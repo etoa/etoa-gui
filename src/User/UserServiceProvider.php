@@ -5,7 +5,7 @@ namespace EtoA\User;
 use EtoA\Building\BuildingRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Defense\DefenseQueueRepository;
-use EtoA\Ship\ShipRepository;
+use EtoA\Ship\ShipQueueRepository;
 use EtoA\Technology\TechnologyRepository;
 use EtoA\Universe\Planet\PlanetRepository;
 use Pimple\Container;
@@ -35,6 +35,22 @@ class UserServiceProvider implements ServiceProviderInterface
             return new UserPropertiesRepository($pimple['db']);
         };
 
+        $pimple[UserCommentRepository::class] = function (Container $pimple): UserCommentRepository {
+            return new UserCommentRepository($pimple['db']);
+        };
+
+        $pimple[UserRatingRepository::class] = function (Container $pimple): UserRatingRepository {
+            return new UserRatingRepository($pimple['db']);
+        };
+
+        $pimple[UserMultiRepository::class] = function (Container $pimple): UserMultiRepository {
+            return new UserMultiRepository($pimple['db']);
+        };
+
+        $pimple[UserLogRepository::class] = function (Container $pimple): UserLogRepository {
+            return new UserLogRepository($pimple['db']);
+        };
+
         $pimple[UserSessionManager::class] = function (Container $pimple): UserSessionManager {
             return new UserSessionManager(
                 $pimple[UserSessionRepository::class],
@@ -50,7 +66,7 @@ class UserServiceProvider implements ServiceProviderInterface
                 $pimple[PlanetRepository::class],
                 $pimple[BuildingRepository::class],
                 $pimple[TechnologyRepository::class],
-                $pimple[ShipRepository::class],
+                $pimple[ShipQueueRepository::class],
                 $pimple[DefenseQueueRepository::class]
             );
         };

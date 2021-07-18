@@ -642,45 +642,6 @@ class User implements \EtoA\User\UserInterface
     }
 
     /**
-     * Sends a system message to the user
-     */
-    function sendMessage($msg_type, $subject, $text)
-    {
-        dbquery("
-            INSERT INTO
-                messages
-            (
-                message_user_from,
-                message_user_to,
-                message_timestamp,
-                message_cat_id
-            )
-            VALUES
-            (
-                '0',
-                '" . $this->id . "',
-                '" . time() . "',
-                '" . $msg_type . "'
-            );
-        ");
-        dbquery("
-            INSERT INTO
-                message_data
-            (
-                id,
-                subject,
-                text
-            )
-            VALUES
-            (
-                " . mysql_insert_id() . ",
-                '" . addslashes($subject) . "',
-                '" . addslashes($text) . "'
-            );
-        ");
-    }
-
-    /**
      * Löschantrag stellen
      */
     function deleteRequest($pw)

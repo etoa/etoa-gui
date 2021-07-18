@@ -44,10 +44,27 @@ class UserSessionRepository extends AbstractRepository
     /**
      * @return UserSession[]
      */
+    public function getActiveUserSessions(int $userId): array
+    {
+        $data = $this->createQueryBuilder()
+            ->select('*')
+            ->from('user_sessions')
+            ->where('user_id = :userId')
+            ->setParameter('userId', $userId)
+            ->orderBy('time_action', 'DESC')
+            ->execute()
+            ->fetchAllAssociative();
+
+        return array_map(fn (array $row) => new UserSession($row), $data);
+    }
+
+    /**
+     * @return UserSession[]
+     */
     public function findByTimeout(int $timeout): array
     {
         $data = $this->createQueryBuilder()
-            ->select("id")
+            ->select("*")
             ->from('user_sessions')
             ->where('time_action + :timeout = ' . time())
             ->setParameter('timeout', $timeout)
@@ -97,5 +114,14 @@ class UserSessionRepository extends AbstractRepository
             ->where('time_action < :timestamp')
             ->setParameter('timestamp', $timestamp)
             ->execute();
+    }
+
+    public function countLogs(): int
+    {
+        return (int) $this->createQueryBuilder()
+            ->select('COUNT(*)')
+            ->from('user_sessionlog')
+            ->execute()
+            ->fetchOne();
     }
 }

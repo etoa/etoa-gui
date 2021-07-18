@@ -1,4 +1,7 @@
 <?PHP
+
+use EtoA\User\UserSessionRepository;
+
 iBoxStart("Logins");
 echo "Hier findest du deine aktiven Sessions, eine Liste der letzten 10 Logins in deinen Account, ebenfalls kannst du weiter unten
             sehen wann dass fehlerhafte Loginversuche stattgefunden haben. Solltest du feststellen, dass jemand unbefugten
@@ -6,30 +9,22 @@ echo "Hier findest du deine aktiven Sessions, eine Liste der letzten 10 Logins i
 iBoxEnd();
 
 tableStart("Aktive Sessions");
-$res = dbquery("
-            SELECT
-                time_login,
-                time_action,
-                ip_addr,
-                user_agent
-            FROM
-                user_sessions
-            WHERE
-                user_id=" . $cu->id . "
-            ORDER BY
-                time_action DESC;");
+/** @var UserSessionRepository $userSessionRepository */
+$userSessionRepository = $app[UserSessionRepository::class];
+$activeSessions = $userSessionRepository->getActiveUserSessions($cu->getId());
+
 echo "<tr>
             <th>Login</th>
             <th>Letzte Aktion</th>
             <th>IP-Adresse</th>
             <th>Hostname</th>
             <th>Client</th></tr>";
-while ($arr = mysql_fetch_array($res)) {
-    $browserParser = new \WhichBrowser\Parser($arr['user_agent']);
-    echo "<tr><td>" . df($arr['time_login']) . "</td>";
-    echo "<td>" . df($arr['time_action']) . "</td>";
-    echo "<td>" . $arr['ip_addr'] . "</td>";
-    echo "<td>" . Net::getHost($arr['ip_addr']) . "</td>";
+foreach ($activeSessions as $session) {
+    $browserParser = new \WhichBrowser\Parser($session->userAgent);
+    echo "<tr><td>" . df($session->timeLogin) . "</td>";
+    echo "<td>" . df($session->timeAction) . "</td>";
+    echo "<td>" . $session->ipAddr . "</td>";
+    echo "<td>" . Net::getHost($session->ipAddr) . "</td>";
     echo "<td>" . $browserParser->toString() . "</td></tr>";
 }
 tableEnd();

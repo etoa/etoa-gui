@@ -1,43 +1,12 @@
-<?php
+<?php declare(strict_types=1);
 
-declare(strict_types=1);
-
-namespace EtoA\Message;
+namespace EtoA\Notepad;
 
 use Doctrine\DBAL\Connection;
 use EtoA\Core\AbstractRepository;
 
-class ReportRepository extends AbstractRepository
+class NotepadRepository extends AbstractRepository
 {
-    public function count(): int
-    {
-        return (int) $this->createQueryBuilder()
-            ->select('COUNT(*)')
-            ->from('reports')
-            ->execute()
-            ->fetchOne();
-    }
-
-    public function countNotArchived(): int
-    {
-        return (int) $this->createQueryBuilder()
-            ->select('COUNT(*)')
-            ->from('reports')
-            ->where('archived = 0')
-            ->execute()
-            ->fetchOne();
-    }
-
-    public function countDeleted(): int
-    {
-        return (int) $this->createQueryBuilder()
-            ->select('COUNT(*)')
-            ->from('reports')
-            ->where('deleted = 1')
-            ->execute()
-            ->fetchOne();
-    }
-
     /**
      * @param int[] $availableUserIds
      */
@@ -47,7 +16,7 @@ class ReportRepository extends AbstractRepository
 
         return (int) $qb
             ->select('count(id)')
-            ->from('reports')
+            ->from('notepad')
             ->where($qb->expr()->notIn('user_id', ':userIds'))
             ->setParameter('userIds', $availableUserIds, Connection::PARAM_INT_ARRAY)
             ->execute()
@@ -62,7 +31,7 @@ class ReportRepository extends AbstractRepository
         $qb = $this->createQueryBuilder();
 
         return (int) $qb
-            ->delete('reports')
+            ->delete('notepad')
             ->where($qb->expr()->notIn('user_id', ':userIds'))
             ->setParameter('userIds', $availableUserIds, Connection::PARAM_INT_ARRAY)
             ->execute();

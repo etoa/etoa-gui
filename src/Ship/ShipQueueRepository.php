@@ -1,19 +1,19 @@
 <?php declare(strict_types=1);
 
-namespace EtoA\Defense;
+namespace EtoA\Ship;
 
 use Doctrine\DBAL\Connection;
 use EtoA\Core\AbstractRepository;
 
-class DefenseQueueRepository extends AbstractRepository
+class ShipQueueRepository extends AbstractRepository
 {
-    public function add(int $userId, int $defenseId, int $entityId, int $count, int $startTime, int $endTime, int $objectTime): int
+    public function add(int $userId, int $shipId, int $entityId, int $count, int $startTime, int $endTime, int $objectTime): int
     {
         $this->createQueryBuilder()
-            ->insert('def_queue')
+            ->insert('ship_queue')
             ->values([
                 'queue_user_id' => ':userId',
-                'queue_def_id' => ':defenseId',
+                'queue_ship_id' => ':shipId',
                 'queue_entity_id' => ':entityId',
                 'queue_cnt' => ':count',
                 'queue_starttime' => ':startTime',
@@ -23,7 +23,7 @@ class DefenseQueueRepository extends AbstractRepository
             ])
             ->setParameters([
                 'userId' => $userId,
-                'defenseId' => $defenseId,
+                'shipId' => $shipId,
                 'entityId' => $entityId,
                 'count' => $count,
                 'startTime' => $startTime,
@@ -35,42 +35,42 @@ class DefenseQueueRepository extends AbstractRepository
         return (int) $this->getConnection()->lastInsertId();
     }
 
-    public function getQueueItem(int $id): ?DefenseQueueItem
+    public function getQueueItem(int $id): ?ShipQueueItem
     {
         $data = $this->createQueryBuilder()
             ->select('*')
-            ->from('def_queue')
+            ->from('ship_queue')
             ->where('queue_id = :id')
             ->setParameter('id', $id)
             ->execute()
             ->fetchAssociative();
 
-        return $data !== false ? new DefenseQueueItem($data) : null;
+        return $data !== false ? new ShipQueueItem($data) : null;
     }
 
     /**
-     * @return DefenseQueueItem[]
+     * @return ShipQueueItem[]
      */
     public function findQueueItemsForUser(int $userId): array
     {
         $data = $this->createQueryBuilder()
             ->select('*')
-            ->from('def_queue')
+            ->from('ship_queue')
             ->where('queue_user_id = :userId')
             ->setParameter('userId', $userId)
             ->orderBy('queue_starttime', 'ASC')
             ->execute()
             ->fetchAllAssociative();
 
-        return array_map(fn ($row) => new DefenseQueueItem($row), $data);
+        return array_map(fn ($row) => new ShipQueueItem($row), $data);
     }
 
-    public function saveQueueItem(DefenseQueueItem $item): void
+    public function saveQueueItem(ShipQueueItem $item): void
     {
         $this->createQueryBuilder()
-            ->update('def_queue')
+            ->update('ship_queue')
             ->set('queue_user_id', ':userId')
-            ->set('queue_def_id', ':defenseId')
+            ->set('queue_ship_id', ':shipId')
             ->set('queue_entity_id', ':entityId')
             ->set('queue_cnt', ':count')
             ->set('queue_starttime', ':startTime')
@@ -82,7 +82,7 @@ class DefenseQueueRepository extends AbstractRepository
             ->setParameters([
                 'id' => $item->id,
                 'userId' => $item->userId,
-                'defenseId' => $item->defenseId,
+                'shipId' => $item->shipId,
                 'entityId' => $item->entityId,
                 'count' => $item->count,
                 'startTime' => $item->startTime,
@@ -97,7 +97,7 @@ class DefenseQueueRepository extends AbstractRepository
     public function deleteQueueItem(int $id): void
     {
         $this->createQueryBuilder()
-            ->delete('def_queue')
+            ->delete('ship_queue')
             ->where('queue_id = :id')
             ->setParameter('id', $id)
             ->execute();
@@ -107,7 +107,7 @@ class DefenseQueueRepository extends AbstractRepository
     {
         return (int) $this->createQueryBuilder()
             ->select('COUNT(*)')
-            ->from('def_queue')
+            ->from('ship_queue')
             ->execute()
             ->fetchOne();
     }
@@ -121,13 +121,12 @@ class DefenseQueueRepository extends AbstractRepository
 
         return (int) $qb
             ->select('count(*)')
-            ->from('def_queue')
+            ->from('ship_queue')
             ->where($qb->expr()->notIn('queue_user_id', ':userIds'))
             ->setParameter('userIds', $availableUserIds, Connection::PARAM_INT_ARRAY)
             ->execute()
             ->fetchOne();
     }
-
 
     /**
      * @param int[] $availableUserIds
@@ -137,7 +136,7 @@ class DefenseQueueRepository extends AbstractRepository
         $qb = $this->createQueryBuilder();
 
         return (int) $qb
-            ->delete('def_queue')
+            ->delete('ship_queue')
             ->where($qb->expr()->notIn('queue_user_id', ':userIds'))
             ->setParameter('userIds', $availableUserIds, Connection::PARAM_INT_ARRAY)
             ->execute();

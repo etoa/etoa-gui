@@ -1,4 +1,10 @@
 <?PHP
+
+use EtoA\User\UserRepository;
+
+/** @var UserRepository $userRepository */
+$userRepository = $app[UserRepository::class];
+
 echo "<h1>Ip- und Hostsuche</h1>";
 
 if (isset($_POST['search'])) {
@@ -28,19 +34,10 @@ else
 if ($user > 0) {
     echo "<h2>Suchergebnisse</h2>";
 
-    $res = dbquery("
-        SELECT
-            user_id,
-            user_nick
-        FROM
-            users
-        WHERE
-            user_id='" . $user . "'
-        ;");
-    if (mysql_num_rows($res) > 0) {
-        $arr = mysql_fetch_assoc($res);
+    $userNick = $userRepository->getNick($user);
+    if ($userNick !== null) {
 
-        echo "<b>Nick:</b> <a href=\"?page=$page&amp;sub=edit&amp;id=" . $user . "\">" . $arr['user_nick'] . "</a><br/>";
+        echo "<b>Nick:</b> <a href=\"?page=$page&amp;sub=edit&amp;id=" . $user . "\">" . $userNick . "</a><br/>";
 
         if (!isset($_SESSION['admin_ipsearch_concat']))
             $_SESSION['admin_ipsearch_concat'] = false;

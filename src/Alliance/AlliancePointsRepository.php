@@ -38,4 +38,13 @@ class AlliancePointsRepository extends AbstractRepository
 
         return array_map(fn (array $row) => new AlliancePoints($row), $data);
     }
+
+    public function count(): int
+    {
+        return (int) $this->createQueryBuilder()
+            ->select('COUNT(*)')
+            ->from('alliance_points')
+            ->execute()
+            ->fetchOne();
+    }
 }

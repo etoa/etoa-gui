@@ -1,4 +1,7 @@
 <?PHP
+
+use EtoA\User\UserRepository;
+
 echo "<h1>Verwarnungen</h1>";
 
 if (isset($_GET['edit'])) {
@@ -118,19 +121,12 @@ if (isset($_GET['edit'])) {
                     <th>User:</th>
                     <td>
                         <select name=\"warning_user_id\">";
-    $res = dbquery("
-                            SELECT
-                                user_nick,
-                                user_id
-                            FROM
-                                users
-                            ORDER BY
-                                user_nick
-                            ");
-    if (mysql_num_rows($res) > 0) {
-        while ($arr = mysql_fetch_array($res)) {
-            echo "<option value=\"" . $arr['user_id'] . "\">" . $arr['user_nick'] . "</option>";
-        }
+
+    /** @var UserRepository $userRepository */
+    $userRepository = $app[UserRepository::class];
+    $userNicks = $userRepository->getUserNicknames();
+    foreach ($userNicks as $userId => $userNick) {
+        echo "<option value=\"" . $userId . "\">" . $userNick . "</option>";
     }
     echo "</select>
                     </td>

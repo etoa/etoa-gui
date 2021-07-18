@@ -1,13 +1,18 @@
 <?PHP
+
+use EtoA\User\UserRepository;
+
 echo "<h1>User-Sessionlogs</h1>";
+
+/** @var UserRepository $userRepository */
+$userRepository = $app[UserRepository::class];
 
 if (isset($_POST['logshow']) || (isset($_GET['id']) && $_GET['id'] > 0)) {
     if (isset($_GET['id']) && $_GET['id'] > 0) {
-        $userid = $_GET['id'];
-        $ures = dbquery("SELECT user_nick, user_id FROM users WHERE user_id='" . $userid . "';");
-        if (mysql_num_rows($ures) > 0) {
-            $uarr = mysql_fetch_array($ures);
-            echo "<h2>Session-Log f&uuml;r <a href=\"?page=user&sub=edit&user_id=" . $uarr['user_id'] . "\">" . $uarr['user_nick'] . "</a></h2>";
+        $userid = (int) $_GET['id'];
+        $userNick = $userRepository->getNick($userid);
+        if ($userNick !== null) {
+            echo "<h2>Session-Log f&uuml;r <a href=\"?page=user&sub=edit&user_id=" . $userid . "\">" . $userNick . "</a></h2>";
         }
         $res = dbquery("SELECT * FROM user_sessionlog WHERE user_id=" . $userid . " ORDER BY id DESC;");
     } else {

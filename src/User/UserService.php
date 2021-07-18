@@ -8,7 +8,7 @@ use BackendMessage;
 use EtoA\Building\BuildingRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Defense\DefenseQueueRepository;
-use EtoA\Ship\ShipRepository;
+use EtoA\Ship\ShipQueueRepository;
 use EtoA\Technology\TechnologyRepository;
 use EtoA\Universe\Planet\PlanetRepository;
 use Log;
@@ -21,7 +21,7 @@ class UserService
     private PlanetRepository $planetRepository;
     private BuildingRepository $buildingRepository;
     private TechnologyRepository $technologyRepository;
-    private ShipRepository $shipRepository;
+    private ShipQueueRepository $shipQueueRepository;
     private DefenseQueueRepository $defenseQueueRepository;
 
     public function __construct(
@@ -30,7 +30,7 @@ class UserService
         PlanetRepository $planetRepository,
         BuildingRepository $buildingRepository,
         TechnologyRepository $technologyRepository,
-        ShipRepository $shipRepository,
+        ShipQueueRepository $shipQueueRepository,
         DefenseQueueRepository $defenseRepository
     ) {
         $this->config = $config;
@@ -38,7 +38,7 @@ class UserService
         $this->planetRepository = $planetRepository;
         $this->buildingRepository = $buildingRepository;
         $this->technologyRepository = $technologyRepository;
-        $this->shipRepository = $shipRepository;
+        $this->shipQueueRepository = $shipQueueRepository;
         $this->defenseQueueRepository = $defenseRepository;
     }
 
@@ -148,12 +148,12 @@ die Spielleitung";
                 $this->technologyRepository->save($item);
             }
 
-            $shipQueueItems = $this->shipRepository->findQueueItemsForUser($user->id);
+            $shipQueueItems = $this->shipQueueRepository->findQueueItemsForUser($user->id);
             foreach ($shipQueueItems as $item) {
                 $item->buildType = 0;
                 $item->startTime += $hmodTime;
                 $item->endTime += $hmodTime;
-                $this->shipRepository->saveQueueItem($item);
+                $this->shipQueueRepository->saveQueueItem($item);
             }
 
             $defQueueItems = $this->defenseQueueRepository->findQueueItemsForUser($user->id);

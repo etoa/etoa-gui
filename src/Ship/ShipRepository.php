@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace EtoA\Ship;
 
+use Doctrine\DBAL\Connection;
 use EtoA\Core\AbstractRepository;
 
 class ShipRepository extends AbstractRepository
@@ -258,6 +259,57 @@ class ShipRepository extends AbstractRepository
             ])->execute();
 
         return $delable;
+    }
+
+    public function count(): int
+    {
+        return (int) $this->createQueryBuilder()
+            ->select('COUNT(shiplist_id)')
+            ->from('shiplist')
+            ->execute()
+            ->fetchOne();
+    }
+
+    public function countEmpty(): int
+    {
+        return (int) $this->createQueryBuilder()
+            ->select('COUNT(shiplist_id)')
+            ->from('shiplist')
+            ->where('shiplist_count = 0')
+            ->andWhere('shiplist_bunkered = 0')
+            ->andWhere('shiplist_special_ship = 0')
+            ->execute()
+            ->fetchOne();
+    }
+
+    /**
+     * @param int[] $availableUserIds
+     */
+    public function getOrphanedCount(array $availableUserIds): int
+    {
+        $qb = $this->createQueryBuilder();
+
+        return (int) $qb
+            ->select('count(shiplist_id)')
+            ->from('shiplist')
+            ->where($qb->expr()->notIn('shiplist_user_id', ':userIds'))
+            ->setParameter('userIds', $availableUserIds, Connection::PARAM_INT_ARRAY)
+            ->execute()
+            ->fetchOne();
+    }
+
+    /**
+     * @param int[] $availableUserIds
+     */
+    public function deleteOrphaned(array $availableUserIds): int
+    {
+        $qb = $this->createQueryBuilder();
+
+        return (int) $qb
+            ->delete('shiplist')
+            ->where($qb->expr()->notIn('shiplist_user_id', ':userIds'))
+            ->setParameter('userIds', $availableUserIds, Connection::PARAM_INT_ARRAY)
+            ->execute();
     }
 
     /**

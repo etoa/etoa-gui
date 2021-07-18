@@ -1,22 +1,18 @@
 <?PHP
+
+use EtoA\User\UserRepository;
+
 echo "<h1>Beobachtungsliste</h1>";
 
+/** @var UserRepository $userRepository */
+$userRepository = $app[UserRepository::class];
+
 if (isset($_GET['text'])) {
-    $res = dbquery("
-        SELECT
-            user_nick,
-            user_id,
-            user_observe
-        FROM
-            users
-        WHERE
-            user_id='" . $_GET['text'] . "'
-        ");
-    $arr = mysql_fetch_array($res);
-    echo "<h2>Beobachtungsgrund für <a href=\"?page=$page&amp;sub=edit&amp;id=" . $arr['user_id'] . "\">" . $arr['user_nick'] . "</a></h2>";
+    $user = $userRepository->getUser((int) $_GET['text']);
+    echo "<h2>Beobachtungsgrund für <a href=\"?page=$page&amp;sub=edit&amp;id=" . $user->id . "\">" . $user->nick . "</a></h2>";
     echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"post\">
-        <textarea name=\"user_observe\" cols=\"80\" rows=\"10\">" . stripslashes($arr['user_observe']) . "</textarea>
-        <input type=\"hidden\" name=\"user_id\" value=\"" . $arr['user_id'] . "\" />
+        <textarea name=\"user_observe\" cols=\"80\" rows=\"10\">" . stripslashes($user->observe) . "</textarea>
+        <input type=\"hidden\" name=\"user_id\" value=\"" . $user->id . "\" />
         <br/><br/>
         <input type=\"submit\" name=\"save_text\" value=\"Speichern\" /> &nbsp;
         <input type=\"submit\" name=\"del_text\" value=\"Löschen\" /> &nbsp;

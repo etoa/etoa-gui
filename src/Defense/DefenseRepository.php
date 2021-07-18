@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace EtoA\Defense;
 
+use Doctrine\DBAL\Connection;
 use EtoA\Core\AbstractRepository;
 
 class DefenseRepository extends AbstractRepository
@@ -172,6 +173,46 @@ class DefenseRepository extends AbstractRepository
             ->from('deflist')
             ->execute()
             ->fetchOne();
+    }
+
+    public function countEmpty(): int
+    {
+        return (int) $this->createQueryBuilder()
+            ->select('COUNT(deflist_id)')
+            ->from('deflist')
+            ->where('deflist_count = 0')
+            ->execute()
+            ->fetchOne();
+    }
+
+    /**
+     * @param int[] $availableUserIds
+     */
+    public function getOrphanedCount(array $availableUserIds): int
+    {
+        $qb = $this->createQueryBuilder();
+
+        return (int) $qb
+            ->select('count(deflist_id)')
+            ->from('deflist')
+            ->where($qb->expr()->notIn('deflist_user_id', ':userIds'))
+            ->setParameter('userIds', $availableUserIds, Connection::PARAM_INT_ARRAY)
+            ->execute()
+            ->fetchOne();
+    }
+
+    /**
+     * @param int[] $availableUserIds
+     */
+    public function deleteOrphaned(array $availableUserIds): int
+    {
+        $qb = $this->createQueryBuilder();
+
+        return (int) $qb
+            ->delete('deflist')
+            ->where($qb->expr()->notIn('deflist_user_id', ':userIds'))
+            ->setParameter('userIds', $availableUserIds, Connection::PARAM_INT_ARRAY)
+            ->execute();
     }
 
     /**

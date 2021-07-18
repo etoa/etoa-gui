@@ -1,8 +1,13 @@
 <?PHP
 
+use EtoA\User\UserRepository;
+
 $dir = PROFILE_IMG_DIR . "/";
 
 echo "<h1>User-Bilder pr&uuml;fen</h1>";
+
+/** @var UserRepository $userRepository */
+$userRepository = $app[UserRepository::class];
 
 //
 // Check submit
@@ -10,11 +15,10 @@ echo "<h1>User-Bilder pr&uuml;fen</h1>";
 if (isset($_POST['validate_submit'])) {
     foreach ($_POST['validate'] as $id => $v) {
         if ($v == 0) {
-            $res = dbquery("SELECT user_profile_img FROM users WHERE user_id=" . $id . ";");
-            if (mysql_num_rows($res) > 0) {
-                $arr = mysql_fetch_array($res);
-                if (file_exists(PROFILE_IMG_DIR . "/" . $arr['user_profile_img'])) {
-                    unlink(PROFILE_IMG_DIR . "/" . $arr['user_profile_img']);
+            $user = $userRepository->getUser($id);
+            if ($user !== null) {
+                if (file_exists(PROFILE_IMG_DIR . "/" . $user->profileImage)) {
+                    unlink(PROFILE_IMG_DIR . "/" . $user->profileImage);
                 }
                 dbquery("UPDATE users SET user_profile_img='',user_profile_img_check=0 WHERE user_id=" . $id . ";");
                 if (mysql_affected_rows() > 0) {

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace EtoA\Technology;
 
+use Doctrine\DBAL\Connection;
 use EtoA\Core\AbstractRepository;
 
 class TechnologyRepository extends AbstractRepository
@@ -130,6 +131,67 @@ class TechnologyRepository extends AbstractRepository
             'startTime' => $startTime,
             'endTime' => $endTime,
         ]);
+    }
+
+    public function count(): int
+    {
+        return (int) $this->createQueryBuilder()
+            ->select('COUNT(techlist_id)')
+            ->from('techlist')
+            ->execute()
+            ->fetchOne();
+    }
+
+    public function countEmpty(): int
+    {
+        return (int) $this->createQueryBuilder()
+            ->select('COUNT(techlist_id)')
+            ->from('techlist')
+            ->where('techlist_current_level=0')
+            ->andWhere('techlist_build_start_time=0')
+            ->andWhere('techlist_build_end_time=0')
+            ->execute()
+            ->fetchOne();
+    }
+
+    public function deleteEmpty(): int
+    {
+        return (int) $this->createQueryBuilder()
+            ->delete('techlist')
+            ->where('techlist_current_level=0')
+            ->andWhere('techlist_build_start_time=0')
+            ->andWhere('techlist_build_end_time=0')
+            ->execute();
+    }
+
+    /**
+     * @param int[] $availableUserIds
+     */
+    public function getOrphanedCount(array $availableUserIds): int
+    {
+        $qb = $this->createQueryBuilder();
+
+        return (int) $qb
+            ->select('count(techlist_id)')
+            ->from('techlist')
+            ->where($qb->expr()->notIn('techlist_user_id', ':userIds'))
+            ->setParameter('userIds', $availableUserIds, Connection::PARAM_INT_ARRAY)
+            ->execute()
+            ->fetchOne();
+    }
+
+    /**
+     * @param int[] $availableUserIds
+     */
+    public function deleteOrphaned(array $availableUserIds): int
+    {
+        $qb = $this->createQueryBuilder();
+
+        return (int) $qb
+            ->delete('techlist')
+            ->where($qb->expr()->notIn('techlist_user_id', ':userIds'))
+            ->setParameter('userIds', $availableUserIds, Connection::PARAM_INT_ARRAY)
+            ->execute();
     }
 
     /**

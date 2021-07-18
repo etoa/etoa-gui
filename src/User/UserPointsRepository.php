@@ -38,4 +38,13 @@ class UserPointsRepository extends AbstractRepository
 
         return array_map(fn (array $row) => new UserPoints($row), $data);
     }
+
+    public function count(): int
+    {
+        return (int) $this->createQueryBuilder()
+            ->select('COUNT(*)')
+            ->from('user_points')
+            ->execute()
+            ->fetchOne();
+    }
 }

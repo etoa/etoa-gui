@@ -1,43 +1,12 @@
-<?php
+<?php declare(strict_types=1);
 
-declare(strict_types=1);
-
-namespace EtoA\Message;
+namespace EtoA\User;
 
 use Doctrine\DBAL\Connection;
 use EtoA\Core\AbstractRepository;
 
-class ReportRepository extends AbstractRepository
+class UserMultiRepository extends AbstractRepository
 {
-    public function count(): int
-    {
-        return (int) $this->createQueryBuilder()
-            ->select('COUNT(*)')
-            ->from('reports')
-            ->execute()
-            ->fetchOne();
-    }
-
-    public function countNotArchived(): int
-    {
-        return (int) $this->createQueryBuilder()
-            ->select('COUNT(*)')
-            ->from('reports')
-            ->where('archived = 0')
-            ->execute()
-            ->fetchOne();
-    }
-
-    public function countDeleted(): int
-    {
-        return (int) $this->createQueryBuilder()
-            ->select('COUNT(*)')
-            ->from('reports')
-            ->where('deleted = 1')
-            ->execute()
-            ->fetchOne();
-    }
-
     /**
      * @param int[] $availableUserIds
      */
@@ -47,8 +16,9 @@ class ReportRepository extends AbstractRepository
 
         return (int) $qb
             ->select('count(id)')
-            ->from('reports')
+            ->from('user_multi')
             ->where($qb->expr()->notIn('user_id', ':userIds'))
+            ->orWhere($qb->expr()->notIn('multi_id', ':userIds'))
             ->setParameter('userIds', $availableUserIds, Connection::PARAM_INT_ARRAY)
             ->execute()
             ->fetchOne();
@@ -62,8 +32,9 @@ class ReportRepository extends AbstractRepository
         $qb = $this->createQueryBuilder();
 
         return (int) $qb
-            ->delete('reports')
+            ->delete('user_multi')
             ->where($qb->expr()->notIn('user_id', ':userIds'))
+            ->orWhere($qb->expr()->notIn('multi_id', ':userIds'))
             ->setParameter('userIds', $availableUserIds, Connection::PARAM_INT_ARRAY)
             ->execute();
     }
