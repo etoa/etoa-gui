@@ -549,15 +549,15 @@ class GameStatsGenerator
         $out .= "<tr><th colspan=\"4\">Design</th></tr>";
         $rank = 1;
         $total = 0;
-        foreach ($this->userPropertiesRepository->getDesignStats($limit) as $arr) {
-            $total += $arr['cnt'];
+        foreach ($this->userPropertiesRepository->getDesignStats($limit) as $design => $count) {
+            $total += $count;
             $out .= "<tr>
                 <td>" . $rank++ . "</td>";
-            $out .= $arr['name'] != ""
-                ? "<td>" . strtr($arr['name'], ["css_style/" => ""]) . "</td>"
+            $out .= $design != ""
+                ? "<td>" . strtr($design, ["css_style/" => ""]) . "</td>"
                 : "<td><i>Standard</i></td>";
             $out .= "<td>" . nf($arr['cnt']) . "</td>";
-            $out .= "<td>" . round(100 / $total * $arr['cnt'], 2) . "%</td></tr>";
+            $out .= "<td>" . round(100 / $total * $count, 2) . "%</td></tr>";
         }
         $out .= "</table>";
 

@@ -615,6 +615,8 @@ class DBManager implements ISingleton
                 chmod(DBERROR_LOGFILE, 0662);
             }
             $f = fopen(DBERROR_LOGFILE, "a+");
+
+            $cu = $cu instanceof \EtoA\Admin\AdminUser ? $cu->nick : $cu;
             fwrite($f, date("d.m.Y H:i:s") . ", " . (isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : 'local') . ", " . $cu . "\n" . $message . "\n\n");
             fclose($f);
         }

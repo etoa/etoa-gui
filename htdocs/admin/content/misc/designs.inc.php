@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\User\UserPropertiesRepository;
 
 /** @var ConfigurationService */
 $config = $app[ConfigurationService::class];
@@ -126,34 +127,16 @@ else if (isset($_GET['remove'])) {
     }
 }
 
+/** @var UserPropertiesRepository $userPropertiesRepository */
+$userPropertiesRepository = $app[UserPropertiesRepository::class];
+$designCounts = $userPropertiesRepository->getDesignStats(99);
 // Show all designs
 foreach ($designs as $k => $v) {
-    $res = dbQuerySave(
-        "
-    SELECT
-        COUNT(id) as cnt
-    FROM
-        user_properties
-    WHERE
-        css_style=?;",
-        array(
-            $k
-        )
-    );
-    $arr = mysql_fetch_row($res);
-    $designs[$k]['users'] = $arr[0];
+    $designs[$k]['users'] = $designCounts[$k] ?? 0;
     $designs[$k]['default'] = ($k == $config->get('default_css_style'));
     // If it is the default design, add all users who have not explicitly selected a design
     if ($k == $config->get('default_css_style')) {
-        $res = dbQuerySave("
-        SELECT
-            COUNT(id) as cnt
-        FROM
-            user_properties
-        WHERE
-            css_style='';");
-        $arr = mysql_fetch_row($res);
-        $designs[$k]['users'] += $arr[0];
+        $designs[$k]['users'] += $designCounts[''] ?? 0;
     }
 }
 

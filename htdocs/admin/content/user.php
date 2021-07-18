@@ -151,13 +151,6 @@ elseif ($sub == "race") {
 }
 
 //
-// History
-//
-elseif ($sub == "history") {
-    require("user/history.inc.php");
-}
-
-//
 // Änderungsanträge
 //
 elseif ($sub == "requests") {

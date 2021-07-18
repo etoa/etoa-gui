@@ -8,10 +8,10 @@ use EtoA\Ship\ShipRepository;
 /** @var ConfigurationService */
 $config = $app[ConfigurationService::class];
 
-/** @var \EtoA\Ship\ShipDataRepository $shipDataRepository */
-$shipDataRepository = $app[\EtoA\Ship\ShipDataRepository::class];
+/** @var ShipDataRepository $shipDataRepository */
+$shipDataRepository = $app[ShipDataRepository::class];
 
-/** @var ShipRepository */
+/** @var ShipRepository $shipRepository */
 $shipRepository = $app[ShipRepository::class];
 /** @var ShipQueueRepository $shipQueueRepository */
 $shipQueueRepository = $app[ShipQueueRepository::class];
@@ -409,13 +409,8 @@ else {
     $twig->addGlobal("title", "Schiffliste");
 
     // Schiffe laden
-
-    /** @var ShipDataRepository */
-    $shipRepository = $app[ShipDataRepository::class];
-
-    $shipNames = $shipRepository->getShipNames(true);
-
-    $tblcnt = mysql_fetch_row(dbquery("SELECT count(shiplist_id) FROM shiplist;"));
+    $shipNames = $shipDataRepository->getShipNames(true);
+    $tblcnt = $shipRepository->count();
 
     // Hinzufügen
     echo "<form action=\"?page=$page&amp;sub=$sub&amp;action=search\" method=\"post\" id=\"selector\" name=\"selector\">";
@@ -482,5 +477,5 @@ else {
         }
     }
 
-    echo "<br/>Es sind <b>" . nf($tblcnt[0]) . "</b> Eintr&auml;ge in der Datenbank vorhanden.";
+    echo "<br/>Es sind <b>" . nf($tblcnt) . "</b> Eintr&auml;ge in der Datenbank vorhanden.";
 }

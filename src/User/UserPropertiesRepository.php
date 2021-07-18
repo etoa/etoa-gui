@@ -10,15 +10,15 @@ use EtoA\Core\AbstractRepository;
 class UserPropertiesRepository extends AbstractRepository
 {
     /**
-     * @return array<int, array{name: string, cnt: int}>
+     * @return array<string, int>
      */
     public function getDesignStats(int $limit): array
     {
         $data = $this->getConnection()
             ->executeQuery(
                 "SELECT
-                    css_style as name,
-                    COUNT(id) as cnt
+                    css_style,
+                    COUNT(id) cnt
                 FROM
                     user_properties
                 GROUP BY
@@ -27,12 +27,9 @@ class UserPropertiesRepository extends AbstractRepository
                     cnt DESC
                 LIMIT $limit;"
             )
-            ->fetchAllAssociative();
+            ->fetchAllKeyValue();
 
-        return array_map(fn ($arr) => [
-            'name' => (string) $arr['name'],
-            'cnt' => (int) $arr['cnt'],
-        ], $data);
+        return array_map(fn ($value) => (int) $value, $data);
     }
 
     /**
