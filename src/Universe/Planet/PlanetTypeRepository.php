@@ -85,11 +85,11 @@ class PlanetTypeRepository extends AbstractRepository
     }
 
     /**
-     * @return array<string[]>
+     * @return array<int, array{name: string, cnt: int}>
      */
     public function getNumberOfOwnedPlanetsByType(): array
     {
-        return $this->getConnection()
+        $data = $this->getConnection()
             ->executeQuery(
                 "SELECT
                     planet_types.type_name as name,
@@ -115,5 +115,10 @@ class PlanetTypeRepository extends AbstractRepository
                     cnt DESC;"
             )
             ->fetchAllAssociative();
+
+        return array_map(fn ($arr) => [
+            'name' => (string) $arr['name'],
+            'cnt' => (int) $arr['cnt'],
+        ], $data);
     }
 }

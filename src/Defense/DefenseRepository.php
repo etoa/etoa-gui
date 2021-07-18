@@ -175,11 +175,11 @@ class DefenseRepository extends AbstractRepository
     }
 
     /**
-     * @return array<string[]>
+     * @return array<int, array{name: string, cnt: int, max: int}>
      */
     public function getOverallCount(): array
     {
-        return $this->getConnection()
+        $data = $this->getConnection()
             ->executeQuery(
                 "SELECT
                     defense.def_name as name,
@@ -206,5 +206,11 @@ class DefenseRepository extends AbstractRepository
                     cnt DESC;"
             )
             ->fetchAllAssociative();
+
+        return array_map(fn ($arr) => [
+            'name' => (string) $arr['name'],
+            'cnt' => (int) $arr['cnt'],
+            'max' => (int) $arr['max'],
+        ], $data);
     }
 }

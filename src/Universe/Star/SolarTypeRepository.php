@@ -76,11 +76,11 @@ class SolarTypeRepository extends AbstractRepository
     }
 
     /**
-     * @return array<string[]>
+     * @return array<int, array{name: string, cnt: int}>
      */
     public function getNumberOfNamedSystemsByType(): array
     {
-        return $this->getConnection()
+        $data = $this->getConnection()
             ->executeQuery(
                 "SELECT
                     t.sol_type_name as name,
@@ -98,5 +98,10 @@ class SolarTypeRepository extends AbstractRepository
                     cnt DESC;"
             )
             ->fetchAllAssociative();
+
+        return array_map(fn ($arr) => [
+            'name' => (string) $arr['name'],
+            'cnt' => (int) $arr['cnt'],
+        ], $data);
     }
 }

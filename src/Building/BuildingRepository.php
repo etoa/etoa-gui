@@ -343,11 +343,11 @@ class BuildingRepository extends AbstractRepository
     }
 
     /**
-     * @return array<string[]>
+     * @return array<int, array{name: string, cnt: int}>
      */
     public function getOverallCount(): array
     {
-        return $this->getConnection()
+        $data = $this->getConnection()
             ->executeQuery(
                 "SELECT
                     buildings.building_name as name,
@@ -373,14 +373,19 @@ class BuildingRepository extends AbstractRepository
                     cnt DESC;"
             )
             ->fetchAllAssociative();
+
+        return array_map(fn ($arr) => [
+            'name' => (string) $arr['name'],
+            'cnt' => (int) $arr['cnt'],
+        ], $data);
     }
 
     /**
-     * @return array<string[]>
+     * @return array<int, array{name: string, max: int}>
      */
     public function getBestLevels(): array
     {
-        return $this->getConnection()
+        $data = $this->getConnection()
             ->executeQuery(
                 "SELECT
                     buildings.building_name as name,
@@ -406,5 +411,10 @@ class BuildingRepository extends AbstractRepository
                     max DESC;"
             )
             ->fetchAllAssociative();
+
+        return array_map(fn ($arr) => [
+            'name' => (string) $arr['name'],
+            'max' => (int) $arr['max'],
+        ], $data);
     }
 }

@@ -69,11 +69,11 @@ class RaceDataRepository extends AbstractRepository
     }
 
     /**
-     * @return array<string[]>
+     * @return array<int, array{name: string, cnt: int}>
      */
     public function getNumberOfRacesByType(): array
     {
-        return $this->getConnection()
+        $data = $this->getConnection()
             ->executeQuery(
                 "SELECT
                     races.race_name as name,
@@ -93,5 +93,10 @@ class RaceDataRepository extends AbstractRepository
                     cnt DESC;"
             )
             ->fetchAllAssociative();
+
+        return array_map(fn ($arr) => [
+            'name' => (string) $arr['name'],
+            'cnt' => (int) $arr['cnt'],
+        ], $data);
     }
 }

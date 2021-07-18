@@ -261,11 +261,11 @@ class ShipRepository extends AbstractRepository
     }
 
     /**
-     * @return array<string[]>
+     * @return array<int, array{name: string, cnt: int, max: int}>
      */
     public function getOverallCount(): array
     {
-        return $this->getConnection()
+        $data = $this->getConnection()
             ->executeQuery(
                 "SELECT
                     ships.ship_name as name,
@@ -293,14 +293,20 @@ class ShipRepository extends AbstractRepository
                     cnt DESC;"
             )
             ->fetchAllAssociative();
+
+        return array_map(fn ($arr) => [
+            'name' => (string) $arr['name'],
+            'cnt' => (int) $arr['cnt'],
+            'max' => (int) $arr['max'],
+        ], $data);
     }
 
     /**
-     * @return array<string[]>
+     * @return array<int, array{name: string, level: int, exp: int}>
      */
     public function getSpecialShipStats(): array
     {
-        return $this->getConnection()
+        $data = $this->getConnection()
             ->executeQuery(
                 "SELECT
                     ships.ship_name as name,
@@ -314,19 +320,25 @@ class ShipRepository extends AbstractRepository
                     INNER JOIN
                         users
                     ON
-                        shiplist_user_id=user_id
-                        AND user_ghost=0
-                        AND user_hmode_from=0
-                        AND user_hmode_to=0
+                        shiplist_user_id = user_id
+                        AND user_ghost = 0
+                        AND user_hmode_from = 0
+                        AND user_hmode_to = 0
                     )
                 ON
-                    shiplist_ship_id=ship_id
-                    AND ships.special_ship=1
+                    shiplist_ship_id = ship_id
+                    AND ships.special_ship = 1
                 GROUP BY
                     ships.ship_id
                 ORDER BY
                     exp DESC;"
             )
             ->fetchAllAssociative();
+
+        return array_map(fn ($arr) => [
+            'name' => (string) $arr['name'],
+            'level' => (int) $arr['level'],
+            'exp' => (int) $arr['exp'],
+        ], $data);
     }
 }

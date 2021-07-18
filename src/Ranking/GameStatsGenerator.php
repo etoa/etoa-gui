@@ -550,14 +550,14 @@ class GameStatsGenerator
         $rank = 1;
         $total = 0;
         foreach ($this->userPropertiesRepository->getDesignStats($limit) as $arr) {
-            $total += (int) $arr['cnt'];
+            $total += $arr['cnt'];
             $out .= "<tr>
                 <td>" . $rank++ . "</td>";
-            $out .= $arr['css_style'] != ""
-                ? "<td>" . strtr($arr['css_style'], ["css_style/" => ""]) . "</td>"
+            $out .= $arr['name'] != ""
+                ? "<td>" . strtr($arr['name'], ["css_style/" => ""]) . "</td>"
                 : "<td><i>Standard</i></td>";
             $out .= "<td>" . nf($arr['cnt']) . "</td>";
-            $out .= "<td>" . round(100 / $total * (int) $arr['cnt'], 2) . "%</td></tr>";
+            $out .= "<td>" . round(100 / $total * $arr['cnt'], 2) . "%</td></tr>";
         }
         $out .= "</table>";
 
@@ -571,14 +571,14 @@ class GameStatsGenerator
         $rank = 1;
         $total = 0;
         foreach ($this->userPropertiesRepository->getImagePackStats($limit) as $arr) {
-            $total += (int) $arr['cnt'];
+            $total += $arr['cnt'];
             $out .= "<tr>
                 <td>" . $rank++ . "</td>";
-            $out .= $arr['image_url'] != ""
-                ? "<td>" . strtr($arr['image_url'], ["images/themes/" => ""]) . "</td>"
+            $out .= $arr['name'] != ""
+                ? "<td>" . strtr($arr['name'], ["images/themes/" => ""]) . "</td>"
                 : "<td><i>Standard</i></td>";
             $out .= "<td>" . nf($arr['cnt']) . "</td>";
-            $out .= "<td>" . round(100 / $total * (int) $arr['cnt'], 2) . "%</td></tr>";
+            $out .= "<td>" . round(100 / $total * $arr['cnt'], 2) . "%</td></tr>";
         }
         $out .= "</table>";
 
@@ -592,14 +592,14 @@ class GameStatsGenerator
         $rank = 1;
         $total = 0;
         foreach ($this->userPropertiesRepository->getImageExtensionStats($limit) as $arr) {
-            $total += (int) $arr['cnt'];
+            $total += $arr['cnt'];
             $out .= "<tr>
                 <td>" . $rank++ . "</td>";
-            $out .= $arr['image_ext'] != ""
-                ? "<td>" . $arr['image_ext'] . "</td>"
+            $out .= $arr['name'] != ""
+                ? "<td>" . $arr['name'] . "</td>"
                 : "<td><i>Standard</i></td>";
             $out .= "<td>" . nf($arr['cnt']) . "</td>";
-            $out .= "<td>" . round(100 / $total * (int) $arr['cnt'], 2) . "%</td></tr>";
+            $out .= "<td>" . round(100 / $total * $arr['cnt'], 2) . "%</td></tr>";
         }
 
         $out .= "</table>";

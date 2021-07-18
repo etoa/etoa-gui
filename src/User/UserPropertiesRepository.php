@@ -9,14 +9,14 @@ use EtoA\Core\AbstractRepository;
 class UserPropertiesRepository extends AbstractRepository
 {
     /**
-     * @return array<string[]>
+     * @return array<int, array{name: string, cnt: int}>
      */
     public function getDesignStats(int $limit): array
     {
-        return $this->getConnection()
+        $data = $this->getConnection()
             ->executeQuery(
                 "SELECT
-                    css_style,
+                    css_style as name,
                     COUNT(id) as cnt
                 FROM
                     user_properties
@@ -27,17 +27,22 @@ class UserPropertiesRepository extends AbstractRepository
                 LIMIT $limit;"
             )
             ->fetchAllAssociative();
+
+        return array_map(fn ($arr) => [
+            'name' => (string) $arr['name'],
+            'cnt' => (int) $arr['cnt'],
+        ], $data);
     }
 
     /**
-     * @return array<string[]>
+     * @return array<int, array{name: string, cnt: int}>
      */
     public function getImagePackStats(int $limit): array
     {
-        return $this->getConnection()
+        $data = $this->getConnection()
             ->executeQuery(
                 "SELECT
-                    image_url,
+                    image_url as name,
                     COUNT(id) as cnt
                 FROM
                     user_properties
@@ -48,17 +53,22 @@ class UserPropertiesRepository extends AbstractRepository
                 LIMIT $limit;"
             )
             ->fetchAllAssociative();
+
+        return array_map(fn ($arr) => [
+            'name' => (string) $arr['name'],
+            'cnt' => (int) $arr['cnt'],
+        ], $data);
     }
 
     /**
-     * @return array<string[]>
+     * @return array<int, array{name: string, cnt: int}>
      */
     public function getImageExtensionStats(int $limit): array
     {
-        return $this->getConnection()
+        $data = $this->getConnection()
             ->executeQuery(
                 "SELECT
-                    image_ext,
+                    image_ext as name,
                     COUNT(id) as cnt
                 FROM
                     user_properties
@@ -69,5 +79,10 @@ class UserPropertiesRepository extends AbstractRepository
                 LIMIT $limit;"
             )
             ->fetchAllAssociative();
+
+        return array_map(fn ($arr) => [
+            'name' => (string) $arr['name'],
+            'cnt' => (int) $arr['cnt'],
+        ], $data);
     }
 }

@@ -133,11 +133,11 @@ class TechnologyRepository extends AbstractRepository
     }
 
     /**
-     * @return array<string[]>
+     * @return array<int, array{name: string, max: int}>
      */
     public function getBestLevels(): array
     {
-        return $this->getConnection()
+        $data = $this->getConnection()
             ->executeQuery(
                 "SELECT
                     technologies.tech_name as name,
@@ -163,5 +163,10 @@ class TechnologyRepository extends AbstractRepository
                     max DESC;"
             )
             ->fetchAllAssociative();
+
+        return array_map(fn ($arr) => [
+            'name' => (string) $arr['name'],
+            'max' => (int) $arr['max'],
+        ], $data);
     }
 }
