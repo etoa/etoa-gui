@@ -83,4 +83,42 @@ class PlanetTypeRepository extends AbstractRepository
 
         return $data !== false ? $data : null;
     }
+
+    /**
+     * @return array<int, array{name: string, cnt: int}>
+     */
+    public function getNumberOfOwnedPlanetsByType(): array
+    {
+        $data = $this->getConnection()
+            ->executeQuery(
+                "SELECT
+                    planet_types.type_name as name,
+                    COUNT(planets.planet_type_id) as cnt
+                FROM
+                    planet_types
+                INNER JOIN
+                    (
+                        planets
+                    INNER JOIN
+                        users
+                    ON
+                        planet_user_id = user_id
+                        AND user_ghost = 0
+                        AND user_hmode_from = 0
+                        AND user_hmode_to = 0
+                    )
+                ON
+                    planet_type_id = type_id
+                GROUP BY
+                    planet_types.type_id
+                ORDER BY
+                    cnt DESC;"
+            )
+            ->fetchAllAssociative();
+
+        return array_map(fn ($arr) => [
+            'name' => (string) $arr['name'],
+            'cnt' => (int) $arr['cnt'],
+        ], $data);
+    }
 }

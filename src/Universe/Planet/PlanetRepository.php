@@ -616,4 +616,192 @@ class PlanetRepository extends AbstractRepository
 
         return $res;
     }
+
+    public function getMaxMetalOfAPlayer(): int
+    {
+        return $this->getMaxResourcesOfAPlayer('planet_res_metal');
+    }
+
+    public function getMaxCrystalOfAPlayer(): int
+    {
+        return $this->getMaxResourcesOfAPlayer('planet_res_crystal');
+    }
+
+    public function getMaxPlasticOfAPlayer(): int
+    {
+        return $this->getMaxResourcesOfAPlayer('planet_res_plastic');
+    }
+
+    public function getMaxFuelOfAPlayer(): int
+    {
+        return $this->getMaxResourcesOfAPlayer('planet_res_fuel');
+    }
+
+    public function getMaxFoodOfAPlayer(): int
+    {
+        return $this->getMaxResourcesOfAPlayer('planet_res_food');
+    }
+
+    private function getMaxResourcesOfAPlayer(string $field): int
+    {
+        return (int) $this->getConnection()
+            ->executeQuery(
+                "SELECT
+                    SUM(" . $field . ") AS sum
+                FROM
+                    planets
+                INNER JOIN
+                    users
+                ON
+                    user_id = planet_user_id
+                    AND user_ghost = 0
+                    AND user_hmode_from = 0
+                    AND user_hmode_to = 0
+                GROUP BY
+                    planet_user_id
+                ORDER BY
+                    sum DESC
+                LIMIT 1;"
+            )
+            ->fetchOne();
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getMaxMetal(): array
+    {
+        return $this->getMaxResources('planet_res_metal');
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getMaxCrystal(): array
+    {
+        return $this->getMaxResources('planet_res_crystal');
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getMaxPlastic(): array
+    {
+        return $this->getMaxResources('planet_res_plastic');
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getMaxFuel(): array
+    {
+        return $this->getMaxResources('planet_res_fuel');
+    }
+
+    /**
+     * @return string[]
+     */
+    public function getMaxFood(): array
+    {
+        return $this->getMaxResources('planet_res_food');
+    }
+
+    /**
+     * @return string[]
+     */
+    private function getMaxResources(string $field): array
+    {
+        return $this->getConnection()
+            ->executeQuery(
+                "SELECT
+                    SUM(" . $field . ") AS sum,
+                    AVG(" . $field . ") AS avg,
+                    COUNT(id) AS cnt
+                FROM
+                    planets
+                INNER JOIN
+                    users
+                ON
+                    planet_user_id = user_id
+                    AND user_ghost = 0
+                    AND user_hmode_from = 0
+                    AND user_hmode_to = 0
+                    AND " . $field . " > 0"
+            )
+            ->fetchAssociative();
+    }
+
+    /**
+     * @return ?string[]
+     */
+    public function getMaxMetalOnAPlanet(): ?array
+    {
+        return $this->getMaxResourcesOnAPlanet('planet_res_metal');
+    }
+
+    /**
+     * @return ?string[]
+     */
+    public function getMaxCrystalOnAPlanet(): ?array
+    {
+        return $this->getMaxResourcesOnAPlanet('planet_res_crystal');
+    }
+
+    /**
+     * @return ?string[]
+     */
+    public function getMaxPlasticOnAPlanet(): ?array
+    {
+        return $this->getMaxResourcesOnAPlanet('planet_res_plastic');
+    }
+
+    /**
+     * @return ?string[]
+     */
+    public function getMaxFuelOnAPlanet(): ?array
+    {
+        return $this->getMaxResourcesOnAPlanet('planet_res_fuel');
+    }
+
+    /**
+     * @return ?string[]
+     */
+    public function getMaxFoodOnAPlanet(): ?array
+    {
+        return $this->getMaxResourcesOnAPlanet('planet_res_food');
+    }
+
+    /**
+     * @return ?string[]
+     */
+    private function getMaxResourcesOnAPlanet(string $field): ?array
+    {
+        $data = $this->getConnection()
+            ->executeQuery(
+                "SELECT
+                    " . $field . " AS res,
+                    type_name AS type
+                FROM
+                    planet_types
+                INNER JOIN
+                    (
+                        planets
+                    INNER JOIN
+                        users
+                    ON
+                        planet_user_id = user_id
+                        AND user_ghost = 0
+                        AND user_hmode_from = 0
+                        AND user_hmode_to = 0
+                    )
+                ON
+                    planet_type_id = type_id
+                ORDER BY
+                    res DESC
+                LIMIT 1;"
+            )
+            ->fetchAssociative();
+
+        return $data !== false ? $data : null;
+    }
 }

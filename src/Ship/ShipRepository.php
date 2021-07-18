@@ -259,4 +259,86 @@ class ShipRepository extends AbstractRepository
 
         return $delable;
     }
+
+    /**
+     * @return array<int, array{name: string, cnt: int, max: int}>
+     */
+    public function getOverallCount(): array
+    {
+        $data = $this->getConnection()
+            ->executeQuery(
+                "SELECT
+                    ships.ship_name as name,
+                    SUM(shiplist.shiplist_count+shiplist.shiplist_bunkered) as cnt,
+                    MAX(shiplist.shiplist_count+shiplist.shiplist_bunkered) as max
+                FROM
+                    ships
+                INNER JOIN
+                    (
+                        shiplist
+                    INNER JOIN
+                        users
+                    ON
+                        shiplist_user_id = user_id
+                        AND user_ghost = 0
+                        AND user_hmode_from = 0
+                        AND user_hmode_to = 0
+                    )
+                ON
+                    shiplist_ship_id = ship_id
+                    AND ships.special_ship = 0
+                GROUP BY
+                    ships.ship_id
+                ORDER BY
+                    cnt DESC;"
+            )
+            ->fetchAllAssociative();
+
+        return array_map(fn ($arr) => [
+            'name' => (string) $arr['name'],
+            'cnt' => (int) $arr['cnt'],
+            'max' => (int) $arr['max'],
+        ], $data);
+    }
+
+    /**
+     * @return array<int, array{name: string, level: int, exp: int}>
+     */
+    public function getSpecialShipStats(): array
+    {
+        $data = $this->getConnection()
+            ->executeQuery(
+                "SELECT
+                    ships.ship_name as name,
+                    MAX(shiplist.shiplist_special_ship_level) as level,
+                    MAX(shiplist.shiplist_special_ship_exp) as exp
+                FROM
+                    ships
+                INNER JOIN
+                    (
+                        shiplist
+                    INNER JOIN
+                        users
+                    ON
+                        shiplist_user_id = user_id
+                        AND user_ghost = 0
+                        AND user_hmode_from = 0
+                        AND user_hmode_to = 0
+                    )
+                ON
+                    shiplist_ship_id = ship_id
+                    AND ships.special_ship = 1
+                GROUP BY
+                    ships.ship_id
+                ORDER BY
+                    exp DESC;"
+            )
+            ->fetchAllAssociative();
+
+        return array_map(fn ($arr) => [
+            'name' => (string) $arr['name'],
+            'level' => (int) $arr['level'],
+            'exp' => (int) $arr['exp'],
+        ], $data);
+    }
 }

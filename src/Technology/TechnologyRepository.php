@@ -131,4 +131,42 @@ class TechnologyRepository extends AbstractRepository
             'endTime' => $endTime,
         ]);
     }
+
+    /**
+     * @return array<int, array{name: string, max: int}>
+     */
+    public function getBestLevels(): array
+    {
+        $data = $this->getConnection()
+            ->executeQuery(
+                "SELECT
+                    technologies.tech_name as name,
+                    MAX(techlist.techlist_current_level) as max
+                FROM
+                    technologies
+                INNER JOIN
+                    (
+                        techlist
+                    INNER JOIN
+                        users
+                    ON
+                        techlist_user_id = user_id
+                        AND user_ghost = 0
+                        AND user_hmode_from = 0
+                        AND user_hmode_to = 0
+                    )
+                ON
+                    tech_id = techlist_tech_id
+                GROUP BY
+                    technologies.tech_id
+                ORDER BY
+                    max DESC;"
+            )
+            ->fetchAllAssociative();
+
+        return array_map(fn ($arr) => [
+            'name' => (string) $arr['name'],
+            'max' => (int) $arr['max'],
+        ], $data);
+    }
 }

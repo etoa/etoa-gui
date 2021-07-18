@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Ranking\GameStatsGenerator;
 
 $xajax->register(XAJAX_FUNCTION, 'statsShowBox');
 $xajax->register(XAJAX_FUNCTION, 'statsShowTable');
@@ -9,6 +10,8 @@ $xajax->register(XAJAX_FUNCTION, 'statsShowTable');
 function statsShowBox($mode, $sort = "", $sortOrder = "")
 {
     global $page;
+    global $app;
+
     $objResponse = new xajaxResponse();
 
     $_SESSION['statsmode'] = $mode;
@@ -196,11 +199,11 @@ function statsShowBox($mode, $sort = "", $sortOrder = "")
         if (is_file(USERSTATS_OUTFILE)) {
             echo '<p><img src="' . USERSTATS_OUTFILE . '" alt="Userstats" /></p>';
         }
-        if (is_file(GAMESTATS_FILE)) {
-            echo file_get_contents(GAMESTATS_FILE);
-        } else {
-            echo "<p>Statistiken noch nicht vorhanden!</p>";
-        }
+
+        /** @var GameStatsGenerator */
+        $gameStatsGenerator = $app[GameStatsGenerator::class];
+        echo $gameStatsGenerator->readCached() ?? "<p>Statistiken noch nicht vorhanden!</p>";
+
         $objResponse->assign('statsBox', 'innerHTML', ob_get_clean());
     }
 

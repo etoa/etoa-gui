@@ -31,6 +31,10 @@ class UserServiceProvider implements ServiceProviderInterface
             return new UserPointsRepository($pimple['db']);
         };
 
+        $pimple[UserPropertiesRepository::class] = function (Container $pimple): UserPropertiesRepository {
+            return new UserPropertiesRepository($pimple['db']);
+        };
+
         $pimple[UserSessionManager::class] = function (Container $pimple): UserSessionManager {
             return new UserSessionManager(
                 $pimple[UserSessionRepository::class],

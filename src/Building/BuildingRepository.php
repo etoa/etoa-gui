@@ -341,4 +341,80 @@ class BuildingRepository extends AbstractRepository
                 'status' => (int) $working,
             ])->execute();
     }
+
+    /**
+     * @return array<int, array{name: string, cnt: int}>
+     */
+    public function getOverallCount(): array
+    {
+        $data = $this->getConnection()
+            ->executeQuery(
+                "SELECT
+                    buildings.building_name as name,
+                    SUM(buildlist.buildlist_current_level) as cnt
+                FROM
+                    buildings
+                INNER JOIN
+                    (
+                        buildlist
+                    INNER JOIN
+                        users
+                    ON
+                        buildlist_user_id = user_id
+                        AND user_ghost = 0
+                        AND user_hmode_from = 0
+                        AND user_hmode_to = 0
+                    )
+                ON
+                    building_id = buildlist_building_id
+                GROUP BY
+                    buildings.building_id
+                ORDER BY
+                    cnt DESC;"
+            )
+            ->fetchAllAssociative();
+
+        return array_map(fn ($arr) => [
+            'name' => (string) $arr['name'],
+            'cnt' => (int) $arr['cnt'],
+        ], $data);
+    }
+
+    /**
+     * @return array<int, array{name: string, max: int}>
+     */
+    public function getBestLevels(): array
+    {
+        $data = $this->getConnection()
+            ->executeQuery(
+                "SELECT
+                    buildings.building_name as name,
+                    MAX(buildlist.buildlist_current_level) as max
+                FROM
+                    buildings
+                INNER JOIN
+                    (
+                        buildlist
+                    INNER JOIN
+                        users
+                    ON
+                        buildlist_user_id = user_id
+                        AND user_ghost = 0
+                        AND user_hmode_from = 0
+                        AND user_hmode_to = 0
+                    )
+                ON
+                    building_id = buildlist_building_id
+                GROUP BY
+                    buildings.building_id
+                ORDER BY
+                    max DESC;"
+            )
+            ->fetchAllAssociative();
+
+        return array_map(fn ($arr) => [
+            'name' => (string) $arr['name'],
+            'max' => (int) $arr['max'],
+        ], $data);
+    }
 }
