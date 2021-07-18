@@ -11,7 +11,7 @@ use EtoA\User\UserRepository;
 /** @var TicketRepository */
 $ticketRepo = $app[TicketRepository::class];
 
-/** @var AdminUserRepository */
+/** @var AdminUserRepository $adminUserRepo */
 $adminUserRepo = $app[AdminUserRepository::class];
 
 /** @var UserRepository $userRepository */
@@ -31,6 +31,7 @@ else
     $id = 0;
 
 $user = $userRepository->getUser((int) $id);
+$adminUserNicks = $adminUserRepo->findAllAsList();
 
 // Geänderte Daten speichern
 if (isset($_POST['save'])) {
@@ -147,7 +148,7 @@ if (isset($_POST['save'])) {
         $sql .= ",user_ban_admin_id='" . $_POST['user_ban_admin_id'] . "'";
         $sql .= ",user_ban_reason='" . addslashes($_POST['user_ban_reason']) . "'";
 
-        $logUser->addToUserLog("account", "{nick} wird von [b]" . date("d.m.Y H:i", $ban_from) . "[/b] bis [b]" . date("d.m.Y H:i", $ban_to) . "[/b] gesperrt.\n[b]Grund:[/b] " . addslashes($_POST['user_ban_reason']) . "\n[b]Verantwortlich: [/b] " . mysql_fetch_array(dbquery("SELECT user_nick FROM admin_users WHERE user_id = " . $_POST['user_ban_admin_id']))['user_nick'], 1);
+        $logUser->addToUserLog("account", "{nick} wird von [b]" . date("d.m.Y H:i", $ban_from) . "[/b] bis [b]" . date("d.m.Y H:i", $ban_to) . "[/b] gesperrt.\n[b]Grund:[/b] " . addslashes($_POST['user_ban_reason']) . "\n[b]Verantwortlich: [/b] " . $adminUserNicks[$_POST['user_ban_admin_id']], 1);
     } else {
         $sql .= ",user_blocked_from=0";
         $sql .= ",user_blocked_to=0";
@@ -738,11 +739,10 @@ if (mysql_num_rows($res) > 0) {
                     <td class=\"tbldata\">
                         <select name=\"user_ban_admin_id\" id=\"user_ban_admin_id\">
                         <option value=\"0\">(niemand)</option>";
-    $tres = dbquery("SELECT * FROM admin_users ORDER BY user_nick;");
-    while ($tarr = mysql_fetch_array($tres)) {
-        echo "<option value=\"" . $tarr['user_id'] . "\"";
-        if ($arr['user_ban_admin_id'] == $tarr['user_id']) echo " selected=\"selected\"";
-        echo ">" . $tarr['user_nick'] . "</option>\n";
+    foreach ($adminUserNicks as $adminUserId => $adminUserNick) {
+        echo "<option value=\"" . $adminUserId . "\"";
+        if ($arr['user_ban_admin_id'] == $adminUserId) echo " selected=\"selected\"";
+        echo ">" . $adminUserNick . "</option>\n";
     }
     echo "</select>
                     </td>

@@ -1,5 +1,6 @@
 <?PHP
 
+use EtoA\Admin\AdminUserRepository;
 use EtoA\User\UserRepository;
 
 echo "<h1>Verwarnungen</h1>";
@@ -34,22 +35,14 @@ if (isset($_GET['edit'])) {
                         <th>Admin:</th>
                         <td>
                             <select name=\"warning_admin_id\">";
-        $ares = dbquery("
-                                SELECT
-                                    user_nick,
-                                    user_id
-                                FROM
-                                    admin_users
-                                ORDER BY
-                                    user_nick
-                                ");
-        if (mysql_num_rows($ares) > 0) {
-            while ($aarr = mysql_fetch_array($ares)) {
-                echo "<option value=\"" . $aarr['user_id'] . "\"";
-                if ($aarr['user_id'] == $arr['warning_admin_id'])
-                    echo " selected=\"selected\"";
-                echo ">" . $aarr['user_nick'] . "</option>";
-            }
+        /** @var AdminUserRepository $adminUserRepository */
+        $adminUserRepository = $app[AdminUserRepository::class];
+        $adminUserNicks = $adminUserRepository->findAllAsList();
+        foreach ($adminUserNicks as $adminUserId => $adminUserNick) {
+            echo "<option value=\"" . $adminUserId . "\"";
+            if ($adminUserId == $arr['warning_admin_id'])
+                echo " selected=\"selected\"";
+            echo ">" . $adminUserNick . "</option>";
         }
         echo "</select>
                         </td>
