@@ -27,6 +27,7 @@ use EtoA\User\UserRepository;
 use EtoA\User\UserService;
 use EtoA\User\UserSessionManager;
 use EtoA\User\UserSessionRepository;
+use EtoA\User\UserSurveillanceRepository;
 
 /** @var TicketRepository */
 $ticketRepo = $app[TicketRepository::class];
@@ -144,25 +145,9 @@ function runCleanup(
 
     //Observer
     if ((isset($_POST['cl_surveillance']) && $_POST['cl_surveillance'] == 1) || $all) {
-        $num = 0;
-        $ores =    dbquery("SELECT
-                            `user_surveillance`.user_id
-                        FROM
-                            `user_surveillance`
-                        INNER JOIN
-                            `users`
-                        ON
-                            `user_surveillance`.user_id=`users`.user_id
-                            AND `users`.user_observe IS NULL
-                        GROUP BY
-                            `user_surveillance`.user_id;");
-        while ($oarr = mysql_fetch_row($ores)) {
-            dbquery("DELETE FROM
-                        `user_surveillance`
-                    WHERE
-                        user_id='" . $oarr[0] . "';");
-            $num += mysql_affected_rows();
-        }
+        /** @var UserSurveillanceRepository $userSurveillanceRepository */
+        $userSurveillanceRepository = $app[UserSurveillanceRepository::class];
+        $num = $userSurveillanceRepository->deletedOrphanedEntries();
         echo $num . " verwaiste Beobachtereinträge gelöscht<br/>";
     }
 
@@ -405,19 +390,10 @@ function cleanupOverView(
 
     // Beobachter
     echo '<fieldset><legend><input type="checkbox" value="1" name="cl_surveillance" /> Beobachter</legend>';
-    $ores =    dbquery("SELECT
-                        count(`user_surveillance`.user_id)
-                    FROM
-                        `user_surveillance`
-                    INNER JOIN
-                        `users`
-                    ON
-                        `user_surveillance`.user_id=`users`.user_id
-                        AND `users`.user_observe IS NULL
-                    GROUP BY
-                        `user_surveillance`.user_id;");
-    $tblcnt = mysql_fetch_row($ores);
-    echo ($tblcnt ? nf($tblcnt[0]) : 0) . " verwaiste Beobachtereinträge gefunden";
+    /** @var UserSurveillanceRepository $userSurveillanceRepository */
+    $userSurveillanceRepository = $app[UserSurveillanceRepository::class];
+    $tblcnt = $userSurveillanceRepository->getOrphanedUserIds();
+    echo count($tblcnt) . " verwaiste Beobachtereinträge gefunden";
     echo '</fieldset><br/>';
 
     // Userdata
