@@ -47,10 +47,24 @@ class ReportRepository extends AbstractRepository
 
         return (int) $qb
             ->select('count(id)')
-            ->from('notepad')
+            ->from('reports')
             ->where($qb->expr()->notIn('user_id', ':userIds'))
             ->setParameter('userIds', $availableUserIds, Connection::PARAM_INT_ARRAY)
             ->execute()
             ->fetchOne();
+    }
+
+    /**
+     * @param int[] $availableUserIds
+     */
+    public function deleteOrphaned(array $availableUserIds): int
+    {
+        $qb = $this->createQueryBuilder();
+
+        return (int) $qb
+            ->delete('reports')
+            ->where($qb->expr()->notIn('user_id', ':userIds'))
+            ->setParameter('userIds', $availableUserIds, Connection::PARAM_INT_ARRAY)
+            ->execute();
     }
 }
