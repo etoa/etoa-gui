@@ -8,6 +8,7 @@ use EtoA\Defense\DefenseQueueRepository;
 use EtoA\Defense\DefenseRepository;
 use EtoA\Help\TicketSystem\TicketRepository;
 use EtoA\Help\TicketSystem\TicketService;
+use EtoA\Log\LogRepository;
 use EtoA\Message\MessageRepository;
 use EtoA\Message\MessageService;
 use EtoA\Message\ReportRepository;
@@ -339,12 +340,10 @@ function cleanupOverView(
 
     // Logs
     echo '<fieldset><legend><input type="checkbox" value="1" name="cl_log" /> Logs</legend>';
-    $tblcnt = mysql_fetch_row(dbquery("
-    SELECT
-        count(id)
-    FROM
-        logs
-    ;"));
+
+    /** @var LogRepository $logRepository */
+    $logRepository = $app[LogRepository::class];
+    $tblcnt = $logRepository->count();
     echo "<b>Logs löschen:</b> Einträge löschen welche älter als <select name=\"log_timestamp\">";
     $days = array(7, 14, 21, 28);
     if (!in_array($config->getInt('log_threshold_days'), $days, true))
@@ -353,7 +352,7 @@ function cleanupOverView(
     foreach ($days as $ds) {
         echo "<option value=\"" . (24 * 3600 * $ds) . "\" " . ($ds == $config->getInt('log_threshold_days')  ? " selected=\"selected\"" : "") . ">" . $ds . " Tage</option>";
     }
-    echo "</select> sind (" . nf($tblcnt[0]) . " total).";
+    echo "</select> sind (" . nf($tblcnt) . " total).";
     echo '</fieldset><br/>';
 
     // User-Sessions
