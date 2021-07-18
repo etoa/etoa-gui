@@ -127,4 +127,19 @@ class DefenseQueueRepository extends AbstractRepository
             ->execute()
             ->fetchOne();
     }
+
+
+    /**
+     * @param int[] $availableUserIds
+     */
+    public function deleteOrphaned(array $availableUserIds): int
+    {
+        $qb = $this->createQueryBuilder();
+
+        return (int) $qb
+            ->delete('def_queue')
+            ->where($qb->expr()->notIn('queue_user_id', ':userIds'))
+            ->setParameter('userIds', $availableUserIds, Connection::PARAM_INT_ARRAY)
+            ->execute();
+    }
 }

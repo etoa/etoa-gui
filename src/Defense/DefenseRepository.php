@@ -202,6 +202,20 @@ class DefenseRepository extends AbstractRepository
     }
 
     /**
+     * @param int[] $availableUserIds
+     */
+    public function deleteOrphaned(array $availableUserIds): int
+    {
+        $qb = $this->createQueryBuilder();
+
+        return (int) $qb
+            ->delete('deflist')
+            ->where($qb->expr()->notIn('deflist_user_id', ':userIds'))
+            ->setParameter('userIds', $availableUserIds, Connection::PARAM_INT_ARRAY)
+            ->execute();
+    }
+
+    /**
      * @return array<int, array{name: string, cnt: int, max: int}>
      */
     public function getOverallCount(): array

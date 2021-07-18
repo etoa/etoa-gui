@@ -22,4 +22,18 @@ class NotepadRepository extends AbstractRepository
             ->execute()
             ->fetchOne();
     }
+
+    /**
+     * @param int[] $availableUserIds
+     */
+    public function deleteOrphaned(array $availableUserIds): int
+    {
+        $qb = $this->createQueryBuilder();
+
+        return (int) $qb
+            ->delete('notepad')
+            ->where($qb->expr()->notIn('user_id', ':userIds'))
+            ->setParameter('userIds', $availableUserIds, Connection::PARAM_INT_ARRAY)
+            ->execute();
+    }
 }

@@ -154,6 +154,16 @@ class TechnologyRepository extends AbstractRepository
             ->fetchOne();
     }
 
+    public function deleteEmpty(): int
+    {
+        return (int) $this->createQueryBuilder()
+            ->delete('techlist')
+            ->where('techlist_current_level=0')
+            ->andWhere('techlist_build_start_time=0')
+            ->andWhere('techlist_build_end_time=0')
+            ->execute();
+    }
+
     /**
      * @param int[] $availableUserIds
      */
@@ -168,6 +178,20 @@ class TechnologyRepository extends AbstractRepository
             ->setParameter('userIds', $availableUserIds, Connection::PARAM_INT_ARRAY)
             ->execute()
             ->fetchOne();
+    }
+
+    /**
+     * @param int[] $availableUserIds
+     */
+    public function deleteOrphaned(array $availableUserIds): int
+    {
+        $qb = $this->createQueryBuilder();
+
+        return (int) $qb
+            ->delete('techlist')
+            ->where($qb->expr()->notIn('techlist_user_id', ':userIds'))
+            ->setParameter('userIds', $availableUserIds, Connection::PARAM_INT_ARRAY)
+            ->execute();
     }
 
     /**

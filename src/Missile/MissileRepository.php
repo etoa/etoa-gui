@@ -87,6 +87,20 @@ class MissileRepository extends \EtoA\Core\AbstractRepository
     }
 
     /**
+     * @param int[] $availableUserIds
+     */
+    public function deleteOrphaned(array $availableUserIds): int
+    {
+        $qb = $this->createQueryBuilder();
+
+        return (int) $qb
+            ->delete('missilelist')
+            ->where($qb->expr()->notIn('missilelist_user_id', ':userIds'))
+            ->setParameter('userIds', $availableUserIds, Connection::PARAM_INT_ARRAY)
+            ->execute();
+    }
+
+    /**
      * @return array<int, int>
      */
     public function getMissilesCounts(int $userId, int $entityId): array

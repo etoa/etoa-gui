@@ -92,6 +92,16 @@ class BuildingRepository extends AbstractRepository
             ->fetchOne();
     }
 
+    public function deleteEmpty(): int
+    {
+        return (int) $this->createQueryBuilder()
+            ->delete('buildlist')
+            ->where('buildlist_current_level=0')
+            ->andWhere('buildlist_build_start_time=0')
+            ->andWhere('buildlist_build_end_time=0')
+            ->execute();
+    }
+
     /**
      * @param int[] $availableUserIds
      */
@@ -106,6 +116,21 @@ class BuildingRepository extends AbstractRepository
             ->setParameter('userIds', $availableUserIds, Connection::PARAM_INT_ARRAY)
             ->execute()
             ->fetchOne();
+    }
+
+
+    /**
+     * @param int[] $availableUserIds
+     */
+    public function deleteOrphaned(array $availableUserIds): int
+    {
+        $qb = $this->createQueryBuilder();
+
+        return (int) $qb
+            ->delete('buildlist')
+            ->where($qb->expr()->notIn('buildlist_user_id', ':userIds'))
+            ->setParameter('userIds', $availableUserIds, Connection::PARAM_INT_ARRAY)
+            ->execute();
     }
 
     /**

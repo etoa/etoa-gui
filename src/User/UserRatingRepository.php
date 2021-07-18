@@ -24,4 +24,18 @@ class UserRatingRepository extends AbstractRepository
             ->execute()
             ->fetchOne();
     }
+
+    /**
+     * @param int[] $availableUserIds
+     */
+    public function deleteOrphaned(array $availableUserIds): int
+    {
+        $qb = $this->createQueryBuilder();
+
+        return (int) $qb
+            ->delete('user_ratings')
+            ->where($qb->expr()->notIn('id', ':userIds'))
+            ->setParameter('userIds', $availableUserIds, Connection::PARAM_INT_ARRAY)
+            ->execute();
+    }
 }
