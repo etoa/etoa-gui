@@ -124,4 +124,21 @@ class UserSessionRepository extends AbstractRepository
             ->execute()
             ->fetchOne();
     }
+
+    /**
+     * @return UserSessionLog[]
+     */
+    public function getUserSessionLogs(int $userId, int $limit): array
+    {
+        $rows = $this->createQueryBuilder()
+            ->select('*')
+            ->from('user_sessionlog')
+            ->where('user_id = :userId')
+            ->setParameter('userId', $userId)
+            ->setMaxResults($limit)
+            ->execute()
+            ->fetchAllAssociative();
+
+        return array_map(fn (array $row) => new UserSessionLog($row) , $rows);
+    }
 }
