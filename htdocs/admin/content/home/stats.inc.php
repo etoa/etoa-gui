@@ -1,5 +1,7 @@
 <?PHP
 
+use EtoA\Alliance\AllianceStatsRepository;
+use EtoA\Alliance\AllianceStatsSearch;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Support\RuntimeDataStore;
 
@@ -8,6 +10,8 @@ $runtimeDataStore = $app[RuntimeDataStore::class];
 
 /** @var ConfigurationService */
 $config = $app[ConfigurationService::class];
+/** @var AllianceStatsRepository $allianceStatsRepository */
+$allianceStatsRepository = $app[AllianceStatsRepository::class];
 
 echo "<h1>Rangliste</h1>";
 
@@ -123,29 +127,23 @@ elseif ($mode == "alliances") {
         $sort = "DESC";
     }
 
-    $res = dbquery("
-        SELECT
-                *
-        FROM
-            alliance_stats
-        ORDER BY
-            $order $sort;");
-    if (mysql_num_rows($res) > 0) {
-        $cnt = 1;
-        while ($arr = mysql_fetch_array($res)) {
+    $allianceStats = $allianceStatsRepository->getStats(AllianceStatsSearch::create()->withSort($order, $sort));
+    if (count($allianceStats) > 0) {
+        $count = 1;
+        foreach ($allianceStats as $stats) {
             echo "<tr>";
-            echo "<td align=\"right\">" . nf($cnt) . "</td>";
-            echo "<td>" . $arr['alliance_tag'] . "</td>";
-            echo "<td>" . $arr['alliance_name'] . "</td>";
-            echo "<td>" . nf($arr['points']) . "</td>";
-            echo "<td>" . nf($arr['uavg']) . "</td>";
-            echo "<td>" . nf($arr['cnt']) . "</td>";
-            echo "<td>" . edit_button("?page=alliances&amp;sub=edit&amp;alliance_id=" . $arr['alliance_id'] . "") . "</td>";
+            echo "<td align=\"right\">" . nf($count) . "</td>";
+            echo "<td>" . $stats->allianceTag . "</td>";
+            echo "<td>" . $stats->allianceName . "</td>";
+            echo "<td>" . nf($stats->points) . "</td>";
+            echo "<td>" . nf($stats->userAverage) . "</td>";
+            echo "<td>" . nf($stats->count) . "</td>";
+            echo "<td>" . edit_button("?page=alliances&amp;sub=edit&amp;alliance_id=" . $stats->allianceId . "") . "</td>";
             echo "</tr>";
-            $cnt++;
+            $count++;
         }
     } else {
-        echo "<tr><td colspan=\"5\" align=\"center\"><i>Keine Allianzen in der Statistik</i></tr>";
+        echo "<tr><td colspan=\"7\" align=\"center\"><i>Keine Allianzen in der Statistik</i></tr>";
     }
     echo "</table>";
 }
@@ -185,45 +183,29 @@ elseif ($mode == "base") {
     echo "<a href=\"javascript:;\" onclick=\"xajax_statsShowBox('$mode','apoints','ASC')\" title=\"Absteigend sortieren\"><img src=\"../images/s_asc.png\" alt=\"Aufsteigend sortieren\" border=\"0\" /></a></th>";
     echo "<th style=\"width:60px;\">Details</th>";
     echo "</tr>";
-    if (isset($sort) && $sort != "" && $sortOrder != "")
-        $sql = "
-            SELECT
-                *
-            FROM
-                   alliance_stats
-            ORDER BY
-                " . $sort . " " . $sortOrder . ",
-                alliance_name ASC;";
-    else {
-        $sql = "
-            SELECT
-                *
-            FROM
-                alliance_stats
-            ORDER BY
-                apoints DESC,
-                alliance_name ASC
-            ;";
+    $search = AllianceStatsSearch::createAllianceBase();
+    if (isset($sort) && $sort != "" && $sortOrder != "") {
+        $search = $search->withSort($sort, $sortOrder);
     }
 
-    $res = dbquery($sql);
-    if (mysql_num_rows($res) > 0) {
+    $allianceStats = $allianceStatsRepository->getStats($search);
+    if (count($allianceStats) > 0) {
         $cnt = 1;
-        while ($arr = mysql_fetch_array($res)) {
+        foreach ($allianceStats as $stats) {
             echo "<tr>
                         <td>
                             " . nf($cnt, 1) . "
                         </td>";
             echo "<td >
-                <div id=\"ttuser" . $arr['alliance_id'] . "\" style=\"display:none;\">
-                    <a href=\"?page=alliances&amp;sub=edit&amp;id=" . $arr['alliance_id'] . "\">Allianzseite</a><br/>";
-            echo "</div><a href=\"#\" " . cTT($arr['alliance_name'], "ttuser" . $arr['alliance_id']) . ">
-                " . $arr['alliance_tag'] . "</td>";
-            echo "<td >" . nf($arr['bpoints']) . "</td>";
-            echo "<td >" . nf($arr['tpoints']) . "</td>";
-            echo "<td >" . nf($arr['spoints']) . "</td>";
-            echo "<td >" . nf($arr['apoints']) . "</td>";
-            echo "<td>" . edit_button("?page=alliances&amp;sub=edit&amp;alliance_id=" . $arr['alliance_id'] . "") . "</td>";
+                <div id=\"ttuser" . $stats->allianceId . "\" style=\"display:none;\">
+                    <a href=\"?page=alliances&amp;sub=edit&amp;id=" . $stats->allianceId . "\">Allianzseite</a><br/>";
+            echo "</div><a href=\"#\" " . cTT($stats->allianceName, "ttuser" . $stats->allianceId) . ">
+                " . $stats->allianceTag . "</td>";
+            echo "<td >" . nf($stats->buildingPoints) . "</td>";
+            echo "<td >" . nf($stats->technologyPoints) . "</td>";
+            echo "<td >" . nf($stats->shipPoints) . "</td>";
+            echo "<td >" . nf($stats->alliancePoints) . "</td>";
+            echo "<td>" . edit_button("?page=alliances&amp;sub=edit&amp;alliance_id=" . $stats->allianceId . "") . "</td>";
             echo "</tr>";
             $cnt++;
         }

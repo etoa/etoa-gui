@@ -22,6 +22,10 @@ class AllianceServiceProvider implements ServiceProviderInterface
             return new AlliancePointsRepository($pimple['db']);
         };
 
+        $pimple[AllianceStatsRepository::class] = function (Container $pimple): AllianceStatsRepository {
+            return new AllianceStatsRepository($pimple['db']);
+        };
+
         $pimple[AllianceHistoryRepository::class] = function (Container $pimple): AllianceHistoryRepository {
             return new AllianceHistoryRepository($pimple['db']);
         };

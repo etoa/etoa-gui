@@ -1,6 +1,8 @@
 <?PHP
 
 use EtoA\Alliance\AllianceRepository;
+use EtoA\Alliance\AllianceStats;
+use EtoA\Alliance\AllianceStatsRepository;
 use EtoA\Building\BuildingDataRepository;
 use EtoA\Building\BuildingPointRepository;
 use EtoA\Core\Configuration\ConfigurationService;
@@ -226,6 +228,9 @@ class Ranking
         $inactivetime = 86400 * USER_INACTIVE_SHOW;
         $allpoints = 0;
         $res_amount_per_point = $config->param1Int('points_update');
+
+        /** @var AllianceStatsRepository $allianceStatsRepository */
+        $allianceStatsRepository = $app[AllianceStatsRepository::class];
 
         // Schiffe laden
         /** @var ShipDataRepository $shipRepository */
@@ -779,7 +784,7 @@ class Ranking
         unset($oldranks);
 
         // Allianz Statistik generieren
-        dbquery("TRUNCATE TABLE alliance_stats;");
+        $allianceStatsRepository->deleteAll();
 
         // Technologien laden
         $res = dbquery("
@@ -843,6 +848,9 @@ class Ranking
             ORDER BY
                 SUM(u.points) DESC
             ;");
+
+        /** @var AllianceStats[] $allianceStats */
+        $allianceStats = [];
         if (mysql_num_rows($res) > 0) {
             while ($arr = mysql_fetch_assoc($res)) {
                 $apoints = 0;
@@ -895,38 +903,7 @@ class Ranking
                 $apoints = $tpoints + $bpoints + $sarr[0];
                 $points = $apoints + $upoints;
 
-                dbQuerySave("
-                    INSERT INTO
-                        alliance_stats
-                    (
-                        alliance_id,
-                        alliance_tag,
-                        alliance_name,
-                        points,
-                        upoints,
-                        apoints,
-                        spoints,
-                        tpoints,
-                        bpoints,
-                        uavg,
-                        cnt,
-                        alliance_rank_last
-                    )
-                    VALUES
-                    (
-                        ?,
-                        ?,
-                        ?,
-                        ?,
-                        ?,
-                        ?,
-                        ?,
-                        ?,
-                        ?,
-                        ?,
-                        ?,
-                        ?
-                    );", [
+                $allianceStats[] = AllianceStats::createFromData(
                     $arr['alliance_id'],
                     $arr['alliance_tag'],
                     $arr['alliance_name'],
@@ -939,7 +916,7 @@ class Ranking
                     $arr['uavg'],
                     $arr['cnt'],
                     $arr['alliance_rank_current']
-                ]);
+                );
 
                 dbquery("
                     INSERT INTO
@@ -961,32 +938,21 @@ class Ranking
                     );");
             }
         }
-        $res = dbquery("SELECT
-                alliance_id,
-                points,
-                alliance_rank_last
-            FROM
-                alliance_stats
-            ORDER BY
-                points DESC
-            ;");
-        if (mysql_num_rows($res) > 0) {
+
+        usort($allianceStats, fn (AllianceStats $a, AllianceStats $b) => $b->points <=> $a->points);
+        if (count($allianceStats) > 0) {
             $rank = 1;
-            while ($arr = mysql_fetch_assoc($res)) {
-                dbquery("UPDATE
-                                alliance_stats
-                            SET
-                                alliance_rank_current='" . $rank . "'
-                            WHERE
-                                alliance_id='" . $arr['alliance_id'] . "';");
+            foreach ($allianceStats as $stats) {
+                $stats->currentRank = $rank;
+                $allianceStatsRepository->add($stats);
                 dbquery("UPDATE
                                 alliances
                             SET
-                                alliance_points='" . $arr['points'] . "',
-                                alliance_rank_current='" . $rank . "',
-                                alliance_rank_last='" . $arr['alliance_rank_last'] . "'
+                                alliance_points='" . $stats->points . "',
+                                alliance_rank_current='" . $stats->currentRank . "',
+                                alliance_rank_last='" . $stats->lastRank . "'
                             WHERE
-                                alliance_id='" . $arr['alliance_id'] . "';");
+                                alliance_id='" . $stats->allianceId . "';");
                 $rank++;
             }
         }
