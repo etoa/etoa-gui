@@ -9,7 +9,7 @@ class UserPointsRepository extends AbstractRepository
     /**
      * @return UserPoints[]
      */
-    public function getPoints(int $userId, int $limit, int $start = null, int $end = null): array
+    public function getPoints(int $userId, int $limit = null, int $start = null, int $end = null): array
     {
         $qb = $this->createQueryBuilder()
             ->select("*")
@@ -17,8 +17,11 @@ class UserPointsRepository extends AbstractRepository
             ->where('point_user_id = :userId')
             ->andWhere('point_points > 0')
             ->setParameter('userId', $userId)
-            ->orderBy('point_timestamp', 'DESC')
-            ->setMaxResults($limit);
+            ->orderBy('point_timestamp', 'DESC');
+
+        if ($limit !== null) {
+            $qb->setMaxResults($limit);
+        }
 
         if ($start > 0) {
             $qb
