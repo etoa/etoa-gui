@@ -17,6 +17,18 @@ class UserSessionRepository extends AbstractRepository
             ->fetchOne();
     }
 
+    /**
+     * @return string[]
+     */
+    public function getUserSessionIds(): array
+    {
+        return array_column($this->createQueryBuilder()
+            ->select('id')
+            ->from('user_sessions')
+            ->execute()
+            ->fetchAllAssociative(), 'id');
+    }
+
     public function countActiveSessions(int $timeout): int
     {
         return (int) $this->createQueryBuilder()
@@ -39,6 +51,20 @@ class UserSessionRepository extends AbstractRepository
             ->fetchAssociative();
 
         return $data !== false ? new UserSession($data) : null;
+    }
+
+    /**
+     * @return UserSession[]
+     */
+    public function getSessions(): array
+    {
+        $data = $this->createQueryBuilder()
+            ->select('*')
+            ->from('user_sessions')
+            ->execute()
+            ->fetchAllAssociative();
+
+        return array_map(fn (array $row) => new UserSession($row), $data);
     }
 
     /**
