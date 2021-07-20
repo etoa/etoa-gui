@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\User\UserRepository;
+use EtoA\User\UserSessionRepository;
 
 /** @var UserRepository $userRepository */
 $userRepository = $app[UserRepository::class];
@@ -127,31 +128,22 @@ if ($user > 0) {
                 echo "<i>Keine fehlgeschlagenen Logins</i>";
             }
         } else {
-            $res = dbquery("
-                SELECT
-                    time_action,
-                    user_agent,
-                    ip_addr
-                FROM
-                    user_sessionlog
-                WHERE
-                    user_id=" . $user . "
-                ORDER BY
-                    time_action DESC
-                ;");
-            if (mysql_num_rows($res) > 0) {
+            /** @var UserSessionRepository $userSessionRepository */
+            $userSessionRepository = $app[UserSessionRepository::class];
+            $sessionLogs = $userSessionRepository->getUserSessionLogs($user);
+            if (count($sessionLogs) > 0) {
                 echo "<table class=\"tb\">
                     <tr>
                     <th style=\"width:130px;\">IP</th>
                     <th style=\"width:130px;\">Host</th>
                     <th style=\"width:150px;\">Datum/Zeit</th>
                     <th>Client</th></tr>";
-                while ($arr = mysql_fetch_array($res)) {
-                    $browserParser = new \WhichBrowser\Parser($arr['user_agent']);
+                foreach ($sessionLogs as $sessionLog) {
+                    $browserParser = new \WhichBrowser\Parser($sessionLog->userAgent);
                     echo "<tr>
-                        <td><a href=\"?page=$page&amp;sub=$sub&amp;ip=" . $arr['ip_addr'] . "\">" . $arr['ip_addr'] . "</a></td>
-                        <td><a href=\"?page=$page&amp;sub=$sub&amp;host=" . Net::getHost($arr['ip_addr']) . "\">" . Net::getHost($arr['ip_addr']) . "</a></td>
-                        <td>" . df($arr['time_action']) . "</td>
+                        <td><a href=\"?page=$page&amp;sub=$sub&amp;ip=" . $sessionLog->ip . "\">" . $sessionLog->ip . "</a></td>
+                        <td><a href=\"?page=$page&amp;sub=$sub&amp;host=" . Net::getHost($sessionLog->ip) . "\">" . Net::getHost($sessionLog->ip) . "</a></td>
+                        <td>" . df($sessionLog->timeAction) . "</td>
                         <td>" . $browserParser->toString() . "</td>
                         </tr>";
                 }
@@ -413,7 +405,7 @@ if ($user > 0) {
                     <td><a href=\"?page=$page&amp;sub=$sub&amp;user=" . $arr['user_id'] . "\" " . cTT($arr['user_nick'], "tt" . $arr['user_id']) . ">" . $arr['user_nick'] . "</a></td>
                     <td>" . df($arr['time_action']) . "</td>
                     <td><a href=\"?page=$page&amp;sub=$sub&amp;ip=" . $arr['ip_addr'] . "\" " . mTT('IP', $arr['ip_addr']) . ">" . ($ip == $arr['ip_addr'] ? 'IP' : '-') . "</a> /
-                    <a href=\"?page=$page&amp;sub=$sub&amp;host=" . Net::getHost($arr['user_ip']) . "\" " . mTT('Host', Net::getHost($arr['user_ip'])) . ">" . ($host == Net::getHost($arr['user_ip']) ? 'Host' : '-') . "</a></td>
+                    <a href=\"?page=$page&amp;sub=$sub&amp;host=" . Net::getHost($arr['ip_addr']) . "\" " . mTT('Host', Net::getHost($arr['ip_addr'])) . ">" . ($host == Net::getHost($arr['ip_addr']) ? 'Host' : '-') . "</a></td>
                     <td>" . $browserParser->toString() . "</td>
                     </tr>";
             }

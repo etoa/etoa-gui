@@ -254,31 +254,6 @@ function checkValidNick($name)
     return preg_match(REGEXP_NICK, $name);
 }
 
-/**
- * User Name in Array speichern
- */
-function get_user_names()
-{
-    $names = array();
-    $res = dbquery("
-        SELECT
-            user_id,
-            user_nick,
-            user_name,
-            user_email,
-            user_alliance_id
-        FROM
-            users;
-    ");
-    while ($arr = mysql_fetch_assoc($res)) {
-        $names[$arr['user_id']]['nick'] = $arr['user_nick'];
-        $names[$arr['user_id']]['name'] = $arr['user_name'];
-        $names[$arr['user_id']]['email'] = $arr['user_email'];
-        $names[$arr['user_id']]['alliance_id'] = $arr['user_alliance_id'];
-    }
-    return $names;
-}
-
 function tableStart($title = "", $width = 0, $layout = "", $id = "")
 {
     if (is_numeric($width) && $width > 0) {

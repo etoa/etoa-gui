@@ -4,6 +4,7 @@ use EtoA\Alliance\AllianceHistoryRepository;
 use EtoA\Alliance\AllianceRepository;
 use EtoA\Alliance\InvalidAllianceParametersException;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\User\UserRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Twig\Environment;
 
@@ -359,7 +360,7 @@ function crap(Request $request, AllianceRepository $repository)
 
 function searchResults(Request $request, AllianceRepository $repository, Environment $twig)
 {
-    global $page;
+    global $page, $app;
 
     $twig->addGlobal('subtitle', 'Suchergebnisse');
 
@@ -377,7 +378,9 @@ function searchResults(Request $request, AllianceRepository $repository, Environ
             echo "<input type=\"button\" onclick=\"document.location='?page=$page'\" value=\"Neue Suche\" /><br/><br/>";
         }
 
-        $users = get_user_names();
+        /** @var UserRepository $userRepository */
+        $userRepository = $app[UserRepository::class];
+        $userNicks = $userRepository->getUserNicknames();
         echo "<table class=\"tb\">";
         echo "<tr>";
         echo "<th>ID</th>";
@@ -391,7 +394,7 @@ function searchResults(Request $request, AllianceRepository $repository, Environ
             echo "<tr>";
             echo "<td>" . $alliance['alliance_id'] . "</td>";
             echo "<td>[" . $alliance['alliance_tag'] . "] <a href=\"?page=$page&sub=edit&alliance_id=" . $alliance['alliance_id'] . "\">" . $alliance['alliance_name'] . "</a></td>";
-            echo "<td>" . $users[$alliance['alliance_founder_id']]['nick'] . "</td>";
+            echo "<td>" . $userNicks[(int) $alliance['alliance_founder_id']] . "</td>";
             echo "<td>" . df($alliance['alliance_foundation_date']) . "</td>";
             echo "<td>" . $alliance['cnt'] . "</td>";
             echo "<td style=\"width:50px;\">";
@@ -408,10 +411,12 @@ function searchResults(Request $request, AllianceRepository $repository, Environ
 
 function drop(Request $request, AllianceRepository $repository)
 {
-    global $page;
+    global $page, $app;
 
     $alliance = $repository->getAlliance($request->query->getInt('alliance_id'));
     if ($alliance !== null) {
+        /** @var UserRepository $userRepository */
+        $userRepository = $app[UserRepository::class];
         echo "Soll folgende Allianz gelöscht werden?<br/><br/>";
         echo "<form action=\"?page=$page\" method=\"post\">";
         echo "<table class=\"tbl\">";
@@ -421,9 +426,9 @@ function drop(Request $request, AllianceRepository $repository)
 			<td class=\"tbldata\">" . $alliance->name . "</td></tr>";
         echo "<tr><td class=\"tbltitle\" valign=\"top\">Tag</td>
 			<td class=\"tbldata\">" . $alliance->tag . "</td></tr>";
-        $users = get_user_names();
+        $userNicks = $userRepository->getUserNicknames();
         echo "<tr><td class=\"tbltitle\" valign=\"top\">Gründer</td>
-			<td class=\"tbldata\">" . $users[$alliance->founderId]['nick'] . "</td></tr>";
+			<td class=\"tbldata\">" . $userNicks[$alliance->founderId] . "</td></tr>";
         echo "<tr><td class=\"tbltitle\" valign=\"top\">Text</td>
 			<td class=\"tbldata\">" . text2html($alliance->text) . "</td></tr>";
         echo "<tr><td class=\"tbltitle\" valign=\"top\">Gründung</td>

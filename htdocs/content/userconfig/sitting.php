@@ -2,6 +2,7 @@
 
 use EtoA\User\UserRepository;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\User\UserSittingRepository;
 
 /** @var UserRepository */
 $userRepository = $app[UserRepository::class];
@@ -104,16 +105,9 @@ if (!$s->sittingActive || $s->falseSitter) {
     if (isset($_GET['action']) && $_GET['action'] == "new_sitting") {
         echo "<form action=\"?page=$page&amp;mode=$mode&amp;action=new_sitting\" method=\"post\">";
 
-        $res = dbquery("
-        SELECT
-            SUM(CEIL((date_to-date_from)/86400))
-        FROM
-            user_sitting
-        WHERE
-            user_id=" . $cu->id . ";");
-        $arr = mysql_fetch_row($res);
-        $prof_rest_days = max(0, $cu->sittingDays - ceil($arr[0]));
-
+        /** @var UserSittingRepository $userSittingRepository */
+        $userSittingRepository = $app[UserSittingRepository::class];
+        $prof_rest_days = max(0, $userSittingRepository->getUsedSittingTime($cu->getId()));
         $form = true;
         if ($prof_rest_days > 0) {
 
@@ -132,14 +126,12 @@ if (!$s->sittingActive || $s->falseSitter) {
                             if (mysql_num_rows($res) == 0) {
                                 $tm_from = mktime($_POST['date_from_h'], $_POST['date_from_i'], 0, $_POST['date_from_m'], $_POST['date_from_d'], $_POST['date_from_y']);
                                 $tm_to = $tm_from + $_POST['date_to_days'] * 86400;
+
+                                /** @var UserSittingRepository $userSittingRepository */
+                                $userSittingRepository = $app[UserSittingRepository::class];
                                 if ($tm_from > time() - 600  && $tm_from < $tm_to && $_POST['date_to_days'] <= $prof_rest_days) {
-                                    $res = dbquery("SELECT id FROM user_sitting WHERE user_id=" . $cu->id . " AND ((date_from < $tm_from AND $tm_from < date_to) OR (date_from < $tm_to AND $tm_to < date_to)) ;");
-                                    if (mysql_num_rows($res) == 0) {
-                                        dbquery("INSERT INTO user_sitting (
-                                        user_id,sitter_id,password,date_from,date_to
-                                        ) VALUES (
-                                        " . $cu->id . "," . $sitterId . ",'$pw',$tm_from,$tm_to
-                                        );");
+                                    if (!$userSittingRepository->hasSittingEntryForTimeSpan($cu->getId(), $tm_from, $tm_to)) {
+                                        $userSittingRepository->addEntry($cu->getId(), $sitterId, $pw, $tm_from, $tm_to);
                                         success_msg("Sitting eingerichtet!");
                                         echo "<p>" . button("Weiter", "?page=$page&amp;mode=$mode&amp;") . "</p>";
                                         $form = false;
@@ -302,49 +294,38 @@ if (!$s->sittingActive || $s->falseSitter) {
         // Sitting
         //
 
-
+        /** @var UserSittingRepository $userSittingRepository */
+        $userSittingRepository = $app[UserSittingRepository::class];
         if (isset($_GET['remove_sitting']) && intval($_GET['remove_sitting']) > 0) {
-            dbquery("DELETE FROM user_sitting WHERE id=" . intval($_GET['remove_sitting']) . " AND user_id=" . $cu->id . " AND date_from>" . time() . ";");
-            if (mysql_affected_rows() > 0)
+            $success = $userSittingRepository->deleteFutureUserEntry((int) $_GET['remove_sitting'], $cu->getId());
+            if ($success)
                 success_msg("Sitting entfernt!");
         }
         if (isset($_GET['cancel_sitting']) && intval($_GET['cancel_sitting']) > 0) {
-            $res = dbquery("UPDATE user_sitting SET date_to=" . time() . " WHERE id=" . intval($_GET['cancel_sitting']) . " AND user_id=" . $cu->id . " AND date_from<" . time() . " AND date_to>" . time() . ";");
-            if (mysql_affected_rows() > 0)
+            $success = $userSittingRepository->cancelUserEntry((int) $_GET['cancel_sitting'], $cu->getId());
+            if ($success)
                 success_msg("Sitting abgebrochen!");
         }
 
 
         tableStart("Sitter Einstellungen [<a href=\"?page=help&site=multi_sitting\">Info</a>]");
-        $res = dbquery("
-        SELECT
-            s.*,
-            u.user_nick as snick
-        FROM
-            user_sitting s
-        LEFT JOIN
-            users u
-            ON s.sitter_id=u.user_id
-        WHERE
-            s.user_id=" . $cu->id . "
-        ORDER BY
-            s.date_from DESC;");
+        $entries = $userSittingRepository->getWhereUser($cu->getId());
         $days = $cu->sittingDays;
-        if (mysql_num_rows($res) > 0) {
+        if (count($entries) > 0) {
             echo "<tr><th>Sitter</th><th>Von</th><th>Bis</th><th>Tage</th><th>Aktionen</th></tr>";
-            while ($arr = mysql_fetch_array($res)) {
-                $tdays = ceil(($arr['date_to'] - $arr['date_from']) / 86400);
+            foreach ($entries as $entry) {
+                $tdays = ceil(($entry->dateTo - $entry->dateFrom) / 86400);
                 $days -= $tdays;
                 echo "<tr>
-                <td>" . $arr['snick'] . "</td>
-                <td>" . df($arr['date_from']) . "</td>
-                <td>" . df($arr['date_to']) . "</td>
+                <td>" . $entry->sitterNick . "</td>
+                <td>" . df($entry->dateFrom) . "</td>
+                <td>" . df($entry->dateTo) . "</td>
                 <td>" . $tdays . "</td>
                 <td>";
-                if ($arr['date_from'] > time()) {
-                    echo "<a href=\"?page=$page&amp;mode=$mode&amp;remove_sitting=" . $arr['id'] . "\" onclick=\"return confirm('Sittereinstellung löschen?');\">Löschen</a>";
-                } elseif ($arr['date_from'] < time() && $arr['date_to'] > time()) {
-                    echo "AKTIV <a href=\"?page=$page&amp;mode=$mode&amp;cancel_sitting=" . $arr['id'] . "\" onclick=\"return confirm('Sitting abbrechen?');\">Abbrechen</a>";
+                if ($entry->dateFrom > time()) {
+                    echo "<a href=\"?page=$page&amp;mode=$mode&amp;remove_sitting=" . $entry->id . "\" onclick=\"return confirm('Sittereinstellung löschen?');\">Löschen</a>";
+                } elseif ($entry->dateFrom < time() && $entry->dateTo > time()) {
+                    echo "AKTIV <a href=\"?page=$page&amp;mode=$mode&amp;cancel_sitting=" . $entry->id . "\" onclick=\"return confirm('Sitting abbrechen?');\">Abbrechen</a>";
                 } else {
                     echo "-";
                 }

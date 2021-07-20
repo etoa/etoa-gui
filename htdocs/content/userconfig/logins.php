@@ -30,28 +30,16 @@ foreach ($activeSessions as $session) {
 tableEnd();
 
 tableStart("Letzte 10 Logins");
-$res = dbquery("
-            SELECT
-                time_login,
-                ip_addr ,
-                user_agent
-            FROM
-                user_sessionlog
-            WHERE
-                user_id=" . $cu->id . "
-            ORDER BY
-                time_login DESC
-            LIMIT
-                10;");
+$sessionLogs = $userSessionRepository->getUserSessionLogs($cu->getId(), 10);
 echo "<tr><th>Zeit</th>
             <th>IP-Adresse</th>
             <th>Hostname</th>
             <th>Client</th></tr>";
-while ($arr = mysql_fetch_array($res)) {
-    $browserParser = new \WhichBrowser\Parser($arr['user_agent']);
-    echo "<tr><td>" . df($arr['time_login']) . "</td>";
-    echo "<td>" . $arr['ip_addr'] . "</td>";
-    echo "<td>" . Net::getHost($arr['ip_addr']) . "</td>";
+foreach ($sessionLogs as $sessionLog) {
+    $browserParser = new \WhichBrowser\Parser($sessionLog->userAgent);
+    echo "<tr><td>" . df($sessionLog->timeLogin) . "</td>";
+    echo "<td>" . $sessionLog->ip . "</td>";
+    echo "<td>" . Net::getHost($sessionLog->ip) . "</td>";
     echo "<td>" . $browserParser->toString() . "</td></tr>";
 }
 tableEnd();
