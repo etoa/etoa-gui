@@ -1,10 +1,15 @@
 <?PHP
 
+use EtoA\User\UserWarningRepository;
+
 echo "<h1>Einstellungen</h1>";
 
 /****************/
 /* Menu			*/
 /****************/
+
+/** @var UserWarningRepository $userWarningRepository */
+$userWarningRepository = $app[UserWarningRepository::class];
 
 $mode = (isset($_GET['mode']) && $_GET['mode'] != "") ? $_GET['mode'] : 'general';
 
@@ -21,16 +26,8 @@ $tabitems = array(
     "misc" => "Sonstiges"
 );
 
-$ures = dbquery("
-    SELECT
-        COUNT(warning_id)
-    FROM
-        user_warnings
-    WHERE
-        warning_user_id=" . $cu->id . "
-    ");
-$uarr = mysql_fetch_row($ures);
-if ($uarr[0] > 0)
+$warnings = $userWarningRepository->getUserWarnings($cu->getId());
+if (count($warnings) > 0)
     $tabitems['warnings'] = "Verwarnungen";
 
 show_tab_menu("mode", $tabitems);
@@ -68,29 +65,12 @@ elseif ($mode == 'warnings') {
                         <th>Datum</th>
                         <th>Verwarnt von</th>
                     </tr>";
-        $ures = dbquery("
-                        SELECT
-                            warning_text,
-                            warning_date,
-                            user_nick as anick,
-                            user_id as aid,
-                            warning_id
-                        FROM
-                            user_warnings
-                        LEFT JOIN
-                            admin_users
-                        ON
-                            user_id=warning_admin_id
-                        WHERE
-                            warning_user_id=" . $cu->id . "
-                        ORDER BY
-                            warning_date DESC
-                        ");
-        while ($uarr = mysql_fetch_array($ures)) {
+
+        foreach ($warnings as $warning) {
             echo "<tr>
-                                <td>" . stripslashes(nl2br($uarr['warning_text'])) . "</td>
-                                <td>" . df($uarr['warning_date']) . "</td>
-                                <td><a href=\"?page=contact&rcpt=" . $uarr['aid'] . "\">" . $uarr['anick'] . "</a>
+                                <td>" . stripslashes(nl2br($warning->text)) . "</td>
+                                <td>" . df($warning->date) . "</td>
+                                <td><a href=\"?page=contact&rcpt=" . $warning->adminId . "\">" . $warning->adminNick . "</a>
                                 </td>
                             </tr>";
         }

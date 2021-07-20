@@ -2,34 +2,26 @@
 
 use EtoA\Admin\AdminUserRepository;
 use EtoA\User\UserRepository;
+use EtoA\User\UserWarningRepository;
 
 echo "<h1>Verwarnungen</h1>";
 
+/** @var UserWarningRepository $userWarningRepository */
+$userWarningRepository = $app[UserWarningRepository::class];
+/** @var UserRepository $userRepository */
+$userRepository = $app[UserRepository::class];
+$userNicks = $userRepository->getUserNicknames();
+
 if (isset($_GET['edit'])) {
-    $res = dbquery("
-        SELECT
-            user_nick,
-            user_points,
-            user_id,
-            warning_text,
-            warning_admin_id
-        FROM
-            users
-        INNER JOIN
-            user_warnings
-        ON
-            warning_user_id=user_id
-            AND warning_id=" . intval($_GET['edit']) . "
-        ;");
+    $warning = $userWarningRepository->getWarning((int) $_GET['edit']);
     echo "<h2>Verwarnung bearbeiten</h2>";
-    if (mysql_num_rows($res) > 0) {
-        $arr = mysql_fetch_assoc($res);
+    if ($warning !== null) {
         echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"post\">
             <input type=\"hidden\" name=\"warning_id\" value=\"" . $_GET['edit'] . "\" />
                 <table class=\"tb\">
                     <tr>
                         <th>User:</th>
-                        <td>" . $arr['user_nick'] . "</td>
+                        <td>" . $userNicks[$warning->userId] . "</td>
                     </tr>
                     <tr>
                         <th>Admin:</th>
@@ -40,7 +32,7 @@ if (isset($_GET['edit'])) {
         $adminUserNicks = $adminUserRepository->findAllAsList();
         foreach ($adminUserNicks as $adminUserId => $adminUserNick) {
             echo "<option value=\"" . $adminUserId . "\"";
-            if ($adminUserId == $arr['warning_admin_id'])
+            if ($adminUserId === $warning->adminId)
                 echo " selected=\"selected\"";
             echo ">" . $adminUserNick . "</option>";
         }
@@ -49,7 +41,7 @@ if (isset($_GET['edit'])) {
                     </tr>
                     <tr>
                         <th>Verwarnungstext:</th>
-                        <td><textarea name=\"warning_text\" rows=\"10\" cols=\"70\">" . $arr['warning_text'] . "</textarea></td>
+                        <td><textarea name=\"warning_text\" rows=\"10\" cols=\"70\">" . $warning->text . "</textarea></td>
                     </tr>
                 </table><br/>
                 <input type=\"submit\" name=\"edit\" value=\"Speichern\" />
@@ -58,22 +50,7 @@ if (isset($_GET['edit'])) {
 } else {
 
     if (isset($_POST['add'])) {
-        dbquery("
-            INSERT INTO
-                user_warnings
-            (
-                warning_user_id,
-                warning_date,
-                warning_text,
-                warning_admin_id
-            )
-            VALUES
-            (
-                " . $_POST['warning_user_id'] . ",
-                UNIX_TIMESTAMP(),
-                '" . addslashes($_POST['warning_text']) . "',
-                " . $cu->id . "
-            );");
+        $userWarningRepository->addEntry((int) $_POST['warning_user_id'], $_POST['warning_text'], $cu->id);
 
         /** @var \EtoA\Message\MessageRepository $messageRepository */
         $messageRepository = $app[\EtoA\Message\MessageRepository::class];
@@ -83,26 +60,13 @@ if (isset($_GET['edit'])) {
     }
 
     if (isset($_POST['edit'])) {
-        dbquery("
-            UPDATE
-                user_warnings
-            SET
-                warning_text='" . addslashes($_POST['warning_text']) . "',
-                warning_admin_id=" . $_POST['warning_admin_id'] . "
-            WHERE
-                warning_id=" . $_POST['warning_id'] . "
-            ;");
+        $userWarningRepository->updateEntry((int) $_POST['warning_id'], $_POST['warning_text'], (int) $_POST['warning_admin_id']);
         success_msg("Verwarnung gespeichert!");
     }
 
 
     if (isset($_GET['del'])) {
-        dbquery("
-            DELETE FROM
-                user_warnings
-            WHERE
-                warning_id=" . intval($_GET['del']) . "
-            ");
+        $userWarningRepository->deleteEntry((int) $_GET['del']);
         success_msg("Verwarnung gelöscht!");
     }
 
@@ -115,9 +79,6 @@ if (isset($_GET['edit'])) {
                     <td>
                         <select name=\"warning_user_id\">";
 
-    /** @var UserRepository $userRepository */
-    $userRepository = $app[UserRepository::class];
-    $userNicks = $userRepository->getUserNicknames();
     foreach ($userNicks as $userId => $userNick) {
         echo "<option value=\"" . $userId . "\">" . $userNick . "</option>";
     }
@@ -132,60 +93,29 @@ if (isset($_GET['edit'])) {
         </form>";
 
     echo "<h2>Bestehende Verwarnungen</h2>";
-    $res = dbquery("
-        SELECT
-            user_nick,
-            user_points,
-            user_id,
-            COUNT(*) as cnt
-        FROM
-            users
-        INNER JOIN
-            user_warnings
-        ON
-            warning_user_id=user_id
-        GROUP BY
-            user_id
-        ORDER BY user_nick
-        ;");
-    if (mysql_num_rows($res) > 0) {
-        while ($arr = mysql_fetch_array($res)) {
+    $warningCounts = $userWarningRepository->getWarningCountsByUser();
+    if (count($warningCounts) > 0) {
+        foreach ($warningCounts as $warningCount) {
             echo "<div style=\"padding:5px;border-bottom:1px solid #fff\">
-                <b>" . $arr['user_nick'] . "</b> &nbsp;
-                [<a href=\"#\" onclick=\"toggleBox('w" . $arr['user_id'] . "')\">" . nf($arr['cnt']) . " Verwarnungen</a>] &nbsp;
-                [<a href=\"?page=user&amp;sub=edit&amp;id=" . $arr['user_id'] . "\">Daten</a>] &nbsp;
-                <table id=\"w" . $arr['user_id'] . "\" style=\"margin-top:10px;" . ((isset($_GET['user']) && $_GET['user'] == $arr['user_id']) ? "" : "display:none;") . "\" class=\"tb\">
+                <b>" . $warningCount['nick'] . "</b> &nbsp;
+                [<a href=\"#\" onclick=\"toggleBox('w" . $warningCount['userId'] . "')\">" . nf($warningCount['count']) . " Verwarnungen</a>] &nbsp;
+                [<a href=\"?page=user&amp;sub=edit&amp;id=" . $warningCount['userId'] . "\">Daten</a>] &nbsp;
+                <table id=\"w" . $warningCount['userId'] . "\" style=\"margin-top:10px;" . ((isset($_GET['user']) && $_GET['user'] == $warningCount['userId']) ? "" : "display:none;") . "\" class=\"tb\">
                     <tr>
                         <th style=\"\">Text</th>
                         <th style=\"width:130px;\">Datum</th>
                         <th style=\"width:100px;\">Verwarnt von</th>
                         <th style=\"width:150px;\">Optionen</th>
                     </tr>";
-            $ures = dbquery("
-                        SELECT
-                            warning_text,
-                            warning_date,
-                            user_nick,
-                            warning_id
-                        FROM
-                            user_warnings
-                        LEFT JOIN
-                            admin_users
-                        ON
-                            user_id=warning_admin_id
-                        WHERE
-                            warning_user_id=" . $arr['user_id'] . "
-                        ORDER BY
-                            warning_date DESC
-                        ");
-            while ($uarr = mysql_fetch_array($ures)) {
+            $userWarnings = $userWarningRepository->getUserWarnings($warningCount['userId']);
+            foreach ($userWarnings as $warning) {
                 echo "<tr>
-                                <td>" . stripslashes(nl2br($uarr['warning_text'])) . "</td>
-                                <td>" . df($uarr['warning_date']) . "</td>
-                                <td><b>" . $uarr['user_nick'] . "</b></td>
+                                <td>" . stripslashes(nl2br($warning->text)) . "</td>
+                                <td>" . df($warning->date) . "</td>
+                                <td><b>" . $warning->adminNick . "</b></td>
                                 <td>
-                                    <a href=\"?page=$page&amp;sub=$sub&amp;edit=" . $uarr['warning_id'] . "\">Bearbeiten</a>
-                                    <a href=\"?page=$page&amp;sub=$sub&amp;del=" . $uarr['warning_id'] . "\" onclick=\"return confirm('Verwarnung löschen?')\">Löschen</a>
+                                    <a href=\"?page=$page&amp;sub=$sub&amp;edit=" . $warning->id . "\">Bearbeiten</a>
+                                    <a href=\"?page=$page&amp;sub=$sub&amp;del=" . $warning->id . "\" onclick=\"return confirm('Verwarnung löschen?')\">Löschen</a>
                                 </td>
                             </tr>";
             }

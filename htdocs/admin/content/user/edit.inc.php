@@ -8,6 +8,7 @@ use EtoA\Race\RaceDataRepository;
 use EtoA\Specialist\SpecialistDataRepository;
 use EtoA\User\UserRepository;
 use EtoA\User\UserSittingRepository;
+use EtoA\User\UserWarningRepository;
 
 /** @var TicketRepository */
 $ticketRepo = $app[TicketRepository::class];
@@ -543,18 +544,11 @@ if (mysql_num_rows($res) > 0) {
     }
 
     // Verwarnungen
-    $cres = dbquery("
-                        SELECT
-                            COUNT(warning_id),
-                            MAX(warning_date)
-                        FROM
-                            user_warnings
-                        WHERE
-                            warning_user_id=" . $arr['user_id'] . "
-                        ;");
-    $carr = mysql_fetch_row($cres);
-    if ($carr[0] > 0) {
-        echo "<div><b>" . $carr[0] . " Verwarnungen</b> vorhanden, neuste  von " . df($carr[1]) . "
+    /** @var UserWarningRepository $userWarningRepository */
+    $userWarningRepository = $app[UserWarningRepository::class];
+    $warning = $userWarningRepository->getCountAndLatestWarning($arr['user_id']);
+    if ($warning['count'] > 0) {
+        echo "<div><b>" . $warning['count'] . " Verwarnungen</b> vorhanden, neuste  von " . df($warning['max']) . "
                             [<a href=\"?page=user&amp;sub=warnings&amp;user=" . $id . "\">Zeigen</a>]
                             </div>";
     }

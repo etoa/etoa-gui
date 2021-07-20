@@ -145,6 +145,6 @@ class UserSessionRepository extends AbstractRepository
             ->execute()
             ->fetchAllAssociative();
 
-        return array_map(fn (array $row) => new UserSessionLog($row) , $rows);
+        return array_map(fn (array $row) => new UserSessionLog($row), $rows);
     }
 }

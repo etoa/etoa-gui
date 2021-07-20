@@ -39,7 +39,7 @@ class UserSittingRepository extends AbstractRepository
             ->execute()
             ->fetchAllAssociative();
 
-        return array_map(fn(array $row) => new UserSitting($row), $data);
+        return array_map(fn (array $row) => new UserSitting($row), $data);
     }
 
     public function getActiveUserEntry(int $userId): ?UserSitting
@@ -67,7 +67,7 @@ class UserSittingRepository extends AbstractRepository
             ->execute()
             ->fetchAllAssociative();
 
-        return array_map(fn(array $row) => new UserSitting($row), $data);
+        return array_map(fn (array $row) => new UserSitting($row), $data);
     }
 
     /**
@@ -81,7 +81,7 @@ class UserSittingRepository extends AbstractRepository
             ->execute()
             ->fetchAllAssociative();
 
-        return array_map(fn(array $row) => new UserSitting($row), $data);
+        return array_map(fn (array $row) => new UserSitting($row), $data);
     }
 
     public function existsEntry(int $userId, string $password): bool
