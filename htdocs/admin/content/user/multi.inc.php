@@ -1,4 +1,7 @@
 <?PHP
+
+use EtoA\User\UserSittingRepository;
+
 if (isset($_GET['ip'])) {
     $ip = $_GET['ip'];
     echo "<h1>Multi-Erkennung - Details</h1>";
@@ -270,19 +273,11 @@ if (isset($_GET['ip'])) {
                     echo "<td $uCol>-</td>";
                 }
 
-                $sitting = mysql_fetch_array(dbquery("
-                        SELECT
-                          user_nick
-                        FROM
-                          user_sitting,users
-                        WHERE
-                          users.user_id = sitter_id
-                        AND
-                          user_sitting.user_id= '" . $iparr['user_id'] . "'
-                        AND
-                          " . time() . " BETWEEN date_from AND date_to"));
-                if ($sitting)
-                    echo "<td>" . $sitting['user_nick'] . "</td></tr>";
+                /** @var UserSittingRepository $userSittingRepository */
+                $userSittingRepository = $app[UserSittingRepository::class];
+                $entry = $userSittingRepository->getActiveUserEntry((int) $iparr['user_id']);
+                if ($entry !== null)
+                    echo "<td>" . $entry->sitterNick . "</td></tr>";
                 else
                     echo "<td>-</td></tr>";
 

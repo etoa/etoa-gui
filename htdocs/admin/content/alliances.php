@@ -394,7 +394,7 @@ function searchResults(Request $request, AllianceRepository $repository, Environ
             echo "<tr>";
             echo "<td>" . $alliance['alliance_id'] . "</td>";
             echo "<td>[" . $alliance['alliance_tag'] . "] <a href=\"?page=$page&sub=edit&alliance_id=" . $alliance['alliance_id'] . "\">" . $alliance['alliance_name'] . "</a></td>";
-            echo "<td>" . $userNicks[$alliance['alliance_founder_id']] . "</td>";
+            echo "<td>" . $userNicks[(int) $alliance['alliance_founder_id']] . "</td>";
             echo "<td>" . df($alliance['alliance_foundation_date']) . "</td>";
             echo "<td>" . $alliance['cnt'] . "</td>";
             echo "<td style=\"width:50px;\">";

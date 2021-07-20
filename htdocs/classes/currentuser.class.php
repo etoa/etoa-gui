@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\User\UserSittingRepository;
 
 /**
  * Provides methods for accessing
@@ -64,17 +65,9 @@ class CurrentUser extends User
 			LIMIT 1;");
         $arr = mysql_fetch_row($res);
         if (validatePasswort($oldPassword, $arr[0])) {
-            $res = dbquery("
-				SELECT
-					COUNT(*)
-				FROM
-					user_sitting
-				WHERE
-					password='" . md5($_POST['user_password1']) . "'
-					AND user_id=" . $this->id . "
-				LIMIT 1;");
-            $arr = mysql_fetch_row($res);
-            if ($arr[0] == 0) {
+            /** @var UserSittingRepository $userSittingRepository */
+            $userSittingRepository = $app[UserSittingRepository::class];
+            if (!$userSittingRepository->existsEntry($this->id, md5($_POST['user_password1']))) {
                 if ($newPassword1 == $newPassword2) {
                     if (strlen($newPassword1) >= $config->getInt('password_minlength')) {
                         if (dbquery("

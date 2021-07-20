@@ -7,6 +7,7 @@ use EtoA\Help\TicketSystem\TicketRepository;
 use EtoA\Race\RaceDataRepository;
 use EtoA\Specialist\SpecialistDataRepository;
 use EtoA\User\UserRepository;
+use EtoA\User\UserSittingRepository;
 
 /** @var TicketRepository */
 $ticketRepo = $app[TicketRepository::class];
@@ -22,6 +23,9 @@ $shipDateRepository = $app[\EtoA\Ship\ShipDataRepository::class];
 
 /** @var ConfigurationService */
 $config = $app[ConfigurationService::class];
+
+/** @var UserSittingRepository $userSittingRepository */
+$userSittingRepository = $app[UserSittingRepository::class];
 
 if (isset($_GET['id']))
     $id = $_GET['id'];
@@ -235,12 +239,7 @@ if (isset($_POST['save'])) {
             $s_id = intval($s_id);
 
             if ($_POST['del_sitting'][$s_id] == 1) {
-                dbquery("UPDATE
-                    user_sitting
-                SET
-                    date_to =UNIX_TIMESTAMP()
-                WHERE
-                    id =$s_id");
+                $userSittingRepository->cancelEntry($s_id);
 
                 success_msg("Eintrag gelöscht!");
             }
@@ -259,10 +258,7 @@ if (isset($_POST['save'])) {
             if ($diff > 0) {
                 if ($sitterId !== null) {
                     if ($diff <= $_POST['user_sitting_days']) {
-                        dbquery("INSERT INTO user_sitting (
-                                    user_id,sitter_id,password,date_from,date_to
-                                    ) VALUES (" .
-                            $_GET['id'] . ",$sitterId,'$pw',$sitting_from,$sitting_to);");
+                        $userSittingRepository->addEntry((int) $_GET['id'], $sitterId, $pw, $sitting_from, $sitting_to);
                     } else {
                         error_msg("So viele Tage sind nicht mehr vorhanden!!");
                     }
@@ -990,34 +986,34 @@ if (mysql_num_rows($res) > 0) {
     }
     echo '</table>';
 
-    $sitting_res = dbquery("SELECT * FROM user_sitting WHERE user_id='" . $arr['user_id'] . "' ORDER BY id DESC;");
-    $sitted_res = dbquery("SELECT * FROM user_sitting WHERE sitter_id='" . $arr['user_id'] . "' ORDER BY id DESC;");
+    $sittedEntries = $userSittingRepository->getWhereUser((int) $arr['user_id']);
+    $sittingEntries = $userSittingRepository->getWhereSitter((int) $arr['user_id']);
     echo '<table class="tb">
             <tr>
-                <th rowspan="' . (mysql_num_rows($sitting_res) + 1) . '" valign="top">Wurde gesittet</th>
+                <th rowspan="' . (count($sittedEntries) + 1) . '" valign="top">Wurde gesittet</th>
                 <th>Sitter</th>
                 <th>Start</th>
                 <th>Ende</th>
                 <th>Abbrechen</th>
             </tr>';
     $used_days = 0;
-    while ($sitting_arr = mysql_fetch_array($sitting_res)) {
-        $used_days += (($sitting_arr['date_to'] - $sitting_arr['date_from']) / 86400);
+    foreach ($sittedEntries as $sittedEntry) {
+        $used_days += (($sittedEntry->dateTo - $sittedEntry->dateFrom) / 86400);
 
         $time = time();
         echo '<tr>
                 <td>
-                    <a href="?page=user&sub=edit&user_id=' . $sitting_arr['sitter_id'] . '">' . get_user_nick($sitting_arr['sitter_id']) . '</a>
+                    <a href="?page=user&sub=edit&user_id=' . $sittedEntry->sitterId . '">' . $sittedEntry->sitterNick . '</a>
                 </td>
                 <td>
-                    ' . df($sitting_arr['date_from']) . '
+                    ' . df($sittedEntry->dateFrom) . '
                 </td>
                 <td>
-                    ' . df($sitting_arr['date_to']) . '
+                    ' . df($sittedEntry->dateTo) . '
                 </td>';
-        if ($sitting_arr['date_to'] > $time) {
+        if ($sittedEntry->dateTo > $time) {
             echo '<td>
-                            <input type="checkbox" name="del_sitting[' . $sitting_arr["id"] . ']" value="1">
+                            <input type="checkbox" name="del_sitting[' . $sittedEntry->id . ']" value="1">
                         </td>';
         } else {
             echo '<td/>';
@@ -1026,21 +1022,21 @@ if (mysql_num_rows($res) > 0) {
     }
 
     echo '<tr>
-            <th rowspan="' . (mysql_num_rows($sitted_res) + 1) . '" valign="top">Hat gesittet</th>
+            <th rowspan="' . (count($sittingEntries) + 1) . '" valign="top">Hat gesittet</th>
             <th>Gesitteter User</th>
             <th>Start</th><br>
             <th>Ende</th>
         </tr>';
-    while ($sitted_arr = mysql_fetch_array($sitted_res)) {
+    foreach ($sittingEntries as $sittingEntry) {
         echo '<tr>
                 <td>
-                    <a href="?page=user&sub=edit&user_id=' . $sitted_arr['user_id'] . '">' . get_user_nick($sitted_arr['user_id']) . '</a>
+                    <a href="?page=user&sub=edit&user_id=' . $sittingEntry->userId . '">' . $sittingEntry->userNick . '</a>
                 </td>
                 <td>
-                    ' . df($sitted_arr['date_from']) . '
+                    ' . df($sittingEntry->dateFrom) . '
                 </td>
                 <td>
-                    ' . df($sitted_arr['date_to']) . '
+                    ' . df($sittingEntry->dateTo) . '
                 </td>
             </tr>';
     }

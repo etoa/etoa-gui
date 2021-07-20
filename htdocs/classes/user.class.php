@@ -3,6 +3,7 @@
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Universe\Planet\PlanetService;
+use EtoA\User\UserSittingRepository;
 
 /**
  * Provides methods for accessing user information
@@ -701,6 +702,9 @@ class User implements \EtoA\User\UserInterface
         /** @var PlanetService */
         $planetService = $app[PlanetService::class];
 
+        /** @var UserSittingRepository $userSittingRepository */
+        $userSittingRepository = $app[UserSittingRepository::class];
+
         $utx = new UserToXml($this->id);
         if ($xmlfile = $utx->toCacheFile()) {
             //
@@ -840,7 +844,7 @@ class User implements \EtoA\User\UserInterface
             dbquery("DELETE FROM user_multi WHERE user_id='" . $this->id . "' OR multi_id='" . $this->id . "';"); //Multiliste löschen
             dbquery("DELETE FROM user_points WHERE point_user_id='" . $this->id . "';");                     //Punkte löschen
             dbquery("DELETE FROM user_warnings WHERE warning_user_id='" . $this->id . "';");                 //Nickänderungsanträge löschen
-            dbquery("DELETE FROM user_sitting WHERE user_id='" . $this->id . "';");             //Sitting löschen
+            $userSittingRepository->cancelEntry($this->id);                                                         //Sitting löschen
             dbquery("DELETE FROM user_properties WHERE id = '" . $this->id . "';");                            //Properties löschen
             dbquery("DELETE FROM user_surveillance WHERE user_id='" . $this->id . "';");                    //Beobachter löschen
             dbquery("DELETE FROM user_comments WHERE comment_user_id='" . $this->id . "';");                        //Kommentare löschen

@@ -556,7 +556,7 @@ class GameStatsGenerator
             $out .= $design != ""
                 ? "<td>" . strtr($design, ["css_style/" => ""]) . "</td>"
                 : "<td><i>Standard</i></td>";
-            $out .= "<td>" . nf($arr['cnt']) . "</td>";
+            $out .= "<td>" . nf($count) . "</td>";
             $out .= "<td>" . round(100 / $total * $count, 2) . "%</td></tr>";
         }
         $out .= "</table>";

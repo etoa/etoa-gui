@@ -1,6 +1,7 @@
 <?php
 
 use EtoA\User\UserSessionManager;
+use EtoA\User\UserSittingRepository;
 
 /**
  * Provides session and authentication management
@@ -18,6 +19,8 @@ class UserSession extends Session
 
         /** @var UserSessionManager */
         $sessionManager = $app[UserSessionManager::class];
+        /** @var UserSittingRepository $userSittingRepository */
+        $userSittingRepository = $app[UserSittingRepository::class];
 
         $sessionManager->cleanup();
 
@@ -74,24 +77,15 @@ class UserSession extends Session
                                     // check sitter
                                     $this->sittingActive = false;
                                     $this->falseSitter = false;
-                                    $sres = dbquery("
-                                    SELECT
-                                        date_to,
-                                        password
-                                    FROM user_sitting
-                                    WHERE
-                                        user_id=" . $uarr['user_id'] . "
-                                        AND date_from<=$t
-                                        AND $t<=date_to ;");
-                                    if (mysql_num_rows($sres) > 0) {
-                                        $sarr = mysql_fetch_row($sres);
-                                        if (validatePasswort($loginPassword, $sarr[1])) {
+                                    $sittingEntry = $userSittingRepository->getActiveUserEntry((int) $uarr['user_id']);
+                                    if ($sittingEntry !== null) {
+                                        if (validatePasswort($loginPassword, $sittingEntry->password)) {
                                             $this->sittingActive = true;
-                                            $this->sittingUntil = (int) $sarr[0];
+                                            $this->sittingUntil = $sittingEntry->dateTo;
                                         } elseif (validatePasswort($loginPassword, $uarr['user_password'])) {
                                             $this->falseSitter = true;
                                             $this->sittingActive = true;
-                                            $this->sittingUntil = $sarr[0];
+                                            $this->sittingUntil = $sittingEntry->dateTo;
                                         }
                                     }
                                     if (strlen($uarr['user_password']) == 64) {
@@ -247,15 +241,10 @@ class UserSession extends Session
 
                     if ($this->sittingActive) {
                         if (time() < $this->sittingUntil) {
-                            $t = time();
-                            $res = dbquery("SELECT
-                                id
-                            FROM user_sitting
-                            WHERE
-                                user_id=" . $this->user_id . "
-                                AND date_from<=$t
-                                AND $t<=date_to ;");
-                            if (mysql_num_rows($res) > 0) {
+                            /** @var UserSittingRepository $userSittingRepository */
+                            $userSittingRepository = $app[UserSittingRepository::class];
+                            $activeSitting = $userSittingRepository->getActiveUserEntry($this->user_id);
+                            if ($activeSitting !== null) {
                                 $allows = true;
                             }
                         }
