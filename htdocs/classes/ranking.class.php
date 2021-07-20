@@ -1,5 +1,6 @@
 <?PHP
 
+use EtoA\Alliance\AlliancePointsRepository;
 use EtoA\Alliance\AllianceRepository;
 use EtoA\Alliance\AllianceStats;
 use EtoA\Alliance\AllianceStatsRepository;
@@ -229,9 +230,6 @@ class Ranking
         $allpoints = 0;
         $res_amount_per_point = $config->param1Int('points_update');
 
-        /** @var AllianceStatsRepository $allianceStatsRepository */
-        $allianceStatsRepository = $app[AllianceStatsRepository::class];
-
         // Schiffe laden
         /** @var ShipDataRepository $shipRepository */
         $shipRepository = $app[ShipDataRepository::class];
@@ -287,6 +285,10 @@ class Ranking
         /** @var AllianceRepository $allianceRepository */
         $allianceRepository = $app[AllianceRepository::class];
         $alliance = $allianceRepository->getAllianceTags();
+        /** @var AllianceStatsRepository $allianceStatsRepository */
+        $allianceStatsRepository = $app[AllianceStatsRepository::class];
+        /** @var AlliancePointsRepository $alliancePointsRepository */
+        $alliancePointsRepository = $app[AlliancePointsRepository::class];
 
         // Load 'old' ranks
         $res = dbquery("
@@ -903,7 +905,7 @@ class Ranking
                 $apoints = $tpoints + $bpoints + $sarr[0];
                 $points = $apoints + $upoints;
 
-                $allianceStats[] = AllianceStats::createFromData(
+                $stats = AllianceStats::createFromData(
                     $arr['alliance_id'],
                     $arr['alliance_tag'],
                     $arr['alliance_name'],
@@ -918,24 +920,8 @@ class Ranking
                     $arr['alliance_rank_current']
                 );
 
-                dbquery("
-                    INSERT INTO
-                        alliance_points
-                    (
-                        point_alliance_id,
-                        point_timestamp,
-                        point_points,
-                        point_avg,
-                        point_cnt
-                    )
-                    VALUES
-                    (
-                        '" . $arr['alliance_id'] . "',
-                        '" . time() . "',
-                        '" . $points . "',
-                        '" . $arr['uavg'] . "',
-                        '" . $arr['cnt'] . "'
-                    );");
+                $alliancePointsRepository->add($stats);
+                $allianceStats[] = $stats;
             }
         }
 

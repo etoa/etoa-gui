@@ -1,5 +1,6 @@
 <?PHP
 
+use EtoA\Alliance\AlliancePointsRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Support\RuntimeDataStore;
 
@@ -8,6 +9,9 @@ $runtimeDataStore = $app[RuntimeDataStore::class];
 
 /** @var ConfigurationService */
 $config = $app[ConfigurationService::class];
+
+/** @var AlliancePointsRepository $alliancePointsRepository */
+$alliancePointsRepository = $app[AlliancePointsRepository::class];
 
 echo "<h1>Statistiken</h1>";
 
@@ -92,25 +96,17 @@ if (isset($_GET['userdetail']) && intval($_GET['userdetail']) > 0) {
         echo "<h2>Punktedetails f&uuml;r [" . text2html($arr['alliance_tag']) . "] " . text2html($arr['alliance_name']) . "</h2>";
         echo "<b>Punkte aktuell:</b> " . nf($arr['alliance_points']) . ", <b>Rang aktuell:</b> " . $arr['alliance_rank_current'] . "<br/><br/>";
         echo "<img src=\"misc/alliance_stats.image.php?alliance=" . $arr['alliance_id'] . "\" alt=\"Diagramm\" /><br/><br/>";
-        $pres = dbquery("
-            SELECT
-                *
-            FROM
-                alliance_points
-            WHERE
-                point_alliance_id='" . $adid . "'
-            ORDER BY
-                point_timestamp DESC
-            LIMIT 48; ");
-        if (mysql_num_rows($pres) > 0) {
+        $pointEntries = $alliancePointsRepository->getPoints($adid, 48);
+        if (count($pointEntries) > 0) {
             $points = [];
             $avg = [];
             $user = [];
-            while ($parr = mysql_fetch_array($pres)) {
-                $points[$parr['point_timestamp']] = $parr['point_points'];
-                $avg[$parr['point_timestamp']] = $parr['point_avg'];
-                $user[$parr['point_timestamp']] = $parr['point_cnt'];
+            foreach ($pointEntries as $entry) {
+                $points[$entry->timestamp] = $entry->points;
+                $avg[$entry->timestamp] = $entry->avg;
+                $user[$entry->timestamp] = $entry->count;
             }
+
             tableStart('', '400');
             echo "<tr><th>Datum</th><th>Zeit</th><th>Punkte</th><th>User-Schnitt</th><th>User</th></tr>";
             foreach ($points as $time => $val) {

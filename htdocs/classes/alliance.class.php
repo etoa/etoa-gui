@@ -1,6 +1,7 @@
 <?php
 
 use EtoA\Alliance\AllianceHistoryRepository;
+use EtoA\Alliance\AlliancePointsRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Message\MessageRepository;
 
@@ -648,8 +649,11 @@ class Alliance
             $allianceHistoryRepository = $app[AllianceHistoryRepository::class];
             $allianceHistoryRepository->removeForAlliance($this->id);
 
+            /** @var AlliancePointsRepository */
+            $alliancePointsRepository = $app[AlliancePointsRepository::class];
+            $alliancePointsRepository->removeForAlliance($this->id);
+
             dbquery("DELETE FROM alliance_news WHERE alliance_news_alliance_id='" . $this->id . "';");
-            dbquery("DELETE FROM alliance_points WHERE point_alliance_id='" . $this->id . "';");
             dbquery("DELETE FROM alliance_polls WHERE poll_alliance_id='" . $this->id . "';");
             dbquery("DELETE FROM alliance_poll_votes WHERE vote_alliance_id='" . $this->id . "';");
             $res = dbquery("SELECT rank_id FROM alliance_ranks WHERE rank_alliance_id='" . $this->id . "';");
