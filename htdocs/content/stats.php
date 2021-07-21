@@ -1,13 +1,20 @@
 <?PHP
 
+use EtoA\Alliance\AlliancePointsRepository;
+use EtoA\Alliance\AllianceRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Support\RuntimeDataStore;
+use EtoA\User\UserPointsRepository;
+use EtoA\User\UserRepository;
 
 /** @var RuntimeDataStore */
 $runtimeDataStore = $app[RuntimeDataStore::class];
 
 /** @var ConfigurationService */
 $config = $app[ConfigurationService::class];
+
+/** @var AlliancePointsRepository $alliancePointsRepository */
+$alliancePointsRepository = $app[AlliancePointsRepository::class];
 
 echo "<h1>Statistiken</h1>";
 
@@ -17,51 +24,28 @@ echo "<h1>Statistiken</h1>";
 
 if (isset($_GET['userdetail']) && intval($_GET['userdetail']) > 0) {
     $udid = intval($_GET['userdetail']);
-    $res = dbquery("
-        SELECT
-            user_nick,
-            user_points,
-            user_rank,
-            user_id
-        FROM
-            users
-        WHERE
-            user_id='" . $udid . "';");
-    if (mysql_num_rows($res) > 0) {
-        $arr = mysql_fetch_array($res);
-        tableStart("Statistiken f&uuml;r " . text2html($arr['user_nick']) . "");
+
+    /** @var UserRepository $userRepository */
+    $userRepository = $app[UserRepository::class];
+    $user = $userRepository->getUser($udid);
+    if ($user !== null) {
+        tableStart("Statistiken f&uuml;r " . text2html($user->nick) . "");
 
         echo "<tr><td colspan=\"6\" style=\"text-align:center;\">
-                <b>Punkte aktuell:</b> " . nf($arr['user_points']) . ", <b>Rang aktuell:</b> " . $arr['user_rank'] . "
+                <b>Punkte aktuell:</b> " . nf($user->points) . ", <b>Rang aktuell:</b> " . $user->rank . "
             </td></tr>";
         echo "<tr><td colspan=\"6\" style=\"text-align:center;\">
-                <img src=\"misc/stats.image.php?user=" . $arr['user_id'] . "\" alt=\"Diagramm\" />
+                <img src=\"misc/stats.image.php?user=" . $user->id . "\" alt=\"Diagramm\" />
             </td></tr>";
-        $pres = dbquery("
-            SELECT
-                *
-            FROM
-                user_points
-            WHERE
-                point_user_id='" . $udid . "'
-            ORDER BY
-                point_timestamp DESC
-            LIMIT 48; ");
-        if (mysql_num_rows($pres) > 0) {
-            $points = [];
-            $fleet = [];
-            $tech = [];
-            $buildings = [];
-            while ($parr = mysql_fetch_array($pres)) {
-                $points[$parr['point_timestamp']] = $parr['point_points'];
-                $fleet[$parr['point_timestamp']] = $parr['point_ship_points'];
-                $tech[$parr['point_timestamp']] = $parr['point_tech_points'];
-                $buildings[$parr['point_timestamp']] = $parr['point_building_points'];
-            }
+
+        /** @var UserPointsRepository $userPointsRepository */
+        $userPointsRepository = $app[UserPointsRepository::class];
+        $pointEntries = $userPointsRepository->getPoints($user->id, 48);
+        if (count($pointEntries) > 0) {
             echo "<tr><th>Datum</th><th>Zeit</th><th>Punkte</th><th>Flotte</th><th>Forschung</th><th>Geb&auml;ude</th></tr>";
-            foreach ($points as $time => $val) {
-                echo "<tr><td>" . date("d.m.Y", $time) . "</td><td>" . date("H:i", $time) . "</td>";
-                echo "<td>" . nf($val) . "</td><td>" . nf($fleet[$time]) . "</td><td>" . nf($tech[$time]) . "</td><td>" . nf($buildings[$time]) . "</td></tr>";
+            foreach ($pointEntries as $entry) {
+                echo "<tr><td>" . date("d.m.Y", $entry->timestamp) . "</td><td>" . date("H:i", $entry->timestamp) . "</td>";
+                echo "<td>" . nf($entry->points) . "</td><td>" . nf($entry->shipPoints) . "</td><td>" . nf($entry->techPoints) . "</td><td>" . nf($entry->buildingPoints) . "</td></tr>";
             }
         } else {
             echo "<tr><td colspan=\"6\"><i>Keine Punktedaten vorhanden!</td></tr>";
@@ -70,55 +54,29 @@ if (isset($_GET['userdetail']) && intval($_GET['userdetail']) > 0) {
         tableEnd();
 
         if (!$popup)
-            echo "<input type=\"button\" value=\"Profil anzeigen\" onclick=\"document.location='?page=userinfo&id=" . $arr['user_id'] . "'\" /> &nbsp; ";
+            echo "<input type=\"button\" value=\"Profil anzeigen\" onclick=\"document.location='?page=userinfo&id=" . $user->id . "'\" /> &nbsp; ";
     } else
         error_msg("Datensatz wurde nicht gefunden!");
 } elseif (isset($_GET['alliancedetail']) && intval($_GET['alliancedetail']) > 0) {
     $adid = intval($_GET['alliancedetail']);
 
-    $res = dbquery("
-        SELECT
-            alliance_tag,
-            alliance_name,
-            alliance_points,
-            alliance_rank_current,
-            alliance_id
-        FROM
-            alliances
-        WHERE
-            alliance_id='" . $adid . "';");
-    if (mysql_num_rows($res) > 0) {
-        $arr = mysql_fetch_array($res);
-        echo "<h2>Punktedetails f&uuml;r [" . text2html($arr['alliance_tag']) . "] " . text2html($arr['alliance_name']) . "</h2>";
-        echo "<b>Punkte aktuell:</b> " . nf($arr['alliance_points']) . ", <b>Rang aktuell:</b> " . $arr['alliance_rank_current'] . "<br/><br/>";
-        echo "<img src=\"misc/alliance_stats.image.php?alliance=" . $arr['alliance_id'] . "\" alt=\"Diagramm\" /><br/><br/>";
-        $pres = dbquery("
-            SELECT
-                *
-            FROM
-                alliance_points
-            WHERE
-                point_alliance_id='" . $adid . "'
-            ORDER BY
-                point_timestamp DESC
-            LIMIT 48; ");
-        if (mysql_num_rows($pres) > 0) {
-            $points = [];
-            $avg = [];
-            $user = [];
-            while ($parr = mysql_fetch_array($pres)) {
-                $points[$parr['point_timestamp']] = $parr['point_points'];
-                $avg[$parr['point_timestamp']] = $parr['point_avg'];
-                $user[$parr['point_timestamp']] = $parr['point_cnt'];
-            }
+    /** @var AllianceRepository $allianceRepository */
+    $allianceRepository = $app[AllianceRepository::class];
+    $alliance = $allianceRepository->getAlliance($adid);
+    if ($alliance !== null) {
+        echo "<h2>Punktedetails f&uuml;r [" . text2html($alliance->tag) . "] " . text2html($alliance->name) . "</h2>";
+        echo "<b>Punkte aktuell:</b> " . nf($alliance->points) . ", <b>Rang aktuell:</b> " . $alliance->currentRank . "<br/><br/>";
+        echo "<img src=\"misc/alliance_stats.image.php?alliance=" . $alliance->id . "\" alt=\"Diagramm\" /><br/><br/>";
+        $pointEntries = $alliancePointsRepository->getPoints($alliance->id, 48);
+        if (count($pointEntries) > 0) {
             tableStart('', '400');
             echo "<tr><th>Datum</th><th>Zeit</th><th>Punkte</th><th>User-Schnitt</th><th>User</th></tr>";
-            foreach ($points as $time => $val) {
-                echo "<tr><td>" . date("d.m.Y", $time) . "</td><td>" . date("H:i", $time) . "</td>";
-                echo "<td>" . nf($points[$time]) . "</td><td>" . nf($avg[$time]) . "</td><td>" . nf($user[$time]) . "</td></tr>";
+            foreach ($pointEntries as $entry) {
+                echo "<tr><td>" . date("d.m.Y", $entry->timestamp) . "</td><td>" . date("H:i", $entry->timestamp) . "</td>";
+                echo "<td>" . nf($entry->points) . "</td><td>" . nf($entry->avg) . "</td><td>" . nf($entry->count) . "</td></tr>";
             }
             tableEnd();
-            echo "<input type=\"button\" value=\"Allianzdetails anzeigen\" onclick=\"document.location='?page=alliance&info_id=" . $arr['alliance_id'] . "'\" /> &nbsp; ";
+            echo "<input type=\"button\" value=\"Allianzdetails anzeigen\" onclick=\"document.location='?page=alliance&info_id=" . $alliance->id . "'\" /> &nbsp; ";
         } else
             error_msg("Keine Punktedaten vorhanden!");
     } else

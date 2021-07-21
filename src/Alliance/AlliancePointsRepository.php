@@ -39,6 +39,26 @@ class AlliancePointsRepository extends AbstractRepository
         return array_map(fn (array $row) => new AlliancePoints($row), $data);
     }
 
+    public function add(AllianceStats $stats): void
+    {
+        $this->createQueryBuilder()
+            ->insert('alliance_stats')
+            ->values([
+                'point_alliance_id' => ':allianceId',
+                'point_timestamp' => ':time',
+                'point_points' => ':points',
+                'point_avg' => ':avg',
+                'point_cnt' => ':count',
+            ])
+            ->setParameters([
+                'allianceId' => $stats->allianceId,
+                'time' => time(),
+                'points' => $stats->points,
+                'avg' => $stats->userAverage,
+                'count' => $stats->count,
+            ])->execute();
+    }
+
     public function count(): int
     {
         return (int) $this->createQueryBuilder()
@@ -46,5 +66,14 @@ class AlliancePointsRepository extends AbstractRepository
             ->from('alliance_points')
             ->execute()
             ->fetchOne();
+    }
+
+    public function removeForAlliance(int $allianceId): void
+    {
+        $this->createQueryBuilder()
+            ->delete('alliance_points')
+            ->where('point_alliance_id = :allianceId')
+            ->setParameter('allianceId', $allianceId)
+            ->execute();
     }
 }

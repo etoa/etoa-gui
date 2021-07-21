@@ -106,6 +106,7 @@ echo $twig->render('admin/cronjob.html.twig', [
     'crontabCheck' => $crontabCheck,
     'crontabUser' => $crontabUser,
     'crontab' => $crontab ?? null,
+    'cronjob' => $cronjob,
     'updateResults' => $updateResults,
 ]);
 exit();

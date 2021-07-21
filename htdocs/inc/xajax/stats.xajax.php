@@ -1,5 +1,7 @@
 <?PHP
 
+use EtoA\Alliance\AllianceStatsRepository;
+use EtoA\Alliance\AllianceStatsSearch;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Ranking\GameStatsGenerator;
 
@@ -11,6 +13,9 @@ function statsShowBox($mode, $sort = "", $sortOrder = "")
 {
     global $page;
     global $app;
+
+    /** @var AllianceStatsRepository $allianceStatsRepository */
+    $allianceStatsRepository = $app[AllianceStatsRepository::class];
 
     $objResponse = new xajaxResponse();
 
@@ -48,53 +53,36 @@ function statsShowBox($mode, $sort = "", $sortOrder = "")
         echo "<a href=\"javascript:;\" onclick=\"xajax_statsShowBox('$mode','cnt','DESC')\" title=\"Absteigend sortieren\"><img src=\"images/s_desc.png\" alt=\"Absteigend sortieren\" border=\"0\" /></a>";
         echo "<a href=\"javascript:;\" onclick=\"xajax_statsShowBox('$mode','cnt','ASC')\" title=\"Absteigend sortieren\"><img src=\"images/s_asc.png\" alt=\"Aufsteigend sortieren\" border=\"0\" /></a>";
         echo "</tr>";
-        if ($sort != "" && $sortOrder != "")
-            $sql = "
-            SELECT
-                *
-            FROM
-                   alliance_stats
-            ORDER BY
-                " . $sort . " " . $sortOrder . ",
-                alliance_name ASC;";
-        else {
-            $sql = "
-            SELECT
-                *
-            FROM
-                alliance_stats
-            ORDER BY
-                points DESC,
-                alliance_name ASC
-            ;";
+        $search = AllianceStatsSearch::create();
+        if ($sort != "" && $sortOrder != "") {
+            $search = $search->withSort($sort, $sortOrder);
         }
-
-        $res = dbquery($sql);
-        if (mysql_num_rows($res) > 0) {
+        $entries = $allianceStatsRepository->getStats($search);
+        if (count($entries) > 0) {
             $cnt = 1;
-            while ($arr = mysql_fetch_array($res)) {
+            foreach ($entries as $stats) {
                 $addstyle = "";
-                if ($arr['alliance_tag'] == $_SESSION['alliance_tag'])
+                if ($stats->allianceTag == $_SESSION['alliance_tag'])
                     $addstyle = " class=\"userAllianceMemberColor\"";
                 echo "<tr>";
-                echo  "<td $addstyle " . tm("Punkteverlauf", "<div><img src=\"misc/alliance_stats.image.php?alliance=" . $arr['alliance_id'] . "\" alt=\"Diagramm\" style=\"width:600px;height:400px;background:#335 url(images/loading335.gif) no-repeat 300px 200px;\" /></div>") . ">
+                echo  "<td $addstyle " . tm("Punkteverlauf", "<div><img src=\"misc/alliance_stats.image.php?alliance=" . $stats->allianceId . "\" alt=\"Diagramm\" style=\"width:600px;height:400px;background:#335 url(images/loading335.gif) no-repeat 300px 200px;\" /></div>") . ">
                 " . nf($cnt) . " ";
-                if ($arr['alliance_rank_current'] == $arr['alliance_rank_last'])
+                if ($stats->currentRank == $stats->lastRank)
                     echo  "<img src=\"images/stats/stat_same.gif\" alt=\"same\" width=\"21\" height=\"9\" />";
-                elseif ($arr['alliance_rank_current'] > $arr['alliance_rank_last'])
+                elseif ($stats->currentRank > $stats->lastRank)
                     echo  "<img src=\"images/stats/stat_down.gif\" alt=\"up\" width=\"9\" height=\"12\" />";
-                elseif ($arr['alliance_rank_current'] < $arr['alliance_rank_last'])
+                elseif ($stats->currentRank < $stats->lastRank)
                     echo  "<img src=\"images/stats/stat_up.gif\" alt=\"down\" width=\"9\" height=\"11\" />";
-                echo "<td $addstyle>" . ($arr['alliance_tag']) . "</td>";
+                echo "<td $addstyle>" . ($stats->allianceTag) . "</td>";
                 echo "<td >
-                <div id=\"ttuser" . $arr['alliance_id'] . "\" style=\"display:none;\">
-                    " . popUp("Allianzseite", "page=alliance&id=" . $arr['alliance_id']) . "<br/>
-                    " . popUp("Punkteverlauf", "page=$page&amp;mode=$mode&amp;alliancedetail=" . $arr['alliance_id']) . "<br/>";
-                echo "</div><a $addstyle href=\"#\" " . cTT($arr['alliance_name'], "ttuser" . $arr['alliance_id']) . ">
-                " . $arr['alliance_name'] . "</td>";
-                echo "<td $addstyle>" . nf($arr['points']) . "</td>";
-                echo "<td $addstyle >" . nf($arr['uavg']) . "</td>";
-                echo "<td $addstyle>" . nf($arr['cnt']) . "</td>";
+                <div id=\"ttuser" . $stats->allianceId . "\" style=\"display:none;\">
+                    " . popUp("Allianzseite", "page=alliance&id=" . $stats->allianceId) . "<br/>
+                    " . popUp("Punkteverlauf", "page=$page&amp;mode=$mode&amp;alliancedetail=" . $stats->allianceId) . "<br/>";
+                echo "</div><a $addstyle href=\"#\" " . cTT($stats->allianceName, "ttuser" . $stats->allianceId) . ">
+                " . $stats->allianceName . "</td>";
+                echo "<td $addstyle>" . nf($stats->points) . "</td>";
+                echo "<td $addstyle >" . nf($stats->userAverage) . "</td>";
+                echo "<td $addstyle>" . nf($stats->count) . "</td>";
                 echo "</tr>";
                 $cnt++;
             }
@@ -139,48 +127,32 @@ function statsShowBox($mode, $sort = "", $sortOrder = "")
         echo "<a href=\"javascript:;\" onclick=\"xajax_statsShowBox('$mode','apoints','DESC')\" title=\"Absteigend sortieren\"><img src=\"images/s_desc.png\" alt=\"Absteigend sortieren\" border=\"0\" /></a>";
         echo "<a href=\"javascript:;\" onclick=\"xajax_statsShowBox('$mode','apoints','ASC')\" title=\"Absteigend sortieren\"><img src=\"images/s_asc.png\" alt=\"Aufsteigend sortieren\" border=\"0\" /></a></th>";
         echo "</tr>";
-        if ($sort != "" && $sortOrder != "")
-            $sql = "
-            SELECT
-                *
-            FROM
-                   alliance_stats
-            ORDER BY
-                " . $sort . " " . $sortOrder . ",
-                alliance_name ASC;";
-        else {
-            $sql = "
-            SELECT
-                *
-            FROM
-                alliance_stats
-            ORDER BY
-                apoints DESC,
-                alliance_name ASC
-            ;";
-        }
 
-        $res = dbquery($sql);
-        if (mysql_num_rows($res) > 0) {
+        $search = AllianceStatsSearch::createAllianceBase();
+        if ($sort != "" && $sortOrder != "") {
+            $search = $search->withSort($sort, $sortOrder);
+        }
+        $entries = $allianceStatsRepository->getStats($search);
+        if (count($entries) > 0) {
             $cnt = 1;
-            while ($arr = mysql_fetch_array($res)) {
+            foreach ($entries as $stats) {
                 $addstyle = "";
-                if ($arr['alliance_tag'] == $_SESSION['alliance_tag'])
+                if ($stats->allianceTag == $_SESSION['alliance_tag'])
                     $addstyle = " class=\"userAllianceMemberColor\"";
                 echo "<tr>
                         <td $addstyle>
                             " . nf($cnt) . "
                         </td>";
                 echo "<td $addstyle>
-                <div id=\"ttuser" . $arr['alliance_id'] . "\" style=\"display:none;\">
-                    " . popUp("Allianzseite", "page=alliance&id=" . $arr['alliance_id']) . "<br/>
-                    " . popUp("Punkteverlauf", "page=$page&amp;mode=$mode&amp;alliancedetail=" . $arr['alliance_id']) . "<br/>";
-                echo "</div><a $addstyle href=\"#\" " . cTT($arr['alliance_name'], "ttuser" . $arr['alliance_id']) . ">
-                " . $arr['alliance_tag'] . "</td>";
-                echo "<td $addstyle>" . nf($arr['bpoints']) . "</td>";
-                echo "<td $addstyle>" . nf($arr['tpoints']) . "</td>";
-                echo "<td $addstyle>" . nf($arr['spoints']) . "</td>";
-                echo "<td $addstyle>" . nf($arr['apoints']) . "</td>";
+                <div id=\"ttuser" . $stats->allianceId . "\" style=\"display:none;\">
+                    " . popUp("Allianzseite", "page=alliance&id=" . $stats->allianceId) . "<br/>
+                    " . popUp("Punkteverlauf", "page=$page&amp;mode=$mode&amp;alliancedetail=" . $stats->allianceId) . "<br/>";
+                echo "</div><a $addstyle href=\"#\" " . cTT($stats->allianceName, "ttuser" . $stats->allianceId) . ">
+                " . $stats->allianceTag . "</td>";
+                echo "<td $addstyle>" . nf($stats->buildingPoints) . "</td>";
+                echo "<td $addstyle>" . nf($stats->technologyPoints) . "</td>";
+                echo "<td $addstyle>" . nf($stats->shipPoints) . "</td>";
+                echo "<td $addstyle>" . nf($stats->alliancePoints) . "</td>";
                 echo "</tr>";
                 $cnt++;
             }

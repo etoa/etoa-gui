@@ -1,11 +1,14 @@
 <?PHP
 
 use EtoA\User\UserRepository;
+use EtoA\User\UserSessionRepository;
 
 echo "<h1>User-Sessionlogs</h1>";
 
 /** @var UserRepository $userRepository */
 $userRepository = $app[UserRepository::class];
+/** @var UserSessionRepository $userSessionRepository */
+$userSessionRepository = $app[UserSessionRepository::class];
 
 if (isset($_POST['logshow']) || (isset($_GET['id']) && $_GET['id'] > 0)) {
     if (isset($_GET['id']) && $_GET['id'] > 0) {
@@ -96,8 +99,8 @@ if (isset($_POST['logshow']) || (isset($_GET['id']) && $_GET['id'] > 0)) {
 
 
     echo "<h2>Session-Log</h2>";
-    $res = dbquery("SELECT COUNT(id) as cnt FROM user_sessionlog;");
-    if (mysql_num_rows($res) > 0) {
+    $logCount = $userSessionRepository->countLogs();
+    if ($logCount > 0) {
         echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"post\">";
         echo "<table class=\"tb\">";
         echo "<tr><th>ID</td><td><input type=\"text\" name=\"user_id\" value=\"\" size=\"20\" maxlength=\"250\" /></td></tr>";
@@ -116,8 +119,7 @@ if (isset($_POST['logshow']) || (isset($_GET['id']) && $_GET['id'] > 0)) {
         echo "</select></td></tr>";
         echo "</table>";
         echo "<br/><input type=\"submit\" name=\"logshow\" value=\"Suche starten\" /></form>";
-        $tblcnt = mysql_fetch_row(dbquery("SELECT count(*) FROM user_sessionlog;"));
-        echo "<br/>Es sind " . nf($tblcnt[0]) . " Eintr&auml;ge in der Datenbank vorhanden.<br/><br/>";
+        echo "<br/>Es sind " . nf($logCount) . " Eintr&auml;ge in der Datenbank vorhanden.<br/><br/>";
     } else
         echo "<i>Keine Eintr&auml;ge vorhanden</i><br/><br/>";
 }
