@@ -1632,3 +1632,8 @@ function flatten(array $array): array
     });
     return $return;
 }
+
+function intOrNull(?string $value): ?int
+{
+    return $value !== null ? (int) $value : null;
+}

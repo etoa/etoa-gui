@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Market\MarketAuctionRepository;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Universe\Planet\PlanetService;
 use EtoA\User\UserSittingRepository;
@@ -828,10 +829,12 @@ class User implements \EtoA\User\UserInterface
             //Buddyliste löschen
             dbquery("DELETE FROM buddylist WHERE bl_user_id='" . $this->id . "' OR bl_buddy_id='" . $this->id . "';");
 
+            /** @var MarketAuctionRepository $marketAuctionRepository */
+            $marketAuctionRepository = $app[MarketAuctionRepository::class];
             //Markt Angebote löschen
             dbquery("DELETE FROM market_ressource WHERE user_id='" . $this->id . "';");     // Rohstoff Angebot
             dbquery("DELETE FROM market_ship WHERE user_id='" . $this->id . "';");                 // Schiff Angebot
-            dbquery("DELETE FROM market_auction WHERE user_id='" . $this->id . "';"); // Auktionen
+            $marketAuctionRepository->deleteUserAuctions($this->id); // Auktionen
 
             //Notitzen löschen
             $np = new Notepad($this->id);

@@ -1,10 +1,13 @@
 <?PHP
 
+use EtoA\Market\MarketAuctionRepository;
 use EtoA\Ship\ShipDataRepository;
 use EtoA\Support\RuntimeDataStore;
 
 /** @var RuntimeDataStore */
 $runtimeDataStore = $app[RuntimeDataStore::class];
+/** @var MarketAuctionRepository $marketAuctionRepository */
+$marketAuctionRepository = $app[MarketAuctionRepository::class];
 
 define("USER_MESSAGE_CAT_ID", 1);
 define("SYS_MESSAGE_CAT_ID", 5);
@@ -132,16 +135,17 @@ if ($sub == "ress") {
 } elseif ($sub == "auction") {
     echo "<h2>Auktionen</h2>";
     if (isset($_GET['auction_delete']) && $_GET['auction_delete'] != "") {
-        dbquery("DELETE FROM market_auction WHERE id=" . $_GET['auction_delete'] . "");
+        $marketAuctionRepository->deleteAuction((int) $_GET['auction_delete']);
         echo MessageBox::ok("", "Auktion gel&ouml;scht");
     }
-    $res = dbquery("SELECT * FROM market_auction ORDER BY date_end ASC;");
-    if (mysql_num_rows($res) > 0) {
+
+    $auctions = $marketAuctionRepository->getAll();
+    if (count($auctions) > 0) {
         /** @var ShipDataRepository $shipRepository */
         $shipRepository = $app[ShipDataRepository::class];
         $shipNames = $shipRepository->getShipNames(true);
 
-        while ($arr = mysql_fetch_array($res)) {
+        foreach ($auctions as $auction) {
             tableStart();
             echo "<tr>
                         <th>Anbieter</td>
@@ -150,7 +154,7 @@ if ($sub == "ress") {
                         <th>Status</td></tr>";
 
             //restliche zeit bis zum ende
-            $rest_time = $arr['date_end'] - time();
+            $rest_time = $auction->dateEnd - time();
 
             $t = floor($rest_time / 3600 / 24);
             $h = floor(($rest_time - ($t * 24 * 3600)) / 3600);
@@ -162,17 +166,17 @@ if ($sub == "ress") {
 
             echo "<tr>
                                 <td rowspan=\"5\">
-                                    <a href=\"?page=user&amp;sub=edit&amp;user_id=" . $arr['user_id'] . "\">" . get_user_nick($arr['user_id']) . "</a>
+                                    <a href=\"?page=user&amp;sub=edit&amp;user_id=" . $auction->userId . "\">" . get_user_nick($auction->userId) . "</a>
                                 </td>
                                 <td>
-                                    Start " . date("d.m.Y  G:i:s", $arr['date_start']) . "
+                                    Start " . date("d.m.Y  G:i:s", $auction->dateStart) . "
                                 </td>";
 
 
             // Sind Schiffe angeboten
-            if ($arr['ship_id'] > 0) {
+            if ($auction->shipId > 0) {
                 echo "<td rowspan=\"5\">
-                                    " . $arr['ship_count'] . " <a href=\"?page=help&site=shipyard&id=" . $arr['ship_id'] . "\">" . $shipNames[$arr['ship_id']] . "</a>
+                                    " . $auction->shipCount . " <a href=\"?page=help&site=shipyard&id=" . $auction->shipId . "\">" . $shipNames[$auction->shipId] . "</a>
                                 </td>";
             } else {
                 echo "<td rowspan=\"5\">Keine Schiffe</td>";
@@ -182,28 +186,28 @@ if ($sub == "ress") {
                                 <b>" . RES_METAL . "</b>:
                             </td>
                             <td>
-                                " . nf($arr['sell_0']) . "
+                                " . nf($auction->sell0) . "
                             </td>";
 
             // Zurückzieh button wenn noch niemand geboten hat
-            if ($arr['current_buyer_id'] == 0) {
-                echo "<td class=\"tbldata\" rowspan=\"5\"><input type=\"button\" onclick=\"if (confirm('Soll diese Auktion wirklich gel&ouml;scht werden?')) document.location='?page=$page&sub=$sub&auction_delete=" . $arr['id'] . "'\" value=\"L&ouml;schen\"/></td></tr>";
-            } elseif ($arr['buyable'] == 0) {
-                echo "<td class=\"tbldata\" rowspan=\"5\">Verkauft!<br><br><input type=\"button\" onclick=\"if (confirm('Soll diese Auktion wirklich gel&ouml;scht werden?')) document.location='?page=$page&sub=$sub&auction_delete=" . $arr['id'] . "'\" value=\"L&ouml;schen\"/></td></tr>";
+            if ($auction->currentBuyerId == 0) {
+                echo "<td class=\"tbldata\" rowspan=\"5\"><input type=\"button\" onclick=\"if (confirm('Soll diese Auktion wirklich gel&ouml;scht werden?')) document.location='?page=$page&sub=$sub&auction_delete=" . $auction->id . "'\" value=\"L&ouml;schen\"/></td></tr>";
+            } elseif ($auction->buyable == 0) {
+                echo "<td class=\"tbldata\" rowspan=\"5\">Verkauft!<br><br><input type=\"button\" onclick=\"if (confirm('Soll diese Auktion wirklich gel&ouml;scht werden?')) document.location='?page=$page&sub=$sub&auction_delete=" . $auction->id . "'\" value=\"L&ouml;schen\"/></td></tr>";
             } else {
-                echo "<td class=\"tbldata\" rowspan=\"5\">Es wurde bereits geboten<br><br><input type=\"button\" onclick=\"if (confirm('Soll diese Auktion wirklich gel&ouml;scht werden?')) document.location='?page=$page&sub=$sub&auction_delete=" . $arr['id'] . "'\" value=\"L&ouml;schen\"/></td></tr>";
+                echo "<td class=\"tbldata\" rowspan=\"5\">Es wurde bereits geboten<br><br><input type=\"button\" onclick=\"if (confirm('Soll diese Auktion wirklich gel&ouml;scht werden?')) document.location='?page=$page&sub=$sub&auction_delete=" . $auction->id . "'\" value=\"L&ouml;schen\"/></td></tr>";
             }
 
             // Start/Ende Anzeigen sofern die auktion nicht schon beendet ist
-            if ($arr['date_end'] > time()) {
+            if ($auction->dateEnd > time()) {
                 echo "<tr>
                                     <td>
-                                        Ende " . date("d.m.Y  G:i:s", $arr['date_end']) . "
+                                        Ende " . date("d.m.Y  G:i:s", $auction->dateEnd) . "
                                     </td>";
             }
             // sonst das löschdatum anzeigen
             else {
-                $delete_rest_time = $arr['date_delete'] - time();
+                $delete_rest_time = $auction->deleted - time();
 
                 $t = floor($delete_rest_time / 3600 / 24);
                 $h = floor(($delete_rest_time) / 3600);
@@ -220,7 +224,7 @@ if ($sub == "ress") {
                                         <b>" . RES_CRYSTAL . "</b>:
                                     </td>
                                     <td>
-                                        " . nf($arr['sell_1']) . "
+                                        " . nf($auction->sell1) . "
                                     </td>
                                 </tr>
                                 <tr>
@@ -231,7 +235,7 @@ if ($sub == "ress") {
                                         <b>" . RES_PLASTIC . "</b>:
                                     </td>
                                     <td>
-                                        " . nf($arr['sell_2']) . "
+                                        " . nf($auction->sell2) . "
                                     </td>
                                 </tr>
                                 <tr>
@@ -239,7 +243,7 @@ if ($sub == "ress") {
                                         <b>" . RES_FUEL . "</b>:
                                     </td>
                                     <td>
-                                        " . nf($arr['sell_3']) . "
+                                        " . nf($auction->sell3) . "
                                     </td>
                                 </tr>
                                 <tr>
@@ -247,12 +251,12 @@ if ($sub == "ress") {
                                         <b>" . RES_FOOD . "</b>:
                                     </td>
                                     <td>
-                                        " . nf($arr['sell_4']) . "
+                                        " . nf($auction->sell4) . "
                                     </td>
                                 </tr>";
 
             //Hochstgebot Anzeigen wenn schon geboten worden ist
-            if ($arr['current_buyer_id'] != 0) {
+            if ($auction->currentBuyerId != 0) {
                 echo "<tr>
                                     <th colspan=\"6\">
                                         H&ouml;chstgebot
@@ -261,16 +265,16 @@ if ($sub == "ress") {
                 //Höchstbietender User anzeigen wenn vorhanden
                 echo "<tr>
                                     <td rowspan=\"5\">
-                                        <a href=\"?page=user&amp;sub=edit&amp;user_id=" . $arr['current_buyer_id'] . "\">" . get_user_nick($arr['current_buyer_id']) . "</a>
+                                        <a href=\"?page=user&amp;sub=edit&amp;user_id=" . $auction->currentBuyerId . "\">" . get_user_nick($auction->currentBuyerId) . "</a>
                                     </td>
                                     <td rowspan=\"5\">
-                                        Geboten " . date("d.m.Y  G:i:s", $arr['current_buyer_date']) . "
+                                        Geboten " . date("d.m.Y  G:i:s", $auction->currentBuyerDate) . "
                                     </td>
                                     <td>
                                         <b>" . RES_METAL . "</b>:
                                     </td>
                                     <td colspan=\"2\">
-                                        " . nf($arr['buy_0']) . "
+                                        " . nf($auction->buy0) . "
                                     </td>
                                     <td rowspan=\"5\">
                                         &nbsp;
@@ -281,7 +285,7 @@ if ($sub == "ress") {
                                         <b>" . RES_CRYSTAL . "</b>:
                                     </td>
                                     <td colspan=\"2\">
-                                        " . nf($arr['buy_1']) . "
+                                        " . nf($auction->buy1) . "
                                     </td>
                                 </tr>
                                 <tr>
@@ -289,7 +293,7 @@ if ($sub == "ress") {
                                         <b>" . RES_PLASTIC . "</b>:
                                     </td>
                                     <td colspan=\"2\">
-                                        " . nf($arr['buy_2']) . "
+                                        " . nf($auction->buy2) . "
                                     </td>
                                 </tr>
                                 <tr>
@@ -297,7 +301,7 @@ if ($sub == "ress") {
                                         <b>" . RES_FUEL . "</b>:
                                     </td>
                                     <td colspan=\"2\">
-                                        " . nf($arr['buy_3']) . "
+                                        " . nf($auction->buy3) . "
                                     </td>
                                 </tr>
                                 <tr>
@@ -305,7 +309,7 @@ if ($sub == "ress") {
                                         <b>" . RES_FOOD . "</b>:
                                     </td>
                                     <td colspan=\"2\">
-                                        " . nf($arr['buy_4']) . "
+                                        " . nf($auction->buy4) . "
                                     </td>
                                 </tr>";
             }

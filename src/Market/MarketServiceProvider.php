@@ -17,6 +17,10 @@ class MarketServiceProvider implements ServiceProviderInterface
             return new MarketRateRepository($pimple['db']);
         };
 
+        $pimple[MarketAuctionRepository::class] = function (Container $pimple): MarketAuctionRepository {
+            return new MarketAuctionRepository($pimple['db']);
+        };
+
         $pimple[MarketHandler::class] = function (Container $pimple): MarketHandler {
             return new MarketHandler(
                 $pimple[MarketRateRepository::class],

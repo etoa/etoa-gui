@@ -1,6 +1,9 @@
 <?php
 
 // Berechnet Endzeit
+use EtoA\Market\MarketAuctionRepository;
+use EtoA\Universe\Resources\BaseResources;
+
 $auction_min_time = AUCTION_MIN_DURATION * 24 * 3600;
 $auction_time_days = $_POST['auction_time_days'];
 $auction_time_hours = $_POST['auction_time_hours'];
@@ -11,6 +14,9 @@ $ok = true;
 $sf = "";
 $sv = "";
 $subtracted = [];
+$currency = new BaseResources();
+$sell = new BaseResources();
+
 foreach ($resNames as $rk => $rn) {
     // Convert formatted number back to integer
     $_POST['auction_sell_' . $rk] = nf_back($_POST['auction_sell_' . $rk]);
@@ -24,12 +30,8 @@ foreach ($resNames as $rk => $rn) {
     // Save resource to be subtracted from the planet
     $subtracted[$rk] = $_POST['auction_sell_' . $rk] * MARKET_TAX;
 
-    // Build query
-    $sf .= ",sell_" . $rk;
-    $sv .= ",'" . $_POST['auction_sell_' . $rk] . "'";
-
-    $sf .= ",currency_" . $rk;
-    $sv .= ",'" . (isset($_POST['auction_buy_' . $rk]) ? intval($_POST['auction_buy_' . $rk]) : '') . "'";
+    $sell->set($rk, (int) $_POST['auction_sell_' . $rk]);
+    $currency->set($rk, $_POST['auction_buy_' . $rk] ?? 0);
 
     // Report data
     if ($_POST['auction_sell_' . $rk] > 0)
@@ -47,26 +49,9 @@ if ($ok && $cp->checkRes($subtracted)) {
     $cp->subRes($subtracted);
 
     // Angebot speichern
-    dbquery("
-        INSERT INTO
-            market_auction
-            (
-            user_id,
-            entity_id,
-            date_start,
-            date_end,
-            text
-            " . $sf . ",
-            buyable)
-        VALUES
-            ('" . $cu->id . "',
-            '" . $cp->id() . "',
-            '" . time() . "',
-            '" . $auction_end_time . "',
-            '" . mysql_real_escape_string($_POST['auction_text']) . "'
-            " . $sv . ",
-            '1')");
-
+    /** @var MarketAuctionRepository $marketAuctionRepository */
+    $marketAuctionRepository = $app[MarketAuctionRepository::class];
+    $marketAuctionRepository->add($cu->getId(), $cp->id(), $auction_end_time, $_POST['auction_text'], $sell, $currency);
 
     //Nachricht senden
     MarketReport::addMarketReport(array(
