@@ -42,18 +42,23 @@ class BaseResources
         switch ($index) {
             case 0:
                 $this->metal = $value;
+
                 break;
             case 1:
                 $this->crystal = $value;
+
                 break;
             case 2:
                 $this->plastic = $value;
+
                 break;
             case 3:
                 $this->fuel = $value;
+
                 break;
             case 4:
                 $this->food = $value;
+
                 break;
             default:
                 throw new Exception('Invalid resource index ' . $index);
@@ -67,5 +72,10 @@ class BaseResources
         $this->plastic += $resources->plastic;
         $this->fuel += $resources->fuel;
         $this->food += $resources->food;
+    }
+
+    public function getSum(): int
+    {
+        return $this->metal + $this->crystal + $this->plastic + $this->fuel + $this->food;
     }
 }

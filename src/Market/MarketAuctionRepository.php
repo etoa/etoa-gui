@@ -88,7 +88,6 @@ class MarketAuctionRepository extends AbstractRepository
         $qb
             ->setParameters($parameters)
             ->execute();
-
     }
 
     /**

@@ -1,6 +1,8 @@
 <?PHP
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Market\MarketResourceRepository as MarketResourceRepositoryAlias;
+use EtoA\Universe\Resources\BaseResources;
 
 $xajax->register(XAJAX_FUNCTION, "showNumberField");
 $xajax->register(XAJAX_FUNCTION, "createPlayers");
@@ -161,34 +163,24 @@ function createValues($form, $nr)
 
 function splitDebris($formValues, $formPlayers)
 {
+    global $app;
 
     $players = (sizeof($formValues) - 1) / 3;
     $response = new xajaxResponse();
+
+    /** @var MarketResourceRepositoryAlias $marketResourceRepository */
+    $marketResourceRepository = $app[MarketResourceRepositoryAlias::class];
 
     for ($fields = 1; $fields <= $players; $fields++) {
         $entity = Entity::createFactoryByCoords($formPlayers['search_cell_s1' . $fields], $formPlayers['search_cell_s2' . $fields], $formPlayers['search_cell_c1' . $fields], $formPlayers['search_cell_c2' . $fields], $formPlayers['search_cell_pos' . $fields]);
         if ($entity && $entity->userId) {
             if ($fields == 1) {
-                $sql = "
-                    INSERT INTO
-                    market_ressource
-                            (
-                            entity_id,
-                            buy_0,
-                            buy_1,
-                            buy_2,
-                            for_user,
-                            `text`,
-                            datum)
-                    VALUES (
-                        299,
-                        " . (intval($formPlayers['total_tit']) - intval($formValues['tit' . $fields])) . ",
-                        " . (intval($formPlayers['total_sili']) - intval($formValues['sili' . $fields])) . ",
-                        " . (intval($formPlayers['total_pvc']) - intval($formValues['pvc' . $fields])) . ",
-                        " . $entity->userId . ",
-                        'Trümmerfeld',
-                        " . time() . "
-                    );";
+                $resource = new BaseResources();
+                $resource->metal = (intval($formPlayers['total_tit']) - intval($formValues['tit' . $fields]));
+                $resource->crystal = (intval($formPlayers['total_sili']) - intval($formValues['sili' . $fields]));
+                $resource->plastic = (intval($formPlayers['total_pvc']) - intval($formValues['pvc' . $fields]));
+
+                $marketResourceRepository->add(0, 299, (int) $entity->userId, 0, 'Trümmerfeld', new BaseResources(), $resource);
                 $logs = "
                     INSERT INTO
                     logs_debris
@@ -208,26 +200,13 @@ function splitDebris($formValues, $formPlayers)
                         " . (-1 * (intval($formPlayers['total_pvc']) - intval($formValues['pvc' . $fields]))) . "
                     )";
             } else {
-                $sql = "
-                    INSERT INTO
-                    market_ressource
-                            (
-                            entity_id,
-                            sell_0,
-                            sell_1,
-                            sell_2,
-                            for_user,
-                            `text`,
-                            datum)
-                    VALUES (
-                        299,
-                        " . $formValues['tit' . $fields] . ",
-                        " . $formValues['sili' . $fields] . ",
-                        " . $formValues['pvc' . $fields] . ",
-                        " . $entity->userId . ",
-                        'Trümmerfeld',
-                        " . time() . "
-                    );";
+                $resource = new BaseResources();
+                $resource->metal = (int) $formValues['tit' . $fields];
+                $resource->crystal = (int) $formValues['sili' . $fields];
+                $resource->plastic = (int) $formValues['pvc' . $fields];
+
+                $marketResourceRepository->add(0, 299, (int) $entity->userId, 0, 'Trümmerfeld', new BaseResources(), $resource);
+
                 $logs = "
                     INSERT INTO
                     logs_debris
@@ -247,7 +226,7 @@ function splitDebris($formValues, $formPlayers)
                          " . $formValues['pvc' . $fields] . "
                     )";
             }
-            dbquery($sql);
+
             dbquery($logs);
 
             $response->assign("tfContent", "innerHTML", "Trümmerfeld aufgeteilt!");

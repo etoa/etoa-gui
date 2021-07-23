@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\Market\MarketAuctionRepository;
+use EtoA\Market\MarketResourceRepository;
 use EtoA\Ship\ShipDataRepository;
 use EtoA\Support\RuntimeDataStore;
 
@@ -8,6 +9,8 @@ use EtoA\Support\RuntimeDataStore;
 $runtimeDataStore = $app[RuntimeDataStore::class];
 /** @var MarketAuctionRepository $marketAuctionRepository */
 $marketAuctionRepository = $app[MarketAuctionRepository::class];
+/** @var MarketResourceRepository $marketResourceRepository */
+$marketResourceRepository = $app[MarketResourceRepository::class];
 
 define("USER_MESSAGE_CAT_ID", 1);
 define("SYS_MESSAGE_CAT_ID", 5);
@@ -17,26 +20,27 @@ echo "<h1>Marktplatz</h1>";
 if ($sub == "ress") {
     echo "<h2>Rohstoffe</h2>";
     if (isset($_GET['ressource_delete']) && $_GET['ressource_delete'] > 0) {
-        dbquery("DELETE FROM market_ressource WHERE id=" . $_GET['ressource_delete'] . "");
+        $marketResourceRepository->delete((int) $_GET['ressource_delete']);
         echo MessageBox::ok("", "Angebot gel&ouml;scht!");
     }
-    $res = dbquery("SELECT * FROM market_ressource ORDER BY datum ASC");
-    if (mysql_num_rows($res) > 0) {
-        while ($arr = mysql_fetch_array($res)) {
-            $username = get_user_nick($arr['user_id']);
+
+    $offers = $marketResourceRepository->getAll();
+    if (count($offers) > 0) {
+        foreach ($offers as $offer) {
+            $username = get_user_nick($offer->userId);
             echo "<table class=\"tb\">";
             echo "<tr>
                         <th width=\"100\">
                             Datum:
                         </th>
                         <td colspan=\"2\" width=\"200\">
-                            " . date("d.m.Y - H:i:s", $arr['datum']) . "
+                            " . date("d.m.Y - H:i:s", $offer->date) . "
                         </td>
                         <th width=\"100\">
                             Spieler:
                         </th>
                         <td width=\"100\">
-                            <a href=\"?page=user&amp;sub=edit&amp;user_id=" . $arr['user_id'] . "\">" . $username . "</a></td><td class=\"tbltitle\"><input type=\"button\" onclick=\"if (confirm('Soll dieses Angebot wirklich gel&ouml;scht werden?')) document.location='?page=$page&sub=$sub&ressource_delete=" . $arr['id'] . "'\" value=\"L&ouml;schen\"/>
+                            <a href=\"?page=user&amp;sub=edit&amp;user_id=" . $offer->userId . "\">" . $username . "</a></td><td class=\"tbltitle\"><input type=\"button\" onclick=\"if (confirm('Soll dieses Angebot wirklich gel&ouml;scht werden?')) document.location='?page=$page&sub=$sub&ressource_delete=" . $offer->id . "'\" value=\"L&ouml;schen\"/>
                         </td>
                     </tr>
                     <tr>
@@ -44,11 +48,13 @@ if ($sub == "ress") {
                             Angebot:
                         </th>";
             $first = true;
+            $sellResources = $offer->getSellResources();
+            $buyResources = $offer->getBuyResources();
             foreach ($resNames as $k => $v) {
                 if (!$first) echo "<tr>";
                 echo "	<td width=\"110\">" . $v . "</td>
                                     <td width=\"100\">
-                                        " . nf($arr['sell_' . $k . '']) . "
+                                        " . nf($sellResources->get($k)) . "
                                     </td>";
                 if ($first) {
                     echo "<th rowspan=\"5\">Preis:</th>";
@@ -56,7 +62,7 @@ if ($sub == "ress") {
                 }
                 echo    "<td width=\"110\">" . $v . "</td>
                                     <td width=\"100\">
-                                        " . nf($arr['buy_' . $k . '']) . "
+                                        " . nf($buyResources->get($k)) . "
                                     </td>
                                 </tr>";
             }

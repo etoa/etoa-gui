@@ -61,9 +61,12 @@ class EntityService
         return $str;
     }
 
-    public function distance(Entity $start, Entity $end): float
+    public function distance(?Entity $start, ?Entity $end): float
     {
-        return $this->distanceByCoords($start->getCoordinates(), $end->getCoordinates());
+        $startCoordinates = $start !== null ? $start->getCoordinates() : new EntityCoordinates(0, 0, 0, 0, 0);
+        $endCoordinates = $end !== null ? $end->getCoordinates() : new EntityCoordinates(0, 0, 0, 0, 0);
+
+        return $this->distanceByCoords($startCoordinates, $endCoordinates);
     }
 
     public function distanceByCoords(EntityCoordinates $start, EntityCoordinates $end): float

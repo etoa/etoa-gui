@@ -1,10 +1,13 @@
 <?PHP
 
 use EtoA\Market\MarketAuctionRepository;
+use EtoA\Market\MarketResource;
+use EtoA\Market\MarketResourceRepository as MarketResourceRepositoryAlias;
 use EtoA\Ship\ShipDataRepository;
 use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Entity\EntityService;
 use EtoA\Universe\Planet\PlanetRepository;
+use EtoA\Universe\Resources\BaseResources;
 use EtoA\User\UserRepository;
 
 $xajax->register(XAJAX_FUNCTION, 'calcMarketRessPrice');
@@ -28,24 +31,22 @@ function marketSearch($form, $order = "distance", $orderDirection = 0)
     $entityRepository = $app[EntityRepository::class];
     /** @var EntityService $entityService */
     $entityService = $app[EntityService::class];
+    /** @var MarketResourceRepositoryAlias $marketResourceRepository */
+    $marketResourceRepository = $app[MarketResourceRepositoryAlias::class];
 
     //
     // Resources
     // <editor-fold>
     if ($form['search_cat'] == "resources") {
         // Build resource type filter query
-        $sfilter = "";
-        $dfilter = "";
+        $sellFilter = new BaseResources();
+        $buyFilter = new BaseResources();
         foreach ($resNames as $rk => $rv) {
             if (isset($form['market_search_filter_supply_' . $rk]) && $form['market_search_filter_supply_' . $rk] == 1) {
-                if ($sfilter != "")
-                    $sfilter .= " OR ";
-                $sfilter .= " sell_" . $rk . ">0 ";
+                $sellFilter->set($rk, 1);
             }
             if (isset($form['market_search_filter_demand_' . $rk]) && $form['market_search_filter_demand_' . $rk] == 1) {
-                if ($dfilter != "")
-                    $dfilter .= " OR ";
-                $dfilter .= " buy_" . $rk . ">0 ";
+                $buyFilter->set($rk, 1);
             }
         }
 
@@ -54,62 +55,48 @@ function marketSearch($form, $order = "distance", $orderDirection = 0)
             $te = Entity::createFactoryById($_SESSION['cpid']);
         }
 
-        $sql = "
-        SELECT
-            *
-        FROM
-            market_ressource
-        WHERE
-            buyable='1'
-            AND (
-            " . ($sfilter != "" ? $sfilter : 0) . "
-            OR user_id = 0
-            )
-            AND (
-            " . ($dfilter != "" ? $dfilter : 0) . "
-            OR user_id = 0
-            )
-            AND user_id!='" . $_SESSION['user_id'] . "'
-            AND (for_user='" . $_SESSION['user_id'] . "' OR for_user='0')
-            AND (for_alliance='" . $_SESSION['alliance_id'] . "' OR for_alliance='0')
-            ;";
+        $offers = $marketResourceRepository->getBuyableOffers((int) $_SESSION['user_id'], (int) $_SESSION['alliance_id'], $sellFilter, $buyFilter, $resNames);
 
-        $res = dbquery($sql);
-
-        $nr = mysql_num_rows($res);
+        $nr = count($offers);
+        /** @var array<array{offer: MarketResource, sell_total: int, buy_total: int, used_res: int, distance: float, duration: float}> $data */
+        $data = [];
         if ($nr > 0) {
             $currentEntity = $entityRepository->getEntity($_SESSION['cpid']);
             $tradeShip = new Ship(MARKET_SHIP_ID);
             $specialist = new Specialist(0, 0, $_SESSION['user_id']);
 
-            $data = array();
             $i = 0;
-            while ($arr = mysql_fetch_assoc($res)) {
+            foreach ($offers as $offer) {
                 $show = true;
+                $buyResources = $offer->getBuyResources();
+                $sellResources = $offer->getSellResources();
                 if (isset($te)) {
                     foreach ($resNames as $rk => $rn) {
-                        if ($te->resources[$rk] < $arr['buy_' . $rk]) {
+                        if ($te->resources[$rk] < $buyResources->get($rk)) {
                             $show = false;
                             break;
                         }
                     }
                 }
+
                 if ($show) {
-                    $data[$i] = array();
-                    $data[$i] = $arr;
-                    $data[$i]['sell_total'] = 0;
-                    $data[$i]['buy_total'] = 0;
-                    $data[$i]['used_res'] = 0;
+                    $sellerEntity = $entityRepository->getEntity($offer->entityId);
+                    $dist = $entityService->distance($sellerEntity, $currentEntity);
+
+                    $data[$i] = [
+                        'offer' => $offer,
+                        'sell_total' => $sellResources->getSum(),
+                        'buy_total' => $buyResources->getSum(),
+                        'used_res' => 0,
+                        'distance' => $dist,
+                        'duration' => ceil($dist / ($tradeShip->speed * $specialist->tradeTime) * 3600 + $tradeShip->time2start + $tradeShip->time2land),
+                    ];
+
                     foreach ($resNames as $rk => $rn) {
-                        $data[$i]['sell_total'] += $arr['sell_' . $rk];
-                        $data[$i]['buy_total'] += $arr['buy_' . $rk];
-                        if ((int) $arr['sell_' . $rk] + (int) $arr['buy_' . $rk] > 0)
+                        if ($sellResources->get($rk) > 0 || $buyResources->get($rk) > 0)
                             $data[$i]['used_res']++;
                     }
-                    $sellerEntity = $entityRepository->getEntity((int) $arr['entity_id']);
-                    $dist = $entityService->distance($sellerEntity, $currentEntity);
-                    $data[$i]['distance'] = $dist;
-                    $data[$i]['duration'] = ceil($dist / ($tradeShip->speed * $specialist->tradeTime) * 3600 + $tradeShip->time2start + $tradeShip->time2land);
+
                     $i++;
                 }
             }
@@ -128,24 +115,12 @@ function marketSearch($form, $order = "distance", $orderDirection = 0)
                 array_multisort($sort, $sortOrder, $data);
             }
 
-
-            $cres = dbquery("
-            SELECT
-                COUNT(id)
-            FROM
-                market_ressource
-            WHERE
-                buyable=1
-                AND user_id!='" . $_SESSION['user_id'] . "'
-                AND (for_user='" . $_SESSION['user_id'] . "' OR for_user='0')
-                AND (for_alliance='" . $_SESSION['alliance_id'] . "' OR for_alliance='0')
-            ;");
-            $carr = mysql_fetch_row($cres);
+            $carr = $marketResourceRepository->countBuyableOffers((int) $_SESSION['user_id'], (int) $_SESSION['alliance_id']);
             echo "<form action=\"?page=market&amp;mode=ressource\" method=\"post\" id=\"ress_buy_selector\">\n";
             checker_init();
             tableStart();
             echo "<thead><tr>
-                <th class=\"infoboxtitle\" colspan=\"20\">Rohstoffangebote ($offerCount von " . $carr[0] . ")
+                <th class=\"infoboxtitle\" colspan=\"20\">Rohstoffangebote ($offerCount von " . $carr . ")
                     <span id=\"market_search_loading\"><img src=\"images/loading.gif\" alt=\"loading\" /></span>
                 </th></tr>";
             echo "<tr>
@@ -164,36 +139,38 @@ function marketSearch($form, $order = "distance", $orderDirection = 0)
                 // Reservation
                 $reservation = "";
                 $class = "";
-                if ($arr['for_user'] != 0) {
+                if ($arr['offer']->forUserId !== 0) {
                     $class = "top";
                     $reservation = "<span class=\"userAllianceMemberColor\">F&uuml;r dich reserviert</span>";
-                } elseif ($arr['for_alliance'] != 0) {
+                } elseif ($arr['offer']->forAllianceId !== 0) {
                     $class = "top";
                     $reservation = "<span class=\"userAllianceMemberColor\">F&uuml;r Allianzmitglied reserviert</span>";
                 }
 
                 $cres = $arr['used_res'];
 
+                $buyResources = $arr['offer']->getBuyResources();
+                $sellResources = $arr['offer']->getSellResources();
                 echo '<tbody class="offer">';
                 foreach ($resNames as $rk => $rn) {
-                    if ((int) $arr['sell_' . $rk] + (int) $arr['buy_' . $rk] > 0) {
+                    if ($sellResources->get($rk) > 0 || $buyResources->get($rk) > 0) {
                         echo "<tr>
                                         <td class=\"rescolor" . $rk . " rname\">" . $resIcons[$rk] . "<b>" . $rn . "</b>:</td>
-                                        <td class=\"rescolor" . $rk . " rsupp\">" . ($arr['sell_' . $rk] > 0 ? nf($arr['sell_' . $rk]) : '-') . "</td>
-                                        <td class=\"rescolor" . $rk . " rdema\">" . ($arr['buy_' . $rk] > 0 ? nf($arr['buy_' . $rk]) : '-') . "</td>";
+                                        <td class=\"rescolor" . $rk . " rsupp\">" . ($sellResources->get($rk) > 0 ? nf($sellResources->get($rk)) : '-') . "</td>
+                                        <td class=\"rescolor" . $rk . " rdema\">" . ($buyResources->get($rk) > 0 ? nf($buyResources->get($rk)) : '-') . "</td>";
                         if ($i == 0) {
 
                             echo "<td rowspan=\"" . $cres . "\" class=\"usrinfo\">
-                                                <a href=\"?page=userinfo&amp;id=" . $arr['user_id'] . "\">" . get_user_nick($arr['user_id']) . "</a></td>";
+                                                <a href=\"?page=userinfo&amp;id=" . $arr['offer']->userId . "\">" . get_user_nick($arr['offer']->userId) . "</a></td>";
                             echo "<td rowspan=\"" . $cres . "\" class=\"duration\">
                                                 " . tf($arr['duration']) . "
                                                 </td>
                                                 <td rowspan=\"" . $cres . "\">
                                                     " . $reservation . "<br />
-                                                    <span class='rtext " . $class . "'  >" . stripslashes($arr['text']) . "</span>
+                                                    <span class='rtext " . $class . "'  >" . stripslashes($arr['offer']->text) . "</span>
                                                 </td>
                                                 <td rowspan=\"" . $cres . "\">
-                                                    <input type=\"checkbox\" name=\"ressource_market_id[]\" id=\"ressource_market_id\" value=\"" . $arr['id'] . "\" /><br/><br/>
+                                                    <input type=\"checkbox\" name=\"ressource_market_id[]\" id=\"ressource_market_id\" value=\"" . $arr['offer']->id . "\" /><br/><br/>
                                                 </td>";
                         }
                         echo "</tr>";
@@ -407,11 +384,11 @@ function marketSearch($form, $order = "distance", $orderDirection = 0)
                         <td>" . $auction->bidCount . "</td>
                         <td>";
                 $currencyResources = $auction->getCurrencyResources();
-                $buyResources = $auction->getBuyResources();
+                $buyFilter = $auction->getBuyResources();
                 foreach ($resNames as $rk => $rn) {
                     if ($currencyResources->get($rk) > 0) {
                         echo "<span class=\"rescolor" . $rk . "\">";
-                        echo $resIcons[$rk] . $rn . ": " . nf($buyResources->get($rk));
+                        echo $resIcons[$rk] . $rn . ": " . nf($buyFilter->get($rk));
                         echo "</span><br style=\"clear:both;\" />";
                     }
                 }
