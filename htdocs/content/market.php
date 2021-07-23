@@ -2,6 +2,7 @@
 
 use EtoA\Building\BuildingRepository;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Market\MarketRepository;
 use EtoA\UI\ResourceBoxDrawer;
 use EtoA\Universe\Planet\PlanetRepository;
 
@@ -68,43 +69,10 @@ if ($config->getBoolean('market_enabled')) {
             require("content/market/js.php");
 
             // Läd die Anzahl aller eingestellter Angebote auf dem aktuellen Planeten
-            $cnt_res = dbquery("
-                SELECT
-                    (
-                        SELECT
-                            COUNT(*)
-                        FROM
-                            market_ressource
-                        WHERE
-                            user_id='" . $cu->id . "'
-                            AND entity_id='" . $planet->id . "'
-                            AND buyer_entity_id=0
-                    ) AS ress_cnt,
-                    (
-                        SELECT
-                            COUNT(*)
-                        FROM
-                            market_ship
-                        WHERE
-                            user_id='" . $cu->id . "'
-                            AND entity_id='" . $planet->id . "'
-                            AND buyer_entity_id=0
-                    ) AS ship_cnt,
-                    (
-                        SELECT
-                            COUNT(*)
-                        FROM
-                            market_auction
-                        WHERE
-                            user_id='" . $cu->id . "'
-                            AND entity_id='" . $planet->id . "'
-                    ) AS auction_cnt
-                    ;");
+            /** @var MarketRepository $marketRepository */
+            $marketRepository = $app[MarketRepository::class];
+            $anzahl = $marketRepository->getOfferCountOnCurrentEntity($cu->getId(), $planet->id);
 
-            $cnt_arr = mysql_fetch_assoc($cnt_res);
-
-            // Summiert die eingestellten Angebote und berechnet die Anzahl der noch einstellbaren Angebote
-            $anzahl = $cnt_arr['ress_cnt'] + $cnt_arr['ship_cnt'] + $cnt_arr['auction_cnt'];
             $possible = $market->currentLevel - $anzahl;
 
             // Lädt Stufe des Allianzmarktplatzes
