@@ -3,6 +3,7 @@
 use EtoA\Market\MarketAuctionRepository;
 use EtoA\Market\MarketResource;
 use EtoA\Market\MarketResourceRepository as MarketResourceRepositoryAlias;
+use EtoA\Market\MarketShipRepository;
 use EtoA\Ship\ShipDataRepository;
 use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Entity\EntityService;
@@ -224,24 +225,21 @@ function marketSearch($form, $order = "distance", $orderDirection = 0)
             $te = Entity::createFactoryById($_SESSION['cpid']);
         }
 
-        $res = dbquery("
-            SELECT
-                *
-            FROM
-                market_ship
-            WHERE
-                buyable='1'
-            AND user_id!='" . $_SESSION['user_id'] . "'
-            AND (for_user='" . $_SESSION['user_id'] . "' OR for_user='0')
-            AND (for_alliance='" . $_SESSION['alliance_id'] . "' OR for_alliance='0')
-            ;");
+        /** @var MarketShipRepository $marketShipRepository */
+        $marketShipRepository = $app[MarketShipRepository::class];
+        $offers = $marketShipRepository->getBuyableOffers((int) $_SESSION['user_id'], (int) $_SESSION['alliance_id']);
         $cnt = 0;
-        if (mysql_num_rows($res) > 0) {
-            while ($arr = mysql_fetch_array($res)) {
+        if (count($offers) > 0) {
+            /** @var ShipDataRepository $shipRepository */
+            $shipRepository = $app[ShipDataRepository::class];
+            $shipNames = $shipRepository->getShipNames(true);
+
+            foreach ($offers as $offer) {
                 $show = true;
+                $costs = $offer->getCosts();
                 if (isset($te)) {
                     foreach ($resNames as $rk => $rn) {
-                        if ($te->resources[$rk] < $arr['costs_' . $rk]) {
+                        if ($te->resources[$rk] < $costs->get($rk)) {
                             $show = false;
                             break;
                         }
@@ -263,10 +261,10 @@ function marketSearch($form, $order = "distance", $orderDirection = 0)
 
                     $reservation = "";
                     $class = "";
-                    if ($arr['for_user'] != 0) {
+                    if ($offer->forUserId !== 0) {
                         $class = "top";
                         $reservation = "<span class=\"userAllianceMemberColor\">F&uuml;r dich reserviert</span>";
-                    } elseif ($arr['for_alliance'] != 0) {
+                    } elseif ($offer->forAllianceId !== 0) {
                         $class = "top";
                         $reservation = "<span class=\"userAllianceMemberColor\">F&uuml;r Allianzmitglied reserviert</span>";
                     }
@@ -274,24 +272,20 @@ function marketSearch($form, $order = "distance", $orderDirection = 0)
                     $i = 0;
                     $resCnt = count($resNames);
 
-                    /** @var ShipDataRepository $shipRepository */
-                    $shipRepository = $app[ShipDataRepository::class];
-                    $shipNames = $shipRepository->getShipNames(true);
-
                     echo '<tbody class="offer">';
                     foreach ($resNames as $rk => $rn) {
                         echo "<tr>";
                         if ($i == 0) {
-                            echo "<td rowspan=\"$resCnt\">" . $arr['count'] . " <a href=\"?page=help&site=shipyard&id=" . $arr['ship_id'] . "\">" . $shipNames[$arr['ship_id']] . "</a></td>";
+                            echo "<td rowspan=\"$resCnt\">" . $offer->count . " <a href=\"?page=help&site=shipyard&id=" . $offer->shipId . "\">" . $shipNames[$offer->shipId] . "</a></td>";
                         }
                         echo "<td class=\"rescolor" . $rk . " rname\">" . $resIcons[$rk] . "<b>" . $rn . "</b>:</td>
-                            <td class=\"rescolor" . $rk . " rdema\">" . nf($arr['costs_' . $rk]) . "</td>";
+                            <td class=\"rescolor" . $rk . " rdema\">" . nf($costs->get($rk)) . "</td>";
                         if ($i++ == 0) {
-                            $tu = new User($arr['user_id']);
+                            $tu = new User($offer->userId);
                             echo "<td rowspan=\"$resCnt\" class=\"usrinfo\">" . $tu->detailLink() . "</td>";
-                            echo "<td rowspan=\"$resCnt\">" . $reservation . "<br /><span class='rtext " . $class . "'  >" . stripslashes($arr['text']) . "</span></td>";
+                            echo "<td rowspan=\"$resCnt\">" . $reservation . "<br /><span class='rtext " . $class . "'  >" . stripslashes($offer->text) . "</span></td>";
                             echo "<td rowspan=\"$resCnt\">
-                                    <input type=\"checkbox\" name=\"ship_market_id[]\" id=\"ship_market_id_" . $arr['id'] . "\" value=\"" . $arr['id'] . "\" onclick=\"xajax_calcMarketShipBuy(xajax.getFormValues('ship_buy_selector'));\" />
+                                    <input type=\"checkbox\" name=\"ship_market_id[]\" id=\"ship_market_id_" . $offer->id . "\" value=\"" . $offer->id . "\" onclick=\"xajax_calcMarketShipBuy(xajax.getFormValues('ship_buy_selector'));\" />
                                 </td>";
                         }
                         echo "</tr>";
@@ -299,7 +293,7 @@ function marketSearch($form, $order = "distance", $orderDirection = 0)
                     echo '</tbody>';
 
                     $cnt++;
-                    if ($cnt < mysql_num_rows($res))
+                    if ($cnt < count($offers))
                         echo "<tr><td colspan=\"6\" style=\"height:10px;background:#000\"></td></tr>";
                 }
             }
@@ -1539,11 +1533,11 @@ function calcMarketShipBuy($val)
             $cnt++;
 
             // Summiert Rohstoffe
-            $ship_metal_total_costs += $val['ship_buy_metal'][$id];
-            $ship_crystal_total_costs += $val['ship_buy_crystal'][$id];
-            $ship_plastic_total_costs += $val['ship_buy_plastic'][$id];
-            $ship_fuel_total_costs += $val['ship_buy_fuel'][$id];
-            $ship_food_total_costs += $val['ship_buy_food'][$id];
+            $ship_metal_total_costs += $val['ship_buy_metal'][$id] ?? 0;
+            $ship_crystal_total_costs += $val['ship_buy_crystal'][$id] ?? 0;
+            $ship_plastic_total_costs += $val['ship_buy_plastic'][$id] ?? 0;
+            $ship_fuel_total_costs += $val['ship_buy_fuel'][$id] ?? 0;
+            $ship_food_total_costs += $val['ship_buy_food'][$id] ?? 0;
         }
     }
 
@@ -1562,11 +1556,11 @@ function calcMarketShipBuy($val)
     }
     // Prüft, ob genug Rohstoffe vorhanden sind
     elseif (
-        $val['res_metal'] < $ship_metal_total_costs
-        || $val['res_crystal'] < $ship_crystal_total_costs
-        || $val['res_plastic'] < $ship_plastic_total_costs
-        || $val['res_fuel'] < $ship_fuel_total_costs
-        || $val['res_food'] < $ship_food_total_costs
+        ($val['res_metal'] ?? 0) < $ship_metal_total_costs
+        || ($val['res_crystal'] ?? 0) < $ship_crystal_total_costs
+        || ($val['res_plastic'] ?? 0) < $ship_plastic_total_costs
+        || ($val['res_fuel'] ?? 0) < $ship_fuel_total_costs
+        || ($val['res_food'] ?? 0) < $ship_food_total_costs
     ) {
         $out_ship_buy_check_message = "<div style=\"color:red;font-weight:bold;\">Es sind zu wenig Rohstoffe vorhanden!</div>";
 

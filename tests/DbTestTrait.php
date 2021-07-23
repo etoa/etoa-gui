@@ -48,5 +48,6 @@ trait DbTestTrait
         $this->connection->executeQuery('DELETE FROM market_rates');
         $this->connection->executeQuery('DELETE FROM market_auction');
         $this->connection->executeQuery('DELETE FROM market_ressource');
+        $this->connection->executeQuery('DELETE FROM market_ship');
     }
 }

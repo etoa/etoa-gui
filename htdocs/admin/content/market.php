@@ -2,6 +2,7 @@
 
 use EtoA\Market\MarketAuctionRepository;
 use EtoA\Market\MarketResourceRepository;
+use EtoA\Market\MarketShipRepository;
 use EtoA\Ship\ShipDataRepository;
 use EtoA\Support\RuntimeDataStore;
 
@@ -11,6 +12,8 @@ $runtimeDataStore = $app[RuntimeDataStore::class];
 $marketAuctionRepository = $app[MarketAuctionRepository::class];
 /** @var MarketResourceRepository $marketResourceRepository */
 $marketResourceRepository = $app[MarketResourceRepository::class];
+/** @var MarketShipRepository $marketShipRepository */
+$marketShipRepository = $app[MarketShipRepository::class];
 
 define("USER_MESSAGE_CAT_ID", 1);
 define("SYS_MESSAGE_CAT_ID", 5);
@@ -74,34 +77,36 @@ if ($sub == "ress") {
 } elseif ($sub == "ships") {
     echo "<h2>Schiffe</h2>";
     if (isset($_GET['ship_delete']) && $_GET['ship_delete'] != "") {
-        dbquery("DELETE FROM market_ship WHERE id=" . $_GET['ship_delete'] . "");
+        $marketShipRepository->delete((int) $_GET['ship_delete']);
         echo MessageBox::ok("", "Angebot gel&ouml;scht");
     }
-    $res = dbquery("SELECT * FROM market_ship ORDER BY datum DESC;");
-    if (mysql_num_rows($res) > 0) {
+
+    $offers = $marketShipRepository->getAll();
+    if (count($offers) > 0) {
         /** @var ShipDataRepository $shipRepository */
         $shipRepository = $app[ShipDataRepository::class];
         $shipNames = $shipRepository->getShipNames(true);
-        while ($arr = mysql_fetch_array($res)) {
-            $username = get_user_nick($arr['user_id']);
+
+        foreach ($offers as $offer) {
+            $username = get_user_nick($offer->userId);
             echo "<form action=\"?page=$page&sub=$sub\" method=\"POST\">\n";
-            echo "<input type=\"hidden\" name=\"ship_market_id\" value=\"" . $arr['id'] . "\">";
+            echo "<input type=\"hidden\" name=\"ship_market_id\" value=\"" . $offer->id . "\">";
             echo "<table class=\"tb\">
                         <tr>
                             <th width=\"100\">
                                 Datum:
                             </th>
                             <td colspan=\"2\" width=\"200\">
-                                " . date("d.m.Y - H:i:s", $arr['datum']) . "
+                                " . date("d.m.Y - H:i:s", $offer->date) . "
                             </td>
                             <th width=\"100\">
                                 Spieler:
                             </th>
                             <td width=\"100\">
-                                <a href=\"?page=user&amp;sub=edit&amp;user_id=" . $arr['user_id'] . "\">" . $username . "</a>
+                                <a href=\"?page=user&amp;sub=edit&amp;user_id=" . $offer->userId . "\">" . $username . "</a>
                             </td>
                             <td rowspan=\"4\">
-                                <input type=\"button\" onclick=\"if (confirm('Soll dieses Angebot wirklich gel&ouml;scht werden?')) document.location='?page=$page&sub=$sub&ship_delete=" . $arr['id'] . "'\" value=\"L&ouml;schen\"/>
+                                <input type=\"button\" onclick=\"if (confirm('Soll dieses Angebot wirklich gel&ouml;scht werden?')) document.location='?page=$page&sub=$sub&ship_delete=" . $offer->id . "'\" value=\"L&ouml;schen\"/>
                             </td>
                         </tr>
                         <tr>
@@ -109,13 +114,13 @@ if ($sub == "ress") {
                                 Schiffname:
                             </th>
                             <td colspan=\"2\" width=\"200\">
-                                " . $shipNames[$arr['ship_id']] . "
+                                " . $shipNames[$offer->shipId] . "
                             </td>
                             <th width=\"100\">
                                 Anzahl:
                             </td>
                             <td width=\"100\">
-                                " . $arr['count'] . "
+                                " . $offer->count . "
                             </td>
                         </tr>
                         <tr>";
@@ -126,9 +131,9 @@ if ($sub == "ress") {
             }
             echo "</tr>
                         <tr>";
-            foreach ($resNames as $k => $v) {
+            foreach ([$offer->costs0, $offer->costs1, $offer->costs2, $offer->costs3, $offer->costs4] as $cost) {
                 echo "<td width=\"100\">
-                            " . nf($arr['costs_' . $k . '']) . "
+                            " . nf($cost) . "
                         </td>";
             }
 

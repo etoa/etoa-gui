@@ -51,14 +51,14 @@ if ($ok && $cp->checkRes($subtracted)) {
     // Angebot speichern
     /** @var MarketAuctionRepository $marketAuctionRepository */
     $marketAuctionRepository = $app[MarketAuctionRepository::class];
-    $marketAuctionRepository->add($cu->getId(), $cp->id(), $auction_end_time, $_POST['auction_text'], $sell, $currency);
+    $auctionId = $marketAuctionRepository->add($cu->getId(), $cp->id(), $auction_end_time, $_POST['auction_text'], $sell, $currency);
 
     //Nachricht senden
     MarketReport::addMarketReport(array(
         'user_id' => $cu->id,
         'entity1_id' => $cp->id,
         'content' => $_POST['auction_text']
-    ), "auctionadd", mysql_insert_id(), $marr);
+    ), "auctionadd", $auctionId, $marr);
 
     Log::add(MARKET_LOG_CAT, Log::INFO, "Der Spieler " . $cu->nick . " hat folgende Rohstoffe zur versteigerung angeboten:\n\n" . RES_METAL . ": " . nf($_POST['auction_sell_0']) . "\n" . RES_CRYSTAL . ": " . nf($_POST['auction_sell_1']) . "\n" . RES_PLASTIC . ": " . nf($_POST['auction_sell_2']) . "\n" . RES_FUEL . ": " . nf($_POST['auction_sell_3']) . "\n" . RES_FOOD . ": " . nf($_POST['auction_sell_4']) . "\n\nAuktionsende: " . date("d.m.Y H:i", $auction_end_time) . "");
 

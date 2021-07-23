@@ -3,6 +3,7 @@
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Market\MarketAuctionRepository;
 use EtoA\Market\MarketResourceRepository;
+use EtoA\Market\MarketShipRepository;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Universe\Planet\PlanetService;
 use EtoA\User\UserSittingRepository;
@@ -834,9 +835,11 @@ class User implements \EtoA\User\UserInterface
             $marketAuctionRepository = $app[MarketAuctionRepository::class];
             /** @var MarketResourceRepository $marketResourceRepository */
             $marketResourceRepository = $app[MarketResourceRepository::class];
+            /** @var MarketShipRepository $marketShipRepository */
+            $marketShipRepository = $app[MarketShipRepository::class];
             //Markt Angebote löschen
-            $marketResourceRepository->deleteUserOffers($this->id);     // Rohstoff Angebot
-            dbquery("DELETE FROM market_ship WHERE user_id='" . $this->id . "';");                 // Schiff Angebot
+            $marketResourceRepository->deleteUserOffers($this->id);    // Rohstoff Angebot
+            $marketShipRepository->deleteUserOffers($this->id);       // Schiff Angebot
             $marketAuctionRepository->deleteUserAuctions($this->id); // Auktionen
 
             //Notitzen löschen

@@ -1,44 +1,47 @@
 <?php
 
+use EtoA\Market\MarketShipRepository;
 use EtoA\Ship\ShipDataRepository;
+use EtoA\Universe\Entity\EntityRepository;
+use EtoA\Universe\Entity\EntityService;
 
 $cnt = 0;
 $cnt_error = 0;
 
+/** @var MarketShipRepository $marketShipRepository */
+$marketShipRepository = $app[MarketShipRepository::class];
+/** @var EntityService $entityService */
+$entityService = $app[EntityService::class];
+/** @var EntityRepository $entityRepository */
+$entityRepository = $app[EntityRepository::class];
+
 foreach ($_POST['ship_market_id'] as $num => $id) {
     // Lädt Angebotsdaten
-    $res = dbquery("
-                SELECT
-                    *
-                FROM
-                    market_ship
-                WHERE
-                    id='" . $id . "'
-                    AND buyable='1';");
+    $offer = $marketShipRepository->getBuyableOffer((int) $id, $cu->getId(), (int) $cu->allianceId());
     // Prüft, ob Angebot noch vorhanden ist
-    if (mysql_num_rows($res) != 0) {
-        $arr = mysql_fetch_array($res);
-
+    if ($offer !== null) {
         $buyarr = array();
-        $mr = array("ship_id" => $arr['ship_id'], "ship_count" => $arr['count']);
+        $mr = array("ship_id" => $offer->shipId, "ship_count" => $offer->count);
+        $costs = $offer->getCosts();
         foreach ($resNames as $rk => $rn) {
-            $buyarr[$rk] = $arr['costs_' . $rk];
-            $mr['buy_' . $rk] = $arr['costs_' . $rk];
+            $buyarr[$rk] = $costs->get($rk);
+            $mr['buy_' . $rk] = $costs->get($rk);
         }
 
         // Prüft, ob genug Rohstoffe vorhanden sind
         if ($cp->checkRes($buyarr)) {
-            $seller_user_nick = get_user_nick($arr['user_id']);
+            $seller_user_nick = get_user_nick($offer->userId);
 
             // Rohstoffe vom Käuferplanet abziehen
             $cp->subRes($buyarr);
 
-            $seller = new User($arr['user_id']);
-            $sellerEntity = Entity::createFactoryById($arr['entity_id']);
+            $seller = new User($offer->userId);
+            $sellerEntity = $entityRepository->getEntity($offer->entityId);
+            $ownEntity = $entityRepository->getEntity((int) $cp->id);
 
             $tradeShip = new Ship(MARKET_SHIP_ID);
 
-            $dist = $sellerEntity->distance($cp);
+            $dist = $entityService->distance($sellerEntity, $ownEntity);
             $sellerFlighttime = ceil($dist / ($seller->specialist->tradeTime * $tradeShip->speed / 3600) + $tradeShip->time2start + $tradeShip->time2land);
             $buyerFlighttime = ceil($dist / ($cu->specialist->tradeTime * $tradeShip->speed / 3600) + $tradeShip->time2start + $tradeShip->time2land);
 
@@ -81,8 +84,8 @@ foreach ($_POST['ship_market_id'] as $num => $id) {
                         VALUES
                         (
                             " . $sellerFid . ",
-                            " . $arr['ship_id'] . ",
-                            " . $arr['count'] . "
+                            " . $offer->shipId . ",
+                            " . $offer->count . "
                         );");
 
 
@@ -138,36 +141,32 @@ foreach ($_POST['ship_market_id'] as $num => $id) {
                         );");
 
 
-            dbquery("
-                            DELETE FROM
-                                market_ship
-                            WHERE
-                                id='" . $id . "'");
+            $marketShipRepository->delete($offer->id);
             $cnt++;
 
 
             // Send report to seller
             MarketReport::addMarketReport(array(
-                'user_id' => $arr['user_id'],
-                'entity1_id' => $arr['entity_id'],
+                'user_id' => $offer->userId,
+                'entity1_id' => $offer->entityId,
                 'entity2_id' => $cp->id,
                 'opponent1_id' => $cu->id,
-            ), "shipsold", $arr['id'], array_merge($mr, array("fleet1_id" => $sellerFid, "fleet2_id" => $buyerFid)));
+            ), "shipsold", $offer->id, array_merge($mr, array("fleet1_id" => $sellerFid, "fleet2_id" => $buyerFid)));
 
             // Send report to buyer (the current user)
             MarketReport::addMarketReport(array(
                 'user_id' => $cu->id,
                 'entity1_id' => $cp->id,
-                'entity2_id' => $arr['entity_id'],
-                'opponent1_id' => $arr['user_id'],
-            ), "shipbought", $arr['id'], array_merge($mr, array("fleet1_id" => $buyerFid, "fleet2_id" => $sellerFid)));
+                'entity2_id' => $offer->entityId,
+                'opponent1_id' => $offer->userId,
+            ), "shipbought", $offer->id, array_merge($mr, array("fleet1_id" => $buyerFid, "fleet2_id" => $sellerFid)));
 
             // Add market ratings
-            $cu->rating->addTradeRating(TRADE_POINTS_PER_TRADE, false, 'Handel #' . $arr['id'] . ' mit ' . $arr['user_id']);
-            if (strlen($arr['text']) > TRADE_POINTS_TRADETEXT_MIN_LENGTH)
-                $seller->rating->addTradeRating(TRADE_POINTS_PER_TRADE + TRADE_POINTS_PER_TRADETEXT, true, 'Handel #' . $arr['id'] . ' mit ' . $cu->id);
+            $cu->rating->addTradeRating(TRADE_POINTS_PER_TRADE, false, 'Handel #' . $offer->id . ' mit ' . $offer->userId);
+            if (strlen($offer->text) > TRADE_POINTS_TRADETEXT_MIN_LENGTH)
+                $seller->rating->addTradeRating(TRADE_POINTS_PER_TRADE + TRADE_POINTS_PER_TRADETEXT, true, 'Handel #' . $offer->id . ' mit ' . $cu->id);
             else
-                $seller->rating->addTradeRating(TRADE_POINTS_PER_TRADE, true, 'Handel #' . $arr['id'] . ' mit ' . $cu->id);
+                $seller->rating->addTradeRating(TRADE_POINTS_PER_TRADE, true, 'Handel #' . $offer->id . ' mit ' . $cu->id);
 
 
 
@@ -179,7 +178,7 @@ foreach ($_POST['ship_market_id'] as $num => $id) {
                             user_multi
                         WHERE
                             user_id='" . $cu->id . "'
-                            AND multi_id='" . $arr['user_id'] . "';");
+                            AND multi_id='" . $offer->userId . "';");
 
             $multi_res2 = dbquery("
                         SELECT
@@ -187,7 +186,7 @@ foreach ($_POST['ship_market_id'] as $num => $id) {
                         FROM
                             user_multi
                         WHERE
-                            user_id='" . $arr['user_id'] . "'
+                            user_id='" . $offer->userId . "'
                             AND multi_id='" . $cu->id . "';");
 
             if (mysql_num_rows($multi_res1) != 0 || mysql_num_rows($multi_res2) != 0) {
@@ -195,7 +194,7 @@ foreach ($_POST['ship_market_id'] as $num => $id) {
                 $shipRepository = $app[ShipDataRepository::class];
                 $shipNames = $shipRepository->getShipNames(true);
 
-                Log::add(Log::F_MULTITRADE, Log::INFO, "[page user sub=edit user_id=" . $cu->id . "][B]" . $cu->nick . "[/B][/page] hat von [page user sub=edit user_id=" . $arr['user_id'] . "][B]" . $seller . "[/B][/page] Schiffe gekauft:\n\n" . $arr['count'] . " " . $shipNames[$arr['ship_id']] . "\n\nund das zu folgendem Preis:\n\n" . RES_METAL . ": " . nf($arr['costs_0']) . "\n" . RES_CRYSTAL . ": " . nf($arr['costs_1']) . "\n" . RES_PLASTIC . ": " . nf($arr['costs_2']) . "\n" . RES_FUEL . ": " . nf($arr['costs_3']) . "\n" . RES_FOOD . ": " . nf($arr['costs_4']));
+                Log::add(Log::F_MULTITRADE, Log::INFO, "[page user sub=edit user_id=" . $cu->id . "][B]" . $cu->nick . "[/B][/page] hat von [page user sub=edit user_id=" . $offer->userId . "][B]" . $seller . "[/B][/page] Schiffe gekauft:\n\n" . $offer->count . " " . $shipNames[$offer->shipId] . "\n\nund das zu folgendem Preis:\n\n" . RES_METAL . ": " . nf($offer->costs0) . "\n" . RES_CRYSTAL . ": " . nf($offer->costs1) . "\n" . RES_PLASTIC . ": " . nf($offer->costs2) . "\n" . RES_FUEL . ": " . nf($offer->costs3) . "\n" . RES_FOOD . ": " . nf($offer->costs4));
             }
 
             //Marktlog schreiben

@@ -1,6 +1,8 @@
 <?php
 
+use EtoA\Market\MarketShipRepository;
 use EtoA\Ship\ShipRepository;
+use EtoA\Universe\Resources\BaseResources;
 use EtoA\User\UserRepository;
 
 /** @var int $alliance_market_level */
@@ -11,6 +13,8 @@ use EtoA\User\UserRepository;
 $userRepository = $app[UserRepository::class];
 /** @var ShipRepository $shipRepository */
 $shipRepository = $app[ShipRepository::class];
+/** @var MarketShipRepository $marketShipRepository */
+$marketShipRepository = $app[MarketShipRepository::class];
 
 $for_user = 0;
 $for_alliance = 0;
@@ -35,13 +39,12 @@ if (!isset($errMsg)) {
     $ship_id = $_POST['ship_list'];
     $ship_count = nf_back($_POST['ship_count']);
 
-    $cf = $cv = "";
     $marr = array("ship_id" => $ship_id, "ship_count" => $ship_count);
+    $costs = new BaseResources();
     foreach ($resNames as $rk => $rn) {
         // Convert formatted number back to integer
         $_POST['ship_buy_' . $rk] = nf_back($_POST['ship_buy_' . $rk]);
-        $cf .= "costs_" . $rk . ",";
-        $cv .= $_POST['ship_buy_' . $rk] . ",";
+        $costs->set($rk, (int) $_POST['ship_buy_' . $rk]);
         $marr['buy_' . $rk] = $_POST['ship_buy_' . $rk];
     }
 
@@ -52,36 +55,13 @@ if (!isset($errMsg)) {
     // Falls alle Schiffe abgezogen werden konnten
     if ($ship_count == $removed_ships_count) {
         // Angebot speicherns
-        dbquery("
-            INSERT INTO
-                market_ship
-            (
-                user_id,
-                entity_id,
-                ship_id,
-                `count`,
-                " . $cf . "
-                for_user,
-                for_alliance,
-                `text`,
-                datum
-            )
-            VALUES
-                    ('" . $cu->id . "',
-                    '" . $cp->id() . "',
-                    '" . $ship_id . "',
-                    '" . $ship_count . "',
-                    " . $cv . "
-                    '" . $for_user . "',
-                    '" . $for_alliance . "',
-                    '" . mysql_real_escape_string($_POST['ship_text']) . "',
-                    '" . time() . "')");
+        $offerId = $marketShipRepository->add($cu->getId(), (int) $cp->id(), (int) $for_user, (int) $for_alliance, $_POST['ship_text'], $ship_id, $ship_count, $costs);
 
         MarketReport::addMarketReport(array(
             'user_id' => $cu->id,
             'entity1_id' => $cp->id,
             'content' => $_POST['ship_text']
-        ), "shipadd", mysql_insert_id(), $marr);
+        ), "shipadd", $offerId, $marr);
 
 
         if ($for_alliance > 0) {

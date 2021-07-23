@@ -73,7 +73,7 @@ if (!isset($errMsg)) {
         if ($cp->subRes($subtracted)) {
 
             // Angebot speichern
-            $marketResourceRepository->add($cu->getId(), (int) $cp->id, (int) $for_user, (int) $for_alliance, $_POST['ressource_text'], $sellResources, $buyResources);
+            $offerId = $marketResourceRepository->add($cu->getId(), (int) $cp->id, (int) $for_user, (int) $for_alliance, $_POST['ressource_text'], $sellResources, $buyResources);
             if ($for_alliance > 0) {
                 // Set cooldown
                 $cd = time() + $cooldown;
@@ -93,7 +93,7 @@ if (!isset($errMsg)) {
                 'user_id' => $cu->id,
                 'entity1_id' => $cp->id,
                 'content' => $_POST['ressource_text']
-            ), "resadd", mysql_insert_id(), $marr);
+            ), "resadd", $offerId, $marr);
 
             success_msg("Angebot erfolgreich aufgegeben");
             return_btn();
