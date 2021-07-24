@@ -4,6 +4,7 @@ use EtoA\Market\MarketHandler;
 use EtoA\Market\MarketResourceRepository;
 use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Entity\EntityService;
+use EtoA\User\UserMultiRepository;
 
 /** @var MarketResourceRepository $marketResourceRepository */
 $marketResourceRepository = $app[MarketResourceRepository::class];
@@ -195,26 +196,10 @@ if (isset($_POST['ressource_market_id'])) {
                     $seller->rating->addTradeRating(TRADE_POINTS_PER_TRADE, true, 'Handel #' . $offer->id . ' mit ' . $cu->id);
 
                 // Log schreiben, falls dieser Handel regelwidrig ist
-                // TODO: Think of an implementation using the user class...
-                $multi_res1 = dbquery("
-                                    SELECT
-                                        multi_id
-                                    FROM
-                                        user_multi
-                                    WHERE
-                                        multi_id='" . $cu->id . "'
-                                        AND user_id='" . $offer->userId . "';");
-
-                $multi_res2 = dbquery("
-                                    SELECT
-                                        user_id
-                                    FROM
-                                        user_multi
-                                    WHERE
-                                        multi_id='" . $offer->userId . "'
-                                        AND user_id='" . $cu->id . "';");
-
-                if (mysql_num_rows($multi_res1) != 0 || mysql_num_rows($multi_res2) != 0) {
+                /** @var UserMultiRepository $userMultiRepository */
+                $userMultiRepository = $app[UserMultiRepository::class];
+                $isMultiWith = $userMultiRepository->existsEntryWith($cu->getId(), $offer->userId);
+                if ($isMultiWith) {
                     Log::add(Log::F_MULTITRADE, Log::INFO, "[page user sub=edit user_id=" . $cu->id . "][B]" . $cu->nick . "[/B][/page] hat von [page user sub=edit user_id=" . $offer->userId . "][B]" . $seller . "[/B][/page] Rohstoffe gekauft:\n\n" . RES_METAL . ": " . nf($offer->sell0) . "\n" . RES_CRYSTAL . ": " . nf($offer->sell1) . "\n" . RES_PLASTIC . ": " . nf($offer->sell2) . "\n" . RES_FUEL . ": " . nf($offer->sell3) . "\n" . RES_FOOD . ": " . nf($offer->sell4) . "\n\nDies hat ihn folgende Rohstoffe gekostet:\n" . RES_METAL . ": " . nf($offer->buy0) . "\n" . RES_CRYSTAL . ": " . nf($offer->buy1) . "\n" . RES_PLASTIC . ": " . nf($offer->buy2) . "\n" . RES_FUEL . ": " . nf($offer->buy3) . "\n" . RES_FOOD . ": " . nf($offer->buy4));
                 }
 

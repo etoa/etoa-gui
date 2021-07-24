@@ -1,6 +1,10 @@
 <?PHP
 
+use EtoA\User\UserMultiRepository;
 use EtoA\User\UserSittingRepository;
+
+/** @var UserMultiRepository $userMultiRepository */
+$userMultiRepository = $app[UserMultiRepository::class];
 
 if (isset($_GET['ip'])) {
     $ip = $_GET['ip'];
@@ -55,15 +59,6 @@ if (isset($_GET['ip'])) {
     echo "<table class=\"tbl\" width=\"100%\">";
     echo "<tr><td class=\"tbltitle\">Nick</td><td class=\"tbltitle\">Name</td><td class=\"tbltitle\">E-Mail</td><td class=\"tbltitle\">Online</td><td class=\"tbltitle\">Punkte</td><td class=\"tbltitle\">Eingetragene Multis</td><td class=\"tbltitle\">Gel&ouml;schte Multis</td></tr>";
     while ($iparr = mysql_fetch_array($ipres)) {
-        $multi_res = dbquery("
-        SELECT
-            *
-        FROM
-            user_multi
-        WHERE
-            user_id='" . $iparr['user_id'] . "'
-            AND multi_id!='0';");
-
         if ($iparr['admin'])
             $uCol = ' class="adminColor"';
         elseif ($iparr['user_ghost'])
@@ -96,14 +91,16 @@ if (isset($_GET['ip'])) {
         else
             echo ">Noch nicht eingeloggt!";
         echo "</td><td $uCol>" . nf($iparr['user_points']) . "</td>";
-        if (mysql_num_rows($multi_res) > 0) {
+
+        $multiEntries = $userMultiRepository->getUserEntries((int) $iparr['user_id']);
+        if (count($multiEntries) > 0) {
             $multi = 1;
 
             echo "<td $uCol>";
-            while ($multi_arr = mysql_fetch_array($multi_res)) {
-                echo "<span title=\"" . $multi_arr['connection'] . "\">" . get_user_nick($multi_arr['multi_id']) . "</span>";
+            foreach ($multiEntries as $entry) {
+                echo "<span title=\"" . $entry->reason . "\">" . $entry->multiUserNick . "</span>";
 
-                if ($multi < mysql_num_rows($multi_res)) {
+                if ($multi < count($multiEntries)) {
                     echo ", ";
                 }
 
@@ -231,16 +228,6 @@ if (isset($_GET['ip'])) {
                     </td>";
             $cnt = 0;
             while ($iparr = mysql_fetch_array($ipres)) {
-
-                $multi_res = dbquery("
-                        SELECT
-                            *
-                        FROM
-                            user_multi
-                        WHERE
-                            user_id='" . $iparr['user_id'] . "'
-                            AND multi_id!='0';");
-
                 if ($cnt != 0) echo "<tr>";
                 else $cnt = 1;
 
@@ -255,14 +242,15 @@ if (isset($_GET['ip'])) {
                     echo ">Noch nicht eingeloggt!";
                 echo "</td>";
 
-                if (mysql_num_rows($multi_res) > 0) {
+                $multiEntries = $userMultiRepository->getUserEntries((int) $iparr['user_id']);
+                if (count($multiEntries) > 0) {
                     $multi = 1;
 
                     echo "<td $uCol>";
-                    while ($multi_arr = mysql_fetch_array($multi_res)) {
-                        echo "<span title=\"" . $multi_arr['connection'] . "\"><a href=\"?page=user&sub=edit&id=" . $multi_arr['multi_id'] . "\">" . get_user_nick($multi_arr['multi_id']) . "</a></span>";
+                    foreach ($multiEntries as $entry) {
+                        echo "<span title=\"" . $entry->reason . "\"><a href=\"?page=user&sub=edit&id=" . $entry->multiUserId . "\">" . $entry->multiUserNick . "</a></span>";
 
-                        if ($multi < mysql_num_rows($multi_res)) {
+                        if ($multi < count($multiEntries)) {
                             echo ", ";
                         }
 

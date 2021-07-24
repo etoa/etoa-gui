@@ -3,6 +3,7 @@
 use EtoA\Market\MarketAuctionRepository;
 use EtoA\Support\RuntimeDataStore;
 use EtoA\Universe\Resources\BaseResources;
+use EtoA\User\UserMultiRepository;
 
 /** @var RuntimeDataStore */
 $runtimeDataStore = $app[RuntimeDataStore::class];
@@ -102,25 +103,10 @@ if ($auction !== null && $auction->dateEnd > time()) {
                 $marketAuctionRepository->addBid($auction->id, $cu->getId(), $cp->id(), $bid, true, $delete_date);
 
                 //Log schreiben, falls dieser Handel regelwidrig ist
-                $multi_res1 = dbquery("
-                    SELECT
-                        multi_id
-                    FROM
-                        user_multi
-                    WHERE
-                        user_id='" . $auction->userId . "'
-                        AND multi_id='" . $cu->id . "';");
-
-                $multi_res2 = dbquery("
-                    SELECT
-                        user_id
-                    FROM
-                        user_multi
-                    WHERE
-                        multi_id='" . $cu->id . "'
-                        AND user_id='" . $auction->userId . "';");
-
-                if (mysql_num_rows($multi_res1) != 0 || mysql_num_rows($multi_res2) != 0) {
+                /** @var UserMultiRepository $userMultiRepository */
+                $userMultiRepository = $app[UserMultiRepository::class];
+                $isMultiWith = $userMultiRepository->existsEntryWith($cu->getId(), $auction->userId);
+                if ($isMultiWith) {
                     // TODO
                     Log::add(Log::F_MULTITRADE, Log::INFO, "[page user sub=edit user_id=" . $cu->id . "][B]" . $cu->nick . "[/B][/page] hat an einer Auktion von [page user sub=edit user_id=" . $auction->userId . "][B]" . $seller . "[/B][/page] gewonnen:\n\nRohstoffe:\n" . RES_METAL . ": " . nf($auction->sell0) . "\n" . RES_CRYSTAL . ": " . nf($auction->sell1) . "\n" . RES_PLASTIC . ": " . nf($auction->sell2) . "\n" . RES_FUEL . ": " . nf($auction->sell3) . "\n" . RES_FOOD . ": " . nf($auction->sell4) . "\n\nDies hat ihn folgende Rohstoffe gekostet:\n" . RES_METAL . ": " . nf($_POST['new_buy_0']) . "\n" . RES_CRYSTAL . ": " . nf($_POST['new_buy_1']) . "\n" . RES_PLASTIC . ": " . nf($_POST['new_buy_2']) . "\n" . RES_FUEL . ": " . nf($_POST['new_buy_3']) . "\n" . RES_FOOD . ": " . nf($_POST['new_buy_4']) . "");
                 }

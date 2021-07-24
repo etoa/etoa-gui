@@ -4,6 +4,7 @@ use EtoA\Market\MarketShipRepository;
 use EtoA\Ship\ShipDataRepository;
 use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Entity\EntityService;
+use EtoA\User\UserMultiRepository;
 
 $cnt = 0;
 $cnt_error = 0;
@@ -171,25 +172,10 @@ foreach ($_POST['ship_market_id'] as $num => $id) {
 
 
             //Log schreiben, falls dieser Handel regelwidrig ist
-            $multi_res1 = dbquery("
-                        SELECT
-                            multi_id
-                        FROM
-                            user_multi
-                        WHERE
-                            user_id='" . $cu->id . "'
-                            AND multi_id='" . $offer->userId . "';");
-
-            $multi_res2 = dbquery("
-                        SELECT
-                            multi_id
-                        FROM
-                            user_multi
-                        WHERE
-                            user_id='" . $offer->userId . "'
-                            AND multi_id='" . $cu->id . "';");
-
-            if (mysql_num_rows($multi_res1) != 0 || mysql_num_rows($multi_res2) != 0) {
+            /** @var UserMultiRepository $userMultiRepository */
+            $userMultiRepository = $app[UserMultiRepository::class];
+            $isMultiWith = $userMultiRepository->existsEntryWith($cu->getId(), $offer->userId);
+            if ($isMultiWith) {
                 /** @var ShipDataRepository $shipRepository */
                 $shipRepository = $app[ShipDataRepository::class];
                 $shipNames = $shipRepository->getShipNames(true);
