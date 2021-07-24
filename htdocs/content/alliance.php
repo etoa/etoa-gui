@@ -2,10 +2,13 @@
 
 use EtoA\Alliance\AllianceApplicationRepository;
 use EtoA\Alliance\AllianceHistoryRepository;
+use EtoA\Alliance\AllianceRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 
 /** @var ConfigurationService */
 $config = $app[ConfigurationService::class];
+/** @var AllianceRepository $allianceRepository */
+$allianceRepository = $app[AllianceRepository::class];
 
 echo "<h1>Allianz</h1>";
 echo "<div id=\"allianceinfo\"></div>"; //nur zu entwicklungszwecken!
@@ -35,16 +38,8 @@ elseif ($cu->allianceId == 0) {
     $myRankId = $cu->allianceRankId;
 
     // Allianzdaten laden
-    $res = dbquery("
-SELECT
-    *
-FROM
-    alliances
-WHERE
-    alliance_id='" . $cu->allianceId . "'
-LIMIT 1;");
-    if (mysql_num_rows($res) > 0) {
-        $arr = mysql_fetch_array($res);
+    $alliance = $allianceRepository->getAlliance($cu->allianceId());
+    if ($alliance !== null) {
         $ally = new Alliance($cu->allianceId);
 
 
@@ -243,7 +238,7 @@ WHERE
             if (isset($_POST['editsubmit']) && checker_verify()) {
                 // Prüft Korrektheit des Allianztags und Namen, wenn diese geändert haben
                 $check = false;
-                if ($_POST['alliance_tag'] != $arr['alliance_tag'] || $_POST['alliance_name'] != $arr['alliance_name']) {
+                if ($_POST['alliance_tag'] != $alliance->tag || $_POST['alliance_name'] != $alliance->name) {
                     // Prüfen, ob der Allianzname bzw. Tag nicht nur aus Leerschlägen besteht
                     $check_tag = str_replace(' ', '', $_POST['alliance_tag']);
                     $check_name = str_replace(' ', '', $_POST['alliance_name']);
@@ -287,19 +282,19 @@ WHERE
 
                     /** @var \EtoA\Alliance\AllianceHistoryRepository $allianceHistoryRepository */
                     $allianceHistoryRepository = $app[\EtoA\Alliance\AllianceHistoryRepository::class];
-                    $allianceHistoryRepository->addEntry((int) $cu->allianceId, "[b]" . $cu->nick . "[/b] ändert den Allianzname und/oder Tag von [b]" . $arr['alliance_name'] . " (" . $arr['alliance_tag'] . ")[/b] in [b]" . $_POST['alliance_name'] . " (" . $_POST['alliance_tag'] . ")[/b]!");
+                    $allianceHistoryRepository->addEntry((int) $cu->allianceId, "[b]" . $cu->nick . "[/b] ändert den Allianzname und/oder Tag von [b]" . $alliance->name . " (" . $alliance->tag . ")[/b] in [b]" . $_POST['alliance_name'] . " (" . $_POST['alliance_tag'] . ")[/b]!");
                 }
                 // Name und/oder Tag sind fehlerhaft
                 else {
-                    $alliance_tag = $arr['alliance_tag'];
-                    $alliance_name = $arr['alliance_name'];
+                    $alliance_tag = $alliance->tag;
+                    $alliance_name = $alliance->name;
                 }
 
                 // Prüft Korrektheit des Allianzbildes
                 $alliance_img_string = "";
                 if (isset($_POST['alliance_img_del']) && $_POST['alliance_img_del'] == 1) {
-                    if (file_exists(ALLIANCE_IMG_DIR . "/" . $arr['alliance_img'])) {
-                        @unlink(ALLIANCE_IMG_DIR . "/" . $arr['alliance_img']);
+                    if (file_exists(ALLIANCE_IMG_DIR . "/" . $alliance->image)) {
+                        @unlink(ALLIANCE_IMG_DIR . "/" . $alliance->image);
                     }
                     $alliance_img_string = "alliance_img='',
                 alliance_img_check=0,";
@@ -334,8 +329,7 @@ WHERE
                 alliance_public_memberlist='" . $_POST['alliance_public_memberlist'] . "'
             WHERE
                 alliance_id=" . $cu->allianceId . ";");
-                $res = dbquery("SELECT * FROM alliances WHERE alliance_id='" . $cu->allianceId . "';");
-                $arr = mysql_fetch_array($res);
+                $alliance = $allianceRepository->getAlliance($cu->allianceId());
                 echo "Die &Auml;nderungen wurden übernommen!<br/>" . $message . "<br/>";
 
                 // Hack
@@ -367,9 +361,9 @@ WHERE
                 $ally->visits++;
 
 
-                tableStart("[" . stripslashes($arr['alliance_tag']) . "] " . stripslashes($arr['alliance_name']));
-                if ($arr['alliance_img'] != "") {
-                    $im = ALLIANCE_IMG_DIR . "/" . $arr['alliance_img'];
+                tableStart("[" . stripslashes($alliance->tag) . "] " . stripslashes($alliance->name));
+                if ($alliance->image != "") {
+                    $im = ALLIANCE_IMG_DIR . "/" . $alliance->image;
                     if (file_exists($im)) {
                         $ims = getimagesize($im);
                         echo "<tr><td class=\"tblblack\" colspan=\"3\" style=\"text-align:center;background:#000\">
@@ -392,7 +386,7 @@ WHERE
                 WHERE
                     post_topic_id=topic_id
                     AND topic_cat_id=cat_id
-                    AND cat_alliance_id=" . $arr['alliance_id'] . "
+                    AND cat_alliance_id=" . $alliance->id . "
                 GROUP BY
                     post_id
                 ORDER BY
@@ -415,7 +409,7 @@ WHERE
                     AND cr_rank_id=" . $myRankId . "
                     AND post_topic_id=topic_id
                     AND topic_cat_id=cat_id
-                    AND cat_alliance_id=" . $arr['alliance_id'] . "
+                    AND cat_alliance_id=" . $alliance->id . "
                 GROUP BY
                     post_id
                 ORDER BY
@@ -429,7 +423,7 @@ WHERE
                 echo "<tr><th>Internes Forum</th><td colspan=\"2\"><b><a href=\"?page=allianceboard\">Forum&uuml;bersicht</a></b> &nbsp; $ps</td></tr>";
 
                 // Umfrage verlinken
-                $pres = dbquery("SELECT poll_title,poll_question,poll_id FROM alliance_polls WHERE poll_alliance_id=" . $arr['alliance_id'] . " ORDER BY poll_timestamp DESC LIMIT 2;");
+                $pres = dbquery("SELECT poll_title,poll_question,poll_id FROM alliance_polls WHERE poll_alliance_id=" . $alliance->id . " ORDER BY poll_timestamp DESC LIMIT 2;");
                 $pcnt = mysql_num_rows($pres);
                 if ($pcnt > 0) {
                     $parr = mysql_fetch_array($pres);
@@ -568,8 +562,8 @@ WHERE
                 }
 
                 // Text anzeigen
-                if ($arr['alliance_text'] != "") {
-                    echo "<tr><td colspan=\"3\" style=\"text-align:center\">" . text2html($arr['alliance_text']) . "</td></tr>\n";
+                if ($alliance->text != "") {
+                    echo "<tr><td colspan=\"3\" style=\"text-align:center\">" . text2html($alliance->text) . "</td></tr>\n";
                 }
 
                 // Kriege
@@ -732,9 +726,9 @@ WHERE
 
 
                 // Website
-                if ($arr['alliance_url'] != "") {
+                if ($alliance->url != "") {
                     echo "<tr><th width=\"120\">Website/Forum:</th><td colspan=\"2\"><b>" .
-                        format_link($arr['alliance_url']) . "</a></b></td></tr>\n";
+                        format_link($alliance->url) . "</a></b></td></tr>\n";
                 }
 
                 // Diverses
