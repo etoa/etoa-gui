@@ -17,6 +17,7 @@ trait DbTestTrait
     protected function tearDown(): void
     {
         $this->connection->executeQuery('TRUNCATE alliances');
+        $this->connection->executeQuery('TRUNCATE alliance_applications');
         $this->connection->executeQuery('TRUNCATE chat');
         $this->connection->executeQuery('TRUNCATE chat_banns');
         $this->connection->executeQuery('TRUNCATE chat_users');

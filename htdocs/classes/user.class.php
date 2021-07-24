@@ -1,5 +1,6 @@
 <?PHP
 
+use EtoA\Alliance\AllianceApplicationRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Market\MarketAuctionRepository;
 use EtoA\Market\MarketResourceRepository;
@@ -819,8 +820,9 @@ class User implements \EtoA\User\UserInterface
             //Rest löschen
             //
 
-            dbquery("DELETE FROM alliance_applications WHERE user_id='" . $this->id . "';");
-
+            /** @var AllianceApplicationRepository $allianceApplicationRepository */
+            $allianceApplicationRepository = $app[AllianceApplicationRepository::class];
+            $allianceApplicationRepository->deleteUserApplication($this->id);
 
             //Baulisten löschen
             dbquery("DELETE FROM shiplist WHERE shiplist_user_id='" . $this->id . "';");        // Schiffe löschen

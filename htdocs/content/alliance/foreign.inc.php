@@ -1,66 +1,49 @@
 <?PHP
 
+use EtoA\Alliance\AllianceApplicationRepository;
+use EtoA\Alliance\AllianceHistoryRepository;
 use EtoA\Alliance\AllianceRepository;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Message\MessageRepository;
 
 /** @var ConfigurationService */
 $config = $app[ConfigurationService::class];
+/** @var AllianceApplicationRepository $allianceApplicationRepository */
+$allianceApplicationRepository = $app[AllianceApplicationRepository::class];
+/** @var AllianceHistoryRepository $allianceHistoryRepository */
+$allianceHistoryRepository = $app[AllianceHistoryRepository::class];
+/** @var MessageRepository $messageRepository */
+$messageRepository = $app[MessageRepository::class];
+/** @var AllianceRepository $allianceRepository */
+$allianceRepository = $app[AllianceRepository::class];
 
 if ($config->getBoolean("alliance_allow")) {
     if ($cu->allianceId == 0) {
-        /** @var AllianceRepository */
-        $allianceRepository = $app[AllianceRepository::class];
-
-        // Check application
-        $application_alliance = 0;
-        $application_timestamp = 0;
-        $res = dbquery("
-        SELECT
-            alliance_id,
-            timestamp
-        FROM
-            alliance_applications
-        WHERE
-            user_id=" . $cu->id . "
-        ;");
-        if (mysql_num_rows($res)) {
-            $arr = mysql_fetch_row($res);
-            $application_alliance = $arr[0];
-            $application_timestamp = $arr[1];
-        }
+        $application = $allianceApplicationRepository->getUserApplication($cu->getId());
 
         //
         // Infotext bei aktiver Bewerbung
         //
-        if ($application_alliance > 0) {
+        if ($application !== null) {
             // Bewerbung zurückziehen
             if (isset($_GET['action']) && $_GET['action'] == "cancelapplication") {
-                $alliance = $allianceRepository->getAlliance((int) $application_alliance);
-                /** @var \EtoA\Message\MessageRepository $messageRepository */
-                $messageRepository = $app[\EtoA\Message\MessageRepository::class];
+                $alliance = $allianceRepository->getAlliance($application->allianceId);
                 $messageRepository->createSystemMessage($alliance->founderId, MSG_ALLYMAIL_CAT, "Bewerbung zurückgezogen", "Der Spieler " . $cu->nick . " hat die Bewerbung bei deiner Allianz zurückgezogen!");
-                /** @var \EtoA\Alliance\AllianceHistoryRepository $allianceHistoryRepository */
-                $allianceHistoryRepository = $app[\EtoA\Alliance\AllianceHistoryRepository::class];
-                $allianceHistoryRepository->addEntry($application_alliance, "Der Spieler [b]" . $cu->nick . "[/b] zieht seine Bewerbung zurück.");
-                dbquery("
-        DELETE FROM
-            alliance_applications
-        WHERE
-            user_id=" . $cu->id . "
-            AND alliance_id=" . $application_alliance . ";");
+                $allianceHistoryRepository->addEntry($application->allianceId, "Der Spieler [b]" . $cu->nick . "[/b] zieht seine Bewerbung zurück.");
+                $allianceApplicationRepository->deleteApplication($cu->getId(), $application->allianceId);
                 echo "Deine Bewerbung wurde gel&ouml;scht!<br/><br/>
         <input type=\"button\" onclick=\"document.location='?page=$page';\" value=\"OK\" />";
             }
             // Bewerbungsstatus anzeigen
             else {
                 echo "<h2>Bewerbungsstatus</h2>";
-                $alliance = $allianceRepository->getAlliance((int) $application_alliance);
+                $alliance = $allianceRepository->getAlliance($application->allianceId);
                 if ($alliance !== null) {
-                    success_msg("Du hast dich am " . df($application_timestamp) . " bei der Allianz " . $alliance->nameWithTag . " beworben
+                    success_msg("Du hast dich am " . df($application->timestamp) . " bei der Allianz " . $alliance->nameWithTag . " beworben
                  und musst nun darauf warten, dass deine Bewerbung akzeptiert wird!");
                     echo "<input type=\"button\" onclick=\"document.location='?page=$page&action=cancelapplication';\" value=\"Bewerbung zurückziehen\" />";
                 } else {
-                    error_msg("Du hast dich am " . df($application_timestamp) . " bei einer Allianz beworben, diese Allianz existiert aber leider nicht mehr.
+                    error_msg("Du hast dich am " . df($application->timestamp) . " bei einer Allianz beworben, diese Allianz existiert aber leider nicht mehr.
                  Deine Bewerbung wurde deshalb gelöscht!");
                     echo "<input type=\"button\" onclick=\"document.location='?page=$page&amp;action=join';\" value=\"Bei einer anderen Allianz bewerben\" />";
                 }
@@ -141,29 +124,9 @@ if ($config->getBoolean("alliance_allow")) {
                 $aid = (int) $_POST['user_alliance_id'];
                 if ($_POST['user_alliance_application'] != '') {
                     $alliance = $allianceRepository->getAlliance($aid);
-                    /** @var \EtoA\Message\MessageRepository $messageRepository */
-                    $messageRepository = $app[\EtoA\Message\MessageRepository::class];
                     $messageRepository->createSystemMessage($alliance->founderId, MSG_ALLYMAIL_CAT, "Bewerbung", "Der Spieler " . $cu->nick . " hat sich bei deiner Allianz beworben. Gehe auf die [page=alliance&action=applications]Allianzseite[/page] für Details!");
-                    /** @var \EtoA\Alliance\AllianceHistoryRepository $allianceHistoryRepository */
-                    $allianceHistoryRepository = $app[\EtoA\Alliance\AllianceHistoryRepository::class];
                     $allianceHistoryRepository->addEntry($aid, "Der Spieler [b]" . $cu->nick . "[/b] bewirbt sich sich bei der Allianz.");
-                    dbquery("
-                    INSERT INTO
-                        alliance_applications
-                    (
-                        user_id,
-                        alliance_id,
-                        text,
-                        timestamp
-                    )
-                    VALUES
-                    (
-                        " . $cu->id . ",
-                        " . $aid . ",
-                        '" . mysql_real_escape_string($_POST['user_alliance_application']) . "',
-                        " . time() . "
-                    );
-                    ");
+                    $allianceApplicationRepository->addApplication($cu->getId(), $aid, $_POST['user_alliance_application']);
 
                     success_msg("Deine Bewerbung bei der Allianz " . $alliance->nameWithTag . " wurde gespeichert! Die Allianzleitung wurde informiert und wird deine Bewerbung ansehen.");
                     echo "<input value=\"&Uuml;bersicht\" type=\"button\" onclick=\"document.location='?page=$page'\" />";

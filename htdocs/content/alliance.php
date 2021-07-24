@@ -1,5 +1,6 @@
 <?PHP
 
+use EtoA\Alliance\AllianceApplicationRepository;
 use EtoA\Alliance\AllianceHistoryRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 
@@ -441,16 +442,10 @@ WHERE
 
                 // Bewerbungen anzeigen
                 if ($isFounder || $myRight['applications']) {
-                    $ares = dbquery("
-                SELECT
-                    COUNT(user_id)
-                FROM
-                    alliance_applications
-                WHERE
-                    alliance_id=" . $cu->allianceId . "
-                ;");
-                    $aarr = mysql_fetch_row($ares);
-                    if ($aarr[0] > 0) {
+                    /** @var AllianceApplicationRepository $allianceApplicationRepository */
+                    $allianceApplicationRepository = $app[AllianceApplicationRepository::class];
+                    $applications = $allianceApplicationRepository->countApplications($cu->allianceId());
+                    if ($applications > 0) {
                         echo "<tr><th colspan=\"3\" align=\"center\">
                     <div align=\"center\"><b><a href=\"?page=$page&action=applications\">Es sind Bewerbungen vorhanden!</a></b></div>
                     </th></tr>";

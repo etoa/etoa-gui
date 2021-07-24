@@ -1,5 +1,6 @@
 <?php
 
+use EtoA\Alliance\AllianceApplicationRepository;
 use EtoA\Alliance\AllianceHistoryRepository;
 use EtoA\Alliance\AlliancePointsRepository;
 use EtoA\Core\Configuration\ConfigurationService;
@@ -619,7 +620,10 @@ class Alliance
                 }
             }
             dbquery("DELETE FROM allianceboard_cat WHERE cat_alliance_id='" . $this->id . "';");
-            dbquery("DELETE FROM alliance_applications WHERE alliance_id='" . $this->id . "';");
+
+            /** @var AllianceApplicationRepository $allianceApplicationRepository */
+            $allianceApplicationRepository = $app[AllianceApplicationRepository::class];
+            $allianceApplicationRepository->deleteAllianceApplication($this->id);
             $bndres = dbquery("SELECT
                     *
                 FROM
