@@ -1,10 +1,13 @@
 <?php
 
+use EtoA\Market\MarketAuctionRepository;
 use EtoA\Support\RuntimeDataStore;
+use EtoA\Universe\Resources\BaseResources;
 
 /** @var RuntimeDataStore */
 $runtimeDataStore = $app[RuntimeDataStore::class];
-
+/** @var MarketAuctionRepository $marketAuctionRepository */
+$marketAuctionRepository = $app[MarketAuctionRepository::class];
 // Speichert Bieterangebot in Array
 $buyRes = array();
 foreach ($resNames as $rk => $rn) {
@@ -14,21 +17,10 @@ foreach ($resNames as $rk => $rn) {
         $buyRes[$rk] = 0;
 }
 
-$res = dbquery("
-    SELECT
-        *
-    FROM
-        market_auction
-    WHERE
-        id='" . intval($_POST['auction_market_id']) . "'
-        AND user_id!=" . $cu->id . "
-        AND date_end>'" . time() . "'
-    ");
+$auction = $marketAuctionRepository->getNonUserAuction($_POST['auction_market_id'], $cu->getId());
 
 // Prüft, ob Angebot noch vorhaden ist
-if (mysql_num_rows($res) > 0) {
-    $arr = mysql_fetch_array($res);
-
+if ($auction !== null && $auction->dateEnd > time()) {
     // Prüft, ob noch genug Rohstoffe vorhanden sind (eventueller Verlust durch Kampf?)
     if ($cp->checkRes($buyRes)) {
         $sell_price = 0;
@@ -37,18 +29,20 @@ if (mysql_num_rows($res) > 0) {
 
         $currentBuyRes = array();
         $marr = array();
+        $sellResources = $auction->getSellResources();
+        $buyResources = $auction->getBuyResources();
         foreach ($resNames as $rk => $rn) {
-            $rate = $runtimeDataStore->get('market_rate_' . $rk, (string) 1);
+            $rate = (float) $runtimeDataStore->get('market_rate_' . $rk, (string) 1);
 
             // Errechnet Rohstoffwert vom Angebot
-            $sell_price += $arr['sell_' . $rk] * $rate;
+            $sell_price += $sellResources->get($rk) * $rate;
             // Errechnet Rohstoffwert vom Höchstbietenden
-            $current_price += $arr['buy_' . $rk] * $rate;
+            $current_price += $buyResources->get($rk) * $rate;
             // Errechnet Rohstoffwert vom abgegebenen Gebot
             $new_price += $buyRes[$rk] * $rate;
 
-            $currentBuyRes[$rk] = $arr['buy_' . $rk];
-            $marr['sell_' . $rk] = $arr['sell_' . $rk];
+            $currentBuyRes[$rk] = $buyResources->get($rk);
+            $marr['sell_' . $rk] = $sellResources->get($rk);
             $marr['buy_' . $rk] = $buyRes[$rk];
         }
 
@@ -58,9 +52,9 @@ if (mysql_num_rows($res) > 0) {
 
             // wenn der bietende das höchst mögliche (oder mehr) bietet...
             if (AUCTION_PRICE_FACTOR_MAX <= (ceil($new_price) / floor($sell_price))) {
-                if ($arr['current_buyer_id'] != 0) {
+                if ($auction->currentBuyerId !== 0) {
                     // Rohstoffe dem überbotenen User wieder zurückgeben
-                    $highestBidderEntity = Entity::createFactoryById($arr['current_buyer_entity_id']);
+                    $highestBidderEntity = Entity::createFactoryById($auction->currentBuyerEntityId);
                     if ($highestBidderEntity->isValid()) {
                         $highestBidderEntity->addRes($currentBuyRes);
                     }
@@ -68,10 +62,10 @@ if (mysql_num_rows($res) > 0) {
                     // Nachricht dem überbotenen User schicken
                     $marr['timestamp2'] = '0';
                     MarketReport::addMarketReport(array(
-                        'user_id' => $arr['current_buyer_id'],
+                        'user_id' => $auction->currentBuyerId,
                         'entity1_id' => $cp->id,
                         'opponent1_id' => $cu->id,
-                    ), "auctionoverbid", $arr['id'], $marr);
+                    ), "auctionoverbid", $auction->id, $marr);
                 }
 
                 // Rohstoffe dem Gewinner abziehen
@@ -79,45 +73,33 @@ if (mysql_num_rows($res) > 0) {
 
                 // Nachricht an Verkäufer
                 MarketReport::addMarketReport(array(
-                    'user_id' => $arr['user_id'],
+                    'user_id' => $auction->userId,
                     'entity1_id' => $cp->id,
                     'opponent1_id' => $cu->id,
-                ), "auctionfinished", $arr['id'], $marr);
+                ), "auctionfinished", $auction->id, $marr);
 
                 MarketReport::addMarketReport(array(
                     'user_id' => $cu->id,
                     'entity1_id' => $cp->id,
-                    'opponent1_id' => $arr['user_id'],
-                ), "auctionwon", $arr['id'], $marr);
+                    'opponent1_id' => $auction->userId,
+                ), "auctionwon", $auction->id, $marr);
 
                 // Add market ratings
-                $seller = new User($arr['user_id']);
-                $cu->rating->addTradeRating(TRADE_POINTS_PER_TRADE, false, 'Handel #' . $arr['id'] . ' mit ' . $arr['user_id']);
-                if (strlen($arr['text']) > TRADE_POINTS_TRADETEXT_MIN_LENGTH)
-                    $seller->rating->addTradeRating(TRADE_POINTS_PER_TRADE + TRADE_POINTS_PER_TRADETEXT, true, 'Handel #' . $arr['id'] . ' mit ' . $cu->id);
+                $seller = new User($auction->userId);
+                $cu->rating->addTradeRating(TRADE_POINTS_PER_TRADE, false, 'Handel #' . $auction->id . ' mit ' . $auction->userId);
+                if (strlen($auction->text) > TRADE_POINTS_TRADETEXT_MIN_LENGTH)
+                    $seller->rating->addTradeRating(TRADE_POINTS_PER_TRADE + TRADE_POINTS_PER_TRADETEXT, true, 'Handel #' . $auction->id . ' mit ' . $cu->id);
                 else
-                    $seller->rating->addTradeRating(TRADE_POINTS_PER_TRADE, true, 'Handel #' . $arr['id'] . ' mit ' . $cu->id);
+                    $seller->rating->addTradeRating(TRADE_POINTS_PER_TRADE, true, 'Handel #' . $auction->id . ' mit ' . $cu->id);
 
-                $resourceString = "";
+                $bid = new BaseResources();
                 foreach ($resNames as $rk => $rn) {
-                    $resourceString .= "buy_$rk='" . $buyRes[$rk] . "',";
+                    $bid->set($rk, $buyRes[$rk]);
                 }
 
                 // Auktion Speichern und "Stoppen" so dass nicht mehr geboten werden kann
                 $delete_date = time() + (AUCTION_DELAY_TIME * 3600);
-                dbquery("
-                    UPDATE
-                        market_auction
-                    SET
-                        current_buyer_id='" . $cu->id . "',
-                        current_buyer_entity_id='" . $cp->id() . "',
-                        current_buyer_date='" . time() . "',
-                        $resourceString
-                        buyable='0',
-                        date_delete=$delete_date,
-                        bidcount=bidcount+1
-                    WHERE
-                        id=" . $arr['id'] . "");
+                $marketAuctionRepository->addBid($auction->id, $cu->getId(), $cp->id(), $bid, true, $delete_date);
 
                 //Log schreiben, falls dieser Handel regelwidrig ist
                 $multi_res1 = dbquery("
@@ -126,7 +108,7 @@ if (mysql_num_rows($res) > 0) {
                     FROM
                         user_multi
                     WHERE
-                        user_id='" . $arr['user_id'] . "'
+                        user_id='" . $auction->userId . "'
                         AND multi_id='" . $cu->id . "';");
 
                 $multi_res2 = dbquery("
@@ -136,11 +118,11 @@ if (mysql_num_rows($res) > 0) {
                         user_multi
                     WHERE
                         multi_id='" . $cu->id . "'
-                        AND user_id='" . $arr['user_id'] . "';");
+                        AND user_id='" . $auction->userId . "';");
 
                 if (mysql_num_rows($multi_res1) != 0 || mysql_num_rows($multi_res2) != 0) {
                     // TODO
-                    Log::add(Log::F_MULTITRADE, Log::INFO, "[page user sub=edit user_id=" . $cu->id . "][B]" . $cu->nick . "[/B][/page] hat an einer Auktion von [page user sub=edit user_id=" . $arr['user_id'] . "][B]" . $seller . "[/B][/page] gewonnen:\n\nRohstoffe:\n" . RES_METAL . ": " . nf($arr['sell_0']) . "\n" . RES_CRYSTAL . ": " . nf($arr['sell_1']) . "\n" . RES_PLASTIC . ": " . nf($arr['sell_2']) . "\n" . RES_FUEL . ": " . nf($arr['sell_3']) . "\n" . RES_FOOD . ": " . nf($arr['sell_4']) . "\n\nDies hat ihn folgende Rohstoffe gekostet:\n" . RES_METAL . ": " . nf($_POST['new_buy_0']) . "\n" . RES_CRYSTAL . ": " . nf($_POST['new_buy_1']) . "\n" . RES_PLASTIC . ": " . nf($_POST['new_buy_2']) . "\n" . RES_FUEL . ": " . nf($_POST['new_buy_3']) . "\n" . RES_FOOD . ": " . nf($_POST['new_buy_4']) . "");
+                    Log::add(Log::F_MULTITRADE, Log::INFO, "[page user sub=edit user_id=" . $cu->id . "][B]" . $cu->nick . "[/B][/page] hat an einer Auktion von [page user sub=edit user_id=" . $auction->userId . "][B]" . $seller . "[/B][/page] gewonnen:\n\nRohstoffe:\n" . RES_METAL . ": " . nf($auction->sell0) . "\n" . RES_CRYSTAL . ": " . nf($auction->sell1) . "\n" . RES_PLASTIC . ": " . nf($auction->sell2) . "\n" . RES_FUEL . ": " . nf($auction->sell3) . "\n" . RES_FOOD . ": " . nf($auction->sell4) . "\n\nDies hat ihn folgende Rohstoffe gekostet:\n" . RES_METAL . ": " . nf($_POST['new_buy_0']) . "\n" . RES_CRYSTAL . ": " . nf($_POST['new_buy_1']) . "\n" . RES_PLASTIC . ": " . nf($_POST['new_buy_2']) . "\n" . RES_FUEL . ": " . nf($_POST['new_buy_3']) . "\n" . RES_FOOD . ": " . nf($_POST['new_buy_4']) . "");
                 }
 
                 // Log schreiben
@@ -152,49 +134,39 @@ if (mysql_num_rows($res) > 0) {
 
                 // TODO: Market course update
             } else {
-                if ($arr['current_buyer_id'] != 0) {
+                if ($auction->currentBuyerId !== 0) {
                     // Rohstoffe dem überbotenen User wieder zurückgeben
-                    $highestBidderEntity = Entity::createFactoryById($arr['current_buyer_entity_id']);
+                    $highestBidderEntity = Entity::createFactoryById($auction->currentBuyerEntityId);
                     if ($highestBidderEntity->isValid()) {
                         $highestBidderEntity->addRes($currentBuyRes);
                     }
 
                     // Nachricht dem überbotenen user schicken
-                    $marr['timestamp2'] = $arr['date_end'];
+                    $marr['timestamp2'] = $auction->dateEnd;
                     MarketReport::addMarketReport(array(
-                        'user_id' => $arr['current_buyer_id'],
+                        'user_id' => $auction->currentBuyerId,
                         'entity1_id' => $cp->id,
                         'opponent1_id' => $cu->id,
-                    ), "auctionoverbid", $arr['id'], $marr);
+                    ), "auctionoverbid", $auction->id, $marr);
                 }
 
 
                 // Rohstoffe vom neuen Bieter abziehen
                 $cp->subRes($buyRes);
 
-                $resourceString = "";
+                $bid = new BaseResources();
                 foreach ($resNames as $rk => $rn) {
-                    $resourceString .= "buy_$rk='" . $buyRes[$rk] . "',";
+                    $bid->set($rk, $buyRes[$rk]);
                 }
 
                 //Das neue Angebot Speichern
-                dbquery("
-                    UPDATE
-                      market_auction
-                    SET
-                        $resourceString
-                        current_buyer_id='" . $cu->id . "',
-                        current_buyer_entity_id='" . $cp->id() . "',
-                        current_buyer_date='" . time() . "',
-                        bidcount=bidcount+1
-                    WHERE
-                        id='" . $arr['id'] . "';");
+                $marketAuctionRepository->addBid($auction->id, $cu->getId(), $cp->id(), $bid);
                 success_msg("Gebot erfolgeich abgegeben!");
-                echo "<p>" . button("Zurück zur Auktion", "?page=market&amp;mode=search&amp;searchcat=auctions&amp;auctionid=" . $arr['id'] . "") . "</p>";
+                echo "<p>" . button("Zurück zur Auktion", "?page=market&amp;mode=search&amp;searchcat=auctions&amp;auctionid=" . $auction->id . "") . "</p>";
             }
         } else {
             error_msg("Das Gebot muss mindestens " . AUCTION_OVERBID . "% höher sein als das Gebot des Höchstbietenden!");
-            echo "<p>" . button("Zurück zur Auktion", "?page=market&amp;mode=search&amp;searchcat=auctions&amp;auctionid=" . $arr['id'] . "") . "</p>";
+            echo "<p>" . button("Zurück zur Auktion", "?page=market&amp;mode=search&amp;searchcat=auctions&amp;auctionid=" . $auction->id . "") . "</p>";
         }
     } else {
         error_msg("Die gebotenen Rohstoffe sind nicht mehr verfügbar!");

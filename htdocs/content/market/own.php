@@ -1,6 +1,9 @@
 <?php
 
 use EtoA\Building\BuildingRepository;
+use EtoA\Market\MarketAuctionRepository;
+use EtoA\Market\MarketResourceRepository;
+use EtoA\Market\MarketShipRepository;
 use EtoA\Ship\ShipRepository;
 
 /** @var ShipRepository $shipRepository */
@@ -9,43 +12,38 @@ $shipRepository = $app[ShipRepository::class];
 /** @var BuildingRepository $buildingRepository */
 $buildingRepository = $app[BuildingRepository::class];
 
+/** @var MarketAuctionRepository $marketAuctionRepository */
+$marketAuctionRepository = $app[MarketAuctionRepository::class];
+/** @var MarketResourceRepository $marketResourceRepository */
+$marketResourceRepository = $app[MarketResourceRepository::class];
+/** @var MarketShipRepository $marketShipRepository */
+$marketShipRepository = $app[MarketShipRepository::class];
+
 // Schiffangebot löschen
 // <editor-fold>
 if (isset($_POST['ship_cancel'])) {
     if (isset($_POST['ship_market_id'])) {
         $smid = intval($_POST['ship_market_id']);
 
-        $scres = dbquery("
-            SELECT
-                *
-            FROM
-                market_ship
-            WHERE
-                id='" . $smid . "'
-                AND user_id='" . $cu->id . "'");
-
-        if (mysql_num_rows($scres) > 0) {
-            $scrow = mysql_fetch_array($scres);
-            $marketLevel = $buildingRepository->getBuildingLevel($cu->getId(), MARKTPLATZ_ID, (int) $scrow['entity_id']);
+        $offer = $marketShipRepository->getUserOffer($smid, $cu->getId());
+        if ($offer !== null) {
+            $marketLevel = $buildingRepository->getBuildingLevel($cu->getId(), MARKTPLATZ_ID, $offer->entityId);
             $return_factor = floor((1 - 1 / ($marketLevel + 1)) * 100) / 100;
-            $marr = array('factor' => $return_factor, "ship_id" => $scrow['ship_id'], "ship_count" => $scrow['count']);
+            $marr = array('factor' => $return_factor, "ship_id" => $offer->shipId, "ship_count" => $offer->count);
+            $costs = $offer->getCosts();
             foreach ($resNames as $rk => $rn) {
                 // todo: when non on the planet where the deal belongs to, the return_factor
                 // is based on the local marketplace, for better or worse... change that so that the
                 // origin marketplace return factor will be taken
-                $marr['buy_' . $rk] = $scrow['costs_' . $rk];
+                $marr['buy_' . $rk] = $costs->get($rk);
             }
 
-            $returnCount = (int) floor($scrow['count'] * $return_factor);
+            $returnCount = (int) floor($offer->count * $return_factor);
             if ($returnCount > 0) {
-                $shipRepository->addShip((int) $scrow['ship_id'], $returnCount, (int) $scrow['user_id'], (int) $scrow['entity_id']);
+                $shipRepository->addShip($offer->shipId, $returnCount, $offer->userId, $offer->entityId);
             }
 
-            dbquery("
-                DELETE FROM
-                    market_ship
-                WHERE
-                    id='" . $smid . "'");
+            $marketShipRepository->delete($smid);
 
             MarketReport::addMarketReport(array(
                 'user_id' => $cu->id,
@@ -69,47 +67,33 @@ if (isset($_POST['ship_cancel'])) {
 elseif (isset($_POST['ressource_cancel']) && isset($_POST['ressource_market_id'])) {
     $rmid = intval($_POST['ressource_market_id']);
 
-    $rcres = dbquery("
-        SELECT
-            *
-        FROM
-            market_ressource
-        WHERE
-            id='" . $rmid . "'
-            AND user_id='" . $cu->id . "'");
-
-    if (mysql_num_rows($rcres) > 0) {
-        $rcrow = mysql_fetch_assoc($rcres);
-
+    $offer = $marketResourceRepository->getUserOffer($rmid, $cu->getId());
+    if ($offer !== null) {
         $rarr = array();
-        $marketLevel = $buildingRepository->getBuildingLevel($cu->getId(), MARKTPLATZ_ID, (int) $rcrow['entity_id']);
+        $marketLevel = $buildingRepository->getBuildingLevel($cu->getId(), MARKTPLATZ_ID, $offer->entityId);
         $return_factor = floor((1 - 1 / ($marketLevel + 1)) * 100) / 100;
         $marr = array('factor' => $return_factor);
+        $sellResources = $offer->getSellResources();
         foreach ($resNames as $rk => $rn) {
-            if ($rcrow['sell_' . $rk] > 0) {
+            if ($sellResources->get($rk) > 0) {
                 // todo: when non on the planet where the deal belongs to, the return_factor
                 // is based on the local marketplace, for better or worse... change that so that the
                 // origin marketplace return factor will be taken
-                $rarr[$rk] = $rcrow['sell_' . $rk] * $return_factor;
-                $marr['sell_' . $rk] = $rcrow['sell_' . $rk];
+                $rarr[$rk] = $sellResources->get($rk) * $return_factor;
+                $marr['sell_' . $rk] = $sellResources->get($rk);
             }
         }
 
-        $tp = Entity::createFactoryById($rcrow['entity_id']);
+        $tp = Entity::createFactoryById($offer->entityId);
         $tp->addRes($rarr);
         unset($tp);
 
         MarketReport::addMarketReport(array(
             'user_id' => $cu->id,
-            'entity1_id' => $rcrow['entity_id'],
+            'entity1_id' => $offer->entityId,
         ), "rescancel", $rmid, $marr);
 
-        dbquery("
-            DELETE FROM
-                market_ressource
-            WHERE
-                id='" . $rmid . "'");
-
+        $marketResourceRepository->delete($rmid);
         success_msg("Angebot wurde gel&ouml;scht und du hast " . ($return_factor * 100) . "% der angebotenen Rohstoffe zur&uuml;ck erhalten!");
     } else {
         error_msg("Es wurde kein entsprechendes Angebot ausgew&auml;hlt!");
@@ -123,40 +107,32 @@ elseif (isset($_POST['ressource_cancel']) && isset($_POST['ressource_market_id']
 elseif (isset($_POST['auction_cancel']) && isset($_POST['auction_cancel_id'])) {
     $acid = intval($_POST['auction_cancel_id']);
 
-    $acres = dbquery("
-        SELECT
-            *
-        FROM
-            market_auction
-        WHERE
-            id='" . $acid . "'
-            AND user_id='" . $cu->id . "'");
-    if (mysql_num_rows($acres) > 0) {
+    $auction = $marketAuctionRepository->getUserAuction($acid, $cu->getId());
+    if ($auction !== null) {
         // Rohstoffe zurückgeben
-        $acrow = mysql_fetch_array($acres);
-
         $rarr = array();
-        $marketLevel = $buildingRepository->getBuildingLevel($cu->getId(), MARKTPLATZ_ID, (int) $acrow['entity_id']);
+        $marketLevel = $buildingRepository->getBuildingLevel($cu->getId(), MARKTPLATZ_ID, $auction->entityId);
         $return_factor = floor((1 - 1 / ($marketLevel + 1)) * 100) / 100;
         $marr = array('factor' => $return_factor);
+        $sellResources = $auction->getSellResources();
         foreach ($resNames as $rk => $rn) {
-            if ($acrow['sell_' . $rk] > 0) {
+            if ($sellResources->get($rk) > 0) {
                 // todo: when non on the planet where the deal belongs to, the return_factor
                 // is based on the local marketplace, for better or worse... change that so that the
                 // origin marketplace return factor will be taken
-                $rarr[$rk] = $acrow['sell_' . $rk] * $return_factor;
-                $marr['sell_' . $rk] = $acrow['sell_' . $rk];
+                $rarr[$rk] = $sellResources->get($rk) * $return_factor;
+                $marr['sell_' . $rk] = $sellResources->get($rk);
             }
         }
         $cp->addRes($rarr);
 
         //Auktion löschen
-        dbquery("DELETE FROM market_auction WHERE id='" . $acid . "'");
+        $marketAuctionRepository->deleteAuction($auction->id);
 
         MarketReport::addMarketReport(array(
             'user_id' => $cu->id,
-            'entity1_id' => $acrow['entity_id'],
-        ), "auctioncancel", $acid, $marr);
+            'entity1_id' => $auction->entityId,
+        ), "auctioncancel", $auction->id, $marr);
         //			Log::add(7, Log::INFO, "Der Spieler ".$cu->nick." zieht folgende Auktion zur&uuml;ck:\nRohstoffe:\n".RES_METAL.": ".$acrow['sell_metal']."\n".RES_CRYSTAL.": ".$acrow['sell_crystal']."\n".RES_PLASTIC.": ".$acrow['sell_plastic']."\n".RES_FUEL.": ".$acrow['sell_fuel']."\n".RES_FOOD.": ".$acrow['sell_food']."\n\nEr erh&auml;lt ".(round($return_factor,2)*100)."% der Waren erstattet!",time());
 
         success_msg("Auktion wurde gel&ouml;scht und du hast " . ($return_factor * 100) . "% der angebotenen Waren zur&uuml;ck erhalten (es wird abgerundet)!");
@@ -174,17 +150,8 @@ else {
     //
     // Rohstoffe
     // <editor-fold>
-    $res = dbquery("
-        SELECT
-            *
-        FROM
-            market_ressource
-        WHERE
-            user_id='" . $cu->id . "'
-            AND buyable='1'
-        ORDER BY
-            datum ASC");
-    if (mysql_num_rows($res) > 0) {
+    $offers = $marketResourceRepository->getUserOffers($cu->getId());
+    if (count($offers) > 0) {
         echo "<form action=\"?page=$page&amp;mode=user_sell\" method=\"post\">\n";
         echo $cstr;
         tableStart("Rohstoffe");
@@ -196,14 +163,14 @@ else {
                 <th>Datum/Text:</th>
                 <th>Zur&uuml;ckziehen:</th></tr>";
         $cnt = 0;
-        while ($row = mysql_fetch_array($res)) {
+        foreach ($offers as $offer) {
             $reservation = '';
-            if ($row['for_user'] != 0) {
-                $reservedUser = new User($row['for_user']);
+            if ($offer->forUserId !== 0) {
+                $reservedUser = new User($offer->forUserId);
                 if ($reservedUser->isValid) {
                     $reservation = "<span class=\"userAllianceMemberColor\">F&uuml;r Spieler " . $reservedUser->nick . " reserviert</span>";
                 }
-            } else if ($row['for_alliance'] != 0) {
+            } else if ($offer->forAllianceId !== 0) {
                 $reservation = "<span class=\"userAllianceMemberColor\">F&uuml;r Allianzmitglied Reserviert</span>";
             } else {
                 $reservation = "";
@@ -211,22 +178,23 @@ else {
 
             $i = 0;
 
-            $te = Entity::createFactoryById($row['entity_id']);
-            $marketLevel = $buildingRepository->getBuildingLevel($cu->getId(), MARKTPLATZ_ID, (int) $row['entity_id']);
+            $te = Entity::createFactoryById($offer->entityId);
+            $marketLevel = $buildingRepository->getBuildingLevel($cu->getId(), MARKTPLATZ_ID, $offer->entityId);
             $return_factor = floor((1 - 1 / ($marketLevel + 1)) * 100) / 100;
             $info_string = "Wenn du das Angebot zur&uuml;ckziehst erh&auml;lst du " . ($return_factor * 100) . "% des Angebotes zur&uuml;ck (abgerundet).";
             if ($te != null) {
-
+                $buyResources = $offer->getBuyResources();
+                $sellResources = $offer->getSellResources();
                 foreach ($resNames as $rk => $rn) {
                     echo "<tr>
                     <td class=\"rescolor" . $rk . "\">" . $resIcons[$rk] . " <b>" . $rn . "</b>:</td>
-                    <td class=\"rescolor" . $rk . "\">" . ($row['sell_' . $rk] > 0 ? nf($row['sell_' . $rk]) : '-') . "</td>
-                    <td class=\"rescolor" . $rk . "\">" . ($row['buy_' . $rk] > 0 ? nf($row['buy_' . $rk]) : '-') . "</td>";
+                    <td class=\"rescolor" . $rk . "\">" . ($sellResources->get($rk) > 0 ? nf($sellResources->get($rk)) : '-') . "</td>
+                    <td class=\"rescolor" . $rk . "\">" . ($buyResources->get($rk) > 0 ? nf($buyResources->get($rk)) : '-') . "</td>";
                     if ($i++ == 0) {
 
                         echo "<td rowspan=\"5\">" . ($te->detailLink()) . "</td>";
-                        echo "<td rowspan=\"5\">" . date("d.m.Y  G:i:s", $row['datum']) . "<br/><br/>" . stripslashes($row['text']) . "</td>";
-                        echo "<td rowspan=\"5\" " . tt($info_string) . "><input type=\"radio\" name=\"ressource_market_id\" value=\"" . $row['id'] . "\"><br/><br/>" . $reservation . "</td></tr>";
+                        echo "<td rowspan=\"5\">" . date("d.m.Y  G:i:s", $offer->date) . "<br/><br/>" . stripslashes($offer->text) . "</td>";
+                        echo "<td rowspan=\"5\" " . tt($info_string) . "><input type=\"radio\" name=\"ressource_market_id\" value=\"" . $offer->id . "\"><br/><br/>" . $reservation . "</td></tr>";
                     }
                     echo "</tr>";
                 }
@@ -235,7 +203,7 @@ else {
             }
 
             $cnt++;
-            if ($cnt < mysql_num_rows($res))
+            if ($cnt < count($offers))
                 echo "<tr><td colspan=\"7\" style=\"height:10px;background:#000\"></td></tr>";
         }
         tableEnd();
@@ -251,17 +219,8 @@ else {
     //
     // Schiffe
     // <editor-fold>
-    $res = dbquery("
-        SELECT
-            *
-        FROM
-            market_ship
-        WHERE
-            user_id='" . $cu->id . "'
-            AND buyable='1'
-        ORDER BY
-            datum ASC");
-    if (mysql_num_rows($res) > 0) {
+    $offers = $marketShipRepository->getUserOffers($cu->getId());
+    if (count($offers) > 0) {
         echo "<form action=\"?page=$page&amp;mode=user_sell\" method=\"post\">\n";
         echo $cstr;
         tableStart("Schiffe");
@@ -273,14 +232,14 @@ else {
             <th>Zur&uuml;ckziehen:</th></tr>";
 
         $cnt = 0;
-        while ($arr = mysql_fetch_array($res)) {
+        foreach ($offers as $offer) {
             $reservation = '';
-            if ($arr['for_user'] != 0) {
-                $reservedUser = new User($arr['for_user']);
+            if ($offer->forUserId !== 0) {
+                $reservedUser = new User($offer->forUserId);
                 if ($reservedUser->isValid) {
                     $reservation = "<span class=\"userAllianceMemberColor\">F&uuml;r Spieler " . $reservedUser->nick . " reserviert</span>";
                 }
-            } else if ($arr['for_alliance'] != 0) {
+            } else if ($offer->forAllianceId !== 0) {
                 $reservation = "<span class=\"userAllianceMemberColor\">F&uuml;r Allianzmitglied Reserviert</span>";
             } else {
                 $reservation = "";
@@ -288,26 +247,28 @@ else {
 
             $i = 0;
             $resCnt = count($resNames);
-            $marketLevel = $buildingRepository->getBuildingLevel($cu->getId(), MARKTPLATZ_ID, (int) $arr['entity_id']);
+            $marketLevel = $buildingRepository->getBuildingLevel($cu->getId(), MARKTPLATZ_ID, $offer->entityId);
             $return_factor = floor((1 - 1 / ($marketLevel + 1)) * 100) / 100;
             $info_string = "Wenn du das Angebot zur&uuml;ckziehst erh&auml;lst du " . ($return_factor * 100) . "% des Angebotes zur&uuml;ck (abgerundet).";
+
+            $costs = $offer->getCosts();
             foreach ($resNames as $rk => $rn) {
                 echo "<tr>";
                 if ($i == 0) {
-                    $ship = new Ship($arr['ship_id']);
-                    echo "<td rowspan=\"$resCnt\">" . $arr['count'] . " <a href=\"?page=help&site=shipyard&id=" . $arr['ship_id'] . "\">" . $ship->toolTip() . "</a></td>";
+                    $ship = new Ship($offer->shipId);
+                    echo "<td rowspan=\"$resCnt\">" . $offer->count . " <a href=\"?page=help&site=shipyard&id=" . $offer->shipId . "\">" . $ship->toolTip() . "</a></td>";
                 }
                 echo "<td class=\"rescolor" . $rk . "\">" . $resIcons[$rk] . "<b>" . $rn . "</b>:</td>
-                    <td class=\"rescolor" . $rk . "\">" . nf($arr['costs_' . $rk]) . "</td>";
+                    <td class=\"rescolor" . $rk . "\">" . nf($costs->get($rk)) . "</td>";
                 if ($i++ == 0) {
-                    echo "<td rowspan=\"$resCnt\">" . date("d.m.Y  G:i:s", $arr['datum']) . "<br/><br/>" . stripslashes($arr['text']) . "</td>";
-                    echo "<td rowspan=\"$resCnt\" " . tt($info_string) . "><input type=\"radio\" name=\"ship_market_id\" value=\"" . $arr['id'] . "\"><br/><br/>" . $reservation . "</td>";
+                    echo "<td rowspan=\"$resCnt\">" . date("d.m.Y  G:i:s", $offer->date) . "<br/><br/>" . stripslashes($offer->text) . "</td>";
+                    echo "<td rowspan=\"$resCnt\" " . tt($info_string) . "><input type=\"radio\" name=\"ship_market_id\" value=\"" . $offer->id . "\"><br/><br/>" . $reservation . "</td>";
                 }
                 echo "</tr>";
             }
 
             $cnt++;
-            if ($cnt < mysql_num_rows($res))
+            if ($cnt < count($offers))
                 echo "<tr><td colspan=\"6\" style=\"height:10px;background:#000\"></td></tr>";
         }
         tableEnd();
@@ -325,17 +286,8 @@ else {
     // Auktionen
     //
     // <editor-fold>
-    $res = dbquery("
-        SELECT
-            *
-        FROM
-            market_auction
-        WHERE
-            user_id='" . $cu->id . "'
-        ORDER BY
-            date_end ASC;");
-
-    if (mysql_num_rows($res) > 0) {
+    $userAuctions = $marketAuctionRepository->getUserAuctions($cu->getId());
+    if (count($userAuctions) > 0) {
         echo "<form action=\"?page=$page&amp;mode=user_sell\" method=\"post\">\n";
         tableStart("Offene Auktionen");
         // Header
@@ -351,9 +303,9 @@ else {
         $cnt = 0;
         $acnts = array();
         $acnt = 0;
-        while ($arr = mysql_fetch_array($res)) {
+        foreach ($userAuctions as $auction) {
             //restliche zeit bis zum ende
-            $rest_time = $arr['date_end'] - time();
+            $rest_time = $auction->dateEnd - time();
 
             // Gibt Nachricht aus, wenn die Auktion beendet ist, aber noch kein Löschtermin festgelegt ist
             if ($rest_time <= 0) {
@@ -366,31 +318,34 @@ else {
 
             echo "<tr>
                 <td>";
+            $sellResources = $auction->getSellResources();
             foreach ($resNames as $rk => $rn) {
-                if ($arr['sell_' . $rk] > 0) {
+                if ($sellResources->get($rk) > 0) {
                     echo "<span class=\"rescolor" . $rk . "\">";
-                    echo $resIcons[$rk] . $rn . ": " . nf($arr['sell_' . $rk]) . "</span><br style=\"clear:both;\" />";
+                    echo $resIcons[$rk] . $rn . ": " . nf($sellResources->get($rk)) . "</span><br style=\"clear:both;\" />";
                 }
             }
             echo "</td>
-                <td>" . $arr['text'] . "</td>
+                <td>" . $auction->text . "</td>
                 <td>$rest_time</td>
-                <td>" . $arr['bidcount'] . "</td>
+                <td>" . $auction->bidCount . "</td>
                 <td>";
+            $currencyResources = $auction->getCurrencyResources();
+            $buyResources = $auction->getBuyResources();
             foreach ($resNames as $rk => $rn) {
-                if ($arr['currency_' . $rk] > 0) {
+                if ($currencyResources->get($rk) > 0) {
                     echo "<span class=\"rescolor" . $rk . "\">";
-                    echo $resIcons[$rk] . $rn . ": " . nf($arr['buy_' . $rk]);
+                    echo $resIcons[$rk] . $rn . ": " . nf($buyResources->get($rk));
                     echo "</span><br style=\"clear:both;\" />";
                 }
             }
             echo "</td>";
-            $marketLevel = $buildingRepository->getBuildingLevel($cu->getId(), MARKTPLATZ_ID, (int) $arr['entity_id']);
+            $marketLevel = $buildingRepository->getBuildingLevel($cu->getId(), MARKTPLATZ_ID, $auction->entityId);
             $return_factor = floor((1 - 1 / ($marketLevel + 1)) * 100) / 100;
             $info_string = "Wenn du das Angebot zur&uuml;ckziehst erh&auml;lst du " . ($return_factor * 100) . "% des Angebotes zur&uuml;ck (abgerundet).";
             echo "<td " . tt($info_string) . " style=\"width:100px;\">";
-            if ($arr['date_end'] - time() > 0 && $arr['bidcount'] == 0 && $arr['buyable'] == 1)
-                echo "<input type=\"radio\" name=\"auction_cancel_id\"  value=\"" . $arr['id'] . "\" />";
+            if ($auction->dateEnd - time() > 0 && $auction->bidCount == 0 && $auction->buyable)
+                echo "<input type=\"radio\" name=\"auction_cancel_id\"  value=\"" . $auction->id . "\" />";
             echo "</td>";
             echo "</td></tr>";
         }

@@ -1,5 +1,7 @@
 <?php
 
+use EtoA\Market\MarketResourceRepository;
+use EtoA\Universe\Resources\BaseResources;
 use EtoA\User\UserRepository;
 
 /** @var int $alliance_market_level */
@@ -8,6 +10,8 @@ use EtoA\User\UserRepository;
 
 /** @var UserRepository $userRepository */
 $userRepository = $app[UserRepository::class];
+/** @var MarketResourceRepository $marketResourceRepository */
+$marketResourceRepository = $app[MarketResourceRepository::class];
 
 $for_user = 0;
 $for_alliance = 0;
@@ -32,6 +36,9 @@ if (!isset($errMsg)) {
     $marr = array('factor' => MARKET_TAX); // Market report data
     $sf = "";
     $sv = "";
+
+    $sellResources = new BaseResources();
+    $buyResources = new BaseResources();
     foreach ($resNames as $rk => $rn) {
         // Convert formatted number back to integer
         $_POST['res_sell_' . $rk] = nf_back($_POST['res_sell_' . $rk]);
@@ -48,12 +55,10 @@ if (!isset($errMsg)) {
         $subtracted[$rk] = $_POST['res_sell_' . $rk] * MARKET_TAX;
 
         // Build query
-        $sf .= ",sell_" . $rk;
-        $sv .= ",'" . $_POST['res_sell_' . $rk] . "'";
+        $sellResources->set($rk, (int) $_POST['res_sell_' . $rk]);
 
         if (isset($_POST['res_buy_' . $rk])) {
-            $sf .= ",buy_" . $rk;
-            $sv .= ",'" . $_POST['res_buy_' . $rk] . "'";
+            $buyResources->set($rk, (int) $_POST['res_buy_' . $rk]);
         }
 
         // Report data
@@ -68,50 +73,30 @@ if (!isset($errMsg)) {
         if ($cp->subRes($subtracted)) {
 
             // Angebot speichern
-            $sql = "
-                    INSERT INTO
-                    market_ressource
-                            (user_id,
-                            entity_id
-                            " . $sf . ",
-                            for_user,
-                            for_alliance,
-                            `text`,
-                            datum)
-                    VALUES
-                            ('" . $cu->id . "',
-                            '" . $cp->id() . "'
-                            " . $sv . ",
-                            '" . $for_user . "',
-                            '" . $for_alliance . "',
-                            '" . mysql_real_escape_string($_POST['ressource_text']) . "',
-                            '" . time() . "');";
+            $offerId = $marketResourceRepository->add($cu->getId(), (int) $cp->id, (int) $for_user, (int) $for_alliance, $_POST['ressource_text'], $sellResources, $buyResources);
+            if ($for_alliance > 0) {
+                // Set cooldown
+                $cd = time() + $cooldown;
+                dbquery("
+                                UPDATE
+                                    alliance_buildlist
+                                SET
+                                    alliance_buildlist_cooldown=" . $cd . "
+                                WHERE
+                                    alliance_buildlist_alliance_id='" . $cu->allianceId . "'
+                                    AND alliance_buildlist_building_id='" . ALLIANCE_MARKET_ID . "';");
 
-            if (dbquery($sql)) {
-                if ($for_alliance > 0) {
-                    // Set cooldown
-                    $cd = time() + $cooldown;
-                    dbquery("
-                                    UPDATE
-                                        alliance_buildlist
-                                    SET
-                                        alliance_buildlist_cooldown=" . $cd . "
-                                    WHERE
-                                        alliance_buildlist_alliance_id='" . $cu->allianceId . "'
-                                        AND alliance_buildlist_building_id='" . ALLIANCE_MARKET_ID . "';");
-
-                    $cu->alliance->buildlist->setCooldown(ALLIANCE_MARKET_ID, $cd);
-                }
-
-                MarketReport::addMarketReport(array(
-                    'user_id' => $cu->id,
-                    'entity1_id' => $cp->id,
-                    'content' => $_POST['ressource_text']
-                ), "resadd", mysql_insert_id(), $marr);
-
-                success_msg("Angebot erfolgreich aufgegeben");
-                return_btn();
+                $cu->alliance->buildlist->setCooldown(ALLIANCE_MARKET_ID, $cd);
             }
+
+            MarketReport::addMarketReport(array(
+                'user_id' => $cu->id,
+                'entity1_id' => $cp->id,
+                'content' => $_POST['ressource_text']
+            ), "resadd", $offerId, $marr);
+
+            success_msg("Angebot erfolgreich aufgegeben");
+            return_btn();
         } else {
             error_msg("Es gab ein Problem beim Reservieren der Rohstoffe!");
             return_btn();

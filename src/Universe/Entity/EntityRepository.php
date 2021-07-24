@@ -42,6 +42,29 @@ class EntityRepository extends AbstractRepository
         return $id !== false ? (int) $id : null;
     }
 
+    public function getEntity(int $id): ?Entity
+    {
+        $data = $this->createQueryBuilder()
+            ->select(
+                'e.id',
+                'c.id as cid',
+                'code',
+                'pos',
+                'sx',
+                'sy',
+                'cx',
+                'cy'
+            )
+            ->from('entities', 'e')
+            ->innerJoin('e', 'cells', 'c', 'e.cell_id = c.id')
+            ->where('e.id = :id')
+            ->setParameters(['id' => $id])
+            ->execute()
+            ->fetchAssociative();
+
+        return $data !== false ? new Entity($data) : null;
+    }
+
     /**
      * @param string[] $codes
      * @return array<Entity>

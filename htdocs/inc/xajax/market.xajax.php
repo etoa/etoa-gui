@@ -1,6 +1,14 @@
 <?PHP
 
+use EtoA\Market\MarketAuctionRepository;
+use EtoA\Market\MarketResource;
+use EtoA\Market\MarketResourceRepository as MarketResourceRepositoryAlias;
+use EtoA\Market\MarketShipRepository;
 use EtoA\Ship\ShipDataRepository;
+use EtoA\Universe\Entity\EntityRepository;
+use EtoA\Universe\Entity\EntityService;
+use EtoA\Universe\Planet\PlanetRepository;
+use EtoA\Universe\Resources\BaseResources;
 use EtoA\User\UserRepository;
 
 $xajax->register(XAJAX_FUNCTION, 'calcMarketRessPrice');
@@ -10,8 +18,6 @@ $xajax->register(XAJAX_FUNCTION, 'calcMarketShipBuy');
 $xajax->register(XAJAX_FUNCTION, 'checkMarketAuctionFormular');
 $xajax->register(XAJAX_FUNCTION, 'calcMarketAuctionTime');
 $xajax->register(XAJAX_FUNCTION, 'calcMarketAuctionPrice');
-$xajax->register(XAJAX_FUNCTION, 'MarketSearchFormularShow');
-$xajax->register(XAJAX_FUNCTION, 'checkMarketSearchFormular');
 
 $xajax->register(XAJAX_FUNCTION, 'marketSearch');
 $xajax->register(XAJAX_FUNCTION, 'showAuctionDetail');
@@ -22,23 +28,26 @@ function marketSearch($form, $order = "distance", $orderDirection = 0)
     ob_start();
     $ajax = new xajaxResponse();
 
+    /** @var EntityRepository $entityRepository */
+    $entityRepository = $app[EntityRepository::class];
+    /** @var EntityService $entityService */
+    $entityService = $app[EntityService::class];
+    /** @var MarketResourceRepositoryAlias $marketResourceRepository */
+    $marketResourceRepository = $app[MarketResourceRepositoryAlias::class];
+
     //
     // Resources
     // <editor-fold>
     if ($form['search_cat'] == "resources") {
         // Build resource type filter query
-        $sfilter = "";
-        $dfilter = "";
+        $sellFilter = new BaseResources();
+        $buyFilter = new BaseResources();
         foreach ($resNames as $rk => $rv) {
             if (isset($form['market_search_filter_supply_' . $rk]) && $form['market_search_filter_supply_' . $rk] == 1) {
-                if ($sfilter != "")
-                    $sfilter .= " OR ";
-                $sfilter .= " sell_" . $rk . ">0 ";
+                $sellFilter->set($rk, 1);
             }
             if (isset($form['market_search_filter_demand_' . $rk]) && $form['market_search_filter_demand_' . $rk] == 1) {
-                if ($dfilter != "")
-                    $dfilter .= " OR ";
-                $dfilter .= " buy_" . $rk . ">0 ";
+                $buyFilter->set($rk, 1);
             }
         }
 
@@ -47,62 +56,48 @@ function marketSearch($form, $order = "distance", $orderDirection = 0)
             $te = Entity::createFactoryById($_SESSION['cpid']);
         }
 
-        $sql = "
-        SELECT
-            *
-        FROM
-            market_ressource
-        WHERE
-            buyable='1'
-            AND (
-            " . ($sfilter != "" ? $sfilter : 0) . "
-            OR user_id = 0
-            )
-            AND (
-            " . ($dfilter != "" ? $dfilter : 0) . "
-            OR user_id = 0
-            )
-            AND user_id!='" . $_SESSION['user_id'] . "'
-            AND (for_user='" . $_SESSION['user_id'] . "' OR for_user='0')
-            AND (for_alliance='" . $_SESSION['alliance_id'] . "' OR for_alliance='0')
-            ;";
+        $offers = $marketResourceRepository->getBuyableOffers((int) $_SESSION['user_id'], (int) $_SESSION['alliance_id'], $sellFilter, $buyFilter, $resNames);
 
-        $res = dbquery($sql);
-
-        $nr = mysql_num_rows($res);
+        $nr = count($offers);
+        /** @var array<array{offer: MarketResource, sell_total: int, buy_total: int, used_res: int, distance: float, duration: float}> $data */
+        $data = [];
         if ($nr > 0) {
-            $currentEntity = Entity::createFactoryById($_SESSION['cpid']);
+            $currentEntity = $entityRepository->getEntity($_SESSION['cpid']);
             $tradeShip = new Ship(MARKET_SHIP_ID);
             $specialist = new Specialist(0, 0, $_SESSION['user_id']);
 
-            $data = array();
             $i = 0;
-            while ($arr = mysql_fetch_assoc($res)) {
+            foreach ($offers as $offer) {
                 $show = true;
+                $buyResources = $offer->getBuyResources();
+                $sellResources = $offer->getSellResources();
                 if (isset($te)) {
                     foreach ($resNames as $rk => $rn) {
-                        if ($te->resources[$rk] < $arr['buy_' . $rk]) {
+                        if ($te->resources[$rk] < $buyResources->get($rk)) {
                             $show = false;
                             break;
                         }
                     }
                 }
+
                 if ($show) {
-                    $data[$i] = array();
-                    $data[$i] = $arr;
-                    $data[$i]['sell_total'] = 0;
-                    $data[$i]['buy_total'] = 0;
-                    $data[$i]['used_res'] = 0;
+                    $sellerEntity = $entityRepository->getEntity($offer->entityId);
+                    $dist = $entityService->distance($sellerEntity, $currentEntity);
+
+                    $data[$i] = [
+                        'offer' => $offer,
+                        'sell_total' => $sellResources->getSum(),
+                        'buy_total' => $buyResources->getSum(),
+                        'used_res' => 0,
+                        'distance' => $dist,
+                        'duration' => ceil($dist / ($tradeShip->speed * $specialist->tradeTime) * 3600 + $tradeShip->time2start + $tradeShip->time2land),
+                    ];
+
                     foreach ($resNames as $rk => $rn) {
-                        $data[$i]['sell_total'] += $arr['sell_' . $rk];
-                        $data[$i]['buy_total'] += $arr['buy_' . $rk];
-                        if ((int) $arr['sell_' . $rk] + (int) $arr['buy_' . $rk] > 0)
+                        if ($sellResources->get($rk) > 0 || $buyResources->get($rk) > 0)
                             $data[$i]['used_res']++;
                     }
-                    $sellerEntity = Entity::createFactoryById($arr['entity_id']);
-                    $dist = $currentEntity->distance($sellerEntity);
-                    $data[$i]['distance'] = $dist;
-                    $data[$i]['duration'] = ceil($dist / ($tradeShip->speed * $specialist->tradeTime) * 3600 + $tradeShip->time2start + $tradeShip->time2land);
+
                     $i++;
                 }
             }
@@ -121,24 +116,12 @@ function marketSearch($form, $order = "distance", $orderDirection = 0)
                 array_multisort($sort, $sortOrder, $data);
             }
 
-
-            $cres = dbquery("
-            SELECT
-                COUNT(id)
-            FROM
-                market_ressource
-            WHERE
-                buyable=1
-                AND user_id!='" . $_SESSION['user_id'] . "'
-                AND (for_user='" . $_SESSION['user_id'] . "' OR for_user='0')
-                AND (for_alliance='" . $_SESSION['alliance_id'] . "' OR for_alliance='0')
-            ;");
-            $carr = mysql_fetch_row($cres);
+            $carr = $marketResourceRepository->countBuyableOffers((int) $_SESSION['user_id'], (int) $_SESSION['alliance_id']);
             echo "<form action=\"?page=market&amp;mode=ressource\" method=\"post\" id=\"ress_buy_selector\">\n";
             checker_init();
             tableStart();
             echo "<thead><tr>
-                <th class=\"infoboxtitle\" colspan=\"20\">Rohstoffangebote ($offerCount von " . $carr[0] . ")
+                <th class=\"infoboxtitle\" colspan=\"20\">Rohstoffangebote ($offerCount von " . $carr . ")
                     <span id=\"market_search_loading\"><img src=\"images/loading.gif\" alt=\"loading\" /></span>
                 </th></tr>";
             echo "<tr>
@@ -157,36 +140,38 @@ function marketSearch($form, $order = "distance", $orderDirection = 0)
                 // Reservation
                 $reservation = "";
                 $class = "";
-                if ($arr['for_user'] != 0) {
+                if ($arr['offer']->forUserId !== 0) {
                     $class = "top";
                     $reservation = "<span class=\"userAllianceMemberColor\">F&uuml;r dich reserviert</span>";
-                } elseif ($arr['for_alliance'] != 0) {
+                } elseif ($arr['offer']->forAllianceId !== 0) {
                     $class = "top";
                     $reservation = "<span class=\"userAllianceMemberColor\">F&uuml;r Allianzmitglied reserviert</span>";
                 }
 
                 $cres = $arr['used_res'];
 
+                $buyResources = $arr['offer']->getBuyResources();
+                $sellResources = $arr['offer']->getSellResources();
                 echo '<tbody class="offer">';
                 foreach ($resNames as $rk => $rn) {
-                    if ((int) $arr['sell_' . $rk] + (int) $arr['buy_' . $rk] > 0) {
+                    if ($sellResources->get($rk) > 0 || $buyResources->get($rk) > 0) {
                         echo "<tr>
                                         <td class=\"rescolor" . $rk . " rname\">" . $resIcons[$rk] . "<b>" . $rn . "</b>:</td>
-                                        <td class=\"rescolor" . $rk . " rsupp\">" . ($arr['sell_' . $rk] > 0 ? nf($arr['sell_' . $rk]) : '-') . "</td>
-                                        <td class=\"rescolor" . $rk . " rdema\">" . ($arr['buy_' . $rk] > 0 ? nf($arr['buy_' . $rk]) : '-') . "</td>";
+                                        <td class=\"rescolor" . $rk . " rsupp\">" . ($sellResources->get($rk) > 0 ? nf($sellResources->get($rk)) : '-') . "</td>
+                                        <td class=\"rescolor" . $rk . " rdema\">" . ($buyResources->get($rk) > 0 ? nf($buyResources->get($rk)) : '-') . "</td>";
                         if ($i == 0) {
 
                             echo "<td rowspan=\"" . $cres . "\" class=\"usrinfo\">
-                                                <a href=\"?page=userinfo&amp;id=" . $arr['user_id'] . "\">" . get_user_nick($arr['user_id']) . "</a></td>";
+                                                <a href=\"?page=userinfo&amp;id=" . $arr['offer']->userId . "\">" . get_user_nick($arr['offer']->userId) . "</a></td>";
                             echo "<td rowspan=\"" . $cres . "\" class=\"duration\">
                                                 " . tf($arr['duration']) . "
                                                 </td>
                                                 <td rowspan=\"" . $cres . "\">
                                                     " . $reservation . "<br />
-                                                    <span class='rtext " . $class . "'  >" . stripslashes($arr['text']) . "</span>
+                                                    <span class='rtext " . $class . "'  >" . stripslashes($arr['offer']->text) . "</span>
                                                 </td>
                                                 <td rowspan=\"" . $cres . "\">
-                                                    <input type=\"checkbox\" name=\"ressource_market_id[]\" id=\"ressource_market_id\" value=\"" . $arr['id'] . "\" /><br/><br/>
+                                                    <input type=\"checkbox\" name=\"ressource_market_id[]\" id=\"ressource_market_id\" value=\"" . $arr['offer']->id . "\" /><br/><br/>
                                                 </td>";
                         }
                         echo "</tr>";
@@ -240,24 +225,21 @@ function marketSearch($form, $order = "distance", $orderDirection = 0)
             $te = Entity::createFactoryById($_SESSION['cpid']);
         }
 
-        $res = dbquery("
-            SELECT
-                *
-            FROM
-                market_ship
-            WHERE
-                buyable='1'
-            AND user_id!='" . $_SESSION['user_id'] . "'
-            AND (for_user='" . $_SESSION['user_id'] . "' OR for_user='0')
-            AND (for_alliance='" . $_SESSION['alliance_id'] . "' OR for_alliance='0')
-            ;");
+        /** @var MarketShipRepository $marketShipRepository */
+        $marketShipRepository = $app[MarketShipRepository::class];
+        $offers = $marketShipRepository->getBuyableOffers((int) $_SESSION['user_id'], (int) $_SESSION['alliance_id']);
         $cnt = 0;
-        if (mysql_num_rows($res) > 0) {
-            while ($arr = mysql_fetch_array($res)) {
+        if (count($offers) > 0) {
+            /** @var ShipDataRepository $shipRepository */
+            $shipRepository = $app[ShipDataRepository::class];
+            $shipNames = $shipRepository->getShipNames(true);
+
+            foreach ($offers as $offer) {
                 $show = true;
+                $costs = $offer->getCosts();
                 if (isset($te)) {
                     foreach ($resNames as $rk => $rn) {
-                        if ($te->resources[$rk] < $arr['costs_' . $rk]) {
+                        if ($te->resources[$rk] < $costs->get($rk)) {
                             $show = false;
                             break;
                         }
@@ -279,10 +261,10 @@ function marketSearch($form, $order = "distance", $orderDirection = 0)
 
                     $reservation = "";
                     $class = "";
-                    if ($arr['for_user'] != 0) {
+                    if ($offer->forUserId !== 0) {
                         $class = "top";
                         $reservation = "<span class=\"userAllianceMemberColor\">F&uuml;r dich reserviert</span>";
-                    } elseif ($arr['for_alliance'] != 0) {
+                    } elseif ($offer->forAllianceId !== 0) {
                         $class = "top";
                         $reservation = "<span class=\"userAllianceMemberColor\">F&uuml;r Allianzmitglied reserviert</span>";
                     }
@@ -290,24 +272,20 @@ function marketSearch($form, $order = "distance", $orderDirection = 0)
                     $i = 0;
                     $resCnt = count($resNames);
 
-                    /** @var ShipDataRepository $shipRepository */
-                    $shipRepository = $app[ShipDataRepository::class];
-                    $shipNames = $shipRepository->getShipNames(true);
-
                     echo '<tbody class="offer">';
                     foreach ($resNames as $rk => $rn) {
                         echo "<tr>";
                         if ($i == 0) {
-                            echo "<td rowspan=\"$resCnt\">" . $arr['count'] . " <a href=\"?page=help&site=shipyard&id=" . $arr['ship_id'] . "\">" . $shipNames[$arr['ship_id']] . "</a></td>";
+                            echo "<td rowspan=\"$resCnt\">" . $offer->count . " <a href=\"?page=help&site=shipyard&id=" . $offer->shipId . "\">" . $shipNames[$offer->shipId] . "</a></td>";
                         }
                         echo "<td class=\"rescolor" . $rk . " rname\">" . $resIcons[$rk] . "<b>" . $rn . "</b>:</td>
-                            <td class=\"rescolor" . $rk . " rdema\">" . nf($arr['costs_' . $rk]) . "</td>";
+                            <td class=\"rescolor" . $rk . " rdema\">" . nf($costs->get($rk)) . "</td>";
                         if ($i++ == 0) {
-                            $tu = new User($arr['user_id']);
+                            $tu = new User($offer->userId);
                             echo "<td rowspan=\"$resCnt\" class=\"usrinfo\">" . $tu->detailLink() . "</td>";
-                            echo "<td rowspan=\"$resCnt\">" . $reservation . "<br /><span class='rtext " . $class . "'  >" . stripslashes($arr['text']) . "</span></td>";
+                            echo "<td rowspan=\"$resCnt\">" . $reservation . "<br /><span class='rtext " . $class . "'  >" . stripslashes($offer->text) . "</span></td>";
                             echo "<td rowspan=\"$resCnt\">
-                                    <input type=\"checkbox\" name=\"ship_market_id[]\" id=\"ship_market_id_" . $arr['id'] . "\" value=\"" . $arr['id'] . "\" onclick=\"xajax_calcMarketShipBuy(xajax.getFormValues('ship_buy_selector'));\" />
+                                    <input type=\"checkbox\" name=\"ship_market_id[]\" id=\"ship_market_id_" . $offer->id . "\" value=\"" . $offer->id . "\" onclick=\"xajax_calcMarketShipBuy(xajax.getFormValues('ship_buy_selector'));\" />
                                 </td>";
                         }
                         echo "</tr>";
@@ -315,7 +293,7 @@ function marketSearch($form, $order = "distance", $orderDirection = 0)
                     echo '</tbody>';
 
                     $cnt++;
-                    if ($cnt < mysql_num_rows($res))
+                    if ($cnt < count($offers))
                         echo "<tr><td colspan=\"6\" style=\"height:10px;background:#000\"></td></tr>";
                 }
             }
@@ -354,18 +332,11 @@ function marketSearch($form, $order = "distance", $orderDirection = 0)
             return $ajax;
         }
 
-        $res = dbquery("
-            SELECT
-                *
-            FROM
-                market_auction
-            WHERE
-                buyable=1
-                AND user_id!='" . $_SESSION['user_id'] . "'
-            ORDER BY
-                date_end ASC;");
+        /** @var MarketAuctionRepository $marketAuctionRepository */
+        $marketAuctionRepository = $app[MarketAuctionRepository::class];
+        $auctions = $marketAuctionRepository->getBuyableAuctions((int) $_SESSION['user_id']);
 
-        if (mysql_num_rows($res) > 0) {
+        if (count($auctions) > 0) {
             tableStart("Offene Auktionen");
             // Header
             echo "<tr>
@@ -379,9 +350,9 @@ function marketSearch($form, $order = "distance", $orderDirection = 0)
             $cnt = 0;
             $acnts = array();
             $acnt = 0;
-            while ($arr = mysql_fetch_array($res)) {
+            foreach ($auctions as $auction) {
                 //restliche zeit bis zum ende
-                $rest_time = $arr['date_end'] - time();
+                $rest_time = $auction->dateEnd - time();
 
                 // Gibt Nachricht aus, wenn die Auktion beendet ist, aber noch kein Löschtermin festgelegt ist
                 if ($rest_time <= 0) {
@@ -394,27 +365,30 @@ function marketSearch($form, $order = "distance", $orderDirection = 0)
 
                 echo "<tr>
                         <td>";
+                $sellResources = $auction->getSellResources();
                 foreach ($resNames as $rk => $rn) {
-                    if ($arr['sell_' . $rk] > 0) {
+                    if ($sellResources->get($rk) > 0) {
                         echo "<span class=\"rescolor" . $rk . "\">";
-                        echo $resIcons[$rk] . $rn . ": " . nf($arr['sell_' . $rk]) . "</span><br style=\"clear:both;\" />";
+                        echo $resIcons[$rk] . $rn . ": " . nf($sellResources->get($rk)) . "</span><br style=\"clear:both;\" />";
                     }
                 }
                 echo "</td>
-                        <td>" . $arr['text'] . "</td>
+                        <td>" . $auction->text . "</td>
                         <td>$rest_time</td>
-                        <td>" . $arr['bidcount'] . "</td>
+                        <td>" . $auction->bidCount . "</td>
                         <td>";
+                $currencyResources = $auction->getCurrencyResources();
+                $buyFilter = $auction->getBuyResources();
                 foreach ($resNames as $rk => $rn) {
-                    if ($arr['currency_' . $rk] > 0) {
+                    if ($currencyResources->get($rk) > 0) {
                         echo "<span class=\"rescolor" . $rk . "\">";
-                        echo $resIcons[$rk] . $rn . ": " . nf($arr['buy_' . $rk]);
+                        echo $resIcons[$rk] . $rn . ": " . nf($buyFilter->get($rk));
                         echo "</span><br style=\"clear:both;\" />";
                     }
                 }
                 echo "</td>";
                 echo "<td style=\"width:100px;\">
-                    <input type=\"button\" onclick=\"xajax_showAuctionDetail(" . $arr['id'] . ")\" value=\"Infos &amp; Bieten\" /></td>";
+                    <input type=\"button\" onclick=\"xajax_showAuctionDetail(" . $auction->id . ")\" value=\"Infos &amp; Bieten\" /></td>";
                 echo "</td></tr>";
             }
             tableEnd();
@@ -435,30 +409,23 @@ function marketSearch($form, $order = "distance", $orderDirection = 0)
 
 function showAuctionDetail($id)
 {
-    global $resNames, $resIcons;
+    global $resNames, $app;
     ob_start();
     $ajax = new xajaxResponse();
 
+    /** @var EntityRepository $entityRepository */
+    $entityRepository = $app[EntityRepository::class];
+    /** @var PlanetRepository $planetRepository */
+    $planetRepository = $app[PlanetRepository::class];
+    /** @var EntityService $entityService */
+    $entityService = $app[EntityService::class];
+    /** @var MarketAuctionRepository $marketAuctionRepository */
+    $marketAuctionRepository = $app[MarketAuctionRepository::class];
+    $auction = $marketAuctionRepository->getNonUserAuction((int) $id, (int) $_SESSION['user_id']);
 
-    $cnt = 0;
-    $acnts = array();
-    $acnt = 0;
-
-    $res = dbquery("
-    SELECT
-        *
-    FROM
-        market_auction
-    WHERE
-        id='" . intval($id) . "'
-        AND user_id!='" . $_SESSION['user_id'] . "'
-    ");
-
-    if (mysql_num_rows($res) > 0) {
-        $arr = mysql_fetch_assoc($res);
-
+    if ($auction !== null) {
         //restliche zeit bis zum ende
-        $rest_time = $arr['date_end'] - time();
+        $rest_time = $auction->dateEnd - time();
 
         // Gibt Nachricht aus, wenn die Auktion beendet ist, aber noch kein Löschtermin festgelegt ist
         if ($rest_time <= 0) {
@@ -469,27 +436,39 @@ function showAuctionDetail($id)
             $rest_time_str = tf($rest_time);
         }
 
-        $seller = new User($arr['user_id']);
-        $bidder = new User($arr['current_buyer_id']);
-        $sellerEntity = Entity::createFactoryById($arr['entity_id']);
-        $own = Entity::createFactoryById($_SESSION['cpid']);
+        $seller = new User($auction->userId);
+        $bidder = new User($auction->currentBuyerId);
+        $sellerEntity = $entityRepository->getEntity($auction->entityId);
+        $ownEntity = $entityRepository->getEntity((int) $_SESSION['cpid']);
+        $planet = $planetRepository->find((int) $_SESSION['cpid']);
+
 
         echo "<form action=\"?page=market&amp;mode=auction\" method=\"post\" name=\"auctionShowFormular\" id=\"auction_show_selector\">";
         checker_init();
-        echo "<input type=\"hidden\" value=\"" . $arr['id'] . "\" name=\"auction_market_id\" id=\"auction_market_id\"/>";
+        echo "<input type=\"hidden\" value=\"" . $auction->id . "\" name=\"auction_market_id\" id=\"auction_market_id\"/>";
         echo "<input type=\"hidden\" value=\"0\" name=\"auction_show_last_update\" id=\"auction_show_last_update\"/>";
         echo "<input type=\"hidden\" value=\"" . $rest_time . "\" name=\"auction_rest_time\" id=\"auction_rest_time\"/>";
 
         // Übergibt Daten an XAJAX
+        $sellResources = $auction->getSellResources();
+        $buyResources = $auction->getBuyResources();
+        $currencyResources = $auction->getCurrencyResources();
+        $ownResources = [
+            0 => $planet->resMetal,
+            1 => $planet->resCrystal,
+            2 => $planet->resPlastic,
+            3 => $planet->resFuel,
+            4 => $planet->resFood,
+        ];
         foreach ($resNames as $rk => $rn) {
             // Rohstoffe
-            echo "<input type=\"hidden\" value=\"" . $own->resources[$rk] . "\" name=\"res_$rk\" id=\"res_$rk\"/>";
+            echo "<input type=\"hidden\" value=\"" . $ownResources[$rk] . "\" name=\"res_$rk\" id=\"res_$rk\"/>";
             // Angebot
-            echo "<input type=\"hidden\" value=\"" . $arr['sell_' . $rk] . "\" name=\"sell_$rk\" id=\"sell_$rk\"/>";
+            echo "<input type=\"hidden\" value=\"" . $sellResources->get($rk) . "\" name=\"sell_$rk\" id=\"sell_$rk\"/>";
             // Höchstgebot
-            echo "<input type=\"hidden\" value=\"" . $arr['buy_' . $rk] . "\" name=\"buy_$rk\" id=\"buy_$rk\"/>";
+            echo "<input type=\"hidden\" value=\"" . $buyResources->get($rk) . "\" name=\"buy_$rk\" id=\"buy_$rk\"/>";
             // Gewünschte Währung
-            echo "<input type=\"hidden\" value=\"" . $arr['currency_' . $rk] . "\" name=\"currency_$rk\" id=\"currency_$rk\"/>";
+            echo "<input type=\"hidden\" value=\"" . $currencyResources->get($rk) . "\" name=\"currency_$rk\" id=\"currency_$rk\"/>";
         }
 
         tableStart("Auktionsdetails");
@@ -509,13 +488,13 @@ function showAuctionDetail($id)
 
         <tr>
         <th>Entfernung:</th>
-        <td>" . $sellerEntity->distance($own) . " AE</td>
+        <td>" . $entityService->distance($sellerEntity, $ownEntity) . " AE</td>
         <th>Anzahl Gebote:</th>
-        <td>" . $arr['bidcount'] . "</td>
+        <td>" . $auction->bidCount . "</td>
         </tr>";
 
-        if ($arr['text'] != "")
-            echo "<tr><td colspan=\"5\">" . (isset($arr['text']) ? stripslashes($arr['text']) : 'Keine Beschreibung vorhanden') . "</td></tr>";
+        if ($auction->text != "")
+            echo "<tr><td colspan=\"5\">" . (isset($auction->text) ? stripslashes($auction->text) : 'Keine Beschreibung vorhanden') . "</td></tr>";
         tableEnd();
 
         // Angebots/Preis Maske
@@ -534,17 +513,17 @@ function showAuctionDetail($id)
                 echo "<tr>
                 <th style=\"vertical-align:middle;\" class=\"rescolor" . $rk . "\">" . $rn . ":</th>
                 <td id=\"auction_sell_metal_field\" style=\"vertical-align:middle;\"  class=\"rescolor" . $rk . "\">
-                    " . nf($arr['sell_' . $rk]) . "
+                    " . nf($sellResources->get($rk)) . "
                 </td>
                 <th style=\"text-align:center;vertical-align:middle;\">" . $factor[$rk] . "</th>
                 <td id=\"auction_buy_" . $rk . "_field\" style=\"vertical-align:middle;\">
-                    " . nf($arr['buy_' . $rk]) . "
+                    " . nf($buyResources->get($rk)) . "
                 </td>
                 <td style=\"vertical-align:middle;\">";
-                if ($arr['currency_' . $rk] == 1) {
+                if ($currencyResources->get($rk) == 1) {
 
                     //calcMarketAuctionPrice(0);
-                    echo "<input type=\"text\" value=\"" . nf($arr['buy_' . $rk]) . "\" name=\"new_buy_" . $rk . "\" id=\"new_buy_" . $rk . "\" size=\"9\" maxlength=\"15\" onkeyup=\"xajax_calcMarketAuctionPrice(xajax.getFormValues('auction_show_selector'));FormatNumber(this.id,this.value," . $sellerEntity->resources[$rk] . ",'','');\"/>";
+                    echo "<input type=\"text\" value=\"" . nf($buyResources->get($rk)) . "\" name=\"new_buy_" . $rk . "\" id=\"new_buy_" . $rk . "\" size=\"9\" maxlength=\"15\" onkeyup=\"xajax_calcMarketAuctionPrice(xajax.getFormValues('auction_show_selector'));FormatNumber(this.id,this.value," . $ownResources[$rk] . ",'','');\"/>";
                 } else {
                     echo " - ";
                 }
@@ -1554,11 +1533,11 @@ function calcMarketShipBuy($val)
             $cnt++;
 
             // Summiert Rohstoffe
-            $ship_metal_total_costs += $val['ship_buy_metal'][$id];
-            $ship_crystal_total_costs += $val['ship_buy_crystal'][$id];
-            $ship_plastic_total_costs += $val['ship_buy_plastic'][$id];
-            $ship_fuel_total_costs += $val['ship_buy_fuel'][$id];
-            $ship_food_total_costs += $val['ship_buy_food'][$id];
+            $ship_metal_total_costs += $val['ship_buy_metal'][$id] ?? 0;
+            $ship_crystal_total_costs += $val['ship_buy_crystal'][$id] ?? 0;
+            $ship_plastic_total_costs += $val['ship_buy_plastic'][$id] ?? 0;
+            $ship_fuel_total_costs += $val['ship_buy_fuel'][$id] ?? 0;
+            $ship_food_total_costs += $val['ship_buy_food'][$id] ?? 0;
         }
     }
 
@@ -1577,11 +1556,11 @@ function calcMarketShipBuy($val)
     }
     // Prüft, ob genug Rohstoffe vorhanden sind
     elseif (
-        $val['res_metal'] < $ship_metal_total_costs
-        || $val['res_crystal'] < $ship_crystal_total_costs
-        || $val['res_plastic'] < $ship_plastic_total_costs
-        || $val['res_fuel'] < $ship_fuel_total_costs
-        || $val['res_food'] < $ship_food_total_costs
+        ($val['res_metal'] ?? 0) < $ship_metal_total_costs
+        || ($val['res_crystal'] ?? 0) < $ship_crystal_total_costs
+        || ($val['res_plastic'] ?? 0) < $ship_plastic_total_costs
+        || ($val['res_fuel'] ?? 0) < $ship_fuel_total_costs
+        || ($val['res_food'] ?? 0) < $ship_food_total_costs
     ) {
         $out_ship_buy_check_message = "<div style=\"color:red;font-weight:bold;\">Es sind zu wenig Rohstoffe vorhanden!</div>";
 
@@ -1804,11 +1783,11 @@ function calcMarketAuctionPrice($val, $last_update = 0)
     // Eingaben wurden noch nicht geprüft
     $objResponse->assign("auction_show_check_submit", "value", 0);
 
-    $val['new_buy_0'] = min(nf_back($val['new_buy_0']), floor($val['res_0']));
-    $val['new_buy_1'] = min(nf_back($val['new_buy_1']), floor($val['res_1']));
-    $val['new_buy_2'] = min(nf_back($val['new_buy_2']), floor($val['res_2']));
-    $val['new_buy_3'] = min(nf_back($val['new_buy_3']), floor($val['res_3']));
-    $val['new_buy_4'] = min(nf_back($val['new_buy_4']), floor($val['res_4']));
+    $val['new_buy_0'] = min(nf_back($val['new_buy_0'] ?? 0), floor($val['res_0']));
+    $val['new_buy_1'] = min(nf_back($val['new_buy_1'] ?? 0), floor($val['res_1']));
+    $val['new_buy_2'] = min(nf_back($val['new_buy_2'] ?? 0), floor($val['res_2']));
+    $val['new_buy_3'] = min(nf_back($val['new_buy_3'] ?? 0), floor($val['res_3']));
+    $val['new_buy_4'] = min(nf_back($val['new_buy_4'] ?? 0), floor($val['res_4']));
 
     etoa_dump($val);
     // Errechnet Rohstoffwert vom Höchstbietenden
@@ -1988,722 +1967,6 @@ function calcMarketAuctionPrice($val, $last_update = 0)
 
 
     $objResponse->assign("auction_check_message", "innerHTML", $out_auction_check_message);
-
-    $objResponse->assign("marketinfo", "innerHTML", ob_get_contents());
-    ob_end_clean();
-
-    return $objResponse;
-}
-
-
-
-
-/***********************************/
-/* Markt: Angebots Suchmaske       */
-/* Stellt die Suchfelder dar       */
-/***********************************/
-
-function MarketSearchFormularShow($val)
-{
-    ob_start();
-    $objResponse = new xajaxResponse();
-
-    //
-    // Zeigt die verschiedenen Suchmasken an
-    //
-
-
-    //
-    // Rohstoffhandel
-    //
-
-    if ($val['search_cat'] == "ressource") {
-        $out_search_content = "
-            <table class=\"tbl\">
-                <tr>
-                    <th width=\"25%\">Verkäufer</th>
-                    <td colspan=\"2\" " . tm("Verkäufer", "Es werden nur Angebote von einem bestimmten User angezeigt.") . ">
-                        <input type=\"text\" name=\"user_nick\" id=\"user_nick\"  maxlength=\"20\" size=\"20\" autocomplete=\"off\" value=\"\" onkeyup=\"xajax_searchUser(this.value);xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"><br/>
-            <div class=\"citybox\" id=\"citybox\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\">&nbsp;</div>
-                    </td>
-                    <td colspan=\"3\" id=\"check_user_nick\" style=\"vertical-align:middle;\">
-                        &nbsp;
-                    </td>
-                </tr>
-                <tr>
-                    <th width=\"25%\">Bezahlbar</th>
-                    <td " . tm("Bezahlbar", "Es werden nur Angebote angezeigt, für diese genug Rohstoffe auf dem aktuellen Planeten sind.") . ">
-                        <input type=\"radio\" name=\"search_ress_buyable\" id=\"search_ress_buyable\" value=\"1\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> Ja
-                    </td>
-                    <td colspan=\"4\" " . tm("Bezahlbar", "Es werden alle Angebote angezeigt") . ">
-                        <input type=\"radio\" name=\"search_ress_buyable\" id=\"search_ress_buyable\" value=\"0\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> Nein alles anzeigen
-                    </td>
-                </tr>
-                <tr>
-                    <th width=\"25%\">Reservierte</th>
-                    <td " . tm("Reservierte", "Es werden nur Angebote angezeigt, welche für Allianzmitlgieder reserveriert sind.") . ">
-                        <input type=\"radio\" name=\"search_ress_for_alliance\" id=\"search_ress_for_alliance\" value=\"1\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> Ja
-                    </td>
-                    <td colspan=\"4\" " . tm("Reservierte", "Es werden alle Angebote angezeigt") . ">
-                        <input type=\"radio\" name=\"search_ress_for_alliance\" id=\"search_ress_for_alliance\" value=\"0\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> Nein alles anzeigen
-                    </td>
-                </tr>
-                <tr>
-                    <th width=\"25%\">Preisklasse</th>
-                    <td colspan=\"5\" " . tm("Preisklasse", "Es werden nur Angebote angezeigt die sich in dieser Preisklasse befinden.") . ">
-                        <select id=\"search_ress_price_class\" name=\"search_ress_price_class\" onchange=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\">
-                            <option value=\"0\">alle</option>
-                            <option value=\"1\">0 - 100'000</option>
-                            <option value=\"2\">100'000 - 1'000'000</option>
-                            <option value=\"3\">1'000'000 - 10'000'000</option>
-                            <option value=\"4\"> > 10'000'000</option>
-                        </select>
-                    </td>
-                </tr>
-                <tr>
-                    <th>Angebot</th>
-                    <td width=\"15%\" " . tm("Angebot", "" . RES_METAL . " soll im Angebot enthalten sein.") . ">
-                        <input type=\"checkbox\" name=\"search_ress_sell_metal\" id=\"search_ress_sell_metal\" value=\"1\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> " . RES_METAL . "
-                    </td>
-                    <td width=\"15%\" " . tm("Angebot", "" . RES_CRYSTAL . " soll im Angebot enthalten sein.") . ">
-                        <input type=\"checkbox\" name=\"search_ress_sell_crystal\" id=\"search_ress_sell_crystal\" value=\"1\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> " . RES_CRYSTAL . "
-                    </td>
-                    <td width=\"15%\" " . tm("Angebot", "" . RES_PLASTIC . " soll im Angebot enthalten sein.") . ">
-                        <input type=\"checkbox\" name=\"search_ress_sell_plastic\" id=\"search_ress_sell_plastic\" value=\"1\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> " . RES_PLASTIC . "
-                    </td>
-                    <td width=\"15%\" " . tm("Angebot", "" . RES_FUEL . " soll im Angebot enthalten sein.") . ">
-                        <input type=\"checkbox\" name=\"search_ress_sell_fuel\" id=\"search_ress_sell_fuel\" value=\"1\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> " . RES_FUEL . "
-                    </td>
-                    <td width=\"15%\" " . tm("Angebot", "" . RES_FOOD . " soll im Angebot enthalten sein.") . ">
-                        <input type=\"checkbox\" name=\"search_ress_sell_food\" id=\"search_ress_sell_food\" value=\"1\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> " . RES_FOOD . "
-                    </td>
-                </tr>
-                <tr>
-                    <th width=\"25%\">Preis</th>
-                    <td " . tm("Preis", "" . RES_METAL . " soll im Preis enthalten sein.") . ">
-                        <input type=\"checkbox\" name=\"search_ress_buy_metal\" id=\"search_ress_buy_metal\" value=\"1\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> " . RES_METAL . "
-                    </td>
-                    <td " . tm("Preis", "" . RES_CRYSTAL . " soll im Preis enthalten sein.") . ">
-                        <input type=\"checkbox\" name=\"search_ress_buy_crystal\" id=\"search_ress_buy_crystal\" value=\"1\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> " . RES_CRYSTAL . "
-                    </td>
-                    <td " . tm("Preis", "" . RES_PLASTIC . " soll im Preis enthalten sein.") . ">
-                        <input type=\"checkbox\" name=\"search_ress_buy_plastic\" id=\"search_ress_buy_plastic\" value=\"1\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> " . RES_PLASTIC . "
-                    </td>
-                    <td " . tm("Preis", "" . RES_FUEL . " soll im Preis enthalten sein.") . ">
-                        <input type=\"checkbox\" name=\"search_ress_buy_fuel\" id=\"search_ress_buy_fuel\" value=\"1\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> " . RES_FUEL . "
-                    </td>
-                    <td " . tm("Preis", "" . RES_FOOD . " soll im Preis enthalten sein.") . ">
-                        <input type=\"checkbox\" name=\"search_ress_buy_food\" id=\"search_ress_buy_food\" value=\"1\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> " . RES_FOOD . "
-                    </td>
-                </tr>
-            </table>";
-
-        $out_search_check_message = "<div style=\"color:red;font-weight:bold;\">Spezifiziere deine Suche</div>";
-    }
-
-
-    //
-    // Schiffshandel
-    //
-
-    elseif ($val['search_cat'] == "ship") {
-        $out_search_content = "
-            <table class=\"tbl\">
-                <tr>
-                    <th width=\"25%\" style=\"vertical-align:middle;\">Verkäufer</th>
-                    <td colspan=\"2\" style=\"vertical-align:middle;\" " . tm("Verkäufer", "Es werden nur Angebote von einem bestimmten User angezeigt.") . ">
-                        <input type=\"text\" name=\"user_nick\" id=\"user_nick\"  maxlength=\"20\" size=\"20\" autocomplete=\"off\" value=\"\" onkeyup=\"xajax_searchUser(this.value);xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"><br/>
-            <div class=\"citybox\" id=\"citybox\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\">&nbsp;</div>
-                    </td>
-                    <td colspan=\"3\" id=\"check_user_nick\" style=\"vertical-align:middle;\">
-                        &nbsp;
-                    </td>
-                </tr>
-                <tr>
-                    <th width=\"25%\">Bezahlbar</th>
-                    <td " . tm("Bezahlbar", "Es werden nur Angebote angezeigt, für diese genug Rohstoffe auf dem aktuellen Planeten sind.") . ">
-                        <input type=\"radio\" name=\"search_ship_buyable\" id=\"search_ship_buyable\" value=\"1\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> Ja
-                    </td>
-                    <td colspan=\"4\" " . tm("Bezahlbar", "Es werden alle Angebote angezeigt") . ">
-                        <input type=\"radio\" name=\"search_ship_buyable\" id=\"search_ship_buyable\" value=\"0\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> Nein alles anzeigen
-                    </td>
-                </tr>
-                <tr>
-                    <th width=\"25%\">Reservierte</th>
-                    <td " . tm("Reservierte", "Es werden nur Angebote angezeigt, welche für Allianzmitlgieder reserveriert sind.") . ">
-                        <input type=\"radio\" name=\"search_ship_for_alliance\" id=\"search_ship_for_alliance\" value=\"1\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> Ja
-                    </td>
-                    <td colspan=\"4\" " . tm("Reservierte", "Es werden alle Angebote angezeigt") . ">
-                        <input type=\"radio\" name=\"search_ship_for_alliance\" id=\"search_ship_for_alliance\" value=\"0\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> Nein alles anzeigen
-                    </td>
-                </tr>
-                <tr>
-                    <th>Schiff</th>
-                    <td colspan=\"5\" " . tm("Schiff", "Es werden nur Angebote angezeigt, welche den gewählten Schiffstyp enthalten.") . ">
-                        <select id=\"search_ship_ship_list\" name=\"search_ship_ship_list\" onchange=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\">
-                            <option value=\"0\" selected=\"selected\">Alle</option>";
-        foreach ($_SESSION['market']['ship_list'] as $id => $ship) {
-            $out_search_content .= "<option value=\"" . $id . "\">" . $ship['ship_name'] . "</option>";
-        }
-        $out_search_content .=  "
-                        </select>
-                    </td>
-                </tr>
-                <tr>
-                    <th width=\"25%\">Preis</th>
-                    <td width=\"15%\" " . tm("Preis", "" . RES_METAL . " soll im Preis enthalten sein.") . ">
-                        <input type=\"checkbox\" name=\"search_ship_buy_metal\" id=\"search_ship_buy_metal\" value=\"1\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> " . RES_METAL . "
-                    </td>
-                    <td width=\"15%\" " . tm("Preis", "" . RES_CRYSTAL . " soll im Preis enthalten sein.") . ">
-                        <input type=\"checkbox\" name=\"search_ship_buy_crystal\" id=\"search_ship_buy_crystal\" value=\"1\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> " . RES_CRYSTAL . "
-                    </td>
-                    <td width=\"15%\" " . tm("Preis", "" . RES_PLASTIC . " soll im Preis enthalten sein.") . ">
-                        <input type=\"checkbox\" name=\"search_ship_buy_plastic\" id=\"search_ship_buy_plastic\" value=\"1\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> " . RES_PLASTIC . "
-                    </td>
-                    <td width=\"15%\" " . tm("Preis", "" . RES_FUEL . " soll im Preis enthalten sein.") . "> " . RES_FUEL . "
-                        <input type=\"checkbox\" name=\"search_ship_buy_fuel\" id=\"search_ship_buy_fuel\" value=\"1\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/>
-                    </td>
-                    <td width=\"15%\" " . tm("Preis", "" . RES_FOOD . " soll im Preis enthalten sein.") . ">
-                        <input type=\"checkbox\" name=\"search_ship_buy_food\" id=\"search_ship_buy_food\" value=\"1\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> " . RES_FOOD . "
-                    </td>
-                </tr>
-            </table>";
-
-        $out_search_check_message = "<div style=\"color:red;font-weight:bold;\">Spezifiziere deine Suche</div>";
-    }
-
-
-    //
-    // Auktionen
-    //
-
-    elseif ($val['search_cat'] == "auction") {
-        $out_search_content = "
-            <table class=\"tbl\">
-                <tr>
-                    <th width=\"25%\" style=\"vertical-align:middle;\">Verkäufer</th>
-                    <td colspan=\"2\" style=\"vertical-align:middle;\" " . tm("Verkäufer", "Es werden nur Angebote von einem bestimmten User angezeigt.") . ">
-                        <input type=\"text\" name=\"user_nick\" id=\"user_nick\"  maxlength=\"20\" size=\"20\" autocomplete=\"off\" value=\"\" onkeyup=\"xajax_searchUser(this.value);xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"><br/>
-            <div class=\"citybox\" id=\"citybox\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\">&nbsp;</div>
-                    </td>
-                    <td colspan=\"3\" id=\"check_user_nick\" style=\"vertical-align:middle;\">
-                        &nbsp;
-                    </td>
-                </tr>
-                <tr>
-                    <th width=\"25%\">Bezahlbar</th>
-                    <td " . tm("Bezahlbar", "Es werden nur Angebote angezeigt, für diese genug Rohstoffe auf dem aktuellen Planeten sind.") . ">
-                        <input type=\"radio\" name=\"search_auction_buyable\" id=\"search_auction_buyable\" value=\"1\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> Ja
-                    </td>
-                    <td colspan=\"4\" " . tm("Bezahlbar", "Es werden alle Angebote angezeigt") . ">
-                        <input type=\"radio\" name=\"search_auction_buyable\" id=\"search_auction_buyable\" value=\"0\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> Nein alles anzeigen
-                    </td>
-                </tr>
-                <tr>
-                    <th width=\"25%\">Abgelaufene ausblenden</th>
-                    <td " . tm("Abgelaufene ausblenden", "Es werden nur Angebote angezeigt, welche noch nicht abgelaufen sind.") . ">
-                        <input type=\"radio\" name=\"search_auction_end\" id=\"search_auction_end\" value=\"1\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> Ja
-                    </td>
-                    <td colspan=\"4\" " . tm("Abgelaufene ausblenden", "Es werden alle Angebote angezeigt") . ">
-                        <input type=\"radio\" name=\"search_auction_end\" id=\"search_auction_end\" value=\"0\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> Nein alles anzeigen
-                    </td>
-                </tr>
-                <tr>
-                    <th width=\"25%\">Preisklasse</th>
-                    <td colspan=\"5\" " . tm("Preisklasse", "Es werden nur Angebote angezeigt die sich in dieser Preisklasse befinden.") . ">
-                        <select id=\"search_auction_price_class\" name=\"search_auction_price_class\" onchange=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\">
-                            <option value=\"0\">alle</option>
-                            <option value=\"1\">0 - 100'000</option>
-                            <option value=\"2\">100'000 - 1'000'000</option>
-                            <option value=\"3\">1'000'000 - 10'000'000</option>
-                            <option value=\"4\"> > 10'000'000</option>
-                        </select>
-                    </td>
-                </tr>
-                <tr>
-                    <th>Angebot</th>
-                    <td width=\"15%\" " . tm("Angebot", "" . RES_METAL . " soll im Angebot enthalten sein.") . ">
-                        <input type=\"checkbox\" name=\"search_auction_sell_metal\" id=\"search_auction_sell_metal\" value=\"1\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> " . RES_METAL . "
-                    </td>
-                    <td width=\"15%\" " . tm("Angebot", "" . RES_CRYSTAL . " soll im Angebot enthalten sein.") . ">
-                        <input type=\"checkbox\" name=\"search_auction_sell_crystal\" id=\"search_auction_sell_crystal\" value=\"1\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> " . RES_CRYSTAL . "
-                    </td>
-                    <td width=\"15%\" " . tm("Angebot", "" . RES_PLASTIC . " soll im Angebot enthalten sein.") . ">
-                        <input type=\"checkbox\" name=\"search_auction_sell_plastic\" id=\"search_auction_sell_plastic\" value=\"1\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> " . RES_PLASTIC . "
-                    </td>
-                    <td width=\"15%\" " . tm("Angebot", "" . RES_FUEL . " soll im Angebot enthalten sein.") . ">
-                        <input type=\"checkbox\" name=\"search_auction_sell_fuel\" id=\"search_auction_sell_fuel\" value=\"1\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> " . RES_FUEL . "
-                    </td>
-                    <td width=\"15%\" " . tm("Angebot", "" . RES_FOOD . " soll im Angebot enthalten sein.") . ">
-                        <input type=\"checkbox\" name=\"search_auction_sell_food\" id=\"search_auction_sell_food\" value=\"1\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> " . RES_FOOD . "
-                    </td>
-                </tr>
-                <tr>
-                    <th width=\"25%\">Preis</th>
-                    <td " . tm("Preis", "" . RES_METAL . " soll im Preis enthalten sein.") . ">
-                        <input type=\"checkbox\" name=\"search_auction_buy_metal\" id=\"search_auction_buy_metal\" value=\"1\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> " . RES_METAL . "
-                    </td>
-                    <td " . tm("Preis", "" . RES_CRYSTAL . " soll im Preis enthalten sein.") . ">
-                        <input type=\"checkbox\" name=\"search_auction_buy_crystal\" id=\"search_auction_buy_crystal\" value=\"1\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> " . RES_CRYSTAL . "
-                    </td>
-                    <td " . tm("Preis", "" . RES_PLASTIC . " soll im Preis enthalten sein.") . ">
-                        <input type=\"checkbox\" name=\"search_auction_buy_plastic\" id=\"search_auction_buy_plastic\" value=\"1\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> " . RES_PLASTIC . "
-                    </td>
-                    <td " . tm("Preis", "" . RES_FUEL . " soll im Preis enthalten sein.") . ">
-                        <input type=\"checkbox\" name=\"search_auction_buy_fuel\" id=\"search_auction_buy_fuel\" value=\"1\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> " . RES_FUEL . "
-                    </td>
-                    <td " . tm("Preis", "" . RES_FOOD . " soll im Preis enthalten sein.") . ">
-                        <input type=\"checkbox\" name=\"search_auction_buy_food\" id=\"search_auction_buy_food\" value=\"1\" onclick=\"xajax_checkMarketSearchFormular(xajax.getFormValues('search_selector'));\"/> " . RES_FOOD . "
-                    </td>
-                </tr>
-            </table>";
-
-
-        $out_search_check_message = "<div style=\"color:red;font-weight:bold;\">Spezifiziere deine Suche</div>";
-    }
-
-
-    //
-    // Keine Kategorie gewählt
-    //
-
-    else {
-        $out_search_content = "&nbsp;";
-        $out_search_check_message = "<div style=\"color:red;font-weight:bold;\">Wähle eine Kategorie!</div>";
-    }
-
-
-    // XAJAX ändert Daten
-    $objResponse->assign("search_check_message", "innerHTML", $out_search_check_message);
-    $objResponse->assign("search_submit", "disabled", true);
-    $objResponse->assign("search_submit", "style.color", '#f00');
-    $objResponse->assign("search_content", "innerHTML", $out_search_content);
-
-
-    $objResponse->assign("marketinfo", "innerHTML", ob_get_contents());
-    ob_end_clean();
-
-    return $objResponse;
-}
-
-
-
-
-/***************************************/
-/* Markt: Angebotssuche                */
-/* Prüft Eingaben und zählt Resultate  */
-/***************************************/
-
-function checkMarketSearchFormular($val)
-{
-    global $s, $cu, $app;
-
-    /** @var UserRepository */
-    $userRepository = $app[UserRepository::class];
-
-    ob_start();
-    $objResponse = new xajaxResponse();
-
-    //
-    // Rohstoffe
-    //
-
-    if ($val['search_cat'] == "ressource") {
-        $sql_add = "";
-        $out_add_nick = "";
-        $out_add_alliance = "";
-        $userId = null;
-
-
-        // Prüft Nick Eingaben
-        if ($val['user_nick'] != "") {
-            $userId = $userRepository->getUserIdByNick($val['user_nick']);
-            if ($userId !== null) {
-                // Eigener Nick ist unzulässig
-                if ($userId != $s['user_id']) {
-                    $objResponse->assign("check_user_nick", "innerHTML", "<div style=\"color:#0f0;font-weight:bold;\">OK!</div>");
-                } else {
-                    $userId = null;
-                    $objResponse->assign("check_user_nick", "innerHTML", "<div style=\"color:red;font-weight:bold;\">Eigene Angebote können nicht angezeigt werden!</div>");
-                }
-            } else {
-                $objResponse->assign("check_user_nick", "innerHTML", "<div style=\"color:red;font-weight:bold;\">User nicht gefunden!</div>");
-            }
-        }
-
-        // Angebote von einem bestimmten User
-        if ($userId !== null) {
-            $sql_add .= " AND user_id='" . $userId . "'";
-            $out_add_nick = " von " . $val['user_nick'] . "";
-        }
-
-        // Kaufbare Angebote suchen
-        if (isset($val['search_ress_buyable']) && $val['search_ress_buyable'] == 1) {
-            $sql_add .= " AND buy_metal<='" . $val['res_metal'] . "'
-                                        AND buy_crystal<='" . $val['res_crystal'] . "'
-                                        AND buy_plastic<='" . $val['res_plastic'] . "'
-                                        AND buy_fuel<='" . $val['res_fuel'] . "'
-                                        AND buy_food<='" . $val['res_food'] . "'";
-        }
-
-        // Für Allianzmitglieder
-        if (isset($val['search_ress_for_alliance']) && $val['search_ress_for_alliance'] == 1) {
-            $sql_add .= " AND ressource_for_alliance='" . $cu->allianceId . "'";
-            $out_add_alliance = " reservierte(s)";
-        } else {
-            $sql_add .= " AND (ressource_for_alliance='0' OR ressource_for_alliance='" . $cu->allianceId . "')";
-        }
-
-
-        // Preisklasse
-        if ($val['search_ress_price_class'] > 0) {
-            if ($val['search_ress_price_class'] == 1) {
-                $sql_add .= " AND (buy_metal+buy_crystal+buy_plastic+buy_fuel+buy_food)>=0
-                                                AND (buy_metal+buy_crystal+buy_plastic+buy_fuel+buy_food)<=100000";
-            } elseif ($val['search_ress_price_class'] == 2) {
-                $sql_add .= " AND (buy_metal+buy_crystal+buy_plastic+buy_fuel+buy_food)>=100000
-                                                AND (buy_metal+buy_crystal+buy_plastic+buy_fuel+buy_food)<=1000000";
-            } elseif ($val['search_ress_price_class'] == 3) {
-                $sql_add .= " AND (buy_metal+buy_crystal+buy_plastic+buy_fuel+buy_food)>=1000000
-                                                AND (buy_metal+buy_crystal+buy_plastic+buy_fuel+buy_food)<=10000000";
-            } elseif ($val['search_ress_price_class'] == 4) {
-                $sql_add .= " AND (buy_metal+buy_crystal+buy_plastic+buy_fuel+buy_food)>=10000000";
-            }
-        }
-
-        // Rohtoffe im Angebot
-        if (isset($val['search_ress_sell_metal']) && $val['search_ress_sell_metal'] == 1) {
-            $sql_add .= " AND sell_metal>0";
-        }
-        if (isset($val['search_ress_sell_crystal']) && $val['search_ress_sell_crystal'] == 1) {
-            $sql_add .= " AND sell_crystal>0";
-        }
-        if (isset($val['search_ress_sell_plastic']) && $val['search_ress_sell_plastic'] == 1) {
-            $sql_add .= " AND sell_plastic>0";
-        }
-        if (isset($val['search_ress_sell_fuel']) && $val['search_ress_sell_fuel'] == 1) {
-            $sql_add .= " AND sell_fuel>0";
-        }
-        if (isset($val['search_ress_sell_food']) && $val['search_ress_sell_food'] == 1) {
-            $sql_add .= " AND sell_food>0";
-        }
-
-        // Rohstoffe im Preis
-        if (isset($val['search_ress_buy_metal']) && $val['search_ress_buy_metal'] == 1) {
-            $sql_add .= " AND buy_metal>0";
-        }
-        if (isset($val['search_ress_buy_crystal']) && $val['search_ress_buy_crystal'] == 1) {
-            $sql_add .= " AND buy_crystal>0";
-        }
-        if (isset($val['search_ress_buy_plastic']) && $val['search_ress_buy_plastic'] == 1) {
-            $sql_add .= " AND buy_plastic>0";
-        }
-        if (isset($val['search_ress_buy_fuel']) && $val['search_ress_buy_fuel'] == 1) {
-            $sql_add .= " AND buy_fuel>0";
-        }
-        if (isset($val['search_ress_buy_food']) && $val['search_ress_buy_food'] == 1) {
-            $sql_add .= " AND buy_food>0";
-        }
-
-
-        //
-        // SQL-Abfrage
-        //
-
-        $res = dbquery("
-            SELECT
-                ressource_market_id
-            FROM
-                market_ressource
-            WHERE
-                ressource_buyable='1'
-        AND user_id!='" . $s['user_id'] . "'
-        " . $sql_add . ";");
-        $cnt = mysql_num_rows($res);
-
-
-        //
-        // End Prüfung
-        //
-
-        // Keine Angebote gefunden
-        if ($cnt <= 0) {
-            $out_search_check_message = "<div style=\"color:red;font-weight:bold;\">Keine Angebote gefunden</div>";
-
-            $objResponse->assign("search_submit", "disabled", true);
-            $objResponse->assign("search_submit", "style.color", '#f00');
-        }
-        // Angebot ist OK
-        else {
-            $out_search_check_message = "<div style=\"color:#0f0;font-weight:bold;\">OK!<br>" . $cnt . "" . $out_add_alliance . " Angebot(e)" . $out_add_nick . " gefunden!</div>";
-
-            $objResponse->assign("search_submit", "disabled", false);
-            $objResponse->assign("search_submit", "style.color", '#0f0');
-        }
-
-        // XAJAX ändert Daten
-        $objResponse->assign("search_check_message", "innerHTML", $out_search_check_message);
-        $objResponse->assign("ressource_sql_add", "value", $sql_add);
-    }
-
-
-
-
-    //
-    // Schiffe
-    //
-
-    elseif ($val['search_cat'] == "ship") {
-        $sql_add = "";
-        $out_add_nick = "";
-        $out_add_alliance = "";
-        $userId = null;
-
-
-        // Prüft Nick Eingaben
-        if (isset($val['user_nick']) && $val['user_nick'] != "") {
-            $userId = $userRepository->getUserIdByNick($val['user_nick']);
-            if ($userId !== null) {
-                // Eigener Nick ist unzulässig
-                if ($userId != $s['user_id']) {
-                    $objResponse->assign("check_user_nick", "innerHTML", "<div style=\"color:#0f0;font-weight:bold;\">OK!</div>");
-                } else {
-                    $userId = null;
-                    $objResponse->assign("check_user_nick", "innerHTML", "<div style=\"color:red;font-weight:bold;\">Eigene Angebote können nicht angezeigt werden!</div>");
-                }
-            } else {
-                $objResponse->assign("check_user_nick", "innerHTML", "<div style=\"color:red;font-weight:bold;\">User nicht gefunden!</div>");
-            }
-        }
-
-        // Angebote von einem bestimmten User
-        if ($userId !== null) {
-            $sql_add .= " AND user_id='" . $userId . "'";
-            $out_add_nick = " von " . $val['user_nick'] . "";
-        }
-
-        // Kaufbare Angebote suchen
-        if (isset($val['search_ship_buyable']) && $val['search_ship_buyable'] == 1) {
-            $sql_add .= " AND ship_costs_metal<='" . $val['res_metal'] . "'
-                                        AND ship_costs_crystal<='" . $val['res_crystal'] . "'
-                                        AND ship_costs_plastic<='" . $val['res_plastic'] . "'
-                                        AND ship_costs_fuel<='" . $val['res_fuel'] . "'
-                                        AND ship_costs_food<='" . $val['res_food'] . "'";
-        }
-
-        // Für Allianzmitglieder
-        if (isset($val['search_ship_for_alliance']) && $val['search_ship_for_alliance'] == 1) {
-            $sql_add .= " AND ship_for_alliance='" . $cu->allianceId . "'";
-            $out_add_alliance = " reservierte(s)";
-        } else {
-            $sql_add .= " AND (ship_for_alliance='0' OR ship_for_alliance='" . $cu->allianceId . "')";
-        }
-
-
-        // Schiff
-        if ($val['search_ship_ship_list'] != 0) {
-            $sql_add .= " AND ship_id='" . $val['search_ship_ship_list'] . "'";
-        }
-
-        // Rohstoffe im Preis
-        if (isset($val['search_ship_buy_metal']) && $val['search_ship_buy_metal'] == 1) {
-            $sql_add .= " AND ship_costs_metal>0";
-        }
-        if (isset($val['search_ship_buy_crystal']) && $val['search_ship_buy_crystal'] == 1) {
-            $sql_add .= " AND ship_costs_crystal>0";
-        }
-        if (isset($val['search_ship_buy_plastic']) && $val['search_ship_buy_plastic'] == 1) {
-            $sql_add .= " AND ship_costs_plastic>0";
-        }
-        if (isset($val['search_ship_buy_fuel']) && $val['search_ship_buy_fuel'] == 1) {
-            $sql_add .= " AND ship_costs_fuel>0";
-        }
-        if (isset($val['search_ship_buy_food']) && $val['search_ship_buy_food'] == 1) {
-            $sql_add .= " AND ship_costs_food>0";
-        }
-
-
-        //
-        // SQL-Abfrage
-        //
-
-        $res = dbquery("
-            SELECT
-                ship_market_id
-            FROM
-                market_ship
-            WHERE
-                ship_buyable='1'
-        AND user_id!='" . $s['user_id'] . "'
-        " . $sql_add . ";");
-        $cnt = mysql_num_rows($res);
-
-
-        //
-        // End Prüfung
-        //
-
-        // Keine Angebote gefunden
-        if ($cnt <= 0) {
-            $out_search_check_message = "<div style=\"color:red;font-weight:bold;\">Keine Angebote gefunden</div>";
-
-            $objResponse->assign("search_submit", "disabled", true);
-            $objResponse->assign("search_submit", "style.color", '#f00');
-        }
-        // Angebot ist OK
-        else {
-            $out_search_check_message = "<div style=\"color:#0f0;font-weight:bold;\">OK!<br>" . $cnt . "" . $out_add_alliance . " Angebot(e)" . $out_add_nick . " gefunden!</div>";
-
-            $objResponse->assign("search_submit", "disabled", false);
-            $objResponse->assign("search_submit", "style.color", '#0f0');
-        }
-
-        // XAJAX ändert Daten
-        $objResponse->assign("search_check_message", "innerHTML", $out_search_check_message);
-        $objResponse->assign("ship_sql_add", "value", $sql_add);
-    }
-
-
-
-    //
-    // Auktionen
-    //
-
-    if ($val['search_cat'] == "auction") {
-        $sql_add = "";
-        $out_add_nick = "";
-        $userId = 0;
-        $out_add_alliance = "";
-
-
-        // Prüft Nick Eingaben
-        if (isset($val['user_nick']) && $val['user_nick'] != "") {
-            $userId = $userRepository->getUserIdByNick($val['user_nick']);
-            if ($userId !== null) {
-                // Eigener Nick ist unzulässig
-                if ($userId != $s['user_id']) {
-                    $objResponse->assign("check_user_nick", "innerHTML", "<div style=\"color:#0f0;font-weight:bold;\">OK!</div>");
-                } else {
-                    $userId = null;
-                    $objResponse->assign("check_user_nick", "innerHTML", "<div style=\"color:red;font-weight:bold;\">Eigene Angebote können nicht angezeigt werden!</div>");
-                }
-            } else {
-                $objResponse->assign("check_user_nick", "innerHTML", "<div style=\"color:red;font-weight:bold;\">User nicht gefunden!</div>");
-            }
-        }
-
-        // Angebote von einem bestimmten User
-        if ($userId !== null) {
-            $sql_add .= " AND auction_user_id='" . $userId . "'";
-            $out_add_nick = " von " . $val['user_nick'] . "";
-        }
-
-        // Kaufbare Angebote suchen
-        if (isset($val['search_auction_auction_buyable']) && $val['search_auction_auction_buyable'] == 1) {
-            $sql_add .= " AND auction_buy_metal<='" . $val['res_metal'] . "'
-                                        AND auction_buy_crystal<='" . $val['res_crystal'] . "'
-                                        AND auction_buy_plastic<='" . $val['res_plastic'] . "'
-                                        AND auction_buy_fuel<='" . $val['res_fuel'] . "'
-                                        AND auction_buy_food<='" . $val['res_food'] . "'";
-        }
-
-        // Abgelaufene Angebote
-        if (isset($val['search_auction_end']) && $val['search_auction_end'] == 1) {
-            $sql_add .= " AND auction_buyable='1'";
-        }
-
-
-        // Preisklasse
-        if ($val['search_auction_price_class'] > 0) {
-            if ($val['search_auction_price_class'] == 1) {
-                $sql_add .= " AND (auction_buy_metal+auction_buy_crystal+auction_buy_plastic+auction_buy_fuel+auction_buy_food)>=0
-                                                AND (auction_buy_metal+auction_buy_crystal+auction_buy_plastic+auction_buy_fuel+auction_buy_food)<=100000";
-            } elseif ($val['search_auction_price_class'] == 2) {
-                $sql_add .= " AND (auction_buy_metal+auction_buy_crystal+auction_buy_plastic+auction_buy_fuel+auction_buy_food)>=100000
-                                                AND (auction_buy_metal+auction_buy_crystal+auction_buy_plastic+auction_buy_fuel+auction_buy_food)<=1000000";
-            } elseif ($val['search_auction_price_class'] == 3) {
-                $sql_add .= " AND (auction_buy_metal+auction_buy_crystal+auction_buy_plastic+auction_buy_fuel+auction_buy_food)>=1000000
-                                                AND (auction_buy_metal+auction_buy_crystal+auction_buy_plastic+auction_buy_fuel+auction_buy_food)<=10000000";
-            } elseif ($val['search_auction_price_class'] == 4) {
-                $sql_add .= " AND (auction_buy_metal+auction_buy_crystal+auction_buy_plastic+auction_buy_fuel+auction_buy_food)>=10000000";
-            }
-        }
-
-        // Rohtoffe im Angebot
-        if (isset($val['search_auction_sell_metal']) && $val['search_auction_sell_metal'] == 1) {
-            $sql_add .= " AND auction_sell_metal>0";
-        }
-        if (isset($val['search_auction_sell_crystal']) && $val['search_auction_sell_crystal'] == 1) {
-            $sql_add .= " AND auction_sell_crystal>0";
-        }
-        if (isset($val['search_auction_sell_plastic']) && $val['search_auction_sell_plastic'] == 1) {
-            $sql_add .= " AND auction_sell_plastic>0";
-        }
-        if (isset($val['search_auction_sell_fuel']) && $val['search_auction_sell_fuel'] == 1) {
-            $sql_add .= " AND auction_sell_fuel>0";
-        }
-        if (isset($val['search_auction_sell_food']) && $val['search_auction_sell_food'] == 1) {
-            $sql_add .= " AND auction_sell_food>0";
-        }
-
-        // Rohstoffe im Preis
-        if (isset($val['search_auction_buy_metal']) && $val['search_auction_buy_metal'] == 1) {
-            $sql_add .= " AND auction_buy_metal>0";
-        }
-        if (isset($val['search_auction_buy_crystal']) && $val['search_auction_buy_crystal'] == 1) {
-            $sql_add .= " AND auction_buy_crystal>0";
-        }
-        if (isset($val['search_auction_buy_plastic']) && $val['search_auction_buy_plastic'] == 1) {
-            $sql_add .= " AND auction_buy_plastic>0";
-        }
-        if (isset($val['search_auction_buy_fuel']) && $val['search_auction_buy_fuel'] == 1) {
-            $sql_add .= " AND auction_buy_fuel>0";
-        }
-        if (isset($val['search_auction_buy_food']) && $val['search_auction_buy_food'] == 1) {
-            $sql_add .= " AND auction_buy_food>0";
-        }
-
-
-        //
-        // SQL-Abfrage
-        //
-
-        $res = dbquery("
-            SELECT
-                auction_market_id
-            FROM
-                market_auction
-            WHERE
-                auction_user_id!='" . $s['user_id'] . "'
-        " . $sql_add . ";");
-        $cnt = mysql_num_rows($res);
-
-
-        //
-        // End Prüfung
-        //
-
-        // Keine Angebote gefunden
-        if ($cnt <= 0) {
-            $out_search_check_message = "<div style=\"color:red;font-weight:bold;\">Keine Angebote gefunden</div>";
-
-            $objResponse->assign("search_submit", "disabled", true);
-            $objResponse->assign("search_submit", "style.color", '#f00');
-        }
-        // Angebot ist OK
-        else {
-            $out_search_check_message = "<div style=\"color:#0f0;font-weight:bold;\">OK!<br>" . $cnt . "" . $out_add_alliance . " Angebot(e)" . $out_add_nick . " gefunden!</div>";
-
-            $objResponse->assign("search_submit", "disabled", false);
-            $objResponse->assign("search_submit", "style.color", '#0f0');
-        }
-
-        // XAJAX ändert Daten
-        $objResponse->assign("search_check_message", "innerHTML", $out_search_check_message);
-        $objResponse->assign("auction_sql_add", "value", $sql_add);
-    }
-
-
 
     $objResponse->assign("marketinfo", "innerHTML", ob_get_contents());
     ob_end_clean();
