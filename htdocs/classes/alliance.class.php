@@ -3,6 +3,7 @@
 use EtoA\Alliance\AllianceApplicationRepository;
 use EtoA\Alliance\AllianceHistoryRepository;
 use EtoA\Alliance\AlliancePointsRepository;
+use EtoA\Alliance\AllianceSpendRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Message\MessageRepository;
 
@@ -666,8 +667,11 @@ class Alliance
                     dbquery("DELETE FROM alliance_rankrights WHERE rr_rank_id=" . $arr[0] . ";");
                 }
             }
+
+            /** @var AllianceSpendRepository $allianceSpendRepository */
+            $allianceSpendRepository = $app[AllianceSpendRepository::class];
+            $allianceSpendRepository->deleteAllianceEntries($this->id);
             dbquery("DELETE FROM alliance_ranks WHERE rank_alliance_id='" . $this->id . "';");
-            dbquery("DELETE FROM alliance_spends WHERE alliance_spend_alliance_id='" . $this->id . "';");
             dbquery("DELETE FROM alliance_techlist WHERE alliance_techlist_alliance_id='" . $this->id . "';");
             dbquery("UPDATE alliances
                 SET

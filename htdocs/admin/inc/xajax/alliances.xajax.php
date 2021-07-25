@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\Alliance\AllianceRepository;
+use EtoA\Alliance\AllianceSpendRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 
 $xajax->register(XAJAX_FUNCTION, "allianceNewsSave");
@@ -281,6 +282,8 @@ function allianceNewsSetBanTime($time, $text)
 
 function showSpend($allianceId, $form)
 {
+    global $app;
+
     ob_start();
 
     $ures = dbquery("SELECT
@@ -321,34 +324,20 @@ function showSpend($allianceId, $form)
         $user = $form['user_spends'];
     }
 
+    /** @var AllianceSpendRepository $allianceSpendRepository */
+    $allianceSpendRepository = $app[AllianceSpendRepository::class];
     if ($sum) {
         if ($user > 0) {
-            $user_sql = "AND alliance_spend_user_id='" . $user . "'";
             $user_message = "von " . $members[$user]['user_nick'] . " ";
         } else {
-            $user_sql = "";
             $user_message = "";
         }
 
         echo "Es werden die bisher eingezahlten Rohstoffe " . $user_message . " angezeigt.<br><br>";
 
         // Läd Einzahlungen
-        $res = dbquery("
-        SELECT
-            SUM(alliance_spend_metal) AS metal,
-            SUM(alliance_spend_crystal) AS crystal,
-            SUM(alliance_spend_plastic) AS plastic,
-            SUM(alliance_spend_fuel) AS fuel,
-            SUM(alliance_spend_food) AS food
-        FROM
-            alliance_spends
-        WHERE
-            alliance_spend_alliance_id='" . $allianceId . "'
-            " . $user_sql . ";");
-
-        if (mysql_num_rows($res) > 0) {
-            $arr = mysql_fetch_assoc($res);
-
+        $resources = $allianceSpendRepository->getTotalSpent($allianceId, $user);
+        if ($resources->getSum() > 0) {
             tableStart("Total eingezahlte Rohstoffe " . $user_message . "");
             echo "<tr>
                             <th class=\"resmetalcolor\" style=\"width:20%\">" . RES_METAL . "</th>
@@ -358,11 +347,11 @@ function showSpend($allianceId, $form)
                             <th class=\"resfoodcolor\" style=\"width:20%\">" . RES_FOOD . "</th>
                         </tr>";
             echo "<tr>
-                            <td>" . nf($arr['metal']) . "</td>
-                            <td>" . nf($arr['crystal']) . "</td>
-                            <td>" . nf($arr['plastic']) . "</td>
-                            <td>" . nf($arr['fuel']) . "</td>
-                            <td>" . nf($arr['food']) . "</td>
+                            <td>" . nf($resources->metal) . "</td>
+                            <td>" . nf($resources->crystal) . "</td>
+                            <td>" . nf($resources->plastic) . "</td>
+                            <td>" . nf($resources->fuel) . "</td>
+                            <td>" . nf($resources->food) . "</td>
                         </tr>";
             tableEnd();
         } else {
@@ -374,10 +363,8 @@ function showSpend($allianceId, $form)
     // Einzahlungen werden einzelen ausgegeben
     else {
         if ($user > 0) {
-            $user_sql = "AND alliance_spend_user_id='" . $user . "'";
             $user_message = "von " . $members[$user]['user_nick'] . " ";
         } else {
-            $user_sql = "";
             $user_message = "";
         }
 
@@ -387,28 +374,15 @@ function showSpend($allianceId, $form)
             } else {
                 echo "Es werden die letzten " . $limit . " Einzahlungen " . $user_message . "gezeigt.<br><br>";
             }
-
-            $limit_sql = "LIMIT " . $limit . "";
         } else {
             echo "Es werden alle bisherigen Einzahlungen " . $user_message . "gezeigt.<br><br>";
-            $limit_sql = "";
         }
 
         // Läd Einzahlungen
-        $res = dbquery("
-        SELECT
-            *
-        FROM
-            alliance_spends
-        WHERE
-            alliance_spend_alliance_id='" . $allianceId . "'
-            " . $user_sql . "
-        ORDER BY
-            alliance_spend_time DESC
-        " . $limit_sql . ";");
-        if (mysql_num_rows($res) > 0) {
-            while ($arr = mysql_fetch_assoc($res)) {
-                tableStart("" . $members[$arr['alliance_spend_user_id']]['user_nick'] . " - " . df($arr['alliance_spend_time']) . "");
+        $spendEntries = $allianceSpendRepository->getSpent($allianceId, $user, (int) $limit);
+        if (count($spendEntries) > 0) {
+            foreach ($spendEntries as $entry) {
+                tableStart("" . $members[$entry->userId]['user_nick'] . " - " . df($entry->time) . "");
                 echo "<tr>
                                 <th class=\"resmetalcolor\" style=\"width:20%\">" . RES_METAL . "</th>
                                 <th class=\"rescrystalcolor\" style=\"width:20%\">" . RES_CRYSTAL . "</th>
@@ -417,11 +391,11 @@ function showSpend($allianceId, $form)
                                 <th class=\"resfoodcolor\" style=\"width:20%\">" . RES_FOOD . "</th>
                             </tr>";
                 echo "<tr>
-                                <td>" . nf($arr['alliance_spend_metal']) . "</td>
-                                <td>" . nf($arr['alliance_spend_crystal']) . "</td>
-                                <td>" . nf($arr['alliance_spend_plastic']) . "</td>
-                                <td>" . nf($arr['alliance_spend_fuel']) . "</td>
-                                <td>" . nf($arr['alliance_spend_food']) . "</td>
+                                <td>" . nf($entry->metal) . "</td>
+                                <td>" . nf($entry->crystal) . "</td>
+                                <td>" . nf($entry->plastic) . "</td>
+                                <td>" . nf($entry->fuel) . "</td>
+                                <td>" . nf($entry->food) . "</td>
                             </tr>";
                 tableEnd();
             }

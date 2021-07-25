@@ -1,8 +1,10 @@
 <?PHP
 
+use EtoA\Alliance\AllianceSpendRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\UI\ResourceBoxDrawer;
 use EtoA\Universe\Planet\PlanetRepository;
+use EtoA\Universe\Resources\BaseResources;
 
 /** @var ConfigurationService */
 $config = $app[ConfigurationService::class];
@@ -12,6 +14,8 @@ $planetRepo = $app[PlanetRepository::class];
 
 /** @var ResourceBoxDrawer */
 $resourceBoxDrawer = $app[ResourceBoxDrawer::class];
+/** @var AllianceSpendRepository $allianceSpendRepository */
+$allianceSpendRepository = $app[AllianceSpendRepository::class];
 
 $planet = $planetRepo->find($cp->id);
 
@@ -115,61 +119,32 @@ function changeResBox(metal, crystal, plastic, fuel, food)
 
 if (isset($_POST['storage_submit']) && checker_verify()) {
     // Formatiert Eingaben
-    $metal = nf_back($_POST['spend_metal']);
-    $crystal = nf_back($_POST['spend_crystal']);
-    $plastic = nf_back($_POST['spend_plastic']);
-    $fuel = nf_back($_POST['spend_fuel']);
-    $food = nf_back($_POST['spend_food']);
+    $resources = new BaseResources();
+    $resources->metal = (int) nf_back($_POST['spend_metal']);
+    $resources->crystal = (int) nf_back($_POST['spend_crystal']);
+    $resources->plastic = (int) nf_back($_POST['spend_plastic']);
+    $resources->fuel = (int) nf_back($_POST['spend_fuel']);
+    $resources->food = (int) nf_back($_POST['spend_food']);
 
     // Prüft, ob Rohstoffe angegeben wurden
-    if (
-        $metal > 0
-        || $crystal > 0
-        || $plastic > 0
-        || $fuel > 0
-        || $food > 0
-    ) {
+    if ($resources->getSum() > 0) {
         // Prüft, ob Rohstoffe noch vorhanden sind
         if (
-            $cp->getRes(1) >= $metal
-            && $cp->getRes(2) >= $crystal
-            && $cp->getRes(3) >= $plastic
-            && $cp->getRes(4) >= $fuel
-            && $cp->getRes(5) >= $food
+            $cp->getRes(1) >= $resources->metal
+            && $cp->getRes(2) >= $resources->crystal
+            && $cp->getRes(3) >= $resources->plastic
+            && $cp->getRes(4) >= $resources->fuel
+            && $cp->getRes(5) >= $resources->food
         ) {
             // Rohstoffe vom Planet abziehen
-            $res = array($metal, $crystal, $plastic, $fuel, $food);
+            $res = array($resources->metal, $resources->crystal, $resources->plastic, $resources->fuel, $resources->food);
             $cp->subRes($res);
 
             // Rohstoffe der Allianz gutschreiben
-            $cu->alliance->changeRes($metal, $crystal, $plastic, $fuel, $food);
+            $cu->alliance->changeRes($resources->metal, $resources->crystal, $resources->plastic, $resources->fuel, $resources->food);
 
             // Spende speichern
-            dbquery("
-                    INSERT INTO
-                        alliance_spends
-                    (
-                        alliance_spend_alliance_id,
-                        alliance_spend_user_id,
-                        alliance_spend_metal,
-                        alliance_spend_crystal,
-                        alliance_spend_plastic,
-                        alliance_spend_fuel,
-                        alliance_spend_food,
-                        alliance_spend_time
-                    )
-                    VALUES
-                    (
-                        '" . $cu->allianceId . "',
-                        '" . $cu->id . "',
-                        '" . $metal . "',
-                        '" . $crystal . "',
-                        '" . $plastic . "',
-                        '" . $fuel . "',
-                        '" . $food . "',
-                        '" . time() . "'
-                    )");
-
+            $allianceSpendRepository->addEntry($cu->allianceId(), $cu->getId(), $resources);
             success_msg("Rohstoffe erfolgreich eingezahlt!");
         } else
             error_msg("Es sind zu wenig Rohstoffe auf dem Planeten!");
@@ -964,31 +939,16 @@ echo "</form>";
 // Einzahlungen werden summiert und ausgegeben
 if ($sum) {
     if ($user > 0) {
-        $user_sql = "AND alliance_spend_user_id='" . $user . "'";
         $user_message = "von " . $cu->alliance->members[$user] . " ";
     } else {
-        $user_sql = "";
         $user_message = "";
     }
 
     echo "Es werden die bisher eingezahlten Rohstoffe " . $user_message . " angezeigt.<br><br>";
 
     // Läd Einzahlungen
-    $res = dbquery("
-    SELECT
-        SUM(alliance_spend_metal) AS metal,
-        SUM(alliance_spend_crystal) AS crystal,
-        SUM(alliance_spend_plastic) AS plastic,
-        SUM(alliance_spend_fuel) AS fuel,
-        SUM(alliance_spend_food) AS food
-    FROM
-        alliance_spends
-    WHERE
-        alliance_spend_alliance_id='" . $cu->allianceId . "'
-        " . $user_sql . ";");
-    if (mysql_num_rows($res) > 0) {
-        $arr = mysql_fetch_assoc($res);
-
+    $resources = $allianceSpendRepository->getTotalSpent($cu->allianceId(), (int) $user);
+    if ($resources->getSum() > 0) {
         tableStart("Total eingezahlte Rohstoffe " . $user_message . "");
         echo "<tr>
                         <th style=\"width:20%\">" . RES_METAL . "</th>
@@ -998,11 +958,11 @@ if ($sum) {
                         <th style=\"width:20%\">" . RES_FOOD . "</th>
                     </tr>";
         echo "<tr>
-                        <td>" . nf($arr['metal']) . "</td>
-                        <td>" . nf($arr['crystal']) . "</td>
-                        <td>" . nf($arr['plastic']) . "</td>
-                        <td>" . nf($arr['fuel']) . "</td>
-                        <td>" . nf($arr['food']) . "</td>
+                        <td>" . nf($resources->metal) . "</td>
+                        <td>" . nf($resources->crystal) . "</td>
+                        <td>" . nf($resources->plastic) . "</td>
+                        <td>" . nf($resources->fuel) . "</td>
+                        <td>" . nf($resources->food) . "</td>
                     </tr>";
         tableEnd();
     } else {
@@ -1015,10 +975,8 @@ if ($sum) {
 else {
 
     if ($user > 0) {
-        $user_sql = "AND alliance_spend_user_id='" . $user . "'";
         $user_message = "von " . $cu->alliance->members[$user] . " ";
     } else {
-        $user_sql = "";
         $user_message = "";
     }
 
@@ -1029,29 +987,16 @@ else {
         } else {
             echo "Es werden die letzten " . $limit . " Einzahlungen " . $user_message . "gezeigt.<br><br>";
         }
-
-        $limit_sql = "LIMIT " . $limit . "";
     } else {
         echo "Es werden alle bisherigen Einzahlungen " . $user_message . "gezeigt.<br><br>";
-        $limit_sql = "";
     }
 
 
     // Läd Einzahlungen
-    $res = dbquery("
-    SELECT
-        *
-    FROM
-        alliance_spends
-    WHERE
-        alliance_spend_alliance_id='" . $cu->allianceId . "'
-        " . $user_sql . "
-    ORDER BY
-        alliance_spend_time DESC
-    " . $limit_sql . ";");
-    if (mysql_num_rows($res) > 0) {
-        while ($arr = mysql_fetch_assoc($res)) {
-            tableStart("" . $cu->alliance->members[$arr['alliance_spend_user_id']] . " - " . df($arr['alliance_spend_time']) . "");
+    $spendEntries = $allianceSpendRepository->getSpent($cu->allianceId(), $user, $limit);
+    if (count($spendEntries) > 0) {
+        foreach ($spendEntries as $entry) {
+            tableStart("" . $cu->alliance->members[$entry->userId] . " - " . df($entry->time) . "");
             echo "<tr>
                             <th style=\"width:20%\">" . RES_METAL . "</th>
                             <th style=\"width:20%\">" . RES_CRYSTAL . "</th>
@@ -1060,11 +1005,11 @@ else {
                             <th style=\"width:20%\">" . RES_FOOD . "</th>
                         </tr>";
             echo "<tr>
-                            <td>" . nf($arr['alliance_spend_metal']) . "</td>
-                            <td>" . nf($arr['alliance_spend_crystal']) . "</td>
-                            <td>" . nf($arr['alliance_spend_plastic']) . "</td>
-                            <td>" . nf($arr['alliance_spend_fuel']) . "</td>
-                            <td>" . nf($arr['alliance_spend_food']) . "</td>
+                            <td>" . nf($entry->metal) . "</td>
+                            <td>" . nf($entry->crystal) . "</td>
+                            <td>" . nf($entry->plastic) . "</td>
+                            <td>" . nf($entry->fuel) . "</td>
+                            <td>" . nf($entry->food) . "</td>
                         </tr>";
             tableEnd();
         }

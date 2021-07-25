@@ -18,6 +18,7 @@ trait DbTestTrait
     {
         $this->connection->executeQuery('TRUNCATE alliances');
         $this->connection->executeQuery('TRUNCATE alliance_applications');
+        $this->connection->executeQuery('TRUNCATE alliance_spends');
         $this->connection->executeQuery('TRUNCATE chat');
         $this->connection->executeQuery('TRUNCATE chat_banns');
         $this->connection->executeQuery('TRUNCATE chat_users');
