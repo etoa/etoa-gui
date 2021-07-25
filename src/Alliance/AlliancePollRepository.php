@@ -85,6 +85,26 @@ class AlliancePollRepository extends AbstractRepository
         return $data !== false ? new AlliancePoll($data) : null;
     }
 
+    /**
+     * @return array<int, int>
+     */
+    public function getUserVotes(int $userId, int $allianceId): array
+    {
+        $rows = $this->createQueryBuilder()
+            ->select('vote_poll_id, vote_id')
+            ->from('alliance_poll_votes')
+            ->where('vote_user_id = :userId')
+            ->andWhere('vote_alliance_id = :allianceId')
+            ->setParameters([
+                'userId' => $userId,
+                'allianceId' => $allianceId,
+            ])
+            ->execute()
+            ->fetchAllKeyValue();
+
+        return array_map(fn ($value) => (int) $value, $rows);
+    }
+
     public function updateActive(int $pollId, int $allianceId, bool $active): int
     {
         return (int) $this->createQueryBuilder()
@@ -133,7 +153,7 @@ class AlliancePollRepository extends AbstractRepository
             ->execute();
     }
 
-    public function addVote(int $pool, int $allianceId, int $answerId): int
+    public function addVote(int $pollId, int $allianceId, int $userId, int $answerId): bool
     {
         if ($answerId < 1 || $answerId > 8) {
             throw new \InvalidArgumentException('Invalid answer id');
@@ -141,21 +161,41 @@ class AlliancePollRepository extends AbstractRepository
 
         $field = sprintf('poll_a%s_count', $answerId);
 
-        return (int) $this->createQueryBuilder()
+        $voted = (bool) $this->createQueryBuilder()
             ->update('alliance_polls')
             ->set($field, $field . ' + 1')
             ->where('poll_alliance_id = :allianceId')
             ->andWhere('poll_id = :id')
             ->setParameters([
-                'id' => $pool,
+                'id' => $pollId,
                 'allianceId' => $allianceId,
             ])
             ->execute();
+
+        if ($voted) {
+            $this->createQueryBuilder()
+                ->insert('alliance_poll_votes')
+                ->values([
+                    'vote_poll_id' => ':pollId',
+                    'vote_user_id' => ':userId',
+                    'vote_alliance_id' => ':allianceId',
+                    'vote_number' => ':vote',
+                ])
+                ->setParameters([
+                    'pollId' => $pollId,
+                    'allianceId' => $allianceId,
+                    'userId' => $userId,
+                    'vote' => $answerId,
+                ])
+                ->execute();
+        }
+
+        return $voted;
     }
 
-    public function deletePoll(int $pollId, int $allianceId): int
+    public function deletePoll(int $pollId, int $allianceId): bool
     {
-        return (int) $this->createQueryBuilder()
+        $deleted = (bool) $this->createQueryBuilder()
             ->delete('alliance_polls')
             ->where('poll_id = :id')
             ->andWhere('poll_alliance_id = :allianceId')
@@ -164,6 +204,20 @@ class AlliancePollRepository extends AbstractRepository
                 'allianceId' => $allianceId,
             ])
             ->execute();
+
+        if ($deleted) {
+            $this->createQueryBuilder()
+                ->delete('alliance_poll_votes')
+                ->where('vote_poll_id = :id')
+                ->andWhere('vote_alliance_id = :allianceId')
+                ->setParameters([
+                    'id' => $pollId,
+                    'allianceId' => $allianceId,
+                ])
+                ->execute();
+        }
+
+        return $deleted;
     }
 
     public function deleteAllianceEntries(int $allianceId): void
@@ -171,6 +225,12 @@ class AlliancePollRepository extends AbstractRepository
         $this->createQueryBuilder()
             ->delete('alliance_polls')
             ->where('poll_alliance_id = :allianceId')
+            ->setParameter('allianceId', $allianceId)
+            ->execute();
+
+        $this->createQueryBuilder()
+            ->delete('alliance_poll_votes')
+            ->where('vote_alliance_id = :allianceId')
             ->setParameter('allianceId', $allianceId)
             ->execute();
     }

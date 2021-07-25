@@ -12,37 +12,16 @@ echo "<h2>Umfragen</h2>";
 if (isset($_POST['vote_submit']) && checker_verify() && isset($_GET['vote']) && intval($_GET['vote']) > 0 && isset($_POST['poll_answer']) && intval($_POST['poll_answer']) > 0) {
     $vid = intval($_GET['vote']);
     $pa = intval($_POST['poll_answer']);
-    $updated = $alliancePollRepository->addVote($vid, $cu->allianceId(), $pa);
-    if ($updated === 1) {
-        dbquery("INSERT INTO alliance_poll_votes (
-                vote_poll_id,
-                vote_user_id,
-                vote_alliance_id,
-                vote_number
-            ) VALUES (
-            '" . $vid . "',
-            '" . $cu->id . "',
-            '" . $arr['alliance_id'] . "',
-            '" . $pa . "'
-            )");
-    }
+    $updated = $alliancePollRepository->addVote($vid, $cu->allianceId(), $cu->getId(), $pa);
 }
 
 $polls = $alliancePollRepository->getPolls($cu->allianceId());
 if (count($polls) > 0) {
     define("POLL_BAR_WIDTH", 120);
     $chk = checker_init();
-    foreach ($polls as $poll) {
-        $upres = dbquery("
-            SELECT
-                vote_id
-            FROM
-                alliance_poll_votes
-            WHERE
-                vote_poll_id=" . $poll->id . "
-                AND vote_user_id=" . $cu->id . "
-                AND vote_alliance_id=" . $arr['alliance_id'] . ";");
+    $votes = $alliancePollRepository->getUserVotes($cu->getId(), $cu->allianceId());
 
+    foreach ($polls as $poll) {
         $answers = [
             1 => $poll->answer1,
             2 => $poll->answer2,
@@ -54,7 +33,7 @@ if (count($polls) > 0) {
             8 => $poll->answer8,
         ];
 
-        if (mysql_num_rows($upres) > 0 || !$poll->active) {
+        if (isset($votes[$poll->id]) || !$poll->active) {
             tableStart(stripslashes($poll->title));
             echo "<tr><th colspan=\"2\">" . stripslashes($poll->question) . "</th></tr>";
             $num_votes = $poll->answer1Count + $poll->answer2Count + $poll->answer3Count + $poll->answer4Count + $poll->answer5Count + $poll->answer6Count + $poll->answer7Count + $poll->answer8Count;

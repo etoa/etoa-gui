@@ -36,7 +36,7 @@ class AlliancePollRepositoryTest extends AbstractDbTestCase
     {
         $pollId = $this->repository->add(1, 'Title', 'Question', 'Answer', 'Answer', 'Answer', 'Answer', 'Answer', 'Answer', 'Answer', 'Answer');
 
-        $this->repository->addVote($pollId, 1, 1);
+        $this->repository->addVote($pollId, 1, 2, 1);
 
         $poll = $this->repository->getPoll($pollId, 1);
         $this->assertNotNull($poll);

@@ -131,8 +131,7 @@ if (Alliance::checkActionRights('polls')) {
             $did = intval($_GET['del']);
 
             $deleted = $alliancePollRepository->deletePoll($did, $cu->allianceId());
-            if ($deleted > 0) {
-                dbquery("DELETE FROM alliance_poll_votes WHERE vote_poll_id=" . $did . " AND vote_alliance_id=" . $arr['alliance_id'] . ";");
+            if ($deleted) {
                 success_msg("Umfrage wurde gel&ouml;scht!");
             }
         }

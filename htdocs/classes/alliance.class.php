@@ -667,7 +667,7 @@ class Alliance
             /** @var AlliancePollRepository $alliancePollRepository */
             $alliancePollRepository = $app[AlliancePollRepository::class];
             $alliancePollRepository->deleteAllianceEntries($this->id);
-            dbquery("DELETE FROM alliance_poll_votes WHERE vote_alliance_id='" . $this->id . "';");
+
             $res = dbquery("SELECT rank_id FROM alliance_ranks WHERE rank_alliance_id='" . $this->id . "';");
             if (mysql_num_rows($res)) {
                 while ($arr = mysql_fetch_row($res)) {
