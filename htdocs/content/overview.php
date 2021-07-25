@@ -1,5 +1,6 @@
 <?PHP
 
+use EtoA\Alliance\AllianceNewsRepository;
 use EtoA\Text\TextRepository;
 
 use EtoA\Core\Configuration\ConfigurationService;
@@ -71,22 +72,11 @@ echo "<tr>
 // Rathaus
 //
 
-$anres = dbquery("
-        SELECT
-            alliance_news_id
-        FROM
-            alliance_news
-        WHERE
-            (
-          alliance_news_alliance_to_id='" . $cu->allianceId . "'
-            OR alliance_news_alliance_to_id = 0
-            )
-        AND alliance_news_date>'" . $cu->lastOnline . "'
-        ORDER BY
-            alliance_news_date DESC
-        LIMIT 5;");
-if (mysql_num_rows($anres) > 0) {
-    echo "<tr><td><a href=\"?page=townhall\" style=\"color:#ff0\"><b>" . mysql_num_rows($anres) . "</b> neue Nachrichten</a></td>";
+/** @var AllianceNewsRepository $allianceNewsRepository */
+$allianceNewsRepository = $app[AllianceNewsRepository::class];
+$newsCounts = $allianceNewsRepository->countNewEntriesSince($cu->allianceId(), $cu->lastOnline);
+if ($newsCounts > 0) {
+    echo "<tr><td><a href=\"?page=townhall\" style=\"color:#ff0\"><b>" . $newsCounts . "</b> neue Nachrichten</a></td>";
 } else {
     echo "<tr><td>Keine neuen Nachrichten</td>";
 }

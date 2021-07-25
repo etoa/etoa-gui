@@ -44,5 +44,9 @@ class AllianceServiceProvider implements ServiceProviderInterface
         $pimple[AllianceSpendRepository::class] = function (Container $pimple): AllianceSpendRepository {
             return new AllianceSpendRepository($pimple['db']);
         };
+
+        $pimple[AllianceNewsRepository::class] = function (Container $pimple): AllianceNewsRepository {
+            return new AllianceNewsRepository($pimple['db']);
+        };
     }
 }

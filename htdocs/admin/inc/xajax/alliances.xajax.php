@@ -1,5 +1,6 @@
 <?PHP
 
+use EtoA\Alliance\AllianceNewsRepository;
 use EtoA\Alliance\AllianceRepository;
 use EtoA\Alliance\AllianceSpendRepository;
 use EtoA\Core\Configuration\ConfigurationService;
@@ -16,37 +17,14 @@ $xajax->register(XAJAX_FUNCTION, "showSpend");
 
 function allianceNewsLoad()
 {
+    global $app;
+
+    /** @var AllianceNewsRepository $allianceNewsRepository */
+    $allianceNewsRepository = $app[AllianceNewsRepository::class];
     ob_start();
 
-    $res = dbquery("
-        SELECT
-            alliance_news_id,
-            alliance_news_title,
-            alliance_news_text,
-            alliance_news_date,
-            a.alliance_name,
-            a.alliance_tag,
-            a.alliance_id,
-            e.alliance_name as e_alliance_name,
-            e.alliance_tag as e_alliance_tag,
-            e.alliance_id as e_alliance_id,
-            user_nick,
-            user_id
-        FROM
-            alliance_news
-        LEFT JOIN
-            alliances as a
-            ON a.alliance_id=alliance_news_alliance_id
-        LEFT JOIN
-            alliances as e
-            ON e.alliance_id=alliance_news_alliance_to_id
-        LEFT JOIN
-            users
-            ON user_id=alliance_news_user_id
-        ORDER BY
-            alliance_news_date DESC
-        ");
-    if (mysql_num_rows($res) > 0) {
+    $allNews = $allianceNewsRepository->getNewsEntries(null);
+    if (count($allNews) > 0) {
         echo '<table class="tb">';
         echo '<tr>
             <th>Datum</th>
@@ -54,42 +32,42 @@ function allianceNewsLoad()
             <th>Empfänger</th>
             <th>Titel / Text</th>
             </tr>';
-        while ($arr = mysql_fetch_array($res)) {
+        foreach ($allNews as $news) {
             echo '<tr>
-                <td rowspan="2">' . df($arr['alliance_news_date']) . '</td>';
-            echo '<td id="news_' . $arr['alliance_news_id'] . '_alliance" style="border-bottom:1px dotted #999;"><b>';
-            if ($arr['alliance_tag'] != '') {
-                echo '[' . $arr['alliance_tag'] . '] ' . $arr['alliance_name'];
+                <td rowspan="2">' . df($news->date) . '</td>';
+            echo '<td id="news_' . $news->id . '_alliance" style="border-bottom:1px dotted #999;"><b>';
+            if ($news->authorAllianceTag != '') {
+                echo '[' . $news->authorAllianceTag . '] ' . $news->authorAllianceName;
             } else {
                 echo '<span style="color:#999;">Allianz existiert nicht!</span>';
             }
             echo '</b></td>';
-            echo '<td id="news_' . $arr['alliance_news_id'] . '_alliance_to" style="border-bottom:none;"><b>';
-            if ($arr['e_alliance_tag'] != '') {
-                echo '[' . $arr['e_alliance_tag'] . '] ' . $arr['e_alliance_name'];
+            echo '<td id="news_' . $news->id . '_alliance_to" style="border-bottom:none;"><b>';
+            if ($news->toAllianceTag != '') {
+                echo '[' . $news->toAllianceTag . '] ' . $news->toAllianceName;
             } else {
                 echo '<span style="color:#999;">Allianz existiert nicht!</span>';
             }
             echo '</b></td>';
-            echo '<td id="news_' . $arr['alliance_news_id'] . '_title" style="border-bottom:1px dotted #999;';
-            echo '"><b>' . stripslashes($arr['alliance_news_title']) . '</b></td>';
-            echo '<td rowspan="2" id="news_' . $arr['alliance_news_id'] . '_actions">
-                <a href="javascript:;" onclick="xajax_allianceNewsEdit(' . $arr['alliance_news_id'] . ');"><img src="../images/edit.gif" alt="Edit" style="border:none;" /></a>
-                <a href="javascript:;" onclick="if (confirm(\'Beitrag löschen?\')) xajax_allianceNewsDel(' . $arr['alliance_news_id'] . ');"><img src="../images/delete.gif" alt="Delete" style="border:none;" /></a>';
-            if ($arr['user_id'] > 0) {
-                echo '<a href="javascript:;" onclick="if (confirm(\'Benutzer sperren?\')) xajax_lockUser(' . $arr['user_id'] . ',document.getElementById(\'ban_timespan\').options[document.getElementById(\'ban_timespan\').selectedIndex].value,document.getElementById(\'ban_text\').value);"><img src="../images/lock.png" alt="Lock" style="border:none;" /></a>';
+            echo '<td id="news_' . $news->id . '_title" style="border-bottom:1px dotted #999;';
+            echo '"><b>' . stripslashes($news->title) . '</b></td>';
+            echo '<td rowspan="2" id="news_' . $news->id . '_actions">
+                <a href="javascript:;" onclick="xajax_allianceNewsEdit(' . $news->id . ');"><img src="../images/edit.gif" alt="Edit" style="border:none;" /></a>
+                <a href="javascript:;" onclick="if (confirm(\'Beitrag löschen?\')) xajax_allianceNewsDel(' . $news->id . ');"><img src="../images/delete.gif" alt="Delete" style="border:none;" /></a>';
+            if ($news->authorUserId > 0) {
+                echo '<a href="javascript:;" onclick="if (confirm(\'Benutzer sperren?\')) xajax_lockUser(' . $news->authorUserId . ',document.getElementById(\'ban_timespan\').options[document.getElementById(\'ban_timespan\').selectedIndex].value,document.getElementById(\'ban_text\').value);"><img src="../images/lock.png" alt="Lock" style="border:none;" /></a>';
             }
             echo '</td>';
             echo '</tr><tr>';
-            echo '<td style="border-top:none;" id="news_' . $arr['alliance_news_id'] . '_user">';
-            if ($arr['user_nick'] != '') {
-                echo $arr['user_nick'];
+            echo '<td style="border-top:none;" id="news_' . $news->id . '_user">';
+            if ($news->authorUserNick != '') {
+                echo $news->authorUserNick;
             } else {
                 echo '<span style="color:#999;">Spieler existiert nicht!</span>';
             }
             echo '</td>';
-            echo '<td style="border-top:none;" id="news_' . $arr['alliance_news_id'] . '_public"></td>';
-            echo '<td style="border-top:none;" id="news_' . $arr['alliance_news_id'] . '_text">' . stripslashes($arr['alliance_news_text']) . '</td>';
+            echo '<td style="border-top:none;" id="news_' . $news->id . '_public"></td>';
+            echo '<td style="border-top:none;" id="news_' . $news->id . '_text">' . stripslashes($news->text) . '</td>';
             echo '</tr>';
         }
         echo '</table>';
@@ -105,12 +83,12 @@ function allianceNewsLoad()
 
 function allianceNewsDel($id)
 {
-    dbquery("
-    DELETE FROM
-        alliance_news
-    WHERE
-        alliance_news_id='" . $id . "'
-    ;");
+    global $app;
+
+    /** @var AllianceNewsRepository $allianceNewsRepository */
+    $allianceNewsRepository = $app[AllianceNewsRepository::class];
+    $allianceNewsRepository->deleteEntry($id);
+
     $objResponse = new xajaxResponse();
     $objResponse->script("xajax_allianceNewsLoad()");
     return $objResponse;
@@ -118,13 +96,14 @@ function allianceNewsDel($id)
 
 function allianceNewsRemoveOld($ts)
 {
+    global $app;
+
     $t = time() - $ts;
-    dbquery("
-    DELETE FROM
-        alliance_news
-    WHERE
-        alliance_news_date<'" . $t . "'
-    ;");
+
+    /** @var AllianceNewsRepository $allianceNewsRepository */
+    $allianceNewsRepository = $app[AllianceNewsRepository::class];
+    $allianceNewsRepository->deleteOlderThan($t);
+
     $objResponse = new xajaxResponse();
     $objResponse->alert(mysql_affected_rows() . " Beiträge wurden gelöscht!");
     $objResponse->script("xajax_allianceNewsLoad()");
@@ -135,34 +114,20 @@ function allianceNewsEdit($id)
 {
     global $app;
 
+    /** @var AllianceNewsRepository $allianceNewsRepository */
+    $allianceNewsRepository = $app[AllianceNewsRepository::class];
+
     $objResponse = new xajaxResponse();
 
-    $res = dbquery("
-    SELECT
-        alliance_news_id
-    FROM
-        alliance_news
-    WHERE
-        alliance_news_id!='" . $id . "'
-    ;");
-    if (mysql_num_rows($res)) {
-        while ($arr = mysql_fetch_array($res)) {
-            $objResponse->assign("news_" . $arr['alliance_news_id'] . "_actions", "innerHTML", '');
+    $newsIds = $allianceNewsRepository->getNewsIds();
+    foreach ($newsIds as $newsId) {
+        if ($newsId != $id) {
+            $objResponse->assign("news_" . $newsId . "_actions", "innerHTML", '');
         }
     }
-    mysql_free_result($res);
 
-    $res = dbquery("
-    SELECT
-        *
-    FROM
-        alliance_news
-    WHERE
-        alliance_news_id='" . $id . "'
-    ;");
-    if (mysql_num_rows($res) > 0) {
-        $arr = mysql_fetch_array($res);
-
+    $news = $allianceNewsRepository->getEntry($id);
+    if ($news !== null) {
         /** @var AllianceRepository $allianceRepository */
         $allianceRepository = $app[AllianceRepository::class];
         $alliances = $allianceRepository->getAllianceNamesWithTags();
@@ -171,7 +136,7 @@ function allianceNewsEdit($id)
         $ca = 0;
         foreach ($alliances as $k => $v) {
             $out .= '<option value="' . $k . '"';
-            if ($k == $arr['alliance_news_alliance_id']) {
+            if ($k === $news->authorAllianceId) {
                 $ca = $k;
                 $out .= ' selected="selected"';
             }
@@ -183,7 +148,7 @@ function allianceNewsEdit($id)
         $out = '<select name="alliance_to_id"><option value="0">(keine)</option>';
         foreach ($alliances as $k => $v) {
             $out .= '<option value="' . $k . '"';
-            if ($k == $arr['alliance_news_alliance_to_id']) {
+            if ($k === $news->toAllianceId) {
                 $out .= ' selected="selected"';
             }
             $out .= '>' . $v . '</option>';
@@ -194,12 +159,12 @@ function allianceNewsEdit($id)
         $objResponse->assign("news_" . $id . "_public", "innerHTML", $out);
 
         $objResponse->assign("news_" . $id . "_user", "innerHTML", 'Lade Spieler...');
-        $objResponse->script("xajax_allianceNewsLoadUserList(" . $id . "," . $ca . "," . $arr['alliance_news_user_id'] . ");");
+        $objResponse->script("xajax_allianceNewsLoadUserList(" . $id . "," . $ca . "," . $news->authorUserId . ");");
 
-        $out = '<textarea name="text" rows="6" cols="45" >' . stripslashes($arr['alliance_news_text']) . '</textarea>';
+        $out = '<textarea name="text" rows="6" cols="45" >' . stripslashes($news->text) . '</textarea>';
         $objResponse->assign("news_" . $id . "_text", "innerHTML", $out);
 
-        $out = '<input type="text" name="title" size="45" value="' . stripslashes($arr['alliance_news_title']) . '" />';
+        $out = '<input type="text" name="title" size="45" value="' . stripslashes($news->title) . '" />';
         $objResponse->assign("news_" . $id . "_title", "innerHTML", $out);
 
         $out = '<input type="button" onclick="xajax_allianceNewsSave(' . $id . ',xajax.getFormValues(\'newsForm\'))" value="Speichern" /><br/>
@@ -248,18 +213,12 @@ function allianceNewsLoadUserList($nid, $aid, $uid)
 
 function allianceNewsSave($id, $form)
 {
-    dbquery("
-    UPDATE
-        alliance_news
-    SET
-        alliance_news_alliance_id='" . $form['alliance_id'] . "',
-        alliance_news_alliance_to_id='" . $form['alliance_to_id'] . "',
-        alliance_news_user_id='" . $form['user_id'] . "',
-        alliance_news_title='" . addslashes($form['title']) . "',
-        alliance_news_text='" . addslashes($form['text']) . "'
-    WHERE
-        alliance_news_id='" . $id . "'
-    ");
+    global $app;
+
+    /** @var AllianceNewsRepository $allianceNewsRepository */
+    $allianceNewsRepository = $app[AllianceNewsRepository::class];
+    $allianceNewsRepository->update($id, $form['user_id'], $form['alliance_id'], $form['title'], $form['text'], $form['alliance_to_id']);
+
     $objResponse = new xajaxResponse();
     $objResponse->script("xajax_allianceNewsLoad()");
     return $objResponse;

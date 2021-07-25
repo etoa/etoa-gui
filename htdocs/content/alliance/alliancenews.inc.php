@@ -1,9 +1,13 @@
 <?PHP
 
+use EtoA\Alliance\AllianceNewsRepository;
 use EtoA\Alliance\AllianceRepository;
 
 if (Alliance::checkActionRights('alliancenews'))
 {
+    /** @var AllianceNewsRepository $allianceNewsRepository */
+    $allianceNewsRepository = $app[AllianceNewsRepository::class];
+
     echo "<h2>Allianznews</h2>";
     if ((isset($_POST['newssubmit']) || isset($_POST['newssubmitsend'])) && checker_verify())
     {
@@ -18,22 +22,7 @@ if (Alliance::checkActionRights('alliancenews'))
         {
             $_SESSION['alliance']=array();
 
-            dbquery("
-            INSERT INTO
-            alliance_news
-            (alliance_news_alliance_id,
-            alliance_news_user_id,
-            alliance_news_title,
-            alliance_news_text,
-            alliance_news_date,
-            alliance_news_alliance_to_id)
-            VALUES
-            (".$cu->allianceId.",
-            ".$cu->id.",
-            '".mysql_real_escape_string($_POST['news_title'])."',
-            '".mysql_real_escape_string($_POST['news_text'])."',
-            ".time().",
-            ".intval($_POST['alliance_id']).")");
+            $allianceNewsRepository->add($cu->getId(), $cu->allianceId(), $_POST['news_title'], $_POST['news_text'], (int) $_POST['alliance_id']);
 
             success_msg("News wurde gesendet!");
 
