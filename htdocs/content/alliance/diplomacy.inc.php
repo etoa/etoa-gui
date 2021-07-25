@@ -48,10 +48,11 @@ use EtoA\Alliance\AllianceRepository;
 if (Alliance::checkActionRights('relations')) {
     echo "<h2>Diplomatie</h2>";
 
-    /** @var AllianceRepository */
+    /** @var AllianceRepository $allianceRepository */
     $allianceRepository = $app[AllianceRepository::class];
     $allianceNamesWithTags = $allianceRepository->getAllianceNamesWithTags();
-
+    /** @var \EtoA\Message\MessageRepository $messageRepository */
+    $messageRepository = $app[\EtoA\Message\MessageRepository::class];
     //
     // Kriegserklärung schreiben
     //
@@ -364,12 +365,8 @@ if (Alliance::checkActionRights('relations')) {
                 success_msg("Du hast einer Allianz erfolgreich ein B&uuml;ndnis angeboten!");
 
                 //Nachricht an den Leader der gegnerischen Allianz schreiben
-                $res = dbquery("SELECT alliance_founder_id FROM alliances WHERE alliance_id='" . $id . "'");
-                $arr = mysql_fetch_array($res);
-
-                /** @var \EtoA\Message\MessageRepository $messageRepository */
-                $messageRepository = $app[\EtoA\Message\MessageRepository::class];
-                $messageRepository->createSystemMessage((int) $arr['alliance_founder_id'], MSG_ALLYMAIL_CAT, 'Bündnisanfrage', "Die Allianz [b]" . $allianceNamesWithTags[$cu->allianceId] . "[/b] fragt euch für ein Bündnis an.\n
+                $founderId = $allianceRepository->getFounderId($id);
+                $messageRepository->createSystemMessage($founderId, MSG_ALLYMAIL_CAT, 'Bündnisanfrage', "Die Allianz [b]" . $allianceNamesWithTags[$cu->allianceId] . "[/b] fragt euch für ein Bündnis an.\n
                         [b]Text:[/b] " . addslashes($_POST['alliance_bnd_text']) . "\n
                         Geschrieben von [b]" . $cu->nick . "[/b].\n Gehe auf die [page=alliance]Allianzseite[/page] um die Anfrage zu bearbeiten!");
             }
@@ -430,12 +427,8 @@ if (Alliance::checkActionRights('relations')) {
                 $allianceHistoryRepository->addEntry($id, "Die Allianz [b]" . $allianceNamesWithTags[$cu->allianceId] . "[/b] erkl&auml;rt den Krieg!");
 
                 //Nachricht an den Leader der gegnerischen Allianz schreiben
-                $res = dbquery("SELECT alliance_founder_id FROM alliances WHERE alliance_id='" . $id . "';");
-                $arr = mysql_fetch_array($res);
-
-                /** @var \EtoA\Message\MessageRepository $messageRepository */
-                $messageRepository = $app[\EtoA\Message\MessageRepository::class];
-                $messageRepository->createSystemMessage((int) $arr['alliance_founder_id'], MSG_ALLYMAIL_CAT, 'Kriegserklärung', "Die Allianz [b]" . $allianceNamesWithTags[$cu->allianceId] . "[/b] erklärt euch den Krieg!\n
+                $founderId = $allianceRepository->getFounderId($id);
+                $messageRepository->createSystemMessage($founderId, MSG_ALLYMAIL_CAT, 'Kriegserklärung', "Die Allianz [b]" . $allianceNamesWithTags[$cu->allianceId] . "[/b] erklärt euch den Krieg!\n
                         Die Kriegserklärung wurde von [b]" . $cu->nick . "[/b] geschrieben.\n Geh auf die Allianzseite für mehr Details!");
             }
         }
@@ -510,18 +503,8 @@ if (Alliance::checkActionRights('relations')) {
                 $allianceHistoryRepository->addEntry((int) $opId, "Die Allianz [b][" . $selfTag . "] " . $selfName . "[/b] löst das Bündnis [b]" . $arr['alliance_bnd_name'] . "[/b] auf!");
 
                 // Send message to leader
-                $fres = dbquery("
-                        SELECT
-                            alliance_founder_id
-                        FROM
-                            alliances
-                        WHERE
-                            alliance_id='" . $opId . "'
-                        ;");
-                $farr = mysql_fetch_array($fres);
-                /** @var \EtoA\Message\MessageRepository $messageRepository */
-                $messageRepository = $app[\EtoA\Message\MessageRepository::class];
-                $messageRepository->createSystemMessage((int) $farr['alliance_founder_id'], MSG_ALLYMAIL_CAT, "Bündnis " . $arr['alliance_bnd_name'] . " beendet", "Die Allianz [b][" . $selfTag . "] " . $selfName . "[/b] beendet ihr Bündnis [b]" . $arr['alliance_bnd_name'] . "[/b] mit eurer Allianz!\n
+                $founderId = $allianceRepository->getFounderId($opId);
+                $messageRepository->createSystemMessage($founderId, MSG_ALLYMAIL_CAT, "Bündnis " . $arr['alliance_bnd_name'] . " beendet", "Die Allianz [b][" . $selfTag . "] " . $selfName . "[/b] beendet ihr Bündnis [b]" . $arr['alliance_bnd_name'] . "[/b] mit eurer Allianz!\n
                         Ausgelöst von [b]" . $cu->nick . "[/b].\nBegründung: " . $_POST['pact_end_text']);
 
                 echo "Das B&uuml;ndnis <b>" . $arr['alliance_bnd_name'] . "</b> mit der Allianz <b>" . $opName . "</b> wurde aufgel&ouml;st!<br/><br/>";

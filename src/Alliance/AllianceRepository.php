@@ -76,6 +76,17 @@ class AllianceRepository extends AbstractRepository
         return $data !== false ? new Alliance($data) : null;
     }
 
+    public function getFounderId(int $allianceId): int
+    {
+        return (int) $this->createQueryBuilder()
+            ->select('alliance_founder_id')
+            ->from('alliances')
+            ->where('alliance_id = :id')
+            ->setParameter('id', $allianceId)
+            ->execute()
+            ->fetchOne();
+    }
+
     /**
      * @param array<string, int|string|bool> $formData
      * @return array<array{alliance_id: string, alliance_name: string, alliance_tag:string, alliance_foundation_date:string, alliance_founder_id: string, cnt:string}>
