@@ -2,6 +2,7 @@
 
 use EtoA\Alliance\AllianceApplicationRepository;
 use EtoA\Alliance\AllianceHistoryRepository;
+use EtoA\Alliance\AlliancePollRepository;
 use EtoA\Alliance\AllianceRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 
@@ -423,12 +424,13 @@ WHERE
                 echo "<tr><th>Internes Forum</th><td colspan=\"2\"><b><a href=\"?page=allianceboard\">Forum&uuml;bersicht</a></b> &nbsp; $ps</td></tr>";
 
                 // Umfrage verlinken
-                $pres = dbquery("SELECT poll_title,poll_question,poll_id FROM alliance_polls WHERE poll_alliance_id=" . $alliance->id . " ORDER BY poll_timestamp DESC LIMIT 2;");
-                $pcnt = mysql_num_rows($pres);
+                /** @var AlliancePollRepository $alliancePollRepository */
+                $alliancePollRepository = $app[AlliancePollRepository::class];
+                $polls = $alliancePollRepository->getPolls($alliance->id, 2);
+                $pcnt = count($polls);
                 if ($pcnt > 0) {
-                    $parr = mysql_fetch_array($pres);
                     echo "<tr><th>Umfrage:</th>
-                <td colspan=\"2\"><a href=\"?page=$page&amp;action=viewpoll\"><b>" . stripslashes($parr['poll_title']) . ":</b> " . stripslashes($parr['poll_question']) . "</a>";
+                <td colspan=\"2\"><a href=\"?page=$page&amp;action=viewpoll\"><b>" . stripslashes($polls[0]->title) . ":</b> " . stripslashes($polls[0]->question) . "</a>";
                     if ($pcnt > 1)
                         echo " &nbsp; (<a href=\"?page=$page&amp;action=viewpoll\">mehr Umfragen</a>)";
                     echo "</td></tr>";

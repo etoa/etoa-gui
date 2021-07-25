@@ -4,6 +4,7 @@ use EtoA\Alliance\AllianceApplicationRepository;
 use EtoA\Alliance\AllianceHistoryRepository;
 use EtoA\Alliance\AllianceNewsRepository;
 use EtoA\Alliance\AlliancePointsRepository;
+use EtoA\Alliance\AlliancePollRepository;
 use EtoA\Alliance\AllianceSpendRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Message\MessageRepository;
@@ -663,7 +664,9 @@ class Alliance
             $allianceNewsRepository = $app[AllianceNewsRepository::class];
             $allianceNewsRepository->deleteAllianceEntries($this->id);
 
-            dbquery("DELETE FROM alliance_polls WHERE poll_alliance_id='" . $this->id . "';");
+            /** @var AlliancePollRepository $alliancePollRepository */
+            $alliancePollRepository = $app[AlliancePollRepository::class];
+            $alliancePollRepository->deleteAllianceEntries($this->id);
             dbquery("DELETE FROM alliance_poll_votes WHERE vote_alliance_id='" . $this->id . "';");
             $res = dbquery("SELECT rank_id FROM alliance_ranks WHERE rank_alliance_id='" . $this->id . "';");
             if (mysql_num_rows($res)) {
