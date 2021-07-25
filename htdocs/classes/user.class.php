@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\Alliance\AllianceApplicationRepository;
+use EtoA\Alliance\AllianceRankRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Market\MarketAuctionRepository;
 use EtoA\Market\MarketResourceRepository;
@@ -573,6 +574,8 @@ class User implements \EtoA\User\UserInterface
      */
     function loadAllianceData()
     {
+        global $app;
+
         if ($this->allianceId > 0) {
             $ares = dbquery("
             SELECT
@@ -592,18 +595,11 @@ class User implements \EtoA\User\UserInterface
                 if ($aarr[2] == $this->id) {
                     $this->allianceRankName = "Gründer";
                 } elseif ($this->allianceRankId > 0) {
-                    $ares = dbquery("
-                    SELECT
-                        rank_name
-                    FROM
-                        alliance_ranks
-                    WHERE
-                        rank_alliance_id=" . $this->allianceId . "
-                        AND rank_id=" . $this->allianceRankId . ";
-                    ");
-                    if (mysql_num_rows($ares) > 0) {
-                        $aarr = mysql_fetch_row($ares);
-                        $this->allianceRankName = $aarr[0];
+                    /** @var AllianceRankRepository $allianceRankRepository */
+                    $allianceRankRepository = $app[AllianceRankRepository::class];
+                    $rank = $allianceRankRepository->getRank($this->allianceRankId, $this->allianceId);
+                    if ($rank !== null) {
+                        $this->allianceRankName = $rank->name;
                     }
                 }
             }

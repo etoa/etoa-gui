@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\Alliance\AllianceHistoryRepository;
+use EtoA\Alliance\AllianceRankRepository;
 use EtoA\Alliance\AllianceRepository;
 use EtoA\Alliance\InvalidAllianceParametersException;
 use EtoA\Core\Configuration\ConfigurationService;
@@ -13,7 +14,8 @@ $repository = $app[AllianceRepository::class];
 
 /** @var AllianceHistoryRepository */
 $allianceHistoryRepository = $app[AllianceHistoryRepository::class];
-
+/** @var AllianceRankRepository $allianceRankRepository */
+$allianceRankRepository = $app[AllianceRankRepository::class];
 /** @var Request */
 $request = Request::createFromGlobals();
 
@@ -31,7 +33,7 @@ if ($sub == "imagecheck") {
 } elseif ($sub == "news") {
     news($config);
 } elseif ($sub == "crap") {
-    crap($request, $repository);
+    crap($request, $repository, $allianceRankRepository);
 } else {
     $twig->addGlobal('title', 'Allianzen');
 
@@ -248,7 +250,7 @@ function news(ConfigurationService $config)
     echo '<script type="text/javascript">xajax_allianceNewsLoad()</script>';
 }
 
-function crap(Request $request, AllianceRepository $repository)
+function crap(Request $request, AllianceRepository $repository, AllianceRankRepository $allianceRankRepository)
 {
     global $page;
     global $sub;
@@ -256,7 +258,7 @@ function crap(Request $request, AllianceRepository $repository)
     echo "<h1>Überflüssige Daten</h1>";
 
     if ($request->query->has('action') && $request->query->get('action') == "cleanupRanks") {
-        if ($repository->deleteOrphanedRanks() > 0) {
+        if ($allianceRankRepository->deleteOrphanedRanks() > 0) {
             echo "Fehlerhafte Daten gelöscht.";
         }
     } elseif ($request->query->has('action') && $request->query->get('action') == "cleanupDiplomacy") {
@@ -269,7 +271,8 @@ function crap(Request $request, AllianceRepository $repository)
         if (count($alliances) > 0) {
             foreach ($alliances as $alliance) {
                 if ($repository->countUsers((int) $alliance['alliance_id']) == 0) {
-                    if ($repository->remove((int) $alliance['alliance_id'])) {
+                    $alliance = new Alliance($alliance['alliance_id']);
+                    if ($alliance->delete()) {
                         $cnt++;
                     }
                 }
@@ -280,7 +283,7 @@ function crap(Request $request, AllianceRepository $repository)
 
     // Ränge ohne Allianz
     echo "<h2>Ränge ohne Allianz</h2>";
-    $ranksWithoutAlliance = $repository->countOrphanedRanks();
+    $ranksWithoutAlliance = $allianceRankRepository->countOrphanedRanks();
     if ($ranksWithoutAlliance > 0) {
         echo "$ranksWithoutAlliance Ränge ohne Allianz.
 			<a href=\"?page=$page&amp;sub=$sub&amp;action=cleanupRanks\">Löschen?</a>";

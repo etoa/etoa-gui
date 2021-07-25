@@ -3,6 +3,7 @@
 use EtoA\Alliance\AllianceApplicationRepository;
 use EtoA\Alliance\AllianceHistoryRepository;
 use EtoA\Alliance\AlliancePollRepository;
+use EtoA\Alliance\AllianceRankRepository;
 use EtoA\Alliance\AllianceRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 
@@ -10,6 +11,8 @@ use EtoA\Core\Configuration\ConfigurationService;
 $config = $app[ConfigurationService::class];
 /** @var AllianceRepository $allianceRepository */
 $allianceRepository = $app[AllianceRepository::class];
+/** @var AllianceRankRepository $allianceRankRepository */
+$allianceRankRepository = $app[AllianceRankRepository::class];
 
 echo "<h1>Allianz</h1>";
 echo "<div id=\"allianceinfo\"></div>"; //nur zu entwicklungszwecken!
@@ -49,25 +52,12 @@ elseif ($cu->allianceId == 0) {
         $rights = array();
         $myRight = [];
         if (mysql_num_rows($rightres) > 0) {
+            $rightIds = $allianceRankRepository->getAvailableRightIds($cu->allianceId(), $myRankId);
+
             while ($rightarr = mysql_fetch_array($rightres)) {
                 $rights[$rightarr['right_id']]['key'] = $rightarr['right_key'];
                 $rights[$rightarr['right_id']]['desc'] = $rightarr['right_desc'];
-                $check_res = dbquery("
-SELECT
-    alliance_rankrights.rr_id
-FROM
-    alliance_rankrights,
-    alliance_ranks
-WHERE
-    alliance_ranks.rank_id=alliance_rankrights.rr_rank_id
-    AND alliance_ranks.rank_alliance_id=" . $cu->allianceId . "
-    AND alliance_rankrights.rr_right_id=" . $rightarr['right_id'] . "
-    AND alliance_rankrights.rr_rank_id=" . $myRankId . ";");
-
-                if (mysql_num_rows($check_res) > 0)
-                    $myRight[$rightarr['right_key']] = true;
-                else
-                    $myRight[$rightarr['right_key']] = false;
+                $myRight[$rightarr['right_key']] = in_array((int) $rightarr['right_id'], $rightIds, true);
             }
         }
 

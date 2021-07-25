@@ -6,7 +6,7 @@ class AllianceRank
 {
     public int $id;
     public int $level;
-    public string $name;
+    public ?string $name;
 
     public function __construct(array $data)
     {

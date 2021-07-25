@@ -5,6 +5,7 @@ use EtoA\Alliance\AllianceHistoryRepository;
 use EtoA\Alliance\AllianceNewsRepository;
 use EtoA\Alliance\AlliancePointsRepository;
 use EtoA\Alliance\AlliancePollRepository;
+use EtoA\Alliance\AllianceRankRepository;
 use EtoA\Alliance\AllianceSpendRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Message\MessageRepository;
@@ -668,17 +669,14 @@ class Alliance
             $alliancePollRepository = $app[AlliancePollRepository::class];
             $alliancePollRepository->deleteAllianceEntries($this->id);
 
-            $res = dbquery("SELECT rank_id FROM alliance_ranks WHERE rank_alliance_id='" . $this->id . "';");
-            if (mysql_num_rows($res)) {
-                while ($arr = mysql_fetch_row($res)) {
-                    dbquery("DELETE FROM alliance_rankrights WHERE rr_rank_id=" . $arr[0] . ";");
-                }
-            }
+            /** @var AllianceRankRepository $allianceRankRepository */
+            $allianceRankRepository = $app[AllianceRankRepository::class];
+            $allianceRankRepository->deleteAllianceRanks($this->id);
 
             /** @var AllianceSpendRepository $allianceSpendRepository */
             $allianceSpendRepository = $app[AllianceSpendRepository::class];
             $allianceSpendRepository->deleteAllianceEntries($this->id);
-            dbquery("DELETE FROM alliance_ranks WHERE rank_alliance_id='" . $this->id . "';");
+
             dbquery("DELETE FROM alliance_techlist WHERE alliance_techlist_alliance_id='" . $this->id . "';");
             dbquery("UPDATE alliances
                 SET
@@ -848,29 +846,14 @@ class Alliance
 
     function checkActionRightsNA($action)
     {
-        global $cu;
+        global $cu, $app;
 
         if ($this->founderId == $cu->id) return true;
 
-        $res = dbquery("
-                        SELECT
-                            alliance_rankrights.rr_id
-                        FROM
-                            alliance_ranks
-                        INNER JOIN
-                            alliance_rankrights
-                        ON
-                            alliance_ranks.rank_id=alliance_rankrights.rr_rank_id
-                        INNER JOIN
-                            alliance_rights
-                        ON
-                            alliance_rankrights.rr_right_id=alliance_rights.right_id
-                            AND alliance_ranks.rank_alliance_id='" . $this->id . "'
-                            AND alliance_rights.right_key='" . $action . "'
-                            AND alliance_rankrights.rr_rank_id=" . $cu->allianceRankId . ";");
-        if (mysql_num_rows($res)) return true;
+        /** @var AllianceRankRepository $allianceRankRepository */
+        $allianceRankRepository = $app[AllianceRankRepository::class];
 
-        return false;
+        return $allianceRankRepository->hasActionRights($this->id, $cu->allianceRankId, $action);
     }
 
     /**
