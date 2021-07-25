@@ -2,6 +2,11 @@
 //
 // Script zum Anzeigen/Verbergen von Texten
 //
+
+use EtoA\Alliance\AllianceNewsRepository;
+
+/** @var AllianceNewsRepository $allianceNewsRepository */
+$allianceNewsRepository = $app[AllianceNewsRepository::class];
 ?>
 <script type="text/javascript">
     function toggleText(elemId, switchId) {
@@ -25,35 +30,8 @@ echo "Im Rathaus k&ouml;nnen Allianzen Nachrichten an ihre Mitglieder oder an
 //
 // Neuste Nachrichten
 //
-$anres = dbquery("
-    SELECT
-        alliance_news_title,
-        alliance_news_date,
-        alliance_news_id,
-        alliance_news_alliance_id,
-        alliance_news_alliance_to_id,
-        alliance_news_text,
-        alliance_news_user_id,
-        af.alliance_name as afname,
-        af.alliance_tag as aftag,
-        user_id,
-        user_nick
-    FROM
-        alliance_news
-    LEFT JOIN
-        alliances as af
-    ON
-        alliance_news_alliance_id=af.alliance_id
-    LEFT JOIN
-        users
-    ON
-        user_id = alliance_news_user_id
-    WHERE
-        alliance_news_alliance_to_id=0
-    ORDER BY
-        alliance_news_date DESC
-    LIMIT 10;");
-if (mysql_num_rows($anres)) {
+$publicNews = $allianceNewsRepository->getNewsEntries(0, 10);
+if (count($publicNews) > 0) {
     tableStart("Die neusten 10 Nachrichten");
     echo "<tr>
                         <th style=\"width:50%;\">Titel</th>
@@ -61,15 +39,15 @@ if (mysql_num_rows($anres)) {
                         <th style=\"width:20%;\">Absender</th>
                         <th style=\"width:10%;\">Text</th>
                 </tr>";
-    while ($anarr = mysql_fetch_array($anres)) {
-        $id = "th" . $anarr['alliance_news_id'];
-        $sid = "sth" . $anarr['alliance_news_id'];
+    foreach ($publicNews as $news) {
+        $id = "th" . $news->id;
+        $sid = "sth" . $news->id;
 
-        echo "<tr><td>" . text2html($anarr['alliance_news_title']) . "</td>";
-        echo "<td>" . df($anarr['alliance_news_date']) . "</td>";
-        if ($anarr['afname'] != "" && $anarr['aftag'] != "") {
-            echo "<td " . tm($anarr['aftag'], text2html($anarr['afname'])) . ">
-                                <a href=\"?page=alliance&amp;info_id=" . $anarr['alliance_news_alliance_id'] . "\">" . $anarr['aftag'] . "</a>
+        echo "<tr><td>" . text2html($news->title) . "</td>";
+        echo "<td>" . df($news->date) . "</td>";
+        if ($news->authorAllianceName != "" && $news->authorAllianceTag != "") {
+            echo "<td " . tm($news->authorAllianceTag, text2html($news->authorAllianceName)) . ">
+                                <a href=\"?page=alliance&amp;info_id=" . $news->authorAllianceId . "\">" . $news->authorAllianceTag . "</a>
                             </td>";
         } else {
             echo "<td>(gel&ouml;scht)</td>";
@@ -78,10 +56,10 @@ if (mysql_num_rows($anres)) {
             [<a href=\"javascript:;\" onclick=\"toggleText('" . $id . "','" . $sid . "');\" id=\"" . $sid . "\">Anzeigen</a>]
             </td></tr>";
         echo "<tr id=\"" . $id . "\" style=\"display:none;\">
-                <td colspan=\"5\">" . text2html(stripslashes($anarr['alliance_news_text'])) . "
+                <td colspan=\"5\">" . text2html(stripslashes($news->text)) . "
                 <br/><br/>-------------------------------------<br/>";
-        if ($anarr['user_id'] > 0) {
-            echo "Geschrieben von <b><a href=\"?page=userinfo&amp;id=" . $anarr['user_id'] . "\">" . $anarr['user_nick'] . "</a></b>";
+        if ($news->authorUserId > 0) {
+            echo "Geschrieben von <b><a href=\"?page=userinfo&amp;id=" . $news->authorUserId . "\">" . $news->authorUserNick . "</a></b>";
         } else {
             echo "<i>Unbekannter Verfasser</i>";
         }
@@ -99,35 +77,8 @@ if (mysql_num_rows($anres)) {
 //
 // Internal messages
 //
-$anres = dbquery("
-    SELECT
-        alliance_news_title,
-        alliance_news_date,
-        alliance_news_id,
-        alliance_news_alliance_id,
-        alliance_news_alliance_to_id,
-        alliance_news_text,
-        alliance_news_user_id,
-        af.alliance_name as afname,
-        af.alliance_tag as aftag,
-        user_id,
-        user_nick
-    FROM
-        alliance_news
-    LEFT JOIN
-        alliances as af
-    ON
-        alliance_news_alliance_id=af.alliance_id
-    LEFT JOIN
-        users
-    ON
-        user_id = alliance_news_user_id
-    WHERE
-        alliance_news_alliance_to_id=" . $cu->allianceId() . "
-    ORDER BY
-        alliance_news_date DESC
-    ;");
-if (mysql_num_rows($anres)) {
+$internalNews = $allianceNewsRepository->getNewsEntries($cu->allianceId());
+if (count($internalNews) > 0) {
     tableStart("Allianzinterne Nachrichten");
     echo "<tr>
                         <th style=\"width:50%;\">Titel</th>
@@ -135,15 +86,15 @@ if (mysql_num_rows($anres)) {
                         <th style=\"width:20%;\">Absender</th>
                         <th style=\"width:10%;\">Text</th>
                 </tr>";
-    while ($anarr = mysql_fetch_array($anres)) {
-        $id = "th" . $anarr['alliance_news_id'];
-        $sid = "sth" . $anarr['alliance_news_id'];
+    foreach ($internalNews as $news) {
+        $id = "th" . $news->id;
+        $sid = "sth" . $news->id;
 
-        echo "<tr><td>" . text2html($anarr['alliance_news_title']) . "</td>";
-        echo "<td>" . df($anarr['alliance_news_date']) . "</td>";
-        if ($anarr['afname'] != "" && $anarr['aftag'] != "") {
-            echo "<td " . tm($anarr['aftag'], text2html($anarr['afname'])) . ">
-                    <a href=\"?page=alliance&amp;info_id=" . $anarr['alliance_news_alliance_id'] . "\">" . $anarr['aftag'] . "</a>
+        echo "<tr><td>" . text2html($news->title) . "</td>";
+        echo "<td>" . df($news->date) . "</td>";
+        if ($news->authorAllianceName != "" && $news->authorAllianceTag != "") {
+            echo "<td " . tm($news->authorAllianceTag, text2html($news->authorAllianceName)) . ">
+                    <a href=\"?page=alliance&amp;info_id=" . $news->authorAllianceId . "\">" . $news->authorAllianceTag . "</a>
 
                 </td>";
         } else {
@@ -153,10 +104,10 @@ if (mysql_num_rows($anres)) {
             [<a href=\"javascript:;\" onclick=\"toggleText('" . $id . "','" . $sid . "');\" id=\"" . $sid . "\">Anzeigen</a>]
             </td></tr>";
         echo "<tr id=\"" . $id . "\" style=\"display:none;\">
-                <td colspan=\"5\">" . text2html(stripslashes($anarr['alliance_news_text'])) . "
+                <td colspan=\"5\">" . text2html(stripslashes($news->text)) . "
                 <br/><br/>-------------------------------------<br/>";
-        if ($anarr['user_id'] > 0) {
-            echo "Geschrieben von <b><a href=\"?page=userinfo&amp;id=" . $anarr['user_id'] . "\">" . $anarr['user_nick'] . "</a></b>";
+        if ($news->authorUserId > 0) {
+            echo "Geschrieben von <b><a href=\"?page=userinfo&amp;id=" . $news->authorUserId . "\">" . $news->authorUserNick . "</a></b>";
         } else {
             echo "<i>Unbekannter Verfasser</i>";
         }

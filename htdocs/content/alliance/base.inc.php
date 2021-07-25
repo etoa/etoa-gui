@@ -1,8 +1,18 @@
 <?PHP
 
+use EtoA\Alliance\AllianceHistoryRepository;
+use EtoA\Alliance\AllianceSpendRepository;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Fleet\FleetRepository;
+use EtoA\Fleet\FleetStatus;
+use EtoA\Ship\ShipDataRepository;
+use EtoA\Ship\ShipQueueRepository;
+use EtoA\Ship\ShipRepository;
 use EtoA\UI\ResourceBoxDrawer;
+use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Planet\PlanetRepository;
+use EtoA\Universe\Resources\BaseResources;
+use EtoA\User\UserRepository;
 
 /** @var ConfigurationService */
 $config = $app[ConfigurationService::class];
@@ -12,6 +22,20 @@ $planetRepo = $app[PlanetRepository::class];
 
 /** @var ResourceBoxDrawer */
 $resourceBoxDrawer = $app[ResourceBoxDrawer::class];
+/** @var AllianceSpendRepository $allianceSpendRepository */
+$allianceSpendRepository = $app[AllianceSpendRepository::class];
+/** @var ShipDataRepository $shipDataRepository */
+$shipDataRepository = $app[ShipDataRepository::class];
+/** @var ShipRepository $shipRepository */
+$shipRepository = $app[ShipRepository::class];
+/** @var ShipQueueRepository $shipQueueRepository */
+$shipQueueRepository = $app[ShipQueueRepository::class];
+/** @var FleetRepository $fleetRepository */
+$fleetRepository = $app[FleetRepository::class];
+/** @var EntityRepository $entityRepository */
+$entityRepository = $app[EntityRepository::class];
+/** @var UserRepository $userRepository */
+$userRepository = $app[UserRepository::class];
 
 $planet = $planetRepo->find($cp->id);
 
@@ -115,61 +139,32 @@ function changeResBox(metal, crystal, plastic, fuel, food)
 
 if (isset($_POST['storage_submit']) && checker_verify()) {
     // Formatiert Eingaben
-    $metal = nf_back($_POST['spend_metal']);
-    $crystal = nf_back($_POST['spend_crystal']);
-    $plastic = nf_back($_POST['spend_plastic']);
-    $fuel = nf_back($_POST['spend_fuel']);
-    $food = nf_back($_POST['spend_food']);
+    $resources = new BaseResources();
+    $resources->metal = (int) nf_back($_POST['spend_metal']);
+    $resources->crystal = (int) nf_back($_POST['spend_crystal']);
+    $resources->plastic = (int) nf_back($_POST['spend_plastic']);
+    $resources->fuel = (int) nf_back($_POST['spend_fuel']);
+    $resources->food = (int) nf_back($_POST['spend_food']);
 
     // Prüft, ob Rohstoffe angegeben wurden
-    if (
-        $metal > 0
-        || $crystal > 0
-        || $plastic > 0
-        || $fuel > 0
-        || $food > 0
-    ) {
+    if ($resources->getSum() > 0) {
         // Prüft, ob Rohstoffe noch vorhanden sind
         if (
-            $cp->getRes(1) >= $metal
-            && $cp->getRes(2) >= $crystal
-            && $cp->getRes(3) >= $plastic
-            && $cp->getRes(4) >= $fuel
-            && $cp->getRes(5) >= $food
+            $cp->getRes(1) >= $resources->metal
+            && $cp->getRes(2) >= $resources->crystal
+            && $cp->getRes(3) >= $resources->plastic
+            && $cp->getRes(4) >= $resources->fuel
+            && $cp->getRes(5) >= $resources->food
         ) {
             // Rohstoffe vom Planet abziehen
-            $res = array($metal, $crystal, $plastic, $fuel, $food);
+            $res = array($resources->metal, $resources->crystal, $resources->plastic, $resources->fuel, $resources->food);
             $cp->subRes($res);
 
             // Rohstoffe der Allianz gutschreiben
-            $cu->alliance->changeRes($metal, $crystal, $plastic, $fuel, $food);
+            $cu->alliance->changeRes($resources->metal, $resources->crystal, $resources->plastic, $resources->fuel, $resources->food);
 
             // Spende speichern
-            dbquery("
-                    INSERT INTO
-                        alliance_spends
-                    (
-                        alliance_spend_alliance_id,
-                        alliance_spend_user_id,
-                        alliance_spend_metal,
-                        alliance_spend_crystal,
-                        alliance_spend_plastic,
-                        alliance_spend_fuel,
-                        alliance_spend_food,
-                        alliance_spend_time
-                    )
-                    VALUES
-                    (
-                        '" . $cu->allianceId . "',
-                        '" . $cu->id . "',
-                        '" . $metal . "',
-                        '" . $crystal . "',
-                        '" . $plastic . "',
-                        '" . $fuel . "',
-                        '" . $food . "',
-                        '" . time() . "'
-                    )");
-
+            $allianceSpendRepository->addEntry($cu->allianceId(), $cu->getId(), $resources);
             success_msg("Rohstoffe erfolgreich eingezahlt!");
         } else
             error_msg("Es sind zu wenig Rohstoffe auf dem Planeten!");
@@ -205,87 +200,28 @@ if (isset($_POST['filter_submit']) && checker_verify()) {
 //
 
 // Allianzschiffe (wenn Schiffswerft gebaut)
+/** @var EtoA\Ship\Ship[] $ships */
 $ships = [];
 if ($shipyard) {
-    $res = dbquery("
-    SELECT
-        ship_id,
-        ship_name,
-        ship_longcomment,
-        ship_speed,
-        ship_time2start,
-        ship_time2land,
-        ship_structure,
-        ship_shield,
-        ship_weapon,
-        ship_max_count,
-        ship_alliance_shipyard_level,
-        ship_alliance_costs
-    FROM
-        ships
-    WHERE
-        ship_alliance_shipyard_level<='" . $cu->alliance->buildlist->getLevel(ALLIANCE_SHIPYARD_ID) . "'
-        AND ship_alliance_shipyard_level>0
-    ORDER BY
-        ship_alliance_shipyard_level;");
-    while ($arr = mysql_fetch_assoc($res)) {
-        $ships[$arr['ship_id']] = $arr;
+    $allianceShipyardLevel = $cu->alliance->buildlist->getLevel(ALLIANCE_SHIPYARD_ID);
+
+    $allianceShips = $shipDataRepository->getAllianceShips();
+    foreach ($allianceShips as $ship) {
+        if ($ship->allianceShipyardLevel <= $allianceShipyardLevel) {
+            $ships[$ship->id] = $ship;
+        }
     }
 }
 
 // Userschiffe laden (wenn Schiffswerft gebaut=
 // Gebaute Schiffe laden
-$shiplist = [];
-$res = dbquery("
-SELECT
-    shiplist_ship_id,
-    shiplist_entity_id,
-    shiplist_count
-FROM
-    shiplist
-WHERE
-    shiplist_user_id='" . $cu->id . "';");
-while ($arr = mysql_fetch_assoc($res)) {
-    $shiplist[$arr['shiplist_ship_id']][$arr['shiplist_entity_id']] = $arr['shiplist_count'];
-}
+$shiplist = $shipRepository->getUserShipCounts($cu->getId());
 
 // Bauliste von allen Planeten laden und nach Schiffe zusammenfassen
-$queue_total = [];
-$res = dbquery("
-SELECT
-    queue_id,
-    queue_ship_id,
-    SUM(queue_cnt) AS cnt
-FROM
-    ship_queue
-WHERE
-    queue_user_id='" . $cu->id . "'
-    AND queue_endtime>'" . $time . "'
-GROUP BY
-    queue_ship_id;");
-while ($arr = mysql_fetch_assoc($res)) {
-    $queue_total[$arr['queue_ship_id']] = $arr['cnt'];
-}
+$queue_total = $shipQueueRepository->getUserQueuedShipCounts($cu->getId());
 
 // Flotten laden und nach Schiffe zusammenfassen
-$fleet = [];
-$res = dbquery("
-    SELECT
-        fs_ship_id,
-        SUM(fs.fs_ship_cnt) AS cnt
-    FROM
-        fleet AS f
-    INNER JOIN
-        fleet_ships AS fs
-    ON f.id=fs.fs_fleet_id
-    WHERE
-        f.user_id='" . $cu->id . "'
-    GROUP BY
-        fs.fs_ship_id;");
-while ($arr = mysql_fetch_assoc($res)) {
-    $fleet[$arr['fs_ship_id']] = $arr['cnt'];
-}
-
+$fleet = $fleetRepository->getUserFleetShipCounts($cu->getId());
 
 //
 // Schiffe kaufen
@@ -297,57 +233,13 @@ if (isset($_POST['ship_submit']) && checker_verify()) {
         // Prüft, ob ein User gewählt wurde
         if ($_POST['user_buy_ship'] > 0) {
             // Gebaute Schiffe laden
-            $shiplist = [];
-            $res = dbquery("
-            SELECT
-                shiplist_ship_id,
-                shiplist_entity_id,
-                shiplist_count,
-                shiplist_bunkered
-            FROM
-                shiplist
-            WHERE
-                shiplist_user_id='" . $_POST['user_buy_ship'] . "';");
-            while ($arr = mysql_fetch_assoc($res)) {
-                $shiplist[$arr['shiplist_ship_id']][$arr['shiplist_entity_id']] = $arr['shiplist_count'] + $arr['shiplist_bunkered'];
-            }
+            $shiplist = $shipRepository->getUserShipCounts($_POST['user_buy_ship']);
 
             // Bauliste von allen Planeten laden und nach Schiffe zusammenfassen
-            $queue_total = [];
-            $res = dbquery("
-            SELECT
-                queue_id,
-                queue_ship_id,
-                SUM(queue_cnt) AS cnt
-            FROM
-                ship_queue
-            WHERE
-                queue_user_id='" . $_POST['user_buy_ship'] . "'
-                AND queue_endtime>'" . $time . "'
-            GROUP BY
-                queue_ship_id;");
-            while ($arr = mysql_fetch_assoc($res)) {
-                $queue_total[$arr['queue_ship_id']] = $arr['cnt'];
-            }
+            $queue_total = $shipQueueRepository->getUserQueuedShipCounts($_POST['user_buy_ship']);
 
             // Flotten laden und nach Schiffe zusammenfassen
-            $fleet = [];
-            $res = dbquery("
-                SELECT
-                    fs_ship_id,
-                    SUM(fs.fs_ship_cnt) AS cnt
-                FROM
-                    fleet AS f
-                INNER JOIN
-                    fleet_ships AS fs
-                ON f.id=fs.fs_fleet_id
-                WHERE
-                    f.user_id='" . $_POST['user_buy_ship'] . "'
-                GROUP BY
-                    fs.fs_ship_id;");
-            while ($arr = mysql_fetch_assoc($res)) {
-                $fleet[$arr['fs_ship_id']] = $arr['cnt'];
-            }
+            $fleet = $fleetRepository->getUserFleetShipCounts($_POST['user_buy_ship']);
 
             $ship_costs = 0;
             $total_build_cnt = 0;
@@ -361,7 +253,7 @@ if (isset($_POST['ship_submit']) && checker_verify()) {
                     $ship_count = 0;
                     // ... auf den Planeten
                     if (isset($shiplist[$ship_id])) {
-                        $ship_count += array_sum($shiplist[$ship_id]);
+                        $ship_count += $shiplist[$ship_id];
                     }
                     // ... in der Bauliste
                     if (isset($queue_total[$ship_id])) {
@@ -376,12 +268,12 @@ if (isset($_POST['ship_submit']) && checker_verify()) {
                     $total_count = $build_cnt + $ship_count;
 
                     // Prüft ob Anzahl grösser ist als Schiffsmaximum
-                    if ($ships[$ship_id]['ship_max_count'] >= $total_count || $ships[$ship_id]['ship_max_count'] == 0) {
+                    if ($ships[$ship_id]->maxCount >= $total_count || $ships[$ship_id]->maxCount === 0) {
                         for ($i = $build_cnt - 1; $i >= 0; $i--) {
                             //Kostenfaktor Schiffe
                             $cost_factor = pow($config->getFloat("alliance_shipcosts_factor"), $ship_count + $i);
                             // Berechnet die Kosten
-                            $ship_costs += $cost_factor * $ships[$ship_id]['ship_alliance_costs'];
+                            $ship_costs += $cost_factor * $ships[$ship_id]->allianceCosts;
                         }
                     }
                     // Die Anzahl übersteigt die Max. Anzahl -> Nachricht wird ausgegeben
@@ -400,51 +292,17 @@ if (isset($_POST['ship_submit']) && checker_verify()) {
                     // Prüft ob Schiffspunkte noch ausreichend sind
                     if ($cu->alliance->members[$_POST['user_buy_ship']]->allianceShippoints >= $ship_costs) {
                         // Zieht Punkte vom Konto ab
-                        dbquery("
-                                UPDATE
-                                    users
-                                SET
-                                    user_alliace_shippoints=user_alliace_shippoints-'" . $ship_costs . "',
-                                    user_alliace_shippoints_used=user_alliace_shippoints_used+'" . $ship_costs . "'
-                                WHERE
-                                    user_id='" . $_POST['user_buy_ship'] . "'
-                            ");
+                        $userRepository->markAllianceShipPointsAsUsed($_POST['user_buy_ship'], $ship_costs);
                         $ship_costed = $ship_costs;
 
                         // Lädt das Allianzentity
-                        $res = dbquery("
-                            SELECT
-                                id
-                            FROM
-                                entities
-                            WHERE
-                                code='x';");
-                        $row = mysql_fetch_row($res);
-
+                        $allianceMarketId = $entityRepository->getAllianceMarketId();
 
                         // Speichert Flotte
                         $launchtime = time(); // Startzeit
                         $duration = 3600; // Dauer 1h
                         $landtime = $launchtime + $duration; // Landezeit
-                        dbquery("
-                                    INSERT INTO fleet
-                                    (
-                                        user_id,
-                                        entity_from,
-                                        entity_to,
-                                        launchtime,
-                                        landtime,
-                                        action
-                                    )
-                                    VALUES
-                                    (
-                                        '" . $_POST['user_buy_ship'] . "',
-                                        '" . $row[0] . "',
-                                        '" . $cp->id . "',
-                                        '" . $launchtime . "',
-                                        '" . $landtime . "',
-                                        'delivery'
-                                    );");
+                        $fleetId = $fleetRepository->add($_POST['user_buy_ship'], $launchtime, $landtime, $allianceMarketId, $cp->id, \EtoA\Fleet\FleetAction::DELIVERY, FleetStatus::DEPARTURE);
 
                         // Speichert Schiffe in der Flotte
                         $sql = "";
@@ -452,17 +310,15 @@ if (isset($_POST['ship_submit']) && checker_verify()) {
                         $cnt = 0;
                         foreach ($_POST['buy_ship'] as $ship_id => $build_cnt) {
                             // Formatiert die eingegebene Zahl (entfernt z.B. die Trennzeichen)
-                            $build_cnt = nf_back($build_cnt);
+                            $build_cnt = (int) nf_back($build_cnt);
 
                             if ($build_cnt > 0) {
+                                $fleetRepository->addShipsToFleet($fleetId, $ship_id, $build_cnt);
                                 // Stellt SQL-String her
                                 if ($cnt == 0) {
-                                    $sql .= "('" . mysql_insert_id() . "', '" . $ship_id . "', '" . $build_cnt . "')";
-                                    $fleet[$ship_id] += $build_cnt;
+                                    $fleet[$ship_id] = ($fleet[$ship_id] ?? 0) + $build_cnt;
                                     // Gibt einmalig eine OK-Medlung aus
                                     success_msg("Schiffe wurden erfolgreich hergestellt!");
-                                } else {
-                                    $sql .= ", ('" . mysql_insert_id() . "', '" . $ship_id . "', '" . $build_cnt . "')";
                                 }
 
                                 // Listet gewählte Schiffe für Log auf
@@ -471,22 +327,10 @@ if (isset($_POST['ship_submit']) && checker_verify()) {
                                 $cnt++;
                             }
                         }
-                        // Speichert Schiffe durch durch den generierten String
-                        dbquery("
-                                    INSERT INTO
-                                    fleet_ships
-                                    (
-                                        fs_fleet_id,
-                                        fs_ship_id,
-                                        fs_ship_cnt
-                                    )
-                                    VALUES
-                                        " . $sql . "
-                                    ;");
 
                         // Zur Allianzgeschichte hinzufügen
-                        /** @var \EtoA\Alliance\AllianceHistoryRepository $allianceHistoryRepository */
-                        $allianceHistoryRepository = $app[\EtoA\Alliance\AllianceHistoryRepository::class];
+                        /** @var AllianceHistoryRepository $allianceHistoryRepository */
+                        $allianceHistoryRepository = $app[AllianceHistoryRepository::class];
                         $allianceHistoryRepository->addEntry((int) $cu->allianceId, "Folgende Schiffe wurden für [b]" . get_user_nick($_POST['user_buy_ship']) . "[/b] hergestellt:\n" . $log . "\n" . nf($ship_costs) . " Teile wurden dafür benötigt.");
                     } else {
                         error_msg("Der gewählte User hat nicht genügend Teile übrig!");
@@ -964,31 +808,16 @@ echo "</form>";
 // Einzahlungen werden summiert und ausgegeben
 if ($sum) {
     if ($user > 0) {
-        $user_sql = "AND alliance_spend_user_id='" . $user . "'";
         $user_message = "von " . $cu->alliance->members[$user] . " ";
     } else {
-        $user_sql = "";
         $user_message = "";
     }
 
     echo "Es werden die bisher eingezahlten Rohstoffe " . $user_message . " angezeigt.<br><br>";
 
     // Läd Einzahlungen
-    $res = dbquery("
-    SELECT
-        SUM(alliance_spend_metal) AS metal,
-        SUM(alliance_spend_crystal) AS crystal,
-        SUM(alliance_spend_plastic) AS plastic,
-        SUM(alliance_spend_fuel) AS fuel,
-        SUM(alliance_spend_food) AS food
-    FROM
-        alliance_spends
-    WHERE
-        alliance_spend_alliance_id='" . $cu->allianceId . "'
-        " . $user_sql . ";");
-    if (mysql_num_rows($res) > 0) {
-        $arr = mysql_fetch_assoc($res);
-
+    $resources = $allianceSpendRepository->getTotalSpent($cu->allianceId(), (int) $user);
+    if ($resources->getSum() > 0) {
         tableStart("Total eingezahlte Rohstoffe " . $user_message . "");
         echo "<tr>
                         <th style=\"width:20%\">" . RES_METAL . "</th>
@@ -998,11 +827,11 @@ if ($sum) {
                         <th style=\"width:20%\">" . RES_FOOD . "</th>
                     </tr>";
         echo "<tr>
-                        <td>" . nf($arr['metal']) . "</td>
-                        <td>" . nf($arr['crystal']) . "</td>
-                        <td>" . nf($arr['plastic']) . "</td>
-                        <td>" . nf($arr['fuel']) . "</td>
-                        <td>" . nf($arr['food']) . "</td>
+                        <td>" . nf($resources->metal) . "</td>
+                        <td>" . nf($resources->crystal) . "</td>
+                        <td>" . nf($resources->plastic) . "</td>
+                        <td>" . nf($resources->fuel) . "</td>
+                        <td>" . nf($resources->food) . "</td>
                     </tr>";
         tableEnd();
     } else {
@@ -1015,10 +844,8 @@ if ($sum) {
 else {
 
     if ($user > 0) {
-        $user_sql = "AND alliance_spend_user_id='" . $user . "'";
         $user_message = "von " . $cu->alliance->members[$user] . " ";
     } else {
-        $user_sql = "";
         $user_message = "";
     }
 
@@ -1029,29 +856,16 @@ else {
         } else {
             echo "Es werden die letzten " . $limit . " Einzahlungen " . $user_message . "gezeigt.<br><br>";
         }
-
-        $limit_sql = "LIMIT " . $limit . "";
     } else {
         echo "Es werden alle bisherigen Einzahlungen " . $user_message . "gezeigt.<br><br>";
-        $limit_sql = "";
     }
 
 
     // Läd Einzahlungen
-    $res = dbquery("
-    SELECT
-        *
-    FROM
-        alliance_spends
-    WHERE
-        alliance_spend_alliance_id='" . $cu->allianceId . "'
-        " . $user_sql . "
-    ORDER BY
-        alliance_spend_time DESC
-    " . $limit_sql . ";");
-    if (mysql_num_rows($res) > 0) {
-        while ($arr = mysql_fetch_assoc($res)) {
-            tableStart("" . $cu->alliance->members[$arr['alliance_spend_user_id']] . " - " . df($arr['alliance_spend_time']) . "");
+    $spendEntries = $allianceSpendRepository->getSpent($cu->allianceId(), $user, $limit);
+    if (count($spendEntries) > 0) {
+        foreach ($spendEntries as $entry) {
+            tableStart("" . $cu->alliance->members[$entry->userId] . " - " . df($entry->time) . "");
             echo "<tr>
                             <th style=\"width:20%\">" . RES_METAL . "</th>
                             <th style=\"width:20%\">" . RES_CRYSTAL . "</th>
@@ -1060,11 +874,11 @@ else {
                             <th style=\"width:20%\">" . RES_FOOD . "</th>
                         </tr>";
             echo "<tr>
-                            <td>" . nf($arr['alliance_spend_metal']) . "</td>
-                            <td>" . nf($arr['alliance_spend_crystal']) . "</td>
-                            <td>" . nf($arr['alliance_spend_plastic']) . "</td>
-                            <td>" . nf($arr['alliance_spend_fuel']) . "</td>
-                            <td>" . nf($arr['alliance_spend_food']) . "</td>
+                            <td>" . nf($entry->metal) . "</td>
+                            <td>" . nf($entry->crystal) . "</td>
+                            <td>" . nf($entry->plastic) . "</td>
+                            <td>" . nf($entry->fuel) . "</td>
+                            <td>" . nf($entry->food) . "</td>
                         </tr>";
             tableEnd();
         }
@@ -1115,35 +929,35 @@ if ($shipyard) {
 
     // Listet Schiffe auf
     if (count($ships) > 0) {
-        foreach ($ships as $id => $data) {
+        foreach ($ships as $ship) {
             // Zählt die Anzahl Schiffe dieses Typs im ganzen Account...
             $ship_count = 0;
             // ... auf den Planeten
-            if (isset($shiplist[$data['ship_id']])) {
-                $ship_count += array_sum($shiplist[$data['ship_id']]);
+            if (isset($shiplist[$ship->id])) {
+                $ship_count += $shiplist[$ship->id];
             }
             // ... in der Bauliste
-            if (isset($queue_total[$data['ship_id']])) {
-                $ship_count += $queue_total[$data['ship_id']];
+            if (isset($queue_total[$ship->id])) {
+                $ship_count += $queue_total[$ship->id];
             }
             // ... in der Luft
-            if (isset($fleet[$data['ship_id']])) {
-                $ship_count += $fleet[$data['ship_id']];
+            if (isset($fleet[$ship->id])) {
+                $ship_count += $fleet[$ship->id];
             }
 
 
             //Kostenfaktor Schiffe
             $cost_factor = pow($config->getFloat("alliance_shipcosts_factor"), $ship_count);
 
-            $path = IMAGE_PATH . "/" . IMAGE_SHIP_DIR . "/ship" . $data['ship_id'] . "_middle." . IMAGE_EXT;
-            tableStart($data['ship_name']);
+            $path = IMAGE_PATH . "/" . IMAGE_SHIP_DIR . "/ship" . $ship->id . "_middle." . IMAGE_EXT;
+            tableStart($ship->name);
             echo "<tr>
                 <td style=\"width:120px;background:#000;vertical-align:middle;padding:0px;\">
-                <img src=\"" . $path . "\" style=\"width:120px;height:120px;border:none;margin:0px;\" alt=\"" . $data['ship_name'] . "\"/>
-                    <input type=\"hidden\" value=\"" . $data['ship_name'] . "\" id=\"ship_name_" . $data['ship_id'] . "\" name=\"ship_name_" . $data['ship_id'] . "\" />
+                <img src=\"" . $path . "\" style=\"width:120px;height:120px;border:none;margin:0px;\" alt=\"" . $ship->name . "\"/>
+                    <input type=\"hidden\" value=\"" . $ship->name . "\" id=\"ship_name_" . $ship->id . "\" name=\"ship_name_" . $ship->id . "\" />
                 </td>
                 <td style=\"vertical-align:top;height:100px;\" colspan=\"7\">
-                    " . $data['ship_longcomment'] . "
+                    " . $ship->longComment . "
                 </td>
                     </tr>
                     <tr>
@@ -1157,20 +971,20 @@ if ($shipyard) {
                             <th style=\"width:10%\">Anzahl</th>
                         </tr>
                         <tr>
-                            <td>" . nf($data['ship_weapon']) . "</td>
-                            <td>" . nf($data['ship_structure']) . "</td>
-                            <td>" . nf($data['ship_shield']) . "</td>
-                            <td>" . nf($data['ship_speed']) . " AE/h</td>
-                            <td>" . tf($data['ship_time2start'] / FLEET_FACTOR_S) . "</td>
-                            <td>" . tf($data['ship_time2land'] / FLEET_FACTOR_S) . "</td>";
-            if ($data['ship_max_count'] != 0 && $data['ship_max_count'] <= $ship_count) {
+                            <td>" . nf($ship->weapon) . "</td>
+                            <td>" . nf($ship->structure) . "</td>
+                            <td>" . nf($ship->shield) . "</td>
+                            <td>" . nf($ship->speed) . " AE/h</td>
+                            <td>" . tf($ship->timeToStart / FLEET_FACTOR_S) . "</td>
+                            <td>" . tf($ship->timeToLand / FLEET_FACTOR_S) . "</td>";
+            if ($ship->maxCount !== 0 && $ship->maxCount <= $ship_count) {
                 echo "<td colspan=\"2\"><i>Maximalanzahl erreicht</i></td>";
             } else {
-                echo "<td>" . nf($data['ship_alliance_costs'] * $cost_factor) . " <input type=\"hidden\" value=\"" . $data['ship_alliance_costs'] * $cost_factor . "\" id=\"ship_costs_" . $data['ship_id'] . "\" name=\"ship_costs_" . $data['ship_id'] . "\" /></td>
+                echo "<td>" . nf($ship->allianceCosts * $cost_factor) . " <input type=\"hidden\" value=\"" . $ship->allianceCosts * $cost_factor . "\" id=\"ship_costs_" . $ship->id . "\" name=\"ship_costs_" . $ship->id . "\" /></td>
                             <td>
-                                <input type=\"text\" value=\"0\" name=\"buy_ship[" . $data['ship_id'] . "]\" id=\"buy_ship_" . $data['ship_id'] . "\" size=\"4\" maxlength=\"6\" onkeyup=\"FormatNumber(this.id,this.value, '', '', '');\"/>";
+                                <input type=\"text\" value=\"0\" name=\"buy_ship[" . $ship->id . "]\" id=\"buy_ship_" . $ship->id . "\" size=\"4\" maxlength=\"6\" onkeyup=\"FormatNumber(this.id,this.value, '', '', '');\"/>";
             }
-            echo "<input type=\"hidden\" value=\"" . $data['ship_max_count'] . "\" id=\"ship_max_count_" . $data['ship_id'] . "\" name=\"ship_max_count_" . $data['ship_id'] . "\" />
+            echo "<input type=\"hidden\" value=\"" . $ship->maxCount . "\" id=\"ship_max_count_" . $ship->id . "\" name=\"ship_max_count_" . $ship->id . "\" />
                                 </td>
                         </tr>";
 

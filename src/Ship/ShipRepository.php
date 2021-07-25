@@ -41,6 +41,23 @@ class ShipRepository extends AbstractRepository
         return array_map(fn ($value) => (int) $value, $data);
     }
 
+    /**
+     * @return array<int, int>
+     */
+    public function getUserShipCounts(int $userId): array
+    {
+        $data = $this->createQueryBuilder()
+            ->select('shiplist_ship_id, SUM(shiplist_count) + SUM(shiplist_bunkered)')
+            ->from('shiplist')
+            ->where('shiplist_user_id = :userId')
+            ->setParameter('userId', $userId)
+            ->groupBy('shiplist_ship_id')
+            ->execute()
+            ->fetchAllKeyValue();
+
+        return array_map(fn ($value) => (int) $value, $data);
+    }
+
     public function addShip(int $shipId, int $amount, int $userId, int $entityId): void
     {
         if ($amount < 0) {

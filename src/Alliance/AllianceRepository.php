@@ -76,6 +76,17 @@ class AllianceRepository extends AbstractRepository
         return $data !== false ? new Alliance($data) : null;
     }
 
+    public function getFounderId(int $allianceId): int
+    {
+        return (int) $this->createQueryBuilder()
+            ->select('alliance_founder_id')
+            ->from('alliances')
+            ->where('alliance_id = :id')
+            ->setParameter('id', $allianceId)
+            ->execute()
+            ->fetchOne();
+    }
+
     /**
      * @param array<string, int|string|bool> $formData
      * @return array<array{alliance_id: string, alliance_name: string, alliance_tag:string, alliance_foundation_date:string, alliance_founder_id: string, cnt:string}>
@@ -264,58 +275,6 @@ class AllianceRepository extends AbstractRepository
     }
 
     /**
-     * @return AllianceRank[]
-     */
-    public function findRanks(int $allianceId): array
-    {
-        $data = $this->createQueryBuilder()
-            ->select(
-                'rank_id',
-                'rank_level',
-                'rank_name'
-            )
-            ->from('alliance_ranks')
-            ->where('rank_alliance_id = :allianceId')
-            ->orderBy('rank_level', 'DESC')
-            ->setParameter('allianceId', $allianceId)
-            ->execute()
-            ->fetchAllAssociative();
-
-        return array_map(fn (array $row) => new AllianceRank($row), $data);
-    }
-
-    public function updateRank(int $id, string $name, int $level): void
-    {
-        $this->createQueryBuilder()
-            ->update('alliance_ranks')
-            ->set('rank_name', ':name')
-            ->set('rank_level', ':level')
-            ->where('rank_id = :id')
-            ->setParameters([
-                'id' => $id,
-                'name' => $name,
-                'level' => $level,
-            ])
-            ->execute();
-    }
-
-    public function countOrphanedRanks(): int
-    {
-        return (int) $this->getConnection()
-            ->executeQuery(
-                "SELECT
-                    COUNT(r.rank_id)
-                FROM alliance_ranks r
-                WHERE NOT EXISTS (
-                    SELECT 1
-                    FROM alliances a
-                    WHERE r.rank_alliance_id = a.alliance_id
-                );"
-            )
-            ->fetchOne();
-    }
-
-    /**
      * @return array<array{alliance_bnd_id: string, a1id: string, a2id: string, a1name:string, a2name: string, lvl: string, name: string, date: string}>
      */
     public function findDiplomacies(int $allianceId): array
@@ -343,19 +302,6 @@ class AllianceRepository extends AbstractRepository
             ])
             ->execute()
             ->fetchAllAssociative();
-    }
-
-    public function deleteOrphanedRanks(): int
-    {
-        return $this->getConnection()
-            ->executeStatement(
-                "DELETE FROM alliance_ranks
-                WHERE NOT EXISTS (
-                    SELECT 1
-                    FROM alliances a
-                    WHERE rank_alliance_id = a.alliance_id
-                );"
-            );
     }
 
     public function countOrphanedDiplomacies(): int
@@ -439,29 +385,6 @@ class AllianceRepository extends AbstractRepository
             ->fetchAllAssociative();
     }
 
-    public function remove(int $id): bool
-    {
-        $affected = (int) $this->createQueryBuilder()
-            ->delete('alliances')
-            ->where('alliance_id = :id')
-            ->setParameter('id', $id)
-            ->execute();
-
-        $this->deleteRanks($id);
-        $this->deleteDiplomacies($id);
-
-        return $affected > 0;
-    }
-
-    public function deleteRanks(int $allianceId): void
-    {
-        $this->createQueryBuilder()
-            ->delete("alliance_ranks")
-            ->where('rank_alliance_id = :allianceId')
-            ->setParameter('allianceId', $allianceId)
-            ->execute();
-    }
-
     public function updateDiplomacy(int $id, int $level, string $name): void
     {
         $this->createQueryBuilder()
@@ -538,21 +461,6 @@ class AllianceRepository extends AbstractRepository
                 'rank' => $rankId,
                 'user' => $userId,
             ])
-            ->execute();
-    }
-
-    public function removeRank(int $rankId): void
-    {
-        $this->createQueryBuilder()
-            ->delete('alliance_ranks')
-            ->where('rank_id = :rankId')
-            ->setParameter('rankId', $rankId)
-            ->execute();
-
-        $this->createQueryBuilder()
-            ->delete('alliance_rankrights')
-            ->where('rr_rank_id = :rankId')
-            ->setParameter('rankId', $rankId)
             ->execute();
     }
 

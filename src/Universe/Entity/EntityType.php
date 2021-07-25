@@ -6,13 +6,13 @@ namespace EtoA\Universe\Entity;
 
 class EntityType
 {
-    const STAR = 's';
-    const PLANET = 'p';
-    const ASTEROID = 'a';
-    const NEBULA = 'n';
-    const WORMHOLE = 'w';
-    const EMPTY_SPACE = 'e';
-    const MARKET = 'm';
-    const ALLIANCE_MARKET = 'x';
-    const UNEXPLORED = 'u';
+    public const STAR = 's';
+    public const PLANET = 'p';
+    public const ASTEROID = 'a';
+    public const NEBULA = 'n';
+    public const WORMHOLE = 'w';
+    public const EMPTY_SPACE = 'e';
+    public const MARKET = 'm';
+    public const ALLIANCE_MARKET = 'x';
+    public const UNEXPLORED = 'u';
 }

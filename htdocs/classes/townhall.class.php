@@ -1,5 +1,6 @@
 <?php
 
+use EtoA\Alliance\AllianceNewsRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 
 class Townhall
@@ -34,24 +35,14 @@ class Townhall
         $rssValue .= "			<link>http://www.etoa.ch</link>\r\n";
         $rssValue .= "		</image>\r\n";
 
-        $res = dbquery("
-        SELECT
-            alliance_news_title,
-            alliance_news_text
-        FROM
-            alliance_news
-        WHERE
-            alliance_news_alliance_to_id = 0
-        ORDER BY
-            alliance_news_date DESC
-
-        ;");
-
+        /** @var AllianceNewsRepository $allianceNewsRepository */
+        $allianceNewsRepository = $app[AllianceNewsRepository::class];
+        $publicNews = $allianceNewsRepository->getNewsEntries(0);
         // The records were retrieved OK, let's start building the item tags
-        while ($arr = mysql_fetch_array($res)) {
+        foreach ($publicNews as $news) {
             $rssValue .= "		<item>\r\n";
-            $rssValue .= "			<title>" . text2html($arr['alliance_news_title']) . "</title>\r\n";
-            $rssValue .= "			<description>" . text2html(substr($arr['alliance_news_text'], 0, 100)) . "</description>\r\n";
+            $rssValue .= "			<title>" . text2html($news->title) . "</title>\r\n";
+            $rssValue .= "			<description>" . text2html(substr($news->text, 0, 100)) . "</description>\r\n";
             $rssValue .= "			<link>http://www.etoa.ch</link>\r\n";
             $rssValue .= "		</item>\r\n";
         }

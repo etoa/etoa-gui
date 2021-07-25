@@ -2,19 +2,18 @@
 
 /** @var mixed[] $arr alliance data */
 
+use EtoA\Alliance\AllianceRankRepository;
+
 if (Alliance::checkActionRights('viewmembers')) {
+
+    /** @var AllianceRankRepository $allianceRankRepository */
+    $allianceRankRepository = $app[AllianceRankRepository::class];
+
     echo "<h2>Allianzmitglieder</h2>";
     $rank = [];
-    $rres = dbquery("
-        SELECT
-      rank_name,
-      rank_id
-        FROM
-            alliance_ranks
-        WHERE
-            rank_alliance_id=" . $arr['alliance_id'] . ";");
-    while ($rarr = mysql_fetch_array($rres)) {
-        $rank[$rarr['rank_id']] = $rarr['rank_name'];
+    $ranks = $allianceRankRepository->getRanks($cu->allianceId());
+    foreach ($ranks as $r) {
+        $rank[$r->id] = $r->name;
     }
     echo "<form action=\"?page=$page\" method=\"post\">";
     tableStart();

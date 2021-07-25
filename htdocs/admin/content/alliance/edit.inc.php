@@ -2,6 +2,7 @@
 
 use EtoA\Alliance\AllianceBuildingRepository;
 use EtoA\Alliance\AllianceHistoryRepository;
+use EtoA\Alliance\AllianceRankRepository;
 use EtoA\Alliance\AllianceRepository;
 use EtoA\Alliance\AllianceTechnologyRepository;
 use Symfony\Component\HttpFoundation\Request;
@@ -9,7 +10,8 @@ use Twig\Environment;
 
 /** @var AllianceRepository */
 $repository = $app[AllianceRepository::class];
-
+/** @var AllianceRankRepository $allianceRankRepository */
+$allianceRankRepository = $app[AllianceRankRepository::class];
 /** @var AllianceHistoryRepository */
 $historyRepository = $app[AllianceHistoryRepository::class];
 
@@ -36,7 +38,7 @@ if (!isset($id)) {
 if ($request->request->has('info_save') && $request->request->get('info_save') != "") {
     saveInfo($request, $repository, $id, $twig);
 } elseif ($request->request->has('member_save') && $request->request->get('member_save') != "") {
-    saveMembers($request, $repository, $twig);
+    saveMembers($request, $repository, $allianceRankRepository, $twig);
 } elseif ($request->request->has('bnd_save') && $request->request->get('bnd_save') != "") {
     saveDiplomacy($request, $repository, $twig);
 } elseif ($request->request->has('res_save') && $request->request->get('res_save') != "") {
@@ -74,7 +76,7 @@ function saveInfo(Request $request, AllianceRepository $repository, int $id, Env
     $twig->addGlobal('successMessage', 'Allianzdaten aktualisiert!');
 }
 
-function saveMembers(Request $request, AllianceRepository $repository, Environment $twig)
+function saveMembers(Request $request, AllianceRepository $repository, AllianceRankRepository $allianceRankRepository, Environment $twig)
 {
     // Mitgliederänderungen
     if ($request->request->has('member_kick') && count($request->request->get('member_kick')) > 0) {
@@ -90,12 +92,12 @@ function saveMembers(Request $request, AllianceRepository $repository, Environme
     // Ränge speichern
     if ($request->request->has('rank_del') && count($request->request->get('rank_del')) > 0) {
         foreach (array_keys($request->request->get('rank_del')) as $rankId) {
-            $repository->removeRank($rankId);
+            $allianceRankRepository->removeRank($rankId);
         }
     }
     if ($request->request->has('rank_name') && count($request->request->get('rank_name')) > 0) {
         foreach ($request->request->get('rank_name') as $rankId => $name) {
-            $repository->updateRank($rankId, $name, $request->request->get('rank_level')[$rankId]);
+            $allianceRankRepository->updateRank($rankId, $name, $request->request->get('rank_level')[$rankId]);
         }
     }
 
@@ -203,7 +205,10 @@ function edit(
     int $id,
     Environment $twig
 ): void {
-    global $page;
+    global $page, $app;
+
+    /** @var AllianceRankRepository $allianceRankRepository */
+    $allianceRankRepository = $app[AllianceRankRepository::class];
 
     $alliance = $repository->getAlliance($id);
 
@@ -216,7 +221,7 @@ function edit(
 
     $members = $repository->findUsers($id);
 
-    $ranks = $repository->findRanks($id);
+    $ranks = $allianceRankRepository->getRanks($id);
 
     echo "<form action=\"?page=$page&amp;sub=edit&amp;id=" . $id . "\" method=\"post\">";
 

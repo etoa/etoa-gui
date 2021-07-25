@@ -1,10 +1,12 @@
 <?PHP
 
+use EtoA\Alliance\AllianceRankRepository;
 use EtoA\Alliance\AllianceRepository;
 
 /** @var AllianceRepository */
 $allianceRepository = $app[AllianceRepository::class];
-
+/** @var AllianceRankRepository $allianceRankRepository */
+$allianceRankRepository = $app[AllianceRankRepository::class];
 echo "<h1>Allianzforum</h1>";
 
 // Prüfen ob User in Allianz ist
@@ -57,22 +59,20 @@ if ($cu->allianceId > 0) {
         $rightres = dbquery("SELECT * FROM alliance_rights ORDER BY right_desc;");
         $rights = array();
         $myRight = [];
+        $rightIds = $allianceRankRepository->getAvailableRightIds(BOARD_ALLIANCE_ID, $myRankId);
         if (mysql_num_rows($rightres) > 0) {
             while ($rightarr = mysql_fetch_array($rightres)) {
                 $rights[$rightarr['right_id']]['key'] = $rightarr['right_key'];
                 $rights[$rightarr['right_id']]['desc'] = $rightarr['right_desc'];
-                if (mysql_num_rows(dbquery("SELECT rr_id FROM alliance_rankrights,alliance_ranks WHERE rank_id=rr_rank_id AND rank_alliance_id=" . BOARD_ALLIANCE_ID . " AND rr_right_id=" . $rightarr['right_id'] . " AND rr_rank_id=" . $myRankId . ";")) > 0)
-                    $myRight[$rightarr['right_key']] = true;
-                else
-                    $myRight[$rightarr['right_key']] = false;
+                $myRight[$rightarr['right_key']] = in_array((int) $rightarr['right_id'], $rightIds , true);
             }
         }
 
         // Ränge laden
-        $rres = dbquery("SELECT rank_name,rank_id FROM alliance_ranks WHERE rank_alliance_id=" . BOARD_ALLIANCE_ID . ";");
+        $ranks = $allianceRankRepository->getRanks(BOARD_ALLIANCE_ID);
         $rank = array();
-        while ($rarr = mysql_fetch_array($rres)) {
-            $rank[$rarr['rank_id']] = $rarr['rank_name'];
+        foreach ($ranks as $r) {
+            $rank[$r->id] = $r->name;
         }
 
         // Kategorien laden

@@ -116,7 +116,7 @@ class AllianceTechnology
         $factor = pow($this->costsFactor, $level - 1);
         $memberFactor = 1 + ($members - 1) * $this->config->getFloat('alliance_membercosts_factor');
         $bc = array();
-        for ($i = 1; $i <= 6; $i++)
+        for ($i = 1; $i < 6; $i++)
             $bc[$i] = ceil($this->costs[$i] * $factor * $memberFactor);
         return $bc;
     }

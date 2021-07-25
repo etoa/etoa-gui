@@ -317,6 +317,20 @@ class UserRepository extends AbstractRepository
         ]);
     }
 
+    public function markAllianceShipPointsAsUsed(int $userId, int $shipCost): void
+    {
+        $this->createQueryBuilder()
+            ->update('users')
+            ->set('user_alliace_shippoints', 'user_alliace_shippoints - :costs')
+            ->set('user_alliace_shippoints_used', 'user_alliace_shippoints_used + :costs')
+            ->where('user_id = :userId')
+            ->setParameters([
+                'userId' => $userId,
+                'costs' => $shipCost,
+            ])
+            ->execute();
+    }
+
     public function remove(int $id): bool
     {
         $affected = (int) $this->createQueryBuilder()

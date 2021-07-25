@@ -48,6 +48,24 @@ class FleetRepository extends AbstractRepository
     }
 
     /**
+     * @return array<int, int>
+     */
+    public function getUserFleetShipCounts(int $userId): array
+    {
+        $data = $this->createQueryBuilder()
+            ->select('fs_ship_id, SUM(fs.fs_ship_cnt)')
+            ->from('fleet', 'f')
+            ->innerJoin('f', 'fleet_ships', 'fs', 'f.id = fs.fs_fleet_id')
+            ->where('f.user_id = :userId')
+            ->setParameter('userId', $userId, )
+            ->groupBy('fs.fs_ship_id')
+            ->execute()
+            ->fetchAllKeyValue();
+
+        return array_map(fn ($value) => (int) $value, $data);
+    }
+
+    /**
      * @return array<Fleet>
      */
     public function findByParameters(FleetSearchParameters $parameters): array

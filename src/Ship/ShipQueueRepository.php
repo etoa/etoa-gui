@@ -49,6 +49,27 @@ class ShipQueueRepository extends AbstractRepository
     }
 
     /**
+     * @return array<int, int>
+     */
+    public function getUserQueuedShipCounts(int $userId): array
+    {
+        $data = $this->createQueryBuilder()
+            ->select('queue_ship_id, SUM(queue_cnt)')
+            ->from('ship_queue')
+            ->where('queue_user_id = :userId')
+            ->andWhere('queue_endtime > :now')
+            ->setParameters([
+                'userId' => $userId,
+                'now' => time(),
+            ])
+            ->groupBy('queue_ship_id')
+            ->execute()
+            ->fetchAllKeyValue();
+
+        return array_map(fn ($value) => (int) $value, $data);
+    }
+
+    /**
      * @return ShipQueueItem[]
      */
     public function findQueueItemsForUser(int $userId): array

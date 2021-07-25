@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\Admin\AdminUserRepository;
+use EtoA\Alliance\AllianceRankRepository;
 use EtoA\Building\BuildingDataRepository;
 use EtoA\Defense\DefenseDataRepository;
 use EtoA\Help\TicketSystem\TicketRepository;
@@ -39,25 +40,23 @@ function showTimeBox($parent, $name, $value, $show = 1)
 
 function allianceRankSelector($parent, $name, $value = 0, $aid = 0)
 {
+    global $app;
+
+    /** @var AllianceRankRepository $allianceRankRepository */
+    $allianceRankRepository = $app[AllianceRankRepository::class];
+
     $or = new xajaxResponse();
     ob_start();
     if ($aid != 0) {
-        $rres = dbquery("
-        SELECT
-            rank_id,
-            rank_name
-        FROM
-            alliance_ranks
-        WHERE
-            rank_alliance_id=" . $aid . "");
-        if (mysql_num_rows($rres) > 0) {
+        $ranks = $allianceRankRepository->getRanks($aid);
+        if (count($ranks) > 0) {
             echo "<select name=\"" . $name . "\"><option value=\"0\">(Kein Rang)</option>";
-            while ($rarr = mysql_fetch_array($rres)) {
-                echo "<option value=\"" . $rarr['rank_id'] . "\"";
-                if ($value == $rarr['rank_id']) {
+            foreach ($ranks as $rank) {
+                echo "<option value=\"" . $rank->id . "\"";
+                if ($value == $rank->id) {
                     echo " selected=\"selected\"";
                 }
-                echo ">" . $rarr['rank_name'] . "</option>";
+                echo ">" . $rank->name . "</option>";
             }
             echo "</select>";
         } else {
