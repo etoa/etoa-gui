@@ -24,7 +24,7 @@ $app->register(new \EtoA\Core\TwigServiceProvider(), [
 $app->register(new \EtoA\Core\Configuration\ConfigurationServiceProvider());
 
 // register error handler
-//\Monolog\ErrorHandler::register($app['logger']);
+\Monolog\ErrorHandler::register($app['logger']);
 
 $app->register(new \EtoA\Building\BuidingServiceProvider());
 $app->register(new \EtoA\Chat\ChatServiceProvider());

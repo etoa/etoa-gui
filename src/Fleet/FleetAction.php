@@ -6,7 +6,8 @@ namespace EtoA\Fleet;
 
 class FleetAction
 {
-    const FLIGHT = 'flight';
-    const SPY = 'spy';
+    public const FLIGHT = 'flight';
+    public const SPY = 'spy';
+    public const DELIVERY = 'delivery';
     // TODO more to be added
 }
