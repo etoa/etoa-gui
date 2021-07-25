@@ -179,6 +179,23 @@ class ShipDataRepository extends AbstractRepository
         return array_map(fn ($row) => new Ship($row), $data);
     }
 
+    /**
+     * @return Ship[]
+     */
+    public function getAllianceShips(): array
+    {
+        $data = $this->createQueryBuilder()
+            ->select('*')
+            ->addSelect()
+            ->from('ships')
+            ->where('ship_alliance_shipyard_level > 0')
+            ->orderBy('ship_alliance_shipyard_level')
+            ->execute()
+            ->fetchAllAssociative();
+
+        return array_map(fn ($row) => new Ship($row), $data);
+    }
+
     public function getShip(int $shipId): ?Ship
     {
         $data = $this->createQueryBuilder()

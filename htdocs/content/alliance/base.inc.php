@@ -2,6 +2,7 @@
 
 use EtoA\Alliance\AllianceSpendRepository;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Ship\ShipDataRepository;
 use EtoA\UI\ResourceBoxDrawer;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Universe\Resources\BaseResources;
@@ -16,7 +17,8 @@ $planetRepo = $app[PlanetRepository::class];
 $resourceBoxDrawer = $app[ResourceBoxDrawer::class];
 /** @var AllianceSpendRepository $allianceSpendRepository */
 $allianceSpendRepository = $app[AllianceSpendRepository::class];
-
+/** @var ShipDataRepository $shipDataRepository */
+$shipDataRepository = $app[ShipDataRepository::class];
 $planet = $planetRepo->find($cp->id);
 
 // Zeigt eigene Rohstoffe an
@@ -180,31 +182,16 @@ if (isset($_POST['filter_submit']) && checker_verify()) {
 //
 
 // Allianzschiffe (wenn Schiffswerft gebaut)
+/** @var Ship[] $ships */
 $ships = [];
 if ($shipyard) {
-    $res = dbquery("
-    SELECT
-        ship_id,
-        ship_name,
-        ship_longcomment,
-        ship_speed,
-        ship_time2start,
-        ship_time2land,
-        ship_structure,
-        ship_shield,
-        ship_weapon,
-        ship_max_count,
-        ship_alliance_shipyard_level,
-        ship_alliance_costs
-    FROM
-        ships
-    WHERE
-        ship_alliance_shipyard_level<='" . $cu->alliance->buildlist->getLevel(ALLIANCE_SHIPYARD_ID) . "'
-        AND ship_alliance_shipyard_level>0
-    ORDER BY
-        ship_alliance_shipyard_level;");
-    while ($arr = mysql_fetch_assoc($res)) {
-        $ships[$arr['ship_id']] = $arr;
+    $allianceShipyardLevel = $cu->alliance->buildlist->getLevel(ALLIANCE_SHIPYARD_ID);
+
+    $allianceShips = $shipDataRepository->getAllianceShips();
+    foreach ($allianceShips as $ship) {
+        if ($ship->allianceShipyardLevel <= $allianceShipyardLevel) {
+            $ships[$ship->id] = $ship;
+        }
     }
 }
 
@@ -351,12 +338,12 @@ if (isset($_POST['ship_submit']) && checker_verify()) {
                     $total_count = $build_cnt + $ship_count;
 
                     // Prüft ob Anzahl grösser ist als Schiffsmaximum
-                    if ($ships[$ship_id]['ship_max_count'] >= $total_count || $ships[$ship_id]['ship_max_count'] == 0) {
+                    if ($ships[$ship_id]->maxCount >= $total_count || $ships[$ship_id]->maxCount === 0) {
                         for ($i = $build_cnt - 1; $i >= 0; $i--) {
                             //Kostenfaktor Schiffe
                             $cost_factor = pow($config->getFloat("alliance_shipcosts_factor"), $ship_count + $i);
                             // Berechnet die Kosten
-                            $ship_costs += $cost_factor * $ships[$ship_id]['ship_alliance_costs'];
+                            $ship_costs += $cost_factor * $ships[$ship_id]->allianceCosts;
                         }
                     }
                     // Die Anzahl übersteigt die Max. Anzahl -> Nachricht wird ausgegeben
@@ -1060,35 +1047,35 @@ if ($shipyard) {
 
     // Listet Schiffe auf
     if (count($ships) > 0) {
-        foreach ($ships as $id => $data) {
+        foreach ($ships as $ship) {
             // Zählt die Anzahl Schiffe dieses Typs im ganzen Account...
             $ship_count = 0;
             // ... auf den Planeten
-            if (isset($shiplist[$data['ship_id']])) {
-                $ship_count += array_sum($shiplist[$data['ship_id']]);
+            if (isset($shiplist[$ship->id])) {
+                $ship_count += array_sum($shiplist[$ship->id]);
             }
             // ... in der Bauliste
-            if (isset($queue_total[$data['ship_id']])) {
-                $ship_count += $queue_total[$data['ship_id']];
+            if (isset($queue_total[$ship->id])) {
+                $ship_count += $queue_total[$ship->id];
             }
             // ... in der Luft
-            if (isset($fleet[$data['ship_id']])) {
-                $ship_count += $fleet[$data['ship_id']];
+            if (isset($fleet[$ship->id])) {
+                $ship_count += $fleet[$ship->id];
             }
 
 
             //Kostenfaktor Schiffe
             $cost_factor = pow($config->getFloat("alliance_shipcosts_factor"), $ship_count);
 
-            $path = IMAGE_PATH . "/" . IMAGE_SHIP_DIR . "/ship" . $data['ship_id'] . "_middle." . IMAGE_EXT;
-            tableStart($data['ship_name']);
+            $path = IMAGE_PATH . "/" . IMAGE_SHIP_DIR . "/ship" . $ship->id . "_middle." . IMAGE_EXT;
+            tableStart($ship->name);
             echo "<tr>
                 <td style=\"width:120px;background:#000;vertical-align:middle;padding:0px;\">
-                <img src=\"" . $path . "\" style=\"width:120px;height:120px;border:none;margin:0px;\" alt=\"" . $data['ship_name'] . "\"/>
-                    <input type=\"hidden\" value=\"" . $data['ship_name'] . "\" id=\"ship_name_" . $data['ship_id'] . "\" name=\"ship_name_" . $data['ship_id'] . "\" />
+                <img src=\"" . $path . "\" style=\"width:120px;height:120px;border:none;margin:0px;\" alt=\"" . $ship->name . "\"/>
+                    <input type=\"hidden\" value=\"" . $ship->name . "\" id=\"ship_name_" . $ship->id . "\" name=\"ship_name_" . $ship->id . "\" />
                 </td>
                 <td style=\"vertical-align:top;height:100px;\" colspan=\"7\">
-                    " . $data['ship_longcomment'] . "
+                    " . $ship->longComment . "
                 </td>
                     </tr>
                     <tr>
@@ -1102,20 +1089,20 @@ if ($shipyard) {
                             <th style=\"width:10%\">Anzahl</th>
                         </tr>
                         <tr>
-                            <td>" . nf($data['ship_weapon']) . "</td>
-                            <td>" . nf($data['ship_structure']) . "</td>
-                            <td>" . nf($data['ship_shield']) . "</td>
-                            <td>" . nf($data['ship_speed']) . " AE/h</td>
-                            <td>" . tf($data['ship_time2start'] / FLEET_FACTOR_S) . "</td>
-                            <td>" . tf($data['ship_time2land'] / FLEET_FACTOR_S) . "</td>";
-            if ($data['ship_max_count'] != 0 && $data['ship_max_count'] <= $ship_count) {
+                            <td>" . nf($ship->weapon) . "</td>
+                            <td>" . nf($ship->structure) . "</td>
+                            <td>" . nf($ship->shield) . "</td>
+                            <td>" . nf($ship->speed) . " AE/h</td>
+                            <td>" . tf($ship->time2start / FLEET_FACTOR_S) . "</td>
+                            <td>" . tf($ship->time2land / FLEET_FACTOR_S) . "</td>";
+            if ($ship->maxCount !== 0 && $ship->maxCount <= $ship_count) {
                 echo "<td colspan=\"2\"><i>Maximalanzahl erreicht</i></td>";
             } else {
-                echo "<td>" . nf($data['ship_alliance_costs'] * $cost_factor) . " <input type=\"hidden\" value=\"" . $data['ship_alliance_costs'] * $cost_factor . "\" id=\"ship_costs_" . $data['ship_id'] . "\" name=\"ship_costs_" . $data['ship_id'] . "\" /></td>
+                echo "<td>" . nf($ship->allianceCosts * $cost_factor) . " <input type=\"hidden\" value=\"" . $ship->allianceCosts * $cost_factor . "\" id=\"ship_costs_" . $ship->id . "\" name=\"ship_costs_" . $ship->id . "\" /></td>
                             <td>
-                                <input type=\"text\" value=\"0\" name=\"buy_ship[" . $data['ship_id'] . "]\" id=\"buy_ship_" . $data['ship_id'] . "\" size=\"4\" maxlength=\"6\" onkeyup=\"FormatNumber(this.id,this.value, '', '', '');\"/>";
+                                <input type=\"text\" value=\"0\" name=\"buy_ship[" . $ship->id . "]\" id=\"buy_ship_" . $ship->id . "\" size=\"4\" maxlength=\"6\" onkeyup=\"FormatNumber(this.id,this.value, '', '', '');\"/>";
             }
-            echo "<input type=\"hidden\" value=\"" . $data['ship_max_count'] . "\" id=\"ship_max_count_" . $data['ship_id'] . "\" name=\"ship_max_count_" . $data['ship_id'] . "\" />
+            echo "<input type=\"hidden\" value=\"" . $ship->maxCount . "\" id=\"ship_max_count_" . $ship->id . "\" name=\"ship_max_count_" . $ship->id . "\" />
                                 </td>
                         </tr>";
 
