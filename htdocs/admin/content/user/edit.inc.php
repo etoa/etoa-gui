@@ -6,6 +6,7 @@ use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Help\TicketSystem\TicketRepository;
 use EtoA\Race\RaceDataRepository;
 use EtoA\Specialist\SpecialistDataRepository;
+use EtoA\User\UserMultiRepository;
 use EtoA\User\UserRepository;
 use EtoA\User\UserSittingRepository;
 use EtoA\User\UserWarningRepository;
@@ -27,7 +28,8 @@ $config = $app[ConfigurationService::class];
 
 /** @var UserSittingRepository $userSittingRepository */
 $userSittingRepository = $app[UserSittingRepository::class];
-
+/** @var UserMultiRepository $userMultiRepository */
+$userMultiRepository = $app[UserMultiRepository::class];
 if (isset($_GET['id']))
     $id = $_GET['id'];
 elseif (isset($_GET['user_id']))
@@ -79,35 +81,14 @@ if (isset($_POST['save'])) {
     //new Multi
     if (($_POST['new_multi'] != "") && (($_POST['multi_reason'] != ""))) {
         $newMultiUserId = $userRepository->getUserIdByNick($_POST['new_multi']);
-        if ($newMultiUserId !== null) {
+        if ($newMultiUserId === null) {
             error_msg("Dieser User exisitert nicht!");
         }
         //ist der eigene nick eingetragen
         elseif ($newMultiUserId == $_GET['id']) {
             error_msg("Man kann nicht den selben Nick im Sitting eintragen!");
         } else {
-            $res = dbquery("SELECT * FROM user_multi WHERE user_id=" . $_GET['id'] . "
-                            AND multi_id =" . $newMultiUserId);
-            if (mysql_num_rows($res) == 0) {
-                dbquery("
-                INSERT INTO
-                    user_multi
-                (user_id,multi_id,connection,timestamp)
-                VALUES
-                (" . $_GET['id'] . "," . $newMultiUserId . ",'" . mysql_real_escape_string($_POST['multi_reason']) . "',UNIX_TIMESTAMP())");
-            } else {
-                dbquery("
-                UPDATE
-                    user_multi
-                SET
-                    activ=1,
-                connection='" . mysql_real_escape_string($_POST['multi_reason']) . "',
-                timestamp=UNIX_TIMESTAMP()
-                WHERE
-                    user_id=" . $_GET['id'] . "
-                AND
-                    multi_id = " . $newMultiUserId);
-            }
+            $userMultiRepository->addOrUpdateEntry((int) $_GET['id'], $newMultiUserId, $_POST['multi_reason']);
             success_msg("Neuer User angelegt!");
         }
     }
@@ -213,14 +194,7 @@ if (isset($_POST['save'])) {
             $m_id = intval($m_id);
 
             if ($_POST['del_multi'][$m_id] == 1) {
-                dbquery("UPDATE
-                    user_multi
-                SET
-                    activ='0',
-                    timestamp=UNIX_TIMESTAMP()
-                WHERE
-                    user_id=" . $_GET['id'] . "
-                AND multi_id=" . $_POST['multi_nick'][$m_id]);
+                $userMultiRepository->deactivate((int) $_GET['id'], (int) $_POST['multi_nick'][$m_id]);
 
                 dbquery("UPDATE
                     users
@@ -931,50 +905,51 @@ if (mysql_num_rows($res) > 0) {
      * Sitting & Multi
      */
 
-    $multi_res = dbquery("SELECT * FROM user_multi WHERE user_id=" . $arr['user_id'] . " AND activ=1;");
-    $del_multi_res = dbquery("SELECT * FROM user_multi WHERE user_id=" . $arr['user_id'] . " AND activ=0;");
+    $multiEntries = $userMultiRepository->getUserEntries((int) $arr['user_id'], true);
     echo '<table class="tb">
             <tr>
-                <th rowspan="' . (mysql_num_rows($multi_res) + 1) . '" valign="top">Eingetragene Multis</th>
+                <th rowspan="' . (count($multiEntries) + 1) . '" valign="top">Eingetragene Multis</th>
                 <th>Name</th>
                 <th>Begründung</th>
                 <th>Eingetragen</th>
                 <th>Löschen</th>
             </tr>';
-    while ($multi_arr = mysql_fetch_array($multi_res)) {
+    foreach ($multiEntries as $multi) {
         echo '<tr>
                 <td>
-                    <a href="?page=user&sub=edit&user_id=' . $multi_arr['multi_id'] . '" name="multi_nick"".">' . get_user_nick($multi_arr['multi_id']) . '</a>
-                    <input type="hidden" name="multi_nick[' . $multi_arr['multi_id'] . ']" value="' . $multi_arr['multi_id'] . '" readonly="readonly">
+                    <a href="?page=user&sub=edit&user_id=' . $multi->multiUserId . '" name="multi_nick"".">' . $multi->multiUserNick . '</a>
+                    <input type="hidden" name="multi_nick[' . $multi->multiUserId . ']" value="' . $multi->multiUserId . '" readonly="readonly">
                 </td>
                 <td>
-                    ' . $multi_arr['connection'] . '
+                    ' . $multi->reason . '
                 </td>
                 <td>
-                    ' . ($multi_arr['timestamp'] > 0 ? df($multi_arr['timestamp']) : '-') . '
+                    ' . ($multi->timestamp > 0 ? df($multi->timestamp) : '-') . '
                 </td>
                 <td>
-                    <input type="checkbox" name="del_multi[' . $multi_arr["multi_id"] . ']" value="1">
+                    <input type="checkbox" name="del_multi[' . $multi->multiUserId . ']" value="1">
                 </td>
             </tr>';
     }
+
+    $deletedMultiEntries = $userMultiRepository->getUserEntries((int) $arr['user_id'], false);
     echo '<tr>
-                <th rowspan="' . (mysql_num_rows($del_multi_res) + 1) . '" valign="top">Gelöschte Multis</th>
+                <th rowspan="' . (count($deletedMultiEntries) + 1) . '" valign="top">Gelöschte Multis</th>
                 <th>Name</th>
                 <th>Begründung</th>
                 <th>Gelöscht</th>
                 <th></th>
             </tr>';
-    while ($del_multi_arr = mysql_fetch_array($del_multi_res)) {
+    foreach ($deletedMultiEntries as $multi) {
         echo '<tr>
                 <td>
-                    <a href="?page=user&sub=edit&user_id=' . $del_multi_arr['multi_id'] . '">' . get_user_nick($del_multi_arr['multi_id']) . '</a>
+                    <a href="?page=user&sub=edit&user_id=' . $multi->multiUserId . '">' . $multi->multiUserNick . '</a>
                 </td>
                 <td>
-                    ' . $del_multi_arr['connection'] . '
+                    ' . $multi->reason . '
                 </td>
                 <td>
-                    ' . ($del_multi_arr['timestamp'] > 0 ? df($del_multi_arr['timestamp']) : '-') . '
+                    ' . ($multi->timestamp > 0 ? df($multi->timestamp) : '-') . '
                 </td>
             </tr>';
     }

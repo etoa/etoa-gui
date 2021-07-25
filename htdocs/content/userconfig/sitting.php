@@ -1,14 +1,19 @@
 <?PHP
 
+use EtoA\User\UserMultiRepository;
 use EtoA\User\UserRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\User\UserSittingRepository;
+use Symfony\Component\HttpFoundation\Request;
 
 /** @var UserRepository */
 $userRepository = $app[UserRepository::class];
-
+/** @var UserMultiRepository $userMultiRepository */
+$userMultiRepository = $app[UserMultiRepository::class];
 /** @var ConfigurationService */
 $config = $app[ConfigurationService::class];
+
+$request = Request::createFromGlobals();
 
 if (!$s->sittingActive || $s->falseSitter) {
     //
@@ -16,13 +21,7 @@ if (!$s->sittingActive || $s->falseSitter) {
     //
 
     if (isset($_POST['new_multi']) != "" && checker_verify()) {
-        dbquery("
-                INSERT INTO
-                    user_multi
-                (user_id,timestamp)
-                VALUES
-                ('" . $cu->id . "',UNIX_TIMESTAMP());");
-
+        $userMultiRepository->addEmptyEntry($cu->getId());
         success_msg("Neuer User angelegt!");
     }
 
@@ -36,26 +35,17 @@ if (!$s->sittingActive || $s->falseSitter) {
         $user = array_unique($_POST['multi_nick']); //löscht alle users die mehrfach eingetragen wurden
         $change = false;
         foreach ($user as $id => $data) {
-            if ($user[$id] != "" && $_POST['del_multi'][$id] != 1) {
+            if ($user[$id] != "" && ($request->request->get('del_multi', [])[$id] ?? 0) != 1) {
                 //Ist dieser User existent
                 $userIdForNick = $userRepository->getUserIdByNick($user[$id]);
-                if ($userIdForNick !== null) {
+                if ($userIdForNick === null) {
                     error_msg("Dieser User exisitert nicht!");
                 }
                 //ist der eigene nick eingetragen
                 elseif ($userIdForNick == $cu->id) {
                     error_msg("Du kannst nicht dich selber eintragen!");
                 } else {
-                    // Daten Speichern
-                    dbquery("
-                            UPDATE
-                                user_multi
-                            SET
-                                multi_id='" . $userIdForNick . "',
-                                connection='" . mysql_real_escape_string($_POST['connection'][$id]) . "',
-                                timestamp=UNIX_TIMESTAMP()
-                            WHERE
-                                id=" . intval($id) . ";");
+                    $userMultiRepository->updateEntry((int) $id, $cu->getId(), $userIdForNick, $_POST['connection'][$id]);
                     $change = true;
                 }
             }
@@ -63,21 +53,16 @@ if (!$s->sittingActive || $s->falseSitter) {
         if ($change) success_msg("&Auml;nderungen &uuml;bernommen!");
 
         //Löscht alle angekreuzten user
-        if ($_POST['del_multi']) {
+        if ($request->request->has('del_multi')) {
             // User löschen
             foreach ($_POST['del_multi'] as $id => $data) {
                 $id = intval($id);
-                if ($_POST['del_multi'][$id] == 1) {
-                    if ($_POST['connection'][$id] == 0 && $_POST['del_multi'][$id] == 0) {
-                        dbquery("DELETE FROM user_multi WHERE id=$id;");
+                $entry = $userMultiRepository->getUserEntry($cu->getId(), $id);
+                if ($entry !== null) {
+                    if ($entry->reason !== '0' && $entry->multiUserId !== 0) {
+                        $userMultiRepository->deleteEntry($entry->id);
                     } else {
-                        dbquery("UPDATE
-                                    user_multi
-                                SET
-                                    activ='0',
-                                    timestamp=UNIX_TIMESTAMP()
-                                WHERE
-                                    id=$id;");
+                        $userMultiRepository->deactivateEntry($entry->id);
                         // Speichert jeden gelöschten multi (soll vor missbrauch schützen -> mutli erstellen -> löschen -> erstellen -> löschen etc.)
                         dbquery("
                                 UPDATE
@@ -218,17 +203,7 @@ if (!$s->sittingActive || $s->falseSitter) {
         echo "<form action=\"?page=$page&mode=sitting\" method=\"post\">";
         $cstr = checker_init();
 
-        $res = dbquery("
-            SELECT
-                *
-            FROM
-                user_multi
-            WHERE
-                user_id='" . $cu->id . "'
-                AND activ='1'
-            ORDER BY
-                id;");
-
+        $multiEntries = $userMultiRepository->getUserEntries($cu->getId(), true);
         $user_res = dbquery("
             SELECT
                 user_sitting_days
@@ -247,15 +222,15 @@ if (!$s->sittingActive || $s->falseSitter) {
                     ";
 
         $unused_multi = 0;
-        while ($arr = mysql_fetch_array($res)) {
+        foreach ($multiEntries as $multi) {
 
 
             echo "<tr><td>";
 
-            if ($arr['multi_id'] != 0) {
-                echo "<input type=\"text\" name=\"multi_nick[" . $arr['id'] . "]\" maxlength=\"20\" size=\"20\" value=\"" . stripslashes(get_user_nick($arr['multi_id'])) . "\" readonly=\"readonly\">";
+            if ($multi->multiUserId !== 0) {
+                echo "<input type=\"text\" name=\"multi_nick[" . $multi->id . "]\" maxlength=\"20\" size=\"20\" value=\"" . stripslashes($multi->multiUserNick) . "\" readonly=\"readonly\">";
             } else {
-                echo "<input type=\"text\" name=\"multi_nick[" . $arr['id'] . "]\" id=\"user_nick_multi\"  maxlength=\"20\" size=\"20\" autocomplete=\"off\" value=\"Usernick\" onkeyup=\"xajax_searchUser(this.value,'user_nick_multi','citybox_multi');\"><br/>
+                echo "<input type=\"text\" name=\"multi_nick[" . $multi->id . "]\" id=\"user_nick_multi\"  maxlength=\"20\" size=\"20\" autocomplete=\"off\" value=\"Usernick\" onkeyup=\"xajax_searchUser(this.value,'user_nick_multi','citybox_multi');\"><br/>
                                             <div class=\"citybox\" id=\"citybox_multi\">&nbsp;</div>";
                 $unused_multi++;
             }
@@ -263,15 +238,15 @@ if (!$s->sittingActive || $s->falseSitter) {
             echo "</td>";
             echo "<td>";
 
-            if ($arr['connection'] != '0') {
-                echo "<input type=\"text\" name=\"connection[" . $arr['id'] . "]\" maxlength=\"50\" size=\"50\" value=\"" . stripslashes($arr['connection']) . "\" readonly=\"readonly\">";
+            if ($multi->reason != '0') {
+                echo "<input type=\"text\" name=\"connection[" . $multi->id . "]\" maxlength=\"50\" size=\"50\" value=\"" . stripslashes($multi->reason) . "\" readonly=\"readonly\">";
             } else {
-                echo "<input type=\"text\" name=\"connection[" . $arr['id'] . "]\" maxlength=\"50\" size=\"50\" value=\"\">";
+                echo "<input type=\"text\" name=\"connection[" . $multi->id . "]\" maxlength=\"50\" size=\"50\" value=\"\">";
             }
 
             echo "</td>";
             echo "<td style=\"text-align:center;\">";
-            echo "<input type=\"checkbox\" name=\"del_multi[" . $arr['id'] . "]\" value=\"1\" />";
+            echo "<input type=\"checkbox\" name=\"del_multi[" . $multi->id . "]\" value=\"1\" />";
             echo "</td></tr>";
         }
         // Todo: fix sitting

@@ -6,6 +6,7 @@ use EtoA\Market\MarketResourceRepository;
 use EtoA\Market\MarketShipRepository;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Universe\Planet\PlanetService;
+use EtoA\User\UserMultiRepository;
 use EtoA\User\UserSittingRepository;
 use EtoA\User\UserWarningRepository;
 
@@ -852,8 +853,10 @@ class User implements \EtoA\User\UserInterface
             dbquery("DELETE FROM fleet_bookmarks WHERE user_id='" . $this->id . "';");
 
             //'user' Info löschen
+            /** @var UserMultiRepository $userMultiRepository */
+            $userMultiRepository = $app[UserMultiRepository::class];
             //dbquery("DELETE FROM user_log WHERE log_user_id='".$this->id."';"); 			//Log löschen
-            dbquery("DELETE FROM user_multi WHERE user_id='" . $this->id . "' OR multi_id='" . $this->id . "';"); //Multiliste löschen
+            $userMultiRepository->deleteUserEntries($this->id); //Multiliste löschen
             dbquery("DELETE FROM user_points WHERE point_user_id='" . $this->id . "';");                     //Punkte löschen
             $userWarningRepository->deleteAllUserEntries($this->id);                 //Nickänderungsanträge löschen
             $userSittingRepository->deleteAllUserEntries($this->id);                                                         //Sitting löschen

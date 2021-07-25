@@ -1,8 +1,16 @@
 <?PHP
+
+use EtoA\User\UserOnlineStatsRepository;
+
 class UserStats
 {
     static function generateImage($file)
     {
+        global $app;
+
+        /** @var UserOnlineStatsRepository $userOnlineStatsRepository */
+        $userOnlineStatsRepository = $app[UserOnlineStatsRepository::class];
+
         $w = 700;
         $h = 400;
         $borderLeftRight = 50;
@@ -39,32 +47,23 @@ class UserStats
         $acto = false;
         $actr = false;
         $index0 = 0;
-        $res = dbquery("SELECT
-            stats_count,
-            stats_regcount,
-            stats_timestamp
-        FROM
-            user_onlinestats
-        ORDER BY
-            stats_timestamp DESC
-        LIMIT
-            " . ($totalSteps + 1) . ";");
-        $mnr = mysql_num_rows($res);
+        $userOnlineStats = $userOnlineStatsRepository->getEntries($totalSteps + 1);
+        $mnr = count($userOnlineStats);
         $sumo = $sumr = 0;
         if ($mnr > 0) {
-            while ($arr = mysql_fetch_array($res)) {
-                $t = $arr['stats_timestamp'];
-                $data[$t]['o'] = $arr['stats_count'];
-                $data[$t]['r'] = $arr['stats_regcount'];
-                $max = max($max, $arr['stats_regcount']);
-                $maxo = max($maxo, $arr['stats_count']);
+            foreach ($userOnlineStats as $stats) {
+                $t = $stats->timestamp;
+                $data[$t]['o'] = $stats->sessionCount;
+                $data[$t]['r'] = $stats->userCount;
+                $max = max($max, $stats->userCount);
+                $maxo = max($maxo, $stats->sessionCount);
                 if ($acto == false)
-                    $acto = $arr['stats_count'];
+                    $acto = $stats->sessionCount;
                 if ($actr == false)
-                    $actr = $arr['stats_regcount'];
-                $sumo += $arr['stats_count'];
-                $sumr += $arr['stats_regcount'];
-                $index0 = $arr['stats_timestamp'];
+                    $actr = $stats->userCount;
+                $sumo += $stats->sessionCount;
+                $sumr += $stats->userCount;
+                $index0 = $stats->timestamp;
             }
             $avgo = round($sumo / $mnr, 2);
             $avgr = round($sumr / $mnr, 2);
@@ -88,42 +87,39 @@ class UserStats
                 }
             }
 
-            $c = count($data);
-            if ($c > 0) {
-                $step = ($w - $borderLeftRight - $borderLeftRight) * 5 * 60 / ($time - $starti);
+            $step = ($w - $borderLeftRight - $borderLeftRight) * 5 * 60 / ($time - $starti);
 
-                $x = $borderLeftRight;
-                $y = $h - $borderBottom;
-                $lastx = $borderLeftRight;
-                $lastyo = $h - $borderBottom; // - ($graphHeight/$max*$data[$index0]['o']);
-                $lastyr = $h - $borderBottom; // - ($graphHeight/$max*$data[$index0]['r']);;
+            $x = $borderLeftRight;
+            $y = $h - $borderBottom;
+            $lastx = $borderLeftRight;
+            $lastyo = $h - $borderBottom; // - ($graphHeight/$max*$data[$index0]['o']);
+            $lastyr = $h - $borderBottom; // - ($graphHeight/$max*$data[$index0]['r']);;
 
-                $ic = 0;
-                foreach ($data as $i => $d) {
-                    $x = $borderLeftRight + ($ic * $step);
-                    // Vertikale Stundenlinien
-                    if (date("i", $i) == "00") {
-                        if (date("H", $i) == "00")
-                            imageline($im, $x, $borderTop + 1, $x, $h - $borderBottom - 1, $colRed);
-                        else
-                            imageline($im, $x, $borderTop + 1, $x, $h - $borderBottom - 1, $colGrey);
-                        imagestring($im, 2, $x - (imagefontheight(2) / 2), $h - $bottomLegend, date("H", $i), $colBlack);
-                    }
-                    $t = date("dmyHi", $i);
-                    if ($max > 0) {
-                        $yo = $h - $borderBottom - ($graphHeight / $max * $d['o']);
-                        $yr = $h - $borderBottom - ($graphHeight / $max * $d['r']);
-                    } else {
-                        $yo = $h - $borderBottom;
-                        $yr = $h - $borderBottom;
-                    }
-                    imageline($im, $lastx, $lastyo, $x, $yo, $colGreen);
-                    imageline($im, $lastx, $lastyr, $x, $yr, $colBlue);
-                    $lastyo = $yo;
-                    $lastyr = $yr;
-                    $lastx = $x;
-                    $ic++;
+            $ic = 0;
+            foreach ($data as $i => $d) {
+                $x = $borderLeftRight + ($ic * $step);
+                // Vertikale Stundenlinien
+                if (date("i", $i) == "00") {
+                    if (date("H", $i) == "00")
+                        imageline($im, $x, $borderTop + 1, $x, $h - $borderBottom - 1, $colRed);
+                    else
+                        imageline($im, $x, $borderTop + 1, $x, $h - $borderBottom - 1, $colGrey);
+                    imagestring($im, 2, $x - (imagefontheight(2) / 2), $h - $bottomLegend, date("H", $i), $colBlack);
                 }
+                $t = date("dmyHi", $i);
+                if ($max > 0) {
+                    $yo = $h - $borderBottom - ($graphHeight / $max * $d['o']);
+                    $yr = $h - $borderBottom - ($graphHeight / $max * $d['r']);
+                } else {
+                    $yo = $h - $borderBottom;
+                    $yr = $h - $borderBottom;
+                }
+                imageline($im, $lastx, $lastyo, $x, $yo, $colGreen);
+                imageline($im, $lastx, $lastyr, $x, $yr, $colBlue);
+                $lastyo = $yo;
+                $lastyr = $yr;
+                $lastx = $x;
+                $ic++;
             }
 
             // Renderzeit
@@ -135,9 +131,9 @@ class UserStats
 
             imagestring($im, 3, 110, $h - 40, "Max    Durchschnitt   Aktuell", $colBlack);
             imagestring($im, 3, 50, $h - 25, "Online", $colGreen);
-            imagestring($im, 2, 110, $h - 25, $maxo, $colBlack);
+            imagestring($im, 2, 110, $h - 25, (string) $maxo, $colBlack);
             imagestring($im, 2, 160, $h - 25, (string) $avgo, $colBlack);
-            imagestring($im, 2, 265, $h - 25, $acto, $colBlack);
+            imagestring($im, 2, 265, $h - 25, (string) $acto, $colBlack);
 
             imagestring($im, 3, 450, $h - 40, "Max    Durchschnitt   Aktuell", $colBlack);
             imagestring($im, 3, 350, $h - 25, "Registriert", $colBlue);
@@ -159,6 +155,11 @@ class UserStats
 
     static function generateXml($file)
     {
+        global $app;
+
+        /** @var UserOnlineStatsRepository $userOnlineStatsRepository */
+        $userOnlineStatsRepository = $app[UserOnlineStatsRepository::class];
+
         $dir = dirname($file);
         if (!is_dir($dir)) {
             mkdir($dir, 0777, true);
@@ -172,23 +173,13 @@ class UserStats
         $parr = mysql_fetch_row($pres);
         $parrh = mysql_fetch_row($presh);
 
-        $res = dbquery("SELECT
-            stats_count,
-            stats_regcount,
-            stats_timestamp
-        FROM
-            user_onlinestats
-        ORDER BY
-            stats_timestamp DESC
-        LIMIT
-            1;");
-        $mnr = mysql_num_rows($res);
+        $stats = $userOnlineStatsRepository->getEntries(1);
+        $mnr = count($stats);
         $acto = 0;
         $actr = 0;
         if ($mnr > 0) {
-            $arr = mysql_fetch_array($res);
-            $acto = $arr['stats_count'];
-            $actr = $arr['stats_regcount'];
+            $acto = $stats[0]->sessionCount;
+            $actr = $stats[0]->userCount;
         }
 
         $d = fopen($file, "w");
