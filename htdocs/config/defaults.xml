@@ -45,6 +45,21 @@
     <item name="mail_reply" cat="1" base="yes">
       <v comment="E-Mail Reply-To" type="text">mail@etoa.ch</v>
     </item>
+    <item name="smtp_host" cat="1" base="yes">
+      <v comment="SMTP Host" type="text"></v>
+    </item>
+    <item name="smtp_port" cat="1" base="yes">
+      <v comment="SMTP Port" type="int">25</v>
+    </item>
+    <item name="smtp_username" cat="1" base="yes">
+      <v comment="SMTP Username" type="text"></v>
+    </item>
+    <item name="smtp_password" cat="1" base="yes">
+      <v comment="SMTP Passwort" type="text"></v>
+    </item>
+    <item name="smtp_security" cat="1" base="yes">
+      <v comment="SMTP Sicherheit ('ssl', 'tls' oder leerlassen)" type="text"></v>
+    </item>
     <item name="enable_register" cat="1" base="yes">
       <v comment="Registration erlauben" type="onoff">1</v>
       <p1 comment="Registration offen ab" type="timedate">1190446200</p1>

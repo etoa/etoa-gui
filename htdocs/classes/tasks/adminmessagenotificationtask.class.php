@@ -2,6 +2,7 @@
 
 use EtoA\Admin\AdminUserRepository;
 use EtoA\Message\MessageRepository;
+use EtoA\Support\Mail\MailSenderService;
 use EtoA\User\UserRepository;
 use Pimple\Container;
 
@@ -13,12 +14,14 @@ class AdminMessageNotificationTask implements IPeriodicTask
     private AdminUserRepository $adminUserRepo;
     private UserRepository $userRepo;
     private MessageRepository $messageRepository;
+    private MailSenderService $mailSenderService;
 
     public function __construct(Container $app)
     {
         $this->adminUserRepo = $app[AdminUserRepository::class];
         $this->userRepo = $app[UserRepository::class];
         $this->messageRepository = $app[MessageRepository::class];
+        $this->mailSenderService = $app[MailSenderService::class];
     }
 
     function run()
@@ -41,8 +44,7 @@ class AdminMessageNotificationTask implements IPeriodicTask
                             : "#" . ($count + 1) . " Von " . $this->userRepo->getNick($message->userFrom) . " mit dem Betreff '" . $message->subject . "'\n\n" . substr($message->text, 0, 500) . "\n\n\n";
                     }
 
-                    $mail = new Mail("Neue private Nachricht in EtoA - Admin", $email_text);
-                    $mail->send($adminUser->email);
+                    $this->mailSenderService->send("Neue private Nachricht in EtoA - Admin", $email_text, $adminUser->email);
 
                     $this->messageRepository->setMailed($adminUser->playerId);
 
