@@ -1,9 +1,12 @@
 <?PHP
 
 use EtoA\User\UserLogRepository;
+use EtoA\User\UserRepository;
 
 /** @var UserLogRepository $userLogRepository */
 $userLogRepository = $app[UserLogRepository::class];
+/** @var UserRepository $userRepository */
+$userRepository = $app[UserRepository::class];
 
 echo "<h1>Benutzerprofil</h1>";
 
@@ -119,22 +122,13 @@ if ($uid > 0) {
             iBoxEnd();
 
 
-            $res = dbquery("
-                SELECT
-                    user_res_from_raid,
-                    user_res_from_asteroid,
-                    user_res_from_nebula,
-                    user_res_from_tf
-                FROM
-                    users
-                WHERE
-                    user_id = " . $cu->id);
-            if ($arr = mysql_fetch_array($res)) {
+            $user = $userRepository->getUser($cu->getId());
+            if ($user !== null) {
                 iBoxStart("Rohstoffe von...");
-                echo "Raids: " . nf($arr['user_res_from_raid']) . " t</br>";
-                echo "Asteroiden: " . nf($arr['user_res_from_asteroid']) . " t</br>";
-                echo "Nebelfelder: " . nf($arr['user_res_from_nebula']) . " t</br>";
-                echo "Trümmerfelder: " . nf($arr['user_res_from_tf']) . " t";
+                echo "Raids: " . nf($user->resFromRaid) . " t</br>";
+                echo "Asteroiden: " . nf($user->resFromAsteroid) . " t</br>";
+                echo "Nebelfelder: " . nf($user->resFromNebula) . " t</br>";
+                echo "Trümmerfelder: " . nf($user->resFromTf) . " t";
                 iBoxEnd();
             }
         }
