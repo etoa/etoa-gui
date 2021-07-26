@@ -4,6 +4,7 @@ use EtoA\Admin\AdminUser;
 use EtoA\Message\MessageCategoryRepository;
 use EtoA\Message\MessageRepository;
 use EtoA\Message\ReportRepository;
+use EtoA\Support\Mail\MailSenderService;
 use EtoA\User\UserRepository;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -29,22 +30,26 @@ $messageCategoryRepository = $app[MessageCategoryRepository::class];
 /** @var ReportRepository */
 $reportRepository = $app[ReportRepository::class];
 
+/** @var MailSenderService $mailSenderService */
+$mailSenderService = $app[MailSenderService::class];
+
 /** @var Request */
 $request = Request::createFromGlobals();
 
 if ($sub == "sendmsg") {
-    sendMessageForm($request, $cu, $messageRepository, $userRepository);
+    sendUserMessageForm($request, $cu, $messageRepository, $userRepository, $mailSenderService);
 } elseif ($sub == "reports") {
     manageReports($request, $reportRepository, $userRepository);
 } else {
     manageMessages($request, $messageRepository, $messageCategoryRepository, $userRepository);
 }
 
-function sendMessageForm(
+function sendUserMessageForm(
     Request $request,
     AdminUser $cu,
     MessageRepository $messageRepository,
-    UserRepository $userRepository
+    UserRepository $userRepository,
+    MailSenderService $mailSenderService
 ): void {
     global $page;
     global $sub;
@@ -69,7 +74,6 @@ function sendMessageForm(
             $msg_type = $request->request->getInt('msg_type');
 
             if (in_array($msg_type, [MESSAGE_TYPE_EMAIL, MESSAGE_TYPE_BOTH], true)) {
-                $mail = new Mail($request->request->get('message_subject'), $request->request->get('message_text'));
                 if ($request->request->getInt('from_id') > 0) {
                     $replyUser = $userRepository->getUser($cu->playerId);
                     $reply = $replyUser->getEmailAddressWithDisplayName();
@@ -92,7 +96,12 @@ function sendMessageForm(
                     $msgCnt++;
                 }
                 if (in_array($msg_type, [MESSAGE_TYPE_EMAIL, MESSAGE_TYPE_BOTH], true)) {
-                    $mail->send($userEmail, $reply);
+                    $mailSenderService->send(
+                        $request->request->get('message_subject'),
+                        $request->request->get('message_text'),
+                        $userEmail,
+                        $reply
+                    );
                     $mailCnt++;
                 }
             }

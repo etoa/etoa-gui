@@ -5,15 +5,19 @@
 //
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Support\Mail\MailSenderService;
 
 /** @var ConfigurationService */
 $config = $app[ConfigurationService::class];
+
+/** @var MailSenderService $mailSenderService */
+$mailSenderService = $app[MailSenderService::class];
 
 $errorMessage = null;
 $successMessage = null;
 try {
     if (isset($_POST['submit_pwforgot']) && checker_verify(0, 1, true)) {
-        if ($_POST['user_nick'] && !stristr($_POST['user_nick'],"'") && $_POST['user_email_fix'] && !stristr($_POST['user_email_fix'],"'")) {
+        if ($_POST['user_nick'] && !stristr($_POST['user_nick'], "'") && $_POST['user_email_fix'] && !stristr($_POST['user_email_fix'], "'")) {
             $res = dbquery("
         SELECT
             user_id,
@@ -21,10 +25,10 @@ try {
         FROM
             users
         WHERE
-            LCASE(user_nick)='".strtolower($_POST['user_nick'])."'
-            AND user_email_fix='".$_POST['user_email_fix']."'
+            LCASE(user_nick)='" . strtolower($_POST['user_nick']) . "'
+            AND user_email_fix='" . $_POST['user_email_fix'] . "'
         ;");
-            if (mysql_num_rows($res)>0) {
+            if (mysql_num_rows($res) > 0) {
                 $arr = mysql_fetch_array($res);
 
                 // Passwort generieren
@@ -32,24 +36,23 @@ try {
 
                 // Email schreiben
                 $email_text = 'Hallo ' . $_POST['user_nick'] . "\n\nDu hast ein neues Passwort angefordert.\nHier sind die neuen Daten:\n\nUniversum: " . $config->get('roundname') . "\n\nNick: " . $_POST['user_nick'] . "\nPasswort: " . $pw . "\n\nWeiterhin viel Spass...\nDas EtoA-Team";
-                $mail = new Mail("Passwort-Anforderung",$email_text);
-                $mail->send($_POST['user_email_fix']);
+                $mailSenderService->send("Passwort-Anforderung", $email_text, $_POST['user_email_fix']);
 
                 // Passwort updaten
                 dbquery("UPDATE
                 users
             SET
-                user_password='".saltPasswort($pw)."'
+                user_password='" . saltPasswort($pw) . "'
             WHERE
-                user_nick='".$_POST['user_nick']."'
-                AND user_email_fix='".$_POST['user_email_fix']."'
+                user_nick='" . $_POST['user_nick'] . "'
+                AND user_email_fix='" . $_POST['user_email_fix'] . "'
             ;");
 
                 // Log hinzufügen
-                Log::add(3,Log::INFO,'Der Benutzer ' . $_POST['user_nick'] . ' hat ein neues Passwort per E-Mail angefordert!');
+                Log::add(3, Log::INFO, 'Der Benutzer ' . $_POST['user_nick'] . ' hat ein neues Passwort per E-Mail angefordert!');
 
                 $_SESSION['pwforgot_success_msg'] = 'Deine Passwort-Anfrage war erfolgreich. Du solltest in einigen Minuten eine E-Mail mit dem neuen Passwort erhalten!';
-                forward('?index='.$index);
+                forward('?index=' . $index);
                 return;
             }
 
