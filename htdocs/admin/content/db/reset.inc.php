@@ -2,9 +2,16 @@
 
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Support\DatabaseManagerRepository;
+use EtoA\Support\DatabaseMigrationService;
 
 /** @var ConfigurationService */
 $config = $app[ConfigurationService::class];
+
+/** @var DatabaseManagerRepository */
+$databaseManager = $app[DatabaseManagerRepository::class];
+
+/** @var DatabaseMigrationService */
+$databaseMigrationService = $app[DatabaseMigrationService::class];
 
 $successMessage = null;
 $errorMessage = null;
@@ -24,7 +31,7 @@ if (isset($_POST['submit'])) {
         $mtx->acquire();
 
         // Do the backup
-        $log = DBManager::getInstance()->backupDB($dir, $gzip);
+        $log = $databaseManager->backupDB($dir, $gzip);
 
         // Release mutex
         $mtx->release();
@@ -37,15 +44,13 @@ if (isset($_POST['submit'])) {
             $tbls = DBManager::getInstance()->getAllTables();
             $emptyTables = [];
             foreach ($tbls as $t) {
-                if (!in_array($t, $persistentTables['definitions'], true) && $t !== DBManager::SCHEMA_MIGRATIONS_TABLE) {
+                if (!in_array($t, $persistentTables['definitions'], true) && $t !== DatabaseManagerRepository::SCHEMA_MIGRATIONS_TABLE) {
                     $emptyTables[] = $t;
                 }
             }
 
             if (count($emptyTables) > 0) {
-                /** @var DatabaseManagerRepository $dbManagerRepository */
-                $dbManagerRepository = $app[DatabaseManagerRepository::class];
-                $dbManagerRepository->truncateTables($emptyTables);
+                $databaseManager->truncateTables($emptyTables);
 
                 $infoMessage = 'Leere Tabellen: ' . implode(', ', $emptyTables);
             }
@@ -68,7 +73,7 @@ if (isset($_POST['submit'])) {
             $tc = DBManager::getInstance()->dropAllTables();
 
             // Load schema
-            DBManager::getInstance()->migrate();
+            $databaseMigrationService->migrate();
 
             // Load config default
             $config->restoreDefaults();

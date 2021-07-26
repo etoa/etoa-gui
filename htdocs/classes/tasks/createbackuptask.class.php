@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Support\DatabaseManagerRepository;
 use Pimple\Container;
 
 /**
@@ -9,10 +10,12 @@ use Pimple\Container;
 class CreateBackupTask implements IPeriodicTask
 {
     private ConfigurationService $config;
+    private DatabaseManagerRepository $databaseManager;
 
     public function __construct(Container $app)
     {
         $this->config = $app[ConfigurationService::class];
+        $this->databaseManager = $app[DatabaseManagerRepository::class];
     }
 
     function run()
@@ -24,7 +27,7 @@ class CreateBackupTask implements IPeriodicTask
             // Remove old backup files
             $cleaned = DBManager::removeOldBackups($backupDir, $this->config->getInt('backup_retention_time'));
 
-            $log = DBManager::getInstance()->backupDB($backupDir, $gzip);
+            $log = $this->databaseManager->backupDB($backupDir, $gzip);
             return $log . ", $cleaned alte Backup-Dateien gelöscht";
         } else {
             return "Backup konnte nicht erstellt werden, Backup Verzeichnis existiert nicht!";

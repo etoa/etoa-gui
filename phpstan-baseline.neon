@@ -96,11 +96,6 @@ parameters:
 			path: htdocs/classes/buildlistitem.class.php
 
 		-
-			message: "#^Only booleans are allowed in an if condition, string\\|null given\\.$#"
-			count: 2
-			path: htdocs/classes/dbmanager.class.php
-
-		-
 			message: "#^Right side of \\|\\| is always true\\.$#"
 			count: 1
 			path: htdocs/classes/fleetlaunch.class.php

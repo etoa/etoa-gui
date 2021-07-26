@@ -1,5 +1,14 @@
 <?PHP
 
+use EtoA\Support\DatabaseManagerRepository;
+use EtoA\Support\DatabaseMigrationService;
+
+/** @var DatabaseManagerRepository */
+$databaseManager = $app[DatabaseManagerRepository::class];
+
+/** @var DatabaseMigrationService */
+$databaseMigrationService = $app[DatabaseMigrationService::class];
+
 $successMessage = null;
 $errorMessage = null;
 if (isset($_POST['migrate'])) {
@@ -9,7 +18,7 @@ if (isset($_POST['migrate'])) {
         $mtx->acquire();
 
         // Migrate schema
-        $cnt = DBManager::getInstance()->migrate();
+        $cnt = $databaseMigrationService->migrate();
         if ($cnt == 0) {
             $successMessage = 'Datenbankschema ist bereits aktuell!';
         } else {
@@ -29,12 +38,9 @@ if (isset($_POST['migrate'])) {
     }
 }
 
-$data = DBManager::getInstance()->getArrayFromTable(DBManager::SCHEMA_MIGRATIONS_TABLE,["version", "date"],"version");
-$pending = DBManager::getInstance()->getPendingMigrations();
-
 echo $twig->render('admin/database/migrations.html.twig', [
-    'data' => $data,
-    'pending' => $pending,
+    'data' => $databaseManager->getMigrations(),
+    'pending' => $databaseMigrationService->getPendingMigrations(),
     'successMessage' => $successMessage,
     'errorMessage' => $errorMessage,
 ]);

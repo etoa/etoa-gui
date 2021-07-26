@@ -26,8 +26,8 @@
         <tbody>
         {% for migration in data %}
             <tr>
-                <td>{{ migration.0}}</td>
-                <td>{{ migration.1 }}</td>
+                <td>{{ migration.version }}</td>
+                <td>{{ migration.date }}</td>
             </tr>
         {% endfor %}
         </tbody>

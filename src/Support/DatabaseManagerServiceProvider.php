@@ -14,5 +14,9 @@ class DatabaseManagerServiceProvider implements ServiceProviderInterface
         $pimple[DatabaseManagerRepository::class] = function (Container $pimple): DatabaseManagerRepository {
             return new DatabaseManagerRepository($pimple['db']);
         };
+
+        $pimple[DatabaseMigrationService::class] = function (Container $pimple): DatabaseMigrationService {
+            return new DatabaseMigrationService($pimple[DatabaseManagerRepository::class]);
+        };
     }
 }

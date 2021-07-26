@@ -3,6 +3,7 @@
 
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Support\DatabaseManagerRepository;
+use EtoA\Support\DatabaseMigrationService;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
@@ -63,6 +64,11 @@ $verbose = in_array("-v", $args, true);
 //
 if ($action == "migrate" || $action == "reset")
 {
+    if (!isset($app)) {
+        $app = require __DIR__ .'/../src/app.php';
+        $app->boot();
+    }
+
     $mtx = new Mutex();
 
     try
@@ -75,18 +81,17 @@ if ($action == "migrate" || $action == "reset")
             DBManager::getInstance()->dropAllTables();
         }
 
+        /** @var DatabaseMigrationService */
+        $databaseMigrationService = $app[DatabaseMigrationService::class];
+
         echo "Migrate database:\n";
-        $cnt = DBManager::getInstance()->migrate();
+        $cnt = $databaseMigrationService->migrate();
         if ($cnt == 0) {
             echo "Database is up-to-date\n";
         }
 
         // Load config defaults
         if ($action == "reset") {
-            if (!isset($app)) {
-                $app = require __DIR__ .'/../src/app.php';
-                $app->boot();
-            }
 
             /** @var ConfigurationService */
             $config = $app[ConfigurationService::class];
@@ -135,8 +140,11 @@ else if ($action == "backup")
         // Acquire mutex
         $mtx->acquire();
 
+        /** @var DatabaseManagerRepository */
+        $databaseManager = $app[DatabaseManagerRepository::class];
+
         // Restore database
-        $log = DBManager::getInstance()->backupDB($dir, $gzip);
+        $log = $databaseManager->backupDB($dir, $gzip);
 
         // Release mutex
         $mtx->release();
@@ -172,6 +180,14 @@ else if ($action == "backup")
 //
 else if ($action == "restore")
 {
+    if (!isset($app)) {
+        $app = require __DIR__ .'/../src/app.php';
+        $app->boot();
+    }
+
+    /** @var DatabaseManagerRepository */
+    $databaseManager = $app[DatabaseManagerRepository::class];
+
     $dir = DBManager::getBackupDir();
 
     // Check if restore point specified
@@ -186,7 +202,7 @@ else if ($action == "restore")
             $mtx->acquire();
 
             // Restore database
-            $log = DBManager::getInstance()->restoreDB($dir, $restorePoint);
+            $log = $databaseManager->restoreDB($dir, $restorePoint);
 
             // Release mutex
             $mtx->release();
@@ -218,9 +234,9 @@ else if ($action == "restore")
     }
     else
     {
-        echo "\nUsage: ".$_SERVER['argv'][0]." ".$action." [restorepoint]\n\n";
-        echo "Available restorepoints:\n\n";
-        $dates = DBManager::getInstance()->getBackupImages($dir);
+        echo "\nUsage: ".$_SERVER['argv'][0]." ".$action." [restore_point]\n\n";
+        echo "Available restore points:\n\n";
+        $dates = $databaseManager->getBackupImages($dir);
         foreach ($dates as $f)
         {
             echo "$f\n";
