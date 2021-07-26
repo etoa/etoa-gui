@@ -122,13 +122,13 @@ if ($uid > 0) {
             iBoxEnd();
 
 
-            $user = $userRepository->getUser($cu->getId());
-            if ($user !== null) {
+            $resourcesUser = $userRepository->getUser($cu->getId());
+            if ($resourcesUser !== null) {
                 iBoxStart("Rohstoffe von...");
-                echo "Raids: " . nf($user->resFromRaid) . " t</br>";
-                echo "Asteroiden: " . nf($user->resFromAsteroid) . " t</br>";
-                echo "Nebelfelder: " . nf($user->resFromNebula) . " t</br>";
-                echo "Trümmerfelder: " . nf($user->resFromTf) . " t";
+                echo "Raids: " . nf($resourcesUser->resFromRaid) . " t</br>";
+                echo "Asteroiden: " . nf($resourcesUser->resFromAsteroid) . " t</br>";
+                echo "Nebelfelder: " . nf($resourcesUser->resFromNebula) . " t</br>";
+                echo "Trümmerfelder: " . nf($resourcesUser->resFromTf) . " t";
                 iBoxEnd();
             }
         }

@@ -4,6 +4,7 @@ use EtoA\Alliance\AllianceNewsRepository;
 use EtoA\Text\TextRepository;
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\User\UserLoginFailureRepository;
 
 /** @var ConfigurationService */
 $config = $app[ConfigurationService::class];
@@ -21,19 +22,13 @@ if ($s->firstView) {
         echo "</div>";
         iBoxEnd();
     }
-    $res = dbquery("
-        SELECT
-            COUNT(failure_user_id)
-        FROM
-            login_failures
-        WHERE
-            failure_user_id=" . $cu->id . "
-            AND failure_time > " . $cu->lastOnline . "
-        ");
-    $arr = mysql_fetch_row($res);
-    if ($arr[0] > 0) {
+
+    /** @var UserLoginFailureRepository $userLoginFailureRepository */
+    $userLoginFailureRepository = $app[UserLoginFailureRepository::class];
+    $failureCount = $userLoginFailureRepository->countLoginFailuresSince($cu->getId(), $cu->lastOnline);
+    if ($failureCount > 0) {
         iBoxStart("Fehlerhafte Logins");
-        echo "<div style=\"color:red;\"><b>Seit deinem letzten Login gab es " . $arr[0] . " <a href=\"?page=userconfig&amp;mode=logins\">fehlerhafte Loginversuche</a>!</b></div>";
+        echo "<div style=\"color:red;\"><b>Seit deinem letzten Login gab es " . $failureCount . " <a href=\"?page=userconfig&amp;mode=logins\">fehlerhafte Loginversuche</a>!</b></div>";
         iBoxEnd();
     }
 }

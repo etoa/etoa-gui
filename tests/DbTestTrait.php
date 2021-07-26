@@ -28,6 +28,7 @@ trait DbTestTrait
         $this->connection->executeQuery('TRUNCATE chat_users');
         $this->connection->executeQuery('TRUNCATE default_items');
         $this->connection->executeQuery('TRUNCATE default_item_sets');
+        $this->connection->executeQuery('TRUNCATE login_failures');
         $this->connection->executeQuery('TRUNCATE planets');
         $this->connection->executeQuery('TRUNCATE techlist');
         $this->connection->executeQuery('TRUNCATE buildlist');

@@ -1,49 +1,41 @@
 <?PHP
+
+use EtoA\User\UserLoginFailureRepository;
+/** @var UserLoginFailureRepository $userLoginFailureRepository */
+$userLoginFailureRepository = $app[UserLoginFailureRepository::class];
+
 echo "<h1>Fehlerhafte Logins</h1>";
 echo "Es werden maximal 300 Einträge angezeigt!<br/><br/>";
 
 switch (isset($_GET['order']) ? $_GET['order'] : 0) {
     case 1:
-        $order = "user_nick ASC";
+        $sort = 'user_nick';
+        $order = "ASC";
         $orderstring = "Nickname";
         break;
     case 2:
-        $order = "failure_ip ASC";
+        $sort = 'failure_ip';
+        $order = "ASC";
         $orderstring = "IP";
         break;
     case 3:
-        $order = "failure_host ASC";
+        $sort = 'failure_host';
+        $order = "ASC";
         $orderstring = "Host";
         break;
     case 3:
-        $order = "failure_clien ASC";
+        $sort = 'failure_client';
+        $order = "ASC";
         $orderstring = "Client";
         break;
     default:
-        $order = "failure_time DESC";
+        $sort = 'failure_time';
+        $order = "DESC";
         $orderstring = "Datum";
 }
 
-
-$res = dbquery("
-            SELECT
-                failure_id,
-                failure_time,
-                user_nick,
-                user_id,
-                failure_ip,
-                failure_host,
-                failure_client
-            FROM
-                login_failures
-            INNER JOIN
-                users ON
-                failure_user_id=user_id
-            ORDER BY
-                " . $order . "
-            LIMIT
-                300;");
-if (mysql_num_rows($res) > 0) {
+$failures = $userLoginFailureRepository->findLoginFailures($sort, $order);
+if (count($failures) > 0) {
     echo "Sortiert nach: " . $orderstring . "<br/><br/>";
     echo "<table class=\"tb\">";
     echo "<tr>
@@ -53,12 +45,12 @@ if (mysql_num_rows($res) > 0) {
                 <th><a href=\"?page=$page&amp;sub=$sub&amp;order=3\">Hostname</a></th>
                 <th><a href=\"?page=$page&amp;sub=$sub&amp;order=4\">Client</a></th>
                 </tr>";
-    while ($arr = mysql_fetch_array($res)) {
-        echo "<tr><td class=\"tbldata\">" . df($arr['failure_time']) . "</td>";
-        echo "<td class=\"tbldata\"><a href=\"?page=user&amp;sub=edit&amp;id=" . $arr['user_id'] . "\">" . $arr['user_nick'] . "</a></td>";
-        echo "<td class=\"tbldata\"><a href=\"?page=user&amp;sub=ipsearch&amp;ip=" . $arr['failure_ip'] . "\">" . $arr['failure_ip'] . "</a></td>";
-        echo "<td class=\"tbldata\"><a href=\"?page=user&amp;sub=ipsearch&amp;host=" . $arr['failure_host'] . "\">" . $arr['failure_host'] . "</a></td>
-                    <td class=\"tbldata\">" . $arr['failure_client'] . "</td>
+    foreach ($failures as $failure) {
+        echo "<tr><td class=\"tbldata\">" . df($failure->time) . "</td>";
+        echo "<td class=\"tbldata\"><a href=\"?page=user&amp;sub=edit&amp;id=" . $failure->userId . "\">" . $failure->userNick . "</a></td>";
+        echo "<td class=\"tbldata\"><a href=\"?page=user&amp;sub=ipsearch&amp;ip=" . $failure->ip . "\">" . $failure->ip . "</a></td>";
+        echo "<td class=\"tbldata\"><a href=\"?page=user&amp;sub=ipsearch&amp;host=" . $failure->host . "\">" . $failure->host . "</a></td>
+                    <td class=\"tbldata\">" . $failure->client . "</td>
                     </tr>";
     }
     echo "</table>";

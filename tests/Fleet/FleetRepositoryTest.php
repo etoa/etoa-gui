@@ -21,7 +21,7 @@ class FleetRepositoryTest extends AbstractDbTestCase
         $fleetId = $this->repository->add(1, 1, 2, 3, 4, 'action', FleetStatus::DEPARTURE, new BaseResources());
         $this->repository->addShipsToFleet($fleetId, 1, 2);
         $this->repository->addShipsToFleet($fleetId, 2, 3);
-        
+
         $this->assertSame(5, $this->repository->countShipsInFleet($fleetId));
     }
 }
