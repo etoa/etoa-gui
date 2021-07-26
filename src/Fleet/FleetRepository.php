@@ -18,6 +18,16 @@ class FleetRepository extends AbstractRepository
             ->fetchOne();
     }
 
+    public function countShipsInFleet(int $fleetId): int
+    {
+        return (int) $this->createQueryBuilder()
+            ->select('SUM(fs_ship_cnt)')
+            ->from('fleet_ships')
+            ->where('fs_fleet_id = :fleetId')
+            ->setParameter('fleetId', $fleetId)
+            ->execute()
+            ->fetchOne();
+    }
     public function hasFleetsRelatedToEntity(int $entityId): bool
     {
         $count = (int) $this->createQueryBuilder()
@@ -112,7 +122,7 @@ class FleetRepository extends AbstractRepository
         return array_map(fn ($arr) => new Fleet($arr), $data);
     }
 
-    public function add(int $userId, int $launchTime, int $landTime, int $entityFrom, int $entityTo, string $action, int $status): int
+    public function add(int $userId, int $launchTime, int $landTime, int $entityFrom, int $entityTo, string $action, int $status, BaseResources $resources): int
     {
         $this->createQueryBuilder()
             ->insert('fleet')
@@ -124,6 +134,11 @@ class FleetRepository extends AbstractRepository
                 'entity_to' => ':entityTo',
                 'action' => ':action',
                 'status' => ':status',
+                'res_metal' => ':resMetal',
+                'res_crystal' => ':resCrystal',
+                'res_plastic' => ':resPlastic',
+                'res_fuel' => ':resFuel',
+                'res_food' => ':resFood',
             ])
             ->setParameters([
                 'userId' => $userId,
@@ -133,6 +148,11 @@ class FleetRepository extends AbstractRepository
                 'entityTo' => $entityTo,
                 'action' => $action,
                 'status' => $status,
+                'resMetal' => $resources->metal,
+                'resCrystal' => $resources->crystal,
+                'resPlastic' => $resources->plastic,
+                'resFuel' => $resources->fuel,
+                'resFood' => $resources->food,
             ])
             ->execute();
 

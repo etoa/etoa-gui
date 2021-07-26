@@ -3,6 +3,7 @@
 use EtoA\Building\BuildingId;
 use EtoA\Building\BuildingRepository;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Fleet\FleetRepository;
 use EtoA\Ship\ShipQueueRepository;
 use EtoA\Technology\TechnologyRepository;
 use EtoA\UI\ResourceBoxDrawer;
@@ -21,6 +22,8 @@ $resourceBoxDrawer = $app[ResourceBoxDrawer::class];
 $buildingRepository = $app[BuildingRepository::class];
 /** @var ShipQueueRepository $shipQueueRepository */
 $shipQueueRepository = $app[ShipQueueRepository::class];
+/** @var FleetRepository $fleetRepository */
+$fleetRepository = $app[FleetRepository::class];
 
 //Definition für "Info" Link
 define('ITEMS_TBL', "ships");
@@ -168,24 +171,7 @@ if ($shipyard !== null && $shipyard->currentLevel > 0) {
         }
 
         // Flotten laden
-        $fleet = [];
-        $res = dbquery("
-    SELECT
-    fs_ship_id,
-    SUM(fs.fs_ship_cnt) AS cnt
-    FROM
-        fleet AS f
-    INNER JOIN
-        fleet_ships AS fs
-    ON f.id=fs.fs_fleet_id
-    WHERE
-    f.user_id='" . $cu->id . "'
-    GROUP BY
-        fs.fs_ship_id;");
-        while ($arr = mysql_fetch_assoc($res)) {
-            $fleet[$arr['fs_ship_id']] = $arr['cnt'];
-        }
-
+        $fleet = $fleetRepository->getUserFleetShipCounts($cu->getId());
 
         // Alle Schiffe laden
         //Schiffsordnung des Users beachten

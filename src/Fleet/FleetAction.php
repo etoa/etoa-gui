@@ -9,5 +9,6 @@ class FleetAction
     public const FLIGHT = 'flight';
     public const SPY = 'spy';
     public const DELIVERY = 'delivery';
+    public const MARKET = 'market';
     // TODO more to be added
 }

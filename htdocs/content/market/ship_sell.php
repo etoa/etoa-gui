@@ -1,9 +1,11 @@
 <?php
 
+use EtoA\Fleet\FleetRepository;
 use EtoA\Market\MarketShipRepository;
 use EtoA\Ship\ShipDataRepository;
 use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Entity\EntityService;
+use EtoA\Universe\Resources\BaseResources;
 use EtoA\User\UserMultiRepository;
 
 $cnt = 0;
@@ -15,6 +17,8 @@ $marketShipRepository = $app[MarketShipRepository::class];
 $entityService = $app[EntityService::class];
 /** @var EntityRepository $entityRepository */
 $entityRepository = $app[EntityRepository::class];
+/** @var FleetRepository $fleetRepository */
+$fleetRepository = $app[FleetRepository::class];
 
 foreach ($_POST['ship_market_id'] as $num => $id) {
     // Lädt Angebotsdaten
@@ -51,96 +55,14 @@ foreach ($_POST['ship_market_id'] as $num => $id) {
             $buyerLandtime = $launchtime + $buyerFlighttime;
 
             // Fleet Seller -> Buyer
-            dbquery("
-                        INSERT INTO
-                            fleet
-                        (
-                            user_id,
-                            entity_from,
-                            entity_to,
-                            launchtime,
-                            landtime,
-                            action,
-                            status
-                        )
-                        VALUES
-                        (
-                            " . $cu->id . ",
-                            " . $sellerEntity->id . ",
-                            " . $cp->id . ",
-                            " . $launchtime . ",
-                            " . $buyerLandtime . ",
-                            'market',
-                            0
-                        );");
-            $sellerFid = mysql_insert_id();
-            dbquery("
-                        INSERT INTO
-                            fleet_ships
-                        (
-                            fs_fleet_id,
-                            fs_ship_id,
-                            fs_ship_cnt
-                        )
-                        VALUES
-                        (
-                            " . $sellerFid . ",
-                            " . $offer->shipId . ",
-                            " . $offer->count . "
-                        );");
-
+            $sellerFid = $fleetRepository->add($cu->getId(), $launchtime, (int) $buyerLandtime, $sellerEntity->id, $cp->id, \EtoA\Fleet\FleetAction::MARKET, \EtoA\Fleet\FleetStatus::DEPARTURE, new BaseResources());
+            $fleetRepository->addShipsToFleet($sellerFid, $offer->shipId, $offer->count);
 
             $numBuyerShip = ($tradeShip->capacity > 0) ? ceil(array_sum($buyarr) / $tradeShip->capacity) : 1;
 
             // Fleet Buyer->Seller
-            dbquery("
-                        INSERT INTO
-                            fleet
-                        (
-                            user_id,
-                            entity_from,
-                            entity_to,
-                            launchtime,
-                            landtime,
-                            action,
-                            res_metal,
-                            res_crystal,
-                            res_plastic,
-                            res_fuel,
-                            res_food,
-                            status
-                        )
-                        VALUES
-                        (
-                            " . $seller->id . ",
-                            " . $cp->id . ",
-                            " . $sellerEntity->id . ",
-                            " . $launchtime . ",
-                            " . $sellerLandtime . ",
-                            'market',
-                        " . $buyarr[0] . ",
-                        " . $buyarr[1] . ",
-                        " . $buyarr[2] . ",
-                        " . $buyarr[3] . ",
-                        " . $buyarr[4] . ",
-                            0
-                        );");
-            $buyerFid = mysql_insert_id();
-            dbquery("
-                        INSERT INTO
-                            fleet_ships
-                        (
-                            fs_fleet_id,
-                            fs_ship_id,
-                            fs_ship_cnt
-                        )
-                        VALUES
-                        (
-                            " . $buyerFid . ",
-                            " . MARKET_SHIP_ID . ",
-                            " . $numBuyerShip . "
-                        );");
-
+            $buyerFid = $fleetRepository->add($seller->getId(), $launchtime, (int) $sellerLandtime, $cp->id, $sellerEntity->id, \EtoA\Fleet\FleetAction::MARKET, \EtoA\Fleet\FleetStatus::DEPARTURE, $costs);
+            $fleetRepository->addShipsToFleet($buyerFid, MARKET_SHIP_ID, $numBuyerShip);
 
             $marketShipRepository->delete($offer->id);
             $cnt++;

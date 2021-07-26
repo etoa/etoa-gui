@@ -1,6 +1,10 @@
 <?PHP
 
+use EtoA\Fleet\FleetRepository;
 use EtoA\Ship\ShipDataRepository;
+
+/** @var FleetRepository $fleetRepository */
+$fleetRepository = $app[FleetRepository::class];
 
 echo "<h1>Flotten</h1>";
 
@@ -227,17 +231,7 @@ else {
 
                 //Zählt gefakte Schiffe wenn Aktion=Fakeangriff
                 if ($fd->getAction()->code() == "fakeattack") {
-                    $fsres = dbquery("
-                            SELECT
-                                SUM(fs_ship_cnt)
-                            FROM
-                                fleet_ships
-                            WHERE
-                                fs_fleet_id='" . $fid . " '
-                            GROUP BY
-                                fs_fleet_id;");
-                    $fsarr = mysql_fetch_row($fsres);
-                    $shipsCount = $fsarr[0];
+                    $shipsCount = $fleetRepository->countShipsInFleet($fid);
                 } else
                     $shipsCount = $fd->countShips();
             } else {

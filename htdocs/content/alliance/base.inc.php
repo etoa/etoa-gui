@@ -302,7 +302,7 @@ if (isset($_POST['ship_submit']) && checker_verify()) {
                         $launchtime = time(); // Startzeit
                         $duration = 3600; // Dauer 1h
                         $landtime = $launchtime + $duration; // Landezeit
-                        $fleetId = $fleetRepository->add($_POST['user_buy_ship'], $launchtime, $landtime, $allianceMarketId, $cp->id, \EtoA\Fleet\FleetAction::DELIVERY, FleetStatus::DEPARTURE);
+                        $fleetId = $fleetRepository->add($_POST['user_buy_ship'], $launchtime, $landtime, $allianceMarketId, $cp->id, \EtoA\Fleet\FleetAction::DELIVERY, FleetStatus::DEPARTURE, new BaseResources());
 
                         // Speichert Schiffe in der Flotte
                         $sql = "";

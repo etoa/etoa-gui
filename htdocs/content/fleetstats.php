@@ -1,9 +1,12 @@
 <?PHP
 
+use EtoA\Fleet\FleetRepository;
 use EtoA\Universe\Planet\PlanetService;
 
 /** @var PlanetService */
 $planetService = $app[PlanetService::class];
+/** @var FleetRepository $fleetRepository */
+$fleetRepository = $app[FleetRepository::class];
 
 echo '<h1>Schiffsübersicht</h1>';
 
@@ -81,26 +84,7 @@ if (mysql_result($res, 0) > 0) {
     }
 
     // Speichert alle Schiffe des Users, die sich im All befinden
-    $fleet_data = array();
-    $res = dbquery("
-        SELECT
-          SUM(fs.fs_ship_cnt) AS cnt,
-          fs.fs_ship_id
-        FROM
-      fleet_ships AS fs
-      INNER JOIN
-      fleet AS f
-      ON fs.fs_fleet_id=f.id
-      AND f.user_id='" . $cu->id . "'
-        GROUP BY
-            fs.fs_ship_id;");
-    if (mysql_num_rows($res) > 0) {
-        while ($arr = mysql_fetch_array($res)) {
-            $fleet_data[$arr['fs_ship_id']] = $arr['cnt'];
-        }
-    }
-
-
+    $fleet_data = $fleetRepository->getUserFleetShipCounts($cu->getId());
     tableStart("Schiffe");
     echo '<tr>
                         <th colspan=\'2\'>Schiff</th>
