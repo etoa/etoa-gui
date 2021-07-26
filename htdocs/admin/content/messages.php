@@ -62,31 +62,16 @@ function sendUserMessageForm(
     $text = "";
     if ($request->request->has('submit')) {
         if ($request->request->get('message_subject') != "" && $request->request->get('message_text') != "") {
-            $to = [];
-            if ($request->request->getInt('rcpt_type') === RECIPIENT_TYPE_ALL) {
-                $to = $userRepository->getEmailAddressesWithDisplayName();
-            } else {
-                $userId = $request->request->getInt('message_user_to');
-                $recipient = $userRepository->getUser($userId);
-                $to[$userId] = $recipient->getEmailAddressWithDisplayName();
-            }
-
             $msg_type = $request->request->getInt('msg_type');
 
-            if (in_array($msg_type, [MESSAGE_TYPE_EMAIL, MESSAGE_TYPE_BOTH], true)) {
-                if ($request->request->getInt('from_id') > 0) {
-                    $replyUser = $userRepository->getUser($cu->playerId);
-                    $reply = $replyUser->getEmailAddressWithDisplayName();
-                } else {
-                    $reply = "";
-                }
-            }
-
-            $mailCnt = 0;
             $msgCnt = 0;
-
-            foreach ($to as $userId => $userEmail) {
-                if (in_array($msg_type, [MESSAGE_TYPE_IN_GAME, MESSAGE_TYPE_BOTH], true)) {
+            if (in_array($msg_type, [MESSAGE_TYPE_IN_GAME, MESSAGE_TYPE_BOTH], true)) {
+                if ($request->request->getInt('rcpt_type') === RECIPIENT_TYPE_ALL) {
+                    $userIds = array_keys($userRepository->getUserNicknames());
+                } else {
+                    $userIds = [$request->request->getInt('message_user_to')];
+                }
+                foreach ($userIds as $userId) {
                     $messageRepository->sendFromUserToUser(
                         $request->request->getInt('from_id'),
                         $userId,
@@ -95,18 +80,34 @@ function sendUserMessageForm(
                     );
                     $msgCnt++;
                 }
-                if (in_array($msg_type, [MESSAGE_TYPE_EMAIL, MESSAGE_TYPE_BOTH], true)) {
-                    $mailSenderService->send(
-                        $request->request->get('message_subject'),
-                        $request->request->get('message_text'),
-                        $userEmail,
-                        $reply
-                    );
-                    $mailCnt++;
-                }
             }
             if ($msgCnt > 0) {
                 success_msg("$msgCnt InGame-Nachrichten wurden versendet!");
+            }
+
+            $mailCnt = 0;
+            if (in_array($msg_type, [MESSAGE_TYPE_EMAIL, MESSAGE_TYPE_BOTH], true)) {
+                if ($request->request->getInt('rcpt_type') === RECIPIENT_TYPE_ALL) {
+                    $recipients = $userRepository->getEmailAddressesWithNickname();
+                } else {
+                    $recipient = $userRepository->getUser($request->request->getInt('message_user_to'));
+                    $recipients = [$recipient->email => $recipient->nick];
+                }
+
+                if ($request->request->getInt('from_id') > 0) {
+                    $replyUser = $userRepository->getUser($cu->playerId);
+                    $replyTo = [$replyUser->email => $replyUser->nick];
+                } else {
+                    $replyTo = null;
+                }
+
+                $mailSenderService->send(
+                    $request->request->get('message_subject'),
+                    $request->request->get('message_text'),
+                    $recipients,
+                    $replyTo
+                );
+                $mailCnt++;
             }
             if ($mailCnt > 0) {
                 success_msg("$mailCnt Mails wurden versendet!");

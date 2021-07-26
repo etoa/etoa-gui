@@ -6,6 +6,11 @@ namespace EtoA\Support\Mail;
 
 use EtoA\Core\Configuration\ConfigurationService;
 use Exception;
+use Swift_Mailer;
+use Swift_Message;
+use Swift_SendmailTransport;
+use Swift_SmtpTransport;
+use Swift_Transport;
 
 class MailSenderService
 {
@@ -17,40 +22,37 @@ class MailSenderService
     }
 
     /**
-     * @param string|string[] $recipients
+     * @param string|array $recipients
+     * @param null|string|array $recipients
      */
-    public function send(string $subject, string $text, $recipients, ?string $replyTo = null): void
+    public function send(string $subject, string $text, $recipients, $replyTo = null): int
     {
-        $subject = $this->getSubjectPrefix() . $subject;
-        $body = $text . $this->getSignature();
-        $headers = [
-            "From" => $this->getForm(),
-            "Content-Type" => "text/plain; charset=UTF-8",
-            "MIME-Version" => "1.0",
-            "Content-Transfer-Encoding" => "8bit",
-            "X-Mailer" => "PHP",
-            "Reply-to" => $replyTo ?? $this->getReplyTo(),
-        ];
-        foreach ((is_array($recipients) ? $recipients : [$recipients]) as $to) {
-            if (!mail($to, $subject, $body, $headers)) {
-                throw new Exception("Mail wurde nicht gesendet!\n\nTo:" . $to . "\nSubject:" . $subject . "\n\nBody:\n\n" . $body);
-            }
+        $mailer = new Swift_Mailer($this->getMailTransport());
+
+        $gameName = APP_NAME . ' ' . $this->config->get('roundname');
+        $message = (new Swift_Message($gameName . ": " . $subject))
+            ->setFrom([$this->config->get('mail_sender') => $gameName])
+            ->setReplyTo($replyTo ?? [$this->config->get('mail_reply') => $gameName])
+            ->setTo($recipients)
+            ->setBody($text . $this->getSignature());
+
+        return $mailer->send($message);
+    }
+
+    private function getMailTransport(): Swift_Transport
+    {
+        $host = $this->config->get('smtp_host');
+        $port = $this->config->getInt('smtp_port');
+        $username = $this->config->get('smtp_username');
+        $password = $this->config->get('smtp_password');
+        $security = $this->config->get('smtp_security');
+
+        if (filled($host)) {
+            return (new Swift_SmtpTransport($host, $port, filled($security) ? $security : null))
+                ->setUsername(filled($username) ? $username : null)
+                ->setPassword(filled($password) ? $password : null);
         }
-    }
-
-    private function getForm(): string
-    {
-        return APP_NAME . ' ' . $this->config->get('roundname') . "<" . $this->config->get('mail_sender') . ">";
-    }
-
-    private function getReplyTo(): string
-    {
-        return APP_NAME . ' ' . $this->config->get('roundname') . "<" . $this->config->get('mail_reply') . ">";
-    }
-
-    private function getSubjectPrefix(): string
-    {
-        return APP_NAME . ' ' . $this->config->get('roundname') . ": ";
+        return new Swift_SendmailTransport();
     }
 
     private function getSignature(): string
