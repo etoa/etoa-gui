@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace EtoA\Support\Mail;
 
 use EtoA\Core\Configuration\ConfigurationService;
-use Exception;
 use Swift_Mailer;
 use Swift_Message;
 use Swift_SendmailTransport;
@@ -22,8 +21,8 @@ class MailSenderService
     }
 
     /**
-     * @param string|array $recipients
-     * @param null|string|array $recipients
+     * @param string|string[]|array<string,string> $recipients
+     * @param null|string|string[]|array<string,string> $replyTo
      */
     public function send(string $subject, string $text, $recipients, $replyTo = null): int
     {
@@ -52,6 +51,7 @@ class MailSenderService
                 ->setUsername(filled($username) ? $username : null)
                 ->setPassword(filled($password) ? $password : null);
         }
+
         return new Swift_SendmailTransport();
     }
 
