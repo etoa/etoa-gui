@@ -2,6 +2,7 @@
 <?PHP
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Support\DatabaseManagerRepository;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
@@ -233,12 +234,19 @@ else if ($action == "restore")
 //
 else if ($action == "check")
 {
+    if (!isset($app)) {
+        $app = require __DIR__ .'/../src/app.php';
+        $app->boot();
+    }
+
+    /** @var DatabaseManagerRepository */
+    $databaseManager = $app[DatabaseManagerRepository::class];
+
     echo "\nChecking tables:\n\n";
     try
     {
-        $ores = DBManager::getInstance()->checkTables();
-        while ($arr = mysql_fetch_assoc($ores))
-        {
+        $result = $databaseManager->checkTables();
+        foreach ($result as $arr) {
             echo implode("\t", $arr)."\n";
         }
     }
@@ -254,14 +262,22 @@ else if ($action == "check")
 //
 else if ($action == "repair")
 {
+    if (!isset($app)) {
+        $app = require __DIR__ .'/../src/app.php';
+        $app->boot();
+    }
+
+    /** @var DatabaseManagerRepository */
+    $databaseManager = $app[DatabaseManagerRepository::class];
+
     echo "\nRepairing tables:\n\n";
     try
     {
-        $ores = DBManager::getInstance()->repairTables(true);
-        while ($arr = mysql_fetch_assoc($ores))
-        {
+        $result = $databaseManager->repairTables();
+        foreach ($result as $arr) {
             echo implode("\t", $arr)."\n";
         }
+        Log::add(Log::F_SYSTEM, Log::INFO, count($result) . " Tabellen wurden manuell repariert!");
     }
     catch (Exception $e)
     {

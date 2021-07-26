@@ -37,7 +37,7 @@ class DatabaseManagerRepository extends AbstractRepository
 
         foreach ($tables as $t) {
             $this->getConnection()
-                ->executeStatement('TRUNCATE '.$t.';');
+                ->executeStatement('TRUNCATE ' . $t . ';');
         }
 
         $this->getConnection()
@@ -65,5 +65,45 @@ class DatabaseManagerRepository extends AbstractRepository
     public function getTableStatus(): array
     {
         return $this->getConnection()->fetchAllAssociative('SHOW TABLE STATUS');
+    }
+
+    /**
+     * @return array<int,array<string,mixed>>
+     */
+    public function analyzeTables(): array
+    {
+        $tables = $this->getConnection()->fetchFirstColumn('SHOW TABLES;');
+
+        return $this->getConnection()->fetchAllAssociative("ANALYZE TABLE " . implode(',', $tables) . ";");
+    }
+
+    /**
+     * @return array<int,array<string,mixed>>
+     */
+    public function checkTables(): array
+    {
+        $tables = $this->getConnection()->fetchFirstColumn('SHOW TABLES;');
+
+        return $this->getConnection()->fetchAllAssociative("CHECK TABLE " . implode(',', $tables) . ";");
+    }
+
+    /**
+     * @return array<int,array<string,mixed>>
+     */
+    public function optimizeTables(): array
+    {
+        $tables = $this->getConnection()->fetchFirstColumn('SHOW TABLES;');
+
+        return $this->getConnection()->fetchAllAssociative("OPTIMIZE TABLE " . implode(',', $tables) . ";");
+    }
+
+    /**
+     * @return array<int,array<string,mixed>>
+     */
+    public function repairTables(): array
+    {
+        $tables = $this->getConnection()->fetchFirstColumn('SHOW TABLES;');
+
+        return $this->getConnection()->fetchAllAssociative("REPAIR TABLE " . implode(',', $tables) . ";");
     }
 }

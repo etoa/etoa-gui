@@ -11,11 +11,6 @@ parameters:
 			path: htdocs/admin/content/cronjob.php
 
 		-
-			message: "#^Unreachable statement \\- code above always terminates\\.$#"
-			count: 1
-			path: htdocs/admin/content/db/maintenance.inc.php
-
-		-
 			message: "#^Variable \\$sortOrder might not be defined\\.$#"
 			count: 2
 			path: htdocs/admin/content/home/stats.inc.php
