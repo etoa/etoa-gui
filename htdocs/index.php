@@ -4,6 +4,7 @@
  * Main game file, provides the template and includes all pages
  */
 
+use EtoA\BuddyList\BuddyListRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Text\TextRepository;
 use EtoA\Universe\Planet\PlanetRepository;
@@ -254,6 +255,9 @@ try {
     $textRepo = $app[TextRepository::class];
     $infoText = $textRepo->find('info');
 
+    /** @var BuddyListRepository $buddyListRepository */
+    $buddyListRepository = $app[BuddyListRepository::class];
+
     $globals = array_merge($currentPlanetData, [
         'design' => strtolower(str_replace('designs/official/', '', CSS_STYLE)),
         'addBanner' => ADD_BANNER,
@@ -265,8 +269,8 @@ try {
         'messages' => $newMessages,
         'newreports' => $newReports,
         'blinkMessages' => $cu->properties->msgBlink,
-        'buddys' => check_buddys_online($cu->id),
-        'buddyreq' => check_buddy_req($cu->id),
+        'buddys' => $buddyListRepository->countFriendsOnline($cu->getId()),
+        'buddyreq' => $buddyListRepository->hasPendingFriendRequest($cu->getId()),
         'fleetAttack' => check_fleet_incomming($cu->id),
         'enableKeybinds' => $cu->properties->enableKeybinds,
         'isAdmin' => $cu->admin,

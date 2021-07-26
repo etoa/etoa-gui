@@ -85,7 +85,6 @@ class User implements \EtoA\User\UserInterface
     protected ?Alliance $alliance = null;
     protected $rating = null;
     protected $properties = null;
-    protected $buddylist = null;
     protected $changedFields;
 
     protected $isVerified;
@@ -417,9 +416,6 @@ class User implements \EtoA\User\UserInterface
             }
             if ($key == "acttime" && $this->acttime == null) {
                 $this->acttime = $this->loadLastAction();
-            }
-            if ($key == 'buddylist' && $this->buddylist == null) {
-                $this->buddylist = new Buddylist($this->id);
             }
             return $this->$key;
         } catch (EException $e) {
