@@ -95,6 +95,39 @@ class UserRepository extends AbstractRepository
             ->execute();
     }
 
+    public function setSpecialist(int $userId, int $specialistId, int $time): void
+    {
+        $this->createQueryBuilder()
+            ->update('users')
+            ->set('user_specialist_time', ':time')
+            ->set('user_specialist_id', ':specialistId')
+            ->where('user_id = :id')
+            ->setParameters([
+                'id' => $userId,
+                'specialistId' => $specialistId,
+                'time' => $time,
+            ])
+            ->execute();
+    }
+
+    /**
+     * @return array<int, int>
+     */
+    public function countUsersWithSpecialists(): array
+    {
+        $data = $this->createQueryBuilder()
+            ->select('user_specialist_id, COUNT(user_id)')
+            ->from('users')
+            ->where('user_specialist_time > :now')
+            ->setParameters([
+                'now' => time(),
+            ])
+            ->execute()
+            ->fetchAllKeyValue();
+
+        return array_map(fn ($value) => (int) $value, $data);
+    }
+
     public function disableHolidayMode(int $userId): void
     {
         $this->createQueryBuilder()
