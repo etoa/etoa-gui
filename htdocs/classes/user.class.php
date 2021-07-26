@@ -8,6 +8,7 @@ use EtoA\Market\MarketResourceRepository;
 use EtoA\Market\MarketShipRepository;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Universe\Planet\PlanetService;
+use EtoA\User\UserLogRepository;
 use EtoA\User\UserMultiRepository;
 use EtoA\User\UserSittingRepository;
 use EtoA\User\UserWarningRepository;
@@ -617,30 +618,16 @@ class User implements \EtoA\User\UserInterface
      */
     final public function addToUserLog($zone, $message, $public = 1)
     {
+        global $app;
+
+        /** @var UserLogRepository $userLogRepository */
+        $userLogRepository = $app[UserLogRepository::class];
+
         $search = array("{user}", "{nick}");
         $replace = array($this->nick, $this->nick);
         $message = str_replace($search, $replace, $message);
 
-        dbquery("
-        INSERT INTO
-            user_log
-        (
-            user_id,
-            timestamp,
-            zone,
-            message,
-            host,
-            public
-        )
-        VALUES
-        (
-            " . $this->id . ",
-            " . time() . ",
-            '" . $zone . "',
-            '" . mysql_real_escape_string($message) . "',
-            '" . gethostbyname($_SERVER['REMOTE_ADDR']) . "',
-            " . intval($public) . "
-        );");
+        $userLogRepository->add($this->getId(), $zone, $message, gethostbyname($_SERVER['REMOTE_ADDR']), (bool) $public);
         return true;
     }
 

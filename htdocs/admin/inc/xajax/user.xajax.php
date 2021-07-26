@@ -8,6 +8,7 @@ use EtoA\Help\TicketSystem\TicketRepository;
 use EtoA\Message\MessageRepository;
 use EtoA\Ship\ShipDataRepository;
 use EtoA\Technology\TechnologyDataRepository;
+use EtoA\User\UserLogRepository;
 use EtoA\User\UserRepository;
 
 $xajax->register(XAJAX_FUNCTION, "showTimeBox");
@@ -359,25 +360,20 @@ function delUserComment($uid, $target, $id)
 
 function userLogs($uid, $target)
 {
+    global $app;
+
+    /** @var UserLogRepository $userLogRepository */
+    $userLogRepository = $app[UserLogRepository::class];
+
     $or = new xajaxResponse();
     ob_start();
     tableStart("", '100%');
     echo "<tr><th>Nachricht</th><th>Datum</th><th>IP</th></tr>";
-    $lres = dbquery("
-                    SELECT
-                        *
-                    FROM
-                        user_log
-                    WHERE
-                        user_id=" . $uid . "
-                    ORDER BY timestamp DESC
-                    LIMIT 100;");
-    if (mysql_num_rows($lres) > 0) {
-        while ($larr = mysql_fetch_array($lres)) {
-            echo "<tr><td>" . text2html($larr['message']) . "</td>
-                            <td>" . df($larr['timestamp']) . "</td>
-                            <td><a href=\"?page=user&amp;sub=ipsearch&amp;ip=" . $larr['host'] . "\">" . $larr['host'] . "</a></td></tr>";
-        }
+    $logs = $userLogRepository->getUserLogs($uid, 100);
+    foreach ($logs as $log) {
+        echo "<tr><td>" . text2html($log->message) . "</td>
+                        <td>" . df($log->timestamp) . "</td>
+                        <td><a href=\"?page=user&amp;sub=ipsearch&amp;ip=" . $log->host . "\">" . $log->host . "</a></td></tr>";
     }
     tableEnd();
 

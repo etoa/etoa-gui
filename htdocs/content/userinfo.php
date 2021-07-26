@@ -1,5 +1,10 @@
 <?PHP
 
+use EtoA\User\UserLogRepository;
+
+/** @var UserLogRepository $userLogRepository */
+$userLogRepository = $app[UserLogRepository::class];
+
 echo "<h1>Benutzerprofil</h1>";
 
 if (!isset($_GET['id']))
@@ -82,20 +87,11 @@ if ($uid > 0) {
         //
 
         iBoxStart("&Ouml;ffentliches Benutzer-Log");
-        $lres = dbquery("
-            SELECT
-                *
-            FROM
-                user_log
-            WHERE
-                user_id=" . $user->id . "
-                AND public=1
-            ORDER BY timestamp DESC
-            LIMIT 10;");
-        if (mysql_num_rows($lres) > 0) {
-            while ($larr = mysql_fetch_array($lres)) {
-                echo "<div class=\"infoLog\">" . text2html($larr['message']);
-                echo "<span>" . df($larr['timestamp'], 0) . "";
+        $logs = $userLogRepository->getUserLogs($user->getId(), 10, true);
+        if (count($logs) > 0) {
+            foreach ($logs as $log) {
+                echo "<div class=\"infoLog\">" . text2html($log->message);
+                echo "<span>" . df($log->timestamp, 0) . "";
                 echo "</span>
                     </div>";
             }
@@ -108,20 +104,11 @@ if ($uid > 0) {
 
         if ($user->id == $cu->id) {
             iBoxStart("Privates Benutzer-Log");
-            $lres = dbquery("
-                SELECT
-                    *
-                FROM
-                    user_log
-                WHERE
-                    user_id=" . $user->id . "
-                    AND public=0
-                ORDER BY timestamp DESC
-                LIMIT 30;");
-            if (mysql_num_rows($lres) > 0) {
-                while ($larr = mysql_fetch_array($lres)) {
-                    echo "<div class=\"infoLog\">" . text2html($larr['message']);
-                    echo "<span>" . df($larr['timestamp']) . "";
+            $logs = $userLogRepository->getUserLogs($user->getId(), 30, false);
+            if (count($logs) > 0) {
+                foreach ($logs as $log) {
+                    echo "<div class=\"infoLog\">" . text2html($log->message);
+                    echo "<span>" . df($log->timestamp) . "";
                     echo "</span>
                         </div>";
                 }

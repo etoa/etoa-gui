@@ -6,14 +6,24 @@ use EtoA\AbstractDbTestCase;
 
 class UserLogRepositoryTest extends AbstractDbTestCase
 {
-    private UserCommentRepository $repository;
+    private UserLogRepository $repository;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->repository = $this->app[UserCommentRepository::class];
+        $this->repository = $this->app[UserLogRepository::class];
     }
+
+    public function testGetUserLogs(): void
+    {
+        $this->repository->add(1, 'zone', 'message', 'localhost', true);
+
+        $this->assertNotEmpty($this->repository->getUserLogs(1, 100));
+        $this->assertNotEmpty($this->repository->getUserLogs(1, 100, true));
+        $this->assertEmpty($this->repository->getUserLogs(1, 100, false));
+    }
+
 
     public function testGetOrphanedCount(): void
     {
