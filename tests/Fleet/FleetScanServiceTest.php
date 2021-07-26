@@ -10,6 +10,7 @@ use EtoA\Universe\Cell\CellRepository;
 use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Entity\EntityType;
 use EtoA\Universe\Planet\PlanetRepository;
+use EtoA\Universe\Resources\BaseResources;
 use EtoA\User\UserRepository;
 use EtoA\WebTestCase;
 
@@ -95,7 +96,7 @@ class FleetScanServiceTest extends WebTestCase
         $planet1 = $this->planetRepository->find($entityId1);
         $entity2 = $this->entityRepository->findIncludeCell($entityId2);
 
-        $this->fleetRepository->add($userId1, time(), time() + 60, $entityId1, $entityId2, FleetAction::SPY, FleetStatus::DEPARTURE);
+        $this->fleetRepository->add($userId1, time(), time() + 60, $entityId1, $entityId2, FleetAction::SPY, FleetStatus::DEPARTURE, new BaseResources());
 
         // when
         $out = $this->service->scanFleets($user1, $planet1, 31, $entity2);

@@ -1,5 +1,6 @@
 <?php
 
+use EtoA\User\UserLoginFailureRepository;
 use EtoA\User\UserSessionManager;
 use EtoA\User\UserSittingRepository;
 
@@ -21,6 +22,8 @@ class UserSession extends Session
         $sessionManager = $app[UserSessionManager::class];
         /** @var UserSittingRepository $userSittingRepository */
         $userSittingRepository = $app[UserSittingRepository::class];
+        /** @var UserLoginFailureRepository $userLoginFailureRepository */
+        $userLoginFailureRepository = $app[UserLoginFailureRepository::class];
 
         $sessionManager->cleanup();
 
@@ -131,22 +134,7 @@ class UserSession extends Session
                                         return true;
                                     } else {
                                         $this->lastError = "Benutzer nicht vorhanden oder Passwort falsch!";
-                                        dbquery("
-                                                INSERT INTO
-                                                    login_failures
-                                                (
-                                                    failure_time,
-                                                    failure_ip,
-                                                    failure_user_id,
-                                                    failure_client
-                                                )
-                                                VALUES
-                                                (
-                                                    '" . $t . "',
-                                                    '" . $_SERVER['REMOTE_ADDR'] . "',
-                                                    '" . $uarr['user_id'] . "',
-                                                    '" . $_SERVER['HTTP_USER_AGENT'] . "'
-                                                );");
+                                        $userLoginFailureRepository->add($uarr['user_id'], $t, $_SERVER['REMOTE_ADDR'], $_SERVER['HTTP_USER_AGENT']);
                                         $this->lastErrorCode = "pass";
                                     }
                                 } else {

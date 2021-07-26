@@ -1,6 +1,10 @@
 <?PHP
 
+use EtoA\User\UserLoginFailureRepository;
 use EtoA\User\UserSessionRepository;
+
+/** @var UserLoginFailureRepository $userLoginFailureRepository */
+$userLoginFailureRepository = $app[UserLoginFailureRepository::class];
 
 iBoxStart("Logins");
 echo "Hier findest du deine aktiven Sessions, eine Liste der letzten 10 Logins in deinen Account, ebenfalls kannst du weiter unten
@@ -45,27 +49,17 @@ foreach ($sessionLogs as $sessionLog) {
 tableEnd();
 
 tableStart("Letzte 10 fehlgeschlagene Logins");
-$res = dbquery("
-            SELECT
-                *
-            FROM
-                login_failures
-            WHERE
-                failure_user_id=" . $cu->id . "
-            ORDER BY
-                failure_time DESC
-            LIMIT
-                10;");
-if (mysql_num_rows($res) > 0) {
+$failures = $userLoginFailureRepository->getUserLoginFailures($cu->getId(), 10);
+if (count($failures) > 0) {
     echo "<tr><th>Zeit</th>";
     echo "<th>IP-Adresse</th>
                 <th>Hostname</th>
                 <th>Client</th></tr>";
-    while ($arr = mysql_fetch_array($res)) {
-        echo "<tr><td>" . df($arr['failure_time']) . "</td>";
-        echo "<td>" . $arr['failure_ip'] . "</td>";
-        echo "<td>" . Net::getHost($arr['failure_ip']) . "</td>";
-        echo "<td>" . $arr['failure_client'] . "</td></tr>";
+    foreach ($failures as $failure) {
+        echo "<tr><td>" . df($failure->time) . "</td>";
+        echo "<td>" . $failure->ip . "</td>";
+        echo "<td>" . Net::getHost($failure->ip) . "</td>";
+        echo "<td>" . $failure->client . "</td></tr>";
     }
 } else {
     echo "<tr><td>Keine fehlgeschlagenen Logins</td></tr>";

@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Entity\EntityType;
 use EtoA\Universe\Planet\PlanetRepository;
 
@@ -9,6 +10,8 @@ $config = $app[ConfigurationService::class];
 
 /** @var PlanetRepository */
 $planetRepo = $app[PlanetRepository::class];
+/** @var EntityRepository $entityRepository */
+$entityRepository = $app[EntityRepository::class];
 
 $id = 0;
 if (isset($_GET['id']) && intval($_GET['id']) > 0) {
@@ -130,16 +133,11 @@ if ($id > 0) {
                 // Previous and next entity
                 $idprev = $id - 1;
                 $idnext = $id + 1;
-                $pmres = dbquery("
-                SELECT
-                    MAX(id)
-                FROM
-                    entities");
-                $pmarr = mysql_fetch_row($pmres);
+                $pmarr = $entityRepository->getMaxEntityId();
                 if ($idprev > 0) {
                     $str_prev =    "<td><input type=\"button\" value=\"&lt;\" onclick=\"document.location='?page=$page&amp;id=" . $idprev . "'\" /></td>";
                 }
-                if ($idnext <= $pmarr[0]) {
+                if ($idnext <= $pmarr) {
                     $str_next = "<td><input type=\"button\" value=\"&gt;\" onclick=\"document.location='?page=$page&amp;id=" . $idnext . "'\" /></td>";
                 }
             } else {

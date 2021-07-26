@@ -12,13 +12,21 @@ class TechnologyRepository extends AbstractRepository
     /**
      * @return TechnologyListItem[]
      */
-    public function findForUser(int $userId): array
+    public function findForUser(int $userId, int $endTimeAfter = null): array
     {
-        $data = $this->createQueryBuilder()
+        $qb = $this->createQueryBuilder()
             ->select('*')
             ->from('techlist')
             ->where('techlist_user_id = :userId')
-            ->setParameter('userId', $userId)
+            ->setParameter('userId', $userId);
+
+        if ($endTimeAfter !== null) {
+            $qb
+                ->andWhere('techlist_build_end_time > :time')
+                ->setParameter('time', $endTimeAfter);
+        }
+
+        $data = $qb
             ->execute()
             ->fetchAllAssociative();
 

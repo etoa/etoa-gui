@@ -204,17 +204,7 @@ if (!$s->sittingActive || $s->falseSitter) {
         $cstr = checker_init();
 
         $multiEntries = $userMultiRepository->getUserEntries($cu->getId(), true);
-        $user_res = dbquery("
-            SELECT
-                user_sitting_days
-            FROM
-                users
-            WHERE
-                user_id='" . $cu->id . "';");
-        $user_arr = mysql_fetch_array($user_res);
-
         tableStart("Multierkennung [<a href=\"?page=help&site=multi_sitting\">Info</a>]");
-
         echo "<tr>
                     <th width=\"35%\">User</th>
                     <th width=\"55%\">Beziehung</th>

@@ -1,5 +1,13 @@
 <?PHP
 
+use EtoA\User\UserLogRepository;
+use EtoA\User\UserRepository;
+
+/** @var UserLogRepository $userLogRepository */
+$userLogRepository = $app[UserLogRepository::class];
+/** @var UserRepository $userRepository */
+$userRepository = $app[UserRepository::class];
+
 echo "<h1>Benutzerprofil</h1>";
 
 if (!isset($_GET['id']))
@@ -82,20 +90,11 @@ if ($uid > 0) {
         //
 
         iBoxStart("&Ouml;ffentliches Benutzer-Log");
-        $lres = dbquery("
-            SELECT
-                *
-            FROM
-                user_log
-            WHERE
-                user_id=" . $user->id . "
-                AND public=1
-            ORDER BY timestamp DESC
-            LIMIT 10;");
-        if (mysql_num_rows($lres) > 0) {
-            while ($larr = mysql_fetch_array($lres)) {
-                echo "<div class=\"infoLog\">" . text2html($larr['message']);
-                echo "<span>" . df($larr['timestamp'], 0) . "";
+        $logs = $userLogRepository->getUserLogs($user->getId(), 10, true);
+        if (count($logs) > 0) {
+            foreach ($logs as $log) {
+                echo "<div class=\"infoLog\">" . text2html($log->message);
+                echo "<span>" . df($log->timestamp, 0) . "";
                 echo "</span>
                     </div>";
             }
@@ -108,20 +107,11 @@ if ($uid > 0) {
 
         if ($user->id == $cu->id) {
             iBoxStart("Privates Benutzer-Log");
-            $lres = dbquery("
-                SELECT
-                    *
-                FROM
-                    user_log
-                WHERE
-                    user_id=" . $user->id . "
-                    AND public=0
-                ORDER BY timestamp DESC
-                LIMIT 30;");
-            if (mysql_num_rows($lres) > 0) {
-                while ($larr = mysql_fetch_array($lres)) {
-                    echo "<div class=\"infoLog\">" . text2html($larr['message']);
-                    echo "<span>" . df($larr['timestamp']) . "";
+            $logs = $userLogRepository->getUserLogs($user->getId(), 30, false);
+            if (count($logs) > 0) {
+                foreach ($logs as $log) {
+                    echo "<div class=\"infoLog\">" . text2html($log->message);
+                    echo "<span>" . df($log->timestamp) . "";
                     echo "</span>
                         </div>";
                 }
@@ -132,22 +122,13 @@ if ($uid > 0) {
             iBoxEnd();
 
 
-            $res = dbquery("
-                SELECT
-                    user_res_from_raid,
-                    user_res_from_asteroid,
-                    user_res_from_nebula,
-                    user_res_from_tf
-                FROM
-                    users
-                WHERE
-                    user_id = " . $cu->id);
-            if ($arr = mysql_fetch_array($res)) {
+            $resourcesUser = $userRepository->getUser($cu->getId());
+            if ($resourcesUser !== null) {
                 iBoxStart("Rohstoffe von...");
-                echo "Raids: " . nf($arr['user_res_from_raid']) . " t</br>";
-                echo "Asteroiden: " . nf($arr['user_res_from_asteroid']) . " t</br>";
-                echo "Nebelfelder: " . nf($arr['user_res_from_nebula']) . " t</br>";
-                echo "Trümmerfelder: " . nf($arr['user_res_from_tf']) . " t";
+                echo "Raids: " . nf($resourcesUser->resFromRaid) . " t</br>";
+                echo "Asteroiden: " . nf($resourcesUser->resFromAsteroid) . " t</br>";
+                echo "Nebelfelder: " . nf($resourcesUser->resFromNebula) . " t</br>";
+                echo "Trümmerfelder: " . nf($resourcesUser->resFromTf) . " t";
                 iBoxEnd();
             }
         }

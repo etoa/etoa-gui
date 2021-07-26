@@ -15,6 +15,7 @@ use EtoA\UI\UserSelector;
 use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Entity\EntityService;
 use EtoA\Universe\Planet\PlanetRepository;
+use EtoA\Universe\Resources\BaseResources;
 use EtoA\User\UserRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Twig\Environment;
@@ -931,7 +932,8 @@ function createNewFleet(
         $srcEnt->id,
         $trgEnt->id,
         $request->request->get('action'),
-        $request->request->getInt('status')
+        $request->request->getInt('status'),
+        new BaseResources()
     );
 
     $fleetRepository->addShipsToFleet(
@@ -1046,7 +1048,8 @@ function sendNewFleet(
             $srcEnt->id,
             $planet->id,
             FleetAction::FLIGHT,
-            FleetStatus::ARRIVAL
+            FleetStatus::ARRIVAL,
+            new BaseResources()
         );
         $fleetRepository->addShipsToFleet(
             $fleetId,

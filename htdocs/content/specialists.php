@@ -1,12 +1,17 @@
 <?PHP
 
+use EtoA\Building\BuildingRepository;
+use EtoA\Defense\DefenseQueueRepository;
+use EtoA\Fleet\FleetRepository;
+use EtoA\Fleet\FleetSearchParameters;
 use EtoA\Specialist\SpecialistDataRepository;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Technology\TechnologyRepository;
 use EtoA\UI\ResourceBoxDrawer;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\User\UserRepository;
 
-/** @var SpecialistDataRepository */
+/** @var SpecialistDataRepository $speciaistRepository */
 $speciaistRepository = $app[SpecialistDataRepository::class];
 
 /** @var UserRepository $userRepository */
@@ -39,16 +44,8 @@ if (isset($_POST['submit_engage']) && isset($_POST['engage'])) {
     if ($cu->specialistTime < $t) {
         $specalist = $speciaistRepository->getSpecialist((int) $_POST['engage']);
         if ($specalist !== null) {
-            $tres = dbquery("
-            SELECT
-                COUNT(user_id)
-            FROM
-                users
-            WHERE
-                user_specialist_time>" . time() . "
-                AND user_specialist_id=" . $specalist->id . ";");
-            $tarr = mysql_fetch_row($tres);
-            $used = min($tarr[0], $totAvail);
+            $specialistsInUse = $userRepository->countUsersWithSpecialists();
+            $used = min(($specialistsInUse[$specalist->id ?? 0]), $totAvail);
             $avail = $totAvail - $used;
             if ($totAvail != 0)
                 $factor = 1 + ($config->param1Float('specialistconfig') / $totAvail * $used);
@@ -64,15 +61,7 @@ if (isset($_POST['submit_engage']) && isset($_POST['engage'])) {
                     $planet->resFood >= $specalist->costsFood * $factor
                 ) {
                     $st = $t + (86400 * $specalist->days);
-                    dbquery("
-                    UPDATE
-                        users
-                    SET
-                        user_specialist_id=" . $specalist->id . ",
-                        user_specialist_time=" . $st . "
-                    WHERE
-                        user_id=" . $cu->id . "
-                    ;");
+                    $userRepository->setSpecialist($cu->getId(), $specalist->id, $st);
                     $cu->specialistId = $specalist->id;
                     $cu->specialistTime = $st;
 
@@ -120,60 +109,62 @@ if (isset($_POST['discharge'])) {
 
             // check if a research is in progress if using the professor
             if ($specialist->timeTechnologies !== 1.0) {
-                $res = dbquery("SELECT techlist_id, techlist_build_start_time FROM techlist WHERE techlist_user_id='" . $cu->id . "' AND techlist_build_end_time > '" . $t . "';");
-                if (mysql_num_rows($res) > 0) {
-                    while ($arr = mysql_fetch_assoc($res)) {
-                        if ($arr['techlist_build_start_time'] > $inittime) {
-                            $inUse = true;
-                            break;
-                        }
+                /** @var TechnologyRepository $technologyRepository */
+                $technologyRepository = $app[TechnologyRepository::class];
+                $technologyEntries = $technologyRepository->findForUser($cu->getId(), $t);
+                foreach ($technologyEntries as $entry) {
+                    if ($entry->startTime > $inittime) {
+                        $inUse = true;
+                        break;
                     }
                 }
             }
 
             //Ingenieur
             if ($specialist->timeDefense !== 1.0) {
-                $res = dbquery("SELECT queue_id, queue_user_click_time FROM def_queue WHERE queue_user_id='" . $cu->id . "' AND queue_endtime > '" . $t . "';");
-                if (mysql_num_rows($res) > 0) {
-                    while ($arr = mysql_fetch_assoc($res)) {
-                        if ($arr['queue_user_click_time'] > $inittime) {
-                            $inUse = true;
-                            break;
-                        }
+                /** @var DefenseQueueRepository $defQueueRepository */
+                $defQueueRepository = $app[DefenseQueueRepository::class];
+                $entries = $defQueueRepository->findQueueItemsForUser($cu->getId());
+                foreach ($entries as $entry) {
+                    if ($entry->endTime > $t && $entry->userClickTime > $inittime) {
+                        $inUse = true;
+                        break;
                     }
                 }
             }
 
             //Architekt
             if ($specialist->timeBuildings !== 1.0) {
-                $res = dbquery("SELECT buildlist_build_start_time FROM buildlist WHERE buildlist_user_id='" . $cu->id . "' AND buildlist_build_end_time > '" . $t . "';");
-                if (mysql_num_rows($res) > 0) {
-                    while ($arr = mysql_fetch_assoc($res)) {
-                        if ($arr['buildlist_build_start_time'] > $inittime) {
-                            $inUse = true;
-                            break;
-                        }
+                /** @var BuildingRepository $buildingRepository */
+                $buildingRepository = $app[BuildingRepository::class];
+                $buildingEntries = $buildingRepository->findForUser($cu->getId(), $t);
+                foreach ($buildingEntries as $entry) {
+                    if ($entry->startTime > $inittime) {
+                        $inUse = true;
+                        break;
                     }
                 }
             }
 
             //Admiral
             if ($specialist->fleetSpeed !== 1.0) {
-                $res = dbquery("SELECT launchtime,landtime,status FROM fleet WHERE user_id=" . $cu->id);
-                if (mysql_num_rows($res) > 0) {
-                    while ($arr = mysql_fetch_assoc($res)) {
-                        if ($arr['launchtime'] > $inittime) {
-                            if ($arr['status'] == 0) {
+                /** @var FleetRepository $fleetRepository */
+                $fleetRepository = $app[FleetRepository::class];
+                $search = FleetSearchParameters::create();
+                $search->userId = $cu->getId();
+                $fleets = $fleetRepository->findByParameters($search);
+                foreach ($fleets as $fleet) {
+                    if ($fleet->launchTime > $inittime) {
+                        if ($fleet->status == \EtoA\Fleet\FleetStatus::DEPARTURE) {
+                            $inUse = true;
+                            break;
+                        } else {
+                            $duration = $fleet->landTime - $fleet->launchTime;
+                            $org_launchtime = $fleet->launchTime - $duration;
+
+                            if ($org_launchtime >= $inittime) {
                                 $inUse = true;
                                 break;
-                            } else {
-                                $duration = $arr['landtime'] - $arr['launchtime'];
-                                $org_launchtime = $arr['launchtime'] - $duration;
-
-                                if ($org_launchtime >= $inittime) {
-                                    $inUse = true;
-                                    break;
-                                }
                             }
                         }
                     }
@@ -186,15 +177,7 @@ if (isset($_POST['discharge'])) {
         if ($inUse) {
             error_msg('Der Spezialist wird gerade verwendet!');
         } else {
-            dbquery("
-            UPDATE
-                users
-            SET
-                user_specialist_id=0,
-                user_specialist_time=0
-            WHERE
-                user_id=" . $cu->id . "
-            ;");
+            $userRepository->setSpecialist($cu->getId(), 0, 0);
             $specialistId = $cu->specialistId;
             $cu->specialistId = 0;
             $cu->specialistTime = 0;
@@ -264,17 +247,9 @@ if (!$s_active) {
 echo "</tr>";
 
 $specialists = $speciaistRepository->getActiveSpecialists();
+$specialistsInUse = $userRepository->countUsersWithSpecialists();
 foreach ($specialists as $specialist) {
-    $tres = dbquery("
-    SELECT
-        COUNT(user_id)
-    FROM
-        users
-    WHERE
-        user_specialist_time>" . time() . "
-        AND user_specialist_id=" . $specialist->id . ";");
-    $tarr = mysql_fetch_row($tres);
-    $used = min($tarr[0], $totAvail);
+    $used = min(($specialistsInUse[$specialist->id] ?? 0), $totAvail);
     $avail = $totAvail - $used;
     if ($totAvail != 0)
         $factor = 1 + ($config->param1Float('specialistconfig') / $totAvail * $used);

@@ -17,6 +17,21 @@ class AdminUserRepository extends AbstractRepository
             ->fetchOne();
     }
 
+    /**
+     * @return int[]
+     */
+    public function getAdminPlayerIds(): array
+    {
+        $data = $this->createQueryBuilder()
+            ->select('player_id')
+            ->from('admin_users')
+            ->where('player_id <> 0')
+            ->execute()
+            ->fetchAllAssociative();
+
+        return array_map(fn ($value) => (int) $value, $data);
+    }
+
     public function find(int $id): ?AdminUser
     {
         $data = $this->createQueryBuilder()

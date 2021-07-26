@@ -80,45 +80,27 @@ if ($cp) {
                     <th width=\"110\">Ausbunkern</th>
                 </tr>";
 
-            $res = dbquery("
-                SELECT
-                    shiplist_ship_id,
-                    shiplist_bunkered,
-                    ship_actions,
-                    ship_name,
-                    ship_id,
-                    ship_shortcomment
-                FROM
-                    shiplist
-                    INNER JOIN
-                    ships
-                ON
-                    ship_id=shiplist_ship_id
-                WHERE
-                    shiplist_user_id=" . $cu->id . "
-                    AND shiplist_entity_id=" . $planet->id . "
-                    AND shiplist_bunkered>0
-                ;");
+            $bunkered = $shipRepository->getBunkeredCount($cu->getId(), $planet->id);
             $val = 0;
             $structure = 0;
             $count = 0;
             $jsAllShips = array();    // Array for selectable ships
-            while ($arr = mysql_fetch_assoc($res)) {
-                if ($ships[$arr['shiplist_ship_id']]->special) {
+            foreach ($bunkered as $shipId => $bunkeredCount) {
+                if ($ships[$shipId]->special) {
                     echo "<tr>
                         <td style=\"width:40px;background:#000;\">
-                                <img src=\"" . IMAGE_PATH . "/" . IMAGE_SHIP_DIR . "/ship" . $arr['shiplist_ship_id'] . "_small." . IMAGE_EXT . "\" align=\"top\" width=\"40\" height=\"40\" alt=\"Ship\" border=\"0\"/>
+                                <img src=\"" . IMAGE_PATH . "/" . IMAGE_SHIP_DIR . "/ship" . $shipId . "_small." . IMAGE_EXT . "\" align=\"top\" width=\"40\" height=\"40\" alt=\"Ship\" border=\"0\"/>
                         </td>";
                 } else {
                     echo "<tr>
                         <td style=\"width:40px;background:#000;\">
-                            <a href=\"?page=help&amp;site=shipyard&amp;id=" . $arr['shiplist_ship_id'] . "\">
-                                <img src=\"" . IMAGE_PATH . "/" . IMAGE_SHIP_DIR . "/ship" . $arr['shiplist_ship_id'] . "_small." . IMAGE_EXT . "\" align=\"top\" width=\"40\" height=\"40\" alt=\"Ship\" border=\"0\"/>
+                            <a href=\"?page=help&amp;site=shipyard&amp;id=" . $shipId . "\">
+                                <img src=\"" . IMAGE_PATH . "/" . IMAGE_SHIP_DIR . "/ship" . $shipId . "_small." . IMAGE_EXT . "\" align=\"top\" width=\"40\" height=\"40\" alt=\"Ship\" border=\"0\"/>
                             </a>
                         </td>";
                 }
 
-                $actions = array_filter(explode(",", $arr['ship_actions']));
+                $actions = array_filter(explode(",", $ships[$shipId]->actions));
                 $accnt = count($actions);
                 $acstr = '';
                 if ($accnt > 0) {
@@ -135,24 +117,24 @@ if ($cp) {
                     $acstr .= "";
                 }
 
-                echo "<td " . tm($arr['ship_name'], "<img src=\"" . IMAGE_PATH . "/" . IMAGE_SHIP_DIR . "/ship" . $arr['ship_id'] . "_middle." . IMAGE_EXT . "\" style=\"float:left;margin-right:5px;\">" . text2html($arr['ship_shortcomment']) . "<br/>" . $acstr . "<br style=\"clear:both;\"/>") . ">" . $arr['ship_name'] . "</td>";
-                echo "<td width=\"150\">" . nf($ships[$arr['shiplist_ship_id']]->structure) . "</td>";
-                echo "<td width=\"110\">" . nf($arr['shiplist_bunkered']) . "<br/>";
+                echo "<td " . tm($ships[$shipId]->name, "<img src=\"" . IMAGE_PATH . "/" . IMAGE_SHIP_DIR . "/ship" . $shipId . "_middle." . IMAGE_EXT . "\" style=\"float:left;margin-right:5px;\">" . text2html($ships[$shipId]->shortComment) . "<br/>" . $acstr . "<br style=\"clear:both;\"/>") . ">" . $ships[$shipId]->name . "</td>";
+                echo "<td width=\"150\">" . nf($ships[$shipId]->structure) . "</td>";
+                echo "<td width=\"110\">" . nf($bunkeredCount) . "<br/>";
 
                 echo "</td>";
                 echo "<td width=\"110\"><input type=\"text\"
-                    id=\"ship_bunker_count_" . $arr['shiplist_ship_id'] . "\"
-                    name=\"ship_bunker_count[" . $arr['shiplist_ship_id'] . "]\"
+                    id=\"ship_bunker_count_" . $shipId . "\"
+                    name=\"ship_bunker_count[" . $shipId . "]\"
                     size=\"10\" value=\"$val\"
                     title=\"Anzahl Schiffe eingeben, die mitfliegen sollen\"
                     onclick=\"this.select();\"
-                    onkeyup=\"FormatNumber(this.id,this.value," . $arr['shiplist_bunkered'] . ",'','');\"/>
+                    onkeyup=\"FormatNumber(this.id,this.value," . $bunkeredCount . ",'','');\"/>
                 <br/>
-                <a href=\"javascript:;\" onclick=\"document.getElementById('ship_bunker_count_" . $arr['shiplist_ship_id'] . "').value=" . $arr['shiplist_bunkered'] . ";document.getElementById('ship_bunker_count_" . $arr['shiplist_ship_id'] . "').select()\">Alle</a> &nbsp;
-                <a href=\"javascript:;\" onclick=\"document.getElementById('ship_bunker_count_" . $arr['shiplist_ship_id'] . "').value=0;document.getElementById('ship_count_" . $arr['shiplist_ship_id'] . "').select()\">Keine</a></td></tr>";
-                $structure += $arr['shiplist_bunkered'] * $ships[$arr['shiplist_ship_id']]->structure;
-                $count += $arr['shiplist_bunkered'];
-                $jsAllShips["ship_bunker_count_" . $arr['shiplist_ship_id']] = $arr['shiplist_bunkered'];
+                <a href=\"javascript:;\" onclick=\"document.getElementById('ship_bunker_count_" . $shipId . "').value=" . $bunkeredCount . ";document.getElementById('ship_bunker_count_" . $shipId . "').select()\">Alle</a> &nbsp;
+                <a href=\"javascript:;\" onclick=\"document.getElementById('ship_bunker_count_" . $shipId . "').value=0;document.getElementById('ship_count_" . $shipId . "').select()\">Keine</a></td></tr>";
+                $structure += $bunkeredCount * $ships[$shipId]->structure;
+                $count += $bunkeredCount;
+                $jsAllShips["ship_bunker_count_" . $shipId] = $bunkeredCount;
             }
             echo "<tr><th colspan=\"2\">Benutzt:</th><td>" . nf($structure) . "/" . nf($fleetBunker->calculateBunkerFleetSpace($fleetBunkerLevel)) . "</td><td>" . nf($count) . "/" . nf($fleetBunker->calculateBunkerFleetCount($fleetBunkerLevel)) . "</td><td >";
 
@@ -222,46 +204,27 @@ if ($cp) {
                     <th width=\"110\">Einbunkern</th>
                 </tr>";
 
-            $res = dbquery("
-                SELECT
-                    shiplist_ship_id,
-                    shiplist_count,
-                    ship_actions,
-                    ship_name,
-                    ship_id,
-                    ship_shortcomment
-                FROM
-                    shiplist
-                INNER JOIN
-                    ships
-                ON
-                    ship_id=shiplist_ship_id
-                WHERE
-                    shiplist_user_id=" . $cu->id . "
-                    AND shiplist_entity_id=" . $planet->id . "
-                    AND shiplist_count>0
-                ;");
-
+            $shipCounts = $shipRepository->getEntityShipCounts($cu->getId(), $planet->id);
             $val = 0;
             $jsAllShips = array();    // Array for selectable ships
-            while ($arr = mysql_fetch_assoc($res)) {
-                if ($ships[$arr['shiplist_ship_id']]->special) {
+            foreach ($shipCounts as $shipId => $shipCount) {
+                if ($ships[$shipId]->special) {
                     echo "<tr>
                         <td style=\"width:40px;background:#000;\">
-                            <a href=\"?page=ship_upgrade&amp;id=" . $arr['shiplist_ship_id'] . "\">
-                                <img src=\"" . IMAGE_PATH . "/" . IMAGE_SHIP_DIR . "/ship" . $arr['shiplist_ship_id'] . "_small." . IMAGE_EXT . "\" align=\"top\" width=\"40\" height=\"40\" alt=\"Ship\" border=\"0\"/>
+                            <a href=\"?page=ship_upgrade&amp;id=" . $shipId . "\">
+                                <img src=\"" . IMAGE_PATH . "/" . IMAGE_SHIP_DIR . "/ship" . $shipId . "_small." . IMAGE_EXT . "\" align=\"top\" width=\"40\" height=\"40\" alt=\"Ship\" border=\"0\"/>
                             </a>
                         </td>";
                 } else {
                     echo "<tr>
                         <td style=\"width:40px;background:#000;\">
-                            <a href=\"?page=help&amp;site=shipyard&amp;id=" . $arr['shiplist_ship_id'] . "\">
-                                <img src=\"" . IMAGE_PATH . "/" . IMAGE_SHIP_DIR . "/ship" . $arr['shiplist_ship_id'] . "_small." . IMAGE_EXT . "\" align=\"top\" width=\"40\" height=\"40\" alt=\"Ship\" border=\"0\"/>
+                            <a href=\"?page=help&amp;site=shipyard&amp;id=" . $shipId . "\">
+                                <img src=\"" . IMAGE_PATH . "/" . IMAGE_SHIP_DIR . "/ship" . $shipId . "_small." . IMAGE_EXT . "\" align=\"top\" width=\"40\" height=\"40\" alt=\"Ship\" border=\"0\"/>
                             </a>
                         </td>";
                 }
 
-                $actions = array_filter(explode(",", $arr['ship_actions']));
+                $actions = array_filter(explode(",", $ships[$shipId]->actions));
                 $accnt = count($actions);
                 $acstr = '';
                 if ($accnt > 0) {
@@ -278,22 +241,22 @@ if ($cp) {
                     $acstr .= "";
                 }
 
-                echo "<td " . tm($arr['ship_name'], "<img src=\"" . IMAGE_PATH . "/" . IMAGE_SHIP_DIR . "/ship" . $arr['ship_id'] . "_middle." . IMAGE_EXT . "\" style=\"float:left;margin-right:5px;\">" . text2html($arr['ship_shortcomment']) . "<br/>" . $acstr . "<br style=\"clear:both;\"/>") . ">" . $arr['ship_name'] . "</td>";
-                echo "<td width=\"150\">" . nf($ships[$arr['shiplist_ship_id']]->structure) . "</td>";
-                echo "<td width=\"110\">" . nf($arr['shiplist_count']) . "<br/>";
+                echo "<td " . tm($ships[$shipId]->name, "<img src=\"" . IMAGE_PATH . "/" . IMAGE_SHIP_DIR . "/ship" . $shipId . "_middle." . IMAGE_EXT . "\" style=\"float:left;margin-right:5px;\">" . text2html($ships[$shipId]->shortComment) . "<br/>" . $acstr . "<br style=\"clear:both;\"/>") . ">" . $ships[$shipId]->name . "</td>";
+                echo "<td width=\"150\">" . nf($ships[$shipId]->structure) . "</td>";
+                echo "<td width=\"110\">" . nf($shipCount) . "<br/>";
 
                 echo "</td>";
                 echo "<td width=\"110\"><input type=\"text\"
-                    id=\"ship_bunker_count_" . $arr['shiplist_ship_id'] . "\"
-                    name=\"ship_bunker_count[" . $arr['shiplist_ship_id'] . "]\"
+                    id=\"ship_bunker_count_" . $shipId . "\"
+                    name=\"ship_bunker_count[" . $shipId . "]\"
                     size=\"10\" value=\"$val\"
                     title=\"Anzahl Schiffe eingeben, die mitfliegen sollen\"
                     onclick=\"this.select();\"
-                    onkeyup=\"FormatNumber(this.id,this.value," . $arr['shiplist_count'] . ",'','');\"/>
+                    onkeyup=\"FormatNumber(this.id,this.value," . $shipCount . ",'','');\"/>
                 <br/>
-                <a href=\"javascript:;\" onclick=\"document.getElementById('ship_bunker_count_" . $arr['shiplist_ship_id'] . "').value=" . $arr['shiplist_count'] . ";document.getElementById('ship_bunker_count_" . $arr['shiplist_ship_id'] . "').select()\">Alle</a> &nbsp;
-                <a href=\"javascript:;\" onclick=\"document.getElementById('ship_bunker_count_" . $arr['shiplist_ship_id'] . "').value=0;document.getElementById('ship_bunker_count_" . $arr['shiplist_ship_id'] . "').select()\">Keine</a></td></tr>";
-                $jsAllShips["ship_bunker_count_" . $arr['shiplist_ship_id']] = $arr['shiplist_count'];
+                <a href=\"javascript:;\" onclick=\"document.getElementById('ship_bunker_count_" . $shipId . "').value=" . $shipCount . ";document.getElementById('ship_bunker_count_" . $shipId . "').select()\">Alle</a> &nbsp;
+                <a href=\"javascript:;\" onclick=\"document.getElementById('ship_bunker_count_" . $shipId . "').value=0;document.getElementById('ship_bunker_count_" . $shipId . "').select()\">Keine</a></td></tr>";
+                $jsAllShips["ship_bunker_count_" . $shipId] = $shipCount;
             }
             echo "<tr><td colspan=\"3\"><td><td >";
 

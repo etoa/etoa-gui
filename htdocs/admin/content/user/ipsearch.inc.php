@@ -1,10 +1,13 @@
 <?PHP
 
+use EtoA\User\UserLoginFailureRepository;
 use EtoA\User\UserRepository;
 use EtoA\User\UserSessionRepository;
 
 /** @var UserRepository $userRepository */
 $userRepository = $app[UserRepository::class];
+/** @var UserLoginFailureRepository $userLoginFailureRepository */
+$userLoginFailureRepository = $app[UserLoginFailureRepository::class];
 
 echo "<h1>Ip- und Hostsuche</h1>";
 
@@ -95,32 +98,19 @@ if ($user > 0) {
             }
 
             echo "<h3>Fehlgeschlagene Logins dieses Users</h3>";
-            $res = dbquery("
-                SELECT
-                    COUNT(failure_ip) as cnt,
-                    failure_ip,
-                    failure_host
-                FROM
-                    login_failures
-                WHERE
-                    failure_user_id=" . $user . "
-                GROUP BY
-                    failure_ip
-                ORDER BY
-                    cnt DESC
-                ;");
-            if (mysql_num_rows($res) > 0) {
+            $userFailureCounts = $userLoginFailureRepository->getLoginFailureCountsByUser($user);
+            if (count($userFailureCounts) > 0) {
                 echo "<table class=\"tb\">";
                 echo "<tr>
                     <th>Anzahl</a></th>
                     <th>IP</a></th>
                     <th>Host</th>
                     </tr>";
-                while ($arr = mysql_fetch_array($res)) {
+                foreach ($userFailureCounts as $failure) {
                     echo "<tr>
-                        <td>" . $arr['cnt'] . "</td>
-                        <td><a href=\"?page=$page&amp;sub=$sub&amp;ip=" . $arr['failure_ip'] . "\">" . $arr['failure_ip'] . "</a></td>
-                        <td><a href=\"?page=$page&amp;sub=$sub&amp;host=" . $arr['failure_host'] . "\">" . $arr['failure_host'] . "</a></td>
+                        <td>" . $failure['count'] . "</td>
+                        <td><a href=\"?page=$page&amp;sub=$sub&amp;ip=" . $failure['ip'] . "\">" . $failure['ip'] . "</a></td>
+                        <td><a href=\"?page=$page&amp;sub=$sub&amp;host=" . $failure['host'] . "\">" . $failure['host'] . "</a></td>
                         </tr>";
                 }
                 echo "</table>";
@@ -153,20 +143,8 @@ if ($user > 0) {
             }
 
             echo "<h3>Fehlgeschlagene Logins dieses Users</h3>";
-            $res = dbquery("
-                SELECT
-                    failure_time,
-                    failure_ip,
-                    failure_host,
-                    failure_client
-                FROM
-                    login_failures
-                WHERE
-                    failure_user_id=" . $user . "
-                ORDER BY
-                    failure_time DESC
-                ;");
-            if (mysql_num_rows($res) > 0) {
+            $failures = $userLoginFailureRepository->getUserLoginFailures($user);
+            if (count($failures) > 0) {
                 echo "<table class=\"tb\">";
                 echo "<tr>
                     <th>IP</a></th>
@@ -174,12 +152,12 @@ if ($user > 0) {
                     <th>Datum/Zeit</th>
                     <th>Client</th>
                     </tr>";
-                while ($arr = mysql_fetch_array($res)) {
+                foreach ($failures as $failure) {
                     echo "<tr>
-                        <td><a href=\"?page=$page&amp;sub=$sub&amp;ip=" . $arr['failure_ip'] . "\">" . $arr['failure_ip'] . "</a></td>
-                        <td><a href=\"?page=$page&amp;sub=$sub&amp;host=" . $arr['failure_host'] . "\">" . $arr['failure_host'] . "</a></td>
-                        <td>" . df($arr['failure_time']) . "</td>
-                        <td>" . $arr['failure_client'] . "</td>
+                        <td><a href=\"?page=$page&amp;sub=$sub&amp;ip=" . $failure->ip . "\">" . $failure->ip . "</a></td>
+                        <td><a href=\"?page=$page&amp;sub=$sub&amp;host=" . $failure->host . "\">" . $failure->host . "</a></td>
+                        <td>" . df($failure->time) . "</td>
+                        <td>" . $failure->client . "</td>
                         </tr>";
                 }
                 echo "</table>";
@@ -290,33 +268,17 @@ if ($user > 0) {
         }
 
         echo "<h3>Fehlgeschlagene Logins unter dieser Adresse</h3>";
-        $res = dbquery("
-            SELECT
-                user_nick,
-                user_id,
-                COUNT(failure_user_id) as cnt
-            FROM
-                login_failures
-            INNER JOIN
-                users ON
-                failure_user_id=user_id
-            WHERE
-                failure_ip='" . $ip . "'
-            GROUP BY
-                failure_user_id
-            ORDER BY
-                cnt DESC
-            ;");
-        if (mysql_num_rows($res) > 0) {
+        $failures = $userLoginFailureRepository->getLoginFailureCountsByIp($ip);
+        if (count($failures) > 0) {
             echo "<table class=\"tb\">";
             echo "<tr>
                 <th>Anzahl</a></th>
                 <th>Nick</a></th>
                 </tr>";
-            while ($arr = mysql_fetch_array($res)) {
+            foreach ($failures as $failure) {
                 echo "<tr>
-                    <td>" . nf($arr['cnt']) . "</td>
-                    <td><a href=\"?page=user&amp;sub=$sub&amp;user=" . $arr['user_id'] . "\">" . $arr['user_nick'] . "</a></td>
+                    <td>" . nf($failure['count']) . "</td>
+                    <td><a href=\"?page=user&amp;sub=$sub&amp;user=" . $failure['userId'] . "\">" . $failure['userNick'] . "</a></td>
                     </tr>";
             }
             echo "</table>";
@@ -415,24 +377,8 @@ if ($user > 0) {
         }
 
         echo "<h3>Fehlgeschlagene Logins unter dieser Adresse</h3>";
-        $res = dbquery("
-            SELECT
-                failure_time,
-                user_nick,
-                user_id,
-                failure_ip,
-                failure_client
-            FROM
-                login_failures
-            LEFT JOIN
-                users ON
-                failure_user_id=user_id
-            WHERE
-                failure_ip='" . $ip . "'
-            ORDER BY
-                failure_time DESC
-            ;");
-        if (mysql_num_rows($res) > 0) {
+        $ipFailures = $userLoginFailureRepository->getIpLoginFailures($ip);
+        if (count($ipFailures) > 0) {
             echo "<table class=\"tb\">";
             echo "<tr>
                 <th>Nick</a></th>
@@ -440,17 +386,17 @@ if ($user > 0) {
                 <th>Match</th>
                 <th>Client</th>
                 </tr>";
-            while ($arr = mysql_fetch_array($res)) {
-                echo "<div id=\"tt" . $arr['user_id'] . "\" style=\"display:none;\">
-                    <a href=\"?page=user&amp;sub=ipsearch&amp;user=" . $arr['user_id'] . "\">IP-Adressen suchen</a><br/>
-                    <a href=\"?page=$page&amp;sub=edit&amp;id=" . $arr['user_id'] . "\">Daten bearbeiten</a><br/>
+            foreach ($ipFailures as $failure) {
+                echo "<div id=\"tt" . $failure->userId . "\" style=\"display:none;\">
+                    <a href=\"?page=user&amp;sub=ipsearch&amp;user=" . $failure->userId . "\">IP-Adressen suchen</a><br/>
+                    <a href=\"?page=$page&amp;sub=edit&amp;id=" . $failure->userId . "\">Daten bearbeiten</a><br/>
                     </div>";
                 echo "<tr>
-                    <td><a href=\"?page=user&amp;sub=$sub&amp;user=" . $arr['user_id'] . "\" " . cTT($arr['user_nick'], "tt" . $arr['user_id']) . ">" . $arr['user_nick'] . "</a></td>
-                    <td>" . df($arr['failure_time']) . "</td>
-                    <td><a href=\"?page=$page&amp;sub=$sub&amp;ip=" . $arr['failure_ip'] . "\" " . mTT('IP', $arr['failure_ip']) . ">" . ($ip == $arr['failure_ip'] ? 'IP' : '-') . "</a> /
-                    <a href=\"?page=$page&amp;sub=$sub&amp;host=" . Net::getHost($arr['failure_ip']) . "\" " . mTT('Host', Net::getHost($arr['failure_ip'])) . ">" . ($host == Net::getHost($arr['failure_ip']) ? 'Host' : '-') . "</a></td>
-                    <td>" . $arr['failure_client'] . "</td>
+                    <td><a href=\"?page=user&amp;sub=$sub&amp;user=" . $failure->userId . "\" " . cTT($failure->userNick, "tt" . $failure->userId) . ">" . $failure->userNick . "</a></td>
+                    <td>" . df($failure->time) . "</td>
+                    <td><a href=\"?page=$page&amp;sub=$sub&amp;ip=" . $failure->ip . "\" " . mTT('IP', $failure->ip) . ">" . ($ip == $failure->ip ? 'IP' : '-') . "</a> /
+                    <a href=\"?page=$page&amp;sub=$sub&amp;host=" . Net::getHost($failure->ip) . "\" " . mTT('Host', Net::getHost($failure->ip)) . ">" . ($host == Net::getHost($failure->ip) ? 'Host' : '-') . "</a></td>
+                    <td>" . $failure->client . "</td>
                     </tr>";
             }
             echo "</table>";

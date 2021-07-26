@@ -1,6 +1,8 @@
 <?PHP
 
+use EtoA\Admin\AdminUserRepository;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Universe\Cell\CellRepository;
 use EtoA\Universe\Entity\EntityType;
 use EtoA\Universe\Planet\PlanetRepository;
 
@@ -9,6 +11,10 @@ $config = $app[ConfigurationService::class];
 
 /** @var PlanetRepository */
 $planetRepo = $app[PlanetRepository::class];
+/** @var CellRepository $cellRepository */
+$cellRepository = $app[CellRepository::class];
+/** @var AdminUserRepository $adminUserRepository */
+$adminUserRepository = $app[AdminUserRepository::class];
 
 if (isset($_GET['id']) && intval($_GET['id']) > 0) {
     $cellId = intval($_GET['id']);
@@ -48,16 +54,7 @@ if ($cell->isValid()) {
 
 
     if ($cu->discovered($cell->absX(), $cell->absY())) {
-        $ares = dbquery("SELECT
-                            player_id
-                        FROM
-                            admin_users
-                        WHERE
-                            player_id<>0;");
-        $admins = array();
-        while ($arow = mysql_fetch_row($ares)) {
-            $admins[] = (int)$arow[0];
-        }
+        $admins = $adminUserRepository->getAdminPlayerIds();
 
         //
         // Systamkarte
@@ -67,19 +64,7 @@ if ($cell->isValid()) {
         echo "<tr><td colspan=\"6\" style=\"text-align:center;vertical-align:middle;\">
         <a href=\"?page=galaxy\">Galaxie</a> &raquo;&nbsp;
         <a href=\"?page=sector&sector=" . $cell->getSX() . "," . $cell->getSY() . "\">Sektor " . $cell->getSX() . "/" . $cell->getSY() . "</a> &raquo; &nbsp;";
-        $cres = dbquery("
-        SELECT
-            id
-        FROM
-            cells
-        WHERE
-            sx=" . $cell->getSX() . "
-            AND sy=" . $cell->getSY() . "
-            AND cx=1
-            AND cy=1;
-        ");
-        $carr = mysql_fetch_row($cres);
-        $cid = $carr[0];
+        $cid = $cellRepository->getCellIdByCoordinates($cell->getSX(), $cell->getSY(), 1, 1);
         echo "<select name=\"cell\" onchange=\"document.location='?page=$page&id='+this.value\">";
         for ($x = 1; $x <= $cx_num; $x++) {
             for ($y = 1; $y <= $cy_num; $y++) {
@@ -362,19 +347,7 @@ if ($cell->isValid()) {
         echo "<div style=\"text-align:center;\">
             <a href=\"?page=galaxy\">Galaxie</a> &gt;&nbsp;
             <a href=\"?page=sector&sector=" . $cell->getSX() . "," . $cell->getSY() . "\">Sektor " . $cell->getSX() . "/" . $cell->getSY() . "</a> &gt; &nbsp;";
-        $cres = dbquery("
-            SELECT
-                id
-            FROM
-                cells
-            WHERE
-                sx=" . $cell->getSX() . "
-                AND sy=" . $cell->getSY() . "
-                AND cx=1
-                AND cy=1;
-            ");
-        $carr = mysql_fetch_row($cres);
-        $cid = $carr[0];
+        $cid = $cellRepository->getCellIdByCoordinates($cell->getSX(), $cell->getSY(), 1, 1);
         echo "<select name=\"cell\" onchange=\"document.location='?page=$page&id='+this.value\">";
         for ($x = 1; $x <= $cx_num; $x++) {
             for ($y = 1; $y <= $cy_num; $y++) {

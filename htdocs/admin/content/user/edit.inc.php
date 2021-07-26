@@ -6,6 +6,7 @@ use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Help\TicketSystem\TicketRepository;
 use EtoA\Race\RaceDataRepository;
 use EtoA\Specialist\SpecialistDataRepository;
+use EtoA\User\UserLoginFailureRepository;
 use EtoA\User\UserMultiRepository;
 use EtoA\User\UserRepository;
 use EtoA\User\UserSittingRepository;
@@ -22,7 +23,8 @@ $userRepository = $app[UserRepository::class];
 
 /** @var \EtoA\Ship\ShipDataRepository $shipDateRepository */
 $shipDateRepository = $app[\EtoA\Ship\ShipDataRepository::class];
-
+/** @var UserLoginFailureRepository $userLoginFailureRepository */
+$userLoginFailureRepository = $app[UserLoginFailureRepository::class];
 /** @var ConfigurationService */
 $config = $app[ConfigurationService::class];
 
@@ -1362,33 +1364,24 @@ if (mysql_num_rows($res) > 0) {
      */
 
     echo "<table class=\"tbl\">";
-    $lres = dbquery("
-    SELECT
-        *
-    FROM
-        login_failures
-    WHERE
-        failure_user_id=" . $arr['user_id'] . "
-    ORDER BY
-        failure_time DESC
-    ;");
-    if (mysql_num_rows($lres) > 0) {
+    $failures = $userLoginFailureRepository->getUserLoginFailures((int) $arr['user_id']);
+    if (count($failures) > 0) {
         echo "<tr>
                         <th class=\"tbltitle\">Zeit</th>
                         <th class=\"tbltitle\">IP-Adresse</th>
                         <th class=\"tbltitle\">Hostname</th>
                         <th class=\"tbltitle\">Client</th>
                     </tr>";
-        while ($larr = mysql_fetch_array($lres)) {
+        foreach ($failures as $failure) {
             echo "<tr>
-                                            <td class=\"tbldata\">" . df($larr['failure_time']) . "</td>
+                                            <td class=\"tbldata\">" . df($failure->time) . "</td>
                                             <td class=\"tbldata\">
-                                                <a href=\"?page=$page&amp;sub=ipsearch&amp;ip=" . $larr['failure_ip'] . "\">" . $larr['failure_ip'] . "</a>
+                                                <a href=\"?page=$page&amp;sub=ipsearch&amp;ip=" . $failure->ip . "\">" . $failure->ip . "</a>
                                             </td>
                                             <td class=\"tbldata\">
-                                                <a href=\"?page=$page&amp;sub=ipsearch&amp;host=" . Net::getHost($larr['failure_ip']) . "\">" . Net::getHost($larr['failure_ip']) . "</a>
+                                                <a href=\"?page=$page&amp;sub=ipsearch&amp;host=" . Net::getHost($failure->ip) . "\">" . Net::getHost($failure->ip) . "</a>
                                             </td>
-                                            <td class=\"tbldata\">" . $larr['failure_client'] . "</td>
+                                            <td class=\"tbldata\">" . $failure->client . "</td>
                                         </tr>";
         }
     } else {
