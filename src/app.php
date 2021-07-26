@@ -27,6 +27,7 @@ $app->register(new \EtoA\Core\Configuration\ConfigurationServiceProvider());
 \Monolog\ErrorHandler::register($app['logger']);
 
 $app->register(new \EtoA\Building\BuidingServiceProvider());
+$app->register(new \EtoA\BuddyList\BuddyListServiceProvider());
 $app->register(new \EtoA\Chat\ChatServiceProvider());
 $app->register(new \EtoA\Core\DoctrineServiceProvider());
 $app->register(new \EtoA\Core\ParamConverterServiceProvider());
