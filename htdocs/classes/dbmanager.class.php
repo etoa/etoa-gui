@@ -276,13 +276,6 @@ class DBManager implements ISingleton
         return $r;
     }
 
-    function explainQuery($sql)
-    {
-        echo "Explaining: $sql";
-        $res = $this->query("EXPLAIN " . $sql . "");
-        $this->drawQueryResult($res);
-    }
-
     public function backupDB($backupDir, $gzip)
     {
         $mysqldump = isWindowsOS() ? WINDOWS_MYSQLDUMP_PATH : "mysqldump";
