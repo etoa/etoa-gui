@@ -268,4 +268,13 @@ class EntityRepository extends AbstractRepository
             ->execute()
             ->fetchAllKeyValue();
     }
+
+    public function getMaxEntityId(): int
+    {
+        return (int) $this->createQueryBuilder()
+            ->select('MAX(id)')
+            ->from('entities')
+            ->execute()
+            ->fetchOne();
+    }
 }
