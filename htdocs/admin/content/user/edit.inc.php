@@ -285,14 +285,7 @@ if (isset($_POST['canceldelete'])) {
 }
 
 if (isset($_GET['setverified'])) {
-    dbquery("
-    UPDATE
-        users
-    SET
-        verification_key=''
-    WHERE
-        user_id=" . $id . "
-    ;");
+    $userRepository->setVerified(intval($id), true);
     success_msg("Account freigeschaltet!");
 }
 
@@ -482,7 +475,7 @@ if (mysql_num_rows($res) > 0) {
         echo "<div>Dieser User ist ein Chat-Admin.</div>";
     }
     if ($arr['verification_key'] != '') {
-        echo "<div>Die E-Mail Adresse ist nocht nicht bestätigt [<a href=\"?page=$page&sub=$sub&id=$id&setverified\">Freischalten</a>].</div>";
+        echo "<div>Die E-Mail Adresse ist noch nicht bestätigt [<a href=\"?page=$page&sub=$sub&id=$id&setverified\">Freischalten</a>].</div>";
     }
 
     // Kommentare

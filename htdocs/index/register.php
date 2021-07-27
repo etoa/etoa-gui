@@ -2,12 +2,16 @@
 
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Support\Mail\MailSenderService;
+use EtoA\User\UserService;
 
 /** @var ConfigurationService */
 $config = $app[ConfigurationService::class];
 
 /** @var \EtoA\User\UserRepository $userRepository */
 $userRepository = $app[\EtoA\User\UserRepository::class];
+
+/** @var UserService */
+$userService = $app[UserService::class];
 
 /** @var MailSenderService $mailSenderService */
 $mailSenderService = $app[MailSenderService::class];
@@ -42,25 +46,22 @@ if (($_POST['register_submit'] ?? false) && $config->getBoolean('enable_register
     $_SESSION['REGISTER'] = $_POST;
 
     try {
-        $newUser = User::register(
+        $newUser = $userService->register(
             $_POST['register_user_name'],
             $_POST['register_user_email'],
             $_POST['register_user_nick'],
             $_POST['register_user_password']
         );
-        Log::add(3, Log::INFO, "Der Benutzer " . $newUser->nick . " (" . $newUser->realName . ", " . $newUser->email . ") hat sich registriert!");
+        Log::add(Log::F_USER, Log::INFO, "Der Benutzer " . $newUser->nick . " (" . $newUser->name . ", " . $newUser->email . ") hat sich registriert!");
 
-        $verificationRequired = $config->getBoolean('email_verification_required');
+        $verificationRequired = filled($newUser->verificationKey);
         $verificationUrl = null;
         if ($verificationRequired) {
-            $newUser->setVerified(false);
             $verificationUrl = $config->get('roundurl') . '/show.php?index=verifymail&key=' . $newUser->verificationKey;
-        } else {
-            $newUser->setVerified(true);
         }
 
         $email_text = "Hallo " . $newUser->nick . "\n\nDu hast dich erfolgreich beim Sci-Fi Browsergame Escape to Andromeda für die " . $config->get('roundname') . " registriert.\nHier nochmals deine Daten:\n\n";
-        $email_text .= "Name: " . $newUser->realName . "\n";
+        $email_text .= "Name: " . $newUser->name . "\n";
         $email_text .= "E-Mail: " . $newUser->email . "\n";
         $email_text .= "Nick: " . $newUser->nick . "\n\n";
         if ($verificationRequired) {

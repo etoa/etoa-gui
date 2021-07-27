@@ -9,6 +9,27 @@ use EtoA\Core\AbstractRepository;
 
 class UserPropertiesRepository extends AbstractRepository
 {
+    public function addBlank(int $id): void
+    {
+        $this->createQueryBuilder()
+            ->delete('user_properties')
+            ->where('id = :id')
+            ->setParameters([
+                'id' => $id,
+            ])
+            ->execute();
+
+        $this->createQueryBuilder()
+            ->insert('user_properties')
+            ->values([
+                'id' => ':id',
+            ])
+            ->setParameters([
+                'id' => $id,
+            ])
+            ->execute();
+    }
+
     /**
      * @return array<string, int>
      */

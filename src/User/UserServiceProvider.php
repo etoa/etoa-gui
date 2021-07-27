@@ -82,6 +82,8 @@ class UserServiceProvider implements ServiceProviderInterface
             return new UserService(
                 $pimple[ConfigurationService::class],
                 $pimple[UserRepository::class],
+                $pimple[UserRatingRepository::class],
+                $pimple[UserPropertiesRepository::class],
                 $pimple[PlanetRepository::class],
                 $pimple[BuildingRepository::class],
                 $pimple[TechnologyRepository::class],

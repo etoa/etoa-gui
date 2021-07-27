@@ -7,6 +7,17 @@
 use EtoA\Alliance\AllianceRepository;
 use EtoA\Race\RaceDataRepository;
 use EtoA\User\UserRepository;
+use EtoA\User\UserService;
+use Symfony\Component\HttpFoundation\Request;
+
+/** @var UserService */
+$userService = $app[UserService::class];
+
+/** @var UserRepository $userRepository */
+$userRepository = $app[UserRepository::class];
+
+/** @var Request */
+$request = Request::createFromGlobals();
 
 if ($sub == "xml") {
     require("user/xml.inc.php");
@@ -32,18 +43,18 @@ elseif ($sub == "sessions") {
 elseif ($sub == "create") {
     echo "<h1>Spieler erstellen</h1>";
 
-    if (isset($_POST['create'])) {
+    if ($request->request->has('create')) {
         try {
-            $newUser = User::register(
-                $_POST['user_name'],
-                $_POST['user_email'],
-                $_POST['user_nick'],
-                $_POST['user_password'],
-                $_POST['user_race'],
-                $_POST['user_ghost'] == 1
+            $newUser = $userService->register(
+                $request->request->get('user_name'),
+                $request->request->get('user_email'),
+                $request->request->get('user_nick'),
+                $request->request->get('user_password'),
+                $request->request->getInt('user_race'),
+                $request->request->has('user_ghost'),
+                true
             );
-            $newUser->setVerified(true);
-            Log::add(3, Log::INFO, "Der Benutzer " . $newUser->nick . " (" . $newUser->realName . ", " . $newUser->email . ") wurde registriert!");
+            Log::add(Log::F_USER, Log::INFO, "Der Benutzer " . $newUser->nick . " (" . $newUser->name . ", " . $newUser->email . ") wurde registriert!");
             success_msg("Benutzer wurde erstellt! [[page user sub=edit id=" . $newUser->id . "]Details[/page]]");
         } catch (Exception $e) {
             error_msg("Benutzer konnte nicht erstellt werden!\n\n" . $e->getMessage());
@@ -407,8 +418,6 @@ else {
         echo "</table>";
         echo "<br/><input type=\"submit\" name=\"user_search\" value=\"Suche starten\" /> (wenn nichts eingegeben wird werden alle Datens&auml;tze angezeigt)</form>";
 
-        /** @var UserRepository $userRepository */
-        $userRepository = $app[UserRepository::class];
         echo "<br/>Es sind " . nf($userRepository->count()) . " Eintr&auml;ge in der Datenbank vorhanden.";
     }
 }
