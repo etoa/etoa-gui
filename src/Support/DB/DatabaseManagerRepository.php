@@ -121,7 +121,12 @@ class DatabaseManagerRepository extends AbstractRepository
      */
     public function analyzeTables(): array
     {
-        return $this->getConnection()->fetchAllAssociative("ANALYZE TABLE " . implode(',', $this->getTables()) . ";");
+        $tables = $this->getTables();
+        if (count($tables) == 0) {
+            return [];
+        }
+
+        return $this->getConnection()->fetchAllAssociative("ANALYZE TABLE " . implode(',', $tables) . ";");
     }
 
     /**
@@ -129,7 +134,12 @@ class DatabaseManagerRepository extends AbstractRepository
      */
     public function checkTables(): array
     {
-        return $this->getConnection()->fetchAllAssociative("CHECK TABLE " . implode(',', $this->getTables()) . ";");
+        $tables = $this->getTables();
+        if (count($tables) == 0) {
+            return [];
+        }
+
+        return $this->getConnection()->fetchAllAssociative("CHECK TABLE " . implode(',', $tables) . ";");
     }
 
     /**
@@ -137,7 +147,12 @@ class DatabaseManagerRepository extends AbstractRepository
      */
     public function optimizeTables(): array
     {
-        return $this->getConnection()->fetchAllAssociative("OPTIMIZE TABLE " . implode(',', $this->getTables()) . ";");
+        $tables = $this->getTables();
+        if (count($tables) == 0) {
+            return [];
+        }
+
+        return $this->getConnection()->fetchAllAssociative("OPTIMIZE TABLE " . implode(',', $tables) . ";");
     }
 
     /**
@@ -145,7 +160,12 @@ class DatabaseManagerRepository extends AbstractRepository
      */
     public function repairTables(): array
     {
-        return $this->getConnection()->fetchAllAssociative("REPAIR TABLE " . implode(',', $this->getTables()) . ";");
+        $tables = $this->getTables();
+        if (count($tables) == 0) {
+            return [];
+        }
+
+        return $this->getConnection()->fetchAllAssociative("REPAIR TABLE " . implode(',', $tables) . ";");
     }
 
     public function dropAllTables(): int
