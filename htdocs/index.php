@@ -6,6 +6,7 @@
 
 use EtoA\BuddyList\BuddyListRepository;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Notepad\NotepadRepository;
 use EtoA\Text\TextRepository;
 use EtoA\Universe\Planet\PlanetRepository;
 
@@ -212,9 +213,9 @@ try {
     $usersOnline = $userSessionRepository->count();
 
     // Count notes
-    $np = new Notepad($cu->id);
-    $numNotes = $np->numNotes();
-    unset($np);
+    /** @var NotepadRepository */
+    $notepadRepository = $app[NotepadRepository::class];
+    $numNotes = $notepadRepository->count($cu->id);
 
     // Number of player's own fleets
     $fm = new FleetManager($cu->id, $cu->allianceId);
