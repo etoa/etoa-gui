@@ -54,48 +54,6 @@ class DBManager implements ISingleton
         return self::configFile;
     }
 
-    function getHost()
-    {
-        if ($this->dbCfg == null) {
-            $this->loadConfig();
-        }
-
-        return explode(':', $this->dbCfg['host'])[0];
-    }
-
-    function getPort()
-    {
-        if ($this->dbCfg == null) {
-            $this->loadConfig();
-        }
-
-        return explode(':', $this->dbCfg['host'], 2)[1] ?? 3306;
-    }
-
-    function getDbName()
-    {
-        if ($this->dbCfg == null) {
-            $this->loadConfig();
-        }
-        return $this->dbCfg['dbname'];
-    }
-
-    private function getUser()
-    {
-        if ($this->dbCfg == null) {
-            $this->loadConfig();
-        }
-        return $this->dbCfg['user'];
-    }
-
-    private function getPassword()
-    {
-        if ($this->dbCfg == null) {
-            $this->loadConfig();
-        }
-        return $this->dbCfg['password'];
-    }
-
     /**
      * Baut die Datenbankverbindung auf
      */

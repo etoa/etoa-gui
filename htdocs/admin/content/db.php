@@ -118,7 +118,7 @@ else {
 
     echo $twig->render('admin/database/database.html.twig', [
         'dbStats' => $dbStats,
-        'dbName' => DBManager::getInstance()->getDbName(),
+        'dbName' => $dbManagerRepository->getDatabaseName(),
         'dbRows' => nf($rows),
         'dbSize' => byte_format($datal),
         'serverUptime' => tf($uts),

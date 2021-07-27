@@ -71,9 +71,21 @@ class DatabaseBackupService
                 if (!isUnixOS()) {
                     throw new Exception("Das Laden von GZIP SQL Dateien wird nur auf UNIX Systemen unterstützt!");
                 }
-                $cmd = "gunzip < " . $file . ".gz | " . $mysql . " -u" . $this->databaseManagerRepository->getConnectionParameter('user') . " -p" . $this->databaseManagerRepository->getConnectionParameter('password') . " -h" . $this->databaseManagerRepository->getConnectionParameter('host') . " --default-character-set=utf8 " . $this->databaseManagerRepository->getDatabaseName();
+                $cmd = "gunzip < " . $file . ".gz | " . $mysql .
+                    " -u" . $this->databaseManagerRepository->getUser() .
+                    " -p" . $this->databaseManagerRepository->getPassword() .
+                    " -h" . $this->databaseManagerRepository->getHost() .
+                    " -P" . $this->databaseManagerRepository->getPort() .
+                    " --default-character-set=utf8
+                    " . $this->databaseManagerRepository->getDatabaseName();
             } else {
-                $cmd = $mysql . " -u" . $this->databaseManagerRepository->getConnectionParameter('user') . " -p" . $this->databaseManagerRepository->getConnectionParameter('password') . " -h" . $this->databaseManagerRepository->getConnectionParameter('host') . " --default-character-set=utf8 " . $this->databaseManagerRepository->getDatabaseName() . " < " . $file;
+                $cmd = $mysql .
+                    " -u" . $this->databaseManagerRepository->getUser() .
+                    " -p" . $this->databaseManagerRepository->getPassword() .
+                    " -h" . $this->databaseManagerRepository->getHost() .
+                    " -P" . $this->databaseManagerRepository->getPort() .
+                    " --default-character-set=utf8 " . $this->databaseManagerRepository->getDatabaseName() .
+                    " < " . $file;
             }
 
             if (isWindowsOS() && !file_exists($mysql) || isUnixOS() && !unix_command_exists($mysqldump)) {
@@ -156,9 +168,21 @@ class DatabaseBackupService
                     throw new Exception("Das Erstellen von GZIP Backups wird nur auf UNIX Systemen unterstützt!");
                 }
                 $file .= ".gz";
-                $cmd = $mysqldump . " -u" . $this->databaseManagerRepository->getConnectionParameter('user') . " -p" . $this->databaseManagerRepository->getConnectionParameter('password') . " -h" . $this->databaseManagerRepository->getConnectionParameter('host') . " --default-character-set=utf8 " . $this->databaseManagerRepository->getDatabaseName() . " | gzip > " . $file;
+                $cmd = $mysqldump .
+                    " -u" . $this->databaseManagerRepository->getUser() .
+                    " -p" . $this->databaseManagerRepository->getPassword() .
+                    " -h" . $this->databaseManagerRepository->getHost() .
+                    " -P" . $this->databaseManagerRepository->getPort() .
+                    " --default-character-set=utf8 " . $this->databaseManagerRepository->getDatabaseName() .
+                    " | gzip > " . $file;
             } else {
-                $cmd = $mysqldump . " -u" . $this->databaseManagerRepository->getConnectionParameter('user') . " -p" . $this->databaseManagerRepository->getConnectionParameter('password') . " -h" . $this->databaseManagerRepository->getConnectionParameter('host') . " --default-character-set=utf8 " . $this->databaseManagerRepository->getDatabaseName() . " -r " . $file;
+                $cmd = $mysqldump .
+                    " -u" . $this->databaseManagerRepository->getUser() .
+                    " -p" . $this->databaseManagerRepository->getPassword() .
+                    " -h" . $this->databaseManagerRepository->getHost() .
+                    " -P" . $this->databaseManagerRepository->getPort() .
+                    " --default-character-set=utf8 " . $this->databaseManagerRepository->getDatabaseName() .
+                    " -r " . $file;
             }
 
             if (isWindowsOS() && !file_exists($mysqldump) || isUnixOS() && !unix_command_exists($mysqldump)) {

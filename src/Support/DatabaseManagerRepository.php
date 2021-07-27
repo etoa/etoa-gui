@@ -30,9 +30,24 @@ class DatabaseManagerRepository extends AbstractRepository
         return $this->getConnection()->getDatabase();
     }
 
-    public function getConnectionParameter(string $param): string
+    public function getUser(): string
     {
-        return $this->getConnection()->getParams()[$param];
+        return $this->getConnection()->getParams()['user'];
+    }
+
+    public function getPassword(): string
+    {
+        return $this->getConnection()->getParams()['password'];
+    }
+
+    public function getHost(): string
+    {
+        return explode(':', $this->getConnection()->getParams()['host'])[0];
+    }
+
+    public function getPort(): int
+    {
+        return explode(':', $this->getConnection()->getParams()['host'], 2)[1] ?? 3306;
     }
 
     /**
