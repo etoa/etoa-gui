@@ -1,41 +1,47 @@
 <?PHP
 
+use EtoA\Support\DB\DatabaseManagerRepository;
+
+/** @var DatabaseManagerRepository */
+$databaseManager = $app[DatabaseManagerRepository::class];
+
 $action = $_GET['action'] ?? null;
 $subTitle = null;
+$successMessage = null;
+
 // Datenbanktabellen optimieren
 if ($action === 'optimize') {
     $subTitle = 'Optimierungsbericht';
-    $ores = DBManager::getInstance()->optimizeTables(true);
+    $result = $databaseManager->optimizeTables();
+    Log::add(Log::F_SYSTEM, Log::INFO, count($result) . " Tabellen wurden manuell optimiert!");
 }
 // Datenbanktabellen analysieren
 elseif ($action === 'analyze') {
     $subTitle = 'Analysebericht';
     $successMessage = 'Tabellen deren Analysestatus bereits aktuell ist werden nicht angezeigt!';
-    $ores = DBManager::getInstance()->analyzeTables();
+    $result = $databaseManager->analyzeTables();
 }
 // Datenbanktabellen prüfen
 elseif ($action === 'check') {
     $subTitle = 'Überprüfungsbericht';
     $successMessage = 'Es werden nur Tabellen mit einem Status != OK angezeigt!';
-    $ores = DBManager::getInstance()->checkTables();
+    $result = $databaseManager->checkTables();
 }
 // Datenbanktabellen reparieren
 elseif ($action === 'repair') {
     $subTitle = 'Reparaturbericht';
-    $ores = DBManager::getInstance()->repairTables(true);
+    $result = $databaseManager->repairTables();
+    Log::add(Log::F_SYSTEM, Log::INFO, count($result) . " Tabellen wurden manuell repariert!");
 } else {
     throw new \InvalidArgumentException('Invalid action: ' . $action);
 }
 
 // Fields
-$fields = [];
-while ($fo = mysql_fetch_field($ores)) {
-    $fields[] = $fo->name;
-}
+$fields = count($result) > 0 ? array_keys($result[0]) : [];
 
 // Records
 $rows = [];
-while ($arr = mysql_fetch_assoc($ores)) {
+foreach ($result as $arr) {
     // When checking, filter all rows with OK status
     if ($action === 'check' && isset($arr['Msg_text']) && $arr['Msg_text'] === 'OK') {
         continue;

@@ -8,7 +8,7 @@ use EtoA\Admin\AdminUserRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Help\TicketSystem\TicketRepository;
 use EtoA\Ranking\GameStatsGenerator;
-use EtoA\Support\DatabaseManagerRepository;
+use EtoA\Support\DB\DatabaseManagerRepository;
 use EtoA\Text\TextRepository;
 use EtoA\Universe\Cell\CellRepository;
 use League\CommonMark\MarkdownConverterInterface;

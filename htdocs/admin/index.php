@@ -6,7 +6,7 @@ use EtoA\Admin\AdminSessionRepository;
 use EtoA\Admin\AdminUserRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Help\TicketSystem\TicketRepository;
-use EtoA\Support\DatabaseManagerRepository;
+use EtoA\Support\DB\DatabaseManagerRepository;
 use EtoA\User\UserRepository;
 use EtoA\User\UserSessionRepository;
 use Twig\Environment;

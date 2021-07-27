@@ -1,6 +1,6 @@
 <?PHP
 
-use EtoA\Support\DatabaseManagerRepository;
+use EtoA\Support\DB\DatabaseManagerRepository;
 
 $twig->addGlobal('title', 'Datenbank');
 
@@ -118,7 +118,7 @@ else {
 
     echo $twig->render('admin/database/database.html.twig', [
         'dbStats' => $dbStats,
-        'dbName' => DBManager::getInstance()->getDbName(),
+        'dbName' => $dbManagerRepository->getDatabaseName(),
         'dbRows' => nf($rows),
         'dbSize' => byte_format($datal),
         'serverUptime' => tf($uts),

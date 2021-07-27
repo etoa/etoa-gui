@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Support\DB\DatabaseMigrationService;
 use Twig\Environment;
 
 if (!isset($app)) {
@@ -148,7 +149,11 @@ if ($step === 2) {
 
     // Migrate database
     ob_start();
-    $cnt = DBManager::getInstance()->migrate();
+
+    /** @var DatabaseMigrationService */
+    $databaseMigrationService = $app[DatabaseMigrationService::class];
+
+    $cnt = $databaseMigrationService->migrate();
     ob_clean();
     if ($cnt > 0) {
         $successMessage = 'Datenbank migriert';

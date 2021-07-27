@@ -6,7 +6,7 @@ namespace EtoA\Universe;
 
 use DirectoryIterator;
 use EtoA\Core\Configuration\ConfigurationService;
-use EtoA\Support\DatabaseManagerRepository;
+use EtoA\Support\DB\DatabaseManagerRepository;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\User\UserRepository;
 use Mutex;

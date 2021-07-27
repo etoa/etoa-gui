@@ -1,9 +1,13 @@
 <?PHP
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Support\DB\DatabaseBackupService;
 
 /** @var ConfigurationService */
 $config = $app[ConfigurationService::class];
+
+/** @var DatabaseBackupService */
+$databaseBackupService = $app[DatabaseBackupService::class];
 
 // Backup erstellen
 $successMessage = null;
@@ -12,14 +16,14 @@ if (isset($_POST['create'])) {
     $mtx = new Mutex();
 
     try {
-        $dir = DBManager::getBackupDir();
+        $dir = $databaseBackupService->getBackupDir();
         $gzip = $config->getBoolean('backup_use_gzip');
 
         // Acquire mutex
         $mtx->acquire();
 
         // Do the backup
-        $log = DBManager::getInstance()->backupDB($dir, $gzip);
+        $log = $databaseBackupService->backupDB($dir, $gzip);
 
         // Release mutex
         $mtx->release();
@@ -45,7 +49,7 @@ if (isset($_POST['create'])) {
 elseif (isset($_GET['action']) && $_GET['action'] === "backuprestore" && $_GET['date'] != "") {
     // Sicherungskopie anlegen
     try {
-        $dir = DBManager::getBackupDir();
+        $dir = $databaseBackupService->getBackupDir();
         $restorePoint = $_GET['date'];
         $gzip = $config->getBoolean('backup_use_gzip');
 
@@ -57,11 +61,11 @@ elseif (isset($_GET['action']) && $_GET['action'] === "backuprestore" && $_GET['
 
             // Backup current database
             $log = 'Anlegen einer Sicherungskopie: ';
-            $log .= DBManager::getInstance()->backupDB($dir, $gzip);
+            $log .= $databaseBackupService->backupDB($dir, $gzip);
 
             // Restore database
             $log .= "\nWiederherstellen der Datenbank: ";
-            $log .= DBManager::getInstance()->restoreDB($dir, $restorePoint);
+            $log .= $databaseBackupService->restoreDB($dir, $restorePoint);
 
             // Release mutex
             $mtx->release();
@@ -94,16 +98,16 @@ if (isset($_POST['submit_changes'])) {
     $successMessage = 'Einstellungen gespeichert';
 }
 
-$dir = DBManager::getBackupDir();
+$dir = $databaseBackupService->getBackupDir();
 $backupDir = null;
 $backups = null;
-if ($dir) {
+if ($dir !== null) {
     $backupDir = realpath($dir);
 
-    $bfiles = DBManager::getInstance()->getBackupImages($dir, 0);
+    $backupFiles = $databaseBackupService->getBackupImages($dir, false);
 
     $backups = [];
-    foreach ($bfiles as $f) {
+    foreach ($backupFiles as $f) {
         $backups[] = [
             'filename' => $f,
             'date' => substr($f, strpos($f, '-') + 1, 16),

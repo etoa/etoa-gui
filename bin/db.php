@@ -2,6 +2,9 @@
 <?PHP
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Support\DB\DatabaseBackupService;
+use EtoA\Support\DB\DatabaseManagerRepository;
+use EtoA\Support\DB\DatabaseMigrationService;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
@@ -62,6 +65,11 @@ $verbose = in_array("-v", $args, true);
 //
 if ($action == "migrate" || $action == "reset")
 {
+    if (!isset($app)) {
+        $app = require __DIR__ .'/../src/app.php';
+        $app->boot();
+    }
+
     $mtx = new Mutex();
 
     try
@@ -69,23 +77,25 @@ if ($action == "migrate" || $action == "reset")
         // Acquire mutex
         $mtx->acquire();
 
+        /** @var DatabaseManagerRepository */
+        $databaseManager = $app[DatabaseManagerRepository::class];
+
         if ($action == "reset") {
             echo "Dropping all tables:\n";
-            DBManager::getInstance()->dropAllTables();
+            $databaseManager->dropAllTables();
         }
 
+        /** @var DatabaseMigrationService */
+        $databaseMigrationService = $app[DatabaseMigrationService::class];
+
         echo "Migrate database:\n";
-        $cnt = DBManager::getInstance()->migrate();
+        $cnt = $databaseMigrationService->migrate();
         if ($cnt == 0) {
             echo "Database is up-to-date\n";
         }
 
         // Load config defaults
         if ($action == "reset") {
-            if (!isset($app)) {
-                $app = require __DIR__ .'/../src/app.php';
-                $app->boot();
-            }
 
             /** @var ConfigurationService */
             $config = $app[ConfigurationService::class];
@@ -125,7 +135,10 @@ else if ($action == "backup")
     /** @var ConfigurationService */
     $config = $app[ConfigurationService::class];
 
-    $dir = DBManager::getBackupDir();
+    /** @var DatabaseBackupService */
+    $databaseBackupService = $app[DatabaseBackupService::class];
+
+    $dir = $databaseBackupService->getBackupDir();
     $gzip = $config->getBoolean('backup_use_gzip');
     $mtx = new Mutex();
 
@@ -135,7 +148,7 @@ else if ($action == "backup")
         $mtx->acquire();
 
         // Restore database
-        $log = DBManager::getInstance()->backupDB($dir, $gzip);
+        $log = $databaseBackupService->backupDB($dir, $gzip);
 
         // Release mutex
         $mtx->release();
@@ -171,7 +184,15 @@ else if ($action == "backup")
 //
 else if ($action == "restore")
 {
-    $dir = DBManager::getBackupDir();
+    if (!isset($app)) {
+        $app = require __DIR__ .'/../src/app.php';
+        $app->boot();
+    }
+
+    /** @var DatabaseBackupService */
+    $databaseBackupService = $app[DatabaseBackupService::class];
+
+    $dir = $databaseBackupService->getBackupDir();
 
     // Check if restore point specified
     if (isset($args[0]))
@@ -185,7 +206,7 @@ else if ($action == "restore")
             $mtx->acquire();
 
             // Restore database
-            $log = DBManager::getInstance()->restoreDB($dir, $restorePoint);
+            $log = $databaseBackupService->restoreDB($dir, $restorePoint);
 
             // Release mutex
             $mtx->release();
@@ -217,9 +238,9 @@ else if ($action == "restore")
     }
     else
     {
-        echo "\nUsage: ".$_SERVER['argv'][0]." ".$action." [restorepoint]\n\n";
-        echo "Available restorepoints:\n\n";
-        $dates = DBManager::getInstance()->getBackupImages($dir);
+        echo "\nUsage: ".$_SERVER['argv'][0]." ".$action." [restore_point]\n\n";
+        echo "Available restore points:\n\n";
+        $dates = $databaseBackupService->getBackupImages($dir);
         foreach ($dates as $f)
         {
             echo "$f\n";
@@ -233,12 +254,19 @@ else if ($action == "restore")
 //
 else if ($action == "check")
 {
+    if (!isset($app)) {
+        $app = require __DIR__ .'/../src/app.php';
+        $app->boot();
+    }
+
+    /** @var DatabaseManagerRepository */
+    $databaseManager = $app[DatabaseManagerRepository::class];
+
     echo "\nChecking tables:\n\n";
     try
     {
-        $ores = DBManager::getInstance()->checkTables();
-        while ($arr = mysql_fetch_assoc($ores))
-        {
+        $result = $databaseManager->checkTables();
+        foreach ($result as $arr) {
             echo implode("\t", $arr)."\n";
         }
     }
@@ -254,14 +282,22 @@ else if ($action == "check")
 //
 else if ($action == "repair")
 {
+    if (!isset($app)) {
+        $app = require __DIR__ .'/../src/app.php';
+        $app->boot();
+    }
+
+    /** @var DatabaseManagerRepository */
+    $databaseManager = $app[DatabaseManagerRepository::class];
+
     echo "\nRepairing tables:\n\n";
     try
     {
-        $ores = DBManager::getInstance()->repairTables(true);
-        while ($arr = mysql_fetch_assoc($ores))
-        {
+        $result = $databaseManager->repairTables();
+        foreach ($result as $arr) {
             echo implode("\t", $arr)."\n";
         }
+        Log::add(Log::F_SYSTEM, Log::INFO, count($result) . " Tabellen wurden manuell repariert!");
     }
     catch (Exception $e)
     {

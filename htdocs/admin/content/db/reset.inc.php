@@ -1,10 +1,22 @@
 <?PHP
 
 use EtoA\Core\Configuration\ConfigurationService;
-use EtoA\Support\DatabaseManagerRepository;
+use EtoA\Support\DB\DatabaseBackupService;
+use EtoA\Support\DB\DatabaseManagerRepository;
+use EtoA\Support\DB\DatabaseMigrationService;
+use EtoA\Support\DB\SchemaMigrationRepository;
 
 /** @var ConfigurationService */
 $config = $app[ConfigurationService::class];
+
+/** @var DatabaseManagerRepository */
+$databaseManager = $app[DatabaseManagerRepository::class];
+
+/** @var DatabaseMigrationService */
+$databaseMigrationService = $app[DatabaseMigrationService::class];
+
+/** @var DatabaseBackupService */
+$databaseBackupService = $app[DatabaseBackupService::class];
 
 $successMessage = null;
 $errorMessage = null;
@@ -17,14 +29,14 @@ if (isset($_POST['submit'])) {
 
     try {
         // Do the backup
-        $dir = DBManager::getBackupDir();
+        $dir = $databaseBackupService->getBackupDir();
         $gzip = $config->getBoolean('backup_use_gzip');
 
         // Acquire mutex
         $mtx->acquire();
 
         // Do the backup
-        $log = DBManager::getInstance()->backupDB($dir, $gzip);
+        $log = $databaseBackupService->backupDB($dir, $gzip);
 
         // Release mutex
         $mtx->release();
@@ -34,18 +46,16 @@ if (isset($_POST['submit'])) {
             $mtx = new Mutex();
             $mtx->acquire();
 
-            $tbls = DBManager::getInstance()->getAllTables();
+            $tables = $databaseManager->getTables();
             $emptyTables = [];
-            foreach ($tbls as $t) {
-                if (!in_array($t, $persistentTables['definitions'], true) && $t !== DBManager::SCHEMA_MIGRATIONS_TABLE) {
+            foreach ($tables as $t) {
+                if (!in_array($t, $persistentTables['definitions'], true) && $t !== SchemaMigrationRepository::SCHEMA_MIGRATIONS_TABLE) {
                     $emptyTables[] = $t;
                 }
             }
 
             if (count($emptyTables) > 0) {
-                /** @var DatabaseManagerRepository $dbManagerRepository */
-                $dbManagerRepository = $app[DatabaseManagerRepository::class];
-                $dbManagerRepository->truncateTables($emptyTables);
+                $databaseManager->truncateTables($emptyTables);
 
                 $infoMessage = 'Leere Tabellen: ' . implode(', ', $emptyTables);
             }
@@ -65,10 +75,10 @@ if (isset($_POST['submit'])) {
             $mtx->acquire();
 
             // Drop tables
-            $tc = DBManager::getInstance()->dropAllTables();
+            $tc = $databaseManager->dropAllTables();
 
             // Load schema
-            DBManager::getInstance()->migrate();
+            $databaseMigrationService->migrate();
 
             // Load config default
             $config->restoreDefaults();
