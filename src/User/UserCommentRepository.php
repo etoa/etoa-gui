@@ -36,4 +36,13 @@ class UserCommentRepository extends AbstractRepository
             ->setParameter('userIds', $availableUserIds, Connection::PARAM_INT_ARRAY)
             ->execute();
     }
+
+    public function removeForUser(int $userId) : void
+    {
+        $this->createQueryBuilder()
+            ->delete('user_comments')
+            ->where('comment_user_id = :userId')
+            ->setParameter('userId', $userId)
+            ->execute();
+    }
 }

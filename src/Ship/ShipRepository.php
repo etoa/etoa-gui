@@ -129,6 +129,21 @@ class ShipRepository extends AbstractRepository
             ->execute();
     }
 
+    public function removeForUser(int $userId): void
+    {
+        $this->createQueryBuilder()
+            ->delete('ship_queue')
+            ->where('queue_user_id = :userId')
+            ->setParameter('userId', $userId)
+            ->execute();
+
+        $this->createQueryBuilder()
+            ->delete('shiplist')
+            ->where('shiplist_user_id = :userId')
+            ->setParameter('userId', $userId)
+            ->execute();
+    }
+
     public function hasShipsOnEntity(int $entityId): bool
     {
         $count = (int) $this->createQueryBuilder()

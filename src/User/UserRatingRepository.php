@@ -59,4 +59,13 @@ class UserRatingRepository extends AbstractRepository
             ->setParameter('userIds', $availableUserIds, Connection::PARAM_INT_ARRAY)
             ->execute();
     }
+
+    public function removeForUser(int $userId) : void
+    {
+        $this->createQueryBuilder()
+            ->delete('user_ratings')
+            ->where('id = :userId')
+            ->setParameter('userId', $userId)
+            ->execute();
+    }
 }

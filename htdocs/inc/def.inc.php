@@ -40,12 +40,6 @@ define("USER_ATTACK_MIN_POINTS", $config->getInt('user_attack_min_points'));
 // Prozentualer Punkteunterschied
 define("USER_ATTACK_PERCENTAGE", $config->getFloat('user_attack_percentage'));
 
-// Aktion beim versenden von Rohstoffen
-define("FLEET_ACTION_RESS", $config->get('market_ship_action_ress'));
-
-// Aktion beim versenden von Schiffen oder Schiffe&Rohstoffe
-define("FLEET_ACTION_SHIP", $config->get('market_ship_action_ship'));
-
 // Zeit in stunden, wie lange die auktion nach ablauf noch zu sehen ist
 define("AUCTION_DELAY_TIME", $config->getInt('market_auction_delay_time'));
 

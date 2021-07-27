@@ -173,6 +173,15 @@ class TicketRepository extends AbstractRepository
         return (int) $qry->execute();
     }
 
+    public function removeForUser(int $userId) : void
+    {
+        $this->createQueryBuilder()
+            ->delete('tickets')
+            ->where('user_id = :userId')
+            ->setParameter('userId', $userId)
+            ->execute();
+    }
+
     /**
      * @return array<int, string>
      */

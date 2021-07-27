@@ -86,6 +86,18 @@ class AllianceRepository extends AbstractRepository
             ->execute()
             ->fetchOne();
     }
+    public function setFounderId(int $allianceId, int $founder): void
+    {
+        $this->createQueryBuilder()
+            ->update('alliances')
+            ->set('alliance_founder_id', ':founder')
+            ->where('alliance_id = :id')
+            ->setParameters([
+                'id' => $allianceId,
+                'founder' => $founder,
+            ])
+            ->execute();
+    }
 
     /**
      * @param array<string, int|string|bool> $formData
@@ -199,6 +211,17 @@ class AllianceRepository extends AbstractRepository
             ->execute();
 
         return (int) $affected > 0;
+    }
+
+    public function remove(int $id): bool
+    {
+        $affected = (int) $this->createQueryBuilder()
+            ->delete('alliances')
+            ->where('alliance_id = :id')
+            ->setParameter('id', $id)
+            ->execute();
+
+        return $affected > 0;
     }
 
     public function getPicture(int $allianceId): ?string

@@ -239,4 +239,13 @@ class TechnologyRepository extends AbstractRepository
             'max' => (int) $arr['max'],
         ], $data);
     }
+
+    public function removeForUser(int $userId): void
+    {
+        $this->createQueryBuilder()
+            ->delete('techlist')
+            ->where('techlist_user_id = :userId')
+            ->setParameter('userId', $userId)
+            ->execute();
+    }
 }

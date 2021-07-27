@@ -119,4 +119,13 @@ class MissileRepository extends \EtoA\Core\AbstractRepository
 
         return array_map(fn ($value) => (int) $value, $data);
     }
+
+    public function removeForUser(int $userId): void
+    {
+        $this->createQueryBuilder()
+            ->delete('missilelist')
+            ->where('missilelist_user_id = :userId')
+            ->setParameter('userId', $userId)
+            ->execute();
+    }
 }

@@ -15,9 +15,17 @@ class MailSenderService
 {
     private ConfigurationService $config;
 
+    private Swift_Mailer $mailer;
+
     public function __construct(ConfigurationService $config)
     {
         $this->config = $config;
+        $this->mailer = new Swift_Mailer($this->getMailTransport());
+    }
+
+    public function setMailer(Swift_Mailer $mailer): void
+    {
+        $this->mailer = $mailer;
     }
 
     /**
@@ -26,8 +34,6 @@ class MailSenderService
      */
     public function send(string $subject, string $text, $recipients, $replyTo = null): int
     {
-        $mailer = new Swift_Mailer($this->getMailTransport());
-
         $gameName = APP_NAME . ' ' . $this->config->get('roundname');
         $message = (new Swift_Message($gameName . ": " . $subject))
             ->setFrom([$this->config->get('mail_sender') => $gameName])
@@ -35,7 +41,7 @@ class MailSenderService
             ->setTo($recipients)
             ->setBody($text . $this->getSignature());
 
-        return $mailer->send($message);
+        return $this->mailer->send($message) ?? 0;
     }
 
     private function getMailTransport(): Swift_Transport
