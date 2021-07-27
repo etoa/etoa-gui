@@ -293,33 +293,6 @@ class DBManager implements ISingleton
         }
     }
 
-    /**
-     * Creates a list of all tables
-     */
-    public function getAllTables()
-    {
-        $res = $this->query("SHOW TABLES;");
-        $tbls = array();
-        while ($arr = mysql_fetch_row($res)) {
-            $tbls[] = $arr[0];
-        }
-        return $tbls;
-    }
-
-    /**
-     * Drops all tables
-     */
-    public function dropAllTables()
-    {
-        $tbls = $this->getAllTables();
-        if (count($tbls) > 0) {
-            dbquery("SET FOREIGN_KEY_CHECKS=0;");
-            dbquery("DROP TABLE " . implode(',', $tbls) . ";");
-            dbquery("SET FOREIGN_KEY_CHECKS=1;");
-        }
-        return count($tbls);
-    }
-
     public function setDatabaseConfig(array $config)
     {
         $this->dbCfg = $config;

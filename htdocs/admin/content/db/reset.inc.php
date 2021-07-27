@@ -46,9 +46,9 @@ if (isset($_POST['submit'])) {
             $mtx = new Mutex();
             $mtx->acquire();
 
-            $tbls = DBManager::getInstance()->getAllTables();
+            $tables = $databaseManager->getTables();
             $emptyTables = [];
-            foreach ($tbls as $t) {
+            foreach ($tables as $t) {
                 if (!in_array($t, $persistentTables['definitions'], true) && $t !== SchemaMigrationRepository::SCHEMA_MIGRATIONS_TABLE) {
                     $emptyTables[] = $t;
                 }
@@ -75,7 +75,7 @@ if (isset($_POST['submit'])) {
             $mtx->acquire();
 
             // Drop tables
-            $tc = DBManager::getInstance()->dropAllTables();
+            $tc = $databaseManager->dropAllTables();
 
             // Load schema
             $databaseMigrationService->migrate();

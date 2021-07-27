@@ -77,9 +77,12 @@ if ($action == "migrate" || $action == "reset")
         // Acquire mutex
         $mtx->acquire();
 
+        /** @var DatabaseManagerRepository */
+        $databaseManager = $app[DatabaseManagerRepository::class];
+
         if ($action == "reset") {
             echo "Dropping all tables:\n";
-            DBManager::getInstance()->dropAllTables();
+            $databaseManager->dropAllTables();
         }
 
         /** @var DatabaseMigrationService */

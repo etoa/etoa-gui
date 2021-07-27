@@ -132,4 +132,16 @@ class DatabaseManagerRepository extends AbstractRepository
     {
         return $this->getConnection()->fetchAllAssociative("REPAIR TABLE " . implode(',', $this->getTables()) . ";");
     }
+
+    public function dropAllTables(): int
+    {
+        $tables = $this->getTables();
+        if (count($tables) > 0) {
+            $this->getConnection()->executeStatement("SET FOREIGN_KEY_CHECKS=0;");
+            $this->getConnection()->executeStatement("DROP TABLE " . implode(',', $tables) . ";");
+            $this->getConnection()->executeStatement("SET FOREIGN_KEY_CHECKS=1;");
+        }
+
+        return count($tables);
+    }
 }
