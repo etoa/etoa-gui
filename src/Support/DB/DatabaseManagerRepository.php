@@ -47,7 +47,7 @@ class DatabaseManagerRepository extends AbstractRepository
 
     public function getPort(): int
     {
-        return explode(':', $this->getConnection()->getParams()['host'], 2)[1] ?? 3306;
+        return (int) explode(':', $this->getConnection()->getParams()['host'], 2)[1] ?? 3306;
     }
 
     /**
