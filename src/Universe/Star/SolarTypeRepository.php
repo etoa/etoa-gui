@@ -13,18 +13,18 @@ class SolarTypeRepository extends AbstractRepository
      *
      * @return array<int, string>
      */
-    public function getSolarTypeNames(bool $showAll = false): array
+    public function getSolarTypeNames(bool $showAll = false, bool $orderById = false): array
     {
         $qb = $this->createQueryBuilder()
-            ->select('s.sol_type_id, s.sol_type_name')
-            ->from('sol_types', 's');
+            ->select('sol_type_id', 'sol_type_name')
+            ->from('sol_types');
 
         if (!$showAll) {
-            $qb->andWhere('s.sol_type_consider = 1');
+            $qb->andWhere('sol_type_consider = 1');
         }
 
         return $qb
-            ->orderBy('s.sol_type_name')
+            ->orderBy($orderById ? 'sol_type_id' : 'sol_type_name')
             ->execute()
             ->fetchAllKeyValue();
     }

@@ -9,6 +9,14 @@ use EtoA\Core\AbstractRepository;
 class AllianceBuildingRepository extends AbstractRepository
 {
     /**
+     * @return array<int, string>
+     */
+    public function getNames(bool $orderById = false): array
+    {
+        return $this->fetchIdsWithNames('alliance_buildings', 'alliance_building_id', 'alliance_building_name', $orderById);
+    }
+
+    /**
      * @return AllianceBuilding[]
      */
     public function findAll(): array

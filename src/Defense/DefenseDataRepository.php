@@ -21,7 +21,7 @@ class DefenseDataRepository extends AbstractRepository
     /**
      * @return array<int, string>
      */
-    public function getDefenseNames(bool $showAll = false): array
+    public function getDefenseNames(bool $showAll = false, bool $orderById = false): array
     {
         $qb = $this->createQueryBuilder()
             ->select('def_id, def_name')
@@ -34,6 +34,7 @@ class DefenseDataRepository extends AbstractRepository
         }
 
         return $qb
+            ->orderBy($orderById ? 'def_id' : 'def_name')
             ->execute()
             ->fetchAllKeyValue();
     }

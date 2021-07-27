@@ -22,10 +22,10 @@ class ShipDataRepository extends AbstractRepository
     /**
      * @return array<int, string>
      */
-    public function getShipNames(bool $showAll = false): array
+    public function getShipNames(bool $showAll = false, bool $orderById = false): array
     {
         $qb = $this->createQueryBuilder()
-            ->select('ship_id, ship_name')
+            ->select('ship_id', 'ship_name')
             ->addSelect()
             ->from('ships');
 
@@ -36,7 +36,7 @@ class ShipDataRepository extends AbstractRepository
         }
 
         return $qb
-                ->orderBy('ship_name')
+                ->orderBy($orderById ? 'ship_id' : 'ship_name')
                 ->execute()
                 ->fetchAllKeyValue();
     }

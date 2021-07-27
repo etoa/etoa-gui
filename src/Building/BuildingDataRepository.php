@@ -62,10 +62,10 @@ class BuildingDataRepository extends AbstractRepository
     /**
      * @return array<int, string>
      */
-    public function getBuildingNames(bool $showAll = false): array
+    public function getBuildingNames(bool $showAll = false, bool $orderById = false): array
     {
         $qb = $this->createQueryBuilder()
-            ->select('building_id, building_name')
+            ->select('building_id', 'building_name')
             ->addSelect()
             ->from('buildings');
 
@@ -74,7 +74,7 @@ class BuildingDataRepository extends AbstractRepository
         }
 
         return $qb
-            ->orderBy('building_name')
+            ->orderBy($orderById ? 'building_id' : 'building_name')
             ->execute()
             ->fetchAllKeyValue();
     }

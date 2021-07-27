@@ -9,6 +9,14 @@ use EtoA\Core\AbstractRepository;
 class AllianceTechnologyRepository extends AbstractRepository
 {
     /**
+     * @return array<int, string>
+     */
+    public function getNames(bool $orderById = false): array
+    {
+        return $this->fetchIdsWithNames('alliance_technologies', 'alliance_tech_id', 'alliance_tech_name', $orderById);
+    }
+
+    /**
      * @return AllianceTechnology[]
      */
     public function findAll(): array
