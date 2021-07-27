@@ -6,6 +6,7 @@ use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Market\MarketAuctionRepository;
 use EtoA\Market\MarketResourceRepository;
 use EtoA\Market\MarketShipRepository;
+use EtoA\Notepad\NotepadRepository;
 use EtoA\Support\Mail\MailSenderService;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Universe\Planet\PlanetService;
@@ -833,10 +834,10 @@ class User implements \EtoA\User\UserInterface
             $marketShipRepository->deleteUserOffers($this->id);       // Schiff Angebot
             $marketAuctionRepository->deleteUserAuctions($this->id); // Auktionen
 
-            //Notitzen löschen
-            $np = new Notepad($this->id);
-            $numNotes = $np->deleteAll();
-            unset($np);
+            //Notizen löschen
+            /** @var NotepadRepository */
+            $notepadRepository = $app[NotepadRepository::class];
+            $notepadRepository->deleteAll($this->id);
 
             //Gespeicherte Koordinaten löschen
             dbquery("DELETE FROM bookmarks WHERE user_id='" . $this->id . "';");
