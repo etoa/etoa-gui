@@ -1,6 +1,6 @@
 <?PHP
 
-use EtoA\Support\DatabaseBackupService;
+use EtoA\Support\DB\DatabaseBackupService;
 
 require("inc/includer.inc.php");
 

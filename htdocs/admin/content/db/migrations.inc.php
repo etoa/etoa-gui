@@ -1,7 +1,7 @@
 <?PHP
 
-use EtoA\Support\SchemaMigrationRepository;
-use EtoA\Support\DatabaseMigrationService;
+use EtoA\Support\DB\SchemaMigrationRepository;
+use EtoA\Support\DB\DatabaseMigrationService;
 
 /** @var SchemaMigrationRepository */
 $schemaMigrationRepository = $app[SchemaMigrationRepository::class];

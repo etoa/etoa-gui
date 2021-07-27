@@ -8,7 +8,7 @@ use EtoA\Building\BuildingRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Defense\DefenseRepository;
 use EtoA\Ship\ShipRepository;
-use EtoA\Support\DatabaseManagerRepository;
+use EtoA\Support\DB\DatabaseManagerRepository;
 use EtoA\Universe\Asteroid\AsteroidRepository;
 use EtoA\Universe\Cell\CellRepository;
 use EtoA\Universe\EmptySpace\EmptySpaceRepository;

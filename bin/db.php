@@ -2,9 +2,9 @@
 <?PHP
 
 use EtoA\Core\Configuration\ConfigurationService;
-use EtoA\Support\DatabaseBackupService;
-use EtoA\Support\DatabaseManagerRepository;
-use EtoA\Support\DatabaseMigrationService;
+use EtoA\Support\DB\DatabaseBackupService;
+use EtoA\Support\DB\DatabaseManagerRepository;
+use EtoA\Support\DB\DatabaseMigrationService;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 

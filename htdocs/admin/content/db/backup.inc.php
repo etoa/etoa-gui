@@ -1,7 +1,7 @@
 <?PHP
 
 use EtoA\Core\Configuration\ConfigurationService;
-use EtoA\Support\DatabaseBackupService;
+use EtoA\Support\DB\DatabaseBackupService;
 
 /** @var ConfigurationService */
 $config = $app[ConfigurationService::class];

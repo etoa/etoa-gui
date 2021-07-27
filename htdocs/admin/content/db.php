@@ -1,6 +1,6 @@
 <?PHP
 
-use EtoA\Support\DatabaseManagerRepository;
+use EtoA\Support\DB\DatabaseManagerRepository;
 
 $twig->addGlobal('title', 'Datenbank');
 

@@ -3,7 +3,7 @@
 declare(strict_types=1);
 
 use EtoA\Core\Configuration\ConfigurationService;
-use EtoA\Support\DatabaseMigrationService;
+use EtoA\Support\DB\DatabaseMigrationService;
 use Twig\Environment;
 
 if (!isset($app)) {

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace EtoA\Support;
+namespace EtoA\Support\DB;
 
 use EtoA\Core\Configuration\ConfigurationService;
 use Pimple\Container;

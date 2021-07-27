@@ -1,10 +1,10 @@
 <?PHP
 
 use EtoA\Core\Configuration\ConfigurationService;
-use EtoA\Support\DatabaseBackupService;
-use EtoA\Support\DatabaseManagerRepository;
-use EtoA\Support\DatabaseMigrationService;
-use EtoA\Support\SchemaMigrationRepository;
+use EtoA\Support\DB\DatabaseBackupService;
+use EtoA\Support\DB\DatabaseManagerRepository;
+use EtoA\Support\DB\DatabaseMigrationService;
+use EtoA\Support\DB\SchemaMigrationRepository;
 
 /** @var ConfigurationService */
 $config = $app[ConfigurationService::class];
