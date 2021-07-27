@@ -90,6 +90,7 @@ if (isset($_GET['manage'])) {
     }
 
     echo $twig->render('admin/misc/imagepacks-check.html.twig', [
+        'imagePackName' => $imagePackName,
         'results' => $results,
         'errorMessage' => $errorMessage,
     ]);

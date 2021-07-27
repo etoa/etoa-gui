@@ -5,11 +5,11 @@
 {% block content %}
     <h1>Bildpakete verwalten</h1>
 
-    {if $msg|default:'' ne ""}{msg type="ok" text=$msg}{/if}
-    {if $infomsg|default:'' ne ""}{msg type="info" text=$infomsg}{/if}
-    {if $errmsg|default:'' ne ""}{msg type="err" text=$errmsg}{/if}
+    {% if errorMessage %}
+        {{ macros.messagebox(errorMessage, 'error') }}
+    {% endif %}
 
-    {% if imagepackName %}<h2>Bilder überprüfen: {{ imagepackName }}</h2>{% endif %}
+    {% if imagePackName ?? null %}<h2>Bilder überprüfen: {{ imagePackName }}</h2>{% endif %}
 
     {% if results %}
     <ul>
