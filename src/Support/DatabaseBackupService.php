@@ -4,15 +4,37 @@ declare(strict_types=1);
 
 namespace EtoA\Support;
 
+use EtoA\Core\Configuration\ConfigurationService;
 use Exception;
 
 class DatabaseBackupService
 {
     private DatabaseManagerRepository $databaseManagerRepository;
+    private ConfigurationService $config;
 
-    public function __construct(DatabaseManagerRepository $databaseManagerRepository)
-    {
+    public function __construct(
+        DatabaseManagerRepository $databaseManagerRepository,
+        ConfigurationService $config
+    ) {
         $this->databaseManagerRepository = $databaseManagerRepository;
+        $this->config = $config;
+    }
+
+    public function getBackupDir(): ?string
+    {
+        $backupDir = $this->config->get('backup_dir');
+        if ($backupDir) {
+            if (is_dir($backupDir)) {
+                return $backupDir;
+            }
+        } else {
+            $backupDir = RELATIVE_ROOT . '../backup';
+            if (is_dir($backupDir)) {
+                return $backupDir;
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -190,5 +212,24 @@ class DatabaseBackupService
         }
 
         file_put_contents($file, $str);
+    }
+
+    /**
+     * Removes old backup files
+     * @return int The number of removed files
+     */
+    public function removeOldBackups(string $dir, int $days): int
+    {
+        $deleted = 0;
+        $time = time();
+        $files = array_merge(glob($dir . "/*.sql"), glob($dir . "/*.sql.gz"));
+        foreach ($files as $f) {
+            if (is_file($f) && $time - filemtime($f) >= 86400 * $days) {
+                unlink($f);
+                $deleted++;
+            }
+        }
+
+        return $deleted;
     }
 }

@@ -29,7 +29,7 @@ if (isset($_POST['submit'])) {
 
     try {
         // Do the backup
-        $dir = DBManager::getBackupDir();
+        $dir = $databaseBackupService->getBackupDir();
         $gzip = $config->getBoolean('backup_use_gzip');
 
         // Acquire mutex

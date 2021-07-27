@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace EtoA\Support;
 
+use EtoA\Core\Configuration\ConfigurationService;
 use Pimple\Container;
 use Pimple\ServiceProviderInterface;
 
@@ -20,7 +21,10 @@ class DatabaseManagerServiceProvider implements ServiceProviderInterface
         };
 
         $pimple[DatabaseBackupService::class] = function (Container $pimple): DatabaseBackupService {
-            return new DatabaseBackupService($pimple[DatabaseManagerRepository::class]);
+            return new DatabaseBackupService(
+                $pimple[DatabaseManagerRepository::class],
+                $pimple[ConfigurationService::class]
+            );
         };
 
         $pimple[DatabaseMigrationService::class] = function (Container $pimple): DatabaseMigrationService {

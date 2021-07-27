@@ -275,49 +275,6 @@ class DBManager implements ISingleton
     }
 
     /**
-     * Returns the backup directory path, if it exists
-     */
-    public static function getBackupDir()
-    {
-        // TODO
-        global $app;
-
-        /** @var ConfigurationService */
-        $config = $app[ConfigurationService::class];
-
-        $backupDir = $config->get('backup_dir');
-        if ($backupDir) {
-            if (is_dir($backupDir)) {
-                return $backupDir;
-            }
-        } else {
-            $backupDir = RELATIVE_ROOT . '../backup';
-            if (is_dir($backupDir)) {
-                return $backupDir;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Removes old backup files
-     * @return int The number of removed files
-     */
-    public static function removeOldBackups($dir, $days)
-    {
-        $deleted = 0;
-        $time = time();
-        $files = array_merge(glob($dir . "/*.sql"), glob($dir . "/*.sql.gz"));
-        foreach ($files as $f) {
-            if (is_file($f) && $time - filemtime($f) >= 86400 * $days) {
-                unlink($f);
-                $deleted++;
-            }
-        }
-        return $deleted;
-    }
-
-    /**
      * Writes a message to error log
      */
     private function writeMsgToErrorLog($message)

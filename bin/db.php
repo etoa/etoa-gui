@@ -132,7 +132,10 @@ else if ($action == "backup")
     /** @var ConfigurationService */
     $config = $app[ConfigurationService::class];
 
-    $dir = DBManager::getBackupDir();
+    /** @var DatabaseBackupService */
+    $databaseBackupService = $app[DatabaseBackupService::class];
+
+    $dir = $databaseBackupService->getBackupDir();
     $gzip = $config->getBoolean('backup_use_gzip');
     $mtx = new Mutex();
 
@@ -140,9 +143,6 @@ else if ($action == "backup")
     {
         // Acquire mutex
         $mtx->acquire();
-
-        /** @var DatabaseBackupService */
-        $databaseBackupService = $app[DatabaseBackupService::class];
 
         // Restore database
         $log = $databaseBackupService->backupDB($dir, $gzip);
@@ -189,7 +189,7 @@ else if ($action == "restore")
     /** @var DatabaseBackupService */
     $databaseBackupService = $app[DatabaseBackupService::class];
 
-    $dir = DBManager::getBackupDir();
+    $dir = $databaseBackupService->getBackupDir();
 
     // Check if restore point specified
     if (isset($args[0]))

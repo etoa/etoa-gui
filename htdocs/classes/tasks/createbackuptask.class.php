@@ -20,12 +20,12 @@ class CreateBackupTask implements IPeriodicTask
 
     function run()
     {
-        $backupDir = DBManager::getBackupDir();
+        $backupDir = $this->databaseBackupService->getBackupDir();
         $gzip = $this->config->getBoolean('backup_use_gzip');
 
         if ($backupDir != null) {
             // Remove old backup files
-            $cleaned = DBManager::removeOldBackups($backupDir, $this->config->getInt('backup_retention_time'));
+            $cleaned = $this->databaseBackupService->removeOldBackups($backupDir, $this->config->getInt('backup_retention_time'));
 
             $log = $this->databaseBackupService->backupDB($backupDir, $gzip);
             return $log . ", $cleaned alte Backup-Dateien gelöscht";

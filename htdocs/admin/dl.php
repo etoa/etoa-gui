@@ -1,4 +1,7 @@
 <?PHP
+
+use EtoA\Support\DatabaseBackupService;
+
 require("inc/includer.inc.php");
 
 if ($s->user_id) {
@@ -10,8 +13,12 @@ if ($s->user_id) {
             realpath(CACHE_ROOT),
             realpath(ADMIN_FILESHARING_DIR),
         );
-        $backupDir = DBManager::getBackupDir();
-        if ($backupDir) {
+
+        /** @var DatabaseBackupService */
+        $databaseBackupService = $app[DatabaseBackupService::class];
+
+        $backupDir = $databaseBackupService->getBackupDir();
+        if ($backupDir !== null) {
             $allowedDirs[] = realpath($backupDir);
         }
         $allow = false;

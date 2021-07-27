@@ -16,7 +16,7 @@ if (isset($_POST['create'])) {
     $mtx = new Mutex();
 
     try {
-        $dir = DBManager::getBackupDir();
+        $dir = $databaseBackupService->getBackupDir();
         $gzip = $config->getBoolean('backup_use_gzip');
 
         // Acquire mutex
@@ -49,7 +49,7 @@ if (isset($_POST['create'])) {
 elseif (isset($_GET['action']) && $_GET['action'] === "backuprestore" && $_GET['date'] != "") {
     // Sicherungskopie anlegen
     try {
-        $dir = DBManager::getBackupDir();
+        $dir = $databaseBackupService->getBackupDir();
         $restorePoint = $_GET['date'];
         $gzip = $config->getBoolean('backup_use_gzip');
 
@@ -98,10 +98,10 @@ if (isset($_POST['submit_changes'])) {
     $successMessage = 'Einstellungen gespeichert';
 }
 
-$dir = DBManager::getBackupDir();
+$dir = $databaseBackupService->getBackupDir();
 $backupDir = null;
 $backups = null;
-if ($dir) {
+if ($dir !== null) {
     $backupDir = realpath($dir);
 
     $backupFiles = $databaseBackupService->getBackupImages($dir, false);
