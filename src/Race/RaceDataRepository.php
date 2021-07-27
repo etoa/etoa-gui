@@ -11,13 +11,17 @@ class RaceDataRepository extends AbstractRepository
      *
      * @return array<int, string>
      */
-    public function getRaceNames(): array
+    public function getRaceNames(bool $showAll = false, bool $orderById = false): array
     {
-        return $this->createQueryBuilder()
-            ->select('r.race_id, r.race_name')
-            ->from('races', 'r')
-            ->andWhere('r.race_active = 1')
-            ->orderBy('r.race_name')
+        $qry = $this->createQueryBuilder()
+            ->select('race_id', 'race_name')
+            ->from('races');
+
+        if (!$showAll) {
+            $qry->andWhere('race_active = 1');
+        }
+
+        return $qry->orderBy($orderById ? 'race_id' : 'race_name')
             ->execute()
             ->fetchAllKeyValue();
     }

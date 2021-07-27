@@ -23,4 +23,31 @@ abstract class AbstractRepository
     {
         return $this->connection;
     }
+
+    /**
+     * @return int[]
+     */
+    protected function fetchIds(string $table, string $idField): array
+    {
+        $data = $this->createQueryBuilder()
+            ->select($idField)
+            ->from($table)
+            ->execute()
+            ->fetchFirstColumn();
+
+        return array_map(fn ($val) => (int) $val, $data);
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    protected function fetchIdsWithNames(string $table, string $idField, string $nameField, bool $orderById = false): array
+    {
+        return $this->createQueryBuilder()
+            ->select($idField, $nameField)
+            ->from($table)
+            ->orderBy($orderById ? $idField : $nameField)
+            ->execute()
+            ->fetchAllKeyValue();
+    }
 }

@@ -71,15 +71,16 @@
             </tr>
             </thead>
             <tbody>
-            {% for i in data.1 %}
+            {% for k,v in data.1 %}
                 <tr>
-                    {% if i is iterable %}
-                        <td><code>{{ data.0 }}{{ i.0 }}.{{ baseType }}</code></td>
-                        <td>{{ i.1}}</td>
-                    {% else %}
-                        <td><code>{{ data.0 }}{{ i }}.{{ baseType }}</code></td>
-                        <td>-</td>
-                    {% endif %}
+                    <td><code>{{ data.0 }}{{ k }}.{{ baseType }}</code></td>
+                    <td>
+                      {% if v matches '/^\\d+$/' %}
+                        -
+                      {% else %}
+                        {{ v }}
+                      {% endif %}
+                    </td>
                 </tr>
             {% endfor %}
             </tbody>

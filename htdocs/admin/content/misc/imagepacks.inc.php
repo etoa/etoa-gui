@@ -1,9 +1,45 @@
 <?PHP
 
+use EtoA\Alliance\AllianceBuildingRepository;
+use EtoA\Alliance\AllianceTechnologyRepository;
+use EtoA\Building\BuildingDataRepository;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Defense\DefenseDataRepository;
+use EtoA\Missile\MissileDataRepository;
+use EtoA\Race\RaceDataRepository;
+use EtoA\Ship\ShipDataRepository;
+use EtoA\Technology\TechnologyDataRepository;
+use EtoA\Universe\Star\SolarTypeRepository;
 
 /** @var ConfigurationService */
 $config = $app[ConfigurationService::class];
+
+/** @var AllianceBuildingRepository */
+$allianceBuildingRepository = $app[AllianceBuildingRepository::class];
+
+/** @var AllianceTechnologyRepository */
+$allianceTechnologyRepository = $app[AllianceTechnologyRepository::class];
+
+/** @var BuildingDataRepository */
+$buildingDataRepository = $app[BuildingDataRepository::class];
+
+/** @var DefenseDataRepository */
+$defenseDataRepository = $app[DefenseDataRepository::class];
+
+/** @var MissileDataRepository */
+$missileDataRepository = $app[MissileDataRepository::class];
+
+/** @var RaceDataRepository */
+$raceDataRepository = $app[RaceDataRepository::class];
+
+/** @var ShipDataRepository */
+$shipDataRepository = $app[ShipDataRepository::class];
+
+/** @var SolarTypeRepository */
+$solarTypeRepository = $app[SolarTypeRepository::class];
+
+/** @var TechnologyDataRepository */
+$technologyDataRepository = $app[TechnologyDataRepository::class];
 
 $twig->addGlobal('title', 'Bildpakete verwalten');
 
@@ -26,27 +62,27 @@ if (isset($_GET['manage'])) {
         $cdir = $imagepack['dir'];
         $exts = $imagepack['extensions'];
 
-        $sizes = array(
+        $sizes = [
             "" => $config->getInt('imagesize'),
             "_middle" => $config->param1Int('imagesize'),
-            "_small" => $config->param2Int('imagesize')
-        );
+            "_small" => $config->param2Int('imagesize'),
+        ];
 
-        $dira = array(
-            "abuildings" => array("building", DBManager::getInstance()->getArrayFromTable("alliance_buildings", "alliance_building_id")),
-            "atechnologies" => array("technology", DBManager::getInstance()->getArrayFromTable("alliance_technologies", "alliance_tech_id")),
-            "buildings" => array("building", DBManager::getInstance()->getArrayFromTable("buildings", "building_id")),
-            "defense" => array("def", DBManager::getInstance()->getArrayFromTable("defense", "def_id")),
-            "missiles" => array("missile", DBManager::getInstance()->getArrayFromTable("missiles", "missile_id")),
-            "ships" => array("ship", DBManager::getInstance()->getArrayFromTable("ships", "ship_id")),
-            "stars" => array("star", DBManager::getInstance()->getArrayFromTable("sol_types", "sol_type_id")),
-            "technologies" => array("technology", DBManager::getInstance()->getArrayFromTable("technologies", "tech_id")),
-            "nebulas" => array("nebula", range(1, $config->getInt('num_nebula_images'))),
-            "asteroids" => array("asteroids", range(1, $config->getInt('num_asteroid_images'))),
-            "space" => array("space", range(1, $config->getInt('num_space_images'))),
-            "wormholes" => array("wormhole", range(1, $config->getInt('num_wormhole_images'))),
-            "races" => array("race", DBManager::getInstance()->getArrayFromTable("races", "race_id")),
-        );
+        $dira = [
+            "abuildings" => ["building", array_keys($allianceBuildingRepository->getNames(true))],
+            "asteroids" => ["asteroids", range(1, $config->getInt('num_asteroid_images'))],
+            "atechnologies" => ["technology", array_keys($allianceTechnologyRepository->getNames(true))],
+            "buildings" => ["building", array_keys($buildingDataRepository->getBuildingNames(true, true))],
+            "defense" => ["def", array_keys($defenseDataRepository->getDefenseNames(true, true))],
+            "missiles" => ["missile", array_keys($missileDataRepository->getMissileNames(true, true))],
+            "races" => ["race", array_keys($raceDataRepository->getRaceNames(true, true))],
+            "ships" => ["ship", array_keys($shipDataRepository->getShipNames(true, true))],
+            "stars" => ["star", array_keys($solarTypeRepository->getSolarTypeNames(true, true))],
+            "technologies" => ["technology", array_keys($technologyDataRepository->getTechnologyNames(true, true))],
+            "nebulas" => ["nebula", range(1, $config->getInt('num_nebula_images'))],
+            "space" => ["space", range(1, $config->getInt('num_space_images'))],
+            "wormholes" => ["wormhole", range(1, $config->getInt('num_wormhole_images'))],
+        ];
 
         foreach ($dira as $sdir => $sd) {
             $sprefix = $sd[0];
@@ -90,6 +126,7 @@ if (isset($_GET['manage'])) {
     }
 
     echo $twig->render('admin/misc/imagepacks-check.html.twig', [
+        'imagePackName' => $imagePackName,
         'results' => $results,
         'errorMessage' => $errorMessage,
     ]);
@@ -122,19 +159,19 @@ if (isset($_GET['download'])) {
 $sampleInfoFile = RELATIVE_ROOT . $config->get('default_image_path') . '/' . IMAGEPACK_CONFIG_FILE_NAME;
 
 $required_images = [
-    "abuildings" => array("building", DBManager::getInstance()->getArrayFromTable("alliance_buildings", ["alliance_building_id", "alliance_building_name"], "alliance_building_id")),
-    "asteroids" => array("asteroids", range(1, $config->getInt('num_asteroid_images'))),
-    "atechnologies" => array("technology", DBManager::getInstance()->getArrayFromTable("alliance_technologies", ["alliance_tech_id", "alliance_tech_name"], "alliance_tech_id")),
-    "buildings" => array("building", DBManager::getInstance()->getArrayFromTable("buildings", ["building_id", "building_name"], "building_id")),
-    "defense" => array("def", DBManager::getInstance()->getArrayFromTable("defense", ["def_id", "def_name"], "def_id")),
-    "missiles" => array("missile", DBManager::getInstance()->getArrayFromTable("missiles", ["missile_id", "missile_name"], "missile_id")),
-    "nebulas" => array("nebula", range(1, $config->getInt('num_nebula_images'))),
-    "races" => array("race", DBManager::getInstance()->getArrayFromTable("races", ["race_id", "race_name"], "race_id")),
-    "ships" => array("ship", DBManager::getInstance()->getArrayFromTable("ships", ["ship_id", "ship_name"], "ship_id")),
-    "space" => array("space", range(1, $config->getInt('num_space_images'))),
-    "stars" => array("star", DBManager::getInstance()->getArrayFromTable("sol_types", ["sol_type_id", "sol_type_name"], "sol_type_id")),
-    "technologies" => array("technology", DBManager::getInstance()->getArrayFromTable("technologies", ["tech_id", "tech_name"], "tech_id")),
-    "wormholes" => array("wormhole", range(1, $config->getInt('num_wormhole_images'))),
+    "abuildings" => ["building", $allianceBuildingRepository->getNames(true)],
+    "asteroids" => ["asteroids", range(1, $config->getInt('num_asteroid_images'))],
+    "atechnologies" => ["technology", $allianceTechnologyRepository->getNames(true)],
+    "buildings" => ["building", $buildingDataRepository->getBuildingNames(true, true)],
+    "defense" => ["def", $defenseDataRepository->getDefenseNames(true, true)],
+    "missiles" => ["missile", $missileDataRepository->getMissileNames(true, true)],
+    "nebulas" => ["nebula", range(1, $config->getInt('num_nebula_images'))],
+    "races" => ["race", $raceDataRepository->getRaceNames(true, true)],
+    "ships" => ["ship", $shipDataRepository->getShipNames(true, true)],
+    "space" => ["space", range(1, $config->getInt('num_space_images'))],
+    "stars" => ["star", $solarTypeRepository->getSolarTypeNames(true, true)],
+    "technologies" => ["technology", $technologyDataRepository->getTechnologyNames(true, true)],
+    "wormholes" => ["wormhole", range(1, $config->getInt('num_wormhole_images'))],
 ];
 echo $twig->render('admin/misc/imagepacks.html.twig', [
     'errorMessage' => $errorMessage,

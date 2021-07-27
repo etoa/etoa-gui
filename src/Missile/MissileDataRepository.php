@@ -21,10 +21,10 @@ class MissileDataRepository extends AbstractRepository
     /**
      * @return array<int, string>
      */
-    public function getMissileNames(bool $showAll = false): array
+    public function getMissileNames(bool $showAll = false, bool $orderById = false): array
     {
         $qb = $this->createQueryBuilder()
-            ->select('missile_id, missile_name')
+            ->select('missile_id', 'missile_name')
             ->addSelect()
             ->from('missiles');
 
@@ -33,7 +33,7 @@ class MissileDataRepository extends AbstractRepository
         }
 
         return $qb
-            ->orderBy('missile_name')
+            ->orderBy($orderById ? 'missile_id' : 'missile_name')
             ->execute()
             ->fetchAllKeyValue();
     }
