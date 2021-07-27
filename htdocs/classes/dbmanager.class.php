@@ -14,10 +14,7 @@ class DBManager implements ISingleton
     const configFile = "db.conf";
     private $dbCfg;
     private $handle;
-    private $queryCount = 0;
-    private $queries  = array();
     private $isOpen = false;
-    private $logQueries = false;
 
     /**
      * Get instance with this very nice singleton design pattern
@@ -132,18 +129,6 @@ class DBManager implements ISingleton
      */
     function close()
     {
-        if ($this->logQueries) {
-            echo "Queries done: " . $this->queryCount . "<br/>";
-            foreach ($this->queries as $q) {
-                echo "<b>" . $q[0] . "</b><br/>" . ($q[1]) . "<br/>";
-                $res = mysql_query("EXPLAIN " . $q[0] . "");
-                $this->drawQueryResult($res);
-                echo "<br/>";
-            }
-        }
-        if (isset($res)) {
-            @mysql_free_result($res);
-        }
         @mysql_close($this->handle);
         unset($this->handle);
         $this->isOpen = false;
@@ -161,15 +146,9 @@ class DBManager implements ISingleton
             $this->connect();
         }
 
-        $this->queryCount++;
-        if ($this->logQueries && stristr($string, "SELECT")) {
-            ob_start();
-            debug_print_backtrace();
-            $this->queries[] = array($string, ob_get_clean());
-        }
-        if ($result = mysql_query($string, $this->handle))
+        if ($result = mysql_query($string, $this->handle)) {
             return $result;
-        elseif ($fehler == 1) {
+        } elseif ($fehler == 1) {
             try {
                 throw new DBException($string);
             } catch (DBException $e) {
@@ -217,27 +196,6 @@ class DBManager implements ISingleton
         if (get_magic_quotes_gpc())
             $string = stripslashes($string);
         return mysql_real_escape_string($string);
-    }
-
-    function drawQueryResult($res)
-    {
-        if (mysql_num_rows($res) > 0) {
-            echo "<table class=\"tb\"><tr>";
-            for ($x = 0; $x < mysql_num_fields($res); $x++) {
-                echo "<th>" . mysql_field_name($res, $x) . "</th>";
-            }
-            echo "</tr>";
-            while ($arr = mysql_fetch_row($res)) {
-                echo "<tr>";
-                foreach ($arr as $a) {
-                    echo "<td>" . $a . "</td>";
-                }
-                echo "</tr>";
-            }
-            echo "</table>";
-        } else {
-            echo "No result!<br/>";
-        }
     }
 
     function getArrayFromTable($table, $field, $sort = null)
