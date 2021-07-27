@@ -1,8 +1,10 @@
 <?PHP
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Support\DatabaseBackupService;
 use EtoA\Support\DatabaseManagerRepository;
 use EtoA\Support\DatabaseMigrationService;
+use EtoA\Support\SchemaMigrationRepository;
 
 /** @var ConfigurationService */
 $config = $app[ConfigurationService::class];
@@ -12,6 +14,9 @@ $databaseManager = $app[DatabaseManagerRepository::class];
 
 /** @var DatabaseMigrationService */
 $databaseMigrationService = $app[DatabaseMigrationService::class];
+
+/** @var DatabaseBackupService */
+$databaseBackupService = $app[DatabaseBackupService::class];
 
 $successMessage = null;
 $errorMessage = null;
@@ -31,7 +36,7 @@ if (isset($_POST['submit'])) {
         $mtx->acquire();
 
         // Do the backup
-        $log = $databaseManager->backupDB($dir, $gzip);
+        $log = $databaseBackupService->backupDB($dir, $gzip);
 
         // Release mutex
         $mtx->release();
@@ -44,7 +49,7 @@ if (isset($_POST['submit'])) {
             $tbls = DBManager::getInstance()->getAllTables();
             $emptyTables = [];
             foreach ($tbls as $t) {
-                if (!in_array($t, $persistentTables['definitions'], true) && $t !== DatabaseManagerRepository::SCHEMA_MIGRATIONS_TABLE) {
+                if (!in_array($t, $persistentTables['definitions'], true) && $t !== SchemaMigrationRepository::SCHEMA_MIGRATIONS_TABLE) {
                     $emptyTables[] = $t;
                 }
             }

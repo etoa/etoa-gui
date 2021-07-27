@@ -2,6 +2,7 @@
 <?PHP
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Support\DatabaseBackupService;
 use EtoA\Support\DatabaseManagerRepository;
 use EtoA\Support\DatabaseMigrationService;
 
@@ -140,11 +141,11 @@ else if ($action == "backup")
         // Acquire mutex
         $mtx->acquire();
 
-        /** @var DatabaseManagerRepository */
-        $databaseManager = $app[DatabaseManagerRepository::class];
+        /** @var DatabaseBackupService */
+        $databaseBackupService = $app[DatabaseBackupService::class];
 
         // Restore database
-        $log = $databaseManager->backupDB($dir, $gzip);
+        $log = $databaseBackupService->backupDB($dir, $gzip);
 
         // Release mutex
         $mtx->release();
@@ -185,8 +186,8 @@ else if ($action == "restore")
         $app->boot();
     }
 
-    /** @var DatabaseManagerRepository */
-    $databaseManager = $app[DatabaseManagerRepository::class];
+    /** @var DatabaseBackupService */
+    $databaseBackupService = $app[DatabaseBackupService::class];
 
     $dir = DBManager::getBackupDir();
 
@@ -202,7 +203,7 @@ else if ($action == "restore")
             $mtx->acquire();
 
             // Restore database
-            $log = $databaseManager->restoreDB($dir, $restorePoint);
+            $log = $databaseBackupService->restoreDB($dir, $restorePoint);
 
             // Release mutex
             $mtx->release();
@@ -236,7 +237,7 @@ else if ($action == "restore")
     {
         echo "\nUsage: ".$_SERVER['argv'][0]." ".$action." [restore_point]\n\n";
         echo "Available restore points:\n\n";
-        $dates = $databaseManager->getBackupImages($dir);
+        $dates = $databaseBackupService->getBackupImages($dir);
         foreach ($dates as $f)
         {
             echo "$f\n";

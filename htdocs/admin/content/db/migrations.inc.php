@@ -1,10 +1,10 @@
 <?PHP
 
-use EtoA\Support\DatabaseManagerRepository;
+use EtoA\Support\SchemaMigrationRepository;
 use EtoA\Support\DatabaseMigrationService;
 
-/** @var DatabaseManagerRepository */
-$databaseManager = $app[DatabaseManagerRepository::class];
+/** @var SchemaMigrationRepository */
+$schemaMigrationRepository = $app[SchemaMigrationRepository::class];
 
 /** @var DatabaseMigrationService */
 $databaseMigrationService = $app[DatabaseMigrationService::class];
@@ -39,7 +39,7 @@ if (isset($_POST['migrate'])) {
 }
 
 echo $twig->render('admin/database/migrations.html.twig', [
-    'data' => $databaseManager->getMigrations(),
+    'data' => $schemaMigrationRepository->getMigrations(),
     'pending' => $databaseMigrationService->getPendingMigrations(),
     'successMessage' => $successMessage,
     'errorMessage' => $errorMessage,

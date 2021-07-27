@@ -1,13 +1,13 @@
 <?PHP
 
 use EtoA\Core\Configuration\ConfigurationService;
-use EtoA\Support\DatabaseManagerRepository;
+use EtoA\Support\DatabaseBackupService;
 
 /** @var ConfigurationService */
 $config = $app[ConfigurationService::class];
 
-/** @var DatabaseManagerRepository */
-$databaseManager = $app[DatabaseManagerRepository::class];
+/** @var DatabaseBackupService */
+$databaseBackupService = $app[DatabaseBackupService::class];
 
 // Backup erstellen
 $successMessage = null;
@@ -23,7 +23,7 @@ if (isset($_POST['create'])) {
         $mtx->acquire();
 
         // Do the backup
-        $log = $databaseManager->backupDB($dir, $gzip);
+        $log = $databaseBackupService->backupDB($dir, $gzip);
 
         // Release mutex
         $mtx->release();
@@ -61,11 +61,11 @@ elseif (isset($_GET['action']) && $_GET['action'] === "backuprestore" && $_GET['
 
             // Backup current database
             $log = 'Anlegen einer Sicherungskopie: ';
-            $log .= $databaseManager->backupDB($dir, $gzip);
+            $log .= $databaseBackupService->backupDB($dir, $gzip);
 
             // Restore database
             $log .= "\nWiederherstellen der Datenbank: ";
-            $log .= $databaseManager->restoreDB($dir, $restorePoint);
+            $log .= $databaseBackupService->restoreDB($dir, $restorePoint);
 
             // Release mutex
             $mtx->release();
@@ -104,7 +104,7 @@ $backups = null;
 if ($dir) {
     $backupDir = realpath($dir);
 
-    $backupFiles = $databaseManager->getBackupImages($dir, false);
+    $backupFiles = $databaseBackupService->getBackupImages($dir, false);
 
     $backups = [];
     foreach ($backupFiles as $f) {

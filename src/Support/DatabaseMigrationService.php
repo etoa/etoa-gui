@@ -6,11 +6,15 @@ namespace EtoA\Support;
 
 class DatabaseMigrationService
 {
-    private DatabaseManagerRepository $databaseManagerRepository;
+    private SchemaMigrationRepository $schemaMigrationRepository;
+    private DatabaseBackupService $databaseBackupService;
 
-    public function __construct(DatabaseManagerRepository $databaseManagerRepository)
-    {
-        $this->databaseManagerRepository = $databaseManagerRepository;
+    public function __construct(
+        SchemaMigrationRepository $schemaMigrationRepository,
+        DatabaseBackupService $databaseBackupService
+    ) {
+        $this->schemaMigrationRepository = $schemaMigrationRepository;
+        $this->databaseBackupService = $databaseBackupService;
     }
 
     /**
@@ -23,7 +27,7 @@ class DatabaseMigrationService
         $migrations = [];
         foreach ($files as $f) {
             $pi = pathinfo($f, PATHINFO_FILENAME);
-            $date = $this->databaseManagerRepository->getMigrationDate($pi);
+            $date = $this->schemaMigrationRepository->getMigrationDate($pi);
             if ($date === null) {
                 $migrations[] = $pi;
             }
@@ -34,8 +38,8 @@ class DatabaseMigrationService
 
     public function migrate(): int
     {
-        if (!$this->databaseManagerRepository->hasMigrationTable()) {
-            $this->databaseManagerRepository->loadFile(RELATIVE_ROOT . '../db/init_schema_migrations.sql');
+        if (!$this->schemaMigrationRepository->hasMigrationTable()) {
+            $this->databaseBackupService->loadFile(RELATIVE_ROOT . '../db/init_schema_migrations.sql');
         }
 
         $files = glob(RELATIVE_ROOT . '../db/migrations/*.sql');
@@ -43,11 +47,11 @@ class DatabaseMigrationService
         $cnt = 0;
         foreach ($files as $f) {
             $pi = pathinfo($f, PATHINFO_FILENAME);
-            $date = $this->databaseManagerRepository->getMigrationDate($pi);
+            $date = $this->schemaMigrationRepository->getMigrationDate($pi);
             if ($date === null) {
                 echo $pi . "\n";
-                $this->databaseManagerRepository->loadFile($f);
-                $this->databaseManagerRepository->addMigration($pi);
+                $this->databaseBackupService->loadFile($f);
+                $this->schemaMigrationRepository->addMigration($pi);
                 $cnt++;
             }
         }
