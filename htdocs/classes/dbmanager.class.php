@@ -156,40 +156,6 @@ class DBManager implements ISingleton
         return mysql_real_escape_string($string);
     }
 
-    function getArrayFromTable($table, $field, $sort = null)
-    {
-        $r = array();
-        $order = $sort ? ' ORDER BY `' . $sort . '` ASC' : '';
-        if (is_array($field)) {
-            $res = $this->query("
-			SELECT
-				`" . implode('`,`', $field) . "`
-			FROM
-				`" . $table . "`
-			$order
-			");
-            if (mysql_num_rows($res) > 0) {
-                while ($arr = mysql_fetch_row($res)) {
-                    $r[] = $arr;
-                }
-            }
-        } else {
-            $res = $this->query("
-			SELECT
-				`" . $field . "`
-			FROM
-				`" . $table . "`
-			$order
-			");
-            if (mysql_num_rows($res) > 0) {
-                while ($arr = mysql_fetch_row($res)) {
-                    $r[] = $arr[0];
-                }
-            }
-        }
-        return $r;
-    }
-
     /**
      * Writes a message to error log
      */
