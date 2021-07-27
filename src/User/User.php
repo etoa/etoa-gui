@@ -142,9 +142,4 @@ class User
         $this->npc = (int) $data['npc'];
         $this->userChangedMainPlanet = (bool) $data['user_changed_main_planet'];
     }
-
-    public function getEmailAddressWithDisplayName(): string
-    {
-        return $this->nick . "<" . $this->email . ">";
-    }
 }

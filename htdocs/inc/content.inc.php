@@ -3,6 +3,7 @@
 use EtoA\Admin\AdminUserRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Quest\QuestResponseListener;
+use EtoA\Support\Mail\MailSenderService;
 use EtoA\Text\TextRepository;
 use EtoA\Support\RuntimeDataStore;
 use EtoA\Tip\TipRepository;
@@ -13,6 +14,9 @@ $runtimeDataStore = $app[RuntimeDataStore::class];
 
 /** @var ConfigurationService */
 $config = $app[ConfigurationService::class];
+
+/** @var MailSenderService $mailSenderService */
+$mailSenderService = $app[MailSenderService::class];
 
 $time = time();
 
@@ -76,8 +80,7 @@ if (!$cu->isSetup() && $page != "help" && $page != "contact") {
             $email_text .= "Damit du alle Funktionen von Escape to Andromeda benutzen kannst muss deine E-Mail Adresse verifiziert werden. Bitte klicke auf den folgenden Link, um die Verifikation für die " . $config->get('roundname') . " abzuschliessen:\n\n";
             $email_text .= $verificationUrl . "\n\n";
             $email_text .= "Viel Spass beim Spielen!\nDas EtoA-Team";
-            $mail = new Mail("Account-Bestätigung", $email_text);
-            $mail->send($cu->email);
+            $mailSenderService->send("Account-Bestätigung", $email_text, $cu->email);
             success_msg("Bestätigungsmail wurde gesendet!");
         } else {
             iBoxStart("Verifikation erforderlich");

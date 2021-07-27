@@ -9,10 +9,10 @@ use EtoA\Building\BuildingRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Defense\DefenseQueueRepository;
 use EtoA\Ship\ShipQueueRepository;
+use EtoA\Support\Mail\MailSenderService;
 use EtoA\Technology\TechnologyRepository;
 use EtoA\Universe\Planet\PlanetRepository;
 use Log;
-use Mail;
 
 class UserService
 {
@@ -23,6 +23,7 @@ class UserService
     private TechnologyRepository $technologyRepository;
     private ShipQueueRepository $shipQueueRepository;
     private DefenseQueueRepository $defenseQueueRepository;
+    private MailSenderService $mailSenderService;
 
     public function __construct(
         ConfigurationService $config,
@@ -31,7 +32,8 @@ class UserService
         BuildingRepository $buildingRepository,
         TechnologyRepository $technologyRepository,
         ShipQueueRepository $shipQueueRepository,
-        DefenseQueueRepository $defenseRepository
+        DefenseQueueRepository $defenseRepository,
+        MailSenderService $mailSenderService
     ) {
         $this->config = $config;
         $this->userRepository = $userRepository;
@@ -40,6 +42,7 @@ class UserService
         $this->technologyRepository = $technologyRepository;
         $this->shipQueueRepository = $shipQueueRepository;
         $this->defenseQueueRepository = $defenseRepository;
+        $this->mailSenderService = $mailSenderService;
     }
 
     public function removeInactive(bool $manual = false): int
@@ -80,8 +83,7 @@ nicht mehr einloggen wird der Account gelöscht.
 Mit freundlichen Grüssen,
 die Spielleitung";
 
-            $mail = new Mail('Inaktivität', $text);
-            $mail->send($user->email);
+            $this->mailSenderService->send('Inaktivität', $text, $user->email);
         }
     }
 

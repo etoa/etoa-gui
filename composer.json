@@ -16,7 +16,8 @@
         "twig/twig": "^2.12",
         "league/commonmark": "^1.3",
         "symfony/error-handler": "^5.3",
-        "whichbrowser/parser": "^2.1"
+        "whichbrowser/parser": "^2.1",
+        "swiftmailer/swiftmailer": "6.0"
     },
     "require-dev": {
         "ergebnis/composer-normalize": "^2.0",

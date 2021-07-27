@@ -1,4 +1,6 @@
-<?php declare(strict_types=1);
+<?php
+
+declare(strict_types=1);
 
 namespace EtoA\User;
 
@@ -6,6 +8,7 @@ use EtoA\Building\BuildingRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Defense\DefenseQueueRepository;
 use EtoA\Ship\ShipQueueRepository;
+use EtoA\Support\Mail\MailSenderService;
 use EtoA\Technology\TechnologyRepository;
 use EtoA\Universe\Planet\PlanetRepository;
 use Pimple\Container;
@@ -83,7 +86,8 @@ class UserServiceProvider implements ServiceProviderInterface
                 $pimple[BuildingRepository::class],
                 $pimple[TechnologyRepository::class],
                 $pimple[ShipQueueRepository::class],
-                $pimple[DefenseQueueRepository::class]
+                $pimple[DefenseQueueRepository::class],
+                $pimple[MailSenderService::class]
             );
         };
     }

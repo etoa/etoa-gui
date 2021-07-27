@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Support\Mail\MailSenderService;
 use EtoA\User\UserSittingRepository;
 
 /**
@@ -37,12 +38,12 @@ class CurrentUser extends User
     function setSetupFinished()
     {
         $sql = "
-	    UPDATE
-	    	users
-	    SET
-				user_setup=1
-	    WHERE
-	    	user_id='" . $this->id . "';";
+        UPDATE
+            users
+        SET
+                user_setup=1
+        WHERE
+            user_id='" . $this->id . "';";
         dbquery($sql);
         $this->setup = true;
     }
@@ -56,13 +57,13 @@ class CurrentUser extends User
         $config = $app[ConfigurationService::class];
 
         $res = dbquery("
-			SELECT
-				user_password
-			FROM
-				users
-			WHERE
-				user_id=" . $this->id . "
-			LIMIT 1;");
+            SELECT
+                user_password
+            FROM
+                users
+            WHERE
+                user_id=" . $this->id . "
+            LIMIT 1;");
         $arr = mysql_fetch_row($res);
         if (validatePasswort($oldPassword, $arr[0])) {
             /** @var UserSittingRepository $userSittingRepository */
@@ -71,16 +72,24 @@ class CurrentUser extends User
                 if ($newPassword1 == $newPassword2) {
                     if (strlen($newPassword1) >= $config->getInt('password_minlength')) {
                         if (dbquery("
-								UPDATE
-									users
-								SET
-									user_password='" . saltPasswort($newPassword1) . "'
-								WHERE
-									user_id='" . $this->id . "'
-								;")) {
+                                UPDATE
+                                    users
+                                SET
+                                    user_password='" . saltPasswort($newPassword1) . "'
+                                WHERE
+                                    user_id='" . $this->id . "'
+                                ;")) {
                             Log::add(3, Log::INFO, "Der Spieler [b]" . $this->nick . "[/b] &auml;ndert sein Passwort!");
-                            $mail = new Mail("Passwortänderung", "Hallo " . $this->nick . "\n\nDies ist eine Bestätigung, dass du dein Passwort für deinen Account erfolgreich geändert hast!\n\nSolltest du dein Passwort nicht selbst geändet haben, so nimm bitte sobald wie möglich Kontakt mit einem Game-Administrator auf: http://www.etoa.ch/kontakt");
-                            $mail->send($this->email);
+
+                            /** @var MailSenderService $mailSenderService */
+                            $mailSenderService = $app[MailSenderService::class];
+
+                            $mailSenderService->send(
+                                "Passwortänderung",
+                                "Hallo " . $this->nick . "\n\nDies ist eine Bestätigung, dass du dein Passwort für deinen Account erfolgreich geändert hast!\n\nSolltest du dein Passwort nicht selbst geändet haben, so nimm bitte sobald wie möglich Kontakt mit einem Game-Administrator auf: http://www.etoa.ch/kontakt",
+                                $this->email
+                            );
+
                             $this->addToUserLog("settings", "{nick} ändert sein Passwort.", 0);
                             return true;
                         }

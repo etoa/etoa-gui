@@ -6,6 +6,7 @@ use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Market\MarketAuctionRepository;
 use EtoA\Market\MarketResourceRepository;
 use EtoA\Market\MarketShipRepository;
+use EtoA\Support\Mail\MailSenderService;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Universe\Planet\PlanetService;
 use EtoA\User\UserLogRepository;
@@ -84,7 +85,6 @@ class User implements \EtoA\User\UserInterface
     protected ?Alliance $alliance = null;
     protected $rating = null;
     protected $properties = null;
-    protected $buddylist = null;
     protected $changedFields;
 
     protected $isVerified;
@@ -356,10 +356,18 @@ class User implements \EtoA\User\UserInterface
             } elseif ($key == "email") {
                 if ($val != $this->$key) {
                     if (checkEmail($val)) {
-                        $mail = new Mail("Änderung deiner E-Mail-Adresse", "Die E-Mail-Adresse deines Accounts " . $this->nick . " wurde von " . $this->email . " auf " . $val . " geändert!");
-                        $mail->send($this->email);
-                        if ($this->emailFix != $this->email)
-                            $mail->send($this->emailFix);
+                        // TODO
+                        global $app;
+
+                        /** @var MailSenderService $mailSenderService */
+                        $mailSenderService = $app[MailSenderService::class];
+
+                        $subject = "Änderung deiner E-Mail-Adresse";
+                        $text = "Die E-Mail-Adresse deines Accounts " . $this->nick . " wurde von " . $this->email . " auf " . $val . " geändert!";
+                        $mailSenderService->send($subject, $text, $this->email);
+                        if ($this->emailFix != $this->email) {
+                            $mailSenderService->send($subject, $text, $this->emailFix);
+                        }
                         $this->$key = $val;
                         $this->changedFields[$key] = true;
                     } else {
@@ -408,9 +416,6 @@ class User implements \EtoA\User\UserInterface
             }
             if ($key == "acttime" && $this->acttime == null) {
                 $this->acttime = $this->loadLastAction();
-            }
-            if ($key == 'buddylist' && $this->buddylist == null) {
-                $this->buddylist = new Buddylist($this->id);
             }
             return $this->$key;
         } catch (EException $e) {
@@ -871,8 +876,11 @@ oder auf eigenem Wunsch hin gelöscht.
 
 Mit freundlichen Grüssen,
 die Spielleitung";
-            $mail = new Mail("Accountlöschung", $text);
-            $mail->send($this->email);
+
+            /** @var MailSenderService $mailSenderService */
+            $mailSenderService = $app[MailSenderService::class];
+
+            $mailSenderService->send("Accountlöschung", $text, $this->email);
 
             return true;
         } else {

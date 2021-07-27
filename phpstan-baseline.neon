@@ -31,16 +31,6 @@ parameters:
 			path: htdocs/admin/content/logs.php
 
 		-
-			message: "#^Variable \\$mail might not be defined\\.$#"
-			count: 1
-			path: htdocs/admin/content/messages.php
-
-		-
-			message: "#^Variable \\$reply might not be defined\\.$#"
-			count: 1
-			path: htdocs/admin/content/messages.php
-
-		-
 			message: "#^Variable \\$iparr might not be defined\\.$#"
 			count: 6
 			path: htdocs/admin/content/user/multi.inc.php

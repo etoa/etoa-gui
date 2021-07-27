@@ -3,6 +3,7 @@
 use EtoA\Admin\AdminUser;
 use EtoA\Admin\AdminUserRepository;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Support\Mail\MailSenderService;
 use EtoA\Text\TextRepository;
 
 $baseUrl = $index != "" ? "?index=" . $index : "?page=" . $page;
@@ -22,6 +23,9 @@ $adminUserRepo = $app[AdminUserRepository::class];
 
 /** @var ConfigurationService */
 $config = $app[ConfigurationService::class];
+
+/** @var MailSenderService $mailSenderService */
+$mailSenderService = $app[MailSenderService::class];
 
 // List of admins
 $admins = collect($adminUserRepo->findAll())
@@ -64,11 +68,9 @@ if (!$admins->isEmpty()) {
                     $text .= $mail_text;
 
                     // Send mail
-                    $mail = new Mail($subject, $text);
-                    if ($mail->send($recipient, $sender)) {
-                        success_msg('Vielen Dank! Deine Nachricht wurde gesendet!');
-                        $showForm = false;
-                    }
+                    $mailSenderService->send($subject, $text, $recipient, $sender);
+                    success_msg('Vielen Dank! Deine Nachricht wurde gesendet!');
+                    $showForm = false;
                 } else {
                     error_msg("Titel oder Text fehlt!");
                 }

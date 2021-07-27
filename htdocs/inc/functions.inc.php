@@ -615,39 +615,6 @@ function check_fleet_incomming($user_id)
 }
 
 /**
- * Check for buddys who are online
- */
-function check_buddys_online($id)
-{
-    $res = dbquery("
-        SELECT
-            COUNT(user_id)
-        FROM
-            buddylist AS bl
-            INNER JOIN user_sessions AS u
-            ON bl.bl_buddy_id = u.user_id
-            AND bl_user_id='" . $id . "'
-            AND bl_allow=1;
-    ");
-    $arr = mysql_fetch_row($res);
-    return $arr[0];
-}
-
-function check_buddy_req($id)
-{
-    $res = dbquery("
-        SELECT
-        COUNT(bl_id)
-        FROM
-        buddylist
-        WHERE
-        bl_buddy_id='" . $id . "'
-        AND bl_allow=0");
-    $arr = mysql_fetch_row($res);
-    return $arr[0];
-}
-
-/**
  * The form checker - init
  */
 function checker_init($debug = 0)

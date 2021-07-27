@@ -27,6 +27,7 @@ $app->register(new \EtoA\Core\Configuration\ConfigurationServiceProvider());
 \Monolog\ErrorHandler::register($app['logger']);
 
 $app->register(new \EtoA\Building\BuidingServiceProvider());
+$app->register(new \EtoA\BuddyList\BuddyListServiceProvider());
 $app->register(new \EtoA\Chat\ChatServiceProvider());
 $app->register(new \EtoA\Core\DoctrineServiceProvider());
 $app->register(new \EtoA\Core\ParamConverterServiceProvider());
@@ -57,6 +58,7 @@ $app->register(new \EtoA\Admin\AdminUserServiceProvider());
 $app->register(new \EtoA\Text\TextServiceProvider());
 $app->register(new \EtoA\Alliance\AllianceServiceProvider());
 $app->register(new \EtoA\Support\DB\DatabaseManagerServiceProvider());
+$app->register(new \EtoA\Support\Mail\MailServiceProvider());
 $app->register(new \EtoA\Universe\UniverseServiceProvider());
 $app->register(new \EtoA\Help\TicketSystem\TicketSystemServiceProvider());
 $app->register(new \EtoA\Message\MessageServiceProvider());
