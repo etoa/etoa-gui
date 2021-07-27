@@ -3,6 +3,8 @@
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Universe\Cell\CellRepository;
 use EtoA\User\UserRepository;
+use EtoA\User\UserUniverseDiscoveryService;
+use Symfony\Component\HttpFoundation\Request;
 
 global $app;
 
@@ -11,17 +13,27 @@ $successMessage = null;
 
 /** @var UserRepository $userRepository */
 $userRepository = $app[UserRepository::class];
+
+/** @var UserUniverseDiscoveryService */
+$userUniverseDiscoveryService = $app[UserUniverseDiscoveryService::class];
+
+/** @var CellRepository $cellRepository */
+$cellRepository = $app[CellRepository::class];
+
+/** @var ConfigurationService $config */
+$config = $app[ConfigurationService::class];
+
+/** @var Request */
+$request = Request::createFromGlobals();
+
 $users = $userRepository->getUserNicknames();
 if (count($users) === 0) {
     $errorMessage = 'Keine Benutzer vorhanden!';
 }
 
 $uid = null;
-$user = null;
-if (isset($_GET['user_id']) && $_GET['user_id'] > 0) {
-    $uid = $_GET['user_id'];
-
-    $user = new User($uid);
+if ($request->query->has('user_id') && $request->query->getInt('user_id') > 0) {
+    $uid = $request->query->getInt('user_id');
 
     $sx = 1;
     $sy = 1;
@@ -30,22 +42,17 @@ if (isset($_GET['user_id']) && $_GET['user_id'] > 0) {
     $radius = 1;
 
     // Discover selected cell
-    if (isset($_POST['discover_selected'])) {
-        $sx = intval($_POST['sx']);
-        $sy = intval($_POST['sy']);
-        $cx = intval($_POST['cx']);
-        $cy = intval($_POST['cy']);
-        $radius = abs(intval($_POST['radius']));
-
-        /** @var CellRepository $cellRepository */
-        $cellRepository = $app[CellRepository::class];
-        /** @var ConfigurationService $config */
-        $config = $app[ConfigurationService::class];
+    if ($request->request->has('discover_selected')) {
+        $sx = $request->request->getInt('sx');
+        $sy = $request->request->getInt('sy');
+        $cx = $request->request->getInt('cx');
+        $cy = $request->request->getInt('cy');
+        $radius = abs($request->request->getInt('radius'));
 
         $cell = $cellRepository->getCellIdByCoordinates($sx, $sy, $cx, $cy);
         if ($cell !== null) {
             [$absX, $absY] = $cell->getAbsoluteCoordinates($config->param1Int('num_of_cells'), $config->param2Int('num_of_cells'));
-            $user->setDiscovered($absX, $absY, $radius);
+            $userUniverseDiscoveryService->setDiscovered($uid, $absX, $absY, $radius);
             $successMessage = 'Koordinaten erkundet!';
         } else {
             $errorMessage = 'Ungültige Koordinate!';
@@ -53,14 +60,14 @@ if (isset($_GET['user_id']) && $_GET['user_id'] > 0) {
     }
 
     // Reset discovered coordinates
-    else if (isset($_POST['discover_reset'])) {
-        $user->setDiscoveredAll(false);
+    else if ($request->request->has('discover_reset')) {
+        $userUniverseDiscoveryService->setDiscoveredAll($uid, false);
         $successMessage = 'Erkundung zurückgesetzt!';
     }
 
     // Discover all coordinates
-    else if (isset($_POST['discover_all'])) {
-        $user->setDiscoveredAll(true);
+    else if ($request->request->has('discover_all')) {
+        $userUniverseDiscoveryService->setDiscoveredAll($uid, true);
         $successMessage = 'Alles erkundet!';
     }
 
@@ -69,8 +76,8 @@ if (isset($_GET['user_id']) && $_GET['user_id'] > 0) {
         'errorMessage' => $errorMessage,
         'users' => $users,
         'uid' => $uid,
-        'user' => $user,
-        'discoveredPercent' => $user->getDiscoveredPercent(),
+        'user' => $userRepository->getUser($uid),
+        'discoveredPercent' => $userUniverseDiscoveryService->getDiscoveredPercent($uid),
         'sx' => $sx,
         'sy' => $sy,
         'cx' => $cx,

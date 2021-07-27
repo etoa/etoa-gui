@@ -1,9 +1,13 @@
 <?PHP
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\User\UserUniverseDiscoveryService;
 
 /** @var ConfigurationService */
 $config = $app[ConfigurationService::class];
+
+/** @var UserUniverseDiscoveryService */
+$userUniverseDiscoveryService = $app[UserUniverseDiscoveryService::class];
 
 $mode = (isset($_GET['mode']) && $_GET['mode'] != "" && ctype_alpha($_GET['mode'])) ? $_GET['mode'] : 'target';
 
@@ -51,7 +55,7 @@ if ((isset($_POST['submitEdit']) || isset($_POST['submitNew'])) && (isset($_POST
         //Check discovered for fleet bookmarks, bugfix by river
         $absX = (($sx - 1) * $config->param1Int('num_of_cells')) + $cx;
         $absY = (($sy - 1) * $config->param2Int('num_of_cells')) + $cy;
-        if ($cu->discovered($absX, $absY)) {
+        if ($userUniverseDiscoveryService->discovered($cu->id, $absX, $absY)) {
             // Create shipstring
             $addships = "";
             foreach ($_POST['ship_count'] as $sid => $count) {
@@ -673,7 +677,7 @@ if ($mode == "fleet") {
 
             $absX = (($sx - 1) * $config->param1Int('num_of_cells')) + $cx;
             $absY = (($sy - 1) * $config->param2Int('num_of_cells')) + $cy;
-            if ($cu->discovered($absX, $absY)) {
+            if ($userUniverseDiscoveryService->discovered($cu->id, $absX, $absY)) {
                 $res = dbquery("
                     SELECT
                         entities.id

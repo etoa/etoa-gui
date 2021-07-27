@@ -188,6 +188,18 @@ class UserRepository extends AbstractRepository
             ->fetchAllKeyValue();
     }
 
+    public function saveDiscoveryMask(int $userId, string $mask): void
+    {
+        $this->createQueryBuilder()
+            ->update('users')
+            ->set('discoverymask', ":mask")
+            ->where('user_id = :userId')
+            ->setParameters([
+                'userId' => $userId,
+                'mask' => $mask,
+            ])
+            ->execute();
+    }
     public function resetDiscoveryMask(): void
     {
         $this->createQueryBuilder()

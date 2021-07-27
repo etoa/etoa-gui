@@ -1,5 +1,7 @@
 <?PHP
 
+use EtoA\User\UserUniverseDiscoveryService;
+
 /**
  * Draws a map of a galaxy sector
  *
@@ -22,8 +24,8 @@ class SectorMapRenderer
     protected $numberOfCellsX;
     protected $numberOfCellsY;
 
-    protected $selectedCell;
-    protected $impersonatedUser;
+    protected ?Cell $selectedCell = null;
+    protected ?int $impersonatedUser = null;
 
     protected $rulerEnabled = false;
     protected $tooltipsEnabled = false;
@@ -53,7 +55,7 @@ class SectorMapRenderer
     /**
      * Sets a specific cell to be marked as the active cell
      */
-    function setSelectedCell($cell)
+    function setSelectedCell(Cell $cell)
     {
         $this->selectedCell = $cell;
     }
@@ -61,7 +63,7 @@ class SectorMapRenderer
     /**
      * If set, the map will be viewed from the perspective of this user (fog of war)
      */
-    function setImpersonatedUser(&$user)
+    function setImpersonatedUser(int $user)
     {
         $this->impersonatedUser = $user;
     }
@@ -111,6 +113,11 @@ class SectorMapRenderer
      */
     function render($sx, $sy)
     {
+        // TODO
+        global $app;
+
+        /** @var UserUniverseDiscoveryService */
+        $userUniverseDiscoveryService = $app[UserUniverseDiscoveryService::class];
 
         ob_start();
 
@@ -167,7 +174,7 @@ class SectorMapRenderer
                 $js = null;
 
                 // Discovered cell or no user specified
-                if ($this->impersonatedUser == null || $this->impersonatedUser->discovered((($sx - 1) * $this->numberOfCellsX) + $xcoords, (($sy - 1) * $this->numberOfCellsY) + $ycoords)) {
+                if ($this->impersonatedUser == null || $userUniverseDiscoveryService->discovered($this->impersonatedUser, (($sx - 1) * $this->numberOfCellsX) + $xcoords, (($sy - 1) * $this->numberOfCellsY) + $ycoords)) {
                     $ent = Entity::createFactory($cells[$xcoords][$ycoords]['code'], $cells[$xcoords][$ycoords]['eid']);
 
                     if ($this->tooltipsEnabled) {
@@ -191,13 +198,13 @@ class SectorMapRenderer
                 else {
                     $fogCode = 0;
                     // Bottom
-                    $fogCode += $ycoords > 1 && $this->impersonatedUser->discovered((($sx - 1) * $this->numberOfCellsX) + $xcoords, (($sy - 1) * $this->numberOfCellsY) + $ycoords - 1) ? 1 : 0;
+                    $fogCode += $ycoords > 1 && $userUniverseDiscoveryService->discovered($this->impersonatedUser, (($sx - 1) * $this->numberOfCellsX) + $xcoords, (($sy - 1) * $this->numberOfCellsY) + $ycoords - 1) ? 1 : 0;
                     // Left
-                    $fogCode += $xcoords > 1 && $this->impersonatedUser->discovered((($sx - 1) * $this->numberOfCellsX) + $xcoords - 1, (($sy - 1) * $this->numberOfCellsY) + $ycoords) ? 2 : 0;
+                    $fogCode += $xcoords > 1 && $userUniverseDiscoveryService->discovered($this->impersonatedUser, (($sx - 1) * $this->numberOfCellsX) + $xcoords - 1, (($sy - 1) * $this->numberOfCellsY) + $ycoords) ? 2 : 0;
                     // Right
-                    $fogCode += $xcoords < $this->numberOfCellsX && $this->impersonatedUser->discovered((($sx - 1) * $this->numberOfCellsX) + $xcoords + 1, (($sy - 1) * $this->numberOfCellsY) + $ycoords) ? 4 : 0;
+                    $fogCode += $xcoords < $this->numberOfCellsX && $userUniverseDiscoveryService->discovered($this->impersonatedUser, (($sx - 1) * $this->numberOfCellsX) + $xcoords + 1, (($sy - 1) * $this->numberOfCellsY) + $ycoords) ? 4 : 0;
                     // Top
-                    $fogCode += $ycoords < $this->numberOfCellsY && $this->impersonatedUser->discovered((($sx - 1) * $this->numberOfCellsX) + $xcoords, (($sy - 1) * $this->numberOfCellsY) + $ycoords + 1) ? 8 : 0;
+                    $fogCode += $ycoords < $this->numberOfCellsY && $userUniverseDiscoveryService->discovered($this->impersonatedUser, (($sx - 1) * $this->numberOfCellsX) + $xcoords, (($sy - 1) * $this->numberOfCellsY) + $ycoords + 1) ? 8 : 0;
 
                     if ($fogCode > 0) {
                         $fogImg = "fogborder$fogCode";

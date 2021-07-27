@@ -182,7 +182,7 @@ $sectorMap->setUserCellIDs($user_solsys_ids);
 if (isset($cp)) {
     $sectorMap->setSelectedCell($cp->getCell());
 }
-$sectorMap->setImpersonatedUser($cu);
+$sectorMap->setImpersonatedUser($cu->id);
 $sectorMap->setCellUrl("?page=cell&amp;id=");
 $sectorMap->setUndiscoveredCellJavaScript("xajax_launchExplorerProbe('##ID##')");
 echo $sectorMap->render($sx, $sy);

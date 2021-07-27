@@ -291,11 +291,6 @@ parameters:
 			path: htdocs/misc/map.image.php
 
 		-
-			message: "#^Variable \\$user might not be defined\\.$#"
-			count: 1
-			path: htdocs/misc/map.image.php
-
-		-
 			message: "#^Variable \\$rates might not be defined\\.$#"
 			count: 1
 			path: htdocs/misc/market.image.php

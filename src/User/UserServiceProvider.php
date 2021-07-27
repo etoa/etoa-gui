@@ -92,5 +92,12 @@ class UserServiceProvider implements ServiceProviderInterface
                 $pimple[MailSenderService::class]
             );
         };
+
+        $pimple[UserUniverseDiscoveryService::class] = function (Container $pimple): UserUniverseDiscoveryService {
+            return new UserUniverseDiscoveryService(
+                $pimple[ConfigurationService::class],
+                $pimple[UserRepository::class]
+            );
+        };
     }
 }
