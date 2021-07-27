@@ -30,7 +30,7 @@ class DatabaseManagerServiceProvider implements ServiceProviderInterface
         $pimple[DatabaseMigrationService::class] = function (Container $pimple): DatabaseMigrationService {
             return new DatabaseMigrationService(
                 $pimple[SchemaMigrationRepository::class],
-                $pimple[DatabaseMigrationService::class]
+                $pimple[DatabaseBackupService::class]
             );
         };
     }
