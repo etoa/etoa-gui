@@ -8,6 +8,7 @@ use EtoA\Help\TicketSystem\TicketRepository;
 use EtoA\Message\MessageRepository;
 use EtoA\Ship\ShipDataRepository;
 use EtoA\Technology\TechnologyDataRepository;
+use EtoA\User\UserCommentRepository;
 use EtoA\User\UserLogRepository;
 use EtoA\User\UserRepository;
 
@@ -288,36 +289,29 @@ function showLast5Messages($uid, $target, $limit = 5)
 
 function userComments($uid, $target)
 {
+    global $app;
+
+    /** @var UserCommentRepository $userCommentRepository */
+    $userCommentRepository = $app[UserCommentRepository::class];
+
     $or = new xajaxResponse();
     ob_start();
     echo "<h2>Neuer Kommentar:</h2><textarea rows=\"4\" cols=\"70\" id=\"new_comment_text\"></textarea><br/><br/>";
     echo "<input type=\"button\" onclick=\"xajax_addUserComment('$uid','$target',document.getElementById('new_comment_text').value);\" value=\"Speichern\" />";
     echo "<h2>Gespeicherte Kommentare</h2><table class=\"tb\">";
-    $lres = dbquery("
-    SELECT
-        *
-    FROM
-        user_comments
-    LEFT JOIN
-        admin_users
-    ON
-        comment_admin_id=user_id
-    WHERE
-        comment_user_id=" . $uid . "
-    ORDER BY
-        comment_timestamp DESC
-    ;");
-    if (mysql_num_rows($lres) > 0) {
+
+    $comments = $userCommentRepository->getComments($uid);
+    if (count($comments) > 0) {
         echo "<tr>
             <th>Text</th>
             <th>Verfasst</th>
             <th>Aktionen</th>
         </tr>";
-        while ($larr = mysql_fetch_array($lres)) {
+        foreach ($comments as $comment) {
             echo "<tr>
-                <td class=\"tbldata\" >" . text2html($larr['comment_text']) . "</td>
-                <td class=\"tbldata\" style=\"width:200px;\">" . df($larr['comment_timestamp']) . " von " . $larr['user_nick'] . "</td>
-                <td class=\"tbldata\" style=\"width:50px;\"><a href=\"javascript:;\" onclick=\"if (confirm('Wirklich löschen?')) {xajax_delUserComment('" . $uid . "','" . $target . "'," . $larr['comment_id'] . ")}\">Löschen</a></td>
+                <td class=\"tbldata\" >" . text2html($comment->text) . "</td>
+                <td class=\"tbldata\" style=\"width:200px;\">" . df($comment->timestamp) . " von " . $comment->adminNick . "</td>
+                <td class=\"tbldata\" style=\"width:50px;\"><a href=\"javascript:;\" onclick=\"if (confirm('Wirklich löschen?')) {xajax_delUserComment('" . $uid . "','" . $target . "'," . $comment->id . ")}\">Löschen</a></td>
             </tr>";
         }
     } else {
@@ -333,10 +327,15 @@ function userComments($uid, $target)
 
 function addUserComment($uid, $target, $text)
 {
+    global $app;
+
+    /** @var UserCommentRepository $userCommentRepository */
+    $userCommentRepository = $app[UserCommentRepository::class];
+
     $or = new xajaxResponse();
     if ($text != "") {
         $or->script("showLoader('$target');");
-        dbquery("INSERT INTO user_comments (comment_timestamp,comment_user_id,comment_admin_id,comment_text) VALUES ('" . time() . "','$uid','" . $_SESSION['user_id'] . "','" . addslashes($text) . "');");
+        $userCommentRepository->addComment($uid, $_SESSION['user_id'], $text);
         $or->script("xajax_userComments('$uid','$target')");
     } else {
         $or->alert("Fehler! Kein Text!");
@@ -346,10 +345,15 @@ function addUserComment($uid, $target, $text)
 
 function delUserComment($uid, $target, $id)
 {
+    global $app;
+
+    /** @var UserCommentRepository $userCommentRepository */
+    $userCommentRepository = $app[UserCommentRepository::class];
+
     $or = new xajaxResponse();
     if ($id > 0) {
         $or->script("showLoader('$target');");
-        dbquery("DELETE FROM user_comments WHERE comment_id=" . $id . ";");
+        $userCommentRepository->deleteComment($id);
         $or->script("xajax_userComments('$uid','$target')");
     } else {
         $or->alert("Fehler! Falsche ID!");
