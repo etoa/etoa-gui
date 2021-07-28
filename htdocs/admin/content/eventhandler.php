@@ -1,9 +1,17 @@
 <?PHP
 
+use EtoA\Backend\BackendMessageRepository;
+use EtoA\Backend\EventHandlerManager;
 use EtoA\Core\Configuration\ConfigurationService;
 
 /** @var ConfigurationService */
 $config = $app[ConfigurationService::class];
+
+/** @var BackendMessageRepository */
+$backendMessageRepository = $app[BackendMessageRepository::class];
+
+/** @var EventHandlerManager */
+$eventHandlerManager = $app[EventHandlerManager::class];
 
 $successMessage = null;
 $errorMessage = null;
@@ -13,41 +21,27 @@ $messageQueueSize = null;
 $sysId = null;
 $log = null;
 if (isUnixOS()) {
-    $pidfile = getAbsPath($config->get('daemon_pidfile'));
-    $eventHandlerPid = EventHandlerManager::checkDaemonRunning($pidfile);
+    $eventHandlerPid = $eventHandlerManager->checkDaemonRunning();
 
     if (isset($_GET['action'])) {
-        $executable = $config->get('daemon_exe');
-        if (!$executable) {
-            $executable = realpath(RELATIVE_ROOT . '../eventhandler/target/etoad');
-        }
-        $instance = $config->get('daemon_instance');
-        $configfile = realpath(RELATIVE_ROOT . 'config/' . EVENTHANDLER_CONFIG_FILE_NAME);
-        $pidfile = getAbsPath($config->get('daemon_pidfile'));
-
-        if (file_exists($executable)) {
-            if (file_exists($configfile)) {
-                if ($_GET['action'] === "start") {
-                    $out = EventHandlerManager::start($executable, $instance, $configfile, $pidfile);
-                    $actionOutput = implode("\n", $out);
-                    $successMessage = 'Dienst gestartet!';
-                } else if ($_GET['action'] === "stop") {
-                    $out = EventHandlerManager::stop($executable, $instance, $configfile, $pidfile);
-                    $actionOutput = implode("\n", $out);
-                    $successMessage = 'Dienst gestoppt!';
-                }
-
-                $eventHandlerPid = EventHandlerManager::checkDaemonRunning($pidfile);
-            } else {
-                $errorMessage = "Eventhandler Konfigurationsdatei $configfile nicht vorhanden!";
+        try {
+            if ($_GET['action'] === "start") {
+                $out = $eventHandlerManager->start();
+                $actionOutput = implode("\n", $out);
+                $successMessage = 'Dienst gestartet!';
+            } else if ($_GET['action'] === "stop") {
+                $out = $eventHandlerManager->stop();
+                $actionOutput = implode("\n", $out);
+                $successMessage = 'Dienst gestoppt!';
             }
-        } else {
-            $errorMessage = "Eventhandler Executable $executable nicht vorhanden!";
+            $eventHandlerPid = $eventHandlerManager->checkDaemonRunning();
+        } catch (Exception $ex) {
+            $errorMessage = $ex->getMessage();
         }
     }
 
-    $messageQueueSize = BackendMessage::getMessageQueueSize();
-    $eventHandlerPid = EventHandlerManager::checkDaemonRunning($pidfile);
+    $messageQueueSize = $backendMessageRepository->getMessageQueueSize();
+    $eventHandlerPid = $eventHandlerManager->checkDaemonRunning();
 
     if (function_exists('posix_uname')) {
         $un = posix_uname();

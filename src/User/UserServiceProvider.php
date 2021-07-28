@@ -6,6 +6,7 @@ namespace EtoA\User;
 
 use EtoA\Alliance\AllianceApplicationRepository;
 use EtoA\Alliance\AllianceRepository;
+use EtoA\Backend\BackendMessageService;
 use EtoA\Bookmark\BookmarkRepository;
 use EtoA\Bookmark\FleetBookmarkRepository;
 use EtoA\BuddyList\BuddyListRepository;
@@ -125,7 +126,8 @@ class UserServiceProvider implements ServiceProviderInterface
                 $pimple[FleetBookmarkRepository::class],
                 $pimple[UserPointsRepository::class],
                 $pimple[UserCommentRepository::class],
-                $pimple[UserSurveillanceRepository::class]
+                $pimple[UserSurveillanceRepository::class],
+                $pimple[BackendMessageService::class]
             );
         };
 

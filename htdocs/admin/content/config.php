@@ -1,5 +1,6 @@
 <?PHP
 
+use EtoA\Backend\BackendMessageService;
 use EtoA\Core\Configuration\ConfigurationDefinitionsRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use Symfony\Component\HttpFoundation\Request;
@@ -11,23 +12,27 @@ $config = $app[ConfigurationService::class];
 /** @var ConfigurationDefinitionsRepository */
 $definitions = $app[ConfigurationDefinitionsRepository::class];
 
+/** @var BackendMessageService */
+$backendMessageService = $app[BackendMessageService::class];
+
 /** @var Request */
 $request = Request::createFromGlobals();
 
 if ($sub === 'restoredefaults') {
-    restore($request, $config, $definitions, $twig);
+    restore($request, $config, $definitions, $backendMessageService, $twig);
 } elseif ($sub === 'check') {
     check($config, $definitions, $twig);
 } elseif ($sub === 'editor') {
-    editor($request, $config, $definitions, $twig);
+    editor($request, $config, $definitions, $backendMessageService, $twig);
 } else {
-    commonConfig($request, $config, $definitions, $twig);
+    commonConfig($request, $config, $definitions, $backendMessageService, $twig);
 }
 
 function restore(
     Request $request,
     ConfigurationService $config,
     ConfigurationDefinitionsRepository $definitions,
+    BackendMessageService $backendMessageService,
     Environment $twig
 ) {
     $successMessage = null;
@@ -36,7 +41,7 @@ function restore(
         if (($cnt = $config->restoreDefaults()) > 0) {
             $config->reload();
             $successMessage = "$cnt Einstellungen wurden wiederhergestellt!";
-            BackendMessage::reloadConfig();
+            $backendMessageService->reloadConfig();
         }
     }
 
@@ -138,6 +143,7 @@ function editor(
     Request $request,
     ConfigurationService $config,
     ConfigurationDefinitionsRepository $definitions,
+    BackendMessageService $backendMessageService,
     Environment $twig
 ) {
     $successMessage = null;
@@ -163,7 +169,7 @@ function editor(
                 }
             }
         }
-        BackendMessage::reloadConfig();
+        $backendMessageService->reloadConfig();
         $successMessage = 'Änderungen wurden übernommen!';
         $activeTab = $request->request->get('activeTab');
     }
@@ -225,6 +231,7 @@ function commonConfig(
     Request $request,
     ConfigurationService $config,
     ConfigurationDefinitionsRepository $definitions,
+    BackendMessageService $backendMessageService,
     Environment $twig
 ) {
     $successMessage = null;
@@ -235,7 +242,7 @@ function commonConfig(
             $p2 = isset($i->p2) ? getFormValue((string)$i->p2['type'], (string)$i['name'], "p2", $request->request->all()) : "";
             $config->set((string)$i['name'], $v, $p1, $p2);
         }
-        BackendMessage::reloadConfig();
+        $backendMessageService->reloadConfig();
         $successMessage = 'Änderungen wurden übernommen!';
     }
     $items = [];

@@ -1,5 +1,6 @@
 <?PHP
 
+use EtoA\Backend\BackendMessageService;
 use EtoA\Building\BuildingRepository;
 use EtoA\Defense\DefenseQueueRepository;
 use EtoA\Fleet\FleetRepository;
@@ -25,6 +26,9 @@ $planetRepo = $app[PlanetRepository::class];
 
 /** @var ResourceBoxDrawer */
 $resourceBoxDrawer = $app[ResourceBoxDrawer::class];
+
+/** @var BackendMessageService */
+$backendMessageService = $app[BackendMessageService::class];
 
 $t = time();
 
@@ -76,7 +80,7 @@ if (isset($_POST['submit_engage']) && isset($_POST['engage'])) {
 
                     //Update every planet
                     foreach ($planets as $pid) {
-                        BackendMessage::updatePlanet($pid);
+                        $backendMessageService->updatePlanet($pid);
                     }
                     success_msg('Der gewählte Spezialist wurde eingestellt!');
                     $app['dispatcher']->dispatch(new \EtoA\Specialist\Event\SpecialistHire($cu->specialistId), \EtoA\Specialist\Event\SpecialistHire::HIRE_SUCCESS);
