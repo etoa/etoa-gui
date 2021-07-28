@@ -2,1103 +2,1176 @@
 * EtoA Graphite Design by MrCage
 */
 
-@import url('../../../web/css/game.css');
+@import url("../../../web/css/game.css");
 
-body,html	{
-	padding:0px;
-	margin:0px;
-	height:100%;
+body,
+html {
+  padding: 0px;
+  margin: 0px;
+  height: 100%;
 }
 
 body {
-	background: #000 url('images/mainbg.jpg') round;
-	color: white;
-	font-family:verdana, sans-serif, arial;
-	font-size: 10pt;
+  background: #000 url("images/mainbg.jpg") round;
+  color: white;
+  font-family: verdana, sans-serif, arial;
+  font-size: 10pt;
 }
 
-h1,h2,h3	{
-	font-family:verdana;
-
+h1,
+h2,
+h3 {
+  font-family: verdana;
 }
 
-h1	{
-	font-size:17pt;
+h1 {
+  font-size: 17pt;
 }
-h2	{
-	font-size:15pt;
-}
-
-input[type="button"],input[type="submit"]	{
-	background:url('images/button1.png') repeat-x;
-	color:#fff;
-	border:none;
-	height:30px;
-	font-weight:bold;
+h2 {
+  font-size: 15pt;
 }
 
-input[type="button"]:hover,input[type="submit"]:hover	{
-	background:url('images/button2.png') repeat-x;
+input[type="button"],
+input[type="submit"] {
+  background: url("images/button1.png") repeat-x;
+  color: #fff;
+  border: none;
+  height: 30px;
+  font-weight: bold;
 }
 
-input[type="button"].ok,input[type="submit"].ok	{
-	background:url('images/buttonok1.png') repeat-x;
+input[type="button"]:hover,
+input[type="submit"]:hover {
+  background: url("images/button2.png") repeat-x;
 }
 
-input[type="button"].ok:hover,input[type="submit"].ok:hover	{
-	background:url('images/buttonok2.png') repeat-x;
+input[type="button"].ok,
+input[type="submit"].ok {
+  background: url("images/buttonok1.png") repeat-x;
 }
 
-input[type="button"].warn,input[type="submit"].warn	{
-	background:url('images/buttonwarn1.png') repeat-x;
+input[type="button"].ok:hover,
+input[type="submit"].ok:hover {
+  background: url("images/buttonok2.png") repeat-x;
 }
 
-input[type="button"].warn:hover,input[type="submit"].warn:hover	{
-	background:url('images/buttonwarn2.png') repeat-x;
+input[type="button"].warn,
+input[type="submit"].warn {
+  background: url("images/buttonwarn1.png") repeat-x;
 }
 
-input[type="button"].disabled,input[type="submit"].disabled,input[type="button"].disabled:hover,input[type="submit"].disabled:hover	{
-	background:url('images/buttondisabled.png') repeat-x;
-	color:#ccc;
+input[type="button"].warn:hover,
+input[type="submit"].warn:hover {
+  background: url("images/buttonwarn2.png") repeat-x;
 }
 
-input[type="file"]	{
-	color:#000;
+input[type="button"].disabled,
+input[type="submit"].disabled,
+input[type="button"].disabled:hover,
+input[type="submit"].disabled:hover {
+  background: url("images/buttondisabled.png") repeat-x;
+  color: #ccc;
 }
 
-input,select,textarea	{
-	color:#ddd;
-	border:1px solid #777;
-	background:#242426 ;
-	padding:4px;
-	font-family:verdana, sans-serif, arial;
-	font-size: 10pt;
+input[type="file"] {
+  color: #000;
 }
 
-input[type="text"],input[type="password"]	{
-	background:url('images/input.png') repeat-x;
+input,
+select,
+textarea {
+  color: #ddd;
+  border: 1px solid #777;
+  background: #242426;
+  padding: 4px;
+  font-family: verdana, sans-serif, arial;
+  font-size: 10pt;
 }
 
-a	{
-	color:#dde;
-	font-weight:bold;
-	text-decoration:none;
+input[type="text"],
+input[type="password"] {
+  background: url("images/input.png") repeat-x;
 }
 
-a:hover	{
-	color:#aab;
-	font-weight:bold;
+a {
+  color: #dde;
+  font-weight: bold;
+  text-decoration: none;
 }
 
-img	{
-	border:none;
+a:hover {
+  color: #aab;
+  font-weight: bold;
 }
 
-#sidebar	{
-	position:absolute;
-	left:0px;
-	top:0px;
-	width:204px;
-	margin:0px;
-	padding:0px;
-	height:636px;
-	background:url('images/sidebar.png') no-repeat;
-	z-index:1;
+img {
+  border: none;
 }
 
-#logo	{
-	display:block;
-	position:absolute;
-	left:0px;
-	top:0px;
-	width:200px;
-	height:50px;
+#sidebar {
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  width: 204px;
+  margin: 0px;
+  padding: 0px;
+  height: 636px;
+  background: url("images/sidebar.png") no-repeat;
+  z-index: 1;
 }
 
-#logo:hover	{
-	background:url('images/sidebarh.png') 0px 0px no-repeat;
+#logo {
+  display: block;
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  width: 200px;
+  height: 50px;
 }
 
-#navcontainer	{
-	position:absolute;
-	left:0px;
-	top:249px;
-	width:196px;
-	margin:0px;
-	padding:0px;
+#logo:hover {
+  background: url("images/sidebarh.png") 0px 0px no-repeat;
 }
 
-#planetname	{
-	position:absolute;
-	left:5px;
-	top:188px;
-	height:20px;
-	font-family: verdana, sans-serif, arial;
-	font-size: 8pt;
-	width:190px;
+#navcontainer {
+  position: absolute;
+  left: 0px;
+  top: 249px;
+  width: 196px;
+  margin: 0px;
+  padding: 0px;
 }
 
-#planetname select	{
-	padding:0px;
-	font-size: 8pt;
-	width:185px;
-	border:none;
+#planetname {
+  position: absolute;
+  left: 5px;
+  top: 188px;
+  height: 20px;
+  font-family: verdana, sans-serif, arial;
+  font-size: 8pt;
+  width: 190px;
 }
 
-#planetimage	{
-	position:absolute;
-	left:40px;
-	top:65px;
+#planetname select {
+  padding: 0px;
+  font-size: 8pt;
+  width: 185px;
+  border: none;
 }
 
-#planetlist	{
-	position:absolute;
-	left:195px;
-	top:182px;
-	font-family: verdana, sans-serif, arial;
-	font-size: 10pt;
-	background:#000;
-	padding:0px;
-	width:220px;
-	z-index:500;
-	border:1px solid #999;
-	border-left:none;
+#planetimage {
+  position: absolute;
+  left: 40px;
+  top: 65px;
 }
 
-#planetlist img	{
-	background:#000;
-	float:left;
-	margin-right:10px;
-	height:20px;
+#planetlist {
+  position: absolute;
+  left: 195px;
+  top: 182px;
+  font-family: verdana, sans-serif, arial;
+  font-size: 10pt;
+  background: #000;
+  padding: 0px;
+  width: 220px;
+  z-index: 500;
+  border: 1px solid #999;
+  border-left: none;
 }
 
-#planetlist a	{
-	display:block;
-	padding:1px 1px 0px 1px;
-	font-size:10pt;
-	color:#fff;
-	text-decoration:none;
-	height:19px;
-}
-#planetlist a:after	{
-	clear:both;
-	content:' ';
+#planetlist img {
+  background: #000;
+  float: left;
+  margin-right: 10px;
+  height: 20px;
 }
 
-#planetlist a:hover	{
-	color:#B98A5E;
-	text-decoration:underline;
+#planetlist a {
+  display: block;
+  padding: 1px 1px 0px 1px;
+  font-size: 10pt;
+  color: #fff;
+  text-decoration: none;
+  height: 19px;
+}
+#planetlist a:after {
+  clear: both;
+  content: " ";
 }
 
-#contentcontainer	{
-	padding-left:30px;
-	position:absolute;
-	left:201px;
-	top:45px;
-	padding-bottom:20px;
-	text-align:left;
-	width:800px;
+#planetlist a:hover {
+  color: #b98a5e;
+  text-decoration: underline;
 }
 
-#navcontainer a	{
-	display:block;
-	width:194px;
-	height:26px;
+#contentcontainer {
+  padding-left: 30px;
+  position: absolute;
+  left: 201px;
+  top: 45px;
+  padding-bottom: 20px;
+  text-align: left;
+  width: 800px;
 }
 
-#navplanetoverview:hover	{
-	background:url('images/sidebarh.png') 0px -249px no-repeat;
-}
-#naveconomy:hover	{
-	background:url('images/sidebarh.png') 0px -275px no-repeat;
-}
-#navpopulation:hover	{
-	background:url('images/sidebarh.png') 0px -301px no-repeat;
-}
-#navhaven:hover	{
-	background:url('images/sidebarh.png') 0px -327px no-repeat;
-}
-#navmarket:hover	{
-	background:url('images/sidebarh.png') 0px -353px no-repeat;
-}
-#navcrypto:hover	{
-	background:url('images/sidebarh.png') 0px -379px no-repeat;
-}
-#navrecycle:hover	{
-	background:url('images/sidebarh.png') 0px -405px no-repeat;
-}
-#navbunker:hover	{
-	background:url('images/sidebarh.png') 0px -431px no-repeat;
-}
-#navbuildings:hover	{
-	background:url('images/sidebarh.png') 0px -483px no-repeat;
-}
-#navresearch:hover	{
-	background:url('images/sidebarh.png') 0px -509px no-repeat;
-}
-#navshipyard:hover	{
-	background:url('images/sidebarh.png') 0px -535px no-repeat;
-}
-#navdefense:hover	{
-	background:url('images/sidebarh.png') 0px -561px no-repeat;
-}
-#navmissiles:hover	{
-	background:url('images/sidebarh.png') 0px -587px no-repeat;
+#navcontainer a {
+  display: block;
+  width: 194px;
+  height: 26px;
 }
 
-#nextEntity	{
-	position:absolute;
-	display:block;
-	top:150px;
-	left:160px;
-	width:20px;
-	height:20px;
+#navplanetoverview:hover {
+  background: url("images/sidebarh.png") 0px -249px no-repeat;
+}
+#naveconomy:hover {
+  background: url("images/sidebarh.png") 0px -275px no-repeat;
+}
+#navpopulation:hover {
+  background: url("images/sidebarh.png") 0px -301px no-repeat;
+}
+#navhaven:hover {
+  background: url("images/sidebarh.png") 0px -327px no-repeat;
+}
+#navmarket:hover {
+  background: url("images/sidebarh.png") 0px -353px no-repeat;
+}
+#navcrypto:hover {
+  background: url("images/sidebarh.png") 0px -379px no-repeat;
+}
+#navrecycle:hover {
+  background: url("images/sidebarh.png") 0px -405px no-repeat;
+}
+#navbunker:hover {
+  background: url("images/sidebarh.png") 0px -431px no-repeat;
+}
+#navbuildings:hover {
+  background: url("images/sidebarh.png") 0px -483px no-repeat;
+}
+#navresearch:hover {
+  background: url("images/sidebarh.png") 0px -509px no-repeat;
+}
+#navshipyard:hover {
+  background: url("images/sidebarh.png") 0px -535px no-repeat;
+}
+#navdefense:hover {
+  background: url("images/sidebarh.png") 0px -561px no-repeat;
+}
+#navmissiles:hover {
+  background: url("images/sidebarh.png") 0px -587px no-repeat;
 }
 
-#nextEntity:hover	{
-	background:url('images/sidebarh.png') -160px -150px no-repeat;
+#nextEntity {
+  position: absolute;
+  display: block;
+  top: 150px;
+  left: 160px;
+  width: 20px;
+  height: 20px;
 }
 
-
-#prevEntity	{
-	position:absolute;
-	display:block;
-	top:150px;
-	left:10px;
-	width:20px;
-	height:20px;
+#nextEntity:hover {
+  background: url("images/sidebarh.png") -160px -150px no-repeat;
 }
 
-#prevEntity:hover	{
-	background:url('images/sidebarh.png') -10px -150px no-repeat;
+#prevEntity {
+  position: absolute;
+  display: block;
+  top: 150px;
+  left: 10px;
+  width: 20px;
+  height: 20px;
 }
 
-
-#hbar	{
-	position:absolute;
-	right:0px;
-	top:0px;
-	text-align:right;
-	background:url('images/hbar.png') top right no-repeat;
-	height:185px;
-	width:476px;
+#prevEntity:hover {
+  background: url("images/sidebarh.png") -10px -150px no-repeat;
 }
 
-#hbar a	{
-	display:block;
-	position:absolute;
-	height:50px;
+#hbar {
+  position: absolute;
+  right: 0px;
+  top: 0px;
+  text-align: right;
+  background: url("images/hbar.png") top right no-repeat;
+  height: 185px;
+  width: 476px;
 }
 
-#navstats	{
-	left:25px;
-	width:54px;
+#hbar a {
+  display: block;
+  position: absolute;
+  height: 50px;
 }
-#navstats:hover	{
-	background:url('images/hbarh.png') -25px 0px no-repeat;
+
+#navstats {
+  left: 25px;
+  width: 54px;
 }
-#navmap{
-	left:80px;
-	width:52px;
+#navstats:hover {
+  background: url("images/hbarh.png") -25px 0px no-repeat;
 }
-#navmap:hover	{
-	background:url('images/hbarh.png') -80px 0px no-repeat;
+#navmap {
+  left: 80px;
+  width: 52px;
 }
-#navfleet{
-	left:133px;
-	width:50px;
+#navmap:hover {
+  background: url("images/hbarh.png") -80px 0px no-repeat;
 }
-#navfleet:hover	{
-	background:url('images/hbarh.png') -133px 0px no-repeat;
+#navfleet {
+  left: 133px;
+  width: 50px;
+}
+#navfleet:hover {
+  background: url("images/hbarh.png") -133px 0px no-repeat;
 }
 #navfleetred {
-	left:133px;
-	width:50px;
-	background:url('images/hbarr.png') -133px 0px no-repeat;
+  left: 133px;
+  width: 50px;
+  background: url("images/hbarr.png") -133px 0px no-repeat;
 }
-#navmessages	{
-	left:184px;
-	width:64px;
+#navmessages {
+  left: 184px;
+  width: 64px;
 }
-#navmessages:hover	{
-	background:url('images/hbarh.png') -184px 0px no-repeat;
+#navmessages:hover {
+  background: url("images/hbarh.png") -184px 0px no-repeat;
 }
-#navmessagesgreen	{
-	left:184px;
-	width:64px;
-	background:url('images/hbarg.png') -184px 0px no-repeat;
+#navmessagesgreen {
+  left: 184px;
+  width: 64px;
+  background: url("images/hbarg.png") -184px 0px no-repeat;
 }
-#navalliance{
-	left:249px;
-	width:46px;
+#navalliance {
+  left: 249px;
+  width: 46px;
 }
-#navalliance:hover	{
-	background:url('images/hbarh.png') -249px 0px no-repeat;
+#navalliance:hover {
+  background: url("images/hbarh.png") -249px 0px no-repeat;
 }
-#navbuddylist	{
-	left:296px;
-	width:50px;
+#navbuddylist {
+  left: 296px;
+  width: 50px;
 }
-#navbuddylistgreen	{
-	left:296px;
-	width:50px;
-	background:url('images/hbarg.png') -296px 0px no-repeat;
+#navbuddylistgreen {
+  left: 296px;
+  width: 50px;
+  background: url("images/hbarg.png") -296px 0px no-repeat;
 }
-#navbuddylistred	{
-	left:296px;
-	width:50px;
-	background:url('images/hbarr.png') -296px 0px no-repeat;
+#navbuddylistred {
+  left: 296px;
+  width: 50px;
+  background: url("images/hbarr.png") -296px 0px no-repeat;
 }
-#navbuddylist:hover,#navbuddylistgreen:hover,#navbuddylistred:hover	{
-	background:url('images/hbarh.png') -296px 0px no-repeat;
+#navbuddylist:hover,
+#navbuddylistgreen:hover,
+#navbuddylistred:hover {
+  background: url("images/hbarh.png") -296px 0px no-repeat;
 }
-#navuserconfig{
-	left:347px;
-	width:43px;
+#navuserconfig {
+  left: 347px;
+  width: 43px;
 }
-#navuserconfig:hover	{
-	background:url('images/hbarh.png') -347px 0px no-repeat;
+#navuserconfig:hover {
+  background: url("images/hbarh.png") -347px 0px no-repeat;
 }
-#navhelp{
-	left:391px;
-	width:35px;
+#navhelp {
+  left: 391px;
+  width: 35px;
 }
-#navhelp:hover	{
-	background:url('images/hbarh.png') -391px 0px no-repeat;
+#navhelp:hover {
+  background: url("images/hbarh.png") -391px 0px no-repeat;
 }
-#navlogout{
-	left:427px;
-	width:45px;
+#navlogout {
+  left: 427px;
+  width: 45px;
 }
-#navlogout:hover	{
-	background:url('images/hbarh.png') -427px 0px no-repeat;
+#navlogout:hover {
+  background: url("images/hbarh.png") -427px 0px no-repeat;
 }
-
-
 
 #hbarmap {
-	position:absolute;
-	right:280px;
-	top:53px;
-	padding:0px;
-	text-align:left;
-	background:#333;
-	border:1px solid #999;
-	border-top:none;
-	z-index:500;
+  position: absolute;
+  right: 280px;
+  top: 53px;
+  padding: 0px;
+  text-align: left;
+  background: #333;
+  border: 1px solid #999;
+  border-top: none;
+  z-index: 500;
 }
 
 #hbarmessages {
-	position:absolute;
-	right:190px;
-	top:53px;
-	padding:0px;
-	text-align:left;
-	background:#333;
-	border:1px solid #999;
-	border-top:none;
-	z-index:500;
+  position: absolute;
+  right: 190px;
+  top: 53px;
+  padding: 0px;
+  text-align: left;
+  background: #333;
+  border: 1px solid #999;
+  border-top: none;
+  z-index: 500;
 }
 
-#hbaralliance	{
-	position:absolute;
-	right:140px;
-	top:53px;
-	padding:0px;
-	text-align:left;
-	background:#333;
-	border:1px solid #999;
-	border-top:none;
-	z-index:501;
+#hbaralliance {
+  position: absolute;
+  right: 140px;
+  top: 53px;
+  padding: 0px;
+  text-align: left;
+  background: #333;
+  border: 1px solid #999;
+  border-top: none;
+  z-index: 501;
 }
 
-#hbarsettings	{
-	position:absolute;
-	right:40px;
-	top:53px;
-	padding:0px;
-	text-align:left;
-	background:#333;
-	border:1px solid #999;
-	border-top:none;
-	z-index:502;
+#hbarsettings {
+  position: absolute;
+  right: 40px;
+  top: 53px;
+  padding: 0px;
+  text-align: left;
+  background: #333;
+  border: 1px solid #999;
+  border-top: none;
+  z-index: 502;
 }
 
-#hbarhelp	{
-	position:absolute;
-	right:20px;
-	top:53px;
-	padding:0px;
-	text-align:left;
-	background:#333;
-	border:1px solid #999;
-	border-top:none;
-	z-index:503;
+#hbarhelp {
+  position: absolute;
+  right: 20px;
+  top: 53px;
+  padding: 0px;
+  text-align: left;
+  background: #333;
+  border: 1px solid #999;
+  border-top: none;
+  z-index: 503;
 }
 
-#hbarlogout	{
-	position:absolute;
-	right:0px;
-	top:53px;
-	padding:0px;
-	text-align:left;
-	background:#333;
-	border:1px solid #999;
-	border-top:none;
-	z-index:503;
+#hbarlogout {
+  position: absolute;
+  right: 0px;
+  top: 53px;
+  padding: 0px;
+  text-align: left;
+  background: #333;
+  border: 1px solid #999;
+  border-top: none;
+  z-index: 503;
 }
 
-#hbaralliance a,#hbarmessages a,#hbarmap a, #hbarsettings	a,#hbarhelp a,#hbarlogout a	{
-	display:block;
-	color:#fff;
-	text-decoration:none;
-	padding:5px;
+#hbaralliance a,
+#hbarmessages a,
+#hbarmap a,
+#hbarsettings a,
+#hbarhelp a,
+#hbarlogout a {
+  display: block;
+  color: #fff;
+  text-decoration: none;
+  padding: 5px;
 }
-#hbaralliance a:hover, #hbarmessages a:hover, #hbarmap a:hover, #hbarsettings	a:hover, #hbarhelp a:hover,#hbarlogout a:hover	{
-	color:#B98A5E;
+#hbaralliance a:hover,
+#hbarmessages a:hover,
+#hbarmap a:hover,
+#hbarsettings a:hover,
+#hbarhelp a:hover,
+#hbarlogout a:hover {
+  color: #b98a5e;
 }
 
-
-#servertime	{
-	position:absolute;
-	left:125px;
-	top:65px;
-	z-index:10;
-	color:#999;
-	font-size:7pt;
+#servertime {
+  position: absolute;
+  left: 125px;
+  top: 65px;
+  z-index: 10;
+  color: #999;
+  font-size: 7pt;
 }
-
 
 /******************
 * Game relevant  *
 ******************/
 
-.boxLayout	{
-	margin:15px 0px;
-	padding:0px;
-	border-collapse: collapse;
-	border:1px solid #111;
-	color:#fff;
-	width: 100%;
+.boxLayout {
+  margin: 15px 0px;
+  padding: 0px;
+  border-collapse: collapse;
+  border: 1px solid #111;
+  color: #fff;
+  width: 100%;
 }
 
 /* Infoboxes and -tables */
-.infoboxtitle	{
-	border-collapse: collapse;
-	background:#242426;
-	border-bottom: 1px solid #111;
-	color:#fff;
-	font-weight:bold;
-	padding: 0;
-	margin:0px;
-	width:100%;
-	text-align:left;
-	vertical-align:top;
-	font-weight: bold;
+.infoboxtitle {
+  border-collapse: collapse;
+  background: #242426;
+  border-bottom: 1px solid #111;
+  color: #fff;
+  font-weight: bold;
+  padding: 0;
+  margin: 0px;
+  width: 100%;
+  text-align: left;
+  vertical-align: top;
+  font-weight: bold;
 }
 
 .infoboxtitle span {
-	padding: 2px 4px;
-	display: block;
+  padding: 2px 4px;
+  display: block;
 }
 
-.infoboxcontent	{
-	padding:4px;
-	background:#4E4E50;
+.infoboxcontent {
+  padding: 4px;
+  background: #4e4e50;
 }
 
 .boxLayout.success .infoboxtitle {
-	color: #0f0;
+  color: #0f0;
 }
 
 .boxLayout.information .infoboxtitle {
-	color: #0ff;
+  color: #0ff;
 }
 
 .boxLayout.error .infoboxtitle {
-	color: #f00;
+  color: #f00;
 }
 
 /* Tables */
 
 table.tb {
- 	border-collapse:collapse;
-	margin:0px;
-	width:100%;
-	margin:15px 0px;
+  border-collapse: collapse;
+  margin: 0px;
+  width: 100%;
+  margin: 15px 0px;
 }
 
 table.tb caption {
-	background:#242426;
-	border:1px solid #111;
-	border-bottom: none;
-	text-align:left;
-	vertical-align:top;
-	padding:2px;
-	font-weight: bold;
+  background: #242426;
+  border: 1px solid #111;
+  border-bottom: none;
+  text-align: left;
+  vertical-align: top;
+  padding: 2px;
+  font-weight: bold;
 }
 
 table.tb th {
-	background:#242426;
-	border:1px solid #111;
-	text-align:left;
-	vertical-align:top;
-	padding:2px;
+  background: #242426;
+  border: 1px solid #111;
+  text-align: left;
+  vertical-align: top;
+  padding: 2px;
 }
 
 table.tb td {
-	color:#fff;
-	background:#4E4E4F;
-	border:1px solid #111;
-	text-align:left;
-	vertical-align:top;
-	padding:2px 2px 2px 5px;
+  color: #fff;
+  background: #4e4e4f;
+  border: 1px solid #111;
+  text-align: left;
+  vertical-align: top;
+  padding: 2px 2px 2px 5px;
 }
 
 /* Map */
-
 
 /*
 * Galaxy and secotr maps
 */
 
 #galaxy_map_nav {
-  text-align:center;
-  vertical-align:middle;
+  text-align: center;
+  vertical-align: middle;
 }
 
 #galaxy_map_container {
-  background:black url('../../../images/main_bg.jpg');
-  text-align:center;
-  padding:0;
+  background: black url("../../../images/main_bg.jpg");
+  text-align: center;
+  padding: 0;
 }
 
 #sector_map_nav {
-  text-align:center;
-  vertical-align:middle;
+  text-align: center;
+  vertical-align: middle;
 }
 
 #sector_map_container {
-  background:black url('../../../images/main_bg.jpg');
-  padding:0;
-  margin:0;
+  background: black url("../../../images/main_bg.jpg");
+  padding: 0;
+  margin: 0;
 }
 
 #sector_map_table {
-  margin:5px auto;
-  min-width:550px;
+  margin: 5px auto;
+  min-width: 550px;
 }
 
 #sector_map_table .sector_map_neighbour_nav {
-  text-align:center;
-  vertical-align:middle;
-  border:none;
-  background:transparent;
-  padding:0;
-  margin:0;
+  text-align: center;
+  vertical-align: middle;
+  border: none;
+  background: transparent;
+  padding: 0;
+  margin: 0;
 }
 
 #sector_map_table .sector_map_cell {
-  padding:0;
-  margin:0;
-  line-height:0;
-  background:black;
-  border:none;
+  padding: 0;
+  margin: 0;
+  line-height: 0;
+  background: black;
+  border: none;
 }
 
 #sector_map_table .sector_map_cell img.cell_number_spacer {
-  width:40px;
-  height:35px;
+  width: 40px;
+  height: 35px;
 }
 
 #sector_map_table .sector_map_cell img.cell_number_vertical {
-  margin-right:5px;
-  margin-left:5px;
-  width:30px;
-  height:40px;
-  border-bottom:1px dashed #555;
+  margin-right: 5px;
+  margin-left: 5px;
+  width: 30px;
+  height: 40px;
+  border-bottom: 1px dashed #555;
 }
 
 #sector_map_table .sector_map_cell img.cell_number_horizontal {
-  margin-top:5px;
-  margin-bottom:5px;
-  width:40px;
-  height:25px;
-  border-left:1px dashed #555;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  width: 40px;
+  height: 25px;
+  border-left: 1px dashed #555;
 }
 
 #sector_map_table .sector_map_cell a {
-  border:none;
-  text-decoration:none;
-  display:inline-block;
-  border-left:1px dashed #555;
-  border-bottom:1px dashed #555;
-  margin:0;
-  padding:0;
-  line-height:0;
-  width:40px;
-  height:40px;
-  vertical-align:top;
+  border: none;
+  text-decoration: none;
+  display: inline-block;
+  border-left: 1px dashed #555;
+  border-bottom: 1px dashed #555;
+  margin: 0;
+  padding: 0;
+  line-height: 0;
+  width: 40px;
+  height: 40px;
+  vertical-align: top;
 }
 
 #sector_map_table .sector_map_cell a img {
-  width:40px;
-  height:40px;
+  width: 40px;
+  height: 40px;
 }
 
-#sector_map_table .sector_map_cell a img.hovered, #sector_map_table .sector_map_cell a img:hover {
-  background:url('../../../images/map/hovercell.png');
+#sector_map_table .sector_map_cell a img.hovered,
+#sector_map_table .sector_map_cell a img:hover {
+  background: url("../../../images/map/hovercell.png");
 }
 
 #sector_map_table .sector_map_cell a img.selected {
-  background:url('../../../images/map/selectedcell.png');
+  background: url("../../../images/map/selectedcell.png");
 }
 
 #sector_map_table .sector_map_cell a img.owned {
-  background:url('../../../images/map/owncell.png');
+  background: url("../../../images/map/owncell.png");
 }
 
 /* Resbox */
 
-#resbox	{
-	margin-bottom:20px;
-	width:650px;
+#resbox {
+  margin-bottom: 20px;
+  width: 650px;
 }
 
-#resboxheader	{
-	background:url('images/bar.png') -1px 0px no-repeat;
-	height:26px;
-	color:#fff;
-	font-weight:bold;
-	padding-left:20px;
-	padding-top:5px;
+#resboxheader {
+  background: url("images/bar.png") -1px 0px no-repeat;
+  height: 26px;
+  color: #fff;
+  font-weight: bold;
+  padding-left: 20px;
+  padding-top: 5px;
 }
 
-#resboxcontent	{
-	padding:5px;
-	background:#242426;
+#resboxcontent {
+  padding: 5px;
+  background: #242426;
 }
 
 /* Tab Menu */
-.tabMenu	{
+.tabMenu {
 }
 
-.tabMenu	a	{
-	display:block;
-	float:left;
-	height:20px;
-	color:#fff;
-	padding:8px 10px 3px 10px;
-	background:url('images/tab1.png') top right no-repeat;
+.tabMenu a {
+  display: block;
+  float: left;
+  height: 20px;
+  color: #fff;
+  padding: 8px 10px 3px 10px;
+  background: url("images/tab1.png") top right no-repeat;
 }
 
-.tabMenu	a:hover	{
-	display:block;
-	float:left;
-	height:20px;
-	color:#B3A08E;
-	padding:8px 10px 3px 10px;
-	background:url('images/tab2.png') top right no-repeat;
+.tabMenu a:hover {
+  display: block;
+  float: left;
+  height: 20px;
+  color: #b3a08e;
+  padding: 8px 10px 3px 10px;
+  background: url("images/tab2.png") top right no-repeat;
 }
 
-.tabMenu	a.tabEnabled	{
-	display:block;
-	float:left;
-	color:#B3A08E;
-	height:20px;
-	padding:8px 10px 3px 10px;
-	background:url('images/tab2.png') top right no-repeat;
+.tabMenu a.tabEnabled {
+  display: block;
+  float: left;
+  color: #b3a08e;
+  height: 20px;
+  padding: 8px 10px 3px 10px;
+  background: url("images/tab2.png") top right no-repeat;
 }
 
 /* Building/Research */
 
 .buildOverviewObjectContainer {
-    width:120px;
-    height:120px;
-    text-align:center;
-    padding:0px;
-    margin-bottom:-1px;
-    border-right:1px solid;
-    border-bottom:1px solid;
-    float:left;
-    background-repeat:no-repeat;
-    position:relative;
-    overflow:hidden;
+  width: 120px;
+  height: 120px;
+  text-align: center;
+  padding: 0px;
+  margin-bottom: -1px;
+  border-right: 1px solid;
+  border-bottom: 1px solid;
+  float: left;
+  background-repeat: no-repeat;
+  position: relative;
+  overflow: hidden;
 }
 
-.buildOverviewObjectTitle	{
-	font-weight:normal;
-	position:absolute;
-	background:url('images/transheader1.png') top right no-repeat;
-    margin:0px;
-	padding:3px 15px 3px 3px;
-	font-size:8pt;
-    float:left;
-	z-index: 10;
+.buildOverviewObjectTitle {
+  font-weight: normal;
+  position: absolute;
+  background: url("images/transheader1.png") top right no-repeat;
+  margin: 0px;
+  padding: 3px 15px 3px 3px;
+  font-size: 8pt;
+  float: left;
+  z-index: 10;
 }
 
 .buildOverviewObjectSubTitle {
-    display:none;
-    float:left;
+  display: none;
+  float: left;
 }
 
 .buildOverviewLink {
-    display:block;
-    width:120px;
-    height:120px;
-    padding:0px;
-    margin:0px;
-    border:none;
+  display: block;
+  width: 120px;
+  height: 120px;
+  padding: 0px;
+  margin: 0px;
+  border: none;
 }
 
-.buildOverviewObjectLevel	{
-	text-align:right;
-	font-size:20pt;
-	font-weight:bold;
-	background:url('images/transfooter1.png') no-repeat;
-	position:absolute;
-	right:0px;
-	bottom:0px;
-	width:60px;
-	padding:3px;
-	padding-right:5px;
-    float:left;
+.buildOverviewObjectLevel {
+  text-align: right;
+  font-size: 20pt;
+  font-weight: bold;
+  background: url("images/transfooter1.png") no-repeat;
+  position: absolute;
+  right: 0px;
+  bottom: 0px;
+  width: 60px;
+  padding: 3px;
+  padding-right: 5px;
+  float: left;
 }
 
 .buildOverviewObjectImage {
-    display:none;
-    float:left;
+  display: none;
+  float: left;
 }
 
-.buildOverviewObjectNone, .tb td.buildOverviewObjectNone {
-	border:none;
-
+.buildOverviewObjectNone,
+.tb td.buildOverviewObjectNone {
+  border: none;
 }
 /* Planet Overview */
 
 .planetOverviewName {
-	position:absolute;
-	left:20px;
-	top:15px;
-	font-size:18pt;
+  position: absolute;
+  left: 20px;
+  top: 15px;
+  font-size: 18pt;
 }
 
-.planetOverviewList	{
-	position:absolute;
-	left:20px;
-	bottom:20px;
-	font-size:9pt;
+.planetOverviewList {
+  position: absolute;
+  left: 20px;
+  bottom: 20px;
+  font-size: 9pt;
 }
 
-.planetOverviewItem	{
-	float:left;
-	width:120px;
-	font-size:9pt;
-	font-weight:bold;
-	height:17px;
+.planetOverviewItem {
+  float: left;
+  width: 120px;
+  font-size: 9pt;
+  font-weight: bold;
+  height: 17px;
 }
 
 /* Pulldown Menu */
 
 /* Get rid of the margin, padding and bullets in the unordered lists */
 #pmenu {
-	padding:0;
-	margin:10px 0px 0px 0px;
-	list-style-type: none;
-	display:table;
-	border:none;
+  padding: 0;
+  margin: 10px 0px 0px 0px;
+  list-style-type: none;
+  display: table;
+  border: none;
 }
 
 #pmenu ul {
-	padding:0;
-	margin:0;
-	list-style-type: none;
-	display:block;
+  padding: 0;
+  margin: 0;
+  list-style-type: none;
+  display: block;
 }
 
 /* Hide the sub levels */
 #pmenu li ul {
-	display:none;
+  display: none;
 }
 
 /* Set up the link size, color and borders */
-#pmenu li a, #pmenu li a:visited {
-	display:block;
-	font-size:12px;
-	color:#fff;
-	padding:3px 10px 0px 10px;
-	height:27px;
-	line-height:24px;
-	text-decoration:none;
-	text-indent:5px;
-	border:none;
-	text-align:center;
+#pmenu li a,
+#pmenu li a:visited {
+  display: block;
+  font-size: 12px;
+  color: #fff;
+  padding: 3px 10px 0px 10px;
+  height: 27px;
+  line-height: 24px;
+  text-decoration: none;
+  text-indent: 5px;
+  border: none;
+  text-align: center;
 }
 
 /* Set up the sub level borders */
-#pmenu li ul li a, #pmenu li ul li a:visited {
-	border:none;
-	width:110px;
-	text-align:left;
-	border-top:none;
+#pmenu li ul li a,
+#pmenu li ul li a:visited {
+  border: none;
+  width: 110px;
+  text-align: left;
+  border-top: none;
 }
-#pmenu li a.enclose, #pmenu li a.enclose:visited {border-width:1px;}
+#pmenu li a.enclose,
+#pmenu li a.enclose:visited {
+  border-width: 1px;
+}
 
 /* Set up the list items */
 #pmenu li {
-	float:left;
-	background: url('images/tab1.png') top right no-repeat;
+  float: left;
+  background: url("images/tab1.png") top right no-repeat;
 }
-#pmenu li.tc {display:table-cell;}
+#pmenu li.tc {
+  display: table-cell;
+}
 
 /* For Non-IE browsers and IE7 */
-#pmenu li:hover {position:relative;}
+#pmenu li:hover {
+  position: relative;
+}
 /* Make the hovered list color persist */
-#pmenu li:hover > a {background: url('images/tab2.png') repeat-x; color:#fff;}
+#pmenu li:hover > a {
+  background: url("images/tab2.png") repeat-x;
+  color: #fff;
+}
 /* For Non-IE and IE7 make the sublevels visible on list hover. This is all it needs */
-#pmenu li:hover > ul {display:block; position:absolute; top:-11px; left:80px; padding:10px 30px 30px 30px; background:transparent; width:120px;}
+#pmenu li:hover > ul {
+  display: block;
+  position: absolute;
+  top: -11px;
+  left: 80px;
+  padding: 10px 30px 30px 30px;
+  background: transparent;
+  width: 120px;
+}
 /* Position the first sub level beneath the top level liinks */
-#pmenu > li:hover > ul {left:-30px; top:20px;}
+#pmenu > li:hover > ul {
+  left: -30px;
+  top: 20px;
+}
 
 /* get rid of the table */
-#pmenu table {position:absolute; border-collapse:collapse; top:0; left:0; z-index:100; font-size:1em;}
+#pmenu table {
+  position: absolute;
+  border-collapse: collapse;
+  top: 0;
+  left: 0;
+  z-index: 100;
+  font-size: 1em;
+}
 
 /* For IE5.5 and IE6 give the hovered links a position relative and a change of background and foreground color. This is needed to trigger IE to show the sub levels */
-* html #pmenu li a:hover {position:relative; background:#223; color:#c00;}
+* html #pmenu li a:hover {
+  position: relative;
+  background: #223;
+  color: #c00;
+}
 
 /* For accessibility of the top level menu when tabbing */
-#pmenu li a:active, #pmenu li a:focus {background:#225 url('images/tab2.png') repeat-x; color:#fff;}
+#pmenu li a:active,
+#pmenu li a:focus {
+  background: #225 url("images/tab2.png") repeat-x;
+  color: #fff;
+}
 
 /* Set up the pointers for the sub level indication */
-#pmenu li.fly {}
-#pmenu li.drop {}
-
+#pmenu li.fly {
+}
+#pmenu li.drop {
+}
 
 /* This lot is for IE5.5 and IE6 ONLY and is necessary to make the sublevels appear */
 
 /* change the drop down levels from display:none; to visibility:hidden; */
-* html #pmenu li ul {visibility:hidden; display:block; position:absolute; top:-11px; left:80px; padding:10px 30px 30px 30px; background:transparent;}
+* html #pmenu li ul {
+  visibility: hidden;
+  display: block;
+  position: absolute;
+  top: -11px;
+  left: 80px;
+  padding: 10px 30px 30px 30px;
+  background: transparent;
+}
 
 /* keep the third level+ hidden when you hover on first level link */
-#pmenu li a:hover ul ul{
-visibility:hidden;
+#pmenu li a:hover ul ul {
+  visibility: hidden;
 }
 /* keep the fourth level+ hidden when you hover on second level link */
-#pmenu li a:hover ul a:hover ul ul{
-visibility:hidden;
+#pmenu li a:hover ul a:hover ul ul {
+  visibility: hidden;
 }
 /* keep the fifth level hidden when you hover on third level link */
-#pmenu li a:hover ul a:hover ul a:hover ul ul{
-visibility:hidden;
+#pmenu li a:hover ul a:hover ul a:hover ul ul {
+  visibility: hidden;
 }
 /* keep the sixth level hidden when you hover on fourth level link */
 #pmenu li a:hover ul a:hover ul a:hover ul a:hover ul ul {
-visibility:hidden;
+  visibility: hidden;
 }
 
 /* make the second level visible when hover on first level link and position it */
 #pmenu li a:hover ul {
-visibility:visible; left:-30px; top:14px;
+  visibility: visible;
+  left: -30px;
+  top: 14px;
 }
 
 /* make the third level visible when you hover over second level link and position it and all further levels */
-#pmenu li a:hover ul a:hover ul{
-visibility:visible; top:-11px; left:80px;
+#pmenu li a:hover ul a:hover ul {
+  visibility: visible;
+  top: -11px;
+  left: 80px;
 }
 /* make the fourth level visible when you hover over third level link */
 #pmenu li a:hover ul a:hover ul a:hover ul {
-visibility:visible;
+  visibility: visible;
 }
 /* make the fifth level visible when you hover over fourth level link */
 #pmenu li a:hover ul a:hover ul a:hover ul a:hover ul {
-visibility:visible;
+  visibility: visible;
 }
 /* make the sixth level visible when you hover over fifth level link */
 #pmenu li a:hover ul a:hover ul a:hover ul a:hover ul a:hover ul {
-visibility:visible;
+  visibility: visible;
 }
 
 /* Techtree */
 
-.techtreeItemContainer	{
-	margin:0px auto 10px auto;
-	display:table;
-	text-align:center;
-	max-width:580px;
+.techtreeItemContainer {
+  margin: 0px auto 10px auto;
+  display: table;
+  text-align: center;
+  max-width: 580px;
 }
 
-.techtreeMainItem	{
-	position:relative;
-	width:120px;
-	height:120px;
-	border:1px solid #fff;
-	margin:10px auto;
+.techtreeMainItem {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  border: 1px solid #fff;
+  margin: 10px auto;
 }
 
-.techtreeItem	{
-	margin:10px;
-	position:relative;
-	float:left;
-	width:120px;
-	height:120px;
-	border:1px solid black;
+.techtreeItem {
+  margin: 10px;
+  position: relative;
+  float: left;
+  width: 120px;
+  height: 120px;
+  border: 1px solid black;
 }
-.techtreeItemLevel	{
-	position:absolute;
-	top:0px;
-	background:url('images/transheader1.png') top right;
-	color:#fff;
-	padding:3px 15px 3px 3px ;
+.techtreeItemLevel {
+  position: absolute;
+  top: 0px;
+  background: url("images/transheader1.png") top right;
+  color: #fff;
+  padding: 3px 15px 3px 3px;
 }
-.techtreeItemName	{
-	position:absolute;
-	bottom:0px;
-	font-size:8pt;
-	padding:5px;
-	background:url('images/trans1.png');
-	color:#fff;
-	width:110px;
+.techtreeItemName {
+  position: absolute;
+  bottom: 0px;
+  font-size: 8pt;
+  padding: 5px;
+  background: url("images/trans1.png");
+  color: #fff;
+  width: 110px;
 }
 
 /* Statistics */
 
-#statsHeaderContainer	{
-	margin-bottom:10px;
+#statsHeaderContainer {
+  margin-bottom: 10px;
 }
 
-#statsSearchContainer	{
-	text-align:left;
-	float:left;
+#statsSearchContainer {
+  text-align: left;
+  float: left;
 }
 
-#statsNav1, #statsNav2	{
-	text-align:right;
-	float:right;
+#statsNav1,
+#statsNav2 {
+  text-align: right;
+  float: right;
 }
 
-#statsNav1 input, #statsNav2 input	{
-	margin-right:5px;
+#statsNav1 input,
+#statsNav2 input {
+  margin-right: 5px;
 }
 
-#statsTable	{
-	margin:0px;
-	padding:0px;
-	margin-bottom:10px;
+#statsTable {
+  margin: 0px;
+  padding: 0px;
+  margin-bottom: 10px;
 }
 
-.loadingMsg	{
-	padding:40px 10px;
-	background: url('images/loading.gif') center no-repeat;
-	text-align:center;
+.loadingMsg {
+  padding: 40px 10px;
+  background: url("images/loading.gif") center no-repeat;
+  text-align: center;
 }
 
-.bigBoxTitle	{
-	background:#4a4a4b url('images/bar2.png') repeat-x;
-	height:25px;
-	color:#fff;
-	font-size:12pt;
-	font-weight:bold;
-	text-align:center;
-	padding-top:10px;
-	width:100%;
+.bigBoxTitle {
+  background: #4a4a4b url("images/bar2.png") repeat-x;
+  height: 25px;
+  color: #fff;
+  font-size: 12pt;
+  font-weight: bold;
+  text-align: center;
+  padding-top: 10px;
+  width: 100%;
 }
 
-.bigBoxContent	{
-
-	color:#fff;
-	background:#666;
-	padding:8px;
+.bigBoxContent {
+  color: #fff;
+  background: #666;
+  padding: 8px;
 }
 
-.closeButton	{
-	background:url('images/close.png') no-repeat;
-	width:25px;
-	height:25px;
+.closeButton {
+  background: url("images/close.png") no-repeat;
+  width: 25px;
+  height: 25px;
 }
 
-.closeButton:hover	{
-	background:url('images/close2.png') no-repeat;
-	width:25px;
-	height:25px;
-	cursor:pointer;
+.closeButton:hover {
+  background: url("images/close2.png") no-repeat;
+  width: 25px;
+  height: 25px;
+  cursor: pointer;
 }
 
 /**
 * Fleet bookmarks
 */
 #bookmarkShiplistInputTable td.thumb {
-  width:40px;
-  background:#000;
+  width: 40px;
+  background: #000;
 }
 
 #bookmarkShiplistInputTable td.thumb img {
-  width:40px;
-  height:40px;
-  border:0;
-  vertical-align:top;
+  width: 40px;
+  height: 40px;
+  border: 0;
+  vertical-align: top;
 }
 
 #bookmarkShiplistInputTable td.count {
-  width:90px;
+  width: 90px;
 }
 
 #bookmarkShiplistInputTable td.actions {
-  width:30px;
-  text-align:center;
+  width: 30px;
+  text-align: center;
 }
 
 .userSetupContainer {
-	width:700px;
+  width: 700px;
 }
 
 /*
 * Tutorial
 */
-#tutorialContainer, #quest-app {
-	position: absolute;
-	right: 8px;
-	top: 60px;
-	z-index:1;
+#tutorialContainer,
+#quest-app {
+  position: absolute;
+  right: 8px;
+  top: 60px;
+  z-index: 1;
 }
 
 .tutorialBox {
-	width: 450px;
-	text-align: left;
-	border: 1px solid #000;
-	background: #4E4E4F;
-	box-shadow: 0px 0px 20px 3px #000;
-	margin-bottom: 5px;
+  width: 450px;
+  text-align: left;
+  border: 1px solid #000;
+  background: #4e4e4f;
+  box-shadow: 0px 0px 20px 3px #000;
+  margin-bottom: 5px;
 }
 
 .tutorialTitle {
-	font-weight:bold;
-	border-bottom: 1px solid #000;
-	background: #242426;
-	padding: 2px 5px;
+  font-weight: bold;
+  border-bottom: 1px solid #000;
+  background: #242426;
+  padding: 2px 5px;
 }
 
 .tutorialContent {
-	padding: 2px 5px;
+  padding: 2px 5px;
 }
 
 .tutorialFooter {
-	border-top: 1px solid #000;
-	background: #242426;
-	padding: 2px 5px;
+  border-top: 1px solid #000;
+  background: #242426;
+  padding: 2px 5px;
 }
 
 /*
 * Code blocks
 */
 
-pre.code	{
-	margin:0;
-	padding:5px 10px ;
-	background: #333;
-	color:#f1f1f1;
-	border:1px solid #BBBBBB;
-	border-radius:2px;
-	text-align: left;
+pre.code {
+  margin: 0;
+  padding: 5px 10px;
+  background: #333;
+  color: #f1f1f1;
+  border: 1px solid #bbbbbb;
+  border-radius: 2px;
+  text-align: left;
 }
 
 /*
@@ -1106,50 +1179,51 @@ pre.code	{
 */
 
 .installContainer {
-	width: 550px;
-	margin: 20px auto;
-	text-align: center;
+  width: 550px;
+  margin: 20px auto;
+  text-align: center;
 }
 
 .installMenu {
-	font-weight:bold;
-	color:#666;
-	text-align: center;
-	list-style-type: none;
+  font-weight: bold;
+  color: #666;
+  text-align: center;
+  list-style-type: none;
 }
 
 .installMenu li {
-	display: inline-block;
-	margin: 0;
+  display: inline-block;
+  margin: 0;
 }
 
 .installMenu li:after {
-	content:'»';
+  content: "»";
 }
 
 .installMenu li:last-child:after {
-	content:none;
+  content: none;
 }
 
 .installContainer table {
-	width: 100%;
+  width: 100%;
 }
 
-.installContainer table td, .installContainer table th {
-	text-align: left;
+.installContainer table td,
+.installContainer table th {
+  text-align: left;
 }
 
 .installContainer .messagebox {
-	padding: 5px;
-	margin: 10px;
+  padding: 5px;
+  margin: 10px;
 }
 
 .installContainer .messagebox .success {
-	color:#0f0;
+  color: #0f0;
 }
 
 .installContainer .messagebox .error {
-	color:#f00;
+  color: #f00;
 }
 
 /*
@@ -1157,12 +1231,12 @@ pre.code	{
 */
 
 .threeColumnList {
-    -webkit-column-count: 3; /* Chrome, Safari, Opera */
-    -moz-column-count: 3; /* Firefox */
-    column-count: 3;
+  -webkit-column-count: 3; /* Chrome, Safari, Opera */
+  -moz-column-count: 3; /* Firefox */
+  column-count: 3;
 }
 
 .allianceManagementLinks a {
-	padding: 3px;
-	display: inline-block;
+  padding: 3px;
+  display: inline-block;
 }

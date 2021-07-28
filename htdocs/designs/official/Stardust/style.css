@@ -3,46 +3,48 @@
 */
 
 @import url(http://fonts.googleapis.com/css?family=Open+Sans:400,300,600,700,300italic,400italic,600italic);
-@import url('../../../web/css/reset.css');
-@import url('../../../web/css/game.css');
+@import url("../../../web/css/reset.css");
+@import url("../../../web/css/game.css");
 
 /*
 * Basic elements
 */
 
 body {
-	background:#000 url('images/mainbg.jpg') repeat;
-	color: #fff;
-	font-family: 'Open Sans', sans-serif;
+  background: #000 url("images/mainbg.jpg") repeat;
+  color: #fff;
+  font-family: "Open Sans", sans-serif;
 }
 
-h1, h2, h3 {
-	font-weight: 400;
+h1,
+h2,
+h3 {
+  font-weight: 400;
 }
 
 h1 {
-	font-size: 2.1em;
-	margin: 0 0 0.6em;
+  font-size: 2.1em;
+  margin: 0 0 0.6em;
 }
 
 h2 {
-	font-size: 1.6em;
-	margin: 0 0 0.6em;
+  font-size: 1.6em;
+  margin: 0 0 0.6em;
 }
 
 h3 {
-	font-size: 1.3em;
-	margin: 0 0 0.6em;
+  font-size: 1.3em;
+  margin: 0 0 0.6em;
 }
 
 a {
-	color: #1E90FF;
-	text-decoration: none;
+  color: #1e90ff;
+  text-decoration: none;
 }
 
 a:hover {
-	color: #fff;
-	text-decoration: none;
+  color: #fff;
+  text-decoration: none;
 }
 
 /*
@@ -50,26 +52,26 @@ a:hover {
 */
 
 .container {
-	display: table;
+  display: table;
 }
 
 .sidebar {
-	display: table-cell;
-	vertical-align: top;
-	width: 200px;
+  display: table-cell;
+  vertical-align: top;
+  width: 200px;
 }
 
 .content {
-	display: table-cell;
-	vertical-align: top;
+  display: table-cell;
+  vertical-align: top;
 }
 
 .pull-right {
-	float: right;
+  float: right;
 }
 
 .clear {
-	clear: both;
+  clear: both;
 }
 
 /*
@@ -77,33 +79,33 @@ a:hover {
 */
 
 .header {
-	background: rgba(100,100,100, 0.5);
-	border-bottom: 1px solid #555;
-	padding: 10px;
+  background: rgba(100, 100, 100, 0.5);
+  border-bottom: 1px solid #555;
+  padding: 10px;
 }
 
 .brand {
-	color: #fff;
-	text-decoration: none;
-	font-weight: bold;
+  color: #fff;
+  text-decoration: none;
+  font-weight: bold;
 }
 
 .header-nav {
-	list-style-type: none;
+  list-style-type: none;
 }
 
 .header-nav li {
-	display: inline-block;
-	padding: 0px 5px;
+  display: inline-block;
+  padding: 0px 5px;
 }
 
 .header-nav li a {
-	color: #bbb;
-	text-decoration: none;
+  color: #bbb;
+  text-decoration: none;
 }
 
 .header-nav li a:hover {
-	color: #fff;
+  color: #fff;
 }
 
 /*
@@ -111,79 +113,79 @@ a:hover {
 */
 
 .sidebar {
-	background: rgba(50,50,50, 0.5);
-	border-right: 1px solid #555;
+  background: rgba(50, 50, 50, 0.5);
+  border-right: 1px solid #555;
 }
 
 .sidebar .planetimage {
-	text-align: center;
-	background: rgba(0,0,0, 0.5);
-	padding: 15px 0;
-	position: relative;
+  text-align: center;
+  background: rgba(0, 0, 0, 0.5);
+  padding: 15px 0;
+  position: relative;
 }
 
 .sidebar .planetimage .servertime {
-	position: absolute;
-	left: 8px;
-	top: 8px;
-	font-size: 70%;
+  position: absolute;
+  left: 8px;
+  top: 8px;
+  font-size: 70%;
 }
 
 .sidebar .planetimage .planetIterator {
-	position: absolute;
-	bottom: 8px;
-	color: #fff;
-	text-decoration: none;
-	font-size: 180%;
-	color: #888;
+  position: absolute;
+  bottom: 8px;
+  color: #fff;
+  text-decoration: none;
+  font-size: 180%;
+  color: #888;
 }
 
 .sidebar .planetimage .planetIterator:hover {
-	color: #fff;
+  color: #fff;
 }
 
 .sidebar .planetimage .prevPlanet {
-	left: 8px;
+  left: 8px;
 }
 
 .sidebar .planetimage .nextPlanet {
-	right: 8px;
+  right: 8px;
 }
 
 .sidebar .planetname {
-	padding: 1px;
+  padding: 1px;
 }
 
 .sidebar .planetname select {
-	width: 100%;
-	border: 1px solid #555;
-    background: none repeat scroll 0% 0% #111;
-    color: #FFF;
+  width: 100%;
+  border: 1px solid #555;
+  background: none repeat scroll 0% 0% #111;
+  color: #fff;
 }
 
 .sidebar .nav-header {
-	padding: 3px 10px;
+  padding: 3px 10px;
 }
 
 .sidebar .nav {
-	list-style-type: none;
+  list-style-type: none;
 }
 
-.sidebar .nav  li {
+.sidebar .nav li {
 }
 
-.sidebar .nav  li a {
-	color: #bbb;
-	text-decoration: none;
-	display:block;
-	background: rgba(100,100,100, 0.5);
-	border-bottom: 1px solid #555;
-	padding: 1px 10px;
+.sidebar .nav li a {
+  color: #bbb;
+  text-decoration: none;
+  display: block;
+  background: rgba(100, 100, 100, 0.5);
+  border-bottom: 1px solid #555;
+  padding: 1px 10px;
 }
 
-.sidebar .nav  li a:hover {
-	color: #fff;
-	background: rgba(100,100,100, 0.8);
+.sidebar .nav li a:hover {
+  color: #fff;
+  background: rgba(100, 100, 100, 0.8);
 }
 
 /*
@@ -191,15 +193,15 @@ a:hover {
 */
 
 .content {
-	padding: 30px 50px;
-	width: 900px;
-	font-size: 90%;
+  padding: 30px 50px;
+  width: 900px;
+  font-size: 90%;
 }
 
 .content ul {
-    list-style: initial;
-    margin: initial;
-    padding: 0 0 0 40px;
+  list-style: initial;
+  margin: initial;
+  padding: 0 0 0 40px;
 }
 
 /*
@@ -207,10 +209,10 @@ a:hover {
 */
 
 .footer {
-	margin-top: 10px;
-	margin-bottom: 5px;
-	padding: 6px 10px;
-	font-size: 70%;
+  margin-top: 10px;
+  margin-bottom: 5px;
+  padding: 6px 10px;
+  font-size: 70%;
 }
 
 /*
@@ -218,56 +220,63 @@ a:hover {
 */
 
 .tb {
-	border-collapse: collapse;
-	margin-bottom: 1.6em;
+  border-collapse: collapse;
+  margin-bottom: 1.6em;
 }
 
 .tb th {
-	text-align: left;
-	font-weight: bold;
+  text-align: left;
+  font-weight: bold;
 }
 
-.tb td, .tb th {
-	border: 1px solid #aaa;
-	padding: 2px 4px;
-	vertical-align: middle;
+.tb td,
+.tb th {
+  border: 1px solid #aaa;
+  padding: 2px 4px;
+  vertical-align: middle;
 }
 
 .tb tr:nth-child(even) {
-	background: rgba(40,40,40, 0.9);
+  background: rgba(40, 40, 40, 0.9);
 }
 
 .tb tr:nth-child(odd) {
-	background: rgba(20,20,20, 0.9);
+  background: rgba(20, 20, 20, 0.9);
 }
 
 /*
 * Forms
 */
 
-input[type="text"], select, textarea {
-	padding: 2px 3px;
-	font-family: 'Open Sans', sans-serif;
-	background: rgba(0,0,0, 0.7);
-	color: #fff;
-	font-size: 90%;
-	border: 1px solid #777;
+input[type="text"],
+select,
+textarea {
+  padding: 2px 3px;
+  font-family: "Open Sans", sans-serif;
+  background: rgba(0, 0, 0, 0.7);
+  color: #fff;
+  font-size: 90%;
+  border: 1px solid #777;
 }
 
-input[type="submit"], input[type="button"], button {
-	padding: 5px 7px;
-	cursor: pointer;
-	font-family: 'Open Sans', sans-serif;
-	border: 1px solid #444;
-	background: linear-gradient(rgb(40,40,40), rgb(20,20,20));
-	color: #ccc;
-	border-radius: 2px;
-	font-weight: bold;
+input[type="submit"],
+input[type="button"],
+button {
+  padding: 5px 7px;
+  cursor: pointer;
+  font-family: "Open Sans", sans-serif;
+  border: 1px solid #444;
+  background: linear-gradient(rgb(40, 40, 40), rgb(20, 20, 20));
+  color: #ccc;
+  border-radius: 2px;
+  font-weight: bold;
 }
 
-input[type="submit"]:hover, input[type="button"]:hover, button:hover {
-	color: #fff;
-	border: 1px solid #666;
+input[type="submit"]:hover,
+input[type="button"]:hover,
+button:hover {
+  color: #fff;
+  border: 1px solid #666;
 }
 
 /*
@@ -275,20 +284,20 @@ input[type="submit"]:hover, input[type="button"]:hover, button:hover {
 */
 
 .boxLayout {
-	margin-bottom: 1.6em;
-	border: 1px solid #aaa;
+  margin-bottom: 1.6em;
+  border: 1px solid #aaa;
 }
 
 .infoboxtitle {
-	padding: 2px;
-	font-weight: bold;
-	border-bottom: 1px solid #aaa;
-	background: rgba(20,20,20, 0.9);
+  padding: 2px;
+  font-weight: bold;
+  border-bottom: 1px solid #aaa;
+  background: rgba(20, 20, 20, 0.9);
 }
 
 .infoboxcontent {
-	padding: 2px;
-	background: rgba(40,40,40, 0.9);
+  padding: 2px;
+  background: rgba(40, 40, 40, 0.9);
 }
 
 /*
@@ -296,32 +305,33 @@ input[type="submit"]:hover, input[type="button"]:hover, button:hover {
 */
 
 #pmenu {
-	padding: 0;
-	margin: 10px auto 10px auto;
-	list-style-type: none;
-	display: table;
-	background: rgba(20,20,20, 0.9);
+  padding: 0;
+  margin: 10px auto 10px auto;
+  list-style-type: none;
+  display: table;
+  background: rgba(20, 20, 20, 0.9);
 }
 
 #pmenu li.tc {
-	display: table-cell;
+  display: table-cell;
 }
 #pmenu li {
-	float: left;
+  float: left;
 }
 
-#pmenu li a, #pmenu li a:visited {
-	display: block;
-	color: #aaa;
-	padding: 6px 10px 6px 10px;
-	text-decoration: none;
-	text-align: center;
-	border: 1px solid #aaa;
+#pmenu li a,
+#pmenu li a:visited {
+  display: block;
+  color: #aaa;
+  padding: 6px 10px 6px 10px;
+  text-decoration: none;
+  text-align: center;
+  border: 1px solid #aaa;
 }
 
 #pmenu li a:hover {
-	border: 1px solid #fff;
-	color: #fff;
+  border: 1px solid #fff;
+  color: #fff;
 }
 
 /*
@@ -329,12 +339,12 @@ input[type="submit"]:hover, input[type="button"]:hover, button:hover {
 */
 
 .threeColumnList {
-    -webkit-column-count: 3; /* Chrome, Safari, Opera */
-    -moz-column-count: 3; /* Firefox */
-    column-count: 3;
+  -webkit-column-count: 3; /* Chrome, Safari, Opera */
+  -moz-column-count: 3; /* Firefox */
+  column-count: 3;
 }
 
 .allianceManagementLinks a {
-	padding: 3px;
-	display: inline-block;
+  padding: 3px;
+  display: inline-block;
 }
