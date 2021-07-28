@@ -1154,9 +1154,9 @@ function tabActivate(tabName,elemId)
 function addFontColor(id, colorId)
 {
 	var color = document.getElementById(id).value;
-	if (color.length==3 || color.length==6)
+	if (color.length==4 || color.length==7)
 	{
-		document.getElementById(colorId).style.color="#"+color;
+		document.getElementById(colorId).style.color=color;
 	}
 	else
 	{

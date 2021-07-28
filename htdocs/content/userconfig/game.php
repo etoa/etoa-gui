@@ -15,13 +15,13 @@ if (isset($_POST['data_submit']) && checker_verify()) {
     $cu->properties->showCellreports = $_POST['show_cellreports'];
     $cu->properties->enableKeybinds = $_POST['keybinds_enable'];
 
-    if ((strlen($_POST['chat_color']) == 3 &&
-            preg_match('/^[a-fA-F0-9]{3}$/', $_POST['chat_color'])) ||
-        (strlen($_POST['chat_color']) == 6 &&
-            preg_match('/^[a-fA-F0-9]{6}$/', $_POST['chat_color']))
+    if ((strlen($_POST['chat_color']) == 4 &&
+            preg_match('/^#[a-fA-F0-9]{3}$/', $_POST['chat_color'])) ||
+        (strlen($_POST['chat_color']) == 7 &&
+            preg_match('/^#[a-fA-F0-9]{6}$/', $_POST['chat_color']))
     ) {
-        $cu->properties->chatColor = $_POST['chat_color'];
-        if ($_POST['chat_color'] == '000' || $_POST['chat_color'] == '000000') {
+        $cu->properties->chatColor = substr($_POST['chat_color'], 1);
+        if ($cu->properties->chatColor == '000' || $cu->properties->chatColor == '000000') {
             success_msg('Chatfarbe schwarz auf schwarz ist eine Weile ja ganz lustig, aber in ein paar Minuten bitte zur&uuml;ck&auml;ndern ;)');
         } else {
             success_msg('Benutzer-Daten wurden ge&auml;ndert!');
@@ -131,16 +131,15 @@ echo "<tr>
         </tr>";
 
 // Chat font color
-echo '<script type="text/javascript" src="web/js/vendor/jscolor.min.js"></script>';
 echo "<tr>
               <th>Chat Schriftfarbe:</th>
               <td>
-            #<input type=\"text\"
-                    class='jscolor'
+            <input type=\"color\"
+
                     id=\"chat_color\"
                     name=\"chat_color\"
                     size=\"6\"
-                    value=\"" . $cu->properties->chatColor . "\"
+                    value=\"#" . $cu->properties->chatColor . "\"
                     onkeyup=\"addFontColor(this.id,'chatPreview')\"
                     onchange=\"addFontColor(this.id,'chatPreview')\"/>&nbsp;
             <div id=\"chatPreview\" style=\"color:#" . $cu->properties->chatColor . ";\">&lt;" . $cu . " | " . date("H:i", time()) . "&gt; Chatvorschau </div>
