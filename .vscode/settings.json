@@ -20,6 +20,7 @@
     ],
     "search.exclude": {
       "htdocs/web/js/app.js": true,
+      "htdocs/web/js/chat.js": true,
       "htdocs/web/js/admin.js": true,
       "htdocs/web/css/admin.css": true
     }
