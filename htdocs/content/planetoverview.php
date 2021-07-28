@@ -269,12 +269,11 @@ if (isset($cp)) {
 
 
         echo "<div id=\"tabName\" style=\"" . ($sub == "name" ? '' : 'display:none;') . "\">";
-        echo '<script type="text/javascript" src="web/js/vendor/planetname.js"></script>';
         echo "<form action=\"?page=$page\" method=\"POST\" style=\"text-align:center;\">";
         tableStart("Name und Beschreibung ändern:");
         echo "<tr><th>Name:</th><td>
         <input type=\"text\" name=\"planet_name\" id=\"planet_name\" value=\"" . ($planet->name) . "\" length=\"25\" maxlength=\"15\" />
-        &nbsp; <a href=\"javascript:;\" onclick=\"GenPlot();\">Name generieren</a></td></tr>";
+        &nbsp; <a href=\"javascript:;\" onclick=\"generatePlanetName('planet_name');\">Name generieren</a></td></tr>";
         echo "<tr><th>Beschreibung:</th><td><textarea name=\"planet_desc\" rows=\"2\" cols=\"30\">" . ($cp->getNoBrDesc()) . "</textarea></td></tr>";
         tableEnd();
         echo "<input type=\"submit\" name=\"submit_change\" value=\"Speichern\" /> &nbsp; ";
