@@ -117,6 +117,12 @@ Debug mode
 
 Create an empty file `config/debug` to enable the debug mode.
 
+Compile assets
+--------------
+
+Run `npm run dev` to compile the assets (JS, CSS) in case you make a change to files in the `resources` directory.
+
+For a production release, run `npm run prod` to bundle the files.
 
 Sample installation on host.etoa.net
 ------------------------------------
