@@ -4,6 +4,7 @@ use EtoA\Admin\AdminNotesRepository;
 use EtoA\Admin\AdminRoleManager;
 use EtoA\Admin\AdminSessionRepository;
 use EtoA\Admin\AdminUserRepository;
+use EtoA\Backend\EventHandlerManager;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Help\TicketSystem\TicketRepository;
 use EtoA\Support\DB\DatabaseManagerRepository;
@@ -83,6 +84,9 @@ try {
         /** @var ConfigurationService */
         $config = $app[ConfigurationService::class];
 
+        /** @var EventHandlerManager */
+        $eventHandlerManager = $app[EventHandlerManager::class];
+
         adminView(
             $s,
             $adminUserRepo,
@@ -94,6 +98,7 @@ try {
             $databaseManager,
             $ticketRepo,
             $config,
+            $eventHandlerManager,
             $twig
         );
     }
@@ -117,6 +122,7 @@ function adminView(
     DatabaseManagerRepository $databaseManager,
     TicketRepository $ticketRepo,
     ConfigurationService $config,
+    EventHandlerManager $eventHandlerManager,
     Environment $twig
 ) {
     global $page;
@@ -147,7 +153,7 @@ function adminView(
     $twig->addGlobal('isUnix', isUnixOS());
 
     if (isUnixOS()) {
-        $eventHandlerPid = EventHandlerManager::checkDaemonRunning(getAbsPath($config->get('daemon_pidfile')));
+        $eventHandlerPid = $eventHandlerManager->checkDaemonRunning();
         exec("cat /proc/cpuinfo | grep processor | wc -l", $out);
         $load = sys_getloadavg();
         $systemLoad = round($load[2] / intval($out[0]) * 100, 2);

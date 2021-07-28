@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace EtoA\Backend;
 
+use EtoA\Core\Configuration\ConfigurationService;
 use Pimple\Container;
 use Pimple\ServiceProviderInterface;
 
@@ -18,6 +19,12 @@ class BackendServiceProvider implements ServiceProviderInterface
         $pimple[BackendMessageService::class] = function (Container $pimple): BackendMessageService {
             return new BackendMessageService(
                 $pimple[BackendMessageRepository::class]
+            );
+        };
+
+        $pimple[EventHandlerManager::class] = function (Container $pimple): EventHandlerManager {
+            return new EventHandlerManager(
+                $pimple[ConfigurationService::class]
             );
         };
     }

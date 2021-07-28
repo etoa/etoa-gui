@@ -1,5 +1,6 @@
 <?PHP
 
+use EtoA\Backend\EventHandlerManager;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Support\Mail\MailSenderService;
 use EtoA\Support\RuntimeDataStore;
@@ -15,6 +16,7 @@ class BackendCheckTask implements IPeriodicTask
     private RuntimeDataStore $runtimeDataStore;
     private ConfigurationService $config;
     private MailSenderService $mailSenderService;
+    private EventHandlerManager $eventHandlerManager;
 
     function __construct(Container $app)
     {
@@ -22,11 +24,12 @@ class BackendCheckTask implements IPeriodicTask
         $this->runtimeDataStore = $app[RuntimeDataStore::class];
         $this->config = $app[ConfigurationService::class];
         $this->mailSenderService = $app[MailSenderService::class];
+        $this->eventHandlerManager = $app[EventHandlerManager::class];
     }
 
     function run()
     {
-        $currentStatus = EventHandlerManager::checkDaemonRunning(getAbsPath($this->config->get('daemon_pidfile'))) > 0;
+        $currentStatus = $this->eventHandlerManager->checkDaemonRunning() > 0;
         $lastStatus = $this->runtimeDataStore->get('backend_status') == 1;
         $change = $currentStatus != $lastStatus;
         if ($change) {
