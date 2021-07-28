@@ -69,4 +69,13 @@ class UserSurveillanceRepository extends AbstractRepository
             ->setParameter('userIds', $userIds, Connection::PARAM_INT_ARRAY)
             ->execute();
     }
+
+    public function removeForUser(int $userId) : void
+    {
+        $this->createQueryBuilder()
+            ->delete('user_surveillance')
+            ->where('user_id = :userId')
+            ->setParameter('userId', $userId)
+            ->execute();
+    }
 }

@@ -134,4 +134,13 @@ class UserPropertiesRepository extends AbstractRepository
             ->setParameter('userIds', $availableUserIds, Connection::PARAM_INT_ARRAY)
             ->execute();
     }
+
+    public function removeForUser(int $userId) : void
+    {
+        $this->createQueryBuilder()
+            ->delete('user_properties')
+            ->where('id = :userId')
+            ->setParameter('userId', $userId)
+            ->execute();
+    }
 }

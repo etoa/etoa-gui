@@ -479,4 +479,13 @@ class BuildingRepository extends AbstractRepository
             'max' => (int) $arr['max'],
         ], $data);
     }
+
+    public function removeForUser(int $userId): void
+    {
+        $this->createQueryBuilder()
+            ->delete('buildlist')
+            ->where('buildlist_user_id = :userId')
+            ->setParameter('userId', $userId)
+            ->execute();
+    }
 }

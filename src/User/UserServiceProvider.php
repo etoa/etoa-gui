@@ -4,13 +4,28 @@ declare(strict_types=1);
 
 namespace EtoA\User;
 
+use EtoA\Alliance\AllianceApplicationRepository;
+use EtoA\Alliance\AllianceRepository;
+use EtoA\Bookmark\BookmarkRepository;
+use EtoA\Bookmark\FleetBookmarkRepository;
+use EtoA\BuddyList\BuddyListRepository;
 use EtoA\Building\BuildingRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Defense\DefenseQueueRepository;
+use EtoA\Defense\DefenseRepository;
+use EtoA\Fleet\FleetRepository;
+use EtoA\Help\TicketSystem\TicketRepository;
+use EtoA\Market\MarketAuctionRepository;
+use EtoA\Market\MarketResourceRepository;
+use EtoA\Market\MarketShipRepository;
+use EtoA\Missile\MissileRepository;
+use EtoA\Notepad\NotepadRepository;
 use EtoA\Ship\ShipQueueRepository;
+use EtoA\Ship\ShipRepository;
 use EtoA\Support\Mail\MailSenderService;
 use EtoA\Technology\TechnologyRepository;
 use EtoA\Universe\Planet\PlanetRepository;
+use EtoA\Universe\Planet\PlanetService;
 use Pimple\Container;
 use Pimple\ServiceProviderInterface;
 
@@ -89,7 +104,28 @@ class UserServiceProvider implements ServiceProviderInterface
                 $pimple[TechnologyRepository::class],
                 $pimple[ShipQueueRepository::class],
                 $pimple[DefenseQueueRepository::class],
-                $pimple[MailSenderService::class]
+                $pimple[MailSenderService::class],
+                $pimple[PlanetService::class],
+                $pimple[UserSittingRepository::class],
+                $pimple[UserWarningRepository::class],
+                $pimple[UserMultiRepository::class],
+                $pimple[AllianceRepository::class],
+                $pimple[AllianceApplicationRepository::class],
+                $pimple[MarketAuctionRepository::class],
+                $pimple[MarketResourceRepository::class],
+                $pimple[MarketShipRepository::class],
+                $pimple[NotepadRepository::class],
+                $pimple[FleetRepository::class],
+                $pimple[ShipRepository::class],
+                $pimple[DefenseRepository::class],
+                $pimple[MissileRepository::class],
+                $pimple[BuddyListRepository::class],
+                $pimple[TicketRepository::class],
+                $pimple[BookmarkRepository::class],
+                $pimple[FleetBookmarkRepository::class],
+                $pimple[UserPointsRepository::class],
+                $pimple[UserCommentRepository::class],
+                $pimple[UserSurveillanceRepository::class]
             );
         };
 

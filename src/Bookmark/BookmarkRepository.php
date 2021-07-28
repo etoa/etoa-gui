@@ -25,4 +25,13 @@ class BookmarkRepository extends AbstractRepository
 
         return array_map(fn ($arr) => new Bookmark($arr), $data);
     }
+
+    public function removeForUser(int $userId) : void
+    {
+        $this->createQueryBuilder()
+            ->delete('bookmarks')
+            ->where('user_id = :userId')
+            ->setParameter('userId', $userId)
+            ->execute();
+    }
 }

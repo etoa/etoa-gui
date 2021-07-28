@@ -17,6 +17,10 @@ class BookmarkServiceProvider implements ServiceProviderInterface
             return new BookmarkRepository($pimple['db']);
         };
 
+        $pimple[FleetBookmarkRepository::class] = function (Container $pimple): FleetBookmarkRepository {
+            return new FleetBookmarkRepository($pimple['db']);
+        };
+
         $pimple[BookmarkService::class] = function (Container $pimple): BookmarkService {
             return new BookmarkService(
                 $pimple[BookmarkRepository::class],

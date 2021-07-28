@@ -9,6 +9,7 @@ use EtoA\Specialist\SpecialistDataRepository;
 use EtoA\User\UserLoginFailureRepository;
 use EtoA\User\UserMultiRepository;
 use EtoA\User\UserRepository;
+use EtoA\User\UserService;
 use EtoA\User\UserSittingRepository;
 use EtoA\User\UserWarningRepository;
 
@@ -21,17 +22,24 @@ $adminUserRepo = $app[AdminUserRepository::class];
 /** @var UserRepository $userRepository */
 $userRepository = $app[UserRepository::class];
 
+/** @var UserService */
+$userService = $app[UserService::class];
+
 /** @var \EtoA\Ship\ShipDataRepository $shipDateRepository */
 $shipDateRepository = $app[\EtoA\Ship\ShipDataRepository::class];
+
 /** @var UserLoginFailureRepository $userLoginFailureRepository */
 $userLoginFailureRepository = $app[UserLoginFailureRepository::class];
+
 /** @var ConfigurationService */
 $config = $app[ConfigurationService::class];
 
 /** @var UserSittingRepository $userSittingRepository */
 $userSittingRepository = $app[UserSittingRepository::class];
+
 /** @var UserMultiRepository $userMultiRepository */
 $userMultiRepository = $app[UserMultiRepository::class];
+
 if (isset($_GET['id']))
     $id = $_GET['id'];
 elseif (isset($_GET['user_id']))
@@ -252,9 +260,12 @@ if (isset($_POST['save'])) {
 
 // User löschen
 if (isset($_POST['delete_user'])) {
-    $user = new User($id);
-    if ($user->delete(false, $cu->nick))
+    try {
+        $userService->delete((int) $id, false, $cu->nick);
         success_msg("L&ouml;schung erfolgreich!");
+    } catch (Exception $ex) {
+        error_msg($ex->getMessage());
+    }
 }
 
 // Löschantrag speichern

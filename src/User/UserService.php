@@ -5,15 +5,32 @@ declare(strict_types=1);
 namespace EtoA\User;
 
 use BackendMessage;
+use EtoA\Alliance\AllianceApplicationRepository;
+use EtoA\Alliance\AllianceRepository;
+use EtoA\Bookmark\BookmarkRepository;
+use EtoA\Bookmark\FleetBookmarkRepository;
+use EtoA\BuddyList\BuddyListRepository;
 use EtoA\Building\BuildingRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Defense\DefenseQueueRepository;
+use EtoA\Defense\DefenseRepository;
+use EtoA\Fleet\FleetRepository;
+use EtoA\Fleet\FleetSearchParameters;
+use EtoA\Help\TicketSystem\TicketRepository;
+use EtoA\Market\MarketAuctionRepository;
+use EtoA\Market\MarketResourceRepository;
+use EtoA\Market\MarketShipRepository;
+use EtoA\Missile\MissileRepository;
+use EtoA\Notepad\NotepadRepository;
 use EtoA\Ship\ShipQueueRepository;
+use EtoA\Ship\ShipRepository;
 use EtoA\Support\Mail\MailSenderService;
 use EtoA\Technology\TechnologyRepository;
 use EtoA\Universe\Planet\PlanetRepository;
+use EtoA\Universe\Planet\PlanetService;
 use Exception;
 use Log;
+use UserToXml;
 
 class UserService
 {
@@ -27,6 +44,27 @@ class UserService
     private ShipQueueRepository $shipQueueRepository;
     private DefenseQueueRepository $defenseQueueRepository;
     private MailSenderService $mailSenderService;
+    private PlanetService $planetService;
+    private UserSittingRepository $userSittingRepository;
+    private UserWarningRepository $userWarningRepository;
+    private UserMultiRepository $userMultiRepository;
+    private AllianceRepository $allianceRepository;
+    private AllianceApplicationRepository $allianceApplicationRepository;
+    private MarketAuctionRepository $marketAuctionRepository;
+    private MarketResourceRepository $marketResourceRepository;
+    private MarketShipRepository $marketShipRepository;
+    private NotepadRepository $notepadRepository;
+    private FleetRepository $fleetRepository;
+    private ShipRepository $shipRepository;
+    private DefenseRepository $defenseRepository;
+    private MissileRepository $missileRepository;
+    private BuddyListRepository $buddyListRepository;
+    private TicketRepository $ticketRepository;
+    private BookmarkRepository $bookmarkRepository;
+    private FleetBookmarkRepository $fleetBookmarkRepository;
+    private UserPointsRepository $userPointsRepository;
+    private UserCommentRepository $userCommentRepository;
+    private UserSurveillanceRepository $userSurveillanceRepository;
 
     public function __construct(
         ConfigurationService $config,
@@ -37,8 +75,29 @@ class UserService
         BuildingRepository $buildingRepository,
         TechnologyRepository $technologyRepository,
         ShipQueueRepository $shipQueueRepository,
-        DefenseQueueRepository $defenseRepository,
-        MailSenderService $mailSenderService
+        DefenseQueueRepository $defenseQueueRepository,
+        MailSenderService $mailSenderService,
+        PlanetService $planetService,
+        UserSittingRepository $userSittingRepository,
+        UserWarningRepository $userWarningRepository,
+        UserMultiRepository $userMultiRepository,
+        AllianceRepository $allianceRepository,
+        AllianceApplicationRepository $allianceApplicationRepository,
+        MarketAuctionRepository $marketAuctionRepository,
+        MarketResourceRepository $marketResourceRepository,
+        MarketShipRepository $marketShipRepository,
+        NotepadRepository $notepadRepository,
+        FleetRepository $fleetRepository,
+        ShipRepository $shipRepository,
+        DefenseRepository $defenseRepository,
+        MissileRepository $missileRepository,
+        BuddyListRepository $buddyListRepository,
+        TicketRepository $ticketRepository,
+        BookmarkRepository $bookmarkRepository,
+        FleetBookmarkRepository $fleetBookmarkRepository,
+        UserPointsRepository $userPointsRepository,
+        UserCommentRepository $userCommentRepository,
+        UserSurveillanceRepository $userSurveillanceRepository
     ) {
         $this->config = $config;
         $this->userRepository = $userRepository;
@@ -48,8 +107,29 @@ class UserService
         $this->buildingRepository = $buildingRepository;
         $this->technologyRepository = $technologyRepository;
         $this->shipQueueRepository = $shipQueueRepository;
-        $this->defenseQueueRepository = $defenseRepository;
+        $this->defenseQueueRepository = $defenseQueueRepository;
         $this->mailSenderService = $mailSenderService;
+        $this->planetService = $planetService;
+        $this->userSittingRepository = $userSittingRepository;
+        $this->userWarningRepository = $userWarningRepository;
+        $this->userMultiRepository = $userMultiRepository;
+        $this->allianceRepository = $allianceRepository;
+        $this->allianceApplicationRepository = $allianceApplicationRepository;
+        $this->marketAuctionRepository = $marketAuctionRepository;
+        $this->marketResourceRepository = $marketResourceRepository;
+        $this->marketShipRepository = $marketShipRepository;
+        $this->notepadRepository = $notepadRepository;
+        $this->fleetRepository = $fleetRepository;
+        $this->shipRepository = $shipRepository;
+        $this->defenseRepository = $defenseRepository;
+        $this->missileRepository = $missileRepository;
+        $this->buddyListRepository = $buddyListRepository;
+        $this->ticketRepository = $ticketRepository;
+        $this->bookmarkRepository = $bookmarkRepository;
+        $this->fleetBookmarkRepository = $fleetBookmarkRepository;
+        $this->userPointsRepository = $userPointsRepository;
+        $this->userCommentRepository = $userCommentRepository;
+        $this->userSurveillanceRepository = $userSurveillanceRepository;
     }
 
     public function register(
@@ -111,6 +191,110 @@ class UserService
         return $this->userRepository->getUser($userId);
     }
 
+    public function delete(int $userId, bool $self = false, string $from = ""): void
+    {
+        $user = $this->userRepository->getUser($userId);
+        if ($user === null) {
+            throw new Exception('Benutzer existiert nicht!');
+        }
+
+        $utx = new UserToXml($userId);
+        if (!($xmlfile = $utx->toCacheFile())) {
+            throw new Exception("Konnte UserXML für " . $userId . " nicht exportieren, User nicht gelöscht!");
+        }
+
+        // Delete fleets of user
+        $userFleets = $this->fleetRepository->findByParameters((new FleetSearchParameters())
+            ->userId($userId));
+        foreach ($userFleets as $fleet) {
+            $this->fleetRepository->removeAllShipsFromFleet($fleet->id);
+            $this->fleetRepository->remove($fleet->id);
+        }
+
+        $userPlanets = $this->planetRepository->getUserPlanets($userId);
+        foreach ($userPlanets as $planet) {
+
+            // Delete market fleets to planet
+            $marketResFleets = $this->fleetRepository->findByParameters((new FleetSearchParameters())
+                ->entityTo($planet->id)
+                ->action($this->config->get('market_ship_action_ress')));
+            $marketShipFleets = $this->fleetRepository->findByParameters((new FleetSearchParameters())
+                ->entityTo($planet->id)
+                ->action($this->config->get('market_ship_action_ship')));
+            foreach (array_merge($marketResFleets, $marketShipFleets) as $fleet) {
+                $this->fleetRepository->removeAllShipsFromFleet($fleet->id);
+                $this->fleetRepository->remove($fleet->id);
+            }
+
+            $this->planetService->reset($planet->id);
+        }
+
+        //
+        // Allianz löschen (falls alleine) oder einen Nachfolger bestimmen
+        //
+        if ($user->allianceId > 0) {
+            $alliance = $this->allianceRepository->getAlliance($user->allianceId);
+            if ($alliance !== null) {
+                $members = $this->allianceRepository->findUsers($alliance->id);
+                if (count($members) == 1) {
+                    $this->allianceRepository->remove($alliance->id);
+                } elseif ($alliance->founderId == $user->id) {
+                    foreach ($members as $member) {
+                        if ($member['user_id'] != $alliance->founderId) {
+                            $this->allianceRepository->setFounderId($alliance->id, (int) $member['user_id']);
+
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        $this->allianceApplicationRepository->deleteUserApplication($userId);
+        $this->shipRepository->removeForUser($userId);
+        $this->defenseRepository->removeForUser($userId);
+        $this->technologyRepository->removeForUser($userId);
+        $this->buildingRepository->removeForUser($userId);
+        $this->missileRepository->removeForUser($userId);
+        $this->buddyListRepository->removeForUser($userId);
+        $this->marketResourceRepository->deleteUserOffers($userId);
+        $this->marketShipRepository->deleteUserOffers($userId);
+        $this->marketAuctionRepository->deleteUserAuctions($userId);
+        $this->notepadRepository->deleteAll($userId);
+        $this->bookmarkRepository->removeForUser($userId);
+        $this->fleetBookmarkRepository->removeForUser($userId);
+        $this->userMultiRepository->deleteUserEntries($userId);
+        $this->userPointsRepository->removeForUser($userId);
+        $this->userWarningRepository->deleteAllUserEntries($userId);
+        $this->userSittingRepository->deleteAllUserEntries($userId);
+        $this->userPropertiesRepository->removeForUser($userId);
+        $this->userSurveillanceRepository->removeForUser($userId);
+        $this->userCommentRepository->removeForUser($userId);
+        $this->userRatingRepository->removeForUser($userId);
+        $this->ticketRepository->removeForUser($userId);
+
+        $this->userRepository->remove($userId);
+
+        //Log schreiben
+        if ($self) {
+            Log::add(Log::F_USER, Log::INFO, "Der Benutzer " . $user->nick . " hat sich selbst gelöscht!\nDie Daten des Benutzers wurden nach " . $xmlfile . " exportiert.");
+        } elseif ($from != "") {
+            Log::add(Log::F_USER, Log::INFO, "Der Benutzer " . $user->nick . " wurde von " . $from . " gelöscht!\nDie Daten des Benutzers wurden nach " . $xmlfile . " exportiert.");
+        } else {
+            Log::add(Log::F_USER, Log::INFO, "Der Benutzer " . $user->nick . " wurde gelöscht!\nDie Daten des Benutzers wurden nach " . $xmlfile . " exportiert.");
+        }
+
+        $text = "Hallo " . $user->nick . "
+
+Dein Account bei Escape to Andromeda (" . $this->config->get('roundname') . ") wurde auf Grund von Inaktivität
+oder auf eigenem Wunsch hin gelöscht.
+
+Mit freundlichen Grüssen,
+die Spielleitung";
+
+        $this->mailSenderService->send("Accountlöschung", $text, $user->email);
+    }
+
     public function removeInactive(bool $manual = false): int
     {
         /** @var int $registerTime Zeit nach der ein User gelöscht wird wenn er noch 0 Punkte hat */
@@ -121,7 +305,7 @@ class UserService
 
         $inactiveUsers = $this->userRepository->findInactive($registerTime, $onlineTime);
         foreach ($inactiveUsers as $user) {
-            $this->userRepository->remove($user->id);
+            $this->delete($user->id);
         }
 
         Log::add(
@@ -170,7 +354,7 @@ die Spielleitung";
     {
         $deletedUsers = $this->userRepository->findDeleted();
         foreach ($deletedUsers as $user) {
-            $this->userRepository->remove($user->id);
+            $this->delete($user->id);
         }
 
         Log::add(

@@ -224,4 +224,14 @@ class BuddyListRepository extends AbstractRepository
 
         return (bool) $counts;
     }
+
+    public function removeForUser(int $userId): void
+    {
+        $this->createQueryBuilder()
+            ->delete('buddylist')
+            ->where('bl_user_id = :userId')
+            ->orWhere('bl_buddy_id = :userId')
+            ->setParameter('userId', $userId)
+            ->execute();
+    }
 }
