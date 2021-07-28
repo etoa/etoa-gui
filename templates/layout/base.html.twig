@@ -12,7 +12,6 @@
     <link rel="shortcut icon" type="image/x-icon" href="favicon.ico" />
 
     <!-- CSS Stylesheets -->
-    <link rel="stylesheet" type="text/css" href="web/css/vendor/jquery-ui.css" />
     {% if templateDir|default(false) %}
         <link rel="stylesheet" type="text/css" href="{{ templateDir }}/style.css" />
     {% endif %}
@@ -36,8 +35,7 @@
 
     <!-- XAJAX -->
     {{ xajaxJS|default('')|raw }}
-    <script type="text/javascript" src="web/js/vendor/jquery.min.js"></script>
-    <script type="text/javascript" src="web/js/vendor/jquery.cookie.js"></script>
+    <script type="text/javascript" src="web/js/app.js"></script>
     <script type="text/javascript" src="web/js/main.js"></script>
     {% if page|default(false) %}
         <script type="text/javascript">
@@ -65,6 +63,5 @@
         time({{ serverTimeUnix() }},'servertime',1);
     });
 </script>
-<script type="text/javascript" src="web/js/vendor/jquery-ui.min.js"></script>
 </body>
 </html>
