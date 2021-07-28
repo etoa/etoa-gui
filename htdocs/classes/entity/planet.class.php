@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Support\StringUtils;
 
 /**
  * Planet class

@@ -3,6 +3,7 @@
 use EtoA\Chat\ChatBanRepository;
 use EtoA\Chat\ChatLogRepository;
 use EtoA\Chat\ChatRepository;
+use EtoA\Support\StringUtils;
 use EtoA\User\UserRepository;
 
 class ChatPushJsonResponder extends JsonResponder

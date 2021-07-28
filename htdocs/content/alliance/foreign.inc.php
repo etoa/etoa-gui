@@ -5,6 +5,7 @@ use EtoA\Alliance\AllianceHistoryRepository;
 use EtoA\Alliance\AllianceRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Message\MessageRepository;
+use EtoA\Support\StringUtils;
 
 /** @var ConfigurationService */
 $config = $app[ConfigurationService::class];
