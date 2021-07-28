@@ -1,21 +1,26 @@
 {
     "cSpell.words": [
-        "cooldown",
-        "etoa",
-        "allianzkryptocenter",
-        "entschlüsselchance",
-        "etoa",
-        "flottenscan",
-        "kryptocenter",
-        "rescrystalcolor",
-        "resfoodcolor",
-        "resfuelcolor",
-        "resmetalcolor",
-        "resplasticcolor",
-        "tbldata",
-        "tbltitle",
-        "townhall",
-        "valign",
-        "xajax"
-    ]
+      "allianzkryptocenter",
+      "cooldown",
+      "entschlüsselchance",
+      "etoa",
+      "flottenscan",
+      "jquery",
+      "kryptocenter",
+      "rescrystalcolor",
+      "resfoodcolor",
+      "resfuelcolor",
+      "resmetalcolor",
+      "resplasticcolor",
+      "tbldata",
+      "tbltitle",
+      "townhall",
+      "valign",
+      "xajax"
+    ],
+    "files.exclude": {
+      "htdocs/web/js/app.js": true,
+      "htdocs/web/js/admin.js": true,
+      "htdocs/web/css/admin.css": true
+    }
 }

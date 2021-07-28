@@ -35,3 +35,5 @@ ubuntu-*-console.log
 .php_cs.cache
 .phpunit.result.cache
 nbproject/*
+
+node_modules/
