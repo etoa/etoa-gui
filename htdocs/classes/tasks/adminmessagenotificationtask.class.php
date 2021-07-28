@@ -7,7 +7,7 @@ use EtoA\User\UserRepository;
 use Pimple\Container;
 
 /**
- * Inform admins about incomming messages
+ * Inform admins about incoming messages
  */
 class AdminMessageNotificationTask implements IPeriodicTask
 {
@@ -53,11 +53,11 @@ class AdminMessageNotificationTask implements IPeriodicTask
             }
         }
 
-        return "$count Admin-Mailbenachrichtugungen versendet";
+        return "$count Admin-Mailbenachrichtigungen versendet";
     }
 
     function getDescription()
     {
-        return "Admin-Mailbenachrichtugungen versenden";
+        return "Admin-Mailbenachrichtigungen versenden";
     }
 }
