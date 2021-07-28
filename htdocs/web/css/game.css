@@ -6,140 +6,185 @@
 * Resources
 */
 
-.resmetalcolor, .tb .resmetalcolor, .rescolor0, .tb .rescolor0	{
-	color:#CFC8C2;
+.resmetalcolor,
+.tb .resmetalcolor,
+.rescolor0,
+.tb .rescolor0 {
+  color: #cfc8c2;
 }
-.rescrystalcolor, .tb .rescrystalcolor, .rescolor1, .tb .rescolor1	{
-	color:#C2E2EF;
+.rescrystalcolor,
+.tb .rescrystalcolor,
+.rescolor1,
+.tb .rescolor1 {
+  color: #c2e2ef;
 }
-.resplasticcolor, .tb .resplasticcolor, .rescolor2, .tb .rescolor2	{
-	color:#E5D1EF;
+.resplasticcolor,
+.tb .resplasticcolor,
+.rescolor2,
+.tb .rescolor2 {
+  color: #e5d1ef;
 }
-.resfuelcolor, .tb .resfuelcolor, .rescolor3, .tb .rescolor3	{
-	color:#A4C1EF;
+.resfuelcolor,
+.tb .resfuelcolor,
+.rescolor3,
+.tb .rescolor3 {
+  color: #a4c1ef;
 }
-.resfoodcolor, .tb .resfoodcolor, .rescolor4, .tb .rescolor4	{
-	color:#C2ECC2;
+.resfoodcolor,
+.tb .resfoodcolor,
+.rescolor4,
+.tb .rescolor4 {
+  color: #c2ecc2;
 }
-.respeoplecolor, .tb .respeoplecolor	{
-	color:#ECC8B2;
+.respeoplecolor,
+.tb .respeoplecolor {
+  color: #ecc8b2;
 }
-.respowercolor, .tb .respowercolor, .rescolor5, .tb .rescolor5	{
-	color:#EFECC2;
+.respowercolor,
+.tb .respowercolor,
+.rescolor5,
+.tb .rescolor5 {
+  color: #efecc2;
 }
-.respowerucolor, .tb .respowerucolor	{
-	color:#ECB2B2;
-}
-
-.resmetal, .tb .resmetal {
-	background:url('../../images/resources/metal_s.png') 1px 1px no-repeat;
-	padding:0px 10px 1px 19px;
-	color:#CFC8C2;
-}
-.rescrystal, .tb .rescrystal	{
-	background:url('../../images/resources/crystal_s.png') 1px 1px no-repeat;
-	padding:0px 10px 1px 19px;
-	color:#C2E2EF;
-}
-.resplastic, .tb .resplastic	{
-	background:url('../../images/resources/plastic_s.png')  1px 1px no-repeat;
-	padding:0px 10px 1px 19px;
-	color:#E5D1EF;
-}
-.resfuel, .tb .resfuel	{
-	background:url('../../images/resources/fuel_s.png')  1px 1px no-repeat;
-	padding:0px 10px 1px 19px;
-	color:#A4C1EF;
-}
-.resfood, .tb .resfood	{
-	background:url('../../images/resources/food_s.png')  1px 1px no-repeat;
-	padding:0px 10px 1px 19px;
-	color:#C2ECC2;
-}
-.respeople, .tb .respeople	{
-	background:url('../../images/resources/people_s.png') 1px 1px  no-repeat;
-	padding:0px 10px 1px 19px;
-	color:#ECC8B2;
-}
-.respower, .tb .respower	{
-	background:url('../../images/resources/power_s.png') 1px 1px  no-repeat;
-	padding:0px 10px 1px 19px;
-	color:#EFECC2;
-}
-.respoweru, .tb .respoweru	{
-	background:url('../../images/resources/poweru_s.png')  1px 1px no-repeat;
-	padding:0px 10px 1px 19px;
-	color:#ECB2B2;
+.respowerucolor,
+.tb .respowerucolor {
+  color: #ecb2b2;
 }
 
-.restime, .tb .restime	{
-	background:url('../../images/resources/time_s.png')  1px 1px no-repeat;
-	padding:0px 10px 1px 19px;
+.resmetal,
+.tb .resmetal {
+  background: url("../../images/resources/metal_s.png") 1px 1px no-repeat;
+  padding: 0px 10px 1px 19px;
+  color: #cfc8c2;
+}
+.rescrystal,
+.tb .rescrystal {
+  background: url("../../images/resources/crystal_s.png") 1px 1px no-repeat;
+  padding: 0px 10px 1px 19px;
+  color: #c2e2ef;
+}
+.resplastic,
+.tb .resplastic {
+  background: url("../../images/resources/plastic_s.png") 1px 1px no-repeat;
+  padding: 0px 10px 1px 19px;
+  color: #e5d1ef;
+}
+.resfuel,
+.tb .resfuel {
+  background: url("../../images/resources/fuel_s.png") 1px 1px no-repeat;
+  padding: 0px 10px 1px 19px;
+  color: #a4c1ef;
+}
+.resfood,
+.tb .resfood {
+  background: url("../../images/resources/food_s.png") 1px 1px no-repeat;
+  padding: 0px 10px 1px 19px;
+  color: #c2ecc2;
+}
+.respeople,
+.tb .respeople {
+  background: url("../../images/resources/people_s.png") 1px 1px no-repeat;
+  padding: 0px 10px 1px 19px;
+  color: #ecc8b2;
+}
+.respower,
+.tb .respower {
+  background: url("../../images/resources/power_s.png") 1px 1px no-repeat;
+  padding: 0px 10px 1px 19px;
+  color: #efecc2;
+}
+.respoweru,
+.tb .respoweru {
+  background: url("../../images/resources/poweru_s.png") 1px 1px no-repeat;
+  padding: 0px 10px 1px 19px;
+  color: #ecb2b2;
 }
 
-.resfield, .tb .resfield	{
-	background:url('../../images/resources/field_s.png')  1px 1px no-repeat;
-	padding:0px 10px 1px 19px;
+.restime,
+.tb .restime {
+  background: url("../../images/resources/time_s.png") 1px 1px no-repeat;
+  padding: 0px 10px 1px 19px;
 }
 
-.resfullcolor, .tb .resfullcolor	{
-	color:#f20;
+.resfield,
+.tb .resfield {
+  background: url("../../images/resources/field_s.png") 1px 1px no-repeat;
+  padding: 0px 10px 1px 19px;
+}
+
+.resfullcolor,
+.tb .resfullcolor {
+  color: #f20;
 }
 
 /*
 * Colors
 */
 
-.userAllianceMemberColor, .tb .userAllianceMemberColor		{
-	color:#ffff33;
+.userAllianceMemberColor,
+.tb .userAllianceMemberColor {
+  color: #ffff33;
 }
 
-.userSelfColor, .tb .userSelfColor		{
-	color:#FF1FFA;
+.userSelfColor,
+.tb .userSelfColor {
+  color: #ff1ffa;
 }
 
-.userLockedColor, .tb .userLockedColor	{
-	color:#FF6522;
+.userLockedColor,
+.tb .userLockedColor {
+  color: #ff6522;
 }
 
-.userInactiveColor, .tb .userInactiveColor		{
-	color:#ccc;
+.userInactiveColor,
+.tb .userInactiveColor {
+  color: #ccc;
 }
 
-.userLongInactiveColor, .tb .userLongInactiveColor		{
-	color:#aaa;
+.userLongInactiveColor,
+.tb .userLongInactiveColor {
+  color: #aaa;
 }
 
-.userGhostColor, .tb .userGhostColor		{
-	color:#779;
+.userGhostColor,
+.tb .userGhostColor {
+  color: #779;
 }
 
-.userHolidayColor, .tb .userHolidayColor		{
-	color:#aaffaa;
+.userHolidayColor,
+.tb .userHolidayColor {
+  color: #aaffaa;
 }
 
-.userDeletedColor, .tb .userDeletedColor, input.userDeletedColor	{
-	color:#09f;
+.userDeletedColor,
+.tb .userDeletedColor,
+input.userDeletedColor {
+  color: #09f;
 }
 
-.adminColor, .tb .adminColor		{
-	color:#DAA520;
+.adminColor,
+.tb .adminColor {
+  color: #daa520;
 }
 
-.enemyColor, .tb .enemyColor		{
-	color:#ff2200;
+.enemyColor,
+.tb .enemyColor {
+  color: #ff2200;
 }
 
-.friendColor, .tb .friendColor		{
-	color:#3366ff;
+.friendColor,
+.tb .friendColor {
+  color: #3366ff;
 }
 
-.noobColor, .tb .noobColor		{
-	color:#aaffff;
+.noobColor,
+.tb .noobColor {
+  color: #aaffff;
 }
 
-.alien, .tb .alien		{
-	color:#000;
+.alien,
+.tb .alien {
+  color: #000;
 }
 
 /*
@@ -147,71 +192,72 @@
 */
 
 .filter-unavailable {
-	filter: blur(1px) grayscale(1);
-   -webkit-filter: blur(1px) grayscale(1);
+  filter: blur(1px) grayscale(1);
+  -webkit-filter: blur(1px) grayscale(1);
 }
 
 .filter-building {
-	filter: sepia(1) hue-rotate(90deg) saturate(4);
-   -webkit-filter: sepia(1) hue-rotate(90deg) saturate(4);
+  filter: sepia(1) hue-rotate(90deg) saturate(4);
+  -webkit-filter: sepia(1) hue-rotate(90deg) saturate(4);
 }
 
 .filter-destructing {
-	filter: sepia(1) hue-rotate(-30deg) saturate(4);
-   -webkit-filter: sepia(1) hue-rotate(-30deg) saturate(4);
+  filter: sepia(1) hue-rotate(-30deg) saturate(4);
+  -webkit-filter: sepia(1) hue-rotate(-30deg) saturate(4);
 }
 
 .filter-noresources {
-	filter: sepia(1) hue-rotate(-50deg) saturate(4);
-   -webkit-filter: sepia(1) hue-rotate(-50deg) saturate(4);
+  filter: sepia(1) hue-rotate(-50deg) saturate(4);
+  -webkit-filter: sepia(1) hue-rotate(-50deg) saturate(4);
 }
 
 /*
 * Search-Box
 */
 
-.search	{
-	background: #000 url('../images/search.png') 2px 1px no-repeat;
-	padding-left:20px;
+.search {
+  background: #000 url("../images/search.png") 2px 1px no-repeat;
+  padding-left: 20px;
 }
 
-.search:focus	{
-	background: #222 url('../images/search.png') 2px 1px no-repeat;
-	padding-left:20px;
+.search:focus {
+  background: #222 url("../images/search.png") 2px 1px no-repeat;
+  padding-left: 20px;
 }
 
 /*
 * BB-Code Items
 */
 
-.bbtable td, .bbtable th {
-	padding:2px;
+.bbtable td,
+.bbtable th {
+  padding: 2px;
 }
 
 /*
 * Resource display
 */
 
-img.resIcon	{
-	float:left;
-	margin-right:5px;
+img.resIcon {
+  float: left;
+  margin-right: 5px;
 }
 
-#resbox	span	{
-	padding-right:5px;
+#resbox span {
+  padding-right: 5px;
 }
 
 /*
 * Planet resources box
 */
 
-.resBoxTitleCell	{
-	vertical-align:middle;
-	height:20px;
+.resBoxTitleCell {
+  vertical-align: middle;
+  height: 20px;
 }
 
-.resBoxTitleCell div	{
-	height:100%;
+.resBoxTitleCell div {
+  height: 100%;
 }
 
 /*
@@ -219,113 +265,115 @@ img.resIcon	{
 */
 
 .criticalErrorBox {
-	border:1px #f00 solid;
-	padding:0px;
-	background:#000;
-	color:#aaa;
-	width:90%;
-	margin:0px auto;
-	margin-top:15px;
-	margin-bottom:15px;
-	text-align:left;
+  border: 1px #f00 solid;
+  padding: 0px;
+  background: #000;
+  color: #aaa;
+  width: 90%;
+  margin: 0px auto;
+  margin-top: 15px;
+  margin-bottom: 15px;
+  text-align: left;
 }
 
 .criticalErrorBox h2 {
-	margin:0px 0px 0px 0px;
-	border-bottom:1px #f00 solid;
-	color:#f00;
-	background:#222;
-	padding:10px;
-	font-size:12pt;
+  margin: 0px 0px 0px 0px;
+  border-bottom: 1px #f00 solid;
+  color: #f00;
+  background: #222;
+  padding: 10px;
+  font-size: 12pt;
 }
 
 .criticalErrorBox h2:before {
-	content:none;
+  content: none;
 }
 
 .criticalErrorBox h2:after {
-	content:none;
+  content: none;
 }
 
 .criticalErrorBox a {
-	color: #aaa;
+  color: #aaa;
 }
 
-.criticalErrorBox a:hover{
-	color: #fff;
+.criticalErrorBox a:hover {
+  color: #fff;
 }
 
 .criticalErrorBox div {
-	padding:10px;
+  padding: 10px;
 }
 
 /*
 * User and alliance info log
 */
 
-.infoLog	{
-	border-bottom:1px solid #556;
-	padding:3px 0px 5px 0px;
-	text-align:left;
+.infoLog {
+  border-bottom: 1px solid #556;
+  padding: 3px 0px 5px 0px;
+  text-align: left;
 }
 
-.infoLog span	{
- color:#aaa;
- font-size:7pt;
- padding-left:15px;
- padding-right:5px;
- white-space : nowrap;
+.infoLog span {
+  color: #aaa;
+  font-size: 7pt;
+  padding-left: 15px;
+  padding-right: 5px;
+  white-space: nowrap;
 }
 
 /*
 * Market
 */
 
-#market_search_filter_category_selector	{
-	float:left;
-	margin-right:20px;
+#market_search_filter_category_selector {
+  float: left;
+  margin-right: 20px;
 }
 
-#market_search_filter_container_res	{
-	float:left;
+#market_search_filter_container_res {
+  float: left;
 }
 
-#market_search_filter_container_res	span {
-	float:left;
-	padding-top:3px;
-	padding-right:3px;
-	font-weight:bold;
-	width:100px;
+#market_search_filter_container_res span {
+  float: left;
+  padding-top: 3px;
+  padding-right: 3px;
+  font-weight: bold;
+  width: 100px;
 }
 
-#market_search_filter_container_res	br {
-	clear:both;
+#market_search_filter_container_res br {
+  clear: both;
 }
 
-#market_search_filter_container_res input[type="checkbox"]	{
-	display:block;
-	float:left;
+#market_search_filter_container_res input[type="checkbox"] {
+  display: block;
+  float: left;
 }
 
-#market_search_filter_container_res label	 {
-	display:block;
-	float:left;
-	width:50px;
-	padding-top:3px;
-	padding-left:3px;
-	cursor:pointer;
+#market_search_filter_container_res label {
+  display: block;
+  float: left;
+  width: 50px;
+  padding-top: 3px;
+  padding-left: 3px;
+  cursor: pointer;
 }
 
 /*
 * Battle report
 */
 
-table.battleTable, table.battleTable tr, table.battleTable tr td  {
-    border:none;
+table.battleTable,
+table.battleTable tr,
+table.battleTable tr td {
+  border: none;
 }
 
 table.battleTable {
-    margin:0 auto;
+  margin: 0 auto;
 }
 
 /*
@@ -333,46 +381,46 @@ table.battleTable {
 */
 
 #chatPreview {
-	float:right;
-	padding: 5px 20px;
-	background-color:#000;
+  float: right;
+  padding: 5px 20px;
+  background-color: #000;
 }
 
 /*
 * Fleet bookmark ship selection auto-complete
 */
 
-#shiplist  {
-  position:absolute;
-  z-index:10;
-  border:1px #ccc solid;
-  border-top:none;
-  border-bottom:none;
-  background:#223;
-  padding:0px;
-  display:none;
+#shiplist {
+  position: absolute;
+  z-index: 10;
+  border: 1px #ccc solid;
+  border-top: none;
+  border-bottom: none;
+  background: #223;
+  padding: 0px;
+  display: none;
 }
 
-#shiplist ul  {
-  padding:0 10px 0 10px;
-  margin:0;
+#shiplist ul {
+  padding: 0 10px 0 10px;
+  margin: 0;
 }
 
-#shiplist li  {
-  list-style:none;
-  padding-left:0;
+#shiplist li {
+  list-style: none;
+  padding-left: 0;
 }
 
-#shiplist a  {
-  text-decoration:none;
-  color:#aaa;
-  display:block;
-  padding:5px;
-  border-bottom:1px solid #fff;
+#shiplist a {
+  text-decoration: none;
+  color: #aaa;
+  display: block;
+  padding: 5px;
+  border-bottom: 1px solid #fff;
 }
 #shiplist a:hover {
-  color:#fff;
-  background:#225;
+  color: #fff;
+  background: #225;
 }
 
 /*
@@ -380,79 +428,79 @@ table.battleTable {
 */
 
 .tooltip {
-	position: absolute;
-	display: none;
-	background: #223;
-	color:#fff;
-	border:1px solid #415680;
-	font-size:9pt;
-	font-family:arial;
-	padding:1px;
-	max-width:400px;
-	z-index:1000;
+  position: absolute;
+  display: none;
+  background: #223;
+  color: #fff;
+  border: 1px solid #415680;
+  font-size: 9pt;
+  font-family: arial;
+  padding: 1px;
+  max-width: 400px;
+  z-index: 1000;
 }
 
-.tooltip .tttitle	{
-	background:#225;
-	border:1px solid #415680;
-	padding: 2px;
-	font-weight:bold;
-	margin-bottom:2px;
+.tooltip .tttitle {
+  background: #225;
+  border: 1px solid #415680;
+  padding: 2px;
+  font-weight: bold;
+  margin-bottom: 2px;
 }
 
-.tooltip .ttcontent	{
-	border:1px solid #415680;
-	padding: 4px;
+.tooltip .ttcontent {
+  border: 1px solid #415680;
+  padding: 4px;
 }
 
-.tooltip a	{
-	color:#eee;
-	text-decoration:underline;
-	font-weight:bold;
+.tooltip a {
+  color: #eee;
+  text-decoration: underline;
+  font-weight: bold;
 }
 
-.tooltip a:hover	{
-	color:#fff;
-	text-decoration:none;;
+.tooltip a:hover {
+  color: #fff;
+  text-decoration: none;
 }
 
 /*
 * Xajax Suchliste z.b. bei Usereingabe in Nachrichten
 */
 
-.citybox  {
-  position:absolute;
-  z-index:10;
-  border:1px #ccc solid;
-  border-top:none;
-  border-bottom:none;
-  background:#223;
-  padding:0px;
-  display:none;
+.citybox {
+  position: absolute;
+  z-index: 10;
+  border: 1px #ccc solid;
+  border-top: none;
+  border-bottom: none;
+  background: #223;
+  padding: 0px;
+  display: none;
 }
 
-.citybox ul  {
-  padding:0 10px 0 10px;
-  margin:0;
+.citybox ul {
+  padding: 0 10px 0 10px;
+  margin: 0;
 }
 
-.citybox li  {
-  list-style:none;
-  padding-left:0;
+.citybox li {
+  list-style: none;
+  padding-left: 0;
 }
 
-.citybox a  {
-  text-decoration:none;
-  color:#aaa;
-  display:block;
-  padding:5px;
-  border-bottom:1px solid #fff;
+.citybox a {
+  text-decoration: none;
+  color: #aaa;
+  display: block;
+  padding: 5px;
+  border-bottom: 1px solid #fff;
   font-weight: normal;
 }
 
 .citybox a:hover {
-  color:#fff;
-  background:#575763;
+  color: #fff;
+  background: #575763;
   font-weight: normal;
 }
 
@@ -461,25 +509,26 @@ table.battleTable {
 */
 
 .exception-container {
-	margin: 10px;
+  margin: 10px;
 }
 
 .exception-message {
-	border: 1px solid #f00;
-	padding: 8px;
-	margin: 20px 0;
-	font-size: 150%;
+  border: 1px solid #f00;
+  padding: 8px;
+  margin: 20px 0;
+  font-size: 150%;
 }
 
 table.stacktrace {
-	width:100%;
-	border-collapse:collapse;
+  width: 100%;
+  border-collapse: collapse;
 }
 
-table.stacktrace td, table.stacktrace th{
-	padding: 3px;
-	text-align: left;
-	border: 1px solid #aaa;
+table.stacktrace td,
+table.stacktrace th {
+  padding: 3px;
+  text-align: left;
+  border: 1px solid #aaa;
 }
 
 /*
@@ -487,37 +536,37 @@ table.stacktrace td, table.stacktrace th{
 */
 
 .fleetInfoContainer .infoboxcontent {
-	background:#000 url('../../images/fleetbg.png') no-repeat top center!important;
-	padding:3px!important;
+  background: #000 url("../../images/fleetbg.png") no-repeat top center !important;
+  padding: 3px !important;
 }
 
 .fleetInfoWrap {
-	padding: 0px;
-	position:relative;
-	width: 100%;
+  padding: 0px;
+  position: relative;
+  width: 100%;
 }
 
 .fleetInfoSource {
-	width:33%;
-	display:inline-block;
+  width: 33%;
+  display: inline-block;
 }
 
 .fleetInfoAction {
-	width:34%;
-	display:inline-block;
-	text-align:center;
+  width: 34%;
+  display: inline-block;
+  text-align: center;
 }
 
 .fleetInfoTarget {
-	width:33%;
-	display:inline-block;
-	text-align:right;
+  width: 33%;
+  display: inline-block;
+  text-align: right;
 }
 
 .fleetInfoProgress {
-	position:absolute;
-	top:17px;
-	width: 16px;
-	height: 16px;
-	background: url('../../images/fleetmove.png');
+  position: absolute;
+  top: 17px;
+  width: 16px;
+  height: 16px;
+  background: url("../../images/fleetmove.png");
 }

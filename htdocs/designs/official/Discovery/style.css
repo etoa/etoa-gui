@@ -2,109 +2,117 @@
 * EtoA Discovery Design by Greaser
 */
 
-@import url('../../../web/css/game.css');
+@import url("../../../web/css/game.css");
 
 body {
-	background-image: url(images/Hintergrund.jpg);
-	background-repeat: no-repeat;
-	background-attachment: fixed;
-	background-position: left top;
-	background-size: contain;
-	background-color: black;
-	color: white;
-	margin:0px;
-	font-family:verdana, sans-serif, arial;
-	font-size: 10pt;
-	border:none;
+  background-image: url(images/Hintergrund.jpg);
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-position: left top;
+  background-size: contain;
+  background-color: black;
+  color: white;
+  margin: 0px;
+  font-family: verdana, sans-serif, arial;
+  font-size: 10pt;
+  border: none;
 }
 
-img	{
-	border:none;
+img {
+  border: none;
 }
 
-a	{
-	color: white;
-	text-decoration:underline;
-	background:none;
+a {
+  color: white;
+  text-decoration: underline;
+  background: none;
 }
 
-a:hover	{
-	color: #ffffff;
-	text-decoration:none;
-	background:none;
+a:hover {
+  color: #ffffff;
+  text-decoration: none;
+  background: none;
 }
 
-h1	{
-	font-size:11pt;
-	text-align:center;
-	margin-top:7px;
-	margin-bottom:8px;
+h1 {
+  font-size: 11pt;
+  text-align: center;
+  margin-top: 7px;
+  margin-bottom: 8px;
 }
 
-h1:before	{
-	content:":: ";
+h1:before {
+  content: ":: ";
 }
 
-h1:after	{
-	content:" ::";
+h1:after {
+  content: " ::";
 }
 
-h2	{
-	font-size:10pt;
-	text-align:center;
-	margin-top:7px;
-	margin-bottom:5px;
+h2 {
+  font-size: 10pt;
+  text-align: center;
+  margin-top: 7px;
+  margin-bottom: 5px;
 }
 
-h2:before	{
-	content:": ";
+h2:before {
+  content: ": ";
 }
 
-h2:after	{
-	content:" :";
+h2:after {
+  content: " :";
 }
 
-table	{
-	border-collapse:collapse;
- 	border:none;
+table {
+  border-collapse: collapse;
+  border: none;
 }
 
 /* Wenn sich der cursor in einem text feld befindet... */
 /* Internet Explorer unterst�tzt diese funktion nicht!!!*/
-input:focus,textarea:focus, select:focus {
- 	border:1px solid #ff0;
-  background:#002;
-  color:#fff;
+input:focus,
+textarea:focus,
+select:focus {
+  border: 1px solid #ff0;
+  background: #002;
+  color: #fff;
 }
 
 /*Definiert die Buttons bei "bauhof" oder "forschung", hintergrund sollte der selbe wie tbldata sein*/
-button	{
-	background:#000000 url('images/cellpic3.gif');
-	border:none;
-	cursor:pointer;
+button {
+  background: #000000 url("images/cellpic3.gif");
+  border: none;
+  cursor: pointer;
 }
 
 /* Definiert die verschieden button typen im normal zustand */
 /* Internet Explorer unterst�tzt diese funktion nicht!!!*/
-input[type="submit"],input[type="reset"],input[type="button"]	{
-	background:#222255 url('images/button1.jpg');
-	color:#fff;
-	font-weight:bold;
+input[type="submit"],
+input[type="reset"],
+input[type="button"] {
+  background: #222255 url("images/button1.jpg");
+  color: #fff;
+  font-weight: bold;
 }
 
-input[type="submit"]:focus,input[type="reset"]:focus,input[type="button"]:focus	{
-	background:#222255 url('images/button1.jpg');
-	color:#fff;
-	font-weight:bold;
-	border:1px solid #ff0;
+input[type="submit"]:focus,
+input[type="reset"]:focus,
+input[type="button"]:focus {
+  background: #222255 url("images/button1.jpg");
+  color: #fff;
+  font-weight: bold;
+  border: 1px solid #ff0;
 }
 
 /* Definiert die verschieden button typen im hover zustand */
 /* Internet Explorer unterst�tzt diese funktion nicht!!!*/
-input:hover[type="submit"],input:hover[type="reset"],input:hover[type="button"]	{
-	background:#222255 url('images/button2.jpg');
-	color:#fff;
-	font-weight:bold;
+input:hover[type="submit"],
+input:hover[type="reset"],
+input:hover[type="button"] {
+  background: #222255 url("images/button2.jpg");
+  color: #fff;
+  font-weight: bold;
 }
 
 /* Definiert die verschieden button typen im normal zustand */
@@ -114,292 +122,296 @@ input[type="reset"][disabled="disabled"],
 input[type="button"][disabled="disabled"],
 input[type="submit"][disabled="disabled"]:hover,
 input[type="reset"][disabled="disabled"]:hover,
-input[type="button"][disabled="disabled"]:hover
-{
-	background:#444;
-	color:#fff;
-	font-weight:bold;
+input[type="button"][disabled="disabled"]:hover {
+  background: #444;
+  color: #fff;
+  font-weight: bold;
 }
 
-
-input,select,textarea	{
-	border:solid #fff 1px;
-	font-family:arial;
-	font-size:10pt;
-	background:#000;
-	color:#fff
+input,
+select,
+textarea {
+  border: solid #fff 1px;
+  font-family: arial;
+  font-size: 10pt;
+  background: #000;
+  color: #fff;
 }
 
-#layoutbox	{
-	width:80%;
-	margin:0px auto;
-	background:#6e7591;
-	font-size:10pt;
-	vertical-align:top;
-	border:1px solid #fff;
+#layoutbox {
+  width: 80%;
+  margin: 0px auto;
+  background: #6e7591;
+  font-size: 10pt;
+  vertical-align: top;
+  border: 1px solid #fff;
 }
 
 #chat_color {
-	width: 60px;
+  width: 60px;
 }
 
-#topbar	{
- 	text-align:right;
- 	padding-right:10px;
- 	background:#424962;
- 	height:19px;
-	border:1px solid #fff;
+#topbar {
+  text-align: right;
+  padding-right: 10px;
+  background: #424962;
+  height: 19px;
+  border: 1px solid #fff;
 }
 
 #topbar a {
-	text-decoration:none;
-	font-weight:bold;
+  text-decoration: none;
+  font-weight: bold;
 }
 
 #topbar a:hover {
-	text-decoration:none;
-	color:#aaa;
-	font-weight:bold;
+  text-decoration: none;
+  color: #aaa;
+  font-weight: bold;
 }
 
-#logo	{
-	background:#000 url('../../images/logo.jpg') no-repeat;
-	width:175px;
-	height:72px;
-	border:1px solid #fff;
+#logo {
+  background: #000 url("../../images/logo.jpg") no-repeat;
+  width: 175px;
+  height: 72px;
+  border: 1px solid #fff;
 }
 
-#banner	{
-	text-align:center;
-	background:#000 url('../../images/banner.jpg') no-repeat;
-	height:72px;
-	border:1px solid #fff;
+#banner {
+  text-align: center;
+  background: #000 url("../../images/banner.jpg") no-repeat;
+  height: 72px;
+  border: 1px solid #fff;
 }
 
-#selectbar	{
-	background:#222;
-	width:175px;
+#selectbar {
+  background: #222;
+  width: 175px;
 }
 
 #selectbar select {
-	width:175px;
-	background:#222;
-	color:#fff;
+  width: 175px;
+  background: #222;
+  color: #fff;
 }
 
-
-#middlebar	{
-	background:#6e7591;
-	height:21px;
-	border:1px solid #fff;
-	border-right:none;
-	padding-left:15px;
+#middlebar {
+  background: #6e7591;
+  height: 21px;
+  border: 1px solid #fff;
+  border-right: none;
+  padding-left: 15px;
 }
 
-#clockbar	{
-	background:#6e7591;
-	width:350px;
-	padding-left:8px;
-	border:1px solid #fff;
-	height:21px;
-	border-left:none;
-	text-align:right;
+#clockbar {
+  background: #6e7591;
+  width: 350px;
+  padding-left: 8px;
+  border: 1px solid #fff;
+  height: 21px;
+  border-left: none;
+  text-align: right;
 }
 
-#content	{
-	background:#9198ab;
-	background:#606578;
-	height:450px;
-	vertical-align:top;
-	padding:4px 10px 10px 10px;
-	border:1px solid #fff;
-	text-align:center;
+#content {
+  background: #9198ab;
+  background: #606578;
+  height: 450px;
+  vertical-align: top;
+  padding: 4px 10px 10px 10px;
+  border: 1px solid #fff;
+  text-align: center;
 }
 
-#copy	{
-	background:#646b84;
-	border:1px solid #fff;
-	padding-left:8px;
+#copy {
+  background: #646b84;
+  border: 1px solid #fff;
+  padding-left: 8px;
 }
 
-#bottombar	{
-	padding-top:4px;
-	padding-right:4px;
-	text-align:right;
-	background:#646b84;
-	height:25px;
-	vertical-align:top;
+#bottombar {
+  padding-top: 4px;
+  padding-right: 4px;
+  text-align: right;
+  background: #646b84;
+  height: 25px;
+  vertical-align: top;
 }
 
-#menu1	{
-	padding:0px 0px 40px 0px;
-	background:#6e7591;
-	width:175px;
-	vertical-align:top;
-	border:1px solid #fff;
+#menu1 {
+  padding: 0px 0px 40px 0px;
+  background: #6e7591;
+  width: 175px;
+  vertical-align: top;
+  border: 1px solid #fff;
 }
 
 #menu1 div {
-	font-weight:bold;
-	background:#225;
-	color:#fff;
-	text-decoration:none;
-	width:175px;
-	padding: 2px 2px 2px 8px;
-	margin: 0px auto;
-	border-bottom:solid 1px #e6e6e6;
-	border-top:none;
-	height:16px;
+  font-weight: bold;
+  background: #225;
+  color: #fff;
+  text-decoration: none;
+  width: 175px;
+  padding: 2px 2px 2px 8px;
+  margin: 0px auto;
+  border-bottom: solid 1px #e6e6e6;
+  border-top: none;
+  height: 16px;
 }
 
 #menu1 a {
-	display: block;
-	background:#626b84;
-	color:#eee;
-	text-decoration:none;
-	width:175px;
-	padding: 2px 2px 2px 8px;
-	margin: 0px auto;
-	border-bottom:solid 1px #e6e6e6;
+  display: block;
+  background: #626b84;
+  color: #eee;
+  text-decoration: none;
+  width: 175px;
+  padding: 2px 2px 2px 8px;
+  margin: 0px auto;
+  border-bottom: solid 1px #e6e6e6;
 }
 
 #menu1 a:hover {
-	background-color:silver;
-	color: #445543;
-	text-decoration:none;
-	border-bottom:solid 1px #e6e6e6;
+  background-color: silver;
+  color: #445543;
+  text-decoration: none;
+  border-bottom: solid 1px #e6e6e6;
 }
 
-
-.tbltitle, table.tb th {
-	font-size:10pt;
-	font-weight:bold;
-	border:1px solid #fff;
-	background:#000000 url('images/cellpic4.gif');
-	padding:2px;
-	text-align:left;
+.tbltitle,
+table.tb th {
+  font-size: 10pt;
+  font-weight: bold;
+  border: 1px solid #fff;
+  background: #000000 url("images/cellpic4.gif");
+  padding: 2px;
+  text-align: left;
 }
 
-.tbldata, table.tb td {
-	font-size:8pt;
-	color:#fff;
-	border:1px solid #fff;
-	background:#000000 url('images/cellpic3.gif');
-	padding:3px;
-	text-align:left;
+.tbldata,
+table.tb td {
+  font-size: 8pt;
+  color: #fff;
+  border: 1px solid #fff;
+  background: #000000 url("images/cellpic3.gif");
+  padding: 3px;
+  text-align: left;
 }
 
 /* Ressourcen Speicher voll / Bewohner -> farbe wenn geb�ude baut */
 /* rest muss gleich wie .tbldata sein! */
 .tbldata2 {
-	font-size:8pt;
-	color:red;
-	border:1px solid #ffffff;
-	background:#000000 url('images/cellpic3.gif');
-	padding:3px;
-	vertical-align:top;
-	text-align:left;
+  font-size: 8pt;
+  color: red;
+  border: 1px solid #ffffff;
+  background: #000000 url("images/cellpic3.gif");
+  padding: 3px;
+  vertical-align: top;
+  text-align: left;
 }
 
 /* Energie wenn sie Positiv ist (standart ist hellgr�n) */
 /* rest muss gleich wie .tbldata sein! */
 .tbldata3 {
-	font-size:8pt;
-	color:#0f0;
-	border:1px solid #ffffff;
-	background:#000000 url('images/cellpic3.gif');
-	padding:3px;
-	vertical-align:top;
-	text-align:left;
+  font-size: 8pt;
+  color: #0f0;
+  border: 1px solid #ffffff;
+  background: #000000 url("images/cellpic3.gif");
+  padding: 3px;
+  vertical-align: top;
+  text-align: left;
 }
 
 /* Tabellenfelder mit Warntext (Standart ist orange) */
 /* rest muss gleich wie .tbldata sein! */
 .tbldata4 {
-	font-size:8pt;
-	color:#f90;
-	border:1px solid #ffffff;
-	background:#000000 url('images/cellpic3.gif');
-	padding:3px;
-	vertical-align:top;
-	text-align:left;
+  font-size: 8pt;
+  color: #f90;
+  border: 1px solid #ffffff;
+  background: #000000 url("images/cellpic3.gif");
+  padding: 3px;
+  vertical-align: top;
+  text-align: left;
 }
 
-
-.tblblack, .tb td.tblblack, .tb th.tblblack {
-	font-size:8pt;
-	color:#fff;
-	border:1px solid #fff;
-	background:#000;
+.tblblack,
+.tb td.tblblack,
+.tb th.tblblack {
+  font-size: 8pt;
+  color: #fff;
+  border: 1px solid #fff;
+  background: #000;
 }
 
 /* Allgemeine Tabellen definition welche gestreckt ist (infobox) */
-.tbl, table.tb	{
-	width:100%;
-	margin:15px auto;
+.tbl,
+table.tb {
+  width: 100%;
+  margin: 15px auto;
 }
 
-.tbl caption, table.tb	caption {
-	border:1px solid #fff;
-	border-bottom: none;
-	font-size:10pt;
-	font-weight:bold;
-	background:#225 url(images/cellpic.gif);
-	padding:4px;
-	text-align:center;
+.tbl caption,
+table.tb caption {
+  border: 1px solid #fff;
+  border-bottom: none;
+  font-size: 10pt;
+  font-weight: bold;
+  background: #225 url(images/cellpic.gif);
+  padding: 4px;
+  text-align: center;
 }
 
-.tblc	{
-	margin:0px auto;
-	border:1px solid #ffffff;
+.tblc {
+  margin: 0px auto;
+  border: 1px solid #ffffff;
 }
 
-div.infoboxtitle	{
-	font-size:10pt;
-	font-weight:bold;
-	border:1px solid #fff;
-	background:#225 url(images/cellpic.gif);
-	padding:4px;
-	text-align:center;
+div.infoboxtitle {
+  font-size: 10pt;
+  font-weight: bold;
+  border: 1px solid #fff;
+  background: #225 url(images/cellpic.gif);
+  padding: 4px;
+  text-align: center;
 }
 
-td.infoboxtitle, .tb td.infoboxtitle, .tb th.infoboxtitle	{
-	font-size:10pt;
-	font-weight:bold;
-	background:#225 url(images/cellpic.gif);
-	padding:4px;
-	text-align:center;
+td.infoboxtitle,
+.tb td.infoboxtitle,
+.tb th.infoboxtitle {
+  font-size: 10pt;
+  font-weight: bold;
+  background: #225 url(images/cellpic.gif);
+  padding: 4px;
+  text-align: center;
 }
 
 div.infoboxcontent {
-	font-size:8pt;
-	color:#fff;
-	border: none;
-	border-left:1px solid #fff;
-	border-right:1px solid #fff;
-	border-bottom:1px solid #fff;
-	background:#225 url(images/cellpic3.gif);
-	padding:4px;
-	text-align:left;
+  font-size: 8pt;
+  color: #fff;
+  border: none;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #fff;
+  border-bottom: 1px solid #fff;
+  background: #225 url(images/cellpic3.gif);
+  padding: 4px;
+  text-align: left;
 }
 
-.statsTab	{
-	/*width:120px;*/
-	height:20px;
-	border:1px solid #fff;
-	margin:0px;
-	padding:0px;
+.statsTab {
+  /*width:120px;*/
+  height: 20px;
+  border: 1px solid #fff;
+  margin: 0px;
+  padding: 0px;
 }
 
-
-table.statsNav	{
-	width:99%;
-	border:1px solid #fff;
-	margin:0px auto;
+table.statsNav {
+  width: 99%;
+  border: 1px solid #fff;
+  margin: 0px auto;
 }
 
-td.statsNav	{
-	background:#000000 url(images/tabulator.gif);
+td.statsNav {
+  background: #000000 url(images/tabulator.gif);
 }
 
 /*
@@ -407,1494 +419,1518 @@ td.statsNav	{
 */
 
 #galaxy_map_nav {
-  text-align:center;
-  vertical-align:middle;
+  text-align: center;
+  vertical-align: middle;
 }
 
 #galaxy_map_container {
-  background:black url('../../../images/main_bg.jpg');
-  text-align:center;
-  padding:0;
+  background: black url("../../../images/main_bg.jpg");
+  text-align: center;
+  padding: 0;
 }
 
 #sector_map_nav {
-  text-align:center;
-  vertical-align:middle;
+  text-align: center;
+  vertical-align: middle;
 }
 
 #sector_map_container {
-  background:black url('../../../images/main_bg.jpg');
-  padding:0;
-  margin:0;
+  background: black url("../../../images/main_bg.jpg");
+  padding: 0;
+  margin: 0;
 }
 
 #sector_map_table {
-  margin:5px auto;
+  margin: 5px auto;
 }
 
 #sector_map_table .sector_map_neighbour_nav {
-  text-align:center;
-  vertical-align:middle;
-  border:none;
-  background:transparent;
-  padding:0;
-  margin:0;
+  text-align: center;
+  vertical-align: middle;
+  border: none;
+  background: transparent;
+  padding: 0;
+  margin: 0;
 }
 
 #sector_map_table .sector_map_cell {
-  padding:0;
-  margin:0;
-  line-height:0;
-  background:black;
-  border:none;
+  padding: 0;
+  margin: 0;
+  line-height: 0;
+  background: black;
+  border: none;
 }
 
 #sector_map_table .sector_map_cell img.cell_number_spacer {
-  width:40px;
-  height:35px;
+  width: 40px;
+  height: 35px;
 }
 
 #sector_map_table .sector_map_cell img.cell_number_vertical {
-  margin-right:5px;
-  margin-left:5px;
-  width:30px;
-  height:40px;
-  border-bottom:1px dashed #555;
+  margin-right: 5px;
+  margin-left: 5px;
+  width: 30px;
+  height: 40px;
+  border-bottom: 1px dashed #555;
 }
 
 #sector_map_table .sector_map_cell img.cell_number_horizontal {
-  margin-top:5px;
-  margin-bottom:5px;
-  width:40px;
-  height:25px;
-  border-left:1px dashed #555;
+  margin-top: 5px;
+  margin-bottom: 5px;
+  width: 40px;
+  height: 25px;
+  border-left: 1px dashed #555;
 }
 
 #sector_map_table .sector_map_cell a {
-  border:none;
-  text-decoration:none;
-  display:inline-block;
-  border-left:1px dashed #555;
-  border-bottom:1px dashed #555;
-  margin:0;
-  padding:0;
-  line-height:0;
-  width:40px;
-  height:40px;
-  vertical-align:top;
+  border: none;
+  text-decoration: none;
+  display: inline-block;
+  border-left: 1px dashed #555;
+  border-bottom: 1px dashed #555;
+  margin: 0;
+  padding: 0;
+  line-height: 0;
+  width: 40px;
+  height: 40px;
+  vertical-align: top;
 }
 
 #sector_map_table .sector_map_cell a img {
-  width:40px;
-  height:40px;
+  width: 40px;
+  height: 40px;
 }
 
-#sector_map_table .sector_map_cell a img.hovered, #sector_map_table .sector_map_cell a img:hover {
-  background:url('../../../images/map/hovercell.png');
+#sector_map_table .sector_map_cell a img.hovered,
+#sector_map_table .sector_map_cell a img:hover {
+  background: url("../../../images/map/hovercell.png");
 }
 
 #sector_map_table .sector_map_cell a img.selected {
-  background:url('../../../images/map/selectedcell.png');
+  background: url("../../../images/map/selectedcell.png");
 }
 
 #sector_map_table .sector_map_cell a img.owned {
-  background:url('../../../images/map/owncell.png');
+  background: url("../../../images/map/owncell.png");
 }
-
-
 
 /* Übersicht -> planetenliste */
 /* \"Courier New\", Courier, mono; */
 
 .PlaniTextLinks {
-	color: #FFFFFF;
-	font-family: "Arial", Courier, mono;
-	font-size: 11px;
-	text-align: right;
-	vertical-align: middle;
+  color: #ffffff;
+  font-family: "Arial", Courier, mono;
+  font-size: 11px;
+  text-align: right;
+  vertical-align: middle;
 }
 .PlaniTextRechts {
-	color: #FFFFFF;
-	font-family: "Arial", Courier, mono;
-	font-size: 11px;
-	text-align: left;
-	vertical-align: middle;
+  color: #ffffff;
+  font-family: "Arial", Courier, mono;
+  font-size: 11px;
+  text-align: left;
+  vertical-align: middle;
 }
 .PlaniTextOben {
-	color: #FFFFFF;
-	font-family: "Arial", Courier, mono;
-	font-size: 11px;
-	text-align: center;
-	vertical-align: bottom;
+  color: #ffffff;
+  font-family: "Arial", Courier, mono;
+  font-size: 11px;
+  text-align: center;
+  vertical-align: bottom;
 }
 
 .PlaniTextCenter {
-	color: #FFFFFF;
-	font-family: Arial, Helvetica, sans-serif;
-	font-size: 14px;
-	text-align: left;
-	vertical-align: baseline;
-	font-weight: lighter;
+  color: #ffffff;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 14px;
+  text-align: left;
+  vertical-align: baseline;
+  font-weight: lighter;
 }
 .PlaniTextCenterPlanetname {
-	color: #FFFFFF;
-	font-family: "SF Chaerilidae",sans-serif;
-	font-size: 20px;
-	text-align: center;
-	vertical-align: baseline;
-	font-weight: lighter;
+  color: #ffffff;
+  font-family: "SF Chaerilidae", sans-serif;
+  font-size: 20px;
+  text-align: center;
+  vertical-align: baseline;
+  font-weight: lighter;
 }
 .PlaniTextCenterBeschreibung {
-	color: #FFFFFF;
-	font-family: Arial, Helvetica, sans-serif;
-	font-size: 14px;
-	text-align: right;
-	vertical-align: baseline;
-	font-weight: lighter;
+  color: #ffffff;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 14px;
+  text-align: right;
+  vertical-align: baseline;
+  font-weight: lighter;
 }
 .PlaniTextCenterRessourcen {
-	color: #FFFFFF;
-	font-family: "SF Chaerilidae",sans-serif;
-	font-size: 16px;
-	text-align: center;
-	vertical-align: baseline;
-	font-weight: lighter;
+  color: #ffffff;
+  font-family: "SF Chaerilidae", sans-serif;
+  font-size: 16px;
+  text-align: center;
+  vertical-align: baseline;
+  font-weight: lighter;
 }
 .PlaniTextCenterStore {
-	color: red;
-	font-family: Arial, Helvetica, sans-serif;
-	font-size: 14px;
-	text-align: left;
-	vertical-align: baseline;
-	font-weight: lighter;
+  color: red;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 14px;
+  text-align: left;
+  vertical-align: baseline;
+  font-weight: lighter;
 }
 .PlaniTextCenterPower {
-	color: #0f0;
-	font-family: Arial, Helvetica, sans-serif;
-	font-size: 14px;
-	text-align: left;
-	vertical-align: baseline;
-	font-weight: lighter;
+  color: #0f0;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 14px;
+  text-align: left;
+  vertical-align: baseline;
+  font-weight: lighter;
 }
-
-
-
 
 /* Definition des ganzen Layouts */
 
 div.Menueleiste-09_ {
-	position:absolute;
-	left:6px;
-	top:73px;
-	width:10px;
-	height:145px;
+  position: absolute;
+  left: 6px;
+  top: 73px;
+  width: 10px;
+  height: 145px;
 }
 
 div.Menueleiste-17_ {
-	position:absolute;
-	left:16px;
-	top:141px;
-	width:71px;
-	height:6px;
+  position: absolute;
+  left: 16px;
+  top: 141px;
+  width: 71px;
+  height: 6px;
 }
 
 div.platzhalter-planeten_ {
-	position:absolute;
-	left:28px;
-	top:147px;
-	width:218px;
-	height:23px;
-	background-color:#000000;
-	text-align:left;
-	vertical-align:middle;
+  position: absolute;
+  left: 28px;
+  top: 147px;
+  width: 218px;
+  height: 23px;
+  background-color: #000000;
+  text-align: left;
+  vertical-align: middle;
 }
 
 div.pb-dropdownplanets_ {
-	position:absolute;
-	left:53px;
-	top:170px;
-	width:34px;
-	height:35px;
+  position: absolute;
+  left: 53px;
+  top: 170px;
+  width: 34px;
+  height: 35px;
 }
 
 div.Menueleiste-28_ {
-	position:absolute;
-	left:0px;
-	top:218px;
-	width:14px;
-	height:437px;
+  position: absolute;
+  left: 0px;
+  top: 218px;
+  width: 14px;
+  height: 437px;
 }
 
 div.Menueleiste-29_ {
-	position:absolute;
-	left:14px;
-	top:218px;
-	width:30px;
-	height:48px;
+  position: absolute;
+  left: 14px;
+  top: 218px;
+  width: 30px;
+  height: 48px;
 }
 
 div.Menueleiste-31_ {
-	position:absolute;
-	left:263px;
-	top:218px;
-	width:15px;
-	height:550px;
+  position: absolute;
+  left: 263px;
+  top: 218px;
+  width: 15px;
+  height: 550px;
 }
 
 div.Menueleiste-37_ {
-	position:absolute;
-	left:14px;
-	top:266px;
-	width:30px;
-	height:36px;
+  position: absolute;
+  left: 14px;
+  top: 266px;
+  width: 30px;
+  height: 36px;
 }
 
 div.Menueleiste-40_ {
-	position:absolute;
-	left:14px;
-	top:302px;
-	width:30px;
-	height:176px;
+  position: absolute;
+  left: 14px;
+  top: 302px;
+  width: 30px;
+  height: 176px;
 }
 
 div.Menueleiste-49_ {
-	position:absolute;
-	left:14px;
-	top:478px;
-	width:30px;
-	height:30px;
+  position: absolute;
+  left: 14px;
+  top: 478px;
+  width: 30px;
+  height: 30px;
 }
 
 div.Menueleiste-54_ {
-	position:absolute;
-	left:44px;
-	top:533px;
-	width:164px;
-	height:2px;
+  position: absolute;
+  left: 44px;
+  top: 533px;
+  width: 164px;
+  height: 2px;
 }
 
 div.Menueleiste-60_ {
-	position:absolute;
-	left:0px;
-	top:655px;
-	width:16px;
-	height:71px;
+  position: absolute;
+  left: 0px;
+  top: 655px;
+  width: 16px;
+  height: 71px;
 }
 
 div.Menueleiste-69_ {
-	position:absolute;
-	left:16px;
-	top:749px;
-	width:75px;
-	height:19px;
+  position: absolute;
+  left: 16px;
+  top: 749px;
+  width: 75px;
+  height: 19px;
 }
 
 div.Menueleiste-70_ {
-	position:absolute;
-	left:188px;
-	top:749px;
-	width:75px;
-	height:19px;
+  position: absolute;
+  left: 188px;
+  top: 749px;
+  width: 75px;
+  height: 19px;
 }
-.Stil1 {color: #FFFFFF}
-body {
-	background-color: #000000;
+.Stil1 {
+  color: #ffffff;
 }
-.Stil2 {font-family:verdana, sans-serif, arial;}
-.Stil3 {font-size: 36px}
-
+body {
+  background-color: #000000;
+}
+.Stil2 {
+  font-family: verdana, sans-serif, arial;
+}
+.Stil3 {
+  font-size: 36px;
+}
 
 body {
-	background-attachment: fixed;
+  background-attachment: fixed;
 }
 
 /* .Stil4 {font-size: 9px} */
 .Stil6 {
-	font-size: 13px;
-	font-family:verdana, sans-serif, arial;
+  font-size: 13px;
+  font-family: verdana, sans-serif, arial;
 }
-
 
 #planetDropDown {
-	background:#000;
-	color:#fff;
-	width:195px;
-	position:absolute;
-	z-index:0;
-	top:175px;
-	left:28px;
-	visibility:hidden;
-	border:1px solid #fff;
+  background: #000;
+  color: #fff;
+  width: 195px;
+  position: absolute;
+  z-index: 0;
+  top: 175px;
+  left: 28px;
+  visibility: hidden;
+  border: 1px solid #fff;
 }
 
-#planetDropDown	a {
-	color:#fff;
-	background:#0D0D41 url('images/button1.jpg');
-	display:block;
-	width:175px;
-	text-align:left;
-	padding:2px 10px 2px 10px;
-	text-decoration:none;
-	font-family:arial;
-	font-size:9pt;
-
+#planetDropDown a {
+  color: #fff;
+  background: #0d0d41 url("images/button1.jpg");
+  display: block;
+  width: 175px;
+  text-align: left;
+  padding: 2px 10px 2px 10px;
+  text-decoration: none;
+  font-family: arial;
+  font-size: 9pt;
 }
 
-#planetDropDown	a.active {
-	font-weight: bold;
+#planetDropDown a.active {
+  font-weight: bold;
 }
 
-#planetDropDown	a:hover {
-	color:#fff;
-	background:#0806a3 url('images/button2.jpg');
-	display:block;
-	width:175px;
-	text-align:left;
-	padding:2px 10px 2px 10px;
-	text-decoration:none;
-	font-family:arial;
-	font-size:9pt;
+#planetDropDown a:hover {
+  color: #fff;
+  background: #0806a3 url("images/button2.jpg");
+  display: block;
+  width: 175px;
+  text-align: left;
+  padding: 2px 10px 2px 10px;
+  text-decoration: none;
+  font-family: arial;
+  font-size: 9pt;
 }
 
 div.platzhalter-serverzeit_ {
-	font-family: "SF Chaerilidae",sans-serif;
-	font-size: 10px;
-	font-style: normal;
-	line-height: normal;
-	font-weight: normal;
-	font-variant: normal;
-	text-transform: none;
-	color: #FFFFFF;
-	position:absolute;
-	left:140px;
-	top:101px;
-	width:62px;
-	height:18px;
-	background-color:#000000;
-	background-position: left center;
-	text-align:center;
-	vertical-align:middle;
+  font-family: "SF Chaerilidae", sans-serif;
+  font-size: 10px;
+  font-style: normal;
+  line-height: normal;
+  font-weight: normal;
+  font-variant: normal;
+  text-transform: none;
+  color: #ffffff;
+  position: absolute;
+  left: 140px;
+  top: 101px;
+  width: 62px;
+  height: 18px;
+  background-color: #000000;
+  background-position: left center;
+  text-align: center;
+  vertical-align: middle;
 }
 
 div.PlanetName {
-	position:absolute;
-	left:34px;
-	top:149px;
-	width:218px;
-	height:23px;
-	font-family: "SF Chaerilidae",sans-serif;
-	font-size: 12px;
-	font-style: normal;
-	line-height: normal;
-	font-weight: normal;
-	font-variant: normal;
-	color: #FFFFFF;
-	background-color: #000000;
-	background-position: left center;
-	text-align:left;
-	vertical-align:middle;
+  position: absolute;
+  left: 34px;
+  top: 149px;
+  width: 218px;
+  height: 23px;
+  font-family: "SF Chaerilidae", sans-serif;
+  font-size: 12px;
+  font-style: normal;
+  line-height: normal;
+  font-weight: normal;
+  font-variant: normal;
+  color: #ffffff;
+  background-color: #000000;
+  background-position: left center;
+  text-align: left;
+  vertical-align: middle;
 }
 
 div.Left_Panel {
-	position:absolute;
-	left:0px;
-	top:0px;
-	width:279px;
-	height:787px;
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  width: 279px;
+  height: 787px;
 }
 
 div.Spielbereich_ {
-	position:absolute;
-	left:290px;
-	top:64px;
-	width:714px;
-	height:704px;
-	text-align:center;
+  position: absolute;
+  left: 290px;
+  top: 64px;
+  width: 714px;
+  height: 704px;
+  text-align: center;
 }
 
 #contentwrap {
-	padding: 20px;
+  padding: 20px;
 }
 
 div.Toppanel {
-	position:absolute;
-	left:0px;
-	top:0px;
-	width:984px;
-	height:62px;
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  width: 984px;
+  height: 62px;
 }
 
 div.EtoA-Logo_ {
-	position:absolute;
-	left:0px;
-	top:0px;
-	width:289px;
-	height:62px;
+  position: absolute;
+  left: 0px;
+  top: 0px;
+  width: 289px;
+  height: 62px;
 }
 
-
-
-
-
-
-
-
-
-
 div.TopPanel-02_ {
-	position:absolute;
-	left:289px;
-	top:0px;
-	width:156px;
-	height:42px;
+  position: absolute;
+  left: 289px;
+  top: 0px;
+  width: 156px;
+  height: 42px;
 }
 
 div.TopPanel-03_ {
-	position:absolute;
-	left:445px;
-	top:0px;
-	width:178px;
-	height:42px;
+  position: absolute;
+  left: 445px;
+  top: 0px;
+  width: 178px;
+  height: 42px;
 }
 
 div.TopPanel-04_ {
-	position:absolute;
-	left:623px;
-	top:0px;
-	width:179px;
-	height:42px;
+  position: absolute;
+  left: 623px;
+  top: 0px;
+  width: 179px;
+  height: 42px;
 }
 
 div.TopPanel-05_ {
-	position:absolute;
-	left:802px;
-	top:0px;
-	width:182px;
-	height:42px;
+  position: absolute;
+  left: 802px;
+  top: 0px;
+  width: 182px;
+  height: 42px;
 }
 
 div.TopPanel-06_ {
-	position:absolute;
-	left:289px;
-	top:42px;
-	width:156px;
-	height:22px;
+  position: absolute;
+  left: 289px;
+  top: 42px;
+  width: 156px;
+  height: 22px;
 }
 
 div.TopPanel-07_ {
-	position:absolute;
-	left:445px;
-	top:42px;
-	width:178px;
-	height:22px;
+  position: absolute;
+  left: 445px;
+  top: 42px;
+  width: 178px;
+  height: 22px;
 }
 
 div.TopPanel-08_ {
-	position:absolute;
-	left:623px;
-	top:42px;
-	width:179px;
-	height:22px;
+  position: absolute;
+  left: 623px;
+  top: 42px;
+  width: 179px;
+  height: 22px;
 }
 
 div.TopPanel-09_ {
-	position:absolute;
-	left:802px;
-	top:42px;
-	width:182px;
-	height:22px;
+  position: absolute;
+  left: 802px;
+  top: 42px;
+  width: 182px;
+  height: 22px;
 }
 
-
-
-
-
-
 div.Menueleiste-51_ {
-	position:absolute;
-	left:14px;
-	top:216px;
-	width:30px;
-	height:437px;
+  position: absolute;
+  left: 14px;
+  top: 216px;
+  width: 30px;
+  height: 437px;
 }
 
 div.Menueleiste-33_ {
-	position:absolute;
-	left:208px;
-	top:226px;
-	width:32px;
-	height:443px;
+  position: absolute;
+  left: 208px;
+  top: 226px;
+  width: 32px;
+  height: 443px;
 }
 
-
-
 div.Menueleiste-47_ {
-	position:absolute;
-	left:44px;
-	top:512px;
-	width:164px;
-	height:22px;
+  position: absolute;
+  left: 44px;
+  top: 512px;
+  width: 164px;
+  height: 22px;
 }
 
 /* Allgemeines */
 
 div.nb-rathaus_ {
-	background:#225;
-	position:absolute;
-	left:44px;
-	top:237px;
-	width:164px;
-	height:21px;
+  background: #225;
+  position: absolute;
+  left: 44px;
+  top: 237px;
+  width: 164px;
+  height: 21px;
 }
 
 div.nb-raumkarte_ {
-	background:#225;
-	position:absolute;
-	left:44px;
-	top:258px;
-	width:164px;
-	height:21px;
+  background: #225;
+  position: absolute;
+  left: 44px;
+  top: 258px;
+  width: 164px;
+  height: 21px;
 }
 
 /* Planet */
 
 div.nb-informationen_ {
-	background:#225;
-	position:absolute;
-	left:44px;
-	top:344px;
-	width:164px;
-	height:21px;
+  background: #225;
+  position: absolute;
+  left: 44px;
+  top: 344px;
+  width: 164px;
+  height: 21px;
 }
 
 div.nb-wirtschaft_ {
-	background:#225;
-	position:absolute;
-	left:44px;
-	top:365px;
-	width:164px;
-	height:21px;
+  background: #225;
+  position: absolute;
+  left: 44px;
+  top: 365px;
+  width: 164px;
+  height: 21px;
 }
 
-
 div.nb-bev-lkerung_ {
-	background:#225;
-	position:absolute;
-	left:44px;
-	top:386px;
-	width:164px;
-	height:21px;
+  background: #225;
+  position: absolute;
+  left: 44px;
+  top: 386px;
+  width: 164px;
+  height: 21px;
 }
 
 div.nb-technikbuam_ {
-	background:#225;
-	position:absolute;
-	left:44px;
-	top:407px;
-	width:164px;
-	height:21px;
+  background: #225;
+  position: absolute;
+  left: 44px;
+  top: 407px;
+  width: 164px;
+  height: 21px;
 }
 
 div.nb-schiffshafen_ {
-	background:#225;
-	position:absolute;
-	left:44px;
-	top:428px;
-	width:164px;
-	height:21px;
+  background: #225;
+  position: absolute;
+  left: 44px;
+  top: 428px;
+  width: 164px;
+  height: 21px;
 }
-
 
 div.nb-marktplatz_ {
-	background:#225;
-	position:absolute;
-	left:44px;
-	top:449px;
-	width:164px;
-	height:21px;
+  background: #225;
+  position: absolute;
+  left: 44px;
+  top: 449px;
+  width: 164px;
+  height: 21px;
 }
 
-
 div.nb-kryptocenter_ {
-	background:#225;
-	position:absolute;
-	left:44px;
-	top:470px;
-	width:164px;
-	height:21px;
+  background: #225;
+  position: absolute;
+  left: 44px;
+  top: 470px;
+  width: 164px;
+  height: 21px;
 }
 
 div.nb-bunker_ {
-	background:#225;
-	position:absolute;
-	left:44px;
-	top:491px;
-	width:164px;
-	height:21px;
+  background: #225;
+  position: absolute;
+  left: 44px;
+  top: 491px;
+  width: 164px;
+  height: 21px;
 }
 
 /* Produktion */
 
 div.nb-bauhof_ {
-	background:#225;
-	position:absolute;
-	left:44px;
-	top:532px;
-	width:164px;
-	height:21px;
+  background: #225;
+  position: absolute;
+  left: 44px;
+  top: 532px;
+  width: 164px;
+  height: 21px;
 }
 
 div.nb-forschung_ {
-	background:#225;
-	position:absolute;
-	left:44px;
-	top:553px;
-	width:164px;
-	height:21px;
+  background: #225;
+  position: absolute;
+  left: 44px;
+  top: 553px;
+  width: 164px;
+  height: 21px;
 }
 
 div.nb-schiffswerft_ {
-	background:#225;
-	position:absolute;
-	left:44px;
-	top:575px;
-	width:164px;
-	height:21px;
+  background: #225;
+  position: absolute;
+  left: 44px;
+  top: 575px;
+  width: 164px;
+  height: 21px;
 }
 
 div.nb-verteidigung_ {
-	background:#225;
-	position:absolute;
-	left:44px;
-	top:596px;
-	width:164px;
-	height:21px;
+  background: #225;
+  position: absolute;
+  left: 44px;
+  top: 596px;
+  width: 164px;
+  height: 21px;
 }
 
 div.nb-recycling_ {
-	background:#225;
-	position:absolute;
-	left:44px;
-	top:617px;
-	width:164px;
-	height:21px;
+  background: #225;
+  position: absolute;
+  left: 44px;
+  top: 617px;
+  width: 164px;
+  height: 21px;
 }
 
 div.nb-raketen_ {
-	background:#225;
-	position:absolute;
-	left:44px;
-	top:638px;
-	width:164px;
-	height:21px;
+  background: #225;
+  position: absolute;
+  left: 44px;
+  top: 638px;
+  width: 164px;
+  height: 21px;
 }
-
-
 
 /* Sonstiges */
 
 div.Menueleiste-57_ {
-	position:absolute;
-	left:44px;
-	top:659px;
-	width:164px;
-	height:21px;
+  position: absolute;
+  left: 44px;
+  top: 659px;
+  width: 164px;
+  height: 21px;
 }
 
 div.nb-buddylist_ {
-	background:#225;
-	position:absolute;
-	left:44px;
-	top:680px;
-	width:164px;
-	height:21px;
+  background: #225;
+  position: absolute;
+  left: 44px;
+  top: 680px;
+  width: 164px;
+  height: 21px;
 }
 
 /* Menu abschluss */
 
 div.Menueleiste-59_ {
-	position:absolute;
-	left:44px;
-	top:701px;
-	width:164px;
-	height:14px;
+  position: absolute;
+  left: 44px;
+  top: 701px;
+  width: 164px;
+  height: 14px;
 }
 
-
 div.Menueleiste-62_ {
-	position:absolute;
-	left:91px;
-	top:715px;
-	width:117px;
-	height:16px;
+  position: absolute;
+  left: 91px;
+  top: 715px;
+  width: 117px;
+  height: 16px;
 }
 
 div.alert_ {
-	position:absolute;
-	left:91px;
-	top:726px;
-	width:97px;
-	height:41px;
+  position: absolute;
+  left: 91px;
+  top: 726px;
+  width: 97px;
+  height: 41px;
 }
 
 div.pb-post_ {
-	position:absolute;
-	left:0px;
-	top:704px;
-	width:49px;
-	height:71px;
+  position: absolute;
+  left: 0px;
+  top: 704px;
+  width: 49px;
+  height: 71px;
 }
 div.pb-report_ {
-	position:absolute;
-	left:49px;
-	top:704px;
-	width:42px;
-	height:71px;
+  position: absolute;
+  left: 49px;
+  top: 704px;
+  width: 42px;
+  height: 71px;
 }
 
 div.pb-notes_ {
-	position:absolute;
-	left:188px;
-	top:721px;
-	width:52px;
-	height:64px;
+  position: absolute;
+  left: 188px;
+  top: 721px;
+  width: 52px;
+  height: 64px;
 }
 
 div.Menueleiste-66_ {
-	position:absolute;
-	left:91px;
-	top:761px;
-	width:97px;
-	height:56px;
+  position: absolute;
+  left: 91px;
+  top: 761px;
+  width: 97px;
+  height: 56px;
 }
 
 div.Menueleiste-68_ {
-	position:absolute;
-	left:16px;
-	top:775px;
-	width:75px;
-	height:23px;
+  position: absolute;
+  left: 16px;
+  top: 775px;
+  width: 75px;
+  height: 23px;
 }
-
 
 div.Menueleiste-63_ {
-	position:absolute;
-	left:240px;
-	top:706px;
-	width:23px;
-	height:94px;
+  position: absolute;
+  left: 240px;
+  top: 706px;
+  width: 23px;
+  height: 94px;
 }
 
-
-
 div.Menueleiste-41_ {
-	position:absolute;
-	left:44px;
-	top:321px;
-	width:164px;
-	height:23px;
+  position: absolute;
+  left: 44px;
+  top: 321px;
+  width: 164px;
+  height: 23px;
 }
 
 div.nb-allianz_ {
-	background:#225;
-	position:absolute;
-	left:44px;
-	top:216px;
-	width:164px;
-	height:21px;
+  background: #225;
+  position: absolute;
+  left: 44px;
+  top: 216px;
+  width: 164px;
+  height: 21px;
 }
 
 div.nb-favoriten_ {
-	background:#225;
-	position:absolute;
-	left:44px;
-	top:300px;
-	width:164px;
-	height:21px;
+  background: #225;
+  position: absolute;
+  left: 44px;
+  top: 300px;
+  width: 164px;
+  height: 21px;
 }
 
 div.nb-flotten_ {
-	background:#225;
-	position:absolute;
-	left:44px;
-	top:279px;
-	width:164px;
-	height:21px;
+  background: #225;
+  position: absolute;
+  left: 44px;
+  top: 279px;
+  width: 164px;
+  height: 21px;
 }
 
 div.Menueleiste-26_ {
-	position:absolute;
-	left:208px;
-	top:200px;
-	width:43px;
-	height:26px;
+  position: absolute;
+  left: 208px;
+  top: 200px;
+  width: 43px;
+  height: 26px;
 }
 
 div.Menueleiste-25_ {
-	position:absolute;
-	left:251px;
-	top:168px;
-	width:12px;
-	height:58px;
+  position: absolute;
+  left: 251px;
+  top: 168px;
+  width: 12px;
+  height: 58px;
 }
 
 div.Menueleiste-23_ {
-	position:absolute;
-	left:87px;
-	top:168px;
-	width:121px;
-	height:48px;
+  position: absolute;
+  left: 87px;
+  top: 168px;
+  width: 121px;
+  height: 48px;
 }
 
 div.pb-planetdropdown_ {
-	position:absolute;
-	left:208px;
-	top:168px;
-	width:43px;
-	height:32px;
+  position: absolute;
+  left: 208px;
+  top: 168px;
+  width: 43px;
+  height: 32px;
 }
 
 div.Menueleiste-27_ {
-	position:absolute;
-	left:16px;
-	top:202px;
-	width:71px;
-	height:13px;
+  position: absolute;
+  left: 16px;
+  top: 202px;
+  width: 71px;
+  height: 13px;
 }
 
 div.Menueleiste_ {
-	position:absolute;
-	left:263px;
-	top:62px;
-	width:15px;
-	height:154px;
+  position: absolute;
+  left: 263px;
+  top: 62px;
+  width: 15px;
+  height: 154px;
 }
 
 div.pb-nextplanet_ {
-	position:absolute;
-	left:53px;
-	top:168px;
-	width:34px;
-	height:35px;
+  position: absolute;
+  left: 53px;
+  top: 168px;
+  width: 34px;
+  height: 35px;
 }
 
 div.pb-previousplanet_ {
-	position:absolute;
-	left:16px;
-	top:168px;
-	width:37px;
-	height:35px;
+  position: absolute;
+  left: 16px;
+  top: 168px;
+  width: 37px;
+  height: 35px;
 }
 
 div.Menueleiste-20_ {
-	position:absolute;
-	left:246px;
-	top:145px;
-	width:17px;
-	height:23px;
+  position: absolute;
+  left: 246px;
+  top: 145px;
+  width: 17px;
+  height: 23px;
 }
 
 div.Menueleiste-18_ {
-	position:absolute;
-	left:16px;
-	top:145px;
-	width:12px;
-	height:23px;
+  position: absolute;
+  left: 16px;
+  top: 145px;
+  width: 12px;
+  height: 23px;
 }
 
 div.Menueleiste-16_ {
-	position:absolute;
-	left:207px;
-	top:122px;
-	width:56px;
-	height:23px;
+  position: absolute;
+  left: 207px;
+  top: 122px;
+  width: 56px;
+  height: 23px;
 }
 
 div.Menueleiste-15_ {
-	position:absolute;
-	left:140px;
-	top:118px;
-	width:62px;
-	height:27px;
+  position: absolute;
+  left: 140px;
+  top: 118px;
+  width: 62px;
+  height: 27px;
 }
 
 div.pb-info_ {
-	position:absolute;
-	left:207px;
-	top:62px;
-	width:56px;
-	height:60px;
+  position: absolute;
+  left: 207px;
+  top: 62px;
+  width: 56px;
+  height: 60px;
 }
 
 div.Menueleiste-12_ {
-	position:absolute;
-	left:87px;
-	top:100px;
-	width:53px;
-	height:45px;
+  position: absolute;
+  left: 87px;
+  top: 100px;
+  width: 53px;
+  height: 45px;
 }
 
 div.Menueleiste-14_ {
-	position:absolute;
-	left:202px;
-	top:100px;
-	width:5px;
-	height:45px;
+  position: absolute;
+  left: 202px;
+  top: 100px;
+  width: 5px;
+  height: 45px;
 }
 
 div.Menueleiste-11_ {
-	position:absolute;
-	left:87px;
-	top:71px;
-	width:120px;
-	height:29px;
+  position: absolute;
+  left: 87px;
+  top: 71px;
+  width: 120px;
+  height: 29px;
 }
 
 div.sp-pb-overview_ {
-	position:absolute;
-	left:16px;
-	top:71px;
-	width:71px;
-	height:74px;
+  position: absolute;
+  left: 16px;
+  top: 71px;
+  width: 71px;
+  height: 74px;
 }
 
 div.Menueleiste-08_ {
-	position:absolute;
-	left:0px;
-	top:71px;
-	width:6px;
-	height:145px;
+  position: absolute;
+  left: 0px;
+  top: 71px;
+  width: 6px;
+  height: 145px;
 }
 
 div.Menueleiste-03_ {
-	position:absolute;
-	left:0px;
-	top:62px;
-	width:207px;
-	height:9px;
+  position: absolute;
+  left: 0px;
+  top: 62px;
+  width: 207px;
+  height: 9px;
 }
 
 div.test_grafik_ {
-	position:absolute;
-	left:99px;
-	top:651px;
-	width:97px;
-	height:41px;
+  position: absolute;
+  left: 99px;
+  top: 651px;
+  width: 97px;
+  height: 41px;
 }
 
-hr	{
-	height:1px;
-	border:1px solid #111;
+hr {
+  height: 1px;
+  border: 1px solid #111;
 }
 
-
-
-table.tab	{
-	margin:0px auto;
-	border:1px solid #000;
-	border-collapse:collapse;
+table.tab {
+  margin: 0px auto;
+  border: 1px solid #000;
+  border-collapse: collapse;
 }
 
-
-td.havenTab	{
-	width:200px;
-	height:30px;
-	border:1px solid #000;
-	margin:0px;
-	padding:0px;
-	background:#ddf;
-	color:#222;
-	font-weight:bold;
-	text-align:center;
-	text-decoration:none;
+td.havenTab {
+  width: 200px;
+  height: 30px;
+  border: 1px solid #000;
+  margin: 0px;
+  padding: 0px;
+  background: #ddf;
+  color: #222;
+  font-weight: bold;
+  text-align: center;
+  text-decoration: none;
 }
 
-td.havenTab:hover	{
-	background:#889;
-	color:#000;
-	text-decoration:none;
+td.havenTab:hover {
+  background: #889;
+  color: #000;
+  text-decoration: none;
 }
 
-#havenBox, #havenInfoBox 	{
-	border:1px solid #000;
-	width:600px;
-	margin:0px auto;
+#havenBox,
+#havenInfoBox {
+  border: 1px solid #000;
+  width: 600px;
+  margin: 0px auto;
 }
-
 
 /* Xajax Suchliste z.b. bei Usereingabe in Nachrichten*/
-.citybox  {
-  position:absolute;
-  z-index:10;
-  border:1px #ccc solid;
-  border-top:none;
-  border-bottom:none;
-  background:#223;
-  padding:0px;
-  display:none;
+.citybox {
+  position: absolute;
+  z-index: 10;
+  border: 1px #ccc solid;
+  border-top: none;
+  border-bottom: none;
+  background: #223;
+  padding: 0px;
+  display: none;
 }
 
-.citybox ul  {
-  padding:0 10px 0 10px;
-  margin:0;
+.citybox ul {
+  padding: 0 10px 0 10px;
+  margin: 0;
 }
 
-.citybox li  {
-  list-style:none;
-  padding-left:0;
+.citybox li {
+  list-style: none;
+  padding-left: 0;
 }
 
-.citybox a  {
-  text-decoration:none;
-  color:#aaa;
-  display:block;
-  padding:5px;
-  border-bottom:1px solid #fff;
+.citybox a {
+  text-decoration: none;
+  color: #aaa;
+  display: block;
+  padding: 5px;
+  border-bottom: 1px solid #fff;
 }
 .citybox a:hover {
-  color:#fff;
-  background:#575763;
+  color: #fff;
+  background: #575763;
 }
 
-.boxLayout	{
-	 margin:15px auto;
-	 width: 100%;
+.boxLayout {
+  margin: 15px auto;
+  width: 100%;
 }
 
 .boxLayout.success .infoboxtitle {
-	color: #0f0;
+  color: #0f0;
 }
 
 .boxLayout.information .infoboxtitle {
-	color: #0ff;
+  color: #0ff;
 }
 
 .boxLayout.error .infoboxtitle {
-	color: #f00;
+  color: #f00;
 }
 
 /* Resource */
-#resbox	{
-	margin-bottom:20px;
-	width:650px;
-	border:1px solid #fff;
+#resbox {
+  margin-bottom: 20px;
+  width: 650px;
+  border: 1px solid #fff;
 }
 
-#resboxheader	{
-	background:url('images/cellpic.gif') no-repeat;
-	height:21px;
-	color:#fff;
-	font-weight:bold;
-	padding-left:20px;
-	padding-top:5px;
-	border-bottom:1px solid #fff;
+#resboxheader {
+  background: url("images/cellpic.gif") no-repeat;
+  height: 21px;
+  color: #fff;
+  font-weight: bold;
+  padding-left: 20px;
+  padding-top: 5px;
+  border-bottom: 1px solid #fff;
 }
 
-#resboxcontent	{
-	padding:5px;
-	background:#333 url('images/cellpic3.gif') repeat;
+#resboxcontent {
+  padding: 5px;
+  background: #333 url("images/cellpic3.gif") repeat;
 }
 
 .buildOverviewObjectContainer {
-    width:120px;
-    height:120px;
-    text-align:center;
-    padding:0px;
-    margin-bottom:-1px;
-    border-right:1px solid;
-    border-bottom:1px solid;
-    float:left;
-    background-repeat:no-repeat;
-    position:relative;
-    overflow:hidden;
+  width: 120px;
+  height: 120px;
+  text-align: center;
+  padding: 0px;
+  margin-bottom: -1px;
+  border-right: 1px solid;
+  border-bottom: 1px solid;
+  float: left;
+  background-repeat: no-repeat;
+  position: relative;
+  overflow: hidden;
 }
 
-.buildOverviewObjectTitle	{
-	font-weight:normal;
-	position:absolute;
-	background:url('images/transheader1.png') top right no-repeat;
-    margin-top:1px;
-	padding:3px 15px 3px 3px;
-	font-size:8pt;
-    float:left;
-	z-index: 10;
+.buildOverviewObjectTitle {
+  font-weight: normal;
+  position: absolute;
+  background: url("images/transheader1.png") top right no-repeat;
+  margin-top: 1px;
+  padding: 3px 15px 3px 3px;
+  font-size: 8pt;
+  float: left;
+  z-index: 10;
 }
 
 .buildOverviewObjectSubTitle {
-    display:none;
-    float:left;
+  display: none;
+  float: left;
 }
 
 .buildOverviewLink {
-    display:block;
-    width:120px;
-    height:120px;
-    padding:0px;
-    margin:0px;
-    border:none;
+  display: block;
+  width: 120px;
+  height: 120px;
+  padding: 0px;
+  margin: 0px;
+  border: none;
 }
 
-.buildOverviewObjectLevel	{
-	text-align:right;
-	font-size:20pt;
-	font-weight:bold;
-	background:url('images/transfooter1.png') no-repeat;
-	position:absolute;
-	right:0px;
-	bottom:0px;
-	width:60px;
-	padding:3px;
-	padding-right:5px;
-    float:left;
+.buildOverviewObjectLevel {
+  text-align: right;
+  font-size: 20pt;
+  font-weight: bold;
+  background: url("images/transfooter1.png") no-repeat;
+  position: absolute;
+  right: 0px;
+  bottom: 0px;
+  width: 60px;
+  padding: 3px;
+  padding-right: 5px;
+  float: left;
 }
 
 .buildOverviewObjectImage {
-    display:none;
-    float:left;
+  display: none;
+  float: left;
 }
 
-.buildOverviewObjectNone, .tb td.buildOverviewObjectNone {
-	border:none;
-
+.buildOverviewObjectNone,
+.tb td.buildOverviewObjectNone {
+  border: none;
 }
 
 .planetOverviewName {
-	position:absolute;
-	left:20px;
-	top:15px;
-	font-size:18pt;
+  position: absolute;
+  left: 20px;
+  top: 15px;
+  font-size: 18pt;
 }
 
 .planetOverviewName a {
-	text-decoration: none;
+  text-decoration: none;
 }
 
-.planetOverviewList	{
-	position:absolute;
-	left:20px;
-	bottom:20px;
-	font-size:9pt;
+.planetOverviewList {
+  position: absolute;
+  left: 20px;
+  bottom: 20px;
+  font-size: 9pt;
 }
 
-.planetOverviewItem	{
-	float:left;
-	width:120px;
-	font-size:9pt;
-	font-weight:bold;
-	height:17px;
+.planetOverviewItem {
+  float: left;
+  width: 120px;
+  font-size: 9pt;
+  font-weight: bold;
+  height: 17px;
 }
 
 /* Tab Menu */
-.tabMenu	{
-	display:table;
-	margin:10px auto 0px auto;
-	border-left:1px solid #fff;
+.tabMenu {
+  display: table;
+  margin: 10px auto 0px auto;
+  border-left: 1px solid #fff;
 }
 
-.tabMenu	a	{
-	display:block;
-	float:left;
-	height:21px;
-	color:#fff;
-	text-decoration:none;
-	padding:7px 10px 3px 10px;
-	background:url('images/tab1.png') top right no-repeat;
-	border-bottom:1px solid #fff;
-	border-top:1px solid #fff;
+.tabMenu a {
+  display: block;
+  float: left;
+  height: 21px;
+  color: #fff;
+  text-decoration: none;
+  padding: 7px 10px 3px 10px;
+  background: url("images/tab1.png") top right no-repeat;
+  border-bottom: 1px solid #fff;
+  border-top: 1px solid #fff;
 }
 
-.tabMenu	a:hover	{
-	display:block;
-	float:left;
-	height:21px;
-	color:#ddd;
-	padding:7px 10px 3px 10px;
-	background:url('images/tab2.png') top right no-repeat;
+.tabMenu a:hover {
+  display: block;
+  float: left;
+  height: 21px;
+  color: #ddd;
+  padding: 7px 10px 3px 10px;
+  background: url("images/tab2.png") top right no-repeat;
 }
 
-.tabMenu	a.tabEnabled	{
-	display:block;
-	float:left;
-	color:#ddd;
-	height:21px;
-	padding:7px 10px 3px 10px;
-	background:url('images/tab2.png') top right no-repeat;
+.tabMenu a.tabEnabled {
+  display: block;
+  float: left;
+  color: #ddd;
+  height: 21px;
+  padding: 7px 10px 3px 10px;
+  background: url("images/tab2.png") top right no-repeat;
 }
 
-.tabMenu a.tabLast	{
-	border-right:1px solid #fff;
+.tabMenu a.tabLast {
+  border-right: 1px solid #fff;
 }
 
 /* Pulldown Menu */
 
 /* Get rid of the margin, padding and bullets in the unordered lists */
 #pmenu {
-	padding:0;
-	margin:10px auto 0px auto;
-	list-style-type: none;
-	display:table;
-	border:1px solid #fff;
+  padding: 0;
+  margin: 10px auto 0px auto;
+  list-style-type: none;
+  display: table;
+  border: 1px solid #fff;
 }
 
 #pmenu ul {
-	padding:0;
-	margin:0;
-	list-style-type: none;
-	display:block;
+  padding: 0;
+  margin: 0;
+  list-style-type: none;
+  display: block;
 }
 
 /* Hide the sub levels */
 #pmenu li ul {
-	display:none;
+  display: none;
 }
 
 /* Set up the link size, color and borders */
-#pmenu li a, #pmenu li a:visited {
-	display:block;
-	font-size:12px;
-	color:#fff;
-	padding:3px 10px 0px 10px;
-	height:28px;
-	line-height:24px;
-	text-decoration:none;
-	text-indent:5px;
-	border:none;
-	text-align:center;
+#pmenu li a,
+#pmenu li a:visited {
+  display: block;
+  font-size: 12px;
+  color: #fff;
+  padding: 3px 10px 0px 10px;
+  height: 28px;
+  line-height: 24px;
+  text-decoration: none;
+  text-indent: 5px;
+  border: none;
+  text-align: center;
 }
 
 /* Set up the sub level borders */
-#pmenu li ul li a, #pmenu li ul li a:visited {
-	border:1px solid #fff;
-	width:110px;
-	text-align:left;
-	border-top:none;
+#pmenu li ul li a,
+#pmenu li ul li a:visited {
+  border: 1px solid #fff;
+  width: 110px;
+  text-align: left;
+  border-top: none;
 }
-#pmenu li a.enclose, #pmenu li a.enclose:visited {border-width:1px;}
+#pmenu li a.enclose,
+#pmenu li a.enclose:visited {
+  border-width: 1px;
+}
 
 /* Set up the list items */
 #pmenu li {
-	float:left;
-	background:#225 url('images/tab1.png') top right no-repeat;
+  float: left;
+  background: #225 url("images/tab1.png") top right no-repeat;
 }
-#pmenu li.tc {display:table-cell;}
+#pmenu li.tc {
+  display: table-cell;
+}
 
 /* For Non-IE browsers and IE7 */
-#pmenu li:hover {position:relative;}
+#pmenu li:hover {
+  position: relative;
+}
 /* Make the hovered list color persist */
-#pmenu li:hover > a {background:#225 url('images/tab2.png') repeat-x; color:#fff;}
+#pmenu li:hover > a {
+  background: #225 url("images/tab2.png") repeat-x;
+  color: #fff;
+}
 /* For Non-IE and IE7 make the sublevels visible on list hover. This is all it needs */
-#pmenu li:hover > ul {display:block; position:absolute; top:-11px; left:80px; padding:10px 30px 30px 30px; background:transparent; width:120px;}
+#pmenu li:hover > ul {
+  display: block;
+  position: absolute;
+  top: -11px;
+  left: 80px;
+  padding: 10px 30px 30px 30px;
+  background: transparent;
+  width: 120px;
+}
 /* Position the first sub level beneath the top level liinks */
-#pmenu > li:hover > ul {left:-30px; top:22px;}
+#pmenu > li:hover > ul {
+  left: -30px;
+  top: 22px;
+}
 
 /* get rid of the table */
-#pmenu table {position:absolute; border-collapse:collapse; top:0; left:0; z-index:100; font-size:1em;}
+#pmenu table {
+  position: absolute;
+  border-collapse: collapse;
+  top: 0;
+  left: 0;
+  z-index: 100;
+  font-size: 1em;
+}
 
 /* For IE5.5 and IE6 give the hovered links a position relative and a change of background and foreground color. This is needed to trigger IE to show the sub levels */
-* html #pmenu li a:hover {position:relative; background:#223; color:#c00;}
+* html #pmenu li a:hover {
+  position: relative;
+  background: #223;
+  color: #c00;
+}
 
 /* For accessibility of the top level menu when tabbing */
-#pmenu li a:active, #pmenu li a:focus {background:#225 url('images/tab2.png') repeat-x; color:#fff;}
+#pmenu li a:active,
+#pmenu li a:focus {
+  background: #225 url("images/tab2.png") repeat-x;
+  color: #fff;
+}
 
 /* Set up the pointers for the sub level indication */
-#pmenu li.fly {}
-#pmenu li.drop {}
-
+#pmenu li.fly {
+}
+#pmenu li.drop {
+}
 
 /* This lot is for IE5.5 and IE6 ONLY and is necessary to make the sublevels appear */
 
 /* change the drop down levels from display:none; to visibility:hidden; */
-* html #pmenu li ul {visibility:hidden; display:block; position:absolute; top:-11px; left:80px; padding:10px 30px 30px 30px; background:transparent;}
+* html #pmenu li ul {
+  visibility: hidden;
+  display: block;
+  position: absolute;
+  top: -11px;
+  left: 80px;
+  padding: 10px 30px 30px 30px;
+  background: transparent;
+}
 
 /* keep the third level+ hidden when you hover on first level link */
-#pmenu li a:hover ul ul{
-visibility:hidden;
+#pmenu li a:hover ul ul {
+  visibility: hidden;
 }
 /* keep the fourth level+ hidden when you hover on second level link */
-#pmenu li a:hover ul a:hover ul ul{
-visibility:hidden;
+#pmenu li a:hover ul a:hover ul ul {
+  visibility: hidden;
 }
 /* keep the fifth level hidden when you hover on third level link */
-#pmenu li a:hover ul a:hover ul a:hover ul ul{
-visibility:hidden;
+#pmenu li a:hover ul a:hover ul a:hover ul ul {
+  visibility: hidden;
 }
 /* keep the sixth level hidden when you hover on fourth level link */
 #pmenu li a:hover ul a:hover ul a:hover ul a:hover ul ul {
-visibility:hidden;
+  visibility: hidden;
 }
 
 /* make the second level visible when hover on first level link and position it */
 #pmenu li a:hover ul {
-visibility:visible; left:-30px; top:14px;
+  visibility: visible;
+  left: -30px;
+  top: 14px;
 }
 
 /* make the third level visible when you hover over second level link and position it and all further levels */
-#pmenu li a:hover ul a:hover ul{
-visibility:visible; top:-11px; left:80px;
+#pmenu li a:hover ul a:hover ul {
+  visibility: visible;
+  top: -11px;
+  left: 80px;
 }
 /* make the fourth level visible when you hover over third level link */
 #pmenu li a:hover ul a:hover ul a:hover ul {
-visibility:visible;
+  visibility: visible;
 }
 /* make the fifth level visible when you hover over fourth level link */
 #pmenu li a:hover ul a:hover ul a:hover ul a:hover ul {
-visibility:visible;
+  visibility: visible;
 }
 /* make the sixth level visible when you hover over fifth level link */
 #pmenu li a:hover ul a:hover ul a:hover ul a:hover ul a:hover ul {
-visibility:visible;
+  visibility: visible;
 }
-
 
 /* Techtree */
 
-.techtreeItemContainer	{
-	margin:0px auto 10px auto;
-	display:table;
-	text-align:center;
-	max-width:580px;
+.techtreeItemContainer {
+  margin: 0px auto 10px auto;
+  display: table;
+  text-align: center;
+  max-width: 580px;
 }
 
-.techtreeMainItem	{
-	position:relative;
-	width:120px;
-	height:120px;
-	border:1px solid #fff;
-	margin:10px auto;
+.techtreeMainItem {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  border: 1px solid #fff;
+  margin: 10px auto;
 }
 
-.techtreeItem	{
-	margin:10px;
-	position:relative;
-	float:left;
-	width:120px;
-	height:120px;
-	border:1px solid black;
+.techtreeItem {
+  margin: 10px;
+  position: relative;
+  float: left;
+  width: 120px;
+  height: 120px;
+  border: 1px solid black;
 }
-.techtreeItemLevel	{
-	position:absolute;
-	top:0px;
-	background:url('images/transheader1.png') top right;
-	color:#fff;
-	padding:3px 15px 3px 3px ;
+.techtreeItemLevel {
+  position: absolute;
+  top: 0px;
+  background: url("images/transheader1.png") top right;
+  color: #fff;
+  padding: 3px 15px 3px 3px;
 }
-.techtreeItemName	{
-	position:absolute;
-	bottom:0px;
-	font-size:8pt;
-	padding:5px;
-	background:url('images/trans1.png');
-	color:#fff;
-	width:110px;
+.techtreeItemName {
+  position: absolute;
+  bottom: 0px;
+  font-size: 8pt;
+  padding: 5px;
+  background: url("images/trans1.png");
+  color: #fff;
+  width: 110px;
 }
 
 /* Statistics */
 
-#statsHeaderContainer	{
-	margin-bottom:10px;
+#statsHeaderContainer {
+  margin-bottom: 10px;
 }
 
-#statsSearchContainer	{
-	text-align:left;
-	float:left;
+#statsSearchContainer {
+  text-align: left;
+  float: left;
 }
 
-#statsNav1, #statsNav2	{
-	text-align:right;
-	float:right;
+#statsNav1,
+#statsNav2 {
+  text-align: right;
+  float: right;
 }
 
-#statsNav1 input, #statsNav2 input	{
-	margin-right:5px;
+#statsNav1 input,
+#statsNav2 input {
+  margin-right: 5px;
 }
 
-#statsTable	{
-	margin:0px;
-	padding:0px;
-	margin-bottom:10px;
+#statsTable {
+  margin: 0px;
+  padding: 0px;
+  margin-bottom: 10px;
 }
 
-.loadingMsg	{
-	padding:20px;
-	background:url('images/loading.gif') top center no-repeat;
-	text-align:center;
+.loadingMsg {
+  padding: 20px;
+  background: url("images/loading.gif") top center no-repeat;
+  text-align: center;
 }
 
 #layoutframe {
-	position:relative;
-	margin:0;
-	padding:0;
+  position: relative;
+  margin: 0;
+  padding: 0;
 }
 
 #chatframe {
-	position:fixed;
-	top:0;
-	right:0;
-	bottom:0;
-	width:230px;
-	background:rgba(0,0,0,0.6);
-	z-index:100;
-	border-left:1px solid #777;
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 230px;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 100;
+  border-left: 1px solid #777;
 }
 
 /**
 * Fleet bookmarks
 */
 #bookmarkShiplistInputTable td.thumb {
-  width:40px;
-  background:#000;
+  width: 40px;
+  background: #000;
 }
 
 #bookmarkShiplistInputTable td.thumb img {
-  width:40px;
-  height:40px;
-  border:0;
-  vertical-align:top;
+  width: 40px;
+  height: 40px;
+  border: 0;
+  vertical-align: top;
 }
 
 #bookmarkShiplistInputTable td.count {
-  width:90px;
+  width: 90px;
 }
 
 #bookmarkShiplistInputTable td.actions {
-  width:30px;
-  text-align:center;
+  width: 30px;
+  text-align: center;
 }
 
 /*
 * Tutorial
 */
-#tutorialContainer, #quest-app {
-	position: absolute;
-	right: 10px;
-	top: 60px;
-	z-index:500;
+#tutorialContainer,
+#quest-app {
+  position: absolute;
+  right: 10px;
+  top: 60px;
+  z-index: 500;
 }
 
 .tutorialBox {
-	width: 450px;
-	text-align: left;
-	border: 1px solid #fff;
-	background: url("images/cellpic3.gif") repeat scroll 0 0 #60606B;
-	box-shadow: 0px 0px 20px 3px #000;
-	margin-bottom: 5px;
+  width: 450px;
+  text-align: left;
+  border: 1px solid #fff;
+  background: url("images/cellpic3.gif") repeat scroll 0 0 #60606b;
+  box-shadow: 0px 0px 20px 3px #000;
+  margin-bottom: 5px;
 }
 
 .tutorialTitle {
-	font-weight:bold;
-	border-bottom: 1px solid #fff;
-	background: url("images/cellpic4.gif") repeat scroll 0 0 #2C2C31;
-	padding: 2px 5px;
+  font-weight: bold;
+  border-bottom: 1px solid #fff;
+  background: url("images/cellpic4.gif") repeat scroll 0 0 #2c2c31;
+  padding: 2px 5px;
 }
 
 .tutorialContent {
-	padding: 2px 5px;
+  padding: 2px 5px;
 }
 
 .tutorialFooter {
-	border-top: 1px solid #fff;
-	background: url("images/cellpic4.gif") repeat scroll 0 0 #2C2C31;
-	padding: 2px 5px;
+  border-top: 1px solid #fff;
+  background: url("images/cellpic4.gif") repeat scroll 0 0 #2c2c31;
+  padding: 2px 5px;
 }
 
 /*
@@ -1902,12 +1938,12 @@ visibility:visible;
 */
 
 .threeColumnList {
-    -webkit-column-count: 3; /* Chrome, Safari, Opera */
-    -moz-column-count: 3; /* Firefox */
-    column-count: 3;
+  -webkit-column-count: 3; /* Chrome, Safari, Opera */
+  -moz-column-count: 3; /* Firefox */
+  column-count: 3;
 }
 
 .allianceManagementLinks a {
-	padding: 3px;
-	display: inline-block;
+  padding: 3px;
+  display: inline-block;
 }

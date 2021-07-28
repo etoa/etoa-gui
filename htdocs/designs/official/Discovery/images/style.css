@@ -11,11 +11,6 @@ body {
 	font-size: 10pt;
 }
 
-/*
-Fix for PNG-Files
-img, div { behavior: url(scripts/iepngfix.htc) }
-*/
-
 a	{
 	color: white;
 	text-decoration:underline;

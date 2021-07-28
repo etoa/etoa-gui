@@ -28,7 +28,6 @@ try {
 }
 
 $twig->addGlobal('ajaxJs', $xajax->getJavascript(XAJAX_DIR));
-$twig->addGlobal('cssTheme', $css_theme);
 $twig->addGlobal('pageTitle', getGameIdentifier() . ' Administration');
 $twig->addGlobal('bodyTopStuff', getInitTT());
 
