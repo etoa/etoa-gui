@@ -6,6 +6,7 @@ use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Help\TicketSystem\TicketRepository;
 use EtoA\Race\RaceDataRepository;
 use EtoA\Specialist\SpecialistDataRepository;
+use EtoA\User\UserCommentRepository;
 use EtoA\User\UserLoginFailureRepository;
 use EtoA\User\UserMultiRepository;
 use EtoA\User\UserRepository;
@@ -490,18 +491,12 @@ if (mysql_num_rows($res) > 0) {
     }
 
     // Kommentare
-    $cres = dbquery("
-                        SELECT
-                            COUNT(comment_id),
-                            MAX(comment_timestamp)
-                        FROM
-                            user_comments
-                        WHERE
-                            comment_user_id=" . $arr['user_id'] . "
-                        ;");
-    $carr = mysql_fetch_row($cres);
-    if ($carr[0] > 0) {
-        echo "<div><b>" . $carr[0] . " Kommentare</b> vorhanden, neuster Kommentar von " . df($carr[1]) . "
+    /** @var UserCommentRepository $userCommentRepository */
+    $userCommentRepository = $app[UserCommentRepository::class];
+    $commentData = $userCommentRepository->getCommentInformation($arr['user_id']);
+
+    if ($commentData['count'] > 0) {
+        echo "<div><b>" . $commentData['count'] . " Kommentare</b> vorhanden, neuster Kommentar von " . df($commentData['latest']) . "
                             [<a href=\"javascript:;\" onclick=\"$('.tabs').tabs('select', 10);\">Zeigen</a>]
                             </div>";
     }

@@ -45,6 +45,7 @@ trait DbTestTrait
         $this->connection->executeQuery('TRUNCATE tutorial_user_progress');
         $this->connection->executeQuery('TRUNCATE user_sessions');
         $this->connection->executeQuery('TRUNCATE users');
+        $this->connection->executeQuery('TRUNCATE user_comments');
         $this->connection->executeQuery('TRUNCATE user_sitting');
         $this->connection->executeQuery('TRUNCATE user_warnings');
         $this->connection->executeQuery('TRUNCATE user_surveillance');
