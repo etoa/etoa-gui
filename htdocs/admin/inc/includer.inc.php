@@ -23,5 +23,3 @@ define('SESSION_NAME', "adminsession");
 define('URL_SEARCH_STRING', "page=$page&amp;sub=$sub&amp;tmp=1");
 
 define('ADMIN_FILESHARING_DIR', CACHE_ROOT . "/admin");
-
-$css_theme = (!isset($themePath) || !is_file("web/css/themes/" . $themePath . "css")) ? "default" : $themePath;
