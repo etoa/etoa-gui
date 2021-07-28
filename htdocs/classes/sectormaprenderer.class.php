@@ -1,15 +1,13 @@
 <?PHP
 
+use EtoA\User\User;
 use EtoA\User\UserUniverseDiscoveryService;
 
 /**
  * Draws a map of a galaxy sector
- *
- * @author Nicolas Perrenoud [mrcage]
- */
+*/
 class SectorMapRenderer
 {
-
     const MapImageDirectory = "images/map";
 
     const HorizontalCoordinateNumberImagePrefix = "GalaxyFrameCounterBottom";
@@ -25,7 +23,7 @@ class SectorMapRenderer
     protected $numberOfCellsY;
 
     protected ?Cell $selectedCell = null;
-    protected ?int $impersonatedUser = null;
+    protected ?User $impersonatedUser = null;
 
     protected $rulerEnabled = false;
     protected $tooltipsEnabled = false;
@@ -63,7 +61,7 @@ class SectorMapRenderer
     /**
      * If set, the map will be viewed from the perspective of this user (fog of war)
      */
-    function setImpersonatedUser(int $user)
+    function setImpersonatedUser(User $user)
     {
         $this->impersonatedUser = $user;
     }

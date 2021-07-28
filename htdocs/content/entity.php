@@ -4,6 +4,7 @@ use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Entity\EntityType;
 use EtoA\Universe\Planet\PlanetRepository;
+use EtoA\User\UserRepository;
 use EtoA\User\UserUniverseDiscoveryService;
 
 /** @var ConfigurationService */
@@ -15,8 +16,13 @@ $planetRepo = $app[PlanetRepository::class];
 /** @var EntityRepository $entityRepository */
 $entityRepository = $app[EntityRepository::class];
 
+/** @var UserRepository */
+$userRepository = $app[UserRepository::class];
+
 /** @var UserUniverseDiscoveryService */
 $userUniverseDiscoveryService = $app[UserUniverseDiscoveryService::class];
+
+$user = $userRepository->getUser($cu->id);
 
 $id = 0;
 if (isset($_GET['id']) && intval($_GET['id']) > 0) {
@@ -32,7 +38,7 @@ if ($id > 0) {
 
     if ($ent = Entity::createFactoryById($id)) {
         $cell = new Cell($ent->cellId());
-        if ($userUniverseDiscoveryService->discovered($cu->id, $cell->absX(), $cell->absY())) {
+        if ($userUniverseDiscoveryService->discovered($user, $cell->absX(), $cell->absY())) {
             if ($ent->isValid()) {
                 echo "<h1>Übersicht über " . $ent . " (" . $ent->entityCodeString() . ")</h1>";
                 if ($ent->entityCode() == EntityType::PLANET) {

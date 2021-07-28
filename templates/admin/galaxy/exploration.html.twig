@@ -18,15 +18,15 @@
         <select onchange="document.location='?page={{ page }}&amp;sub={{ sub }}&amp;user_id='+this.options[this.selectedIndex].value">
             <option value="0" style="font-style:italic;">(Benutzer wählen...)</option>
             {% for id,nick in users %}
-                <option value="{{ id }}"{% if uid == id %} selected="selected"{% endif %}>{{ nick }}</option>
+                <option value="{{ id }}"{% if user and user.id == id %} selected="selected"{% endif %}>{{ nick }}</option>
             {% endfor %}
         </select>
     </p>
 
-    {% if uid %}
+    {% if user %}
         <h3>Spieler '{{ user.nick }}'</h3>
         <p>Erkundet: {{ discoveredPercent|round(2) }}%</p>
-        <form action="?page={{ page }}&amp;sub={{ sub }}&amp;user_id={{ uid }}" method="post">
+        <form action="?page={{ page }}&amp;sub={{ sub }}&amp;user_id={{ user.id }}" method="post">
             <p>
                 <input type="text" name="sx" value="{{ sx }}" size="2" />:<input type="text" name="sy" value="{{ sy }}" size="2" /> /
                 <input type="text" name="cx" value="{{ cx }}" size="2" />:<input type="text" name="cy" value="{{ cy }}" size="2" />
@@ -37,7 +37,7 @@
                 <input type="submit" name="discover_reset" value="Erkundung zurücksetzen" onclick="return confirm('Wirklich zurücksetzen?')" />
                 <input type="submit" name="discover_all" value="Alles erkunden" />
             </p>
-            <img src="../misc/map.image.php?legend&amp;req_admin&amp;user={{ uid }}" alt="Galaxiekarte" />
+            <img src="../misc/map.image.php?legend&amp;req_admin&amp;user={{ user.id }}" alt="Galaxiekarte" />
         </form>
     {% else %}
         <p>Bitte Spieler wählen!</p>

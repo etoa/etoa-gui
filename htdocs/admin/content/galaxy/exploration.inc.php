@@ -31,9 +31,8 @@ if (count($users) === 0) {
     $errorMessage = 'Keine Benutzer vorhanden!';
 }
 
-$uid = null;
 if ($request->query->has('user_id') && $request->query->getInt('user_id') > 0) {
-    $uid = $request->query->getInt('user_id');
+    $user = $userRepository->getUser($request->query->getInt('user_id'));
 
     $sx = 1;
     $sy = 1;
@@ -52,7 +51,7 @@ if ($request->query->has('user_id') && $request->query->getInt('user_id') > 0) {
         $cell = $cellRepository->getCellIdByCoordinates($sx, $sy, $cx, $cy);
         if ($cell !== null) {
             [$absX, $absY] = $cell->getAbsoluteCoordinates($config->param1Int('num_of_cells'), $config->param2Int('num_of_cells'));
-            $userUniverseDiscoveryService->setDiscovered($uid, $absX, $absY, $radius);
+            $userUniverseDiscoveryService->setDiscovered($user, $absX, $absY, $radius);
             $successMessage = 'Koordinaten erkundet!';
         } else {
             $errorMessage = 'Ungültige Koordinate!';
@@ -61,13 +60,13 @@ if ($request->query->has('user_id') && $request->query->getInt('user_id') > 0) {
 
     // Reset discovered coordinates
     else if ($request->request->has('discover_reset')) {
-        $userUniverseDiscoveryService->setDiscoveredAll($uid, false);
+        $userUniverseDiscoveryService->setDiscoveredAll($user, false);
         $successMessage = 'Erkundung zurückgesetzt!';
     }
 
     // Discover all coordinates
     else if ($request->request->has('discover_all')) {
-        $userUniverseDiscoveryService->setDiscoveredAll($uid, true);
+        $userUniverseDiscoveryService->setDiscoveredAll($user, true);
         $successMessage = 'Alles erkundet!';
     }
 
@@ -75,9 +74,8 @@ if ($request->query->has('user_id') && $request->query->getInt('user_id') > 0) {
         'successMessage' => $successMessage,
         'errorMessage' => $errorMessage,
         'users' => $users,
-        'uid' => $uid,
-        'user' => $userRepository->getUser($uid),
-        'discoveredPercent' => $userUniverseDiscoveryService->getDiscoveredPercent($uid),
+        'user' => $user,
+        'discoveredPercent' => $userUniverseDiscoveryService->getDiscoveredPercent($user),
         'sx' => $sx,
         'sy' => $sy,
         'cx' => $cx,
@@ -91,6 +89,6 @@ echo $twig->render('admin/galaxy/exploration.html.twig', [
     'successMessage' => $successMessage,
     'errorMessage' => $errorMessage,
     'users' => $users,
-    'uid' => $uid,
+    'user' => null,
 ]);
 exit();

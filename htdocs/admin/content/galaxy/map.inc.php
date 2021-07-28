@@ -1,8 +1,10 @@
 <?PHP
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\User\UserRepository;
 use Symfony\Component\HttpFoundation\Request;
 
+/** @var UserRepository $userRepository  */
 /** @var ConfigurationService $config */
 
 $sx_num = $config->param1Int('num_of_sectors');
@@ -25,7 +27,8 @@ if ($request->query->has('cell')) {
 
 // View map as user
 if ($request->query->has('user')) {
-    $sectorMap->setImpersonatedUser($request->query->getInt('user'));
+    $impersonatedUser = $userRepository->getUser($request->query->getInt('user'));
+    $sectorMap->setImpersonatedUser($impersonatedUser);
 }
 
 // Draw map

@@ -72,14 +72,14 @@ if (isset($_SESSION) || $admin)
     }
     if ($admin || (isset($s['user_id']) && $s['user_id'] > 0))
     {
-        $userId = null;
+        $user = null;
         if ($admin && isset($_GET['user']))
         {
-            $userId = $request->query->getInt('user');
+            $user = $userRepository->getUser($request->query->getInt('user'));
         }
         else if (!$admin && isset($s))
         {
-            $userId = intval($s['user_id']);
+            $user = $userRepository->getUser(intval($s['user_id']));
         }
 
         $starImageSrc = imagecreatefrompng(IMG_DIR."/stars/star4_small.png");
@@ -201,7 +201,7 @@ if (isset($_SESSION) || $admin)
                     $xcoords = $entity->cx;
                     $ycoords = $entity->cy;
 
-                    if (($admin && $userId === null) || $userUniverseDiscoveryService->discovered($userId, (($entity->sx - 1) * $cx_num) + $entity->cx,(($entity->sy - 1) * $cy_num) + $entity->cy))
+                    if (($admin && $user === null) || $userUniverseDiscoveryService->discovered($user, (($entity->sx - 1) * $cx_num) + $entity->cx,(($entity->sy - 1) * $cy_num) + $entity->cy))
                     {
                         if ($entity->code == EntityType::STAR)
                         {
@@ -235,17 +235,17 @@ if (isset($_SESSION) || $admin)
                             continue;
                         }
                     }
-                    elseif ($userId !== null)
+                    elseif ($user !== null)
                     {
                         $fogCode = 0;
                         // Bottom
-                        $fogCode += $ycoords > 1 && $userUniverseDiscoveryService->discovered($userId, (($sx - 1) * $cx_num) + $xcoords  , (($sy - 1) * $cy_num) + $ycoords-1) ? 1 : 0;
+                        $fogCode += $ycoords > 1 && $userUniverseDiscoveryService->discovered($user, (($sx - 1) * $cx_num) + $xcoords  , (($sy - 1) * $cy_num) + $ycoords-1) ? 1 : 0;
                         // Left
-                        $fogCode += $xcoords > 1 && $userUniverseDiscoveryService->discovered($userId, (($sx - 1) * $cx_num) + $xcoords-1, (($sy - 1) * $cy_num) + $ycoords  ) ? 2 : 0;
+                        $fogCode += $xcoords > 1 && $userUniverseDiscoveryService->discovered($user, (($sx - 1) * $cx_num) + $xcoords-1, (($sy - 1) * $cy_num) + $ycoords  ) ? 2 : 0;
                         // Right
-                        $fogCode += $xcoords < $cx_num && $userUniverseDiscoveryService->discovered($userId, (($sx - 1) * $cx_num) + $xcoords+1, (($sy - 1) * $cy_num) + $ycoords  ) ? 4 : 0;
+                        $fogCode += $xcoords < $cx_num && $userUniverseDiscoveryService->discovered($user, (($sx - 1) * $cx_num) + $xcoords+1, (($sy - 1) * $cy_num) + $ycoords  ) ? 4 : 0;
                         // Top
-                        $fogCode += $ycoords < $cy_num && $userUniverseDiscoveryService->discovered($userId, (($sx - 1) * $cx_num) + $xcoords  , (($sy - 1) * $cy_num) + $ycoords+1) ? 8 : 0;
+                        $fogCode += $ycoords < $cy_num && $userUniverseDiscoveryService->discovered($user, (($sx - 1) * $cx_num) + $xcoords  , (($sy - 1) * $cy_num) + $ycoords+1) ? 8 : 0;
                         if ($fogCode > 0) {
                             imagecopyresampled($im,$fogborderImages[$fogCode],$xe,$ye,0,0,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE,GALAXY_IMAGE_SCALE);
                         } else {

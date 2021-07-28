@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\User\UserRepository;
 use EtoA\User\UserUniverseDiscoveryService;
 
 $xajax->register(XAJAX_FUNCTION, 'launchBookmarkProbe');
@@ -204,6 +205,9 @@ function bookmarkTargetInfo($form)
     /** @var UserUniverseDiscoveryService */
     $userUniverseDiscoveryService = $app[UserUniverseDiscoveryService::class];
 
+    /** @var UserRepository */
+    $userRepository = $app[UserRepository::class];
+
     $pos = (int)$form['pos'];
     $sx = (int)$form['sx'];
     $sy = (int)$form['sy'];
@@ -213,8 +217,8 @@ function bookmarkTargetInfo($form)
         $absX = (($sx - 1) * $config->param1Int('num_of_cells')) + $cx;
         $absY = (($sy - 1) * $config->param2Int('num_of_cells')) + $cy;
 
-        $userId = intval($_SESSION['user_id']);
-        $code = $userUniverseDiscoveryService->discovered($userId, $absX, $absY) == 0 ? 'u' : '';
+        $user = $userRepository->getUser(intval($_SESSION['user_id']));
+        $code = $userUniverseDiscoveryService->discovered($user, $absX, $absY) == 0 ? 'u' : '';
 
         $res = dbquery("
                 SELECT

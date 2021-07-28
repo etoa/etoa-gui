@@ -5,6 +5,7 @@ use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Universe\Cell\CellRepository;
 use EtoA\Universe\Entity\EntityType;
 use EtoA\Universe\Planet\PlanetRepository;
+use EtoA\User\UserRepository;
 use EtoA\User\UserUniverseDiscoveryService;
 
 /** @var ConfigurationService */
@@ -19,8 +20,13 @@ $cellRepository = $app[CellRepository::class];
 /** @var AdminUserRepository $adminUserRepository */
 $adminUserRepository = $app[AdminUserRepository::class];
 
+/** @var UserRepository */
+$userRepository = $app[UserRepository::class];
+
 /** @var UserUniverseDiscoveryService */
 $userUniverseDiscoveryService = $app[UserUniverseDiscoveryService::class];
+
+$user = $userRepository->getUser($cu->id);
 
 if (isset($_GET['id']) && intval($_GET['id']) > 0) {
     $cellId = intval($_GET['id']);
@@ -58,7 +64,7 @@ if ($cell->isValid()) {
     $cx_num = $config->param1Int('num_of_cells');
     $cy_num = $config->param2Int('num_of_cells');
 
-    if ($userUniverseDiscoveryService->discovered($cu->id, $cell->absX(), $cell->absY())) {
+    if ($userUniverseDiscoveryService->discovered($user, $cell->absX(), $cell->absY())) {
         $admins = $adminUserRepository->getAdminPlayerIds();
 
         //

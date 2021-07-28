@@ -2,6 +2,7 @@
 
 use EtoA\Fleet\FleetRepository;
 use EtoA\Ship\ShipDataRepository;
+use EtoA\User\UserRepository;
 use EtoA\User\UserUniverseDiscoveryService;
 
 /** @var FleetRepository $fleetRepository */
@@ -9,6 +10,11 @@ $fleetRepository = $app[FleetRepository::class];
 
 /** @var UserUniverseDiscoveryService */
 $userUniverseDiscoveryService = $app[UserUniverseDiscoveryService::class];
+
+/** @var UserRepository */
+$userRepository = $app[UserRepository::class];
+
+$user = $userRepository->getUser($cu->id);
 
 echo "<h1>Flotten</h1>";
 
@@ -186,7 +192,7 @@ else {
             echo "<td><b>" . $fd->getSource()->entityCodeString() . "</b>
                 <a href=\"?page=cell&amp;id=" . $fd->getSource()->cellId() . "&amp;hl=" . $fd->getSource()->id() . "\">" . $fd->getSource() . "</a><br/>";
 
-            if ($userUniverseDiscoveryService->discovered($cu->id, $fd->getTarget()->getCell()->absX(), $fd->getTarget()->getCell()->absY())) {
+            if ($userUniverseDiscoveryService->discovered($user, $fd->getTarget()->getCell()->absX(), $fd->getTarget()->getCell()->absY())) {
                 echo "<b>" . $fd->getTarget()->entityCodeString() . "</b>
                     <a href=\"?page=cell&amp;id=" . $fd->getTarget()->cellId() . "&amp;hl=" . $fd->getTarget()->id() . "\">" . $fd->getTarget() . "</a></td>";
             } else {
