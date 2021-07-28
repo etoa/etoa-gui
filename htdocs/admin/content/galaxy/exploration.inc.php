@@ -1,6 +1,5 @@
 <?PHP
 
-use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Universe\Cell\CellRepository;
 use EtoA\User\UserRepository;
 use EtoA\User\UserUniverseDiscoveryService;
@@ -19,9 +18,6 @@ $userUniverseDiscoveryService = $app[UserUniverseDiscoveryService::class];
 
 /** @var CellRepository $cellRepository */
 $cellRepository = $app[CellRepository::class];
-
-/** @var ConfigurationService $config */
-$config = $app[ConfigurationService::class];
 
 /** @var Request */
 $request = Request::createFromGlobals();
@@ -50,8 +46,7 @@ if ($request->query->has('user_id') && $request->query->getInt('user_id') > 0) {
 
         $cell = $cellRepository->getCellIdByCoordinates($sx, $sy, $cx, $cy);
         if ($cell !== null) {
-            [$absX, $absY] = $cell->getAbsoluteCoordinates($config->param1Int('num_of_cells'), $config->param2Int('num_of_cells'));
-            $userUniverseDiscoveryService->setDiscovered($user, $absX, $absY, $radius);
+            $userUniverseDiscoveryService->setDiscovered($user, $cell, $radius);
             $successMessage = 'Koordinaten erkundet!';
         } else {
             $errorMessage = 'Ungültige Koordinate!';

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace EtoA\User;
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Universe\Cell\Cell;
 
 class UserUniverseDiscoveryService
 {
@@ -56,7 +57,7 @@ class UserUniverseDiscoveryService
         return 0;
     }
 
-    public function setDiscovered(User $user, int $absX, int $absY, int $radius = 1): void
+    public function setDiscovered(User $user, Cell $cell, int $radius = 1): void
     {
         $this->ensureDiscoveryMaskExists($user);
 
@@ -64,6 +65,8 @@ class UserUniverseDiscoveryService
         $cx_num = $this->config->param1Int('num_of_cells');
         $sy_num = $this->config->param2Int('num_of_sectors');
         $cy_num = $this->config->param2Int('num_of_cells');
+
+        [$absX, $absY] = $cell->getAbsoluteCoordinates($cx_num, $cy_num);
 
         for ($x = $absX - $radius; $x <= $absX + $radius; $x++) {
             for ($y = $absY - $radius; $y <= $absY + $radius; $y++) {
