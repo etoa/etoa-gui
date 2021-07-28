@@ -1,4 +1,7 @@
 <?PHP
+
+use EtoA\Chat\ChatManager;
+
 class ChatLogoutJsonResponder extends JsonResponder
 {
     function getRequiredParams()
@@ -20,8 +23,11 @@ class ChatLogoutJsonResponder extends JsonResponder
             return array();
         }
 
-        ChatManager::logoutUser($_SESSION['user_id']);
-        ChatManager::sendSystemMessage($_SESSION['user_nick'] . ' verlässt den Chat.');
+        /** @var ChatManager */
+        $chatManager = $this->app[ChatManager::class];
+
+        $chatManager->logoutUser((int) $_SESSION['user_id']);
+        $chatManager->sendSystemMessage($_SESSION['user_nick'] . ' verlässt den Chat.');
 
         return $data;
     }

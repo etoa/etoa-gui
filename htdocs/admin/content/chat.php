@@ -5,14 +5,20 @@
 //
 use EtoA\Chat\ChatBanRepository;
 use EtoA\Chat\ChatLogRepository;
+use EtoA\Chat\ChatManager;
 use EtoA\Chat\ChatUserRepository;
 
 /** @var ChatBanRepository $chatBanRepository */
 $chatBanRepository = $app[ChatBanRepository::class];
+
 /** @var ChatUserRepository $chatUserRepository */
 $chatUserRepository = $app[ChatUserRepository::class];
+
 /** @var ChatLogRepository $chatLogRepository */
 $chatLogRepository = $app[ChatLogRepository::class];
+
+/** @var ChatManager */
+$chatManager = $app[ChatManager::class];
 
 if ($sub == 'log') {
     echo "<h1>InGame-Chat Log</h1>";
@@ -81,14 +87,14 @@ else {
         $userId = (int) $_GET['ban'];
         $chatBanRepository->banUser($userId, 'Banned by Admin');
         $chatUserRepository->kickUser($userId, 'Bannend by Admin');
-        ChatManager::sendSystemMessage(get_user_nick($userId) . " wurde gebannt!");
+        $chatManager->sendSystemMessage(get_user_nick($userId) . " wurde gebannt!");
     } elseif (isset($_GET['unban']) && $_GET['unban'] > 0) {
         $userId = (int) $_GET['unban'];
         $chatBanRepository->deleteBan($userId);
     } elseif (isset($_GET['kick']) && $_GET['kick'] > 0) {
         $userId = (int) $_GET['kick'];
         $chatUserRepository->kickUser($userId, 'Bannend by Admin');
-        ChatManager::sendSystemMessage(get_user_nick($userId) . " wurde gekickt!");
+        $chatManager->sendSystemMessage(get_user_nick($userId) . " wurde gekickt!");
     } elseif (isset($_GET['del']) && $_GET['del'] > 0) {
         $userId = (int) $_GET['del'];
         $chatUserRepository->deleteUser($userId);
