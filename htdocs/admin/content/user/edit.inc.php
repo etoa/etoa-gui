@@ -1461,9 +1461,31 @@ if (mysql_num_rows($res) > 0) {
      * Kommentare
      */
 
-    echo "<div id=\"commentsBox\">
-        <div style=\"text-align:center;\"><img src=\"../web/images/ajax-loader-circle.gif\" /><br/>Wird geladen...</div>
-    </div>";
+    /** @var UserCommentRepository $userCommentRepository */
+    $userCommentRepository = $app[UserCommentRepository::class];
+
+    echo "<div id=\"commentsBox\"><h2>Neuer Kommentar:</h2><textarea rows=\"4\" cols=\"70\" id=\"new_comment_text\"></textarea><br/><br/>";
+    echo "<input type=\"button\" onclick=\"xajax_addUserComment('$id','commentsBox',document.getElementById('new_comment_text').value);\" value=\"Speichern\" />";
+    echo "<h2>Gespeicherte Kommentare</h2><table class=\"tb\">";
+
+    $comments = $userCommentRepository->getComments($id);
+    if (count($comments) > 0) {
+        echo "<tr>
+            <th>Text</th>
+            <th>Verfasst</th>
+            <th>Aktionen</th>
+        </tr>";
+        foreach ($comments as $comment) {
+            echo "<tr>
+                <td class=\"tbldata\" >" . text2html($comment->text) . "</td>
+                <td class=\"tbldata\" style=\"width:200px;\">" . df($comment->timestamp) . " von " . $comment->adminNick . "</td>
+                <td class=\"tbldata\" style=\"width:50px;\"><a href=\"javascript:;\" onclick=\"if (confirm('Wirklich löschen?')) {xajax_delUserComment('" . $id . "','commentsBox'," . $comment->id . ")}\">Löschen</a></td>
+            </tr>";
+        }
+    } else {
+        echo "<tr><td class=\"tbldata\">Keine Kommentare</td></tr>";
+    }
+    echo "</table></div>";
 
     echo '</div><div id="tabs-12">';
 
