@@ -20,19 +20,6 @@
         <link rel="stylesheet" type="text/css" href="{{ css }}" />
     {% endfor %}
 
-    <!-- CSS Hacks for stuipd Internet Explorer -->
-    <!--[if IE]><link rel="stylesheet" type="text/css" href="web/css/ie.css" /><![endif]-->
-    <!-- PNG Hack for stupid Internet Explorer -->
-    <!--[if IE 6]>img, div { behavior: url('web/css/iepngfix.htc') }
-    <script src="web/js/vendor/DD_belatedPNG.js"></script>
-    <script>
-        DD_belatedPNG.fix('.png_bg'); /* EXAMPLE */
-        /* string argument can be any CSS selector */
-        /* using .png_bg example is unnecessary */
-        /* change it to what suits you! */
-    </script>
-    <![endif]-->
-
     <!-- XAJAX -->
     {{ xajaxJS|default('')|raw }}
     <script type="text/javascript" src="web/js/app.js"></script>
