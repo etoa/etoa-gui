@@ -2,13 +2,17 @@
 
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Universe\Planet\PlanetRepository;
+use EtoA\User\UserRepository;
 use Twig\Environment;
 
 /** @var ConfigurationService */
 $config = $app[ConfigurationService::class];
 
+/** @var UserRepository */
+$userRepository = $app[UserRepository::class];
+
 if ($sub == "map") {
-    galaxyMap($config, $twig);
+    galaxyMap($config, $userRepository, $twig);
 } elseif ($sub == "exploration") {
     exploration($twig);
 } elseif ($sub == "uni") {
@@ -23,7 +27,7 @@ if ($sub == "map") {
     entities($config);
 }
 
-function galaxyMap(ConfigurationService $config, Environment $twig)
+function galaxyMap(ConfigurationService $config, UserRepository $userRepository, Environment $twig)
 {
     require("galaxy/map.inc.php");
 }

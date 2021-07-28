@@ -9,6 +9,27 @@ use EtoA\Core\AbstractRepository;
 
 class UserRatingRepository extends AbstractRepository
 {
+    public function addBlank(int $id): void
+    {
+        $this->createQueryBuilder()
+            ->delete('user_ratings')
+            ->where('id = :id')
+            ->setParameters([
+                'id' => $id,
+            ])
+            ->execute();
+
+        $this->createQueryBuilder()
+            ->insert('user_ratings')
+            ->values([
+                'id' => ':id',
+            ])
+            ->setParameters([
+                'id' => $id,
+            ])
+            ->execute();
+    }
+
     /**
      * @param int[] $availableUserIds
      */

@@ -5,16 +5,28 @@ use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Universe\Cell\CellRepository;
 use EtoA\Universe\Entity\EntityType;
 use EtoA\Universe\Planet\PlanetRepository;
+use EtoA\User\UserRepository;
+use EtoA\User\UserUniverseDiscoveryService;
 
 /** @var ConfigurationService */
 $config = $app[ConfigurationService::class];
 
 /** @var PlanetRepository */
 $planetRepo = $app[PlanetRepository::class];
+
 /** @var CellRepository $cellRepository */
 $cellRepository = $app[CellRepository::class];
+
 /** @var AdminUserRepository $adminUserRepository */
 $adminUserRepository = $app[AdminUserRepository::class];
+
+/** @var UserRepository */
+$userRepository = $app[UserRepository::class];
+
+/** @var UserUniverseDiscoveryService */
+$userUniverseDiscoveryService = $app[UserUniverseDiscoveryService::class];
+
+$user = $userRepository->getUser($cu->id);
 
 if (isset($_GET['id']) && intval($_GET['id']) > 0) {
     $cellId = intval($_GET['id']);
@@ -52,8 +64,7 @@ if ($cell->isValid()) {
     $cx_num = $config->param1Int('num_of_cells');
     $cy_num = $config->param2Int('num_of_cells');
 
-
-    if ($cu->discovered($cell->absX(), $cell->absY())) {
+    if ($userUniverseDiscoveryService->discovered($user, $cell->absX(), $cell->absY())) {
         $admins = $adminUserRepository->getAdminPlayerIds();
 
         //
@@ -64,15 +75,14 @@ if ($cell->isValid()) {
         echo "<tr><td colspan=\"6\" style=\"text-align:center;vertical-align:middle;\">
         <a href=\"?page=galaxy\">Galaxie</a> &raquo;&nbsp;
         <a href=\"?page=sector&sector=" . $cell->getSX() . "," . $cell->getSY() . "\">Sektor " . $cell->getSX() . "/" . $cell->getSY() . "</a> &raquo; &nbsp;";
-        $cid = $cellRepository->getCellIdByCoordinates($cell->getSX(), $cell->getSY(), 1, 1);
         echo "<select name=\"cell\" onchange=\"document.location='?page=$page&id='+this.value\">";
         for ($x = 1; $x <= $cx_num; $x++) {
             for ($y = 1; $y <= $cy_num; $y++) {
-                echo "<option value=\"" . $cid . "\"";
+                $cellAtCoordinates = $cellRepository->getCellIdByCoordinates($cell->getSX(), $cell->getSY(), $x, $y);
+                echo "<option value=\"" . $cellAtCoordinates->id . "\"";
                 if ($cell->getCX() == $x && $cell->getCY() == $y)
                     echo " selected=\"selected\"";
                 echo ">System $x/$y &nbsp;</option>";
-                $cid++;
             }
         }
         echo "</select>";
@@ -347,15 +357,14 @@ if ($cell->isValid()) {
         echo "<div style=\"text-align:center;\">
             <a href=\"?page=galaxy\">Galaxie</a> &gt;&nbsp;
             <a href=\"?page=sector&sector=" . $cell->getSX() . "," . $cell->getSY() . "\">Sektor " . $cell->getSX() . "/" . $cell->getSY() . "</a> &gt; &nbsp;";
-        $cid = $cellRepository->getCellIdByCoordinates($cell->getSX(), $cell->getSY(), 1, 1);
         echo "<select name=\"cell\" onchange=\"document.location='?page=$page&id='+this.value\">";
         for ($x = 1; $x <= $cx_num; $x++) {
             for ($y = 1; $y <= $cy_num; $y++) {
-                echo "<option value=\"" . $cid . "\"";
+                $cellAtCoordinates = $cellRepository->getCellIdByCoordinates($cell->getSX(), $cell->getSY(), $x, $y);
+                echo "<option value=\"" . $cellAtCoordinates->id . "\"";
                 if ($cell->getCX() == $x && $cell->getCY() == $y)
                     echo " selected=\"selected\"";
                 echo ">System $x/$y &nbsp;</option>";
-                $cid++;
             }
         }
         echo "</select></div><br/>";

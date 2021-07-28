@@ -1,7 +1,10 @@
 <?PHP
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\User\UserRepository;
+use Symfony\Component\HttpFoundation\Request;
 
+/** @var UserRepository $userRepository  */
 /** @var ConfigurationService $config */
 
 $sx_num = $config->param1Int('num_of_sectors');
@@ -9,22 +12,23 @@ $sy_num = $config->param2Int('num_of_sectors');
 $cx_num = $config->param1Int('num_of_cells');
 $cy_num = $config->param2Int('num_of_cells');
 
+/** @var Request */
+$request = Request::createFromGlobals();
+
 $sectorMap = new SectorMapRenderer($cx_num, $cy_num);
 
 // Selected cell
-if (isset($_GET['cell'])) {
-    $cell = new Cell($_GET['cell']);
+if ($request->query->has('cell')) {
+    $cell = new Cell($request->query->getInt('cell'));
     if ($cell->isValid()) {
         $sectorMap->setSelectedCell($cell);
     }
 }
 
 // View map as user
-if (isset($_GET['user'])) {
-    $user = new CurrentUser($_GET['user']);
-    if ($user->isValid) {
-        $sectorMap->setImpersonatedUser($user);
-    }
+if ($request->query->has('user')) {
+    $impersonatedUser = $userRepository->getUser($request->query->getInt('user'));
+    $sectorMap->setImpersonatedUser($impersonatedUser);
 }
 
 // Draw map

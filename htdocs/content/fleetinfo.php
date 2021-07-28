@@ -1,5 +1,16 @@
 <?PHP
 
+use EtoA\User\UserRepository;
+use EtoA\User\UserUniverseDiscoveryService;
+
+/** @var UserRepository */
+$userRepository = $app[UserRepository::class];
+
+/** @var UserUniverseDiscoveryService */
+$userUniverseDiscoveryService = $app[UserUniverseDiscoveryService::class];
+
+$user = $userRepository->getUser($cu->id);
+
 echo "<h1>Flotten</h1>";
 echo "<h2>Details</h2>";
 
@@ -65,7 +76,7 @@ if ($valid > 0) {
     echo "<div class=\"fleetInfoProgress\" id=\"fleetProgress\"></div>";
     echo "<div id=\"source\" class=\"fleetInfoSource\">";
     if ($fd->getAction()->visibleSource()) {
-        if ($cu->discovered($fd->getSource()->getCell()->absX(), $fd->getSource()->getCell()->absY())) {
+        if ($userUniverseDiscoveryService->discovered($user, $fd->getSource()->getCell()->absX(), $fd->getSource()->getCell()->absY())) {
             echo $fd->getSource()->smallImage() . "<br/>
                     <a href=\"?page=cell&amp;id=" . $fd->getSource()->cellId() . "&amp;hl=" . $fd->getSource()->id() . "\">" . $fd->getSource() . "</a><br/>";
         } else {
@@ -83,7 +94,7 @@ if ($valid > 0) {
                 <div><span id=\"flighttime\"></span> (<span id=\"flightPercent\"></span>)</div>
             </div>";
     echo "<div id=\"target\" class=\"fleetInfoTarget\">";
-    if ($cu->discovered($fd->getTarget()->getCell()->absX(), $fd->getTarget()->getCell()->absY())) {
+    if ($userUniverseDiscoveryService->discovered($user, $fd->getTarget()->getCell()->absX(), $fd->getTarget()->getCell()->absY())) {
         echo $fd->getTarget()->smallImage() . "<br/>
                 <a href=\"?page=cell&amp;id=" . $fd->getTarget()->cellId() . "&amp;hl=" . $fd->getTarget()->id() . "\">" . $fd->getTarget() . "</a><br/>";
     } else {

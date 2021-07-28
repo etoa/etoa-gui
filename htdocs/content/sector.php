@@ -1,9 +1,13 @@
 <?PHP
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\User\UserRepository;
 
 /** @var ConfigurationService */
 $config = $app[ConfigurationService::class];
+
+/** @var UserRepository */
+$userRepository = $app[UserRepository::class];
 
 $_SESSION['currentEntity'] = serialize($cp);
 
@@ -182,7 +186,7 @@ $sectorMap->setUserCellIDs($user_solsys_ids);
 if (isset($cp)) {
     $sectorMap->setSelectedCell($cp->getCell());
 }
-$sectorMap->setImpersonatedUser($cu);
+$sectorMap->setImpersonatedUser($userRepository->getUser($cu->id));
 $sectorMap->setCellUrl("?page=cell&amp;id=");
 $sectorMap->setUndiscoveredCellJavaScript("xajax_launchExplorerProbe('##ID##')");
 echo $sectorMap->render($sx, $sy);

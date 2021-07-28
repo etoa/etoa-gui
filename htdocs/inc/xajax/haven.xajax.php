@@ -3,6 +3,8 @@
 // Main dialogs
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\User\UserRepository;
+use EtoA\User\UserUniverseDiscoveryService;
 
 $xajax->register(XAJAX_FUNCTION, "havenShowShips");
 $xajax->register(XAJAX_FUNCTION, "havenShowTarget");
@@ -610,6 +612,12 @@ function havenShowWormhole($form)
     /** @var ConfigurationService */
     $config = $app[ConfigurationService::class];
 
+    /** @var UserUniverseDiscoveryService */
+    $userUniverseDiscoveryService = $app[UserUniverseDiscoveryService::class];
+
+    /** @var UserRepository */
+    $userRepository = $app[UserRepository::class];
+
     $response = new xajaxResponse();
 
     // Do some checks
@@ -618,12 +626,10 @@ function havenShowWormhole($form)
         $fleet = unserialize($_SESSION['haven']['fleetObj']);
 
         if ($fleet->wormholeEntryEntity == null) {
+            $owner = $userRepository->getUser(intval($fleet->owner->id));
             $absX = (($form['man_sx'] - 1) * $config->param1Int('num_of_cells')) + $form['man_cx'];
             $absY = (($form['man_sy'] - 1) * $config->param2Int('num_of_cells')) + $form['man_cy'];
-            if ($fleet->owner->discovered($absX, $absY) == 0)
-                $code = 'u';
-            else
-                $code = '';
+            $code = $userUniverseDiscoveryService->discovered($owner, $absX, $absY) == 0 ? 'u' : '';
 
             $res = dbQuerySave("
                 SELECT
@@ -926,6 +932,12 @@ function havenShowAction($form)
     /** @var ConfigurationService */
     $config = $app[ConfigurationService::class];
 
+    /** @var UserUniverseDiscoveryService */
+    $userUniverseDiscoveryService = $app[UserUniverseDiscoveryService::class];
+
+    /** @var UserRepository */
+    $userRepository = $app[UserRepository::class];
+
     $response = new xajaxResponse();
     defineImagePaths();
 
@@ -934,12 +946,10 @@ function havenShowAction($form)
         // Get fleet object
         $fleet = unserialize($_SESSION['haven']['fleetObj']);
 
+        $owner = $userRepository->getUser(intval($fleet->owner->id));
         $absX = (($form['man_sx'] - 1) * $config->param1Int('num_of_cells')) + $form['man_cx'];
         $absY = (($form['man_sy'] - 1) * $config->param2Int('num_of_cells')) + $form['man_cy'];
-        if ($fleet->owner->discovered($absX, $absY) == 0)
-            $code = 'u';
-        else
-            $code = '';
+        $code = $userUniverseDiscoveryService->discovered($owner, $absX, $absY) == 0 ? 'u' : '';
 
         $res = dbQuerySave("
             SELECT
@@ -1288,6 +1298,12 @@ function havenTargetInfo($form)
     /** @var ConfigurationService */
     $config = $app[ConfigurationService::class];
 
+    /** @var UserUniverseDiscoveryService */
+    $userUniverseDiscoveryService = $app[UserUniverseDiscoveryService::class];
+
+    /** @var UserRepository */
+    $userRepository = $app[UserRepository::class];
+
     $response = new xajaxResponse();
     $alliance = "";
     $target = false;
@@ -1306,10 +1322,8 @@ function havenTargetInfo($form)
         /** @var FleetLaunch $fleet */
         $fleet = unserialize($_SESSION['haven']['fleetObj']);
 
-        if ($fleet->owner->discovered($absX, $absY) == 0)
-            $code = 'u';
-        else
-            $code = '';
+        $owner = $userRepository->getUser(intval($fleet->owner->id));
+        $code = $userUniverseDiscoveryService->discovered($owner, $absX, $absY) == 0 ? 'u' : '';
 
         $sql = "
                 SELECT
@@ -1426,6 +1440,12 @@ function havenBookmark($form)
     /** @var ConfigurationService */
     $config = $app[ConfigurationService::class];
 
+    /** @var UserUniverseDiscoveryService */
+    $userUniverseDiscoveryService = $app[UserUniverseDiscoveryService::class];
+
+    /** @var UserRepository */
+    $userRepository = $app[UserRepository::class];
+
     $response = new xajaxResponse();
 
     /** @var FleetLaunch $fleet */
@@ -1470,10 +1490,8 @@ function havenBookmark($form)
     $absX = (($csx - 1) * $config->param1Int('num_of_cells')) + $ccx;
     $absY = (($csy - 1) * $config->param2Int('num_of_cells')) + $ccy;
 
-    if ($fleet->owner->discovered($absX, $absY) == 0)
-        $code = 'u';
-    else
-        $code = '';
+    $owner = $userRepository->getUser(intval($fleet->owner->id));
+    $code = $userUniverseDiscoveryService->discovered($owner, $absX, $absY) == 0 ? 'u' : '';
 
     $res = dbQuerySave("
             SELECT

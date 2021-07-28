@@ -12,12 +12,15 @@ use EtoA\Ship\ShipQueueRepository;
 use EtoA\Support\Mail\MailSenderService;
 use EtoA\Technology\TechnologyRepository;
 use EtoA\Universe\Planet\PlanetRepository;
+use Exception;
 use Log;
 
 class UserService
 {
     private ConfigurationService $config;
     private UserRepository $userRepository;
+    private UserRatingRepository $userRatingRepository;
+    private UserPropertiesRepository $userPropertiesRepository;
     private PlanetRepository $planetRepository;
     private BuildingRepository $buildingRepository;
     private TechnologyRepository $technologyRepository;
@@ -28,6 +31,8 @@ class UserService
     public function __construct(
         ConfigurationService $config,
         UserRepository $userRepository,
+        UserRatingRepository $userRatingRepository,
+        UserPropertiesRepository $userPropertiesRepository,
         PlanetRepository $planetRepository,
         BuildingRepository $buildingRepository,
         TechnologyRepository $technologyRepository,
@@ -37,12 +42,73 @@ class UserService
     ) {
         $this->config = $config;
         $this->userRepository = $userRepository;
+        $this->userRatingRepository = $userRatingRepository;
+        $this->userPropertiesRepository = $userPropertiesRepository;
         $this->planetRepository = $planetRepository;
         $this->buildingRepository = $buildingRepository;
         $this->technologyRepository = $technologyRepository;
         $this->shipQueueRepository = $shipQueueRepository;
         $this->defenseQueueRepository = $defenseRepository;
         $this->mailSenderService = $mailSenderService;
+    }
+
+    public function register(
+        string $name,
+        string $email,
+        string $nick,
+        string $password,
+        int $race = 0,
+        bool $ghost = false,
+        bool $forceVerified = false
+    ): User {
+        // Validate required data is not empty
+        if (!filled($name) || !filled($email) || !filled($nick) || !filled($password)) {
+            throw new Exception("Nicht alle Felder sind ausgefüllt!");
+        }
+
+        // Validate email
+        if (!checkEmail($email)) {
+            throw new Exception("Diese E-Mail-Adresse scheint ungültig zu sein. Prüfe nach, ob dein E-Mail-Server online ist und die Adresse im korrekten Format vorliegt!");
+        }
+
+        // Validate name
+        if (!checkValidName($name)) {
+            throw new Exception("Du hast ein unerlaubtes Zeichen im vollständigen Namen!");
+        }
+
+        // Validate nickname
+        $nick = trim($nick);
+        if (!checkValidNick($nick)) {
+            throw new Exception("Du hast ein unerlaubtes Zeichen im Benutzernamen!");
+        }
+        if ($nick == '') {
+            throw new Exception("Dein Nickname darf nicht nur aus Leerzeichen bestehen!");
+        }
+        $nick_length = strlen(utf8_decode($nick));
+        if ($nick_length < $this->config->param1Int('nick_length') || $nick_length > $this->config->param2Int('nick_length')) {
+            throw new Exception("Dein Nickname muss mindestens " . $this->config->param1Int('nick_length') . " Zeichen und maximum " . $this->config->param2Int('nick_length') . " Zeichen haben!");
+        }
+
+        // Validate password
+        if (strlen($password) < $this->config->getInt('password_minlength')) {
+            throw new Exception("Das Passwort ist noch zu kurz (mind. " . $this->config->getInt('password_minlength') . " Zeichen sind nötig)!");
+        }
+
+        // Check existing user
+        if ($this->userRepository->exists($nick, $email)) {
+            throw new Exception("Der Benutzer mit diesem Nicknamen oder dieser E-Mail-Adresse existiert bereits!");
+        }
+
+        // Add new record
+        $userId = $this->userRepository->create($nick, $name, $email, $password, $race, $ghost);
+        $this->userRepository->setSittingDays($userId, $this->config->getInt('user_sitting_days'));
+        $this->userRatingRepository->addBlank($userId);
+        $this->userPropertiesRepository->addBlank($userId);
+
+        $verificationRequired = $this->config->getBoolean('email_verification_required');
+        $this->userRepository->setVerified($userId, !$verificationRequired || $forceVerified);
+
+        return $this->userRepository->getUser($userId);
     }
 
     public function removeInactive(bool $manual = false): int

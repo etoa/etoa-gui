@@ -1,14 +1,24 @@
 <?PHP
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\User\UserRepository;
+use EtoA\User\UserUniverseDiscoveryService;
 
 /** @var ConfigurationService */
 $config = $app[ConfigurationService::class];
+
+/** @var UserRepository */
+$userRepository = $app[UserRepository::class];
+
+/** @var UserUniverseDiscoveryService */
+$userUniverseDiscoveryService = $app[UserUniverseDiscoveryService::class];
 
 $mode = (isset($_GET['mode']) && $_GET['mode'] != "" && ctype_alpha($_GET['mode'])) ? $_GET['mode'] : 'target';
 
 // save current planet for use in xajax functions
 $_SESSION['currentEntity'] = serialize($cp);
+
+$user = $userRepository->getUser($cu->id);
 
 // Header & Menu
 echo "<h1>Favoriten</h1>";
@@ -51,7 +61,7 @@ if ((isset($_POST['submitEdit']) || isset($_POST['submitNew'])) && (isset($_POST
         //Check discovered for fleet bookmarks, bugfix by river
         $absX = (($sx - 1) * $config->param1Int('num_of_cells')) + $cx;
         $absY = (($sy - 1) * $config->param2Int('num_of_cells')) + $cy;
-        if ($cu->discovered($absX, $absY)) {
+        if ($userUniverseDiscoveryService->discovered($user, $absX, $absY)) {
             // Create shipstring
             $addships = "";
             foreach ($_POST['ship_count'] as $sid => $count) {
@@ -109,7 +119,7 @@ if ((isset($_POST['submitEdit']) || isset($_POST['submitNew'])) && (isset($_POST
                     )
                     VALUES
                     (
-                        '" . $cu->id . "',
+                        '" . $user->id . "',
                         '" . mysql_real_escape_string($_POST['name']) . "',
                         '" . $arr[0] . "',
                         '" . $addships . "',
@@ -134,7 +144,7 @@ if ((isset($_POST['submitEdit']) || isset($_POST['submitNew'])) && (isset($_POST
                         action='" . $_POST['action'] . "',
                         speed='" . $speed . "'
                     WHERE
-                        user_id='" . $cu->id . "'
+                        user_id='" . $user->id . "'
                         AND id='" . intval($_POST['id']) . "'
                     LIMIT 1;");
 
@@ -157,7 +167,7 @@ if (isset($_GET['del']) && intval($_GET['del']) > 0) {
         fleet_bookmarks
     WHERE
         id='" . $bmid . "'
-        AND user_id='" . $cu->id . "';");
+        AND user_id='" . $user->id . "';");
     if (mysql_affected_rows() > 0)
         success_msg("Gelöscht");
 }
@@ -170,7 +180,7 @@ if ($mode == "fleet") {
         FROM
             fleet_bookmarks
         WHERE
-            user_id='" . $cu->id . "'
+            user_id='" . $user->id . "'
         ORDER BY
             name;");
     if (mysql_num_rows($res) > 0) {
@@ -242,7 +252,7 @@ if ($mode == "fleet") {
                         fleet_bookmarks
                     WHERE
                         id='" . $bmid . "'
-                        AND user_id='" . $cu->id . "';");
+                        AND user_id='" . $user->id . "';");
         if (mysql_num_rows($bres) > 0) {
             $barr = mysql_fetch_assoc($bres);
             $eres = dbquery("
@@ -457,7 +467,7 @@ if ($mode == "fleet") {
             FROM
                 planets
             WHERE
-                planets.planet_user_id=" . $cu->id . "
+                planets.planet_user_id=" . $user->id . "
             ORDER BY
                 planet_user_main DESC,
                 planet_name ASC;");
@@ -480,7 +490,7 @@ if ($mode == "fleet") {
                 entities
             ON
                 bookmarks.entity_id=entities.id
-                AND bookmarks.user_id=" . $cu->id . ";");
+                AND bookmarks.user_id=" . $user->id . ";");
 
     if (mysql_num_rows($bRes) > 0) {
         echo '<option value="0">-------------------------------</option>\n';
@@ -607,7 +617,7 @@ if ($mode == "fleet") {
             entities
             ON bookmarks.entity_id=entities.id
             AND bookmarks.id='" . $bmid . "'
-            AND bookmarks.user_id=" . $cu->id . ";");
+            AND bookmarks.user_id=" . $user->id . ";");
         if (mysql_num_rows($res) > 0) {
             $arr = mysql_fetch_assoc($res);
             $ent = Entity::createFactory($arr['code'], $arr['entity_id']);
@@ -644,7 +654,7 @@ if ($mode == "fleet") {
                 comment='" . mysql_real_escape_string($_POST['bookmark_comment']) . "'
             WHERE
                 id='" . $bmid . "'
-                AND user_id='" . $cu->id . "';");
+                AND user_id='" . $user->id . "';");
             if (mysql_affected_rows() > 0)
                 success_msg("Gespeichert");
         }
@@ -658,7 +668,7 @@ if ($mode == "fleet") {
                 bookmarks
             WHERE
                 id='" . $bmid . "'
-                AND user_id='" . $cu->id . "';");
+                AND user_id='" . $user->id . "';");
             if (mysql_affected_rows() > 0)
                 success_msg("Gelöscht");
         }
@@ -673,7 +683,7 @@ if ($mode == "fleet") {
 
             $absX = (($sx - 1) * $config->param1Int('num_of_cells')) + $cx;
             $absY = (($sy - 1) * $config->param2Int('num_of_cells')) + $cy;
-            if ($cu->discovered($absX, $absY)) {
+            if ($userUniverseDiscoveryService->discovered($user, $absX, $absY)) {
                 $res = dbquery("
                     SELECT
                         entities.id
@@ -696,7 +706,7 @@ if ($mode == "fleet") {
                             bookmarks
                         WHERE
                             entity_id='" . $arr[0] . "'
-                            AND user_id='" . $cu->id . "';");
+                            AND user_id='" . $user->id . "';");
                     if (mysql_num_rows($check_res) == 0) {
                         dbquery("
                             INSERT INTO
@@ -706,7 +716,7 @@ if ($mode == "fleet") {
                                 entity_id,
                                 comment)
                             VALUES
-                                ('" . $cu->id . "',
+                                ('" . $user->id . "',
                                 '" . $arr[0] . "',
                                 '" . mysql_real_escape_string($_POST['bookmark_comment']) . "');");
 
@@ -742,7 +752,7 @@ if ($mode == "fleet") {
                     bookmarks
                 WHERE
                     entity_id='" . $arr[0] . "'
-                    AND user_id='" . $cu->id . "';");
+                    AND user_id='" . $user->id . "';");
                 if (mysql_num_rows($check_res) == 0) {
                     dbquery("
                     INSERT INTO
@@ -752,7 +762,7 @@ if ($mode == "fleet") {
                         entity_id,
                         comment)
                     VALUES
-                        ('" . $cu->id . "',
+                        ('" . $user->id . "',
                         '" . $arr[0] . "',
                         '-');");
 
@@ -818,7 +828,7 @@ if ($mode == "fleet") {
             bookmarks
         INNER JOIN
             entities
-            ON bookmarks.user_id=" . $cu->id . "
+            ON bookmarks.user_id=" . $user->id . "
             AND bookmarks.entity_id=entities.id
         " . $order . ";");
         if (mysql_num_rows($res) > 0) {
@@ -891,12 +901,12 @@ if ($mode == "fleet") {
 
                 if ($ent->entityCode() == 'p') {
                     // Nachrichten-Link
-                    if ($ent->ownerId() > 0 && $cu->id != $ent->ownerId()) {
+                    if ($ent->ownerId() > 0 && $user->id != $ent->ownerId()) {
                         echo "<a href=\"?page=messages&amp;mode=new&amp;message_user_to=" . $ent->ownerId() . "\" title=\"Nachricht senden\">" . icon("mail") . "</a> ";
                     }
 
                     // Ausspionieren, Raketen, Krypto
-                    if ($cu->id != $ent->ownerId()) {
+                    if ($user->id != $ent->ownerId()) {
                         // Besiedelter Planet
                         if ($ent->ownerId() > 0) {
                             echo "<a href=\"javascript:;\" onclick=\"xajax_launchSypProbe(" . $ent->id() . ");\" title=\"Ausspionieren\">" . icon("spy") . "</a>";
@@ -909,7 +919,7 @@ if ($mode == "fleet") {
                 // Analysieren, letzten Analysebericht als Popup anzeigen
                 if (in_array("analyze", $ent->allowedFleetActions(), true)) {
                     if ($cu->properties->showCellreports) {
-                        $reports = Report::find(array("type" => "spy", "user_id" => $cu->id, "entity1_id" => $ent->id()), "timestamp DESC", 1, 0, true);
+                        $reports = Report::find(array("type" => "spy", "user_id" => $user->id, "entity1_id" => $ent->id()), "timestamp DESC", 1, 0, true);
                         if (count($reports) > 0) {
                             $r = array_pop($reports);
                             echo "<span " . tm($r->subject, $r . "<br style=\"clear:both\" />") . "><a href=\"javascript:;\" onclick=\"xajax_launchAnalyzeProbe(" . $ent->id() . ");\" title=\"Analysieren\">" . icon("spy") . "</a></span>";

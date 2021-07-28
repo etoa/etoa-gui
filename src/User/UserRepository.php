@@ -188,6 +188,18 @@ class UserRepository extends AbstractRepository
             ->fetchAllKeyValue();
     }
 
+    public function saveDiscoveryMask(int $userId, string $mask): void
+    {
+        $this->createQueryBuilder()
+            ->update('users')
+            ->set('discoverymask', ":mask")
+            ->where('user_id = :userId')
+            ->setParameters([
+                'userId' => $userId,
+                'mask' => $mask,
+            ])
+            ->execute();
+    }
     public function resetDiscoveryMask(): void
     {
         $this->createQueryBuilder()
@@ -343,6 +355,32 @@ class UserRepository extends AbstractRepository
         ]);
     }
 
+    public function setSittingDays(int $userId, int $days): void
+    {
+        $this->createQueryBuilder()
+            ->update('users')
+            ->set('user_sitting_days', ':days')
+            ->where('user_id = :userId')
+            ->setParameters([
+                'userId' => $userId,
+                'days' => $days,
+            ])
+            ->execute();
+    }
+
+    public function setVerified(int $userId, bool $verified): void
+    {
+        $this->createQueryBuilder()
+            ->update('users')
+            ->set('verification_key', ':verificationKey')
+            ->where('user_id = :userId')
+            ->setParameters([
+                'userId' => $userId,
+                'verificationKey' => $verified ? '' : generateRandomString(64),
+            ])
+            ->execute();
+    }
+
     public function markAllianceShipPointsAsUsed(int $userId, int $shipCost): void
     {
         $this->createQueryBuilder()
@@ -368,24 +406,48 @@ class UserRepository extends AbstractRepository
         return $affected > 0;
     }
 
-    public function create(string $nick, string $name, string $email, string $password): int
+    public function exists(string $nick, string $email): bool
+    {
+        $data = $this->createQueryBuilder()
+            ->select("user_id")
+            ->from('users')
+            ->where('user_nick = :nick')
+            ->orWhere('user_email_fix = :email')
+            ->setMaxResults(1)
+            ->setParameters([
+                'nick' => $nick,
+                'email' => $email,
+            ])
+            ->execute()
+            ->fetchOne();
+
+        return $data !== false;
+    }
+
+    public function create(string $nick, string $name, string $email, string $password, int $race = 0, bool $ghost = false): int
     {
         $this->createQueryBuilder()
-        ->insert('users')
-        ->values([
-            'user_nick' => ':nick',
-            'user_name' => ':name',
-            'user_email' => ':email',
-            'user_email_fix' => ':email',
-            'user_password' => ':password',
-        ])
-        ->setParameters([
-            'nick' => $nick,
-            'name' => $name,
-            'email' => $email,
-            'password' => saltPasswort($password),
-        ])
-        ->execute();
+            ->insert('users')
+            ->values([
+                'user_nick' => ':nick',
+                'user_name' => ':name',
+                'user_email' => ':email',
+                'user_email_fix' => ':email',
+                'user_password' => ':password',
+                'user_race_id' => ':race',
+                'user_ghost' => ':ghost',
+                'user_logouttime' => 'UNIX_TIMESTAMP()',
+                'user_registered' => 'UNIX_TIMESTAMP()',
+            ])
+            ->setParameters([
+                'nick' => $nick,
+                'name' => $name,
+                'email' => $email,
+                'race' => $race,
+                'password' => saltPasswort($password),
+                'ghost' => $ghost ? 1 : 0,
+            ])
+            ->execute();
 
         return (int) $this->getConnection()->lastInsertId();
     }

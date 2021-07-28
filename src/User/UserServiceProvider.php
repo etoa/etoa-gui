@@ -82,12 +82,21 @@ class UserServiceProvider implements ServiceProviderInterface
             return new UserService(
                 $pimple[ConfigurationService::class],
                 $pimple[UserRepository::class],
+                $pimple[UserRatingRepository::class],
+                $pimple[UserPropertiesRepository::class],
                 $pimple[PlanetRepository::class],
                 $pimple[BuildingRepository::class],
                 $pimple[TechnologyRepository::class],
                 $pimple[ShipQueueRepository::class],
                 $pimple[DefenseQueueRepository::class],
                 $pimple[MailSenderService::class]
+            );
+        };
+
+        $pimple[UserUniverseDiscoveryService::class] = function (Container $pimple): UserUniverseDiscoveryService {
+            return new UserUniverseDiscoveryService(
+                $pimple[ConfigurationService::class],
+                $pimple[UserRepository::class]
             );
         };
     }
