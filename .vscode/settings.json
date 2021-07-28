@@ -18,7 +18,7 @@
       "valign",
       "xajax"
     ],
-    "files.exclude": {
+    "search.exclude": {
       "htdocs/web/js/app.js": true,
       "htdocs/web/js/admin.js": true,
       "htdocs/web/css/admin.css": true
