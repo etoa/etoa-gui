@@ -1,5 +1,6 @@
 <?PHP
 
+use EtoA\Backend\BackendMessageService;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Universe\Asteroid\AsteroidRepository;
 use EtoA\Universe\EmptySpace\EmptySpaceRepository;
@@ -47,6 +48,9 @@ $planetTypeRepository = $app[PlanetTypeRepository::class];
 
 /** @var PlanetService */
 $planetService = $app[PlanetService::class];
+
+/** @var BackendMessageService */
+$backendMessageService = $app[BackendMessageService::class];
 
 /** @var Request */
 $request = Request::createFromGlobals();
@@ -121,7 +125,7 @@ if ($id > 0) {
                 }
             }
             if ($request->request->has('calcres')) {
-                BackendMessage::updatePlanet($id);
+                $backendMessageService->updatePlanet($id);
                 sleep(2);
                 success_msg("Resourcen neu berechnet");
             } else if (count($request->request->all()) > 0 && !$request->request->has('save')) {

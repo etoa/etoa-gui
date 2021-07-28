@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace EtoA\User;
 
-use BackendMessage;
 use EtoA\Alliance\AllianceApplicationRepository;
 use EtoA\Alliance\AllianceRepository;
+use EtoA\Backend\BackendMessageService;
 use EtoA\Bookmark\BookmarkRepository;
 use EtoA\Bookmark\FleetBookmarkRepository;
 use EtoA\BuddyList\BuddyListRepository;
@@ -65,6 +65,7 @@ class UserService
     private UserPointsRepository $userPointsRepository;
     private UserCommentRepository $userCommentRepository;
     private UserSurveillanceRepository $userSurveillanceRepository;
+    private BackendMessageService $backendMessageService;
 
     public function __construct(
         ConfigurationService $config,
@@ -97,7 +98,8 @@ class UserService
         FleetBookmarkRepository $fleetBookmarkRepository,
         UserPointsRepository $userPointsRepository,
         UserCommentRepository $userCommentRepository,
-        UserSurveillanceRepository $userSurveillanceRepository
+        UserSurveillanceRepository $userSurveillanceRepository,
+        BackendMessageService $backendMessageService
     ) {
         $this->config = $config;
         $this->userRepository = $userRepository;
@@ -130,6 +132,7 @@ class UserService
         $this->userPointsRepository = $userPointsRepository;
         $this->userCommentRepository = $userCommentRepository;
         $this->userSurveillanceRepository = $userSurveillanceRepository;
+        $this->backendMessageService = $backendMessageService;
     }
 
     public function register(
@@ -421,7 +424,7 @@ die Spielleitung";
             $userPlanets = $this->planetRepository->getUserPlanets($user->id);
             foreach ($userPlanets as $planet) {
                 $this->planetRepository->setLastUpdated($planet->id, time());
-                BackendMessage::updatePlanet($planet->id);
+                $this->backendMessageService->updatePlanet($planet->id);
             }
         }
 

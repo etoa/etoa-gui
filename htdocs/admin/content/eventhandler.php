@@ -1,9 +1,13 @@
 <?PHP
 
+use EtoA\Backend\BackendMessageRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 
 /** @var ConfigurationService */
 $config = $app[ConfigurationService::class];
+
+/** @var BackendMessageRepository */
+$backendMessageRepository = $app[BackendMessageRepository::class];
 
 $successMessage = null;
 $errorMessage = null;
@@ -46,7 +50,7 @@ if (isUnixOS()) {
         }
     }
 
-    $messageQueueSize = BackendMessage::getMessageQueueSize();
+    $messageQueueSize = $backendMessageRepository->getMessageQueueSize();
     $eventHandlerPid = EventHandlerManager::checkDaemonRunning($pidfile);
 
     if (function_exists('posix_uname')) {
