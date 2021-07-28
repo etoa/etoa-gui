@@ -1415,13 +1415,6 @@ if (mysql_num_rows($res) > 0) {
                 </tr>";
     tableEnd();
 
-    // DON'T BUILD IN A FEATURE THAT'S NOT YET AVILABLE
-    /*
-    echo "<div id=\"pointsBox\">
-        <div style=\"text-align:center;\"><img src=\"web/images/ajax-loader-circle.gif\" /><br/>Wird geladen...</div>
-    </div>
-    ";	*/
-
     echo '</div><div id="tabs-10">';
 
     /**
@@ -1454,7 +1447,6 @@ if (mysql_num_rows($res) > 0) {
         echo '<p>Dieser User hat keine Tickets</p>';
     }
 
-    //<div style=\"text-align:center;\"><img src=\"web/images/ajax-loader-circle.gif\" /><br/>Wird geladen...</div>
     echo "</div>";
 
     echo '</div><div id="tabs-11">';
@@ -1464,7 +1456,7 @@ if (mysql_num_rows($res) > 0) {
      */
 
     echo "<div id=\"commentsBox\">
-        <div style=\"text-align:center;\"><img src=\"web/images/ajax-loader-circle.gif\" /><br/>Wird geladen...</div>
+        <div style=\"text-align:center;\"><img src=\"../web/images/ajax-loader-circle.gif\" /><br/>Wird geladen...</div>
     </div>";
 
     echo '</div><div id="tabs-12">';

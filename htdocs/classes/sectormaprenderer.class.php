@@ -188,7 +188,7 @@ class SectorMapRenderer
                     }
 
                     $url = isset($this->cellUrl) ? $this->cellUrl . $cells[$xcoords][$ycoords]['cid'] : '#';
-                    $img = RELATIVE_ROOT . $ent->imagePath();
+                    $img = $ent->imagePath();
                     unset($ent);
                 }
 

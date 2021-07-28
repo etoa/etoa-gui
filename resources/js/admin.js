@@ -1,3 +1,12 @@
+import jQuery from 'jquery'
+window.$ = window.jQuery = jQuery
+
+import 'jquery-ui-bundle/jquery-ui.css'
+
+require('jquery-ui-bundle')
+require('jquery-mousewheel')
+require('./jquery.mapbox.js')
+
 $(function () {
   // Load tabs
   $(".tabs").tabs();
@@ -38,18 +47,18 @@ function toggleBox(boxId) {
 
 function showLoader(elem) {
   document.getElementById(elem).innerHTML =
-    '<div style="text-align:center;padding:10px;"><img src="web/images/ajax-loader-circle.gif" /></div>';
+    '<div style="text-align:center;padding:10px;"><img src="../web/images/ajax-loader-circle.gif" /></div>';
 }
 
 function showLoaderPrepend(elem) {
   document.getElementById(elem).innerHTML =
-    '<div style="text-align:center;padding:10px;"><img src="web/images/ajax-loader-circle.gif" /></div>' +
+    '<div style="text-align:center;padding:10px;"><img src="../web/images/ajax-loader-circle.gif" /></div>' +
     document.getElementById(elem).innerHTML;
 }
 
 function showLoaderInline(elem) {
   document.getElementById(elem).innerHTML =
-    '<span style="text-align:center;padding:10px;"><img src="web/images/ajax-loader-circle.gif" /></span>';
+    '<span style="text-align:center;padding:10px;"><img src="../web/images/ajax-loader-circle.gif" /></span>';
 }
 
 function createFields() {
