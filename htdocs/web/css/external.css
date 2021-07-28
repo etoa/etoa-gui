@@ -2,23 +2,23 @@
 / Definitions for publicly available sites   /
 --------------------------------------------*/
 
-body	{
-	text-align:left;
-	margin:0px;
+body {
+  text-align: left;
+  margin: 0px;
 }
 
-h1	{
-	padding-bottom: 20px;
-	text-align: center;
+h1 {
+  padding-bottom: 20px;
+  text-align: center;
 }
 
 p.center {
-	text-align: center;
+  text-align: center;
 }
 
-#outGameContent	{
-	margin: 80px auto 10px;
-	width: 800px;
+#outGameContent {
+  margin: 80px auto 10px;
+  width: 800px;
 }
 
 /*
@@ -26,11 +26,12 @@ p.center {
 */
 
 table.tb.boxLayout {
-	width: 100%!important;
+  width: 100% !important;
 }
 
-table.tb td , table.tb th{
-	vertical-align: middle;
+table.tb td,
+table.tb th {
+  vertical-align: middle;
 }
 
 /*
@@ -38,27 +39,27 @@ table.tb td , table.tb th{
 */
 
 .styled-form {
-	margin:0px auto;
+  margin: 0px auto;
 }
 
 .styled-form-medium {
-	width:570px;
+  width: 570px;
 }
 
 .styled-form label {
-	display: inline-block;
-	text-align: right;
+  display: inline-block;
+  text-align: right;
 }
 
 .styled-form label:after {
-	content:':';
+  content: ":";
 }
 
-.styled-form-medium  label {
-	width: 120px;
+.styled-form-medium label {
+  width: 120px;
 }
 
 .styled-form-medium .form-buttons,
 .styled-form-medium .form-text {
-	padding-left: 125px;
+  padding-left: 125px;
 }

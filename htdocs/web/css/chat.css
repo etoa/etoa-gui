@@ -1,153 +1,155 @@
-body	{
-	background:#000 url('../images/background.jpg');
-	color:#fff;
-	font-family:arial;
-	font-size:9pt;
-	margin:0px;
-	padding:0px;
+body {
+  background: #000 url("../images/background.jpg");
+  color: #fff;
+  font-family: arial;
+  font-size: 9pt;
+  margin: 0px;
+  padding: 0px;
 }
 
-input,select	{
-	border:1px solid #fff;
-	background:#111;
-	color:#fff;
+input,
+select {
+  border: 1px solid #fff;
+  background: #111;
+  color: #fff;
 }
 
 #chatcontainer {
-	position:fixed;
-	top:0;
-	left:0;
-	right:0;
-	bottom:40px;
-	word-wrap: break-word;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 40px;
+  word-wrap: break-word;
 }
 
-div.chatmsg, div.serverMessage {
-	font-size: 1em;
+div.chatmsg,
+div.serverMessage {
+  font-size: 1em;
 }
 
-#chatitems	{
-	border-radius:2px;
-	padding:5px;
-	margin-top:2px;
-	background:rgba(0,0,0, 0.3);
-	overflow:auto;
-	vertical-align:middle;
-	font-family: Verdana, Arial, sans-serif;
+#chatitems {
+  border-radius: 2px;
+  padding: 5px;
+  margin-top: 2px;
+  background: rgba(0, 0, 0, 0.3);
+  overflow: auto;
+  vertical-align: middle;
+  font-family: Verdana, Arial, sans-serif;
 }
 
 #chatitems img {
-	vertical-align:middle;
-	margin-right:3px;
+  vertical-align: middle;
+  margin-right: 3px;
 }
 
 #chatitems .systemMessage {
-	color:#777;
+  color: #777;
 }
 
 #chatitems .serverMessage {
-	color:#aaa;
+  color: #aaa;
 }
 
 #chatitems .adminMessage {
-	color:#ff8;
-	font-weight:bold;
+  color: #ff8;
+  font-weight: bold;
 }
 
 #chatitems a {
-	color:#fff;
+  color: #fff;
 }
 
-#userlist	{
-	padding:5px 10px;
+#userlist {
+  padding: 5px 10px;
 }
 
-#userlist a	{
-	color:#fff;
+#userlist a {
+  color: #fff;
 }
 
-#loading	{
-	position:fixed;
-	left:0px;
-	right:0px;
-	bottom:30px;
-	height:16px;
-	background:black;
-	color:#fff;
-	overflow:hidden;
-	vertical-align:middle;
+#loading {
+  position: fixed;
+  left: 0px;
+  right: 0px;
+  bottom: 30px;
+  height: 16px;
+  background: black;
+  color: #fff;
+  overflow: hidden;
+  vertical-align: middle;
 }
 
 #loadingAnimation {
-	  display:inline-block;
-	  width:20px;
+  display: inline-block;
+  width: 20px;
 }
 
 #loadingAnimation img {
-	vertical-align:middle;
+  vertical-align: middle;
 }
 
 #loading span {
-	vertical-align:middle;
+  vertical-align: middle;
 }
 
-#chatinput	{
-	position:fixed;
-	left:0px;
-	right:0px;
-	bottom:0px;
-	background:#222;
-	height:20px;
-	padding:5px 5px 5px 5px;
+#chatinput {
+  position: fixed;
+  left: 0px;
+  right: 0px;
+  bottom: 0px;
+  background: #222;
+  height: 20px;
+  padding: 5px 5px 5px 5px;
 }
 
 #ctext {
-	width:100%;
-	border-color: #999;
+  width: 100%;
+  border-color: #999;
 }
 
 #ctext:focus {
-	border-color: #ccc;
+  border-color: #ccc;
 }
 
 #status {
-	float: right;
-	padding: 0 0.5em;
-	z-index: 10;
-	position: fixed;
-	right: 0;
-	/* should be #loading bottom +1px */
-	bottom: 31px;
-	/* not transparent, so it hides oversized msgFail text below */
+  float: right;
+  padding: 0 0.5em;
+  z-index: 10;
+  position: fixed;
+  right: 0;
+  /* should be #loading bottom +1px */
+  bottom: 31px;
+  /* not transparent, so it hides oversized msgFail text below */
 }
 
 #unread {
-	color: lime;
-	padding-left: 5px;
+  color: lime;
+  padding-left: 5px;
 }
 
 #usercount {
-	color: #ccc;
-	cursor: pointer;
+  color: #ccc;
+  cursor: pointer;
 }
 
 #usercount:hover {
-	color: #fff;
+  color: #fff;
 }
 
 #logoutButton {
-	position: absolute;
-	top: 1px;
-	right: 19px;
-	z-index: 100;
-	font-weight: bold;
-	cursor: pointer;
-	border: 1px solid #333;
-	color: #aaa;
-	background: rgba(0, 0, 0, 0.5);
+  position: absolute;
+  top: 1px;
+  right: 19px;
+  z-index: 100;
+  font-weight: bold;
+  cursor: pointer;
+  border: 1px solid #333;
+  color: #aaa;
+  background: rgba(0, 0, 0, 0.5);
 }
 
 #logoutButton:hover {
-	border: 1px solid #555;
-	color: #ddd;
+  border: 1px solid #555;
+  color: #ddd;
 }
