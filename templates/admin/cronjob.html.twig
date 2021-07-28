@@ -85,7 +85,7 @@
                         <td style="text-align:center;">{{ item.dayofmonth }}</td>
                         <td style="text-align:center;">{{ item.month }}</td>
                         <td style="text-align:center;">{{ item.dayofweek }}</td>
-                        <td style="text-align:center;">{% if item.current %}<img src="web/images/icons/bullet_green.png">{% else %}<img src="web/images/icons/bullet_black.png">{% endif %}</td>
+                        <td style="text-align:center;">{% if item.current %}<img src="../web/images/icons/bullet_green.png">{% else %}<img src="../web/images/icons/bullet_black.png">{% endif %}</td>
                         <td><input type="button" value="Ausführen" onclick="document.location='?page={{ page }}&runtask={{ key }}'" /></td>
                     </tr>
                 {% endfor %}
