@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\Chat\ChatBanRepository;
+use EtoA\Chat\ChatManager;
 use EtoA\Chat\ChatRepository;
 use EtoA\Chat\ChatUserRepository;
 
@@ -40,6 +41,9 @@ class ChatPollJsonResponder extends JsonResponder
             $chatUserRepository = $this->app[ChatUserRepository::class];
             $chatUser = $chatUserRepository->getChatUser($userId);
 
+            /** @var ChatManager */
+            $chatManager = $this->app[ChatManager::class];
+
             if ($chatUser !== null) {
                 if ($chatUser->kick !== null) {
                     $chatUserRepository->deleteUser($userId);
@@ -50,13 +54,13 @@ class ChatPollJsonResponder extends JsonResponder
                 }
             } else {
                 // User does not exist yet
-                ChatManager::sendSystemMessage($_SESSION['user_nick'] . ' betritt den Chat.');
+                $chatManager->sendSystemMessage($_SESSION['user_nick'] . ' betritt den Chat.');
                 $data['cmd'] = 'li';
-                $data['msg'] = ChatManager::getWelcomeMessage($_SESSION['user_nick']);
+                $data['msg'] = $chatManager->getWelcomeMessage($_SESSION['user_nick']);
             }
 
             // User exists, not kicked, not banned.
-            ChatManager::updateUserEntry($_SESSION['user_id'], $_SESSION['user_nick']);
+            $chatManager->updateUserEntry((int) $_SESSION['user_id'], $_SESSION['user_nick']);
 
             // Query new messages
             /** @var ChatRepository $chatRepository */
