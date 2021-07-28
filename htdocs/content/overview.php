@@ -4,6 +4,7 @@ use EtoA\Alliance\AllianceNewsRepository;
 use EtoA\Text\TextRepository;
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Support\StringUtils;
 use EtoA\User\UserLoginFailureRepository;
 
 /** @var ConfigurationService */

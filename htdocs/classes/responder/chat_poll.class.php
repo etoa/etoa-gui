@@ -4,6 +4,7 @@ use EtoA\Chat\ChatBanRepository;
 use EtoA\Chat\ChatManager;
 use EtoA\Chat\ChatRepository;
 use EtoA\Chat\ChatUserRepository;
+use EtoA\Support\StringUtils;
 
 class ChatPollJsonResponder extends JsonResponder
 {

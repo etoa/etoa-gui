@@ -44,6 +44,7 @@
 <?PHP
 
 use EtoA\Alliance\AllianceRepository;
+use EtoA\Support\StringUtils;
 
 if (Alliance::checkActionRights('relations')) {
     echo "<h2>Diplomatie</h2>";

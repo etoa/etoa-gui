@@ -2,6 +2,7 @@
 
 use EtoA\Alliance\AllianceNewsRepository;
 use EtoA\Alliance\AllianceRepository;
+use EtoA\Support\StringUtils;
 
 if (Alliance::checkActionRights('alliancenews'))
 {
