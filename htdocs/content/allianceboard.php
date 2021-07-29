@@ -33,8 +33,6 @@ if ($cu->allianceId > 0) {
     $alliance = $allianceRepository->getAlliance((int) $cu->allianceId);
     $allianceNames = $allianceRepository->getAllianceNames();
     if ($alliance !== null) {
-        define('BOARD_ALLIANCE_ID', $alliance->id);
-
         //Get Variablen überprüfen und IDs zuordnen
         $legal = true;
         $bnd_id = null;
@@ -42,11 +40,11 @@ if ($cu->allianceId > 0) {
         if (isset($_GET['bnd']) && intval($_GET['bnd']) > 0) {
             $bid = intval($_GET['bnd']);
 
-            $bres = dbquery("SELECT * FROM alliance_bnd WHERE (alliance_bnd_alliance_id1=" . BOARD_ALLIANCE_ID . " || alliance_bnd_alliance_id2=" . BOARD_ALLIANCE_ID . ") AND alliance_bnd_id=" . $bid . " AND alliance_bnd_level=2;");
+            $bres = dbquery("SELECT * FROM alliance_bnd WHERE (alliance_bnd_alliance_id1=" . $alliance->id . " || alliance_bnd_alliance_id2=" . $alliance->id . ") AND alliance_bnd_id=" . $bid . " AND alliance_bnd_level=2;");
             if (mysql_num_rows($bres) > 0) {
                 $barr = mysql_fetch_array($bres);
                 $bnd_id = $barr['alliance_bnd_id'];
-                if ($barr['alliance_bnd_alliance_id2'] == BOARD_ALLIANCE_ID) {
+                if ($barr['alliance_bnd_alliance_id2'] == $alliance->id) {
                     $alliance_bnd_id = $barr['alliance_bnd_alliance_id1'];
                 } else {
                     $alliance_bnd_id = $barr['alliance_bnd_alliance_id2'];
@@ -62,7 +60,7 @@ if ($cu->allianceId > 0) {
 
         // Eigenen Rang laden
         $user = $userRepository->getUser($cu->getId());
-        if ($user !== null && $user->allianceId === BOARD_ALLIANCE_ID) {
+        if ($user !== null && $user->allianceId === $alliance->id) {
             $myRankId = $user->allianceRankId;
         } else
             $myRankId = 0;
@@ -71,7 +69,7 @@ if ($cu->allianceId > 0) {
         $rightres = dbquery("SELECT * FROM alliance_rights ORDER BY right_desc;");
         $rights = array();
         $myRight = [];
-        $rightIds = $allianceRankRepository->getAvailableRightIds(BOARD_ALLIANCE_ID, $myRankId);
+        $rightIds = $allianceRankRepository->getAvailableRightIds($alliance->id, $myRankId);
         if (mysql_num_rows($rightres) > 0) {
             while ($rightarr = mysql_fetch_array($rightres)) {
                 $rights[$rightarr['right_id']]['key'] = $rightarr['right_key'];
@@ -81,7 +79,7 @@ if ($cu->allianceId > 0) {
         }
 
         // Ränge laden
-        $ranks = $allianceRankRepository->getRanks(BOARD_ALLIANCE_ID);
+        $ranks = $allianceRankRepository->getRanks($alliance->id);
         $rank = array();
         foreach ($ranks as $r) {
             $rank[$r->id] = $r->name;
@@ -89,8 +87,8 @@ if ($cu->allianceId > 0) {
 
         // Kategorien laden
         $myCat = [];
-        $allianceCategories = $allianceBoardCategoryRepository->getCategories(BOARD_ALLIANCE_ID);
-        $availableCategories = $allianceBoardCategoryRankRepository->getCategoriesForRank(BOARD_ALLIANCE_ID, $myRankId);
+        $allianceCategories = $allianceBoardCategoryRepository->getCategories($alliance->id);
+        $availableCategories = $allianceBoardCategoryRankRepository->getCategoriesForRank($alliance->id, $myRankId);
         $allianceCategoryMap = [];
         if (count($allianceCategories) > 0) {
             foreach ($allianceCategories as $category) {
@@ -106,16 +104,7 @@ if ($cu->allianceId > 0) {
             $isFounder = false;
 
         // Allianz-User in Array laden
-        $ures = dbquery("SELECT * FROM users WHERE user_alliance_id='" . BOARD_ALLIANCE_ID . "' ORDER BY user_nick ASC;");
-        $user = array();
-        if (mysql_num_rows($ures) > 0) {
-            while ($uarr = mysql_fetch_array($ures)) {
-                $user[$uarr['user_id']]['nick'] = $uarr['user_nick'];
-                $user[$uarr['user_id']]['rank'] = $uarr['user_rank'];
-                $user[$uarr['user_id']]['avatar'] = $uarr['user_avatar'];
-                $user[$uarr['user_id']]['signature'] = $uarr['user_signature'];
-            }
-        }
+        $allianceUsers = $userRepository->getAllianceUsers($alliance->id);
 
         // Change avatar function
         echo "<script type=\"text/javascript\">";
@@ -261,21 +250,21 @@ if ($cu->allianceId > 0) {
                         tableStart($topic->subject);
                         foreach ($posts as $post) {
                             echo "<tr><th style=\"width:150px;\"><a name=\"" . $post->id . "\"></a><a href=\"?page=userinfo&amp;id=" . $post->userId . "\">" . $post->userNick . "</a><br/>";
-                            show_avatar($user[$post->userId]['avatar']);
-                            $cpost = $allianceBoardPostRepository->getUserAlliancePostCounts(BOARD_ALLIANCE_ID, $cu->getId());
+                            show_avatar($allianceUsers[$post->userId]->avatar);
+                            $cpost = $allianceBoardPostRepository->getUserAlliancePostCounts($alliance->id, $cu->getId());
                             echo "Beitr&auml;ge: " . $cpost . "<br/><br/>" . df($post->timestamp) . " Uhr";
                             if ($isAdmin || $post->userId == $cu->id)
                                 echo "<br/><a href=\"?page=$page&amp;bnd=" . $bid . "&editpost=" . $post->id . "\"><img src=\"images/edit.gif\" alt=\"edit\" style=\"border:none\" /></a> <a href=\"?page=$page&amp;bnd=" . $bid . "&delpost=" . $post->id . "\"><img src=\"images/delete.gif\" alt=\"del\" style=\"border:none;\" /></a>";
                             echo "</th>";
                             echo "<td";
-                            if (isset($urank) && $user[$post->userId]['rank'] == count($urank) - 1)
+                            if (isset($urank) && $allianceUsers[$post->userId]->rank == count($urank) - 1)
                                 echo " style=\"color:" . ADMIN_COLOR . "\"";
 
                             echo ">" . text2html($post->text);
                             if ($post->changed !== null)
                                 echo "<br/><br/><span style=\"font-size:8pt;\">Dieser Beitrag wurde zuletzt geändert am " . date("d.m.Y", $post->changed) . " um " . date("H:i", $post->changed) . " Uhr.</span>";
-                            if ($user[$post->userId]['signature'] != "")
-                                echo "<hr>" . text2html($user[$post->userId]['signature']);
+                            if ($allianceUsers[$post->userId]->signature != "")
+                                echo "<hr>" . text2html($allianceUsers[$post->userId]->signature);
                             echo "</td></tr>";
                         }
                         tableEnd();
@@ -313,7 +302,7 @@ if ($cu->allianceId > 0) {
                 echo "<form action=\"?page=$page&amp;bnd=" . $bid . "\" method=\"post\">";
                 echo "<h2><a href=\"?page=$page\">&Uuml;bersicht</a> &gt; <a href=\"?page=$page&amp;bnd=" . $bid . "\">" . $allianceNames[$alliance_bnd_id] . "</a> &gt; Neues Thema</h2>";
             } else {
-                $category = $allianceBoardCategoryRepository->getCategory($ntid, BOARD_ALLIANCE_ID);
+                $category = $allianceBoardCategoryRepository->getCategory($ntid, $alliance->id);
                 if ($category !== null) {
                     echo "<form action=\"?page=$page&amp;cat=" . $ntid . "\" method=\"post\">";
                     echo "<h2><a href=\"?page=$page\">&Uuml;bersicht</a> &gt; <a href=\"?page=$page&amp;cat=" . $category->id . "\">" . $category->name . "</a> &gt; Neues Thema</h2>";
@@ -366,7 +355,7 @@ if ($cu->allianceId > 0) {
                             echo "<tr><th>Kategorie:</th><td>" . $allianceNames[$alliance_bnd_id] . "</td></tr>";
                         } else {
                             echo "<tr><th>Kategorie:</th><td><select name=\"topic_cat_id\">";
-                            $categories = $allianceBoardCategoryRepository->getCategories(BOARD_ALLIANCE_ID);
+                            $categories = $allianceBoardCategoryRepository->getCategories($alliance->id);
                             foreach ($categories as $category) {
                                 echo "<option value=\"" . $category->id . "\"";
                                 if ($topic->categoryId === $category->id) echo " selected=\"selected\"";
@@ -409,7 +398,7 @@ if ($cu->allianceId > 0) {
             $cat = intval($_GET['cat']);
 
             if ($isAdmin || isset($myCat[$cat])) {
-                $category = $allianceBoardCategoryRepository->getCategory($cat, BOARD_ALLIANCE_ID);
+                $category = $allianceBoardCategoryRepository->getCategory($cat, $alliance->id);
                 if ($category !== null) {
                     echo "<h2><a href=\"?page=$page\">&Uuml;bersicht</a> &gt; " . ($category->name != "" ? stripslashes($category->name) : "Unbenannt") . "</h2>";
 
@@ -452,7 +441,7 @@ if ($cu->allianceId > 0) {
                             echo ">" . $topic->subject . "</a></td>";
                             echo "<td>" . $postCounts[$topic->id] . "</td>";
                             echo "<td>" . $topic->count . "</td>";
-                            echo "<td>" . $user[$topic->userId]['nick'] . "</td>";
+                            echo "<td>" . $allianceUsers[$topic->userId]->nick . "</td>";
                             $post = $allianceBoardPostRepository->getPosts($topic->id, 1)[0];
                             echo "<td><a href=\"?page=$page&amp;topic=" . $topic->id . "#" . $post->id . "\">" . df($post->timestamp) . "</a><br/>" . $post->userNick . "</td>";
                             if ($isAdmin || $cu->id == $topic->userId) {
@@ -525,7 +514,7 @@ if ($cu->allianceId > 0) {
                             echo ">" . $topic->subject . "</a></td>";
                             echo "<td>" . $postCounts[$topic->id] . "</td>";
                             echo "<td>" . $topic->count . "</td>";
-                            echo "<td>" . $user[$topic->userId]['nick'] . "</td>";
+                            echo "<td>" . $allianceUsers[$topic->userId]->nick . "</td>";
                             $post = $allianceBoardPostRepository->getPosts($topic->id, 1)[0];
                             echo "<td><a href=\"?page=$page&amp;topic=" . $topic->id . "#" . $post->id . "\">" . df($post->timestamp) . "</a><br/>" . $post->userNick . "</td>";
                             if ($isAdmin || $cu->id == $topic->userId) {
@@ -567,7 +556,7 @@ if ($cu->allianceId > 0) {
             tableStart();
             echo "<tr><th>Name:</th><td><input type=\"text\" name=\"cat_name\" size=\"40\" /></td></tr>";
             echo "<tr><th>Beschreibung:</th><td><input type=\"text\" name=\"cat_desc\" size=\"40\" value=\"\" /></td></tr>";
-            echo "<tr><th>Reihenfolge/Position:</th><td><input type=\"text\" size=\"1\" maxlenght=\"2\" name=\"cat_order\" value=\"" . count($allianceBoardCategoryRepository->getCategoryIds(BOARD_ALLIANCE_ID)) . "\" /></td></tr>";
+            echo "<tr><th>Reihenfolge/Position:</th><td><input type=\"text\" size=\"1\" maxlenght=\"2\" name=\"cat_order\" value=\"" . count($allianceBoardCategoryRepository->getCategoryIds($alliance->id)) . "\" /></td></tr>";
             echo "<tr><th>Zugriff:</th><td>";
             foreach ($rank as $k => $v) {
                 echo "<input type=\"checkbox\" name=\"cr[" . $k . "]\" value=\"1\" ";
@@ -596,7 +585,7 @@ if ($cu->allianceId > 0) {
             $ecid = intval($_GET['editcat']);
 
             echo "<h2>Kategorie bearbeiten</h2>";
-            $category = $allianceBoardCategoryRepository->getCategory($ecid, BOARD_ALLIANCE_ID);
+            $category = $allianceBoardCategoryRepository->getCategory($ecid, $alliance->id);
             if ($category !== null) {
                 $d = opendir(BOARD_BULLET_DIR);
                 $bullets = array();
@@ -648,7 +637,7 @@ if ($cu->allianceId > 0) {
             $ebid = intval($_GET['editbnd']);
 
             echo "<h2>Kategorie bearbeiten</h2>";
-            $res = dbquery("SELECT * FROM alliance_bnd WHERE (alliance_bnd_alliance_id1=" . BOARD_ALLIANCE_ID . " || alliance_bnd_alliance_id2=" . BOARD_ALLIANCE_ID . ") AND alliance_bnd_id=" . $ebid . ";");
+            $res = dbquery("SELECT * FROM alliance_bnd WHERE (alliance_bnd_alliance_id1=" . $alliance->id . " || alliance_bnd_alliance_id2=" . $alliance->id . ") AND alliance_bnd_id=" . $ebid . ";");
             if (mysql_num_rows($res) > 0) {
                 $arr = mysql_fetch_array($res);
                 $d = opendir(BOARD_BULLET_DIR);
@@ -660,7 +649,7 @@ if ($cu->allianceId > 0) {
                 }
                 sort($bullets);
                 $alliance_bnd_id = 0;
-                if ($arr['alliance_bnd_alliance_id2'] == BOARD_ALLIANCE_ID) {
+                if ($arr['alliance_bnd_alliance_id2'] == $alliance->id) {
                     $alliance_bnd_id = $arr['alliance_bnd_alliance_id1'];
                 } else {
                     $alliance_bnd_id = $arr['alliance_bnd_alliance_id2'];
@@ -712,7 +701,7 @@ if ($cu->allianceId > 0) {
             $dcid = intval($_GET['delcat']);
 
             echo "<h2>Kategorie löschen</h2>";
-            $category = $allianceBoardCategoryRepository->getCategory($dcid, BOARD_ALLIANCE_ID);
+            $category = $allianceBoardCategoryRepository->getCategory($dcid, $alliance->id);
             if ($category !== null) {
                 echo "<form action=\"?page=$page\" method=\"post\">";
                 echo "<input type=\"hidden\" name=\"cat_id\" value=\"" . $category->id . "\" />";
@@ -732,13 +721,13 @@ if ($cu->allianceId > 0) {
             if (count($rank) > 0) {
 
                 if (isset($_POST['cat_new']) && isset($_POST['cat_name'])) {
-                    $cid = $allianceBoardCategoryRepository->addCategory($_POST['cat_name'], $_POST['cat_desc'], (int) $_POST['cat_order'], $_POST['cat_bullet'], BOARD_ALLIANCE_ID);
+                    $cid = $allianceBoardCategoryRepository->addCategory($_POST['cat_name'], $_POST['cat_desc'], (int) $_POST['cat_order'], $_POST['cat_bullet'], $alliance->id);
                     $newRanks = array_map(fn ($value) => (int) $value, $_POST['cr'] ?? []);
                     $allianceBoardCategoryRankRepository->replaceRanks($cid, 0, $newRanks);
                     success_msg("Neue Kategorie gespeichert!");
                 } elseif (isset($_POST['cat_edit']) && isset($_POST['cat_name']) && isset($_POST['cat_id']) && intval($_POST['cat_id']) > 0) {
                     $catid = intval($_POST['cat_id']);
-                    $allianceBoardCategoryRepository->updateCategory($catid, $_POST['cat_name'], $_POST['cat_desc'], (int) $_POST['cat_order'], $_POST['cat_bullet'], BOARD_ALLIANCE_ID);
+                    $allianceBoardCategoryRepository->updateCategory($catid, $_POST['cat_name'], $_POST['cat_desc'], (int) $_POST['cat_order'], $_POST['cat_bullet'], $alliance->id);
 
                     $newRanks = array_map(fn ($value) => (int) $value, $_POST['cr'] ?? []);
                     $allianceBoardCategoryRankRepository->replaceRanks($catid, 0, $newRanks);
@@ -750,11 +739,11 @@ if ($cu->allianceId > 0) {
                     success_msg("&Auml;nderungen gespeichert!");
                 } elseif (isset($_POST['cat_delete']) && isset($_POST['cat_id']) && intval($_POST['cat_id']) > 0) {
                     $catid = intval($_POST['cat_id']);
-                    $allianceBoardCategoryRepository->deleteCategory($catid, BOARD_ALLIANCE_ID);
+                    $allianceBoardCategoryRepository->deleteCategory($catid, $alliance->id);
                     success_msg("Kategorie gelöscht!");
                 }
 
-                $categories = $allianceBoardCategoryRepository->getCategories(BOARD_ALLIANCE_ID);
+                $categories = $allianceBoardCategoryRepository->getCategories($alliance->id);
                 if (count($categories) > 0) {
                     $categoryIds = array_map(fn (Category $category) => $category->id, $categories);
                     $postCounts = $allianceBoardCategoryRepository->getCategoryPostCounts($categoryIds);
@@ -821,7 +810,7 @@ if ($cu->allianceId > 0) {
 
 
                 //shows Bnd forums
-                $res = dbquery("SELECT * FROM alliance_bnd WHERE (alliance_bnd_alliance_id1=" . BOARD_ALLIANCE_ID . " || alliance_bnd_alliance_id2=" . BOARD_ALLIANCE_ID . ") AND alliance_bnd_level=2 ORDER BY alliance_bnd_id");
+                $res = dbquery("SELECT * FROM alliance_bnd WHERE (alliance_bnd_alliance_id1=" . $alliance->id . " || alliance_bnd_alliance_id2=" . $alliance->id . ") AND alliance_bnd_level=2 ORDER BY alliance_bnd_id");
                 if (mysql_num_rows($res) > 0) {
                     $allianceBnds = [];
                     $allianceBndIds = [];
@@ -842,7 +831,7 @@ if ($cu->allianceId > 0) {
                     $accessCnt = 0;
                     $alliance_bnd_id = 0;
                     foreach ($allianceBnds as $arr) {
-                        if ($arr['alliance_bnd_alliance_id2'] == BOARD_ALLIANCE_ID) {
+                        if ($arr['alliance_bnd_alliance_id2'] == $alliance->id) {
                             $alliance_bnd_id = $arr['alliance_bnd_alliance_id1'];
                         } else {
                             $alliance_bnd_id = $arr['alliance_bnd_alliance_id2'];

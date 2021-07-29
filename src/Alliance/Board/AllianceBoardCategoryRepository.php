@@ -97,7 +97,7 @@ class AllianceBoardCategoryRepository extends AbstractRepository
             ->where('cat_alliance_id = :allianceId')
             ->setParameters([
                 'catId' => $categoryId,
-                'allianceId' => $allianceId
+                'allianceId' => $allianceId,
             ])
             ->execute()
             ->fetchAssociative();

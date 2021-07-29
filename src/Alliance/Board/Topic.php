@@ -26,5 +26,4 @@ class Topic
         $this->top = (bool) $data['topic_top'];
         $this->closed = (bool) $data['topic_closed'];
     }
-
 }

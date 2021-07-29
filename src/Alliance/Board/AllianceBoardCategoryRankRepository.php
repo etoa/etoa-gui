@@ -24,7 +24,7 @@ class AllianceBoardCategoryRankRepository extends AbstractRepository
             ->execute()
             ->fetchAllAssociative();
 
-        return array_map(fn (array $row) => (int) $row['cr_cat_id'] , $data);
+        return array_map(fn (array $row) => (int) $row['cr_cat_id'], $data);
     }
 
     /**
@@ -40,7 +40,7 @@ class AllianceBoardCategoryRankRepository extends AbstractRepository
             ->execute()
             ->fetchAllAssociative();
 
-        return array_map(fn (array $row) => (int) $row['cr_rank_id'] , $data);
+        return array_map(fn (array $row) => (int) $row['cr_rank_id'], $data);
     }
 
     /**
@@ -56,16 +56,19 @@ class AllianceBoardCategoryRankRepository extends AbstractRepository
             ->execute()
             ->fetchAllAssociative();
 
-        return array_map(fn (array $row) => (int) $row['cr_rank_id'] , $data);
+        return array_map(fn (array $row) => (int) $row['cr_rank_id'], $data);
     }
 
+    /**
+     * @param int[] $rankIds
+     */
     public function replaceRanks(int $categoryId, int $bndId, array $rankIds): void
     {
         $qb = $this->createQueryBuilder()
             ->delete('allianceboard_catranks');
 
         if ($categoryId > 0) {
-                $qb
+            $qb
                 ->where('cr_cat_id = :categoryId')
                 ->setParameter('categoryId', $categoryId);
         } elseif ($bndId > 0) {
