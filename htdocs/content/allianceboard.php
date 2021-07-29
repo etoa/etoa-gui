@@ -9,6 +9,7 @@ use EtoA\Alliance\Board\Topic;
 use EtoA\Alliance\AllianceRankRepository;
 use EtoA\Alliance\AllianceRepository;
 use EtoA\User\UserRepository;
+use Symfony\Component\HttpFoundation\Request;
 
 /** @var AllianceRepository */
 $allianceRepository = $app[AllianceRepository::class];
@@ -25,6 +26,8 @@ $allianceBoardCategoryRankRepository = $app[AllianceBoardCategoryRankRepository:
 /** @var UserRepository $userRepository */
 $userRepository = $app[UserRepository::class];
 
+$request = Request::createFromGlobals();
+
 echo "<h1>Allianzforum</h1>";
 
 // Prüfen ob User in Allianz ist
@@ -37,8 +40,8 @@ if ($cu->allianceId > 0) {
         $legal = true;
         $bnd_id = null;
         $alliance_bnd_id = null;
-        if (isset($_GET['bnd']) && intval($_GET['bnd']) > 0) {
-            $bid = intval($_GET['bnd']);
+        if ($request->query->getInt('bnd') > 0) {
+            $bid = $request->query->getInt('bnd');
 
             $bres = dbquery("SELECT * FROM alliance_bnd WHERE (alliance_bnd_alliance_id1=" . $alliance->id . " || alliance_bnd_alliance_id2=" . $alliance->id . ") AND alliance_bnd_id=" . $bid . " AND alliance_bnd_level=2;");
             if (mysql_num_rows($bres) > 0) {
@@ -50,7 +53,8 @@ if ($cu->allianceId > 0) {
                     $alliance_bnd_id = $barr['alliance_bnd_alliance_id2'];
                 }
 
-                $_GET['cat'] = 0;
+                // We got a valid bnd id. Set the category id to 0
+                $request->query->set('cat', 0);
             } else {
                 $legal = false;
             }
@@ -124,22 +128,22 @@ if ($cu->allianceId > 0) {
         //
         // Create new post in topic
         //
-        if (isset($_GET['newpost']) && intval($_GET['newpost']) > 0 && $cu->id > 0 && $legal) {
-            $npid = intval($_GET['newpost']);
+        if ($request->query->getInt('newpost') > 0 && $cu->id > 0 && $legal) {
+            $newPostTopicId = $request->query->getInt('newpost');
 
             if (isset($alliance_bnd_id)) {
-                $topic = $allianceBoardTopicRepository->getTopic($npid, $alliance_bnd_id);
+                $topic = $allianceBoardTopicRepository->getTopic($newPostTopicId, $alliance_bnd_id);
             } else {
-                $topic = $allianceBoardTopicRepository->getTopic($npid);
+                $topic = $allianceBoardTopicRepository->getTopic($newPostTopicId);
             }
 
             if ($topic !== null) {
                 if (!$topic->closed) {
-                    echo "<form action=\"?page=$page&amp;topic=" . $npid . "&bnd=" . $bid . "\" method=\"post\">";
+                    echo "<form action=\"?page=$page&amp;topic=" . $newPostTopicId . "&bnd=" . $bid . "\" method=\"post\">";
                     if (isset($alliance_bnd_id)) {
-                        echo "<h2><a href=\"?page=$page\">&Uuml;bersicht</a> &gt; <a href=\"?page=$page&amp;bnd=" . $topic->bndId . "\">" . $allianceNames[$alliance_bnd_id] . "</a> &gt; <a href=\"?page=$page&amp;topic=" . $npid . "\">" . $topic->subject . "</a> &gt; Neuer Beitrag</h2>";
+                        echo "<h2><a href=\"?page=$page\">&Uuml;bersicht</a> &gt; <a href=\"?page=$page&amp;bnd=" . $topic->bndId . "\">" . $allianceNames[$alliance_bnd_id] . "</a> &gt; <a href=\"?page=$page&amp;topic=" . $newPostTopicId . "\">" . $topic->subject . "</a> &gt; Neuer Beitrag</h2>";
                     } else {
-                        echo "<h2><a href=\"?page=$page\">&Uuml;bersicht</a> &gt; <a href=\"?page=$page&amp;cat=" . $topic->categoryId . "\">" . $allianceCategoryMap[$topic->id]->name . "</a> &gt; <a href=\"?page=$page&amp;topic=" . $npid . "\">" . $topic->subject . "</a> &gt; Neuer Beitrag</h2>";
+                        echo "<h2><a href=\"?page=$page\">&Uuml;bersicht</a> &gt; <a href=\"?page=$page&amp;cat=" . $topic->categoryId . "\">" . $allianceCategoryMap[$topic->id]->name . "</a> &gt; <a href=\"?page=$page&amp;topic=" . $newPostTopicId . "\">" . $topic->subject . "</a> &gt; Neuer Beitrag</h2>";
                     }
                     tableStart();
                     echo "<tr><th>Text:</th><td><textarea name=\"post_text\" rows=\"10\" cols=\"90\"></textarea></td></tr>";
@@ -149,14 +153,14 @@ if ($cu->allianceId > 0) {
                     error_msg("Dieses Thema ist geschlossen!", 1);
             } else
                 error_msg("Dieses Thema existiert nicht!");
-            echo "<input type=\"button\" value=\"Zur&uuml;ck\" onclick=\"if (confirm('Soll die Erstellung des Beitrags abgebrochen werden?')) document.location='?page=$page&bnd=" . $bid . "&topic=" . $npid . "'\" /></form>";
+            echo "<input type=\"button\" value=\"Zur&uuml;ck\" onclick=\"if (confirm('Soll die Erstellung des Beitrags abgebrochen werden?')) document.location='?page=$page&bnd=" . $bid . "&topic=" . $newPostTopicId . "'\" /></form>";
         }
 
         //
         // Edit Post
         //
-        elseif (isset($_GET['editpost']) && intval($_GET['editpost']) > 0 && $s) {
-            $editPostId = intval($_GET['editpost']);
+        elseif ($request->query->getInt('editpost') > 0 && $s) {
+            $editPostId = $request->query->getInt('editpost');
 
             echo "<h2>Beitrag bearbeiten</h2>";
             $post = $allianceBoardPostRepository->getPost($editPostId);
@@ -178,8 +182,8 @@ if ($cu->allianceId > 0) {
         //
         // Delete Post
         //
-        elseif (isset($_GET['delpost']) && intval($_GET['delpost']) > 0 && $s) {
-            $deletePostId = intval($_GET['delpost']);
+        elseif ($request->query->getInt('delpost') > 0 && $s) {
+            $deletePostId = $request->query->getInt('delpost');
 
             echo "<h2>Beitrag löschen</h2>";
             $post = $allianceBoardPostRepository->getPost($deletePostId);
@@ -201,10 +205,10 @@ if ($cu->allianceId > 0) {
         //
         // Show topic with its posts
         //
-        elseif (isset($_GET['topic']) && intval($_GET['topic']) > 0 && $legal) {
-            $tpid = intval($_GET['topic']);
+        elseif ($request->query->getInt('topic') > 0 && $legal) {
+            $topicId = $request->query->getInt('topic');
 
-            $topic = $allianceBoardTopicRepository->getTopic($tpid);
+            $topic = $allianceBoardTopicRepository->getTopic($topicId);
             if ($topic !== null) {
                 if (($bnd_id === $topic->bndId && $isAdmin) || (isset($myCat[$topic->categoryId]) && ($isAdmin || $myCat[$topic->categoryId]))) {
                     if ($topic->bndId > 0) {
@@ -217,35 +221,37 @@ if ($cu->allianceId > 0) {
                     }
 
                     // Save new post
-                    if (isset($_POST['submit']) && isset($_POST['post_text']) && $cu->id > 0 && !$topic->closed) {
-                        $mid = $allianceBoardPostRepository->addPost($tpid, $_POST['post_text'], $cu->getId(), $cu->getNick());
-                        $allianceBoardTopicRepository->updateTopicTimestamp($tpid);
+                    if ($request->request->has('submit') && $request->request->has('post_text') && $cu->id > 0 && !$topic->closed) {
+                        $mid = $allianceBoardPostRepository->addPost($topicId, $request->request->get('post_text'), $cu->getId(), $cu->getNick());
+                        $allianceBoardTopicRepository->updateTopicTimestamp($topicId);
                         success_msg("Beitrag gespeichert!");
                         echo "<script type=\"text/javascript\">document.location='?page=$page&bnd=" . $bid . "&topic=" . $topic->id . "#" . $mid . "';</script>";
                     } else
-                        $allianceBoardTopicRepository->increaseTopicCount($tpid);
+                        $allianceBoardTopicRepository->increaseTopicCount($topicId);
 
                     // Edit post
-                    if (isset($_POST['post_edit']) && isset($_POST['post_text']) && isset($_POST['post_id']) && ($cu->id > 0 || $isAdmin)) {
+                    if ($request->request->has('post_edit') && $request->request->has('post_text') && $request->request->getInt('post_id') > 0 && ($cu->id > 0 || $isAdmin)) {
+                        $postId = $request->request->getInt('post_id');
                         if ($isAdmin)
-                            $allianceBoardPostRepository->updatePost((int) $_POST['post_id'], $_POST['post_text']);
+                            $allianceBoardPostRepository->updatePost($postId, $request->request->get('post_text'));
                         else
-                            $allianceBoardPostRepository->updatePost((int) $_POST['post_id'], $_POST['post_text'], $cu->getId());
+                            $allianceBoardPostRepository->updatePost($postId, $request->request->get('post_text'), $cu->getId());
                         success_msg("&Auml;nderungen gespeichert!");
-                        echo "<script type=\"text/javascript\">document.location='?page=$page&bnd=" . $bid . "&topic=" . $topic->id . "#" . $_POST['post_id'] . "';</script>";
+                        echo "<script type=\"text/javascript\">document.location='?page=$page&bnd=" . $bid . "&topic=" . $topic->id . "#" . $postId . "';</script>";
                     }
 
                     // Delete post
-                    if (isset($_POST['post_delete']) && isset($_POST['post_id']) && ($cu->id > 0 || $isAdmin)) {
+                    if ($request->request->has('post_delete') && $request->request->getInt('post_id') > 0 && ($cu->id > 0 || $isAdmin)) {
+                        $postId = $request->request->getInt('post_id');
                         if ($isAdmin)
-                            $allianceBoardPostRepository->deletePost((int) $_POST['post_id']);
+                            $allianceBoardPostRepository->deletePost($postId);
                         else
-                            $allianceBoardPostRepository->deletePost((int) $_POST['post_id'], $cu->getId());
+                            $allianceBoardPostRepository->deletePost($postId, $cu->getId());
 
                         success_msg("Beitrag gelöscht");
                     }
 
-                    $posts = $allianceBoardPostRepository->getPosts($tpid);
+                    $posts = $allianceBoardPostRepository->getPosts($topicId);
                     if (count($posts) > 0) {
                         tableStart($topic->subject);
                         foreach ($posts as $post) {
@@ -269,9 +275,9 @@ if ($cu->allianceId > 0) {
                         }
                         tableEnd();
                     } else {
-                        $topic = $allianceBoardTopicRepository->getTopic($tpid);
+                        $topic = $allianceBoardTopicRepository->getTopic($topicId);
                         if ($topic !== null) {
-                            $allianceBoardTopicRepository->deleteTopic($tpid);
+                            $allianceBoardTopicRepository->deleteTopic($topicId);
                             echo "<script>document.location='?page=$page&cat=" . $topic->categoryId . "';</script>
                                     Klicke <a href=\"?page=$page&cat=" . $topic->categoryId . "\">hier</a> falls du nicht automatisch weitergeleitet wirst...";
                         } else {
@@ -280,7 +286,7 @@ if ($cu->allianceId > 0) {
                         }
                     }
                     if ($cu->id > 0 && !$topic->closed)
-                        echo "<input type=\"button\" value=\"Neuer Beitrag\" onclick=\"document.location='?page=$page&amp;bnd=" . $bid . "&newpost=" . $tpid . "'\" /> &nbsp; ";
+                        echo "<input type=\"button\" value=\"Neuer Beitrag\" onclick=\"document.location='?page=$page&amp;bnd=" . $bid . "&newpost=" . $topicId . "'\" /> &nbsp; ";
                 } else
                     error_msg("Kein Zugriff!");
             } else
@@ -295,16 +301,16 @@ if ($cu->allianceId > 0) {
         //
         // Create new topic in category
         //
-        elseif (isset($_GET['newtopic']) && intval($_GET['newtopic']) > 0 && $cu->id > 0 && $legal) {
-            $ntid = intval($_GET['newtopic']);
+        elseif ($request->query->getInt('newtopic') > 0 && $cu->id > 0 && $legal) {
+            $newTopicCategoryId = $request->query->getInt('newtopic');
 
             if ($bid > 0) {
                 echo "<form action=\"?page=$page&amp;bnd=" . $bid . "\" method=\"post\">";
                 echo "<h2><a href=\"?page=$page\">&Uuml;bersicht</a> &gt; <a href=\"?page=$page&amp;bnd=" . $bid . "\">" . $allianceNames[$alliance_bnd_id] . "</a> &gt; Neues Thema</h2>";
             } else {
-                $category = $allianceBoardCategoryRepository->getCategory($ntid, $alliance->id);
+                $category = $allianceBoardCategoryRepository->getCategory($newTopicCategoryId, $alliance->id);
                 if ($category !== null) {
-                    echo "<form action=\"?page=$page&amp;cat=" . $ntid . "\" method=\"post\">";
+                    echo "<form action=\"?page=$page&amp;cat=" . $newTopicCategoryId . "\" method=\"post\">";
                     echo "<h2><a href=\"?page=$page\">&Uuml;bersicht</a> &gt; <a href=\"?page=$page&amp;cat=" . $category->id . "\">" . $category->name . "</a> &gt; Neues Thema</h2>";
                 } else
                     $legal = false;
@@ -318,7 +324,7 @@ if ($cu->allianceId > 0) {
             } else
                 error_msg("Diese Kategorie existiert nicht!");
             if ($bid == 0) {
-                echo "<input type=\"button\" value=\"Zur&uuml;ck\" onclick=\"if (confirm('Soll die Erstellung des Themas abgebrochen werden?')) document.location='?page=$page&amp;cat=" . $ntid . "'\" /></form>";
+                echo "<input type=\"button\" value=\"Zur&uuml;ck\" onclick=\"if (confirm('Soll die Erstellung des Themas abgebrochen werden?')) document.location='?page=$page&amp;cat=" . $newTopicCategoryId . "'\" /></form>";
             } else {
                 echo "<input type=\"button\" value=\"Zur&uuml;ck\" onclick=\"if (confirm('Soll die Erstellung des Themas abgebrochen werden?')) document.location='?page=$page&amp;bnd=" . $bid . "'\" /></form>";
             }
@@ -328,11 +334,11 @@ if ($cu->allianceId > 0) {
         //
         // Edit a topic
         //
-        elseif (isset($_GET['edittopic']) && intval($_GET['edittopic']) > 0 && $s  && $legal) {
-            $etid = intval($_GET['edittopic']);
+        elseif ($request->query->getInt('edittopic') > 0 && $s  && $legal) {
+            $editTopicId = $request->query->getInt('edittopic');
 
             echo "<h2>Thema bearbeiten</h2>";
-            $topic = $allianceBoardTopicRepository->getTopic($etid, $bid);
+            $topic = $allianceBoardTopicRepository->getTopic($editTopicId, $bid);
             if ($topic !== null) {
                 if ($cu->id == $topic->userId || $isAdmin) {
                     echo "<form action=\"?page=$page&amp;bnd=" . $bid . "&cat=" . $topic->categoryId . "\" method=\"post\">";
@@ -376,11 +382,11 @@ if ($cu->allianceId > 0) {
         //
         // Delete a topic and all it's posts
         //
-        elseif (isset($_GET['deltopic']) && intval($_GET['deltopic']) > 0 && $isAdmin) {
-            $dtid = intval($_GET['deltopic']);
+        elseif ($request->query->getInt('deltopic') > 0 && $isAdmin) {
+            $deleteTopicId = $request->query->getInt('deltopic');
 
             echo "<h2>Thema löschen</h2>";
-            $topic = $allianceBoardTopicRepository->getTopic($dtid);
+            $topic = $allianceBoardTopicRepository->getTopic($deleteTopicId);
             if ($topic !== null) {
                 echo "<form action=\"?page=$page&amp;bnd=" . $topic->bndId . "&amp;cat=" . $topic->categoryId . "\" method=\"post\">";
                 echo "<input type=\"hidden\" name=\"topic_id\" value=\"" . $topic->id . "\" />";
@@ -394,11 +400,11 @@ if ($cu->allianceId > 0) {
         //
         // Show topics in category
         //
-        elseif (isset($_GET['cat']) && intval($_GET['cat']) > 0) {
-            $cat = intval($_GET['cat']);
+        elseif ($request->query->getInt('cat') > 0) {
+            $categoryId = $request->query->getInt('cat');
 
-            if ($isAdmin || isset($myCat[$cat])) {
-                $category = $allianceBoardCategoryRepository->getCategory($cat, $alliance->id);
+            if ($isAdmin || (isset($myCat[$categoryId]) && $myCat[$categoryId])) {
+                $category = $allianceBoardCategoryRepository->getCategory($categoryId, $alliance->id);
                 if ($category !== null) {
                     echo "<h2><a href=\"?page=$page\">&Uuml;bersicht</a> &gt; " . ($category->name != "" ? stripslashes($category->name) : "Unbenannt") . "</h2>";
 
@@ -457,7 +463,7 @@ if ($cu->allianceId > 0) {
                     } else
                         error_msg("Es sind noch keine Themen vorhanden!");
                     if ($cu->id > 0)
-                        echo "<input type=\"button\" value=\"Neues Thema\" onclick=\"document.location='?page=$page&newtopic=" . $cat . "'\" /> &nbsp; ";
+                        echo "<input type=\"button\" value=\"Neues Thema\" onclick=\"document.location='?page=$page&newtopic=" . $categoryId . "'\" /> &nbsp; ";
                 } else
                     error_msg("Kategorie existiert nicht!");
             } else
@@ -469,9 +475,8 @@ if ($cu->allianceId > 0) {
         // Show bnd topics in category
         //
         elseif ($bid > 0) {
-            $cat = intval($_GET['cat']);
-
-            if ($isAdmin || isset($myCat[$cat])) {
+            $bndRankIds = $allianceBoardCategoryRankRepository->getRanksForBnd($bid);
+            if ($isAdmin || in_array($bid, $bndRankIds, true)) {
                 if ($legal) {
                     echo "<h2><a href=\"?page=$page\">&Uuml;bersicht</a> &gt; " . $allianceNames[$alliance_bnd_id] . "</h2>";
 
@@ -483,7 +488,7 @@ if ($cu->allianceId > 0) {
                     }
                     // Save edited topic
                     elseif (isset($_POST['topic_edit']) && isset($_POST['topic_subject']) && isset($_POST['topic_id']) && $_POST['topic_id'] > 0) {
-                        $allianceBoardTopicRepository->updateTopic((int) $_POST['topic_id'], $_POST['topic_subject'], (int) $_POST['topic_bnd_id'], $cat, (bool) $_POST['topic_top'], (bool) $_POST['topic_closed']);
+                        $allianceBoardTopicRepository->updateTopic((int) $_POST['topic_id'], $_POST['topic_subject'], (int) $_POST['topic_bnd_id'], 0, (bool) $_POST['topic_top'], (bool) $_POST['topic_closed']);
                         success_msg("&Auml;nderungen gespeichert!");
                         if ($_POST['topic_bnd_id'] != $bid)
                             echo "<script type=\"text/javascript\">document.location='?page=$page&amp;bnd=" . $_POST['topic_bnd_id'] . "';</script>";
@@ -541,7 +546,7 @@ if ($cu->allianceId > 0) {
         //
         // New category
         //
-        elseif (isset($_GET['action']) && $_GET['action'] == "newcat" && $isAdmin) {
+        elseif ($request->query->get('action') === "newcat" && $isAdmin) {
             $d = opendir(BOARD_BULLET_DIR);
             $bullets = array();
             while ($f = readdir($d)) {
@@ -581,11 +586,11 @@ if ($cu->allianceId > 0) {
         //
         // Edit a category
         //
-        elseif (isset($_GET['editcat']) && intval($_GET['editcat']) > 0 && $isAdmin) {
-            $ecid = intval($_GET['editcat']);
+        elseif ($request->query->getInt('editcat') > 0 && $isAdmin) {
+            $editCategoryId = $request->query->getInt('editcat');
 
             echo "<h2>Kategorie bearbeiten</h2>";
-            $category = $allianceBoardCategoryRepository->getCategory($ecid, $alliance->id);
+            $category = $allianceBoardCategoryRepository->getCategory($editCategoryId, $alliance->id);
             if ($category !== null) {
                 $d = opendir(BOARD_BULLET_DIR);
                 $bullets = array();
@@ -633,11 +638,11 @@ if ($cu->allianceId > 0) {
 
         //
         //edit a bnd category
-        elseif (isset($_GET['editbnd']) && intval($_GET['editbnd']) > 0 && $isAdmin) {
-            $ebid = intval($_GET['editbnd']);
+        elseif ($request->query->getInt('editbnd') > 0 && $isAdmin) {
+            $editBndId = $request->query->getInt('editbnd');
 
             echo "<h2>Kategorie bearbeiten</h2>";
-            $res = dbquery("SELECT * FROM alliance_bnd WHERE (alliance_bnd_alliance_id1=" . $alliance->id . " || alliance_bnd_alliance_id2=" . $alliance->id . ") AND alliance_bnd_id=" . $ebid . ";");
+            $res = dbquery("SELECT * FROM alliance_bnd WHERE (alliance_bnd_alliance_id1=" . $alliance->id . " || alliance_bnd_alliance_id2=" . $alliance->id . ") AND alliance_bnd_id=" . $editBndId . ";");
             if (mysql_num_rows($res) > 0) {
                 $arr = mysql_fetch_array($res);
                 $d = opendir(BOARD_BULLET_DIR);
@@ -697,11 +702,11 @@ if ($cu->allianceId > 0) {
         //
         // Delete a forum category and all it's content
         //
-        elseif (isset($_GET['delcat']) && intval($_GET['delcat']) > 0 && $isAdmin) {
-            $dcid = intval($_GET['delcat']);
+        elseif ($request->query->getInt('delcat') > 0 && $isAdmin) {
+            $deleteCategoryId = $request->query->getInt('delcat');
 
             echo "<h2>Kategorie löschen</h2>";
-            $category = $allianceBoardCategoryRepository->getCategory($dcid, $alliance->id);
+            $category = $allianceBoardCategoryRepository->getCategory($deleteCategoryId, $alliance->id);
             if ($category !== null) {
                 echo "<form action=\"?page=$page\" method=\"post\">";
                 echo "<input type=\"hidden\" name=\"cat_id\" value=\"" . $category->id . "\" />";
@@ -725,21 +730,20 @@ if ($cu->allianceId > 0) {
                     $newRanks = array_map(fn ($value) => (int) $value, $_POST['cr'] ?? []);
                     $allianceBoardCategoryRankRepository->replaceRanks($cid, 0, $newRanks);
                     success_msg("Neue Kategorie gespeichert!");
-                } elseif (isset($_POST['cat_edit']) && isset($_POST['cat_name']) && isset($_POST['cat_id']) && intval($_POST['cat_id']) > 0) {
-                    $catid = intval($_POST['cat_id']);
+                } elseif (isset($_POST['cat_edit']) && isset($_POST['cat_name']) && isset($_POST['cat_id']) && $request->request->getInt('cat_id') > 0) {
+                    $catid = $request->request->getInt('cat_id');
                     $allianceBoardCategoryRepository->updateCategory($catid, $_POST['cat_name'], $_POST['cat_desc'], (int) $_POST['cat_order'], $_POST['cat_bullet'], $alliance->id);
 
                     $newRanks = array_map(fn ($value) => (int) $value, $_POST['cr'] ?? []);
                     $allianceBoardCategoryRankRepository->replaceRanks($catid, 0, $newRanks);
                     success_msg("&Auml;nderungen gespeichert!");
-                } elseif (isset($_POST['cat_edit']) && isset($_POST['bnd_id']) && intval($_POST['bnd_id']) > 0) {
-                    $bndid = intval($_POST['bnd_id']);
+                } elseif (isset($_POST['cat_edit']) && $request->request->getInt('bnd_id') > 0) {
+                    $bndid = $request->request->getInt('bnd_id');
                     $newRanks = array_map(fn ($value) => (int) $value, $_POST['cr'] ?? []);
                     $allianceBoardCategoryRankRepository->replaceRanks(0, $bndid, $newRanks);
                     success_msg("&Auml;nderungen gespeichert!");
-                } elseif (isset($_POST['cat_delete']) && isset($_POST['cat_id']) && intval($_POST['cat_id']) > 0) {
-                    $catid = intval($_POST['cat_id']);
-                    $allianceBoardCategoryRepository->deleteCategory($catid, $alliance->id);
+                } elseif (isset($_POST['cat_delete']) && $request->request->getInt('cat_id') > 0) {
+                    $allianceBoardCategoryRepository->deleteCategory($request->request->getInt('cat_id'), $alliance->id);
                     success_msg("Kategorie gelöscht!");
                 }
 
@@ -785,7 +789,7 @@ if ($cu->allianceId > 0) {
                                 echo " " . tm("Admin-Info: " . $category->name, "<b>Position:</b> " . $category->order . "<br/><b>Zugriff:</b> " . $rstr) . "";
                             }
                             echo ">
-                                <b><a href=\"?page=$page&amp;bnd=0&cat=" . intval($category->id) . "\">" . ($category->name != "" ? $category->name : "Unbenannt") . "</a></b>
+                                <b><a href=\"?page=$page&amp;bnd=0&cat=" . $category->id . "\">" . ($category->name != "" ? $category->name : "Unbenannt") . "</a></b>
                                 <br/>" . text2html($category->description) . "</td>";
                             echo "<td>" . $postCounts[$category->id] . "</td>";
                             echo "<td>" . $topicCounts[$category->id] . "</td>";
