@@ -121,36 +121,6 @@ parameters:
 			path: htdocs/content/alliance/diplomacy.inc.php
 
 		-
-			message: "#^If condition is always true\\.$#"
-			count: 1
-			path: htdocs/content/allianceboard.php
-
-		-
-			message: "#^Right side of && is always true\\.$#"
-			count: 2
-			path: htdocs/content/allianceboard.php
-
-		-
-			message: "#^Variable \\$alliance_bnd_id might not be defined\\.$#"
-			count: 4
-			path: htdocs/content/allianceboard.php
-
-		-
-			message: "#^Variable \\$arr might not be defined\\.$#"
-			count: 2
-			path: htdocs/content/allianceboard.php
-
-		-
-			message: "#^Variable \\$bnd_id might not be defined\\.$#"
-			count: 1
-			path: htdocs/content/allianceboard.php
-
-		-
-			message: "#^Variable \\$tarr might not be defined\\.$#"
-			count: 2
-			path: htdocs/content/allianceboard.php
-
-		-
 			message: "#^Comparison operation \"\\=\\=\" between 0\\|0\\.0\\|''\\|'0'\\|array\\(\\)\\|false\\|null and 0 results in an error\\.$#"
 			count: 1
 			path: htdocs/content/buildings.php

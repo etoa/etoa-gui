@@ -5,6 +5,7 @@ use EtoA\Alliance\AllianceHistoryRepository;
 use EtoA\Alliance\AlliancePollRepository;
 use EtoA\Alliance\AllianceRankRepository;
 use EtoA\Alliance\AllianceRepository;
+use EtoA\Alliance\Board\AllianceBoardTopicRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 
 /** @var ConfigurationService */
@@ -363,52 +364,16 @@ elseif ($cu->allianceId == 0) {
                 }
 
                 // Internes Forum verlinken
-                if ($myRight['allianceboard'] || $isFounder)
-                    $pres = dbquery("
-                SELECT
-                    topic_subject,
-                    post_id,topic_id,
-                    topic_timestamp,
-                    post_user_id
-                FROM
-                    " . BOARD_POSTS_TABLE . ",
-                    " . BOARD_TOPIC_TABLE . ",
-                    " . BOARD_CAT_TABLE . "
-                WHERE
-                    post_topic_id=topic_id
-                    AND topic_cat_id=cat_id
-                    AND cat_alliance_id=" . $alliance->id . "
-                GROUP BY
-                    post_id
-                ORDER BY
-                    post_timestamp DESC
-                LIMIT 1;");
-                else
-                    $pres = dbquery("
-                SELECT
-                    topic_subject,
-                    post_id,topic_id,
-                    topic_timestamp,
-                    post_user_id
-                FROM
-                    " . BOARD_POSTS_TABLE . ",
-                    " . BOARD_TOPIC_TABLE . ",
-                    " . BOARD_CAT_TABLE . ",
-                    allianceboard_catranks
-                WHERE
-                    cr_cat_id=cat_id
-                    AND cr_rank_id=" . $myRankId . "
-                    AND post_topic_id=topic_id
-                    AND topic_cat_id=cat_id
-                    AND cat_alliance_id=" . $alliance->id . "
-                GROUP BY
-                    post_id
-                ORDER BY
-                    post_timestamp DESC
-                LIMIT 1;");
-                if (mysql_num_rows($pres) > 0) {
-                    $parr = mysql_fetch_row($pres);
-                    $ps = "Neuster Post: <a href=\"?page=allianceboard&amp;topic=" . $parr[2] . "#" . $parr[1] . "\"><b>" . $parr[0] . "</b>, geschrieben von: <b>" . get_user_nick($parr[4]) . "</b>, <b>" . df($parr[3]) . "</b></a>";
+                /** @var AllianceBoardTopicRepository $allianceBoardTopicRepository */
+                $allianceBoardTopicRepository = $app[AllianceBoardTopicRepository::class];
+                if ($myRight['allianceboard'] || $isFounder) {
+                    $topic = $allianceBoardTopicRepository->getAllianceTopicWithLatestPost($alliance->id);
+                } else {
+                    $topic = $allianceBoardTopicRepository->getAllianceTopicWithLatestPost($alliance->id, $myRankId);
+                }
+
+                if ($topic !== null) {
+                    $ps = "Neuster Post: <a href=\"?page=allianceboard&amp;topic=" . $topic->id . "#" . $topic->post->id . "\"><b>" . $topic->subject . "</b>, geschrieben von: <b>" . $topic->post->userNick . "</b>, <b>" . df($topic->timestamp) . "</b></a>";
                 } else
                     $ps = "<i>Noch keine Beitr&auml;ge vorhanden";
                 echo "<tr><th>Internes Forum</th><td colspan=\"2\"><b><a href=\"?page=allianceboard\">Forum&uuml;bersicht</a></b> &nbsp; $ps</td></tr>";

@@ -44,6 +44,7 @@
 <?PHP
 
 use EtoA\Alliance\AllianceRepository;
+use EtoA\Alliance\Board\AllianceBoardTopicRepository;
 
 if (Alliance::checkActionRights('relations')) {
     echo "<h2>Diplomatie</h2>";
@@ -482,11 +483,9 @@ if (Alliance::checkActionRights('relations')) {
                 }
 
                 //Delete Bnd Forum
-                $bres = dbquery("SELECT * FROM allianceboard_topics WHERE topic_bnd_id=" . $id . ";");
-                while ($barr = mysql_fetch_array($bres)) {
-                    dbquery("DELETE FROM allianceboard_posts WHERE post_topic_id=" . $barr['topic_id'] . ";");
-                }
-                dbquery("DELETE FROM allianceboard_topics WHERE topic_bnd_id=" . $id . ";");
+                /** @var AllianceBoardTopicRepository $allianceBoardRepository */
+                $allianceBoardRepository = $app[AllianceBoardTopicRepository::class];
+                $allianceBoardRepository->deleteBndTopic($id);
 
                 // Delete entity
                 dbquery("

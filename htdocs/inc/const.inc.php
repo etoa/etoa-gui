@@ -478,15 +478,6 @@ define("BOARD_AVATAR_DIR", CACHE_ROOT . "/avatars");
 define("BOARD_DEFAULT_IMAGE", "default.png");
 define("BOARD_ADMIN_RANK", 4);
 
-// Tabelle der Forentopics
-define("BOARD_TOPIC_TABLE", "allianceboard_topics");
-
-// Tabelle der Forenposts
-define("BOARD_POSTS_TABLE", "allianceboard_posts");
-
-// Tabelle der Kategorien
-define("BOARD_CAT_TABLE", "allianceboard_cat");
-
 // Avatar-Breite
 define("BOARD_AVATAR_MAX_WIDTH", 1024);
 
