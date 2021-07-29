@@ -1,5 +1,6 @@
 <?PHP
 
+use EtoA\Alliance\Board\AllianceBoardCategoryRankRepository;
 use EtoA\Alliance\Board\AllianceBoardCategoryRepository;
 use EtoA\Alliance\Board\AllianceBoardPostRepository;
 use EtoA\Alliance\Board\AllianceBoardTopicRepository;
@@ -19,6 +20,8 @@ $allianceBoardCategoryRepository = $app[AllianceBoardCategoryRepository::class];
 $allianceBoardTopicRepository = $app[AllianceBoardTopicRepository::class];
 /** @var AllianceBoardPostRepository $allianceBoardPostRepository */
 $allianceBoardPostRepository = $app[AllianceBoardPostRepository::class];
+/** @var AllianceBoardCategoryRankRepository $allianceBoardCategoryRankRepository */
+$allianceBoardCategoryRankRepository = $app[AllianceBoardCategoryRankRepository::class];
 /** @var UserRepository $userRepository */
 $userRepository = $app[UserRepository::class];
 
@@ -87,14 +90,12 @@ if ($cu->allianceId > 0) {
         // Kategorien laden
         $myCat = [];
         $allianceCategories = $allianceBoardCategoryRepository->getCategories(BOARD_ALLIANCE_ID);
+        $availableCategories = $allianceBoardCategoryRankRepository->getCategoriesForRank(BOARD_ALLIANCE_ID, $myRankId);
         $allianceCategoryMap = [];
         if (count($allianceCategories) > 0) {
             foreach ($allianceCategories as $category) {
                 $allianceCategoryMap[$category->id] = $category;
-                if (mysql_num_rows(dbquery("SELECT cr_id FROM allianceboard_catranks,alliance_ranks WHERE rank_id=cr_rank_id AND rank_alliance_id=" . BOARD_ALLIANCE_ID . " AND cr_cat_id=" . $category->id . " AND cr_rank_id=" . $myRankId . ";")) > 0)
-                    $myCat[$category->id] = true;
-                else
-                    $myCat[$category->id] = false;
+                $myCat[$category->id] = in_array($category->id, $availableCategories, true);
             }
         }
 
@@ -613,10 +614,10 @@ if ($cu->allianceId > 0) {
                 echo "<tr><th>Beschreibung:</th><td><input type=\"text\" name=\"cat_desc\" size=\"40\" value=\"" . $category->description . "\" /></td></tr>";
                 echo "<tr><th>Reihenfolge/Position:</th><td><input type=\"text\" size=\"1\" maxlenght=\"2\" name=\"cat_order\" value=\"" . $category->order . "\" /></td></tr>";
                 echo "<tr><th>Zugriff:</th><td>";
+                $categoryRankIds = $allianceBoardCategoryRankRepository->getRanksForCategories($category->id);
                 foreach ($rank as $k => $v) {
                     echo "<input type=\"checkbox\" name=\"cr[" . $k . "]\" value=\"1\" ";
-                    $crres = dbquery("SELECT cr_id FROM allianceboard_catranks WHERE cr_rank_id=" . $k . " AND cr_cat_id=" . $category->id . ";");
-                    if (mysql_num_rows($crres) > 0)
+                    if (in_array($k, $categoryRankIds, true))
                         echo " checked=\"checked\" /><span style=\"color:#0f0;\">" . $v . "</span><br/>";
                     else
                         echo " /> <span style=\"color:#f50;\">" . $v . "</span><br/>";
@@ -671,14 +672,17 @@ if ($cu->allianceId > 0) {
                 echo "<tr><th>Name:</th><td>" . $allianceNames[$alliance_bnd_id] . "</td></tr>";
                 echo "<tr><th>Beschreibung:</th><td>" . $arr['alliance_bnd_text'] . "</td></tr>";
                 echo "<tr><th>Zugriff:</th><td>";
+
+                $bndRankIds = $allianceBoardCategoryRankRepository->getRanksForBnd((int) $arr['alliance_bnd_id']);
                 foreach ($rank as $k => $v) {
                     echo "<input type=\"checkbox\" name=\"cr[" . $k . "]\" value=\"1\" ";
-                    $crres = dbquery("SELECT cr_id FROM allianceboard_catranks WHERE cr_rank_id=" . $k . " AND cr_bnd_id=" . $arr['alliance_bnd_id'] . ";");
-                    if (mysql_num_rows($crres) > 0)
+                    if (in_array($k, $bndRankIds, true)) {
                         echo " checked=\"checked\" /><span style=\"color:#0f0;\">" . $v . "</span><br/>";
-                    else
+                    } else {
                         echo " /> <span style=\"color:#f50;\">" . $v . "</span><br/>";
+                    }
                 }
+
                 echo "</td></tr>";
                 /*echo "<tr><th style=\"width:110px;\">Symbol:</th><td>";
                     if ($arr['cat_bullet']=="" || !is_file(BOARD_BULLET_DIR."/".$arr['cat_bullet'])) $arr['cat_bullet']=BOARD_DEFAULT_IMAGE;
@@ -729,30 +733,20 @@ if ($cu->allianceId > 0) {
 
                 if (isset($_POST['cat_new']) && isset($_POST['cat_name'])) {
                     $cid = $allianceBoardCategoryRepository->addCategory($_POST['cat_name'], $_POST['cat_desc'], (int) $_POST['cat_order'], $_POST['cat_bullet'], BOARD_ALLIANCE_ID);
-                    if (isset($_POST['cr'])) {
-                        foreach ($_POST['cr'] as $k => $v) {
-                            dbquery("INSERT INTO allianceboard_catranks (cr_cat_id,cr_rank_id) VALUES (" . $cid . ",$k);");
-                        }
-                    }
+                    $newRanks = array_map(fn ($value) => (int) $value, $_POST['cr'] ?? []);
+                    $allianceBoardCategoryRankRepository->replaceRanks($cid, 0, $newRanks);
                     success_msg("Neue Kategorie gespeichert!");
                 } elseif (isset($_POST['cat_edit']) && isset($_POST['cat_name']) && isset($_POST['cat_id']) && intval($_POST['cat_id']) > 0) {
                     $catid = intval($_POST['cat_id']);
                     $allianceBoardCategoryRepository->updateCategory($catid, $_POST['cat_name'], $_POST['cat_desc'], (int) $_POST['cat_order'], $_POST['cat_bullet'], BOARD_ALLIANCE_ID);
-                    dbquery("DELETE FROM allianceboard_catranks WHERE cr_cat_id=" . $catid . ";");
-                    if (isset($_POST['cr'])) {
-                        foreach ($_POST['cr'] as $k => $v) {
-                            dbquery("INSERT INTO allianceboard_catranks (cr_cat_id,cr_rank_id) VALUES (" . $catid . ",$k);");
-                        }
-                    }
+
+                    $newRanks = array_map(fn ($value) => (int) $value, $_POST['cr'] ?? []);
+                    $allianceBoardCategoryRankRepository->replaceRanks($catid, 0, $newRanks);
                     success_msg("&Auml;nderungen gespeichert!");
                 } elseif (isset($_POST['cat_edit']) && isset($_POST['bnd_id']) && intval($_POST['bnd_id']) > 0) {
                     $bndid = intval($_POST['bnd_id']);
-                    dbquery("DELETE FROM allianceboard_catranks WHERE cr_bnd_id=" . $bndid . ";");
-                    if (isset($_POST['cr'])) {
-                        foreach ($_POST['cr'] as $k => $v) {
-                            dbquery("INSERT INTO allianceboard_catranks (cr_bnd_id,cr_rank_id) VALUES (" . $bndid . ",$k);");
-                        }
-                    }
+                    $newRanks = array_map(fn ($value) => (int) $value, $_POST['cr'] ?? []);
+                    $allianceBoardCategoryRankRepository->replaceRanks(0, $bndid, $newRanks);
                     success_msg("&Auml;nderungen gespeichert!");
                 } elseif (isset($_POST['cat_delete']) && isset($_POST['cat_id']) && intval($_POST['cat_id']) > 0) {
                     $catid = intval($_POST['cat_id']);
@@ -791,11 +785,13 @@ if ($cu->allianceId > 0) {
                             echo "<td style=\"width:300px;\"";
                             if ($isAdmin) {
                                 $rstr = "";
+                                $categoryRankIds = $allianceBoardCategoryRankRepository->getRanksForCategories($category->id);
                                 foreach ($rank as $k => $v) {
-                                    $crres = dbquery("SELECT cr_id FROM allianceboard_catranks WHERE cr_rank_id=" . $k . " AND cr_cat_id=" . $category->id . ";");
-                                    if (mysql_num_rows($crres) > 0)
+                                    if (in_array($k, $categoryRankIds, true)) {
                                         $rstr .= $v . ", ";
+                                    }
                                 }
+
                                 if ($rstr != "") $rstr = substr($rstr, 0, strlen($rstr) - 2);
                                 echo " " . tm("Admin-Info: " . $category->name, "<b>Position:</b> " . $category->order . "<br/><b>Zugriff:</b> " . $rstr) . "";
                             }
@@ -867,11 +863,13 @@ if ($cu->allianceId > 0) {
                             echo "<td style=\"width:300px;\"";
                             if ($isAdmin) {
                                 $rstr = "";
+                                $bndRankIds = $allianceBoardCategoryRankRepository->getRanksForBnd((int) $arr['alliance_bnd_id']);
                                 foreach ($rank as $k => $v) {
-                                    $crres = dbquery("SELECT cr_id FROM allianceboard_catranks WHERE cr_rank_id=" . $k . " AND cr_bnd_id=" . intval($arr['alliance_bnd_id']) . ";");
-                                    if (mysql_num_rows($crres) > 0)
+                                    if (in_array($k, $bndRankIds, true)) {
                                         $rstr .= $v . ", ";
+                                    }
                                 }
+
                                 if ($rstr != "") $rstr = substr($rstr, 0, strlen($rstr) - 2);
                                 echo " " . tm("Admin-Info: " . stripslashes($allianceNames[$alliance_bnd_id]),/*"<b>Position:</b> ".$arr['cat_order']."<br/>*/ "<b>Zugriff:</b> " . $rstr) . "";
                             }

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace EtoA\Alliance;
 
+use EtoA\Alliance\Board\AllianceBoardCategoryRankRepository;
 use EtoA\Alliance\Board\AllianceBoardCategoryRepository;
 use EtoA\Alliance\Board\AllianceBoardPostRepository;
 use EtoA\Alliance\Board\AllianceBoardTopicRepository;
@@ -70,6 +71,10 @@ class AllianceServiceProvider implements ServiceProviderInterface
 
         $pimple[AllianceBoardPostRepository::class] = function (Container $pimple): AllianceBoardPostRepository {
             return new AllianceBoardPostRepository($pimple['db']);
+        };
+
+        $pimple[AllianceBoardCategoryRankRepository::class] = function (Container $pimple): AllianceBoardCategoryRankRepository {
+            return new AllianceBoardCategoryRankRepository($pimple['db']);
         };
     }
 }
