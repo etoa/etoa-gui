@@ -1,10 +1,9 @@
-<?PHP
+<?php
 
-/**
- * String utilities
- *
- * @author MrCage <mrcage@etoa.ch>
- */
+declare(strict_types=1);
+
+namespace EtoA\Support;
+
 class StringUtils
 {
     /**
@@ -15,24 +14,27 @@ class StringUtils
      *   == array ('Lorem','ipsum','dolor sit amet','consectetur','adipiscing "elit','dolor'))
      *
      * @see http://stackoverflow.com/questions/2202435/php-explode-the-string-but-treat-words-in-quotes-as-a-single-word
+     * @return string[]
      */
-    public static function splitBySpaces($text)
+    public static function splitBySpaces(string $text): array
     {
         if (preg_match_all('/"(?:\\\\.|[^\\\\"])*"|\S+/', $text, $matches)) {
             $rtn = array();
             for ($x = 0; $x < count($matches[0]); $x++) {
                 $rtn[$x] = preg_replace(array('/^"/', '/"$/', '/\\\"/'), array('', '', '"'), $matches[0][$x]);
             }
+
             return $rtn;
         } else {
             if (strlen($text) > 0) {
                 return array($text);
             }
+
             return array();
         }
     }
 
-    public static function encodeJavascriptString($str)
+    public static function encodeJavascriptString(string $str): string
     {
         $controlChars = array(
             chr(92) => '\\\\',            // \ to \\
@@ -41,12 +43,13 @@ class StringUtils
             chr(13) . chr(10) => '\n',    // CR LF
             chr(10) . chr(13) => '\n',    // LF CR
             chr(10) => '\n',             // LF
-            chr(13) => '\n'              // CR
+            chr(13) => '\n',              // CR
         );
+
         return strtr($str, $controlChars);
     }
 
-    public static function encodeDBStringToJS($str)
+    public static function encodeDBStringToJS(string $str): string
     {
         // Pass the string to a JS variable inline (so no " and no ' occurence possible)
         return str_replace("'", "\\'", str_replace("\\", "\\\\", htmlspecialchars($str, ENT_COMPAT, 'UTF-8')));
@@ -56,19 +59,19 @@ class StringUtils
      * to be displayed as plaintext in the HTML document, so changing
      * all the tags to entities etc. AND replacing newlines with <br> tags
      */
-    public static function encodeDBStringToPlaintext($str)
+    public static function encodeDBStringToPlaintext(string $str): string
     {
         return StringUtils::replaceBR(htmlspecialchars($str, ENT_COMPAT, 'UTF-8'));
     }
 
     /* Wrapper function, like encodeDBStringToPlaintext() but for inside a textarea.
      */
-    public static function encodeDBStringForTextarea($str)
+    public static function encodeDBStringForTextarea(string $str): string
     {
         return htmlspecialchars($str, ENT_QUOTES, 'UTF-8', true);
     }
 
-    public static function replaceAsciiControlCharsUnicode($str)
+    public static function replaceAsciiControlCharsUnicode(string $str): string
     {
         $controlChars = array(
             chr(0) => chr(0x2400),
@@ -103,12 +106,13 @@ class StringUtils
             chr(29) => chr(0x241D),
             chr(30) => chr(0x241E),
             chr(31) => chr(0x241F),
-            chr(127) => chr(0x2421)
+            chr(127) => chr(0x2421),
         );
+
         return strtr($str, $controlChars);
     }
 
-    public static function replaceAsciiControlChars($str)
+    public static function replaceAsciiControlChars(string $str): string
     {
         $controlChars = array(
             chr(0) => '&#x2400;',
@@ -143,19 +147,21 @@ class StringUtils
             chr(29) => '&#x241D;',
             chr(30) => '&#x241E;',
             chr(31) => '&#x241F;',
-            chr(127) => '&#x2421;'
+            chr(127) => '&#x2421;',
         );
+
         return strtr($str, $controlChars);
     }
 
-    public static function replaceBR($str)
+    public static function replaceBR(string $str): string
     {
         $controlChars = array(
             chr(13) . chr(10) => '<br />',    // CR LF
             chr(10) . chr(13) => '<br />',    // LF CR
             chr(10) => '<br />',             // LF
-            chr(13) => '<br />'              // CR
+            chr(13) => '<br />' ,             // CR
         );
+
         return strtr($str, $controlChars);
     }
 }

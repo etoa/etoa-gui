@@ -2,6 +2,8 @@
 
 namespace EtoA\Chat;
 
+use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Text\TextRepository;
 use Pimple\Container;
 use Pimple\ServiceProviderInterface;
 
@@ -23,6 +25,15 @@ class ChatServiceProvider implements ServiceProviderInterface
 
         $pimple[ChatRepository::class] = function (Container $pimple): ChatRepository {
             return new ChatRepository($pimple['db']);
+        };
+
+        $pimple[ChatManager::class] = function (Container $pimple): ChatManager {
+            return new ChatManager(
+                $pimple[ChatRepository::class],
+                $pimple[ChatUserRepository::class],
+                $pimple[TextRepository::class],
+                $pimple[ConfigurationService::class],
+            );
         };
     }
 }

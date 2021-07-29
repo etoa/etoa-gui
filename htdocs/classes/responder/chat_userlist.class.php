@@ -1,4 +1,7 @@
 <?PHP
+
+use EtoA\Chat\ChatManager;
+
 class ChatUserlistJsonResponder extends JsonResponder
 {
     function getRequiredParams()
@@ -14,11 +17,11 @@ class ChatUserlistJsonResponder extends JsonResponder
 
     function getResponse($params)
     {
+        /** @var ChatManager */
+        $chatManager = $this->app[ChatManager::class];
 
-        $data = array();
-
-        if (ChatManager::isUserOnline($_SESSION['user_id'])) {
-            return ChatManager::getUserOnlineList();
+        if ($chatManager->isUserOnline((int) $_SESSION['user_id'])) {
+            return $chatManager->getUserOnlineList();
         }
         return array();
     }

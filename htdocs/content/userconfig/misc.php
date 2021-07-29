@@ -1,9 +1,13 @@
 <?PHP
 
+use EtoA\Backend\BackendMessageService;
 use EtoA\Core\Configuration\ConfigurationService;
 
 /** @var ConfigurationService */
 $config = $app[ConfigurationService::class];
+
+/** @var BackendMessageService */
+$backendMessageService = $app[BackendMessageService::class];
 
 $umod = false;
 
@@ -28,7 +32,7 @@ if (isset($_POST['hmod_on']) && checker_verify()) {
 if (isset($_POST['hmod_off']) && checker_verify()) {
     if ($cu->deleted == 0 && $cu->removeUmode()) {
         foreach ($planets as $pid) {
-            BackendMessage::updatePlanet($pid);
+            $backendMessageService->updatePlanet($pid);
         }
 
         success_msg("Urlaubsmodus aufgehoben! Denke daran, auf allen deinen Planeten die Produktion zu überprüfen!");

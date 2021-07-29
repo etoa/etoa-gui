@@ -2,6 +2,7 @@
 
 use Doctrine\Common\Collections\ArrayCollection;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Support\StringUtils;
 
 /**
  * Returns a string containing the game name, version and round

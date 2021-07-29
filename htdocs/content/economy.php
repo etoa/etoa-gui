@@ -1,5 +1,6 @@
 <?PHP
 
+use EtoA\Backend\BackendMessageService;
 use EtoA\Building\BuildingDataRepository;
 use EtoA\Building\BuildingRepository;
 use EtoA\Core\Configuration\ConfigurationService;
@@ -18,8 +19,12 @@ $resourceBoxDrawer = $app[ResourceBoxDrawer::class];
 
 /** @var BuildingRepository $buildingRepository */
 $buildingRepository = $app[BuildingRepository::class];
+
 /** @var BuildingDataRepository $buildingDataRepository */
 $buildingDataRepository = $app[BuildingDataRepository::class];
+
+/** @var BackendMessageService */
+$backendMessageService = $app[BackendMessageService::class];
 
 if ($cp) {
 
@@ -48,7 +53,7 @@ if ($cp) {
             success_msg("Änderungen gespeichert!");
 
             // Send
-            BackendMessage::updatePlanet($planet->id);
+            $backendMessageService->updatePlanet($planet->id);
         }
     }
 
@@ -56,7 +61,7 @@ if ($cp) {
     echo $resourceBoxDrawer->getHTML($planet);
 
     if (isset($_GET['action']) && $_GET['action'] == "update") {
-        BackendMessage::updatePlanet($planet->id);
+        $backendMessageService->updatePlanet($planet->id);
         success_msg("Planet wird neu berechnet!");
     }
 

@@ -47,6 +47,7 @@ use EtoA\Alliance\AllianceDiplomacyLevel;
 use EtoA\Alliance\AllianceDiplomacyRepository;
 use EtoA\Alliance\AllianceRepository;
 use EtoA\Alliance\Board\AllianceBoardTopicRepository;
+use EtoA\Support\StringUtils;
 
 if (Alliance::checkActionRights('relations')) {
     echo "<h2>Diplomatie</h2>";

@@ -2,7 +2,9 @@
 
 use EtoA\Chat\ChatBanRepository;
 use EtoA\Chat\ChatLogRepository;
+use EtoA\Chat\ChatManager;
 use EtoA\Chat\ChatRepository;
+use EtoA\Support\StringUtils;
 use EtoA\User\UserRepository;
 
 class ChatPushJsonResponder extends JsonResponder
@@ -62,8 +64,12 @@ class ChatPushJsonResponder extends JsonResponder
 
             /** @var ChatBanRepository $chatBanRepository */
             $chatBanRepository = $this->app[ChatBanRepository::class];
+
             /** @var UserRepository $userRepository */
             $userRepository = $this->app[UserRepository::class];
+
+            /** @var ChatManager */
+            $chatManager = $this->app[ChatManager::class];
 
             // Handle command
             if (count($words) > 0 && preg_match('#^/([a-z]+)$#i', array_shift($words), $commandMatch)) {
@@ -75,8 +81,8 @@ class ChatPushJsonResponder extends JsonResponder
                         $uid = $userRepository->getUserIdByNick($words[0]);
                         if ($uid > 0) {
                             $msg = (count($words) > 1) ? implode(' ', array_slice($words, 1)) : '';
-                            if (ChatManager::kickUser($uid, $msg)) {
-                                ChatManager::sendSystemMessage($words[0] . ' wurde gekickt!' . ($msg != '' ? ' Grund: ' . $msg : ''));
+                            if ($chatManager->kickUser($uid, $msg)) {
+                                $chatManager->sendSystemMessage($words[0] . ' wurde gekickt!' . ($msg != '' ? ' Grund: ' . $msg : ''));
                             } else {
                                 return array(
                                     'cmd' => 'aa',
@@ -104,8 +110,8 @@ class ChatPushJsonResponder extends JsonResponder
                         if ($uid > 0) {
                             $text = (count($words) > 1) ? implode(' ', array_slice($words, 1)) : '';
                             $chatBanRepository->banUser($uid, $text, true);
-                            ChatManager::kickUser($uid, $text);
-                            ChatManager::sendSystemMessage($words[0] . ' wurde gebannt! Grund: ' . $text);
+                            $chatManager->kickUser($uid, $text);
+                            $chatManager->sendSystemMessage($words[0] . ' wurde gebannt! Grund: ' . $text);
                         } else {
                             return array(
                                 'cmd' => 'aa',
