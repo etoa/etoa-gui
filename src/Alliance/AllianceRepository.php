@@ -52,15 +52,32 @@ class AllianceRepository extends AbstractRepository
             ->select("alliance_id, alliance_name, alliance_tag")
             ->from('alliances')
             ->orderBy('alliance_name')
+            ->addOrderBy('alliance_tag')
             ->execute()
             ->fetchAllAssociative();
 
         $result = [];
         foreach ($rows as $row) {
-            $result[$row['alliance_id']] = sprintf('[%s] %s', $row['alliance_tag'], $row['alliance_name']);
+            $result[(int) $row['alliance_id']] = sprintf('[%s] %s', $row['alliance_tag'], $row['alliance_name']);
         }
 
         return $result;
+    }
+
+    /**
+     * @return Alliance[]
+     */
+    public function getAlliances(): array
+    {
+        $data = $this->createQueryBuilder()
+            ->select("*")
+            ->from('alliances')
+            ->orderBy('alliance_name')
+            ->addOrderBy('alliance_tag')
+            ->execute()
+            ->fetchAllAssociative();
+
+        return array_map(fn (array $row) => new Alliance($row), $data);
     }
 
     public function getAlliance(int $allianceId): ?Alliance

@@ -438,9 +438,9 @@ class User implements \EtoA\User\UserInterface
         return $this->setup;
     }
 
-    final public function allianceId()
+    final public function allianceId(): int
     {
-        return $this->allianceId;
+        return (int) $this->allianceId;
     }
 
     final public function allianceName()

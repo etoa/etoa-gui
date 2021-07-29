@@ -46,6 +46,8 @@ class AllianceDiplomacyRepository extends AbstractRepository
             ->select('b.*')
             ->addSelect('a1.alliance_name as alliance1Name')
             ->addSelect('a2.alliance_name as alliance2Name')
+            ->addSelect('a1.alliance_tag as alliance1Tag')
+            ->addSelect('a2.alliance_tag as alliance2Tag')
             ->from('alliance_bnd', 'b')
             ->leftJoin('b', 'alliances', 'a1', 'alliance_bnd_alliance_id1 = a1.alliance_id')
             ->leftJoin('b', 'alliances', 'a2', 'alliance_bnd_alliance_id2 = a2.alliance_id')
@@ -67,12 +69,14 @@ class AllianceDiplomacyRepository extends AbstractRepository
         return array_map(fn (array $row) => new AllianceDiplomacy($row, $allianceId), $data);
     }
 
-    public function getDiplomacy(int $id, int $allianceId): ?AllianceDiplomacy
+    public function getDiplomacy(int $id, int $allianceId, int $level = null): ?AllianceDiplomacy
     {
-        $data = $this->createQueryBuilder()
+        $qb = $this->createQueryBuilder()
             ->select('b.*')
             ->addSelect('a1.alliance_name as alliance1Name')
             ->addSelect('a2.alliance_name as alliance2Name')
+            ->addSelect('a1.alliance_tag as alliance1Tag')
+            ->addSelect('a2.alliance_tag as alliance2Tag')
             ->from('alliance_bnd', 'b')
             ->leftJoin('b', 'alliances', 'a1', 'alliance_bnd_alliance_id1 = a1.alliance_id')
             ->leftJoin('b', 'alliances', 'a2', 'alliance_bnd_alliance_id2 = a2.alliance_id')
@@ -81,13 +85,35 @@ class AllianceDiplomacyRepository extends AbstractRepository
             ->setParameters([
                 'allianceId' => $allianceId,
                 'bndId' => $id,
-            ])
+            ]);
+
+        if ($level !== null) {
+            $qb
+                ->andWhere('b.alliance_bnd_level = :level')
+                ->setParameter('level', $level);
+        }
+
+        $data = $qb
             ->execute()
             ->fetchAssociative();
 
         return $data !== false ? new AllianceDiplomacy($data, $id) : null;
     }
 
+    public function existsDiplomacyBetween(int $allianceId, int $otherAllianceId): bool
+    {
+        return (bool) $this->createQueryBuilder()
+            ->select('1')
+            ->from('alliance_bnd')
+            ->where('(alliance_bnd_alliance_id1 = :allianceId AND alliance_bnd_alliance_id2 = :otherAllianceId) OR (alliance_bnd_alliance_id2 = :allianceId AND alliance_bnd_alliance_id1 = :otherAllianceId)')
+            ->andWhere('alliance_bnd_level > 0')
+            ->setParameters([
+                'allianceId' => $allianceId,
+                'otherAllianceId' => $otherAllianceId,
+            ])
+            ->execute()
+            ->fetchOne();
+    }
 
     public function updateDiplomacy(int $id, int $level, string $name): void
     {
@@ -100,6 +126,38 @@ class AllianceDiplomacyRepository extends AbstractRepository
                 'id' => $id,
                 'level' => $level,
                 'name' => $name,
+            ])
+            ->execute();
+    }
+
+    public function acceptBnd(int $id, int $points): void
+    {
+        $this->createQueryBuilder()
+            ->update('alliance_bnd')
+            ->set('alliance_bnd_level', ':level')
+            ->set('alliance_bnd_points', ':points')
+            ->where('alliance_bnd_id = :id')
+            ->setParameters([
+                'id' => $id,
+                'points' => $points,
+                'level' => AllianceDiplomacyLevel::BND_CONFIRMED,
+            ])
+            ->execute();
+    }
+
+    public function updatePublicText(int $id, int $allianceId, int $level, string $publicText): void
+    {
+        $this->createQueryBuilder()
+            ->update('alliance_bnd')
+            ->set('alliance_bnd_text_pub', ':publicText')
+            ->where('alliance_bnd_id = :id')
+            ->andWhere('alliance_bnd_level = :level')
+            ->andWhere('alliance_bnd_alliance_id1 = :allianceId OR alliance_bnd_alliance_id2 = :allianceId')
+            ->setParameters([
+                'id' => $id,
+                'allianceId' => $allianceId,
+                'level' => $level,
+                'publicText' => $publicText,
             ])
             ->execute();
     }

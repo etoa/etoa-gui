@@ -10,6 +10,8 @@ class AllianceDiplomacy
     public int $alliance2Id;
     public ?string $alliance1Name;
     public ?string $alliance2Name;
+    public ?string $alliance1Tag;
+    public ?string $alliance2Tag;
     public int $level;
     public string $text;
     public int $date;
@@ -27,6 +29,8 @@ class AllianceDiplomacy
         $this->alliance2Id = (int) $data['alliance_bnd_alliance_id2'];
         $this->alliance1Name = $data['alliance1Name'];
         $this->alliance2Name = $data['alliance2Name'];
+        $this->alliance1Tag = $data['alliance1Tag'];
+        $this->alliance2Tag = $data['alliance2Tag'];
         $this->level = (int) $data['alliance_bnd_level'];
         $this->text = $data['alliance_bnd_text'];
         $this->date = (int) $data['alliance_bnd_date'];

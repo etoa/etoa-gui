@@ -48,8 +48,8 @@ if ($cu->allianceId > 0) {
         if ($request->query->getInt('bnd') > 0) {
             $bid = $request->query->getInt('bnd');
 
-            $diplomacy = $allianceDiplomacyRepository->getDiplomacy($bid, $alliance->id);
-            if ($diplomacy !== null && $diplomacy->level === AllianceDiplomacyLevel::BND_CONFIRMED) {
+            $diplomacy = $allianceDiplomacyRepository->getDiplomacy($bid, $alliance->id, AllianceDiplomacyLevel::BND_CONFIRMED);
+            if ($diplomacy !== null) {
                 $bnd_id = $diplomacy->id;
                 $alliance_bnd_id = $diplomacy->otherAllianceId;
 
