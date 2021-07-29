@@ -4,6 +4,7 @@ use EtoA\Alliance\AllianceDiplomacyRepository;
 use EtoA\Alliance\AllianceHistoryRepository;
 use EtoA\Alliance\AllianceRankRepository;
 use EtoA\Alliance\AllianceRepository;
+use EtoA\Alliance\AllianceService;
 use EtoA\Alliance\InvalidAllianceParametersException;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\User\UserRepository;
@@ -14,10 +15,12 @@ use Twig\Environment;
 /** @var AllianceRepository */
 $repository = $app[AllianceRepository::class];
 
-/** @var AllianceHistoryRepository */
-$allianceHistoryRepository = $app[AllianceHistoryRepository::class];
+/** @var AllianceService */
+$service = $app[AllianceService::class];
+
 /** @var AllianceRankRepository $allianceRankRepository */
 $allianceRankRepository = $app[AllianceRankRepository::class];
+
 /** @var AllianceDiplomacyRepository $allianceDiplomacyRepository */
 $allianceDiplomacyRepository = $app[AllianceDiplomacyRepository::class];
 /** @var Request */
@@ -33,7 +36,7 @@ if ($sub == "imagecheck") {
 } elseif ($sub == "techdata") {
     advanced_form("alliancetechnologies", $twig);
 } elseif ($sub == "create") {
-    create($request, $repository, $allianceHistoryRepository);
+    create($request, $repository, $service);
 } elseif ($sub == "news") {
     news($config);
 } elseif ($sub == "crap") {
@@ -165,7 +168,7 @@ function imagecheck(Request $request, AllianceRepository $repository)
 function create(
     Request $request,
     AllianceRepository $repository,
-    AllianceHistoryRepository $allianceHistoryRepository
+    AllianceService $service
 ): void {
     global $page;
     global $sub;
@@ -173,24 +176,14 @@ function create(
     echo "<h1>Allianz erstellen</h1>";
 
     if ($request->request->has('create')) {
-        // TODO refactor wild mix between active-record classes and repository pattern
-        $founder = new User($request->request->getInt('alliance_founder_id'));
+        $founderId = $request->request->getInt('alliance_founder_id');
         try {
-            $id = $repository->create(
+            $alliance = $service->create(
                 $request->request->get('alliance_tag'),
                 $request->request->get('alliance_name'),
-                $founder->id,
+                $founderId,
             );
-            $alliance = new Alliance($id);
-            $founder->alliance = $alliance;
-
-            // TODO
-            global $app;
-            /** @var UserService */
-            $userService = $app[UserService::class];
-            $userService->addToUserLog($founder->id, "alliance", "{nick} hat die Allianz [b]" . $alliance . "[/b] gegründet.");
-            $allianceHistoryRepository->addEntry($id, "Die Allianz [b]" . $alliance . "[/b] wurde von [b]" . $founder . "[/b] gegründet!");
-            success_msg("Allianz wurde erstellt! [[page alliances sub=edit id=" . $alliance->id . "]Details[/page]]");
+            success_msg("Allianz " . $alliance->toString() . " wurde erstellt! [[page alliances sub=edit id=" . $alliance->id . "]Details[/page]]");
         } catch (InvalidAllianceParametersException $ex) {
             error_msg("Allianz konnte nicht erstellt werden!\n\n" . $ex->getMessage() . "");
         }
