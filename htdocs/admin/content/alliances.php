@@ -1,5 +1,6 @@
 <?PHP
 
+use EtoA\Alliance\AllianceDiplomacyRepository;
 use EtoA\Alliance\AllianceHistoryRepository;
 use EtoA\Alliance\AllianceRankRepository;
 use EtoA\Alliance\AllianceRepository;
@@ -16,6 +17,8 @@ $repository = $app[AllianceRepository::class];
 $allianceHistoryRepository = $app[AllianceHistoryRepository::class];
 /** @var AllianceRankRepository $allianceRankRepository */
 $allianceRankRepository = $app[AllianceRankRepository::class];
+/** @var AllianceDiplomacyRepository $allianceDiplomacyRepository */
+$allianceDiplomacyRepository = $app[AllianceDiplomacyRepository::class];
 /** @var Request */
 $request = Request::createFromGlobals();
 
@@ -33,7 +36,7 @@ if ($sub == "imagecheck") {
 } elseif ($sub == "news") {
     news($config);
 } elseif ($sub == "crap") {
-    crap($request, $repository, $allianceRankRepository);
+    crap($request, $repository, $allianceRankRepository, $allianceDiplomacyRepository);
 } else {
     $twig->addGlobal('title', 'Allianzen');
 
@@ -250,7 +253,7 @@ function news(ConfigurationService $config)
     echo '<script type="text/javascript">xajax_allianceNewsLoad()</script>';
 }
 
-function crap(Request $request, AllianceRepository $repository, AllianceRankRepository $allianceRankRepository)
+function crap(Request $request, AllianceRepository $repository, AllianceRankRepository $allianceRankRepository, AllianceDiplomacyRepository $allianceDiplomacyRepository)
 {
     global $page;
     global $sub;
@@ -262,7 +265,7 @@ function crap(Request $request, AllianceRepository $repository, AllianceRankRepo
             echo "Fehlerhafte Daten gelöscht.";
         }
     } elseif ($request->query->has('action') && $request->query->get('action') == "cleanupDiplomacy") {
-        if ($repository->deleteOrphanedDiplomacies() > 0) {
+        if ($allianceDiplomacyRepository->deleteOrphanedDiplomacies() > 0) {
             echo "Fehlerhafte Daten gelöscht.";
         }
     } elseif ($request->query->has('action') && $request->query->get('action') == "cleanupEmptyAlliances") {
@@ -293,7 +296,7 @@ function crap(Request $request, AllianceRepository $repository, AllianceRankRepo
 
     // Bündnisse/Kriege ohne Allianz
     echo "<h2>Bündnisse/Kriege ohne Allianz</h2>";
-    $bndWithoutAlliance = $repository->countOrphanedDiplomacies();
+    $bndWithoutAlliance = $allianceDiplomacyRepository->countOrphanedDiplomacies();
     if ($bndWithoutAlliance > 0) {
         echo "$bndWithoutAlliance Bündnisse/Kriege ohne Allianz.
 			<a href=\"?page=$page&amp;sub=$sub&amp;action=cleanupDiplomacy\">Löschen?</a>";

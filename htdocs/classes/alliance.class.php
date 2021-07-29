@@ -1,6 +1,7 @@
 <?php
 
 use EtoA\Alliance\AllianceApplicationRepository;
+use EtoA\Alliance\AllianceDiplomacyRepository;
 use EtoA\Alliance\AllianceHistoryRepository;
 use EtoA\Alliance\AllianceNewsRepository;
 use EtoA\Alliance\AlliancePointsRepository;
@@ -621,25 +622,14 @@ class Alliance
             /** @var AllianceApplicationRepository $allianceApplicationRepository */
             $allianceApplicationRepository = $app[AllianceApplicationRepository::class];
             $allianceApplicationRepository->deleteAllianceApplication($this->id);
-            $bndres = dbquery("SELECT
-                    *
-                FROM
-                    alliance_bnd
-                WHERE
-                    alliance_bnd_alliance_id1='" . $this->id . "'
-                    OR alliance_bnd_alliance_id2='" . $this->id . "';");
-            if (mysql_num_rows($bndres) > 0) {
-                while ($bndarr = mysql_fetch_assoc($bndres)) {
-                    $allianceBoardTopicRepository->deleteBndTopic((int) $bndarr['alliance_bnd_id']);
-                }
+
+            /** @var AllianceDiplomacyRepository $allianceDiplomacyRepository */
+            $allianceDiplomacyRepository = $app[AllianceDiplomacyRepository::class];
+            $diplomacies = $allianceDiplomacyRepository->getDiplomacies($this->id);
+            foreach ($diplomacies as $diplomacy) {
+                $allianceBoardTopicRepository->deleteBndTopic($diplomacy->id);
             }
-            dbquery("
-                    DELETE FROM
-                        alliance_bnd
-                    WHERE
-                        alliance_bnd_alliance_id1='" . $this->id . "'
-                        OR alliance_bnd_alliance_id2='" . $this->id . "';
-                ");
+            $allianceDiplomacyRepository->deleteAllianceDiplomacies($this->id);
             dbquery("DELETE FROM alliance_buildlist WHERE alliance_buildlist_alliance_id='" . $this->id . "';");
 
             /** @var AllianceHistoryRepository */

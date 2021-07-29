@@ -76,5 +76,9 @@ class AllianceServiceProvider implements ServiceProviderInterface
         $pimple[AllianceBoardCategoryRankRepository::class] = function (Container $pimple): AllianceBoardCategoryRankRepository {
             return new AllianceBoardCategoryRankRepository($pimple['db']);
         };
+
+        $pimple[AllianceDiplomacyRepository::class] = function (Container $pimple): AllianceDiplomacyRepository {
+            return new AllianceDiplomacyRepository($pimple['db']);
+        };
     }
 }

@@ -43,6 +43,8 @@
 
 <?PHP
 
+use EtoA\Alliance\AllianceDiplomacyLevel;
+use EtoA\Alliance\AllianceDiplomacyRepository;
 use EtoA\Alliance\AllianceRepository;
 use EtoA\Alliance\Board\AllianceBoardTopicRepository;
 
@@ -54,6 +56,9 @@ if (Alliance::checkActionRights('relations')) {
     $allianceNamesWithTags = $allianceRepository->getAllianceNamesWithTags();
     /** @var \EtoA\Message\MessageRepository $messageRepository */
     $messageRepository = $app[\EtoA\Message\MessageRepository::class];
+    /** @var AllianceDiplomacyRepository $allianceDiplomacyRepository */
+    $allianceDiplomacyRepository = $app[AllianceDiplomacyRepository::class];
+
     //
     // Kriegserklärung schreiben
     //
@@ -130,57 +135,26 @@ if (Alliance::checkActionRights('relations')) {
     elseif (isset($_GET['view']) && intval($_GET['view']) > 0) {
         $id = intval($_GET['view']);
 
-        $res = dbquery("
-                SELECT
-                    alliance_bnd_text,
-                    alliance_bnd_text_pub,
-                    a1.alliance_id as a1id,
-                    a2.alliance_id as a2id,
-                    a1.alliance_name as a1name,
-                    a2.alliance_name as a2name,
-                    alliance_bnd_name,
-                    alliance_bnd_level
-                FROM
-                    alliance_bnd
-                INNER JOIN
-                    alliances as a1
-                    ON a1.alliance_id=alliance_bnd_alliance_id1
-                INNER JOIN
-                    alliances as a2
-                    ON a2.alliance_id=alliance_bnd_alliance_id2
-                WHERE
-                    (alliance_bnd_alliance_id1='" . $cu->allianceId . "'
-                    OR alliance_bnd_alliance_id2='" . $cu->allianceId . "')
-                    AND alliance_bnd_id='" . $id . "'
-                ;");
-        if (mysql_num_rows($res) > 0) {
-            $arr = mysql_fetch_array($res);
-            if ($arr['a1id'] == $cu->allianceId) {
-                $opId = $arr['a2id'];
-                $opName = $arr['a2name'];
-            } else {
-                $opId = $arr['a1id'];
-                $opName = $arr['a1name'];
-            }
-
+        $diplomacy = $allianceDiplomacyRepository->getDiplomacy($id, $cu->allianceId);
+        if ($diplomacy !== null) {
             echo "<form action=\"?page=$page&amp;action=relations\" method=\"post\">";
 
-            switch ($arr['alliance_bnd_level']) {
-                case 0:
+            switch ($diplomacy->level) {
+                case AllianceDiplomacyLevel::BND_REQUEST:
                     tableStart("Status der Bündnissanfrage");
                     echo "<tr>
                                 <th style=\"width:200px;\">Allianz</th>
-                                <td>" . $opName . "</td>
+                                <td>" . $diplomacy->otherAllianceName . "</td>
                             </tr>";
                     echo "<tr>
                                 <th style=\"width:200px;\">Bündnissname</th>
-                                <td>" . text2html($arr['alliance_bnd_name']) . "</td>
+                                <td>" . text2html($diplomacy->name) . "</td>
                             </tr>";
                     echo "<tr>
                                 <th style=\"width:200px;\">Text</th>
-                                <td>" . text2html($arr['alliance_bnd_text']) . "</td>
+                                <td>" . text2html($diplomacy->text) . "</td>
                             </tr>";
-                    if ($arr['a1id'] == $cu->allianceId) {
+                    if ($diplomacy->alliance1Id == $cu->allianceId) {
                         echo "<tr>
                                     <th style=\"width:200px;\">Status</th>
                                     <td>Die Anfrage wurde noch nicht angenommen.</td>
@@ -192,56 +166,56 @@ if (Alliance::checkActionRights('relations')) {
                                 </tr>";
                     }
                     tableEnd();
-                    echo "<input type=\"hidden\" name=\"id\" value=\"" . $id . "\" />";
-                    if ($arr['a1id'] == $cu->allianceId) {
+                    echo "<input type=\"hidden\" name=\"id\" value=\"" . $diplomacy->id . "\" />";
+                    if ($diplomacy->alliance1Id == $cu->allianceId) {
                         echo "<input type=\"submit\" name=\"submit_withdraw_pact\" value=\"Bündnisangebot zurückziehen\" onclick=\"return confirm('Angebot wirklich zurückziehen?')\" /> &nbsp; ";
                     } else {
                         echo "<input type=\"submit\" name=\"pact_accept\" value=\"Bündnisangebot annehmen\" /> &nbsp; ";
                         echo "<input type=\"submit\" name=\"pact_reject\" value=\"Bündnisangebot ablehnen\" /> &nbsp; ";
                     }
                     break;
-                case 2:
-                    tableStart("Bündnis \"" . $arr['alliance_bnd_name'] . "\"");
+                case AllianceDiplomacyLevel::BND_CONFIRMED:
+                    tableStart("Bündnis \"" . $diplomacy->name . "\"");
                     echo "<tr>
                                 <th style=\"width:200px;\">Allianz</th>
-                                <td>" . $opName . "</td>
+                                <td>" . $diplomacy->otherAllianceName . "</td>
                             </tr>";
                     echo "<tr>
                                 <th style=\"width:200px;\">Anfragetext</th>
-                                <td>" . text2html($arr['alliance_bnd_text']) . "</td>
+                                <td>" . text2html($diplomacy->text) . "</td>
                             </tr>";
                     echo "<tr>
                                 <th style=\"width:200px;\">Öffentlicher Text</th>
-                                <td><textarea name=\"alliance_bnd_text_pub\" rows=\"6\" cols=\"70\">" . StringUtils::encodeDBStringForTextarea($arr['alliance_bnd_text_pub']) . "</textarea></td>
+                                <td><textarea name=\"alliance_bnd_text_pub\" rows=\"6\" cols=\"70\">" . StringUtils::encodeDBStringForTextarea($diplomacy->publicText) . "</textarea></td>
                             </tr>";
                     tableEnd();
-                    echo "<input type=\"hidden\" name=\"id\" value=\"" . $id . "\" />";
+                    echo "<input type=\"hidden\" name=\"id\" value=\"" . $diplomacy->id . "\" />";
                     echo "<input type=\"submit\" name=\"submit_pact_public_text\" value=\"Speichern\" /> &nbsp; ";
                     break;
-                case 3:
+                case AllianceDiplomacyLevel::WAR:
                     tableStart("Krieg");
                     echo "<tr>
                                 <th style=\"width:200px;\">Allianz</th>
-                                <td>" . $opName . "</td>
+                                <td>" . $diplomacy->otherAllianceName . "</td>
                             </tr>";
                     echo "<tr>
                                 <th style=\"width:200px;\">Kriegserklärung</th>
-                                <td>" . text2html($arr['alliance_bnd_text']) . "</td>
+                                <td>" . text2html($diplomacy->text) . "</td>
                             </tr>";
-                    if ($arr['a1id'] == $cu->allianceId) {
+                    if ($diplomacy->alliance1Id == $cu->allianceId) {
                         echo "<tr>
                                     <th style=\"width:200px;\">Öffentlicher Text</th>
-                                    <td><textarea name=\"alliance_bnd_text_pub\" rows=\"6\" cols=\"70\">" . StringUtils::encodeDBStringForTextarea($arr['alliance_bnd_text_pub']) . "</textarea></td>
+                                    <td><textarea name=\"alliance_bnd_text_pub\" rows=\"6\" cols=\"70\">" . StringUtils::encodeDBStringForTextarea($diplomacy->publicText) . "</textarea></td>
                                 </tr>";
                     } else {
                         echo "<tr>
                                     <th style=\"width:200px;\">Öffentlicher Text</th>
-                                    <td>" . text2html($arr['alliance_bnd_text_pub']) . "</td>
+                                    <td>" . text2html($diplomacy->publicText) . "</td>
                                 </tr>";
                     }
                     tableEnd();
-                    if ($arr['a1id'] == $cu->allianceId) {
-                        echo "<input type=\"hidden\" name=\"id\" value=\"" . $id . "\" />";
+                    if ($diplomacy->alliance1Id == $cu->allianceId) {
+                        echo "<input type=\"hidden\" name=\"id\" value=\"" . $diplomacy->id . "\" />";
                         echo "<input type=\"submit\" name=\"submit_war_public_text\" value=\"Speichern\" /> &nbsp; ";
                     }
                     break;
@@ -261,53 +235,21 @@ if (Alliance::checkActionRights('relations')) {
     elseif (isset($_GET['end_pact']) && intval($_GET['end_pact']) > 0) {
         $id = intval($_GET['end_pact']);
 
-        $res = dbquery("
-                SELECT
-                    alliance_bnd_text,
-                    alliance_bnd_text_pub,
-                    a1.alliance_id as a1id,
-                    a2.alliance_id as a2id,
-                    a1.alliance_name as a1name,
-                    a2.alliance_name as a2name,
-                    alliance_bnd_name,
-                    alliance_bnd_level
-                FROM
-                    alliance_bnd
-                INNER JOIN
-                    alliances as a1
-                    ON a1.alliance_id=alliance_bnd_alliance_id1
-                INNER JOIN
-                    alliances as a2
-                    ON a2.alliance_id=alliance_bnd_alliance_id2
-                WHERE
-                    (alliance_bnd_alliance_id1='" . $cu->allianceId . "'
-                    OR alliance_bnd_alliance_id2='" . $cu->allianceId . "')
-                    AND alliance_bnd_id='" . $id . "'
-                    AND alliance_bnd_level=2
-                ;");
-        if (mysql_num_rows($res) > 0) {
-            $arr = mysql_fetch_array($res);
-            if ($arr['a1id'] == $cu->allianceId) {
-                $opId = $arr['a2id'];
-                $opName = $arr['a2name'];
-            } else {
-                $opId = $arr['a1id'];
-                $opName = $arr['a1name'];
-            }
-
+        $diplomacy = $allianceDiplomacyRepository->getDiplomacy($id, $cu->allianceId());
+        if ($diplomacy !== null && $diplomacy->level === AllianceDiplomacyLevel::BND_CONFIRMED) {
             echo "<form action=\"?page=$page&amp;action=relations\" method=\"post\" name=\"endpact\">";
 
-            tableStart("Bündnis \"" . stripslashes($arr['alliance_bnd_name']) . "\" beenden");
+            tableStart("Bündnis \"" . stripslashes($diplomacy->name) . "\" beenden");
             echo "<tr>
                         <th style=\"width:200px;\">Allianz</th>
-                        <td>" . $opName . "</td>
+                        <td>" . $diplomacy->otherAllianceName . "</td>
                     </tr>";
             echo "<tr>
                         <th style=\"width:200px;\">Begründung</th>
                         <td><textarea name=\"pact_end_text\" rows=\"6\" cols=\"70\"></textarea></td>
                     </tr>";
             tableEnd();
-            echo "<input type=\"hidden\" name=\"id\" value=\"" . $id . "\" />";
+            echo "<input type=\"hidden\" name=\"id\" value=\"" . $diplomacy->id . "\" />";
             echo "<input type=\"submit\" name=\"submit_pact_end\" value=\"Auflösen\"  onclick=\"return checkEndPact()\" onsubmit=\"return checkEndPact()\" /> &nbsp; ";
             echo "<input type=\"button\" onclick=\"document.location='?page=alliance&amp;action=relations';\" value=\"Zur&uuml;ck\" />";
             echo "</form>";
@@ -341,28 +283,7 @@ if (Alliance::checkActionRights('relations')) {
             if (mysql_num_rows($bnd_res) > 0) {
                 error_msg("Deine Allianz steht schon in einer Beziehung (B&uuml;ndnis/Krieg) mit der ausgew&auml;hlten Allianz oder es ist bereits eine Bewerbung um ein B&uuml;ndnis vorhanden!");
             } else {
-                dbquery("
-                        INSERT INTO
-                            alliance_bnd
-                        (
-                            alliance_bnd_alliance_id1,
-                            alliance_bnd_alliance_id2,
-                            alliance_bnd_level,
-                            alliance_bnd_text,
-                            alliance_bnd_name,
-                            alliance_bnd_date,
-                            alliance_bnd_diplomat_id
-                        )
-                        VALUES
-                        (
-                            '" . $cu->allianceId . "',
-                            '" . $id . "',
-                            '0',
-                            '" . mysql_real_escape_string($_POST['alliance_bnd_text']) . "',
-                            '" . mysql_real_escape_string($_POST['alliance_bnd_name']) . "',
-                            " . time() . ",
-                            '" . $cu->id . "'
-                        );");
+                $allianceDiplomacyRepository->add($cu->allianceId, $id, AllianceDiplomacyLevel::BND_REQUEST, $_POST['alliance_bnd_text'], $_POST['alliance_bnd_name'], $cu->getId());
                 success_msg("Du hast einer Allianz erfolgreich ein B&uuml;ndnis angeboten!");
 
                 //Nachricht an den Leader der gegnerischen Allianz schreiben
@@ -395,30 +316,7 @@ if (Alliance::checkActionRights('relations')) {
             if (mysql_num_rows($war_res) > 0) {
                 error_msg("Deine Allianz steht schon in einer Beziehung (B&uuml;ndnis/Krieg) mit der ausgew&auml;hlten Allianz oder es ist bereits eine Bewerbung um ein B&uuml;ndnis vorhanden!");
             } else {
-                dbquery("
-                        INSERT INTO
-                        alliance_bnd
-                        (
-                            alliance_bnd_alliance_id1,
-                            alliance_bnd_alliance_id2,
-                            alliance_bnd_level,
-                            alliance_bnd_text,
-                            alliance_bnd_text_pub,
-                            alliance_bnd_date,
-                            alliance_bnd_points,
-                            alliance_bnd_diplomat_id
-                        )
-                        VALUES
-                        (
-                            '" . $cu->allianceId . "',
-                            '" . $id . "',
-                            '3',
-                            '" . mysql_real_escape_string($_POST['alliance_bnd_text']) . "',
-                            '" . mysql_real_escape_string($_POST['alliance_bnd_text_pub']) . "',
-                            '" . time() . "',
-                            " . DIPLOMACY_POINTS_PER_WAR . ",
-                            '" . $cu->id . "'
-                        )");
+                $allianceDiplomacyRepository->add($cu->allianceId(), $id, AllianceDiplomacyLevel::WAR, $_POST['alliance_bnd_text'], '', $cu->id, DIPLOMACY_POINTS_PER_WAR, $_POST['alliance_bnd_text_pub']);
 
                 success_msg("Du hast einer Allianz den Krieg erkl&auml;rt!");
 
@@ -514,34 +412,18 @@ if (Alliance::checkActionRights('relations')) {
         if (isset($_POST['submit_withdraw_pact']) && isset($_POST['id']) && intval($_POST['id']) > 0) {
             $id = intval($_POST['id']);
 
-            $res = dbquery("
-                        SELECT
-                            alliance_bnd_id,
-                            alliance_bnd_alliance_id2
-                        FROM
-                            alliance_bnd
-                        WHERE
-                            alliance_bnd_alliance_id1=" . $cu->allianceId . "
-                            AND alliance_bnd_id='" . $id . "'
-                        ;");
-            $arr = mysql_fetch_array($res);
-            if (mysql_num_rows($res) > 0) {
-                // Remove request
-                dbquery("
-                        DELETE FROM
-                            alliance_bnd
-                        WHERE
-                            alliance_bnd_id='" . $arr['alliance_bnd_id'] . "'
-                        ;");
+            $diplomacy = $allianceDiplomacyRepository->getDiplomacy($id, $cu->allianceId());
+            if ($diplomacy !== null && $diplomacy->alliance1Id == $cu->allianceId()) {
+                $allianceDiplomacyRepository->deleteDiplomacy($diplomacy->id);
 
                 // Inform opposite leader
-                $otherAlliance = $allianceRepository->getAlliance($arr['alliance_bnd_alliance_id2']);
+                $otherAlliance = $allianceRepository->getAlliance($diplomacy->alliance2Id);
                 /** @var \EtoA\Message\MessageRepository $messageRepository */
                 $messageRepository = $app[\EtoA\Message\MessageRepository::class];
-                $messageRepository->createSystemMessage($otherAlliance->founderId, MSG_ALLYMAIL_CAT, "Anfrage zurückgenommen", "Die Allianz [b]" . $allianceNamesWithTags[$cu->allianceId] . "[/b] hat ihre Büdnisanfrage wieder zurückgezogen.");
+                $messageRepository->createSystemMessage($otherAlliance->founderId, MSG_ALLYMAIL_CAT, "Anfrage zurückgenommen", "Die Allianz [b]" . $diplomacy->alliance1Name . "[/b] hat ihre Büdnisanfrage wieder zurückgezogen.");
 
                 // Display message
-                echo "Anfrage gel&ouml;scht! Die Allianzleitung der Allianz <b>" . $otherAlliance->name . "</b> wurde per Nachricht dar&uuml;ber informiert.<br/><br/>";
+                echo "Anfrage gel&ouml;scht! Die Allianzleitung der Allianz <b>" . $diplomacy->otherAllianceName . "</b> wurde per Nachricht dar&uuml;ber informiert.<br/><br/>";
             }
         }
 

@@ -1,5 +1,8 @@
 <?PHP
 
+use EtoA\Alliance\AllianceDiplomacy;
+use EtoA\Alliance\AllianceDiplomacyLevel;
+use EtoA\Alliance\AllianceDiplomacyRepository;
 use EtoA\Alliance\Board\AllianceBoardCategoryRankRepository;
 use EtoA\Alliance\Board\AllianceBoardCategoryRepository;
 use EtoA\Alliance\Board\AllianceBoardPostRepository;
@@ -23,6 +26,8 @@ $allianceBoardTopicRepository = $app[AllianceBoardTopicRepository::class];
 $allianceBoardPostRepository = $app[AllianceBoardPostRepository::class];
 /** @var AllianceBoardCategoryRankRepository $allianceBoardCategoryRankRepository */
 $allianceBoardCategoryRankRepository = $app[AllianceBoardCategoryRankRepository::class];
+/** @var AllianceDiplomacyRepository $allianceDiplomacyRepository */
+$allianceDiplomacyRepository = $app[AllianceDiplomacyRepository::class];
 /** @var UserRepository $userRepository */
 $userRepository = $app[UserRepository::class];
 
@@ -43,15 +48,10 @@ if ($cu->allianceId > 0) {
         if ($request->query->getInt('bnd') > 0) {
             $bid = $request->query->getInt('bnd');
 
-            $bres = dbquery("SELECT * FROM alliance_bnd WHERE (alliance_bnd_alliance_id1=" . $alliance->id . " || alliance_bnd_alliance_id2=" . $alliance->id . ") AND alliance_bnd_id=" . $bid . " AND alliance_bnd_level=2;");
-            if (mysql_num_rows($bres) > 0) {
-                $barr = mysql_fetch_array($bres);
-                $bnd_id = $barr['alliance_bnd_id'];
-                if ($barr['alliance_bnd_alliance_id2'] == $alliance->id) {
-                    $alliance_bnd_id = $barr['alliance_bnd_alliance_id1'];
-                } else {
-                    $alliance_bnd_id = $barr['alliance_bnd_alliance_id2'];
-                }
+            $diplomacy = $allianceDiplomacyRepository->getDiplomacy($bid, $alliance->id);
+            if ($diplomacy !== null && $diplomacy->level === AllianceDiplomacyLevel::BND_CONFIRMED) {
+                $bnd_id = $diplomacy->id;
+                $alliance_bnd_id = $diplomacy->otherAllianceId;
 
                 // We got a valid bnd id. Set the category id to 0
                 $request->query->set('cat', 0);
@@ -132,7 +132,7 @@ if ($cu->allianceId > 0) {
             $newPostTopicId = $request->query->getInt('newpost');
 
             if (isset($alliance_bnd_id)) {
-                $topic = $allianceBoardTopicRepository->getTopic($newPostTopicId, $alliance_bnd_id);
+                $topic = $allianceBoardTopicRepository->getTopic($newPostTopicId, $bid);
             } else {
                 $topic = $allianceBoardTopicRepository->getTopic($newPostTopicId);
             }
@@ -467,7 +467,7 @@ if ($cu->allianceId > 0) {
                 } else
                     error_msg("Kategorie existiert nicht!");
             } else
-                error_msg("Kein Zugriff!3");
+                error_msg("Kein Zugriff!");
             echo "<input type=\"button\" value=\"Zur &Uuml;bersicht\" onclick=\"document.location='?page=$page'\" />";
         }
 
@@ -642,9 +642,8 @@ if ($cu->allianceId > 0) {
             $editBndId = $request->query->getInt('editbnd');
 
             echo "<h2>Kategorie bearbeiten</h2>";
-            $res = dbquery("SELECT * FROM alliance_bnd WHERE (alliance_bnd_alliance_id1=" . $alliance->id . " || alliance_bnd_alliance_id2=" . $alliance->id . ") AND alliance_bnd_id=" . $editBndId . ";");
-            if (mysql_num_rows($res) > 0) {
-                $arr = mysql_fetch_array($res);
+            $diplomacy = $allianceDiplomacyRepository->getDiplomacy($editBndId, $alliance->id);
+            if ($diplomacy !== null) {
                 $d = opendir(BOARD_BULLET_DIR);
                 $bullets = array();
                 while ($f = readdir($d)) {
@@ -653,21 +652,15 @@ if ($cu->allianceId > 0) {
                     }
                 }
                 sort($bullets);
-                $alliance_bnd_id = 0;
-                if ($arr['alliance_bnd_alliance_id2'] == $alliance->id) {
-                    $alliance_bnd_id = $arr['alliance_bnd_alliance_id1'];
-                } else {
-                    $alliance_bnd_id = $arr['alliance_bnd_alliance_id2'];
-                }
 
                 echo "<form action=\"?page=$page\" method=\"post\">";
-                echo "<input type=\"hidden\" name=\"bnd_id\" value=\"" . $arr['alliance_bnd_id'] . "\" />";
+                echo "<input type=\"hidden\" name=\"bnd_id\" value=\"" . $diplomacy->id . "\" />";
                 tableStart();
-                echo "<tr><th>Name:</th><td>" . $allianceNames[$alliance_bnd_id] . "</td></tr>";
-                echo "<tr><th>Beschreibung:</th><td>" . $arr['alliance_bnd_text'] . "</td></tr>";
+                echo "<tr><th>Name:</th><td>" . $diplomacy->otherAllianceName . "</td></tr>";
+                echo "<tr><th>Beschreibung:</th><td>" . $diplomacy->text . "</td></tr>";
                 echo "<tr><th>Zugriff:</th><td>";
 
-                $bndRankIds = $allianceBoardCategoryRankRepository->getRanksForBnd((int) $arr['alliance_bnd_id']);
+                $bndRankIds = $allianceBoardCategoryRankRepository->getRanksForBnd($diplomacy->id);
                 foreach ($rank as $k => $v) {
                     echo "<input type=\"checkbox\" name=\"cr[" . $k . "]\" value=\"1\" ";
                     if (in_array($k, $bndRankIds, true)) {
@@ -678,19 +671,6 @@ if ($cu->allianceId > 0) {
                 }
 
                 echo "</td></tr>";
-                /*echo "<tr><th style=\"width:110px;\">Symbol:</th><td>";
-                    if ($arr['cat_bullet']=="" || !is_file(BOARD_BULLET_DIR."/".$arr['cat_bullet'])) $arr['cat_bullet']=BOARD_DEFAULT_IMAGE;
-                    echo "<img src=\"".BOARD_BULLET_DIR."/".$arr['cat_bullet']."\" style=\"width:38px;height:35px;\" id=\"bullet\" />";
-                    echo "<br/>Symbol ändern: <select name=\"cat_bullet\" changeBullet=\"changeAvatar(this);\" onmousemove=\"changeBullet(this);\" onkeyup=\"changeBullet(this);\">";
-                    echo "<option value=\"".BOARD_DEFAULT_IMAGE."\">Standard-Symbol</option>";
-                    foreach ($bullets as $a)
-                    {
-                            echo "<option value=\"$a\"";
-                            if ($a==$arr['cat_bullet'] && $arr['cat_bullet']!="") echo " selected=\"selected\"";
-                            echo ">$a</option>";
-                    }
-                    echo "</select></td></tr>";*/
-
                 tableEnd();
                 echo "<input type=\"submit\" name=\"cat_edit\" value=\"Speichern\" /> ";
             } else
@@ -814,15 +794,10 @@ if ($cu->allianceId > 0) {
 
 
                 //shows Bnd forums
-                $res = dbquery("SELECT * FROM alliance_bnd WHERE (alliance_bnd_alliance_id1=" . $alliance->id . " || alliance_bnd_alliance_id2=" . $alliance->id . ") AND alliance_bnd_level=2 ORDER BY alliance_bnd_id");
-                if (mysql_num_rows($res) > 0) {
+                $diplomacies = $allianceDiplomacyRepository->getDiplomacies($alliance->id, AllianceDiplomacyLevel::BND_CONFIRMED);
+                if (count($diplomacies) > 0) {
                     $allianceBnds = [];
-                    $allianceBndIds = [];
-                    while ($arr = mysql_fetch_array($res)) {
-                        $allianceBnds[] = $arr;
-                        $allianceBndIds[] = (int) $arr['alliance_bnd_id'];
-                    }
-
+                    $allianceBndIds = array_map(fn (AllianceDiplomacy $diplomacy) => $diplomacy->id, $diplomacies);
                     $topicCounts = $allianceBoardTopicRepository->getBndTopicCounts($allianceBndIds);
                     $postCounts = $allianceBoardTopicRepository->getBndPostCounts($allianceBndIds);
 
@@ -833,30 +808,20 @@ if ($cu->allianceId > 0) {
                     }
                     echo "</tr>";
                     $accessCnt = 0;
-                    $alliance_bnd_id = 0;
-                    foreach ($allianceBnds as $arr) {
-                        if ($arr['alliance_bnd_alliance_id2'] == $alliance->id) {
-                            $alliance_bnd_id = $arr['alliance_bnd_alliance_id1'];
-                        } else {
-                            $alliance_bnd_id = $arr['alliance_bnd_alliance_id2'];
-                        }
-
-                        if ($isAdmin || isset($myCat[$arr['alliance_bnd_id']])) {
+                    foreach ($diplomacies as $diplomacy) {
+                        if ($isAdmin || isset($myCat[$diplomacy->id])) {// @ todo
                             $accessCnt++;
-                            $topic = $allianceBoardTopicRepository->getTopicWithLatestPost(0, (int) $arr['alliance_bnd_id']);
+                            $topic = $allianceBoardTopicRepository->getTopicWithLatestPost(0, $diplomacy->id);
                             if ($topic !== null) {
                                 $ps = "<a href=\"?page=$page&amp;topic=" . $topic->id . "#" . $topic->post->id . "\" " . tm($topic->subject . ", " . df($topic->timestamp), "Geschrieben von: <b>" . $topic->post->userNick . "</b>") . ">" . $topic->subject . "<br/>" . df($topic->timestamp) . "</a>"; //ToDo User auch von anderen Allianzen
                             } else
                                 $ps = "-";
                             echo "<tr>";
-                            if (!isset($arr['cat_bullet']) || $arr['cat_bullet'] == "" || !is_file(BOARD_BULLET_DIR . "/" . $arr['cat_bullet'])) {
-                                $arr['cat_bullet'] = BOARD_DEFAULT_IMAGE;
-                            }
-                            echo "<td style=\"width:40px;\"><img src=\"" . BOARD_BULLET_DIR . "/" . $arr['cat_bullet'] . "\" style=\"width:40px;height:40px;\" /></td>";
+                            echo "<td style=\"width:40px;\"><img src=\"" . BOARD_BULLET_DIR . "/" . BOARD_DEFAULT_IMAGE . "\" style=\"width:40px;height:40px;\" /></td>";
                             echo "<td style=\"width:300px;\"";
                             if ($isAdmin) {
                                 $rstr = "";
-                                $bndRankIds = $allianceBoardCategoryRankRepository->getRanksForBnd((int) $arr['alliance_bnd_id']);
+                                $bndRankIds = $allianceBoardCategoryRankRepository->getRanksForBnd($diplomacy->id);
                                 foreach ($rank as $k => $v) {
                                     if (in_array($k, $bndRankIds, true)) {
                                         $rstr .= $v . ", ";
@@ -864,15 +829,15 @@ if ($cu->allianceId > 0) {
                                 }
 
                                 if ($rstr != "") $rstr = substr($rstr, 0, strlen($rstr) - 2);
-                                echo " " . tm("Admin-Info: " . stripslashes($allianceNames[$alliance_bnd_id]),/*"<b>Position:</b> ".$arr['cat_order']."<br/>*/ "<b>Zugriff:</b> " . $rstr) . "";
+                                echo " " . tm("Admin-Info: " . stripslashes($diplomacy->otherAllianceName),/*"<b>Position:</b> ".$arr['cat_order']."<br/>*/ "<b>Zugriff:</b> " . $rstr) . "";
                             }
-                            echo "><b><a href=\"?page=$page&amp;cat=0&bnd=" . $arr['alliance_bnd_id'] . "\"";
-                            echo ">" . stripslashes($allianceNames[$alliance_bnd_id]) . "</a></b><br/>" . text2html($arr['alliance_bnd_text']) . "</td>";
-                            echo "<td>" . $postCounts[intval($arr['alliance_bnd_id'])] . "</td>";
-                            echo "<td>" . $topicCounts[intval($arr['alliance_bnd_id'])] . "</td>";
+                            echo "><b><a href=\"?page=$page&amp;cat=0&bnd=" . $diplomacy->id . "\"";
+                            echo ">" . stripslashes($diplomacy->otherAllianceName) . "</a></b><br/>" . text2html($diplomacy->text) . "</td>";
+                            echo "<td>" . $postCounts[$diplomacy->id] . "</td>";
+                            echo "<td>" . $topicCounts[$diplomacy->id] . "</td>";
                             echo "<td>$ps</td>";
                             if ($isAdmin) {
-                                echo "<td style=\"width:90px;\"><input type=\"button\" value=\"Bearbeiten\" onclick=\"document.location='?page=$page&editbnd=" . $arr['alliance_bnd_id'] . "'\" /><br/>
+                                echo "<td style=\"width:90px;\"><input type=\"button\" value=\"Bearbeiten\" onclick=\"document.location='?page=$page&editbnd=" . $diplomacy->id . "'\" /><br/>
                                     </td>";
                             }
                             echo "</tr>";

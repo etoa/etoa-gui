@@ -298,75 +298,6 @@ class AllianceRepository extends AbstractRepository
     }
 
     /**
-     * @return array<array{alliance_bnd_id: string, a1id: string, a2id: string, a1name:string, a2name: string, lvl: string, name: string, date: string}>
-     */
-    public function findDiplomacies(int $allianceId): array
-    {
-        return $this->createQueryBuilder()
-            ->select(
-                'alliance_bnd_id',
-                'alliance_bnd_alliance_id1 as a1id',
-                'alliance_bnd_alliance_id2 as a2id',
-                'a1.alliance_name as a1name',
-                'a2.alliance_name as a2name',
-                'alliance_bnd_level as lvl',
-                'alliance_bnd_name as name',
-                'alliance_bnd_date as date'
-            )
-            ->from('alliance_bnd', 'b')
-            ->leftJoin('b', 'alliances', 'a1', 'alliance_bnd_alliance_id1 = a1.alliance_id')
-            ->leftJoin('b', 'alliances', 'a2', 'alliance_bnd_alliance_id2 = a2.alliance_id')
-            ->where('alliance_bnd_alliance_id1 = :id')
-            ->orWhere('alliance_bnd_alliance_id2 = :id')
-            ->orderBy('alliance_bnd_level', 'DESC')
-            ->addOrderBy('alliance_bnd_date', 'DESC')
-            ->setParameters([
-                'id' => $allianceId,
-            ])
-            ->execute()
-            ->fetchAllAssociative();
-    }
-
-    public function countOrphanedDiplomacies(): int
-    {
-        return (int) $this->getConnection()
-            ->executeQuery(
-                "SELECT
-                    COUNT(b.alliance_bnd_id)
-                FROM alliance_bnd b
-                WHERE NOT EXISTS (
-                    SELECT 1
-                    FROM alliances a
-                    WHERE b.alliance_bnd_alliance_id1 = a.alliance_id
-                )
-                OR NOT EXISTS (
-                    SELECT 1
-                    FROM alliances a
-                    WHERE b.alliance_bnd_alliance_id2 = a.alliance_id
-                );"
-            )
-            ->fetchOne();
-    }
-
-    public function deleteOrphanedDiplomacies(): int
-    {
-        return $this->getConnection()
-            ->executeStatement(
-                "DELETE FROM alliance_bnd
-                WHERE NOT EXISTS (
-                    SELECT 1
-                    FROM alliances a
-                    WHERE alliance_bnd_alliance_id1 = a.alliance_id
-                )
-                OR NOT EXISTS (
-                    SELECT 1
-                    FROM alliances a
-                    WHERE alliance_bnd_alliance_id2 = a.alliance_id
-                )"
-            );
-    }
-
-    /**
      * @return array<array{alliance_id: string, alliance_name: string, alliance_tag: string}>
      */
     public function findAllWithoutFounder(): array
@@ -406,40 +337,6 @@ class AllianceRepository extends AbstractRepository
                 );"
             )
             ->fetchAllAssociative();
-    }
-
-    public function updateDiplomacy(int $id, int $level, string $name): void
-    {
-        $this->createQueryBuilder()
-            ->update('alliance_bnd')
-            ->set('alliance_bnd_level', ':level')
-            ->set('alliance_bnd_name', ':name')
-            ->where('alliance_bnd_id = :id')
-            ->setParameters([
-                'id' => $id,
-                'level' => $level,
-                'name' => $name,
-            ])
-            ->execute();
-    }
-
-    public function deleteDiplomacy(int $id): void
-    {
-        $this->createQueryBuilder()
-            ->delete('alliance_bnd')
-            ->where('alliance_bnd_id = :id')
-            ->setParameter('id', $id)
-            ->execute();
-    }
-
-    public function deleteDiplomacies(int $allianceId): void
-    {
-        $this->createQueryBuilder()
-            ->delete('alliance_bnd')
-            ->where('alliance_bnd_alliance_id1 = :id')
-            ->orWhere('alliance_bnd_alliance_id2 = :id')
-            ->setParameter('id', $allianceId)
-            ->execute();
     }
 
     public function countUsers(int $allianceId): int
