@@ -269,4 +269,16 @@ class DefenseRepository extends AbstractRepository
             'max' => (int) $arr['max'],
         ], $data);
     }
+
+    public function cleanUp(): int
+    {
+        return $this->getConnection()
+            ->executeStatement(
+                "DELETE FROM
+                    `deflist`
+                WHERE
+                    `deflist_count`='0'
+                ;"
+            );
+    }
 }

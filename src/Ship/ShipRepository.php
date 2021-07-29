@@ -425,4 +425,18 @@ class ShipRepository extends AbstractRepository
             'exp' => (int) $arr['exp'],
         ], $data);
     }
+
+    public function cleanUp(): int
+    {
+        return $this->getConnection()
+            ->executeStatement(
+                "DELETE FROM
+                    `shiplist`
+                WHERE
+                    `shiplist_count`='0'
+                    AND `shiplist_bunkered`='0'
+                    AND `shiplist_special_ship`='0'
+                    ;"
+            );
+    }
 }

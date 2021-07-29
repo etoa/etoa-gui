@@ -91,6 +91,12 @@ function runCleanup(
 ) {
     global $app;
 
+    /** @var ShipRepository $shipRepository */
+    $shipRepository = $app[ShipRepository::class];
+
+    /** @var DefenseRepository $defenseRepository */
+    $defenseRepository = $app[DefenseRepository::class];
+
     echo "Clean-Up wird durchgeführt...<br/>";
     $all = isset($_POST['submit_cleanup_all']) ? true : false;
 
@@ -204,13 +210,9 @@ function runCleanup(
             echo $notepadRepository->deleteOrphaned($userIds) . " verwaiste Notizen wurden gelöscht!<br/>";
         }
         if (isset($_POST['del_shiplist'])) {
-            /** @var ShipRepository $shipRepository */
-            $shipRepository = $app[ShipRepository::class];
             echo $shipRepository->deleteOrphaned($userIds) . " verwaiste Schiffe wurden gelöscht!<br/>";
         }
         if (isset($_POST['del_deflist'])) {
-            /** @var DefenseRepository $defenseRepository */
-            $defenseRepository = $app[DefenseRepository::class];
             echo $defenseRepository->deleteOrphaned($userIds) . " verwaiste Verteidigungen wurden gelöscht!<br/>";
         }
         if (isset($_POST['del_missilelist'])) {
@@ -242,10 +244,13 @@ function runCleanup(
 
     /* object lists */
     if ((isset($_POST['cl_objlist']) && $_POST['cl_objlist'] == 1) || $all) {
-        $nr = ShipList::cleanUp();
+        $nr = $shipRepository->cleanUp();
         echo $nr . " leere Schiffdaten wurden gelöscht!<br/>";
-        $nr = DefList::cleanUp();
+        Log::add(Log::F_SYSTEM, Log::INFO, "$nr leere Schiffsdatensätze wurden manuell gelöscht!");
+
+        $nr = $defenseRepository->cleanUp();
         echo $nr . " leere Verteidigungsdaten wurden gelöscht!<br/>";
+        Log::add(Log::F_SYSTEM, Log::INFO, "$nr leere Verteidigungsdatensätze wurden manuell gelöscht!");
 
         /** @var BuildingRepository $buildingRepository */
         $buildingRepository = $app[BuildingRepository::class];
