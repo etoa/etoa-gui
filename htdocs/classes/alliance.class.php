@@ -1,12 +1,15 @@
 <?php
 
 use EtoA\Alliance\AllianceApplicationRepository;
+use EtoA\Alliance\AllianceDiplomacyRepository;
 use EtoA\Alliance\AllianceHistoryRepository;
 use EtoA\Alliance\AllianceNewsRepository;
 use EtoA\Alliance\AlliancePointsRepository;
 use EtoA\Alliance\AlliancePollRepository;
 use EtoA\Alliance\AllianceRankRepository;
 use EtoA\Alliance\AllianceSpendRepository;
+use EtoA\Alliance\Board\AllianceBoardCategoryRepository;
+use EtoA\Alliance\Board\AllianceBoardTopicRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Message\MessageRepository;
 
@@ -610,47 +613,23 @@ class Alliance
         global $app;
 
         if (!$this->isAtWar()) {
-            $res = dbquery("SELECT cat_id FROM allianceboard_cat WHERE cat_alliance_id='" . $this->id . "';");
-            if (mysql_num_rows($res)) {
-                while ($arr = mysql_fetch_row($res)) {
-                    dbquery("DELETE FROM allianceboard_catranks WHERE cr_rank_id='" . $arr[0] . "';");
-                    $res = dbquery("SELECT topic_id FROM allianceboard_topics WHERE topic_cat_id='" . $arr[0] . "';");
-                    if (mysql_num_rows($res)) {
-                        while ($arr = mysql_fetch_row($res)) {
-                            dbquery("DELETE FROM allianceboard_posts WHERE post_topic_id='" . $arr[0] . "';");
-                        }
-                    }
-                    dbquery("DELETE FROM allianceboard_topics WHERE topic_cat_id='" . $arr[0] . "';");
-                }
-            }
-            dbquery("DELETE FROM allianceboard_cat WHERE cat_alliance_id='" . $this->id . "';");
+            /** @var AllianceBoardTopicRepository $allianceBoardTopicRepository */
+            $allianceBoardTopicRepository = $app[AllianceBoardTopicRepository::class];
+            /** @var AllianceBoardCategoryRepository $allianceBoardCategoryRepository */
+            $allianceBoardCategoryRepository = $app[AllianceBoardCategoryRepository::class];
+            $allianceBoardCategoryRepository->deleteAllCategories($this->id);
 
             /** @var AllianceApplicationRepository $allianceApplicationRepository */
             $allianceApplicationRepository = $app[AllianceApplicationRepository::class];
             $allianceApplicationRepository->deleteAllianceApplication($this->id);
-            $bndres = dbquery("SELECT
-                    *
-                FROM
-                    alliance_bnd
-                WHERE
-                    alliance_bnd_alliance_id1='" . $this->id . "'
-                    OR alliance_bnd_alliance_id2='" . $this->id . "';");
-            if (mysql_num_rows($bndres) > 0) {
-                while ($bndarr = mysql_fetch_assoc($bndres)) {
-                    $bres = dbquery("SELECT * FROM allianceboard_topics WHERE topic_bnd_id=" . $bndarr['alliance_bnd_id'] . ";");
-                    while ($barr = mysql_fetch_assoc($bres)) {
-                        dbquery("DELETE FROM allianceboard_posts WHERE post_topic_id=" . $barr['topic_id'] . ";");
-                    }
-                    dbquery("DELETE FROM allianceboard_topics WHERE topic_bnd_id=" . $bndarr['alliance_bnd_id'] . ";");
-                }
+
+            /** @var AllianceDiplomacyRepository $allianceDiplomacyRepository */
+            $allianceDiplomacyRepository = $app[AllianceDiplomacyRepository::class];
+            $diplomacies = $allianceDiplomacyRepository->getDiplomacies($this->id);
+            foreach ($diplomacies as $diplomacy) {
+                $allianceBoardTopicRepository->deleteBndTopic($diplomacy->id);
             }
-            dbquery("
-                    DELETE FROM
-                        alliance_bnd
-                    WHERE
-                        alliance_bnd_alliance_id1='" . $this->id . "'
-                        OR alliance_bnd_alliance_id2='" . $this->id . "';
-                ");
+            $allianceDiplomacyRepository->deleteAllianceDiplomacies($this->id);
             dbquery("DELETE FROM alliance_buildlist WHERE alliance_buildlist_alliance_id='" . $this->id . "';");
 
             /** @var AllianceHistoryRepository */

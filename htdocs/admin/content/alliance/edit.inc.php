@@ -1,6 +1,8 @@
 <?PHP
 
 use EtoA\Alliance\AllianceBuildingRepository;
+use EtoA\Alliance\AllianceDiplomacyLevel;
+use EtoA\Alliance\AllianceDiplomacyRepository;
 use EtoA\Alliance\AllianceHistoryRepository;
 use EtoA\Alliance\AllianceRankRepository;
 use EtoA\Alliance\AllianceRepository;
@@ -20,6 +22,8 @@ $buildingRepository = $app[AllianceBuildingRepository::class];
 
 /** @var AllianceTechnologyRepository */
 $technologyRepository = $app[AllianceTechnologyRepository::class];
+/** @var AllianceDiplomacyRepository $allianceDiplomacyRepository */
+$allianceDiplomacyRepository = $app[AllianceDiplomacyRepository::class];
 
 /** @var Request */
 $request = Request::createFromGlobals();
@@ -40,7 +44,7 @@ if ($request->request->has('info_save') && $request->request->get('info_save') !
 } elseif ($request->request->has('member_save') && $request->request->get('member_save') != "") {
     saveMembers($request, $repository, $allianceRankRepository, $twig);
 } elseif ($request->request->has('bnd_save') && $request->request->get('bnd_save') != "") {
-    saveDiplomacy($request, $repository, $twig);
+    saveDiplomacy($request, $allianceDiplomacyRepository, $twig);
 } elseif ($request->request->has('res_save') && $request->request->get('res_save') != "") {
     saveResources($request, $repository, $id, $twig);
 } elseif ($request->request->has('buildings') && $request->request->get('buildings') != "") {
@@ -48,7 +52,7 @@ if ($request->request->has('info_save') && $request->request->get('info_save') !
 } elseif ($request->request->has('techs') && $request->request->get('techs') != "") {
     saveTechnologies($request, $technologyRepository, $id, $twig);
 }
-edit($repository, $buildingRepository, $technologyRepository, $historyRepository, $id, $twig);
+edit($repository, $buildingRepository, $technologyRepository, $historyRepository, $allianceDiplomacyRepository, $id, $twig);
 
 function saveInfo(Request $request, AllianceRepository $repository, int $id, Environment $twig)
 {
@@ -104,7 +108,7 @@ function saveMembers(Request $request, AllianceRepository $repository, AllianceR
     $twig->addGlobal('successMessage', 'Mitglieder aktualisiert!');
 }
 
-function saveDiplomacy(Request $request, AllianceRepository $repository, Environment $twig)
+function saveDiplomacy(Request $request, AllianceDiplomacyRepository $repository, Environment $twig)
 {
     // Bündnisse / Kriege speichern
     if ($request->request->has('alliance_bnd_del') && count($request->request->get('alliance_bnd_del')) > 0) {
@@ -202,6 +206,7 @@ function edit(
     AllianceBuildingRepository $buildingRepository,
     AllianceTechnologyRepository $technologyRepository,
     AllianceHistoryRepository $historyRepository,
+    AllianceDiplomacyRepository $allianceDiplomacyRepository,
     int $id,
     Environment $twig
 ): void {
@@ -246,7 +251,7 @@ function edit(
 
     echo '</div><div id="tabs-3">';
 
-    diplomacyTab($repository, $id);
+    diplomacyTab($allianceDiplomacyRepository, $id);
 
     echo '</div><div id="tabs-4">';
 
@@ -371,9 +376,9 @@ function membersTab(array $members, array $ranks): void
     echo "<p><input type=\"submit\" name=\"member_save\" value=\"Übernehmen\" /></p>";
 }
 
-function diplomacyTab(AllianceRepository $repository, int $id): void
+function diplomacyTab(AllianceDiplomacyRepository $repository, int $id): void
 {
-    $diplomacies = $repository->findDiplomacies($id);
+    $diplomacies = $repository->getDiplomacies($id);
     if (count($diplomacies) > 0) {
         echo "<table class=\"tb\">";
         echo "<tr>
@@ -381,27 +386,25 @@ function diplomacyTab(AllianceRepository $repository, int $id): void
 			<th>Bezeichnung</th>
 			<th>Status / Datum</th>
 			<th>Löschen</th></tr>";
-        foreach ($diplomacies as $barr) {
-            $opId = ($id == $barr['a2id']) ? $barr['a1id'] : $barr['a2id'];
-            $opName = ($id == $barr['a2id']) ? $barr['a1name'] : $barr['a2name'];
+        foreach ($diplomacies as $diplomacy) {
             echo "<tr>
-					<td><a href=\"?page=alliances&amp;action=edit&amp;id=" . $opId . "\">" . $opName . "</a></td>
-					<td><input type=\"text\" value=\"" . $barr['name'] . "\" name=\"alliance_bnd_name[" . $barr['alliance_bnd_id'] . "]\" /></td>";
+					<td><a href=\"?page=alliances&amp;action=edit&amp;id=" . $diplomacy->otherAllianceId . "\">" . $diplomacy->otherAllianceName . "</a></td>
+					<td><input type=\"text\" value=\"" . $diplomacy->name . "\" name=\"alliance_bnd_name[" . $diplomacy->id . "]\" /></td>";
             echo "<td>
-				<select name=\"alliance_bnd_level[" . $barr['alliance_bnd_id'] . "]\">";
+				<select name=\"alliance_bnd_level[" . $diplomacy->id . "]\">";
             echo "<option value=\"0\">Bündnisanfrage</option>";
             echo "<option value=\"2\"";
-            if ($barr['lvl'] == 2) echo " selected=\"selected\"";
+            if ($diplomacy->level === AllianceDiplomacyLevel::BND_CONFIRMED) echo " selected=\"selected\"";
             echo ">Bündnis</option>";
             echo "<option value=\"3\"";
-            if ($barr['lvl'] == 3) echo " selected=\"selected\"";
+            if ($diplomacy->level === AllianceDiplomacyLevel::WAR) echo " selected=\"selected\"";
             echo ">Krieg</option>";
             echo "<option value=\"3\"";
-            if ($barr['lvl'] == 4) echo " selected=\"selected\"";
+            if ($diplomacy->level === AllianceDiplomacyLevel::PEACE) echo " selected=\"selected\"";
             echo ">Frieden</option>";
             echo "</select>";
-            echo " &nbsp; " . df($barr['date']) . "</td>";
-            echo "<td valign=\"top\"><input type=\"checkbox\" name=\"alliance_bnd_del[" . $barr['alliance_bnd_id'] . "]\" value=\"1\" /></td></tr>";
+            echo " &nbsp; " . df($diplomacy->date) . "</td>";
+            echo "<td valign=\"top\"><input type=\"checkbox\" name=\"alliance_bnd_del[" . $diplomacy->id . "]\" value=\"1\" /></td></tr>";
         }
         echo "</table>";
         echo "<p><input type=\"submit\" name=\"bnd_save\" value=\"Übernehmen\" /></p>";

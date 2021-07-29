@@ -209,6 +209,29 @@ class UserRepository extends AbstractRepository
             ->execute();
     }
 
+    /**
+     * @return User[]
+     */
+    public function getAllianceUsers(int $allianceId): array
+    {
+        $data = $this->createQueryBuilder()
+            ->select('*')
+            ->from('users')
+            ->where('user_alliance_id = :allianceId')
+            ->setParameter('allianceId', $allianceId)
+            ->orderBy('user_nick', 'ASC')
+            ->execute()
+            ->fetchAllAssociative();
+
+        $result = [];
+        foreach ($data as $row) {
+            $user = new User($row);
+            $result[$user->id] = $user;
+        }
+
+        return $result;
+    }
+
     public function getUser(int $userId): ?User
     {
         $data = $this->createQueryBuilder()

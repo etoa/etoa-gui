@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace EtoA\Alliance;
 
+use EtoA\Alliance\Board\AllianceBoardCategoryRankRepository;
+use EtoA\Alliance\Board\AllianceBoardCategoryRepository;
+use EtoA\Alliance\Board\AllianceBoardPostRepository;
+use EtoA\Alliance\Board\AllianceBoardTopicRepository;
 use Pimple\Container;
 use Pimple\ServiceProviderInterface;
 
@@ -55,6 +59,26 @@ class AllianceServiceProvider implements ServiceProviderInterface
 
         $pimple[AllianceRankRepository::class] = function (Container $pimple): AllianceRankRepository {
             return new AllianceRankRepository($pimple['db']);
+        };
+
+        $pimple[AllianceBoardCategoryRepository::class] = function (Container $pimple): AllianceBoardCategoryRepository {
+            return new AllianceBoardCategoryRepository($pimple['db']);
+        };
+
+        $pimple[AllianceBoardTopicRepository::class] = function (Container $pimple): AllianceBoardTopicRepository {
+            return new AllianceBoardTopicRepository($pimple['db']);
+        };
+
+        $pimple[AllianceBoardPostRepository::class] = function (Container $pimple): AllianceBoardPostRepository {
+            return new AllianceBoardPostRepository($pimple['db']);
+        };
+
+        $pimple[AllianceBoardCategoryRankRepository::class] = function (Container $pimple): AllianceBoardCategoryRankRepository {
+            return new AllianceBoardCategoryRankRepository($pimple['db']);
+        };
+
+        $pimple[AllianceDiplomacyRepository::class] = function (Container $pimple): AllianceDiplomacyRepository {
+            return new AllianceDiplomacyRepository($pimple['db']);
         };
     }
 }
