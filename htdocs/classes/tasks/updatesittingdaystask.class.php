@@ -2,22 +2,25 @@
 
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\User\UserRepository;
+use Pimple\Container;
 
 /**
  * Update user sitting days
  */
 class UpdateSittingDaysTask implements IPeriodicTask
 {
+    private ConfigurationService $config;
+    private UserRepository $userRepository;
+
+    public function __construct(Container $app)
+    {
+        $this->config = $app[ConfigurationService::class];
+        $this->userRepository = $app[UserRepository::class];
+    }
+
     function run()
     {
-        global $app;
-
-        /** @var ConfigurationService */
-        $config = $app[ConfigurationService::class];
-
-        /** @var UserRepository $userRepository */
-        $userRepository = $app[UserRepository::class];
-        $userRepository->addSittingDays($config->param1Int("user_sitting_days"));
+        $this->userRepository->addSittingDays($this->config->param1Int("user_sitting_days"));
 
         return "Sittertage aller User wurden aktualisiert";
     }
