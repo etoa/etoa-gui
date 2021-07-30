@@ -530,11 +530,12 @@ elseif ($cu->allianceId == 0) {
                                             <th>Zeitraum</th>
                                         </tr>";
                     foreach ($wars as $diplomacy) {
+                        $opAlly = new Alliance($diplomacy->otherAllianceId);
                         echo "<tr>
                                             <td>
-                                                <a href=\"?page=$page&amp;id=" . $diplomacy->otherAllianceId->id . "\">[" . $diplomacy->otherAllianceTag . "] " . $diplomacy->otherAllianceName . "</a>
+                                                <a href=\"?page=$page&amp;id=" . $diplomacy->otherAllianceId . "\">" . $opAlly . "</a>
                                             </td>
-                                            <td>" . nf($diplomacy->otherAlliancePoints) . " / " . nf($diplomacy->otherAllianceAveragePoints) . "</td>
+                                            <td>" . nf($opAlly->points) . " / " . nf($opAlly->avgPoints) . "</td>
                                             <td>" . df($diplomacy->date, 0) . " bis " . df($diplomacy->date + WAR_DURATION, 0) . "</td>
                                         </tr>";
                     }
@@ -546,7 +547,7 @@ elseif ($cu->allianceId == 0) {
 
                 // Friedensabkommen
                 $peace = $allianceDiplomacyRepository->getDiplomacies($ally->id, AllianceDiplomacyLevel::PEACE);
-                if (mysql_num_rows($peace) > 0) {
+                if (count($peace) > 0) {
                     echo "<tr>
                                 <th>Friedensabkommen:</th>
                                 <td>
@@ -557,11 +558,12 @@ elseif ($cu->allianceId == 0) {
                                             <th>Zeitraum</th>
                                         </tr>";
                     foreach ($peace as $diplomacy) {
+                        $opAlly = new Alliance($diplomacy->otherAllianceId);
                         echo "<tr>
                                             <td>
-                                                <a href=\"?page=$page&amp;id=" . $diplomacy->otherAllianceId->id . "\">[" . $diplomacy->otherAllianceTag . "] " . $diplomacy->otherAllianceName . "</a>
+                                                <a href=\"?page=$page&amp;id=" . $diplomacy->otherAllianceId . "\">" . $opAlly . "</a>
                                             </td>
-                                            <td>" . nf($diplomacy->otherAlliancePoints) . " / " . nf($diplomacy->otherAllianceAveragePoints) . "</td>
+                                            <td>" . nf($opAlly->points) . " / " . nf($opAlly->avgPoints) . "</td>
                                             <td>" . df($diplomacy->date, 0) . " bis " . df($diplomacy->date + PEACE_DURATION, 0) . "</td>
                                         </tr>";
                     }
@@ -572,7 +574,7 @@ elseif ($cu->allianceId == 0) {
 
                 // Bündnisse
                 $bnds = $allianceDiplomacyRepository->getDiplomacies($ally->id, AllianceDiplomacyLevel::BND_CONFIRMED);
-                if (mysql_num_rows($wars) > 0) {
+                if (count($bnds) > 0) {
                     echo "<tr>
                                 <th>Bündnisse:</th>
                                 <td>
@@ -585,10 +587,11 @@ elseif ($cu->allianceId == 0) {
                                         </tr>";
 
                     foreach ($bnds as $diplomacy) {
+                        $opAlly = new Alliance($diplomacy->otherAllianceId);
                         echo "<tr>
                                             <td>" . stripslashes($diplomacy->name) . "</td>
-                                            <td><a href=\"?page=$page&amp;id=" . $diplomacy->otherAllianceId->id . "\">[" . $diplomacy->otherAllianceTag . "] " . $diplomacy->otherAllianceName . "</a></td>
-                                            <td>" . nf($diplomacy->otherAlliancePoints) . " / " . nf($diplomacy->otherAllianceAveragePoints) . "</td>
+                                            <td><a href=\"?page=$page&amp;id=" . $diplomacy->otherAllianceId . "\">" . $opAlly . "</a></td>
+                                            <td>" . nf($opAlly->points) . " / " . nf($opAlly->avgPoints) . "</td>
                                             <td>" . df($diplomacy->date) . "</td>
                                         </tr>";
                     }

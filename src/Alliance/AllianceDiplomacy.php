@@ -12,10 +12,6 @@ class AllianceDiplomacy
     public ?string $alliance2Name;
     public ?string $alliance1Tag;
     public ?string $alliance2Tag;
-    public int $alliance1Points;
-    public int $alliance2Points;
-    public int $alliance1MemberCount;
-    public int $alliance2MemberCount;
     public int $level;
     public string $text;
     public int $date;
@@ -38,10 +34,6 @@ class AllianceDiplomacy
         $this->alliance2Name = $data['alliance2Name'];
         $this->alliance1Tag = $data['alliance1Tag'];
         $this->alliance2Tag = $data['alliance2Tag'];
-        $this->alliance1Points = (int) $data['alliance1Points'];
-        $this->alliance2Points = (int) $data['alliance2Points'];
-        $this->alliance1MemberCount = (int) $data['alliance1MemberCount'];
-        $this->alliance2MemberCount = (int) $data['alliance2MemberCount'];
         $this->level = (int) $data['alliance_bnd_level'];
         $this->text = $data['alliance_bnd_text'];
         $this->date = (int) $data['alliance_bnd_date'];
@@ -52,9 +44,5 @@ class AllianceDiplomacy
         $this->otherAllianceId = $allianceId === $this->alliance2Id ? $this->alliance1Id : $this->alliance2Id;
         $this->otherAllianceName = $allianceId === $this->alliance2Id ? $this->alliance1Name : $this->alliance2Name;
         $this->otherAllianceTag = $allianceId === $this->alliance2Id ? $this->alliance1Tag : $this->alliance2Tag;
-        $this->otherAlliancePoints = $allianceId === $this->alliance2Id ? $this->alliance1Points : $this->alliance1MemberCount;
-        if ($this->alliance1MemberCount > 0 && $this->alliance2MemberCount > 0) {
-            $this->otherAllianceAveragePoints = (int) floor($allianceId === $this->alliance2Id ? $this->alliance1Points / $this->alliance1MemberCount : $this->alliance2Points / $this->alliance2MemberCount);
-        }
     }
 }

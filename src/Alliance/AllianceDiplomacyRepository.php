@@ -44,8 +44,8 @@ class AllianceDiplomacyRepository extends AbstractRepository
     {
         $qb = $this->createQueryBuilder()
             ->select('b.*')
-            ->addSelect('a1.alliance_name as alliance1Name, a1.alliance_tag as alliance1Tag, a1.alliance_points as alliance1Points, a1.member_count as alliance1MemberCount')
-            ->addSelect('a2.alliance_name as alliance2Name, a2.alliance_tag as alliance2Tag, a2.alliance_points as alliance2Points, a2.member_count as alliance2MemberCount')
+            ->addSelect('a1.alliance_name as alliance1Name, a1.alliance_tag as alliance1Tag')
+            ->addSelect('a2.alliance_name as alliance2Name, a2.alliance_tag as alliance2Tag')
             ->from('alliance_bnd', 'b')
             ->leftJoin('b', 'alliances', 'a1', 'alliance_bnd_alliance_id1 = a1.alliance_id')
             ->leftJoin('b', 'alliances', 'a2', 'alliance_bnd_alliance_id2 = a2.alliance_id')
@@ -71,8 +71,8 @@ class AllianceDiplomacyRepository extends AbstractRepository
     {
         $qb = $this->createQueryBuilder()
             ->select('b.*')
-            ->addSelect('a1.alliance_name as alliance1Name, a1.alliance_tag as alliance1Tag, a1.alliance_points as alliance1Points, a1.member_count as alliance1MemberCount')
-            ->addSelect('a2.alliance_name as alliance2Name, a2.alliance_tag as alliance2Tag, a2.alliance_points as alliance2Points, a2.member_count as alliance2MemberCount')
+            ->addSelect('a1.alliance_name as alliance1Name, a1.alliance_tag as alliance1Tag')
+            ->addSelect('a2.alliance_name as alliance2Name, a2.alliance_tag as alliance2Tag')
             ->from('alliance_bnd', 'b')
             ->leftJoin('b', 'alliances', 'a1', 'alliance_bnd_alliance_id1 = a1.alliance_id')
             ->leftJoin('b', 'alliances', 'a2', 'alliance_bnd_alliance_id2 = a2.alliance_id')
