@@ -85,4 +85,11 @@ class UserLogRepository extends AbstractRepository
             ->setParameter('userIds', $availableUserIds, Connection::PARAM_INT_ARRAY)
             ->execute();
     }
+
+    public function deleteAll(): void
+    {
+        $this->createQueryBuilder()
+            ->delete('user_log')
+            ->execute();
+    }
 }

@@ -13,6 +13,8 @@ class UserLogRepositoryTest extends AbstractDbTestCase
         parent::setUp();
 
         $this->repository = $this->app[UserLogRepository::class];
+
+        $this->repository->deleteAll();
     }
 
     public function testGetUserLogs(): void
