@@ -199,7 +199,9 @@ class Alliance
                     $allianceHistoryRepository = $app[AllianceHistoryRepository::class];
                     $allianceHistoryRepository->addEntry($this->id, "Der Spieler [b]" . $this->founder . "[/b] wird zum Gründer befördert.");
 
-                    $this->founder->sendMessage(MSG_ALLYMAIL_CAT, "Gründer", "Du hast nun die Gründerrechte deiner Allianz!");
+                    /** @var MessageRepository $messageRepository */
+                    $messageRepository = $app[MessageRepository::class];
+                    $messageRepository->createSystemMessage($this->founder->id, MSG_ALLYMAIL_CAT, "Gründer", "Du hast nun die Gründerrechte deiner Allianz!");
 
                     /** @var UserService */
                     $userService = $app[UserService::class];
@@ -350,10 +352,12 @@ class Alliance
                     $this->members[$userId]->alliance = null;
                     $this->members[$userId]->allianceLeave = time();
                     if ($this->members[$userId]->allianceId == 0) {
+                        /** @var MessageRepository $messageRepository */
+                        $messageRepository = $app[MessageRepository::class];
                         if ($kick == 1) {
-                            $this->members[$userId]->sendMessage(MSG_ALLYMAIL_CAT, "Allianzausschluss", "Du wurdest aus der Allianz [b]" . $this->__toString() . "[/b] ausgeschlossen!");
+                            $messageRepository->createSystemMessage($userId, MSG_ALLYMAIL_CAT, "Allianzausschluss", "Du wurdest aus der Allianz [b]" . $this->__toString() . "[/b] ausgeschlossen!");
                         } else {
-                            $this->__get('founder')->sendMessage(MSG_ALLYMAIL_CAT, "Allianzaustritt", "Der Spieler " . $this->members[$userId] . " trat aus der Allianz aus!");
+                            $messageRepository->createSystemMessage($this->__get('founder')->id, MSG_ALLYMAIL_CAT, "Allianzaustritt", "Der Spieler " . $this->members[$userId] . " trat aus der Allianz aus!");
                         }
 
                         /** @var AllianceHistoryRepository */
@@ -427,6 +431,11 @@ class Alliance
      */
     public function addWingRequest($allianceId)
     {
+        global $app;
+
+        /** @var MessageRepository $messageRepository */
+        $messageRepository = $app[MessageRepository::class];
+
         $this->getWingRequests();
         if ($allianceId != $this->id && $allianceId != $this->motherId &&  $allianceId != $this->motherRequestId) {
             $res = dbquery("
@@ -441,7 +450,7 @@ class Alliance
                 ");
             if (mysql_affected_rows() > 0) {
                 $this->wingRequests[$allianceId] = new Alliance($allianceId);
-                $this->wingRequests[$allianceId]->__get('founder')->sendMessage(MSG_ALLYMAIL_CAT, "Wing-Anfrage", "Die Allianz [b]" . $this->__toString() . "[/b] möchte eure Allianz als Wing hinzufügen. [page alliance action=wings]Anfrage beantworten[/page]");
+                $messageRepository->createSystemMessage($this->wingRequests[$allianceId]->__get('founder')->id, MSG_ALLYMAIL_CAT, "Wing-Anfrage", "Die Allianz [b]" . $this->__toString() . "[/b] möchte eure Allianz als Wing hinzufügen. [page alliance action=wings]Anfrage beantworten[/page]");
                 return true;
             }
         }
@@ -453,6 +462,11 @@ class Alliance
      */
     public function cancelWingRequest($wingId)
     {
+        global $app;
+
+        /** @var MessageRepository $messageRepository */
+        $messageRepository = $app[MessageRepository::class];
+
         $this->getWingRequests();
         dbquery("
             UPDATE
@@ -465,11 +479,11 @@ class Alliance
             ");
         if (mysql_affected_rows() > 0) {
             if ($this->wingRequests != null) {
-                $this->wingRequests[$wingId]->__get('founder')->sendMessage(MSG_ALLYMAIL_CAT, "Wing-Anfrage zurückgezogen", "Die Allianz [b]" . $this->__toString() . "[/b] hat die Wing-Anfrage zurückgezogen.");
+                $messageRepository->createSystemMessage($this->wingRequests[$wingId]->__get('founder')->id, MSG_ALLYMAIL_CAT, "Wing-Anfrage zurückgezogen", "Die Allianz [b]" . $this->__toString() . "[/b] hat die Wing-Anfrage zurückgezogen.");
                 unset($this->wingRequests[$wingId]);
             } else {
                 $tmpWing = new Alliance($wingId);
-                $tmpWing->__get('founder')->sendMessage(MSG_ALLYMAIL_CAT, "Wing-Anfrage zurückgezogen", "Die Allianz [b]" . $this->__toString() . "[/b] hat die Wing-Anfrage zurückgezogen.");
+                $messageRepository->createSystemMessage($tmpWing->__get('founder')->id, MSG_ALLYMAIL_CAT, "Wing-Anfrage zurückgezogen", "Die Allianz [b]" . $this->__toString() . "[/b] hat die Wing-Anfrage zurückgezogen.");
                 unset($tmpWing);
             }
             return true;
@@ -482,6 +496,11 @@ class Alliance
      */
     public function revokeWingRequest()
     {
+        global $app;
+
+        /** @var MessageRepository $messageRepository */
+        $messageRepository = $app[MessageRepository::class];
+
         if ($this->motherRequestId > 0) {
             dbquery("
                 UPDATE
@@ -493,7 +512,7 @@ class Alliance
                     AND alliance_id=" . $this->id . "
                 ");
             if (mysql_affected_rows() > 0) {
-                $this->__get('motherRequest')->__get('founder')->sendMessage(MSG_ALLYMAIL_CAT, "Wing-Anfrage zurückgewiesen", "Die Allianz [b]" . $this->__toString() . "[/b] hat die Wing-Anfrage zurückgewiesen.");
+                $messageRepository->createSystemMessage($this->__get('motherRequest')->__get('founder')->id ,MSG_ALLYMAIL_CAT, "Wing-Anfrage zurückgewiesen", "Die Allianz [b]" . $this->__toString() . "[/b] hat die Wing-Anfrage zurückgewiesen.");
                 $this->motherRequestId = 0;
                 $this->motherRequest = null;
                 return true;
@@ -531,7 +550,9 @@ class Alliance
                 $allianceHistoryRepository->addEntry($this->__get('mother')->id, "[b]" . $this->__toString() . "[/b] wurde als neuer Wing hinzugefügt.");
                 $allianceHistoryRepository->addEntry($this->id, "Wir sind nun ein Wing von [b]" . $this->__get('mother') . "[/b]");
 
-                $this->__get('mother')->__get('founder')->sendMessage(MSG_ALLYMAIL_CAT, "Neuer Wing", "Die Allianz [b]" . $this->__toString() . "[/b] ist nun ein Wing von [b]" . $this->__get('mother') . "[/b]");
+                /** @var MessageRepository $messageRepository */
+                $messageRepository = $app[MessageRepository::class];
+                $messageRepository->createSystemMessage($this->__get('mother')->__get('founder')->id, MSG_ALLYMAIL_CAT, "Neuer Wing", "Die Allianz [b]" . $this->__toString() . "[/b] ist nun ein Wing von [b]" . $this->__get('mother') . "[/b]");
                 return true;
             }
         }
@@ -564,8 +585,11 @@ class Alliance
                 $allianceHistoryRepository = $app[AllianceHistoryRepository::class];
                 $allianceHistoryRepository->addEntry($this->id, $this->wings[$allianceId] . " wurde als neuer Wing hinzugefügt.");
                 $allianceHistoryRepository->addEntry($this->wings[$allianceId]->id, "Wir sing nun ein Wing von " . $this->__toString());
-                $this->__get('founder')->sendMessage(MSG_ALLYMAIL_CAT, "Neuer Wing", "Die Allianz [b]" . $this->wings[$allianceId] . "[/b] ist nun ein Wing von [b]" . $this->__toString() . "[/b]");
-                $this->wings[$allianceId]->__get('founder')->sendMessage(MSG_ALLYMAIL_CAT, "Neuer Wing", "Die Allianz [b]" . $this->wings[$allianceId] . "[/b] ist nun ein Wing von [b]" . $this->__toString() . "[/b]");
+
+                /** @var MessageRepository $messageRepository */
+                $messageRepository = $app[MessageRepository::class];
+                $messageRepository->createSystemMessage($this->__get('founder')->id, MSG_ALLYMAIL_CAT, "Neuer Wing", "Die Allianz [b]" . $this->wings[$allianceId] . "[/b] ist nun ein Wing von [b]" . $this->__toString() . "[/b]");
+                $messageRepository->createSystemMessage($this->wings[$allianceId]->__get('founder')->id, MSG_ALLYMAIL_CAT, "Neuer Wing", "Die Allianz [b]" . $this->wings[$allianceId] . "[/b] ist nun ein Wing von [b]" . $this->__toString() . "[/b]");
                 return true;
             }
         }
@@ -595,8 +619,11 @@ class Alliance
             if ($this->wings != null) {
                 $allianceHistoryRepository->addEntry($this->id, $this->wings[$wingId] . " ist nun kein Wing mehr von uns");
                 $allianceHistoryRepository->addEntry($this->wings[$wingId]->id, "Wir sind nun kein Wing mehr von [b]" . $this->__toString() . "[/b]");
-                $this->__get('founder')->sendMessage(MSG_ALLYMAIL_CAT, "Wing aufgelöst", "Die Allianz [b]" . $this->wings[$wingId] . "[/b] ist kein Wing mehr von [b]" . $this->__toString() . "[/b]");
-                $this->wings[$wingId]->__get('founder')->sendMessage(MSG_ALLYMAIL_CAT, "Wing aufgelöst", "Die Allianz [b]" . $this->wings[$wingId] . "[/b] ist kein Wing mehr von [b]" . $this->__toString() . "[/b]");
+
+                /** @var MessageRepository $messageRepository */
+                $messageRepository = $app[MessageRepository::class];
+                $messageRepository->createSystemMessage($this->__get('founder')->id, MSG_ALLYMAIL_CAT, "Wing aufgelöst", "Die Allianz [b]" . $this->wings[$wingId] . "[/b] ist kein Wing mehr von [b]" . $this->__toString() . "[/b]");
+                $messageRepository->createSystemMessage($this->wings[$wingId]->__get('founder')->id, MSG_ALLYMAIL_CAT, "Wing aufgelöst", "Die Allianz [b]" . $this->wings[$wingId] . "[/b] ist kein Wing mehr von [b]" . $this->__toString() . "[/b]");
                 unset($this->wings[$wingId]);
             } else {
                 $tmpWing = new Alliance($wingId);
