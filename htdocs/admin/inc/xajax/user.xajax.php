@@ -11,6 +11,7 @@ use EtoA\Technology\TechnologyDataRepository;
 use EtoA\User\UserCommentRepository;
 use EtoA\User\UserLogRepository;
 use EtoA\User\UserRepository;
+use EtoA\User\UserService;
 
 $xajax->register(XAJAX_FUNCTION, "showTimeBox");
 $xajax->register(XAJAX_FUNCTION, "allianceRankSelector");
@@ -394,11 +395,16 @@ function userLogs($uid, $target)
 
 function addUserLog($uid, $target, $text)
 {
+    // TODO
+    global $app;
+
+    /** @var UserService */
+    $userService = $app[UserService::class];
+
     $or = new xajaxResponse();
     if ($text != "") {
         $or->script("showLoader('$target');");
-        $user = new User($uid);
-        $user->addToUserLog("settings", $text, 1);
+        $userService->addToUserLog($uid, "settings", $text, true);
         $or->script("xajax_userLogs('$uid','$target')");
     } else {
         $or->alert("Fehler! Kein Text!");

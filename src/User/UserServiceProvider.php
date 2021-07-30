@@ -127,7 +127,8 @@ class UserServiceProvider implements ServiceProviderInterface
                 $pimple[UserPointsRepository::class],
                 $pimple[UserCommentRepository::class],
                 $pimple[UserSurveillanceRepository::class],
-                $pimple[BackendMessageService::class]
+                $pimple[BackendMessageService::class],
+                $pimple[UserLogRepository::class]
             );
         };
 

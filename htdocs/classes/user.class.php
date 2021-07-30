@@ -12,6 +12,7 @@ use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Universe\Planet\PlanetService;
 use EtoA\User\UserLogRepository;
 use EtoA\User\UserMultiRepository;
+use EtoA\User\UserService;
 use EtoA\User\UserSittingRepository;
 use EtoA\User\UserWarningRepository;
 
@@ -305,20 +306,26 @@ class User implements \EtoA\User\UserInterface
                 return true;
             }
             if ($key == "alliance") {
+
+                // TODO
+                global $app;
+
+                /** @var UserService */
+                $userService = $app[UserService::class];
+
                 $tmpAlly = $this->$key;
                 $this->$key = $val;
                 if ($this->alliance == null) {
                     $this->allianceId = 0;
                     if ($tmpAlly != null)
-                        $this->addToUserLog("alliance", "{nick} ist nun kein Mitglied mehr der Allianz [b]" . $tmpAlly . "[/b].");
+                        $userService->addToUserLog($this->id, "alliance", "{nick} ist nun kein Mitglied mehr der Allianz [b]" . $tmpAlly . "[/b].");
                 } else {
                     if ($tmpAlly != null)
-                        $this->addToUserLog("alliance", "{nick} ist nun kein Mitglied mehr der Allianz " . $tmpAlly . ".");
-                    $this->addToUserLog("alliance", "{nick} ist nun Mitglied der Allianz " . $this->alliance . ".");
+                        $userService->addToUserLog($this->id, "alliance", "{nick} ist nun kein Mitglied mehr der Allianz " . $tmpAlly . ".");
+                    $userService->addToUserLog($this->id, "alliance", "{nick} ist nun Mitglied der Allianz " . $this->alliance . ".");
                     $this->allianceId = $this->alliance->id;
                 }
                 unset($tmpAlly);
-
 
                 $this->allianceRankId = 0;
                 $this->changedFields[$key] = true;
@@ -590,30 +597,6 @@ class User implements \EtoA\User\UserInterface
                 }
             }
         }
-    }
-
-    /**
-     * Adds a message to this users personal log
-     * The message string is parsed for the users nickname
-     *
-     * @param string $zone
-     * @param string $message
-     * @param int $public
-     * @return bool
-     */
-    final public function addToUserLog($zone, $message, $public = 1)
-    {
-        global $app;
-
-        /** @var UserLogRepository $userLogRepository */
-        $userLogRepository = $app[UserLogRepository::class];
-
-        $search = array("{user}", "{nick}");
-        $replace = array($this->nick, $this->nick);
-        $message = str_replace($search, $replace, $message);
-
-        $userLogRepository->add($this->getId(), $zone, $message, gethostbyname($_SERVER['REMOTE_ADDR']), (bool) $public);
-        return true;
     }
 
     /**

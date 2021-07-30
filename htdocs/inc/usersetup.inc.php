@@ -11,6 +11,7 @@ use EtoA\Universe\Planet\PlanetService;
 use EtoA\Universe\Planet\PlanetTypeRepository;
 use EtoA\Universe\Star\SolarTypeRepository;
 use EtoA\Universe\Star\StarRepository;
+use EtoA\User\UserService;
 use Symfony\Component\HttpFoundation\Request;
 
 /** @var TextRepository $textRepo */
@@ -70,7 +71,10 @@ if (isset($s->itemset_key) && $request->request->has(md5($s->itemset_key)) && $r
         $planetService->setDefaultResources($planetId);
 
         $entity = $entityRepository->findIncludeCell($planetId);
-        $cu->addToUserLog("planets", "{nick} wählt [b]" . $entity->toString() . "[/b] als Hauptplanet aus.", 0);
+
+        /** @var UserService */
+        $userService = $app[UserService::class];
+        $userService->addToUserLog($cu->id, "planets", "{nick} wählt [b]" . $entity->toString() . "[/b] als Hauptplanet aus.");
 
         /** @var DefaultItemRepository $defaultItemRepository */
         $defaultItemRepository = $app[DefaultItemRepository::class];
