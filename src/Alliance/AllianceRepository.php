@@ -154,17 +154,25 @@ class AllianceRepository extends AbstractRepository
             ->fetchAllAssociative();
     }
 
-    public function exists(string $tag, string $name): bool
+    public function exists(string $tag, string $name, int $ignoreAllianceId = null): bool
     {
-        return (bool) $this->createQueryBuilder()
+        $qb = $this->createQueryBuilder()
             ->select('alliance_id')
             ->from('alliances')
-            ->where('alliance_tag = :tag')
-            ->orWhere('alliance_name = :name')
+            ->where('alliance_tag = :tag OR alliance_name = :name')
             ->setParameters([
                 'name' => $name,
                 'tag' => $tag,
-            ])
+            ]);
+
+        if ($ignoreAllianceId !== null) {
+            $qb
+                ->andWhere('alliance_id <> :allianceId')
+                ->setParameter(':allianceId', $ignoreAllianceId);
+        }
+
+        return (bool) $qb
+            ->setMaxResults(1)
             ->execute()
             ->fetchOne();
     }

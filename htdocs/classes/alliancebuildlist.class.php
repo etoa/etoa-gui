@@ -1,5 +1,7 @@
 <?PHP
 
+use EtoA\Alliance\AllianceBuildingRepository;
+
 class AllianceBuildList implements IteratorAggregate
 {
     private $allianceId;
@@ -132,56 +134,39 @@ class AllianceBuildList implements IteratorAggregate
 
     function getCooldown($bid, $uid = null)
     {
+        global $app;
+
         if ($this->items == null)
             $this->load();
         if (isset($this->itemStatus[$bid])) {
             if ($uid != null) {
-                $res = dbQuerySave("
-                    SELECT
-                        cooldown_end
-                    FROM
-                        alliance_building_cooldown
-                    WHERE
-                        cooldown_user_id=?
-                        AND cooldown_alliance_building_id=?
-                        ;", array($uid, $bid));
-                if (mysql_num_rows($res) > 0) {
-                    $arr = mysql_fetch_assoc($res);
-                    return $arr['cooldown_end'];
-                }
-            } else {
-                if ($this->itemStatus[$bid]['cooldown'] > time())
-                    return $this->itemStatus[$bid]['cooldown'];
+                /** @var AllianceBuildingRepository $allianceBuildingRepository */
+                $allianceBuildingRepository = $app[AllianceBuildingRepository::class];
+
+                return $allianceBuildingRepository->getUserCooldown($uid, $bid);
             }
+
+            if ($this->itemStatus[$bid]['cooldown'] > time())
+                return $this->itemStatus[$bid]['cooldown'];
         }
         return false;
     }
 
     function setCooldown($bid, $cd, $uid = null)
     {
+        global $app;
+
         if ($this->items == null)
             $this->load();
         if (isset($this->itemStatus[$bid])) {
+            /** @var AllianceBuildingRepository $allianceBuildingRepository */
+            $allianceBuildingRepository = $app[AllianceBuildingRepository::class];
+
             if ($uid != null) {
-                dbQuerySave("
-                    REPLACE INTO
-                        alliance_building_cooldown
-                    (
-                        cooldown_user_id,
-                        cooldown_alliance_building_id,
-                        cooldown_end
-                    ) VALUES (
-                        ?,?,?
-                    );", array($uid, $bid, $cd));
+                $allianceBuildingRepository->setUserCooldown($uid, $bid, $cd);
             } else {
                 $this->itemStatus[$bid]['cooldown'] = $cd;
-                $res = dbquery("
-                    UPDATE
-                        alliance_buildlist
-                    SET
-                        alliance_buildlist_cooldown=" . $cd . "
-                    WHERE
-                        alliance_buildlist_id=" . $this->itemStatus[$bid]['listid'] . ";");
+                $allianceBuildingRepository->setCooldown($this->allianceId, $bid, $cd);
             }
         }
     }
@@ -267,7 +252,7 @@ class AllianceBuildList implements IteratorAggregate
      */
     function build($itemId)
     {
-        global $cu;
+        global $cu, $app;
         if ($this->alliance == null) {
             if ($cu->alliance->id != $this->allianceId)
                 $this->alliance = new Alliance($this->allianceId);
@@ -296,40 +281,12 @@ class AllianceBuildList implements IteratorAggregate
             $this->itemStatus[$itemId]['start_time'] = $startTime;
             $this->itemStatus[$itemId]['end_time'] = $endTime;
 
+            /** @var AllianceBuildingRepository $allianceBuildingRepository */
+            $allianceBuildingRepository = $app[AllianceBuildingRepository::class];
             if ($this->itemStatus[$itemId]['level'] == 0) {
-                dbquery("
-                            INSERT INTO
-                                `alliance_buildlist`
-                            (
-                                 `alliance_buildlist_alliance_id`,
-                                `alliance_buildlist_building_id`,
-                                `alliance_buildlist_current_level`,
-                                `alliance_buildlist_build_start_time`,
-                                `alliance_buildlist_build_end_time`,
-                                `alliance_buildlist_member_for`
-                            )
-                            VALUES
-                            (
-                                 '" . $this->allianceId . "',
-                                '" . $itemId . "',
-                                '0',
-                                '" . $startTime . "',
-                                '" . $endTime . "',
-                                '" . $this->alliance->memberCount . "'
-                            );");
+                $allianceBuildingRepository->addToAlliance($this->allianceId, $itemId, 0, $this->alliance->memberCount, $startTime, $endTime);
             } else {
-                dbquery("
-                            UPDATE
-                                `alliance_buildlist`
-                            SET
-                                `alliance_buildlist_build_start_time`='" . $startTime . "',
-                                `alliance_buildlist_build_end_time`='" . $endTime . "',
-                                `alliance_buildlist_member_for`='" . $this->alliance->memberCount . "'
-                            WHERE
-                                 `alliance_buildlist_alliance_id`='" . $this->allianceId . "'
-                                AND `alliance_buildlist_building_id`='" . $itemId . "'
-                            LIMIT 1;
-                            ");
+                $allianceBuildingRepository->updateForAlliance($this->allianceId, $itemId, $this->itemStatus[$itemId]['level'], $this->alliance->memberCount, $startTime, $endTime);
             }
 
             global $app;

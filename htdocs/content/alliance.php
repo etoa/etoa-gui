@@ -1,12 +1,15 @@
 <?PHP
 
 use EtoA\Alliance\AllianceApplicationRepository;
+use EtoA\Alliance\AllianceDiplomacyLevel;
+use EtoA\Alliance\AllianceDiplomacyRepository;
 use EtoA\Alliance\AllianceHistoryRepository;
 use EtoA\Alliance\AlliancePollRepository;
 use EtoA\Alliance\AllianceRankRepository;
 use EtoA\Alliance\AllianceRepository;
 use EtoA\Alliance\Board\AllianceBoardTopicRepository;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\User\UserRepository;
 
 /** @var ConfigurationService */
 $config = $app[ConfigurationService::class];
@@ -14,6 +17,10 @@ $config = $app[ConfigurationService::class];
 $allianceRepository = $app[AllianceRepository::class];
 /** @var AllianceRankRepository $allianceRankRepository */
 $allianceRankRepository = $app[AllianceRankRepository::class];
+/** @var AllianceDiplomacyRepository $allianceDiplomacyRepository */
+$allianceDiplomacyRepository = $app[AllianceDiplomacyRepository::class];
+/** @var UserRepository $userRepository */
+$userRepository = $app[UserRepository::class];
 
 echo "<h1>Allianz</h1>";
 echo "<div id=\"allianceinfo\"></div>"; //nur zu entwicklungszwecken!
@@ -240,19 +247,9 @@ elseif ($cu->allianceId == 0) {
                         $check_name = check_illegal_signs($_POST['alliance_name']);
                         $signs = check_illegal_signs("gibt eine liste von unerlaubten zeichen aus! ; < > & etc.");
                         if ($check_tag == "" && $check_name == "") {
+
                             // Prüft, ob dieser Tag oder Name bereits vorhanden ist
-                            $check_res = dbquery("
-                        SELECT
-                            COUNT(*)
-                        FROM
-                            alliances
-                        WHERE
-                            (alliance_tag='" . $_POST['alliance_tag'] . "'
-                            OR alliance_name='" . $_POST['alliance_name'] . "')
-                            AND alliance_id!='" . $cu->allianceId . "'
-                        ;");
-                            // Name / Tag sind bereits vergeben
-                            if (mysql_result($check_res, 0) > 0) {
+                            if ($allianceRepository->exists($_POST['alliance_tag'], $_POST['alliance_name'], $cu->allianceId())) {
                                 error_msg("Der gewünschte Tag oder Name ist bereits vergeben!");
                             }
                             // Name / Tag sind noch nicht vergeben
@@ -524,21 +521,8 @@ elseif ($cu->allianceId == 0) {
                 }
 
                 // Kriege
-                $wars = dbquery("
-            SELECT
-                alliance_bnd_alliance_id1 as a1id,
-                alliance_bnd_alliance_id2 as a2id,
-                alliance_bnd_date as date
-            FROM
-                alliance_bnd
-            WHERE
-                alliance_bnd_level=3
-                AND
-                (alliance_bnd_alliance_id1='" . $ally->id . "'
-                OR alliance_bnd_alliance_id2='" . $ally->id . "')
-            ;");
-                if (mysql_num_rows($wars) > 0) {
-
+                $wars = $allianceDiplomacyRepository->getDiplomacies($ally->id, AllianceDiplomacyLevel::WAR);
+                if (count($wars) > 0) {
                     echo "<tr>
                                 <th>Kriege:</th>
                                 <td>
@@ -548,17 +532,14 @@ elseif ($cu->allianceId == 0) {
                                             <th>Punkte</th>
                                             <th>Zeitraum</th>
                                         </tr>";
-                    while ($war = mysql_fetch_array($wars)) {
-                        if ($war['a1id'] == $ally->id)
-                            $opAlly = new Alliance($war['a2id']);
-                        else
-                            $opAlly = new Alliance($war['a1id']);
+                    foreach ($wars as $diplomacy) {
+                        $opAlly = new Alliance($diplomacy->otherAllianceId);
                         echo "<tr>
                                             <td>
-                                                <a href=\"?page=$page&amp;id=" . $opAlly->id . "\">" . $opAlly . "</a>
+                                                <a href=\"?page=$page&amp;id=" . $diplomacy->otherAllianceId . "\">" . $opAlly . "</a>
                                             </td>
                                             <td>" . nf($opAlly->points) . " / " . nf($opAlly->avgPoints) . "</td>
-                                            <td>" . df($war['date'], 0) . " bis " . df($war['date'] + WAR_DURATION, 0) . "</td>
+                                            <td>" . df($diplomacy->date, 0) . " bis " . df($diplomacy->date + WAR_DURATION, 0) . "</td>
                                         </tr>";
                     }
                     echo "</table>
@@ -568,21 +549,8 @@ elseif ($cu->allianceId == 0) {
 
 
                 // Friedensabkommen
-                $wars = dbquery("
-            SELECT
-                alliance_bnd_alliance_id1 as a1id,
-                alliance_bnd_alliance_id2 as a2id,
-                alliance_bnd_date as date
-            FROM
-                alliance_bnd
-            WHERE
-                alliance_bnd_level=4
-                AND
-                (alliance_bnd_alliance_id1='" . $ally->id . "'
-                OR alliance_bnd_alliance_id2='" . $ally->id . "')
-
-            ;");
-                if (mysql_num_rows($wars) > 0) {
+                $peace = $allianceDiplomacyRepository->getDiplomacies($ally->id, AllianceDiplomacyLevel::PEACE);
+                if (count($peace) > 0) {
                     echo "<tr>
                                 <th>Friedensabkommen:</th>
                                 <td>
@@ -592,17 +560,14 @@ elseif ($cu->allianceId == 0) {
                                             <th>Punkte</th>
                                             <th>Zeitraum</th>
                                         </tr>";
-                    while ($war = mysql_fetch_array($wars)) {
-                        if ($war['a1id'] == $ally->id)
-                            $opAlly = new Alliance($war['a2id']);
-                        else
-                            $opAlly = new Alliance($war['a1id']);
+                    foreach ($peace as $diplomacy) {
+                        $opAlly = new Alliance($diplomacy->otherAllianceId);
                         echo "<tr>
                                             <td>
-                                                <a href=\"?page=$page&amp;id=" . $opAlly->id . "\">" . $opAlly . "</a>
+                                                <a href=\"?page=$page&amp;id=" . $diplomacy->otherAllianceId . "\">" . $opAlly . "</a>
                                             </td>
                                             <td>" . nf($opAlly->points) . " / " . nf($opAlly->avgPoints) . "</td>
-                                            <td>" . df($war['date'], 0) . " bis " . df($war['date'] + PEACE_DURATION, 0) . "</td>
+                                            <td>" . df($diplomacy->date, 0) . " bis " . df($diplomacy->date + PEACE_DURATION, 0) . "</td>
                                         </tr>";
                     }
                     echo "</table>
@@ -611,21 +576,8 @@ elseif ($cu->allianceId == 0) {
                 }
 
                 // Bündnisse
-                $wars = dbquery("
-            SELECT
-                alliance_bnd_alliance_id1 as a1id,
-                alliance_bnd_alliance_id2 as a2id,
-                alliance_bnd_date as date,
-                alliance_bnd_name as name
-            FROM
-                alliance_bnd
-            WHERE
-                alliance_bnd_level=2
-                AND
-                (alliance_bnd_alliance_id1='" . $ally->id . "'
-                OR alliance_bnd_alliance_id2='" . $ally->id . "')
-            ;");
-                if (mysql_num_rows($wars) > 0) {
+                $bnds = $allianceDiplomacyRepository->getDiplomacies($ally->id, AllianceDiplomacyLevel::BND_CONFIRMED);
+                if (count($bnds) > 0) {
                     echo "<tr>
                                 <th>Bündnisse:</th>
                                 <td>
@@ -637,16 +589,13 @@ elseif ($cu->allianceId == 0) {
                                             <th>Seit</th>
                                         </tr>";
 
-                    while ($war = mysql_fetch_array($wars)) {
-                        if ($war['a1id'] == $ally->id)
-                            $opAlly = new Alliance($war['a2id']);
-                        else
-                            $opAlly = new Alliance($war['a1id']);
+                    foreach ($bnds as $diplomacy) {
+                        $opAlly = new Alliance($diplomacy->otherAllianceId);
                         echo "<tr>
-                                            <td>" . stripslashes($war['name']) . "</td>
-                                            <td><a href=\"?page=$page&amp;id=" . $opAlly->id . "\">" . $opAlly . "</a></td>
+                                            <td>" . stripslashes($diplomacy->name) . "</td>
+                                            <td><a href=\"?page=$page&amp;id=" . $diplomacy->otherAllianceId . "\">" . $opAlly . "</a></td>
                                             <td>" . nf($opAlly->points) . " / " . nf($opAlly->avgPoints) . "</td>
-                                            <td>" . df($war['date']) . "</td>
+                                            <td>" . df($diplomacy->date) . "</td>
                                         </tr>";
                     }
                     echo "</table>
@@ -713,14 +662,7 @@ elseif ($cu->allianceId == 0) {
         }
     } else {
         if ($_POST['resolvefalseallyid'] != "") {
-            dbquery("
-        UPDATE
-            users
-        SET
-            user_alliance_id=0,
-            user_alliance_rank_id=0
-        WHERE
-            user_id=" . $cu->id . ";");
+            $userRepository->setAllianceId($cu->getId(), 0, 0);
             success_msg("Die fehlerhafte Verkn&uuml;pfung wurde gel&ouml;st!");
         } else
             echo "<form action=\"?page=$page\" method=\"post\">Diese Allianz existiert nicht!<br/><br/>

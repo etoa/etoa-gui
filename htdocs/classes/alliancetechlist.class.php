@@ -1,5 +1,7 @@
 <?PHP
 
+use EtoA\Alliance\AllianceTechnologyRepository;
+
 class AllianceTechlist implements IteratorAggregate
 {
     private $allianceId;
@@ -208,7 +210,8 @@ class AllianceTechlist implements IteratorAggregate
      */
     function build($itemId)
     {
-        global $cu;
+        global $cu, $app;
+
         if ($this->alliance == null) {
             if ($cu->alliance->id != $this->allianceId)
                 $this->alliance = new Alliance($this->allianceId);
@@ -237,43 +240,14 @@ class AllianceTechlist implements IteratorAggregate
             $this->itemStatus[$itemId]['start_time'] = $startTime;
             $this->itemStatus[$itemId]['end_time'] = $endTime;
 
+            /** @var AllianceTechnologyRepository $allianceTechnologyRepository */
+            $allianceTechnologyRepository = $app[AllianceTechnologyRepository::class];
             if ($this->itemStatus[$itemId]['level'] == 0) {
-                dbquery("
-							INSERT INTO
-								`alliance_techlist`
-							(
-							 	`alliance_techlist_alliance_id`,
-								`alliance_techlist_tech_id`,
-								`alliance_techlist_current_level`,
-								`alliance_techlist_build_start_time`,
-								`alliance_techlist_build_end_time`,
-								`alliance_techlist_member_for`
-							)
-							VALUES
-							(
-							 	'" . $this->allianceId . "',
-								'" . $itemId . "',
-								'0',
-								'" . $startTime . "',
-								'" . $endTime . "',
-								'" . $this->alliance->memberCount . "'
-							);");
+                $allianceTechnologyRepository->addToAlliance($this->allianceId, $itemId, 0, $this->alliance->memberCount, $startTime, $endTime);
             } else {
-                dbquery("
-							UPDATE
-								`alliance_techlist`
-							SET
-								`alliance_techlist_build_start_time`='" . $startTime . "',
-								`alliance_techlist_build_end_time`='" . $endTime . "',
-								`alliance_techlist_member_for`='" . $this->alliance->memberCount . "'
-							WHERE
-							 	`alliance_techlist_alliance_id`='" . $this->allianceId . "'
-								AND `alliance_techlist_tech_id`='" . $itemId . "'
-							LIMIT 1;
-							");
+                $allianceTechnologyRepository->updateForAlliance($this->allianceId, $itemId, $this->itemStatus[$itemId]['level'], $this->alliance->memberCount, $startTime, $endTime);
             }
 
-            global $app;
             /** @var \EtoA\Alliance\AllianceHistoryRepository $allianceHistoryRepository */
             $allianceHistoryRepository = $app[\EtoA\Alliance\AllianceHistoryRepository::class];
             $allianceHistoryRepository->addEntry((int) $cu->allianceId, "[b]" . $cu->nick . "[/b] hat die Forschung [b]" . $this->items[$itemId]->name . " (" . $lvl . ")[/b] in Auftrag gegeben.");

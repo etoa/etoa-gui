@@ -20,6 +20,9 @@ class AllianceDiplomacy
     public int $diplomatId;
     public int $otherAllianceId;
     public ?string $otherAllianceName;
+    public ?string $otherAllianceTag;
+    public int $otherAlliancePoints = 0;
+    public int $otherAllianceAveragePoints = 0;
 
     public function __construct(array $data, int $allianceId)
     {
@@ -40,5 +43,6 @@ class AllianceDiplomacy
 
         $this->otherAllianceId = $allianceId === $this->alliance2Id ? $this->alliance1Id : $this->alliance2Id;
         $this->otherAllianceName = $allianceId === $this->alliance2Id ? $this->alliance1Name : $this->alliance2Name;
+        $this->otherAllianceTag = $allianceId === $this->alliance2Id ? $this->alliance1Tag : $this->alliance2Tag;
     }
 }

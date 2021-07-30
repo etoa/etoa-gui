@@ -50,4 +50,13 @@ class AllianceRepositoryTest extends AbstractDbTestCase
 
         $this->assertSame([13 => '[tag] Alliance'], $allianceNames);
     }
+
+    public function testExists(): void
+    {
+        $allianceId = $this->repository->create('tag', 'Alliance', 1);
+
+        $this->assertTrue($this->repository->exists('tag', 'Test'));
+        $this->assertTrue($this->repository->exists('other', 'Alliance'));
+        $this->assertFalse($this->repository->exists('tag', 'Alliance', $allianceId));
+    }
 }

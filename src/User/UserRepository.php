@@ -55,16 +55,24 @@ class UserRepository extends AbstractRepository
             ->fetchOne();
     }
 
-    public function setAllianceId(int $userId, int $allianceId): void
+    public function setAllianceId(int $userId, int $allianceId, int $rankId = null): void
     {
-        $this->createQueryBuilder()
+        $qb = $this->createQueryBuilder()
             ->update('users')
             ->set('user_alliance_id', ':allianceId')
             ->where('user_id = :id')
             ->setParameters([
                 'id' => $userId,
                 'allianceId' => $allianceId,
-            ])
+            ]);
+
+        if ($rankId !== null) {
+            $qb
+                ->set('user_alliance_rank_id', ':rank')
+                ->setParameter('rank', $rankId);
+        }
+
+        $qb
             ->execute();
     }
 
