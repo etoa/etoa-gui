@@ -66,6 +66,7 @@ class UserService
     private UserCommentRepository $userCommentRepository;
     private UserSurveillanceRepository $userSurveillanceRepository;
     private BackendMessageService $backendMessageService;
+    private UserLogRepository $userLogRepository;
 
     public function __construct(
         ConfigurationService $config,
@@ -99,7 +100,8 @@ class UserService
         UserPointsRepository $userPointsRepository,
         UserCommentRepository $userCommentRepository,
         UserSurveillanceRepository $userSurveillanceRepository,
-        BackendMessageService $backendMessageService
+        BackendMessageService $backendMessageService,
+        UserLogRepository $userLogRepository
     ) {
         $this->config = $config;
         $this->userRepository = $userRepository;
@@ -133,6 +135,7 @@ class UserService
         $this->userCommentRepository = $userCommentRepository;
         $this->userSurveillanceRepository = $userSurveillanceRepository;
         $this->backendMessageService = $backendMessageService;
+        $this->userLogRepository = $userLogRepository;
     }
 
     public function register(
@@ -429,5 +432,16 @@ die Spielleitung";
         }
 
         return count($users);
+    }
+
+    public function addToUserLog(int $userId, string $zone, string $message, bool $public = true): void
+    {
+        $user = $this->userRepository->getUser($userId);
+
+        $search = array("{user}", "{nick}");
+        $replace = array($user->nick, $user->nick);
+        $message = str_replace($search, $replace, $message);
+
+        $this->userLogRepository->add($userId, $zone, $message, gethostbyname($_SERVER['REMOTE_ADDR']), $public);
     }
 }

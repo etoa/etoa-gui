@@ -2,12 +2,16 @@
 
 use EtoA\Backend\BackendMessageService;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\User\UserService;
 
 /** @var ConfigurationService */
 $config = $app[ConfigurationService::class];
 
 /** @var BackendMessageService */
 $backendMessageService = $app[BackendMessageService::class];
+
+/** @var UserService*/
+$userService = $app[UserService::class];
 
 $umod = false;
 
@@ -18,7 +22,7 @@ $umod = false;
 if (isset($_POST['hmod_on']) && checker_verify()) {
     if ($cu->activateUmode()) {
         success_msg("Du bist nun im Urlaubsmodus bis [b]" . df(time()) . "[/b].");
-        $cu->addToUserLog("settings", "{nick} ist nun im Urlaub.", 1);
+        $userService->addToUserLog($cu->id, "settings", "{nick} ist nun im Urlaub.", true);
         $umod = true;
     } else {
         error_msg("Es sind noch Flotten unterwegs!");
@@ -36,7 +40,7 @@ if (isset($_POST['hmod_off']) && checker_verify()) {
         }
 
         success_msg("Urlaubsmodus aufgehoben! Denke daran, auf allen deinen Planeten die Produktion zu überprüfen!");
-        $cu->addToUserLog("settings", "{nick} ist nun aus dem Urlaub zurück.", 1);
+        $userService->addToUserLog($cu->id, "settings", "{nick} ist nun aus dem Urlaub zurück.", true);
 
         echo '<input type="button" value="Zur Übersicht" onclick="document.location=\'?page=overview\'" />';
     } else {
@@ -67,7 +71,7 @@ elseif (isset($_POST['remove_submit'])) {
         session_destroy();
         success_msg("Deine Daten werden am " . df(time() + ($config->getInt('user_delete_days') * 3600 * 24)) . " Uhr von unserem System gelöscht! Wir w&uuml;nschen weiterhin viel Erfolg im Netz!");
         $cu->activateUmode(true);
-        $cu->addToUserLog("settings", "{nick} hat seinen Account zur Löschung freigegeben.", 1);
+        $userService->addToUserLog($cu->id, "settings", "{nick} hat seinen Account zur Löschung freigegeben.", true);
         echo '<input type="button" value="Zur Startseite" onclick="document.location=\'' . getLoginUrl() . '\'" />';
     } else {
         error_msg("Falsches Passwort!");
@@ -81,7 +85,7 @@ elseif (isset($_POST['remove_submit'])) {
 elseif (isset($_POST['remove_cancel']) && checker_verify()) {
     $cu->revokeDelete();
     success_msg("Löschantrag aufgehoben!");
-    $cu->addToUserLog("settings", "{nick} hat seine Accountlöschung aufgehoben.", 1);
+    $userService->addToUserLog($cu->id, "settings", "{nick} hat seine Accountlöschung aufgehoben.", true);
     echo '<input type="button" value="Weiter" onclick="document.location=\'?page=userconfig&mode=misc\'" />';
 }
 

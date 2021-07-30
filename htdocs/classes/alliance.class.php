@@ -12,6 +12,7 @@ use EtoA\Alliance\Board\AllianceBoardCategoryRepository;
 use EtoA\Alliance\Board\AllianceBoardTopicRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Message\MessageRepository;
+use EtoA\User\UserService;
 
 /**
  * The alliance object
@@ -199,7 +200,11 @@ class Alliance
                     $allianceHistoryRepository->addEntry($this->id, "Der Spieler [b]" . $this->founder . "[/b] wird zum Gründer befördert.");
 
                     $this->founder->sendMessage(MSG_ALLYMAIL_CAT, "Gründer", "Du hast nun die Gründerrechte deiner Allianz!");
-                    $this->founder->addToUserLog("alliance", "{nick} ist nun Gründer der Allianz " . $this->__toString());
+
+                    /** @var UserService */
+                    $userService = $app[UserService::class];
+                    $userService->addToUserLog($this->founder->id, "alliance", "{nick} ist nun Gründer der Allianz " . $this->__toString());
+
                     $this->changedFields[$key] = true;
                     return true;
                 }
@@ -686,7 +691,10 @@ class Alliance
             //Log schreiben
             if ($user != null) {
                 $user->alliance = null;
-                $user->addToUserLog("alliance", "{nick} löst die Allianz [b]" . $this->__toString() . "[/b] auf.");
+
+                /** @var UserService */
+                $userService = $app[UserService::class];
+                $userService->addToUserLog($user->id, "alliance", "{nick} löst die Allianz [b]" . $this->__toString() . "[/b] auf.");
                 Log::add("5", Log::INFO, "Die Allianz [b]" . $this->__toString() . "[/b] wurde von " . $user . " aufgelöst!");
             } else
                 Log::add("5", Log::INFO, "Die Allianz [b]" . $this->__toString() . "[/b] wurde gelöscht!");
@@ -781,7 +789,10 @@ class Alliance
                             );
                             $returnMsg = new Alliance(mysql_insert_id());
                             $data['founder']->alliance = $returnMsg;
-                            $data['founder']->addToUserLog("alliance", "{nick} hat die Allianz [b]" . $returnMsg . "[/b] gegründet.");
+
+                            /** @var UserService */
+                            $userService = $app[UserService::class];
+                            $userService->addToUserLog($data['founder']->id, "alliance", "{nick} hat die Allianz [b]" . $returnMsg . "[/b] gegründet.");
 
                             /** @var AllianceHistoryRepository */
                             $allianceHistoryRepository = $app[AllianceHistoryRepository::class];

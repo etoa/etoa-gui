@@ -14,6 +14,7 @@ use EtoA\UI\ResourceBoxDrawer;
 use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Universe\Planet\PlanetService;
+use EtoA\User\UserService;
 use Symfony\Component\HttpFoundation\Request;
 
 /** @var ConfigurationService */
@@ -158,7 +159,11 @@ if (isset($cp)) {
                         $entity = $entityRepository->findIncludeCell($planet->id);
 
                         $cu->setChangedMainPlanet(true);
-                        $cu->addToUserLog("planets", "{nick} wählt [b]" . $entity->toString() . "[/b] als neuen Hauptplanet aus.", 0);
+
+                        /** @var UserService */
+                        $userService = $app[UserService::class];
+                        $userService->addToUserLog($cu->id, "planets", "{nick} wählt [b]" . $entity->toString() . "[/b] als neuen Hauptplanet aus.", false);
+
                         echo "<br><b>" . $planet->name . "</b> ist nun dein Hauptplanet!<br/><br/>
                         <input type=\"button\" value=\"Zurück\" onclick=\"document.location='?page=$page'\" />";
                     } else {

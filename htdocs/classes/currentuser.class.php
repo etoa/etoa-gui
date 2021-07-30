@@ -2,6 +2,7 @@
 
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Support\Mail\MailSenderService;
+use EtoA\User\UserService;
 use EtoA\User\UserSittingRepository;
 
 /**
@@ -90,7 +91,9 @@ class CurrentUser extends User
                                 $this->email
                             );
 
-                            $this->addToUserLog("settings", "{nick} ändert sein Passwort.", 0);
+                            /** @var UserService */
+                            $userService = $app[UserService::class];
+                            $userService->addToUserLog($this->id, "settings", "{nick} ändert sein Passwort.", false);
                             return true;
                         }
                     } else {

@@ -5,6 +5,7 @@ use EtoA\Alliance\AllianceHistoryRepository;
 use EtoA\Alliance\AllianceRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\User\UserRepository;
+use EtoA\User\UserService;
 
 /** @var ConfigurationService */
 $config = $app[ConfigurationService::class];
@@ -51,8 +52,9 @@ if (Alliance::checkActionRights('applications')) {
                     $allianceHistoryRepository->addEntry((int) $cu->allianceId, "Die Bewerbung von [b]" . $nick . "[/b] wurde akzeptiert!");
                     Log::add(5, Log::INFO, "Der Spieler [b]" . $nick . "[/b] tritt der Allianz [b]" . $alliance->nameWithTag . "[/b] bei!");
 
-                    $tu = new User($id);
-                    $tu->addToUserLog("alliance", "{nick} ist nun ein Mitglied der Allianz " . $alliance->name . ".");
+                    /** @var UserService */
+                    $userService = $app[UserService::class];
+                    $userService->addToUserLog($id, "alliance", "{nick} ist nun ein Mitglied der Allianz " . $alliance->name . ".");
 
                     // Speichern
                     $userRepository->setAllianceId($id, $cu->allianceId());

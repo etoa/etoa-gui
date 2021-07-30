@@ -7,6 +7,7 @@ use EtoA\Alliance\AllianceRepository;
 use EtoA\Alliance\InvalidAllianceParametersException;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\User\UserRepository;
+use EtoA\User\UserService;
 use Symfony\Component\HttpFoundation\Request;
 use Twig\Environment;
 
@@ -182,7 +183,12 @@ function create(
             );
             $alliance = new Alliance($id);
             $founder->alliance = $alliance;
-            $founder->addToUserLog("alliance", "{nick} hat die Allianz [b]" . $alliance . "[/b] gegründet.");
+
+            // TODO
+            global $app;
+            /** @var UserService */
+            $userService = $app[UserService::class];
+            $userService->addToUserLog($founder->id, "alliance", "{nick} hat die Allianz [b]" . $alliance . "[/b] gegründet.");
             $allianceHistoryRepository->addEntry($id, "Die Allianz [b]" . $alliance . "[/b] wurde von [b]" . $founder . "[/b] gegründet!");
             success_msg("Allianz wurde erstellt! [[page alliances sub=edit id=" . $alliance->id . "]Details[/page]]");
         } catch (InvalidAllianceParametersException $ex) {

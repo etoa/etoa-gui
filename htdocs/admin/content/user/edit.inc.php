@@ -41,6 +41,9 @@ $userSittingRepository = $app[UserSittingRepository::class];
 /** @var UserMultiRepository $userMultiRepository */
 $userMultiRepository = $app[UserMultiRepository::class];
 
+/** @var UserService */
+$userService = $app[UserService::class];
+
 if (isset($_GET['id']))
     $id = $_GET['id'];
 elseif (isset($_GET['user_id']))
@@ -55,7 +58,7 @@ $adminUserNicks = $adminUserRepo->findAllAsList();
 if (isset($_POST['save'])) {
     $logUser = new User($id);
     if ($user->nick !== $_POST['user_nick']) {
-        $logUser->addToUserLog("settings", "{nick} hat seinen Namen zu " . $_POST['user_nick'] . " geändert.", 1);
+        $userService->addToUserLog($id, "settings", "{nick} hat seinen Namen zu " . $_POST['user_nick'] . " geändert.", true);
     }
 
     // Speichert Usertdaten in der Tabelle "users"
@@ -145,7 +148,7 @@ if (isset($_POST['save'])) {
         $sql .= ",user_ban_admin_id='" . $_POST['user_ban_admin_id'] . "'";
         $sql .= ",user_ban_reason='" . addslashes($_POST['user_ban_reason']) . "'";
 
-        $logUser->addToUserLog("account", "{nick} wird von [b]" . date("d.m.Y H:i", $ban_from) . "[/b] bis [b]" . date("d.m.Y H:i", $ban_to) . "[/b] gesperrt.\n[b]Grund:[/b] " . addslashes($_POST['user_ban_reason']) . "\n[b]Verantwortlich: [/b] " . $adminUserNicks[$_POST['user_ban_admin_id']], 1);
+        $userService->addToUserLog($id, "account", "{nick} wird von [b]" . date("d.m.Y H:i", $ban_from) . "[/b] bis [b]" . date("d.m.Y H:i", $ban_to) . "[/b] gesperrt.\n[b]Grund:[/b] " . addslashes($_POST['user_ban_reason']) . "\n[b]Verantwortlich: [/b] " . $adminUserNicks[$_POST['user_ban_admin_id']], true);
     } else {
         $sql .= ",user_blocked_from=0";
         $sql .= ",user_blocked_to=0";
