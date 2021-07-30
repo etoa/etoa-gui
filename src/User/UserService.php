@@ -477,4 +477,21 @@ die Spielleitung";
 
         $this->addToUserLog($userId, "settings", "{nick} ändert sein Passwort.", false);
     }
+
+    public function resetPassword(string $nick, string $emailFixed): void
+    {
+        $user = $this->userRepository->getUserByNickAndEmail($nick, $emailFixed);
+        if ($user === null) {
+            throw new Exception('Es wurde kein entsprechender Datensatz gefunden!');
+        }
+
+        $pw = generatePasswort();
+
+        $email_text = 'Hallo ' . $_POST['user_nick'] . "\n\nDu hast ein neues Passwort angefordert.\nHier sind die neuen Daten:\n\nUniversum: " . $this->config->get('roundname') . "\n\nNick: " . $nick . "\nPasswort: " . $pw . "\n\nWeiterhin viel Spass...\nDas EtoA-Team";
+        $this->mailSenderService->send("Passwort-Anforderung", $email_text, $emailFixed);
+
+        $this->userRepository->updatePassword($user->id, $pw);
+
+        Log::add(3, Log::INFO, 'Der Benutzer ' . $_POST['user_nick'] . ' hat ein neues Passwort per E-Mail angefordert!');
+    }
 }

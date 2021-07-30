@@ -5,58 +5,28 @@
 //
 
 use EtoA\Core\Configuration\ConfigurationService;
-use EtoA\Support\Mail\MailSenderService;
+use EtoA\User\UserService;
+
+/** @var UserService */
+$userService = $app[UserService::class];
 
 /** @var ConfigurationService */
 $config = $app[ConfigurationService::class];
-
-/** @var MailSenderService $mailSenderService */
-$mailSenderService = $app[MailSenderService::class];
 
 $errorMessage = null;
 $successMessage = null;
 try {
     if (isset($_POST['submit_pwforgot']) && checker_verify(0, 1, true)) {
         if ($_POST['user_nick'] && !stristr($_POST['user_nick'], "'") && $_POST['user_email_fix'] && !stristr($_POST['user_email_fix'], "'")) {
-            $res = dbquery("
-        SELECT
-            user_id,
-            user_registered
-        FROM
-            users
-        WHERE
-            LCASE(user_nick)='" . strtolower($_POST['user_nick']) . "'
-            AND user_email_fix='" . $_POST['user_email_fix'] . "'
-        ;");
-            if (mysql_num_rows($res) > 0) {
-                $arr = mysql_fetch_array($res);
-
-                // Passwort generieren
-                $pw = generatePasswort();
-
-                // Email schreiben
-                $email_text = 'Hallo ' . $_POST['user_nick'] . "\n\nDu hast ein neues Passwort angefordert.\nHier sind die neuen Daten:\n\nUniversum: " . $config->get('roundname') . "\n\nNick: " . $_POST['user_nick'] . "\nPasswort: " . $pw . "\n\nWeiterhin viel Spass...\nDas EtoA-Team";
-                $mailSenderService->send("Passwort-Anforderung", $email_text, $_POST['user_email_fix']);
-
-                // Passwort updaten
-                dbquery("UPDATE
-                users
-            SET
-                user_password='" . saltPasswort($pw) . "'
-            WHERE
-                user_nick='" . $_POST['user_nick'] . "'
-                AND user_email_fix='" . $_POST['user_email_fix'] . "'
-            ;");
-
-                // Log hinzufügen
-                Log::add(3, Log::INFO, 'Der Benutzer ' . $_POST['user_nick'] . ' hat ein neues Passwort per E-Mail angefordert!');
-
-                $_SESSION['pwforgot_success_msg'] = 'Deine Passwort-Anfrage war erfolgreich. Du solltest in einigen Minuten eine E-Mail mit dem neuen Passwort erhalten!';
-                forward('?index=' . $index);
-                return;
+            try {
+                $userService->resetPassword($_POST['user_nick'], $_POST['user_email_fix']);
+            } catch (Exception $ex) {
+                $errorMessage = $ex->getMessage();
             }
 
-            $errorMessage = 'Es wurde kein entsprechender Datensatz gefunden!';
+            $_SESSION['pwforgot_success_msg'] = 'Deine Passwort-Anfrage war erfolgreich. Du solltest in einigen Minuten eine E-Mail mit dem neuen Passwort erhalten!';
+            forward('?index=' . $index);
+            return;
         } else {
             $errorMessage = 'Du hast keinen Benutzernamen oder keine E-Mail-Adresse eingegeben oder ein unerlaubtes Zeichen verwendet!';
         }
