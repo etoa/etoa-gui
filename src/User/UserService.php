@@ -301,6 +301,24 @@ die Spielleitung";
         $this->mailSenderService->send("Accountlöschung", $text, $user->email);
     }
 
+    public function deleteRequest(int $userId, string $password): bool
+    {
+        $user = $this->userRepository->getUser($userId);
+        if ($user !== null && validatePasswort($password, $user->password)) {
+            $timestamp = time() + ($this->config->getInt('user_delete_days') * 3600 * 24);
+            $this->userRepository->markDeleted($userId, $timestamp);
+
+            return true;
+        }
+
+        return false;
+    }
+
+    public function revokeDelete(int $userId): void
+    {
+        $this->userRepository->markDeleted($userId, 0);
+    }
+
     public function removeInactive(bool $manual = false): int
     {
         /** @var int $registerTime Zeit nach der ein User gelöscht wird wenn er noch 0 Punkte hat */

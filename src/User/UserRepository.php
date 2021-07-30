@@ -361,6 +361,19 @@ class UserRepository extends AbstractRepository
         return array_map(fn ($row) => new User($row), $data);
     }
 
+    public function markDeleted(int $userId, int $timestamp): void
+    {
+        $this->createQueryBuilder()
+            ->update('users')
+            ->set('user_deleted', ':timestamp')
+            ->where('user_id = :userId')
+            ->setParameters([
+                'userId' => $userId,
+                'timestamp' => $timestamp,
+            ])
+            ->execute();
+    }
+
     /**
      * @return array<string,string>
      */

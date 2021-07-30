@@ -41,9 +41,6 @@ $userSittingRepository = $app[UserSittingRepository::class];
 /** @var UserMultiRepository $userMultiRepository */
 $userMultiRepository = $app[UserMultiRepository::class];
 
-/** @var UserService */
-$userService = $app[UserService::class];
-
 if (isset($_GET['id']))
     $id = $_GET['id'];
 elseif (isset($_GET['user_id']))
@@ -275,27 +272,13 @@ if (isset($_POST['delete_user'])) {
 // Löschantrag speichern
 if (isset($_POST['requestdelete'])) {
     $t = time() + ($config->getInt('user_delete_days') * 3600 * 24);
-    dbquery("
-    UPDATE
-        users
-    SET
-        user_deleted=" . $t . "
-    WHERE
-        user_id=" . $id . "
-    ;");
+    $userRepository->markDeleted($id, $t);
     success_msg("Löschantrag gespeichert!");
 }
 
 // Löschantrag aufheben
 if (isset($_POST['canceldelete'])) {
-    dbquery("
-    UPDATE
-        users
-    SET
-        user_deleted=0
-    WHERE
-        user_id=" . $id . "
-    ;");
+    $userRepository->markDeleted($id, 0);
     success_msg("Löschantrag aufgehoben!");
 }
 
