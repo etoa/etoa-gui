@@ -240,19 +240,9 @@ elseif ($cu->allianceId == 0) {
                         $check_name = check_illegal_signs($_POST['alliance_name']);
                         $signs = check_illegal_signs("gibt eine liste von unerlaubten zeichen aus! ; < > & etc.");
                         if ($check_tag == "" && $check_name == "") {
+
                             // Prüft, ob dieser Tag oder Name bereits vorhanden ist
-                            $check_res = dbquery("
-                        SELECT
-                            COUNT(*)
-                        FROM
-                            alliances
-                        WHERE
-                            (alliance_tag='" . $_POST['alliance_tag'] . "'
-                            OR alliance_name='" . $_POST['alliance_name'] . "')
-                            AND alliance_id!='" . $cu->allianceId . "'
-                        ;");
-                            // Name / Tag sind bereits vergeben
-                            if (mysql_result($check_res, 0) > 0) {
+                            if ($allianceRepository->exists($_POST['alliance_tag'], $_POST['alliance_name'], $cu->allianceId())) {
                                 error_msg("Der gewünschte Tag oder Name ist bereits vergeben!");
                             }
                             // Name / Tag sind noch nicht vergeben
