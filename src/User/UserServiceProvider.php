@@ -12,6 +12,7 @@ use EtoA\Bookmark\FleetBookmarkRepository;
 use EtoA\BuddyList\BuddyListRepository;
 use EtoA\Building\BuildingRepository;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\DefaultItem\DefaultItemRepository;
 use EtoA\Defense\DefenseQueueRepository;
 use EtoA\Defense\DefenseRepository;
 use EtoA\Fleet\FleetRepository;
@@ -136,6 +137,16 @@ class UserServiceProvider implements ServiceProviderInterface
             return new UserUniverseDiscoveryService(
                 $pimple[ConfigurationService::class],
                 $pimple[UserRepository::class]
+            );
+        };
+
+        $pimple[UserSetupService::class] = function (Container $pimple): UserSetupService {
+            return new UserSetupService(
+                $pimple[DefaultItemRepository::class],
+                $pimple[BuildingRepository::class],
+                $pimple[TechnologyRepository::class],
+                $pimple[ShipRepository::class],
+                $pimple[DefenseRepository::class],
             );
         };
     }
