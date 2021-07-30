@@ -1,6 +1,8 @@
 <?PHP
 
 use EtoA\Alliance\AllianceApplicationRepository;
+use EtoA\Alliance\AllianceDiplomacyLevel;
+use EtoA\Alliance\AllianceDiplomacyRepository;
 use EtoA\Alliance\AllianceHistoryRepository;
 use EtoA\Alliance\AlliancePollRepository;
 use EtoA\Alliance\AllianceRankRepository;
@@ -14,6 +16,8 @@ $config = $app[ConfigurationService::class];
 $allianceRepository = $app[AllianceRepository::class];
 /** @var AllianceRankRepository $allianceRankRepository */
 $allianceRankRepository = $app[AllianceRankRepository::class];
+/** @var AllianceDiplomacyRepository $allianceDiplomacyRepository */
+$allianceDiplomacyRepository = $app[AllianceDiplomacyRepository::class];
 
 echo "<h1>Allianz</h1>";
 echo "<div id=\"allianceinfo\"></div>"; //nur zu entwicklungszwecken!
@@ -514,21 +518,8 @@ elseif ($cu->allianceId == 0) {
                 }
 
                 // Kriege
-                $wars = dbquery("
-            SELECT
-                alliance_bnd_alliance_id1 as a1id,
-                alliance_bnd_alliance_id2 as a2id,
-                alliance_bnd_date as date
-            FROM
-                alliance_bnd
-            WHERE
-                alliance_bnd_level=3
-                AND
-                (alliance_bnd_alliance_id1='" . $ally->id . "'
-                OR alliance_bnd_alliance_id2='" . $ally->id . "')
-            ;");
-                if (mysql_num_rows($wars) > 0) {
-
+                $wars = $allianceDiplomacyRepository->getDiplomacies($ally->id, AllianceDiplomacyLevel::WAR);
+                if (count($wars) > 0) {
                     echo "<tr>
                                 <th>Kriege:</th>
                                 <td>
@@ -538,17 +529,13 @@ elseif ($cu->allianceId == 0) {
                                             <th>Punkte</th>
                                             <th>Zeitraum</th>
                                         </tr>";
-                    while ($war = mysql_fetch_array($wars)) {
-                        if ($war['a1id'] == $ally->id)
-                            $opAlly = new Alliance($war['a2id']);
-                        else
-                            $opAlly = new Alliance($war['a1id']);
+                    foreach ($wars as $diplomacy) {
                         echo "<tr>
                                             <td>
-                                                <a href=\"?page=$page&amp;id=" . $opAlly->id . "\">" . $opAlly . "</a>
+                                                <a href=\"?page=$page&amp;id=" . $diplomacy->otherAllianceId->id . "\">[" . $diplomacy->otherAllianceTag . "] " . $diplomacy->otherAllianceName . "</a>
                                             </td>
-                                            <td>" . nf($opAlly->points) . " / " . nf($opAlly->avgPoints) . "</td>
-                                            <td>" . df($war['date'], 0) . " bis " . df($war['date'] + WAR_DURATION, 0) . "</td>
+                                            <td>" . nf($diplomacy->otherAlliancePoints) . " / " . nf($diplomacy->otherAllianceAveragePoints) . "</td>
+                                            <td>" . df($diplomacy->date, 0) . " bis " . df($diplomacy->date + WAR_DURATION, 0) . "</td>
                                         </tr>";
                     }
                     echo "</table>
@@ -558,21 +545,8 @@ elseif ($cu->allianceId == 0) {
 
 
                 // Friedensabkommen
-                $wars = dbquery("
-            SELECT
-                alliance_bnd_alliance_id1 as a1id,
-                alliance_bnd_alliance_id2 as a2id,
-                alliance_bnd_date as date
-            FROM
-                alliance_bnd
-            WHERE
-                alliance_bnd_level=4
-                AND
-                (alliance_bnd_alliance_id1='" . $ally->id . "'
-                OR alliance_bnd_alliance_id2='" . $ally->id . "')
-
-            ;");
-                if (mysql_num_rows($wars) > 0) {
+                $peace = $allianceDiplomacyRepository->getDiplomacies($ally->id, AllianceDiplomacyLevel::PEACE);
+                if (mysql_num_rows($peace) > 0) {
                     echo "<tr>
                                 <th>Friedensabkommen:</th>
                                 <td>
@@ -582,17 +556,13 @@ elseif ($cu->allianceId == 0) {
                                             <th>Punkte</th>
                                             <th>Zeitraum</th>
                                         </tr>";
-                    while ($war = mysql_fetch_array($wars)) {
-                        if ($war['a1id'] == $ally->id)
-                            $opAlly = new Alliance($war['a2id']);
-                        else
-                            $opAlly = new Alliance($war['a1id']);
+                    foreach ($peace as $diplomacy) {
                         echo "<tr>
                                             <td>
-                                                <a href=\"?page=$page&amp;id=" . $opAlly->id . "\">" . $opAlly . "</a>
+                                                <a href=\"?page=$page&amp;id=" . $diplomacy->otherAllianceId->id . "\">[" . $diplomacy->otherAllianceTag . "] " . $diplomacy->otherAllianceName . "</a>
                                             </td>
-                                            <td>" . nf($opAlly->points) . " / " . nf($opAlly->avgPoints) . "</td>
-                                            <td>" . df($war['date'], 0) . " bis " . df($war['date'] + PEACE_DURATION, 0) . "</td>
+                                            <td>" . nf($diplomacy->otherAlliancePoints) . " / " . nf($diplomacy->otherAllianceAveragePoints) . "</td>
+                                            <td>" . df($diplomacy->date, 0) . " bis " . df($diplomacy->date + PEACE_DURATION, 0) . "</td>
                                         </tr>";
                     }
                     echo "</table>
@@ -601,20 +571,7 @@ elseif ($cu->allianceId == 0) {
                 }
 
                 // Bündnisse
-                $wars = dbquery("
-            SELECT
-                alliance_bnd_alliance_id1 as a1id,
-                alliance_bnd_alliance_id2 as a2id,
-                alliance_bnd_date as date,
-                alliance_bnd_name as name
-            FROM
-                alliance_bnd
-            WHERE
-                alliance_bnd_level=2
-                AND
-                (alliance_bnd_alliance_id1='" . $ally->id . "'
-                OR alliance_bnd_alliance_id2='" . $ally->id . "')
-            ;");
+                $bnds = $allianceDiplomacyRepository->getDiplomacies($ally->id, AllianceDiplomacyLevel::BND_CONFIRMED);
                 if (mysql_num_rows($wars) > 0) {
                     echo "<tr>
                                 <th>Bündnisse:</th>
@@ -627,16 +584,12 @@ elseif ($cu->allianceId == 0) {
                                             <th>Seit</th>
                                         </tr>";
 
-                    while ($war = mysql_fetch_array($wars)) {
-                        if ($war['a1id'] == $ally->id)
-                            $opAlly = new Alliance($war['a2id']);
-                        else
-                            $opAlly = new Alliance($war['a1id']);
+                    foreach ($bnds as $diplomacy) {
                         echo "<tr>
-                                            <td>" . stripslashes($war['name']) . "</td>
-                                            <td><a href=\"?page=$page&amp;id=" . $opAlly->id . "\">" . $opAlly . "</a></td>
-                                            <td>" . nf($opAlly->points) . " / " . nf($opAlly->avgPoints) . "</td>
-                                            <td>" . df($war['date']) . "</td>
+                                            <td>" . stripslashes($diplomacy->name) . "</td>
+                                            <td><a href=\"?page=$page&amp;id=" . $diplomacy->otherAllianceId->id . "\">[" . $diplomacy->otherAllianceTag . "] " . $diplomacy->otherAllianceName . "</a></td>
+                                            <td>" . nf($diplomacy->otherAlliancePoints) . " / " . nf($diplomacy->otherAllianceAveragePoints) . "</td>
+                                            <td>" . df($diplomacy->date) . "</td>
                                         </tr>";
                     }
                     echo "</table>
