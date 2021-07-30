@@ -154,26 +154,10 @@ class AllianceRepository extends AbstractRepository
             ->fetchAllAssociative();
     }
 
-    public function create(string $tag, string $name, ?int $founderId): int
+    public function exists(string $tag, string $name): bool
     {
-        if ($name == "" || $tag == "") {
-            throw new InvalidAllianceParametersException("Name/Tag fehlt!");
-        }
-
-        if (!preg_match('/^[^\'\"\?\<\>\$\!\=\;\&\\\\[\]]{1,6}$/i', $tag) > 0) {
-            throw new InvalidAllianceParametersException("Ungültiger Tag! Die Länge muss zwischen 3 und 6 Zeichen liegen und darf folgende Zeichen nicht enthalten: ^'\"?<>$!=;&[]\\\\");
-        }
-
-        if (!preg_match('/([^\'\"\?\<\>\$\!\=\;\&\\\\[\]]{4,25})$/', $name) > 0) {
-            throw new InvalidAllianceParametersException("Ungültiger Name! Die Länge muss zwischen 4 und 25 Zeichen liegen und darf folgende Zeichen nicht enthalten: ^'\"?<>$!=;&[]\\\\");
-        }
-
-        if ($founderId === null || $founderId <= 0) {
-            throw new InvalidAllianceParametersException("Allianzgründer-ID fehlt!");
-        }
-
-        $exists = $this->createQueryBuilder()
-            ->select('*')
+        return (bool) $this->createQueryBuilder()
+            ->select('alliance_id')
             ->from('alliances')
             ->where('alliance_tag = :tag')
             ->orWhere('alliance_name = :name')
@@ -182,11 +166,11 @@ class AllianceRepository extends AbstractRepository
                 'tag' => $tag,
             ])
             ->execute()
-            ->fetchAssociative();
-        if ($exists) {
-            throw new InvalidAllianceParametersException("Eine Allianz mit diesem Tag oder Namen existiert bereits!");
-        }
+            ->fetchOne();
+    }
 
+    public function create(string $tag, string $name, int $founderId): int
+    {
         $this->createQueryBuilder()
             ->insert('alliances')
             ->values([

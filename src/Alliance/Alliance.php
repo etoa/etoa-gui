@@ -68,4 +68,9 @@ class Alliance
         $this->resFood = (int) $data['alliance_res_food'];
         $this->objectsForMembers = (int) $data['alliance_objects_for_members'];
     }
+
+    public function toString(): string
+    {
+        return "[" . $this->tag . "] " . $this->name;
+    }
 }

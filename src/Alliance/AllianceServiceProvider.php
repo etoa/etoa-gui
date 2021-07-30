@@ -4,10 +4,12 @@ declare(strict_types=1);
 
 namespace EtoA\Alliance;
 
+use EtoA\User\UserRepository;
 use EtoA\Alliance\Board\AllianceBoardCategoryRankRepository;
 use EtoA\Alliance\Board\AllianceBoardCategoryRepository;
 use EtoA\Alliance\Board\AllianceBoardPostRepository;
 use EtoA\Alliance\Board\AllianceBoardTopicRepository;
+use EtoA\User\UserService;
 use Pimple\Container;
 use Pimple\ServiceProviderInterface;
 
@@ -37,6 +39,7 @@ class AllianceServiceProvider implements ServiceProviderInterface
         $pimple[AllianceBuildingRepository::class] = function (Container $pimple): AllianceBuildingRepository {
             return new AllianceBuildingRepository($pimple['db']);
         };
+
         $pimple[AllianceTechnologyRepository::class] = function (Container $pimple): AllianceTechnologyRepository {
             return new AllianceTechnologyRepository($pimple['db']);
         };
@@ -59,6 +62,15 @@ class AllianceServiceProvider implements ServiceProviderInterface
 
         $pimple[AllianceRankRepository::class] = function (Container $pimple): AllianceRankRepository {
             return new AllianceRankRepository($pimple['db']);
+        };
+
+        $pimple[AllianceService::class] = function (Container $pimple): AllianceService {
+            return new AllianceService(
+                $pimple[AllianceRepository::class],
+                $pimple[UserRepository::class],
+                $pimple[AllianceHistoryRepository::class],
+                $pimple[UserService::class],
+            );
         };
 
         $pimple[AllianceBoardCategoryRepository::class] = function (Container $pimple): AllianceBoardCategoryRepository {
