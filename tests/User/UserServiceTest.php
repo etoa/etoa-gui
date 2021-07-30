@@ -58,4 +58,22 @@ class UserServiceTest extends WebTestCase
         // then
         $this->assertNull($this->repository->getUser($user->id));
     }
+
+    public function testDeleteRequest(): void
+    {
+        // given
+        $name = 'John Doe';
+        $nick = 'JohnDoe';
+        $email = 'johndoe@example.com';
+        $password = '12345678';
+        $user = $this->service->register($name, $email, $nick, $password);
+
+        // when
+        $result = $this->service->deleteRequest($user->id, $password);
+
+        // then
+        $this->assertTrue($result);
+        $user = $this->repository->getUser($user->id);
+        $this->assertGreaterThan(time(), $user->deleted);
+    }
 }

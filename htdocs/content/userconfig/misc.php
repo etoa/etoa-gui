@@ -66,7 +66,7 @@ elseif (isset($_POST['remove']) && checker_verify()) {
 // User löschen
 //
 elseif (isset($_POST['remove_submit'])) {
-    if ($cu->deleteRequest($_POST['remove_password'])) {
+    if ($userService->deleteRequest($cu->id, $_POST['remove_password'])) {
         $s = Null;
         session_destroy();
         success_msg("Deine Daten werden am " . df(time() + ($config->getInt('user_delete_days') * 3600 * 24)) . " Uhr von unserem System gelöscht! Wir w&uuml;nschen weiterhin viel Erfolg im Netz!");
@@ -83,7 +83,7 @@ elseif (isset($_POST['remove_submit'])) {
 // Löschantrag aufheben
 //
 elseif (isset($_POST['remove_cancel']) && checker_verify()) {
-    $cu->revokeDelete();
+    $userService->revokeDelete($cu->id);
     success_msg("Löschantrag aufgehoben!");
     $userService->addToUserLog($cu->id, "settings", "{nick} hat seine Accountlöschung aufgehoben.", true);
     echo '<input type="button" value="Weiter" onclick="document.location=\'?page=userconfig&mode=misc\'" />';

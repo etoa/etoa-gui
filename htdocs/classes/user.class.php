@@ -600,48 +600,6 @@ class User implements \EtoA\User\UserInterface
     }
 
     /**
-     * Löschantrag stellen
-     */
-    function deleteRequest($pw)
-    {
-        // TODO
-        global $app;
-
-        /** @var ConfigurationService */
-        $config = $app[ConfigurationService::class];
-
-        if (validatePasswort($pw, $this->pw)) {
-            $t = time() + ($config->getInt('user_delete_days') * 3600 * 24);
-            dbquery("
-                UPDATE
-                    users
-                SET
-                    user_deleted=" . $t . "
-                WHERE
-                    user_id=" . $this->id . "
-                ;");
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    /**
-     * Löschantrag widerrufen
-     */
-    function revokeDelete()
-    {
-        dbquery("
-            UPDATE
-                users
-            SET
-                user_deleted=0
-            WHERE
-                user_id=" . $this->id . "
-            ;");
-    }
-
-    /**
      * Umode aktivieren
      */
     function activateUmode($force = false)
