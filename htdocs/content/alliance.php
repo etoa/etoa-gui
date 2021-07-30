@@ -9,6 +9,7 @@ use EtoA\Alliance\AllianceRankRepository;
 use EtoA\Alliance\AllianceRepository;
 use EtoA\Alliance\Board\AllianceBoardTopicRepository;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\User\UserRepository;
 
 /** @var ConfigurationService */
 $config = $app[ConfigurationService::class];
@@ -18,6 +19,8 @@ $allianceRepository = $app[AllianceRepository::class];
 $allianceRankRepository = $app[AllianceRankRepository::class];
 /** @var AllianceDiplomacyRepository $allianceDiplomacyRepository */
 $allianceDiplomacyRepository = $app[AllianceDiplomacyRepository::class];
+/** @var UserRepository $userRepository */
+$userRepository = $app[UserRepository::class];
 
 echo "<h1>Allianz</h1>";
 echo "<div id=\"allianceinfo\"></div>"; //nur zu entwicklungszwecken!
@@ -659,14 +662,7 @@ elseif ($cu->allianceId == 0) {
         }
     } else {
         if ($_POST['resolvefalseallyid'] != "") {
-            dbquery("
-        UPDATE
-            users
-        SET
-            user_alliance_id=0,
-            user_alliance_rank_id=0
-        WHERE
-            user_id=" . $cu->id . ";");
+            $userRepository->setAllianceId($cu->getId(), 0, 0);
             success_msg("Die fehlerhafte Verkn&uuml;pfung wurde gel&ouml;st!");
         } else
             echo "<form action=\"?page=$page\" method=\"post\">Diese Allianz existiert nicht!<br/><br/>
