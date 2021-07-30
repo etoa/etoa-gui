@@ -165,6 +165,7 @@ class AllianceRepository extends AbstractRepository
                 'name' => $name,
                 'tag' => $tag,
             ])
+            ->setMaxResults(1)
             ->execute()
             ->fetchOne();
     }

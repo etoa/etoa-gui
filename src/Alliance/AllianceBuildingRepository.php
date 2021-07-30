@@ -129,7 +129,7 @@ class AllianceBuildingRepository extends AbstractRepository
         );
     }
 
-    public function addToAlliance(int $allianceId, int $buildingId, int $level, int $amount): void
+    public function addToAlliance(int $allianceId, int $buildingId, int $level, int $amount, int $startTime = 0, int $endTime = 0): void
     {
         $this->createQueryBuilder()
             ->insert('alliance_buildlist')
@@ -137,8 +137,8 @@ class AllianceBuildingRepository extends AbstractRepository
                 'alliance_buildlist_alliance_id' => ':alliance',
                 'alliance_buildlist_building_id' => ':buildingId',
                 'alliance_buildlist_current_level' => ':level',
-                'alliance_buildlist_build_start_time' => 0,
-                'alliance_buildlist_build_end_time' => 1,
+                'alliance_buildlist_build_start_time' => ':startTime',
+                'alliance_buildlist_build_end_time' => ':endTime',
                 'alliance_buildlist_cooldown' => 0,
                 'alliance_buildlist_member_for' => ' :amount',
             ])
@@ -147,16 +147,20 @@ class AllianceBuildingRepository extends AbstractRepository
                 'buildingId' => $buildingId,
                 'level' => $level,
                 'amount' => $amount,
+                'startTime' => $startTime,
+                'endTime' => $endTime,
             ])
             ->execute();
     }
 
-    public function updateForAlliance(int $allianceId, int $buildingId, int $level, int $amount): void
+    public function updateForAlliance(int $allianceId, int $buildingId, int $level, int $amount, int $startTime = 0, int $endTime = 0): void
     {
         $this->createQueryBuilder()
             ->update('alliance_buildlist')
             ->set('alliance_buildlist_current_level', ':level')
             ->set('alliance_buildlist_member_for', ':amount')
+            ->set('alliance_buildlist_build_start_time', ':startTime')
+            ->set('alliance_buildlist_build_end_time', ':endTime')
             ->where('alliance_buildlist_alliance_id = :alliance')
             ->andWhere('alliance_buildlist_building_id = :buildingId')
             ->setParameters([
@@ -164,6 +168,8 @@ class AllianceBuildingRepository extends AbstractRepository
                 'amount' => $amount,
                 'alliance' => $allianceId,
                 'buildingId' => $buildingId,
+                'startTime' => $startTime,
+                'endTime' => $endTime,
             ])
             ->execute();
     }
