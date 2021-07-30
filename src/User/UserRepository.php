@@ -217,6 +217,18 @@ class UserRepository extends AbstractRepository
             ->execute();
     }
 
+    public function setSetupFinished(int $userId): void
+    {
+        $this->createQueryBuilder()
+            ->update('users')
+            ->set('user_setup', (string) 1)
+            ->where('user_id = :userId')
+            ->setParameters([
+                'userId' => $userId,
+            ])
+            ->execute();
+    }
+
     /**
      * @return User[]
      */

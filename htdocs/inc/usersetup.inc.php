@@ -11,6 +11,7 @@ use EtoA\Universe\Planet\PlanetService;
 use EtoA\Universe\Planet\PlanetTypeRepository;
 use EtoA\Universe\Star\SolarTypeRepository;
 use EtoA\Universe\Star\StarRepository;
+use EtoA\User\UserRepository;
 use EtoA\User\UserService;
 use EtoA\User\UserSetupService;
 use Symfony\Component\HttpFoundation\Request;
@@ -42,6 +43,9 @@ $starRepository = $app[StarRepository::class];
 /** @var UserSetupService $userSetupService */
 $userSetupService = $app[UserSetupService::class];
 
+/** @var UserRepository $userRepository */
+$userRepository = $app[UserRepository::class];
+
 /** @var Request */
 $request = Request::createFromGlobals();
 
@@ -62,7 +66,8 @@ if (isset($s->itemset_key) && $request->request->has(md5($s->itemset_key)) && $r
     $userSetupService->addItemSetListToPlanet($s->itemset_planet, $cu->id, $request->request->getInt('itemset_id'));
     $s->itemset_key = null;
     $s->itemset_planet = null;
-    $cu->setSetupFinished();
+    $userRepository->setSetupFinished($cu->id);
+    $cu->setSetup();
     $mode = "finished";
 } elseif ($request->request->has('submit_chooseplanet') && $request->request->getInt('choosenplanetid') > 0 && checker_verify() && !isset($cp)) {
     $planetId = $request->request->getInt('choosenplanetid');
@@ -87,10 +92,12 @@ if (isset($s->itemset_key) && $request->request->has(md5($s->itemset_key)) && $r
             $mode = "itemsets";
         } elseif (count($sets) === 1) {
             $userSetupService->addItemSetListToPlanet($planetId, $cu->id, $sets[0]->id);
-            $cu->setSetupFinished();
+            $userRepository->setSetupFinished($cu->id);
+            $cu->setSetup();
             $mode = "finished";
         } else {
-            $cu->setSetupFinished();
+            $userRepository->setSetupFinished($cu->id);
+            $cu->setSetup();
             $mode = "finished";
         }
     }
