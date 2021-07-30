@@ -444,4 +444,37 @@ die Spielleitung";
 
         $this->userLogRepository->add($userId, $zone, $message, gethostbyname($_SERVER['REMOTE_ADDR']), $public);
     }
+
+    public function setPassword(int $userId, string $oldPassword, string $newPassword1, string $newPassword2): void
+    {
+        $user = $this->userRepository->getUser($userId);
+
+        if (!validatePasswort($oldPassword, $user->password)) {
+            throw new Exception("Dein altes Passwort stimmt nicht mit dem gespeicherten Passwort &uuml;berein!");
+        }
+
+        if ($this->userSittingRepository->existsEntry($userId, md5($newPassword1))) {
+            throw new Exception("Das Passwort darf nicht identisch mit dem Sitterpasswort sein!");
+        }
+
+        if ($newPassword1 != $newPassword2) {
+            throw new Exception("Die Eingaben m&uuml;ssen identisch sein!");
+        }
+
+        if (strlen($newPassword1) < $this->config->getInt('password_minlength')) {
+            throw new Exception("Das Passwort muss mindestens " . $this->config->getInt('password_minlength') . " Zeichen lang sein!");
+        }
+
+        $this->userRepository->updatePassword($userId, $newPassword1);
+
+        Log::add(Log::F_USER, Log::INFO, "Der Spieler [b]" . $user->nick . "[/b] &auml;ndert sein Passwort!");
+
+        $this->mailSenderService->send(
+            "Passwortänderung",
+            "Hallo " . $user->nick . "\n\nDies ist eine Bestätigung, dass du dein Passwort für deinen Account erfolgreich geändert hast!\n\nSolltest du dein Passwort nicht selbst geändert haben, so nimm bitte sobald wie möglich Kontakt mit einem Game-Administrator auf: http://www.etoa.ch/kontakt",
+            $user->email
+        );
+
+        $this->addToUserLog($userId, "settings", "{nick} ändert sein Passwort.", false);
+    }
 }

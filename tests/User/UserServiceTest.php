@@ -43,6 +43,26 @@ class UserServiceTest extends WebTestCase
         $this->assertEquals($email, $user->email);
     }
 
+    public function testSetPassword(): void
+    {
+        // given
+        $name = 'John Doe';
+        $nick = 'JohnDoe';
+        $email = 'johndoe@example.com';
+        $password = '12345678';
+        $newPassword = '87654321';
+        $user = $this->service->register($name, $email, $nick, $password);
+        $this->assertTrue(validatePasswort($password, $user->password));
+        $_SERVER['REMOTE_ADDR'] = '127.0.0.1';
+
+        // when
+        $this->service->setPassword($user->id, $password, $newPassword, $newPassword);
+
+        // then
+        $user = $this->repository->getUser($user->id);
+        $this->assertTrue(validatePasswort($newPassword, $user->password));
+    }
+
     public function testDelete(): void
     {
         // given

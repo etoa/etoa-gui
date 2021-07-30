@@ -482,4 +482,17 @@ class UserRepository extends AbstractRepository
 
         return (int) $this->getConnection()->lastInsertId();
     }
+
+    public function updatePassword(int $userId, string $password): void
+    {
+        $this->createQueryBuilder()
+            ->update('users')
+            ->set('user_password', ':password')
+            ->where('user_id = :userId')
+            ->setParameters([
+                'userId' => $userId,
+                'password' => saltPasswort($password),
+            ])
+            ->execute();
+    }
 }

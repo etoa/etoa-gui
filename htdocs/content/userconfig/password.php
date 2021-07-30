@@ -1,9 +1,13 @@
 <?PHP
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\User\UserService;
 
 /** @var ConfigurationService */
 $config = $app[ConfigurationService::class];
+
+/** @var UserService */
+$userService = $app[UserService::class];
 
 iBoxStart("Logins");
 echo "Solltest du Probleme mit dem Passwort haben schreibe
@@ -12,11 +16,11 @@ iBoxEnd();
 
 // Änderungen speichern
 if (isset($_POST['password_submit']) && checker_verify()) {
-    $rtnMsg = "";
-    if ($cu->setPassword($_POST['user_password'], $_POST['user_password1'], $_POST['user_password2'], $rtnMsg)) {
+    try {
+        $userService->setPassword($cu->id, $_POST['user_password'], $_POST['user_password1'], $_POST['user_password2']);
         success_msg("Das Passwort wurde ge&auml;ndert!");
-    } else {
-        error_msg($rtnMsg);
+    } catch (Exception $ex) {
+        error_msg($ex->getMessage());
     }
 }
 
