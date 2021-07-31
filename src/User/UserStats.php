@@ -1,16 +1,26 @@
-<?PHP
+<?php
 
-use EtoA\User\UserOnlineStatsRepository;
+declare(strict_types=1);
+
+namespace EtoA\User;
+
+use EtoA\Universe\Planet\PlanetRepository;
 
 class UserStats
 {
-    static function generateImage($file)
+    private UserOnlineStatsRepository $userOnlineStatsRepository;
+    private PlanetRepository $planetRepository;
+
+    public function __construct(
+        UserOnlineStatsRepository $userOnlineStatsRepository,
+        PlanetRepository $planetRepository
+    ) {
+        $this->userOnlineStatsRepository = $userOnlineStatsRepository;
+        $this->planetRepository = $planetRepository;
+    }
+
+    public function generateImage(string $file): void
     {
-        global $app;
-
-        /** @var UserOnlineStatsRepository $userOnlineStatsRepository */
-        $userOnlineStatsRepository = $app[UserOnlineStatsRepository::class];
-
         $w = 700;
         $h = 400;
         $borderLeftRight = 50;
@@ -47,7 +57,7 @@ class UserStats
         $acto = false;
         $actr = false;
         $index0 = 0;
-        $userOnlineStats = $userOnlineStatsRepository->getEntries($totalSteps + 1);
+        $userOnlineStats = $this->userOnlineStatsRepository->getEntries($totalSteps + 1);
         $mnr = count($userOnlineStats);
         $sumo = $sumr = 0;
         if ($mnr > 0) {
@@ -57,10 +67,12 @@ class UserStats
                 $data[$t]['r'] = $stats->userCount;
                 $max = max($max, $stats->userCount);
                 $maxo = max($maxo, $stats->sessionCount);
-                if ($acto == false)
+                if ($acto == false) {
                     $acto = $stats->sessionCount;
-                if ($actr == false)
+                }
+                if ($actr == false) {
                     $actr = $stats->userCount;
+                }
                 $sumo += $stats->sessionCount;
                 $sumr += $stats->userCount;
                 $index0 = $stats->timestamp;
@@ -100,10 +112,11 @@ class UserStats
                 $x = $borderLeftRight + ($ic * $step);
                 // Vertikale Stundenlinien
                 if (date("i", $i) == "00") {
-                    if (date("H", $i) == "00")
+                    if (date("H", $i) == "00") {
                         imageline($im, $x, $borderTop + 1, $x, $h - $borderBottom - 1, $colRed);
-                    else
+                    } else {
                         imageline($im, $x, $borderTop + 1, $x, $h - $borderBottom - 1, $colGrey);
+                    }
                     imagestring($im, 2, $x - (imagefontheight(2) / 2), $h - $bottomLegend, date("H", $i), $colBlack);
                 }
                 $t = date("dmyHi", $i);
@@ -153,27 +166,14 @@ class UserStats
         }
     }
 
-    static function generateXml($file)
+    public function generateXml(string $file): void
     {
-        global $app;
-
-        /** @var UserOnlineStatsRepository $userOnlineStatsRepository */
-        $userOnlineStatsRepository = $app[UserOnlineStatsRepository::class];
-
         $dir = dirname($file);
         if (!is_dir($dir)) {
             mkdir($dir, 0777, true);
         }
 
-        /**
-         * Gameinfo XML
-         */
-        $pres = dbquery("SELECT COUNT(id) FROM planets;");
-        $presh = dbquery("SELECT COUNT(id) FROM planets WHERE planet_user_id>0;");
-        $parr = mysql_fetch_row($pres);
-        $parrh = mysql_fetch_row($presh);
-
-        $stats = $userOnlineStatsRepository->getEntries(1);
+        $stats = $this->userOnlineStatsRepository->getEntries(1);
         $mnr = count($stats);
         $acto = 0;
         $actr = 0;
@@ -182,7 +182,6 @@ class UserStats
             $actr = $stats[0]->userCount;
         }
 
-        $d = fopen($file, "w");
         $text = "<gameserver>
             <users>
                 <online>" . $acto . "</online>
@@ -190,12 +189,12 @@ class UserStats
             </users>
             <galaxy>
                 <planets>
-                    <inhabited>" . $parrh[0] . "</inhabited>
-                    <total>" . $parr[0] . "</total>
+                    <inhabited>" . $this->planetRepository->countWithUser() . "</inhabited>
+                    <total>" . $this->planetRepository->count() . "</total>
                 </planets>
             </galaxy>
         </gameserver>";
-        fwrite($d, $text);
-        fclose($d);
+
+        file_put_contents($file, $text);
     }
 }
