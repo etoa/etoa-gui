@@ -33,7 +33,7 @@ class UserStats
 
         $im = imagecreate($w, $h);
         $imh = imagecreatefromjpeg(RELATIVE_ROOT . "images/logo_trans.jpg");
-        imagecopyresized($im, $imh, ($w - imagesx($imh)) / 2, ($h - imagesy($imh)) / 2, 0, 0, imagesx($imh), imagesy($imh), imagesx($imh), imagesy($imh));
+        imagecopyresized($im, $imh, (int) (($w - imagesx($imh)) / 2), (int) (($h - imagesy($imh)) / 2), 0, 0, imagesx($imh), imagesy($imh), imagesx($imh), imagesy($imh));
 
         $colWhite = imagecolorallocate($im, 255, 255, 255);
         $colBlack = imagecolorallocate($im, 0, 0, 0);
@@ -92,7 +92,7 @@ class UserStats
             if ($max > 0) {
                 for ($i = 0; $i <= ceil($max / 100); $i++) {
                     $y = (int) ($h - $borderBottom - ($graphHeight / ($max / 100) * $i));
-                    imagestring($im, 2, $yLegend, $y - (imagefontheight(2) / 2), (string) ($i * 100), $colBlack);
+                    imagestring($im, 2, $yLegend, (int) ($y - (imagefontheight(2) / 2)), (string) ($i * 100), $colBlack);
                     if ($i != 0) {
                         imageline($im, $borderLeftRight + 1, $y, $w - $borderLeftRight - 1, $y, $colGrey);
                     }
@@ -127,8 +127,8 @@ class UserStats
                     $yo = $h - $borderBottom;
                     $yr = $h - $borderBottom;
                 }
-                imageline($im, $lastx, $lastyo, $x, $yo, $colGreen);
-                imageline($im, $lastx, $lastyr, $x, $yr, $colBlue);
+                imageline($im, (int) $lastx, (int) $lastyo, (int) $x, (int) $yo, $colGreen);
+                imageline($im, (int) $lastx, (int) $lastyr, (int) $x, (int) $yr, $colBlue);
                 $lastyo = $yo;
                 $lastyr = $yr;
                 $lastx = $x;
