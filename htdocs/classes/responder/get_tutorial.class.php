@@ -1,4 +1,7 @@
 <?PHP
+
+use EtoA\Tutorial\TutorialManager;
+
 class GetTutorialJsonResponder extends JsonResponder
 {
     function getRequiredParams()
@@ -8,19 +11,19 @@ class GetTutorialJsonResponder extends JsonResponder
 
     function getResponse($params)
     {
-
         $data = array();
 
-        $ttm = new TutorialManager();
+        /** @var TutorialManager $tutorialManager */
+        $tutorialManager = $this->app[TutorialManager::class];
 
         $currentStep = 0;
         if (isset($params['step'])) {
-            $currentStep = $params['step'];
+            $currentStep = (int) $params['step'];
         } else if (isset($_SESSION['user_id'])) {
-            $currentStep = $ttm->getUserProgess($_SESSION['user_id'], $params['id']);
+            $currentStep = $tutorialManager->getUserProgress((int) $_SESSION['user_id'], (int) $params['id']);
         }
 
-        $tutorialText = $ttm->getText($params['id'], $currentStep);
+        $tutorialText = $tutorialManager->getText((int) $params['id'], $currentStep);
         if ($tutorialText != null) {
             $data['title'] = $tutorialText->title;
             $data['content'] = text2html($tutorialText->content);
@@ -28,7 +31,7 @@ class GetTutorialJsonResponder extends JsonResponder
             $data['next'] = $tutorialText->next;
 
             if (isset($_SESSION['user_id'])) {
-                $ttm->setUserProgess($_SESSION['user_id'], $params['id'], $tutorialText->step);
+                $tutorialManager->setUserProgress((int) $_SESSION['user_id'], (int) $params['id'], $tutorialText->step);
             }
         }
         return $data;

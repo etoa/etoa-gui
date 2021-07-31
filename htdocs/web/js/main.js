@@ -1464,7 +1464,7 @@ function showTutorialText(id, step) {
       $('#tutorialContainer').attr('data-tutorial', id);
       $('.tutorialTitleContent').html(data.title);
       $('.tutorialContent').html(data.content);
-      if (data.prev) {
+      if (data.prev !== null) {
         $('.tutorialPrev').show();
         $('.tutorialPrev').unbind("click");
         $('.tutorialPrev').click(function () {
@@ -1473,7 +1473,7 @@ function showTutorialText(id, step) {
       } else {
         $('.tutorialPrev').hide();
       }
-      if (data.next) {
+      if (data.next !== null) {
         $('.tutorialNext').show();
         $('.tutorialNext').unbind("click");
         $('.tutorialNext').click(function () {

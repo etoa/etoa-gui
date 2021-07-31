@@ -1,7 +1,12 @@
 <?PHP
 
+use EtoA\Tutorial\TutorialManager;
+
 /** @var \EtoA\Ship\ShipDataRepository $shipDataRepository */
 $shipDataRepository = $app[\EtoA\Ship\ShipDataRepository::class];
+
+/** @var TutorialManager $tutorialManager */
+$tutorialManager = $app[TutorialManager::class];
 
 // Datenänderung übernehmen
 if (isset($_POST['data_submit']) && checker_verify()) {
@@ -34,8 +39,7 @@ if (isset($_POST['data_submit']) && checker_verify()) {
 
 
 if (isset($_POST['show_tut']) && checker_verify()) {
-    $ttm = new TutorialManager();
-    $ttm->reopenAllTutorials($cu->id);
+    $tutorialManager->reopenAllTutorials($cu->id);
     echo '<script type="text/javascript">showTutorialText(1,0)</script>';
 }
 
