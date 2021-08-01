@@ -1328,7 +1328,7 @@ function defineImagePaths()
 
     if (!defined('IMAGE_PATH')) {
         if (!isset($cu) && isset($_SESSION['user_id'])) {
-            $cu = new CurrentUser($_SESSION['user_id']);
+            $cu = new User($_SESSION['user_id']);
         }
 
         $design = DESIGN_DIRECTORY . "/official/" . $config->get('default_css_style');

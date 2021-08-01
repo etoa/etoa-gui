@@ -82,7 +82,7 @@ function viewSingleMessage(
     MessageRepository $messageRepository,
     MessageCategoryRepository $messageCategoryRepository,
     UserRepository $userRepository,
-    CurrentUser $cu
+    User $cu
 ): void {
     global $page;
     global $mode;
@@ -166,7 +166,7 @@ function listMessagesOverview(
     MessageRepository $messageRepository,
     MessageCategoryRepository $messageCategoryRepository,
     UserRepository $userRepository,
-    CurrentUser $cu,
+    User $cu,
     ConfigurationService $config
 ): void {
     global $page;

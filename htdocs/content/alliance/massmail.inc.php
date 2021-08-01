@@ -1,30 +1,32 @@
 <?PHP
 
-/** @var \EtoA\Message\MessageRepository $messageRepository */
-$messageRepository = $app[\EtoA\Message\MessageRepository::class];
+use EtoA\Alliance\AllianceRights;
+use EtoA\Message\MessageRepository;
+use EtoA\User\UserRepository;
 
+/** @var MessageRepository $messageRepository */
+$messageRepository = $app[MessageRepository::class];
+/** @var UserRepository $userRepository */
+$userRepository = $app[UserRepository::class];
 /** @var mixed[] $arr alliance data */
 
-if (Alliance::checkActionRights('massmail')) {
+if (Alliance::checkActionRights(AllianceRights::MASS_MAIL)) {
     echo "<h2>Rundmail</h2>";
 
     // Nachricht senden
     if (isset($_POST['submit']) && checker_verify()) {
-        $ures = dbquery("SELECT
-            user_id
-        FROM
-            users
-        WHERE
-            user_alliance_id=" . $arr['alliance_id'] . "
-            AND user_id!=" . $cu->id . "
-        ;");
-        if (mysql_num_rows($ures) > 0) {
-            while ($uarr = mysql_fetch_array($ures)) {
+        $allianceUsers = $userRepository->getAllianceUsers((int) $arr['alliance_id']);
+        if (count($allianceUsers) > 1) {
+            foreach ($allianceUsers as $allianceUser) {
+                if ($allianceUser->id === $cu->getId()) {
+                    continue;
+                }
+
                 $subject = addslashes($_POST['message_subject']) . "";
 
                 $messageRepository->sendFromUserToUser(
-                    (int) $cu->id,
-                    (int) $uarr['user_id'],
+                    $cu->getId(),
+                    $allianceUser->id,
                     $_POST['message_subject'],
                     $_POST['message_text'],
                     MSG_ALLYMAIL_CAT

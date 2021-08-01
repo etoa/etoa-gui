@@ -3,6 +3,7 @@
 use EtoA\Alliance\AllianceApplicationRepository;
 use EtoA\Alliance\AllianceHistoryRepository;
 use EtoA\Alliance\AllianceRepository;
+use EtoA\Alliance\AllianceRights;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\User\UserRepository;
 use EtoA\User\UserService;
@@ -16,7 +17,7 @@ $allianceApplicationRepository = $app[AllianceApplicationRepository::class];
 /** @var UserRepository $userRepository */
 $userRepository = $app[UserRepository::class];
 
-if (Alliance::checkActionRights('applications')) {
+if (Alliance::checkActionRights(AllianceRights::APPLICATIONS)) {
     $maxMemberCount = $config->getInt("alliance_max_member_count");
 
     echo "<h2>Bewerbungen</h2>";

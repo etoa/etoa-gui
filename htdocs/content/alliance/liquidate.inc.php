@@ -2,7 +2,9 @@
 
 /** @var Alliance $ally */
 
-if (Alliance::checkActionRights('liquidate')) {
+use EtoA\Alliance\AllianceRights;
+
+if (Alliance::checkActionRights(AllianceRights::LIQUIDATE)) {
     echo "<h2>Allianz aufl&ouml;sen</h2>";
 
     // Prüft, ob noch Mitglieder vorhanden sind (keine Bewerbungen!)

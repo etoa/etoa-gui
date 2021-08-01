@@ -8,6 +8,29 @@ use EtoA\Core\AbstractRepository;
 
 class AllianceRepository extends AbstractRepository
 {
+    /**
+     * @return AllianceMember[]
+     */
+    public function getAllianceMembers(int $allianceId): array
+    {
+        $data = $this->getConnection()->fetchAllAssociative('
+            SELECT u.user_id, u.user_points, u.user_nick, u.user_alliance_rank_id, p.id as planetId, x.time_action AS last_log, s.time_action, r.race_name
+            FROM users u
+            INNER JOIN planets p ON p.planet_user_id = u.user_id AND p.planet_user_main = 1
+            INNER JOIN races r ON r.race_id = u.user_race_id
+            LEFT JOIN user_sessions s ON s.user_id = u.user_id
+            LEFT JOIN (
+                SELECT user_id, MAX(time_action) as time_action FROM user_sessionlog GROUP BY user_id
+            ) x ON x.user_id = u.user_id
+            WHERE u.user_alliance_id = :allianceId
+            ORDER BY u.user_points DESC, u.user_nick
+        ', [
+            'allianceId' => $allianceId,
+        ]);
+
+        return array_map(fn (array $row) => new AllianceMember($row), $data);
+    }
+
     public function count(): int
     {
         return (int) $this->createQueryBuilder()
@@ -78,6 +101,26 @@ class AllianceRepository extends AbstractRepository
             ->fetchAllAssociative();
 
         return array_map(fn (array $row) => new Alliance($row), $data);
+    }
+
+    /**
+     * @return AllianceWithMemberCount[]
+     */
+    public function getAlliancesAcceptingApplications(): array
+    {
+        $data = $this->createQueryBuilder()
+            ->select("a.*")
+            ->addSelect('COUNT(u.user_id) as member_count')
+            ->from('alliances', 'a')
+            ->leftJoin('a', 'users', 'u', 'u.user_alliance_id=a.alliance_id')
+            ->where('a.alliance_accept_applications = 1')
+            ->groupBy('a.alliance_id')
+            ->orderBy('a.alliance_name')
+            ->addOrderBy('a.alliance_tag')
+            ->execute()
+            ->fetchAllAssociative();
+
+        return array_map(fn (array $row) => new AllianceWithMemberCount($row), $data);
     }
 
     public function getAlliance(int $allianceId): ?Alliance
@@ -197,9 +240,22 @@ class AllianceRepository extends AbstractRepository
         return (int) $this->getConnection()->lastInsertId();
     }
 
-    public function update(int $id, string $tag, string $name, string $text, string $template, string $url, int $founder): bool
+    public function updateApplicationText(int $allianceId, string $template): void
     {
-        $affected = $this->createQueryBuilder()
+        $this->createQueryBuilder()
+            ->update('alliances')
+            ->set('alliance_application_template', ':template')
+            ->where('alliance_id = :id')
+            ->setParameters([
+                'template' => $template,
+                'allianceId' => $allianceId,
+            ])
+            ->execute();
+    }
+
+    public function update(int $id, string $tag, string $name, string $text, string $template, string $url, int $founder, string $updatedAllianceImage = null, bool $acceptsApplications = null, bool $acceptsBnd = null, bool $publicMemberList = null): bool
+    {
+        $qb = $this->createQueryBuilder()
             ->update('alliances')
             ->set('alliance_name', ':name')
             ->set('alliance_tag', ':tag')
@@ -216,7 +272,35 @@ class AllianceRepository extends AbstractRepository
                 'template' => $template,
                 'url' => $url,
                 'founder' => $founder,
-            ])
+            ]);
+
+        if ($updatedAllianceImage !== null) {
+            $qb
+                ->set('alliance_img', ':allianceImage')
+                ->set('alliance_img_check', ':imageCheck')
+                ->setParameter('allianceImage', $updatedAllianceImage)
+                ->setParameter('imageCheck', $updatedAllianceImage !== '' ? 1 : 0);
+        }
+
+        if ($acceptsBnd !== null) {
+            $qb
+                ->set('alliance_accept_bnd', ':acceptsBnd')
+                ->setParameter('acceptsBnd', (int) $acceptsBnd);
+        }
+
+        if ($acceptsApplications !== null) {
+            $qb
+                ->set('alliance_accept_applications', ':acceptsApplications')
+                ->setParameter('acceptsApplications', (int) $acceptsApplications);
+        }
+
+        if ($publicMemberList !== null) {
+            $qb
+                ->set('alliance_public_memberlist', ':publicMemberList')
+                ->setParameter('publicMemberList', (int) $publicMemberList);
+        }
+
+        $affected = $qb
             ->execute();
 
         return (int) $affected > 0;
@@ -502,9 +586,10 @@ class AllianceRepository extends AbstractRepository
         int $addCrystal,
         int $addPlastic,
         int $addFuel,
-        int $addFood
+        int $addFood,
+        int $newMemberCount = null
     ): void {
-        $this->createQueryBuilder()
+        $qb = $this->createQueryBuilder()
             ->update('alliances')
             ->set('alliance_res_metal', 'alliance_res_metal + :addMetal')
             ->set('alliance_res_crystal', 'alliance_res_crystal + :addCrystal')
@@ -519,7 +604,15 @@ class AllianceRepository extends AbstractRepository
                 'addPlastic' => $addPlastic,
                 'addFuel' => $addFuel,
                 'addFood' => $addFood,
-            ])
+            ]);
+
+        if ($newMemberCount !== null) {
+            $qb
+                ->set('alliance_objects_for_members', ':memberCount')
+                ->setParameter('memberCount', $newMemberCount);
+        }
+
+        $qb
             ->execute();
     }
 

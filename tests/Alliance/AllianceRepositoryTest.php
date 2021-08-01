@@ -59,4 +59,17 @@ class AllianceRepositoryTest extends AbstractDbTestCase
         $this->assertTrue($this->repository->exists('other', 'Alliance'));
         $this->assertFalse($this->repository->exists('tag', 'Alliance', $allianceId));
     }
+
+    public function testUpdate(): void
+    {
+        $allianceId = $this->repository->create('tag', 'Alliance', 1);
+
+        $this->repository->update($allianceId, 'new', 'New', 'Text', 'Yes', '', 1, 'test.png', true, true, true);
+
+        $alliance = $this->repository->getAlliance($allianceId);
+
+        $this->assertNotNull($alliance);
+
+        $this->assertTrue($alliance->imageCheck);
+    }
 }

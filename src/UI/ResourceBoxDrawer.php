@@ -22,7 +22,7 @@ class ResourceBoxDrawer
 
     public function getHTML(Planet $planet): string
     {
-        $currentUser = new \CurrentUser(\UserSession::getInstance($this->config)->user_id);
+        $currentUser = new \User(\UserSession::getInstance($this->config)->user_id);
         $small = $currentUser->properties->smallResBox;
 
         return $small ? $this->getHTMLSmall($planet) : $this->getHTMLNormal($planet);

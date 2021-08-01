@@ -92,5 +92,9 @@ class AllianceServiceProvider implements ServiceProviderInterface
         $pimple[AllianceDiplomacyRepository::class] = function (Container $pimple): AllianceDiplomacyRepository {
             return new AllianceDiplomacyRepository($pimple['db']);
         };
+
+        $pimple[AllianceRightRepository::class] = function (Container $pimple): AllianceRightRepository {
+            return new AllianceRightRepository($pimple['db']);
+        };
     }
 }

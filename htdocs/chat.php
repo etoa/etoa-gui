@@ -22,7 +22,7 @@ if (isset($_SESSION['user_id'])) {
     if ($chatBan !== null) {
         $errorMessage = 'Du wurdest vom Chat gebannt!<br/><br/><b>Grund:</b> ' . $chatBan->reason;
     } else {
-        $cu = new CurrentUser($_SESSION['user_id']);
+        $cu = new User($_SESSION['user_id']);
         $_SESSION['ccolor'] = $cu->properties->chatColor;
         $chatColor = $cu->properties->chatColor;
     }

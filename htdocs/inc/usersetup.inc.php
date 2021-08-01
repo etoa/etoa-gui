@@ -11,7 +11,9 @@ use EtoA\Universe\Planet\PlanetService;
 use EtoA\Universe\Planet\PlanetTypeRepository;
 use EtoA\Universe\Star\SolarTypeRepository;
 use EtoA\Universe\Star\StarRepository;
+use EtoA\User\UserRepository;
 use EtoA\User\UserService;
+use EtoA\User\UserSetupService;
 use Symfony\Component\HttpFoundation\Request;
 
 /** @var TextRepository $textRepo */
@@ -38,6 +40,12 @@ $entityRepository = $app[EntityRepository::class];
 /** @var StarRepository */
 $starRepository = $app[StarRepository::class];
 
+/** @var UserSetupService $userSetupService */
+$userSetupService = $app[UserSetupService::class];
+
+/** @var UserRepository $userRepository */
+$userRepository = $app[UserRepository::class];
+
 /** @var Request */
 $request = Request::createFromGlobals();
 
@@ -55,10 +63,11 @@ $mode = null;
 // Apply chosen itemset
 /** @var UserSession $s */
 if (isset($s->itemset_key) && $request->request->has(md5($s->itemset_key)) && $request->request->has('itemset_id')) {
-    Usersetup::addItemSetListToPlanet($s->itemset_planet, $cu->id, $request->request->getInt('itemset_id'));
+    $userSetupService->addItemSetListToPlanet($s->itemset_planet, $cu->id, $request->request->getInt('itemset_id'));
     $s->itemset_key = null;
     $s->itemset_planet = null;
-    $cu->setSetupFinished();
+    $userRepository->setSetupFinished($cu->id);
+    $cu->setSetup();
     $mode = "finished";
 } elseif ($request->request->has('submit_chooseplanet') && $request->request->getInt('choosenplanetid') > 0 && checker_verify() && !isset($cp)) {
     $planetId = $request->request->getInt('choosenplanetid');
@@ -82,11 +91,13 @@ if (isset($s->itemset_key) && $request->request->has(md5($s->itemset_key)) && $r
         if (count($sets) > 1) {
             $mode = "itemsets";
         } elseif (count($sets) === 1) {
-            Usersetup::addItemSetListToPlanet($planetId, $cu->id, $sets[0]->id);
-            $cu->setSetupFinished();
+            $userSetupService->addItemSetListToPlanet($planetId, $cu->id, $sets[0]->id);
+            $userRepository->setSetupFinished($cu->id);
+            $cu->setSetup();
             $mode = "finished";
         } else {
-            $cu->setSetupFinished();
+            $userRepository->setSetupFinished($cu->id);
+            $cu->setSetup();
             $mode = "finished";
         }
     }

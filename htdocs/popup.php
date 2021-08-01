@@ -13,7 +13,7 @@ $config = $app[ConfigurationService::class];
 
 $loggedIn = false;
 if ($s->validate(0)) {
-    $cu = new CurrentUser($s->user_id);
+    $cu = new User($s->user_id);
     if ($cu->isValid) {
         $loggedIn = true;
     }

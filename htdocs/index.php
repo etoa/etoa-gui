@@ -73,7 +73,7 @@ if (!$s->validate()) {
 }
 
 // Load user data
-$cu = new CurrentUser($s->user_id);
+$cu = new User($s->user_id);
 
 // Check if it is valid user
 if (!$cu->isValid) {

@@ -43,7 +43,7 @@ class SessionServiceProvider implements ServiceProviderInterface, BootableProvid
         return new ChatUser($session->user_id, $session->user_nick);
     }
 
-    private function validateUser(\UserSession $session, ConfigurationService $config): \CurrentUser
+    private function validateUser(\UserSession $session, ConfigurationService $config): \User
     {
         if (!$session->validate(0)) {
             throw new AccessDeniedHttpException();
@@ -53,7 +53,7 @@ class SessionServiceProvider implements ServiceProviderInterface, BootableProvid
         if (isset($cu)) {
             $currentUser = $cu;
         } else {
-            $currentUser = new \CurrentUser(\UserSession::getInstance($config)->user_id);
+            $currentUser = new \User(\UserSession::getInstance($config)->user_id);
         }
 
         if (!$currentUser->isValid) {
