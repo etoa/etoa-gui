@@ -2,6 +2,8 @@
 
 use EtoA\Bookmark\FleetBookmarkRepository;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Universe\Entity\EntityCoordinates;
+use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Resources\BaseResources;
 use EtoA\User\UserRepository;
 use EtoA\User\UserUniverseDiscoveryService;
@@ -11,7 +13,8 @@ $config = $app[ConfigurationService::class];
 
 /** @var UserRepository $userRepository */
 $userRepository = $app[UserRepository::class];
-
+/** @var EntityRepository $entityRepository */
+$entityRepository = $app[EntityRepository::class];
 /** @var UserUniverseDiscoveryService */
 $userUniverseDiscoveryService = $app[UserUniverseDiscoveryService::class];
 /** @var FleetBookmarkRepository $fleetBookmarkRepository */
@@ -174,40 +177,32 @@ if ($mode == "fleet") {
     }
 } elseif ($mode == "new") {
     // Creat array for data
-    $data = array();
+    $data = [
+        'id' => null,
+        'name' => '',
+        'res' => new BaseResources(),
+        'fetch' => new BaseResources(),
+        'ships' => [],
+        'speed' => 100,
+        'action' => 'flight',
+    ];
     $new = false;
 
     $_SESSION['bookmarks'] = array('added');
     $_SESSION['bookmarks']['added'] = array();
 
+    $entity = null;
     if (isset($_GET['edit']) && intval($_GET['edit']) > 0) {
         $bmid = intval($_GET['edit']);
 
         // Load bookmark data
         $bookmark = $fleetBookmarkRepository->get($bmid, $user->id);
         if ($bookmark !== null) {
-            $eres = dbquery("
-                        SELECT
-                            cells.sx,
-                            cells.cx,
-                            cells.sy,
-                            cells.cy,
-                            entities.pos
-                        FROM
-                            entities
-                        INNER JOIN
-                            cells
-                        ON
-                            entities.cell_id=cells.id
-                            AND entities.id='" . $bookmark->targetId . "'
-                        LIMIT 1");
-            if (mysql_num_rows($eres)) {
-                $earr = mysql_fetch_assoc($eres);
-
+            $entity = $entityRepository->getEntity($bookmark->targetId);
+            if ($entity !== null) {
                 // Fill data array
-                $data = array_merge($data, $earr);
-                $data['res'] = [$bookmark->freight->metal, $bookmark->freight->crystal, $bookmark->freight->plastic, $bookmark->freight->fuel, $bookmark->freight->food, $bookmark->freight->people];
-                $data['fetch'] = [$bookmark->fetch->metal, $bookmark->fetch->crystal, $bookmark->fetch->plastic, $bookmark->fetch->fuel, $bookmark->fetch->food, $bookmark->fetch->people];
+                $data['res'] = $bookmark->freight;
+                $data['fetch'] = $bookmark->fetch;
                 $data['ships'] = $bookmark->ships;
                 $data['speed'] = $bookmark->speed;
                 $data['name'] = $bookmark->name;
@@ -222,20 +217,10 @@ if ($mode == "fleet") {
     }
 
     // If data array is without data create a new one
-    if (count($data) === 0) {
+    if ($entity === null) {
         $new = true;
-        $data['id'] = 0;
-        $data['sx'] = 1;
-        $data['sy'] = 1;
-        $data['cx'] = 1;
-        $data['cy'] = 1;
-        $data['pos'] = 0;
-        $data['name'] = "";
-        $data['res'] = array(0, 0, 0, 0, 0, 0);
-        $data['fetch'] = array(0, 0, 0, 0, 0, 0);
-        $data['ships'] = array();
-        $data['speed'] = "100";
-        $data['action'] = "flight";
+
+        $entity = $entityRepository->findByCoordinates(new EntityCoordinates(1, 1, 1, 1, 0));
     }
 
     echo '<form id="bookmarkForm" action="?page=' . $page . '&amp;mode=fleet" method="post">';
@@ -307,7 +292,7 @@ if ($mode == "fleet") {
                     name="sx"
                     size="1"
                     maxlength="1"
-                    value="' . $data['sx'] . '"
+                    value="' . $entity->sx . '"
                     title="Sektor X-Koordinate"
                     autocomplete="off"
                     onfocus="this.select()"
@@ -321,7 +306,7 @@ if ($mode == "fleet") {
                     name="sy"
                     size="1"
                     maxlength="1"
-                    value="' . $data['sy'] . '"
+                    value="' . $entity->sy . '"
                     title="Sektor Y-Koordinate"
                     autocomplete="off"
                     onfocus="this.select()"
@@ -335,7 +320,7 @@ if ($mode == "fleet") {
                     name="cx"
                     size="2"
                     maxlength="2"
-                    value="' . $data['cx'] . '"
+                    value="' . $entity->cx . '"
                     title="Zelle X-Koordinate"
                     autocomplete="off"
                     onfocus="this.select()"
@@ -349,7 +334,7 @@ if ($mode == "fleet") {
                     name="cy"
                     size="2"
                     maxlength="2"
-                    value="' . $data['cy'] . '"
+                    value="' . $entity->cy . '"
                     title="Zelle Y-Koordinate"
                     autocomplete="off"
                     onfocus="this.select()"
@@ -363,7 +348,7 @@ if ($mode == "fleet") {
                     name="pos"
                     size="2"
                     maxlength="2"
-                    value="' . $data['pos'] . '"
+                    value="' . $entity->pos . '"
                     title="Position des Planeten im Sonnensystem"
                     autocomplete="off"
                     onfocus="this.select()"
@@ -451,55 +436,55 @@ if ($mode == "fleet") {
         <tr>
             <th>' . RES_ICON_METAL . '' . RES_METAL . '</th>
             <td>
-                <input type="text" name="res0" id="res0" value="' . $data['res'][0] . '" size="16" onkeyup="FormatSignedNumber(this.id,this.value, \'\', \'\', \'\');" />
+                <input type="text" name="res0" id="res0" value="' . $data['res']->metal . '" size="16" onkeyup="FormatSignedNumber(this.id,this.value, \'\', \'\', \'\');" />
             </td>
             <td>
-                <input type="text" name="fetch0" id="fetch0" value="' . $data['fetch'][0] . '" size="16" onkeyup="FormatNumber(this.id,this.value, \'\', \'\', \'\');" />
+                <input type="text" name="fetch0" id="fetch0" value="' . $data['fetch']->metal . '" size="16" onkeyup="FormatNumber(this.id,this.value, \'\', \'\', \'\');" />
             </td>
         </tr>
         <tr>
             <th>' . RES_ICON_CRYSTAL . '' . RES_CRYSTAL . '</th>
             <td>
-                <input type="text" name="res1" id="res1" value="' . $data['res'][1] . '" size="16" onkeyup="FormatSignedNumber(this.id,this.value, \'\', \'\', \'\');" />
+                <input type="text" name="res1" id="res1" value="' . $data['res']->crystal . '" size="16" onkeyup="FormatSignedNumber(this.id,this.value, \'\', \'\', \'\');" />
             </td>
             <td>
-                <input type="text" name="fetch1" id="fetch1" value="' . $data['fetch'][1] . '" size="16" onkeyup="FormatNumber(this.id,this.value, \'\', \'\', \'\');" />
+                <input type="text" name="fetch1" id="fetch1" value="' . $data['fetch']->crystal . '" size="16" onkeyup="FormatNumber(this.id,this.value, \'\', \'\', \'\');" />
             </td>
         </tr>
         <tr>
             <th>' . RES_ICON_PLASTIC . '' . RES_PLASTIC . '</th>
             <td>
-                <input type="text" name="res2" id="res2" value="' . $data['res'][2] . '" size="16" onkeyup="FormatSignedNumber(this.id,this.value, \'\', \'\', \'\');" />
+                <input type="text" name="res2" id="res2" value="' . $data['res']->plastic . '" size="16" onkeyup="FormatSignedNumber(this.id,this.value, \'\', \'\', \'\');" />
             </td>
             <td>
-                <input type="text" name="fetch2" id="fetch2" value="' . $data['fetch'][2] . '" size="16" onkeyup="FormatNumber(this.id,this.value, \'\', \'\', \'\');" />
+                <input type="text" name="fetch2" id="fetch2" value="' . $data['fetch']->plastic . '" size="16" onkeyup="FormatNumber(this.id,this.value, \'\', \'\', \'\');" />
             </td>
         </tr>
         <tr>
             <th>' . RES_ICON_FUEL . '' . RES_FUEL . '</th>
             <td>
-                <input type="text" name="res3" id="res3" value="' . $data['res'][3] . '" size="16" onkeyup="FormatSignedNumber(this.id,this.value, \'\', \'\', \'\');" />
+                <input type="text" name="res3" id="res3" value="' . $data['res']->fuel . '" size="16" onkeyup="FormatSignedNumber(this.id,this.value, \'\', \'\', \'\');" />
             </td>
             <td>
-                <input type="text" name="fetch3" id="fetch3" value="' . $data['fetch'][3] . '" size="16" onkeyup="FormatNumber(this.id,this.value, \'\', \'\', \'\');" />
+                <input type="text" name="fetch3" id="fetch3" value="' . $data['fetch']->fuel . '" size="16" onkeyup="FormatNumber(this.id,this.value, \'\', \'\', \'\');" />
             </td>
         </tr>
         <tr>
             <th>' . RES_ICON_FOOD . '' . RES_FOOD . '</th>
             <td>
-                <input type="text" name="res4" id="res4" value="' . $data['res'][4] . '" size="16" onkeyup="FormatSignedNumber(this.id,this.value, \'\', \'\', \'\');" />
+                <input type="text" name="res4" id="res4" value="' . $data['res']->food . '" size="16" onkeyup="FormatSignedNumber(this.id,this.value, \'\', \'\', \'\');" />
             </td>
             <td>
-                <input type="text" name="fetch4" id="fetch4" value="' . $data['fetch'][4] . '" size="16" onkeyup="FormatNumber(this.id,this.value, \'\', \'\', \'\');" />
+                <input type="text" name="fetch4" id="fetch4" value="' . $data['fetch']->food . '" size="16" onkeyup="FormatNumber(this.id,this.value, \'\', \'\', \'\');" />
             </td>
         </tr>
         <tr>
             <th>' . RES_ICON_PEOPLE . 'Passagiere</th>
             <td>
-                <input type="text" name="res5" id="res5" value="' . $data['res'][5] . '" size="16" onkeyup="FormatSignedNumber(this.id,this.value, \'\', \'\', \'\');" />
+                <input type="text" name="res5" id="res5" value="' . $data['res']->people . '" size="16" onkeyup="FormatSignedNumber(this.id,this.value, \'\', \'\', \'\');" />
             </td>
             <td>
-                <input type="text" name="fetch5" id="fetch5" value="' . $data['fetch'][5] . '" size="16" onkeyup="FormatNumber(this.id,this.value, \'\', \'\', \'\');" />
+                <input type="text" name="fetch5" id="fetch5" value="' . $data['fetch']->people . '" size="16" onkeyup="FormatNumber(this.id,this.value, \'\', \'\', \'\');" />
             </td>
         </tr>';
     tableEnd();
