@@ -35,6 +35,7 @@ trait DbTestTrait
         $this->connection->executeQuery('TRUNCATE default_item_sets');
         $this->connection->executeQuery('TRUNCATE fleet');
         $this->connection->executeQuery('TRUNCATE fleet_ships');
+        $this->connection->executeQuery('TRUNCATE fleet_bookmarks');
         $this->connection->executeQuery('TRUNCATE login_failures');
         $this->connection->executeQuery('TRUNCATE planets');
         $this->connection->executeQuery('TRUNCATE techlist');
