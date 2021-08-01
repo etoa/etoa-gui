@@ -217,9 +217,22 @@ class AllianceRepository extends AbstractRepository
         return (int) $this->getConnection()->lastInsertId();
     }
 
-    public function update(int $id, string $tag, string $name, string $text, string $template, string $url, int $founder): bool
+    public function updateApplicationText(int $allianceId, string $template): void
     {
-        $affected = $this->createQueryBuilder()
+        $this->createQueryBuilder()
+            ->update('alliances')
+            ->set('alliance_application_template', ':template')
+            ->where('alliance_id = :id')
+            ->setParameters([
+                'template' => $template,
+                'allianceId' => $allianceId,
+            ])
+            ->execute();
+    }
+
+    public function update(int $id, string $tag, string $name, string $text, string $template, string $url, int $founder, string $updatedAllianceImage = null, bool $acceptsApplications = null, bool $acceptsBnd = null, bool $publicMemberList = null): bool
+    {
+        $qb = $this->createQueryBuilder()
             ->update('alliances')
             ->set('alliance_name', ':name')
             ->set('alliance_tag', ':tag')
@@ -236,7 +249,35 @@ class AllianceRepository extends AbstractRepository
                 'template' => $template,
                 'url' => $url,
                 'founder' => $founder,
-            ])
+            ]);
+
+        if ($updatedAllianceImage !==null) {
+            $qb
+                ->set('alliance_img', ':allianceImage')
+                ->set('alliance_img_check', ':imageCheck')
+                ->setParameter('allianceImage', $updatedAllianceImage)
+                ->setParameter('imageCheck', $updatedAllianceImage !== '' ? 1 : 0);
+        }
+
+        if ($acceptsBnd !== null) {
+            $qb
+                ->set('alliance_accept_bnd', ':acceptsBnd')
+                ->setParameter('acceptsBnd', (int) $acceptsBnd);
+        }
+
+        if ($acceptsApplications !== null) {
+            $qb
+                ->set('alliance_accept_applications', ':acceptsApplications')
+                ->setParameter('acceptsApplications', (int) $acceptsApplications);
+        }
+
+        if ($publicMemberList !== null) {
+            $qb
+                ->set('alliance_public_memberlist', ':publicMemberList')
+                ->setParameter('publicMemberList', (int) $publicMemberList);
+        }
+
+        $affected = $qb
             ->execute();
 
         return (int) $affected > 0;

@@ -287,12 +287,12 @@ elseif ($cu->allianceId == 0) {
 
                 // Prüft Korrektheit des Allianzbildes
                 $alliance_img_string = "";
+                $updatedAllianceImage = null;
                 if (isset($_POST['alliance_img_del']) && $_POST['alliance_img_del'] == 1) {
                     if (file_exists(ALLIANCE_IMG_DIR . "/" . $alliance->image)) {
                         @unlink(ALLIANCE_IMG_DIR . "/" . $alliance->image);
                     }
-                    $alliance_img_string = "alliance_img='',
-                alliance_img_check=0,";
+                    $updatedAllianceImage = '';
                 } elseif ($_FILES['alliance_img_file']['tmp_name'] != "") {
                     $imup = new ImageUpload('alliance_img_file', ALLIANCE_IMG_DIR, "alliance_" . $cu->allianceId . "_" . time());
                     $imup->setMaxSize(ALLIANCE_IMG_MAX_SIZE);
@@ -300,8 +300,7 @@ elseif ($cu->allianceId == 0) {
                     $imup->enableResizing(ALLIANCE_IMG_WIDTH, ALLIANCE_IMG_HEIGHT);
 
                     if ($imup->process()) {
-                        $alliance_img_string = "alliance_img='" . $imup->getResultName() . "',
-                    alliance_img_check=1,";
+                        $updatedAllianceImage = $imup->getResultName();
                         success_msg("Allianzbild hochgeladen!");
                     }
                 }
@@ -310,20 +309,7 @@ elseif ($cu->allianceId == 0) {
                     $message = "";
                 }
 
-                dbquery("
-            UPDATE
-                alliances
-            SET
-                alliance_tag='" . addslashes($alliance_tag) . "',
-                alliance_name='" . addslashes($alliance_name) . "',
-                alliance_text='" . addslashes($_POST['alliance_text']) . "',
-                " . $alliance_img_string . "
-                alliance_url='" . $_POST['alliance_url'] . "',
-                alliance_accept_applications='" . $_POST['alliance_accept_applications'] . "',
-                alliance_accept_bnd='" . $_POST['alliance_accept_bnd'] . "',
-                alliance_public_memberlist='" . $_POST['alliance_public_memberlist'] . "'
-            WHERE
-                alliance_id=" . $cu->allianceId . ";");
+                $allianceRepository->update($alliance->id, $alliance_tag, $alliance_name, $_POST['alliance_text'], $alliance->applicationTemplate, $_POST['alliance_url'], $alliance->founderId, $updatedAllianceImage, (bool) $_POST['alliance_accept_applications'], (bool) $_POST['alliance_accept_bnd'], (bool) $_POST['alliance_public_memberlist']);
                 $alliance = $allianceRepository->getAlliance($cu->allianceId());
                 echo "Die &Auml;nderungen wurden übernommen!<br/>" . $message . "<br/>";
 
@@ -333,7 +319,7 @@ elseif ($cu->allianceId == 0) {
 
             // Bewerbungsvorlage speichern
             if (isset($_POST['applicationtemplatesubmit']) && $_POST['applicationtemplatesubmit'] != "" && checker_verify()) {
-                dbquery("UPDATE alliances SET alliance_application_template='" . addslashes($_POST['alliance_application_template']) . "' WHERE alliance_id=" . $cu->allianceId . ";");
+                $allianceRepository->updateApplicationText($alliance->id, $_POST['alliance_application_template']);
                 echo "Die &Auml;nderungen wurden übernommen!<br/><br/>";
             }
 
