@@ -3,9 +3,13 @@
 use EtoA\Alliance\AllianceRankRepository;
 use EtoA\Alliance\AllianceRight;
 use EtoA\Alliance\AllianceRights;
+use EtoA\User\UserRepository;
 
 /** @var mixed[] $arr alliance data */
 /** @var array<int, AllianceRight> $rights */
+
+/** @var UserRepository $userRepository */
+$userRepository = $app[UserRepository::class];
 
 if (Alliance::checkActionRights(AllianceRights::RANKS)) {
     /** @var AllianceRankRepository $allianceRankRepository */
@@ -25,7 +29,7 @@ if (Alliance::checkActionRights(AllianceRights::RANKS)) {
                     $allianceRankRepository->deleteRights($id);
                     if (isset($_POST['rank_del'][$id]) && $_POST['rank_del'][$id] == 1) {
                         $allianceRankRepository->removeRank($id);
-                        dbquery("UPDATE users SET user_alliance_rank_id=0 WHERE user_alliance_rank_id=$id;");
+                        $userRepository->setAllianceId($id, $cu->allianceId(), 0);
                     } else {
                         $allianceRankRepository->updateRank($id, $name, $_POST['rank_level'][$id]);
                         if (isset($_POST['rankright']) && isset($_POST['rankright'][$id])) {
