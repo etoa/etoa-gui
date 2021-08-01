@@ -31,7 +31,7 @@ if (Alliance::checkActionRights(AllianceRights::RANKS)) {
                         if (isset($_POST['rankright']) && isset($_POST['rankright'][$id])) {
                             foreach ($_POST['rankright'][$id] as $rid => $rv) {
                                 $rid = intval($rid);
-                                $allianceRankRepository->addRankRight($rid, $id);
+                                $allianceRankRepository->addRankRight($id, $rid);
                             }
                         }
                     }
