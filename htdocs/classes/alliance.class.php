@@ -8,6 +8,7 @@ use EtoA\Alliance\AllianceNewsRepository;
 use EtoA\Alliance\AlliancePointsRepository;
 use EtoA\Alliance\AlliancePollRepository;
 use EtoA\Alliance\AllianceRankRepository;
+use EtoA\Alliance\AllianceRepository;
 use EtoA\Alliance\AllianceRights;
 use EtoA\Alliance\AllianceSpendRepository;
 use EtoA\Alliance\Board\AllianceBoardCategoryRepository;
@@ -738,18 +739,12 @@ class Alliance
      */
     function changeRes($m, $c, $p, $fu, $fo, $pw = 0)
     {
-        $sql = "
-            UPDATE
-                alliances
-            SET
-                alliance_res_metal=alliance_res_metal+" . $m . ",
-                alliance_res_crystal=alliance_res_crystal+" . $c . ",
-                alliance_res_plastic=alliance_res_plastic+" . $p . ",
-                alliance_res_fuel=alliance_res_fuel+" . $fu . ",
-                alliance_res_food=alliance_res_food+" . $fo . "
-            WHERE
-                alliance_id='" . $this->id . "';";
-        dbquery($sql);
+        global $app;
+
+        /** @var AllianceRepository $allianceRepository */
+        $allianceRepository = $app[AllianceRepository::class];
+        $allianceRepository->addResources($this->id, $m, $c, $p, $fu, $fo);
+
         $this->resMetal += $m;
         $this->resCrystal += $c;
         $this->resPlastic += $p;
@@ -906,19 +901,9 @@ class Alliance
         if ($save) {
             // Zieht Rohstoffe vom Allianzkonto ab und speichert Anzahl Members, für welche nun bezahlt ist
             if (array_sum($to_pay) > 0) {
-                dbquery("
-                      UPDATE
-                        alliances
-                      SET
-                        alliance_res_metal=alliance_res_metal-'" . $to_pay[1] . "',
-                        alliance_res_crystal=alliance_res_crystal-'" . $to_pay[2] . "',
-                        alliance_res_plastic=alliance_res_plastic-'" . $to_pay[3] . "',
-                        alliance_res_fuel=alliance_res_fuel-'" . $to_pay[4] . "',
-                        alliance_res_food=alliance_res_food-'" . $to_pay[5] . "',
-                        alliance_objects_for_members='" . $newMemberCnt . "'
-                      WHERE
-                        alliance_id='" . $this->id . "'
-                    LIMIT 1;");
+                /** @var AllianceRepository $allianceRepository */
+                $allianceRepository = $app[AllianceRepository::class];
+                $allianceRepository->addResources($this->id, -$to_pay[1], -$to_pay[2], -$to_pay[3], -$to_pay[4], -$to_pay[5], $newMemberCnt);
 
                 /** @var \EtoA\Alliance\AllianceHistoryRepository $allianceHistoryRepository */
                 $allianceHistoryRepository = $app[\EtoA\Alliance\AllianceHistoryRepository::class];

@@ -586,9 +586,10 @@ class AllianceRepository extends AbstractRepository
         int $addCrystal,
         int $addPlastic,
         int $addFuel,
-        int $addFood
+        int $addFood,
+        int $newMemberCount = null
     ): void {
-        $this->createQueryBuilder()
+        $qb = $this->createQueryBuilder()
             ->update('alliances')
             ->set('alliance_res_metal', 'alliance_res_metal + :addMetal')
             ->set('alliance_res_crystal', 'alliance_res_crystal + :addCrystal')
@@ -603,7 +604,15 @@ class AllianceRepository extends AbstractRepository
                 'addPlastic' => $addPlastic,
                 'addFuel' => $addFuel,
                 'addFood' => $addFood,
-            ])
+            ]);
+
+        if ($newMemberCount !== null) {
+            $qb
+                ->set('alliance_objects_for_members', ':memberCount')
+                ->setParameter('memberCount', $newMemberCount);
+        }
+
+        $qb
             ->execute();
     }
 
