@@ -1,6 +1,7 @@
 <?php
 
 use EtoA\Alliance\AllianceApplicationRepository;
+use EtoA\Alliance\AllianceDiplomacyLevel;
 use EtoA\Alliance\AllianceDiplomacyRepository;
 use EtoA\Alliance\AllianceHistoryRepository;
 use EtoA\Alliance\AllianceNewsRepository;
@@ -930,12 +931,11 @@ class Alliance
 
     public function isAtWar()
     {
-        $sql = "SELECT alliance_bnd_id FROM alliance_bnd WHERE alliance_bnd_level=3 && (alliance_bnd_alliance_id1=" . $this->id . " OR alliance_bnd_alliance_id2=" . $this->id . ") LIMIT 1;";
-        $res = dbquery($sql);
-        if (mysql_num_rows($res) > 0) {
-            return true;
-        }
-        return false;
+        global $app;
+        /** @var AllianceDiplomacyRepository $allianceDiplomacyRepository */
+        $allianceDiplomacyRepository = $app[AllianceDiplomacyRepository::class];
+
+        return $allianceDiplomacyRepository->isAtWar($this->id);
     }
 
     /**
@@ -944,27 +944,13 @@ class Alliance
 
     public function checkWar($allianceId)
     {
+        global $app;
+
         if ($this->id != $allianceId && $allianceId > 0) {
-            $wres = dbquery("
-              SELECT
-                  COUNT(alliance_bnd_id)
-              FROM
-                  alliance_bnd
-              WHERE
-                  (
-                      (
-                          alliance_bnd_alliance_id1=" . $this->id . "
-                          AND alliance_bnd_alliance_id2=" . $allianceId . "
-                      )
-                      OR
-                      (
-                          alliance_bnd_alliance_id2=" . $this->id . "
-                          AND alliance_bnd_alliance_id1=" . $allianceId . "
-                      )
-                  )
-                  AND alliance_bnd_level=3");
-            $warr = mysql_fetch_row($wres);
-            if ($warr[0] > 0) return true;
+            /** @var AllianceDiplomacyRepository $allianceDiplomacyRepository */
+            $allianceDiplomacyRepository = $app[AllianceDiplomacyRepository::class];
+
+            return $allianceDiplomacyRepository->existsDiplomacyBetween($this->id, $allianceId, AllianceDiplomacyLevel::WAR);
         }
         return false;
     }
@@ -975,27 +961,13 @@ class Alliance
 
     public function checkBnd($allianceId)
     {
+        global $app;
+
         if ($this->id != $allianceId && $allianceId > 0) {
-            $bres = dbquery("
-              SELECT
-                  COUNT(alliance_bnd_id)
-              FROM
-                  alliance_bnd
-              WHERE
-                  (
-                      (
-                          alliance_bnd_alliance_id1=" . $this->id . "
-                          AND alliance_bnd_alliance_id2=" . $allianceId . "
-                      )
-                      OR
-                      (
-                          alliance_bnd_alliance_id2=" . $this->id . "
-                          AND alliance_bnd_alliance_id1=" . $allianceId . "
-                      )
-                  )
-                  AND alliance_bnd_level=2");
-            $barr = mysql_fetch_row($bres);
-            if ($barr[0] > 0) return true;
+            /** @var AllianceDiplomacyRepository $allianceDiplomacyRepository */
+            $allianceDiplomacyRepository = $app[AllianceDiplomacyRepository::class];
+
+            return $allianceDiplomacyRepository->existsDiplomacyBetween($this->id, $allianceId, AllianceDiplomacyLevel::BND_CONFIRMED);
         }
         return false;
     }
