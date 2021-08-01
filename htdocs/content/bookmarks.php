@@ -1,17 +1,24 @@
 <?PHP
 
+use EtoA\Bookmark\FleetBookmarkRepository;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Universe\Entity\EntityCoordinates;
+use EtoA\Universe\Entity\EntityRepository;
+use EtoA\Universe\Resources\BaseResources;
 use EtoA\User\UserRepository;
 use EtoA\User\UserUniverseDiscoveryService;
 
 /** @var ConfigurationService */
 $config = $app[ConfigurationService::class];
 
-/** @var UserRepository */
+/** @var UserRepository $userRepository */
 $userRepository = $app[UserRepository::class];
-
+/** @var EntityRepository $entityRepository */
+$entityRepository = $app[EntityRepository::class];
 /** @var UserUniverseDiscoveryService */
 $userUniverseDiscoveryService = $app[UserUniverseDiscoveryService::class];
+/** @var FleetBookmarkRepository $fleetBookmarkRepository */
+$fleetBookmarkRepository = $app[FleetBookmarkRepository::class];
 
 $mode = (isset($_GET['mode']) && $_GET['mode'] != "" && ctype_alpha($_GET['mode'])) ? $_GET['mode'] : 'target';
 
@@ -74,79 +81,30 @@ if ((isset($_POST['submitEdit']) || isset($_POST['submitNew'])) && (isset($_POST
             $speed = max(1, min(100, intval(nf_back($_POST['value']))));
 
             // Create restring
-            $freight = intval(nf_back_sign($_POST['res0'])) . "," .
-                intval(nf_back_sign($_POST['res1'])) . "," .
-                intval(nf_back_sign($_POST['res2'])) . "," .
-                intval(nf_back_sign($_POST['res3'])) . "," .
-                intval(nf_back_sign($_POST['res4'])) . "," .
-                intval(nf_back_sign($_POST['res5'])) . "";
+            $freight = new BaseResources();
+            $freight->metal = (int) nf_back_sign($_POST['res0']);
+            $freight->crystal = (int) nf_back_sign($_POST['res1']);
+            $freight->plastic = (int) nf_back_sign($_POST['res2']);
+            $freight->fuel = (int) nf_back_sign($_POST['res3']);
+            $freight->food = (int) nf_back_sign($_POST['res4']);
+            $freight->people = (int) nf_back_sign($_POST['res5']);
 
-            /*$fetch = intval(nf_back_sign($_POST['fetch0'])).",".
-                intval(nf_back_sign($_POST['fetch1'])).",".
-                intval(nf_back_sign($_POST['fetch2'])).",".
-                intval(nf_back_sign($_POST['fetch3'])).",".
-                intval(nf_back_sign($_POST['fetch4'])).",".
-                intval(nf_back_sign($_POST['fetch5']))."";*/
-
-            /*$freight = max(0,intval(nf_back($_POST['res0']))).",".
-                max(0,intval(nf_back($_POST['res1']))).",".
-                max(0,intval(nf_back($_POST['res2']))).",".
-                max(0,intval(nf_back($_POST['res3']))).",".
-                max(0,intval(nf_back($_POST['res4']))).",".
-                max(0,intval(nf_back($_POST['res5']))).""; */
-
-            $fetch = max(0, intval(nf_back($_POST['fetch0']))) . "," .
-                max(0, intval(nf_back($_POST['fetch1']))) . "," .
-                max(0, intval(nf_back($_POST['fetch2']))) . "," .
-                max(0, intval(nf_back($_POST['fetch3']))) . "," .
-                max(0, intval(nf_back($_POST['fetch4']))) . "," .
-                max(0, intval(nf_back($_POST['fetch5']))) . "";
+            $fetch = new BaseResources();
+            $fetch->metal = max(0, (int) nf_back($_POST['fetch0']));
+            $fetch->crystal = max(0, (int) nf_back($_POST['fetch1']));
+            $fetch->plastic = max(0, (int) nf_back($_POST['fetch2']));
+            $fetch->fuel = max(0, (int) nf_back($_POST['fetch3']));
+            $fetch->food = max(0, (int) nf_back($_POST['fetch4']));
+            $fetch->people = max(0, (int) nf_back($_POST['fetch5']));
 
             // Save new bookmark
             if (isset($_POST['submitNew'])) {
-                dbquery("
-                    INSERT INTO
-                        fleet_bookmarks
-                    (
-                        user_id,
-                        name,
-                        target_id,
-                        ships,
-                        res,
-                        resfetch,
-                        action,
-                        speed
-                    )
-                    VALUES
-                    (
-                        '" . $user->id . "',
-                        '" . mysql_real_escape_string($_POST['name']) . "',
-                        '" . $arr[0] . "',
-                        '" . $addships . "',
-                        '" . $freight . "',
-                        '" . $fetch . "',
-                        '" . $_POST['action'] . "',
-                        '" . $speed . "'
-                    );");
+                $fleetBookmarkRepository->add($user->id, $_POST['name'], $arr[0], $addships, $freight, $fetch, $_POST['action'], $speed);
 
                 success_msg("Der Favorit wurde hinzugef&uuml;gt!");
             } elseif (isset($_POST['submitEdit'])) {
                 // Update edidet bookmark
-                dbquery("
-                    UPDATE
-                        fleet_bookmarks
-                    SET
-                        name='" . addslashes($_POST['name']) . "',
-                        target_id='" . $arr[0] . "',
-                        ships='" . $addships . "',
-                        res='" . $freight . "',
-                        resfetch='" . $fetch . "',
-                        action='" . $_POST['action'] . "',
-                        speed='" . $speed . "'
-                    WHERE
-                        user_id='" . $user->id . "'
-                        AND id='" . intval($_POST['id']) . "'
-                    LIMIT 1;");
+                $fleetBookmarkRepository->update((int) $_POST['id'], $user->id, $_POST['name'], $arr[0], $addships, $freight, $fetch, $_POST['action'], $speed);
 
                 success_msg("Der Favorit wurde gespeichert!");
             }
@@ -162,28 +120,15 @@ if ((isset($_POST['submitEdit']) || isset($_POST['submitNew'])) && (isset($_POST
 if (isset($_GET['del']) && intval($_GET['del']) > 0) {
     $bmid = intval($_GET['del']);
 
-    dbquery("
-    DELETE FROM
-        fleet_bookmarks
-    WHERE
-        id='" . $bmid . "'
-        AND user_id='" . $user->id . "';");
-    if (mysql_affected_rows() > 0)
+    if ($fleetBookmarkRepository->remove($bmid, $user->id)) {
         success_msg("Gelöscht");
+    }
 }
 
 if ($mode == "fleet") {
     // Load fleet bookmarks
-    $res = dbquery("
-        SELECT
-            *
-        FROM
-            fleet_bookmarks
-        WHERE
-            user_id='" . $user->id . "'
-        ORDER BY
-            name;");
-    if (mysql_num_rows($res) > 0) {
+    $bookmarks = $fleetBookmarkRepository->getForUser($user->id);
+    if (count($bookmarks) > 0) {
         /** @var \EtoA\Ship\ShipDataRepository $shipDataRepository */
         $shipDataRepository = $app[\EtoA\Ship\ShipDataRepository::class];
         $shipNames = $shipDataRepository->getShipNames(true);
@@ -196,29 +141,26 @@ if ($mode == "fleet") {
                     <th>Schiffe</th>
                     <th>Aktionen</th>
             </tr>";
-        while ($arr = mysql_fetch_assoc($res)) {
-            $ent = Entity::createFactoryById($arr['target_id']);
-            $ac = FleetAction::createFactory($arr['action']);
-
-            $sidarr = explode(",", $arr['ships']);
+        foreach ($bookmarks as $bookmark) {
+            $ent = Entity::createFactoryById($bookmark->targetId);
+            $ac = FleetAction::createFactory($bookmark->action);
 
             echo "<tr>
-                    <td>" . text2html($arr['name']) . "</td>
+                    <td>" . text2html($bookmark->name) . "</td>
                     <td style=\"width:40px;background:#000\"><img src=\"" . $ent->imagePath() . "\" /></td>
                     <td>" . $ent . "<br/>(" . $ent->entityCodeString() . ")</td>
                     <td>" . $ac . "</td>
                     <td>";
 
             // Creating ship-print-string
-            foreach ($sidarr as $sd) {
-                $sdi = explode(":", $sd);
-                echo nf($sdi[1]) . " " . $shipNames[(int) $sdi[0]] . "<br />";
+            foreach ($bookmark->ships as $shipId => $count) {
+                echo nf($count) . " " . $shipNames[$shipId] . "<br />";
             }
             echo "</td>
-                    <td id=\"fleet_bm_actions_" . $arr['id'] . "\" class=\"tbldata\">
-                        <a href=\"javascript:;\" onclick=\"$('#fleet_bm_actions_" . $arr['id'] . "').html('Flotte wird gestartet...');xajax_launchBookmarkProbe(" . $arr['id'] . ");\">Starten</a>
-                        <a href=\"?page=$page&amp;mode=new&amp;edit=" . $arr['id'] . "\">Bearbeiten</a>
-                        <a href=\"?page=$page&amp;mode=$mode&amp;del=" . $arr['id'] . "\" onclick=\"return confirm('Soll dieser Favorit wirklich gel&ouml;scht werden?');\">Entfernen</a>
+                    <td id=\"fleet_bm_actions_" . $bookmark->id . "\" class=\"tbldata\">
+                        <a href=\"javascript:;\" onclick=\"$('#fleet_bm_actions_" . $bookmark->id . "').html('Flotte wird gestartet...');xajax_launchBookmarkProbe(" . $bookmark->id . ");\">Starten</a>
+                        <a href=\"?page=$page&amp;mode=new&amp;edit=" . $bookmark->id . "\">Bearbeiten</a>
+                        <a href=\"?page=$page&amp;mode=$mode&amp;del=" . $bookmark->id . "\" onclick=\"return confirm('Soll dieser Favorit wirklich gel&ouml;scht werden?');\">Entfernen</a>
                     </td>
                 </tr>";
         }
@@ -235,62 +177,37 @@ if ($mode == "fleet") {
     }
 } elseif ($mode == "new") {
     // Creat array for data
-    $data = array();
+    $data = [
+        'id' => null,
+        'name' => '',
+        'res' => new BaseResources(),
+        'fetch' => new BaseResources(),
+        'ships' => [],
+        'speed' => 100,
+        'action' => 'flight',
+    ];
     $new = false;
 
     $_SESSION['bookmarks'] = array('added');
     $_SESSION['bookmarks']['added'] = array();
 
+    $entity = null;
     if (isset($_GET['edit']) && intval($_GET['edit']) > 0) {
         $bmid = intval($_GET['edit']);
 
         // Load bookmark data
-        $bres = dbquery("
-                    SELECT
-                        *
-                    FROM
-                        fleet_bookmarks
-                    WHERE
-                        id='" . $bmid . "'
-                        AND user_id='" . $user->id . "';");
-        if (mysql_num_rows($bres) > 0) {
-            $barr = mysql_fetch_assoc($bres);
-            $eres = dbquery("
-                        SELECT
-                            cells.sx,
-                            cells.cx,
-                            cells.sy,
-                            cells.cy,
-                            entities.pos
-                        FROM
-                            entities
-                        INNER JOIN
-                            cells
-                        ON
-                            entities.cell_id=cells.id
-                            AND entities.id='" . $barr['target_id'] . "'
-                        LIMIT 1");
-            if (mysql_num_rows($eres)) {
-                $earr = mysql_fetch_assoc($eres);
-
-                $res = explode(",", $barr['res']);
-                $fetch = explode(",", $barr['resfetch']);
-                $shipNames = array();
-                $ship = explode(",", $barr['ships']);
-                foreach ($ship as $shipdata) {
-                    $s = explode(":", $shipdata);
-                    $shipNames[$s[0]] = $s[1];
-                }
-
+        $bookmark = $fleetBookmarkRepository->get($bmid, $user->id);
+        if ($bookmark !== null) {
+            $entity = $entityRepository->getEntity($bookmark->targetId);
+            if ($entity !== null) {
                 // Fill data array
-                $data = array_merge($data, $earr);
-                $data['res'] = $res;
-                $data['fetch'] = $fetch;
-                $data['ships'] = $shipNames;
-                $data['speed'] = $barr['speed'];
-                $data['name'] = $barr['name'];
-                $data['id'] = $barr['id'];
-                $data['action'] = $barr['action'];
+                $data['res'] = $bookmark->freight;
+                $data['fetch'] = $bookmark->fetch;
+                $data['ships'] = $bookmark->ships;
+                $data['speed'] = $bookmark->speed;
+                $data['name'] = $bookmark->name;
+                $data['id'] = $bookmark->id;
+                $data['action'] = $bookmark->action;
             } else {
                 error_msg("Ziel wurde nicht gefunden!");
             }
@@ -300,20 +217,10 @@ if ($mode == "fleet") {
     }
 
     // If data array is without data create a new one
-    if (count($data) === 0) {
+    if ($entity === null) {
         $new = true;
-        $data['id'] = 0;
-        $data['sx'] = 1;
-        $data['sy'] = 1;
-        $data['cx'] = 1;
-        $data['cy'] = 1;
-        $data['pos'] = 0;
-        $data['name'] = "";
-        $data['res'] = array(0, 0, 0, 0, 0, 0);
-        $data['fetch'] = array(0, 0, 0, 0, 0, 0);
-        $data['ships'] = array();
-        $data['speed'] = "100";
-        $data['action'] = "flight";
+
+        $entity = $entityRepository->findByCoordinates(new EntityCoordinates(1, 1, 1, 1, 0));
     }
 
     echo '<form id="bookmarkForm" action="?page=' . $page . '&amp;mode=fleet" method="post">';
@@ -385,7 +292,7 @@ if ($mode == "fleet") {
                     name="sx"
                     size="1"
                     maxlength="1"
-                    value="' . $data['sx'] . '"
+                    value="' . $entity->sx . '"
                     title="Sektor X-Koordinate"
                     autocomplete="off"
                     onfocus="this.select()"
@@ -399,7 +306,7 @@ if ($mode == "fleet") {
                     name="sy"
                     size="1"
                     maxlength="1"
-                    value="' . $data['sy'] . '"
+                    value="' . $entity->sy . '"
                     title="Sektor Y-Koordinate"
                     autocomplete="off"
                     onfocus="this.select()"
@@ -413,7 +320,7 @@ if ($mode == "fleet") {
                     name="cx"
                     size="2"
                     maxlength="2"
-                    value="' . $data['cx'] . '"
+                    value="' . $entity->cx . '"
                     title="Zelle X-Koordinate"
                     autocomplete="off"
                     onfocus="this.select()"
@@ -427,7 +334,7 @@ if ($mode == "fleet") {
                     name="cy"
                     size="2"
                     maxlength="2"
-                    value="' . $data['cy'] . '"
+                    value="' . $entity->cy . '"
                     title="Zelle Y-Koordinate"
                     autocomplete="off"
                     onfocus="this.select()"
@@ -441,7 +348,7 @@ if ($mode == "fleet") {
                     name="pos"
                     size="2"
                     maxlength="2"
-                    value="' . $data['pos'] . '"
+                    value="' . $entity->pos . '"
                     title="Position des Planeten im Sonnensystem"
                     autocomplete="off"
                     onfocus="this.select()"
@@ -529,55 +436,55 @@ if ($mode == "fleet") {
         <tr>
             <th>' . RES_ICON_METAL . '' . RES_METAL . '</th>
             <td>
-                <input type="text" name="res0" id="res0" value="' . $data['res'][0] . '" size="16" onkeyup="FormatSignedNumber(this.id,this.value, \'\', \'\', \'\');" />
+                <input type="text" name="res0" id="res0" value="' . $data['res']->metal . '" size="16" onkeyup="FormatSignedNumber(this.id,this.value, \'\', \'\', \'\');" />
             </td>
             <td>
-                <input type="text" name="fetch0" id="fetch0" value="' . $data['fetch'][0] . '" size="16" onkeyup="FormatNumber(this.id,this.value, \'\', \'\', \'\');" />
+                <input type="text" name="fetch0" id="fetch0" value="' . $data['fetch']->metal . '" size="16" onkeyup="FormatNumber(this.id,this.value, \'\', \'\', \'\');" />
             </td>
         </tr>
         <tr>
             <th>' . RES_ICON_CRYSTAL . '' . RES_CRYSTAL . '</th>
             <td>
-                <input type="text" name="res1" id="res1" value="' . $data['res'][1] . '" size="16" onkeyup="FormatSignedNumber(this.id,this.value, \'\', \'\', \'\');" />
+                <input type="text" name="res1" id="res1" value="' . $data['res']->crystal . '" size="16" onkeyup="FormatSignedNumber(this.id,this.value, \'\', \'\', \'\');" />
             </td>
             <td>
-                <input type="text" name="fetch1" id="fetch1" value="' . $data['fetch'][1] . '" size="16" onkeyup="FormatNumber(this.id,this.value, \'\', \'\', \'\');" />
+                <input type="text" name="fetch1" id="fetch1" value="' . $data['fetch']->crystal . '" size="16" onkeyup="FormatNumber(this.id,this.value, \'\', \'\', \'\');" />
             </td>
         </tr>
         <tr>
             <th>' . RES_ICON_PLASTIC . '' . RES_PLASTIC . '</th>
             <td>
-                <input type="text" name="res2" id="res2" value="' . $data['res'][2] . '" size="16" onkeyup="FormatSignedNumber(this.id,this.value, \'\', \'\', \'\');" />
+                <input type="text" name="res2" id="res2" value="' . $data['res']->plastic . '" size="16" onkeyup="FormatSignedNumber(this.id,this.value, \'\', \'\', \'\');" />
             </td>
             <td>
-                <input type="text" name="fetch2" id="fetch2" value="' . $data['fetch'][2] . '" size="16" onkeyup="FormatNumber(this.id,this.value, \'\', \'\', \'\');" />
+                <input type="text" name="fetch2" id="fetch2" value="' . $data['fetch']->plastic . '" size="16" onkeyup="FormatNumber(this.id,this.value, \'\', \'\', \'\');" />
             </td>
         </tr>
         <tr>
             <th>' . RES_ICON_FUEL . '' . RES_FUEL . '</th>
             <td>
-                <input type="text" name="res3" id="res3" value="' . $data['res'][3] . '" size="16" onkeyup="FormatSignedNumber(this.id,this.value, \'\', \'\', \'\');" />
+                <input type="text" name="res3" id="res3" value="' . $data['res']->fuel . '" size="16" onkeyup="FormatSignedNumber(this.id,this.value, \'\', \'\', \'\');" />
             </td>
             <td>
-                <input type="text" name="fetch3" id="fetch3" value="' . $data['fetch'][3] . '" size="16" onkeyup="FormatNumber(this.id,this.value, \'\', \'\', \'\');" />
+                <input type="text" name="fetch3" id="fetch3" value="' . $data['fetch']->fuel . '" size="16" onkeyup="FormatNumber(this.id,this.value, \'\', \'\', \'\');" />
             </td>
         </tr>
         <tr>
             <th>' . RES_ICON_FOOD . '' . RES_FOOD . '</th>
             <td>
-                <input type="text" name="res4" id="res4" value="' . $data['res'][4] . '" size="16" onkeyup="FormatSignedNumber(this.id,this.value, \'\', \'\', \'\');" />
+                <input type="text" name="res4" id="res4" value="' . $data['res']->food . '" size="16" onkeyup="FormatSignedNumber(this.id,this.value, \'\', \'\', \'\');" />
             </td>
             <td>
-                <input type="text" name="fetch4" id="fetch4" value="' . $data['fetch'][4] . '" size="16" onkeyup="FormatNumber(this.id,this.value, \'\', \'\', \'\');" />
+                <input type="text" name="fetch4" id="fetch4" value="' . $data['fetch']->food . '" size="16" onkeyup="FormatNumber(this.id,this.value, \'\', \'\', \'\');" />
             </td>
         </tr>
         <tr>
             <th>' . RES_ICON_PEOPLE . 'Passagiere</th>
             <td>
-                <input type="text" name="res5" id="res5" value="' . $data['res'][5] . '" size="16" onkeyup="FormatSignedNumber(this.id,this.value, \'\', \'\', \'\');" />
+                <input type="text" name="res5" id="res5" value="' . $data['res']->people . '" size="16" onkeyup="FormatSignedNumber(this.id,this.value, \'\', \'\', \'\');" />
             </td>
             <td>
-                <input type="text" name="fetch5" id="fetch5" value="' . $data['fetch'][5] . '" size="16" onkeyup="FormatNumber(this.id,this.value, \'\', \'\', \'\');" />
+                <input type="text" name="fetch5" id="fetch5" value="' . $data['fetch']->people . '" size="16" onkeyup="FormatNumber(this.id,this.value, \'\', \'\', \'\');" />
             </td>
         </tr>';
     tableEnd();

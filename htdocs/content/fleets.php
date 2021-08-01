@@ -1,5 +1,6 @@
 <?PHP
 
+use EtoA\Alliance\AllianceRights;
 use EtoA\Fleet\FleetRepository;
 use EtoA\Ship\ShipDataRepository;
 use EtoA\User\UserRepository;
@@ -47,7 +48,7 @@ if (isset($_GET['mode']) && $_GET['mode'] == "alliance" && $cu->allianceId > 0) 
 
                     echo "<tr>";
                     echo "<td>";
-                    if ($cu->alliance->checkActionRightsNA('fleetminister'))
+                    if ($cu->alliance->checkActionRightsNA(AllianceRights::FLEET_MINISTER))
                         echo "<a href=\"?page=fleetinfo&id=" . $fid . "\">";
 
                     echo "<span style=\"font-weight:bold;color:" . FleetAction::$attitudeColor[$fd->getAction()->attitude()] . "\">
@@ -114,7 +115,7 @@ if (isset($_GET['mode']) && $_GET['mode'] == "alliance" && $cu->allianceId > 0) 
                         date("d.m.y, H:i:s", $fd->landTime()) . "
                                 </td>
                                 <td>";
-                    if ($cu->alliance->checkActionRightsNA('fleetminister'))
+                    if ($cu->alliance->checkActionRightsNA(AllianceRights::FLEET_MINISTER))
                         echo "<a href=\"?page=fleetinfo&id=" . $fid . "&lead_id=" . $fid . "\">";
 
                     echo "<span style=\"color:" . FleetAction::$attitudeColor[$fd->getAction()->attitude()] . "\">

@@ -1,5 +1,6 @@
 <?PHP
 
+use EtoA\Bookmark\FleetBookmarkRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\User\UserRepository;
 use EtoA\User\UserUniverseDiscoveryService;
@@ -35,64 +36,50 @@ function showFleetCategorie($cId)
 function launchBookmarkProbe($bid)
 {
     global $app;
+
+    /** @var FleetBookmarkRepository $fleetBookMarkRepository */
+    $fleetBookMarkRepository = $app[FleetBookmarkRepository::class];
     $cp = Entity::createFactoryById($_SESSION['cpid']);
 
     $objResponse = new xajaxResponse();
 
     ob_start();
     $launched = false;
-    $bres = dbquery("
-                           SELECT
-                            target_id,
-                            ships,
-                            res,
-                            resfetch,
-                            action,
-                            speed
-                        FROM
-                            fleet_bookmarks
-                        WHERE
-                            id='" . $bid . "'
-                            AND user_id='" . $cp->owner()->id . "';");
-    if (mysql_num_rows($bres)) {
-        $barr = mysql_fetch_assoc($bres);
-
+    $bookmark = $fleetBookMarkRepository->get($bid, $cp->owner()->id);
+    if ($bookmark !== null) {
         $fleet = new FleetLaunch($cp, $cp->owner());
         if ($fleet->checkHaven()) {
             $shipOutput = "";
             $probeCount = true;
-            $sidarr = explode(",", $barr['ships']);
             /** @var \EtoA\Ship\ShipDataRepository $shipDataRepository */
             $shipDataRepository = $app[\EtoA\Ship\ShipDataRepository::class];
             $ships = $shipDataRepository->getShipNames(true);
-            foreach ($sidarr as $sd) {
-                $sdi = explode(":", $sd);
-                $probeCount = min($probeCount, $fleet->addShip($sdi[0], $sdi[1]));
+            foreach ($bookmark->ships as $shipId => $count) {
+                $probeCount = min($probeCount, $fleet->addShip($shipId, $count));
                 if ($shipOutput != "") $shipOutput .= ", ";
-                $shipOutput .= $sdi[1] . " " . $ships[(int) $sdi[0]];
+                $shipOutput .= $count . " " . $ships[$shipId];
             }
 
             if ($probeCount) {
                 if ($fleet->fixShips()) {
-                    if ($ent = Entity::createFactoryById($barr['target_id'])) {
+                    if ($ent = Entity::createFactoryById($bookmark->targetId)) {
                         if ($fleet->setTarget($ent)) {
-                            $fleet->setSpeedPercent($barr['speed']);
+                            $fleet->setSpeedPercent($bookmark->speed);
                             if ($fleet->checkTarget()) {
-                                if ($fleet->setAction($barr['action'])) {
-                                    $resarr = explode(",", $barr['res']);
-                                    foreach ($resarr as $id => $res) {
-                                        $id++;
-                                        if ($id == 6) {
-                                            $fleet->loadPeople($res);
-                                        } else {
-                                            $fleet->loadResource($id, $res, 1);
-                                        }
-                                    }
-                                    $fetcharr = explode(",", $barr['resfetch']);
-                                    foreach ($fetcharr as $id => $fetch) {
-                                        $id++;
-                                        $fleet->fetchResource($id, $fetch);
-                                    }
+                                if ($fleet->setAction($bookmark->action)) {
+                                    $fleet->loadResource(0, $bookmark->freight->metal, 1);
+                                    $fleet->loadResource(1, $bookmark->freight->crystal, 1);
+                                    $fleet->loadResource(2, $bookmark->freight->plastic, 1);
+                                    $fleet->loadResource(3, $bookmark->freight->fuel, 1);
+                                    $fleet->loadResource(4, $bookmark->freight->food, 1);
+                                    $fleet->loadPeople($bookmark->freight->people);
+
+                                    $fleet->fetchResource(0, $bookmark->freight->metal);
+                                    $fleet->fetchResource(1, $bookmark->freight->crystal);
+                                    $fleet->fetchResource(2, $bookmark->freight->plastic);
+                                    $fleet->fetchResource(3, $bookmark->freight->fuel);
+                                    $fleet->fetchResource(4, $bookmark->freight->food);
+                                    $fleet->fetchResource(5, $bookmark->freight->people);
 
                                     if ($fid = $fleet->launch()) {
                                         $flObj = new Fleet($fid);

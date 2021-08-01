@@ -24,7 +24,7 @@ if ($request->query->getInt('msg_id') > 0) {
 }
 
 function viewDeletedMessage(
-    CurrentUser $cu,
+    User $cu,
     MessageRepository $messageRepository,
     UserRepository $userRepository,
     int $id
@@ -58,7 +58,7 @@ function viewDeletedMessage(
 
 function listDeletedMessages(
     Request $request,
-    CurrentUser $cu,
+    User $cu,
     MessageRepository $messageRepository,
     MessageCategoryRepository $messageCategoryRepository,
     UserRepository $userRepository

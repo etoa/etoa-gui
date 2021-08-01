@@ -2,7 +2,9 @@
 
 use EtoA\Alliance\AllianceHistoryRepository;
 use EtoA\Alliance\AllianceRankRepository;
+use EtoA\Alliance\AllianceRights;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\User\UserRepository;
 
 /** @var ConfigurationService */
 $config = $app[ConfigurationService::class];
@@ -11,10 +13,12 @@ $config = $app[ConfigurationService::class];
 $allianceHistoryRepository = $app[AllianceHistoryRepository::class];
 /** @var AllianceRankRepository $allianceRankRepository */
 $allianceRankRepository = $app[AllianceRankRepository::class];
+/** @var UserRepository $userRepository */
+$userRepository = $app[UserRepository::class];
 /** @var Alliance $ally */
 /** @var bool $isFounder */
 
-if (Alliance::checkActionRights('editmembers')) {
+if (Alliance::checkActionRights(AllianceRights::EDIT_MEMBERS)) {
 
     echo "<h2>Allianzmitglieder</h2>";
     // Ränge laden
@@ -33,8 +37,8 @@ if (Alliance::checkActionRights('editmembers')) {
                 $uid = intval($uid);
                 $rid = intval($rid);
 
-                if (mysql_num_rows(dbquery("SELECT user_id FROM users WHERE user_alliance_rank_id!='$rid' AND user_id='$uid';")) > 0) {
-                    dbquery("UPDATE users SET user_alliance_rank_id='$rid' WHERE user_id='$uid';");
+                if (!$userRepository->hasUserRankId($cu->allianceId(), $uid, $rid)) {
+                    $userRepository->setAllianceId($uid, $cu->allianceId(), $rid);
                     $allianceHistoryRepository->addEntry($ally->id, "Der Spieler [b]" . get_user_nick($uid) . "[/b] erhält den Rang [b]" . $rank[$rid] . "[/b].");
                 }
             }

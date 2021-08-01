@@ -7,6 +7,7 @@ use EtoA\Support\Mail\MailSenderService;
 use EtoA\Text\TextRepository;
 use EtoA\Support\RuntimeDataStore;
 use EtoA\Tip\TipRepository;
+use EtoA\Tutorial\TutorialManager;
 use EtoA\User\UserSurveillanceRepository;
 
 /** @var RuntimeDataStore */
@@ -18,15 +19,17 @@ $config = $app[ConfigurationService::class];
 /** @var MailSenderService $mailSenderService */
 $mailSenderService = $app[MailSenderService::class];
 
+/** @var TutorialManager $tutorialManager */
+$tutorialManager = $app[TutorialManager::class];
+
 $time = time();
 
 // Get tutorial
-$ttm = new TutorialManager();
-if (!$ttm->hasReadTutorial($cu->id, 1)) {
+if (!$tutorialManager->hasReadTutorial($cu->id, 1)) {
     $twig->addGlobal('tutorial_id', 1);
-} else if ($cu->isSetup() && !$ttm->hasReadTutorial($cu->id, 2)) {
+} else if ($cu->isSetup() && !$tutorialManager->hasReadTutorial($cu->id, 2)) {
     $twig->addGlobal('tutorial_id', 2);
-} elseif ($cu->isSetup() && $ttm->hasReadTutorial($cu->id, 2) && $app['etoa.quests.enabled']) {
+} elseif ($cu->isSetup() && $tutorialManager->hasReadTutorial($cu->id, 2) && $app['etoa.quests.enabled']) {
     $app['cubicle.quests.initializer']->initialize($cu->id);
 }
 

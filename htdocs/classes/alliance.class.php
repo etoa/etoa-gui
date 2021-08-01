@@ -1,12 +1,15 @@
 <?php
 
 use EtoA\Alliance\AllianceApplicationRepository;
+use EtoA\Alliance\AllianceDiplomacyLevel;
 use EtoA\Alliance\AllianceDiplomacyRepository;
 use EtoA\Alliance\AllianceHistoryRepository;
 use EtoA\Alliance\AllianceNewsRepository;
 use EtoA\Alliance\AlliancePointsRepository;
 use EtoA\Alliance\AlliancePollRepository;
 use EtoA\Alliance\AllianceRankRepository;
+use EtoA\Alliance\AllianceRepository;
+use EtoA\Alliance\AllianceRights;
 use EtoA\Alliance\AllianceSpendRepository;
 use EtoA\Alliance\Board\AllianceBoardCategoryRepository;
 use EtoA\Alliance\Board\AllianceBoardTopicRepository;
@@ -736,18 +739,12 @@ class Alliance
      */
     function changeRes($m, $c, $p, $fu, $fo, $pw = 0)
     {
-        $sql = "
-            UPDATE
-                alliances
-            SET
-                alliance_res_metal=alliance_res_metal+" . $m . ",
-                alliance_res_crystal=alliance_res_crystal+" . $c . ",
-                alliance_res_plastic=alliance_res_plastic+" . $p . ",
-                alliance_res_fuel=alliance_res_fuel+" . $fu . ",
-                alliance_res_food=alliance_res_food+" . $fo . "
-            WHERE
-                alliance_id='" . $this->id . "';";
-        dbquery($sql);
+        global $app;
+
+        /** @var AllianceRepository $allianceRepository */
+        $allianceRepository = $app[AllianceRepository::class];
+        $allianceRepository->addResources($this->id, $m, $c, $p, $fu, $fo);
+
         $this->resMetal += $m;
         $this->resCrystal += $c;
         $this->resPlastic += $p;
@@ -757,8 +754,9 @@ class Alliance
 
     /**
      * Check rights for an action
+     * @param AllianceRights::* $action
      */
-    static function checkActionRights($action, $msg = TRUE)
+    static function checkActionRights(string $action, $msg = TRUE): bool
     {
         global $myRight, $isFounder, $page;
         if ($isFounder || $myRight[$action]) {
@@ -775,9 +773,10 @@ class Alliance
     /**
      * Check rights for an action
      * use this function if you're not on the alliance page
+     *
+     * @param AllianceRights::* $action
      */
-
-    function checkActionRightsNA($action)
+    function checkActionRightsNA(string $action): bool
     {
         global $cu, $app;
 
@@ -902,19 +901,9 @@ class Alliance
         if ($save) {
             // Zieht Rohstoffe vom Allianzkonto ab und speichert Anzahl Members, für welche nun bezahlt ist
             if (array_sum($to_pay) > 0) {
-                dbquery("
-                      UPDATE
-                        alliances
-                      SET
-                        alliance_res_metal=alliance_res_metal-'" . $to_pay[1] . "',
-                        alliance_res_crystal=alliance_res_crystal-'" . $to_pay[2] . "',
-                        alliance_res_plastic=alliance_res_plastic-'" . $to_pay[3] . "',
-                        alliance_res_fuel=alliance_res_fuel-'" . $to_pay[4] . "',
-                        alliance_res_food=alliance_res_food-'" . $to_pay[5] . "',
-                        alliance_objects_for_members='" . $newMemberCnt . "'
-                      WHERE
-                        alliance_id='" . $this->id . "'
-                    LIMIT 1;");
+                /** @var AllianceRepository $allianceRepository */
+                $allianceRepository = $app[AllianceRepository::class];
+                $allianceRepository->addResources($this->id, -$to_pay[1], -$to_pay[2], -$to_pay[3], -$to_pay[4], -$to_pay[5], $newMemberCnt);
 
                 /** @var \EtoA\Alliance\AllianceHistoryRepository $allianceHistoryRepository */
                 $allianceHistoryRepository = $app[\EtoA\Alliance\AllianceHistoryRepository::class];
@@ -927,12 +916,11 @@ class Alliance
 
     public function isAtWar()
     {
-        $sql = "SELECT alliance_bnd_id FROM alliance_bnd WHERE alliance_bnd_level=3 && (alliance_bnd_alliance_id1=" . $this->id . " OR alliance_bnd_alliance_id2=" . $this->id . ") LIMIT 1;";
-        $res = dbquery($sql);
-        if (mysql_num_rows($res) > 0) {
-            return true;
-        }
-        return false;
+        global $app;
+        /** @var AllianceDiplomacyRepository $allianceDiplomacyRepository */
+        $allianceDiplomacyRepository = $app[AllianceDiplomacyRepository::class];
+
+        return $allianceDiplomacyRepository->isAtWar($this->id);
     }
 
     /**
@@ -941,27 +929,13 @@ class Alliance
 
     public function checkWar($allianceId)
     {
+        global $app;
+
         if ($this->id != $allianceId && $allianceId > 0) {
-            $wres = dbquery("
-              SELECT
-                  COUNT(alliance_bnd_id)
-              FROM
-                  alliance_bnd
-              WHERE
-                  (
-                      (
-                          alliance_bnd_alliance_id1=" . $this->id . "
-                          AND alliance_bnd_alliance_id2=" . $allianceId . "
-                      )
-                      OR
-                      (
-                          alliance_bnd_alliance_id2=" . $this->id . "
-                          AND alliance_bnd_alliance_id1=" . $allianceId . "
-                      )
-                  )
-                  AND alliance_bnd_level=3");
-            $warr = mysql_fetch_row($wres);
-            if ($warr[0] > 0) return true;
+            /** @var AllianceDiplomacyRepository $allianceDiplomacyRepository */
+            $allianceDiplomacyRepository = $app[AllianceDiplomacyRepository::class];
+
+            return $allianceDiplomacyRepository->existsDiplomacyBetween($this->id, $allianceId, AllianceDiplomacyLevel::WAR);
         }
         return false;
     }
@@ -972,27 +946,13 @@ class Alliance
 
     public function checkBnd($allianceId)
     {
+        global $app;
+
         if ($this->id != $allianceId && $allianceId > 0) {
-            $bres = dbquery("
-              SELECT
-                  COUNT(alliance_bnd_id)
-              FROM
-                  alliance_bnd
-              WHERE
-                  (
-                      (
-                          alliance_bnd_alliance_id1=" . $this->id . "
-                          AND alliance_bnd_alliance_id2=" . $allianceId . "
-                      )
-                      OR
-                      (
-                          alliance_bnd_alliance_id2=" . $this->id . "
-                          AND alliance_bnd_alliance_id1=" . $allianceId . "
-                      )
-                  )
-                  AND alliance_bnd_level=2");
-            $barr = mysql_fetch_row($bres);
-            if ($barr[0] > 0) return true;
+            /** @var AllianceDiplomacyRepository $allianceDiplomacyRepository */
+            $allianceDiplomacyRepository = $app[AllianceDiplomacyRepository::class];
+
+            return $allianceDiplomacyRepository->existsDiplomacyBetween($this->id, $allianceId, AllianceDiplomacyLevel::BND_CONFIRMED);
         }
         return false;
     }

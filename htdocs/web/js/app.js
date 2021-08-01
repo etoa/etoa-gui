@@ -12,6 +12,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
 /* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var _planetname__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./planetname */ "./resources/js/planetname.js");
+/* harmony import */ var _tutorial_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./tutorial.js */ "./resources/js/tutorial.js");
 
 window.$ = window.jQuery = (jquery__WEBPACK_IMPORTED_MODULE_0___default());
 
@@ -19,6 +20,7 @@ __webpack_require__(/*! ./jquery.cookie.js */ "./resources/js/jquery.cookie.js")
 
 
 window.generatePlanetName = _planetname__WEBPACK_IMPORTED_MODULE_1__.default;
+
 
 /***/ }),
 
@@ -691,6 +693,99 @@ function ScanLine(sLine) {
   sLine = ScanLine(sLine);
   document.getElementById(id).value = sLine;
 }
+
+/***/ }),
+
+/***/ "./resources/js/tutorial.js":
+/*!**********************************!*\
+  !*** ./resources/js/tutorial.js ***!
+  \**********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! jquery */ "./node_modules/jquery/dist/jquery.js");
+/* harmony import */ var jquery__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(jquery__WEBPACK_IMPORTED_MODULE_0__);
+ // Minimize tutorial
+
+var minimizeTutorial = function minimizeTutorial() {
+  jquery__WEBPACK_IMPORTED_MODULE_0___default()('.tutorialBox').hide();
+  jquery__WEBPACK_IMPORTED_MODULE_0___default()('.tutorialBoxReduced').show();
+  jquery__WEBPACK_IMPORTED_MODULE_0___default().cookie('tutorial_minimize', 'yes');
+}; // Restore tutorial
+
+
+var restoreTutorial = function restoreTutorial() {
+  jquery__WEBPACK_IMPORTED_MODULE_0___default()('.tutorialBox').show();
+  jquery__WEBPACK_IMPORTED_MODULE_0___default()('.tutorialBoxReduced').hide();
+  jquery__WEBPACK_IMPORTED_MODULE_0___default().cookie('tutorial_minimize', 'no');
+};
+
+var openTutorial = function openTutorial() {
+  jquery__WEBPACK_IMPORTED_MODULE_0___default()('#tutorialContainer').show();
+  jquery__WEBPACK_IMPORTED_MODULE_0___default()('.tutorialBoxReduced').hide();
+
+  if (jquery__WEBPACK_IMPORTED_MODULE_0___default().cookie('tutorial_minimize') == 'yes') {
+    minimizeTutorial();
+  }
+};
+
+var closeTutorial = function closeTutorial() {
+  jquery__WEBPACK_IMPORTED_MODULE_0___default()('#tutorialContainer').hide();
+  jquery__WEBPACK_IMPORTED_MODULE_0___default().ajax({
+    type: 'PUT',
+    url: '/api/tutorials/' + jquery__WEBPACK_IMPORTED_MODULE_0___default()('#tutorialContainer').attr('data-tutorial') + '/close',
+    contentType: 'application/json'
+  }).fail(alert);
+};
+
+function showTutorialText(id, step) {
+  ajaxRequest('get_tutorial', {
+    id: id,
+    step: step
+  }, function (data) {
+    if (data.title && data.content) {
+      jquery__WEBPACK_IMPORTED_MODULE_0___default()('#tutorialContainer').attr('data-tutorial', id);
+      jquery__WEBPACK_IMPORTED_MODULE_0___default()('.tutorialTitleContent').html(data.title);
+      jquery__WEBPACK_IMPORTED_MODULE_0___default()('.tutorialContent').html(data.content);
+
+      if (data.prev !== null) {
+        jquery__WEBPACK_IMPORTED_MODULE_0___default()('.tutorialPrev').show();
+        jquery__WEBPACK_IMPORTED_MODULE_0___default()('.tutorialPrev').unbind("click");
+        jquery__WEBPACK_IMPORTED_MODULE_0___default()('.tutorialPrev').click(function () {
+          showTutorialText(id, data.prev);
+        });
+      } else {
+        jquery__WEBPACK_IMPORTED_MODULE_0___default()('.tutorialPrev').hide();
+      }
+
+      if (data.next !== null) {
+        jquery__WEBPACK_IMPORTED_MODULE_0___default()('.tutorialNext').show();
+        jquery__WEBPACK_IMPORTED_MODULE_0___default()('.tutorialNext').unbind("click");
+        jquery__WEBPACK_IMPORTED_MODULE_0___default()('.tutorialNext').click(function () {
+          showTutorialText(id, data.next);
+        });
+        jquery__WEBPACK_IMPORTED_MODULE_0___default()('.tutorialFinish').hide();
+      } else {
+        jquery__WEBPACK_IMPORTED_MODULE_0___default()('.tutorialNext').hide();
+        jquery__WEBPACK_IMPORTED_MODULE_0___default()('.tutorialFinish').show();
+      }
+    }
+  }, alert);
+  openTutorial();
+}
+
+jquery__WEBPACK_IMPORTED_MODULE_0___default()(function () {
+  jquery__WEBPACK_IMPORTED_MODULE_0___default()('.tutorialMinimize').click(minimizeTutorial);
+  jquery__WEBPACK_IMPORTED_MODULE_0___default()('.tutorialRestore').click(restoreTutorial);
+  jquery__WEBPACK_IMPORTED_MODULE_0___default()('.tutorialClose').click(function () {
+    if (confirm('Tutorial wirklich schliessen?')) {
+      closeTutorial();
+    }
+  });
+  jquery__WEBPACK_IMPORTED_MODULE_0___default()('.tutorialFinish').click(closeTutorial);
+});
+window.showTutorialText = showTutorialText;
 
 /***/ }),
 

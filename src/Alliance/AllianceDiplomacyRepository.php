@@ -96,17 +96,26 @@ class AllianceDiplomacyRepository extends AbstractRepository
         return $data !== false ? new AllianceDiplomacy($data, $id) : null;
     }
 
-    public function existsDiplomacyBetween(int $allianceId, int $otherAllianceId): bool
+    public function existsDiplomacyBetween(int $allianceId, int $otherAllianceId, int $level = null): bool
     {
-        return (bool) $this->createQueryBuilder()
+        $qb = $this->createQueryBuilder()
             ->select('1')
             ->from('alliance_bnd')
             ->where('(alliance_bnd_alliance_id1 = :allianceId AND alliance_bnd_alliance_id2 = :otherAllianceId) OR (alliance_bnd_alliance_id2 = :allianceId AND alliance_bnd_alliance_id1 = :otherAllianceId)')
-            ->andWhere('alliance_bnd_level > 0')
             ->setParameters([
                 'allianceId' => $allianceId,
                 'otherAllianceId' => $otherAllianceId,
-            ])
+            ]);
+
+        if ($level !== null) {
+            $qb
+                ->andWhere('alliance_bnd_level = :level')
+                ->setParameter('level', $level);
+        } else {
+            $qb->andWhere('alliance_bnd_level > 0');
+        }
+
+        return (bool) $qb
             ->execute()
             ->fetchOne();
     }
@@ -156,6 +165,53 @@ class AllianceDiplomacyRepository extends AbstractRepository
                 'publicText' => $publicText,
             ])
             ->execute();
+    }
+
+    public function wasWarDeclaredAgainstSince(int $allianceId, int $since): bool
+    {
+        return (bool) $this->createQueryBuilder()
+            ->select('1')
+            ->from('alliance_bnd')
+            ->where('alliance_bnd_alliance_id2 = :allianceId')
+            ->andWhere('alliance_bnd_level = :war')
+            ->andWhere('alliance_bnd_date > :since')
+            ->setParameters([
+                'allianceId' => $allianceId,
+                'war' => AllianceDiplomacyLevel::WAR,
+                'since' => $since,
+            ])
+            ->execute()
+            ->fetchOne();
+    }
+
+    public function isAtWar(int $allianceId): bool
+    {
+        return (bool) $this->createQueryBuilder()
+            ->select('1')
+            ->from('alliance_bnd')
+            ->where('alliance_bnd_alliance_id1 = :allianceId OR alliance_bnd_alliance_id2 = :allianceId')
+            ->andWhere('alliance_bnd_level = :war')
+            ->setParameters([
+                'allianceId' => $allianceId,
+                'war' => AllianceDiplomacyLevel::WAR,
+            ])
+            ->execute()
+            ->fetchOne();
+    }
+
+    public function hasPendingBndRequests(int $allianceId): bool
+    {
+        return (bool) $this->createQueryBuilder()
+            ->select('1')
+            ->from('alliance_bnd')
+            ->where('alliance_bnd_alliance_id2 = :allianceId')
+            ->andWhere('alliance_bnd_level = :level')
+            ->setParameters([
+                'allianceId' => $allianceId,
+                'level' => AllianceDiplomacyLevel::BND_REQUEST,
+            ])
+            ->execute()
+            ->fetchOne();
     }
 
     public function deleteDiplomacy(int $id): void

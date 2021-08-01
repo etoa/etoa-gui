@@ -1,5 +1,6 @@
 <?PHP
 
+use EtoA\Alliance\AllianceRights;
 use EtoA\User\UserRepository;
 use EtoA\User\UserUniverseDiscoveryService;
 
@@ -23,7 +24,7 @@ $fd = new Fleet($fleet_id, -1, $lead_id);
 if ($fd->valid()) {
     if ($fd->ownerId() == $cu->id) {
         $valid = 10;
-    } elseif ($cu->alliance->checkActionRightsNA('fleetminister')) {
+    } elseif ($cu->alliance->checkActionRightsNA(AllianceRights::FLEET_MINISTER)) {
         if ($fd->getAction()->code() == "support" && $fd->ownerAllianceId() == $cu->allianceId() && $cu->allianceId() > 0 && ($fd->status() == 0 || $fd->status() == 3)) {
             $valid = $cu->alliance->buildlist->getLevel(ALLIANCE_FLEET_CONTROL_ID);
         } elseif ($fd->getAction()->code() == "alliance" && $fd->ownerAllianceId() == $cu->allianceId() && $cu->allianceId() > 0) {

@@ -1,6 +1,10 @@
 <?PHP
 
 use EtoA\User\UserRepository;
+use EtoA\User\UserToXml;
+
+/** @var UserToXml $userToXml */
+$userToXml = $app[UserToXml::class];
 
 $twig->addGlobal("title", "XML-Import/Export");
 
@@ -194,10 +198,11 @@ else {
     $twig->addGlobal("subtitle", "Export");
 
     if (isset($_POST['exportcache'])) {
-        $uti = new UserToXml($_POST['export_user_id']);
-        $xmlfile = $uti->toCacheFile();
-        if ($xmlfile) {
+        try {
+            $xmlfile = $userToXml->toCacheFile((int) $_POST['export_user_id']);
             success_msg("Die Userdaten wurden nach [b]" . $xmlfile . "[/b] exportiert.");
+        } catch (Exception $ex) {
+            error_msg($ex->getMessage());
         }
     }
     if (isset($_POST['exportdl'])) {

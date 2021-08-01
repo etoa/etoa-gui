@@ -7,6 +7,9 @@ use EtoA\Alliance\AllianceHistoryRepository;
 use EtoA\Alliance\AlliancePollRepository;
 use EtoA\Alliance\AllianceRankRepository;
 use EtoA\Alliance\AllianceRepository;
+use EtoA\Alliance\AllianceRight;
+use EtoA\Alliance\AllianceRightRepository;
+use EtoA\Alliance\AllianceRights;
 use EtoA\Alliance\Board\AllianceBoardTopicRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\User\UserRepository;
@@ -21,6 +24,8 @@ $allianceRankRepository = $app[AllianceRankRepository::class];
 $allianceDiplomacyRepository = $app[AllianceDiplomacyRepository::class];
 /** @var UserRepository $userRepository */
 $userRepository = $app[UserRepository::class];
+/** @var AllianceRightRepository $allianceRightRepository */
+$allianceRightRepository = $app[AllianceRightRepository::class];
 
 echo "<h1>Allianz</h1>";
 echo "<div id=\"allianceinfo\"></div>"; //nur zu entwicklungszwecken!
@@ -56,16 +61,17 @@ elseif ($cu->allianceId == 0) {
 
 
         // Rechte laden
-        $rightres = dbquery("SELECT * FROM alliance_rights;");
-        $rights = array();
+        /** @var array<int, AllianceRight> $rights */
+        $rights = [];
+        /** @var array<string, bool> $myRight */
         $myRight = [];
-        if (mysql_num_rows($rightres) > 0) {
+        $allianceRights = $allianceRightRepository->getRights();
+        if (count($allianceRights) > 0) {
             $rightIds = $allianceRankRepository->getAvailableRightIds($cu->allianceId(), $myRankId);
 
-            while ($rightarr = mysql_fetch_array($rightres)) {
-                $rights[$rightarr['right_id']]['key'] = $rightarr['right_key'];
-                $rights[$rightarr['right_id']]['desc'] = $rightarr['right_desc'];
-                $myRight[$rightarr['right_key']] = in_array((int) $rightarr['right_id'], $rightIds, true);
+            foreach ($allianceRights as $right) {
+                $rights[$right->id] = $right;
+                $myRight[$right->key] = in_array($right->id, $rightIds, true);
             }
         }
 
@@ -76,7 +82,7 @@ elseif ($cu->allianceId == 0) {
         // Allianzdaten ändern
         //
         if (isset($_GET['action']) && $_GET['action'] == "editdata") {
-            if (Alliance::checkActionRights('editdata')) {
+            if (Alliance::checkActionRights(AllianceRights::EDIT_DATA)) {
                 require("alliance/editdata.inc.php");
             }
         }
@@ -85,7 +91,7 @@ elseif ($cu->allianceId == 0) {
         // Bewerbungsvorlage bearbeiten
         //
         elseif (isset($_GET['action']) && $_GET['action'] == "applicationtemplate") {
-            if (Alliance::checkActionRights('applicationtemplate')) {
+            if (Alliance::checkActionRights(AllianceRights::APPLICATION_TEMPLATE)) {
                 require("alliance/applicationtemplate.inc.php");
             }
         }
@@ -101,7 +107,7 @@ elseif ($cu->allianceId == 0) {
         // Umfragen erstellen / bearbeiten
         //
         elseif (isset($_GET['action']) && $_GET['action'] == "polls") {
-            if (Alliance::checkActionRights('polls')) {
+            if (Alliance::checkActionRights(AllianceRights::POLLS)) {
                 require("alliance/polls.inc.php");
             }
         }
@@ -110,7 +116,7 @@ elseif ($cu->allianceId == 0) {
         // Mitglieder bearbeiten
         //
         elseif (isset($_GET['action']) && $_GET['action'] == "editmembers") {
-            if (Alliance::checkActionRights('editmembers')) {
+            if (Alliance::checkActionRights(AllianceRights::EDIT_MEMBERS)) {
                 require("alliance/editmembers.inc.php");
             }
         }
@@ -119,7 +125,7 @@ elseif ($cu->allianceId == 0) {
         // Rundmail
         //
         elseif (isset($_GET['action']) && $_GET['action'] == "massmail") {
-            if (Alliance::checkActionRights('massmail')) {
+            if (Alliance::checkActionRights(AllianceRights::MASS_MAIL)) {
                 require("alliance/massmail.inc.php");
             }
         }
@@ -128,7 +134,7 @@ elseif ($cu->allianceId == 0) {
         // Ränge
         //
         elseif (isset($_GET['action']) && $_GET['action'] == "ranks") {
-            if (Alliance::checkActionRights('ranks')) {
+            if (Alliance::checkActionRights(AllianceRights::RANKS)) {
                 require("alliance/ranks.inc.php");
             }
         }
@@ -137,7 +143,7 @@ elseif ($cu->allianceId == 0) {
         // Bewerbungen
         //
         elseif (isset($_GET['action']) && $_GET['action'] == "applications") {
-            if (Alliance::checkActionRights('applications')) {
+            if (Alliance::checkActionRights(AllianceRights::APPLICATIONS)) {
                 require("alliance/applications.inc.php");
             }
         }
@@ -146,7 +152,7 @@ elseif ($cu->allianceId == 0) {
         // Allianz auflösen bestätigen
         //
         elseif (isset($_GET['action']) && $_GET['action'] == "liquidate"  && !$cu->alliance->isAtWar()) {
-            if (Alliance::checkActionRights('liquidate')) {
+            if (Alliance::checkActionRights(AllianceRights::LIQUIDATE)) {
                 require("alliance/liquidate.inc.php");
             }
         }
@@ -155,7 +161,7 @@ elseif ($cu->allianceId == 0) {
         // Allianz-News
         //
         elseif (isset($_GET['action']) && $_GET['action'] == "alliancenews") {
-            if (Alliance::checkActionRights('alliancenews')) {
+            if (Alliance::checkActionRights(AllianceRights::ALLIANCE_NEWS)) {
                 require("alliance/alliancenews.inc.php");
             }
         }
@@ -164,7 +170,7 @@ elseif ($cu->allianceId == 0) {
         // Bündniss-/Kriegspartner wählen
         //
         elseif (isset($_GET['action']) && $_GET['action'] == "relations") {
-            if (Alliance::checkActionRights('relations')) {
+            if (Alliance::checkActionRights(AllianceRights::RELATIONS)) {
                 require("alliance/diplomacy.inc.php");
             }
         }
@@ -173,7 +179,7 @@ elseif ($cu->allianceId == 0) {
         // Geschichte anzeigen
         //
         elseif (isset($_GET['action']) && $_GET['action'] == "history") {
-            if (Alliance::checkActionRights('history')) {
+            if (Alliance::checkActionRights(AllianceRights::HISTORY)) {
                 require("alliance/history.inc.php");
             }
         }
@@ -182,7 +188,7 @@ elseif ($cu->allianceId == 0) {
         // Mitglieder anzeigen
         //
         elseif (isset($_GET['action']) && $_GET['action'] == "viewmembers") {
-            if (Alliance::checkActionRights('viewmembers')) {
+            if (Alliance::checkActionRights(AllianceRights::VIEW_MEMBERS)) {
                 require("alliance/viewmembers.inc.php");
             }
         }
@@ -191,7 +197,7 @@ elseif ($cu->allianceId == 0) {
         // Wings verwalten
         //
         elseif (isset($_GET['action']) && $_GET['action'] == "wings" && $config->getBoolean('allow_wings')) {
-            if (Alliance::checkActionRights('wings')) {
+            if (Alliance::checkActionRights(AllianceRights::WINGS)) {
                 require("alliance/wings.inc.php");
             }
         }
@@ -281,12 +287,12 @@ elseif ($cu->allianceId == 0) {
 
                 // Prüft Korrektheit des Allianzbildes
                 $alliance_img_string = "";
+                $updatedAllianceImage = null;
                 if (isset($_POST['alliance_img_del']) && $_POST['alliance_img_del'] == 1) {
                     if (file_exists(ALLIANCE_IMG_DIR . "/" . $alliance->image)) {
                         @unlink(ALLIANCE_IMG_DIR . "/" . $alliance->image);
                     }
-                    $alliance_img_string = "alliance_img='',
-                alliance_img_check=0,";
+                    $updatedAllianceImage = '';
                 } elseif ($_FILES['alliance_img_file']['tmp_name'] != "") {
                     $imup = new ImageUpload('alliance_img_file', ALLIANCE_IMG_DIR, "alliance_" . $cu->allianceId . "_" . time());
                     $imup->setMaxSize(ALLIANCE_IMG_MAX_SIZE);
@@ -294,8 +300,7 @@ elseif ($cu->allianceId == 0) {
                     $imup->enableResizing(ALLIANCE_IMG_WIDTH, ALLIANCE_IMG_HEIGHT);
 
                     if ($imup->process()) {
-                        $alliance_img_string = "alliance_img='" . $imup->getResultName() . "',
-                    alliance_img_check=1,";
+                        $updatedAllianceImage = $imup->getResultName();
                         success_msg("Allianzbild hochgeladen!");
                     }
                 }
@@ -304,20 +309,7 @@ elseif ($cu->allianceId == 0) {
                     $message = "";
                 }
 
-                dbquery("
-            UPDATE
-                alliances
-            SET
-                alliance_tag='" . addslashes($alliance_tag) . "',
-                alliance_name='" . addslashes($alliance_name) . "',
-                alliance_text='" . addslashes($_POST['alliance_text']) . "',
-                " . $alliance_img_string . "
-                alliance_url='" . $_POST['alliance_url'] . "',
-                alliance_accept_applications='" . $_POST['alliance_accept_applications'] . "',
-                alliance_accept_bnd='" . $_POST['alliance_accept_bnd'] . "',
-                alliance_public_memberlist='" . $_POST['alliance_public_memberlist'] . "'
-            WHERE
-                alliance_id=" . $cu->allianceId . ";");
+                $allianceRepository->update($alliance->id, $alliance_tag, $alliance_name, $_POST['alliance_text'], $alliance->applicationTemplate, $_POST['alliance_url'], $alliance->founderId, $updatedAllianceImage, (bool) $_POST['alliance_accept_applications'], (bool) $_POST['alliance_accept_bnd'], (bool) $_POST['alliance_public_memberlist']);
                 $alliance = $allianceRepository->getAlliance($cu->allianceId());
                 echo "Die &Auml;nderungen wurden übernommen!<br/>" . $message . "<br/>";
 
@@ -327,7 +319,7 @@ elseif ($cu->allianceId == 0) {
 
             // Bewerbungsvorlage speichern
             if (isset($_POST['applicationtemplatesubmit']) && $_POST['applicationtemplatesubmit'] != "" && checker_verify()) {
-                dbquery("UPDATE alliances SET alliance_application_template='" . addslashes($_POST['alliance_application_template']) . "' WHERE alliance_id=" . $cu->allianceId . ";");
+                $allianceRepository->updateApplicationText($alliance->id, $_POST['alliance_application_template']);
                 echo "Die &Auml;nderungen wurden übernommen!<br/><br/>";
             }
 
@@ -363,7 +355,7 @@ elseif ($cu->allianceId == 0) {
                 // Internes Forum verlinken
                 /** @var AllianceBoardTopicRepository $allianceBoardTopicRepository */
                 $allianceBoardTopicRepository = $app[AllianceBoardTopicRepository::class];
-                if ($myRight['allianceboard'] || $isFounder) {
+                if ($myRight[AllianceRights::ALLIANCE_BOARD] || $isFounder) {
                     $topic = $allianceBoardTopicRepository->getAllianceTopicWithLatestPost($alliance->id);
                 } else {
                     $topic = $allianceBoardTopicRepository->getAllianceTopicWithLatestPost($alliance->id, $myRankId);
@@ -389,7 +381,7 @@ elseif ($cu->allianceId == 0) {
                 }
 
                 // Bewerbungen anzeigen
-                if ($isFounder || $myRight['applications']) {
+                if ($isFounder || $myRight[AllianceRights::APPLICATIONS]) {
                     /** @var AllianceApplicationRepository $allianceApplicationRepository */
                     $allianceApplicationRepository = $app[AllianceApplicationRepository::class];
                     $applications = $allianceApplicationRepository->countApplications($cu->allianceId());
@@ -401,7 +393,7 @@ elseif ($cu->allianceId == 0) {
                 }
 
                 // Wing-Anfrage
-                if ($config->getBoolean('allow_wings') && ($isFounder || $myRight['wings']) && $ally->motherRequestId > 0) {
+                if ($config->getBoolean('allow_wings') && ($isFounder || $myRight[AllianceRights::WINGS]) && $ally->motherRequestId > 0) {
                     echo "<tr><th colspan=\"3\" align=\"center\">
                 <div align=\"center\"><b><a href=\"?page=$page&action=wings\">Es ist eine Wing-Anfrage vorhanden!</a></b></div>
                 </th></tr>";
@@ -417,16 +409,8 @@ elseif ($cu->allianceId == 0) {
 
 
                 // Bündnissanfragen anzeigen
-                if ($isFounder || $myRight['relations']) {
-                    $bres = dbquery("
-                SELECT
-                    alliance_bnd_id
-                FROM
-                    alliance_bnd
-                WHERE
-                    alliance_bnd_alliance_id2='" . $cu->allianceId . "'
-                    AND alliance_bnd_level='0';");
-                    if (mysql_num_rows($bres) > 0)
+                if ($isFounder || $myRight[AllianceRights::RELATIONS]) {
+                    if ($allianceDiplomacyRepository->hasPendingBndRequests($cu->allianceId()))
                         echo "<tr>
                         <th colspan=\"3\" style=\"text-align:center;color:#0f0\">
                             <a  style=\"color:#0f0\" href=\"?page=$page&action=relations\">Es sind B&uuml;ndnisanfragen vorhanden!</a>
@@ -435,49 +419,50 @@ elseif ($cu->allianceId == 0) {
 
                 // Kriegserklärung anzeigen
                 $time = time() - 192600;
-                if (mysql_num_rows(dbquery("SELECT alliance_bnd_id FROM alliance_bnd WHERE alliance_bnd_alliance_id2='" . $cu->allianceId . "' AND alliance_bnd_level='3' AND alliance_bnd_date>'$time';")) > 0)
-                    if ($isFounder || $myRight['relations'])
+                if ($allianceDiplomacyRepository->wasWarDeclaredAgainstSince($cu->allianceId(), $time)) {
+                    if ($isFounder || $myRight[AllianceRights::RELATIONS])
                         echo "<tr>
                     <th colspan=\"3\" align=\"center\"><b>
                         <div align=\"center\"><a href=\"?page=$page&action=relations\">Deiner Allianz wurde in den letzten 36h der Krieg erkl&auml;rt!</a></div></b></th></tr>";
                     else
                         echo "<tr><th colspan=\"3\" align=\"center\"><div align=\"center\"><b>Deiner Allianz wurde in den letzten 36h der Krieg erkl&auml;rt!</b></div></th></tr>";
+                }
 
                 // Verwaltung
                 $adminBox = array();
 
-                if ($isFounder || $myRight['viewmembers']) {
+                if ($isFounder || $myRight[AllianceRights::VIEW_MEMBERS]) {
                     $adminBox["Mitglieder anzeigen"] = "?page=$page&amp;action=viewmembers";
                 }
                 $adminBox["Allianzbasis"] = "?page=$page&action=base";
-                if ($config->getBoolean('allow_wings') && ($isFounder || $myRight['wings'])) {
+                if ($config->getBoolean('allow_wings') && ($isFounder || $myRight[AllianceRights::WINGS])) {
                     $adminBox["Wings verwalten"] = "?page=$page&action=wings";
                 }
-                if ($isFounder || $myRight['history']) {
+                if ($isFounder || $myRight[AllianceRights::HISTORY]) {
                     $adminBox["Geschichte"] = "?page=$page&action=history";
                 }
-                if ($isFounder || $myRight['alliancenews']) {
+                if ($isFounder || $myRight[AllianceRights::ALLIANCE_NEWS]) {
                     $adminBox["Allianznews (Rathaus)"] = "?page=$page&action=alliancenews";
                 }
-                if ($isFounder || $myRight['relations']) {
+                if ($isFounder || $myRight[AllianceRights::RELATIONS]) {
                     $adminBox["Diplomatie"] = "?page=$page&action=relations";
                 }
-                if ($isFounder || $myRight['polls']) {
+                if ($isFounder || $myRight[AllianceRights::POLLS]) {
                     $adminBox["Umfragen verwalten"] = "?page=$page&action=polls";
                 }
-                if ($isFounder || $myRight['massmail']) {
+                if ($isFounder || $myRight[AllianceRights::MASS_MAIL]) {
                     $adminBox["Rundmail"] = "?page=$page&action=massmail";
                 }
-                if ($isFounder || $myRight['editmembers']) {
+                if ($isFounder || $myRight[AllianceRights::EDIT_MEMBERS]) {
                     $adminBox["Mitglieder verwalten"] = "?page=$page&action=editmembers";
                 }
-                if ($isFounder || $myRight['ranks']) {
+                if ($isFounder || $myRight[AllianceRights::RANKS]) {
                     $adminBox["Ränge"] = "?page=$page&action=ranks";
                 }
-                if ($isFounder || $myRight['editdata']) {
+                if ($isFounder || $myRight[AllianceRights::EDIT_DATA]) {
                     $adminBox["Allianz-Daten bearbeiten"] = "?page=$page&amp;action=editdata";
                 }
-                if ($isFounder || $myRight['applicationtemplate']) {
+                if ($isFounder || $myRight[AllianceRights::APPLICATION_TEMPLATE]) {
                     $adminBox["Bewerbungsvorlage"] = "?page=$page&action=applicationtemplate";
                 }
                 if ($isFounder && !$cu->alliance->isAtWar()) {
@@ -499,7 +484,7 @@ elseif ($cu->allianceId == 0) {
 
 
                 // Letzte Ereignisse anzeigen
-                if ($isFounder || $myRight['history']) {
+                if ($isFounder || $myRight[AllianceRights::HISTORY]) {
                     echo "<tr>
                     <th width=\"120\">Letzte Ereignisse:</th>
                     <td colspan=\"2\">";

@@ -2,11 +2,12 @@
 
 /** @var mixed[] $arr alliance data */
 use EtoA\Alliance\AlliancePollRepository;
+use EtoA\Alliance\AllianceRights;
 
 /** @var AlliancePollRepository $alliancePollRepository */
 $alliancePollRepository = $app[AlliancePollRepository::class];
 
-if (Alliance::checkActionRights('polls')) {
+if (Alliance::checkActionRights(AllianceRights::POLLS)) {
     echo "<h2>Umfragen verwalten</h2>";
     if (isset($_GET['pollaction']) && $_GET['pollaction'] == "create") {
         if (isset($_POST['pollsubmitnew']) && $_POST['pollsubmitnew'] && checker_verify()) {

@@ -76,6 +76,25 @@ class UserRepository extends AbstractRepository
             ->execute();
     }
 
+    
+    public function hasUserRankId(int $allianceId, int $userId, int $rankId): bool
+    {
+        return (bool) $this->createQueryBuilder()
+            ->select('user_id')
+            ->from('users')
+            ->where('user_id = :userId')
+            ->andWhere('user_alliance_id = :allianceId')
+            ->andWhere('user_alliance_rank_id = :rankId')
+            ->setParameters([
+                'userId' => $userId,
+                'allianceId' => $allianceId,
+                'rankId' => $rankId,
+            ])
+            ->setMaxResults(1)
+            ->execute()
+            ->fetchOne();
+    }
+
     public function setLogoutTime(int $userId, ?int $time = null): void
     {
         $this->createQueryBuilder()
@@ -214,6 +233,18 @@ class UserRepository extends AbstractRepository
             ->update('users')
             ->set('discoverymask', "''")
             ->set('user_setup', (string) 0)
+            ->execute();
+    }
+
+    public function setSetupFinished(int $userId): void
+    {
+        $this->createQueryBuilder()
+            ->update('users')
+            ->set('user_setup', (string) 1)
+            ->where('user_id = :userId')
+            ->setParameters([
+                'userId' => $userId,
+            ])
             ->execute();
     }
 
