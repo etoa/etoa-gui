@@ -445,6 +445,16 @@ class User implements \EtoA\User\UserInterface
         return $this->setup;
     }
 
+    public function setSetup()
+    {
+        $this->setup = true;
+    }
+
+    public function setNotSetup()
+    {
+        $this->setup = false;
+    }
+
     final public function allianceId(): int
     {
         return (int) $this->allianceId;

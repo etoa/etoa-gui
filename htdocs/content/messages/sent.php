@@ -20,7 +20,7 @@ if ($request->query->getInt('msg_id') > 0) {
 }
 
 function viewSentMessage(
-    CurrentUser $cu,
+    User $cu,
     MessageRepository $messageRepository,
     UserRepository $userRepository,
     int $id
@@ -51,7 +51,7 @@ function viewSentMessage(
 }
 
 function listSentMessages(
-    CurrentUser $cu,
+    User $cu,
     MessageRepository $messageRepository,
     UserRepository $userRepository
 ): void {

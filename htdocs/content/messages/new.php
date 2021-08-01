@@ -42,7 +42,7 @@ if (!$cu->isVerified) {
 
 function sendMessageForm(
     Request $request,
-    CurrentUser $cu,
+    User $cu,
     MessageRepository $messageRepository,
     UserRepository $userRepository
 ): void {
@@ -212,7 +212,7 @@ function getInitialSubject(Request $request)
 function getInitialMessageText(
     Request $request,
     MessageRepository $messageRepository,
-    CurrentUser $cu
+    User $cu
 ): string {
     if ($request->request->has('message_text')) {
         if ($request->request->has('message_sender')) {
@@ -243,7 +243,7 @@ function submitSendMessage(
     UserRepository $userRepository,
     MessageRepository $messageRepository,
     MessageIgnoreRepository $messageIgnoreRepository,
-    CurrentUser $cu,
+    User $cu,
     $dispatcher
 ): void {
 
