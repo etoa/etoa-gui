@@ -12,6 +12,7 @@ use EtoA\Bookmark\FleetBookmarkRepository;
 use EtoA\BuddyList\BuddyListRepository;
 use EtoA\Building\BuildingRepository;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Defense\DefenseDataRepository;
 use EtoA\Defense\DefenseQueueRepository;
 use EtoA\Defense\DefenseRepository;
 use EtoA\Fleet\FleetRepository;
@@ -21,12 +22,16 @@ use EtoA\Market\MarketResourceRepository;
 use EtoA\Market\MarketShipRepository;
 use EtoA\Missile\MissileRepository;
 use EtoA\Notepad\NotepadRepository;
+use EtoA\Race\RaceDataRepository;
+use EtoA\Ship\ShipDataRepository;
 use EtoA\Ship\ShipQueueRepository;
 use EtoA\Ship\ShipRepository;
 use EtoA\Support\Mail\MailSenderService;
+use EtoA\Technology\TechnologyDataRepository;
 use EtoA\Technology\TechnologyRepository;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Universe\Planet\PlanetService;
+use EtoA\Universe\Planet\PlanetTypeRepository;
 use Pimple\Container;
 use Pimple\ServiceProviderInterface;
 
@@ -128,7 +133,26 @@ class UserServiceProvider implements ServiceProviderInterface
                 $pimple[UserCommentRepository::class],
                 $pimple[UserSurveillanceRepository::class],
                 $pimple[BackendMessageService::class],
-                $pimple[UserLogRepository::class]
+                $pimple[UserLogRepository::class],
+                $pimple[UserToXml::class],
+            );
+        };
+
+        $pimple[UserToXml::class] = function (Container $pimple): UserToXml {
+            return new UserToXml(
+                $pimple[UserRepository::class],
+                $pimple[AllianceRepository::class],
+                $pimple[RaceDataRepository::class],
+                $pimple[PlanetRepository::class],
+                $pimple[PlanetTypeRepository::class],
+                $pimple[BuildingRepository::class],
+                $pimple[TechnologyRepository::class],
+                $pimple[TechnologyDataRepository::class],
+                $pimple[ShipRepository::class],
+                $pimple[ShipDataRepository::class],
+                $pimple[FleetRepository::class],
+                $pimple[DefenseRepository::class],
+                $pimple[DefenseDataRepository::class],
             );
         };
 
