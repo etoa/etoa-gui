@@ -164,6 +164,13 @@ class UserServiceProvider implements ServiceProviderInterface
             );
         };
 
+        $pimple[UserStats::class] = function (Container $pimple): UserStats {
+            return new UserStats(
+                $pimple[UserOnlineStatsRepository::class],
+                $pimple[PlanetRepository::class]
+            );
+        };
+
         $pimple[UserSetupService::class] = function (Container $pimple): UserSetupService {
             return new UserSetupService(
                 $pimple[DefaultItemRepository::class],
