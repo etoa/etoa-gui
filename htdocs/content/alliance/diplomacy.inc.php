@@ -47,11 +47,12 @@ use EtoA\Alliance\AllianceDiplomacyLevel;
 use EtoA\Alliance\AllianceDiplomacyRepository;
 use EtoA\Alliance\AllianceHistoryRepository;
 use EtoA\Alliance\AllianceRepository;
+use EtoA\Alliance\AllianceRights;
 use EtoA\Alliance\Board\AllianceBoardTopicRepository;
 use EtoA\Message\MessageRepository;
 use EtoA\Support\StringUtils;
 
-if (Alliance::checkActionRights('relations')) {
+if (Alliance::checkActionRights(AllianceRights::RELATIONS)) {
     echo "<h2>Diplomatie</h2>";
 
     /** @var AllianceRepository $allianceRepository */

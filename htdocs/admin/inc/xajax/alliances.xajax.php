@@ -4,6 +4,7 @@ use EtoA\Alliance\AllianceNewsRepository;
 use EtoA\Alliance\AllianceRepository;
 use EtoA\Alliance\AllianceSpendRepository;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\User\UserRepository;
 
 $xajax->register(XAJAX_FUNCTION, "allianceNewsSave");
 $xajax->register(XAJAX_FUNCTION, "allianceNewsLoad");
@@ -178,27 +179,22 @@ function allianceNewsEdit($id)
 
 function allianceNewsLoadUserList($nid, $aid, $uid)
 {
+    global $app;
+
     $objResponse = new xajaxResponse();
     $out = '';
     if ($aid > 0) {
         $out = '<select name="user_id"><option value="0">(keiner)</option>';
-        $res = dbquery("
-        SELECT
-            user_id,
-            user_nick
-        FROM
-            users
-        WHERE
-            user_alliance_id='" . $aid . "'
-        ;");
-        if (mysql_num_rows($res)) {
-            while ($arr = mysql_fetch_array($res)) {
-                $out .= '<option value="' . $arr['user_id'] . '"';
-                if ($uid == $arr['user_id']) {
-                    $out .= ' selected="selected"';
-                }
-                $out .= '>' . $arr['user_nick'] . '</option>';
+
+        /** @var UserRepository $userRepository */
+        $userRepository = $app[UserRepository::class];
+        $members = $userRepository->getAllianceUsers($aid);
+        foreach ($members as $member) {
+            $out .= '<option value="' . $member->id . '"';
+            if ($uid == $member->id) {
+                $out .= ' selected="selected"';
             }
+            $out .= '>' . $member->nick . '</option>';
         }
         $out .= '</select>';
     } else {
@@ -245,24 +241,9 @@ function showSpend($allianceId, $form)
 
     ob_start();
 
-    $ures = dbquery("SELECT
-                    user_id,
-                    user_nick,
-                    user_points,
-                    user_alliance_rank_id
-                FROM
-                    users
-                WHERE
-                    user_alliance_id=" . $allianceId . "
-                ORDER BY
-                    user_points DESC,
-                    user_nick;");
-    $members = array();
-    if (mysql_num_rows($ures) > 0) {
-        while ($uarr = mysql_fetch_array($ures)) {
-            $members[$uarr['user_id']] = $uarr;
-        }
-    }
+    /** @var UserRepository $userRepository */
+    $userRepository = $app[UserRepository::class];
+    $members = $userRepository->getAllianceUsers($allianceId);
 
     $sum = false;
     $user = 0;
@@ -287,7 +268,7 @@ function showSpend($allianceId, $form)
     $allianceSpendRepository = $app[AllianceSpendRepository::class];
     if ($sum) {
         if ($user > 0) {
-            $user_message = "von " . $members[$user]['user_nick'] . " ";
+            $user_message = "von " . $members[$user]->nick . " ";
         } else {
             $user_message = "";
         }
@@ -322,7 +303,7 @@ function showSpend($allianceId, $form)
     // Einzahlungen werden einzelen ausgegeben
     else {
         if ($user > 0) {
-            $user_message = "von " . $members[$user]['user_nick'] . " ";
+            $user_message = "von " . $members[$user]->nick . " ";
         } else {
             $user_message = "";
         }
@@ -341,7 +322,7 @@ function showSpend($allianceId, $form)
         $spendEntries = $allianceSpendRepository->getSpent($allianceId, $user, (int) $limit);
         if (count($spendEntries) > 0) {
             foreach ($spendEntries as $entry) {
-                tableStart("" . $members[$entry->userId]['user_nick'] . " - " . df($entry->time) . "");
+                tableStart("" . $members[$entry->userId]->nick . " - " . df($entry->time) . "");
                 echo "<tr>
                                 <th class=\"resmetalcolor\" style=\"width:20%\">" . RES_METAL . "</th>
                                 <th class=\"rescrystalcolor\" style=\"width:20%\">" . RES_CRYSTAL . "</th>

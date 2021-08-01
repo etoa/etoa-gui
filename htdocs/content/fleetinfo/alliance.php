@@ -3,6 +3,8 @@
 /** @var int $fleet_id */
 /** @var Fleet $fd */
 
+use EtoA\Alliance\AllianceRights;
+
 $lead_id = (int) $_GET['lead_id'] > 0 ? (int) $_GET['lead_id'] : -1;
 
 $rights = true;
@@ -14,7 +16,7 @@ else
     $rights = false;
 
 if ($cu->alliance->getBuildingLevel("Flottenkontrolle") >= ALLIANCE_FLEET_SHOW_DETAIL && $rights) {
-    if ($cu->alliance->checkActionRightsNA('fleetminister') || $cu->id == $fd->ownerId()) {
+    if ($cu->alliance->checkActionRightsNA(AllianceRights::FLEET_MINISTER) || $cu->id == $fd->ownerId()) {
         //
         // Flottendaten laden und überprüfen ob die Flotte existiert
         //

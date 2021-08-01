@@ -1,8 +1,10 @@
 <?PHP
 
+use EtoA\Alliance\AllianceRights;
+
 /** @var mixed[] $arr */
 
-if (Alliance::checkActionRights('applicationtemplate')) {
+if (Alliance::checkActionRights(AllianceRights::APPLICATION_TEMPLATE)) {
 
     echo "<h2>Bewerbungsvorlage bearbeiten</h2>";
     echo "<form action=\"?page=$page\" method=\"post\">";

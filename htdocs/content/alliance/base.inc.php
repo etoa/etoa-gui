@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\Alliance\AllianceHistoryRepository;
+use EtoA\Alliance\AllianceRights;
 use EtoA\Alliance\AllianceSpendRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Fleet\FleetRepository;
@@ -229,7 +230,7 @@ $fleet = $fleetRepository->getUserFleetShipCounts($cu->getId());
 
 $ship_costed = 0;
 if (isset($_POST['ship_submit']) && checker_verify()) {
-    if ($cu->alliance->checkActionRightsNA("buildminister") || $cu->id == $_POST['user_buy_ship']) {
+    if ($cu->alliance->checkActionRightsNA(AllianceRights::BUILD_MINISTER) || $cu->id == $_POST['user_buy_ship']) {
         // Prüft, ob ein User gewählt wurde
         if ($_POST['user_buy_ship'] > 0) {
             // Gebaute Schiffe laden
@@ -413,7 +414,7 @@ tableEnd();
 
 // Gebäude in Auftrag geben
 if (isset($_POST['building_submit']) && checker_verify()) {
-    if (Alliance::checkActionRights("buildminister")) {
+    if (Alliance::checkActionRights(AllianceRights::BUILD_MINISTER)) {
         if (isset($_POST['building_id']) && $_POST['building_id'] != 0) {
             if ($cu->alliance->buildlist->build($_POST['building_id']))
                 success_msg("Gebäude wurde erfolgreich in Auftrag gegeben!");
@@ -426,7 +427,7 @@ if (isset($_POST['building_submit']) && checker_verify()) {
 
 // Technologie in Auftrag geben
 if (isset($_POST['research_submit']) && checker_verify()) {
-    if (Alliance::checkActionRights("buildminister")) {
+    if (Alliance::checkActionRights(AllianceRights::BUILD_MINISTER)) {
         if (isset($_POST['research_id']) && $_POST['research_id'] != 0) {
             if ($cu->alliance->techlist->build($_POST['research_id']))
                 success_msg("Forschung wurde erfolgreich in Auftrag gegeben!");

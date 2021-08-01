@@ -150,26 +150,9 @@ if ($config->getBoolean("alliance_allow")) {
                 echo "<h2>Allianz w&auml;hlen</h2>
                 Nicht alle Allianzen akzeptieren jederzeit eine Bewerbung. <br/>
                 Im Folgenden findest du eine Liste der Allianzen die momentan Bewerbungen akzeptieren:<br/><br/>";
-                $res = dbquery("
-                SELECT
-                    alliances.alliance_id,
-                    alliances.alliance_tag,
-                    alliances.alliance_name,
-                    alliances.alliance_accept_applications,
-                    COUNT(users.user_id) as member_count
-                FROM
-                    alliances
-                LEFT JOIN
-                    users
-                    ON users.user_alliance_id=alliances.alliance_id
-                WHERE
-                    alliances.alliance_accept_applications=1
-                GROUP BY
-                    alliances.alliance_id
-                ORDER BY
-                    alliances.alliance_name,
-                    alliances.alliance_tag;");
-                if (mysql_num_rows($res) > 0) {
+
+                $alliances = $allianceRepository->getAlliancesAcceptingApplications();
+                if (count($alliances) > 0) {
                     tableStart("", "400", " align=\"center\"");
                     //					echo "<table width=\"300\" align=\"center\" class=\"tbl\">";
                     echo "<tr>
@@ -178,18 +161,18 @@ if ($config->getBoolean("alliance_allow")) {
                                     <th>Mitglieder</th>
                                     <th style=\"width:100px;\">Aktionen</th>
                             </tr>";
-                    while ($arr = mysql_fetch_array($res)) {
-                        echo "<tr><td>" . $arr['alliance_tag'] . "</td>
-                        <td>" . $arr['alliance_name'] . "</td>
-                        <td>" . $arr['member_count'] . "</td>
-                        <td><a href=\"?page=alliance&amp;info_id=" . $arr['alliance_id'] . "\">Info</a>";
-                        echo "&nbsp;<a href=\"?page=$page&action=join&alliance_id=" . $arr['alliance_id'] . "\">Bewerben</a>";
+                    foreach ($alliances as $alliance) {
+                        echo "<tr><td>" . $alliance->tag . "</td>
+                        <td>" . $alliance->name . "</td>
+                        <td>" . $alliance->memberCount . "</td>
+                        <td><a href=\"?page=alliance&amp;info_id=" . $alliance->id . "\">Info</a>";
+                        echo "&nbsp;<a href=\"?page=$page&action=join&alliance_id=" . $alliance->id . "\">Bewerben</a>";
                         echo "</td></tr>";
                     }
                     tableEnd();
 
                     $maxMemberCount = $config->getInt("alliance_max_member_count");
-                    if ($maxMemberCount != 0) {
+                    if ($maxMemberCount !== 0) {
                         echo "<p><b>Hinweis:</b> Eine Allianz darf maximal $maxMemberCount Mitglieder haben!</p>";
                     }
 

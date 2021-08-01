@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\Alliance\AllianceRepository;
+use EtoA\Alliance\AllianceRights;
 use EtoA\Core\Configuration\ConfigurationService;
 
 /** @var ConfigurationService */
@@ -11,7 +12,7 @@ $allianceRepository = $app[AllianceRepository::class];
 
 /** @var Alliance $ally */
 
-if ($config->getBoolean('allow_wings') && Alliance::checkActionRights('wings')) {
+if ($config->getBoolean('allow_wings') && Alliance::checkActionRights(AllianceRights::WINGS)) {
     echo "<h2>Wings verwalten</h2>";
 
     if (isset($_GET['remove']) && intval($_GET['remove']) > 0) {
