@@ -1,11 +1,13 @@
 <?PHP
 
-/** @var mixed[] $arr alliance data */
-/** @var array[] $rights */
-
 use EtoA\Alliance\AllianceRankRepository;
+use EtoA\Alliance\AllianceRight;
+use EtoA\Alliance\AllianceRights;
 
-if (Alliance::checkActionRights('ranks')) {
+/** @var mixed[] $arr alliance data */
+/** @var array<int, AllianceRight> $rights */
+
+if (Alliance::checkActionRights(AllianceRights::RANKS)) {
     /** @var AllianceRankRepository $allianceRankRepository */
     $allianceRankRepository = $app[AllianceRankRepository::class];
 
@@ -58,12 +60,12 @@ if (Alliance::checkActionRights('ranks')) {
                                         Level: <input type=\"text\" name=\"rank_level[" . $rank->id . "]\" value=\"" . $rank->level . "\" maxlength=\"1\" size=\"2\" />
                                     </td>
                                     <td>";
-            foreach ($rights as $k => $v) {
-                echo "<input type=\"checkbox\" name=\"rankright[" . $rank->id . "][" . $k . "]\" value=\"1\" ";
-                if (in_array((int) $k, $rightIds, true))
-                    echo " checked=\"checked\" /><span style=\"color:#0f0;\">" . $v['desc'] . "</span><br/>";
+            foreach ($rights as $right) {
+                echo "<input type=\"checkbox\" name=\"rankright[" . $rank->id . "][" . $right->id . "]\" value=\"1\" ";
+                if (in_array($right->id, $rightIds, true))
+                    echo " checked=\"checked\" /><span style=\"color:#0f0;\">" . $right->description . "</span><br/>";
                 else
-                    echo " /> <span style=\"color:#f50;\">" . $v['desc'] . "</span><br/>";
+                    echo " /> <span style=\"color:#f50;\">" . $right->description . "</span><br/>";
             }
             echo "</td>";
 

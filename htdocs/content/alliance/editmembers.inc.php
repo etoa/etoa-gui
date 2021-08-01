@@ -2,6 +2,7 @@
 
 use EtoA\Alliance\AllianceHistoryRepository;
 use EtoA\Alliance\AllianceRankRepository;
+use EtoA\Alliance\AllianceRights;
 use EtoA\Core\Configuration\ConfigurationService;
 
 /** @var ConfigurationService */
@@ -14,7 +15,7 @@ $allianceRankRepository = $app[AllianceRankRepository::class];
 /** @var Alliance $ally */
 /** @var bool $isFounder */
 
-if (Alliance::checkActionRights('editmembers')) {
+if (Alliance::checkActionRights(AllianceRights::EDIT_MEMBERS)) {
 
     echo "<h2>Allianzmitglieder</h2>";
     // Ränge laden

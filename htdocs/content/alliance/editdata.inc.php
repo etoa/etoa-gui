@@ -2,7 +2,9 @@
 
 /** @var Alliance $ally */
 
-if (Alliance::checkActionRights('editdata')) {
+use EtoA\Alliance\AllianceRights;
+
+if (Alliance::checkActionRights(AllianceRights::EDIT_DATA)) {
     echo "<h2>Allianzdaten &auml;ndern</h2>";
 
     echo "<form action=\"?page=$page\" method=\"post\" enctype=\"multipart/form-data\">";

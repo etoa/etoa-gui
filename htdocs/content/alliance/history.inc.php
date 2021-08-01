@@ -1,10 +1,11 @@
 <?PHP
 
 use EtoA\Alliance\AllianceHistoryRepository;
+use EtoA\Alliance\AllianceRights;
 
 /** @var mixed[] $arr alliance data */
 
-if (Alliance::checkActionRights('history')) {
+if (Alliance::checkActionRights(AllianceRights::HISTORY)) {
     /** @var AllianceHistoryRepository */
     $allianceHistoryRepository = $app[AllianceHistoryRepository::class];
 

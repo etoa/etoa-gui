@@ -7,6 +7,7 @@ use EtoA\Alliance\AllianceNewsRepository;
 use EtoA\Alliance\AlliancePointsRepository;
 use EtoA\Alliance\AlliancePollRepository;
 use EtoA\Alliance\AllianceRankRepository;
+use EtoA\Alliance\AllianceRights;
 use EtoA\Alliance\AllianceSpendRepository;
 use EtoA\Alliance\Board\AllianceBoardCategoryRepository;
 use EtoA\Alliance\Board\AllianceBoardTopicRepository;
@@ -757,8 +758,9 @@ class Alliance
 
     /**
      * Check rights for an action
+     * @param AllianceRights::* $action
      */
-    static function checkActionRights($action, $msg = TRUE)
+    static function checkActionRights(string $action, $msg = TRUE): bool
     {
         global $myRight, $isFounder, $page;
         if ($isFounder || $myRight[$action]) {
@@ -775,9 +777,10 @@ class Alliance
     /**
      * Check rights for an action
      * use this function if you're not on the alliance page
+     *
+     * @param AllianceRights::* $action
      */
-
-    function checkActionRightsNA($action)
+    function checkActionRightsNA(string $action): bool
     {
         global $cu, $app;
 

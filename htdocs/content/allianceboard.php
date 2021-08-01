@@ -3,6 +3,9 @@
 use EtoA\Alliance\AllianceDiplomacy;
 use EtoA\Alliance\AllianceDiplomacyLevel;
 use EtoA\Alliance\AllianceDiplomacyRepository;
+use EtoA\Alliance\AllianceRight;
+use EtoA\Alliance\AllianceRightRepository;
+use EtoA\Alliance\AllianceRights;
 use EtoA\Alliance\Board\AllianceBoardCategoryRankRepository;
 use EtoA\Alliance\Board\AllianceBoardCategoryRepository;
 use EtoA\Alliance\Board\AllianceBoardPostRepository;
@@ -30,6 +33,8 @@ $allianceBoardCategoryRankRepository = $app[AllianceBoardCategoryRankRepository:
 $allianceDiplomacyRepository = $app[AllianceDiplomacyRepository::class];
 /** @var UserRepository $userRepository */
 $userRepository = $app[UserRepository::class];
+/** @var AllianceRightRepository $allianceRightRepository */
+$allianceRightRepository = $app[AllianceRightRepository::class];
 
 $request = Request::createFromGlobals();
 
@@ -69,16 +74,17 @@ if ($cu->allianceId > 0) {
         } else
             $myRankId = 0;
 
-        // Rechte laden
-        $rightres = dbquery("SELECT * FROM alliance_rights ORDER BY right_desc;");
-        $rights = array();
+        /** @var array<int, AllianceRight> $rights */
+        $rights = [];
+        /** @var array<string, bool> $myRight */
         $myRight = [];
-        $rightIds = $allianceRankRepository->getAvailableRightIds($alliance->id, $myRankId);
-        if (mysql_num_rows($rightres) > 0) {
-            while ($rightarr = mysql_fetch_array($rightres)) {
-                $rights[$rightarr['right_id']]['key'] = $rightarr['right_key'];
-                $rights[$rightarr['right_id']]['desc'] = $rightarr['right_desc'];
-                $myRight[$rightarr['right_key']] = in_array((int) $rightarr['right_id'], $rightIds , true);
+        $allianceRights = $allianceRightRepository->getRights();
+        if (count($allianceRights) > 0) {
+            $rightIds = $allianceRankRepository->getAvailableRightIds($cu->allianceId(), $myRankId);
+
+            foreach ($allianceRights as $right) {
+                $rights[$right->id] = $right;
+                $myRight[$right->key] = in_array($right->id, $rightIds, true);
             }
         }
 
@@ -118,7 +124,7 @@ if ($cu->allianceId > 0) {
 
 
         // Board-Admin prüfen
-        if (Alliance::checkActionRights('allianceboard', FALSE) || $isFounder)
+        if (Alliance::checkActionRights(AllianceRights::ALLIANCE_BOARD, FALSE) || $isFounder)
             $isAdmin = true;
         else
             $isAdmin = false;

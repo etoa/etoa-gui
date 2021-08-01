@@ -1,11 +1,14 @@
 <?PHP
 
 /** @var \EtoA\Message\MessageRepository $messageRepository */
+
+use EtoA\Alliance\AllianceRights;
+
 $messageRepository = $app[\EtoA\Message\MessageRepository::class];
 
 /** @var mixed[] $arr alliance data */
 
-if (Alliance::checkActionRights('massmail')) {
+if (Alliance::checkActionRights(AllianceRights::MASS_MAIL)) {
     echo "<h2>Rundmail</h2>";
 
     // Nachricht senden

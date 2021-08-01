@@ -2,9 +2,10 @@
 
 use EtoA\Alliance\AllianceNewsRepository;
 use EtoA\Alliance\AllianceRepository;
+use EtoA\Alliance\AllianceRights;
 use EtoA\Support\StringUtils;
 
-if (Alliance::checkActionRights('alliancenews'))
+if (Alliance::checkActionRights(AllianceRights::ALLIANCE_NEWS))
 {
     /** @var AllianceNewsRepository $allianceNewsRepository */
     $allianceNewsRepository = $app[AllianceNewsRepository::class];

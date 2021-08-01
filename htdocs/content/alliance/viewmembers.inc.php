@@ -3,8 +3,9 @@
 /** @var mixed[] $arr alliance data */
 
 use EtoA\Alliance\AllianceRankRepository;
+use EtoA\Alliance\AllianceRights;
 
-if (Alliance::checkActionRights('viewmembers')) {
+if (Alliance::checkActionRights(AllianceRights::VIEW_MEMBERS)) {
 
     /** @var AllianceRankRepository $allianceRankRepository */
     $allianceRankRepository = $app[AllianceRankRepository::class];
