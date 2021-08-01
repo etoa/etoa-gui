@@ -3,12 +3,15 @@
 /** @var mixed[] $arr alliance data */
 
 use EtoA\Alliance\AllianceRankRepository;
+use EtoA\Alliance\AllianceRepository;
 use EtoA\Alliance\AllianceRights;
 
 if (Alliance::checkActionRights(AllianceRights::VIEW_MEMBERS)) {
 
     /** @var AllianceRankRepository $allianceRankRepository */
     $allianceRankRepository = $app[AllianceRankRepository::class];
+    /** @var AllianceRepository $allianceRepository */
+    $allianceRepository = $app[AllianceRepository::class];
 
     echo "<h2>Allianzmitglieder</h2>";
     $rank = [];
@@ -28,72 +31,40 @@ if (Alliance::checkActionRights(AllianceRights::VIEW_MEMBERS)) {
         <th>Online</th>
         <th>Aktionen</th>
         </tr>";
-    $ures = dbquery("
-        SELECT
-            Max(user_sessionlog.time_action) as last_log,
-            user_sessions.time_action,
-            u.user_id,
-            u.user_points,
-            u.user_nick,
-            p.id as pid,
-            u.user_alliance_rank_id,
-            race_name
-        FROM
-            users AS u
-        INNER JOIN
-            planets AS p
-            ON p.planet_user_id=u.user_id
-            AND p.planet_user_main=1
-        INNER JOIN
-            races
-            ON user_race_id=race_id
-        LEFT JOIN
-            user_sessionlog
-        ON
-            u.user_id=user_sessionlog.user_id
-        LEFT JOIN
-            user_sessions
-        ON
-            u.user_id=user_sessions.user_id
-        WHERE
-            u.user_alliance_id='" . $arr['alliance_id'] . "'
-        GROUP BY
-            u.user_id
-        ORDER BY
-            u.user_points DESC, u.user_nick;");
+    $allianceMembers = $allianceRepository->getAllianceMembers($alliance->id);
     $time = time();
-    while ($uarr = mysql_fetch_assoc($ures)) {
-        $tp = Planet::getById($uarr['pid']);
+    foreach ($allianceMembers as $member) {
+        $tp = Planet::getById($member->mainPlanetId);
         echo "<tr>";
-        echo "<td>" . $uarr['user_nick'] . "</td>
+        echo "<td>" . $member->nick . "</td>
             <td>" . $tp . "</td>
-            <td>" . nf($uarr['user_points']) . "</td>
-            <td>" . $uarr['race_name'] . "</td>";
-        if ($arr['alliance_founder_id'] == $uarr['user_id']) {
+            <td>" . nf($member->points) . "</td>
+            <td>" . $member->raceName . "</td>";
+        if ($alliance->founderId === $member->id) {
             echo "<td>Gr&uuml;nder</td>";
-        } elseif (isset($rank[$uarr['user_alliance_rank_id']])) {
-            echo "<td>" . $rank[$uarr['user_alliance_rank_id']] . "</td>";
+        } elseif (isset($rank[$member->rankId])) {
+            echo "<td>" . $rank[$member->rankId] . "</td>";
         } else {
             echo "<td>-</td>";
         }
-        $num = check_fleet_incomming($uarr['user_id']);
+        $num = check_fleet_incomming($member->id);
         if ($num > 0)
             echo "<td BGCOLOR=\"#FF0000\" align=\"center\">" . $num . "</td>";
         else
             echo "<td>-</td>";
 
-        if ($uarr['time_action'])
+        if ($member->timeAction !== null)
             echo "<td style=\"color:#0f0;\">online</td>";
-        elseif ($uarr['last_log'])
-            echo "<td>" . date("d.m.Y H:i", $uarr['last_log']) . "</td>";
+        elseif ($member->lastLog !== null)
+            echo "<td>" . date("d.m.Y H:i", $member->lastLog) . "</td>";
         else
             echo "<td>Noch nicht eingeloggt!</td>";
 
         echo "<td class=\"tbldata\">";
-        if ($cu->id != $uarr['user_id'])
-            echo "<a href=\"?page=messages&amp;mode=new&amp;message_user_to=" . $uarr['user_id'] . "\">Nachricht</a> ";
+        if ($cu->getId() !== $member->id)
+            echo "<a href=\"?page=messages&amp;mode=new&amp;message_user_to=" . $member->id . "\">Nachricht</a> ";
 
-        echo "<a href=\"?page=userinfo&amp;id=" . $uarr['user_id'] . "\">Profil</a>";
+        echo "<a href=\"?page=userinfo&amp;id=" . $member->id . "\">Profil</a>";
         echo "</td></tr>";
     }
     tableEnd();

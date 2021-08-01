@@ -8,6 +8,29 @@ use EtoA\Core\AbstractRepository;
 
 class AllianceRepository extends AbstractRepository
 {
+    /**
+     * @return AllianceMember[]
+     */
+    public function getAllianceMembers(int $allianceId): array
+    {
+        $data = $this->getConnection()->fetchAllAssociative('
+            SELECT u.user_id, u.user_points, u.user_nick, u.user_alliance_rank_id, p.id as planetId, x.time_action AS last_log, s.time_action, r.race_name
+            FROM users u
+            INNER JOIN planets p ON p.planet_user_id = u.user_id AND p.planet_user_main = 1
+            INNER JOIN races r ON r.race_id = u.user_race_id
+            LEFT JOIN user_sessions s ON s.user_id = u.user_id
+            LEFT JOIN (
+                SELECT user_id, MAX(time_action) as time_action FROM user_sessionlog GROUP BY user_id
+            ) x ON x.user_id = u.user_id
+            WHERE u.user_alliance_id = :allianceId
+            ORDER BY u.user_points DESC, u.user_nick
+        ', [
+            'allianceId' => $allianceId,
+        ]);
+
+        return array_map(fn (array $row) => new AllianceMember($row), $data);
+    }
+
     public function count(): int
     {
         return (int) $this->createQueryBuilder()
