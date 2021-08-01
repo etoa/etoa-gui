@@ -424,15 +424,7 @@ elseif ($cu->allianceId == 0) {
 
                 // Bündnissanfragen anzeigen
                 if ($isFounder || $myRight[AllianceRights::RELATIONS]) {
-                    $bres = dbquery("
-                SELECT
-                    alliance_bnd_id
-                FROM
-                    alliance_bnd
-                WHERE
-                    alliance_bnd_alliance_id2='" . $cu->allianceId . "'
-                    AND alliance_bnd_level='0';");
-                    if (mysql_num_rows($bres) > 0)
+                    if ($allianceDiplomacyRepository->hasPendingBndRequests($cu->allianceId()))
                         echo "<tr>
                         <th colspan=\"3\" style=\"text-align:center;color:#0f0\">
                             <a  style=\"color:#0f0\" href=\"?page=$page&action=relations\">Es sind B&uuml;ndnisanfragen vorhanden!</a>
@@ -441,13 +433,14 @@ elseif ($cu->allianceId == 0) {
 
                 // Kriegserklärung anzeigen
                 $time = time() - 192600;
-                if (mysql_num_rows(dbquery("SELECT alliance_bnd_id FROM alliance_bnd WHERE alliance_bnd_alliance_id2='" . $cu->allianceId . "' AND alliance_bnd_level='3' AND alliance_bnd_date>'$time';")) > 0)
+                if ($allianceDiplomacyRepository->wasWarDeclaredAgainstSince($cu->allianceId(), $time)) {
                     if ($isFounder || $myRight[AllianceRights::RELATIONS])
                         echo "<tr>
                     <th colspan=\"3\" align=\"center\"><b>
                         <div align=\"center\"><a href=\"?page=$page&action=relations\">Deiner Allianz wurde in den letzten 36h der Krieg erkl&auml;rt!</a></div></b></th></tr>";
                     else
                         echo "<tr><th colspan=\"3\" align=\"center\"><div align=\"center\"><b>Deiner Allianz wurde in den letzten 36h der Krieg erkl&auml;rt!</b></div></th></tr>";
+                }
 
                 // Verwaltung
                 $adminBox = array();

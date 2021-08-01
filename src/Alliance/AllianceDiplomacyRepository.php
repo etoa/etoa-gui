@@ -158,6 +158,38 @@ class AllianceDiplomacyRepository extends AbstractRepository
             ->execute();
     }
 
+    public function wasWarDeclaredAgainstSince(int $allianceId, int $since): bool
+    {
+        return (bool) $this->createQueryBuilder()
+            ->select('1')
+            ->from('alliance_bnd')
+            ->where('alliance_bnd_alliance_id2 = :allianceId')
+            ->andWhere('alliance_bnd_level = :war')
+            ->andWhere('alliance_bnd_date > :since')
+            ->setParameters([
+                'allianceId' => $allianceId,
+                'war' => AllianceDiplomacyLevel::WAR,
+                'since' => $since,
+            ])
+            ->execute()
+            ->fetchOne();
+    }
+
+    public function hasPendingBndRequests(int $allianceId): bool
+    {
+        return (bool) $this->createQueryBuilder()
+            ->select('1')
+            ->from('alliance_bnd')
+            ->where('alliance_bnd_alliance_id2 = :allianceId')
+            ->andWhere('alliance_bnd_level = :level')
+            ->setParameters([
+                'allianceId' => $allianceId,
+                'level' => AllianceDiplomacyLevel::BND_REQUEST,
+            ])
+            ->execute()
+            ->fetchOne();
+    }
+
     public function deleteDiplomacy(int $id): void
     {
         $this->createQueryBuilder()
