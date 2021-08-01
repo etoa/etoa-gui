@@ -42,6 +42,30 @@ class ShipRepository extends AbstractRepository
     }
 
     /**
+     * @return ShipListItem[]
+     */
+    public function findForUser(int $userId, ?int $entityId = null): array
+    {
+        $qb = $this->createQueryBuilder()
+            ->select('*')
+            ->from('shiplist')
+            ->where('shiplist_user_id = :userId')
+            ->setParameter('userId', $userId);
+
+        if ($entityId !== null) {
+            $qb
+                ->andWhere('shiplist_entity_id = :entityId')
+                ->setParameter('entityId', $entityId);
+        }
+
+        $data = $qb
+            ->execute()
+            ->fetchAllAssociative();
+
+        return array_map(fn ($row) => new ShipListItem($row), $data);
+    }
+
+    /**
      * @return array<int, int>
      */
     public function getUserShipCounts(int $userId): array

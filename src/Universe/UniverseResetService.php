@@ -9,8 +9,8 @@ use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Support\DB\DatabaseManagerRepository;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\User\UserRepository;
+use EtoA\User\UserToXml;
 use Mutex;
-use UserToXml;
 
 class UniverseResetService
 {

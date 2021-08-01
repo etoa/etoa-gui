@@ -30,7 +30,6 @@ use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Universe\Planet\PlanetService;
 use Exception;
 use Log;
-use UserToXml;
 
 class UserService
 {
@@ -67,6 +66,7 @@ class UserService
     private UserSurveillanceRepository $userSurveillanceRepository;
     private BackendMessageService $backendMessageService;
     private UserLogRepository $userLogRepository;
+    private UserToXml $userToXml;
 
     public function __construct(
         ConfigurationService $config,
@@ -101,7 +101,8 @@ class UserService
         UserCommentRepository $userCommentRepository,
         UserSurveillanceRepository $userSurveillanceRepository,
         BackendMessageService $backendMessageService,
-        UserLogRepository $userLogRepository
+        UserLogRepository $userLogRepository,
+        UserToXml $userToXml
     ) {
         $this->config = $config;
         $this->userRepository = $userRepository;
@@ -136,6 +137,7 @@ class UserService
         $this->userSurveillanceRepository = $userSurveillanceRepository;
         $this->backendMessageService = $backendMessageService;
         $this->userLogRepository = $userLogRepository;
+        $this->userToXml = $userToXml;
     }
 
     public function register(
@@ -204,9 +206,10 @@ class UserService
             throw new Exception('Benutzer existiert nicht!');
         }
 
-        $utx = new UserToXml($userId);
-        if (!($xmlfile = $utx->toCacheFile())) {
-            throw new Exception("Konnte UserXML für " . $userId . " nicht exportieren, User nicht gelöscht!");
+        try {
+            $xmlfile = $this->userToXml->toCacheFile($userId);
+        } catch (Exception $ex) {
+            throw new Exception("Konnte UserXML für " . $userId . " nicht exportieren, User nicht gelöscht!", 0, $ex);
         }
 
         // Delete fleets of user

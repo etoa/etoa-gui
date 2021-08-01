@@ -9,6 +9,30 @@ use EtoA\Core\AbstractRepository;
 
 class DefenseRepository extends AbstractRepository
 {
+    /**
+     * @return DefenseListItem[]
+     */
+    public function findForUser(int $userId, ?int $entityId = null): array
+    {
+        $qb = $this->createQueryBuilder()
+            ->select('*')
+            ->from('deflist')
+            ->where('deflist_user_id = :userId')
+            ->setParameter('userId', $userId);
+
+        if ($entityId !== null) {
+            $qb
+                ->andWhere('deflist_entity_id = :entityId')
+                ->setParameter('entityId', $entityId);
+        }
+
+        $data = $qb
+            ->execute()
+            ->fetchAllAssociative();
+
+        return array_map(fn ($row) => new DefenseListItem($row), $data);
+    }
+
     public function addDefense(int $defenseId, int $amount, int $userId, int $entityId): void
     {
         if ($amount < 0) {
