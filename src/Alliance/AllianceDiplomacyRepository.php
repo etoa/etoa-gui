@@ -98,7 +98,7 @@ class AllianceDiplomacyRepository extends AbstractRepository
 
     public function existsDiplomacyBetween(int $allianceId, int $otherAllianceId, int $level = null): bool
     {
-        $qb =$this->createQueryBuilder()
+        $qb = $this->createQueryBuilder()
             ->select('1')
             ->from('alliance_bnd')
             ->where('(alliance_bnd_alliance_id1 = :allianceId AND alliance_bnd_alliance_id2 = :otherAllianceId) OR (alliance_bnd_alliance_id2 = :allianceId AND alliance_bnd_alliance_id1 = :otherAllianceId)')
