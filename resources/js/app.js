@@ -5,3 +5,5 @@ require('./jquery.cookie.js')
 
 import generatePlanetName from './planetname'
 window.generatePlanetName = generatePlanetName
+
+import './tutorial.js'
