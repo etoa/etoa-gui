@@ -274,7 +274,7 @@ class AllianceRepository extends AbstractRepository
                 'founder' => $founder,
             ]);
 
-        if ($updatedAllianceImage !==null) {
+        if ($updatedAllianceImage !== null) {
             $qb
                 ->set('alliance_img', ':allianceImage')
                 ->set('alliance_img_check', ':imageCheck')

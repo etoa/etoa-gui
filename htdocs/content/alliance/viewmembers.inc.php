@@ -1,10 +1,10 @@
 <?PHP
 
-/** @var mixed[] $arr alliance data */
-
 use EtoA\Alliance\AllianceRankRepository;
 use EtoA\Alliance\AllianceRepository;
 use EtoA\Alliance\AllianceRights;
+
+/** @var \EtoA\Alliance\Alliance $alliance */
 
 if (Alliance::checkActionRights(AllianceRights::VIEW_MEMBERS)) {
 
