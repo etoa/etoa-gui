@@ -80,6 +80,26 @@ class AllianceRepository extends AbstractRepository
         return array_map(fn (array $row) => new Alliance($row), $data);
     }
 
+    /**
+     * @return AllianceWithMemberCount[]
+     */
+    public function getAlliancesAcceptingApplications(): array
+    {
+        $data = $this->createQueryBuilder()
+            ->select("a.*")
+            ->addSelect('COUNT(u.user_id) as member_count')
+            ->from('alliances', 'a')
+            ->leftJoin('a', 'users', 'u', 'u.user_alliance_id=a.alliance_id')
+            ->where('a.alliance_accept_applications = 1')
+            ->groupBy('a.alliance_id')
+            ->orderBy('a.alliance_name')
+            ->addOrderBy('a.alliance_tag')
+            ->execute()
+            ->fetchAllAssociative();
+
+        return array_map(fn (array $row) => new AllianceWithMemberCount($row), $data);
+    }
+
     public function getAlliance(int $allianceId): ?Alliance
     {
         $data = $this->createQueryBuilder()
