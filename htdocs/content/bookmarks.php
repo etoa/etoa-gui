@@ -1,5 +1,6 @@
 <?PHP
 
+use EtoA\Bookmark\BookmarkOrder;
 use EtoA\Bookmark\BookmarkRepository;
 use EtoA\Bookmark\FleetBookmarkRepository;
 use EtoA\Core\Configuration\ConfigurationService;
@@ -88,12 +89,12 @@ if ((isset($_POST['submitEdit']) || isset($_POST['submitNew'])) && (isset($_POST
 
             // Save new bookmark
             if (isset($_POST['submitNew'])) {
-                $fleetBookmarkRepository->add($user->id, $_POST['name'], $arr[0], $addships, $freight, $fetch, $_POST['action'], $speed);
+                $fleetBookmarkRepository->add($user->id, $_POST['name'], $entity->id, $addships, $freight, $fetch, $_POST['action'], $speed);
 
                 success_msg("Der Favorit wurde hinzugef&uuml;gt!");
             } elseif (isset($_POST['submitEdit'])) {
                 // Update edidet bookmark
-                $fleetBookmarkRepository->update((int) $_POST['id'], $user->id, $_POST['name'], $arr[0], $addships, $freight, $fetch, $_POST['action'], $speed);
+                $fleetBookmarkRepository->update((int) $_POST['id'], $user->id, $_POST['name'], $entity->id, $addships, $freight, $fetch, $_POST['action'], $speed);
 
                 success_msg("Der Favorit wurde gespeichert!");
             }
@@ -375,25 +376,13 @@ if ($mode == "fleet") {
         }
     }
 
-    $bRes = dbquery("
-            SELECT
-                bookmarks.entity_id,
-                bookmarks.comment,
-                entities.code
-            FROM
-                bookmarks
-            INNER JOIN
-                entities
-            ON
-                bookmarks.entity_id=entities.id
-                AND bookmarks.user_id=" . $user->id . ";");
-
-    if (mysql_num_rows($bRes) > 0) {
+    $bookmarks = $bookmarkRepository->findForUser($user->id);
+    if (count($bookmarks) > 0) {
         echo '<option value="0">-------------------------------</option>\n';
 
-        while ($bArr = mysql_fetch_assoc($bRes)) {
-            $ent = Entity::createFactory($bArr['code'], $bArr['entity_id']);
-            echo '<option value="' . $ent->id() . '">' . $ent->entityCodeString() . ' - ' . $ent . ' (' . $bArr['comment'] . ')</option>\n';
+        foreach ($bookmarks as $bookmark) {
+            $ent = Entity::createFactory($bookmark->entityCode, $bookmark->entityId);
+            echo '<option value="' . $ent->id() . '">' . $ent->entityCodeString() . ' - ' . $ent . ' (' . $bookmark->comment . ')</option>\n';
         }
     }
     echo '		</select>
@@ -502,21 +491,9 @@ if ($mode == "fleet") {
 
         echo "<form action=\"?page=$page\" method=\"post\">";
         checker_init();
-        $res = dbquery("
-        SELECT
-        bookmarks.comment,
-        bookmarks.entity_id,
-        entities.code
-        FROM
-        bookmarks
-        INNER JOIN
-            entities
-            ON bookmarks.entity_id=entities.id
-            AND bookmarks.id='" . $bmid . "'
-            AND bookmarks.user_id=" . $user->id . ";");
-        if (mysql_num_rows($res) > 0) {
-            $arr = mysql_fetch_assoc($res);
-            $ent = Entity::createFactory($arr['code'], $arr['entity_id']);
+        $bookmark = $bookmarkRepository->getBookmark($bmid, $user->id);
+        if ($bookmark !== null) {
+            $ent = Entity::createFactory($bookmark->entityCode, $bookmark->entityId);
 
             tableStart("Favorit bearbeiten");
             echo "<tr>
@@ -526,7 +503,7 @@ if ($mode == "fleet") {
                         <tr>
                             <th>Kommentar</th>
                             <td>
-                                <textarea name=\"bookmark_comment\" rows=\"3\" cols=\"60\">" . stripslashes($arr['comment']) . "</textarea>
+                                <textarea name=\"bookmark_comment\" rows=\"3\" cols=\"60\">" . stripslashes($bookmark->comment) . "</textarea>
                             </td>
                         </tr>";
             tableEnd();
@@ -632,50 +609,18 @@ if ($mode == "fleet") {
 
         iBoxEnd();
 
-        $order = "";
-        if ($cu->properties->itemOrderBookmark == "users.user_nick")
-            $order = " LEFT JOIN
-                        planets
-                    ON
-                        bookmarks.entity_id=planets.id
-                    LEFT JOIN
-                        users
-                    ON
-                        planets.planet_user_id=users.user_id ";
-        $order .= " ORDER BY " . $cu->properties->itemOrderBookmark . " " . $cu->properties->itemOrderWay . "";
-
         // List bookmarks
-        $res = dbquery("
-        SELECT
-        bookmarks.id,
-        bookmarks.comment,
-        bookmarks.entity_id,
-        entities.code
-        FROM
-            bookmarks
-        INNER JOIN
-            entities
-            ON bookmarks.user_id=" . $user->id . "
-            AND bookmarks.entity_id=entities.id
-        " . $order . ";");
-        if (mysql_num_rows($res) > 0) {
+        $bookmarks = $bookmarkRepository->findForUser($user->id, new BookmarkOrder($cu->properties->itemOrderBookmark , $cu->properties->itemOrderWay));
+        if (count($bookmarks) > 0) {
             tableStart("Gespeicherte Favoriten");
             /*************
              * Sortierbox *
              *************/
             //Legt Sortierwerte in einem Array fest
-            $values = array(
-                "bookmarks.id" => "Erstelldatum",
-                "bookmarks.entity_id" => "Koordianten",
-                "bookmarks.comment" => "Kommentar",
-                "entities.code" => "Typ",
-                "users.user_nick" => "Besitzer"
-            );
-
             echo "<tr>
                     <td colspan=\"6\" style=\"text-align:center;\">
                         <select name=\"sort_value\">";
-            foreach ($values as $value => $name) {
+            foreach (BookmarkOrder::ALL_ORDERS as $value => $name) {
                 echo "<option value=\"" . $value . "\"";
                 if ($cu->properties->itemOrderBookmark == $value) {
                     echo " selected=\"selected\"";
@@ -708,15 +653,15 @@ if ($mode == "fleet") {
                             <th>Kommentar</th>
                             <th>Aktionen</th>
                         </tr>";
-            while ($arr = mysql_fetch_assoc($res)) {
-                $ent = Entity::createFactory($arr['code'], $arr['entity_id']);
+            foreach ($bookmarks as $bookmark) {
+                $ent = Entity::createFactory($bookmark->entityCode, $bookmark->entityId);
 
                 echo "<tr>
                                     <td style=\"width:40px;background:#000\"><img src=\"" . $ent->imagePath() . "\" /></td>
                                     <td>" . $ent->entityCodeString() . "</td>
                                     <td><a href=\"?page=cell&amp;id=" . $ent->cellId() . "&amp;hl=" . $ent->id() . "\">" . $ent . "</a></td>
                                     <td>" . $ent->owner() . "</td>
-                                    <td>" . text2html($arr['comment']) . "</td>
+                                    <td>" . text2html($bookmark->comment) . "</td>
                                     <td>";
 
                 // Action icons added by river, Info link moved to coordinates (above)
@@ -757,8 +702,8 @@ if ($mode == "fleet") {
                 }
                 echo "
                                         <a href=\"?page=entity&amp;id=" . $ent->id() . "&amp;hl=" . $ent->id() . "\">" . icon('info') . "</a>
-                                        <a href=\"?page=$page&amp;edit=" . $arr['id'] . "\">" . icon('edit') . "</a>
-                                        <a href=\"?page=$page&amp;del=" . $arr['id'] . "\" onclick=\"return confirm('Soll dieser Favorit wirklich gel&ouml;scht werden?');\">" . icon('delete') . "</a>
+                                        <a href=\"?page=$page&amp;edit=" . $bookmark->id . "\">" . icon('edit') . "</a>
+                                        <a href=\"?page=$page&amp;del=" . $bookmark->id . "\" onclick=\"return confirm('Soll dieser Favorit wirklich gel&ouml;scht werden?');\">" . icon('delete') . "</a>
                                 </td>
                         </tr>";
             }

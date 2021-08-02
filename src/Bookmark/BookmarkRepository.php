@@ -11,19 +11,53 @@ class BookmarkRepository extends AbstractRepository
     /**
      * @return array<Bookmark>
      */
-    public function findForUser(int $userId): array
+    public function findForUser(int $userId, BookmarkOrder $order = null): array
     {
-        $data = $this->createQueryBuilder()
-            ->select('*')
+        $qb = $this->createQueryBuilder()
+            ->select('bookmarks.*')
+            ->addSelect('entities.code as entityCode')
             ->from('bookmarks')
-            ->where('user_id = :userId')
+            ->innerJoin('bookmarks', 'entities', 'entities', 'bookmarks.entity_id = entities.id')
+            ->where('bookmarks.user_id = :userId')
             ->setParameters([
                 'userId' => $userId,
-            ])
+            ]);
+
+        if ($order !== null) {
+            if ($order->order === BookmarkOrder::ORDER_OWNER) {
+                $qb
+                    ->leftJoin('bookmarks', 'planets', 'planets', 'bookmarks.entity_id = planets.id')
+                    ->leftJoin('planets', 'users', 'users', 'planets.planet_user_id = users.user_id');
+            }
+
+            $qb
+                ->orderBy($order->order, $order->direction);
+        }
+
+        $data = $qb
             ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn ($arr) => new Bookmark($arr), $data);
+    }
+
+    public function getBookmark(int $id, int $userId): ?Bookmark
+    {
+        $data = $this->createQueryBuilder()
+            ->select('b.*')
+            ->addSelect('e.code as entityCode')
+            ->from('bookmarks', 'b')
+            ->innerJoin('b', 'entities', 'e', 'b.entity_id=e.id')
+            ->where('b.user_id = :userId')
+            ->where('b.id = :id')
+            ->setParameters([
+                'id' => $id,
+                'userId' => $userId,
+            ])
+            ->execute()
+            ->fetchAssociative();
+
+        return $data !== false ? new Bookmark($data) : null;
     }
 
     public function hasEntityBookmark(int $userId, int $entity): bool
@@ -63,7 +97,8 @@ class BookmarkRepository extends AbstractRepository
     public function updateComment(int $id, int $userId, string $comment): bool
     {
         return (bool) $this->createQueryBuilder()
-            ->update('comment = :comment')
+            ->update('bookmarks')
+            ->set('comment', ':comment')
             ->where('id = :id')
             ->andWhere('user_id = :userId')
             ->setParameters([
