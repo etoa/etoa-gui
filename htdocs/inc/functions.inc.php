@@ -989,17 +989,6 @@ function calcBuildingCosts(\EtoA\Building\Building $building, $level, $fac = 1)
     return $bc;
 }
 
-function calcAllianceBuildingCosts($buildingArray, $level, $fac = 1)
-{
-    $bc = array();
-    $bc['metal'] = $fac * $buildingArray['alliance_building_costs_metal'] * pow($buildingArray['alliance_building_costs_factor'], $level);
-    $bc['crystal'] = $fac * $buildingArray['alliance_building_costs_crystal'] * pow($buildingArray['alliance_building_costs_factor'], $level);
-    $bc['plastic'] = $fac * $buildingArray['alliance_building_costs_plastic'] * pow($buildingArray['alliance_building_costs_factor'], $level);
-    $bc['fuel'] = $fac * $buildingArray['alliance_building_costs_fuel'] * pow($buildingArray['alliance_building_costs_factor'], $level);
-    $bc['food'] = $fac * $buildingArray['alliance_building_costs_food'] * pow($buildingArray['alliance_building_costs_factor'], $level);
-    return $bc;
-}
-
 /**
  * Calculates costs per level for a given technology costs array
  *
