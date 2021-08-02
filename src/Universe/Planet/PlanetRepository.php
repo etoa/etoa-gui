@@ -34,6 +34,8 @@ class PlanetRepository extends AbstractRepository
             ->from('planets')
             ->where('planet_user_id = :userId')
             ->setParameter('userId', $userId)
+            ->orderBy('planet_user_main', 'DESC')
+            ->addOrderBy('planet_name', 'ASC')
             ->execute()
             ->fetchAllAssociative();
 

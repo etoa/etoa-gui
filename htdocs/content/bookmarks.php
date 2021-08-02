@@ -6,6 +6,7 @@ use EtoA\Bookmark\FleetBookmarkRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Universe\Entity\EntityCoordinates;
 use EtoA\Universe\Entity\EntityRepository;
+use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Universe\Resources\BaseResources;
 use EtoA\User\UserRepository;
 use EtoA\User\UserUniverseDiscoveryService;
@@ -23,6 +24,8 @@ $userUniverseDiscoveryService = $app[UserUniverseDiscoveryService::class];
 $fleetBookmarkRepository = $app[FleetBookmarkRepository::class];
 /** @var BookmarkRepository $bookmarkRepository */
 $bookmarkRepository = $app[BookmarkRepository::class];
+/** @var PlanetRepository $planetRepository */
+$planetRepository = $app[PlanetRepository::class];
 
 $mode = (isset($_GET['mode']) && $_GET['mode'] != "" && ctype_alpha($_GET['mode'])) ? $_GET['mode'] : 'target';
 
@@ -358,20 +361,10 @@ if ($mode == "fleet") {
                 >\n
                     <option value="0">Wählen...</option>';
 
-    $pRes = dbquery("
-            SELECT
-                planets.id
-            FROM
-                planets
-            WHERE
-                planets.planet_user_id=" . $user->id . "
-            ORDER BY
-                planet_user_main DESC,
-                planet_name ASC;");
-
-    if (mysql_num_rows($pRes) > 0) {
-        while ($pArr = mysql_fetch_assoc($pRes)) {
-            $ent = Entity::createFactory('p', $pArr['id']);
+    $planets = $planetRepository->getUserPlanets($user->id);
+    if (count($planets) > 0) {
+        foreach ($planets as $planet) {
+            $ent = Entity::createFactory('p', $planet->id);
             echo '<option value="' . $ent->id() . '">Eigener Planet: ' . $ent . '</option>\n';
         }
     }
