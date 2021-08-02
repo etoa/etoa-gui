@@ -6,7 +6,7 @@ use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\User\UserSittingRepository;
 use Symfony\Component\HttpFoundation\Request;
 
-/** @var UserRepository */
+/** @var UserRepository $userRepository */
 $userRepository = $app[UserRepository::class];
 /** @var UserMultiRepository $userMultiRepository */
 $userMultiRepository = $app[UserMultiRepository::class];
@@ -64,13 +64,7 @@ if (!$s->sittingActive || $s->falseSitter) {
                     } else {
                         $userMultiRepository->deactivateEntry($entry->id);
                         // Speichert jeden gelöschten multi (soll vor missbrauch schützen -> mutli erstellen -> löschen -> erstellen -> löschen etc.)
-                        dbquery("
-                                UPDATE
-                                    users
-                                SET
-                                    user_multi_delets=user_multi_delets+1
-                                WHERE
-                                    user_id='" . $cu->id . "';");
+                        $userRepository->increaseMultiDeletes($cu->getId());
                     }
                     success_msg("Eintrag gelöscht!");
                 }

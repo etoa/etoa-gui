@@ -76,7 +76,7 @@ class UserRepository extends AbstractRepository
             ->execute();
     }
 
-    
+
     public function hasUserRankId(int $allianceId, int $userId, int $rankId): bool
     {
         return (bool) $this->createQueryBuilder()
@@ -553,6 +553,18 @@ class UserRepository extends AbstractRepository
             ->setParameters([
                 'userId' => $userId,
                 'password' => saltPasswort($password),
+            ])
+            ->execute();
+    }
+
+    public function increaseMultiDeletes(int $userId): void
+    {
+        $this->createQueryBuilder()
+            ->update('users')
+            ->set('user_multi_delets', 'user_multi_delets + 1')
+            ->where('user_id = :userId')
+            ->setParameters([
+                'userId' => $userId,
             ])
             ->execute();
     }
