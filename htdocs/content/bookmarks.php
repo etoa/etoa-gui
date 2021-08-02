@@ -1,5 +1,6 @@
 <?PHP
 
+use EtoA\Bookmark\BookmarkRepository;
 use EtoA\Bookmark\FleetBookmarkRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Universe\Entity\EntityCoordinates;
@@ -19,6 +20,8 @@ $entityRepository = $app[EntityRepository::class];
 $userUniverseDiscoveryService = $app[UserUniverseDiscoveryService::class];
 /** @var FleetBookmarkRepository $fleetBookmarkRepository */
 $fleetBookmarkRepository = $app[FleetBookmarkRepository::class];
+/** @var BookmarkRepository $bookmarkRepository */
+$bookmarkRepository = $app[BookmarkRepository::class];
 
 $mode = (isset($_GET['mode']) && $_GET['mode'] != "" && ctype_alpha($_GET['mode'])) ? $_GET['mode'] : 'target';
 
@@ -540,30 +543,18 @@ if ($mode == "fleet") {
         if (isset($_POST['submit_edit_target']) && isset($_POST['bookmark_comment']) && isset($_POST['bookmark_id']) && intval($_POST['bookmark_id']) > 0 && checker_verify()) {
             $bmid = intval($_POST['bookmark_id']);
 
-            dbquery("
-            UPDATE
-                bookmarks
-            SET
-                comment='" . mysql_real_escape_string($_POST['bookmark_comment']) . "'
-            WHERE
-                id='" . $bmid . "'
-                AND user_id='" . $user->id . "';");
-            if (mysql_affected_rows() > 0)
+            if ($bookmarkRepository->updateComment($bmid, $user->id, $_POST['bookmark_comment'])) {
                 success_msg("Gespeichert");
+            }
         }
 
         // Favorit löschen
         if (isset($_GET['del']) && intval($_GET['del']) > 0) {
             $bmid = intval($_GET['del']);
 
-            dbquery("
-            DELETE FROM
-                bookmarks
-            WHERE
-                id='" . $bmid . "'
-                AND user_id='" . $user->id . "';");
-            if (mysql_affected_rows() > 0)
+            if ($bookmarkRepository->remove($bmid, $user->id)) {
                 success_msg("Gelöscht");
+            }
         }
 
         // Neuen Favorit speichern
@@ -577,42 +568,10 @@ if ($mode == "fleet") {
             $absX = (($sx - 1) * $config->param1Int('num_of_cells')) + $cx;
             $absY = (($sy - 1) * $config->param2Int('num_of_cells')) + $cy;
             if ($userUniverseDiscoveryService->discovered($user, $absX, $absY)) {
-                $res = dbquery("
-                    SELECT
-                        entities.id
-                    FROM
-                        entities
-                    INNER JOIN
-                        cells
-                    ON entities.cell_id=cells.id
-                        AND sx='" . $sx . "'
-                        AND sy='" . $sy . "'
-                        AND cx='" . $cx . "'
-                        AND cy='" . $cy . "'
-                        AND pos='" . $pos . "';");
-                if (mysql_num_rows($res) > 0) {
-                    $arr = mysql_fetch_row($res);
-                    $check_res = dbquery("
-                        SELECT
-                            id
-                        FROM
-                            bookmarks
-                        WHERE
-                            entity_id='" . $arr[0] . "'
-                            AND user_id='" . $user->id . "';");
-                    if (mysql_num_rows($check_res) == 0) {
-                        dbquery("
-                            INSERT INTO
-                                bookmarks
-                            (
-                                user_id,
-                                entity_id,
-                                comment)
-                            VALUES
-                                ('" . $user->id . "',
-                                '" . $arr[0] . "',
-                                '" . mysql_real_escape_string($_POST['bookmark_comment']) . "');");
-
+                $entity = $entityRepository->findByCoordinates(new EntityCoordinates($sx, $sy, $cx, $cy, $pos));
+                if ($entity !== null) {
+                    if (!$bookmarkRepository->hasEntityBookmark($user->id, $entity->id)) {
+                        $bookmarkRepository->add($user->id, $entity->id, $_POST['bookmark_comment']);
                         success_msg("Der Favorit wurde hinzugef&uuml;gt!");
                     } else {
                         error_msg("Dieser Favorit existiert schon!");
@@ -629,35 +588,10 @@ if ($mode == "fleet") {
         if (isset($_GET['add']) && intval($_GET['add']) > 0) {
             $bmid = intval($_GET['add']);
 
-            $res = dbquery("
-            SELECT
-                entities.id
-            FROM
-                entities
-            WHERE
-                id=" . $bmid . ";");
-            if (mysql_num_rows($res) > 0) {
-                $arr = mysql_fetch_row($res);
-                $check_res = dbquery("
-                SELECT
-                    id
-                FROM
-                    bookmarks
-                WHERE
-                    entity_id='" . $arr[0] . "'
-                    AND user_id='" . $user->id . "';");
-                if (mysql_num_rows($check_res) == 0) {
-                    dbquery("
-                    INSERT INTO
-                        bookmarks
-                    (
-                        user_id,
-                        entity_id,
-                        comment)
-                    VALUES
-                        ('" . $user->id . "',
-                        '" . $arr[0] . "',
-                        '-');");
+            $entity = $entityRepository->getEntity($bmid);
+            if ($entity !== null) {
+                if (!$bookmarkRepository->hasEntityBookmark($user->id, $entity->id)) {
+                    $bookmarkRepository->add($user->id, $entity->id, '-');
 
                     success_msg("Der Favorit wurde hinzugef&uuml;gt!");
                 } else {
