@@ -3,16 +3,19 @@
 namespace EtoA\Bookmark;
 
 use EtoA\AbstractDbTestCase;
+use EtoA\Universe\Entity\EntityRepository;
 
 class BookmarkRepositoryTest extends AbstractDbTestCase
 {
     private BookmarkRepository $repository;
+    private EntityRepository $entityRepository;
 
     protected function setUp(): void
     {
         parent::setUp();
 
         $this->repository = $this->app[BookmarkRepository::class];
+        $this->entityRepository = $this->app[EntityRepository::class];
     }
 
     public function testHasEntityBookmark(): void
@@ -26,7 +29,8 @@ class BookmarkRepositoryTest extends AbstractDbTestCase
 
     public function testFindForUser(): void
     {
-        $this->repository->add(1, 2, 'Test');
+        $entityId = $this->entityRepository->add(1, 'e');
+        $this->repository->add(1, $entityId, 'Test');
 
         $this->assertNotEmpty($this->repository->findForUser(1));
     }
