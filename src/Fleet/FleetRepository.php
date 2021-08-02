@@ -18,6 +18,17 @@ class FleetRepository extends AbstractRepository
             ->fetchOne();
     }
 
+    public function countLeaderFleets(int $leaderId): int
+    {
+        return (int) $this->createQueryBuilder()
+            ->select("COUNT(id)")
+            ->from('fleet')
+            ->where('leader_id = :leaderId')
+            ->setParameter('leaderId', $leaderId)
+            ->execute()
+            ->fetchOne();
+    }
+
     public function countShipsInFleet(int $fleetId): int
     {
         return (int) $this->createQueryBuilder()

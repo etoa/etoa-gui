@@ -3,6 +3,7 @@
 // Main dialogs
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Fleet\FleetRepository;
 use EtoA\Universe\Entity\EntityCoordinates;
 use EtoA\Universe\Entity\EntityRepository;
 use EtoA\User\UserRepository;
@@ -1770,6 +1771,11 @@ function havenCheckAction($code)
 
 function havenAllianceAttack($id)
 {
+    global $app;
+
+    /** @var FleetRepository $fleetRepository */
+    $fleetRepository = $app[FleetRepository::class];
+
     $response = new xajaxResponse();
     /** @var FleetLaunch $fleet */
     $fleet = unserialize($_SESSION['haven']['fleetObj']);
@@ -1779,42 +1785,22 @@ function havenAllianceAttack($id)
     $fleet->setSpeedPercent($percentageSpeed);
 
     if ($id > 0 && $fleet->getLeader() != $id) {
-
-        $res = dbQuerySave("
-                            SELECT
-                                id,
-                                user_id,
-                                next_id,
-                                landtime
-                            FROM
-                                fleet
-                            WHERE
-                                id=?
-                            LIMIT 1;", [$id]);
-        if (mysql_num_rows($res) > 0) {
-            $arr = mysql_fetch_assoc($res);
-            if ($arr['next_id'] == $fleet->sourceEntity->ownerAlliance()) {
+        $fleetObj = $fleetRepository->find($id);
+        if ($fleetObj !== null) {
+            if ($fleetObj->nextId == $fleet->sourceEntity->ownerAlliance()) {
                 if ($fleet->checkAttNum($id)) {
-                    $cres = dbQuerySave("
-                                        SELECT
-                                            COUNT(id) as cnt
-                                        FROM
-                                            fleet
-                                        WHERE
-                                            leader_id=?
-                                        ;", [$id]);
-                    $carr = mysql_fetch_assoc($cres);
-                    if ($carr['cnt'] <= $fleet->allianceSlots) {
+                    $leaderCount = $fleetRepository->countLeaderFleets($id);
+                    if ($leaderCount <= $fleet->allianceSlots) {
                         $duration = $fleet->distance / $fleet->getSpeed();    // Calculate duration
                         $duration *= 3600;    // Convert to seconds
                         $duration = ceil($duration);
-                        $maxTime = $arr["landtime"] - time() - $fleet->getTimeLaunchLand() - $fleet->duration1 - 120;
+                        $maxTime = $fleetObj->landTime - time() - $fleet->getTimeLaunchLand() - $fleet->duration1 - 120;
 
                         if ($duration < $maxTime) {
                             $percentageSpeed =  ceil(100 * $duration / $maxTime);
                             $fleet->setSpeedPercent($percentageSpeed);
                             $fleet->setLeader($id);
-                            $comment = "Unterstützung des Allianzangriffes mit  Ankunft: " . date("d.m.y, H:i:s", $arr["landtime"]);
+                            $comment = "Unterstützung des Allianzangriffes mit  Ankunft: " . date("d.m.y, H:i:s", $fleetObj->landTime);
                         } else $comment = "Der gewählte Angriff kann nicht mehr erreicht werden.";
                     } else $comment = "Am gewählten Angriff kann nicht teilgenommen werden, da die Flottenkontrolle keine weiteren Teilflotten unterstützt.";
                 } else $comment = "Am gewählten Angriff kann nicht teilgenommen werden, da die Anzahl Angreifer limitiert ist.";
