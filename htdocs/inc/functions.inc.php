@@ -951,7 +951,6 @@ function resizeImage($fileFrom, $fileTo, $newMaxWidth = 0, $newMaxHeight = 0, $t
 /**
  * Calculates costs per level for a given building costs array
  *
- * @param array<string, float> $buildingArray Array of db cost values
  * @param int $level Level
  * @param float $fac costFactor (like specialist)
  * @return array<string, float> Array of calculated costs

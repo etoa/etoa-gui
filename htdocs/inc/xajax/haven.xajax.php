@@ -3,6 +3,8 @@
 // Main dialogs
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Universe\Entity\EntityCoordinates;
+use EtoA\Universe\Entity\EntityRepository;
 use EtoA\User\UserRepository;
 use EtoA\User\UserUniverseDiscoveryService;
 
@@ -611,7 +613,8 @@ function havenShowWormhole($form)
 
     /** @var ConfigurationService */
     $config = $app[ConfigurationService::class];
-
+    /** @var EntityRepository $entityRepository */
+    $entityRepository = $app[EntityRepository::class];
     /** @var UserUniverseDiscoveryService */
     $userUniverseDiscoveryService = $app[UserUniverseDiscoveryService::class];
 
@@ -631,34 +634,12 @@ function havenShowWormhole($form)
             $absY = (($form['man_sy'] - 1) * $config->param2Int('num_of_cells')) + $form['man_cy'];
             $code = $userUniverseDiscoveryService->discovered($owner, $absX, $absY) == 0 ? 'u' : '';
 
-            $res = dbQuerySave("
-                SELECT
-                    entities.id,
-                    entities.code
-                FROM
-                    entities
-                INNER JOIN
-                    cells
-                ON
-                    entities.cell_id=cells.id
-                    AND cells.sx=?
-                    AND cells.sy=?
-                    AND cells.cx=?
-                    AND cells.cy=?
-                    AND entities.pos=?
-                ;", [
-                $form['man_sx'],
-                $form['man_sy'],
-                $form['man_cx'],
-                $form['man_cy'],
-                $form['man_p']
-            ]);
-            if (mysql_num_rows($res) > 0) {
-                $arr = mysql_fetch_row($res);
+            $entity = $entityRepository->findByCoordinates(new EntityCoordinates($form['man_sx'], $form['man_sy'], $form['man_cx'], $form['man_cy'], $form['man_p']));
+            if ($entity !== null) {
                 if ($code == '')
-                    $ent = Entity::createFactory($arr[1], $arr[0]);
+                    $ent = Entity::createFactory($entity->code, $entity->id);
                 else
-                    $ent = Entity::createFactory($code, $arr[0]);
+                    $ent = Entity::createFactory($code, $entity->id);
 
                 //Info Feld des ersten Teiles des Fluges, Tabelle muss vor setWormhole stehen!!
                 ob_start();
@@ -934,7 +915,8 @@ function havenShowAction($form)
 
     /** @var UserUniverseDiscoveryService */
     $userUniverseDiscoveryService = $app[UserUniverseDiscoveryService::class];
-
+    /** @var EntityRepository $entityRepository */
+    $entityRepository = $app[EntityRepository::class];
     /** @var UserRepository */
     $userRepository = $app[UserRepository::class];
 
@@ -951,34 +933,12 @@ function havenShowAction($form)
         $absY = (($form['man_sy'] - 1) * $config->param2Int('num_of_cells')) + $form['man_cy'];
         $code = $userUniverseDiscoveryService->discovered($owner, $absX, $absY) == 0 ? 'u' : '';
 
-        $res = dbQuerySave("
-            SELECT
-                entities.id,
-                entities.code
-            FROM
-                entities
-            INNER JOIN
-                cells
-            ON
-                entities.cell_id=cells.id
-                AND cells.sx=?
-                AND cells.sy=?
-                AND cells.cx=?
-                AND cells.cy=?
-                AND entities.pos=?
-            ", [
-            $form['man_sx'],
-            $form['man_sy'],
-            $form['man_cx'],
-            $form['man_cy'],
-            $form['man_p']
-        ]);
-        if (mysql_num_rows($res) > 0) {
-            $arr = mysql_fetch_row($res);
+        $entity = $entityRepository->findByCoordinates(new EntityCoordinates($form['man_sx'], $form['man_sy'], $form['man_cx'], $form['man_cy'], $form['man_p']));
+        if ($entity !== null) {
             if ($code == '')
-                $ent = Entity::createFactory($arr[1], $arr[0]);
+                $ent = Entity::createFactory($entity->code, $entity->id);
             else
-                $ent = Entity::createFactory($code, $arr[0]);
+                $ent = Entity::createFactory($code, $entity->id);
 
             if ($fleet->setTarget($ent, $form['speed_percent'])) {
                 if ($fleet->checkTarget()) {
@@ -1297,7 +1257,8 @@ function havenTargetInfo($form)
 
     /** @var ConfigurationService */
     $config = $app[ConfigurationService::class];
-
+    /** @var EntityRepository $entityRepository */
+    $entityRepository = $app[EntityRepository::class];
     /** @var UserUniverseDiscoveryService */
     $userUniverseDiscoveryService = $app[UserUniverseDiscoveryService::class];
 
@@ -1325,30 +1286,12 @@ function havenTargetInfo($form)
         $owner = $userRepository->getUser(intval($fleet->owner->id));
         $code = $userUniverseDiscoveryService->discovered($owner, $absX, $absY) == 0 ? 'u' : '';
 
-        $sql = "
-                SELECT
-                    entities.id,
-                    entities.code
-                FROM
-                    entities
-                INNER JOIN
-                    cells
-                ON
-                    entities.cell_id=cells.id
-                    AND cells.sx=?
-                    AND cells.sy=?
-                    AND cells.cx=?
-                    AND cells.cy=?
-                    AND entities.pos=?
-                ;";
-        $res = dbQuerySave($sql, [$sx, $sy, $cx, $cy, $pos]);
-        if (mysql_num_rows($res) > 0 && !($code == 'u' && $pos > 0)) {
-            $arr = mysql_fetch_row($res);
-
+        $entity = $entityRepository->findByCoordinates(new EntityCoordinates($sx, $sy, $cx, $cy, $pos));
+        if ($entity !== null && !($code == 'u' && $pos > 0)) {
             if ($code == '')
-                $ent = Entity::createFactory($arr[1], $arr[0]);
+                $ent = Entity::createFactory($entity->code, $entity->id);
             else
-                $ent = Entity::createFactory($code, $arr[0]);
+                $ent = Entity::createFactory($code, $entity->id);
 
             $fleet->setTarget($ent);
             $fleet->setSpeedPercent($form['speed_percent']);
@@ -1439,7 +1382,8 @@ function havenBookmark($form)
 
     /** @var ConfigurationService */
     $config = $app[ConfigurationService::class];
-
+    /** @var EntityRepository $entityRepositroy */
+    $entityRepositroy = $app[EntityRepository::class];
     /** @var UserUniverseDiscoveryService */
     $userUniverseDiscoveryService = $app[UserUniverseDiscoveryService::class];
 
@@ -1493,29 +1437,12 @@ function havenBookmark($form)
     $owner = $userRepository->getUser(intval($fleet->owner->id));
     $code = $userUniverseDiscoveryService->discovered($owner, $absX, $absY) == 0 ? 'u' : '';
 
-    $res = dbQuerySave("
-            SELECT
-                entities.id,
-                entities.code
-            FROM
-                entities
-            INNER JOIN
-                cells
-            ON
-                entities.cell_id=cells.id
-                AND cells.sx=?
-                AND cells.sy=?
-                AND cells.cx=?
-                AND cells.cy=?
-                AND entities.pos=?
-            ;", [$csx, $csy, $ccx, $ccy, $psp]);
-    if (mysql_num_rows($res) > 0 && !($code == 'u' && $psp)) {
-        $arr = mysql_fetch_row($res);
-
+    $entity = $entityRepositroy->findByCoordinates(new EntityCoordinates($csx, $csy, $ccx, $ccy, $psp));
+    if ($entity !== null && !($code == 'u' && $psp)) {
         if ($code == '')
-            $ent = Entity::createFactory($arr[1], $arr[0]);
+            $ent = Entity::createFactory($entity->code, $entity->id);
         else
-            $ent = Entity::createFactory($code, $arr[0]);
+            $ent = Entity::createFactory($code, $entity->id);
     }
     echo "<img src=\"" . $ent->imagePath() . "\" style=\"float:left;\" >";
 
@@ -1533,7 +1460,7 @@ function havenBookmark($form)
     if ($ent->entityCode() == 'w' && $fleet->wormholeEntryEntity == NULL && $fleet->wormholeEnable)
         $action = '<input id="setWormhole" tabindex="9" type="button" onclick="xajax_havenShowWormhole(xajax.getFormValues(\'targetForm\'))" value="Wurmloch auswählen">';
     else {
-        if (isset($arr) && $arr[1] != 'w')
+        if (isset($entity) && $entity->code !== 'w')
             $action = "<input id=\"cooseAction\" tabindex=\"9\" type=\"submit\" value=\"Weiter zur Aktionsauswahl &gt;&gt;&gt;\"  /> &nbsp;";
         else {
             $action = '';
