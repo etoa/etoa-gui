@@ -395,15 +395,7 @@ if ($request->query->has('id') && $request->query->getInt('id') > 0) {
    <!-- 	<th>" . RES_ICON_POWER . "Energie</th>     -->
                 <th>Felder</th></tr>";
         for ($x = 0; $x < min(30, $building->lastLevel); $x++) {
-            $bc = calcBuildingCosts([
-                'building_costs_metal' => $building->costsMetal,
-                'building_costs_crystal' => $building->costsCrystal,
-                'building_costs_plastic' => $building->costsPlastic,
-                'building_costs_fuel' => $building->costsFuel,
-                'building_costs_food' => $building->costsFood,
-                'building_costs_power' => $building->costsPower,
-                'building_build_costs_factor' => $building->buildCostsFactor,
-            ], $x);
+            $bc = calcBuildingCosts($building, $x);
             echo '<tr><td>' . ($x + 1) . '</td>
                     <td style="text-align:right;">' . nf($bc['metal']) . '</td>
                     <td style="text-align:right;">' . nf($bc['crystal']) . '</td>

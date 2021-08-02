@@ -1,5 +1,6 @@
 <?PHP
 
+use EtoA\Building\BuildingDataRepository;
 use EtoA\Building\BuildingRepository;
 use EtoA\Defense\DefenseRepository;
 use EtoA\Missile\MissileRepository;
@@ -1225,23 +1226,14 @@ function lockUser($uid, $time, $reason)
 
 function buildingPrices($id, $lvl)
 {
+    global $app;
+
+    /** @var BuildingDataRepository $buildingRepository */
+    $buildingRepository = $app[BuildingDataRepository::class];
+
     $objResponse = new xajaxResponse();
-    $res = dbquery("
-    SELECT
-        building_costs_metal,
-        building_costs_crystal,
-        building_costs_plastic,
-        building_costs_fuel,
-        building_costs_food,
-        building_costs_power,
-        building_build_costs_factor
-    FROM
-        buildings
-    WHERE
-        building_id=" . $id . "
-    ;");
-    $arr = mysql_fetch_array($res);
-    $bc = calcBuildingCosts($arr, $lvl);
+    $building = $buildingRepository->getBuilding($id);
+    $bc = calcBuildingCosts($building, $lvl);
     $objResponse->assign("c1_metal", "innerHTML", nf($bc['metal']));
     $objResponse->assign("c1_crystal", "innerHTML", nf($bc['crystal']));
     $objResponse->assign("c1_plastic", "innerHTML", nf($bc['plastic']));
@@ -1254,27 +1246,18 @@ function buildingPrices($id, $lvl)
 
 function totalBuildingPrices($form)
 {
+    global $app;
+
+    /** @var BuildingDataRepository $buildingRepository */
+    $buildingRepository = $app[BuildingDataRepository::class];
+
     $objResponse = new xajaxResponse();
     $bctt = array();
     foreach ($form['b_lvl'] as $id => $lvl) {
-        $res = dbquery("
-        SELECT
-            building_costs_metal,
-            building_costs_crystal,
-            building_costs_plastic,
-            building_costs_fuel,
-            building_costs_food,
-            building_costs_power,
-            building_build_costs_factor
-        FROM
-            buildings
-        WHERE
-            building_id=" . $id . "
-        ;");
-        $arr = mysql_fetch_array($res);
+        $building = $buildingRepository->getBuilding($id);
         $bct = array();
         for ($x = 0; $x < $lvl; $x++) {
-            $bc = calcBuildingCosts($arr, $x);
+            $bc = calcBuildingCosts($building, $x);
             $bct['metal'] += $bc['metal'];
             $bct['crystal'] += $bc['crystal'];
             $bct['plastic'] += $bc['plastic'];
@@ -1311,8 +1294,8 @@ function reqInfo($id, $cat = 'b')
 
     defineImagePaths();
 
-    /** @var \EtoA\Building\BuildingDataRepository $buildingRepository */
-    $buildingRepository = $app[\EtoA\Building\BuildingDataRepository::class];
+    /** @var BuildingDataRepository $buildingRepository */
+    $buildingRepository = $app[BuildingDataRepository::class];
     $buildingNames = $buildingRepository->getBuildingNames();
 
     /** @var \EtoA\Technology\TechnologyDataRepository $technologyRepository */

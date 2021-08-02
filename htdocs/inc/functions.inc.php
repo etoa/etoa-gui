@@ -957,7 +957,7 @@ function resizeImage($fileFrom, $fileTo, $newMaxWidth = 0, $newMaxHeight = 0, $t
  * @return array<string, float> Array of calculated costs
  *
  */
-function calcBuildingCosts($buildingArray, $level, $fac = 1)
+function calcBuildingCosts(\EtoA\Building\Building $building, $level, $fac = 1)
 {
     global $cp;
     global $cu;
@@ -968,12 +968,12 @@ function calcBuildingCosts($buildingArray, $level, $fac = 1)
     $config = $app[ConfigurationService::class];
 
     $bc = array();
-    $bc['metal'] = $fac * $buildingArray['building_costs_metal'] * pow($buildingArray['building_build_costs_factor'], $level);
-    $bc['crystal'] = $fac * $buildingArray['building_costs_crystal'] * pow($buildingArray['building_build_costs_factor'], $level);
-    $bc['plastic'] = $fac * $buildingArray['building_costs_plastic'] * pow($buildingArray['building_build_costs_factor'], $level);
-    $bc['fuel'] = $fac * $buildingArray['building_costs_fuel'] * pow($buildingArray['building_build_costs_factor'], $level);
-    $bc['food'] = $fac * $buildingArray['building_costs_food'] * pow($buildingArray['building_build_costs_factor'], $level);
-    $bc['power'] = $fac * $buildingArray['building_costs_power'] * pow($buildingArray['building_build_costs_factor'], $level);
+    $bc['metal'] = $fac * $building->costsMetal * pow($building->buildCostsFactor, $level);
+    $bc['crystal'] = $fac * $building->costsCrystal * pow($building->buildCostsFactor, $level);
+    $bc['plastic'] = $fac * $building->costsPlastic * pow($building->buildCostsFactor, $level);
+    $bc['fuel'] = $fac * $building->costsFuel * pow($building->buildCostsFactor, $level);
+    $bc['food'] = $fac * $building->costsFood * pow($building->buildCostsFactor, $level);
+    $bc['power'] = $fac * $building->costsPower * pow($building->buildCostsFactor, $level);
 
     $typeBuildTime = 1.0;
     $starBuildTime = 1.0;
