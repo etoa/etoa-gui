@@ -27,6 +27,7 @@ trait DbTestTrait
         $this->connection->executeQuery('TRUNCATE allianceboard_catranks');
         $this->connection->executeQuery('TRUNCATE allianceboard_topics');
         $this->connection->executeQuery('TRUNCATE allianceboard_posts');
+        $this->connection->executeQuery('TRUNCATE bookmarks');
         $this->connection->executeQuery('TRUNCATE buddylist');
         $this->connection->executeQuery('TRUNCATE chat');
         $this->connection->executeQuery('TRUNCATE chat_banns');
