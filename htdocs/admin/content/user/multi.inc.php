@@ -1,12 +1,17 @@
 <?PHP
 
+use EtoA\Alliance\AllianceRepository;
 use EtoA\User\UserMultiRepository;
 use EtoA\User\UserSittingRepository;
 
 /** @var UserMultiRepository $userMultiRepository */
 $userMultiRepository = $app[UserMultiRepository::class];
+/** @var AllianceRepository $allianceRepository */
+$allianceRepository = $app[AllianceRepository::class];
 
 if (isset($_GET['ip'])) {
+    $allianceTags = $allianceRepository->getAllianceTags();
+
     $ip = $_GET['ip'];
     echo "<h1>Multi-Erkennung - Details</h1>";
 
@@ -77,8 +82,7 @@ if (isset($_GET['ip'])) {
                 <a href=\"?page=$page&amp;sub=ipsearch&amp;user=" . $iparr['user_id'] . "\">" . $iparr['user_nick'] . "</a>
                 ";
         if ($iparr['user_alliance_id'] > 0) {
-            $aarr = mysql_fetch_array(dbquery("SELECT alliance_tag FROM alliances WHERE alliance_id=" . $iparr['user_alliance_id'] . ";"));
-            echo "<br/><b>" . $aarr['alliance_tag'] . "</b>";
+            echo "<br/><b>" . $allianceTags[$iparr['user_alliance_id']] . "</b>";
         }
         echo "</td>";
         echo "<td $uCol>" . $iparr['user_name'] . "</td>";
