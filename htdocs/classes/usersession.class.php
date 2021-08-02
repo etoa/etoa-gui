@@ -1,6 +1,7 @@
 <?php
 
 use EtoA\User\UserLoginFailureRepository;
+use EtoA\User\UserRepository;
 use EtoA\User\UserSessionManager;
 use EtoA\User\UserSittingRepository;
 
@@ -20,10 +21,15 @@ class UserSession extends Session
 
         /** @var UserSessionManager */
         $sessionManager = $app[UserSessionManager::class];
+
         /** @var UserSittingRepository $userSittingRepository */
         $userSittingRepository = $app[UserSittingRepository::class];
+
         /** @var UserLoginFailureRepository $userLoginFailureRepository */
         $userLoginFailureRepository = $app[UserLoginFailureRepository::class];
+
+        /** @var UserRepository $userRepository */
+        $userRepository = $app[UserRepository::class];
 
         $sessionManager->cleanup();
 
@@ -59,64 +65,42 @@ class UserSession extends Session
 
                             if ($loginNick != "" && $loginPassword != "") // Add here regex check for nickname
                             {
-                                $sql = "
-                                SELECT
-                                    user_id,
-                                    user_nick,
-                                    user_registered,
-                                    user_password,
-                                    user_password_temp
-                                FROM
-                                    " . self::tableUser . "
-                                WHERE
-                                    LCASE(user_nick)=?
-                                LIMIT 1;
-                                ;";
-                                $ures = dbQuerySave($sql, array(strtolower($loginNick)));
-                                if (mysql_num_rows($ures) > 0) {
-                                    $uarr = mysql_fetch_assoc($ures);
+                                $user = $userRepository->getUserByNick($loginNick);
+                                if ($user !== null) {
                                     $t = time();
 
                                     // check sitter
                                     $this->sittingActive = false;
                                     $this->falseSitter = false;
-                                    $sittingEntry = $userSittingRepository->getActiveUserEntry((int) $uarr['user_id']);
+                                    $sittingEntry = $userSittingRepository->getActiveUserEntry($user->id);
                                     if ($sittingEntry !== null) {
                                         if (validatePasswort($loginPassword, $sittingEntry->password)) {
                                             $this->sittingActive = true;
                                             $this->sittingUntil = $sittingEntry->dateTo;
-                                        } elseif (validatePasswort($loginPassword, $uarr['user_password'])) {
+                                        } elseif (validatePasswort($loginPassword, $user->password)) {
                                             $this->falseSitter = true;
                                             $this->sittingActive = true;
                                             $this->sittingUntil = $sittingEntry->dateTo;
                                         }
                                     }
-                                    if (strlen($uarr['user_password']) == 64) {
+                                    if (strlen($user->password) == 64) {
                                         $pw = $loginPassword;
-                                        $seed = $uarr['user_registered'];
+                                        $seed = $user->registered;
                                         $salt = "yheaP;BXf;UokIAJ4dhaOL"; // Round 9
-                                        if ($uarr['user_password'] == md5($pw . $seed . $salt) . md5($salt . $seed . $pw)) {
-                                            $newPw = saltPasswort($pw);
-                                            dbquery("UPDATE
-                                                users
-                                            SET
-                                                user_password='" . $newPw . "'
-                                            WHERE
-                                                user_id='" . $uarr['user_id'] . "'
-                                            ;");
-                                            $uarr['user_password'] = $newPw;
+                                        if ($user->password == md5($pw . $seed . $salt) . md5($salt . $seed . $pw)) {
+                                            $user->password = $userRepository->updatePassword($user->id, $pw);
                                         }
                                     }
 
                                     if (
-                                        validatePasswort($loginPassword, $uarr['user_password'])
+                                        validatePasswort($loginPassword, $user->password)
                                         || $this->sittingActive
-                                        || ($uarr['user_password_temp'] != "" && $uarr['user_password_temp'] == $loginPassword)
+                                        || ($user->passwordTemp != "" && $user->passwordTemp == $loginPassword)
                                     ) {
                                         session_regenerate_id(true);
 
-                                        $this->user_id = $uarr['user_id'];
-                                        $this->user_nick = $uarr['user_nick'];
+                                        $this->user_id = $user->id;
+                                        $this->user_nick = $user->nick;
                                         $this->time_login = $t;
                                         $this->time_action = $t;
                                         $this->registerSession();
@@ -134,7 +118,7 @@ class UserSession extends Session
                                         return true;
                                     } else {
                                         $this->lastError = "Benutzer nicht vorhanden oder Passwort falsch!";
-                                        $userLoginFailureRepository->add($uarr['user_id'], $t, $_SERVER['REMOTE_ADDR'], $_SERVER['HTTP_USER_AGENT']);
+                                        $userLoginFailureRepository->add($user->id, $t, $_SERVER['REMOTE_ADDR'], $_SERVER['HTTP_USER_AGENT']);
                                         $this->lastErrorCode = "pass";
                                     }
                                 } else {
