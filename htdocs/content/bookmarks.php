@@ -42,29 +42,15 @@ echo '<br/>';
 // Save edited or new fleet bookmarks
 // max length (in database) of action is 15 chars
 if ((isset($_POST['submitEdit']) || isset($_POST['submitNew'])) && (isset($_POST['action']) && ctype_alpha($_POST['action']) && strlen($_POST['action']) <= 15)) {
-    $sx = intval($_POST['sx']);
-    $cx = intval($_POST['cx']);
-    $sy = intval($_POST['sy']);
-    $cy = intval($_POST['cy']);
-    $pos = intval($_POST['pos']);
+    $sx = (int) $_POST['sx'];
+    $cx = (int) $_POST['cx'];
+    $sy = (int) $_POST['sy'];
+    $cy = (int) $_POST['cy'];
+    $pos = (int) $_POST['pos'];
 
     // Check entity
-    $res = dbquery("
-        SELECT
-            entities.id
-        FROM
-            entities
-        INNER JOIN
-            cells
-        ON entities.cell_id=cells.id
-            AND sx='" . $sx . "'
-            AND sy='" . $sy . "'
-            AND cx='" . $cx . "'
-            AND cy='" . $cy . "'
-            AND pos='" . $pos . "';");
-    if (mysql_num_rows($res) > 0) {
-        $arr = mysql_fetch_row($res);
-
+    $entity = $entityRepository->findByCoordinates(new EntityCoordinates($sx, $sy, $cx, $cy, $pos));
+    if ($entity !== null) {
         //Check discovered for fleet bookmarks, bugfix by river
         $absX = (($sx - 1) * $config->param1Int('num_of_cells')) + $cx;
         $absY = (($sy - 1) * $config->param2Int('num_of_cells')) + $cy;
@@ -73,12 +59,12 @@ if ((isset($_POST['submitEdit']) || isset($_POST['submitNew'])) && (isset($_POST
             $addships = "";
             foreach ($_POST['ship_count'] as $sid => $count) {
                 if ($addships == "")
-                    $addships .= intval($sid) . ":" . nf_back($count);
+                    $addships .= (int) $sid . ":" . nf_back($count);
                 else
-                    $addships .= "," . intval($sid) . ":" . nf_back($count);
+                    $addships .= "," . (int) $sid . ":" . nf_back($count);
             }
 
-            $speed = max(1, min(100, intval(nf_back($_POST['value']))));
+            $speed = max(1, min(100, (int) nf_back($_POST['value'])));
 
             // Create restring
             $freight = new BaseResources();
