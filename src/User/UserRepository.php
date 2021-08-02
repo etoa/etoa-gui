@@ -568,4 +568,17 @@ class UserRepository extends AbstractRepository
             ])
             ->execute();
     }
+
+    public function updateObserve(int $userId, ?string $observe): void
+    {
+        $this->createQueryBuilder()
+            ->update('users')
+            ->set('user_observe', ':observe')
+            ->where('user_id = :userId')
+            ->setParameters([
+                'userId' => $userId,
+                'observe' => $observe,
+            ])
+            ->execute();
+    }
 }

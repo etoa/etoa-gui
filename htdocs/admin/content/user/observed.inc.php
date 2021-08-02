@@ -214,44 +214,16 @@ elseif (isset($_GET['surveillance']) && $_GET['surveillance'] > 0) {
 //
 else {
     if (isset($_POST['observe_add'])) {
-        dbquery("
-            UPDATE
-                users
-            SET
-                user_observe='" . addslashes($_POST['user_observe']) . "'
-            WHERE
-                user_id=" . $_POST['user_id'] . "
-            ");
+        $userRepository->updateObserve((int) $_POST['user_id'], $_POST['user_observe']);
     }
     if (isset($_GET['del'])) {
-        dbquery("
-            UPDATE
-                users
-            SET
-                user_observe = NULL
-            WHERE
-                user_id=" . $_GET['del'] . "
-            ");
+        $userRepository->updateObserve((int) $_POST['del'], null);
     }
     if (isset($_POST['del_text'])) {
-        dbquery("
-            UPDATE
-                users
-            SET
-                user_observe = NULL
-            WHERE
-                user_id=" . $_POST['user_id'] . "
-            ");
+        $userRepository->updateObserve((int) $_POST['del'], null);
     }
     if (isset($_POST['save_text'])) {
-        dbquery("
-            UPDATE
-                users
-            SET
-                user_observe='" . addslashes($_POST['user_observe']) . "'
-            WHERE
-                user_id=" . $_POST['user_id'] . "
-            ");
+        $userRepository->updateObserve((int) $_POST['user_id'], $_POST['user_observe']);
     }
 
     echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"post\">
