@@ -5,6 +5,7 @@ use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Defense\DefenseRepository;
 use EtoA\Ship\ShipRepository;
 use EtoA\Technology\TechnologyRepository;
+use EtoA\Technology\TechnologyRequirementRepository;
 use EtoA\UI\ResourceBoxDrawer;
 use EtoA\Universe\Planet\PlanetRepository;
 
@@ -24,6 +25,8 @@ $shipRepository = $app[ShipRepository::class];
 $defenseRepository = $app[DefenseRepository::class];
 /** @var TechnologyRepository $technologyRepository */
 $technologyRepository = $app[TechnologyRepository::class];
+/** @var TechnologyRequirementRepository $technologyRequirementRepository */
+$technologyRequirementRepository = $app[TechnologyRequirementRepository::class];
 
 if ($cp) {
     $planet = $planetRepo->find($cp->id);
@@ -122,45 +125,27 @@ if ($cp) {
         echo '<tr><th>Geb&auml;ude</th><th>Arbeiter</th><th>Zus&auml;tzliche Nahrung</th></tr>';
 
         // Gebäudede mit Arbeitsplätzen auswählen
-        $sp_res = dbquery("
-        SELECT
-            buildlist.buildlist_people_working,
-            buildings.building_name,
-            buildings.building_people_place,
-            buildings.building_id
-        FROM
-            buildlist,
-            buildings
-        WHERE
-            buildlist.buildlist_building_id=buildings.building_id
-        AND buildings.building_workplace='1'
-        AND buildlist.buildlist_entity_id='" . $planet->id . "'
-        ORDER BY
-            buildings.building_id;");
+        $workplaces = $buildingRepository->getWorkplaceBuildings($planet->id);
         $work_available = false;
-        if (mysql_num_rows($sp_res) > 0) {
+        if (count($workplaces) > 0) {
             $work_available = true;
-            while ($sp_arr = mysql_fetch_array($sp_res)) {
-                if ($sp_arr['building_id'] == PEOPLE_BUILDING_ID) {
+            foreach ($workplaces as $workplace) {
+                if ($workplace->buildingId === PEOPLE_BUILDING_ID) {
                     $requirements_passed = true;
-                    $rres = dbquery("SELECT * FROM tech_requirements where obj_id=" . GEN_TECH_ID);
-                    $bl = new BuildList($planet->id, $cu->id);
+                    $requirements = $technologyRequirementRepository->getRequirements(GEN_TECH_ID);
 
                     /** @var TechnologyRepository $technologyRepository */
                     $technologyRepository = $app[TechnologyRepository::class];
                     $techlist = $technologyRepository->getTechnologyLevels($cu->getId());
 
-                    $buildingLevels = $buildingRepository->getBuildingLevels($planet->id);
-
-                    while ($rarr = mysql_fetch_array($rres)) {
-                        if ($rarr['req_tech_id'] > 0) {
-                            if (($rarr['req_level']) > ($techlist[$rarr['req_tech_id']] ?? 0)) {
+                    foreach ($requirements as $requirement) {
+                        if ($requirement->requiredTechnologyId > 0) {
+                            if ($requirement->requiredLevel > ($techlist[$requirement->requiredTechnologyId] ?? 0)) {
                                 $requirements_passed = false;
                             }
                         }
-                        if ($rarr['req_building_id'] > 0) {
-
-                            if (($rarr['req_level']) > ($buildingLevels[$rarr['req_building_id']] ?? 0)) {
+                        if ($requirement->requiredBuildingId > 0) {
+                            if ($requirement->requiredLevel > ($buildingLevels[$requirement->requiredBuildingId] ?? 0)) {
                                 $requirements_passed = false;
                             }
                         }
@@ -172,7 +157,7 @@ if ($cp) {
                 }
 
                 echo '<tr><td style="width:150px">';
-                switch ($sp_arr['building_id']) {
+                switch ($workplace->buildingId) {
                     case BUILD_BUILDING_ID:
                         echo 'Bauhof';
                         break;
@@ -180,23 +165,23 @@ if ($cp) {
                         echo 'Genlabor';
                         break;
                     default:
-                        echo $sp_arr['building_name'];
+                        echo $workplace->buildingName;
                 }
                 echo '</td><td>';
 
-                if ($workingStatus[$sp_arr['building_id']] > 0) {
-                    echo $sp_arr['buildlist_people_working'];
+                if ($workingStatus[$workplace->buildingId] > 0) {
+                    echo $workplace->peopleWorking;
 
                     //Sperrt arbeiter
-                    $buildingRepository->markBuildingWorkingStatus($cu->getId(), $planet->id, (int) $sp_arr['building_id'], true);
+                    $buildingRepository->markBuildingWorkingStatus($cu->getId(), $planet->id, $workplace->buildingId, true);
                 } else {
 
-                    echo '<input type="text" id="' . $sp_arr['building_id'] . '" name="people_work[' . $sp_arr['building_id'] . ']" value="' . $sp_arr['buildlist_people_working'] . '" size="8" maxlength="20" onKeyUp="FormatNumber(this.id,this.value, ' . $planet->people . ', \'\', \'\');"/>';
+                    echo '<input type="text" id="' . $workplace->buildingId . '" name="people_work[' . $workplace->buildingId . ']" value="' . $workplace->peopleWorking . '" size="8" maxlength="20" onKeyUp="FormatNumber(this.id,this.value, ' . $planet->people . ', \'\', \'\');"/>';
 
                     //Entsperrt arbeiter
-                    $buildingRepository->markBuildingWorkingStatus($cu->getId(), $planet->id, (int) $sp_arr['building_id'], false);
+                    $buildingRepository->markBuildingWorkingStatus($cu->getId(), $planet->id, $workplace->buildingId, false);
                 }
-                echo '</td><td>' . (nf($sp_arr['buildlist_people_working'] * $config->getInt('people_food_require'))) . ' t</td></tr>';
+                echo '</td><td>' . (nf($workplace->peopleWorking * $config->getInt('people_food_require'))) . ' t</td></tr>';
             }
         }
 

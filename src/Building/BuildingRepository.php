@@ -28,6 +28,28 @@ class BuildingRepository extends AbstractRepository
         return array_map(fn ($value) => (int) $value, $data);
     }
 
+    /**
+     * @return BuildingWorkplace[]
+     */
+    public function getWorkplaceBuildings(int $entityId): array
+    {
+        $data = $this->createQueryBuilder()
+            ->select('buildlist_people_working')
+            ->addSelect('building_id, building_name, building_people_place')
+            ->from('buildlist')
+            ->innerJoin('buildlist', 'buildings', 'b', 'buildlist_building_id = b.building_id')
+            ->andWhere('buildlist_entity_id = :entityId')
+            ->andWhere('buildlist_current_level > 0')
+            ->andWhere('building_workplace = 1')
+            ->setParameters([
+                'entityId' => $entityId,
+            ])
+            ->execute()
+            ->fetchAllAssociative();
+
+        return array_map(fn (array $row) => new BuildingWorkplace($row), $data);
+    }
+
     public function getBuildingLevel(int $userId, int $buildingId, int $entityId): int
     {
         return (int) $this->createQueryBuilder()

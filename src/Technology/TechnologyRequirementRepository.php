@@ -21,6 +21,22 @@ class TechnologyRequirementRepository extends AbstractRepository
     }
 
     /**
+     * @return TechnologyRequirement[]
+     */
+    public function getRequirements(int $technologyId): array
+    {
+        $data = $this->createQueryBuilder()
+            ->select('*')
+            ->from('tech_requirements')
+            ->where('obj_id = :technologyId')
+            ->setParameter('technologyId', $technologyId)
+            ->execute()
+            ->fetchAllAssociative();
+
+        return array_map(fn (array $row) => new TechnologyRequirement($row), $data);
+    }
+
+    /**
      * @return array<int, int>
      */
     public function getDuplicateTechRequirements(): array
