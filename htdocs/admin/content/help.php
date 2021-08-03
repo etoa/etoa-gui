@@ -1,6 +1,20 @@
 <?PHP
 
+use EtoA\Building\BuildingDataRepository;
+use EtoA\Building\BuildingRequirementRepository;
+use EtoA\Defense\DefenseDataRepository;
+use EtoA\Ship\ShipDataRepository;
+use EtoA\Ship\ShipRequirementRepository;
+use EtoA\Technology\TechnologyDataRepository;
+use EtoA\Technology\TechnologyRequirementRepository;
 use Symfony\Component\HttpFoundation\Request;
+
+/** @var TechnologyRequirementRepository $technologyRequirementRepository */
+$technologyRequirementRepository = $app[TechnologyRequirementRepository::class];
+/** @var ShipRequirementRepository $shipRequirementRepository */
+$shipRequirementRepository = $app[ShipRequirementRepository::class];
+/** @var BuildingRequirementRepository $buildingRequirementRepository */
+$buildingRequirementRepository = $app[BuildingRequirementRepository::class];
 
 /** @var Request */
 $request = Request::createFromGlobals();
@@ -15,8 +29,8 @@ if ($sub == "techtree") {
 
     echo "<select onchange=\"xajax_reqInfo(this.value,'b')\">
     <option value=\"0\">Gebäude wählen...</option>";
-    /** @var \EtoA\Building\BuildingDataRepository $buildingRepository */
-    $buildingRepository = $app[\EtoA\Building\BuildingDataRepository::class];
+    /** @var BuildingDataRepository $buildingRepository */
+    $buildingRepository = $app[BuildingDataRepository::class];
     $buildingNames = $buildingRepository->getBuildingNames();
     foreach ($buildingNames as $buildingId => $buildingName) {
         echo "<option value=\"" . $buildingId . "\">" . $buildingName . "</option>";
@@ -25,8 +39,8 @@ if ($sub == "techtree") {
 
     echo "<select onchange=\"xajax_reqInfo(this.value,'t')\">
     <option value=\"0\">Technologie wählen...</option>";
-    /** @var \EtoA\Technology\TechnologyDataRepository $technologyRepository */
-    $technologyRepository = $app[\EtoA\Technology\TechnologyDataRepository::class];
+    /** @var TechnologyDataRepository $technologyRepository */
+    $technologyRepository = $app[TechnologyDataRepository::class];
     $technologyNames = $technologyRepository->getTechnologyNames();
     foreach ($technologyNames as $technologyId => $technologyName) {
         echo "<option value=\"" . $technologyId . "\">" . $technologyName . "</option>";
@@ -35,8 +49,8 @@ if ($sub == "techtree") {
 
     echo "<select onchange=\"xajax_reqInfo(this.value,'s')\">
     <option value=\"0\">Schiff wählen...</option>";
-    /** @var \EtoA\Ship\ShipDataRepository $shipRepository */
-    $shipRepository = $app[\EtoA\Ship\ShipDataRepository::class];
+    /** @var ShipDataRepository $shipRepository */
+    $shipRepository = $app[ShipDataRepository::class];
     $shipNames = $shipRepository->getShipNames();
     foreach ($shipNames as $shipId => $shipName) {
         echo "<option value=\"" . $shipId . "\">" . $shipName . "</option>";
@@ -45,8 +59,8 @@ if ($sub == "techtree") {
 
     echo "<select onchange=\"xajax_reqInfo(this.value,'d')\">
     <option value=\"0\">Verteidigung wählen...</option>";
-    /** @var \EtoA\Defense\DefenseDataRepository $defenseRepository */
-    $defenseRepository = $app[\EtoA\Defense\DefenseDataRepository::class];
+    /** @var DefenseDataRepository $defenseRepository */
+    $defenseRepository = $app[DefenseDataRepository::class];
     $defenseNames = $defenseRepository->getDefenseNames();
     foreach ($defenseNames as $defenseId => $defenseName) {
         echo "<option value=\"" . $defenseId . "\">" . $defenseName . "</option>";
@@ -60,37 +74,34 @@ if ($sub == "techtree") {
     echo '<script type="text/javascript">xajax_reqInfo(' . $starItem . ',"b")</script>';
 
     echo "<br/><br/>";
-    $bures = dbquery("SELECT COUNT(*),obj_id,req_building_id FROM building_requirements WHERE req_building_id>0 GROUP BY obj_id,req_building_id;");
-    while ($buarr = mysql_fetch_row($bures)) {
-        if ($buarr[0] != 1)
-            echo "Gebäude-Bedingung Fehler bei Gebäude " . $buarr[1] . " (" . $buarr[2] . ")<br/>";
-    }
-    $bures = dbquery("SELECT COUNT(*),obj_id,req_tech_id FROM building_requirements WHERE req_tech_id>0 GROUP BY obj_id,req_tech_id;");
-    while ($buarr = mysql_fetch_row($bures)) {
-        if ($buarr[0] != 1)
-            echo "Tech-Bedingung Fehler bei Gebäude " . $buarr[1] . " (" . $buarr[2] . ")<br/>";
+    $duplicates = $buildingRequirementRepository->getDuplicateBuildingRequirements();
+    foreach ($duplicates as $buildingId => $requiredObjId) {
+        echo "Gebäude-Bedingung Fehler bei Gebäude " . $buildingId . " (" . $requiredObjId . ")<br/>";
     }
 
-    $bures = dbquery("SELECT COUNT(*),obj_id,req_building_id FROM tech_requirements WHERE req_building_id>0 GROUP BY obj_id,req_building_id;");
-    while ($buarr = mysql_fetch_row($bures)) {
-        if ($buarr[0] != 1)
-            echo "Gebäude-Bedingung Fehler bei Tech " . $buarr[1] . " (" . $buarr[2] . ")<br/>";
-    }
-    $bures = dbquery("SELECT COUNT(*),obj_id,req_tech_id FROM tech_requirements WHERE req_tech_id>0 GROUP BY obj_id,req_tech_id;");
-    while ($buarr = mysql_fetch_row($bures)) {
-        if ($buarr[0] != 1)
-            echo "Tech-Bedingung Fehler bei Tech " . $buarr[1] . " (" . $buarr[2] . ")<br/>";
+    $duplicates = $buildingRequirementRepository->getDuplicateTechRequirements();
+    foreach ($duplicates as $buildingId => $requiredObjId) {
+        echo "Tech-Bedingung Fehler bei Gebäude " . $buildingId . " (" . $requiredObjId . ")<br/>";
     }
 
-    $bures = dbquery("SELECT COUNT(*),obj_id,req_building_id FROM ship_requirements WHERE req_building_id>0 GROUP BY obj_id,req_building_id;");
-    while ($buarr = mysql_fetch_row($bures)) {
-        if ($buarr[0] != 1)
-            echo "Gebäude-Bedingung Fehler bei Schiff " . $buarr[1] . " (" . $buarr[2] . ")<br/>";
+    $duplicates = $technologyRequirementRepository->getDuplicateBuildingRequirements();
+    foreach ($duplicates as $techId => $requiredObjId) {
+        echo "Gebäude-Bedingung Fehler bei Tech " . $techId . " (" . $requiredObjId . ")<br/>";
     }
-    $bures = dbquery("SELECT COUNT(*),obj_id,req_tech_id FROM ship_requirements WHERE req_tech_id>0 GROUP BY obj_id,req_tech_id;");
-    while ($buarr = mysql_fetch_row($bures)) {
-        if ($buarr[0] != 1)
-            echo "Tech-Bedingung Fehler bei Schiff " . $buarr[1] . " (" . $buarr[2] . ")<br/>";
+
+    $duplicates = $technologyRequirementRepository->getDuplicateTechRequirements();
+    foreach ($duplicates as $techId => $requiredObjId) {
+        echo "Tech-Bedingung Fehler bei Tech " . $techId . " (" . $requiredObjId . ")<br/>";
+    }
+
+    $duplicates = $shipRequirementRepository->getDuplicateBuildingRequirements();
+    foreach ($duplicates as $shipId => $requiredObjId) {
+        echo "Gebäude-Bedingung Fehler bei Schiff " . $shipId . " (" . $requiredObjId . ")<br/>";
+    }
+
+    $duplicates = $shipRequirementRepository->getDuplicateTechRequirements();
+    foreach ($duplicates as $shipId => $requiredObjId) {
+        echo "Tech-Bedingung Fehler bei Schiff " . $shipId . " (" . $requiredObjId . ")<br/>";
     }
 } else {
     require("../content/help.php");
