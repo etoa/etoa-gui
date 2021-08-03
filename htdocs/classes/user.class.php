@@ -13,6 +13,7 @@ use EtoA\Universe\Planet\PlanetService;
 use EtoA\User\UserLogRepository;
 use EtoA\User\UserMultiRepository;
 use EtoA\User\UserService;
+use EtoA\User\UserSessionRepository;
 use EtoA\User\UserSittingRepository;
 use EtoA\User\UserWarningRepository;
 
@@ -542,34 +543,23 @@ class User implements \EtoA\User\UserInterface
 
     function loadLastAction()
     {
-        $res = dbquery("
-            SELECT
-                time_action
-            FROM
-                user_sessions
-            WHERE
-                user_id='" . $this->id . "'
-            LIMIT 1;");
-        if (mysql_num_rows($res)) {
-            $arr = mysql_fetch_row($res);
-            return $arr[0];
-        } else {
-            $res = dbquery("
-                SELECT
-                    time_action
-                FROM
-                    user_sessionlog
-                WHERE
-                    user_id='" . $this->id . "'
-                ORDER BY
-                    time_action DESC
-                LIMIT 1;");
-            if (mysql_num_rows($res)) {
-                $arr = mysql_fetch_row($res);
-                return $arr[0];
-            } else
-                return 1;
+        // TODO
+        global $app;
+
+        /** @var UserSessionRepository $userSessionRepository */
+        $userSessionRepository = $app[UserSessionRepository::class];
+
+        $userSession = $userSessionRepository->find($this->id);
+        if ($userSession !== null) {
+            return $userSession->timeAction;
         }
+
+        $sessionLogs = $userSessionRepository->getUserSessionLogs($this->id, 1);
+        if (count($sessionLogs) > 0) {
+            return $sessionLogs[0]->timeAction;
+        }
+
+        return 1;
     }
 
     /**
