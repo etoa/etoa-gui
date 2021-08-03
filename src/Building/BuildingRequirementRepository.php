@@ -6,16 +6,25 @@ use EtoA\Core\AbstractRepository;
 
 class BuildingRequirementRepository extends AbstractRepository
 {
+    /**
+     * @return array<int, int>
+     */
     public function getDuplicateTechRequirements(): array
     {
         return $this->getDuplicateRequirements('req_building_id');
     }
 
+    /**
+     * @return array<int, int>
+     */
     public function getDuplicateBuildingRequirements(): array
     {
         return $this->getDuplicateRequirements('req_tech_id');
     }
 
+    /**
+     * @return array<int, int>
+     */
     private function getDuplicateRequirements(string $requirement): array
     {
         $data = $this->createQueryBuilder()

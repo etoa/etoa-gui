@@ -47,16 +47,25 @@ class ShipRequirementRepository extends AbstractRepository
         return array_map(fn ($row) => ShipRequiredTechnology::createFromShip($row), $data);
     }
 
+    /**
+     * @return array<int, int>
+     */
     public function getDuplicateTechRequirements(): array
     {
         return $this->getDuplicateRequirements('req_building_id');
     }
 
+    /**
+     * @return array<int, int>
+     */
     public function getDuplicateBuildingRequirements(): array
     {
         return $this->getDuplicateRequirements('req_tech_id');
     }
 
+    /**
+     * @return array<int, int>
+     */
     private function getDuplicateRequirements(string $requirement): array
     {
         $data = $this->createQueryBuilder()

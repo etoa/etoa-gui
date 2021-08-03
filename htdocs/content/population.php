@@ -2,6 +2,8 @@
 
 use EtoA\Building\BuildingRepository;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Defense\DefenseRepository;
+use EtoA\Ship\ShipRepository;
 use EtoA\Technology\TechnologyRepository;
 use EtoA\UI\ResourceBoxDrawer;
 use EtoA\Universe\Planet\PlanetRepository;
@@ -16,6 +18,12 @@ $planetRepo = $app[PlanetRepository::class];
 $resourceBoxDrawer = $app[ResourceBoxDrawer::class];
 /** @var BuildingRepository $buildingRepository */
 $buildingRepository = $app[BuildingRepository::class];
+/** @var ShipRepository $shipRepository */
+$shipRepository = $app[ShipRepository::class];
+/** @var DefenseRepository $defenseRepository */
+$defenseRepository = $app[DefenseRepository::class];
+/** @var TechnologyRepository $technologyRepository */
+$technologyRepository = $app[TechnologyRepository::class];
 
 if ($cp) {
     $planet = $planetRepo->find($cp->id);
@@ -58,80 +66,14 @@ if ($cp) {
         echo '<tr><th>TOTAL</b></th><td><b>' . nf($pcnt) . '</b></td></tr>';
         tableEnd();
 
-        //überprüft tätigkeit des Schiffswerftes
-        $sql = "
-        SELECT
-            COUNT(queue_id)
-        FROM
-            ship_queue
-        WHERE
-            queue_entity_id='" . $planet->id . "'
-        AND queue_user_id='" . $cu->id . "'
-        AND queue_starttime>'0'
-        AND queue_endtime>'0';";
-        $tres = dbquery($sql);
-        $tarr = mysql_fetch_row($tres);
-        $w = [];
-        $w[SHIP_BUILDING_ID] = $tarr[0];
-
-        //überprüft tätigkeit der waffenfabrik
-        $sql = "
-        SELECT
-            COUNT(queue_id)
-        FROM
-            def_queue
-        WHERE
-            queue_entity_id='" . $planet->id . "'
-        AND queue_user_id='" . $cu->id . "'
-        AND queue_starttime>'0'
-        AND queue_endtime>'0';";
-        $tres = dbquery($sql);
-        $tarr = mysql_fetch_row($tres);
-        $w[DEF_BUILDING_ID] = $tarr[0];
-
-        //überprüft tätigkeit des forschungslabors
-        $sql = "
-        SELECT
-            COUNT(techlist_id)
-        FROM
-        techlist
-        WHERE
-            techlist_entity_id='" . $planet->id . "'
-        AND techlist_user_id='" . $cu->id . "'
-        AND techlist_build_type>'2'
-        AND techlist_tech_id <>" . GEN_TECH_ID;
-        $tres = dbquery($sql);
-        $tarr = mysql_fetch_row($tres);
-        $w[TECH_BUILDING_ID] = $tarr[0];
-
-        //überprüft tätigkeit des bauhofes
-        $sql = "
-        SELECT
-            COUNT(buildlist_id)
-        FROM
-            buildlist
-        WHERE
-            buildlist_entity_id='" . $planet->id . "'
-        AND buildlist_user_id='" . $cu->id . "'
-        AND buildlist_build_start_time>'0'
-        AND buildlist_build_end_time>'0';";
-        $tres = dbquery($sql);
-        $tarr = mysql_fetch_row($tres);
-        $w[BUILD_BUILDING_ID] = $tarr[0];
-
-        $sql = "
-            SELECT
-                1
-            FROM
-                techlist
-            WHERE
-                techlist_tech_id=" . GEN_TECH_ID . "
-            AND techlist_user_id=" . $cu->id . "
-            AND techlist_build_type>2";
-
-        $tres = mysql_query($sql);
-        $tarr = mysql_fetch_row($tres);
-        $w[PEOPLE_BUILDING_ID] = (int)isset($tarr[0]);
+        //überprüft tätigkeit
+        $workingStatus = [
+            SHIP_BUILDING_ID => $shipRepository->countBuildInProgress($cu->getId(), $planet->id),
+            DEF_BUILDING_ID => $defenseRepository->countBuildInProgress($cu->getId(), $planet->id),
+            TECH_BUILDING_ID => $technologyRepository->countResearchInProgress($cu->getId(), $planet->id),
+            BUILD_BUILDING_ID => $buildingRepository->countBuildInProgress($cu->getId(), $planet->id),
+            PEOPLE_BUILDING_ID =>  (int) $technologyRepository->isTechInProgress($cu->getId(), GEN_TECH_ID),
+        ];
 
         //
         // Arbeiter zuteilen
@@ -147,20 +89,20 @@ if ($cp) {
             if (isset($_POST['people_work']) && gettype($_POST['people_work']) == 'array') {
 
                 foreach ($_POST['people_work'] as $id => $num) {
-                    if (!$w[$id]) {
+                    if (!$workingStatus[$id]) {
                         $working += nf_back($num);
                     }
                 }
 
                 $available = min($free_people, $working);
 
-                foreach ($_POST['people_work'] as $id => $num) {
-                    if (!$w[$id]) {
+                foreach ($_POST['people_work'] as $buildingId => $num) {
+                    if ($workingStatus[$buildingId] === 0) {
                         $num = nf_back($num);
                         $work = $available > 0 ? min($num, $available) : 0;
                         $available -= $num;
 
-                        $buildingRepository->setPeopleWorking($planet->id, (int) $id, (int) $work);
+                        $buildingRepository->setPeopleWorking($planet->id, $buildingId, (int) $work);
                     }
                 }
             }
@@ -168,9 +110,9 @@ if ($cp) {
 
         // Alle Arbeiter freistellen (solange sie nicht noch an einer Arbeit sind)
         if (isset($_POST['submit_people_free']) && checker_verify()) {
-            foreach ($w as $id => $v) {
-                if ($v == 0) {
-                    $buildingRepository->setPeopleWorking($planet->id, (int) $id, 0);
+            foreach ($workingStatus as $buildingId => $v) {
+                if ($v === 0) {
+                    $buildingRepository->setPeopleWorking($planet->id, $buildingId, 0);
                 }
             }
         }
@@ -242,7 +184,7 @@ if ($cp) {
                 }
                 echo '</td><td>';
 
-                if ($w[$sp_arr['building_id']] > 0) {
+                if ($workingStatus[$sp_arr['building_id']] > 0) {
                     echo $sp_arr['buildlist_people_working'];
 
                     //Sperrt arbeiter
