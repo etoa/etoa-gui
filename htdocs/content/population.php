@@ -167,14 +167,8 @@ if ($cp) {
                         $num = nf_back($num);
                         $work = $available > 0 ? min($num, $available) : 0;
                         $available -= $num;
-                        dbquery("
-                    UPDATE
-                        buildlist
-                    SET
-                        buildlist_people_working='" . $work . "'
-                    WHERE
-                        buildlist_building_id='" . intval($id) . "'
-                    AND buildlist_entity_id=" . $planet->id);
+
+                        $buildingRepository->setPeopleWorking($planet->id, (int) $id, (int) $work);
                     }
                 }
             }
@@ -184,15 +178,7 @@ if ($cp) {
         if (isset($_POST['submit_people_free']) && checker_verify()) {
             foreach ($w as $id => $v) {
                 if ($v == 0) {
-                    dbquery("
-                    UPDATE
-                        buildlist
-                    SET
-                        buildlist_people_working='0'
-                    WHERE
-                        buildlist_building_id='" . $id . "'
-                    AND buildlist_user_id='" . $cu->id . "'
-                    AND buildlist_entity_id='" . $planet->id . "'");
+                    $buildingRepository->setPeopleWorking($planet->id, (int) $id, 0);
                 }
             }
         }

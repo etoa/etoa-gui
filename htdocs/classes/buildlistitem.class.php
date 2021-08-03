@@ -176,8 +176,12 @@ class BuildListItem
     public function setPeopleWorking($people, $force = false)
     {
         if ($this->buildType == 0 || $force) {
+            global $app;
+
+            /** @var BuildingRepository $buildingRepository */
+            $buildingRepository = $app[BuildingRepository::class];
+            $buildingRepository->setPeopleWorking($this->entityId, $this->buildingId, (int) $people);
             $this->peopleWorking = $people;
-            dbquery("UPDATE buildlist SET buildlist_people_working='" . $people . "' WHERE buildlist_id='" . $this->id . "' LIMIT 1;");
             return true;
         }
         return false;
