@@ -24,5 +24,9 @@ class BuidingServiceProvider implements ServiceProviderInterface
         $pimple[BuildingPointRepository::class] = function (Container $pimple): BuildingPointRepository {
             return new BuildingPointRepository($pimple['db']);
         };
+
+        $pimple[BuildingRequirementRepository::class] = function (Container $pimple): BuildingRequirementRepository {
+            return new BuildingRequirementRepository($pimple['db']);
+        };
     }
 }

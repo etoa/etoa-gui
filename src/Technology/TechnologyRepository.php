@@ -141,6 +141,40 @@ class TechnologyRepository extends AbstractRepository
         ]);
     }
 
+    public function countResearchInProgress(int $userId, int $entityId): bool
+    {
+        return (bool) $this->createQueryBuilder()
+            ->select('COUNT(techlist_id)')
+            ->from('techlist')
+            ->where('techlist_user_id = :userId')
+            ->where('techlist_entity_id = :entityId')
+            ->andWhere('techlist_build_type > 2')
+            ->andWhere('techlist_tech_id <> :techId')
+            ->setParameters([
+                'userId' => $userId,
+                'entityId' => $entityId,
+                'techId' => GEN_TECH_ID,
+            ])
+            ->execute()
+            ->fetchOne();
+    }
+
+    public function isTechInProgress(int $userId, int $technologyId): bool
+    {
+        return (bool) $this->createQueryBuilder()
+            ->select('1')
+            ->from('techlist')
+            ->where('techlist_user_id = :userId')
+            ->andWhere('techlist_build_type > 2')
+            ->andWhere('techlist_tech_id = :techId')
+            ->setParameters([
+                'userId' => $userId,
+                'techId' => $technologyId,
+            ])
+            ->execute()
+            ->fetchOne();
+    }
+
     public function count(): int
     {
         return (int) $this->createQueryBuilder()

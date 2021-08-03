@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Universe\Cell\CellRepository;
 use EtoA\User\UserRepository;
 
 /** @var ConfigurationService */
@@ -8,6 +9,8 @@ $config = $app[ConfigurationService::class];
 
 /** @var UserRepository */
 $userRepository = $app[UserRepository::class];
+/** @var CellRepository $cellRepository */
+$cellRepository = $app[CellRepository::class];
 
 $_SESSION['currentEntity'] = serialize($cp);
 
@@ -159,30 +162,10 @@ echo "</td>";
 // Map
 echo "<td class=\"sector_map_cell\">";
 
-// Load user's systems
-$res = dbquery("
-  SELECT
-      cells.id as id
-  FROM
-      planets
-  INNER JOIN
-  (
-      entities
-      INNER JOIN
-          cells
-          ON cells.id=entities.cell_id
-  )
-     ON entities.id=planets.id
-      AND planet_user_id='" . $cu->id . "';");
-$user_solsys_ids = array();
-while ($arr = mysql_fetch_row($res)) {
-    $user_solsys_ids[] = (int) $arr[0];
-}
-
 $sectorMap = new SectorMapRenderer($config->param1Int('num_of_cells'), $config->param2Int('num_of_cells'));
 $sectorMap->enableRuler(true);
 $sectorMap->enableTooltips(true);
-$sectorMap->setUserCellIDs($user_solsys_ids);
+$sectorMap->setUserCellIDs($cellRepository->getUserCellIds($cu->getId()));
 if (isset($cp)) {
     $sectorMap->setSelectedCell($cp->getCell());
 }

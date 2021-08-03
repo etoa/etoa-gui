@@ -72,6 +72,10 @@ class BuildingRepositoryTest extends AbstractDbTestCase
         $this->repository->addBuilding($buildingId, $level, $userId, $entityId);
 
         $this->assertSame(0, $this->repository->getPeopleWorking($entityId)->total);
+
+        $this->repository->setPeopleWorking($entityId, $buildingId, 100);
+
+        $this->assertSame(100, $this->repository->getPeopleWorking($entityId)->total);
     }
 
     public function testMarkBuildingWorkingStatus(): void
@@ -92,5 +96,19 @@ class BuildingRepositoryTest extends AbstractDbTestCase
         $this->repository->addBuilding(1, 0, 1, 1);
 
         $this->assertSame(1, $this->repository->countEmpty());
+    }
+
+    public function testGetWorkplaceBuildings(): void
+    {
+        $this->repository->addBuilding(BuildingId::SHIPYARD, 10, 1, 1);
+
+        $this->assertNotEmpty($this->repository->getWorkplaceBuildings(1));
+    }
+
+    public function testGetPeopleStorageBuildings(): void
+    {
+        $this->repository->addBuilding(BuildingId::PEOPLE, 10, 1, 1);
+
+        $this->assertNotEmpty($this->repository->getPeopleStorageBuildings(1));
     }
 }

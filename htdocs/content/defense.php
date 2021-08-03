@@ -330,14 +330,7 @@ if ($factoryBuilding !== null && $factoryBuilding->currentLevel > 0) {
         // people working changed
         if (isset($_POST['submit_people_form'])) {
             if (count($queue) === 0) {
-                dbquery("
-                    UPDATE
-                        buildlist
-                    SET
-                        buildlist_people_working='" . nf_back($_POST['peopleWorking']) . "'
-                    WHERE
-                        buildlist_building_id='" . DEF_BUILDING_ID . "'
-                    AND buildlist_entity_id=" . $planet->id);
+                $buildingRepository->setPeopleWorking($planet->id, DEF_BUILDING_ID, (int) nf_back($_POST['peopleWorking']));
                 //success_msg("Arbeiter zugeteilt!");
             } else
                 error_msg('Arbeiter konnten nicht zugeteilt werden!');

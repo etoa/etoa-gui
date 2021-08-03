@@ -28,6 +28,50 @@ class BuildingRepository extends AbstractRepository
         return array_map(fn ($value) => (int) $value, $data);
     }
 
+    /**
+     * @return BuildingWorkplace[]
+     */
+    public function getWorkplaceBuildings(int $entityId): array
+    {
+        $data = $this->createQueryBuilder()
+            ->select('buildlist_people_working')
+            ->addSelect('building_id, building_name, building_people_place')
+            ->from('buildlist')
+            ->innerJoin('buildlist', 'buildings', 'b', 'buildlist_building_id = b.building_id')
+            ->andWhere('buildlist_entity_id = :entityId')
+            ->andWhere('buildlist_current_level > 0')
+            ->andWhere('building_workplace = 1')
+            ->setParameters([
+                'entityId' => $entityId,
+            ])
+            ->execute()
+            ->fetchAllAssociative();
+
+        return array_map(fn (array $row) => new BuildingWorkplace($row), $data);
+    }
+
+    /**
+     * @return BuildingPeopleStorage[]
+     */
+    public function getPeopleStorageBuildings(int $entityId): array
+    {
+        $data = $this->createQueryBuilder()
+            ->select('buildlist_current_level')
+            ->addSelect('building_store_factor, building_name, building_people_place')
+            ->from('buildlist')
+            ->innerJoin('buildlist', 'buildings', 'b', 'buildlist_building_id = b.building_id')
+            ->andWhere('buildlist_entity_id = :entityId')
+            ->andWhere('buildlist_current_level > 0')
+            ->andWhere('building_people_place > 0')
+            ->setParameters([
+                'entityId' => $entityId,
+            ])
+            ->execute()
+            ->fetchAllAssociative();
+
+        return array_map(fn (array $row) => new BuildingPeopleStorage($row), $data);
+    }
+
     public function getBuildingLevel(int $userId, int $buildingId, int $entityId): int
     {
         return (int) $this->createQueryBuilder()
@@ -76,6 +120,23 @@ class BuildingRepository extends AbstractRepository
         return (int) $this->createQueryBuilder()
             ->select('COUNT(buildlist_id)')
             ->from('buildlist')
+            ->execute()
+            ->fetchOne();
+    }
+
+    public function countBuildInProgress(int $userId, int $entityId): int
+    {
+        return (int)$this->createQueryBuilder()
+            ->select('COUNT(buildlist_id)')
+            ->from('buildlist')
+            ->where('buildlist_entity_id = :entityId')
+            ->andWhere('buildlist_user_id = :userId')
+            ->andWhere('buildlist_build_start_time > 0')
+            ->andWhere('buildlist_build_end_time > 0')
+            ->setParameters([
+                'userId' => $userId,
+                'entityId' => $entityId,
+            ])
             ->execute()
             ->fetchOne();
     }
@@ -381,17 +442,38 @@ class BuildingRepository extends AbstractRepository
             ->execute();
     }
 
-    public function getPeopleWorking(int $entityId): PeopleWorking
+    public function getPeopleWorking(int $entityId, bool $onlyWorkingStatus = false): PeopleWorking
     {
-        $data = $this->createQueryBuilder()
+        $qb = $this->createQueryBuilder()
             ->select('buildlist_building_id, buildlist_people_working')
             ->from('buildlist')
             ->where('buildlist_entity_id = :entityId')
-            ->setParameter('entityId', $entityId)
+            ->setParameter('entityId', $entityId);
+
+        if ($onlyWorkingStatus) {
+            $qb->andWhere('buildlist_people_working_status = 1');
+        }
+
+        $data = $qb
             ->execute()
             ->fetchAllKeyValue();
 
         return new PeopleWorking($data);
+    }
+
+    public function setPeopleWorking(int $entityId, int $buildingId, int $people): void
+    {
+        $this->createQueryBuilder()
+            ->update('buildlist')
+            ->set('buildlist_people_working', ':peopleWorking')
+            ->where('buildlist_entity_id = :entityId')
+            ->andWhere('buildlist_building_id = :buildingId')
+            ->setParameters([
+                'entityId' => $entityId,
+                'buildingId' => $buildingId,
+                'peopleWorking' => $people,
+            ])
+            ->execute();
     }
 
     public function markBuildingWorkingStatus(int $userId, int $entityId, int $buildingId, bool $working): bool

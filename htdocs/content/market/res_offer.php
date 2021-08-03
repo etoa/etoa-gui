@@ -1,5 +1,6 @@
 <?php
 
+use EtoA\Alliance\AllianceBuildingRepository;
 use EtoA\Market\MarketResourceRepository;
 use EtoA\Universe\Resources\BaseResources;
 use EtoA\User\UserRepository;
@@ -12,6 +13,8 @@ use EtoA\User\UserRepository;
 $userRepository = $app[UserRepository::class];
 /** @var MarketResourceRepository $marketResourceRepository */
 $marketResourceRepository = $app[MarketResourceRepository::class];
+/** @var AllianceBuildingRepository $allianceBuildingRepository */
+$allianceBuildingRepository = $app[AllianceBuildingRepository::class];
 
 $for_user = 0;
 $for_alliance = 0;
@@ -77,14 +80,7 @@ if (!isset($errMsg)) {
             if ($for_alliance > 0) {
                 // Set cooldown
                 $cd = time() + $cooldown;
-                dbquery("
-                                UPDATE
-                                    alliance_buildlist
-                                SET
-                                    alliance_buildlist_cooldown=" . $cd . "
-                                WHERE
-                                    alliance_buildlist_alliance_id='" . $cu->allianceId . "'
-                                    AND alliance_buildlist_building_id='" . ALLIANCE_MARKET_ID . "';");
+                $allianceBuildingRepository->setCooldown($cu->allianceId(), ALLIANCE_MARKET_ID, $cd);
 
                 $cu->alliance->buildlist->setCooldown(ALLIANCE_MARKET_ID, $cd);
             }

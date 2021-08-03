@@ -182,6 +182,23 @@ class ShipRepository extends AbstractRepository
         return $count > 0;
     }
 
+    public function countBuildInProgress(int $userId, int $entityId): int
+    {
+        return (int) $this->createQueryBuilder()
+            ->select('COUNT(queue_id)')
+            ->from('ship_queue')
+            ->where('queue_entity_id = :entityId')
+            ->andWhere('queue_user_id = :userId')
+            ->andWhere('queue_starttime > 0')
+            ->andWhere('queue_endtime > 0')
+            ->setParameters([
+                'userId' => $userId,
+                'entityId' => $entityId,
+            ])
+            ->execute()
+            ->fetchOne();
+    }
+
     /**
      * @return ShipQueueItem[]
      */
