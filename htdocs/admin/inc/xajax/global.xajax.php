@@ -600,7 +600,7 @@ function showMissilesOnPlanet($pid)
 
     if ($pid != 0) {
         [$entityId, $userId] = explode(":", $pid);
-        $missileList = $missileRepository->findForUser($userId, $entityId);
+        $missileList = $missileRepository->findForUser((int) $userId, (int) $entityId);
         if (count($missileList) > 0) {
             $missileNames = $missileDataRepository->getMissileNames(true);
             $out = "<table class=\"tb\">";
@@ -665,8 +665,8 @@ function editMissile($form, $listId)
     $objResponse = new xajaxResponse();
 
     [$entityId, $userId] = explode(":", $form['entity_id']);
-    $missileList = $missileRepository->findForUser($userId, $entityId);
-    if (count($missileList)) {
+    $missileList = $missileRepository->findForUser((int) $userId, (int) $entityId);
+    if (count($missileList) > 0) {
         foreach ($missileList as $entry) {
             if ($entry->id == $listId) {
                 $out = "<input type=\"text\" size=\"9\" maxlength=\"12\" name=\"editcnt_" . $entry->id . "\" value=\"" . $entry->count . "\" />";
@@ -716,7 +716,7 @@ function showDefenseOnPlanet($form)
 
     if ($entityId > 0) {
         $defenseNames = $defenseDataRepository->getDefenseNames(true);
-        $defenseList = $defenseRepository->findForUser($userId, $entityId);
+        $defenseList = $defenseRepository->findForUser((int) $userId, (int) $entityId);
         if (count($defenseList) > 0) {
             $out = "<table class=\"tb\">";
             foreach ($defenseList as $entry) {
@@ -782,7 +782,7 @@ function editDefense($form, $listId)
 
     $objResponse = new xajaxResponse();
     [$entityId, $userId] = explode(":", $form['entity_id']);
-    $defenseList = $defenseRepository->findForUser($userId, $entityId);
+    $defenseList = $defenseRepository->findForUser((int) $userId, (int) $entityId);
     foreach ($defenseList as $entry) {
         if ($entry->id == $listId) {
             $out = "<input type=\"text\" size=\"9\" maxlength=\"12\" name=\"editcnt_" . $entry->id . "\" value=\"" . $entry->count . "\" />";
@@ -832,7 +832,7 @@ function showBuildingsOnPlanet($form)
     $buildTypes = Building::getBuildTypes();
 
     if ($entityId != 0) {
-        $buildingList = $buildingRepository->findForUser($userId, $entityId);
+        $buildingList = $buildingRepository->findForUser((int) $userId, (int) $entityId);
         if (count($buildingList) > 0) {
             $buildingNames = $buildingDataRepository->getBuildingNames(true);
 
@@ -884,7 +884,7 @@ function addAllBuildingToPlanet($form, $num)
     $objResponse = new xajaxResponse();
 
     [$entityId, $userId] = explode(":", $form['entity_id']);
-    if ($userId) {
+    if ($userId > 0) {
         /** @var BuildingRepository $buildingRepository */
         $buildingRepository = $app[BuildingRepository::class];
         for ($i = 1; $i <= $num; $i++) {
@@ -925,8 +925,8 @@ function editBuilding($form, $listId)
 
     [$entityId, $userId] = explode(":", $form['entity_id']);
     if ($entityId !== '') {
-        $buildingList = $buildingRepository->findForUser($userId, $entityId);
-        if (count($buildingList)) {
+        $buildingList = $buildingRepository->findForUser((int) $userId, (int) $entityId);
+        if (count($buildingList) > 0) {
             $buildTypes = Building::getBuildTypes();
             foreach ($buildingList as $entry) {
                 if ($entry->id == $listId) {
