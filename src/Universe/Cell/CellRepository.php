@@ -158,6 +158,23 @@ class CellRepository extends AbstractRepository
     }
 
     /**
+     * @return int[]
+     */
+    public function getUserCellIds(int $userId): array
+    {
+        $data = $this->createQueryBuilder()
+            ->select('DISTINCT c.id')
+            ->from('cells', 'c')
+            ->innerJoin('c', 'entities', 'e', 'e.cell_id = c.id')
+            ->innerJoin('e', 'planets', 'p', 'p.id = e.id AND p.planet_user_id = :user')
+            ->setParameter('user', $userId)
+            ->execute()
+            ->fetchAllAssociative();
+
+        return array_map(fn (array $row) => (int) $row['id'], $data);
+    }
+
+    /**
      * @return array<CellPopulation>
      */
     public function getCellPopulationForUser(int $userId): array
