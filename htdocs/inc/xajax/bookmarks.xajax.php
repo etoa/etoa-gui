@@ -2,6 +2,8 @@
 
 use EtoA\Bookmark\FleetBookmarkRepository;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Universe\Entity\EntityCoordinates;
+use EtoA\Universe\Entity\EntityRepository;
 use EtoA\User\UserRepository;
 use EtoA\User\UserUniverseDiscoveryService;
 
@@ -188,7 +190,8 @@ function bookmarkTargetInfo($form)
 
     /** @var ConfigurationService */
     $config = $app[ConfigurationService::class];
-
+    /** @var EntityRepository $entityRepository */
+    $entityRepository = $app[EntityRepository::class];
     /** @var UserUniverseDiscoveryService */
     $userUniverseDiscoveryService = $app[UserUniverseDiscoveryService::class];
 
@@ -207,29 +210,12 @@ function bookmarkTargetInfo($form)
         $user = $userRepository->getUser(intval($_SESSION['user_id']));
         $code = $userUniverseDiscoveryService->discovered($user, $absX, $absY) == 0 ? 'u' : '';
 
-        $res = dbquery("
-                SELECT
-                    entities.id,
-                    entities.code
-                FROM
-                    entities
-                INNER JOIN
-                    cells
-                ON
-                    entities.cell_id=cells.id
-                    AND cells.sx=" . $sx . "
-                    AND cells.sy=" . $sy . "
-                    AND cells.cx=" . $cx . "
-                    AND cells.cy=" . $cy . "
-                    AND entities.pos=" . $pos . "
-                ");
-        if (mysql_num_rows($res) > 0 && !($code == 'u' && isset($form['man_p']))) {
-            $arr = mysql_fetch_row($res);
-
+        $entity = $entityRepository->findByCoordinates(new EntityCoordinates($sx, $sy, $cx, $cy, $pos));
+        if ($entity !== null && !($code == 'u' && isset($form['man_p']))) {
             if ($code == '')
-                $ent = Entity::createFactory($arr[1], $arr[0]);
+                $ent = Entity::createFactory($entity->code, $entity->id);
             else
-                $ent = Entity::createFactory($code, $arr[0]);
+                $ent = Entity::createFactory($code, $entity->id);
 
             echo "<img src=\"" . $ent->imagePath() . "\" style=\"float:left;\" >";
 

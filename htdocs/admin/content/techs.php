@@ -396,10 +396,7 @@ else {
                 </div>
             </div>';
 
-        $tblcnt = mysql_fetch_row(dbquery("SELECT
-                                                    count(*)
-                                                FROM
-                                                    techlist;"));
-        echo "<p>Es sind " . nf($tblcnt[0]) . " Eintr&auml;ge in der Datenbank vorhanden.</p>";
+        $tblcnt = $technologyRepository->count();
+        echo "<p>Es sind " . nf($tblcnt) . " Eintr&auml;ge in der Datenbank vorhanden.</p>";
     }
 }

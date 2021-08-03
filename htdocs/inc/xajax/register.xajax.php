@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\User\UserRepository;
 
 $xajax->register(XAJAX_FUNCTION, 'registerCheckName');
 $xajax->register(XAJAX_FUNCTION, 'registerCheckNick');
@@ -38,13 +39,14 @@ function registerCheckNick($val)
 
     /** @var ConfigurationService */
     $config = $app[ConfigurationService::class];
+    /** @var UserRepository $userRepository */
+    $userRepository = $app[UserRepository::class];
 
     $objResponse = new xajaxResponse();
     $objResponse->assign('nickStatus', 'style.fontWeight', "bold");
     if (checkValidNick($val)) {
         if (strlen($val) >= $config->param1Int('nick_length')) {
-            $res = dbquery("SELECT user_id FROM users WHERE user_nick='$val';");
-            if (mysql_num_rows($res) > 0) {
+            if ($userRepository->getUserIdByNick($val) !== null) {
                 $objResponse->assign('nickStatus', 'innerHTML', "Dieser Benutzername wird bereits benutzt!");
                 $objResponse->assign('nickStatus', 'style.color', "#f90");
             } else {

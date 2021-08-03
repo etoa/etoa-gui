@@ -172,14 +172,14 @@ class BuildingRepository extends AbstractRepository
         return $data !== false ? $data : null;
     }
 
-    public function updateBuildingListEntry(int $id, int $level, string $type, string $start, string $end): bool
+    public function updateBuildingListEntry(int $id, int $level, int $type, int $start, int $end): bool
     {
         $affected = $this->createQueryBuilder()
             ->update('buildlist')
             ->set('buildlist_current_level', ':level')
             ->set('buildlist_build_type', ':type')
-            ->set('buildlist_build_start_time', 'UNIX_TIMESTAMP(:start)')
-            ->set('buildlist_build_end_time', 'UNIX_TIMESTAMP(:end)')
+            ->set('buildlist_build_start_time', ':start')
+            ->set('buildlist_build_end_time', ':end')
             ->where('buildlist_id = :id')
             ->setParameters([
                 'level' => $level,
@@ -300,13 +300,19 @@ class BuildingRepository extends AbstractRepository
     /**
      * @return BuildingListItem[]
      */
-    public function findForUser(int $userId, int $endTimeAfter = null): array
+    public function findForUser(int $userId, int $entityId = null, int $endTimeAfter = null): array
     {
         $qb = $this->createQueryBuilder()
             ->select('*')
             ->from('buildlist')
             ->where('buildlist_user_id = :userId')
             ->setParameter('userId', $userId);
+
+        if ($entityId !== null) {
+            $qb
+                ->andWhere('buildlist_entity_id = :entityId')
+                ->setParameter('entityId', $entityId);
+        }
 
         if ($endTimeAfter !== null) {
             $qb
@@ -486,6 +492,15 @@ class BuildingRepository extends AbstractRepository
             ->delete('buildlist')
             ->where('buildlist_user_id = :userId')
             ->setParameter('userId', $userId)
+            ->execute();
+    }
+
+    public function removeEntry(int $id): void
+    {
+        $this->createQueryBuilder()
+            ->delete('buildlist')
+            ->where('buildlist_id = :id')
+            ->setParameter('id', $id)
             ->execute();
     }
 }

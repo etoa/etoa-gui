@@ -206,13 +206,7 @@ if (isset($_POST['save'])) {
 
             if ($_POST['del_multi'][$m_id] == 1) {
                 $userMultiRepository->deactivate((int) $_GET['id'], (int) $_POST['multi_nick'][$m_id]);
-
-                dbquery("UPDATE
-                    users
-                SET
-                    user_multi_delets=user_multi_delets+1
-                WHERE
-                    user_id=" . $_GET['id']);
+                $userRepository->increaseMultiDeletes((int) $_GET['id']);
 
                 success_msg("Eintrag gelöscht!");
             }
