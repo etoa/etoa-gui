@@ -120,12 +120,57 @@ class MissileRepository extends \EtoA\Core\AbstractRepository
         return array_map(fn ($value) => (int) $value, $data);
     }
 
+    /**
+     * @return MissileListItem[]
+     */
+    public function findForUser(int $userId, ?int $entityId = null): array
+    {
+        $qb = $this->createQueryBuilder()
+            ->select('*')
+            ->from('missilelist')
+            ->where('missilelist_user_id = :userId')
+            ->setParameter('userId', $userId);
+
+        if ($entityId !== null) {
+            $qb
+                ->andWhere('missilelist_entity_id = :entityId')
+                ->setParameter('entityId', $entityId);
+        }
+
+        $data = $qb
+            ->execute()
+            ->fetchAllAssociative();
+
+        return array_map(fn ($row) => new MissileListItem($row), $data);
+    }
+
+    public function setMissileCount(int $id, int $count): void
+    {
+        $this->createQueryBuilder()
+            ->update('missilelist')
+            ->set('missilelist_count', ':count')
+            ->where('missilelist_id = :id')
+            ->setParameters([
+                'count' => $count,
+                'id' => $id,
+            ])->execute();
+    }
+
     public function removeForUser(int $userId): void
     {
         $this->createQueryBuilder()
             ->delete('missilelist')
             ->where('missilelist_user_id = :userId')
             ->setParameter('userId', $userId)
+            ->execute();
+    }
+
+    public function remove(int $id): void
+    {
+        $this->createQueryBuilder()
+            ->delete('missilelist')
+            ->where('missilelist_id = :id')
+            ->setParameter('id', $id)
             ->execute();
     }
 }

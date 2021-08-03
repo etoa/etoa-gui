@@ -4,6 +4,7 @@ use EtoA\Building\BuildingDataRepository;
 use EtoA\Building\BuildingRepository;
 use EtoA\Defense\DefenseDataRepository;
 use EtoA\Defense\DefenseRepository;
+use EtoA\Missile\MissileDataRepository;
 use EtoA\Missile\MissileRepository;
 use EtoA\Ship\ShipRepository;
 
@@ -588,32 +589,26 @@ function submitEditShip($form, $listId)
 
 function showMissilesOnPlanet($pid)
 {
+    global $app;
+
+    /** @var MissileDataRepository $missileDataRepository */
+    $missileDataRepository = $app[MissileDataRepository::class];
+    /** @var MissileRepository $missileRepository */
+    $missileRepository = $app[MissileRepository::class];
+
     $objResponse = new xajaxResponse();
 
     if ($pid != 0) {
-        $updata = explode(":", $pid);
-        $pid = $updata[0];
-        $res = dbquery("
-        SELECT
-            missile_name,
-            missilelist_count,
-            missilelist_id
-        FROM
-            missilelist
-        INNER JOIN
-            missiles
-            ON missilelist_missile_id=missile_id
-            AND missilelist_entity_id='" . $pid . "'
-        ORDER BY
-            missile_name
-        ;");
-        if (mysql_num_rows($res) > 0) {
+        [$entityId, $userId] = explode(":", $pid);
+        $missileList = $missileRepository->findForUser($userId, $entityId);
+        if (count($missileList) > 0) {
+            $missileNames = $missileDataRepository->getMissileNames(true);
             $out = "<table class=\"tb\">";
-            while ($arr = mysql_fetch_array($res)) {
-                $out .= "<tr><td style=\"width:80px\" id=\"cnt_" . $arr['missilelist_id'] . "\">" . $arr['missilelist_count'] . "</td>
-                <th>" . $arr['missile_name'] . "</th>
-                <td style=\"width:150px\" id=\"actions_" . $arr['missilelist_id'] . "\"><a href=\"javascript:;\" onclick=\"xajax_editMissile(xajax.getFormValues('selector')," . $arr['missilelist_id'] . ")\">Bearbeiten</a>
-                <a href=\"javascript:;\" onclick=\"if (confirm('Sollen " . $arr['missilelist_count'] . " " . $arr['missile_name'] . " von diesem Planeten gel&ouml;scht werden?')) {xajax_removeMissileFromPlanet(xajax.getFormValues('selector')," . $arr['missilelist_id'] . ")}\">L&ouml;schen</td>
+            foreach ($missileList as $entry) {
+                $out .= "<tr><td style=\"width:80px\" id=\"cnt_" . $entry->id . "\">" . $entry->count . "</td>
+                <th>" . $missileNames[$entry->id] . "</th>
+                <td style=\"width:150px\" id=\"actions_" . $entry->id . "\"><a href=\"javascript:;\" onclick=\"xajax_editMissile(xajax.getFormValues('selector')," . $entry->id . ")\">Bearbeiten</a>
+                <a href=\"javascript:;\" onclick=\"if (confirm('Sollen " . $entry->count . " " . $missileNames[$entry->id] . " von diesem Planeten gel&ouml;scht werden?')) {xajax_removeMissileFromPlanet(xajax.getFormValues('selector')," . $entry->id . ")}\">L&ouml;schen</td>
                 </tr>";
             }
             $out .= "</table>";
@@ -630,14 +625,14 @@ function showMissilesOnPlanet($pid)
 function addMissileToPlanet($form)
 {
     global $app;
-    /** @var MissileRepository */
+    /** @var MissileRepository $missileRepository */
     $missileRepository = $app[MissileRepository::class];
     $objResponse = new xajaxResponse();
 
-    $updata = explode(":", $form['entity_id']);
-    if ($updata[1] > 0) {
-        $missileRepository->addMissile((int) $form['ship_id'], (int) $form['shiplist_count'], (int) $updata[1], (int) $updata[0]);
-        $objResponse->script("xajax_showMissilesOnPlanet(" . $updata[0] . ")");
+    [$entityId, $userId] = explode(":", $form['entity_id']);
+    if ($userId > 0) {
+        $missileRepository->addMissile((int) $form['ship_id'], (int) $form['shiplist_count'], (int) $userId, (int) $entityId);
+        $objResponse->script("xajax_showMissilesOnPlanet('" . $form['entity_id'] . "')");
     } else {
         $out = "Planet unbewohnt. Kann keine Schiffe hier bauen!";
         $objResponse->assign("shipsOnPlanet", "innerHTML", $out);
@@ -647,43 +642,40 @@ function addMissileToPlanet($form)
 
 function removeMissileFromPlanet($form, $listId)
 {
+    global $app;
+
+    /** @var MissileRepository $missileRepository */
+    $missileRepository = $app[MissileRepository::class];
+
     $objResponse = new xajaxResponse();
 
-    $updata = explode(":", $form['entity_id']);
-    dbquery("
-    DELETE FROM
-        missilelist
-    WHERE
-        missilelist_id=" . intval($listId) . "
-    ;");
-    $objResponse->script("xajax_showMissilesOnPlanet(" . $updata[0] . ");");
+    $missileRepository->remove((int) $listId);
+    $objResponse->script("xajax_showMissilesOnPlanet('" . $form['entity_id'] . "');");
+
     return $objResponse;
 }
 
 function editMissile($form, $listId)
 {
+    global $app;
+
+    /** @var MissileRepository $missileRepository */
+    $missileRepository = $app[MissileRepository::class];
+
     $objResponse = new xajaxResponse();
 
-    $updata = explode(":", $form['entity_id']);
-    $res = dbquery("
-    SELECT
-        missilelist_count,
-        missilelist_id
-    FROM
-        missilelist
-    WHERE
-        missilelist_entity_id=" . $updata[0] . "
-    ;");
-    if (mysql_num_rows($res)) {
-        while ($arr = mysql_fetch_array($res)) {
-            if ($arr['missilelist_id'] == $listId) {
-                $out = "<input type=\"text\" size=\"9\" maxlength=\"12\" name=\"editcnt_" . $listId . "\" value=\"" . $arr['missilelist_count'] . "\" />";
-                $objResponse->assign("cnt_" . $listId, "innerHTML", $out);
-                $out = "<a href=\"javaScript:;\" onclick=\"xajax_submitEditMissile(xajax.getFormValues('selector')," . $listId . ");\">Speichern</a> ";
-                $out .= "<a href=\"javaScript:;\" onclick=\"xajax_showMissilesOnPlanet(" . $updata[0] . ");\">Abbrechen</a>";
-                $objResponse->assign("actions_" . $listId, "innerHTML", $out);
+    [$entityId, $userId] = explode(":", $form['entity_id']);
+    $missileList = $missileRepository->findForUser($userId, $entityId);
+    if (count($missileList)) {
+        foreach ($missileList as $entry) {
+            if ($entry->id == $listId) {
+                $out = "<input type=\"text\" size=\"9\" maxlength=\"12\" name=\"editcnt_" . $entry->id . "\" value=\"" . $entry->count . "\" />";
+                $objResponse->assign("cnt_" . $entry->id, "innerHTML", $out);
+                $out = "<a href=\"javaScript:;\" onclick=\"xajax_submitEditMissile(xajax.getFormValues('selector')," . $entry->id . ");\">Speichern</a> ";
+                $out .= "<a href=\"javaScript:;\" onclick=\"xajax_showMissilesOnPlanet('" . $form['entity_id'] . "');\">Abbrechen</a>";
+                $objResponse->assign("actions_" . $entry->id, "innerHTML", $out);
             } else {
-                $objResponse->assign("actions_" . $arr['missilelist_id'], "innerHTML", "");
+                $objResponse->assign("actions_" . $entry->id, "innerHTML", "");
             }
         }
     }
@@ -693,18 +685,16 @@ function editMissile($form, $listId)
 
 function submitEditMissile($form, $listId)
 {
+    global $app;
+
+    /** @var MissileRepository $missileRepository */
+    $missileRepository = $app[MissileRepository::class];
+
     $objResponse = new xajaxResponse();
 
-    $updata = explode(":", $form['entity_id']);
-    dbquery("
-    UPDATE
-        missilelist
-    SET
-        missilelist_count=" . intval($form['editcnt_' . $listId]) . "
-    WHERE
-        missilelist_id=" . intval($listId) . "
-    ;");
-    $objResponse->script("xajax_showMissilesOnPlanet(" . $updata[0] . ");");
+    $missileRepository->setMissileCount((int) $listId, (int) $form['editcnt_' . $listId]);
+    $objResponse->script("xajax_showMissilesOnPlanet('" . $form['entity_id'] . "');");
+
     return $objResponse;
 }
 
@@ -1297,8 +1287,8 @@ function reqInfo($id, $cat = 'b')
     $defenseRepository = $app[DefenseDataRepository::class];
     $defenseNames = $defenseRepository->getDefenseNames();
 
-    /** @var \EtoA\Missile\MissileDataRepository $missileRepository */
-    $missileRepository = $app[\EtoA\Missile\MissileDataRepository::class];
+    /** @var MissileDataRepository $missileRepository */
+    $missileRepository = $app[MissileDataRepository::class];
     $missileNames = $missileRepository->getMissileNames();
 
     //
