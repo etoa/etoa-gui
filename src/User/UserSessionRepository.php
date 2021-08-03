@@ -53,6 +53,27 @@ class UserSessionRepository extends AbstractRepository
         return $data !== false ? new UserSession($data) : null;
     }
 
+    public function findByParameters(string $id, int $userId, string $userAgent, int $timeLogin): ?UserSession
+    {
+        $data = $this->createQueryBuilder()
+            ->select("*")
+            ->from('user_sessions')
+            ->where('id = :id')
+            ->andWhere('user_id = :userId')
+            ->andWhere('user_agent = :userAgent')
+            ->andWhere('time_login = :timeLogin')
+            ->setParameters([
+                'id' => $id,
+                'userId' => $userId,
+                'userAgent' => $userAgent,
+                'timeLogin' => $timeLogin,
+            ])
+            ->execute()
+            ->fetchAssociative();
+
+        return $data !== false ? new UserSession($data) : null;
+    }
+
     /**
      * @return UserSession[]
      */
@@ -100,12 +121,62 @@ class UserSessionRepository extends AbstractRepository
         return array_map(fn (array $row) => new UserSession($row), $data);
     }
 
+    public function add(string $id, int $userId, string $ipAddress, string $userAgent, int $timeLogin): void
+    {
+        $this->createQueryBuilder()
+            ->insert('user_sessions')
+            ->values([
+                'id' => ':id',
+                'user_id' => ':userId',
+                'ip_addr' => ':ipAddress',
+                'user_agent' => ':userAgent',
+                'time_login' => ':timeLogin',
+
+            ])
+            ->setParameters([
+                'id' => $id,
+                'userId' => $userId,
+                'ipAddress' => $ipAddress,
+                'userAgent' => $userAgent,
+                'timeLogin' => $timeLogin,
+            ])
+            ->execute();
+    }
+
+    public function update(string $id, int $timeAction, int $botCount, int $lastSpan, string $ipAddress): void
+    {
+        $this->createQueryBuilder()
+            ->update('user_sessions')
+            ->set('time_action', ':timeAction')
+            ->set('bot_count', ':botCount')
+            ->set('last_span', ':lastSpan')
+            ->set('ip_addr', ':ipAddress')
+            ->where('id = :id')
+            ->setParameters([
+                'id' => $id,
+                'timeAction' => $timeAction,
+                'botCount' => $botCount,
+                'lastSpan' => $lastSpan,
+                'ipAddress' => $ipAddress,
+            ])
+            ->execute();
+    }
+
     public function remove(string $id): void
     {
         $this->createQueryBuilder()
             ->delete('user_sessions')
             ->where('id = :id')
             ->setParameter('id', $id)
+            ->execute();
+    }
+
+    public function removeForUser(int $userId): void
+    {
+        $this->createQueryBuilder()
+            ->delete('user_sessions')
+            ->where('user_id = :userId')
+            ->setParameter('userId', $userId)
             ->execute();
     }
 

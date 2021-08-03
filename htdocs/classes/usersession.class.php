@@ -3,6 +3,7 @@
 use EtoA\User\UserLoginFailureRepository;
 use EtoA\User\UserRepository;
 use EtoA\User\UserSessionManager;
+use EtoA\User\UserSessionRepository;
 use EtoA\User\UserSittingRepository;
 
 /**
@@ -11,9 +12,6 @@ use EtoA\User\UserSittingRepository;
  */
 class UserSession extends Session
 {
-    const tableUser = "users";
-    const tableSession = "user_sessions";
-
     function login($data)
     {
         // TODO
@@ -181,24 +179,19 @@ class UserSession extends Session
         // TODO
         global $app;
 
-        if (isset($this->time_login)) {
-            $res = dbquery("
-            SELECT
-                id
-            FROM
-                `" . self::tableSession . "`
-            WHERE
-                id='" . session_id() . "'
-                AND `user_id`=" . intval($this->user_id) . "
-                AND `user_agent`='" . $_SERVER['HTTP_USER_AGENT'] . "'
-                AND `time_login`=" . intval($this->time_login) . "
-            LIMIT 1
-            ;");
-            if (mysql_num_rows($res) > 0) {
-                $t = time();
+        /** @var UserSessionRepository $userSessionRepository */
+        $userSessionRepository = $app[UserSessionRepository::class];
 
-                // TODO
-                global $app;
+        /** @var UserSittingRepository $userSittingRepository */
+        $userSittingRepository = $app[UserSittingRepository::class];
+
+        /** @var UserSessionManager $sessionManager */
+        $sessionManager = $app[UserSessionManager::class];
+
+        if (isset($this->time_login)) {
+            $userSession = $userSessionRepository->findByParameters(session_id(), $this->user_id, $_SERVER['HTTP_USER_AGENT'], $this->time_login);
+            if ($userSession !== null) {
+                $t = time();
 
                 if ($this->time_action + $this->config->getInt('user_timeout') > $t) {
                     $allows = false;
@@ -213,8 +206,6 @@ class UserSession extends Session
 
                     if ($this->sittingActive) {
                         if (time() < $this->sittingUntil) {
-                            /** @var UserSittingRepository $userSittingRepository */
-                            $userSittingRepository = $app[UserSittingRepository::class];
                             $activeSitting = $userSittingRepository->getActiveUserEntry($this->user_id);
                             if ($activeSitting !== null) {
                                 $allows = true;
@@ -224,17 +215,7 @@ class UserSession extends Session
                         $allows = true;
                     if ($allows) {
                         if (!$bot) {
-                            dbquery("
-                            UPDATE
-                                `" . self::tableSession . "`
-                            SET
-                                time_action=" . $t . ",
-                                bot_count='" . $this->bot_count . "',
-                                last_span='" . $this->last_span . "',
-                                ip_addr='" . $_SERVER['REMOTE_ADDR'] . "'
-                            WHERE
-                                id='" . session_id() . "'
-                            ;");
+                            $userSessionRepository->update(session_id(), $t, $this->bot_count, $this->last_span, $_SERVER['REMOTE_ADDR']);
 
                             $this->time_action = $t;
                             return true;
@@ -256,9 +237,6 @@ class UserSession extends Session
         if ($destroy == 1) {
             // chat logout
             $this->cLogin = false;
-
-            /** @var UserSessionManager */
-            $sessionManager = $app[UserSessionManager::class];
 
             // destroy user session
             $sessionManager->unregisterSession();
@@ -287,32 +265,16 @@ class UserSession extends Session
 
     function registerSession()
     {
-        dbquery("
-        DELETE FROM
-            `" . self::tableSession . "`
-        WHERE
-            user_id=" . intval($this->user_id) . "
-            OR id='" . session_id() . "'
-        ;");
-        dbquery("
-        INSERT INTO
-            `" . self::tableSession . "`
-        (
-            `id` ,
-            `user_id`,
-            `ip_addr`,
-            `user_agent`,
-            `time_login`
-        )
-        VALUES
-        (
-            '" . session_id() . "',
-            " . intval($this->user_id) . ",
-            '" . $_SERVER['REMOTE_ADDR'] . "',
-            '" . $_SERVER['HTTP_USER_AGENT'] . "',
-            " . intval($this->time_login) . "
-        )
-        ");
+        // TODO
+        global $app;
+
+        /** @var UserSessionRepository $userSessionRepository */
+        $userSessionRepository = $app[UserSessionRepository::class];
+
+        $userSessionRepository->remove(session_id());
+        $userSessionRepository->removeForUser($this->user_id);
+
+        $userSessionRepository->add(session_id(), $this->user_id, $_SERVER['REMOTE_ADDR'], $_SERVER['HTTP_USER_AGENT'], $this->time_login);
     }
 
     function logout()
