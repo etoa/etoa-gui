@@ -817,43 +817,35 @@ function submitEditDefense($form, $listId)
 
 function showBuildingsOnPlanet($form)
 {
+    global $app;
+
+    /** @var BuildingRepository $buildingRepository */
+    $buildingRepository = $app[BuildingRepository::class];
+    /** @var BuildingDataRepository $buildingDataRepository */
+    $buildingDataRepository = $app[BuildingDataRepository::class];
+
     $objResponse = new xajaxResponse();
 
-    $updata = explode(":", $form);
-    $eid = $updata[0];
-    $out =     "<script type=\"text/javascript\">document.getElementById('entity_id').selectedindex=" . $eid . ";</script>";
+    [$entityId, $userId] = explode(":", $form);
+    $out =     "<script type=\"text/javascript\">document.getElementById('entity_id').selectedindex=" . $entityId . ";</script>";
 
     $buildTypes = Building::getBuildTypes();
 
-    if ($eid != 0) {
-        $res = dbquery("
-        SELECT
-            building_name,
-            buildlist_current_level,
-            buildlist_id,
-            buildlist_build_type,
-            buildlist_build_start_time,
-            buildlist_build_end_time
-        FROM
-            buildlist
-        INNER JOIN
-            buildings
-            ON buildlist_building_id=building_id
-            AND buildlist_entity_id='" . $eid . "'
-        ORDER BY
-            building_name
-        ;");
-        if (mysql_num_rows($res) > 0) {
+    if ($entityId != 0) {
+        $buildingList = $buildingRepository->findForUser($userId, $entityId);
+        if (count($buildingList) > 0) {
+            $buildingNames = $buildingDataRepository->getBuildingNames(true);
+
             $out .= "<table class=\"tb\" id =\"tb\">";
-            while ($arr = mysql_fetch_array($res)) {
-                $out .= "<tr><td style=\"width:80px\" id=\"cnt_" . $arr['buildlist_id'] . "\">" . $arr['buildlist_current_level'] . "</td>
-                <td style=\"width:100px\" id=\"type_" . $arr['buildlist_id'] . "\">" . $buildTypes[$arr['buildlist_build_type']] . "</td>
-                <td style=\"width:300px\" id=\"time_" . $arr['buildlist_id'] . "\">";
-                $out .= ($arr['buildlist_build_end_time'] > 0) ? "Start: " . df($arr['buildlist_build_start_time']) . "<br />Ende: " . df($arr['buildlist_build_end_time']) : "";
+            foreach ($buildingList as $entry) {
+                $out .= "<tr><td style=\"width:80px\" id=\"cnt_" . $entry->id . "\">" . $entry->currentLevel . "</td>
+                <td style=\"width:100px\" id=\"type_" . $entry->id . "\">" . $buildTypes[$entry->buildType] . "</td>
+                <td style=\"width:300px\" id=\"time_" . $entry->id . "\">";
+                $out .= ($entry->endTime > 0) ? "Start: " . df($entry->startTime) . "<br />Ende: " . df($entry->endTime) : "";
                 $out .= "</td>
-                <th>" . $arr['building_name'] . "</th>
-                <td style=\"width:150px\" id=\"actions_" . $arr['buildlist_id'] . "\"><a href=\"javascript:;\" onclick=\"xajax_editBuilding(xajax.getFormValues('selector')," . $arr['buildlist_id'] . ")\">Bearbeiten</a>
-                <a href=\"javascript:;\" onclick=\"if (confirm('Soll " . $arr['building_name'] . " " . $arr['buildlist_current_level'] . " von diesem Planeten gel&ouml;scht werden?')) {xajax_removeBuildingFromPlanet(xajax.getFormValues('selector')," . $arr['buildlist_id'] . ")}\">L&ouml;schen</td>
+                <th>" . $buildingNames[$entry->buildingId] . "</th>
+                <td style=\"width:150px\" id=\"actions_" . $entry->id . "\"><a href=\"javascript:;\" onclick=\"xajax_editBuilding(xajax.getFormValues('selector')," . $entry->id . ")\">Bearbeiten</a>
+                <a href=\"javascript:;\" onclick=\"if (confirm('Soll " . $buildingNames[$entry->buildingId] . " " . $entry->currentLevel . " von diesem Planeten gel&ouml;scht werden?')) {xajax_removeBuildingFromPlanet(xajax.getFormValues('selector')," . $entry->id . ")}\">L&ouml;schen</td>
                 </tr>";
             }
             $out .= "</table>";
@@ -872,11 +864,11 @@ function addBuildingToPlanet($form)
     global $app;
     $objResponse = new xajaxResponse();
 
-    $updata = explode(":", $form['entity_id']);
-    if ($updata[1] > 0) {
+    [$entityId, $userId] = explode(":", $form['entity_id']);
+    if ($userId > 0) {
         /** @var BuildingRepository */
         $buildingRepository = $app[BuildingRepository::class];
-        $buildingRepository->addBuilding((int) $form['building_id'], (int) $form['buildlist_current_level'], (int) $updata[1], (int) $updata[0]);
+        $buildingRepository->addBuilding((int) $form['building_id'], (int) $form['buildlist_current_level'], (int) $userId, (int) $entityId);
         $objResponse->script("xajax_showBuildingsOnPlanet('" . $form['entity_id'] . "')");
     } else {
         $out = "Planet unbewohnt. Kann keine Gebäude hier bauen!";
@@ -891,12 +883,12 @@ function addAllBuildingToPlanet($form, $num)
 
     $objResponse = new xajaxResponse();
 
-    $updata = explode(":", $form['entity_id']);
-    if ($updata[1] > 0) {
-        /** @var \EtoA\Building\BuildingRepository $buildingRepository */
+    [$entityId, $userId] = explode(":", $form['entity_id']);
+    if ($userId) {
+        /** @var BuildingRepository $buildingRepository */
         $buildingRepository = $app[BuildingRepository::class];
         for ($i = 1; $i <= $num; $i++) {
-            $buildingRepository->addBuilding($i, (int) $form['buildlist_current_level'], (int) $updata[1], (int) $updata[0]);
+            $buildingRepository->addBuilding($i, (int) $form['buildlist_current_level'], (int) $userId, (int) $entityId);
         }
 
         $objResponse->script("xajax_showBuildingsOnPlanet('" . $form['entity_id'] . "')");
@@ -909,64 +901,57 @@ function addAllBuildingToPlanet($form, $num)
 
 function removeBuildingFromPlanet($form, $listId)
 {
-    $objResponse = new xajaxResponse();
-    $updata = explode(":", $form['entity_id']);
+    global $app;
 
-    dbquery("
-    DELETE FROM
-        buildlist
-    WHERE
-        buildlist_id=" . intval($listId) . "
-    ;");
-    $objResponse->script("xajax_showBuildingsOnPlanet('" . $updata[0] . "');");
+    /** @var BuildingRepository $buildingRepository */
+    $buildingRepository = $app[BuildingRepository::class];
+
+    $objResponse = new xajaxResponse();
+
+    $buildingRepository->removeEntry((int) $listId);
+    $objResponse->script("xajax_showBuildingsOnPlanet('" . $form['entity_id'] . "');");
 
     return $objResponse;
 }
 
 function editBuilding($form, $listId)
 {
+    global $app;
+
+    /** @var BuildingRepository $buildingRepository */
+    $buildingRepository = $app[BuildingRepository::class];
+
     $objResponse = new xajaxResponse();
 
-    $updata = explode(":", $form['entity_id']);
-    if ($updata[0] !== '') {
-        $res = dbquery("
-        SELECT
-            buildlist_current_level,
-            buildlist_build_start_time,
-            buildlist_build_end_time,
-            buildlist_build_type,
-            buildlist_id
-        FROM
-            buildlist
-        WHERE
-            buildlist_entity_id=" . $updata[0] . "
-        ;");
-        if (mysql_num_rows($res)) {
+    [$entityId, $userId] = explode(":", $form['entity_id']);
+    if ($entityId !== '') {
+        $buildingList = $buildingRepository->findForUser($userId, $entityId);
+        if (count($buildingList)) {
             $buildTypes = Building::getBuildTypes();
-            while ($arr = mysql_fetch_array($res)) {
-                if ($arr['buildlist_id'] == $listId) {
+            foreach ($buildingList as $entry) {
+                if ($entry->id == $listId) {
                     ob_start();
                     echo "Start: ";
-                    show_timebox("editstart_" . $listId, $arr['buildlist_build_start_time']);
+                    show_timebox("editstart_" . $entry->id, $entry->startTime, 1);
                     echo "<br />Ende: ";
-                    show_timebox("editend_" . $listId, $arr['buildlist_build_end_time']);
-                    $objResponse->assign("time_" . $listId, "innerHTML", ob_get_clean());
+                    show_timebox("editend_" . $entry->id, $entry->endTime, 1);
+                    $objResponse->assign("time_" . $entry->id, "innerHTML", ob_get_clean());
                     ob_start();
-                    echo '<select name="editbuildtype_' . $listId . '">';
+                    echo '<select name="editbuildtype_' . $entry->id . '">';
                     foreach ($buildTypes as $id => $type) {
                         echo '<option value="' . $id . '"';
-                        if ($id == $arr['buildlist_build_type']) echo ' selected';
+                        if ($id == $entry->buildType) echo ' selected';
                         echo '>' . $type . '</option>';
                     }
                     echo '</select>';
-                    $objResponse->assign("type_" . $listId, "innerHTML", ob_get_clean());
-                    $out = "<input type=\"text\" size=\"9\" maxlength=\"12\" name=\"editcnt_" . $listId . "\" value=\"" . $arr['buildlist_current_level'] . "\" />";
-                    $objResponse->assign("cnt_" . $listId, "innerHTML", $out);
-                    $out = "<a href=\"javaScript:;\" onclick=\"xajax_submitEditBuilding(xajax.getFormValues('selector')," . $listId . ");\">Speichern</a> ";
+                    $objResponse->assign("type_" . $entry->id, "innerHTML", ob_get_clean());
+                    $out = "<input type=\"text\" size=\"9\" maxlength=\"12\" name=\"editcnt_" . $entry->id . "\" value=\"" . $entry->currentLevel . "\" />";
+                    $objResponse->assign("cnt_" . $entry->id, "innerHTML", $out);
+                    $out = "<a href=\"javaScript:;\" onclick=\"xajax_submitEditBuilding(xajax.getFormValues('selector')," . $entry->id . ");\">Speichern</a> ";
                     $out .= "<a href=\"javaScript:;\" onclick=\"xajax_showBuildingsOnPlanet('" . $form['entity_id'] . "');\">Abbrechen</a>";
-                    $objResponse->assign("actions_" . $listId, "innerHTML", $out);
+                    $objResponse->assign("actions_" . $entry->id, "innerHTML", $out);
                 } else {
-                    $objResponse->assign("actions_" . $arr['buildlist_id'], "innerHTML", "");
+                    $objResponse->assign("actions_" . $entry->id, "innerHTML", "");
                 }
             }
         }
@@ -979,25 +964,20 @@ function editBuilding($form, $listId)
 
 function submitEditBuilding($form, $listId)
 {
+    global $app;
+
+    /** @var BuildingRepository $buildingRepository */
+    $buildingRepository = $app[BuildingRepository::class];
+
     $objResponse = new xajaxResponse();
 
     $status = intval($form['editbuildtype_' . $listId]);
     $endtime = $status > 0 ? mktime($form['editend_' . $listId . '_h'], $form['editend_' . $listId . '_i'], $form['editend_' . $listId . '_s'], $form['editend_' . $listId . '_m'], $form['editend_' . $listId . '_d'], $form['editend_' . $listId . '_y']) : '0';
     $starttime = $status > 0 ? mktime($form['editstart_' . $listId . '_h'], $form['editstart_' . $listId . '_i'], $form['editstart_' . $listId . '_s'], $form['editstart_' . $listId . '_m'], $form['editstart_' . $listId . '_d'], $form['editstart_' . $listId . '_y']) : '0';
 
-    $updata = explode(":", $form['entity_id']);
-    dbquery("
-    UPDATE
-        buildlist
-    SET
-        buildlist_current_level=" . intval($form['editcnt_' . $listId]) . ",
-        buildlist_build_type=" . $status . ",
-        buildlist_build_start_time=" . $starttime . ",
-        buildlist_build_end_time=" . $endtime . "
-    WHERE
-        buildlist_id=" . intval($listId) . "
-    ;");
+    $buildingRepository->updateBuildingListEntry((int) $listId, (int) $form['editcnt_' . $listId], $status, $starttime, $endtime);
     $objResponse->script("xajax_showBuildingsOnPlanet('" . $form['entity_id'] . "');");
+
     return $objResponse;
 }
 

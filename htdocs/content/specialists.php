@@ -141,7 +141,7 @@ if (isset($_POST['discharge'])) {
             if ($specialist->timeBuildings !== 1.0) {
                 /** @var BuildingRepository $buildingRepository */
                 $buildingRepository = $app[BuildingRepository::class];
-                $buildingEntries = $buildingRepository->findForUser($cu->getId(), $t);
+                $buildingEntries = $buildingRepository->findForUser($cu->getId(), null, $t);
                 foreach ($buildingEntries as $entry) {
                     if ($entry->startTime > $inittime) {
                         $inUse = true;

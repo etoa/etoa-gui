@@ -225,9 +225,9 @@ function buildingList(
         $repository->updateBuildingListEntry(
             $request->request->getInt('buildlist_id'),
             $request->request->getInt('buildlist_current_level'),
-            $request->request->get('buildlist_build_type'),
-            $request->request->get('buildlist_build_start_time'),
-            $request->request->get('buildlist_build_end_time')
+            $request->request->getInt('buildlist_build_type'),
+            (new \DateTime($request->request->get('buildlist_build_start_time')))->getTimestamp(),
+            (new \DateTime($request->request->get('buildlist_build_end_time')))->getTimestamp()
         );
     } elseif ($request->request->has('del')) {
         $repository->deleteBuildingListEntry($request->request->getInt('buildlist_id'));
