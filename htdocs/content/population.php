@@ -35,22 +35,8 @@ if ($cp) {
     echo '<div id="population_info"></div>'; // Nur zu testzwecken
     echo $resourceBoxDrawer->getHTML($planet);
 
-    $res = dbquery("
-    SELECT
-        buildings.building_store_factor,
-        buildings.building_name,
-        buildings.building_people_place,
-        buildlist.buildlist_current_level
-    FROM
-        buildlist
-    INNER JOIN
-        buildings
-    ON
-        buildlist.buildlist_building_id=buildings.building_id
-    AND buildlist.buildlist_entity_id=" . $planet->id . "
-    AND buildings.building_people_place>0
-    AND buildlist.buildlist_current_level>0;");
-    if (mysql_num_rows($res) > 0) {
+    $peopleStorageBuildings = $buildingRepository->getPeopleStorageBuildings($planet->id);
+    if (count($peopleStorageBuildings) > 0) {
         //
         // Wohnfläche
         //
@@ -60,9 +46,9 @@ if ($cp) {
         <td>' . nf($config->param1Int('user_start_people')) . '</td>
         </tr>';
         $pcnt = $config->param1Int('user_start_people');
-        while ($arr = mysql_fetch_array($res)) {
-            $place = round($arr['building_people_place'] * pow($arr['building_store_factor'], $arr['buildlist_current_level'] - 1));
-            echo '<tr><th>' . $arr['building_name'] . '</th>
+        foreach ($peopleStorageBuildings as $storage) {
+            $place = round($storage->peoplePlace * pow($storage->storeFactor, $storage->currentLevel - 1));
+            echo '<tr><th>' . $storage->buildingName . '</th>
             <td>' . nf($place) . '</td></tr>';
             $pcnt += $place;
         }

@@ -97,4 +97,18 @@ class BuildingRepositoryTest extends AbstractDbTestCase
 
         $this->assertSame(1, $this->repository->countEmpty());
     }
+
+    public function testGetWorkplaceBuildings(): void
+    {
+        $this->repository->addBuilding(BuildingId::SHIPYARD, 10, 1, 1);
+
+        $this->assertNotEmpty($this->repository->getWorkplaceBuildings(1));
+    }
+
+    public function testGetPeopleStorageBuildings(): void
+    {
+        $this->repository->addBuilding(BuildingId::PEOPLE, 10, 1, 1);
+
+        $this->assertNotEmpty($this->repository->getPeopleStorageBuildings(1));
+    }
 }
