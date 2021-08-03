@@ -381,13 +381,19 @@ class BuildingRepository extends AbstractRepository
             ->execute();
     }
 
-    public function getPeopleWorking(int $entityId): PeopleWorking
+    public function getPeopleWorking(int $entityId, bool $onlyWorkingStatus = false): PeopleWorking
     {
-        $data = $this->createQueryBuilder()
+        $qb = $this->createQueryBuilder()
             ->select('buildlist_building_id, buildlist_people_working')
             ->from('buildlist')
             ->where('buildlist_entity_id = :entityId')
-            ->setParameter('entityId', $entityId)
+            ->setParameter('entityId', $entityId);
+
+        if ($onlyWorkingStatus) {
+            $qb->andWhere('buildlist_people_working_status = 1');
+        }
+
+        $data = $qb
             ->execute()
             ->fetchAllKeyValue();
 

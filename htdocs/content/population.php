@@ -138,19 +138,11 @@ if ($cp) {
         //
         if (isset($_POST['submit_people_work']) && checker_verify()) {
             //zählt gesperrte Arbeiter auf dem aktuellen Planet
-            $check_res = dbquery("
-            SELECT
-                SUM(buildlist_people_working)
-            FROM
-                buildlist
-            WHERE
-                buildlist_entity_id=" . $planet->id . "
-            AND buildlist_people_working_status='1';");
+            $peopleWorking = $buildingRepository->getPeopleWorking($planet->id, true);
 
             $working = 0;
-            $check_arr = mysql_fetch_array($check_res);
             // Frei = total auf Planet - gesperrt auf Planet
-            $free_people = floor($planet->people) - $check_arr[0];
+            $free_people = floor($planet->people) - $peopleWorking->total;
 
             if (isset($_POST['people_work']) && gettype($_POST['people_work']) == 'array') {
 
@@ -281,28 +273,20 @@ if ($cp) {
 
 
         // Zählt alle arbeiter die eingetragen snid (besetzt oder nicht) für die anszeige!
-        $bres = dbquery("
-        SELECT
-            SUM(buildlist_people_working)
-        FROM
-            buildlist
-        WHERE
-            buildlist_entity_id=" . $planet->id . ";");
-        $barr = mysql_fetch_array($bres);
-        $people_working = $barr[0];
+        $peopleWorking = $buildingRepository->getPeopleWorking($planet->id);
 
         // Infodaten
         $capacity = $planet->peoplePlace;
         if ($capacity < 200) {
             $capacity = 200;
         }
-        $people_free = floor($planet->people) - $people_working;
+        $people_free = floor($planet->people) - $peopleWorking->total;
         $people_div = $planet->people * (($config->getFloat('people_multiply')  + $cp->typePopulation + $cu->race->population + $cp->starPopulation + $cu->specialist->population - 4) * (1 - ($planet->people / ($capacity + 1))) / 24);
 
 
         tableStart("Daten", 500);
         echo '<tr><th style="width:300px">Bevölkerung total</th><td>' . nf(floor($planet->people)) . '</td></tr>';
-        echo '<tr><th>Arbeiter</th><td>' . nf($people_working) . '</td></tr>';
+        echo '<tr><th>Arbeiter</th><td>' . nf($peopleWorking->total) . '</td></tr>';
         echo '<tr><th>Freie Leute</th><td>' . nf($people_free) . '</td></tr>';
         echo '<tr><th>Zeitreduktion pro Arbeiter und Auftrag</th><td>' . tf($config->getInt('people_work_done')) . '</td></tr>';
         echo '<tr><th>Nahrung pro Arbeiter und Auftrag</th><td>' . nf($config->getInt('people_food_require')) . ' t</td></tr>';
