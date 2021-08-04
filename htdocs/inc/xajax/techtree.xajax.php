@@ -1,4 +1,7 @@
 <?PHP
+
+use EtoA\Requirement\RequirementRepositoryProvider;
+
 $xajax->register(XAJAX_FUNCTION, "reqInfo");
 
 
@@ -12,61 +15,40 @@ function reqInfo($id, $cat = 'b')
 
     /** @var \EtoA\Building\BuildingDataRepository $buildingRepository */
     $buildingRepository = $app[\EtoA\Building\BuildingDataRepository::class];
-    $buildingNames = $buildingRepository->getBuildingNames();
+    $buildingNames = $buildingRepository->getBuildingNames(true);
 
     /** @var \EtoA\Technology\TechnologyDataRepository $technologyRepository */
     $technologyRepository = $app[\EtoA\Technology\TechnologyDataRepository::class];
-    $technologyNames = $technologyRepository->getTechnologyNames();
+    $technologyNames = $technologyRepository->getTechnologyNames(true);
 
     /** @var \EtoA\Ship\ShipDataRepository $shipRepository */
     $shipRepository = $app[\EtoA\Ship\ShipDataRepository::class];
-    $shipNames = $shipRepository->getShipNames();
+    $shipNames = $shipRepository->getShipNames(true);
 
     /** @var \EtoA\Defense\DefenseDataRepository $defenseRepository */
     $defenseRepository = $app[\EtoA\Defense\DefenseDataRepository::class];
-    $defenseNames = $defenseRepository->getDefenseNames();
+    $defenseNames = $defenseRepository->getDefenseNames(true);
 
     /** @var \EtoA\Missile\MissileDataRepository $missileRepository */
     $missileRepository = $app[\EtoA\Missile\MissileDataRepository::class];
-    $missileNames = $missileRepository->getMissileNames();
+    $missileNames = $missileRepository->getMissileNames(true);
 
     //
     // Required objects
     //
 
-    if ($cat == 'b') {
-        $req_tbl = "building_requirements";
-        $req_field = "obj_id";
-    } elseif ($cat == 't') {
-        $req_tbl = "tech_requirements";
-        $req_field = "obj_id";
-    } elseif ($cat == 's') {
-        $req_tbl = "ship_requirements";
-        $req_field = "obj_id";
-    } elseif ($cat == 'd') {
-        $req_tbl = "def_requirements";
-        $req_field = "obj_id";
-    } elseif ($cat == 'm') {
-        $req_tbl = "missile_requirements";
-        $req_field = "obj_id";
-    } else {
-        throw new \InvalidArgumentException('Unknown category:' . $cat);
+    /** @var RequirementRepositoryProvider $requiredRepositoryProvider */
+    $requiredRepositoryProvider = $app[RequirementRepositoryProvider::class];
+    $repository = $requiredRepositoryProvider->getRepositoryForCategory($cat);
+    $requirements = $repository->getRequirements($id);
+
+    $items = [];
+    foreach ($requirements->getBuildingRequirements($id) as $requirement) {
+        $items[] = array($requirement->requiredBuildingId, $buildingNames[$requirement->requiredBuildingId], $requirement->requiredLevel, IMAGE_PATH . "/buildings/building" . $requirement->requiredBuildingId . "_middle." . IMAGE_EXT, "xajax_reqInfo(" . $requirement->requiredBuildingId . ",'b')");
     }
 
-    $items = array();
-    $res = dbquery("SELECT * FROM $req_tbl WHERE obj_id=" . $id . " AND req_building_id>0 AND req_level>0 ORDER BY req_level;");
-    $nr = mysql_num_rows($res);
-    if ($nr > 0) {
-        while ($arr = mysql_fetch_assoc($res)) {
-            $items[] = array($arr['req_building_id'], $buildingNames[$arr['req_building_id']], $arr['req_level'], IMAGE_PATH . "/buildings/building" . $arr['req_building_id'] . "_middle." . IMAGE_EXT, "xajax_reqInfo(" . $arr['req_building_id'] . ",'b')");
-        }
-    }
-    $res = dbquery("SELECT * FROM $req_tbl WHERE $req_field=" . $id . " AND req_tech_id>0 AND req_level>0 ORDER BY req_level;");
-    $nr2 = mysql_num_rows($res);
-    if ($nr2 > 0) {
-        while ($arr = mysql_fetch_assoc($res)) {
-            $items[] = array($arr['req_tech_id'], $technologyNames[$arr['req_tech_id']], $arr['req_level'], IMAGE_PATH . "/technologies/technology" . $arr['req_tech_id'] . "_middle." . IMAGE_EXT, "xajax_reqInfo(" . $arr['req_tech_id'] . ",'t')");
-        }
+    foreach ($requirements->getTechnologyRequirements($id) as $requirement) {
+        $items[] = array($requirement->requiredTechnologyId, $technologyNames[$requirement->requiredTechnologyId], $requirement->requiredLevel, IMAGE_PATH . "/technologies/technology" . $requirement->requiredTechnologyId . "_middle." . IMAGE_EXT, "xajax_reqInfo(" . $requirement->requiredTechnologyId . ",'b')");
     }
 
     if (count($items) > 0) {
