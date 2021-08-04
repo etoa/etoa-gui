@@ -73,4 +73,27 @@ abstract class AbstractRequirementRepository extends AbstractRepository
 
         return array_map(fn ($value) => (int) $value, $data);
     }
+
+    public function add(int $objId, int $level, ?int $techId, ?int $buildingId): void
+    {
+        $this->getConnection()->executeQuery('
+            INSERT INTO ' . $this->table . '(obj_id, req_level, req_tech_id, req_building_id)
+            VALUES (:objId, :level, :techId, :buildingId)
+            ON DUPLICATE KEY UPDATE req_level = :level
+        ', [
+            'objId' => $objId,
+            'level' => $level,
+            'techId' => $techId,
+            'buildingId' => $buildingId,
+        ]);
+    }
+
+    public function remove(int $id): void
+    {
+        $this->createQueryBuilder()
+            ->delete($this->table)
+            ->where('id = :id')
+            ->setParameter('id', $id)
+            ->execute();
+    }
 }

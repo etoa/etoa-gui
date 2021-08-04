@@ -10,33 +10,28 @@ $xajax->register(XAJAX_FUNCTION, "drawObjTechTree");
 
 function addToTechTree($type, $id, $reqid, $reqlvl)
 {
+    global $app;
+
+    /** @var RequirementRepositoryProvider $requirementRepositoryProvider */
+    $requirementRepositoryProvider = $app[RequirementRepositoryProvider::class];
+
     $or = new xajaxResponse();
     ob_start();
     if ($reqid != "") {
         $reqlvl = intval($reqlvl);
         if ($reqlvl > 0) {
+            $requiredBuildingId = null;
+            $requiredTechnologyId = null;
             $reqidexpl = explode(":", $reqid);
             if ($reqidexpl[0] == "t") {
-                $f = "req_tech_id";
+                $requiredTechnologyId = (int) $reqidexpl[1];
             } else {
-                $f = "req_building_id";
+                $requiredBuildingId = (int) $reqidexpl[1];
             }
-            dbquery("
-            INSERT INTO
-                " . $type . "
-            (
-                obj_id,
-                $f,
-                req_level
-            )
-            VALUES
-            (
-                " . $id . ",
-                " . $reqidexpl[1] . ",
-                " . $reqlvl . "
-            )
-            ON DUPLICATE KEY UPDATE req_level=" . $reqlvl . "
-            ");
+
+            $requirementRepositoryProvider
+                ->getRepositoryForTableName($type)
+                ->add($id, $reqlvl, $requiredTechnologyId, $requiredBuildingId);
             $or->script("xajax_drawObjTechTree('$type',$id)");
         } else
             $or->alert("Ungültige Stufe!");
@@ -51,15 +46,14 @@ function addToTechTree($type, $id, $reqid, $reqlvl)
 
 function removeFromTechTree($type, $id, $rid)
 {
+    global $app;
+
+    /** @var RequirementRepositoryProvider $requirementRepositoryProvider */
+    $requirementRepositoryProvider = $app[RequirementRepositoryProvider::class];
+
     $or = new xajaxResponse();
     ob_start();
-    dbquery("
-    DELETE FROM
-        " . $type . "
-    WHERE
-        id = " . $rid . "
-    LIMIT 1;
-    ");
+    $requirementRepositoryProvider->getRepositoryForTableName($type)->remove($rid);
     $or->script("xajax_drawObjTechTree('$type',$id)");
     $out = ob_get_contents();
     ob_end_clean();
