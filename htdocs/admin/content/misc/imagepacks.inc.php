@@ -3,6 +3,7 @@
 use EtoA\Alliance\AllianceBuildingRepository;
 use EtoA\Alliance\AllianceTechnologyRepository;
 use EtoA\Building\BuildingDataRepository;
+use EtoA\Building\BuildingSort;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Defense\DefenseDataRepository;
 use EtoA\Missile\MissileDataRepository;
@@ -14,31 +15,31 @@ use EtoA\Universe\Star\SolarTypeRepository;
 /** @var ConfigurationService */
 $config = $app[ConfigurationService::class];
 
-/** @var AllianceBuildingRepository */
+/** @var AllianceBuildingRepository $allianceBuildingRepository */
 $allianceBuildingRepository = $app[AllianceBuildingRepository::class];
 
-/** @var AllianceTechnologyRepository */
+/** @var AllianceTechnologyRepository $allianceTechnologyRepository */
 $allianceTechnologyRepository = $app[AllianceTechnologyRepository::class];
 
-/** @var BuildingDataRepository */
+/** @var BuildingDataRepository $buildingDataRepository */
 $buildingDataRepository = $app[BuildingDataRepository::class];
 
-/** @var DefenseDataRepository */
+/** @var DefenseDataRepository $defenseDataRepository */
 $defenseDataRepository = $app[DefenseDataRepository::class];
 
-/** @var MissileDataRepository */
+/** @var MissileDataRepository $missileDataRepository */
 $missileDataRepository = $app[MissileDataRepository::class];
 
-/** @var RaceDataRepository */
+/** @var RaceDataRepository $raceDataRepository */
 $raceDataRepository = $app[RaceDataRepository::class];
 
-/** @var ShipDataRepository */
+/** @var ShipDataRepository $shipDataRepository */
 $shipDataRepository = $app[ShipDataRepository::class];
 
-/** @var SolarTypeRepository */
+/** @var SolarTypeRepository $solarTypeRepository */
 $solarTypeRepository = $app[SolarTypeRepository::class];
 
-/** @var TechnologyDataRepository */
+/** @var TechnologyDataRepository $technologyDataRepository */
 $technologyDataRepository = $app[TechnologyDataRepository::class];
 
 $twig->addGlobal('title', 'Bildpakete verwalten');
@@ -72,7 +73,7 @@ if (isset($_GET['manage'])) {
             "abuildings" => ["building", array_keys($allianceBuildingRepository->getNames(true))],
             "asteroids" => ["asteroids", range(1, $config->getInt('num_asteroid_images'))],
             "atechnologies" => ["technology", array_keys($allianceTechnologyRepository->getNames(true))],
-            "buildings" => ["building", array_keys($buildingDataRepository->getBuildingNames(true, true))],
+            "buildings" => ["building", array_keys($buildingDataRepository->getBuildingNames(true, BuildingSort::id()))],
             "defense" => ["def", array_keys($defenseDataRepository->getDefenseNames(true, true))],
             "missiles" => ["missile", array_keys($missileDataRepository->getMissileNames(true, true))],
             "races" => ["race", array_keys($raceDataRepository->getRaceNames(true, true))],
@@ -162,7 +163,7 @@ $required_images = [
     "abuildings" => ["building", $allianceBuildingRepository->getNames(true)],
     "asteroids" => ["asteroids", range(1, $config->getInt('num_asteroid_images'))],
     "atechnologies" => ["technology", $allianceTechnologyRepository->getNames(true)],
-    "buildings" => ["building", $buildingDataRepository->getBuildingNames(true, true)],
+    "buildings" => ["building", $buildingDataRepository->getBuildingNames(true, BuildingSort::id())],
     "defense" => ["def", $defenseDataRepository->getDefenseNames(true, true)],
     "missiles" => ["missile", $missileDataRepository->getMissileNames(true, true)],
     "nebulas" => ["nebula", range(1, $config->getInt('num_nebula_images'))],
