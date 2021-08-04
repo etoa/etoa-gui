@@ -1,6 +1,11 @@
 <?PHP
 
+use EtoA\Building\BuildingRequirementRepository;
+use EtoA\Defense\DefenseRequirementRepository;
+use EtoA\Missile\MissileRequirementRepository;
 use EtoA\Requirement\RequirementRepositoryProvider;
+use EtoA\Ship\ShipRequirementRepository;
+use EtoA\Technology\TechnologyRequirementRepository;
 
 $xajax->register(XAJAX_FUNCTION, "reqInfo");
 
@@ -15,23 +20,23 @@ function reqInfo($id, $cat = 'b')
 
     /** @var \EtoA\Building\BuildingDataRepository $buildingRepository */
     $buildingRepository = $app[\EtoA\Building\BuildingDataRepository::class];
-    $buildingNames = $buildingRepository->getBuildingNames(true);
+    $buildingNames = $buildingRepository->getBuildingNames();
 
     /** @var \EtoA\Technology\TechnologyDataRepository $technologyRepository */
     $technologyRepository = $app[\EtoA\Technology\TechnologyDataRepository::class];
-    $technologyNames = $technologyRepository->getTechnologyNames(true);
+    $technologyNames = $technologyRepository->getTechnologyNames();
 
     /** @var \EtoA\Ship\ShipDataRepository $shipRepository */
     $shipRepository = $app[\EtoA\Ship\ShipDataRepository::class];
-    $shipNames = $shipRepository->getShipNames(true);
+    $shipNames = $shipRepository->getShipNames();
 
     /** @var \EtoA\Defense\DefenseDataRepository $defenseRepository */
     $defenseRepository = $app[\EtoA\Defense\DefenseDataRepository::class];
-    $defenseNames = $defenseRepository->getDefenseNames(true);
+    $defenseNames = $defenseRepository->getDefenseNames();
 
     /** @var \EtoA\Missile\MissileDataRepository $missileRepository */
     $missileRepository = $app[\EtoA\Missile\MissileDataRepository::class];
-    $missileNames = $missileRepository->getMissileNames(true);
+    $missileNames = $missileRepository->getMissileNames();
 
     //
     // Required objects
@@ -96,62 +101,58 @@ function reqInfo($id, $cat = 'b')
     // Allowed objects
     //
 
+    /** @var BuildingRequirementRepository $buildingRequirementRepository */
+    $buildingRequirementRepository = $app[BuildingRequirementRepository::class];
+    /** @var DefenseRequirementRepository $defenseRequirementRepository */
+    $defenseRequirementRepository = $app[DefenseRequirementRepository::class];
+    /** @var ShipRequirementRepository $shipRequirementRepository */
+    $shipRequirementRepository = $app[ShipRequirementRepository::class];
+    /** @var TechnologyRequirementRepository $technologyRequirementRepository */
+    $technologyRequirementRepository = $app[TechnologyRequirementRepository::class];
+    /** @var MissileRequirementRepository $missileRequirementRepository */
+    $missileRequirementRepository = $app[MissileRequirementRepository::class];
     if ($cat == 'b' || $cat == 't') {
         if ($cat == 'b') {
-            $req_field = "req_building_id";
-            $req_level_field = "req_level";
+            $buildingRequirements = $buildingRequirementRepository->getRequiredByBuilding($id);
+            $defenseRequirements = $defenseRequirementRepository->getRequiredByBuilding($id);
+            $shipRequirements = $shipRequirementRepository->getRequiredByBuilding($id);
+            $technologyRequirements = $technologyRequirementRepository->getRequiredByBuilding($id);
+            $missileRequirements = $missileRequirementRepository->getRequiredByBuilding($id);
         } elseif ($cat == 't') {
-            $req_field = "req_tech_id";
-            $req_level_field = "req_level";
+            $buildingRequirements = $buildingRequirementRepository->getRequiredByTechnology($id);
+            $defenseRequirements = $defenseRequirementRepository->getRequiredByTechnology($id);
+            $shipRequirements = $shipRequirementRepository->getRequiredByTechnology($id);
+            $technologyRequirements = $technologyRequirementRepository->getRequiredByTechnology($id);
+            $missileRequirements = $missileRequirementRepository->getRequiredByTechnology($id);
         } else {
             throw new \InvalidArgumentException('Unknown category:' . $cat);
         }
 
 
         $items = array();
-        $res = dbquery("SELECT * FROM building_requirements WHERE " . $req_field . "=" . $id . " ORDER BY " . $req_level_field . ";");
-        $nr = mysql_num_rows($res);
-        if ($nr > 0) {
-            while ($arr = mysql_fetch_assoc($res)) {
-                if (isset($buildingNames[$arr['obj_id']])) {
-                    $items[] = array($arr['obj_id'], $buildingNames[$arr['obj_id']], $arr[$req_level_field], IMAGE_PATH . "/buildings/building" . $arr['obj_id'] . "_middle." . IMAGE_EXT, "xajax_reqInfo(" . $arr['obj_id'] . ",'b')");
-                }
+        foreach ($buildingRequirements as $requirement) {
+            if (isset($buildingNames[$requirement->objectId])) {
+                $items[] = array($requirement->objectId, $buildingNames[$requirement->objectId], $requirement->requiredLevel, IMAGE_PATH . "/buildings/building" . $requirement->objectId . "_middle." . IMAGE_EXT, "xajax_reqInfo(" . $requirement->objectId . ",'b')");
             }
         }
-        $res = dbquery("SELECT * FROM tech_requirements WHERE " . $req_field . "=" . $id . " ORDER BY " . $req_level_field . ";");
-        $nr = mysql_num_rows($res);
-        if ($nr > 0) {
-            while ($arr = mysql_fetch_assoc($res)) {
-                if (isset($technologyNames[$arr['obj_id']])) {
-                    $items[] = array($arr['obj_id'], $technologyNames[$arr['obj_id']], $arr[$req_level_field], IMAGE_PATH . "/technologies/technology" . $arr['obj_id'] . "_middle." . IMAGE_EXT, "xajax_reqInfo(" . $arr['obj_id'] . ",'t')");
-                }
+        foreach ($technologyRequirements as $requirement) {
+            if (isset($technologyNames[$requirement->objectId])) {
+                $items[] = array($requirement->objectId, $technologyNames[$requirement->objectId], $requirement->requiredLevel, IMAGE_PATH . "/technologies/technology" . $requirement->objectId . "_middle." . IMAGE_EXT, "xajax_reqInfo(" . $requirement->objectId . ",'t')");
             }
         }
-        $res = dbquery("SELECT * FROM ship_requirements WHERE " . $req_field . "=" . $id . " ORDER BY " . $req_level_field . ";");
-        $nr = mysql_num_rows($res);
-        if ($nr > 0) {
-            while ($arr = mysql_fetch_assoc($res)) {
-                if (isset($shipNames[$arr['obj_id']])) {
-                    $items[] = array($arr['obj_id'], $shipNames[$arr['obj_id']], $arr[$req_level_field], IMAGE_PATH . "/ships/ship" . $arr['obj_id'] . "_middle." . IMAGE_EXT, "xajax_reqInfo(" . $arr['obj_id'] . ",'s')");
-                }
+        foreach ($shipRequirements as $requirement) {
+            if (isset($shipNames[$requirement->objectId])) {
+                $items[] = array($requirement->objectId, $shipNames[$requirement->objectId], $requirement->requiredLevel, IMAGE_PATH . "/ships/ship" . $requirement->objectId . "_middle." . IMAGE_EXT, "xajax_reqInfo(" . $requirement->objectId . ",'s')");
             }
         }
-        $res = dbquery("SELECT * FROM def_requirements WHERE " . $req_field . "=" . $id . " ORDER BY " . $req_level_field . ";");
-        $nr = mysql_num_rows($res);
-        if ($nr > 0) {
-            while ($arr = mysql_fetch_assoc($res)) {
-                if (isset($defenseNames[$arr['obj_id']])) {
-                    $items[] = array($arr['obj_id'], $defenseNames[$arr['obj_id']], $arr[$req_level_field], IMAGE_PATH . "/defense/def" . $arr['obj_id'] . "_middle." . IMAGE_EXT, "xajax_reqInfo(" . $arr['obj_id'] . ",'d')");
-                }
+        foreach ($defenseRequirements as $requirement) {
+            if (isset($defenseNames[$requirement->objectId])) {
+                $items[] = array($requirement->objectId, $defenseNames[$requirement->objectId], $requirement->requiredLevel, IMAGE_PATH . "/defense/def" . $requirement->objectId . "_middle." . IMAGE_EXT, "xajax_reqInfo(" . $requirement->objectId . ",'d')");
             }
         }
-        $res = dbquery("SELECT * FROM missile_requirements WHERE " . $req_field . "=" . $id . " ORDER BY " . $req_level_field . ";");
-        $nr = mysql_num_rows($res);
-        if ($nr > 0) {
-            while ($arr = mysql_fetch_assoc($res)) {
-                if (isset($missileNames[$arr['obj_id']])) {
-                    $items[] = array($arr['obj_id'], $missileNames[$arr['obj_id']], $arr[$req_level_field], IMAGE_PATH . "/missiles/missile" . $arr['obj_id'] . "_middle." . IMAGE_EXT, "xajax_reqInfo(" . $arr['obj_id'] . ",'m')");
-                }
+        foreach ($missileRequirements as $requirement) {
+            if (isset($missileNames[$requirement->objectId])) {
+                $items[] = array($requirement->objectId, $missileNames[$requirement->objectId], $requirement->requiredLevel, IMAGE_PATH . "/missiles/missile" . $requirement->objectId . "_middle." . IMAGE_EXT, "xajax_reqInfo(" . $requirement->objectId . ",'m')");
             }
         }
 

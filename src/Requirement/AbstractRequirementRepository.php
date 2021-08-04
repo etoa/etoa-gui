@@ -41,6 +41,40 @@ abstract class AbstractRequirementRepository extends AbstractRepository
     }
 
     /**
+     * @return ObjectRequirement[]
+     */
+    public function getRequiredByBuilding(int $buildingId): array
+    {
+        $data = $this->createQueryBuilder()
+            ->select('*')
+            ->from($this->table)
+            ->where('req_building_id = :buildingId')
+            ->orderBy('req_level')
+            ->setParameter('buildingId', $buildingId)
+            ->execute()
+            ->fetchAllAssociative();
+
+        return array_map(fn (array $row) => new ObjectRequirement($row), $data);
+    }
+
+    /**
+     * @return ObjectRequirement[]
+     */
+    public function getRequiredByTechnology(int $technologyId): array
+    {
+        $data = $this->createQueryBuilder()
+            ->select('*')
+            ->from($this->table)
+            ->where('req_tech_id = :technologyId')
+            ->orderBy('req_level')
+            ->setParameter('technologyId', $technologyId)
+            ->execute()
+            ->fetchAllAssociative();
+
+        return array_map(fn (array $row) => new ObjectRequirement($row), $data);
+    }
+
+    /**
      * @return array<int, int>
      */
     public function getDuplicateTechRequirements(): array
