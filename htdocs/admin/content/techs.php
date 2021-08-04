@@ -4,6 +4,7 @@ use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Technology\TechnologyDataRepository;
 use EtoA\Technology\TechnologyPointRepository;
 use EtoA\Technology\TechnologyRepository;
+use EtoA\Technology\TechnologySort;
 
 /** @var ConfigurationService */
 $config = $app[ConfigurationService::class];
@@ -80,14 +81,11 @@ elseif ($sub == "req") {
 
     define("TITLE", "Forschungsanforderungen");
     define("REQ_TBL", "tech_requirements");
-    define("ITEMS_TBL", "technologies");
-    define("ITEM_ID_FLD", "tech_id");
-    define("ITEM_NAME_FLD", "tech_name");
     define("ITEM_ENABLE_FLD", "tech_show");
-    define("ITEM_ORDER_FLD", "tech_type_id,tech_order,tech_name");
 
     define("ITEM_IMAGE_PATH", IMAGE_PATH . "/technologies/technology<DB_TABLE_ID>_small." . IMAGE_EXT);
 
+    $objectNames = $technologyDataRepository->getTechnologyNames(true, TechnologySort::type());
     include("inc/requirements.inc.php");
 }
 

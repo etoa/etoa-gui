@@ -1,5 +1,9 @@
 <?PHP
 
+use EtoA\Building\BuildingDataRepository;
+use EtoA\Requirement\RequirementRepositoryProvider;
+use EtoA\Technology\TechnologyDataRepository;
+
 $xajax->register(XAJAX_FUNCTION, "addToTechTree");
 $xajax->register(XAJAX_FUNCTION, "removeFromTechTree");
 $xajax->register(XAJAX_FUNCTION, "drawObjTechTree");
@@ -65,9 +69,21 @@ function removeFromTechTree($type, $id, $rid)
 
 function drawObjTechTree($type, $id)
 {
+    global $app;
+
+    /** @var TechnologyDataRepository $technologyRepository */
+    $technologyRepository = $app[TechnologyDataRepository::class];
+    $technologyNames = $technologyRepository->getTechnologyNames(true);
+    /** @var BuildingDataRepository $buildingRepository */
+    $buildingRepository = $app[BuildingDataRepository::class];
+    $buildingNames = $buildingRepository->getBuildingNames(true);
+    /** @var RequirementRepositoryProvider $requirementProvider */
+    $requirementProvider = $app[RequirementRepositoryProvider::class];
+    $repository = $requirementProvider->getRepository($type);
+
     $or = new xajaxResponse();
     ob_start();
-    drawTechTreeForSingleItem($type, $id);
+    drawTechTreeForSingleItem($type, $repository->getAll(), $id, $technologyNames, $buildingNames);
     $out = ob_get_contents();
     ob_end_clean();
     $or->assign("item_container_" . $id, "innerHTML", $out);

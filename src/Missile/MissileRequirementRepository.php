@@ -2,21 +2,13 @@
 
 namespace EtoA\Missile;
 
-use EtoA\Core\AbstractRepository;
+use Doctrine\DBAL\Connection;
+use EtoA\Requirement\AbstractRequirementRepository;
 
-class MissileRequirementRepository extends AbstractRepository
+class MissileRequirementRepository extends AbstractRequirementRepository
 {
-    /**
-     * @return MissileRequirement[]
-     */
-    public function getAll(): array
+    public function __construct(Connection $connection)
     {
-        $data = $this->createQueryBuilder()
-            ->select('*')
-            ->from('missile_requirements')
-            ->execute()
-            ->fetchAllAssociative();
-
-        return array_map(fn (array $row) => new MissileRequirement($row), $data);
+        parent::__construct($connection, 'missile_requirements');
     }
 }

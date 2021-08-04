@@ -27,17 +27,15 @@ function editMissileData(Environment $twig): void
 
 function missileRequirements(Environment $twig): void
 {
-    define("TITLE", "Raketemanforderungen");
-    define("ITEMS_TBL", "missiles");
-    define("REQ_TBL", "missile_requirements");
-    define("REQ_ITEM_FLD", "obj_id");
-    define("ITEM_ID_FLD", "missile_id");
-    define("ITEM_NAME_FLD", "missile_name");
-    define("ITEM_ENABLE_FLD", "missile_show");
-    define("ITEM_ORDER_FLD", "missile_name");
+    global $app;
 
+    define("TITLE", "Raketemanforderungen");
+    define("REQ_TBL", "missile_requirements");
     define("ITEM_IMAGE_PATH", IMAGE_PATH . "/missiles/missile<DB_TABLE_ID>_small." . IMAGE_EXT);
 
+    /** @var MissileDataRepository $missileDataRepository */
+    $missileDataRepository = $app[MissileDataRepository::class];
+    $objectNames = $missileDataRepository->getMissileNames(true);
     include("inc/requirements.inc.php");
 }
 

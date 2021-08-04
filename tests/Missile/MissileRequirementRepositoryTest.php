@@ -17,7 +17,7 @@ class MissileRequirementRepositoryTest extends AbstractDbTestCase
 
     public function testGetAll(): void
     {
-        $requirements = $this->repository->getAll();
+        $requirements = $this->repository->getAll()->getAll(1);
 
         $this->assertNotEmpty($requirements);
     }

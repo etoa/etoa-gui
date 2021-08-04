@@ -70,20 +70,6 @@ if ($missileBuilding !== null && $missileBuilding->currentLevel > 0) {
             /** @var MissileRequirementRepository $missileRequirementRepository */
             $missileRequirementRepository = $app[MissileRequirementRepository::class];
             $requirements = $missileRequirementRepository->getAll();
-            /** @var MissileRequirement[][] $buildingRequirements */
-            $buildingRequirements = [];
-            /** @var MissileRequirement[][] $technologyRequirements */
-            $technologyRequirements = [];
-            foreach ($requirements as $requirement) {
-                if ($requirement->requiredBuildingId > 0) {
-                    $buildingRequirements[$requirement->missileId][] = $requirement;
-                }
-
-                if ($requirement->requiredTechnologyId > 0) {
-                    $technologyRequirements[$requirement->missileId][] = $requirement;
-                }
-            }
-
             $builing_something = false;
 
             // Gebäudeliste laden
@@ -305,19 +291,15 @@ if ($missileBuilding !== null && $missileBuilding->currentLevel > 0) {
 
                     // Check requirements for this building
                     $requirements_passed = true;
-                    if (count($buildingRequirements[$missile->id]) > 0) {
-                        foreach ($buildingRequirements[$missile->id] as $requirement) {
-                            if (!isset($buildlist[$requirement->requiredBuildingId]) || $buildlist[$requirement->requiredBuildingId] < $requirement->requiredLevel) {
-                                $requirements_passed = false;
-                            }
+                    foreach ($requirements->getBuildingRequirements($missile->id) as $requirement) {
+                        if (!isset($buildlist[$requirement->requiredBuildingId]) || $buildlist[$requirement->requiredBuildingId] < $requirement->requiredLevel) {
+                            $requirements_passed = false;
                         }
                     }
 
-                    if (count($technologyRequirements[$missile->id]) > 0) {
-                        foreach ($technologyRequirements[$missile->id] as $requirement) {
-                            if (!isset($techlist[$requirement->requiredTechnologyId]) || $techlist[$requirement->requiredTechnologyId] < $requirement->requiredLevel) {
-                                $requirements_passed = false;
-                            }
+                    foreach ($requirements->getTechnologyRequirements($missile->id) as $requirement) {
+                        if (!isset($techlist[$requirement->requiredTechnologyId]) || $techlist[$requirement->requiredTechnologyId] < $requirement->requiredLevel) {
+                            $requirements_passed = false;
                         }
                     }
 

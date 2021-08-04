@@ -2,15 +2,17 @@
 
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Defense\Defense;
+use EtoA\Defense\DefenseDataRepository;
 use EtoA\Defense\DefenseQueueRepository;
 use EtoA\Defense\DefenseRepository;
+use EtoA\Defense\DefenseSort;
 use Symfony\Component\HttpFoundation\Request;
 
 /** @var ConfigurationService */
 $config = $app[ConfigurationService::class];
 
-/** @var \EtoA\Defense\DefenseDataRepository $defenseDataRepository */
-$defenseDataRepository = $app[\EtoA\Defense\DefenseDataRepository::class];
+/** @var DefenseDataRepository $defenseDataRepository */
+$defenseDataRepository = $app[DefenseDataRepository::class];
 $defenseNames = $defenseDataRepository->getDefenseNames(true);
 
 /** @var DefenseRepository $defenseRepository */
@@ -369,18 +371,12 @@ elseif ($sub == "cat") {
 //
 elseif ($sub == "req") {
     define("TITLE", "Verteidigungsanforderungen");
-    define("ITEMS_TBL", "defense");
-    define("TYPES_TBL", "def_types");
     define("REQ_TBL", "def_requirements");
-    define("REQ_ITEM_FLD", "obj_id");
-    define("ITEM_ID_FLD", "def_id");
-    define("ITEM_NAME_FLD", "def_name");
-    define("ITEM_ENABLE_FLD", "def_buildable");
-    define("ITEM_ORDER_FLD", "def_cat_id,def_order,def_name");
-
     define("ITEM_IMAGE_PATH", IMAGE_PATH . "/defense/def<DB_TABLE_ID>_small." . IMAGE_EXT);
 
-
+    /** @var DefenseDataRepository $defenseDataRepository */
+    $defenseDataRepository = $app[DefenseDataRepository::class];
+    $objectNames = $defenseDataRepository->getDefenseNames(true, DefenseSort::category());
     include("inc/requirements.inc.php");
 }
 

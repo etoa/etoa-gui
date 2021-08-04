@@ -435,42 +435,25 @@ function DuplicateMySQLRecord($table, $id_field, $id)
     return $newid;
 }
 
-function drawTechTreeForSingleItem($type, $id)
+function drawTechTreeForSingleItem(string $type, \EtoA\Requirement\RequirementsCollection $requirements, int $objectId, array $technologyNames, array $buildingNames)
 {
-    $rres = dbquery("
-    SELECT
-        r.*,
-        b.building_name as bname,
-        t.tech_name as tname
-    FROM
-        " . $type . " r
-    LEFT JOIN
-        buildings b
-        ON r.req_building_id = b.building_id
-    LEFT JOIN
-        technologies t
-        ON r.req_tech_id = t.tech_id
-    WHERE
-        obj_id=" . $id . "
-    ORDER BY
-        tname,
-        bname;");
-    if (mysql_num_rows($rres) > 0) {
-        while ($rarr = mysql_fetch_assoc($rres)) {
-            if ($rarr['req_building_id'] > 0) {
-                $name = $rarr['bname'];
-                $pn = "b:" . $rarr['req_building_id'];
-            } elseif ($rarr['req_tech_id'] > 0) {
-                $name = $rarr['tname'];
-                $pn = "t:" . $rarr['req_tech_id'];
+    $objectRequirements = $requirements->getAll($objectId);
+    if (count($objectRequirements) > 0) {
+        foreach ($objectRequirements as $requirement) {
+            if ($requirement->requiredBuildingId > 0) {
+                $name = $buildingNames[$requirement->requiredBuildingId];
+                $pn = "b:" . $requirement->requiredBuildingId;
+            } elseif ($requirement->requiredTechnologyId > 0) {
+                $name = $technologyNames[$requirement->requiredTechnologyId];
+                $pn = "t:" . $requirement->requiredTechnologyId;
             } else {
                 $name = "INVALID";
                 $pn = '';
             }
 
-            echo "<a href=\"javascript:;\" onclick=\"var nlvl = prompt('Level für " . $name . " ändern:','" . $rarr['req_level'] . "'); if (nlvl != '' && nlvl != null) xajax_addToTechTree('" . $type . "'," . $id . ",'" . $pn . "',nlvl);\">";
-            echo $name . " <b>" . $rarr['req_level'] . "</b></a>";
-            echo " &nbsp; <a href=\"javascript:;\" onclick=\"if (confirm('Anforderung löschen?')) xajax_removeFromTechTree('" . $type . "'," . $id . "," . $rarr['id'] . ")\">" . icon("delete") . "</a>";
+            echo "<a href=\"javascript:;\" onclick=\"var nlvl = prompt('Level für " . $name . " ändern:','" . $requirement->requiredLevel . "'); if (nlvl != '' && nlvl != null) xajax_addToTechTree('" . $type . "'," . $objectId . ",'" . $pn . "',nlvl);\">";
+            echo $name . " <b>" . $requirement->requiredLevel . "</b></a>";
+            echo " &nbsp; <a href=\"javascript:;\" onclick=\"if (confirm('Anforderung löschen?')) xajax_removeFromTechTree('" . $type . "'," . $objectId . "," . $requirement->id . ")\">" . icon("delete") . "</a>";
             echo "<br/>";
         }
     } else {

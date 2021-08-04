@@ -6,10 +6,13 @@ use EtoA\Building\BuildingDataRepository;
 use EtoA\Building\BuildingSort;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Defense\DefenseDataRepository;
+use EtoA\Defense\DefenseSort;
 use EtoA\Missile\MissileDataRepository;
 use EtoA\Race\RaceDataRepository;
 use EtoA\Ship\ShipDataRepository;
+use EtoA\Ship\ShipSort;
 use EtoA\Technology\TechnologyDataRepository;
+use EtoA\Technology\TechnologySort;
 use EtoA\Universe\Star\SolarTypeRepository;
 
 /** @var ConfigurationService */
@@ -74,12 +77,12 @@ if (isset($_GET['manage'])) {
             "asteroids" => ["asteroids", range(1, $config->getInt('num_asteroid_images'))],
             "atechnologies" => ["technology", array_keys($allianceTechnologyRepository->getNames(true))],
             "buildings" => ["building", array_keys($buildingDataRepository->getBuildingNames(true, BuildingSort::id()))],
-            "defense" => ["def", array_keys($defenseDataRepository->getDefenseNames(true, true))],
+            "defense" => ["def", array_keys($defenseDataRepository->getDefenseNames(true, DefenseSort::id()))],
             "missiles" => ["missile", array_keys($missileDataRepository->getMissileNames(true, true))],
             "races" => ["race", array_keys($raceDataRepository->getRaceNames(true, true))],
-            "ships" => ["ship", array_keys($shipDataRepository->getShipNames(true, true))],
+            "ships" => ["ship", array_keys($shipDataRepository->getShipNames(true, ShipSort::id()))],
             "stars" => ["star", array_keys($solarTypeRepository->getSolarTypeNames(true, true))],
-            "technologies" => ["technology", array_keys($technologyDataRepository->getTechnologyNames(true, true))],
+            "technologies" => ["technology", array_keys($technologyDataRepository->getTechnologyNames(true, TechnologySort::id()))],
             "nebulas" => ["nebula", range(1, $config->getInt('num_nebula_images'))],
             "space" => ["space", range(1, $config->getInt('num_space_images'))],
             "wormholes" => ["wormhole", range(1, $config->getInt('num_wormhole_images'))],
@@ -164,14 +167,14 @@ $required_images = [
     "asteroids" => ["asteroids", range(1, $config->getInt('num_asteroid_images'))],
     "atechnologies" => ["technology", $allianceTechnologyRepository->getNames(true)],
     "buildings" => ["building", $buildingDataRepository->getBuildingNames(true, BuildingSort::id())],
-    "defense" => ["def", $defenseDataRepository->getDefenseNames(true, true)],
+    "defense" => ["def", $defenseDataRepository->getDefenseNames(true, DefenseSort::id())],
     "missiles" => ["missile", $missileDataRepository->getMissileNames(true, true)],
     "nebulas" => ["nebula", range(1, $config->getInt('num_nebula_images'))],
     "races" => ["race", $raceDataRepository->getRaceNames(true, true)],
-    "ships" => ["ship", $shipDataRepository->getShipNames(true, true)],
+    "ships" => ["ship", $shipDataRepository->getShipNames(true, ShipSort::id())],
     "space" => ["space", range(1, $config->getInt('num_space_images'))],
     "stars" => ["star", $solarTypeRepository->getSolarTypeNames(true, true)],
-    "technologies" => ["technology", $technologyDataRepository->getTechnologyNames(true, true)],
+    "technologies" => ["technology", $technologyDataRepository->getTechnologyNames(true, TechnologySort::id())],
     "wormholes" => ["wormhole", range(1, $config->getInt('num_wormhole_images'))],
 ];
 echo $twig->render('admin/misc/imagepacks.html.twig', [
