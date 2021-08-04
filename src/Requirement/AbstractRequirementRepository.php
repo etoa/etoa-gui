@@ -26,20 +26,18 @@ abstract class AbstractRequirementRepository extends AbstractRepository
         return new RequirementsCollection(array_map(fn (array $row) => new ObjectRequirement($row), $data));
     }
 
-    /**
-     * @return ObjectRequirement[]
-     */
-    public function getRequirements(int $objectId): array
+    public function getRequirements(int $objectId): RequirementsCollection
     {
         $data = $this->createQueryBuilder()
             ->select('*')
             ->from($this->table)
             ->where('obj_id = :objectId')
+            ->orderBy('req_level')
             ->setParameter('objectId', $objectId)
             ->execute()
             ->fetchAllAssociative();
 
-        return array_map(fn (array $row) => new ObjectRequirement($row), $data);
+        return new RequirementsCollection(array_map(fn (array $row) => new ObjectRequirement($row), $data));
     }
 
     /**

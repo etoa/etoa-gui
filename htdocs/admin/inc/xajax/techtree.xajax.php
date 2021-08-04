@@ -79,7 +79,7 @@ function drawObjTechTree($type, $id)
     $buildingNames = $buildingRepository->getBuildingNames(true);
     /** @var RequirementRepositoryProvider $requirementProvider */
     $requirementProvider = $app[RequirementRepositoryProvider::class];
-    $repository = $requirementProvider->getRepository($type);
+    $repository = $requirementProvider->getRepositoryForTableName($type);
 
     $or = new xajaxResponse();
     ob_start();

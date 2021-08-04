@@ -25,7 +25,7 @@ class RequirementRepositoryProvider
         $this->missileRequirementRepository = $missileRequirementRepository;
     }
 
-    public function getRepository(string $type): AbstractRequirementRepository
+    public function getRepositoryForTableName(string $type): AbstractRequirementRepository
     {
         switch ($type) {
             case 'ship_requirements':
@@ -40,6 +40,24 @@ class RequirementRepositoryProvider
                 return $this->buildingRequirementRepository;
             default:
                 throw new \InvalidArgumentException('No requirement repository available for :' . $type);
+        }
+    }
+
+    public function getRepositoryForCategory(string $category): AbstractRequirementRepository
+    {
+        switch ($category) {
+            case 's':
+                return $this->shipRequirementRepository;
+            case 'd':
+                return $this->defenseRequirementRepository;
+            case 't':
+                return $this->technologyRequirementRepository;
+            case 'b':
+                return $this->buildingRequirementRepository;
+            case 'm':
+                return $this->buildingRequirementRepository;
+            default:
+                throw new \InvalidArgumentException('No requirement repository available for :' . $category);
         }
     }
 }

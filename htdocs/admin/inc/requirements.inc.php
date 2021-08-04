@@ -16,7 +16,7 @@ $technologyRepository = $app[TechnologyDataRepository::class];
 $te = $technologyRepository->getTechnologyNames(true);
 /** @var RequirementRepositoryProvider $requirementProvider */
 $requirementProvider = $app[RequirementRepositoryProvider::class];
-$requirements = $requirementProvider->getRepository(REQ_TBL)->getAll();
+$requirements = $requirementProvider->getRepositoryForTableName(REQ_TBL)->getAll();
 if (isset($objectNames) && count($objectNames) > 0) {
     echo "<table><tr>
             <th colspan=\"" . (defined('ITEM_IMAGE_PATH') ? 2 : 1) . "\">Name</th>

@@ -124,7 +124,7 @@ if ($cp) {
                     $technologyRepository = $app[TechnologyRepository::class];
                     $techlist = $technologyRepository->getTechnologyLevels($cu->getId());
 
-                    foreach ($requirements as $requirement) {
+                    foreach ($requirements->getAll(GEN_TECH_ID) as $requirement) {
                         if ($requirement->requiredTechnologyId > 0) {
                             if ($requirement->requiredLevel > ($techlist[$requirement->requiredTechnologyId] ?? 0)) {
                                 $requirements_passed = false;
