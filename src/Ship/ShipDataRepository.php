@@ -35,12 +35,7 @@ class ShipDataRepository extends AbstractRepository
                 ->andWhere('special_ship = 0');
         }
 
-        $orderBy = $orderBy ?? ShipSort::name();
-        foreach ($orderBy->sorts as $sort) {
-            $qb->addOrderBy($sort);
-        }
-
-        return $qb
+        return $this->applySort($qb, $orderBy ?? ShipSort::name())
                 ->execute()
                 ->fetchAllKeyValue();
     }
@@ -266,5 +261,43 @@ class ShipDataRepository extends AbstractRepository
             ->fetchAssociative();
 
         return $data !== false ? new Ship($data) : null;
+    }
+
+    /**
+     * @return Ship[]
+     */
+    public function searchShips(ShipSearch $search, ShipSort $sort = null, int $limit = null): array
+    {
+        $qb = $this->createQueryBuilder()
+            ->select('*')
+            ->from('ships');
+
+        $qb->setParameters($search->parameters);
+        foreach ($search->parts as $query) {
+            $qb->andWhere($query);
+        }
+
+        $this->applySort($qb, $sort);
+
+        if ($limit !== null) {
+            $qb->setMaxResults($limit);
+        }
+
+        $data = $qb
+            ->execute()
+            ->fetchAllAssociative();
+
+        return array_map(fn ($row) => new Ship($row), $data);
+    }
+
+    private function applySort(QueryBuilder $qb, ShipSort $shipSort = null): QueryBuilder
+    {
+        if ($shipSort !== null) {
+            foreach ($shipSort->sorts as $sort => $order) {
+                $qb->addOrderBy($sort, $order);
+            }
+        }
+
+        return $qb;
     }
 }

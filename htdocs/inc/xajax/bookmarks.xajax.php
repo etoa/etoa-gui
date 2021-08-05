@@ -2,6 +2,8 @@
 
 use EtoA\Bookmark\FleetBookmarkRepository;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Ship\ShipDataRepository;
+use EtoA\Ship\ShipSearch;
 use EtoA\Universe\Entity\EntityCoordinates;
 use EtoA\Universe\Entity\EntityRepository;
 use EtoA\User\UserRepository;
@@ -53,8 +55,8 @@ function launchBookmarkProbe($bid)
         if ($fleet->checkHaven()) {
             $shipOutput = "";
             $probeCount = true;
-            /** @var \EtoA\Ship\ShipDataRepository $shipDataRepository */
-            $shipDataRepository = $app[\EtoA\Ship\ShipDataRepository::class];
+            /** @var ShipDataRepository $shipDataRepository */
+            $shipDataRepository = $app[ShipDataRepository::class];
             $ships = $shipDataRepository->getShipNames(true);
             foreach ($bookmark->ships as $shipId => $count) {
                 $probeCount = min($probeCount, $fleet->addShip($shipId, $count));
@@ -131,6 +133,11 @@ function launchBookmarkProbe($bid)
 //Listet gefundene Schiffe auf
 function searchShipList($val)
 {
+    global $app;
+
+    /** @var ShipDataRepository $shipDataRepository */
+    $shipDataRepository = $app[ShipDataRepository::class];
+
     $targetId = 'shiplist';
     $inputId = 'shipname';
 
@@ -138,20 +145,12 @@ function searchShipList($val)
     $nCount = 0;
     $sLastHit = null;
 
-    $res = dbquery("SELECT
-            ship_name
-        FROM
-            ships
-        WHERE
-            (ship_show=1
-                || ship_buildable=1)
-            AND ship_name LIKE '" . $val . "%'
-        LIMIT 20;");
-    if (mysql_num_rows($res) > 0) {
-        while ($arr = mysql_fetch_row($res)) {
+    $ships = $shipDataRepository->searchShips(ShipSearch::create()->showOrBuildable()->nameLike($val), null, 20);
+    if (count($ships) > 0) {
+        foreach ($ships as $ship) {
             $nCount++;
-            $sOut .= "<a href=\"#\" onclick=\"javascript:document.getElementById('$inputId').value='" . htmlspecialchars($arr[0]) . "';fleetBookmarkAddShipToList('" . $arr[0] . "');document.getElementById('$targetId').style.display = 'none';\">" . htmlspecialchars($arr[0]) . "</a>";
-            $sLastHit = $arr[0];
+            $sOut .= "<a href=\"#\" onclick=\"javascript:document.getElementById('$inputId').value='" . htmlspecialchars($ship->name) . "';fleetBookmarkAddShipToList('" . $ship->name . "');document.getElementById('$targetId').style.display = 'none';\">" . htmlspecialchars($ship->name) . "</a>";
+            $sLastHit = $ship->name;
         }
     }
 

@@ -2,6 +2,8 @@
 
 namespace EtoA\Ship;
 
+use EtoA\Universe\Resources\BaseResources;
+
 class Ship
 {
     public int $id;
@@ -137,5 +139,17 @@ class Ship
             default:
                 return IMAGE_PATH."/".IMAGE_SHIP_DIR."/ship".$this->id.".".IMAGE_EXT;
         }
+    }
+
+    public function getCosts(): BaseResources
+    {
+        $resources = new BaseResources();
+        $resources->metal = $this->costsMetal;
+        $resources->crystal = $this->costsCrystal;
+        $resources->plastic = $this->costsPlastic;
+        $resources->fuel = $this->costsFuel;
+        $resources->food = $this->costsFood;
+
+        return $resources;
     }
 }
