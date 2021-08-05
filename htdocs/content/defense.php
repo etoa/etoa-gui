@@ -5,6 +5,7 @@ use EtoA\Building\BuildingRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Defense\DefenseQueueRepository;
 use EtoA\Defense\DefenseRepository;
+use EtoA\Defense\DefenseRequirementRepository;
 use EtoA\Technology\TechnologyRepository;
 use EtoA\UI\ResourceBoxDrawer;
 use EtoA\Universe\Planet\PlanetRepository;
@@ -24,6 +25,8 @@ $buildingRepository = $app[BuildingRepository::class];
 $defenseRepository = $app[DefenseRepository::class];
 /** @var DefenseQueueRepository $defenseQueueRepository */
 $defenseQueueRepository = $app[DefenseQueueRepository::class];
+/** @var DefenseRequirementRepository $defenseRequirementRepository */
+$defenseRequirementRepository = $app[DefenseRequirementRepository::class];
 
 //Definition für "Info" Link
 define("ITEMS_TBL", "defense");
@@ -96,25 +99,7 @@ if ($factoryBuilding !== null && $factoryBuilding->currentLevel > 0) {
         //
 
         // Vorausetzungen laden
-        $req = array();
-        $res = dbquery("
-                    SELECT
-                        *
-                    FROM
-                        def_requirements;");
-
-        while ($arr = mysql_fetch_assoc($res)) {
-            //Gebäude Vorausetzungen
-            if ($arr['req_building_id'] > 0) {
-                $req[$arr['obj_id']]['b'][$arr['req_building_id']] = $arr['req_level'];
-            }
-
-            //Technologie Voraussetzungen
-            if ($arr['req_tech_id'] > 0) {
-                $req[$arr['obj_id']]['t'][$arr['req_tech_id']] = $arr['req_level'];
-            }
-        }
-
+        $requirements = $defenseRequirementRepository->getAll();
 
         //Technologien laden und Gentechlevel definieren
         $gen_tech_level = 0;
@@ -802,19 +787,15 @@ if ($factoryBuilding !== null && $factoryBuilding->currentLevel > 0) {
                         // Prüfen ob Schiff gebaut werden kann
                         $build_def = 1;
                         // Gebäude prüfen
-                        if (isset($req[$data['def_id']]['b']) && count($req[$data['def_id']]['b']) > 0) {
-                            foreach ($req[$data['def_id']]['b'] as $id => $level) {
-                                if (!isset($buildlist[$id]) || $buildlist[$id] < $level) {
-                                    $build_def = 0;
-                                }
+                        foreach ($requirements->getBuildingRequirements($data['def_id']) as $requirement) {
+                            if (!isset($buildlist[$requirement->requiredBuildingId]) || $buildlist[$requirement->requiredBuildingId] < $requirement->requiredLevel) {
+                                $build_def = 0;
                             }
                         }
                         // Technologien prüfen
-                        if (isset($req[$data['def_id']]['t']) && count($req[$data['def_id']]['t']) > 0) {
-                            foreach ($req[$data['def_id']]['t'] as $id => $level) {
-                                if (!isset($techlist[$id]) || $techlist[$id] < $level) {
-                                    $build_def = 0;
-                                }
+                        foreach ($requirements->getTechnologyRequirements($data['def_id']) as $requirement) {
+                            if (!isset($techlist[$requirement->requiredTechnologyId]) || $techlist[$requirement->requiredTechnologyId] < $requirement->requiredLevel) {
+                                $build_def = 0;
                             }
                         }
 

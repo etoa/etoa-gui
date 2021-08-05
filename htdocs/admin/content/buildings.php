@@ -1,8 +1,11 @@
 <?PHP
 
+use EtoA\Building\BuildingDataRepository;
 use EtoA\Building\BuildingPointRepository;
 use EtoA\Building\BuildingRepository;
+use EtoA\Building\BuildingSort;
 use EtoA\Core\Configuration\ConfigurationService;
+use Pimple\Container;
 use Symfony\Component\HttpFoundation\Request;
 use Twig\Environment;
 
@@ -26,7 +29,7 @@ if ($sub == "prices") {
 } elseif ($sub == "data") {
     editData($twig);
 } elseif ($sub == "req") {
-    requirements($twig);
+    requirements($twig, $app);
 } else {
     buildingList($request, $repository, $config, $twig);
 }
@@ -185,19 +188,18 @@ function editData(Environment $twig)
     advanced_form("buildings", $twig);
 }
 
-function requirements(Environment $twig)
+function requirements(Environment $twig, Container $app)
 {
     define('TITLE', "Gebäudeanforderungen");
     define('ITEMS_TBL', "buildings");
     define('TYPES_TBL', "building_types");
     define('REQ_TBL', "building_requirements");
-    define('ITEM_ID_FLD', "building_id");
-    define('ITEM_NAME_FLD', "building_name");
-    define('ITEM_ENABLE_FLD', "1");
-    define('ITEM_ORDER_FLD', "building_type_id,building_order,building_name");
 
     define("ITEM_IMAGE_PATH", IMAGE_PATH . "/buildings/building<DB_TABLE_ID>_small." . IMAGE_EXT);
 
+    /** @var BuildingDataRepository $buildingRepository */
+    $buildingRepository = $app[BuildingDataRepository::class];
+    $objectNames = $buildingRepository->getBuildingNames(true, BuildingSort::type());
     include("inc/requirements.inc.php");
 }
 

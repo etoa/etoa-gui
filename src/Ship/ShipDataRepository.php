@@ -22,7 +22,7 @@ class ShipDataRepository extends AbstractRepository
     /**
      * @return array<int, string>
      */
-    public function getShipNames(bool $showAll = false, bool $orderById = false): array
+    public function getShipNames(bool $showAll = false, ShipSort $orderBy = null): array
     {
         $qb = $this->createQueryBuilder()
             ->select('ship_id', 'ship_name')
@@ -35,8 +35,12 @@ class ShipDataRepository extends AbstractRepository
                 ->andWhere('special_ship = 0');
         }
 
+        $orderBy = $orderBy ?? ShipSort::name();
+        foreach ($orderBy->sorts as $sort) {
+            $qb->addOrderBy($sort);
+        }
+
         return $qb
-                ->orderBy($orderById ? 'ship_id' : 'ship_name')
                 ->execute()
                 ->fetchAllKeyValue();
     }

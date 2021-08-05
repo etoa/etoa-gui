@@ -40,6 +40,33 @@ class AllianceDiplomacyRepository extends AbstractRepository
     /**
      * @return AllianceDiplomacy[]
      */
+    public function get(int $level, int $limit = null): array
+    {
+        $qb = $this->createQueryBuilder()
+            ->select('b.*')
+            ->addSelect('a1.alliance_name as alliance1Name, a1.alliance_tag as alliance1Tag')
+            ->addSelect('a2.alliance_name as alliance2Name, a2.alliance_tag as alliance2Tag')
+            ->from('alliance_bnd', 'b')
+            ->leftJoin('b', 'alliances', 'a1', 'alliance_bnd_alliance_id1 = a1.alliance_id')
+            ->leftJoin('b', 'alliances', 'a2', 'alliance_bnd_alliance_id2 = a2.alliance_id')
+            ->andWhere('b.alliance_bnd_level = :level')
+            ->orderBy('b.alliance_bnd_date', 'DESC')
+            ->setParameter('level', $level);
+
+        if ($limit !== null) {
+            $qb->setMaxResults($limit);
+        }
+
+        $data = $qb
+            ->execute()
+            ->fetchAllAssociative();
+
+        return array_map(fn (array $row) => new AllianceDiplomacy($row, 0), $data);
+    }
+
+    /**
+     * @return AllianceDiplomacy[]
+     */
     public function getDiplomacies(int $allianceId, int $level = null): array
     {
         $qb = $this->createQueryBuilder()

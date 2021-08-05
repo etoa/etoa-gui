@@ -39,6 +39,7 @@ $app->register(new \EtoA\Missile\MissileServiceProvider());
 $app->register(new \EtoA\Notepad\NotepadServiceProvider());
 $app->register(new \EtoA\Log\LogServiceProvider());
 $app->register(new \EtoA\Race\RaceServiceProvider());
+$app->register(new \EtoA\Requirement\RequirementServiceProvider());
 $app->register($questProvider = new \EtoA\Quest\QuestServiceProvider(), [
     'cubicle.quests.autostart' => true,
     'cubicle.quests.slots' => [

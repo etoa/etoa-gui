@@ -4,6 +4,7 @@ use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Ship\ShipDataRepository;
 use EtoA\Ship\ShipQueueRepository;
 use EtoA\Ship\ShipRepository;
+use EtoA\Ship\ShipSort;
 
 /** @var ConfigurationService */
 $config = $app[ConfigurationService::class];
@@ -89,14 +90,9 @@ elseif ($sub == "req") {
     //Definistion für die normalen Schiffe
     define("TITLE", "Schiffanforderungen");
     define("REQ_TBL", "ship_requirements");
-    define("ITEMS_TBL", "ships");
-    define("ITEM_ID_FLD", "ship_id");
-    define("ITEM_NAME_FLD", "ship_name");
-    define("ITEM_ENABLE_FLD", "1");
-    define("ITEM_ORDER_FLD", "ship_cat_id,ship_order");
-
     define("ITEM_IMAGE_PATH", IMAGE_PATH . "/ships/ship<DB_TABLE_ID>_small." . IMAGE_EXT);
 
+    $objectNames = $shipDataRepository->getShipNames(true, ShipSort::category());
     include("inc/requirements.inc.php");
 }
 

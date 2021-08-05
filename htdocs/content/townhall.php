@@ -3,10 +3,14 @@
 // Script zum Anzeigen/Verbergen von Texten
 //
 
+use EtoA\Alliance\AllianceDiplomacyLevel;
+use EtoA\Alliance\AllianceDiplomacyRepository;
 use EtoA\Alliance\AllianceNewsRepository;
 
 /** @var AllianceNewsRepository $allianceNewsRepository */
 $allianceNewsRepository = $app[AllianceNewsRepository::class];
+/** @var AllianceDiplomacyRepository $allianceDiplomacyRepository */
+$allianceDiplomacyRepository = $app[AllianceDiplomacyRepository::class];
 ?>
 <script type="text/javascript">
     function toggleText(elemId, switchId) {
@@ -125,33 +129,8 @@ if (count($internalNews) > 0) {
 //
 // Bündnisse
 //
-$res = dbquery("
-    SELECT
-        alliance_bnd_id,
-        alliance_bnd_name,
-        a1.alliance_name as an1,
-        a2.alliance_name as an2,
-        a1.alliance_tag as at1,
-        a2.alliance_tag as at2,
-        alliance_bnd_alliance_id1 as aid1,
-        alliance_bnd_alliance_id2 as aid2,
-        alliance_bnd_date,
-        alliance_bnd_text_pub
-    FROM
-        alliance_bnd
-    INNER JOIN
-        alliances AS a1
-    ON alliance_bnd_alliance_id1 = a1.alliance_id
-    INNER JOIN
-        alliances AS a2
-    ON alliance_bnd_alliance_id2 = a2.alliance_id
-    WHERE
-        alliance_bnd_level=2
-    ORDER BY
-        alliance_bnd_date DESC
-    LIMIT 15;
-    ");
-if (mysql_num_rows($res) > 0) {
+$bnds = $allianceDiplomacyRepository->get(AllianceDiplomacyLevel::BND_CONFIRMED, 15);
+if (count($bnds) > 0) {
     tableStart("Neuste Bündnisse");
     echo "
         <tr>
@@ -161,16 +140,16 @@ if (mysql_num_rows($res) > 0) {
             <th style=\"width:20%;\">Datum</th>
             <th style=\"width:10%;\">Erklärung</th>
         </tr>";
-    while ($arr = mysql_fetch_array($res)) {
-        $id = "bnd" . $arr['alliance_bnd_id'];
-        $sid = "sbnd" . $arr['alliance_bnd_id'];
+    foreach ($bnds as $diplomacy) {
+        $id = "bnd" . $diplomacy->id;
+        $sid = "sbnd" . $diplomacy->id;
         echo "<tr>
-                <td><a href=\"?page=alliance&amp;info_id=" . $arr['aid1'] . "\" " . tm($arr['at1'], text2html($arr['an1'])) . ">" . text2html($arr['an1']) . "</td>
-                <td><a href=\"?page=alliance&amp;info_id=" . $arr['aid2'] . "\" " . tm($arr['at2'], text2html($arr['an2'])) . ">" . text2html($arr['an2']) . "</td>
-                <td>" . stripslashes($arr['alliance_bnd_name']) . "</td>
-                <td>" . df($arr['alliance_bnd_date']) . "</td>
+                <td><a href=\"?page=alliance&amp;info_id=" . $diplomacy->alliance1Id . "\" " . tm($diplomacy->alliance1Tag, text2html($diplomacy->alliance1Name)) . ">" . text2html($diplomacy->alliance1Name) . "</td>
+                <td><a href=\"?page=alliance&amp;info_id=" . $diplomacy->alliance2Id . "\" " . tm($diplomacy->alliance2Tag, text2html($diplomacy->alliance2Name)) . ">" . text2html($diplomacy->alliance2Name) . "</td>
+                <td>" . stripslashes($diplomacy->name) . "</td>
+                <td>" . df($diplomacy->date) . "</td>
                 <td>";
-        if ($arr['alliance_bnd_text_pub'] != "") {
+        if ($diplomacy->publicText != "") {
             echo "[<a href=\"javascript:;\" onclick=\"toggleText('" . $id . "','" . $sid . "');\" id=\"" . $sid . "\">Anzeigen</a>]";
         } else {
             echo "-";
@@ -178,7 +157,7 @@ if (mysql_num_rows($res) > 0) {
         echo "</td>
             </tr>";
         echo "<tr id=\"" . $id . "\" style=\"display:none;\">
-                <td colspan=\"5\">" . text2html(stripslashes($arr['alliance_bnd_text_pub'])) . "</td>
+                <td colspan=\"5\">" . text2html(stripslashes($diplomacy->publicText)) . "</td>
             </tr>";
     }
     tableEnd();
@@ -192,31 +171,8 @@ if (mysql_num_rows($res) > 0) {
 //
 // Kriege
 //
-$res = dbquery("
-    SELECT
-        alliance_bnd_id,
-        a1.alliance_name as an1,
-        a2.alliance_name as an2,
-        a1.alliance_tag as at1,
-        a2.alliance_tag as at2,
-        alliance_bnd_alliance_id1 as aid1,
-        alliance_bnd_alliance_id2 as aid2,
-        alliance_bnd_date,
-        alliance_bnd_text_pub
-    FROM
-        alliance_bnd
-    INNER JOIN
-        alliances AS a1
-    ON alliance_bnd_alliance_id1 = a1.alliance_id
-    INNER JOIN
-        alliances AS a2
-    ON alliance_bnd_alliance_id2 = a2.alliance_id
-    WHERE
-        alliance_bnd_level=3
-    ORDER BY
-        alliance_bnd_date DESC;
-    ");
-if (mysql_num_rows($res) > 0) {
+$wars = $allianceDiplomacyRepository->get(AllianceDiplomacyLevel::WAR);
+if (count($wars) > 0) {
     tableStart("Aktuelle Kriege (Dauer " . round(WAR_DURATION / 3600) . "h)");
     echo "<tr>
                         <th width=\"25%\">Allianz 1</th>
@@ -225,16 +181,16 @@ if (mysql_num_rows($res) > 0) {
                         <th width=\"20%\">Ende</th>
                         <th width=\"10%\">Erklärung</th>
                     </tr>";
-    while ($arr = mysql_fetch_array($res)) {
-        $id = "war" . $arr['alliance_bnd_id'];
-        $sid = "swar" . $arr['alliance_bnd_id'];
+    foreach ($wars as $diplomacy) {
+        $id = "war" . $diplomacy->id;
+        $sid = "swar" . $diplomacy->id;
         echo "<tr>
-                <td><a href=\"?page=alliance&amp;info_id=" . $arr['aid1'] . "\" " . tm($arr['at1'], text2html($arr['an1'])) . ">" . text2html($arr['an1']) . "</td>
-                <td><a href=\"?page=alliance&amp;info_id=" . $arr['aid2'] . "\" " . tm($arr['at2'], text2html($arr['an2'])) . ">" . text2html($arr['an2']) . "</td>
-                <td>" . df($arr['alliance_bnd_date']) . "</td>
-                <td>" . df($arr['alliance_bnd_date'] + WAR_DURATION) . "</td>
+                <td><a href=\"?page=alliance&amp;info_id=" . $diplomacy->alliance1Id . "\" " . tm($diplomacy->alliance1Tag, text2html($diplomacy->alliance1Name)) . ">" . text2html($diplomacy->alliance1Name) . "</td>
+                <td><a href=\"?page=alliance&amp;info_id=" . $diplomacy->alliance2Id . "\" " . tm($diplomacy->alliance2Tag, text2html($diplomacy->alliance2Name)) . ">" . text2html($diplomacy->alliance2Name) . "</td>
+                <td>" . df($diplomacy->date) . "</td>
+                <td>" . df($diplomacy->date + WAR_DURATION) . "</td>
                 <td>";
-        if ($arr['alliance_bnd_text_pub'] != "") {
+        if ($diplomacy->publicText != "") {
             echo "[<a href=\"javascript:;\" onclick=\"toggleText('" . $id . "','" . $sid . "');\" id=\"" . $sid . "\">Anzeigen</a>]";
         } else {
             echo "-";
@@ -242,7 +198,7 @@ if (mysql_num_rows($res) > 0) {
         echo "</td>
             </tr>";
         echo "<tr id=\"" . $id . "\" style=\"display:none;\">
-                <td colspan=\"5\">" . text2html(stripslashes($arr['alliance_bnd_text_pub'])) . "</td>
+                <td colspan=\"5\">" . text2html(stripslashes($diplomacy->publicText)) . "</td>
             </tr>";
     }
     tableEnd();
@@ -256,29 +212,8 @@ if (mysql_num_rows($res) > 0) {
 //
 // Friedensabkommen
 //
-$res = dbquery("
-    SELECT
-        a1.alliance_name as an1,
-        a2.alliance_name as an2,
-        a1.alliance_tag as at1,
-        a2.alliance_tag as at2,
-        alliance_bnd_alliance_id1 as aid1,
-        alliance_bnd_alliance_id2 as aid2,
-        alliance_bnd_date
-    FROM
-        alliance_bnd
-    INNER JOIN
-        alliances AS a1
-    ON alliance_bnd_alliance_id1 = a1.alliance_id
-    INNER JOIN
-        alliances AS a2
-    ON alliance_bnd_alliance_id2 = a2.alliance_id
-    WHERE
-        alliance_bnd_level=4
-    ORDER BY
-        alliance_bnd_date DESC;
-    ");
-if (mysql_num_rows($res) > 0) {
+$peace = $allianceDiplomacyRepository->get(AllianceDiplomacyLevel::PEACE);
+if (count($peace) > 0) {
     tableStart("Aktuelle Friedensabkommen (Dauer " . round(PEACE_DURATION / 3600) . "h)");
     echo "<tr>
             <th width=\"30%\">Allianz 1</th>
@@ -286,12 +221,12 @@ if (mysql_num_rows($res) > 0) {
             <th width=\"20%\">Start</th>
             <th width=\"20%\">Ende</th>
         </tr>";
-    while ($arr = mysql_fetch_array($res)) {
+    foreach ($peace as $diplomacy) {
         echo "<tr>
-                <td><a href=\"?page=alliance&amp;info_id=" . $arr['aid1'] . "\" " . tm($arr['at1'], text2html($arr['an1'])) . ">" . text2html($arr['an1']) . "</td>
-                <td><a href=\"?page=alliance&amp;info_id=" . $arr['aid2'] . "\" " . tm($arr['at2'], text2html($arr['an2'])) . ">" . text2html($arr['an2']) . "</td>
-                <td>" . df($arr['alliance_bnd_date']) . "</td>
-                <td>" . df($arr['alliance_bnd_date'] + PEACE_DURATION) . "</td>
+                <td><a href=\"?page=alliance&amp;info_id=" . $diplomacy->alliance1Id . "\" " . tm($diplomacy->alliance1Tag, text2html($diplomacy->alliance1Name)) . ">" . text2html($diplomacy->alliance1Name) . "</td>
+                <td><a href=\"?page=alliance&amp;info_id=" . $diplomacy->alliance2Id . "\" " . tm($diplomacy->alliance2Tag, text2html($diplomacy->alliance2Name)) . ">" . text2html($diplomacy->alliance2Name) . "</td>
+                <td>" . df($diplomacy->date) . "</td>
+                <td>" . df($diplomacy->date + PEACE_DURATION) . "</td>
             </tr>";
     }
     tableEnd();

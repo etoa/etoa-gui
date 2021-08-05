@@ -17,6 +17,6 @@ class TechnologyRequirementRepositoryTest extends AbstractDbTestCase
 
     public function testGetAll(): void
     {
-        $this->assertNotEmpty($this->repository->getAll());
+        $this->assertNotEmpty($this->repository->getAll()->getBuildingRequirements(4));
     }
 }

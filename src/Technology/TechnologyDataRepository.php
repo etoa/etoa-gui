@@ -9,7 +9,7 @@ class TechnologyDataRepository extends AbstractRepository
     /**
      * @return array<int, string>
      */
-    public function getTechnologyNames(bool $showAll = false, bool $orderById = false): array
+    public function getTechnologyNames(bool $showAll = false, TechnologySort $orderBy = null): array
     {
         $qb = $this->createQueryBuilder()
             ->select('t.tech_id', 't.tech_name')
@@ -20,10 +20,12 @@ class TechnologyDataRepository extends AbstractRepository
             $qb->where('t.tech_show = 1');
         }
 
+        $orderBy = $orderBy ?? TechnologySort::type();
+        foreach ($orderBy->sorts as $sort) {
+            $qb->addOrderBy($sort);
+        }
+
         return $qb
-            ->orderBy($orderById ? 't.tech_id' : 'tt.type_order')
-            ->addOrderBy('t.tech_order')
-            ->addOrderBy('t.tech_name')
             ->execute()
             ->fetchAllKeyValue();
     }

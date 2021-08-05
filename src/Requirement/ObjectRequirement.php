@@ -1,8 +1,8 @@
 <?php declare(strict_types=1);
 
-namespace EtoA\Technology;
+namespace EtoA\Requirement;
 
-class TechnologyRequirement
+class ObjectRequirement
 {
     public int $id;
     public int $objectId;

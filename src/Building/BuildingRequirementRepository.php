@@ -2,41 +2,13 @@
 
 namespace EtoA\Building;
 
-use EtoA\Core\AbstractRepository;
+use Doctrine\DBAL\Connection;
+use EtoA\Requirement\AbstractRequirementRepository;
 
-class BuildingRequirementRepository extends AbstractRepository
+class BuildingRequirementRepository extends AbstractRequirementRepository
 {
-    /**
-     * @return array<int, int>
-     */
-    public function getDuplicateTechRequirements(): array
+    public function __construct(Connection $connection)
     {
-        return $this->getDuplicateRequirements('req_building_id');
-    }
-
-    /**
-     * @return array<int, int>
-     */
-    public function getDuplicateBuildingRequirements(): array
-    {
-        return $this->getDuplicateRequirements('req_tech_id');
-    }
-
-    /**
-     * @return array<int, int>
-     */
-    private function getDuplicateRequirements(string $requirement): array
-    {
-        $data = $this->createQueryBuilder()
-            ->select('obj_id', $requirement)
-            ->from('building_requirements')
-            ->where($requirement . ' > 0')
-            ->groupBy('obj_id')
-            ->addGroupBy($requirement)
-            ->having('COUNT(*) > 1')
-            ->execute()
-            ->fetchAllKeyValue();
-
-        return array_map(fn ($value) => (int) $value, $data);
+        parent::__construct($connection, 'building_requirements');
     }
 }
