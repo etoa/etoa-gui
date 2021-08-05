@@ -1,6 +1,7 @@
 <?php
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Message\ReportRepository;
 
 /**
  * Implements a report management system, replacing some of the
@@ -182,7 +183,7 @@ abstract class Report
      * @param string|array $where WHERE conditions where $arrayKey is database field name
      * and $arrayValue is database field value
      * @param string $order ORDER query string
-     * @return array Array containing a list of reports
+     * @return array|int Array containing a list of reports
      */
     static function &find($where = null, $order = null, $limit = "", $count = 0, $admin = false, $join = "")
     {
@@ -295,6 +296,8 @@ abstract class Report
 
         /** @var ConfigurationService */
         $config = $app[ConfigurationService::class];
+        /** @var ReportRepository $reportRepository */
+        $reportRepository = $app[ReportRepository::class];
 
         $nr = 0;
         if ($onlyDeleted == 0) {
@@ -303,15 +306,7 @@ abstract class Report
                 ? time() - $threshold
                 : time() - (24 * 3600 * $config->getInt('reports_threshold_days'));
 
-            dbquery("
-                    DELETE FROM
-                        reports
-                    WHERE
-                        `archived`='0'
-                        AND `read`='1'
-                        AND `timestamp`<'" . $timestamp . "';
-                ");
-            $nr = mysql_affected_rows();
+            $nr = $reportRepository->removeUnarchivedread($timestamp);
             Log::add("4", Log::INFO, "Unarchivierte Berichte die älter als " . date("d.m.Y H:i", $timestamp) . " sind wurden gelöscht!");
         }
 
@@ -320,16 +315,9 @@ abstract class Report
             ? time() - $threshold
             : time() - (24 * 3600 * $config->param1Int('reports_threshold_days'));
 
-
-        dbquery("
-                DELETE FROM
-                    reports
-                WHERE
-                    deleted='1'
-                    AND timestamp<'" . $timestamp . "';
-            ");
+        $nr += $reportRepository->removeDeleted($timestamp);
         Log::add("4", Log::INFO, "Unarchivierte Berichte die älter als " . date("d.m.Y H:i", $timestamp) . " sind wurden gelöscht!");
-        $nr += mysql_affected_rows();
+
         return $nr;
     }
 }

@@ -38,6 +38,71 @@ class ReportRepository extends AbstractRepository
             ->fetchOne();
     }
 
+    public function countUserUnread(int $userId): int
+    {
+        return (int) $this->createQueryBuilder()
+            ->select('COUNT(id)')
+            ->from('reports')
+            ->where('user_id = :userId')
+            ->andWhere('`read` = 0')
+            ->andWhere('`deleted` = 0')
+            ->setParameter('userId', $userId)
+            ->execute()
+            ->fetchOne();
+    }
+
+    /**
+     * @param int[] $ids
+     */
+    public function archive(int $userId, array $ids): void
+    {
+        if (count($ids) === 0) {
+            return;
+        }
+
+        $this->createQueryBuilder()
+            ->update('reports')
+            ->set('archived', '1')
+            ->where('user_id = :userId')
+            ->andWhere('id IN (:ids)')
+            ->setParameter('userId', $userId)
+            ->setParameter('ids', $ids, Connection::PARAM_INT_ARRAY)
+            ->execute();
+    }
+
+    /**
+     * @param int[] $ids
+     */
+    public function delete(int $userId, bool $archived, array $ids = null, string $type = null): void
+    {
+        if ($ids !== null && count($ids) === 0) {
+            return;
+        }
+
+        $qb = $this->createQueryBuilder()
+            ->update('reports')
+            ->set('deleted', '1')
+            ->where('user_id = :userId')
+            ->andWhere('archived = :archived')
+            ->setParameter('userId', $userId)
+            ->setParameter('archived', $archived);
+
+        if ($ids !== null) {
+            $qb
+                ->andWhere('id IN (:ids)')
+                ->setParameter('ids', $ids, Connection::PARAM_INT_ARRAY);
+        }
+
+        if ($type !== null) {
+            $qb
+                ->andWhere('type = :type')
+                ->setParameter('type', $type);
+        }
+
+        $qb
+            ->execute();
+    }
+
     /**
      * @param int[] $availableUserIds
      */
@@ -65,6 +130,27 @@ class ReportRepository extends AbstractRepository
             ->delete('reports')
             ->where($qb->expr()->notIn('user_id', ':userIds'))
             ->setParameter('userIds', $availableUserIds, Connection::PARAM_INT_ARRAY)
+            ->execute();
+    }
+
+    public function removeUnarchivedread(int $beforeTimestamp): int
+    {
+        return (int) $this->createQueryBuilder()
+            ->delete('reports')
+            ->where('archived = 0')
+            ->andWhere('read = 1')
+            ->andWhere('timestamp < :timestamp')
+            ->setParameter('timestamp', $beforeTimestamp)
+            ->execute();
+    }
+
+    public function removeDeleted(int $beforeTimestamp): int
+    {
+        return (int) $this->createQueryBuilder()
+            ->delete('reports')
+            ->where('deleted = 1')
+            ->andWhere('timestamp < :timestamp')
+            ->setParameter('timestamp', $beforeTimestamp)
             ->execute();
     }
 }
