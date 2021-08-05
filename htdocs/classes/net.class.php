@@ -1,5 +1,7 @@
 <?php
 
+use EtoA\HostCache\HostCacheRepository;
+
 /**
  * Description of net
  *
@@ -22,40 +24,20 @@ class Net
         if (isset(self::$hostCache[$ip]))
             return self::$hostCache[$ip];
 
-        $t = time();
-        $res = dbquery("
-        SELECT
-            host
-        FROM
-            hostname_cache
-        WHERE
-            addr='" . $ip . "'
-            AND timestamp>" . ($t - 86400) . "
-        ");
-        if (mysql_num_rows($res) > 0) {
-            $arr = mysql_fetch_row($res);
-            $host = $arr[0];
+        global $app;
+        /** @var HostCacheRepository $hostCacheRepository */
+        $hostCacheRepository = $app[HostCacheRepository::class];
+
+        $host = $hostCacheRepository->getHost($ip);
+        if ($host !== null) {
             self::$hostCache[$ip] = $host;
             return $host;
         }
 
         $host = @gethostbyaddr($ip);
         self::$hostCache[$ip] = $host;
-        dbquery("
-        REPLACE INTO
-            hostname_cache
-        (
-          addr,
-            host,
-            timestamp
-        )
-        VALUES
-        (
-            '" . $ip . "',
-            '" . $host . "',
-            " . $t . "
-        );
-        ");
+        $hostCacheRepository->store($host, $ip);
+
         return $host;
     }
 
@@ -67,50 +49,28 @@ class Net
         if (isset(self::$ipCache[$host]))
             return self::$ipCache[$host];
 
-        $t = time();
-        $res = dbquery("
-        SELECT
-            addr
-        FROM
-            hostname_cache
-        WHERE
-            host='" . $host . "'
-            AND timestamp>" . ($t - 86400) . "
-        ");
-        if (mysql_num_rows($res) > 0) {
-            $arr = mysql_fetch_row($res);
-            $ip = $arr[0];
+        global $app;
+        /** @var HostCacheRepository $hostCacheRepository */
+        $hostCacheRepository = $app[HostCacheRepository::class];
+
+        $ip = $hostCacheRepository->getAddr($host);
+        if ($ip !== null) {
             self::$ipCache[$host] = $ip;
             return $ip;
         }
 
         $ip = @gethostbyname($host);
         self::$ipCache[$host] = $ip;
-        dbquery("
-        REPLACE INTO
-            hostname_cache
-        (
-          addr,
-            host,
-            timestamp
-        )
-        VALUES
-        (
-            '" . $ip . "',
-            '" . $host . "',
-            " . $t . "
-        );
-        ");
+        $hostCacheRepository->store($host, $ip);
+
         return $ip;
     }
 
     static function clearCache()
     {
-        dbquery("
-        DELETE FROM
-            hostname_cache
-        WHERE
-            timestamp<" . (time() - 86400) . "
-        ");
+        global $app;
+        /** @var HostCacheRepository $hostCacheRepository */
+        $hostCacheRepository = $app[HostCacheRepository::class];
+        $hostCacheRepository->clear();
     }
 }
