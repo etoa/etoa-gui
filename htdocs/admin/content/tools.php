@@ -1,14 +1,17 @@
 <?php
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Log\AccessLogRepository;
 
 /** @var ConfigurationService */
 $config = $app[ConfigurationService::class];
+/** @var AccessLogRepository $accessLogRepository */
+$accessLogRepository = $app[AccessLogRepository::class];
 
 echo "<h1>Tools</h1>";
 
 if ($sub == "accesslog") {
-    accessLog($config);
+    accessLog($config, $accessLogRepository);
 } elseif ($sub == "filesharing") {
     fileSharing();
 } elseif ($sub == "ipresolver") {
@@ -17,7 +20,7 @@ if ($sub == "accesslog") {
     toolsIndex();
 }
 
-function accessLog(ConfigurationService $config)
+function accessLog(ConfigurationService $config, AccessLogRepository $accessLogRepository)
 {
     global $page;
     global $sub;
@@ -30,7 +33,7 @@ function accessLog(ConfigurationService $config)
         success_msg("Einstellungen gespeichert");
     }
     if (isset($_POST['submit_truncate'])) {
-        dbquery("DELETE FROM accesslog;");
+        $accessLogRepository->deleteAll();
         success_msg("Aufzeichnungen gelöscht");
     }
 
@@ -48,30 +51,20 @@ function accessLog(ConfigurationService $config)
     $domains = array('ingame', 'public', 'admin');
 
     foreach ($domains as $d) {
-        $res = dbquery("
-        SELECT target,COUNT(target) cnt
-        FROM accesslog
-        WHERE domain='$d'
-        GROUP BY target
-        ORDER BY cnt DESC");
         echo "<h3>" . ucfirst($d) . "</h3>";
         echo "<table class=\"tb\" style=\"width:500px\"><tr>
         <th>Ziel</th>
         <th style=\"width:90px\">Zugriffe
         <th style=\"width:200px\">Unterbereiche</th></tr>";
-        while ($arr = mysql_fetch_assoc($res)) {
-            echo "<tr><td>" . $arr['target'] . "</td>
-            <td>" . $arr['cnt'] . "</td>
+        $counts = $accessLogRepository->getCountsForDomain($d);
+        foreach ($counts as $target => $targetCount) {
+            echo "<tr><td>" . $target . "</td>
+            <td>" . $targetCount . "</td>
             <td style=\"padding:1px\"><table style=\"margin:0;width:100%;border:none;\">";
-            $sres = dbquery("
-                        SELECT sub,COUNT(sub) cnt
-                        FROM accesslog
-                        WHERE domain='$d' AND target='" . $arr['target'] . "'
-                        GROUP BY sub
-                        ORDER BY cnt DESC");
-            while ($sarr = mysql_fetch_assoc($sres)) {
-                echo "<tr><td>" . $sarr['sub'] . "</td>
-                <td style=\"width:60px\">" . $sarr['cnt'] . "</td></tr>";
+            $subCounts = $accessLogRepository->getCountsForTarget($d, $target);
+            foreach ($subCounts as $subLabel => $count) {
+                echo "<tr><td>" . $subLabel . "</td>
+                <td style=\"width:60px\">" . $count . "</td></tr>";
             }
             echo "</table></td>
             </tr>";

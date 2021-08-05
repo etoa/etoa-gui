@@ -2,6 +2,7 @@
 
 use Doctrine\Common\Collections\ArrayCollection;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Log\AccessLogRepository;
 use EtoA\Support\StringUtils;
 
 /**
@@ -1347,15 +1348,15 @@ function logAccess($target, $domain = "", $sub = "")
 
     /** @var ConfigurationService */
     $config = $app[ConfigurationService::class];
+    /** @var AccessLogRepository $accessLogRepository */
+    $accessLogRepository = $app[AccessLogRepository::class];
 
     if ($config->getBoolean('accesslog')) {
-        if (!isset($_SESSION['accesslog_sid']))
+        if (!isset($_SESSION['accesslog_sid'])) {
             $_SESSION['accesslog_sid'] = uniqid((string) mt_rand(), true);
-        dbquery("
-        INSERT INTO
-        accesslog
-        (target,timestamp,sid,sub,domain)
-        VALUES ('$target',UNIX_TIMESTAMP(),'" . $_SESSION['accesslog_sid'] . "','$sub','$domain');");
+        }
+
+        $accessLogRepository->add($target, $_SESSION['accesslog_sid'], $sub, $domain);
     }
 }
 
