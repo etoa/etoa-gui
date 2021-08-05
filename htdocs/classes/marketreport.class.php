@@ -28,6 +28,7 @@ class MarketReport extends Report
         'auctionoverbid' => 'Überboten',
         'auctionwon' => 'Auktion gewonnen',
         'auctionfinished' => 'Auktion beendet',
+        'other' => 'other',
     );
 
     protected $subType = 'other';

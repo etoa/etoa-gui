@@ -51,6 +51,35 @@ class ReportRepository extends AbstractRepository
             ->fetchOne();
     }
 
+    public function addReport(string $type, int $userId, int $allianceId, ?string $content, int $entity1Id, int $entity2Id, int $opponentId): int
+    {
+        $this->createQueryBuilder()
+            ->insert('reports')
+            ->values([
+                'timestamp' => ':time',
+                'type' => ':type',
+                'user_id' => ':userId',
+                'alliance_id' => ':allianceId',
+                'content' => ':content',
+                'entity1_id' => ':entity1Id',
+                'entity2_id' => ':entity2Id',
+                'opponent1_id' => ':opponentId',
+            ])
+            ->setParameters([
+                ':time' => time(),
+                'type' => $type,
+                'userId' => $userId,
+                'allianceId' => $allianceId,
+                'content' => $content,
+                'entity1Id' => $entity1Id,
+                'entity2Id' => $entity2Id,
+                'opponentId' => $opponentId,
+            ])
+            ->execute();
+
+        return (int) $this->getConnection()->lastInsertId();
+    }
+
     /**
      * @param int[] $ids
      */
