@@ -145,12 +145,12 @@ function searchShipList($val)
     $nCount = 0;
     $sLastHit = null;
 
-    $ships = $shipDataRepository->searchShips(ShipSearch::create()->showOrBuildable()->nameLike($val), null, 20);
+    $ships = $shipDataRepository->searchShipNames(ShipSearch::create()->showOrBuildable()->nameLike($val), null, 20);
     if (count($ships) > 0) {
-        foreach ($ships as $ship) {
+        foreach ($ships as $shipName) {
             $nCount++;
-            $sOut .= "<a href=\"#\" onclick=\"javascript:document.getElementById('$inputId').value='" . htmlspecialchars($ship->name) . "';fleetBookmarkAddShipToList('" . $ship->name . "');document.getElementById('$targetId').style.display = 'none';\">" . htmlspecialchars($ship->name) . "</a>";
-            $sLastHit = $ship->name;
+            $sOut .= "<a href=\"#\" onclick=\"javascript:document.getElementById('$inputId').value='" . htmlspecialchars($shipName) . "';fleetBookmarkAddShipToList('" . $shipName . "');document.getElementById('$targetId').style.display = 'none';\">" . htmlspecialchars($shipName) . "</a>";
+            $sLastHit = $shipName;
         }
     }
 

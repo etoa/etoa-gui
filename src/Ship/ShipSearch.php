@@ -29,9 +29,25 @@ class ShipSearch
         return $this;
     }
 
+    public function show(bool $show): ShipSearch
+    {
+        $this->parts[] = 'ship_show = :show';
+        $this->parameters['show'] = (int) $show;
+
+        return $this;
+    }
+
     public function buildable(): ShipSearch
     {
         $this->parts[] = 'ship_buildable=1';
+
+        return $this;
+    }
+
+    public function special(bool $special): ShipSearch
+    {
+        $this->parts[] = 'special_ship = :special';
+        $this->parameters['special'] = (int) $special;
 
         return $this;
     }

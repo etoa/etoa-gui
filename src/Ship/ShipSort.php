@@ -17,7 +17,7 @@ class ShipSort
         "costs_metal" => "Titan",
         "costs_crystal" => "Silizium",
         "costs_plastic" => "PVC",
-        "costs_fuel" => "Tritium"
+        "costs_fuel" => "Tritium",
     ];
 
     /** @var array<string, ?string> */

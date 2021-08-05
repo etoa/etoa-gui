@@ -24,20 +24,30 @@ class ShipDataRepository extends AbstractRepository
      */
     public function getShipNames(bool $showAll = false, ShipSort $orderBy = null): array
     {
+        $search = $showAll ? ShipSearch::create()->show(true)->special(false) : null;
+
+        return $this->searchShipNames($search, $orderBy);
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    public function searchShipNames(ShipSearch $search = null, ShipSort $orderBy = null, int $limit = null): array
+    {
         $qb = $this->createQueryBuilder()
             ->select('ship_id', 'ship_name')
             ->addSelect()
             ->from('ships');
 
-        if (!$showAll) {
-            $qb
-                ->where('ship_show = 1')
-                ->andWhere('special_ship = 0');
+        $qb = $this->applySearch($qb, $search);
+
+        if ($limit !== null) {
+            $qb->setMaxResults($limit);
         }
 
         return $this->applySort($qb, $orderBy ?? ShipSort::name())
-                ->execute()
-                ->fetchAllKeyValue();
+            ->execute()
+            ->fetchAllKeyValue();
     }
 
 
@@ -272,18 +282,13 @@ class ShipDataRepository extends AbstractRepository
             ->select('*')
             ->from('ships');
 
-        $qb->setParameters($search->parameters);
-        foreach ($search->parts as $query) {
-            $qb->andWhere($query);
-        }
-
-        $this->applySort($qb, $sort);
-
         if ($limit !== null) {
             $qb->setMaxResults($limit);
         }
 
-        $data = $qb
+        $qb = $this->applySearch($qb, $search);
+
+        $data = $this->applySort($qb, $sort)
             ->execute()
             ->fetchAllAssociative();
 
@@ -295,6 +300,18 @@ class ShipDataRepository extends AbstractRepository
         if ($shipSort !== null) {
             foreach ($shipSort->sorts as $sort => $order) {
                 $qb->addOrderBy($sort, $order);
+            }
+        }
+
+        return $qb;
+    }
+
+    private function applySearch(QueryBuilder $qb, ShipSearch $search = null): QueryBuilder
+    {
+        if ($search !== null) {
+            $qb->setParameters($search->parameters);
+            foreach ($search->parts as $query) {
+                $qb->andWhere($query);
             }
         }
 

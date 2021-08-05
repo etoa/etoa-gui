@@ -28,7 +28,7 @@ class PreciseResources
     {
         $resources = new PreciseResources();
         $resources->metal = $this->metal * $factor;
-        $resources->crystal  =$this->crystal * $factor;
+        $resources->crystal = $this->crystal * $factor;
         $resources->plastic = $this->plastic * $factor;
         $resources->fuel = $this->fuel * $factor;
         $resources->food = $this->food * $factor;
