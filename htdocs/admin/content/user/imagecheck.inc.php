@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\User\UserRepository;
+use EtoA\User\UserSearch;
 
 $dir = PROFILE_IMG_DIR . "/";
 
@@ -36,29 +37,21 @@ if (isset($_POST['validate_submit'])) {
 //
 echo "<h2>Noch nicht verifizierte Bilder</h2>";
 echo "Diese Bilder gehören zu aktiven Spielern. Bitte prüfe regelmässig, ob sie nicht gegen unsere Regeln verstossen!<br/>";
-$res = dbquery("SELECT
-        user_id,
-        user_nick,
-        user_profile_img
-    FROM
-        users
-    WHERE
-        user_profile_img_check=1
-        AND user_profile_img!='';");
-if (mysql_num_rows($res) > 0) {
-    echo "Es sind " . mysql_num_rows($res) . " Bilder gespeichert!<br/><br/>";
+$users = $userRepository->searchUsers(UserSearch::create()->confirmedImageCheck());
+if (count($users) > 0) {
+    echo "Es sind " . count($users) . " Bilder gespeichert!<br/><br/>";
     echo "<form action=\"\" method=\"post\">
         <table class=\"tb\"><tr><th>User</th><th>Fehler</th><th>Aktionen</th></tr>";
-    while ($arr = mysql_fetch_assoc($res)) {
-        echo "<tr><td>" . $arr['user_nick'] . "</td><td>";
-        if (file_exists($dir . $arr['user_profile_img'])) {
-            echo '<img src="' . $dir . $arr['user_profile_img'] . '" alt="Profil" />';
+    foreach ($users as $user) {
+        echo "<tr><td>" . $user->nick . "</td><td>";
+        if (file_exists($dir . $user->profileImage)) {
+            echo '<img src="' . $dir . $user->profileImage . '" alt="Profil" />';
         } else {
             echo '<span style=\"color:red\">Bild existiert nicht!</span>';
         }
         echo "</td><td>
-            <input type=\"radio\" name=\"validate[" . $arr['user_id'] . "]\" value=\"1\" checked=\"checked\"> Bild ist in Ordnung<br/>
-            <input type=\"radio\" name=\"validate[" . $arr['user_id'] . "]\" value=\"0\" > Bild verstösst gegen die Regeln. Lösche es!<br/>
+            <input type=\"radio\" name=\"validate[" . $user->id . "]\" value=\"1\" checked=\"checked\"> Bild ist in Ordnung<br/>
+            <input type=\"radio\" name=\"validate[" . $user->id . "]\" value=\"0\" > Bild verstösst gegen die Regeln. Lösche es!<br/>
             </td></tr>";
     }
     echo "</table><br/>
@@ -70,24 +63,11 @@ if (mysql_num_rows($res) > 0) {
 //
 // Orphans
 //
-$res = dbquery("
-    SELECT
-        user_id,
-        user_nick,
-        user_profile_img
-    FROM
-        users
-    WHERE
-        user_profile_img!=''
-    ");
-$nr = mysql_num_rows($res);
-$paths = array();
-$nicks = array();
-if ($nr > 0) {
-    while ($arr = mysql_fetch_array($res)) {
-        $paths[$arr['user_id']] = $arr['user_profile_img'];
-        $nicks[$arr['user_id']] = $arr['user_nick'];
-    }
+$users = $userRepository->searchUsers(UserSearch::create()->withProfileImage());
+$paths = [];
+foreach ($users as $user) {
+    $paths[$user->id] = $user->profileImage;
+
 }
 $files = array();
 if (is_dir($dir)) {

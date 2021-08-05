@@ -26,4 +26,41 @@ class UserSearch extends AbstractSearch
 
         return $this;
     }
+
+    public function notObserved(): self
+    {
+        $this->parts[] = "user_observe IS NULL";
+
+        return $this;
+    }
+
+    public function withProfileImage(): self
+    {
+        $this->parts[] = "user_profile_img <> ''";
+
+        return $this;
+    }
+
+    public function confirmedImageCheck(): self
+    {
+        $this->parts[] = "user_profile_img_check = 1 AND user_profile_img <> ''";
+
+        return $this;
+    }
+
+    public function allianceId(int $allianceId): self
+    {
+        $this->parts[] = "user_alliance_id = :allianceId";
+        $this->parameters['allianceId'] = $allianceId;
+
+        return $this;
+    }
+
+    public function notUser(int $userId): self
+    {
+        $this->parts[] = "user_id <> :notUserId";
+        $this->parameters['notUserId'] = $userId;
+
+        return $this;
+    }
 }

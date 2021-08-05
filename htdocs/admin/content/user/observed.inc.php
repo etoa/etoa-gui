@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\User\UserRepository;
+use EtoA\User\UserSearch;
 
 echo "<h1>Beobachtungsliste</h1>";
 
@@ -232,21 +233,9 @@ else {
         <table class=\"tb\">
         <tr><th>
         Benutzer:</th><td><select name=\"user_id\">";
-    $res = dbquery("
-            SELECT
-                user_nick,
-                user_id
-            FROM
-                users
-            WHERE
-                user_observe IS NULL
-            ORDER BY
-                user_nick
-            ");
-    if (mysql_num_rows($res) > 0) {
-        while ($arr = mysql_fetch_array($res)) {
-            echo "<option value=\"" . $arr['user_id'] . "\">" . $arr['user_nick'] . "</option>";
-        }
+    $userNicks = $userRepository->searchUserNicknames(UserSearch::create()->notObserved());
+    foreach ($userNicks as $userId => $userNick) {
+        echo "<option value=\"" . $userId . "\">" . $userNick . "</option>";
     }
     echo "</select></td></tr>
             <tr><th>Grund:</th><td><textarea name=\"user_observe\" cols=\"80\" rows=\"5\">Multiverdacht</textarea></td></tr>

@@ -240,22 +240,7 @@ class UserRepository extends AbstractRepository
      */
     public function getAllianceUsers(int $allianceId): array
     {
-        $data = $this->createQueryBuilder()
-            ->select('*')
-            ->from('users')
-            ->where('user_alliance_id = :allianceId')
-            ->setParameter('allianceId', $allianceId)
-            ->orderBy('user_nick', 'ASC')
-            ->execute()
-            ->fetchAllAssociative();
-
-        $result = [];
-        foreach ($data as $row) {
-            $user = new User($row);
-            $result[$user->id] = $user;
-        }
-
-        return $result;
+        return $this->searchUsers(UserSearch::create()->allianceId($allianceId));
     }
 
     public function getUser(int $userId): ?User
@@ -582,5 +567,28 @@ class UserRepository extends AbstractRepository
         return $this->applySearchSortLimit($qb, $search, null, $limit)
             ->execute()
             ->fetchAllKeyValue();
+    }
+
+    /**
+     * @return User[]
+     */
+    public function searchUsers(UserSearch $search = null, int $limit = null): array
+    {
+        $qb = $this->createQueryBuilder()
+            ->select('*')
+            ->from('users')
+            ->orderBy('user_nick');
+
+        $data = $this->applySearchSortLimit($qb, $search, null, $limit)
+            ->execute()
+            ->fetchAllAssociative();
+
+        $users = [];
+        foreach ($data as $row) {
+            $user = new User($row);
+            $users[$user->id] = $user;
+        }
+
+        return $users;
     }
 }

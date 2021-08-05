@@ -5,6 +5,7 @@ use EtoA\Alliance\AllianceRepository;
 use EtoA\Alliance\AllianceSpendRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\User\UserRepository;
+use EtoA\User\UserSearch;
 
 $xajax->register(XAJAX_FUNCTION, "allianceNewsSave");
 $xajax->register(XAJAX_FUNCTION, "allianceNewsLoad");
@@ -188,13 +189,13 @@ function allianceNewsLoadUserList($nid, $aid, $uid)
 
         /** @var UserRepository $userRepository */
         $userRepository = $app[UserRepository::class];
-        $members = $userRepository->getAllianceUsers($aid);
-        foreach ($members as $member) {
-            $out .= '<option value="' . $member->id . '"';
-            if ($uid == $member->id) {
+        $members = $userRepository->searchUserNicknames(UserSearch::create()->allianceId($aid));
+        foreach ($members as $memberId => $memberNick) {
+            $out .= '<option value="' . $memberId . '"';
+            if ($uid == $memberId) {
                 $out .= ' selected="selected"';
             }
-            $out .= '>' . $member->nick . '</option>';
+            $out .= '>' . $memberNick . '</option>';
         }
         $out .= '</select>';
     } else {
@@ -243,7 +244,7 @@ function showSpend($allianceId, $form)
 
     /** @var UserRepository $userRepository */
     $userRepository = $app[UserRepository::class];
-    $members = $userRepository->getAllianceUsers($allianceId);
+    $memberNicks = $userRepository->searchUserNicknames(UserSearch::create()->allianceId($allianceId));
 
     $sum = false;
     $user = 0;
@@ -268,7 +269,7 @@ function showSpend($allianceId, $form)
     $allianceSpendRepository = $app[AllianceSpendRepository::class];
     if ($sum) {
         if ($user > 0) {
-            $user_message = "von " . $members[$user]->nick . " ";
+            $user_message = "von " . $memberNicks[$user] . " ";
         } else {
             $user_message = "";
         }
@@ -303,7 +304,7 @@ function showSpend($allianceId, $form)
     // Einzahlungen werden einzelen ausgegeben
     else {
         if ($user > 0) {
-            $user_message = "von " . $members[$user]->nick . " ";
+            $user_message = "von " . $memberNicks[$user] . " ";
         } else {
             $user_message = "";
         }
@@ -322,7 +323,7 @@ function showSpend($allianceId, $form)
         $spendEntries = $allianceSpendRepository->getSpent($allianceId, $user, (int) $limit);
         if (count($spendEntries) > 0) {
             foreach ($spendEntries as $entry) {
-                tableStart("" . $members[$entry->userId]->nick . " - " . df($entry->time) . "");
+                tableStart("" . $memberNicks[$entry->userId] . " - " . df($entry->time) . "");
                 echo "<tr>
                                 <th class=\"resmetalcolor\" style=\"width:20%\">" . RES_METAL . "</th>
                                 <th class=\"rescrystalcolor\" style=\"width:20%\">" . RES_CRYSTAL . "</th>
