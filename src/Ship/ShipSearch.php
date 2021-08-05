@@ -14,10 +14,26 @@ class ShipSearch
         return new ShipSearch();
     }
 
+    public function id(int $id): ShipSearch
+    {
+        $this->parts[] = "ship_id = :id";
+        $this->parameters['id'] = $id;
+
+        return $this;
+    }
+
     public function nameLike(string $name): ShipSearch
     {
         $this->parts[] = "ship_name LIKE :nameLike";
         $this->parameters['nameLike'] = $name . '%';
+
+        return $this;
+    }
+
+    public function name(string $name): ShipSearch
+    {
+        $this->parts[] = "ship_name = :name";
+        $this->parameters['name'] = $name;
 
         return $this;
     }
