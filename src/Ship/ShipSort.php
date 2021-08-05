@@ -2,7 +2,9 @@
 
 namespace EtoA\Ship;
 
-class ShipSort
+use EtoA\Core\Database\AbstractSort;
+
+class ShipSort extends AbstractSort
 {
     public const USER_SORT_VALUES = [
         "name" => "Name",
@@ -19,9 +21,6 @@ class ShipSort
         "costs_plastic" => "PVC",
         "costs_fuel" => "Tritium",
     ];
-
-    /** @var array<string, ?string> */
-    public array $sorts;
 
     /**
      * @param array<string, ?string> $sorts

@@ -260,7 +260,7 @@ function createNewTicketForm(TicketRepository $ticketRepo, UserRepository $userR
     echo '<form action="?page=' . $page . '" method="post">';
     tableStart();
     echo '<tr><th>User:</th><td>';
-    htmlSelect("user_id", $userRepository->getUserNicknames());
+    htmlSelect("user_id", $userRepository->searchUserNicknames());
     echo '</td></tr>';
     echo '<tr><th>Kategorie:</th><td>';
     htmlSelect("cat_id", $ticketRepo->findAllCategoriesAsMap());

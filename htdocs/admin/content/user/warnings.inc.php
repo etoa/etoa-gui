@@ -10,7 +10,7 @@ echo "<h1>Verwarnungen</h1>";
 $userWarningRepository = $app[UserWarningRepository::class];
 /** @var UserRepository $userRepository */
 $userRepository = $app[UserRepository::class];
-$userNicks = $userRepository->getUserNicknames();
+$userNicks = $userRepository->searchUserNicknames();
 
 if (isset($_GET['edit'])) {
     $warning = $userWarningRepository->getWarning((int) $_GET['edit']);

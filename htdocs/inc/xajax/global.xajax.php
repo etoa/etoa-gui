@@ -7,6 +7,7 @@ use EtoA\Universe\Entity\EntityService;
 use EtoA\Universe\Entity\EntityType;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\User\UserRepository;
+use EtoA\User\UserSearch;
 
 $xajax->register(XAJAX_FUNCTION, 'searchUser');
 $xajax->register(XAJAX_FUNCTION, 'getFlightTargetInfo');
@@ -16,6 +17,11 @@ $xajax->register(XAJAX_FUNCTION, 'formatNumbers');
 //Listet gefundene User auf
 function searchUser($val, $field_id = 'user_nick', $box_id = 'citybox', $separator = ";")
 {
+    global $app;
+
+    /** @var UserRepository $userRepository */
+    $userRepository = $app[UserRepository::class];
+
     $outNick = "";
     $temp = "";
     $nicks = explode($separator, $val);
@@ -25,16 +31,13 @@ function searchUser($val, $field_id = 'user_nick', $box_id = 'citybox', $separat
         $temp = $val;
     }
     $sOut = "";
-    $nCount = 0;
     $sLastHit = null;
 
-    $res = dbquery("SELECT user_nick FROM users WHERE user_nick LIKE '" . $val . "%' LIMIT 20;");
-    if (mysql_num_rows($res) > 0) {
-        while ($arr = mysql_fetch_row($res)) {
-            $nCount++;
-            $sOut .= "<a href=\"#\" onclick=\"javascript:document.getElementById('" . $field_id . "').value=(document.getElementById('" . $field_id . "').value && document.getElementById('" . $field_id . "').value.indexOf(';')!=-1)?document.getElementById('" . $field_id . "').value.replace(/^(.+);[^;]+$/,'$1;')+'" . htmlentities($arr[0], ENT_QUOTES, 'UTF-8') . "':'" . htmlentities($arr[0], ENT_QUOTES, 'UTF-8') . "';document.getElementById('" . $box_id . "').style.display = 'none';\">" . htmlentities($arr[0], ENT_QUOTES, 'UTF-8') . "</a>";
-            $sLastHit = $arr[0];
-        }
+    $nicknames = $userRepository->searchUserNicknames(UserSearch::create()->nameLike($val), 20);
+    $nCount = count($nicknames);
+    foreach ($nicknames as $nickname) {
+        $sOut .= "<a href=\"#\" onclick=\"javascript:document.getElementById('" . $field_id . "').value=(document.getElementById('" . $field_id . "').value && document.getElementById('" . $field_id . "').value.indexOf(';')!=-1)?document.getElementById('" . $field_id . "').value.replace(/^(.+);[^;]+$/,'$1;')+'" . htmlentities($nickname, ENT_QUOTES, 'UTF-8') . "':'" . htmlentities($nickname, ENT_QUOTES, 'UTF-8') . "';document.getElementById('" . $box_id . "').style.display = 'none';\">" . htmlentities($nickname, ENT_QUOTES, 'UTF-8') . "</a>";
+        $sLastHit = $nickname;
     }
 
     if ($nCount > 20) {

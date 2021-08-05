@@ -18,7 +18,7 @@ echo "<h1>Integritätscheck</h1>";
 echo "<h2>Prüfen ob zu allen Planeten mit einer User-Id auch ein User existiert...</h2>";
 /** @var UserRepository $userRepository */
 $userRepository = $app[UserRepository::class];
-$user = $userRepository->getUserNicknames();
+$user = $userRepository->searchUserNicknames();
 
 /** @var PlanetRepository $planetRepository */
 $planetRepository = $app[PlanetRepository::class];

@@ -68,7 +68,7 @@ function profileIndex(AdminUser $cu, Environment $twig, UserRepository $userRepo
 {
     echo $twig->render('admin/profile/profile.html.twig', [
         'user' => $cu,
-        'users' => $userRepository->getUserNicknames(),
+        'users' => $userRepository->searchUserNicknames(),
     ]);
     exit();
 }

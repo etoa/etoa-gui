@@ -67,7 +67,7 @@ function sendUserMessageForm(
             $msgCnt = 0;
             if (in_array($msg_type, [MESSAGE_TYPE_IN_GAME, MESSAGE_TYPE_BOTH], true)) {
                 if ($request->request->getInt('rcpt_type') === RECIPIENT_TYPE_ALL) {
-                    $userIds = array_keys($userRepository->getUserNicknames());
+                    $userIds = array_keys($userRepository->searchUserNicknames());
                 } else {
                     $userIds = [$request->request->getInt('message_user_to')];
                 }
@@ -139,7 +139,7 @@ function sendUserMessageForm(
         <input type=\"radio\" name=\"rcpt_type\" id=\"rcpt_type_1\" value=\"" . RECIPIENT_TYPE_ALL . "\"  checked=\"checked\"  onclick=\"document.getElementById('message_user_to').style.display='none';\" /> <label for=\"rcpt_type_1\">Alle Spieler</label>
         <input type=\"radio\" name=\"rcpt_type\" id=\"rcpt_type_0\" value=\"" . RECIPIENT_TYPE_SINGLE . "\"  onclick=\"document.getElementById('message_user_to').style.display='';\" /> <label for=\"rcpt_type_0\">Einzelner Empfänger</label>
         <select name=\"message_user_to\" id=\"message_user_to\" style=\"display:none\">";
-    $userNicks = $userRepository->getUserNicknames();
+    $userNicks = $userRepository->searchUserNicknames();
     foreach ($userNicks as $userId => $userNick) {
         echo "<option value=\"" . $userId . "\"";
         echo ">" . $userNick . "</option>";

@@ -22,7 +22,7 @@ $cellRepository = $app[CellRepository::class];
 /** @var Request */
 $request = Request::createFromGlobals();
 
-$users = $userRepository->getUserNicknames();
+$users = $userRepository->searchUserNicknames();
 if (count($users) === 0) {
     $errorMessage = 'Keine Benutzer vorhanden!';
 }

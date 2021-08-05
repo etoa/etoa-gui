@@ -1,31 +1,20 @@
 <?PHP
+
+use EtoA\User\UserRepository;
+use EtoA\User\UserSearch;
+
 if (isset($_POST['search_query']) && $_POST['search_query'] != "") {
     $search = $_POST['search_query'];
     echo "<h1>Suche nach <i>" . $search . "</i></h1>";
 
     // Users
-    $res = dbquery("
-        SELECT
-            user_id,
-            user_nick
-        FROM
-            users
-        WHERE
-            user_nick LIKE '%" . $search . "%'
-            OR user_name LIKE '%" . $search . "%'
-            OR user_email LIKE '%" . $search . "%'
-            OR user_email_fix LIKE '%" . $search . "%'
-            OR dual_email LIKE '%" . $search . "%'
-            OR dual_name LIKE '%" . $search . "%'
-        ORDER BY
-            user_nick
-        LIMIT 30;
-
-        ");
-    if (mysql_num_rows($res) > 0) {
+    /** @var UserRepository $userRepository */
+    $userRepository = $app[UserRepository::class];
+    $userNicks = $userRepository->searchUserNicknames(UserSearch::create()->nameOrEmailOrDualLike($search), 30);
+    if (count($userNicks) > 0) {
         echo "<h2>Spieler</h2><ul>";
-        while ($arr = mysql_fetch_array($res)) {
-            echo "<li><a href=\"?page=user&amp;sub=edit&amp;id=" . $arr['user_id'] . "\">" . $arr['user_nick'] . "</a></li>";
+        foreach ($userNicks as $userId => $userNick) {
+            echo "<li><a href=\"?page=user&amp;sub=edit&amp;id=" . $userId . "\">" . $userNick . "</a></li>";
         }
         echo "</ul>";
     }

@@ -34,7 +34,7 @@ if ($request->query->getInt('remove') > 0) {
     success_msg("Spieler wurde von der Liste entfernt!");
 }
 
-$users = $userRepository->getUserNicknames();
+$users = $userRepository->searchUserNicknames();
 unset($users[$cu->id]);
 
 tableStart('Ignorierliste');

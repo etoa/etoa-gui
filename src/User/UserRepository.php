@@ -202,19 +202,6 @@ class UserRepository extends AbstractRepository
             ->execute();
     }
 
-    /**
-     * @return array<int, string>
-     */
-    public function getUserNicknames(): array
-    {
-        return $this->createQueryBuilder()
-            ->select('user_id, user_nick')
-            ->from('users')
-            ->orderBy('user_nick')
-            ->execute()
-            ->fetchAllKeyValue();
-    }
-
     public function saveDiscoveryMask(int $userId, string $mask): void
     {
         $this->createQueryBuilder()
@@ -580,5 +567,20 @@ class UserRepository extends AbstractRepository
                 'observe' => $observe,
             ])
             ->execute();
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    public function searchUserNicknames(UserSearch $search = null, int $limit = null): array
+    {
+        $qb = $this->createQueryBuilder()
+            ->select('user_id, user_nick')
+            ->from('users')
+            ->orderBy('user_nick');
+
+        return $this->applySearchSortLimit($qb, $search, null, $limit)
+            ->execute()
+            ->fetchAllKeyValue();
     }
 }

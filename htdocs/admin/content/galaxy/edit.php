@@ -180,7 +180,7 @@ Neuer Besitzer: [page user sub=edit user_id=" . $request->request->getInt('plane
             //Listet alle User der Spiels auf
             echo "<tr><th>Besitzer</th><td colspan=\"3\"><select name=\"planet_user_id\">";
             echo "<option value=\"0\">(niemand)</option>";
-            foreach ($userRepo->getUserNicknames() as $userId => $userNick) {
+            foreach ($userRepo->searchUserNicknames() as $userId => $userNick) {
                 echo "<option value=\"$userId\"";
                 if ($planet->userId == $userId) {
                     echo " selected=\"selected\"";

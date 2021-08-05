@@ -8,7 +8,7 @@ echo "<p>Banner werden jeweils beim Aktualisieren der Punkte neu generiert.</p>"
 
 /** @var UserRepository $userRepository */
 $userRepository = $app[UserRepository::class];
-$userNicks = $userRepository->getUserNicknames();
+$userNicks = $userRepository->searchUserNicknames();
 foreach ($userNicks as $userId => $userNick) {
     $name = Ranking::getUserBannerPath($userId);
     if (file_exists($name)) {

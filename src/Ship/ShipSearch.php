@@ -2,13 +2,10 @@
 
 namespace EtoA\Ship;
 
-class ShipSearch
-{
-    /** @var string[] */
-    public array $parts = [];
-    /** @var array<string, mixed> */
-    public array $parameters = [];
+use EtoA\Core\Database\AbstractSearch;
 
+class ShipSearch extends AbstractSearch
+{
     public static function create(): ShipSearch
     {
         return new ShipSearch();

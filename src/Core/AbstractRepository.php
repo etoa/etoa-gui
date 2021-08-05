@@ -4,6 +4,8 @@ namespace EtoA\Core;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Query\QueryBuilder;
+use EtoA\Core\Database\AbstractSearch;
+use EtoA\Core\Database\AbstractSort;
 
 abstract class AbstractRepository
 {
@@ -49,5 +51,27 @@ abstract class AbstractRepository
             ->orderBy($orderById ? $idField : $nameField)
             ->execute()
             ->fetchAllKeyValue();
+    }
+
+    protected function applySearchSortLimit(QueryBuilder $qb, AbstractSearch $search = null, AbstractSort $sorts = null, int $limit = null): QueryBuilder
+    {
+        if ($search !== null) {
+            $qb->setParameters($search->parameters);
+            foreach ($search->parts as $query) {
+                $qb->andWhere($query);
+            }
+        }
+
+        if ($sorts !== null) {
+            foreach ($sorts->sorts as $sort => $order) {
+                $qb->addOrderBy($sort, $order);
+            }
+        }
+
+        if ($limit !== null) {
+            $qb->setMaxResults($limit);
+        }
+
+        return $qb;
     }
 }

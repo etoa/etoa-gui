@@ -216,7 +216,7 @@ else {
     echo "<p>Spieler wählen: <select name=\"export_user_id\">";
     /** @var UserRepository $userRepository */
     $userRepository = $app[UserRepository::class];
-    $userNicks = $userRepository->getUserNicknames();
+    $userNicks = $userRepository->searchUserNicknames();
     foreach ($userNicks as $userId => $userNick) {
         echo "<option value=\"" . $userId . "\">" . $userNick . "</option>";
     }
