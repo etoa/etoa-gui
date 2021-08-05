@@ -12,11 +12,13 @@ class WarPeaceUpdateTask implements IPeriodicTask
 {
     private AllianceHistoryRepository $allianceHistoryRepository;
     private MessageRepository $messageRepository;
+    private \EtoA\Alliance\AllianceDiplomacyRepository $allianceDiplomacyRepository;
 
     public function __construct(Container $app)
     {
         $this->allianceHistoryRepository = $app[AllianceHistoryRepository::class];
         $this->messageRepository = $app[MessageRepository::class];
+        $this->allianceDiplomacyRepository = $app[\EtoA\Alliance\AllianceDiplomacyRepository::class];
     }
 
     function run()
@@ -147,12 +149,7 @@ class WarPeaceUpdateTask implements IPeriodicTask
                 $this->messageRepository->createSystemMessage((int) $arr['a1f'], MSG_ALLYMAIL_CAT, "Friedensvertrag abgelaufen", $text);
                 $this->messageRepository->createSystemMessage((int) $arr['a2f'], MSG_ALLYMAIL_CAT, "Friedensvertrag abgelaufen", $text);
 
-                dbquery("
-                    DELETE FROM
-                        alliance_bnd
-                    WHERE
-                        alliance_bnd_id=" . $arr['alliance_bnd_id'] . "
-                    ");
+                $this->allianceDiplomacyRepository->deleteDiplomacy((int) $arr['alliance_bnd_id']);
             }
             $cnt += $nr;
         }

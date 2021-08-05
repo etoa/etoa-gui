@@ -385,7 +385,7 @@ function searchResults(Request $request, AllianceRepository $repository, Environ
 
         /** @var UserRepository $userRepository */
         $userRepository = $app[UserRepository::class];
-        $userNicks = $userRepository->getUserNicknames();
+        $userNicks = $userRepository->searchUserNicknames();
         echo "<table class=\"tb\">";
         echo "<tr>";
         echo "<th>ID</th>";
@@ -431,7 +431,7 @@ function drop(Request $request, AllianceRepository $repository)
 			<td class=\"tbldata\">" . $alliance->name . "</td></tr>";
         echo "<tr><td class=\"tbltitle\" valign=\"top\">Tag</td>
 			<td class=\"tbldata\">" . $alliance->tag . "</td></tr>";
-        $userNicks = $userRepository->getUserNicknames();
+        $userNicks = $userRepository->searchUserNicknames();
         echo "<tr><td class=\"tbltitle\" valign=\"top\">Gründer</td>
 			<td class=\"tbldata\">" . $userNicks[$alliance->founderId] . "</td></tr>";
         echo "<tr><td class=\"tbltitle\" valign=\"top\">Text</td>

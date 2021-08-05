@@ -1,4 +1,8 @@
 <?PHP
+
+use EtoA\Ship\ShipDataRepository;
+use EtoA\Ship\ShipSearch;
+
 class GetShipListJsonResponder extends JsonResponder
 {
     function getRequiredParams()
@@ -8,30 +12,19 @@ class GetShipListJsonResponder extends JsonResponder
 
     function getResponse($params)
     {
+        /** @var ShipDataRepository $shipRepository */
+        $shipRepository = $this->app[ShipDataRepository::class];
 
-        $data = array();
-
-        $res = dbquery("
-    SELECT
-			ship_id,
-			ship_name
-		FROM
-			ships
-		WHERE
-			(ship_show=1 || ship_buildable=1)
-			AND ship_name LIKE '" . $params['q'] . "%'
-    ORDER BY
-      ship_name
-		LIMIT 20;");
-        $nr = mysql_num_rows($res);
-        $data['count'] = $nr;
-        if ($nr > 0) {
-            $data['entries'] = array();
-            while ($arr = mysql_fetch_row($res)) {
-                $data['entries'][] = array(
-                    'id' => $arr[0],
-                    'name' => $arr[1]
-                );
+        $data = [];
+        $shipNames = $shipRepository->searchShipNames(ShipSearch::create()->showOrBuildable()->nameLike($params['q']), null, 20);
+        $data['count'] = count($shipNames);
+        if ($data['count'] > 0) {
+            $data['entries'] = [];
+            foreach ($shipNames as $shipId => $shipName) {
+                $data['entries'][] = [
+                    'id' => $shipId,
+                    'name' => $shipName,
+                ];
             }
         }
 

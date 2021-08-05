@@ -1,4 +1,8 @@
 <?PHP
+
+use EtoA\Ship\ShipDataRepository;
+use EtoA\Ship\ShipSearch;
+
 class GetShipInfoJsonResponder extends JsonResponder
 {
     function getRequiredParams()
@@ -8,39 +12,29 @@ class GetShipInfoJsonResponder extends JsonResponder
 
     function getResponse($params)
     {
+        /** @var ShipDataRepository $shipRepository */
+        $shipRepository = $this->app[ShipDataRepository::class];
 
         defineImagePaths();
 
         $data = array();
 
+        $search = ShipSearch::create()->showOrBuildable();
         if (is_numeric($params['ship'])) {
-            $sql = " AND ship_id='" . $params['ship'] . "'";
+            $search = $search->id((int) $params['ship']);
         } else {
-            $sql = "AND ship_name='" . $params['ship'] . "'";
+            $search = $search->name($params['ship']);
         }
-        $res = dbquery("
-          SELECT
-            ship_id,
-            ship_name,
-            special_ship,
-            ship_actions,
-            ship_shortcomment,
-            ship_launchable
-          FROM
-            ships
-          WHERE
-            (ship_show=1
-              || ship_buildable=1)
-            " . $sql . "
-          LIMIT 1;");
-        if (mysql_num_rows($res) > 0) {
-            $arr = mysql_fetch_assoc($res);
-            if (!in_array($arr['ship_id'], $_SESSION['bookmarks']['added'], true)) {
-                $data['id'] = $arr['ship_id'];
-                $data['name'] = $arr['ship_name'];
-                $data['image'] = IMAGE_PATH . "/" . IMAGE_SHIP_DIR . "/ship" . $arr['ship_id'] . "_small." . IMAGE_EXT;
 
-                $actions = array_filter(explode(",", $arr['ship_actions']));
+        $ships = $shipRepository->searchShips($search, null, 1);
+        if (count($ships) > 0) {
+            $ship = $ships[0];
+            if (!in_array($ship->id, $_SESSION['bookmarks']['added'], true)) {
+                $data['id'] = $ship->id;
+                $data['name'] = $ship->name;
+                $data['image'] = $ship->getImagePath();
+
+                $actions = array_filter(explode(",", $ship->actions));
                 $accnt = count($actions);
                 $acstr = '';
                 if ($accnt > 0) {
@@ -57,9 +51,9 @@ class GetShipInfoJsonResponder extends JsonResponder
                     $acstr .= "";
                 }
 
-                $data['tooltip'] = "<img src=\"" . IMAGE_PATH . "/" . IMAGE_SHIP_DIR . "/ship" . $arr['ship_id'] . "_middle." . IMAGE_EXT . "\" style=\"float:left;margin-right:5px;\">" . text2html($arr['ship_shortcomment']) . "<br/>" . $acstr . "<br style=\"clear:both;\"/>";
+                $data['tooltip'] = "<img src=\"" . IMAGE_PATH . "/" . IMAGE_SHIP_DIR . "/ship" . $ship->id . "_middle." . IMAGE_EXT . "\" style=\"float:left;margin-right:5px;\">" . text2html($ship->shortComment) . "<br/>" . $acstr . "<br style=\"clear:both;\"/>";
 
-                $data['launchable'] = $arr['ship_launchable'];
+                $data['launchable'] = $ship->launchable;
             }
         } else {
             $data['error'] = "Schiff nicht gefunden!";

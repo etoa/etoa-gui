@@ -8,6 +8,8 @@ use EtoA\Missile\MissileDataRepository;
 use EtoA\Missile\MissileRepository;
 use EtoA\Requirement\RequirementRepositoryProvider;
 use EtoA\Ship\ShipRepository;
+use EtoA\User\UserRepository;
+use EtoA\User\UserSearch;
 
 $xajax->register(XAJAX_FUNCTION, "planetSelectorByCell");
 $xajax->register(XAJAX_FUNCTION, "planetSelectorByUser");
@@ -984,19 +986,20 @@ function submitEditBuilding($form, $listId)
 //Listet gefundene User auf
 function searchUser($val, $field_id = 'user_nick', $box_id = 'citybox')
 {
+    global $app;
+
+    /** @var UserRepository $userRepository */
+    $userRepository = $app[UserRepository::class];
 
     $sOut = "";
-    $nCount = 0;
     $sLastHit = null;
 
-    $res = dbquery("SELECT user_nick FROM users WHERE user_nick LIKE '" . $val . "%' LIMIT 20;");
-    if (mysql_num_rows($res) > 0) {
-        while ($arr = mysql_fetch_row($res)) {
-            $nCount++;
-            $sOut .= "<a href=\"#\" onclick=\"javascript:document.getElementById('" . $field_id . "').value='" . htmlentities($arr[0]) . "';document.getElementById('" . $box_id . "').style.display = 'none';\">" . htmlentities($arr[0]) . "</a>";
-            $sLastHit = $arr[0];
+    $userNicks = $userRepository->searchUserNicknames(UserSearch::create()->nameLike($val), 20);
+    $nCount = count($userNicks);
+        foreach ($userNicks as $nick) {
+            $sOut .= "<a href=\"#\" onclick=\"javascript:document.getElementById('" . $field_id . "').value='" . htmlentities($nick) . "';document.getElementById('" . $box_id . "').style.display = 'none';\">" . htmlentities($nick) . "</a>";
+            $sLastHit = $nick;
         }
-    }
 
     if ($nCount > 20) {
         $sOut = "";
@@ -1026,25 +1029,22 @@ function searchUser($val, $field_id = 'user_nick', $box_id = 'citybox')
 //Listet gefundene User auf (Speziel für Schiffs-, Def-, und Raketenformular)
 function searchUserList($val, $function)
 {
+    global $app;
+
+    /** @var UserRepository $userRepository */
+    $userRepository = $app[UserRepository::class];
+
     $targetId = 'userlist';
     $inputId = 'userlist_nick';
 
     $sOut = "";
-    $nCount = 0;
     $sLastHit = null;
-    $res = dbquery("SELECT
-        user_nick
-    FROM
-        users
-    WHERE
-        user_nick LIKE '" . $val . "%'
-    LIMIT 20;");
-    if (mysql_num_rows($res) > 0) {
-        while ($arr = mysql_fetch_row($res)) {
-            $nCount++;
-            $sOut .= "<a href=\"#\" onclick=\"javascript:document.getElementById('$inputId').value='" . htmlentities($arr[0]) . "';xajax_planetSelectorByUser('" . $arr[0] . "','" . $function . "');document.getElementById('$targetId').style.display = 'none';\">" . htmlentities($arr[0]) . "</a>";
-            $sLastHit = $arr[0];
-        }
+
+    $userNicks = $userRepository->searchUserNicknames(UserSearch::create()->nameLike($val), 20);
+    $nCount = count($userNicks);
+    foreach ($userNicks as $nick) {
+        $sOut .= "<a href=\"#\" onclick=\"javascript:document.getElementById('$inputId').value='" . htmlentities($nick) . "';xajax_planetSelectorByUser('" . $nick . "','" . $function . "');document.getElementById('$targetId').style.display = 'none';\">" . htmlentities($nick) . "</a>";
+        $sLastHit = $nick;
     }
 
     if ($nCount > 20) {

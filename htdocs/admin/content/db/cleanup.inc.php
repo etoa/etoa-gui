@@ -161,7 +161,7 @@ function runCleanup(
     if ((isset($_POST['cl_userdata']) && $_POST['cl_userdata'] == 1) || $all) {
         /** @var UserRepository $userRepository */
         $userRepository = $app[UserRepository::class];
-        $userIds = array_keys($userRepository->getUserNicknames());
+        $userIds = array_keys($userRepository->searchUserNicknames());
         if (count($userIds) > 0) {
             $ustring = implode(',', $userIds);
         } else {
@@ -405,7 +405,7 @@ function cleanupOverView(
     echo '<fieldset><legend><input type="checkbox" value="1" name="cl_userdata" /> Userdata von gelöschten Spielern</legend>';
     /** @var UserRepository $userRepository */
     $userRepository = $app[UserRepository::class];
-    $userIds = array_keys($userRepository->getUserNicknames());
+    $userIds = array_keys($userRepository->searchUserNicknames());
     if (count($userIds) === 0) {
         $userIds = [0];
     }

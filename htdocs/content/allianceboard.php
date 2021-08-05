@@ -15,6 +15,7 @@ use EtoA\Alliance\Board\Topic;
 use EtoA\Alliance\AllianceRankRepository;
 use EtoA\Alliance\AllianceRepository;
 use EtoA\User\UserRepository;
+use EtoA\User\UserSearch;
 use Symfony\Component\HttpFoundation\Request;
 
 /** @var AllianceRepository */
@@ -114,7 +115,7 @@ if ($cu->allianceId > 0) {
             $isFounder = false;
 
         // Allianz-User in Array laden
-        $allianceUsers = $userRepository->getAllianceUsers($alliance->id);
+        $allianceUsers = $userRepository->searchUsers(UserSearch::create()->allianceId($alliance->id));
 
         // Change avatar function
         echo "<script type=\"text/javascript\">";

@@ -20,6 +20,10 @@ class ShipDataRepositoryTest extends AbstractDbTestCase
         $names = $this->repository->getShipNames();
 
         $this->assertNotEmpty($names);
+
+        $names = $this->repository->getShipNames(true);
+
+        $this->assertNotEmpty($names);
     }
 
     public function testGetShipPoints(): void

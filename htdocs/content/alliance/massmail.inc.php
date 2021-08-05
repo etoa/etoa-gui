@@ -3,6 +3,7 @@
 use EtoA\Alliance\AllianceRights;
 use EtoA\Message\MessageRepository;
 use EtoA\User\UserRepository;
+use EtoA\User\UserSearch;
 
 /** @var MessageRepository $messageRepository */
 $messageRepository = $app[MessageRepository::class];
@@ -15,18 +16,14 @@ if (Alliance::checkActionRights(AllianceRights::MASS_MAIL)) {
 
     // Nachricht senden
     if (isset($_POST['submit']) && checker_verify()) {
-        $allianceUsers = $userRepository->getAllianceUsers((int) $arr['alliance_id']);
-        if (count($allianceUsers) > 1) {
-            foreach ($allianceUsers as $allianceUser) {
-                if ($allianceUser->id === $cu->getId()) {
-                    continue;
-                }
-
+        $allianceUsers = $userRepository->searchUserNicknames(UserSearch::create()->allianceId((int) $arr['alliance_id'])->notUser($cu->getId()));
+        if (count($allianceUsers) > 0) {
+            foreach (array_keys($allianceUsers) as $allianceUserId) {
                 $subject = addslashes($_POST['message_subject']) . "";
 
                 $messageRepository->sendFromUserToUser(
                     $cu->getId(),
-                    $allianceUser->id,
+                    $allianceUserId,
                     $_POST['message_subject'],
                     $_POST['message_text'],
                     MSG_ALLYMAIL_CAT

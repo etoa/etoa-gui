@@ -1,6 +1,7 @@
 <?php
 
 use EtoA\Alliance\AllianceApplicationRepository;
+use EtoA\Alliance\AllianceBuildingRepository;
 use EtoA\Alliance\AllianceDiplomacyLevel;
 use EtoA\Alliance\AllianceDiplomacyRepository;
 use EtoA\Alliance\AllianceHistoryRepository;
@@ -11,6 +12,7 @@ use EtoA\Alliance\AllianceRankRepository;
 use EtoA\Alliance\AllianceRepository;
 use EtoA\Alliance\AllianceRights;
 use EtoA\Alliance\AllianceSpendRepository;
+use EtoA\Alliance\AllianceTechnologyRepository;
 use EtoA\Alliance\Board\AllianceBoardCategoryRepository;
 use EtoA\Alliance\Board\AllianceBoardTopicRepository;
 use EtoA\Core\Configuration\ConfigurationService;
@@ -648,6 +650,9 @@ class Alliance
         global $app;
 
         if (!$this->isAtWar()) {
+            /** @var AllianceRepository $allianceRepository */
+            $allianceRepository = $app[AllianceRepository::class];
+
             /** @var AllianceBoardTopicRepository $allianceBoardTopicRepository */
             $allianceBoardTopicRepository = $app[AllianceBoardTopicRepository::class];
             /** @var AllianceBoardCategoryRepository $allianceBoardCategoryRepository */
@@ -665,7 +670,10 @@ class Alliance
                 $allianceBoardTopicRepository->deleteBndTopic($diplomacy->id);
             }
             $allianceDiplomacyRepository->deleteAllianceDiplomacies($this->id);
-            dbquery("DELETE FROM alliance_buildlist WHERE alliance_buildlist_alliance_id='" . $this->id . "';");
+
+            /** @var AllianceBuildingRepository $allianceBuildingRepository */
+            $allianceBuildingRepository = $app[AllianceBuildingRepository::class];
+            $allianceBuildingRepository->removeForAlliance($this->id);
 
             /** @var AllianceHistoryRepository */
             $allianceHistoryRepository = $app[AllianceHistoryRepository::class];
@@ -691,7 +699,9 @@ class Alliance
             $allianceSpendRepository = $app[AllianceSpendRepository::class];
             $allianceSpendRepository->deleteAllianceEntries($this->id);
 
-            dbquery("DELETE FROM alliance_techlist WHERE alliance_techlist_alliance_id='" . $this->id . "';");
+            /** @var AllianceTechnologyRepository $allianceTechnologyRepository */
+            $allianceTechnologyRepository = $app[AllianceTechnologyRepository::class];
+            $allianceTechnologyRepository->removeForAlliance($this->id);
             dbquery("UPDATE alliances
                 SET
                     alliance_mother=0
@@ -712,11 +722,7 @@ class Alliance
             unset($member);
 
             // Daten löschen
-            dbquery("
-                DELETE FROM
-                    alliances
-                WHERE
-                    alliance_id='" . $this->id . "';");
+            $allianceRepository->remove($this->id);
 
             //Log schreiben
             if ($user != null) {
@@ -729,9 +735,9 @@ class Alliance
             } else
                 Log::add("5", Log::INFO, "Die Allianz [b]" . $this->__toString() . "[/b] wurde gelöscht!");
             return true;
-        } else {
-            return false;
         }
+
+        return false;
     }
 
     /**

@@ -28,6 +28,7 @@ parameters:
         - '#Doctrine\\Common\\Cache\\ArrayCache#'
 
         - '#Method EtoA\\[a-z\\]+Test::[a-z]*provider[a-z]*\(\) return type has no value type specified in iterable type array#i'
+        - '#Method EtoA\\[a-z\\]+Test::test[a-z]*\(\) has parameter \$[a-z]+ with no value type specified in iterable type#i'
         - '#Method EtoA\\[a-z\\]+::__construct\(\) has parameter \$(data|arr) with no value type specified in iterable type array#i'
         - '#Method EtoA\\[a-z\\]+::createFrom[a-z]+\(\) has parameter \$(data|arr) with no value type specified in iterable type array#i'
 

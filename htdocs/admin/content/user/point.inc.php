@@ -10,7 +10,7 @@ $userPointRepository = $app[UserPointsRepository::class];
 
 /** @var UserRepository $userRepository */
 $userRepository = $app[UserRepository::class];
-$userNicks = $userRepository->getUserNicknames();
+$userNicks = $userRepository->searchUserNicknames();
 if (count($userNicks) > 0) {
     echo "<b>Punkteentwicklung anzeigen f&uuml;r:</b> <select onchange=\"document.location='?page=$page&sub=$sub&user_id='+this.options[this.selectedIndex].value\">";
     echo "<option value=\"0\" style=\"font-style:italic;\">(Benutzer w&auml;hlen...)</option>";

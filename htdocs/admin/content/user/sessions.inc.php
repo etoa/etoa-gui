@@ -34,7 +34,7 @@ if (isset($_POST['kick_all'])) {
 
 /** @var UserRepository $userRepository */
 $userRepository = $app[UserRepository::class];
-$userNicks = $userRepository->getUserNicknames();
+$userNicks = $userRepository->searchUserNicknames();
 $userSessions = $userSessionRepository->getSessions();
 if (count($userSessions) > 0) {
     echo "<p>Es sind " . count($userSessions) . " Sessions aktiv. <input type=\"submit\" name=\"kick_all\" value=\"Alle User kicken\" onclick=\"return confirm('Sollen wirklich alle User aus dem Spiel geworfen werden?');\" /></p>";

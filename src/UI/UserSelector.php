@@ -22,7 +22,7 @@ class UserSelector
         if ($showEmptyOption) {
             $str .= "<option value=\"\" style=\"font-style:italic\">(niemand)</option>";
         }
-        foreach ($this->userRepository->getUserNicknames() as $id => $label) {
+        foreach ($this->userRepository->searchUserNicknames() as $id => $label) {
             $str .= "<option value=\"$id\"";
             if ($id === $userId) {
                 $str .= " selected=\"selected\"";

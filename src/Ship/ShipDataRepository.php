@@ -24,25 +24,24 @@ class ShipDataRepository extends AbstractRepository
      */
     public function getShipNames(bool $showAll = false, ShipSort $orderBy = null): array
     {
+        $search = $showAll ? ShipSearch::create()->show(true)->special(false) : null;
+
+        return $this->searchShipNames($search, $orderBy);
+    }
+
+    /**
+     * @return array<int, string>
+     */
+    public function searchShipNames(ShipSearch $search = null, ShipSort $orderBy = null, int $limit = null): array
+    {
         $qb = $this->createQueryBuilder()
             ->select('ship_id', 'ship_name')
             ->addSelect()
             ->from('ships');
 
-        if (!$showAll) {
-            $qb
-                ->where('ship_show = 1')
-                ->andWhere('special_ship = 0');
-        }
-
-        $orderBy = $orderBy ?? ShipSort::name();
-        foreach ($orderBy->sorts as $sort) {
-            $qb->addOrderBy($sort);
-        }
-
-        return $qb
-                ->execute()
-                ->fetchAllKeyValue();
+        return $this->applySearchSortLimit($qb, $search, $orderBy ?? ShipSort::name(), $limit)
+            ->execute()
+            ->fetchAllKeyValue();
     }
 
 
@@ -266,5 +265,21 @@ class ShipDataRepository extends AbstractRepository
             ->fetchAssociative();
 
         return $data !== false ? new Ship($data) : null;
+    }
+
+    /**
+     * @return Ship[]
+     */
+    public function searchShips(ShipSearch $search, ShipSort $sort = null, int $limit = null): array
+    {
+        $qb = $this->createQueryBuilder()
+            ->select('*')
+            ->from('ships');
+
+        $data = $this->applySearchSortLimit($qb, $search, $sort, $limit)
+            ->execute()
+            ->fetchAllAssociative();
+
+        return array_map(fn ($row) => new Ship($row), $data);
     }
 }
