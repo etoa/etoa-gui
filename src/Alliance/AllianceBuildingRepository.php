@@ -173,4 +173,13 @@ class AllianceBuildingRepository extends AbstractRepository
             ])
             ->execute();
     }
+
+    public function removeForAlliance(int $allianceId): void
+    {
+        $this->createQueryBuilder()
+            ->delete('alliance_buildlist')
+            ->where('alliance_buildlist_alliance_id = :allianceId')
+            ->setParameter('allianceId', $allianceId)
+            ->execute();
+    }
 }
