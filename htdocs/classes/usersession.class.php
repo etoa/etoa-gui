@@ -1,7 +1,9 @@
 <?php
 
 use EtoA\User\UserLoginFailureRepository;
+use EtoA\User\UserRepository;
 use EtoA\User\UserSessionManager;
+use EtoA\User\UserSessionRepository;
 use EtoA\User\UserSittingRepository;
 
 /**
@@ -10,9 +12,6 @@ use EtoA\User\UserSittingRepository;
  */
 class UserSession extends Session
 {
-    const tableUser = "users";
-    const tableSession = "user_sessions";
-
     function login($data)
     {
         // TODO
@@ -20,10 +19,15 @@ class UserSession extends Session
 
         /** @var UserSessionManager */
         $sessionManager = $app[UserSessionManager::class];
+
         /** @var UserSittingRepository $userSittingRepository */
         $userSittingRepository = $app[UserSittingRepository::class];
+
         /** @var UserLoginFailureRepository $userLoginFailureRepository */
         $userLoginFailureRepository = $app[UserLoginFailureRepository::class];
+
+        /** @var UserRepository $userRepository */
+        $userRepository = $app[UserRepository::class];
 
         $sessionManager->cleanup();
 
@@ -59,64 +63,42 @@ class UserSession extends Session
 
                             if ($loginNick != "" && $loginPassword != "") // Add here regex check for nickname
                             {
-                                $sql = "
-                                SELECT
-                                    user_id,
-                                    user_nick,
-                                    user_registered,
-                                    user_password,
-                                    user_password_temp
-                                FROM
-                                    " . self::tableUser . "
-                                WHERE
-                                    LCASE(user_nick)=?
-                                LIMIT 1;
-                                ;";
-                                $ures = dbQuerySave($sql, array(strtolower($loginNick)));
-                                if (mysql_num_rows($ures) > 0) {
-                                    $uarr = mysql_fetch_assoc($ures);
+                                $user = $userRepository->getUserByNick($loginNick);
+                                if ($user !== null) {
                                     $t = time();
 
                                     // check sitter
                                     $this->sittingActive = false;
                                     $this->falseSitter = false;
-                                    $sittingEntry = $userSittingRepository->getActiveUserEntry((int) $uarr['user_id']);
+                                    $sittingEntry = $userSittingRepository->getActiveUserEntry($user->id);
                                     if ($sittingEntry !== null) {
                                         if (validatePasswort($loginPassword, $sittingEntry->password)) {
                                             $this->sittingActive = true;
                                             $this->sittingUntil = $sittingEntry->dateTo;
-                                        } elseif (validatePasswort($loginPassword, $uarr['user_password'])) {
+                                        } elseif (validatePasswort($loginPassword, $user->password)) {
                                             $this->falseSitter = true;
                                             $this->sittingActive = true;
                                             $this->sittingUntil = $sittingEntry->dateTo;
                                         }
                                     }
-                                    if (strlen($uarr['user_password']) == 64) {
+                                    if (strlen($user->password) == 64) {
                                         $pw = $loginPassword;
-                                        $seed = $uarr['user_registered'];
+                                        $seed = $user->registered;
                                         $salt = "yheaP;BXf;UokIAJ4dhaOL"; // Round 9
-                                        if ($uarr['user_password'] == md5($pw . $seed . $salt) . md5($salt . $seed . $pw)) {
-                                            $newPw = saltPasswort($pw);
-                                            dbquery("UPDATE
-                                                users
-                                            SET
-                                                user_password='" . $newPw . "'
-                                            WHERE
-                                                user_id='" . $uarr['user_id'] . "'
-                                            ;");
-                                            $uarr['user_password'] = $newPw;
+                                        if ($user->password == md5($pw . $seed . $salt) . md5($salt . $seed . $pw)) {
+                                            $user->password = $userRepository->updatePassword($user->id, $pw);
                                         }
                                     }
 
                                     if (
-                                        validatePasswort($loginPassword, $uarr['user_password'])
+                                        validatePasswort($loginPassword, $user->password)
                                         || $this->sittingActive
-                                        || ($uarr['user_password_temp'] != "" && $uarr['user_password_temp'] == $loginPassword)
+                                        || ($user->passwordTemp != "" && $user->passwordTemp == $loginPassword)
                                     ) {
                                         session_regenerate_id(true);
 
-                                        $this->user_id = $uarr['user_id'];
-                                        $this->user_nick = $uarr['user_nick'];
+                                        $this->user_id = $user->id;
+                                        $this->user_nick = $user->nick;
                                         $this->time_login = $t;
                                         $this->time_action = $t;
                                         $this->registerSession();
@@ -134,7 +116,7 @@ class UserSession extends Session
                                         return true;
                                     } else {
                                         $this->lastError = "Benutzer nicht vorhanden oder Passwort falsch!";
-                                        $userLoginFailureRepository->add($uarr['user_id'], $t, $_SERVER['REMOTE_ADDR'], $_SERVER['HTTP_USER_AGENT']);
+                                        $userLoginFailureRepository->add($user->id, $t, $_SERVER['REMOTE_ADDR'], $_SERVER['HTTP_USER_AGENT']);
                                         $this->lastErrorCode = "pass";
                                     }
                                 } else {
@@ -197,24 +179,19 @@ class UserSession extends Session
         // TODO
         global $app;
 
-        if (isset($this->time_login)) {
-            $res = dbquery("
-            SELECT
-                id
-            FROM
-                `" . self::tableSession . "`
-            WHERE
-                id='" . session_id() . "'
-                AND `user_id`=" . intval($this->user_id) . "
-                AND `user_agent`='" . $_SERVER['HTTP_USER_AGENT'] . "'
-                AND `time_login`=" . intval($this->time_login) . "
-            LIMIT 1
-            ;");
-            if (mysql_num_rows($res) > 0) {
-                $t = time();
+        /** @var UserSessionRepository $userSessionRepository */
+        $userSessionRepository = $app[UserSessionRepository::class];
 
-                // TODO
-                global $app;
+        /** @var UserSittingRepository $userSittingRepository */
+        $userSittingRepository = $app[UserSittingRepository::class];
+
+        /** @var UserSessionManager $sessionManager */
+        $sessionManager = $app[UserSessionManager::class];
+
+        if (isset($this->time_login)) {
+            $userSession = $userSessionRepository->findByParameters(session_id(), $this->user_id, $_SERVER['HTTP_USER_AGENT'], $this->time_login);
+            if ($userSession !== null) {
+                $t = time();
 
                 if ($this->time_action + $this->config->getInt('user_timeout') > $t) {
                     $allows = false;
@@ -229,8 +206,6 @@ class UserSession extends Session
 
                     if ($this->sittingActive) {
                         if (time() < $this->sittingUntil) {
-                            /** @var UserSittingRepository $userSittingRepository */
-                            $userSittingRepository = $app[UserSittingRepository::class];
                             $activeSitting = $userSittingRepository->getActiveUserEntry($this->user_id);
                             if ($activeSitting !== null) {
                                 $allows = true;
@@ -240,17 +215,7 @@ class UserSession extends Session
                         $allows = true;
                     if ($allows) {
                         if (!$bot) {
-                            dbquery("
-                            UPDATE
-                                `" . self::tableSession . "`
-                            SET
-                                time_action=" . $t . ",
-                                bot_count='" . $this->bot_count . "',
-                                last_span='" . $this->last_span . "',
-                                ip_addr='" . $_SERVER['REMOTE_ADDR'] . "'
-                            WHERE
-                                id='" . session_id() . "'
-                            ;");
+                            $userSessionRepository->update(session_id(), $t, $this->bot_count, $this->last_span, $_SERVER['REMOTE_ADDR']);
 
                             $this->time_action = $t;
                             return true;
@@ -272,9 +237,6 @@ class UserSession extends Session
         if ($destroy == 1) {
             // chat logout
             $this->cLogin = false;
-
-            /** @var UserSessionManager */
-            $sessionManager = $app[UserSessionManager::class];
 
             // destroy user session
             $sessionManager->unregisterSession();
@@ -303,32 +265,16 @@ class UserSession extends Session
 
     function registerSession()
     {
-        dbquery("
-        DELETE FROM
-            `" . self::tableSession . "`
-        WHERE
-            user_id=" . intval($this->user_id) . "
-            OR id='" . session_id() . "'
-        ;");
-        dbquery("
-        INSERT INTO
-            `" . self::tableSession . "`
-        (
-            `id` ,
-            `user_id`,
-            `ip_addr`,
-            `user_agent`,
-            `time_login`
-        )
-        VALUES
-        (
-            '" . session_id() . "',
-            " . intval($this->user_id) . ",
-            '" . $_SERVER['REMOTE_ADDR'] . "',
-            '" . $_SERVER['HTTP_USER_AGENT'] . "',
-            " . intval($this->time_login) . "
-        )
-        ");
+        // TODO
+        global $app;
+
+        /** @var UserSessionRepository $userSessionRepository */
+        $userSessionRepository = $app[UserSessionRepository::class];
+
+        $userSessionRepository->remove(session_id());
+        $userSessionRepository->removeForUser($this->user_id);
+
+        $userSessionRepository->add(session_id(), $this->user_id, $_SERVER['REMOTE_ADDR'], $_SERVER['HTTP_USER_AGENT'], $this->time_login);
     }
 
     function logout()

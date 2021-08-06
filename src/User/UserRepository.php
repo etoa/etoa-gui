@@ -256,6 +256,21 @@ class UserRepository extends AbstractRepository
         return $data !== false ? new User($data) : null;
     }
 
+    public function getUserByNick(string $nick): ?User
+    {
+        $data = $this->createQueryBuilder()
+            ->select('*')
+            ->from('users')
+            ->where('LCASE(user_nick) = :nick')
+            ->setParameters([
+                'nick' => strtolower($nick),
+            ])
+            ->execute()
+            ->fetchAssociative();
+
+        return $data !== false ? new User($data) : null;
+    }
+
     public function getUserByNickAndEmail(string $nick, string $emailFixed): ?User
     {
         $data = $this->createQueryBuilder()
@@ -516,17 +531,20 @@ class UserRepository extends AbstractRepository
         return (int) $this->getConnection()->lastInsertId();
     }
 
-    public function updatePassword(int $userId, string $password): void
+    public function updatePassword(int $userId, string $password): string
     {
+        $saltedPassword = saltPasswort($password);
         $this->createQueryBuilder()
             ->update('users')
             ->set('user_password', ':password')
             ->where('user_id = :userId')
             ->setParameters([
                 'userId' => $userId,
-                'password' => saltPasswort($password),
+                'password' => $saltedPassword,
             ])
             ->execute();
+
+        return $saltedPassword;
     }
 
     public function increaseMultiDeletes(int $userId): void
