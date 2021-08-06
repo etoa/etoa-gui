@@ -9,6 +9,7 @@ use EtoA\Specialist\SpecialistDataRepository;
 use EtoA\User\UserCommentRepository;
 use EtoA\User\UserLoginFailureRepository;
 use EtoA\User\UserMultiRepository;
+use EtoA\User\UserPropertiesRepository;
 use EtoA\User\UserRepository;
 use EtoA\User\UserService;
 use EtoA\User\UserSittingRepository;
@@ -40,6 +41,9 @@ $userSittingRepository = $app[UserSittingRepository::class];
 
 /** @var UserMultiRepository $userMultiRepository */
 $userMultiRepository = $app[UserMultiRepository::class];
+
+/** @var UserPropertiesRepository $userPropertiesRepository */
+$userPropertiesRepository = $app[UserPropertiesRepository::class];
 
 if (isset($_GET['id']))
     $id = $_GET['id'];
@@ -166,38 +170,33 @@ if (isset($_POST['save'])) {
     $sql .= " WHERE user_id='" . $id . "';";
     dbquery($sql);
 
-
-
     //
-    // Speichert Usereinstellungen in der Tabelle "user_properties"
+    // Speichert Usereinstellungen
     //
 
-    $sql = "UPDATE user_properties SET
-    image_url='" . $_POST['image_url'] . "',
-    image_ext='" . $_POST['image_ext'] . "',
-    css_style='" . $_POST['css_style'] . "',
-    planet_circle_width=" . $_POST['planet_circle_width'] . ",
-    item_show='" . $_POST['item_show'] . "',
-    image_filter=" . $_POST['image_filter'] . ",
-    msgsignature='" . addslashes($_POST['msgsignature']) . "',
-    msgcreation_preview=" . $_POST['msgcreation_preview'] . ",
-    msg_preview=" . $_POST['msg_preview'] . ",
-    helpbox=" . $_POST['helpbox'] . ",
-    notebox=" . $_POST['notebox'] . ",
-    msg_copy=" . $_POST['msg_copy'] . ",
-    msg_blink=" . $_POST['msg_blink'] . ",
-    spyship_id=" . $_POST['spyship_id'] . ",
-    spyship_count='" . $_POST['spyship_count'] . "',
-    analyzeship_id=" . $_POST['analyzeship_id'] . ",
-    analyzeship_count='" . $_POST['analyzeship_count'] . "',
-    havenships_buttons=" . $_POST['havenships_buttons'] . ",
-    show_adds=" . $_POST['show_adds'] . ",
-    fleet_rtn_msg=" . $_POST['fleet_rtn_msg'] . "";
+    $properties = $userPropertiesRepository->getOrCreateProperties((int) $id);
+    $properties->imageUrl = filled($_POST['image_url']) ? $_POST['image_url'] : null;
+    $properties->imageExt = filled($_POST['image_ext']) ? $_POST['image_ext'] : null;
+    $properties->cssStyle = filled($_POST['css_style']) ? $_POST['css_style'] : null;
+    $properties->planetCircleWidth = $_POST['planet_circle_width'];
+    $properties->itemShow = $_POST['item_show'];
+    $properties->imageFilter = $_POST['image_filter'] == 1;
+    $properties->msgSignature = filled($_POST['msgsignature']) ? $_POST['msgsignature'] : null;
+    $properties->msgCreationPreview = $_POST['msgcreation_preview'] == 1;
+    $properties->msgPreview = $_POST['msg_preview'] == 1;
+    $properties->helpBox = $_POST['helpbox'] == 1;
+    $properties->noteBox = $_POST['notebox'] == 1;
+    $properties->msgCopy = $_POST['msg_copy'] == 1;
+    $properties->msgBlink = $_POST['msg_blink'] == 1;
+    $properties->spyShipId = $_POST['spyship_id'];
+    $properties->spyShipCount = $_POST['spyship_count'];
+    $properties->analyzeShipId = $_POST['analyzeship_id'];
+    $properties->analyzeShipCount = $_POST['analyzeship_count'];
+    $properties->havenShipsButtons = $_POST['havenships_buttons'] == 1;
+    $properties->showAdds = $_POST['show_adds'] == 1;
+    $properties->fleetRtnMsg = $_POST['fleet_rtn_msg'] == 1;
 
-    // Perform query
-    $sql .= " WHERE id='" . $id . "';";
-    dbquery($sql);
-
+    $userPropertiesRepository->storeProperties((int) $id, $properties);
 
     if (isset($_POST['del_multi'])) {
         //Multi löschen
@@ -286,7 +285,6 @@ $res = dbquery("
     SELECT
         users.*,
         races.*,
-        user_properties.*,
         user_sessionlog.time_action AS time_log,
         user_sessionlog.ip_addr AS ip_log,
         user_sessionlog.user_agent AS agent_log,
@@ -295,10 +293,6 @@ $res = dbquery("
         user_sessions.ip_addr
     FROM
         users
-    INNER JOIN
-        user_properties
-    ON
-        user_id = id
     LEFT JOIN
         races
     ON
@@ -320,6 +314,8 @@ $res = dbquery("
 if (mysql_num_rows($res) > 0) {
     // Load data
     $arr = mysql_fetch_array($res);
+
+    $properties = $userPropertiesRepository->getOrCreateProperties((int) $id);
 
     // Some preparations
     $st = $arr['user_specialist_time'] > 0 ? $arr['user_specialist_time'] : time();
@@ -1125,13 +1121,13 @@ if (mysql_num_rows($res) > 0) {
     echo "<tr>
                     <td class=\"tbltitle\">Design:</td>
                     <td class=\"tbldata\">
-                        <input type=\"text\" name=\"css_style\" id=\"css_style\" size=\"45\" maxlength=\"250\" value=\"" . $arr['css_style'] . "\">
+                        <input type=\"text\" name=\"css_style\" id=\"css_style\" size=\"45\" maxlength=\"250\" value=\"" . $properties->cssStyle . "\">
                         &nbsp; <input type=\"button\" onclick=\"document.getElementById('css_style').value = document.getElementById('designSelector').options[document.getElementById('designSelector').selectedIndex].value\" value=\"&lt;&lt;\" /> &nbsp; ";
     echo "<select id=\"designSelector\">
                 <option value=\"\">(Bitte wählen)</option>";
     foreach ($designs as $k => $v) {
         echo "<option value=\"$k\"";
-        if ($arr['css_style'] == $k) echo " selected=\"selected\"";
+        if ($properties->cssStyle == $k) echo " selected=\"selected\"";
         echo ">" . $v['name'] . "</option>";
     }
     echo "</select>
@@ -1140,8 +1136,8 @@ if (mysql_num_rows($res) > 0) {
                 <tr>
                     <td class=\"tbltitle\">Bildpaket / Dateiendung:</td>
                     <td class=\"tbldata\">
-                        <input type=\"text\" name=\"image_url\" id=\"image_url\" size=\"45\" maxlength=\"250\" value=\"" . $arr['image_url'] . "\">
-                        <input type=\"text\" name=\"image_ext\" id=\"image_ext\" value=\"" . $arr['image_ext'] . "\" size=\"3\" maxlength=\"6\" />
+                        <input type=\"text\" name=\"image_url\" id=\"image_url\" size=\"45\" maxlength=\"250\" value=\"" . $properties->imageUrl . "\">
+                        <input type=\"text\" name=\"image_ext\" id=\"image_ext\" value=\"" . $properties->imageExt . "\" size=\"3\" maxlength=\"6\" />
                         &nbsp; <input type=\"button\" onclick=\"
                         var imageSetVal = document.getElementById('imageSelector').options[document.getElementById('imageSelector').selectedIndex].value;
                         if (imageSetVal!='') {
@@ -1158,7 +1154,7 @@ if (mysql_num_rows($res) > 0) {
     foreach ($imagepacks as $v) {
         foreach ($v['extensions'] as $e) {
             echo "<option value=\"" . $v['path'] . ":" . $e . "\"";
-            if ($arr['image_url'] == $v['path']) echo " selected=\"selected\"";
+            if ($properties->imageUrl == $v['path']) echo " selected=\"selected\"";
             echo ">" . $v['name'] . " ($e)</option>";
         }
     }
@@ -1171,7 +1167,7 @@ if (mysql_num_rows($res) > 0) {
         <select name=\"planet_circle_width\">";
     for ($x = 450; $x <= 700; $x += 50) {
         echo "<option value=\"$x\"";
-        if ($arr['planet_circle_width'] == $x) echo " selected=\"selected\"";
+        if ($properties->planetCircleWidth == $x) echo " selected=\"selected\"";
         echo ">" . $x . "</option>";
     }
     echo "</select>
@@ -1181,10 +1177,10 @@ if (mysql_num_rows($res) > 0) {
         <td class=\"tbltitle\">Schiff/Def Ansicht:</td>
         <td class=\"tbldata\">
             <input type=\"radio\" name=\"item_show\" value=\"full\"";
-    if ($arr['item_show'] == 'full' || $arr['item_show'] == '') echo " checked=\"checked\"";
+    if ($properties->itemShow == 'full' || $properties->itemShow == '') echo " checked=\"checked\"";
     echo " /> Volle Ansicht  &nbsp;
             <input type=\"radio\" name=\"item_show\" value=\"small\"";
-    if ($arr['item_show'] == 'small') echo " checked=\"checked\"";
+    if ($properties->itemShow == 'small') echo " checked=\"checked\"";
     echo " /> Einfache Ansicht
         </td>
     </tr>
@@ -1192,10 +1188,10 @@ if (mysql_num_rows($res) > 0) {
         <td class=\"tbltitle\">Bildfilter:</td>
         <td class=\"tbldata\">
             <input type=\"radio\" name=\"image_filter\" value=\"1\"";
-    if ($arr['image_filter'] == 1) echo " checked=\"checked\"";
+    if ($properties->imageFilter) echo " checked=\"checked\"";
     echo "/> An   &nbsp;
             <input type=\"radio\" name=\"image_filter\" value=\"0\"";
-    if ($arr['image_filter'] == 0) echo " checked=\"checked\"";
+    if (!$properties->imageFilter) echo " checked=\"checked\"";
     echo "/> Aus
         </td>
     </tr>
@@ -1203,10 +1199,10 @@ if (mysql_num_rows($res) > 0) {
         <td class=\"tbltitle\">Separates Hilfefenster:</td>
         <td class=\"tbldata\">
         <input type=\"radio\" name=\"helpbox\" value=\"1\" ";
-    if ($arr['helpbox'] == 1) echo " checked=\"checked\"";
+    if ($properties->helpBox) echo " checked=\"checked\"";
     echo "/> Aktiviert &nbsp;
         <input type=\"radio\" name=\"helpbox\" value=\"0\" ";
-    if ($arr['helpbox'] == 0) echo " checked=\"checked\"";
+    if (!$properties->helpBox) echo " checked=\"checked\"";
     echo "/> Deaktiviert
         </td>
     </tr>
@@ -1214,10 +1210,10 @@ if (mysql_num_rows($res) > 0) {
         <td class=\"tbltitle\">Separater Notizbox:</td>
         <td class=\"tbldata\">
         <input type=\"radio\" name=\"notebox\" value=\"1\" ";
-    if ($arr['notebox'] == 1) echo " checked=\"checked\"";
+    if ($properties->noteBox) echo " checked=\"checked\"";
     echo "/> Aktiviert &nbsp;
         <input type=\"radio\" name=\"notebox\" value=\"0\" ";
-    if ($arr['notebox'] == 0) echo " checked=\"checked\"";
+    if (!$properties->noteBox) echo " checked=\"checked\"";
     echo "/> Deaktiviert
         </td>
     </tr>
@@ -1225,10 +1221,10 @@ if (mysql_num_rows($res) > 0) {
         <td class=\"tbltitle\">Vertausche Buttons in Hafen-Schiffauswahl:</td>
         <td class=\"tbldata\">
         <input type=\"radio\" name=\"havenships_buttons\" value=\"1\" ";
-    if ($arr['havenships_buttons'] == 1) echo " checked=\"checked\"";
+    if ($properties->havenShipsButtons) echo " checked=\"checked\"";
     echo "/> Aktiviert &nbsp;
         <input type=\"radio\" name=\"havenships_buttons\" value=\"0\" ";
-    if ($arr['havenships_buttons'] == 0) echo " checked=\"checked\"";
+    if (!$properties->havenShipsButtons) echo " checked=\"checked\"";
     echo "/> Deaktiviert
         </td>
     </tr>
@@ -1236,10 +1232,10 @@ if (mysql_num_rows($res) > 0) {
         <td class=\"tbltitle\">Werbung anzeigen:</td>
         <td class=\"tbldata\">
         <input type=\"radio\" name=\"show_adds\" value=\"1\" ";
-    if ($arr['show_adds'] == 1) echo " checked=\"checked\"";
+    if ($properties->showAdds) echo " checked=\"checked\"";
     echo "/> Aktiviert &nbsp;
         <input type=\"radio\" name=\"show_adds\" value=\"0\" ";
-    if ($arr['show_adds'] == 0) echo " checked=\"checked\"";
+    if (!$properties->showAdds) echo " checked=\"checked\"";
     echo "/> Deaktiviert
         </td>
     </tr>";
@@ -1255,17 +1251,17 @@ if (mysql_num_rows($res) > 0) {
     echo "<tr>
                     <td class=\"tbltitle\">Nachrichten-Signatur:</td>
                     <td class=\"tbldata\">
-                        <textarea name=\"msgsignature\" cols=\"60\" rows=\"8\">" . stripslashes($arr['msgsignature']) . "</textarea>
+                        <textarea name=\"msgsignature\" cols=\"60\" rows=\"8\">" . $properties->msgSignature . "</textarea>
                     </td>
                 </tr>
                 <tr>
                 <td class=\"tbltitle\">Nachrichtenvorschau (Neue/Archiv):</td>
                     <td class=\"tbldata\">
             <input type=\"radio\" name=\"msg_preview\" value=\"1\" ";
-    if ($arr['msg_preview'] == 1) echo " checked=\"checked\"";
+    if ($properties->msgPreview) echo " checked=\"checked\"";
     echo "/> Aktiviert
             <input type=\"radio\" name=\"msg_preview\" value=\"0\" ";
-    if ($arr['msg_preview'] == 0) echo " checked=\"checked\"";
+    if (!$properties->msgPreview) echo " checked=\"checked\"";
     echo "/> Deaktiviert
             </td>
         </tr>
@@ -1273,10 +1269,10 @@ if (mysql_num_rows($res) > 0) {
         <td class=\"tbltitle\">Nachrichtenvorschau (Erstellen):</td>
         <td class=\"tbldata\">
         <input type=\"radio\" name=\"msgcreation_preview\" value=\"1\" ";
-    if ($arr['msgcreation_preview'] == 1) echo " checked=\"checked\"";
+    if ($properties->msgCreationPreview) echo " checked=\"checked\"";
     echo "/> Aktiviert
         <input type=\"radio\" name=\"msgcreation_preview\" value=\"0\" ";
-    if ($arr['msgcreation_preview'] == 0) echo " checked=\"checked\"";
+    if (!$properties->msgCreationPreview) echo " checked=\"checked\"";
     echo "/> Deaktiviert
     </td>
     </tr>
@@ -1284,10 +1280,10 @@ if (mysql_num_rows($res) > 0) {
     <td class=\"tbltitle\">Blinkendes Nachrichtensymbol:</td>
         <td class=\"tbldata\">
         <input type=\"radio\" name=\"msg_blink\" value=\"1\" ";
-    if ($arr['msg_blink'] == 1) echo " checked=\"checked\"";
+    if ($properties->msgBlink) echo " checked=\"checked\"";
     echo "/> Aktiviert
         <input type=\"radio\" name=\"msg_blink\" value=\"0\" ";
-    if ($arr['msg_blink'] == 0) echo " checked=\"checked\"";
+    if (!$properties->msgBlink) echo " checked=\"checked\"";
     echo "/> Deaktiviert
     </td>
     </tr>
@@ -1295,10 +1291,10 @@ if (mysql_num_rows($res) > 0) {
     <td class=\"tbltitle\">Text bei Antwort/Weiterleiten kopieren:</td>
         <td class=\"tbldata\">
         <input type=\"radio\" name=\"msg_copy\" value=\"1\" ";
-    if ($arr['msg_copy'] == 1) echo " checked=\"checked\"";
+    if ($properties->msgCopy) echo " checked=\"checked\"";
     echo "/> Aktiviert
         <input type=\"radio\" name=\"msg_copy\" value=\"0\" ";
-    if ($arr['msg_copy'] == 0) echo " checked=\"checked\"";
+    if (!$properties->msgCopy) echo " checked=\"checked\"";
     echo "/> Deaktiviert
         </td>
     </tr>
@@ -1307,13 +1303,13 @@ if (mysql_num_rows($res) > 0) {
             <td class=\"tbltitle\">Nachricht bei Transport-/Spionagerückkehr:</td>
             <td class=\"tbldata\">
             <input type=\"radio\" name=\"fleet_rtn_msg\" value=\"1\" ";
-    if ($arr['fleet_rtn_msg'] == 1) {
+    if ($properties->fleetRtnMsg) {
         echo " checked=\"checked\"";
     }
     echo "/> Aktiviert &nbsp;
 
             <input type=\"radio\" name=\"fleet_rtn_msg\" value=\"0\" ";
-    if ($arr['fleet_rtn_msg'] == 0) {
+    if (!$properties->fleetRtnMsg) {
         echo " checked=\"checked\"";
     }
     echo "/> Deaktiviert
