@@ -4,6 +4,7 @@ use EtoA\Market\MarketAuctionRepository;
 use EtoA\Support\RuntimeDataStore;
 use EtoA\Universe\Resources\BaseResources;
 use EtoA\User\UserMultiRepository;
+use EtoA\User\UserRatingRepository;
 
 /** @var RuntimeDataStore */
 $runtimeDataStore = $app[RuntimeDataStore::class];
@@ -86,12 +87,30 @@ if ($auction !== null && $auction->dateEnd > time()) {
                 ), "auctionwon", $auction->id, $marr);
 
                 // Add market ratings
-                $seller = new User($auction->userId);
-                $cu->rating->addTradeRating(TRADE_POINTS_PER_TRADE, false, 'Handel #' . $auction->id . ' mit ' . $auction->userId);
-                if (strlen($auction->text) > TRADE_POINTS_TRADETEXT_MIN_LENGTH)
-                    $seller->rating->addTradeRating(TRADE_POINTS_PER_TRADE + TRADE_POINTS_PER_TRADETEXT, true, 'Handel #' . $auction->id . ' mit ' . $cu->id);
-                else
-                    $seller->rating->addTradeRating(TRADE_POINTS_PER_TRADE, true, 'Handel #' . $auction->id . ' mit ' . $cu->id);
+                /** @var UserRatingRepository $userRatingRepository */
+                $userRatingRepository = $app[UserRatingRepository::class];
+
+                $userRatingRepository->addTradeRating(
+                    $cu->id,
+                    TRADE_POINTS_PER_TRADE,
+                    false,
+                    'Handel #' . $auction->id . ' mit ' . $auction->userId
+                );
+                if (strlen($auction->text) > TRADE_POINTS_TRADETEXT_MIN_LENGTH) {
+                    $userRatingRepository->addTradeRating(
+                        $auction->userId,
+                        TRADE_POINTS_PER_TRADE + TRADE_POINTS_PER_TRADETEXT,
+                        true,
+                        'Handel #' . $auction->id . ' mit ' . $cu->id
+                    );
+                } else {
+                    $userRatingRepository->addTradeRating(
+                        $auction->userId,
+                        TRADE_POINTS_PER_TRADE,
+                        true,
+                        'Handel #' . $auction->id . ' mit ' . $cu->id
+                    );
+                }
 
                 $bid = new BaseResources();
                 foreach ($resNames as $rk => $rn) {
@@ -108,6 +127,7 @@ if ($auction !== null && $auction->dateEnd > time()) {
                 $isMultiWith = $userMultiRepository->existsEntryWith($cu->getId(), $auction->userId);
                 if ($isMultiWith) {
                     // TODO
+                    $seller = new User($auction->userId);
                     Log::add(Log::F_MULTITRADE, Log::INFO, "[page user sub=edit user_id=" . $cu->id . "][B]" . $cu->nick . "[/B][/page] hat an einer Auktion von [page user sub=edit user_id=" . $auction->userId . "][B]" . $seller . "[/B][/page] gewonnen:\n\nRohstoffe:\n" . RES_METAL . ": " . nf($auction->sell0) . "\n" . RES_CRYSTAL . ": " . nf($auction->sell1) . "\n" . RES_PLASTIC . ": " . nf($auction->sell2) . "\n" . RES_FUEL . ": " . nf($auction->sell3) . "\n" . RES_FOOD . ": " . nf($auction->sell4) . "\n\nDies hat ihn folgende Rohstoffe gekostet:\n" . RES_METAL . ": " . nf($_POST['new_buy_0']) . "\n" . RES_CRYSTAL . ": " . nf($_POST['new_buy_1']) . "\n" . RES_PLASTIC . ": " . nf($_POST['new_buy_2']) . "\n" . RES_FUEL . ": " . nf($_POST['new_buy_3']) . "\n" . RES_FOOD . ": " . nf($_POST['new_buy_4']) . "");
                 }
 

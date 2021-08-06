@@ -10,6 +10,8 @@ use EtoA\User\UserCommentRepository;
 use EtoA\User\UserLoginFailureRepository;
 use EtoA\User\UserMultiRepository;
 use EtoA\User\UserPropertiesRepository;
+use EtoA\User\UserRatingRepository;
+use EtoA\User\UserRatingSearch;
 use EtoA\User\UserRepository;
 use EtoA\User\UserService;
 use EtoA\User\UserSittingRepository;
@@ -1372,29 +1374,45 @@ if (mysql_num_rows($res) > 0) {
      * Points
      */
 
-    $cUser = new User($id);
-
     tableStart("Bewertung");
-    echo "<tr>
-                    <td>Kampfpunkte</td>
-                    <td>" . $cUser->rating->battle . "</td>
-                </tr>";
-    echo "<tr>
-                    <td>Kämpfe gewonnen/verloren/total</td>
-                    <td>" . $cUser->rating->battlesWon . "/" . $cUser->rating->battlesLost . "/" . $cUser->rating->battlesFought . "</td>
-                </tr>";
-    echo "<tr>
-                    <td>Handelspunkte</td>
-                    <td>" . $cUser->rating->trade . "</td>
-                </tr>";
-    echo "<tr>
-                    <td>Handel Einkauf/Verkauf</td>
-                    <td>" . $cUser->rating->tradesBuy . "/" . $cUser->rating->tradesSell . "</td>
-                </tr>";
-    echo "<tr>
-                    <td>Diplomatiepunkte</td>
-                    <td>" . $cUser->rating->diplomacy . "</td>
-                </tr>";
+
+    /** @var UserRatingRepository $userRatingRepository */
+    $userRatingRepository = $app[UserRatingRepository::class];
+
+    $ratingSearch = UserRatingSearch::create()->id($id);
+
+    $battleRating = $userRatingRepository->getBattleRating($ratingSearch)[0] ?? null;
+    if ($battleRating !== null) {
+        echo "<tr>
+                <td>Kampfpunkte</td>
+                <td>" . $battleRating->rating . "</td>
+            </tr>";
+        echo "<tr>
+                <td>Kämpfe gewonnen/verloren/total</td>
+                <td>" . $battleRating->battlesWon . "/" . $battleRating->battlesLost . "/" . $battleRating->battlesFought . "</td>
+            </tr>";
+    }
+
+    $tradeRating = $userRatingRepository->getTradeRating($ratingSearch)[0] ?? null;
+    if ($tradeRating !== null) {
+        echo "<tr>
+                <td>Handelspunkte</td>
+                <td>" . $tradeRating->rating . "</td>
+            </tr>";
+        echo "<tr>
+                <td>Handel Einkauf/Verkauf</td>
+                <td>" . $tradeRating->tradesBuy . "/" . $tradeRating->tradesSell . "</td>
+            </tr>";
+    }
+
+    $diplomacyRating = $userRatingRepository->getDiplomacyRating($ratingSearch)[0] ?? null;
+    if ($diplomacyRating !== null) {
+        echo "<tr>
+                <td>Diplomatiepunkte</td>
+                <td>" . $diplomacyRating->rating . "</td>
+            </tr>";
+    }
+
     tableEnd();
 
     echo '</div><div id="tabs-10">';

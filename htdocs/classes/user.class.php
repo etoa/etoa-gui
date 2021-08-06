@@ -408,9 +408,6 @@ class User implements \EtoA\User\UserInterface
             if ($key == "alliance" && $this->alliance == null && $this->allianceId > 0) {
                 $this->alliance = new Alliance($this->allianceId);
             }
-            if ($key == "rating" && $this->rating == null) {
-                $this->rating = new UserRating($this->id);
-            }
             if ($key == "specialist" && $this->specialist == null) {
                 $this->specialist = new Specialist($this->specialistId, $this->specialistTime);
             }

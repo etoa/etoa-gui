@@ -1,6 +1,8 @@
 <?PHP
 
 use EtoA\User\UserLogRepository;
+use EtoA\User\UserRatingRepository;
+use EtoA\User\UserRatingSearch;
 use EtoA\User\UserRepository;
 
 /** @var UserLogRepository $userLogRepository */
@@ -58,15 +60,27 @@ if ($uid > 0) {
         if ($user->rankHighest > 0) {
             echo "<tr><th style=\"width:120px;\">Bester Rang:</th><td>" . nf($user->rankHighest) . "</td></tr>";
         }
-        if ($user->rating->battle > 0) {
-            echo "<tr><th style=\"width:120px;\">Kampfpunkte:</th><td>" . nf($user->rating->battle) . " (Gewonnen/Verloren/Total: " . nf($user->rating->battlesWon) . "/" . nf($user->rating->battlesLost) . "/" . nf($user->rating->battlesFought) . ")</td></tr>";
+
+        /** @var UserRatingRepository $userRatingRepository */
+        $userRatingRepository = $app[UserRatingRepository::class];
+
+        $ratingSearch = UserRatingSearch::create()->id($user->id);
+
+        $battleRating = $userRatingRepository->getBattleRating($ratingSearch)[0] ?? null;
+        if ($battleRating !== null && $battleRating->rating > 0) {
+            echo "<tr><th style=\"width:120px;\">Kampfpunkte:</th><td>" . nf($battleRating->rating) . " (Gewonnen/Verloren/Total: " . nf($battleRating->battlesWon) . "/" . nf($battleRating->battlesLost) . "/" . nf($battleRating->battlesFought) . ")</td></tr>";
         }
-        if ($user->rating->trade > 0) {
-            echo "<tr><th style=\"width:120px;\">Handelspunkte:</th><td>" . nf($user->rating->trade) . " (Einkäufe/Verkäufe: " . nf($user->rating->tradesBuy) . "/" . nf($user->rating->tradesSell) . ")</td></tr>";
+
+        $tradeRating = $userRatingRepository->getTradeRating($ratingSearch)[0] ?? null;
+        if ($tradeRating !== null && $tradeRating->rating > 0) {
+            echo "<tr><th style=\"width:120px;\">Handelspunkte:</th><td>" . nf($tradeRating->rating) . " (Einkäufe/Verkäufe: " . nf($tradeRating->tradesBuy) . "/" . nf($tradeRating->tradesSell) . ")</td></tr>";
         }
-        if ($user->rating->diplomacy > 0) {
-            echo "<tr><th style=\"width:120px;\">Diplomatiepunkte:</th><td>" . nf($user->rating->diplomacy) . "</td></tr>";
+
+        $diplomacyRating = $userRatingRepository->getDiplomacyRating($ratingSearch)[0] ?? null;
+        if ($diplomacyRating !== null && $diplomacyRating->rating > 0) {
+            echo "<tr><th style=\"width:120px;\">Diplomatiepunkte:</th><td>" . nf($diplomacyRating->rating) . "</td></tr>";
         }
+
         if ($user->profileBoardUrl != "") {
             echo "<tr><th style=\"width:120px;\">Foren-Profil:</th><td><a href=\"" . $user->profileBoardUrl . "\">" . $user->profileBoardUrl . "</a></td></tr>";
         }
