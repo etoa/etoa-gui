@@ -21,11 +21,15 @@ class UserStatRepository extends AbstractRepository
     public function searchStats(UserStatSearch $search, UserRatingSort $sort = null, int $limit = null, int $offset = null): array
     {
         $qb = $this->createQueryBuilder()
-            ->select('id', 'nick', 'blocked', 'hmod', 'inactive', 'race_name', 'alliance_tag', 'sx', 'sy')
+            ->select('id', 'nick', 'blocked', 'hmod', 'inactive', 'race_name', 'alliance_tag', 'sx', 'sy', 'points_ships', 'points_tech', 'points_buildings', 'points_exp')
             ->addSelect($search->order . ' AS rank')
             ->addSelect($search->field . ' AS points')
             ->addSelect($search->shift . ' AS shift')
             ->from('user_stats');
+
+        if (isset($search->parameters['allianceId'])) {
+            $qb->innerJoin('user_stats', 'users', 'users', 'users.user_id = user_stats.id');
+        }
 
         if ($sort == null || count($sort->sorts) === 0) {
             $qb
