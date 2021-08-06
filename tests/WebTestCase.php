@@ -17,7 +17,8 @@ abstract class WebTestCase extends TestCase
 
     protected function setUp(): void
     {
-        $this->app = $this->createApplication();
+        global $app; // Make Application available via $app because it is used by the session
+        $this->app = $app = $this->createApplication();
     }
 
     public function createApplication(): Application
