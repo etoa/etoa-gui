@@ -3,6 +3,7 @@
 use EtoA\Alliance\AllianceBuildingId;
 use EtoA\Alliance\AllianceBuildingRepository;
 use EtoA\Market\MarketResourceRepository;
+use EtoA\Message\MarketReportRepository;
 use EtoA\Universe\Resources\BaseResources;
 use EtoA\User\UserRepository;
 
@@ -16,6 +17,8 @@ $userRepository = $app[UserRepository::class];
 $marketResourceRepository = $app[MarketResourceRepository::class];
 /** @var AllianceBuildingRepository $allianceBuildingRepository */
 $allianceBuildingRepository = $app[AllianceBuildingRepository::class];
+/** @var MarketReportRepository $marketReportRepository */
+$marketReportRepository = $app[MarketReportRepository::class];
 
 $for_user = 0;
 $for_alliance = 0;
@@ -37,12 +40,11 @@ if ($_POST['resource_offer_reservation'] == 2) {
 if (!isset($errMsg)) {
     $ok = true;    // Checker for valid resources
     $subtracted = array(); // Resource to be subtracted from planet
-    $marr = array('factor' => MARKET_TAX); // Market report data
     $sf = "";
     $sv = "";
 
     $sellResources = new BaseResources();
-    $buyResources = new BaseResources();
+    $costs = new BaseResources();
     foreach ($resNames as $rk => $rn) {
         // Convert formatted number back to integer
         $_POST['res_sell_' . $rk] = nf_back($_POST['res_sell_' . $rk]);
@@ -62,14 +64,8 @@ if (!isset($errMsg)) {
         $sellResources->set($rk, (int) $_POST['res_sell_' . $rk]);
 
         if (isset($_POST['res_buy_' . $rk])) {
-            $buyResources->set($rk, (int) $_POST['res_buy_' . $rk]);
+            $costs->set($rk, (int) $_POST['res_buy_' . $rk]);
         }
-
-        // Report data
-        if ($_POST['res_sell_' . $rk] > 0)
-            $marr['sell_' . $rk] = $_POST['res_sell_' . $rk];
-        if (isset($_POST['res_buy_' . $rk]) && $_POST['res_buy_' . $rk] > 0)
-            $marr['buy_' . $rk] = $_POST['res_buy_' . $rk];
     }
 
     if ($ok) {
@@ -77,18 +73,14 @@ if (!isset($errMsg)) {
         if ($cp->subRes($subtracted)) {
 
             // Angebot speichern
-            $offerId = $marketResourceRepository->add($cu->getId(), (int) $cp->id, (int) $for_user, (int) $for_alliance, $_POST['ressource_text'], $sellResources, $buyResources);
+            $offerId = $marketResourceRepository->add($cu->getId(), (int) $cp->id, (int) $for_user, (int) $for_alliance, $_POST['ressource_text'], $sellResources, $costs);
             if ($for_alliance > 0) {
                 // Set cooldown
                 $cd = time() + $cooldown;
                 $allianceBuildingRepository->setCooldown($cu->allianceId(), AllianceBuildingId::MARKET, $cd);
             }
 
-            MarketReport::addMarketReport(array(
-                'user_id' => $cu->id,
-                'entity1_id' => $cp->id,
-                'content' => $_POST['ressource_text']
-            ), "resadd", $offerId, $marr);
+            $marketReportRepository->addResourceReport($offerId, $cu->id, $cp->id, 0, $sellResources, "resadd", $costs, MARKET_TAX, $_POST['ressource_text']);
 
             success_msg("Angebot erfolgreich aufgegeben");
             return_btn();

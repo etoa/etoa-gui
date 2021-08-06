@@ -65,7 +65,6 @@ elseif (isset($_POST['ressource_cancel']) && isset($_POST['ressource_market_id']
         $rarr = array();
         $marketLevel = $buildingRepository->getBuildingLevel($cu->getId(), MARKTPLATZ_ID, $offer->entityId);
         $return_factor = floor((1 - 1 / ($marketLevel + 1)) * 100) / 100;
-        $marr = array('factor' => $return_factor);
         $sellResources = $offer->getSellResources();
         foreach ($resNames as $rk => $rn) {
             if ($sellResources->get($rk) > 0) {
@@ -73,7 +72,6 @@ elseif (isset($_POST['ressource_cancel']) && isset($_POST['ressource_market_id']
                 // is based on the local marketplace, for better or worse... change that so that the
                 // origin marketplace return factor will be taken
                 $rarr[$rk] = $sellResources->get($rk) * $return_factor;
-                $marr['sell_' . $rk] = $sellResources->get($rk);
             }
         }
 
@@ -81,10 +79,7 @@ elseif (isset($_POST['ressource_cancel']) && isset($_POST['ressource_market_id']
         $tp->addRes($rarr);
         unset($tp);
 
-        MarketReport::addMarketReport(array(
-            'user_id' => $cu->id,
-            'entity1_id' => $offer->entityId,
-        ), "rescancel", $rmid, $marr);
+        $marketReportRepository->addResourceReport($rmid, $cu->id, $offer->entityId, 0, $sellResources, "rescancel", new BaseResources(), $return_factor);
 
         $marketResourceRepository->delete($rmid);
         success_msg("Angebot wurde gel&ouml;scht und du hast " . ($return_factor * 100) . "% der angebotenen Rohstoffe zur&uuml;ck erhalten!");
