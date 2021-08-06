@@ -5,6 +5,8 @@ use EtoA\Alliance\AllianceStatsSearch;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Support\RuntimeDataStore;
 use EtoA\User\UserRatingRepository;
+use EtoA\User\UserStatRepository;
+use EtoA\User\UserStatSearch;
 
 /** @var RuntimeDataStore */
 $runtimeDataStore = $app[RuntimeDataStore::class];
@@ -15,6 +17,9 @@ $config = $app[ConfigurationService::class];
 $allianceStatsRepository = $app[AllianceStatsRepository::class];
 /** @var UserRatingRepository $userRatingRepository */
 $userRatingRepository = $app[UserRatingRepository::class];
+/** @var UserStatRepository $userStatsRepository */
+$userStatsRepository = $app[UserStatRepository::class];
+
 echo "<h1>Rangliste</h1>";
 
 $mode = isset($_GET['mode']) && $_GET['mode'] != "" ? $_GET['mode'] : "user";
@@ -356,76 +361,29 @@ else {
 
     // Punktetabelle
     if ($mode == "ships") {
-        $field = "points_ships";
-        $order = "rank_ships";
+        $search = UserStatSearch::ships();
         $title = "Schiffspunkte";
-        $shift = "rankshift_ships";
     } elseif ($mode == "tech") {
-        $field = "points_tech";
-        $order = "rank_tech";
+        $search = UserStatSearch::technologies();
         $title = "Technologiepunkte";
-        $shift = "rankshift_tech";
     } elseif ($mode == "buildings") {
-        $field = "points_buildings";
-        $order = "rank_buildings";
+        $search = UserStatSearch::buildings();
         $title = "Gebäudepunkte";
-        $shift = "rankshift_buildings";
     } elseif ($mode == "exp") {
-        $field = "points_exp";
-        $order = "rank_exp";
+        $search = UserStatSearch::exp();
         $title = "Erfahrungspunkte";
-        $shift = "rankshift_exp";
     } else {
-        $field = "points";
-        $order = "rank";
+        $search = UserStatSearch::points();
         $title = "Gesamtpunkte";
-        $shift = "rankshift";
     }
     if (isset($_POST['search']) && $_POST['search'] != "" && $_POST['user_nick'] != "") {
-        $res = dbquery("SELECT
-                id,
-                nick,
-                blocked,
-                hmod,
-                inactive,
-                " . $order . " AS rank,
-                " . $field . " AS points,
-                " . $shift . " AS shift,
-                race_name,
-                alliance_tag,
-                sx,
-                sy
-            FROM
-                user_stats
-            WHERE
-                nick LIKE '" . $_POST['user_nick'] . "%'
-            ORDER BY
-                $order ASC,
-                nick ASC;");
-    } else {
-        $res = dbquery("SELECT
-                id,
-                nick,
-                blocked,
-                hmod,
-                inactive,
-                " . $order . " AS rank,
-                " . $field . " AS points,
-                " . $shift . " AS shift,
-                race_name,
-                alliance_tag,
-                sx,
-                sy
-            FROM
-                user_stats
-            ORDER BY
-                $order ASC,
-                nick ASC
-            ;");
+        $search->nick($_POST['user_nick']);
     }
 
+    $stats = $userStatsRepository->searchStats($search);
+
     echo "<table class=\"tb\">";
-    if (mysql_num_rows($res) > 0) {
+    if (count($stats) > 0) {
         echo "<tr><th colspan=\"7\" style=\"text-align:center;\">" . $title . "</th></tr>";
         echo "<tr>
                 <th style=\"width:50px;\">#</th>
@@ -436,33 +394,33 @@ else {
                 <th style=\"\">Punkte</th>
                 <th style=\"width:60px;\">Details</th>
             </tr>";
-        while ($arr = mysql_fetch_array($res)) {
-            if ($arr['blocked'] == 1) {
+        foreach ($stats as $stat) {
+            if ($stat->blocked) {
                 $addstyle = " style=\"color:#ffaaaa;\"";
-            } elseif ($arr['hmod'] == 1) {
+            } elseif ($stat->hmod) {
                 $addstyle = " style=\"color:#aaffaa;\"";
-            } elseif ($arr['inactive'] == 1) {
+            } elseif ($stat->inactive) {
                 $addstyle = " style=\"color:#aaaaaa;\"";
             } else {
                 $addstyle = "";
             }
             echo "<tr>";
 
-            echo "<td $addstyle  align=\"right\">" . nf($arr['rank']) . "";
-            if ($arr['shift'] == 2)
+            echo "<td $addstyle  align=\"right\">" . nf($stat->rank) . "";
+            if ($stat->shift === 2)
                 echo "<img src=\"../images/stats/stat_down.gif\" alt=\"down\" width=\"9\" height=\"12\" />";
-            elseif ($arr['shift'] == 1)
+            elseif ($stat->shift === 1)
                 echo "<img src=\"../images/stats/stat_up.gif\" alt=\"up\" width=\"9\" height=\"11\" />";
             else
                 echo "<img src=\"../images/stats/stat_same.gif\" alt=\"same\" width=\"21\" height=\"9\" />";
             echo "</td>";
-            echo "<td $addstyle >" . $arr['nick'] . "</td>";
-            echo "<td $addstyle >" . $arr['race_name'] . "</td>";
-            echo "<td  $addstyle >" . $arr['sx'] . "/" . $arr['sy'] . "</td>";
-            echo "<td  $addstyle >" . $arr['alliance_tag'] . "</td>";
-            echo "<td $addstyle >" . nf($arr['points']) . "</td>";
+            echo "<td $addstyle >" . $stat->nick . "</td>";
+            echo "<td $addstyle >" . $stat->raceName . "</td>";
+            echo "<td  $addstyle >" . $stat->sx . "/" . $stat->sy . "</td>";
+            echo "<td  $addstyle >" . $stat->allianceTag . "</td>";
+            echo "<td $addstyle >" . nf($stat->points) . "</td>";
             echo "<td $addstyle >
-                " . edit_button("?page=user&amp;sub=edit&amp;id=" . $arr['id'] . "") . "
+                " . edit_button("?page=user&amp;sub=edit&amp;id=" . $stat->id . "") . "
                 </td>";
             echo "</tr>";
         }
