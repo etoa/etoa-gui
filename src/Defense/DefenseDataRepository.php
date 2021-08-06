@@ -33,12 +33,10 @@ class DefenseDataRepository extends AbstractRepository
                 ->where('def_show = 1');
         }
 
-        $orderBy = $orderBy ?? DefenseSort::name();
-        foreach ($orderBy->sorts as $sort) {
-            $qb->addOrderBy($sort);
-        }
 
-        return $qb
+        $orderBy = $orderBy ?? DefenseSort::name();
+
+        return $this->applySearchSortLimit($qb, null, $orderBy)
             ->execute()
             ->fetchAllKeyValue();
     }
