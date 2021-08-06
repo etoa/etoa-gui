@@ -1,6 +1,7 @@
 <?php
 
 use EtoA\Message\ReportRepository;
+use EtoA\Message\ReportSearch;
 use EtoA\Message\ReportTypes;
 
 /** @var ReportRepository $reportRepository */
@@ -72,15 +73,17 @@ $limitstr = $limit . "," . REPORT_LIMIT;
 
 // Load all reports
 if ($type == "all") {
+    $search = ReportSearch::create()->userId($cu->getId())->deleted(false)->archived(false);
     $reports = Report::find(array("user_id" => $cu->id), "timestamp DESC", $limitstr);
-    $totalReports = Report::find(array("user_id" => $cu->id), "timestamp DESC", "", 1);
 } elseif ($type == "archiv") {
+    $search = ReportSearch::create()->userId($cu->getId())->deleted(false)->archived(true);
     $reports = Report::find(array("user_id" => $cu->id, "archived" => true), "timestamp DESC", $limitstr);
-    $totalReports = Report::find(array("user_id" => $cu->id, "archived" => true), "timestamp DESC", "", 1);
 } else {
+    $search = ReportSearch::create()->userId($cu->getId())->type($type)->deleted(false)->archived(false);
     $reports = Report::find(array("type" => $type, "user_id" => $cu->id), "timestamp DESC", $limitstr);
-    $totalReports = Report::find(array("type" => $type, "user_id" => $cu->id), "timestamp DESC", "", 1);
 }
+
+$totalReportsCount = $reportRepository->countReports($search);
 
 // Check if reports available
 if (count($reports) > 0) {
@@ -101,7 +104,7 @@ if (count($reports) > 0) {
         echo "<input type=\"button\" value=\"&lt;&lt;\" onclick=\"document.location='?page=$page&amp;type=$type&amp;limit=0'\" /> ";
         echo "<input type=\"button\" value=\"&lt;\" onclick=\"document.location='?page=$page&amp;type=$type&amp;limit=" . ($limit - REPORT_LIMIT) . "'\" /> ";
     }
-    $totalReportsCount = (int) $totalReports;
+
     echo " " . $limit . "-" . min($limit + REPORT_LIMIT, $totalReportsCount) . " ";
     if ($limit + REPORT_LIMIT < $totalReportsCount) {
         echo "<input type=\"button\" value=\"&gt;\" onclick=\"document.location='?page=$page&amp;type=$type&amp;limit=" . ($limit + REPORT_LIMIT) . "'\" /> ";

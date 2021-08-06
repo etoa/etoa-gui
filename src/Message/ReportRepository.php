@@ -51,7 +51,35 @@ class ReportRepository extends AbstractRepository
             ->fetchOne();
     }
 
-    public function addReport(string $type, int $userId, int $allianceId, ?string $content, int $entity1Id, int $entity2Id, int $opponentId): int
+    /**
+     * @return Report[]
+     */
+    public function searchReports(ReportSearch $search, int $limit, int $first = null): array
+    {
+        $qb = $this->createQueryBuilder()
+            ->select('*')
+            ->from('reports')
+            ->orderBy('timestamp', 'DESC');
+
+        $data = $this->applySearchSortLimit($qb, $search, null, $limit, $first)
+            ->execute()
+            ->fetchAllAssociative();
+
+        return array_map(fn (array $row) => new Report($row), $data);
+    }
+
+    public function countReports(ReportSearch $search): int
+    {
+        $qb = $this->createQueryBuilder()
+            ->select('COUNT(id)')
+            ->from('reports');
+
+        return (int) $this->applySearchSortLimit($qb, $search)
+            ->execute()
+            ->fetchOne();
+    }
+
+    protected function addReport(string $type, int $userId, int $allianceId, ?string $content, int $entity1Id, int $entity2Id, int $opponentId): int
     {
         $this->createQueryBuilder()
             ->insert('reports')
