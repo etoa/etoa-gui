@@ -4,6 +4,7 @@ use EtoA\Alliance\AllianceStatsRepository;
 use EtoA\Alliance\AllianceStatsSearch;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Support\RuntimeDataStore;
+use EtoA\User\UserRatingRepository;
 
 /** @var RuntimeDataStore */
 $runtimeDataStore = $app[RuntimeDataStore::class];
@@ -12,7 +13,8 @@ $runtimeDataStore = $app[RuntimeDataStore::class];
 $config = $app[ConfigurationService::class];
 /** @var AllianceStatsRepository $allianceStatsRepository */
 $allianceStatsRepository = $app[AllianceStatsRepository::class];
-
+/** @var UserRatingRepository $userRatingRepository */
+$userRatingRepository = $app[UserRatingRepository::class];
 echo "<h1>Rangliste</h1>";
 
 $mode = isset($_GET['mode']) && $_GET['mode'] != "" ? $_GET['mode'] : "user";
@@ -222,28 +224,11 @@ elseif ($mode == "base") {
 elseif ($mode == "diplomacy" || $mode == "battle" || $mode == "trade") {
     // Punktetabelle
     if ($mode == "diplomacy") {
-        $res = dbquery("
-                SELECT
-                    r.diplomacy_rating,
-                    user_id,
-                    user_nick,
-                    race_name,
-                    alliance_tag
-                FROM
-                    users
-                INNER JOIN
-                    races ON user_race_id=race_id
-                INNER JOIN
-                    user_ratings as r ON user_id=r.id
-                LEFT JOIN
-                    alliances ON user_alliance_id=alliance_id
-                ORDER BY
-                    battle_rating DESC
-                ;");
+        $ratings = $userRatingRepository->getDiplomacyRating();
         echo "<table class=\"tb\">";
         echo "<tr><th colspan=\"9\" style=\"text-align:center\">Diplomatiewertung</th></tr>";
         $cnt = 1;
-        if (mysql_num_rows($res) > 0) {
+        if (count($ratings) > 0) {
             echo "<tr>
                         <th style=\"width:50px;\">#</th>
                         <th style=\"\">Nick</th>
@@ -252,16 +237,16 @@ elseif ($mode == "diplomacy" || $mode == "battle" || $mode == "trade") {
                         <th style=\"\">Bewertung</th>
                         <th style=\"width:60px;\">Details</th>
                     </tr>";
-            while ($arr = mysql_fetch_array($res)) {
-                if ($arr['diplomacy_rating'] > 0) {
+            foreach ($ratings as $rating) {
+                if ($rating->rating > 0) {
                     echo "<tr>";
                     echo "<td>" . $cnt . "</td>";
-                    echo "<td>" . $arr['user_nick'] . "</td>";
-                    echo "<td>" . $arr['race_name'] . "</td>";
-                    echo "<td >" . $arr['alliance_tag'] . "</td>";
-                    echo "<td>" . nf($arr['diplomacy_rating']) . "</td>";
+                    echo "<td>" . $rating->userNick . "</td>";
+                    echo "<td>" . $rating->raceName . "</td>";
+                    echo "<td >" . $rating->allianceTag . "</td>";
+                    echo "<td>" . nf($rating->rating) . "</td>";
                     echo "<td>
-                            " . edit_button("?page=user&amp;sub=edit&amp;id=" . $arr['user_id'] . "") . "
+                            " . edit_button("?page=user&amp;sub=edit&amp;id=" . $rating->userId . "") . "
                             </td>";
                     echo "</tr>";
                     $cnt++;
@@ -273,31 +258,11 @@ elseif ($mode == "diplomacy" || $mode == "battle" || $mode == "trade") {
         }
         echo "</table><br/>";
     } elseif ($mode == "battle") {
-        $res = dbquery("
-                SELECT
-                    r.battles_fought,
-                    r.battles_won,
-                    r.battles_lost,
-                    r.battle_rating,
-                    user_id,
-                    user_nick,
-                    race_name,
-                    alliance_tag
-                FROM
-                    users
-                INNER JOIN
-                    races ON user_race_id=race_id
-                INNER JOIN
-                    user_ratings as r ON user_id=r.id
-                LEFT JOIN
-                    alliances ON user_alliance_id=alliance_id
-                ORDER BY
-                    battle_rating DESC
-                ;");
+        $ratings = $userRatingRepository->getBattleRating();
         echo "<table class=\"tb\">";
         echo "<tr><th colspan=\"9\" style=\"text-align:center\">Kampfwertung</th></tr>";
         $cnt = 1;
-        if (mysql_num_rows($res) > 0) {
+        if (count($ratings) > 0) {
             echo "<tr>
                         <th style=\"width:50px;\">#</th>
                         <th style=\"\">Nick</th>
@@ -309,19 +274,19 @@ elseif ($mode == "diplomacy" || $mode == "battle" || $mode == "trade") {
                         <th style=\"\">Bewertung</th>
                         <th style=\"width:60px;\">Details</th>
                     </tr>";
-            while ($arr = mysql_fetch_array($res)) {
-                if ($arr['battle_rating'] > 0) {
+            foreach ($ratings as $rating) {
+                if ($rating->rating > 0) {
                     echo "<tr>";
                     echo "<td>" . $cnt . "</td>";
-                    echo "<td>" . $arr['user_nick'] . "</td>";
-                    echo "<td>" . $arr['race_name'] . "</td>";
-                    echo "<td >" . $arr['alliance_tag'] . "</td>";
-                    echo "<td>" . nf($arr['battles_won']) . "</td>";
-                    echo "<td>" . nf($arr['battles_lost']) . "</td>";
-                    echo "<td>" . nf($arr['battles_fought']) . "</td>";
-                    echo "<td>" . nf($arr['battle_rating']) . "</td>";
+                    echo "<td>" . $rating->userNick . "</td>";
+                    echo "<td>" . $rating->raceName . "</td>";
+                    echo "<td >" . $rating->allianceTag . "</td>";
+                    echo "<td>" . nf($rating->battlesWon) . "</td>";
+                    echo "<td>" . nf($rating->battlesLost) . "</td>";
+                    echo "<td>" . nf($rating->battlesFought) . "</td>";
+                    echo "<td>" . nf($rating->rating) . "</td>";
                     echo "<td>
-                            " . edit_button("?page=user&amp;sub=edit&amp;id=" . $arr['user_id'] . "") . "
+                            " . edit_button("?page=user&amp;sub=edit&amp;id=" . $rating->userId . "") . "
                             </td>";
                     echo "</tr>";
                     $cnt++;
@@ -333,30 +298,11 @@ elseif ($mode == "diplomacy" || $mode == "battle" || $mode == "trade") {
         }
         echo "</table><br/>";
     } elseif ($mode == "trade") {
-        $res = dbquery("
-                SELECT
-                    r.trades_sell,
-                    r.trades_buy,
-                    r.trade_rating,
-                    user_id,
-                    user_nick,
-                    race_name,
-                    alliance_tag
-                FROM
-                    users
-                INNER JOIN
-                    races ON user_race_id=race_id
-                INNER JOIN
-                    user_ratings as r ON user_id=r.id
-                LEFT JOIN
-                    alliances ON user_alliance_id=alliance_id
-                ORDER BY
-                    battle_rating DESC
-                ;");
+        $ratings = $userRatingRepository->getTradeRating();
         echo "<table class=\"tb\">";
         echo "<tr><th colspan=\"9\" style=\"text-align:center\">Handelswertung</th></tr>";
         $cnt = 1;
-        if (mysql_num_rows($res) > 0) {
+        if (count($ratings) > 0) {
             echo "<tr>
                         <th style=\"width:50px;\">#</th>
                         <th style=\"\">Nick</th>
@@ -367,18 +313,18 @@ elseif ($mode == "diplomacy" || $mode == "battle" || $mode == "trade") {
                         <th style=\"\">Bewertung</th>
                         <th style=\"width:60px;\">Details</th>
                     </tr>";
-            while ($arr = mysql_fetch_array($res)) {
-                if ($arr['trade_rating'] > 0) {
+            foreach ($ratings as $rating) {
+                if ($rating->rating > 0) {
                     echo "<tr>";
                     echo "<td>" . $cnt . "</td>";
-                    echo "<td>" . $arr['user_nick'] . "</td>";
-                    echo "<td>" . $arr['race_name'] . "</td>";
-                    echo "<td >" . $arr['alliance_tag'] . "</td>";
-                    echo "<td>" . nf($arr['trades_buy']) . "</td>";
-                    echo "<td>" . nf($arr['trades_sell']) . "</td>";
-                    echo "<td>" . nf($arr['trade_rating']) . "</td>";
+                    echo "<td>" . $rating->userNick . "</td>";
+                    echo "<td>" . $rating->raceName . "</td>";
+                    echo "<td >" . $rating->allianceTag . "</td>";
+                    echo "<td>" . nf($rating->tradesBuy) . "</td>";
+                    echo "<td>" . nf($rating->tradesSell) . "</td>";
+                    echo "<td>" . nf($rating->rating) . "</td>";
                     echo "<td>
-                            " . edit_button("?page=user&amp;sub=edit&amp;id=" . $arr['user_id'] . "") . "
+                            " . edit_button("?page=user&amp;sub=edit&amp;id=" . $rating->userId . "") . "
                             </td>";
                     echo "</tr>";
                     $cnt++;

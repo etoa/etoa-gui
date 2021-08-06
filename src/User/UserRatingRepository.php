@@ -5,10 +5,63 @@ declare(strict_types=1);
 namespace EtoA\User;
 
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Query\QueryBuilder;
 use EtoA\Core\AbstractRepository;
 
 class UserRatingRepository extends AbstractRepository
 {
+    /**
+     * @return UserDiplomacyRating[]
+     */
+    public function getDiplomacyRating(): array
+    {
+        $data = $this->createSpecialRatingQueryBuilder()
+            ->addSelect('r.diplomacy_rating')
+            ->orderBy('diplomacy_rating', 'DESC')
+            ->execute()
+            ->fetchAllAssociative();
+
+        return array_map(fn (array $row) => new UserDiplomacyRating($row), $data);
+    }
+
+    /**
+     * @return UserBattleRating[]
+     */
+    public function getBattleRating(): array
+    {
+        $data = $this->createSpecialRatingQueryBuilder()
+            ->addSelect('r.battle_rating, r.battles_lost, r.battles_won, r.battles_fought')
+            ->orderBy('battle_rating', 'DESC')
+            ->execute()
+            ->fetchAllAssociative();
+
+        return array_map(fn (array $row) => new UserBattleRating($row), $data);
+    }
+
+    /**
+     * @return UserTradeRating[]
+     */
+    public function getTradeRating(): array
+    {
+        $data = $this->createSpecialRatingQueryBuilder()
+            ->addSelect('r.trade_rating, r.trades_buy, r.trades_sell')
+            ->orderBy('trade_rating', 'DESC')
+            ->execute()
+            ->fetchAllAssociative();
+
+        return array_map(fn (array $row) => new UserTradeRating($row), $data);
+    }
+
+    private function createSpecialRatingQueryBuilder(): QueryBuilder
+    {
+        return $this->createQueryBuilder()
+            ->select('u.user_id', 'u.user_nick', 'ra.race_name', 'a.alliance_tag')
+            ->from('user_ratings', 'r')
+            ->innerJoin('r', 'users', 'u', 'u.user_id = r.id')
+            ->innerJoin('u', 'races', 'ra', 'u.user_race_id = ra.race_id')
+            ->leftJoin('u', 'alliances', 'a', 'u.user_alliance_id = a.alliance_id');
+    }
+
     public function addBlank(int $id): void
     {
         $this->createQueryBuilder()
