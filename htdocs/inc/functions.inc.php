@@ -54,17 +54,6 @@ function dbquery($string, $fehler = 1)
 }
 
 /**
- * Executes an sql query savely and protects agains SQL injections
- *
- * @param string $query SQL-Query
- * @param array $params Array of arguments
- */
-function dbQuerySave($query, $params = array())
-{
-    return DBManager::getInstance()->safeQuery($query, $params);
-}
-
-/**
  * User-Nick via User-Id auslesen
  */
 function get_user_nick($id)
