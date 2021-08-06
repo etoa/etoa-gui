@@ -2,6 +2,7 @@
 
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Message\ReportRepository;
+use EtoA\Message\ReportTypes;
 
 /**
  * Implements a report management system, replacing some of the
@@ -13,13 +14,8 @@ use EtoA\Message\ReportRepository;
  */
 abstract class Report
 {
-    /**
-     * @var array Available report types
-     */
-    static $types = array('battle' => 'Kampf', 'spy' => 'Spionage', 'explore' => 'Erkundung', 'market' => 'Markt', 'crypto' => 'Krypto', 'other' => 'Sonstige');
-
     protected $valid = false;
-    protected $type = 'other';
+    protected $type = ReportTypes::TYPE_OTHER;
     protected $id;
     protected $subject = "1";
     protected $timestamp;
@@ -225,7 +221,7 @@ abstract class Report
 
     function typeName()
     {
-        return self::$types[$this->type];
+        return ReportTypes::TYPES[$this->type];
     }
 
     /**

@@ -8,7 +8,7 @@ class MarketReportRepository extends ReportRepository
 {
     public function addAuctionReport(int $auctionId, int $userId, int $entityId, int $opponentId, BaseResources $sellResources, string $subType, BaseResources $buyResources, string $content = null, float $factor = 1.0, int $timestamp2 = 0): void
     {
-        $reportId = $this->addReport('market', $userId, 0, $content, $entityId, 0, $opponentId);
+        $reportId = $this->addReport(ReportTypes::TYPE_MARKET, $userId, 0, $content, $entityId, 0, $opponentId);
 
         $this->createQueryBuilder()
             ->insert('reports_market')
@@ -55,7 +55,7 @@ class MarketReportRepository extends ReportRepository
 
     public function addShipReport(int $marketId, int $userId, int $entityId, int $opponentId, int $shipId, int $shipCount, string $subType, BaseResources $costs, float $factor = 1.0, string $content = null, int $timestamp2 = 0, int $entity2Id = 0, int $fleet1Id = 0, int $fleet2Id = 0): void
     {
-        $reportId = $this->addReport('market', $userId, 0, $content, $entityId, $entity2Id, $opponentId);
+        $reportId = $this->addReport(ReportTypes::TYPE_MARKET, $userId, 0, $content, $entityId, $entity2Id, $opponentId);
 
         $this->createQueryBuilder()
             ->insert('reports_market')
@@ -98,7 +98,7 @@ class MarketReportRepository extends ReportRepository
 
     public function addResourceReport(int $marketId, int $userId, int $entityId, int $opponentId, BaseResources $sellResources, string $subType, BaseResources $costs, float $factor = 1.0, string $content = null, int $timestamp2 = 0, int $entity2Id = 0, int $fleet1Id = 0, int $fleet2Id = 0): void
     {
-        $reportId = $this->addReport('market', $userId, 0, $content, $entityId, $entity2Id, $opponentId);
+        $reportId = $this->addReport(ReportTypes::TYPE_MARKET, $userId, 0, $content, $entityId, $entity2Id, $opponentId);
 
         $this->createQueryBuilder()
             ->insert('reports_market')

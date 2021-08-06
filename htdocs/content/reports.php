@@ -1,6 +1,7 @@
 <?php
 
 use EtoA\Message\ReportRepository;
+use EtoA\Message\ReportTypes;
 
 /** @var ReportRepository $reportRepository */
 $reportRepository = $app[ReportRepository::class];
@@ -11,7 +12,7 @@ echo "<h1>Berichte</h1>";
 
 // Show navigation
 $tabitems = array("all" => "Neuste Berichte");
-foreach (Report::$types as $k => $v) {
+foreach (ReportTypes::TYPES as $k => $v) {
     $tabitems[$k] = $v;
 }
 $tabitems["archiv"] = "Archiv";
@@ -91,7 +92,7 @@ if (count($reports) > 0) {
     elseif ($type == "archiv")
         tableStart("Archiv");
     else
-        tableStart(Report::$types[$type] . "berichte");
+        tableStart(ReportTypes::TYPES[$type] . "berichte");
 
     // Pagination navigation
     echo "<tr><th colspan=\"5\">";
