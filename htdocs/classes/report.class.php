@@ -120,64 +120,6 @@ abstract class Report
     public abstract function createSubject();
 
     /**
-     * Adds a new report. To be called from the derived class.
-     *
-     * @param array $data Associative array containing various fields
-     * @return boolean True if adding was successfull, false otherwise
-     */
-    static function add($data)
-    {
-        if (isset($data['user_id']) || isset($data['alliance_id'])) {
-            $fs = "";
-            $vs = "";
-
-            if (isset($data['user_id'])) {
-                $fs .= ",user_id";
-                $vs .= ",'" . intval($data['user_id']) . "'";
-            }
-            if (isset($data['alliance_id'])) {
-                $fs .= ",alliance_id";
-                $vs .= ",'" . intval($data['alliance_id']) . "'";
-            }
-            if (isset($data['content'])) {
-                $fs .= ",content";
-                $vs .= ",'" . mysql_real_escape_string($data['content']) . "'";
-            }
-            if (isset($data['entity1_id'])) {
-                $fs .= ",entity1_id";
-                $vs .= ",'" . intval($data['entity1_id']) . "'";
-            }
-            if (isset($data['entity2_id'])) {
-                $fs .= ",entity2_id";
-                $vs .= ",'" . intval($data['entity2_id']) . "'";
-            }
-            if (isset($data['opponent1_id'])) {
-                $fs .= ",opponent1_id";
-                $vs .= ",'" . intval($data['opponent1_id']) . "'";
-            }
-
-            $sql = "INSERT INTO
-                reports
-            (
-                timestamp,
-                type
-                " . $fs . "
-            )
-            VALUES
-            (
-                " . time() . ",
-                '" . (isset($data['type']) && isset(self::$types[$data['type']]) ? $data['type'] : 'other') . "'
-                " . $vs . "
-            );";
-            dbquery($sql);
-            return mysql_insert_id();
-        }
-        error_msg("Kein Report-Besitzer angegeben!");
-        etoa_dump($data);
-        return false;
-    }
-
-    /**
      * Gets a list of reports
      *
      * @param string|array $where WHERE conditions where $arrayKey is database field name

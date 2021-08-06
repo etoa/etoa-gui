@@ -28,7 +28,6 @@ class MarketReport extends Report
         'auctionoverbid' => 'Überboten',
         'auctionwon' => 'Auktion gewonnen',
         'auctionfinished' => 'Auktion beendet',
-        'other' => 'other',
     );
 
     protected $subType = 'other';
@@ -69,69 +68,6 @@ class MarketReport extends Report
                 return;
             }
         }
-    }
-
-    static function addMarketReport($data, $subType, $recordId, $marketData)
-    {
-        global $resNames;
-
-        $id = parent::add(array_merge($data, array("type" => "market")));
-        if ($id != null) {
-            $fs = "";
-            $vs = "";
-            foreach ($resNames as $rk => $rn) {
-                if (isset($marketData['sell_' . $rk])) {
-                    $fs .= ",sell_" . $rk . " ";
-                    $vs .= "," . $marketData['sell_' . $rk] . " ";
-                }
-                if (isset($marketData['buy_' . $rk])) {
-                    $fs .= ",buy_" . $rk . " ";
-                    $vs .= "," . $marketData['buy_' . $rk] . " ";
-                }
-            }
-            if (isset($marketData['factor']) && $marketData['factor'] > 0) {
-                $fs .= ",factor ";
-                $vs .= "," . $marketData['factor'] . " ";
-            }
-            if (isset($marketData['fleet1_id']) && $marketData['fleet1_id'] > 0) {
-                $fs .= ",fleet1_id ";
-                $vs .= "," . $marketData['fleet1_id'] . " ";
-            }
-            if (isset($marketData['fleet2_id']) && $marketData['fleet2_id'] > 0) {
-                $fs .= ",fleet2_id ";
-                $vs .= "," . $marketData['fleet2_id'] . " ";
-            }
-            if (isset($marketData['ship_id']) && $marketData['ship_id'] > 0) {
-                $fs .= ",ship_id ";
-                $vs .= "," . $marketData['ship_id'] . " ";
-            }
-            if (isset($marketData['ship_count']) && $marketData['ship_count'] > 0) {
-                $fs .= ",ship_count ";
-                $vs .= "," . $marketData['ship_count'] . " ";
-            }
-            if (isset($marketData['timestamp2']) && $marketData['timestamp2'] > 0) {
-                $fs .= ",timestamp2 ";
-                $vs .= "," . $marketData['timestamp2'] . " ";
-            }
-            dbquery("INSERT INTO
-				reports_market
-			(
-				id,
-				subtype,
-				record_id
-				" . $fs . "
-			)
-			VALUES
-			(
-				" . $id . ",
-				'" . (isset(self::$subTypes[$subType]) ? $subType : 'other') . "',
-				" . intval($recordId) . "
-				" . $vs . "
-			)
-			");
-            return $id;
-        }
-        return null;
     }
 
     function createSubject()
