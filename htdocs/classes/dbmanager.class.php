@@ -117,46 +117,6 @@ class DBManager implements ISingleton
     }
 
     /**
-     * Executes an sql query savely and protects agains SQL injections
-     *
-     * @param string $query SQL-Query
-     * @param ?array $params Array of arguments
-     */
-    function safeQuery($query, $params = array())
-    {
-        if (is_array($params) && count($params) > 0) {
-            foreach ($params as &$v) {
-                $v = $this->escapeStr($v);
-            }
-            # Escaping parameters
-            # str_replace - replacing ? -> %s. %s is ugly in raw sql query
-            # vsprintf - replacing all %s to parameters
-            $sql = vsprintf(str_replace("?", "'%s'", $query), $params);
-        } else {
-            $sql = $query;    # If no params...
-        }
-        return $this->query($sql);
-    }
-
-    /**
-     * Prepares a user string for sql queries and
-     * escapes all malicious characters, e.g. '
-     *
-     * @param string $string
-     * @return string
-     */
-    function escapeStr($string)
-    {
-        if (!$this->isOpen) {
-            $this->connect();
-        }
-        $string = trim($string);
-        if (get_magic_quotes_gpc())
-            $string = stripslashes($string);
-        return mysql_real_escape_string($string);
-    }
-
-    /**
      * Writes a message to error log
      */
     private function writeMsgToErrorLog($message)
