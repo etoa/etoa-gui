@@ -206,19 +206,6 @@ abstract class Report
         return null;
     }
 
-    /**
-     * Check new messages of the given user
-     *
-     * @param int $userId
-     * @return int Number of new messages
-     */
-    static function countNew($userId)
-    {
-        $res = dbquery("SELECT COUNT(id) FROM reports WHERE user_id=" . intval($userId) . " AND `read`=0 AND `deleted`=0;");
-        $arr = mysql_fetch_row($res);
-        return $arr[0];
-    }
-
     function typeName()
     {
         return ReportTypes::TYPES[$this->type];
