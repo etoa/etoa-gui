@@ -129,4 +129,20 @@ class DefenseDataRepository extends AbstractRepository
 
         return $result;
     }
+
+    /**
+     * @return Defense[]
+     */
+    public function searchDefense(DefenseSearch $search, DefenseSort $sort = null, int $limit = null): array
+    {
+        $qb = $this->createQueryBuilder()
+            ->select('*')
+            ->from('defense');
+
+        $data = $this->applySearchSortLimit($qb, $search, $sort, $limit)
+            ->execute()
+            ->fetchAllAssociative();
+
+        return array_map(fn ($row) => new Defense($row), $data);
+    }
 }

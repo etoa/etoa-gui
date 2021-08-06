@@ -60,4 +60,16 @@ class Defense
         $this->maxCount = (int) $data['def_max_count'];
         $this->points = (float) $data['def_points'];
     }
+
+    public function getImagePath(string $type = "small"): string
+    {
+        switch ($type) {
+            case 'small':
+                return IMAGE_PATH."/".IMAGE_DEF_DIR."/def".$this->id."_small.".IMAGE_EXT;
+            case 'medium':
+                return IMAGE_PATH."/".IMAGE_DEF_DIR."/def".$this->id."_middle.".IMAGE_EXT;
+            default:
+                return IMAGE_PATH."/".IMAGE_DEF_DIR."/def".$this->id.".".IMAGE_EXT;
+        }
+    }
 }

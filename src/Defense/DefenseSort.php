@@ -2,11 +2,10 @@
 
 namespace EtoA\Defense;
 
-class DefenseSort
-{
-    /** @var string[] */
-    public array $sorts;
+use EtoA\Core\Database\AbstractSort;
 
+class DefenseSort extends AbstractSort
+{
     /**
      * @param string[] $sorts
      */
