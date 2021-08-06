@@ -37,13 +37,13 @@ try {
     exit(1);
 }
 
-// Load default values
-require_once(RELATIVE_ROOT."inc/def.inc.php");
-
 if (!isset($app)) {
     $app = require __DIR__ .'/../src/app.php';
     $app->boot();
 }
+
+// Load default values
+require_once(RELATIVE_ROOT."inc/def.inc.php");
 
 $args = array_splice($_SERVER['argv'], 1);
 
