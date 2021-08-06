@@ -26,30 +26,25 @@ class ChatPushJsonResponder extends JsonResponder
         $data = array();
 
         if (isset($_SESSION['user_id'])) {
+            /** @var UserRepository $userRepository */
+            $userRepository = $this->app[UserRepository::class];
+
             $admin = 0;
-            $res = dbquery('
-      SELECT
-        user_chatadmin,admin
-      FROM
-        users
-      WHERE
-        user_id=' . $_SESSION['user_id'] . ';');
-            if (mysql_num_rows($res) > 0) // Should always be true, otherwise the user does not exist
-            {
+            $user = $userRepository->getUser((int) $_SESSION['user_id']);
+            if ($user !== null) { // Should always be true, otherwise the user does not exist
                 // chatadmins = 2, admins = 1, noadmin-entwickler = 3,
                 // leiter team community = 4, admin-entwickler = 5
-                $arr = mysql_fetch_assoc($res);
-                if ($arr['admin'] == 1) {
-                    if ($arr['user_chatadmin'] == 3) {
+                if ($user->admin === 1) {
+                    if ($user->chatAdmin === 3) {
                         $admin = 5; // Entwickler mit Adminrechten
                     } else {
                         $admin = 1; // Admin
                     }
-                } elseif ($arr['user_chatadmin'] == 1)
+                } elseif ($user->chatAdmin === 1)
                     $admin = 2; // Chatadmin
-                elseif ($arr['user_chatadmin'] == 2)
+                elseif ($user->chatAdmin === 2)
                     $admin = 4; // Leiter Team Community
-                elseif ($arr['admin'] == 2)
+                elseif ($user->admin === 2)
                     $admin = 3; // Entwickler ohne Adminrechte
             } else {
                 return array('cmd' => 'nu'); // no user

@@ -43,8 +43,8 @@ class User
     public int $registered;
     public ?string $profileText;
     public bool $ghost;
-    public bool $admin;
-    public bool $chatAdmin;
+    public int $admin;
+    public int $chatAdmin;
     public int $visits;
     public ?string $avatar;
     public ?string $signature;
@@ -112,8 +112,8 @@ class User
         $this->registered = (int) $data['user_registered'];
         $this->profileText = $data['user_profile_text'];
         $this->ghost = (bool) $data['user_ghost'];
-        $this->admin = (bool) $data['admin'];
-        $this->chatAdmin = (bool) $data['user_chatadmin'];
+        $this->admin = (int) $data['admin'];
+        $this->chatAdmin = (int) $data['user_chatadmin'];
         $this->visits = (int) $data['user_visits'];
         $this->avatar = $data['user_avatar'];
         $this->signature = $data['user_signature'];
