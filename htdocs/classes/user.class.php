@@ -411,9 +411,6 @@ class User implements \EtoA\User\UserInterface
             if ($key == "rating" && $this->rating == null) {
                 $this->rating = new UserRating($this->id);
             }
-            if ($key == "properties" && $this->properties == null) {
-                $this->properties = new UserProperties($this->id);
-            }
             if ($key == "specialist" && $this->specialist == null) {
                 $this->specialist = new Specialist($this->specialistId, $this->specialistTime);
             }

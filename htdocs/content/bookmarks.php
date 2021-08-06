@@ -8,6 +8,7 @@ use EtoA\Universe\Entity\EntityCoordinates;
 use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Universe\Resources\BaseResources;
+use EtoA\User\UserPropertiesRepository;
 use EtoA\User\UserRepository;
 use EtoA\User\UserUniverseDiscoveryService;
 
@@ -26,6 +27,11 @@ $fleetBookmarkRepository = $app[FleetBookmarkRepository::class];
 $bookmarkRepository = $app[BookmarkRepository::class];
 /** @var PlanetRepository $planetRepository */
 $planetRepository = $app[PlanetRepository::class];
+
+/** @var UserPropertiesRepository $userPropertiesRepository */
+$userPropertiesRepository = $app[UserPropertiesRepository::class];
+
+$properties = $userPropertiesRepository->getOrCreateProperties($cu->id);
 
 $mode = (isset($_GET['mode']) && $_GET['mode'] != "" && ctype_alpha($_GET['mode'])) ? $_GET['mode'] : 'target';
 
@@ -474,8 +480,9 @@ if ($mode == "fleet") {
      *  Sortiereingaben speichern *
      ****************************/
     if (count($_POST) > 0 && isset($_POST['sort_submit']) && isset($_POST['sort_value']) && ctype_aldotsc($_POST['sort_value']) && isset($_POST['sort_way']) && ctype_aldotsc($_POST['sort_way'])) {
-        $cu->properties->itemOrderBookmark = $_POST['sort_value'];
-        $cu->properties->itemOrderWay = $_POST['sort_way'];
+        $properties->itemOrderBookmark = $_POST['sort_value'];
+        $properties->itemOrderWay = $_POST['sort_way'];
+        $userPropertiesRepository->storeProperties($cu->id, $properties);
     }
 
     // Bearbeiten
@@ -603,7 +610,7 @@ if ($mode == "fleet") {
         iBoxEnd();
 
         // List bookmarks
-        $bookmarks = $bookmarkRepository->findForUser($user->id, new BookmarkOrder($cu->properties->itemOrderBookmark , $cu->properties->itemOrderWay));
+        $bookmarks = $bookmarkRepository->findForUser($user->id, new BookmarkOrder($properties->itemOrderBookmark , $properties->itemOrderWay));
         if (count($bookmarks) > 0) {
             tableStart("Gespeicherte Favoriten");
             /*************
@@ -615,7 +622,7 @@ if ($mode == "fleet") {
                         <select name=\"sort_value\">";
             foreach (BookmarkOrder::ALL_ORDERS as $value => $name) {
                 echo "<option value=\"" . $value . "\"";
-                if ($cu->properties->itemOrderBookmark == $value) {
+                if ($properties->itemOrderBookmark == $value) {
                     echo " selected=\"selected\"";
                 }
                 echo ">" . $name . "</option>";
@@ -626,12 +633,12 @@ if ($mode == "fleet") {
 
             //Aufsteigend
             echo "<option value=\"ASC\"";
-            if ($cu->properties->itemOrderWay == 'ASC') echo " selected=\"selected\"";
+            if ($properties->itemOrderWay == 'ASC') echo " selected=\"selected\"";
             echo ">Aufsteigend</option>";
 
             //Absteigend
             echo "<option value=\"DESC\"";
-            if ($cu->properties->itemOrderWay == 'DESC') echo " selected=\"selected\"";
+            if ($properties->itemOrderWay == 'DESC') echo " selected=\"selected\"";
             echo ">Absteigend</option>";
 
             echo "</select>
@@ -683,7 +690,7 @@ if ($mode == "fleet") {
 
                 // Analysieren, letzten Analysebericht als Popup anzeigen
                 if (in_array("analyze", $ent->allowedFleetActions(), true)) {
-                    if ($cu->properties->showCellreports) {
+                    if ($properties->showCellreports) {
                         $reports = Report::find(array("type" => "spy", "user_id" => $user->id, "entity1_id" => $ent->id()), "timestamp DESC", 1, 0, true);
                         if (count($reports) > 0) {
                             $r = array_pop($reports);

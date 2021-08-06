@@ -5,6 +5,7 @@ use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Universe\Cell\CellRepository;
 use EtoA\Universe\Entity\EntityType;
 use EtoA\Universe\Planet\PlanetRepository;
+use EtoA\User\UserPropertiesRepository;
 use EtoA\User\UserRepository;
 use EtoA\User\UserUniverseDiscoveryService;
 
@@ -27,6 +28,11 @@ $userRepository = $app[UserRepository::class];
 $userUniverseDiscoveryService = $app[UserUniverseDiscoveryService::class];
 
 $user = $userRepository->getUser($cu->id);
+
+/** @var UserPropertiesRepository $userPropertiesRepository */
+$userPropertiesRepository = $app[UserPropertiesRepository::class];
+
+$properties = $userPropertiesRepository->getOrCreateProperties($cu->id);
 
 if (isset($_GET['id']) && intval($_GET['id']) > 0) {
     $cellId = intval($_GET['id']);
@@ -303,7 +309,7 @@ if ($cell->isValid()) {
             }
 
             if (in_array("analyze", $ent->allowedFleetActions(), true)) {
-                if ($cu->properties->showCellreports) {
+                if ($properties->showCellreports) {
                     $reports = Report::find(array("type" => "spy", "user_id" => $cu->id, "entity1_id" => $ent->id()), "timestamp DESC", 1, 0, true);
                     if (count($reports) > 0) {
                         $r = array_pop($reports);

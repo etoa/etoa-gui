@@ -6,6 +6,7 @@ namespace EtoA\UI;
 
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Ship\ShipDataRepository;
+use EtoA\User\UserPropertiesRepository;
 use EtoA\User\UserRepository;
 use Pimple\Container;
 use Pimple\ServiceProviderInterface;
@@ -15,7 +16,10 @@ class UIServiceProvider implements ServiceProviderInterface
     public function register(Container $pimple): void
     {
         $pimple[ResourceBoxDrawer::class] = function (Container $pimple): ResourceBoxDrawer {
-            return new ResourceBoxDrawer($pimple[ConfigurationService::class]);
+            return new ResourceBoxDrawer(
+                $pimple[ConfigurationService::class],
+                $pimple[UserPropertiesRepository::class]
+            );
         };
 
         $pimple[EntityCoordinatesSelector::class] = function (Container $pimple): EntityCoordinatesSelector {

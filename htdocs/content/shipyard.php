@@ -14,6 +14,7 @@ use EtoA\Technology\TechnologyRepository;
 use EtoA\UI\ResourceBoxDrawer;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Universe\Resources\PreciseResources;
+use EtoA\User\UserPropertiesRepository;
 
 /** @var ConfigurationService */
 $config = $app[ConfigurationService::class];
@@ -26,16 +27,26 @@ $resourceBoxDrawer = $app[ResourceBoxDrawer::class];
 
 /** @var BuildingRepository $buildingRepository */
 $buildingRepository = $app[BuildingRepository::class];
+
 /** @var ShipQueueRepository $shipQueueRepository */
 $shipQueueRepository = $app[ShipQueueRepository::class];
+
 /** @var FleetRepository $fleetRepository */
 $fleetRepository = $app[FleetRepository::class];
+
 /** @var ShipRequirementRepository $shipRequirementRepository */
 $shipRequirementRepository = $app[ShipRequirementRepository::class];
+
 /** @var ShipCategoryRepository $shipCategoryRepository */
 $shipCategoryRepository = $app[ShipCategoryRepository::class];
+
 /** @var ShipDataRepository $shipDataRepository */
 $shipDataRepository = $app[ShipDataRepository::class];
+
+/** @var UserPropertiesRepository $userPropertiesRepository */
+$userPropertiesRepository = $app[UserPropertiesRepository::class];
+
+$properties = $userPropertiesRepository->getOrCreateProperties($cu->id);
 
 //Definition für "Info" Link
 define('ITEMS_TBL', "ships");
@@ -95,10 +106,10 @@ if ($shipyard !== null && $shipyard->currentLevel > 0) {
             count($_POST) > 0 && isset($_POST['sort_submit'])
             && ctype_aldotsc($_POST['sort_value']) && ctype_aldotsc($_POST['sort_way'])
         ) {
-            $cu->properties->itemOrderShip = $_POST['sort_value'];
-            $cu->properties->itemOrderWay = $_POST['sort_way'];
+            $properties->itemOrderShip = $_POST['sort_value'];
+            $properties->itemOrderWay = $_POST['sort_way'];
+            $userPropertiesRepository->storeProperties($cu->id, $properties);
         }
-
 
         //
         // Läd alle benötigten Daten in PHP-Arrays
@@ -179,7 +190,7 @@ if ($shipyard !== null && $shipyard->currentLevel > 0) {
         /** @var PreciseResources[] $shipCosts */
         $shipCosts = [];
         $shipSearch = ShipSearch::create()->buildable()->raceOrNull($cu->raceId);
-        $shipOrder = ShipSort::specialWithUserSort($cu->properties->itemOrderShip, $cu->properties->itemOrderWay);
+        $shipOrder = ShipSort::specialWithUserSort($properties->itemOrderShip, $properties->itemOrderWay);
         $ships = $shipDataRepository->searchShips($shipSearch, $shipOrder);
         foreach ($ships as $ship) {
             $shipsByCategory[$ship->catId][] = $ship;
@@ -306,7 +317,7 @@ if ($shipyard !== null && $shipyard->currentLevel > 0) {
                             <select name=\"sort_value\">";
         foreach (ShipSort::USER_SORT_VALUES as $value => $name) {
             echo "<option value=\"" . $value . "\"";
-            if ($cu->properties->itemOrderShip === $value) {
+            if ($properties->itemOrderShip === $value) {
                 echo " selected=\"selected\"";
             }
             echo ">" . $name . "</option>";
@@ -317,12 +328,12 @@ if ($shipyard !== null && $shipyard->currentLevel > 0) {
 
         //Aufsteigend
         echo "<option value=\"ASC\"";
-        if ($cu->properties->itemOrderWay == 'ASC') echo " selected=\"selected\"";
+        if ($properties->itemOrderWay == 'ASC') echo " selected=\"selected\"";
         echo ">Aufsteigend</option>";
 
         //Absteigend
         echo "<option value=\"DESC\"";
-        if ($cu->properties->itemOrderWay == 'DESC') echo " selected=\"selected\"";
+        if ($properties->itemOrderWay == 'DESC') echo " selected=\"selected\"";
         echo ">Absteigend</option>";
 
         echo "</select>
@@ -733,7 +744,7 @@ if ($shipyard !== null && $shipyard->currentLevel > 0) {
                 // Auflistung der Schiffe (auch diese, die noch nicht gebaut wurden)
                 if (isset($shipsByCategory[$category->id]) && count($shipsByCategory[$category->id]) > 0) {
                     //Einfache Ansicht
-                    if ($cu->properties->itemShow != 'full') {
+                    if ($properties->itemShow != 'full') {
                         echo '<tr>
                                         <th colspan="2" class="tbltitle">Schiff</th>
                                         <th class="tbltitle">Zeit</th>
@@ -964,7 +975,7 @@ if ($shipyard !== null && $shipyard->currentLevel > 0) {
                                 }
 
                                 // Volle Ansicht
-                                if ($cu->properties->itemShow == 'full') {
+                                if ($properties->itemShow == 'full') {
                                     if ($ccnt > 0) {
                                         echo "<tr>
                                                     <td colspan=\"5\" style=\"height:5px;\"></td>

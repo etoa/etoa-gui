@@ -8,6 +8,7 @@ use EtoA\Technology\TechnologyRepository;
 use EtoA\UI\ResourceBoxDrawer;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Technology\TechnologyDataRepository;
+use EtoA\User\UserPropertiesRepository;
 
 /** @var ConfigurationService */
 $config = $app[ConfigurationService::class];
@@ -21,7 +22,12 @@ $resourceBoxDrawer = $app[ResourceBoxDrawer::class];
 /** @var BuildingRepository $buildingRepository */
 $buildingRepository = $app[BuildingRepository::class];
 
-if ($cu->properties->itemShow != 'full') {
+/** @var UserPropertiesRepository $userPropertiesRepository */
+$userPropertiesRepository = $app[UserPropertiesRepository::class];
+
+$properties = $userPropertiesRepository->getOrCreateProperties($cu->id);
+
+if ($properties->itemShow != 'full') {
     define('NUM_BUILDINGS_PER_ROW', 9);
     define('TABLE_WIDTH', '');
 } else {
@@ -33,7 +39,7 @@ if ($cu->properties->itemShow != 'full') {
 define('HELP_URL', "?page=help&site=buildings");
 
 // Aktiviert / Deaktiviert Bildfilter
-if ($cu->properties->imageFilter == 1) {
+if ($properties->imageFilter) {
     $use_img_filter = true;
 } else {
     $use_img_filter = false;
@@ -171,7 +177,7 @@ if (isset($cp)) {
                 <input type="hidden" name="foodRequired" id="foodRequired" value="' . $config->getInt('people_food_require') . '" />
                 <input type="hidden" name="peopleFree" id="peopleFree" value="' . $peopleFree . '" />
                 <input type="hidden" name="foodAvaiable" id="foodAvaiable" value="' . $cp->getRes1(4) . '" />';
-    if ($cu->properties->itemShow == 'full' && $bid > 0 && $bl->item($bid) !== false) {
+    if ($properties->itemShow == 'full' && $bid > 0 && $bl->item($bid) !== false) {
         $box .= '<input type="hidden" name="peopleOptimized" id="peopleOptimized" value="' . $bl->item($bid)->getPeopleOptimized() . '" />';
     } else {
         $box .= '<input type="hidden" name="peopleOptimized" id="peopleOptimized" value="0" />';
@@ -206,7 +212,7 @@ if (isset($cp)) {
                             <div id="changeWorkingPeopleError" style="display:none;">&nbsp;</div>
                             <input type="submit" value="Speichern" name="submit_people_form" id="submit_people_form" />&nbsp;';
 
-    if ($cu->properties->itemShow == 'full' && $bid > 0 && $bl->item($bid) !== false) {
+    if ($properties->itemShow == 'full' && $bid > 0 && $bl->item($bid) !== false) {
         $peopleOptimized = $bl->item($bid)->getPeopleOptimized();
         $box .= '<input type="button" value="Optimieren" onclick="updatePeopleWorkingBox(\'' . $peopleOptimized . '\',\'-1\',\'^-1\');">';
     }
@@ -256,7 +262,7 @@ if (isset($cp)) {
     echo '</div>';
 
     // if full view and detail view selected, show it
-    if ($bid > 0 && $bl->item($bid) !== false && $cu->properties->itemShow == 'full') {
+    if ($bid > 0 && $bl->item($bid) !== false && $properties->itemShow == 'full') {
 
         //
         // Gebäudedaten anzeigen
@@ -488,7 +494,7 @@ if (isset($cp)) {
                 tableStart($typeName, TABLE_WIDTH);
 
                 //Einfache Ansicht
-                if ($cu->properties->itemShow != 'full') {
+                if ($properties->itemShow != 'full') {
                     echo "<tr>
                             <th colspan=\"2\">Gebäude</th>
                             <th>Zeit</th>
@@ -507,7 +513,7 @@ if (isset($cp)) {
                 $it = $bl->getCatIterator($typeId, $mode);
 
                 while ($it->valid()) {
-                    if ($cu->properties->itemShow != 'full')
+                    if ($properties->itemShow != 'full')
                         $img = $it->current()->building->imgPathSmall();
                     else
                         $img = $it->current()->building->imgPathMiddle();
@@ -577,7 +583,7 @@ if (isset($cp)) {
                     }
 
                     //Einfache Ansicht
-                    if ($cu->properties->itemShow != 'full') {
+                    if ($properties->itemShow != 'full') {
                         echo "<tr>
                                     <td>
                                         <a href=\"" . HELP_URL . "&amp;id=" . $it->key() . "\"><img class=\"" . $filterStyleClass . "\" src=\"" . $img . "\" width=\"40px\" height=\"40px\" border=\"0\" /></a>
@@ -617,7 +623,7 @@ if (isset($cp)) {
                         $scnt++;
                     } else {
 
-                        if ($cu->properties->itemShow == 'full') {
+                        if ($properties->itemShow == 'full') {
                             // Display row starter if needed
                             if ($cnt == 0) {
                                 echo "<tr>";

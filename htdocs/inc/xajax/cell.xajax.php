@@ -1,5 +1,7 @@
 <?PHP
 
+use EtoA\User\UserPropertiesRepository;
+
 $xajax->register(XAJAX_FUNCTION, 'launchSypProbe');
 $xajax->register(XAJAX_FUNCTION, 'launchAnalyzeProbe');
 $xajax->register(XAJAX_FUNCTION, 'launchExplorerProbe');
@@ -12,10 +14,18 @@ function launchSypProbe($tid)
     ob_start();
     $launched = false;
 
-    if ($cp->owner()->properties->spyShipId > 0) {
+    // TODO
+    global $app;
+
+    /** @var UserPropertiesRepository $userPropertiesRepository */
+    $userPropertiesRepository = $app[UserPropertiesRepository::class];
+
+    $properties = $userPropertiesRepository->getOrCreateProperties($cp->owner()->id);
+
+    if ($properties->spyShipId > 0) {
         $fleet = new FleetLaunch($cp, $cp->owner());
         if ($fleet->checkHaven()) {
-            if ($probeCount = $fleet->addShip($cp->owner()->properties->spyShipId, $cp->owner()->properties->spyShipCount)) {
+            if ($probeCount = $fleet->addShip($properties->spyShipId, $properties->spyShipCount)) {
                 if ($fleet->fixShips()) {
                     if ($ent = Entity::createFactoryById($tid)) {
                         if ($fleet->setTarget($ent)) {
@@ -71,10 +81,18 @@ function launchAnalyzeProbe($tid)
     ob_start();
     $launched = false;
 
-    if ($cp->owner()->properties->analyzeShipId > 0) {
+    // TODO
+    global $app;
+
+    /** @var UserPropertiesRepository $userPropertiesRepository */
+    $userPropertiesRepository = $app[UserPropertiesRepository::class];
+
+    $properties = $userPropertiesRepository->getOrCreateProperties($cp->owner()->id);
+
+    if ($properties->analyzeShipId > 0) {
         $fleet = new FleetLaunch($cp, $cp->owner());
         if ($fleet->checkHaven()) {
-            if ($probeCount = $fleet->addShip($cp->owner()->properties->analyzeShipId, $cp->owner()->properties->analyzeShipCount)) {
+            if ($probeCount = $fleet->addShip($properties->analyzeShipId, $properties->analyzeShipCount)) {
                 if ($fleet->fixShips()) {
                     if ($ent = Entity::createFactoryById($tid)) {
                         if ($fleet->setTarget($ent)) {
@@ -130,10 +148,18 @@ function launchExplorerProbe($tcid)
     ob_start();
     $launched = false;
 
-    if ($cp->owner()->properties->exploreShipId > 0) {
+    // TODO
+    global $app;
+
+    /** @var UserPropertiesRepository $userPropertiesRepository */
+    $userPropertiesRepository = $app[UserPropertiesRepository::class];
+
+    $properties = $userPropertiesRepository->getOrCreateProperties($cp->owner()->id);
+
+    if ($properties->exploreShipId > 0) {
         $fleet = new FleetLaunch($cp, $cp->owner());
         if ($fleet->checkHaven()) {
-            if ($probeCount = $fleet->addShip($cp->owner()->properties->exploreShipId, $cp->owner()->properties->exploreShipCount)) {
+            if ($probeCount = $fleet->addShip($properties->exploreShipId, $properties->exploreShipCount)) {
                 if ($fleet->fixShips()) {
                     $tc = new Cell($tcid);
                     if ($tc->isValid()) {
