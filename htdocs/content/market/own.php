@@ -33,15 +33,7 @@ if (isset($_POST['ship_cancel'])) {
         if ($offer !== null) {
             $marketLevel = $buildingRepository->getBuildingLevel($cu->getId(), MARKTPLATZ_ID, $offer->entityId);
             $return_factor = floor((1 - 1 / ($marketLevel + 1)) * 100) / 100;
-            $marr = array('factor' => $return_factor, "ship_id" => $offer->shipId, "ship_count" => $offer->count);
             $costs = $offer->getCosts();
-            foreach ($resNames as $rk => $rn) {
-                // todo: when non on the planet where the deal belongs to, the return_factor
-                // is based on the local marketplace, for better or worse... change that so that the
-                // origin marketplace return factor will be taken
-                $marr['buy_' . $rk] = $costs->get($rk);
-            }
-
             $returnCount = (int) floor($offer->count * $return_factor);
             if ($returnCount > 0) {
                 $shipRepository->addShip($offer->shipId, $returnCount, $offer->userId, $offer->entityId);
@@ -49,10 +41,7 @@ if (isset($_POST['ship_cancel'])) {
 
             $marketShipRepository->delete($smid);
 
-            MarketReport::addMarketReport(array(
-                'user_id' => $cu->id,
-                'entity1_id' => $cp->id,
-            ), "shipcancel", $smid, $marr);
+            $marketReportRepository->addShipReport($offer->id, $cu->getId(), $cp->id, 0, $offer->shipId, $offer->count, "shipcancel", $costs, $return_factor);
 
             success_msg("Angebot wurde gel&ouml;scht und du hast $returnCount (" . ($return_factor * 100) . "%) der angebotenen Schiffe zur&uuml;ck erhalten (es wird abgerundet)");
         } else {

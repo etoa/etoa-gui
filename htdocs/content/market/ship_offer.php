@@ -3,6 +3,7 @@
 use EtoA\Alliance\AllianceBuildingId;
 use EtoA\Alliance\AllianceBuildingRepository;
 use EtoA\Market\MarketShipRepository;
+use EtoA\Message\MarketReportRepository;
 use EtoA\Ship\ShipRepository;
 use EtoA\Universe\Resources\BaseResources;
 use EtoA\User\UserRepository;
@@ -19,6 +20,8 @@ $shipRepository = $app[ShipRepository::class];
 $marketShipRepository = $app[MarketShipRepository::class];
 /** @var AllianceBuildingRepository $allianceBuildingRepository */
 $allianceBuildingRepository = $app[AllianceBuildingRepository::class];
+/** @var MarketReportRepository $marketReportRepository */
+$marketReportRepository = $app[MarketReportRepository::class];
 
 $for_user = 0;
 $for_alliance = 0;
@@ -43,13 +46,10 @@ if (!isset($errMsg)) {
     $ship_id = $_POST['ship_list'];
     $ship_count = nf_back($_POST['ship_count']);
 
-    $marr = array("ship_id" => $ship_id, "ship_count" => $ship_count);
     $costs = new BaseResources();
     foreach ($resNames as $rk => $rn) {
         // Convert formatted number back to integer
-        $_POST['ship_buy_' . $rk] = nf_back($_POST['ship_buy_' . $rk]);
-        $costs->set($rk, (int) $_POST['ship_buy_' . $rk]);
-        $marr['buy_' . $rk] = $_POST['ship_buy_' . $rk];
+        $costs->set($rk, max(0, (int) nf_back($_POST['ship_buy_' . $rk])));
     }
 
     // Überprüft ob die angegebene Anzahl Schiffe noch vorhanden ist (eventuelle Zerstörung durch Kampf?)
@@ -61,12 +61,7 @@ if (!isset($errMsg)) {
         // Angebot speicherns
         $offerId = $marketShipRepository->add($cu->getId(), (int) $cp->id(), (int) $for_user, (int) $for_alliance, $_POST['ship_text'], $ship_id, $ship_count, $costs);
 
-        MarketReport::addMarketReport(array(
-            'user_id' => $cu->id,
-            'entity1_id' => $cp->id,
-            'content' => $_POST['ship_text']
-        ), "shipadd", $offerId, $marr);
-
+        $marketReportRepository->addShipReport($offerId, $cu->getId(), $cp->id, 0, $ship_id, $ship_count, "shipadd", $costs, 1.0, $_POST['ship_text']);
 
         if ($for_alliance > 0) {
             // Set cooldown
