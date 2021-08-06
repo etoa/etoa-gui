@@ -22,14 +22,6 @@ class ShipSort extends AbstractSort
         "costs_fuel" => "Tritium",
     ];
 
-    /**
-     * @param array<string, ?string> $sorts
-     */
-    public function __construct(array $sorts)
-    {
-        $this->sorts = $sorts;
-    }
-
     public static function id(): ShipSort
     {
         return new ShipSort(['ship_id' => null]);

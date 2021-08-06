@@ -2,19 +2,16 @@
 
 namespace EtoA\Alliance;
 
-use Doctrine\DBAL\Query\QueryBuilder;
+use EtoA\Core\Database\AbstractSort;
 
-class AllianceStatsSearch
+class AllianceStatsSort extends AbstractSort
 {
-    private string $sort = 'points';
-    private string $order = 'DESC';
-
-    public static function create(): AllianceStatsSearch
+    public static function create(): AllianceStatsSort
     {
-        return new AllianceStatsSearch();
+        return new AllianceStatsSort(['points' => 'DESC']);
     }
 
-    public static function createAllianceBase(): AllianceStatsSearch
+    public static function createAllianceBase(): AllianceStatsSort
     {
         return self::create()->withSort('apoints', 'DESC');
     }
@@ -29,14 +26,8 @@ class AllianceStatsSearch
             throw new \InvalidArgumentException('Invalid value for $sort: ' . $order);
         }
 
-        $this->sort = $sort;
-        $this->order = $order;
+        $this->sorts = [$sort => $order];
 
         return $this;
-    }
-
-    public function apply(QueryBuilder $qb): QueryBuilder
-    {
-        return $qb->orderBy($this->sort, $this->order);
     }
 }

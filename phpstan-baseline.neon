@@ -176,11 +176,6 @@ parameters:
 			path: htdocs/content/market/new.php
 
 		-
-			message: "#^Variable property access on EtoA\\\\Market\\\\MarketRate\\.$#"
-			count: 7
-			path: src/Market/MarketHandler.php
-
-		-
 			message: "#^Variable \\$color might not be defined\\.$#"
 			count: 1
 			path: htdocs/content/research.php
@@ -241,6 +236,11 @@ parameters:
 			path: htdocs/inc/xajax/global.xajax.php
 
 		-
+			message: "#^Variable property access on EtoA\\\\User\\\\UserBattleRating\\|EtoA\\\\User\\\\UserDiplomacyRating\\|EtoA\\\\User\\\\UserTradeRating\\.$#"
+			count: 1
+			path: htdocs/inc/xajax/stats.xajax.php
+
+		-
 			message: "#^Variable \\$x might not be defined\\.$#"
 			count: 1
 			path: htdocs/misc/alliance_stats.image.php
@@ -284,6 +284,11 @@ parameters:
 			message: "#^Method EtoA\\\\Building\\\\BuildingRepository\\:\\:findByFormData\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: src/Building/BuildingRepository.php
+
+		-
+			message: "#^Variable property access on EtoA\\\\Market\\\\MarketRate\\.$#"
+			count: 7
+			path: src/Market/MarketHandler.php
 
 		-
 			message: "#^Method EtoA\\\\UI\\\\EntityCoordinatesSelector\\:\\:parse\\(\\) has parameter \\$parameters with no value type specified in iterable type Symfony\\\\Component\\\\HttpFoundation\\\\ParameterBag\\.$#"

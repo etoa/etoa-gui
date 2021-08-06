@@ -1,6 +1,10 @@
 <?PHP
 
+use EtoA\Defense\DefenseDataRepository;
+use EtoA\Defense\DefenseSearch;
 use EtoA\Race\RaceDataRepository;
+use EtoA\Ship\ShipDataRepository;
+use EtoA\Ship\ShipSearch;
 
 class GetRaceInfosJsonResponder extends JsonResponder
 {
@@ -19,12 +23,15 @@ class GetRaceInfosJsonResponder extends JsonResponder
         $val = $params['id'];
 
         if ($val > 0) {
-            /** @var RaceDataRepository */
+            /** @var RaceDataRepository $raceRepository */
             $raceRepository = $this->app[RaceDataRepository::class];
+            /** @var ShipDataRepository $shipRepository */
+            $shipRepository = $this->app[ShipDataRepository::class];
+            /** @var DefenseDataRepository $defenseRepository */
+            $defenseRepository = $this->app[DefenseDataRepository::class];
             $race = $raceRepository->getRace((int) $val);
 
             if ($race !== null) {
-
                 ob_start();
 
                 echo text2html($race->comment) . "<br/><br/>";
@@ -64,19 +71,10 @@ class GetRaceInfosJsonResponder extends JsonResponder
                 tableStart('', 500);
 
                 echo  "<tr><th colspan=\"3\">Spezielle Schiffe:</th></tr>";
-                $res = dbquery("
-			SELECT
-				ship_id
-			FROM
-				ships
-			WHERE
-			ship_race_id='" . $val . "'
-			AND ship_buildable=1
-			AND special_ship=0;");
-                if (mysql_num_rows($res) > 0) {
-                    while ($arr = mysql_fetch_array($res)) {
-                        $ship = new Ship($arr['ship_id']);
-                        echo "<tr><td style=\"background:black;\"><img src=\"" . $ship->imgPath() . "\" style=\"width:40px;height:40px;border:none;\" alt=\"ship" . $ship->id . "\" /></td>
+                $ships = $shipRepository->searchShips(ShipSearch::create()->buildable()->raceId($race->id)->special(false));
+                if (count($ships) > 0) {
+                    foreach ($ships as $ship) {
+                        echo "<tr><td style=\"background:black;\"><img src=\"" . $ship->getImagePath() . "\" style=\"width:40px;height:40px;border:none;\" alt=\"ship" . $ship->id . "\" /></td>
 					<th style=\"width:180px;\">" . text2html($ship->name) . "</th>
 					<td>" . text2html($ship->shortComment) . "</td></tr>";
                     }
@@ -86,22 +84,12 @@ class GetRaceInfosJsonResponder extends JsonResponder
                 tableEnd();
                 tableStart('', 500);
                 echo  "<tr><th colspan=\"3\">Spezielle Verteidigung:</th></tr>";
-                $res = dbquery("
-			SELECT
-				def_id,
-				def_name,
-				def_shortcomment
-			FROM
-				defense
-			WHERE
-			def_race_id='" . $val . "'
-			AND def_buildable=1;");
-                if (mysql_num_rows($res) > 0) {
-                    while ($arr = mysql_fetch_array($res)) {
-                        $s_img = IMAGE_PATH . "/" . IMAGE_DEF_DIR . "/def" . $arr['def_id'] . "_small." . IMAGE_EXT;
-                        echo "<tr><td style=\"background:black;\"><img src=\"" . $s_img . "\" style=\"width:40px;height:40px;border:none;\" alt=\"def" . $arr['def_id'] . "\" /></td>
-					<th style=\"width:180px;\">" . text2html($arr['def_name']) . "</th>
-					<td>" . text2html($arr['def_shortcomment']) . "</td></tr>";
+                $defense = $defenseRepository->searchDefense(DefenseSearch::create()->raceId($race->id)->buildable());
+                if (count($defense) > 0) {
+                    foreach ($defense as $def) {
+                        echo "<tr><td style=\"background:black;\"><img src=\"" . $def->getImagePath() . "\" style=\"width:40px;height:40px;border:none;\" alt=\"def" . $def->id . "\" /></td>
+					<th style=\"width:180px;\">" . text2html($def->name) . "</th>
+					<td>" . text2html($def->shortComment) . "</td></tr>";
                     }
                 } else
                     echo "<tr><td colspan=\"3\">Keine Rassenverteidigung vorhanden</td></tr>";

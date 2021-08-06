@@ -44,18 +44,36 @@ class AlliancePointsRepository extends AbstractRepository
         $this->createQueryBuilder()
             ->insert('alliance_stats')
             ->values([
-                'point_alliance_id' => ':allianceId',
-                'point_timestamp' => ':time',
-                'point_points' => ':points',
-                'point_avg' => ':avg',
-                'point_cnt' => ':count',
+                'alliance_id' => ':allianceId',
+                'alliance_tag' => ':allianceTag',
+                'alliance_name' => ':allianceName',
+                'timestamp' => ':time',
+                'points' => ':points',
+                'upoints' => ':userPoints',
+                'apoints' => ':alliancePoints',
+                'bpoints' => ':buildingPoints',
+                'spoints' => ':shipPoints',
+                'tpoints' => ':technologyPoints',
+                'uavg' => ':avg',
+                'cnt' => ':count',
+                'alliance_rank_current' => ':currentRank',
+                'alliance_rank_last' => ':lastRank',
             ])
             ->setParameters([
                 'allianceId' => $stats->allianceId,
+                'allianceTag' => $stats->allianceTag,
+                'allianceName' => $stats->allianceName,
                 'time' => time(),
                 'points' => $stats->points,
+                'userPoints' => $stats->userPoints,
+                'alliancePoints' => $stats->alliancePoints,
+                'buildingPoints' => $stats->buildingPoints,
+                'technologyPoints' => $stats->technologyPoints,
+                'shipPoints' => $stats->shipPoints,
                 'avg' => $stats->userAverage,
                 'count' => $stats->count,
+                'currentRank' => $stats->currentRank,
+                'lastRank' => $stats->lastRank,
             ])->execute();
     }
 

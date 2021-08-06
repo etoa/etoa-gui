@@ -53,7 +53,7 @@ abstract class AbstractRepository
             ->fetchAllKeyValue();
     }
 
-    protected function applySearchSortLimit(QueryBuilder $qb, AbstractSearch $search = null, AbstractSort $sorts = null, int $limit = null): QueryBuilder
+    protected function applySearchSortLimit(QueryBuilder $qb, AbstractSearch $search = null, AbstractSort $sorts = null, int $limit = null, int $offset = null): QueryBuilder
     {
         if ($search !== null) {
             $qb->setParameters($search->parameters);
@@ -70,6 +70,10 @@ abstract class AbstractRepository
 
         if ($limit !== null) {
             $qb->setMaxResults($limit);
+        }
+
+        if ($offset !== null) {
+            $qb->setFirstResult($offset);
         }
 
         return $qb;

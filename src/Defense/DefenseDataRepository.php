@@ -33,12 +33,10 @@ class DefenseDataRepository extends AbstractRepository
                 ->where('def_show = 1');
         }
 
-        $orderBy = $orderBy ?? DefenseSort::name();
-        foreach ($orderBy->sorts as $sort) {
-            $qb->addOrderBy($sort);
-        }
 
-        return $qb
+        $orderBy = $orderBy ?? DefenseSort::name();
+
+        return $this->applySearchSortLimit($qb, null, $orderBy)
             ->execute()
             ->fetchAllKeyValue();
     }
@@ -128,5 +126,21 @@ class DefenseDataRepository extends AbstractRepository
         }
 
         return $result;
+    }
+
+    /**
+     * @return Defense[]
+     */
+    public function searchDefense(DefenseSearch $search, DefenseSort $sort = null, int $limit = null): array
+    {
+        $qb = $this->createQueryBuilder()
+            ->select('*')
+            ->from('defense');
+
+        $data = $this->applySearchSortLimit($qb, $search, $sort, $limit)
+            ->execute()
+            ->fetchAllAssociative();
+
+        return array_map(fn ($row) => new Defense($row), $data);
     }
 }

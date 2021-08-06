@@ -65,10 +65,18 @@ class ShipSearch extends AbstractSearch
         return $this;
     }
 
+    public function raceId(int $raceId): ShipSearch
+    {
+        $this->parts[] = 'ship_race_id = :raceId';
+        $this->parameters['raceId'] = $raceId;
+
+        return $this;
+    }
+
     public function raceOrNull(int $raceId): ShipSearch
     {
-        $this->parts[] = 'ship_race_id = 0 OR ship_race_id = :raceId';
-        $this->parameters['raceId'] = $raceId;
+        $this->parts[] = 'ship_race_id = 0 OR ship_race_id = :raceIdOrNull';
+        $this->parameters['raceIdOrNull'] = $raceId;
 
         return $this;
     }
