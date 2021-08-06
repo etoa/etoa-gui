@@ -6,14 +6,9 @@ use EtoA\Core\Database\AbstractSort;
 
 class AllianceStatsSort extends AbstractSort
 {
-    private function __construct()
-    {
-        $this->sorts = ['points' => 'DESC'];
-    }
-
     public static function create(): AllianceStatsSort
     {
-        return new AllianceStatsSort();
+        return new AllianceStatsSort(['points' => 'DESC']);
     }
 
     public static function createAllianceBase(): AllianceStatsSort

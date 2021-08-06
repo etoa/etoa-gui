@@ -4,7 +4,12 @@ use EtoA\Alliance\AllianceStatsRepository;
 use EtoA\Alliance\AllianceStatsSort;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Ranking\GameStatsGenerator;
+use EtoA\User\UserRatingRepository;
+use EtoA\User\UserRatingSearch;
+use EtoA\User\UserRatingSort;
 use EtoA\User\UserRepository;
+use EtoA\User\UserStatRepository;
+use EtoA\User\UserStatSearch;
 
 $xajax->register(XAJAX_FUNCTION, 'statsShowBox');
 $xajax->register(XAJAX_FUNCTION, 'statsShowTable');
@@ -274,272 +279,98 @@ function statsShowTable($mode, $limit = 0, $userstring = "", $absolute = 0, $ord
 
     /** @var ConfigurationService */
     $config = $app[ConfigurationService::class];
+    /** @var UserRatingRepository $userRatingRepository */
+    $userRatingRepository = $app[UserRatingRepository::class];
+    /** @var UserStatRepository $userStatRepository */
+    $userStatRepository = $app[UserStatRepository::class];
 
     $numRows = $config->getInt('stats_num_rows');
 
     // Datensatznavigation
     $counter = 0;
     if ($mode == "diplomacy" || $mode == "battle" || $mode == "trade") {
-        $res = dbquery("
-        SELECT
-            COUNT(id)
-        FROM
-            user_ratings
-        INNER JOIN
-            users
-        ON
-            users.user_id=user_ratings.id;");
+        $num = $userRatingRepository->count();
         $counter = ($limit > 0) ? $limit : 0;
     } else {
-        $res = dbquery("
-        SELECT
-            COUNT(id)
-        FROM
-            user_stats;");
+        $num = $userStatRepository->count();
     }
-    $usrcnt = mysql_fetch_row($res);
-    $num = $usrcnt[0];
 
+    $offset = 0;
     if ($limit > 0) {
         $nextlimit = $limit + $numRows;
         $prevlimit = $limit - $numRows;
-        $limit = $limit . "," . $numRows;
+        $offset = $limit;
     } else {
-        $limit = "0," . $numRows;
         $nextlimit = $numRows;
         $prevlimit = -1;
     }
     $lastlimit = (ceil($num / $numRows) * $numRows) - $numRows;
 
     // Punktetabelle
-
     if ($num > 0) {
-        $rank = $shift = null;
+        $ratingSort = new UserRatingSort();
+        if ($orderBy == 'nickUp') {
+            $ratingSort = UserRatingSort::nick('DESC');
+        } elseif ($orderBy == 'nickDown') {
+            $ratingSort = UserRatingSort::nick('ASC');
+        } elseif ($orderBy == 'rankUp') {
+            $ratingSort = UserRatingSort::rank('DESC');
+        } elseif ($orderBy == 'rankDown') {
+            $ratingSort = UserRatingSort::rank('ASC');
+        } elseif ($orderBy == 'allyUp') {
+            $ratingSort = UserRatingSort::allianceTag('DESC');
+        } elseif ($orderBy == 'allyDown') {
+            $ratingSort = UserRatingSort::allianceTag('ASC');
+        }
+
+        $ratingSearch = UserRatingSearch::create()->ghost(false);
+        if ($userstring !== '') {
+            $offset = 0;
+            $ratingSearch->nick($userstring);
+        }
+
         $titleContainer = $contentContainer = [];
-        if ($mode == "diplomacy") {
-            $field = "diplomacy_rating";
-            $order = "diplomacy_rating";
+        if ($mode === "diplomacy") {
+            $entries = $userRatingRepository->getDiplomacyRating($ratingSearch, $ratingSort, $numRows, $offset);
             $title = "Diplomatiewertung";
             $titleContainer = array("#", "Nick", "Rasse", "Allianz", "Bewertung");
-            $contentContainer = array("counter", "user_nick", "race_name", "alliance_tag", "diplomacy_rating");
+            $contentContainer = array("counter", "user_nick", "raceName", "allianceTag", "rating");
         } elseif ($mode == "trade") {
-            $field = "trades_buy,trades_sell,trade_rating";
-            $order = "trade_rating";
+            $entries = $userRatingRepository->getTradeRating($ratingSearch, $ratingSort, $numRows, $offset);
             $title = "Handelswertung";
             $titleContainer = array("#", "Nick", "Rasse", "Allianz", "Einkäufe", "Verkäufe", "Bewertung");
-            $contentContainer = array("counter", "user_nick", "race_name", "alliance_tag", "trades_buy", "trades_sell", "trade_rating");
+            $contentContainer = array("counter", "user_nick", "raceName", "allianceTag", "tradesBuy", "tradesSell", "rating");
         } elseif ($mode == "battle") {
-            $field = "battles_won,battles_lost,battles_fought,battle_rating,elorating";
-            $order = "battle_rating";
+            $entries = $userRatingRepository->getBattleRating($ratingSearch, $ratingSort, $numRows, $offset);
             $title = "Kampfwertung";
             $titleContainer = array("#", "Nick", "Rasse", "Allianz", "Kämpfe Gewonnen", "Kämpfe Verloren", "Kämpfe Total", "Bewertung", "Elo Rating");
-            $contentContainer = array("counter", "user_nick", "race_name", "alliance_tag", "battles_won", "battles_lost", "battles_fought", "battle_rating", "elorating");
-        } elseif ($mode == "ships") {
-            $field = "points_ships";
-            $rank = "rank_ships";
-            $order = "rank_ships";
-            $title = "Schiffspunkte";
-            $shift = "rankshift_ships";
-        } elseif ($mode == "tech") {
-            $field = "points_tech";
-            $rank = "rank_tech";
-            $order = "rank_tech";
-            $title = "Technologiepunkte";
-            $shift = "rankshift_tech";
-        } elseif ($mode == "buildings") {
-            $field = "points_buildings";
-            $rank = "rank_buildings";
-            $order = "rank_buildings";
-            $title = "Gebäudepunkte";
-            $shift = "rankshift_buildings";
-        } elseif ($mode == "exp") {
-            $field = "points_exp";
-            $rank = "rank_exp";
-            $order = "rank_exp";
-            $title = "Erfahrungspunkte";
-            $shift = "rankshift_exp";
+            $contentContainer = array("counter", "user_nick", "raceName", "allianceTag", "battlesWon", "battlesLost", "battlesFought", "rating", "eloRating");
         } else {
-            $field = "points";
-            $rank = "rank";
-            $order = "rank";
-            $title = "Gesamtpunkte";
-            $shift = "rankshift";
-        }
-        $orderDir = "ASC";
-
-        if ($orderBy == 'nickUp') {
-            $order = "nick";
-            $orderDir = "DESC";
-        } elseif ($orderBy == 'nickDown') {
-            $order = "nick";
-            $orderDir = "ASC";
-        } elseif ($orderBy == 'rankUp') {
-            $order = "rank";
-            $orderDir = "DESC";
-        } elseif ($orderBy == 'rankDown') {
-            $order = "rank";
-            $orderDir = "ASC";
-        } elseif ($orderBy == 'allyUp') {
-            $order = "alliance_tag";
-            $orderDir = "DESC";
-        } elseif ($orderBy == 'allyDown') {
-            $order = "alliance_tag";
-            $orderDir = "ASC";
-        }
-
-        $queryParams = array();
-        if ($userstring != "") {
-            $limit = "0," . $numRows;
-            if ($absolute == 1) {
-                if ($mode == "diplomacy" || $mode == "battle" || $mode == "trade") {
-                    $sql = "
-                    SELECT
-                        user_id AS id,
-                        user_nick,
-                        race_name,
-                        alliance_tag,
-                        " . $field . "
-                    FROM
-                        users
-                        INNER JOIN
-                            races ON user_race_id=race_id
-                        INNER JOIN
-                            user_ratings as r ON user_id=r.id
-                        LEFT JOIN
-                            alliances ON user_alliance_id=alliance_id
-                    WHERE
-                        LCASE(user_nick) LIKE ?
-                        AND user_ghost=0
-                    ORDER BY
-                        $order DESC
-                    LIMIT
-                        $limit;";
-                    $queryParams = array(strtolower($userstring));
-                } else {
-                    $sql = "
-                    SELECT
-                        id,
-                        nick,
-                        blocked,
-                        hmod,
-                        inactive,
-                        " . $rank . " AS rank,
-                        " . $field . " AS points,
-                        " . $shift . " AS shift,
-                        race_name,
-                        alliance_tag,
-                        sx,
-                        sy
-                    FROM
-                        user_stats
-                    WHERE
-                        LCASE(nick) LIKE ?
-                    ORDER BY
-                        $order $orderDir
-                    LIMIT
-                        $limit;";
-                    $queryParams = array(strtolower($userstring));
-                }
+            if ($mode == "ships") {
+                $title = "Schiffspunkte";
+                $search = UserStatSearch::ships();
+            }  elseif ($mode == "tech") {
+                $search = UserStatSearch::technologies();
+                $title = "Technologiepunkte";
+            } elseif ($mode == "buildings") {
+                $search = UserStatSearch::buildings();
+                $title = "Gebäudepunkte";
+            } elseif ($mode == "exp") {
+                $search = UserStatSearch::exp();
+                $title = "Erfahrungspunkte";
             } else {
-                if ($mode == "diplomacy" || $mode == "battle" || $mode == "trade") {
-                    $sql = "
-                    SELECT
-                        user_id AS id,
-                        user_nick,
-                        race_name,
-                        alliance_tag,
-                        " . $field . "
-                    FROM
-                        users
-                        INNER JOIN
-                            races ON user_race_id=race_id
-                        INNER JOIN
-                            user_ratings as r ON user_id=r.id
-                        LEFT JOIN
-                            alliances ON user_alliance_id=alliance_id
-                    WHERE
-                    LCASE(user_nick) LIKE ?
-                        AND user_ghost=0
-                    ORDER BY
-                        $order DESC
-                    LIMIT
-                        $limit;";
-                    $queryParams = array(strtolower('%' . $userstring . '%'));
-                } else {
-                    $sql = "
-                    SELECT
-                        id,
-                        nick,
-                        blocked,
-                        hmod,
-                        inactive,
-                        " . $rank . " AS rank,
-                        " . $field . " AS points,
-                        " . $shift . " AS shift,
-                        race_name,
-                        alliance_tag,
-                        sx,
-                        sy
-                    FROM
-                        user_stats
-                    WHERE
-                    LCASE(nick) LIKE ?
-                    ORDER BY
-                        $order $orderDir
-                    LIMIT
-                        $limit;";
-                    $queryParams = array(strtolower('%' . $userstring . '%'));
-                }
+                $search = UserStatSearch::points();
+                $title = "Gesamtpunkte";
             }
-        } else {
-            if ($mode == "diplomacy" || $mode == "battle" || $mode == "trade") {
-                $sql = "
-                SELECT
-                    user_id AS id,
-                    user_nick,
-                    race_name,
-                    alliance_tag,
-                    " . $field . "
-                FROM
-                    users
-                    INNER JOIN
-                        races ON user_race_id=race_id
-                    INNER JOIN
-                        user_ratings as r ON user_id=r.id
-                    LEFT JOIN
-                        alliances ON user_alliance_id=alliance_id
-                WHERE
-                    user_ghost=0
-                ORDER BY
-                    $order DESC
-                LIMIT
-                    $limit;";
-            } else {
-                $sql = "
-                SELECT
-                    id,
-                    nick,
-                    blocked,
-                    hmod,
-                    inactive,
-                    " . $rank . " AS rank,
-                    " . $field . " AS points,
-                    " . $shift . " AS shift,
-                    race_name,
-                    alliance_tag,
-                    sx,
-                    sy
-                FROM
-                    user_stats
-                ORDER BY
-                    $order $orderDir
-                LIMIT
-                    $limit;";
-            }
-        }
-        $res = dbQuerySave($sql, $queryParams);
 
-        $nr = mysql_num_rows($res);
+            if ($userstring !== '') {
+                $search->nick($userstring);
+            }
+
+            $entries = $userStatRepository->searchStats($search, $ratingSort, $numRows, $offset);
+        }
+
+        $nr = count($entries);
         if ($nr > 0) {
             // Navigationsfeld
             ob_start();
@@ -597,11 +428,11 @@ function statsShowTable($mode, $limit = 0, $userstring = "", $absolute = 0, $ord
                 <th>Punkte</th>";
             }
             $out .= "</tr>";
-            while ($arr = mysql_fetch_assoc($res)) {
-                if ($mode == "diplomacy" || $mode == "battle" || $mode == "trade") {
-                    if ($arr['id'] == $_SESSION['user_id']) {
+            foreach ($entries as $entry) {
+                if ($entry instanceof \EtoA\User\UserRating) {
+                    if ($entry->userId == $_SESSION['user_id']) {
                         $addstyle = " class=\"userSelfColor\"";
-                    } elseif ($arr['alliance_tag'] != '' && $arr['alliance_tag'] == $_SESSION['alliance_tag']) {
+                    } elseif ($entry->allianceTag != '' && $entry->allianceTag == $_SESSION['alliance_tag']) {
                         $addstyle = " class=\"userAllianceMemberColor\"";
                     } else {
                         $addstyle = "";
@@ -610,31 +441,31 @@ function statsShowTable($mode, $limit = 0, $userstring = "", $absolute = 0, $ord
                     $out .= "<tr>";
                     foreach ($contentContainer as $content) {
                         if ($content == "counter") $out .= "<td $addstyle>" . ++$counter . "</td>";
-                        elseif ($content == "user_nick") {
+                        elseif ($content === "user_nick") {
                             $out .= "<td $addstyle >
-                            <div id=\"ttuser" . $arr['id'] . "\" style=\"display:none;\">
-                            " . popUp("Profil anzeigen", "page=userinfo&id=" . $arr['id']) . "<br/>
-                            " . popUp("Punkteverlauf", "page=$page&amp;mode=$mode&amp;userdetail=" . $arr['id']) . "<br/>";
-                            if ($arr['id'] != $_SESSION['user_id']) {
-                                $out .=  "<a href=\"?page=messages&mode=new&message_user_to=" . $arr['id'] . "\">Nachricht senden</a><br/>";
-                                $out .=  "<a href=\"?page=buddylist&add_id=" . $arr['id'] . "\">Als Freund hinzufügen</a>";
+                            <div id=\"ttuser" . $entry->userId . "\" style=\"display:none;\">
+                            " . popUp("Profil anzeigen", "page=userinfo&id=" . $entry->userId) . "<br/>
+                            " . popUp("Punkteverlauf", "page=$page&amp;mode=$mode&amp;userdetail=" . $entry->userId) . "<br/>";
+                            if ($entry->userId != $_SESSION['user_id']) {
+                                $out .=  "<a href=\"?page=messages&mode=new&message_user_to=" . $entry->userId . "\">Nachricht senden</a><br/>";
+                                $out .=  "<a href=\"?page=buddylist&add_id=" . $entry->userId . "\">Als Freund hinzufügen</a>";
                             }
                             $out .= "</div>
-                            <a $addstyle href=\"#\" " . cTT($arr['user_nick'], "ttuser" . $arr['id']) . ">" . $arr['user_nick'] . "</a></td>";
+                            <a $addstyle href=\"#\" " . cTT($entry->userNick, "ttuser" . $entry->userId) . ">" . $entry->userNick . "</a></td>";
                         } else {
-                            $out .= "<td $addstyle>" . $arr[$content] . "</td>";
+                            $out .= "<td $addstyle>" . $entry->{$content} . "</td>";
                         }
                     }
                 } else {
-                    if ($arr['id'] == $_SESSION['user_id']) {
+                    if ($entry->id == $_SESSION['user_id']) {
                         $addstyle = " class=\"userSelfColor\"";
-                    } elseif ($arr['blocked'] == 1) {
+                    } elseif ($entry->blocked) {
                         $addstyle = " class=\"userLockedColor\"";
-                    } elseif ($arr['hmod'] == 1) {
+                    } elseif ($entry->hmod) {
                         $addstyle = " class=\"userHolidayColor\"";
-                    } elseif ($arr['inactive'] == 1) {
+                    } elseif ($entry->inactive) {
                         $addstyle = " class=\"userInactiveColor\"";
-                    } elseif ($arr['alliance_tag'] != '' && $arr['alliance_tag'] == $_SESSION['alliance_tag']) {
+                    } elseif ($entry->allianceTag != '' && $entry->allianceTag == $_SESSION['alliance_tag']) {
                         $addstyle = " class=\"userAllianceMemberColor\"";
                     } else {
                         $addstyle = "";
@@ -643,29 +474,29 @@ function statsShowTable($mode, $limit = 0, $userstring = "", $absolute = 0, $ord
 
                     $out .= "<td $addstyle  align=\"right\" ";
                     if ($mode == "user")
-                        $out .= tm("Punkteverlauf", "<div><img src=\"misc/stats.image.php?user=" . $arr['id'] . "\" alt=\"Diagramm\" style=\"width:600px;height:400px;background:#335 url(images/loading335.gif) no-repeat 300px 200px;\" /></div>");
-                    $out .= ">" . nf($arr['rank']) . " ";
-                    if ($arr['shift'] == 2)
+                        $out .= tm("Punkteverlauf", "<div><img src=\"misc/stats.image.php?user=" . $entry->id . "\" alt=\"Diagramm\" style=\"width:600px;height:400px;background:#335 url(images/loading335.gif) no-repeat 300px 200px;\" /></div>");
+                    $out .= ">" . nf($entry->rank) . " ";
+                    if ($entry->shift === 2)
                         $out .= "<img src=\"images/stats/stat_down.gif\" alt=\"down\" width=\"9\" height=\"12\" />";
-                    elseif ($arr['shift'] == 1)
+                    elseif ($entry->shift === 1)
                         $out .= "<img src=\"images/stats/stat_up.gif\" alt=\"up\" width=\"9\" height=\"11\" />";
                     else
                         $out .= "<img src=\"images/stats/stat_same.gif\" alt=\"same\" width=\"21\" height=\"9\" />";
                     $out .= "</td>";
                     $out .= "<td $addstyle >
-                    <div id=\"ttuser" . $arr['id'] . "\" style=\"display:none;\">
-                    " . popUp("Profil anzeigen", "page=userinfo&id=" . $arr['id']) . "<br/>
-                    " . popUp("Punkteverlauf", "page=$page&amp;mode=$mode&amp;userdetail=" . $arr['id']) . "<br/>";
-                    if ($arr['id'] != $_SESSION['user_id']) {
-                        $out .=  "<a href=\"?page=messages&mode=new&message_user_to=" . $arr['id'] . "\">Nachricht senden</a><br/>";
-                        $out .=  "<a href=\"?page=buddylist&add_id=" . $arr['id'] . "\">Als Freund hinzufügen</a>";
+                    <div id=\"ttuser" . $entry->id . "\" style=\"display:none;\">
+                    " . popUp("Profil anzeigen", "page=userinfo&id=" . $entry->id) . "<br/>
+                    " . popUp("Punkteverlauf", "page=$page&amp;mode=$mode&amp;userdetail=" . $entry->id) . "<br/>";
+                    if ($entry->id != $_SESSION['user_id']) {
+                        $out .=  "<a href=\"?page=messages&mode=new&message_user_to=" . $entry->id . "\">Nachricht senden</a><br/>";
+                        $out .=  "<a href=\"?page=buddylist&add_id=" . $entry->id . "\">Als Freund hinzufügen</a>";
                     }
                     $out .= "</div>
-                    <a $addstyle href=\"#\" " . cTT($arr['nick'], "ttuser" . $arr['id']) . ">" . $arr['nick'] . "</a></td>";
-                    $out .= "<td $addstyle >" . $arr['race_name'] . "</td>";
-                    $out .= "<td $addstyle ><a $addstyle href=\"?page=sector&sector=" . $arr['sx'] . "," . $arr['sy'] . "\">" . $arr['sx'] . "/" . $arr['sy'] . "</a></td>";
-                    $out .= "<td $addstyle >" . $arr['alliance_tag'] . "</td>";
-                    $out .= "<td $addstyle >" . nf($arr['points']) . "</td>";
+                    <a $addstyle href=\"#\" " . cTT($entry->nick, "ttuser" . $entry->id) . ">" . $entry->nick . "</a></td>";
+                    $out .= "<td $addstyle >" . $entry->raceName . "</td>";
+                    $out .= "<td $addstyle ><a $addstyle href=\"?page=sector&sector=" . $entry->sx . "," . $entry->sy . "\">" . $entry->sx . "/" . $entry->sy . "</a></td>";
+                    $out .= "<td $addstyle >" . $entry->allianceTag . "</td>";
+                    $out .= "<td $addstyle >" . nf($entry->points) . "</td>";
                     $out .= "</tr>";
                 }
             }
