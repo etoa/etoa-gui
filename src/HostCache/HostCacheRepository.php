@@ -8,7 +8,7 @@ class HostCacheRepository extends AbstractRepository
 {
     public function getAddr(string $host): ?string
     {
-        return $this->createQueryBuilder()
+        $data = $this->createQueryBuilder()
             ->select('addr')
             ->from('hostname_cache')
             ->where('host = :host')
@@ -20,11 +20,13 @@ class HostCacheRepository extends AbstractRepository
             ->setMaxResults(1)
             ->execute()
             ->fetchOne();
+
+        return $data !== false ? $data : null;
     }
 
     public function getHost(string $ip): ?string
     {
-        return $this->createQueryBuilder()
+        $data = $this->createQueryBuilder()
             ->select('host')
             ->from('hostname_cache')
             ->where('addr = :ip')
@@ -36,6 +38,8 @@ class HostCacheRepository extends AbstractRepository
             ->setMaxResults(1)
             ->execute()
             ->fetchOne();
+
+        return $data !== false ? $data : null;
     }
 
     public function store(string $host, string $ip): void
