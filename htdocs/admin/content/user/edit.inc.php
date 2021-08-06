@@ -797,13 +797,13 @@ if (mysql_num_rows($res) > 0) {
     echo "<tr>
             <td class=\"tbltitle\">Spionagesonden für Direktscan:</td>
             <td class=\"tbldata\">
-            <input type=\"text\" name=\"spyship_count\" maxlength=\"5\" size=\"5\" value=\"" . $arr['spyship_count'] . "\"> &nbsp; ";
+            <input type=\"text\" name=\"spyship_count\" maxlength=\"5\" size=\"5\" value=\"" . $properties->spyShipCount . "\"> &nbsp; ";
     $shipNames = $shipDateRepository->getShipNamesWithAction('spy');
     if (count($shipNames) > 0) {
         echo '<select name="spyship_id"><option value="0">(keines)</option>';
         foreach ($shipNames as $shipId => $shipName) {
             echo '<option value="' . $shipId . '"';
-            if ($arr['spyship_id'] == $shipId)
+            if ($properties->spyShipId == $shipId)
                 echo ' selected="selected"';
             echo '>' . $shipName . '</option>';
         }
@@ -815,13 +815,13 @@ if (mysql_num_rows($res) > 0) {
     echo "<tr>
             <td class=\"tbltitle\">Analysatoren für Quickanalyse:</td>
             <td class=\"tbldata\">
-            <input type=\"text\" name=\"analyzeship_count\" maxlength=\"5\" size=\"5\" value=\"" . $arr['analyzeship_count'] . "\"> &nbsp; ";
+            <input type=\"text\" name=\"analyzeship_count\" maxlength=\"5\" size=\"5\" value=\"" . $properties->analyzeShipCount . "\"> &nbsp; ";
     $shipNames = $shipDateRepository->getShipNamesWithAction('analyze');
     if (count($shipNames) > 0) {
         echo '<select name="analyzeship_id"><option value="0">(keines)</option>';
         foreach ($shipNames as $shipId => $shipName) {
             echo '<option value="' . $shipId . '"';
-            if ($arr['analyzeship_id'] == $shipId)
+            if ($properties->analyzeShipId == $shipId)
                 echo ' selected="selected"';
             echo '>' . $shipName . '</option>';
         }
