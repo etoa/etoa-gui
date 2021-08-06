@@ -32,5 +32,4 @@ class UserStat
         $this->sx = (int) $data['sx'];
         $this->sy = (int) $data['sy'];
     }
-
 }

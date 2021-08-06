@@ -9,13 +9,13 @@ class AllianceStatsRepository extends AbstractRepository
     /**
      * @return AllianceStats[]
      */
-    public function getStats(AllianceStatsSearch $search): array
+    public function getStats(AllianceStatsSort $sort): array
     {
         $qb = $this->createQueryBuilder()
             ->select('*')
             ->from('alliance_stats');
 
-        $data = $search->apply($qb)
+        $data = $this->applySearchSortLimit($qb, null, $sort)
             ->addOrderBy('alliance_name', 'ASC')
             ->execute()
             ->fetchAllAssociative();

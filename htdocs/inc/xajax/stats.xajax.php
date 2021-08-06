@@ -1,9 +1,10 @@
 <?PHP
 
 use EtoA\Alliance\AllianceStatsRepository;
-use EtoA\Alliance\AllianceStatsSearch;
+use EtoA\Alliance\AllianceStatsSort;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Ranking\GameStatsGenerator;
+use EtoA\User\UserRepository;
 
 $xajax->register(XAJAX_FUNCTION, 'statsShowBox');
 $xajax->register(XAJAX_FUNCTION, 'statsShowTable');
@@ -16,6 +17,8 @@ function statsShowBox($mode, $sort = "", $sortOrder = "")
 
     /** @var AllianceStatsRepository $allianceStatsRepository */
     $allianceStatsRepository = $app[AllianceStatsRepository::class];
+    /** @var UserRepository $userRepository */
+    $userRepository = $app[UserRepository::class];
 
     $objResponse = new xajaxResponse();
 
@@ -53,7 +56,7 @@ function statsShowBox($mode, $sort = "", $sortOrder = "")
         echo "<a href=\"javascript:;\" onclick=\"xajax_statsShowBox('$mode','cnt','DESC')\" title=\"Absteigend sortieren\"><img src=\"images/s_desc.png\" alt=\"Absteigend sortieren\" border=\"0\" /></a>";
         echo "<a href=\"javascript:;\" onclick=\"xajax_statsShowBox('$mode','cnt','ASC')\" title=\"Absteigend sortieren\"><img src=\"images/s_asc.png\" alt=\"Aufsteigend sortieren\" border=\"0\" /></a>";
         echo "</tr>";
-        $search = AllianceStatsSearch::create();
+        $search = AllianceStatsSort::create();
         if ($sort != "" && $sortOrder != "") {
             $search = $search->withSort($sort, $sortOrder);
         }
@@ -128,7 +131,7 @@ function statsShowBox($mode, $sort = "", $sortOrder = "")
         echo "<a href=\"javascript:;\" onclick=\"xajax_statsShowBox('$mode','apoints','ASC')\" title=\"Absteigend sortieren\"><img src=\"images/s_asc.png\" alt=\"Aufsteigend sortieren\" border=\"0\" /></a></th>";
         echo "</tr>";
 
-        $search = AllianceStatsSearch::createAllianceBase();
+        $search = AllianceStatsSort::createAllianceBase();
         if ($sort != "" && $sortOrder != "") {
             $search = $search->withSort($sort, $sortOrder);
         }
@@ -183,24 +186,7 @@ function statsShowBox($mode, $sort = "", $sortOrder = "")
     // Pranger
     //
     elseif ($mode == "pillory") {
-        $res = dbquery("SELECT
-            u.user_nick,
-            u.user_blocked_from,
-            u.user_blocked_to,
-            u.user_ban_reason,
-            a.user_nick AS admin_nick,
-            a.user_email AS admin_email
-        FROM
-            users AS u
-        LEFT JOIN
-            admin_users AS a
-        ON
-            u.user_ban_admin_id = a.user_id
-        WHERE
-            u.user_blocked_from<" . time() . "
-            AND u.user_blocked_to>" . time() . "
-        ORDER BY
-            u.user_blocked_from DESC;");
+        $entries = $userRepository->getPillory();
         ob_start();
         tableStart("Pranger");
         echo "
@@ -211,14 +197,14 @@ function statsShowBox($mode, $sort = "", $sortOrder = "")
             <th>Admin</th>
             <th>Grund der Sperrung</th>
         </tr>";
-        if (mysql_num_rows($res) > 0) {
-            while ($arr = mysql_fetch_array($res)) {
+        if (count($entries) > 0) {
+            foreach ($entries as $entry) {
                 echo "<tr>
-                <td>" . $arr['user_nick'] . "</td>
-                <td>" . df($arr['user_blocked_from']) . "</td>
-                <td>" . df($arr['user_blocked_to']) . "</td>
-                <td><a href=\"mailto:" . $arr['admin_email'] . "\">" . $arr['admin_nick'] . "</a></td>
-                <td>" . text2html($arr['user_ban_reason']) . "</td>
+                <td>" . $entry->userNick . "</td>
+                <td>" . df($entry->blockedFrom) . "</td>
+                <td>" . df($entry->blockedTo) . "</td>
+                <td><a href=\"mailto:" . $entry->adminEmail . "\">" . $entry->adminNick . "</a></td>
+                <td>" . text2html($entry->banReason) . "</td>
                 </tr>";
             }
         } else

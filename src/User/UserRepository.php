@@ -591,4 +591,23 @@ class UserRepository extends AbstractRepository
 
         return $users;
     }
+
+    /**
+     * @return Pillory[]
+     */
+    public function getPillory(): array
+    {
+        $data = $this->createQueryBuilder()
+            ->select('u.user_nick, u.user_blocked_from, u.user_blocked_to, u.user_ban_reason')
+            ->addSelect('a.user_nick AS admin_nick, a.user_email AS admin_email')
+            ->from('users', 'u')
+            ->leftJoin('u', 'admin_users', 'a', 'u.user_ban_admin_id = a.user_id')
+            ->where('u.user_blocked_from < :time')
+            ->andWhere('u.user_blocked_to > :time')
+            ->orderBy('u.user_blocked_from', 'DESC')
+            ->execute()
+            ->fetchAllAssociative();
+
+        return array_map(fn (array $row) => new Pillory($row), $data);
+    }
 }

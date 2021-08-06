@@ -1,7 +1,7 @@
 <?PHP
 
 use EtoA\Alliance\AllianceStatsRepository;
-use EtoA\Alliance\AllianceStatsSearch;
+use EtoA\Alliance\AllianceStatsSort;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Support\RuntimeDataStore;
 use EtoA\User\UserRatingRepository;
@@ -134,7 +134,7 @@ elseif ($mode == "alliances") {
         $sort = "DESC";
     }
 
-    $allianceStats = $allianceStatsRepository->getStats(AllianceStatsSearch::create()->withSort($order, $sort));
+    $allianceStats = $allianceStatsRepository->getStats(AllianceStatsSort::create()->withSort($order, $sort));
     if (count($allianceStats) > 0) {
         $count = 1;
         foreach ($allianceStats as $stats) {
@@ -190,7 +190,7 @@ elseif ($mode == "base") {
     echo "<a href=\"javascript:;\" onclick=\"xajax_statsShowBox('$mode','apoints','ASC')\" title=\"Absteigend sortieren\"><img src=\"../images/s_asc.png\" alt=\"Aufsteigend sortieren\" border=\"0\" /></a></th>";
     echo "<th style=\"width:60px;\">Details</th>";
     echo "</tr>";
-    $search = AllianceStatsSearch::createAllianceBase();
+    $search = AllianceStatsSort::createAllianceBase();
     if (isset($sort) && $sort != "" && $sortOrder != "") {
         $search = $search->withSort($sort, $sortOrder);
     }
