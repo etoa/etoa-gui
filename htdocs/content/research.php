@@ -12,6 +12,7 @@ use EtoA\Technology\TechnologyTypeRepository;
 use EtoA\UI\ResourceBoxDrawer;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Technology\TechnologyDataRepository;
+use EtoA\User\UserPropertiesRepository;
 
 /** @var ConfigurationService */
 $config = $app[ConfigurationService::class];
@@ -24,16 +25,24 @@ $resourceBoxDrawer = $app[ResourceBoxDrawer::class];
 
 /** @var BuildingRepository $buildingRepository */
 $buildingRepository = $app[BuildingRepository::class];
+
 /** @var TechnologyDataRepository $technologyDataRepository */
 $technologyDataRepository = $app[TechnologyDataRepository::class];
+
 /** @var TechnologyRepository $technologyRepository */
 $technologyRepository = $app[TechnologyRepository::class];
+
+/** @var UserPropertiesRepository $userPropertiesRepository */
+$userPropertiesRepository = $app[UserPropertiesRepository::class];
+
+$properties = $userPropertiesRepository->getOrCreateProperties($cu->id);
+
 define('NUM_BUILDINGS_PER_ROW', 5);
 define('CELL_WIDTH', 120);
 define('TABLE_WIDTH', 'auto');
 
 // Aktiviert / Deaktiviert Bildfilter
-if ($cu->properties->imageFilter == 1) {
+if ($properties->imageFilter) {
     $use_img_filter = true;
 } else {
     $use_img_filter = false;
@@ -203,7 +212,7 @@ if (isset($cp)) {
                     <input type="hidden" name="foodRequired" id="foodRequired" value="' . $config->getInt('people_food_require') . '" />
                     <input type="hidden" name="peopleFree" id="peopleFree" value="' . $peopleFree . '" />
                     <input type="hidden" name="foodAvaiable" id="foodAvaiable" value="' . $planet->resFood . '" />';
-        if ($cu->properties->itemShow == 'full' && $bid > 0) {
+        if ($properties->itemShow == 'full' && $bid > 0) {
             $box .= '<input type="hidden" name="peopleOptimized" id="peopleOptimized" value="' . $peopleOptimized . '" />';
         } else {
             $box .= '<input type="hidden" name="peopleOptimized" id="peopleOptimized" value="0" />';

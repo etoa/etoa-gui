@@ -9,6 +9,7 @@ use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Notepad\NotepadRepository;
 use EtoA\Text\TextRepository;
 use EtoA\Universe\Planet\PlanetRepository;
+use EtoA\User\UserPropertiesRepository;
 
 //
 // Basics
@@ -79,6 +80,11 @@ $cu = new User($s->user_id);
 if (!$cu->isValid) {
     forward(getLoginUrl(['page' => 'err', 'err' => 'usernotfound']), 'Benutzer nicht mehr vorhanden');
 }
+
+/** @var UserPropertiesRepository $userPropertiesRepository */
+$userPropertiesRepository = $app[UserPropertiesRepository::class];
+
+$properties = $userPropertiesRepository->getOrCreateProperties($cu->id);
 
 //
 // Design / layout properties
@@ -155,7 +161,7 @@ try {
 
     // Zugriff erlauben und Inhalt anzeigen
     else {
-        if ($s->firstView && $cu->properties->startUpChat == 1) {
+        if ($s->firstView && $properties->startUpChat == 1) {
             echo "<script type=\"text/javascript\">" . CHAT_ONCLICK . "</script>";
         }
 
@@ -246,7 +252,7 @@ try {
 
     if (ADD_BANNER == "") {
         $twig->addGlobal('adds', false);
-    } elseif ($cu->properties->showAdds == 1 || FORCE_ADDS == 1) {
+    } elseif ($properties->showAdds || FORCE_ADDS == 1) {
         $twig->addGlobal('adds', true);
     } else {
         $twig->addGlobal('adds', false);
@@ -269,11 +275,11 @@ try {
         'ownFleetCount' => $ownFleetCount,
         'messages' => $newMessages,
         'newreports' => $newReports,
-        'blinkMessages' => $cu->properties->msgBlink,
+        'blinkMessages' => $properties->msgBlink,
         'buddys' => $buddyListRepository->countFriendsOnline($cu->getId()),
         'buddyreq' => $buddyListRepository->hasPendingFriendRequest($cu->getId()),
         'fleetAttack' => check_fleet_incomming($cu->id),
-        'enableKeybinds' => $cu->properties->enableKeybinds,
+        'enableKeybinds' => $properties->enableKeybinds,
         'isAdmin' => $cu->admin,
         'usersOnline' => $usersOnline,
         'usersTotal' => $userCount,
@@ -286,8 +292,8 @@ try {
         'mainNav' => $gameMenu->getMainNav(),
         'renderTime' => $watch->stop('render')->getDuration() / 1000,
         'infoText' => $infoText->isEnabled() ? $infoText->content : null,
-        'helpBox' => $cu->properties->helpBox == 1,
-        'noteBox' => $cu->properties->noteBox == 1,
+        'helpBox' => $properties->helpBox,
+        'noteBox' => $properties->noteBox,
     ]);
     foreach ($globals as $key => $value) {
         $twig->addGlobal($key, $value);

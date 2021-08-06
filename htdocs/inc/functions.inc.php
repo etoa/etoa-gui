@@ -4,6 +4,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Log\AccessLogRepository;
 use EtoA\Support\StringUtils;
+use EtoA\User\UserPropertiesRepository;
 
 /**
  * Returns a string containing the game name, version and round
@@ -264,7 +265,14 @@ function tableStart($title = "", $width = 0, $layout = "", $id = "")
         $w = "width:" . $width . "";
     } else {
         global $cu;
-        if (isset($cu->properties) && $cu->properties->cssStyle == "Graphite")
+        global $app;
+
+        /** @var UserPropertiesRepository $userPropertiesRepository */
+        $userPropertiesRepository = $app[UserPropertiesRepository::class];
+
+        $properties = $userPropertiesRepository->getOrCreateProperties($cu->id);
+
+        if ($properties->cssStyle == "Graphite")
             $w = "width:650px";
         else
             $w = "width:100%";
@@ -1315,25 +1323,30 @@ function defineImagePaths()
     /** @var ConfigurationService */
     $config = $app[ConfigurationService::class];
 
+    /** @var UserPropertiesRepository $userPropertiesRepository */
+    $userPropertiesRepository = $app[UserPropertiesRepository::class];
+
+    $properties = $userPropertiesRepository->getOrCreateProperties($cu->id);
+
     if (!defined('IMAGE_PATH')) {
         if (!isset($cu) && isset($_SESSION['user_id'])) {
             $cu = new User($_SESSION['user_id']);
         }
 
         $design = DESIGN_DIRECTORY . "/official/" . $config->get('default_css_style');
-        if (isset($cu) && $cu->properties->cssStyle != '') {
-            if (is_dir(DESIGN_DIRECTORY . "/custom/" . $cu->properties->cssStyle)) {
-                $design = DESIGN_DIRECTORY . "/custom/" . $cu->properties->cssStyle;
-            } else if (is_dir(DESIGN_DIRECTORY . "/official/" . $cu->properties->cssStyle)) {
-                $design = DESIGN_DIRECTORY . "/official/" . $cu->properties->cssStyle;
+        if (isset($cu) && $properties->cssStyle != '') {
+            if (is_dir(DESIGN_DIRECTORY . "/custom/" . $properties->cssStyle)) {
+                $design = DESIGN_DIRECTORY . "/custom/" . $properties->cssStyle;
+            } else if (is_dir(DESIGN_DIRECTORY . "/official/" . $properties->cssStyle)) {
+                $design = DESIGN_DIRECTORY . "/official/" . $properties->cssStyle;
             }
         }
         define('CSS_STYLE', $design);
 
         // Image paths
-        if (isset($cu) && $cu->properties->imageUrl != '' && $cu->properties->imageExt != '') {
-            define('IMAGE_PATH', $cu->properties->imageUrl);
-            define('IMAGE_EXT', $cu->properties->imageExt);
+        if (isset($cu) && $properties->imageUrl != '' && $properties->imageExt != '') {
+            define('IMAGE_PATH', $properties->imageUrl);
+            define('IMAGE_EXT', $properties->imageExt);
         } else {
             define("IMAGE_PATH", (ADMIN_MODE ? '../' : '') . $config->get('default_image_path'));
             define("IMAGE_EXT", "png");

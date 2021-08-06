@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\User\UserPropertiesRepository;
 
 $indexpage = [
     'login' => [
@@ -32,18 +33,23 @@ if ($s->validate(0)) {
     $loggedIn = (bool) $cu->isValid;
 }
 
+/** @var UserPropertiesRepository $userPropertiesRepository */
+$userPropertiesRepository = $app[UserPropertiesRepository::class];
+
+$properties = isset($cu) ? $userPropertiesRepository->getOrCreateProperties($cu->id) : null;
+
 $design = DESIGN_DIRECTORY . '/official/' . $config->get('default_css_style');
-if (isset($cu) && $cu->properties->cssStyle) {
-    if (is_dir(DESIGN_DIRECTORY . '/custom/' . $cu->properties->cssStyle)) {
-        $design = DESIGN_DIRECTORY . '/custom/' . $cu->properties->cssStyle;
-    } else if (is_dir(DESIGN_DIRECTORY . '/official/' . $cu->properties->cssStyle)) {
-        $design = DESIGN_DIRECTORY . '/official/' . $cu->properties->cssStyle;
+if (isset($cu) && filled($properties->cssStyle)) {
+    if (is_dir(DESIGN_DIRECTORY . '/custom/' . $properties->cssStyle)) {
+        $design = DESIGN_DIRECTORY . '/custom/' . $properties->cssStyle;
+    } else if (is_dir(DESIGN_DIRECTORY . '/official/' . $properties->cssStyle)) {
+        $design = DESIGN_DIRECTORY . '/official/' . $properties->cssStyle;
     }
 }
 define('CSS_STYLE', $design);
-if (isset($cu) && $cu->properties->imageUrl && $cu->properties->imageExt) {
-    define('IMAGE_PATH', $cu->properties->imageUrl);
-    define('IMAGE_EXT', $cu->properties->imageExt);
+if (isset($cu) && filled($properties->imageUrl) && filled($properties->imageExt)) {
+    define('IMAGE_PATH', $properties->imageUrl);
+    define('IMAGE_EXT', $properties->imageExt);
 } else {
     define('IMAGE_PATH', $config->get('default_image_path'));
     define('IMAGE_EXT', 'png');

@@ -6,6 +6,7 @@ namespace EtoA\UI;
 
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Universe\Planet\Planet;
+use EtoA\User\UserPropertiesRepository;
 
 /**
  * Displays a box with resources, power and population
@@ -13,19 +14,22 @@ use EtoA\Universe\Planet\Planet;
 class ResourceBoxDrawer
 {
     private ConfigurationService $config;
+    private UserPropertiesRepository $userPropertiesRepository;
 
     public function __construct(
-        ConfigurationService $config
+        ConfigurationService $config,
+        UserPropertiesRepository $userPropertiesRepository
     ) {
         $this->config = $config;
+        $this->userPropertiesRepository = $userPropertiesRepository;
     }
 
     public function getHTML(Planet $planet): string
     {
-        $currentUser = new \User(\UserSession::getInstance($this->config)->user_id);
-        $small = $currentUser->properties->smallResBox;
+        $userId = (int) \UserSession::getInstance($this->config)->user_id;
+        $properties = $this->userPropertiesRepository->getOrCreateProperties($userId);
 
-        return $small ? $this->getHTMLSmall($planet) : $this->getHTMLNormal($planet);
+        return $properties->smallResBox ? $this->getHTMLSmall($planet) : $this->getHTMLNormal($planet);
     }
 
     private function getHTMLNormal(Planet $planet): string

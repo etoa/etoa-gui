@@ -4,6 +4,7 @@ use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Message\MessageCategory;
 use EtoA\Message\MessageCategoryRepository;
 use EtoA\Message\MessageRepository;
+use EtoA\User\UserPropertiesRepository;
 use EtoA\User\UserRepository;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -21,6 +22,9 @@ $request = Request::createFromGlobals();
 
 /** @var UserRepository */
 $userRepository = $app[UserRepository::class];
+
+/** @var UserPropertiesRepository $userPropertiesRepository */
+$userPropertiesRepository = $app[UserPropertiesRepository::class];
 
 $mode = $request->query->get('mode', '') != '' && ctype_alpha($request->query->get('mode'))
     ? $request->query->get('mode')
@@ -72,9 +76,9 @@ if ($mode == "new") {
 } elseif ($mode == "sent") {
     require('content/messages/sent.php');
 } elseif ($request->query->getInt('msg_id') > 0) {
-    viewSingleMessage($request, $messageRepository, $messageCategoryRepository, $userRepository, $cu);
+    viewSingleMessage($request, $messageRepository, $messageCategoryRepository, $userRepository, $cu, $userPropertiesRepository);
 } else {
-    listMessagesOverview($request, $messageRepository, $messageCategoryRepository, $userRepository, $cu, $config);
+    listMessagesOverview($request, $messageRepository, $messageCategoryRepository, $userRepository, $cu, $userPropertiesRepository, $config);
 }
 
 function viewSingleMessage(
@@ -82,10 +86,13 @@ function viewSingleMessage(
     MessageRepository $messageRepository,
     MessageCategoryRepository $messageCategoryRepository,
     UserRepository $userRepository,
-    User $cu
+    User $cu,
+    UserPropertiesRepository $userPropertiesRepository
 ): void {
     global $page;
     global $mode;
+
+    $properties = $userPropertiesRepository->getOrCreateProperties($cu->id);
 
     $messages = $messageRepository->findBy([
         'id' => $request->query->getInt('msg_id'),
@@ -137,7 +144,7 @@ function viewSingleMessage(
         echo "<input type=\"hidden\" name=\"message_id\" value=\"" . $message->id . "\" />";
         echo "<input type=\"hidden\" name=\"message_subject\" value=\"" . $message->subject . "\" />";
         echo "<input type=\"hidden\" name=\"message_sender\" value=\"" . $sender . "\" />";
-        if ($cu->properties->msgCopy) {
+        if ($properties->msgCopy) {
             // Muss mit echo 'text'; erfolgen, da sonst der Text beim ersten " - Zeichen abgeschnitten wird!
             // Allerdings ist so das selbe Problem mit den ' - Zeichen!
             echo '<input type=\'hidden\' name=\'message_text\' value=\'' . htmlentities($message->text, ENT_QUOTES, 'UTF-8') . '\' />';
@@ -167,10 +174,13 @@ function listMessagesOverview(
     MessageCategoryRepository $messageCategoryRepository,
     UserRepository $userRepository,
     User $cu,
+    UserPropertiesRepository $userPropertiesRepository,
     ConfigurationService $config
 ): void {
     global $page;
     global $mode;
+
+    $properties = $userPropertiesRepository->getOrCreateProperties($cu->id);
 
     // Einzelne Nachricht löschen
     if ($request->request->has('submitdelete') && checker_verify()) {
@@ -257,7 +267,7 @@ function listMessagesOverview(
     }
     tableEnd();
 
-    $previewMessages = $cu->properties->msgPreview == 1;
+    $previewMessages = $properties->msgPreview == 1;
 
     echo "<form action=\"?page=$page&amp;mode=" . $mode . "\" method=\"post\"><div>";
     checker_init();
@@ -372,7 +382,7 @@ function listMessagesOverview(
                             $subject = base64_encode("Re: " . $message->subject);
                         }
 
-                        if ($cu->properties->msgCopy) {
+                        if ($properties->msgCopy) {
                             echo "<input type=\"button\" value=\"Antworten\" name=\"answer\" onclick=\"document.location='?page=$page&mode=new&message_user_to=" . $message->userFrom . "&amp;message_subject=" . $subject . "" . $msgadd . "'\" />&nbsp;";
                         } else {
                             echo "<input type=\"button\" value=\"Antworten\" name=\"answer\" onclick=\"document.location='?page=$page&mode=new&message_user_to=" . $message->userFrom . "&amp;message_subject=" . $subject . "'\" />&nbsp;";

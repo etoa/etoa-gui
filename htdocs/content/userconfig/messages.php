@@ -1,13 +1,21 @@
 <?PHP
 
+use EtoA\User\UserPropertiesRepository;
+
+/** @var UserPropertiesRepository $userPropertiesRepository */
+$userPropertiesRepository = $app[UserPropertiesRepository::class];
+
+$properties = $userPropertiesRepository->getOrCreateProperties($cu->id);
+
 // Datenänderung übernehmen
 if (isset($_POST['data_submit']) && checker_verify()) {
-    $cu->properties->msgSignature = addslashes($_POST['msgsignature']);
-    $cu->properties->msgPreview = $_POST['msg_preview'];
-    $cu->properties->msgCreationPreview = $_POST['msgcreation_preview'];
-    $cu->properties->msgBlink = $_POST['msg_blink'];
-    $cu->properties->msgCopy = $_POST['msg_copy'];
-    $cu->properties->fleetRtnMsg = $_POST['fleet_rtn_msg'];
+    $properties->msgSignature = filled($_POST['msgsignature']) ? $_POST['msgsignature'] : null;
+    $properties->msgPreview = $_POST['msg_preview'] == 1;
+    $properties->msgCreationPreview = $_POST['msgcreation_preview'] == 1;
+    $properties->msgBlink = $_POST['msg_blink'] == 1;
+    $properties->msgCopy = $_POST['msg_copy'] == 1;
+    $properties->fleetRtnMsg = $_POST['fleet_rtn_msg'] == 1;
+    $userPropertiesRepository->storeProperties($cu->id, $properties);
 
     success_msg("Nachrichten-Einstellungen wurden ge&auml;ndert!");
 }
@@ -19,17 +27,17 @@ tableStart("Nachrichtenoptionen");
 echo "<tr>
         <th width=\"35%\">Nachrichten-Signatur:</th>
         <td>
-            <textarea name=\"msgsignature\" cols=\"50\" rows=\"4\" width=\"65%\">" . stripslashes($cu->properties->msgSignature) . "</textarea></td>
+            <textarea name=\"msgsignature\" cols=\"50\" rows=\"4\" width=\"65%\">" . $properties->msgSignature . "</textarea></td>
     </tr>";
 //Nachrichtenvorschau (Neue/Archiv) (An/Aus)
 echo "<tr>
                      <th width=\"36%\">Nachrichtenvorschau (Neue/Archiv):</th>
                 <td width=\"16%\">
             <input type=\"radio\" name=\"msg_preview\" value=\"1\" ";
-if ($cu->properties->msgPreview == 1) echo " checked=\"checked\"";
+if ($properties->msgPreview) echo " checked=\"checked\"";
 echo "/> Aktiviert
             <input type=\"radio\" name=\"msg_preview\" value=\"0\" ";
-if ($cu->properties->msgPreview == 0) echo " checked=\"checked\"";
+if (!$properties->msgPreview) echo " checked=\"checked\"";
 echo "/> Deaktiviert
                </td>
         </tr>";
@@ -39,11 +47,11 @@ echo "<tr>
                   <th width=\"36%\">Nachrichtenvorschau (Erstellen):</th>
               <td width=\"16%\">
               <input type=\"radio\" name=\"msgcreation_preview\" value=\"1\" ";
-if ($cu->properties->msgCreationPreview == 1)
+if ($properties->msgCreationPreview)
     echo " checked=\"checked\"";
 echo "/> Aktiviert
               <input type=\"radio\" name=\"msgcreation_preview\" value=\"0\" ";
-if ($cu->properties->msgCreationPreview == 0)
+if (!$properties->msgCreationPreview)
     echo " checked=\"checked\"";
 echo "/> Deaktiviert
           </td>
@@ -54,11 +62,11 @@ echo "<tr>
                   <th width=\"36%\">Blinkendes Nachrichtensymbol:</th>
               <td width=\"16%\">
               <input type=\"radio\" name=\"msg_blink\" value=\"1\" ";
-if ($cu->properties->msgBlink == 1)
+if ($properties->msgBlink)
     echo " checked=\"checked\"";
 echo "/> Aktiviert
               <input type=\"radio\" name=\"msg_blink\" value=\"0\" ";
-if ($cu->properties->msgBlink == 0)
+if (!$properties->msgBlink)
     echo " checked=\"checked\"";
 echo "/> Deaktiviert
           </td>
@@ -69,11 +77,11 @@ echo "<tr>
                   <th width=\"36%\">Text bei Antwort/Weiterleiten kopieren:</th>
               <td width=\"16%\">
               <input type=\"radio\" name=\"msg_copy\" value=\"1\" ";
-if ($cu->properties->msgCopy == 1)
+if ($properties->msgCopy)
     echo " checked=\"checked\"";
 echo "/> Aktiviert
               <input type=\"radio\" name=\"msg_copy\" value=\"0\" ";
-if ($cu->properties->msgCopy == 0)
+if (!$properties->msgCopy)
     echo " checked=\"checked\"";
 echo "/> Deaktiviert
           </td>
@@ -84,11 +92,11 @@ echo "<tr>
                 <th width=\"36%\">Nachricht bei Transport-/Spionagerückkehr:</th>
                 <td width=\"16%\">
               <input type=\"radio\" name=\"fleet_rtn_msg\" value=\"1\" ";
-if ($cu->properties->fleetRtnMsg == 1) echo " checked=\"checked\"";
+if ($properties->fleetRtnMsg) echo " checked=\"checked\"";
 echo "/> Aktiviert &nbsp;
 
               <input type=\"radio\" name=\"fleet_rtn_msg\" value=\"0\" ";
-if ($cu->properties->fleetRtnMsg == 0) echo " checked=\"checked\"";
+if (!$properties->fleetRtnMsg) echo " checked=\"checked\"";
 echo "/> Deaktiviert
             </td>
           </tr>";

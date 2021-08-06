@@ -8,6 +8,7 @@ use EtoA\Text\TextRepository;
 use EtoA\Support\RuntimeDataStore;
 use EtoA\Tip\TipRepository;
 use EtoA\Tutorial\TutorialManager;
+use EtoA\User\UserPropertiesRepository;
 use EtoA\User\UserSurveillanceRepository;
 
 /** @var RuntimeDataStore */
@@ -21,6 +22,11 @@ $mailSenderService = $app[MailSenderService::class];
 
 /** @var TutorialManager $tutorialManager */
 $tutorialManager = $app[TutorialManager::class];
+
+/** @var UserPropertiesRepository $userPropertiesRepository */
+$userPropertiesRepository = $app[UserPropertiesRepository::class];
+
+$properties = $userPropertiesRepository->getOrCreateProperties($cu->id);
 
 $time = time();
 
@@ -188,9 +194,11 @@ if (!$cu->isSetup() && $page != "help" && $page != "contact") {
         // Change display mode (full/small) if requested
         if (isset($_GET['change_display_mode'])) {
             if ($_GET['change_display_mode'] == 'small') {
-                $cu->properties->itemShow = 'small';
+                $properties->itemShow = 'small';
+                $userPropertiesRepository->storeProperties($cu->id, $properties);
             } elseif ($_GET['change_display_mode'] == 'full') {
-                $cu->properties->itemShow = 'full';
+                $properties->itemShow = 'full';
+                $userPropertiesRepository->storeProperties($cu->id, $properties);
             }
             forward("?page=$page");
         }

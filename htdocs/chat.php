@@ -3,18 +3,24 @@
 
 use EtoA\Chat\ChatBanRepository;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\User\UserPropertiesRepository;
 
 define('RELATIVE_ROOT', '');
 include_once __DIR__ . '/inc/bootstrap.inc.php';
 
 /** @var ConfigurationService */
 $config = $app[ConfigurationService::class];
+
+/** @var UserPropertiesRepository $userPropertiesRepository */
+$userPropertiesRepository = $app[UserPropertiesRepository::class];
+
 /** @var ChatBanRepository $chatBanRepository */
 $chatBanRepository = $app[ChatBanRepository::class];
 
 $login = false;
 $chatColor = null;
 $errorMessage = null;
+$properties = null;
 if (isset($_SESSION['user_id'])) {
     $login = true;
 
@@ -23,18 +29,19 @@ if (isset($_SESSION['user_id'])) {
         $errorMessage = 'Du wurdest vom Chat gebannt!<br/><br/><b>Grund:</b> ' . $chatBan->reason;
     } else {
         $cu = new User($_SESSION['user_id']);
-        $_SESSION['ccolor'] = $cu->properties->chatColor;
-        $chatColor = $cu->properties->chatColor;
+        $properties = $userPropertiesRepository->getOrCreateProperties($cu->id);
+        $_SESSION['ccolor'] = $properties->chatColor;
+        $chatColor = $properties->chatColor;
     }
 }
 
 // Select design
 $design = DESIGN_DIRECTORY . "/official/" . $config->get('default_css_style');
-if (isset($cu) && $cu->properties->cssStyle) {
-    if (is_dir(DESIGN_DIRECTORY . "/custom/" . $cu->properties->cssStyle)) {
-        $design = DESIGN_DIRECTORY . "/custom/" . $cu->properties->cssStyle;
-    } else if (is_dir(DESIGN_DIRECTORY . "/official/" . $cu->properties->cssStyle)) {
-        $design = DESIGN_DIRECTORY . "/official/" . $cu->properties->cssStyle;
+if (isset($cu) && $properties !== null && filled($properties->cssStyle)) {
+    if (is_dir(DESIGN_DIRECTORY . "/custom/" . $properties->cssStyle)) {
+        $design = DESIGN_DIRECTORY . "/custom/" . $properties->cssStyle;
+    } else if (is_dir(DESIGN_DIRECTORY . "/official/" . $properties->cssStyle)) {
+        $design = DESIGN_DIRECTORY . "/official/" . $properties->cssStyle;
     }
 }
 define('CSS_STYLE', $design);

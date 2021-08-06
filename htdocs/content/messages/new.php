@@ -2,6 +2,7 @@
 
 use EtoA\Message\MessageIgnoreRepository;
 use EtoA\Message\MessageRepository;
+use EtoA\User\UserPropertiesRepository;
 use EtoA\User\UserRepository;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -13,6 +14,9 @@ $messageIgnoreRepository = $app[MessageIgnoreRepository::class];
 
 /** @var UserRepository */
 $userRepository = $app[UserRepository::class];
+
+/** @var UserPropertiesRepository $userPropertiesRepository */
+$userPropertiesRepository = $app[UserPropertiesRepository::class];
 
 /** @var Request */
 $request = Request::createFromGlobals();
@@ -37,25 +41,28 @@ if (!$cu->isVerified) {
         );
     }
 
-    sendMessageForm($request, $cu, $messageRepository, $userRepository);
+    sendMessageForm($request, $cu, $messageRepository, $userRepository, $userPropertiesRepository);
 }
 
 function sendMessageForm(
     Request $request,
     User $cu,
     MessageRepository $messageRepository,
-    UserRepository $userRepository
+    UserRepository $userRepository,
+    UserPropertiesRepository $userPropertiesRepository
 ): void {
     global $page;
     global $mode;
 
-    $previewNewMessage = $cu->properties->msgCreationPreview == 1 ? true : false;
+    $properties = $userPropertiesRepository->getOrCreateProperties($cu->id);
+
+    $previewNewMessage = $properties->msgCreationPreview;
 
     $user = getInitialUser($request, $userRepository);
     $subject = getInitialSubject($request);
     $text = getInitialMessageText($request, $messageRepository, $cu);
-    if ($cu->properties->msgSignature) {
-        $text = "\n\n" . $cu->properties->msgSignature . $text;
+    if (filled($properties->msgSignature)) {
+        $text = "\n\n" . $properties->msgSignature . $text;
     }
 
     echo "<form action=\"?page=" . $page . "&mode=" . $mode . "\" method=\"POST\" name=\"msgform\">";

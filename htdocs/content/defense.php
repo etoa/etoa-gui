@@ -9,6 +9,7 @@ use EtoA\Defense\DefenseRequirementRepository;
 use EtoA\Technology\TechnologyRepository;
 use EtoA\UI\ResourceBoxDrawer;
 use EtoA\Universe\Planet\PlanetRepository;
+use EtoA\User\UserPropertiesRepository;
 
 /** @var ConfigurationService */
 $config = $app[ConfigurationService::class];
@@ -27,6 +28,11 @@ $defenseRepository = $app[DefenseRepository::class];
 $defenseQueueRepository = $app[DefenseQueueRepository::class];
 /** @var DefenseRequirementRepository $defenseRequirementRepository */
 $defenseRequirementRepository = $app[DefenseRequirementRepository::class];
+
+/** @var UserPropertiesRepository $userPropertiesRepository */
+$userPropertiesRepository = $app[UserPropertiesRepository::class];
+
+$properties = $userPropertiesRepository->getOrCreateProperties($cu->id);
 
 //Definition für "Info" Link
 define("ITEMS_TBL", "defense");
@@ -89,10 +95,10 @@ if ($factoryBuilding !== null && $factoryBuilding->currentLevel > 0) {
             count($_POST) > 0 && isset($_POST['sort_submit'])
             && ctype_aldotsc($_POST['sort_value']) && ctype_aldotsc($_POST['sort_way'])
         ) {
-            $cu->properties->itemOrderDef = $_POST['sort_value'];
-            $cu->properties->itemOrderWay = $_POST['sort_way'];
+            $properties->itemOrderDef = $_POST['sort_value'];
+            $properties->itemOrderWay = $_POST['sort_way'];
+            $userPropertiesRepository->storeProperties($cu->id, $properties);
         }
-
 
         //
         // Läd alle benötigten Daten in PHP-Arrays
@@ -147,7 +153,7 @@ if ($factoryBuilding !== null && $factoryBuilding->currentLevel > 0) {
 
         // Alle Verteidigung laden
         //Verteidigungsordnunr des Users beachten
-        $order = "def_" . $cu->properties->itemOrderDef . " " . $cu->properties->itemOrderWay . "";
+        $order = "def_" . $properties->itemOrderDef . " " . $properties->itemOrderWay . "";
         $res = dbquery("
                     SELECT
                         def_id,
@@ -348,7 +354,7 @@ if ($factoryBuilding !== null && $factoryBuilding->currentLevel > 0) {
                     <select name=\"sort_value\">";
         foreach ($values as $value => $name) {
             echo "<option value=\"" . $value . "\"";
-            if ($cu->properties->itemOrderDef == $value) {
+            if ($properties->itemOrderDef == $value) {
                 echo " selected=\"selected\"";
             }
             echo ">" . $name . "</option>";
@@ -359,12 +365,12 @@ if ($factoryBuilding !== null && $factoryBuilding->currentLevel > 0) {
 
         //Aufsteigend
         echo "<option value=\"ASC\"";
-        if ($cu->properties->itemOrderWay == 'ASC') echo " selected=\"selected\"";
+        if ($properties->itemOrderWay == 'ASC') echo " selected=\"selected\"";
         echo ">Aufsteigend</option>";
 
         //Absteigend
         echo "<option value=\"DESC\"";
-        if ($cu->properties->itemOrderWay == 'DESC') echo " selected=\"selected\"";
+        if ($properties->itemOrderWay == 'DESC') echo " selected=\"selected\"";
         echo ">Absteigend</option>";
 
         echo "</select>
@@ -770,7 +776,7 @@ if ($factoryBuilding !== null && $factoryBuilding->currentLevel > 0) {
                 // Auflistung der Verteidigung (auch diese, die noch nicht gebaut wurden)
                 if (count($defs) > 0) {
                     //Einfache Ansicht
-                    if ($cu->properties->itemShow != 'full') {
+                    if ($properties->itemShow != 'full') {
                         echo "<tr>
                                         <th colspan=\"2\">Anlage</th>
                                         <th>Zeit</th>
@@ -990,7 +996,7 @@ if ($factoryBuilding !== null && $factoryBuilding->currentLevel > 0) {
                             }
 
                             // Volle Ansicht
-                            if ($cu->properties->itemShow == 'full') {
+                            if ($properties->itemShow == 'full') {
                                 if ($ccnt > 0) {
                                     echo "<tr>
                                             <td colspan=\"5\" style=\"height:5px;\"></td>

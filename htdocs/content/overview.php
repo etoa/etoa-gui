@@ -6,9 +6,15 @@ use EtoA\Text\TextRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Support\StringUtils;
 use EtoA\User\UserLoginFailureRepository;
+use EtoA\User\UserPropertiesRepository;
 
 /** @var ConfigurationService */
 $config = $app[ConfigurationService::class];
+
+/** @var UserPropertiesRepository $userPropertiesRepository */
+$userPropertiesRepository = $app[UserPropertiesRepository::class];
+
+$properties = $userPropertiesRepository->getOrCreateProperties($cu->id);
 
 // BEGIN SKRIPT //
 echo "<h1>&Uuml;bersicht</h1>";
@@ -497,8 +503,8 @@ tableEnd();
 
 //Kreis Definitionen
 $division = 15;            //Kreis Teilung: So hoch wie die maximale Anzahl Planeten
-$d_planets = $cu->properties->planetCircleWidth;    //Durchmesser der Bilder (in Pixel)
-$d_infos = $cu->properties->planetCircleWidth;        //Durchmesser der Infos (in Pixel)
+$d_planets = $properties->planetCircleWidth;    //Durchmesser der Bilder (in Pixel)
+$d_infos = $properties->planetCircleWidth;        //Durchmesser der Infos (in Pixel)
 $pic_height = 75;            //Planet Bildhöhe
 $pic_width = 75;            //Planet Bildbreite
 $info_box_height = 50;    //Info Höhe

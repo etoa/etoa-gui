@@ -11,6 +11,7 @@ use EtoA\Technology\TechnologyRepository;
 use EtoA\UI\ResourceBoxDrawer;
 use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Planet\PlanetRepository;
+use EtoA\User\UserPropertiesRepository;
 
 /** @var ConfigurationService */
 $config = $app[ConfigurationService::class];
@@ -29,6 +30,11 @@ $missileFlightRepository = $app[MissileFlightRepository::class];
 
 /** @var BuildingRepository $buildingRepository */
 $buildingRepository = $app[BuildingRepository::class];
+
+/** @var UserPropertiesRepository $userPropertiesRepository */
+$userPropertiesRepository = $app[UserPropertiesRepository::class];
+
+$properties = $userPropertiesRepository->getOrCreateProperties($cu->id);
 
 // Info-Link
 define("HELP_URL", "?page=help&site=missiles");
@@ -443,7 +449,7 @@ if ($missileBuilding !== null && $missileBuilding->currentLevel > 0) {
                         }
 
                         // Volle Ansicht
-                        if ($cu->properties->itemShow == 'full') {
+                        if ($properties->itemShow == 'full') {
                             if ($cnt2 > 0) {
                                 echo "<tr>
                                         <td colspan=\"5\" style=\"height:5px;\"></td>
