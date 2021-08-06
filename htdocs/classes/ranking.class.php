@@ -855,7 +855,6 @@ class Ranking
         $allianceStats = [];
         if (mysql_num_rows($res) > 0) {
             while ($arr = mysql_fetch_assoc($res)) {
-                $apoints = 0;
                 $upoints = 0;
                 $bpoints = 0;
                 $tpoints = 0;
@@ -909,18 +908,16 @@ class Ranking
                     $arr['alliance_id'],
                     $arr['alliance_tag'],
                     $arr['alliance_name'],
+                    (int) $arr['cnt'],
                     $points,
                     $upoints,
                     $apoints,
-                    $sarr[0],
                     $tpoints,
                     $bpoints,
                     $arr['uavg'],
                     $arr['cnt'],
                     $arr['alliance_rank_current']
                 );
-
-                $alliancePointsRepository->add($stats);
                 $allianceStats[] = $stats;
             }
         }
