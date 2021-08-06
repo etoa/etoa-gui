@@ -605,6 +605,7 @@ class UserRepository extends AbstractRepository
             ->where('u.user_blocked_from < :time')
             ->andWhere('u.user_blocked_to > :time')
             ->orderBy('u.user_blocked_from', 'DESC')
+            ->setParameter('time', time())
             ->execute()
             ->fetchAllAssociative();
 
