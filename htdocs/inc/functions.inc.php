@@ -1358,7 +1358,7 @@ function logAccess($target, $domain = "", $sub = "")
             $_SESSION['accesslog_sid'] = uniqid((string) mt_rand(), true);
         }
 
-        $accessLogRepository->add($target, $_SESSION['accesslog_sid'], $sub, $domain);
+        $accessLogRepository->add($target, $_SESSION['accesslog_sid'], $sub ?? '', $domain);
     }
 }
 
