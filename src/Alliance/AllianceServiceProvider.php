@@ -9,6 +9,7 @@ use EtoA\Alliance\Board\AllianceBoardCategoryRankRepository;
 use EtoA\Alliance\Board\AllianceBoardCategoryRepository;
 use EtoA\Alliance\Board\AllianceBoardPostRepository;
 use EtoA\Alliance\Board\AllianceBoardTopicRepository;
+use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\User\UserService;
 use Pimple\Container;
 use Pimple\ServiceProviderInterface;
@@ -95,6 +96,13 @@ class AllianceServiceProvider implements ServiceProviderInterface
 
         $pimple[AllianceRightRepository::class] = function (Container $pimple): AllianceRightRepository {
             return new AllianceRightRepository($pimple['db']);
+        };
+
+        $pimple[TownhallService::class] = function (Container $pimple): TownhallService {
+            return new TownhallService(
+                $pimple[ConfigurationService::class],
+                $pimple[AllianceNewsRepository::class]
+            );
         };
     }
 }

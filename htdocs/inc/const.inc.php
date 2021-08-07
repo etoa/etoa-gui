@@ -148,9 +148,6 @@ define('USERBANNER_LINK_URL', 'http://www.etoa.ch');
 // RSS Dir
 define('RSS_DIR', CACHE_ROOT . "/rss");
 
-// Townhall-RSS-File
-define('RSS_TOWNHALL_FILE', RSS_DIR . "/townhall.rss");
-
 //
 // Pfade
 //

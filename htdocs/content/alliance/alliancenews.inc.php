@@ -3,6 +3,7 @@
 use EtoA\Alliance\AllianceNewsRepository;
 use EtoA\Alliance\AllianceRepository;
 use EtoA\Alliance\AllianceRights;
+use EtoA\Alliance\TownhallService;
 use EtoA\Support\StringUtils;
 use EtoA\User\UserRatingRepository;
 
@@ -37,8 +38,13 @@ if (Alliance::checkActionRights(AllianceRights::ALLIANCE_NEWS)) {
                 );
             }
 
+
+            /** @var TownhallService $townhallService */
+            $townhallService = $app[TownhallService::class];
+
             // Update rss file
-            Townhall::genRss();
+            $townhallService->genRss();
+
         } elseif (isset($_POST['news_title']) && isset($_POST['news_text']) && $_POST['news_title'] != "" && $_POST['news_text'] != "") {
             $_SESSION['alliance'] = array();
             $_SESSION['alliance']['news'] = array();
