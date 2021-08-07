@@ -284,8 +284,7 @@ class BuildListItem
         $this->buildType = 3;
 
         if ($this->id > 0) {
-            dbquery("UPDATE buildlist SET buildlist_build_type='3', buildlist_build_start_time='" . $this->startTime .
-                "', buildlist_build_end_time='" . $this->endTime . "' WHERE buildlist_id='" . $this->id . "' LIMIT 1;");
+            $buildingRepository->updateBuildingListEntry($this->id, $this->level, $this->buildType, $this->startTime, $this->endTime);
         } else {
             dbquery("INSERT INTO
                         buildlist
