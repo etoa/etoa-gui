@@ -374,7 +374,10 @@ class BuildListItem
     public function demolish()
     {
         // TODO
-        global $cp, $cu;
+        global $cp, $cu, $app;
+
+        /** @var BuildingRepository $buildingRepository */
+        $buildingRepository = $app[BuildingRepository::class];
 
         $costs = $this->getDemolishCosts();
         $this->changedFields['startTime'] = "buildlist_build_start_time";
@@ -385,7 +388,7 @@ class BuildListItem
         $this->endTime = $this->startTime + $costs['time'];
         $this->buildType = 4;
 
-        dbquery("UPDATE buildlist SET buildlist_build_type='4', buildlist_build_start_time='" . $this->startTime . "', buildlist_build_end_time='" . $this->endTime . "' WHERE buildlist_id='" . $this->id . "' LIMIT 1;");
+        $buildingRepository->updateBuildingListEntry($this->id, $this->level, $this->buildType, $this->startTime, $this->endTime);
         BuildList::$underConstruction = true;
 
         $this->planetRepo->addResources($cp->id, -$costs['costs0'], -$costs['costs1'], -$costs['costs2'], -$costs['costs3'], -$costs['costs4']);
