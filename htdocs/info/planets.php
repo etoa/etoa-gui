@@ -1,5 +1,6 @@
 <?PHP
 
+use EtoA\UI\Tooltip;
 use EtoA\Universe\Planet\PlanetTypeRepository;
 
 /** @var PlanetTypeRepository */
@@ -49,7 +50,7 @@ foreach ($planetTypes as $planetType) {
 
     $tt = new Tooltip();
     $tt->addImage(IMAGE_PATH . "/" . IMAGE_PLANET_DIR . "/planet" . $planetType->id . "_" . $x . ".gif");
-    echo "<img src=\"" . IMAGE_PATH . "/" . IMAGE_PLANET_DIR . "/planet" . $planetType->id . "_" . $x . "_small.gif\" width=\"40\" height=\"40\" alt=\"planet\" border=\"0\" / " . $tt . "></td>";
+    echo "<img src=\"" . IMAGE_PATH . "/" . IMAGE_PLANET_DIR . "/planet" . $planetType->id . "_" . $x . "_small.gif\" width=\"40\" height=\"40\" alt=\"planet\" border=\"0\" / " . $tt->toString() . "></td>";
 
     $tt = new Tooltip();
     $tt->addIcon(IMAGE_PATH . "/" . IMAGE_PLANET_DIR . "/planet" . $planetType->id . "_" . $x . "_small.gif");
@@ -61,7 +62,7 @@ foreach ($planetTypes as $planetType) {
     if ($planetType->collectGas)
         $tt->addGoodCond("Ermöglich " . RES_FUEL . "abbau");
     $tt->addComment($planetType->comment);
-    echo "<td class=\"tbltitle\" " . $tt . ">" . $planetType->name . "</td>";
+    echo "<td class=\"tbltitle\" " . $tt->toString() . ">" . $planetType->name . "</td>";
     echo "<td class=\"tbldata\">" . get_percent_string($planetType->metal, 1) . "</td>";
     echo "<td class=\"tbldata\">" . get_percent_string($planetType->crystal, 1) . "</td>";
     echo "<td class=\"tbldata\">" . get_percent_string($planetType->plastic, 1) . "</td>";

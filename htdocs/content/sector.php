@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\UI\Tooltip;
 use EtoA\Universe\Cell\CellRepository;
 use EtoA\User\UserRepository;
 
@@ -113,7 +114,7 @@ if ($sx_tl !== 0 && $sy_tl !== 0 && $sx_tl !== $sx_num + 1 && $sy_tl !== $sy_num
     $tt = new Tooltip();
     $tt->addTitle("Sektor $sx_tl/$sy_tl");
     $tt->addText("Sektor $sx_tl/$sy_tl anzeigen");
-    echo "<a href=\"?page=$page&amp;sx=$sx_tl&amp;sy=$sy_tl\" " . $tt . ">";
+    echo "<a href=\"?page=$page&amp;sx=$sx_tl&amp;sy=$sy_tl\" " . $tt->toString() . ">";
     echo "<img src=\"$sector_pic/sector_topleft.gif\" alt=\"Sektor $sx_tl/$sy_tl\" onmouseover=\"$(this).attr('src','$sector_pic/sector_topleft_On.gif');\" onmouseout=\"$(this).attr('src','$sector_pic/sector_topleft.gif');\"/></a>";
 } else {
     echo "&nbsp;";
@@ -125,7 +126,7 @@ if ($sx_tc != 0 && $sy_tc != 0 && $sx_tc != $sx_num + 1 && $sy_tc != $sy_num + 1
     $tt = new Tooltip();
     $tt->addTitle("Sektor $sx_tc/$sy_tc");
     $tt->addText("Sektor $sx_tc/$sy_tc anzeigen");
-    echo "<a href=\"?page=$page&amp;sx=$sx_tc&amp;sy=$sy_tc\" " . $tt . ">";
+    echo "<a href=\"?page=$page&amp;sx=$sx_tc&amp;sy=$sy_tc\" " . $tt->toString() . ">";
     echo "<img src=\"$sector_pic/sector_topcenter.gif\" alt=\"Sektor $sx_tc/$sy_tc\" onmouseover=\"$(this).attr('src','$sector_pic/sector_topcenter_On.gif');\" onmouseout=\"$(this).attr('src','$sector_pic/sector_topcenter.gif');\"/></a>";
 } else {
     echo "&nbsp;";
@@ -137,7 +138,7 @@ if ($sx_tr !== 0 && $sy_tr !== 0 && $sx_tr !== $sx_num + 1 && $sy_tr !== $sy_num
     $tt = new Tooltip();
     $tt->addTitle("Sektor $sx_tr/$sy_tr");
     $tt->addText("Sektor $sx_tr/$sy_tr anzeigen");
-    echo "<a href=\"?page=$page&amp;sx=$sx_tr&amp;sy=$sy_tr\" " . $tt . ">";
+    echo "<a href=\"?page=$page&amp;sx=$sx_tr&amp;sy=$sy_tr\" " . $tt->toString() . ">";
     echo "<img src=\"$sector_pic/sector_topright.gif\" alt=\"Sektor $sx_tr/$sy_tr\" onmouseover=\"$(this).attr('src','$sector_pic/sector_topright_On.gif');\" onmouseout=\"$(this).attr('src','$sector_pic/sector_topright.gif');\" /></a>";
 } else {
     echo "&nbsp;";
@@ -152,7 +153,7 @@ if ($sx_ml != 0 && $sy_ml == 0 && $sx_ml != $sx_num + 1 && $sy_ml != $sy_num + 1
     $tt = new Tooltip();
     $tt->addTitle("Sektor $sx_ml/$sy_ml");
     $tt->addText("Sektor $sx_ml/$sy_ml anzeigen");
-    echo "<a href=\"?page=$page&amp;sx=$sx_ml&amp;sy=$sy_ml\" " . $tt . ">";
+    echo "<a href=\"?page=$page&amp;sx=$sx_ml&amp;sy=$sy_ml\" " . $tt->toString() . ">";
     echo "<img src=\"$sector_pic/sector_middleleft.gif\" alt=\"Sektor $sx_ml/$sy_ml\" onmouseover=\"$(this).attr('src','$sector_pic/sector_middleleft_On.gif');\" onmouseout=\"$(this).attr('src','$sector_pic/sector_middleleft.gif');\" /></a>";
 } else {
     echo "&nbsp;";
@@ -182,7 +183,7 @@ if ($sx_mr != 0 && $sy_mr != 0 && $sx_mr != $sx_num + 1 && $sy_mr != $sy_num + 1
     $tt = new Tooltip();
     $tt->addTitle("Sektor $sx_mr/$sy_mr");
     $tt->addText("Sektor $sx_mr/$sy_mr anzeigen");
-    echo "<a href=\"?page=$page&amp;sx=$sx_mr&amp;sy=$sy_mr\" " . $tt . ">";
+    echo "<a href=\"?page=$page&amp;sx=$sx_mr&amp;sy=$sy_mr\" " . $tt->toString() . ">";
     echo "<img src=\"$sector_pic/sector_middleright.gif\" alt=\"Sektor $sx_mr/$sy_mr\" onmouseover=\"$(this).attr('src','$sector_pic/sector_middleright_On.gif');\" onmouseout=\"$(this).attr('src','$sector_pic/sector_middleright.gif');\" /></a>";
 } else {
     echo "&nbsp;";
@@ -198,7 +199,7 @@ if ($sx_bl != 0 && $sy_bl != 0 && $sx_bl != $sx_num + 1 && $sy_bl != $sy_num + 1
     $tt = new Tooltip();
     $tt->addTitle("Sektor $sx_bl/$sy_bl");
     $tt->addText("Sektor $sx_bl/$sy_bl anzeigen");
-    echo "<a href=\"?page=$page&amp;sx=$sx_bl&amp;sy=$sy_bl\">";
+    echo "<a href=\"?page=$page&amp;sx=$sx_bl&amp;sy=$sy_bl\" " . $tt->toString() . ">";
     echo "<img src=\"$sector_pic/sector_bottomleft.gif\" alt=\"Sektor $sx_bl/$sy_bl\" onmouseover=\"$(this).attr('src','$sector_pic/sector_bottomleft_On.gif');\" onmouseout=\"$(this).attr('src','$sector_pic/sector_bottomleft.gif');\" /></a>";
 } else {
     echo "&nbsp;";
@@ -210,7 +211,7 @@ if ($sx_bc != 0 && $sy_bc == 0 && $sx_bc != $sx_num + 1 && $sy_bc == $sy_num + 1
     $tt = new Tooltip();
     $tt->addTitle("Sektor $sx_bc/$sy_bc");
     $tt->addText("Sektor $sx_bc/$sy_bc anzeigen");
-    echo "<a href=\"?page=$page&amp;sx=$sx_bc&amp;sy=$sy_bc\">";
+    echo "<a href=\"?page=$page&amp;sx=$sx_bc&amp;sy=$sy_bc\" " . $tt->toString() . ">";
     echo "<img src=\"$sector_pic/sector_bottomcenter.gif\" alt=\"Sektor $sx_bc/$sy_bc\" onmouseover=\"$(this).attr('src','$sector_pic/sector_bottomcenter_On.gif');\" onmouseout=\"$(this).attr('src','$sector_pic/sector_bottomcenter.gif');\" /></a>";
 } else {
     echo "&nbsp;";
@@ -222,7 +223,7 @@ if ($sx_br !== 0 && $sy_br !== 0 && $sx_br !== $sx_num + 1 && $sy_br !== $sy_num
     $tt = new Tooltip();
     $tt->addTitle("Sektor $sx_br/$sy_br");
     $tt->addText("Sektor $sx_br/$sy_br anzeigen");
-    echo "<a href=\"?page=$page&amp;sx=$sx_br&amp;sy=$sy_br\">";
+    echo "<a href=\"?page=$page&amp;sx=$sx_br&amp;sy=$sy_br\" " . $tt->toString() . ">";
     echo "<img src=\"$sector_pic/sector_bottomright.gif\" alt=\"Sektor $sx_br/$sy_br\" onmouseover=\"$(this).attr('src','$sector_pic/sector_bottomright_On.gif');\" onmouseout=\"$(this).attr('src','$sector_pic/sector_bottomright.gif');\" /></a>";
 } else {
     echo "&nbsp;";
