@@ -1,5 +1,7 @@
 <?PHP
 
+use EtoA\Alliance\AllianceRepository;
+use EtoA\Alliance\AllianceSearch;
 use EtoA\User\UserRepository;
 use EtoA\User\UserSearch;
 
@@ -20,23 +22,13 @@ if (isset($_POST['search_query']) && $_POST['search_query'] != "") {
     }
 
     // Alliances
-    $res = dbquery("
-        SELECT
-            alliance_id,
-            alliance_name,
-            alliance_tag
-        FROM
-            alliances
-        WHERE
-            alliance_name LIKE '%" . $search . "%'
-            OR alliance_tag LIKE '%" . $search . "%'
-        ORDER BY
-            alliance_tag
-        ");
-    if (mysql_num_rows($res) > 0) {
+    /** @var AllianceRepository $allianceRepository */
+    $allianceRepository = $app[AllianceRepository::class];
+    $alliances = $allianceRepository->getAllianceNamesWithTags(AllianceSearch::create()->nameOrTagLike($search));
+    if (count($alliances) > 0) {
         echo "<h2>Allianzen</h2><ul>";
-        while ($arr = mysql_fetch_array($res)) {
-            echo "<li><a href=\"?page=alliances&amp;sub=edit&amp;alliance_id=" . $arr['alliance_id'] . "\">[" . $arr['alliance_tag'] . "] " . $arr['alliance_name'] . "</a></li>";
+        foreach ($alliances as $allianceId => $allianceNameWithTag) {
+            echo "<li><a href=\"?page=alliances&amp;sub=edit&amp;alliance_id=" . $allianceId . "\">" . $allianceNameWithTag . "</a></li>";
         }
         echo "</ul>";
     }

@@ -69,9 +69,9 @@ class AllianceRepository extends AbstractRepository
     /**
      * @return array<int, string>
      */
-    public function getAllianceNamesWithTags(): array
+    public function getAllianceNamesWithTags(AllianceSearch $search = null): array
     {
-        $rows = $this->createQueryBuilder()
+        $rows = $this->applySearchSortLimit($this->createQueryBuilder(), $search)
             ->select("alliance_id, alliance_name, alliance_tag")
             ->from('alliances')
             ->orderBy('alliance_name')

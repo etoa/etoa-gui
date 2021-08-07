@@ -51,13 +51,11 @@ class DefenseQueueRepository extends AbstractRepository
     /**
      * @return DefenseQueueItem[]
      */
-    public function findQueueItemsForUser(int $userId): array
+    public function searchQueueItems(DefenseQueueSearch $search): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->applySearchSortLimit($this->createQueryBuilder(), $search)
             ->select('*')
             ->from('def_queue')
-            ->where('queue_user_id = :userId')
-            ->setParameter('userId', $userId)
             ->orderBy('queue_starttime', 'ASC')
             ->execute()
             ->fetchAllAssociative();

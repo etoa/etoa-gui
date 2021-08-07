@@ -9,13 +9,17 @@ class UserStat
     public bool $blocked;
     public bool $hmod;
     public bool $inactive;
-    public int $rank;
-    public int $points;
-    public int $shift;
+    public int $rank; // rank for the current selection
+    public int $points; // points for the current selection
+    public int $shift; // shift for the current selection
     public string $raceName;
     public ?string $allianceTag;
     public int $sx;
     public int $sy;
+    public int $shipPoints;
+    public int $techPoints;
+    public int $buildingPoints;
+    public int $expPoints;
 
     public function __construct(array $data)
     {
@@ -31,5 +35,9 @@ class UserStat
         $this->allianceTag = $data['alliance_tag'];
         $this->sx = (int) $data['sx'];
         $this->sy = (int) $data['sy'];
+        $this->shipPoints = (int) $data['points_ships'];
+        $this->techPoints = (int) $data['points_tech'];
+        $this->buildingPoints = (int) $data['points_buildings'];
+        $this->expPoints = (int) $data['points_exp'];
     }
 }

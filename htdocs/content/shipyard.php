@@ -191,8 +191,8 @@ if ($shipyard !== null && $shipyard->currentLevel > 0) {
         $shipCosts = [];
         $shipSearch = ShipSearch::create()->buildable()->raceOrNull($cu->raceId);
         $shipOrder = ShipSort::specialWithUserSort($properties->itemOrderShip, $properties->itemOrderWay);
-        $ships = $shipDataRepository->searchShips($shipSearch, $shipOrder);
-        foreach ($ships as $ship) {
+        $items = $shipDataRepository->searchShips($shipSearch, $shipOrder);
+        foreach ($items as $ship) {
             $shipsByCategory[$ship->catId][] = $ship;
             $ships[$ship->id] = $ship;
             $shipCosts[$ship->id] = PreciseResources::createFromBase($ship->getCosts())->multiply($cu->specialist->costsShip);

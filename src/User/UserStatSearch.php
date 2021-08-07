@@ -49,4 +49,12 @@ class UserStatSearch extends AbstractSearch
 
         return $this;
     }
+
+    public function allianceId(int $allianceId): self
+    {
+        $this->parts[] = 'users.user_alliance_id = :allianceId';
+        $this->parameters['allianceId'] = $allianceId;
+
+        return $this;
+    }
 }
