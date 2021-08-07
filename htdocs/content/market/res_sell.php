@@ -6,6 +6,7 @@ use EtoA\Market\MarketResourceRepository;
 use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Entity\EntityService;
 use EtoA\User\UserMultiRepository;
+use EtoA\User\UserRatingRepository;
 
 /** @var MarketResourceRepository $marketResourceRepository */
 $marketResourceRepository = $app[MarketResourceRepository::class];
@@ -101,11 +102,30 @@ if (isset($_POST['ressource_market_id'])) {
                 ), "resbought", $offer->id, array_merge($mr, array("fleet1_id" => $buyerFid, "fleet2_id" => $sellerFid)));
 
                 // Add market ratings
-                $cu->rating->addTradeRating(TRADE_POINTS_PER_TRADE, false, 'Handel #' . $offer->id . ' mit ' . $offer->userId);
-                if (strlen($offer->text) > TRADE_POINTS_TRADETEXT_MIN_LENGTH)
-                    $seller->rating->addTradeRating(TRADE_POINTS_PER_TRADE + TRADE_POINTS_PER_TRADETEXT, true, 'Handel #' . $offer->id . ' mit ' . $cu->id);
-                else
-                    $seller->rating->addTradeRating(TRADE_POINTS_PER_TRADE, true, 'Handel #' . $offer->id . ' mit ' . $cu->id);
+                /** @var UserRatingRepository $userRatingRepository */
+                $userRatingRepository = $app[UserRatingRepository::class];
+
+                $userRatingRepository->addTradeRating(
+                    $cu->id,
+                    TRADE_POINTS_PER_TRADE,
+                    false,
+                    'Handel #' . $offer->id . ' mit ' . $offer->userId
+                );
+                if (strlen($offer->text) > TRADE_POINTS_TRADETEXT_MIN_LENGTH) {
+                    $userRatingRepository->addTradeRating(
+                        $seller->id,
+                        TRADE_POINTS_PER_TRADE + TRADE_POINTS_PER_TRADETEXT,
+                        true,
+                        'Handel #' . $offer->id . ' mit ' . $cu->id
+                    );
+                } else {
+                    $userRatingRepository->addTradeRating(
+                        $seller->id,
+                        TRADE_POINTS_PER_TRADE,
+                        true,
+                        'Handel #' . $offer->id . ' mit ' . $cu->id
+                    );
+                }
 
                 // Log schreiben, falls dieser Handel regelwidrig ist
                 /** @var UserMultiRepository $userMultiRepository */
