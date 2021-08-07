@@ -7,6 +7,7 @@ use EtoA\Admin\AdminUser;
 use EtoA\Admin\AdminUserRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Help\TicketSystem\TicketRepository;
+use EtoA\HostCache\NetworkNameService;
 use EtoA\Ranking\GameStatsGenerator;
 use EtoA\Support\DB\DatabaseManagerRepository;
 use EtoA\Text\TextRepository;
@@ -45,10 +46,13 @@ if ($sub == "offline") {
     /** @var AdminSessionManager */
     $sessionManager = $app[AdminSessionManager::class];
 
+    /** @var NetworkNameService $networkNameService */
+    $networkNameService = $app[NetworkNameService::class];
+
     if ($request->request->has('logshow') && $request->request->get('logshow') != "") {
-        adminSessionLogForUserView($request, $s, $sessionRepository, $adminUserRepo);
+        adminSessionLogForUserView($request, $s, $sessionRepository, $adminUserRepo, $networkNameService);
     } else {
-        adminSessionLogView($request, $config, $cu, $sessionRepository, $sessionManager);
+        adminSessionLogView($request, $config, $cu, $sessionRepository, $sessionManager, $networkNameService);
     }
 } elseif ($sub == "adminusers") {
     require("home/adminusers.inc.php");
@@ -138,7 +142,8 @@ function adminSessionLogForUserView(
     Request $request,
     AdminSession $s,
     AdminSessionRepository $sessionRepository,
-    AdminUserRepository $adminUserRepo
+    AdminUserRepository $adminUserRepo,
+    NetworkNameService $networkNameService
 ) {
     global $page;
     global $sub;
@@ -184,7 +189,7 @@ function adminSessionLogForUserView(
                     echo " <span style=\"color:#0f0\">aktiv</span>";
                 }
                 echo "</td>";
-                echo "<td title=\"" . Net::getHost($arr->ipAddr) . "\">" . $arr->ipAddr . "</td>";
+                echo "<td title=\"" . $networkNameService->getHost($arr->ipAddr) . "\">" . $arr->ipAddr . "</td>";
                 $browserParser = new \WhichBrowser\Parser($arr->userAgent);
                 echo "<td title=\"" . $arr->userAgent . "\">" . $browserParser->browser->toString() . "</td>";
                 echo "<td title=\"" . $arr->userAgent . "\">" . $browserParser->os->toString() . "</td>";
@@ -204,7 +209,8 @@ function adminSessionLogView(
     ConfigurationService $config,
     AdminUser $cu,
     AdminSessionRepository $sessionRepository,
-    AdminSessionManager $sessionManager
+    AdminSessionManager $sessionManager,
+    NetworkNameService $networkNameService
 ) {
     global $page;
     global $sub;
@@ -262,7 +268,7 @@ function adminSessionLogView(
                     <td>" . date("d.m.Y H:i", $arr->timeLogin) . "</td>
                     <td>" . date("d.m.Y H:i", $arr->timeAction) . "</td>
                     <td>" . tf($arr->timeAction - $arr->timeLogin) . "</td>
-                    <td title=\"" . Net::getHost($arr->ipAddr) . "\">" . $arr->ipAddr . "</td>
+                    <td title=\"" . $networkNameService->getHost($arr->ipAddr) . "\">" . $arr->ipAddr . "</td>
                     <td title=\"" . $arr->userAgent . "\">" . $browserParser->toString() . "</td>
                     <td><a href=\"?page=$page&amp;sub=$sub&amp;kick=" . $arr->userId . "\">Kick</a></td>
                 </tr>";

@@ -3,6 +3,7 @@
 use EtoA\Admin\AdminUser;
 use EtoA\Admin\AdminUserRepository;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\HostCache\NetworkNameService;
 use EtoA\Support\Mail\MailSenderService;
 use EtoA\Text\TextRepository;
 
@@ -26,6 +27,9 @@ $config = $app[ConfigurationService::class];
 
 /** @var MailSenderService $mailSenderService */
 $mailSenderService = $app[MailSenderService::class];
+
+/** @var NetworkNameService $networkNameService */
+$networkNameService = $app[NetworkNameService::class];
 
 // List of admins
 $admins = collect($adminUserRepo->findAll())
@@ -64,7 +68,7 @@ if (!$admins->isEmpty()) {
                     } else {
                         $text .= "E-Mail: " . $_POST['mail_sender'] . "\n";
                     }
-                    $text .= "IP/Host: " . $_SERVER['REMOTE_ADDR'] . " (" . Net::getHost($_SERVER['REMOTE_ADDR']) . ")\n\n";
+                    $text .= "IP/Host: " . $_SERVER['REMOTE_ADDR'] . " (" . $networkNameService->getHost($_SERVER['REMOTE_ADDR']) . ")\n\n";
                     $text .= $mail_text;
 
                     // Send mail
