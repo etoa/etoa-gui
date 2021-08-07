@@ -1,10 +1,14 @@
 <?PHP
 
+use EtoA\HostCache\NetworkNameService;
 use EtoA\User\UserLoginFailureRepository;
 use EtoA\User\UserSessionRepository;
 
 /** @var UserLoginFailureRepository $userLoginFailureRepository */
 $userLoginFailureRepository = $app[UserLoginFailureRepository::class];
+
+/** @var NetworkNameService $networkNameService */
+$networkNameService = $app[NetworkNameService::class];
 
 iBoxStart("Logins");
 echo "Hier findest du deine aktiven Sessions, eine Liste der letzten 10 Logins in deinen Account, ebenfalls kannst du weiter unten
@@ -28,7 +32,7 @@ foreach ($activeSessions as $session) {
     echo "<tr><td>" . df($session->timeLogin) . "</td>";
     echo "<td>" . df($session->timeAction) . "</td>";
     echo "<td>" . $session->ipAddr . "</td>";
-    echo "<td>" . Net::getHost($session->ipAddr) . "</td>";
+    echo "<td>" . $networkNameService->getHost($session->ipAddr) . "</td>";
     echo "<td>" . $browserParser->toString() . "</td></tr>";
 }
 tableEnd();
@@ -43,7 +47,7 @@ foreach ($sessionLogs as $sessionLog) {
     $browserParser = new \WhichBrowser\Parser($sessionLog->userAgent);
     echo "<tr><td>" . df($sessionLog->timeLogin) . "</td>";
     echo "<td>" . $sessionLog->ip . "</td>";
-    echo "<td>" . Net::getHost($sessionLog->ip) . "</td>";
+    echo "<td>" . $networkNameService->getHost($sessionLog->ip) . "</td>";
     echo "<td>" . $browserParser->toString() . "</td></tr>";
 }
 tableEnd();
@@ -58,7 +62,7 @@ if (count($failures) > 0) {
     foreach ($failures as $failure) {
         echo "<tr><td>" . df($failure->time) . "</td>";
         echo "<td>" . $failure->ip . "</td>";
-        echo "<td>" . Net::getHost($failure->ip) . "</td>";
+        echo "<td>" . $networkNameService->getHost($failure->ip) . "</td>";
         echo "<td>" . $failure->client . "</td></tr>";
     }
 } else {

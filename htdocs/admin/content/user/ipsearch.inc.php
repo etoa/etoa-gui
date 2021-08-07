@@ -1,13 +1,18 @@
 <?PHP
 
+use EtoA\HostCache\NetworkNameService;
 use EtoA\User\UserLoginFailureRepository;
 use EtoA\User\UserRepository;
 use EtoA\User\UserSessionRepository;
 
 /** @var UserRepository $userRepository */
 $userRepository = $app[UserRepository::class];
+
 /** @var UserLoginFailureRepository $userLoginFailureRepository */
 $userLoginFailureRepository = $app[UserLoginFailureRepository::class];
+
+/** @var NetworkNameService $networkNameService */
+$networkNameService = $app[NetworkNameService::class];
 
 echo "<h1>Ip- und Hostsuche</h1>";
 
@@ -19,14 +24,14 @@ if (isset($_POST['search'])) {
 if (isset($_GET['ip'])  && $_GET['ip'] != "")
     $ip = $_GET['ip'];
 elseif (isset($_GET['host'])  && $_GET['host'] != "")
-    $ip = Net::getAddr($_GET['host']);
+    $ip = $networkNameService->getAddr($_GET['host']);
 else
     $ip = "";
 
 if (isset($_GET['host']) && $_GET['host'] != "")
     $host = $_GET['host'];
 elseif ($ip != "")
-    $host = Net::getHost($ip);
+    $host = $networkNameService->getHost($ip);
 else
     $host = "";
 
@@ -89,7 +94,7 @@ if ($user > 0) {
                     echo "<tr>
                         <td>" . nf($arr['cnt']) . "</td>
                         <td><a href=\"?page=$page&amp;sub=$sub&amp;ip=" . $arr['ip_addr'] . "\">" . $arr['ip_addr'] . "</a></td>
-                        <td><a href=\"?page=$page&amp;sub=$sub&amp;host=" . Net::getHost($arr['ip_addr']) . "\">" . Net::getHost($arr['ip_addr']) . "</a></td>
+                        <td><a href=\"?page=$page&amp;sub=$sub&amp;host=" . $networkNameService->getHost($arr['ip_addr']) . "\">" . $networkNameService->getHost($arr['ip_addr']) . "</a></td>
                         </tr>";
                 }
                 echo "</table>";
@@ -132,7 +137,7 @@ if ($user > 0) {
                     $browserParser = new \WhichBrowser\Parser($sessionLog->userAgent);
                     echo "<tr>
                         <td><a href=\"?page=$page&amp;sub=$sub&amp;ip=" . $sessionLog->ip . "\">" . $sessionLog->ip . "</a></td>
-                        <td><a href=\"?page=$page&amp;sub=$sub&amp;host=" . Net::getHost($sessionLog->ip) . "\">" . Net::getHost($sessionLog->ip) . "</a></td>
+                        <td><a href=\"?page=$page&amp;sub=$sub&amp;host=" . $networkNameService->getHost($sessionLog->ip) . "\">" . $networkNameService->getHost($sessionLog->ip) . "</a></td>
                         <td>" . df($sessionLog->timeAction) . "</td>
                         <td>" . $browserParser->toString() . "</td>
                         </tr>";
@@ -322,7 +327,7 @@ if ($user > 0) {
                     <td><a href=\"?page=$page&amp;sub=$sub&amp;user=" . $arr['user_id'] . "\" " . cTT($arr['user_nick'], "tt" . $arr['user_id']) . ">" . $arr['user_nick'] . "</a></td>
                     <td>" . df($arr['time_action']) . "</td>
                     <td><a href=\"?page=$page&amp;sub=$sub&amp;ip=" . $arr['ip_addr'] . "\" " . mTT('IP', $arr['ip_addr']) . ">" . ($ip == $arr['ip_addr'] ? 'IP' : '-') . "</a> /
-                    <a href=\"?page=$page&amp;sub=$sub&amp;host=" . Net::getHost($arr['ip_addr']) . "\" " . mTT('Host', Net::getHost($arr['ip_addr'])) . ">" . ($host == Net::getHost($arr['ip_addr']) ? 'Host' : '-') . "</a></td>
+                    <a href=\"?page=$page&amp;sub=$sub&amp;host=" . $networkNameService->getHost($arr['ip_addr']) . "\" " . mTT('Host', $networkNameService->getHost($arr['ip_addr'])) . ">" . ($host == $networkNameService->getHost($arr['ip_addr']) ? 'Host' : '-') . "</a></td>
                     <td>" . $browserParser->toString() . "</td>
                     </tr>";
             }
@@ -367,7 +372,7 @@ if ($user > 0) {
                     <td><a href=\"?page=$page&amp;sub=$sub&amp;user=" . $arr['user_id'] . "\" " . cTT($arr['user_nick'], "tt" . $arr['user_id']) . ">" . $arr['user_nick'] . "</a></td>
                     <td>" . df($arr['time_action']) . "</td>
                     <td><a href=\"?page=$page&amp;sub=$sub&amp;ip=" . $arr['ip_addr'] . "\" " . mTT('IP', $arr['ip_addr']) . ">" . ($ip == $arr['ip_addr'] ? 'IP' : '-') . "</a> /
-                    <a href=\"?page=$page&amp;sub=$sub&amp;host=" . Net::getHost($arr['ip_addr']) . "\" " . mTT('Host', Net::getHost($arr['ip_addr'])) . ">" . ($host == Net::getHost($arr['ip_addr']) ? 'Host' : '-') . "</a></td>
+                    <a href=\"?page=$page&amp;sub=$sub&amp;host=" . $networkNameService->getHost($arr['ip_addr']) . "\" " . mTT('Host', $networkNameService->getHost($arr['ip_addr'])) . ">" . ($host == $networkNameService->getHost($arr['ip_addr']) ? 'Host' : '-') . "</a></td>
                     <td>" . $browserParser->toString() . "</td>
                     </tr>";
             }
@@ -395,7 +400,7 @@ if ($user > 0) {
                     <td><a href=\"?page=user&amp;sub=$sub&amp;user=" . $failure->userId . "\" " . cTT($failure->userNick, "tt" . $failure->userId) . ">" . $failure->userNick . "</a></td>
                     <td>" . df($failure->time) . "</td>
                     <td><a href=\"?page=$page&amp;sub=$sub&amp;ip=" . $failure->ip . "\" " . mTT('IP', $failure->ip) . ">" . ($ip == $failure->ip ? 'IP' : '-') . "</a> /
-                    <a href=\"?page=$page&amp;sub=$sub&amp;host=" . Net::getHost($failure->ip) . "\" " . mTT('Host', Net::getHost($failure->ip)) . ">" . ($host == Net::getHost($failure->ip) ? 'Host' : '-') . "</a></td>
+                    <a href=\"?page=$page&amp;sub=$sub&amp;host=" . $networkNameService->getHost($failure->ip) . "\" " . mTT('Host', $networkNameService->getHost($failure->ip)) . ">" . ($host == $networkNameService->getHost($failure->ip) ? 'Host' : '-') . "</a></td>
                     <td>" . $failure->client . "</td>
                     </tr>";
             }

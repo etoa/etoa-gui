@@ -1,6 +1,7 @@
 <?php
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\HostCache\NetworkNameService;
 use EtoA\User\UserRepository;
 use EtoA\User\UserSessionManager;
 use EtoA\User\UserSessionRepository;
@@ -13,6 +14,9 @@ $userSessionManager = $app[UserSessionManager::class];
 
 /** @var UserSessionRepository $userSessionRepository */
 $userSessionRepository = $app[UserSessionRepository::class];
+
+/** @var NetworkNameService $networkNameService */
+$networkNameService = $app[NetworkNameService::class];
 
 echo "<h2>Aktive Sessions</h2>";
 echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"post\">";
@@ -56,7 +60,7 @@ if (count($userSessions) > 0) {
             echo "<td class=\"tbldata\" style=\"color:#0f0\">Online [<a href=\"?page=$page&amp;sub=$sub&amp;kick=" . $session->id . "\">kick</a>]</td>";
         } else
             echo "<td class=\"tbldata\" style=\"color:#f72\">offline</td>";
-        echo "<td class=\"tbldata\">" . $session->ipAddr . "<br/>" . Net::getHost($session->ipAddr) . "</td>";
+        echo "<td class=\"tbldata\">" . $session->ipAddr . "<br/>" . $networkNameService->getHost($session->ipAddr) . "</td>";
         $browserParser = new \WhichBrowser\Parser($session->userAgent);
         echo "<td class=\"tbldata\">" . $browserParser->toString() . "</td>";
         echo "<td class=\"tbldata\">";

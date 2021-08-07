@@ -1,5 +1,6 @@
 <?PHP
 
+use EtoA\HostCache\NetworkNameService;
 use EtoA\User\UserRepository;
 use EtoA\User\UserSearch;
 
@@ -7,6 +8,9 @@ echo "<h1>Beobachtungsliste</h1>";
 
 /** @var UserRepository $userRepository */
 $userRepository = $app[UserRepository::class];
+
+/** @var NetworkNameService $networkNameService */
+$networkNameService = $app[NetworkNameService::class];
 
 if (isset($_GET['text'])) {
     $user = $userRepository->getUser((int) $_GET['text']);
@@ -70,7 +74,7 @@ elseif (isset($_GET['surveillance']) && $_GET['surveillance'] > 0) {
 
         $browserParser = new \WhichBrowser\Parser($arr['user_agent']);
         echo "<p><b>IP:</b> " . $arr['ip_addr'] . "<br/>
-            <b>Host:</b> " . Net::getHost($arr['ip_addr']) . "<br/>
+            <b>Host:</b> " . $networkNameService->getHost($arr['ip_addr']) . "<br/>
             <b>Client:</b> " . $browserParser->toString() . "</p>";
 
         echo "<p>" . button("Neu laden", "?page=$page&amp;sub=$sub&amp;surveillance=" . $_GET['surveillance'] . "&amp;session=" . $_GET['session']) . " &nbsp; " .
@@ -180,32 +184,6 @@ elseif (isset($_GET['surveillance']) && $_GET['surveillance'] > 0) {
         }
         echo "</table>";
 
-        /*
-        $res = dbquery("SELECT * FROM user_surveillance WHERE user_id=".$_GET['surveillance']." ORDER BY timestamp DESC LIMIT 1000;");
-        if (mysql_num_rows($res)>0)
-        {
-            echo "<p>Die erweiterte Beobachtung ist automatisch für User unter Beobachtung aktiv!</p>";
-            echo "<p>".button("Neu laden","?page=$page&amp;sub=$sub&amp;surveillance=".$_GET['surveillance'])." &nbsp; ".button("Zurück","?page=$page&amp;sub=$sub")."</p>";
-            $tu = new User($_GET['surveillance']);
-            tableStart("Aufgezeichnete Aktionen von ".$tu,"100%");
-            echo "<tr><th>Zeit</th><th>Seite</th><th>Request (GET)</th><th>Formular (POST)</th></tr>";
-            while ($arr=mysql_fetch_assoc($res))
-            {
-                $req = wordwrap($arr['request'], 60, "\n", true);
-                $post = wordwrap($arr['post'], 60, "\n", true);
-                echo "<tr>
-                    <td>".df($arr['timestamp'],1)."</td>
-                    <td>".$arr['page']."</td>
-                    <td>".text2html($req)."</td>
-                    <td>".text2html($post)."</td>
-                </tr>";
-            }
-            tableEnd();
-        }
-        else
-        {
-            echo "<p>Keine Einträge vorhanden!</p>";
-        }*/
         echo "<p>" . button("Zurück", "?page=$page&amp;sub=$sub") . "</p>";
     }
 }

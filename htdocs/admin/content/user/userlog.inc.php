@@ -1,5 +1,6 @@
 <?PHP
 
+use EtoA\HostCache\NetworkNameService;
 use EtoA\User\UserRepository;
 use EtoA\User\UserSessionRepository;
 
@@ -7,8 +8,12 @@ echo "<h1>User-Sessionlogs</h1>";
 
 /** @var UserRepository $userRepository */
 $userRepository = $app[UserRepository::class];
+
 /** @var UserSessionRepository $userSessionRepository */
 $userSessionRepository = $app[UserSessionRepository::class];
+
+/** @var NetworkNameService $networkNameService */
+$networkNameService = $app[NetworkNameService::class];
 
 if (isset($_POST['logshow']) || (isset($_GET['id']) && $_GET['id'] > 0)) {
     if (isset($_GET['id']) && $_GET['id'] > 0) {
@@ -35,7 +40,7 @@ if (isset($_POST['logshow']) || (isset($_GET['id']) && $_GET['id'] > 0)) {
             $sql .= " AND ip_addr='" . stripslashes($_POST['log_ip']) . "'";
         }
         if ($_POST['log_hostname'] != "") {
-            $sql .= " AND ip_addr='" . stripslashes(Net::getAddr($_POST['log_ip'])) . "'";
+            $sql .= " AND ip_addr='" . stripslashes($networkNameService->getAddr($_POST['log_ip'])) . "'";
         }
         if ($_POST['user_agent'] != "") {
             if (stristr($_POST['qmode']['user_agent'], "%"))
@@ -77,7 +82,7 @@ if (isset($_POST['logshow']) || (isset($_GET['id']) && $_GET['id'] > 0)) {
             else
                 echo "-";
             echo "</td>";
-            echo "<td>" . $arr['ip_addr'] . "<br/>" . Net::getHost($arr['ip_addr']) . "</td>";
+            echo "<td>" . $arr['ip_addr'] . "<br/>" . $networkNameService->getHost($arr['ip_addr']) . "</td>";
             $browserParser = new \WhichBrowser\Parser($arr['user_agent']);
             echo "<td>" . $browserParser->toString() . "</td>";
             echo "<td>";

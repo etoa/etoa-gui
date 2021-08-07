@@ -1,13 +1,18 @@
 <?PHP
 
 use EtoA\Alliance\AllianceRepository;
+use EtoA\HostCache\NetworkNameService;
 use EtoA\User\UserMultiRepository;
 use EtoA\User\UserSittingRepository;
 
 /** @var UserMultiRepository $userMultiRepository */
 $userMultiRepository = $app[UserMultiRepository::class];
+
 /** @var AllianceRepository $allianceRepository */
 $allianceRepository = $app[AllianceRepository::class];
+
+/** @var NetworkNameService $networkNameService */
+$networkNameService = $app[NetworkNameService::class];
 
 if (isset($_GET['ip'])) {
     $allianceTags = $allianceRepository->getAllianceTags();
@@ -16,7 +21,7 @@ if (isset($_GET['ip'])) {
     echo "<h1>Multi-Erkennung - Details</h1>";
 
     echo "<b>IP:</b> <a href=\"?page=$page&amp;sub=ipsearch&amp;ip=" . $ip . "\">$ip</a><br/>
-            <b>Host:</b> <a href=\"?page=$page&amp;sub=ipsearch&amp;host=" . Net::getHost($ip) . "\">" . Net::getHost($ip) . "</a><br/><br/>";
+            <b>Host:</b> <a href=\"?page=$page&amp;sub=ipsearch&amp;host=" . $networkNameService->getHost($ip) . "\">" . $networkNameService->getHost($ip) . "</a><br/><br/>";
     $ipres = dbquery("
             SELECT
                 users.user_blocked_from,

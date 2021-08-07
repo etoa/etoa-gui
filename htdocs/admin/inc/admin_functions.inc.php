@@ -4,6 +4,7 @@ use Doctrine\DBAL\Query\QueryBuilder;
 use EtoA\Admin\AdminUserRepository;
 use EtoA\Building\BuildingDataRepository;
 use EtoA\Defense\DefenseDataRepository;
+use EtoA\HostCache\NetworkNameService;
 use EtoA\Ship\ShipDataRepository;
 use EtoA\Technology\TechnologyDataRepository;
 use EtoA\User\UserRepository;
@@ -463,6 +464,12 @@ function drawTechTreeForSingleItem(string $type, \EtoA\Requirement\RequirementsC
 
 function showLogs($args = null, $limit = 0)
 {
+    // TODO
+    global $app;
+
+    /** @var NetworkNameService $networkNameService */
+    $networkNameService = $app[NetworkNameService::class];
+
     $paginationLimit = 100;
 
     $cat = is_array($args) && isset($args['logcat']) ? $args['logcat'] : 0;
@@ -537,7 +544,7 @@ function showLogs($args = null, $limit = 0)
             <td>" . Log::$facilities[$arr['facility']] . "</td>
             <td>" . text2html($arr['message']);
             if ($arr['ip'] != "")
-                echo "<br/><br/><b>Host:</b> " . $arr['ip'] . " (" . Net::getHost($arr['ip']) . ")";
+                echo "<br/><br/><b>Host:</b> " . $arr['ip'] . " (" . $networkNameService->getHost($arr['ip']) . ")";
             echo "</td>
             </tr>";
         }

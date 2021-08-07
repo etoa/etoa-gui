@@ -4,6 +4,7 @@ use EtoA\Admin\AdminUserRepository;
 use EtoA\Alliance\AllianceRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Help\TicketSystem\TicketRepository;
+use EtoA\HostCache\NetworkNameService;
 use EtoA\Race\RaceDataRepository;
 use EtoA\Specialist\SpecialistDataRepository;
 use EtoA\User\UserCommentRepository;
@@ -46,6 +47,9 @@ $userMultiRepository = $app[UserMultiRepository::class];
 
 /** @var UserPropertiesRepository $userPropertiesRepository */
 $userPropertiesRepository = $app[UserPropertiesRepository::class];
+
+/** @var NetworkNameService $networkNameService */
+$networkNameService = $app[NetworkNameService::class];
 
 if (isset($_GET['id']))
     $id = $_GET['id'];
@@ -407,7 +411,7 @@ if (mysql_num_rows($res) > 0) {
                 <tr>
                     <td class=\"tbltitle\">IP/Host:</td>
                     <td class=\"tbldata\"><a href=\"?page=user&amp;sub=ipsearch&amp;ip=" . $ip . "\">" . $ip . "</a>,
-                        <a href=\"?page=user&amp;sub=ipsearch&amp;host=" . Net::getHost($ip) . "\">" . Net::getHost($ip) . "</a></td>
+                        <a href=\"?page=user&amp;sub=ipsearch&amp;host=" . $networkNameService->getHost($ip) . "\">" . $networkNameService->getHost($ip) . "</a></td>
                 </tr>
                 <tr>
                     <td class=\"tbltitle\">Agent:</td>
@@ -1356,7 +1360,7 @@ if (mysql_num_rows($res) > 0) {
                                                 <a href=\"?page=$page&amp;sub=ipsearch&amp;ip=" . $failure->ip . "\">" . $failure->ip . "</a>
                                             </td>
                                             <td class=\"tbldata\">
-                                                <a href=\"?page=$page&amp;sub=ipsearch&amp;host=" . Net::getHost($failure->ip) . "\">" . Net::getHost($failure->ip) . "</a>
+                                                <a href=\"?page=$page&amp;sub=ipsearch&amp;host=" . $networkNameService->getHost($failure->ip) . "\">" . $networkNameService->getHost($failure->ip) . "</a>
                                             </td>
                                             <td class=\"tbldata\">" . $failure->client . "</td>
                                         </tr>";

@@ -1,12 +1,17 @@
 <?php
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\HostCache\NetworkNameService;
 use EtoA\Log\AccessLogRepository;
 
 /** @var ConfigurationService */
 $config = $app[ConfigurationService::class];
+
 /** @var AccessLogRepository $accessLogRepository */
 $accessLogRepository = $app[AccessLogRepository::class];
+
+/** @var NetworkNameService $networkNameService */
+$networkNameService = $app[NetworkNameService::class];
 
 echo "<h1>Tools</h1>";
 
@@ -15,7 +20,7 @@ if ($sub == "accesslog") {
 } elseif ($sub == "filesharing") {
     fileSharing();
 } elseif ($sub == "ipresolver") {
-    ipResolver();
+    ipResolver($networkNameService);
 } else {
     toolsIndex();
 }
@@ -163,7 +168,7 @@ function fileSharing()
     }
 }
 
-function ipResolver()
+function ipResolver(NetworkNameService $networkNameService)
 {
     global $page;
     global $sub;
@@ -174,7 +179,7 @@ function ipResolver()
     if (isset($_POST['resolve'])) {
         if ($_POST['address'] != "") {
             $ip = $_POST['address'];
-            $host = Net::getHost($_POST['address']);
+            $host = $networkNameService->getHost($_POST['address']);
             echo "Die IP <b>" . $ip . "</b> hat den Hostnamen <b>" . $host . "</b><br/>";
         } elseif ($_POST['hostname'] != "") {
             $ip = gethostbyname($_POST['hostname']);
