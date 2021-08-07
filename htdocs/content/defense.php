@@ -3,12 +3,19 @@
 use EtoA\Building\BuildingId;
 use EtoA\Building\BuildingRepository;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Defense\DefenseCategoryRepository;
+use EtoA\Defense\DefenseDataRepository;
+use EtoA\Defense\DefenseQueueItem;
 use EtoA\Defense\DefenseQueueRepository;
+use EtoA\Defense\DefenseQueueSearch;
 use EtoA\Defense\DefenseRepository;
 use EtoA\Defense\DefenseRequirementRepository;
+use EtoA\Defense\DefenseSearch;
+use EtoA\Defense\DefenseSort;
 use EtoA\Technology\TechnologyRepository;
 use EtoA\UI\ResourceBoxDrawer;
 use EtoA\Universe\Planet\PlanetRepository;
+use EtoA\Universe\Resources\PreciseResources;
 use EtoA\User\UserPropertiesRepository;
 
 /** @var ConfigurationService */
@@ -28,7 +35,10 @@ $defenseRepository = $app[DefenseRepository::class];
 $defenseQueueRepository = $app[DefenseQueueRepository::class];
 /** @var DefenseRequirementRepository $defenseRequirementRepository */
 $defenseRequirementRepository = $app[DefenseRequirementRepository::class];
-
+/** @var DefenseCategoryRepository $defenseCategoryRepository */
+$defenseCategoryRepository = $app[DefenseCategoryRepository::class];
+/** @var DefenseDataRepository $defenseDataRepository */
+$defenseDataRepository = $app[DefenseDataRepository::class];
 /** @var UserPropertiesRepository $userPropertiesRepository */
 $userPropertiesRepository = $app[UserPropertiesRepository::class];
 
@@ -124,97 +134,40 @@ if ($factoryBuilding !== null && $factoryBuilding->currentLevel > 0) {
         $deflist = $defenseRepository->getEntityDefenseCounts($cu->getId(), $planet->id);
 
         // Bauliste vom aktuellen Planeten laden (wird nach "Abbrechen" nochmals geladen)
-        $res = dbquery("
-                    SELECT
-                        queue_id,
-                        queue_def_id,
-                        queue_cnt,
-                        queue_starttime,
-                        queue_endtime,
-                        queue_objtime
-                    FROM
-                        def_queue
-                    WHERE
-                        queue_entity_id='" . $planet->id . "'
-                        AND queue_endtime>'" . $time . "'
-                    ORDER BY
-                        queue_starttime ASC;");
-        $queue_entity = array();
-        $queue = array();
-        while ($arr = mysql_fetch_assoc($res)) {
-            $queue[$arr['queue_id']] = $arr;
-            if (isset($queue_entity[$arr['queue_def_id']])) {
-                $queue_entity[$arr['queue_def_id']]['queue_cnt'] += $arr['queue_cnt'];
-                $queue_entity[$arr['queue_def_id']]['queue_endtime'] = $arr['queue_endtime'];
+        $queueItems = $defenseQueueRepository->searchQueueItems(DefenseQueueSearch::create()->entityId($planet->id)->endAfter($time));
+        /** @var array<int, DefenseQueueItem> $queue */
+        $queue = [];
+        /** @var array<int, int> $queueItemCounts */
+        $queueItemCounts = [];
+        foreach ($queueItems as $item) {
+            $queue[$item->id] = $item;
+            if (!isset($queueItemCounts[$item->defenseId])) {
+                $queueItemCounts[$item->defenseId] = 0;
             } else {
-                $queue_entity[$arr['queue_def_id']] = $arr;
+                $queueItemCounts[$item->defenseId] += $item->count;
             }
         }
 
-        // Alle Verteidigung laden
-        //Verteidigungsordnunr des Users beachten
-        $order = "def_" . $properties->itemOrderDef . " " . $properties->itemOrderWay . "";
-        $res = dbquery("
-                    SELECT
-                        def_id,
-                        def_name,
-                        def_shortcomment,
-                        def_costs_metal,
-                        def_costs_crystal,
-                        def_costs_plastic,
-                        def_costs_fuel,
-                        def_costs_food,
-                        def_fields,
-                        def_show,
-                        def_buildable,
-                        def_structure,
-                        def_shield,
-                        def_weapon,
-                        def_race_id,
-                        def_max_count,
-                        cat_name,
-                        cat_id
-                    FROM
-                        defense
-                        INNER JOIN
-                            def_cat
-                        ON
-                            def_cat_id=cat_id
-                    WHERE
-                        def_buildable='1'
-                        AND def_show='1'
-                        AND (def_race_id='0' OR def_race_id='" . $cu->raceId . "')
-                    ORDER BY
-                        cat_order,
-                        " . $order . ";");
-        $cat = [];
-        /** @var array[] $defs */
+        /** @var \EtoA\Defense\Defense[] $defs */
         $defs = [];
-        while ($arr = mysql_fetch_assoc($res)) {
-            $cat[$arr['cat_id']] = $arr['cat_name'];
-            $arr['def_costs_metal'] *= $cu->specialist->costsDefense;
-            $arr['def_costs_crystal'] *= $cu->specialist->costsDefense;
-            $arr['def_costs_plastic'] *= $cu->specialist->costsDefense;
-            $arr['def_costs_fuel'] *= $cu->specialist->costsDefense;
-            $arr['def_costs_food'] *= $cu->specialist->costsDefense;
-            $defs[$arr['def_id']] = $arr;
+        /** @var \EtoA\Defense\Defense[][] $defenseByCategory */
+        $defenseByCategory = [];
+        /** @var PreciseResources[] $defenseCosts */
+        $defenseCosts = [];
+        // Alle Verteidigung laden
+        $categories = $defenseCategoryRepository->getAllCategories();
+        //Verteidigungsordnunr des Users beachten
+        $items = $defenseDataRepository->searchDefense(DefenseSearch::create()->showOrBuildable()->raceOrNull($cu->raceId), DefenseSort::specialWithUserSort($properties->itemOrderDef, $properties->itemOrderWay));
+        foreach ($items as $item) {
+            $defs[$item->id] = $item;
+            $defenseCosts[$item->id] = PreciseResources::createFromBase($item->getCosts())->multiply($cu->specialist->costsShip);
+            $defenseByCategory[$item->catId][] = $item;
         }
 
         // Bauliste vom Planeten laden und nach Verteidigung zusammenfassen
         $queueFields = 0;
-        $res = dbquery("
-                    SELECT
-                        queue_def_id,
-                        SUM(queue_cnt) AS cnt
-                    FROM
-                        def_queue
-                    WHERE
-                        queue_entity_id='" . $planet->id . "'
-                        AND queue_endtime>'" . $time . "'
-                    GROUP BY
-                        queue_def_id;");
-        while ($arr = mysql_fetch_assoc($res)) {
-            $queueFields += $arr['cnt'] * $defs[$arr['queue_def_id']]['def_fields'];
+        foreach ($queueItemCounts as $defenseId => $count) {
+            $queueFields += $count * $defs[$defenseId]->fields;
         }
 
         //Berechnet freie Felder
@@ -335,26 +288,11 @@ if ($factoryBuilding !== null && $factoryBuilding->currentLevel > 0) {
         echo "<form action=\"?page=$page\" method=\"post\">";
         iBoxStart("Filter");
 
-        //Legt Sortierwerte in einem Array fest
-        $values = array(
-            "order" => "Vorgabe",
-            "name" => "Name",
-            "points" => "Kosten",
-            "fields" => "Felder",
-            "weapon" => "Waffen",
-            "structure" => "Struktur",
-            "shield" => "Schild",
-            "costs_metal" => "Titan",
-            "costs_crystal" => "Silizium",
-            "costs_plastic" => "PVC",
-            "costs_fuel" => "Tritium"
-        );
-
         echo "<div style=\"text-align:center;\">
                     <select name=\"sort_value\">";
-        foreach ($values as $value => $name) {
+        foreach (DefenseSort::USER_SORT_VALUES as $value => $name) {
             echo "<option value=\"" . $value . "\"";
-            if ($properties->itemOrderDef == $value) {
+            if ($properties->itemOrderDef === $value) {
                 echo " selected=\"selected\"";
             }
             echo ">" . $name . "</option>";
@@ -401,8 +339,8 @@ if ($factoryBuilding !== null && $factoryBuilding->currentLevel > 0) {
             $end_time = time();
             if (count($queue) > 0) {
                 // Speichert die letzte Endzeit, da das Array $queue nach queue_starttime (und somit auch endtime) sortiert ist
-                foreach ($queue as $data) {
-                    $end_time = $data['queue_endtime'];
+                foreach ($queue as $queueItem) {
+                    $end_time = $queueItem->endTime;
                 }
             }
 
@@ -422,18 +360,18 @@ if ($factoryBuilding !== null && $factoryBuilding->currentLevel > 0) {
                     }
 
                     // ... in der Bauliste
-                    if (isset($queue_entity[$def_id])) {
-                        $def_count += $queue_entity[$def_id]['queue_cnt'];
+                    if (isset($queueItemCounts[$def_id])) {
+                        $def_count += $queueItemCounts[$def_id];
                     }
 
                     //Anzahl überprüfen, ob diese die maximalzahl übersteigt, gegebenenfalls ändern
-                    if ($build_cnt + $def_count > $defs[$def_id]['def_max_count'] && $defs[$def_id]['def_max_count'] != 0) {
-                        $build_cnt = max(0, $defs[$def_id]['def_max_count'] - $def_count);
+                    if ($build_cnt + $def_count > $defs[$def_id]->maxCount && $defs[$def_id]->maxCount != 0) {
+                        $build_cnt = max(0, $defs[$def_id]->maxCount - $def_count);
                     }
 
                     //Wenn der User nicht genug freie Felder hat, die Anzahl Anlagen drosseln
-                    if ($defs[$def_id]['def_fields'] > 0 && $fields_available - $defs[$def_id]['def_fields'] * $build_cnt < 0) {
-                        $build_cnt = floor($fields_available / $defs[$def_id]['def_fields']);
+                    if ($defs[$def_id]->fields > 0 && $fields_available - $defs[$def_id]->fields * $build_cnt < 0) {
+                        $build_cnt = floor($fields_available / $defs[$def_id]->fields);
                     }
 
                     // TODO: Überprüfen
@@ -441,32 +379,32 @@ if ($factoryBuilding !== null && $factoryBuilding->currentLevel > 0) {
                     //Titan
                     $bf = [];
                     $bc = [];
-                    if ($defs[$def_id]['def_costs_metal'] > 0) {
-                        $bf['metal'] = $planet->resMetal / $defs[$def_id]['def_costs_metal'];
+                    if ($defenseCosts[$def_id]->metal > 0) {
+                        $bf['metal'] = $planet->resMetal / $defenseCosts[$def_id]->metal;
                     } else {
                         $bc['metal'] = 0;
                     }
                     //Silizium
-                    if ($defs[$def_id]['def_costs_crystal'] > 0) {
-                        $bf['crystal'] = $planet->resCrystal / $defs[$def_id]['def_costs_crystal'];
+                    if ($defenseCosts[$def_id]->crystal > 0) {
+                        $bf['crystal'] = $planet->resCrystal / $defenseCosts[$def_id]->crystal;
                     } else {
                         $bc['crystal'] = 0;
                     }
                     //PVC
-                    if ($defs[$def_id]['def_costs_plastic'] > 0) {
-                        $bf['plastic'] = $planet->resPlastic / $defs[$def_id]['def_costs_plastic'];
+                    if ($defenseCosts[$def_id]->plastic > 0) {
+                        $bf['plastic'] = $planet->resPlastic / $defenseCosts[$def_id]->plastic;
                     } else {
                         $bc['plastic'] = 0;
                     }
                     //Tritium
-                    if ($defs[$def_id]['def_costs_fuel'] > 0) {
-                        $bf['fuel'] = $planet->resFuel / $defs[$def_id]['def_costs_fuel'];
+                    if ($defenseCosts[$def_id]->fuel > 0) {
+                        $bf['fuel'] = $planet->resFuel / $defenseCosts[$def_id]->fuel;
                     } else {
                         $bc['fuel'] = 0;
                     }
                     //Nahrung
-                    if (intval($_POST['additional_food_costs']) > 0 || $defs[$def_id]['def_costs_food'] > 0) {
-                        $bf['food'] = $planet->resFood / (intval($_POST['additional_food_costs']) + $defs[$def_id]['def_costs_food']);
+                    if (intval($_POST['additional_food_costs']) > 0 || $defenseCosts[$def_id]->food > 0) {
+                        $bf['food'] = $planet->resFood / (intval($_POST['additional_food_costs']) + $defenseCosts[$def_id]->food);
                     } else {
                         $bc['food'] = 0;
                     }
@@ -485,18 +423,14 @@ if ($factoryBuilding !== null && $factoryBuilding->currentLevel > 0) {
                     //Anzahl muss grösser als 0 sein
                     if ($build_cnt > 0) {
                         //Errechne Kosten pro auftrag schiffe
-                        $bc['metal'] = $defs[$def_id]['def_costs_metal'] * $build_cnt;
-                        $bc['crystal'] = $defs[$def_id]['def_costs_crystal'] * $build_cnt;
-                        $bc['plastic'] = $defs[$def_id]['def_costs_plastic'] * $build_cnt;
-                        $bc['fuel'] = $defs[$def_id]['def_costs_fuel'] * $build_cnt;
-                        $bc['food'] = (intval($_POST['additional_food_costs']) + $defs[$def_id]['def_costs_food']) * $build_cnt;
+                        $bc['metal'] = $defenseCosts[$def_id]->metal * $build_cnt;
+                        $bc['crystal'] = $defenseCosts[$def_id]->crystal * $build_cnt;
+                        $bc['plastic'] = $defenseCosts[$def_id]->plastic * $build_cnt;
+                        $bc['fuel'] = $defenseCosts[$def_id]->fuel * $build_cnt;
+                        $bc['food'] = (intval($_POST['additional_food_costs']) + $defenseCosts[$def_id]->food) * $build_cnt;
 
                         // Bauzeit pro Def berechnen
-                        $btime = ($defs[$def_id]['def_costs_metal']
-                            + $defs[$def_id]['def_costs_crystal']
-                            + $defs[$def_id]['def_costs_plastic']
-                            + $defs[$def_id]['def_costs_fuel']
-                            + $defs[$def_id]['def_costs_food'])
+                        $btime = $defenseCosts[$def_id]->sum()
                             / $config->getInt('global_time') * $config->getFloat('def_build_time')
                             * $time_boni_factor
                             * $cu->specialist->defenseTime;
@@ -522,20 +456,27 @@ if ($factoryBuilding !== null && $factoryBuilding->currentLevel > 0) {
                         $buildingRepository->markBuildingWorkingStatus($cu->getId(), $planet->id, BuildingId::DEFENSE, true);
 
                         // Queue Array aktualisieren
-                        $queue_data = array();
-                        $queue_data['queue_id'] = $deflist_id;
-                        $queue_data['queue_def_id'] = $def_id;
-                        $queue_data['queue_cnt'] = $build_cnt;
-                        $queue_data['queue_starttime'] = $start_time;
-                        $queue_data['queue_endtime'] = $end_time;
-                        $queue_data['queue_objtime'] = $obj_time;
-                        $queue[$deflist_id] = $queue_data;
-                        if (!isset($queue_entity[$def_id])) {
-                            $queue_entity[$def_id] = $queue_data;
-                        }
-                        $queue_entity[$def_id]['queue_cnt'] += $build_cnt;
+                        $queue_data = new DefenseQueueItem([
+                            'queue_id' => $deflist_id,
+                            'queue_def_id' => $def_id,
+                            'queue_cnt' => $build_cnt,
+                            'queue_user_id' => $cu->getId(),
+                            'queue_entity_id' => $planet->id,
+                            'queue_starttime' => $start_time,
+                            'queue_endtime' => $end_time,
+                            'queue_objtime' => $obj_time,
+                            'queue_build_type' => 0,
+                            'queue_user_click_time' => time(),
+                        ]);
 
-                        echo "<tr><td>" . nf($build_cnt) . " " . $defs[$def_id]['def_name'] . " in Auftrag gegeben!</td></tr>";
+                        $queue[$deflist_id] = $queue_data;
+                        if (!isset($queueItemCounts[$def_id])) {
+                            $queueItemCounts[$def_id] = $build_cnt;
+                        } else {
+                            $queueItemCounts[$def_id] += $build_cnt;
+                        }
+
+                        echo "<tr><td>" . nf($build_cnt) . " " . $defs[$def_id]->name . " in Auftrag gegeben!</td></tr>";
 
                         //Rohstoffe summieren, diese werden nach der Schleife abgezogen
                         $totalMetal += $bc['metal'];
@@ -545,7 +486,7 @@ if ($factoryBuilding !== null && $factoryBuilding->currentLevel > 0) {
                         $totalFood += $bc['food'];
 
                         //Felder subtrahieren
-                        $fields_available -= $build_cnt * $defs[$def_id]['def_fields'];
+                        $fields_available -= $build_cnt * $defs[$def_id]->fields;
 
                         $log_text = "[b]Verteidigungsauftrag Bauen[/b]
 
@@ -574,7 +515,7 @@ if ($factoryBuilding !== null && $factoryBuilding->currentLevel > 0) {
 
                         GameLog::add(GameLog::F_DEF, GameLog::INFO, $log_text, $cu->id, $cu->allianceId, $planet->id, $def_id, 1, $build_cnt);
                     } else {
-                        echo "<tr><td>" . $defs[$def_id]['def_name'] . ": Zu wenig Rohstoffe für diese Anzahl!</td></tr>";
+                        echo "<tr><td>" . $defs[$def_id]->name . ": Zu wenig Rohstoffe für diese Anzahl!</td></tr>";
                     }
                     $counter++;
                 }
@@ -597,26 +538,26 @@ if ($factoryBuilding !== null && $factoryBuilding->currentLevel > 0) {
             $id = intval($_GET['cancel']);
             if (isset($queue[$id])) {
                 //Zu erhaltende Rohstoffe errechnen
-                $obj_cnt = min(ceil(($queue[$id]['queue_endtime'] - max($time, $queue[$id]['queue_starttime'])) / $queue[$id]['queue_objtime']), $queue[$id]['queue_cnt']);
-                echo "Breche den Bau von " . $obj_cnt . " " . $defs[$queue[$id]['queue_def_id']]['def_name'] . " ab...<br/>";
+                $obj_cnt = min(ceil(($queue[$id]->endTime - max($time, $queue[$id]->startTime)) / $queue[$id]->objectTime), $queue[$id]->count);
+                echo "Breche den Bau von " . $obj_cnt . " " . $defs[$queue[$id]->defenseId]->name . " ab...<br/>";
 
                 $ret = [];
-                $ret['metal'] = $defs[$queue[$id]['queue_def_id']]['def_costs_metal'] * $obj_cnt * $cancel_res_factor;
-                $ret['crystal'] = $defs[$queue[$id]['queue_def_id']]['def_costs_crystal'] * $obj_cnt * $cancel_res_factor;
-                $ret['plastic'] = $defs[$queue[$id]['queue_def_id']]['def_costs_plastic'] * $obj_cnt * $cancel_res_factor;
-                $ret['fuel'] = $defs[$queue[$id]['queue_def_id']]['def_costs_fuel'] * $obj_cnt * $cancel_res_factor;
-                $ret['food'] = $defs[$queue[$id]['queue_def_id']]['def_costs_food'] * $obj_cnt * $cancel_res_factor;
+                $ret['metal'] = $defenseCosts[$queue[$id]->defenseId]->metal * $obj_cnt * $cancel_res_factor;
+                $ret['crystal'] = $defenseCosts[$queue[$id]->defenseId]->crystal * $obj_cnt * $cancel_res_factor;
+                $ret['plastic'] = $defenseCosts[$queue[$id]->defenseId]->plastic * $obj_cnt * $cancel_res_factor;
+                $ret['fuel'] = $defenseCosts[$queue[$id]->defenseId]->fuel * $obj_cnt * $cancel_res_factor;
+                $ret['food'] = $defenseCosts[$queue[$id]->defenseId]->food * $obj_cnt * $cancel_res_factor;
 
                 // Daten für Log speichern
-                $def_name = $defs[$queue[$id]['queue_def_id']]['def_name'];
-                $defId = $queue[$id]['queue_def_id'];
-                $queue_count = $queue[$id]['queue_cnt'];
-                $queue_objtime = $queue[$id]['queue_objtime'];
-                $start_time = $queue[$id]['queue_starttime'];
-                $end_time = $queue[$id]['queue_endtime'];
+                $def_name = $defs[$queue[$id]->defenseId]->name;
+                $defId = $queue[$id]->defenseId;
+                $queue_count = $queue[$id]->count;
+                $queue_objtime = $queue[$id]->objectTime;
+                $start_time = $queue[$id]->startTime;
+                $end_time = $queue[$id]->endTime;
 
                 //Felder addieren
-                $fields_available += $queue_count * $defs[$queue[$id]['queue_def_id']]['def_fields'];
+                $fields_available += $queue_count * $defs[$queue[$id]->defenseId]->fields;
 
                 //Auftrag löschen
                 $defenseQueueRepository->deleteQueueItem($id);
@@ -624,48 +565,25 @@ if ($factoryBuilding !== null && $factoryBuilding->currentLevel > 0) {
                 $buildingRepository->markBuildingWorkingStatus($cu->getId(), $planet->id, BuildingId::DEFENSE, false);
 
                 // Nachkommende Aufträge werden Zeitlich nach vorne verschoben
-                $tres = dbquery("
-                            SELECT
-                                queue_id,
-                                queue_def_id,
-                                queue_cnt,
-                                queue_starttime,
-                                queue_endtime,
-                                queue_objtime
-                            FROM
-                                def_queue
-                            WHERE
-                                queue_starttime>='" . $end_time . "'
-                                AND queue_entity_id='" . $planet->id . "'
-                            ORDER BY
-                                queue_starttime ASC
-                            ;");
-
-                if (mysql_num_rows($tres) > 0) {
+                $queueItems = $defenseQueueRepository->searchQueueItems(DefenseQueueSearch::create()->entityId($planet->id)->startEqualAfter($end_time));
+                if (count($queueItems) > 0) {
                     $new_starttime = max($start_time, time());
-                    while ($tarr = mysql_fetch_assoc($tres)) {
-                        $new_endtime = $new_starttime + $tarr['queue_endtime'] - $tarr['queue_starttime'];
-                        dbquery("
-                            UPDATE
-                                def_queue
-                            SET
-                                queue_starttime='" . $new_starttime . "',
-                                queue_endtime='" . $new_endtime . "'
-                            WHERE
-                                queue_id='" . $tarr['queue_id'] . "'
-                            ");
+                    foreach ($queueItems as $item) {
+                        $new_endtime = $new_starttime + $item->endTime - $item->startTime;
+                        $item->startTime = $new_starttime;
+                        $item->endTime = $new_endtime;
+                        $defenseQueueRepository->saveQueueItem($item);
 
                         // Aktualisiert das Queue-Array
-                        $queue[$tarr['queue_id']]['queue_starttime'] = $new_starttime;
-                        $queue[$tarr['queue_id']]['queue_endtime'] = $new_endtime;
+                        $queue[$item->id] = $item;
 
                         $new_starttime = $new_endtime;
                     }
                 }
 
-                $queue_entity[$defId]['queue_cnt'] -= $queue_count;
+                $queueItemCounts[$defId] -= $queue_count;
                 // Auftrag aus Array löschen
-                $queue[$id] = NULL;
+                unset($queue[$id]);
 
                 //Rohstoffe dem Planeten gutschreiben und aktualisieren
                 $planetRepo->addResources($planet->id, $ret['metal'], $ret['crystal'], $ret['plastic'], $ret['fuel'], $ret['food']);
@@ -705,19 +623,19 @@ if ($factoryBuilding !== null && $factoryBuilding->currentLevel > 0) {
             tableStart("Bauliste");
             $first = true;
             $absolute_starttime = 0;
-            foreach ($queue as $data) {
+            foreach ($queue as $queueItem) {
                 // Listet nur Die Datensätze aus, die auch eine Verteidiguns ID beinhalten, da ev. der Datensatz mit NULL gleichgesetzt wurde
-                if (isset($data['queue_def_id'])) {
+                if ($queueItem->defenseId > 0) {
                     if ($first) {
-                        $obj_t_remaining = ((($data['queue_endtime'] - $time) / $data['queue_objtime']) - floor(($data['queue_endtime'] - $time) / $data['queue_objtime'])) * $data['queue_objtime'];
+                        $obj_t_remaining = ((($queueItem->endTime - $time) / $queueItem->objectTime) - floor(($queueItem->endTime - $time) / $queueItem->objectTime)) * $queueItem->objectTime;
                         if ($obj_t_remaining == 0) {
-                            $obj_t_remaining = $data['queue_objtime'];
+                            $obj_t_remaining = $queueItem->objectTime;
                         }
-                        $obj_time = $data['queue_objtime'];
+                        $obj_time = $queueItem->objectTime;
 
-                        $absolute_starttime = $data['queue_starttime'];
+                        $absolute_starttime = $queueItem->startTime;
 
-                        $obj_t_passed = $data['queue_objtime'] - $obj_t_remaining;
+                        $obj_t_passed = $queueItem->objectTime - $obj_t_remaining;
                         echo "<tr>
                                 <th colspan=\"2\">Aktuell</th>
                                 <th style=\"width:150px;\">Start</th>
@@ -725,9 +643,9 @@ if ($factoryBuilding !== null && $factoryBuilding->currentLevel > 0) {
                                 <th style=\"width:80px;\" colspan=\"2\">Verbleibend</th>
                             </tr>
                             <tr>
-                            <td colspan=\"2\">" . $defs[$data['queue_def_id']]['def_name'] . "</td>
-                            <td>" . df(time() - $obj_t_passed, 1) . "</td>
-                            <td>" . df(time() + $obj_t_remaining, 1) . "</td>
+                            <td colspan=\"2\">" . $defs[$queueItem->defenseId]->name . "</td>
+                            <td>" . df($time - $obj_t_passed, 1) . "</td>
+                            <td>" . df($time + $obj_t_remaining, 1) . "</td>
                             <td colspan=\"2\">" . tf($obj_t_remaining) . "</td>
                         </tr>
                         <tr>
@@ -742,14 +660,14 @@ if ($factoryBuilding !== null && $factoryBuilding->currentLevel > 0) {
                     }
 
                     echo "<tr>
-                            <td id=\"objcount\">" . $data['queue_cnt'] . "</td>
-                            <td>" . $defs[$data['queue_def_id']]['def_name'] . "</td>
+                            <td id=\"objcount\">" . $queueItem->count . "</td>
+                            <td>" . $defs[$queueItem->defenseId]->name . "</td>
                             <td>" . df($absolute_starttime, 1) . "</td>
-                            <td>" . df($absolute_starttime + $data['queue_endtime'] - $data['queue_starttime'], 1) . "</td>
-                            <td>" . tf($data['queue_endtime'] - time()) . "</td>
+                            <td>" . df($absolute_starttime + $queueItem->endTime - $queueItem->startTime, 1) . "</td>
+                            <td>" . tf($queueItem->endTime - time()) . "</td>
                             <td id=\"cancel\">";
                     if ($cancelable) {
-                        echo "<a href=\"?page=$page&amp;cancel=" . $data['queue_id'] . "\" onclick=\"return confirm('Soll dieser Auftrag wirklich abgebrochen werden?');\">Abbrechen</a>";
+                        echo "<a href=\"?page=$page&amp;cancel=" . $queueItem->id . "\" onclick=\"return confirm('Soll dieser Auftrag wirklich abgebrochen werden?');\">Abbrechen</a>";
                     } else {
                         echo "-";
                     }
@@ -757,7 +675,7 @@ if ($factoryBuilding !== null && $factoryBuilding->currentLevel > 0) {
                         </tr>";
 
                     //Setzt die Startzeit des nächsten Schiffes, auf die Endzeit des jetztigen Schiffes
-                    $absolute_starttime = $data['queue_endtime'];
+                    $absolute_starttime = $queueItem->endTime;
                 }
             }
             tableEnd();
@@ -768,15 +686,15 @@ if ($factoryBuilding !== null && $factoryBuilding->currentLevel > 0) {
          ***********************/
 
         $cnt = 0;
-        if (count($cat) > 0) {
-            foreach ($cat as $cat_id => $cat_name) {
-                tableStart($cat_name);
+        if (count($categories) > 0) {
+            foreach ($categories as $category) {
+                tableStart($category->name);
                 $ccnt = 0;
 
                 // Auflistung der Verteidigung (auch diese, die noch nicht gebaut wurden)
-                if (count($defs) > 0) {
+                if (isset($defenseByCategory[$category->id])) {
                     //Einfache Ansicht
-                    if ($properties->itemShow != 'full') {
+                    if ($properties->itemShow !== 'full') {
                         echo "<tr>
                                         <th colspan=\"2\">Anlage</th>
                                         <th>Zeit</th>
@@ -789,37 +707,37 @@ if ($factoryBuilding !== null && $factoryBuilding->currentLevel > 0) {
                                     </tr>";
                     }
 
-                    foreach ($defs as $data) {
+                    foreach ($defenseByCategory[$category->id] as $defense) {
                         // Prüfen ob Schiff gebaut werden kann
                         $build_def = 1;
                         // Gebäude prüfen
-                        foreach ($requirements->getBuildingRequirements($data['def_id']) as $requirement) {
+                        foreach ($requirements->getBuildingRequirements($defense->id) as $requirement) {
                             if (!isset($buildlist[$requirement->requiredBuildingId]) || $buildlist[$requirement->requiredBuildingId] < $requirement->requiredLevel) {
                                 $build_def = 0;
                             }
                         }
                         // Technologien prüfen
-                        foreach ($requirements->getTechnologyRequirements($data['def_id']) as $requirement) {
+                        foreach ($requirements->getTechnologyRequirements($defense->id) as $requirement) {
                             if (!isset($techlist[$requirement->requiredTechnologyId]) || $techlist[$requirement->requiredTechnologyId] < $requirement->requiredLevel) {
                                 $build_def = 0;
                             }
                         }
 
                         // Schiffdatensatz zeigen wenn die Voraussetzungen erfüllt sind und das Schiff in diese Kategorie gehört
-                        if ($build_def == 1 && $data['cat_id'] == $cat_id) {
+                        if ($build_def == 1) {
                             // Zählt die Anzahl Schiffe dieses Typs im ganzen Account...
                             $def_count = 0;
                             // ... auf den Planeten
-                            if (isset($deflist[$data['def_id']])) {
-                                $def_count += $deflist[$data['def_id']];
+                            if (isset($deflist[$defense->id])) {
+                                $def_count += $deflist[$defense->id];
                             }
                             // ... in der Bauliste
-                            if (isset($queue_entity[$data['def_id']])) {
-                                $def_count += $queue_entity[$data['def_id']]['queue_cnt'];
+                            if (isset($queueItemCounts[$defense->id])) {
+                                $def_count += $queueItemCounts[$defense->id];
                             }
 
                             // Bauzeit berechnen
-                            $btime = ($data['def_costs_metal'] + $data['def_costs_crystal'] + $data['def_costs_plastic'] + $data['def_costs_fuel'] + $data['def_costs_food']) / $config->getInt('global_time') * $config->getFloat('def_build_time') * $time_boni_factor * $cu->specialist->defenseTime;
+                            $btime = $defenseCosts[$defense->id]->sum() / $config->getInt('global_time') * $config->getFloat('def_build_time') * $time_boni_factor * $cu->specialist->defenseTime;
                             $btime_min = $btime * (0.1 - ($gen_tech_level / 100));
                             $peopleOptimized = ceil(($btime - $btime_min) / $config->getInt('people_work_done'));
 
@@ -838,42 +756,42 @@ if ($factoryBuilding !== null && $factoryBuilding->currentLevel > 0) {
 
                             //Nahrungskosten versteckt übermitteln
                             echo "<input type=\"hidden\" name=\"additional_food_costs\" value=\"" . $food_costs . "\" />";
-                            $food_costs += $data['def_costs_food'];
+                            $food_costs += $defenseCosts[$defense->id]->food;
 
 
                             //Errechnet wie viele Verteidigung von diesem Typ maximal Gebaut werden können mit den aktuellen Rohstoffen
 
                             //Felder
-                            if ((int)$data['def_fields'] > 0) {
-                                $build_cnt_fields = floor($fields_available / $data['def_fields']);
+                            if ($defense->fields > 0) {
+                                $build_cnt_fields = floor($fields_available / $defense->fields);
                             } else {
                                 $build_cnt_fields = 99999999999;
                             }
 
                             //Titan
-                            if ($data['def_costs_metal'] > 0) {
-                                $build_cnt_metal = floor($planet->resMetal / $data['def_costs_metal']);
+                            if ($defenseCosts[$defense->id]->metal > 0) {
+                                $build_cnt_metal = floor($planet->resMetal / $defenseCosts[$defense->id]->metal);
                             } else {
                                 $build_cnt_metal = 99999999999;
                             }
 
                             //Silizium
-                            if ($data['def_costs_crystal'] > 0) {
-                                $build_cnt_crystal = floor($planet->resCrystal / $data['def_costs_crystal']);
+                            if ($defenseCosts[$defense->id]->crystal > 0) {
+                                $build_cnt_crystal = floor($planet->resCrystal / $defenseCosts[$defense->id]->crystal);
                             } else {
                                 $build_cnt_crystal = 99999999999;
                             }
 
                             //PVC
-                            if ($data['def_costs_plastic'] > 0) {
-                                $build_cnt_plastic = floor($planet->resPlastic / $data['def_costs_plastic']);
+                            if ($defenseCosts[$defense->id]->plastic > 0) {
+                                $build_cnt_plastic = floor($planet->resPlastic / $defenseCosts[$defense->id]->plastic);
                             } else {
                                 $build_cnt_plastic = 99999999999;
                             }
 
                             //Tritium
-                            if ($data['def_costs_fuel'] > 0) {
-                                $build_cnt_fuel = floor($planet->resFuel / $data['def_costs_fuel']);
+                            if ($defenseCosts[$defense->id]->fuel > 0) {
+                                $build_cnt_fuel = floor($planet->resFuel / $defenseCosts[$defense->id]->fuel);
                             } else {
                                 $build_cnt_fuel = 99999999999;
                             }
@@ -886,8 +804,8 @@ if ($factoryBuilding !== null && $factoryBuilding->currentLevel > 0) {
                             }
 
                             //Begrente Anzahl baubar
-                            if ($data['def_max_count'] != 0) {
-                                $max_cnt = $data['def_max_count'] - $def_count;
+                            if ($defense->maxCount != 0) {
+                                $max_cnt = $defense->maxCount - $def_count;
                             } else {
                                 $max_cnt = 99999999999;
                             }
@@ -906,32 +824,32 @@ if ($factoryBuilding !== null && $factoryBuilding->currentLevel > 0) {
                                 $bwmsg = [];
                                 //Wartezeit Titan
                                 if ($planet->prodMetal > 0) {
-                                    $bwait['metal'] = ceil(($data['def_costs_metal'] - $planet->resMetal) / $planet->prodMetal * 3600);
-                                    $bwmsg['metal'] = tm("Fehlender Rohstoff", nf($data['def_costs_metal'] - $planet->resMetal) . " Titan<br />Bereit in " . tf($bwait['metal']) . "");
+                                    $bwait['metal'] = ceil(($defenseCosts[$defense->id]->metal - $planet->resMetal) / $planet->prodMetal * 3600);
+                                    $bwmsg['metal'] = tm("Fehlender Rohstoff", nf($defenseCosts[$defense->id]->metal - $planet->resMetal) . " Titan<br />Bereit in " . tf($bwait['metal']) . "");
                                 } else {
                                     $bwait['metal'] = 0;
                                 }
 
                                 //Wartezeit Silizium
                                 if ($planet->prodCrystal > 0) {
-                                    $bwait['crystal'] = ceil(($data['def_costs_crystal'] - $planet->resCrystal) / $planet->prodCrystal * 3600);
-                                    $bwmsg['crystal'] = tm("Fehlender Rohstoff", nf($data['def_costs_crystal'] - $planet->resCrystal) . " Silizium<br />Bereit in " . tf($bwait['crystal']) . "");
+                                    $bwait['crystal'] = ceil(($defenseCosts[$defense->id]->crystal - $planet->resCrystal) / $planet->prodCrystal * 3600);
+                                    $bwmsg['crystal'] = tm("Fehlender Rohstoff", nf($defenseCosts[$defense->id]->crystal - $planet->resCrystal) . " Silizium<br />Bereit in " . tf($bwait['crystal']) . "");
                                 } else {
                                     $bwait['crystal'] = 0;
                                 }
 
                                 //Wartezeit PVC
                                 if ($planet->prodPlastic > 0) {
-                                    $bwait['plastic'] = ceil(($data['def_costs_plastic'] - $planet->resPlastic) / $planet->prodPlastic * 3600);
-                                    $bwmsg['plastic'] = tm("Fehlender Rohstoff", nf($data['def_costs_plastic'] - $planet->resPlastic) . " PVC<br />Bereit in " . tf($bwait['plastic']) . "");
+                                    $bwait['plastic'] = ceil(($defenseCosts[$defense->id]->plastic - $planet->resPlastic) / $planet->prodPlastic * 3600);
+                                    $bwmsg['plastic'] = tm("Fehlender Rohstoff", nf($defenseCosts[$defense->id]->plastic - $planet->resPlastic) . " PVC<br />Bereit in " . tf($bwait['plastic']) . "");
                                 } else {
                                     $bwait['plastic'] = 0;
                                 }
 
                                 //Wartezeit Tritium
                                 if ($planet->prodFuel > 0) {
-                                    $bwait['fuel'] = ceil(($data['def_costs_fuel'] - $planet->resFuel) / $planet->prodFuel * 3600);
-                                    $bwmsg['fuel'] = tm("Fehlender Rohstoff", nf($data['def_costs_fuel'] - $planet->resFuel) . " Tritium<br />Bereit in " . tf($bwait['fuel']) . "");
+                                    $bwait['fuel'] = ceil(($defenseCosts[$defense->id]->fuel - $planet->resFuel) / $planet->prodFuel * 3600);
+                                    $bwmsg['fuel'] = tm("Fehlender Rohstoff", nf($defenseCosts[$defense->id]->fuel - $planet->resFuel) . " Tritium<br />Bereit in " . tf($bwait['fuel']) . "");
                                 } else {
                                     $bwait['fuel'] = 0;
                                 }
@@ -954,28 +872,28 @@ if ($factoryBuilding !== null && $factoryBuilding->currentLevel > 0) {
 
                             //Stellt Rohstoff Rot dar, wenn es von diesem zu wenig auf dem Planeten hat
                             //Titan
-                            if ($data['def_costs_metal'] > $planet->resMetal && isset($bwmsg['metal'])) {
+                            if ($defenseCosts[$defense->id]->metal > $planet->resMetal && isset($bwmsg['metal'])) {
                                 $ress_style_metal = "style=\"color:red;\" " . $bwmsg['metal'] . "";
                             } else {
                                 $ress_style_metal = "";
                             }
 
                             //Silizium
-                            if ($data['def_costs_crystal'] > $planet->resCrystal && isset($bwmsg['crystal'])) {
+                            if ($defenseCosts[$defense->id]->crystal > $planet->resCrystal && isset($bwmsg['crystal'])) {
                                 $ress_style_crystal = "style=\"color:red;\" " . $bwmsg['crystal'] . "";
                             } else {
                                 $ress_style_crystal = "";
                             }
 
                             //PVC
-                            if ($data['def_costs_plastic'] > $planet->resPlastic && isset($bwmsg['plastic'])) {
+                            if ($defenseCosts[$defense->id]->plastic > $planet->resPlastic && isset($bwmsg['plastic'])) {
                                 $ress_style_plastic = "style=\"color:red;\" " . $bwmsg['plastic'] . "";
                             } else {
                                 $ress_style_plastic = "";
                             }
 
                             //Tritium
-                            if ($data['def_costs_fuel'] > $planet->resFuel && isset($bwmsg['fuel'])) {
+                            if ($defenseCosts[$defense->id]->fuel > $planet->resFuel && isset($bwmsg['fuel'])) {
                                 $ress_style_fuel = "style=\"color:red;\" " . $bwmsg['fuel'] . "";
                             } else {
                                 $ress_style_fuel = "";
@@ -989,8 +907,8 @@ if ($factoryBuilding !== null && $factoryBuilding->currentLevel > 0) {
                             }
 
                             // Speichert die Anzahl gebauter Schiffe in eine Variable
-                            if (isset($deflist[$data['def_id']])) {
-                                $deflist_count = $deflist[$data['def_id']];
+                            if (isset($deflist[$defense->id])) {
+                                $deflist_count = $deflist[$defense->id];
                             } else {
                                 $deflist_count = 0;
                             }
@@ -1002,34 +920,34 @@ if ($factoryBuilding !== null && $factoryBuilding->currentLevel > 0) {
                                             <td colspan=\"5\" style=\"height:5px;\"></td>
                                     </tr>";
                                 }
-                                $s_img = IMAGE_PATH . "/" . IMAGE_DEF_DIR . "/def" . $data['def_id'] . "_middle." . IMAGE_EXT;
+                                $s_img = IMAGE_PATH . "/" . IMAGE_DEF_DIR . "/def" . $defense->id . "_middle." . IMAGE_EXT;
 
                                 echo "<tr>
-                                        <th colspan=\"5\" height=\"20\">" . $data['def_name'] . "</th>
+                                        <th colspan=\"5\" height=\"20\">" . $defense->name . "</th>
                                     </tr>
                                     <tr>
                                         <td width=\"120\" height=\"120\" rowspan=\"3\">
-                                            <a href=\"" . HELP_URL . "&amp;id=" . $data[ITEM_ID_FLD] . "\" title=\"Info zu dieser Anlage anzeigen\">
+                                            <a href=\"" . HELP_URL . "&amp;id=" . $defense->id . "\" title=\"Info zu dieser Anlage anzeigen\">
                                             <img src=\"" . $s_img . "\" width=\"120\" height=\"120\" border=\"0\" /></a>
                                         </td>
-                                        <td colspan=\"4\" valign=\"top\">" . $data['def_shortcomment'] . "</td>
+                                        <td colspan=\"4\" valign=\"top\">" . $defense->shortComment . "</td>
                                     </tr>
                                     <tr>
                                         <th  height=\"30\">Vorhanden:</th>
                                         <td>" . nf($deflist_count) . "</td>
                                         <th>Felder pro Einheit:</th>
-                                        <td>" . nf($data['def_fields']) . "</td>
+                                        <td>" . nf($defense->fields) . "</td>
                                     </tr>
                                     <tr>
                                         <th height=\"30\">Bauzeit</th>
                                         <td>" . tf($btime) . "</td>";
 
                                 //Maximale Anzahl erreicht
-                                if ($def_count >= $data['def_max_count'] && $data['def_max_count'] != 0) {
+                                if ($def_count >= $defense->maxCount && $defense->maxCount !== 0) {
                                     echo "<th height=\"30\" colspan=\"2\"><i>Maximalanzahl erreicht</i></th>";
                                 } else {
                                     echo "<th height=\"30\">In Aufrag geben:</th>
-                                            <td><input type=\"text\" value=\"0\" name=\"build_count[" . $data['def_id'] . "]\" id=\"build_count_" . $data['def_id'] . "\" size=\"4\" maxlength=\"9\" " . tm("", $tm_cnt) . " tabindex=\"" . $tabulator . "\" onkeyup=\"FormatNumber(this.id,this.value, " . $def_max_build . ", '', '');\"/> St&uuml;ck<br><a href=\"javascript:;\" onclick=\"document.getElementById('build_count_" . $data['def_id'] . "').value=" . $def_max_build . ";\">max</a>";
+                                            <td><input type=\"text\" value=\"0\" name=\"build_count[" . $defense->id . "]\" id=\"build_count_" . $defense->id . "\" size=\"4\" maxlength=\"9\" " . tm("", $tm_cnt) . " tabindex=\"" . $tabulator . "\" onkeyup=\"FormatNumber(this.id,this.value, " . $def_max_build . ", '', '');\"/> St&uuml;ck<br><a href=\"javascript:;\" onclick=\"document.getElementById('build_count_" . $defense->id . "').value=" . $def_max_build . ";\">max</a>";
                                     if (count($queue) === 0) {
                                         echo '&nbsp;<a href="#changePeople" onclick="javascript:if(document.getElementById(\'changePeople\').style.display==\'none\') {toggleBox(\'changePeople\')};updatePeopleWorkingBox(\'' . $peopleOptimized . '\',\'-1\',\'^-1\');">optimieren</a>';
                                     }
@@ -1045,16 +963,16 @@ if ($factoryBuilding !== null && $factoryBuilding->currentLevel > 0) {
                                             <th height=\"20\" width=\"98\">" . RES_FOOD . "</th></tr>
                                         <tr>
                                         <td height=\"20\" width=\"110\" " . $ress_style_metal . ">
-                                            " . nf($data['def_costs_metal']) . "
+                                            " . nf($defenseCosts[$defense->id]->metal) . "
                                         </td>
                                         <td height=\"20\" width=\"25%\" " . $ress_style_crystal . ">
-                                            " . nf($data['def_costs_crystal']) . "
+                                            " . nf($defenseCosts[$defense->id]->crystal) . "
                                         </td>
                                         <td height=\"20\" width=\"25%\" " . $ress_style_plastic . ">
-                                            " . nf($data['def_costs_plastic']) . "
+                                            " . nf($defenseCosts[$defense->id]->plastic) . "
                                         </td>
                                         <td height=\"20\" width=\"25%\" " . $ress_style_fuel . ">
-                                            " . nf($data['def_costs_fuel']) . "
+                                            " . nf($defenseCosts[$defense->id]->fuel) . "
                                         </td>
                                         <td height=\"20\" width=\"25%\" " . $ress_style_food . ">
                                             " . nf($food_costs) . "
@@ -1063,28 +981,28 @@ if ($factoryBuilding !== null && $factoryBuilding->currentLevel > 0) {
                             }
                             //Einfache Ansicht der Schiffsliste
                             else {
-                                $s_img = IMAGE_PATH . "/" . IMAGE_DEF_DIR . "/def" . $data['def_id'] . "_small." . IMAGE_EXT;
+                                $s_img = IMAGE_PATH . "/" . IMAGE_DEF_DIR . "/def" . $defense->id . "_small." . IMAGE_EXT;
 
                                 echo "<tr>
                                         <td>
-                                            <a href=\"" . HELP_URL . "&amp;id=" . $data[ITEM_ID_FLD] . "\"><img src=\"" . $s_img . "\" width=\"40\" height=\"40\" border=\"0\" /></a>
+                                            <a href=\"" . HELP_URL . "&amp;id=" . $defense->id . "\"><img src=\"" . $s_img . "\" width=\"40\" height=\"40\" border=\"0\" /></a>
                                         </td>
                                         <th width=\"30%\">
-                                            <span style=\"font-weight:500\">" . $data['def_name'] . "<br/>
+                                            <span style=\"font-weight:500\">" . $defense->name . "<br/>
                                             Gebaut:</span> " . nf($deflist_count) . "
                                         </th>
                                         <td width=\"13%\">" . tf($btime) . "</td>
-                                        <td width=\"10%\" " . $ress_style_metal . ">" . nf($data['def_costs_metal']) . "</td>
-                                        <td width=\"10%\" " . $ress_style_crystal . ">" . nf($data['def_costs_crystal']) . "</td>
-                                        <td width=\"10%\" " . $ress_style_plastic . ">" . nf($data['def_costs_plastic']) . "</td>
-                                        <td width=\"10%\" " . $ress_style_fuel . ">" . nf($data['def_costs_fuel']) . "</td>
+                                        <td width=\"10%\" " . $ress_style_metal . ">" . nf($defenseCosts[$defense->id]->metal) . "</td>
+                                        <td width=\"10%\" " . $ress_style_crystal . ">" . nf($defenseCosts[$defense->id]->crystal) . "</td>
+                                        <td width=\"10%\" " . $ress_style_plastic . ">" . nf($defenseCosts[$defense->id]->plastic) . "</td>
+                                        <td width=\"10%\" " . $ress_style_fuel . ">" . nf($defenseCosts[$defense->id]->fuel) . "</td>
                                         <td width=\"10%\" " . $ress_style_food . ">" . nf($food_costs) . "</td>";
 
                                 //Maximale Anzahl erreicht
-                                if ($def_count >= $data['def_max_count'] && $data['def_max_count'] != 0) {
+                                if ($def_count >= $defense->maxCount && $defense->maxCount != 0) {
                                     echo "<td>Max</td></tr>";
                                 } else {
-                                    echo "<td><input type=\"text\" value=\"0\" id=\"build_count_" . $data['def_id'] . "\" name=\"build_count[" . $data['def_id'] . "]\" size=\"5\" maxlength=\"9\" " . tm("", $tm_cnt) . " tabindex=\"" . $tabulator . "\" onkeyup=\"FormatNumber(this.id,this.value, " . $def_max_build . ", '', '');\"/><br><a href=\"javascript:;\" onclick=\"document.getElementById('build_count_" . $data['def_id'] . "').value=" . $def_max_build . ";\">max</a></td></tr>";
+                                    echo "<td><input type=\"text\" value=\"0\" id=\"build_count_" . $defense->id . "\" name=\"build_count[" . $defense->id . "]\" size=\"5\" maxlength=\"9\" " . tm("", $tm_cnt) . " tabindex=\"" . $tabulator . "\" onkeyup=\"FormatNumber(this.id,this.value, " . $def_max_build . ", '', '');\"/><br><a href=\"javascript:;\" onclick=\"document.getElementById('build_count_" . $defense->id . "').value=" . $def_max_build . ";\">max</a></td></tr>";
                                 }
                             }
 

@@ -18,10 +18,25 @@ class DefenseSearch extends AbstractSearch
         return $this;
     }
 
+    public function showOrBuildable(): self
+    {
+        $this->parts[] = 'def_show = 1 OR def_buildable = 1';
+
+        return $this;
+    }
+
     public function raceId(int $raceId): self
     {
         $this->parts[] = 'def_race_id = :raceId';
         $this->parameters['raceId'] = $raceId;
+
+        return $this;
+    }
+
+    public function raceOrNull(int $raceId): self
+    {
+        $this->parts[] = 'def_race_id = 0 OR def_race_id = :raceIdOrNull';
+        $this->parameters['raceIdOrNull'] = $raceId;
 
         return $this;
     }

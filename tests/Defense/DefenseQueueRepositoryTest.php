@@ -38,7 +38,7 @@ class DefenseQueueRepositoryTest extends AbstractDbTestCase
     {
         $this->repository->add(1, 2, 3, 4, time(), time() + 20, 5);
 
-        $this->assertNotEmpty($this->repository->findQueueItemsForUser(1));
+        $this->assertNotEmpty($this->repository->searchQueueItems(DefenseQueueSearch::create()->userId(1)));
     }
 
     public function testDeleteQueueItem(): void

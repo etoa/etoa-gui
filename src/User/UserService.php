@@ -13,6 +13,7 @@ use EtoA\BuddyList\BuddyListRepository;
 use EtoA\Building\BuildingRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Defense\DefenseQueueRepository;
+use EtoA\Defense\DefenseQueueSearch;
 use EtoA\Defense\DefenseRepository;
 use EtoA\Fleet\FleetRepository;
 use EtoA\Fleet\FleetSearchParameters;
@@ -435,7 +436,7 @@ die Spielleitung";
                 $this->shipQueueRepository->saveQueueItem($item);
             }
 
-            $defQueueItems = $this->defenseQueueRepository->findQueueItemsForUser($user->id);
+            $defQueueItems = $this->defenseQueueRepository->searchQueueItems(DefenseQueueSearch::create()->userId($user->id));
             foreach ($defQueueItems as $item) {
                 $item->buildType = 0;
                 $item->startTime += $hmodTime;

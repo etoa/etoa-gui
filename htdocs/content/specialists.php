@@ -3,6 +3,7 @@
 use EtoA\Backend\BackendMessageService;
 use EtoA\Building\BuildingRepository;
 use EtoA\Defense\DefenseQueueRepository;
+use EtoA\Defense\DefenseQueueSearch;
 use EtoA\Fleet\FleetRepository;
 use EtoA\Fleet\FleetSearchParameters;
 use EtoA\Specialist\SpecialistDataRepository;
@@ -128,7 +129,7 @@ if (isset($_POST['discharge'])) {
             if ($specialist->timeDefense !== 1.0) {
                 /** @var DefenseQueueRepository $defQueueRepository */
                 $defQueueRepository = $app[DefenseQueueRepository::class];
-                $entries = $defQueueRepository->findQueueItemsForUser($cu->getId());
+                $entries = $defQueueRepository->searchQueueItems(DefenseQueueSearch::create()->userId($cu->getId()));
                 foreach ($entries as $entry) {
                     if ($entry->endTime > $t && $entry->userClickTime > $inittime) {
                         $inUse = true;
