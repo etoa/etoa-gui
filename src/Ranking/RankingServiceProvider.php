@@ -24,6 +24,7 @@ use EtoA\Universe\Planet\PlanetTypeRepository;
 use EtoA\Universe\Star\SolarTypeRepository;
 use EtoA\User\UserPropertiesRepository;
 use EtoA\User\UserRepository;
+use EtoA\User\UserStatRepository;
 use Pimple\Container;
 use Pimple\ServiceProviderInterface;
 
@@ -66,7 +67,8 @@ class RankingServiceProvider implements ServiceProviderInterface
                 $pimple[TechnologyPointRepository::class],
                 $pimple[ShipDataRepository::class],
                 $pimple[DefenseDataRepository::class],
-                $pimple[RaceDataRepository::class]
+                $pimple[RaceDataRepository::class],
+                $pimple[UserStatRepository::class]
             );
         };
     }

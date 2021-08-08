@@ -17,6 +17,8 @@ use EtoA\Support\RuntimeDataStore;
 use EtoA\Technology\TechnologyDataRepository;
 use EtoA\Technology\TechnologyPointRepository;
 use EtoA\Technology\TechnologyRepository;
+use EtoA\User\UserStatRepository;
+use EtoA\User\UserStatSearch;
 use GdImage;
 
 /**
@@ -38,6 +40,7 @@ class RankingService
     private ShipDataRepository $shipRepository;
     private DefenseDataRepository $defenseRepository;
     private RaceDataRepository $raceRepository;
+    private UserStatRepository $userStatRepository;
 
     private string $userBannerBackgroundImage = "images/userbanner/userbanner1.png";
     private string $userBannerFont = "images/userbanner/calibri.ttf";
@@ -54,7 +57,8 @@ class RankingService
         TechnologyPointRepository $technologyPointRepository,
         ShipDataRepository $shipRepository,
         DefenseDataRepository $defenseRepository,
-        RaceDataRepository $raceRepository
+        RaceDataRepository $raceRepository,
+        UserStatRepository $userStatRepository
     ) {
         $this->config = $config;
         $this->runtimeDataStore = $runtimeDataStore;
@@ -68,6 +72,7 @@ class RankingService
         $this->shipRepository = $shipRepository;
         $this->defenseRepository = $defenseRepository;
         $this->raceRepository = $raceRepository;
+        $this->userStatRepository = $userStatRepository;
     }
 
     private function getTitles(bool $admin = false): string
@@ -78,57 +83,67 @@ class RankingService
             ? "../images"
             : "images";
 
+        tableStart("Allgemeine Titel");
+        $cnt = 0;
+
         $titles = [
-            "total" => "",
-            "fleet" => "_ships",
-            "tech" => "_tech",
-            "buildings" => "_buildings",
-            "exp" => "_exp",
+            [
+                'search' => UserStatSearch::points(),
+                'medal_image' => $img_dir . '/medals/medal_total.png',
+                'rank_title' => $this->config->get('userrank_total'),
+            ],
+            [
+                'search' => UserStatSearch::ships(),
+                'medal_image' => $img_dir . '/medals/medal_fleet.png',
+                'rank_title' => $this->config->get('userrank_fleet'),
+            ],
+            [
+                'search' => UserStatSearch::technologies(),
+                'medal_image' => $img_dir . '/medals/medal_tech.png',
+                'rank_title' => $this->config->get('userrank_tech'),
+            ],
+            [
+                'search' => UserStatSearch::buildings(),
+                'medal_image' => $img_dir . '/medals/medal_buildings.png',
+                'rank_title' => $this->config->get('userrank_buildings'),
+            ],
+            [
+                'search' => UserStatSearch::exp(),
+                'medal_image' => $img_dir . '/medals/medal_exp.png',
+                'rank_title' => $this->config->get('userrank_exp'),
+            ],
         ];
+        foreach ($titles as $title) {
+            $stats = $this->userStatRepository->searchStats($title['search'], null, 1);
+            if (count($stats) > 0) {
+                $stat = $stats[0];
+                if ($stat->points > 0) {
+                    $profile = ($admin == 1)
+                        ? "?page=user&amp;sub=edit&amp;user_id=" . $stat->id . ""
+                        : "?page=userinfo&amp;id=" . $stat->id;
+                    echo "<tr>
+                        <th class=\"tbltitle\" style=\"width:100px;height:100px;\">
+                            <img src='" . $title['medal_image'] . "' alt=\"medal\" style=\"height:100px;\" />
+                        </th>
+                        <td class=\"tbldata\" style=\"font-size:16pt;vertical-align:middle;padding:2px 10px 2px 10px;width:400px;\">
+                            " . $title['rank_title'] . "
+                        </td>
+                        <td class=\"tbldata\" style=\"vertical-align:middle;padding-top:0px;padding-left:15px;\">
+                            <span style=\"font-size:13pt;color:#ff0;\">" . $stat->nick . "</span><br/><br/>
+                            " . nf($stat->points) . " Punkte<br/><br/>";
+                    echo "[<a href=\"" . $profile . "\">Profil</a>]";
+                    echo "</td>
+                    </tr>";
+                    $cnt++;
+                }
+            }
+        }
 
         $titles2 = [
             'battle',
             'trade',
             'diplomacy',
         ];
-
-        tableStart("Allgemeine Titel");
-        $cnt = 0;
-        foreach ($titles as $k => $v) {
-            $res = dbquery("
-                SELECT
-                    nick,
-                    points" . $v . ",
-                    id
-                FROM
-                    user_stats
-                WHERE
-                    rank" . $v . ">0
-                    AND points" . $v . ">0
-                ORDER BY
-                    rank" . $v . " ASC
-                LIMIT 1;");
-            if (mysql_num_rows($res) > 0) {
-                $arr = mysql_fetch_row($res);
-                $profile = ($admin == 1)
-                    ? "?page=user&amp;sub=edit&amp;user_id=" . $arr[2] . ""
-                    : "?page=userinfo&amp;id=" . $arr[2];
-                echo "<tr>
-                        <th class=\"tbltitle\" style=\"width:100px;height:100px;\">
-                            <img src='" . $img_dir . "/medals/medal_" . $k . ".png' alt=\"medal\" style=\"height:100px;\" />
-                        </th>
-                        <td class=\"tbldata\" style=\"font-size:16pt;vertical-align:middle;padding:2px 10px 2px 10px;width:400px;\">
-                            " . $this->config->get('userrank_' . $k) . "
-                        </td>
-                        <td class=\"tbldata\" style=\"vertical-align:middle;padding-top:0px;padding-left:15px;\">
-                            <span style=\"font-size:13pt;color:#ff0;\">" . $arr[0] . "</span><br/><br/>
-                            " . nf($arr[1]) . " Punkte<br/><br/>";
-                echo "[<a href=\"" . $profile . "\">Profil</a>]";
-                echo "</td>
-                    </tr>";
-            }
-            $cnt++;
-        }
         foreach ($titles2 as $v) {
             $res = dbquery("
                 SELECT
@@ -167,9 +182,11 @@ class RankingService
             }
             $cnt++;
         }
+
         if ($cnt == 0) {
             echo "<tr><td class=\"tbldata\">Keine Titel vorhanden (kein Spieler hat die minimale Punktzahl zum Erwerb eines Titels erreicht)!</td></tr>";
         }
+
         tableEnd();
         tableStart("Rassenleader");
         $rres = dbquery("

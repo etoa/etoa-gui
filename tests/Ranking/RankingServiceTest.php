@@ -45,4 +45,30 @@ class RankingServiceTest extends WebTestCase
         $this->assertEquals(2, $result->numberOfUsers);
         $this->assertEquals(0, $result->totalPoints);
     }
+
+    public function testCalcTitles_noUsers(): void
+    {
+        // given
+
+        // when
+        $this->service->calcTitles();
+
+        // then
+        $this->assertFileExists($this->service->getUserTitlesCacheFilePath());
+        $this->assertFileExists($this->service->getUserTitlesAdminCacheFilePath());
+    }
+
+    public function testCalcTitles_withNewUsers(): void
+    {
+        // given
+        $this->userService->register('Hans Muster', 'hans@example.com', 'Hans', '12345678');
+        $this->userService->register('Peter Lustig', 'peter@example.com', 'Peter', '12345678');
+
+        // when
+        $this->service->calcTitles();
+
+        // then
+        $this->assertFileExists($this->service->getUserTitlesCacheFilePath());
+        $this->assertFileExists($this->service->getUserTitlesAdminCacheFilePath());
+    }
 }
