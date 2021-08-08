@@ -8,6 +8,7 @@ use EtoA\Alliance\AllianceBuildingId;
 use EtoA\Alliance\AllianceBuildingRepository;
 use EtoA\Alliance\AllianceHistoryRepository;
 use EtoA\Alliance\AllianceRepository;
+use EtoA\Alliance\AllianceTechnologyId;
 use EtoA\Alliance\AllianceTechnologyRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Defense\DefenseRepository;
@@ -208,7 +209,7 @@ class FleetScanService
         $value = $this->technologyRepository->getTechnologyLevel($user->id, TARN_TECH_ID);
 
         if ($user->allianceId > 0) {
-            $value += $this->allianceTechnologyRepository->getLevel($user->allianceId, ALLIANCE_TECH_TARN_ID);
+            $value += $this->allianceTechnologyRepository->getLevel($user->allianceId, AllianceTechnologyId::TARN);
         }
 
         $specialist = $this->specialistDataRepository->getSpecialist($user->specialistId);
@@ -237,7 +238,7 @@ class FleetScanService
         $value = $this->technologyRepository->getTechnologyLevel($user->id, SPY_TECH_ID);
 
         if ($user->allianceId > 0) {
-            $value += $this->allianceTechnologyRepository->getLevel($user->allianceId, ALLIANCE_TECH_SPY_ID);
+            $value += $this->allianceTechnologyRepository->getLevel($user->allianceId, AllianceTechnologyId::SPY);
         }
 
         $specialist = $this->specialistDataRepository->getSpecialist($user->specialistId);

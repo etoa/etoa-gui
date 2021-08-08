@@ -403,13 +403,6 @@ define("RES_BUNKER_ID", 26);
 // ID des Flottenbunkers
 define("FLEET_BUNKER_ID", 27);
 
-//
-// Allianzgebäude
-//
-define("ALLIANCE_TECH_TARN_ID", 4);
-
-define("ALLIANCE_TECH_SPY_ID", 8);
-
 /*************************/
 /* Flotten & Kampfsystem */
 /*************************/
