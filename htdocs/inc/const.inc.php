@@ -236,8 +236,6 @@ define("SHIP_MISC_MSG_CAT_ID", 5);
 define("MSG_ALLYMAIL_CAT", 6);
 
 // Punkteberechnung
-define("USERTITLES_MIN_POINTS", 10000);
-
 define('DIPLOMACY_POINTS_PER_NEWS', 4);
 define('DIPLOMACY_POINTS_PER_PACT', 1);
 define('DIPLOMACY_POINTS_MIN_PACT_DURATION', 3600 * 24 * 1);
