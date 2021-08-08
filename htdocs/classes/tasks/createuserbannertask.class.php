@@ -1,6 +1,6 @@
 <?PHP
 
-use EtoA\Ranking\RankingService;
+use EtoA\Ranking\UserBannerService;
 use Pimple\Container;
 
 /**
@@ -8,16 +8,16 @@ use Pimple\Container;
  */
 class CreateUserBannerTask implements IPeriodicTask
 {
-    private RankingService $rankingService;
+    private UserBannerService $userBannerService;
 
     function __construct(Container $app)
     {
-        $this->rankingService = $app[RankingService::class];
+        $this->userBannerService = $app[UserBannerService::class];
     }
 
     function run()
     {
-        $this->rankingService->createUserBanner();
+        $this->userBannerService->createUserBanner();
         return "User Banner erstellt";
     }
 
