@@ -17,6 +17,9 @@ use EtoA\Support\RuntimeDataStore;
 use EtoA\Technology\TechnologyDataRepository;
 use EtoA\Technology\TechnologyPointRepository;
 use EtoA\Technology\TechnologyRepository;
+use EtoA\User\UserRatingRepository;
+use EtoA\User\UserRatingSearch;
+use EtoA\User\UserRatingSort;
 use EtoA\User\UserRepository;
 use EtoA\User\UserSearch;
 use EtoA\User\UserSort;
@@ -45,6 +48,7 @@ class RankingService
     private RaceDataRepository $raceRepository;
     private UserStatRepository $userStatRepository;
     private UserRepository $userRepository;
+    private UserRatingRepository $userRatingRepository;
 
     private string $userBannerBackgroundImage = "images/userbanner/userbanner1.png";
     private string $userBannerFont = "images/userbanner/calibri.ttf";
@@ -63,7 +67,8 @@ class RankingService
         DefenseDataRepository $defenseRepository,
         RaceDataRepository $raceRepository,
         UserStatRepository $userStatRepository,
-        UserRepository $userRepository
+        UserRepository $userRepository,
+        UserRatingRepository $userRatingRepository
     ) {
         $this->config = $config;
         $this->runtimeDataStore = $runtimeDataStore;
@@ -79,6 +84,7 @@ class RankingService
         $this->raceRepository = $raceRepository;
         $this->userStatRepository = $userStatRepository;
         $this->userRepository = $userRepository;
+        $this->userRatingRepository = $userRatingRepository;
     }
 
     public function getTitles(bool $admin = false): string
@@ -146,46 +152,56 @@ class RankingService
         }
 
         $titles2 = [
-            'battle',
-            'trade',
-            'diplomacy',
+            [
+                'results' => $this->userRatingRepository->getBattleRating(
+                    UserRatingSearch::create()->ghost(false),
+                    UserRatingSort::rank('DESC'),
+                    1
+                ),
+                'medal_image' => $img_dir . '/medals/medal_battle.png',
+                'rank_title' => $this->config->get('userrank_battle'),
+            ],
+            [
+                'results' => $this->userRatingRepository->getTradeRating(
+                    UserRatingSearch::create()->ghost(false),
+                    UserRatingSort::rank('DESC'),
+                    1
+                ),
+                'medal_image' => $img_dir . '/medals/medal_trade.png',
+                'rank_title' => $this->config->get('userrank_trade'),
+            ],
+            [
+                'results' => $this->userRatingRepository->getDiplomacyRating(
+                    UserRatingSearch::create()->ghost(false),
+                    UserRatingSort::rank('DESC'),
+                    1
+                ),
+                'medal_image' => $img_dir . '/medals/medal_diplomacy.png',
+                'rank_title' => $this->config->get('userrank_diplomacy'),
+            ],
         ];
-        foreach ($titles2 as $v) {
-            $res = dbquery("
-                SELECT
-                    user_nick,
-                    " . $v . "_rating,
-                    user_id
-                FROM
-                    users
-                INNER JOIN
-                    user_ratings
-                ON user_id=id
-                AND
-                    " . $v . "_rating>0
-                AND user_ghost=0
-                ORDER BY
-                    " . $v . "_rating DESC
-                LIMIT 1;");
-            if (mysql_num_rows($res) > 0) {
-                $arr = mysql_fetch_row($res);
-                $profile = ($admin == 1)
-                    ? "?page=user&amp;sub=edit&amp;user_id=" . $arr[2] . ""
-                    : "?page=userinfo&amp;id=" . $arr[2];
-                echo "<tr>
+        foreach ($titles2 as $title) {
+            if (count($title['results']) > 0) {
+                $rating = $title['results'][0];
+                if ($rating->rating > 0) {
+                    $profile = ($admin == 1)
+                        ? "?page=user&amp;sub=edit&amp;user_id=" . $rating->userId . ""
+                        : "?page=userinfo&amp;id=" . $rating->userId;
+                    echo "<tr>
                         <th class=\"tbltitle\" style=\"width:100px;height:100px;\">
-                            <img src='" . $img_dir . "/medals/medal_" . $v . ".png' style=\"height:100px;\" />
+                            <img src='" . $title['medal_image'] . "' style=\"height:100px;\" />
                         </th>
                         <td class=\"tbldata\" style=\"font-size:16pt;vertical-align:middle;padding:2px 10px 2px 10px;width:400px;\">
-                            " . $this->config->get('userrank_' . $v) . "
+                            " . $title['rank_title'] . "
                         </td>
                         <td class=\"tbldata\" style=\"vertical-align:middle;padding-top:0px;padding-left:15px;\">
-                            <span style=\"font-size:13pt;color:#ff0;\">" . $arr[0] . "</span><br/><br/>
-                            " . nf($arr[1]) . " Punkte<br/><br/>";
-                echo "[<a href=\"" . $profile . "\">Profil</a>]";
-                echo "</td>
+                            <span style=\"font-size:13pt;color:#ff0;\">" . $rating->userNick . "</span><br/><br/>
+                            " . nf($rating->rating) . " Punkte<br/><br/>";
+                    echo "[<a href=\"" . $profile . "\">Profil</a>]";
+                    echo "</td>
                     </tr>";
-                $cnt++;
+                    $cnt++;
+                }
             }
         }
 
