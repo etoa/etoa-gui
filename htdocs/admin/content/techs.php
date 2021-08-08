@@ -46,10 +46,10 @@ if ($sub == "points") {
             $points = $technologyPointRepository->getAllMap();
             if (isset($techPoints[$technologyId])) {
                 $cnt = 0;
-                foreach ($techPoints[$technologyId] as $level => $point) {
+                foreach ($techPoints[$technologyId] as $level => $points) {
                     if ($cnt == 0)
                         echo "<tr>";
-                    echo "<th>" . $level . "</th><td style=\"text-align: right\" title=\"$point\">" . nf($point) . "</td>";
+                    echo "<th>" . $level . "</th><td style=\"text-align: right\" title=\"$points\">" . nf($points) . "</td>";
                     if ($cnt == "3") {
                         echo "</tr>";
                         $cnt = 0;

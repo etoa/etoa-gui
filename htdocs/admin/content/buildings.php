@@ -147,7 +147,8 @@ function buildingPoints(
     echo "<h1>Gebäudepunkte</h1>";
     echo "<h2>Gebäudepunkte neu berechnen</h2><form action=\"?page=$page&amp;sub=$sub\" method=\"POST\">";
     if ($request->request->has('recalc') && $request->request->get('recalc') != "") {
-        echo MessageBox::ok("", $rankingService->calcBuildingPoints());
+        $numBuildings = $rankingService->calcBuildingPoints();
+        echo MessageBox::ok("", sprintf("Die Geb&auml;udepunkte von %s Geb&auml;uden wurden aktualisiert!", $numBuildings));
     }
     echo "Nach jeder Änderung an den Gebäuden müssen die Gebäudepunkte neu berechnet werden.<br/><br/>
         Diese Aktion kann eine Weile dauern! ";
@@ -166,7 +167,7 @@ function buildingPoints(
                     if ($cnt == 0) {
                         echo "<tr>";
                     }
-                    echo "<th>" . $level . "</th><td>" . $points . "</td>";
+                    echo "<th>" . $level . "</th><td style=\"text-align: right\" title=\"$points\">" . nf($points) . "</td>";
                     if ($cnt == "3") {
                         echo "</tr>";
                         $cnt = 0;

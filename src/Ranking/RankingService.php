@@ -7,6 +7,7 @@ namespace EtoA\Ranking;
 use EtoA\Alliance\AllianceRepository;
 use EtoA\Alliance\AllianceStats;
 use EtoA\Alliance\AllianceStatsRepository;
+use EtoA\Building\Building;
 use EtoA\Building\BuildingDataRepository;
 use EtoA\Building\BuildingPointRepository;
 use EtoA\Core\Configuration\ConfigurationService;
@@ -753,30 +754,38 @@ class RankingService
         return new RankingCalculationResult(count($users), $allpoints);
     }
 
-    public function calcBuildingPoints(): string
+    public function calcBuildingPoints(): int
     {
         $buildings = $this->buildingDataRepository->getBuildings();
         $this->buildingPointRepository->deleteAll();
 
         foreach ($buildings as $building) {
-            $points = [];
-            for ($level = 1; $level <= $building->lastLevel; $level++) {
-                $r = $building->costsMetal
-                    + $building->costsCrystal
-                    + $building->costsFuel
-                    + $building->costsPlastic
-                    + $building->costsFood;
-                $p = ($r * (1 - $building->buildCostsFactor ** $level)
-                    / (1 - $building->buildCostsFactor))
-                    / $this->config->param1Int('points_update');
-
-                $points[$level] = $p;
-            }
-
-            $this->buildingPointRepository->add($building->id, $points);
+            $this->buildingPointRepository->add($building->id, $this->calculatePointsForBuilding($building));
         }
 
-        return sprintf("Die Geb&auml;udepunkte von %s Geb&auml;uden wurden aktualisiert!", count($buildings));
+        return count($buildings);
+    }
+
+    /**
+     * @return array<int, float>
+     */
+    private function calculatePointsForBuilding(Building $building)
+    {
+        $points = [];
+        for ($level = 1; $level <= $building->lastLevel; $level++) {
+            $r = $building->costsMetal
+                + $building->costsCrystal
+                + $building->costsFuel
+                + $building->costsPlastic
+                + $building->costsFood;
+            $p = ($r * (1 - $building->buildCostsFactor ** $level)
+                / (1 - $building->buildCostsFactor))
+                / $this->config->param1Int('points_update');
+
+            $points[$level] = $p;
+        }
+
+        return $points;
     }
 
     public function calcTechPoints(): int
@@ -784,10 +793,8 @@ class RankingService
         $technologies = $this->technologyDataRepository->getTechnologies();
         $this->technologyPointRepository->deleteAll();
 
-        if (count($technologies) > 0) {
-            foreach ($technologies as $technology) {
-                $this->technologyPointRepository->add($technology->id, $this->calculatePointsForTechnology($technology));
-            }
+        foreach ($technologies as $technology) {
+            $this->technologyPointRepository->add($technology->id, $this->calculatePointsForTechnology($technology));
         }
 
         return count($technologies);
