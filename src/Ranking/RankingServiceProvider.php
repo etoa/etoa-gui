@@ -72,7 +72,6 @@ class RankingServiceProvider implements ServiceProviderInterface
                 $pimple[RaceDataRepository::class],
                 $pimple[UserStatRepository::class],
                 $pimple[UserRepository::class],
-                $pimple[UserRatingRepository::class],
                 $pimple[CellRepository::class],
             );
         };
@@ -80,6 +79,16 @@ class RankingServiceProvider implements ServiceProviderInterface
         $pimple[UserBannerService::class] = function (Container $pimple): UserBannerService {
             return new UserBannerService(
                 $pimple[ConfigurationService::class]
+            );
+        };
+
+        $pimple[UserTitlesService::class] = function (Container $pimple): UserTitlesService {
+            return new UserTitlesService(
+                $pimple[ConfigurationService::class],
+                $pimple[RaceDataRepository::class],
+                $pimple[UserStatRepository::class],
+                $pimple[UserRepository::class],
+                $pimple[UserRatingRepository::class]
             );
         };
     }

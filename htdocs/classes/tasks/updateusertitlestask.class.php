@@ -1,6 +1,6 @@
 <?PHP
 
-use EtoA\Ranking\RankingService;
+use EtoA\Ranking\UserTitlesService;
 use Pimple\Container;
 
 /**
@@ -8,16 +8,16 @@ use Pimple\Container;
  */
 class UpdateUserTitlesTask implements IPeriodicTask
 {
-    private RankingService $rankingService;
+    private UserTitlesService $userTitlesService;
 
     function __construct(Container $app)
     {
-        $this->rankingService = $app[RankingService::class];
+        $this->userTitlesService = $app[UserTitlesService::class];
     }
 
     function run()
     {
-        $this->rankingService->calcTitles();
+        $this->userTitlesService->calcTitles();
         return "User Titel aktualisiert";
     }
 

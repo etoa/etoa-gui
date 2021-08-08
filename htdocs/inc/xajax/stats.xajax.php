@@ -4,7 +4,7 @@ use EtoA\Alliance\AllianceStatsRepository;
 use EtoA\Alliance\AllianceStatsSort;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Ranking\GameStatsGenerator;
-use EtoA\Ranking\RankingService;
+use EtoA\Ranking\UserTitlesService;
 use EtoA\User\UserRatingRepository;
 use EtoA\User\UserRatingSearch;
 use EtoA\User\UserRatingSort;
@@ -223,14 +223,14 @@ function statsShowBox($mode, $sort = "", $sortOrder = "")
     // Titles
     //
     elseif ($mode == "titles") {
-        /** @var RankingService $rankingService */
-        $rankingService = $app[RankingService::class];
+        /** @var UserTitlesService $userTitlesService */
+        $userTitlesService = $app[UserTitlesService::class];
 
         ob_start();
-        if (!file_exists($rankingService->getUserTitlesCacheFilePath())) {
+        if (!file_exists($userTitlesService->getUserTitlesCacheFilePath())) {
             echo "<b>Fehler! Die Liste wurde noch nicht erstellt! Bitte das nächste Statistikupdate abwarten.<br/><br/>";
         } else {
-            include($rankingService->getUserTitlesCacheFilePath());
+            include($userTitlesService->getUserTitlesCacheFilePath());
         }
         $out .= ob_get_contents();
         ob_end_clean();
