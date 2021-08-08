@@ -10,12 +10,17 @@ use EtoA\Alliance\AllianceStatsRepository;
 use EtoA\Building\Building;
 use EtoA\Building\BuildingDataRepository;
 use EtoA\Building\BuildingPointRepository;
+use EtoA\Building\BuildingRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Defense\Defense;
 use EtoA\Defense\DefenseDataRepository;
+use EtoA\Defense\DefenseRepository;
+use EtoA\Fleet\FleetRepository;
+use EtoA\Fleet\FleetSearchParameters;
 use EtoA\Race\RaceDataRepository;
 use EtoA\Ship\Ship;
 use EtoA\Ship\ShipDataRepository;
+use EtoA\Ship\ShipRepository;
 use EtoA\Support\RuntimeDataStore;
 use EtoA\Technology\Technology;
 use EtoA\Technology\TechnologyDataRepository;
@@ -23,6 +28,7 @@ use EtoA\Technology\TechnologyPointRepository;
 use EtoA\Technology\TechnologyRepository;
 use EtoA\Universe\Cell\Cell;
 use EtoA\Universe\Cell\CellRepository;
+use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\User\UserRepository;
 use EtoA\User\UserSearch;
 use EtoA\User\UserStatRepository;
@@ -38,13 +44,18 @@ class RankingService
     private RuntimeDataStore $runtimeDataStore;
     private AllianceRepository $allianceRepository;
     private AllianceStatsRepository $allianceStatsRepository;
+    private PlanetRepository $planetRepository;
+    private BuildingRepository $buildingRepository;
     private BuildingDataRepository $buildingDataRepository;
     private BuildingPointRepository $buildingPointRepository;
     private TechnologyRepository $technologyRepository;
     private TechnologyDataRepository $technologyDataRepository;
     private TechnologyPointRepository $technologyPointRepository;
-    private ShipDataRepository $shipRepository;
-    private DefenseDataRepository $defenseRepository;
+    private ShipRepository $shipRepository;
+    private ShipDataRepository $shipDataRepository;
+    private FleetRepository $fleetRepository;
+    private DefenseRepository $defenseRepository;
+    private DefenseDataRepository $defenseDataRepository;
     private RaceDataRepository $raceRepository;
     private UserStatRepository $userStatRepository;
     private UserRepository $userRepository;
@@ -55,13 +66,18 @@ class RankingService
         RuntimeDataStore $runtimeDataStore,
         AllianceRepository $allianceRepository,
         AllianceStatsRepository $allianceStatsRepository,
+        PlanetRepository $planetRepository,
+        BuildingRepository $buildingRepository,
         BuildingDataRepository $buildingDataRepository,
         BuildingPointRepository $buildingPointRepository,
         TechnologyRepository $technologyRepository,
         TechnologyDataRepository $technologyDataRepository,
         TechnologyPointRepository $technologyPointRepository,
-        ShipDataRepository $shipRepository,
-        DefenseDataRepository $defenseRepository,
+        ShipRepository $shipRepository,
+        ShipDataRepository $shipDataRepository,
+        FleetRepository $fleetRepository,
+        DefenseRepository $defenseRepository,
+        DefenseDataRepository $defenseDataRepository,
         RaceDataRepository $raceRepository,
         UserStatRepository $userStatRepository,
         UserRepository $userRepository,
@@ -71,13 +87,18 @@ class RankingService
         $this->runtimeDataStore = $runtimeDataStore;
         $this->allianceRepository = $allianceRepository;
         $this->allianceStatsRepository = $allianceStatsRepository;
+        $this->planetRepository = $planetRepository;
+        $this->buildingRepository = $buildingRepository;
         $this->buildingDataRepository = $buildingDataRepository;
         $this->buildingPointRepository = $buildingPointRepository;
         $this->technologyRepository = $technologyRepository;
         $this->technologyDataRepository = $technologyDataRepository;
         $this->technologyPointRepository = $technologyPointRepository;
         $this->shipRepository = $shipRepository;
+        $this->shipDataRepository = $shipDataRepository;
+        $this->fleetRepository = $fleetRepository;
         $this->defenseRepository = $defenseRepository;
+        $this->defenseDataRepository = $defenseDataRepository;
         $this->raceRepository = $raceRepository;
         $this->userStatRepository = $userStatRepository;
         $this->userRepository = $userRepository;
@@ -90,13 +111,13 @@ class RankingService
         $inactiveTime = 86400 * USER_INACTIVE_SHOW;
         $allpoints = 0;
 
-        $ship = $this->shipRepository->getShipPoints();
-        $def = $this->defenseRepository->getDefensePoints();
+        $shipPoints = $this->shipDataRepository->getShipPoints();
+        $defensePoints = $this->defenseDataRepository->getDefensePoints();
 
         if (!$this->buildingPointRepository->areCalculated()) {
             $this->calcBuildingPoints();
         }
-        $building = $this->buildingPointRepository->getAllMap();
+        $buildingPoints = $this->buildingPointRepository->getAllMap();
 
         if (!$this->technologyPointRepository->areCalculated()) {
             $this->calcTechPoints();
@@ -185,76 +206,37 @@ class RankingService
                 $sy = $cells[$arr[0]]->sy;
             }
 
-            // Punkte für Schiffe (aus Planeten)
-            $res = dbquery("
-                    SELECT
-                        shiplist_ship_id,
-                        shiplist_count,
-                        shiplist_bunkered
-                    FROM
-                        shiplist
-                    WHERE
-                        shiplist_user_id='" . $user->id . "';
-                ");
-            while ($arr = mysql_fetch_assoc($res)) {
-                $p = ($arr['shiplist_bunkered'] + $arr['shiplist_count']) * $ship[$arr['shiplist_ship_id']];
+            $shipListItems = $this->shipRepository->findForUser($user->id);
+            foreach ($shipListItems as $shipListItem) {
+                $p = ($shipListItem->bunkered + $shipListItem->count) * $shipPoints[$shipListItem->shipId];
                 $points += $p;
                 $points_ships += $p;
             }
 
-            //
-            // Punkte für Schiffe (in Flotten)
-            $res = dbquery("
-                    SELECT
-                        fs.fs_ship_id,
-                        fs.fs_ship_cnt
-                    FROM
-                        fleet AS f
-                    INNER JOIN
-                        fleet_ships AS fs
-                        ON f.id = fs.fs_fleet_id
-                        AND fs.fs_ship_faked='0'
-                        AND f.user_id='" . $user->id . "'
-                ;");
-            while ($arr = mysql_fetch_assoc($res)) {
-                $p = $arr['fs_ship_cnt'] * $ship[$arr['fs_ship_id']];
-                $points += $p;
-                $points_ships += $p;
+            $fleets = $this->fleetRepository->findByParameters(FleetSearchParameters::create()->userId($user->id));
+            foreach ($fleets as $fleet) {
+                foreach ($this->fleetRepository->findAllShipsInFleet($fleet->id) as $shipEntry) {
+                    $p = $shipEntry->count * $shipPoints[$shipEntry->shipId];
+                    $points += $p;
+                    $points_ships += $p;
+                }
             }
 
-            // Punkte für Verteidigung
-            $res = dbquery("
-                    SELECT
-                        deflist_count,
-                        deflist_def_id
-                    FROM
-                        deflist
-                    WHERE
-                        deflist_user_id='" . $user->id . "';
-                ");
-            while ($arr = mysql_fetch_assoc($res)) {
-                $p = round($arr['deflist_count'] * $def[$arr['deflist_def_id']]);
+            $defenseListItems = $this->defenseRepository->findForUser($user->id);
+            foreach ($defenseListItems as $defenseListItem) {
+                $p = round($defenseListItem->count * $defensePoints[$defenseListItem->defenseId]);
                 $points += $p;
                 $points_building += $p;
             }
 
             // Punkte für Gebäude
-            $res = dbquery("
-                    SELECT
-                        buildlist_current_level,
-                        buildlist_building_id
-                    FROM
-                        buildlist
-                    WHERE
-                        buildlist_user_id='" . $user->id . "';
-                ");
-            if (mysql_num_rows($res) > 0) {
-                while ($arr = mysql_fetch_assoc($res)) {
-                    if ($arr['buildlist_current_level'] > 0) {
-                        $p = round($building[$arr['buildlist_building_id']][$arr['buildlist_current_level']]);
-                        $points += $p;
-                        $points_building += $p;
-                    }
+            $planets = $this->planetRepository->getUserPlanets($user->id);
+            foreach ($planets as $planet) {
+                $buildingLevels = $this->buildingRepository->getBuildingLevels($planet->id);
+                foreach ($buildingLevels as $buildingId => $level) {
+                    $p = round($buildingPoints[$buildingId][$level]);
+                    $points += $p;
+                    $points_building += $p;
                 }
             }
 
@@ -375,21 +357,7 @@ class RankingService
                 ");
         }
 
-        // Array Löschen (Speicher freigeben)
-        unset($ship);
-        unset($def);
-        unset($building);
-        unset($techPoints);
-        unset($p);
-        unset($points);
-        unset($points_ships);
-        unset($points_tech);
-        unset($points_building);
-        unset($user_stats_query);
-        unset($user_points_query);
-
         // Ranking (Total Points)
-
         $res = dbquery("
             SELECT
                 id,
@@ -824,9 +792,9 @@ class RankingService
 
     public function calcShipPoints(): int
     {
-        $ships = $this->shipRepository->getAllShips(true);
+        $ships = $this->shipDataRepository->getAllShips(true);
         foreach ($ships as $ship) {
-            $this->shipRepository->updateShipPoints($ship->id, $this->calculatePointsForShip($ship));
+            $this->shipDataRepository->updateShipPoints($ship->id, $this->calculatePointsForShip($ship));
         }
 
         return count($ships);
@@ -844,9 +812,9 @@ class RankingService
 
     public function calcDefensePoints(): int
     {
-        $defenses = $this->defenseRepository->getAllDefenses();
+        $defenses = $this->defenseDataRepository->getAllDefenses();
         foreach ($defenses as $defense) {
-            $this->defenseRepository->updateDefensePoints($defense->id, $this->calculatePointsForDefense($defense));
+            $this->defenseDataRepository->updateDefensePoints($defense->id, $this->calculatePointsForDefense($defense));
         }
 
         return count($defenses);

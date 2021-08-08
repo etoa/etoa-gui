@@ -12,6 +12,7 @@ use EtoA\Building\BuildingRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Defense\DefenseDataRepository;
 use EtoA\Defense\DefenseRepository;
+use EtoA\Fleet\FleetRepository;
 use EtoA\Race\RaceDataRepository;
 use EtoA\Ship\ShipDataRepository;
 use EtoA\Ship\ShipRepository;
@@ -62,12 +63,17 @@ class RankingServiceProvider implements ServiceProviderInterface
                 $pimple[RuntimeDataStore::class],
                 $pimple[AllianceRepository::class],
                 $pimple[AllianceStatsRepository::class],
+                $pimple[PlanetRepository::class],
+                $pimple[BuildingRepository::class],
                 $pimple[BuildingDataRepository::class],
                 $pimple[BuildingPointRepository::class],
                 $pimple[TechnologyRepository::class],
                 $pimple[TechnologyDataRepository::class],
                 $pimple[TechnologyPointRepository::class],
+                $pimple[ShipRepository::class],
                 $pimple[ShipDataRepository::class],
+                $pimple[FleetRepository::class],
+                $pimple[DefenseRepository::class],
                 $pimple[DefenseDataRepository::class],
                 $pimple[RaceDataRepository::class],
                 $pimple[UserStatRepository::class],
