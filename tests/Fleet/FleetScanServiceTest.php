@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace EtoA\Fleet;
 
+use EtoA\Alliance\AllianceBuildingId;
 use EtoA\Alliance\AllianceBuildingRepository;
 use EtoA\Alliance\AllianceRepository;
 use EtoA\Universe\Cell\CellRepository;
@@ -46,7 +47,7 @@ class FleetScanServiceTest extends WebTestCase
         $userId2 = $this->userRepository->create('Victim', 'Peter Meier', 'peter@example.com', 'password');
         $allianceId1 = $this->allianceRepository->create('TST', 'Testers', $userId1);
         $this->userRepository->setAllianceId($userId1, $allianceId1);
-        $this->allianceBuildingRepository->setUserCooldown($userId1, ALLIANCE_CRYPTO_ID, 0);
+        $this->allianceBuildingRepository->setUserCooldown($userId1, AllianceBuildingId::CRYPTO, 0);
         $this->allianceRepository->addResources($allianceId1, 0, 0, 0, 10000, 0);
 
         $cellId1 = $this->cellRepository->create(1, 1, 1, 1);
@@ -79,7 +80,7 @@ class FleetScanServiceTest extends WebTestCase
         $userId2 = $this->userRepository->create('Victim', 'Peter Meier', 'peter@example.com', 'password');
         $allianceId1 = $this->allianceRepository->create('TST', 'Testers', $userId1);
         $this->userRepository->setAllianceId($userId1, $allianceId1);
-        $this->allianceBuildingRepository->setUserCooldown($userId1, ALLIANCE_CRYPTO_ID, 0);
+        $this->allianceBuildingRepository->setUserCooldown($userId1, AllianceBuildingId::CRYPTO, 0);
         $this->allianceRepository->addResources($allianceId1, 0, 0, 0, 10000, 0);
 
         $cellId1 = $this->cellRepository->create(1, 1, 1, 1);

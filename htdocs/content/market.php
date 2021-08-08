@@ -1,5 +1,6 @@
 <?PHP
 
+use EtoA\Alliance\AllianceBuildingId;
 use EtoA\Building\BuildingRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Market\MarketRepository;
@@ -77,7 +78,7 @@ if ($config->getBoolean('market_enabled')) {
 
             // Lädt Stufe des Allianzmarktplatzes
             if ($cu->allianceId() > 0)
-                $alliance_market_level = $cu->alliance->buildlist->getLevel(ALLIANCE_MARKET_ID);
+                $alliance_market_level = $cu->alliance->buildlist->getLevel(AllianceBuildingId::MARKET);
             else
                 $alliance_market_level = 0;
 
@@ -89,8 +90,8 @@ if ($config->getBoolean('market_enabled')) {
             }
             $cooldown = ($factor == 0) ? 0 : 3600 / $factor;
             if ($alliance_market_level > 0) {
-                if ($cu->alliance->buildlist->getCooldown(ALLIANCE_MARKET_ID) > time()) {
-                    $status_text = "Bereit in <span id=\"cdcd\">" . tf($cu->alliance->buildlist->getCooldown(ALLIANCE_MARKET_ID) - time() . "</span>");
+                if ($cu->alliance->buildlist->getCooldown(AllianceBuildingId::MARKET) > time()) {
+                    $status_text = "Bereit in <span id=\"cdcd\">" . tf($cu->alliance->buildlist->getCooldown(AllianceBuildingId::MARKET) - time() . "</span>");
                     $cd_enabled = true;
                 } else {
                     $status_text = "Bereit";
@@ -209,7 +210,7 @@ if ($config->getBoolean('market_enabled')) {
             }
 
             if ($cd_enabled) {
-                countDown("cdcd", $cu->alliance->buildlist->getCooldown(ALLIANCE_MARKET_ID));
+                countDown("cdcd", $cu->alliance->buildlist->getCooldown(AllianceBuildingId::MARKET));
             }
         } else {
             info_msg("Dieses Gebäude ist noch bis " . df($market->deactivated) . " deaktiviert!");

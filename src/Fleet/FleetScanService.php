@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace EtoA\Fleet;
 
+use EtoA\Alliance\AllianceBuildingId;
 use EtoA\Alliance\AllianceBuildingRepository;
 use EtoA\Alliance\AllianceHistoryRepository;
 use EtoA\Alliance\AllianceRepository;
@@ -96,7 +97,7 @@ class FleetScanService
 
     public function getUserCooldownDifference(int $userId): int
     {
-        $userCooldown = $this->allianceBuildingRepository->getUserCooldown($userId, ALLIANCE_CRYPTO_ID);
+        $userCooldown = $this->allianceBuildingRepository->getUserCooldown($userId, AllianceBuildingId::CRYPTO);
         if ($userCooldown > time()) {
             return $userCooldown - time();
         }
@@ -141,7 +142,7 @@ class FleetScanService
         }
 
         $cooldownTime = time() + $this->calculateCooldown($cryptoCenterLevel);
-        $this->allianceBuildingRepository->setUserCooldown($currentUser->id, ALLIANCE_CRYPTO_ID, $cooldownTime);
+        $this->allianceBuildingRepository->setUserCooldown($currentUser->id, AllianceBuildingId::CRYPTO, $cooldownTime);
 
         $targetPlanet = $this->planetRepository->find($targetEntity->id);
         $this->allianceHistoryRepository->addEntry($currentUser->allianceId, "Der Spieler [b]" . $currentUser->nick . "[/b] hat den Planeten " . $targetPlanet->name . "[/b] (" . $targetEntity->coordinatesString() . ") gescannt!");

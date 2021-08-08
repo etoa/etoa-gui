@@ -1,5 +1,6 @@
 <?PHP
 
+use EtoA\Alliance\AllianceBuildingId;
 use EtoA\Alliance\AllianceRights;
 use EtoA\Fleet\FleetRepository;
 use EtoA\Ship\ShipDataRepository;
@@ -28,7 +29,7 @@ if (isset($_GET['mode']) && $_GET['mode'] == "alliance" && $cu->allianceId > 0) 
     echo "<input type=\"button\" onclick=\"document.location='?page=fleets'\" value=\"Flotten anzeigen\" /><br/><br/>";
 
     if ($cu->allianceId() > 0) {
-        if ($cu->alliance->buildlist->getLevel(ALLIANCE_FLEET_CONTROL_ID) >= ALLIANCE_FLEET_SHOW) {
+        if ($cu->alliance->buildlist->getLevel(AllianceBuildingId::FLEET_CONTROL) >= ALLIANCE_FLEET_SHOW) {
             $fm = new FleetManager($cu->id, $cu->allianceId);
             $fm->loadAllianceSupport();
 

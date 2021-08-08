@@ -1,5 +1,6 @@
 <?php
 
+use EtoA\Alliance\AllianceBuildingId;
 use EtoA\Alliance\AllianceBuildingRepository;
 use EtoA\Market\MarketShipRepository;
 use EtoA\Ship\ShipRepository;
@@ -70,9 +71,9 @@ if (!isset($errMsg)) {
         if ($for_alliance > 0) {
             // Set cooldown
             $cd = time() + $cooldown;
-            $allianceBuildingRepository->setCooldown($cu->allianceId(), ALLIANCE_MARKET_ID, $cd);
+            $allianceBuildingRepository->setCooldown($cu->allianceId(), AllianceBuildingId::MARKET, $cd);
 
-            $cu->alliance->buildlist->setCooldown(ALLIANCE_MARKET_ID, $cd);
+            $cu->alliance->buildlist->setCooldown(AllianceBuildingId::MARKET, $cd);
         }
 
         success_msg("Angebot erfolgreich abgesendet!");

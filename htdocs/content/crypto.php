@@ -1,5 +1,6 @@
 <?PHP
 
+use EtoA\Alliance\AllianceBuildingId;
 use EtoA\Alliance\AllianceBuildingRepository;
 use EtoA\Alliance\AllianceRights;
 use EtoA\Bookmark\BookmarkService;
@@ -46,7 +47,7 @@ $planet = $planetRepository->find($cp->id);
 $currentUser = $userRepository->getUser($cu->id);
 
 // Gebäude Level und Arbeiter laden
-$cryptoCenterLevel = $allianceBuildingRepository->getLevel($currentUser->allianceId, ALLIANCE_CRYPTO_ID);
+$cryptoCenterLevel = $allianceBuildingRepository->getLevel($currentUser->allianceId, AllianceBuildingId::CRYPTO);
 
 // Allg. deaktivierung
 if ($config->getBoolean('crypto_enable')) {
@@ -161,7 +162,7 @@ if ($config->getBoolean('crypto_enable')) {
             echo '</form>';
             echo '</body>';
         } else {
-            $userCooldown = $allianceBuildingRepository->getUserCooldown($currentUser->id, ALLIANCE_CRYPTO_ID);
+            $userCooldown = $allianceBuildingRepository->getUserCooldown($currentUser->id, AllianceBuildingId::CRYPTO);
             echo "<b>Diese Funktion wurde vor kurzem benutzt! <br/>";
             echo "Du musst bis " . df($userCooldown) . " warten, um die Funktion wieder zu benutzen!</b>";
             countDown("cdcd", $userCooldown);

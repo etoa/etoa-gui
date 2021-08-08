@@ -1,5 +1,6 @@
 <?PHP
 
+use EtoA\Alliance\AllianceBuildingId;
 use EtoA\Alliance\AllianceHistoryRepository;
 use EtoA\Alliance\AllianceRights;
 use EtoA\Alliance\AllianceSpendRepository;
@@ -46,8 +47,8 @@ echo $resourceBoxDrawer->getHTML($planet);
 echo "<h2><a href=\"?page=" . $page . "&amp;action=" . $_GET['action'] . "\">Allianzbasis</a></h2>";
 
 // Schiffswerft gebaut?
-$shipyard = ($cu->alliance->buildlist->getLevel(ALLIANCE_SHIPYARD_ID) >= 1) ? TRUE : FALSE;
-$research = ($cu->alliance->buildlist->getLevel(ALLIANCE_RESEARCH_ID) >= 1) ? TRUE : FALSE;
+$shipyard = ($cu->alliance->buildlist->getLevel(AllianceBuildingId::SHIPYARD) >= 1) ? TRUE : FALSE;
+$research = ($cu->alliance->buildlist->getLevel(AllianceBuildingId::RESEARCH) >= 1) ? TRUE : FALSE;
 
 //
 // Navigation
@@ -204,7 +205,7 @@ if (isset($_POST['filter_submit']) && checker_verify()) {
 /** @var EtoA\Ship\Ship[] $ships */
 $ships = [];
 if ($shipyard) {
-    $allianceShipyardLevel = $cu->alliance->buildlist->getLevel(ALLIANCE_SHIPYARD_ID);
+    $allianceShipyardLevel = $cu->alliance->buildlist->getLevel(AllianceBuildingId::SHIPYARD);
 
     $allianceShips = $shipDataRepository->getAllianceShips();
     foreach ($allianceShips as $ship) {
@@ -918,7 +919,7 @@ if ($shipyard) {
         echo "<td style=\"text-align:center;\"><span " . tm("Produktionsstop", "Die Produktion wurde unterbrochen, da negative Rohstoffe vorhanden sind.") . ">Schiffsteile pro Stunde: 0</span></td>";
     } else {
         // if changed, also change classes/alliance.class.php
-        echo "<td style=\"text-align:center;\">Schiffsteile pro Stunde: " . ceil($config->getInt('alliance_shippoints_per_hour') * pow($config->getFloat('alliance_shippoints_base'), ($cu->alliance->buildlist->getLevel(ALLIANCE_SHIPYARD_ID) - 1))) . "</td>";
+        echo "<td style=\"text-align:center;\">Schiffsteile pro Stunde: " . ceil($config->getInt('alliance_shippoints_per_hour') * pow($config->getFloat('alliance_shippoints_base'), ($cu->alliance->buildlist->getLevel(AllianceBuildingId::SHIPYARD) - 1))) . "</td>";
     }
     echo "</tr>
     <tr>
