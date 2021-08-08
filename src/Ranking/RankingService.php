@@ -70,11 +70,13 @@ class RankingService
         $this->raceRepository = $raceRepository;
     }
 
-    private function getTitles(bool $admin = false, bool $extern = false): string
+    private function getTitles(bool $admin = false): string
     {
         ob_start();
 
-        $img_dir = ($admin == 1) ? "../images" : "images";
+        $img_dir = ($admin == 1)
+            ? "../images"
+            : "images";
 
         $titles = [
             "total" => "",
@@ -108,7 +110,9 @@ class RankingService
                 LIMIT 1;");
             if (mysql_num_rows($res) > 0) {
                 $arr = mysql_fetch_row($res);
-                $profile = ($admin == 1) ? "?page=user&amp;sub=edit&amp;user_id=" . $arr[2] . "" : "?page=userinfo&amp;id=" . $arr[2];
+                $profile = ($admin == 1)
+                    ? "?page=user&amp;sub=edit&amp;user_id=" . $arr[2] . ""
+                    : "?page=userinfo&amp;id=" . $arr[2];
                 echo "<tr>
                         <th class=\"tbltitle\" style=\"width:100px;height:100px;\">
                             <img src='" . $img_dir . "/medals/medal_" . $k . ".png' alt=\"medal\" style=\"height:100px;\" />
@@ -119,9 +123,7 @@ class RankingService
                         <td class=\"tbldata\" style=\"vertical-align:middle;padding-top:0px;padding-left:15px;\">
                             <span style=\"font-size:13pt;color:#ff0;\">" . $arr[0] . "</span><br/><br/>
                             " . nf($arr[1]) . " Punkte<br/><br/>";
-                if (!$extern) {
-                    echo "[<a href=\"" . $profile . "\">Profil</a>]";
-                }
+                echo "[<a href=\"" . $profile . "\">Profil</a>]";
                 echo "</td>
                     </tr>";
             }
@@ -146,7 +148,9 @@ class RankingService
                 LIMIT 1;");
             if (mysql_num_rows($res) > 0) {
                 $arr = mysql_fetch_row($res);
-                $profile = ($admin == 1) ? "?page=user&amp;sub=edit&amp;user_id=" . $arr[2] . "" : "?page=userinfo&amp;id=" . $arr[2];
+                $profile = ($admin == 1)
+                    ? "?page=user&amp;sub=edit&amp;user_id=" . $arr[2] . ""
+                    : "?page=userinfo&amp;id=" . $arr[2];
                 echo "<tr>
                         <th class=\"tbltitle\" style=\"width:100px;height:100px;\">
                             <img src='" . $img_dir . "/medals/medal_" . $v . ".png' style=\"height:100px;\" />
@@ -157,9 +161,7 @@ class RankingService
                         <td class=\"tbldata\" style=\"vertical-align:middle;padding-top:0px;padding-left:15px;\">
                             <span style=\"font-size:13pt;color:#ff0;\">" . $arr[0] . "</span><br/><br/>
                             " . nf($arr[1]) . " Punkte<br/><br/>";
-                if (!$extern) {
-                    echo "[<a href=\"" . $profile . "\">Profil</a>]";
-                }
+                echo "[<a href=\"" . $profile . "\">Profil</a>]";
                 echo "</td>
                     </tr>";
             }
@@ -199,7 +201,9 @@ class RankingService
                 $arr = mysql_fetch_row($res);
                 $cres = dbquery("SELECT COUNT(user_race_id) FROM users WHERE user_race_id=" . $rarr['race_id'] . "");
                 $carr = mysql_fetch_row($cres);
-                $profile = ($admin == 1) ? "?page=user&amp;sub=edit&amp;user_id=" . $arr[2] . "" : "?page=userinfo&amp;id=" . $arr[2];
+                $profile = ($admin == 1)
+                    ? "?page=user&amp;sub=edit&amp;user_id=" . $arr[2] . ""
+                    : "?page=userinfo&amp;id=" . $arr[2];
 
                 echo "<tr>
                         <th class=\"tbltitle\" style=\"width:70px;height:70px;\">
@@ -212,9 +216,7 @@ class RankingService
                         <td class=\"tbldata\" style=\"vertical-align:middle;padding-top:0px;padding-left:15px;\">
                             <span style=\"font-size:13pt;color:#ff0;\">" . $arr[0] . "</span><br/><br/>
                             " . nf($arr[1]) . " Punkte &nbsp;&nbsp;&nbsp;";
-                if (!$extern) {
-                    echo "[<a href=\"" . $profile . "\">Profil</a>]";
-                }
+                echo "[<a href=\"" . $profile . "\">Profil</a>]";
                 echo "</td>
                     </tr>";
             }
@@ -237,9 +239,18 @@ class RankingService
             mkdir($dir);
         }
 
-        file_put_contents($dir . "/usertitles.gen", $this->getTitles());
-        file_put_contents($dir . "/usertitles_a.gen", $this->getTitles(true));
-        file_put_contents($dir . "/usertitles_ex.gen", $this->getTitles(false, true));
+        file_put_contents($this->getUserTitlesCacheFilePath(), $this->getTitles());
+        file_put_contents($this->getUserTitlesAdminCacheFilePath(), $this->getTitles(true));
+    }
+
+    public function getUserTitlesCacheFilePath()
+    {
+        return CACHE_ROOT . "/out/usertitles.html";
+    }
+
+    public function getUserTitlesAdminCacheFilePath()
+    {
+        return CACHE_ROOT . "/out/usertitles_a.html";
     }
 
     public function calc(): RankingCalculationResult

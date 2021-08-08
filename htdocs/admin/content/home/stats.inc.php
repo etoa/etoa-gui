@@ -3,6 +3,7 @@
 use EtoA\Alliance\AllianceStatsRepository;
 use EtoA\Alliance\AllianceStatsSort;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Ranking\RankingService;
 use EtoA\Support\RuntimeDataStore;
 use EtoA\User\UserRatingRepository;
 use EtoA\User\UserStatRepository;
@@ -96,7 +97,13 @@ if ($mode == "titles") {
 echo "</table><br/>";
 
 if ($mode == "titles") {
-    include(CACHE_ROOT . "/out/usertitles_a.gen");
+    /** @var RankingService $rankingService */
+    $rankingService = $app[RankingService::class];
+    if (!file_exists($rankingService->getUserTitlesAdminCacheFilePath())) {
+        echo "<b>Fehler! Die Liste wurde noch nicht erstellt! Bitte das nächste Statistikupdate abwarten.<br/><br/>";
+    } else {
+       include($rankingService->getUserTitlesAdminCacheFilePath());
+    }
 }
 
 //
