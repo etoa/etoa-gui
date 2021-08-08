@@ -4,6 +4,7 @@ use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\DefaultItem\DefaultItemRepository;
 use EtoA\Race\RaceDataRepository;
 use EtoA\Text\TextRepository;
+use EtoA\UI\Tooltip;
 use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Entity\EntityType;
 use EtoA\Universe\Planet\PlanetRepository;
@@ -333,7 +334,7 @@ if ($mode == "itemsets" && isset($planet)) {
             $tt->addGoodCond("Bewohnte Planeten: " . $countInhabitedPlanets);
             $tt->addComment("Klickt hier um euren Heimatplaneten in Sektor <b>" . $xcnt . "/" . $ycnt . "</b> anzusiedeln!");
 
-            echo "<area shape=\"rect\" coords=\"$x," . (GALAXY_MAP_WIDTH - $y) . "," . ($x + $sec_x_size) . "," . (GALAXY_MAP_WIDTH - $y - $sec_y_size) . "\" href=\"?setup_sx=" . $xcnt . "&amp;setup_sy=" . $ycnt . "\" alt=\"Sektor $xcnt / $ycnt\" " . $tt . ">\n";
+            echo "<area shape=\"rect\" coords=\"$x," . (GALAXY_MAP_WIDTH - $y) . "," . ($x + $sec_x_size) . "," . (GALAXY_MAP_WIDTH - $y - $sec_y_size) . "\" href=\"?setup_sx=" . $xcnt . "&amp;setup_sy=" . $ycnt . "\" alt=\"Sektor $xcnt / $ycnt\" " . $tt->toString() . ">\n";
             $ycnt++;
         }
         $xcnt++;

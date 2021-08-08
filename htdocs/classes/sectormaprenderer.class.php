@@ -1,5 +1,6 @@
 <?PHP
 
+use EtoA\UI\Tooltip;
 use EtoA\User\User;
 use EtoA\User\UserUniverseDiscoveryService;
 
@@ -225,7 +226,7 @@ class SectorMapRenderer
                 }
 
                 // Title or tooltip
-                $title = (isset($tt) ? $tt : "title=\"$sx/$sy : $xcoords/$ycoords\"");
+                $title = (isset($tt) ? $tt->toString() : "title=\"$sx/$sy : $xcoords/$ycoords\"");
 
                 // Mouseover
                 $mouseOver = '';
