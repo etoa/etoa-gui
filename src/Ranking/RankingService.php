@@ -214,7 +214,6 @@ class RankingService
                 $points_building += $p;
             }
 
-            // Punkte für Gebäude
             foreach ($planets as $planet) {
                 $buildingLevels = $this->buildingRepository->getBuildingLevels($planet->id);
                 foreach ($buildingLevels as $buildingId => $level) {
@@ -224,7 +223,6 @@ class RankingService
                 }
             }
 
-            // Punkte für Forschung
             $techList = $this->technologyRepository->getTechnologyLevels($user->id);
             foreach ($techList as $technologyId => $level) {
                 $p = round($techPoints[$technologyId][$level]);
@@ -232,35 +230,8 @@ class RankingService
                 $points_tech += $p;
             }
 
-            // Punkte für XP
-            $res = dbquery("
-                    SELECT
-                        SUM(shiplist_special_ship_exp)
-                    FROM
-                        shiplist
-                    WHERE
-                        shiplist_user_id='" . $user->id . "'
-                        AND shiplist_count=1;
-                ");
-            $arr = mysql_fetch_row($res);
-            $points_exp = max(0, $arr[0]);
-
-            $res = dbquery("
-                    SELECT
-                        SUM(fs_special_ship_exp)
-                    FROM
-                        fleet_ships
-                    INNER JOIN
-                        fleet
-                    ON
-                        fleet.id=fleet_ships.fs_fleet_id
-                    AND
-                        fleet.user_id='" . $user->id . "'
-                    AND
-                        fleet_ships.fs_ship_cnt='1'
-                ");
-            $arr = mysql_fetch_row($res);
-            $points_exp += max(0, $arr[0]);
+            $points_exp = max(0, $this->shipRepository->getSpecialShipExperienceSumForUser($user->id));
+            $points_exp += max(0, $this->fleetRepository->getSpecialShipExperienceSumForUser($user->id));
 
             // Save part of insert query
             $user_stats_query .= ",(
