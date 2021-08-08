@@ -68,7 +68,8 @@ class RankingServiceProvider implements ServiceProviderInterface
                 $pimple[ShipDataRepository::class],
                 $pimple[DefenseDataRepository::class],
                 $pimple[RaceDataRepository::class],
-                $pimple[UserStatRepository::class]
+                $pimple[UserStatRepository::class],
+                $pimple[UserRepository::class],
             );
         };
     }

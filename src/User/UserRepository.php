@@ -590,14 +590,17 @@ class UserRepository extends AbstractRepository
     /**
      * @return User[]
      */
-    public function searchUsers(UserSearch $search = null, int $limit = null): array
+    public function searchUsers(UserSearch $search = null, UserSort $sort = null, int $limit = null): array
     {
         $qb = $this->createQueryBuilder()
             ->select('*')
-            ->from('users')
-            ->orderBy('user_nick');
+            ->from('users');
 
-        $data = $this->applySearchSortLimit($qb, $search, null, $limit)
+        if ($sort == null || count($sort->sorts) === 0) {
+            $qb->orderBy('user_nick');
+        }
+
+        $data = $this->applySearchSortLimit($qb, $search, $sort, $limit)
             ->execute()
             ->fetchAllAssociative();
 

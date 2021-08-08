@@ -17,6 +17,9 @@ use EtoA\Support\RuntimeDataStore;
 use EtoA\Technology\TechnologyDataRepository;
 use EtoA\Technology\TechnologyPointRepository;
 use EtoA\Technology\TechnologyRepository;
+use EtoA\User\UserRepository;
+use EtoA\User\UserSearch;
+use EtoA\User\UserSort;
 use EtoA\User\UserStatRepository;
 use EtoA\User\UserStatSearch;
 use GdImage;
@@ -41,6 +44,7 @@ class RankingService
     private DefenseDataRepository $defenseRepository;
     private RaceDataRepository $raceRepository;
     private UserStatRepository $userStatRepository;
+    private UserRepository $userRepository;
 
     private string $userBannerBackgroundImage = "images/userbanner/userbanner1.png";
     private string $userBannerFont = "images/userbanner/calibri.ttf";
@@ -58,7 +62,8 @@ class RankingService
         ShipDataRepository $shipRepository,
         DefenseDataRepository $defenseRepository,
         RaceDataRepository $raceRepository,
-        UserStatRepository $userStatRepository
+        UserStatRepository $userStatRepository,
+        UserRepository $userRepository
     ) {
         $this->config = $config;
         $this->runtimeDataStore = $runtimeDataStore;
@@ -73,9 +78,10 @@ class RankingService
         $this->defenseRepository = $defenseRepository;
         $this->raceRepository = $raceRepository;
         $this->userStatRepository = $userStatRepository;
+        $this->userRepository = $userRepository;
     }
 
-    private function getTitles(bool $admin = false): string
+    public function getTitles(bool $admin = false): string
     {
         ob_start();
 
@@ -179,8 +185,8 @@ class RankingService
                 echo "[<a href=\"" . $profile . "\">Profil</a>]";
                 echo "</td>
                     </tr>";
+                $cnt++;
             }
-            $cnt++;
         }
 
         if ($cnt == 0) {
@@ -189,50 +195,32 @@ class RankingService
 
         tableEnd();
         tableStart("Rassenleader");
-        $rres = dbquery("
-            SELECT
-                race_id,
-                race_leadertitle,
-                race_name
-            FROM
-                races
-            ORDER BY
-                race_name;
-            ");
-        while ($rarr = mysql_fetch_assoc($rres)) {
-            $res = dbquery("
-                SELECT
-                    user_nick,
-                    user_points,
-                    user_id
-                FROM
-                    users
-                WHERE
-                    user_race_id=" . $rarr['race_id'] . "
-                    AND user_ghost=0
-                ORDER BY
-                    user_points DESC
-                LIMIT 1;
-                ");
-            if (mysql_num_rows($res) > 0) {
-                $arr = mysql_fetch_row($res);
-                $cres = dbquery("SELECT COUNT(user_race_id) FROM users WHERE user_race_id=" . $rarr['race_id'] . "");
-                $carr = mysql_fetch_row($cres);
+        $races = $this->raceRepository->getActiveRaces();
+        foreach ($races as $race) {
+            $users = $this->userRepository->searchUsers(
+                UserSearch::create()
+                    ->raceId($race->id)
+                    ->notGhost()
+                    ->hasPoints(),
+                UserSort::points('desc'),
+                1
+            );
+            if (count($users) > 0) {
+                $user = array_values($users)[0];
                 $profile = ($admin == 1)
-                    ? "?page=user&amp;sub=edit&amp;user_id=" . $arr[2] . ""
-                    : "?page=userinfo&amp;id=" . $arr[2];
-
+                    ? "?page=user&amp;sub=edit&amp;user_id=" . $user->id . ""
+                    : "?page=userinfo&amp;id=" . $user->id;
                 echo "<tr>
                         <th class=\"tbltitle\" style=\"width:70px;height:70px;\">
                             <img src='" . $img_dir . "/medals/medal_race.png' style=\"height:70px;\" />
                         </th>
                         <td class=\"tbldata\" style=\"vertical-align:middle;padding:2px 10px 2px 10px;width:360px;\">
-                            <div style=\"font-size:16pt;\">" . $rarr['race_leadertitle'] . "</div>
-                            " . $carr[0] . " V&ouml;lker
+                            <div style=\"font-size:16pt;\">" . $race->leaderTitle . "</div>
+                            " . $this->raceRepository->getNumberOfUsersWithRace($race->id) . " V&ouml;lker
                         </td>
                         <td class=\"tbldata\" style=\"vertical-align:middle;padding-top:0px;padding-left:15px;\">
-                            <span style=\"font-size:13pt;color:#ff0;\">" . $arr[0] . "</span><br/><br/>
-                            " . nf($arr[1]) . " Punkte &nbsp;&nbsp;&nbsp;";
+                            <span style=\"font-size:13pt;color:#ff0;\">" . $user->nick . "</span><br/><br/>
+                            " . nf($user->points) . " Punkte &nbsp;&nbsp;&nbsp;";
                 echo "[<a href=\"" . $profile . "\">Profil</a>]";
                 echo "</td>
                     </tr>";
