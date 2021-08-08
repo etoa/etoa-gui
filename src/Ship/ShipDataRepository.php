@@ -51,7 +51,7 @@ class ShipDataRepository extends AbstractRepository
     public function getShipPoints(): array
     {
         $data = $this->createQueryBuilder()
-            ->select('ship_id, ship_points')
+            ->select('ship_id', 'ship_points')
             ->from('ships')
             ->execute()
             ->fetchAllKeyValue();

@@ -10,6 +10,7 @@ use EtoA\Alliance\AllianceStatsRepository;
 use EtoA\Building\BuildingDataRepository;
 use EtoA\Building\BuildingPointRepository;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Defense\Defense;
 use EtoA\Defense\DefenseDataRepository;
 use EtoA\Race\RaceDataRepository;
 use EtoA\Ship\Ship;
@@ -825,36 +826,23 @@ class RankingService
             / $this->config->param1Int('points_update');
     }
 
-    public function calcDefensePoints(): string
+    public function calcDefensePoints(): int
     {
-        $res = dbquery("
-          SELECT
-            def_id,
-            def_costs_metal,
-            def_costs_crystal,
-            def_costs_fuel,
-            def_costs_plastic,
-            def_costs_food
-          FROM
-            defense;");
-        $mnr = mysql_num_rows($res);
-        if ($mnr > 0) {
-            while ($arr = mysql_fetch_array($res)) {
-                $p = ($arr['def_costs_metal'] +
-                    $arr['def_costs_crystal']
-                    + $arr['def_costs_fuel']
-                    + $arr['def_costs_plastic']
-                    + $arr['def_costs_food'])
-                    / $this->config->param1Int('points_update');
-                dbquery("UPDATE
-              defense
-               SET
-                def_points=$p
-              WHERE
-                def_id=" . $arr['def_id'] . ";");
-            }
+        $defenses = $this->defenseRepository->getAllDefenses();
+        foreach ($defenses as $defense) {
+            $this->defenseRepository->updateDefensePoints($defense->id, $this->calculatePointsForDefense($defense));
         }
 
-        return "Die Punkte von $mnr Verteidigungsanlagen wurden aktualisiert!";
+        return count($defenses);
+    }
+
+    public function calculatePointsForDefense(Defense $defense): float
+    {
+        return ($defense->costsMetal
+            + $defense->costsCrystal
+            + $defense->costsFuel
+            + $defense->costsPlastic
+            + $defense->costsFood)
+            / $this->config->param1Int('points_update');
     }
 }
