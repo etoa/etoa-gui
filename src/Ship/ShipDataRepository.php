@@ -59,6 +59,19 @@ class ShipDataRepository extends AbstractRepository
         return array_map(fn ($value) => (float) $value, $data);
     }
 
+    public function updateShipPoints(int $shipId, float $points): void
+    {
+        $this->createQueryBuilder()
+            ->update('ships')
+            ->set('ship_points', ':points')
+            ->where('ship_id = :shipId')
+            ->setParameters([
+                'shipId' => $shipId,
+                'points' => $points,
+            ])
+            ->execute();
+    }
+
     /**
      * @return Ship[]
      */

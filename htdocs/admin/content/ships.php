@@ -30,7 +30,8 @@ if ($sub == "battlepoints") {
 
     echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"POST\">";
     if (isset($_POST['recalc'])) {
-        echo MessageBox::ok("", $rankingService->calcShipPoints());
+        $numShips = $rankingService->calcShipPoints();
+        echo MessageBox::ok("", "Die Punkte von " . $numShips . " Schiffen wurden aktualisiert!");
     }
     echo "<p>Nach jeder direkter &Auml;nderung an den Schiffen via Datenbank m&uuml;ssen die Punkte neu berechnet werden!</p>
         <p><input type=\"submit\" name=\"recalc\" value=\"Neu berechnen\" /></p>
