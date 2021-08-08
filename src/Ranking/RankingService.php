@@ -16,6 +16,7 @@ use EtoA\Race\RaceDataRepository;
 use EtoA\Ship\Ship;
 use EtoA\Ship\ShipDataRepository;
 use EtoA\Support\RuntimeDataStore;
+use EtoA\Technology\Technology;
 use EtoA\Technology\TechnologyDataRepository;
 use EtoA\Technology\TechnologyPointRepository;
 use EtoA\Technology\TechnologyRepository;
@@ -778,32 +779,40 @@ class RankingService
         return sprintf("Die Geb&auml;udepunkte von %s Geb&auml;uden wurden aktualisiert!", count($buildings));
     }
 
-    public function calcTechPoints(): string
+    public function calcTechPoints(): int
     {
         $technologies = $this->technologyDataRepository->getTechnologies();
         $this->technologyPointRepository->deleteAll();
 
         if (count($technologies) > 0) {
             foreach ($technologies as $technology) {
-                $points = [];
-                for ($level = 1; $level <= $technology->lastLevel; $level++) {
-                    $r = $technology->costsMetal
-                        + $technology->costsCrystal
-                        + $technology->costsFuel
-                        + $technology->costsPlastic
-                        + $technology->costsFood;
-                    $p = ($r * (1 - $technology->buildCostsFactor ** $level)
-                        / (1 - $technology->buildCostsFactor))
-                        / $this->config->param1Int('points_update');
-
-                    $points[$level] = $p;
-                }
-
-                $this->technologyPointRepository->add($technology->id, $points);
+                $this->technologyPointRepository->add($technology->id, $this->calculatePointsForTechnology($technology));
             }
         }
 
-        return sprintf("Die Punkte von %s Technologien wurden aktualisiert!", count($technologies));
+        return count($technologies);
+    }
+
+    /**
+     * @return array<int, float>
+     */
+    private function calculatePointsForTechnology(Technology $technology): array
+    {
+        $points = [];
+        for ($level = 1; $level <= $technology->lastLevel; $level++) {
+            $r = $technology->costsMetal
+                + $technology->costsCrystal
+                + $technology->costsFuel
+                + $technology->costsPlastic
+                + $technology->costsFood;
+            $p = ($r * (1 - $technology->buildCostsFactor ** $level)
+                / (1 - $technology->buildCostsFactor))
+                / $this->config->param1Int('points_update');
+
+            $points[$level] = $p;
+        }
+
+        return $points;
     }
 
     public function calcShipPoints(): int
@@ -816,7 +825,7 @@ class RankingService
         return count($ships);
     }
 
-    public function calculatePointsForShip(Ship $ship): float
+    private function calculatePointsForShip(Ship $ship): float
     {
         return ($ship->costsMetal
             + $ship->costsCrystal
@@ -836,7 +845,7 @@ class RankingService
         return count($defenses);
     }
 
-    public function calculatePointsForDefense(Defense $defense): float
+    private function calculatePointsForDefense(Defense $defense): float
     {
         return ($defense->costsMetal
             + $defense->costsCrystal

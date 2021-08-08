@@ -29,7 +29,8 @@ if ($sub == "points") {
     echo "<h1>Forschungspunkte</h1>";
     echo "<h2>Forschungpsunkte neu berechnen</h2><form action=\"?page=$page&amp;sub=$sub\" method=\"POST\">";
     if (isset($_POST['recalc']) && $_POST['recalc'] != "") {
-        echo MessageBox::ok("", $rankingService->calcTechPoints());
+        $numTechnologies = $rankingService->calcTechPoints();
+        echo MessageBox::ok("", sprintf("Die Punkte von %s Technologien wurden aktualisiert!", $numTechnologies));
     }
     echo "Nach jeder &Auml;nderung an den Forschungen m&uuml;ssen die Forschungspunkte neu berechnet werden.<br/><br/> ";
     echo "<input type=\"submit\" name=\"recalc\" value=\"Neu berechnen\" /></form>";
@@ -48,7 +49,7 @@ if ($sub == "points") {
                 foreach ($techPoints[$technologyId] as $level => $point) {
                     if ($cnt == 0)
                         echo "<tr>";
-                    echo "<th>" . $level . "</th><td>" . $point . "</td>";
+                    echo "<th>" . $level . "</th><td style=\"text-align: right\" title=\"$point\">" . nf($point) . "</td>";
                     if ($cnt == "3") {
                         echo "</tr>";
                         $cnt = 0;

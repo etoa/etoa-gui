@@ -40,7 +40,7 @@ if ($sub == "battlepoints") {
     $ships = $shipDataRepository->getAllShips(true, 'ship_points');
     echo "<table class=\"tb\">";
     foreach ($ships as $ship) {
-        echo "<tr><th>" . $ship->name . "</th><td style=\"width:70%; text-align: right\">" . nf($ship->points) . "</td></tr>";
+        echo "<tr><th>" . $ship->name . "</th><td style=\"width:70%; text-align: right\" title=\"$ship->points\">" . nf($ship->points) . "</td></tr>";
     }
     echo "</table>";
 }

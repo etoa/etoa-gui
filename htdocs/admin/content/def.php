@@ -45,7 +45,7 @@ if ($sub == "battlepoints") {
     if (count($defenses) > 0) {
         echo "<table class=\"tb\">";
         foreach ($defenses as $defense) {
-            echo "<tr><th>" . $defense->name . "</th><td style=\"width:70%; text-align: right\">" . nf($defense->points) . "</td></tr>";
+            echo "<tr><th>" . $defense->name . "</th><td style=\"width:70%; text-align: right\"  title=\"$defense->points\">" . nf($defense->points) . "</td></tr>";
         }
         echo "</table>";
     }
