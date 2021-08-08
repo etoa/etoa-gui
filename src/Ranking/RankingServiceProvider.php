@@ -5,11 +5,19 @@ declare(strict_types=1);
 namespace EtoA\Ranking;
 
 use EtoA\Alliance\AllianceRepository;
+use EtoA\Alliance\AllianceStatsRepository;
+use EtoA\Building\BuildingDataRepository;
+use EtoA\Building\BuildingPointRepository;
 use EtoA\Building\BuildingRepository;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Defense\DefenseDataRepository;
 use EtoA\Defense\DefenseRepository;
 use EtoA\Race\RaceDataRepository;
+use EtoA\Ship\ShipDataRepository;
 use EtoA\Ship\ShipRepository;
+use EtoA\Support\RuntimeDataStore;
+use EtoA\Technology\TechnologyDataRepository;
+use EtoA\Technology\TechnologyPointRepository;
 use EtoA\Technology\TechnologyRepository;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Universe\Planet\PlanetTypeRepository;
@@ -42,6 +50,23 @@ class RankingServiceProvider implements ServiceProviderInterface
                 $pimple[ShipRepository::class],
                 $pimple[DefenseRepository::class],
                 $pimple[UserPropertiesRepository::class],
+            );
+        };
+
+        $pimple[RankingService::class] = function (Container $pimple): RankingService {
+            return new RankingService(
+                $pimple[ConfigurationService::class],
+                $pimple[RuntimeDataStore::class],
+                $pimple[AllianceRepository::class],
+                $pimple[AllianceStatsRepository::class],
+                $pimple[BuildingDataRepository::class],
+                $pimple[BuildingPointRepository::class],
+                $pimple[TechnologyRepository::class],
+                $pimple[TechnologyDataRepository::class],
+                $pimple[TechnologyPointRepository::class],
+                $pimple[ShipDataRepository::class],
+                $pimple[DefenseDataRepository::class],
+                $pimple[RaceDataRepository::class]
             );
         };
     }

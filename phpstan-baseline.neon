@@ -295,3 +295,7 @@ parameters:
 			count: 1
 			path: src/UI/EntityCoordinatesSelector.php
 
+		-
+			message: "#^Return typehint of method EtoA\\\\Ranking\\\\RankingService\\:\\:createUserBannerImage\\(\\) has invalid type GdImage\\.$#"
+			count: 1
+			path: src/Ranking/RankingService.php

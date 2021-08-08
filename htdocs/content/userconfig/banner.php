@@ -1,9 +1,13 @@
 <?PHP
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Ranking\RankingService;
 
 /** @var ConfigurationService */
 $config = $app[ConfigurationService::class];
+
+/** @var RankingService $rankingService */
+$rankingService = $app[RankingService::class];
 
 $id = $cu->id;
 
@@ -11,7 +15,7 @@ iBoxStart("Banner");
 echo 'Hilf mit, EtoA bekannter zu machen und binde unser Banner auf deiner Website ein!
 Hier findest du den Quellcode um das Banner einzubinden:<br><br>';
 
-$name = Ranking::getUserBannerPath($id);
+$name = $rankingService->getUserBannerPath($id);
 if (file_exists($name)) {
     echo '<div style="text-align: center;">
     <img src="' . $name . '" alt="Banner"><br><br>

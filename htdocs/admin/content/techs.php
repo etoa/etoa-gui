@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Ranking\RankingService;
 use EtoA\Technology\TechnologyDataRepository;
 use EtoA\Technology\TechnologyPointRepository;
 use EtoA\Technology\TechnologyRepository;
@@ -8,12 +9,18 @@ use EtoA\Technology\TechnologySort;
 
 /** @var ConfigurationService */
 $config = $app[ConfigurationService::class];
+
 /** @var TechnologyRepository $technologyRepository */
 $technologyRepository = $app[TechnologyRepository::class];
+
 /** @var TechnologyDataRepository $technologyDataRepository */
 $technologyDataRepository = $app[TechnologyDataRepository::class];
+
 /** @var TechnologyPointRepository $technologyPointRepository */
 $technologyPointRepository = $app[TechnologyPointRepository::class];
+
+/** @var RankingService $rankingService */
+$rankingService = $app[RankingService::class];
 
 //
 // Forschungspunkte
@@ -22,7 +29,7 @@ if ($sub == "points") {
     echo "<h1>Forschungspunkte</h1>";
     echo "<h2>Forschungpsunkte neu berechnen</h2><form action=\"?page=$page&amp;sub=$sub\" method=\"POST\">";
     if (isset($_POST['recalc']) && $_POST['recalc'] != "") {
-        echo MessageBox::ok("", Ranking::calcTechPoints());
+        echo MessageBox::ok("", $rankingService->calcTechPoints());
     }
     echo "Nach jeder &Auml;nderung an den Forschungen m&uuml;ssen die Forschungspunkte neu berechnet werden.<br/><br/> ";
     echo "<input type=\"submit\" name=\"recalc\" value=\"Neu berechnen\" /></form>";

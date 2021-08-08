@@ -5,6 +5,7 @@ use EtoA\Building\BuildingPointRepository;
 use EtoA\Building\BuildingRepository;
 use EtoA\Building\BuildingSort;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Ranking\RankingService;
 use Pimple\Container;
 use Symfony\Component\HttpFoundation\Request;
 use Twig\Environment;
@@ -17,13 +18,17 @@ $request = Request::createFromGlobals();
 
 /** @var ConfigurationService */
 $config = $app[ConfigurationService::class];
+
 /** @var BuildingPointRepository $buildingPointRepository */
 $buildingPointRepository = $app[BuildingPointRepository::class];
+
+/** @var RankingService $rankingService */
+$rankingService = $app[RankingService::class];
 
 if ($sub == "prices") {
     priceCalculator($repository);
 } elseif ($sub == "points") {
-    buildingPoints($request, $repository, $buildingPointRepository);
+    buildingPoints($request, $repository, $buildingPointRepository, $rankingService);
 } elseif ($sub == "type") {
     editCategories($twig);
 } elseif ($sub == "data") {
@@ -130,15 +135,19 @@ function priceCalculator(BuildingRepository $repository)
     echo "</table></form>";
 }
 
-function buildingPoints(Request $request, BuildingRepository $repository, BuildingPointRepository $buildingPointRepository)
-{
+function buildingPoints(
+    Request $request,
+    BuildingRepository $repository,
+    BuildingPointRepository $buildingPointRepository,
+    RankingService $rankingService
+) {
     global $page;
     global $sub;
 
     echo "<h1>Gebäudepunkte</h1>";
     echo "<h2>Gebäudepunkte neu berechnen</h2><form action=\"?page=$page&amp;sub=$sub\" method=\"POST\">";
     if ($request->request->has('recalc') && $request->request->get('recalc') != "") {
-        echo MessageBox::ok("", Ranking::calcBuildingPoints());
+        echo MessageBox::ok("", $rankingService->calcBuildingPoints());
     }
     echo "Nach jeder Änderung an den Gebäuden müssen die Gebäudepunkte neu berechnet werden.<br/><br/>
         Diese Aktion kann eine Weile dauern! ";

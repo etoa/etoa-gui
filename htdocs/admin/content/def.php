@@ -6,6 +6,7 @@ use EtoA\Defense\DefenseDataRepository;
 use EtoA\Defense\DefenseQueueRepository;
 use EtoA\Defense\DefenseRepository;
 use EtoA\Defense\DefenseSort;
+use EtoA\Ranking\RankingService;
 use Symfony\Component\HttpFoundation\Request;
 
 /** @var ConfigurationService */
@@ -17,8 +18,12 @@ $defenseNames = $defenseDataRepository->getDefenseNames(true);
 
 /** @var DefenseRepository $defenseRepository */
 $defenseRepository = $app[DefenseRepository::class];
+
 /** @var DefenseQueueRepository $defenseQueueRepository */
 $defenseQueueRepository = $app[DefenseQueueRepository::class];
+
+/** @var RankingService $rankingService */
+$rankingService = $app[RankingService::class];
 
 $request = Request::createFromGlobals();
 //
@@ -28,7 +33,7 @@ if ($sub == "battlepoints") {
     echo "<h1>Punkte</h1>";
     echo "<h2>Punkte neu berechnen</h2><form action=\"?page=$page&amp;sub=$sub\" method=\"POST\">";
     if (isset($_POST['recalc']) && $_POST['recalc'] != "") {
-        echo MessageBox::ok("", Ranking::calcDefensePoints());
+        echo MessageBox::ok("", $rankingService->calcDefensePoints());
     }
     echo "Nach jeder direkter &Auml;nderung an den Verteidigungsanlagen via Datenbank m&uuml;ssen die Punkte neu berechnet werden: ";
     echo "<br/><br/><input type=\"submit\" name=\"recalc\" value=\"Neu berechnen\" /></form>";

@@ -1,15 +1,24 @@
 <?PHP
 
+use EtoA\Ranking\RankingService;
+use Pimple\Container;
+
 /**
  * Calculate points and update ranking
  */
 class CalculateRankingTask implements IPeriodicTask
 {
+    private RankingService $rankingService;
+
+    function __construct(Container $app)
+    {
+        $this->rankingService = $app[RankingService::class];
+    }
+
     function run()
     {
-        $num = Ranking::calc();
-        $d = $num[0] > 0 ? $num[1] / $num[0] : 0;
-        return "Die Punkte von " . $num[0] . " Spielern wurden aktualisiert; ein Spieler hat durchschnittlich " . nf($d) . " Punkte";
+        $result = $this->rankingService->calc();
+        return "Die Punkte von " . $result->numberOfUsers . " Spielern wurden aktualisiert; ein Spieler hat durchschnittlich " . nf($result->getAveragePoints()) . " Punkte";
     }
 
     function getDescription()

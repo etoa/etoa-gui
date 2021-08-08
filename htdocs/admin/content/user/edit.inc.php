@@ -6,6 +6,7 @@ use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Help\TicketSystem\TicketRepository;
 use EtoA\HostCache\NetworkNameService;
 use EtoA\Race\RaceDataRepository;
+use EtoA\Ranking\RankingService;
 use EtoA\Specialist\SpecialistDataRepository;
 use EtoA\User\UserCommentRepository;
 use EtoA\User\UserLoginFailureRepository;
@@ -50,6 +51,9 @@ $userPropertiesRepository = $app[UserPropertiesRepository::class];
 
 /** @var NetworkNameService $networkNameService */
 $networkNameService = $app[NetworkNameService::class];
+
+/** @var RankingService $rankingService */
+$rankingService = $app[RankingService::class];
 
 if (isset($_GET['id']))
     $id = $_GET['id'];
@@ -1103,7 +1107,7 @@ if (mysql_num_rows($res) > 0) {
             </tr>";
 
     echo '<tr><th>Banner:</th><td>';
-    $name = Ranking::getUserBannerPath($id);
+    $name = $rankingService->getUserBannerPath($id);
     if (file_exists($name)) {
         echo '
                 <img src="' . $name . '" alt="Banner"><br>

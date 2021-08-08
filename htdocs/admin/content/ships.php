@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Ranking\RankingService;
 use EtoA\Ship\ShipDataRepository;
 use EtoA\Ship\ShipQueueRepository;
 use EtoA\Ship\ShipRepository;
@@ -14,8 +15,12 @@ $shipDataRepository = $app[ShipDataRepository::class];
 
 /** @var ShipRepository $shipRepository */
 $shipRepository = $app[ShipRepository::class];
+
 /** @var ShipQueueRepository $shipQueueRepository */
 $shipQueueRepository = $app[ShipQueueRepository::class];
+
+/** @var RankingService $rankingService */
+$rankingService = $app[RankingService::class];
 
 //
 // Battlepoints
@@ -25,7 +30,7 @@ if ($sub == "battlepoints") {
 
     echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"POST\">";
     if (isset($_POST['recalc'])) {
-        echo MessageBox::ok("", Ranking::calcShipPoints());
+        echo MessageBox::ok("", $rankingService->calcShipPoints());
     }
     echo "<p>Nach jeder direkter &Auml;nderung an den Schiffen via Datenbank m&uuml;ssen die Punkte neu berechnet werden!</p>
         <p><input type=\"submit\" name=\"recalc\" value=\"Neu berechnen\" /></p>
