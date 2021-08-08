@@ -78,7 +78,10 @@ class RankingServiceProvider implements ServiceProviderInterface
 
         $pimple[UserBannerService::class] = function (Container $pimple): UserBannerService {
             return new UserBannerService(
-                $pimple[ConfigurationService::class]
+                $pimple[ConfigurationService::class],
+                $pimple[UserRepository::class],
+                $pimple[AllianceRepository::class],
+                $pimple[RaceDataRepository::class]
             );
         };
 

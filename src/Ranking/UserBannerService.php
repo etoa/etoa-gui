@@ -4,20 +4,32 @@ declare(strict_types=1);
 
 namespace EtoA\Ranking;
 
+use EtoA\Alliance\AllianceRepository;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Race\RaceDataRepository;
+use EtoA\User\UserRepository;
 use GdImage;
 
 class UserBannerService
 {
     private ConfigurationService $config;
+    private UserRepository $userRepository;
+    private AllianceRepository $allianceRepository;
+    private RaceDataRepository $raceDataRepository;
 
     private string $userBannerBackgroundImage = "images/userbanner/userbanner1.png";
     private string $userBannerFont = "images/userbanner/calibri.ttf";
 
     public function __construct(
-        ConfigurationService $config
+        ConfigurationService $config,
+        UserRepository $userRepository,
+        AllianceRepository $allianceRepository,
+        RaceDataRepository $raceDataRepository
     ) {
         $this->config = $config;
+        $this->userRepository = $userRepository;
+        $this->allianceRepository = $allianceRepository;
+        $this->raceDataRepository = $raceDataRepository;
     }
 
     public function createUserBanner(): void
@@ -29,45 +41,27 @@ class UserBannerService
 
         $createdFiles = array();
 
-        $res = dbquery("
-            SELECT
-                u.user_nick,
-                a.alliance_tag,
-                a.alliance_name,
-                r.race_name,
-                u.user_points,
-                u.user_id,
-                u.admin,
-                u.user_ghost,
-                u.user_rank
-            FROM
-                users u
-            LEFT JOIN
-                alliances a
-                ON u.user_alliance_id=a.alliance_id
-            LEFT JOIN
-                races r
-                On u.user_race_id=r.race_id
-            ");
-        while ($arr = mysql_fetch_assoc($res)) {
-            if ($arr['admin'] == 1) {
+        $allianceNames = $this->allianceRepository->getAllianceNamesWithTags();
+        $raceNames = $this->raceDataRepository->getRaceNames(true);
+        $users = $this->userRepository->searchUsers();
+        foreach ($users as $user) {
+            if ($user->admin == 1) {
                 $pt = "  -  Game-Admin";
-            } elseif ($arr['user_ghost'] == 1) {
+            } elseif ($user->ghost) {
                 $pt = "";
             } else {
-                $pt = "  -  " . nf($arr['user_points']) . " Punkte, Platz " . $arr['user_rank'] . "";
+                $pt = "  -  " . nf($user->points) . " Punkte, Platz " . $user->rank . "";
             }
             $text = $this->config->get('roundname') . $pt;
 
             $im = $this->createUserBannerImage(
-                $arr['user_nick'],
-                $arr['alliance_tag'],
-                $arr['alliance_name'],
-                $arr['race_name'],
+                $user->nick,
+                $user->allianceId > 0 && isset($allianceNames[$user->allianceId]) ? $allianceNames[$user->allianceId] : null,
+                $raceNames[$user->raceId],
                 $text
             );
 
-            $file = $this->getUserBannerPath((int) $arr['user_id']);
+            $file = $this->getUserBannerPath($user->id);
             if (file_exists($file)) {
                 unlink($file);
             }
@@ -96,8 +90,7 @@ class UserBannerService
     /** @return resource|GdImage */
     private function createUserBannerImage(
         string $nick,
-        ?string $allianceTag,
-        ?string $allianceName,
+        ?string $alliance,
         string $race,
         string $text
     ) {
@@ -127,9 +120,9 @@ class UserBannerService
         imagettftext($im, 11, 0, $nsize[2] - $nsize[0] + 15, 20, $colWhite, $font, $race);
 
         // Alliance
-        if (filled($allianceTag)) {
-            imagettftext($im, 9, 0, 9, 39, $colBlack, $font, "<" . $allianceTag . "> " . $allianceName);
-            imagettftext($im, 9, 0, 8, 38, $colWhite, $font, "<" . $allianceTag . "> " . $allianceName);
+        if (filled($alliance)) {
+            imagettftext($im, 9, 0, 9, 39, $colBlack, $font, $alliance);
+            imagettftext($im, 9, 0, 8, 38, $colWhite, $font, $alliance);
         }
 
         // Text
