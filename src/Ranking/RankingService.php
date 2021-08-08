@@ -243,12 +243,12 @@ class RankingService
         file_put_contents($this->getUserTitlesAdminCacheFilePath(), $this->getTitles(true));
     }
 
-    public function getUserTitlesCacheFilePath()
+    public function getUserTitlesCacheFilePath(): string
     {
         return CACHE_ROOT . "/out/usertitles.html";
     }
 
-    public function getUserTitlesAdminCacheFilePath()
+    public function getUserTitlesAdminCacheFilePath(): string
     {
         return CACHE_ROOT . "/out/usertitles_a.html";
     }
