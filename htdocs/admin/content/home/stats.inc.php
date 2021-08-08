@@ -26,54 +26,71 @@ $mode = isset($_GET['mode']) && $_GET['mode'] != "" ? $_GET['mode'] : "user";
 
 // Menü
 echo "<br/><table class=\"tbl\">";
-if ($mode == "user")
+
+if ($mode == "user") {
     echo "<tr><td class=\"statsTab\" ><a href=\"?page=$page&amp;sub=$sub&amp;mode=user\" class=\"tabEnabled\">Spieler</a></td>";
-else
+} else {
     echo "<tr><td class=\"statsTab\" ><a href=\"?page=$page&amp;sub=$sub&amp;mode=user\" class=\"tabDefault\">Spieler</a></td>";
-if ($mode == "ships")
+}
+
+if ($mode == "ships") {
     echo "<td class=\"statsTab\" ><a href=\"?page=$page&amp;sub=$sub&amp;mode=ships\" class=\"tabEnabled\">Flotten</a></td>";
-else
+} else {
     echo "<td class=\"statsTab\" ><a href=\"?page=$page&amp;sub=$sub&amp;mode=ships\" class=\"tabDefault\">Flotten</a></td>";
-if ($mode == "tech")
+}
+
+if ($mode == "tech") {
     echo "<td class=\"statsTab\" ><a href=\"?page=$page&amp;sub=$sub&amp;mode=tech\" class=\"tabEnabled\">Technologien</a></td>";
-else
+} else {
     echo "<td class=\"statsTab\" ><a href=\"?page=$page&amp;sub=$sub&amp;mode=tech\" class=\"tabDefault\">Technologien</a></td>";
-if ($mode == "buildings")
+}
+
+if ($mode == "buildings") {
     echo "<td class=\"statsTab\" ><a href=\"?page=$page&amp;sub=$sub&amp;mode=buildings\" class=\"tabEnabled\">Geb&auml;ude</a></td>";
-else
+} else {
     echo "<td class=\"statsTab\" ><a href=\"?page=$page&amp;sub=$sub&amp;mode=buildings\" class=\"tabDefault\">Geb&auml;ude</a></td>";
-if ($mode == "exp")
+}
+
+if ($mode == "exp") {
     echo "<td class=\"statsTab\" ><a href=\"?page=$page&amp;sub=$sub&amp;mode=exp\" class=\"tabEnabled\">Exp</a></td>";
-else
+} else {
     echo "<td class=\"statsTab\" ><a href=\"?page=$page&amp;sub=$sub&amp;mode=exp\" class=\"tabDefault\">Exp</a></td>";
+}
 
-
-if ($mode == "battle")
+if ($mode == "battle") {
     echo "<td class=\"statsTab\" ><a href=\"?page=$page&amp;sub=$sub&amp;mode=battle\" class=\"tabEnabled\">Kampf</a></td>";
-else
+} else {
     echo "<td class=\"statsTab\" ><a href=\"?page=$page&amp;sub=$sub&amp;mode=battle\" class=\"tabDefault\">Kampf</a></td>";
-if ($mode == "trade")
-    echo "<td class=\"statsTab\" ><a href=\"?page=$page&amp;sub=$sub&amp;mode=trade\" class=\"tabEnabled\">Handel</a></td>";
-else
-    echo "<td class=\"statsTab\" ><a href=\"?page=$page&amp;sub=$sub&amp;mode=trade\" class=\"tabDefault\">Handel</a></td>";
-if ($mode == "diplomacy")
-    echo "<td class=\"statsTab\" ><a href=\"?page=$page&amp;sub=$sub&amp;mode=diplomacy\" class=\"tabEnabled\">Diplomatie</a></td>";
-else
-    echo "<td class=\"statsTab\" ><a href=\"?page=$page&amp;sub=$sub&amp;mode=diplomacy\" class=\"tabDefault\">Diplomatie</a></td>";
-if ($mode == "alliances")
-    echo "<td class=\"statsTab\" ><a href=\"?page=$page&amp;sub=$sub&amp;mode=alliances\" class=\"tabEnabled\">Allianzen</a></td>";
-else
-    echo "<td class=\"statsTab\" ><a href=\"?page=$page&amp;sub=$sub&amp;mode=alliances\" class=\"tabDefault\">Allianzen</a></td>";
-if ($mode == "base")
-    echo "<td class=\"statsTab\" ><a href=\"?page=$page&amp;sub=$sub&amp;mode=base\" class=\"tabEnabled\">Allianzbasis</a></td>";
-else
-    echo "<td class=\"statsTab\" ><a href=\"?page=$page&amp;sub=$sub&amp;mode=base\" class=\"tabDefault\">Allianzbasis</a></td>";
+}
 
-if (ENABLE_USERTITLES == 1) {
-    if ($mode == "titles")
-        echo "<td class=\"statsTab\" ><a href=\"?page=$page&amp;sub=$sub&amp;mode=titles\" class=\"tabEnabled\">Titel</a></td></tr>";
-    else
-        echo "<td class=\"statsTab\" ><a href=\"?page=$page&amp;sub=$sub&amp;mode=titles\" class=\"tabDefault\">Titel</a></td></tr>";
+if ($mode == "trade") {
+    echo "<td class=\"statsTab\" ><a href=\"?page=$page&amp;sub=$sub&amp;mode=trade\" class=\"tabEnabled\">Handel</a></td>";
+} else {
+    echo "<td class=\"statsTab\" ><a href=\"?page=$page&amp;sub=$sub&amp;mode=trade\" class=\"tabDefault\">Handel</a></td>";
+}
+
+if ($mode == "diplomacy") {
+    echo "<td class=\"statsTab\" ><a href=\"?page=$page&amp;sub=$sub&amp;mode=diplomacy\" class=\"tabEnabled\">Diplomatie</a></td>";
+} else {
+    echo "<td class=\"statsTab\" ><a href=\"?page=$page&amp;sub=$sub&amp;mode=diplomacy\" class=\"tabDefault\">Diplomatie</a></td>";
+}
+
+if ($mode == "alliances") {
+    echo "<td class=\"statsTab\" ><a href=\"?page=$page&amp;sub=$sub&amp;mode=alliances\" class=\"tabEnabled\">Allianzen</a></td>";
+} else {
+    echo "<td class=\"statsTab\" ><a href=\"?page=$page&amp;sub=$sub&amp;mode=alliances\" class=\"tabDefault\">Allianzen</a></td>";
+}
+
+if ($mode == "base") {
+    echo "<td class=\"statsTab\" ><a href=\"?page=$page&amp;sub=$sub&amp;mode=base\" class=\"tabEnabled\">Allianzbasis</a></td>";
+} else {
+    echo "<td class=\"statsTab\" ><a href=\"?page=$page&amp;sub=$sub&amp;mode=base\" class=\"tabDefault\">Allianzbasis</a></td>";
+}
+
+if ($mode == "titles") {
+    echo "<td class=\"statsTab\" ><a href=\"?page=$page&amp;sub=$sub&amp;mode=titles\" class=\"tabEnabled\">Titel</a></td></tr>";
+} else {
+    echo "<td class=\"statsTab\" ><a href=\"?page=$page&amp;sub=$sub&amp;mode=titles\" class=\"tabDefault\">Titel</a></td></tr>";
 }
 
 echo "</table><br/>";

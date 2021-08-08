@@ -17,11 +17,8 @@ class UpdateUserTitlesTask implements IPeriodicTask
 
     function run()
     {
-        if (ENABLE_USERTITLES == 1) {
-            $this->rankingService->calcTitles();
-            return "User Titel aktualisiert";
-        }
-        return "User Titel nicht aktualisiert (deaktiviert)";
+        $this->rankingService->calcTitles();
+        return "User Titel aktualisiert";
     }
 
     function getDescription()
