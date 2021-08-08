@@ -41,6 +41,17 @@ class UserSearch extends AbstractSearch
         return $this;
     }
 
+    public function inHolidays(?bool $active = true): self
+    {
+        if ($active === true) {
+            $this->parts[] = "user_hmode_from > 0";
+        } elseif ($active === false) {
+            $this->parts[] = "user_hmode_from = 0";
+        }
+
+        return $this;
+    }
+
     public function hasPoints(): self
     {
         $this->parts[] = "user_points > 0";

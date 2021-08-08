@@ -43,4 +43,10 @@ class UserStatRepository extends AbstractRepository
 
         return array_map(fn (array $row) => new UserStat($row), $data);
     }
+
+    public function truncate(): void
+    {
+        $this->getConnection()
+            ->executeStatement("TRUNCATE TABLE user_stats;");
+    }
 }

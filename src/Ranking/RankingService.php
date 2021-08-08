@@ -332,43 +332,26 @@ class RankingService
         }
 
         // Statistiktabelle leeren
-        dbquery("TRUNCATE TABLE user_stats;");
-
-        // User-ID's laden
-        $ures = dbquery("
-                SELECT
-                    user_id,
-                    user_nick,
-                    user_race_id,
-                    user_alliance_id,
-                    user_rank_highest,
-                    user_blocked_to,
-                    user_hmode_from,
-                    user_logouttime
-                FROM
-                    users
-                WHERE
-                    user_ghost=0" .
-            // same check as below to set `user_stats`.`hmod` field
-            ($this->config->getBoolean('show_hmod_users_stats') ? '' : ' AND (user_hmode_from = 0)') .
-            ';');
+        $this->userStatRepository->truncate();
 
         $user_stats_query = "";
         $user_points_query = "";
-        $user_rank_highest = array();
+        $user_rank_highest = [];
         $max_points_building = 0;
-        $points_building_arr = array();
+        $points_building_arr = [];
         $max_points = 0;
-        $points_arr = array();
+        $points_arr = [];
 
-        while ($uarr = mysql_fetch_assoc($ures)) {
-            $userId = (int) $uarr['user_id'];
-
+        $includeUsersInHolidas = $this->config->getBoolean('show_hmod_users_stats');
+        $users = $this->userRepository->searchUsers(UserSearch::create()
+            ->notGhost()
+            ->inHolidays($includeUsersInHolidas ? null : false));
+        foreach ($users as $user) {
             // first 24hours no highest rank calculation
             if (time() > (3600 * 24 + $this->config->param1Int("enable_login"))) {
-                $user_rank_highest[$userId] = $uarr['user_rank_highest'] > 0 ? $uarr['user_rank_highest'] : 9999;
+                $user_rank_highest[$user->id] = $user->rankHighest > 0 ? $user->rankHighest : 9999;
             } else {
-                $user_rank_highest[$userId] = 0;
+                $user_rank_highest[$user->id] = 0;
             }
 
             $points = 0.0;
@@ -389,7 +372,7 @@ class RankingService
                     ON
                         planets.id=entities.id
                         AND planets.planet_user_main=1
-                        AND planets.planet_user_id='" . $userId . "';
+                        AND planets.planet_user_id='" . $user->id . "';
                 ");
             if (mysql_num_rows($res)) {
                 $arr = mysql_fetch_row($res);
@@ -406,7 +389,7 @@ class RankingService
                     FROM
                         shiplist
                     WHERE
-                        shiplist_user_id='" . $userId . "';
+                        shiplist_user_id='" . $user->id . "';
                 ");
             while ($arr = mysql_fetch_assoc($res)) {
                 $p = ($arr['shiplist_bunkered'] + $arr['shiplist_count']) * $ship[$arr['shiplist_ship_id']];
@@ -426,7 +409,7 @@ class RankingService
                         fleet_ships AS fs
                         ON f.id = fs.fs_fleet_id
                         AND fs.fs_ship_faked='0'
-                        AND f.user_id='" . $userId . "'
+                        AND f.user_id='" . $user->id . "'
                 ;");
             while ($arr = mysql_fetch_assoc($res)) {
                 $p = $arr['fs_ship_cnt'] * $ship[$arr['fs_ship_id']];
@@ -442,7 +425,7 @@ class RankingService
                     FROM
                         deflist
                     WHERE
-                        deflist_user_id='" . $userId . "';
+                        deflist_user_id='" . $user->id . "';
                 ");
             while ($arr = mysql_fetch_assoc($res)) {
                 $p = round($arr['deflist_count'] * $def[$arr['deflist_def_id']]);
@@ -458,7 +441,7 @@ class RankingService
                     FROM
                         buildlist
                     WHERE
-                        buildlist_user_id='" . $userId . "';
+                        buildlist_user_id='" . $user->id . "';
                 ");
             if (mysql_num_rows($res) > 0) {
                 while ($arr = mysql_fetch_assoc($res)) {
@@ -471,7 +454,7 @@ class RankingService
             }
 
             // Punkte für Forschung
-            $techList = $this->technologyRepository->getTechnologyLevels($userId);
+            $techList = $this->technologyRepository->getTechnologyLevels($user->id);
             foreach ($techList as $technologyId => $level) {
                 $p = round($techPoints[$technologyId][$level]);
                 $points += $p;
@@ -485,7 +468,7 @@ class RankingService
                     FROM
                         shiplist
                     WHERE
-                        shiplist_user_id='" . $userId . "'
+                        shiplist_user_id='" . $user->id . "'
                         AND shiplist_count=1;
                 ");
             $arr = mysql_fetch_row($res);
@@ -501,7 +484,7 @@ class RankingService
                     ON
                         fleet.id=fleet_ships.fs_fleet_id
                     AND
-                        fleet.user_id='" . $userId . "'
+                        fleet.user_id='" . $user->id . "'
                     AND
                         fleet_ships.fs_ship_cnt='1'
                 ");
@@ -510,24 +493,24 @@ class RankingService
 
             // Save part of insert query
             $user_stats_query .= ",(
-                        " . $userId . ",
+                        " . $user->id . ",
                         " . $points . ",
                         " . $points_ships . ",
                         " . $points_tech . ",
                         " . $points_building . ",
                         " . $points_exp . ",
-                        '" . $uarr['user_nick'] . "',
-                        '" . ($uarr['user_alliance_id'] > 0 ? $alliance[$uarr['user_alliance_id']] : '') . "',
-                        '" . $uarr['user_alliance_id'] . "',
-                        '" . ($uarr['user_race_id'] > 0 ? $race[$uarr['user_race_id']] : '') . "',
+                        '" . $user->nick . "',
+                        '" . ($user->allianceId > 0 ? $alliance[$user->allianceId] : '') . "',
+                        '" . $user->allianceId . "',
+                        '" . ($user->raceId > 0 ? $race[$user->raceId] : '') . "',
                         '" . $sx . "',
                         '" . $sy . "',
-                        '" . ($uarr['user_blocked_to'] > $time ? 1 : 0) . "',
-                        '" . ($uarr['user_logouttime'] < $time - $inactiveTime ? 1 : 0) . "',
-                        '" . ($uarr['user_hmode_from'] > 0 ? 1 : 0) . "'
+                        '" . ($user->blockedTo > $time ? 1 : 0) . "',
+                        '" . ($user->logoutTime < $time - $inactiveTime ? 1 : 0) . "',
+                        '" . ($user->hmodFrom > 0 ? 1 : 0) . "'
                     )";
             $user_points_query .= ",(
-                        '" . $userId . "',
+                        '" . $user->id . "',
                         '" . time() . "',
                         '" . $points . "',
                         '" . $points_ships . "',
@@ -538,9 +521,8 @@ class RankingService
             $allpoints += $points;
 
             $max_points_building = max($max_points_building, $points_building);
-            $points_building_arr[$userId] = $points_building;
+            $points_building_arr[$user->id] = $points_building;
         }
-        unset($userId);
 
         // Save points in memory cached table
         if ($user_stats_query != "") {
@@ -964,13 +946,7 @@ class RankingService
         // Zeit in Config speichern
         $this->runtimeDataStore->set('statsupdate', (string) time());
 
-        $num = mysql_num_rows($ures);
-
-        // Arrays löschen (Speicher freigeben)
-        mysql_free_result($res);
-        unset($arr);
-
-        return new RankingCalculationResult($num, $allpoints);
+        return new RankingCalculationResult(count($users), $allpoints);
     }
 
     public function createUserBanner(): void
