@@ -17,6 +17,8 @@ use EtoA\Support\RuntimeDataStore;
 use EtoA\Technology\TechnologyDataRepository;
 use EtoA\Technology\TechnologyPointRepository;
 use EtoA\Technology\TechnologyRepository;
+use EtoA\Universe\Cell\Cell;
+use EtoA\Universe\Cell\CellRepository;
 use EtoA\User\UserRatingRepository;
 use EtoA\User\UserRatingSearch;
 use EtoA\User\UserRatingSort;
@@ -49,6 +51,7 @@ class RankingService
     private UserStatRepository $userStatRepository;
     private UserRepository $userRepository;
     private UserRatingRepository $userRatingRepository;
+    private CellRepository $cellRepository;
 
     private string $userBannerBackgroundImage = "images/userbanner/userbanner1.png";
     private string $userBannerFont = "images/userbanner/calibri.ttf";
@@ -68,7 +71,8 @@ class RankingService
         RaceDataRepository $raceRepository,
         UserStatRepository $userStatRepository,
         UserRepository $userRepository,
-        UserRatingRepository $userRatingRepository
+        UserRatingRepository $userRatingRepository,
+        CellRepository $cellRepository
     ) {
         $this->config = $config;
         $this->runtimeDataStore = $runtimeDataStore;
@@ -85,6 +89,7 @@ class RankingService
         $this->userStatRepository = $userStatRepository;
         $this->userRepository = $userRepository;
         $this->userRatingRepository = $userRatingRepository;
+        $this->cellRepository = $cellRepository;
     }
 
     public function getTitles(bool $admin = false): string
@@ -293,19 +298,10 @@ class RankingService
         }
         $techPoints = $this->technologyPointRepository->getAllMap();
 
-        // Cells laden
-        $res = dbquery("
-                SELECT
-                    id,
-                    sx,
-                    sy
-                FROM
-                    cells;
-            ");
-        $cells = array();
-        while ($arr = mysql_fetch_row($res)) {
-            $cells[$arr[0]][0] = $arr[1];
-            $cells[$arr[0]][1] = $arr[2];
+        /** @var Cell[] $cells */
+        $cells = [];
+        foreach ($this->cellRepository->findAllCoordinates() as $cell) {
+            $cells[$cell->id] = $cell;
         }
 
         $race = $this->raceRepository->getRaceNames();
@@ -397,8 +393,8 @@ class RankingService
                 ");
             if (mysql_num_rows($res)) {
                 $arr = mysql_fetch_row($res);
-                $sx = $cells[$arr[0]][0];
-                $sy = $cells[$arr[0]][1];
+                $sx = $cells[$arr[0]]->sx;
+                $sy = $cells[$arr[0]]->sy;
             }
 
             // Punkte für Schiffe (aus Planeten)
@@ -931,11 +927,11 @@ class RankingService
                     $arr['alliance_tag'],
                     $arr['alliance_name'],
                     (int) $arr['cnt'],
-                    $points,
-                    $upoints,
-                    $apoints,
-                    $tpoints,
-                    $bpoints,
+                    (int) $points,
+                    (int) $upoints,
+                    (int) $apoints,
+                    (int) $tpoints,
+                    (int) $bpoints,
                     (int) $arr['uavg'],
                     (int) $arr['cnt'],
                     (int) $arr['alliance_rank_current']
