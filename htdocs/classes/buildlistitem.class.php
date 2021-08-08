@@ -284,8 +284,7 @@ class BuildListItem
         $this->buildType = 3;
 
         if ($this->id > 0) {
-            dbquery("UPDATE buildlist SET buildlist_build_type='3', buildlist_build_start_time='" . $this->startTime .
-                "', buildlist_build_end_time='" . $this->endTime . "' WHERE buildlist_id='" . $this->id . "' LIMIT 1;");
+            $buildingRepository->updateBuildingListEntry($this->id, $this->level, $this->buildType, $this->startTime, $this->endTime);
         } else {
             dbquery("INSERT INTO
                         buildlist
@@ -375,7 +374,10 @@ class BuildListItem
     public function demolish()
     {
         // TODO
-        global $cp, $cu;
+        global $cp, $cu, $app;
+
+        /** @var BuildingRepository $buildingRepository */
+        $buildingRepository = $app[BuildingRepository::class];
 
         $costs = $this->getDemolishCosts();
         $this->changedFields['startTime'] = "buildlist_build_start_time";
@@ -386,7 +388,7 @@ class BuildListItem
         $this->endTime = $this->startTime + $costs['time'];
         $this->buildType = 4;
 
-        dbquery("UPDATE buildlist SET buildlist_build_type='4', buildlist_build_start_time='" . $this->startTime . "', buildlist_build_end_time='" . $this->endTime . "' WHERE buildlist_id='" . $this->id . "' LIMIT 1;");
+        $buildingRepository->updateBuildingListEntry($this->id, $this->level, $this->buildType, $this->startTime, $this->endTime);
         BuildList::$underConstruction = true;
 
         $this->planetRepo->addResources($cp->id, -$costs['costs0'], -$costs['costs1'], -$costs['costs2'], -$costs['costs3'], -$costs['costs4']);
@@ -432,7 +434,7 @@ class BuildListItem
             $this->startTime = 0;
             $this->buildType = 0;
 
-            dbquery("UPDATE buildlist SET buildlist_build_type='0', buildlist_build_start_time='0', buildlist_build_end_time='0' WHERE buildlist_id='" . $this->id . "' LIMIT 1;");
+            $buildingRepository->updateBuildingListEntry($this->id, $this->level, 0, 0, 0);
 
             $buildingRepository->markBuildingWorkingStatus($cu->getId(), (int) $cp->id, BuildingId::BUILDING, false);
 
@@ -473,7 +475,10 @@ class BuildListItem
     {
         if ($this->endTime > time()) {
             // TODO
-            global $cp, $cu;
+            global $cp, $cu, $app;
+
+            /** @var BuildingRepository $buildingRepository */
+            $buildingRepository = $app[BuildingRepository::class];
 
             $costs = $this->getDemolishCosts();
             $fac = ($this->endTime - time()) / ($this->endTime - $this->startTime);
@@ -481,7 +486,7 @@ class BuildListItem
             $this->startTime = 0;
             $this->buildType = 0;
 
-            dbquery("UPDATE buildlist SET buildlist_build_type='0', buildlist_build_start_time='0', buildlist_build_end_time='0' WHERE buildlist_id='" . $this->id . "' LIMIT 1;");
+            $buildingRepository->updateBuildingListEntry($this->id, $this->level, 0, 0, 0);
             BuildList::$underConstruction = false;
 
             $this->planetRepo->addResources($cp->id, $costs['costs0'] * $fac, $costs['costs1'] * $fac, $costs['costs2'] * $fac, $costs['costs3'] * $fac, $costs['costs4'] * $fac);

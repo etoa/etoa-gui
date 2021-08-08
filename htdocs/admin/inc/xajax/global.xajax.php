@@ -1,5 +1,7 @@
 <?PHP
 
+use EtoA\Alliance\AllianceRepository;
+use EtoA\Alliance\AllianceSearch;
 use EtoA\Building\BuildingDataRepository;
 use EtoA\Building\BuildingRepository;
 use EtoA\Defense\DefenseDataRepository;
@@ -1076,18 +1078,20 @@ function searchUserList($val, $function)
 //Listet gefundene Allianzen auf
 function searchAlliance($val, $field_id = 'alliance_name', $box_id = 'citybox')
 {
+    global $app;
+
+    /** @var AllianceRepository $allianceRepository */
+    $allianceRepository = $app[AllianceRepository::class];
 
     $sOut = "";
     $nCount = 0;
     $sLastHit = null;
 
-    $res = dbquery("SELECT alliance_name FROM alliances WHERE alliance_name LIKE '%" . $val . "%' LIMIT 20;");
-    if (mysql_num_rows($res) > 0) {
-        while ($arr = mysql_fetch_row($res)) {
-            $nCount++;
-            $sOut .= "<a href=\"#\" onclick=\"javascript:document.getElementById('" . $field_id . "').value='" . htmlentities($arr[0]) . "';document.getElementById('" . $box_id . "').style.display = 'none';\">" . htmlentities($arr[0]) . "</a>";
-            $sLastHit = $arr[0];
-        }
+    $allianceNames = $allianceRepository->getAllianceNames(AllianceSearch::create()->nameLike($val), 20);
+    foreach ($allianceNames as $allianceName) {
+        $nCount++;
+        $sOut .= "<a href=\"#\" onclick=\"javascript:document.getElementById('" . $field_id . "').value='" . htmlentities($allianceName) . "';document.getElementById('" . $box_id . "').style.display = 'none';\">" . htmlentities($allianceName) . "</a>";
+        $sLastHit = $allianceName;
     }
 
     if ($nCount > 20) {
