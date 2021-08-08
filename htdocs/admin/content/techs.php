@@ -39,11 +39,9 @@ if ($sub == "points") {
     $technologyNames = $technologyDataRepository->getTechnologyNames(true);
     if (count($technologyNames) > 0) {
         $techPoints = $technologyPointRepository->getAllMap();
-
         echo "<table class=\"tb\">";
         foreach ($technologyNames as $technologyId => $technologyName) {
             echo "<tr><th>" . $technologyName . "</th><td style=\"width:70%\"><table class=\"tb\">";
-            $points = $technologyPointRepository->getAllMap();
             if (isset($techPoints[$technologyId])) {
                 $cnt = 0;
                 foreach ($techPoints[$technologyId] as $level => $points) {
