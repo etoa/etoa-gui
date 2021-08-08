@@ -28,6 +28,7 @@ use EtoA\Technology\TechnologyPointRepository;
 use EtoA\Technology\TechnologyRepository;
 use EtoA\Universe\Cell\Cell;
 use EtoA\Universe\Cell\CellRepository;
+use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\User\UserRepository;
 use EtoA\User\UserSearch;
@@ -60,6 +61,7 @@ class RankingService
     private UserStatRepository $userStatRepository;
     private UserRepository $userRepository;
     private CellRepository $cellRepository;
+    private EntityRepository $entityRepository;
 
     public function __construct(
         ConfigurationService $config,
@@ -81,7 +83,8 @@ class RankingService
         RaceDataRepository $raceRepository,
         UserStatRepository $userStatRepository,
         UserRepository $userRepository,
-        CellRepository $cellRepository
+        CellRepository $cellRepository,
+        EntityRepository $entityRepository
     ) {
         $this->config = $config;
         $this->runtimeDataStore = $runtimeDataStore;
@@ -103,6 +106,7 @@ class RankingService
         $this->userStatRepository = $userStatRepository;
         $this->userRepository = $userRepository;
         $this->cellRepository = $cellRepository;
+        $this->entityRepository = $entityRepository;
     }
 
     public function calc(): RankingCalculationResult
@@ -123,12 +127,6 @@ class RankingService
             $this->calcTechPoints();
         }
         $techPoints = $this->technologyPointRepository->getAllMap();
-
-        /** @var Cell[] $cells */
-        $cells = [];
-        foreach ($this->cellRepository->findAllCoordinates() as $cell) {
-            $cells[$cell->id] = $cell;
-        }
 
         $race = $this->raceRepository->getRaceNames();
 
@@ -187,23 +185,14 @@ class RankingService
             $sx = 0;
             $sy = 0;
 
-            // Zelle des Hauptplaneten
-            $res = dbquery("
-                    SELECT
-                        cell_id
-                    FROM
-                        entities
-                    INNER JOIN
-                        planets
-                    ON
-                        planets.id=entities.id
-                        AND planets.planet_user_main=1
-                        AND planets.planet_user_id='" . $user->id . "';
-                ");
-            if (mysql_num_rows($res)) {
-                $arr = mysql_fetch_row($res);
-                $sx = $cells[$arr[0]]->sx;
-                $sy = $cells[$arr[0]]->sy;
+            $planets = $this->planetRepository->getUserPlanets($user->id);
+            foreach ($planets as $planet) {
+                if ($planet->mainPlanet) {
+                    $entity = $this->entityRepository->findIncludeCell($planet->id);
+                    $sx = $entity->sx;
+                    $sy = $entity->sy;
+                    break;
+                }
             }
 
             $shipListItems = $this->shipRepository->findForUser($user->id);
@@ -230,7 +219,6 @@ class RankingService
             }
 
             // Punkte für Gebäude
-            $planets = $this->planetRepository->getUserPlanets($user->id);
             foreach ($planets as $planet) {
                 $buildingLevels = $this->buildingRepository->getBuildingLevels($planet->id);
                 foreach ($buildingLevels as $buildingId => $level) {
