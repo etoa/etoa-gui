@@ -26,8 +26,6 @@ use EtoA\Technology\Technology;
 use EtoA\Technology\TechnologyDataRepository;
 use EtoA\Technology\TechnologyPointRepository;
 use EtoA\Technology\TechnologyRepository;
-use EtoA\Universe\Cell\Cell;
-use EtoA\Universe\Cell\CellRepository;
 use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\User\UserRepository;
@@ -60,7 +58,6 @@ class RankingService
     private RaceDataRepository $raceRepository;
     private UserStatRepository $userStatRepository;
     private UserRepository $userRepository;
-    private CellRepository $cellRepository;
     private EntityRepository $entityRepository;
 
     public function __construct(
@@ -83,7 +80,6 @@ class RankingService
         RaceDataRepository $raceRepository,
         UserStatRepository $userStatRepository,
         UserRepository $userRepository,
-        CellRepository $cellRepository,
         EntityRepository $entityRepository
     ) {
         $this->config = $config;
@@ -105,7 +101,6 @@ class RankingService
         $this->raceRepository = $raceRepository;
         $this->userStatRepository = $userStatRepository;
         $this->userRepository = $userRepository;
-        $this->cellRepository = $cellRepository;
         $this->entityRepository = $entityRepository;
     }
 
@@ -191,6 +186,7 @@ class RankingService
                     $entity = $this->entityRepository->findIncludeCell($planet->id);
                     $sx = $entity->sx;
                     $sy = $entity->sy;
+
                     break;
                 }
             }
