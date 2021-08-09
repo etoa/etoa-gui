@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\Alliance\AllianceBuildingId;
+use EtoA\Alliance\AllianceBuildingRepository;
 use EtoA\Building\BuildingRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Market\MarketRepository;
@@ -17,6 +18,8 @@ $planetRepo = $app[PlanetRepository::class];
 $resourceBoxDrawer = $app[ResourceBoxDrawer::class];
 /** @var BuildingRepository $buildingRepository */
 $buildingRepository = $app[BuildingRepository::class];
+/** @var AllianceBuildingRepository $allianceBuildingRepository */
+$allianceBuildingRepository = $app[AllianceBuildingRepository::class];
 
 /********
  *	Datei-Struktur
@@ -78,7 +81,7 @@ if ($config->getBoolean('market_enabled')) {
 
             // Lädt Stufe des Allianzmarktplatzes
             if ($cu->allianceId() > 0)
-                $alliance_market_level = $cu->alliance->buildlist->getLevel(AllianceBuildingId::MARKET);
+                $alliance_market_level = $allianceBuildingRepository->getLevel($cu->allianceId(), AllianceBuildingId::MARKET);
             else
                 $alliance_market_level = 0;
 
@@ -210,7 +213,8 @@ if ($config->getBoolean('market_enabled')) {
             }
 
             if ($cd_enabled) {
-                countDown("cdcd", $cu->alliance->buildlist->getCooldown(AllianceBuildingId::MARKET));
+                $allianceMarketCooldown = $allianceBuildingRepository->getCooldown($cu->allianceId(), AllianceBuildingId::MARKET);
+                countDown("cdcd", $allianceMarketCooldown);
             }
         } else {
             info_msg("Dieses Gebäude ist noch bis " . df($market->deactivated) . " deaktiviert!");

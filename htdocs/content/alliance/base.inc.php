@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\Alliance\AllianceBuildingId;
+use EtoA\Alliance\AllianceBuildingRepository;
 use EtoA\Alliance\AllianceHistoryRepository;
 use EtoA\Alliance\AllianceRepository;
 use EtoA\Alliance\AllianceRights;
@@ -51,7 +52,8 @@ $allianceTechnologyRepository = $app[AllianceTechnologyRepository::class];
 $allianceRepository = $app[AllianceRepository::class];
 /** @var AllianceBase $allianceBase */
 $allianceBase = $app[AllianceBase::class];
-
+/** @var AllianceBuildingRepository $allianceBuildingRepository */
+$allianceBuildingRepository = $app[AllianceBuildingRepository::class];
 
 /** @var Request */
 $request = Request::createFromGlobals();
@@ -65,8 +67,8 @@ echo $resourceBoxDrawer->getHTML($planet);
 echo "<h2><a href=\"?page=" . $page . "&amp;action=" . $_GET['action'] . "\">Allianzbasis</a></h2>";
 
 // Schiffswerft gebaut?
-$shipyard = ($cu->alliance->buildlist->getLevel(AllianceBuildingId::SHIPYARD) >= 1) ? TRUE : FALSE;
-$research = ($cu->alliance->buildlist->getLevel(AllianceBuildingId::RESEARCH) >= 1) ? TRUE : FALSE;
+$allianceShipyardLevel = $allianceBuildingRepository->getLevel($cu->allianceId(), AllianceBuildingId::SHIPYARD);
+$allianceResearchLevel = $allianceBuildingRepository->getLevel($cu->allianceId(), AllianceBuildingId::RESEARCH);
 
 //
 // Navigation
@@ -88,11 +90,11 @@ echo "<a href=\"javascript:;\" onclick=\"showTab('tabBuildings')\">Gebäude</a> 
 
 $ddm = new DropdownMenu(1);
 $ddm->add('b', 'Gebäude', "showTab('tabBuildings');");
-if ($research) {
+if ($allianceResearchLevel > 0) {
     $ddm->add('r', 'Technologien', "showTab('tabResearch');");
 }
 $ddm->add('s', 'Speicher', "showTab('tabStorage');");
-if ($shipyard) {
+if ($allianceShipyardLevel > 0) {
     $ddm->add('sw', 'Schiffswerft', "showTab('tabShipyard');");
 }
 echo $ddm;
@@ -222,9 +224,7 @@ if (isset($_POST['filter_submit']) && checker_verify()) {
 // Allianzschiffe (wenn Schiffswerft gebaut)
 /** @var EtoA\Ship\Ship[] $ships */
 $ships = [];
-if ($shipyard) {
-    $allianceShipyardLevel = $cu->alliance->buildlist->getLevel(AllianceBuildingId::SHIPYARD);
-
+if ($allianceShipyardLevel > 0) {
     $allianceShips = $shipDataRepository->getAllianceShips();
     foreach ($allianceShips as $ship) {
         if ($ship->allianceShipyardLevel <= $allianceShipyardLevel) {
@@ -616,7 +616,7 @@ echo "<input type=\"hidden\" value=\"0\" name=\"research_id\" id=\"research_id\"
 // Es sind Technologien vorhanden
 // Es sind Gebäude vorhanden
 $technologyList = $allianceTechnologyRepository->getTechnologyList($alliance->id);
-if ($research && count($technologies) > 0) {
+if ($allianceResearchLevel > 0 && count($technologies) > 0) {
     $requirementStatus = AllianceItemRequirementStatus::createForTechnologies($technologies, $technologyList);
     foreach ($technologies as $technology) {
         $currentTechnologyListItem = $technologyList[$technology->id] ?? null;
@@ -925,7 +925,7 @@ if ($action2 == "shipyard") {
 }
 echo "<div id=\"tabShipyard\" style=\"display:" . $display . ";\">";
 
-if ($shipyard) {
+if ($allianceShipyardLevel > 0) {
     echo "<h1>Schiffswerft</h1>";
 
     echo "<form action=\"?page=" . $page . "&amp;action=" . $_GET['action'] . "&amp;action2=shipyard\" method=\"post\" id=\"alliance_shipyard\">\n";
@@ -938,7 +938,7 @@ if ($shipyard) {
         echo "<td style=\"text-align:center;\"><span " . tm("Produktionsstop", "Die Produktion wurde unterbrochen, da negative Rohstoffe vorhanden sind.") . ">Schiffsteile pro Stunde: 0</span></td>";
     } else {
         // if changed, also change classes/alliance.class.php
-        echo "<td style=\"text-align:center;\">Schiffsteile pro Stunde: " . ceil($config->getInt('alliance_shippoints_per_hour') * pow($config->getFloat('alliance_shippoints_base'), ($cu->alliance->buildlist->getLevel(AllianceBuildingId::SHIPYARD) - 1))) . "</td>";
+        echo "<td style=\"text-align:center;\">Schiffsteile pro Stunde: " . ceil($config->getInt('alliance_shippoints_per_hour') * pow($config->getFloat('alliance_shippoints_base'), ($allianceShipyardLevel - 1))) . "</td>";
     }
     echo "</tr>
     <tr>
