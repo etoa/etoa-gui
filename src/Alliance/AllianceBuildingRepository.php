@@ -27,7 +27,13 @@ class AllianceBuildingRepository extends AbstractRepository
             ->execute()
             ->fetchAllAssociative();
 
-        return array_map(fn (array $row) => new AllianceBuilding($row), $data);
+        $result = [];
+        foreach ($data as $row) {
+            $building = new AllianceBuilding($row);
+            $result[$building->id] = $building;
+        }
+
+        return $result;
     }
 
     public function existsInAlliance(int $allianceId, int $buildingId): bool
@@ -129,6 +135,28 @@ class AllianceBuildingRepository extends AbstractRepository
         );
     }
 
+    /**
+     * @return AllianceBuildList[]
+     */
+    public function getBuildList(int $allianceId): array
+    {
+        $data = $this->createQueryBuilder()
+            ->select('*')
+            ->from('alliance_buildlist')
+            ->where('alliance_buildlist_alliance_id = :allianceId')
+            ->setParameter('allianceId', $allianceId)
+            ->execute()
+            ->fetchAllAssociative();
+
+        $result = [];
+        foreach ($data as $row) {
+            $entry = new AllianceBuildList($row);
+            $result[$entry->buildingId] = $entry;
+        }
+
+        return $result;
+    }
+
     public function addToAlliance(int $allianceId, int $buildingId, int $level, int $amount, int $startTime = 0, int $endTime = 0): void
     {
         $this->createQueryBuilder()
@@ -149,6 +177,20 @@ class AllianceBuildingRepository extends AbstractRepository
                 'amount' => $amount,
                 'startTime' => $startTime,
                 'endTime' => $endTime,
+            ])
+            ->execute();
+    }
+
+    public function updateMembersForAlliance(int $allianceId, int $amount): void
+    {
+        $this->createQueryBuilder()
+            ->update('alliance_buildlist')
+            ->set('alliance_buildlist_member_for', ':amount')
+            ->where('alliance_buildlist_alliance_id = :alliance')
+            ->andWhere('alliance_buildlist_member_for < :amount')
+            ->setParameters([
+                'amount' => $amount,
+                'alliance' => $allianceId,
             ])
             ->execute();
     }

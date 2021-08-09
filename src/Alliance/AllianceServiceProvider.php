@@ -104,5 +104,15 @@ class AllianceServiceProvider implements ServiceProviderInterface
                 $pimple[AllianceNewsRepository::class]
             );
         };
+
+        $pimple[AllianceMemberCosts::class] = function (Container $pimple): AllianceMemberCosts {
+            return new AllianceMemberCosts(
+                $pimple[AllianceBuildingRepository::class],
+                $pimple[AllianceTechnologyRepository::class],
+                $pimple[ConfigurationService::class],
+                $pimple[AllianceRepository::class],
+                $pimple[AllianceHistoryRepository::class]
+            );
+        };
     }
 }

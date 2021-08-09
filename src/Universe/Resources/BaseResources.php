@@ -75,6 +75,15 @@ class BaseResources
         $this->food += $resources->food;
     }
 
+    public function remove(BaseResources $resources): void
+    {
+        $this->metal -= $resources->metal;
+        $this->crystal -= $resources->crystal;
+        $this->plastic -= $resources->plastic;
+        $this->fuel -= $resources->fuel;
+        $this->food -= $resources->food;
+    }
+
     public function getSum(): int
     {
         return $this->metal + $this->crystal + $this->plastic + $this->fuel + $this->food;
