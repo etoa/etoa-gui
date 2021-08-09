@@ -256,9 +256,6 @@ class Alliance
                 else
                     $this->founder = new User($this->founderId);
             }
-            if ($key == "buildlist" && $this->buildlist == null)
-                $this->buildlist = new AllianceBuildList($this->id, TRUE);
-
 
             // Protected properties
             if ($key == "changedFields")

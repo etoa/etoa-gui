@@ -2,7 +2,7 @@
 
 namespace EtoA\Alliance;
 
-class AllianceBuildList
+class AllianceBuildListItem
 {
     public int $id;
     public int $allianceId;

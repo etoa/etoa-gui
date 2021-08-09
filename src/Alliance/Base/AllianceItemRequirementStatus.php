@@ -3,7 +3,7 @@
 namespace EtoA\Alliance\Base;
 
 use EtoA\Alliance\AllianceBuilding;
-use EtoA\Alliance\AllianceBuildList;
+use EtoA\Alliance\AllianceBuildListItem;
 use EtoA\Alliance\AllianceTechnology;
 use EtoA\Alliance\AllianceTechnologyListItem;
 
@@ -49,7 +49,7 @@ class AllianceItemRequirementStatus
 
     /**
      * @param AllianceBuilding[] $buildings
-     * @param AllianceBuildList[] $buildingList
+     * @param AllianceBuildListItem[] $buildingList
      */
     public static function createForBuildings(array $buildings, array $buildingList): AllianceItemRequirementStatus
     {
@@ -65,7 +65,7 @@ class AllianceItemRequirementStatus
             }
         }
 
-        return new AllianceItemRequirementStatus($levelList, $requirementList, (bool) array_filter($buildingList, fn (AllianceBuildList $item) => $item->isUnderConstruction()));
+        return new AllianceItemRequirementStatus($levelList, $requirementList, (bool) array_filter($buildingList, fn (AllianceBuildListItem $item) => $item->isUnderConstruction()));
     }
 
     public function requirementsMet(int $itemId): bool

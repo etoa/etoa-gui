@@ -136,7 +136,7 @@ class AllianceBuildingRepository extends AbstractRepository
     }
 
     /**
-     * @return AllianceBuildList[]
+     * @return AllianceBuildListItem[]
      */
     public function getBuildList(int $allianceId): array
     {
@@ -150,7 +150,7 @@ class AllianceBuildingRepository extends AbstractRepository
 
         $result = [];
         foreach ($data as $row) {
-            $entry = new AllianceBuildList($row);
+            $entry = new AllianceBuildListItem($row);
             $result[$entry->buildingId] = $entry;
         }
 

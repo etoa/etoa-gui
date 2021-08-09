@@ -59,6 +59,7 @@ $request = Request::createFromGlobals();
 
 $planet = $planetRepo->find($cp->id);
 $technologies = $allianceTechnologyRepository->findAll();
+$buildings = $allianceBuildingRepository->findAll();
 
 // Zeigt eigene Rohstoffe an
 echo $resourceBoxDrawer->getHTML($planet);
@@ -69,7 +70,6 @@ echo "<h2><a href=\"?page=" . $page . "&amp;action=" . $_GET['action'] . "\">All
 $allianceShipyardLevel = $allianceBuildingRepository->getLevel($cu->allianceId(), AllianceBuildingId::SHIPYARD);
 $allianceResearchLevel = $allianceBuildingRepository->getLevel($cu->allianceId(), AllianceBuildingId::RESEARCH);
 
-$buildlist = new AllianceBuildList($cu->allianceId(), true);
 //
 // Navigation
 //
@@ -435,10 +435,16 @@ tableEnd();
 if (isset($_POST['building_submit']) && checker_verify()) {
     if (Alliance::checkActionRights(AllianceRights::BUILD_MINISTER)) {
         if (isset($_POST['building_id']) && $_POST['building_id'] != 0) {
-            if ($buildlist->build($_POST['building_id']))
-                success_msg("Gebäude wurde erfolgreich in Auftrag gegeben!");
-            else
-                error_msg($buildlist->getLastError());
+            $buildingId = $request->request->getInt('building_id');
+            try {
+                $alliance = $allianceRepository->getAlliance($cu->allianceId());
+                $building = $buildings[$buildingId];
+                $buildingList = $allianceBuildingRepository->getBuildList($alliance->id);
+                $allianceBase->buildBuilding($user, $alliance, $building, $buildingList[$buildingId] ?? null, AllianceItemRequirementStatus::createForBuildings($buildings, $buildingList));
+                success_msg("Forschung wurde erfolgreich in Auftrag gegeben!");
+            } catch (\RuntimeException $e) {
+                error_msg($e->getMessage());
+            }
         }
     }
 }
@@ -463,12 +469,7 @@ if (isset($_POST['research_submit']) && checker_verify()) {
 }
 
 $alliance = $allianceRepository->getAlliance($cu->allianceId());
-$allianceResources = new BaseResources();
-$allianceResources->metal = $alliance->resMetal;
-$allianceResources->crystal = $alliance->resCrystal;
-$allianceResources->plastic = $alliance->resPlastic;
-$allianceResources->fuel = $alliance->resFuel;
-$allianceResources->food = $alliance->resFood;
+$allianceResources = $alliance->getResources();
 
 $resName = array(
     0 => RES_METAL,
@@ -496,94 +497,89 @@ $cstr = checker_init();
 echo "<input type=\"hidden\" value=\"0\" name=\"building_id\" id=\"building_id\" />";
 
 // Es sind Gebäude vorhanden
-if ($buildlist->count()) {
-    $buildingIterator = $buildlist->getIterator();
-    while ($buildingIterator->valid()) {
+$buildingList = $allianceBuildingRepository->getBuildList($alliance->id);
+if (count($buildings) > 0) {
+    $requirementStatus = AllianceItemRequirementStatus::createForBuildings($buildings, $buildingList);
+    foreach ($buildings as $building) {
+        $currentBuildingListItem = $buildingList[$building->id] ?? null;
+        $itemStatus = $allianceBase->getBuildingBuildStatus($alliance, $building, $currentBuildingListItem, $requirementStatus);
+
+        if ($itemStatus->status === AllianceItemBuildStatus::STATUS_MISSING_REQUIREMENTS) {
+            continue;
+        }
+
         $style_message = '';
-        if ($buildlist->show($buildingIterator->key())) {
-            $level = $buildlist->getLevel($buildingIterator->key());
-            $title = $buildingIterator->current() . ' <span id="buildlevel">';
-            $title .= ($level > 0) ? $level : '';
-            $title .= '</span>';
-            tableStart($title);
-            echo "<tr>
-                <td style=\"width:120px;background:#000;vertical-align:middle;padding:0px;\">"
-                . $buildingIterator->current()->imgMiddle() . "
-                </td>
-                <td style=\"vertical-align:top;height:100px;\" colspan=\"6\">
-                " . $buildingIterator->current()->longDesc . "
-                </td>
-                    </tr>";
+        $level = $currentBuildingListItem !== null ? $currentBuildingListItem->level : null;
+        tableStart($building->name . ' <span id="buildlevel">' . ($level > 0 ? $level : '') . '</span>');
+
+        echo "<tr>
+            <td style=\"width:120px;background:#000;vertical-align:middle;padding:0px;\">
+            <img src=\"" . $building->getImagePath() . "\" style=\"width:120px;height:120px;\" alt=\"" . $building->name . "\"/>
+            </td>
+            <td style=\"vertical-align:top;height:100px;\" colspan=\"6\">
+            " . $building->longComment . "
+            </td>
+                </tr>";
             //
             // Baumenü
             //
 
-            echo "<tr>";
-            if ($buildlist->isMaxLevel($buildingIterator->key()))
-                echo "<td colspan=\"7\" style=\"text-align:center;\">Maximallevel erreicht!</td>";
-            else {
-                $costs = $buildingIterator->current()->getCosts($level + 1, $cu->alliance->memberCount);
-                $need_something = false;
-                $need = new BaseResources();
-                $style = [];
-                foreach ($resName as $id => $resourceName) {
-                    if ($allianceResources->get($id) >= $costs[$id + 1]) {
-                        $style[$id] = "";
-                    } else {
-                        $need_something = true;
+        echo "<tr>";
+        if ($itemStatus->status === AllianceItemBuildStatus::STATUS_MAX_LEVEL) {
+            echo "<td colspan=\"7\" style=\"text-align:center;\">Maximallevel erreicht!</td>";
+        } else {
+            $costs = $building->calculateCosts($level + 1, $alliance->memberCount, $config->getFloat('alliance_membercosts_factor'));
+            $style = array_fill(0, count($resName), '');
 
-                        // Erstellt absolut Wert der Zahl
-                        $need->set($id, abs($costs[$id + 1] - $allianceResources->get($id)));
-                        $style[$id] =  "style=\"color:red;\" " . tm("Fehlender Rohstoff", "" . nf($need->get($id)) . " " . $resourceName . "") . "";
+            $message = '';
+            $style_message = '';
+            switch ($itemStatus->status) {
+                case AllianceItemBuildStatus::STATUS_ITEM_UNDER_CONSTRUCTION:
+                    $style_message = "color: rgb(0, 255, 0);";
+                    $message = startTime($currentBuildingListItem->buildEndTime - time(), 'build_message_building_' . $building->id . '', 0, 'Wird ausgebaut auf Stufe ' . ($level + 1) . ' (TIME)');
+                    break;
+                case AllianceItemBuildStatus::STATUS_UNDER_CONSTRUCTION:
+                    $message = "Es wird bereits gebaut!";
+                    $style_message = "color: rgb(255, 0, 0);";
+                    break;
+                case AllianceItemBuildStatus::STATUS_MISSING_RESOURCE:
+                    $need = $itemStatus->missingResources;
+                    $message = "<input type=\"button\" class=\"button\" name=\"storage_submit\" id=\"storage_submit\" value=\"Fehlende Rohstoffe einzahlen\" " . tm("Nicht genügend Rohstoffe", "Es sind nicht genügend Rohstoffe vorhanden!<br>Klick auf den Button um die fehlenden Rohstoffe einzuzahlen.") . " onclick=\"setSpends(" . $need->metal . ", " . $need->crystal . ", " . $need->plastic . ", " . $need->fuel . ", " . $need->food . ");\"/>";
+                    foreach ($resName as $id => $resourceName) {
+                        if ($need->get($id) > 0) {
+                            $style[$id] = "style=\"color:red;\" " . tm("Fehlender Rohstoff", "" . nf($need->get($id)) . " " . $resourceName . "") . "";
+                        }
                     }
-                }
-
-                if ($buildlist->checkBuildable($buildingIterator->key())) {
-                    if ($level == 0)
-                        $build_button = "Bauen";
-                    else
-                        $build_button = "Ausbauen";
+                    break;
+                case AllianceItemBuildStatus::STATUS_OK;
+                    $build_button = $level === 0 ? "Bauen" : "Ausbauen";
 
                     // Generiert Baubutton, mit welchem vor dem Absenden noch die Objekt ID übergeben wird
-                    $message = "<input type=\"submit\" class=\"button\" name=\"building_submit\" id=\"building_submit\" value=\"" . $build_button . "\" onclick=\"document.getElementById('building_id').value=" . $buildingIterator->key() . ";\"/>";
-                } else {
-                    if ($buildlist->isUnderConstruction()) {
-                        if ($buildlist->isUnderConstruction($buildingIterator->key())) {
-                            $style_message = "color: rgb(0, 255, 0);";
-                            $message = startTime($buildlist->isUnderConstruction($buildingIterator->key()) - time(), 'build_message_building_' . $buildingIterator->key() . '', 0, 'Wird ausgebaut auf Stufe ' . ($level + 1) . ' (TIME)');
-                        } else {
-                            $message = $buildlist->getLastError();
-                            $style_message = "color: rgb(255, 0, 0);";
-                        }
-                    } elseif ($need_something) {
-                        $message = "<input type=\"button\" class=\"button\" name=\"storage_submit\" id=\"storage_submit\" value=\"Fehlende Rohstoffe einzahlen\" " . tm("Nicht genügend Rohstoffe", "Es sind nicht genügend Rohstoffe vorhanden!<br>Klick auf den Button um die fehlenden Rohstoffe einzuzahlen.") . " onclick=\"setSpends(" . $need->metal . ", " . $need->crystal . ", " . $need->plastic . ", " . $need->fuel . ", " . $need->food . ");\"/>";
-                    } else
-                        $message = $buildlist->getLastError();
-                }
-                echo "<th width=\"7%\">Stufe</th>
-                    <th width=\"18%\">Zeit</th>
-                    <th width=\"15%\">" . RES_METAL . "</th>
-                    <th width=\"15%\">" . RES_CRYSTAL . "</th>
-                    <th width=\"15%\">" . RES_PLASTIC . "</th>
-                    <th width=\"15%\">" . RES_FUEL . "</th>
-                    <th width=\"15%\">" . RES_FOOD . "</th>
-                </tr><tr>
-                    <td width=\"7%\">" . ($level + 1) . "</th>
-                    <td width=\"18%\">" . tf($buildlist->getBuildTime($buildingIterator->key(), $level + 1)) . "</th>
-                    <td " . $style[0] . " width=\"15%\">" . nf($costs[1]) . "</td>
-                    <td " . $style[1] . " width=\"15%\">" . nf($costs[2]) . "</td>
-                    <td " . $style[2] . " width=\"15%\">" . nf($costs[3]) . "</td>
-                    <td " . $style[3] . " width=\"15%\">" . nf($costs[4]) . "</td>
-                    <td " . $style[4] . " width=\"15%\">" . nf($costs[5]) . "</td>
-                </tr>
-                <tr>
-                    <td colspan=\"7\" style=\"text-align:center;" . $style_message . "\" name=\"build_message_building_" . $buildingIterator->key() . "\" id=\"build_message_building_" . $buildingIterator->key() . "\">" . $message . "</td>";
+                    $message = "<input type=\"submit\" class=\"button\" name=\"building_submit\" id=\"building_submit\" value=\"" . $build_button . "\" onclick=\"document.getElementById('building_id').value=" . $building->id . ";\"/>";
+                    break;
             }
-            echo "</tr>";
-            tableEnd();
-        }
 
-        $buildingIterator->next();
+            echo "<th width=\"7%\">Stufe</th>
+                <th width=\"18%\">Zeit</th>
+                <th width=\"15%\">" . RES_METAL . "</th>
+                <th width=\"15%\">" . RES_CRYSTAL . "</th>
+                <th width=\"15%\">" . RES_PLASTIC . "</th>
+                <th width=\"15%\">" . RES_FUEL . "</th>
+                <th width=\"15%\">" . RES_FOOD . "</th>
+            </tr><tr>
+                <td width=\"7%\">" . ($level + 1) . "</th>
+                <td width=\"18%\">" . tf($building->calculateBuildTime($level+ 1)) . "</th>
+                <td " . $style[0] . " width=\"15%\">" . nf($costs->metal) . "</td>
+                <td " . $style[1] . " width=\"15%\">" . nf($costs->crystal) . "</td>
+                <td " . $style[2] . " width=\"15%\">" . nf($costs->plastic) . "</td>
+                <td " . $style[3] . " width=\"15%\">" . nf($costs->fuel) . "</td>
+                <td " . $style[4] . " width=\"15%\">" . nf($costs->food) . "</td>
+            </tr>
+            <tr>
+                <td colspan=\"7\" style=\"text-align:center;" . $style_message . "\" name=\"build_message_building_" . $building->id . "\" id=\"build_message_building_" . $building->id . "\">" . $message . "</td>";
+        }
+        echo "</tr>";
+        tableEnd();
     }
 }
 // Es sind noch keine Gebäude vorhanden

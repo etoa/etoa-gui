@@ -13,6 +13,14 @@ class AllianceItemBuildStatus
     public const STATUS_MISSING_RESOURCE = 'missing-resources';
     public const STATUS_MISSING_REQUIREMENTS = 'missing-requirements';
 
+    public const STATUS_MESSAGES = [
+        self::STATUS_UNDER_CONSTRUCTION => 'Es wird bereits gebaut!',
+        self::STATUS_ITEM_UNDER_CONSTRUCTION => 'Es wird bereits gebaut!',
+        self::STATUS_MAX_LEVEL => 'Maximalstufe erreicht!',
+        self::STATUS_MISSING_RESOURCE => 'Zuwenig Rohstoffe vorhanden!',
+        self::STATUS_MISSING_REQUIREMENTS => 'Voraussetzungen nicht erfüllt!',
+    ];
+
     public string $status;
     public BaseResources $missingResources;
 
