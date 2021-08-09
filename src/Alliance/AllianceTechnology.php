@@ -41,6 +41,11 @@ class AllianceTechnology
         $this->neededLevel = (int) $data['alliance_tech_needed_level'];
     }
 
+    public function getImagePath(): string
+    {
+        return IMAGE_PATH . "/" . IMAGE_ALLIANCE_TECHNOLOGY_DIR . "/technology" . $this->id . "_middle." . IMAGE_EXT;
+    }
+
     public function calculateCosts(int $level, int $members, float $memberCostsFactor): BaseResources
     {
         $level = max(1, $level);
@@ -57,5 +62,10 @@ class AllianceTechnology
         $costs->food = (int) ceil($this->costsFood * $memberLevelFactor);
 
         return $costs;
+    }
+
+    public function calculateBuildTime(int $level): int
+    {
+        return $this->buildTime * $level;
     }
 }

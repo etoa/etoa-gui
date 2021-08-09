@@ -65,7 +65,7 @@ class AllianceTechlist implements IteratorAggregate
 				;");
         if (mysql_num_rows($res) > 0) {
             while ($arr = mysql_fetch_assoc($res)) {
-                $this->items[$arr['alliance_tech_id']] = new AllianceTechnology($arr);
+                    $this->items[$arr['alliance_tech_id']] = new AllianceTechnology($arr);
                 $this->itemStatus[$arr['alliance_tech_id']] = array(
                     'listid' => $arr['alliance_techlist_id'],
                     'level' => $arr['alliance_techlist_current_level'],

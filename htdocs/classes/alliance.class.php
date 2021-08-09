@@ -70,7 +70,6 @@ class Alliance
 
     protected $allianceObjectsForMembers;
     protected $buildlist = null;
-    protected $techlist = null;
 
     private ConfigurationService $config;
 
@@ -258,8 +257,6 @@ class Alliance
                 else
                     $this->founder = new User($this->founderId);
             }
-            if ($key == "techlist" && $this->techlist == null)
-                $this->techlist = new AllianceTechlist($this->id, TRUE);
             if ($key == "buildlist" && $this->buildlist == null)
                 $this->buildlist = new AllianceBuildList($this->id, TRUE);
 

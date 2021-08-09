@@ -2,8 +2,12 @@
 
 use EtoA\Alliance\AllianceBuildingId;
 use EtoA\Alliance\AllianceHistoryRepository;
+use EtoA\Alliance\AllianceItemRequirementStatus;
+use EtoA\Alliance\AllianceRepository;
 use EtoA\Alliance\AllianceRights;
 use EtoA\Alliance\AllianceSpendRepository;
+use EtoA\Alliance\AllianceTechnologyList;
+use EtoA\Alliance\AllianceTechnologyRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Fleet\FleetRepository;
 use EtoA\Fleet\FleetStatus;
@@ -16,7 +20,7 @@ use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Universe\Resources\BaseResources;
 use EtoA\User\UserRepository;
 
-/** @var ConfigurationService */
+/** @var ConfigurationService $config */
 $config = $app[ConfigurationService::class];
 
 /** @var PlanetRepository */
@@ -38,8 +42,15 @@ $fleetRepository = $app[FleetRepository::class];
 $entityRepository = $app[EntityRepository::class];
 /** @var UserRepository $userRepository */
 $userRepository = $app[UserRepository::class];
+/** @var AllianceTechnologyRepository $allianceTechnologyRepository */
+$allianceTechnologyRepository = $app[AllianceTechnologyRepository::class];
+/** @var AllianceRepository $allianceRepository */
+$allianceRepository = $app[AllianceRepository::class];
+/** @var \EtoA\Alliance\Alliance $alliance */
 
 $planet = $planetRepo->find($cp->id);
+
+$techlist = new AllianceTechlist($cu->allianceId(), 1);
 
 // Zeigt eigene Rohstoffe an
 echo $resourceBoxDrawer->getHTML($planet);
@@ -430,27 +441,28 @@ if (isset($_POST['building_submit']) && checker_verify()) {
 if (isset($_POST['research_submit']) && checker_verify()) {
     if (Alliance::checkActionRights(AllianceRights::BUILD_MINISTER)) {
         if (isset($_POST['research_id']) && $_POST['research_id'] != 0) {
-            if ($cu->alliance->techlist->build($_POST['research_id']))
+            if ($techlist->build($_POST['research_id']))
                 success_msg("Forschung wurde erfolgreich in Auftrag gegeben!");
             else
-                error_msg($cu->alliance->techlist->getLastError());
+                error_msg($techlist->getLastError());
         }
     }
 }
 
-$allianceRes = array(
-    1 => $cu->alliance->resMetal,
-    2 => $cu->alliance->resCrystal,
-    3 => $cu->alliance->resPlastic,
-    4 => $cu->alliance->resFuel,
-    5 => $cu->alliance->resFood
-);
+$alliance = $allianceRepository->getAlliance($alliance->id);
+$allianceResources = new BaseResources();
+$allianceResources->metal = $alliance->resMetal;
+$allianceResources->crystal = $alliance->resCrystal;
+$allianceResources->plastic = $alliance->resPlastic;
+$allianceResources->fuel = $alliance->resFuel;
+$allianceResources->food = $alliance->resFood;
+
 $resName = array(
-    1 => RES_METAL,
-    2 => RES_CRYSTAL,
-    3 => RES_PLASTIC,
-    4 => RES_FUEL,
-    5 => RES_FOOD
+    0 => RES_METAL,
+    1 => RES_CRYSTAL,
+    2 => RES_PLASTIC,
+    3 => RES_FUEL,
+    4 => RES_FOOD
 );
 
 
@@ -499,18 +511,17 @@ if ($cu->alliance->buildlist->count()) {
             else {
                 $costs = $buildingIterator->current()->getCosts($level + 1, $cu->alliance->memberCount);
                 $need_something = false;
-                $need = [];
+                $need = new BaseResources();
                 $style = [];
-                foreach ($allianceRes as $id => $resAmount) {
-                    if ($resAmount >= $costs[$id]) {
-                        $need[$id] = 0;
+                foreach ($resName as $id => $resourceName) {
+                    if ($allianceResources->get($id) >= $costs[$id + 1]) {
                         $style[$id] = "";
                     } else {
                         $need_something = true;
 
                         // Erstellt absolut Wert der Zahl
-                        $need[$id] = abs($costs[$id] - $resAmount);
-                        $style[$id] =  "style=\"color:red;\" " . tm("Fehlender Rohstoff", "" . nf($need[$id]) . " " . $resName[$id] . "") . "";
+                        $need->set($id, abs($costs[$id + 1] - $allianceResources->get($id)));
+                        $style[$id] =  "style=\"color:red;\" " . tm("Fehlender Rohstoff", "" . nf($need->get($id)) . " " . $resourceName . "") . "";
                     }
                 }
 
@@ -532,7 +543,7 @@ if ($cu->alliance->buildlist->count()) {
                             $style_message = "color: rgb(255, 0, 0);";
                         }
                     } elseif ($need_something) {
-                        $message = "<input type=\"button\" class=\"button\" name=\"storage_submit\" id=\"storage_submit\" value=\"Fehlende Rohstoffe einzahlen\" " . tm("Nicht genügend Rohstoffe", "Es sind nicht genügend Rohstoffe vorhanden!<br>Klick auf den Button um die fehlenden Rohstoffe einzuzahlen.") . " onclick=\"setSpends(" . $need[1] . ", " . $need[2] . ", " . $need[3] . ", " . $need[4] . ", " . $need[5] . ");\"/>";
+                        $message = "<input type=\"button\" class=\"button\" name=\"storage_submit\" id=\"storage_submit\" value=\"Fehlende Rohstoffe einzahlen\" " . tm("Nicht genügend Rohstoffe", "Es sind nicht genügend Rohstoffe vorhanden!<br>Klick auf den Button um die fehlenden Rohstoffe einzuzahlen.") . " onclick=\"setSpends(" . $need->metal . ", " . $need->crystal . ", " . $need->plastic . ", " . $need->fuel . ", " . $need->food . ");\"/>";
                     } else
                         $message = $cu->alliance->buildlist->getLastError();
                 }
@@ -546,11 +557,11 @@ if ($cu->alliance->buildlist->count()) {
                 </tr><tr>
                     <td width=\"7%\">" . ($level + 1) . "</th>
                     <td width=\"18%\">" . tf($cu->alliance->buildlist->getBuildTime($buildingIterator->key(), $level + 1)) . "</th>
-                    <td " . $style[1] . " width=\"15%\">" . nf($costs[1]) . "</td>
-                    <td " . $style[2] . " width=\"15%\">" . nf($costs[2]) . "</td>
-                    <td " . $style[3] . " width=\"15%\">" . nf($costs[3]) . "</td>
-                    <td " . $style[4] . " width=\"15%\">" . nf($costs[4]) . "</td>
-                    <td " . $style[5] . " width=\"15%\">" . nf($costs[5]) . "</td>
+                    <td " . $style[0] . " width=\"15%\">" . nf($costs[1]) . "</td>
+                    <td " . $style[1] . " width=\"15%\">" . nf($costs[2]) . "</td>
+                    <td " . $style[2] . " width=\"15%\">" . nf($costs[3]) . "</td>
+                    <td " . $style[3] . " width=\"15%\">" . nf($costs[4]) . "</td>
+                    <td " . $style[4] . " width=\"15%\">" . nf($costs[5]) . "</td>
                 </tr>
                 <tr>
                     <td colspan=\"7\" style=\"text-align:center;" . $style_message . "\" name=\"build_message_building_" . $buildingIterator->key() . "\" id=\"build_message_building_" . $buildingIterator->key() . "\">" . $message . "</td>";
@@ -591,90 +602,89 @@ echo "<input type=\"hidden\" value=\"0\" name=\"research_id\" id=\"research_id\"
 
 // Es sind Technologien vorhanden
 // Es sind Gebäude vorhanden
-if ($research && $cu->alliance->techlist->count()) {
-    $techIterator = $cu->alliance->techlist->getIterator();
-    while ($techIterator->valid()) {
-        $style_message = '';
-        if ($cu->alliance->techlist->show($techIterator->key())) {
-            $level = $cu->alliance->techlist->getLevel($techIterator->key());
-            $title = $techIterator->current() . ' <span id="buildlevel">';
-            $title .= ($level > 0) ? $level : '';
-            $title .= '</span>';
-            tableStart($title);
-            echo "<tr>
-                <td style=\"width:120px;background:#000;vertical-align:middle;padding:0px;\">"
-                . $techIterator->current()->imgMiddle() . "
-                </td>
-                <td style=\"vertical-align:top;height:100px;\" colspan=\"6\">
-                " . $techIterator->current()->longDesc . "
-                </td>
-                    </tr>";
-            //
-            // Baumenü
-            //
-
-            echo "<tr>";
-            if ($cu->alliance->techlist->isMaxLevel($techIterator->key()))
-                echo "<td colspan=\"7\" style=\"text-align:center;\">Maximallevel erreicht!</td>";
-            else {
-                $costs = $techIterator->current()->getCosts($level + 1, $cu->alliance->memberCount);
-                $need_something = false;
-                $style = [];
-                $need = [];
-                foreach ($allianceRes as $id => $resAmount) {
-                    if ($resAmount > $costs[$id]) {
-                        $need[$id] = 0;
-                        $style[$id] = "";
-                    } else {
-                        $need_something = true;
-
-                        // Erstellt absolut Wert der Zahl
-                        $need[$id] = abs($costs[$id] - $resAmount);
-                        $style[$id] =  "style=\"color:red;\" " . tm("Fehlender Rohstoff", "" . nf($need[$id]) . " " . $resName[$id] . "") . "";
-                    }
-                }
-
-
-                $message = '';
-                if ($cu->alliance->techlist->checkBuildable($techIterator->key())) {
-                    // Generiert Baubutton, mit welchem vor dem Absenden noch die Objekt ID übergeben wird
-                    $message = "<input type=\"submit\" class=\"button\" name=\"research_submit\" id=\"research_submit\" value=\"Erforschen\" onclick=\"document.getElementById('research_id').value=" . $techIterator->key() . ";\"/>";
-                } else {
-                    if ($cu->alliance->techlist->isUnderConstruction()) {
-                        if ($cu->alliance->techlist->isUnderConstruction($techIterator->key())) {
-                            $style_message = "color: rgb(0, 255, 0);";
-                            $message = startTime($cu->alliance->techlist->isUnderConstruction($techIterator->key()) - time(), 'build_message_research_' . $techIterator->key() . '', 0, 'Wird ausgebaut auf Stufe ' . ($level + 1) . ' (TIME)');
-                        } else {
-                            $message = $cu->alliance->techlist->getLastError();
-                            $style_message = "color: rgb(255, 0, 0);";
-                        }
-                    } elseif ($need_something) {
-                        $message = "<input type=\"button\" class=\"button\" name=\"storage_submit\" id=\"storage_submit\" value=\"Fehlende Rohstoffe einzahlen\" " . tm("Nicht genügend Rohstoffe", "Es sind nicht genügend Rohstoffe vorhanden!<br>Klick auf den Button um die fehlenden Rohstoffe einzuzahlen.") . " onclick=\"setSpends(" . $need[1] . ", " . $need[2] . ", " . $need[3] . ", " . $need[4] . ", " . $need[5] . ");\"/>";
-                    }
-                }
-                echo "<th width=\"7%\">Stufe</th>
-                    <th width=\"18%\">Zeit</th>
-                    <th width=\"15%\">" . RES_METAL . "</th>
-                    <th width=\"15%\">" . RES_CRYSTAL . "</th>
-                    <th width=\"15%\">" . RES_PLASTIC . "</th>
-                    <th width=\"15%\">" . RES_FUEL . "</th>
-                    <th width=\"15%\">" . RES_FOOD . "</th>
-                </tr><tr>
-                    <td width=\"7%\">" . ($level + 1) . "</th>
-                    <td width=\"18%\">" . tf($cu->alliance->techlist->getBuildTime($techIterator->key(), $level + 1)) . "</th>
-                    <td " . $style[1] . " width=\"15%\">" . nf($costs[1]) . "</td>
-                    <td " . $style[2] . " width=\"15%\">" . nf($costs[2]) . "</td>
-                    <td " . $style[3] . " width=\"15%\">" . nf($costs[3]) . "</td>
-                    <td " . $style[4] . " width=\"15%\">" . nf($costs[4]) . "</td>
-                    <td " . $style[5] . " width=\"15%\">" . nf($costs[5]) . "</td>
-                </tr>
-                <tr>
-                    <td colspan=\"7\" style=\"text-align:center;" . $style_message . "\" name=\"build_message_research_" . $techIterator->key() . "\" id=\"build_message_research_" . $techIterator->key() . "\">" . $message . "</td>";
-            }
-            echo "</tr>";
-            tableEnd();
+$technologies = $allianceTechnologyRepository->findAll();
+$technologyList = $allianceTechnologyRepository->getTechnologyList($alliance->id);
+if ($research && count($technologies) > 0) {
+    $requirementStatus = AllianceItemRequirementStatus::createForTechnologies($technologies, $technologyList);
+    $isUnderConstruction = (bool) array_filter($technologyList, fn (AllianceTechnologyList $item) => $item->isUnderConstruction());
+    foreach ($technologies as $technology) {
+        if (!$requirementStatus->requirementsMet($technology->id)) {
+            continue;
         }
-        $techIterator->next();
+
+        $currentTechnologyListItem = $technologyList[$technology->id] ?? null;
+        $level = $currentTechnologyListItem !== null ? $technologyList[$technology->id]->level : 0;
+        tableStart($technology->name . ' <span id="buildlevel">' . (($level > 0) ? $level : '') . '</span>');
+
+        echo "<tr>
+            <td style=\"width:120px;background:#000;vertical-align:middle;padding:0px;\">"
+            . '<img src="' . $technology->getImagePath() . '" style="width:120px;height:120px;" alt="' . $technology->name . '"/>
+            </td>
+            <td style="vertical-align:top;height:100px;" colspan="6">
+            ' . $technology->longComment . "
+            </td>
+                </tr>";
+
+        //
+        // Baumenü
+        //
+        echo "<tr>";
+        if ($level >= $technology->lastLevel)
+            echo "<td colspan=\"7\" style=\"text-align:center;\">Maximallevel erreicht!</td>";
+        else {
+            $costs = $technology->calculateCosts($level + 1, $cu->alliance->memberCount, $config->getFloat('alliance_membercosts_factor'));
+            $style = [];
+            $need = new BaseResources();
+            foreach ($resName as $id => $resourceName) {
+                if ($allianceResources->get($id) > $costs->get($id)) {
+                    $style[$id] = "";
+                } else {
+                    // Erstellt absolut Wert der Zahl
+                    $need->set($id, abs($costs->get($id) - $allianceResources->get($id)));
+                    $style[$id] = "style=\"color:red;\" " . tm("Fehlender Rohstoff", "" . nf($need->get($id)) . " " . $resourceName . "") . "";
+                }
+            }
+
+
+            $message = '';
+            $style_message = '';
+            if ($isUnderConstruction) {
+                if ($currentTechnologyListItem !== null && $currentTechnologyListItem->isUnderConstruction()) {
+                    $style_message = "color: rgb(0, 255, 0);";
+                    $message = startTime($currentTechnologyListItem->buildEndTime - time(), 'build_message_research_' . $technology->id . '', 0, 'Wird ausgebaut auf Stufe ' . ($level + 1) . ' (TIME)');
+                } else {
+                    $message = "Es wird bereits gebaut!";
+                    $style_message = "color: rgb(255, 0, 0);";
+                }
+            } elseif ($need->getSum() > 0) {
+                $message = "<input type=\"button\" class=\"button\" name=\"storage_submit\" id=\"storage_submit\" value=\"Fehlende Rohstoffe einzahlen\" " . tm("Nicht genügend Rohstoffe", "Es sind nicht genügend Rohstoffe vorhanden!<br>Klick auf den Button um die fehlenden Rohstoffe einzuzahlen.") . " onclick=\"setSpends(" . $need->metal . ", " . $need->crystal . ", " . $need->plastic . ", " . $need->fuel . ", " . $need->food . ");\"/>";
+            } else {
+                // Generiert Baubutton, mit welchem vor dem Absenden noch die Objekt ID übergeben wird
+                $message = "<input type=\"submit\" class=\"button\" name=\"research_submit\" id=\"research_submit\" value=\"Erforschen\" onclick=\"document.getElementById('research_id').value=" . $technology->id . ";\"/>";
+            }
+
+            echo "<th width=\"7%\">Stufe</th>
+                <th width=\"18%\">Zeit</th>
+                <th width=\"15%\">" . RES_METAL . "</th>
+                <th width=\"15%\">" . RES_CRYSTAL . "</th>
+                <th width=\"15%\">" . RES_PLASTIC . "</th>
+                <th width=\"15%\">" . RES_FUEL . "</th>
+                <th width=\"15%\">" . RES_FOOD . "</th>
+            </tr><tr>
+                <td width=\"7%\">" . ($level + 1) . "</th>
+                <td width=\"18%\">" . tf($technology->calculateBuildTime($level + 1)) . "</th>
+                <td " . $style[0] . " width=\"15%\">" . nf($costs->metal) . "</td>
+                <td " . $style[1] . " width=\"15%\">" . nf($costs->crystal) . "</td>
+                <td " . $style[2] . " width=\"15%\">" . nf($costs->plastic) . "</td>
+                <td " . $style[3] . " width=\"15%\">" . nf($costs->fuel) . "</td>
+                <td " . $style[4] . " width=\"15%\">" . nf($costs->food) . "</td>
+            </tr>
+            <tr>
+                <td colspan=\"7\" style=\"text-align:center;" . $style_message . "\" name=\"build_message_research_" . $technology->id . "\" id=\"build_message_research_" . $technology->id . "\">" . $message . "</td>";
+        }
+
+        echo "</tr>";
+        tableEnd();
     }
 }
 // Es sind noch keine Gebäude vorhanden
