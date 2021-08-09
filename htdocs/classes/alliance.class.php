@@ -69,7 +69,6 @@ class Alliance
     protected $resFood;
 
     protected $allianceObjectsForMembers;
-    protected $buildlist = null;
 
     private ConfigurationService $config;
 

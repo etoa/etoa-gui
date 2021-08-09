@@ -6,7 +6,6 @@ use EtoA\Alliance\AllianceHistoryRepository;
 use EtoA\Alliance\AllianceRepository;
 use EtoA\Alliance\AllianceRights;
 use EtoA\Alliance\AllianceSpendRepository;
-use EtoA\Alliance\AllianceTechnologyListItem;
 use EtoA\Alliance\AllianceTechnologyRepository;
 use EtoA\Alliance\Base\AllianceBase;
 use EtoA\Alliance\Base\AllianceItemBuildStatus;
@@ -70,6 +69,7 @@ echo "<h2><a href=\"?page=" . $page . "&amp;action=" . $_GET['action'] . "\">All
 $allianceShipyardLevel = $allianceBuildingRepository->getLevel($cu->allianceId(), AllianceBuildingId::SHIPYARD);
 $allianceResearchLevel = $allianceBuildingRepository->getLevel($cu->allianceId(), AllianceBuildingId::RESEARCH);
 
+$buildlist = new AllianceBuildList($cu->allianceId(), true);
 //
 // Navigation
 //
@@ -435,10 +435,10 @@ tableEnd();
 if (isset($_POST['building_submit']) && checker_verify()) {
     if (Alliance::checkActionRights(AllianceRights::BUILD_MINISTER)) {
         if (isset($_POST['building_id']) && $_POST['building_id'] != 0) {
-            if ($cu->alliance->buildlist->build($_POST['building_id']))
+            if ($buildlist->build($_POST['building_id']))
                 success_msg("Gebäude wurde erfolgreich in Auftrag gegeben!");
             else
-                error_msg($cu->alliance->buildlist->getLastError());
+                error_msg($buildlist->getLastError());
         }
     }
 }
@@ -496,12 +496,12 @@ $cstr = checker_init();
 echo "<input type=\"hidden\" value=\"0\" name=\"building_id\" id=\"building_id\" />";
 
 // Es sind Gebäude vorhanden
-if ($cu->alliance->buildlist->count()) {
-    $buildingIterator = $cu->alliance->buildlist->getIterator();
+if ($buildlist->count()) {
+    $buildingIterator = $buildlist->getIterator();
     while ($buildingIterator->valid()) {
         $style_message = '';
-        if ($cu->alliance->buildlist->show($buildingIterator->key())) {
-            $level = $cu->alliance->buildlist->getLevel($buildingIterator->key());
+        if ($buildlist->show($buildingIterator->key())) {
+            $level = $buildlist->getLevel($buildingIterator->key());
             $title = $buildingIterator->current() . ' <span id="buildlevel">';
             $title .= ($level > 0) ? $level : '';
             $title .= '</span>';
@@ -519,7 +519,7 @@ if ($cu->alliance->buildlist->count()) {
             //
 
             echo "<tr>";
-            if ($cu->alliance->buildlist->isMaxLevel($buildingIterator->key()))
+            if ($buildlist->isMaxLevel($buildingIterator->key()))
                 echo "<td colspan=\"7\" style=\"text-align:center;\">Maximallevel erreicht!</td>";
             else {
                 $costs = $buildingIterator->current()->getCosts($level + 1, $cu->alliance->memberCount);
@@ -538,7 +538,7 @@ if ($cu->alliance->buildlist->count()) {
                     }
                 }
 
-                if ($cu->alliance->buildlist->checkBuildable($buildingIterator->key())) {
+                if ($buildlist->checkBuildable($buildingIterator->key())) {
                     if ($level == 0)
                         $build_button = "Bauen";
                     else
@@ -547,18 +547,18 @@ if ($cu->alliance->buildlist->count()) {
                     // Generiert Baubutton, mit welchem vor dem Absenden noch die Objekt ID übergeben wird
                     $message = "<input type=\"submit\" class=\"button\" name=\"building_submit\" id=\"building_submit\" value=\"" . $build_button . "\" onclick=\"document.getElementById('building_id').value=" . $buildingIterator->key() . ";\"/>";
                 } else {
-                    if ($cu->alliance->buildlist->isUnderConstruction()) {
-                        if ($cu->alliance->buildlist->isUnderConstruction($buildingIterator->key())) {
+                    if ($buildlist->isUnderConstruction()) {
+                        if ($buildlist->isUnderConstruction($buildingIterator->key())) {
                             $style_message = "color: rgb(0, 255, 0);";
-                            $message = startTime($cu->alliance->buildlist->isUnderConstruction($buildingIterator->key()) - time(), 'build_message_building_' . $buildingIterator->key() . '', 0, 'Wird ausgebaut auf Stufe ' . ($level + 1) . ' (TIME)');
+                            $message = startTime($buildlist->isUnderConstruction($buildingIterator->key()) - time(), 'build_message_building_' . $buildingIterator->key() . '', 0, 'Wird ausgebaut auf Stufe ' . ($level + 1) . ' (TIME)');
                         } else {
-                            $message = $cu->alliance->buildlist->getLastError();
+                            $message = $buildlist->getLastError();
                             $style_message = "color: rgb(255, 0, 0);";
                         }
                     } elseif ($need_something) {
                         $message = "<input type=\"button\" class=\"button\" name=\"storage_submit\" id=\"storage_submit\" value=\"Fehlende Rohstoffe einzahlen\" " . tm("Nicht genügend Rohstoffe", "Es sind nicht genügend Rohstoffe vorhanden!<br>Klick auf den Button um die fehlenden Rohstoffe einzuzahlen.") . " onclick=\"setSpends(" . $need->metal . ", " . $need->crystal . ", " . $need->plastic . ", " . $need->fuel . ", " . $need->food . ");\"/>";
                     } else
-                        $message = $cu->alliance->buildlist->getLastError();
+                        $message = $buildlist->getLastError();
                 }
                 echo "<th width=\"7%\">Stufe</th>
                     <th width=\"18%\">Zeit</th>
@@ -569,7 +569,7 @@ if ($cu->alliance->buildlist->count()) {
                     <th width=\"15%\">" . RES_FOOD . "</th>
                 </tr><tr>
                     <td width=\"7%\">" . ($level + 1) . "</th>
-                    <td width=\"18%\">" . tf($cu->alliance->buildlist->getBuildTime($buildingIterator->key(), $level + 1)) . "</th>
+                    <td width=\"18%\">" . tf($buildlist->getBuildTime($buildingIterator->key(), $level + 1)) . "</th>
                     <td " . $style[0] . " width=\"15%\">" . nf($costs[1]) . "</td>
                     <td " . $style[1] . " width=\"15%\">" . nf($costs[2]) . "</td>
                     <td " . $style[2] . " width=\"15%\">" . nf($costs[3]) . "</td>
