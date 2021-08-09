@@ -82,8 +82,6 @@ if (!isset($errMsg)) {
                 // Set cooldown
                 $cd = time() + $cooldown;
                 $allianceBuildingRepository->setCooldown($cu->allianceId(), AllianceBuildingId::MARKET, $cd);
-
-                $cu->alliance->buildlist->setCooldown(AllianceBuildingId::MARKET, $cd);
             }
 
             MarketReport::addMarketReport(array(

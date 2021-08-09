@@ -93,8 +93,9 @@ if ($config->getBoolean('market_enabled')) {
             }
             $cooldown = ($factor == 0) ? 0 : 3600 / $factor;
             if ($alliance_market_level > 0) {
-                if ($cu->alliance->buildlist->getCooldown(AllianceBuildingId::MARKET) > time()) {
-                    $status_text = "Bereit in <span id=\"cdcd\">" . tf($cu->alliance->buildlist->getCooldown(AllianceBuildingId::MARKET) - time() . "</span>");
+                $allianceMarketCooldown = $allianceBuildingRepository->getCooldown($cu->allianceId(), AllianceBuildingId::MARKET);
+                if ($allianceMarketCooldown > time()) {
+                    $status_text = "Bereit in <span id=\"cdcd\">" . tf($allianceMarketCooldown - time() . "</span>");
                     $cd_enabled = true;
                 } else {
                     $status_text = "Bereit";
