@@ -27,7 +27,13 @@ class AllianceTechnologyRepository extends AbstractRepository
             ->execute()
             ->fetchAllAssociative();
 
-        return array_map(fn (array $row) => new AllianceTechnology($row), $data);
+        $result = [];
+        foreach ($data as $row) {
+            $technology = new AllianceTechnology($row);
+            $result[$technology->id] = $technology;
+        }
+
+        return $result;
     }
 
     public function existsInAlliance(int $allianceId, int $technologyId): bool
@@ -85,6 +91,20 @@ class AllianceTechnologyRepository extends AbstractRepository
             ->execute();
     }
 
+    public function updateMembersForAlliance(int $allianceId, int $amount): void
+    {
+        $this->createQueryBuilder()
+            ->update('alliance_techlist')
+            ->set('alliance_techlist_member_for', ':amount')
+            ->where('alliance_techlist_alliance_id = :alliance')
+            ->andWhere('alliance_techlist_member_for < :amount')
+            ->setParameters([
+                'amount' => $amount,
+                'alliance' => $allianceId,
+            ])
+            ->execute();
+    }
+
     public function updateForAlliance(int $allianceId, int $technologyId, int $level, int $amount, int $startTime = 0, int $endTime = 0): void
     {
         $this->createQueryBuilder()
@@ -113,5 +133,28 @@ class AllianceTechnologyRepository extends AbstractRepository
             ->where('alliance_techlist_alliance_id = :allianceId')
             ->setParameter('allianceId', $allianceId)
             ->execute();
+    }
+
+
+    /**
+     * @return AllianceTechnologyListItem[]
+     */
+    public function getTechnologyList(int $allianceId): array
+    {
+        $data = $this->createQueryBuilder()
+            ->select('*')
+            ->from('alliance_techlist')
+            ->where('alliance_techlist_alliance_id = :allianceId')
+            ->setParameter('allianceId', $allianceId)
+            ->execute()
+            ->fetchAllAssociative();
+
+        $result = [];
+        foreach ($data as $row) {
+            $entry = new AllianceTechnologyListItem($row);
+            $result[$entry->technologyId] = $entry;
+        }
+
+        return $result;
     }
 }

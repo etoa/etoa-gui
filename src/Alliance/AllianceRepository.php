@@ -123,17 +123,20 @@ class AllianceRepository extends AbstractRepository
         return array_map(fn (array $row) => new AllianceWithMemberCount($row), $data);
     }
 
-    public function getAlliance(int $allianceId): ?Alliance
+    public function getAlliance(int $allianceId): ?AllianceWithMemberCount
     {
         $data = $this->createQueryBuilder()
-            ->select("*")
-            ->from('alliances')
-            ->where('alliance_id = :id')
+            ->select("a.*")
+            ->addSelect('COUNT(u.user_id) as member_count')
+            ->from('alliances', 'a')
+            ->leftJoin('a', 'users', 'u', 'u.user_alliance_id=a.alliance_id')
+            ->where('a.alliance_id = :id')
             ->setParameter('id', $allianceId)
+            ->groupBy('a.alliance_id')
             ->execute()
             ->fetchAssociative();
 
-        return $data !== false ? new Alliance($data) : null;
+        return $data !== false ? new AllianceWithMemberCount($data) : null;
     }
 
     public function getFounderId(int $allianceId): int

@@ -310,6 +310,8 @@ try {
     echo $twig->render('layout/empty.html.twig', [
         'content' => $e,
     ]);
+} catch (\Throwable $exception) {
+    throw $exception;
 } finally {
     $_SESSION['lastpage'] = $page;
 

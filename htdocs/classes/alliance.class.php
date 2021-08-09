@@ -5,6 +5,7 @@ use EtoA\Alliance\AllianceBuildingRepository;
 use EtoA\Alliance\AllianceDiplomacyLevel;
 use EtoA\Alliance\AllianceDiplomacyRepository;
 use EtoA\Alliance\AllianceHistoryRepository;
+use EtoA\Alliance\AllianceMemberCosts;
 use EtoA\Alliance\AllianceNewsRepository;
 use EtoA\Alliance\AlliancePointsRepository;
 use EtoA\Alliance\AlliancePollRepository;
@@ -68,8 +69,6 @@ class Alliance
     protected $resFood;
 
     protected $allianceObjectsForMembers;
-    protected $buildlist = null;
-    protected $techlist = null;
 
     private ConfigurationService $config;
 
@@ -257,11 +256,6 @@ class Alliance
                 else
                     $this->founder = new User($this->founderId);
             }
-            if ($key == "techlist" && $this->techlist == null)
-                $this->techlist = new AllianceTechlist($this->id, TRUE);
-            if ($key == "buildlist" && $this->buildlist == null)
-                $this->buildlist = new AllianceBuildList($this->id, TRUE);
-
 
             // Protected properties
             if ($key == "changedFields")
@@ -313,6 +307,7 @@ class Alliance
         global $app;
 
         $this->getMembers();
+        $currentMemberCount = count($this->members);
         if (!isset($this->members[$userId])) {
             $maxMemberCount = $this->config->getInt("alliance_max_member_count");
             if ($maxMemberCount > 0 && $this->memberCount > $maxMemberCount) {
@@ -332,7 +327,10 @@ class Alliance
                     $allianceHistoryRepository = $app[AllianceHistoryRepository::class];
                     $allianceHistoryRepository->addEntry($this->id, "[b]" . $tmpUser . "[/b] wurde als neues Mitglied aufgenommen");
 
-                    $this->calcMemberCosts();
+                    /** @var AllianceMemberCosts $allianceMemberCosts */
+                    $allianceMemberCosts = $app[AllianceMemberCosts::class];
+                    $allianceMemberCosts->increase($this->id, $currentMemberCount, count($this->members));
+
                     return true;
                 }
             }
@@ -792,132 +790,6 @@ class Alliance
         $allianceRankRepository = $app[AllianceRankRepository::class];
 
         return $allianceRankRepository->hasActionRights($this->id, $cu->allianceRankId, $action);
-    }
-
-    /**
-     * Calc costs at adding a new Member
-     */
-    public function calcMemberCosts($save = true, $addMembers = 1)
-    {
-        // TODO
-        global $app;
-
-        // Zählt aktuelle Memberanzahl und und läd den Wert, für welche Anzahl User die Allianzobjekte gebaut wurden
-        $this->getMembers();
-        $newMemberCnt = count($this->members) + $addMembers;
-        if ($save)
-            $newMemberCnt--;
-
-        // Allianzrohstoffe anpassen, wenn die Allianzobjekte nicht für diese Anzahl ausgebaut sind
-
-        //Aktuelle, neue und zu zahlende Kosten
-        $costs = array(1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0, 6 => 0);
-        $new_costs = array(1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0, 6 => 0);
-        $to_pay = array(1 => 0, 2 => 0, 3 => 0, 4 => 0, 5 => 0, 6 => 0);
-
-        // Berechnet Kostendifferenz
-
-        if ($this->buildlist == null)
-            $this->buildlist = new AllianceBuildList($this->id);
-        $buildingIterator = $this->buildlist->getIterator();
-
-        while ($buildingIterator->valid()) {
-            if ($this->buildlist->getMemberFor($buildingIterator->key()) < $newMemberCnt) {
-                // Wenn ein Gebäude in Bau ist, wird die Stufe zur berechnung bereits erhöht
-                $level = $this->buildlist->getLevel($buildingIterator->key());
-                if ($this->buildlist->isUnderConstruction($buildingIterator->key()))
-                    $level++;
-
-                // Berechnungen nur durchführen, wenn die Stufe >0 ist oder sich das Objekt in Bau befindet
-                // Dies ist eine Sicherheit für den Fall, dass die Stufe manuel zurückgesetzt wird. Es würden falsche Kosten entstehen
-                if ($level > 0 || $this->buildlist->isUnderConstruction($buildingIterator->key())) {
-                    // Kosten von jedem Level des Gebäudes wird berechnet
-                    for ($x = 1; $x <= $level; $x++) {
-                        $buildCosts = $buildingIterator->current()->getCosts($x, $this->buildlist->getMemberFor($buildingIterator->key()));
-
-                        foreach ($buildCosts as $rid => $cost)
-                            $costs[$rid] += $cost;
-
-                        $buildCosts = $buildingIterator->current()->getCosts($x, $newMemberCnt);
-
-                        foreach ($buildCosts as $rid => $cost)
-                            $new_costs[$rid] += $cost;
-                    }
-                }
-            }
-            $buildingIterator->next();
-        }
-        if ($save) { // BUGFIX by river: AND part - only edit if new member count is higher
-            dbquery("UPDATE
-                        alliance_buildlist
-                    SET
-                        alliance_buildlist_member_for='" . $newMemberCnt . "'
-                    WHERE
-                        alliance_buildlist_alliance_id='" . $this->id . "'
-                    AND
-                        alliance_buildlist_member_for < '" . $newMemberCnt . "';");
-        }
-
-
-        if ($this->techlist == null)
-            $this->techlist = new AllianceTechlist($this->id);
-        $techIterator = $this->techlist->getIterator();
-
-        while ($techIterator->valid()) {
-            if ($this->buildlist->getMemberFor($techIterator->key()) < $newMemberCnt) {
-                // Wenn eine Techin Bau ist, wird die Stufe zur berechnung bereits erhöht
-                $level = $this->techlist->getLevel($techIterator->key());
-                if ($this->techlist->isUnderConstruction($techIterator->key()))
-                    $level++;
-
-                // Berechnungen nur durchführen, wenn die Stufe >0 ist oder sich das Objekt in Bau befindet
-                // Dies ist eine Sicherheit für den Fall, dass die Stufe manuel zurückgesetzt wird. Es würden falsche Kosten entstehen
-                if ($level > 0 || $this->techlist->isUnderConstruction($techIterator->key())) {
-                    // Kosten von jedem Level des Gebäudes wird berechnet
-                    for ($x = 1; $x <= $level; $x++) {
-                        $buildCosts = $techIterator->current()->getCosts($x, $this->techlist->getMemberFor($techIterator->key()));
-
-                        foreach ($buildCosts as $rid => $cost)
-                            $costs[$rid] += $cost;
-
-                        $buildCosts = $techIterator->current()->getCosts($x, $newMemberCnt);
-
-                        foreach ($buildCosts as $rid => $cost)
-                            $new_costs[$rid] += $cost;
-                    }
-                }
-            }
-            $techIterator->next();
-        }
-        if ($save) { // BUGFIX by river: AND part - only edit if new member count is higher
-            dbquery("UPDATE
-                        alliance_techlist
-                    SET
-                        alliance_techlist_member_for='" . $newMemberCnt . "'
-                    WHERE
-                        alliance_techlist_alliance_id='" . $this->id . "'
-                    AND
-                        alliance_techlist_member_for < '" . $newMemberCnt . "';");
-        }
-
-        // Berechnet die zu zahlenden Rohstoffe
-        foreach ($costs as $rid => $cost)
-            $to_pay[$rid] = $new_costs[$rid] - $cost;
-
-        if ($save) {
-            // Zieht Rohstoffe vom Allianzkonto ab und speichert Anzahl Members, für welche nun bezahlt ist
-            if (array_sum($to_pay) > 0) {
-                /** @var AllianceRepository $allianceRepository */
-                $allianceRepository = $app[AllianceRepository::class];
-                $allianceRepository->addResources($this->id, -$to_pay[1], -$to_pay[2], -$to_pay[3], -$to_pay[4], -$to_pay[5], $newMemberCnt);
-
-                /** @var \EtoA\Alliance\AllianceHistoryRepository $allianceHistoryRepository */
-                $allianceHistoryRepository = $app[\EtoA\Alliance\AllianceHistoryRepository::class];
-                $allianceHistoryRepository->addEntry((int) $this->id, "Dem Allianzkonto wurden folgende Rohstoffe abgezogen:\n[b]" . RES_METAL . "[/b]: " . nf($to_pay[1]) . "\n[b]" . RES_CRYSTAL . "[/b]: " . nf($to_pay[2]) . "\n[b]" . RES_PLASTIC . "[/b]: " . nf($to_pay[3]) . "\n[b]" . RES_FUEL . "[/b]: " . nf($to_pay[4]) . "\n[b]" . RES_FOOD . "[/b]: " . nf($to_pay[5]) . "\n\nDie Allianzobjekte sind nun für " . $newMemberCnt . " Mitglieder verfügbar!");
-            }
-        } else {
-            return text2html("Bei der Aufnahme von " . $addMembers . " Member werden dem Allianzkonto folgende Rohstoffe abgezogen:\n[b]" . RES_METAL . "[/b]: " . nf($to_pay[1]) . "\n[b]" . RES_CRYSTAL . "[/b]: " . nf($to_pay[2]) . "\n[b]" . RES_PLASTIC . "[/b]: " . nf($to_pay[3]) . "\n[b]" . RES_FUEL . "[/b]: " . nf($to_pay[4]) . "\n[b]" . RES_FOOD . "[/b]: " . nf($to_pay[5]));
-        }
     }
 
     public function isAtWar()

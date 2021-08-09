@@ -1,11 +1,15 @@
 <?PHP
 
+use EtoA\Alliance\AllianceBuildingId;
+use EtoA\Alliance\AllianceBuildingRepository;
 use EtoA\Alliance\AllianceRights;
 use EtoA\User\UserRepository;
 use EtoA\User\UserUniverseDiscoveryService;
 
 /** @var UserRepository */
 $userRepository = $app[UserRepository::class];
+/** @var AllianceBuildingRepository $allianceBuildingRepository */
+$allianceBuildingRepository = $app[AllianceBuildingRepository::class];
 
 /** @var UserUniverseDiscoveryService */
 $userUniverseDiscoveryService = $app[UserUniverseDiscoveryService::class];
@@ -25,16 +29,17 @@ if ($fd->valid()) {
     if ($fd->ownerId() == $cu->id) {
         $valid = 10;
     } elseif ($cu->alliance->checkActionRightsNA(AllianceRights::FLEET_MINISTER)) {
+        $allianceFleetControlLevel = $allianceBuildingRepository->getLevel($cu->allianceId(), AllianceBuildingId::FLEET_CONTROL);
         if ($fd->getAction()->code() == "support" && $fd->ownerAllianceId() == $cu->allianceId() && $cu->allianceId() > 0 && ($fd->status() == 0 || $fd->status() == 3)) {
-            $valid = $cu->alliance->buildlist->getLevel(ALLIANCE_FLEET_CONTROL_ID);
+            $valid = $allianceFleetControlLevel;
         } elseif ($fd->getAction()->code() == "alliance" && $fd->ownerAllianceId() == $cu->allianceId() && $cu->allianceId() > 0) {
             if ($fd->status() == 0) {
-                if ($lead_id > 0 && ($cu->alliance->buildlist->getLevel(ALLIANCE_FLEET_CONTROL_ID) >= ALLIANCE_FLEET_SHOW)) {
-                    $valid = $cu->alliance->buildlist->getLevel(ALLIANCE_FLEET_CONTROL_ID);
+                if ($lead_id > 0 && ($allianceFleetControlLevel >= ALLIANCE_FLEET_SHOW)) {
+                    $valid = $allianceFleetControlLevel;
                 }
             } elseif ($fd->status() == 3) {
-                if ($cu->alliance->buildlist->getLevel(ALLIANCE_FLEET_CONTROL_ID) >= ALLIANCE_FLEET_SHOW_PART) {
-                    $valid = $cu->alliance->buildlist->getLevel(ALLIANCE_FLEET_CONTROL_ID);
+                if ($allianceFleetControlLevel >= ALLIANCE_FLEET_SHOW_PART) {
+                    $valid = $allianceFleetControlLevel;
                 }
             }
         }

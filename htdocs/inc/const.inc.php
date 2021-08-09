@@ -403,28 +403,6 @@ define("RES_BUNKER_ID", 26);
 // ID des Flottenbunkers
 define("FLEET_BUNKER_ID", 27);
 
-//
-// Allianzgebäude
-//
-
-// ID des Allianzmarktplatzes
-define("ALLIANCE_MARKET_ID", 2);
-
-// ID des Allianzschiffwerftes
-define("ALLIANCE_SHIPYARD_ID", 3);
-
-define("ALLIANCE_CRYPTO_ID", 6);
-
-define("ALLIANCE_MAIN_ID", 1);
-
-define("ALLIANCE_FLEET_CONTROL_ID", 4);
-
-define("ALLIANCE_RESEARCH_ID", 5);
-
-define("ALLIANCE_TECH_TARN_ID", 4);
-
-define("ALLIANCE_TECH_SPY_ID", 8);
-
 /*************************/
 /* Flotten & Kampfsystem */
 /*************************/

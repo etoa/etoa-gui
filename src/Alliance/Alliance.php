@@ -2,6 +2,8 @@
 
 namespace EtoA\Alliance;
 
+use EtoA\Universe\Resources\BaseResources;
+
 class Alliance
 {
     public int $id;
@@ -72,5 +74,17 @@ class Alliance
     public function toString(): string
     {
         return "[" . $this->tag . "] " . $this->name;
+    }
+
+    public function getResources(): BaseResources
+    {
+        $resources = new BaseResources();
+        $resources->metal = $this->resMetal;
+        $resources->crystal = $this->resCrystal;
+        $resources->plastic = $this->resPlastic;
+        $resources->fuel = $this->resFuel;
+        $resources->food = $this->resFood;
+
+        return $resources;
     }
 }
