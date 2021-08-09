@@ -137,7 +137,7 @@ class AllianceTechnologyRepository extends AbstractRepository
 
 
     /**
-     * @return AllianceTechnologyList[]
+     * @return AllianceTechnologyListItem[]
      */
     public function getTechnologyList(int $allianceId): array
     {
@@ -151,7 +151,7 @@ class AllianceTechnologyRepository extends AbstractRepository
 
         $result = [];
         foreach ($data as $row) {
-            $entry = new AllianceTechnologyList($row);
+            $entry = new AllianceTechnologyListItem($row);
             $result[$entry->technologyId] = $entry;
         }
 

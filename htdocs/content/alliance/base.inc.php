@@ -2,12 +2,14 @@
 
 use EtoA\Alliance\AllianceBuildingId;
 use EtoA\Alliance\AllianceHistoryRepository;
-use EtoA\Alliance\AllianceItemRequirementStatus;
 use EtoA\Alliance\AllianceRepository;
 use EtoA\Alliance\AllianceRights;
 use EtoA\Alliance\AllianceSpendRepository;
-use EtoA\Alliance\AllianceTechnologyList;
+use EtoA\Alliance\AllianceTechnologyListItem;
 use EtoA\Alliance\AllianceTechnologyRepository;
+use EtoA\Alliance\Base\AllianceBase;
+use EtoA\Alliance\Base\AllianceItemBuildStatus;
+use EtoA\Alliance\Base\AllianceItemRequirementStatus;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Fleet\FleetRepository;
 use EtoA\Fleet\FleetStatus;
@@ -19,6 +21,7 @@ use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Universe\Resources\BaseResources;
 use EtoA\User\UserRepository;
+use Symfony\Component\HttpFoundation\Request;
 
 /** @var ConfigurationService $config */
 $config = $app[ConfigurationService::class];
@@ -46,11 +49,15 @@ $userRepository = $app[UserRepository::class];
 $allianceTechnologyRepository = $app[AllianceTechnologyRepository::class];
 /** @var AllianceRepository $allianceRepository */
 $allianceRepository = $app[AllianceRepository::class];
-/** @var \EtoA\Alliance\Alliance $alliance */
+/** @var AllianceBase $allianceBase */
+$allianceBase = $app[AllianceBase::class];
+
+
+/** @var Request */
+$request = Request::createFromGlobals();
 
 $planet = $planetRepo->find($cp->id);
-
-$techlist = new AllianceTechlist($cu->allianceId(), 1);
+$technologies = $allianceTechnologyRepository->findAll();
 
 // Zeigt eigene Rohstoffe an
 echo $resourceBoxDrawer->getHTML($planet);
@@ -441,15 +448,21 @@ if (isset($_POST['building_submit']) && checker_verify()) {
 if (isset($_POST['research_submit']) && checker_verify()) {
     if (Alliance::checkActionRights(AllianceRights::BUILD_MINISTER)) {
         if (isset($_POST['research_id']) && $_POST['research_id'] != 0) {
-            if ($techlist->build($_POST['research_id']))
+            $technologyId = $request->request->getInt('research_id');
+            try {
+                $alliance = $allianceRepository->getAlliance($cu->allianceId());
+                $technology = $technologies[$technologyId];
+                $technologyList = $allianceTechnologyRepository->getTechnologyList($alliance->id);
+                $allianceBase->buildTechnology($user, $alliance, $technology, $technologyList[$technologyId] ?? null, AllianceItemRequirementStatus::createForTechnologies($technologies, $technologyList));
                 success_msg("Forschung wurde erfolgreich in Auftrag gegeben!");
-            else
-                error_msg($techlist->getLastError());
+            } catch (\RuntimeException $e) {
+                error_msg($e->getMessage());
+            }
         }
     }
 }
 
-$alliance = $allianceRepository->getAlliance($alliance->id);
+$alliance = $allianceRepository->getAlliance($cu->allianceId());
 $allianceResources = new BaseResources();
 $allianceResources->metal = $alliance->resMetal;
 $allianceResources->crystal = $alliance->resCrystal;
@@ -602,17 +615,16 @@ echo "<input type=\"hidden\" value=\"0\" name=\"research_id\" id=\"research_id\"
 
 // Es sind Technologien vorhanden
 // Es sind Gebäude vorhanden
-$technologies = $allianceTechnologyRepository->findAll();
 $technologyList = $allianceTechnologyRepository->getTechnologyList($alliance->id);
 if ($research && count($technologies) > 0) {
     $requirementStatus = AllianceItemRequirementStatus::createForTechnologies($technologies, $technologyList);
-    $isUnderConstruction = (bool) array_filter($technologyList, fn (AllianceTechnologyList $item) => $item->isUnderConstruction());
     foreach ($technologies as $technology) {
-        if (!$requirementStatus->requirementsMet($technology->id)) {
+        $currentTechnologyListItem = $technologyList[$technology->id] ?? null;
+        $itemStatus = $allianceBase->getTechnologyBuildStatus($alliance, $technology, $currentTechnologyListItem, $requirementStatus);
+        if ($itemStatus->status === AllianceItemBuildStatus::STATUS_MISSING_REQUIREMENTS) {
             continue;
         }
 
-        $currentTechnologyListItem = $technologyList[$technology->id] ?? null;
         $level = $currentTechnologyListItem !== null ? $technologyList[$technology->id]->level : 0;
         tableStart($technology->name . ' <span id="buildlevel">' . (($level > 0) ? $level : '') . '</span>');
 
@@ -629,38 +641,35 @@ if ($research && count($technologies) > 0) {
         // Baumenü
         //
         echo "<tr>";
-        if ($level >= $technology->lastLevel)
+        if ($itemStatus->status === AllianceItemBuildStatus::STATUS_MAX_LEVEL)
             echo "<td colspan=\"7\" style=\"text-align:center;\">Maximallevel erreicht!</td>";
         else {
-            $costs = $technology->calculateCosts($level + 1, $cu->alliance->memberCount, $config->getFloat('alliance_membercosts_factor'));
-            $style = [];
-            $need = new BaseResources();
-            foreach ($resName as $id => $resourceName) {
-                if ($allianceResources->get($id) > $costs->get($id)) {
-                    $style[$id] = "";
-                } else {
-                    // Erstellt absolut Wert der Zahl
-                    $need->set($id, abs($costs->get($id) - $allianceResources->get($id)));
-                    $style[$id] = "style=\"color:red;\" " . tm("Fehlender Rohstoff", "" . nf($need->get($id)) . " " . $resourceName . "") . "";
-                }
-            }
-
+            $costs = $technology->calculateCosts($level + 1, $alliance->memberCount, $config->getFloat('alliance_membercosts_factor'));
+            $style = array_fill(0, count($resName), '');
 
             $message = '';
             $style_message = '';
-            if ($isUnderConstruction) {
-                if ($currentTechnologyListItem !== null && $currentTechnologyListItem->isUnderConstruction()) {
+            switch ($itemStatus->status) {
+                case AllianceItemBuildStatus::STATUS_ITEM_UNDER_CONSTRUCTION:
                     $style_message = "color: rgb(0, 255, 0);";
                     $message = startTime($currentTechnologyListItem->buildEndTime - time(), 'build_message_research_' . $technology->id . '', 0, 'Wird ausgebaut auf Stufe ' . ($level + 1) . ' (TIME)');
-                } else {
+                    break;
+                case AllianceItemBuildStatus::STATUS_UNDER_CONSTRUCTION:
                     $message = "Es wird bereits gebaut!";
                     $style_message = "color: rgb(255, 0, 0);";
-                }
-            } elseif ($need->getSum() > 0) {
-                $message = "<input type=\"button\" class=\"button\" name=\"storage_submit\" id=\"storage_submit\" value=\"Fehlende Rohstoffe einzahlen\" " . tm("Nicht genügend Rohstoffe", "Es sind nicht genügend Rohstoffe vorhanden!<br>Klick auf den Button um die fehlenden Rohstoffe einzuzahlen.") . " onclick=\"setSpends(" . $need->metal . ", " . $need->crystal . ", " . $need->plastic . ", " . $need->fuel . ", " . $need->food . ");\"/>";
-            } else {
-                // Generiert Baubutton, mit welchem vor dem Absenden noch die Objekt ID übergeben wird
-                $message = "<input type=\"submit\" class=\"button\" name=\"research_submit\" id=\"research_submit\" value=\"Erforschen\" onclick=\"document.getElementById('research_id').value=" . $technology->id . ";\"/>";
+                    break;
+                case AllianceItemBuildStatus::STATUS_MISSING_RESOURCE:
+                    $need = $itemStatus->missingResources;
+                    $message = "<input type=\"button\" class=\"button\" name=\"storage_submit\" id=\"storage_submit\" value=\"Fehlende Rohstoffe einzahlen\" " . tm("Nicht genügend Rohstoffe", "Es sind nicht genügend Rohstoffe vorhanden!<br>Klick auf den Button um die fehlenden Rohstoffe einzuzahlen.") . " onclick=\"setSpends(" . $need->metal . ", " . $need->crystal . ", " . $need->plastic . ", " . $need->fuel . ", " . $need->food . ");\"/>";
+                    foreach ($resName as $id => $resourceName) {
+                        if ($need->get($id) > 0) {
+                            $style[$id] = "style=\"color:red;\" " . tm("Fehlender Rohstoff", "" . nf($need->get($id)) . " " . $resourceName . "") . "";
+                        }
+                    }
+                    break;
+                case AllianceItemBuildStatus::STATUS_OK;
+                    $message = "<input type=\"submit\" class=\"button\" name=\"research_submit\" id=\"research_submit\" value=\"Erforschen\" onclick=\"document.getElementById('research_id').value=" . $technology->id . ";\"/>";
+                    break;
             }
 
             echo "<th width=\"7%\">Stufe</th>

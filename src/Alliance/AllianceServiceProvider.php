@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace EtoA\Alliance;
 
+use EtoA\Alliance\Base\AllianceBase;
 use EtoA\User\UserRepository;
 use EtoA\Alliance\Board\AllianceBoardCategoryRankRepository;
 use EtoA\Alliance\Board\AllianceBoardCategoryRepository;
@@ -109,6 +110,14 @@ class AllianceServiceProvider implements ServiceProviderInterface
             return new AllianceMemberCosts(
                 $pimple[AllianceBuildingRepository::class],
                 $pimple[AllianceTechnologyRepository::class],
+                $pimple[ConfigurationService::class],
+                $pimple[AllianceRepository::class],
+                $pimple[AllianceHistoryRepository::class]
+            );
+        };
+
+        $pimple[AllianceBase::class] = function (Container $pimple): AllianceBase {
+            return new AllianceBase(
                 $pimple[ConfigurationService::class],
                 $pimple[AllianceRepository::class],
                 $pimple[AllianceHistoryRepository::class]

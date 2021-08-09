@@ -1,6 +1,11 @@
 <?php declare(strict_types=1);
 
-namespace EtoA\Alliance;
+namespace EtoA\Alliance\Base;
+
+use EtoA\Alliance\AllianceBuilding;
+use EtoA\Alliance\AllianceBuildList;
+use EtoA\Alliance\AllianceTechnology;
+use EtoA\Alliance\AllianceTechnologyListItem;
 
 class AllianceItemRequirementStatus
 {
@@ -8,20 +13,22 @@ class AllianceItemRequirementStatus
     public array $levelList;
     /** @var array<int, array<int, int>> */
     public array $requirementList;
+    private bool $underConstruction;
 
     /**
      * @param array<int, int> $levelList
      * @param array<int, array<int, int>> $requirementList
      */
-    private function __construct(array $levelList, array $requirementList)
+    private function __construct(array $levelList, array $requirementList, bool $underConstruction)
     {
         $this->levelList = $levelList;
         $this->requirementList = $requirementList;
+        $this->underConstruction = $underConstruction;
     }
 
     /**
      * @param AllianceTechnology[] $technologies
-     * @param AllianceTechnologyList[] $technologyList
+     * @param AllianceTechnologyListItem[] $technologyList
      */
     public static function createForTechnologies(array $technologies, array $technologyList): AllianceItemRequirementStatus
     {
@@ -37,7 +44,7 @@ class AllianceItemRequirementStatus
             }
         }
 
-        return new AllianceItemRequirementStatus($levelList, $requirementList);
+        return new AllianceItemRequirementStatus($levelList, $requirementList, (bool) array_filter($technologyList, fn (AllianceTechnologyListItem $item) => $item->isUnderConstruction()));
     }
 
     /**
@@ -58,7 +65,7 @@ class AllianceItemRequirementStatus
             }
         }
 
-        return new AllianceItemRequirementStatus($levelList, $requirementList);
+        return new AllianceItemRequirementStatus($levelList, $requirementList, (bool) array_filter($buildingList, fn (AllianceBuildList $item) => $item->isUnderConstruction()));
     }
 
     public function requirementsMet(int $itemId): bool
@@ -78,5 +85,10 @@ class AllianceItemRequirementStatus
         }
 
         return true;
+    }
+
+    public function isUnderConstruction(): bool
+    {
+        return $this->underConstruction;
     }
 }
