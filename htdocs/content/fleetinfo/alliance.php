@@ -3,19 +3,27 @@
 /** @var int $fleet_id */
 /** @var Fleet $fd */
 
+use EtoA\Alliance\AllianceBuildingRepository;
+use EtoA\Alliance\AllianceRepository;
 use EtoA\Alliance\AllianceRights;
+
+/** @var AllianceBuildingRepository $allianceBuildingRepository */
+$allianceBuildingRepository = $app[AllianceBuildingRepository::class];
+/** @var AllianceRepository $allianceRepository */
+$allianceRepository = $app[AllianceRepository::class];
 
 $lead_id = (int) $_GET['lead_id'] > 0 ? (int) $_GET['lead_id'] : -1;
 
 $rights = true;
+$allianceFleetControlLevel = $allianceBuildingRepository->getLevel($cu->allianceId(), \EtoA\Alliance\AllianceBuildingId::FLEET_CONTROL);
 
 if ($lead_id > 0)
     $fd = new Fleet($fleet_id, -1, $lead_id);
 else
-        if ($cu->alliance->getBuildingLevel("Flottenkontrolle") < ALLIANCE_FLEET_SHOW_PART && $cu->id != $fd->ownerId())
+        if ($allianceFleetControlLevel < ALLIANCE_FLEET_SHOW_PART && $cu->id != $fd->ownerId())
     $rights = false;
 
-if ($cu->alliance->getBuildingLevel("Flottenkontrolle") >= ALLIANCE_FLEET_SHOW_DETAIL && $rights) {
+if ($allianceFleetControlLevel >= ALLIANCE_FLEET_SHOW_DETAIL && $rights) {
     if ($cu->alliance->checkActionRightsNA(AllianceRights::FLEET_MINISTER) || $cu->id == $fd->ownerId()) {
         //
         // Flottendaten laden und überprüfen ob die Flotte existiert
@@ -91,12 +99,15 @@ if ($cu->alliance->getBuildingLevel("Flottenkontrolle") >= ALLIANCE_FLEET_SHOW_D
                         <th>Verbleibend:</th>
                         <td id=\"flighttime\" style=\"color:#ff0\">-</td>
                     </tr>";
-            if ($fd->id() == $fd->leaderId() && $lead_id > 0 && $cu->alliance->getBuildingLevel("Flottenkontrolle") >= ALLIANCE_FLEET_SHOW_PART) {
+
+            if ($fd->id() == $fd->leaderId() && $lead_id > 0 && $allianceFleetControlLevel >= ALLIANCE_FLEET_SHOW_PART) {
+                $alliance = $allianceRepository->getAlliance($cu->allianceId());
+                $allianceTag = $alliance !== null ? $alliance->tag : null;
                 echo "<th>Teilflotten:</th>
                         <td>
-                            <a href=\"?page=fleetinfo&amp;id=" . $fd->id() . "\">" . $cu->allianceTag() . "-" . $fd->id() . "<br />Besitzer: " . get_user_nick($fd->ownerId()) . "</a><br />";
+                            <a href=\"?page=fleetinfo&amp;id=" . $fd->id() . "\">" . $allianceTag . "-" . $fd->id() . "<br />Besitzer: " . get_user_nick($fd->ownerId()) . "</a><br />";
                 foreach ($fd->fleets as $f) {
-                    echo "<a href=\"?page=fleetinfo&amp;id=" . $f->id() . "\">" . $cu->allianceTag() . "-" . $f->id() . "<br />Besitzer: " . get_user_nick($f->ownerId()) . "</a><br />";
+                    echo "<a href=\"?page=fleetinfo&amp;id=" . $f->id() . "\">" . $allianceTag . "-" . $f->id() . "<br />Besitzer: " . get_user_nick($f->ownerId()) . "</a><br />";
                 }
                 echo "</td></tr>";
             }

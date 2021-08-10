@@ -1,21 +1,9 @@
 <?PHP
 
-use EtoA\Alliance\AllianceApplicationRepository;
-use EtoA\Alliance\AllianceRankRepository;
 use EtoA\Core\Configuration\ConfigurationService;
-use EtoA\Market\MarketAuctionRepository;
-use EtoA\Market\MarketResourceRepository;
-use EtoA\Market\MarketShipRepository;
-use EtoA\Notepad\NotepadRepository;
 use EtoA\Support\Mail\MailSenderService;
-use EtoA\Universe\Planet\PlanetRepository;
-use EtoA\Universe\Planet\PlanetService;
-use EtoA\User\UserLogRepository;
-use EtoA\User\UserMultiRepository;
 use EtoA\User\UserService;
 use EtoA\User\UserSessionRepository;
-use EtoA\User\UserSittingRepository;
-use EtoA\User\UserWarningRepository;
 
 /**
  * Provides methods for accessing user information
@@ -63,9 +51,6 @@ class User implements \EtoA\User\UserInterface
     protected $signature;
     protected $avatar;
     protected $allianceRankId;
-    protected $allianceName;
-    protected $allianceTag;
-    protected $allianceRankName;
     protected $allianceLeave;
     protected $rank;
     protected $rankHighest;
@@ -165,10 +150,6 @@ class User implements \EtoA\User\UserInterface
 
             $this->sittingDays = $arr['user_sitting_days'];
 
-            $this->allianceName = "";
-            $this->allianceTag = "";
-            $this->allianceRankName = "";
-
             $this->rank = $arr['user_rank'];
             $this->rankHighest = $arr['user_rank_highest'];
 
@@ -203,10 +184,6 @@ class User implements \EtoA\User\UserInterface
             $this->hmode_to = 0;
             $this->deleted = 0;
             $this->allianceId = 0;
-
-            $this->allianceName = "";
-            $this->allianceTag = "";
-            $this->allianceRankName = "";
 
             $this->rank = 0;
             $this->rankHighest = 0;
@@ -455,30 +432,6 @@ class User implements \EtoA\User\UserInterface
         return (int) $this->allianceId;
     }
 
-    final public function allianceName()
-    {
-        if ($this->allianceName == "") {
-            $this->loadAllianceData();
-        }
-        return $this->allianceName;
-    }
-
-    final public function allianceTag()
-    {
-        if ($this->allianceTag == "") {
-            $this->loadAllianceData();
-        }
-        return $this->allianceTag;
-    }
-
-    final public function allianceRankName()
-    {
-        if ($this->allianceRankName == "") {
-            $this->loadAllianceData();
-        }
-        return $this->allianceRankName;
-    }
-
     public function isInactiv()
     {
         if (!$this->admin) {
@@ -542,43 +495,6 @@ class User implements \EtoA\User\UserInterface
         }
 
         return 1;
-    }
-
-    /**
-     * Load alliance data
-     */
-    function loadAllianceData()
-    {
-        global $app;
-
-        if ($this->allianceId > 0) {
-            $ares = dbquery("
-            SELECT
-                alliance_tag,
-                alliance_name,
-                alliance_founder_id
-            FROM
-                alliances
-            WHERE
-                alliance_id=" . $this->allianceId . ";
-            ");
-            if (mysql_num_rows($ares) > 0) {
-                $aarr = mysql_fetch_row($ares);
-                $this->allianceName = "[" . $aarr[0] . "] " . $aarr[1];
-                $this->allianceTag = $aarr[0];
-
-                if ($aarr[2] == $this->id) {
-                    $this->allianceRankName = "Gründer";
-                } elseif ($this->allianceRankId > 0) {
-                    /** @var AllianceRankRepository $allianceRankRepository */
-                    $allianceRankRepository = $app[AllianceRankRepository::class];
-                    $rank = $allianceRankRepository->getRank($this->allianceRankId, $this->allianceId);
-                    if ($rank !== null) {
-                        $this->allianceRankName = $rank->name;
-                    }
-                }
-            }
-        }
     }
 
     /**

@@ -1,5 +1,7 @@
 <?PHP
 
+use EtoA\Alliance\AllianceRankRepository;
+use EtoA\Alliance\AllianceRepository;
 use EtoA\User\UserLogRepository;
 use EtoA\User\UserRatingRepository;
 use EtoA\User\UserRatingSearch;
@@ -9,6 +11,10 @@ use EtoA\User\UserRepository;
 $userLogRepository = $app[UserLogRepository::class];
 /** @var UserRepository $userRepository */
 $userRepository = $app[UserRepository::class];
+/** @var AllianceRankRepository $allianceRankRepository */
+$allianceRankRepository = $app[AllianceRankRepository::class];
+/** @var AllianceRepository $allianceRepository */
+$allianceRepository = $app[AllianceRepository::class];
 
 echo "<h1>Benutzerprofil</h1>";
 
@@ -46,10 +52,17 @@ if ($uid > 0) {
       </tr>";
         if ($user->allianceId != 0) {
             echo "<tr><th style=\"width:120px;\">Allianz:</th><td>";
-            if ($user->allianceRankName() != "") {
-                echo $user->allianceRankName() . " von ";
+            $alliance = $allianceRepository->getAlliance($user->allianceId());
+            if ($user->getId() === $alliance->founderId) {
+                echo 'Gründer von ';
+            } else {
+                $rank = $allianceRankRepository->getRank($user->allianceRankId, $user->allianceId());
+                if ($rank !== null) {
+                    echo $rank->name . " von ";
+                }
             }
-            echo "<a href=\"?page=alliance&amp;id=" . $user->allianceId . "\">" . $user->alliance . "</a></td></tr>";
+
+            echo "<a href=\"?page=alliance&amp;id=" . $user->allianceId . "\">" . $alliance->nameWithTag     . "</a></td></tr>";
         }
         if ($user->visits > 0) {
             echo "<tr><th style=\"width:120px;\">Besucherz&auml;hler:</th><td>" . nf($user->visits) . " Besucher</td></tr>";

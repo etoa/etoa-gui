@@ -2,6 +2,7 @@
 
 use EtoA\Alliance\AllianceBuildingId;
 use EtoA\Alliance\AllianceBuildingRepository;
+use EtoA\Alliance\AllianceRepository;
 use EtoA\Alliance\AllianceRights;
 use EtoA\User\UserRepository;
 use EtoA\User\UserUniverseDiscoveryService;
@@ -10,7 +11,8 @@ use EtoA\User\UserUniverseDiscoveryService;
 $userRepository = $app[UserRepository::class];
 /** @var AllianceBuildingRepository $allianceBuildingRepository */
 $allianceBuildingRepository = $app[AllianceBuildingRepository::class];
-
+/** @var AllianceRepository $allianceRepository */
+$allianceRepository = $app[AllianceRepository::class];
 /** @var UserUniverseDiscoveryService */
 $userUniverseDiscoveryService = $app[UserUniverseDiscoveryService::class];
 
@@ -239,8 +241,11 @@ if ($valid > 0) {
                     <tr>
                         <td class=\"tbltitle\">Teilflotten:</td>
                         <td>";
+
+        $alliance = $allianceRepository->getAlliance($cu->allianceId());
+        $allianceTag = $alliance !== null ? $alliance->tag : null;
         foreach ($fd->fleets as $f) {
-            echo "<a href=\"?page=fleetinfo&amp;id=" . $f->id() . "\">" . $cu->allianceTag() . "-" . $f->id() . "<br />Besitzer: " . get_user_nick($f->ownerId()) . "</a><br />";
+            echo "<a href=\"?page=fleetinfo&amp;id=" . $f->id() . "\">" . $allianceTag . "-" . $f->id() . "<br />Besitzer: " . get_user_nick($f->ownerId()) . "</a><br />";
         }
         echo "</td></tr>";
         tableEnd();
