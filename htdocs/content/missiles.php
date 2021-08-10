@@ -19,7 +19,7 @@ $config = $app[ConfigurationService::class];
 /** @var PlanetRepository */
 $planetRepo = $app[PlanetRepository::class];
 
-/** @var EntityRepository */
+/** @var EntityRepository $entityRepository */
 $entityRepository = $app[EntityRepository::class];
 
 /** @var ResourceBoxDrawer */
@@ -644,31 +644,9 @@ if ($missileBuilding !== null && $missileBuilding->currentLevel > 0) {
                             $entity = $entityRepository->findIncludeCell($planet->id);
                             $coords = [];
                             if (isset($_GET['target'])) {
-                                $tres = dbquery("SELECT
-                                                    cells.sx,
-                                                    cells.sy,
-                                                    cells.cx,
-                                                    cells.cy,
-                                                    entities.pos
-                                                FROM
-                                                    entities
-                                                INNER JOIN
-                                                    cells
-                                                ON
-                                                    entities.id='" . intval($_GET['target']) . "'
-                                                    AND entities.cell_id=cells.id;");
-                                $tarr = mysql_fetch_array($tres);
-                                $coords[0] = $tarr['sx'];
-                                $coords[1] = $tarr['sy'];
-                                $coords[2] = $tarr['cx'];
-                                $coords[3] = $tarr['cy'];
-                                $coords[4] = $tarr['pos'];
+                                $target = $entityRepository->getEntity((int) $_GET['target']);
                             } else {
-                                $coords[0] = $entity->sx;
-                                $coords[1] = $entity->sy;
-                                $coords[2] = $entity->cx;
-                                $coords[3] = $entity->cy;
-                                $coords[4] = $entity->pos;
+                                $target = $entity;
                             }
 
                             $keyup_command = 'xajax_getFlightTargetInfo(xajax.getFormValues(\'targetForm\'),' . $entity->sx . ',' . $entity->sy . ',' . $entity->cx . ',' . $entity->cy . ',' . $entity->pos . ');';
@@ -692,11 +670,11 @@ if ($missileBuilding !== null && $missileBuilding->currentLevel > 0) {
                             }
                             echo '</td><th>:</th>
                             <td>
-                                <input type="text"  onkeyup="' . $keyup_command . '" name="sx" id="sx" value="' . $coords[0] . '" size="2" autocomplete="off" maxlength="2" /> /
-                                <input type="text"  onkeyup="' . $keyup_command . '" name="sy" id="sy" value="' . $coords[1] . '" size="2" autocomplete="off" maxlength="2" /> :
-                                <input type="text"  onkeyup="' . $keyup_command . '" name="cx" id="cx" value="' . $coords[2] . '" size="2" autocomplete="off" maxlength="2" /> /
-                                <input type="text"  onkeyup="' . $keyup_command . '" name="cy" id="cy" value="' . $coords[3] . '" size="2" autocomplete="off" maxlength="2" /> :
-                                <input type="text"  onkeyup="' . $keyup_command . '" name="p" id="p" value="' . $coords[4] . '" size="2" autocomplete="off" maxlength="2" />
+                                <input type="text"  onkeyup="' . $keyup_command . '" name="sx" id="sx" value="' . $target->sx . '" size="2" autocomplete="off" maxlength="2" /> /
+                                <input type="text"  onkeyup="' . $keyup_command . '" name="sy" id="sy" value="' . $target->sy . '" size="2" autocomplete="off" maxlength="2" /> :
+                                <input type="text"  onkeyup="' . $keyup_command . '" name="cx" id="cx" value="' . $target->cx . '" size="2" autocomplete="off" maxlength="2" /> /
+                                <input type="text"  onkeyup="' . $keyup_command . '" name="cy" id="cy" value="' . $target->cy . '" size="2" autocomplete="off" maxlength="2" /> :
+                                <input type="text"  onkeyup="' . $keyup_command . '" name="p" id="p" value="' . $target->pos . '" size="2" autocomplete="off" maxlength="2" />
                             </td></tr>';
 
                             // Bookmarkliste anzeigen
