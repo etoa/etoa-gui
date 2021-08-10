@@ -1,0 +1,26 @@
+[
+    {
+        "type_id": "1",
+        "type_name": "Allgemeine Geb\u00e4ude",
+        "type_order": "1",
+        "type_color": "#ffffff"
+    },
+    {
+        "type_id": "2",
+        "type_name": "Rohstoffgeb\u00e4ude",
+        "type_order": "2",
+        "type_color": "#ffffff"
+    },
+    {
+        "type_id": "3",
+        "type_name": "Kraftwerke",
+        "type_order": "3",
+        "type_color": "#ffffff"
+    },
+    {
+        "type_id": "4",
+        "type_name": "Speicher",
+        "type_order": "4",
+        "type_color": "#ffffff"
+    }
+]

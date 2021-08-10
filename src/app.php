@@ -58,6 +58,7 @@ $app->register(new \EtoA\User\UserServiceProvider());
 $app->register(new \EtoA\Admin\AdminUserServiceProvider());
 $app->register(new \EtoA\Text\TextServiceProvider());
 $app->register(new \EtoA\Alliance\AllianceServiceProvider());
+$app->register(new \EtoA\Support\Balancing\BalancingServiceProvider());
 $app->register(new \EtoA\Support\DB\DatabaseManagerServiceProvider());
 $app->register(new \EtoA\HostCache\HostCacheServiceprovider());
 $app->register(new \EtoA\Support\Mail\MailServiceProvider());

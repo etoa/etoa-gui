@@ -1,0 +1,12 @@
+[
+    {
+        "set_id": "5",
+        "set_name": "Standard",
+        "set_active": "0"
+    },
+    {
+        "set_id": "9",
+        "set_name": "Speed Lockdown",
+        "set_active": "1"
+    }
+]
