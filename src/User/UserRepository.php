@@ -243,49 +243,31 @@ class UserRepository extends AbstractRepository
         return $this->searchUsers(UserSearch::create()->allianceId($allianceId));
     }
 
-    public function getUser(int $userId): ?User
+    public function findUser(UserSearch $search): ?User
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->applySearchSortLimit($this->createQueryBuilder(), $search)
             ->select('*')
             ->from('users')
-            ->where('user_id = :userId')
-            ->setParameter('userId', $userId)
+            ->setMaxResults(1)
             ->execute()
             ->fetchAssociative();
 
         return $data !== false ? new User($data) : null;
+    }
+
+    public function getUser(int $userId): ?User
+    {
+        return $this->findUser(UserSearch::create()->user($userId));
     }
 
     public function getUserByNick(string $nick): ?User
     {
-        $data = $this->createQueryBuilder()
-            ->select('*')
-            ->from('users')
-            ->where('LCASE(user_nick) = :nick')
-            ->setParameters([
-                'nick' => strtolower($nick),
-            ])
-            ->execute()
-            ->fetchAssociative();
-
-        return $data !== false ? new User($data) : null;
+        return $this->findUser(UserSearch::create()->nick($nick));
     }
 
     public function getUserByNickAndEmail(string $nick, string $emailFixed): ?User
     {
-        $data = $this->createQueryBuilder()
-            ->select('*')
-            ->from('users')
-            ->where('LCASE(user_nick) = :nick')
-            ->andWhere('user_email_fix = :emailFixed')
-            ->setParameters([
-                'nick' => strtolower($nick),
-                'emailFixed' => $emailFixed,
-            ])
-            ->execute()
-            ->fetchAssociative();
-
-        return $data !== false ? new User($data) : null;
+        return $this->findUser(UserSearch::create()->nick($nick)->emailFix($emailFixed));
     }
 
     /**
@@ -485,22 +467,14 @@ class UserRepository extends AbstractRepository
         return $affected > 0;
     }
 
-    public function exists(string $nick, string $email): bool
+    public function exists(UserSearch $search): bool
     {
-        $data = $this->createQueryBuilder()
-            ->select("user_id")
+        return (bool) $this->applySearchSortLimit($this->createQueryBuilder(), $search)
+            ->select("1")
             ->from('users')
-            ->where('user_nick = :nick')
-            ->orWhere('user_email_fix = :email')
             ->setMaxResults(1)
-            ->setParameters([
-                'nick' => $nick,
-                'email' => $email,
-            ])
             ->execute()
             ->fetchOne();
-
-        return $data !== false;
     }
 
     public function create(string $nick, string $name, string $email, string $password, int $race = 0, bool $ghost = false): int

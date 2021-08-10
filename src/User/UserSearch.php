@@ -11,6 +11,14 @@ class UserSearch extends AbstractSearch
         return new UserSearch();
     }
 
+    public function nick(string $nickname): self
+    {
+        $this->parts[] = "LCASE(user_nick) = :nickname";
+        $this->parameters['nickname'] = strtolower($nickname);
+
+        return $this;
+    }
+
     public function nameLike(string $name): self
     {
         $this->parts[] = "user_nick LIKE :nameLike";
@@ -19,10 +27,34 @@ class UserSearch extends AbstractSearch
         return $this;
     }
 
+    public function emailOrEmailFix(string $email): self
+    {
+        $this->parts[] = "user_email_fix = :emailOrEmailFix OR user_email = :emailOrEmailFix";
+        $this->parameters['emailOrEmailFix'] = $email;
+
+        return $this;
+    }
+
+    public function emailFix(string $emailFix): self
+    {
+        $this->parts[] = "user_email_fix = :emailFixed";
+        $this->parameters['emailFixed'] = $emailFix;
+
+        return $this;
+    }
+
     public function nameOrEmailOrDualLike(string $like): self
     {
         $this->parts[] = 'user_nick LIKE :like OR user_name LIKE :like OR user_email LIKE :like OR user_email_fix LIKE :like OR dual_email LIKE :like OR dual_name LIKE :like';
         $this->parameters['like'] = '%' . $like . '%';
+
+        return $this;
+    }
+
+    public function password(string $saltedPassword): self
+    {
+        $this->parts[] = "user_password = :password";
+        $this->parameters['password'] = $saltedPassword;
 
         return $this;
     }
@@ -52,6 +84,14 @@ class UserSearch extends AbstractSearch
     {
         $this->parts[] = "user_alliance_id = :allianceId";
         $this->parameters['allianceId'] = $allianceId;
+
+        return $this;
+    }
+
+    public function user(int $userId): self
+    {
+        $this->parts[] = "user_id = :userId";
+        $this->parameters['userId'] = $userId;
 
         return $this;
     }

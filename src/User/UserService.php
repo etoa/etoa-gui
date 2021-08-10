@@ -184,7 +184,7 @@ class UserService
         }
 
         // Check existing user
-        if ($this->userRepository->exists($nick, $email)) {
+        if ($this->userRepository->exists(UserSearch::create()->nick($nick)->emailFix($email))) {
             throw new Exception("Der Benutzer mit diesem Nicknamen oder dieser E-Mail-Adresse existiert bereits!");
         }
 
