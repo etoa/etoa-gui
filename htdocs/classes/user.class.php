@@ -479,18 +479,6 @@ class User implements \EtoA\User\UserInterface
         return $this->allianceRankName;
     }
 
-    public function setAllianceId($id)
-    {
-        $this->allianceId = $id;
-        dbquery("
-        UPDATE
-            " . self::tableName . "
-        SET
-            user_alliance_rank_id=0,
-            user_alliance_id=" . $id . "
-        WHERE user_id='" . $this->id . "';");
-    }
-
     public function isInactiv()
     {
         if (!$this->admin) {
