@@ -19,7 +19,6 @@ class ShipQueueRepository extends AbstractRepository
                 'queue_starttime' => ':startTime',
                 'queue_endtime' => ':endTime',
                 'queue_objtime' => ':objTime',
-                'queue_user_click_time' => ':userClickTime',
             ])
             ->setParameters([
                 'userId' => $userId,
@@ -29,7 +28,6 @@ class ShipQueueRepository extends AbstractRepository
                 'startTime' => $startTime,
                 'endTime' => $endTime,
                 'objTime' => $objectTime,
-                'userClickTime' => time(),
             ])->execute();
 
         return (int) $this->getConnection()->lastInsertId();
@@ -72,13 +70,11 @@ class ShipQueueRepository extends AbstractRepository
     /**
      * @return ShipQueueItem[]
      */
-    public function findQueueItemsForUser(int $userId): array
+    public function searchQueueItems(ShipQueueSearch $search): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->applySearchSortLimit($this->createQueryBuilder(), $search)
             ->select('*')
             ->from('ship_queue')
-            ->where('queue_user_id = :userId')
-            ->setParameter('userId', $userId)
             ->orderBy('queue_starttime', 'ASC')
             ->execute()
             ->fetchAllAssociative();
@@ -98,7 +94,6 @@ class ShipQueueRepository extends AbstractRepository
             ->set('queue_endtime', ':endTime')
             ->set('queue_objtime', ':objectTime')
             ->set('queue_build_type', ':buildType')
-            ->set('queue_user_click_time', ':userClickTime')
             ->where('queue_id = :id')
             ->setParameters([
                 'id' => $item->id,
@@ -110,7 +105,6 @@ class ShipQueueRepository extends AbstractRepository
                 'endTime' => $item->endTime,
                 'objectTime' => $item->objectTime,
                 'buildType' => $item->buildType,
-                'userClickTime' => $item->userClickTime,
             ])
             ->execute();
     }

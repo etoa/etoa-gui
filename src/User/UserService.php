@@ -24,6 +24,7 @@ use EtoA\Market\MarketShipRepository;
 use EtoA\Missile\MissileRepository;
 use EtoA\Notepad\NotepadRepository;
 use EtoA\Ship\ShipQueueRepository;
+use EtoA\Ship\ShipQueueSearch;
 use EtoA\Ship\ShipRepository;
 use EtoA\Support\Mail\MailSenderService;
 use EtoA\Technology\TechnologyRepository;
@@ -428,7 +429,7 @@ die Spielleitung";
                 $this->technologyRepository->save($item);
             }
 
-            $shipQueueItems = $this->shipQueueRepository->findQueueItemsForUser($user->id);
+            $shipQueueItems = $this->shipQueueRepository->searchQueueItems(ShipQueueSearch::create()->userId($user->id));
             foreach ($shipQueueItems as $item) {
                 $item->buildType = 0;
                 $item->startTime += $hmodTime;

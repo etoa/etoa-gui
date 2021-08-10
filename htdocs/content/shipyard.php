@@ -6,7 +6,10 @@ use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Fleet\FleetRepository;
 use EtoA\Ship\ShipCategoryRepository;
 use EtoA\Ship\ShipDataRepository;
+use EtoA\Ship\ShipQueueItem;
 use EtoA\Ship\ShipQueueRepository;
+use EtoA\Ship\ShipQueueSearch;
+use EtoA\Ship\ShipRepository;
 use EtoA\Ship\ShipRequirementRepository;
 use EtoA\Ship\ShipSearch;
 use EtoA\Ship\ShipSort;
@@ -30,7 +33,8 @@ $buildingRepository = $app[BuildingRepository::class];
 
 /** @var ShipQueueRepository $shipQueueRepository */
 $shipQueueRepository = $app[ShipQueueRepository::class];
-
+/** @var ShipRepository $shipRepositroy */
+$shipRepositroy = $app[ShipRepository::class];
 /** @var FleetRepository $fleetRepository */
 $fleetRepository = $app[FleetRepository::class];
 
@@ -122,60 +126,29 @@ if ($shipyard !== null && $shipyard->currentLevel > 0) {
         $gen_tech_level = $techlist[GEN_TECH_ID] ?? 0;
 
         // Gebaute Schiffe laden
+        /** @var array<int, array<int, int>> $shiplist */
         $shiplist = [];
+        /** @var array<int, int> $bunkered */
         $bunkered = [];
-        $res = dbquery("
-        SELECT
-            shiplist_ship_id,
-            shiplist_entity_id,
-            shiplist_count,
-            shiplist_bunkered
-        FROM
-        shiplist
-        WHERE
-        shiplist_user_id='" . $cu->id . "';");
-        while ($arr = mysql_fetch_assoc($res)) {
-            $shiplist[$arr['shiplist_ship_id']][$arr['shiplist_entity_id']] = $arr['shiplist_count'];
-            $bunkered[$arr['shiplist_ship_id']][$arr['shiplist_entity_id']] = $arr['shiplist_bunkered'];
+        $userShiplist = $shipRepositroy->findForUser($cu->getId());
+        foreach ($userShiplist as $entry) {
+            $shiplist[$entry->shipId][$entry->entityId] = $entry->count;
+            if (!isset($bunkered[$entry->shipId])) {
+                $bunkered[$entry->shipId] = 0;
+            }
+            $bunkered[$entry->shipId] += $entry->bunkered;
         }
 
         // Bauliste vom aktuellen Planeten laden (wird nach "Abbrechen" nochmals geladen)
+        /** @var array<int, ShipQueueItem> $queue */
         $queue = [];
-        $res = dbquery("
-        SELECT
-        queue_id,
-        queue_ship_id,
-        queue_cnt,
-        queue_starttime,
-        queue_endtime,
-        queue_objtime
-        FROM
-        ship_queue
-        WHERE
-        queue_entity_id='" . $planet->id . "'
-        AND queue_endtime>'" . $time . "'
-    ORDER BY
-            queue_starttime ASC;");
-        while ($arr = mysql_fetch_assoc($res)) {
-            $queue[$arr['queue_id']] = $arr;
+        $shipQueueItems = $shipQueueRepository->searchQueueItems(ShipQueueSearch::create()->entityId($planet->id)->endAfter($time));
+        foreach ($shipQueueItems as $item) {
+            $queue[$item->id] = $item;
         }
 
         // Bauliste vom allen Planeten laden und nach Schiffe zusammenfassen
-        $queue_total = [];
-        $res = dbquery("
-        SELECT
-        queue_ship_id,
-        SUM(queue_cnt) AS cnt
-        FROM
-        ship_queue
-        WHERE
-        queue_user_id='" . $cu->id . "'
-        AND queue_endtime>'" . $time . "'
-    GROUP BY
-        queue_ship_id;");
-        while ($arr = mysql_fetch_assoc($res)) {
-            $queue_total[$arr['queue_ship_id']] = $arr['cnt'];
-        }
+        $queue_total = $shipQueueRepository->getUserQueuedShipCounts($cu->getId());
 
         // Flotten laden
         $fleet = $fleetRepository->getUserFleetShipCounts($cu->getId());
@@ -368,7 +341,7 @@ if ($shipyard !== null && $shipyard->currentLevel > 0) {
             if (count($queue) > 0) {
                 // Speichert die letzte Endzeit, da das Array $queue nach queue_starttime (und somit auch endtime) sortiert ist
                 foreach ($queue as $data) {
-                    $end_time = $data['queue_endtime'];
+                    $end_time = $data->endTime;
                 }
             }
 
@@ -392,7 +365,7 @@ if ($shipyard !== null && $shipyard->currentLevel > 0) {
                     }
                     // ... im Bunker
                     if (isset($bunkered[$ship_id])) {
-                        $ship_count += array_sum($bunkered[$ship_id]);
+                        $ship_count += $bunkered[$ship_id];
                     }
                     // ... in der Bauliste
                     if (isset($queue_total[$ship_id])) {
@@ -491,13 +464,17 @@ if ($shipyard !== null && $shipyard->currentLevel > 0) {
                         $buildingRepository->markBuildingWorkingStatus($cu->getId(), $planet->id, BuildingId::SHIPYARD, true);
 
                         // Queue Array aktualisieren
-                        $queue[$shiplist_id]['queue_id'] = $shiplist_id;
-                        $queue[$shiplist_id]['queue_ship_id'] = $ship_id;
-                        $queue[$shiplist_id]['queue_cnt'] = $build_cnt;
-                        $queue[$shiplist_id]['queue_starttime'] = $start_time;
-                        $queue[$shiplist_id]['queue_endtime'] = $end_time;
-                        $queue[$shiplist_id]['queue_objtime'] = $obj_time;
-
+                        $queue[$shiplist_id] = new ShipQueueItem([
+                            'queue_id' => $shiplist_id,
+                            'queue_ship_id' => $ship_id,
+                            'queue_cnt' => $build_cnt,
+                            'queue_user_id' => $cu->getId(),
+                            'queue_entity_id' => $planet->id,
+                            'queue_starttime' => $start_time,
+                            'queue_endtime' => $end_time,
+                            'queue_objtime' => $obj_time,
+                            'queue_build_type' => 0,
+                        ]);
 
                         echo "<tr><td>" . nf($build_cnt) . " " . $ships[$ship_id]->name . " in Auftrag gegeben!</td></tr>";
 
@@ -563,24 +540,25 @@ if ($shipyard !== null && $shipyard->currentLevel > 0) {
         if (isset($_GET['cancel']) && intval($_GET['cancel']) > 0 && $cancelable) {
             $id = intval($_GET['cancel']);
             if (isset($queue[$id])) {
+                $ship_id = $queue[$id]->shipId;
+
                 //Zu erhaltende Rohstoffe errechnen
-                $obj_cnt = min(ceil(($queue[$id]['queue_endtime'] - max($time, $queue[$id]['queue_starttime'])) / $queue[$id]['queue_objtime']), $queue[$id]['queue_cnt']);
-                echo "Breche den Bau von " . $obj_cnt . " " . $ships[$queue[$id]['queue_ship_id']]['ship_name'] . " ab...<br/>";
+                $obj_cnt = min(ceil(($queue[$id]->endTime - max($time, $queue[$id]->startTime)) / $queue[$id]->objectTime), $queue[$id]->count);
+                echo "Breche den Bau von " . $obj_cnt . " " . $ships[$ship_id]->name . " ab...<br/>";
 
                 $ret = [];
-                $ret['metal'] = $shipCosts[$queue[$id]['queue_ship_id']]->metal * $obj_cnt * $cancel_res_factor;
-                $ret['crystal'] = $shipCosts[$queue[$id]['queue_ship_id']]->crystal * $obj_cnt * $cancel_res_factor;
-                $ret['plastic'] = $shipCosts[$queue[$id]['queue_ship_id']]->plastic * $obj_cnt * $cancel_res_factor;
-                $ret['fuel'] = $shipCosts[$queue[$id]['queue_ship_id']]->fuel * $obj_cnt * $cancel_res_factor;
-                $ret['food'] = $shipCosts[$queue[$id]['queue_ship_id']]->food * $obj_cnt * $cancel_res_factor;
+                $ret['metal'] = $shipCosts[$ship_id]->metal * $obj_cnt * $cancel_res_factor;
+                $ret['crystal'] = $shipCosts[$ship_id]->crystal * $obj_cnt * $cancel_res_factor;
+                $ret['plastic'] = $shipCosts[$ship_id]->plastic * $obj_cnt * $cancel_res_factor;
+                $ret['fuel'] = $shipCosts[$ship_id]->fuel * $obj_cnt * $cancel_res_factor;
+                $ret['food'] = $shipCosts[$ship_id]->food * $obj_cnt * $cancel_res_factor;
 
                 // Daten für Log speichern
-                $ship_name = $ships[$queue[$id]['queue_ship_id']]->name;
-                $ship_id = $queue[$id]['queue_ship_id'];
-                $queue_count = $queue[$id]['queue_cnt'];
-                $queue_objtime = $queue[$id]['queue_objtime'];
-                $start_time = $queue[$id]['queue_starttime'];
-                $end_time = $queue[$id]['queue_endtime'];
+                $ship_name = $ships[$ship_id]->name;
+                $queue_count = $queue[$id]->count;
+                $queue_objtime = $queue[$id]->objectTime;
+                $start_time = $queue[$id]->startTime;
+                $end_time = $queue[$id]->endTime;
 
                 //Auftrag löschen
                 $shipQueueRepository->deleteQueueItem($id);
@@ -588,46 +566,23 @@ if ($shipyard !== null && $shipyard->currentLevel > 0) {
                 $buildingRepository->markBuildingWorkingStatus($cu->getId(), $planet->id, BuildingId::SHIPYARD, false);
 
                 // Nachkommende Aufträge werden Zeitlich nach vorne verschoben
-                $tres = dbquery("
-                SELECT
-                    queue_id,
-                queue_ship_id,
-                queue_cnt,
-                queue_starttime,
-                queue_endtime,
-                queue_objtime
-                FROM
-                    ship_queue
-                WHERE
-                    queue_starttime>='" . $end_time . "'
-                    AND queue_entity_id='" . $planet->id . "'
-                ORDER BY
-                    queue_starttime ASC
-                ;");
-                if (mysql_num_rows($tres) > 0) {
+                $queueItems = $shipQueueRepository->searchQueueItems(ShipQueueSearch::create()->entityId($planet->id)->startEqualAfter($end_time));
+                if (count($queueItems) > 0) {
                     $new_starttime = max($start_time, time());
-                    while ($tarr = mysql_fetch_assoc($tres)) {
-                        $new_endtime = $new_starttime + $tarr['queue_endtime'] - $tarr['queue_starttime'];
-                        dbquery("
-                        UPDATE
-                            ship_queue
-                        SET
-                            queue_starttime='" . $new_starttime . "',
-                            queue_endtime='" . $new_endtime . "'
-                        WHERE
-                            queue_id='" . $tarr['queue_id'] . "'
-                        ");
+                    foreach ($queueItems as $item) {
+                        $item->startTime = $new_starttime;
+                        $item->endTime = $new_starttime + $item->endTime - $item->startTime;
+                        $shipQueueRepository->saveQueueItem($item);
 
                         // Aktualisiert das Queue-Array
-                        $queue[$tarr['queue_id']]['queue_starttime'] = $new_starttime;
-                        $queue[$tarr['queue_id']]['queue_endtime'] = $new_endtime;
+                        $queue[$item->id] = $item;
 
-                        $new_starttime = $new_endtime;
+                        $new_starttime = $item->endTime;
                     }
                 }
 
                 // Auftrag aus Array löschen
-                $queue[$id] = NULL;
+                unset($queue[$id]);
 
                 //Rohstoffe dem Planeten gutschreiben und aktualisieren
                 $planetRepo->addResources($planet->id, $ret['metal'], $ret['crystal'], $ret['plastic'], $ret['fuel'], $ret['food']);
@@ -668,59 +623,56 @@ if ($shipyard !== null && $shipyard->currentLevel > 0) {
             $first = true;
             $absolute_starttime = 0;
             foreach ($queue as $data) {
-                // Listet nur Die Datensätze aus, die auch eine Schiffs ID beinhalten, da ev. der Datensatz mit NULL gleichgesetzt wurde
-                if (isset($data['queue_ship_id'])) {
-                    if ($first) {
-                        $obj_t_remaining = ((($data['queue_endtime'] - $time) / $data['queue_objtime']) - floor(($data['queue_endtime'] - $time) / $data['queue_objtime'])) * $data['queue_objtime'];
-                        if ($obj_t_remaining == 0) {
-                            $obj_t_remaining = $data['queue_objtime'];
-                        }
-                        $obj_time = $data['queue_objtime'];
+                if ($first) {
+                    $obj_t_remaining = ((($data->endTime - $time) / $data->objectTime) - floor(($data->endTime - $time) / $data->objectTime)) * $data->objectTime;
+                    if ($obj_t_remaining == 0) {
+                        $obj_t_remaining = $data->objectTime;
+                    }
+                    $obj_time = $data->objectTime;
 
-                        $absolute_starttime = $data['queue_starttime'];
+                    $absolute_starttime = $data->startTime;
 
-                        $obj_t_passed = $data['queue_objtime'] - $obj_t_remaining;
-                        echo "<tr>
-                                <th colspan=\"2\">Aktuell</th>
-                                <th style=\"width:150px;\">Start</th>
-                                <th style=\"width:150px;\">Ende</th>
-                                <th style=\"width:80px;\" colspan=\"2\">Verbleibend</th>
-                            </tr>";
-                        echo "<tr>";
-                        echo "<td colspan=\"2\">" . $ships[$data['queue_ship_id']]->name . "</td>";
-                        echo "<td>" . df(time() - $obj_t_passed, 1) . "</td>";
-                        echo "<td>" . df(time() + $obj_t_remaining, 1) . "</td>";
-                        echo "<td colspan=\"2\">" . tf($obj_t_remaining) . "</td>
+                    $obj_t_passed = $data->objectTime - $obj_t_remaining;
+                    echo "<tr>
+                            <th colspan=\"2\">Aktuell</th>
+                            <th style=\"width:150px;\">Start</th>
+                            <th style=\"width:150px;\">Ende</th>
+                            <th style=\"width:80px;\" colspan=\"2\">Verbleibend</th>
                         </tr>";
-                        echo "<tr>
-                                <th style=\"width:40px;\">Anzahl</th>
-                                <th>Bauauftrag</th>
-                                <th style=\"width:150px;\">Start</th>
-                                <th style=\"width:150px;\">Ende</th>
-                                <th style=\"width:150px;\">Verbleibend</th>
-                                <th style=\"width:80px;\">Aktionen</th>
-                            </tr>";
-                        $first = false;
-                    }
-
                     echo "<tr>";
-                    echo "<td id=\"objcount\">" . $data['queue_cnt'] . "</td>";
-                    echo "<td>" . $ships[$data['queue_ship_id']]->name . "</td>";
-                    echo "<td>" . df($absolute_starttime, 1) . "</td>";
-                    echo "<td>" . df($absolute_starttime + $data['queue_endtime'] - $data['queue_starttime'], 1) . "</td>";
-                    echo "<td>" . tf($data['queue_endtime'] - time()) . "</td>";
-                    echo "<td id=\"cancel\">";
-                    if ($cancelable) {
-                        echo "<a href=\"?page=$page&amp;cancel=" . $data['queue_id'] . "\" onclick=\"return confirm('Soll dieser Auftrag wirklich abgebrochen werden?');\">Abbrechen</a>";
-                    } else {
-                        echo "-";
-                    }
-                    echo "</td>
+                    echo "<td colspan=\"2\">" . $ships[$data->shipId]->name . "</td>";
+                    echo "<td>" . df(time() - $obj_t_passed, 1) . "</td>";
+                    echo "<td>" . df(time() + $obj_t_remaining, 1) . "</td>";
+                    echo "<td colspan=\"2\">" . tf($obj_t_remaining) . "</td>
                     </tr>";
-
-                    //Setzt die Startzeit des nächsten Schiffes, auf die Endzeit des jetztigen Schiffes
-                    $absolute_starttime = $data['queue_endtime'];
+                    echo "<tr>
+                            <th style=\"width:40px;\">Anzahl</th>
+                            <th>Bauauftrag</th>
+                            <th style=\"width:150px;\">Start</th>
+                            <th style=\"width:150px;\">Ende</th>
+                            <th style=\"width:150px;\">Verbleibend</th>
+                            <th style=\"width:80px;\">Aktionen</th>
+                        </tr>";
+                    $first = false;
                 }
+
+                echo "<tr>";
+                echo "<td id=\"objcount\">" . $data->count . "</td>";
+                echo "<td>" . $ships[$data->shipId]->name . "</td>";
+                echo "<td>" . df($absolute_starttime, 1) . "</td>";
+                echo "<td>" . df($absolute_starttime + $data->endTime - $data->startTime, 1) . "</td>";
+                echo "<td>" . tf($data->endTime - time()) . "</td>";
+                echo "<td id=\"cancel\">";
+                if ($cancelable) {
+                    echo "<a href=\"?page=$page&amp;cancel=" . $data->id . "\" onclick=\"return confirm('Soll dieser Auftrag wirklich abgebrochen werden?');\">Abbrechen</a>";
+                } else {
+                    echo "-";
+                }
+                echo "</td>
+                </tr>";
+
+                //Setzt die Startzeit des nächsten Schiffes, auf die Endzeit des jetztigen Schiffes
+                $absolute_starttime = $data->endTime;
             }
             tableEnd();
         }
@@ -784,7 +736,7 @@ if ($shipyard !== null && $shipyard->currentLevel > 0) {
                             }
                             // ... im Bunker
                             if (isset($bunkered[$shipData->id])) {
-                                $ship_count += array_sum($bunkered[$shipData->id]);
+                                $ship_count += $bunkered[$shipData->id];
                             }
                             // ... in der Bauliste
                             if (isset($queue_total[$shipData->id])) {
