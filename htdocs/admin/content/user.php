@@ -7,6 +7,7 @@
 use EtoA\Alliance\AllianceRepository;
 use EtoA\Race\RaceDataRepository;
 use EtoA\User\UserRepository;
+use EtoA\User\UserSearch;
 use EtoA\User\UserService;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -200,100 +201,89 @@ else {
     if ((isset($_GET['special']) || isset($_POST['user_search']) || isset($_SESSION['admin']['user_query'])) && isset($_GET['action']) && $_GET['action'] == "search") {
         $twig->addGlobal("subtitle", 'Suchergebnisse');
 
-        $tables = 'users';
-
+        $userSearch = UserSearch::create();
         if (isset($_GET['special'])) {
             switch ($_GET['special']) {
                 case "ip":
-                    $sql = " user_ip='" . base64_decode($_GET['val'], true) . "'";
+                    $userSearch->ip(base64_decode($_GET['val'], true));
                     break;
                 case "host":
-                    $sql = " user_hostname='" . base64_decode($_GET['val'], true) . "'";
+                    $userSearch->hostname(base64_decode($_GET['val'], true));
                     break;
                 case "blocked":
-                    $sql = " (user_blocked_from<" . time() . " AND user_blocked_to>" . time() . ")";
+                    $userSearch->blocked();
                     break;
                 default:
-                    $sql = " user_nick='%" . base64_decode($_GET['val'], true) . "%'";
+                    $userSearch->nickLike(base64_decode($_GET['val'], true));
             }
-            $sqlstart = "SELECT * FROM $tables WHERE ";
-            $sqlend = " ORDER BY user_nick;";
-            $sql = $sqlstart . $sql . $sqlend;
-            $_SESSION['admin']['user_query'] = $sql;
+            $_SESSION['admin']['user_query'] = serialize($userSearch);
         } elseif ($_SESSION['admin']['user_query'] == "") {
             $sql = '';
             if ($_POST['user_id'] != "") {
-                $sql .= " AND user_id='" . $_POST['user_id'] . "'";
+                $userSearch->user($_POST['user_id']);
             }
             if (isset($_POST['user_nick_search']) != "") {
-                $sql .= " AND user_nick LIKE '%" . $_POST['user_nick_search'] . "%'";
+                $userSearch->nickLike($_POST['user_nick_search']);
             }
             if ($_POST['user_nick'] != "") {
-                $sql .= " AND user_nick  LIKE '%" . $_POST['user_nick'] . "%'";
+                $userSearch->nickLike($_POST['user_nick']);
             }
             if ($_POST['user_name'] != "") {
-                $sql .= " AND user_name  LIKE '%" . $_POST['user_name'] . "%'";
+                $userSearch->nameLike($_POST['user_name']);
             }
             if ($_POST['user_email'] != "") {
-                $sql .= " AND user_email  LIKE '%" . $_POST['user_email'] . "%'";
+                $userSearch->emailLike($_POST['user_email']);
             }
             if ($_POST['user_email_fix'] != "") {
-                $sql .= " AND user_email_fix LIKE '%" . $_POST['user_email_fix'] . "%'";
+                $userSearch->emailFixLike($_POST['user_email_fix']);
             }
             if ($_POST['user_password'] != "") {
-                $sql .= " AND user_password LIKE '" . md5($_POST['user_password']) . "'";
+                $userSearch->password(md5($_POST['user_password'])); // I don't think this works
             }
             if ($_POST['user_ip'] != "") {
-                $sql .= " AND user_ip LIKE '%" . $_POST['user_ip'] . "%'";
+                $userSearch->ipLike($_POST['user_ip']);
             }
             if ($_POST['user_alliance'] != "") {
-                $sql .= " AND user_alliance_id=alliance_id AND alliance_name LIKE '%" . $_POST['user_alliance'] . "%'";
-                $tables .= "," . 'alliances';
+                $userSearch->allianceLike($_POST['user_alliance']);
             }
             if ($_POST['user_race_id'] != "") {
-                $sql .= " AND user_race_id='" . $_POST['user_race_id'] . "'";
+                $userSearch->race($_POST['user_race_id']);
             }
             if ($_POST['user_profile_text'] != "") {
                 $sql .= " AND user_profile_text LIKE '%" . $_POST['user_profile_text'] . "%'";
             }
             if (isset($_POST['user_hmode']) && $_POST['user_hmode'] < 2) {
                 if ($_POST['user_hmode'] == 1)
-                    $sql .= " AND (user_hmode_from<" . time() . " AND user_hmode_to>" . time() . ")";
+                    $userSearch->inHmode();
                 else
-                    $sql .= " AND (user_hmode_to<" . time() . ")";
+                    $userSearch->notInHmode();
             }
             if (isset($_POST['user_blocked']) && $_POST['user_blocked'] < 2) {
                 if ($_POST['user_blocked'] == 1)
-                    $sql .= " AND (user_blocked_from<" . time() . " AND user_blocked_to>" . time() . ")";
+                    $userSearch->blocked();
                 else
-                    $sql .= " AND (user_blocked_to<" . time() . ")";
+                    $userSearch->notBlocked();
             }
             if (isset($_POST['user_chatadmin']) && $_POST['user_chatadmin'] < 2) {
-                if ($_POST['user_chatadmin'] == 1)
-                    $sql .= " AND user_chatadmin=1 ";
-                else
-                    $sql .= " AND user_chatadmin=0 ";
+                $userSearch->chatadmin($_POST['user_chatadmin'] == 1);
             }
             if (isset($_POST['user_ghost']) && $_POST['user_ghost'] < 2) {
-                if ($_POST['user_ghost'] == 1)
-                    $sql .= " AND user_ghost=1 ";
-                else
-                    $sql .= " AND user_ghost=0 ";
+                $userSearch->ghost($_POST['user_ghost'] == 1);
             }
 
-            $sqlstart = "SELECT * FROM $tables WHERE 1 ";
-            $sqlend = " ORDER BY user_nick;";
-            $sql = $sqlstart . $sql . $sqlend;
-            $_SESSION['admin']['user_query'] = $sql;
-        } else
-            $sql = $_SESSION['admin']['user_query'];
+            $_SESSION['admin']['user_query'] = serialize($userSearch);
+        } else {
+            if (isset($_SESSION['admin']['user_query'])) {
+                $userSearch = unserialize($_SESSION['admin']['user_query'], ['allowed_classes' => [UserSearch::class]]);
+            }
+        }
 
-        $res = dbquery($sql);
-        $nr = mysql_num_rows($res);
+        $users = $userRepository->searchUsers($userSearch);
+        $nr = count($users);
         if ($nr == 1) {
-            $arr = mysql_fetch_array($res);
-            echo "<script>document.location='?page=$page&sub=edit&id=" . $arr['user_id'] . "';</script>
-                Klicke <a href=\"?page=$page&sub=edit&id=" . $arr['user_id'] . "\">hier</a> falls du nicht automatisch weitergeleitet wirst...";
+            $user = array_pop($users);
+            echo "<script>document.location='?page=$page&sub=edit&id=" . $user->id . "';</script>
+                Klicke <a href=\"?page=$page&sub=edit&id=" . $user->id . "\">hier</a> falls du nicht automatisch weitergeleitet wirst...";
         } elseif ($nr > 0) {
             echo $nr . " Datens&auml;tze vorhanden<br/><br/>";
             if ($nr > 20) {
@@ -322,20 +312,20 @@ else {
             echo "<th>Rasse</th>
                 <th></th>";
             echo "</tr>";
-            while ($arr = mysql_fetch_assoc($res)) {
-                if ($arr['user_blocked_from'] < $time && $arr['user_blocked_to'] > $time) {
+            foreach ($users as $user) {
+                if ($user->blockedFrom < $time && $user->blockedTo > $time) {
                     $status = "Gesperrt";
                     $uCol = ' class="userLockedColor"';
-                } elseif ($arr['user_hmode_from'] < $time && $arr['user_hmode_to'] > $time) {
+                } elseif ($user->hmodFrom < $time && $user->hmodTo > $time) {
                     $status = "Urlaub";
                     $uCol = ' class="userHolidayColor"';
-                } elseif ($arr['user_deleted'] != 0) {
+                } elseif ($user->deleted > 0) {
                     $status = "Löschauftrag";
                     $uCol = ' class="userDeletedColor"';
-                } elseif ($arr['admin'] != 0) {
+                } elseif ($user->admin != 0) {
                     $status = "Admin";
                     $uCol = ' class="adminColor"';
-                } elseif ($arr['user_ghost'] != 0) {
+                } elseif ($user->ghost) {
                     $status = "Geist";
                     $uCol = ' class="userGhostColor"';
                 } else {
@@ -343,18 +333,18 @@ else {
                     $uCol = "";
                 }
                 echo "<tr>";
-                echo "<td>" . $arr['user_id'] . "</td>";
-                echo "<td><a href=\"?page=$page&amp;sub=edit&amp;id=" . $arr['user_id'] . "\">" . $arr['user_nick'] . "</a></td>";
+                echo "<td>" . $user->id . "</td>";
+                echo "<td><a href=\"?page=$page&amp;sub=edit&amp;id=" . $user->id . "\">" . $user->nick . "</a></td>";
                 echo "<td " . $uCol . ">" . $status . "</td>";
-                echo "<td title=\"" . $arr['user_name'] . "\">" . cut_string($arr['user_name'], 15) . "</td>";
-                echo "<td title=\"" . $arr['user_email'] . "\">" . cut_string($arr['user_email'], 15) . "</td>";
-                echo "<td title=\"" . $arr['dual_name'] . "\">" . cut_string($arr['dual_name'], 15) . "</td>";
-                echo "<td title=\"" . $arr['dual_email'] . "\">" . cut_string($arr['dual_email'], 15) . "</td>";
-                echo "<td>" . nf($arr['user_points']) . "</td>";
-                echo "<td>" . ($arr['user_alliance_id'] > 0 ? $allianceNameWithTags[$arr['user_alliance_id']] : '-') . "</td>";
-                echo "<td>" . ($arr['user_race_id'] > 0 ? $raceNames[$arr['user_race_id']] : '-') . "</td>";
+                echo "<td title=\"" . $user->name . "\">" . cut_string($user->name, 15) . "</td>";
+                echo "<td title=\"" . $user->email . "\">" . cut_string($user->email, 15) . "</td>";
+                echo "<td title=\"" . $user->dualName . "\">" . cut_string($user->dualName, 15) . "</td>";
+                echo "<td title=\"" . $user->dualEmail . "\">" . cut_string($user->dualEmail, 15) . "</td>";
+                echo "<td>" . nf($user->points) . "</td>";
+                echo "<td>" . ($user->allianceId > 0 ? $allianceNameWithTags[$user->allianceId] : '-') . "</td>";
+                echo "<td>" . ($user->raceId > 0 ? $raceNames[$user->raceId] : '-') . "</td>";
                 echo "<td>
-                    " . edit_button("?page=$page&amp;sub=edit&amp;id=" . $arr['user_id']) . "
+                    " . edit_button("?page=$page&amp;sub=edit&amp;id=" . $user->id) . "
                     </td>";
                 echo "</tr>";
             }

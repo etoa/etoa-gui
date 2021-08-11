@@ -33,7 +33,7 @@ function searchUser($val, $field_id = 'user_nick', $box_id = 'citybox', $separat
     $sOut = "";
     $sLastHit = null;
 
-    $nicknames = $userRepository->searchUserNicknames(UserSearch::create()->nameLike($val), 20);
+    $nicknames = $userRepository->searchUserNicknames(UserSearch::create()->nickLike($val), 20);
     $nCount = count($nicknames);
     foreach ($nicknames as $nickname) {
         $sOut .= "<a href=\"#\" onclick=\"javascript:document.getElementById('" . $field_id . "').value=(document.getElementById('" . $field_id . "').value && document.getElementById('" . $field_id . "').value.indexOf(';')!=-1)?document.getElementById('" . $field_id . "').value.replace(/^(.+);[^;]+$/,'$1;')+'" . htmlentities($nickname, ENT_QUOTES, 'UTF-8') . "':'" . htmlentities($nickname, ENT_QUOTES, 'UTF-8') . "';document.getElementById('" . $box_id . "').style.display = 'none';\">" . htmlentities($nickname, ENT_QUOTES, 'UTF-8') . "</a>";

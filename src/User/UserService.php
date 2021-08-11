@@ -24,6 +24,7 @@ use EtoA\Market\MarketShipRepository;
 use EtoA\Missile\MissileRepository;
 use EtoA\Notepad\NotepadRepository;
 use EtoA\Ship\ShipQueueRepository;
+use EtoA\Ship\ShipQueueSearch;
 use EtoA\Ship\ShipRepository;
 use EtoA\Support\Mail\MailSenderService;
 use EtoA\Technology\TechnologyRepository;
@@ -184,7 +185,7 @@ class UserService
         }
 
         // Check existing user
-        if ($this->userRepository->exists($nick, $email)) {
+        if ($this->userRepository->exists(UserSearch::create()->nick($nick)->emailFix($email))) {
             throw new Exception("Der Benutzer mit diesem Nicknamen oder dieser E-Mail-Adresse existiert bereits!");
         }
 
@@ -428,7 +429,7 @@ die Spielleitung";
                 $this->technologyRepository->save($item);
             }
 
-            $shipQueueItems = $this->shipQueueRepository->findQueueItemsForUser($user->id);
+            $shipQueueItems = $this->shipQueueRepository->searchQueueItems(ShipQueueSearch::create()->userId($user->id));
             foreach ($shipQueueItems as $item) {
                 $item->buildType = 0;
                 $item->startTime += $hmodTime;

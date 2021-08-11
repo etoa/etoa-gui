@@ -44,3 +44,4 @@ if (!configFileExists($cbConfigFile)) {
         exit();
     }
 }
+

@@ -12,7 +12,8 @@ $runtimeDataStore = $app[RuntimeDataStore::class];
 
 /** @var ConfigurationService */
 $config = $app[ConfigurationService::class];
-
+/** @var AllianceRepository $allianceRepository */
+$allianceRepository = $app[AllianceRepository::class];
 /** @var AlliancePointsRepository $alliancePointsRepository */
 $alliancePointsRepository = $app[AlliancePointsRepository::class];
 
@@ -60,8 +61,6 @@ if (isset($_GET['userdetail']) && intval($_GET['userdetail']) > 0) {
 } elseif (isset($_GET['alliancedetail']) && intval($_GET['alliancedetail']) > 0) {
     $adid = intval($_GET['alliancedetail']);
 
-    /** @var AllianceRepository $allianceRepository */
-    $allianceRepository = $app[AllianceRepository::class];
     $alliance = $allianceRepository->getAlliance($adid);
     if ($alliance !== null) {
         echo "<h2>Punktedetails f&uuml;r [" . text2html($alliance->tag) . "] " . text2html($alliance->name) . "</h2>";
@@ -94,7 +93,8 @@ if (isset($_GET['userdetail']) && intval($_GET['userdetail']) > 0) {
 //
 
 else {
-    $_SESSION['alliance_tag'] = $cu->allianceTag();
+    $alliance = $allianceRepository->getAlliance($cu->allianceId());
+    $_SESSION['alliance_tag'] = $alliance !== null ? $alliance->tag : null;
 
     $ddm = new DropdownMenu(1);
     $ddm->add('total', 'Gesamtstatistik', 'xajax_statsShowBox(\'user\');');

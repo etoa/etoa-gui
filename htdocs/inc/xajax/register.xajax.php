@@ -2,6 +2,7 @@
 
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\User\UserRepository;
+use EtoA\User\UserSearch;
 
 $xajax->register(XAJAX_FUNCTION, 'registerCheckName');
 $xajax->register(XAJAX_FUNCTION, 'registerCheckNick');
@@ -68,10 +69,15 @@ function registerCheckNick($val)
 //Überprüft die Korrektheit der Eingabe von der Email Adresse und prüft ob diese schon vorhanden ist
 function registerCheckEmail($val)
 {
+    global $app;
+
+    /** @var UserRepository $userRepository */
+    $userRepository = $app[UserRepository::class];
+
     $objResponse = new xajaxResponse();
     if (checkEmail($val)) {
-        $res = dbquery("SELECT user_id FROM users WHERE user_email='$val' OR user_email_fix='$val';");
-        if (mysql_num_rows($res) > 0) {
+        $exists = $userRepository->exists(UserSearch::create()->emailOrEmailFix($val));
+        if ($exists) {
             $objResponse->assign('emailStatus', 'innerHTML', "Diese E-Mail-Adresse wird bereits benutzt!");
             $objResponse->assign('emailStatus', 'style.color', "#f90");
             $objResponse->assign('emailStatus', 'style.fontWeight', "bold");

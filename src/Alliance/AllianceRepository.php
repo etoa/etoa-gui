@@ -125,6 +125,10 @@ class AllianceRepository extends AbstractRepository
 
     public function getAlliance(int $allianceId): ?AllianceWithMemberCount
     {
+        if ($allianceId === 0) {
+            return null;
+        }
+
         $data = $this->createQueryBuilder()
             ->select("a.*")
             ->addSelect('COUNT(u.user_id) as member_count')

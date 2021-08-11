@@ -3,6 +3,7 @@
 use EtoA\User\UserMultiRepository;
 use EtoA\User\UserRepository;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\User\UserSearch;
 use EtoA\User\UserSittingRepository;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -93,16 +94,12 @@ if (!$s->sittingActive || $s->falseSitter) {
             // Save
             if (isset($_POST['sitting_add'])) {
                 if ($_POST['sitter_nick'] != "") {
-                    $res = dbquery("SELECT user_id,user_registered FROM users WHERE user_id!=" . $cu->id . " AND user_nick='" . mysql_real_escape_string($_POST['sitter_nick']) . "' LIMIT 1;");
-                    if (mysql_num_rows($res) > 0) {
-                        $arr = mysql_fetch_row($res);
-                        $sitterId = $arr[0];
-                        $sitterRegistered = $arr[1];
+                    $sitterUser = $userRepository->findUser(UserSearch::create()->notUser($cu->getId())->nick($_POST['sitter_nick']));
+                    if ($sitterUser !== null) {
                         if ($_POST['sitter_password1'] == $_POST['sitter_password2'] && $_POST['sitter_password1'] != "" && strlen($_POST['sitter_password1']) >= $config->getInt('password_minlength')) {
                             $pw = saltPasswort($_POST['sitter_password1']);
 
-                            $res = dbquery("SELECT user_id FROM users WHERE user_password='" . $pw . "' AND user_id=" . $cu->id . " LIMIT 1;");
-                            if (mysql_num_rows($res) == 0) {
+                            if (!$userRepository->exists(UserSearch::create()->user($cu->getId())->password($pw))) {
                                 $tm_from = mktime($_POST['date_from_h'], $_POST['date_from_i'], 0, $_POST['date_from_m'], $_POST['date_from_d'], $_POST['date_from_y']);
                                 $tm_to = $tm_from + $_POST['date_to_days'] * 86400;
 
@@ -110,7 +107,7 @@ if (!$s->sittingActive || $s->falseSitter) {
                                 $userSittingRepository = $app[UserSittingRepository::class];
                                 if ($tm_from > time() - 600  && $tm_from < $tm_to && $_POST['date_to_days'] <= $prof_rest_days) {
                                     if (!$userSittingRepository->hasSittingEntryForTimeSpan($cu->getId(), $tm_from, $tm_to)) {
-                                        $userSittingRepository->addEntry($cu->getId(), $sitterId, $pw, $tm_from, $tm_to);
+                                        $userSittingRepository->addEntry($cu->getId(), $sitterUser->id, $pw, $tm_from, $tm_to);
                                         success_msg("Sitting eingerichtet!");
                                         echo "<p>" . button("Weiter", "?page=$page&amp;mode=$mode&amp;") . "</p>";
                                         $form = false;
