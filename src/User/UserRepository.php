@@ -571,6 +571,10 @@ class UserRepository extends AbstractRepository
             ->from('users')
             ->orderBy('user_nick');
 
+        if (isset($search->parameters['allianceLike'])) {
+            $qb->innerJoin('users', 'alliances', 'alliances', 'user_alliance_id = alliances.alliance_id');
+        }
+
         $data = $this->applySearchSortLimit($qb, $search, null, $limit)
             ->execute()
             ->fetchAllAssociative();

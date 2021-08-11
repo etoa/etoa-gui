@@ -19,10 +19,26 @@ class UserSearch extends AbstractSearch
         return $this;
     }
 
+    public function nickLike(string $name): self
+    {
+        $this->parts[] = "user_nick LIKE :nickLike";
+        $this->parameters['nickLike'] = $name . '%';
+
+        return $this;
+    }
+
     public function nameLike(string $name): self
     {
-        $this->parts[] = "user_nick LIKE :nameLike";
-        $this->parameters['nameLike'] = $name . '%';
+        $this->parts[] = "user_name LIKE :nameLike";
+        $this->parameters['nameLike'] = '%' . $name . '%';
+
+        return $this;
+    }
+
+    public function emailLike(string $email): self
+    {
+        $this->parts[] = "user_email LIKE :emailLike";
+        $this->parameters['emailLike'] = '%' . $email . '%';
 
         return $this;
     }
@@ -43,7 +59,15 @@ class UserSearch extends AbstractSearch
         return $this;
     }
 
-    public function nameOrEmailOrDualLike(string $like): self
+    public function emailFixLike(string $emailFix): self
+    {
+        $this->parts[] = "user_email_fix LIKE :emailFixedLike";
+        $this->parameters['emailFixedLike'] = '%' . $emailFix . '%';
+
+        return $this;
+    }
+
+    public function nickOrEmailOrDualLike(string $like): self
     {
         $this->parts[] = 'user_nick LIKE :like OR user_name LIKE :like OR user_email LIKE :like OR user_email_fix LIKE :like OR dual_email LIKE :like OR dual_name LIKE :like';
         $this->parameters['like'] = '%' . $like . '%';
@@ -62,6 +86,38 @@ class UserSearch extends AbstractSearch
     public function notObserved(): self
     {
         $this->parts[] = "user_observe IS NULL";
+
+        return $this;
+    }
+
+    public function blocked(): self
+    {
+        $this->parts[] = "(user_blocked_from < :now AND user_blocked_to > :now)";
+        $this->parameters['now'] = time();
+
+        return $this;
+    }
+
+    public function notBlocked(): self
+    {
+        $this->parts[] = "user_blocked_to < :now";
+        $this->parameters['now'] = time();
+
+        return $this;
+    }
+
+    public function inHmode(): self
+    {
+        $this->parts[] = "(user_hmode_from < :now AND user_hmode_to > :now)";
+        $this->parameters['now'] = time();
+
+        return $this;
+    }
+
+    public function notInHmode(): self
+    {
+        $this->parts[] = "user_hmode_to < :now";
+        $this->parameters['now'] = time();
 
         return $this;
     }
@@ -100,6 +156,70 @@ class UserSearch extends AbstractSearch
     {
         $this->parts[] = "user_id <> :notUserId";
         $this->parameters['notUserId'] = $userId;
+
+        return $this;
+    }
+
+    public function race(int $raceId): self
+    {
+        $this->parts[] = "user_race_id = :race";
+        $this->parameters['race'] = $raceId;
+
+        return $this;
+    }
+
+    public function ip(string $ip): self
+    {
+        $this->parts[] = "user_ip = :ip";
+        $this->parameters['ip'] = $ip;
+
+        return $this;
+    }
+
+    public function ipLike(string $ip): self
+    {
+        $this->parts[] = "user_ip LIKE :ipLike";
+        $this->parameters['ipLike'] = '%' . $ip . '%';
+
+        return $this;
+    }
+
+    public function hostname(string $hostname): self
+    {
+        $this->parts[] = "user_hostname = :hostname";
+        $this->parameters['hostname'] = $hostname;
+
+        return $this;
+    }
+
+    public function profileTextLike(string $profileText): self
+    {
+        $this->parts[] = "user_profile_text LIKE :profileTextLike";
+        $this->parameters['profileTextLike'] = '%' . $profileText . '%';
+
+        return $this;
+    }
+
+    public function chatadmin(bool $chatadmin): self
+    {
+        $this->parts[] = "user_chatadmin = :chatadmin";
+        $this->parameters['chatadmin'] = (int) $chatadmin;
+
+        return $this;
+    }
+
+    public function ghost(bool $ghost): self
+    {
+        $this->parts[] = "user_ghost = :ghost";
+        $this->parameters['ghost'] = (int) $ghost;
+
+        return $this;
+    }
+
+    public function allianceLike(string $allianceName): self
+    {
+        $this->parts[] = "alliances.alliance_name LIKE :allianceLike";
+        $this->parameters['allianceLike'] = '%' . $allianceName . '%';
 
         return $this;
     }
