@@ -2,6 +2,8 @@
 
 use EtoA\Building\BuildingRepository;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Fleet\FleetRepository;
+use EtoA\Fleet\FleetSearch;
 use EtoA\Ship\ShipRepository;
 use EtoA\Technology\TechnologyRepository;
 
@@ -182,9 +184,9 @@ class FleetLaunch
             } elseif ($fleetControl->isDeactivated()) {
                 $this->error = "Dieser Raumschiffhafen ist bis " . df($fleetControl->deactivated) . " deaktiviert.";
             } else {
-                $fm = new FleetManager($this->ownerId);
-                $this->fleetSlotsUsed = $fm->countControlledByEntity($this->sourceEntity->id());
-                unset($fm);
+                /** @var FleetRepository $fleetRepository */
+                $fleetRepository = $app[FleetRepository::class];
+                $this->fleetSlotsUsed = $fleetRepository->count(FleetSearch::create()->user($this->ownerId)->controlledByEntity($this->sourceEntity->id()));
 
                 $this->fleetControlLevel = $fleetControl->currentLevel;
                 $totalSlots = FLEET_NOCONTROL_NUM + $this->fleetControlLevel + $this->specialist->fleetMax;

@@ -27,6 +27,15 @@ class FleetSearch extends AbstractSearch
         return $this;
     }
 
+    public function controlledByEntity(int $entityId): self
+    {
+        $this->parts[] = '(entity_from = :controlledByEntity AND status = :departureState) OR (entity_to = :controlledByEntity AND status <> :departureState)';
+        $this->parameters['controlledByEntity'] = $entityId;
+        $this->parameters['departureState'] = FleetStatus::DEPARTURE;
+
+        return $this;
+    }
+
     public function planetUser(int $userId): self
     {
         $this->parts[] = 'planets.planet_user_id = :planetUserId';
