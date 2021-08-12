@@ -2,6 +2,8 @@
 
 use EtoA\Backend\BackendMessageService;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\User\UserHolidayService;
+use EtoA\User\UserRepository;
 use EtoA\User\UserService;
 
 /** @var ConfigurationService */
@@ -12,6 +14,10 @@ $backendMessageService = $app[BackendMessageService::class];
 
 /** @var UserService*/
 $userService = $app[UserService::class];
+/** @var UserHolidayService $userHolidayService */
+$userHolidayService = $app[UserHolidayService::class];
+/** @var UserRepository $userRepository */
+$userRepository = $app[UserRepository::class];
 
 $umod = false;
 
@@ -20,7 +26,7 @@ $umod = false;
 //
 
 if (isset($_POST['hmod_on']) && checker_verify()) {
-    if ($cu->activateUmode()) {
+    if ($userHolidayService->activateHolidayMode($cu->getId())) {
         success_msg("Du bist nun im Urlaubsmodus bis [b]" . df(time()) . "[/b].");
         $userService->addToUserLog($cu->id, "settings", "{nick} ist nun im Urlaub.", true);
         $umod = true;
@@ -34,11 +40,8 @@ if (isset($_POST['hmod_on']) && checker_verify()) {
 //
 
 if (isset($_POST['hmod_off']) && checker_verify()) {
-    if ($cu->deleted == 0 && $cu->removeUmode()) {
-        foreach ($planets as $pid) {
-            $backendMessageService->updatePlanet($pid);
-        }
-
+    $user = $userRepository->getUser($cu->getId());
+    if ($user->deleted === 0 && $userHolidayService->deactivateHolidayMode($user)) {
         success_msg("Urlaubsmodus aufgehoben! Denke daran, auf allen deinen Planeten die Produktion zu überprüfen!");
         $userService->addToUserLog($cu->id, "settings", "{nick} ist nun aus dem Urlaub zurück.", true);
 
@@ -70,7 +73,7 @@ elseif (isset($_POST['remove_submit'])) {
         $s = Null;
         session_destroy();
         success_msg("Deine Daten werden am " . df(time() + ($config->getInt('user_delete_days') * 3600 * 24)) . " Uhr von unserem System gelöscht! Wir w&uuml;nschen weiterhin viel Erfolg im Netz!");
-        $cu->activateUmode(true);
+        $userHolidayService->activateHolidayMode($cu->getId(), true);
         $userService->addToUserLog($cu->id, "settings", "{nick} hat seinen Account zur Löschung freigegeben.", true);
         echo '<input type="button" value="Zur Startseite" onclick="document.location=\'' . getLoginUrl() . '\'" />';
     } else {

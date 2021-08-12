@@ -6,7 +6,7 @@ namespace EtoA\Fleet;
 
 class FleetStatus
 {
-    const DEPARTURE = 0;
-    const ARRIVAL = 1;
-    const CANCELLED = 2;
+    public const DEPARTURE = 0;
+    public const ARRIVAL = 1;
+    public const CANCELLED = 2;
 }

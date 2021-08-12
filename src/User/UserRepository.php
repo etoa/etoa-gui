@@ -155,12 +155,27 @@ class UserRepository extends AbstractRepository
         return array_map(fn ($value) => (int) $value, $data);
     }
 
+    public function activateHolidayMode(int $userId, int $from, int $to): void
+    {
+        $this->createQueryBuilder()
+            ->update('users')
+            ->set('user_hmode_from', (string) $from)
+            ->set('user_hmode_to', (string) $to)
+            ->set('user_logouttime', (string) $from)
+            ->where('user_id = :id')
+            ->setParameters([
+                'id' => $userId,
+            ])
+            ->execute();
+    }
+
     public function disableHolidayMode(int $userId): void
     {
         $this->createQueryBuilder()
             ->update('users')
             ->set('user_hmode_from', (string) 0)
             ->set('user_hmode_to', (string) 0)
+            ->set('user_logouttime', (string) time())
             ->where('user_id = :id')
             ->setParameters([
                 'id' => $userId,

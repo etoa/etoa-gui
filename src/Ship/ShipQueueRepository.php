@@ -156,4 +156,33 @@ class ShipQueueRepository extends AbstractRepository
             ->setParameter('userIds', $availableUserIds, Connection::PARAM_INT_ARRAY)
             ->execute();
     }
+
+    public function freezeConstruction(int $userId): void
+    {
+        $this->createQueryBuilder()
+            ->update('ship_queue')
+            ->set('queue_build_type', ':type')
+            ->where('queue_user_id = :userId')
+            ->setParameters([
+                'userId' => $userId,
+                'type' => 1,
+            ])
+            ->execute();
+    }
+
+    public function unfreezeConstruction(int $userId, int $duration): void
+    {
+        $this->createQueryBuilder()
+            ->update('ship_queue')
+            ->set('queue_build_type', ':type')
+            ->set('queue_starttime', 'queue_starttime + :duration')
+            ->set('queue_endtime', 'queue_endtime + :duration')
+            ->where('queue_user_id = :userId')
+            ->setParameters([
+                'userId' => $userId,
+                'type' => 0,
+                'duration' => $duration,
+            ])
+            ->execute();
+    }
 }

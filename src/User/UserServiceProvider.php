@@ -104,6 +104,20 @@ class UserServiceProvider implements ServiceProviderInterface
             );
         };
 
+        $pimple[UserHolidayService::class] = function (Container $pimple): UserHolidayService {
+            return new UserHolidayService(
+                $pimple[ConfigurationService::class],
+                $pimple[UserRepository::class],
+                $pimple[BuildingRepository::class],
+                $pimple[TechnologyRepository::class],
+                $pimple[ShipQueueRepository::class],
+                $pimple[DefenseQueueRepository::class],
+                $pimple[PlanetRepository::class],
+                $pimple[FleetRepository::class],
+                $pimple[BackendMessageService::class]
+            );
+        };
+
         $pimple[UserService::class] = function (Container $pimple): UserService {
             return new UserService(
                 $pimple[ConfigurationService::class],

@@ -1,7 +1,7 @@
 <?PHP
 
 use EtoA\Core\Configuration\ConfigurationService;
-use EtoA\User\UserService;
+use EtoA\User\UserHolidayService;
 use Pimple\Container;
 
 /**
@@ -9,19 +9,19 @@ use Pimple\Container;
  */
 class SetHolydayModeUsersInactiveTask implements IPeriodicTask
 {
-    private UserService $userService;
+    private UserHolidayService  $userUmodService;
     private ConfigurationService $config;
 
     public function __construct(Container $app)
     {
         $this->config = $app[ConfigurationService::class];
-        $this->userService = $app[UserService::class];
+        $this->userUmodService = $app[UserHolidayService::class];
     }
 
     function run()
     {
         if ($this->config->param2Boolean('hmode_days')) {
-            $count = $this->userService->setUmodToInactive();
+            $count = $this->userUmodService->setUmodeToInactive();
             return "$count User aus Urlaubsmodus in Inaktivität gesetzt";
         }
         return null;
