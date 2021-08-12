@@ -1,6 +1,8 @@
 <?PHP
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Defense\DefenseRepository;
+use EtoA\Ship\ShipRepository;
 use EtoA\Technology\TechnologyRepository;
 use EtoA\UI\ResourceBoxDrawer;
 use EtoA\Universe\Planet\PlanetRepository;
@@ -8,12 +10,15 @@ use EtoA\Universe\Planet\PlanetRepository;
 /** @var ConfigurationService */
 $config = $app[ConfigurationService::class];
 
-/** @var PlanetRepository */
+/** @var PlanetRepository $planetRepo */
 $planetRepo = $app[PlanetRepository::class];
 
 /** @var ResourceBoxDrawer */
 $resourceBoxDrawer = $app[ResourceBoxDrawer::class];
-
+/** @var ShipRepository $shipRepository */
+$shipRepository = $app[ShipRepository::class];
+/** @var DefenseRepository $defenseRepository */
+$defenseRepository = $app[DefenseRepository::class];
 define('HELP_URL_DEF', "?page=help&site=defense");
 define('HELP_URL_SHIP', "?page=help&site=shipyard");
 
@@ -85,15 +90,7 @@ if ($tech_level > 0) {
                         }
 
                         //Schiffe vom Planeten abziehen
-                        dbquery("
-            UPDATE
-                shiplist
-            SET
-                shiplist_count=shiplist_count-" . $num . "
-            WHERE
-                shiplist_entity_id='" . $planet->id . "'
-                AND shiplist_ship_id='" . $id . "'
-                AND shiplist_user_id='" . $cu->id . "';");
+                        $shipRepository->removeShips($id, $num, $cu->getId(), $planet->id);
 
                         //Rohstoffe summieren
                         $pb[0] += ceil($payback * $arr['ship_costs_metal'] * $num);
@@ -110,17 +107,7 @@ if ($tech_level > 0) {
             }
 
             //Rohstoffe Updaten
-            dbquery("
-            UPDATE
-                planets
-            SET
-        planet_res_metal=planet_res_metal+" . $pb[0] . ",
-        planet_res_crystal=planet_res_crystal+" . $pb[1] . ",
-        planet_res_plastic=planet_res_plastic+" . $pb[2] . ",
-        planet_res_fuel=planet_res_fuel+" . $pb[3] . ",
-        planet_res_food=planet_res_food+" . $pb[4] . "
-            WHERE
-                id='" . $planet->id . "';");
+            $planetRepo->addResources($planet->id, $pb[0], $pb[1], $pb[2], $pb[3], $pb[4]);
 
 
             //Rohstoffe auf dem Planeten aktualisieren
@@ -180,15 +167,7 @@ if ($tech_level > 0) {
                         }
 
                         //Defese vom Planeten Abziehen
-                        dbquery("
-            UPDATE
-                deflist
-            SET
-                deflist_count=deflist_count-" . $num . "
-            WHERE
-                deflist_entity_id='" . $planet->id . "'
-                AND deflist_def_id='" . $id . "'
-                AND deflist_user_id='" . $cu->id . "';");
+                        $defenseRepository->removeDefense($id, $num, $cu->getId(), $planet->id);
 
                         //Rohstoffe summieren
                         $pb[0] += ceil($payback * $arr['def_costs_metal'] * $num);
@@ -206,18 +185,7 @@ if ($tech_level > 0) {
             }
 
             //Rohstoffe und Felder updaten
-            dbquery("
-            UPDATE
-                planets
-            SET
-        planet_res_metal=planet_res_metal+" . $pb[0] . ",
-        planet_res_crystal=planet_res_crystal+" . $pb[1] . ",
-        planet_res_plastic=planet_res_plastic+" . $pb[2] . ",
-        planet_res_fuel=planet_res_fuel+" . $pb[3] . ",
-        planet_res_food=planet_res_food+" . $pb[4] . ",
-        planet_fields_used=planet_fields_used-" . $fields . "
-            WHERE
-                id='" . $planet->id . "';");
+            $planetRepo->addResources($planet->id, $pb[0], $pb[1], $pb[2], $pb[3], $pb[4], 0, -$fields);
 
             //Rohstoffe auf dem Planeten aktualisieren
             $planet->resMetal += $pb[0];
