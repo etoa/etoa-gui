@@ -282,4 +282,18 @@ class TechnologyRepository extends AbstractRepository
             ->setParameter('userId', $userId)
             ->execute();
     }
+
+    public function freezeConstruction(int $userId): void
+    {
+        $this->createQueryBuilder()
+            ->update('techlist')
+            ->set('techlist_build_type', 'techlist_build_type - 2')
+            ->where('techlist_user_id = :userId')
+            ->andWhere('techlist_build_start_time > 0')
+            ->setParameters([
+                'userId' => $userId,
+                'type' => 1,
+            ])
+            ->execute();
+    }
 }

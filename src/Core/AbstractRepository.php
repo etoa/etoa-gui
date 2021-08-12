@@ -57,6 +57,9 @@ abstract class AbstractRepository
     {
         if ($search !== null) {
             $qb->setParameters($search->parameters);
+            foreach ($search->stringArrayParameters as $parameter => $value) {
+                $qb->setParameter($parameter, $value, Connection::PARAM_STR_ARRAY);
+            }
             foreach ($search->parts as $query) {
                 $qb->andWhere($query);
             }

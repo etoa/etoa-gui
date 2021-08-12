@@ -8,6 +8,7 @@ use EtoA\HostCache\NetworkNameService;
 use EtoA\Race\RaceDataRepository;
 use EtoA\Specialist\SpecialistDataRepository;
 use EtoA\User\UserCommentRepository;
+use EtoA\User\UserHolidayService;
 use EtoA\User\UserLoginFailureRepository;
 use EtoA\User\UserMultiRepository;
 use EtoA\User\UserPropertiesRepository;
@@ -165,7 +166,9 @@ if (isset($_POST['save'])) {
 
     // Handle holiday mode
     if ($_POST['umod_enable'] == 1) {
-        $logUser->activateUmode(true);
+        /** @var UserHolidayService $userHolidayService */
+        $userHolidayService = $app[UserHolidayService::class];
+        $userHolidayService->activateHolidayMode($logUser->getId(), true);
         $sql .= ",user_hmode_from='" . parseDatePicker('user_hmode_from', $_POST) . "'";
         $sql .= ",user_hmode_to='" . parseDatePicker('user_hmode_to', $_POST) . "'";
     } else {

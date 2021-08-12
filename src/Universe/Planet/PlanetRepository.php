@@ -594,6 +594,24 @@ class PlanetRepository extends AbstractRepository
             ->execute();
     }
 
+    public function freezeProduction(int $userId): void
+    {
+        $this->createQueryBuilder()
+            ->update('planets')
+            ->set('planet_last_updated', (string) 0)
+            ->set('planet_prod_metal', (string) 0)
+            ->set('planet_prod_crystal', (string) 0)
+            ->set('planet_prod_plastic', (string) 0)
+            ->set('planet_prod_fuel', (string) 0)
+            ->set('planet_prod_food', (string) 0)
+            ->set('planet_prod_power', (string) 0)
+            ->where('planet_user_id = :userId')
+            ->setParameters([
+                'userId' => $userId,
+            ])
+            ->execute();
+    }
+
     public function getGlobalResources(): BaseResources
     {
         $data = $this->createQueryBuilder()

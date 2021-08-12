@@ -140,4 +140,17 @@ class DefenseQueueRepository extends AbstractRepository
             ->setParameter('userIds', $availableUserIds, Connection::PARAM_INT_ARRAY)
             ->execute();
     }
+
+    public function freezeConstruction(int $userId): void
+    {
+        $this->createQueryBuilder()
+            ->update('def_queue')
+            ->set('queue_build_type', ':type')
+            ->where('queue_user_id = :userId')
+            ->setParameters([
+                'userId' => $userId,
+                'type' => 1,
+            ])
+            ->execute();
+    }
 }

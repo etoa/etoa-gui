@@ -392,4 +392,20 @@ class FleetRepository extends AbstractRepository
 
         return $res;
     }
+
+    public function exists(FleetSearch $search): bool
+    {
+        $qb = $this->applySearchSortLimit($this->createQueryBuilder(), $search);
+
+        if (isset($search->parameters['planetUserId'])) {
+            $qb->innerJoin('fleet', 'planets', 'planets', 'fleet.entity_to = planets.id');
+        }
+
+        return (bool) $qb
+            ->select('1')
+            ->from('fleet')
+            ->setMaxResults(1)
+            ->execute()
+            ->fetchOne();
+    }
 }
