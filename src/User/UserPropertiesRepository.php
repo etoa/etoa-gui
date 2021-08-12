@@ -119,11 +119,11 @@ class UserPropertiesRepository extends AbstractRepository
                 'showCellreports' => $properties->showCellreports,
                 'havenShipsButtons' => $properties->havenShipsButtons,
                 'showAdds' => $properties->showAdds,
-                'fleetRtnMsg' => $properties->fleetRtnMsg,
-                'smallResBox' => $properties->smallResBox,
-                'startUpChat' => $properties->startUpChat,
+                'fleetRtnMsg' => (int) $properties->fleetRtnMsg,
+                'smallResBox' => (int) $properties->smallResBox,
+                'startUpChat' => (int) $properties->startUpChat,
                 'chatColor' => $properties->chatColor,
-                'enableKeybinds' => $properties->enableKeybinds,
+                'enableKeybinds' => (int) $properties->enableKeybinds,
             ])
             ->execute();
     }
