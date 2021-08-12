@@ -533,7 +533,7 @@ class PlanetRepository extends AbstractRepository
     {
         $this->createQueryBuilder()
             ->update('planets')
-            ->set('planet_last_updated', 'timestamp')
+            ->set('planet_last_updated', ':timestamp')
             ->where('id = :id')
             ->setParameters([
                 'id' => $id,

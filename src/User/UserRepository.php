@@ -175,6 +175,7 @@ class UserRepository extends AbstractRepository
             ->update('users')
             ->set('user_hmode_from', (string) 0)
             ->set('user_hmode_to', (string) 0)
+            ->set('user_logouttime', (string) time())
             ->where('user_id = :id')
             ->setParameters([
                 'id' => $userId,

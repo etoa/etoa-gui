@@ -6,13 +6,11 @@ use EtoA\Backend\BackendMessageService;
 use EtoA\Building\BuildingRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Defense\DefenseQueueRepository;
-use EtoA\Defense\DefenseQueueSearch;
 use EtoA\Fleet\FleetAction;
 use EtoA\Fleet\FleetRepository;
 use EtoA\Fleet\FleetSearch;
 use EtoA\Fleet\FleetStatus;
 use EtoA\Ship\ShipQueueRepository;
-use EtoA\Ship\ShipQueueSearch;
 use EtoA\Technology\TechnologyRepository;
 use EtoA\Universe\Planet\PlanetRepository;
 
@@ -72,63 +70,39 @@ class UserHolidayService
         return true;
     }
 
+    public function deactivateHolidayMode(User $user, bool $force = false): bool
+    {
+        $now = time();
+        if ($user->hmodFrom === 0 || (($user->hmodFrom > $now || $user->hmodTo > $now) && !$force)) {
+            return false;
+        }
+
+        $holidayTime = $now - $user->hmodFrom;
+
+        $this->shipQueueRepository->unfreezeConstruction($user->id, $holidayTime);
+        $this->defenseQueueRepository->unfreezeConstruction($user->id, $holidayTime);
+        $this->buildingRepository->unfreezeConstruction($user->id, $holidayTime);
+        $this->technologyRepository->unfreezeConstruction($user->id, $holidayTime);
+        $this->planetRepository->freezeProduction($user->id);
+
+        $this->userRepository->addSpecialistTime($user->id, $holidayTime);
+        $this->userRepository->disableHolidayMode($user->id);
+
+        $userPlanets = $this->planetRepository->getUserPlanets($user->id);
+        foreach ($userPlanets as $planet) {
+            $this->planetRepository->setLastUpdated($planet->id, time());
+            $this->backendMessageService->updatePlanet($planet->id);
+        }
+
+        return true;
+    }
+
     public function setUmodeToInactive(): int
     {
         $threshold = time() - ($this->config->param1Int('hmode_days') * 86400);
         $users = $this->userRepository->findInactiveInHolidayMode($threshold);
         foreach ($users as $user) {
-            $hmodTime = time() - $user->hmodFrom;
-
-            $this->userRepository->disableHolidayMode($user->id);
-
-            $newLogoutTime = time() - ($this->config->param2Int('user_inactive_days') * 86400);
-            $this->userRepository->setLogoutTime($user->id, $newLogoutTime);
-
-            $buildingItems = $this->buildingRepository->findForUser($user->id);
-            foreach ($buildingItems as $item) {
-                if ($item->startTime == 0 || $item->endTime == 0) {
-                    continue;
-                }
-                $item->buildType = 3;
-                $item->startTime += $hmodTime;
-                $item->endTime += $hmodTime;
-                $this->buildingRepository->save($item);
-            }
-
-            $technologyItems = $this->technologyRepository->findForUser($user->id);
-            foreach ($technologyItems as $item) {
-                if ($item->startTime == 0 || $item->endTime == 0) {
-                    continue;
-                }
-                $item->buildType = 3;
-                $item->startTime += $hmodTime;
-                $item->endTime += $hmodTime;
-                $this->technologyRepository->save($item);
-            }
-
-            $shipQueueItems = $this->shipQueueRepository->searchQueueItems(ShipQueueSearch::create()->userId($user->id));
-            foreach ($shipQueueItems as $item) {
-                $item->buildType = 0;
-                $item->startTime += $hmodTime;
-                $item->endTime += $hmodTime;
-                $this->shipQueueRepository->saveQueueItem($item);
-            }
-
-            $defQueueItems = $this->defenseQueueRepository->searchQueueItems(DefenseQueueSearch::create()->userId($user->id));
-            foreach ($defQueueItems as $item) {
-                $item->buildType = 0;
-                $item->startTime += $hmodTime;
-                $item->endTime += $hmodTime;
-                $this->defenseQueueRepository->saveQueueItem($item);
-            }
-
-            $this->userRepository->addSpecialistTime($user->id, $hmodTime);
-
-            $userPlanets = $this->planetRepository->getUserPlanets($user->id);
-            foreach ($userPlanets as $planet) {
-                $this->planetRepository->setLastUpdated($planet->id, time());
-                $this->backendMessageService->updatePlanet($planet->id);
-            }
+            $this->deactivateHolidayMode($user);
         }
 
         return count($users);

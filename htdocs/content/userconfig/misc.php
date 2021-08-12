@@ -3,6 +3,7 @@
 use EtoA\Backend\BackendMessageService;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\User\UserHolidayService;
+use EtoA\User\UserRepository;
 use EtoA\User\UserService;
 
 /** @var ConfigurationService */
@@ -15,6 +16,8 @@ $backendMessageService = $app[BackendMessageService::class];
 $userService = $app[UserService::class];
 /** @var UserHolidayService $userHolidayService */
 $userHolidayService = $app[UserHolidayService::class];
+/** @var UserRepository $userRepository */
+$userRepository = $app[UserRepository::class];
 
 $umod = false;
 
@@ -37,11 +40,8 @@ if (isset($_POST['hmod_on']) && checker_verify()) {
 //
 
 if (isset($_POST['hmod_off']) && checker_verify()) {
-    if ($cu->deleted == 0 && $cu->removeUmode()) {
-        foreach ($planets as $pid) {
-            $backendMessageService->updatePlanet($pid);
-        }
-
+    $user = $userRepository->getUser($cu->getId());
+    if ($user->deleted === 0 && $userHolidayService->deactivateHolidayMode($user)) {
         success_msg("Urlaubsmodus aufgehoben! Denke daran, auf allen deinen Planeten die Produktion zu überprüfen!");
         $userService->addToUserLog($cu->id, "settings", "{nick} ist nun aus dem Urlaub zurück.", true);
 

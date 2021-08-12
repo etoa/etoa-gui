@@ -51,6 +51,8 @@ $userPropertiesRepository = $app[UserPropertiesRepository::class];
 
 /** @var NetworkNameService $networkNameService */
 $networkNameService = $app[NetworkNameService::class];
+/** @var UserHolidayService $userHolidayService */
+$userHolidayService = $app[UserHolidayService::class];
 
 if (isset($_GET['id']))
     $id = $_GET['id'];
@@ -166,13 +168,11 @@ if (isset($_POST['save'])) {
 
     // Handle holiday mode
     if ($_POST['umod_enable'] == 1) {
-        /** @var UserHolidayService $userHolidayService */
-        $userHolidayService = $app[UserHolidayService::class];
         $userHolidayService->activateHolidayMode($logUser->getId(), true);
         $sql .= ",user_hmode_from='" . parseDatePicker('user_hmode_from', $_POST) . "'";
         $sql .= ",user_hmode_to='" . parseDatePicker('user_hmode_to', $_POST) . "'";
     } else {
-        $logUser->removeUmode(true);
+        $userHolidayService->deactivateHolidayMode($user, true);
     }
 
     // Perform query

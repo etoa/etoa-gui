@@ -153,4 +153,20 @@ class DefenseQueueRepository extends AbstractRepository
             ])
             ->execute();
     }
+
+    public function unfreezeConstruction(int $userId, int $duration): void
+    {
+        $this->createQueryBuilder()
+            ->update('def_queue')
+            ->set('queue_build_type', ':type')
+            ->set('queue_starttime', 'queue_starttime + :duration')
+            ->set('queue_endtime', 'queue_endtime + :duration')
+            ->where('queue_user_id = :userId')
+            ->setParameters([
+                'userId' => $userId,
+                'type' => 0,
+                'duration' => $duration,
+            ])
+            ->execute();
+    }
 }

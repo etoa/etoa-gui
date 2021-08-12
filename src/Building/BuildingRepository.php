@@ -598,4 +598,20 @@ class BuildingRepository extends AbstractRepository
             ])
             ->execute();
     }
+
+    public function unfreezeConstruction(int $userId, int $duration): void
+    {
+        $this->createQueryBuilder()
+            ->update('buildlist')
+            ->set('buildlist_build_type', 'buildlist_build_type + 2')
+            ->set('buildlist_build_start_time', 'buildlist_build_start_time + :duration')
+            ->set('buildlist_build_end_time', 'buildlist_build_end_time + :duration')
+            ->where('buildlist_user_id = :userId')
+            ->andWhere('buildlist_build_start_time > 0')
+            ->setParameters([
+                'userId' => $userId,
+                'duration' => $duration,
+            ])
+            ->execute();
+    }
 }
