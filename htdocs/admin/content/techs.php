@@ -203,7 +203,7 @@ else {
         }
 
         // Suchquery generieren
-        elseif ($_SESSION['search']['tech']['query'] == null) {
+        elseif (!isset($_SESSION['search']['tech']['query'])) {
             if ($_POST['planet_id'] != '')
                 $sql .= " AND planets.id='" . $_POST['planet_id'] . "'";
             if ($_POST['planet_name'] != '') {

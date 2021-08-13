@@ -44,7 +44,6 @@ class ShipDataRepository extends AbstractRepository
             ->fetchAllKeyValue();
     }
 
-
     /**
      * @return array<int, float>
      */
@@ -280,6 +279,12 @@ class ShipDataRepository extends AbstractRepository
             ->execute()
             ->fetchAllAssociative();
 
-        return array_map(fn ($row) => new Ship($row), $data);
+        $result = [];
+        foreach ($data as $row) {
+            $ship = new Ship($row);
+            $result[$ship->id] = $ship;
+        }
+
+        return $result;
     }
 }

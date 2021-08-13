@@ -1,8 +1,12 @@
 <?PHP
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Defense\DefenseDataRepository;
 use EtoA\Defense\DefenseRepository;
+use EtoA\Defense\DefenseSearch;
+use EtoA\Ship\ShipDataRepository;
 use EtoA\Ship\ShipRepository;
+use EtoA\Ship\ShipSearch;
 use EtoA\Technology\TechnologyRepository;
 use EtoA\UI\ResourceBoxDrawer;
 use EtoA\Universe\Planet\PlanetRepository;
@@ -17,8 +21,13 @@ $planetRepo = $app[PlanetRepository::class];
 $resourceBoxDrawer = $app[ResourceBoxDrawer::class];
 /** @var ShipRepository $shipRepository */
 $shipRepository = $app[ShipRepository::class];
+/** @var ShipDataRepository $shipDataRepository */
+$shipDataRepository = $app[ShipDataRepository::class];
 /** @var DefenseRepository $defenseRepository */
 $defenseRepository = $app[DefenseRepository::class];
+/** @var DefenseDataRepository $defenseDataRepository */
+$defenseDataRepository = $app[DefenseDataRepository::class];
+
 define('HELP_URL_DEF', "?page=help&site=defense");
 define('HELP_URL_SHIP', "?page=help&site=shipyard");
 
@@ -58,49 +67,32 @@ if ($tech_level > 0) {
         $recycled = [];
         //Anzahl muss grösser als 0 sein
         if (count($_POST['ship_count']) > 0) {
+            $ships = $shipDataRepository->searchShips(ShipSearch::create()->buildable()->special(false));
+            $shipCounts = $shipRepository->getEntityShipCounts($cu->getId(), $planet->id);
             foreach ($_POST['ship_count'] as $id => $num) {
                 $id = intval($id);
 
                 $num = abs($num);
                 if ($num > 0) {
-                    $res = dbquery("
-        SELECT
-            ships.ship_name,
-            ships.ship_costs_metal,
-            ships.ship_costs_crystal,
-            ships.ship_costs_plastic,
-            ships.ship_costs_fuel,
-            ships.ship_costs_food,
-            shiplist.shiplist_count
-        FROM
-            shiplist
-            INNER JOIN
-            ships
-                ON
-            ships.ship_id=shiplist.shiplist_ship_id
-            AND shiplist.shiplist_user_id='" . $cu->id . "'
-            AND shiplist.shiplist_entity_id='" . $planet->id . "'
-            AND shiplist.shiplist_ship_id='" . $id . "';");
-                    if (mysql_num_rows($res) > 0) {
-                        $arr = mysql_fetch_array($res);
-
+                    if (isset($ships[$id], $shipCounts[$id])) {
+                        $ship = $ships[$id];
                         //Anzahl anpassen, wenn angegebene Anzahl grösser ist, als die effektive Anzahl auf dem Planeten
-                        if ($num > $arr['shiplist_count']) {
-                            $num = $arr['shiplist_count'];
+                        if ($num > $shipCounts[$ship->id]) {
+                            $num = $shipCounts[$ship->id];
                         }
 
                         //Schiffe vom Planeten abziehen
-                        $shipRepository->removeShips($id, $num, $cu->getId(), $planet->id);
+                        $shipRepository->removeShips($ship->id, $num, $cu->getId(), $planet->id);
 
                         //Rohstoffe summieren
-                        $pb[0] += ceil($payback * $arr['ship_costs_metal'] * $num);
-                        $pb[1] += ceil($payback * $arr['ship_costs_crystal'] * $num);
-                        $pb[2] += ceil($payback * $arr['ship_costs_plastic'] * $num);
-                        $pb[3] += ceil($payback * $arr['ship_costs_fuel'] * $num);
-                        $pb[4] += ceil($payback * $arr['ship_costs_food'] * $num);
+                        $pb[0] += ceil($payback * $ship->costsMetal * $num);
+                        $pb[1] += ceil($payback * $ship->costsCrystal * $num);
+                        $pb[2] += ceil($payback * $ship->costsPlastic * $num);
+                        $pb[3] += ceil($payback * $ship->costsFuel * $num);
+                        $pb[4] += ceil($payback * $ship->costsFood * $num);
                         $cnt += $num;
 
-                        $log_ships .= "[B]" . $arr['ship_name'] . ":[/B] " . $num . "\n";
+                        $log_ships .= "[B]" . $ship->name . ":[/B] " . $num . "\n";
                         $recycled[$id] = $num;
                     }
                 }
@@ -136,49 +128,32 @@ if ($tech_level > 0) {
         //Anzahl muss grösser als 0 sein
         if (count($_POST['def_count']) > 0) {
             $fields = 0;
+            $defenseCounts = $defenseRepository->getEntityDefenseCounts($cu->getId(), $planet->id);
+            $defenses = $defenseDataRepository->searchDefense(DefenseSearch::create()->buildable());
             foreach ($_POST['def_count'] as $id => $num) {
                 $num = abs($num);
                 if ($num > 0) {
-                    $res = dbquery("
-        SELECT
-            defense.def_name,
-            defense.def_costs_metal,
-            defense.def_costs_crystal,
-            defense.def_costs_plastic,
-            defense.def_costs_fuel,
-            defense.def_costs_food,
-            defense.def_fields,
-            deflist.deflist_count
-        FROM
-            deflist
-            INNER JOIN
-            defense
-                ON
-            defense.def_id=deflist.deflist_def_id
-            AND deflist.deflist_entity_id='" . $planet->id . "'
-            AND deflist.deflist_def_id='" . $id . "'
-            AND deflist.deflist_user_id='" . $cu->id . "' ;");
-                    if (mysql_num_rows($res) > 0) {
-                        $arr = mysql_fetch_array($res);
+                    if (isset($defenses[$id], $defenseCounts[$id])) {
+                        $defense = $defenses[$id];
 
                         //Anzahl anpassen, wenn angegebene Anzahl grösser ist, als die effektive Anzahl auf dem Planeten
-                        if ($num > $arr['deflist_count']) {
-                            $num = $arr['deflist_count'];
+                        if ($num > $defenseCounts[$defense->id]) {
+                            $num = $defenseCounts[$defense->id];
                         }
 
                         //Defese vom Planeten Abziehen
-                        $defenseRepository->removeDefense($id, $num, $cu->getId(), $planet->id);
+                        $defenseRepository->removeDefense($defense->id, $num, $cu->getId(), $planet->id);
 
                         //Rohstoffe summieren
-                        $pb[0] += ceil($payback * $arr['def_costs_metal'] * $num);
-                        $pb[1] += ceil($payback * $arr['def_costs_crystal'] * $num);
-                        $pb[2] += ceil($payback * $arr['def_costs_plastic'] * $num);
-                        $pb[3] += ceil($payback * $arr['def_costs_fuel'] * $num);
-                        $pb[4] += ceil($payback * $arr['def_costs_food'] * $num);
-                        $fields += $arr['def_fields'] * $num;
+                        $pb[0] += ceil($payback * $defense->costsMetal * $num);
+                        $pb[1] += ceil($payback * $defense->costsCrystal * $num);
+                        $pb[2] += ceil($payback * $defense->costsPlastic * $num);
+                        $pb[3] += ceil($payback * $defense->costsFuel * $num);
+                        $pb[4] += ceil($payback * $defense->costsFood * $num);
+                        $fields += $defense->fields * $num;
                         $cnt += $num;
 
-                        $log_def .= "[B]" . $arr['def_name'] . ":[/B] " . $num . "\n";
+                        $log_def .= "[B]" . $defense->name . ":[/B] " . $num . "\n";
                         $recycled[$id] = $num;
                     }
                 }
@@ -209,24 +184,9 @@ if ($tech_level > 0) {
     //
     //Schiffe
     //
-    $res = dbquery("
-    SELECT
-        s.ship_id,
-        s.ship_name,
-        sl.shiplist_count
-    FROM
-    ships AS s
-    INNER JOIN
-    shiplist AS sl
-    ON s.ship_id=sl.shiplist_ship_id
-    AND sl.shiplist_entity_id='" . $planet->id . "'
-    AND s.ship_buildable='1'
-    AND s.special_ship='0'
-    AND sl.shiplist_count>'0'
-    AND sl.shiplist_user_id='" . $cu->id . "'
-    ORDER BY
-        s.ship_name;");
-    if (mysql_num_rows($res) > 0) {
+    $shipNames = $shipDataRepository->searchShipNames(ShipSearch::create()->buildable()->special(false));
+    $shipCounts = $shipRepository->getEntityShipCounts($cu->getId(), $planet->id);
+    if (count($shipCounts) > 0) {
         echo "<form action=\"?page=$page\" method=\"POST\">";
         tableStart("Schiffe");
         echo "<tr>
@@ -236,15 +196,19 @@ if ($tech_level > 0) {
                     </tr>\n";
 
         $tabulator = 1;
-        while ($arr = mysql_fetch_array($res)) {
-            $s_img = IMAGE_PATH . "/" . IMAGE_SHIP_DIR . "/ship" . $arr['ship_id'] . "_small." . IMAGE_EXT;
+        foreach ($shipNames as $shipId => $shipName) {
+            if (!isset($shipCounts[$shipId])) {
+                continue;
+            }
+
+            $s_img = IMAGE_PATH . "/" . IMAGE_SHIP_DIR . "/ship" . $shipId . "_small." . IMAGE_EXT;
             echo "<tr>
                             <td width=\"40\">
-                                <a href=\"" . HELP_URL_SHIP . "&amp;id=" . $arr['ship_id'] . "\"><img src=\"$s_img\" width=\"40\"  height=\"40\" border=\"0\"/></a>
+                                <a href=\"" . HELP_URL_SHIP . "&amp;id=" . $shipId . "\"><img src=\"$s_img\" width=\"40\"  height=\"40\" border=\"0\"/></a>
                             </td>";
-            echo "<td width=\"66%\" valign=\"middle\">" . $arr['ship_name'] . "</td>";
-            echo "<td width=\"22%\" valign=\"middle\">" . nf($arr['shiplist_count']) . "</td>";
-            echo "<td width=\"12%\" valign=\"middle\"><input type=\"text\" name=\"ship_count[" . $arr['ship_id'] . "]\" size=\"8\" maxlength=\"" . strlen($arr['shiplist_count']) . "\" value=\"0\" title=\"Anzahl welche recyclet werden sollen\" tabindex=\"" . $tabulator . "\" onKeyPress=\"return nurZahlen(event)\">
+            echo "<td width=\"66%\" valign=\"middle\">" . $shipName . "</td>";
+            echo "<td width=\"22%\" valign=\"middle\">" . nf($shipCounts[$shipId]) . "</td>";
+            echo "<td width=\"12%\" valign=\"middle\"><input type=\"text\" name=\"ship_count[" . $shipId . "]\" size=\"8\" maxlength=\"" . strlen((string) $shipCounts[$shipId]) . "\" value=\"0\" title=\"Anzahl welche recyclet werden sollen\" tabindex=\"" . $tabulator . "\" onKeyPress=\"return nurZahlen(event)\">
                             </td>
                     </tr>\n";
         }
@@ -259,23 +223,9 @@ if ($tech_level > 0) {
     //
     //Verteidigung
     //
-    $res = dbquery("
-    SELECT
-        d.def_id,
-        d.def_name,
-        dl.deflist_count
-    FROM
-    defense AS d
-    INNER JOIN
-    deflist AS dl
-    ON d.def_id=dl.deflist_def_id
-    AND dl.deflist_entity_id='" . $planet->id . "'
-    AND d.def_buildable='1'
-    AND dl.deflist_user_id='" . $cu->id . "'
-    AND dl.deflist_count>0
-    ORDER BY
-        def_name;");
-    if (mysql_num_rows($res) > 0) {
+    $defenseNames = $defenseDataRepository->searchDefenseNames(DefenseSearch::create()->buildable());
+    $defenseCounts = $defenseRepository->getEntityDefenseCounts($cu->getId(), $planet->id);
+    if (count($defenseCounts) > 0) {
         echo "<form action=\"?page=$page\" method=\"POST\">";
         tableStart("Verteidigungsanlagen");
         echo "<tr>
@@ -284,15 +234,19 @@ if ($tech_level > 0) {
                         <th valign=\"top\" width=\"110\">Auswahl</th>
                     </tr>\n";
         $tabulator = 1;
-        while ($arr = mysql_fetch_array($res)) {
-            $s_img = IMAGE_PATH . "/" . IMAGE_DEF_DIR . "/def" . $arr['def_id'] . "_small." . IMAGE_EXT; //image angepasst by Lamborghini
+        foreach ($defenseNames as $defenseId => $defenseName) {
+            if (!isset($defenseCounts[$defenseId])) {
+                continue;
+            }
+
+            $s_img = IMAGE_PATH . "/" . IMAGE_DEF_DIR . "/def" . $defenseId . "_small." . IMAGE_EXT; //image angepasst by Lamborghini
             echo "<tr>
                             <td width=\"40\">
-                                <a href=\"" . HELP_URL_DEF . "&amp;id=" . $arr['def_id'] . "\"><img src=\"$s_img\" width=\"40\"  height=\"40\" border=\"0\"/></a>
+                                <a href=\"" . HELP_URL_DEF . "&amp;id=" . $defenseId . "\"><img src=\"$s_img\" width=\"40\"  height=\"40\" border=\"0\"/></a>
                             </td>";
-            echo "<td width=\"66%\" valign=\"middle\">" . $arr['def_name'] . "</td>";
-            echo "<td width=\"22%\" valign=\"middle\">" . nf($arr['deflist_count']) . "</td>";
-            echo "<td width=\"12%\" valign=\"middle\"><input type=\"text\" name=\"def_count[" . $arr['def_id'] . "]\" size=\"8\" maxlength=\"" . strlen($arr['deflist_count']) . "\" value=\"0\" tabindex=\"" . $tabulator . "\" onKeyPress=\"return nurZahlen(event)\"></td>
+            echo "<td width=\"66%\" valign=\"middle\">" . $defenseName . "</td>";
+            echo "<td width=\"22%\" valign=\"middle\">" . nf($defenseCounts[$defenseId]) . "</td>";
+            echo "<td width=\"12%\" valign=\"middle\"><input type=\"text\" name=\"def_count[" . $defenseId . "]\" size=\"8\" maxlength=\"" . strlen((string) $defenseCounts[$defenseId]) . "\" value=\"0\" tabindex=\"" . $tabulator . "\" onKeyPress=\"return nurZahlen(event)\"></td>
                     </tr>\n";
             $tabulator++;
         }
