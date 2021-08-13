@@ -253,7 +253,7 @@ elseif ($sub == "queue") {
                 $bet = "";
 
             $userNick = $userRepository->getNick($queue->userId);
-            $shipNames = $shipDataRepository->getShipNames();
+            $shipNames = $shipDataRepository->getShipNames(true);
             $planet = $planetRepository->find($queue->entityId);
             echo "<form action=\"?page=$page&sub=$sub&action=edit&id=" . $queue->id . "\" method=\"post\">";
             echo "<table class=\"tbl\">";
