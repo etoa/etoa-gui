@@ -269,13 +269,11 @@ class ShipDataRepository extends AbstractRepository
     /**
      * @return Ship[]
      */
-    public function searchShips(ShipSearch $search, ShipSort $sort = null, int $limit = null): array
+    public function searchShips(ShipSearch $search = null, ShipSort $sort = null, int $limit = null): array
     {
-        $qb = $this->createQueryBuilder()
+        $data = $this->applySearchSortLimit($this->createQueryBuilder(), $search, $sort, $limit)
             ->select('*')
-            ->from('ships');
-
-        $data = $this->applySearchSortLimit($qb, $search, $sort, $limit)
+            ->from('ships')
             ->execute()
             ->fetchAllAssociative();
 
