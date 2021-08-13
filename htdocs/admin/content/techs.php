@@ -5,6 +5,7 @@ use EtoA\Technology\TechnologyDataRepository;
 use EtoA\Technology\TechnologyPointRepository;
 use EtoA\Technology\TechnologyRepository;
 use EtoA\Technology\TechnologySort;
+use EtoA\Universe\Planet\PlanetRepository;
 
 /** @var ConfigurationService */
 $config = $app[ConfigurationService::class];
@@ -14,7 +15,6 @@ $technologyRepository = $app[TechnologyRepository::class];
 $technologyDataRepository = $app[TechnologyDataRepository::class];
 /** @var TechnologyPointRepository $technologyPointRepository */
 $technologyPointRepository = $app[TechnologyPointRepository::class];
-
 //
 // Forschungspunkte
 //
@@ -161,11 +161,11 @@ else {
             $technologyNames = $technologyDataRepository->getTechnologyNames(true);
             if (isset($_POST['all_techs'])) {
                 foreach (array_keys($technologyNames) as $technologyId) {
-                    $technologyRepository->addTechnology($technologyId, (int) $_POST['techlist_current_level'], (int) $updata[1], 0);
+                    $technologyRepository->addTechnology($technologyId, (int) $_POST['techlist_current_level'], (int) $updata[1], (int) $updata[0]);
                 }
                 echo "Technologien wurden aktualisiert!<br/>";
             } else {
-                $technologyRepository->addTechnology((int) $_POST['tech_id'], (int) $_POST['techlist_current_level'], (int) $updata[1], 0);
+                $technologyRepository->addTechnology((int) $_POST['tech_id'], (int) $_POST['techlist_current_level'], (int) $updata[1], (int) $updata[0]);
                 echo "Technologie wurde hinzugefügt!<br/>";
             }
 
@@ -268,9 +268,17 @@ else {
     //
     elseif (isset($_GET['action']) && $_GET['action'] == "edit") {
         if (isset($_POST['save'])) {
-            dbquery("UPDATE techlist SET techlist_current_level='" . $_POST['techlist_current_level'] . "',techlist_build_type='" . $_POST['techlist_build_type'] . "',techlist_build_start_time=UNIX_TIMESTAMP('" . $_POST['techlist_build_start_time'] . "'),techlist_build_end_time=UNIX_TIMESTAMP('" . $_POST['techlist_build_end_time'] . "') WHERE techlist_id='" . $_GET['techlist_id'] . "';");
+            $entry = $technologyRepository->getEntry($_GET['techlist_id']);
+            if ($entry) {
+                $entry->currentLevel = (int) $_POST['techlist_current_level'];
+                $entry->buildType = (int) $_POST['techlist_build_type'];
+                $entry->startTime = $_POST['techlist_build_start_time'] ? (new \DateTime($_POST['techlist_build_start_time']))->getTimestamp() : 0;
+                $entry->endTime = $_POST['techlist_build_end_time'] ? (new \DateTime($_POST['techlist_build_end_time']))->getTimestamp() : 0;
+                $technologyRepository->save($entry);
+            }
+
         } elseif (isset($_POST['del'])) {
-            dbquery("DELETE FROM techlist WHERE techlist_id='" . $_GET['techlist_id'] . "';");
+            $technologyRepository->removeEntry($_GET['techlist_id']);
         }
 
         $res = dbquery("SELECT
