@@ -3,6 +3,7 @@
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Ship\ShipDataRepository;
 use EtoA\Ship\ShipQueueRepository;
+use EtoA\Ship\ShipQueueSearch;
 use EtoA\Ship\ShipRepository;
 use EtoA\Ship\ShipSort;
 
@@ -103,97 +104,31 @@ elseif ($sub == "queue") {
     $twig->addGlobal("title", "Schiff-Bauliste");
 
     if (isset($_POST['shipqueue_search']) || isset($_GET['action']) && $_GET['action'] == "searchresults") {
-        $sqlstart = "
-            SELECT
-                queue_id,
-                queue_starttime,
-                queue_endtime,
-                queue_objtime,
-                queue_cnt,
-                ship_name,
-                ship_id,
-                planet_name,
-                planets.id,
-                planet_user_id,
-                entities.pos,
-                cells.sx,
-                cells.sy,
-                cells.cx,
-                cells.cy,
-                user_nick,
-                user_id,
-                user_points
-            FROM
-                    ship_queue
-            INNER JOIN
-                planets
-                ON
-                    queue_entity_id=planets.id
-            INNER JOIN
-                entities
-                ON
-                    planets.id=entities.id
-            INNER JOIN
-                cells
-                ON
-                    entities.cell_id=cells.id
-            INNER JOIN
-                users
-                ON
-                    queue_user_id=user_id
-            INNER JOIN
-                ships
-                ON
-                    queue_ship_id=ship_id
-            ";
-        $sqlend = "
-            GROUP BY
-                    queue_id
-            ORDER BY
-                    queue_entity_id,
-                    queue_endtime
-                    ;";
-
         // Suchquery generieren
-        $sql = '';
-        if ($_SESSION['shipqueue']['query'] == "") {
+        if (!isset($_SESSION['shipqueue']['query'])) {
+            $queueSearch = ShipQueueSearch::create();
             if ($_POST['planet_id'] != "") {
-                if ($sql != "") $sql .= " AND ";
-                $sql .= "queue_entity_id=" . $_POST['planet_id'];
+                $queueSearch->entityId($_POST['planet_id']);
             }
             if ($_POST['planet_name'] != "") {
-                if ($sql != "") $sql .= " AND ";
-                if (stristr($_POST['qmode']['planet_name'], "%")) $addchars = "%";
-                else $addchars = "";
-                $sql .= "planet_name " . stripslashes($_POST['qmode']['planet_name']) . $_POST['planet_name'] . "$addchars'";
+                $queueSearch->likePlanetName($_POST['planet_name']);
             }
             if ($_POST['user_id'] != "") {
-                if ($sql != "") $sql .= " AND ";
-                $sql .= "queue_user_id=" . $_POST['user_id'];
+                $queueSearch->userId($_POST['user_id']);
             }
             if ($_POST['user_nick'] != "") {
-                if ($sql != "") $sql .= " AND ";
-                if (stristr($_POST['qmode']['user_nick'], "%")) $addchars = "%";
-                else $addchars = "";
-                $sql .= "user_nick " . stripslashes($_POST['qmode']['user_nick']) . $_POST['user_nick'] . "$addchars'";
+                $queueSearch->likeUserNick($_POST['user_nick']);
             }
             if ($_POST['ship_id'] != "") {
-                if ($sql != "") $sql .= " AND ";
-                $sql .= "queue_ship_id=" . $_POST['ship_id'];
+                $queueSearch->shipId($_POST['ship_id']);
             }
-
-            if ($sql != "") {
-                $sql = $sqlstart . " WHERE " . $sql . $sqlend;
-            } else {
-                $sql = $sqlstart . $sql . $sqlend;
-            }
-            $_SESSION['shipqueue']['query'] = $sql;
+            $_SESSION['shipqueue']['query'] = serialize($queueSearch);
         } else {
-            $sql = $_SESSION['shipqueue']['query'];
+            $queueSearch = unserialize($_SESSION['shipqueue']['query'], ['allowed_classes' => [ShipQueueSearch::class]]);
         }
 
-        $res = dbquery($sql);
-        $nr = mysql_num_rows($res);
+        $entries = $shipQueueRepository->adminSearchQueueItems($queueSearch);
+        $nr = count($entries);
         if ($nr > 0) {
             echo "$nr Datens&auml;tze vorhanden<br/><br/>";
             if ($nr > 20) {
@@ -214,16 +149,16 @@ elseif ($sub == "queue") {
             echo "</tr>";
             $check = array();
             $pid = 0;
-            while ($arr = mysql_fetch_array($res)) {
-                if ($pid > 0 && $pid != $arr['id']) {
+            foreach ($entries as $shipQueueItem) {
+                if ($pid > 0 && $pid !== $shipQueueItem->entityId) {
                     echo "<tr><td colspan=\"8\" style=\"height:3px;background:#000;\" class=\"tbldata\"></td></tr>";
                 }
-                $pid = $arr['id'];
+                $pid = $shipQueueItem->entityId;
 
                 $error = false;
 
                 // Planet gehört nicht dem Besitzer
-                if ($arr['user_id'] != $arr['planet_user_id']) {
+                if ($shipQueueItem->userId !== $shipQueueItem->planetUserId) {
                     $error = true;
                     $errorMsg = "Planet geh&ouml;rt nicht dem Schiffbesitzer! Wird auf den Heimatplaneten verschoben";
                 }
@@ -244,19 +179,19 @@ elseif ($sub == "queue") {
 
                 if ($error)
                     $style = " style=\"color:#f30\"";
-                elseif ($arr['queue_cnt'] == 0)
+                elseif ($shipQueueItem->count === 0)
                     $style = " style=\"color:#999\"";
                 else
                     $style = "";
                 echo "<tr>";
-                echo "<td class=\"tbldata\" $style>" . $arr['queue_id'] . "</a></td>";
-                echo "<td class=\"tbldata\"$style " . mTT($arr['ship_name'], "<b>Schiff-ID:</b> " . $arr['ship_id']) . ">" . $arr['ship_name'] . "</td>";
-                echo "<td class=\"tbldata\"$style>" . nf($arr['queue_cnt']) . "</td>";
-                echo "<td class=\"tbldata\"$style " . mTT($arr['planet_name'], "<b>Planet-ID:</b> " . $arr['id'] . "<br/><b>Koordinaten:</b> " . $arr['cell_sx'] . "/" . $arr['cell_sy'] . " : " . $arr['cell_cx'] . "/" . $arr['cell_cy'] . " : " . $arr['planet_solsys_pos']) . ">" . cut_string($arr['planet_name'], 11) . "</td>";
-                echo "<td class=\"tbldata\"$style " . mTT($arr['user_nick'], "<b>User-ID:</b> " . $arr['user_id'] . "<br/><b>Punkte:</b> " . nf($arr['user_points'])) . ">" . cut_string($arr['user_nick'], 11) . "</td>";
-                echo "<td class=\"tbldata\"$style>" . df($arr['queue_starttime'], 1) . "</td>";
-                echo "<td class=\"tbldata\"$style>" . df($arr['queue_endtime'], 1) . "</td>";
-                echo "<td class=\"tbldata\"$style>" . edit_button("?page=$page&sub=$sub&action=edit&id=" . $arr['queue_id']);
+                echo "<td class=\"tbldata\" $style>" . $shipQueueItem->id . "</a></td>";
+                echo "<td class=\"tbldata\"$style " . mTT($shipQueueItem->shipName, "<b>Schiff-ID:</b> " . $shipQueueItem->shipId) . ">" . $shipQueueItem->shipName . "</td>";
+                echo "<td class=\"tbldata\"$style>" . nf($shipQueueItem->count) . "</td>";
+                echo "<td class=\"tbldata\"$style " . mTT($shipQueueItem->planetName, "<b>Planet-ID:</b> " . $shipQueueItem->entityId . "<br/><b>Koordinaten:</b> " . $shipQueueItem->entity->sx . "/" . $shipQueueItem->entity->sy . " : " . $shipQueueItem->entity->cx . "/" . $shipQueueItem->entity->cy . " : " . $shipQueueItem->entity->pos) . ">" . cut_string($shipQueueItem->planetName, 11) . "</td>";
+                echo "<td class=\"tbldata\"$style " . mTT($shipQueueItem->userNick, "<b>User-ID:</b> " . $shipQueueItem->userId . "<br/><b>Punkte:</b> " . nf($shipQueueItem->userPoints)) . ">" . cut_string($shipQueueItem->userNick, 11) . "</td>";
+                echo "<td class=\"tbldata\"$style>" . df($shipQueueItem->startTime, 1) . "</td>";
+                echo "<td class=\"tbldata\"$style>" . df($shipQueueItem->endTime, 1) . "</td>";
+                echo "<td class=\"tbldata\"$style>" . edit_button("?page=$page&sub=$sub&action=edit&id=" . $shipQueueItem->id);
                 echo "</td>";
                 echo "</tr>";
             }
@@ -367,7 +302,7 @@ elseif ($sub == "queue") {
     // Suchmaske Schiffaufträge
     //
     else {
-        $_SESSION['shipqueue']['query'] = "";
+        unset($_SESSION['shipqueue']['query']);
 
         // Schiffe laden
         /** @var ShipDataRepository */
@@ -380,11 +315,9 @@ elseif ($sub == "queue") {
         echo "<table class=\"tbl\">";
         echo "<tr><td class=\"tbltitle\">Planet ID</td><td class=\"tbldata\"><input type=\"text\" name=\"planet_id\" value=\"\" size=\"20\" maxlength=\"250\" /></td>";
         echo "<tr><td class=\"tbltitle\">Planetname</td><td class=\"tbldata\"><input type=\"text\" name=\"planet_name\" value=\"\" size=\"20\" maxlength=\"250\" /> ";
-        fieldqueryselbox('planet_name');
         echo "</td></tr>";
         echo "<tr><td class=\"tbltitle\">Spieler ID</td><td class=\"tbldata\"><input type=\"text\" name=\"user_id\" value=\"\" size=\"20\" maxlength=\"250\" /></td></tr>";
         echo "<tr><td class=\"tbltitle\">Spieler Nick</td><td class=\"tbldata\"><input type=\"text\" name=\"user_nick\" value=\"\" size=\"20\" maxlength=\"250\" /> ";
-        fieldqueryselbox('user_nick');
         echo "</td></tr>";
         echo "<tr><td class=\"tbltitle\">Schiff</td><td class=\"tbldata\"><select name=\"ship_id\"><option value=\"\"><i>---</i></option>";
         foreach ($shipNames as $shipId => $shipName) {
