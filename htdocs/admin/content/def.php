@@ -306,7 +306,7 @@ elseif ($sub == "req") {
 else {
     echo "<h1>Verteidigungsliste</h1>";
 
-    if (isset($_POST['deflist_search']) || (isset($_GET['action']) && $_GET['action'] == "searchresults") || isset($_POST['new'])) {
+    if (isset($_POST['deflist_search']) || (isset($_GET['action']) && $_GET['action'] == "searchresults")) {
 
         $sqlstart = "SELECT
                 planets.id,
@@ -342,68 +342,8 @@ else {
                     def_order,def_name;";
         $sql = "";
 
-        // Verteidigung hinzufügen
-        if (isset($_POST['new'])) {
-            $updata = explode(":", $_POST['planet_id']);
-            $defenseRepository->addDefense((int) $_POST['def_id'], (int) $_POST['deflist_count'], (int) $updata[1], (int) $updata[0]);
-            echo "Verteidigung wurde hinzugefügt!<br/>";
-            $sql = " AND planets.id=" . $updata[0];
-            $_SESSION['defedit']['query'] = "";
-
-            // Hinzufügen
-            echo "<h2>Neue Verteidigungsanlagen hinzuf&uuml;gen</h2>";
-            echo "<form action=\"?page=$page&amp;sub=$sub&amp;action=search\" method=\"post\">";
-            tableStart();
-            echo "<tr><th class=\"tbltitle\">Verteidigung:</th><td class=\"tbldata\"><select name=\"def_id\">";
-            foreach ($defenseNames as $defenseId => $defenseName) {
-                echo "<option value=\"" . $defenseId . "\"";
-                if ($defenseId == $_POST['def_id']) echo " selected=\"selected\"";
-                echo ">" . $defenseName . "</option>";
-            }
-            echo "</select></td></tr>";
-            if ($_POST['deflist_count'])
-                $v = $_POST['deflist_count'];
-            else
-                $v = 1;
-            echo "<tr><th class=\"tbltitle\">Anzahl</th><td class=\"tbldata\"><input type=\"text\" name=\"deflist_count\" value=\"$v\" size=\"1\" maxlength=\"3\" /></td></tr>";
-            echo "<tr><th class=\"tbltitle\">auf dem Planeten</th><td class=\"tbldata\"> <select name=\"planet_id\"><";
-            $pres = dbquery("SELECT
-                                users.user_id,
-                                planets.id,
-                                planet_name,
-                                users.user_nick,
-                                entities.pos,
-                                cells.sx,
-                                cells.sy,
-                                cells.cx,
-                                cells.cy
-                            FROM
-                                users
-                            INNER JOIN
-                                planets
-                                ON planets.planet_user_id=users.user_id
-                            INNER JOIN
-                                entities
-                                ON entities.id=planets.id
-                            INNER JOIN
-                                cells
-                                ON cells.id=entities.cell_id
-                            ORDER BY
-                                planets.id;");
-            while ($parr = mysql_fetch_array($pres)) {
-                echo "<option value=\"" . $parr['id'] . ":" . $parr['user_id'] . "\"";
-                if ($updata[0] == $parr['id']) echo " selected=\"selected\"";
-                echo ">" . $parr['sx'] . "/" . $parr['sy'] . " : " . $parr['cx'] . "/" . $parr['cy'] . " : " . $parr['pos'] . " &nbsp; " . $parr['planet_name'] . " (" . $parr['user_nick'] . ")</option>";
-            }
-            echo "</select></td></tr>";
-            tableEnd();
-            echo "<input type=\"submit\" name=\"new\" value=\"Hinzuf&uuml;gen\" /></form><br/>";
-            $sql = $sqlstart . $sql . $sqlend;
-            $_SESSION['defedit']['query'] = $sql;
-        }
-
         // Suchquery generieren
-        elseif (!isset($_SESSION['defedit']['query']) || $_SESSION['defedit']['query'] == "") {
+        if (!isset($_SESSION['defedit']['query']) || $_SESSION['defedit']['query'] == "") {
             if ($request->request->getInt('planet_id') > 0)
                 $sql .= " AND id='" . $request->request->getInt('planet_id') . "'";
             if ((bool) $request->request->get('planet_name')) {
