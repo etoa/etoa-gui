@@ -63,6 +63,32 @@ class DefenseQueueRepository extends AbstractRepository
         return array_map(fn ($row) => new DefenseQueueItem($row), $data);
     }
 
+    /**
+     * @return AdminDefenseQueueItem[]
+     */
+    public function adminSearchQueueItems(DefenseQueueSearch $search): array
+    {
+        $data = $this->applySearchSortLimit($this->createQueryBuilder(), $search)
+            ->select('def_queue.*')
+            ->addSelect('def_name')
+            ->addSelect('planet_name, planet_user_id')
+            ->addSelect('entities.id, entities.pos, entities.code, cells.sx, cells.sy, cells.cx, cells.cy, cells.id as cid')
+            ->addSelect('user_nick, user_points')
+            ->from('def_queue')
+            ->innerJoin('def_queue', 'planets', 'planets', 'planets.id = queue_entity_id')
+            ->innerJoin('planets', 'entities', 'entities', 'planets.id = entities.id')
+            ->innerJoin('planets', 'cells', 'cells', 'cells.id = entities.cell_id')
+            ->innerJoin('def_queue', 'users', 'users', 'users.user_id = queue_user_id')
+            ->innerJoin('def_queue', 'defense', 'defense', 'defense.def_id = queue_def_id')
+            ->groupBy('queue_id')
+            ->orderBy('queue_entity_id')
+            ->addOrderBy('queue_endtime')
+            ->execute()
+            ->fetchAllAssociative();
+
+        return array_map(fn ($row) => new AdminDefenseQueueItem($row), $data);
+    }
+
     public function saveQueueItem(DefenseQueueItem $item): void
     {
         $this->createQueryBuilder()

@@ -4,16 +4,16 @@ namespace EtoA\Defense;
 
 use EtoA\Core\Database\AbstractSearch;
 
-class DefenseQueueSearch extends AbstractSearch
+class DefenseListSearch extends AbstractSearch
 {
-    public static function create(): DefenseQueueSearch
+    public static function create(): DefenseListSearch
     {
-        return new DefenseQueueSearch();
+        return new DefenseListSearch();
     }
 
     public function userId(int $userId): self
     {
-        $this->parts[] = 'queue_user_id = :userId';
+        $this->parts[] = 'deflist_user_id = :userId';
         $this->parameters['userId'] = $userId;
 
         return $this;
@@ -29,7 +29,7 @@ class DefenseQueueSearch extends AbstractSearch
 
     public function entityId(int $entityId): self
     {
-        $this->parts[] = 'queue_entity_id = :entityId';
+        $this->parts[] = 'deflist_entity_id = :entityId';
         $this->parameters['entityId'] = $entityId;
 
         return $this;
@@ -37,7 +37,7 @@ class DefenseQueueSearch extends AbstractSearch
 
     public function likePlanetName(string $planetName): self
     {
-        $this->parts[] = 'planets.planet_name = :likePlanetName';
+        $this->parts[] = 'planets.planet_name LIKE :likePlanetName';
         $this->parameters['likePlanetName'] = '%' . $planetName . '%';
 
         return $this;
@@ -45,24 +45,8 @@ class DefenseQueueSearch extends AbstractSearch
 
     public function defenseId(int $defenseId): self
     {
-        $this->parts[] = 'queue_def_id = :defenseId';
+        $this->parts[] = 'deflist_def_id = :defenseId';
         $this->parameters['defenseId'] = $defenseId;
-
-        return $this;
-    }
-
-    public function startEqualAfter(int $time): self
-    {
-        $this->parts[] = 'queue_endtime >= :startEqualAfter';
-        $this->parameters['startEqualAfter'] = $time;
-
-        return $this;
-    }
-
-    public function endAfter(int $time): self
-    {
-        $this->parts[] = 'queue_endtime > :endAfter';
-        $this->parameters['endAfter'] = $time;
 
         return $this;
     }

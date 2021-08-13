@@ -258,6 +258,8 @@ class User implements \EtoA\User\UserInterface
                     $sql .= " user_hmode_from=" . $this->hmode_from . ",";
                 } elseif ($k == "hmode_to") {
                     $sql .= " user_hmode_to=" . $this->hmode_to . ",";
+                } elseif ($k === 'changedMainPlanet') {
+                    // do nothing
                 } else
                     echo " $k has no valid UPDATE query!<br/>";
             }
@@ -539,23 +541,5 @@ class User implements \EtoA\User\UserInterface
         // Planet is attackable if user is attackable
         // or if last owner == this owner (invade time threshold)
         return $this->canAttackUser($p->owner()) || $this->id == $p->lastUserCheck();
-    }
-
-    /**
-     * Setzt, ob dieser Spieler seinen Hauptplaneten bereits gewechselt hat.
-     * @param boolean $changed
-     */
-    public function setChangedMainPlanet($changed)
-    {
-        $changed_value = ($changed ? 1 : 0);
-        $this->changedMainPlanet = $changed_value;
-        dbquery("
-        UPDATE
-            users
-        SET
-            user_changed_main_planet=$changed_value
-        WHERE
-            user_id=" . $this->id . "
-        ");
     }
 }

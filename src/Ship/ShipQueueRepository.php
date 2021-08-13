@@ -82,6 +82,32 @@ class ShipQueueRepository extends AbstractRepository
         return array_map(fn ($row) => new ShipQueueItem($row), $data);
     }
 
+    /**
+     * @return AdminShipQueueItem[]
+     */
+    public function adminSearchQueueItems(ShipQueueSearch $search): array
+    {
+        $data = $this->applySearchSortLimit($this->createQueryBuilder(), $search)
+            ->select('ship_queue.*')
+            ->addSelect('ship_name')
+            ->addSelect('planet_name, planet_user_id')
+            ->addSelect('entities.id, entities.pos, entities.code, cells.sx, cells.sy, cells.cx, cells.cy, cells.id as cid')
+            ->addSelect('user_nick, user_points')
+            ->from('ship_queue')
+            ->innerJoin('ship_queue', 'planets', 'planets', 'planets.id = queue_entity_id')
+            ->innerJoin('planets', 'entities', 'entities', 'planets.id = entities.id')
+            ->innerJoin('planets', 'cells', 'cells', 'cells.id = entities.cell_id')
+            ->innerJoin('ship_queue', 'users', 'users', 'users.user_id = queue_user_id')
+            ->innerJoin('ship_queue', 'ships', 'ships', 'ships.ship_id = queue_ship_id')
+            ->groupBy('queue_id')
+            ->orderBy('queue_entity_id')
+            ->addOrderBy('queue_endtime')
+            ->execute()
+            ->fetchAllAssociative();
+
+        return array_map(fn ($row) => new AdminShipQueueItem($row), $data);
+    }
+
     public function saveQueueItem(ShipQueueItem $item): void
     {
         $this->createQueryBuilder()

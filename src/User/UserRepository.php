@@ -561,6 +561,18 @@ class UserRepository extends AbstractRepository
             ->execute();
     }
 
+    public function markMainPlanetChanged(int $userId): void
+    {
+        $this->createQueryBuilder()
+            ->update('users')
+            ->set('user_changed_main_planet', '1')
+            ->where('user_id = :userId')
+            ->setParameters([
+                'userId' => $userId,
+            ])
+            ->execute();
+    }
+
     /**
      * @return array<int, string>
      */

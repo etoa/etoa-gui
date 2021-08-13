@@ -65,6 +65,25 @@ class ShipSearch extends AbstractSearch
         return $this;
     }
 
+    public function tradeable(bool $tradeable): ShipSearch
+    {
+        $this->parts[] = 'ship_tradable = :tradeable';
+        $this->parameters['tradeable'] = (int) $tradeable;
+
+        return $this;
+    }
+
+    public function allianceShip(bool $allianceShip): ShipSearch
+    {
+        if ($allianceShip) {
+            $this->parts[] = 'ship_alliance_costs > 0';
+        } else {
+            $this->parts[] = 'ship_alliance_costs = 0';
+        }
+
+        return $this;
+    }
+
     public function raceId(int $raceId): ShipSearch
     {
         $this->parts[] = 'ship_race_id = :raceId';
