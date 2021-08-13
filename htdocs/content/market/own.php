@@ -4,7 +4,9 @@ use EtoA\Building\BuildingRepository;
 use EtoA\Market\MarketAuctionRepository;
 use EtoA\Market\MarketResourceRepository;
 use EtoA\Market\MarketShipRepository;
+use EtoA\Message\MarketReportRepository;
 use EtoA\Ship\ShipRepository;
+use EtoA\Universe\Resources\BaseResources;
 
 /** @var ShipRepository $shipRepository */
 $shipRepository = $app[ShipRepository::class];
@@ -18,6 +20,8 @@ $marketAuctionRepository = $app[MarketAuctionRepository::class];
 $marketResourceRepository = $app[MarketResourceRepository::class];
 /** @var MarketShipRepository $marketShipRepository */
 $marketShipRepository = $app[MarketShipRepository::class];
+/** @var MarketReportRepository $marketReportRepository */
+$marketReportRepository = $app[MarketReportRepository::class];
 
 // Schiffangebot löschen
 // <editor-fold>
@@ -29,15 +33,7 @@ if (isset($_POST['ship_cancel'])) {
         if ($offer !== null) {
             $marketLevel = $buildingRepository->getBuildingLevel($cu->getId(), MARKTPLATZ_ID, $offer->entityId);
             $return_factor = floor((1 - 1 / ($marketLevel + 1)) * 100) / 100;
-            $marr = array('factor' => $return_factor, "ship_id" => $offer->shipId, "ship_count" => $offer->count);
             $costs = $offer->getCosts();
-            foreach ($resNames as $rk => $rn) {
-                // todo: when non on the planet where the deal belongs to, the return_factor
-                // is based on the local marketplace, for better or worse... change that so that the
-                // origin marketplace return factor will be taken
-                $marr['buy_' . $rk] = $costs->get($rk);
-            }
-
             $returnCount = (int) floor($offer->count * $return_factor);
             if ($returnCount > 0) {
                 $shipRepository->addShip($offer->shipId, $returnCount, $offer->userId, $offer->entityId);
@@ -45,10 +41,7 @@ if (isset($_POST['ship_cancel'])) {
 
             $marketShipRepository->delete($smid);
 
-            MarketReport::addMarketReport(array(
-                'user_id' => $cu->id,
-                'entity1_id' => $cp->id,
-            ), "shipcancel", $smid, $marr);
+            $marketReportRepository->addShipReport($offer->id, $cu->getId(), $cp->id, 0, $offer->shipId, $offer->count, "shipcancel", $costs, $return_factor);
 
             success_msg("Angebot wurde gel&ouml;scht und du hast $returnCount (" . ($return_factor * 100) . "%) der angebotenen Schiffe zur&uuml;ck erhalten (es wird abgerundet)");
         } else {
@@ -72,7 +65,6 @@ elseif (isset($_POST['ressource_cancel']) && isset($_POST['ressource_market_id']
         $rarr = array();
         $marketLevel = $buildingRepository->getBuildingLevel($cu->getId(), MARKTPLATZ_ID, $offer->entityId);
         $return_factor = floor((1 - 1 / ($marketLevel + 1)) * 100) / 100;
-        $marr = array('factor' => $return_factor);
         $sellResources = $offer->getSellResources();
         foreach ($resNames as $rk => $rn) {
             if ($sellResources->get($rk) > 0) {
@@ -80,7 +72,6 @@ elseif (isset($_POST['ressource_cancel']) && isset($_POST['ressource_market_id']
                 // is based on the local marketplace, for better or worse... change that so that the
                 // origin marketplace return factor will be taken
                 $rarr[$rk] = $sellResources->get($rk) * $return_factor;
-                $marr['sell_' . $rk] = $sellResources->get($rk);
             }
         }
 
@@ -88,10 +79,7 @@ elseif (isset($_POST['ressource_cancel']) && isset($_POST['ressource_market_id']
         $tp->addRes($rarr);
         unset($tp);
 
-        MarketReport::addMarketReport(array(
-            'user_id' => $cu->id,
-            'entity1_id' => $offer->entityId,
-        ), "rescancel", $rmid, $marr);
+        $marketReportRepository->addResourceReport($rmid, $cu->id, $offer->entityId, 0, $sellResources, "rescancel", new BaseResources(), $return_factor);
 
         $marketResourceRepository->delete($rmid);
         success_msg("Angebot wurde gel&ouml;scht und du hast " . ($return_factor * 100) . "% der angebotenen Rohstoffe zur&uuml;ck erhalten!");
@@ -113,7 +101,6 @@ elseif (isset($_POST['auction_cancel']) && isset($_POST['auction_cancel_id'])) {
         $rarr = array();
         $marketLevel = $buildingRepository->getBuildingLevel($cu->getId(), MARKTPLATZ_ID, $auction->entityId);
         $return_factor = floor((1 - 1 / ($marketLevel + 1)) * 100) / 100;
-        $marr = array('factor' => $return_factor);
         $sellResources = $auction->getSellResources();
         foreach ($resNames as $rk => $rn) {
             if ($sellResources->get($rk) > 0) {
@@ -121,18 +108,13 @@ elseif (isset($_POST['auction_cancel']) && isset($_POST['auction_cancel_id'])) {
                 // is based on the local marketplace, for better or worse... change that so that the
                 // origin marketplace return factor will be taken
                 $rarr[$rk] = $sellResources->get($rk) * $return_factor;
-                $marr['sell_' . $rk] = $sellResources->get($rk);
             }
         }
         $cp->addRes($rarr);
 
         //Auktion löschen
         $marketAuctionRepository->deleteAuction($auction->id);
-
-        MarketReport::addMarketReport(array(
-            'user_id' => $cu->id,
-            'entity1_id' => $auction->entityId,
-        ), "auctioncancel", $auction->id, $marr);
+        $marketReportRepository->addAuctionReport($auction->id, $cu->getId(), $auction->entityId, 0, $sellResources, 'auctioncancel', new BaseResources(), null, $return_factor);
         //			Log::add(7, Log::INFO, "Der Spieler ".$cu->nick." zieht folgende Auktion zur&uuml;ck:\nRohstoffe:\n".RES_METAL.": ".$acrow['sell_metal']."\n".RES_CRYSTAL.": ".$acrow['sell_crystal']."\n".RES_PLASTIC.": ".$acrow['sell_plastic']."\n".RES_FUEL.": ".$acrow['sell_fuel']."\n".RES_FOOD.": ".$acrow['sell_food']."\n\nEr erh&auml;lt ".(round($return_factor,2)*100)."% der Waren erstattet!",time());
 
         success_msg("Auktion wurde gel&ouml;scht und du hast " . ($return_factor * 100) . "% der angebotenen Waren zur&uuml;ck erhalten (es wird abgerundet)!");

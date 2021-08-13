@@ -34,5 +34,9 @@ class MessageServiceProvider implements ServiceProviderInterface
         $pimple[ReportRepository::class] = function (Container $pimple): ReportRepository {
             return new ReportRepository($pimple['db']);
         };
+
+        $pimple[MarketReportRepository::class] = function (Container $pimple): MarketReportRepository {
+            return new MarketReportRepository($pimple['db']);
+        };
     }
 }

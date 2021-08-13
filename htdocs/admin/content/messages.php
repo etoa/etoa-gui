@@ -4,6 +4,7 @@ use EtoA\Admin\AdminUser;
 use EtoA\Message\MessageCategoryRepository;
 use EtoA\Message\MessageRepository;
 use EtoA\Message\ReportRepository;
+use EtoA\Message\ReportTypes;
 use EtoA\Support\Mail\MailSenderService;
 use EtoA\User\UserRepository;
 use Symfony\Component\HttpFoundation\Request;
@@ -355,7 +356,6 @@ function manageReports(Request $request, ReportRepository $reportRepository, Use
             echo "<th>Empfänger</th>";
             echo "<th>Betreff</th>";
             echo "</tr>";
-            $types = Report::$types;
             foreach ($reports as $rid => $r) {
                 if ($request->request->get('type') == 'battle' && $request->request->getInt("entity_ships") == 1) {
                     if ($r->entityShips == "" || $r->entityShips == 0)
@@ -378,7 +378,7 @@ function manageReports(Request $request, ReportRepository $reportRepository, Use
                     $style = "";
                 echo "<tr>";
                 echo "<td style=\"$style;width:110px;\">" . date("Y-d-m H:i", $r->timestamp) . "</td>";
-                echo "<td style=\"$style\">" . $types[$r->type] . "</td>";
+                echo "<td style=\"$style\">" . ReportTypes::TYPES[$r->type] . "</td>";
                 echo "<td style=\"$style\">" . cut_string($recipient, 11) . "</td>";
                 echo "<td><div id=\"r_s_" . $rid . "\" style=\"" . $style . "cursor:pointer;\" onclick=\"$('#r_l_" . $rid . "').toggle();\">" . cut_string($r->subject, 50) . "</div><div id=\"r_l_" . $rid . "\" style=\"display:none;\"><br/>" . $r . "</div></td>";
                 echo "</tr>";
@@ -428,7 +428,7 @@ function manageReports(Request $request, ReportRepository $reportRepository, Use
                             <td>
                                 <select name=\"type\" onchange=\"xajax_showDetail(this.value);\" >
                                     <option value=\"\">(egal)</option>";
-        foreach (Report::$types as $k => $v)
+        foreach (ReportTypes::TYPES as $k => $v)
             echo "					<option value=\"" . $k . "\">" . $v . "</option>";
 
         echo "					</select>

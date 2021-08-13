@@ -9,6 +9,7 @@ use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Fleet\FleetRepository;
 use EtoA\Fleet\FleetSearch;
 use EtoA\Message\MessageRepository;
+use EtoA\Message\ReportRepository;
 use EtoA\Notepad\NotepadRepository;
 use EtoA\Text\TextRepository;
 use EtoA\Universe\Planet\PlanetRepository;
@@ -212,7 +213,9 @@ try {
     $newMessages = $messageRepository->countNewForUser($cu->id);
 
     // Check new reports
-    $newReports = Report::countNew($cu->id);
+    /** @var ReportRepository $reportRepository */
+    $reportRepository = $app[ReportRepository::class];
+    $newReports = $reportRepository->countUserUnread($cu->getId());
 
     /** @var UserRepository $userRepository */
     $userRepository = $app[UserRepository::class];
