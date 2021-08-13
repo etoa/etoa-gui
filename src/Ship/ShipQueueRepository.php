@@ -101,7 +101,7 @@ class ShipQueueRepository extends AbstractRepository
             ->innerJoin('ship_queue', 'ships', 'ships', 'ships.ship_id = queue_ship_id')
             ->groupBy('queue_id')
             ->orderBy('queue_entity_id')
-            ->orderBy('queue_endtime')
+            ->addOrderBy('queue_endtime')
             ->execute()
             ->fetchAllAssociative();
 

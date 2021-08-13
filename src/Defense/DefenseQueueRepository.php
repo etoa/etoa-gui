@@ -82,7 +82,7 @@ class DefenseQueueRepository extends AbstractRepository
             ->innerJoin('def_queue', 'defense', 'defense', 'defense.def_id = queue_def_id')
             ->groupBy('queue_id')
             ->orderBy('queue_entity_id')
-            ->orderBy('queue_endtime')
+            ->addOrderBy('queue_endtime')
             ->execute()
             ->fetchAllAssociative();
 

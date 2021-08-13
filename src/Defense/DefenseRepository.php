@@ -334,4 +334,31 @@ class DefenseRepository extends AbstractRepository
                 ;"
             );
     }
+
+    /**
+     * @return AdminDefenseListItem[]
+     */
+    public function adminSearchQueueItems(DefenseListSearch $search): array
+    {
+        $data = $this->applySearchSortLimit($this->createQueryBuilder(), $search)
+            ->select('deflist.*')
+            ->addSelect('def_name')
+            ->addSelect('planet_name, planet_user_id')
+            ->addSelect('entities.id, entities.pos, entities.code, cells.sx, cells.sy, cells.cx, cells.cy, cells.id as cid')
+            ->addSelect('user_nick, user_points')
+            ->from('deflist')
+            ->innerJoin('deflist', 'planets', 'planets', 'planets.id = deflist_entity_id')
+            ->innerJoin('planets', 'entities', 'entities', 'planets.id = entities.id')
+            ->innerJoin('planets', 'cells', 'cells', 'cells.id = entities.cell_id')
+            ->innerJoin('deflist', 'users', 'users', 'users.user_id = deflist_user_id')
+            ->innerJoin('deflist', 'defense', 'defense', 'defense.def_id = deflist_def_id')
+            ->groupBy('deflist_id')
+            ->orderBy('deflist_entity_id')
+            ->addOrderBy('def_order')
+            ->addOrderBy('def_name')
+            ->execute()
+            ->fetchAllAssociative();
+
+        return array_map(fn ($row) => new AdminDefenseListItem($row), $data);
+    }
 }
