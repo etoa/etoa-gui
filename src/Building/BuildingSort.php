@@ -2,31 +2,22 @@
 
 namespace EtoA\Building;
 
-class BuildingSort
+use EtoA\Core\Database\AbstractSort;
+
+class BuildingSort extends AbstractSort
 {
-    /** @var string[] */
-    public array $sorts;
-
-    /**
-     * @param string[] $sorts
-     */
-    public function __construct(array $sorts)
-    {
-        $this->sorts = $sorts;
-    }
-
     public static function id(): BuildingSort
     {
-        return new BuildingSort(['building_id']);
+        return new BuildingSort(['building_id' => null]);
     }
 
     public static function name(): BuildingSort
     {
-        return new BuildingSort(['building_name']);
+        return new BuildingSort(['building_name' => null]);
     }
 
     public static function type(): BuildingSort
     {
-        return new BuildingSort(['building_type_id', 'building_order', 'building_name']);
+        return new BuildingSort(['building_type_id' => null, 'building_order' => null, 'building_name' => null]);
     }
 }

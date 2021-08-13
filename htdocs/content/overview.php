@@ -1,6 +1,8 @@
 <?PHP
 
 use EtoA\Alliance\AllianceNewsRepository;
+use EtoA\Fleet\FleetRepository;
+use EtoA\Fleet\FleetSearch;
 use EtoA\Text\TextRepository;
 
 use EtoA\Core\Configuration\ConfigurationService;
@@ -90,16 +92,16 @@ if ($newsCounts > 0) {
 //
 // Eigene Flotten
 //
-$fm = new FleetManager($cu->id, $cu->allianceId);
-$fm->loadOwn();
-
+/** @var FleetRepository $fleetRepository */
+$fleetRepository = $app[FleetRepository::class];
+$ownFleets = $fleetRepository->count(FleetSearch::create()->user($cu->getId()));
 //Mehrere Flotten
-if ($fm->count() > 1) {
-    echo "<td><a href=\"?page=fleets\" style=\"color:#0f0\"><b>" . $fm->count() . "</b> eigene Flotten</a></td>";
+if ($ownFleets > 1) {
+    echo "<td><a href=\"?page=fleets\" style=\"color:#0f0\"><b>" . $ownFleets . "</b> eigene Flotten</a></td>";
 }
 //Eine Flotte
-elseif ($fm->count() == 1) {
-    echo "<td><a href=\"?page=fleets\" style=\"color:#0f0\"><b>" . $fm->count() . "</b> eigene Flotte</a></td>";
+elseif ($ownFleets === 1) {
+    echo "<td><a href=\"?page=fleets\" style=\"color:#0f0\"><b>" . $ownFleets . "</b> eigene Flotte</a></td>";
 }
 //Keine Flotten
 else {
@@ -110,6 +112,7 @@ else {
 //
 // Fremde Flotten
 //
+$fm = new FleetManager($cu->id, $cu->allianceId);
 $fm->loadForeign();
 //Mehrere Flotten
 if ($fm->count() > 1) {

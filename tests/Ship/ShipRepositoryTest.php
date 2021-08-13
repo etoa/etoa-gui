@@ -68,8 +68,9 @@ class ShipRepositoryTest extends AbstractDbTestCase
         $this->repository->addShip($shipId, 10, $userId, $entityId);
 
         $amount = $this->repository->removeShips($shipId, 50, $userId, $entityId);
-
         $this->assertSame(10, $amount);
+
+        $this->assertSame([], $this->repository->getEntityShipCounts($userId, $entityId));
     }
 
     public function testGetEntityShipCounts(): void

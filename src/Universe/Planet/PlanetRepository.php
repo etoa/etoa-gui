@@ -357,7 +357,8 @@ class PlanetRepository extends AbstractRepository
         float $resPlastic,
         float $resFuel,
         float $resFood,
-        int $people = 0
+        int $people = 0,
+        int $fields = 0
     ): bool {
         $affected = (int) $this->createQueryBuilder()
             ->update('planets')
@@ -367,6 +368,7 @@ class PlanetRepository extends AbstractRepository
             ->set('planet_res_fuel', 'planet_res_fuel + :res_fuel')
             ->set('planet_res_food', 'planet_res_food + :res_food')
             ->set('planet_people', 'planet_people + :people')
+            ->set('planet_fields_used', 'planet_fields_used + :fields')
             ->where('id = :id')
             ->setParameters([
                 'id' => $id,
@@ -376,6 +378,7 @@ class PlanetRepository extends AbstractRepository
                 'res_fuel' => $resFuel,
                 'res_food' => $resFood,
                 'people' => $people,
+                'fields' => $fields,
             ])
             ->execute();
 

@@ -11,9 +11,17 @@ class BuildingDataRepository extends AbstractRepository
      */
     public function getBuildings(): array
     {
-        $data = $this->createQueryBuilder()
-            ->select('b.*')
-            ->from('buildings', 'b')
+        return $this->searchBuildings();
+    }
+
+    /**
+     * @return array<int, Building>
+     */
+    public function searchBuildings(BuildingSearch $search = null, BuildingSort $sort = null): array
+    {
+        $data = $this->applySearchSortLimit($this->createQueryBuilder(), $search, $sort)
+            ->select('*')
+            ->from('buildings')
             ->execute()
             ->fetchAllAssociative();
 
@@ -64,18 +72,14 @@ class BuildingDataRepository extends AbstractRepository
      */
     public function getBuildingNames(bool $showAll = false, BuildingSort $orderBy = null): array
     {
-        $qb = $this->createQueryBuilder()
+        $orderBy = $orderBy ?? BuildingSort::name();
+        $qb = $this->applySearchSortLimit($this->createQueryBuilder(), null, $orderBy)
             ->select('building_id', 'building_name')
             ->addSelect()
             ->from('buildings');
 
         if (!$showAll) {
             $qb->where('building_show = 1');
-        }
-
-        $orderBy = $orderBy ?? BuildingSort::name();
-        foreach ($orderBy->sorts as $sort) {
-            $qb->addOrderBy($sort);
         }
 
         return $qb

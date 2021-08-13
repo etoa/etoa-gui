@@ -40,7 +40,7 @@ class DefenseRepository extends AbstractRepository
         }
 
 
-        $this->changeDefenseCount($defenseId, $amount, $userId, $entityId);
+        $this->addDefenseCount($defenseId, $amount, $userId, $entityId);
     }
 
     public function setDefenseCount(int $id, int $count): void
@@ -85,12 +85,24 @@ class DefenseRepository extends AbstractRepository
 
         $amount = min($available, $amount);
 
-        $this->changeDefenseCount($defenseId, -$amount, $userId, $entityId);
+        $this->createQueryBuilder()
+            ->update('deflist')
+            ->set('deflist_count', 'deflist_count - :amount')
+            ->where('deflist_def_id = :defenseId')
+            ->andWhere('deflist_user_id = :userId')
+            ->andWhere('deflist_entity_id = :entityId')
+            ->setParameters([
+                'userId' => $userId,
+                'entityId' => $entityId,
+                'defenseId' => $defenseId,
+                'amount' => $amount,
+            ])
+            ->execute();
 
         return $amount;
     }
 
-    private function changeDefenseCount(int $defenseId, int $amount, int $userId, int $entityId): void
+    private function addDefenseCount(int $defenseId, int $amount, int $userId, int $entityId): void
     {
         $this->getConnection()
             ->executeQuery(

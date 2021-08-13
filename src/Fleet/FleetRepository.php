@@ -9,9 +9,9 @@ use EtoA\Universe\Resources\BaseResources;
 
 class FleetRepository extends AbstractRepository
 {
-    public function count(): int
+    public function count(FleetSearch $search = null): int
     {
-        return (int) $this->createQueryBuilder()
+        return (int) $this->applySearchSortLimit($this->createQueryBuilder(), $search)
             ->select("COUNT(id)")
             ->from('fleet')
             ->execute()

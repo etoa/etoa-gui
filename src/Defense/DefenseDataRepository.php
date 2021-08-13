@@ -23,20 +23,24 @@ class DefenseDataRepository extends AbstractRepository
      */
     public function getDefenseNames(bool $showAll = false, DefenseSort $orderBy = null): array
     {
-        $qb = $this->createQueryBuilder()
-            ->select('def_id, def_name')
-            ->addSelect()
-            ->from('defense');
-
+        $search = null;
         if (!$showAll) {
-            $qb
-                ->where('def_show = 1');
+            $search = DefenseSearch::create()->show();
         }
 
+        return $this->searchDefenseNames($search, $orderBy);
+    }
 
-        $orderBy = $orderBy ?? DefenseSort::name();
 
-        return $this->applySearchSortLimit($qb, null, $orderBy)
+    /**
+     * @return array<int, string>
+     */
+    public function searchDefenseNames(DefenseSearch $search = null, DefenseSort $orderBy = null, int $limit = null): array
+    {
+        return $this->applySearchSortLimit($this->createQueryBuilder(), $search, $orderBy ?? DefenseSort::name(), $limit)
+            ->select('def_id', 'def_name')
+            ->addSelect()
+            ->from('defense')
             ->execute()
             ->fetchAllKeyValue();
     }
@@ -133,14 +137,18 @@ class DefenseDataRepository extends AbstractRepository
      */
     public function searchDefense(DefenseSearch $search, DefenseSort $sort = null, int $limit = null): array
     {
-        $qb = $this->createQueryBuilder()
+        $data = $this->applySearchSortLimit($this->createQueryBuilder(), $search, $sort, $limit)
             ->select('*')
-            ->from('defense');
-
-        $data = $this->applySearchSortLimit($qb, $search, $sort, $limit)
+            ->from('defense')
             ->execute()
             ->fetchAllAssociative();
 
-        return array_map(fn ($row) => new Defense($row), $data);
+        $results = [];
+        foreach ($data as $row) {
+            $defense = new Defense($row);
+            $results[$defense->id] = $defense;
+        }
+
+        return $results;
     }
 }
