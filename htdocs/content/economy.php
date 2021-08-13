@@ -5,6 +5,9 @@ use EtoA\Building\BuildingDataRepository;
 use EtoA\Building\BuildingRepository;
 use EtoA\Building\BuildingSearch;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Ship\ShipDataRepository;
+use EtoA\Ship\ShipRepository;
+use EtoA\Ship\ShipSearch;
 use EtoA\Technology\TechnologyRepository;
 use EtoA\UI\ResourceBoxDrawer;
 use EtoA\Universe\Planet\PlanetRepository;
@@ -26,6 +29,10 @@ $buildingDataRepository = $app[BuildingDataRepository::class];
 
 /** @var BackendMessageService $backendMessageService */
 $backendMessageService = $app[BackendMessageService::class];
+/** @var ShipDataRepository $shipDataRepository */
+$shipDataRepository = $app[ShipDataRepository::class];
+/** @var ShipRepository $shipRepository */
+$shipRepository = $app[ShipRepository::class];
 
 if ($cp) {
 
@@ -365,31 +372,19 @@ if ($cp) {
     }
 
     // Power produced by ships
-    $sres = dbquery("
-        SELECT
-            shiplist_count,
-            ship_prod_power,
-            ship_name
-        FROM
-            shiplist
-        INNER JOIN
-            ships
-            ON shiplist_ship_id=ship_id
-            AND shiplist_entity_id=" . $planet->id . "
-            AND shiplist_user_id=" . $cu->id . "
-            AND ship_prod_power>0
-        ");
-    if (mysql_num_rows($sres) > 0) {
+    $shipCounts = $shipRepository->getEntityShipCounts($cu->getId(), $planet->id);
+    $ships = array_intersect_key($shipDataRepository->searchShips(ShipSearch::create()->producesPower()), $shipCounts);
+    if (count($ships) > 0) {
         $solarProdBonus = $planet->solarPowerBonus();
         $color = $solarProdBonus >= 0 ? '#0f0' : '#f00';
         $solarTempString = "<span style=\"color:" . $color . "\">" . ($solarProdBonus > 0 ? '+' : '') . $solarProdBonus . "</span>";
-        while ($sarr = mysql_fetch_array($sres)) {
-            $pwr = ($sarr['ship_prod_power'] + $solarProdBonus);
+        foreach ($ships as $ship) {
+            $pwr = ($ship->powerProduction + $solarProdBonus);
             $pwr *= $bonusFactor;
-            $pwrt = $pwr * $sarr['shiplist_count'];
-            echo "<tr><th>" . $sarr['ship_name'] . " (" . nf($sarr['shiplist_count']) . ")</th>";
+            $pwrt = $pwr * $shipCounts[$ship->id];
+            echo "<tr><th>" . $ship->name . " (" . nf($shipCounts[$ship->id]) . ")</th>";
             echo "<td colspan=\"3\">" . nf($pwrt) . "
-                (Energie pro Satellit: " . (($pwr)) . " = " . $sarr['ship_prod_power'] . " Basis, " . $solarTempString . " bedingt durch Entfernung zur Sonne, " . get_percent_string($bonusFactor, 1) . " durch Energiebonus)</td>";
+                (Energie pro Satellit: " . (($pwr)) . " = " . $ship->powerProduction . " Basis, " . $solarTempString . " bedingt durch Entfernung zur Sonne, " . get_percent_string($bonusFactor, 1) . " durch Energiebonus)</td>";
             echo "</tr>";
             $cnt['power'] += $pwrt;
         }

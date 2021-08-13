@@ -80,4 +80,11 @@ class ShipSearch extends AbstractSearch
 
         return $this;
     }
+
+    public function producesPower(): self
+    {
+        $this->parts[] = 'ship_prod_power > 0';
+
+        return $this;
+    }
 }
