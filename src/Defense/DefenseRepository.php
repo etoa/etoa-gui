@@ -33,6 +33,19 @@ class DefenseRepository extends AbstractRepository
         return array_map(fn ($row) => new DefenseListItem($row), $data);
     }
 
+    public function getItem(int $id): ?DefenseListItem
+    {
+        $data = $this->createQueryBuilder()
+            ->select('*')
+            ->from('deflist')
+            ->where('deflist_id = :id')
+            ->setParameter('id', $id)
+            ->execute()
+            ->fetchAssociative();
+
+        return $data !== false ? new DefenseListItem($data) : null;
+    }
+
     public function addDefense(int $defenseId, int $amount, int $userId, int $entityId): void
     {
         if ($amount < 0) {

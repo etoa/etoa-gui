@@ -385,37 +385,20 @@ else {
     // Bearbeiten
     //
     elseif (isset($_GET['action']) && $_GET['action'] == "edit") {
-        $res = dbquery("SELECT
-                                deflist.deflist_id,
-                                deflist.deflist_count,
-                                defense.def_name,
-                                users.user_nick,
-                                planets.planet_name
-                            FROM
-                                deflist
-                            INNER JOIN
-                                defense
-                            ON
-                                deflist.deflist_def_id=defense.def_id
-                            INNER JOIN
-                                users
-                            ON
-                                deflist.deflist_user_id=users.user_id
-                            INNER JOIN
-                                planets
-                            ON
-                                deflist.deflist_entity_id=planets.id;");
-        if (mysql_num_rows($res) > 0) {
-            $arr = mysql_fetch_array($res);
+        $listItem = $defenseRepository->getItem($_GET['deflist_id']);
+        if ($listItem !== null) {
+            $defenseNames = $defenseDataRepository->getDefenseNames(true);
+            $userNick = $userRepository->getNick($listItem->userId);
+            $planet = $planetRepository->find($listItem->entityId);
             echo "<form action=\"?page=$page&sub=$sub&action=searchresults\" method=\"post\">";
-            echo "<input type=\"hidden\" name=\"deflist_id\" value=\"" . $arr['deflist_id'] . "\" />";
+            echo "<input type=\"hidden\" name=\"deflist_id\" value=\"" . $listItem->id . "\" />";
             echo "<table class=\"tbl\">";
-            echo "<tr><td class=\"tbltitle\">ID</td><td class=\"tbldata\">" . $arr['deflist_id'] . "</td></tr>";
-            echo "<tr><td class=\"tbltitle\">Planet</td><td class=\"tbldata\">" . $arr['planet_name'] . "</td></tr>";
-            echo "<tr><td class=\"tbltitle\">Spieler</td><td class=\"tbldata\">" . $arr['user_nick'] . "</td></tr>";
-            echo "<tr><td class=\"tbltitle\">Verteidigung</td><td class=\"tbldata\">" . $arr['def_name'] . "</td></tr>";
+            echo "<tr><td class=\"tbltitle\">ID</td><td class=\"tbldata\">" . $listItem->id . "</td></tr>";
+            echo "<tr><td class=\"tbltitle\">Planet</td><td class=\"tbldata\">" . $planet->name . "</td></tr>";
+            echo "<tr><td class=\"tbltitle\">Spieler</td><td class=\"tbldata\">" . $userNick . "</td></tr>";
+            echo "<tr><td class=\"tbltitle\">Verteidigung</td><td class=\"tbldata\">" . $defenseNames[$listItem->defenseId] . "</td></tr>";
             echo "<tr><td class=\"tbltitle\">Anzahl</td><td class=\"tbldata\">
-                    <input type=\"text\" name=\"deflist_count\" value=\"" . $arr['deflist_count'] . "\" size=\"5\" maxlength=\"20\" /></td></tr>";
+                    <input type=\"text\" name=\"deflist_count\" value=\"" . $listItem->count . "\" size=\"5\" maxlength=\"20\" /></td></tr>";
 
             echo "</table><br/>";
             echo "<input type=\"submit\" name=\"save\" value=\"&Uuml;bernehmen\" class=\"button\" />&nbsp;";
