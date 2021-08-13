@@ -6,6 +6,8 @@ use EtoA\Ship\ShipQueueRepository;
 use EtoA\Ship\ShipQueueSearch;
 use EtoA\Ship\ShipRepository;
 use EtoA\Ship\ShipSort;
+use EtoA\Universe\Planet\PlanetRepository;
+use EtoA\User\UserRepository;
 
 /** @var ConfigurationService */
 $config = $app[ConfigurationService::class];
@@ -17,6 +19,10 @@ $shipDataRepository = $app[ShipDataRepository::class];
 $shipRepository = $app[ShipRepository::class];
 /** @var ShipQueueRepository $shipQueueRepository */
 $shipQueueRepository = $app[ShipQueueRepository::class];
+/** @var UserRepository $userRepository */
+$userRepository = $app[UserRepository::class];
+/** @var PlanetRepository $planetRepository */
+$planetRepository = $app[PlanetRepository::class];
 
 //
 // Battlepoints
@@ -209,7 +215,7 @@ elseif ($sub == "queue") {
     //
     elseif (isset($_GET['action']) && $_GET['action'] == "edit" && $_GET['id'] > 0) {
         // Änderungen speichern
-        if ($_POST['save'] != "") {
+        if (isset($_POST['save'])) {
             $queueItem = $shipQueueRepository->getQueueItem((int) $_GET['id']);
             if ($queueItem !== null) {
                 $queueItem->count = (int) $_POST['queue_cnt'];
@@ -220,13 +226,13 @@ elseif ($sub == "queue") {
         }
 
         // Auftrag löschen
-        elseif ($_POST['del'] != "") {
+        elseif (isset($_POST['del'])) {
             $shipQueueRepository->deleteQueueItem((int) $_GET['id']);
             echo "Datensatz entfernt!<br/><br/>";
         }
 
         // Auftrag abschliessen
-        elseif ($_POST['build_finish'] != "") {
+        elseif (isset($_POST['build_finish'])) {
             $queueItem = $shipQueueRepository->getQueueItem((int) $_GET['id']);
             if ($queueItem !== null) {
                 $shipRepository->addShip($queueItem->shipId, $queueItem->count, $queueItem->userId, $queueItem->endTime);
@@ -235,54 +241,33 @@ elseif ($sub == "queue") {
             echo "Bau abgeschlossen!<br/><br/>";
         }
 
-        $res = dbquery("
-            SELECT
-                queue_id,
-                queue_objtime,
-                queue_starttime,
-                queue_endtime,
-                queue_cnt,
-                ship_name,
-                planet_name,
-                user_nick
-            FROM
-          ship_queue
-      INNER JOIN
-          ships
-          ON queue_ship_id=ship_id
-      INNER JOIN
-          users
-          ON queue_user_id=user_id
-      INNER JOIN
-          planets
-          ON queue_entity_id=planets.id
-            WHERE
-           queue_id=" . intval($_GET['id']) . ";");
-
-        if (mysql_num_rows($res) > 0) {
-            $arr = mysql_fetch_array($res);
-            if ($arr['queue_starttime'] > 0)
-                $bst = date($config->get('admin_dateformat'), $arr['queue_starttime']);
+        $queue = $shipQueueRepository->getQueueItem($_GET['id']);
+        if ($queue !== null) {
+            if ($queue->startTime > 0)
+                $bst = date($config->get('admin_dateformat'), $queue->startTime);
             else
                 $bst = "";
-            if ($arr['queue_endtime'] > 0)
-                $bet = date($config->get('admin_dateformat'), $arr['queue_endtime']);
+            if ($queue->endTime > 0)
+                $bet = date($config->get('admin_dateformat'), $queue->endTime);
             else
                 $bet = "";
 
-            echo "<form action=\"?page=$page&sub=$sub&action=edit&id=" . $arr['queue_id'] . "\" method=\"post\">";
+            $userNick = $userRepository->getNick($queue->userId);
+            $shipNames = $shipDataRepository->getShipNames();
+            $planet = $planetRepository->find($queue->entityId);
+            echo "<form action=\"?page=$page&sub=$sub&action=edit&id=" . $queue->id . "\" method=\"post\">";
             echo "<table class=\"tbl\">";
-            echo "<tr><td class=\"tbltitle\">ID</td><td class=\"tbldata\">" . $arr['queue_id'] . "</td></tr>";
-            echo "<tr><td class=\"tbltitle\">Planet</td><td class=\"tbldata\">" . $arr['planet_name'] . "</td></tr>";
-            echo "<tr><td class=\"tbltitle\">Spieler</td><td class=\"tbldata\">" . $arr['user_nick'] . "</td></tr>";
-            echo "<tr><td class=\"tbltitle\">Schiff</td><td class=\"tbldata\">" . $arr['ship_name'] . "</td></tr>";
-            echo "<tr><td class=\"tbltitle\">Anzahl</td><td class=\"tbldata\"><input type=\"text\" name=\"queue_cnt\" value=\"" . $arr['queue_cnt'] . "\" size=\"5\" maxlength=\"20\" /></td></tr>";
+            echo "<tr><td class=\"tbltitle\">ID</td><td class=\"tbldata\">" . $queue->id . "</td></tr>";
+            echo "<tr><td class=\"tbltitle\">Planet</td><td class=\"tbldata\">" . $planet->name . "</td></tr>";
+            echo "<tr><td class=\"tbltitle\">Spieler</td><td class=\"tbldata\">" . $userNick . "</td></tr>";
+            echo "<tr><td class=\"tbltitle\">Schiff</td><td class=\"tbldata\">" . $shipNames[$queue->shipId] . "</td></tr>";
+            echo "<tr><td class=\"tbltitle\">Anzahl</td><td class=\"tbldata\"><input type=\"text\" name=\"queue_cnt\" value=\"" . $queue->count . "\" size=\"5\" maxlength=\"20\" /></td></tr>";
             echo "<tr><td class=\"tbltitle\">Baustart</td><td class=\"tbldata\">
                 <input type=\"text\" id=\"shiplist_build_start_time\" name=\"queue_starttime\" value=\"$bst\" size=\"20\" maxlength=\"30\" />
                 <input type=\"button\" value=\"Jetzt\" onclick=\"document.getElementById('shiplist_build_start_time').value='" . date("Y-d-m h:i") . "'\" /></td></tr>";
             echo "<tr><td class=\"tbltitle\">Bauende</td><td class=\"tbldata\">
                 <input type=\"text\" id=\"shiplist_build_end_time\" name=\"queue_endtime\" value=\"$bet\" size=\"20\" maxlength=\"30\" /></td></tr>";
-            echo "<tr><td class=\"tbltitle\">Bauzeit pro Schiff</td><td class=\"tbldata\">" . tf($arr['queue_objtime']) . "</td></tr>";
+            echo "<tr><td class=\"tbltitle\">Bauzeit pro Schiff</td><td class=\"tbldata\">" . tf($queue->objectTime) . "</td></tr>";
             echo "</table><br/>";
             echo "<input type=\"submit\" name=\"save\" value=\"&Uuml;bernehmen\" class=\"button\" />&nbsp;";
             echo "<input type=\"submit\" name=\"build_finish\" value=\"Bau fertigstellen\" />&nbsp;";
