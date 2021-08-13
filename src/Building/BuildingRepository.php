@@ -461,6 +461,23 @@ class BuildingRepository extends AbstractRepository
         return new PeopleWorking($data);
     }
 
+    public function updateProductionPercent(int $userId, int $entityId, int $buildingId, float $percent): void
+    {
+        $this->createQueryBuilder()
+            ->update('buildlist')
+            ->set('buildlist_prod_percent', ':percent')
+            ->where('buildlist_entity_id = :entityId')
+            ->andWhere('buildlist_building_id = :buildingId')
+            ->andWhere('buildlist_user_id = :userId')
+            ->setParameters([
+                'userId' => $userId,
+                'entityId' => $entityId,
+                'buildingId' => $buildingId,
+                'percent' => $percent,
+            ])
+            ->execute();
+    }
+
     public function setPeopleWorking(int $entityId, int $buildingId, int $people): void
     {
         $this->createQueryBuilder()
