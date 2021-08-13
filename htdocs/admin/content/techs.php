@@ -269,7 +269,7 @@ else {
     elseif (isset($_GET['action']) && $_GET['action'] == "edit") {
         if (isset($_POST['save'])) {
             $entry = $technologyRepository->getEntry($_GET['techlist_id']);
-            if ($entry) {
+            if ($entry !== null) {
                 $entry->currentLevel = (int) $_POST['techlist_current_level'];
                 $entry->buildType = (int) $_POST['techlist_build_type'];
                 $entry->startTime = $_POST['techlist_build_start_time'] ? (new \DateTime($_POST['techlist_build_start_time']))->getTimestamp() : 0;
