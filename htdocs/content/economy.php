@@ -317,11 +317,11 @@ if ($cp) {
     // Resource Bunker
     //
     $blvl = $buildingRepository->getBuildingLevel($cu->getId(), RES_BUNKER_ID, $planet->id);
-    $building = $buildingDataRepository->getBuilding(RES_BUNKER_ID);
+    $bunkerBuilding = $buildingDataRepository->getBuilding(RES_BUNKER_ID);
     if ($blvl > 0) {
         iBoxStart("Rohstoffbunker");
-        echo "In deinem <b>" . $building->name . "</b> der Stufe <b>$blvl</b> werden bei einem
-            Angriff <b>" . nf($building->calculateBunkerResources($blvl)) . "</b> Resourcen gesichert!";
+        echo "In deinem <b>" . $bunkerBuilding->name . "</b> der Stufe <b>$blvl</b> werden bei einem
+            Angriff <b>" . nf($bunkerBuilding->calculateBunkerResources($blvl)) . "</b> Resourcen gesichert!";
         iBoxEnd();
     }
 
