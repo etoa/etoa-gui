@@ -26,7 +26,7 @@ foreach ($resNames as $rk => $rn) {
     $currency->set($rk, max(0, nf_back($_POST['auction_buy_' . $rk] ?? 0)));
 
     // Prüft ob noch immer genug Rohstoffe auf dem Planeten sind (eventueller verlust durch Kampf?)
-    if ($sell->get($rk) && $sell->get($rk) * MARKET_TAX > $cp->resources[$rk]) {
+    if ($sell->get($rk) > 0 && $sell->get($rk) * MARKET_TAX > $cp->resources[$rk]) {
         $ok = false;
         break;
     }
