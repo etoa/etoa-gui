@@ -22,7 +22,7 @@ $config = $app[ConfigurationService::class];
 /** @var EntityRepository */
 $entityRepo = $app[EntityRepository::class];
 
-/** @var StarRepository */
+/** @var StarRepository $starRepo */
 $starRepo = $app[StarRepository::class];
 
 /** @var PlanetRepository */
@@ -335,7 +335,7 @@ Neuer Besitzer: [page user sub=edit user_id=" . $request->request->getInt('plane
             echo "</form>";
         } elseif ($entity->code == EntityType::STAR) {
             if ($request->request->has('save')) {
-                if ($starRepo->update($id, $request->request->getInt('type_id'), $request->request->get('name'))) {
+                if ($starRepo->update($id, $request->request->get('name'), $request->request->getInt('type_id'))) {
                     success_msg("Änderungen übernommen");
                 }
             }

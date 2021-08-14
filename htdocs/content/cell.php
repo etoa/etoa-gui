@@ -5,6 +5,7 @@ use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Universe\Cell\CellRepository;
 use EtoA\Universe\Entity\EntityType;
 use EtoA\Universe\Planet\PlanetRepository;
+use EtoA\Universe\Star\StarRepository;
 use EtoA\User\UserPropertiesRepository;
 use EtoA\User\UserRepository;
 use EtoA\User\UserUniverseDiscoveryService;
@@ -23,7 +24,8 @@ $adminUserRepository = $app[AdminUserRepository::class];
 
 /** @var UserRepository */
 $userRepository = $app[UserRepository::class];
-
+/** @var StarRepository $starRepository */
+$starRepository = $app[StarRepository::class];
 /** @var UserUniverseDiscoveryService */
 $userUniverseDiscoveryService = $app[UserUniverseDiscoveryService::class];
 
@@ -44,17 +46,13 @@ $_SESSION['currentEntity'] = serialize($cp);
 
 // Systemnamen updaten
 if (isset($_POST['starname_submit']) && $_POST['starname'] != "" && intval($_POST['starname_id']) > 0 && checker_verify()) {
-    $star = new Star($_POST['starname_id']);
-    if ($star->isValid()) {
-        if ($star->setNewName($_POST['starname'])) {
-            success_msg("Der Stern wurde benannt!");
+    if ($starRepository->update($_POST['starname_id'], $_POST['starname'])) {
+        success_msg("Der Stern wurde benannt!");
 
-            $app['dispatcher']->dispatch(new \EtoA\Galaxy\Event\StarRename(), \EtoA\Galaxy\Event\StarRename::RENAME_SUCCESS);
-        } else {
-            error_msg("Es gab ein Problem beim Setzen des Namens!");
-        }
+        $app['dispatcher']->dispatch(new \EtoA\Galaxy\Event\StarRename(), \EtoA\Galaxy\Event\StarRename::RENAME_SUCCESS);
+    } else {
+        error_msg("Es gab ein Problem beim Setzen des Namens!");
     }
-    unset($star);
 }
 
 $cell = new Cell($cellId);

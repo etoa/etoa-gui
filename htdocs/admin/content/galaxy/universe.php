@@ -21,7 +21,7 @@ $universeResetService = $app[UniverseResetService::class];
 /** @var CellRepository */
 $cellRepo = $app[CellRepository::class];
 
-/** @var StarRepository */
+/** @var StarRepository $starRepo */
 $starRepo = $app[StarRepository::class];
 
 /** @var PlanetRepository */

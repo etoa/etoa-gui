@@ -22,7 +22,7 @@ $cellRepo = $app[CellRepository::class];
 /** @var EntityRepository */
 $entityRepo = $app[EntityRepository::class];
 
-/** @var StarRepository */
+/** @var StarRepository $starRepo */
 $starRepo = $app[StarRepository::class];
 
 /** @var UserRepository */
