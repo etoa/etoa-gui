@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace EtoA\Universe\Planet;
 
+use Doctrine\DBAL\Query\QueryBuilder;
 use EtoA\Core\AbstractRepository;
 use EtoA\Universe\Entity\EntityType;
 use EtoA\Universe\Resources\BaseResources;
@@ -29,17 +30,44 @@ class PlanetRepository extends AbstractRepository
      */
     public function getUserPlanets(int $userId): array
     {
-        $data = $this->createQueryBuilder()
-            ->select('*')
-            ->from('planets')
-            ->where('planet_user_id = :userId')
-            ->setParameter('userId', $userId)
-            ->orderBy('planet_user_main', 'DESC')
-            ->addOrderBy('planet_name', 'ASC')
+        $data = $this->userPlanetsQueryBuilder($userId)
             ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn ($row) => new Planet($row), $data);
+    }
+
+    /**
+     * @return PlanetWithCoordinates[]
+     */
+    public function getUserPlanetsWithCoordinates(int $userId): array
+    {
+        $data = $this->userPlanetsQueryBuilder($userId)
+            ->addSelect('e.id',
+                'c.id as cid',
+                'code',
+                'pos',
+                'sx',
+                'sy',
+                'cx',
+                'cy')
+            ->innerJoin('planets', 'entities', 'e', 'e.id = planets.id')
+            ->innerJoin('e', 'cells', 'c', 'e.cell_id = c.id')
+            ->execute()
+            ->fetchAllAssociative();
+
+        return array_map(fn ($row) => new PlanetWithCoordinates($row), $data);
+    }
+
+    private function userPlanetsQueryBuilder(int $userId): QueryBuilder
+    {
+        return $this->createQueryBuilder()
+            ->select('planets.*')
+            ->from('planets')
+            ->where('planet_user_id = :userId')
+            ->setParameter('userId', $userId)
+            ->orderBy('planet_user_main', 'DESC')
+            ->addOrderBy('planet_name', 'ASC');
     }
 
     /**
