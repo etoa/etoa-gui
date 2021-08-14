@@ -180,6 +180,15 @@ class ShipRepository extends AbstractRepository
             ->execute();
     }
 
+    public function removeEntry(int $id): void
+    {
+        $this->createQueryBuilder()
+            ->delete('shiplist')
+            ->where('shiplist_id = :id')
+            ->setParameter('id', $id)
+            ->execute();
+    }
+
     public function hasShipsOnEntity(int $entityId): bool
     {
         $count = (int) $this->createQueryBuilder()
