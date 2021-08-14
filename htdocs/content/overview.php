@@ -1,6 +1,8 @@
 <?PHP
 
 use EtoA\Alliance\AllianceNewsRepository;
+use EtoA\Building\BuildingDataRepository;
+use EtoA\Building\BuildingRepository;
 use EtoA\Defense\DefenseDataRepository;
 use EtoA\Defense\DefenseQueueRepository;
 use EtoA\Defense\DefenseQueueSearch;
@@ -21,6 +23,10 @@ use EtoA\User\UserPropertiesRepository;
 $config = $app[ConfigurationService::class];
 /** @var PlanetRepository $planetRepository */
 $planetRepository = $app[PlanetRepository::class];
+/** @var BuildingDataRepository $buildingDataRepository */
+$buildingDataRepository = $app[BuildingDataRepository::class];
+/** @var BuildingRepository $buildingRepository */
+$buildingRepository = $app[BuildingRepository::class];
 /** @var ShipDataRepository $shipDataRepository */
 $shipDataRepository = $app[ShipDataRepository::class];
 /** @var ShipQueueRepository $shipQueueRepository */
@@ -546,6 +552,7 @@ echo "<div align=\"center\" style=\"position:relative; left:0px; top:0px; width:
 
 //Liest alle Planeten des Besitzers aus und gibt benötigte infos
 $userPlanets = $planetRepository->getUserPlanets($cu->getId());
+$buildingNames = $buildingDataRepository->getBuildingNames(true);
 $shipNames = $shipDataRepository->getShipNames(true);
 $defenseNames = $defenseDataRepository->getDefenseNames(true);
 
@@ -559,40 +566,27 @@ $defense_zeit = [];
 $defense_time = [];
 foreach ($userPlanets as $userPlanet) {
     // Bauhof infos
-    $res_building = dbquery("
-      SELECT
-        b.building_name,
-        bl.buildlist_build_end_time,
-        bl.buildlist_current_level,
-        bl.buildlist_build_type
-      FROM
-        buildlist AS bl
-        INNER JOIN
-        buildings AS b
-        ON b.building_id=bl.buildlist_building_id
-        AND bl.buildlist_entity_id='" . $userPlanet->id . "'
-        AND bl.buildlist_build_type>'0'");
-
-    if (mysql_num_rows($res_building) > 0) {
-        $arr_building = mysql_fetch_array($res_building);
+    $buildingEntries = $buildingRepository->findForUser($cu->getId(), $userPlanet->id, time());
+    if (count($buildingEntries) > 0) {
+        $entry = $buildingEntries[0];
 
         //infos über den Bauhof
-        $building_rest_time = $arr_building['buildlist_build_end_time'] - time();
+        $building_rest_time = $entry->endTime - time();
         $building_h = floor($building_rest_time / 3600);
         $building_m = floor(($building_rest_time - $building_h * 3600) / 60);
         $building_s = $building_rest_time - $building_h * 3600 - $building_m * 60;
         $building_zeit = "(" . $building_h . "h " . $building_m . "m " . $building_s . "s)";
 
         $building_time = $building_zeit;
-        $building_name =  $arr_building['building_name'];
+        $building_name =  $buildingNames[$entry->buildingId];
 
         // Zeigt Ausbaulevel bei Abriss
-        if ($arr_building['buildlist_build_type'] == 4) {
-            $building_level =  $arr_building['buildlist_current_level'] - 1;
+        if ($entry->buildType == 4) {
+            $building_level =  $entry->currentLevel - 1;
         }
         // Bei Ausbau
         else {
-            $building_level =  $arr_building['buildlist_current_level'] + 1;
+            $building_level =  $entry->currentLevel + 1;
         }
 
         if ($building_rest_time <= 0) {
