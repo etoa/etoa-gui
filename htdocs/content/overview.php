@@ -11,6 +11,9 @@ use EtoA\Fleet\FleetSearch;
 use EtoA\Ship\ShipDataRepository;
 use EtoA\Ship\ShipQueueRepository;
 use EtoA\Ship\ShipQueueSearch;
+use EtoA\Technology\TechnologyDataRepository;
+use EtoA\Technology\TechnologyListItemSearch;
+use EtoA\Technology\TechnologyRepository;
 use EtoA\Text\TextRepository;
 
 use EtoA\Core\Configuration\ConfigurationService;
@@ -23,6 +26,10 @@ use EtoA\User\UserPropertiesRepository;
 $config = $app[ConfigurationService::class];
 /** @var PlanetRepository $planetRepository */
 $planetRepository = $app[PlanetRepository::class];
+/** @var TechnologyDataRepository $technologyDataRepository */
+$technologyDataRepository = $app[TechnologyDataRepository::class];
+/** @var TechnologyRepository $technologyRepository */
+$technologyRepository = $app[TechnologyRepository::class];
 /** @var BuildingDataRepository $buildingDataRepository */
 $buildingDataRepository = $app[BuildingDataRepository::class];
 /** @var BuildingRepository $buildingRepository */
@@ -149,36 +156,21 @@ else {
     echo "<td>Keine fremden Flotten</td>";
 }
 
-
-
 //
 // Technologien
 //
-
+$technologyNames = $technologyDataRepository->getTechnologyNames(true);
 //Lädt forschende Tech
-$bres = dbquery("
-      SELECT
-          technologies.tech_name,
-          techlist.techlist_build_end_time,
-          techlist.techlist_entity_id
-      FROM
-          techlist
-          INNER JOIN
-          technologies
-          ON technologies.tech_id=techlist.techlist_tech_id
-          AND techlist.techlist_user_id='" . $cu->id . "'
-          AND techlist.techlist_build_type>'0'
-          AND techlist.techlist_tech_id != '23';");
-if (mysql_num_rows($bres) > 0) {
-    $barr = mysql_fetch_array($bres);
-    echo "<td><a href=\"?page=research&amp;change_entity=" . $barr['techlist_entity_id'] . "\" id=\"tech_counter\">";
+$technologyInProgress = $technologyRepository->searchEntry(TechnologyListItemSearch::create()->userId($cu->getId())->notTechnologyId(GEN_TECH_ID)->underConstruction());
+if ($technologyInProgress !== null) {
+    echo "<td><a href=\"?page=research&amp;change_entity=" . $technologyInProgress->entityId . "\" id=\"tech_counter\">";
     //Forschung ist fertig
-    if ($barr['techlist_build_end_time'] - time() <= 0) {
-        echo "" . $barr['tech_name'] . " Fertig";
+    if ($technologyInProgress->endTime - time() <= 0) {
+        echo "" . $technologyNames[$technologyInProgress->technologyId] . " Fertig";
     }
     //Noch am forschen
     else {
-        echo startTime($barr['techlist_build_end_time'] - time(), 'tech_counter', 0, '' . $barr['tech_name'] . ' TIME');
+        echo startTime($technologyInProgress->endTime - time(), 'tech_counter', 0, '' . $technologyNames[$technologyInProgress->technologyId] . ' TIME');
     }
 
     echo "</a></td></tr>";
@@ -189,20 +181,8 @@ if (mysql_num_rows($bres) > 0) {
 //
 //Gentech
 //
-$bres = dbquery("
-      SELECT
-          technologies.tech_name,
-          techlist.techlist_build_end_time,
-          techlist.techlist_entity_id
-      FROM
-          techlist
-          INNER JOIN
-          technologies
-          ON technologies.tech_id=techlist.techlist_tech_id
-          AND techlist.techlist_user_id='" . $cu->id . "'
-          AND techlist.techlist_build_type>'0'
-          AND techlist.techlist_tech_id= '23';");
-if (mysql_num_rows($bres) > 0) {
+$genTechnologyInProgress = $technologyRepository->searchEntry(TechnologyListItemSearch::create()->userId($cu->getId())->technologyId(GEN_TECH_ID)->underConstruction());
+if ($genTechnologyInProgress !== null) {
     echo "
         <tr >
           <th colspan =3></th>
@@ -210,16 +190,15 @@ if (mysql_num_rows($bres) > 0) {
                </tr>
               <tr>";
 
-    $garr = mysql_fetch_array($bres);
     echo "<td colspan =3>";
-    echo "<td><a href=\"?page=research&amp;change_entity=" . $garr['techlist_entity_id'] . "\" id=\"tech_gen\">";
+    echo "<td><a href=\"?page=research&amp;change_entity=" . $genTechnologyInProgress->entityId . "\" id=\"tech_gen\">";
     //Forschung ist fertig
-    if ($garr['techlist_build_end_time'] - time() <= 0) {
-        echo "" . $garr['tech_name'] . " Fertig";
+    if ($genTechnologyInProgress->endTime - time() <= 0) {
+        echo "" . $technologyNames[$genTechnologyInProgress->technologyId] . " Fertig";
     }
     //Noch am forschen
     else {
-        echo startTime($garr['techlist_build_end_time'] - time(), 'tech_gen', 0, '' . $garr['tech_name'] . ' TIME');
+        echo startTime($genTechnologyInProgress->endTime - time(), 'tech_gen', 0, '' . $technologyNames[$genTechnologyInProgress->technologyId] . ' TIME');
     }
 
     echo "</a></td></tr>";

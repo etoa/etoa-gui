@@ -43,14 +43,16 @@ class PlanetRepository extends AbstractRepository
     public function getUserPlanetsWithCoordinates(int $userId): array
     {
         $data = $this->userPlanetsQueryBuilder($userId)
-            ->addSelect('e.id',
+            ->addSelect(
+                'e.id',
                 'c.id as cid',
                 'code',
                 'pos',
                 'sx',
                 'sy',
                 'cx',
-                'cy')
+                'cy'
+            )
             ->innerJoin('planets', 'entities', 'e', 'e.id = planets.id')
             ->innerJoin('e', 'cells', 'c', 'e.cell_id = c.id')
             ->execute()
