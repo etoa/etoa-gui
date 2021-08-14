@@ -70,9 +70,9 @@ class ShipQueueRepository extends AbstractRepository
     /**
      * @return ShipQueueItem[]
      */
-    public function searchQueueItems(ShipQueueSearch $search): array
+    public function searchQueueItems(ShipQueueSearch $search, int $limit = null): array
     {
-        $data = $this->applySearchSortLimit($this->createQueryBuilder(), $search)
+        $data = $this->applySearchSortLimit($this->createQueryBuilder(), $search, null, $limit)
             ->select('*')
             ->from('ship_queue')
             ->orderBy('queue_starttime', 'ASC')

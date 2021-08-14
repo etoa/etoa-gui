@@ -1,8 +1,14 @@
 <?PHP
 
 use EtoA\Alliance\AllianceNewsRepository;
+use EtoA\Defense\DefenseDataRepository;
+use EtoA\Defense\DefenseQueueRepository;
+use EtoA\Defense\DefenseQueueSearch;
 use EtoA\Fleet\FleetRepository;
 use EtoA\Fleet\FleetSearch;
+use EtoA\Ship\ShipDataRepository;
+use EtoA\Ship\ShipQueueRepository;
+use EtoA\Ship\ShipQueueSearch;
 use EtoA\Text\TextRepository;
 
 use EtoA\Core\Configuration\ConfigurationService;
@@ -15,6 +21,14 @@ use EtoA\User\UserPropertiesRepository;
 $config = $app[ConfigurationService::class];
 /** @var PlanetRepository $planetRepository */
 $planetRepository = $app[PlanetRepository::class];
+/** @var ShipDataRepository $shipDataRepository */
+$shipDataRepository = $app[ShipDataRepository::class];
+/** @var ShipQueueRepository $shipQueueRepository */
+$shipQueueRepository = $app[ShipQueueRepository::class];
+/** @var DefenseDataRepository $defenseDataRepository */
+$defenseDataRepository = $app[DefenseDataRepository::class];
+/** @var DefenseQueueRepository $defenseQueRepository */
+$defenseQueRepository = $app[DefenseQueueRepository::class];
 /** @var UserPropertiesRepository $userPropertiesRepository */
 $userPropertiesRepository = $app[UserPropertiesRepository::class];
 
@@ -532,6 +546,8 @@ echo "<div align=\"center\" style=\"position:relative; left:0px; top:0px; width:
 
 //Liest alle Planeten des Besitzers aus und gibt benötigte infos
 $userPlanets = $planetRepository->getUserPlanets($cu->getId());
+$shipNames = $shipDataRepository->getShipNames(true);
+$defenseNames = $defenseDataRepository->getDefenseNames(true);
 
 $shipyard_rest_time = [];
 $shipyard_name = [];
@@ -591,30 +607,14 @@ foreach ($userPlanets as $userPlanet) {
 
 
     // Schiffswerft infos
-    $res_shipyard = dbquery("
-            SELECT
-            ship_name,
-            queue_cnt,
-            queue_starttime,
-            queue_endtime,
-            queue_objtime
-            FROM
-            ship_queue
-        INNER JOIN
-            ships
-            ON queue_ship_id=ship_id
-              AND queue_entity_id='" . $userPlanet->id . "'
-              AND queue_endtime>'" . time() . "'
-        ORDER BY
-                queue_starttime ASC
-            LIMIT 1;");
-    if (mysql_num_rows($res_shipyard) > 0) {
-        $arr_shipyard = mysql_fetch_array($res_shipyard);
+    $queueEntries = $shipQueueRepository->searchQueueItems(ShipQueueSearch::create()->entityId($userPlanet->id)->endAfter(time()), 1);
+    if (count($queueEntries) > 0) {
+        $queueItem = $queueEntries[0];
 
         //Verbleibende Zeit bis zur fertigstellung des aktuellen Auftrages
-        $shipyard_rest_time[$userPlanet->id] = $arr_shipyard['queue_endtime'] - time();
+        $shipyard_rest_time[$userPlanet->id] = $queueItem->endTime - time();
         //Schiffsname
-        $shipyard_name[$userPlanet->id] =  $arr_shipyard['ship_name'];
+        $shipyard_name[$userPlanet->id] =  $shipNames[$queueItem->shipId];
 
         //infos über den raumschiffswerft
         $shipyard_h = floor($shipyard_rest_time[$userPlanet->id] / 3600);
@@ -632,30 +632,14 @@ foreach ($userPlanets as $userPlanet) {
     }
 
     // waffenfabrik infos
-    $res_defense = dbquery("
-            SELECT
-            def_name,
-            queue_cnt,
-            queue_starttime,
-            queue_endtime,
-            queue_objtime
-            FROM
-            def_queue
-        INNER JOIN
-            defense
-            ON queue_def_id=def_id
-              AND queue_entity_id='" . $userPlanet->id . "'
-              AND queue_endtime>'" . time() . "'
-        ORDER BY
-                queue_starttime ASC
-            LIMIT 1;");
-    if (mysql_num_rows($res_defense) > 0) {
-        $arr_defense = mysql_fetch_array($res_defense);
+    $queueEntries = $defenseQueRepository->searchQueueItems(DefenseQueueSearch::create()->entityId($userPlanet->id)->endAfter(time()), 1);
+    if (count($queueEntries) > 0) {
+        $queueItem = $queueEntries[0];
 
         //Verbleibende Zeit bis zur fertigstellung des aktuellen Auftrages
-        $defense_rest_time[$userPlanet->id] = $arr_defense['queue_endtime'] - time();
+        $defense_rest_time[$userPlanet->id] = $queueItem->endTime - time();
         //Defname
-        $defense_name[$userPlanet->id] = $arr_defense['def_name'];
+        $defense_name[$userPlanet->id] = $defenseNames[$queueItem->defenseId];
 
         // Infos über die Waffenfabrik
         $defense_h = floor($defense_rest_time[$userPlanet->id] / 3600);
