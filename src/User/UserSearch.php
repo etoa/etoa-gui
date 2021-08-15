@@ -90,6 +90,13 @@ class UserSearch extends AbstractSearch
         return $this;
     }
 
+    public function notGhost(): self
+    {
+        $this->parts[] = "user_ghost = 0";
+
+        return $this;
+    }
+
     public function blocked(): self
     {
         $this->parts[] = "(user_blocked_from < :now AND user_blocked_to > :now)";
@@ -98,10 +105,28 @@ class UserSearch extends AbstractSearch
         return $this;
     }
 
+    public function inHolidays(?bool $active = true): self
+    {
+        if ($active === true) {
+            $this->parts[] = "user_hmode_from > 0";
+        } elseif ($active === false) {
+            $this->parts[] = "user_hmode_from = 0";
+        }
+
+        return $this;
+    }
+
     public function notBlocked(): self
     {
         $this->parts[] = "user_blocked_to < :now";
         $this->parameters['now'] = time();
+
+        return $this;
+    }
+
+    public function hasPoints(): self
+    {
+        $this->parts[] = "user_points > 0";
 
         return $this;
     }
@@ -140,6 +165,14 @@ class UserSearch extends AbstractSearch
     {
         $this->parts[] = "user_alliance_id = :allianceId";
         $this->parameters['allianceId'] = $allianceId;
+
+        return $this;
+    }
+
+    public function raceId(int $raceId): self
+    {
+        $this->parts[] = "user_race_id = :raceId";
+        $this->parameters['raceId'] = $raceId;
 
         return $this;
     }

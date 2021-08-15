@@ -371,6 +371,18 @@ class FleetRepository extends AbstractRepository
             ->execute();
     }
 
+    public function getSpecialShipExperienceSumForUser(int $userId): int
+    {
+        return (int) $this->createQueryBuilder()
+            ->select('SUM(fs_special_ship_exp)')
+            ->from('fleet_ships', 'fs')
+            ->innerJoin('fs', 'fleet', 'f', 'f.id = fs.fs_fleet_id AND f.user_id = :userId')
+            ->andWhere('fs_ship_cnt = 1')
+            ->setParameter('userId', $userId)
+            ->execute()
+            ->fetchOne();
+    }
+
     public function getGlobalResources(): BaseResources
     {
         $data = $this->createQueryBuilder()

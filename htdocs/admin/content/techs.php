@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Ranking\RankingService;
 use EtoA\Technology\TechnologyDataRepository;
 use EtoA\Technology\TechnologyPointRepository;
 use EtoA\Technology\TechnologyRepository;
@@ -9,12 +10,19 @@ use EtoA\Universe\Planet\PlanetRepository;
 
 /** @var ConfigurationService */
 $config = $app[ConfigurationService::class];
+
 /** @var TechnologyRepository $technologyRepository */
 $technologyRepository = $app[TechnologyRepository::class];
+
 /** @var TechnologyDataRepository $technologyDataRepository */
 $technologyDataRepository = $app[TechnologyDataRepository::class];
+
 /** @var TechnologyPointRepository $technologyPointRepository */
 $technologyPointRepository = $app[TechnologyPointRepository::class];
+
+/** @var RankingService $rankingService */
+$rankingService = $app[RankingService::class];
+
 //
 // Forschungspunkte
 //
@@ -22,7 +30,8 @@ if ($sub == "points") {
     echo "<h1>Forschungspunkte</h1>";
     echo "<h2>Forschungpsunkte neu berechnen</h2><form action=\"?page=$page&amp;sub=$sub\" method=\"POST\">";
     if (isset($_POST['recalc']) && $_POST['recalc'] != "") {
-        echo MessageBox::ok("", Ranking::calcTechPoints());
+        $numTechnologies = $rankingService->calcTechPoints();
+        echo MessageBox::ok("", sprintf("Die Punkte von %s Technologien wurden aktualisiert!", $numTechnologies));
     }
     echo "Nach jeder &Auml;nderung an den Forschungen m&uuml;ssen die Forschungspunkte neu berechnet werden.<br/><br/> ";
     echo "<input type=\"submit\" name=\"recalc\" value=\"Neu berechnen\" /></form>";
@@ -31,17 +40,15 @@ if ($sub == "points") {
     $technologyNames = $technologyDataRepository->getTechnologyNames(true);
     if (count($technologyNames) > 0) {
         $techPoints = $technologyPointRepository->getAllMap();
-
         echo "<table class=\"tb\">";
         foreach ($technologyNames as $technologyId => $technologyName) {
             echo "<tr><th>" . $technologyName . "</th><td style=\"width:70%\"><table class=\"tb\">";
-            $points = $technologyPointRepository->getAllMap();
             if (isset($techPoints[$technologyId])) {
                 $cnt = 0;
-                foreach ($techPoints[$technologyId] as $level => $point) {
+                foreach ($techPoints[$technologyId] as $level => $points) {
                     if ($cnt == 0)
                         echo "<tr>";
-                    echo "<th>" . $level . "</th><td>" . $point . "</td>";
+                    echo "<th>" . $level . "</th><td style=\"text-align: right\" title=\"$points\">" . nf($points) . "</td>";
                     if ($cnt == "3") {
                         echo "</tr>";
                         $cnt = 0;

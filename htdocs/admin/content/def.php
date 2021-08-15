@@ -8,6 +8,7 @@ use EtoA\Defense\DefenseQueueRepository;
 use EtoA\Defense\DefenseQueueSearch;
 use EtoA\Defense\DefenseRepository;
 use EtoA\Defense\DefenseSort;
+use EtoA\Ranking\RankingService;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\User\UserRepository;
 use Symfony\Component\HttpFoundation\Request;
@@ -21,12 +22,16 @@ $defenseNames = $defenseDataRepository->getDefenseNames(true);
 
 /** @var DefenseRepository $defenseRepository */
 $defenseRepository = $app[DefenseRepository::class];
+
 /** @var DefenseQueueRepository $defenseQueueRepository */
 $defenseQueueRepository = $app[DefenseQueueRepository::class];
 /** @var UserRepository $userRepository */
 $userRepository = $app[UserRepository::class];
 /** @var PlanetRepository $planetRepository */
 $planetRepository = $app[PlanetRepository::class];
+
+/** @var RankingService $rankingService */
+$rankingService = $app[RankingService::class];
 
 $request = Request::createFromGlobals();
 //
@@ -36,7 +41,8 @@ if ($sub == "battlepoints") {
     echo "<h1>Punkte</h1>";
     echo "<h2>Punkte neu berechnen</h2><form action=\"?page=$page&amp;sub=$sub\" method=\"POST\">";
     if (isset($_POST['recalc']) && $_POST['recalc'] != "") {
-        echo MessageBox::ok("", Ranking::calcDefensePoints());
+        $numDefenses = $rankingService->calcDefensePoints();
+        echo MessageBox::ok("", "Die Punkte von $numDefenses Verteidigungsanlagen wurden aktualisiert!");
     }
     echo "Nach jeder direkter &Auml;nderung an den Verteidigungsanlagen via Datenbank m&uuml;ssen die Punkte neu berechnet werden: ";
     echo "<br/><br/><input type=\"submit\" name=\"recalc\" value=\"Neu berechnen\" /></form>";
@@ -47,7 +53,7 @@ if ($sub == "battlepoints") {
     if (count($defenses) > 0) {
         echo "<table class=\"tb\">";
         foreach ($defenses as $defense) {
-            echo "<tr><th>" . $defense->name . "</th><td style=\"width:70%\">" . $defense->points . "</td></tr>";
+            echo "<tr><th>" . $defense->name . "</th><td style=\"width:70%; text-align: right\"  title=\"$defense->points\">" . nf($defense->points) . "</td></tr>";
         }
         echo "</table>";
     }

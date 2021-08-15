@@ -103,4 +103,15 @@ class RaceDataRepository extends AbstractRepository
             'cnt' => (int) $arr['cnt'],
         ], $data);
     }
+
+    public function getNumberOfUsersWithRace(int $raceId): int
+    {
+        return (int) $this->createQueryBuilder()
+            ->select('COUNT(user_race_id)')
+            ->from('users')
+            ->where(' user_race_id = :raceId')
+            ->setParameter('raceId', $raceId)
+            ->execute()
+            ->fetchOne();
+    }
 }

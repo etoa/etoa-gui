@@ -1,17 +1,24 @@
 <?PHP
 
+use EtoA\Ranking\UserTitlesService;
+use Pimple\Container;
+
 /**
  * Update user titles
  */
 class UpdateUserTitlesTask implements IPeriodicTask
 {
+    private UserTitlesService $userTitlesService;
+
+    function __construct(Container $app)
+    {
+        $this->userTitlesService = $app[UserTitlesService::class];
+    }
+
     function run()
     {
-        if (ENABLE_USERTITLES == 1) {
-            Ranking::calcTitles();
-            return "User Titel aktualisiert";
-        }
-        return "User Titel nicht aktualisiert (deaktiviert)";
+        $this->userTitlesService->calcTitles();
+        return "User Titel aktualisiert";
     }
 
     function getDescription()

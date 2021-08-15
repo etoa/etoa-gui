@@ -236,9 +236,6 @@ define("SHIP_MISC_MSG_CAT_ID", 5);
 define("MSG_ALLYMAIL_CAT", 6);
 
 // Punkteberechnung
-define("ENABLE_USERTITLES", 1);
-define("USERTITLES_MIN_POINTS", 10000);
-
 define('DIPLOMACY_POINTS_PER_NEWS', 4);
 define('DIPLOMACY_POINTS_PER_PACT', 1);
 define('DIPLOMACY_POINTS_MIN_PACT_DURATION', 3600 * 24 * 1);
@@ -551,6 +548,4 @@ define('XML_INFO_FILE', CACHE_ROOT . "/xml/info.xml");
 
 define('USERBANNER_WIDTH', 468);
 define('USERBANNER_HEIGTH', 60);
-define('USERBANNER_BACKGROUND_IMAGE', RELATIVE_ROOT . "images/userbanner/userbanner1.png");
-define('USERBANNER_FONT', realpath(RELATIVE_ROOT . "images/userbanner/calibri.ttf"));
 define('USERBANNER_DIR', CACHE_ROOT . '/userbanner');

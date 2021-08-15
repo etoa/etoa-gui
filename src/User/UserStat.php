@@ -9,9 +9,16 @@ class UserStat
     public bool $blocked;
     public bool $hmod;
     public bool $inactive;
-    public int $rank; // rank for the current selection
-    public int $points; // points for the current selection
-    public int $shift; // shift for the current selection
+
+    /** Rank for the current selection */
+    public int $rank;
+
+    /** Points for the current selection */
+    public int $points;
+
+    /** Shift for the current selection */
+    public int $shift;
+
     public string $raceName;
     public ?string $allianceTag;
     public int $sx;

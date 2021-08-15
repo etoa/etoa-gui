@@ -488,6 +488,18 @@ class ShipRepository extends AbstractRepository
         ], $data);
     }
 
+    public function getSpecialShipExperienceSumForUser(int $userId): int
+    {
+        return (int) $this->createQueryBuilder()
+            ->select('SUM(shiplist_special_ship_exp)')
+            ->from('shiplist')
+            ->where('shiplist_user_id = :userId')
+            ->andWhere('shiplist_count = 1')
+            ->setParameter('userId', $userId)
+            ->execute()
+            ->fetchOne();
+    }
+
     public function cleanUp(): int
     {
         return $this->getConnection()
