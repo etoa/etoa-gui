@@ -4,6 +4,7 @@ use EtoA\Building\BuildingDataRepository;
 use EtoA\Building\BuildingId;
 use EtoA\Building\BuildingRepository;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Log\LogSeverity;
 use EtoA\Technology\Technology;
 use EtoA\Technology\TechnologyRepository;
 use EtoA\Technology\TechnologyRequirement;
@@ -422,7 +423,7 @@ if (isset($cp)) {
                             [b]" . RES_FUEL . ":[/b] " . nf($planet->resFuel - $bc['fuel']) . "
                             [b]" . RES_FOOD . ":[/b] " . nf($planet->resFood - $bc['food']);
 
-                            GameLog::add(GameLog::F_TECH, GameLog::INFO, $log_text, $cu->id, $cu->allianceId, $planet->id, $technology->id, $b_status, $b_level);
+                            GameLog::add(GameLog::F_TECH, LogSeverity::INFO, $log_text, $cu->id, $cu->allianceId, $planet->id, $technology->id, $b_status, $b_level);
 
                             echo '<script>toggleBox(\'link\'); </script>';
                         } else {
@@ -470,7 +471,7 @@ if (isset($cp)) {
                         [b]" . RES_FOOD . ":[/b] " . nf($planet->resFood + $bc['food'] * $fac);
 
                         //Log Speichern
-                        GameLog::add(GameLog::F_TECH, GameLog::INFO, $log_text, $cu->id, $cu->allianceId, $planet->id, $technology->id, $b_status, $b_level);
+                        GameLog::add(GameLog::F_TECH, LogSeverity::INFO, $log_text, $cu->id, $cu->allianceId, $planet->id, $technology->id, $b_status, $b_level);
 
                         header("Refresh:0; url=?page=research&id=" . $bid);
                     } else {

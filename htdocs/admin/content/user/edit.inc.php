@@ -6,6 +6,7 @@ use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Help\TicketSystem\TicketRepository;
 use EtoA\HostCache\NetworkNameService;
 use EtoA\Log\LogFacility;
+use EtoA\Log\LogSeverity;
 use EtoA\Race\RaceDataRepository;
 use EtoA\Ranking\UserBannerService;
 use EtoA\Specialist\SpecialistDataRepository;
@@ -151,7 +152,7 @@ if (isset($_POST['save'])) {
     if (isset($_POST['user_password']) && $_POST['user_password'] != "") {
         $sql .= ",user_password='" . saltPasswort($_POST['user_password']) . "'";
         echo "Das Passwort wurde ge&auml;ndert!<br>";
-        Log::add(LogFacility::ADMIN, Log::INFO, $cu->nick . " ändert das Passwort von " . $_POST['user_nick'] . "");
+        Log::add(LogFacility::ADMIN, LogSeverity::INFO, $cu->nick . " ändert das Passwort von " . $_POST['user_nick'] . "");
     }
 
     // Handle ban

@@ -5,6 +5,7 @@ use EtoA\Alliance\AllianceRankRepository;
 use EtoA\Building\BuildingDataRepository;
 use EtoA\Defense\DefenseDataRepository;
 use EtoA\Help\TicketSystem\TicketRepository;
+use EtoA\Log\LogSeverity;
 use EtoA\Message\MessageRepository;
 use EtoA\Ship\ShipDataRepository;
 use EtoA\Technology\TechnologyDataRepository;
@@ -787,7 +788,7 @@ function loadEconomy($uid, $target)
 
             echo "<tr>
                         <td>" . df($lbarr['timestamp']) . "</td>
-                        <td>" . GameLog::$severities[$lbarr['severity']] . "</td>
+                        <td>" . LogSeverity::SEVERITIES[$lbarr['severity']] . "</td>
                         <td>" . $te . "</td>
                         <td>" . $ob . "</td>
                         <td>" . $obStatus . "</td>
@@ -859,7 +860,7 @@ function loadEconomy($uid, $target)
 
             echo "<tr>
                         <td>" . df($larr['timestamp']) . "</td>
-                        <td>" . GameLog::$severities[$larr['severity']] . "</td>
+                        <td>" . LogSeverity::SEVERITIES[$larr['severity']] . "</td>
                         <td>" . $te . "</td>
                         <td>" . $ob . "</td>
                         <td>" . $obStatus . "</td>
@@ -933,7 +934,7 @@ function loadEconomy($uid, $target)
 
             echo "<tr>
                         <td>" . df($larr['timestamp']) . "</td>
-                        <td>" . GameLog::$severities[$larr['severity']] . "</td>
+                        <td>" . LogSeverity::SEVERITIES[$larr['severity']] . "</td>
                         <td>" . $te . "</td>
                         <td>" . $ob . "</td>
                         <td>" . $obStatus . "</td>
@@ -1007,7 +1008,7 @@ function loadEconomy($uid, $target)
 
             echo "<tr>
                         <td>" . df($larr['timestamp']) . "</td>
-                        <td>" . GameLog::$severities[$larr['severity']] . "</td>
+                        <td>" . LogSeverity::SEVERITIES[$larr['severity']] . "</td>
                         <td>" . $te . "</td>
                         <td>" . $ob . "</td>
                         <td>" . $obStatus . "</td>

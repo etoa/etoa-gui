@@ -4,6 +4,7 @@ use EtoA\Admin\AdminUser;
 use EtoA\Admin\AdminUserRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Log\LogFacility;
+use EtoA\Log\LogSeverity;
 use EtoA\User\UserRepository;
 use Twig\Environment;
 
@@ -43,7 +44,7 @@ function submitPassword(
 
         $twig->addGlobal('successMessage', 'Das Passwort wurde geändert!');
 
-        Log::add(LogFacility::ADMIN, Log::INFO,  $cu->id . " ändert sein Passwort");
+        Log::add(LogFacility::ADMIN, LogSeverity::INFO,  $cu->id . " ändert sein Passwort");
     } catch (\Exception $ex) {
         $twig->addGlobal('errorMessage', $ex->getMessage());
     }
@@ -62,7 +63,7 @@ function submitProfile(AdminUser $cu, AdminUserRepository $adminUserRepo, Enviro
 
     $twig->addGlobal('successMessage', 'Die Daten wurden geändert!');
 
-    Log::add(LogFacility::ADMIN, Log::INFO, $cu->nick . " ändert seine Daten");
+    Log::add(LogFacility::ADMIN, LogSeverity::INFO, $cu->nick . " ändert seine Daten");
 }
 
 function profileIndex(AdminUser $cu, Environment $twig, UserRepository $userRepository)

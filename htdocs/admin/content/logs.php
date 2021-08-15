@@ -5,6 +5,7 @@ use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Defense\DefenseDataRepository;
 use EtoA\Log\LogFacility;
 use EtoA\Log\LogRepository;
+use EtoA\Log\LogSeverity;
 use EtoA\Ship\ShipDataRepository;
 use EtoA\Technology\TechnologyDataRepository;
 use Twig\Environment;
@@ -516,7 +517,7 @@ function checkFights()
     echo "<form action=\".\" method=\"post\" id=\"filterform\">";
     echo "<label for=\"logsev\">Ab Schweregrad:</label>
     <select id=\"logsev\" name=\"logsev\" onchange=\"applyFilter(0)\">";
-    foreach (Log::$severities as $k => $v) {
+    foreach (LogSeverity::SEVERITIES as $k => $v) {
         echo "<option value=\"" . $k . "\">" . $v . "</option>";
     }
     echo "</select> &nbsp; ";
@@ -628,7 +629,7 @@ function newGamelogs()
     echo "<form action=\".\" method=\"post\" id=\"filterform\">";
     echo "<label for=\"logsev\">Ab Schweregrad:</label>
     <select id=\"logsev\" name=\"logsev\" onchange=\"applyFilter(0)\">";
-    foreach (GameLog::$severities as $k => $v) {
+    foreach (LogSeverity::SEVERITIES as $k => $v) {
         echo "<option value=\"" . $k . "\">" . $v . "</option>";
     }
     echo "</select> &nbsp; ";
@@ -689,7 +690,7 @@ function newFleetLogs()
     echo "<form action=\".\" method=\"post\" id=\"filterform\">";
     echo "<label for=\"logsev\">Ab Schweregrad:</label>
     <select id=\"logsev\" name=\"logsev\" onchange=\"applyFilter(0)\">";
-    foreach (Log::$severities as $k => $v) {
+    foreach (LogSeverity::SEVERITIES as $k => $v) {
         echo "<option value=\"" . $k . "\">" . $v . "</option>";
     }
     echo "</select> &nbsp; ";
@@ -803,7 +804,7 @@ function newCommonLog()
     echo "<form action=\".\" method=\"post\" id=\"filterform\">";
     echo "<label for=\"logsev\">Ab Schweregrad:</label>
     <select id=\"logsev\" name=\"logsev\" onchange=\"applyFilter(0)\">";
-    foreach (Log::$severities as $k => $v) {
+    foreach (LogSeverity::SEVERITIES as $k => $v) {
         echo "<option value=\"" . $k . "\">" . $v . "</option>";
     }
     echo "</select> &nbsp; ";

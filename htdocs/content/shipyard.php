@@ -4,6 +4,7 @@ use EtoA\Building\BuildingId;
 use EtoA\Building\BuildingRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Fleet\FleetRepository;
+use EtoA\Log\LogSeverity;
 use EtoA\Ship\ShipCategoryRepository;
 use EtoA\Ship\ShipDataRepository;
 use EtoA\Ship\ShipQueueItem;
@@ -511,7 +512,7 @@ if ($shipyard !== null && $shipyard->currentLevel > 0) {
                         [b]" . RES_FUEL . ":[/b] " . nf($planet->resFuel - $totalFuel) . "
                         [b]" . RES_FOOD . ":[/b] " . nf($planet->resFood - $totalFood);
 
-                        GameLog::add(GameLog::F_SHIP, GameLog::INFO, $log_text, $cu->id, $cu->allianceId, $planet->id, $ship_id, 1, $build_cnt);
+                        GameLog::add(GameLog::F_SHIP, LogSeverity::INFO, $log_text, $cu->id, $cu->allianceId, $planet->id, $ship_id, 1, $build_cnt);
 
                         //Daten für Log speichern
                         $log_ships .= "<b>" . $ships[$ship_id]->name . "</b>: " . nf($build_cnt) . " (" . tf($duration) . ")<br>";
@@ -610,7 +611,7 @@ if ($shipyard !== null && $shipyard->currentLevel > 0) {
                 [b]" . RES_FOOD . ":[/b] " . nf($planet->resFood + $ret['food']);
 
                 //Log Speichern
-                GameLog::add(GameLog::F_SHIP, GameLog::INFO, $log_text, $cu->id, $cu->allianceId, $planet->id, $ship_id, 0, $queue_count);
+                GameLog::add(GameLog::F_SHIP, LogSeverity::INFO, $log_text, $cu->id, $cu->allianceId, $planet->id, $ship_id, 0, $queue_count);
                 header("Refresh:0");
             }
         }

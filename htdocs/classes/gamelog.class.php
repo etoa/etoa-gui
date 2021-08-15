@@ -1,4 +1,7 @@
 <?PHP
+
+use EtoA\Log\LogSeverity;
+
 class GameLog extends BaseLog
 {
     protected static $table = "logs_game";
@@ -33,9 +36,9 @@ class GameLog extends BaseLog
             $facility = self::F_OTHER;
         }
         if (!is_numeric($severity) || $severity < 0 || $severity > 4) {
-            $severity = self::INFO;
+            $severity = LogSeverity::INFO;
         }
-        if ($severity > self::DEBUG || isDebugEnabled()) {
+        if ($severity > LogSeverity::DEBUG || isDebugEnabled()) {
             //Speichert Log
             dbquery("
 			INSERT DELAYED INTO

@@ -5,6 +5,7 @@ use EtoA\Alliance\AllianceBuildingRepository;
 use EtoA\Alliance\AllianceRepository;
 use EtoA\Alliance\AllianceRights;
 use EtoA\Log\LogFacility;
+use EtoA\Log\LogSeverity;
 use EtoA\User\UserRepository;
 use EtoA\User\UserUniverseDiscoveryService;
 
@@ -67,7 +68,7 @@ if ($valid > 0) {
         if ($valid >= ALLIANCE_FLEET_SEND_HOME) {
             if ($fd->cancelFlight(true)) {
                 success_msg("Flug erfolgreich abgebrochen!");
-                Log::add(LogFacility::FLEETACTION, Log::INFO, "Der Spieler [b]" . $cu->nick . "[/b] bricht den ganzen Allianzflug seiner Flotte [b]" . $fleet_id . "[/b] ab");
+                Log::add(LogFacility::FLEETACTION, LogSeverity::INFO, "Der Spieler [b]" . $cu->nick . "[/b] bricht den ganzen Allianzflug seiner Flotte [b]" . $fleet_id . "[/b] ab");
             } else {
                 error_msg("Flug konnte nicht abgebrochen werden. " . $fd->getError());
             }

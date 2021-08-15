@@ -2,6 +2,7 @@
 
 namespace EtoA\Quest\Log;
 
+use EtoA\Log\LogSeverity;
 use LittleCubicleGames\Quests\Entity\QuestInterface;
 use LittleCubicleGames\Quests\Log\QuestLoggerInterface;
 use LittleCubicleGames\Quests\Workflow\QuestDefinitionInterface;
@@ -18,6 +19,6 @@ class QuestGameLog implements QuestLoggerInterface
 
     public function log(QuestInterface $quest, string $previousState, string $transitionName): void
     {
-        \GameLog::add(\GameLog::F_QUESTS, \GameLog::INFO, '', $quest->getUser(), 0, 0, $quest->getQuestId(), self::TRANSITION_MAP[$transitionName]);
+        \GameLog::add(\GameLog::F_QUESTS, LogSeverity::INFO, '', $quest->getUser(), 0, 0, $quest->getQuestId(), self::TRANSITION_MAP[$transitionName]);
     }
 }

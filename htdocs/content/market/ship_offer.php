@@ -3,6 +3,7 @@
 use EtoA\Alliance\AllianceBuildingId;
 use EtoA\Alliance\AllianceBuildingRepository;
 use EtoA\Log\LogFacility;
+use EtoA\Log\LogSeverity;
 use EtoA\Market\MarketShipRepository;
 use EtoA\Message\MarketReportRepository;
 use EtoA\Ship\ShipRepository;
@@ -79,7 +80,7 @@ if (!isset($errMsg)) {
             // log action because this was a bug earlier
             Log::add(
                 LogFacility::ILLEGALACTION,
-                Log::WARNING,
+                LogSeverity::WARNING,
                 'User ' . $cu->nick . ' hat versucht, auf dem Planeten' . $cp->name()
                     . ' mehr Schiffe der ID ' . $ship_id . ' zu verkaufen, als vorhanden sind.'
                     . ' Vorhanden: ' . $removed_ships_count . ', Versuchte Verkaufszahl: ' . $ship_count

@@ -3,6 +3,7 @@
 use EtoA\Building\BuildingId;
 use EtoA\Building\BuildingRepository;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Log\LogSeverity;
 use EtoA\Universe\Planet\PlanetRepository;
 
 class BuildListItem
@@ -339,7 +340,7 @@ class BuildListItem
         [b]" . RES_FOOD . ":[/b] " . nf($cp->resFood) . "";
 
         //Log Speichern
-        GameLog::add(GameLog::F_BUILD, GameLog::INFO, $log_text, $cu->id, $cu->allianceId, $cp->id, $this->buildingId, 3, $this->level);
+        GameLog::add(GameLog::F_BUILD, LogSeverity::INFO, $log_text, $cu->id, $cu->allianceId, $cp->id, $this->buildingId, 3, $this->level);
 
         return;
     }
@@ -414,7 +415,7 @@ class BuildListItem
         [b]" . RES_FOOD . ":[/b] " . nf($cp->resFood) . "";
 
         //Log Speichern
-        GameLog::add(GameLog::F_BUILD, GameLog::INFO, $log_text, $cu->id, $cu->allianceId, $cp->id, $this->buildingId, 4, $this->level);
+        GameLog::add(GameLog::F_BUILD, LogSeverity::INFO, $log_text, $cu->id, $cu->allianceId, $cp->id, $this->buildingId, 4, $this->level);
 
         return;
     }
@@ -464,7 +465,7 @@ class BuildListItem
 [b]" . RES_FOOD . ":[/b] " . nf($cp->resFood) . "";
 
             //Log Speichern
-            GameLog::add(GameLog::F_BUILD, GameLog::INFO, $log_text, $cu->id, $cu->allianceId, $cp->id, $this->buildingId, 1, $this->level);
+            GameLog::add(GameLog::F_BUILD, LogSeverity::INFO, $log_text, $cu->id, $cu->allianceId, $cp->id, $this->buildingId, 1, $this->level);
 
             return;
         } else
@@ -513,7 +514,7 @@ class BuildListItem
             [b]" . RES_FOOD . ":[/b] " . nf($cp->resFood) . "";
 
             //Log Speichern
-            GameLog::add(GameLog::F_BUILD, GameLog::INFO, $log_text, $cu->id, $cu->allianceId, $cp->id, $this->buildingId, 2, $this->level);
+            GameLog::add(GameLog::F_BUILD, LogSeverity::INFO, $log_text, $cu->id, $cu->allianceId, $cp->id, $this->buildingId, 2, $this->level);
 
             return;
         } else

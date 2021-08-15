@@ -2,6 +2,7 @@
 
 use EtoA\Fleet\FleetRepository;
 use EtoA\Log\LogFacility;
+use EtoA\Log\LogSeverity;
 use EtoA\Market\MarketHandler;
 use EtoA\Market\MarketResourceRepository;
 use EtoA\Message\MarketReportRepository;
@@ -121,7 +122,7 @@ if (isset($_POST['ressource_market_id'])) {
                 $userMultiRepository = $app[UserMultiRepository::class];
                 $isMultiWith = $userMultiRepository->existsEntryWith($cu->getId(), $offer->userId);
                 if ($isMultiWith) {
-                    Log::add(LogFacility::MULTITRADE, Log::INFO, "[page user sub=edit user_id=" . $cu->id . "][B]" . $cu->nick . "[/B][/page] hat von [page user sub=edit user_id=" . $offer->userId . "][B]" . $seller . "[/B][/page] Rohstoffe gekauft:\n\n" . RES_METAL . ": " . nf($offer->sell0) . "\n" . RES_CRYSTAL . ": " . nf($offer->sell1) . "\n" . RES_PLASTIC . ": " . nf($offer->sell2) . "\n" . RES_FUEL . ": " . nf($offer->sell3) . "\n" . RES_FOOD . ": " . nf($offer->sell4) . "\n\nDies hat ihn folgende Rohstoffe gekostet:\n" . RES_METAL . ": " . nf($offer->buy0) . "\n" . RES_CRYSTAL . ": " . nf($offer->buy1) . "\n" . RES_PLASTIC . ": " . nf($offer->buy2) . "\n" . RES_FUEL . ": " . nf($offer->buy3) . "\n" . RES_FOOD . ": " . nf($offer->buy4));
+                    Log::add(LogFacility::MULTITRADE, LogSeverity::INFO, "[page user sub=edit user_id=" . $cu->id . "][B]" . $cu->nick . "[/B][/page] hat von [page user sub=edit user_id=" . $offer->userId . "][B]" . $seller . "[/B][/page] Rohstoffe gekauft:\n\n" . RES_METAL . ": " . nf($offer->sell0) . "\n" . RES_CRYSTAL . ": " . nf($offer->sell1) . "\n" . RES_PLASTIC . ": " . nf($offer->sell2) . "\n" . RES_FUEL . ": " . nf($offer->sell3) . "\n" . RES_FOOD . ": " . nf($offer->sell4) . "\n\nDies hat ihn folgende Rohstoffe gekostet:\n" . RES_METAL . ": " . nf($offer->buy0) . "\n" . RES_CRYSTAL . ": " . nf($offer->buy1) . "\n" . RES_PLASTIC . ": " . nf($offer->buy2) . "\n" . RES_FUEL . ": " . nf($offer->buy3) . "\n" . RES_FOOD . ": " . nf($offer->buy4));
                 }
 
                 // Zählt die erfolgreich abgewickelten Angebote

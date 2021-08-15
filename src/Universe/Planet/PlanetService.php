@@ -8,6 +8,7 @@ use EtoA\Building\BuildingRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Defense\DefenseRepository;
 use EtoA\Log\LogFacility;
+use EtoA\Log\LogSeverity;
 use EtoA\Ship\ShipRepository;
 use Log;
 
@@ -101,6 +102,6 @@ class PlanetService
         $this->defenseRepository->removeForEntity($id);
         $this->buildingRepository->removeForEntity($id);
 
-        Log::add(LogFacility::GALAXY, Log::INFO, "Der Planet mit der ID " . $id . " wurde zurückgesetzt!");
+        Log::add(LogFacility::GALAXY, LogSeverity::INFO, "Der Planet mit der ID " . $id . " wurde zurückgesetzt!");
     }
 }

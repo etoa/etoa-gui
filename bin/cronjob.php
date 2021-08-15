@@ -3,6 +3,7 @@
 
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Log\LogFacility;
+use EtoA\Log\LogSeverity;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
@@ -72,11 +73,11 @@ try {
 
         // Write log
         if (LOG_UPDATES) {
-            $severity = Log::INFO;
+            $severity = LogSeverity::INFO;
         } elseif ($tr->getTotalDuration() > LOG_UPDATES_THRESHOLD) {
-            $severity = Log::WARNING;
+            $severity = LogSeverity::WARNING;
         } else {
-            $severity = Log::DEBUG;
+            $severity = LogSeverity::DEBUG;
         }
         $text = "Periodische Tasks (".date("d.m.Y H:i:s",$time)."):\n\n".$log;
         Log::add(LogFacility::UPDATES, $severity, $text);

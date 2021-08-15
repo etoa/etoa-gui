@@ -6,6 +6,7 @@ use EtoA\Building\BuildingDataRepository;
 use EtoA\Defense\DefenseDataRepository;
 use EtoA\HostCache\NetworkNameService;
 use EtoA\Log\LogFacility;
+use EtoA\Log\LogSeverity;
 use EtoA\Ship\ShipDataRepository;
 use EtoA\Technology\TechnologyDataRepository;
 use EtoA\User\UserRepository;
@@ -541,7 +542,7 @@ function showLogs($args = null, $limit = 0)
         while ($arr = mysql_fetch_assoc($res)) {
             echo "<tr>
             <td>" . df($arr['timestamp']) . "</td>
-            <td>" . Log::$severities[$arr['severity']] . "</td>
+            <td>" . LogSeverity::SEVERITIES[$arr['severity']] . "</td>
             <td>" . LogFacility::FACILITIES[$arr['facility']] . "</td>
             <td>" . text2html($arr['message']);
             if ($arr['ip'] != "")
@@ -752,7 +753,7 @@ function showAttackAbuseLogs($args = null, $limit = -1, $load = true)
 
             echo "<tr>
             <td>" . df($banData['timestamp']) . "</td>
-            <td>" . Log::$severities[$banData['severity']] . "</td>
+            <td>" . LogSeverity::SEVERITIES[$banData['severity']] . "</td>
             <td>$fUser</td>
             <td>$eUser</td>
             <td>$entity</td>
@@ -870,7 +871,7 @@ function showFleetLogs($args = null, $limit = 0)
             $endEntity = Entity::createFactoryById($arr['entity_to']);
             echo "<tr>
             <td>" . df($arr['timestamp']) . "</td>
-            <td>" . Log::$severities[$arr['severity']] . "</td>
+            <td>" . LogSeverity::SEVERITIES[$arr['severity']] . "</td>
             <td>" . FleetLog::$facilities[$arr['facility']] . "</td>
             <td>$owner</td>
             <td>" . $fa . " [" . FleetAction::$statusCode[$arr["status"]] . "]</td>
@@ -1230,7 +1231,7 @@ function showGameLogs($args = null, $limit = 0)
 
             echo "<tr>
             <td>" . df($arr['timestamp']) . "</td>
-            <td>" . GameLog::$severities[$arr['severity']] . "</td>
+            <td>" . LogSeverity::SEVERITIES[$arr['severity']] . "</td>
             <td>" . GameLog::$facilities[$arr['facility']] . "</td>
             <td>" . $tu . "</td>
             <td>" . $ta . "</td>

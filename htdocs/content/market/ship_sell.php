@@ -2,6 +2,7 @@
 
 use EtoA\Fleet\FleetRepository;
 use EtoA\Log\LogFacility;
+use EtoA\Log\LogSeverity;
 use EtoA\Market\MarketShipRepository;
 use EtoA\Message\MarketReportRepository;
 use EtoA\Ship\ShipDataRepository;
@@ -112,7 +113,7 @@ foreach ($_POST['ship_market_id'] as $num => $id) {
                 $shipRepository = $app[ShipDataRepository::class];
                 $shipNames = $shipRepository->getShipNames(true);
 
-                Log::add(LogFacility::MULTITRADE, Log::INFO, "[page user sub=edit user_id=" . $cu->id . "][B]" . $cu->nick . "[/B][/page] hat von [page user sub=edit user_id=" . $offer->userId . "][B]" . $seller . "[/B][/page] Schiffe gekauft:\n\n" . $offer->count . " " . $shipNames[$offer->shipId] . "\n\nund das zu folgendem Preis:\n\n" . RES_METAL . ": " . nf($offer->costs0) . "\n" . RES_CRYSTAL . ": " . nf($offer->costs1) . "\n" . RES_PLASTIC . ": " . nf($offer->costs2) . "\n" . RES_FUEL . ": " . nf($offer->costs3) . "\n" . RES_FOOD . ": " . nf($offer->costs4));
+                Log::add(LogFacility::MULTITRADE, LogSeverity::INFO, "[page user sub=edit user_id=" . $cu->id . "][B]" . $cu->nick . "[/B][/page] hat von [page user sub=edit user_id=" . $offer->userId . "][B]" . $seller . "[/B][/page] Schiffe gekauft:\n\n" . $offer->count . " " . $shipNames[$offer->shipId] . "\n\nund das zu folgendem Preis:\n\n" . RES_METAL . ": " . nf($offer->costs0) . "\n" . RES_CRYSTAL . ": " . nf($offer->costs1) . "\n" . RES_PLASTIC . ": " . nf($offer->costs2) . "\n" . RES_FUEL . ": " . nf($offer->costs3) . "\n" . RES_FOOD . ": " . nf($offer->costs4));
             }
 
             //Marktlog schreiben

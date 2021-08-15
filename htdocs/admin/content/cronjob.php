@@ -2,6 +2,7 @@
 
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Log\LogFacility;
+use EtoA\Log\LogSeverity;
 
 /** @var ConfigurationService */
 $config = $app[ConfigurationService::class];
@@ -71,7 +72,7 @@ if (isset($_GET['runtask'])) {
         $tr = new PeriodicTaskRunner($app);
         $out = $tr->runTask($_GET['runtask']);
         $_SESSION['update_results'] = $title . $out . ob_get_clean();
-        Log::add(LogFacility::UPDATES, Log::INFO, "Task [b]" . $_GET['runtask'] . "[/b] manuell ausgeführt:\n" . trim($out));
+        Log::add(LogFacility::UPDATES, LogSeverity::INFO, "Task [b]" . $_GET['runtask'] . "[/b] manuell ausgeführt:\n" . trim($out));
     }
     forward('?page=' . $page);
 }
@@ -89,7 +90,7 @@ if (isset($_GET['run'])) {
     $log .= ob_get_clean();
     $log .= "\nTotal: " . $tr->getTotalDuration() . ' sec';
     $_SESSION['update_results'] = $log;
-    Log::add(LogFacility::UPDATES, Log::INFO, "Tasks manuell ausgeführt:\n" . trim($log));
+    Log::add(LogFacility::UPDATES, LogSeverity::INFO, "Tasks manuell ausgeführt:\n" . trim($log));
     forward('?page=' . $page);
 }
 

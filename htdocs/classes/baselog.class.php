@@ -6,36 +6,12 @@ use EtoA\Log\FleetLogRepository;
 use EtoA\Log\GameLogRepository;
 use EtoA\Log\LogFacility;
 use EtoA\Log\LogRepository;
+use EtoA\Log\LogSeverity;
 
 abstract class BaseLog
 {
     protected static $table;
     protected static $queueTable;
-
-    // Severities
-
-    /**
-     * Debug message
-     */
-    const DEBUG = 0;
-    /**
-     * Information
-     */
-    const INFO = 1;
-    /**
-     * Warning
-     */
-    const WARNING = 2;
-    /**
-     * Error
-     */
-    const ERROR = 3;
-    /**
-     * Critical error
-     */
-    const CRIT = 4;
-
-    static public $severities = array("Debug", "Information", "Warnung", "Fehler", "Kritisch");
 
     /**
      * Alle alten Logs löschen
@@ -65,7 +41,7 @@ abstract class BaseLog
         $nr += $fleetLogRepository->cleanup($timestamp);
         $nr += $battleLogRepository->cleanup($timestamp);
 
-        Log::add(LogFacility::SYSTEM, Log::INFO, "$nr Logs die älter als " . date("d.m.Y H:i", $timestamp) . " sind wurden gelöscht!");
+        Log::add(LogFacility::SYSTEM, LogSeverity::INFO, "$nr Logs die älter als " . date("d.m.Y H:i", $timestamp) . " sind wurden gelöscht!");
         return $nr;
     }
 }

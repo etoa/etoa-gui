@@ -2,6 +2,7 @@
 
 use EtoA\Defense\DefenseRepository;
 use EtoA\Log\LogFacility;
+use EtoA\Log\LogSeverity;
 use Pimple\Container;
 
 /**
@@ -19,7 +20,7 @@ class CleanupDeflistTask implements IPeriodicTask
     function run()
     {
         $nr = $this->defenseRepository->cleanUp();
-        Log::add(LogFacility::SYSTEM, Log::INFO, "$nr leere Verteidigungsdatensätze wurden gelöscht!");
+        Log::add(LogFacility::SYSTEM, LogSeverity::INFO, "$nr leere Verteidigungsdatensätze wurden gelöscht!");
 
         return "$nr alte Verteidigungseinträge gelöscht";
     }

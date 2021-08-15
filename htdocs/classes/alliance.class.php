@@ -18,6 +18,7 @@ use EtoA\Alliance\Board\AllianceBoardCategoryRepository;
 use EtoA\Alliance\Board\AllianceBoardTopicRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Log\LogFacility;
+use EtoA\Log\LogSeverity;
 use EtoA\Message\MessageRepository;
 use EtoA\User\UserService;
 
@@ -730,9 +731,9 @@ class Alliance
                 /** @var UserService */
                 $userService = $app[UserService::class];
                 $userService->addToUserLog($user->id, "alliance", "{nick} löst die Allianz [b]" . $this->__toString() . "[/b] auf.");
-                Log::add(LogFacility::ALLIANCE, Log::INFO, "Die Allianz [b]" . $this->__toString() . "[/b] wurde von " . $user . " aufgelöst!");
+                Log::add(LogFacility::ALLIANCE, LogSeverity::INFO, "Die Allianz [b]" . $this->__toString() . "[/b] wurde von " . $user . " aufgelöst!");
             } else
-                Log::add(LogFacility::ALLIANCE, Log::INFO, "Die Allianz [b]" . $this->__toString() . "[/b] wurde gelöscht!");
+                Log::add(LogFacility::ALLIANCE, LogSeverity::INFO, "Die Allianz [b]" . $this->__toString() . "[/b] wurde gelöscht!");
             return true;
         }
 

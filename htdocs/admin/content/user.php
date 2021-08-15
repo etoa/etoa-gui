@@ -6,6 +6,7 @@
 
 use EtoA\Alliance\AllianceRepository;
 use EtoA\Log\LogFacility;
+use EtoA\Log\LogSeverity;
 use EtoA\Race\RaceDataRepository;
 use EtoA\User\UserRepository;
 use EtoA\User\UserSearch;
@@ -56,7 +57,7 @@ elseif ($sub == "create") {
                 $request->request->has('user_ghost'),
                 true
             );
-            Log::add(LogFacility::USER, Log::INFO, "Der Benutzer " . $newUser->nick . " (" . $newUser->name . ", " . $newUser->email . ") wurde registriert!");
+            Log::add(LogFacility::USER, LogSeverity::INFO, "Der Benutzer " . $newUser->nick . " (" . $newUser->name . ", " . $newUser->email . ") wurde registriert!");
             success_msg("Benutzer wurde erstellt! [[page user sub=edit id=" . $newUser->id . "]Details[/page]]");
         } catch (Exception $e) {
             error_msg("Benutzer konnte nicht erstellt werden!\n\n" . $e->getMessage());

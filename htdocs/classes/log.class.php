@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\Log\LogFacility;
+use EtoA\Log\LogSeverity;
 
 class Log extends BaseLog
 {
@@ -19,9 +20,9 @@ class Log extends BaseLog
             $facility = LogFacility::OTHER;
         }
         if (!is_numeric($severity) || $severity < 0 || $severity > 4) {
-            $severity = self::INFO;
+            $severity = LogSeverity::INFO;
         }
-        if ($severity > self::DEBUG || isDebugEnabled()) {
+        if ($severity > LogSeverity::DEBUG || isDebugEnabled()) {
             dbquery("
 			INSERT DELAYED INTO
 				" . self::$table . "

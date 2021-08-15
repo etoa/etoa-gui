@@ -3,6 +3,7 @@
 
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Log\LogFacility;
+use EtoA\Log\LogSeverity;
 use EtoA\Support\DB\DatabaseBackupService;
 use EtoA\Support\DB\DatabaseManagerRepository;
 use EtoA\Support\DB\DatabaseMigrationService;
@@ -155,7 +156,7 @@ else if ($action == "backup")
         $mtx->release();
 
         // Write log
-        Log::add(LogFacility::SYSTEM, Log::INFO, "[b]Datenbank-Backup Skript[/b]\n".$log);
+        Log::add(LogFacility::SYSTEM, LogSeverity::INFO, "[b]Datenbank-Backup Skript[/b]\n".$log);
 
         // Show output
         if ($verbose) {
@@ -170,7 +171,7 @@ else if ($action == "backup")
         $mtx->release();
 
         // Write log
-        Log::add(LogFacility::SYSTEM, Log::ERROR, "[b]Datenbank-Backup Skript[/b]\nDie Datenbank konnte nicht in das Verzeichnis [b]".$dir."[/b] gesichert werden: ".$e->getMessage());
+        Log::add(LogFacility::SYSTEM, LogSeverity::ERROR, "[b]Datenbank-Backup Skript[/b]\nDie Datenbank konnte nicht in das Verzeichnis [b]".$dir."[/b] gesichert werden: ".$e->getMessage());
 
         // Show output
         echo "Fehler: ".$e->getMessage();
@@ -213,7 +214,7 @@ else if ($action == "restore")
             $mtx->release();
 
             // Write log
-            Log::add(LogFacility::SYSTEM, Log::INFO, "[b]Datenbank-Restore Skript[/b]\n".$log);
+            Log::add(LogFacility::SYSTEM, LogSeverity::INFO, "[b]Datenbank-Restore Skript[/b]\n".$log);
 
             // Show output
             if ($verbose) {
@@ -228,7 +229,7 @@ else if ($action == "restore")
             $mtx->release();
 
             // Write log
-            Log::add(LogFacility::SYSTEM, Log::ERROR, "[b]Datenbank-Restore Skript[/b]\nDie Datenbank konnte nicht vom Backup [b]".$restorePoint."[/b] aus dem Verzeichnis [b]".$dir."[/b] wiederhergestellt werden: ".$e->getMessage());
+            Log::add(LogFacility::SYSTEM, LogSeverity::ERROR, "[b]Datenbank-Restore Skript[/b]\nDie Datenbank konnte nicht vom Backup [b]".$restorePoint."[/b] aus dem Verzeichnis [b]".$dir."[/b] wiederhergestellt werden: ".$e->getMessage());
 
             // Show output
             echo "Fehler: ".$e->getMessage();
@@ -298,7 +299,7 @@ else if ($action == "repair")
         foreach ($result as $arr) {
             echo implode("\t", $arr)."\n";
         }
-        Log::add(LogFacility::SYSTEM, Log::INFO, count($result) . " Tabellen wurden manuell repariert!");
+        Log::add(LogFacility::SYSTEM, LogSeverity::INFO, count($result) . " Tabellen wurden manuell repariert!");
     }
     catch (Exception $e)
     {

@@ -6,6 +6,7 @@ namespace EtoA\User;
 
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Log\LogFacility;
+use EtoA\Log\LogSeverity;
 use Log;
 
 class UserSessionManager
@@ -58,7 +59,7 @@ class UserSessionManager
 
         $count = $this->repository->removeSessionLogs($timestamp);
 
-        Log::add(LogFacility::SYSTEM, Log::INFO, "$count Usersession-Logs die älter als " . date("d.m.Y, H:i", $timestamp) . " sind wurden gelöscht.");
+        Log::add(LogFacility::SYSTEM, LogSeverity::INFO, "$count Usersession-Logs die älter als " . date("d.m.Y, H:i", $timestamp) . " sind wurden gelöscht.");
 
         return $count;
     }

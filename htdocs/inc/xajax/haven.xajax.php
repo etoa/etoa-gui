@@ -6,6 +6,7 @@ use EtoA\Alliance\AllianceBuildingId;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Fleet\FleetRepository;
 use EtoA\Log\LogFacility;
+use EtoA\Log\LogSeverity;
 use EtoA\Universe\Entity\EntityCoordinates;
 use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Planet\PlanetRepository;
@@ -871,7 +872,7 @@ function havenShowWormhole($form)
             include_once(getcwd() . '/inc/bootstrap.inc.php');
             Log::add(
                 LogFacility::ILLEGALACTION,
-                Log::INFO,
+                LogSeverity::INFO,
                 'Der User ' . $_SESSION['user_nick'] . ' versuchte, ein zweites Wurmloch zu &ouml;ffnen' . "\n"
                     . 'Bereits gesetztes Wurmloch: ' . $fleet->wormholeEntryEntity . ' mit Austrittspunkt ' . $fleet->wormholeExitEntity . "\n"
                     . 'Zweites Wumloch: ' . $form['man_sx'] . ' / ' . $form['man_sy'] . ' : ' . $form['man_cx'] . ' / ' . $form['man_cy'] . ' : ' . $form['man_p'] . '.'
