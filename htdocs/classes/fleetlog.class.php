@@ -2,7 +2,6 @@
 class FleetLog extends BaseLog
 {
     protected static $table = "logs_fleet";
-    protected static $queueTable = "logs_fleet_queue";
 
     /**
      * Others
@@ -100,7 +99,7 @@ class FleetLog extends BaseLog
             $this->text = "Treibstoff: " . $this->fuel . " Nahrung: " . $this->food . " Piloten: " . $this->pilots;
             dbquery("
             INSERT DELAYED INTO
-                " . self::$queueTable . "
+                " . self::$table . "
             (
                 `fleet_id`,
                 `facility`,
@@ -210,71 +209,5 @@ class FleetLog extends BaseLog
         $this->status = $status;
         $this->pilots = $pilots;
         $this->launched = true;
-    }
-
-    /**
-     * Processes the log queue and stores
-     * all items in the persistend log table
-     */
-    static function processQueue()
-    {
-        dbquery("
-        INSERT INTO
-            " . self::$table . "
-        (
-            `fleet_id`,
-            `facility`,
-            `timestamp`,
-            `message`,
-            `user_id`,
-            `entity_user_id`,
-            `entity_from`,
-            `entity_to`,
-            `launchtime`,
-            `landtime`,
-            `action`,
-            `status`,
-            `fleet_res_start`,
-            `fleet_res_end`,
-            `fleet_ships_start`,
-            `fleet_ships_end`,
-            `entity_res_start`,
-            `entity_res_end`,
-            `entity_ships_start`,
-            `entity_ships_end`
-        )
-        SELECT
-            `fleet_id`,
-            `facility`,
-            `timestamp`,
-            `message`,
-            `user_id`,
-            `entity_user_id`,
-            `entity_from`,
-            `entity_to`,
-            `launchtime`,
-            `landtime`,
-            `action`,
-            `status`,
-            `fleet_res_start`,
-            `fleet_res_end`,
-            `fleet_ships_start`,
-            `fleet_ships_end`,
-            `entity_res_start`,
-            `entity_res_end`,
-            `entity_ships_start`,
-            `entity_ships_end`
-        FROM
-            " . self::$queueTable . "
-        ;");
-        $numRecords = mysql_affected_rows();
-        if ($numRecords > 0) {
-            dbquery("
-            DELETE FROM
-                " . self::$queueTable . "
-            LIMIT
-                " . $numRecords . ";");
-        }
-        return $numRecords;
     }
 }

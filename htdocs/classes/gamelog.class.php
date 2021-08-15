@@ -2,7 +2,6 @@
 class GameLog extends BaseLog
 {
     protected static $table = "logs_game";
-    protected static $queueTable = "logs_game_queue";
 
     // Facilities
 
@@ -40,7 +39,7 @@ class GameLog extends BaseLog
             //Speichert Log
             dbquery("
 			INSERT DELAYED INTO
-				" . self::$queueTable . "
+				" . self::$table . "
 			(
 				facility,
 				severity,
@@ -69,53 +68,5 @@ class GameLog extends BaseLog
 				'" . intval($level) . "'
 			);");
         }
-    }
-
-    /**
-     * Processes the log queue and stores
-     * all items in the persistend log table
-     */
-    static function processQueue()
-    {
-        dbquery("
-		INSERT INTO
-			" . self::$table . "
-		(
-			facility,
-			severity,
-			timestamp,
-			message,
-			ip,
-			user_id,
-			alliance_id,
-			entity_id,
-			object_id,
-			status,
-			level
-		)
-		SELECT
-			facility,
-			severity,
-			timestamp,
-			message,
-			ip,
-			user_id,
-			alliance_id,
-			entity_id,
-			object_id,
-			status,
-			level
-		FROM
-			" . self::$queueTable . "
-		;");
-        $numRecords = mysql_affected_rows();
-        if ($numRecords > 0) {
-            dbquery("
-			DELETE FROM
-				" . self::$queueTable . "
-			LIMIT
-				" . $numRecords . ";");
-        }
-        return $numRecords;
     }
 }

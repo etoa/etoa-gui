@@ -2,7 +2,6 @@
 class Log extends BaseLog
 {
     protected static $table = "logs";
-    protected static $queueTable = "logs_queue";
 
     // Facilities
 
@@ -125,7 +124,7 @@ class Log extends BaseLog
         if ($severity > self::DEBUG || isDebugEnabled()) {
             dbquery("
 			INSERT DELAYED INTO
-				" . self::$queueTable . "
+				" . self::$table . "
 			(
 				facility,
 				severity,
@@ -142,41 +141,5 @@ class Log extends BaseLog
 				'" . mysql_real_escape_string($msg) . "'
 			);");
         }
-    }
-
-    /**
-     * Processes the log queue and stores
-     * all items in the persistend log table
-     */
-    static function processQueue()
-    {
-        dbquery("
-		INSERT INTO
-			" . self::$table . "
-		(
-			facility,
-			severity,
-			timestamp,
-			ip,
-			message
-		)
-		SELECT
-			facility,
-			severity,
-			timestamp,
-			ip,
-			message
-		FROM
-			" . self::$queueTable . "
-		;");
-        $numRecords = mysql_affected_rows();
-        if ($numRecords > 0) {
-            dbquery("
-			DELETE FROM
-				" . self::$queueTable . "
-			LIMIT
-				" . $numRecords . ";");
-        }
-        return $numRecords;
     }
 }
