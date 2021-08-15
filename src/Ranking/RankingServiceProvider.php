@@ -13,6 +13,7 @@ use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Defense\DefenseDataRepository;
 use EtoA\Defense\DefenseRepository;
 use EtoA\Fleet\FleetRepository;
+use EtoA\Log\LogRepository;
 use EtoA\Race\RaceDataRepository;
 use EtoA\Ship\ShipDataRepository;
 use EtoA\Ship\ShipRepository;
@@ -39,7 +40,8 @@ class RankingServiceProvider implements ServiceProviderInterface
             return new PointsService(
                 $pimple[ConfigurationService::class],
                 $pimple[UserRepository::class],
-                $pimple[AllianceRepository::class]
+                $pimple[AllianceRepository::class],
+                $pimple[LogRepository::class]
             );
         };
 

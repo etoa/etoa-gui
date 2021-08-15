@@ -3,6 +3,7 @@
 
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Log\LogFacility;
+use EtoA\Log\LogRepository;
 use EtoA\Log\LogSeverity;
 
 require_once __DIR__ . '/../vendor/autoload.php';
@@ -55,6 +56,8 @@ try {
 
     /** @var ConfigurationService */
     $config = $app[ConfigurationService::class];
+    /** @var LogRepository $logRepository */
+    $logRepository = $app[LogRepository::class];
 
     // Prüfen ob Updates eingeschaltet sind
     if ($config->getBoolean('update_enabled'))
@@ -80,7 +83,7 @@ try {
             $severity = LogSeverity::DEBUG;
         }
         $text = "Periodische Tasks (".date("d.m.Y H:i:s",$time)."):\n\n".$log;
-        Log::add(LogFacility::UPDATES, $severity, $text);
+        $logRepository->add(LogFacility::UPDATES, $severity, $text);
 
         if ($verbose) {
             echo $text;

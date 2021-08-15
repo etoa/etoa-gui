@@ -1,11 +1,14 @@
 <?PHP
 
 use EtoA\Log\LogFacility;
+use EtoA\Log\LogRepository;
 use EtoA\Log\LogSeverity;
 use EtoA\Support\DB\DatabaseManagerRepository;
 
 /** @var DatabaseManagerRepository */
 $databaseManager = $app[DatabaseManagerRepository::class];
+/** @var LogRepository $logRepository */
+$logRepository = $app[LogRepository::class];
 
 $action = $_GET['action'] ?? null;
 $subTitle = null;
@@ -15,7 +18,7 @@ $successMessage = null;
 if ($action === 'optimize') {
     $subTitle = 'Optimierungsbericht';
     $result = $databaseManager->optimizeTables();
-    Log::add(LogFacility::SYSTEM, LogSeverity::INFO, count($result) . " Tabellen wurden manuell optimiert!");
+    $logRepository->add(LogFacility::SYSTEM, LogSeverity::INFO, count($result) . " Tabellen wurden manuell optimiert!");
 }
 // Datenbanktabellen analysieren
 elseif ($action === 'analyze') {
@@ -33,7 +36,7 @@ elseif ($action === 'check') {
 elseif ($action === 'repair') {
     $subTitle = 'Reparaturbericht';
     $result = $databaseManager->repairTables();
-    Log::add(LogFacility::SYSTEM, LogSeverity::INFO, count($result) . " Tabellen wurden manuell repariert!");
+    $logRepository->add(LogFacility::SYSTEM, LogSeverity::INFO, count($result) . " Tabellen wurden manuell repariert!");
 } else {
     throw new \InvalidArgumentException('Invalid action: ' . $action);
 }

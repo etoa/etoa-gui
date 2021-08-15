@@ -3,6 +3,7 @@
 use EtoA\Alliance\AllianceBuildingId;
 use EtoA\Alliance\AllianceBuildingRepository;
 use EtoA\Log\LogFacility;
+use EtoA\Log\LogRepository;
 use EtoA\Log\LogSeverity;
 use EtoA\Market\MarketShipRepository;
 use EtoA\Message\MarketReportRepository;
@@ -24,6 +25,8 @@ $marketShipRepository = $app[MarketShipRepository::class];
 $allianceBuildingRepository = $app[AllianceBuildingRepository::class];
 /** @var MarketReportRepository $marketReportRepository */
 $marketReportRepository = $app[MarketReportRepository::class];
+/** @var LogRepository $logRepository */
+$logRepository = $app[LogRepository::class];
 
 $for_user = 0;
 $for_alliance = 0;
@@ -78,7 +81,7 @@ if (!isset($errMsg)) {
         if ($removed_ships_count > 0) {
             $shipRepository->addShip($ship_id, $removed_ships_count, $cu->getId(), (int) $cp->id);
             // log action because this was a bug earlier
-            Log::add(
+            $logRepository->add(
                 LogFacility::ILLEGALACTION,
                 LogSeverity::WARNING,
                 'User ' . $cu->nick . ' hat versucht, auf dem Planeten' . $cp->name()

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace EtoA\Message;
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Log\LogRepository;
 use Pimple\Container;
 use Pimple\ServiceProviderInterface;
 
@@ -27,7 +28,8 @@ class MessageServiceProvider implements ServiceProviderInterface
         $pimple[MessageService::class] = function (Container $pimple): MessageService {
             return new MessageService(
                 $pimple[MessageRepository::class],
-                $pimple[ConfigurationService::class]
+                $pimple[ConfigurationService::class],
+                $pimple[LogRepository::class]
             );
         };
 

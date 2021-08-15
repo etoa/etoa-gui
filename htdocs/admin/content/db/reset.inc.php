@@ -2,6 +2,7 @@
 
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Log\LogFacility;
+use EtoA\Log\LogRepository;
 use EtoA\Log\LogSeverity;
 use EtoA\Support\DB\DatabaseBackupService;
 use EtoA\Support\DB\DatabaseManagerRepository;
@@ -19,6 +20,8 @@ $databaseMigrationService = $app[DatabaseMigrationService::class];
 
 /** @var DatabaseBackupService */
 $databaseBackupService = $app[DatabaseBackupService::class];
+/** @var LogRepository $logRepository */
+$logRepository = $app[LogRepository::class];
 
 $successMessage = null;
 $errorMessage = null;
@@ -95,7 +98,7 @@ if (isset($_POST['submit'])) {
         $mtx->release();
 
         // Write log
-        Log::add(LogFacility::SYSTEM, LogSeverity::ERROR, "[b]Datenbank-Reset fehlgeschlagen[/b]\nFehler: " . $e->getMessage());
+        $logRepository->add(LogFacility::SYSTEM, LogSeverity::ERROR, "[b]Datenbank-Reset fehlgeschlagen[/b]\nFehler: " . $e->getMessage());
 
         // Show message
         $errorMessage = 'Beim Ausführen des Resaet-Befehls trat ein Fehler auf: ' . $e->getMessage();

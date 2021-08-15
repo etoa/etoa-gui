@@ -7,12 +7,15 @@ use EtoA\Alliance\AllianceBuildingRepository;
 use EtoA\Alliance\AllianceRepository;
 use EtoA\Alliance\AllianceRights;
 use EtoA\Log\LogFacility;
+use EtoA\Log\LogRepository;
 use EtoA\Log\LogSeverity;
 
 /** @var AllianceBuildingRepository $allianceBuildingRepository */
 $allianceBuildingRepository = $app[AllianceBuildingRepository::class];
 /** @var AllianceRepository $allianceRepository */
 $allianceRepository = $app[AllianceRepository::class];
+/** @var LogRepository $logRepository */
+$logRepository = $app[LogRepository::class];
 
 $lead_id = (int) $_GET['lead_id'] > 0 ? (int) $_GET['lead_id'] : -1;
 
@@ -36,7 +39,7 @@ if ($allianceFleetControlLevel >= ALLIANCE_FLEET_SHOW_DETAIL && $rights) {
             if (isset($_POST['cancel']) != "" && checker_verify()) {
                 if ($fd->cancelFlight()) {
                     success_msg("Flug erfolgreich abgebrochen!");
-                    Log::add(LogFacility::FLEETACTION, LogSeverity::INFO, "Der Spieler [b]" . $cu->nick . "[/b] bricht den Flug seiner Flotte [b]" . $fleet_id . "[/b] ab");
+                    $logRepository->add(LogFacility::FLEETACTION, LogSeverity::INFO, "Der Spieler [b]" . $cu->nick . "[/b] bricht den Flug seiner Flotte [b]" . $fleet_id . "[/b] ab");
                 } else {
                     error_msg("Flug konnte nicht abgebrochen werden. " . $fd->getError());
                 }
@@ -46,7 +49,7 @@ if ($allianceFleetControlLevel >= ALLIANCE_FLEET_SHOW_DETAIL && $rights) {
             if (isset($_POST['cancel_alliance']) != "" && checker_verify()) {
                 if ($fd->cancelFlight(true)) {
                     success_msg("Flug erfolgreich abgebrochen!");
-                    Log::add(LogFacility::FLEETACTION, LogSeverity::INFO, "Der Spieler [b]" . $cu->nick . "[/b] bricht den ganzen Allianzflug seiner Flotte [b]" . $fleet_id . "[/b] ab");
+                    $logRepository->add(LogFacility::FLEETACTION, LogSeverity::INFO, "Der Spieler [b]" . $cu->nick . "[/b] bricht den ganzen Allianzflug seiner Flotte [b]" . $fleet_id . "[/b] ab");
                 } else {
                     error_msg("Flug konnte nicht abgebrochen werden. " . $fd->getError());
                 }

@@ -7,9 +7,6 @@ namespace EtoA\User;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Query\QueryBuilder;
 use EtoA\Core\AbstractRepository;
-use EtoA\Log\LogFacility;
-use EtoA\Log\LogSeverity;
-use Log;
 
 class UserRatingRepository extends AbstractRepository
 {
@@ -75,26 +72,7 @@ class UserRatingRepository extends AbstractRepository
             ->leftJoin('u', 'alliances', 'a', 'u.user_alliance_id = a.alliance_id');
     }
 
-    public function addBattleRating(int $userId, int $rating, string $reason = ""): void
-    {
-        if ($rating != 0) {
-            $this->createQueryBuilder()
-                ->update('user_ratings')
-                ->set('battle_rating', 'battle_rating + :rating')
-                ->where('id = :userId')
-                ->setParameters([
-                    'rating' => $rating,
-                    'userId' => $userId,
-                ])
-                ->execute();
-
-            if ($reason != "") {
-                Log::add(LogFacility::RANKING, LogSeverity::INFO, "KP: Der Spieler " . $userId . " erhält " . $rating . " Kampfpunkte. Grund: " . $reason);
-            }
-        }
-    }
-
-    public function addTradeRating(int $userId, int $rating, bool $sell = true, string $reason = ""): void
+    public function addTradeRating(int $userId, int $rating, bool $sell = true): void
     {
         $qry = $this->createQueryBuilder()
             ->update('user_ratings')
@@ -110,13 +88,9 @@ class UserRatingRepository extends AbstractRepository
             $qry->set('trades_buy', 'trades_buy + 1');
         }
         $qry->execute();
-
-        if ($reason != "") {
-            Log::add(LogFacility::RANKING, LogSeverity::INFO, "HP: Der Spieler " . $userId . " erhält " . $rating . " Handelspunkte. Grund: " . $reason);
-        }
     }
 
-    public function addDiplomacyRating(int $userId, int $rating, string $reason = ""): void
+    public function addDiplomacyRating(int $userId, int $rating): void
     {
         $this->createQueryBuilder()
             ->update('user_ratings')
@@ -127,10 +101,6 @@ class UserRatingRepository extends AbstractRepository
                 'userId' => $userId,
             ])
             ->execute();
-
-        if ($reason != "") {
-            Log::add(LogFacility::RANKING, LogSeverity::INFO, "DP: Der Spieler " . $userId . " erhält " . $rating . " Diplomatiepunkte. Grund: " . $reason);
-        }
     }
 
     public function addBlank(int $id): void

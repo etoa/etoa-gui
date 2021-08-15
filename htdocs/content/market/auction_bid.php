@@ -1,13 +1,14 @@
 <?php
 
 use EtoA\Log\LogFacility;
+use EtoA\Log\LogRepository;
 use EtoA\Log\LogSeverity;
 use EtoA\Market\MarketAuctionRepository;
 use EtoA\Message\MarketReportRepository;
 use EtoA\Support\RuntimeDataStore;
 use EtoA\Universe\Resources\BaseResources;
 use EtoA\User\UserMultiRepository;
-use EtoA\User\UserRatingRepository;
+use EtoA\User\UserRatingService;
 
 /** @var RuntimeDataStore */
 $runtimeDataStore = $app[RuntimeDataStore::class];
@@ -15,6 +16,8 @@ $runtimeDataStore = $app[RuntimeDataStore::class];
 $marketAuctionRepository = $app[MarketAuctionRepository::class];
 /** @var MarketReportRepository $marketReportRepository */
 $marketReportRepository = $app[MarketReportRepository::class];
+/** @var LogRepository $logRepository */
+$logRepository = $app[LogRepository::class];
 
 // Speichert Bieterangebot in Array
 $buyRes = array();
@@ -78,24 +81,24 @@ if ($auction !== null && $auction->dateEnd > time()) {
                 $marketReportRepository->addAuctionReport($auction->id, $cu->getId(), $cp->id, $auction->userId, $sellResources, "auctionwon", $newBuyResource);
 
                 // Add market ratings
-                /** @var UserRatingRepository $userRatingRepository */
-                $userRatingRepository = $app[UserRatingRepository::class];
+                /** @var UserRatingService $userRatingService */
+                $userRatingService = $app[UserRatingService::class];
 
-                $userRatingRepository->addTradeRating(
+                $userRatingService->addTradeRating(
                     $cu->id,
                     TRADE_POINTS_PER_TRADE,
                     false,
                     'Handel #' . $auction->id . ' mit ' . $auction->userId
                 );
                 if (strlen($auction->text) > TRADE_POINTS_TRADETEXT_MIN_LENGTH) {
-                    $userRatingRepository->addTradeRating(
+                    $userRatingService->addTradeRating(
                         $auction->userId,
                         TRADE_POINTS_PER_TRADE + TRADE_POINTS_PER_TRADETEXT,
                         true,
                         'Handel #' . $auction->id . ' mit ' . $cu->id
                     );
                 } else {
-                    $userRatingRepository->addTradeRating(
+                    $userRatingService->addTradeRating(
                         $auction->userId,
                         TRADE_POINTS_PER_TRADE,
                         true,
@@ -119,7 +122,7 @@ if ($auction !== null && $auction->dateEnd > time()) {
                 if ($isMultiWith) {
                     // TODO
                     $seller = new User($auction->userId);
-                    Log::add(LogFacility::MULTITRADE, LogSeverity::INFO, "[page user sub=edit user_id=" . $cu->id . "][B]" . $cu->nick . "[/B][/page] hat an einer Auktion von [page user sub=edit user_id=" . $auction->userId . "][B]" . $seller . "[/B][/page] gewonnen:\n\nRohstoffe:\n" . RES_METAL . ": " . nf($auction->sell0) . "\n" . RES_CRYSTAL . ": " . nf($auction->sell1) . "\n" . RES_PLASTIC . ": " . nf($auction->sell2) . "\n" . RES_FUEL . ": " . nf($auction->sell3) . "\n" . RES_FOOD . ": " . nf($auction->sell4) . "\n\nDies hat ihn folgende Rohstoffe gekostet:\n" . RES_METAL . ": " . $newBuyResource->metal . "\n" . RES_CRYSTAL . ": " . $newBuyResource->crystal . "\n" . RES_PLASTIC . ": " . $newBuyResource->plastic . "\n" . RES_FUEL . ": " . $newBuyResource->fuel . "\n" . RES_FOOD . ": " . $newBuyResource->food . "");
+                    $logRepository->add(LogFacility::MULTITRADE, LogSeverity::INFO, "[page user sub=edit user_id=" . $cu->id . "][B]" . $cu->nick . "[/B][/page] hat an einer Auktion von [page user sub=edit user_id=" . $auction->userId . "][B]" . $seller . "[/B][/page] gewonnen:\n\nRohstoffe:\n" . RES_METAL . ": " . nf($auction->sell0) . "\n" . RES_CRYSTAL . ": " . nf($auction->sell1) . "\n" . RES_PLASTIC . ": " . nf($auction->sell2) . "\n" . RES_FUEL . ": " . nf($auction->sell3) . "\n" . RES_FOOD . ": " . nf($auction->sell4) . "\n\nDies hat ihn folgende Rohstoffe gekostet:\n" . RES_METAL . ": " . $newBuyResource->metal . "\n" . RES_CRYSTAL . ": " . $newBuyResource->crystal . "\n" . RES_PLASTIC . ": " . $newBuyResource->plastic . "\n" . RES_FUEL . ": " . $newBuyResource->fuel . "\n" . RES_FOOD . ": " . $newBuyResource->food . "");
                 }
 
                 // Log schreiben

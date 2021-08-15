@@ -3,6 +3,8 @@
 use EtoA\Backend\BackendMessageService;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Log\LogFacility;
+use EtoA\Log\LogRepository;
+use EtoA\Log\LogSeverity;
 use EtoA\Universe\Asteroid\AsteroidRepository;
 use EtoA\Universe\EmptySpace\EmptySpaceRepository;
 use EtoA\Universe\Entity\EntityRepository;
@@ -52,6 +54,8 @@ $planetService = $app[PlanetService::class];
 
 /** @var BackendMessageService */
 $backendMessageService = $app[BackendMessageService::class];
+/** @var LogRepository $logRepository */
+$logRepository = $app[LogRepository::class];
 
 /** @var Request */
 $request = Request::createFromGlobals();
@@ -141,7 +145,7 @@ if ($id > 0) {
                         }
 
                         //Log Schreiben
-                        Log::add(LogFacility::GALAXY, \EtoA\Log\LogSeverity::INFO, $cu->nick . " wechselt den Besitzer vom Planeten: [page galaxy sub=edit id=" . $id . "][B]" . $id . "[/B][/page]
+                        $logRepository->add(LogFacility::GALAXY, LogSeverity::INFO, $cu->nick . " wechselt den Besitzer vom Planeten: [page galaxy sub=edit id=" . $id . "][B]" . $id . "[/B][/page]
 Alter Besitzer: [page user sub=edit user_id=" . $request->request->getInt('planet_user_id_old') . "][B]" . $request->request->getInt('planet_user_id_old') . "[/B][/page]
 Neuer Besitzer: [page user sub=edit user_id=" . $request->request->getInt('planet_user_id') . "][B]" . $request->request->getInt('planet_user_id') . "[/B][/page]");
 

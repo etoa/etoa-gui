@@ -6,23 +6,26 @@ namespace EtoA\User;
 
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Log\LogFacility;
+use EtoA\Log\LogRepository;
 use EtoA\Log\LogSeverity;
-use Log;
 
 class UserSessionManager
 {
     private UserSessionRepository $repository;
     private ConfigurationService $config;
     private UserRepository $userRepository;
+    private LogRepository $logRepository;
 
     public function __construct(
         UserSessionRepository $repository,
         ConfigurationService $config,
-        UserRepository $userRepository
+        UserRepository $userRepository,
+        LogRepository $logRepository
     ) {
         $this->repository = $repository;
         $this->config = $config;
         $this->userRepository = $userRepository;
+        $this->logRepository = $logRepository;
     }
 
     public function unregisterSession(string $sessionId = null, bool $logoutPressed = true): void
@@ -59,7 +62,7 @@ class UserSessionManager
 
         $count = $this->repository->removeSessionLogs($timestamp);
 
-        Log::add(LogFacility::SYSTEM, LogSeverity::INFO, "$count Usersession-Logs die älter als " . date("d.m.Y, H:i", $timestamp) . " sind wurden gelöscht.");
+        $this->logRepository->add(LogFacility::SYSTEM, LogSeverity::INFO, "$count Usersession-Logs die älter als " . date("d.m.Y, H:i", $timestamp) . " sind wurden gelöscht.");
 
         return $count;
     }

@@ -41,7 +41,7 @@ abstract class BaseLog
         $nr += $fleetLogRepository->cleanup($timestamp);
         $nr += $battleLogRepository->cleanup($timestamp);
 
-        Log::add(LogFacility::SYSTEM, LogSeverity::INFO, "$nr Logs die älter als " . date("d.m.Y H:i", $timestamp) . " sind wurden gelöscht!");
+        $logRepository->add(LogFacility::SYSTEM, LogSeverity::INFO, "$nr Logs die älter als " . date("d.m.Y H:i", $timestamp) . " sind wurden gelöscht!");
         return $nr;
     }
 }

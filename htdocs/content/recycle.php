@@ -5,6 +5,7 @@ use EtoA\Defense\DefenseDataRepository;
 use EtoA\Defense\DefenseRepository;
 use EtoA\Defense\DefenseSearch;
 use EtoA\Log\LogFacility;
+use EtoA\Log\LogRepository;
 use EtoA\Log\LogSeverity;
 use EtoA\Ship\ShipDataRepository;
 use EtoA\Ship\ShipRepository;
@@ -29,6 +30,8 @@ $shipDataRepository = $app[ShipDataRepository::class];
 $defenseRepository = $app[DefenseRepository::class];
 /** @var DefenseDataRepository $defenseDataRepository */
 $defenseDataRepository = $app[DefenseDataRepository::class];
+/** @var LogRepository $logRepository */
+$logRepository = $app[LogRepository::class];
 
 define('HELP_URL_DEF', "?page=help&site=defense");
 define('HELP_URL_SHIP', "?page=help&site=shipyard");
@@ -115,7 +118,7 @@ if ($tech_level > 0) {
             //Log schreiben
             $log = "Der User [page user sub=edit user_id=" . $cu->id . "] [B]" . $cu . "[/B] [/page] hat auf dem Planeten [page galaxy sub=edit id=" . $planet->id . "][B]" . $planet->name . "[/B][/page] folgende Schiffe mit dem r&uuml;ckgabewert von " . ($payback * 100) . "% recycelt:\n\n" . $log_ships . "\nDies hat ihm folgende Rohstoffe gegeben:\n" . RES_METAL . ": " . nf($pb[0]) . "\n" . RES_CRYSTAL . ": " . nf($pb[1]) . "\n" . RES_PLASTIC . ": " . nf($pb[2]) . "\n" . RES_FUEL . ": " . nf($pb[3]) . "\n" . RES_FOOD . ": " . nf($pb[4]) . "\n";
 
-            Log::add(LogFacility::RECYCLING, LogSeverity::INFO, $log);
+            $logRepository->add(LogFacility::RECYCLING, LogSeverity::INFO, $log);
         }
         success_msg(nf($cnt) . " Schiffe erfolgreich recycelt!");
         foreach ($recycled as $id => $num) {
@@ -174,7 +177,7 @@ if ($tech_level > 0) {
             //Log schreiben
             $log = "Der User [page user sub=edit user_id=" . $cu->id . "] [B]" . $cu . "[/B] [/page] hat auf dem Planeten [page galaxy sub=edit id=" . $planet->id . "][B]" . $planet->name . "[/B][/page] folgende Verteidigungsanlagen mit dem r&uuml;ckgabewert von " . ($payback * 100) . "% recycelt:\n\n" . $log_def . "\nDies hat ihm folgende Rohstoffe gegeben:\n" . RES_METAL . ": " . nf($pb[0]) . "\n" . RES_CRYSTAL . ": " . nf($pb[1]) . "\n" . RES_PLASTIC . ": " . nf($pb[2]) . "\n" . RES_FUEL . ": " . nf($pb[3]) . "\n" . RES_FOOD . ": " . nf($pb[4]) . "\n";
 
-            Log::add(LogFacility::RECYCLING, LogSeverity::INFO, $log);
+            $logRepository->add(LogFacility::RECYCLING, LogSeverity::INFO, $log);
         }
         success_msg("" . nf($cnt) . " Verteidigungsanlagen erfolgreich recycelt!");
         foreach ($recycled as $id => $num) {

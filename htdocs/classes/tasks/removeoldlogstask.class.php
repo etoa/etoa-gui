@@ -7,7 +7,7 @@ class RemoveOldLogsTask implements IPeriodicTask
 {
     function run()
     {
-        $nr = Log::removeOld();
+        $nr = BaseLog::removeOld();
         return "$nr alte Logs gelöscht";
     }
 
