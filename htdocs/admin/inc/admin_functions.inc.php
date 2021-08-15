@@ -5,6 +5,7 @@ use EtoA\Admin\AdminUserRepository;
 use EtoA\Building\BuildingDataRepository;
 use EtoA\Defense\DefenseDataRepository;
 use EtoA\HostCache\NetworkNameService;
+use EtoA\Log\LogFacility;
 use EtoA\Ship\ShipDataRepository;
 use EtoA\Technology\TechnologyDataRepository;
 use EtoA\User\UserRepository;
@@ -541,7 +542,7 @@ function showLogs($args = null, $limit = 0)
             echo "<tr>
             <td>" . df($arr['timestamp']) . "</td>
             <td>" . Log::$severities[$arr['severity']] . "</td>
-            <td>" . Log::$facilities[$arr['facility']] . "</td>
+            <td>" . LogFacility::FACILITIES[$arr['facility']] . "</td>
             <td>" . text2html($arr['message']);
             if ($arr['ip'] != "")
                 echo "<br/><br/><b>Host:</b> " . $arr['ip'] . " (" . $networkNameService->getHost($arr['ip']) . ")";

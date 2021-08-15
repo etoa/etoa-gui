@@ -3,6 +3,7 @@
 use EtoA\Building\BuildingDataRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Defense\DefenseDataRepository;
+use EtoA\Log\LogFacility;
 use EtoA\Log\LogRepository;
 use EtoA\Ship\ShipDataRepository;
 use EtoA\Technology\TechnologyDataRepository;
@@ -810,9 +811,8 @@ function newCommonLog()
     echo "<label for=\"logcat\">Kategorie:</label>
     <select id=\"logcat\" name=\"logcat\" onchange=\"applyFilter(0)\">
     <option value=\"0\">(Alle)</option>";
-    foreach (Log::$facilities as $k => $v) {
-        if ($k > 0)
-            echo "<option value=\"" . $k . "\">" . $v . "</option>";
+    foreach (LogFacility::FACILITIES as $k => $v) {
+        echo "<option value=\"" . $k . "\">" . $v . "</option>";
     }
     echo "</select> &nbsp; ";
 

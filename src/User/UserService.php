@@ -17,6 +17,7 @@ use EtoA\Defense\DefenseRepository;
 use EtoA\Fleet\FleetRepository;
 use EtoA\Fleet\FleetSearchParameters;
 use EtoA\Help\TicketSystem\TicketRepository;
+use EtoA\Log\LogFacility;
 use EtoA\Market\MarketAuctionRepository;
 use EtoA\Market\MarketResourceRepository;
 use EtoA\Market\MarketShipRepository;
@@ -286,11 +287,11 @@ class UserService
 
         //Log schreiben
         if ($self) {
-            Log::add(Log::F_USER, Log::INFO, "Der Benutzer " . $user->nick . " hat sich selbst gelöscht!\nDie Daten des Benutzers wurden nach " . $xmlfile . " exportiert.");
+            Log::add(LogFacility::USER, Log::INFO, "Der Benutzer " . $user->nick . " hat sich selbst gelöscht!\nDie Daten des Benutzers wurden nach " . $xmlfile . " exportiert.");
         } elseif ($from != "") {
-            Log::add(Log::F_USER, Log::INFO, "Der Benutzer " . $user->nick . " wurde von " . $from . " gelöscht!\nDie Daten des Benutzers wurden nach " . $xmlfile . " exportiert.");
+            Log::add(LogFacility::USER, Log::INFO, "Der Benutzer " . $user->nick . " wurde von " . $from . " gelöscht!\nDie Daten des Benutzers wurden nach " . $xmlfile . " exportiert.");
         } else {
-            Log::add(Log::F_USER, Log::INFO, "Der Benutzer " . $user->nick . " wurde gelöscht!\nDie Daten des Benutzers wurden nach " . $xmlfile . " exportiert.");
+            Log::add(LogFacility::USER, Log::INFO, "Der Benutzer " . $user->nick . " wurde gelöscht!\nDie Daten des Benutzers wurden nach " . $xmlfile . " exportiert.");
         }
 
         $text = "Hallo " . $user->nick . "
@@ -336,7 +337,7 @@ die Spielleitung";
         }
 
         Log::add(
-            Log::F_SYSTEM,
+            LogFacility::SYSTEM,
             Log::INFO,
             count($inactiveUsers) . " inaktive User die seit " . date("d.m.Y H:i", $onlineTime) . " nicht mehr online waren oder seit " . date("d.m.Y H:i", $registerTime) . " keine Punkte haben wurden " . ($manual ? 'manuell' : '') . " gelöscht!"
         );
@@ -385,7 +386,7 @@ die Spielleitung";
         }
 
         Log::add(
-            Log::F_SYSTEM,
+            LogFacility::SYSTEM,
             Log::INFO,
             count($deletedUsers) . ' als gelöscht markierte User wurden ' . ($manual ? 'manuell' : '') . ' gelöscht!'
         );
@@ -426,7 +427,7 @@ die Spielleitung";
 
         $this->userRepository->updatePassword($userId, $newPassword1);
 
-        Log::add(Log::F_USER, Log::INFO, "Der Spieler [b]" . $user->nick . "[/b] &auml;ndert sein Passwort!");
+        Log::add(LogFacility::USER, Log::INFO, "Der Spieler [b]" . $user->nick . "[/b] &auml;ndert sein Passwort!");
 
         $this->mailSenderService->send(
             "Passwortänderung",
@@ -451,6 +452,6 @@ die Spielleitung";
 
         $this->userRepository->updatePassword($user->id, $pw);
 
-        Log::add(3, Log::INFO, 'Der Benutzer ' . $_POST['user_nick'] . ' hat ein neues Passwort per E-Mail angefordert!');
+        Log::add(LogFacility::USER, Log::INFO, 'Der Benutzer ' . $_POST['user_nick'] . ' hat ein neues Passwort per E-Mail angefordert!');
     }
 }

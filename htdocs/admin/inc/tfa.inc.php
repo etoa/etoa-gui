@@ -1,6 +1,7 @@
 <?php
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Log\LogFacility;
 
 /** @var ConfigurationService */
 $config = $app[ConfigurationService::class];
@@ -12,7 +13,7 @@ if (isset($_POST['tfa_activate'])) {
         $cu->tfaSecret = $_SESSION['tfa_activate_secret'];
         $cu->save();
         unset($_SESSION['tfa_activate_secret']);
-        Log::add(8, Log::INFO, $cu->nick . ' aktiviert Zwei-Faktor-Authentifizierung');
+        Log::add(LogFacility::ADMIN, Log::INFO, $cu->nick . ' aktiviert Zwei-Faktor-Authentifizierung');
         forward('?myprofile');
     }
 
@@ -25,7 +26,7 @@ if (isset($_POST['tfa_disable'])) {
         $cu->tfaSecret = '';
         $cu->save();
         unset($_SESSION['tfa_activate_secret']);
-        Log::add(8, Log::INFO, $cu->nick . ' deaktiviert Zwei-Faktor-Authentifizierung');
+        Log::add(LogFacility::ADMIN, Log::INFO, $cu->nick . ' deaktiviert Zwei-Faktor-Authentifizierung');
         forward('?myprofile');
     }
 

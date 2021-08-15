@@ -6,6 +6,7 @@ use EtoA\Alliance\AllianceMemberCosts;
 use EtoA\Alliance\AllianceRepository;
 use EtoA\Alliance\AllianceRights;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Log\LogFacility;
 use EtoA\User\UserRepository;
 use EtoA\User\UserService;
 
@@ -54,7 +55,7 @@ if (Alliance::checkActionRights(AllianceRights::APPLICATIONS)) {
                     /** @var AllianceHistoryRepository $allianceHistoryRepository */
                     $allianceHistoryRepository = $app[AllianceHistoryRepository::class];
                     $allianceHistoryRepository->addEntry((int) $cu->allianceId, "Die Bewerbung von [b]" . $nick . "[/b] wurde akzeptiert!");
-                    Log::add(5, Log::INFO, "Der Spieler [b]" . $nick . "[/b] tritt der Allianz [b]" . $alliance->nameWithTag . "[/b] bei!");
+                    Log::add(LogFacility::ALLIANCE, Log::INFO, "Der Spieler [b]" . $nick . "[/b] tritt der Allianz [b]" . $alliance->nameWithTag . "[/b] bei!");
 
                     /** @var UserService */
                     $userService = $app[UserService::class];

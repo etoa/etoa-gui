@@ -1,5 +1,6 @@
 <?PHP
 
+use EtoA\Log\LogFacility;
 use EtoA\Support\DB\DatabaseManagerRepository;
 use Pimple\Container;
 
@@ -18,7 +19,7 @@ class OptimizeTablesTask implements IPeriodicTask
     function run()
     {
         $result = $this->databaseManager->optimizeTables();
-        Log::add(Log::F_SYSTEM, Log::INFO, count($result) . " Tabellen wurden optimiert!");
+        Log::add(LogFacility::SYSTEM, Log::INFO, count($result) . " Tabellen wurden optimiert!");
         return "Tabellen optimiert";
     }
 

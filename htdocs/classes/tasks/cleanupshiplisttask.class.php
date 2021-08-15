@@ -1,5 +1,6 @@
 <?PHP
 
+use EtoA\Log\LogFacility;
 use EtoA\Ship\ShipRepository;
 use Pimple\Container;
 
@@ -18,7 +19,7 @@ class CleanupShiplistTask implements IPeriodicTask
     function run()
     {
         $nr = $this->shipRepository->cleanUp();
-        Log::add(Log::F_SYSTEM, Log::INFO, "$nr leere Schiffsdatensätze wurden gelöscht!");
+        Log::add(LogFacility::SYSTEM, Log::INFO, "$nr leere Schiffsdatensätze wurden gelöscht!");
 
         return "$nr alte Schiffseinträge gelöscht";
     }

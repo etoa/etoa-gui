@@ -6,6 +6,7 @@
 use EtoA\Alliance\AllianceBuildingRepository;
 use EtoA\Alliance\AllianceRepository;
 use EtoA\Alliance\AllianceRights;
+use EtoA\Log\LogFacility;
 
 /** @var AllianceBuildingRepository $allianceBuildingRepository */
 $allianceBuildingRepository = $app[AllianceBuildingRepository::class];
@@ -34,7 +35,7 @@ if ($allianceFleetControlLevel >= ALLIANCE_FLEET_SHOW_DETAIL && $rights) {
             if (isset($_POST['cancel']) != "" && checker_verify()) {
                 if ($fd->cancelFlight()) {
                     success_msg("Flug erfolgreich abgebrochen!");
-                    Log::add(13, Log::INFO, "Der Spieler [b]" . $cu->nick . "[/b] bricht den Flug seiner Flotte [b]" . $fleet_id . "[/b] ab");
+                    Log::add(LogFacility::FLEETACTION, Log::INFO, "Der Spieler [b]" . $cu->nick . "[/b] bricht den Flug seiner Flotte [b]" . $fleet_id . "[/b] ab");
                 } else {
                     error_msg("Flug konnte nicht abgebrochen werden. " . $fd->getError());
                 }
@@ -44,7 +45,7 @@ if ($allianceFleetControlLevel >= ALLIANCE_FLEET_SHOW_DETAIL && $rights) {
             if (isset($_POST['cancel_alliance']) != "" && checker_verify()) {
                 if ($fd->cancelFlight(true)) {
                     success_msg("Flug erfolgreich abgebrochen!");
-                    Log::add(13, Log::INFO, "Der Spieler [b]" . $cu->nick . "[/b] bricht den ganzen Allianzflug seiner Flotte [b]" . $fleet_id . "[/b] ab");
+                    Log::add(LogFacility::FLEETACTION, Log::INFO, "Der Spieler [b]" . $cu->nick . "[/b] bricht den ganzen Allianzflug seiner Flotte [b]" . $fleet_id . "[/b] ab");
                 } else {
                     error_msg("Flug konnte nicht abgebrochen werden. " . $fd->getError());
                 }

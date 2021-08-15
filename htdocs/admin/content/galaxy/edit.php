@@ -2,6 +2,7 @@
 
 use EtoA\Backend\BackendMessageService;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Log\LogFacility;
 use EtoA\Universe\Asteroid\AsteroidRepository;
 use EtoA\Universe\EmptySpace\EmptySpaceRepository;
 use EtoA\Universe\Entity\EntityRepository;
@@ -139,7 +140,7 @@ if ($id > 0) {
                     }
 
                     //Log Schreiben
-                    Log::add(Log::F_GALAXY, Log::INFO, $cu->nick . " wechselt den Besitzer vom Planeten: [page galaxy sub=edit id=" . $id . "][B]" . $id . "[/B][/page]
+                    Log::add(LogFacility::GALAXY, Log::INFO, $cu->nick . " wechselt den Besitzer vom Planeten: [page galaxy sub=edit id=" . $id . "][B]" . $id . "[/B][/page]
 Alter Besitzer: [page user sub=edit user_id=" . $request->request->getInt('planet_user_id_old') . "][B]" . $request->request->getInt('planet_user_id_old') . "[/B][/page]
 Neuer Besitzer: [page user sub=edit user_id=" . $request->request->getInt('planet_user_id') . "][B]" . $request->request->getInt('planet_user_id') . "[/B][/page]");
 

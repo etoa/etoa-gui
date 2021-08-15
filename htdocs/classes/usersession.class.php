@@ -1,5 +1,6 @@
 <?php
 
+use EtoA\Log\LogFacility;
 use EtoA\User\UserLoginFailureRepository;
 use EtoA\User\UserRepository;
 use EtoA\User\UserSessionManager;
@@ -163,7 +164,7 @@ class UserSession extends Session
                 $text .= "GET: " . var_export($_GET, true) . "\n";
             $text .= "Agent: " . $_SERVER['HTTP_USER_AGENT'] . "\n";
             $text .= "Referer: " . $_SERVER['HTTP_REFERER'] . "\n";
-            Log::add(Log::F_ILLEGALACTION, Log::WARNING, $text);
+            Log::add(LogFacility::ILLEGALACTION, Log::WARNING, $text);
         }
 
         return false;

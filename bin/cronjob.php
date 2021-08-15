@@ -2,6 +2,7 @@
 <?PHP
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Log\LogFacility;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
@@ -78,7 +79,7 @@ try {
             $severity = Log::DEBUG;
         }
         $text = "Periodische Tasks (".date("d.m.Y H:i:s",$time)."):\n\n".$log;
-        Log::add(Log::F_UPDATES, $severity, $text);
+        Log::add(LogFacility::UPDATES, $severity, $text);
 
         if ($verbose) {
             echo $text;

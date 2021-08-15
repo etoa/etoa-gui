@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace EtoA\Message;
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Log\LogFacility;
 use Log;
 
 class MessageService
@@ -31,7 +32,7 @@ class MessageService
             $ids = $this->repository->findIdsOfReadNotArchivedOlderThan($timestamp);
             $count += $this->repository->removeBulk($ids);
 
-            Log::add(Log::F_SYSTEM, Log::INFO, "Unarchivierte Nachrichten die älter als " . date("d.m.Y H:i", $timestamp) . " sind wurden gelöscht!");
+            Log::add(LogFacility::SYSTEM, Log::INFO, "Unarchivierte Nachrichten die älter als " . date("d.m.Y H:i", $timestamp) . " sind wurden gelöscht!");
         }
 
         // Deleted
@@ -42,7 +43,7 @@ class MessageService
         $ids = $this->repository->findIdsOfDeletedOlderThan($timestamp);
         $count += $this->repository->removeBulk($ids);
 
-        Log::add(Log::F_SYSTEM, Log::INFO, "Unarchivierte Nachrichten die älter als " . date("d.m.Y H:i", $timestamp) . " sind wurden gelöscht!");
+        Log::add(LogFacility::SYSTEM, Log::INFO, "Unarchivierte Nachrichten die älter als " . date("d.m.Y H:i", $timestamp) . " sind wurden gelöscht!");
 
         return $count;
     }

@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Log\LogFacility;
 use EtoA\Support\Mail\MailSenderService;
 use EtoA\User\UserService;
 
@@ -52,7 +53,7 @@ if (($_POST['register_submit'] ?? false) && $config->getBoolean('enable_register
             $_POST['register_user_nick'],
             $_POST['register_user_password']
         );
-        Log::add(Log::F_USER, Log::INFO, "Der Benutzer " . $newUser->nick . " (" . $newUser->name . ", " . $newUser->email . ") hat sich registriert!");
+        Log::add(LogFacility::USER, Log::INFO, "Der Benutzer " . $newUser->nick . " (" . $newUser->name . ", " . $newUser->email . ") hat sich registriert!");
 
         $verificationRequired = filled($newUser->verificationKey);
         $verificationUrl = null;

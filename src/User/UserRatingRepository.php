@@ -7,6 +7,7 @@ namespace EtoA\User;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Query\QueryBuilder;
 use EtoA\Core\AbstractRepository;
+use EtoA\Log\LogFacility;
 use Log;
 
 class UserRatingRepository extends AbstractRepository
@@ -87,7 +88,7 @@ class UserRatingRepository extends AbstractRepository
                 ->execute();
 
             if ($reason != "") {
-                Log::add(17, Log::INFO, "KP: Der Spieler " . $userId . " erhält " . $rating . " Kampfpunkte. Grund: " . $reason);
+                Log::add(LogFacility::RANKING, Log::INFO, "KP: Der Spieler " . $userId . " erhält " . $rating . " Kampfpunkte. Grund: " . $reason);
             }
         }
     }
@@ -110,7 +111,7 @@ class UserRatingRepository extends AbstractRepository
         $qry->execute();
 
         if ($reason != "") {
-            Log::add(17, Log::INFO, "HP: Der Spieler " . $userId . " erhält " . $rating . " Handelspunkte. Grund: " . $reason);
+            Log::add(LogFacility::RANKING, Log::INFO, "HP: Der Spieler " . $userId . " erhält " . $rating . " Handelspunkte. Grund: " . $reason);
         }
     }
 
@@ -127,7 +128,7 @@ class UserRatingRepository extends AbstractRepository
             ->execute();
 
         if ($reason != "") {
-            Log::add(17, Log::INFO, "DP: Der Spieler " . $userId . " erhält " . $rating . " Diplomatiepunkte. Grund: " . $reason);
+            Log::add(LogFacility::RANKING, Log::INFO, "DP: Der Spieler " . $userId . " erhält " . $rating . " Diplomatiepunkte. Grund: " . $reason);
         }
     }
 

@@ -1,5 +1,6 @@
 <?PHP
 
+use EtoA\Log\LogFacility;
 use EtoA\Support\DB\DatabaseManagerRepository;
 use Pimple\Container;
 
@@ -18,7 +19,7 @@ class AnalyzeTablesTask implements IPeriodicTask
     function run()
     {
         $result = $this->databaseManager->analyzeTables();
-        Log::add(Log::F_SYSTEM, Log::INFO, count($result) . " Tabellen wurden analysiert!");
+        Log::add(LogFacility::SYSTEM, Log::INFO, count($result) . " Tabellen wurden analysiert!");
         return "Tabellen analysiert";
     }
 

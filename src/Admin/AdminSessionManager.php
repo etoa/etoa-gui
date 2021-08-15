@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace EtoA\Admin;
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Log\LogFacility;
 use Log;
 
 class AdminSessionManager
@@ -33,7 +34,7 @@ class AdminSessionManager
 
         $count = $this->repository->removeSessionLogs($timestamp);
 
-        Log::add(Log::F_SYSTEM, Log::INFO, "$count Admin-Session-Logs die älter als " . date("d.m.Y, H:i", $timestamp) . " sind wurden gelöscht.");
+        Log::add(LogFacility::SYSTEM, Log::INFO, "$count Admin-Session-Logs die älter als " . date("d.m.Y, H:i", $timestamp) . " sind wurden gelöscht.");
 
         return $count;
     }

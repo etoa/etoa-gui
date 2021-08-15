@@ -1,6 +1,7 @@
 <?php
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Log\LogFacility;
 use EtoA\Message\ReportRepository;
 use EtoA\Message\ReportTypes;
 
@@ -232,7 +233,7 @@ abstract class Report
                 : time() - (24 * 3600 * $config->getInt('reports_threshold_days'));
 
             $nr = $reportRepository->removeUnarchivedread($timestamp);
-            Log::add("4", Log::INFO, "Unarchivierte Berichte die älter als " . date("d.m.Y H:i", $timestamp) . " sind wurden gelöscht!");
+            Log::add(LogFacility::SYSTEM, Log::INFO, "Unarchivierte Berichte die älter als " . date("d.m.Y H:i", $timestamp) . " sind wurden gelöscht!");
         }
 
         // Deleted
@@ -241,7 +242,7 @@ abstract class Report
             : time() - (24 * 3600 * $config->param1Int('reports_threshold_days'));
 
         $nr += $reportRepository->removeDeleted($timestamp);
-        Log::add("4", Log::INFO, "Unarchivierte Berichte die älter als " . date("d.m.Y H:i", $timestamp) . " sind wurden gelöscht!");
+        Log::add(LogFacility::SYSTEM, Log::INFO, "Unarchivierte Berichte die älter als " . date("d.m.Y H:i", $timestamp) . " sind wurden gelöscht!");
 
         return $nr;
     }

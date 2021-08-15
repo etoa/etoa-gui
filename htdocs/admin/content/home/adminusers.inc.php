@@ -3,6 +3,7 @@
 use EtoA\Admin\AdminRoleManager;
 use EtoA\Admin\AdminUser;
 use EtoA\Admin\AdminUserRepository;
+use EtoA\Log\LogFacility;
 use Symfony\Component\HttpFoundation\Request;
 use Twig\Environment;
 
@@ -181,7 +182,7 @@ function listUsers(
             $adminUserRepo->save($admin);
 
             $twig->addGlobal('successMessage', "Gespeichert!");
-            Log::add(8, Log::INFO, "Der Administrator " . $cu->nick . " erstellt einen neuen Administrator: " . $admin->nick . "(" . $admin->id . ").");
+            Log::add(LogFacility::ADMIN, Log::INFO, "Der Administrator " . $cu->nick . " erstellt einen neuen Administrator: " . $admin->nick . "(" . $admin->id . ").");
 
             if ($request->request->get('user_password') != "") {
                 $password = $request->request->get('user_password');
@@ -201,7 +202,7 @@ function listUsers(
 
             if ($request->request->get('user_password') != "") {
                 $adminUserRepo->setPassword($adminUser, $request->request->get('user_password'));
-                Log::add(8, Log::INFO, "Der Administrator " . $cu->nick . " ändert das Passwort des Administrators " . $adminUser->nick . "(" . $adminUser->id . ").");
+                Log::add(LogFacility::ADMIN, Log::INFO, "Der Administrator " . $cu->nick . " ändert das Passwort des Administrators " . $adminUser->nick . "(" . $adminUser->id . ").");
             }
 
             $adminUser->nick = $request->request->get('user_nick');
@@ -209,7 +210,7 @@ function listUsers(
             $adminUser->email = $request->request->get('user_email');
             if ($request->request->has('tfa_remove')) {
                 $adminUser->tfaSecret = "";
-                Log::add(8, Log::INFO, "Der Administrator " . $cu->nick . " deaktiviert die Zwei-Faktor-Authentifizierung des Administrators " . $adminUser->nick . "(" . $adminUser->id . ").");
+                Log::add(LogFacility::ADMIN, Log::INFO, "Der Administrator " . $cu->nick . " deaktiviert die Zwei-Faktor-Authentifizierung des Administrators " . $adminUser->nick . "(" . $adminUser->id . ").");
             }
             $adminUser->locked = $request->request->getBoolean('user_locked');
             $adminUser->isContact = $request->request->getBoolean('is_contact');
@@ -218,7 +219,7 @@ function listUsers(
             $adminUserRepo->save($adminUser);
 
             $twig->addGlobal('successMessage', "Gespeichert!");
-            Log::add(8, Log::INFO, "Der Administrator " . $cu->nick . " ändert die Daten des Administrators " . $adminUser->nick . " (ID: " . $adminUser->id . ").");
+            Log::add(LogFacility::ADMIN, Log::INFO, "Der Administrator " . $cu->nick . " ändert die Daten des Administrators " . $adminUser->nick . " (ID: " . $adminUser->id . ").");
         } else {
             echo "Nick nicht angegeben!<br/><br/>";
         }
@@ -227,7 +228,7 @@ function listUsers(
     if ($request->query->has('del') && $request->query->getInt('del') > 0 && $request->query->getInt('del') != $cu->id) {
         $adminUser = $adminUserRepo->find($request->query->getInt('del'));
         if ($adminUser != null && $adminUserRepo->remove($adminUser)) {
-            Log::add(8, Log::INFO, "Der Administrator " . $cu->nick . " löscht den Administrator " . $adminUser->nick . " (ID: " . $adminUser->id . ").");
+            Log::add(LogFacility::ADMIN, Log::INFO, "Der Administrator " . $cu->nick . " löscht den Administrator " . $adminUser->nick . " (ID: " . $adminUser->id . ").");
             echo "Benutzer gelöscht!<br/><br/>";
         }
     }

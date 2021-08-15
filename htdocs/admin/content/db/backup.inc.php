@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Log\LogFacility;
 use EtoA\Support\DB\DatabaseBackupService;
 
 /** @var ConfigurationService */
@@ -29,7 +30,7 @@ if (isset($_POST['create'])) {
         $mtx->release();
 
         // Write log
-        Log::add(Log::F_SYSTEM, Log::INFO, "[b]Datenbank-Backup[/b]\n" . $log);
+        Log::add(LogFacility::SYSTEM, Log::INFO, "[b]Datenbank-Backup[/b]\n" . $log);
 
         // Show message
         $successMessage = $log;
@@ -38,7 +39,7 @@ if (isset($_POST['create'])) {
         $mtx->release();
 
         // Write log
-        Log::add(Log::F_SYSTEM, Log::ERROR, "[b]Datenbank-Backup[/b]\nFehler: " . $e->getMessage());
+        Log::add(LogFacility::SYSTEM, Log::ERROR, "[b]Datenbank-Backup[/b]\nFehler: " . $e->getMessage());
 
         // Show message
         $errorMessage = 'Beim Ausführen des Backup-Befehls trat ein Fehler auf: ' . $e->getMessage();
@@ -71,7 +72,7 @@ elseif (isset($_GET['action']) && $_GET['action'] === "backuprestore" && $_GET['
             $mtx->release();
 
             // Write log
-            Log::add(Log::F_SYSTEM, Log::INFO, "[b]Datenbank-Restore[/b]\n" . $log);
+            Log::add(LogFacility::SYSTEM, Log::INFO, "[b]Datenbank-Restore[/b]\n" . $log);
 
             // Show message
             $successMessage = 'Das Backup ' . $restorePoint . ' wurde wiederhergestellt und es wurde eine Sicherungskopie der vorherigen Daten angelegt!';
@@ -80,7 +81,7 @@ elseif (isset($_GET['action']) && $_GET['action'] === "backuprestore" && $_GET['
             $mtx->release();
 
             // Write log
-            Log::add(Log::F_SYSTEM, Log::ERROR, "[b]Datenbank-Restore[/b]\nDie Datenbank konnte nicht vom Backup [b]" . $restorePoint . "[/b] aus dem Verzeichnis [b]" . $dir . "[/b] wiederhergestellt werden: " . $e->getMessage());
+            Log::add(LogFacility::SYSTEM, Log::ERROR, "[b]Datenbank-Restore[/b]\nDie Datenbank konnte nicht vom Backup [b]" . $restorePoint . "[/b] aus dem Verzeichnis [b]" . $dir . "[/b] wiederhergestellt werden: " . $e->getMessage());
 
             // Show message
             $errorMessage = 'Beim Ausf&uuml;hren des Restore-Befehls trat ein Fehler auf! ' . $e->getMessage();

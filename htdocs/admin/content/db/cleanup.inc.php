@@ -8,6 +8,7 @@ use EtoA\Defense\DefenseQueueRepository;
 use EtoA\Defense\DefenseRepository;
 use EtoA\Help\TicketSystem\TicketRepository;
 use EtoA\Help\TicketSystem\TicketService;
+use EtoA\Log\LogFacility;
 use EtoA\Log\LogRepository;
 use EtoA\Message\MessageRepository;
 use EtoA\Message\MessageService;
@@ -246,11 +247,11 @@ function runCleanup(
     if ((isset($_POST['cl_objlist']) && $_POST['cl_objlist'] == 1) || $all) {
         $nr = $shipRepository->cleanUp();
         echo $nr . " leere Schiffdaten wurden gelöscht!<br/>";
-        Log::add(Log::F_SYSTEM, Log::INFO, "$nr leere Schiffsdatensätze wurden manuell gelöscht!");
+        Log::add(LogFacility::SYSTEM, Log::INFO, "$nr leere Schiffsdatensätze wurden manuell gelöscht!");
 
         $nr = $defenseRepository->cleanUp();
         echo $nr . " leere Verteidigungsdaten wurden gelöscht!<br/>";
-        Log::add(Log::F_SYSTEM, Log::INFO, "$nr leere Verteidigungsdatensätze wurden manuell gelöscht!");
+        Log::add(LogFacility::SYSTEM, Log::INFO, "$nr leere Verteidigungsdatensätze wurden manuell gelöscht!");
 
         /** @var BuildingRepository $buildingRepository */
         $buildingRepository = $app[BuildingRepository::class];

@@ -4,6 +4,7 @@ use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Log\BattleLogRepository;
 use EtoA\Log\FleetLogRepository;
 use EtoA\Log\GameLogRepository;
+use EtoA\Log\LogFacility;
 use EtoA\Log\LogRepository;
 
 abstract class BaseLog
@@ -64,7 +65,7 @@ abstract class BaseLog
         $nr += $fleetLogRepository->cleanup($timestamp);
         $nr += $battleLogRepository->cleanup($timestamp);
 
-        Log::add(Log::F_SYSTEM, Log::INFO, "$nr Logs die älter als " . date("d.m.Y H:i", $timestamp) . " sind wurden gelöscht!");
+        Log::add(LogFacility::SYSTEM, Log::INFO, "$nr Logs die älter als " . date("d.m.Y H:i", $timestamp) . " sind wurden gelöscht!");
         return $nr;
     }
 }
