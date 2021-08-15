@@ -457,6 +457,9 @@ class FleetLaunch
     {
         global $app;
 
+        /** @var FleetRepository $fleetRepository */
+        $fleetRepository = $app[FleetRepository::class];
+
         if ($this->actionOk) {
             if ($this->checkHaven()) {
                 $time = time();
@@ -614,35 +617,9 @@ class FleetLaunch
                                 " . $sda['sBonusDeactivade'] . "
                             );");
                         } elseif ($sda['fake'] !== false) {
-                            dbquery("INSERT INTO
-                                fleet_ships
-                                (
-                                    fs_fleet_id,
-                                    fs_ship_id,
-                                    fs_ship_cnt,
-                                    fs_ship_faked
-                                )
-                                VALUES
-                                (
-                                    " . $fid . ",
-                                    " . $sid . ",
-                                    " . $sda['count'] . ",
-                                    " . $this->fakeId . "
-                                );");
+                            $fleetRepository->addShipsToFleet($fid, $sid, $sda['count'], $this->fakeId);
                         } else {
-                            dbquery("INSERT INTO
-                                fleet_ships
-                                (
-                                    fs_fleet_id,
-                                    fs_ship_id,
-                                    fs_ship_cnt
-                                )
-                                VALUES
-                                (
-                                    " . $fid . ",
-                                    " . $sid . ",
-                                    " . $sda['count'] . "
-                                );");
+                            $fleetRepository->addShipsToFleet($fid, $sid, $sda['count']);
                         }
                     }
 

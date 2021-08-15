@@ -298,7 +298,7 @@ class FleetRepository extends AbstractRepository
         return $data !== false ? new FleetShip($data) : null;
     }
 
-    public function addShipsToFleet(int $fleetId, int $shipId, int $count): void
+    public function addShipsToFleet(int $fleetId, int $shipId, int $count, int $fakeId = 0): void
     {
         $entry = $this->findShipsInFleet($fleetId, $shipId);
         if ($entry !== null) {
@@ -323,11 +323,13 @@ class FleetRepository extends AbstractRepository
                 'fs_fleet_id' => ':fleetId',
                 'fs_ship_id' => ':shipId',
                 'fs_ship_cnt' => ':count',
+                'fs_ship_faked' => ':fakeId',
             ])
             ->setParameters([
                 'fleetId' => $fleetId,
                 'shipId' => $shipId,
                 'count' => $count,
+                'fakeId' => $fakeId,
             ])
             ->execute();
     }

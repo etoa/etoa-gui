@@ -46,6 +46,17 @@ class TechnologyRepository extends AbstractRepository
         return $data !== false ? new TechnologyListItem($data) : null;
     }
 
+    public function searchEntry(TechnologyListItemSearch $search): ?TechnologyListItem
+    {
+        $data = $this->applySearchSortLimit($this->createQueryBuilder(), $search, null, 1)
+            ->select('*')
+            ->from('techlist')
+            ->execute()
+            ->fetchAssociative();
+
+        return $data !== false ? new TechnologyListItem($data) : null;
+    }
+
     public function save(TechnologyListItem $item): void
     {
         $this->createQueryBuilder()

@@ -38,7 +38,7 @@ $planetTypeRepository = $app[PlanetTypeRepository::class];
 /** @var EntityRepository $entityRepository */
 $entityRepository = $app[EntityRepository::class];
 
-/** @var StarRepository */
+/** @var StarRepository $starRepository */
 $starRepository = $app[StarRepository::class];
 
 /** @var UserSetupService $userSetupService */

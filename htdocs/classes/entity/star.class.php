@@ -193,27 +193,6 @@ class Star extends Entity
         return $this->cellId;
     }
 
-    /**
-     * Name star
-     */
-    public function setNewName($name, $strict = 1)
-    {
-        $name = stripBBCode($name);
-        if ($strict == 0 || !$this->named) {
-            dbquery("
-				UPDATE
-					stars
-				SET
-					name='" . mysql_real_escape_string($name) . "'
-				WHERE
-					id=" . $this->id . "
-				");
-            $this->name = $name;
-            $this->named = true;
-            return true;
-        }
-        return false;
-    }
     public function getFleetTargetForwarder()
     {
         return null;

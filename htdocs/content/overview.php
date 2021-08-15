@@ -1,18 +1,47 @@
 <?PHP
 
 use EtoA\Alliance\AllianceNewsRepository;
+use EtoA\Building\BuildingDataRepository;
+use EtoA\Building\BuildingRepository;
+use EtoA\Defense\DefenseDataRepository;
+use EtoA\Defense\DefenseQueueRepository;
+use EtoA\Defense\DefenseQueueSearch;
 use EtoA\Fleet\FleetRepository;
 use EtoA\Fleet\FleetSearch;
+use EtoA\Ship\ShipDataRepository;
+use EtoA\Ship\ShipQueueRepository;
+use EtoA\Ship\ShipQueueSearch;
+use EtoA\Technology\TechnologyDataRepository;
+use EtoA\Technology\TechnologyListItemSearch;
+use EtoA\Technology\TechnologyRepository;
 use EtoA\Text\TextRepository;
 
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Support\StringUtils;
+use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\User\UserLoginFailureRepository;
 use EtoA\User\UserPropertiesRepository;
 
 /** @var ConfigurationService */
 $config = $app[ConfigurationService::class];
-
+/** @var PlanetRepository $planetRepository */
+$planetRepository = $app[PlanetRepository::class];
+/** @var TechnologyDataRepository $technologyDataRepository */
+$technologyDataRepository = $app[TechnologyDataRepository::class];
+/** @var TechnologyRepository $technologyRepository */
+$technologyRepository = $app[TechnologyRepository::class];
+/** @var BuildingDataRepository $buildingDataRepository */
+$buildingDataRepository = $app[BuildingDataRepository::class];
+/** @var BuildingRepository $buildingRepository */
+$buildingRepository = $app[BuildingRepository::class];
+/** @var ShipDataRepository $shipDataRepository */
+$shipDataRepository = $app[ShipDataRepository::class];
+/** @var ShipQueueRepository $shipQueueRepository */
+$shipQueueRepository = $app[ShipQueueRepository::class];
+/** @var DefenseDataRepository $defenseDataRepository */
+$defenseDataRepository = $app[DefenseDataRepository::class];
+/** @var DefenseQueueRepository $defenseQueRepository */
+$defenseQueRepository = $app[DefenseQueueRepository::class];
 /** @var UserPropertiesRepository $userPropertiesRepository */
 $userPropertiesRepository = $app[UserPropertiesRepository::class];
 
@@ -127,36 +156,21 @@ else {
     echo "<td>Keine fremden Flotten</td>";
 }
 
-
-
 //
 // Technologien
 //
-
+$technologyNames = $technologyDataRepository->getTechnologyNames(true);
 //Lädt forschende Tech
-$bres = dbquery("
-      SELECT
-          technologies.tech_name,
-          techlist.techlist_build_end_time,
-          techlist.techlist_entity_id
-      FROM
-          techlist
-          INNER JOIN
-          technologies
-          ON technologies.tech_id=techlist.techlist_tech_id
-          AND techlist.techlist_user_id='" . $cu->id . "'
-          AND techlist.techlist_build_type>'0'
-          AND techlist.techlist_tech_id != '23';");
-if (mysql_num_rows($bres) > 0) {
-    $barr = mysql_fetch_array($bres);
-    echo "<td><a href=\"?page=research&amp;change_entity=" . $barr['techlist_entity_id'] . "\" id=\"tech_counter\">";
+$technologyInProgress = $technologyRepository->searchEntry(TechnologyListItemSearch::create()->userId($cu->getId())->notTechnologyId(GEN_TECH_ID)->underConstruction());
+if ($technologyInProgress !== null) {
+    echo "<td><a href=\"?page=research&amp;change_entity=" . $technologyInProgress->entityId . "\" id=\"tech_counter\">";
     //Forschung ist fertig
-    if ($barr['techlist_build_end_time'] - time() <= 0) {
-        echo "" . $barr['tech_name'] . " Fertig";
+    if ($technologyInProgress->endTime - time() <= 0) {
+        echo "" . $technologyNames[$technologyInProgress->technologyId] . " Fertig";
     }
     //Noch am forschen
     else {
-        echo startTime($barr['techlist_build_end_time'] - time(), 'tech_counter', 0, '' . $barr['tech_name'] . ' TIME');
+        echo startTime($technologyInProgress->endTime - time(), 'tech_counter', 0, '' . $technologyNames[$technologyInProgress->technologyId] . ' TIME');
     }
 
     echo "</a></td></tr>";
@@ -167,20 +181,8 @@ if (mysql_num_rows($bres) > 0) {
 //
 //Gentech
 //
-$bres = dbquery("
-      SELECT
-          technologies.tech_name,
-          techlist.techlist_build_end_time,
-          techlist.techlist_entity_id
-      FROM
-          techlist
-          INNER JOIN
-          technologies
-          ON technologies.tech_id=techlist.techlist_tech_id
-          AND techlist.techlist_user_id='" . $cu->id . "'
-          AND techlist.techlist_build_type>'0'
-          AND techlist.techlist_tech_id= '23';");
-if (mysql_num_rows($bres) > 0) {
+$genTechnologyInProgress = $technologyRepository->searchEntry(TechnologyListItemSearch::create()->userId($cu->getId())->technologyId(GEN_TECH_ID)->underConstruction());
+if ($genTechnologyInProgress !== null) {
     echo "
         <tr >
           <th colspan =3></th>
@@ -188,16 +190,15 @@ if (mysql_num_rows($bres) > 0) {
                </tr>
               <tr>";
 
-    $garr = mysql_fetch_array($bres);
     echo "<td colspan =3>";
-    echo "<td><a href=\"?page=research&amp;change_entity=" . $garr['techlist_entity_id'] . "\" id=\"tech_gen\">";
+    echo "<td><a href=\"?page=research&amp;change_entity=" . $genTechnologyInProgress->entityId . "\" id=\"tech_gen\">";
     //Forschung ist fertig
-    if ($garr['techlist_build_end_time'] - time() <= 0) {
-        echo "" . $garr['tech_name'] . " Fertig";
+    if ($genTechnologyInProgress->endTime - time() <= 0) {
+        echo "" . $technologyNames[$genTechnologyInProgress->technologyId] . " Fertig";
     }
     //Noch am forschen
     else {
-        echo startTime($garr['techlist_build_end_time'] - time(), 'tech_gen', 0, '' . $garr['tech_name'] . ' TIME');
+        echo startTime($genTechnologyInProgress->endTime - time(), 'tech_gen', 0, '' . $technologyNames[$genTechnologyInProgress->technologyId] . ' TIME');
     }
 
     echo "</a></td></tr>";
@@ -529,34 +530,10 @@ echo "<div align=\"center\" style=\"position:relative; left:0px; top:0px; width:
     ";
 
 //Liest alle Planeten des Besitzers aus und gibt benötigte infos
-$psql = "
-    SELECT
-        p.planet_name,
-      p.id,
-      p.planet_image,
-      p.planet_people,
-      p.planet_res_metal,
-      p.planet_res_crystal,
-      p.planet_res_plastic,
-      p.planet_res_fuel,
-      p.planet_res_food,
-      p.planet_use_power,
-      p.planet_prod_power,
-      p.planet_store_metal,
-      p.planet_store_crystal,
-      p.planet_store_plastic,
-      p.planet_store_fuel,
-      p.planet_store_food,
-      p.planet_people_place
-    FROM
-        planets AS p
-       WHERE
-           p.planet_user_id=" . $cu->id . "
-    ORDER BY
-      p.planet_user_main DESC,
-      p.planet_name;";
-$res_planet = dbquery($psql);
-
+$userPlanets = $planetRepository->getUserPlanets($cu->getId());
+$buildingNames = $buildingDataRepository->getBuildingNames(true);
+$shipNames = $shipDataRepository->getShipNames(true);
+$defenseNames = $defenseDataRepository->getDefenseNames(true);
 
 $shipyard_rest_time = [];
 $shipyard_name = [];
@@ -566,48 +543,29 @@ $defense_rest_time = [];
 $defense_name = [];
 $defense_zeit = [];
 $defense_time = [];
-while ($arr_planet = mysql_fetch_array($res_planet)) {
-    if ($arr_planet['planet_name'] != "") {
-        $planet_name = $arr_planet['planet_name'];
-    } else {
-        $planet_name = "Unbenannt";
-    }
-
+foreach ($userPlanets as $userPlanet) {
     // Bauhof infos
-    $res_building = dbquery("
-      SELECT
-        b.building_name,
-        bl.buildlist_build_end_time,
-        bl.buildlist_current_level,
-        bl.buildlist_build_type
-      FROM
-        buildlist AS bl
-        INNER JOIN
-        buildings AS b
-        ON b.building_id=bl.buildlist_building_id
-        AND bl.buildlist_entity_id='" . $arr_planet['id'] . "'
-        AND bl.buildlist_build_type>'0'");
-
-    if (mysql_num_rows($res_building) > 0) {
-        $arr_building = mysql_fetch_array($res_building);
+    $buildingEntries = $buildingRepository->findForUser($cu->getId(), $userPlanet->id, time());
+    if (count($buildingEntries) > 0) {
+        $entry = $buildingEntries[0];
 
         //infos über den Bauhof
-        $building_rest_time = $arr_building['buildlist_build_end_time'] - time();
+        $building_rest_time = $entry->endTime - time();
         $building_h = floor($building_rest_time / 3600);
         $building_m = floor(($building_rest_time - $building_h * 3600) / 60);
         $building_s = $building_rest_time - $building_h * 3600 - $building_m * 60;
         $building_zeit = "(" . $building_h . "h " . $building_m . "m " . $building_s . "s)";
 
         $building_time = $building_zeit;
-        $building_name =  $arr_building['building_name'];
+        $building_name =  $buildingNames[$entry->buildingId];
 
         // Zeigt Ausbaulevel bei Abriss
-        if ($arr_building['buildlist_build_type'] == 4) {
-            $building_level =  $arr_building['buildlist_current_level'] - 1;
+        if ($entry->buildType == 4) {
+            $building_level =  $entry->currentLevel - 1;
         }
         // Bei Ausbau
         else {
-            $building_level =  $arr_building['buildlist_current_level'] + 1;
+            $building_level =  $entry->currentLevel + 1;
         }
 
         if ($building_rest_time <= 0) {
@@ -622,118 +580,85 @@ while ($arr_planet = mysql_fetch_array($res_planet)) {
 
 
     // Schiffswerft infos
-    $res_shipyard = dbquery("
-            SELECT
-            ship_name,
-            queue_cnt,
-            queue_starttime,
-            queue_endtime,
-            queue_objtime
-            FROM
-            ship_queue
-        INNER JOIN
-            ships
-            ON queue_ship_id=ship_id
-              AND queue_entity_id='" . $arr_planet['id'] . "'
-              AND queue_endtime>'" . time() . "'
-        ORDER BY
-                queue_starttime ASC
-            LIMIT 1;");
-    if (mysql_num_rows($res_shipyard) > 0) {
-        $arr_shipyard = mysql_fetch_array($res_shipyard);
+    $queueEntries = $shipQueueRepository->searchQueueItems(ShipQueueSearch::create()->entityId($userPlanet->id)->endAfter(time()), 1);
+    if (count($queueEntries) > 0) {
+        $queueItem = $queueEntries[0];
 
         //Verbleibende Zeit bis zur fertigstellung des aktuellen Auftrages
-        $shipyard_rest_time[$arr_planet['id']] = $arr_shipyard['queue_endtime'] - time();
+        $shipyard_rest_time[$userPlanet->id] = $queueItem->endTime - time();
         //Schiffsname
-        $shipyard_name[$arr_planet['id']] =  $arr_shipyard['ship_name'];
+        $shipyard_name[$userPlanet->id] =  $shipNames[$queueItem->shipId];
 
         //infos über den raumschiffswerft
-        $shipyard_h = floor($shipyard_rest_time[$arr_planet['id']] / 3600);
-        $shipyard_m = floor(($shipyard_rest_time[$arr_planet['id']] - $shipyard_h * 3600) / 60);
-        $shipyard_s = $shipyard_rest_time[$arr_planet['id']] - $shipyard_h * 3600 - $shipyard_m * 60;
-        $shipyard_zeit[$arr_planet['id']] = "(" . $shipyard_h . "h " . $shipyard_m . "m " . $shipyard_s . "s)";
+        $shipyard_h = floor($shipyard_rest_time[$userPlanet->id] / 3600);
+        $shipyard_m = floor(($shipyard_rest_time[$userPlanet->id] - $shipyard_h * 3600) / 60);
+        $shipyard_s = $shipyard_rest_time[$userPlanet->id] - $shipyard_h * 3600 - $shipyard_m * 60;
+        $shipyard_zeit[$userPlanet->id] = "(" . $shipyard_h . "h " . $shipyard_m . "m " . $shipyard_s . "s)";
 
-        $shipyard_time[$arr_planet['id']] = $shipyard_zeit[$arr_planet['id']];
-        if ($shipyard_rest_time[$arr_planet['id']] <= 0) {
-            $shipyard_time[$arr_planet['id']] = "Fertig";
+        $shipyard_time[$userPlanet->id] = $shipyard_zeit[$userPlanet->id];
+        if ($shipyard_rest_time[$userPlanet->id] <= 0) {
+            $shipyard_time[$userPlanet->id] = "Fertig";
         }
     } else {
-        $shipyard_time[$arr_planet['id']] = "";
-        $shipyard_name[$arr_planet['id']] = "";
+        $shipyard_time[$userPlanet->id] = "";
+        $shipyard_name[$userPlanet->id] = "";
     }
 
     // waffenfabrik infos
-    $res_defense = dbquery("
-            SELECT
-            def_name,
-            queue_cnt,
-            queue_starttime,
-            queue_endtime,
-            queue_objtime
-            FROM
-            def_queue
-        INNER JOIN
-            defense
-            ON queue_def_id=def_id
-              AND queue_entity_id='" . $arr_planet['id'] . "'
-              AND queue_endtime>'" . time() . "'
-        ORDER BY
-                queue_starttime ASC
-            LIMIT 1;");
-    if (mysql_num_rows($res_defense) > 0) {
-        $arr_defense = mysql_fetch_array($res_defense);
+    $queueEntries = $defenseQueRepository->searchQueueItems(DefenseQueueSearch::create()->entityId($userPlanet->id)->endAfter(time()), 1);
+    if (count($queueEntries) > 0) {
+        $queueItem = $queueEntries[0];
 
         //Verbleibende Zeit bis zur fertigstellung des aktuellen Auftrages
-        $defense_rest_time[$arr_planet['id']] = $arr_defense['queue_endtime'] - time();
+        $defense_rest_time[$userPlanet->id] = $queueItem->endTime - time();
         //Defname
-        $defense_name[$arr_planet['id']] = $arr_defense['def_name'];
+        $defense_name[$userPlanet->id] = $defenseNames[$queueItem->defenseId];
 
         // Infos über die Waffenfabrik
-        $defense_h = floor($defense_rest_time[$arr_planet['id']] / 3600);
-        $defense_m = floor(($defense_rest_time[$arr_planet['id']] - $defense_h * 3600) / 60);
-        $defense_s = $defense_rest_time[$arr_planet['id']] - $defense_h * 3600 - $defense_m * 60;
-        $defense_zeit[$arr_planet['id']] = "(" . $defense_h . "h " . $defense_m . "m " . $defense_s . "s)";
+        $defense_h = floor($defense_rest_time[$userPlanet->id] / 3600);
+        $defense_m = floor(($defense_rest_time[$userPlanet->id] - $defense_h * 3600) / 60);
+        $defense_s = $defense_rest_time[$userPlanet->id] - $defense_h * 3600 - $defense_m * 60;
+        $defense_zeit[$userPlanet->id] = "(" . $defense_h . "h " . $defense_m . "m " . $defense_s . "s)";
 
-        $defense_time[$arr_planet['id']] = $defense_zeit[$arr_planet['id']];
-        $defense_name[$arr_planet['id']] = $defense_name[$arr_planet['id']];
-        if ($defense_rest_time[$arr_planet['id']] <= 0) {
-            $defense_time[$arr_planet['id']] = "Fertig";
+        $defense_time[$userPlanet->id] = $defense_zeit[$userPlanet->id];
+        if ($defense_rest_time[$userPlanet->id] <= 0) {
+            $defense_time[$userPlanet->id] = "Fertig";
         }
     } else {
-        $defense_time[$arr_planet['id']] = "";
-        $defense_name[$arr_planet['id']] = "";
+        $defense_time[$userPlanet->id] = "";
+        $defense_name[$userPlanet->id] = "";
     }
 
-    $planet_info = "<b class=\"planet_name\">" . StringUtils::encodeDBStringToPlaintext($planet_name) . "</b><br>
+    $planet_info = "<b class=\"planet_name\">" . StringUtils::encodeDBStringToPlaintext($userPlanet->displayName()) . "</b><br>
             " . $building_name . " " . $building_level . "
             ";
-    $planet_image_path = "" . IMAGE_PATH . "/" . IMAGE_PLANET_DIR . "/planet" . $arr_planet['planet_image'] . "_middle.gif";
+    $planet_image_path = "" . IMAGE_PATH . "/" . IMAGE_PLANET_DIR . "/planet" . $userPlanet->image . "_middle.gif";
 
     // Planet bild mit link zum bauhof und der informationen übergabe beim mouseover
-    $planet_link = "<a href=\"?page=buildings&change_entity=" . $arr_planet['id'] . "\"><img id=\"Planet\" src=\"" . $planet_image_path . "\" width=\"" . $pic_width . "\" height=\"" . $pic_height . "\" border=\"0\"
+    $planet_link = "<a href=\"?page=buildings&change_entity=" . $userPlanet->id . "\"><img id=\"Planet\" src=\"" . $planet_image_path . "\" width=\"" . $pic_width . "\" height=\"" . $pic_height . "\" border=\"0\"
         onMouseOver=\"show_info(
-            '" . $arr_planet['id'] . "',
-            '" . StringUtils::encodeDBStringToJS($planet_name) . "',
+            '" . $userPlanet->id . "',
+            '" . StringUtils::encodeDBStringToJS($userPlanet->displayName()) . "',
             '" . $building_name . "',
             '" . $building_time . "',
-            '" . $shipyard_name[$arr_planet['id']] . "',
-            '" . $shipyard_time[$arr_planet['id']] . "',
-            '" . $defense_name[$arr_planet['id']] . "',
-            '" . $defense_time[$arr_planet['id']] . "',
-            '" . floor($arr_planet['planet_people']) . "',
-            '" . floor($arr_planet['planet_res_metal']) . "',
-            '" . floor($arr_planet['planet_res_crystal']) . "',
-            '" . floor($arr_planet['planet_res_plastic']) . "',
-            '" . floor($arr_planet['planet_res_fuel']) . "',
-            '" . floor($arr_planet['planet_res_food']) . "',
-            '" . floor($arr_planet['planet_use_power']) . "',
-            '" . floor($arr_planet['planet_prod_power']) . "',
-            '" . floor($arr_planet['planet_store_metal']) . "',
-            '" . floor($arr_planet['planet_store_crystal']) . "',
-            '" . floor($arr_planet['planet_store_plastic']) . "',
-            '" . floor($arr_planet['planet_store_fuel']) . "',
-            '" . floor($arr_planet['planet_store_food']) . "',
-            '" . floor($arr_planet['planet_people_place']) . "'
+            '" . $shipyard_name[$userPlanet->id] . "',
+            '" . $shipyard_time[$userPlanet->id] . "',
+            '" . $defense_name[$userPlanet->id] . "',
+            '" . $defense_time[$userPlanet->id] . "',
+            '" . floor($userPlanet->people) . "',
+            '" . floor($userPlanet->resMetal) . "',
+            '" . floor($userPlanet->resCrystal) . "',
+            '" . floor($userPlanet->resPlastic) . "',
+            '" . floor($userPlanet->resFuel) . "',
+            '" . floor($userPlanet->resFood) . "',
+            '" . floor($userPlanet->usePower) . "',
+            '" . floor($userPlanet->prodPower) . "',
+            '" . floor($userPlanet->storeMetal) . "',
+            '" . floor($userPlanet->storeCrystal) . "',
+            '" . floor($userPlanet->storePlastic) . "',
+            '" . floor($userPlanet->storeFuel) . "',
+            '" . floor($userPlanet->storeFood) . "',
+            '" . floor($userPlanet->peoplePlace) . "'
             );\"/></a>
             ";
 
@@ -781,15 +706,15 @@ while ($arr_planet = mysql_fetch_array($res_planet)) {
         $top = $middle_top + (($d_infos / 2) * sin(deg2rad($degree + 270))) - $pic_height / 2;
     }
 
-    echo "<div id=\"planet_info_" . $arr_planet['id'] . "\" style=\"position:absolute; left:" . $left . "px; top:" . $top . "px; width:" . $info_box_width . "px; height:" . $info_box_height . "px; text-align:" . $text . "; vertical-align:middle;\">
+    echo "<div id=\"planet_info_" . $userPlanet->id . "\" style=\"position:absolute; left:" . $left . "px; top:" . $top . "px; width:" . $info_box_width . "px; height:" . $info_box_height . "px; text-align:" . $text . "; vertical-align:middle;\">
             ";
 
     echo $planet_info;
-    echo '<span id="planet_timer_' . $arr_planet['id'] . '">';
+    echo '<span id="planet_timer_' . $userPlanet->id . '">';
 
     // Stellt Zeit Counter dar, wenn ein Gebäude in bau ist
     if ($building_rest_time > 0) {
-        echo startTime($building_rest_time, "planet_timer_" . $arr_planet['id'] . "", 0, "<br>(TIME)") . "";
+        echo startTime($building_rest_time, "planet_timer_" . $userPlanet->id . "", 0, "<br>(TIME)") . "";
     }
 
     echo "</span></div>

@@ -8,8 +8,10 @@ use EtoA\Help\TicketSystem\TicketRepository;
 use EtoA\Message\MessageRepository;
 use EtoA\Ship\ShipDataRepository;
 use EtoA\Technology\TechnologyDataRepository;
+use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\User\UserCommentRepository;
 use EtoA\User\UserLogRepository;
+use EtoA\User\UserPointsRepository;
 use EtoA\User\UserRepository;
 use EtoA\User\UserService;
 
@@ -76,6 +78,11 @@ function allianceRankSelector($parent, $name, $value = 0, $aid = 0)
 
 function userPointsTable($uid, $target, $length = 100, $start = -1, $end = -1)
 {
+    global $app;
+
+    /** @var UserPointsRepository $userPointsRepository */
+    $userPointsRepository = $app[UserPointsRepository::class];
+
     $t = time();
     if ($start == -1) {
         $start = $t - 172800;
@@ -125,20 +132,8 @@ function userPointsTable($uid, $target, $length = 100, $start = -1, $end = -1)
 
     <br/></div>";
     echo "<table class=\"tb\">";
-    $lres = dbquery("
-    SELECT
-        *
-    FROM
-        user_points
-    WHERE
-        point_user_id=" . $uid . "
-        AND point_timestamp > " . $start . "
-        AND point_timestamp < " . $end . "
-    ORDER BY
-        point_timestamp DESC
-    LIMIT " . $length . "
-    ;");
-    if (mysql_num_rows($lres) > 0) {
+    $userPoints = $userPointsRepository->getPoints($uid, $length, $start, $end);
+    if (count($userPoints) > 0) {
         echo "<tr>
             <th>Datum</th>
             <th>Zeit</th>
@@ -147,14 +142,14 @@ function userPointsTable($uid, $target, $length = 100, $start = -1, $end = -1)
             <th>Forschung</th>
             <th>Flotte</th>
         </tr>";
-        while ($larr = mysql_fetch_array($lres)) {
+        foreach ($userPoints as $points) {
             echo "<tr>
-                <td class=\"tbldata\">" . date("d.m.Y", $larr['point_timestamp']) . "</td>
-                <td class=\"tbldata\">" . date("H:i", $larr['point_timestamp']) . "</td>
-                <td class=\"tbldata\">" . nf($larr['point_points']) . "</td>
-                <td class=\"tbldata\">" . nf($larr['point_building_points']) . "</td>
-                <td class=\"tbldata\">" . nf($larr['point_tech_points']) . "</td>
-                <td class=\"tbldata\">" . nf($larr['point_ship_points']) . "</td>
+                <td class=\"tbldata\">" . date("d.m.Y", $points->timestamp) . "</td>
+                <td class=\"tbldata\">" . date("H:i", $points->timestamp) . "</td>
+                <td class=\"tbldata\">" . nf($points->points) . "</td>
+                <td class=\"tbldata\">" . nf($points->buildingPoints) . "</td>
+                <td class=\"tbldata\">" . nf($points->techPoints) . "</td>
+                <td class=\"tbldata\">" . nf($points->shipPoints) . "</td>
             </tr>";
         }
     } else {
@@ -416,6 +411,9 @@ function loadEconomy($uid, $target)
 {
     global $app;
 
+    /** @var PlanetRepository $planetRepository */
+    $planetRepository = $app[PlanetRepository::class];
+
     $or = new xajaxResponse();
     ob_start();
 
@@ -429,21 +427,8 @@ function loadEconomy($uid, $target)
     echo "<fieldset><legend>Rohstoff- und Produktionsübersicht</legend>";
 
     // Sucht alle Planet IDs des Users
-    $pres = dbquery("
-                    SELECT
-                        id
-                    FROM
-                        planets
-                    WHERE
-                        planet_user_id='" . $uid . "'");
-    if (mysql_num_rows($pres) > 0) {
-
-        // Läd alle "Planetclass" Daten in ein Array
-        $planets = array();
-        while ($parr = mysql_fetch_row($pres)) {
-            $planets[] = Planet::getById($parr[0]);
-        }
-
+    $userPlanets = $planetRepository->getUserPlanetsWithCoordinates($uid);
+    if (count($userPlanets) > 0) {
         $cnt_res = 0;
         $max_res = array(0, 0, 0, 0, 0, 0);
         $min_res = array(9999999999, 9999999999, 9999999999, 9999999999, 9999999999, 9999999999);
@@ -457,109 +442,109 @@ function loadEconomy($uid, $target)
         $val_prod = [];
         $val_store = [];
         $val_time = [];
-        foreach ($planets as $p) {
+        foreach ($userPlanets as $planet) {
             //Speichert die aktuellen Rohstoffe in ein Array
-            $val_res[$p->id][0] = floor($p->resMetal);
-            $val_res[$p->id][1] = floor($p->resCrystal);
-            $val_res[$p->id][2] = floor($p->resPlastic);
-            $val_res[$p->id][3] = floor($p->resFuel);
-            $val_res[$p->id][4] = floor($p->resFood);
-            $val_res[$p->id][5] = floor($p->people);
+            $val_res[$planet->id][0] = floor($planet->resMetal);
+            $val_res[$planet->id][1] = floor($planet->resCrystal);
+            $val_res[$planet->id][2] = floor($planet->resPlastic);
+            $val_res[$planet->id][3] = floor($planet->resFuel);
+            $val_res[$planet->id][4] = floor($planet->resFood);
+            $val_res[$planet->id][5] = floor($planet->people);
 
             for ($x = 0; $x < 6; $x++) {
-                $max_res[$x] = max($max_res[$x], $val_res[$p->id][$x]);
-                $min_res[$x] = min($min_res[$x], $val_res[$p->id][$x]);
-                $tot_res[$x] += $val_res[$p->id][$x];
+                $max_res[$x] = max($max_res[$x], $val_res[$planet->id][$x]);
+                $min_res[$x] = min($min_res[$x], $val_res[$planet->id][$x]);
+                $tot_res[$x] += $val_res[$planet->id][$x];
             }
 
             //Speichert die aktuellen Rohstoffproduktionen in ein Array
-            $val_prod[$p->id][0] = floor($p->prodMetal);
-            $val_prod[$p->id][1] = floor($p->prodCrystal);
-            $val_prod[$p->id][2] = floor($p->prodPlastic);
-            $val_prod[$p->id][3] = floor($p->prodFuel);
-            $val_prod[$p->id][4] = floor($p->prodFood);
-            $val_prod[$p->id][5] = floor($p->prodPeople);
+            $val_prod[$planet->id][0] = floor($planet->prodMetal);
+            $val_prod[$planet->id][1] = floor($planet->prodCrystal);
+            $val_prod[$planet->id][2] = floor($planet->prodPlastic);
+            $val_prod[$planet->id][3] = floor($planet->prodFuel);
+            $val_prod[$planet->id][4] = floor($planet->prodFood);
+            $val_prod[$planet->id][5] = floor($planet->prodPeople);
 
             for ($x = 0; $x < 6; $x++) {
-                $max_prod[$x] = max($max_prod[$x], $val_prod[$p->id][$x]);
-                $min_prod[$x] = min($min_prod[$x], $val_prod[$p->id][$x]);
-                $tot_prod[$x] += $val_prod[$p->id][$x];
+                $max_prod[$x] = max($max_prod[$x], $val_prod[$planet->id][$x]);
+                $min_prod[$x] = min($min_prod[$x], $val_prod[$planet->id][$x]);
+                $tot_prod[$x] += $val_prod[$planet->id][$x];
             }
 
             //Speichert die aktuellen Speicher in ein Array
-            $val_store[$p->id][0] = floor($p->storeMetal);
-            $val_store[$p->id][1] = floor($p->storeCrystal);
-            $val_store[$p->id][2] = floor($p->storePlastic);
-            $val_store[$p->id][3] = floor($p->storeFuel);
-            $val_store[$p->id][4] = floor($p->storeFood);
-            $val_store[$p->id][5] = floor($p->people_place);
+            $val_store[$planet->id][0] = floor($planet->storeMetal);
+            $val_store[$planet->id][1] = floor($planet->storeCrystal);
+            $val_store[$planet->id][2] = floor($planet->storePlastic);
+            $val_store[$planet->id][3] = floor($planet->storeFuel);
+            $val_store[$planet->id][4] = floor($planet->storeFood);
+            $val_store[$planet->id][5] = floor($planet->peoplePlace);
 
             //Berechnet die dauer bis die Speicher voll sind (zuerst prüfen ob Division By Zero!)
 
             //Titan
-            if ($p->prodMetal > 0) {
-                if ($p->storeMetal - $p->resMetal > 0) {
-                    $val_time[$p->id][0] = ceil(($p->storeMetal - $p->resMetal) / $p->prodMetal * 3600);
+            if ($planet->prodMetal > 0) {
+                if ($planet->storeMetal - $planet->resMetal > 0) {
+                    $val_time[$planet->id][0] = ceil(($planet->storeMetal - $planet->resMetal) / $planet->prodMetal * 3600);
                 } else {
-                    $val_time[$p->id][0] = 0;
+                    $val_time[$planet->id][0] = 0;
                 }
             } else {
-                $val_time[$p->id][0] = 0;
+                $val_time[$planet->id][0] = 0;
             }
 
             //Silizium
-            if ($p->prodCrystal > 0) {
-                if ($p->storeCrystal - $p->resCrystal > 0) {
-                    $val_time[$p->id][1] = ceil(($p->storeCrystal - $p->resCrystal) / $p->prodCrystal * 3600);
+            if ($planet->prodCrystal > 0) {
+                if ($planet->storeCrystal - $planet->resCrystal > 0) {
+                    $val_time[$planet->id][1] = ceil(($planet->storeCrystal - $planet->resCrystal) / $planet->prodCrystal * 3600);
                 } else {
-                    $val_time[$p->id][1] = 0;
+                    $val_time[$planet->id][1] = 0;
                 }
             } else {
-                $val_time[$p->id][1] = 0;
+                $val_time[$planet->id][1] = 0;
             }
 
             //PVC
-            if ($p->prodPlastic > 0) {
-                if ($p->storePlastic - $p->resPlastic > 0) {
-                    $val_time[$p->id][2] = ceil(($p->storePlastic - $p->resPlastic) / $p->prodPlastic * 3600);
+            if ($planet->prodPlastic > 0) {
+                if ($planet->storePlastic - $planet->resPlastic > 0) {
+                    $val_time[$planet->id][2] = ceil(($planet->storePlastic - $planet->resPlastic) / $planet->prodPlastic * 3600);
                 } else {
-                    $val_time[$p->id][2] = 0;
+                    $val_time[$planet->id][2] = 0;
                 }
             } else {
-                $val_time[$p->id][2] = 0;
+                $val_time[$planet->id][2] = 0;
             }
 
             //Tritium
-            if ($p->prodFuel > 0) {
-                if ($p->storeFuel - $p->resFuel > 0) {
-                    $val_time[$p->id][3] = ceil(($p->storeFuel - $p->resFuel) / $p->prodFuel * 3600);
+            if ($planet->prodFuel > 0) {
+                if ($planet->storeFuel - $planet->resFuel > 0) {
+                    $val_time[$planet->id][3] = ceil(($planet->storeFuel - $planet->resFuel) / $planet->prodFuel * 3600);
                 } else {
-                    $val_time[$p->id][3] = 0;
+                    $val_time[$planet->id][3] = 0;
                 }
             } else {
-                $val_time[$p->id][3] = 0;
+                $val_time[$planet->id][3] = 0;
             }
 
             //Nahrung
-            if ($p->prodFood > 0) {
-                if ($p->storeFood - $p->resFood > 0) {
-                    $val_time[$p->id][4] = ceil(($p->storeFood - $p->resFood) / $p->prodFood * 3600);
+            if ($planet->prodFood > 0) {
+                if ($planet->storeFood - $planet->resFood > 0) {
+                    $val_time[$planet->id][4] = ceil(($planet->storeFood - $planet->resFood) / $planet->prodFood * 3600);
                 } else {
-                    $val_time[$p->id][4] = 0;
+                    $val_time[$planet->id][4] = 0;
                 }
             } else {
-                $val_time[$p->id][4] = 0;
+                $val_time[$planet->id][4] = 0;
             }
 
             //Bewohner
-            if ($p->prodPeople > 0) {
-                if ($p->people_place - $p->people > 0) {
-                    $val_time[$p->id][5] = ceil(($p->people_place - $p->people) / $p->prodPeople * 3600);
+            if ($planet->prodPeople > 0) {
+                if ($planet->peoplePlace - $planet->people > 0) {
+                    $val_time[$planet->id][5] = ceil(($planet->peoplePlace - $planet->people) / $planet->prodPeople * 3600);
                 } else {
-                    $val_time[$p->id][5] = 0;
+                    $val_time[$planet->id][5] = 0;
                 }
             } else {
-                $val_time[$p->id][5] = 0;
+                $val_time[$planet->id][5] = 0;
             }
         }
 
@@ -579,16 +564,16 @@ function loadEconomy($uid, $target)
                                     <td class=\"tbltitle\">" . RES_FOOD . "</td>
                                     <td class=\"tbltitle\">Bewohner</td>
                                 </tr>";
-        foreach ($planets as $p) {
+        foreach ($userPlanets as $planet) {
             echo "<tr>
                                         <td class=\"tbldata\">
-                                            <a href=\"?page=galaxy&sub=edit&id=" . $p->id() . "\">" . $p . "</a>
+                                            <a href=\"?page=galaxy&sub=edit&id=" . $planet->id . "\">" . $planet->toString() . "</a>
                                         </td>";
             for ($x = 0; $x < 6; $x++) {
                 echo "<td";
-                if ($max_res[$x] == $val_res[$p->id][$x]) {
+                if ($max_res[$x] == $val_res[$planet->id][$x]) {
                     echo " class=\"tbldata3\"";
-                } elseif ($min_res[$x] == $val_res[$p->id][$x]) {
+                } elseif ($min_res[$x] == $val_res[$planet->id][$x]) {
                     echo " class=\"tbldata2\"";
                 } else {
                     echo " class=\"tbldata\"";
@@ -596,18 +581,18 @@ function loadEconomy($uid, $target)
 
 
                 //Der Speicher ist noch nicht gefüllt
-                if ($val_res[$p->id][$x] < $val_store[$p->id][$x] && $val_time[$p->id][$x] != 0) {
-                    echo " " . tm("Speicher", "Speicher voll in " . tf($val_time[$p->id][$x]) . "") . " ";
-                    if ($val_time[$p->id][$x] < 43200) {
+                if ($val_res[$planet->id][$x] < $val_store[$planet->id][$x] && $val_time[$planet->id][$x] != 0) {
+                    echo " " . tm("Speicher", "Speicher voll in " . tf($val_time[$planet->id][$x]) . "") . " ";
+                    if ($val_time[$planet->id][$x] < 43200) {
                         echo " style=\"font-style:italic;\" ";
                     }
-                    echo ">" . nf($val_res[$p->id][$x]) . "</td>";
+                    echo ">" . nf($val_res[$planet->id][$x]) . "</td>";
                 }
                 //Speicher Gefüllt
                 else {
                     echo " " . tm("Speicher", "Speicher voll!") . "";
                     echo " style=\"\" ";
-                    echo "><b>" . nf($val_res[$p->id][$x]) . "</b></td>";
+                    echo "><b>" . nf($val_res[$planet->id][$x]) . "</b></td>";
                 }
             }
             echo "</tr>";
@@ -638,14 +623,14 @@ function loadEconomy($uid, $target)
         $max_prod[5] = 0;
         $min_prod[5] = 9999999999;
         $tot_prod[5] = 0;
-        foreach ($planets as $p) {
+        foreach ($userPlanets as $planet) {
             //Speichert die aktuellen Energieproduktionen in ein Array (Bewohnerproduktion [5] wird überschrieben)
-            $val_prod[$p->id][5] = floor($p->prodPower);
+            $val_prod[$planet->id][5] = floor($planet->prodPower);
 
             // Gibt Min. / Max. aus
-            $max_prod[5] = max($max_prod[5], $val_prod[$p->id][5]);
-            $min_prod[5] = min($min_prod[5], $val_prod[$p->id][5]);
-            $tot_prod[5] += $val_prod[$p->id][5];
+            $max_prod[5] = max($max_prod[5], $val_prod[$planet->id][5]);
+            $min_prod[5] = min($min_prod[5], $val_prod[$planet->id][5]);
+            $tot_prod[5] += $val_prod[$planet->id][5];
         }
 
         echo "<p>Legende: Minimum, Maximum,
@@ -663,8 +648,8 @@ function loadEconomy($uid, $target)
                     <th class=\"tbltitle\">" . RES_FUEL . "</th>
                     <th class=\"tbltitle\">" . RES_FOOD . "</th>
                     <th class=\"tbltitle\">Energie</th></tr>";
-        foreach ($planets as $p) {
-            echo "<tr><td class=\"tbldata\"><a href=\"?page=galaxy&amp;sub=edit&amp;id=" . $p->id() . "\">" . $p . "</a></td>";
+        foreach ($userPlanets as $planet) {
+            echo "<tr><td class=\"tbldata\"><a href=\"?page=galaxy&amp;sub=edit&amp;id=" . $planet->id . "\">" . $planet->toString() . "</a></td>";
             for ($x = 0; $x < 6; $x++) {
                 /*
                             // Erstellt TM-Box für jeden Rohstoff
@@ -709,14 +694,14 @@ function loadEconomy($uid, $target)
                 $tm = "";
 
                 echo "<td";
-                if ($max_prod[$x] == $val_prod[$p->id][$x]) {
+                if ($max_prod[$x] == $val_prod[$planet->id][$x]) {
                     echo " class=\"tbldata3\"";
-                } elseif ($min_prod[$x] == $val_prod[$p->id][$x]) {
+                } elseif ($min_prod[$x] == $val_prod[$planet->id][$x]) {
                     echo " class=\"tbldata2\"";
                 } else {
                     echo " class=\"tbldata\"";
                 }
-                echo " " . tm($tm_header, $tm) . ">" . nf($val_prod[$p->id][$x]) . "</td>";
+                echo " " . tm($tm_header, $tm) . ">" . nf($val_prod[$planet->id][$x]) . "</td>";
             }
             echo "</tr>";
             $cnt_prod++;

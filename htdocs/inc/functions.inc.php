@@ -256,15 +256,16 @@ function tableStart($title = "", $width = 0, $layout = "", $id = "")
         global $cu;
         global $app;
 
-        /** @var UserPropertiesRepository $userPropertiesRepository */
-        $userPropertiesRepository = $app[UserPropertiesRepository::class];
+        $w = "width:100%";
+        if ($cu) {
+            /** @var UserPropertiesRepository $userPropertiesRepository */
+            $userPropertiesRepository = $app[UserPropertiesRepository::class];
+            $properties = $userPropertiesRepository->getOrCreateProperties($cu->id);
+            if ($properties->cssStyle == "Graphite") {
+                $w = "width:650px";
+            }
+         }
 
-        $properties = $userPropertiesRepository->getOrCreateProperties($cu->id);
-
-        if ($properties->cssStyle == "Graphite")
-            $w = "width:650px";
-        else
-            $w = "width:100%";
     }
     if ($id != "") {
         $id = "id=\"" . $id . "\"";
