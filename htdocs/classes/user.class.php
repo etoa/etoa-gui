@@ -1,21 +1,9 @@
 <?PHP
 
-use EtoA\Alliance\AllianceApplicationRepository;
-use EtoA\Alliance\AllianceRankRepository;
 use EtoA\Core\Configuration\ConfigurationService;
-use EtoA\Market\MarketAuctionRepository;
-use EtoA\Market\MarketResourceRepository;
-use EtoA\Market\MarketShipRepository;
-use EtoA\Notepad\NotepadRepository;
 use EtoA\Support\Mail\MailSenderService;
-use EtoA\Universe\Planet\PlanetRepository;
-use EtoA\Universe\Planet\PlanetService;
-use EtoA\User\UserLogRepository;
-use EtoA\User\UserMultiRepository;
 use EtoA\User\UserService;
 use EtoA\User\UserSessionRepository;
-use EtoA\User\UserSittingRepository;
-use EtoA\User\UserWarningRepository;
 
 /**
  * Provides methods for accessing user information
@@ -63,9 +51,6 @@ class User implements \EtoA\User\UserInterface
     protected $signature;
     protected $avatar;
     protected $allianceRankId;
-    protected $allianceName;
-    protected $allianceTag;
-    protected $allianceRankName;
     protected $allianceLeave;
     protected $rank;
     protected $rankHighest;
@@ -165,10 +150,6 @@ class User implements \EtoA\User\UserInterface
 
             $this->sittingDays = $arr['user_sitting_days'];
 
-            $this->allianceName = "";
-            $this->allianceTag = "";
-            $this->allianceRankName = "";
-
             $this->rank = $arr['user_rank'];
             $this->rankHighest = $arr['user_rank_highest'];
 
@@ -203,10 +184,6 @@ class User implements \EtoA\User\UserInterface
             $this->hmode_to = 0;
             $this->deleted = 0;
             $this->allianceId = 0;
-
-            $this->allianceName = "";
-            $this->allianceTag = "";
-            $this->allianceRankName = "";
 
             $this->rank = 0;
             $this->rankHighest = 0;
@@ -281,6 +258,8 @@ class User implements \EtoA\User\UserInterface
                     $sql .= " user_hmode_from=" . $this->hmode_from . ",";
                 } elseif ($k == "hmode_to") {
                     $sql .= " user_hmode_to=" . $this->hmode_to . ",";
+                } elseif ($k === 'changedMainPlanet') {
+                    // do nothing
                 } else
                     echo " $k has no valid UPDATE query!<br/>";
             }
@@ -455,42 +434,6 @@ class User implements \EtoA\User\UserInterface
         return (int) $this->allianceId;
     }
 
-    final public function allianceName()
-    {
-        if ($this->allianceName == "") {
-            $this->loadAllianceData();
-        }
-        return $this->allianceName;
-    }
-
-    final public function allianceTag()
-    {
-        if ($this->allianceTag == "") {
-            $this->loadAllianceData();
-        }
-        return $this->allianceTag;
-    }
-
-    final public function allianceRankName()
-    {
-        if ($this->allianceRankName == "") {
-            $this->loadAllianceData();
-        }
-        return $this->allianceRankName;
-    }
-
-    public function setAllianceId($id)
-    {
-        $this->allianceId = $id;
-        dbquery("
-        UPDATE
-            " . self::tableName . "
-        SET
-            user_alliance_rank_id=0,
-            user_alliance_id=" . $id . "
-        WHERE user_id='" . $this->id . "';");
-    }
-
     public function isInactiv()
     {
         if (!$this->admin) {
@@ -556,289 +499,6 @@ class User implements \EtoA\User\UserInterface
         return 1;
     }
 
-    /**
-     * Load alliance data
-     */
-    function loadAllianceData()
-    {
-        global $app;
-
-        if ($this->allianceId > 0) {
-            $ares = dbquery("
-            SELECT
-                alliance_tag,
-                alliance_name,
-                alliance_founder_id
-            FROM
-                alliances
-            WHERE
-                alliance_id=" . $this->allianceId . ";
-            ");
-            if (mysql_num_rows($ares) > 0) {
-                $aarr = mysql_fetch_row($ares);
-                $this->allianceName = "[" . $aarr[0] . "] " . $aarr[1];
-                $this->allianceTag = $aarr[0];
-
-                if ($aarr[2] == $this->id) {
-                    $this->allianceRankName = "Gründer";
-                } elseif ($this->allianceRankId > 0) {
-                    /** @var AllianceRankRepository $allianceRankRepository */
-                    $allianceRankRepository = $app[AllianceRankRepository::class];
-                    $rank = $allianceRankRepository->getRank($this->allianceRankId, $this->allianceId);
-                    if ($rank !== null) {
-                        $this->allianceRankName = $rank->name;
-                    }
-                }
-            }
-        }
-    }
-
-    /**
-     * Umode aktivieren
-     */
-    function activateUmode($force = false)
-    {
-        // TODO
-        global $app;
-
-        /** @var ConfigurationService */
-        $config = $app[ConfigurationService::class];
-
-        $cres = dbquery("SELECT id FROM fleet WHERE user_id='" . $this->id . "';");
-        $carr = mysql_fetch_row($cres);
-        if ($carr[0] == 0 || $force) {
-            $pres = dbquery("SELECT
-                                    f.id
-                                FROM
-                                    fleet as f
-                                INNER JOIN
-                                    planets as p
-                                ON f.entity_to=p.id
-                                AND p.planet_user_id='" . $this->id . "'
-                                AND (f.user_id='" . $this->id . "' OR (status=0 AND action NOT IN ('collectdebris','explore','flight','createdebris')));");
-            $parr = mysql_fetch_row($pres);
-            if ($parr[0] == 0 || $force) {
-                $sres = dbquery("SELECT
-                                        queue_id,
-                                        queue_starttime
-                                    FROM
-                                        ship_queue
-                                    WHERE
-                                        queue_user_id='" . $this->id . "';");
-                while ($sarr = mysql_fetch_row($sres)) {
-                    if ($sarr[1] > time()) {
-                        dbquery("UPDATE
-                                        ship_queue
-                                    SET
-                                        queue_build_type=1
-                                    WHERE
-                                        queue_user_id='" . $this->id . "';");
-                    } else {
-                        dbquery("UPDATE
-                                        ship_queue
-                                    SET
-                                        queue_build_type=1
-                                    WHERE
-                                        queue_user_id='" . $this->id . "';");
-                    }
-                }
-                $sres = dbquery("SELECT
-                                        queue_id,
-                                        queue_starttime
-                                    FROM
-                                        def_queue
-                                    WHERE
-                                        queue_user_id='" . $this->id . "';");
-                while ($sarr = mysql_fetch_row($sres)) {
-                    if ($sarr[1] > time()) {
-                        dbquery("UPDATE
-                                        def_queue
-                                    SET
-                                        queue_build_type=1
-                                    WHERE
-                                        queue_user_id='" . $this->id . "';");
-                    } else {
-                        dbquery("UPDATE
-                                        def_queue
-                                    SET
-                                        queue_build_type=1
-                                    WHERE
-                                        queue_user_id='" . $this->id . "';");
-                    }
-                }
-
-                dbquery("UPDATE
-                                buildlist
-                            SET
-                                buildlist_build_type = 1
-                            WHERE
-                                buildlist_user_id='" . $this->id . "'
-                                AND buildlist_build_start_time>0;");
-                dbquery("UPDATE
-                                techlist
-                            SET
-                                techlist_build_type=1
-                            WHERE
-                                techlist_user_id='" . $this->id . "'
-                                AND techlist_build_start_time>0;");
-
-                $hfrom = time();
-
-                $hto = $hfrom + ($config->getInt('hmode_days') * 24 * 3600);
-                dbquery("
-                        UPDATE
-                            planets
-                        SET
-                            planet_last_updated='0',
-                            planet_prod_metal=0,
-                            planet_prod_crystal=0,
-                            planet_prod_plastic=0,
-                            planet_prod_fuel=0,
-                            planet_prod_food=0
-                        WHERE
-                            planet_user_id='" . $this->id . "';");
-
-                dbquery("UPDATE users SET user_hmode_from=$hfrom,user_hmode_to=$hto,user_logouttime='" . time() . "' WHERE user_id='" . $this->id . "';");
-
-                $this->hmode_from = $hfrom;
-                $this->hmode_to = $hto;
-                return true;
-            } else
-                return false;
-        } else
-            return false;
-    }
-
-    /**
-     * Umode aufheben
-     */
-
-    function removeUmode($force = false)
-    {
-
-        if ($this->hmode_from > 0 && (($this->hmode_from < time() && $this->hmode_to < time()) || $force)) {
-            $hmodTime = time() - $this->hmode_from;
-            $bres = dbquery("
-                                SELECT
-                                    buildlist_id,
-                                    buildlist_build_end_time,
-                                    buildlist_build_start_time,
-                                    buildlist_build_type
-                                FROM
-                                    buildlist
-                                WHERE
-                                    buildlist_build_start_time>0
-                                    AND buildlist_build_type>0
-                                    AND buildlist_user_id=" . $this->id . ";");
-
-            while ($barr = mysql_fetch_row($bres)) {
-                $start = $barr[2] + $hmodTime;
-                $end = $barr[1] + $hmodTime;
-                $status = $barr[3] + 2;
-                dbquery("UPDATE
-                                buildlist
-                            SET
-                                buildlist_build_type='" . $status . "',
-                                buildlist_build_start_time='" . $start . "',
-                                buildlist_build_end_time='" . $end . "'
-                            WHERE
-                                buildlist_id='" . $barr[0] . "';");
-            }
-
-            $tres = dbquery("
-                                SELECT
-                                    techlist_id,
-                                    techlist_build_end_time,
-                                    techlist_build_start_time,
-                                    techlist_build_type
-                                FROM
-                                    techlist
-                                WHERE
-                                    techlist_build_start_time>0
-                                    AND techlist_build_type>0
-                                    AND techlist_user_id=" . $this->id . ";");
-
-            while ($tarr = mysql_fetch_row($tres)) {
-                $status = $tarr[3] + 2;
-                $start = $tarr[2] + $hmodTime;
-                $end = $tarr[1] + $hmodTime;
-                dbquery("UPDATE
-                                techlist
-                            SET
-                                techlist_build_type='" . $status . "',
-                                techlist_build_start_time='" . $start . "',
-                                techlist_build_end_time='" . $end . "'
-                            WHERE
-                                techlist_id=" . $tarr[0] . ";");
-            }
-
-            $sres = dbquery("SELECT
-                                    queue_id,
-                                    queue_endtime,
-                                    queue_starttime
-                                 FROM
-                                     ship_queue
-                                WHERE
-                                    queue_user_id='" . $this->id . "'
-                                ORDER BY
-                                    queue_starttime ASC;");
-            $time = time();
-            while ($sarr = mysql_fetch_row($sres)) {
-                $start = $sarr[2] + $hmodTime;
-                $end = $sarr[1] + $hmodTime;
-                dbquery("UPDATE
-                                ship_queue
-                            SET
-                                queue_build_type=0,
-                                queue_starttime='" . $start . "',
-                                queue_endtime='" . $end . "'
-                            WHERE
-                                queue_id=" . $sarr[0] . ";");
-            }
-
-            $dres = dbquery("SELECT
-                                    queue_id,
-                                    queue_endtime,
-                                    queue_starttime
-                                 FROM
-                                     def_queue
-                                WHERE
-                                    queue_user_id='" . $this->id . "'
-                                ORDER BY
-                                    queue_starttime ASC;");
-            $time = time();
-            while ($darr = mysql_fetch_row($dres)) {
-                $start = $darr[2] + $hmodTime;
-                $end = $darr[1] + $hmodTime;
-                dbquery("UPDATE
-                                def_queue
-                            SET
-                                queue_build_type=0,
-                            queue_starttime='" . $start . "',
-                                queue_endtime='" . $end . "'
-                            WHERE
-                                queue_id=" . $darr[0] . ";");
-            }
-
-            // Prolong specialist contract
-            dbquery("
-                UPDATE
-                  users
-                SET
-                  user_specialist_time=user_specialist_time+" . $hmodTime . "
-                WHERE
-                  user_specialist_id > 0
-                  AND user_id=" . $this->id . "
-                ;");
-
-            dbquery("UPDATE users SET user_hmode_from=0,user_hmode_to=0,user_logouttime='" . time() . "' WHERE user_id='" . $this->id . "';");
-            dbquery("UPDATE planets SET planet_last_updated=" . time() . " WHERE planet_user_id='" . $this->id . "';");
-            return true;
-        } else {
-            return false;
-        }
-    }
-
     public function detailLink()
     {
         return "<a href=\"?page=userinfo&amp;id=" . $this->id . "\">" . $this->__toString() . "</a>";
@@ -881,23 +541,5 @@ class User implements \EtoA\User\UserInterface
         // Planet is attackable if user is attackable
         // or if last owner == this owner (invade time threshold)
         return $this->canAttackUser($p->owner()) || $this->id == $p->lastUserCheck();
-    }
-
-    /**
-     * Setzt, ob dieser Spieler seinen Hauptplaneten bereits gewechselt hat.
-     * @param boolean $changed
-     */
-    public function setChangedMainPlanet($changed)
-    {
-        $changed_value = ($changed ? 1 : 0);
-        $this->changedMainPlanet = $changed_value;
-        dbquery("
-        UPDATE
-            users
-        SET
-            user_changed_main_planet=$changed_value
-        WHERE
-            user_id=" . $this->id . "
-        ");
     }
 }

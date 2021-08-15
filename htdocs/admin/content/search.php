@@ -12,7 +12,7 @@ if (isset($_POST['search_query']) && $_POST['search_query'] != "") {
     // Users
     /** @var UserRepository $userRepository */
     $userRepository = $app[UserRepository::class];
-    $userNicks = $userRepository->searchUserNicknames(UserSearch::create()->nameOrEmailOrDualLike($search), 30);
+    $userNicks = $userRepository->searchUserNicknames(UserSearch::create()->nickOrEmailOrDualLike($search), 30);
     if (count($userNicks) > 0) {
         echo "<h2>Spieler</h2><ul>";
         foreach ($userNicks as $userId => $userNick) {

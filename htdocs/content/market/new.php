@@ -1,9 +1,17 @@
 <?php
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Ship\ShipDataRepository;
+use EtoA\Ship\ShipRepository;
+use EtoA\Ship\ShipSearch;
+use EtoA\Ship\ShipSort;
 
-/** @var ConfigurationService */
+/** @var ConfigurationService $config */
 $config = $app[ConfigurationService::class];
+/** @var ShipRepository $shipRepository */
+$shipRepository = $app[ShipRepository::class];
+/** @var ShipDataRepository $shipDataRepository */
+$shipDataRepository = $app[ShipDataRepository::class];
 
 /** @var bool $possible */
 /** @var int $alliance_market_level */
@@ -161,58 +169,27 @@ if ($possible > 0) {
     // Schiffe
     //
     if (MIN_MARKET_LEVEL_SHIP <= MARKET_LEVEL) {
-        $check_res = dbquery("
-        SELECT
-            COUNT(*)
-        FROM
-            shiplist
-        WHERE
-            shiplist_entity_id='" . $cp->id() . "'");
+        $shipCounts = $shipRepository->getEntityShipCounts($cu->getId(), $cp->id());
 
         // Zuerst wird überprüft ob auf dem Planeten Schiffe sind
-        if (mysql_result($check_res, 0) > 0) {
+        if (count($shipCounts) > 0) {
             // Folgender Javascript Abschnitt, welcher von PHP-Teilen erzeugt wird, lädt die Daten von den Schiffen, welche sich auf dem aktuellen Planeten befinden,
             // in ein JS-Array. Dies wird für die Preisberechnung benötigt. Das erzeugte PHP Array wird für die Schiffsauswahl (SELECT) verwendet.
 
             // Lädt Daten von den vorhandenen Schiffen auf dem aktuellen Planeten
-            $sres = dbquery("
-            SELECT
-                ships.ship_id,
-                ships.ship_name,
-                ships.ship_costs_metal,
-                ships.ship_costs_crystal,
-                ships.ship_costs_plastic,
-                ships.ship_costs_fuel,
-                ships.ship_costs_food,
-                shiplist.shiplist_count
-            FROM
-                shiplist
-                INNER JOIN
-                ships
-                ON shiplist.shiplist_ship_id=ships.ship_id
-            WHERE
-                    shiplist.shiplist_entity_id='" . $cp->id() . "'
-                AND shiplist.shiplist_count>'0'
-                AND ships.special_ship='0'
-                AND ships.ship_alliance_costs='0'
-                AND ships.ship_tradable='1'
-            ORDER BY
-                ships.ship_name;");
+            $tradeableShips = array_intersect_key($shipDataRepository->searchShips(ShipSearch::create()->special(false)->tradeable(false)->allianceShip(false), ShipSort::name()), $shipCounts);
 
             echo "<script type=\"text/javascript\">";
             echo "ships = new Array();\n";
-            $ships = array();
-            while ($sarr = mysql_fetch_array($sres)) {
-                echo "ships[" . $sarr['ship_id'] . "] = new Object();\n";
-                echo "ships[" . $sarr['ship_id'] . "][\"name\"] = \"" . $sarr['ship_name'] . "\";";
-                echo "ships[" . $sarr['ship_id'] . "]['costs_metal'] = " . $sarr['ship_costs_metal'] . ";";
-                echo "ships[" . $sarr['ship_id'] . "]['costs_crystal'] = " . $sarr['ship_costs_crystal'] . ";";
-                echo "ships[" . $sarr['ship_id'] . "]['costs_plastic'] = " . $sarr['ship_costs_plastic'] . ";";
-                echo "ships[" . $sarr['ship_id'] . "]['costs_fuel'] = " . $sarr['ship_costs_fuel'] . ";";
-                echo "ships[" . $sarr['ship_id'] . "]['costs_food'] = " . $sarr['ship_costs_food'] . ";";
-                echo "ships[" . $sarr['ship_id'] . "][\"count\"] = " . $sarr['shiplist_count'] . ";";
-
-                $ships[$sarr['ship_id']] = $sarr;
+            foreach ($tradeableShips as $ship) {
+                echo "ships[" . $ship->id . "] = new Object();\n";
+                echo "ships[" . $ship->id . "][\"name\"] = \"" . $ship->name . "\";";
+                echo "ships[" . $ship->id . "]['costs_metal'] = " . $ship->costsMetal . ";";
+                echo "ships[" . $ship->id . "]['costs_crystal'] = " . $ship->costsCrystal . ";";
+                echo "ships[" . $ship->id . "]['costs_plastic'] = " . $ship->costsPlastic . ";";
+                echo "ships[" . $ship->id . "]['costs_fuel'] = " . $ship->costsFuel . ";";
+                echo "ships[" . $ship->id . "]['costs_food'] = " . $ship->costsFood . ";";
+                echo "ships[" . $ship->id . "][\"count\"] = " . $shipCounts[$ship->id] . ";";
             }
             echo "</script>\n";
 
@@ -233,8 +210,8 @@ if ($possible > 0) {
                         <select name=\"ship_list\" id=\"ship_list\" onchange=\"calcMarketShipPrice(1, 0);\">";
 
             // Listet alle vorhandenen Schiffe auf
-            foreach ($ships as $sarr) {
-                echo "<option value=\"" . $sarr['ship_id'] . "\">" . $sarr['ship_name'] . " (" . $sarr['shiplist_count'] . ")</option>";
+            foreach ($tradeableShips as $ship) {
+                echo "<option value=\"" . $ship->id . "\">" . $ship->name . " (" . $shipCounts[$ship->id] . ")</option>";
             }
             echo "</select>
                 </td>

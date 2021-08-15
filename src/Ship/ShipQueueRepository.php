@@ -19,7 +19,6 @@ class ShipQueueRepository extends AbstractRepository
                 'queue_starttime' => ':startTime',
                 'queue_endtime' => ':endTime',
                 'queue_objtime' => ':objTime',
-                'queue_user_click_time' => ':userClickTime',
             ])
             ->setParameters([
                 'userId' => $userId,
@@ -29,7 +28,6 @@ class ShipQueueRepository extends AbstractRepository
                 'startTime' => $startTime,
                 'endTime' => $endTime,
                 'objTime' => $objectTime,
-                'userClickTime' => time(),
             ])->execute();
 
         return (int) $this->getConnection()->lastInsertId();
@@ -72,18 +70,42 @@ class ShipQueueRepository extends AbstractRepository
     /**
      * @return ShipQueueItem[]
      */
-    public function findQueueItemsForUser(int $userId): array
+    public function searchQueueItems(ShipQueueSearch $search): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->applySearchSortLimit($this->createQueryBuilder(), $search)
             ->select('*')
             ->from('ship_queue')
-            ->where('queue_user_id = :userId')
-            ->setParameter('userId', $userId)
             ->orderBy('queue_starttime', 'ASC')
             ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn ($row) => new ShipQueueItem($row), $data);
+    }
+
+    /**
+     * @return AdminShipQueueItem[]
+     */
+    public function adminSearchQueueItems(ShipQueueSearch $search): array
+    {
+        $data = $this->applySearchSortLimit($this->createQueryBuilder(), $search)
+            ->select('ship_queue.*')
+            ->addSelect('ship_name')
+            ->addSelect('planet_name, planet_user_id')
+            ->addSelect('entities.id, entities.pos, entities.code, cells.sx, cells.sy, cells.cx, cells.cy, cells.id as cid')
+            ->addSelect('user_nick, user_points')
+            ->from('ship_queue')
+            ->innerJoin('ship_queue', 'planets', 'planets', 'planets.id = queue_entity_id')
+            ->innerJoin('planets', 'entities', 'entities', 'planets.id = entities.id')
+            ->innerJoin('planets', 'cells', 'cells', 'cells.id = entities.cell_id')
+            ->innerJoin('ship_queue', 'users', 'users', 'users.user_id = queue_user_id')
+            ->innerJoin('ship_queue', 'ships', 'ships', 'ships.ship_id = queue_ship_id')
+            ->groupBy('queue_id')
+            ->orderBy('queue_entity_id')
+            ->addOrderBy('queue_endtime')
+            ->execute()
+            ->fetchAllAssociative();
+
+        return array_map(fn ($row) => new AdminShipQueueItem($row), $data);
     }
 
     public function saveQueueItem(ShipQueueItem $item): void
@@ -98,7 +120,6 @@ class ShipQueueRepository extends AbstractRepository
             ->set('queue_endtime', ':endTime')
             ->set('queue_objtime', ':objectTime')
             ->set('queue_build_type', ':buildType')
-            ->set('queue_user_click_time', ':userClickTime')
             ->where('queue_id = :id')
             ->setParameters([
                 'id' => $item->id,
@@ -110,7 +131,6 @@ class ShipQueueRepository extends AbstractRepository
                 'endTime' => $item->endTime,
                 'objectTime' => $item->objectTime,
                 'buildType' => $item->buildType,
-                'userClickTime' => $item->userClickTime,
             ])
             ->execute();
     }
@@ -160,6 +180,35 @@ class ShipQueueRepository extends AbstractRepository
             ->delete('ship_queue')
             ->where($qb->expr()->notIn('queue_user_id', ':userIds'))
             ->setParameter('userIds', $availableUserIds, Connection::PARAM_INT_ARRAY)
+            ->execute();
+    }
+
+    public function freezeConstruction(int $userId): void
+    {
+        $this->createQueryBuilder()
+            ->update('ship_queue')
+            ->set('queue_build_type', ':type')
+            ->where('queue_user_id = :userId')
+            ->setParameters([
+                'userId' => $userId,
+                'type' => 1,
+            ])
+            ->execute();
+    }
+
+    public function unfreezeConstruction(int $userId, int $duration): void
+    {
+        $this->createQueryBuilder()
+            ->update('ship_queue')
+            ->set('queue_build_type', ':type')
+            ->set('queue_starttime', 'queue_starttime + :duration')
+            ->set('queue_endtime', 'queue_endtime + :duration')
+            ->where('queue_user_id = :userId')
+            ->setParameters([
+                'userId' => $userId,
+                'type' => 0,
+                'duration' => $duration,
+            ])
             ->execute();
     }
 }

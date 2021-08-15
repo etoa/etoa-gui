@@ -155,12 +155,27 @@ class UserRepository extends AbstractRepository
         return array_map(fn ($value) => (int) $value, $data);
     }
 
+    public function activateHolidayMode(int $userId, int $from, int $to): void
+    {
+        $this->createQueryBuilder()
+            ->update('users')
+            ->set('user_hmode_from', (string) $from)
+            ->set('user_hmode_to', (string) $to)
+            ->set('user_logouttime', (string) $from)
+            ->where('user_id = :id')
+            ->setParameters([
+                'id' => $userId,
+            ])
+            ->execute();
+    }
+
     public function disableHolidayMode(int $userId): void
     {
         $this->createQueryBuilder()
             ->update('users')
             ->set('user_hmode_from', (string) 0)
             ->set('user_hmode_to', (string) 0)
+            ->set('user_logouttime', (string) time())
             ->where('user_id = :id')
             ->setParameters([
                 'id' => $userId,
@@ -243,49 +258,31 @@ class UserRepository extends AbstractRepository
         return $this->searchUsers(UserSearch::create()->allianceId($allianceId));
     }
 
-    public function getUser(int $userId): ?User
+    public function findUser(UserSearch $search): ?User
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->applySearchSortLimit($this->createQueryBuilder(), $search)
             ->select('*')
             ->from('users')
-            ->where('user_id = :userId')
-            ->setParameter('userId', $userId)
+            ->setMaxResults(1)
             ->execute()
             ->fetchAssociative();
 
         return $data !== false ? new User($data) : null;
+    }
+
+    public function getUser(int $userId): ?User
+    {
+        return $this->findUser(UserSearch::create()->user($userId));
     }
 
     public function getUserByNick(string $nick): ?User
     {
-        $data = $this->createQueryBuilder()
-            ->select('*')
-            ->from('users')
-            ->where('LCASE(user_nick) = :nick')
-            ->setParameters([
-                'nick' => strtolower($nick),
-            ])
-            ->execute()
-            ->fetchAssociative();
-
-        return $data !== false ? new User($data) : null;
+        return $this->findUser(UserSearch::create()->nick($nick));
     }
 
     public function getUserByNickAndEmail(string $nick, string $emailFixed): ?User
     {
-        $data = $this->createQueryBuilder()
-            ->select('*')
-            ->from('users')
-            ->where('LCASE(user_nick) = :nick')
-            ->andWhere('user_email_fix = :emailFixed')
-            ->setParameters([
-                'nick' => strtolower($nick),
-                'emailFixed' => $emailFixed,
-            ])
-            ->execute()
-            ->fetchAssociative();
-
-        return $data !== false ? new User($data) : null;
+        return $this->findUser(UserSearch::create()->nick($nick)->emailFix($emailFixed));
     }
 
     /**
@@ -485,22 +482,14 @@ class UserRepository extends AbstractRepository
         return $affected > 0;
     }
 
-    public function exists(string $nick, string $email): bool
+    public function exists(UserSearch $search): bool
     {
-        $data = $this->createQueryBuilder()
-            ->select("user_id")
+        return (bool) $this->applySearchSortLimit($this->createQueryBuilder(), $search)
+            ->select("1")
             ->from('users')
-            ->where('user_nick = :nick')
-            ->orWhere('user_email_fix = :email')
             ->setMaxResults(1)
-            ->setParameters([
-                'nick' => $nick,
-                'email' => $email,
-            ])
             ->execute()
             ->fetchOne();
-
-        return $data !== false;
     }
 
     public function create(string $nick, string $name, string $email, string $password, int $race = 0, bool $ghost = false): int
@@ -572,6 +561,18 @@ class UserRepository extends AbstractRepository
             ->execute();
     }
 
+    public function markMainPlanetChanged(int $userId): void
+    {
+        $this->createQueryBuilder()
+            ->update('users')
+            ->set('user_changed_main_planet', '1')
+            ->where('user_id = :userId')
+            ->setParameters([
+                'userId' => $userId,
+            ])
+            ->execute();
+    }
+
     /**
      * @return array<int, string>
      */
@@ -598,6 +599,10 @@ class UserRepository extends AbstractRepository
 
         if ($sort == null || count($sort->sorts) === 0) {
             $qb->orderBy('user_nick');
+        }
+
+        if (isset($search->parameters['allianceLike'])) {
+            $qb->innerJoin('users', 'alliances', 'alliances', 'user_alliance_id = alliances.alliance_id');
         }
 
         $data = $this->applySearchSortLimit($qb, $search, $sort, $limit)

@@ -63,6 +63,8 @@ class DefenseRepositoryTest extends AbstractDbTestCase
         $this->repository->addDefense($defenseId, 2, $userId, 12);
 
         $this->assertSame(2, $this->repository->removeDefense($defenseId, 10, $userId, 12));
+
+        $this->assertSame([], $this->repository->getEntityDefenseCounts($userId, 12));
     }
 
     public function testGetEntityDefenseCounts(): void

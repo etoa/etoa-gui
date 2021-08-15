@@ -13,7 +13,6 @@ use EtoA\BuddyList\BuddyListRepository;
 use EtoA\Building\BuildingRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Defense\DefenseQueueRepository;
-use EtoA\Defense\DefenseQueueSearch;
 use EtoA\Defense\DefenseRepository;
 use EtoA\Fleet\FleetRepository;
 use EtoA\Fleet\FleetSearchParameters;
@@ -184,7 +183,7 @@ class UserService
         }
 
         // Check existing user
-        if ($this->userRepository->exists($nick, $email)) {
+        if ($this->userRepository->exists(UserSearch::create()->nick($nick)->emailFix($email))) {
             throw new Exception("Der Benutzer mit diesem Nicknamen oder dieser E-Mail-Adresse existiert bereits!");
         }
 
@@ -392,68 +391,6 @@ die Spielleitung";
         );
 
         return count($deletedUsers);
-    }
-
-    public function setUmodToInactive(): int
-    {
-        $threshold = time() - ($this->config->param1Int('hmode_days') * 86400);
-        $users = $this->userRepository->findInactiveInHolidayMode($threshold);
-        foreach ($users as $user) {
-            $hmodTime = time() - $user->hmodFrom;
-
-            $this->userRepository->disableHolidayMode($user->id);
-
-            $newLogoutTime = time() - ($this->config->param2Int('user_inactive_days') * 86400);
-            $this->userRepository->setLogoutTime($user->id, $newLogoutTime);
-
-            $buildingItems = $this->buildingRepository->findForUser($user->id);
-            foreach ($buildingItems as $item) {
-                if ($item->startTime == 0 || $item->endTime == 0) {
-                    continue;
-                }
-                $item->buildType = 3;
-                $item->startTime += $hmodTime;
-                $item->endTime += $hmodTime;
-                $this->buildingRepository->save($item);
-            }
-
-            $technologyItems = $this->technologyRepository->findForUser($user->id);
-            foreach ($technologyItems as $item) {
-                if ($item->startTime == 0 || $item->endTime == 0) {
-                    continue;
-                }
-                $item->buildType = 3;
-                $item->startTime += $hmodTime;
-                $item->endTime += $hmodTime;
-                $this->technologyRepository->save($item);
-            }
-
-            $shipQueueItems = $this->shipQueueRepository->findQueueItemsForUser($user->id);
-            foreach ($shipQueueItems as $item) {
-                $item->buildType = 0;
-                $item->startTime += $hmodTime;
-                $item->endTime += $hmodTime;
-                $this->shipQueueRepository->saveQueueItem($item);
-            }
-
-            $defQueueItems = $this->defenseQueueRepository->searchQueueItems(DefenseQueueSearch::create()->userId($user->id));
-            foreach ($defQueueItems as $item) {
-                $item->buildType = 0;
-                $item->startTime += $hmodTime;
-                $item->endTime += $hmodTime;
-                $this->defenseQueueRepository->saveQueueItem($item);
-            }
-
-            $this->userRepository->addSpecialistTime($user->id, $hmodTime);
-
-            $userPlanets = $this->planetRepository->getUserPlanets($user->id);
-            foreach ($userPlanets as $planet) {
-                $this->planetRepository->setLastUpdated($planet->id, time());
-                $this->backendMessageService->updatePlanet($planet->id);
-            }
-        }
-
-        return count($users);
     }
 
     public function addToUserLog(int $userId, string $zone, string $message, bool $public = true): void

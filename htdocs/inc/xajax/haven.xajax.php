@@ -2,6 +2,7 @@
 
 // Main dialogs
 
+use EtoA\Alliance\AllianceBuildingId;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Fleet\FleetRepository;
 use EtoA\Universe\Entity\EntityCoordinates;
@@ -68,8 +69,8 @@ function havenShowShips()
     if ($fleet->specialist->fleetMax > 0)
         echo " +3 Flotten durch " . $fleet->specialist->name;
     echo ")</td></tr>";
-    if ($fleet->owner->allianceId() > 0 && $fleet->owner->alliance->buildlist->getLevel(ALLIANCE_MAIN_ID)) {
-        $flvl = $fleet->owner->alliance->buildlist->getLevel(ALLIANCE_FLEET_CONTROL_ID);
+    if ($fleet->owner->allianceId() > 0 && $fleet->owner->alliance->buildlist->getLevel(AllianceBuildingId::MAIN)) {
+        $flvl = $fleet->owner->alliance->buildlist->getLevel(AllianceBuildingId::FLEET_CONTROL);
         $fleet->setAllianceSlots($flvl);
         $afleets = $fleet->getAllianceSlots();
         $pfleets = $flvl + 2;

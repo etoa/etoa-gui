@@ -3,10 +3,14 @@
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Defense\Defense;
 use EtoA\Defense\DefenseDataRepository;
+use EtoA\Defense\DefenseListSearch;
 use EtoA\Defense\DefenseQueueRepository;
+use EtoA\Defense\DefenseQueueSearch;
 use EtoA\Defense\DefenseRepository;
 use EtoA\Defense\DefenseSort;
 use EtoA\Ranking\RankingService;
+use EtoA\Universe\Planet\PlanetRepository;
+use EtoA\User\UserRepository;
 use Symfony\Component\HttpFoundation\Request;
 
 /** @var ConfigurationService */
@@ -21,6 +25,10 @@ $defenseRepository = $app[DefenseRepository::class];
 
 /** @var DefenseQueueRepository $defenseQueueRepository */
 $defenseQueueRepository = $app[DefenseQueueRepository::class];
+/** @var UserRepository $userRepository */
+$userRepository = $app[UserRepository::class];
+/** @var PlanetRepository $planetRepository */
+$planetRepository = $app[PlanetRepository::class];
 
 /** @var RankingService $rankingService */
 $rankingService = $app[RankingService::class];
@@ -65,97 +73,32 @@ elseif ($sub == "queue") {
     echo "<h2>Bauliste</h2>";
 
     if ((isset($_POST['defqueue_search']) && $_POST['defqueue_search'] != "") || (isset($_GET['action']) && $_GET['action'] == "searchresults")) {
-        $sqlstart = "
-            SELECT
-                queue_id,
-                queue_starttime,
-                queue_endtime,
-                queue_objtime,
-                queue_cnt,
-                def_name,
-                def_id,
-                planet_name,
-                planets.id,
-                planet_user_id,
-                entities.pos,
-                cells.sx,
-                cells.sy,
-                cells.cx,
-                cells.cy,
-                user_nick,
-                user_id,
-                user_points
-            FROM
-                    def_queue
-            INNER JOIN
-                planets
-                ON
-                    queue_entity_id=planets.id
-            INNER JOIN
-                entities
-                ON
-                    planets.id=entities.id
-            INNER JOIN
-                cells
-                ON
-                    entities.cell_id=cells.id
-            INNER JOIN
-                users
-                ON
-                    queue_user_id=user_id
-            INNER JOIN
-                defense
-                ON
-                    queue_def_id=def_id
-            ";
-        $sqlend = "
-            GROUP BY
-                    queue_id
-            ORDER BY
-                    queue_entity_id,
-                    queue_endtime
-                    ;";
-
         // Suchquery generieren
-        $sql = '';
-        if (!isset($_SESSION['defqueue']['query']) || $_SESSION['defqueue']['query'] == "") {
+        if (!isset($_SESSION['defqueue']['query'])) {
+            $queueSearch = DefenseQueueSearch::create();
             if ($request->request->getInt('planet_id') > 0) {
-                if ($sql != "") $sql .= " AND ";
-                $sql .= "queue_entity_id=" . $request->request->getInt('planet_id');
+                $queueSearch->entityId($request->request->getInt('planet_id'));
             }
             if ((bool) $request->request->get('planet_name')) {
-                if ($sql != "") $sql .= " AND ";
-                if (stristr($_POST['qmode']['planet_name'], "%")) $addchars = "%";
-                else $addchars = "";
-                $sql .= "planet_name " . stripslashes($_POST['qmode']['planet_name']) . $_POST['planet_name'] . "$addchars'";
+                $queueSearch->likePlanetName($request->request->get('planet_name'));
             }
             if ($request->request->getInt('user_id') > 0) {
-                if ($sql != "") $sql .= " AND ";
-                $sql .= "queue_user_id=" . $request->request->getInt('user_id');
+                $queueSearch->userId($request->request->getInt('user_id'));
             }
             if ((bool) $request->request->get('user_nick')) {
-                if ($sql != "") $sql .= " AND ";
-                if (stristr($_POST['qmode']['user_nick'], "%")) $addchars = "%";
-                else $addchars = "";
-                $sql .= "user_nick " . stripslashes($_POST['qmode']['user_nick']) . $_POST['user_nick'] . "$addchars'";
+                $queueSearch->likeUserNick($request->request->get('user_nick'));
             }
             if ($request->request->getInt('def_id') > 0) {
-                if ($sql != "") $sql .= " AND ";
-                $sql .= "queue_def_id=" . $request->request->getInt('def_id');
+                $queueSearch->defenseId($request->request->getInt('def_id'));
             }
 
-            if ($sql != "") {
-                $sql = $sqlstart . " WHERE " . $sql . $sqlend;
-            } else {
-                $sql = $sqlstart . $sql . $sqlend;
-            }
-            $_SESSION['defqueue']['query'] = $sql;
+            $_SESSION['defqueue']['query'] = serialize($queueSearch);
         } else {
-            $sql = $_SESSION['defqueue']['query'];
+            $queueSearch = unserialize($_SESSION['defqueue']['query'], ['allowed_classes' => [DefenseQueueSearch::class]]);
         }
 
-        $res = dbquery($sql);
-        $nr = mysql_num_rows($res);
+        $entries = $defenseQueueRepository->adminSearchQueueItems($queueSearch);
+        $nr = count($entries);
         if ($nr > 0) {
             echo "$nr Datens&auml;tze vorhanden<br/><br/>";
             if ($nr > 20) {
@@ -176,16 +119,16 @@ elseif ($sub == "queue") {
             echo "</tr>";
             $check = array();
             $pid = 0;
-            while ($arr = mysql_fetch_array($res)) {
-                if ($pid > 0 && $pid != $arr['id']) {
+            foreach ($entries as $entry) {
+                if ($pid > 0 && $pid !== $entry->entityId) {
                     echo "<tr><td colspan=\"8\" style=\"height:3px;background:#000;\" class=\"tbldata\"></td></tr>";
                 }
-                $pid = $arr['id'];
+                $pid = $entry->entityId;
 
                 $error = false;
 
                 // Planet gehört nicht dem Besitzer
-                if ($arr['user_id'] != $arr['planet_user_id']) {
+                if ($entry->userId !== $entry->planetUserId) {
                     $error = true;
                     $errorMsg = "Planet geh&ouml;rt nicht dem Schiffbesitzer! Wird auf den Heimatplaneten verschoben";
                 }
@@ -206,19 +149,19 @@ elseif ($sub == "queue") {
 
                 if ($error)
                     $style = " style=\"color:#f30\"";
-                elseif ($arr['queue_cnt'] == 0)
+                elseif ($entry->count === 0)
                     $style = " style=\"color:#999\"";
                 else
                     $style = "";
                 echo "<tr>";
-                echo "<td class=\"tbldata\" $style>" . $arr['queue_id'] . "</a></td>";
-                echo "<td class=\"tbldata\"$style " . mTT($arr['def_name'], "<b>Schiff-ID:</b> " . $arr['def_id']) . ">" . $arr['def_name'] . "</td>";
-                echo "<td class=\"tbldata\"$style>" . nf($arr['queue_cnt']) . "</td>";
-                echo "<td class=\"tbldata\"$style " . mTT($arr['planet_name'], "<b>Planet-ID:</b> " . $arr['id'] . "<br/><b>Koordinaten:</b> " . $arr['sx'] . "/" . $arr['sy'] . " : " . $arr['cx'] . "/" . $arr['cy'] . " : " . $arr['pos']) . ">" . cut_string($arr['planet_name'], 11) . "</td>";
-                echo "<td class=\"tbldata\"$style " . mTT($arr['user_nick'], "<b>User-ID:</b> " . $arr['user_id'] . "<br/><b>Punkte:</b> " . nf($arr['user_points'])) . ">" . cut_string($arr['user_nick'], 11) . "</td>";
-                echo "<td class=\"tbldata\"$style>" . df($arr['queue_starttime'], 1) . "</td>";
-                echo "<td class=\"tbldata\"$style>" . df($arr['queue_endtime'], 1) . "</td>";
-                echo "<td class=\"tbldata\"$style>" . edit_button("?page=$page&sub=$sub&action=edit&id=" . $arr['queue_id']);
+                echo "<td class=\"tbldata\" $style>" . $entry->id . "</a></td>";
+                echo "<td class=\"tbldata\"$style " . mTT($entry->defenseName, "<b>Verteidigungs-ID:</b> " . $entry->id) . ">" . $entry->defenseName . "</td>";
+                echo "<td class=\"tbldata\"$style>" . nf($entry->count) . "</td>";
+                echo "<td class=\"tbldata\"$style " . mTT($entry->planetName, "<b>Planet-ID:</b> " . $entry->entityId . "<br/><b>Koordinaten:</b> " . $entry->entity->sx . "/" . $entry->entity->sy . " : " . $entry->entity->cx . "/" . $entry->entity->cy . " : " . $entry->entity->pos) . ">" . cut_string($entry->planetName, 11) . "</td>";
+                echo "<td class=\"tbldata\"$style " . mTT($entry->userNick, "<b>User-ID:</b> " . $entry->userId . "<br/><b>Punkte:</b> " . nf($entry->userPoints)) . ">" . cut_string($entry->userNick, 11) . "</td>";
+                echo "<td class=\"tbldata\"$style>" . df($entry->startTime, 1) . "</td>";
+                echo "<td class=\"tbldata\"$style>" . df($entry->endTime, 1) . "</td>";
+                echo "<td class=\"tbldata\"$style>" . edit_button("?page=$page&sub=$sub&action=edit&id=" . $entry->id);
                 echo "</td>";
                 echo "</tr>";
             }
@@ -263,54 +206,34 @@ elseif ($sub == "queue") {
             echo "Bau abgeschlossen!<br/><br/>";
         }
 
-        $res = dbquery("
-            SELECT
-                queue_id,
-                queue_objtime,
-                queue_starttime,
-                queue_endtime,
-                queue_cnt,
-                def_name,
-                planet_name,
-                user_nick
-            FROM
-          def_queue
-      INNER JOIN
-          defense
-          ON queue_def_id=def_id
-      INNER JOIN
-          users
-          ON queue_user_id=user_id
-      INNER JOIN
-          planets
-          ON queue_entity_id=planets.id
-            WHERE
-           queue_id=" . intval($_GET['id']) . ";");
-
-        if (mysql_num_rows($res) > 0) {
-            $arr = mysql_fetch_array($res);
-            if ($arr['queue_starttime'] > 0)
-                $bst = date($config->get('admin_dateformat'), $arr['queue_starttime']);
+        $queueItem = $defenseQueueRepository->getQueueItem((int) $_GET['id']);
+        if ($queueItem !== null) {
+            if ($queueItem->startTime > 0)
+                $bst = date($config->get('admin_dateformat'), $queueItem->startTime);
             else
                 $bst = "";
-            if ($arr['queue_endtime'] > 0)
-                $bet = date($config->get('admin_dateformat'), $arr['queue_endtime']);
+            if ($queueItem->endTime > 0)
+                $bet = date($config->get('admin_dateformat'), $queueItem->endTime);
             else
                 $bet = "";
 
-            echo "<form action=\"?page=$page&sub=$sub&action=edit&id=" . $arr['queue_id'] . "\" method=\"post\">";
+            $userNick = $userRepository->getNick($queueItem->userId);
+            $planet = $planetRepository->find($queueItem->entityId);
+            $defenseNames = $defenseDataRepository->getDefenseNames(true);
+
+            echo "<form action=\"?page=$page&sub=$sub&action=edit&id=" . $queueItem->id . "\" method=\"post\">";
             echo "<table class=\"tbl\">";
-            echo "<tr><td class=\"tbltitle\">ID</td><td class=\"tbldata\">" . $arr['queue_id'] . "</td></tr>";
-            echo "<tr><td class=\"tbltitle\">Planet</td><td class=\"tbldata\">" . $arr['planet_name'] . "</td></tr>";
-            echo "<tr><td class=\"tbltitle\">Spieler</td><td class=\"tbldata\">" . $arr['user_nick'] . "</td></tr>";
-            echo "<tr><td class=\"tbltitle\">Schiff</td><td class=\"tbldata\">" . $arr['def_name'] . "</td></tr>";
-            echo "<tr><td class=\"tbltitle\">Anzahl</td><td class=\"tbldata\"><input type=\"text\" name=\"queue_cnt\" value=\"" . $arr['queue_cnt'] . "\" size=\"5\" maxlength=\"20\" /></td></tr>";
+            echo "<tr><td class=\"tbltitle\">ID</td><td class=\"tbldata\">" . $queueItem->id . "</td></tr>";
+            echo "<tr><td class=\"tbltitle\">Planet</td><td class=\"tbldata\">" . $planet->name . "</td></tr>";
+            echo "<tr><td class=\"tbltitle\">Spieler</td><td class=\"tbldata\">" . $userNick . "</td></tr>";
+            echo "<tr><td class=\"tbltitle\">Schiff</td><td class=\"tbldata\">" . $defenseNames[$queueItem->defenseId] . "</td></tr>";
+            echo "<tr><td class=\"tbltitle\">Anzahl</td><td class=\"tbldata\"><input type=\"text\" name=\"queue_cnt\" value=\"" . $queueItem->count . "\" size=\"5\" maxlength=\"20\" /></td></tr>";
             echo "<tr><td class=\"tbltitle\">Baustart</td><td class=\"tbldata\">
                 <input type=\"text\" id=\"shiplist_build_start_time\" name=\"queue_starttime\" value=\"$bst\" size=\"20\" maxlength=\"30\" />
                 <input type=\"button\" value=\"Jetzt\" onclick=\"document.getElementById('shiplist_build_start_time').value='" . date("Y-d-m h:i") . "'\" /></td></tr>";
             echo "<tr><td class=\"tbltitle\">Bauende</td><td class=\"tbldata\">
                 <input type=\"text\" id=\"shiplist_build_end_time\" name=\"queue_endtime\" value=\"$bet\" size=\"20\" maxlength=\"30\" /></td></tr>";
-            echo "<tr><td class=\"tbltitle\">Bauzeit pro Schiff</td><td class=\"tbldata\">" . tf($arr['queue_objtime']) . "</td></tr>";
+            echo "<tr><td class=\"tbltitle\">Bauzeit pro Schiff</td><td class=\"tbldata\">" . tf($queueItem->objectTime) . "</td></tr>";
             echo "</table><br/>";
             echo "<input type=\"submit\" name=\"save\" value=\"&Uuml;bernehmen\" class=\"button\" />&nbsp;";
             echo "<input type=\"submit\" name=\"build_finish\" value=\"Bau fertigstellen\" />&nbsp;";
@@ -330,7 +253,7 @@ elseif ($sub == "queue") {
     // Suchmaske Schiffaufträge
     //
     else {
-        $_SESSION['defqueue']['query'] = "";
+        unset($_SESSION['defqueue']['query']);
 
         // Suchmaske
         echo "Suchmaske:<br/><br/>";
@@ -338,11 +261,9 @@ elseif ($sub == "queue") {
         echo "<table class=\"tbl\">";
         echo "<tr><td class=\"tbltitle\">Planet ID</td><td class=\"tbldata\"><input type=\"text\" name=\"planet_id\" value=\"\" size=\"20\" maxlength=\"250\" /></td>";
         echo "<tr><td class=\"tbltitle\">Planetname</td><td class=\"tbldata\"><input type=\"text\" name=\"planet_name\" value=\"\" size=\"20\" maxlength=\"250\" /> ";
-        fieldqueryselbox('planet_name');
         echo "</td></tr>";
         echo "<tr><td class=\"tbltitle\">Spieler ID</td><td class=\"tbldata\"><input type=\"text\" name=\"user_id\" value=\"\" size=\"20\" maxlength=\"250\" /></td></tr>";
         echo "<tr><td class=\"tbltitle\">Spieler Nick</td><td class=\"tbldata\"><input type=\"text\" name=\"user_nick\" value=\"\" size=\"20\" maxlength=\"250\" /> ";
-        fieldqueryselbox('user_nick');
         echo "</td></tr>";
         echo "<tr><td class=\"tbltitle\">Verteidigung</td><td class=\"tbldata\"><select name=\"def_id\"><option value=\"\"><i>---</i></option>";
         foreach ($defenseNames as $defenseId => $defenseName) {
@@ -392,129 +313,28 @@ elseif ($sub == "req") {
 else {
     echo "<h1>Verteidigungsliste</h1>";
 
-    if (isset($_POST['deflist_search']) || (isset($_GET['action']) && $_GET['action'] == "searchresults") || isset($_POST['new'])) {
-
-        $sqlstart = "SELECT
-                planets.id,
-                planet_name,
-                  entities.pos,
-              cells.sx,cells.sy,
-              cells.cx,cells.cy,
-              user_id,
-              user_nick,
-              user_points,
-              def_id,
-              def_name,
-              deflist_id,
-              deflist_count
-            FROM
-                deflist,
-                entities,
-                planets,
-                cells,
-                users,
-                defense
-            WHERE
-                planets.id=entities.id
-            AND	entities.cell_id=cells.id
-                    AND deflist_def_id=def_id
-                    AND user_id=deflist_user_id
-                    AND planets.id=deflist_entity_id ";
-        $sqlend = "
-            GROUP BY
-                    deflist_id
-            ORDER BY
-                    deflist_entity_id,
-                    def_order,def_name;";
-        $sql = "";
-
-        // Verteidigung hinzufügen
-        if (isset($_POST['new'])) {
-            $updata = explode(":", $_POST['planet_id']);
-            $defenseRepository->addDefense((int) $_POST['def_id'], (int) $_POST['deflist_count'], (int) $updata[1], (int) $updata[0]);
-            echo "Verteidigung wurde hinzugefügt!<br/>";
-            $sql = " AND planets.id=" . $updata[0];
-            $_SESSION['defedit']['query'] = "";
-
-            // Hinzufügen
-            echo "<h2>Neue Verteidigungsanlagen hinzuf&uuml;gen</h2>";
-            echo "<form action=\"?page=$page&amp;sub=$sub&amp;action=search\" method=\"post\">";
-            tableStart();
-            echo "<tr><th class=\"tbltitle\">Verteidigung:</th><td class=\"tbldata\"><select name=\"def_id\">";
-            foreach ($defenseNames as $defenseId => $defenseName) {
-                echo "<option value=\"" . $defenseId . "\"";
-                if ($defenseId == $_POST['def_id']) echo " selected=\"selected\"";
-                echo ">" . $defenseName . "</option>";
-            }
-            echo "</select></td></tr>";
-            if ($_POST['deflist_count'])
-                $v = $_POST['deflist_count'];
-            else
-                $v = 1;
-            echo "<tr><th class=\"tbltitle\">Anzahl</th><td class=\"tbldata\"><input type=\"text\" name=\"deflist_count\" value=\"$v\" size=\"1\" maxlength=\"3\" /></td></tr>";
-            echo "<tr><th class=\"tbltitle\">auf dem Planeten</th><td class=\"tbldata\"> <select name=\"planet_id\"><";
-            $pres = dbquery("SELECT
-                                users.user_id,
-                                planets.id,
-                                planet_name,
-                                users.user_nick,
-                                entities.pos,
-                                cells.sx,
-                                cells.sy,
-                                cells.cx,
-                                cells.cy
-                            FROM
-                                users
-                            INNER JOIN
-                                planets
-                                ON planets.planet_user_id=users.user_id
-                            INNER JOIN
-                                entities
-                                ON entities.id=planets.id
-                            INNER JOIN
-                                cells
-                                ON cells.id=entities.cell_id
-                            ORDER BY
-                                planets.id;");
-            while ($parr = mysql_fetch_array($pres)) {
-                echo "<option value=\"" . $parr['id'] . ":" . $parr['user_id'] . "\"";
-                if ($updata[0] == $parr['id']) echo " selected=\"selected\"";
-                echo ">" . $parr['sx'] . "/" . $parr['sy'] . " : " . $parr['cx'] . "/" . $parr['cy'] . " : " . $parr['pos'] . " &nbsp; " . $parr['planet_name'] . " (" . $parr['user_nick'] . ")</option>";
-            }
-            echo "</select></td></tr>";
-            tableEnd();
-            echo "<input type=\"submit\" name=\"new\" value=\"Hinzuf&uuml;gen\" /></form><br/>";
-            $sql = $sqlstart . $sql . $sqlend;
-            $_SESSION['defedit']['query'] = $sql;
-        }
-
+    if (isset($_POST['deflist_search']) || (isset($_GET['action']) && $_GET['action'] == "searchresults")) {
         // Suchquery generieren
-        elseif (!isset($_SESSION['defedit']['query']) || $_SESSION['defedit']['query'] == "") {
+        if (!isset($_SESSION['defedit']['query']) || $_SESSION['defedit']['query'] == "") {
+            $defenseSearch = DefenseListSearch::create();
             if ($request->request->getInt('planet_id') > 0)
-                $sql .= " AND id='" . $request->request->getInt('planet_id') . "'";
+                $defenseSearch->entityId($request->request->getInt('planet_id'));
             if ((bool) $request->request->get('planet_name')) {
-                if (stristr($_POST['qmode']['planet_name'], "%"))
-                    $addchars = "%";
-                else $addchars = "";
-                $sql .= " AND planet_name " . stripslashes($_POST['qmode']['planet_name']) . $_POST['planet_name'] . "$addchars'";
+                $defenseSearch->likePlanetName($request->request->get('planet_name'));
             }
             if ($request->request->getInt('user_id') > 0)
-                $sql .= " AND user_id='" . $request->request->getInt('user_id') . "'";
+                $defenseSearch->userId($request->request->getInt('user_id'));
             if ((bool) $request->request->get('user_nick')) {
-                if (stristr($_POST['qmode']['user_nick'], "%"))
-                    $addchars = "%";
-                else $addchars = "";
-                $sql .= " AND user_nick " . stripslashes($_POST['qmode']['user_nick']) . $_POST['user_nick'] . "$addchars'";
+                $defenseSearch->likeUserNick($request->request->get('user_nick'));
             }
-            if ($request->request->getInt('def_id') > 0)
-                $sql .= " AND def_id='" . $request->request->getInt('def_id') . "'";
+            if ($request->request->getInt('def_id') > 0) {
+                $defenseSearch->defenseId($request->request->getInt('def_id'));
+            }
 
-
-            $sql = $sqlstart . $sql . $sqlend;
-            $_SESSION['defedit']['query'] = $sql;
-        } else
-            $sql = $_SESSION['defedit']['query'];
-
+            $_SESSION['defedit']['query'] = serialize($defenseSearch);
+        } else {
+            $defenseSearch = unserialize($_SESSION['defedit']['query'], ['allowed_classes' => [DefenseListSearch::class]]);
+        }
 
         if (isset($_POST['save'])) {
             $defenseRepository->setDefenseCount((int) $_POST['deflist_id'], (int) $_POST['deflist_count']);
@@ -527,10 +347,11 @@ else {
             success_msg("Aufgeräumt");
         }
 
-        $res = dbquery($sql);
-        if (mysql_num_rows($res) > 0) {
-            echo mysql_num_rows($res) . " Datens&auml;tze vorhanden<br/><br/>";
-            if (mysql_num_rows($res) > 20) {
+        $defenseListItems = $defenseRepository->adminSearchQueueItems($defenseSearch);
+        $nr = count($defenseListItems);
+        if ($nr > 0) {
+            echo $nr . " Datens&auml;tze vorhanden<br/><br/>";
+            if ($nr > 20) {
                 echo "<input type=\"button\" value=\"Neue Suche\" onclick=\"document.location='?page=$page&sub=$sub'\" /> ";
                 echo "<input type=\"button\" value=\"Aktualisieren\" onclick=\"document.location='?page=$page&amp;sub=$sub&amp;action=searchresults'\" /> ";
                 echo "<input type=\"button\" value=\"Clean-Up\" onclick=\"document.location='?page=$page&amp;sub=$sub&amp;action=searchresults&amp;cleanup=1'\" /><br/><br/>";
@@ -543,19 +364,19 @@ else {
             echo "<td class=\"tbltitle\">Verteidigung</td>";
             echo "<td class=\"tbltitle\">Anzahl</td>";
             echo "</tr>";
-            while ($arr = mysql_fetch_array($res)) {
-                if ($arr['deflist_count'] == 0)
+            foreach ($defenseListItems as $item) {
+                if ($item->count === 0)
                     $style = " style=\"color:#999\"";
                 else
                     $style = "";
 
                 echo "<tr>";
-                echo "<td class=\"tbldata\" $style>" . $arr['deflist_id'] . "</a></td>";
-                echo "<td class=\"tbldata\" $style" . mTT($arr['planet_name'], "<b>Planet-ID:</b> " . $arr['id'] . "<br/><b>Koordinaten:</b> " . $arr['sx'] . "/" . $arr['sy'] . " : " . $arr['cx'] . "/" . $arr['cy'] . " : " . $arr['pos']) . ">" . cut_string($arr['planet_name'], 11) . "</a></td>";
-                echo "<td class=\"tbldata\" $style" . mTT($arr['user_nick'], "<b>User-ID:</b> " . $arr['user_id'] . "<br/><b>Punkte:</b> " . nf($arr['user_points'])) . ">" . cut_string($arr['user_nick'], 11) . "</a></td>";
-                echo "<td class=\"tbldata\" $style" . mTT($arr['def_name'], "<b>Verteidigungs-ID:</b> " . $arr['def_id']) . ">" . $arr['def_name'] . "</a></td>";
-                echo "<td class=\"tbldata\" $style>" . nf($arr['deflist_count']) . "</a></td>";
-                echo "<td class=\"tbldata\">" . edit_button("?page=$page&sub=$sub&action=edit&deflist_id=" . $arr['deflist_id']) . "</td>";
+                echo "<td class=\"tbldata\" $style>" . $item->id . "</a></td>";
+                echo "<td class=\"tbldata\" $style" . mTT($item->planetName, "<b>Planet-ID:</b> " . $item->entityId . "<br/><b>Koordinaten:</b> " . $item->entity->sx . "/" . $item->entity->sy . " : " . $item->entity->cx . "/" . $item->entity->cy . " : " . $item->entity->pos) . ">" . cut_string($item->planetName, 11) . "</a></td>";
+                echo "<td class=\"tbldata\" $style" . mTT($item->userNick, "<b>User-ID:</b> " . $item->userId . "<br/><b>Punkte:</b> " . nf($item->userPoints)) . ">" . cut_string($item->userNick, 11) . "</a></td>";
+                echo "<td class=\"tbldata\" $style" . mTT($item->defenseName, "<b>Verteidigungs-ID:</b> " . $item->defenseId) . ">" . $item->defenseName . "</a></td>";
+                echo "<td class=\"tbldata\" $style>" . nf($item->count) . "</a></td>";
+                echo "<td class=\"tbldata\">" . edit_button("?page=$page&sub=$sub&action=edit&deflist_id=" . $item->id) . "</td>";
                 echo "</tr>";
             }
             echo "</table>";
@@ -570,37 +391,20 @@ else {
     // Bearbeiten
     //
     elseif (isset($_GET['action']) && $_GET['action'] == "edit") {
-        $res = dbquery("SELECT
-                                deflist.deflist_id,
-                                deflist.deflist_count,
-                                defense.def_name,
-                                users.user_nick,
-                                planets.planet_name
-                            FROM
-                                deflist
-                            INNER JOIN
-                                defense
-                            ON
-                                deflist.deflist_def_id=defense.def_id
-                            INNER JOIN
-                                users
-                            ON
-                                deflist.deflist_user_id=users.user_id
-                            INNER JOIN
-                                planets
-                            ON
-                                deflist.deflist_entity_id=planets.id;");
-        if (mysql_num_rows($res) > 0) {
-            $arr = mysql_fetch_array($res);
+        $listItem = $defenseRepository->getItem($_GET['deflist_id']);
+        if ($listItem !== null) {
+            $defenseNames = $defenseDataRepository->getDefenseNames(true);
+            $userNick = $userRepository->getNick($listItem->userId);
+            $planet = $planetRepository->find($listItem->entityId);
             echo "<form action=\"?page=$page&sub=$sub&action=searchresults\" method=\"post\">";
-            echo "<input type=\"hidden\" name=\"deflist_id\" value=\"" . $arr['deflist_id'] . "\" />";
+            echo "<input type=\"hidden\" name=\"deflist_id\" value=\"" . $listItem->id . "\" />";
             echo "<table class=\"tbl\">";
-            echo "<tr><td class=\"tbltitle\">ID</td><td class=\"tbldata\">" . $arr['deflist_id'] . "</td></tr>";
-            echo "<tr><td class=\"tbltitle\">Planet</td><td class=\"tbldata\">" . $arr['planet_name'] . "</td></tr>";
-            echo "<tr><td class=\"tbltitle\">Spieler</td><td class=\"tbldata\">" . $arr['user_nick'] . "</td></tr>";
-            echo "<tr><td class=\"tbltitle\">Verteidigung</td><td class=\"tbldata\">" . $arr['def_name'] . "</td></tr>";
+            echo "<tr><td class=\"tbltitle\">ID</td><td class=\"tbldata\">" . $listItem->id . "</td></tr>";
+            echo "<tr><td class=\"tbltitle\">Planet</td><td class=\"tbldata\">" . $planet->name . "</td></tr>";
+            echo "<tr><td class=\"tbltitle\">Spieler</td><td class=\"tbldata\">" . $userNick . "</td></tr>";
+            echo "<tr><td class=\"tbltitle\">Verteidigung</td><td class=\"tbldata\">" . $defenseNames[$listItem->defenseId] . "</td></tr>";
             echo "<tr><td class=\"tbltitle\">Anzahl</td><td class=\"tbldata\">
-                    <input type=\"text\" name=\"deflist_count\" value=\"" . $arr['deflist_count'] . "\" size=\"5\" maxlength=\"20\" /></td></tr>";
+                    <input type=\"text\" name=\"deflist_count\" value=\"" . $listItem->count . "\" size=\"5\" maxlength=\"20\" /></td></tr>";
 
             echo "</table><br/>";
             echo "<input type=\"submit\" name=\"save\" value=\"&Uuml;bernehmen\" class=\"button\" />&nbsp;";
@@ -687,11 +491,9 @@ else {
         tableStart();
         echo "<tr><th class=\"tbltitle\">Planet ID</td><td class=\"tbldata\"><input type=\"text\" name=\"planet_id\" value=\"\" size=\"20\" maxlength=\"250\" /></td></tr>";
         echo "<tr><th class=\"tbltitle\">Planetname</td><td class=\"tbldata\"><input type=\"text\" name=\"planet_name\" value=\"\" size=\"20\" maxlength=\"250\" /> ";
-        fieldqueryselbox('planet_name');
         echo "</td></tr>";
         echo "<tr><th class=\"tbltitle\">Spieler ID</td><td class=\"tbldata\"><input type=\"text\" name=\"user_id\" value=\"\" size=\"20\" maxlength=\"250\" /></td></tr>";
         echo "<tr><th class=\"tbltitle\">Spieler Nick</td><td class=\"tbldata\"><input type=\"text\" name=\"user_nick\" value=\"\" size=\"20\" maxlength=\"250\" autocomplete=\"off\" onkeyup=\"xajax_searchUser(this.value,'user_nick','citybox1');\"/> ";
-        fieldqueryselbox('user_nick');
         echo "<br><div class=\"citybox\" id=\"citybox1\">&nbsp;</div></tr>";
         echo "<tr><th class=\"tbltitle\">Verteidigung</td><td class=\"tbldata\"><select name=\"def_id\"><option value=\"\"><i>---</i></option>";
         foreach ($defenseNames as $defenseId => $defenseName)

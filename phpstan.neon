@@ -40,7 +40,6 @@ parameters:
         - '#Method [a-z0-9_]+::[a-z0-9_]+\(\) has no return typehint specified#i'
         - '#Method [a-z0-9_]+::[a-z0-9_]+\(\) has parameter \$[a-z0-9_]+ with no typehint specified#i'
         - '#Property [a-z0-9_]+::\$[a-z0-9_]+ has no typehint specified#i'
-        - '#Property [a-z0-9_]+::\$[a-z0-9_]+ type has no value type specified in iterable type array#i'
         - '#Method [a-z0-9_]+::[a-z0-9_]+\(\) has parameter \$[a-z0-9_]+ with no value type specified in iterable type array#i'
         - '#Class [a-z0-9_]+ implements generic interface IteratorAggregate but does not specify its types: TKey, TValue#i'
         - '#Method [a-z0-9_]+::get[a-z]*Iterator\(\) return#i'

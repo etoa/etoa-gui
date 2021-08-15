@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace EtoA\Fleet;
 
+use EtoA\Alliance\AllianceBuildingId;
 use EtoA\Alliance\AllianceBuildingRepository;
 use EtoA\Alliance\AllianceHistoryRepository;
 use EtoA\Alliance\AllianceRepository;
+use EtoA\Alliance\AllianceTechnologyId;
 use EtoA\Alliance\AllianceTechnologyRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Defense\DefenseRepository;
@@ -96,7 +98,7 @@ class FleetScanService
 
     public function getUserCooldownDifference(int $userId): int
     {
-        $userCooldown = $this->allianceBuildingRepository->getUserCooldown($userId, ALLIANCE_CRYPTO_ID);
+        $userCooldown = $this->allianceBuildingRepository->getUserCooldown($userId, AllianceBuildingId::CRYPTO);
         if ($userCooldown > time()) {
             return $userCooldown - time();
         }
@@ -141,7 +143,7 @@ class FleetScanService
         }
 
         $cooldownTime = time() + $this->calculateCooldown($cryptoCenterLevel);
-        $this->allianceBuildingRepository->setUserCooldown($currentUser->id, ALLIANCE_CRYPTO_ID, $cooldownTime);
+        $this->allianceBuildingRepository->setUserCooldown($currentUser->id, AllianceBuildingId::CRYPTO, $cooldownTime);
 
         $targetPlanet = $this->planetRepository->find($targetEntity->id);
         $this->allianceHistoryRepository->addEntry($currentUser->allianceId, "Der Spieler [b]" . $currentUser->nick . "[/b] hat den Planeten " . $targetPlanet->name . "[/b] (" . $targetEntity->coordinatesString() . ") gescannt!");
@@ -207,7 +209,7 @@ class FleetScanService
         $value = $this->technologyRepository->getTechnologyLevel($user->id, TARN_TECH_ID);
 
         if ($user->allianceId > 0) {
-            $value += $this->allianceTechnologyRepository->getLevel($user->allianceId, ALLIANCE_TECH_TARN_ID);
+            $value += $this->allianceTechnologyRepository->getLevel($user->allianceId, AllianceTechnologyId::TARN);
         }
 
         $specialist = $this->specialistDataRepository->getSpecialist($user->specialistId);
@@ -236,7 +238,7 @@ class FleetScanService
         $value = $this->technologyRepository->getTechnologyLevel($user->id, SPY_TECH_ID);
 
         if ($user->allianceId > 0) {
-            $value += $this->allianceTechnologyRepository->getLevel($user->allianceId, ALLIANCE_TECH_SPY_ID);
+            $value += $this->allianceTechnologyRepository->getLevel($user->allianceId, AllianceTechnologyId::SPY);
         }
 
         $specialist = $this->specialistDataRepository->getSpecialist($user->specialistId);

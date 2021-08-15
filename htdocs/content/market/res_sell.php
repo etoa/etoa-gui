@@ -3,6 +3,7 @@
 use EtoA\Fleet\FleetRepository;
 use EtoA\Market\MarketHandler;
 use EtoA\Market\MarketResourceRepository;
+use EtoA\Message\MarketReportRepository;
 use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Entity\EntityService;
 use EtoA\User\UserMultiRepository;
@@ -16,6 +17,8 @@ $entityService = $app[EntityService::class];
 $entityRepository = $app[EntityRepository::class];
 /** @var FleetRepository $fleetRepository */
 $fleetRepository = $app[FleetRepository::class];
+/** @var MarketReportRepository $marketReportRepository */
+$marketReportRepository = $app[MarketReportRepository::class];
 
 $cnt = 0;
 $cnt_error = 0;
@@ -75,31 +78,16 @@ if (isset($_POST['ressource_market_id'])) {
                 $marketResourceRepository->delete($offer->id);
 
                 // Add values for market rate calculation and
-                // fill array for the market report ($mr)
-                $mr = array();
                 foreach ($resNames as $rk => $rn) {
                     $supplyTotal[$rk] += $sellarr[$rk];
                     $demandTotal[$rk] += $buyarr[$rk];
-
-                    $mr['sell_' . $rk] = $sellarr[$rk];
-                    $mr['buy_' . $rk] = $buyarr[$rk];
                 }
 
                 // Send report to seller
-                MarketReport::addMarketReport(array(
-                    'user_id' => $offer->userId,
-                    'entity1_id' => $offer->entityId,
-                    'entity2_id' => $cp->id,
-                    'opponent1_id' => $cu->id,
-                ), "ressold", $offer->id, array_merge($mr, array("fleet1_id" => $sellerFid, "fleet2_id" => $buyerFid)));
+                $marketReportRepository->addResourceReport($offer->id, $offer->userId, $offer->entityId, $cu->getId(), $sellResources, "ressold", $buyResource, 1.0, null, 0, $cp->id, $sellerFid, $buyerFid);
 
                 // Send report to buyer (the current user)
-                MarketReport::addMarketReport(array(
-                    'user_id' => $cu->id,
-                    'entity1_id' => $cp->id,
-                    'entity2_id' => $offer->entityId,
-                    'opponent1_id' => $offer->userId,
-                ), "resbought", $offer->id, array_merge($mr, array("fleet1_id" => $buyerFid, "fleet2_id" => $sellerFid)));
+                $marketReportRepository->addResourceReport($offer->id, $cu->getId(), $cp->id, $offer->userId, $sellResources, "resbought", $buyResource, 1.0, null, 0, $offer->entityId, $buyerFid, $sellerFid);
 
                 // Add market ratings
                 /** @var UserRatingRepository $userRatingRepository */

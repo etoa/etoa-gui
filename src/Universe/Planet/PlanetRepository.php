@@ -357,7 +357,8 @@ class PlanetRepository extends AbstractRepository
         float $resPlastic,
         float $resFuel,
         float $resFood,
-        int $people = 0
+        int $people = 0,
+        int $fields = 0
     ): bool {
         $affected = (int) $this->createQueryBuilder()
             ->update('planets')
@@ -367,6 +368,7 @@ class PlanetRepository extends AbstractRepository
             ->set('planet_res_fuel', 'planet_res_fuel + :res_fuel')
             ->set('planet_res_food', 'planet_res_food + :res_food')
             ->set('planet_people', 'planet_people + :people')
+            ->set('planet_fields_used', 'planet_fields_used + :fields')
             ->where('id = :id')
             ->setParameters([
                 'id' => $id,
@@ -376,6 +378,7 @@ class PlanetRepository extends AbstractRepository
                 'res_fuel' => $resFuel,
                 'res_food' => $resFood,
                 'people' => $people,
+                'fields' => $fields,
             ])
             ->execute();
 
@@ -533,7 +536,7 @@ class PlanetRepository extends AbstractRepository
     {
         $this->createQueryBuilder()
             ->update('planets')
-            ->set('planet_last_updated', 'timestamp')
+            ->set('planet_last_updated', ':timestamp')
             ->where('id = :id')
             ->setParameters([
                 'id' => $id,
@@ -591,6 +594,24 @@ class PlanetRepository extends AbstractRepository
             ->delete('planets')
             ->where('id = :id')
             ->setParameter('id', $id)
+            ->execute();
+    }
+
+    public function freezeProduction(int $userId): void
+    {
+        $this->createQueryBuilder()
+            ->update('planets')
+            ->set('planet_last_updated', (string) 0)
+            ->set('planet_prod_metal', (string) 0)
+            ->set('planet_prod_crystal', (string) 0)
+            ->set('planet_prod_plastic', (string) 0)
+            ->set('planet_prod_fuel', (string) 0)
+            ->set('planet_prod_food', (string) 0)
+            ->set('planet_prod_power', (string) 0)
+            ->where('planet_user_id = :userId')
+            ->setParameters([
+                'userId' => $userId,
+            ])
             ->execute();
     }
 

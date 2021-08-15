@@ -75,6 +75,27 @@ class BaseResources
         $this->food += $resources->food;
     }
 
+    public function remove(BaseResources $resources): void
+    {
+        $this->metal -= $resources->metal;
+        $this->crystal -= $resources->crystal;
+        $this->plastic -= $resources->plastic;
+        $this->fuel -= $resources->fuel;
+        $this->food -= $resources->food;
+    }
+
+    public function missing(BaseResources $available): BaseResources
+    {
+        $resources = new BaseResources();
+        $resources->metal = max(0, $this->metal - $available->metal);
+        $resources->crystal = max(0, $this->crystal - $available->crystal);
+        $resources->plastic = max(0, $this->plastic - $available->plastic);
+        $resources->fuel = max(0, $this->fuel - $available->fuel);
+        $resources->food = max(0, $this->food - $available->food);
+
+        return $resources;
+    }
+
     public function getSum(): int
     {
         return $this->metal + $this->crystal + $this->plastic + $this->fuel + $this->food;

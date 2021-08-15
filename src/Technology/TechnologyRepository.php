@@ -33,18 +33,31 @@ class TechnologyRepository extends AbstractRepository
         return array_map(fn ($row) => new TechnologyListItem($row), $data);
     }
 
+    public function getEntry(int $id): ?TechnologyListItem
+    {
+        $data = $this->createQueryBuilder()
+            ->select('*')
+            ->from('techlist')
+            ->where('techlist_id = :id')
+            ->setParameter('id', $id)
+            ->execute()
+            ->fetchAssociative();
+
+        return $data !== false ? new TechnologyListItem($data) : null;
+    }
+
     public function save(TechnologyListItem $item): void
     {
         $this->createQueryBuilder()
             ->update('techlist')
-            ->set('techlist_user_id', 'userId')
-            ->set('techlist_tech_id', 'technologyId')
-            ->set('techlist_entity_id', 'entityId')
-            ->set('techlist_current_level', 'currentLevel')
-            ->set('techlist_build_type', 'buildType')
-            ->set('techlist_build_start_time', 'startTime')
-            ->set('techlist_build_end_time', 'endTime')
-            ->set('techlist_prod_percent', 'prodPercent')
+            ->set('techlist_user_id', ':userId')
+            ->set('techlist_tech_id', ':technologyId')
+            ->set('techlist_entity_id', ':entityId')
+            ->set('techlist_current_level', ':currentLevel')
+            ->set('techlist_build_type', ':buildType')
+            ->set('techlist_build_start_time', ':startTime')
+            ->set('techlist_build_end_time', ':endTime')
+            ->set('techlist_prod_percent', ':prodPercent')
             ->where('techlist_id = :id')
             ->setParameters([
                 'id' => $item->id,
@@ -206,6 +219,15 @@ class TechnologyRepository extends AbstractRepository
             ->execute();
     }
 
+    public function removeEntry(int $id): void
+    {
+        $this->createQueryBuilder()
+            ->delete('techlist')
+            ->where('techlist_id = :id')
+            ->setParameter('id', $id)
+            ->execute();
+    }
+
     /**
      * @param int[] $availableUserIds
      */
@@ -280,6 +302,36 @@ class TechnologyRepository extends AbstractRepository
             ->delete('techlist')
             ->where('techlist_user_id = :userId')
             ->setParameter('userId', $userId)
+            ->execute();
+    }
+
+    public function freezeConstruction(int $userId): void
+    {
+        $this->createQueryBuilder()
+            ->update('techlist')
+            ->set('techlist_build_type', 'techlist_build_type - 2')
+            ->where('techlist_user_id = :userId')
+            ->andWhere('techlist_build_start_time > 0')
+            ->setParameters([
+                'userId' => $userId,
+                'type' => 1,
+            ])
+            ->execute();
+    }
+
+    public function unfreezeConstruction(int $userId, int $duration): void
+    {
+        $this->createQueryBuilder()
+            ->update('techlist')
+            ->set('techlist_build_type', 'techlist_build_type + 2')
+            ->set('techlist_build_start_time', 'techlist_build_start_time + :duration')
+            ->set('techlist_build_end_time', 'techlist_build_end_time + :duration')
+            ->where('techlist_user_id = :userId')
+            ->andWhere('techlist_build_start_time > 0')
+            ->setParameters([
+                'userId' => $userId,
+                'duration' => $duration,
+            ])
             ->execute();
     }
 }

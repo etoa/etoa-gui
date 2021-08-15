@@ -9,9 +9,9 @@ use EtoA\Universe\Resources\BaseResources;
 
 class FleetRepository extends AbstractRepository
 {
-    public function count(): int
+    public function count(FleetSearch $search = null): int
     {
-        return (int) $this->createQueryBuilder()
+        return (int) $this->applySearchSortLimit($this->createQueryBuilder(), $search)
             ->select("COUNT(id)")
             ->from('fleet')
             ->execute()
@@ -403,5 +403,21 @@ class FleetRepository extends AbstractRepository
         $res->food = (int) $data['food'];
 
         return $res;
+    }
+
+    public function exists(FleetSearch $search): bool
+    {
+        $qb = $this->applySearchSortLimit($this->createQueryBuilder(), $search);
+
+        if (isset($search->parameters['planetUserId'])) {
+            $qb->innerJoin('fleet', 'planets', 'planets', 'fleet.entity_to = planets.id');
+        }
+
+        return (bool) $qb
+            ->select('1')
+            ->from('fleet')
+            ->setMaxResults(1)
+            ->execute()
+            ->fetchOne();
     }
 }

@@ -2,6 +2,8 @@
 
 namespace EtoA\Alliance;
 
+use EtoA\Universe\Resources\BaseResources;
+
 class AllianceTechnology
 {
     public int $id;
@@ -37,5 +39,33 @@ class AllianceTechnology
         $this->show = (bool) $data['alliance_tech_show'];
         $this->neededId = (int) $data['alliance_tech_needed_id'];
         $this->neededLevel = (int) $data['alliance_tech_needed_level'];
+    }
+
+    public function getImagePath(): string
+    {
+        return IMAGE_PATH . "/" . IMAGE_ALLIANCE_TECHNOLOGY_DIR . "/technology" . $this->id . "_middle." . IMAGE_EXT;
+    }
+
+    public function calculateCosts(int $level, int $members, float $memberCostsFactor): BaseResources
+    {
+        $level = max(1, $level);
+        $members = max(1, $members);
+
+        $factor = $this->buildFactor ** ($level - 1);
+        $memberLevelFactor = $factor * (1 + ($members - 1) * $memberCostsFactor);
+
+        $costs = new BaseResources();
+        $costs->metal = (int) ceil($this->costsMetal * $memberLevelFactor);
+        $costs->crystal = (int) ceil($this->costsCrystal * $memberLevelFactor);
+        $costs->plastic = (int) ceil($this->costsPlastic * $memberLevelFactor);
+        $costs->fuel = (int) ceil($this->costsFuel * $memberLevelFactor);
+        $costs->food = (int) ceil($this->costsFood * $memberLevelFactor);
+
+        return $costs;
+    }
+
+    public function calculateBuildTime(int $level): int
+    {
+        return $this->buildTime * $level;
     }
 }

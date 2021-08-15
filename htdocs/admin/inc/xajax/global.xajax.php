@@ -996,7 +996,7 @@ function searchUser($val, $field_id = 'user_nick', $box_id = 'citybox')
     $sOut = "";
     $sLastHit = null;
 
-    $userNicks = $userRepository->searchUserNicknames(UserSearch::create()->nameLike($val), 20);
+    $userNicks = $userRepository->searchUserNicknames(UserSearch::create()->nickLike($val), 20);
     $nCount = count($userNicks);
         foreach ($userNicks as $nick) {
             $sOut .= "<a href=\"#\" onclick=\"javascript:document.getElementById('" . $field_id . "').value='" . htmlentities($nick) . "';document.getElementById('" . $box_id . "').style.display = 'none';\">" . htmlentities($nick) . "</a>";
@@ -1042,7 +1042,7 @@ function searchUserList($val, $function)
     $sOut = "";
     $sLastHit = null;
 
-    $userNicks = $userRepository->searchUserNicknames(UserSearch::create()->nameLike($val), 20);
+    $userNicks = $userRepository->searchUserNicknames(UserSearch::create()->nickLike($val), 20);
     $nCount = count($userNicks);
     foreach ($userNicks as $nick) {
         $sOut .= "<a href=\"#\" onclick=\"javascript:document.getElementById('$inputId').value='" . htmlentities($nick) . "';xajax_planetSelectorByUser('" . $nick . "','" . $function . "');document.getElementById('$targetId').style.display = 'none';\">" . htmlentities($nick) . "</a>";

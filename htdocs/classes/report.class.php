@@ -1,6 +1,8 @@
 <?php
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Message\ReportRepository;
+use EtoA\Message\ReportTypes;
 
 /**
  * Implements a report management system, replacing some of the
@@ -12,13 +14,8 @@ use EtoA\Core\Configuration\ConfigurationService;
  */
 abstract class Report
 {
-    /**
-     * @var array Available report types
-     */
-    static $types = array('battle' => 'Kampf', 'spy' => 'Spionage', 'explore' => 'Erkundung', 'market' => 'Markt', 'crypto' => 'Krypto', 'other' => 'Sonstige');
-
     protected $valid = false;
-    protected $type = 'other';
+    protected $type = ReportTypes::TYPE_OTHER;
     protected $id;
     protected $subject = "1";
     protected $timestamp;
@@ -119,70 +116,12 @@ abstract class Report
     public abstract function createSubject();
 
     /**
-     * Adds a new report. To be called from the derived class.
-     *
-     * @param array $data Associative array containing various fields
-     * @return boolean True if adding was successfull, false otherwise
-     */
-    static function add($data)
-    {
-        if (isset($data['user_id']) || isset($data['alliance_id'])) {
-            $fs = "";
-            $vs = "";
-
-            if (isset($data['user_id'])) {
-                $fs .= ",user_id";
-                $vs .= ",'" . intval($data['user_id']) . "'";
-            }
-            if (isset($data['alliance_id'])) {
-                $fs .= ",alliance_id";
-                $vs .= ",'" . intval($data['alliance_id']) . "'";
-            }
-            if (isset($data['content'])) {
-                $fs .= ",content";
-                $vs .= ",'" . mysql_real_escape_string($data['content']) . "'";
-            }
-            if (isset($data['entity1_id'])) {
-                $fs .= ",entity1_id";
-                $vs .= ",'" . intval($data['entity1_id']) . "'";
-            }
-            if (isset($data['entity2_id'])) {
-                $fs .= ",entity2_id";
-                $vs .= ",'" . intval($data['entity2_id']) . "'";
-            }
-            if (isset($data['opponent1_id'])) {
-                $fs .= ",opponent1_id";
-                $vs .= ",'" . intval($data['opponent1_id']) . "'";
-            }
-
-            $sql = "INSERT INTO
-                reports
-            (
-                timestamp,
-                type
-                " . $fs . "
-            )
-            VALUES
-            (
-                " . time() . ",
-                '" . (isset($data['type']) && isset(self::$types[$data['type']]) ? $data['type'] : 'other') . "'
-                " . $vs . "
-            );";
-            dbquery($sql);
-            return mysql_insert_id();
-        }
-        error_msg("Kein Report-Besitzer angegeben!");
-        etoa_dump($data);
-        return false;
-    }
-
-    /**
      * Gets a list of reports
      *
      * @param string|array $where WHERE conditions where $arrayKey is database field name
      * and $arrayValue is database field value
      * @param string $order ORDER query string
-     * @return array Array containing a list of reports
+     * @return array|int Array containing a list of reports
      */
     static function &find($where = null, $order = null, $limit = "", $count = 0, $admin = false, $join = "")
     {
@@ -267,22 +206,9 @@ abstract class Report
         return null;
     }
 
-    /**
-     * Check new messages of the given user
-     *
-     * @param int $userId
-     * @return int Number of new messages
-     */
-    static function countNew($userId)
-    {
-        $res = dbquery("SELECT COUNT(id) FROM reports WHERE user_id=" . intval($userId) . " AND `read`=0 AND `deleted`=0;");
-        $arr = mysql_fetch_row($res);
-        return $arr[0];
-    }
-
     function typeName()
     {
-        return self::$types[$this->type];
+        return ReportTypes::TYPES[$this->type];
     }
 
     /**
@@ -295,6 +221,8 @@ abstract class Report
 
         /** @var ConfigurationService */
         $config = $app[ConfigurationService::class];
+        /** @var ReportRepository $reportRepository */
+        $reportRepository = $app[ReportRepository::class];
 
         $nr = 0;
         if ($onlyDeleted == 0) {
@@ -303,15 +231,7 @@ abstract class Report
                 ? time() - $threshold
                 : time() - (24 * 3600 * $config->getInt('reports_threshold_days'));
 
-            dbquery("
-                    DELETE FROM
-                        reports
-                    WHERE
-                        `archived`='0'
-                        AND `read`='1'
-                        AND `timestamp`<'" . $timestamp . "';
-                ");
-            $nr = mysql_affected_rows();
+            $nr = $reportRepository->removeUnarchivedread($timestamp);
             Log::add("4", Log::INFO, "Unarchivierte Berichte die älter als " . date("d.m.Y H:i", $timestamp) . " sind wurden gelöscht!");
         }
 
@@ -320,16 +240,9 @@ abstract class Report
             ? time() - $threshold
             : time() - (24 * 3600 * $config->param1Int('reports_threshold_days'));
 
-
-        dbquery("
-                DELETE FROM
-                    reports
-                WHERE
-                    deleted='1'
-                    AND timestamp<'" . $timestamp . "';
-            ");
+        $nr += $reportRepository->removeDeleted($timestamp);
         Log::add("4", Log::INFO, "Unarchivierte Berichte die älter als " . date("d.m.Y H:i", $timestamp) . " sind wurden gelöscht!");
-        $nr += mysql_affected_rows();
+
         return $nr;
     }
 }

@@ -70,8 +70,6 @@ define("DEFQUEUE_CANCEL_END", $config->getFloat('defqueue_cancel_end'));
 
 $planet = $planetRepo->find($cp->id);
 
-$bl = new BuildList($planet->id, $cu->id);
-
 // BEGIN SKRIPT //
 
 //Tabulator var setzten (für das fortbewegen des cursors im forumular)

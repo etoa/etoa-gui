@@ -6,10 +6,16 @@
 
 use EtoA\BuddyList\BuddyListRepository;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Fleet\FleetRepository;
+use EtoA\Fleet\FleetSearch;
+use EtoA\Message\MessageRepository;
+use EtoA\Message\ReportRepository;
 use EtoA\Notepad\NotepadRepository;
 use EtoA\Text\TextRepository;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\User\UserPropertiesRepository;
+use EtoA\User\UserRepository;
+use EtoA\User\UserSessionRepository;
 
 //
 // Basics
@@ -201,33 +207,33 @@ try {
         }
     }
 
-    /** @var \EtoA\Message\MessageRepository $messageRepository */
-    $messageRepository = $app[\EtoA\Message\MessageRepository::class];
-
     // Count Messages
+    /** @var MessageRepository $messageRepository */
+    $messageRepository = $app[MessageRepository::class];
     $newMessages = $messageRepository->countNewForUser($cu->id);
 
     // Check new reports
-    $newReports = Report::countNew($cu->id);
+    /** @var ReportRepository $reportRepository */
+    $reportRepository = $app[ReportRepository::class];
+    $newReports = $reportRepository->countUserUnread($cu->getId());
 
-    /** @var \EtoA\User\UserRepository $userRepository */
-    $userRepository = $app[\EtoA\User\UserRepository::class];
+    /** @var UserRepository $userRepository */
+    $userRepository = $app[UserRepository::class];
     $userCount = $userRepository->count();
 
-    /** @var \EtoA\User\UserSessionRepository $userSessionRepository */
-    $userSessionRepository = $app[\EtoA\User\UserSessionRepository::class];
+    /** @var UserSessionRepository $userSessionRepository */
+    $userSessionRepository = $app[UserSessionRepository::class];
     $usersOnline = $userSessionRepository->count();
 
     // Count notes
-    /** @var NotepadRepository */
+    /** @var NotepadRepository $notepadRepository */
     $notepadRepository = $app[NotepadRepository::class];
     $numNotes = $notepadRepository->count($cu->id);
 
     // Number of player's own fleets
-    $fm = new FleetManager($cu->id, $cu->allianceId);
-    $fm->loadOwn();
-    $ownFleetCount = $fm->count();
-    unset($fm);
+    /** @var FleetRepository $fleetRepository */
+    $fleetRepository = $app[FleetRepository::class];
+    $ownFleetCount = $fleetRepository->count(FleetSearch::create()->user($cu->getId()));
 
     if (isset($cp, $pm)) {
         $currentPlanetData = [
@@ -310,6 +316,8 @@ try {
     echo $twig->render('layout/empty.html.twig', [
         'content' => $e,
     ]);
+} catch (\Throwable $exception) {
+    throw $exception;
 } finally {
     $_SESSION['lastpage'] = $page;
 

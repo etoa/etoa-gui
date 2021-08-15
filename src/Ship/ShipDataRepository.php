@@ -44,7 +44,6 @@ class ShipDataRepository extends AbstractRepository
             ->fetchAllKeyValue();
     }
 
-
     /**
      * @return array<int, float>
      */
@@ -283,16 +282,20 @@ class ShipDataRepository extends AbstractRepository
     /**
      * @return Ship[]
      */
-    public function searchShips(ShipSearch $search, ShipSort $sort = null, int $limit = null): array
+    public function searchShips(ShipSearch $search = null, ShipSort $sort = null, int $limit = null): array
     {
-        $qb = $this->createQueryBuilder()
+        $data = $this->applySearchSortLimit($this->createQueryBuilder(), $search, $sort, $limit)
             ->select('*')
-            ->from('ships');
-
-        $data = $this->applySearchSortLimit($qb, $search, $sort, $limit)
+            ->from('ships')
             ->execute()
             ->fetchAllAssociative();
 
-        return array_map(fn ($row) => new Ship($row), $data);
+        $result = [];
+        foreach ($data as $row) {
+            $ship = new Ship($row);
+            $result[$ship->id] = $ship;
+        }
+
+        return $result;
     }
 }

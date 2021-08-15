@@ -1,6 +1,7 @@
 <?php
 
 use EtoA\Market\MarketAuctionRepository;
+use EtoA\Message\MarketReportRepository;
 use EtoA\Support\RuntimeDataStore;
 use EtoA\Universe\Resources\BaseResources;
 use EtoA\User\UserMultiRepository;
@@ -10,12 +11,17 @@ use EtoA\User\UserRatingRepository;
 $runtimeDataStore = $app[RuntimeDataStore::class];
 /** @var MarketAuctionRepository $marketAuctionRepository */
 $marketAuctionRepository = $app[MarketAuctionRepository::class];
+/** @var MarketReportRepository $marketReportRepository */
+$marketReportRepository = $app[MarketReportRepository::class];
+
 // Speichert Bieterangebot in Array
 $buyRes = array();
+$newBuyResource = new BaseResources();
 foreach ($resNames as $rk => $rn) {
-    if (isset($_POST['new_buy_' . $rk]))
+    if (isset($_POST['new_buy_' . $rk])) {
+        $newBuyResource->set($rk, nf_back($_POST['new_buy_' . $rk]));
         $buyRes[$rk] = nf_back($_POST['new_buy_' . $rk]);
-    else
+    } else
         $buyRes[$rk] = 0;
 }
 
@@ -30,22 +36,19 @@ if ($auction !== null && $auction->dateEnd > time()) {
         $new_price = 0;
 
         $currentBuyRes = array();
-        $marr = array();
         $sellResources = $auction->getSellResources();
-        $buyResources = $auction->getBuyResources();
+        $currentBuyResources = $auction->getBuyResources();
         foreach ($resNames as $rk => $rn) {
             $rate = (float) $runtimeDataStore->get('market_rate_' . $rk, (string) 1);
 
             // Errechnet Rohstoffwert vom Angebot
             $sell_price += $sellResources->get($rk) * $rate;
             // Errechnet Rohstoffwert vom Höchstbietenden
-            $current_price += $buyResources->get($rk) * $rate;
+            $current_price += $currentBuyResources->get($rk) * $rate;
             // Errechnet Rohstoffwert vom abgegebenen Gebot
             $new_price += $buyRes[$rk] * $rate;
 
-            $currentBuyRes[$rk] = $buyResources->get($rk);
-            $marr['sell_' . $rk] = $sellResources->get($rk);
-            $marr['buy_' . $rk] = $buyRes[$rk];
+            $currentBuyRes[$rk] = $currentBuyResources->get($rk);
         }
 
         // Prüft, ob Gebot höher ist als das vom Höchstbietenden
@@ -62,29 +65,15 @@ if ($auction !== null && $auction->dateEnd > time()) {
                     }
 
                     // Nachricht dem überbotenen User schicken
-                    $marr['timestamp2'] = '0';
-                    MarketReport::addMarketReport(array(
-                        'user_id' => $auction->currentBuyerId,
-                        'entity1_id' => $cp->id,
-                        'opponent1_id' => $cu->id,
-                    ), "auctionoverbid", $auction->id, $marr);
+                    $marketReportRepository->addAuctionReport($auction->id, $auction->currentBuyerId, $cp->id, $cu->getId(), $sellResources, "auctionoverbid", $newBuyResource);
                 }
 
                 // Rohstoffe dem Gewinner abziehen
                 $cp->subRes($buyRes);
 
                 // Nachricht an Verkäufer
-                MarketReport::addMarketReport(array(
-                    'user_id' => $auction->userId,
-                    'entity1_id' => $cp->id,
-                    'opponent1_id' => $cu->id,
-                ), "auctionfinished", $auction->id, $marr);
-
-                MarketReport::addMarketReport(array(
-                    'user_id' => $cu->id,
-                    'entity1_id' => $cp->id,
-                    'opponent1_id' => $auction->userId,
-                ), "auctionwon", $auction->id, $marr);
+                $marketReportRepository->addAuctionReport($auction->id, $auction->userId, $cp->id, $cu->getId(), $sellResources, "auctionfinished", $newBuyResource);
+                $marketReportRepository->addAuctionReport($auction->id, $cu->getId(), $cp->id, $auction->userId, $sellResources, "auctionwon", $newBuyResource);
 
                 // Add market ratings
                 /** @var UserRatingRepository $userRatingRepository */
@@ -128,7 +117,7 @@ if ($auction !== null && $auction->dateEnd > time()) {
                 if ($isMultiWith) {
                     // TODO
                     $seller = new User($auction->userId);
-                    Log::add(Log::F_MULTITRADE, Log::INFO, "[page user sub=edit user_id=" . $cu->id . "][B]" . $cu->nick . "[/B][/page] hat an einer Auktion von [page user sub=edit user_id=" . $auction->userId . "][B]" . $seller . "[/B][/page] gewonnen:\n\nRohstoffe:\n" . RES_METAL . ": " . nf($auction->sell0) . "\n" . RES_CRYSTAL . ": " . nf($auction->sell1) . "\n" . RES_PLASTIC . ": " . nf($auction->sell2) . "\n" . RES_FUEL . ": " . nf($auction->sell3) . "\n" . RES_FOOD . ": " . nf($auction->sell4) . "\n\nDies hat ihn folgende Rohstoffe gekostet:\n" . RES_METAL . ": " . nf($_POST['new_buy_0']) . "\n" . RES_CRYSTAL . ": " . nf($_POST['new_buy_1']) . "\n" . RES_PLASTIC . ": " . nf($_POST['new_buy_2']) . "\n" . RES_FUEL . ": " . nf($_POST['new_buy_3']) . "\n" . RES_FOOD . ": " . nf($_POST['new_buy_4']) . "");
+                    Log::add(Log::F_MULTITRADE, Log::INFO, "[page user sub=edit user_id=" . $cu->id . "][B]" . $cu->nick . "[/B][/page] hat an einer Auktion von [page user sub=edit user_id=" . $auction->userId . "][B]" . $seller . "[/B][/page] gewonnen:\n\nRohstoffe:\n" . RES_METAL . ": " . nf($auction->sell0) . "\n" . RES_CRYSTAL . ": " . nf($auction->sell1) . "\n" . RES_PLASTIC . ": " . nf($auction->sell2) . "\n" . RES_FUEL . ": " . nf($auction->sell3) . "\n" . RES_FOOD . ": " . nf($auction->sell4) . "\n\nDies hat ihn folgende Rohstoffe gekostet:\n" . RES_METAL . ": " . $newBuyResource->metal . "\n" . RES_CRYSTAL . ": " . $newBuyResource->crystal . "\n" . RES_PLASTIC . ": " . $newBuyResource->plastic . "\n" . RES_FUEL . ": " . $newBuyResource->fuel . "\n" . RES_FOOD . ": " . $newBuyResource->food . "");
                 }
 
                 // Log schreiben
@@ -148,12 +137,7 @@ if ($auction !== null && $auction->dateEnd > time()) {
                     }
 
                     // Nachricht dem überbotenen user schicken
-                    $marr['timestamp2'] = $auction->dateEnd;
-                    MarketReport::addMarketReport(array(
-                        'user_id' => $auction->currentBuyerId,
-                        'entity1_id' => $cp->id,
-                        'opponent1_id' => $cu->id,
-                    ), "auctionoverbid", $auction->id, $marr);
+                    $marketReportRepository->addAuctionReport($auction->id, $auction->currentBuyerId, $cp->id, $cu->getId(), $sellResources, "auctionoverbid", $newBuyResource, null, $auction->dateEnd);
                 }
 
 

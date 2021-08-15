@@ -14,6 +14,7 @@ use EtoA\UI\ResourceBoxDrawer;
 use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Universe\Planet\PlanetService;
+use EtoA\User\UserRepository;
 use EtoA\User\UserService;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -55,6 +56,8 @@ $techDataRepository = $app[TechnologyDataRepository::class];
 $techRepository = $app[TechnologyRepository::class];
 /** @var DefenseDataRepository $defenseDataRepository */
 $defenseDataRepository = $app[DefenseDataRepository::class];
+/** @var UserRepository $userRepository */
+$userRepository = $app[UserRepository::class];
 
 /** @var ?Planet $cp - The current Planet */
 /** @var User $cu - The current User */
@@ -157,8 +160,8 @@ if (isset($cp)) {
                 if (!$cu->changedMainPlanet()) {
                     if ($planetRepo->setMain($planet->id, $cu->id)) {
                         $entity = $entityRepository->findIncludeCell($planet->id);
-
-                        $cu->setChangedMainPlanet(true);
+                        $userRepository->markMainPlanetChanged($cu->getId());
+                        $cu->changedMainPlanet = true;
 
                         /** @var UserService */
                         $userService = $app[UserService::class];

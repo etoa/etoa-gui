@@ -1,5 +1,7 @@
 <?PHP
 
+use EtoA\Alliance\AllianceBuildingId;
+use EtoA\Alliance\AllianceBuildingRepository;
 use EtoA\Building\BuildingRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Market\MarketRepository;
@@ -16,6 +18,8 @@ $planetRepo = $app[PlanetRepository::class];
 $resourceBoxDrawer = $app[ResourceBoxDrawer::class];
 /** @var BuildingRepository $buildingRepository */
 $buildingRepository = $app[BuildingRepository::class];
+/** @var AllianceBuildingRepository $allianceBuildingRepository */
+$allianceBuildingRepository = $app[AllianceBuildingRepository::class];
 
 /********
  *	Datei-Struktur
@@ -77,7 +81,7 @@ if ($config->getBoolean('market_enabled')) {
 
             // Lädt Stufe des Allianzmarktplatzes
             if ($cu->allianceId() > 0)
-                $alliance_market_level = $cu->alliance->buildlist->getLevel(ALLIANCE_MARKET_ID);
+                $alliance_market_level = $allianceBuildingRepository->getLevel($cu->allianceId(), AllianceBuildingId::MARKET);
             else
                 $alliance_market_level = 0;
 
@@ -89,8 +93,9 @@ if ($config->getBoolean('market_enabled')) {
             }
             $cooldown = ($factor == 0) ? 0 : 3600 / $factor;
             if ($alliance_market_level > 0) {
-                if ($cu->alliance->buildlist->getCooldown(ALLIANCE_MARKET_ID) > time()) {
-                    $status_text = "Bereit in <span id=\"cdcd\">" . tf($cu->alliance->buildlist->getCooldown(ALLIANCE_MARKET_ID) - time() . "</span>");
+                $allianceMarketCooldown = $allianceBuildingRepository->getCooldown($cu->allianceId(), AllianceBuildingId::MARKET);
+                if ($allianceMarketCooldown > time()) {
+                    $status_text = "Bereit in <span id=\"cdcd\">" . tf($allianceMarketCooldown - time() . "</span>");
                     $cd_enabled = true;
                 } else {
                     $status_text = "Bereit";
@@ -209,7 +214,8 @@ if ($config->getBoolean('market_enabled')) {
             }
 
             if ($cd_enabled) {
-                countDown("cdcd", $cu->alliance->buildlist->getCooldown(ALLIANCE_MARKET_ID));
+                $allianceMarketCooldown = $allianceBuildingRepository->getCooldown($cu->allianceId(), AllianceBuildingId::MARKET);
+                countDown("cdcd", $allianceMarketCooldown);
             }
         } else {
             info_msg("Dieses Gebäude ist noch bis " . df($market->deactivated) . " deaktiviert!");

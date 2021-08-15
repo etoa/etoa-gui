@@ -18,6 +18,13 @@ class DefenseSearch extends AbstractSearch
         return $this;
     }
 
+    public function show(): self
+    {
+        $this->parts[] = 'def_show = 1';
+
+        return $this;
+    }
+
     public function showOrBuildable(): self
     {
         $this->parts[] = 'def_show = 1 OR def_buildable = 1';

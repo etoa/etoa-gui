@@ -2,6 +2,7 @@
 
 use EtoA\Alliance\AllianceApplicationRepository;
 use EtoA\Alliance\AllianceHistoryRepository;
+use EtoA\Alliance\AllianceMemberCosts;
 use EtoA\Alliance\AllianceRepository;
 use EtoA\Alliance\AllianceRights;
 use EtoA\Core\Configuration\ConfigurationService;
@@ -16,6 +17,8 @@ $allianceRepository = $app[AllianceRepository::class];
 $allianceApplicationRepository = $app[AllianceApplicationRepository::class];
 /** @var UserRepository $userRepository */
 $userRepository = $app[UserRepository::class];
+/** @var AllianceMemberCosts $allianceMemberCosts */
+$allianceMemberCosts = $app[AllianceMemberCosts::class];
 
 if (Alliance::checkActionRights(AllianceRights::APPLICATIONS)) {
     $maxMemberCount = $config->getInt("alliance_max_member_count");
@@ -25,21 +28,21 @@ if (Alliance::checkActionRights(AllianceRights::APPLICATIONS)) {
         if (count($_POST['application_answer']) > 0) {
             $cnt = 0;
             $alliance = $allianceRepository->getAlliance((int) $cu->allianceId);
-            $new_member = false;
-
+            $currentMemberCount = $allianceRepository->countUsers((int) $cu->allianceId);
+            $newMemberCount = $currentMemberCount;
             foreach ($_POST['application_answer'] as $id => $answer) {
 
                 $nick = $_POST['application_user_nick_' . $id . ''];
 
                 // Anfrage annehmen
                 if ($answer == 2) {
-                    if ($maxMemberCount != 0 && $allianceRepository->countUsers((int) $cu->allianceId) >= $maxMemberCount) {
+                    if ($maxMemberCount != 0 && $newMemberCount >= $maxMemberCount) {
                         error_msg("Maximale Anzahl an Mitgliedern erreicht!");
                         break;
                     }
 
                     $cnt++;
-                    $new_member = true;
+                    $newMemberCount++;
                     success_msg($nick . " wurde angenommen.");
 
                     // Nachricht an den Bewerber schicken
@@ -95,8 +98,8 @@ if (Alliance::checkActionRights(AllianceRights::APPLICATIONS)) {
             }
 
             // Wenn neue Members hinzugefügt worde sind werden ev. die Allianzrohstoffe angepasst
-            if ($new_member) {
-                $cu->alliance->calcMemberCosts();
+            if ($newMemberCount > $currentMemberCount) {
+                $allianceMemberCosts->increase($alliance->id, $currentMemberCount, $newMemberCount);
             }
 
             success_msg("Änderungen übernommen");

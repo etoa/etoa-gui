@@ -74,7 +74,7 @@ class Building
         $this->storePlastic = (int) $data['building_store_plastic'];
         $this->storeFuel = (int) $data['building_store_fuel'];
         $this->storeFood = (int) $data['building_store_food'];
-        $this->storeFactor = (int) $data['building_store_factor'];
+        $this->storeFactor = (float) $data['building_store_factor'];
         $this->peoplePlace = (int) $data['building_people_place'];
         $this->lastLevel = (int) $data['building_last_level'];
         $this->fields = (int) $data['building_fields'];

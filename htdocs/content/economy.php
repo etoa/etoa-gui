@@ -3,15 +3,19 @@
 use EtoA\Backend\BackendMessageService;
 use EtoA\Building\BuildingDataRepository;
 use EtoA\Building\BuildingRepository;
+use EtoA\Building\BuildingSearch;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Ship\ShipDataRepository;
+use EtoA\Ship\ShipRepository;
+use EtoA\Ship\ShipSearch;
 use EtoA\Technology\TechnologyRepository;
 use EtoA\UI\ResourceBoxDrawer;
 use EtoA\Universe\Planet\PlanetRepository;
 
-/** @var ConfigurationService */
+/** @var ConfigurationService $config */
 $config = $app[ConfigurationService::class];
 
-/** @var PlanetRepository */
+/** @var PlanetRepository $planetRepo */
 $planetRepo = $app[PlanetRepository::class];
 
 /** @var ResourceBoxDrawer */
@@ -23,8 +27,12 @@ $buildingRepository = $app[BuildingRepository::class];
 /** @var BuildingDataRepository $buildingDataRepository */
 $buildingDataRepository = $app[BuildingDataRepository::class];
 
-/** @var BackendMessageService */
+/** @var BackendMessageService $backendMessageService */
 $backendMessageService = $app[BackendMessageService::class];
+/** @var ShipDataRepository $shipDataRepository */
+$shipDataRepository = $app[ShipDataRepository::class];
+/** @var ShipRepository $shipRepository */
+$shipRepository = $app[ShipRepository::class];
 
 if ($cp) {
 
@@ -39,16 +47,8 @@ if ($cp) {
                 $val = floatval($val);
                 if ($val > 1) $val = 1;
                 if ($val < 0) $val = 0;
-                dbquery("
-                    UPDATE
-                        buildlist
-                    SET
-                        buildlist_prod_percent=$val
-                    WHERE
-                        buildlist_user_id=" . $cu->id . "
-                        AND buildlist_entity_id=" . $planet->id . "
-                        AND buildlist_building_id='" . intval($id) . "'
-                    ;");
+
+                $buildingRepository->updateProductionPercent($cu->getId(), $planet->id, $id, $val);
             }
             success_msg("Änderungen gespeichert!");
 
@@ -68,6 +68,10 @@ if ($cp) {
     //
     // Produktion pro Stunde und Energieverbrauch
     //
+    $buildlistMap = [];
+    foreach ($buildingRepository->findForUser($cu->getId(), $planet->id) as $item) {
+        $buildlistMap[$item->buildingId] = $item;
+    }
 
     $cnt = array(
         "metal" => 0,
@@ -79,38 +83,8 @@ if ($cp) {
     $prodIncludingBoni = [];
     $powerUsed = 0;
     echo "<form action=\"?page=$page\" method=\"post\">";
-    $bres = dbquery("
-        SELECT
-            b.building_id,
-            b.building_name,
-            b.building_type_id,
-            b.building_prod_metal,
-            b.building_prod_crystal,
-            b.building_prod_plastic,
-            b.building_prod_fuel,
-            b.building_prod_food,
-            b.building_power_use,
-            b.building_production_factor,
-            l.buildlist_current_level,
-            l.buildlist_prod_percent
-        FROM
-        buildings AS b
-        INNER JOIN
-        buildlist AS l
-            ON	b.building_id=l.buildlist_building_id
-        AND l.buildlist_user_id=" . $cu->id . "
-        AND l.buildlist_entity_id=" . $planet->id . "
-        AND l.buildlist_current_level>0
-        AND (b.building_prod_metal>0
-            OR b.building_prod_crystal>0
-            OR b.building_prod_plastic>0
-            OR b.building_prod_fuel>0
-            OR b.building_prod_food>0
-            OR b.building_power_use>0)
-        ORDER BY
-            b.building_type_id,
-            b.building_order;");
-    if (mysql_num_rows($bres) > 0) {
+    $producingBuildings = array_intersect_key($buildingDataRepository->searchBuildings(BuildingSearch::create()->withProductionOrPowerUse()), $buildlistMap);
+    if (count($producingBuildings) > 0) {
         tableStart("Rohstoffproduktion und Energieverbrauch");
         echo "<tr>
                         <th style=\"width:200px;\">Geb&auml;ude</th>";
@@ -136,119 +110,117 @@ if ($cp) {
 
         $resourceKeys = ['metal', 'crystal', 'plastic', 'fuel', 'food'];
 
-        while ($barr = mysql_fetch_array($bres)) {
-            // Ist das gebäudelevel > 0
-            if ($barr['buildlist_current_level'] > 0) {
-                // Errechnen der Produktion pro Gebäude
-                echo "<tr>
-                    <td>
-                        " . $barr['building_name'] . " (" . $barr['buildlist_current_level'] . ")";
-                if ($barr['buildlist_prod_percent'] == 0) {
-                    echo "<br/><span style=\"color:red;font-size:8pt;\">Produktion ausgeschaltet!</span>";
-                }
-                echo "</td>";
-
-                $bareBuildingProduction = [];
-                $bareBuildingProduction['metal'] = $prodIncludingBoni['metal'] = $barr['building_prod_metal'] * pow($barr['building_production_factor'], $barr['buildlist_current_level'] - 1);
-                $bareBuildingProduction['crystal'] = $prodIncludingBoni['crystal'] = $barr['building_prod_crystal'] * pow($barr['building_production_factor'], $barr['buildlist_current_level'] - 1);
-                $bareBuildingProduction['plastic'] = $prodIncludingBoni['plastic'] = $barr['building_prod_plastic'] * pow($barr['building_production_factor'], $barr['buildlist_current_level'] - 1);
-                $bareBuildingProduction['fuel'] = $prodIncludingBoni['fuel'] = $barr['building_prod_fuel'] * pow($barr['building_production_factor'], $barr['buildlist_current_level'] - 1);
-                $bareBuildingProduction['food'] = $prodIncludingBoni['food'] = $barr['building_prod_food'] * pow($barr['building_production_factor'], $barr['buildlist_current_level'] - 1);
-
-                // update base resource production, used later for bost calculation.
-                foreach ($resourceKeys as $resourceKey) {
-                    $baseResourceProd[$resourceKey] += $bareBuildingProduction[$resourceKey] * $barr['buildlist_prod_percent'];
-                }
-
-                // Addieren der Planeten-, Rassen- und Spezialistenboni
-                if ($bareBuildingProduction['metal'] != "") {
-                    $boni = $cp->typeMetal - 1 + $cu->race->metal - 1 + $cp->starMetal - 1 + $cu->specialist->prodMetal - 1;
-                    $prodIncludingBoni['metal'] += $bareBuildingProduction['metal'] * $boni;
-                }
-                if ($bareBuildingProduction['crystal'] != "") {
-                    $boni = $cp->typeCrystal - 1 + $cu->race->crystal - 1 + $cp->starCrystal - 1 + $cu->specialist->prodCrystal - 1;
-                    $prodIncludingBoni['crystal'] += $bareBuildingProduction['crystal'] * $boni;
-                }
-                if ($bareBuildingProduction['plastic'] != "") {
-                    $boni = $cp->typePlastic - 1 + $cu->race->plastic - 1 + $cp->starPlastic - 1 + $cu->specialist->prodPlastic - 1;
-                    $prodIncludingBoni['plastic'] += $bareBuildingProduction['plastic'] * $boni;
-                }
-                if ($bareBuildingProduction['fuel'] != "") {
-                    $boni = $cp->typeFuel - 1 + $cu->race->fuel - 1 + $cp->starFuel - 1 + $cu->specialist->prodFuel - 1  + $planet->getFuelProductionBonusFactor() * -1;
-                    $prodIncludingBoni['fuel'] += $bareBuildingProduction['fuel'] * $boni;
-                }
-                if ($bareBuildingProduction['food'] != "") {
-                    $boni = $cp->typeFood - 1 + $cu->race->food - 1 + $cp->starFood - 1 + $cu->specialist->prodFood - 1;
-                    $prodIncludingBoni['food'] += $bareBuildingProduction['food'] * $boni;
-                }
-
-
-                foreach ($resourceKeys as $resourceKey) {
-                    // apply production percent
-                    $prodIncludingBoni[$resourceKey] *= $barr['buildlist_prod_percent'];
-                    // add to total
-                    $cnt[$resourceKey] += floor($prodIncludingBoni[$resourceKey]);
-                }
-
-                $building_power_use = floor($barr['building_power_use'] * pow($barr['building_production_factor'], $barr['buildlist_current_level'] - 1));
-
-                //KälteBonusString
-                $fuelBonus = "Kältebonus: ";
-                $spw = $planet->fuelProductionBonus();
-                if ($spw >= 0) {
-                    $fuelBonus .= "<span style=\"color:#0f0\">+" . $spw . "%</span>";
-                } else {
-                    $fuelBonus .= "<span style=\"color:#f00\">" . $spw . "%</span>";
-                }
-                $fuelBonus .= " " . RES_FUEL . "-Produktion";
-
-                // Werte anzeigen
-                foreach ($resourceKeys as $resourceKey) {
-                    echo "<td " . tm("Grundproduktion ohne Boni", nf(floor($bareBuildingProduction[$resourceKey])) . " t/h") . ">" . nf($prodIncludingBoni[$resourceKey], 1) . "</td>";
-                }
-                // energy
-                echo "<td";
-                if ($building_power_use > 0) {
-                    echo " style=\"color:#f00\"";
-                }
-                echo ">" . nf(ceil($building_power_use * $barr['buildlist_prod_percent'])) . "</td>";
-                echo "<td>";
-
-                if ($barr['building_type_id'] == RES_BUILDING_CAT) {
-                    echo "<select name=\"buildlist_prod_percent[" . $barr['building_id'] . "]\">\n";
-                    $prod_percent = $barr['buildlist_prod_percent'];
-                    for ($x = 0; $x < 1; $x += 0.1) {
-                        if ($x > 0.9) {
-                            $vx = 0;
-                        } else {
-                            $vx = 1 - $x;
-                        }
-                        $perc = $vx * 100;
-                        echo "<option value=\"" . $vx . "\"";
-                        if (doubleval($vx) >= doubleval($prod_percent)) {
-                            echo " selected=\"selected\"";
-                        }
-                        echo ">" . $perc . " %</option>\n";
-                    }
-                    echo "</select>";
-                    echo "&nbsp; <img src=\"misc/progress.image.php?w=50&p=" . ($barr['buildlist_prod_percent'] * 100) . "\" alt=\"progress\" />";
-                } elseif ($barr['building_id'] == BUILD_MISSILE_ID || $barr['building_id'] == BUILD_CRYPTO_ID) {
-                    echo "<select name=\"buildlist_prod_percent[" . $barr['building_id'] . "]\">\n";
-                    echo "<option value=\"1\"";
-                    if ($barr['buildlist_prod_percent'] == 1) echo " selected=\"selected\"";
-                    echo ">100 %</option>\n";
-                    echo "<option value=\"0\"";
-                    if ($barr['buildlist_prod_percent'] == 0) echo " selected=\"selected\"";
-                    echo ">0 %</option>\n";
-                    echo "</select>";
-                    echo "&nbsp; <img src=\"misc/progress.image.php?w=50&p=" . ($barr['buildlist_prod_percent'] * 100) . "\" alt=\"progress\" />";
-                } else {
-                    echo "&nbsp;";
-                }
-                echo "</td>";
-                echo "</tr>";
-                $pwrcnt += $building_power_use * $barr['buildlist_prod_percent'];
+        foreach ($producingBuildings as $building) {
+            $buildlist = $buildlistMap[$building->id];
+            // Errechnen der Produktion pro Gebäude
+            echo "<tr>
+                <td>
+                    " . $building->name . " (" . $buildlist->currentLevel . ")";
+            if ($buildlist->prodPercent == 0) {
+                echo "<br/><span style=\"color:red;font-size:8pt;\">Produktion ausgeschaltet!</span>";
             }
+            echo "</td>";
+
+            $bareBuildingProduction = [];
+            $bareBuildingProduction['metal'] = $prodIncludingBoni['metal'] = $building->prodMetal * pow($building->productionFactor, $buildlist->currentLevel - 1);
+            $bareBuildingProduction['crystal'] = $prodIncludingBoni['crystal'] = $building->prodCrystal * pow($building->productionFactor, $buildlist->currentLevel - 1);
+            $bareBuildingProduction['plastic'] = $prodIncludingBoni['plastic'] = $building->prodPlastic * pow($building->productionFactor, $buildlist->currentLevel - 1);
+            $bareBuildingProduction['fuel'] = $prodIncludingBoni['fuel'] = $building->prodFuel * pow($building->productionFactor, $buildlist->currentLevel - 1);
+            $bareBuildingProduction['food'] = $prodIncludingBoni['food'] = $building->prodFood * pow($building->productionFactor, $buildlist->currentLevel - 1);
+
+            // update base resource production, used later for bost calculation.
+            foreach ($resourceKeys as $resourceKey) {
+                $baseResourceProd[$resourceKey] += $bareBuildingProduction[$resourceKey] * $buildlist->prodPercent;
+            }
+
+            // Addieren der Planeten-, Rassen- und Spezialistenboni
+            if ($bareBuildingProduction['metal'] != "") {
+                $boni = $cp->typeMetal - 1 + $cu->race->metal - 1 + $cp->starMetal - 1 + $cu->specialist->prodMetal - 1;
+                $prodIncludingBoni['metal'] += $bareBuildingProduction['metal'] * $boni;
+            }
+            if ($bareBuildingProduction['crystal'] != "") {
+                $boni = $cp->typeCrystal - 1 + $cu->race->crystal - 1 + $cp->starCrystal - 1 + $cu->specialist->prodCrystal - 1;
+                $prodIncludingBoni['crystal'] += $bareBuildingProduction['crystal'] * $boni;
+            }
+            if ($bareBuildingProduction['plastic'] != "") {
+                $boni = $cp->typePlastic - 1 + $cu->race->plastic - 1 + $cp->starPlastic - 1 + $cu->specialist->prodPlastic - 1;
+                $prodIncludingBoni['plastic'] += $bareBuildingProduction['plastic'] * $boni;
+            }
+            if ($bareBuildingProduction['fuel'] != "") {
+                $boni = $cp->typeFuel - 1 + $cu->race->fuel - 1 + $cp->starFuel - 1 + $cu->specialist->prodFuel - 1  + $planet->getFuelProductionBonusFactor() * -1;
+                $prodIncludingBoni['fuel'] += $bareBuildingProduction['fuel'] * $boni;
+            }
+            if ($bareBuildingProduction['food'] != "") {
+                $boni = $cp->typeFood - 1 + $cu->race->food - 1 + $cp->starFood - 1 + $cu->specialist->prodFood - 1;
+                $prodIncludingBoni['food'] += $bareBuildingProduction['food'] * $boni;
+            }
+
+
+            foreach ($resourceKeys as $resourceKey) {
+                // apply production percent
+                $prodIncludingBoni[$resourceKey] *= $buildlist->currentLevel;
+                // add to total
+                $cnt[$resourceKey] += floor($prodIncludingBoni[$resourceKey]);
+            }
+
+            $building_power_use = floor($building->powerUse * pow($building->productionFactor, $buildlist->currentLevel - 1));
+
+            //KälteBonusString
+            $fuelBonus = "Kältebonus: ";
+            $spw = $planet->fuelProductionBonus();
+            if ($spw >= 0) {
+                $fuelBonus .= "<span style=\"color:#0f0\">+" . $spw . "%</span>";
+            } else {
+                $fuelBonus .= "<span style=\"color:#f00\">" . $spw . "%</span>";
+            }
+            $fuelBonus .= " " . RES_FUEL . "-Produktion";
+
+            // Werte anzeigen
+            foreach ($resourceKeys as $resourceKey) {
+                echo "<td " . tm("Grundproduktion ohne Boni", nf(floor($bareBuildingProduction[$resourceKey])) . " t/h") . ">" . nf($prodIncludingBoni[$resourceKey], 1) . "</td>";
+            }
+            // energy
+            echo "<td";
+            if ($building_power_use > 0) {
+                echo " style=\"color:#f00\"";
+            }
+            echo ">" . nf(ceil($building_power_use * $buildlist->prodPercent)) . "</td>";
+            echo "<td>";
+
+            if ($buildlist->buildType == RES_BUILDING_CAT) {
+                echo "<select name=\"buildlist_prod_percent[" . $building->id . "]\">\n";
+                $prod_percent = $buildlist->prodPercent;
+                for ($x = 0; $x < 1; $x += 0.1) {
+                    if ($x > 0.9) {
+                        $vx = 0;
+                    } else {
+                        $vx = 1 - $x;
+                    }
+                    $perc = $vx * 100;
+                    echo "<option value=\"" . $vx . "\"";
+                    if (doubleval($vx) >= doubleval($prod_percent)) {
+                        echo " selected=\"selected\"";
+                    }
+                    echo ">" . $perc . " %</option>\n";
+                }
+                echo "</select>";
+                echo "&nbsp; <img src=\"misc/progress.image.php?w=50&p=" . ($buildlist->prodPercent * 100) . "\" alt=\"progress\" />";
+            } elseif ($building->id == BUILD_MISSILE_ID || $building->id == BUILD_CRYPTO_ID) {
+                echo "<select name=\"buildlist_prod_percent[" . $building->id . "]\">\n";
+                echo "<option value=\"1\"";
+                if ($buildlist->prodPercent == 1) echo " selected=\"selected\"";
+                echo ">100 %</option>\n";
+                echo "<option value=\"0\"";
+                if ($buildlist->prodPercent == 0) echo " selected=\"selected\"";
+                echo ">0 %</option>\n";
+                echo "</select>";
+                echo "&nbsp; <img src=\"misc/progress.image.php?w=50&p=" . ($buildlist->prodPercent * 100) . "\" alt=\"progress\" />";
+            } else {
+                echo "&nbsp;";
+            }
+            echo "</td>";
+            echo "</tr>";
+            $pwrcnt += $building_power_use * $buildlist->prodPercent;
         }
         $pwrcnt = floor($pwrcnt);
 
@@ -345,11 +317,11 @@ if ($cp) {
     // Resource Bunker
     //
     $blvl = $buildingRepository->getBuildingLevel($cu->getId(), RES_BUNKER_ID, $planet->id);
-    $building = $buildingDataRepository->getBuilding(RES_BUNKER_ID);
+    $bunkerBuilding = $buildingDataRepository->getBuilding(RES_BUNKER_ID);
     if ($blvl > 0) {
         iBoxStart("Rohstoffbunker");
-        echo "In deinem <b>" . $building->name . "</b> der Stufe <b>$blvl</b> werden bei einem
-            Angriff <b>" . nf($building->calculateBunkerResources($blvl)) . "</b> Resourcen gesichert!";
+        echo "In deinem <b>" . $bunkerBuilding->name . "</b> der Stufe <b>$blvl</b> werden bei einem
+            Angriff <b>" . nf($bunkerBuilding->calculateBunkerResources($blvl)) . "</b> Resourcen gesichert!";
         iBoxEnd();
     }
 
@@ -381,37 +353,17 @@ if ($cp) {
     $cnt['power'] = 0;
 
     // Power produced by buildings
-    $pres = dbquery("
-        SELECT
-            b.building_id,
-            b.building_name,
-            b.building_type_id,
-            b.building_prod_power,
-            b.building_power_use,
-            b.building_production_factor,
-            l.buildlist_current_level,
-            l.buildlist_prod_percent
-        FROM
-      buildings AS b
-      INNER JOIN
-      buildlist AS l
-      ON b.building_id=l.buildlist_building_id
-      AND l.buildlist_user_id='" . $cu->id . "'
-      AND l.buildlist_entity_id='" . $planet->id . "'
-      AND l.buildlist_current_level>'0'
-      AND b.building_prod_power>'0'
-        ORDER BY
-            b.building_order,
-            b.building_name;");
-    if (mysql_num_rows($pres) > 0) {
-        while ($parr = mysql_fetch_array($pres)) {
+    $producingProducingBuildings = array_intersect_key($buildingDataRepository->searchBuildings(BuildingSearch::create()->withPowerProduction()), $buildlistMap);
+    if (count($producingProducingBuildings) > 0) {
+        foreach ($producingProducingBuildings as $building) {
             // Calculate power production
-            $prodIncludingBoni['power'] = round($parr['building_prod_power'] * pow($parr['building_production_factor'], $parr['buildlist_current_level'] - 1));
+            $buildlist = $buildlistMap[$building->id];
+            $prodIncludingBoni['power'] = round($building->prodPower * pow($building->productionFactor, $buildlist->currentLevel - 1));
 
             // Add bonus
             $prodIncludingBoni['power'] *= $bonusFactor;
 
-            echo "<tr><th>" . $parr['building_name'] . " (" . $parr['buildlist_current_level'] . ")</th>";
+            echo "<tr><th>" . $building->name . " (" . $buildlist->currentLevel . ")</th>";
             echo "<td colspan=\"3\">" . nf(floor($prodIncludingBoni['power'])) . "</td></tr>";
 
             // Zum Total hinzufügen
@@ -420,31 +372,19 @@ if ($cp) {
     }
 
     // Power produced by ships
-    $sres = dbquery("
-        SELECT
-            shiplist_count,
-            ship_prod_power,
-            ship_name
-        FROM
-            shiplist
-        INNER JOIN
-            ships
-            ON shiplist_ship_id=ship_id
-            AND shiplist_entity_id=" . $planet->id . "
-            AND shiplist_user_id=" . $cu->id . "
-            AND ship_prod_power>0
-        ");
-    if (mysql_num_rows($sres) > 0) {
+    $shipCounts = $shipRepository->getEntityShipCounts($cu->getId(), $planet->id);
+    $ships = array_intersect_key($shipDataRepository->searchShips(ShipSearch::create()->producesPower()), $shipCounts);
+    if (count($ships) > 0) {
         $solarProdBonus = $planet->solarPowerBonus();
         $color = $solarProdBonus >= 0 ? '#0f0' : '#f00';
         $solarTempString = "<span style=\"color:" . $color . "\">" . ($solarProdBonus > 0 ? '+' : '') . $solarProdBonus . "</span>";
-        while ($sarr = mysql_fetch_array($sres)) {
-            $pwr = ($sarr['ship_prod_power'] + $solarProdBonus);
+        foreach ($ships as $ship) {
+            $pwr = ($ship->powerProduction + $solarProdBonus);
             $pwr *= $bonusFactor;
-            $pwrt = $pwr * $sarr['shiplist_count'];
-            echo "<tr><th>" . $sarr['ship_name'] . " (" . nf($sarr['shiplist_count']) . ")</th>";
+            $pwrt = $pwr * $shipCounts[$ship->id];
+            echo "<tr><th>" . $ship->name . " (" . nf($shipCounts[$ship->id]) . ")</th>";
             echo "<td colspan=\"3\">" . nf($pwrt) . "
-                (Energie pro Satellit: " . (($pwr)) . " = " . $sarr['ship_prod_power'] . " Basis, " . $solarTempString . " bedingt durch Entfernung zur Sonne, " . get_percent_string($bonusFactor, 1) . " durch Energiebonus)</td>";
+                (Energie pro Satellit: " . (($pwr)) . " = " . $ship->powerProduction . " Basis, " . $solarTempString . " bedingt durch Entfernung zur Sonne, " . get_percent_string($bonusFactor, 1) . " durch Energiebonus)</td>";
             echo "</tr>";
             $cnt['power'] += $pwrt;
         }
@@ -480,31 +420,8 @@ if ($cp) {
     //
     // Lager
     //
-
-    $bres = dbquery("
-        SELECT
-            b.building_name,
-            b.building_store_metal,
-            b.building_store_crystal,
-            b.building_store_plastic,
-            b.building_store_fuel,
-            b.building_store_food,
-            b.building_store_factor,
-            l.buildlist_current_level
-        FROM
-            buildings AS b,
-            buildlist AS l
-        WHERE
-            b.building_id = l.buildlist_building_id
-            AND l.buildlist_entity_id=" . $planet->id . "
-            AND l.buildlist_current_level>0
-            AND
-                (b.building_store_metal>0
-                OR b.building_store_crystal>0
-                OR b.building_store_plastic>0
-                OR b.building_store_fuel>0
-                OR b.building_store_food>0);");
-    if (mysql_num_rows($bres) > 0) {
+    $storageBuildings = array_intersect_key($buildingDataRepository->searchBuildings(BuildingSearch::create()->storage()), $buildlistMap);
+    if (count($storageBuildings) > 0) {
         tableStart("Lagerkapazit&auml;t");
         echo "<tr><th style=\"width:160px\">Geb&auml;ude</th>";
         echo "<th>" . RES_ICON_METAL . "" . RES_METAL . "</th>";
@@ -521,15 +438,17 @@ if ($cp) {
             $storetotal[$x] = $config->getInt('def_store_capacity');
         }
         echo "</tr>";
-        while ($barr = mysql_fetch_array($bres)) {
-            echo "<tr><th>" . $barr['building_name'] . " (" . $barr['buildlist_current_level'] . ")</th>";
-            $level = $barr['buildlist_current_level'] - 1;
+        foreach ($storageBuildings as $building) {
+            $buildlist = $buildlistMap[$building->id];
+
+            echo "<tr><th>" . $building->name . " (" . $buildlist->currentLevel . ")</th>";
+            $level = $buildlist->currentLevel - 1;
             $store = [];
-            $store[0] = round($barr['building_store_metal'] * pow($barr['building_store_factor'], $level));
-            $store[1] = round($barr['building_store_crystal'] * pow($barr['building_store_factor'], $level));
-            $store[2] = round($barr['building_store_plastic'] * pow($barr['building_store_factor'], $level));
-            $store[3] = round($barr['building_store_fuel'] * pow($barr['building_store_factor'], $level));
-            $store[4] = round($barr['building_store_food'] * pow($barr['building_store_factor'], $level));
+            $store[0] = round($building->storeMetal * pow($building->storeFactor, $level));
+            $store[1] = round($building->storeCrystal * pow($building->storeFactor, $level));
+            $store[2] = round($building->storePlastic * pow($building->storeFactor, $level));
+            $store[3] = round($building->storeFuel * pow($building->storeFactor, $level));
+            $store[4] = round($building->storeFood * pow($building->storeFactor, $level));
             foreach ($store as $id => $sd) {
                 $storetotal[$id] += $sd;
                 echo "<td>" . nf($sd) . "</td>";

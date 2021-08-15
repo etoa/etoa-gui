@@ -1,5 +1,7 @@
 <?PHP
 
+use EtoA\Alliance\AllianceMemberCosts;
+use EtoA\Alliance\AllianceRepository;
 use EtoA\User\UserStatRepository;
 use EtoA\User\UserStatSearch;
 
@@ -91,6 +93,13 @@ function showAllianceMembers($alliance_id = 0, $field_id)
 
 function showAllianceMemberAddCosts($allianceId = 0, $form)
 {
+    global $app;
+
+    /** @var AllianceMemberCosts $allianceMemberCosts */
+    $allianceMemberCosts = $app[AllianceMemberCosts::class];
+    /** @var AllianceRepository $allianceRepository */
+    $allianceRepository = $app[AllianceRepository::class];
+
     ob_start();
     $objResponse = new xajaxResponse();
     $cnt = 0;
@@ -101,7 +110,10 @@ function showAllianceMemberAddCosts($allianceId = 0, $form)
     if ($allianceId != 0) {
         $alliance = new Alliance($allianceId);
 
-        echo $alliance->calcMemberCosts(false, $cnt);
+        $currentUserCount = $allianceRepository->countUsers($allianceId);
+        $costs = $allianceMemberCosts->calculate($allianceId, $currentUserCount, $currentUserCount + $cnt);
+
+        echo text2html("Bei der Aufnahme von " . $cnt . " Member werden dem Allianzkonto folgende Rohstoffe abgezogen:\n[b]" . RES_METAL . "[/b]: " . nf($costs->metal) . "\n[b]" . RES_CRYSTAL . "[/b]: " . nf($costs->crystal) . "\n[b]" . RES_PLASTIC . "[/b]: " . nf($costs->plastic) . "\n[b]" . RES_FUEL . "[/b]: " . nf($costs->fuel) . "\n[b]" . RES_FOOD . "[/b]: " . nf($costs->food));
     }
 
     $objResponse->assign("memberCostsTD", "innerHTML", ob_get_contents());

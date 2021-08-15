@@ -1,12 +1,19 @@
 <?php
 
+use EtoA\Message\ReportRepository;
+use EtoA\Message\ReportSearch;
+use EtoA\Message\ReportTypes;
+
+/** @var ReportRepository $reportRepository */
+$reportRepository = $app[ReportRepository::class];
+
 define("REPORT_LIMIT", 20);
 
 echo "<h1>Berichte</h1>";
 
 // Show navigation
 $tabitems = array("all" => "Neuste Berichte");
-foreach (Report::$types as $k => $v) {
+foreach (ReportTypes::TYPES as $k => $v) {
     $tabitems[$k] = $v;
 }
 $tabitems["archiv"] = "Archiv";
@@ -24,14 +31,7 @@ if (isset($_POST['submitarchivselection'])  && checker_verify()) {
         foreach ($_POST['delreport'] as $id => $val)
             array_push($ids, intval($id));
 
-        dbquery("
-                UPDATE
-                    reports
-                SET
-                    archived=1
-                WHERE
-                    id IN (" . implode(",", $ids) . ")
-                    AND user_id='" . $cu->id . "';");
+        $reportRepository->archive($cu->getId(), $ids);
 
         if (count($_POST['delreport']) == 1) {
             success_msg("Bericht wurde archiviert!");
@@ -43,27 +43,13 @@ if (isset($_POST['submitarchivselection'])  && checker_verify()) {
 
 // Selektiere löschen
 if (isset($_POST['submitdeleteselection'])  && checker_verify()) {
-    if ($type == "archiv") {
-        $sqladd = " AND archived=1";
-    } else {
-        $sqladd = " AND archived=0";
-    }
-
     if (isset($_POST['delreport']) && count($_POST['delreport']) > 0) {
 
         $ids = array();
         foreach ($_POST['delreport'] as $id => $val)
             array_push($ids, intval($id));
 
-        dbquery("
-                UPDATE
-                    reports
-                SET
-                    deleted=1
-                WHERE
-                    id IN (" . implode(",", $ids) . ")
-                    AND user_id='" . $cu->id . "'
-                    $sqladd;");
+        $reportRepository->delete($cu->getId(), $type === "archiv", $ids);
 
         if (count($_POST['delreport']) == 1) {
             success_msg("Bericht wurde gel&ouml;scht!");
@@ -74,22 +60,9 @@ if (isset($_POST['submitdeleteselection'])  && checker_verify()) {
 }
 // Alle Nachrichten löschen
 elseif (isset($_POST['submitdeleteall']) && checker_verify()) {
-    if ($type == "archiv")
-        $sqladd = " AND archived=1";
-    else {
-        $sqladd = " AND archived=0";
-        if ($type != "all")
-            $sqladd .= " AND type='" . $type . "' ";
-    }
+    $deleteType = in_array($type, ['archiv', 'all'], true) ? null : $type;
+    $reportRepository->delete($cu->getId(), $type === "archiv", null, $deleteType);
 
-    dbquery("
-        UPDATE
-            reports
-        SET
-            deleted=1
-        WHERE
-            user_id='" . $cu->id . "'
-            $sqladd;");
     success_msg("Alle Berichte wurden gel&ouml;scht!");
 }
 
@@ -100,15 +73,17 @@ $limitstr = $limit . "," . REPORT_LIMIT;
 
 // Load all reports
 if ($type == "all") {
+    $search = ReportSearch::create()->userId($cu->getId())->deleted(false)->archived(false);
     $reports = Report::find(array("user_id" => $cu->id), "timestamp DESC", $limitstr);
-    $totalReports = Report::find(array("user_id" => $cu->id), "timestamp DESC", "", 1);
 } elseif ($type == "archiv") {
+    $search = ReportSearch::create()->userId($cu->getId())->deleted(false)->archived(true);
     $reports = Report::find(array("user_id" => $cu->id, "archived" => true), "timestamp DESC", $limitstr);
-    $totalReports = Report::find(array("user_id" => $cu->id, "archived" => true), "timestamp DESC", "", 1);
 } else {
+    $search = ReportSearch::create()->userId($cu->getId())->type($type)->deleted(false)->archived(false);
     $reports = Report::find(array("type" => $type, "user_id" => $cu->id), "timestamp DESC", $limitstr);
-    $totalReports = Report::find(array("type" => $type, "user_id" => $cu->id), "timestamp DESC", "", 1);
 }
+
+$totalReportsCount = $reportRepository->countReports($search);
 
 // Check if reports available
 if (count($reports) > 0) {
@@ -120,7 +95,7 @@ if (count($reports) > 0) {
     elseif ($type == "archiv")
         tableStart("Archiv");
     else
-        tableStart(Report::$types[$type] . "berichte");
+        tableStart(ReportTypes::TYPES[$type] . "berichte");
 
     // Pagination navigation
     echo "<tr><th colspan=\"5\">";
@@ -129,7 +104,7 @@ if (count($reports) > 0) {
         echo "<input type=\"button\" value=\"&lt;&lt;\" onclick=\"document.location='?page=$page&amp;type=$type&amp;limit=0'\" /> ";
         echo "<input type=\"button\" value=\"&lt;\" onclick=\"document.location='?page=$page&amp;type=$type&amp;limit=" . ($limit - REPORT_LIMIT) . "'\" /> ";
     }
-    $totalReportsCount = count($totalReports);
+
     echo " " . $limit . "-" . min($limit + REPORT_LIMIT, $totalReportsCount) . " ";
     if ($limit + REPORT_LIMIT < $totalReportsCount) {
         echo "<input type=\"button\" value=\"&gt;\" onclick=\"document.location='?page=$page&amp;type=$type&amp;limit=" . ($limit + REPORT_LIMIT) . "'\" /> ";
