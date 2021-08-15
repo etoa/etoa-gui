@@ -4,21 +4,12 @@ namespace EtoA\Log;
 
 use EtoA\Core\AbstractRepository;
 
-class LogRepository extends AbstractRepository
+class BattleLogRepository extends AbstractRepository
 {
-    public function count(): int
-    {
-        return (int) $this->createQueryBuilder()
-            ->select('COUNT(id)')
-            ->from('logs')
-            ->execute()
-            ->fetchOne();
-    }
-
     public function cleanup(int $threshold): int
     {
         return (int) $this->createQueryBuilder()
-            ->delete('logs')
+            ->delete('logs_battle')
             ->where('timestamp < :threshold')
             ->setParameter('threshold', $threshold)
             ->execute();

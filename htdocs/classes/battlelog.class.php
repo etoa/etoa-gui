@@ -105,20 +105,4 @@ class BattleLog extends BaseLog
         }
         return $numRecords;
     }
-
-    /**
-     * Removes up old logs from the persistend log table
-     *
-     * @param int|string $threshold All items older than this time threshold will be deleted
-     */
-    static function cleanup($threshold)
-    {
-        dbquery("
-			DELETE FROM
-				" . self::$table . "
-			WHERE
-				timestamp<'" . $threshold . "'
-		");
-        return mysql_affected_rows();
-    }
 }

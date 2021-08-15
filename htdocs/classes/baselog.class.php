@@ -1,6 +1,10 @@
 <?PHP
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Log\BattleLogRepository;
+use EtoA\Log\FleetLogRepository;
+use EtoA\Log\GameLogRepository;
+use EtoA\Log\LogRepository;
 
 abstract class BaseLog
 {
@@ -40,17 +44,25 @@ abstract class BaseLog
         // TODO
         global $app;
 
-        /** @var ConfigurationService */
+        /** @var ConfigurationService $config */
         $config = $app[ConfigurationService::class];
+        /** @var LogRepository $logRepository */
+        $logRepository = $app[LogRepository::class];
+        /** @var GameLogRepository $gameLogRepository */
+        $gameLogRepository = $app[GameLogRepository::class];
+        /** @var FleetLogRepository $fleetLogRepository */
+        $fleetLogRepository = $app[FleetLogRepository::class];
+        /** @var BattleLogRepository $battleLogRepository */
+        $battleLogRepository = $app[BattleLogRepository::class];
 
         $timestamp = $threshold > 0
             ? time() - $threshold
             : time() - (24 * 3600 * $config->getInt('log_threshold_days'));
 
-        $nr = Log::cleanup($timestamp);
-        $nr += GameLog::cleanup($timestamp);
-        $nr += FleetLog::cleanup($timestamp);
-        $nr += BattleLog::cleanup($timestamp);
+        $nr = $logRepository->cleanup($timestamp);
+        $nr += $gameLogRepository->cleanup($timestamp);
+        $nr += $fleetLogRepository->cleanup($timestamp);
+        $nr += $battleLogRepository->cleanup($timestamp);
 
         Log::add(Log::F_SYSTEM, Log::INFO, "$nr Logs die älter als " . date("d.m.Y H:i", $timestamp) . " sind wurden gelöscht!");
         return $nr;
