@@ -5,6 +5,7 @@ use EtoA\Building\BuildingId;
 use EtoA\Building\BuildingRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Log\GameLogFacility;
+use EtoA\Log\GameLogRepository;
 use EtoA\Log\LogSeverity;
 use EtoA\Technology\Technology;
 use EtoA\Technology\TechnologyRepository;
@@ -33,7 +34,8 @@ $technologyDataRepository = $app[TechnologyDataRepository::class];
 
 /** @var TechnologyRepository $technologyRepository */
 $technologyRepository = $app[TechnologyRepository::class];
-
+/** @var GameLogRepository $gameLogRepository */
+$gameLogRepository = $app[GameLogRepository::class];
 /** @var UserPropertiesRepository $userPropertiesRepository */
 $userPropertiesRepository = $app[UserPropertiesRepository::class];
 
@@ -424,7 +426,7 @@ if (isset($cp)) {
                             [b]" . RES_FUEL . ":[/b] " . nf($planet->resFuel - $bc['fuel']) . "
                             [b]" . RES_FOOD . ":[/b] " . nf($planet->resFood - $bc['food']);
 
-                            GameLog::add(GameLogFacility::TECH, LogSeverity::INFO, $log_text, $cu->id, $cu->allianceId, $planet->id, $technology->id, $b_status, $b_level);
+                            $gameLogRepository->add(GameLogFacility::TECH, LogSeverity::INFO, $log_text, $cu->id, $cu->allianceId, $planet->id, $technology->id, $b_status, $b_level);
 
                             echo '<script>toggleBox(\'link\'); </script>';
                         } else {
@@ -472,7 +474,7 @@ if (isset($cp)) {
                         [b]" . RES_FOOD . ":[/b] " . nf($planet->resFood + $bc['food'] * $fac);
 
                         //Log Speichern
-                        GameLog::add(GameLogFacility::TECH, LogSeverity::INFO, $log_text, $cu->id, $cu->allianceId, $planet->id, $technology->id, $b_status, $b_level);
+                        $gameLogRepository->add(GameLogFacility::TECH, LogSeverity::INFO, $log_text, $cu->id, $cu->allianceId, $planet->id, $technology->id, $b_status, $b_level);
 
                         header("Refresh:0; url=?page=research&id=" . $bid);
                     } else {
