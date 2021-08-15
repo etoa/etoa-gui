@@ -3,6 +3,7 @@
 use EtoA\Building\BuildingDataRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Defense\DefenseDataRepository;
+use EtoA\Log\GameLogFacility;
 use EtoA\Log\LogFacility;
 use EtoA\Log\LogRepository;
 use EtoA\Log\LogSeverity;
@@ -637,7 +638,7 @@ function newGamelogs()
     echo "<label for=\"logcat\">Kategorie:</label>
     <select id=\"logcat\" name=\"logcat\" onchange=\"fillObjectSelection();applyFilter(0)\">
     <option value=\"0\">(Alle)</option>";
-    foreach (GameLog::$facilities as $k => $v) {
+    foreach (GameLogFacility::FACILITIES as $k => $v) {
         if ($k > 0)
             echo "<option value=\"" . $k . "\">" . $v . "</option>";
     }

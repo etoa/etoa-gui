@@ -5,6 +5,7 @@ use EtoA\Alliance\AllianceRankRepository;
 use EtoA\Building\BuildingDataRepository;
 use EtoA\Defense\DefenseDataRepository;
 use EtoA\Help\TicketSystem\TicketRepository;
+use EtoA\Log\GameLogFacility;
 use EtoA\Log\LogSeverity;
 use EtoA\Message\MessageRepository;
 use EtoA\Ship\ShipDataRepository;
@@ -745,7 +746,7 @@ function loadEconomy($uid, $target)
                 FROM
                     logs_game AS log
                 WHERE
-                    log.facility='" . GameLog::F_BUILD . "'
+                    log.facility='" . GameLogFacility::BUILD . "'
                     AND log.user_id='" . $uid . "'
                 ORDER BY
                     log.timestamp DESC
@@ -824,7 +825,7 @@ function loadEconomy($uid, $target)
                 FROM
                     logs_game AS log
                 WHERE
-                    log.facility='" . GameLog::F_TECH . "'
+                    log.facility='" . GameLogFacility::TECH . "'
                     AND log.user_id='" . $uid . "'
                 ORDER BY
                     log.timestamp DESC
@@ -896,7 +897,7 @@ function loadEconomy($uid, $target)
                 FROM
                     logs_game AS log
                 WHERE
-                    log.facility='" . GameLog::F_SHIP . "'
+                    log.facility='" . GameLogFacility::SHIP . "'
                     AND log.user_id='" . $uid . "'
                 ORDER BY
                     log.timestamp DESC
@@ -971,7 +972,7 @@ function loadEconomy($uid, $target)
                 FROM
                     logs_game AS log
                 WHERE
-                    log.facility='" . GameLog::F_DEF . "'
+                    log.facility='" . GameLogFacility::DEF . "'
                     AND log.user_id='" . $uid . "'
                 ORDER BY
                     log.timestamp DESC

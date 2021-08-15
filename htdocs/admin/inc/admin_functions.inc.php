@@ -5,6 +5,7 @@ use EtoA\Admin\AdminUserRepository;
 use EtoA\Building\BuildingDataRepository;
 use EtoA\Defense\DefenseDataRepository;
 use EtoA\HostCache\NetworkNameService;
+use EtoA\Log\GameLogFacility;
 use EtoA\Log\LogFacility;
 use EtoA\Log\LogSeverity;
 use EtoA\Ship\ShipDataRepository;
@@ -1160,7 +1161,7 @@ function showGameLogs($args = null, $limit = 0)
             $ta = ($arr['alliance_id'] > 0) ? new Alliance($arr['alliance_id']) : "-";
             $te = ($arr['entity_id'] > 0) ? Entity::createFactoryById($arr['entity_id']) : "-";
             switch ($arr['facility']) {
-                case GameLog::F_BUILD:
+                case GameLogFacility::BUILD:
                     $ob = $buildingNames[$arr['object_id']] . " " . ($arr['level'] > 0 ? $arr['level'] : '');
                     switch ($arr['status']) {
                         case 1:
@@ -1179,7 +1180,7 @@ function showGameLogs($args = null, $limit = 0)
                             $obStatus = '-';
                     }
                     break;
-                case GameLog::F_TECH:
+                case GameLogFacility::TECH:
                     $ob = $technologyNames[$arr['object_id']] . " " . ($arr['level'] > 0 ? $arr['level'] : '');
                     switch ($arr['status']) {
                         case 3:
@@ -1192,7 +1193,7 @@ function showGameLogs($args = null, $limit = 0)
                             $obStatus = '-';
                     }
                     break;
-                case GameLog::F_SHIP:
+                case GameLogFacility::SHIP:
                     $ob = $arr['object_id'] > 0 ? $shipNames[$arr['object_id']] . ' ' . ($arr['level'] > 0 ? $arr['level'] . 'x' : '') : '-';
                     switch ($arr['status']) {
                         case 1:
@@ -1205,7 +1206,7 @@ function showGameLogs($args = null, $limit = 0)
                             $obStatus = '-';
                     }
                     break;
-                case GameLog::F_DEF:
+                case GameLogFacility::DEF:
                     $ob = $arr['object_id'] > 0 ? $defenseNames[$arr['object_id']] . ' ' . ($arr['level'] > 0 ? $arr['level'] . 'x' : '') : '-';
                     switch ($arr['status']) {
                         case 1:
@@ -1218,7 +1219,7 @@ function showGameLogs($args = null, $limit = 0)
                             $obStatus = '-';
                     }
                     break;
-                case GameLog::F_QUESTS:
+                case GameLogFacility::QUESTS:
                     $quest = $app['cubicle.quests.registry']->getQuest($arr['object_id']);
                     $questStates = array_flip(\EtoA\Quest\Log\QuestGameLog::TRANSITION_MAP);
                     $ob = $quest->getData()['title'];
@@ -1232,7 +1233,7 @@ function showGameLogs($args = null, $limit = 0)
             echo "<tr>
             <td>" . df($arr['timestamp']) . "</td>
             <td>" . LogSeverity::SEVERITIES[$arr['severity']] . "</td>
-            <td>" . GameLog::$facilities[$arr['facility']] . "</td>
+            <td>" . GameLogFacility::FACILITIES[$arr['facility']] . "</td>
             <td>" . $tu . "</td>
             <td>" . $ta . "</td>
             <td>" . $te . "</td>
