@@ -105,6 +105,11 @@ class Planet
         $this->invadedBy = (int) $data['invadedby'];
     }
 
+    public function displayName(): string
+    {
+        return filled($this->name) ? $this->name : 'Unbenannt';
+    }
+
     public function hasDebrisField(): bool
     {
         return $this->wfMetal + $this->wfCrystal + $this->wfPlastic > 0;

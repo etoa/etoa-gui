@@ -39,7 +39,7 @@ class PlanetService
     {
         $data = array();
         foreach ($this->repository->getUserPlanets($userId) as $planet) {
-            $data[$planet->id] = filled($planet->name) ? $planet->name : 'Unbenannt';
+            $data[$planet->id] = $planet->displayName();
         }
 
         return $data;

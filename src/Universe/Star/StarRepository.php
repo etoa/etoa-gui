@@ -61,21 +61,25 @@ class StarRepository extends AbstractRepository
             ->execute();
     }
 
-    public function update(int $id, int $typeId, string $name): bool
+    public function update(int $id, string $name, int $typeId = null): bool
     {
-        $affected = (int) $this->createQueryBuilder()
+        $qb = $this->createQueryBuilder()
             ->update('stars')
-            ->set('type_id', ':type_id')
             ->set('name', ':name')
             ->where('id = :id')
             ->setParameters([
                 'id' => $id,
-                'type_id' => $typeId,
                 'name' => $name,
-            ])
-            ->execute();
+            ]);
 
-        return $affected > 0;
+        if ($typeId !== null) {
+            $qb
+                ->set('type_id', ':type_id')
+                ->setParameter('type_id', $typeId);
+        }
+
+        return (bool) $qb
+            ->execute();
     }
 
     public function remove(int $id): void

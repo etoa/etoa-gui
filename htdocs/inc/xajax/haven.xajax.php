@@ -7,6 +7,7 @@ use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Fleet\FleetRepository;
 use EtoA\Universe\Entity\EntityCoordinates;
 use EtoA\Universe\Entity\EntityRepository;
+use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\User\UserRepository;
 use EtoA\User\UserUniverseDiscoveryService;
 
@@ -304,6 +305,11 @@ function havenShowShips()
  */
 function havenShowTarget($form)
 {
+    global $app;
+
+    /** @var PlanetRepository $planetRepository */
+    $planetRepository = $app[PlanetRepository::class];
+
     $response = new xajaxResponse();
     defineImagePaths();
 
@@ -484,23 +490,10 @@ function havenShowTarget($form)
             echo "<option value=\"0\"";
             echo ">Wählen...</option>";
 
-            $pRes = dbquery("
-                                SELECT
-                                    planets.id
-                                FROM
-                                    planets
-                                WHERE
-                                    planets.planet_user_id=" . $fleet->ownerid() . "
-                                ORDER BY
-                                    planet_user_main DESC,
-                                    planet_name ASC;");
-
-            if (mysql_num_rows($pRes) > 0) {
-                while ($pArr = mysql_fetch_assoc($pRes)) {
-                    $ent = Entity::createFactory('p', $pArr['id']);
-                    echo "<option value=\"" . $ent->id() . "\"";
-                    echo ">Eigener Planet: " . $ent . "</option>\n";
-                }
+            $userPlanets = $planetRepository->getUserPlanetsWithCoordinates($fleet->ownerid());
+            foreach ($userPlanets as $userPlanet) {
+                echo "<option value=\"" . $userPlanet->id . "\"";
+                echo ">Eigener Planet: " . $userPlanet->toString() . "</option>\n";
             }
 
             $bRes = dbquery("
@@ -617,6 +610,8 @@ function havenShowWormhole($form)
     $config = $app[ConfigurationService::class];
     /** @var EntityRepository $entityRepository */
     $entityRepository = $app[EntityRepository::class];
+    /** @var PlanetRepository $planetRepository */
+    $planetRepository = $app[PlanetRepository::class];
     /** @var UserUniverseDiscoveryService */
     $userUniverseDiscoveryService = $app[UserUniverseDiscoveryService::class];
 
@@ -774,23 +769,10 @@ function havenShowWormhole($form)
                     echo "<option value=\"0\"";
                     echo ">Wählen...</option>";
 
-                    $pRes = dbquery("
-                                    SELECT
-                                        planets.id
-                                    FROM
-                                        planets
-                                    WHERE
-                                        planets.planet_user_id=" . $fleet->ownerid() . "
-                                    ORDER BY
-                                        planet_user_main DESC,
-                                        planet_name ASC;");
-
-                    if (mysql_num_rows($pRes) > 0) {
-                        while ($pArr = mysql_fetch_assoc($pRes)) {
-                            $ent = Entity::createFactory('p', $pArr['id']);
-                            echo "<option value=\"" . $ent->id() . "\"";
-                            echo ">Eigener Planet: " . $ent . "</option>\n";
-                        }
+                    $userPlanets = $planetRepository->getUserPlanetsWithCoordinates($fleet->ownerid());
+                    foreach ($userPlanets as $userPlanet) {
+                        echo "<option value=\"" . $userPlanet->id . "\"";
+                        echo ">Eigener Planet: " . $userPlanet->toString() . "</option>\n";
                     }
 
                     $bRes = dbquery("

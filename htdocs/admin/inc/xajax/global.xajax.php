@@ -351,14 +351,14 @@ function addShipToPlanet($form)
 
 function removeShipFromPlanet($form, $listId)
 {
-    $objResponse = new xajaxResponse();
+    global $app;
 
-    dbquery("
-    DELETE FROM
-        shiplist
-    WHERE
-        shiplist_id=" . intval($listId) . "
-    ;");
+    /** @var ShipRepository $shipRepository */
+    $shipRepository = $app[ShipRepository::class];
+
+    $shipRepository->removeEntry($listId);
+
+    $objResponse = new xajaxResponse();
     $objResponse->script("xajax_showShipsOnPlanet('" . $form['entity_id'] . "');");
     return $objResponse;
 }

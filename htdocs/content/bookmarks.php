@@ -367,11 +367,10 @@ if ($mode == "fleet") {
                 >\n
                     <option value="0">Wählen...</option>';
 
-    $planets = $planetRepository->getUserPlanets($user->id);
+    $planets = $planetRepository->getUserPlanetsWithCoordinates($user->id);
     if (count($planets) > 0) {
         foreach ($planets as $planet) {
-            $ent = Entity::createFactory('p', $planet->id);
-            echo '<option value="' . $ent->id() . '">Eigener Planet: ' . $ent . '</option>\n';
+            echo '<option value="' . $planet->id . '">Eigener Planet: ' . $planet->toString() . '</option>\n';
         }
     }
 

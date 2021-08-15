@@ -51,9 +51,9 @@ class DefenseQueueRepository extends AbstractRepository
     /**
      * @return DefenseQueueItem[]
      */
-    public function searchQueueItems(DefenseQueueSearch $search): array
+    public function searchQueueItems(DefenseQueueSearch $search, int $limit = null): array
     {
-        $data = $this->applySearchSortLimit($this->createQueryBuilder(), $search)
+        $data = $this->applySearchSortLimit($this->createQueryBuilder(), $search, null, $limit)
             ->select('*')
             ->from('def_queue')
             ->orderBy('queue_starttime', 'ASC')
