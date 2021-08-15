@@ -9,7 +9,6 @@ class ProcessLogMessagesTask implements IPeriodicTask
     {
         $nr = Log::processQueue();
         $nr += GameLog::processQueue();
-        $nr += BattleLog::processQueue();
         $nr += FleetLog::processQueue();
         return "$nr Log Nachrichten verarbeitet";
     }

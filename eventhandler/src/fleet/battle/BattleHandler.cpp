@@ -288,7 +288,7 @@ void BattleHandler::battle(Fleet* fleet, Entity* entity, Log* log, bool ratingEf
 
         //Log schreiben
         query << "INSERT DELAYED INTO "
-        << "	logs_battle_queue "
+        << "	logs_battle "
         << "("
         << "	fleet_id, "
         << "	user_id, "
