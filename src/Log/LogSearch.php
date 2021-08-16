@@ -22,7 +22,7 @@ class LogSearch extends AbstractSearch
     public function severity(int $severity): self
     {
         $this->parts[] = 'severity >= :severity';
-        $this->parameters['severity'] = $severity . '%';
+        $this->parameters['severity'] = $severity;
 
         return $this;
     }

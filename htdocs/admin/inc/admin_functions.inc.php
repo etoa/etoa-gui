@@ -5,6 +5,8 @@ use EtoA\Admin\AdminUserRepository;
 use EtoA\Building\BuildingDataRepository;
 use EtoA\Defense\DefenseDataRepository;
 use EtoA\HostCache\NetworkNameService;
+use EtoA\Log\BattleLogRepository;
+use EtoA\Log\BattleLogSearch;
 use EtoA\Log\FleetLogFacility;
 use EtoA\Log\GameLogFacility;
 use EtoA\Log\GameLogRepository;
@@ -558,20 +560,17 @@ function showAttackAbuseLogs($args = null, $limit = -1, $load = true)
 
     /** @var UserRepository */
     $userRepository = $app[UserRepository::class];
+    /** @var BattleLogRepository $battleLogRepository */
+    $battleLogRepository = $app[BattleLogRepository::class];
 
     $paginationLimit = 50;
 
     if ($load) {
+        $search = BattleLogSearch::create();
         $action = is_array($args) && isset($args['flaction']) ? $args['flaction'] : 0;
         $sev = is_array($args) && isset($args['logsev'])  ? $args['logsev'] : 0;
 
         $landtime = is_array($args) ? mktime($args['searchtime_h'], $args['searchtime_i'], $args['searchtime_s'], $args['searchtime_m'], $args['searchtime_d'], $args['searchtime_y']) : time();
-
-        $order = "timestamp ASC";
-
-        $sql1 = "SELECT ";
-        $sql2 = " * ";
-        $sql3 = " FROM logs_battle l ";
 
         if (isset($args['searchfuser']) && $args['searchfuser'] != "" && !is_numeric($args['searchfuser'])) {
             $args['searchfuser'] = $userRepository->getUserIdByNick($args['searchfuser']);
@@ -580,27 +579,25 @@ function showAttackAbuseLogs($args = null, $limit = -1, $load = true)
             $args['searcheuser'] = $userRepository->getUserIdByNick($args['searcheuser']);
         }
 
-        $sql3 .= " WHERE fleet_weapon>0 AND landtime<='" . $landtime . "' AND landtime>'" . ($landtime - 3600 * 24) . "' ";
+        $search->attackingBetween($landtime, $landtime - 3600 * 24);
         if ($action != "") {
-            $sql3 .= " AND action='" . $action . "' ";
+            $search->action($action);
         }
         if ($sev > 0) {
-            $sql3 .= " AND severity >= " . $sev . " ";
+            $search->severity($sev);
         }
         if (isset($args['searchfuser']) && is_numeric($args['searchfuser'])) {
-            $sql3 .= " AND l.user_id LIKE '%," . intval($args['searchfuser']) . ",%' ";
+            $search->fleetUserId((int) $args['searchfuser']);
         }
         if (isset($args['searcheuser']) && is_numeric($args['searcheuser'])) {
-            $sql3 .= " AND l.entity_user_id LIKE '%," . intval($args['searcheuser']) . ",%' ";
+            $search->entityUserId((int) $args['searcheuser']);
         }
-        $sql3 .= " ORDER BY $order";
 
-        $res = dbquery($sql1 . $sql2 . $sql3);
+        $logs = $battleLogRepository->searchLogs($search);
 
         $bans = array();
-        $actions = array();
 
-        if (mysql_num_rows($res) > 0) {
+        if (count($logs) > 0) {
             $data = array();
 
             $waveMaxCnt = array(3, 4);                // Max. 3er/4er Wellen...
@@ -617,14 +614,14 @@ function showAttackAbuseLogs($args = null, $limit = -1, $load = true)
             $add_ban_time = 12 * 3600;                                // Sperrzeit bei jedem weiteren Vergehen: 12h (wird immer dazu addiert)
 
             //Alle Daten werden in einem Array gespeichert, da mehr als 1 Angriffer möglich ist funktioniert das alte Tool nicht mehr
-            while ($arr = mysql_fetch_array($res)) {
-                $uid = explode(",", $arr['user_id']);
-                $euid = explode(",", $arr['entity_user_id']);
+            foreach ($logs as $log) {
+                $uid = explode(",", $log->fleetUserIds);
+                $euid = explode(",", $log->entityUserIds);
                 $eUser = $euid[1];
-                $entity = $arr['entity_id'];
-                $time = $arr['landtime'];
-                $war = $arr['war'];
-                $action = $arr['action'];
+                $entity = $log->entityId;
+                $time = $log->landTime;
+                $war = $log->war;
+                $action = $log->action;
                 foreach ($uid as $fUser) {
                     if ($fUser != "") {
                         if (!isset($data[$fUser])) $data[$fUser] = array();
