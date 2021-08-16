@@ -5,6 +5,7 @@ use EtoA\Admin\AdminUserRepository;
 use EtoA\Building\BuildingDataRepository;
 use EtoA\Defense\DefenseDataRepository;
 use EtoA\HostCache\NetworkNameService;
+use EtoA\Log\FleetLogFacility;
 use EtoA\Log\GameLogFacility;
 use EtoA\Log\LogFacility;
 use EtoA\Log\LogSeverity;
@@ -873,7 +874,7 @@ function showFleetLogs($args = null, $limit = 0)
             echo "<tr>
             <td>" . df($arr['timestamp']) . "</td>
             <td>" . LogSeverity::SEVERITIES[$arr['severity']] . "</td>
-            <td>" . FleetLog::$facilities[$arr['facility']] . "</td>
+            <td>" . FleetLogFacility::FACILITIES[$arr['facility']] . "</td>
             <td>$owner</td>
             <td>" . $fa . " [" . FleetAction::$statusCode[$arr["status"]] . "]</td>
             <td>" . $startEntity . "<br/>" . $startEntity->entityCodeString() . ", " . $startEntity->owner() . "</td>

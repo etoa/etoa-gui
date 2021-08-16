@@ -1107,6 +1107,7 @@ function havenShowLaunch($form)
     // Do some checks
     if (count($form) > 0) {
         // Get fleet object
+        /** @var FleetLaunch $fleet */
         $fleet = unserialize($_SESSION['haven']['fleetObj']);
 
         if ($fleet->setAction($form['fleet_action'])) {
@@ -1138,7 +1139,10 @@ function havenShowLaunch($form)
             $duration = $fleet->distance / $fleet->getSpeed();    // Calculate duration
             $duration *= 3600;    // Convert to seconds
             $duration = ceil($duration);
-            $maxTime = $fleet->aFleets[0]['landtime'] - time() - $fleet->getTimeLaunchLand() - $fleet->duration1;
+            $maxTime = 0;
+            if (isset($fleet->aFleets)) {
+                $maxTime = $fleet->aFleets[0]['landtime'] - time() - $fleet->getTimeLaunchLand() - $fleet->duration1;
+            }
 
             //check for alliance+time to join
             if (($duration < $maxTime) || $form['fleet_action'] != "alliance" || $maxTime < 0) {

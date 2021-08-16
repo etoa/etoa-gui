@@ -43,7 +43,7 @@ class GameLogRepository extends AbstractRepository
             'entityId' => $entityId,
             'objectId' => $objectId,
             'status' => $status,
-            'level' => $level
+            'level' => $level,
         ]);
     }
 

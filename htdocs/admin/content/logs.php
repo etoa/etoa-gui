@@ -3,6 +3,7 @@
 use EtoA\Building\BuildingDataRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Defense\DefenseDataRepository;
+use EtoA\Log\FleetLogFacility;
 use EtoA\Log\GameLogFacility;
 use EtoA\Log\LogFacility;
 use EtoA\Log\LogRepository;
@@ -699,7 +700,7 @@ function newFleetLogs()
     echo "<label for=\"logfac\">Facility:</label>
     <select id=\"logfac\" name=\"logfac\" onchange=\"applyFilter(0)\">
     <option value=\"\">(Alle)</option>";
-    foreach (FleetLog::$facilities as $k => $v) {
+    foreach (FleetLogFacility::FACILITIES as $k => $v) {
         echo "<option value=\"" . $k . "\">" . $v . "</option>";
     }
     echo "</select> &nbsp; ";

@@ -1,5 +1,8 @@
 <?PHP
 
+use EtoA\Log\FleetLogRepository;
+use EtoA\Universe\Resources\BaseResources;
+
 /**
  * Handles data and actions for a fleet object
  *
@@ -484,6 +487,8 @@ class Fleet
      */
     function cancelFlight($alliance = false, $is_child = false)
     {
+        global $app;
+
         if ($this->status == 0 || $this->status == 3) {
             if ($this->landTime() > time() || $is_child) {
                 if ($this->getAction()->cancelable()) {
@@ -522,9 +527,15 @@ class Fleet
                         }
                     }
 
-                    $log = new FleetLog($this->ownerId, $this->sourceId);
-                    $log->cancel($this->id, $this->launchTime, $this->landTime, $this->targetId, $this->actionCode, $this->status, $this->pilots);
-                    $log->addFleetRes(array($this->resMetal, $this->resCrystal, $this->resPlastic, $this->resFuel, $this->resFood), $this->resPeople, null, false);
+                    $resourceStart = new BaseResources();
+                    $resourceStart->metal = $this->resMetal;
+                    $resourceStart->crystal = $this->resCrystal;
+                    $resourceStart->plastic = $this->resPlastic;
+                    $resourceStart->fuel = $this->resFuel;
+                    $resourceStart->food = $this->resFood;
+                    $resourceStart->people = $this->resPeople;
+                    $logLaunchTime = $this->launchTime;
+                    $logLandTime = $this->landTime;
 
                     // ### STATUS ###
                     // 0: Hinflug
@@ -579,17 +590,24 @@ class Fleet
                     $returnFactor = 1 - $passed;
 
                     // Fleet gets unused costs back
-                    $this->resFuel += ceil($this->usageFuel * $returnFactor);
-                    $this->resFood += ceil($this->usageFood * $returnFactor);
-                    $this->resPower += ceil($this->usagePower * $returnFactor);
+                    $this->resFuel += (int) ceil($this->usageFuel * $returnFactor);
+                    $this->resFood += (int) ceil($this->usageFood * $returnFactor);
+                    $this->resPower += (int) ceil($this->usagePower * $returnFactor);
 
-                    $this->usageFuel = floor($this->usageFuel * $passed);
-                    $this->usageFood = floor($this->usageFood * $passed);
-                    $this->usagePower = floor($this->usagePower * $passed);
+                    $this->usageFuel = (int) floor($this->usageFuel * $passed);
+                    $this->usageFood = (int) floor($this->usageFood * $passed);
+                    $this->usagePower = (int) floor($this->usagePower * $passed);
 
-                    $log->fuel = $this->usageFuel;
-                    $log->food = $this->usageFood;
-                    $log->addFleetRes(array($this->resMetal, $this->resCrystal, $this->resPlastic, $this->resFuel, $this->resFood), $this->resPeople, null, true);
+                    $resourcesEnd = new BaseResources();
+                    $resourcesEnd->metal = $this->resMetal;
+                    $resourcesEnd->crystal = $this->resCrystal;
+                    $resourcesEnd->plastic = $this->resPlastic;
+                    $resourcesEnd->fuel = $this->resFuel;
+                    $resourcesEnd->food = $this->resFood;
+                    $resourcesEnd->people = $this->resPeople;
+                    /** @var FleetLogRepository $fleetLogRepository */
+                    $fleetLogRepository = $app[FleetLogRepository::class];
+                    $fleetLogRepository->addCancel($this->id, $this->ownerId, $this->targetId, $this->sourceId, $logLaunchTime, $logLandTime, $this->actionCode, $this->status, $this->pilots, $this->usageFuel, $this->usageFood, $resourceStart, $resourcesEnd);
                     if ($this->update())
                         return true;
                 } else {
