@@ -40,24 +40,16 @@ class AllianceDiplomacyRepository extends AbstractRepository
     /**
      * @return AllianceDiplomacy[]
      */
-    public function get(int $level, int $limit = null): array
+    public function search(AllianceDiplomacySearch $search, int $limit = null): array
     {
-        $qb = $this->createQueryBuilder()
+        $data = $this->applySearchSortLimit($this->createQueryBuilder(), $search, null, $limit)
             ->select('b.*')
             ->addSelect('a1.alliance_name as alliance1Name, a1.alliance_tag as alliance1Tag')
             ->addSelect('a2.alliance_name as alliance2Name, a2.alliance_tag as alliance2Tag')
             ->from('alliance_bnd', 'b')
             ->leftJoin('b', 'alliances', 'a1', 'alliance_bnd_alliance_id1 = a1.alliance_id')
             ->leftJoin('b', 'alliances', 'a2', 'alliance_bnd_alliance_id2 = a2.alliance_id')
-            ->andWhere('b.alliance_bnd_level = :level')
             ->orderBy('b.alliance_bnd_date', 'DESC')
-            ->setParameter('level', $level);
-
-        if ($limit !== null) {
-            $qb->setMaxResults($limit);
-        }
-
-        $data = $qb
             ->execute()
             ->fetchAllAssociative();
 
@@ -147,9 +139,9 @@ class AllianceDiplomacyRepository extends AbstractRepository
             ->fetchOne();
     }
 
-    public function updateDiplomacy(int $id, int $level, string $name): void
+    public function updateDiplomacy(int $id, int $level, string $name, int $points = null, int $date = null): void
     {
-        $this->createQueryBuilder()
+        $qb = $this->createQueryBuilder()
             ->update('alliance_bnd')
             ->set('alliance_bnd_level', ':level')
             ->set('alliance_bnd_name', ':name')
@@ -158,7 +150,21 @@ class AllianceDiplomacyRepository extends AbstractRepository
                 'id' => $id,
                 'level' => $level,
                 'name' => $name,
-            ])
+            ]);
+
+        if ($points !== null) {
+            $qb
+                ->set('alliance_bnd_points', ':points')
+                ->setParameter('points', $points);
+        }
+
+        if ($date !== null) {
+            $qb
+                ->set('alliance_bnd_date', ':date')
+                ->setParameter('date', $date);
+        }
+
+        $qb
             ->execute();
     }
 

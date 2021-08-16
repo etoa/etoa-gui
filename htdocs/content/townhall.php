@@ -5,6 +5,7 @@
 
 use EtoA\Alliance\AllianceDiplomacyLevel;
 use EtoA\Alliance\AllianceDiplomacyRepository;
+use EtoA\Alliance\AllianceDiplomacySearch;
 use EtoA\Alliance\AllianceNewsRepository;
 
 /** @var AllianceNewsRepository $allianceNewsRepository */
@@ -129,7 +130,7 @@ if (count($internalNews) > 0) {
 //
 // Bündnisse
 //
-$bnds = $allianceDiplomacyRepository->get(AllianceDiplomacyLevel::BND_CONFIRMED, 15);
+$bnds = $allianceDiplomacyRepository->search(AllianceDiplomacySearch::create()->level(AllianceDiplomacyLevel::BND_CONFIRMED), 15);
 if (count($bnds) > 0) {
     tableStart("Neuste Bündnisse");
     echo "
@@ -171,7 +172,7 @@ if (count($bnds) > 0) {
 //
 // Kriege
 //
-$wars = $allianceDiplomacyRepository->get(AllianceDiplomacyLevel::WAR);
+$wars = $allianceDiplomacyRepository->search(AllianceDiplomacySearch::create()->level(AllianceDiplomacyLevel::WAR));
 if (count($wars) > 0) {
     tableStart("Aktuelle Kriege (Dauer " . round(WAR_DURATION / 3600) . "h)");
     echo "<tr>
@@ -212,7 +213,7 @@ if (count($wars) > 0) {
 //
 // Friedensabkommen
 //
-$peace = $allianceDiplomacyRepository->get(AllianceDiplomacyLevel::PEACE);
+$peace = $allianceDiplomacyRepository->search(AllianceDiplomacySearch::create()->level(AllianceDiplomacyLevel::PEACE));
 if (count($peace) > 0) {
     tableStart("Aktuelle Friedensabkommen (Dauer " . round(PEACE_DURATION / 3600) . "h)");
     echo "<tr>
