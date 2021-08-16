@@ -181,11 +181,6 @@ parameters:
 			path: htdocs/inc/functions.inc.php
 
 		-
-			message: "#^Function collect\\(\\) return type with generic class Doctrine\\\\Common\\\\Collections\\\\ArrayCollection does not specify its types\\: TKey, T$#"
-			count: 1
-			path: htdocs/inc/functions.inc.php
-
-		-
 			message: "#^Ternary operator condition is always false\\.$#"
 			count: 1
 			path: htdocs/inc/functions.inc.php

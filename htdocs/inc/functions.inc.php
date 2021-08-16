@@ -1529,17 +1529,6 @@ function stripBBCode($text_to_search)
     return preg_replace($pattern, $replace, $text_to_search);
 }
 
-/**
- * Creates a new collection from the given array of data
- *
- * @param array $data
- * @return ArrayCollection
- */
-function collect(array $data): ArrayCollection
-{
-    return new ArrayCollection($data);
-}
-
 if (!function_exists('blank')) {
     /**
      * Determine if the given value is "blank".

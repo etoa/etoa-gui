@@ -19,7 +19,7 @@ if ($contactText->isEnabled()) {
     iBoxEnd();
 }
 
-/** @var AdminUserRepository */
+/** @var AdminUserRepository $adminUserRepo */
 $adminUserRepo = $app[AdminUserRepository::class];
 
 /** @var ConfigurationService */
@@ -32,15 +32,15 @@ $mailSenderService = $app[MailSenderService::class];
 $networkNameService = $app[NetworkNameService::class];
 
 // List of admins
-$admins = collect($adminUserRepo->findAll())
-    ->filter(fn (AdminUser $admin) => $admin->isContact);
-if (!$admins->isEmpty()) {
+$admins = array_filter($adminUserRepo->findAll(), fn (AdminUser $admin) => $admin->isContact);
+if (count($admins) > 0) {
     if (isset($_GET['rcpt']) && intval($_GET['rcpt']) > 0) {
         $rcpt = intval($_GET['rcpt']);
-        $admin = $admins->filter(fn (AdminUser $admin) => $admin->id == $rcpt)
-            ->first();
+        $admins = array_filter($admins, fn (AdminUser $admin) => $admin->id == $rcpt);
         echo '<form action="' . $baseUrl . '&amp;rcpt=' . $rcpt . '" method="post"><div>';
-        if ($admin != null) {
+        if (count($admins) > 0) {
+            $admin = array_values($admins)[0];
+
             $showForm = true;
             $mail_subject = '';
             $mail_text = '';
