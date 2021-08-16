@@ -246,11 +246,6 @@ parameters:
 			path: src/Alliance/AllianceRepository.php
 
 		-
-			message: "#^Method EtoA\\\\Alliance\\\\AllianceRepository\\:\\:findTechnologies\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: src/Alliance/AllianceRepository.php
-
-		-
 			message: "#^Method EtoA\\\\Building\\\\BuildingRepository\\:\\:fetchBuildingListEntry\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: src/Building/BuildingRepository.php
