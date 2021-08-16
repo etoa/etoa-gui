@@ -9,6 +9,7 @@ use EtoA\Defense\DefenseRepository;
 use EtoA\Missile\MissileDataRepository;
 use EtoA\Missile\MissileRepository;
 use EtoA\Requirement\RequirementRepositoryProvider;
+use EtoA\Ship\ShipDataRepository;
 use EtoA\Ship\ShipRepository;
 use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Entity\EntitySearch;
@@ -160,6 +161,13 @@ function planetSelectorByUser($userNick, $function, $show_user_id = 1)
 
 function showShipsOnPlanet($form)
 {
+    global $app;
+
+    /** @var ShipRepository $shipRepository */
+    $shipRepository = $app[ShipRepository::class];
+    /** @var ShipDataRepository $shipDataRepository */
+    $shipDataRepository = $app[ShipDataRepository::class];
+
     $objResponse = new xajaxResponse();
 
     $updata = explode(":", $form);
@@ -171,28 +179,8 @@ function showShipsOnPlanet($form)
     ob_start();
 
     if ($eid != 0) {
-        $res = dbquery("
-        SELECT
-            ship_points,
-            ship_name,
-            shiplist_count,
-            shiplist_bunkered,
-            shiplist_id,
-            special_ship_need_exp as ship_xp_base,
-            special_ship_exp_factor as ship_xp_factor,
-            shiplist_special_ship_exp as shiplist_xp
-        FROM
-            shiplist
-        INNER JOIN
-            ships
-            ON shiplist_ship_id=ship_id
-            AND shiplist_entity_id='" . $eid . "'
-            AND (shiplist_count+shiplist_bunkered)>0
-        ORDER BY
-            ship_name
-        ;");
-
-        if (mysql_num_rows($res) > 0) {
+        $shipList = $shipRepository->findForUser($uid, $eid);
+        if (count($shipList) > 0) {
             $out = "<table class=\"tb\">
             <tr><th>Anzahl</th>
             <th>Bunker</th>
@@ -201,20 +189,23 @@ function showShipsOnPlanet($form)
             <th>Spezielles</th>
             <th>Aktionen</th></tr>";
             $points = 0;
-            while ($arr = mysql_fetch_array($res)) {
-                $points += $arr['ship_points'] * ($arr['shiplist_count'] + $arr['shiplist_bunkered']);
-                $out .= "<tr><td style=\"width:80px\" id=\"cnt_" . $arr['shiplist_id'] . "\">" . $arr['shiplist_count'] . "</td>
-                <td style=\"width:80px\" id=\"bunkered_" . $arr['shiplist_id'] . "\">" . $arr['shiplist_bunkered'] . "</td>
-                <td>" . $arr['ship_name'] . "</td>
-                <td>" . ($arr['ship_points'] * ($arr['shiplist_count'] + $arr['shiplist_bunkered'])) . "</td>
-                <td id=\"special_" . $arr['shiplist_id'] . "\">";
-                if ($arr['ship_xp_base'] > 0) {
-                    $out .= nf($arr['shiplist_xp']) . " XP, Level " . Ship::levelByXp($arr['ship_xp_base'], $arr['ship_xp_factor'], $arr['shiplist_xp']);
+            $ships = $shipDataRepository->getAllShips(true);
+            foreach ($shipList as $item) {
+                $ship = $ships[$item->shipId];
+                $itemPoints = $ship->points * ($item->count + $item->bunkered);
+                $points += $itemPoints;
+                $out .= "<tr><td style=\"width:80px\" id=\"cnt_" . $item->id . "\">" . $item->count . "</td>
+                <td style=\"width:80px\" id=\"bunkered_" . $item->id . "\">" . $item->count . "</td>
+                <td>" . $ship->name . "</td>
+                <td>" . ($itemPoints) . "</td>
+                <td id=\"special_" . $item->id . "\">";
+                if ($ship->specialNeedExp > 0) {
+                    $out .= nf($item->specialShipExp) . " XP, Level " . Ship::levelByXp($ship->specialNeedExp, $ship->specialExpFactor, $item->specialShipExp);
                 }
                 $out .= "
-                <td style=\"width:180px\" id=\"actions_" . $arr['shiplist_id'] . "\" id=\"actions_" . $arr['shiplist_id'] . "\">
-                <input type=\"button\" value=\"Bearbeiten\" onclick=\"xajax_editShipByListId(xajax.getFormValues('selector')," . $arr['shiplist_id'] . ")\" />
-                <input type=\"button\" value=\"Löschen\" onclick=\"if (confirm('Sollen " . $arr['shiplist_count'] . " " . $arr['ship_name'] . " von diesem Planeten gel&ouml;scht werden?')) {showLoaderPrepend('shipsOnPlanet');xajax_removeShipFromPlanet(xajax.getFormValues('selector')," . $arr['shiplist_id'] . ")}\" />
+                <td style=\"width:180px\" id=\"actions_" . $item->id . "\" id=\"actions_" . $item->id . "\">
+                <input type=\"button\" value=\"Bearbeiten\" onclick=\"xajax_editShipByListId(xajax.getFormValues('selector')," . $item->id . ")\" />
+                <input type=\"button\" value=\"Löschen\" onclick=\"if (confirm('Sollen " . $item->count . " " . $ship->name . " von diesem Planeten gel&ouml;scht werden?')) {showLoaderPrepend('shipsOnPlanet');xajax_removeShipFromPlanet(xajax.getFormValues('selector')," . $item->id . ")}\" />
                 </td>
                 </tr>";
             }

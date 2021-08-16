@@ -50,6 +50,7 @@ class ShipRepository extends AbstractRepository
             ->select('*')
             ->from('shiplist')
             ->where('shiplist_user_id = :userId')
+            ->andWhere('shiplist_count > 0 OR shiplist_bunkered > 0')
             ->setParameter('userId', $userId);
 
         if ($entityId !== null) {
