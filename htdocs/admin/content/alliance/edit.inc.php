@@ -267,11 +267,11 @@ function edit(
 
     echo '</div><div id="tabs-7">';
 
-    buildingsTab($repository, $buildingRepository, $id);
+    buildingsTab($buildingRepository, $id);
 
     echo '</div><div id="tabs-8">';
 
-    technologiesTab($repository, $technologyRepository, $id);
+    technologiesTab($technologyRepository, $id);
 
     echo '<br><input type="submit" name="techs">';
 
@@ -492,10 +492,10 @@ function depositsTab(\EtoA\Alliance\Alliance $alliance, array $members): void
     echo "<div id=\"spends\">&nbsp;</div>";
 }
 
-function buildingsTab(AllianceRepository $repository, AllianceBuildingRepository $buildingRepository, int $id): void
+function buildingsTab(AllianceBuildingRepository $buildingRepository, int $id): void
 {
-    $buildListItems = $repository->findBuildings($id);
-    $buildings = $buildingRepository->findAll();
+    $buildListItems = $buildingRepository->getBuildList($id);
+    $buildings = $buildingRepository->getNames();
 
     tableStart();
     echo "<tr>
@@ -506,11 +506,11 @@ function buildingsTab(AllianceRepository $repository, AllianceBuildingRepository
 		</tr>";
     if (count($buildListItems) > 0) {
         foreach ($buildListItems as $item) {
-            echo "<tr><td>" . $item['alliance_building_name'] . "</td>
-			<td>" . $item['alliance_buildlist_current_level'] . "</td>
-			<td>" . $item['alliance_buildlist_member_for'] . "</td><td>";
-            if ($item['alliance_buildlist_build_end_time'] > time()) echo "Bauen";
-            elseif ($item['alliance_buildlist_build_end_time'] > 0) echo "Bau abgeschlossen";
+            echo "<tr><td>" . $buildings[$item->id] . "</td>
+			<td>" . $item->level . "</td>
+			<td>" . $item->memberFor . "</td><td>";
+            if ($item->buildEndTime > time()) echo "Bauen";
+            elseif ($item->buildEndTime > 0) echo "Bau abgeschlossen";
             else echo "Untätig";
             echo "</td>";
             echo "</tr>";
@@ -534,8 +534,8 @@ function buildingsTab(AllianceRepository $repository, AllianceBuildingRepository
 
     if (count($buildings) > 0) {
         echo '<select name="alliance_building_id">';
-        foreach ($buildings as $building) {
-            echo "<option value=\"" . $building->id . "\">" . $building->name . "</option>";
+        foreach ($buildings as $buildingId => $building) {
+            echo "<option value=\"" . $buildingId . "\">" . $building . "</option>";
         }
         echo "</select>";
     }
@@ -548,10 +548,10 @@ function buildingsTab(AllianceRepository $repository, AllianceBuildingRepository
     echo '<br><input type="submit" name="buildings">';
 }
 
-function technologiesTab(AllianceRepository $repository, AllianceTechnologyRepository $technologyRepository, int $id)
+function technologiesTab(AllianceTechnologyRepository $technologyRepository, int $id)
 {
-    $techListItems = $repository->findTechnologies($id);
-    $technologies = $technologyRepository->findAll();
+    $techListItems = $technologyRepository->getTechnologyList($id);
+    $technologies = $technologyRepository->getNames();
 
     tableStart();
     echo "<tr>
@@ -559,11 +559,11 @@ function technologiesTab(AllianceRepository $repository, AllianceTechnologyRepos
 		</tr>";
     if (count($techListItems) > 0) {
         foreach ($techListItems as $item) {
-            echo "<tr><td>" . $item['alliance_tech_name'] . "</td>
-			<td>" . $item['alliance_techlist_current_level'] . "</td>
-			<td>" . $item['alliance_techlist_member_for'] . "</td><td>";
-            if ($item['alliance_techlist_build_end_time'] > time()) echo "Forschen";
-            elseif ($item['alliance_techlist_build_end_time'] > 0) echo "Forschen abgeschlossen";
+            echo "<tr><td>" . $technologies[$item->id] . "</td>
+			<td>" . $item->level . "</td>
+			<td>" . $item->memberFor . "</td><td>";
+            if ($item->buildEndTime > time()) echo "Forschen";
+            elseif ($item->buildEndTime > 0) echo "Forschen abgeschlossen";
             else echo "Untätig";
             echo "</td>";
             echo "</tr>";
@@ -584,8 +584,8 @@ function technologiesTab(AllianceRepository $repository, AllianceTechnologyRepos
 
     if (count($technologies) > 0) {
         echo '<select name="alliance_tech_id">';
-        foreach ($technologies as $technology) {
-            echo "<option value=\"" . $technology->id . "\">" . $technology->name . "</option>";
+        foreach ($technologies as $technologyId => $technology) {
+            echo "<option value=\"" . $technologyId . "\">" . $technology . "</option>";
         }
         echo "</select>";
     }

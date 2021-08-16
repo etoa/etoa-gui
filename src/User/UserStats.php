@@ -109,7 +109,7 @@ class UserStats
 
             $ic = 0;
             foreach ($data as $i => $d) {
-                $x = $borderLeftRight + ($ic * $step);
+                $x = (int) ($borderLeftRight + ($ic * $step));
                 // Vertikale Stundenlinien
                 if (date("i", $i) == "00") {
                     if (date("H", $i) == "00") {
@@ -117,7 +117,7 @@ class UserStats
                     } else {
                         imageline($im, $x, $borderTop + 1, $x, $h - $borderBottom - 1, $colGrey);
                     }
-                    imagestring($im, 2, $x - (imagefontheight(2) / 2), $h - $bottomLegend, date("H", $i), $colBlack);
+                    imagestring($im, 2, $x - (int) ((imagefontheight(2) / 2)), $h - $bottomLegend, date("H", $i), $colBlack);
                 }
                 $t = date("dmyHi", $i);
                 if ($max > 0) {
@@ -127,8 +127,8 @@ class UserStats
                     $yo = $h - $borderBottom;
                     $yr = $h - $borderBottom;
                 }
-                imageline($im, (int) $lastx, (int) $lastyo, (int) $x, (int) $yo, $colGreen);
-                imageline($im, (int) $lastx, (int) $lastyr, (int) $x, (int) $yr, $colBlue);
+                imageline($im, $lastx, (int) $lastyo, $x, (int) $yo, $colGreen);
+                imageline($im, $lastx, (int) $lastyr, $x, (int) $yr, $colBlue);
                 $lastyo = $yo;
                 $lastyr = $yr;
                 $lastx = $x;

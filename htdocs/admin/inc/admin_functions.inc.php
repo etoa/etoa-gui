@@ -709,6 +709,7 @@ function showAttackAbuseLogs($args = null, $limit = -1, $load = true)
 
     $bans = unserialize($_SESSION['logs']['attackObj']);
     $nr = count($bans);
+    $total = $nr;
     if ($nr > 0) {
         echo "<table class=\"tb\">";
         echo "<tr><th colspan=\"10\">

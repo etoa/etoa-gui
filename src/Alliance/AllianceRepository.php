@@ -532,34 +532,6 @@ class AllianceRepository extends AbstractRepository
             ->fetchAllAssociative();
     }
 
-    public function findBuildings(int $allianceId): array
-    {
-        return $this->createQueryBuilder()
-            ->select(
-                'bl.*',
-                'b.alliance_building_name'
-            )
-            ->from('alliance_buildlist', 'bl')
-            ->innerJoin('bl', 'alliance_buildings', 'b', 'b.alliance_building_id = bl.alliance_buildlist_building_id AND alliance_buildlist_alliance_id = :allianceId')
-            ->setParameter('allianceId', $allianceId)
-            ->execute()
-            ->fetchAllAssociative();
-    }
-
-    public function findTechnologies(int $allianceId): array
-    {
-        return $this->createQueryBuilder()
-            ->select(
-                'tl.*',
-                't.alliance_tech_name'
-            )
-            ->from('alliance_techlist', 'tl')
-            ->innerJoin('tl', 'alliance_technologies', 't', 't.alliance_tech_id = tl.alliance_techlist_tech_id AND alliance_techlist_alliance_id = :allianceId')
-            ->setParameter('allianceId', $allianceId)
-            ->execute()
-            ->fetchAllAssociative();
-    }
-
     public function updateResources(
         int $allianceId,
         int $metal,

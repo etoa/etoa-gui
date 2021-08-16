@@ -11,6 +11,34 @@ class PreciseResources
     public float $food = 0;
     public float $people = 0;
 
+    public function set(int $index, float $value): void
+    {
+        switch ($index) {
+            case 0:
+                $this->metal = $value;
+
+                break;
+            case 1:
+                $this->crystal = $value;
+
+                break;
+            case 2:
+                $this->plastic = $value;
+
+                break;
+            case 3:
+                $this->fuel = $value;
+
+                break;
+            case 4:
+                $this->food = $value;
+
+                break;
+            default:
+                throw new \Exception('Invalid resource index ' . $index);
+        }
+    }
+
     public static function createFromBase(BaseResources $baseResources): PreciseResources
     {
         $resources = new PreciseResources();

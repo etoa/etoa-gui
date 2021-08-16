@@ -11,11 +11,6 @@ parameters:
 			path: htdocs/admin/content/cronjob.php
 
 		-
-			message: "#^Variable \\$sortOrder might not be defined\\.$#"
-			count: 2
-			path: htdocs/admin/content/home/stats.inc.php
-
-		-
 			message: "#^Variable \\$iparr might not be defined\\.$#"
 			count: 6
 			path: htdocs/admin/content/user/multi.inc.php
@@ -23,11 +18,6 @@ parameters:
 		-
 			message: "#^Empty array passed to foreach\\.$#"
 			count: 1
-			path: htdocs/admin/inc/admin_functions.inc.php
-
-		-
-			message: "#^Undefined variable\\: \\$total$#"
-			count: 3
 			path: htdocs/admin/inc/admin_functions.inc.php
 
 		-
@@ -126,31 +116,6 @@ parameters:
 			path: htdocs/content/cell.php
 
 		-
-			message: "#^Variable \\$cx might not be defined\\.$#"
-			count: 1
-			path: htdocs/content/crypto.php
-
-		-
-			message: "#^Variable \\$cy might not be defined\\.$#"
-			count: 1
-			path: htdocs/content/crypto.php
-
-		-
-			message: "#^Variable \\$pp might not be defined\\.$#"
-			count: 1
-			path: htdocs/content/crypto.php
-
-		-
-			message: "#^Variable \\$sx might not be defined\\.$#"
-			count: 1
-			path: htdocs/content/crypto.php
-
-		-
-			message: "#^Variable \\$sy might not be defined\\.$#"
-			count: 1
-			path: htdocs/content/crypto.php
-
-		-
 			message: "#^Negated boolean expression is always true\\.$#"
 			count: 1
 			path: htdocs/content/help.php
@@ -188,11 +153,6 @@ parameters:
 		-
 			message: "#^Dynamic call to static method XMLReader\\:\\:open\\(\\)\\.$#"
 			count: 2
-			path: htdocs/inc/functions.inc.php
-
-		-
-			message: "#^Function collect\\(\\) return type with generic class Doctrine\\\\Common\\\\Collections\\\\ArrayCollection does not specify its types\\: TKey, T$#"
-			count: 1
 			path: htdocs/inc/functions.inc.php
 
 		-
@@ -251,16 +211,6 @@ parameters:
 			path: htdocs/misc/stats.image.php
 
 		-
-			message: "#^Method EtoA\\\\Alliance\\\\AllianceRepository\\:\\:findBuildings\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: src/Alliance/AllianceRepository.php
-
-		-
-			message: "#^Method EtoA\\\\Alliance\\\\AllianceRepository\\:\\:findTechnologies\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: src/Alliance/AllianceRepository.php
-
-		-
 			message: "#^Method EtoA\\\\Building\\\\BuildingRepository\\:\\:fetchBuildingListEntry\\(\\) return type has no value type specified in iterable type array\\.$#"
 			count: 1
 			path: src/Building/BuildingRepository.php
@@ -271,14 +221,9 @@ parameters:
 			path: src/Building/BuildingRepository.php
 
 		-
-			message: "#^Variable property access on EtoA\\\\Market\\\\MarketRate\\.$#"
-			count: 7
-			path: src/Market/MarketHandler.php
-
-		-
-			message: "#^Method EtoA\\\\UI\\\\EntityCoordinatesSelector\\:\\:parse\\(\\) has parameter \\$parameters with no value type specified in iterable type Symfony\\\\Component\\\\HttpFoundation\\\\ParameterBag\\.$#"
+			message: "#^Method EtoA\\\\Ranking\\\\UserBannerService\\:\\:createUserBannerImage\\(\\) never returns GdImage so it can be removed from the return typehint\\.$#"
 			count: 1
-			path: src/UI/EntityCoordinatesSelector.php
+			path: src/Ranking/UserBannerService.php
 
 		-
 			message: "#^Return typehint of method EtoA\\\\Ranking\\\\UserBannerService\\:\\:createUserBannerImage\\(\\) has invalid type GdImage\\.$#"
@@ -286,6 +231,7 @@ parameters:
 			path: src/Ranking/UserBannerService.php
 
 		-
-			message: "#^Method EtoA\\\\Ranking\\\\UserBannerService\\:\\:createUserBannerImage\\(\\) never returns GdImage so it can be removed from the return typehint\\.$#"
+			message: "#^Method EtoA\\\\UI\\\\EntityCoordinatesSelector\\:\\:parse\\(\\) has parameter \\$parameters with no value type specified in iterable type Symfony\\\\Component\\\\HttpFoundation\\\\ParameterBag\\.$#"
 			count: 1
-			path: src/Ranking/UserBannerService.php
+			path: src/UI/EntityCoordinatesSelector.php
+

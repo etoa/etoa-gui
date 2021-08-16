@@ -56,10 +56,8 @@ class MarketHandler
 
             // For every resource calculate the ration and multiply with the weight factor
             for ($i = 0; $i < BaseResources::NUM_RESOURCES; $i++) {
-                $supplyProp = "supply$i";
-                $demandProp = "demand$i";
-                if ($rate->$supplyProp > 0) {
-                    $r = ($rate->$demandProp / $rate->$supplyProp);
+                if ($rate->supply->get($i) > 0) {
+                    $r = ($rate->demand->get($i) / $rate->supply->get($i));
                     if ($r > $rateMax) {
                         $rates[$i] += $rateMax * $factor;
                     }
@@ -69,7 +67,7 @@ class MarketHandler
                         $rates[$i] += $r * $factor;
                     }
                 } else {
-                    if ($rate->$demandProp > 0) {
+                    if ($rate->demand->get($i) > 0) {
                         $rates[$i] += $rateMax * $factor;
                     } else {
                         $rates[$i] += 1 * $factor;
@@ -121,8 +119,7 @@ class MarketHandler
         $rate->timestamp = time();
         for ($i = 0; $i < BaseResources::NUM_RESOURCES; $i++) {
             $this->runtimeDataStore->set('market_rate_' . $i, (string) $rates[$i]);
-            $rateProp = "rate$i";
-            $rate->$rateProp = $rates[$i];
+            $rate->rate->set($i, $rates[$i]);
         }
 
         // Add a new row to the rates table. This row gets filled from now on with buy results
@@ -147,10 +144,8 @@ class MarketHandler
         $rate = $rates[0];
 
         for ($i = 0; $i < BaseResources::NUM_RESOURCES; $i++) {
-            $supplyProp = "supply$i";
-            $rate->$supplyProp = $supply[$i];
-            $demandProp = "demand$i";
-            $rate->$demandProp = $demand[$i];
+            $rate->supply->set($i, $supply[$i]);
+            $rate->demand->set($i, $demand[$i]);
         }
 
         $this->marketRateRepository->save($rate);

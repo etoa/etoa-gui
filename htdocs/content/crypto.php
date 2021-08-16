@@ -111,7 +111,13 @@ if ($config->getBoolean('crypto_enable')) {
                     $coords = $targetEntity->getCoordinates();
                 }
             } elseif ($request->request->has('scan')) {
-                $coords = new EntityCoordinates($sx, $sy, $cx, $cy, $pp);
+                $coords = new EntityCoordinates(
+                    $request->request->getInt('sx'),
+                    $request->request->getInt('sy'),
+                    $request->request->getInt('cx'),
+                    $request->request->getInt('cy'),
+                    $request->request->getInt('p')
+                );
             }
 
             $keyup_command = 'xajax_getCryptoDistance(xajax.getFormValues(\'targetForm\'),' . $planetEntity->sx . ',' . $planetEntity->sy . ',' . $planetEntity->cx . ',' . $planetEntity->cy . ',' . $planetEntity->pos . ');';
