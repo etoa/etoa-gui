@@ -1,6 +1,9 @@
 <?php
 
 use EtoA\Fleet\FleetRepository;
+use EtoA\Log\LogFacility;
+use EtoA\Log\LogRepository;
+use EtoA\Log\LogSeverity;
 use EtoA\Market\MarketShipRepository;
 use EtoA\Message\MarketReportRepository;
 use EtoA\Ship\ShipDataRepository;
@@ -8,7 +11,7 @@ use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Entity\EntityService;
 use EtoA\Universe\Resources\BaseResources;
 use EtoA\User\UserMultiRepository;
-use EtoA\User\UserRatingRepository;
+use EtoA\User\UserRatingService;
 
 $cnt = 0;
 $cnt_error = 0;
@@ -23,6 +26,8 @@ $entityRepository = $app[EntityRepository::class];
 $fleetRepository = $app[FleetRepository::class];
 /** @var MarketReportRepository $marketReportRepository */
 $marketReportRepository = $app[MarketReportRepository::class];
+/** @var LogRepository $logRepository */
+$logRepository = $app[LogRepository::class];
 
 foreach ($_POST['ship_market_id'] as $num => $id) {
     // Lädt Angebotsdaten
@@ -77,24 +82,24 @@ foreach ($_POST['ship_market_id'] as $num => $id) {
             $marketReportRepository->addShipReport($offer->id, $cu->getId(), $cp->id, $offer->userId, $offer->shipId, $offer->count, "shipbought", $costs, 1.0, null, 0, $offer->entityId, $buyerFid, $sellerFid);
 
             // Add market ratings
-            /** @var UserRatingRepository $userRatingRepository */
-            $userRatingRepository = $app[UserRatingRepository::class];
+            /** @var UserRatingService $userRatingService */
+            $userRatingService = $app[UserRatingService::class];
 
-            $userRatingRepository->addTradeRating(
+            $userRatingService->addTradeRating(
                 $cu->id,
                 TRADE_POINTS_PER_TRADE,
                 false,
                 'Handel #' . $offer->id . ' mit ' . $offer->userId
             );
             if (strlen($offer->text) > TRADE_POINTS_TRADETEXT_MIN_LENGTH) {
-                $userRatingRepository->addTradeRating(
+                $userRatingService->addTradeRating(
                     $seller->id,
                     TRADE_POINTS_PER_TRADE + TRADE_POINTS_PER_TRADETEXT,
                     true,
                     'Handel #' . $offer->id . ' mit ' . $cu->id
                 );
             } else {
-                $userRatingRepository->addTradeRating(
+                $userRatingService->addTradeRating(
                     $seller->id,
                     TRADE_POINTS_PER_TRADE,
                     true,
@@ -111,7 +116,7 @@ foreach ($_POST['ship_market_id'] as $num => $id) {
                 $shipRepository = $app[ShipDataRepository::class];
                 $shipNames = $shipRepository->getShipNames(true);
 
-                Log::add(Log::F_MULTITRADE, Log::INFO, "[page user sub=edit user_id=" . $cu->id . "][B]" . $cu->nick . "[/B][/page] hat von [page user sub=edit user_id=" . $offer->userId . "][B]" . $seller . "[/B][/page] Schiffe gekauft:\n\n" . $offer->count . " " . $shipNames[$offer->shipId] . "\n\nund das zu folgendem Preis:\n\n" . RES_METAL . ": " . nf($offer->costs0) . "\n" . RES_CRYSTAL . ": " . nf($offer->costs1) . "\n" . RES_PLASTIC . ": " . nf($offer->costs2) . "\n" . RES_FUEL . ": " . nf($offer->costs3) . "\n" . RES_FOOD . ": " . nf($offer->costs4));
+                $logRepository->add(LogFacility::MULTITRADE, LogSeverity::INFO, "[page user sub=edit user_id=" . $cu->id . "][B]" . $cu->nick . "[/B][/page] hat von [page user sub=edit user_id=" . $offer->userId . "][B]" . $seller . "[/B][/page] Schiffe gekauft:\n\n" . $offer->count . " " . $shipNames[$offer->shipId] . "\n\nund das zu folgendem Preis:\n\n" . RES_METAL . ": " . nf($offer->costs0) . "\n" . RES_CRYSTAL . ": " . nf($offer->costs1) . "\n" . RES_PLASTIC . ": " . nf($offer->costs2) . "\n" . RES_FUEL . ": " . nf($offer->costs3) . "\n" . RES_FOOD . ": " . nf($offer->costs4));
             }
 
             //Marktlog schreiben

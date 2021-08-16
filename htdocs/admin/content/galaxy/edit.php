@@ -2,6 +2,9 @@
 
 use EtoA\Backend\BackendMessageService;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Log\LogFacility;
+use EtoA\Log\LogRepository;
+use EtoA\Log\LogSeverity;
 use EtoA\Universe\Asteroid\AsteroidRepository;
 use EtoA\Universe\EmptySpace\EmptySpaceRepository;
 use EtoA\Universe\Entity\EntityRepository;
@@ -51,6 +54,8 @@ $planetService = $app[PlanetService::class];
 
 /** @var BackendMessageService */
 $backendMessageService = $app[BackendMessageService::class];
+/** @var LogRepository $logRepository */
+$logRepository = $app[LogRepository::class];
 
 /** @var Request */
 $request = Request::createFromGlobals();
@@ -128,24 +133,26 @@ if ($id > 0) {
                 $backendMessageService->updatePlanet($id);
                 sleep(2);
                 success_msg("Resourcen neu berechnet");
-            } else if (count($request->request->all()) > 0 && !$request->request->has('save')) {
-                // Wenn der Besitzer wechseln soll
-                if ($request->request->get('planet_user_id') != $request->request->get('planet_user_id_old')) {
-                    //Planet dem neuen User übergeben (Schiffe und Verteidigung werden vom Planeten gelöscht!)
-                    $planetService->changeOwner($id, $request->request->getInt('planet_user_id'));
+            } else {
+                if (count($request->request->all()) > 0 && !$request->request->has('save')) {
+                    // Wenn der Besitzer wechseln soll
+                    if ($request->request->get('planet_user_id') != $request->request->get('planet_user_id_old')) {
+                        //Planet dem neuen User übergeben (Schiffe und Verteidigung werden vom Planeten gelöscht!)
+                        $planetService->changeOwner($id, $request->request->getInt('planet_user_id'));
 
-                    if ($request->request->getInt('planet_user_id') == 0) {
-                        $planetRepo->reset($id);
-                    }
+                        if ($request->request->getInt('planet_user_id') == 0) {
+                            $planetRepo->reset($id);
+                        }
 
-                    //Log Schreiben
-                    Log::add(Log::F_GALAXY, Log::INFO, $cu->nick . " wechselt den Besitzer vom Planeten: [page galaxy sub=edit id=" . $id . "][B]" . $id . "[/B][/page]
+                        //Log Schreiben
+                        $logRepository->add(LogFacility::GALAXY, LogSeverity::INFO, $cu->nick . " wechselt den Besitzer vom Planeten: [page galaxy sub=edit id=" . $id . "][B]" . $id . "[/B][/page]
 Alter Besitzer: [page user sub=edit user_id=" . $request->request->getInt('planet_user_id_old') . "][B]" . $request->request->getInt('planet_user_id_old') . "[/B][/page]
 Neuer Besitzer: [page user sub=edit user_id=" . $request->request->getInt('planet_user_id') . "][B]" . $request->request->getInt('planet_user_id') . "[/B][/page]");
 
-                    success_msg("Der Planet wurde dem User mit der ID: [b]" . $request->request->getInt('planet_user_id') . "[/b] übergeben!");
-                } else {
-                    error_msg("Es wurde kein neuer Besitzer gewählt!");
+                        success_msg("Der Planet wurde dem User mit der ID: [b]" . $request->request->getInt('planet_user_id') . "[/b] übergeben!");
+                    } else {
+                        error_msg("Es wurde kein neuer Besitzer gewählt!");
+                    }
                 }
             }
 

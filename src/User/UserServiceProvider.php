@@ -18,6 +18,7 @@ use EtoA\Defense\DefenseQueueRepository;
 use EtoA\Defense\DefenseRepository;
 use EtoA\Fleet\FleetRepository;
 use EtoA\Help\TicketSystem\TicketRepository;
+use EtoA\Log\LogRepository;
 use EtoA\Market\MarketAuctionRepository;
 use EtoA\Market\MarketResourceRepository;
 use EtoA\Market\MarketShipRepository;
@@ -68,6 +69,10 @@ class UserServiceProvider implements ServiceProviderInterface
             return new UserRatingRepository($pimple['db']);
         };
 
+        $pimple[UserRatingService::class] = function (Container $pimple): UserRatingService {
+            return new UserRatingService($pimple[UserRatingRepository::class], $pimple[LogRepository::class]);
+        };
+
         $pimple[UserMultiRepository::class] = function (Container $pimple): UserMultiRepository {
             return new UserMultiRepository($pimple['db']);
         };
@@ -100,7 +105,8 @@ class UserServiceProvider implements ServiceProviderInterface
             return new UserSessionManager(
                 $pimple[UserSessionRepository::class],
                 $pimple[ConfigurationService::class],
-                $pimple[UserRepository::class]
+                $pimple[UserRepository::class],
+                $pimple[LogRepository::class]
             );
         };
 
@@ -154,6 +160,7 @@ class UserServiceProvider implements ServiceProviderInterface
                 $pimple[BackendMessageService::class],
                 $pimple[UserLogRepository::class],
                 $pimple[UserToXml::class],
+                $pimple[LogRepository::class]
             );
         };
 

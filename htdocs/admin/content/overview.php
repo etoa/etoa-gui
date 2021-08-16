@@ -8,6 +8,9 @@ use EtoA\Admin\AdminUserRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Help\TicketSystem\TicketRepository;
 use EtoA\HostCache\NetworkNameService;
+use EtoA\Log\LogFacility;
+use EtoA\Log\LogRepository;
+use EtoA\Log\LogSeverity;
 use EtoA\Ranking\GameStatsGenerator;
 use EtoA\Support\DB\DatabaseManagerRepository;
 use EtoA\Text\TextRepository;
@@ -214,6 +217,10 @@ function adminSessionLogView(
 ) {
     global $page;
     global $sub;
+    global $app;
+
+    /** @var LogRepository $logRepository */
+    $logRepository = $app[LogRepository::class];
 
     echo "<h1>Admin-Log</h1>";
 
@@ -228,7 +235,7 @@ function adminSessionLogView(
         $idToKick = $request->query->getInt('kick');
         if ($idToKick != $cu->id) {
             $sessionManager->kick((string) $idToKick);
-            Log::add(8, Log::INFO, $cu->nick . " löscht die Session des Administrators mit der ID " . $idToKick);
+            $logRepository->add(LogFacility::ADMIN, LogSeverity::INFO, $cu->nick . " löscht die Session des Administrators mit der ID " . $idToKick);
         } else {
             echo error_msg("Du kannst nicht dich selbst kicken!");
         }

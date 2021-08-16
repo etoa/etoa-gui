@@ -7,8 +7,10 @@ namespace EtoA\Universe\Planet;
 use EtoA\Building\BuildingRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Defense\DefenseRepository;
+use EtoA\Log\LogFacility;
+use EtoA\Log\LogRepository;
+use EtoA\Log\LogSeverity;
 use EtoA\Ship\ShipRepository;
-use Log;
 
 class PlanetService
 {
@@ -17,19 +19,22 @@ class PlanetService
     private ShipRepository $shipRepository;
     private DefenseRepository $defenseRepository;
     private ConfigurationService $config;
+    private LogRepository $logRepository;
 
     public function __construct(
         PlanetRepository $repository,
         BuildingRepository $buildingRepository,
         ShipRepository $shipRepository,
         DefenseRepository $defenseRepository,
-        ConfigurationService $config
+        ConfigurationService $config,
+        LogRepository $logRepository
     ) {
         $this->repository = $repository;
         $this->buildingRepository = $buildingRepository;
         $this->shipRepository = $shipRepository;
         $this->defenseRepository = $defenseRepository;
         $this->config = $config;
+        $this->logRepository = $logRepository;
     }
 
     /**
@@ -100,6 +105,6 @@ class PlanetService
         $this->defenseRepository->removeForEntity($id);
         $this->buildingRepository->removeForEntity($id);
 
-        Log::add(6, Log::INFO, "Der Planet mit der ID " . $id . " wurde zurückgesetzt!");
+        $this->logRepository->add(LogFacility::GALAXY, LogSeverity::INFO, "Der Planet mit der ID " . $id . " wurde zurückgesetzt!");
     }
 }

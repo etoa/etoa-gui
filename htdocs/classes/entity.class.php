@@ -144,6 +144,15 @@ abstract class Entity
         return $this->cy;
     }
 
+    public function getEntityCoordinates(): \EtoA\Universe\Entity\EntityCoordinates
+    {
+        if (!$this->coordsLoaded) {
+            $this->loadCoords();
+        }
+
+        return new \EtoA\Universe\Entity\EntityCoordinates($this->sx, $this->sy, $this->cx, $this->cy, $this->pos());
+    }
+
     /**
      * Returns owner
      */

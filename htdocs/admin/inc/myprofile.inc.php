@@ -3,6 +3,9 @@
 use EtoA\Admin\AdminUser;
 use EtoA\Admin\AdminUserRepository;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Log\LogFacility;
+use EtoA\Log\LogRepository;
+use EtoA\Log\LogSeverity;
 use EtoA\User\UserRepository;
 use Twig\Environment;
 
@@ -12,12 +15,14 @@ $adminUserRepo = $app[AdminUserRepository::class];
 $userRepository = $app[UserRepository::class];
 /** @var ConfigurationService */
 $config = $app[ConfigurationService::class];
+/** @var LogRepository $logRepository */
+$logRepository = $app[LogRepository::class];
 
 if (isset($_POST['submitPassword'])) {
-    submitPassword($cu, $adminUserRepo, $config, $twig);
+    submitPassword($cu, $adminUserRepo, $config, $twig, $logRepository);
 }
 if (isset($_POST['submitProfile'])) {
-    submitProfile($cu, $adminUserRepo, $twig);
+    submitProfile($cu, $adminUserRepo, $twig, $logRepository);
 }
 profileIndex($cu, $twig, $userRepository);
 
@@ -25,7 +30,8 @@ function submitPassword(
     AdminUser $cu,
     AdminUserRepository $adminUserRepo,
     ConfigurationService $config,
-    Environment $twig
+    Environment $twig,
+    LogRepository $logRepository
 ): void {
     try {
         if (!$cu->checkEqualPassword($_POST['user_password_old'])) {
@@ -42,13 +48,13 @@ function submitPassword(
 
         $twig->addGlobal('successMessage', 'Das Passwort wurde geändert!');
 
-        Log::add(8, Log::INFO,  $cu->id . " ändert sein Passwort");
+        $logRepository->add(LogFacility::ADMIN, LogSeverity::INFO,  $cu->id . " ändert sein Passwort");
     } catch (\Exception $ex) {
         $twig->addGlobal('errorMessage', $ex->getMessage());
     }
 }
 
-function submitProfile(AdminUser $cu, AdminUserRepository $adminUserRepo, Environment $twig)
+function submitProfile(AdminUser $cu, AdminUserRepository $adminUserRepo, Environment $twig, LogRepository $logRepository)
 {
     $cu->name = $_POST['user_name'];
     $cu->email = $_POST['user_email'];
@@ -61,7 +67,7 @@ function submitProfile(AdminUser $cu, AdminUserRepository $adminUserRepo, Enviro
 
     $twig->addGlobal('successMessage', 'Die Daten wurden geändert!');
 
-    Log::add(8, Log::INFO, $cu->nick . " ändert seine Daten");
+    $logRepository->add(LogFacility::ADMIN, LogSeverity::INFO, $cu->nick . " ändert seine Daten");
 }
 
 function profileIndex(AdminUser $cu, Environment $twig, UserRepository $userRepository)

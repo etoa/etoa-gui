@@ -12,6 +12,9 @@ use EtoA\Defense\DefenseRepository;
 use EtoA\Defense\DefenseRequirementRepository;
 use EtoA\Defense\DefenseSearch;
 use EtoA\Defense\DefenseSort;
+use EtoA\Log\GameLogFacility;
+use EtoA\Log\GameLogRepository;
+use EtoA\Log\LogSeverity;
 use EtoA\Technology\TechnologyRepository;
 use EtoA\UI\ResourceBoxDrawer;
 use EtoA\Universe\Planet\PlanetRepository;
@@ -41,7 +44,8 @@ $defenseCategoryRepository = $app[DefenseCategoryRepository::class];
 $defenseDataRepository = $app[DefenseDataRepository::class];
 /** @var UserPropertiesRepository $userPropertiesRepository */
 $userPropertiesRepository = $app[UserPropertiesRepository::class];
-
+/** @var GameLogRepository $gameLogRepository */
+$gameLogRepository = $app[GameLogRepository::class];
 $properties = $userPropertiesRepository->getOrCreateProperties($cu->id);
 
 //Definition für "Info" Link
@@ -511,7 +515,7 @@ if ($factoryBuilding !== null && $factoryBuilding->currentLevel > 0) {
                         [b]" . RES_FUEL . ":[/b] " . nf($planet->resFuel - $totalFuel) . "
                         [b]" . RES_FOOD . ":[/b] " . nf($planet->resFood - $totalFood);
 
-                        GameLog::add(GameLog::F_DEF, GameLog::INFO, $log_text, $cu->id, $cu->allianceId, $planet->id, $def_id, 1, $build_cnt);
+                        $gameLogRepository->add(GameLogFacility::DEF, LogSeverity::INFO, $log_text, $cu->id, $cu->allianceId, $planet->id, $def_id, 1, $build_cnt);
                     } else {
                         echo "<tr><td>" . $defs[$def_id]->name . ": Zu wenig Rohstoffe für diese Anzahl!</td></tr>";
                     }
@@ -609,7 +613,7 @@ if ($factoryBuilding !== null && $factoryBuilding->currentLevel > 0) {
                 [b]" . RES_FOOD . ":[/b] " . nf($planet->resFood + $ret['food']);
 
                 //Log Speichern
-                GameLog::add(GameLog::F_DEF, GameLog::INFO, $log_text, $cu->id, $cu->allianceId, $planet->id, $defId, 0, $queue_count);
+                $gameLogRepository->add(GameLogFacility::DEF, LogSeverity::INFO, $log_text, $cu->id, $cu->allianceId, $planet->id, $defId, 0, $queue_count);
                 header("Refresh:0");
             }
         }

@@ -1,13 +1,16 @@
 <?php
 
 use EtoA\Fleet\FleetRepository;
+use EtoA\Log\LogFacility;
+use EtoA\Log\LogRepository;
+use EtoA\Log\LogSeverity;
 use EtoA\Market\MarketHandler;
 use EtoA\Market\MarketResourceRepository;
 use EtoA\Message\MarketReportRepository;
 use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Entity\EntityService;
 use EtoA\User\UserMultiRepository;
-use EtoA\User\UserRatingRepository;
+use EtoA\User\UserRatingService;
 
 /** @var MarketResourceRepository $marketResourceRepository */
 $marketResourceRepository = $app[MarketResourceRepository::class];
@@ -19,6 +22,8 @@ $entityRepository = $app[EntityRepository::class];
 $fleetRepository = $app[FleetRepository::class];
 /** @var MarketReportRepository $marketReportRepository */
 $marketReportRepository = $app[MarketReportRepository::class];
+/** @var LogRepository $logRepository */
+$logRepository = $app[LogRepository::class];
 
 $cnt = 0;
 $cnt_error = 0;
@@ -90,24 +95,24 @@ if (isset($_POST['ressource_market_id'])) {
                 $marketReportRepository->addResourceReport($offer->id, $cu->getId(), $cp->id, $offer->userId, $sellResources, "resbought", $buyResource, 1.0, null, 0, $offer->entityId, $buyerFid, $sellerFid);
 
                 // Add market ratings
-                /** @var UserRatingRepository $userRatingRepository */
-                $userRatingRepository = $app[UserRatingRepository::class];
+                /** @var UserRatingService $userRatingService */
+                $userRatingService = $app[UserRatingService::class];
 
-                $userRatingRepository->addTradeRating(
+                $userRatingService->addTradeRating(
                     $cu->id,
                     TRADE_POINTS_PER_TRADE,
                     false,
                     'Handel #' . $offer->id . ' mit ' . $offer->userId
                 );
                 if (strlen($offer->text) > TRADE_POINTS_TRADETEXT_MIN_LENGTH) {
-                    $userRatingRepository->addTradeRating(
+                    $userRatingService->addTradeRating(
                         $seller->id,
                         TRADE_POINTS_PER_TRADE + TRADE_POINTS_PER_TRADETEXT,
                         true,
                         'Handel #' . $offer->id . ' mit ' . $cu->id
                     );
                 } else {
-                    $userRatingRepository->addTradeRating(
+                    $userRatingService->addTradeRating(
                         $seller->id,
                         TRADE_POINTS_PER_TRADE,
                         true,
@@ -120,7 +125,7 @@ if (isset($_POST['ressource_market_id'])) {
                 $userMultiRepository = $app[UserMultiRepository::class];
                 $isMultiWith = $userMultiRepository->existsEntryWith($cu->getId(), $offer->userId);
                 if ($isMultiWith) {
-                    Log::add(Log::F_MULTITRADE, Log::INFO, "[page user sub=edit user_id=" . $cu->id . "][B]" . $cu->nick . "[/B][/page] hat von [page user sub=edit user_id=" . $offer->userId . "][B]" . $seller . "[/B][/page] Rohstoffe gekauft:\n\n" . RES_METAL . ": " . nf($offer->sell0) . "\n" . RES_CRYSTAL . ": " . nf($offer->sell1) . "\n" . RES_PLASTIC . ": " . nf($offer->sell2) . "\n" . RES_FUEL . ": " . nf($offer->sell3) . "\n" . RES_FOOD . ": " . nf($offer->sell4) . "\n\nDies hat ihn folgende Rohstoffe gekostet:\n" . RES_METAL . ": " . nf($offer->buy0) . "\n" . RES_CRYSTAL . ": " . nf($offer->buy1) . "\n" . RES_PLASTIC . ": " . nf($offer->buy2) . "\n" . RES_FUEL . ": " . nf($offer->buy3) . "\n" . RES_FOOD . ": " . nf($offer->buy4));
+                    $logRepository->add(LogFacility::MULTITRADE, LogSeverity::INFO, "[page user sub=edit user_id=" . $cu->id . "][B]" . $cu->nick . "[/B][/page] hat von [page user sub=edit user_id=" . $offer->userId . "][B]" . $seller . "[/B][/page] Rohstoffe gekauft:\n\n" . RES_METAL . ": " . nf($offer->sell0) . "\n" . RES_CRYSTAL . ": " . nf($offer->sell1) . "\n" . RES_PLASTIC . ": " . nf($offer->sell2) . "\n" . RES_FUEL . ": " . nf($offer->sell3) . "\n" . RES_FOOD . ": " . nf($offer->sell4) . "\n\nDies hat ihn folgende Rohstoffe gekostet:\n" . RES_METAL . ": " . nf($offer->buy0) . "\n" . RES_CRYSTAL . ": " . nf($offer->buy1) . "\n" . RES_PLASTIC . ": " . nf($offer->buy2) . "\n" . RES_FUEL . ": " . nf($offer->buy3) . "\n" . RES_FOOD . ": " . nf($offer->buy4));
                 }
 
                 // Zählt die erfolgreich abgewickelten Angebote

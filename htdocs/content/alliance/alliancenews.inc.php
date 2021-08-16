@@ -5,7 +5,7 @@ use EtoA\Alliance\AllianceRepository;
 use EtoA\Alliance\AllianceRights;
 use EtoA\Alliance\TownhallService;
 use EtoA\Support\StringUtils;
-use EtoA\User\UserRatingRepository;
+use EtoA\User\UserRatingService;
 
 if (Alliance::checkActionRights(AllianceRights::ALLIANCE_NEWS)) {
     /** @var AllianceNewsRepository $allianceNewsRepository */
@@ -27,11 +27,11 @@ if (Alliance::checkActionRights(AllianceRights::ALLIANCE_NEWS)) {
 
             // Gebe nur Punkte falls Nachricht öffentlich oder an andere Allianz
             if ($cu->allianceId != $_POST['alliance_id']) {
-                /** @var UserRatingRepository $userRatingRepository */
-                $userRatingRepository = $app[UserRatingRepository::class];
+                /** @var UserRatingService $userRatingService */
+                $userRatingService = $app[UserRatingService::class];
 
                 // 2nd param is only for logging, Log::add() escapes string properly
-                $userRatingRepository->addDiplomacyRating(
+                $userRatingService->addDiplomacyRating(
                     $cu->id,
                     DIPLOMACY_POINTS_PER_NEWS,
                     "Rathausnews verfasst (ID:" . $newsId . ", " . $_POST['news_text'] . ")"

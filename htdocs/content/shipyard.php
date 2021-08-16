@@ -4,6 +4,9 @@ use EtoA\Building\BuildingId;
 use EtoA\Building\BuildingRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Fleet\FleetRepository;
+use EtoA\Log\GameLogFacility;
+use EtoA\Log\GameLogRepository;
+use EtoA\Log\LogSeverity;
 use EtoA\Ship\ShipCategoryRepository;
 use EtoA\Ship\ShipDataRepository;
 use EtoA\Ship\ShipQueueItem;
@@ -46,7 +49,8 @@ $shipCategoryRepository = $app[ShipCategoryRepository::class];
 
 /** @var ShipDataRepository $shipDataRepository */
 $shipDataRepository = $app[ShipDataRepository::class];
-
+/** @var GameLogRepository $gameLogRepository */
+$gameLogRepository = $app[GameLogRepository::class];
 /** @var UserPropertiesRepository $userPropertiesRepository */
 $userPropertiesRepository = $app[UserPropertiesRepository::class];
 
@@ -511,7 +515,7 @@ if ($shipyard !== null && $shipyard->currentLevel > 0) {
                         [b]" . RES_FUEL . ":[/b] " . nf($planet->resFuel - $totalFuel) . "
                         [b]" . RES_FOOD . ":[/b] " . nf($planet->resFood - $totalFood);
 
-                        GameLog::add(GameLog::F_SHIP, GameLog::INFO, $log_text, $cu->id, $cu->allianceId, $planet->id, $ship_id, 1, $build_cnt);
+                        $gameLogRepository->add(GameLogFacility::SHIP, LogSeverity::INFO, $log_text, $cu->id, $cu->allianceId, $planet->id, $ship_id, 1, $build_cnt);
 
                         //Daten für Log speichern
                         $log_ships .= "<b>" . $ships[$ship_id]->name . "</b>: " . nf($build_cnt) . " (" . tf($duration) . ")<br>";
@@ -610,7 +614,7 @@ if ($shipyard !== null && $shipyard->currentLevel > 0) {
                 [b]" . RES_FOOD . ":[/b] " . nf($planet->resFood + $ret['food']);
 
                 //Log Speichern
-                GameLog::add(GameLog::F_SHIP, GameLog::INFO, $log_text, $cu->id, $cu->allianceId, $planet->id, $ship_id, 0, $queue_count);
+                $gameLogRepository->add(GameLogFacility::SHIP, LogSeverity::INFO, $log_text, $cu->id, $cu->allianceId, $planet->id, $ship_id, 0, $queue_count);
                 header("Refresh:0");
             }
         }

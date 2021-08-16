@@ -1,12 +1,17 @@
 <?php
 
 // Berechnet Endzeit
+use EtoA\Log\LogFacility;
+use EtoA\Log\LogRepository;
+use EtoA\Log\LogSeverity;
 use EtoA\Market\MarketAuctionRepository;
 use EtoA\Message\MarketReportRepository;
 use EtoA\Universe\Resources\BaseResources;
 
 /** @var MarketReportRepository $marketReportRepository */
 $marketReportRepository = $app[MarketReportRepository::class];
+/** @var LogRepository $logRepository */
+$logRepository = $app[LogRepository::class];
 
 $auction_min_time = AUCTION_MIN_DURATION * 24 * 3600;
 $auction_time_days = $_POST['auction_time_days'];
@@ -50,7 +55,7 @@ if ($ok && $cp->checkRes($subtracted)) {
 
     //Nachricht senden
     $marketReportRepository->addAuctionReport($auctionId, $cu->getId(), $cp->id, 0, $sell, "auctionadd", $currency, $_POST['auction_text'], MARKET_TAX, $auction_end_time);
-    Log::add(MARKET_LOG_CAT, Log::INFO, "Der Spieler " . $cu->nick . " hat folgende Rohstoffe zur versteigerung angeboten:\n\n" . RES_METAL . ": " . $sell->metal . "\n" . RES_CRYSTAL . ": " . $sell->crystal . "\n" . RES_PLASTIC . ": " . $sell->plastic . "\n" . RES_FUEL . ": " . $sell->fuel . "\n" . RES_FOOD . ": " . $sell->food . "\n\nAuktionsende: " . date("d.m.Y H:i", $auction_end_time) . "");
+    $logRepository->add(LogFacility::MARKET, LogSeverity::INFO, "Der Spieler " . $cu->nick . " hat folgende Rohstoffe zur versteigerung angeboten:\n\n" . RES_METAL . ": " . $sell->metal . "\n" . RES_CRYSTAL . ": " . $sell->crystal . "\n" . RES_PLASTIC . ": " . $sell->plastic . "\n" . RES_FUEL . ": " . $sell->fuel . "\n" . RES_FOOD . ": " . $sell->food . "\n\nAuktionsende: " . date("d.m.Y H:i", $auction_end_time) . "");
 
     // todo: report
 

@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Log\DebrisLogRepository;
 use EtoA\Market\MarketResourceRepository as MarketResourceRepositoryAlias;
 use EtoA\Universe\Resources\BaseResources;
 
@@ -170,6 +171,8 @@ function splitDebris($formValues, $formPlayers)
 
     /** @var MarketResourceRepositoryAlias $marketResourceRepository */
     $marketResourceRepository = $app[MarketResourceRepositoryAlias::class];
+    /** @var DebrisLogRepository $debrisLogRepository */
+    $debrisLogRepository = $app[DebrisLogRepository::class];
 
     for ($fields = 1; $fields <= $players; $fields++) {
         $entity = Entity::createFactoryByCoords($formPlayers['search_cell_s1' . $fields], $formPlayers['search_cell_s2' . $fields], $formPlayers['search_cell_c1' . $fields], $formPlayers['search_cell_c2' . $fields], $formPlayers['search_cell_pos' . $fields]);
@@ -181,24 +184,14 @@ function splitDebris($formValues, $formPlayers)
                 $resource->plastic = (intval($formPlayers['total_pvc']) - intval($formValues['pvc' . $fields]));
 
                 $marketResourceRepository->add(0, 299, (int) $entity->userId, 0, 'Trümmerfeld', new BaseResources(), $resource);
-                $logs = "
-                    INSERT INTO
-                    logs_debris
-                            (
-                            time,
-                            admin_id,
-                            user_id,
-                            metal,
-                            crystal,
-                            plastic)
-                    VALUES (
-                        " . time() . ",
-                        " . $_SESSION['user_id'] . ",
-                        " . $entity->userId . ",
-                        " . (-1 * (intval($formPlayers['total_tit']) - intval($formValues['tit' . $fields]))) . ",
-                        " . (-1 * (intval($formPlayers['total_sili']) - intval($formValues['sili' . $fields]))) . ",
-                        " . (-1 * (intval($formPlayers['total_pvc']) - intval($formValues['pvc' . $fields]))) . "
-                    )";
+
+                $debrisLogRepository->add(
+                    $_SESSION['user_id'],
+                    $entity->userId,
+                    (-1 * (intval($formPlayers['total_tit']) - intval($formValues['tit' . $fields]))),
+                    (-1 * (intval($formPlayers['total_sili']) - intval($formValues['sili' . $fields]))),
+                    (-1 * (intval($formPlayers['total_pvc']) - intval($formValues['pvc' . $fields])))
+                );
             } else {
                 $resource = new BaseResources();
                 $resource->metal = (int) $formValues['tit' . $fields];
@@ -207,27 +200,8 @@ function splitDebris($formValues, $formPlayers)
 
                 $marketResourceRepository->add(0, 299, (int) $entity->userId, 0, 'Trümmerfeld', new BaseResources(), $resource);
 
-                $logs = "
-                    INSERT INTO
-                    logs_debris
-                            (
-                            time,
-                            admin_id,
-                            user_id,
-                            metal,
-                            crystal,
-                            plastic)
-                    VALUES (
-                        " . time() . ",
-                        " . $_SESSION['user_id'] . ",
-                        " . $entity->userId . ",
-                        " . $formValues['tit' . $fields] . ",
-                        " . $formValues['sili' . $fields] . ",
-                         " . $formValues['pvc' . $fields] . "
-                    )";
+                $debrisLogRepository->add($_SESSION['user_id'], $entity->userId, $resource->metal, $resource->crystal, $resource->plastic);
             }
-
-            dbquery($logs);
 
             $response->assign("tfContent", "innerHTML", "Trümmerfeld aufgeteilt!");
         } else {

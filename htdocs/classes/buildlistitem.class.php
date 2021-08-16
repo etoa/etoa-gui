@@ -3,6 +3,9 @@
 use EtoA\Building\BuildingId;
 use EtoA\Building\BuildingRepository;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Log\GameLogFacility;
+use EtoA\Log\GameLogRepository;
+use EtoA\Log\LogSeverity;
 use EtoA\Universe\Planet\PlanetRepository;
 
 class BuildListItem
@@ -270,6 +273,8 @@ class BuildListItem
         // TODO
         global $cp, $cu, $bl, $app;
 
+        /** @var GameLogRepository $gameLogRepository */
+        $gameLogRepository = $app[GameLogRepository::class];
         /** @var BuildingRepository $buildingRepository */
         $buildingRepository = $app[BuildingRepository::class];
         $peopleWorking = $buildingRepository->getPeopleWorking($this->entityId);
@@ -339,7 +344,7 @@ class BuildListItem
         [b]" . RES_FOOD . ":[/b] " . nf($cp->resFood) . "";
 
         //Log Speichern
-        GameLog::add(GameLog::F_BUILD, GameLog::INFO, $log_text, $cu->id, $cu->allianceId, $cp->id, $this->buildingId, 3, $this->level);
+        $gameLogRepository->add(GameLogFacility::BUILD, LogSeverity::INFO, $log_text, $cu->id, $cu->allianceId, $cp->id, $this->buildingId, 3, $this->level);
 
         return;
     }
@@ -378,6 +383,8 @@ class BuildListItem
 
         /** @var BuildingRepository $buildingRepository */
         $buildingRepository = $app[BuildingRepository::class];
+        /** @var GameLogRepository $gameLogRepository */
+        $gameLogRepository = $app[GameLogRepository::class];
 
         $costs = $this->getDemolishCosts();
         $this->changedFields['startTime'] = "buildlist_build_start_time";
@@ -414,7 +421,7 @@ class BuildListItem
         [b]" . RES_FOOD . ":[/b] " . nf($cp->resFood) . "";
 
         //Log Speichern
-        GameLog::add(GameLog::F_BUILD, GameLog::INFO, $log_text, $cu->id, $cu->allianceId, $cp->id, $this->buildingId, 4, $this->level);
+        $gameLogRepository->add(GameLogFacility::BUILD, LogSeverity::INFO, $log_text, $cu->id, $cu->allianceId, $cp->id, $this->buildingId, 4, $this->level);
 
         return;
     }
@@ -427,6 +434,8 @@ class BuildListItem
 
             /** @var BuildingRepository $buildingRepository */
             $buildingRepository = $app[BuildingRepository::class];
+            /** @var GameLogRepository $gameLogRepository */
+            $gameLogRepository = $app[GameLogRepository::class];
 
             $costs = $this->getBuildCosts();
             $fac = ($this->endTime - time()) / ($this->endTime - $this->startTime);
@@ -464,7 +473,7 @@ class BuildListItem
 [b]" . RES_FOOD . ":[/b] " . nf($cp->resFood) . "";
 
             //Log Speichern
-            GameLog::add(GameLog::F_BUILD, GameLog::INFO, $log_text, $cu->id, $cu->allianceId, $cp->id, $this->buildingId, 1, $this->level);
+            $gameLogRepository->add(GameLogFacility::BUILD, LogSeverity::INFO, $log_text, $cu->id, $cu->allianceId, $cp->id, $this->buildingId, 1, $this->level);
 
             return;
         } else
@@ -479,6 +488,8 @@ class BuildListItem
 
             /** @var BuildingRepository $buildingRepository */
             $buildingRepository = $app[BuildingRepository::class];
+            /** @var GameLogRepository $gameLogRepository */
+            $gameLogRepository = $app[GameLogRepository::class];
 
             $costs = $this->getDemolishCosts();
             $fac = ($this->endTime - time()) / ($this->endTime - $this->startTime);
@@ -513,7 +524,7 @@ class BuildListItem
             [b]" . RES_FOOD . ":[/b] " . nf($cp->resFood) . "";
 
             //Log Speichern
-            GameLog::add(GameLog::F_BUILD, GameLog::INFO, $log_text, $cu->id, $cu->allianceId, $cp->id, $this->buildingId, 2, $this->level);
+            $gameLogRepository->add(GameLogFacility::BUILD, LogSeverity::INFO, $log_text, $cu->id, $cu->allianceId, $cp->id, $this->buildingId, 2, $this->level);
 
             return;
         } else

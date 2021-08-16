@@ -16,21 +16,6 @@ parameters:
 			path: htdocs/admin/content/home/stats.inc.php
 
 		-
-			message: "#^Empty array passed to foreach\\.$#"
-			count: 1
-			path: htdocs/admin/content/logs.php
-
-		-
-			message: "#^Left side of && is always false\\.$#"
-			count: 1
-			path: htdocs/admin/content/logs.php
-
-		-
-			message: "#^Undefined variable\\: \\$res$#"
-			count: 3
-			path: htdocs/admin/content/logs.php
-
-		-
 			message: "#^Variable \\$iparr might not be defined\\.$#"
 			count: 6
 			path: htdocs/admin/content/user/multi.inc.php

@@ -1,6 +1,9 @@
 <?php
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Log\LogFacility;
+use EtoA\Log\LogRepository;
+use EtoA\Log\LogSeverity;
 use EtoA\Message\ReportRepository;
 use EtoA\Message\ReportTypes;
 
@@ -223,6 +226,8 @@ abstract class Report
         $config = $app[ConfigurationService::class];
         /** @var ReportRepository $reportRepository */
         $reportRepository = $app[ReportRepository::class];
+        /** @var LogRepository $logRepository */
+        $logRepository = $app[LogRepository::class];
 
         $nr = 0;
         if ($onlyDeleted == 0) {
@@ -232,7 +237,7 @@ abstract class Report
                 : time() - (24 * 3600 * $config->getInt('reports_threshold_days'));
 
             $nr = $reportRepository->removeUnarchivedread($timestamp);
-            Log::add("4", Log::INFO, "Unarchivierte Berichte die älter als " . date("d.m.Y H:i", $timestamp) . " sind wurden gelöscht!");
+            $logRepository->add(LogFacility::SYSTEM, LogSeverity::INFO, "Unarchivierte Berichte die älter als " . date("d.m.Y H:i", $timestamp) . " sind wurden gelöscht!");
         }
 
         // Deleted
@@ -241,7 +246,7 @@ abstract class Report
             : time() - (24 * 3600 * $config->param1Int('reports_threshold_days'));
 
         $nr += $reportRepository->removeDeleted($timestamp);
-        Log::add("4", Log::INFO, "Unarchivierte Berichte die älter als " . date("d.m.Y H:i", $timestamp) . " sind wurden gelöscht!");
+        $logRepository->add(LogFacility::SYSTEM, LogSeverity::INFO, "Unarchivierte Berichte die älter als " . date("d.m.Y H:i", $timestamp) . " sind wurden gelöscht!");
 
         return $nr;
     }

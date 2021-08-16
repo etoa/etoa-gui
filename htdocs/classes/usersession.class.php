@@ -1,5 +1,8 @@
 <?php
 
+use EtoA\Log\LogFacility;
+use EtoA\Log\LogRepository;
+use EtoA\Log\LogSeverity;
 use EtoA\User\UserLoginFailureRepository;
 use EtoA\User\UserRepository;
 use EtoA\User\UserSessionManager;
@@ -28,6 +31,8 @@ class UserSession extends Session
 
         /** @var UserRepository $userRepository */
         $userRepository = $app[UserRepository::class];
+        /** @var LogRepository $logRepository */
+        $logRepository = $app[LogRepository::class];
 
         $sessionManager->cleanup();
 
@@ -163,7 +168,7 @@ class UserSession extends Session
                 $text .= "GET: " . var_export($_GET, true) . "\n";
             $text .= "Agent: " . $_SERVER['HTTP_USER_AGENT'] . "\n";
             $text .= "Referer: " . $_SERVER['HTTP_REFERER'] . "\n";
-            Log::add(Log::F_ILLEGALACTION, Log::WARNING, $text);
+            $logRepository->add(LogFacility::ILLEGALACTION, LogSeverity::WARNING, $text);
         }
 
         return false;

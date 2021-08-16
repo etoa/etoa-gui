@@ -8,7 +8,9 @@ use EtoA\Defense\DefenseQueueRepository;
 use EtoA\Defense\DefenseRepository;
 use EtoA\Help\TicketSystem\TicketRepository;
 use EtoA\Help\TicketSystem\TicketService;
+use EtoA\Log\LogFacility;
 use EtoA\Log\LogRepository;
+use EtoA\Log\LogSeverity;
 use EtoA\Message\MessageRepository;
 use EtoA\Message\MessageService;
 use EtoA\Message\ReportRepository;
@@ -96,13 +98,15 @@ function runCleanup(
 
     /** @var DefenseRepository $defenseRepository */
     $defenseRepository = $app[DefenseRepository::class];
+    /** @var LogRepository $logRepository */
+    $logRepository = $app[LogRepository::class];
 
     echo "Clean-Up wird durchgeführt...<br/>";
     $all = isset($_POST['submit_cleanup_all']) ? true : false;
 
     // Log cleanup
     if (isset($_POST['cl_log']) || $all) {
-        $nr = Log::removeOld($_POST['log_timestamp']);
+        $nr = BaseLog::removeOld($_POST['log_timestamp']);
         echo $nr . " Logs wurden gelöscht!<br/>";
     }
 
@@ -246,11 +250,11 @@ function runCleanup(
     if ((isset($_POST['cl_objlist']) && $_POST['cl_objlist'] == 1) || $all) {
         $nr = $shipRepository->cleanUp();
         echo $nr . " leere Schiffdaten wurden gelöscht!<br/>";
-        Log::add(Log::F_SYSTEM, Log::INFO, "$nr leere Schiffsdatensätze wurden manuell gelöscht!");
+        $logRepository->add(LogFacility::SYSTEM, LogSeverity::INFO, "$nr leere Schiffsdatensätze wurden manuell gelöscht!");
 
         $nr = $defenseRepository->cleanUp();
         echo $nr . " leere Verteidigungsdaten wurden gelöscht!<br/>";
-        Log::add(Log::F_SYSTEM, Log::INFO, "$nr leere Verteidigungsdatensätze wurden manuell gelöscht!");
+        $logRepository->add(LogFacility::SYSTEM, LogSeverity::INFO, "$nr leere Verteidigungsdatensätze wurden manuell gelöscht!");
 
         /** @var BuildingRepository $buildingRepository */
         $buildingRepository = $app[BuildingRepository::class];

@@ -4,6 +4,9 @@ use EtoA\Admin\AdminUser;
 use EtoA\Admin\AdminUserRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\HostCache\NetworkNameService;
+use EtoA\Log\LogFacility;
+use EtoA\Log\LogRepository;
+use EtoA\Log\LogSeverity;
 use EtoA\Support\Mail\MailSenderService;
 use Twig\Environment;
 
@@ -18,10 +21,12 @@ $mailSenderService = $app[MailSenderService::class];
 
 /** @var NetworkNameService $networkNameService */
 $networkNameService = $app[NetworkNameService::class];
+/** @var LogRepository $logRepository */
+$logRepository = $app[LogRepository::class];
 
 if (isset($_GET['sendpass'])) {
     if (isset($_POST['sendpass_submit'])) {
-        sendPassword($config, $adminUserRepo, $mailSenderService, $networkNameService, $twig);
+        sendPassword($config, $adminUserRepo, $mailSenderService, $networkNameService, $twig, $logRepository);
     } else {
         sendPasswordForm($twig);
     }
@@ -40,7 +45,8 @@ function sendPassword(
     AdminUserRepository $adminUserRepo,
     MailSenderService $mailSenderService,
     NetworkNameService $networkNameService,
-    Environment $twig
+    Environment $twig,
+    LogRepository $logRepository
 ): void {
     $user = $adminUserRepo->findOneByNick($_POST['user_nick']);
     if ($user !== null) {
@@ -59,7 +65,7 @@ function sendPassword(
         $buttonMsg = 'Zum Login';
         $buttonTarget = '?';
 
-        Log::add(8, Log::INFO,  "Der Administrator " . $user->nick . " (ID: " . $user->id . ") fordert per E-Mail (" . $user->email . ") von " . $_SERVER['REMOTE_ADDR'] . " aus ein neues Passwort an.");
+        $logRepository->add(LogFacility::ADMIN, LogSeverity::INFO,  "Der Administrator " . $user->nick . " (ID: " . $user->id . ") fordert per E-Mail (" . $user->email . ") von " . $_SERVER['REMOTE_ADDR'] . " aus ein neues Passwort an.");
     } else {
         $msgStyle = 'color_warn';
         $statusMsg = 'Dieser Benutzer existiert nicht!';

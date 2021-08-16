@@ -1316,7 +1316,7 @@ function defineImagePaths()
     /** @var UserPropertiesRepository $userPropertiesRepository */
     $userPropertiesRepository = $app[UserPropertiesRepository::class];
 
-    $properties = $userPropertiesRepository->getOrCreateProperties($cu->id);
+    $properties = $cu !== null ? $userPropertiesRepository->getOrCreateProperties($cu->id) : null;
 
     if (!defined('IMAGE_PATH')) {
         if (!isset($cu) && isset($_SESSION['user_id'])) {
@@ -1324,7 +1324,7 @@ function defineImagePaths()
         }
 
         $design = DESIGN_DIRECTORY . "/official/" . $config->get('default_css_style');
-        if (isset($cu) && $properties->cssStyle != '') {
+        if (isset($properties) && $properties->cssStyle != '') {
             if (is_dir(DESIGN_DIRECTORY . "/custom/" . $properties->cssStyle)) {
                 $design = DESIGN_DIRECTORY . "/custom/" . $properties->cssStyle;
             } else if (is_dir(DESIGN_DIRECTORY . "/official/" . $properties->cssStyle)) {
@@ -1334,7 +1334,7 @@ function defineImagePaths()
         define('CSS_STYLE', $design);
 
         // Image paths
-        if (isset($cu) && $properties->imageUrl != '' && $properties->imageExt != '') {
+        if (isset($properties) && $properties->imageUrl != '' && $properties->imageExt != '') {
             define('IMAGE_PATH', $properties->imageUrl);
             define('IMAGE_EXT', $properties->imageExt);
         } else {

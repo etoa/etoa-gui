@@ -4,8 +4,11 @@ use EtoA\Building\BuildingRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Fleet\FleetRepository;
 use EtoA\Fleet\FleetSearch;
+use EtoA\Log\FleetLogRepository;
 use EtoA\Ship\ShipRepository;
 use EtoA\Technology\TechnologyRepository;
+use EtoA\Universe\Entity\EntityService;
+use EtoA\Universe\Resources\BaseResources;
 
 /**
  * Fleet launch class, provides the full workflow for starting a fleet
@@ -52,13 +55,11 @@ class FleetLaunch
     private $action;
     private $resources;
     private $error;
-    private $fleetLog;
     public $sBonusSpeed;
     public $wormholeEnable;
     public $aFleets;
     public $allianceSlots;
-
-    private ConfigurationService $config;
+    private string $entityResourceLogStart;
 
     /**
      * The constructor
@@ -69,8 +70,6 @@ class FleetLaunch
     {
         // TODO
         global $app;
-
-        $this->config = $app[ConfigurationService::class];
 
         $this->sourceEntity = $sourceEnt;
         $this->owner = $ownerEnt;
@@ -128,8 +127,7 @@ class FleetLaunch
         $this->actionOk = false;
 
         $this->error = "";
-
-        $this->fleetLog = new FleetLog($this->ownerId, $this->sourceEntity->id, $sourceEnt);
+        $this->entityResourceLogStart = $this->sourceEntity->getResourceLog();
 
         //Create targetentity
         if (isset($_SESSION['haven']['targetId'])) {
@@ -161,14 +159,17 @@ class FleetLaunch
 
         $this->havenOk = false;
 
+        /** @var ConfigurationService $config */
+        $config = $app[ConfigurationService::class];
+
         // Check if flights are possible
         if (
-            !$this->config->getBoolean('flightban')
-            || $this->config->param1Int('flightban_time') > time()
-            || $this->config->param2Int('flightban_time') < time()
+            !$config->getBoolean('flightban')
+            || $config->param1Int('flightban_time') > time()
+            || $config->param2Int('flightban_time') < time()
         ) {
 
-            if ($this->config->getBoolean('emp_action')) {
+            if ($config->getBoolean('emp_action')) {
                 $action = 3;
             } else {
                 $action = 2;
@@ -202,7 +203,7 @@ class FleetLaunch
                 }
             }
         } else {
-            $this->error = "Wegen einer Flottensperre können bis " . df($this->config->param2Int('flightban_time')) . " keine Flotten gestartet werden! " . $this->config->param1('flightban');
+            $this->error = "Wegen einer Flottensperre können bis " . df($config->param2Int('flightban_time')) . " keine Flotten gestartet werden! " . $config->param1('flightban');
         }
         return $this->havenOk;
     }
@@ -389,14 +390,19 @@ class FleetLaunch
      */
     function setTarget(&$ent, $speedPercent = 100)
     {
+        global $app;
+
+        /** @var EntityService $entityService */
+        $entityService = $app[EntityService::class];
+
         if ($this->shipsFixed) {
             if ($ent->isValid()) {
                 $this->targetEntity = $ent;
                 if ($this->wormholeEntryEntity != NULL) {
-                    $this->distance = $this->wormholeExitEntity->distance($this->targetEntity);
-                    $this->distance1 = $this->sourceEntity->distance($this->wormholeEntryEntity);
+                    $this->distance = $entityService->distanceByCoords($this->wormholeExitEntity->getEntityCoordinates(), $this->targetEntity->getEntityCoordinates());
+                    $this->distance1 = $entityService->distanceByCoords($this->sourceEntity->getEntityCoordinates(), $this->wormholeEntryEntity->getEntityCoordinates());
                 } else {
-                    $this->distance = $this->sourceEntity->distance($this->targetEntity);
+                    $this->distance = $entityService->distanceByCoords($this->sourceEntity->getEntityCoordinates(), $this->targetEntity->getEntityCoordinates());
                     $this->distance1 = 0;
                 }
 
@@ -481,9 +487,9 @@ class FleetLaunch
                     $this->finalLoadResource();
 
                     // Subtract flight and support costs from source
-                    $this->sourceEntity->chgRes(4, -$this->getCosts() - $this->getSupportFuel());
-                    $this->sourceEntity->chgRes(5, -$this->getCostsFood() - $this->getSupportFood());
-                    $this->sourceEntity->chgPeople(- ($this->getPilots() + $this->capacityPeopleLoaded));
+//                    $this->sourceEntity->chgRes(4, -$this->getCosts() - $this->getSupportFuel());
+//                    $this->sourceEntity->chgRes(5, -$this->getCostsFood() - $this->getSupportFood());
+//                    $this->sourceEntity->chgPeople(- ($this->getPilots() + $this->capacityPeopleLoaded));
 
                     if ($this->action == "alliance" && $this->leaderId != 0) {
                         $status = 3;
@@ -624,17 +630,25 @@ class FleetLaunch
                     }
 
                     //add all the cool stuff to the fleetLog
-                    $this->fleetLog->fleetId = $fid;
-                    $this->fleetLog->targetId = $this->targetEntity->id();
-                    $this->fleetLog->launchtime = $time;
-                    $this->fleetLog->landtime = $this->landTime;
-                    $this->fleetLog->fuel = $this->getCosts() + $this->supportCostsFuel;
-                    $this->fleetLog->food = $this->getCostsFood() + $this->supportCostsFood;
-                    $this->fleetLog->pilots = $this->getPilots();
-                    $this->fleetLog->action = $this->action;
-                    $this->fleetLog->addFleetRes($this->res, $this->capacityPeopleLoaded, $this->fetch);
-                    $this->fleetLog->fleetShipEnd = $shipLog;
-                    $this->fleetLog->launch();
+                    $resources = new BaseResources();
+                    $resources->metal = $this->res[1];
+                    $resources->crystal = $this->res[2];
+                    $resources->plastic = $this->res[3];
+                    $resources->fuel = $this->res[4];
+                    $resources->food = $this->res[5];
+                    $resources->people = $this->capacityPeopleLoaded;
+
+                    $fetch = new BaseResources();
+                    $fetch->metal = $this->fetch[1];
+                    $fetch->crystal = $this->fetch[2];
+                    $fetch->plastic = $this->fetch[3];
+                    $fetch->fuel = $this->fetch[4];
+                    $fetch->food = $this->fetch[5];
+                    $fetch->people = $this->fetch[6];
+
+                    /** @var FleetLogRepository $fleetLogRepository */
+                    $fleetLogRepository = $app[FleetLogRepository::class];
+                    $fleetLogRepository->addLaunch($fid, $this->ownerId, $this->sourceEntity->id, $this->targetEntity->id(), $time, $this->landTime, $this->action, $this->getPilots(), $this->getCosts() + $this->supportCostsFuel, $this->getCostsFood() + $this->supportCostsFood, $resources, $fetch, $shipLog, $this->entityResourceLogStart, $this->sourceEntity->getResourceLog());
 
 
                     if ($this->action == "alliance" && $this->leaderId == 0) {
@@ -711,6 +725,11 @@ class FleetLaunch
      */
     function getAllowedActions()
     {
+        global $app;
+
+        /** @var ConfigurationService $config */
+        $config = $app[ConfigurationService::class];
+
         $this->error = '';
 
         //$allowed =  ($this->sFleets && count($this->sFleets) && ( $this->leaderId>0 || in_array($this->targetEntity->id,$this->sFleets))) ? true : false;
@@ -720,13 +739,13 @@ class FleetLaunch
         $actionObjs = array();
 
         $battleban = false;
-        if ($this->config->getBoolean("battleban") && $this->config->param1Int("battleban_time") <= time() && $this->config->param2Int("battleban_time") > time()) {
-            $this->error = "Kampfsperre von " . df($this->config->param1Int("battleban_time")) . " bis " . df($this->config->param2Int("battleban_time")) . ". " . $this->config->param1("battleban");
+        if ($config->getBoolean("battleban") && $config->param1Int("battleban_time") <= time() && $config->param2Int("battleban_time") > time()) {
+            $this->error = "Kampfsperre von " . df($config->param1Int("battleban_time")) . " bis " . df($config->param2Int("battleban_time")) . ". " . $config->param1("battleban");
             $battleban = true;
         }
 
-        if ($this->config->getBoolean("flightban") && $this->config->param1Int("flightban_time") <= time() && $this->config->param2Int("flightban_time") > time()) {
-            $this->error = "Flottensperre von " . df($this->config->param1Int("flightban_time")) . " bis " . df($this->config->param2Int("flightban_time")) . ". " . $this->config->param1("flightban");
+        if ($config->getBoolean("flightban") && $config->param1Int("flightban_time") <= time() && $config->param2Int("flightban_time") > time()) {
+            $this->error = "Flottensperre von " . df($config->param1Int("flightban_time")) . " bis " . df($config->param2Int("flightban_time")) . ". " . $config->param1("flightban");
         } else {
             $noobProtectionErrorAdded = false;
 
@@ -745,9 +764,9 @@ class FleetLaunch
                     $this->sourceEntity->ownerId() != $this->targetEntity->ownerId() &&
                     $ai->allianceAction && (
                         // alliance battle system is disabled
-                        !$this->config->getBoolean("abs_enabled") || (
+                        !$config->getBoolean("abs_enabled") || (
                             // or abs is enabled for alliances at war only
-                            $this->config->param1Boolean("abs_enabled") && (
+                            $config->param1Boolean("abs_enabled") && (
                                 (
                                     // and it is an agressive action
                                     $ai->attitude() == 3 &&
@@ -833,7 +852,7 @@ class FleetLaunch
                 if (!$supportPossible) {
                     // Meldung ausgeben, dass Support nicht möglich ist
                     $this->error .= 'Support nicht m&ouml;glich, die Maximalzahl von ' .
-                        $this->config->param1Int('alliance_fleets_max_players') .
+                        $config->param1Int('alliance_fleets_max_players') .
                         ' Verteidigern ist auf diesem Planet bereits erreicht.<br />';
                     $supportPossible = true;
                 }
@@ -863,7 +882,11 @@ class FleetLaunch
 
     function getCostsFood()
     {
-        $this->costsFood = ceil($this->getPilots() * $this->config->getInt('people_food_require') / 3600 * $this->getDuration());
+        global $app;
+        /** @var ConfigurationService $config */
+        $config = $app[ConfigurationService::class];
+
+        $this->costsFood = ceil($this->getPilots() * $config->getInt('people_food_require') / 3600 * $this->getDuration());
         return $this->costsFood;
     }
 
@@ -1063,10 +1086,14 @@ class FleetLaunch
 
     function getSupportMaxTime()
     {
+        global $app;
+        /** @var ConfigurationService $config */
+        $config = $app[ConfigurationService::class];
+
         $this->supportCostsFuel = 0;
         $this->supportCostsFood = 0;
 
-        $this->supportCostsFoodPerSec = $this->pilots * $this->config->getInt('people_food_require') / 36000;
+        $this->supportCostsFoodPerSec = $this->pilots * $config->getInt('people_food_require') / 36000;
         $this->supportCostsFuelPerSec = $this->costsPerHundredAE * $this->getSpeed() / $this->getSpeedPercent() / 3600000;
 
         $maxTime = $this->getCapacity() / ($this->supportCostsFuelPerSec + $this->supportCostsFoodPerSec);
@@ -1162,7 +1189,11 @@ class FleetLaunch
     // Alliance attack already confirmed
     function checkAttNum($leaderid)
     {
-        if (!$this->config->getBoolean('alliance_fleets_max_players')) {
+        global $app;
+        /** @var ConfigurationService $config */
+        $config = $app[ConfigurationService::class];
+
+        if (!$config->getBoolean('alliance_fleets_max_players')) {
             return true;
         }
         // Check number of users participating in the alliance attack
@@ -1176,7 +1207,7 @@ class FleetLaunch
             GROUP BY
                 `user_id`
         ;');
-        if (mysql_num_rows($res) < $this->config->param1Int('alliance_fleets_max_players')) {
+        if (mysql_num_rows($res) < $config->param1Int('alliance_fleets_max_players')) {
             return true;
         }
         while ($arr = mysql_fetch_assoc($res)) {
@@ -1189,7 +1220,11 @@ class FleetLaunch
 
     function checkDefNum()
     {
-        if (!$this->config->getBoolean('alliance_fleets_max_players')) {
+        global $app;
+        /** @var ConfigurationService $config */
+        $config = $app[ConfigurationService::class];
+
+        if (!$config->getBoolean('alliance_fleets_max_players')) {
             return true;
         }
         // check the number of supporters on that planet
@@ -1211,7 +1246,7 @@ class FleetLaunch
         ;');
         // user id is guaranteed to not be the target owner, so the number is reduced
         // by one, because we always have one slot reserved for the planet's owner
-        if (mysql_num_rows($res) < ($this->config->param1Int('alliance_fleets_max_players') - 1)) {
+        if (mysql_num_rows($res) < ($config->param1Int('alliance_fleets_max_players') - 1)) {
             return true;
         }
         // if the maximum of user slots is already reached, we check whether there

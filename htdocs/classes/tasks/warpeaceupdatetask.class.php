@@ -3,7 +3,7 @@
 use EtoA\Alliance\AllianceDiplomacyRepository;
 use EtoA\Alliance\AllianceHistoryRepository;
 use EtoA\Message\MessageRepository;
-use EtoA\User\UserRatingRepository;
+use EtoA\User\UserRatingService;
 use Pimple\Container;
 
 /**
@@ -15,14 +15,14 @@ class WarPeaceUpdateTask implements IPeriodicTask
     private AllianceHistoryRepository $allianceHistoryRepository;
     private MessageRepository $messageRepository;
     private AllianceDiplomacyRepository $allianceDiplomacyRepository;
-    private UserRatingRepository $userRatingRepository;
+    private UserRatingService $userRatingService;
 
     public function __construct(Container $app)
     {
         $this->allianceHistoryRepository = $app[AllianceHistoryRepository::class];
         $this->messageRepository = $app[MessageRepository::class];
         $this->allianceDiplomacyRepository = $app[AllianceDiplomacyRepository::class];
-        $this->userRatingRepository = $app[UserRatingRepository::class];
+        $this->userRatingService = $app[UserRatingService::class];
     }
 
     function run()
@@ -46,10 +46,11 @@ class WarPeaceUpdateTask implements IPeriodicTask
             ");
         if (mysql_num_rows($res) > 0) {
             while ($arr = mysql_fetch_assoc($res)) {
-                $this->userRatingRepository->addDiplomacyRating(
+                $reason = "Bündnis " . $arr['alliance_bnd_alliance_id1'] . " mit " . $arr['alliance_bnd_alliance_id1'];
+                $this->userRatingService->addDiplomacyRating(
                     (int) $arr['alliance_bnd_diplomat_id'],
                     (int) $arr['alliance_bnd_points'],
-                    "Bündnis " . $arr['alliance_bnd_alliance_id1'] . " mit " . $arr['alliance_bnd_alliance_id1']
+                    $reason
                 );
 
                 dbquery("
@@ -104,7 +105,7 @@ class WarPeaceUpdateTask implements IPeriodicTask
                 $this->messageRepository->createSystemMessage((int) $arr['a2f'], MSG_ALLYMAIL_CAT, "Krieg beendet", $text . " Während dieser Friedenszeit kann kein neuer Krieg erklärt werden!");
 
                 // Assing diplomacy points
-                $this->userRatingRepository->addDiplomacyRating(
+                $this->userRatingService->addDiplomacyRating(
                     (int) $arr['alliance_bnd_diplomat_id'],
                     (int) $arr['alliance_bnd_points'],
                     "Krieg " . $arr['a1id'] . " gegen " . $arr['a2id']

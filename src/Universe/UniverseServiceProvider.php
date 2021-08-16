@@ -7,6 +7,7 @@ namespace EtoA\Universe;
 use EtoA\Building\BuildingRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Defense\DefenseRepository;
+use EtoA\Log\LogRepository;
 use EtoA\Ship\ShipRepository;
 use EtoA\Support\DB\DatabaseManagerRepository;
 use EtoA\Universe\Asteroid\AsteroidRepository;
@@ -78,6 +79,7 @@ class UniverseServiceProvider implements ServiceProviderInterface
                 $pimple[ShipRepository::class],
                 $pimple[DefenseRepository::class],
                 $pimple[ConfigurationService::class],
+                $pimple[LogRepository::class]
             );
         };
 

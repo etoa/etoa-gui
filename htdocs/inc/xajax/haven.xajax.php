@@ -5,6 +5,9 @@
 use EtoA\Alliance\AllianceBuildingId;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Fleet\FleetRepository;
+use EtoA\Log\LogFacility;
+use EtoA\Log\LogRepository;
+use EtoA\Log\LogSeverity;
 use EtoA\Universe\Entity\EntityCoordinates;
 use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Planet\PlanetRepository;
@@ -614,6 +617,8 @@ function havenShowWormhole($form)
     $planetRepository = $app[PlanetRepository::class];
     /** @var UserUniverseDiscoveryService */
     $userUniverseDiscoveryService = $app[UserUniverseDiscoveryService::class];
+    /** @var LogRepository $logRepository */
+    $logRepository = $app[LogRepository::class];
 
     /** @var UserRepository */
     $userRepository = $app[UserRepository::class];
@@ -868,9 +873,9 @@ function havenShowWormhole($form)
             }
         } else {
             include_once(getcwd() . '/inc/bootstrap.inc.php');
-            Log::add(
-                18,
-                Log::INFO,
+            $logRepository->add(
+                LogFacility::ILLEGALACTION,
+                LogSeverity::INFO,
                 'Der User ' . $_SESSION['user_nick'] . ' versuchte, ein zweites Wurmloch zu &ouml;ffnen' . "\n"
                     . 'Bereits gesetztes Wurmloch: ' . $fleet->wormholeEntryEntity . ' mit Austrittspunkt ' . $fleet->wormholeExitEntity . "\n"
                     . 'Zweites Wumloch: ' . $form['man_sx'] . ' / ' . $form['man_sy'] . ' : ' . $form['man_cx'] . ' / ' . $form['man_cy'] . ' : ' . $form['man_p'] . '.'
@@ -1102,6 +1107,7 @@ function havenShowLaunch($form)
     // Do some checks
     if (count($form) > 0) {
         // Get fleet object
+        /** @var FleetLaunch $fleet */
         $fleet = unserialize($_SESSION['haven']['fleetObj']);
 
         if ($fleet->setAction($form['fleet_action'])) {
@@ -1133,7 +1139,10 @@ function havenShowLaunch($form)
             $duration = $fleet->distance / $fleet->getSpeed();    // Calculate duration
             $duration *= 3600;    // Convert to seconds
             $duration = ceil($duration);
-            $maxTime = $fleet->aFleets[0]['landtime'] - time() - $fleet->getTimeLaunchLand() - $fleet->duration1;
+            $maxTime = 0;
+            if (isset($fleet->aFleets)) {
+                $maxTime = $fleet->aFleets[0]['landtime'] - time() - $fleet->getTimeLaunchLand() - $fleet->duration1;
+            }
 
             //check for alliance+time to join
             if (($duration < $maxTime) || $form['fleet_action'] != "alliance" || $maxTime < 0) {

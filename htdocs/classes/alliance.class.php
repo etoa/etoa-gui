@@ -17,6 +17,9 @@ use EtoA\Alliance\AllianceTechnologyRepository;
 use EtoA\Alliance\Board\AllianceBoardCategoryRepository;
 use EtoA\Alliance\Board\AllianceBoardTopicRepository;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Log\LogFacility;
+use EtoA\Log\LogRepository;
+use EtoA\Log\LogSeverity;
 use EtoA\Message\MessageRepository;
 use EtoA\User\UserService;
 
@@ -700,6 +703,10 @@ class Alliance
             /** @var AllianceTechnologyRepository $allianceTechnologyRepository */
             $allianceTechnologyRepository = $app[AllianceTechnologyRepository::class];
             $allianceTechnologyRepository->removeForAlliance($this->id);
+
+            /** @var LogRepository $logRepository */
+            $logRepository = $app[LogRepository::class];
+
             dbquery("UPDATE alliances
                 SET
                     alliance_mother=0
@@ -729,9 +736,9 @@ class Alliance
                 /** @var UserService */
                 $userService = $app[UserService::class];
                 $userService->addToUserLog($user->id, "alliance", "{nick} löst die Allianz [b]" . $this->__toString() . "[/b] auf.");
-                Log::add("5", Log::INFO, "Die Allianz [b]" . $this->__toString() . "[/b] wurde von " . $user . " aufgelöst!");
+                $logRepository->add(LogFacility::ALLIANCE, LogSeverity::INFO, "Die Allianz [b]" . $this->__toString() . "[/b] wurde von " . $user . " aufgelöst!");
             } else
-                Log::add("5", Log::INFO, "Die Allianz [b]" . $this->__toString() . "[/b] wurde gelöscht!");
+                $logRepository->add(LogFacility::ALLIANCE, LogSeverity::INFO, "Die Allianz [b]" . $this->__toString() . "[/b] wurde gelöscht!");
             return true;
         }
 

@@ -17,6 +17,9 @@ use EtoA\Defense\DefenseRepository;
 use EtoA\Fleet\FleetRepository;
 use EtoA\Fleet\FleetSearchParameters;
 use EtoA\Help\TicketSystem\TicketRepository;
+use EtoA\Log\LogFacility;
+use EtoA\Log\LogRepository;
+use EtoA\Log\LogSeverity;
 use EtoA\Market\MarketAuctionRepository;
 use EtoA\Market\MarketResourceRepository;
 use EtoA\Market\MarketShipRepository;
@@ -29,7 +32,6 @@ use EtoA\Technology\TechnologyRepository;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Universe\Planet\PlanetService;
 use Exception;
-use Log;
 
 class UserService
 {
@@ -67,6 +69,7 @@ class UserService
     private BackendMessageService $backendMessageService;
     private UserLogRepository $userLogRepository;
     private UserToXml $userToXml;
+    private LogRepository $logRepository;
 
     public function __construct(
         ConfigurationService $config,
@@ -102,7 +105,8 @@ class UserService
         UserSurveillanceRepository $userSurveillanceRepository,
         BackendMessageService $backendMessageService,
         UserLogRepository $userLogRepository,
-        UserToXml $userToXml
+        UserToXml $userToXml,
+        LogRepository $logRepository
     ) {
         $this->config = $config;
         $this->userRepository = $userRepository;
@@ -138,6 +142,7 @@ class UserService
         $this->backendMessageService = $backendMessageService;
         $this->userLogRepository = $userLogRepository;
         $this->userToXml = $userToXml;
+        $this->logRepository = $logRepository;
     }
 
     public function register(
@@ -286,11 +291,11 @@ class UserService
 
         //Log schreiben
         if ($self) {
-            Log::add(Log::F_USER, Log::INFO, "Der Benutzer " . $user->nick . " hat sich selbst gelöscht!\nDie Daten des Benutzers wurden nach " . $xmlfile . " exportiert.");
+            $this->logRepository->add(LogFacility::USER, LogSeverity::INFO, "Der Benutzer " . $user->nick . " hat sich selbst gelöscht!\nDie Daten des Benutzers wurden nach " . $xmlfile . " exportiert.");
         } elseif ($from != "") {
-            Log::add(Log::F_USER, Log::INFO, "Der Benutzer " . $user->nick . " wurde von " . $from . " gelöscht!\nDie Daten des Benutzers wurden nach " . $xmlfile . " exportiert.");
+            $this->logRepository->add(LogFacility::USER, LogSeverity::INFO, "Der Benutzer " . $user->nick . " wurde von " . $from . " gelöscht!\nDie Daten des Benutzers wurden nach " . $xmlfile . " exportiert.");
         } else {
-            Log::add(Log::F_USER, Log::INFO, "Der Benutzer " . $user->nick . " wurde gelöscht!\nDie Daten des Benutzers wurden nach " . $xmlfile . " exportiert.");
+            $this->logRepository->add(LogFacility::USER, LogSeverity::INFO, "Der Benutzer " . $user->nick . " wurde gelöscht!\nDie Daten des Benutzers wurden nach " . $xmlfile . " exportiert.");
         }
 
         $text = "Hallo " . $user->nick . "
@@ -335,9 +340,9 @@ die Spielleitung";
             $this->delete($user->id);
         }
 
-        Log::add(
-            Log::F_SYSTEM,
-            Log::INFO,
+        $this->logRepository->add(
+            LogFacility::SYSTEM,
+            LogSeverity::INFO,
             count($inactiveUsers) . " inaktive User die seit " . date("d.m.Y H:i", $onlineTime) . " nicht mehr online waren oder seit " . date("d.m.Y H:i", $registerTime) . " keine Punkte haben wurden " . ($manual ? 'manuell' : '') . " gelöscht!"
         );
 
@@ -384,9 +389,9 @@ die Spielleitung";
             $this->delete($user->id);
         }
 
-        Log::add(
-            Log::F_SYSTEM,
-            Log::INFO,
+        $this->logRepository->add(
+            LogFacility::SYSTEM,
+            LogSeverity::INFO,
             count($deletedUsers) . ' als gelöscht markierte User wurden ' . ($manual ? 'manuell' : '') . ' gelöscht!'
         );
 
@@ -426,7 +431,7 @@ die Spielleitung";
 
         $this->userRepository->updatePassword($userId, $newPassword1);
 
-        Log::add(Log::F_USER, Log::INFO, "Der Spieler [b]" . $user->nick . "[/b] &auml;ndert sein Passwort!");
+        $this->logRepository->add(LogFacility::USER, LogSeverity::INFO, "Der Spieler [b]" . $user->nick . "[/b] &auml;ndert sein Passwort!");
 
         $this->mailSenderService->send(
             "Passwortänderung",
@@ -451,6 +456,6 @@ die Spielleitung";
 
         $this->userRepository->updatePassword($user->id, $pw);
 
-        Log::add(3, Log::INFO, 'Der Benutzer ' . $_POST['user_nick'] . ' hat ein neues Passwort per E-Mail angefordert!');
+        $this->logRepository->add(LogFacility::USER, LogSeverity::INFO, 'Der Benutzer ' . $_POST['user_nick'] . ' hat ein neues Passwort per E-Mail angefordert!');
     }
 }

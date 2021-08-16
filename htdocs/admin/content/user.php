@@ -5,6 +5,9 @@
 //
 
 use EtoA\Alliance\AllianceRepository;
+use EtoA\Log\LogFacility;
+use EtoA\Log\LogRepository;
+use EtoA\Log\LogSeverity;
 use EtoA\Race\RaceDataRepository;
 use EtoA\User\UserRepository;
 use EtoA\User\UserSearch;
@@ -16,6 +19,8 @@ $userService = $app[UserService::class];
 
 /** @var UserRepository $userRepository */
 $userRepository = $app[UserRepository::class];
+/** @var LogRepository $logRepository */
+$logRepository = $app[LogRepository::class];
 
 /** @var Request */
 $request = Request::createFromGlobals();
@@ -55,7 +60,7 @@ elseif ($sub == "create") {
                 $request->request->has('user_ghost'),
                 true
             );
-            Log::add(Log::F_USER, Log::INFO, "Der Benutzer " . $newUser->nick . " (" . $newUser->name . ", " . $newUser->email . ") wurde registriert!");
+            $logRepository->add(LogFacility::USER, LogSeverity::INFO, "Der Benutzer " . $newUser->nick . " (" . $newUser->name . ", " . $newUser->email . ") wurde registriert!");
             success_msg("Benutzer wurde erstellt! [[page user sub=edit id=" . $newUser->id . "]Details[/page]]");
         } catch (Exception $e) {
             error_msg("Benutzer konnte nicht erstellt werden!\n\n" . $e->getMessage());

@@ -5,6 +5,20 @@ use EtoA\Admin\AdminUserRepository;
 use EtoA\Building\BuildingDataRepository;
 use EtoA\Defense\DefenseDataRepository;
 use EtoA\HostCache\NetworkNameService;
+use EtoA\Log\BattleLogRepository;
+use EtoA\Log\BattleLogSearch;
+use EtoA\Log\DebrisLogRepository;
+use EtoA\Log\DebrisLogSearch;
+use EtoA\Log\FleetLogFacility;
+use EtoA\Log\FleetLogRepository;
+use EtoA\Log\FleetLogSearch;
+use EtoA\Log\GameLogFacility;
+use EtoA\Log\GameLogRepository;
+use EtoA\Log\GameLogSearch;
+use EtoA\Log\LogFacility;
+use EtoA\Log\LogRepository;
+use EtoA\Log\LogSearch;
+use EtoA\Log\LogSeverity;
 use EtoA\Ship\ShipDataRepository;
 use EtoA\Technology\TechnologyDataRepository;
 use EtoA\User\UserRepository;
@@ -469,6 +483,8 @@ function showLogs($args = null, $limit = 0)
 
     /** @var NetworkNameService $networkNameService */
     $networkNameService = $app[NetworkNameService::class];
+    /** @var LogRepository $logRepository */
+    $logRepository = $app[LogRepository::class];
 
     $paginationLimit = 100;
 
@@ -476,37 +492,25 @@ function showLogs($args = null, $limit = 0)
     $sev = is_array($args) && isset($args['logsev'])  ? $args['logsev'] : 0;
     $text = is_array($args) && isset($args['searchtext'])   ? $args['searchtext'] : "";
 
-    $order = "timestamp DESC";
-
-    $sql1 = "SELECT ";
-    $sql2 = " * ";
-
-    $sql3 = " FROM logs WHERE ";
-    $sql3 .= "1";
+    $search = LogSearch::create();
     if ($cat > 0) {
-        $sql3 .= " AND facility=" . $cat . " ";
+        $search->facility($cat);
     }
     if ($text != "") {
-        $sql3 .= " AND message LIKE '%" . $text . "%' ";
+        $search->messageLike($text);
     }
     if ($sev > 0) {
-        $sql3 .= " AND severity >= " . $sev . " ";
+        $search->severity($sev);
     }
-    $sql3 .= " ORDER BY $order";
 
-    $res = dbquery($sql1 . " COUNT(id) as cnt " . $sql3);
-    $arr = mysql_fetch_row($res);
-    $total = $arr[0];
+    $total = $logRepository->count($search);
 
     $limit = max(0, $limit);
     $limit = min($total, $limit);
     $limit -= $limit % $paginationLimit;
-    $limitstring = "$limit,$paginationLimit";
 
-    $sql4 = " LIMIT $limitstring";
-
-    $res = dbquery($sql1 . $sql2 . $sql3 . $sql4);
-    $nr = mysql_num_rows($res);
+    $logs = $logRepository->searchLogs($search, $paginationLimit, $limit);
+    $nr = count($logs);
     if ($nr > 0) {
         echo "<table class=\"tb\">";
         echo "<tr><th colspan=\"4\">
@@ -537,14 +541,14 @@ function showLogs($args = null, $limit = 0)
             <th style=\"width:90px;\">Bereich</th>
             <th>Nachricht</th>
         </tr>";
-        while ($arr = mysql_fetch_assoc($res)) {
+        foreach ($logs as $log) {
             echo "<tr>
-            <td>" . df($arr['timestamp']) . "</td>
-            <td>" . Log::$severities[$arr['severity']] . "</td>
-            <td>" . Log::$facilities[$arr['facility']] . "</td>
-            <td>" . text2html($arr['message']);
-            if ($arr['ip'] != "")
-                echo "<br/><br/><b>Host:</b> " . $arr['ip'] . " (" . $networkNameService->getHost($arr['ip']) . ")";
+            <td>" . df($log->timestamp) . "</td>
+            <td>" . LogSeverity::SEVERITIES[$log->severity] . "</td>
+            <td>" . LogFacility::FACILITIES[$log->facility] . "</td>
+            <td>" . text2html($log->message);
+            if ($log->ip != "")
+                echo "<br/><br/><b>Host:</b> " . $log->ip . " (" . $networkNameService->getHost($log->ip) . ")";
             echo "</td>
             </tr>";
         }
@@ -560,20 +564,17 @@ function showAttackAbuseLogs($args = null, $limit = -1, $load = true)
 
     /** @var UserRepository */
     $userRepository = $app[UserRepository::class];
+    /** @var BattleLogRepository $battleLogRepository */
+    $battleLogRepository = $app[BattleLogRepository::class];
 
     $paginationLimit = 50;
 
     if ($load) {
+        $search = BattleLogSearch::create();
         $action = is_array($args) && isset($args['flaction']) ? $args['flaction'] : 0;
         $sev = is_array($args) && isset($args['logsev'])  ? $args['logsev'] : 0;
 
         $landtime = is_array($args) ? mktime($args['searchtime_h'], $args['searchtime_i'], $args['searchtime_s'], $args['searchtime_m'], $args['searchtime_d'], $args['searchtime_y']) : time();
-
-        $order = "timestamp ASC";
-
-        $sql1 = "SELECT ";
-        $sql2 = " * ";
-        $sql3 = " FROM logs_battle l ";
 
         if (isset($args['searchfuser']) && $args['searchfuser'] != "" && !is_numeric($args['searchfuser'])) {
             $args['searchfuser'] = $userRepository->getUserIdByNick($args['searchfuser']);
@@ -582,27 +583,25 @@ function showAttackAbuseLogs($args = null, $limit = -1, $load = true)
             $args['searcheuser'] = $userRepository->getUserIdByNick($args['searcheuser']);
         }
 
-        $sql3 .= " WHERE fleet_weapon>0 AND landtime<='" . $landtime . "' AND landtime>'" . ($landtime - 3600 * 24) . "' ";
+        $search->attackingBetween($landtime, $landtime - 3600 * 24);
         if ($action != "") {
-            $sql3 .= " AND action='" . $action . "' ";
+            $search->action($action);
         }
         if ($sev > 0) {
-            $sql3 .= " AND severity >= " . $sev . " ";
+            $search->severity($sev);
         }
         if (isset($args['searchfuser']) && is_numeric($args['searchfuser'])) {
-            $sql3 .= " AND l.user_id LIKE '%," . intval($args['searchfuser']) . ",%' ";
+            $search->fleetUserId((int) $args['searchfuser']);
         }
         if (isset($args['searcheuser']) && is_numeric($args['searcheuser'])) {
-            $sql3 .= " AND l.entity_user_id LIKE '%," . intval($args['searcheuser']) . ",%' ";
+            $search->entityUserId((int) $args['searcheuser']);
         }
-        $sql3 .= " ORDER BY $order";
 
-        $res = dbquery($sql1 . $sql2 . $sql3);
+        $logs = $battleLogRepository->searchLogs($search);
 
         $bans = array();
-        $actions = array();
 
-        if (mysql_num_rows($res) > 0) {
+        if (count($logs) > 0) {
             $data = array();
 
             $waveMaxCnt = array(3, 4);                // Max. 3er/4er Wellen...
@@ -619,14 +618,14 @@ function showAttackAbuseLogs($args = null, $limit = -1, $load = true)
             $add_ban_time = 12 * 3600;                                // Sperrzeit bei jedem weiteren Vergehen: 12h (wird immer dazu addiert)
 
             //Alle Daten werden in einem Array gespeichert, da mehr als 1 Angriffer möglich ist funktioniert das alte Tool nicht mehr
-            while ($arr = mysql_fetch_array($res)) {
-                $uid = explode(",", $arr['user_id']);
-                $euid = explode(",", $arr['entity_user_id']);
+            foreach ($logs as $log) {
+                $uid = explode(",", $log->fleetUserIds);
+                $euid = explode(",", $log->entityUserIds);
                 $eUser = $euid[1];
-                $entity = $arr['entity_id'];
-                $time = $arr['landtime'];
-                $war = $arr['war'];
-                $action = $arr['action'];
+                $entity = $log->entityId;
+                $time = $log->landTime;
+                $war = $log->war;
+                $action = $log->action;
                 foreach ($uid as $fUser) {
                     if ($fUser != "") {
                         if (!isset($data[$fUser])) $data[$fUser] = array();
@@ -751,7 +750,7 @@ function showAttackAbuseLogs($args = null, $limit = -1, $load = true)
 
             echo "<tr>
             <td>" . df($banData['timestamp']) . "</td>
-            <td>" . Log::$severities[$banData['severity']] . "</td>
+            <td>" . LogSeverity::SEVERITIES[$banData['severity']] . "</td>
             <td>$fUser</td>
             <td>$eUser</td>
             <td>$entity</td>
@@ -773,56 +772,49 @@ function showAttackAbuseLogs($args = null, $limit = -1, $load = true)
 function showFleetLogs($args = null, $limit = 0)
 {
     global $resNames, $app;
+
+    /** @var UserRepository $userRepository */
+    $userRepository = $app[UserRepository::class];
+    /** @var FleetLogRepository $fleetLogRepository */
+    $fleetLogRepository = $app[FleetLogRepository::class];
+
     $paginationLimit = 50;
 
     $action = is_array($args) && isset($args['flaction']) ? $args['flaction'] : 0;
     $sev = is_array($args) && isset($args['logsev'])  ? $args['logsev'] : 0;
 
-    $order = "timestamp DESC";
-
-    $sql1 = "SELECT ";
-    $sql2 = " * ";
-
-    $sql3 = " FROM logs_fleet l ";
     if (isset($args['searchuser']) && $args['searchuser'] != "" && !is_numeric($args['searchuser'])) {
-        $sql3 .= " INNER JOIN users u ON u.user_id=l.user_id AND u.user_nick LIKE '%" . $args['searchuser'] . "%' ";
+        $args['searchfuser'] = $userRepository->getUserIdByNick($args['searchuser']);
     }
-
     if (isset($args['searcheuser']) && $args['searcheuser'] != "" && !is_numeric($args['searcheuser'])) {
-        $sql3 .= " INNER JOIN users eu ON eu.user_id=l.entity_user_id AND eu.user_nick LIKE '%" . $args['searcheuser'] . "%' ";
+        $args['searcheuser'] = $userRepository->getUserIdByNick($args['searcheuser']);
     }
 
-    $sql3 .= " WHERE 1 ";
+    $search = FleetLogSearch::create();
     if ($action != "") {
-        $sql3 .= " AND action='" . $action . "' ";
+        $search->action($action);
     }
     if ($sev > 0) {
-        $sql3 .= " AND severity >= " . $sev . " ";
+        $search->severity($sev);
     }
     if (isset($args['logfac']) && is_numeric($args['logfac'])) {
-        $sql3 .= " AND facility = " . $args['logfac'] . " ";
+        $search->facility($args['logfac']);
     }
     if (isset($args['searchuser']) && is_numeric($args['searchuser'])) {
-        $sql3 .= " AND l.user_id=" . intval($args['searchuser']) . " ";
+        $search->fleetUserId((int) $args['searchuser']);
     }
     if (isset($args['searcheuser']) && is_numeric($args['searcheuser'])) {
-        $sql3 .= " AND l.user_id=" . intval($args['searcheuser']) . " ";
+        $search->entityUserId((int) $args['searcheuser']);
     }
-    $sql3 .= " ORDER BY $order";
 
-    $res = dbquery($sql1 . " COUNT(id) as cnt " . $sql3);
-    $arr = mysql_fetch_row($res);
-    $total = $arr[0];
+    $total = $fleetLogRepository->count($search);
 
     $limit = max(0, $limit);
     $limit = min($total, $limit);
     $limit -= $limit % $paginationLimit;
-    $limitstring = "$limit,$paginationLimit";
 
-    $sql4 = " LIMIT $limitstring";
-
-    $res = dbquery($sql1 . $sql2 . $sql3 . $sql4);
-    $nr = mysql_num_rows($res);
+    $logs = $fleetLogRepository->searchLogs($search, $paginationLimit, $limit);
+    $nr = count($logs);
     if ($nr > 0) {
         echo "<table class=\"tb\">";
         echo "<tr><th colspan=\"10\">
@@ -862,83 +854,67 @@ function showFleetLogs($args = null, $limit = 0)
         /** @var ShipDataRepository $shipDataRepository */
         $shipDataRepository = $app[ShipDataRepository::class];
         $shipNames = $shipDataRepository->getShipNames(true);
-        while ($arr = mysql_fetch_assoc($res)) {
-            $owner = new User($arr['user_id']);
-            $fa = FleetAction::createFactory($arr['action']);
-            $startEntity = Entity::createFactoryById($arr['entity_from']);
-            $endEntity = Entity::createFactoryById($arr['entity_to']);
+        foreach ($logs as $log) {
+            $owner = new User($log->userId);
+            $fa = FleetAction::createFactory($log->action);
+            $startEntity = Entity::createFactoryById($log->entityFromId);
+            $endEntity = Entity::createFactoryById($log->entityToId);
             echo "<tr>
-            <td>" . df($arr['timestamp']) . "</td>
-            <td>" . Log::$severities[$arr['severity']] . "</td>
-            <td>" . FleetLog::$facilities[$arr['facility']] . "</td>
+            <td>" . df($log->timestamp) . "</td>
+            <td>" . LogSeverity::SEVERITIES[$log->severity] . "</td>
+            <td>" . FleetLogFacility::FACILITIES[$log->facility] . "</td>
             <td>$owner</td>
-            <td>" . $fa . " [" . FleetAction::$statusCode[$arr["status"]] . "]</td>
+            <td>" . $fa . " [" . FleetAction::$statusCode[$log->status] . "]</td>
             <td>" . $startEntity . "<br/>" . $startEntity->entityCodeString() . ", " . $startEntity->owner() . "</td>
             <td>" . $endEntity . "<br/>" . $endEntity->entityCodeString() . ", " . $endEntity->owner() . "</td>
-            <td>" . df($arr['launchtime']) . "</td>
-            <td>" . df($arr['landtime']) . "</td>
-            <td><a href=\"javascript:;\" onclick=\"toggleBox('details" . $arr['id'] . "')\">Bericht</a></td>
+            <td>" . df($log->launchTime) . "</td>
+            <td>" . df($log->landTime) . "</td>
+            <td><a href=\"javascript:;\" onclick=\"toggleBox('details" . $log->id . "')\">Bericht</a></td>
             </tr>";
-            echo "<tr id=\"details" . $arr['id'] . "\" style=\"display:none;\"><td colspan=\"10\">";
+            echo "<tr id=\"details" . $log->id . "\" style=\"display:none;\"><td colspan=\"10\">";
             tableStart("", 450);
             echo "<tr><th>Schiffe in der Flotte</th><th>Vor der Aktion</th><th>Nach der Aktion</th></tr>";
-            $sship = array();
-            $ssship = explode(",", $arr['fleet_ships_start']);
-            foreach ($ssship as $sd) {
-                $sdi = explode(":", $sd);
-                $sship[$sdi[0]] = $sdi[1];
-            }
-            $esship = explode(",", $arr['fleet_ships_end']);
-            foreach ($esship as $sd) {
-                $sdi = explode(":", $sd);
-                if ($sdi[0] > 0)
-                    echo "<tr><td>" . $shipNames[(int) $sdi[0]] . "</td><td>" . nf($sdi[1]) . "</td><td>" . nf($sship[$sdi[0]]) . "</td></tr>";
+            $sship = $log->fleetShipsStart;
+            foreach ($log->fleetShipsEnd as $shipId => $count) {
+                echo "<tr><td>" . $shipNames[$shipId] . "</td><td>" . nf($count) . "</td><td>" . nf($sship[$shipId] ?? 0) . "</td></tr>";
             }
             echo tableEnd();
             tableStart("", 450);
             echo "<tr><th>Schiffe auf dem Planeten</th><th>Vor der Aktion</th><th>Nach der Aktion</th></tr>";
-            $sship = array();
-            $ssship = explode(",", $arr['entity_ships_start']);
-            foreach ($ssship as $sd) {
-                $sdi = explode(":", $sd);
-                $sship[$sdi[0]] = $sdi[1];
-            }
-            $esship = explode(",", $arr['entity_ships_end']);
-            foreach ($esship as $sd) {
-                $sdi = explode(":", $sd);
-                if ($sdi[0] > 0)
-                    echo "<tr><td>" . $shipNames[(int) $sdi[0]] . "</td><td>" . nf($sdi[1]) . "</td><td>" . nf($sship[$sdi[0]]) . "</td></tr>";
+            $sship = $log->entityShipsStart;
+            foreach ($log->entityShipsEnd as $shipId => $count) {
+                echo "<tr><td>" . $shipNames[$shipId] . "</td><td>" . nf($count) . "</td><td>" . nf($sship[$shipId] ?? 0) . "</td></tr>";
             }
             echo tableEnd();
             tableStart("", 450);
             echo "<tr><th>Rohstoffe in der Flotte</th><th>Vor der Aktion</th><th>Nach der Aktion</th></tr>";
             $sres = array();
             $eres = array();
-            $ssres = explode(":", $arr['fleet_res_start']);
+            $ssres = explode(":", $log->fleetResStart);
             foreach ($ssres as $sd) {
                 array_push($sres, $sd);
             }
-            $esres = explode(":", $arr['fleet_res_end']);
+            $esres = explode(":", $log->fleetResEnd);
             foreach ($esres as $sd) {
                 array_push($eres, $sd);
             }
             foreach ($resNames as $k => $v) {
-                echo "<tr><td>" . $v . "</td><td>" . nf($sres[$k]) . "</td><td>" . nf($eres[$k]) . "</td></tr>";
+                echo "<tr><td>" . $v . "</td><td>" . nf((int) $sres[$k]) . "</td><td>" . nf((int) $eres[$k]) . "</td></tr>";
             }
-            echo "<tr><td>Bewoner</td><td>" . nf($sres[5]) . "</td><td>" . nf($eres[5]) . "</td></tr>";
+            echo "<tr><td>Bewoner</td><td>" . nf((int) $sres[5]) . "</td><td>" . nf((int) $eres[5]) . "</td></tr>";
             echo tableEnd();
 
             //Will not show Resmessage if entity was not touched (fleet cancel)
-            if ($arr['entity_res_start'] != "untouched" || $arr['entity_res_end'] != "untouched") {
+            if ($log->entityResStart != "untouched" || $log->entityResEnd != "untouched") {
                 tableStart("", 450);
                 echo "<tr><th>Rohstoffe auf der Entity</th><th>Vor der Aktion</th><th>Nach der Aktion</th></tr>";
                 $sres = array();
                 $eres = array();
-                $ssres = explode(":", $arr['entity_res_start']);
+                $ssres = explode(":", $log->entityResStart);
                 foreach ($ssres as $sd) {
                     array_push($sres, $sd);
                 }
-                $esres = explode(":", $arr['entity_res_end']);
+                $esres = explode(":", $log->entityResEnd);
                 foreach ($esres as $sd) {
                     array_push($eres, $sd);
                 }
@@ -948,7 +924,7 @@ function showFleetLogs($args = null, $limit = 0)
                 echo "<tr><td>Bewoner</td><td>" . nf($sres[5]) . "</td><td>" . nf($eres[5]) . "</td></tr>";
                 echo tableEnd();
             }
-            echo $arr["message"];
+            echo $log->message;
             echo "</td></tr>";
         }
         echo "</table>";
@@ -964,34 +940,29 @@ function showDebrisLogs($args = null, $limit = 0)
     $adminUserRepo = $app[AdminUserRepository::class];
     /** @var UserRepository $userRepository */
     $userRepository = $app[UserRepository::class];
+    /** @var DebrisLogRepository $debrisLogRepository */
+    $debrisLogRepository = $app[DebrisLogRepository::class];
 
     $maxtime = is_array($args) ? mktime($args['searchtime_h'], $args['searchtime_i'], $args['searchtime_s'], $args['searchtime_m'], $args['searchtime_d'], $args['searchtime_y']) : time();
 
     $paginationLimit = 50;
 
-    $sql = "SELECT * from logs_debris";
-    $sql2 = " WHERE time<" . $maxtime;
-
+    $search = DebrisLogSearch::create()->timeBefore($maxtime);
     if (isset($args['searchuser']) && trim($args['searchuser']) != '') {
-        $sql2 .= " AND user_id = " . $userRepository->getUserIdByNick($args['searchuser']) . " ";
-    };
+        $search->userId($userRepository->getUserIdByNick($args['searchuser']));
+    }
     if (isset($args['searchadmin']) && trim($args['searchadmin']) != '') {
-        $admin = $adminUserRepo->findOneByNick($args['searchadmin']);
-        $sql2 .= " AND admin_id=" . ($admin != null ? $admin->id : 0);
-    };
+        $search->adminId($adminUserRepo->findOneByNick($args['searchadmin']));
+    }
 
-    $res = dbquery(" SELECT COUNT(id) as cnt from logs_debris" . $sql2);
-    $arr = mysql_fetch_row($res);
-    $total = $arr[0];
+    $total = $debrisLogRepository->count($search);
 
     $limit = max(0, $limit);
     $limit = min($total, $limit);
     $limit -= $limit % $paginationLimit;
-    $limitstring = "$limit,$paginationLimit";
 
-    $res = dbquery($sql . $sql2);
-
-    $nr = mysql_num_rows($res);
+    $logs = $debrisLogRepository->searchLogs($search, $paginationLimit, $limit);
+    $nr = count($logs);
     if ($nr > 0) {
         echo "<table class=\"tb\">";
         echo "<tr><th colspan=\"10\">
@@ -1024,15 +995,15 @@ function showDebrisLogs($args = null, $limit = 0)
             <th>Silizium</th>
             <th>PVC</th>
         </tr>";
-        while ($arr = mysql_fetch_assoc($res)) {
-            $admin = $adminUserRepo->find($arr['admin_id']);
+        foreach ($logs as $log) {
+            $admin = $adminUserRepo->find($log->adminId);
             echo "<tr>
-            <td>" . date('d M Y H:i:s', $arr['time']) . "</td>
+            <td>" . date('d M Y H:i:s', $log->timestamp) . "</td>
             <td>" . ($admin != null ? $admin->nick : '?') . "</td>
-            <td>" . new User($arr['user_id']) . "</td>
-            <td>" . $arr['metal'] . "</td>
-            <td>" . $arr['crystal'] . "</td>
-            <td>" . $arr['plastic'] . "</td>
+            <td>" . new User($log->userId) . "</td>
+            <td>" . $log->metal . "</td>
+            <td>" . $log->crystal . "</td>
+            <td>" . $log->plastic . "</td>
             </tr>";
         }
         echo "</table>";
@@ -1045,66 +1016,56 @@ function showGameLogs($args = null, $limit = 0)
 {
     global $app;
 
+    /** @var GameLogRepository $gameLogRepository */
+    $gameLogRepository = $app[GameLogRepository::class];
+
     $paginationLimit = 25;
 
     $cat = is_array($args) && isset($args['logcat']) ? $args['logcat'] : 0;
     $sev = is_array($args) && isset($args['logsev'])  ? $args['logsev'] : 0;
     $text = is_array($args) && isset($args['searchtext'])   ? $args['searchtext'] : "";
 
-    $order = "timestamp DESC";
-
-    $sql1 = "SELECT ";
-    $sql2 = " l.* ";
-
-    $sql3 = " FROM logs_game l ";
+    $search = GameLogSearch::create();
     if (isset($args['searchuser']) && $args['searchuser'] != "" && !is_numeric($args['searchuser'])) {
-        $sql3 .= " INNER JOIN users u ON u.user_id=l.user_id AND u.user_nick LIKE '%" . $args['searchuser'] . "%' ";
+        $search->userNickLike($args['searchuser']);
     }
     if (isset($args['searchalliance']) && $args['searchalliance'] != "" && !is_numeric($args['searchalliance'])) {
-        $sql3 .= " INNER JOIN alliances a ON a.alliance_id=l.alliance_id AND a.alliance_name LIKE '%" . $args['searchalliance'] . "%' ";
+        $search->allianceNameLike($args['searchalliance']);
     }
     if (isset($args['searchentity']) && $args['searchentity'] != "" && !is_numeric($args['searchentity'])) {
         // TODO: this now only works for planets...
-        $sql3 .= " INNER JOIN planets e ON e.id=l.entity_id AND e.planet_name LIKE '%" . $args['searchentity'] . "%' ";
+        $search->planetNameLike($args['searchentity']);
     }
-    $sql3 .= " WHERE 1 ";
 
     if (isset($args['searchuser']) && is_numeric($args['searchuser'])) {
-        $sql3 .= " AND l.user_id=" . intval($args['searchuser']) . " ";
+        $search->userId((int) $args['searchuser']);
     }
     if (isset($args['searchalliance']) && is_numeric($args['searchalliance'])) {
-        $sql3 .= " AND l.alliance_id=" . intval($args['searchalliance']) . " ";
+        $search->allianceId((int) $args['searchalliance']);
     }
     if (isset($args['searchentity']) && is_numeric($args['searchentity'])) {
-        $sql3 .= " AND l.entity_id=" . intval($args['searchentity']) . " ";
+        $search->entityId((int) $args['searchentity']);
     }
     if ($cat > 0) {
-        $sql3 .= " AND facility=" . $cat . " ";
+        $search->facility($cat);
     }
     if ($text != "") {
-        $sql3 .= " AND message LIKE '%" . $text . "%' ";
+        $search->messageLike($text);
     }
     if ($sev > 0) {
-        $sql3 .= " AND severity >= " . $sev . " ";
+        $search->severity($sev);
     }
     if (isset($args['object_id']) && $args['object_id'] > 0) {
-        $sql3 .= " AND object_id = " . $args['object_id'] . " ";
+        $search->objectId($sev);
     }
-    $sql3 .= " ORDER BY $order";
 
-    $res = dbquery($sql1 . " COUNT(l.id) as cnt " . $sql3);
-    $arr = mysql_fetch_row($res);
-    $total = $arr[0];
-
+    $total = $gameLogRepository->count($search);
     $limit = max(0, $limit);
     $limit = min($total, $limit);
     $limit -= $limit % $paginationLimit;
-    $limitstring = "$limit,$paginationLimit";
 
-    $sql4 = " LIMIT $limitstring";
-
-    $res = dbquery($sql1 . $sql2 . $sql3 . $sql4);
-    $nr = mysql_num_rows($res);
+    $logs = $gameLogRepository->searchLogs($search, $paginationLimit, $limit);
+    $nr = count($logs);
     if ($nr > 0) {
         echo "<table class=\"tb\">";
         echo "<tr><th colspan=\"10\">
@@ -1153,14 +1114,14 @@ function showGameLogs($args = null, $limit = 0)
             <th>Status</th>
             <th>Optionen</th>
         </tr>";
-        while ($arr = mysql_fetch_assoc($res)) {
-            $tu = ($arr['user_id'] > 0) ? new User($arr['user_id']) : "-";
-            $ta = ($arr['alliance_id'] > 0) ? new Alliance($arr['alliance_id']) : "-";
-            $te = ($arr['entity_id'] > 0) ? Entity::createFactoryById($arr['entity_id']) : "-";
-            switch ($arr['facility']) {
-                case GameLog::F_BUILD:
-                    $ob = $buildingNames[$arr['object_id']] . " " . ($arr['level'] > 0 ? $arr['level'] : '');
-                    switch ($arr['status']) {
+        foreach ($logs as $log) {
+            $tu = ($log->userId > 0) ? new User($log->userId) : "-";
+            $ta = ($log->allianceId > 0) ? new Alliance($log->allianceId) : "-";
+            $te = ($log->entityId > 0) ? Entity::createFactoryById($log->entityId) : "-";
+            switch ($log->facility) {
+                case GameLogFacility::BUILD:
+                    $ob = $buildingNames[$log->objectId] . " " . ($log->level > 0 ? $log->level : '');
+                    switch ($log->status) {
                         case 1:
                             $obStatus = "Ausbau abgebrochen";
                             break;
@@ -1177,9 +1138,9 @@ function showGameLogs($args = null, $limit = 0)
                             $obStatus = '-';
                     }
                     break;
-                case GameLog::F_TECH:
-                    $ob = $technologyNames[$arr['object_id']] . " " . ($arr['level'] > 0 ? $arr['level'] : '');
-                    switch ($arr['status']) {
+                case GameLogFacility::TECH:
+                    $ob = $technologyNames[$log->objectId] . " " . ($log->level > 0 ? $log->level : '');
+                    switch ($log->status) {
                         case 3:
                             $obStatus = "Erforschung";
                             break;
@@ -1190,9 +1151,9 @@ function showGameLogs($args = null, $limit = 0)
                             $obStatus = '-';
                     }
                     break;
-                case GameLog::F_SHIP:
-                    $ob = $arr['object_id'] > 0 ? $shipNames[$arr['object_id']] . ' ' . ($arr['level'] > 0 ? $arr['level'] . 'x' : '') : '-';
-                    switch ($arr['status']) {
+                case GameLogFacility::SHIP:
+                    $ob = $log->objectId > 0 ? $shipNames[$log->objectId] . ' ' . ($log->level > 0 ? $log->level . 'x' : '') : '-';
+                    switch ($log->status) {
                         case 1:
                             $obStatus = "Bau";
                             break;
@@ -1203,9 +1164,9 @@ function showGameLogs($args = null, $limit = 0)
                             $obStatus = '-';
                     }
                     break;
-                case GameLog::F_DEF:
-                    $ob = $arr['object_id'] > 0 ? $defenseNames[$arr['object_id']] . ' ' . ($arr['level'] > 0 ? $arr['level'] . 'x' : '') : '-';
-                    switch ($arr['status']) {
+                case GameLogFacility::DEF:
+                    $ob = $log->objectId > 0 ? $defenseNames[$log->objectId] . ' ' . ($log->level > 0 ? $log->level . 'x' : '') : '-';
+                    switch ($log->status) {
                         case 1:
                             $obStatus = "Bau";
                             break;
@@ -1216,11 +1177,11 @@ function showGameLogs($args = null, $limit = 0)
                             $obStatus = '-';
                     }
                     break;
-                case GameLog::F_QUESTS:
-                    $quest = $app['cubicle.quests.registry']->getQuest($arr['object_id']);
+                case GameLogFacility::QUESTS:
+                    $quest = $app['cubicle.quests.registry']->getQuest($log->objectId);
                     $questStates = array_flip(\EtoA\Quest\Log\QuestGameLog::TRANSITION_MAP);
                     $ob = $quest->getData()['title'];
-                    $obStatus = str_replace('_', ' ', $questStates[$arr['status']]);
+                    $obStatus = str_replace('_', ' ', $questStates[$log->status]);
                     break;
                 default:
                     $ob = "-";
@@ -1228,18 +1189,18 @@ function showGameLogs($args = null, $limit = 0)
             }
 
             echo "<tr>
-            <td>" . df($arr['timestamp']) . "</td>
-            <td>" . GameLog::$severities[$arr['severity']] . "</td>
-            <td>" . GameLog::$facilities[$arr['facility']] . "</td>
+            <td>" . df($log->timestamp) . "</td>
+            <td>" . LogSeverity::SEVERITIES[$log->severity] . "</td>
+            <td>" . GameLogFacility::FACILITIES[$log->facility] . "</td>
             <td>" . $tu . "</td>
             <td>" . $ta . "</td>
             <td>" . $te . "</td>
             <td>" . $ob . "</td>
             <td>" . $obStatus . "</td>
-            <td><a href=\"javascript:;\" onclick=\"toggleBox('details" . $arr['id'] . "')\">Details</a></td>
+            <td><a href=\"javascript:;\" onclick=\"toggleBox('details" . $log->id . "')\">Details</a></td>
             </tr>";
-            echo "<tr id=\"details" . $arr['id'] . "\" style=\"display:none;\"><td colspan=\"9\">" . text2html($arr['message']) . "
-            <br/><br/>IP: " . $arr['ip'] . "</td></tr>";
+            echo "<tr id=\"details" . $log->id . "\" style=\"display:none;\"><td colspan=\"9\">" . text2html($log->message) . "
+            <br/><br/>IP: " . $log->ip . "</td></tr>";
         }
         echo "</table>";
     } else {
