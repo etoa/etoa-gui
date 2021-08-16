@@ -24,10 +24,6 @@ echo "<div id=\"logsinfo\"></div>"; //nur zu entwicklungszwecken!
 
 if ($sub == "errorlog") {
     errorlog($twig);
-} elseif (isset($_POST['alliance_search']) && $_POST['alliance_search'] != "" || isset($_GET['action']) && $_GET['action'] == "searchresults") {
-    logSearchResults();
-} elseif (isset($_GET['sub']) && $_GET['sub'] == "view") {
-    viewEntry();
 } elseif (isset($_GET['sub']) && $_GET['sub'] == "logs_battle") {
     battleLog();
 } elseif (isset($_GET['sub']) && $_GET['sub'] == "logs_game") {
@@ -67,103 +63,6 @@ function errorlog(Environment $twig)
         'logFile' => $logFile,
     ]);
     exit();
-}
-
-function logSearchResults()
-{
-    global $page;
-
-    if ($_SESSION['logs']['query'] == "") {
-        $sql = '';
-        $sqlstart = "SELECT * FROM logs,log_cat WHERE log_cat=cat_id ";
-        $sqlend = " ORDER BY log_realtime DESC, log_timestamp DESC";
-        if ($_POST['limit'] > 0)
-            $sqlend .= " LIMIT " . $_POST['limit'] . ";";
-        if ($_POST['log_text'] != "") {
-            if (stristr($_POST['qmode']['log_text'], "%")) $addchars = "%";
-            else $addchars = "";
-            $sql .= " AND log_text " . stripslashes($_POST['qmode']['log_text']) . $_POST['log_text'] . "$addchars'";
-        }
-        if ($_POST['log_text2'] != "") {
-            if (stristr($_POST['qmode']['log_text2'], "%")) $addchars = "%";
-            else $addchars = "";
-            $sql .= " AND log_text " . stripslashes($_POST['qmode']['log_text2']) . $_POST['log_text2'] . "$addchars'";
-        }
-        if ($_POST['log_hostname'] != "") {
-            if (stristr($_POST['qmode']['log_hostname'], "%")) $addchars = "%";
-            else $addchars = "";
-            $sql .= " AND log_hostname " . stripslashes($_POST['qmode']['log_hostname']) . $_POST['log_hostname'] . "$addchars'";
-        }
-        if ($_POST['log_ip'] != "") {
-            if (stristr($_POST['qmode']['log_ip'], "%")) $addchars = "%";
-            else $addchars = "";
-            $sql .= " AND log_ip " . stripslashes($_POST['qmode']['log_ip']) . $_POST['log_ip'] . "$addchars'";
-        }
-        if ($_POST['log_cat'] > 0) {
-            $sql .= " AND log_cat=" . $_POST['log_cat'];
-        }
-        $sql = $sqlstart . $sql . $sqlend;
-        $_SESSION['logs']['query'] = $sql;
-    } else
-        $sql = $_SESSION['logs']['query'];
-
-    $res = dbquery($sql);
-    if (mysql_num_rows($res) > 0) {
-        echo mysql_num_rows($res) . " Datens&auml;tze vorhanden<br/><br/>";
-        if (mysql_num_rows($res) > 20)
-            echo "<input type=\"button\" value=\"Neue Suche\" onclick=\"document.location='?page=$page'\" /><br/><br/>";
-
-        echo "<table class=\"tbl\">";
-        echo "<tr>";
-        echo "<td class=\"tbltitle\" valign=\"top\">Zeit</td>";
-        echo "<td class=\"tbltitle\" valign=\"top\">Kategorie</td>";
-        echo "<td class=\"tbltitle\" valign=\"top\">Text</td>";
-        echo "<td class=\"tbltitle\" valign=\"top\">Computer</td>";
-        echo "<td>&nbsp;</td>";
-        echo "</tr>";
-        while ($arr = mysql_fetch_array($res)) {
-            echo "<tr>";
-            echo "<td class=\"tbldata\" valign=\"top\"><b>" . date("d.m.Y H:i:s", $arr['log_timestamp']) . "</b><br/>";
-            if ($arr['log_realtime'] > 0)
-                echo date("Y-m-d H:i:s", $arr['log_realtime']);
-            else
-                echo "-";
-            echo "</td>";
-            echo "<td class=\"tbldata\">" . $arr['cat_name'] . "</td>";
-            echo "<td class=\"tbldata\" valign=\"top\">" . text2html(cut_string($arr['log_text'], 300)) . "</td>";
-            echo "<td class=\"tbldata\" valign=\"top\">" . $arr['log_ip'] . " " . $arr['log_hostname'] . "</td>";
-            echo "<td class=\"tbldata\" valign=\"top\"><a href=\"?page=$page&amp;sub=view&amp;log_id=" . $arr['log_id'] . "\">detail</a></td>";
-            echo "</tr>";
-        }
-        echo "</table>";
-        echo "<br/><input type=\"button\" value=\"Neue Suche\" onclick=\"document.location='?page=$page'\" />";
-    } else {
-        echo "Die Suche lieferte keine Resultate!<br/><br/>";
-        echo "<input type=\"button\" onclick=\"document.location='?page=$page'\" value=\"Zur&uuml;ck\" /><br/><br/>";
-    }
-}
-
-function viewEntry()
-{
-    global $page;
-
-    $res = dbquery("SELECT * FROM logs,log_cat WHERE log_cat=cat_id AND log_id=" . $_GET['log_id'] . ";");
-    $arr = mysql_fetch_array($res);
-    echo "<table class=\"tbl\">";
-    echo "<tr><td class=\"tbltitle\" valign=\"top\">Zeit</td><td class=\"tbldata\">" . date("Y-m-d H:i:s", $arr['log_timestamp']) . "</td></tr>";
-    echo "<tr><td class=\"tbltitle\" valign=\"top\">Realzeit</td><td class=\"tbldata\">";
-    if ($arr['log_realtime'] > 0)
-        echo date("Y-m-d H:i:s", $arr['log_realtime']);
-    else
-        echo "-";
-    echo "</td></tr>";
-    echo "<tr><td class=\"tbltitle\" valign=\"top\">Kategorie</td><td class=\"tbldata\">" . $arr['cat_name'] . "</td></tr>";
-    echo "<tr><td class=\"tbltitle\" valign=\"top\">Text</td><td class=\"tbldata\">" . text2html($arr['log_text']) . "</td></tr>";
-    echo "<tr><td class=\"tbltitle\" valign=\"top\">Hostname</td><td class=\"tbldata\">" . $arr['log_hostname'] . "</td></tr>";
-    echo "<tr><td class=\"tbltitle\" valign=\"top\">IP</td><td class=\"tbldata\">" . $arr['log_ip'] . "</td></tr>";
-    echo "</table>";
-    echo "<br/><input type=\"button\" value=\"Zur&uuml;ck\" onclick=\"document.location='?page=$page&action=searchresults'\" /> ";
-    echo "<input type=\"button\" value=\"Neue Suche\" onclick=\"document.location='?page=$page'\" />";
 }
 
 function battleLog()
