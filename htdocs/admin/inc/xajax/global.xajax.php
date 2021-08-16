@@ -51,7 +51,6 @@ $xajax->register(XAJAX_FUNCTION, "submitEditBuilding");
 $xajax->register(XAJAX_FUNCTION, "searchUser");
 $xajax->register(XAJAX_FUNCTION, "searchUserList");
 $xajax->register(XAJAX_FUNCTION, "searchAlliance");
-$xajax->register(XAJAX_FUNCTION, "searchPlanet");
 $xajax->register(XAJAX_FUNCTION, "lockUser");
 
 $xajax->register(XAJAX_FUNCTION, "buildingPrices");
@@ -1081,50 +1080,6 @@ function searchAlliance($val, $field_id = 'alliance_name', $box_id = 'citybox')
 
     return $objResponse;
 }
-
-
-//Listet gefundene Planeten auf
-function searchPlanet($val, $field_id = 'planet_name', $box_id = 'citybox')
-{
-
-    $sOut = "";
-    $nCount = 0;
-    $sLastHit = null;
-
-    $res = dbquery("SELECT planet_name FROM planets WHERE planet_name LIKE '" . $val . "%' LIMIT 20;");
-    if (mysql_num_rows($res) > 0) {
-        while ($arr = mysql_fetch_row($res)) {
-            $nCount++;
-            $sOut .= "<a href=\"#\" onclick=\"javascript:document.getElementById('" . $field_id . "').value='" . htmlentities($arr[0]) . "';document.getElementById('" . $box_id . "').style.display = 'none';\">" . htmlentities($arr[0]) . "</a>";
-            $sLastHit = $arr[0];
-        }
-    }
-
-    if ($nCount > 20) {
-        $sOut = "";
-    }
-
-    $objResponse = new xajaxResponse();
-
-    if (strlen($sOut) > 0) {
-        $sOut = "" . $sOut . "";
-        $objResponse->script("document.getElementById('" . $box_id . "').style.display = \"block\"");
-    } else {
-        $objResponse->script("document.getElementById('" . $box_id . "').style.display = \"none\"");
-    }
-
-    //Wenn nur noch ein User in frage kommt, diesen Anzeigen
-    if ($nCount == 1) {
-        $objResponse->script("document.getElementById('" . $box_id . "').style.display = \"none\"");
-        $objResponse->script("document.getElementById('" . $field_id . "').value = \"" . $sLastHit . "\"");
-    }
-
-    $objResponse->assign($box_id, "innerHTML", $sOut);
-
-    return $objResponse;
-}
-
-
 
 function lockUser($uid, $time, $reason)
 {
