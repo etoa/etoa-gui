@@ -8,6 +8,8 @@ use EtoA\HostCache\NetworkNameService;
 use EtoA\Log\FleetLogFacility;
 use EtoA\Log\GameLogFacility;
 use EtoA\Log\LogFacility;
+use EtoA\Log\LogRepository;
+use EtoA\Log\LogSearch;
 use EtoA\Log\LogSeverity;
 use EtoA\Ship\ShipDataRepository;
 use EtoA\Technology\TechnologyDataRepository;
@@ -473,6 +475,8 @@ function showLogs($args = null, $limit = 0)
 
     /** @var NetworkNameService $networkNameService */
     $networkNameService = $app[NetworkNameService::class];
+    /** @var LogRepository $logRepository */
+    $logRepository = $app[LogRepository::class];
 
     $paginationLimit = 100;
 
@@ -480,37 +484,25 @@ function showLogs($args = null, $limit = 0)
     $sev = is_array($args) && isset($args['logsev'])  ? $args['logsev'] : 0;
     $text = is_array($args) && isset($args['searchtext'])   ? $args['searchtext'] : "";
 
-    $order = "timestamp DESC";
-
-    $sql1 = "SELECT ";
-    $sql2 = " * ";
-
-    $sql3 = " FROM logs WHERE ";
-    $sql3 .= "1";
+    $search = LogSearch::create();
     if ($cat > 0) {
-        $sql3 .= " AND facility=" . $cat . " ";
+        $search->facility($cat);
     }
     if ($text != "") {
-        $sql3 .= " AND message LIKE '%" . $text . "%' ";
+        $search->messageLike($text);
     }
     if ($sev > 0) {
-        $sql3 .= " AND severity >= " . $sev . " ";
+        $search->severity($sev);
     }
-    $sql3 .= " ORDER BY $order";
 
-    $res = dbquery($sql1 . " COUNT(id) as cnt " . $sql3);
-    $arr = mysql_fetch_row($res);
-    $total = $arr[0];
+    $total = $logRepository->count($search);
 
     $limit = max(0, $limit);
     $limit = min($total, $limit);
     $limit -= $limit % $paginationLimit;
-    $limitstring = "$limit,$paginationLimit";
 
-    $sql4 = " LIMIT $limitstring";
-
-    $res = dbquery($sql1 . $sql2 . $sql3 . $sql4);
-    $nr = mysql_num_rows($res);
+    $logs = $logRepository->searchLogs($search, $paginationLimit, $limit);
+    $nr = count($logs);
     if ($nr > 0) {
         echo "<table class=\"tb\">";
         echo "<tr><th colspan=\"4\">
@@ -541,14 +533,14 @@ function showLogs($args = null, $limit = 0)
             <th style=\"width:90px;\">Bereich</th>
             <th>Nachricht</th>
         </tr>";
-        while ($arr = mysql_fetch_assoc($res)) {
+        foreach ($logs as $log) {
             echo "<tr>
-            <td>" . df($arr['timestamp']) . "</td>
-            <td>" . LogSeverity::SEVERITIES[$arr['severity']] . "</td>
-            <td>" . LogFacility::FACILITIES[$arr['facility']] . "</td>
-            <td>" . text2html($arr['message']);
-            if ($arr['ip'] != "")
-                echo "<br/><br/><b>Host:</b> " . $arr['ip'] . " (" . $networkNameService->getHost($arr['ip']) . ")";
+            <td>" . df($log->timestamp) . "</td>
+            <td>" . LogSeverity::SEVERITIES[$log->severity] . "</td>
+            <td>" . LogFacility::FACILITIES[$log->facility] . "</td>
+            <td>" . text2html($log->message);
+            if ($log->ip != "")
+                echo "<br/><br/><b>Host:</b> " . $log->ip . " (" . $networkNameService->getHost($log->ip) . ")";
             echo "</td>
             </tr>";
         }
