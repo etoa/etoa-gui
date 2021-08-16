@@ -215,8 +215,8 @@ elseif ($mode == "base") {
     echo "<th style=\"width:60px;\">Details</th>";
     echo "</tr>";
     $search = AllianceStatsSort::createAllianceBase();
-    if (isset($sort) && $sort != "" && $sortOrder != "") {
-        $search = $search->withSort($sort, $sortOrder);
+    if (isset($sort) && $sort != "") {
+        $search = $search->withSort($sort, 'DESC');
     }
 
     $allianceStats = $allianceStatsRepository->getStats($search);

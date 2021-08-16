@@ -11,11 +11,6 @@ parameters:
 			path: htdocs/admin/content/cronjob.php
 
 		-
-			message: "#^Variable \\$sortOrder might not be defined\\.$#"
-			count: 2
-			path: htdocs/admin/content/home/stats.inc.php
-
-		-
 			message: "#^Variable \\$iparr might not be defined\\.$#"
 			count: 6
 			path: htdocs/admin/content/user/multi.inc.php
