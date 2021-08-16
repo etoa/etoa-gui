@@ -64,6 +64,12 @@ class MissileDataRepository extends AbstractRepository
             ->execute()
             ->fetchAllAssociative();
 
-        return array_map(fn ($row) => new Missile($row), $data);
+        $result = [];
+        foreach ($data as $row) {
+            $missile = new Missile($row);
+            $result[$missile->id] = $missile;
+        }
+
+        return $result;
     }
 }
