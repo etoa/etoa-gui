@@ -27,7 +27,7 @@ class MissileFlightRepositoryTest extends AbstractDbTestCase
         $this->repository->startFlight(3, 2, 10, [1 => 1]);
         $this->connection->executeQuery('INSERT INTO planets (id) VALUES (2)');
 
-        $flights = $this->repository->getFlights(3);
+        $flights = $this->repository->getFlights(MissileFlightSearch::create()->entityFrom(3));
 
         $this->assertNotEmpty($flights);
         $this->assertSame([1 => 1], $flights[0]->missiles);

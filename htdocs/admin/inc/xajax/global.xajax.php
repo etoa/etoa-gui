@@ -179,7 +179,7 @@ function showShipsOnPlanet($form)
     ob_start();
 
     if ($eid != 0) {
-        $shipList = $shipRepository->findForUser($uid, $eid);
+        $shipList = $shipRepository->findForUser((int) $uid, (int) $eid);
         if (count($shipList) > 0) {
             $out = "<table class=\"tb\">
             <tr><th>Anzahl</th>

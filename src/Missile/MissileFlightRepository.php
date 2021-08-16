@@ -9,14 +9,13 @@ class MissileFlightRepository extends AbstractRepository
     /**
      * @return MissileFlight[]
      */
-    public function getFlights(int $entityFromId): array
+    public function getFlights(MissileFlightSearch $search): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->applySearchSortLimit($this->createQueryBuilder(), $search)
             ->select('f.flight_landtime, f.flight_id, p.planet_name, p.id')
             ->from('missile_flights', 'f')
             ->innerJoin('f', 'planets', 'p', 'p.id = f.flight_entity_to')
-            ->where('flight_entity_from = :entityFrom')
-            ->setParameter('entityFrom', $entityFromId)
+            ->orderBy('flight_landtime', 'ASC')
             ->execute()
             ->fetchAllAssociative();
 
