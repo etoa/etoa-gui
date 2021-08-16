@@ -55,6 +55,8 @@ class PlanetRepository extends AbstractRepository
             )
             ->innerJoin('planets', 'entities', 'e', 'e.id = planets.id')
             ->innerJoin('e', 'cells', 'c', 'e.cell_id = c.id')
+            ->orderBy('planet_user_main', 'DESC')
+            ->addOrderBy('planets.id', 'ASC')
             ->execute()
             ->fetchAllAssociative();
 

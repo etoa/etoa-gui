@@ -115,41 +115,34 @@ function planetSelectorByCell($form, $function, $show_user_id = 0)
 
 function planetSelectorByUser($userNick, $function, $show_user_id = 1)
 {
+    global $app;
+
+    /** @var UserRepository $userRepository */
+    $userRepository = $app[UserRepository::class];
+    /** @var PlanetRepository $planetRepository */
+    $planetRepository = $app[PlanetRepository::class];
+
     $objResponse = new xajaxResponse();
     if ($userNick != "") {
-        $pres = dbquery("
-        SELECT
-            id,
-            planet_user_id
-        FROM
-            planets
-        INNER JOIN
-            users
-        ON planet_user_id=user_id
-            AND user_nick='$userNick'
-        ORDER BY
-            planets.planet_user_main DESC,
-            planets.id ASC
-            ;
-        ");
-        $nr = mysql_num_rows($pres);
+        $userId = $userRepository->getUserIdByNick($userNick);
+        $planets = $planetRepository->getUserPlanetsWithCoordinates($userId);
+        $nr = count($planets);
         if ($nr > 0) {
             $out = "<select name=\"entity_id\" size=\"" . ($nr + 1) . "\" onchange=\"showLoader('shipsOnPlanet');xajax_" . $function . "(this.options[this.selectedIndex].value);\">\n";
             $cnt = 0;
             $val = '';
-            while ($parr = mysql_fetch_row($pres)) {
+            foreach ($planets as $planet) {
                 if ($cnt === 0) {
-                    $out .= "<option value=\"0:" . $parr[1] . "\">Alle</option>";
+                    $out .= "<option value=\"0:" . $planet->userId . "\">Alle</option>";
                     $cnt++;
                 }
-                $p = Planet::getById($parr[0]);
 
                 if ($show_user_id == 1) {
-                    $val = $parr[0] . ":" . $parr[1];
+                    $val = $planet->id . ":" . $planet->userId;
                 } else {
-                    $val = $parr[0] . ":" . "0";
+                    $val = $planet->id . ":" . "0";
                 }
-                $out .= "<option value=\"$val\">" . $p . "</option>\n";
+                $out .= "<option value=\"$val\">" . $planet->toString() . "</option>\n";
             }
             $out .= "</select>\n";
 
