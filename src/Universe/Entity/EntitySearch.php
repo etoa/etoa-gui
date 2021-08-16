@@ -27,6 +27,22 @@ class EntitySearch extends AbstractSearch
         return $this;
     }
 
+    public function cx(int $cx): self
+    {
+        $this->parts[] = 'c.cx = :cx';
+        $this->parameters['cx'] = $cx;
+
+        return $this;
+    }
+
+    public function cy(int $cy): self
+    {
+        $this->parts[] = 'c.cy = :cy';
+        $this->parameters['cy'] = $cy;
+
+        return $this;
+    }
+
     public function pos(int $pos): self
     {
         $this->parts[] = 'e.pos = :pos';

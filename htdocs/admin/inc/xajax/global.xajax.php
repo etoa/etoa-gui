@@ -10,6 +10,11 @@ use EtoA\Missile\MissileDataRepository;
 use EtoA\Missile\MissileRepository;
 use EtoA\Requirement\RequirementRepositoryProvider;
 use EtoA\Ship\ShipRepository;
+use EtoA\Universe\Entity\EntityRepository;
+use EtoA\Universe\Entity\EntitySearch;
+use EtoA\Universe\Entity\EntityType;
+use EtoA\Universe\Planet\PlanetRepository;
+use EtoA\Universe\Planet\PlanetSearch;
 use EtoA\User\UserRepository;
 use EtoA\User\UserSearch;
 
@@ -54,77 +59,43 @@ $xajax->register(XAJAX_FUNCTION, "totalBuildingPrices");
 
 function planetSelectorByCell($form, $function, $show_user_id = 0)
 {
+    global $app;
+
+    /** @var EntityRepository $entityRepository */
+    $entityRepository = $app[EntityRepository::class];
+    /** @var PlanetRepository $planetRepository */
+    $planetRepository = $app[PlanetRepository::class];
+
     $objResponse = new xajaxResponse();
     $out = '';
     if ($form['cell_sx'] != 0 && $form['cell_sy'] != 0 && $form['cell_cx'] != 0 && $form['cell_cy'] != 0) {
-        $res = dbquery("
-        SELECT
-            entities.id,
-            cells.sx,
-            cells.sy,
-            cells.cx,
-            cells.cy,
-            entities.pos,
-            entities.code
-        FROM
-            entities
-        INNER JOIN
-            cells
-        ON
-            entities.cell_id=cells.id
-        AND
-            cells.sx='" . $form['cell_sx'] . "'
-        AND
-            cells.sy='" . $form['cell_sy'] . "'
-        AND
-            cells.cx='" . $form['cell_cx'] . "'
-        AND
-            cells.cy='" . $form['cell_cy'] . "'
-        ;");
-
-        $nr = mysql_num_rows($res);
+        $entitiesInCell = $entityRepository->searchEntities(EntitySearch::create()->sx($form['cell_sx'])->sy($form['cell_sy'])->cx($form['cell_cx'])->cy($form['cell_cy']));
+        $nr = count($entitiesInCell);
         if ($nr > 0) {
             if ($nr > 1) {
-                $cnt = 0;
-                $entities = array();
-                $ids = "";
-                while ($arr = mysql_fetch_row($res)) {
-                    if ($arr[6] == 'p') {
-                        if ($cnt != 0) $ids .= ",";
-                        $ids .= $arr[0];
-                        $cnt++;
-                        $entities[$arr[0]] = $arr[5];
+                $entities = [];
+                $planetIds = [];
+                foreach ($entitiesInCell as $entity) {
+                    if ($entity->code === EntityType::PLANET) {
+                        $planetIds[] = $entity->id;
+                        $entities[$entity->id] = $entity;
                     }
                 }
 
-                $pres = dbquery("
-                SELECT
-                    id,
-                    planet_name,
-                    planet_user_id,
-                    user_nick
-                FROM
-                    planets
-                LEFT JOIN
-                    users
-                    ON planet_user_id=user_id
-                WHERE
-                    planets.id IN (" . $ids . ");
-                ");
-                $nr = mysql_num_rows($pres);
+                $planetNames = $planetRepository->searchPlanetNamesWithUserNick(PlanetSearch::create()->idIn($planetIds));
+                $nr = count($planetNames);
                 if ($nr > 0) {
                     $out = "<select name=\"entity_id\" size=\"" . ($nr) . "\" onchange=\"showLoader('shipsOnPlanet');xajax_" . $function . "(this.options[this.selectedIndex].value);\">\n";
-                    while ($parr = mysql_fetch_array($pres)) {
-                        $name = ($parr['planet_name'] == "") ? "Unbennant" : $parr['planet_name'];
+                    foreach ($planetNames as $planetName) {
                         if ($show_user_id == 1) {
-                            $val = $parr['id'] . ":" . $parr['planet_user_id'];
+                            $val = $planetName->id . ":" . $planetName->userId;
                         } else {
-                            $val = $parr['id'];
+                            $val = $planetName->id;
                         }
-                        if ($parr['planet_user_id'] > 0)
-                            $out .= "<option value=\"$val\">" . $entities[$parr['id']] . " " . $name . " (" . $parr['user_nick'] . ")</option>";
+                        if ($planetName->userId > 0)
+                            $out .= "<option value=\"$val\">" . $entities[$planetName->id]->pos . " " . $planetName->displayName() . " (" . $planetName->userNick . ")</option>";
                         else
-                            $out .= "<option value=\"$val\" style=\"font-style:italic\">" . $entities[$parr['id']] . " " . $name . " Unbewohnt</option>";
+                            $out .= "<option value=\"$val\" style=\"font-style:italic\">" . $entities[$planetName->id]->pos . " " . $planetName->displayName() . " Unbewohnt</option>";
                     }
                     $out .= "</select>";
                 }

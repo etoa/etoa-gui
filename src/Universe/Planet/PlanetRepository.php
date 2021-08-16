@@ -130,6 +130,22 @@ class PlanetRepository extends AbstractRepository
             ->fetchOne();
     }
 
+    /**
+     * @return PlanetNameWithUserNick[]
+     */
+    public function searchPlanetNamesWithUserNick(PlanetSearch $search): array
+    {
+        $data = $this->applySearchSortLimit($this->createQueryBuilder(), $search)
+            ->select('p.id, p.planet_name')
+            ->addSelect('u.user_id, u.user_nick')
+            ->from('planets', 'p')
+            ->leftJoin('p', 'users', 'u', 'u.user_id = p.planet_user_id')
+            ->execute()
+            ->fetchAllAssociative();
+
+        return array_map(fn (array $row) => new PlanetNameWithUserNick($row), $data);
+    }
+
     public function getUserMainId(int $userId): int
     {
         return (int) $this->createQueryBuilder()
