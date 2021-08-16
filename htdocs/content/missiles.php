@@ -4,6 +4,7 @@ use EtoA\Building\BuildingRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Missile\MissileDataRepository;
 use EtoA\Missile\MissileFlightRepository;
+use EtoA\Missile\MissileFlightSearch;
 use EtoA\Missile\MissileRepository;
 use EtoA\Missile\MissileRequirement;
 use EtoA\Missile\MissileRequirementRepository;
@@ -146,7 +147,7 @@ if ($missileBuilding !== null && $missileBuilding->currentLevel > 0) {
             }
 
             // Load flights
-            $flights = $missileFlightRepository->getFlights($planet->id);
+            $flights = $missileFlightRepository->getFlights(MissileFlightSearch::create()->entityFrom($planet->id));
             $fcnt = count($flights);
 
             // Kaufen

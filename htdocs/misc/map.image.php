@@ -3,6 +3,7 @@
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Universe\Cell\CellRepository;
 use EtoA\Universe\Entity\EntityRepository;
+use EtoA\Universe\Entity\EntitySearch;
 use EtoA\Universe\Entity\EntityType;
 use EtoA\Universe\Star\StarRepository;
 use EtoA\User\UserRepository;
@@ -19,7 +20,7 @@ $config = $app[ConfigurationService::class];
 /** @var CellRepository */
 $cellRepo = $app[CellRepository::class];
 
-/** @var EntityRepository */
+/** @var EntityRepository $entityRepo */
 $entityRepo = $app[EntityRepository::class];
 
 /** @var StarRepository $starRepo */
@@ -186,7 +187,7 @@ if (isset($_SESSION) || $admin)
         }
         else
         {
-            $entities = $entityRepo->findAllIncludeCell(0);
+            $entities = $entityRepo->searchEntities(EntitySearch::create()->pos(0));
             if (count($entities) > 0)
             {
                 foreach ($entities as $entity)

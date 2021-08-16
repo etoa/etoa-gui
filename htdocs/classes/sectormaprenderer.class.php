@@ -1,6 +1,8 @@
 <?PHP
 
 use EtoA\UI\Tooltip;
+use EtoA\Universe\Entity\EntityRepository;
+use EtoA\Universe\Entity\EntitySearch;
 use EtoA\User\User;
 use EtoA\User\UserUniverseDiscoveryService;
 
@@ -117,29 +119,16 @@ class SectorMapRenderer
 
         /** @var UserUniverseDiscoveryService */
         $userUniverseDiscoveryService = $app[UserUniverseDiscoveryService::class];
+        /** @var EntityRepository $entityRepository */
+        $entityRepository = $app[EntityRepository::class];
 
         ob_start();
 
-        $res = dbquery("
-    SELECT
-      cx,
-      cy,
-      cells.id as cid,
-      entities.id as eid,
-      code
-    FROM
-      cells
-    INNER JOIN
-      entities
-      ON entities.cell_id=cells.id
-      AND entities.pos=0
-      AND sx='$sx'
-      AND sy='$sy';");
-        $cells = array();
-        while ($arr = mysql_fetch_assoc($res)) {
-            $cells[$arr['cx']][$arr['cy']]['cid'] = $arr['cid'];
-            $cells[$arr['cx']][$arr['cy']]['eid'] = $arr['eid'];
-            $cells[$arr['cx']][$arr['cy']]['code'] = $arr['code'];
+        $entities = $entityRepository->searchEntities(EntitySearch::create()->sx($sx)->sy($sy)->pos(0));
+        /** @var array<int, array<int, \EtoA\Universe\Entity\Entity>> $cells */
+        $cells = [];
+        foreach ($entities as $entity) {
+            $cells[$entity->cx][$entity->cy] = $entity;
         }
 
         for ($y = 0; $y < $this->numberOfCellsX; $y++) {
@@ -166,7 +155,7 @@ class SectorMapRenderer
                 $overlayClasses = array();
                 if ($this->selectedCell != null && $this->selectedCell->getSX() == $sx && $this->selectedCell->getSY() == $sy && $this->selectedCell->getCX() == $xcoords && $this->selectedCell->getCY() == $ycoords) {
                     $overlayClasses[] = 'selected';
-                } elseif (in_array((int) $cells[$xcoords][$ycoords]['cid'], $this->userCellsIDs, true)) {
+                } elseif (in_array($cells[$xcoords][$ycoords]->cellId, $this->userCellsIDs, true)) {
                     $overlayClasses[] = 'owned';
                 }
 
@@ -174,7 +163,7 @@ class SectorMapRenderer
 
                 // Discovered cell or no user specified
                 if ($this->impersonatedUser == null || $userUniverseDiscoveryService->discovered($this->impersonatedUser, (($sx - 1) * $this->numberOfCellsX) + $xcoords, (($sy - 1) * $this->numberOfCellsY) + $ycoords)) {
-                    $ent = Entity::createFactory($cells[$xcoords][$ycoords]['code'], $cells[$xcoords][$ycoords]['eid']);
+                    $ent = Entity::createFactory($cells[$xcoords][$ycoords]->code, $cells[$xcoords][$ycoords]->id);
 
                     if ($this->tooltipsEnabled) {
                         $tt = new Tooltip();
@@ -188,7 +177,7 @@ class SectorMapRenderer
                         }
                     }
 
-                    $url = isset($this->cellUrl) ? $this->cellUrl . $cells[$xcoords][$ycoords]['cid'] : '#';
+                    $url = isset($this->cellUrl) ? $this->cellUrl . $cells[$xcoords][$ycoords]->cellId : '#';
                     $img = $ent->imagePath();
                     unset($ent);
                 }
@@ -218,9 +207,9 @@ class SectorMapRenderer
                         $tt->addComment("Expedition senden um Zelle sichtbar zu machen.");
                     }
 
-                    $url = isset($this->undiscoveredCellUrl) ? $this->undiscoveredCellUrl . $cells[$xcoords][$ycoords]['cid'] : '#';
+                    $url = isset($this->undiscoveredCellUrl) ? $this->undiscoveredCellUrl . $cells[$xcoords][$ycoords]->cellId : '#';
                     if (isset($this->undiscoveredCellJavaScript)) {
-                        $js = preg_replace('/##ID##/', $cells[$xcoords][$ycoords]['cid'], $this->undiscoveredCellJavaScript);
+                        $js = preg_replace('/##ID##/', (string) $cells[$xcoords][$ycoords]->cellId, $this->undiscoveredCellJavaScript);
                     }
                     $img = IMAGE_PATH . "/unexplored/" . $fogImg . ".png";
                 }
@@ -244,7 +233,7 @@ class SectorMapRenderer
                     echo "<a href=\"" . $url . "\" ";
                 }
                 echo " style=\"background:url('" . $img . "');\"$class$mouseOver>";
-                echo "<img src=\"" . RELATIVE_ROOT . "images/blank.gif\" alt=\"Raumzelle\" " . $title . " data-id=\"" . $cells[$xcoords][$ycoords]['cid'] . "\" $overlayClass/></a>";
+                echo "<img src=\"" . RELATIVE_ROOT . "images/blank.gif\" alt=\"Raumzelle\" " . $title . " data-id=\"" . $cells[$xcoords][$ycoords]->cellId . "\" $overlayClass/></a>";
             }
             echo "<br/>";
         }

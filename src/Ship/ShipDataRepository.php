@@ -24,7 +24,7 @@ class ShipDataRepository extends AbstractRepository
      */
     public function getShipNames(bool $showAll = false, ShipSort $orderBy = null): array
     {
-        $search = $showAll ? ShipSearch::create()->show(true)->special(false) : null;
+        $search = !$showAll ? ShipSearch::create()->show(true)->special(false) : null;
 
         return $this->searchShipNames($search, $orderBy);
     }

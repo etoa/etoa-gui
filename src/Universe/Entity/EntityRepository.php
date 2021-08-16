@@ -185,33 +185,27 @@ class EntityRepository extends AbstractRepository
     }
 
     /**
-     * @return array<Entity>
+     * @return Entity[]
      */
-    public function findAllIncludeCell(?int $pos = null): array
+    public function searchEntities(EntitySearch $search): array
     {
-        $qry = $this->createQueryBuilder()
+        $data = $this->applySearchSortLimit($this->createQueryBuilder(), $search)
             ->select(
                 'e.id',
-                'e.code',
-                'e.pos',
                 'c.id as cid',
-                'c.sx',
-                'c.cx',
-                'c.sy',
-                'c.cy'
+                'code',
+                'pos',
+                'sx',
+                'sy',
+                'cx',
+                'cy'
             )
             ->from('entities', 'e')
-            ->innerJoin('e', 'cells', 'c', 'e.cell_id = c.id');
-
-        if ($pos !== null) {
-            $qry->where('pos = :pos')
-                ->setParameter('pos', $pos);
-        }
-
-        $data = $qry->execute()
+            ->innerJoin('e', 'cells', 'c', 'e.cell_id = c.id')
+            ->execute()
             ->fetchAllAssociative();
 
-        return array_map(fn (array $arr) => new Entity($arr), $data);
+        return array_map(fn (array $row) => new Entity($row), $data);
     }
 
     public function getAllianceMarketId(): int

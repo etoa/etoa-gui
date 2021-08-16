@@ -1,25 +1,27 @@
 <?PHP
 
+use EtoA\Missile\MissileFlightRepository;
+use EtoA\Missile\MissileFlightSearch;
+use Pimple\Container;
+
 /**
  * Checks and handles missile actions
  */
 class CheckMissilesTask implements IPeriodicTask
 {
+    private MissileFlightRepository $missileFlightRepository;
+
+    public function __construct(Container $pimple)
+    {
+        $this->missileFlightRepository = $pimple[MissileFlightRepository::class];
+    }
+
     function run()
     {
-        $res = dbquery("
-			SELECT
-				flight_id
-			FROM
-				missile_flights
-			WHERE
-				flight_landtime < UNIX_TIMESTAMP()
-			ORDER BY
-				flight_landtime ASC
-			;");
-        $cnt = 0;
-        while ($arr = mysql_fetch_assoc($res)) {
-            MissileBattleHandler::battle($arr['flight_id']);
+        $flights = $this->missileFlightRepository->getFlights(MissileFlightSearch::create()->landed());
+        $cnt = count($flights);
+        foreach ($flights as $flight) {
+            MissileBattleHandler::battle($flight->id);
             $cnt++;
         }
         return "$cnt Raketen-Aktionen berechnet";

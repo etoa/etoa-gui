@@ -9,7 +9,13 @@ use EtoA\Defense\DefenseRepository;
 use EtoA\Missile\MissileDataRepository;
 use EtoA\Missile\MissileRepository;
 use EtoA\Requirement\RequirementRepositoryProvider;
+use EtoA\Ship\ShipDataRepository;
 use EtoA\Ship\ShipRepository;
+use EtoA\Universe\Entity\EntityRepository;
+use EtoA\Universe\Entity\EntitySearch;
+use EtoA\Universe\Entity\EntityType;
+use EtoA\Universe\Planet\PlanetRepository;
+use EtoA\Universe\Planet\PlanetSearch;
 use EtoA\User\UserRepository;
 use EtoA\User\UserSearch;
 
@@ -46,7 +52,6 @@ $xajax->register(XAJAX_FUNCTION, "submitEditBuilding");
 $xajax->register(XAJAX_FUNCTION, "searchUser");
 $xajax->register(XAJAX_FUNCTION, "searchUserList");
 $xajax->register(XAJAX_FUNCTION, "searchAlliance");
-$xajax->register(XAJAX_FUNCTION, "searchPlanet");
 $xajax->register(XAJAX_FUNCTION, "lockUser");
 
 $xajax->register(XAJAX_FUNCTION, "buildingPrices");
@@ -54,77 +59,43 @@ $xajax->register(XAJAX_FUNCTION, "totalBuildingPrices");
 
 function planetSelectorByCell($form, $function, $show_user_id = 0)
 {
+    global $app;
+
+    /** @var EntityRepository $entityRepository */
+    $entityRepository = $app[EntityRepository::class];
+    /** @var PlanetRepository $planetRepository */
+    $planetRepository = $app[PlanetRepository::class];
+
     $objResponse = new xajaxResponse();
     $out = '';
     if ($form['cell_sx'] != 0 && $form['cell_sy'] != 0 && $form['cell_cx'] != 0 && $form['cell_cy'] != 0) {
-        $res = dbquery("
-        SELECT
-            entities.id,
-            cells.sx,
-            cells.sy,
-            cells.cx,
-            cells.cy,
-            entities.pos,
-            entities.code
-        FROM
-            entities
-        INNER JOIN
-            cells
-        ON
-            entities.cell_id=cells.id
-        AND
-            cells.sx='" . $form['cell_sx'] . "'
-        AND
-            cells.sy='" . $form['cell_sy'] . "'
-        AND
-            cells.cx='" . $form['cell_cx'] . "'
-        AND
-            cells.cy='" . $form['cell_cy'] . "'
-        ;");
-
-        $nr = mysql_num_rows($res);
+        $entitiesInCell = $entityRepository->searchEntities(EntitySearch::create()->sx($form['cell_sx'])->sy($form['cell_sy'])->cx($form['cell_cx'])->cy($form['cell_cy']));
+        $nr = count($entitiesInCell);
         if ($nr > 0) {
             if ($nr > 1) {
-                $cnt = 0;
-                $entities = array();
-                $ids = "";
-                while ($arr = mysql_fetch_row($res)) {
-                    if ($arr[6] == 'p') {
-                        if ($cnt != 0) $ids .= ",";
-                        $ids .= $arr[0];
-                        $cnt++;
-                        $entities[$arr[0]] = $arr[5];
+                $entities = [];
+                $planetIds = [];
+                foreach ($entitiesInCell as $entity) {
+                    if ($entity->code === EntityType::PLANET) {
+                        $planetIds[] = $entity->id;
+                        $entities[$entity->id] = $entity;
                     }
                 }
 
-                $pres = dbquery("
-                SELECT
-                    id,
-                    planet_name,
-                    planet_user_id,
-                    user_nick
-                FROM
-                    planets
-                LEFT JOIN
-                    users
-                    ON planet_user_id=user_id
-                WHERE
-                    planets.id IN (" . $ids . ");
-                ");
-                $nr = mysql_num_rows($pres);
+                $planetNames = $planetRepository->searchPlanetNamesWithUserNick(PlanetSearch::create()->idIn($planetIds));
+                $nr = count($planetNames);
                 if ($nr > 0) {
                     $out = "<select name=\"entity_id\" size=\"" . ($nr) . "\" onchange=\"showLoader('shipsOnPlanet');xajax_" . $function . "(this.options[this.selectedIndex].value);\">\n";
-                    while ($parr = mysql_fetch_array($pres)) {
-                        $name = ($parr['planet_name'] == "") ? "Unbennant" : $parr['planet_name'];
+                    foreach ($planetNames as $planetName) {
                         if ($show_user_id == 1) {
-                            $val = $parr['id'] . ":" . $parr['planet_user_id'];
+                            $val = $planetName->id . ":" . $planetName->userId;
                         } else {
-                            $val = $parr['id'];
+                            $val = $planetName->id;
                         }
-                        if ($parr['planet_user_id'] > 0)
-                            $out .= "<option value=\"$val\">" . $entities[$parr['id']] . " " . $name . " (" . $parr['user_nick'] . ")</option>";
+                        if ($planetName->userId > 0)
+                            $out .= "<option value=\"$val\">" . $entities[$planetName->id]->pos . " " . $planetName->displayName() . " (" . $planetName->userNick . ")</option>";
                         else
-                            $out .= "<option value=\"$val\" style=\"font-style:italic\">" . $entities[$parr['id']] . " " . $name . " Unbewohnt</option>";
+                            $out .= "<option value=\"$val\" style=\"font-style:italic\">" . $entities[$planetName->id]->pos . " " . $planetName->displayName() . " Unbewohnt</option>";
                     }
                     $out .= "</select>";
                 }
@@ -144,41 +115,34 @@ function planetSelectorByCell($form, $function, $show_user_id = 0)
 
 function planetSelectorByUser($userNick, $function, $show_user_id = 1)
 {
+    global $app;
+
+    /** @var UserRepository $userRepository */
+    $userRepository = $app[UserRepository::class];
+    /** @var PlanetRepository $planetRepository */
+    $planetRepository = $app[PlanetRepository::class];
+
     $objResponse = new xajaxResponse();
     if ($userNick != "") {
-        $pres = dbquery("
-        SELECT
-            id,
-            planet_user_id
-        FROM
-            planets
-        INNER JOIN
-            users
-        ON planet_user_id=user_id
-            AND user_nick='$userNick'
-        ORDER BY
-            planets.planet_user_main DESC,
-            planets.id ASC
-            ;
-        ");
-        $nr = mysql_num_rows($pres);
+        $userId = $userRepository->getUserIdByNick($userNick);
+        $planets = $planetRepository->getUserPlanetsWithCoordinates($userId);
+        $nr = count($planets);
         if ($nr > 0) {
             $out = "<select name=\"entity_id\" size=\"" . ($nr + 1) . "\" onchange=\"showLoader('shipsOnPlanet');xajax_" . $function . "(this.options[this.selectedIndex].value);\">\n";
             $cnt = 0;
             $val = '';
-            while ($parr = mysql_fetch_row($pres)) {
+            foreach ($planets as $planet) {
                 if ($cnt === 0) {
-                    $out .= "<option value=\"0:" . $parr[1] . "\">Alle</option>";
+                    $out .= "<option value=\"0:" . $planet->userId . "\">Alle</option>";
                     $cnt++;
                 }
-                $p = Planet::getById($parr[0]);
 
                 if ($show_user_id == 1) {
-                    $val = $parr[0] . ":" . $parr[1];
+                    $val = $planet->id . ":" . $planet->userId;
                 } else {
-                    $val = $parr[0] . ":" . "0";
+                    $val = $planet->id . ":" . "0";
                 }
-                $out .= "<option value=\"$val\">" . $p . "</option>\n";
+                $out .= "<option value=\"$val\">" . $planet->toString() . "</option>\n";
             }
             $out .= "</select>\n";
 
@@ -197,6 +161,13 @@ function planetSelectorByUser($userNick, $function, $show_user_id = 1)
 
 function showShipsOnPlanet($form)
 {
+    global $app;
+
+    /** @var ShipRepository $shipRepository */
+    $shipRepository = $app[ShipRepository::class];
+    /** @var ShipDataRepository $shipDataRepository */
+    $shipDataRepository = $app[ShipDataRepository::class];
+
     $objResponse = new xajaxResponse();
 
     $updata = explode(":", $form);
@@ -208,28 +179,8 @@ function showShipsOnPlanet($form)
     ob_start();
 
     if ($eid != 0) {
-        $res = dbquery("
-        SELECT
-            ship_points,
-            ship_name,
-            shiplist_count,
-            shiplist_bunkered,
-            shiplist_id,
-            special_ship_need_exp as ship_xp_base,
-            special_ship_exp_factor as ship_xp_factor,
-            shiplist_special_ship_exp as shiplist_xp
-        FROM
-            shiplist
-        INNER JOIN
-            ships
-            ON shiplist_ship_id=ship_id
-            AND shiplist_entity_id='" . $eid . "'
-            AND (shiplist_count+shiplist_bunkered)>0
-        ORDER BY
-            ship_name
-        ;");
-
-        if (mysql_num_rows($res) > 0) {
+        $shipList = $shipRepository->findForUser((int) $uid, (int) $eid);
+        if (count($shipList) > 0) {
             $out = "<table class=\"tb\">
             <tr><th>Anzahl</th>
             <th>Bunker</th>
@@ -238,20 +189,23 @@ function showShipsOnPlanet($form)
             <th>Spezielles</th>
             <th>Aktionen</th></tr>";
             $points = 0;
-            while ($arr = mysql_fetch_array($res)) {
-                $points += $arr['ship_points'] * ($arr['shiplist_count'] + $arr['shiplist_bunkered']);
-                $out .= "<tr><td style=\"width:80px\" id=\"cnt_" . $arr['shiplist_id'] . "\">" . $arr['shiplist_count'] . "</td>
-                <td style=\"width:80px\" id=\"bunkered_" . $arr['shiplist_id'] . "\">" . $arr['shiplist_bunkered'] . "</td>
-                <td>" . $arr['ship_name'] . "</td>
-                <td>" . ($arr['ship_points'] * ($arr['shiplist_count'] + $arr['shiplist_bunkered'])) . "</td>
-                <td id=\"special_" . $arr['shiplist_id'] . "\">";
-                if ($arr['ship_xp_base'] > 0) {
-                    $out .= nf($arr['shiplist_xp']) . " XP, Level " . Ship::levelByXp($arr['ship_xp_base'], $arr['ship_xp_factor'], $arr['shiplist_xp']);
+            $ships = $shipDataRepository->getAllShips(true);
+            foreach ($shipList as $item) {
+                $ship = $ships[$item->shipId];
+                $itemPoints = $ship->points * ($item->count + $item->bunkered);
+                $points += $itemPoints;
+                $out .= "<tr><td style=\"width:80px\" id=\"cnt_" . $item->id . "\">" . $item->count . "</td>
+                <td style=\"width:80px\" id=\"bunkered_" . $item->id . "\">" . $item->count . "</td>
+                <td>" . $ship->name . "</td>
+                <td>" . ($itemPoints) . "</td>
+                <td id=\"special_" . $item->id . "\">";
+                if ($ship->specialNeedExp > 0) {
+                    $out .= nf($item->specialShipExp) . " XP, Level " . Ship::levelByXp($ship->specialNeedExp, $ship->specialExpFactor, $item->specialShipExp);
                 }
                 $out .= "
-                <td style=\"width:180px\" id=\"actions_" . $arr['shiplist_id'] . "\" id=\"actions_" . $arr['shiplist_id'] . "\">
-                <input type=\"button\" value=\"Bearbeiten\" onclick=\"xajax_editShipByListId(xajax.getFormValues('selector')," . $arr['shiplist_id'] . ")\" />
-                <input type=\"button\" value=\"Löschen\" onclick=\"if (confirm('Sollen " . $arr['shiplist_count'] . " " . $arr['ship_name'] . " von diesem Planeten gel&ouml;scht werden?')) {showLoaderPrepend('shipsOnPlanet');xajax_removeShipFromPlanet(xajax.getFormValues('selector')," . $arr['shiplist_id'] . ")}\" />
+                <td style=\"width:180px\" id=\"actions_" . $item->id . "\" id=\"actions_" . $item->id . "\">
+                <input type=\"button\" value=\"Bearbeiten\" onclick=\"xajax_editShipByListId(xajax.getFormValues('selector')," . $item->id . ")\" />
+                <input type=\"button\" value=\"Löschen\" onclick=\"if (confirm('Sollen " . $item->count . " " . $ship->name . " von diesem Planeten gel&ouml;scht werden?')) {showLoaderPrepend('shipsOnPlanet');xajax_removeShipFromPlanet(xajax.getFormValues('selector')," . $item->id . ")}\" />
                 </td>
                 </tr>";
             }
@@ -1117,50 +1071,6 @@ function searchAlliance($val, $field_id = 'alliance_name', $box_id = 'citybox')
 
     return $objResponse;
 }
-
-
-//Listet gefundene Planeten auf
-function searchPlanet($val, $field_id = 'planet_name', $box_id = 'citybox')
-{
-
-    $sOut = "";
-    $nCount = 0;
-    $sLastHit = null;
-
-    $res = dbquery("SELECT planet_name FROM planets WHERE planet_name LIKE '" . $val . "%' LIMIT 20;");
-    if (mysql_num_rows($res) > 0) {
-        while ($arr = mysql_fetch_row($res)) {
-            $nCount++;
-            $sOut .= "<a href=\"#\" onclick=\"javascript:document.getElementById('" . $field_id . "').value='" . htmlentities($arr[0]) . "';document.getElementById('" . $box_id . "').style.display = 'none';\">" . htmlentities($arr[0]) . "</a>";
-            $sLastHit = $arr[0];
-        }
-    }
-
-    if ($nCount > 20) {
-        $sOut = "";
-    }
-
-    $objResponse = new xajaxResponse();
-
-    if (strlen($sOut) > 0) {
-        $sOut = "" . $sOut . "";
-        $objResponse->script("document.getElementById('" . $box_id . "').style.display = \"block\"");
-    } else {
-        $objResponse->script("document.getElementById('" . $box_id . "').style.display = \"none\"");
-    }
-
-    //Wenn nur noch ein User in frage kommt, diesen Anzeigen
-    if ($nCount == 1) {
-        $objResponse->script("document.getElementById('" . $box_id . "').style.display = \"none\"");
-        $objResponse->script("document.getElementById('" . $field_id . "').value = \"" . $sLastHit . "\"");
-    }
-
-    $objResponse->assign($box_id, "innerHTML", $sOut);
-
-    return $objResponse;
-}
-
-
 
 function lockUser($uid, $time, $reason)
 {

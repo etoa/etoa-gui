@@ -1,7 +1,10 @@
 <?PHP
 
+use EtoA\Alliance\AllianceDiplomacyLevel;
 use EtoA\Alliance\AllianceDiplomacyRepository;
+use EtoA\Alliance\AllianceDiplomacySearch;
 use EtoA\Alliance\AllianceHistoryRepository;
+use EtoA\Alliance\AllianceRepository;
 use EtoA\Message\MessageRepository;
 use EtoA\User\UserRatingService;
 use Pimple\Container;
@@ -16,12 +19,14 @@ class WarPeaceUpdateTask implements IPeriodicTask
     private MessageRepository $messageRepository;
     private AllianceDiplomacyRepository $allianceDiplomacyRepository;
     private UserRatingService $userRatingService;
+    private AllianceRepository $allianceRepository;
 
     public function __construct(Container $app)
     {
         $this->allianceHistoryRepository = $app[AllianceHistoryRepository::class];
         $this->messageRepository = $app[MessageRepository::class];
         $this->allianceDiplomacyRepository = $app[AllianceDiplomacyRepository::class];
+        $this->allianceRepository = $app[AllianceRepository::class];
         $this->userRatingService = $app[UserRatingService::class];
     }
 
@@ -30,138 +35,61 @@ class WarPeaceUpdateTask implements IPeriodicTask
         $time = time();
 
         // Assign diplomacy points for pacts
-        $res = dbquery("
-            SELECT
-                alliance_bnd_id,
-                alliance_bnd_diplomat_id,
-                alliance_bnd_alliance_id1,
-                alliance_bnd_alliance_id2,
-                alliance_bnd_points
-            FROM
-                alliance_bnd
-            WHERE
-                alliance_bnd_date<" . ($time - DIPLOMACY_POINTS_MIN_PACT_DURATION) . "
-                AND alliance_bnd_points>0
-                AND alliance_bnd_level=2
-            ");
-        if (mysql_num_rows($res) > 0) {
-            while ($arr = mysql_fetch_assoc($res)) {
-                $reason = "Bündnis " . $arr['alliance_bnd_alliance_id1'] . " mit " . $arr['alliance_bnd_alliance_id1'];
-                $this->userRatingService->addDiplomacyRating(
-                    (int) $arr['alliance_bnd_diplomat_id'],
-                    (int) $arr['alliance_bnd_points'],
-                    $reason
-                );
+        $pacts = $this->allianceDiplomacyRepository->search(AllianceDiplomacySearch::create()->level(AllianceDiplomacyLevel::BND_CONFIRMED)->pendingPoints()->dateBefore($time - DIPLOMACY_POINTS_MIN_PACT_DURATION));
+        foreach ($pacts as $diplomacy) {
+            $reason = "Bündnis " . $diplomacy->alliance1Id . " mit " . $diplomacy->alliance2Id;
+            $this->userRatingService->addDiplomacyRating(
+                $diplomacy->diplomatId,
+                $diplomacy->points,
+                $reason
+            );
 
-                dbquery("
-                    UPDATE
-                        alliance_bnd
-                    SET
-                        alliance_bnd_points=0
-                    WHERE
-                        alliance_bnd_id=" . $arr['alliance_bnd_id'] . "
-                    ");
-            }
+            $this->allianceDiplomacyRepository->updateDiplomacy($diplomacy->id, AllianceDiplomacyLevel::PEACE, $diplomacy->name, 0);
         }
 
         $cnt = 0;
 
         // Wars
-        $res = dbquery("
-            SELECT
-                alliance_bnd_id,
-                a1.alliance_id as a1id,
-                a2.alliance_id as a2id,
-                a1.alliance_name as a1name,
-                a2.alliance_name as a2name,
-                a1.alliance_tag as a1tag,
-                a2.alliance_tag as a2tag,
-                a1.alliance_founder_id as a1f,
-                a2.alliance_founder_id as a2f,
-                alliance_bnd_points,
-                alliance_bnd_diplomat_id
-            FROM
-                alliance_bnd
-            INNER JOIN
-                alliances as a1
-                ON a1.alliance_id=alliance_bnd_alliance_id1
-            INNER JOIN
-                alliances as a2
-                ON a2.alliance_id=alliance_bnd_alliance_id2
-            WHERE
-                alliance_bnd_date<" . ($time - WAR_DURATION) . "
-                AND alliance_bnd_level=3
-            ");
-        $nr = mysql_num_rows($res);
+        $wars = $this->allianceDiplomacyRepository->search(AllianceDiplomacySearch::create()->level(AllianceDiplomacyLevel::WAR)->dateBefore($time - WAR_DURATION));
+        $nr = count($wars);
         if ($nr > 0) {
-            while ($arr = mysql_fetch_assoc($res)) {
+            foreach ($wars as $war) {
                 // Add log
-                $text = "Der Krieg zwischen [b][" . $arr['a1tag'] . "] " . $arr['a1name'] . "[/b] und [b][" . $arr['a2tag'] . "] " . $arr['a2name'] . "[/b] ist zu Ende! Es folgt eine Friedenszeit von " . round(PEACE_DURATION / 3600) . " Stunden.";
-                $this->allianceHistoryRepository->addEntry((int) $arr['a1id'], $text);
-                $this->allianceHistoryRepository->addEntry((int) $arr['a2id'], $text);
+                $text = "Der Krieg zwischen [b][" . $war->alliance1Tag . "] " . $war->alliance1Name . "[/b] und [b][" . $war->alliance2Tag . "] " . $war->alliance2Name . "[/b] ist zu Ende! Es folgt eine Friedenszeit von " . round(PEACE_DURATION / 3600) . " Stunden.";
+                $this->allianceHistoryRepository->addEntry($war->alliance1Id, $text);
+                $this->allianceHistoryRepository->addEntry($war->alliance2Id, $text);
 
                 // Send message to leader
-                $this->messageRepository->createSystemMessage((int) $arr['a1f'], MSG_ALLYMAIL_CAT, "Krieg beendet", $text . " Während dieser Friedenszeit kann kein neuer Krieg erklärt werden!");
-                $this->messageRepository->createSystemMessage((int) $arr['a2f'], MSG_ALLYMAIL_CAT, "Krieg beendet", $text . " Während dieser Friedenszeit kann kein neuer Krieg erklärt werden!");
+                $this->messageRepository->createSystemMessage($this->allianceRepository->getFounderId($war->alliance1Id), MSG_ALLYMAIL_CAT, "Krieg beendet", $text . " Während dieser Friedenszeit kann kein neuer Krieg erklärt werden!");
+                $this->messageRepository->createSystemMessage($this->allianceRepository->getFounderId($war->alliance2Id), MSG_ALLYMAIL_CAT, "Krieg beendet", $text . " Während dieser Friedenszeit kann kein neuer Krieg erklärt werden!");
 
                 // Assing diplomacy points
                 $this->userRatingService->addDiplomacyRating(
-                    (int) $arr['alliance_bnd_diplomat_id'],
-                    (int) $arr['alliance_bnd_points'],
-                    "Krieg " . $arr['a1id'] . " gegen " . $arr['a2id']
+                    $war->diplomatId,
+                    $war->points,
+                    "Krieg " . $war->alliance1Id . " gegen " . $war->alliance2Id
                 );
 
-                dbquery("
-                    UPDATE
-                        alliance_bnd
-                    SET
-                        alliance_bnd_level=4,
-                        alliance_bnd_date=" . $time . ",
-                        alliance_bnd_points=0
-                    WHERE
-                        alliance_bnd_id=" . $arr['alliance_bnd_id'] . "
-                    ");
+                $this->allianceDiplomacyRepository->updateDiplomacy($war->id, AllianceDiplomacyLevel::PEACE, $war->name, 0, $time);
             }
             $cnt += $nr;
         }
 
         // Peaces
-        $res = dbquery("
-            SELECT
-                alliance_bnd_id,
-                a1.alliance_id as a1id,
-                a2.alliance_id as a2id,
-                a1.alliance_name as a1name,
-                a2.alliance_name as a2name,
-                a1.alliance_tag as a1tag,
-                a2.alliance_tag as a2tag,
-                a1.alliance_founder_id as a1f,
-                a2.alliance_founder_id as a2f
-            FROM
-                alliance_bnd
-            INNER JOIN
-                alliances as a1
-                ON a1.alliance_id=alliance_bnd_alliance_id1
-            INNER JOIN
-                alliances as a2
-                ON a2.alliance_id=alliance_bnd_alliance_id2
-            WHERE
-                alliance_bnd_date<" . ($time - PEACE_DURATION) . "
-                AND alliance_bnd_level=4
-            ");
-        $nr = mysql_num_rows($res);
+        $peace = $this->allianceDiplomacyRepository->search(AllianceDiplomacySearch::create()->level(AllianceDiplomacyLevel::PEACE)->dateBefore($time - PEACE_DURATION));
+        $nr = count($peace);
         if ($nr > 0) {
-            while ($arr = mysql_fetch_assoc($res)) {
+            foreach ($peace as $diplomacy) {
                 // Add log
-                $text = "Der Friedensvertrag zwischen [b][" . $arr['a1tag'] . "] " . $arr['a1name'] . "[/b] und [b][" . $arr['a2tag'] . "] " . $arr['a2name'] . "[/b] ist abgelaufen. Ihr könnt einander nun wieder Krieg erklären.";
-                $this->allianceHistoryRepository->addEntry((int) $arr['a1id'], $text);
-                $this->allianceHistoryRepository->addEntry((int) $arr['a2id'], $text);
+                $text = "Der Friedensvertrag zwischen [b][" . $diplomacy->alliance1Tag . "] " . $diplomacy->alliance1Name . "[/b] und [b][" . $diplomacy->alliance2Tag . "] " . $diplomacy->alliance2Name . "[/b] ist abgelaufen. Ihr könnt einander nun wieder Krieg erklären.";
+                $this->allianceHistoryRepository->addEntry($diplomacy->alliance1Id, $text);
+                $this->allianceHistoryRepository->addEntry($diplomacy->alliance2Id, $text);
 
                 // Send message to leader
-                $this->messageRepository->createSystemMessage((int) $arr['a1f'], MSG_ALLYMAIL_CAT, "Friedensvertrag abgelaufen", $text);
-                $this->messageRepository->createSystemMessage((int) $arr['a2f'], MSG_ALLYMAIL_CAT, "Friedensvertrag abgelaufen", $text);
+                $this->messageRepository->createSystemMessage($this->allianceRepository->getFounderId($diplomacy->alliance1Id), MSG_ALLYMAIL_CAT, "Friedensvertrag abgelaufen", $text);
+                $this->messageRepository->createSystemMessage($this->allianceRepository->getFounderId($diplomacy->alliance2Id), MSG_ALLYMAIL_CAT, "Friedensvertrag abgelaufen", $text);
 
-                $this->allianceDiplomacyRepository->deleteDiplomacy((int) $arr['alliance_bnd_id']);
+                $this->allianceDiplomacyRepository->deleteDiplomacy($diplomacy->id);
             }
             $cnt += $nr;
         }
