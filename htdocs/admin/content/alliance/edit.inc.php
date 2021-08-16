@@ -10,17 +10,17 @@ use EtoA\Alliance\AllianceTechnologyRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Twig\Environment;
 
-/** @var AllianceRepository */
+/** @var AllianceRepository $repository */
 $repository = $app[AllianceRepository::class];
 /** @var AllianceRankRepository $allianceRankRepository */
 $allianceRankRepository = $app[AllianceRankRepository::class];
-/** @var AllianceHistoryRepository */
+/** @var AllianceHistoryRepository $historyRepository */
 $historyRepository = $app[AllianceHistoryRepository::class];
 
-/** @var AllianceBuildingRepository */
+/** @var AllianceBuildingRepository $buildingRepository */
 $buildingRepository = $app[AllianceBuildingRepository::class];
 
-/** @var AllianceTechnologyRepository */
+/** @var AllianceTechnologyRepository $technologyRepository */
 $technologyRepository = $app[AllianceTechnologyRepository::class];
 /** @var AllianceDiplomacyRepository $allianceDiplomacyRepository */
 $allianceDiplomacyRepository = $app[AllianceDiplomacyRepository::class];

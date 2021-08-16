@@ -202,7 +202,7 @@ function admin_edit_dataset($db_fields, $arr)
     // TODO
     global $app;
 
-    /** @var ConfigurationService */
+    /** @var ConfigurationService $config */
     $config = $app[ConfigurationService::class];
 
     $hidden_rows = array();
@@ -395,7 +395,7 @@ function admin_delete_dataset($db_fields, $arr)
     // TODO
     global $app;
 
-    /** @var ConfigurationService */
+    /** @var ConfigurationService $config */
     $config = $app[ConfigurationService::class];
 
     foreach ($db_fields as $k => $a) {
@@ -468,7 +468,7 @@ function admin_show_overview($db_fields, $arr)
     // TODO
     global $app;
 
-    /** @var ConfigurationService */
+    /** @var ConfigurationService $config */
     $config = $app[ConfigurationService::class];
 
     foreach ($db_fields as $k => $a) {

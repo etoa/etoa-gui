@@ -20,19 +20,19 @@ use Symfony\Component\HttpFoundation\Request;
 /** @var TextRepository $textRepo */
 $textRepo = $app[TextRepository::class];
 
-/** @var ConfigurationService */
+/** @var ConfigurationService $config */
 $config = $app[ConfigurationService::class];
 
-/** @var PlanetRepository */
+/** @var PlanetRepository $planetRepo */
 $planetRepo = $app[PlanetRepository::class];
 
-/** @var PlanetService */
+/** @var PlanetService $planetService */
 $planetService = $app[PlanetService::class];
 
-/** @var SolarTypeRepository  */
+/** @var SolarTypeRepository  $solarTypeRepository */
 $solarTypeRepository = $app[SolarTypeRepository::class];
 
-/** @var PlanetTypeRepository */
+/** @var PlanetTypeRepository $planetTypeRepository */
 $planetTypeRepository = $app[PlanetTypeRepository::class];
 
 /** @var EntityRepository $entityRepository */
@@ -82,7 +82,7 @@ if (isset($s->itemset_key) && $request->request->has(md5($s->itemset_key)) && $r
 
         $entity = $entityRepository->findIncludeCell($planetId);
 
-        /** @var UserService */
+        /** @var UserService $userService */
         $userService = $app[UserService::class];
         $userService->addToUserLog($cu->id, "planets", "{nick} wählt [b]" . $entity->toString() . "[/b] als Hauptplanet aus.");
 
@@ -350,7 +350,7 @@ if ($mode == "itemsets" && isset($planet)) {
     Bitte wählt die Rasse eures Volkes aus.<br/>
     Jede Rasse hat Vor- und Nachteile sowie einige Spezialeinheiten:<br/><br/>";
 
-    /** @var RaceDataRepository */
+    /** @var RaceDataRepository $raceRepository */
     $raceRepository = $app[RaceDataRepository::class];
 
     $raceNames = $raceRepository->getRaceNames();

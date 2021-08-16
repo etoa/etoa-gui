@@ -10,10 +10,10 @@ use EtoA\Log\LogSeverity;
 use EtoA\Support\Mail\MailSenderService;
 use Twig\Environment;
 
-/** @var AdminUserRepository */
+/** @var AdminUserRepository $adminUserRepo */
 $adminUserRepo = $app[AdminUserRepository::class];
 
-/** @var ConfigurationService */
+/** @var ConfigurationService $config */
 $config = $app[ConfigurationService::class];
 
 /** @var MailSenderService $mailSenderService */

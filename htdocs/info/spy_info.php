@@ -38,7 +38,7 @@ tableEnd();
 tableStart("Spionagesonden");
 echo "<tr><td class=\"tbltitle\" >Name</td><td class=\"tbltitle\" colspan=\"2\" width=\"90%\">Beschreibung</td></tr>";
 
-/** @var ShipDataRepository */
+/** @var ShipDataRepository $shipReposistory */
 $shipReposistory = $app[ShipDataRepository::class];
 
 $ships = $shipReposistory->getShipsWithAction('spy');

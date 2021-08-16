@@ -11,7 +11,7 @@ use Symfony\Component\HttpFoundation\Request;
 $userRepository = $app[UserRepository::class];
 /** @var UserMultiRepository $userMultiRepository */
 $userMultiRepository = $app[UserMultiRepository::class];
-/** @var ConfigurationService */
+/** @var ConfigurationService $config */
 $config = $app[ConfigurationService::class];
 
 $request = Request::createFromGlobals();

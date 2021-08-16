@@ -117,7 +117,7 @@ if (Alliance::checkActionRights(AllianceRights::ALLIANCE_NEWS)) {
     }
     echo '<option ' . $selected . ' value="0" style="font-weight:bold;color:#0f0;">Öffentliches Rathaus</option>';
 
-    /** @var AllianceRepository */
+    /** @var AllianceRepository $allianceRepository */
     $allianceRepository = $app[AllianceRepository::class];
     $allianceNamesWithTags = $allianceRepository->getAllianceNamesWithTags();
 

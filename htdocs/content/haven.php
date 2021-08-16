@@ -6,13 +6,13 @@ use EtoA\Ship\ShipRepository;
 use EtoA\UI\ResourceBoxDrawer;
 use EtoA\Universe\Planet\PlanetRepository;
 
-/** @var ConfigurationService */
+/** @var ConfigurationService $config */
 $config = $app[ConfigurationService::class];
 
 /** @var PlanetRepository $planetRepo */
 $planetRepo = $app[PlanetRepository::class];
 
-/** @var ResourceBoxDrawer */
+/** @var ResourceBoxDrawer $resourceBoxDrawer */
 $resourceBoxDrawer = $app[ResourceBoxDrawer::class];
 
 /** @var ShipRepository $shipRepository */

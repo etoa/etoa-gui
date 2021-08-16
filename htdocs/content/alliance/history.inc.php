@@ -6,7 +6,7 @@ use EtoA\Alliance\AllianceRights;
 /** @var mixed[] $arr alliance data */
 
 if (Alliance::checkActionRights(AllianceRights::HISTORY)) {
-    /** @var AllianceHistoryRepository */
+    /** @var AllianceHistoryRepository $allianceHistoryRepository */
     $allianceHistoryRepository = $app[AllianceHistoryRepository::class];
 
     echo "<h2>Allianzgeschichte</h2>";

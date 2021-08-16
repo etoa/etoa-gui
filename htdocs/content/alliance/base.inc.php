@@ -26,10 +26,10 @@ use Symfony\Component\HttpFoundation\Request;
 /** @var ConfigurationService $config */
 $config = $app[ConfigurationService::class];
 
-/** @var PlanetRepository */
+/** @var PlanetRepository $planetRepo */
 $planetRepo = $app[PlanetRepository::class];
 
-/** @var ResourceBoxDrawer */
+/** @var ResourceBoxDrawer $resourceBoxDrawer */
 $resourceBoxDrawer = $app[ResourceBoxDrawer::class];
 /** @var AllianceSpendRepository $allianceSpendRepository */
 $allianceSpendRepository = $app[AllianceSpendRepository::class];

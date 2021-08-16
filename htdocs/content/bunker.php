@@ -9,7 +9,7 @@ use EtoA\Universe\Planet\PlanetRepository;
 /** @var PlanetRepository $planetRepo */
 $planetRepo = $app[PlanetRepository::class];
 
-/** @var ResourceBoxDrawer */
+/** @var ResourceBoxDrawer $resourceBoxDrawer */
 $resourceBoxDrawer = $app[ResourceBoxDrawer::class];
 
 /** @var ShipRepository $shipRepository */

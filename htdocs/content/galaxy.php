@@ -2,7 +2,7 @@
 
 use EtoA\Core\Configuration\ConfigurationService;
 
-/** @var ConfigurationService */
+/** @var ConfigurationService $config */
 $config = $app[ConfigurationService::class];
 
 $sx_num = $config->param1Int('num_of_sectors');

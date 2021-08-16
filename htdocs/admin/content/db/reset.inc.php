@@ -9,16 +9,16 @@ use EtoA\Support\DB\DatabaseManagerRepository;
 use EtoA\Support\DB\DatabaseMigrationService;
 use EtoA\Support\DB\SchemaMigrationRepository;
 
-/** @var ConfigurationService */
+/** @var ConfigurationService $config */
 $config = $app[ConfigurationService::class];
 
-/** @var DatabaseManagerRepository */
+/** @var DatabaseManagerRepository $databaseManager */
 $databaseManager = $app[DatabaseManagerRepository::class];
 
-/** @var DatabaseMigrationService */
+/** @var DatabaseMigrationService $databaseMigrationService */
 $databaseMigrationService = $app[DatabaseMigrationService::class];
 
-/** @var DatabaseBackupService */
+/** @var DatabaseBackupService $databaseBackupService */
 $databaseBackupService = $app[DatabaseBackupService::class];
 /** @var LogRepository $logRepository */
 $logRepository = $app[LogRepository::class];

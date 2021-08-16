@@ -6,7 +6,7 @@ $twig->addGlobal("title", MODUL_NAME);
 
 global $app;
 
-/** @var ConfigurationService */
+/** @var ConfigurationService $config */
 $config = $app[ConfigurationService::class];
 
 if (isset($_POST['apply_submit'])) {

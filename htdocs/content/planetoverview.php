@@ -18,28 +18,28 @@ use EtoA\User\UserRepository;
 use EtoA\User\UserService;
 use Symfony\Component\HttpFoundation\Request;
 
-/** @var ConfigurationService */
+/** @var ConfigurationService $config */
 $config = $app[ConfigurationService::class];
 
-/** @var PlanetService */
+/** @var PlanetService $planetService */
 $planetService = $app[PlanetService::class];
 
-/** @var PlanetRepository */
+/** @var PlanetRepository $planetRepo */
 $planetRepo = $app[PlanetRepository::class];
 
-/** @var EntityRepository */
+/** @var EntityRepository $entityRepository */
 $entityRepository = $app[EntityRepository::class];
 
 /** @var ShipRepository $shipRepo */
 $shipRepo = $app[ShipRepository::class];
 
-/** @var FleetRepository */
+/** @var FleetRepository $fleetRepo */
 $fleetRepo = $app[FleetRepository::class];
 
 /** @var Request */
 $request = Request::createFromGlobals();
 
-/** @var ResourceBoxDrawer */
+/** @var ResourceBoxDrawer $resourceBoxDrawer */
 $resourceBoxDrawer = $app[ResourceBoxDrawer::class];
 
 /** @var ShipDataRepository $shipDataRepository */
@@ -163,7 +163,7 @@ if (isset($cp)) {
                         $userRepository->markMainPlanetChanged($cu->getId());
                         $cu->changedMainPlanet = true;
 
-                        /** @var UserService */
+                        /** @var UserService $userService */
                         $userService = $app[UserService::class];
                         $userService->addToUserLog($cu->id, "planets", "{nick} wählt [b]" . $entity->toString() . "[/b] als neuen Hauptplanet aus.", false);
 

@@ -127,7 +127,7 @@ if (isset($cp)) {
         //
 
         // Lade Rassennamen
-        /** @var RaceDataRepository */
+        /** @var RaceDataRepository $raceRepository */
         $raceRepository = $app[RaceDataRepository::class];
 
         $raceNames = $raceRepository->getRaceNames();

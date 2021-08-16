@@ -291,7 +291,7 @@ function addShipToPlanet($form)
     $updata = explode(":", $form['entity_id']);
 
     if ($updata[1] > 0) {
-        /** @var ShipRepository */
+        /** @var ShipRepository $shipRepository */
         $shipRepository = $app[ShipRepository::class];
 
         $shipRepository->addShip((int) $form['ship_id'], (int) $form['shiplist_count'], (int) $updata[1], (int) $updata[0]);
@@ -823,7 +823,7 @@ function addBuildingToPlanet($form)
 
     [$entityId, $userId] = explode(":", $form['entity_id']);
     if ($userId > 0) {
-        /** @var BuildingRepository */
+        /** @var BuildingRepository $buildingRepository */
         $buildingRepository = $app[BuildingRepository::class];
         $buildingRepository->addBuilding((int) $form['building_id'], (int) $form['buildlist_current_level'], (int) $userId, (int) $entityId);
         $objResponse->script("xajax_showBuildingsOnPlanet('" . $form['entity_id'] . "')");

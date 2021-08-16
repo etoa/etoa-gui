@@ -3,10 +3,10 @@
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Universe\Planet\PlanetRepository;
 
-/** @var ConfigurationService */
+/** @var ConfigurationService $config */
 $config = $app[ConfigurationService::class];
 
-/** @var PlanetRepository */
+/** @var PlanetRepository $planetRepo */
 $planetRepo = $app[PlanetRepository::class];
 
 echo '<h1>Wirtschaftsübersicht</h1>';

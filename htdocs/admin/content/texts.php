@@ -3,7 +3,7 @@
 use EtoA\Text\TextRepository;
 use Twig\Environment;
 
-/** @var TextRepository */
+/** @var TextRepository $textRepo */
 $textRepo = $app[TextRepository::class];
 
 if (isset($_GET['id'])) {

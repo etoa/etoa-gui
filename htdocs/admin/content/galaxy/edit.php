@@ -19,40 +19,40 @@ use EtoA\Universe\Wormhole\WormholeRepository;
 use EtoA\User\UserRepository;
 use Symfony\Component\HttpFoundation\Request;
 
-/** @var ConfigurationService */
+/** @var ConfigurationService $config */
 $config = $app[ConfigurationService::class];
 
-/** @var EntityRepository */
+/** @var EntityRepository $entityRepo */
 $entityRepo = $app[EntityRepository::class];
 
 /** @var StarRepository $starRepo */
 $starRepo = $app[StarRepository::class];
 
-/** @var PlanetRepository */
+/** @var PlanetRepository $planetRepo */
 $planetRepo = $app[PlanetRepository::class];
 
-/** @var AsteroidRepository */
+/** @var AsteroidRepository $asteroidRepo */
 $asteroidRepo = $app[AsteroidRepository::class];
 
-/** @var NebulaRepository */
+/** @var NebulaRepository $nebulaRepo */
 $nebulaRepo = $app[NebulaRepository::class];
 
-/** @var WormholeRepository */
+/** @var WormholeRepository $wormholeRepo */
 $wormholeRepo = $app[WormholeRepository::class];
 
-/** @var EmptySpaceRepository */
+/** @var EmptySpaceRepository $emptySpaceRepo */
 $emptySpaceRepo = $app[EmptySpaceRepository::class];
 
-/** @var SolarTypeRepository */
+/** @var SolarTypeRepository $solarTypeRepository */
 $solarTypeRepository = $app[SolarTypeRepository::class];
 
-/** @var PlanetTypeRepository */
+/** @var PlanetTypeRepository $planetTypeRepository */
 $planetTypeRepository = $app[PlanetTypeRepository::class];
 
-/** @var PlanetService */
+/** @var PlanetService $planetService */
 $planetService = $app[PlanetService::class];
 
-/** @var BackendMessageService */
+/** @var BackendMessageService $backendMessageService */
 $backendMessageService = $app[BackendMessageService::class];
 /** @var LogRepository $logRepository */
 $logRepository = $app[LogRepository::class];
@@ -181,7 +181,7 @@ Neuer Besitzer: [page user sub=edit user_id=" . $request->request->getInt('plane
 
             echo "<tr><td style=\"height:2px;\" colspan=\"4\"></td></tr>";
 
-            /** @var UserRepository */
+            /** @var UserRepository $userRepo */
             $userRepo = $app[UserRepository::class];
 
             //Listet alle User der Spiels auf

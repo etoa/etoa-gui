@@ -15,10 +15,10 @@ class AdminSession extends Session
         // TODO
         global $app;
 
-        /** @var AdminSessionManager */
+        /** @var AdminSessionManager $sessionManager */
         $sessionManager = $app[AdminSessionManager::class];
 
-        /** @var AdminUserRepository */
+        /** @var AdminUserRepository $userRepository */
         $userRepository = $app[AdminUserRepository::class];
 
         $sessionManager->cleanup();
@@ -100,10 +100,10 @@ class AdminSession extends Session
         // TODO
         global $app;
 
-        /** @var AdminSessionManager */
+        /** @var AdminSessionManager $sessionManager */
         $sessionManager = $app[AdminSessionManager::class];
 
-        /** @var AdminSessionRepository */
+        /** @var AdminSessionRepository $repository */
         $repository = $app[AdminSessionRepository::class];
 
         if (isset($this->time_login)) {
@@ -158,7 +158,7 @@ class AdminSession extends Session
         // TODO
         global $app;
 
-        /** @var AdminSessionManager */
+        /** @var AdminSessionManager $sessionManager */
         $sessionManager = $app[AdminSessionManager::class];
 
         $sessionManager->unregisterSession(session_id());

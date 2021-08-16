@@ -12,7 +12,7 @@ use EtoA\Log\LogSeverity;
 use EtoA\User\UserRepository;
 use EtoA\User\UserService;
 
-/** @var ConfigurationService */
+/** @var ConfigurationService $config */
 $config = $app[ConfigurationService::class];
 /** @var AllianceRepository $allianceRepository */
 $allianceRepository = $app[AllianceRepository::class];
@@ -61,7 +61,7 @@ if (Alliance::checkActionRights(AllianceRights::APPLICATIONS)) {
                     $allianceHistoryRepository->addEntry((int) $cu->allianceId, "Die Bewerbung von [b]" . $nick . "[/b] wurde akzeptiert!");
                     $logRepository->add(LogFacility::ALLIANCE, LogSeverity::INFO, "Der Spieler [b]" . $nick . "[/b] tritt der Allianz [b]" . $alliance->nameWithTag . "[/b] bei!");
 
-                    /** @var UserService */
+                    /** @var UserService $userService */
                     $userService = $app[UserService::class];
                     $userService->addToUserLog($id, "alliance", "{nick} ist nun ein Mitglied der Allianz " . $alliance->name . ".");
 

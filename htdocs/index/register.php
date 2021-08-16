@@ -7,13 +7,13 @@ use EtoA\Log\LogSeverity;
 use EtoA\Support\Mail\MailSenderService;
 use EtoA\User\UserService;
 
-/** @var ConfigurationService */
+/** @var ConfigurationService $config */
 $config = $app[ConfigurationService::class];
 
 /** @var \EtoA\User\UserRepository $userRepository */
 $userRepository = $app[\EtoA\User\UserRepository::class];
 
-/** @var UserService */
+/** @var UserService $userService */
 $userService = $app[UserService::class];
 
 /** @var MailSenderService $mailSenderService */

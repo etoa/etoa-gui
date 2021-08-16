@@ -50,13 +50,13 @@ function shipRanking(\EtoA\Ship\Ship $ship)
 
 echo "<h2>Raumschiffe</h2>";
 
-/** @var ShipDataRepository */
+/** @var ShipDataRepository $shipDataRepository */
 $shipDataRepository = $app[ShipDataRepository::class];
 
-/** @var ShipCategoryRepository */
+/** @var ShipCategoryRepository $shipCategoryRepository */
 $shipCategoryRepository = $app[ShipCategoryRepository::class];
 
-/** @var RaceDataRepository */
+/** @var RaceDataRepository $raceRepository */
 $raceRepository = $app[RaceDataRepository::class];
 $raceNames = $raceRepository->getRaceNames();
 
@@ -165,7 +165,7 @@ if (isset($_GET['id'])) {
                         <td style=\"font-weight:bold;\">Antriebstechnologie</td>
                         <td>";
 
-        /** @var ShipRequirementRepository */
+        /** @var ShipRequirementRepository $shipRequirementRepository */
         $shipRequirementRepository = $app[ShipRequirementRepository::class];
         $technologies = $shipRequirementRepository->getRequiredSpeedTechnologies($ship->id);
         foreach ($technologies as $technology) {

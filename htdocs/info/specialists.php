@@ -14,7 +14,7 @@ echo "Spezialisten können für eine fixe Zeitdauer angestellt werden und verst�
     um Platz für einen neuen zu schaffen; man erhält in diesem Fall aber keine Ressourcen zurück.";
 iBoxEnd();
 
-/** @var SpecialistDataRepository */
+/** @var SpecialistDataRepository $speciaistRepository */
 $speciaistRepository = $app[SpecialistDataRepository::class];
 $specialists = $speciaistRepository->getActiveSpecialists();
 

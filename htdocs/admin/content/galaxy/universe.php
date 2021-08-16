@@ -12,34 +12,34 @@ use EtoA\Universe\UniverseResetService;
 use EtoA\Universe\Wormhole\WormholeRepository;
 use Symfony\Component\HttpFoundation\Request;
 
-/** @var UniverseGenerator */
+/** @var UniverseGenerator $universeGenerator */
 $universeGenerator = $app[UniverseGenerator::class];
 
-/** @var UniverseResetService */
+/** @var UniverseResetService $universeResetService */
 $universeResetService = $app[UniverseResetService::class];
 
-/** @var CellRepository */
+/** @var CellRepository $cellRepo */
 $cellRepo = $app[CellRepository::class];
 
 /** @var StarRepository $starRepo */
 $starRepo = $app[StarRepository::class];
 
-/** @var PlanetRepository */
+/** @var PlanetRepository $planetRepo */
 $planetRepo = $app[PlanetRepository::class];
 
-/** @var AsteroidRepository */
+/** @var AsteroidRepository $asteroidRepo */
 $asteroidRepo = $app[AsteroidRepository::class];
 
-/** @var NebulaRepository */
+/** @var NebulaRepository $nebulaRepo */
 $nebulaRepo = $app[NebulaRepository::class];
 
-/** @var WormholeRepository */
+/** @var WormholeRepository $wormholeRepo */
 $wormholeRepo = $app[WormholeRepository::class];
 
-/** @var EmptySpaceRepository */
+/** @var EmptySpaceRepository $emptySpaceRepo */
 $emptySpaceRepo = $app[EmptySpaceRepository::class];
 
-/** @var ConfigurationService */
+/** @var ConfigurationService $config */
 $config = $app[ConfigurationService::class];
 
 /** @var Request */

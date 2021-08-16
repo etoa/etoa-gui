@@ -9,10 +9,10 @@ use EtoA\Log\LogSeverity;
 use Symfony\Component\HttpFoundation\Request;
 use Twig\Environment;
 
-/** @var AdminUserRepository */
+/** @var AdminUserRepository $adminUserRepo */
 $adminUserRepo = $app[AdminUserRepository::class];
 
-/** @var AdminRoleManager */
+/** @var AdminRoleManager $roleManager */
 $roleManager = $app[AdminRoleManager::class];
 
 /** @var Request */

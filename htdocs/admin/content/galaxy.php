@@ -5,10 +5,10 @@ use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\User\UserRepository;
 use Twig\Environment;
 
-/** @var ConfigurationService */
+/** @var ConfigurationService $config */
 $config = $app[ConfigurationService::class];
 
-/** @var UserRepository */
+/** @var UserRepository $userRepository */
 $userRepository = $app[UserRepository::class];
 
 if ($sub == "map") {

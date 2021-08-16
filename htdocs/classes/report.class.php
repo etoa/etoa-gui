@@ -222,7 +222,7 @@ abstract class Report
         // TODO
         global $app;
 
-        /** @var ConfigurationService */
+        /** @var ConfigurationService $config */
         $config = $app[ConfigurationService::class];
         /** @var ReportRepository $reportRepository */
         $reportRepository = $app[ReportRepository::class];

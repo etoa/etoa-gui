@@ -69,19 +69,19 @@ function getFlightTargetInfo($f, $sx1, $sy1, $cx1, $cy1, $p1)
     // TODO
     global $app;
 
-    /** @var ConfigurationService */
+    /** @var ConfigurationService $config */
     $config = $app[ConfigurationService::class];
 
-    /** @var EntityRepository */
+    /** @var EntityRepository $entityRepository */
     $entityRepository = $app[EntityRepository::class];
 
-    /** @var PlanetRepository */
+    /** @var PlanetRepository $planetRepository */
     $planetRepository = $app[PlanetRepository::class];
 
-    /** @var UserRepository */
+    /** @var UserRepository $userRepository */
     $userRepository = $app[UserRepository::class];
 
-    /** @var EntityService */
+    /** @var EntityService $entityService */
     $entityService = $app[EntityService::class];
 
     $sourceCoordinates = new EntityCoordinates($sx1, $sy1, $cx1, $cy1, $p1);
@@ -257,19 +257,19 @@ function getCryptoDistance($f, $sx1, $sy1, $cx1, $cy1, $p1)
     // TODO
     global $app;
 
-    /** @var ConfigurationService */
+    /** @var ConfigurationService $config */
     $config = $app[ConfigurationService::class];
 
-    /** @var EntityRepository */
+    /** @var EntityRepository $entityRepository */
     $entityRepository = $app[EntityRepository::class];
 
-    /** @var PlanetRepository */
+    /** @var PlanetRepository $planetRepository */
     $planetRepository = $app[PlanetRepository::class];
 
-    /** @var UserRepository */
+    /** @var UserRepository $userRepository */
     $userRepository = $app[UserRepository::class];
 
-    /** @var EntityService */
+    /** @var EntityService $entityService */
     $entityService = $app[EntityService::class];
 
     $sourceCoordinates = new EntityCoordinates($sx1, $sy1, $cx1, $cy1, $p1);

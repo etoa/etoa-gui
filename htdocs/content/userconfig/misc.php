@@ -6,13 +6,13 @@ use EtoA\User\UserHolidayService;
 use EtoA\User\UserRepository;
 use EtoA\User\UserService;
 
-/** @var ConfigurationService */
+/** @var ConfigurationService $config */
 $config = $app[ConfigurationService::class];
 
-/** @var BackendMessageService */
+/** @var BackendMessageService $backendMessageService */
 $backendMessageService = $app[BackendMessageService::class];
 
-/** @var UserService*/
+/** @var UserService $userService */
 $userService = $app[UserService::class];
 /** @var UserHolidayService $userHolidayService */
 $userHolidayService = $app[UserHolidayService::class];

@@ -36,7 +36,7 @@ if (isset($_GET['id'])) {
         tableEnd();
 
         if ($technology->typeId === $techSpeedCategory) {
-            /** @var ShipRequirementRepository */
+            /** @var ShipRequirementRepository $shipRequirementRepository */
             $shipRequirementRepository = $app[ShipRequirementRepository::class];
             $requirements = $shipRequirementRepository->getShipsWithRequiredTechnology($technology->id);
             if (count($requirements) > 0) {

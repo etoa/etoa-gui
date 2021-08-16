@@ -117,7 +117,7 @@ class SectorMapRenderer
         // TODO
         global $app;
 
-        /** @var UserUniverseDiscoveryService */
+        /** @var UserUniverseDiscoveryService $userUniverseDiscoveryService */
         $userUniverseDiscoveryService = $app[UserUniverseDiscoveryService::class];
         /** @var EntityRepository $entityRepository */
         $entityRepository = $app[EntityRepository::class];

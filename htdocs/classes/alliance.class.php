@@ -202,7 +202,7 @@ class Alliance
                     // TODO
                     global $app;
 
-                    /** @var AllianceHistoryRepository */
+                    /** @var AllianceHistoryRepository $allianceHistoryRepository */
                     $allianceHistoryRepository = $app[AllianceHistoryRepository::class];
                     $allianceHistoryRepository->addEntry($this->id, "Der Spieler [b]" . $this->founder . "[/b] wird zum Gründer befördert.");
 
@@ -210,7 +210,7 @@ class Alliance
                     $messageRepository = $app[MessageRepository::class];
                     $messageRepository->createSystemMessage($this->founder->id, MSG_ALLYMAIL_CAT, "Gründer", "Du hast nun die Gründerrechte deiner Allianz!");
 
-                    /** @var UserService */
+                    /** @var UserService $userService */
                     $userService = $app[UserService::class];
                     $userService->addToUserLog($this->founder->id, "alliance", "{nick} ist nun Gründer der Allianz " . $this->__toString());
 
@@ -326,7 +326,7 @@ class Alliance
                     $messageRepository = $app[MessageRepository::class];
                     $messageRepository->createSystemMessage($userId, MSG_ALLYMAIL_CAT, "Allianzaufnahme", "Du wurdest in die Allianz [b]" . $this->__toString() . "[/b] aufgenommen!");
 
-                    /** @var AllianceHistoryRepository */
+                    /** @var AllianceHistoryRepository $allianceHistoryRepository */
                     $allianceHistoryRepository = $app[AllianceHistoryRepository::class];
                     $allianceHistoryRepository->addEntry($this->id, "[b]" . $tmpUser . "[/b] wurde als neues Mitglied aufgenommen");
 
@@ -366,7 +366,7 @@ class Alliance
                             $messageRepository->createSystemMessage($this->__get('founder')->id, MSG_ALLYMAIL_CAT, "Allianzaustritt", "Der Spieler " . $this->members[$userId] . " trat aus der Allianz aus!");
                         }
 
-                        /** @var AllianceHistoryRepository */
+                        /** @var AllianceHistoryRepository $allianceHistoryRepository */
                         $allianceHistoryRepository = $app[AllianceHistoryRepository::class];
                         $allianceHistoryRepository->addEntry($this->id, "[b]" . $this->members[$userId] . "[/b] ist nun kein Mitglied mehr von uns.");
 
@@ -551,7 +551,7 @@ class Alliance
                 $this->motherRequestId = 0;
                 $this->motherRequest = null;
 
-                /** @var AllianceHistoryRepository */
+                /** @var AllianceHistoryRepository $allianceHistoryRepository */
                 $allianceHistoryRepository = $app[AllianceHistoryRepository::class];
                 $allianceHistoryRepository->addEntry($this->__get('mother')->id, "[b]" . $this->__toString() . "[/b] wurde als neuer Wing hinzugefügt.");
                 $allianceHistoryRepository->addEntry($this->id, "Wir sind nun ein Wing von [b]" . $this->__get('mother') . "[/b]");
@@ -587,7 +587,7 @@ class Alliance
             if (mysql_affected_rows() > 0) {
                 $this->wings[$allianceId] = new Alliance($allianceId);
 
-                /** @var AllianceHistoryRepository */
+                /** @var AllianceHistoryRepository $allianceHistoryRepository */
                 $allianceHistoryRepository = $app[AllianceHistoryRepository::class];
                 $allianceHistoryRepository->addEntry($this->id, $this->wings[$allianceId] . " wurde als neuer Wing hinzugefügt.");
                 $allianceHistoryRepository->addEntry($this->wings[$allianceId]->id, "Wir sing nun ein Wing von " . $this->__toString());
@@ -620,7 +620,7 @@ class Alliance
                 AND alliance_id=" . $wingId . "
             ");
         if (mysql_affected_rows() > 0) {
-            /** @var AllianceHistoryRepository */
+            /** @var AllianceHistoryRepository $allianceHistoryRepository */
             $allianceHistoryRepository = $app[AllianceHistoryRepository::class];
             if ($this->wings != null) {
                 $allianceHistoryRepository->addEntry($this->id, $this->wings[$wingId] . " ist nun kein Wing mehr von uns");
@@ -676,11 +676,11 @@ class Alliance
             $allianceBuildingRepository = $app[AllianceBuildingRepository::class];
             $allianceBuildingRepository->removeForAlliance($this->id);
 
-            /** @var AllianceHistoryRepository */
+            /** @var AllianceHistoryRepository $allianceHistoryRepository */
             $allianceHistoryRepository = $app[AllianceHistoryRepository::class];
             $allianceHistoryRepository->removeForAlliance($this->id);
 
-            /** @var AlliancePointsRepository */
+            /** @var AlliancePointsRepository $alliancePointsRepository */
             $alliancePointsRepository = $app[AlliancePointsRepository::class];
             $alliancePointsRepository->removeForAlliance($this->id);
 
@@ -733,7 +733,7 @@ class Alliance
             if ($user != null) {
                 $user->alliance = null;
 
-                /** @var UserService */
+                /** @var UserService $userService */
                 $userService = $app[UserService::class];
                 $userService->addToUserLog($user->id, "alliance", "{nick} löst die Allianz [b]" . $this->__toString() . "[/b] auf.");
                 $logRepository->add(LogFacility::ALLIANCE, LogSeverity::INFO, "Die Allianz [b]" . $this->__toString() . "[/b] wurde von " . $user . " aufgelöst!");
@@ -847,7 +847,7 @@ class Alliance
         // TODO
         global $app;
 
-        /** @var ConfigurationService */
+        /** @var ConfigurationService $config */
         $config = $app[ConfigurationService::class];
 
         $pres = dbquery("SELECT

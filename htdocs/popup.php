@@ -9,7 +9,7 @@ $app = require __DIR__ . '/../src/app.php';
 
 $request = Request::createFromGlobals();
 
-/** @var ConfigurationService */
+/** @var ConfigurationService $config */
 $config = $app[ConfigurationService::class];
 
 /** @var UserPropertiesRepository $userPropertiesRepository */

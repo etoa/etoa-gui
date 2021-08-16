@@ -11,22 +11,22 @@ use EtoA\Help\TicketSystem\TicketStatus;
 use EtoA\User\UserRepository;
 use Symfony\Component\HttpFoundation\Request;
 
-/** @var TicketService */
+/** @var TicketService $ticketService */
 $ticketService = $app[TicketService::class];
 
-/** @var TicketRepository */
+/** @var TicketRepository $ticketRepo */
 $ticketRepo = $app[TicketRepository::class];
 
-/** @var TicketMessageRepository */
+/** @var TicketMessageRepository $ticketMessageRepo */
 $ticketMessageRepo = $app[TicketMessageRepository::class];
 
-/** @var AdminUserRepository */
+/** @var AdminUserRepository $adminUserRepo */
 $adminUserRepo = $app[AdminUserRepository::class];
 
-/** @var UserRepository */
+/** @var UserRepository $userRepo */
 $userRepo = $app[UserRepository::class];
 
-/** @var AdminRoleManager */
+/** @var AdminRoleManager $roleManager */
 $roleManager = $app[AdminRoleManager::class];
 
 /** @var Request */

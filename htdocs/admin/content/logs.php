@@ -15,7 +15,7 @@ use Twig\Environment;
 // TODO
 global $app;
 
-/** @var ConfigurationService */
+/** @var ConfigurationService $config */
 $config = $app[ConfigurationService::class];
 
 $twig->addGlobal('title', 'Logs');

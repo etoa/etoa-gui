@@ -11,10 +11,10 @@ use EtoA\Tutorial\TutorialManager;
 use EtoA\User\UserPropertiesRepository;
 use EtoA\User\UserSurveillanceRepository;
 
-/** @var RuntimeDataStore */
+/** @var RuntimeDataStore $runtimeDataStore */
 $runtimeDataStore = $app[RuntimeDataStore::class];
 
-/** @var ConfigurationService */
+/** @var ConfigurationService $config */
 $config = $app[ConfigurationService::class];
 
 /** @var MailSenderService $mailSenderService */

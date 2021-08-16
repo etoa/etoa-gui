@@ -24,7 +24,7 @@ $indexpage = [
 
 require_once __DIR__ . '/inc/bootstrap.inc.php';
 
-/** @var ConfigurationService */
+/** @var ConfigurationService $config */
 $config = $app[ConfigurationService::class];
 
 $loggedIn = false;

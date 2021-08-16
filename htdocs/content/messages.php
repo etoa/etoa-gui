@@ -8,19 +8,19 @@ use EtoA\User\UserPropertiesRepository;
 use EtoA\User\UserRepository;
 use Symfony\Component\HttpFoundation\Request;
 
-/** @var ConfigurationService */
+/** @var ConfigurationService $config */
 $config = $app[ConfigurationService::class];
 
-/** @var MessageRepository */
+/** @var MessageRepository $messageRepository */
 $messageRepository = $app[MessageRepository::class];
 
-/** @var MessageCategoryRepository */
+/** @var MessageCategoryRepository $messageCategoryRepository */
 $messageCategoryRepository = $app[MessageCategoryRepository::class];
 
 /** @var Request */
 $request = Request::createFromGlobals();
 
-/** @var UserRepository */
+/** @var UserRepository $userRepository */
 $userRepository = $app[UserRepository::class];
 
 /** @var UserPropertiesRepository $userPropertiesRepository */

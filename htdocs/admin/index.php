@@ -57,34 +57,34 @@ try {
     if (!$s->validate()) {
         include __DIR__ . '/inc/admin_login.inc.php';
     } else {
-        /** @var AdminUserRepository */
+        /** @var AdminUserRepository $adminUserRepo */
         $adminUserRepo = $app[AdminUserRepository::class];
 
-        /** @var UserRepository */
+        /** @var UserRepository $userRepo */
         $userRepo = $app[UserRepository::class];
 
-        /** @var UserSessionRepository */
+        /** @var UserSessionRepository $userSessionRepo */
         $userSessionRepo = $app[UserSessionRepository::class];
 
-        /** @var AdminNotesRepository */
+        /** @var AdminNotesRepository $notesRepo */
         $notesRepo = $app[AdminNotesRepository::class];
 
-        /** @var AdminRoleManager */
+        /** @var AdminRoleManager $roleManager */
         $roleManager = $app[AdminRoleManager::class];
 
-        /** @var AdminSessionRepository */
+        /** @var AdminSessionRepository $sessionRepository */
         $sessionRepository = $app[AdminSessionRepository::class];
 
-        /** @var DatabaseManagerRepository */
+        /** @var DatabaseManagerRepository $databaseManager */
         $databaseManager = $app[DatabaseManagerRepository::class];
 
-        /** @var TicketRepository */
+        /** @var TicketRepository $ticketRepo */
         $ticketRepo = $app[TicketRepository::class];
 
-        /** @var ConfigurationService */
+        /** @var ConfigurationService $config */
         $config = $app[ConfigurationService::class];
 
-        /** @var EventHandlerManager */
+        /** @var EventHandlerManager $eventHandlerManager */
         $eventHandlerManager = $app[EventHandlerManager::class];
 
         adminView(

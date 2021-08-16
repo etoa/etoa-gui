@@ -10,7 +10,7 @@ use EtoA\Ship\ShipSort;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\User\UserRepository;
 
-/** @var ConfigurationService */
+/** @var ConfigurationService $config */
 $config = $app[ConfigurationService::class];
 
 /** @var ShipDataRepository $shipDataRepository */
@@ -296,7 +296,7 @@ elseif ($sub == "queue") {
         unset($_SESSION['shipqueue']['query']);
 
         // Schiffe laden
-        /** @var ShipDataRepository */
+        /** @var ShipDataRepository $shipRepository */
         $shipRepository = $app[ShipDataRepository::class];
         $shipNames = $shipRepository->getShipNames(true);
 

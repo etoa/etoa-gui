@@ -10,13 +10,13 @@ use EtoA\Log\LogSeverity;
 use EtoA\User\UserRepository;
 use EtoA\User\UserUniverseDiscoveryService;
 
-/** @var UserRepository */
+/** @var UserRepository $userRepository */
 $userRepository = $app[UserRepository::class];
 /** @var AllianceBuildingRepository $allianceBuildingRepository */
 $allianceBuildingRepository = $app[AllianceBuildingRepository::class];
 /** @var AllianceRepository $allianceRepository */
 $allianceRepository = $app[AllianceRepository::class];
-/** @var UserUniverseDiscoveryService */
+/** @var UserUniverseDiscoveryService $userUniverseDiscoveryService */
 $userUniverseDiscoveryService = $app[UserUniverseDiscoveryService::class];
 /** @var LogRepository $logRepository */
 $logRepository = $app[LogRepository::class];

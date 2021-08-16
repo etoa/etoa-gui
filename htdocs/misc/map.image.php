@@ -14,10 +14,10 @@ include("image.inc.php");
 
 define('IMG_DIR',"images/imagepacks/Discovery");
 
-/** @var ConfigurationService */
+/** @var ConfigurationService $config */
 $config = $app[ConfigurationService::class];
 
-/** @var CellRepository */
+/** @var CellRepository $cellRepo */
 $cellRepo = $app[CellRepository::class];
 
 /** @var EntityRepository $entityRepo */
@@ -26,10 +26,10 @@ $entityRepo = $app[EntityRepository::class];
 /** @var StarRepository $starRepo */
 $starRepo = $app[StarRepository::class];
 
-/** @var UserRepository */
+/** @var UserRepository $userRepository */
 $userRepository = $app[UserRepository::class];
 
-/** @var UserUniverseDiscoveryService */
+/** @var UserUniverseDiscoveryService $userUniverseDiscoveryService */
 $userUniverseDiscoveryService = $app[UserUniverseDiscoveryService::class];
 
 /** @var Request */

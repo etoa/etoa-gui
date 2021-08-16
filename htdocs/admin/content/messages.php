@@ -19,16 +19,16 @@ define('MESSAGE_TYPE_BOTH', 2);
 define('RECIPIENT_TYPE_SINGLE', 0);
 define('RECIPIENT_TYPE_ALL', 1);
 
-/** @var UserRepository */
+/** @var UserRepository $userRepository */
 $userRepository = $app[UserRepository::class];
 
-/** @var MessageRepository */
+/** @var MessageRepository $messageRepository */
 $messageRepository = $app[MessageRepository::class];
 
-/** @var MessageCategoryRepository */
+/** @var MessageCategoryRepository $messageCategoryRepository */
 $messageCategoryRepository = $app[MessageCategoryRepository::class];
 
-/** @var ReportRepository */
+/** @var ReportRepository $reportRepository */
 $reportRepository = $app[ReportRepository::class];
 
 /** @var MailSenderService $mailSenderService */

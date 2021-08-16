@@ -4,13 +4,13 @@ use EtoA\Backend\BackendMessageRepository;
 use EtoA\Backend\EventHandlerManager;
 use EtoA\Core\Configuration\ConfigurationService;
 
-/** @var ConfigurationService */
+/** @var ConfigurationService $config */
 $config = $app[ConfigurationService::class];
 
-/** @var BackendMessageRepository */
+/** @var BackendMessageRepository $backendMessageRepository */
 $backendMessageRepository = $app[BackendMessageRepository::class];
 
-/** @var EventHandlerManager */
+/** @var EventHandlerManager $eventHandlerManager */
 $eventHandlerManager = $app[EventHandlerManager::class];
 
 $successMessage = null;

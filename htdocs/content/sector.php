@@ -5,10 +5,10 @@ use EtoA\UI\Tooltip;
 use EtoA\Universe\Cell\CellRepository;
 use EtoA\User\UserRepository;
 
-/** @var ConfigurationService */
+/** @var ConfigurationService $config */
 $config = $app[ConfigurationService::class];
 
-/** @var UserRepository */
+/** @var UserRepository $userRepository */
 $userRepository = $app[UserRepository::class];
 /** @var CellRepository $cellRepository */
 $cellRepository = $app[CellRepository::class];

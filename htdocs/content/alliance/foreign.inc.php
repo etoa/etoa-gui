@@ -9,7 +9,7 @@ use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Message\MessageRepository;
 use EtoA\Support\StringUtils;
 
-/** @var ConfigurationService */
+/** @var ConfigurationService $config */
 $config = $app[ConfigurationService::class];
 
 /** @var AllianceApplicationRepository $allianceApplicationRepository */
@@ -24,7 +24,7 @@ $messageRepository = $app[MessageRepository::class];
 /** @var AllianceRepository $allianceRepository */
 $allianceRepository = $app[AllianceRepository::class];
 
-/** @var AllianceService */
+/** @var AllianceService $service */
 $service = $app[AllianceService::class];
 
 if ($config->getBoolean("alliance_allow")) {

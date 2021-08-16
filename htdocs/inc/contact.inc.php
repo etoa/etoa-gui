@@ -22,7 +22,7 @@ if ($contactText->isEnabled()) {
 /** @var AdminUserRepository $adminUserRepo */
 $adminUserRepo = $app[AdminUserRepository::class];
 
-/** @var ConfigurationService */
+/** @var ConfigurationService $config */
 $config = $app[ConfigurationService::class];
 
 /** @var MailSenderService $mailSenderService */

@@ -66,7 +66,7 @@ if ($_GET['logout'] ?? false) {
     forward(getLoginUrl(['page' => 'logout']), 'Logout');
 }
 
-/** @var ConfigurationService */
+/** @var ConfigurationService $config */
 $config = $app[ConfigurationService::class];
 
 // Validate session
@@ -172,7 +172,7 @@ try {
         }
 
         if ($cu->isSetup()) {
-            /** @var PlanetRepository */
+            /** @var PlanetRepository $planetRepository */
             $planetRepository = $app[PlanetRepository::class];
             $userPlanets = $planetRepository->getUserPlanets((int) $cu->id);
             $planets = [];

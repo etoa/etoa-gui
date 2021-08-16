@@ -6,7 +6,7 @@ use EtoA\Market\MarketShipRepository;
 use EtoA\Ship\ShipDataRepository;
 use EtoA\Support\RuntimeDataStore;
 
-/** @var RuntimeDataStore */
+/** @var RuntimeDataStore $runtimeDataStore */
 $runtimeDataStore = $app[RuntimeDataStore::class];
 /** @var MarketAuctionRepository $marketAuctionRepository */
 $marketAuctionRepository = $app[MarketAuctionRepository::class];

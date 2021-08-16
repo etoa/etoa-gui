@@ -3,10 +3,10 @@
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\User\UserService;
 
-/** @var ConfigurationService */
+/** @var ConfigurationService $config */
 $config = $app[ConfigurationService::class];
 
-/** @var UserService */
+/** @var UserService $userService */
 $userService = $app[UserService::class];
 
 iBoxStart("Logins");

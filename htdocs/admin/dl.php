@@ -14,7 +14,7 @@ if ($s->user_id) {
             realpath(ADMIN_FILESHARING_DIR),
         );
 
-        /** @var DatabaseBackupService */
+        /** @var DatabaseBackupService $databaseBackupService */
         $databaseBackupService = $app[DatabaseBackupService::class];
 
         $backupDir = $databaseBackupService->getBackupDir();

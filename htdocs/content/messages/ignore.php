@@ -4,10 +4,10 @@ use EtoA\Message\MessageIgnoreRepository;
 use EtoA\User\UserRepository;
 use Symfony\Component\HttpFoundation\Request;
 
-/** @var MessageIgnoreRepository */
+/** @var MessageIgnoreRepository $messageIgnoreRepository */
 $messageIgnoreRepository = $app[MessageIgnoreRepository::class];
 
-/** @var UserRepository */
+/** @var UserRepository $userRepository */
 $userRepository = $app[UserRepository::class];
 
 /** @var Request */

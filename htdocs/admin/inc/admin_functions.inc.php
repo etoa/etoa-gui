@@ -562,7 +562,7 @@ function showAttackAbuseLogs($args = null, $limit = -1, $load = true)
 {
     global $app;
 
-    /** @var UserRepository */
+    /** @var UserRepository $userRepository */
     $userRepository = $app[UserRepository::class];
     /** @var BattleLogRepository $battleLogRepository */
     $battleLogRepository = $app[BattleLogRepository::class];
@@ -938,6 +938,7 @@ function showDebrisLogs($args = null, $limit = 0)
 {
     global $app;
 
+    /** @var AdminUserRepository $adminUserRepo */
     $adminUserRepo = $app[AdminUserRepository::class];
     /** @var UserRepository $userRepository */
     $userRepository = $app[UserRepository::class];
@@ -953,7 +954,10 @@ function showDebrisLogs($args = null, $limit = 0)
         $search->userId($userRepository->getUserIdByNick($args['searchuser']));
     }
     if (isset($args['searchadmin']) && trim($args['searchadmin']) != '') {
-        $search->adminId($adminUserRepo->findOneByNick($args['searchadmin']));
+        $admin = $adminUserRepo->findOneByNick($args['searchadmin']);
+        if ($admin !== null) {
+            $search->adminId($admin->id);
+        }
     }
 
     $total = $debrisLogRepository->count($search);

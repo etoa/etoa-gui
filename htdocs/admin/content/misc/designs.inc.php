@@ -3,7 +3,7 @@
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\User\UserPropertiesRepository;
 
-/** @var ConfigurationService */
+/** @var ConfigurationService $config */
 $config = $app[ConfigurationService::class];
 
 $designs = get_designs();

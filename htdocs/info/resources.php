@@ -2,7 +2,7 @@
 
 use EtoA\Core\Configuration\ConfigurationService;
 
-/** @var ConfigurationService */
+/** @var ConfigurationService $config */
 $config = $app[ConfigurationService::class];
 
 echo "<h2>Ressourcen</h2>";

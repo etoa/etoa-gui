@@ -31,7 +31,7 @@ function messagesSetRead($mid)
     // TODO
     global $app;
 
-    /** @var MessageRepository */
+    /** @var MessageRepository $messageRepository */
     $messageRepository = $app[MessageRepository::class];
 
     $messageRepository->setRead($mid);

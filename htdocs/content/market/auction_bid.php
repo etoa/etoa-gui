@@ -10,7 +10,7 @@ use EtoA\Universe\Resources\BaseResources;
 use EtoA\User\UserMultiRepository;
 use EtoA\User\UserRatingService;
 
-/** @var RuntimeDataStore */
+/** @var RuntimeDataStore $runtimeDataStore */
 $runtimeDataStore = $app[RuntimeDataStore::class];
 /** @var MarketAuctionRepository $marketAuctionRepository */
 $marketAuctionRepository = $app[MarketAuctionRepository::class];

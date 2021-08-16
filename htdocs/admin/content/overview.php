@@ -22,10 +22,10 @@ use Twig\Environment;
 /** @var Request */
 $request = Request::createFromGlobals();
 
-/** @var ConfigurationService */
+/** @var ConfigurationService $config */
 $config = $app[ConfigurationService::class];
 
-/** @var GameStatsGenerator */
+/** @var GameStatsGenerator $gameStatsGenerator */
 $gameStatsGenerator = $app[GameStatsGenerator::class];
 
 if ($sub == "offline") {
@@ -40,13 +40,13 @@ if ($sub == "offline") {
 
     changelogView($markdown, $twig);
 } elseif ($sub == "adminlog") {
-    /** @var AdminSessionRepository */
+    /** @var AdminSessionRepository $sessionRepository */
     $sessionRepository = $app[AdminSessionRepository::class];
 
-    /** @var AdminUserRepository */
+    /** @var AdminUserRepository $adminUserRepo */
     $adminUserRepo = $app[AdminUserRepository::class];
 
-    /** @var AdminSessionManager */
+    /** @var AdminSessionManager $sessionManager */
     $sessionManager = $app[AdminSessionManager::class];
 
     /** @var NetworkNameService $networkNameService */
@@ -62,24 +62,24 @@ if ($sub == "offline") {
 } elseif ($sub == "observed") {
     require("home/observed.inc.php");
 } elseif ($sub == "sysinfo") {
-    /** @var DatabaseManagerRepository */
+    /** @var DatabaseManagerRepository $databaseManager */
     $databaseManager = $app[DatabaseManagerRepository::class];
 
     systemInfoView($databaseManager, $twig);
 } else {
-    /** @var CellRepository */
+    /** @var CellRepository $universeCellRepo */
     $universeCellRepo = $app[CellRepository::class];
 
-    /** @var TicketRepository */
+    /** @var TicketRepository $ticketRepo */
     $ticketRepo = $app[TicketRepository::class];
 
-    /** @var TextRepository */
+    /** @var TextRepository $textRepo */
     $textRepo = $app[TextRepository::class];
 
-    /** @var AdminRoleManager */
+    /** @var AdminRoleManager $roleManager */
     $roleManager = $app[AdminRoleManager::class];
 
-    /** @var ConfigurationService */
+    /** @var ConfigurationService $config */
     $config = $app[ConfigurationService::class];
 
     indexView($config, $cu, $universeCellRepo, $ticketRepo, $textRepo, $roleManager, $twig);

@@ -46,7 +46,7 @@ include("image.inc.php");
 	/** @var \EtoA\Market\MarketRateRepository $marketRateRepository */
     $marketRateRepository = $app[\EtoA\Market\MarketRateRepository::class];
 
-    /** @var ConfigurationService */
+    /** @var ConfigurationService $config */
     $config = $app[ConfigurationService::class];
 
     $marketRates = $marketRateRepository->getRates($config->getInt('market_rates_count'));

@@ -66,7 +66,7 @@ for ($i=0;$i<=$maxRatio; $i+=$maxRatio/10)
 
 $strx = P_LEFT;
 $i = 0;
-/** @var BuildingDataRepository */
+/** @var BuildingDataRepository $buildingRepository */
 $buildingRepository = $app[BuildingDataRepository::class];
 $buildings = $buildingRepository->getBuildingsByType(BUILDING_POWER_CAT);
 foreach ($buildings as $building) {
@@ -91,14 +91,14 @@ foreach ($buildings as $building) {
     $i++;
 }
 
-/** @var ShipDataRepository */
+/** @var ShipDataRepository $shipRepository */
 $shipRepository = $app[ShipDataRepository::class];
 
 $ships = $shipRepository->getShipWithPowerProduction();
 
 $strx = P_LEFT;
 
-/** @var ConfigurationService */
+/** @var ConfigurationService $config */
 $config = $app[ConfigurationService::class];
 
 foreach ($ships as $ship) {

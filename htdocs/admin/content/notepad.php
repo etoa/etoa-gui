@@ -5,7 +5,7 @@ use EtoA\Admin\AdminNotesRepository;
 $adminUserId = $cu->id;
 if ($adminUserId > 0) {
 
-    /** @var AdminNotesRepository */
+    /** @var AdminNotesRepository $notesRepo */
     $notesRepo = $app[AdminNotesRepository::class];
 
     if (isset($_GET['chk']) && $_GET['chk'] == 'new') {
