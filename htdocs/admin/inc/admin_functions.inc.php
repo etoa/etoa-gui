@@ -7,6 +7,8 @@ use EtoA\Defense\DefenseDataRepository;
 use EtoA\HostCache\NetworkNameService;
 use EtoA\Log\BattleLogRepository;
 use EtoA\Log\BattleLogSearch;
+use EtoA\Log\DebrisLogRepository;
+use EtoA\Log\DebrisLogSearch;
 use EtoA\Log\FleetLogFacility;
 use EtoA\Log\FleetLogRepository;
 use EtoA\Log\FleetLogSearch;
@@ -938,34 +940,29 @@ function showDebrisLogs($args = null, $limit = 0)
     $adminUserRepo = $app[AdminUserRepository::class];
     /** @var UserRepository $userRepository */
     $userRepository = $app[UserRepository::class];
+    /** @var DebrisLogRepository $debrisLogRepository */
+    $debrisLogRepository = $app[DebrisLogRepository::class];
 
     $maxtime = is_array($args) ? mktime($args['searchtime_h'], $args['searchtime_i'], $args['searchtime_s'], $args['searchtime_m'], $args['searchtime_d'], $args['searchtime_y']) : time();
 
     $paginationLimit = 50;
 
-    $sql = "SELECT * from logs_debris";
-    $sql2 = " WHERE time<" . $maxtime;
-
+    $search = DebrisLogSearch::create()->timeBefore($maxtime);
     if (isset($args['searchuser']) && trim($args['searchuser']) != '') {
-        $sql2 .= " AND user_id = " . $userRepository->getUserIdByNick($args['searchuser']) . " ";
-    };
+        $search->userId($userRepository->getUserIdByNick($args['searchuser']));
+    }
     if (isset($args['searchadmin']) && trim($args['searchadmin']) != '') {
-        $admin = $adminUserRepo->findOneByNick($args['searchadmin']);
-        $sql2 .= " AND admin_id=" . ($admin != null ? $admin->id : 0);
-    };
+        $search->adminId($adminUserRepo->findOneByNick($args['searchadmin']));
+    }
 
-    $res = dbquery(" SELECT COUNT(id) as cnt from logs_debris" . $sql2);
-    $arr = mysql_fetch_row($res);
-    $total = $arr[0];
+    $total = $debrisLogRepository->count($search);
 
     $limit = max(0, $limit);
     $limit = min($total, $limit);
     $limit -= $limit % $paginationLimit;
-    $limitstring = "$limit,$paginationLimit";
 
-    $res = dbquery($sql . $sql2);
-
-    $nr = mysql_num_rows($res);
+    $logs = $debrisLogRepository->searchLogs($search, $paginationLimit, $limit);
+    $nr = count($logs);
     if ($nr > 0) {
         echo "<table class=\"tb\">";
         echo "<tr><th colspan=\"10\">
@@ -998,15 +995,15 @@ function showDebrisLogs($args = null, $limit = 0)
             <th>Silizium</th>
             <th>PVC</th>
         </tr>";
-        while ($arr = mysql_fetch_assoc($res)) {
-            $admin = $adminUserRepo->find($arr['admin_id']);
+        foreach ($logs as $log) {
+            $admin = $adminUserRepo->find($log->adminId);
             echo "<tr>
-            <td>" . date('d M Y H:i:s', $arr['time']) . "</td>
+            <td>" . date('d M Y H:i:s', $log->timestamp) . "</td>
             <td>" . ($admin != null ? $admin->nick : '?') . "</td>
-            <td>" . new User($arr['user_id']) . "</td>
-            <td>" . $arr['metal'] . "</td>
-            <td>" . $arr['crystal'] . "</td>
-            <td>" . $arr['plastic'] . "</td>
+            <td>" . new User($log->userId) . "</td>
+            <td>" . $log->metal . "</td>
+            <td>" . $log->crystal . "</td>
+            <td>" . $log->plastic . "</td>
             </tr>";
         }
         echo "</table>";

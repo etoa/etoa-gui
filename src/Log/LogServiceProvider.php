@@ -25,6 +25,10 @@ class LogServiceProvider implements ServiceProviderInterface
             return new GameLogRepository($pimple['db']);
         };
 
+        $pimple[DebrisLogRepository::class] = function (Container $pimple): DebrisLogRepository {
+            return new DebrisLogRepository($pimple['db']);
+        };
+
         $pimple[AccessLogRepository::class] = function (Container $pimple): AccessLogRepository {
             return new AccessLogRepository($pimple['db']);
         };
