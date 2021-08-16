@@ -407,6 +407,49 @@ class BuildingRepository extends AbstractRepository
         return $data !== false ? new BuildingListItem($data) : null;
     }
 
+    /**
+     * @return ?array{building_name: string, buildlist_id: int}
+     */
+    public function getDeactivatableBuilding(int $entityId): ?array
+    {
+        $data = $this->getConnection()->fetchAssociative('
+            SELECT
+                building_name, buildlist_id
+            FROM
+                buildlist
+            INNER JOIN
+                buildings
+            ON building_id = buildlist_building_id
+            AND buildlist_entity_id = :entityId
+            AND buildlist_current_level > 0
+            AND buildlist_building_id IN (:buildingIds)
+            AND buildlist_deactivated < :now
+            ORDER BY RAND()
+            LIMIT 1
+        ', [
+            'entityId' => $entityId,
+            'now' => time(),
+            'buildingIds' => [BuildingId::DEFENSE, BuildingId::SHIPYARD, BuildingId::FLEET_CONTROL, BuildingId::MARKET, BuildingId::CRYPTO],
+        ], [
+            'buildingIds' => Connection::PARAM_INT_ARRAY,
+        ]);
+
+        return $data !== false ? $data : null;
+    }
+
+    public function deactivateBuilding(int $id, int $deactivateTime): void
+    {
+        $this->createQueryBuilder()
+            ->update('buildlist')
+            ->set('buildlist_deactivated', ':deactivated')
+            ->where('buildlist_id = :id')
+            ->setParameters([
+                'id' => $id,
+                'deactivated' => $deactivateTime,
+            ])
+            ->execute();
+    }
+
     public function save(BuildingListItem $item): void
     {
         $this->createQueryBuilder()

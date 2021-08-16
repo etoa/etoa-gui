@@ -1,6 +1,12 @@
 <?PHP
 
+use EtoA\Building\BuildingRepository;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Defense\DefenseDataRepository;
+use EtoA\Defense\DefenseRepository;
+use EtoA\Message\MessageRepository;
+use EtoA\Missile\Missile;
+use EtoA\Missile\MissileDataRepository;
 use EtoA\Missile\MissileFlight;
 use EtoA\Missile\MissileFlightRepository;
 use EtoA\Missile\MissileRepository;
@@ -14,7 +20,6 @@ class MissileBattleHandler
      */
     static function battle(MissileFlight $flight)
     {
-        $fid = $flight->id;
         // TODO
         global $app;
 
@@ -22,12 +27,20 @@ class MissileBattleHandler
         $config = $app[ConfigurationService::class];
         /** @var MissileFlightRepository $missileFlightRepository */
         $missileFlightRepository = $app[MissileFlightRepository::class];
+        /** @var MissileDataRepository $missileDataRepository */
+        $missileDataRepository = $app[MissileDataRepository::class];
         /** @var MissileRepository $missileRepository */
         $missileRepository = $app[MissileRepository::class];
         /** @var PlanetRepository */
         $planetRepository = $app[PlanetRepository::class];
-        /** @var \EtoA\Message\MessageRepository $messageRepository */
-        $messageRepository = $app[\EtoA\Message\MessageRepository::class];
+        /** @var MessageRepository $messageRepository */
+        $messageRepository = $app[MessageRepository::class];
+        /** @var DefenseRepository $defenseRepository */
+        $defenseRepository = $app[DefenseRepository::class];
+        /** @var DefenseDataRepository $defenseDataRepository */
+        $defenseDataRepository = $app[DefenseDataRepository::class];
+        /** @var BuildingRepository $buildingRepository */
+        $buildingRepository = $app[BuildingRepository::class];
 
         // Faktor mit dem die Schilde der Verteidigung bei einem Kampf mit einberechnet werden.
         define("MISSILE_BATTLE_SHIELD_FACTOR", $config->getFloat('missile_battle_shield_factor'));
@@ -50,125 +63,71 @@ class MissileBattleHandler
             return;
         }
 
-        $res = dbquery("
-		SELECT
-			flight_entity_to,
-			pt.planet_user_id as tuid,
-			pt.planet_name,
-			pf.planet_user_id as fuid
-		FROM
-			missile_flights
-		INNER JOIN
-			planets as pt
-			ON flight_entity_to=pt.id
-		INNER JOIN
-			planets as pf
-			ON flight_entity_from=pf.id
-			AND flight_id=" . $fid . "
-		;");
-        if (mysql_num_rows($res) > 0) {
-            $arr = mysql_fetch_array($res);
-            $tid = $arr['flight_entity_to'];
-            $tuid = $arr['tuid'];
-            $fuid = $arr['fuid'];
-            $tname = $arr['planet_name'];
-            dbquery("
-			DELETE FROM
-				missile_flights
-			WHERE
-				flight_id=" . $fid . "
-			;");
-            $mres = dbquery("
-			SELECT
-				obj_cnt AS cnt,
-				missile_damage as dmg,
-				missile_deactivate as emp
-			FROM
-				missile_flights_obj
-			INNER JOIN
-				missiles
-				ON missile_id=obj_missile_id
-				AND obj_flight_id='" . $fid . "'");
-            if (mysql_num_rows($mres) > 0) {
+        if ($flight->entityFromId > 0) {
+            $targetUserId = $planetRepository->getPlanetUserId($flight->targetPlanetId);
+
+            $missiles = $missileDataRepository->getMissiles();
+            $missileFlightRepository->deleteFlight($flight->id, $flight->entityFromId);
+            if (count($flight->missiles) > 0) {
                 // Select all attacking missiles
-                $m = array();
-                $mcnt = 0;
-                while ($marr = mysql_fetch_array($mres)) {
-                    for ($x = 0; $x < $marr['cnt']; $x++) {
-                        $m[$mcnt]['dmg'] = $marr['dmg'];
-                        $m[$mcnt]['emp'] = $marr['emp'];
-                        $mcnt++;
+                /** @var array<int, Missile> $attackingMissiles */
+                $attackingMissiles = [];
+                $attackingMissilesCount = 0;
+                foreach ($flight->missiles as $missileId => $count) {
+                    $missile = $missiles[$missileId];
+                    for ($x = 0; $x < $count; $x++) {
+                        $attackingMissiles[$attackingMissilesCount] = $missile->damage;
+                        $attackingMissiles[$attackingMissilesCount] = $missile->deactivate;
+                        $attackingMissilesCount++;
                     }
                 }
                 // Shuffle their order
-                shuffle($m);
-                // Remove from db
-                dbquery("
-				DELETE FROM
-					missile_flights_obj
-				WHERE
-					obj_flight_id=" . $fid . "
-				;");
+                shuffle($attackingMissiles);
 
                 // Select anti-missiles from target
-                $dres =  dbquery("
-				SELECT
-					missile_def,
-					missilelist_count,
-					missile_id,
-					missilelist_id,
-					missile_name
-				FROM
-					missilelist
-				INNER JOIN
-					missiles
-					ON missilelist_missile_id=missile_id
-					AND missilelist_entity_id=" . $tid . "
-					AND missile_def>0
-				;");
-                $dm = array();
-                $dmid = array();
-                $dmcnt = 0;
-                if (mysql_num_rows($dres) > 0) {
-                    while ($darr = mysql_fetch_array($dres)) {
-                        array_push($dmid, $darr['missilelist_id']);
-                        for ($x = 0; $x < $darr['missilelist_count']; $x++) {
-                            $dm[$dmcnt]['id'] = $darr['missilelist_id'];
-                            $dm[$dmcnt]['d'] = $darr['missile_def'];
-                            $dm[$dmcnt]['n'] = $darr['missile_name']; // Debug
-                            $dmcnt++;
+                $missileList = $missileRepository->findForUser($targetUserId, $flight->targetPlanetId);
+                $defendingMissiles = [];
+                $defendingMissilesCounts = [];
+                $defendingMissileCount = 0;
+                foreach ($missileList as $item) {
+                    $missile = $missiles[$item->missileId];
+                    if ($missile->def > 0) {
+                        $defendingMissilesCounts[$item->id] = $item->count;
+                        for ($x = 0; $x < $item->count; $x++) {
+                            $defendingMissiles[$defendingMissileCount]['id'] = $item->id;
+                            $defendingMissiles[$defendingMissileCount]['d'] = $missile->def;
+                            $defendingMissiles[$defendingMissileCount]['n'] = $missile->name;
+                            $defendingMissileCount++;
                         }
                     }
                 }
-                foreach ($dmid as $k) {
-                    dbquery("UPDATE missilelist SET missilelist_count=0 WHERE missilelist_id=" . $k . ";");
-                }
-                $dmcnt_start = $dmcnt;
+                $dmcnt_start = $defendingMissileCount;
 
-                shuffle($dm);
+                shuffle($defendingMissiles);
 
-                $dm_copy = $dm;
-                $dmcnt_copy = $dmcnt;
+                $dm_copy = $defendingMissiles;
+                $dmcnt_copy = $defendingMissileCount;
                 $def_report = "";
-                for ($x = 0; $x < $dmcnt; $x++) {
+                for ($x = 0; $x < $defendingMissileCount; $x++) {
                     $def_report .= "Feuere " . $dm_copy[$x]['n'] . " ab...\n";
                     for ($y = 0; $y < $dm_copy[$x]['d']; $y++) {
                         $def_report .= "Angreifende Rakete wird getroffen!\n";
-                        array_pop($m);
-                        $mcnt--;
+                        array_pop($attackingMissiles);
+                        $attackingMissilesCount--;
                     }
-                    array_pop($dm);
+                    $missileList = array_pop($defendingMissiles);
+                    $defendingMissilesCounts[$missileList['id']]--;
                     $dmcnt_copy--;
-                    if ($mcnt <= 0)
+                    if ($attackingMissilesCount <= 0)
                         break;
                 }
-                $dmcnt = $dmcnt_copy;
+                $defendingMissileCount = $dmcnt_copy;
 
                 if ($def_report != '') {
                     $def_report = "[b]Verteidigungsbericht:[/b]\n\n" . $def_report;
-                    if ($dmcnt > 0) {
+                    if ($defendingMissileCount > 0) {
                         $def_report .= "\n[b]Verbleibende Raketen:[/b]\n\n";
-                        foreach ($dm as $tc => $tm) {
+                        foreach ($defendingMissiles as $tc => $tm) {
                             $def_report .= $tm['n'] . "\n";
                         }
                     } else {
@@ -176,94 +135,72 @@ class MissileBattleHandler
                     }
                 }
 
-
                 // Check if missiles are left
-                if ($mcnt > 0) {
-                    $msg_a = "Eure Raketen haben den Planeten [b]" . $tname . "[/b] angegriffen! ";
-                    $msg_d = "Euer Planet [b]" . $tname . "[/b] wurde von einem Raketenangriff getroffen!\n";
+                if ($attackingMissilesCount > 0) {
+                    $msg_a = "Eure Raketen haben den Planeten [b]" . $flight->targetPlanetName . "[/b] angegriffen! ";
+                    $msg_d = "Euer Planet [b]" . $flight->targetPlanetName . "[/b] wurde von einem Raketenangriff getroffen!\n";
                     if ($dmcnt_start > 0) {
                         $msg_d .= "Eure Abfangraketen schossen zwar einige angreifende Raketen ab, jedoch kamen die restlichen Raketen trotzdem durch.\n ";
                         $msg_d .= "\n" . $def_report . "\n";
                     }
 
                     // Bomb the defense
-                    $dres = dbquery("
-					SELECT
-						def_structure,
-						def_shield,
-						def_name,
-						deflist_id,
-						deflist_count
-					FROM
-						deflist
-					INNER JOIN
-						defense
-						ON deflist_def_id=def_id
-						AND deflist_entity_id=" . $tid . "
-						AND deflist_count>0
-					");
-                    if (mysql_num_rows($dres) > 0) {
+                    $defenses = $defenseDataRepository->getAllDefenses();
+                    $defenseList = $defenseRepository->findForUser($targetUserId, $flight->targetPlanetId);
+                    if (count($defenseList) > 0) {
                         // Def values
-                        $str = 0;
-                        $sh = 0;
-                        $def = array();
+                        $defendingStructure = 0;
+                        $defendingShield = 0;
+                        $defenseItemsById = [];
+                        $defenseItemCounts = [];
                         $msg_d .= "Anlagen vor dem Angriff:\n\n";
-                        while ($darr = mysql_fetch_array($dres)) {
-                            $str += ($darr['def_structure'] * $darr['deflist_count']);
-                            $sh += ($darr['def_shield'] * $darr['deflist_count'] * MISSILE_BATTLE_SHIELD_FACTOR);
-                            $def[$darr['deflist_id']]['id'] = $darr['deflist_id'];
-                            $def[$darr['deflist_id']]['count'] = $darr['deflist_count'];
-                            $def[$darr['deflist_id']]['name'] = $darr['def_name'];
-                            $def[$darr['deflist_id']]['structure'] = $darr['def_structure'];
-                            $msg_d .= "" . $darr['deflist_count'] . " " . $darr['def_name'] . "\n";
+                        foreach ($defenseList as $item) {
+                            $defense = $defenses[$item->defenseId];
+                            $defendingStructure += $defense->structure * $item->count;
+                            $defendingShield += $defense->shield * $item->count * MISSILE_BATTLE_SHIELD_FACTOR;
+                            $defenseItemsById[$item->id] = $item;
+                            $defenseItemCounts[$item->id] = $item->count;
+                            $msg_d .= "" . $item->count . " " . $defense->name . "\n";
                         }
-                        shuffle($def);
+                        shuffle($defenseItemCounts);
 
                         // Missile damage
-                        $mdmg = 0;
-                        foreach ($m as $mv) {
-                            $mdmg += $mv['dmg'];
+                        $attackingDamage = 0;
+                        foreach ($attackingMissiles as $attackingMissile) {
+                            $attackingDamage += $attackingMissile->damage;
                         }
 
-                        $msg_d .= "\nDie Raketen verursachen $mdmg Schaden.\n";
+                        $msg_d .= "\nDie Raketen verursachen $attackingDamage Schaden.\n";
 
-                        $sh_rem = $sh - $mdmg;
-                        if ($sh_rem < 0) {
-                            $msg_d .= "Die Schilde halten $sh Schaden auf.\n";
+                        $remainingShiled = $defendingShield - $attackingDamage;
+                        if ($remainingShiled < 0) {
+                            $msg_d .= "Die Schilde halten $defendingShield Schaden auf.\n";
 
-                            $str_rem = $str + $sh_rem;
-                            if ($str_rem > 0) {
-                                $str_det = $str - $str_rem;
-                                foreach ($def as $k => $do) {
-                                    $ds = $do['structure'] * $do['count'];
-                                    if ($ds - $str_det > 0) {
-                                        $def[$k]['count'] = ceil($def[$k]['count'] * ($ds - $str_det) / $ds);
+                            $remainingStructure = $defendingStructure + $remainingShiled;
+                            if ($remainingStructure > 0) {
+                                $stillAvailableStructure = $defendingStructure - $remainingStructure;
+                                foreach ($defenseItemCounts as $itemId => $count) {
+                                    $defense = $defenses[$defenseItemsById[$itemId]->defenseId];
+                                    $defenseStructure = $defense->structure * $count;
+                                    if ($defenseStructure - $stillAvailableStructure > 0) {
+                                        $defenseItemCounts[$itemId] = (int) ceil($count * ($defenseStructure - $stillAvailableStructure) / $defenseStructure);
                                         break;
-                                    } else {
-                                        $def[$k]['count'] = 0;
-                                        $str_det -= ($do['structure'] * $do['count']);
                                     }
+
+                                    $defenseItemCounts[$itemId] = 0;
+                                    $stillAvailableStructure -= $defenseStructure;
                                 }
 
                                 $msg_d .= "\nAnlagen nach dem Angriff:\n\n";
-                                foreach ($def as $v) {
-                                    $msg_d .= $v['count'] . " " . $v['name'] . "\n";
-                                    dbquery("UPDATE
-										deflist
-									SET
-										deflist_count=" . $v['count'] . "
-									WHERE
-										deflist_id=" . $v['id'] . "");
+                                foreach ($defenseItemCounts as $itemId => $count) {
+                                    $msg_d .= $count . " " . $defenses[$defenseItemsById[$itemId]->defenseId]->name . "\n";
+                                    $defenseRepository->setDefenseCount($itemId, $count);
                                 }
                             } else {
                                 $msg_d .= 'Sämtliche Verteidigungsanlagen wurden zerstört!' . "\n";
-                                dbquery("
-								UPDATE
-									deflist
-								SET
-									deflist_count=0
-								WHERE
-									deflist_entity_id=" . $tid . ";");
+                                foreach (array_keys($defenseItemCounts) as $itemId) {
+                                    $defenseRepository->setDefenseCount($itemId, 0);
+                                }
                             }
                         } else {
                             $msg_d .= 'Es wurden aber keine Schäden festgestellt da eure Schilde allen Schaden abgefangen haben.' . "\n";
@@ -274,67 +211,29 @@ class MissileBattleHandler
 
                     // EMP
                     $time = time();
-                    foreach ($m as $mo) {
-                        if ($mo['emp'] > 0) {
-                            $res = dbquery("SELECT
-								building_name,
-								buildlist_id
-							FROM
-								buildlist
-							INNER JOIN
-								buildings
-								ON building_id=buildlist_building_id
-								AND buildlist_entity_id=" . $tid . "
-								AND buildlist_current_level > 0
-								AND (
-								buildlist_building_id='" . FLEET_CONTROL_ID . "'
-								OR buildlist_building_id='" . FACTORY_ID . "'
-								OR buildlist_building_id='" . SHIPYARD_ID . "'
-								OR buildlist_building_id='" . MARKTPLATZ_ID . "'
-								OR buildlist_building_id='" . BUILD_CRYPTO_ID . "'
-								)
-								AND buildlist_deactivated<" . $time . "
-							ORDER BY
-								RAND()
-							LIMIT
-								1;");
-                            if (mysql_num_rows($res) > 0) {
-                                $arr = mysql_fetch_array($res);
-                                $msg_a .= "Das Gebäude " . $arr['building_name'] . " wurde für " . tf($mo['emp']) . " deaktiviert!\n";
-                                $msg_d .= "Euer Gebäude " . $arr['building_name'] . " wurde für " . tf($mo['emp']) . " deaktiviert!\n";
-                                dbquery("
-								UPDATE
-									buildlist
-								SET
-									buildlist_deactivated=" . ($time + $mo['emp']) . "
-								WHERE
-									buildlist_id=" . $arr['buildlist_id'] . "
-								;");
+                    foreach ($attackingMissiles as $attackingMissile) {
+                        if ($attackingMissile->deactivate > 0) {
+                            $toBeDeactivated = $buildingRepository->getDeactivatableBuilding($flight->targetPlanetId);
+                            if ($toBeDeactivated !== null) {
+                                $msg_a .= "Das Gebäude " . $toBeDeactivated['building_name'] . " wurde für " . tf($attackingMissile->deactivate) . " deaktiviert!\n";
+                                $msg_d .= "Euer Gebäude " . $toBeDeactivated['building_name'] . " wurde für " . tf($attackingMissile->deactivate) . " deaktiviert!\n";
+                                $buildingRepository->deactivateBuilding($toBeDeactivated['buildlist_id'], $time + $attackingMissile->deactivate);
                             }
                         }
                     }
                 } else {
-                    $msg_a = "Der Kontakt zu den Raketen die den Planeten [b]" . $tname . "[/b] angreifen sollten ist verlorengegangen!";
-                    $msg_d = "Eure Defensivraketen auf [b]" . $tname . "[/b] haben erfolgreich einen feindlichen Raketenangriff abgewehrt!";
+                    $msg_a = "Der Kontakt zu den Raketen die den Planeten [b]" . $flight->targetPlanetName . "[/b] angreifen sollten ist verlorengegangen!";
+                    $msg_d = "Eure Defensivraketen auf [b]" . $flight->targetPlanetName . "[/b] haben erfolgreich einen feindlichen Raketenangriff abgewehrt!";
                     $msg_d .= "\n\n" . $def_report;
                 }
 
                 // Set remaining defense missiles
-                foreach ($dm as $dm_obj) {
-                    dbquery("
-					UPDATE
-						missilelist
-					SET
-						missilelist_count=missilelist_count+1
-					WHERE
-						missilelist_id=" . $dm_obj['id'] . "
-					");
+                foreach ($defendingMissilesCounts as $itemId => $count) {
+                    $missileRepository->setMissileCount($itemId, $count);
                 }
 
-                /** @var \EtoA\Message\MessageRepository $messageRepository */
-                $messageRepository = $app[\EtoA\Message\MessageRepository::class];
-                $messageRepository->createSystemMessage((int) $fuid, SHIP_WAR_MSG_CAT_ID, 'Ergebnis des Raketenangriffs', $msg_a);
-                $messageRepository->createSystemMessage((int) $tuid, SHIP_WAR_MSG_CAT_ID, 'Raketenangriff', $msg_d);
+                $messageRepository->createSystemMessage($flight->entityFromId, SHIP_WAR_MSG_CAT_ID, 'Ergebnis des Raketenangriffs', $msg_a);
+                $messageRepository->createSystemMessage($targetUserId, SHIP_WAR_MSG_CAT_ID, 'Raketenangriff', $msg_d);
             }
         }
     }

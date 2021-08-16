@@ -18,6 +18,7 @@ class DefenseRepository extends AbstractRepository
             ->select('*')
             ->from('deflist')
             ->where('deflist_user_id = :userId')
+            ->andWhere('deflist_count > 0')
             ->setParameter('userId', $userId);
 
         if ($entityId !== null) {
