@@ -13,7 +13,7 @@ $successMessage = null;
 /** @var UserRepository $userRepository */
 $userRepository = $app[UserRepository::class];
 
-/** @var UserUniverseDiscoveryService */
+/** @var UserUniverseDiscoveryService $userUniverseDiscoveryService */
 $userUniverseDiscoveryService = $app[UserUniverseDiscoveryService::class];
 
 /** @var CellRepository $cellRepository */

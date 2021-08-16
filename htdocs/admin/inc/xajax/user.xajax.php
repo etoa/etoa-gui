@@ -171,10 +171,10 @@ function userTickets($uid, $target)
 {
     global $app;
 
-    /** @var AdminUserRepository */
+    /** @var AdminUserRepository $adminUserRepo */
     $adminUserRepo = $app[AdminUserRepository::class];
 
-    /** @var TicketRepository */
+    /** @var TicketRepository $ticketRepo */
     $ticketRepo = $app[TicketRepository::class];
 
     $or = new xajaxResponse();
@@ -239,10 +239,10 @@ function showLast5Messages($uid, $target, $limit = 5)
     // TODO
     global $app;
 
-    /** @var MessageRepository */
+    /** @var MessageRepository $messageRepository */
     $messageRepository = $app[MessageRepository::class];
 
-    /** @var UserRepository */
+    /** @var UserRepository $userRepo */
     $userRepo = $app[UserRepository::class];
 
     ob_start();
@@ -397,7 +397,7 @@ function addUserLog($uid, $target, $text)
     // TODO
     global $app;
 
-    /** @var UserService */
+    /** @var UserService $userService */
     $userService = $app[UserService::class];
 
     $or = new xajaxResponse();

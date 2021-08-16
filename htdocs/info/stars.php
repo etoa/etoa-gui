@@ -2,7 +2,7 @@
 
 use EtoA\Universe\Star\SolarTypeRepository;
 
-/** @var SolarTypeRepository */
+/** @var SolarTypeRepository $solarTypeRepository */
 $solarTypeRepository = $app[SolarTypeRepository::class];
 
 echo "<h2>Sterne</h2>";

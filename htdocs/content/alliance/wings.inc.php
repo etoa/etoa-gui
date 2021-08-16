@@ -4,7 +4,7 @@ use EtoA\Alliance\AllianceRepository;
 use EtoA\Alliance\AllianceRights;
 use EtoA\Core\Configuration\ConfigurationService;
 
-/** @var ConfigurationService */
+/** @var ConfigurationService $config */
 $config = $app[ConfigurationService::class];
 
 /** @var AllianceRepository $allianceRepository */

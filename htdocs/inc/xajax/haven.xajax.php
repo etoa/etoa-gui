@@ -609,18 +609,18 @@ function havenShowWormhole($form)
     // TODO
     global $app;
 
-    /** @var ConfigurationService */
+    /** @var ConfigurationService $config */
     $config = $app[ConfigurationService::class];
     /** @var EntityRepository $entityRepository */
     $entityRepository = $app[EntityRepository::class];
     /** @var PlanetRepository $planetRepository */
     $planetRepository = $app[PlanetRepository::class];
-    /** @var UserUniverseDiscoveryService */
+    /** @var UserUniverseDiscoveryService $userUniverseDiscoveryService */
     $userUniverseDiscoveryService = $app[UserUniverseDiscoveryService::class];
     /** @var LogRepository $logRepository */
     $logRepository = $app[LogRepository::class];
 
-    /** @var UserRepository */
+    /** @var UserRepository $userRepository */
     $userRepository = $app[UserRepository::class];
 
     $response = new xajaxResponse();
@@ -899,14 +899,14 @@ function havenShowAction($form)
     // TODO
     global $app;
 
-    /** @var ConfigurationService */
+    /** @var ConfigurationService $config */
     $config = $app[ConfigurationService::class];
 
-    /** @var UserUniverseDiscoveryService */
+    /** @var UserUniverseDiscoveryService $userUniverseDiscoveryService */
     $userUniverseDiscoveryService = $app[UserUniverseDiscoveryService::class];
     /** @var EntityRepository $entityRepository */
     $entityRepository = $app[EntityRepository::class];
-    /** @var UserRepository */
+    /** @var UserRepository $userRepository */
     $userRepository = $app[UserRepository::class];
 
     $response = new xajaxResponse();
@@ -1248,14 +1248,14 @@ function havenTargetInfo($form)
     // TODO
     global $app;
 
-    /** @var ConfigurationService */
+    /** @var ConfigurationService $config */
     $config = $app[ConfigurationService::class];
     /** @var EntityRepository $entityRepository */
     $entityRepository = $app[EntityRepository::class];
-    /** @var UserUniverseDiscoveryService */
+    /** @var UserUniverseDiscoveryService $userUniverseDiscoveryService */
     $userUniverseDiscoveryService = $app[UserUniverseDiscoveryService::class];
 
-    /** @var UserRepository */
+    /** @var UserRepository $userRepository */
     $userRepository = $app[UserRepository::class];
 
     $response = new xajaxResponse();
@@ -1373,14 +1373,14 @@ function havenBookmark($form)
     // TODO
     global $app;
 
-    /** @var ConfigurationService */
+    /** @var ConfigurationService $config */
     $config = $app[ConfigurationService::class];
     /** @var EntityRepository $entityRepositroy */
     $entityRepositroy = $app[EntityRepository::class];
-    /** @var UserUniverseDiscoveryService */
+    /** @var UserUniverseDiscoveryService $userUniverseDiscoveryService */
     $userUniverseDiscoveryService = $app[UserUniverseDiscoveryService::class];
 
-    /** @var UserRepository */
+    /** @var UserRepository $userRepository */
     $userRepository = $app[UserRepository::class];
 
     $response = new xajaxResponse();

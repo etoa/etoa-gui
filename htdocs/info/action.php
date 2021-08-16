@@ -32,7 +32,7 @@ if (isset($_GET['action']) && ctype_alpha($_GET['action'])) {
 
         //Liest alle notwenidgen Daten aus der Schiffs-DB
 
-        /** @var ShipDataRepository */
+        /** @var ShipDataRepository $shipRepository */
         $shipRepository = $app[ShipDataRepository::class];
 
         $shipNames = $shipRepository->getShipNamesWithAction($ac->code());

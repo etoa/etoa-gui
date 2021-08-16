@@ -5,12 +5,12 @@ use EtoA\Defense\DefenseDataRepository;
 use EtoA\Race\RaceDataRepository;
 use EtoA\Ship\ShipDataRepository;
 
-/** @var RaceDataRepository */
+/** @var RaceDataRepository $raceRepository */
 $raceRepository = $app[RaceDataRepository::class];
 
 $raceNames = $raceRepository->getRaceNames();
 
-/** @var DefenseDataRepository */
+/** @var DefenseDataRepository $defenseDataRepository */
 $defenseDataRepository = $app[DefenseDataRepository::class];
 
 echo "<h2>Verteidigung</h2>";
@@ -47,7 +47,7 @@ if (isset($_GET['id']) && intval($_GET['id']) > 0) {
         echo "<tr><td class=\"tbltitle\">Max. Anzahl</td><td class=\"tbldata\">" . nf($defense->maxCount) . "</td></tr>";
         tableEnd();
 
-        /** @var ShipDataRepository */
+        /** @var ShipDataRepository $shipDataRepository */
         $shipDataRepository = $app[ShipDataRepository::class];
 
         $ship = $shipDataRepository->getTransformedShipForDefense($defense->id);
@@ -90,7 +90,7 @@ if (isset($_GET['id']) && intval($_GET['id']) > 0) {
         $sort = "ASC";
     }
 
-    /** @var DefenseCategoryRepository */
+    /** @var DefenseCategoryRepository $defenseCategoryRepository */
     $defenseCategoryRepository = $app[DefenseCategoryRepository::class];
     $defenseCategories = $defenseCategoryRepository->getAllCategories();
     foreach ($defenseCategories as $defenseCategory) {

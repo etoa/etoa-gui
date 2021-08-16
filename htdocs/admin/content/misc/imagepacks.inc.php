@@ -15,7 +15,7 @@ use EtoA\Technology\TechnologyDataRepository;
 use EtoA\Technology\TechnologySort;
 use EtoA\Universe\Star\SolarTypeRepository;
 
-/** @var ConfigurationService */
+/** @var ConfigurationService $config */
 $config = $app[ConfigurationService::class];
 
 /** @var AllianceBuildingRepository $allianceBuildingRepository */

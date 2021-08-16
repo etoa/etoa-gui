@@ -6,13 +6,13 @@ use EtoA\Core\Configuration\ConfigurationService;
 use Symfony\Component\HttpFoundation\Request;
 use Twig\Environment;
 
-/** @var ConfigurationService */
+/** @var ConfigurationService $config */
 $config = $app[ConfigurationService::class];
 
-/** @var ConfigurationDefinitionsRepository */
+/** @var ConfigurationDefinitionsRepository $definitions */
 $definitions = $app[ConfigurationDefinitionsRepository::class];
 
-/** @var BackendMessageService */
+/** @var BackendMessageService $backendMessageService */
 $backendMessageService = $app[BackendMessageService::class];
 
 /** @var Request */

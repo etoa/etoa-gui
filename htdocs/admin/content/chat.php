@@ -17,7 +17,7 @@ $chatUserRepository = $app[ChatUserRepository::class];
 /** @var ChatLogRepository $chatLogRepository */
 $chatLogRepository = $app[ChatLogRepository::class];
 
-/** @var ChatManager */
+/** @var ChatManager $chatManager */
 $chatManager = $app[ChatManager::class];
 
 if ($sub == 'log') {

@@ -31,7 +31,7 @@ class MissileBattleHandler
         $missileDataRepository = $app[MissileDataRepository::class];
         /** @var MissileRepository $missileRepository */
         $missileRepository = $app[MissileRepository::class];
-        /** @var PlanetRepository */
+        /** @var PlanetRepository $planetRepository */
         $planetRepository = $app[PlanetRepository::class];
         /** @var MessageRepository $messageRepository */
         $messageRepository = $app[MessageRepository::class];

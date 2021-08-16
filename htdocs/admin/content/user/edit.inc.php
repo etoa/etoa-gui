@@ -23,7 +23,7 @@ use EtoA\User\UserService;
 use EtoA\User\UserSittingRepository;
 use EtoA\User\UserWarningRepository;
 
-/** @var TicketRepository */
+/** @var TicketRepository $ticketRepo */
 $ticketRepo = $app[TicketRepository::class];
 
 /** @var AdminUserRepository $adminUserRepo */
@@ -32,7 +32,7 @@ $adminUserRepo = $app[AdminUserRepository::class];
 /** @var UserRepository $userRepository */
 $userRepository = $app[UserRepository::class];
 
-/** @var UserService */
+/** @var UserService $userService */
 $userService = $app[UserService::class];
 
 /** @var \EtoA\Ship\ShipDataRepository $shipDateRepository */
@@ -41,7 +41,7 @@ $shipDateRepository = $app[\EtoA\Ship\ShipDataRepository::class];
 /** @var UserLoginFailureRepository $userLoginFailureRepository */
 $userLoginFailureRepository = $app[UserLoginFailureRepository::class];
 
-/** @var ConfigurationService */
+/** @var ConfigurationService $config */
 $config = $app[ConfigurationService::class];
 
 /** @var UserSittingRepository $userSittingRepository */
@@ -758,12 +758,12 @@ if (mysql_num_rows($res) > 0) {
      * Game-Daten
      */
 
-    /** @var RaceDataRepository */
+    /** @var RaceDataRepository $raceRepository */
     $raceRepository = $app[RaceDataRepository::class];
 
     $raceNames = $raceRepository->getRaceNames();
 
-    /** @var SpecialistDataRepository */
+    /** @var SpecialistDataRepository $specialistRepository */
     $specialistRepository = $app[SpecialistDataRepository::class];
 
     $specialistNames = $specialistRepository->getSpecialistNames();
@@ -801,7 +801,7 @@ if (mysql_num_rows($res) > 0) {
                     <td class=\"tbltitle\">Allianz:</td>
                     <td class=\"tbldata\">
                         <select id=\"user_alliance_id\" name=\"user_alliance_id\" onchange=\"loadAllianceRanks(" . $arr['user_alliance_rank_id'] . ");\">";
-    /** @var AllianceRepository */
+    /** @var AllianceRepository $allianceRepository */
     $allianceRepository = $app[AllianceRepository::class];
     $allianceNamesWithTags = $allianceRepository->getAllianceNamesWithTags();
     echo "<option value=\"0\">(Keine)</option>";

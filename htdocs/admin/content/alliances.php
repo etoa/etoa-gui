@@ -12,10 +12,10 @@ use EtoA\User\UserService;
 use Symfony\Component\HttpFoundation\Request;
 use Twig\Environment;
 
-/** @var AllianceRepository */
+/** @var AllianceRepository $repository */
 $repository = $app[AllianceRepository::class];
 
-/** @var AllianceService */
+/** @var AllianceService $service */
 $service = $app[AllianceService::class];
 
 /** @var AllianceRankRepository $allianceRankRepository */
@@ -26,7 +26,7 @@ $allianceDiplomacyRepository = $app[AllianceDiplomacyRepository::class];
 /** @var Request */
 $request = Request::createFromGlobals();
 
-/** @var ConfigurationService */
+/** @var ConfigurationService $config */
 $config = $app[ConfigurationService::class];
 
 if ($sub == "imagecheck") {

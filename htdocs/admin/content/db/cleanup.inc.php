@@ -31,34 +31,34 @@ use EtoA\User\UserSessionManager;
 use EtoA\User\UserSessionRepository;
 use EtoA\User\UserSurveillanceRepository;
 
-/** @var TicketRepository */
+/** @var TicketRepository $ticketRepo */
 $ticketRepo = $app[TicketRepository::class];
 
-/** @var UserSessionManager */
+/** @var UserSessionManager $userSessionManager */
 $userSessionManager = $app[UserSessionManager::class];
 
-/** @var AdminSessionManager */
+/** @var AdminSessionManager $sessionManager */
 $sessionManager = $app[AdminSessionManager::class];
 
-/** @var PointsService */
+/** @var PointsService $pointsService */
 $pointsService = $app[PointsService::class];
 
-/** @var MessageService */
+/** @var MessageService $messageService */
 $messageService = $app[MessageService::class];
 
-/** @var ConfigurationService */
+/** @var ConfigurationService $config */
 $config = $app[ConfigurationService::class];
 
-/** @var MessageRepository */
+/** @var MessageRepository $messageRepository */
 $messageRepository = $app[MessageRepository::class];
 
-/** @var ReportRepository */
+/** @var ReportRepository $reportRepository */
 $reportRepository = $app[ReportRepository::class];
 
-/** @var TicketService */
+/** @var TicketService $ticketService */
 $ticketService = $app[TicketService::class];
 
-/** @var UserService */
+/** @var UserService $userService */
 $userService = $app[UserService::class];
 
 echo '<h2>Clean-Up</h2>';

@@ -2,7 +2,7 @@
 
 use EtoA\Missile\MissileDataRepository;
 
-/** @var MissileDataRepository */
+/** @var MissileDataRepository $missileDataRepository */
 $missileDataRepository = $app[MissileDataRepository::class];
 
 echo "<h2>Raketen</h2>";

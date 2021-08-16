@@ -16,7 +16,7 @@ if (!isset($app)) {
 // Load default values
 require_once __DIR__ . '/def.inc.php';
 
-/** @var ConfigurationService */
+/** @var ConfigurationService $config */
 $config = $app[ConfigurationService::class];
 
 // Init session

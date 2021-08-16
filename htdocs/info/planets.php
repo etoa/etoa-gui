@@ -3,7 +3,7 @@
 use EtoA\UI\Tooltip;
 use EtoA\Universe\Planet\PlanetTypeRepository;
 
-/** @var PlanetTypeRepository */
+/** @var PlanetTypeRepository $planetTypeRepository */
 $planetTypeRepository = $app[PlanetTypeRepository::class];
 
 echo "<h2>Planeten</h2>";

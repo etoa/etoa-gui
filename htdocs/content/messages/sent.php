@@ -4,10 +4,10 @@ use EtoA\Message\MessageRepository;
 use EtoA\User\UserRepository;
 use Symfony\Component\HttpFoundation\Request;
 
-/** @var MessageRepository */
+/** @var MessageRepository $messageRepository */
 $messageRepository = $app[MessageRepository::class];
 
-/** @var UserRepository */
+/** @var UserRepository $userRepository */
 $userRepository = $app[UserRepository::class];
 
 /** @var Request */

@@ -5,7 +5,7 @@ use EtoA\Building\BuildingRepository;
 use EtoA\Building\BuildingTypeDataRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 
-/** @var ConfigurationService */
+/** @var ConfigurationService $config */
 $config = $app[ConfigurationService::class];
 
 /** @var \Symfony\Component\HttpFoundation\Request $request */
@@ -19,7 +19,7 @@ if ($request->query->has('id') && $request->query->getInt('id') > 0) {
 
     $b_level = 1;
 
-    /** @var BuildingDataRepository */
+    /** @var BuildingDataRepository $buildingDataRepository */
     $buildingDataRepository = $app[BuildingDataRepository::class];
 
     $building = $buildingDataRepository->getBuilding($currentBuildingId);
@@ -40,7 +40,7 @@ if ($request->query->has('id') && $request->query->getInt('id') > 0) {
 
         $currentLevel = 0;
         if (isset($cu) && isset($cp)) {
-            /** @var BuildingRepository */
+            /** @var BuildingRepository $buildingRepository */
             $buildingRepository = $app[BuildingRepository::class];
             $currentLevel = $buildingRepository->getBuildingLevel((int) $cu->id, $currentBuildingId, (int) $cp->id);
         }
@@ -456,10 +456,10 @@ elseif (isset($_GET['type_id']) && intval($_GET['type_id']) > 0) {
 else {
     HelpUtil::breadCrumbs(array("Geb&auml;ude", "buildings"));
 
-    /** @var BuildingTypeDataRepository */
+    /** @var BuildingTypeDataRepository $buildingTypeRepository */
     $buildingTypeRepository = $app[BuildingTypeDataRepository::class];
 
-    /** @var BuildingDataRepository */
+    /** @var BuildingDataRepository $buildingDataRepository */
     $buildingDataRepository = $app[BuildingDataRepository::class];
 
     $buildingTypeNames = $buildingTypeRepository->getTypeNames();

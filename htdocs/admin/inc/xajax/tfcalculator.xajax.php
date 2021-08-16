@@ -47,7 +47,7 @@ function createPlayers($nr)
         // TODO
         global $app;
 
-        /** @var ConfigurationService */
+        /** @var ConfigurationService $config */
         $config = $app[ConfigurationService::class];
 
         $response = new xajaxResponse();

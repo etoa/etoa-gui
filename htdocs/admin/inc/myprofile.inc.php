@@ -9,11 +9,11 @@ use EtoA\Log\LogSeverity;
 use EtoA\User\UserRepository;
 use Twig\Environment;
 
-/** @var AdminUserRepository */
+/** @var AdminUserRepository $adminUserRepo */
 $adminUserRepo = $app[AdminUserRepository::class];
 /** @var UserRepository $userRepository */
 $userRepository = $app[UserRepository::class];
-/** @var ConfigurationService */
+/** @var ConfigurationService $config */
 $config = $app[ConfigurationService::class];
 /** @var LogRepository $logRepository */
 $logRepository = $app[LogRepository::class];

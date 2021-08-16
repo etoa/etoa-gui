@@ -2,7 +2,7 @@
 
 use EtoA\Support\RuntimeDataStore;
 
-/** @var RuntimeDataStore */
+/** @var RuntimeDataStore $runtimeDataStore */
 $runtimeDataStore = $app[RuntimeDataStore::class];
 
 $currentRates = [];

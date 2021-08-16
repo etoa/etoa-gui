@@ -6,10 +6,10 @@ use EtoA\User\UserRepository;
 use EtoA\User\UserSessionManager;
 use EtoA\User\UserSessionRepository;
 
-/** @var ConfigurationService */
+/** @var ConfigurationService $config */
 $config = $app[ConfigurationService::class];
 
-/** @var UserSessionManager */
+/** @var UserSessionManager $userSessionManager */
 $userSessionManager = $app[UserSessionManager::class];
 
 /** @var UserSessionRepository $userSessionRepository */

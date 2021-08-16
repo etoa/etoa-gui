@@ -10,10 +10,10 @@ use EtoA\User\UserPropertiesRepository;
 use EtoA\User\UserRepository;
 use EtoA\User\UserUniverseDiscoveryService;
 
-/** @var ConfigurationService */
+/** @var ConfigurationService $config */
 $config = $app[ConfigurationService::class];
 
-/** @var PlanetRepository */
+/** @var PlanetRepository $planetRepo */
 $planetRepo = $app[PlanetRepository::class];
 
 /** @var CellRepository $cellRepository */
@@ -22,11 +22,11 @@ $cellRepository = $app[CellRepository::class];
 /** @var AdminUserRepository $adminUserRepository */
 $adminUserRepository = $app[AdminUserRepository::class];
 
-/** @var UserRepository */
+/** @var UserRepository $userRepository */
 $userRepository = $app[UserRepository::class];
 /** @var StarRepository $starRepository */
 $starRepository = $app[StarRepository::class];
-/** @var UserUniverseDiscoveryService */
+/** @var UserUniverseDiscoveryService $userUniverseDiscoveryService */
 $userUniverseDiscoveryService = $app[UserUniverseDiscoveryService::class];
 
 $user = $userRepository->getUser($cu->id);

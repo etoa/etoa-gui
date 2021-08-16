@@ -12,14 +12,14 @@ use EtoA\User\UserPropertiesRepository;
 use EtoA\User\UserRepository;
 use EtoA\User\UserUniverseDiscoveryService;
 
-/** @var ConfigurationService */
+/** @var ConfigurationService $config */
 $config = $app[ConfigurationService::class];
 
 /** @var UserRepository $userRepository */
 $userRepository = $app[UserRepository::class];
 /** @var EntityRepository $entityRepository */
 $entityRepository = $app[EntityRepository::class];
-/** @var UserUniverseDiscoveryService */
+/** @var UserUniverseDiscoveryService $userUniverseDiscoveryService */
 $userUniverseDiscoveryService = $app[UserUniverseDiscoveryService::class];
 /** @var FleetBookmarkRepository $fleetBookmarkRepository */
 $fleetBookmarkRepository = $app[FleetBookmarkRepository::class];

@@ -19,16 +19,16 @@ $speciaistRepository = $app[SpecialistDataRepository::class];
 /** @var UserRepository $userRepository */
 $userRepository = $app[UserRepository::class];
 
-/** @var ConfigurationService */
+/** @var ConfigurationService $config */
 $config = $app[ConfigurationService::class];
 
-/** @var PlanetRepository */
+/** @var PlanetRepository $planetRepo */
 $planetRepo = $app[PlanetRepository::class];
 
-/** @var ResourceBoxDrawer */
+/** @var ResourceBoxDrawer $resourceBoxDrawer */
 $resourceBoxDrawer = $app[ResourceBoxDrawer::class];
 
-/** @var BackendMessageService */
+/** @var BackendMessageService $backendMessageService */
 $backendMessageService = $app[BackendMessageService::class];
 
 $t = time();

@@ -12,7 +12,7 @@ if (!isset($app)) {
     $app->boot();
 }
 
-/** @var Environment */
+/** @var Environment $twig */
 $twig = $app['twig'];
 
 $successMessage = null;
@@ -104,7 +104,7 @@ user = ' . $dbCfg['user'] . '
 password = ' . $dbCfg['password'] . '
 ';
 
-    /** @var ConfigurationService */
+    /** @var ConfigurationService $config */
     $config = $app[ConfigurationService::class];
 
     $config->set("referers", $_SESSION['INSTALL']['referers']);
@@ -150,7 +150,7 @@ if ($step === 2) {
     // Migrate database
     ob_start();
 
-    /** @var DatabaseMigrationService */
+    /** @var DatabaseMigrationService $databaseMigrationService */
     $databaseMigrationService = $app[DatabaseMigrationService::class];
 
     $cnt = $databaseMigrationService->migrate();
@@ -158,7 +158,7 @@ if ($step === 2) {
     if ($cnt > 0) {
         $successMessage = 'Datenbank migriert';
 
-        /** @var ConfigurationService */
+        /** @var ConfigurationService $config */
         $config = $app[ConfigurationService::class];
 
         // Load config defaults
@@ -171,7 +171,7 @@ if ($step === 2) {
         $default_referers = $default_round_url . "\n" . INSTALLER_DEFAULT_LOGINSERVER_URL;
     } else {
 
-        /** @var ConfigurationService */
+        /** @var ConfigurationService $config */
         $config = $app[ConfigurationService::class];
 
         $default_round_url = $config->get('roundurl');

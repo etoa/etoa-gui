@@ -3,10 +3,10 @@
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Support\RuntimeDataStore;
 
-/** @var RuntimeDataStore */
+/** @var RuntimeDataStore $runtimeDataStore */
 $runtimeDataStore = $app[RuntimeDataStore::class];
 
-/** @var ConfigurationService */
+/** @var ConfigurationService $config */
 $config = $app[ConfigurationService::class];
 
 // Zeit bis "Inaktiv" Status (atm 7 Tage)

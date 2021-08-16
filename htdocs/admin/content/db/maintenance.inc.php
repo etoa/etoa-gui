@@ -5,7 +5,7 @@ use EtoA\Log\LogRepository;
 use EtoA\Log\LogSeverity;
 use EtoA\Support\DB\DatabaseManagerRepository;
 
-/** @var DatabaseManagerRepository */
+/** @var DatabaseManagerRepository $databaseManager */
 $databaseManager = $app[DatabaseManagerRepository::class];
 /** @var LogRepository $logRepository */
 $logRepository = $app[LogRepository::class];

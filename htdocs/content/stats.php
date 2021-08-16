@@ -7,10 +7,10 @@ use EtoA\Support\RuntimeDataStore;
 use EtoA\User\UserPointsRepository;
 use EtoA\User\UserRepository;
 
-/** @var RuntimeDataStore */
+/** @var RuntimeDataStore $runtimeDataStore */
 $runtimeDataStore = $app[RuntimeDataStore::class];
 
-/** @var ConfigurationService */
+/** @var ConfigurationService $config */
 $config = $app[ConfigurationService::class];
 /** @var AllianceRepository $allianceRepository */
 $allianceRepository = $app[AllianceRepository::class];

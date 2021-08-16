@@ -16,28 +16,28 @@ use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\User\UserRepository;
 use Symfony\Component\HttpFoundation\Request;
 
-/** @var ConfigurationService */
+/** @var ConfigurationService $config */
 $config = $app[ConfigurationService::class];
 
-/** @var BookmarkService */
+/** @var BookmarkService $bookmarkService */
 $bookmarkService = $app[BookmarkService::class];
 
-/** @var UserRepository */
+/** @var UserRepository $userRepository */
 $userRepository = $app[UserRepository::class];
 
-/** @var PlanetRepository */
+/** @var PlanetRepository $planetRepository */
 $planetRepository = $app[PlanetRepository::class];
 
-/** @var EntityRepository */
+/** @var EntityRepository $entityRepository */
 $entityRepository = $app[EntityRepository::class];
 
-/** @var FleetScanService */
+/** @var FleetScanService $fleetScanService */
 $fleetScanService = $app[FleetScanService::class];
 
-/** @var AllianceBuildingRepository */
+/** @var AllianceBuildingRepository $allianceBuildingRepository */
 $allianceBuildingRepository = $app[AllianceBuildingRepository::class];
 
-/** @var ResourceBoxDrawer */
+/** @var ResourceBoxDrawer $resourceBoxDrawer */
 $resourceBoxDrawer = $app[ResourceBoxDrawer::class];
 
 /** @var Request */

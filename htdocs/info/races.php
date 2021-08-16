@@ -6,7 +6,7 @@ use EtoA\Defense\DefenseDataRepository;
 use EtoA\Race\RaceDataRepository;
 use EtoA\Ship\ShipDataRepository;
 
-/** @var RaceDataRepository */
+/** @var RaceDataRepository $raceRepository */
 $raceRepository = $app[RaceDataRepository::class];
 
 $raceNames = $raceRepository->getRaceNames();
@@ -73,7 +73,7 @@ if ($request->query->has('id')) {
 
     // Ships
 
-    /** @var ShipDataRepository */
+    /** @var ShipDataRepository $shipDataRepository */
     $shipDataRepository = $app[ShipDataRepository::class];
 
     $ships = $shipDataRepository->getShipsByRace($raceId);
@@ -89,7 +89,7 @@ if ($request->query->has('id')) {
     }
 
     // Defenses
-    /** @var DefenseDataRepository */
+    /** @var DefenseDataRepository $defenseDataRepository */
     $defenseDataRepository = $app[DefenseDataRepository::class];
     $defenses = $defenseDataRepository->getDefenseByRace($raceId);
     if (count($defenses) > 0) {

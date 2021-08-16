@@ -11,10 +11,10 @@ use EtoA\User\UserUniverseDiscoveryService;
 /** @var FleetRepository $fleetRepository */
 $fleetRepository = $app[FleetRepository::class];
 
-/** @var UserUniverseDiscoveryService */
+/** @var UserUniverseDiscoveryService $userUniverseDiscoveryService */
 $userUniverseDiscoveryService = $app[UserUniverseDiscoveryService::class];
 
-/** @var UserRepository */
+/** @var UserRepository $userRepository */
 $userRepository = $app[UserRepository::class];
 /** @var AllianceBuildingRepository $allianceBuildingRepository */
 $allianceBuildingRepository = $app[AllianceBuildingRepository::class];

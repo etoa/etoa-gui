@@ -8,7 +8,7 @@ use EtoA\Technology\TechnologyRepository;
 use EtoA\Technology\TechnologySort;
 use EtoA\Universe\Planet\PlanetRepository;
 
-/** @var ConfigurationService */
+/** @var ConfigurationService $config */
 $config = $app[ConfigurationService::class];
 
 /** @var TechnologyRepository $technologyRepository */

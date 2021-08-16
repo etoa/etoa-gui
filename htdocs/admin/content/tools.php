@@ -4,7 +4,7 @@ use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\HostCache\NetworkNameService;
 use EtoA\Log\AccessLogRepository;
 
-/** @var ConfigurationService */
+/** @var ConfigurationService $config */
 $config = $app[ConfigurationService::class];
 
 /** @var AccessLogRepository $accessLogRepository */

@@ -13,7 +13,7 @@ use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\User\UserRepository;
 use Symfony\Component\HttpFoundation\Request;
 
-/** @var ConfigurationService */
+/** @var ConfigurationService $config */
 $config = $app[ConfigurationService::class];
 
 /** @var DefenseDataRepository $defenseDataRepository */

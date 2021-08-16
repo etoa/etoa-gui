@@ -9,10 +9,10 @@ use EtoA\User\UserRatingRepository;
 use EtoA\User\UserStatRepository;
 use EtoA\User\UserStatSearch;
 
-/** @var RuntimeDataStore */
+/** @var RuntimeDataStore $runtimeDataStore */
 $runtimeDataStore = $app[RuntimeDataStore::class];
 
-/** @var ConfigurationService */
+/** @var ConfigurationService $config */
 $config = $app[ConfigurationService::class];
 /** @var AllianceStatsRepository $allianceStatsRepository */
 $allianceStatsRepository = $app[AllianceStatsRepository::class];

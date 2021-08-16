@@ -22,7 +22,7 @@ use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\User\UserLoginFailureRepository;
 use EtoA\User\UserPropertiesRepository;
 
-/** @var ConfigurationService */
+/** @var ConfigurationService $config */
 $config = $app[ConfigurationService::class];
 /** @var PlanetRepository $planetRepository */
 $planetRepository = $app[PlanetRepository::class];

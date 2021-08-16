@@ -10,13 +10,13 @@ use Pimple\Container;
 use Symfony\Component\HttpFoundation\Request;
 use Twig\Environment;
 
-/** @var BuildingRepository */
+/** @var BuildingRepository $repository */
 $repository = $app[BuildingRepository::class];
 
 /** @var Request */
 $request = Request::createFromGlobals();
 
-/** @var ConfigurationService */
+/** @var ConfigurationService $config */
 $config = $app[ConfigurationService::class];
 
 /** @var BuildingPointRepository $buildingPointRepository */

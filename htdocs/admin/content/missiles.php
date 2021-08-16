@@ -5,7 +5,7 @@ use EtoA\Missile\MissileDataRepository;
 use EtoA\Missile\MissileRepository;
 use Twig\Environment;
 
-/** @var ConfigurationService */
+/** @var ConfigurationService $config */
 $config = $app[ConfigurationService::class];
 /** @var MissileDataRepository $missileDataRepository */
 $missileDataRepository = $app[MissileDataRepository::class];

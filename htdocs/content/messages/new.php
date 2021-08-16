@@ -6,13 +6,13 @@ use EtoA\User\UserPropertiesRepository;
 use EtoA\User\UserRepository;
 use Symfony\Component\HttpFoundation\Request;
 
-/** @var MessageRepository */
+/** @var MessageRepository $messageRepository */
 $messageRepository = $app[MessageRepository::class];
 
-/** @var MessageIgnoreRepository */
+/** @var MessageIgnoreRepository $messageIgnoreRepository */
 $messageIgnoreRepository = $app[MessageIgnoreRepository::class];
 
-/** @var UserRepository */
+/** @var UserRepository $userRepository */
 $userRepository = $app[UserRepository::class];
 
 /** @var UserPropertiesRepository $userPropertiesRepository */

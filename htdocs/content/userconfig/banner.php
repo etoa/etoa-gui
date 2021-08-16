@@ -3,7 +3,7 @@
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Ranking\UserBannerService;
 
-/** @var ConfigurationService */
+/** @var ConfigurationService $config */
 $config = $app[ConfigurationService::class];
 
 /** @var UserBannerService $userBannerService */

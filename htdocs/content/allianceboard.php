@@ -18,7 +18,7 @@ use EtoA\User\UserRepository;
 use EtoA\User\UserSearch;
 use Symfony\Component\HttpFoundation\Request;
 
-/** @var AllianceRepository */
+/** @var AllianceRepository $allianceRepository */
 $allianceRepository = $app[AllianceRepository::class];
 /** @var AllianceRankRepository $allianceRankRepository */
 $allianceRankRepository = $app[AllianceRankRepository::class];

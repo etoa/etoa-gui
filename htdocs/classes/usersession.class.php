@@ -20,7 +20,7 @@ class UserSession extends Session
         // TODO
         global $app;
 
-        /** @var UserSessionManager */
+        /** @var UserSessionManager $sessionManager */
         $sessionManager = $app[UserSessionManager::class];
 
         /** @var UserSittingRepository $userSittingRepository */
@@ -287,7 +287,7 @@ class UserSession extends Session
         // TODO
         global $app;
 
-        /** @var UserSessionManager */
+        /** @var UserSessionManager $sessionManager */
         $sessionManager = $app[UserSessionManager::class];
 
         // chat logout

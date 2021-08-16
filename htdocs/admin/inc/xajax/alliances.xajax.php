@@ -226,7 +226,7 @@ function allianceNewsSetBanTime($time, $text)
     // TODO
     global $app;
 
-    /** @var ConfigurationService */
+    /** @var ConfigurationService $config */
     $config = $app[ConfigurationService::class];
 
     $config->set('townhall_ban', $time, $text);

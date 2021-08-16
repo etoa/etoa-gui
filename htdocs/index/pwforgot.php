@@ -7,10 +7,10 @@
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\User\UserService;
 
-/** @var UserService */
+/** @var UserService $userService */
 $userService = $app[UserService::class];
 
-/** @var ConfigurationService */
+/** @var ConfigurationService $config */
 $config = $app[ConfigurationService::class];
 
 $errorMessage = null;

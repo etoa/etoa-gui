@@ -3,7 +3,7 @@
 use EtoA\Notepad\NotepadRepository;
 use Symfony\Component\HttpFoundation\Request;
 
-/** @var NotepadRepository */
+/** @var NotepadRepository $notepadRepository */
 $notepadRepository = $app[NotepadRepository::class];
 
 /** @var Request */

@@ -20,37 +20,37 @@ use EtoA\User\UserRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Twig\Environment;
 
-/** @var ConfigurationService */
+/** @var ConfigurationService $config */
 $config = $app[ConfigurationService::class];
 
-/** @var UserRepository */
+/** @var UserRepository $userRepository */
 $userRepository = $app[UserRepository::class];
 
-/** @var ShipDataRepository */
+/** @var ShipDataRepository $shipDataRepository */
 $shipDataRepository = $app[ShipDataRepository::class];
 
-/** @var PlanetRepository */
+/** @var PlanetRepository $planetRepo */
 $planetRepo = $app[PlanetRepository::class];
 
-/** @var EntityRepository */
+/** @var EntityRepository $entityRepository */
 $entityRepository = $app[EntityRepository::class];
 
-/** @var EntityService */
+/** @var EntityService $entityService */
 $entityService = $app[EntityService::class];
 
-/** @var FleetRepository */
+/** @var FleetRepository $fleetRepository */
 $fleetRepository = $app[FleetRepository::class];
 
-/** @var FleetService */
+/** @var FleetService $fleetService */
 $fleetService = $app[FleetService::class];
 
-/** @var EntityCoordinatesSelector */
+/** @var EntityCoordinatesSelector $entityCoordinatesSelector */
 $entityCoordinatesSelector = $app[EntityCoordinatesSelector::class];
 
-/** @var UserSelector */
+/** @var UserSelector $userSelector */
 $userSelector = $app[UserSelector::class];
 
-/** @var ShipSelector */
+/** @var ShipSelector $shipSelector */
 $shipSelector = $app[ShipSelector::class];
 
 /** @var Request */

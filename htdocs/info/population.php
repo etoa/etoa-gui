@@ -3,7 +3,7 @@
 use EtoA\Building\BuildingDataRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 
-/** @var ConfigurationService */
+/** @var ConfigurationService $config */
 $config = $app[ConfigurationService::class];
 
 echo "<h2>Bewohner</h2>";
@@ -20,7 +20,7 @@ iBoxStart("Wohnraum");
     <b>".nf($config->param1Int('user_start_people'))."</b> Menschen auf jedem Planeten. Dieser Wert kann durch folgende Gebäude gesteigert werden:<br/>
         <ul>";
 
-    /** @var BuildingDataRepository */
+    /** @var BuildingDataRepository $buildingDataRepository */
     $buildingDataRepository = $app[BuildingDataRepository::class];
     $buildingNames = $buildingDataRepository->getBuildingNamesHavingPlaceForPeople();
 

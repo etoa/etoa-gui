@@ -181,7 +181,7 @@ function statsShowBox($mode, $sort = "", $sortOrder = "")
             echo '<p><img src="' . USERSTATS_OUTFILE . '" alt="Userstats" /></p>';
         }
 
-        /** @var GameStatsGenerator */
+        /** @var GameStatsGenerator $gameStatsGenerator */
         $gameStatsGenerator = $app[GameStatsGenerator::class];
         echo $gameStatsGenerator->readCached() ?? "<p>Statistiken noch nicht vorhanden!</p>";
 
@@ -282,7 +282,7 @@ function statsShowTable($mode, $limit = 0, $userstring = "", $absolute = 0, $ord
     // TODO
     global $app;
 
-    /** @var ConfigurationService */
+    /** @var ConfigurationService $config */
     $config = $app[ConfigurationService::class];
     /** @var UserRatingRepository $userRatingRepository */
     $userRatingRepository = $app[UserRatingRepository::class];

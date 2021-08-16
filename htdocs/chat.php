@@ -8,7 +8,7 @@ use EtoA\User\UserPropertiesRepository;
 define('RELATIVE_ROOT', '');
 include_once __DIR__ . '/inc/bootstrap.inc.php';
 
-/** @var ConfigurationService */
+/** @var ConfigurationService $config */
 $config = $app[ConfigurationService::class];
 
 /** @var UserPropertiesRepository $userPropertiesRepository */

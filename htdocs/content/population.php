@@ -9,13 +9,13 @@ use EtoA\Technology\TechnologyRequirementRepository;
 use EtoA\UI\ResourceBoxDrawer;
 use EtoA\Universe\Planet\PlanetRepository;
 
-/** @var ConfigurationService */
+/** @var ConfigurationService $config */
 $config = $app[ConfigurationService::class];
 
-/** @var PlanetRepository */
+/** @var PlanetRepository $planetRepo */
 $planetRepo = $app[PlanetRepository::class];
 
-/** @var ResourceBoxDrawer */
+/** @var ResourceBoxDrawer $resourceBoxDrawer */
 $resourceBoxDrawer = $app[ResourceBoxDrawer::class];
 /** @var BuildingRepository $buildingRepository */
 $buildingRepository = $app[BuildingRepository::class];

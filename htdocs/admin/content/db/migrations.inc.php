@@ -6,10 +6,10 @@ use EtoA\Log\LogSeverity;
 use EtoA\Support\DB\SchemaMigrationRepository;
 use EtoA\Support\DB\DatabaseMigrationService;
 
-/** @var SchemaMigrationRepository */
+/** @var SchemaMigrationRepository $schemaMigrationRepository */
 $schemaMigrationRepository = $app[SchemaMigrationRepository::class];
 
-/** @var DatabaseMigrationService */
+/** @var DatabaseMigrationService $databaseMigrationService */
 $databaseMigrationService = $app[DatabaseMigrationService::class];
 /** @var LogRepository $logRepository */
 $logRepository = $app[LogRepository::class];

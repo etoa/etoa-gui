@@ -14,7 +14,7 @@ function getGameIdentifier()
     // TODO
     global $app;
 
-    /** @var ConfigurationService */
+    /** @var ConfigurationService $config */
     $config = $app[ConfigurationService::class];
 
     return APP_NAME . ' ' . getAppVersion() . ' ' . $config->get('roundname');
@@ -962,7 +962,7 @@ function calcBuildingCosts(\EtoA\Building\Building $building, $level, $fac = 1)
 
     global $app;
 
-    /** @var ConfigurationService */
+    /** @var ConfigurationService $config */
     $config = $app[ConfigurationService::class];
 
     $bc = array();
@@ -1310,7 +1310,7 @@ function defineImagePaths()
     global $cu;
     global $app;
 
-    /** @var ConfigurationService */
+    /** @var ConfigurationService $config */
     $config = $app[ConfigurationService::class];
 
     /** @var UserPropertiesRepository $userPropertiesRepository */
@@ -1349,7 +1349,7 @@ function logAccess($target, $domain = "", $sub = "")
     // TODO
     global $app;
 
-    /** @var ConfigurationService */
+    /** @var ConfigurationService $config */
     $config = $app[ConfigurationService::class];
     /** @var AccessLogRepository $accessLogRepository */
     $accessLogRepository = $app[AccessLogRepository::class];
@@ -1402,7 +1402,7 @@ function getLoginUrl($args = array())
     // TODO
     global $app;
 
-    /** @var ConfigurationService */
+    /** @var ConfigurationService $config */
     $config = $app[ConfigurationService::class];
 
     $url = $config->get('loginurl');

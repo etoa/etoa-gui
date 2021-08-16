@@ -562,7 +562,7 @@ function showAttackAbuseLogs($args = null, $limit = -1, $load = true)
 {
     global $app;
 
-    /** @var UserRepository */
+    /** @var UserRepository $userRepository */
     $userRepository = $app[UserRepository::class];
     /** @var BattleLogRepository $battleLogRepository */
     $battleLogRepository = $app[BattleLogRepository::class];
@@ -938,6 +938,7 @@ function showDebrisLogs($args = null, $limit = 0)
 {
     global $app;
 
+    /** @var AdminUserRepository $adminUserRepo */
     $adminUserRepo = $app[AdminUserRepository::class];
     /** @var UserRepository $userRepository */
     $userRepository = $app[UserRepository::class];

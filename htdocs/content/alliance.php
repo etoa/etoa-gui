@@ -14,7 +14,7 @@ use EtoA\Alliance\Board\AllianceBoardTopicRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\User\UserRepository;
 
-/** @var ConfigurationService */
+/** @var ConfigurationService $config */
 $config = $app[ConfigurationService::class];
 /** @var AllianceRepository $allianceRepository */
 $allianceRepository = $app[AllianceRepository::class];
@@ -489,7 +489,7 @@ elseif ($cu->allianceId == 0) {
                     <th width=\"120\">Letzte Ereignisse:</th>
                     <td colspan=\"2\">";
 
-                    /** @var AllianceHistoryRepository */
+                    /** @var AllianceHistoryRepository $allianceHistoryRepository */
                     $allianceHistoryRepository = $app[AllianceHistoryRepository::class];
                     $entries = $allianceHistoryRepository->findForAlliance($cu->allianceId, 5);
                     if (count($entries) > 0) {

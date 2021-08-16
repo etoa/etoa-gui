@@ -290,7 +290,7 @@ class User implements \EtoA\User\UserInterface
                 // TODO
                 global $app;
 
-                /** @var UserService */
+                /** @var UserService $userService */
                 $userService = $app[UserService::class];
 
                 $tmpAlly = $this->$key;

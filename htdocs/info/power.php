@@ -7,7 +7,7 @@ use EtoA\Ship\ShipDataRepository;
 use EtoA\Ship\ShipRepository;
 use EtoA\Universe\Planet\Planet;
 
-/** @var ConfigurationService */
+/** @var ConfigurationService $config */
 $config = $app[ConfigurationService::class];
 
 echo "<h2>Energie</h2>";
@@ -17,9 +17,9 @@ echo "<tr><td colspan=\"6\">
 <img src=\"misc/powerproduction.image.php\" alt=\"Graph\" />
 </td></tr>";
 
-/** @var BuildingRepository */
+/** @var BuildingRepository $buildingRepository */
 $buildingRepository = $app[BuildingRepository::class];
-/** @var BuildingDataRepository */
+/** @var BuildingDataRepository $buildingDataRepository */
 $buildingDataRepository = $app[BuildingDataRepository::class];
 $buildings = $buildingDataRepository->getBuildingsByType(BUILDING_POWER_CAT);
 
@@ -44,10 +44,10 @@ foreach ($buildings as $building) {
         </tr>";
 }
 
-/** @var ShipRepository */
+/** @var ShipRepository $shipRepository */
 $shipRepository = $app[ShipRepository::class];
 
-/** @var ShipDataRepository */
+/** @var ShipDataRepository $shipDataRepository */
 $shipDataRepository = $app[ShipDataRepository::class];
 
 $ships = $shipDataRepository->getShipWithPowerProduction();

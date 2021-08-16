@@ -151,6 +151,6 @@ if ($cnt_error > 0) {
 }
 
 // Gekaufte/Verkaufte Rohstoffe in Config-DB speichern für Kursberechnung
-/** @var MarketHandler */
+/** @var MarketHandler $marketHandler */
 $marketHandler = $app[MarketHandler::class];
 $marketHandler->addResToRate($supplyTotal, $demandTotal);

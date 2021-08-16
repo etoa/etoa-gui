@@ -89,7 +89,7 @@ class OtherReport extends Report
 
         global $app;
 
-        /** @var ConfigurationService */
+        /** @var ConfigurationService $config */
         $config = $app[ConfigurationService::class];
         /** @var ShipDataRepository $shipRepository */
         $shipRepository = $app[ShipDataRepository::class];

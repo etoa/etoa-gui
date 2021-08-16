@@ -6,10 +6,10 @@ use EtoA\Log\LogRepository;
 use EtoA\Log\LogSeverity;
 use EtoA\Support\DB\DatabaseBackupService;
 
-/** @var ConfigurationService */
+/** @var ConfigurationService $config */
 $config = $app[ConfigurationService::class];
 
-/** @var DatabaseBackupService */
+/** @var DatabaseBackupService $databaseBackupService */
 $databaseBackupService = $app[DatabaseBackupService::class];
 /** @var LogRepository $logRepository */
 $logRepository = $app[LogRepository::class];
