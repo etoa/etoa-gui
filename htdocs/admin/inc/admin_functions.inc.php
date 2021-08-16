@@ -887,12 +887,12 @@ function showFleetLogs($args = null, $limit = 0)
             tableStart("", 450);
             echo "<tr><th>Schiffe in der Flotte</th><th>Vor der Aktion</th><th>Nach der Aktion</th></tr>";
             $sship = array();
-            $ssship = explode(",", $arr['fleet_ships_start']);
+            $ssship = array_filter(explode(",", $arr['fleet_ships_start']));
             foreach ($ssship as $sd) {
                 $sdi = explode(":", $sd);
                 $sship[$sdi[0]] = $sdi[1];
             }
-            $esship = explode(",", $arr['fleet_ships_end']);
+            $esship = array_filter(explode(",", $arr['fleet_ships_end']));
             foreach ($esship as $sd) {
                 $sdi = explode(":", $sd);
                 if ($sdi[0] > 0)
@@ -902,12 +902,12 @@ function showFleetLogs($args = null, $limit = 0)
             tableStart("", 450);
             echo "<tr><th>Schiffe auf dem Planeten</th><th>Vor der Aktion</th><th>Nach der Aktion</th></tr>";
             $sship = array();
-            $ssship = explode(",", $arr['entity_ships_start']);
+            $ssship = array_filter(explode(",", $arr['entity_ships_start']));
             foreach ($ssship as $sd) {
                 $sdi = explode(":", $sd);
                 $sship[$sdi[0]] = $sdi[1];
             }
-            $esship = explode(",", $arr['entity_ships_end']);
+            $esship = array_filter(explode(",", $arr['entity_ships_end']));
             foreach ($esship as $sd) {
                 $sdi = explode(":", $sd);
                 if ($sdi[0] > 0)
@@ -927,9 +927,9 @@ function showFleetLogs($args = null, $limit = 0)
                 array_push($eres, $sd);
             }
             foreach ($resNames as $k => $v) {
-                echo "<tr><td>" . $v . "</td><td>" . nf($sres[$k]) . "</td><td>" . nf($eres[$k]) . "</td></tr>";
+                echo "<tr><td>" . $v . "</td><td>" . nf((int) $sres[$k]) . "</td><td>" . nf((int) $eres[$k]) . "</td></tr>";
             }
-            echo "<tr><td>Bewoner</td><td>" . nf($sres[5]) . "</td><td>" . nf($eres[5]) . "</td></tr>";
+            echo "<tr><td>Bewoner</td><td>" . nf((int) $sres[5]) . "</td><td>" . nf((int) $eres[5]) . "</td></tr>";
             echo tableEnd();
 
             //Will not show Resmessage if entity was not touched (fleet cancel)
