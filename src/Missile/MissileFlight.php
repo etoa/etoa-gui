@@ -5,6 +5,7 @@ namespace EtoA\Missile;
 class MissileFlight
 {
     public int $id;
+    public int $entityFromId;
     public int $targetPlanetId;
     public ?string $targetPlanetName;
     public int $landTime;
@@ -17,6 +18,7 @@ class MissileFlight
     public function __construct(array $data, array $missiles)
     {
         $this->id = (int) $data['flight_id'];
+        $this->entityFromId = (int) $data['flight_entity_from'];
         $this->targetPlanetId = (int) $data['id'];
         $this->targetPlanetName = $data['planet_name'];
         $this->landTime = (int) $data['flight_landtime'];

@@ -1,6 +1,9 @@
 <?PHP
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Missile\MissileFlight;
+use EtoA\Missile\MissileFlightRepository;
+use EtoA\Missile\MissileRepository;
 use EtoA\Universe\Planet\PlanetRepository;
 
 class MissileBattleHandler
@@ -8,80 +11,41 @@ class MissileBattleHandler
     /**
      * Handles missile assault
      *
-     * @param int $fid Flight Id
      */
-    static function battle($fid)
+    static function battle(MissileFlight $flight)
     {
+        $fid = $flight->id;
         // TODO
         global $app;
 
-        /** @var ConfigurationService */
+        /** @var ConfigurationService $config */
         $config = $app[ConfigurationService::class];
+        /** @var MissileFlightRepository $missileFlightRepository */
+        $missileFlightRepository = $app[MissileFlightRepository::class];
+        /** @var MissileRepository $missileRepository */
+        $missileRepository = $app[MissileRepository::class];
+        /** @var PlanetRepository */
+        $planetRepository = $app[PlanetRepository::class];
+        /** @var \EtoA\Message\MessageRepository $messageRepository */
+        $messageRepository = $app[\EtoA\Message\MessageRepository::class];
 
         // Faktor mit dem die Schilde der Verteidigung bei einem Kampf mit einberechnet werden.
         define("MISSILE_BATTLE_SHIELD_FACTOR", $config->getFloat('missile_battle_shield_factor'));
 
         // Kampf abbrechen und Raketen zum Startplanet schicken wenn Kampfsperre aktiv ist
         if ($config->getBoolean('battleban') && $config->param1Int('battleban_time') <= time() && $config->param2Int('battleban_time') > time()) {
-            // Lädt Flugdaten
-            $res = dbquery("
-			SELECT
-				flight_entity_from
-			FROM
-				missile_flights
-			WHERE
-				flight_id=" . $fid . "
-			;");
-            if (mysql_num_rows($res) > 0) {
-                $arr = mysql_fetch_assoc($res);
-
-                // Transferiert Raketen zum Startplanet
-                $mres = dbquery("
-				SELECT
-					obj_missile_id,
-					obj_cnt
-				FROM
-					missile_flights_obj
-				WHERE
-					obj_flight_id='" . $fid . "'");
-                while ($marr = mysql_fetch_assoc($mres)) {
-                    dbquery("
-					UPDATE
-						missilelist
-					SET
-						missilelist_count=missilelist_count+" . $marr['obj_cnt'] . "
-					WHERE
-						missilelist_entity_id=" . $arr['flight_entity_from'] . "
-						AND missilelist_missile_id=" . $marr['obj_missile_id'] . "
-					;");
-                }
-
-                // Löscht Flug
-                dbquery("
-				DELETE FROM
-					missile_flights
-				WHERE
-					flight_id=" . $fid . "
-				;");
-
-                // Löscht Raketen
-                dbquery("
-				DELETE FROM
-					missile_flights_obj
-				WHERE
-					obj_flight_id=" . $fid . "
-				;");
-
-                // Schickt Nachricht an den Angreifer
-                $msg = $config->param2('battleban_arrival_text');
-                /** @var PlanetRepository */
-                $planetRepository = $app[PlanetRepository::class];
-                $uid = $planetRepository->getPlanetUserId((int) $arr['flight_entity_from']);
-
-                /** @var \EtoA\Message\MessageRepository $messageRepository */
-                $messageRepository = $app[\EtoA\Message\MessageRepository::class];
-                $messageRepository->createSystemMessage($uid, SHIP_WAR_MSG_CAT_ID, 'Ergebnis des Raketenangriffs', $msg);
+            $planetUserId = $planetRepository->getPlanetUserId($flight->entityFromId);
+            // Transferiert Raketen zum Startplanet
+            foreach ($flight->missiles as $missileId => $count) {
+                $missileRepository->addMissile($missileId, $count, $planetUserId, $flight->entityFromId);
             }
+
+            // Löscht Flug
+            $missileFlightRepository->deleteFlight($flight->id, $flight->entityFromId);
+
+            // Schickt Nachricht an den Angreifer
+            $msg = $config->param2('battleban_arrival_text');
+            $messageRepository->createSystemMessage($planetUserId, SHIP_WAR_MSG_CAT_ID, 'Ergebnis des Raketenangriffs', $msg);
 
             return;
         }

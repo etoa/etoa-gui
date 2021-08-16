@@ -21,7 +21,7 @@ class CheckMissilesTask implements IPeriodicTask
         $flights = $this->missileFlightRepository->getFlights(MissileFlightSearch::create()->landed());
         $cnt = count($flights);
         foreach ($flights as $flight) {
-            MissileBattleHandler::battle($flight->id);
+            MissileBattleHandler::battle($flight);
             $cnt++;
         }
         return "$cnt Raketen-Aktionen berechnet";
