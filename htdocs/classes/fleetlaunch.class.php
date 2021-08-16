@@ -8,6 +8,7 @@ use EtoA\Log\FleetLogRepository;
 use EtoA\Ship\ShipRepository;
 use EtoA\Technology\TechnologyRepository;
 use EtoA\Universe\Entity\EntityService;
+use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Universe\Resources\BaseResources;
 
 /**
@@ -21,11 +22,11 @@ class FleetLaunch
     //
     // Variable definitions
     //
-    public $sourceEntity;
-    public $targetEntity;
+    public ?Planet $sourceEntity = null;
+    public ?Entity $targetEntity = null;
     public $owner;
-    public $wormholeEntryEntity;
-    public $wormholeExitEntity;
+    public ?Entity $wormholeEntryEntity = null;
+    public ?Entity $wormholeExitEntity = null;
     var $ownerId;
 
     var $ships;
@@ -465,6 +466,8 @@ class FleetLaunch
 
         /** @var FleetRepository $fleetRepository */
         $fleetRepository = $app[FleetRepository::class];
+        /** @var PlanetRepository $planetRepository */
+        $planetRepository = $app[PlanetRepository::class];
 
         if ($this->actionOk) {
             if ($this->checkHaven()) {
@@ -487,9 +490,8 @@ class FleetLaunch
                     $this->finalLoadResource();
 
                     // Subtract flight and support costs from source
-//                    $this->sourceEntity->chgRes(4, -$this->getCosts() - $this->getSupportFuel());
-//                    $this->sourceEntity->chgRes(5, -$this->getCostsFood() - $this->getSupportFood());
-//                    $this->sourceEntity->chgPeople(- ($this->getPilots() + $this->capacityPeopleLoaded));
+                    $planetRepository->addResources($this->sourceEntity->id(), 0, 0, 0, -$this->getCosts() - $this->getSupportFuel(), -$this->getCostsFood() - $this->getSupportFood(), - ($this->getPilots() + $this->capacityPeopleLoaded));
+                    $this->sourceEntity->reloadRes();
 
                     if ($this->action == "alliance" && $this->leaderId != 0) {
                         $status = 3;
