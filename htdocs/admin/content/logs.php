@@ -26,8 +26,6 @@ if ($sub == "errorlog") {
     errorlog($twig);
 } elseif (isset($_GET['sub']) && $_GET['sub'] == "logs_battle") {
     battleLog();
-} elseif (isset($_GET['sub']) && $_GET['sub'] == "logs_game") {
-    gameLog($config);
 } elseif (isset($_POST['logs_submit']) && $_POST['logs_submit'] != "" && checker_verify()) {
     commonLog();
 } elseif (isset($_GET['sub']) && $_GET['sub'] == "new_logs_page") {
@@ -68,76 +66,6 @@ function errorlog(Environment $twig)
 function battleLog()
 {
     echo "Battle Log im aufbau!<br>";
-}
-
-function gameLog(ConfigurationService $config)
-{
-    global $page;
-
-    $lres = dbquery("
-    SELECT
-        logs_game_cat_id,
-        logs_game_cat_name,
-        COUNT(logs_game_id) as cnt
-    FROM
-        logs_game_cat
-        INNER JOIN
-        logs_game
-        ON logs_game_cat=logs_game_cat_id
-    GROUP BY
-        logs_game_cat_id;");
-    $logs_game_type = array();
-    while ($larr = mysql_fetch_array($lres)) {
-        $logs_game_type[$larr['logs_game_cat_id']]['name'] = $larr['logs_game_cat_name'];
-        $logs_game_type[$larr['logs_game_cat_id']]['cnt'] = $larr['cnt'];
-    }
-
-
-    $_SESSION['logs']['query'] = Null;
-    echo "Suchmaske:<br/><br/>";
-    echo "<form action=\"?page=$page\" method=\"post\">";
-    echo "<table class=\"tbl\">";
-
-    echo "<tr><td class=\"tbltitle\">Kategorie</td><td class=\"tbldata\"><select name=\"logs_game_cat\">";
-    echo "<option value=\"0\">(nicht zugeordnet)</option>";
-    foreach ($logs_game_type as $id => $val) {
-        echo "<option value=\"$id\">" . $val['name'] . " (" . $val['cnt'] . ")</option>";
-    }
-    echo "</select></td></tr>";
-
-    echo "<tr><td class=\"tbltitle\">Planetenname</td><td class=\"tbldata\"><input type=\"text\" name=\"planet_name\" value=\"\" size=\"20\" maxlength=\"250\" /> ";
-    fieldqueryselbox('planet_name');
-    echo "</td></tr>";
-    echo "<tr><td class=\"tbltitle\">Planeten-ID</td><td class=\"tbldata\"><input type=\"text\" name=\"planet_id\" value=\"\" size=\"20\" maxlength=\"250\" /></td></tr>";
-    echo "<tr><td class=\"tbltitle\">Koordinaten</td><td class=\"tbldata\"><select name=\"cell_sx\">";
-    echo "<option value=\"\">(egal)</option>";
-    for ($x = 1; $x <= $config->param1Int('num_of_sectors'); $x++)
-        echo "<option value=\"$x\">$x</option>";
-    echo "</select>/<select name=\"cell_sy\">";
-    echo "<option value=\"\">(egal)</option>";
-    for ($x = 1; $x <= $config->param2Int('num_of_sectors'); $x++)
-        echo "<option value=\"$x\">$x</option>";
-    echo "</select> : <select name=\"cell_cx\">";
-    echo "<option value=\"\">(egal)</option>";
-    for ($x = 1; $x <= $config->param1Int('num_of_cells'); $x++)
-        echo "<option value=\"$x\">$x</option>";
-    echo "</select>/<select name=\"cell_cy\">";
-    echo "<option value=\"\">(egal)</option>";
-    for ($x = 1; $x <= $config->param2Int('num_of_cells'); $x++)
-        echo "<option value=\"$x\">$x</option>";
-    echo "</select> : <select name=\"planet_solsys_pos\">";
-    echo "<option value=\"\">(egal)</option>";
-    for ($x = 1; $x <= $config->param2Int('num_planets'); $x++)
-        echo "<option value=\"$x\">$x</option>";
-    echo "</select></td></tr>";
-    echo "<tr><td class=\"tbltitle\">Besitzer-ID</td><td class=\"tbldata\"><input type=\"text\" name=\"planet_user_id\" value=\"\" size=\"20\" maxlength=\"250\" /></td>";
-    echo "<tr><td class=\"tbltitle\">Besitzer</td><td class=\"tbldata\"><input type=\"text\" name=\"user_nick\" value=\"\" size=\"20\" maxlength=\"250\" /> ";
-    fieldqueryselbox('user_nick');
-    echo "</td></tr>";
-    echo "<tr><td class=\"tbltitle\">Allianz-Tag</td><td class=\"tbldata\"><input type=\"text\" name=\"alliance_tag\" value=\"\" size=\"20\" maxlength=\"250\" /> ";
-    fieldqueryselbox('alliance_tag');
-    echo "</td></tr>";
-    echo "</table></form>";
 }
 
 function commonLog()
