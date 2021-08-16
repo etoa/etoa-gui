@@ -487,9 +487,9 @@ class FleetLaunch
                     $this->finalLoadResource();
 
                     // Subtract flight and support costs from source
-                    $this->sourceEntity->chgRes(4, -$this->getCosts() - $this->getSupportFuel());
-                    $this->sourceEntity->chgRes(5, -$this->getCostsFood() - $this->getSupportFood());
-                    $this->sourceEntity->chgPeople(- ($this->getPilots() + $this->capacityPeopleLoaded));
+//                    $this->sourceEntity->chgRes(4, -$this->getCosts() - $this->getSupportFuel());
+//                    $this->sourceEntity->chgRes(5, -$this->getCostsFood() - $this->getSupportFood());
+//                    $this->sourceEntity->chgPeople(- ($this->getPilots() + $this->capacityPeopleLoaded));
 
                     if ($this->action == "alliance" && $this->leaderId != 0) {
                         $status = 3;

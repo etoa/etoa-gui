@@ -8,6 +8,30 @@ use EtoA\Universe\Resources\BaseResources;
 
 class FleetLogRepository extends AbstractRepository
 {
+    /**
+     * @return FleetLog[]
+     */
+    public function searchLogs(FleetLogSearch $search, int $limit = null, int $offset = null): array
+    {
+        $data = $this->applySearchSortLimit($this->createQueryBuilder(), $search, null, $limit, $offset)
+            ->select('*')
+            ->from('logs_fleet')
+            ->orderBy('timestamp', 'DESC')
+            ->execute()
+            ->fetchAllAssociative();
+
+        return array_map(fn (array $row) => new FleetLog($row), $data);
+    }
+
+    public function count(FleetLogSearch $search = null): int
+    {
+        return (int) $this->applySearchSortLimit($this->createQueryBuilder(), $search)
+            ->select('COUNT(id)')
+            ->from('logs')
+            ->execute()
+            ->fetchOne();
+    }
+
     public function addLaunch(int $fleetId, int $userId, int $entityFromId, int $targetEntityId, int $launchTime, int $landTime, string $action, int $pilots, int $fuel, int $food, BaseResources $resource, BaseResources $fetch, string $fleetShipEnd, string $entityResStart, string $entityResEnd): void
     {
         $fleetResEnd = sprintf('%s:%s:%s:%s:%s:%s:0,f,', $resource->metal, $resource->crystal, $resource->plastic, $resource->fuel, $resource->food, $resource->people);

@@ -8,6 +8,8 @@ use EtoA\HostCache\NetworkNameService;
 use EtoA\Log\BattleLogRepository;
 use EtoA\Log\BattleLogSearch;
 use EtoA\Log\FleetLogFacility;
+use EtoA\Log\FleetLogRepository;
+use EtoA\Log\FleetLogSearch;
 use EtoA\Log\GameLogFacility;
 use EtoA\Log\GameLogRepository;
 use EtoA\Log\GameLogSearch;
@@ -768,56 +770,49 @@ function showAttackAbuseLogs($args = null, $limit = -1, $load = true)
 function showFleetLogs($args = null, $limit = 0)
 {
     global $resNames, $app;
+
+    /** @var UserRepository $userRepository */
+    $userRepository = $app[UserRepository::class];
+    /** @var FleetLogRepository $fleetLogRepository */
+    $fleetLogRepository = $app[FleetLogRepository::class];
+
     $paginationLimit = 50;
 
     $action = is_array($args) && isset($args['flaction']) ? $args['flaction'] : 0;
     $sev = is_array($args) && isset($args['logsev'])  ? $args['logsev'] : 0;
 
-    $order = "timestamp DESC";
-
-    $sql1 = "SELECT ";
-    $sql2 = " * ";
-
-    $sql3 = " FROM logs_fleet l ";
     if (isset($args['searchuser']) && $args['searchuser'] != "" && !is_numeric($args['searchuser'])) {
-        $sql3 .= " INNER JOIN users u ON u.user_id=l.user_id AND u.user_nick LIKE '%" . $args['searchuser'] . "%' ";
+        $args['searchfuser'] = $userRepository->getUserIdByNick($args['searchuser']);
     }
-
     if (isset($args['searcheuser']) && $args['searcheuser'] != "" && !is_numeric($args['searcheuser'])) {
-        $sql3 .= " INNER JOIN users eu ON eu.user_id=l.entity_user_id AND eu.user_nick LIKE '%" . $args['searcheuser'] . "%' ";
+        $args['searcheuser'] = $userRepository->getUserIdByNick($args['searcheuser']);
     }
 
-    $sql3 .= " WHERE 1 ";
+    $search = FleetLogSearch::create();
     if ($action != "") {
-        $sql3 .= " AND action='" . $action . "' ";
+        $search->action($action);
     }
     if ($sev > 0) {
-        $sql3 .= " AND severity >= " . $sev . " ";
+        $search->severity($sev);
     }
     if (isset($args['logfac']) && is_numeric($args['logfac'])) {
-        $sql3 .= " AND facility = " . $args['logfac'] . " ";
+        $search->facility($args['logfac']);
     }
     if (isset($args['searchuser']) && is_numeric($args['searchuser'])) {
-        $sql3 .= " AND l.user_id=" . intval($args['searchuser']) . " ";
+        $search->fleetUserId((int) $args['searchuser']);
     }
     if (isset($args['searcheuser']) && is_numeric($args['searcheuser'])) {
-        $sql3 .= " AND l.user_id=" . intval($args['searcheuser']) . " ";
+        $search->entityUserId((int) $args['searcheuser']);
     }
-    $sql3 .= " ORDER BY $order";
 
-    $res = dbquery($sql1 . " COUNT(id) as cnt " . $sql3);
-    $arr = mysql_fetch_row($res);
-    $total = $arr[0];
+    $total = $fleetLogRepository->count($search);
 
     $limit = max(0, $limit);
     $limit = min($total, $limit);
     $limit -= $limit % $paginationLimit;
-    $limitstring = "$limit,$paginationLimit";
 
-    $sql4 = " LIMIT $limitstring";
-
-    $res = dbquery($sql1 . $sql2 . $sql3 . $sql4);
-    $nr = mysql_num_rows($res);
+    $logs = $fleetLogRepository->searchLogs($search, $paginationLimit, $limit);
+    $nr = count($logs);
     if ($nr > 0) {
         echo "<table class=\"tb\">";
         echo "<tr><th colspan=\"10\">
@@ -857,63 +852,47 @@ function showFleetLogs($args = null, $limit = 0)
         /** @var ShipDataRepository $shipDataRepository */
         $shipDataRepository = $app[ShipDataRepository::class];
         $shipNames = $shipDataRepository->getShipNames(true);
-        while ($arr = mysql_fetch_assoc($res)) {
-            $owner = new User($arr['user_id']);
-            $fa = FleetAction::createFactory($arr['action']);
-            $startEntity = Entity::createFactoryById($arr['entity_from']);
-            $endEntity = Entity::createFactoryById($arr['entity_to']);
+        foreach ($logs as $log) {
+            $owner = new User($log->userId);
+            $fa = FleetAction::createFactory($log->action);
+            $startEntity = Entity::createFactoryById($log->entityFromId);
+            $endEntity = Entity::createFactoryById($log->entityToId);
             echo "<tr>
-            <td>" . df($arr['timestamp']) . "</td>
-            <td>" . LogSeverity::SEVERITIES[$arr['severity']] . "</td>
-            <td>" . FleetLogFacility::FACILITIES[$arr['facility']] . "</td>
+            <td>" . df($log->timestamp) . "</td>
+            <td>" . LogSeverity::SEVERITIES[$log->severity] . "</td>
+            <td>" . FleetLogFacility::FACILITIES[$log->facility] . "</td>
             <td>$owner</td>
-            <td>" . $fa . " [" . FleetAction::$statusCode[$arr["status"]] . "]</td>
+            <td>" . $fa . " [" . FleetAction::$statusCode[$log->status] . "]</td>
             <td>" . $startEntity . "<br/>" . $startEntity->entityCodeString() . ", " . $startEntity->owner() . "</td>
             <td>" . $endEntity . "<br/>" . $endEntity->entityCodeString() . ", " . $endEntity->owner() . "</td>
-            <td>" . df($arr['launchtime']) . "</td>
-            <td>" . df($arr['landtime']) . "</td>
-            <td><a href=\"javascript:;\" onclick=\"toggleBox('details" . $arr['id'] . "')\">Bericht</a></td>
+            <td>" . df($log->launchTime) . "</td>
+            <td>" . df($log->landTime) . "</td>
+            <td><a href=\"javascript:;\" onclick=\"toggleBox('details" . $log->id . "')\">Bericht</a></td>
             </tr>";
-            echo "<tr id=\"details" . $arr['id'] . "\" style=\"display:none;\"><td colspan=\"10\">";
+            echo "<tr id=\"details" . $log->id . "\" style=\"display:none;\"><td colspan=\"10\">";
             tableStart("", 450);
             echo "<tr><th>Schiffe in der Flotte</th><th>Vor der Aktion</th><th>Nach der Aktion</th></tr>";
-            $sship = array();
-            $ssship = array_filter(explode(",", $arr['fleet_ships_start']));
-            foreach ($ssship as $sd) {
-                $sdi = explode(":", $sd);
-                $sship[$sdi[0]] = $sdi[1];
-            }
-            $esship = array_filter(explode(",", $arr['fleet_ships_end']));
-            foreach ($esship as $sd) {
-                $sdi = explode(":", $sd);
-                if ($sdi[0] > 0)
-                    echo "<tr><td>" . $shipNames[(int) $sdi[0]] . "</td><td>" . nf($sdi[1]) . "</td><td>" . nf($sship[$sdi[0]]) . "</td></tr>";
+            $sship = $log->fleetShipsStart;
+            foreach ($log->fleetShipsEnd as $shipId => $count) {
+                echo "<tr><td>" . $shipNames[$shipId] . "</td><td>" . nf($count) . "</td><td>" . nf($sship[$shipId] ?? 0) . "</td></tr>";
             }
             echo tableEnd();
             tableStart("", 450);
             echo "<tr><th>Schiffe auf dem Planeten</th><th>Vor der Aktion</th><th>Nach der Aktion</th></tr>";
-            $sship = array();
-            $ssship = array_filter(explode(",", $arr['entity_ships_start']));
-            foreach ($ssship as $sd) {
-                $sdi = explode(":", $sd);
-                $sship[$sdi[0]] = $sdi[1];
-            }
-            $esship = array_filter(explode(",", $arr['entity_ships_end']));
-            foreach ($esship as $sd) {
-                $sdi = explode(":", $sd);
-                if ($sdi[0] > 0)
-                    echo "<tr><td>" . $shipNames[(int) $sdi[0]] . "</td><td>" . nf($sdi[1]) . "</td><td>" . nf($sship[$sdi[0]]) . "</td></tr>";
+            $sship = $log->entityShipsStart;
+            foreach ($log->entityShipsEnd as $shipId => $count) {
+                echo "<tr><td>" . $shipNames[$shipId] . "</td><td>" . nf($count) . "</td><td>" . nf($sship[$shipId] ?? 0) . "</td></tr>";
             }
             echo tableEnd();
             tableStart("", 450);
             echo "<tr><th>Rohstoffe in der Flotte</th><th>Vor der Aktion</th><th>Nach der Aktion</th></tr>";
             $sres = array();
             $eres = array();
-            $ssres = explode(":", $arr['fleet_res_start']);
+            $ssres = explode(":", $log->fleetResStart);
             foreach ($ssres as $sd) {
                 array_push($sres, $sd);
             }
-            $esres = explode(":", $arr['fleet_res_end']);
+            $esres = explode(":", $log->fleetResEnd);
             foreach ($esres as $sd) {
                 array_push($eres, $sd);
             }
@@ -924,16 +903,16 @@ function showFleetLogs($args = null, $limit = 0)
             echo tableEnd();
 
             //Will not show Resmessage if entity was not touched (fleet cancel)
-            if ($arr['entity_res_start'] != "untouched" || $arr['entity_res_end'] != "untouched") {
+            if ($log->entityResStart != "untouched" || $log->entityResEnd != "untouched") {
                 tableStart("", 450);
                 echo "<tr><th>Rohstoffe auf der Entity</th><th>Vor der Aktion</th><th>Nach der Aktion</th></tr>";
                 $sres = array();
                 $eres = array();
-                $ssres = explode(":", $arr['entity_res_start']);
+                $ssres = explode(":", $log->entityResStart);
                 foreach ($ssres as $sd) {
                     array_push($sres, $sd);
                 }
-                $esres = explode(":", $arr['entity_res_end']);
+                $esres = explode(":", $log->entityResEnd);
                 foreach ($esres as $sd) {
                     array_push($eres, $sd);
                 }
@@ -943,7 +922,7 @@ function showFleetLogs($args = null, $limit = 0)
                 echo "<tr><td>Bewoner</td><td>" . nf($sres[5]) . "</td><td>" . nf($eres[5]) . "</td></tr>";
                 echo tableEnd();
             }
-            echo $arr["message"];
+            echo $log->message;
             echo "</td></tr>";
         }
         echo "</table>";
