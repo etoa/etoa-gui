@@ -116,31 +116,6 @@ parameters:
 			path: htdocs/content/cell.php
 
 		-
-			message: "#^Variable \\$cx might not be defined\\.$#"
-			count: 1
-			path: htdocs/content/crypto.php
-
-		-
-			message: "#^Variable \\$cy might not be defined\\.$#"
-			count: 1
-			path: htdocs/content/crypto.php
-
-		-
-			message: "#^Variable \\$pp might not be defined\\.$#"
-			count: 1
-			path: htdocs/content/crypto.php
-
-		-
-			message: "#^Variable \\$sx might not be defined\\.$#"
-			count: 1
-			path: htdocs/content/crypto.php
-
-		-
-			message: "#^Variable \\$sy might not be defined\\.$#"
-			count: 1
-			path: htdocs/content/crypto.php
-
-		-
 			message: "#^Negated boolean expression is always true\\.$#"
 			count: 1
 			path: htdocs/content/help.php
