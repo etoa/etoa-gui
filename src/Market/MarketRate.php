@@ -30,7 +30,7 @@ class MarketRate
         $rate->supply->plastic = (int) $data['supply_2'];
         $rate->supply->fuel = (int) $data['supply_3'];
         $rate->supply->food = (int) $data['supply_4'];
-        $rate->supply->people =(int) $data['supply_5'];
+        $rate->supply->people = (int) $data['supply_5'];
         $rate->demand->metal = (int) $data['demand_0'];
         $rate->demand->crystal = (int) $data['demand_1'];
         $rate->demand->plastic = (int) $data['demand_2'];
