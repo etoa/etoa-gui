@@ -21,11 +21,6 @@ parameters:
 			path: htdocs/admin/inc/admin_functions.inc.php
 
 		-
-			message: "#^Undefined variable\\: \\$total$#"
-			count: 3
-			path: htdocs/admin/inc/admin_functions.inc.php
-
-		-
 			message: "#^Variable \\$lastWave might not be defined\\.$#"
 			count: 1
 			path: htdocs/admin/inc/admin_functions.inc.php
