@@ -28,8 +28,6 @@ if ($sub == "errorlog") {
     battleLog();
 } elseif (isset($_POST['logs_submit']) && $_POST['logs_submit'] != "" && checker_verify()) {
     commonLog();
-} elseif (isset($_GET['sub']) && $_GET['sub'] == "new_logs_page") {
-    newLog();
 } elseif ($sub == "check_fights") {
     checkFights();
 } elseif ($sub == "gamelogs") {
@@ -281,37 +279,6 @@ function commonLog()
 
         tableEnd();
     }
-}
-
-function newLog()
-{
-    global $page;
-
-    echo "<h1>Neue Log Seite!</h1><br>";
-
-    echo "Suchmaske:<br/><br/>";
-    echo "<form action=\"?page=$page\" method=\"post\" id=\"log_selector\">";
-    $cstr = checker_init();
-
-    tableStart();
-
-    //Kategorie wählen
-    echo "<tr>
-                    <td class=\"tbltitle\">Kategorie</td><td class=\"tbldata\">
-                        <select name=\"log_cat\" onChange=\"xajax_logSelectorCat(xajax.getFormValues('log_selector'),1);\">
-                            <option value=\"0\">(nicht zugeordnet)</option>
-                            <option value=\"logs\">Allgemeine</option>
-                            <option value=\"logs_fleet\">Flotten</option>
-                            <option value=\"logs_battle\">Kampfberichte</option>
-                            <option value=\"logs_game\">Game</option>
-                        </select>
-                    </td>
-                </tr>";
-    tableEnd();
-
-    // Suchformular
-    echo "<div id=\"catSelector\"></div>";
-    echo "</form>";
 }
 
 function checkFights()
