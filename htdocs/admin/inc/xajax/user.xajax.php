@@ -6,6 +6,8 @@ use EtoA\Building\BuildingDataRepository;
 use EtoA\Defense\DefenseDataRepository;
 use EtoA\Help\TicketSystem\TicketRepository;
 use EtoA\Log\GameLogFacility;
+use EtoA\Log\GameLogRepository;
+use EtoA\Log\GameLogSearch;
 use EtoA\Log\LogSeverity;
 use EtoA\Message\MessageRepository;
 use EtoA\Ship\ShipDataRepository;
@@ -415,6 +417,8 @@ function loadEconomy($uid, $target)
 
     /** @var PlanetRepository $planetRepository */
     $planetRepository = $app[PlanetRepository::class];
+    /** @var GameLogRepository $gameLogRepository */
+    $gameLogRepository = $app[GameLogRepository::class];
 
     $or = new xajaxResponse();
     ob_start();
@@ -732,27 +736,8 @@ function loadEconomy($uid, $target)
 
     echo "<h2>Bauaufträge</h2>";
 
-    $lbres = dbquery("
-                SELECT
-                    log.id,
-                    log.severity,
-                    log.object_id,
-                    log.message,
-                    log.status,
-                    log.level,
-                    log.entity_id,
-                    log.ip,
-                    log.timestamp
-                FROM
-                    logs_game AS log
-                WHERE
-                    log.facility='" . GameLogFacility::BUILD . "'
-                    AND log.user_id='" . $uid . "'
-                ORDER BY
-                    log.timestamp DESC
-                LIMIT
-                    5;");
-    if (mysql_num_rows($lbres) > 0) {
+    $logs = $gameLogRepository->searchLogs(GameLogSearch::create()->userId($uid)->facility(GameLogFacility::BUILD), 5);
+    if (count($logs) > 0) {
         tableStart();
         echo "<tr>
                         <th style=\"width:140px;\">Datum</th>
@@ -767,10 +752,10 @@ function loadEconomy($uid, $target)
         $buildingRepository = $app[BuildingDataRepository::class];
         $buildingNames = $buildingRepository->getBuildingNames(true);
 
-        while ($lbarr = mysql_fetch_array($lbres)) {
-            $te = ($lbarr['entity_id'] > 0) ? Entity::createFactoryById($lbarr['entity_id']) : "-";
-            $ob = $buildingNames[$lbarr['object_id']] . " " . ($lbarr['level'] > 0 ? $lbarr['level'] : '');
-            switch ($lbarr['status']) {
+        foreach ($logs as $log) {
+            $te = ($log->entityId > 0) ? Entity::createFactoryById($log->entityId) : "-";
+            $ob = $buildingNames[$log->objectId] . " " . ($log->level > 0 ? $log->level : '');
+            switch ($log->status) {
                 case 1:
                     $obStatus = "Ausbau abgebrochen";
                     break;
@@ -788,15 +773,15 @@ function loadEconomy($uid, $target)
             }
 
             echo "<tr>
-                        <td>" . df($lbarr['timestamp']) . "</td>
-                        <td>" . LogSeverity::SEVERITIES[$lbarr['severity']] . "</td>
+                        <td>" . df($log->timestamp) . "</td>
+                        <td>" . LogSeverity::SEVERITIES[$log->severity] . "</td>
                         <td>" . $te . "</td>
                         <td>" . $ob . "</td>
                         <td>" . $obStatus . "</td>
-                        <td><a href=\"javascript:;\" onclick=\"toggleBox('details" . $lbarr['id'] . "')\">Details</a></td>
+                        <td><a href=\"javascript:;\" onclick=\"toggleBox('details" . $log->id . "')\">Details</a></td>
                         </tr>";
-            echo "<tr id=\"details" . $lbarr['id'] . "\" style=\"display:none;\"><td colspan=\"9\">" . text2html($lbarr['message']) . "
-                        <br/><br/>IP: " . $lbarr['ip'] . "</td></tr>";
+            echo "<tr id=\"details" . $log->id . "\" style=\"display:none;\"><td colspan=\"9\">" . text2html($log->message) . "
+                        <br/><br/>IP: " . $log->ip . "</td></tr>";
         }
 
         tableEnd();
@@ -811,27 +796,8 @@ function loadEconomy($uid, $target)
 
     echo "<h2>Forschungsaufträge</h2>";
 
-    $lres = dbquery("
-                SELECT
-                    log.id,
-                    log.severity,
-                    log.object_id,
-                    log.message,
-                    log.status,
-                    log.level,
-                    log.entity_id,
-                    log.ip,
-                    log.timestamp
-                FROM
-                    logs_game AS log
-                WHERE
-                    log.facility='" . GameLogFacility::TECH . "'
-                    AND log.user_id='" . $uid . "'
-                ORDER BY
-                    log.timestamp DESC
-                LIMIT
-                    5;");
-    if (mysql_num_rows($lres) > 0) {
+    $logs = $gameLogRepository->searchLogs(GameLogSearch::create()->userId($uid)->facility(GameLogFacility::TECH), 5);
+    if (count($logs) > 0) {
         tableStart();
         echo "<tr>
                         <th style=\"width:140px;\">Datum</th>
@@ -845,10 +811,10 @@ function loadEconomy($uid, $target)
         /** @var TechnologyDataRepository $techRepository */
         $techRepository = $app[TechnologyDataRepository::class];
         $technologyNames = $techRepository->getTechnologyNames(true);
-        while ($larr = mysql_fetch_array($lres)) {
-            $te = ($larr['entity_id'] > 0) ? Entity::createFactoryById($larr['entity_id']) : "-";
-            $ob = $technologyNames[$larr['object_id']] . " " . ($larr['level'] > 0 ? $larr['level'] : '');
-            switch ($larr['status']) {
+        foreach ($logs as $log) {
+            $te = ($log->entityId > 0) ? Entity::createFactoryById($log->entityId) : "-";
+            $ob = $technologyNames[$log->objectId] . " " . ($log->level > 0 ? $log->level : '');
+            switch ($log->status) {
                 case 3:
                     $obStatus = "Erforschung";
                     break;
@@ -860,15 +826,15 @@ function loadEconomy($uid, $target)
             }
 
             echo "<tr>
-                        <td>" . df($larr['timestamp']) . "</td>
-                        <td>" . LogSeverity::SEVERITIES[$larr['severity']] . "</td>
+                        <td>" . df($log->timestamp) . "</td>
+                        <td>" . LogSeverity::SEVERITIES[$log->severity] . "</td>
                         <td>" . $te . "</td>
                         <td>" . $ob . "</td>
                         <td>" . $obStatus . "</td>
-                        <td><a href=\"javascript:;\" onclick=\"toggleBox('details" . $larr['id'] . "')\">Details</a></td>
+                        <td><a href=\"javascript:;\" onclick=\"toggleBox('details" . $log->id . "')\">Details</a></td>
                         </tr>";
-            echo "<tr id=\"details" . $larr['id'] . "\" style=\"display:none;\"><td colspan=\"9\">" . text2html($larr['message']) . "
-                        <br/><br/>IP: " . $larr['ip'] . "</td></tr>";
+            echo "<tr id=\"details" . $log->id . "\" style=\"display:none;\"><td colspan=\"9\">" . text2html($log->message) . "
+                        <br/><br/>IP: " . $log->ip . "</td></tr>";
         }
 
         tableEnd();
@@ -882,29 +848,8 @@ function loadEconomy($uid, $target)
     //
 
     echo "<h2>Schiffsaufträge</h2>";
-
-    $lres = dbquery("
-                SELECT
-                    log.id,
-                    log.severity,
-                    log.object_id,
-                    log.message,
-                    log.status,
-                    log.level,
-                    log.entity_id,
-                    log.ip,
-                    log.timestamp
-                FROM
-                    logs_game AS log
-                WHERE
-                    log.facility='" . GameLogFacility::SHIP . "'
-                    AND log.user_id='" . $uid . "'
-                ORDER BY
-                    log.timestamp DESC
-                LIMIT
-                    5;");
-
-    if (mysql_num_rows($lres) > 0) {
+    $logs = $gameLogRepository->searchLogs(GameLogSearch::create()->userId($uid)->facility(GameLogFacility::SHIP), 5);
+    if (count($logs) > 0) {
         tableStart();
         echo "<tr>
                         <th style=\"width:140px;\">Datum</th>
@@ -919,10 +864,10 @@ function loadEconomy($uid, $target)
         $shipRepository = $app[ShipDataRepository::class];
         $shipNames = $shipRepository->getShipNames(true);
 
-        while ($larr = mysql_fetch_array($lres)) {
-            $te = ($larr['entity_id'] > 0) ? Entity::createFactoryById($larr['entity_id']) : "-";
-            $ob = $larr['object_id'] > 0 ? $shipNames[$larr['object_id']] . ' ' . ($larr['level'] > 0 ? $larr['level'] . 'x' : '') : '-';
-            switch ($larr['status']) {
+        foreach ($logs as $log) {
+            $te = ($log->entityId > 0) ? Entity::createFactoryById($log->entityId) : "-";
+            $ob = $log->objectId > 0 ? $shipNames[$log->objectId] . ' ' . ($log->level > 0 ? $log->level . 'x' : '') : '-';
+            switch ($log->status) {
                 case 1:
                     $obStatus = "Bau";
                     break;
@@ -934,15 +879,15 @@ function loadEconomy($uid, $target)
             }
 
             echo "<tr>
-                        <td>" . df($larr['timestamp']) . "</td>
-                        <td>" . LogSeverity::SEVERITIES[$larr['severity']] . "</td>
+                        <td>" . df($log->timestamp) . "</td>
+                        <td>" . LogSeverity::SEVERITIES[$log->severity] . "</td>
                         <td>" . $te . "</td>
                         <td>" . $ob . "</td>
                         <td>" . $obStatus . "</td>
-                        <td><a href=\"javascript:;\" onclick=\"toggleBox('details" . $larr['id'] . "')\">Details</a></td>
+                        <td><a href=\"javascript:;\" onclick=\"toggleBox('details" . $log->id . "')\">Details</a></td>
                         </tr>";
-            echo "<tr id=\"details" . $larr['id'] . "\" style=\"display:none;\"><td colspan=\"9\">" . text2html($larr['message']) . "
-                        <br/><br/>IP: " . $larr['ip'] . "</td></tr>";
+            echo "<tr id=\"details" . $log->id . "\" style=\"display:none;\"><td colspan=\"9\">" . text2html($log->message) . "
+                        <br/><br/>IP: " . $log->ip . "</td></tr>";
         }
 
         tableEnd();
@@ -958,27 +903,8 @@ function loadEconomy($uid, $target)
 
     echo "<h2>Verteidigungsaufträge</h2>";
 
-    $lres = dbquery("
-                SELECT
-                    log.id,
-                    log.severity,
-                    log.object_id,
-                    log.message,
-                    log.status,
-                    log.level,
-                    log.entity_id,
-                    log.ip,
-                    log.timestamp
-                FROM
-                    logs_game AS log
-                WHERE
-                    log.facility='" . GameLogFacility::DEF . "'
-                    AND log.user_id='" . $uid . "'
-                ORDER BY
-                    log.timestamp DESC
-                LIMIT
-                    5;");
-    if (mysql_num_rows($lres) > 0) {
+    $logs = $gameLogRepository->searchLogs(GameLogSearch::create()->userId($uid)->facility(GameLogFacility::DEF), 5);
+    if (count($logs) > 0) {
         tableStart();
         echo "<tr>
                         <th style=\"width:140px;\">Datum</th>
@@ -993,10 +919,10 @@ function loadEconomy($uid, $target)
         $defenseRepository = $app[DefenseDataRepository::class];
         $defenseNames = $defenseRepository->getDefenseNames(true);
 
-        while ($larr = mysql_fetch_array($lres)) {
-            $te = ($larr['entity_id'] > 0) ? Entity::createFactoryById($larr['entity_id']) : "-";
-            $ob = $larr['object_id'] > 0 ? $defenseNames[$larr['object_id']] . ' ' . ($larr['level'] > 0 ? $larr['level'] . 'x' : '') : '-';
-            switch ($larr['status']) {
+        foreach ($logs as $log) {
+            $te = ($log->entityId > 0) ? Entity::createFactoryById($log->entityId) : "-";
+            $ob = $log->objectId > 0 ? $defenseNames[$log->objectId] . ' ' . ($log->level > 0 ? $log->level . 'x' : '') : '-';
+            switch ($log->status) {
                 case 1:
                     $obStatus = "Bau";
                     break;
@@ -1008,15 +934,15 @@ function loadEconomy($uid, $target)
             }
 
             echo "<tr>
-                        <td>" . df($larr['timestamp']) . "</td>
-                        <td>" . LogSeverity::SEVERITIES[$larr['severity']] . "</td>
+                        <td>" . df($log->timestamp) . "</td>
+                        <td>" . LogSeverity::SEVERITIES[$log->severity] . "</td>
                         <td>" . $te . "</td>
                         <td>" . $ob . "</td>
                         <td>" . $obStatus . "</td>
-                        <td><a href=\"javascript:;\" onclick=\"toggleBox('details" . $larr['id'] . "')\">Details</a></td>
+                        <td><a href=\"javascript:;\" onclick=\"toggleBox('details" . $log->id . "')\">Details</a></td>
                         </tr>";
-            echo "<tr id=\"details" . $larr['id'] . "\" style=\"display:none;\"><td colspan=\"9\">" . text2html($larr['message']) . "
-                        <br/><br/>IP: " . $larr['ip'] . "</td></tr>";
+            echo "<tr id=\"details" . $log->id . "\" style=\"display:none;\"><td colspan=\"9\">" . text2html($log->message) . "
+                        <br/><br/>IP: " . $log->ip . "</td></tr>";
         }
 
         tableEnd();

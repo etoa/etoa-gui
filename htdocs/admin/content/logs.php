@@ -187,7 +187,7 @@ function newGamelogs()
                     /** @var DefenseDataRepository $defenseRepository */
                     $defenseRepository = $app[DefenseDataRepository::class];
                     foreach ($defenseRepository->getDefenseNames(true) as $defenseId => $defenseName) {
-                        echo "elem.options[elem.options.length] = new Option('$defenseId',$defenseName);";
+                        echo "elem.options[elem.options.length] = new Option('$defenseId','$defenseName');";
                     }
                     ?>
                     break;

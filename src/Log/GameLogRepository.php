@@ -6,6 +6,24 @@ use EtoA\Core\AbstractRepository;
 
 class GameLogRepository extends AbstractRepository
 {
+    /**
+     * @return GameLog[]
+     */
+    public function searchLogs(GameLogSearch $search, int $limit = null, int $offset = null): array
+    {
+        $data = $this->applySearchSortLimit($this->createQueryBuilder(), $search, null, $limit, $offset)
+            ->select('logs_game.*')
+            ->from('logs_game')
+            ->innerJoin('logs_game', 'users', 'users', 'users.user_id = logs_game.user_id')
+            ->leftJoin('logs_game', 'alliances', 'alliances', 'alliances.alliance_id = logs_game.alliance_id')
+            ->leftJoin('logs_game', 'planets', 'planets', 'planets.id = logs_game.entity_id')
+            ->orderBy('timestamp', 'DESC')
+            ->execute()
+            ->fetchAllAssociative();
+
+        return array_map(fn (array $row) => new GameLog($row), $data);
+    }
+
     public function add(int $facility, int $severity, string $message, int $userId, int $allianceId, int $entityId, int $objectId = 0, int $status = 0, int $level = 0): void
     {
         $this->getConnection()->executeQuery('INSERT DELAYED INTO logs_game (
@@ -54,5 +72,17 @@ class GameLogRepository extends AbstractRepository
             ->where('timestamp < :threshold')
             ->setParameter('threshold', $threshold)
             ->execute();
+    }
+
+    public function count(GameLogSearch $search = null): int
+    {
+        return (int) $this->applySearchSortLimit($this->createQueryBuilder(), $search)
+            ->select('COUNT(*)')
+            ->from('logs_game')
+            ->innerJoin('logs_game', 'users', 'users', 'users.user_id = logs_game.user_id')
+            ->leftJoin('logs_game', 'alliances', 'alliances', 'alliances.alliance_id = logs_game.alliance_id')
+            ->leftJoin('logs_game', 'planets', 'planets', 'planets.id = logs_game.entity_id')
+            ->execute()
+            ->fetchOne();
     }
 }

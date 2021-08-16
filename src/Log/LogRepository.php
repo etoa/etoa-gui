@@ -12,8 +12,8 @@ class LogRepository extends AbstractRepository
     public function searchLogs(LogSearch $search, int $limit = null, int $offset = null): array
     {
         $data = $this->applySearchSortLimit($this->createQueryBuilder(), $search, null, $limit, $offset)
-            ->select('l.*')
-            ->from('logs', 'l')
+            ->select('*')
+            ->from('logs')
             ->orderBy('timestamp', 'DESC')
             ->execute()
             ->fetchAllAssociative();

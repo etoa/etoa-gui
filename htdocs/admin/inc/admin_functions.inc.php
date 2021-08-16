@@ -7,6 +7,8 @@ use EtoA\Defense\DefenseDataRepository;
 use EtoA\HostCache\NetworkNameService;
 use EtoA\Log\FleetLogFacility;
 use EtoA\Log\GameLogFacility;
+use EtoA\Log\GameLogRepository;
+use EtoA\Log\GameLogSearch;
 use EtoA\Log\LogFacility;
 use EtoA\Log\LogRepository;
 use EtoA\Log\LogSearch;
@@ -1041,66 +1043,56 @@ function showGameLogs($args = null, $limit = 0)
 {
     global $app;
 
+    /** @var GameLogRepository $gameLogRepository */
+    $gameLogRepository = $app[GameLogRepository::class];
+
     $paginationLimit = 25;
 
     $cat = is_array($args) && isset($args['logcat']) ? $args['logcat'] : 0;
     $sev = is_array($args) && isset($args['logsev'])  ? $args['logsev'] : 0;
     $text = is_array($args) && isset($args['searchtext'])   ? $args['searchtext'] : "";
 
-    $order = "timestamp DESC";
-
-    $sql1 = "SELECT ";
-    $sql2 = " l.* ";
-
-    $sql3 = " FROM logs_game l ";
+    $search = GameLogSearch::create();
     if (isset($args['searchuser']) && $args['searchuser'] != "" && !is_numeric($args['searchuser'])) {
-        $sql3 .= " INNER JOIN users u ON u.user_id=l.user_id AND u.user_nick LIKE '%" . $args['searchuser'] . "%' ";
+        $search->userNickLike($args['searchuser']);
     }
     if (isset($args['searchalliance']) && $args['searchalliance'] != "" && !is_numeric($args['searchalliance'])) {
-        $sql3 .= " INNER JOIN alliances a ON a.alliance_id=l.alliance_id AND a.alliance_name LIKE '%" . $args['searchalliance'] . "%' ";
+        $search->allianceNameLike($args['searchalliance']);
     }
     if (isset($args['searchentity']) && $args['searchentity'] != "" && !is_numeric($args['searchentity'])) {
         // TODO: this now only works for planets...
-        $sql3 .= " INNER JOIN planets e ON e.id=l.entity_id AND e.planet_name LIKE '%" . $args['searchentity'] . "%' ";
+        $search->planetNameLike($args['searchentity']);
     }
-    $sql3 .= " WHERE 1 ";
 
     if (isset($args['searchuser']) && is_numeric($args['searchuser'])) {
-        $sql3 .= " AND l.user_id=" . intval($args['searchuser']) . " ";
+        $search->userId((int) $args['searchuser']);
     }
     if (isset($args['searchalliance']) && is_numeric($args['searchalliance'])) {
-        $sql3 .= " AND l.alliance_id=" . intval($args['searchalliance']) . " ";
+        $search->allianceId((int) $args['searchalliance']);
     }
     if (isset($args['searchentity']) && is_numeric($args['searchentity'])) {
-        $sql3 .= " AND l.entity_id=" . intval($args['searchentity']) . " ";
+        $search->entityId((int) $args['searchentity']);
     }
     if ($cat > 0) {
-        $sql3 .= " AND facility=" . $cat . " ";
+        $search->facility($cat);
     }
     if ($text != "") {
-        $sql3 .= " AND message LIKE '%" . $text . "%' ";
+        $search->messageLike($text);
     }
     if ($sev > 0) {
-        $sql3 .= " AND severity >= " . $sev . " ";
+        $search->severity($sev);
     }
     if (isset($args['object_id']) && $args['object_id'] > 0) {
-        $sql3 .= " AND object_id = " . $args['object_id'] . " ";
+        $search->objectId($sev);
     }
-    $sql3 .= " ORDER BY $order";
 
-    $res = dbquery($sql1 . " COUNT(l.id) as cnt " . $sql3);
-    $arr = mysql_fetch_row($res);
-    $total = $arr[0];
-
+    $total = $gameLogRepository->count($search);
     $limit = max(0, $limit);
     $limit = min($total, $limit);
     $limit -= $limit % $paginationLimit;
-    $limitstring = "$limit,$paginationLimit";
 
-    $sql4 = " LIMIT $limitstring";
-
-    $res = dbquery($sql1 . $sql2 . $sql3 . $sql4);
-    $nr = mysql_num_rows($res);
+    $logs = $gameLogRepository->searchLogs($search, $paginationLimit, $limit);
+    $nr = count($logs);
     if ($nr > 0) {
         echo "<table class=\"tb\">";
         echo "<tr><th colspan=\"10\">
@@ -1149,14 +1141,14 @@ function showGameLogs($args = null, $limit = 0)
             <th>Status</th>
             <th>Optionen</th>
         </tr>";
-        while ($arr = mysql_fetch_assoc($res)) {
-            $tu = ($arr['user_id'] > 0) ? new User($arr['user_id']) : "-";
-            $ta = ($arr['alliance_id'] > 0) ? new Alliance($arr['alliance_id']) : "-";
-            $te = ($arr['entity_id'] > 0) ? Entity::createFactoryById($arr['entity_id']) : "-";
-            switch ($arr['facility']) {
+        foreach ($logs as $log) {
+            $tu = ($log->userId > 0) ? new User($log->userId) : "-";
+            $ta = ($log->allianceId > 0) ? new Alliance($log->allianceId) : "-";
+            $te = ($log->entityId > 0) ? Entity::createFactoryById($log->entityId) : "-";
+            switch ($log->facility) {
                 case GameLogFacility::BUILD:
-                    $ob = $buildingNames[$arr['object_id']] . " " . ($arr['level'] > 0 ? $arr['level'] : '');
-                    switch ($arr['status']) {
+                    $ob = $buildingNames[$log->objectId] . " " . ($log->level > 0 ? $log->level : '');
+                    switch ($log->status) {
                         case 1:
                             $obStatus = "Ausbau abgebrochen";
                             break;
@@ -1174,8 +1166,8 @@ function showGameLogs($args = null, $limit = 0)
                     }
                     break;
                 case GameLogFacility::TECH:
-                    $ob = $technologyNames[$arr['object_id']] . " " . ($arr['level'] > 0 ? $arr['level'] : '');
-                    switch ($arr['status']) {
+                    $ob = $technologyNames[$log->objectId] . " " . ($log->level > 0 ? $log->level : '');
+                    switch ($log->status) {
                         case 3:
                             $obStatus = "Erforschung";
                             break;
@@ -1187,8 +1179,8 @@ function showGameLogs($args = null, $limit = 0)
                     }
                     break;
                 case GameLogFacility::SHIP:
-                    $ob = $arr['object_id'] > 0 ? $shipNames[$arr['object_id']] . ' ' . ($arr['level'] > 0 ? $arr['level'] . 'x' : '') : '-';
-                    switch ($arr['status']) {
+                    $ob = $log->objectId > 0 ? $shipNames[$log->objectId] . ' ' . ($log->level > 0 ? $log->level . 'x' : '') : '-';
+                    switch ($log->status) {
                         case 1:
                             $obStatus = "Bau";
                             break;
@@ -1200,8 +1192,8 @@ function showGameLogs($args = null, $limit = 0)
                     }
                     break;
                 case GameLogFacility::DEF:
-                    $ob = $arr['object_id'] > 0 ? $defenseNames[$arr['object_id']] . ' ' . ($arr['level'] > 0 ? $arr['level'] . 'x' : '') : '-';
-                    switch ($arr['status']) {
+                    $ob = $log->objectId > 0 ? $defenseNames[$log->objectId] . ' ' . ($log->level > 0 ? $log->level . 'x' : '') : '-';
+                    switch ($log->status) {
                         case 1:
                             $obStatus = "Bau";
                             break;
@@ -1213,10 +1205,10 @@ function showGameLogs($args = null, $limit = 0)
                     }
                     break;
                 case GameLogFacility::QUESTS:
-                    $quest = $app['cubicle.quests.registry']->getQuest($arr['object_id']);
+                    $quest = $app['cubicle.quests.registry']->getQuest($log->objectId);
                     $questStates = array_flip(\EtoA\Quest\Log\QuestGameLog::TRANSITION_MAP);
                     $ob = $quest->getData()['title'];
-                    $obStatus = str_replace('_', ' ', $questStates[$arr['status']]);
+                    $obStatus = str_replace('_', ' ', $questStates[$log->status]);
                     break;
                 default:
                     $ob = "-";
@@ -1224,18 +1216,18 @@ function showGameLogs($args = null, $limit = 0)
             }
 
             echo "<tr>
-            <td>" . df($arr['timestamp']) . "</td>
-            <td>" . LogSeverity::SEVERITIES[$arr['severity']] . "</td>
-            <td>" . GameLogFacility::FACILITIES[$arr['facility']] . "</td>
+            <td>" . df($log->timestamp) . "</td>
+            <td>" . LogSeverity::SEVERITIES[$log->severity] . "</td>
+            <td>" . GameLogFacility::FACILITIES[$log->facility] . "</td>
             <td>" . $tu . "</td>
             <td>" . $ta . "</td>
             <td>" . $te . "</td>
             <td>" . $ob . "</td>
             <td>" . $obStatus . "</td>
-            <td><a href=\"javascript:;\" onclick=\"toggleBox('details" . $arr['id'] . "')\">Details</a></td>
+            <td><a href=\"javascript:;\" onclick=\"toggleBox('details" . $log->id . "')\">Details</a></td>
             </tr>";
-            echo "<tr id=\"details" . $arr['id'] . "\" style=\"display:none;\"><td colspan=\"9\">" . text2html($arr['message']) . "
-            <br/><br/>IP: " . $arr['ip'] . "</td></tr>";
+            echo "<tr id=\"details" . $log->id . "\" style=\"display:none;\"><td colspan=\"9\">" . text2html($log->message) . "
+            <br/><br/>IP: " . $log->ip . "</td></tr>";
         }
         echo "</table>";
     } else {
