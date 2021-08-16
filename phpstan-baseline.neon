@@ -271,14 +271,9 @@ parameters:
 			path: src/Building/BuildingRepository.php
 
 		-
-			message: "#^Variable property access on EtoA\\\\Market\\\\MarketRate\\.$#"
-			count: 7
-			path: src/Market/MarketHandler.php
-
-		-
-			message: "#^Method EtoA\\\\UI\\\\EntityCoordinatesSelector\\:\\:parse\\(\\) has parameter \\$parameters with no value type specified in iterable type Symfony\\\\Component\\\\HttpFoundation\\\\ParameterBag\\.$#"
+			message: "#^Method EtoA\\\\Ranking\\\\UserBannerService\\:\\:createUserBannerImage\\(\\) never returns GdImage so it can be removed from the return typehint\\.$#"
 			count: 1
-			path: src/UI/EntityCoordinatesSelector.php
+			path: src/Ranking/UserBannerService.php
 
 		-
 			message: "#^Return typehint of method EtoA\\\\Ranking\\\\UserBannerService\\:\\:createUserBannerImage\\(\\) has invalid type GdImage\\.$#"
@@ -286,6 +281,7 @@ parameters:
 			path: src/Ranking/UserBannerService.php
 
 		-
-			message: "#^Method EtoA\\\\Ranking\\\\UserBannerService\\:\\:createUserBannerImage\\(\\) never returns GdImage so it can be removed from the return typehint\\.$#"
+			message: "#^Method EtoA\\\\UI\\\\EntityCoordinatesSelector\\:\\:parse\\(\\) has parameter \\$parameters with no value type specified in iterable type Symfony\\\\Component\\\\HttpFoundation\\\\ParameterBag\\.$#"
 			count: 1
-			path: src/Ranking/UserBannerService.php
+			path: src/UI/EntityCoordinatesSelector.php
+

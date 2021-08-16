@@ -59,12 +59,12 @@ include("image.inc.php");
 
 		foreach ($marketRates as $marketRate) {
 			$rates = [
-			    $marketRate->rate0,
-                $marketRate->rate1,
-                $marketRate->rate2,
-                $marketRate->rate3,
-                $marketRate->rate4,
-                $marketRate->rate5,
+			    $marketRate->rate->metal,
+                $marketRate->rate->crystal,
+                $marketRate->rate->plastic,
+                $marketRate->rate->fuel,
+                $marketRate->rate->food,
+                $marketRate->rate->people,
             ];
 			$drate = max(max($rates), $drate);
 			$grates[] = $rates;
