@@ -2,6 +2,7 @@
 
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Support\StringUtils;
+use EtoA\Universe\Planet\PlanetRepository;
 
 /**
  * Planet class
@@ -451,25 +452,19 @@ class Planet extends Entity
 
     function reloadRes()
     {
-        $res = dbquery("
-						   SELECT
-						   		planet_res_metal,
-								planet_res_crystal,
-								planet_res_plastic,
-								planet_res_fuel,
-								planet_res_food
-							FROM
-								planets
-							WHERE
-								id='" . $this->id . "'
-							LIMIT 1;");
-        if (mysql_num_rows($res) > 0) {
-            $arr = mysql_fetch_assoc($res);
-            $this->resMetal = floor($arr['planet_res_metal']);
-            $this->resCrystal = floor($arr['planet_res_crystal']);
-            $this->resPlastic = floor($arr['planet_res_plastic']);
-            $this->resFuel = floor($arr['planet_res_fuel']);
-            $this->resFood = floor($arr['planet_res_food']);
+        global $app;
+
+        /** @var PlanetRepository $planetRepository */
+        $planetRepository = $app[PlanetRepository::class];
+
+        $resources = $planetRepository->getPlanetResources($this->id());
+        if ($resources !== null) {
+            $this->resMetal = floor($resources->metal);
+            $this->resCrystal = floor($resources->crystal);
+            $this->resPlastic = floor($resources->plastic);
+            $this->resFuel = floor($resources->fuel);
+            $this->resFood = floor($resources->food);
+            $this->people = floor($resources->people);
         }
     }
 
