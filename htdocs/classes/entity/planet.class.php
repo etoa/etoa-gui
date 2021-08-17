@@ -449,60 +449,6 @@ class Planet extends Entity
         return true;
     }
 
-    function subRes($data)
-    {
-        global $resNames;
-
-        $str = "";
-        foreach ($resNames as $rk => $rn) {
-            if (isset($data[$rk]) && intval($data[$rk]) > 0) {
-                $diff = intval($data[$rk]);
-
-                if ($this->resources[$rk] - $diff < 0)
-                    return false;
-
-                // todo: one day, planet table resourcse shold also be enumerated
-                if ($str != "")
-                    $str .= ",";
-                switch ($rk) {
-                    case 0:
-                        $str .= "planet_res_metal=planet_res_metal-" . $diff . "";
-                        $this->resMetal -= $diff;
-                        break;
-                    case 1:
-                        $str .= "planet_res_crystal=planet_res_crystal-" . $diff . "";
-                        $this->resCrystal -= $diff;
-                        break;
-                    case 2:
-                        $str .= "planet_res_plastic=planet_res_plastic-" . $diff . "";
-                        $this->resPlastic -= $diff;
-                        break;
-                    case 3:
-                        $str .= "planet_res_fuel=planet_res_fuel-" . $diff . "";
-                        $this->resFuel -= $diff;
-                        break;
-                    case 4:
-                        $str .= "planet_res_food=planet_res_food-" . $diff . "";
-                        $this->resFood -= $diff;
-                        break;
-                }
-                $this->resources[$rk] -= $diff;
-            }
-        }
-        if ($str != "") {
-            $sql = "
-				UPDATE
-					planets
-				SET
-					" . $str . "
-				WHERE
-					id='" . $this->id . "';";
-            dbquery($sql);
-            return true;
-        }
-        return false;
-    }
-
     function reloadRes()
     {
         $res = dbquery("

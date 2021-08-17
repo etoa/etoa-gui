@@ -3,6 +3,7 @@
 namespace EtoA\Universe\Planet;
 
 use EtoA\AbstractDbTestCase;
+use EtoA\Universe\Resources\BaseResources;
 
 class PlanetRepositoryTest extends AbstractDbTestCase
 {
@@ -48,6 +49,22 @@ class PlanetRepositoryTest extends AbstractDbTestCase
     public function testGetPlanetCountNoPlanets(): void
     {
         $this->assertSame(0, $this->repository->getPlanetCount(1));
+    }
+
+    public function testRemoveResources(): void
+    {
+        $this->setupPlanet(1, 1, false);
+
+        $resources = new BaseResources();
+        $resources->metal = 1;
+        $this->assertFalse($this->repository->removeResources(1, $resources));
+
+        $this->repository->addResources(1, 1, 0, 0, 0, 0);
+
+        $this->assertSame(1.0, $this->repository->getPlanetResources(1)->getSum());
+
+        $this->assertTrue($this->repository->removeResources(1, $resources));
+        $this->assertSame(0.0, $this->repository->getPlanetResources(1)->getSum());
     }
 
     private function setupPlanet(int $planetId, int $userId, bool $isMain): void

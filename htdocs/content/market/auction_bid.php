@@ -70,8 +70,14 @@ if ($auction !== null && $auction->dateEnd > time()) {
                     $marketReportRepository->addAuctionReport($auction->id, $auction->currentBuyerId, $cp->id, $cu->getId(), $sellResources, "auctionoverbid", $newBuyResource);
                 }
 
+                $bid = new BaseResources();
+                foreach ($resNames as $rk => $rn) {
+                    $bid->set($rk, $buyRes[$rk]);
+                }
+
                 // Rohstoffe dem Gewinner abziehen
-                $cp->subRes($buyRes);
+                $planetRepository->removeResources($cp->id(), $bid);
+                $cp->reloadRes();
 
                 // Nachricht an Verkäufer
                 $marketReportRepository->addAuctionReport($auction->id, $auction->userId, $cp->id, $cu->getId(), $sellResources, "auctionfinished", $newBuyResource);
@@ -101,11 +107,6 @@ if ($auction !== null && $auction->dateEnd > time()) {
                         true,
                         'Handel #' . $auction->id . ' mit ' . $cu->id
                     );
-                }
-
-                $bid = new BaseResources();
-                foreach ($resNames as $rk => $rn) {
-                    $bid->set($rk, $buyRes[$rk]);
                 }
 
                 // Auktion Speichern und "Stoppen" so dass nicht mehr geboten werden kann
@@ -139,14 +140,14 @@ if ($auction !== null && $auction->dateEnd > time()) {
                     $marketReportRepository->addAuctionReport($auction->id, $auction->currentBuyerId, $cp->id, $cu->getId(), $sellResources, "auctionoverbid", $newBuyResource, null, $auction->dateEnd);
                 }
 
-
-                // Rohstoffe vom neuen Bieter abziehen
-                $cp->subRes($buyRes);
-
                 $bid = new BaseResources();
                 foreach ($resNames as $rk => $rn) {
                     $bid->set($rk, $buyRes[$rk]);
                 }
+
+                // Rohstoffe vom neuen Bieter abziehen
+                $planetRepository->removeResources($cp->id(), $bid);
+                $cp->reloadRes();
 
                 //Das neue Angebot Speichern
                 $marketAuctionRepository->addBid($auction->id, $cu->getId(), $cp->id(), $bid);

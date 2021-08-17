@@ -84,20 +84,24 @@ class BaseResources
         $this->food -= $resources->food;
     }
 
-    public function missing(BaseResources $available): BaseResources
+    /**
+     * @param BaseResources|PreciseResources $available
+     */
+    public function missing($available): BaseResources
     {
         $resources = new BaseResources();
-        $resources->metal = max(0, $this->metal - $available->metal);
-        $resources->crystal = max(0, $this->crystal - $available->crystal);
-        $resources->plastic = max(0, $this->plastic - $available->plastic);
-        $resources->fuel = max(0, $this->fuel - $available->fuel);
-        $resources->food = max(0, $this->food - $available->food);
+        $resources->metal = (int) ceil(max(0, $this->metal - $available->metal));
+        $resources->crystal = (int) ceil(max(0, $this->crystal - $available->crystal));
+        $resources->plastic = (int) ceil(max(0, $this->plastic - $available->plastic));
+        $resources->fuel = (int) ceil(max(0, $this->fuel - $available->fuel));
+        $resources->food = (int) ceil(max(0, $this->food - $available->food));
+        $resources->people = (int) ceil(max(0, $this->people - $available->people));
 
         return $resources;
     }
 
     public function getSum(): int
     {
-        return $this->metal + $this->crystal + $this->plastic + $this->fuel + $this->food;
+        return $this->metal + $this->crystal + $this->plastic + $this->fuel + $this->food = $this->people;
     }
 }

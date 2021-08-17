@@ -432,7 +432,7 @@ if ($factoryBuilding !== null && $factoryBuilding->currentLevel > 0) {
                         $bc['food'] = (intval($_POST['additional_food_costs']) + $defenseCosts[$def_id]->food) * $build_cnt;
 
                         // Bauzeit pro Def berechnen
-                        $btime = $defenseCosts[$def_id]->sum()
+                        $btime = $defenseCosts[$def_id]->getSum()
                             / $config->getInt('global_time') * $config->getFloat('def_build_time')
                             * $time_boni_factor
                             * $cu->specialist->defenseTime;
@@ -739,7 +739,7 @@ if ($factoryBuilding !== null && $factoryBuilding->currentLevel > 0) {
                             }
 
                             // Bauzeit berechnen
-                            $btime = $defenseCosts[$defense->id]->sum() / $config->getInt('global_time') * $config->getFloat('def_build_time') * $time_boni_factor * $cu->specialist->defenseTime;
+                            $btime = $defenseCosts[$defense->id]->getSum() / $config->getInt('global_time') * $config->getFloat('def_build_time') * $time_boni_factor * $cu->specialist->defenseTime;
                             $btime_min = $btime * (0.1 - ($gen_tech_level / 100));
                             $peopleOptimized = ceil(($btime - $btime_min) / $config->getInt('people_work_done'));
 

@@ -9,6 +9,7 @@ use EtoA\Message\MarketReportRepository;
 use EtoA\Ship\ShipDataRepository;
 use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Entity\EntityService;
+use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Universe\Resources\BaseResources;
 use EtoA\User\UserMultiRepository;
 use EtoA\User\UserRatingService;
@@ -28,6 +29,8 @@ $fleetRepository = $app[FleetRepository::class];
 $marketReportRepository = $app[MarketReportRepository::class];
 /** @var LogRepository $logRepository */
 $logRepository = $app[LogRepository::class];
+/** @var PlanetRepository $planetRepository */
+$planetRepository = $app[PlanetRepository::class];
 
 foreach ($_POST['ship_market_id'] as $num => $id) {
     // Lädt Angebotsdaten
@@ -45,7 +48,8 @@ foreach ($_POST['ship_market_id'] as $num => $id) {
             $seller_user_nick = get_user_nick($offer->userId);
 
             // Rohstoffe vom Käuferplanet abziehen
-            $cp->subRes($buyarr);
+            $planetRepository->removeResources($cp->id(), $costs);
+            $cp->reloadRes();
 
             $seller = new User($offer->userId);
             $sellerEntity = $entityRepository->getEntity($offer->entityId);

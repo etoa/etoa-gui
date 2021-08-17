@@ -442,7 +442,7 @@ if ($shipyard !== null && $shipyard->currentLevel > 0) {
                         $bc['food'] = (intval($_POST['additional_food_costs']) + $shipCosts[$ship_id]->food) * $build_cnt;
 
                         // Bauzeit pro Schiff berechnen
-                        $btime = $shipCosts[$ship_id]->sum()
+                        $btime = $shipCosts[$ship_id]->getSum()
                             / $config->getInt('global_time') * $config->getFloat('ship_build_time')
                             * $time_boni_factor
                             * $cu->specialist->shipTime;
@@ -752,7 +752,7 @@ if ($shipyard !== null && $shipyard->currentLevel > 0) {
                             }
 
                             // Bauzeit berechnen
-                            $btime = ($shipCosts[$shipData->id]->sum()) / $config->getInt('global_time') * $config->getFloat('ship_build_time') * $time_boni_factor * $cu->specialist->shipTime;
+                            $btime = ($shipCosts[$shipData->id]->getSum()) / $config->getInt('global_time') * $config->getFloat('ship_build_time') * $time_boni_factor * $cu->specialist->shipTime;
                             $btime_min = $btime * (0.1 - ($gen_tech_level / 100));
                             $peopleOptimized = ceil(($btime - $btime_min) / $config->getInt('people_work_done'));
 

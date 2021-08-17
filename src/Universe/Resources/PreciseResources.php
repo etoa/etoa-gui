@@ -65,7 +65,23 @@ class PreciseResources
         return $this;
     }
 
-    public function sum(): float
+    /**
+     * @param PreciseResources|BaseResources $available
+     */
+    public function missing($available): PreciseResources
+    {
+        $resources = new PreciseResources();
+        $resources->metal = max(0, $this->metal - $available->metal);
+        $resources->crystal = max(0, $this->crystal - $available->crystal);
+        $resources->plastic = max(0, $this->plastic - $available->plastic);
+        $resources->fuel = max(0, $this->fuel - $available->fuel);
+        $resources->food = max(0, $this->food - $available->food);
+        $resources->people = max(0, $this->people - $available->people);
+
+        return $resources;
+    }
+
+    public function getSum(): float
     {
         return $this->metal + $this->crystal + $this->plastic + $this->fuel + $this->food + $this->people;
     }

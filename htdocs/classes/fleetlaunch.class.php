@@ -995,10 +995,13 @@ class FleetLaunch
     // subtracts the payload ress (not support/flight fuel and food)
     function finalLoadResource()
     {
-        global $resNames;
+        global $resNames, $app;
+
+        /** @var PlanetRepository $planetRepository */
+        $planetRepository = $app[PlanetRepository::class];
 
         $this->sourceEntity->reloadRes();
-        $resarr = array();
+        $resources = new BaseResources();
 
         foreach ($resNames as $rk => $rn) {
             $id = $rk + 1;
@@ -1016,19 +1019,20 @@ class FleetLaunch
             $this->res[$id] = 0;
             $this->calcResLoaded();
             if ($id == 4) {
-                $loaded = floor(min($ammount, $this->getCapacity(), $this->sourceEntity->getRes($id) - $this->getSupportFuel() - $this->getCosts()));
+                $loaded = (int) floor(min($ammount, $this->getCapacity(), $this->sourceEntity->getRes($id) - $this->getSupportFuel() - $this->getCosts()));
             } elseif ($id == 5) {
-                $loaded = floor(min($ammount, $this->getCapacity(), $this->sourceEntity->getRes($id) - $this->getSupportFood() - $this->getCostsFood()));
+                $loaded = (int) floor(min($ammount, $this->getCapacity(), $this->sourceEntity->getRes($id) - $this->getSupportFood() - $this->getCostsFood()));
             } else {
-                $loaded = floor(min($ammount, $this->getCapacity(), $this->sourceEntity->getRes($id)));
+                $loaded = (int) floor(min($ammount, $this->getCapacity(), $this->sourceEntity->getRes($id)));
             }
             $this->res[$id] = $loaded;
-            $resarr[$rk] = $loaded;
+            $resources->set($rk, $loaded);
         }
 
         $this->calcResLoaded();
 
-        $this->sourceEntity->subRes($resarr);
+        $planetRepository->removeResources($this->sourceEntity->id(), $resources);
+        $this->sourceEntity->reloadRes();
     }
 
     function loadPeople($ammount)

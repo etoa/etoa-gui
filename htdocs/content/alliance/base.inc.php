@@ -179,8 +179,8 @@ if (isset($_POST['storage_submit']) && checker_verify()) {
             && $cp->getRes(5) >= $resources->food
         ) {
             // Rohstoffe vom Planet abziehen
-            $res = array($resources->metal, $resources->crystal, $resources->plastic, $resources->fuel, $resources->food);
-            $cp->subRes($res);
+            $planetRepo->removeResources($cp->id(), $resources);
+            $cp->reloadRes();
 
             // Rohstoffe der Allianz gutschreiben
             $cu->alliance->changeRes($resources->metal, $resources->crystal, $resources->plastic, $resources->fuel, $resources->food);
