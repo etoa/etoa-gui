@@ -6,11 +6,14 @@ use EtoA\Market\MarketResourceRepository;
 use EtoA\Market\MarketShipRepository;
 use EtoA\Message\MarketReportRepository;
 use EtoA\Ship\ShipRepository;
+use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Universe\Resources\BaseResources;
+use EtoA\Universe\Resources\PreciseResources;
 
 /** @var ShipRepository $shipRepository */
 $shipRepository = $app[ShipRepository::class];
-
+/** @var PlanetRepository $planetRepository */
+$planetRepository = $app[PlanetRepository::class];
 /** @var BuildingRepository $buildingRepository */
 $buildingRepository = $app[BuildingRepository::class];
 
@@ -66,18 +69,17 @@ elseif (isset($_POST['ressource_cancel']) && isset($_POST['ressource_market_id']
         $marketLevel = $buildingRepository->getBuildingLevel($cu->getId(), MARKTPLATZ_ID, $offer->entityId);
         $return_factor = floor((1 - 1 / ($marketLevel + 1)) * 100) / 100;
         $sellResources = $offer->getSellResources();
+        $returnResources = new PreciseResources();
         foreach ($resNames as $rk => $rn) {
             if ($sellResources->get($rk) > 0) {
                 // todo: when non on the planet where the deal belongs to, the return_factor
                 // is based on the local marketplace, for better or worse... change that so that the
                 // origin marketplace return factor will be taken
-                $rarr[$rk] = $sellResources->get($rk) * $return_factor;
+                $returnResources->set($rk, $sellResources->get($rk) * $return_factor);
             }
         }
 
-        $tp = Entity::createFactoryById($offer->entityId);
-        $tp->addRes($rarr);
-        unset($tp);
+        $planetRepository->addResources($offer->entityId, $returnResources->metal, $returnResources->crystal, $returnResources->plastic, $returnResources->fuel, $returnResources->food);
 
         $marketReportRepository->addResourceReport($rmid, $cu->id, $offer->entityId, 0, $sellResources, "rescancel", new BaseResources(), $return_factor);
 
@@ -102,15 +104,16 @@ elseif (isset($_POST['auction_cancel']) && isset($_POST['auction_cancel_id'])) {
         $marketLevel = $buildingRepository->getBuildingLevel($cu->getId(), MARKTPLATZ_ID, $auction->entityId);
         $return_factor = floor((1 - 1 / ($marketLevel + 1)) * 100) / 100;
         $sellResources = $auction->getSellResources();
+        $returnResources = new PreciseResources();
         foreach ($resNames as $rk => $rn) {
             if ($sellResources->get($rk) > 0) {
                 // todo: when non on the planet where the deal belongs to, the return_factor
                 // is based on the local marketplace, for better or worse... change that so that the
                 // origin marketplace return factor will be taken
-                $rarr[$rk] = $sellResources->get($rk) * $return_factor;
+                $returnResources->set($rk, $sellResources->get($rk) * $return_factor);
             }
         }
-        $cp->addRes($rarr);
+        $planetRepository->addResources($auction->entityId, $returnResources->metal, $returnResources->crystal, $returnResources->plastic, $returnResources->fuel, $returnResources->food);
 
         //Auktion löschen
         $marketAuctionRepository->deleteAuction($auction->id);
