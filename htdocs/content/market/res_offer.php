@@ -4,7 +4,9 @@ use EtoA\Alliance\AllianceBuildingId;
 use EtoA\Alliance\AllianceBuildingRepository;
 use EtoA\Market\MarketResourceRepository;
 use EtoA\Message\MarketReportRepository;
+use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Universe\Resources\BaseResources;
+use EtoA\Universe\Resources\PreciseResources;
 use EtoA\User\UserRepository;
 
 /** @var int $alliance_market_level */
@@ -19,6 +21,8 @@ $marketResourceRepository = $app[MarketResourceRepository::class];
 $allianceBuildingRepository = $app[AllianceBuildingRepository::class];
 /** @var MarketReportRepository $marketReportRepository */
 $marketReportRepository = $app[MarketReportRepository::class];
+/** @var PlanetRepository $planetRepository */
+$planetRepository = $app[PlanetRepository::class];
 
 $for_user = 0;
 $for_alliance = 0;
@@ -39,7 +43,7 @@ if ($_POST['resource_offer_reservation'] == 2) {
 
 if (!isset($errMsg)) {
     $ok = true;    // Checker for valid resources
-    $subtracted = array(); // Resource to be subtracted from planet
+    $offerCosts = new PreciseResources(); // Resource to be subtracted from planet
     $sf = "";
     $sv = "";
 
@@ -58,7 +62,7 @@ if (!isset($errMsg)) {
         }
 
         // Save resource to be subtracted from the planet
-        $subtracted[$rk] = $_POST['res_sell_' . $rk] * MARKET_TAX;
+        $offerCosts->set($rk, $_POST['res_sell_' . $rk] * MARKET_TAX);
 
         // Build query
         $sellResources->set($rk, (int) $_POST['res_sell_' . $rk]);
@@ -70,8 +74,8 @@ if (!isset($errMsg)) {
 
     if ($ok) {
         // Rohstoffe vom Planet abziehen
-        if ($cp->subRes($subtracted)) {
-
+        if ($planetRepository->removeResources($cp->id(), $offerCosts)) {
+            $cp->reloadRes();
             // Angebot speichern
             $offerId = $marketResourceRepository->add($cu->getId(), (int) $cp->id, (int) $for_user, (int) $for_alliance, $_POST['ressource_text'], $sellResources, $costs);
             if ($for_alliance > 0) {

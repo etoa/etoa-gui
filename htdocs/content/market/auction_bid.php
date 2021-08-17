@@ -6,10 +6,13 @@ use EtoA\Log\LogSeverity;
 use EtoA\Market\MarketAuctionRepository;
 use EtoA\Message\MarketReportRepository;
 use EtoA\Support\RuntimeDataStore;
+use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Universe\Resources\BaseResources;
 use EtoA\User\UserMultiRepository;
 use EtoA\User\UserRatingService;
 
+/** @var PlanetRepository $planetRepository */
+$planetRepository = $app[PlanetRepository::class];
 /** @var RuntimeDataStore $runtimeDataStore */
 $runtimeDataStore = $app[RuntimeDataStore::class];
 /** @var MarketAuctionRepository $marketAuctionRepository */
@@ -40,7 +43,6 @@ if ($auction !== null && $auction->dateEnd > time()) {
         $current_price = 0;
         $new_price = 0;
 
-        $currentBuyRes = array();
         $sellResources = $auction->getSellResources();
         $currentBuyResources = $auction->getBuyResources();
         foreach ($resNames as $rk => $rn) {
@@ -52,8 +54,6 @@ if ($auction !== null && $auction->dateEnd > time()) {
             $current_price += $currentBuyResources->get($rk) * $rate;
             // Errechnet Rohstoffwert vom abgegebenen Gebot
             $new_price += $buyRes[$rk] * $rate;
-
-            $currentBuyRes[$rk] = $currentBuyResources->get($rk);
         }
 
         // Prüft, ob Gebot höher ist als das vom Höchstbietenden
@@ -64,17 +64,20 @@ if ($auction !== null && $auction->dateEnd > time()) {
             if (AUCTION_PRICE_FACTOR_MAX <= (ceil($new_price) / floor($sell_price))) {
                 if ($auction->currentBuyerId !== 0) {
                     // Rohstoffe dem überbotenen User wieder zurückgeben
-                    $highestBidderEntity = Entity::createFactoryById($auction->currentBuyerEntityId);
-                    if ($highestBidderEntity->isValid()) {
-                        $highestBidderEntity->addRes($currentBuyRes);
-                    }
+                    $planetRepository->addResources($auction->currentBuyerEntityId, $currentBuyResources->metal, $currentBuyResources->crystal, $currentBuyResources->plastic, $currentBuyResources->fuel, $currentBuyResources->food);
 
                     // Nachricht dem überbotenen User schicken
                     $marketReportRepository->addAuctionReport($auction->id, $auction->currentBuyerId, $cp->id, $cu->getId(), $sellResources, "auctionoverbid", $newBuyResource);
                 }
 
+                $bid = new BaseResources();
+                foreach ($resNames as $rk => $rn) {
+                    $bid->set($rk, $buyRes[$rk]);
+                }
+
                 // Rohstoffe dem Gewinner abziehen
-                $cp->subRes($buyRes);
+                $planetRepository->removeResources($cp->id(), $bid);
+                $cp->reloadRes();
 
                 // Nachricht an Verkäufer
                 $marketReportRepository->addAuctionReport($auction->id, $auction->userId, $cp->id, $cu->getId(), $sellResources, "auctionfinished", $newBuyResource);
@@ -106,11 +109,6 @@ if ($auction !== null && $auction->dateEnd > time()) {
                     );
                 }
 
-                $bid = new BaseResources();
-                foreach ($resNames as $rk => $rn) {
-                    $bid->set($rk, $buyRes[$rk]);
-                }
-
                 // Auktion Speichern und "Stoppen" so dass nicht mehr geboten werden kann
                 $delete_date = time() + (AUCTION_DELAY_TIME * 3600);
                 $marketAuctionRepository->addBid($auction->id, $cu->getId(), $cp->id(), $bid, true, $delete_date);
@@ -136,23 +134,20 @@ if ($auction !== null && $auction->dateEnd > time()) {
             } else {
                 if ($auction->currentBuyerId !== 0) {
                     // Rohstoffe dem überbotenen User wieder zurückgeben
-                    $highestBidderEntity = Entity::createFactoryById($auction->currentBuyerEntityId);
-                    if ($highestBidderEntity->isValid()) {
-                        $highestBidderEntity->addRes($currentBuyRes);
-                    }
+                    $planetRepository->addResources($auction->currentBuyerEntityId, $currentBuyResources->metal, $currentBuyResources->crystal, $currentBuyResources->plastic, $currentBuyResources->fuel, $currentBuyResources->food);
 
                     // Nachricht dem überbotenen user schicken
                     $marketReportRepository->addAuctionReport($auction->id, $auction->currentBuyerId, $cp->id, $cu->getId(), $sellResources, "auctionoverbid", $newBuyResource, null, $auction->dateEnd);
                 }
 
-
-                // Rohstoffe vom neuen Bieter abziehen
-                $cp->subRes($buyRes);
-
                 $bid = new BaseResources();
                 foreach ($resNames as $rk => $rn) {
                     $bid->set($rk, $buyRes[$rk]);
                 }
+
+                // Rohstoffe vom neuen Bieter abziehen
+                $planetRepository->removeResources($cp->id(), $bid);
+                $cp->reloadRes();
 
                 //Das neue Angebot Speichern
                 $marketAuctionRepository->addBid($auction->id, $cu->getId(), $cp->id(), $bid);

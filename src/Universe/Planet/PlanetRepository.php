@@ -8,6 +8,7 @@ use Doctrine\DBAL\Query\QueryBuilder;
 use EtoA\Core\AbstractRepository;
 use EtoA\Universe\Entity\EntityType;
 use EtoA\Universe\Resources\BaseResources;
+use EtoA\Universe\Resources\PreciseResources;
 
 class PlanetRepository extends AbstractRepository
 {
@@ -431,6 +432,69 @@ class PlanetRepository extends AbstractRepository
             ->execute();
 
         return $affected > 0;
+    }
+
+    /**
+     * @param BaseResources|PreciseResources $resources
+     */
+    public function removeResources(int $id, $resources): bool
+    {
+        $planetResources = $this->getPlanetResources($id);
+        if ($planetResources === null) {
+            return false;
+        }
+
+        $missing = $resources->missing($planetResources);
+        if ($missing->getSum() > 0) {
+            return false;
+        }
+
+        $affected = (int) $this->createQueryBuilder()
+            ->update('planets')
+            ->set('planet_res_metal', 'planet_res_metal - :res_metal')
+            ->set('planet_res_crystal', 'planet_res_crystal - :res_crystal')
+            ->set('planet_res_plastic', 'planet_res_plastic - :res_plastic')
+            ->set('planet_res_fuel', 'planet_res_fuel - :res_fuel')
+            ->set('planet_res_food', 'planet_res_food - :res_food')
+            ->set('planet_people', 'planet_people - :people')
+            ->where('id = :id')
+            ->setParameters([
+                'id' => $id,
+                'res_metal' => $resources->metal,
+                'res_crystal' => $resources->crystal,
+                'res_plastic' => $resources->plastic,
+                'res_fuel' => $resources->fuel,
+                'res_food' => $resources->food,
+                'people' => $resources->people,
+            ])
+            ->execute();
+
+        return $affected > 0;
+    }
+
+    public function getPlanetResources(int $id): ?PreciseResources
+    {
+        $data = $this->createQueryBuilder()
+            ->select('planet_res_metal', 'planet_res_crystal', 'planet_res_plastic, planet_res_fuel, planet_res_food, planet_people')
+            ->from('planets')
+            ->where('id = :id')
+            ->setParameter('id', $id)
+            ->execute()
+            ->fetchAssociative();
+
+        if ($data === false) {
+            return null;
+        }
+
+        $resources = new PreciseResources();
+        $resources->metal = (float) $data['planet_res_metal'];
+        $resources->crystal = (float) $data['planet_res_crystal'];
+        $resources->plastic = (float) $data['planet_res_plastic'];
+        $resources->fuel = (float) $data['planet_res_fuel'];
+        $resources->food = (float) $data['planet_res_food'];
+        $resources->people = (float) $data['planet_people'];
+
+        return $resources;
     }
 
     public function addPeople(int $id, int $amount): void

@@ -6,12 +6,15 @@ use EtoA\Log\LogRepository;
 use EtoA\Log\LogSeverity;
 use EtoA\Market\MarketAuctionRepository;
 use EtoA\Message\MarketReportRepository;
+use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Universe\Resources\BaseResources;
 
 /** @var MarketReportRepository $marketReportRepository */
 $marketReportRepository = $app[MarketReportRepository::class];
 /** @var LogRepository $logRepository */
 $logRepository = $app[LogRepository::class];
+/** @var PlanetRepository $planetRepository */
+$planetRepository = $app[PlanetRepository::class];
 
 $auction_min_time = AUCTION_MIN_DURATION * 24 * 3600;
 $auction_time_days = $_POST['auction_time_days'];
@@ -46,7 +49,12 @@ $ress_update = 0;
 // Prüft ob Rohstoffe noch vorhanden sind (eventueller verlust durch Kampf?)
 if ($ok && $cp->checkRes($subtracted)) {
     // Rohstoffe + Taxe vom Planetenkonto abziehen
-    $cp->subRes($subtracted);
+    $bidCosts = new BaseResources();
+    foreach ($resNames as $rk => $rn) {
+        $bidCosts->set($rk, $subtracted[$rk]);
+    }
+    $planetRepository->removeResources($cp->id(), $bidCosts);
+    $cp->reloadRes();
 
     // Angebot speichern
     /** @var MarketAuctionRepository $marketAuctionRepository */
