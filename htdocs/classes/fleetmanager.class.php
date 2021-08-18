@@ -1,5 +1,6 @@
 <?PHP
 
+use EtoA\Fleet\FleetRepository;
 use EtoA\Technology\TechnologyRepository;
 
 class FleetManager
@@ -46,6 +47,9 @@ class FleetManager
     function loadForeign()
     {
         global $app;
+
+        /** @var FleetRepository $fleetRepository */
+        $fleetRepository = $app[FleetRepository::class];
 
         $this->count = 0;
         $this->aggressivCount = 0;
@@ -98,24 +102,10 @@ class FleetManager
 
                             // Minbari fleet hide ability does not work with alliance attacks
                             // TODO: Improvement would be differentiation between single fleets
-                            if ($cFleet->getAction()->code() != 'alliance') {
-                                $specialBoniRes = dbquery("
-										SELECT
-											s.special_ship_bonus_tarn,
-											fs.fs_special_ship_bonus_tarn
-										FROM
-											ships s
-										INNER JOIN
-											fleet_ships fs
-										ON s.ship_id = fs.fs_ship_id
-											AND fs.fs_fleet_id='" . $farr[0] . "'
-											AND s.special_ship='1';");
-                                if (mysql_num_rows($specialBoniRes) > 0) {
-                                    while ($specialBoniArr = mysql_fetch_assoc($specialBoniRes)) {
-                                        $specialShipBonusTarn += $specialBoniArr['special_ship_bonus_tarn'] * $specialBoniArr['fs_special_ship_bonus_tarn'];
-                                    }
-                                }
+                            if ($cFleet->getAction()->code() !== 'alliance') {
+                                $specialShipBonusTarn = $fleetRepository->getFleetSpecialTarnBonus($farr[0]);
                             }
+
                             $diffTimeFactor = 0.1 * min(9, $diffTimeFactor + 10 * $specialShipBonusTarn);
 
                             if ($cFleet->remainingTime() <  ($cFleet->landTime() - $cFleet->launchTime()) * (1 - $diffTimeFactor)) {
