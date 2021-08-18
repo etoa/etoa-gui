@@ -294,43 +294,29 @@ else {
             $technologyRepository->removeEntry($_GET['techlist_id']);
         }
 
-        $res = dbquery("SELECT
-                                *
-                            FROM
-                                techlist
-                            INNER JOIN
-                                technologies
-                            ON
-                                techlist.techlist_tech_id=technologies.tech_id
-                                AND techlist.techlist_id='" . $_GET['techlist_id'] . "'
-                            INNER JOIN
-                                planets
-                            ON
-                                techlist.techlist_entity_id=planets.id
-                            INNER JOIN
-                                users
-                            ON
-                                techlist.techlist_user_id=users.user_id;");
-        if (mysql_num_rows($res) > 0) {
-            $arr = mysql_fetch_array($res);
-            echo "<form action=\"?page=$page&sub=$sub&action=edit&techlist_id=" . $_GET['techlist_id'] . "\" method=\"post\">";
+        $entry = $technologyRepository->getEntry($_GET['techlist_id']);
+        if ($entry !== null) {
+            $technologyNames = $technologyDataRepository->getTechnologyNames(true);
+            $userNick = $userRepository->getNick($entry->userId);
+            $planet = $planetRepository->find($entry->entityId);
+            echo "<form action=\"?page=$page&sub=$sub&action=edit&techlist_id=" . $entry->id . "\" method=\"post\">";
             echo "<table class=\"tbl\">";
-            echo "<tr><td class=\"tbltitle\" valign=\"top\">ID</td><td class=\"tbldata\">" . $arr['techlist_id'] . "</td></tr>";
-            echo "<tr><td class=\"tbltitle\" valign=\"top\">Planet</td><td class=\"tbldata\">" . $arr['planet_name'] . "</td></tr>";
-            echo "<tr><td class=\"tbltitle\" valign=\"top\">Spieler</td><td class=\"tbldata\">" . $arr['user_nick'] . "</td></tr>";
-            echo "<tr><td class=\"tbltitle\" valign=\"top\">Geb&auml;ude</td><td class=\"tbldata\">" . $arr['tech_name'] . "</td></tr>";
-            echo "<tr><td class=\"tbltitle\" valign=\"top\">Level</td><td class=\"tbldata\"><input type=\"text\" name=\"techlist_current_level\" value=\"" . $arr['techlist_current_level'] . "\" size=\"2\" maxlength=\"3\" /></td></tr>";
+            echo "<tr><td class=\"tbltitle\" valign=\"top\">ID</td><td class=\"tbldata\">" . $entry->id . "</td></tr>";
+            echo "<tr><td class=\"tbltitle\" valign=\"top\">Planet</td><td class=\"tbldata\">" . ($planet !== null ? $planet->name : '') . "</td></tr>";
+            echo "<tr><td class=\"tbltitle\" valign=\"top\">Spieler</td><td class=\"tbldata\">" . $userNick . "</td></tr>";
+            echo "<tr><td class=\"tbltitle\" valign=\"top\">Geb&auml;ude</td><td class=\"tbldata\">" . $technologyNames[$entry->id] . "</td></tr>";
+            echo "<tr><td class=\"tbltitle\" valign=\"top\">Level</td><td class=\"tbldata\"><input type=\"text\" name=\"techlist_current_level\" value=\"" . $entry->currentLevel . "\" size=\"2\" maxlength=\"3\" /></td></tr>";
             echo "<tr><td class=\"tbltitle\" valign=\"top\">Baustatus</td><td class=\"tbldata\"><select name=\"techlist_build_type\">";
             foreach ($build_type as $id => $val) {
                 echo "<option value=\"$id\"";
-                if ($arr['techlist_build_type'] == $id) echo " selected=\"selected\"";
+                if ($entry->buildType == $id) echo " selected=\"selected\"";
                 echo ">$val</option>";
             }
             echo "</select></td></tr>";
 
-            if ($arr['techlist_build_start_time'] > 0) $bst = date($config->get('admin_dateformat'), $arr['techlist_build_start_time']);
+            if ($entry->startTime > 0) $bst = date($config->get('admin_dateformat'), $entry->startTime);
             else $bst = "";
-            if ($arr['techlist_build_end_time'] > 0) $bet = date($config->get('admin_dateformat'), $arr['techlist_build_end_time']);
+            if ($entry->endTime > 0) $bet = date($config->get('admin_dateformat'), $entry->endTime);
             else $bet = "";
             echo "<tr><td class=\"tbltitle\" valign=\"top\">Baustart</td><td class=\"tbldata\"><input type=\"text\" name=\"techlist_build_start_time\" id=\"techlist_build_start_time\" value=\"$bst\" size=\"20\" maxlength=\"30\" /> <input type=\"button\" value=\"Jetzt\" onclick=\"document.getElementById('techlist_build_start_time').value='" . date("Y-m-d H:i:s") . "'\" /></td></tr>";
             echo "<tr><td class=\"tbltitle\" valign=\"top\">Bauende</td><td class=\"tbldata\"><input type=\"text\" name=\"techlist_build_end_time\" value=\"$bet\" size=\"20\" maxlength=\"30\" /></td></tr>";
