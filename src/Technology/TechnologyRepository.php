@@ -345,4 +345,32 @@ class TechnologyRepository extends AbstractRepository
             ])
             ->execute();
     }
+
+    /**
+     * @return AdminTechnologyListItem[]
+     */
+    public function adminSearchQueueItems(TechnologyListItemSearch $search): array
+    {
+        $data = $this->applySearchSortLimit($this->createQueryBuilder(), $search)
+            ->select('techlist.*')
+            ->addSelect('tech_name')
+            ->addSelect('planet_name, planet_user_id')
+            ->addSelect('entities.id, entities.pos, entities.code, cells.sx, cells.sy, cells.cx, cells.cy, cells.id as cid')
+            ->addSelect('user_nick, user_points')
+            ->from('techlist')
+            ->innerJoin('techlist', 'planets', 'planets', 'planets.id = techlist_entity_id')
+            ->innerJoin('planets', 'entities', 'entities', 'planets.id = entities.id')
+            ->innerJoin('planets', 'cells', 'cells', 'cells.id = entities.cell_id')
+            ->innerJoin('techlist', 'users', 'users', 'users.user_id = techlist_user_id')
+            ->innerJoin('techlist', 'technologies', 'technologies', 'technologies.tech_id = techlist_tech_id')
+            ->groupBy('techlist_id')
+            ->orderBy('techlist_entity_id')
+            ->addOrderBy('tech_type_id')
+            ->addOrderBy('tech_order')
+            ->addOrderBy('tech_name')
+            ->execute()
+            ->fetchAllAssociative();
+
+        return array_map(fn ($row) => new AdminTechnologyListItem($row), $data);
+    }
 }
