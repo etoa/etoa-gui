@@ -41,6 +41,40 @@ class BookmarkRepository extends AbstractRepository
         return array_map(fn ($arr) => new Bookmark($arr), $data);
     }
 
+    /**
+     * @return BookmarkEntity[]
+     */
+    public function getBookmarkedEntities(int $userId): array
+    {
+        $data = $this->createQueryBuilder()
+            ->select(
+                'e.id',
+                'c.id as cid',
+                'code',
+                'pos',
+                'sx',
+                'sy',
+                'cx',
+                'cy',
+                'planet_name',
+                'stars.name as star_name',
+                'comment'
+            )
+            ->from('bookmarks')
+            ->innerJoin('bookmarks', 'entities', 'e', 'e.id = bookmarks.entity_id')
+            ->leftJoin('e', 'planets', 'planets', 'e.id = planets.id')
+            ->leftJoin('e', 'stars', 'stars', 'e.id = stars.id')
+            ->innerJoin('e', 'cells', 'c', 'e.cell_id = c.id')
+            ->where('bookmarks.user_id = :userId')
+            ->setParameter('userId', $userId)
+            ->orderBy('bookmarks.comment')
+            ->addOrderBy('bookmarks.entity_id')
+            ->execute()
+            ->fetchAllAssociative();
+
+        return array_map(fn (array $row) => new BookmarkEntity($row), $data);
+    }
+
     public function getBookmark(int $id, int $userId): ?Bookmark
     {
         $data = $this->createQueryBuilder()
