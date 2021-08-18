@@ -7,6 +7,7 @@ use EtoA\Technology\TechnologyPointRepository;
 use EtoA\Technology\TechnologyRepository;
 use EtoA\Technology\TechnologySort;
 use EtoA\Universe\Planet\PlanetRepository;
+use EtoA\User\UserRepository;
 
 /** @var ConfigurationService $config */
 $config = $app[ConfigurationService::class];
@@ -22,6 +23,10 @@ $technologyPointRepository = $app[TechnologyPointRepository::class];
 
 /** @var RankingService $rankingService */
 $rankingService = $app[RankingService::class];
+/** @var PlanetRepository $planetRepository */
+$planetRepository = $app[PlanetRepository::class];
+/** @var UserRepository $userRepository */
+$userRepository = $app[UserRepository::class];
 
 //
 // Forschungspunkte
@@ -196,11 +201,12 @@ else {
                 $v = 1;
             echo "<tr><th class=\"tbltitle\">Stufe</th><td class=\"tbldata\"><input type=\"text\" name=\"techlist_current_level\" value=\"$v\" size=\"1\" maxlength=\"3\" /></td></tr>";
             echo "<tr><th class=\"tbltitle\">f&uuml;r den Spieler</th><td class=\"tbldata\"> <select name=\"planet_id\"><";
-            $pres = dbquery("SELECT user_id,user_nick,planets.id FROM users,planets WHERE planet_user_id=user_id AND planet_user_main=1 ORDER BY user_nick;");
-            while ($parr = mysql_fetch_array($pres)) {
-                echo "<option value=\"" . $parr['id'] . ":" . $parr['user_id'] . "\"";
-                if ($updata[1] == $parr['user_id']) echo " selected=\"selected\"";
-                echo ">" . $parr['user_nick'] . "</option>";
+            $userNicks = $userRepository->searchUserNicknames();
+            $mainPlanets = $planetRepository->getMainPlanets();
+            foreach ($mainPlanets as $mainPlanet) {
+                echo "<option value=\"" . $mainPlanet->id . ":" . $mainPlanet->userId . "\"";
+                if ($updata[1] == $mainPlanet->userId) echo " selected=\"selected\"";
+                echo ">" . $userNicks[$mainPlanet->userId] . "</option>";
             }
             echo "</select></td></tr>";
             tableEnd();
@@ -385,21 +391,10 @@ else {
         echo "</select><br>Alle Techs <input type='checkbox' name='all_techs'></td></tr>";
         echo "<tr><th class=\"tbltitle\">Stufe</th><td class=\"tbldata\"><input type=\"text\" name=\"techlist_current_level\" value=\"1\" size=\"1\" maxlength=\"3\" /></td></tr>";
         echo "<tr><th class=\"tbltitle\">f&uuml;r den Spieler</th><td class=\"tbldata\"> <select name=\"planet_id\"><";
-        $pres = dbquery("SELECT
-                                user_id,
-                                user_nick,
-                                planets.id
-                            FROM
-                                planets
-                            INNER JOIN
-                                users
-                            ON
-                                users.user_id=planets.planet_user_id
-                                AND planets.planet_user_main=1
-                            ORDER BY
-                                user_nick;");
-        while ($parr = mysql_fetch_array($pres)) {
-            echo "<option value=\"" . $parr['id'] . ":" . $parr['user_id'] . "\">" . $parr['user_nick'] . "</option>";
+        $userNicks = $userRepository->searchUserNicknames();
+        $mainPlanets = $planetRepository->getMainPlanets();
+        foreach ($mainPlanets as $mainPlanet) {
+            echo "<option value=\"" . $mainPlanet->id . ":" . $mainPlanet->userId . "\">" . $userNicks[$mainPlanet->userId] . "</option>";
         }
         echo "</select></td></tr>";
         tableEnd();
