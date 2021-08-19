@@ -402,6 +402,25 @@ class UserRepository extends AbstractRepository
             ->fetchAllKeyValue();
     }
 
+    public function blockUser(int $userId, int $from, int $to, string $reason, int $adminId): void
+    {
+        $this->createQueryBuilder()
+            ->update('users')
+            ->set('user_blocked_from', ':from')
+            ->set('user_blocked_to', ':to')
+            ->set('user_ban_reason', ':reason')
+            ->set('user_ban_admin_id', ':adminId')
+            ->where('user_id = :userId')
+            ->setParameters([
+                'from' => $from,
+                'to' => $to,
+                'reason' => $reason,
+                'adminId' => $adminId,
+                'userId' => $userId,
+            ])
+            ->execute();
+    }
+
     public function removeOldBans(): void
     {
         $this->getConnection()->executeQuery("

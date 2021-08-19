@@ -1074,19 +1074,14 @@ function searchAlliance($val, $field_id = 'alliance_name', $box_id = 'citybox')
 
 function lockUser($uid, $time, $reason)
 {
+    global $app;
+
+    /** @var UserRepository $userRepository */
+    $userRepository = $app[UserRepository::class];
+
     $t1 = time();
     $t2 = $t1 + $time;
-    dbquery("
-    UPDATE
-        users
-    SET
-        user_blocked_from=" . $t1 . ",
-        user_blocked_to=" . $t2 . ",
-        user_ban_reason='" . addslashes($reason) . "',
-        user_ban_admin_id='" . $_SESSION[SESSION_NAME]['user_id'] . "'
-    WHERE
-        user_id='" . $uid . "'
-    ;");
+    $userRepository->blockUser($uid, $t1, $t2, $reason, $_SESSION[SESSION_NAME]['user_id']);
     $objResponse = new xajaxResponse();
     $objResponse->alert("Der Benutzer wurde gesperrt!");
     return $objResponse;
