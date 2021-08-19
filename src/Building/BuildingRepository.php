@@ -336,18 +336,23 @@ class BuildingRepository extends AbstractRepository
             ->fetchAllAssociative();
     }
 
-    public function addBuilding(int $buildingId, int $level, int $userId, int $entityId): void
+    public function addBuilding(int $buildingId, int $level, int $userId, int $entityId, int $buildType = 0, int $startTime = 0, int $endTime = 0): void
     {
         $this->getConnection()->executeQuery('INSERT INTO buildlist (
                 buildlist_user_id,
                 buildlist_entity_id,
                 buildlist_building_id,
-                buildlist_current_level
+                buildlist_current_level,
+                buildlist_build_type,
+                buildlist_build_start_time,
+                buildlist_build_end_time
             ) VALUES (
                 :userId,
                 :entityId,
                 :buildingId,
-                :level
+                :level,
+                :startTime,
+                :endTime,
             ) ON DUPLICATE KEY
             UPDATE buildlist_current_level = :level;
         ', [
@@ -355,6 +360,8 @@ class BuildingRepository extends AbstractRepository
             'level' => max(0, $level),
             'entityId' => $entityId,
             'buildingId' => $buildingId,
+            'startTime' => $startTime,
+            'endTime' => $endTime,
         ]);
     }
 
