@@ -3,6 +3,8 @@
 use EtoA\HostCache\NetworkNameService;
 use EtoA\User\UserRepository;
 use EtoA\User\UserSearch;
+use EtoA\User\UserSurveillanceRepository;
+use EtoA\User\UserSurveillanceSearch;
 
 echo "<h1>Beobachtungsliste</h1>";
 
@@ -80,17 +82,19 @@ elseif (isset($_GET['surveillance']) && $_GET['surveillance'] > 0) {
         echo "<p>" . button("Neu laden", "?page=$page&amp;sub=$sub&amp;surveillance=" . $_GET['surveillance'] . "&amp;session=" . $_GET['session']) . " &nbsp; " .
             button("Zurück", "?page=$page&amp;sub=$sub&amp;surveillance=" . $_GET['surveillance']) . "</p>";
 
-        $res = dbquery("SELECT * FROM user_surveillance WHERE session='" . $sid . "' ORDER BY timestamp DESC;");
-        if (mysql_num_rows($res) > 0) {
+        /** @var UserSurveillanceRepository $userSuveillanceRepository */
+        $userSuveillanceRepository = $app[UserSurveillanceRepository::class];
+        $entries = $userSuveillanceRepository->search(UserSurveillanceSearch::create()->session($sid));
+        if (count($entries) > 0) {
             tableStart("", "100%");
             echo "<tr><th>Zeit</th><th>Seite</th><th>Request (GET)</th><th>Query String</th><th>Formular (POST)</th></tr>";
-            while ($arr = mysql_fetch_assoc($res)) {
-                $req = wordwrap($arr['request'], 60, "\n", true);
-                $reqRaw = wordwrap($arr['request_raw'], 60, "\n", true);
-                $post = wordwrap($arr['post'], 60, "\n", true);
+            foreach ($entries as $entry) {
+                $req = wordwrap($entry->request, 60, "\n", true);
+                $reqRaw = wordwrap($entry->requestRaw, 60, "\n", true);
+                $post = wordwrap($entry->post, 60, "\n", true);
                 echo "<tr>
-                        <td>" . df($arr['timestamp'], 1) . "</td>
-                        <td>" . $arr['page'] . "</td>
+                        <td>" . df($entry->timestamp, 1) . "</td>
+                        <td>" . $entry->page . "</td>
                         <td>" . text2html($req) . "</td>
                         <td>" . text2html($reqRaw) . "</td>
                         <td>" . text2html($post) . "</td>
@@ -100,25 +104,9 @@ elseif (isset($_GET['surveillance']) && $_GET['surveillance'] > 0) {
         }
     } else {
 
-        $sessions = array();
-        $sres = dbquery("
-            SELECT
-                session,COUNT(id)
-            FROM
-                user_surveillance
-            WHERE
-                user_id=" . $_GET['surveillance'] . "
-            GROUP BY
-                session
-            ORDER BY
-                timestamp DESC
-            LIMIT
-                50000;");
-        if (mysql_num_rows($sres) > 0) {
-            while ($sarr = mysql_fetch_row($sres)) {
-                $sessions[] = array($sarr[0], $sarr[1]);
-            }
-        }
+        /** @var UserSurveillanceRepository $userSuveillanceRepository */
+        $userSuveillanceRepository = $app[UserSurveillanceRepository::class];
+        $sessions = $userSuveillanceRepository->countPerSession(UserSurveillanceSearch::create()->userId($_GET['surveillance']));
 
         echo "<p>Die erweiterte Beobachtung ist automatisch für User unter Beobachtung aktiv!</p>";
         echo "<p>" . button("Neu laden", "?page=$page&amp;sub=$sub&amp;surveillance=" . $_GET['surveillance']) . " &nbsp; " . button("Zurück", "?page=$page&amp;sub=$sub") . "</p>";
@@ -131,9 +119,8 @@ elseif (isset($_GET['surveillance']) && $_GET['surveillance'] > 0) {
             <th>Aktionen/Minute</th>
             <th>Optionen</th>
             </tr>";
-        foreach ($sessions as $si) {
-            if ($si[1] > 0) {
-                $sid = $si[0];
+        foreach ($sessions as $sid => $count) {
+            if ($count > 0) {
                 $res = dbquery("
                     SELECT
                         *
@@ -163,22 +150,22 @@ elseif (isset($_GET['surveillance']) && $_GET['surveillance'] > 0) {
                 echo "<td>" . (isset($arr['time_login']) && $arr['time_login'] > 0 ? date("d.m.Y H:i", $arr['time_login']) : '-') . "</td>";
                 echo "<td>" . (isset($arr['time_action']) && $arr['time_action'] > 0 ? date("d.m.Y H:i", $arr['time_action']) : '-') . "</td>";
                 echo "<td>";
-                $dur = max($arr['time_logout'], $arr['time_action']) - $arr['time_login'];
+                $dur = max($arr['time_logout'] ?? 0, $arr['time_action']) - $arr['time_login'];
                 if ($dur > 0)
                     echo tf($dur);
                 else
                     echo "-";
                 if ($dur > 60) {
-                    $apm = round($si[1] / $dur * 60, 1);
+                    $apm = round($count / $dur * 60, 1);
                 } else if ($dur > 0) {
-                    $apm = $si[1];
+                    $apm = $count;
                 } else {
                     $apm = '-';
                 }
                 echo "</td>
-                    <td>" . $si[1] . "</td>
+                    <td>" . $count . "</td>
                     <td>" . $apm . "</td>
-                    <td><a href=\"?page=$page&sub=$sub&surveillance=" . $_GET['surveillance'] . "&amp;session=" . $si[0] . "\">Details</a></td>
+                    <td><a href=\"?page=$page&sub=$sub&surveillance=" . $_GET['surveillance'] . "&amp;session=" . $sid . "\">Details</a></td>
                     </tr>";
             }
         }
@@ -269,9 +256,11 @@ else {
                 echo "<td class=\"tbldata\">" . date("d.m.Y H:i", $arr['time_log']) . "</td>";
             else
                 echo "<td class=\"tbldata\">Noch nicht eingeloggt!</td>";
-            $dres = dbquery("SELECT COUNT(id) FROM user_surveillance WHERE user_id=" . $arr['user_id'] . ";");
-            $dnum = mysql_fetch_row($dres);
-            echo "<td>" . nf($dnum[0]) . "</td>
+
+            /** @var UserSurveillanceRepository $userSuveillanceRepository */
+            $userSuveillanceRepository = $app[UserSurveillanceRepository::class];
+            $dnum = $userSuveillanceRepository->count(UserSurveillanceSearch::create()->userId($arr['user_id']));
+            echo "<td>" . nf($dnum) . "</td>
                     <td>
                         <a href=\"?page=$page&amp;sub=$sub&amp;surveillance=" . $arr['user_id'] . "\">Details</a>
                         <a href=\"?page=$page&amp;sub=$sub&amp;text=" . $arr['user_id'] . "\">Text ändern</a>

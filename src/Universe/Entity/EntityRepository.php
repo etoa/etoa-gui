@@ -205,7 +205,7 @@ class EntityRepository extends AbstractRepository
     /**
      * @return EntityLabel[]
      */
-    public function searchEntityLabels(EntityLabelSearch $search, EntityLabelSort $sort, int $limit = null): array
+    public function searchEntityLabels(EntityLabelSearch $search, EntityLabelSort $sort = null, int $limit = null): array
     {
         $data = $this->getEntityCoordinatesQueryBuilder($search, $sort, $limit)
             ->addSelect('planets.planet_name, planets.planet_user_main, planets.planet_type_id as planet_type')
