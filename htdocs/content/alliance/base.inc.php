@@ -14,6 +14,7 @@ use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Fleet\FleetRepository;
 use EtoA\Fleet\FleetStatus;
 use EtoA\Ship\ShipDataRepository;
+use EtoA\Ship\ShipListItemCount;
 use EtoA\Ship\ShipQueueRepository;
 use EtoA\Ship\ShipRepository;
 use EtoA\UI\ResourceBoxDrawer;
@@ -235,7 +236,7 @@ if ($allianceShipyardLevel > 0) {
 
 // Userschiffe laden (wenn Schiffswerft gebaut=
 // Gebaute Schiffe laden
-$shiplist = $shipRepository->getUserShipCounts($cu->getId());
+$shiplist = array_map(fn (ShipListItemCount $count) => $count->sum(), $shipRepository->getUserShipCounts($cu->getId()));
 
 // Bauliste von allen Planeten laden und nach Schiffe zusammenfassen
 $queue_total = $shipQueueRepository->getUserQueuedShipCounts($cu->getId());
@@ -253,7 +254,7 @@ if (isset($_POST['ship_submit']) && checker_verify()) {
         // Prüft, ob ein User gewählt wurde
         if ($_POST['user_buy_ship'] > 0) {
             // Gebaute Schiffe laden
-            $shiplist = $shipRepository->getUserShipCounts($_POST['user_buy_ship']);
+            $shiplist = array_map(fn (ShipListItemCount $count) => $count->sum(), $shipRepository->getUserShipCounts($_POST['user_buy_ship']));
 
             // Bauliste von allen Planeten laden und nach Schiffe zusammenfassen
             $queue_total = $shipQueueRepository->getUserQueuedShipCounts($_POST['user_buy_ship']);

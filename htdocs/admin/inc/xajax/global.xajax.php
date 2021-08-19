@@ -217,30 +217,9 @@ function showShipsOnPlanet($form)
         $out .= "<br/><input type=\"Button\" value=\"Neu laden\" onclick=\"showLoader('shipsOnPlanet');xajax_showShipsOnPlanet('" . $form . "');\">";
         $style = '';
     } elseif ($uid != 0) {
-        $res = dbquery("
-        SELECT
-            ship_points,
-            ship_name,
-            SUM(shiplist_count) AS cnt,
-            SUM(shiplist_bunkered) AS bunkered,
-            ship_id,
-            special_ship_need_exp as ship_xp_base,
-            special_ship_exp_factor as ship_xp_factor,
-            shiplist_special_ship_exp as shiplist_xp
-        FROM
-            shiplist
-        INNER JOIN
-            ships
-            ON shiplist_ship_id=ship_id
-            AND shiplist_user_id='" . $uid . "'
-            AND shiplist_count>0
-        GROUP BY
-            ship_id
-        ORDER BY
-            ship_name
-        ;");
-
-        if (mysql_num_rows($res) > 0) {
+        $counts = $shipRepository->getUserShipCounts((int) $uid);
+        $ships = array_intersect_key($shipDataRepository->getAllShips(true), $counts);
+        if (count($ships) > 0) {
             $out = "<table class=\"tb\">
             <tr><th>Anzahl</th>
             <th>Bunker</th>
@@ -249,21 +228,22 @@ function showShipsOnPlanet($form)
             <th>Spezielles</th>
             <th>Aktionen</th></tr>";
             $points = 0;
-            while ($arr = mysql_fetch_array($res)) {
-                $points += $arr['ship_points'] * ($arr['cnt'] + $arr['bunkered']);
-                $out .= "<tr id=\"data_" . $arr['ship_id'] . "\"><td style=\"width:80px\" id=\"cnt_" . $arr['ship_id'] . "\">" . $arr['cnt'] . "</td>
-                <td style=\"width:80px\" id=\"bunkered_" . $arr['ship_id'] . "\">" . $arr['bunkered'] . "</td>
-                <td>" . $arr['ship_name'] . "</td>
-                <td>" . ($arr['ship_points'] * $arr['cnt']) . "</td>
-                <td id=\"special_" . $arr['ship_id'] . "\">";
-                if ($arr['ship_xp_base'] > 0) {
-                    $out .= nf($arr['shiplist_xp']) . " XP, Level " . Ship::levelByXp($arr['ship_xp_base'], $arr['ship_xp_factor'], $arr['shiplist_xp']);
+            foreach ($ships as $ship) {
+                $count = $counts[$ship->id];
+                $points += $ship->points * $count->sum();
+                $out .= "<tr id=\"data_" . $ship->id . "\"><td style=\"width:80px\" id=\"cnt_" . $ship->id . "\">" . $count->count . "</td>
+                <td style=\"width:80px\" id=\"bunkered_" . $ship->id . "\">" . $count->bunkered . "</td>
+                <td>" . $ship->name . "</td>
+                <td>" . ($ship->points * $count->count) . "</td>
+                <td id=\"special_" . $ship->id . "\">";
+                if ($ship->specialNeedExp > 0) {
+                    $out .= nf($count->exp) . " XP, Level " . Ship::levelByXp($ship->specialNeedExp, $ship->specialExpFactor, $count->exp);
                 }
                 $out .= "
-                <td style=\"width:180px\" id=\"actions_" . $arr['ship_id'] . "\" id=\"actions_" . $arr['ship_id'] . "\">
-                <input type=\"button\" value=\"Bearbeiten\" onclick=\"xajax_editShipByShipId(xajax.getFormValues('selector')," . $arr['ship_id'] . ")\" />
+                <td style=\"width:180px\" id=\"actions_" . $ship->id . "\" id=\"actions_" . $ship->id . "\">
+                <input type=\"button\" value=\"Bearbeiten\" onclick=\"xajax_editShipByShipId(xajax.getFormValues('selector')," . $ship->id . ")\" />
                 </td></tr>
-                <tr><td colspan=\"6\" id=\"edit_" . $arr['ship_id'] . "\" style=\"display:none;\"></td></tr>";
+                <tr><td colspan=\"6\" id=\"edit_" . $ship->id . "\" style=\"display:none;\"></td></tr>";
             }
             $out .= "<tr><td colspan=\"3\"></td><td><b>" . nf($points) . "</b></td><td colspan=\"2\"></td></tr>";
             $out .= "</table>";
@@ -458,7 +438,7 @@ function submitEditShip($form, $listId)
     $objResponse = new xajaxResponse();
 
     $entry = $shipRepository->find($listId);
-    if ($entry) {
+    if ($entry !== null) {
         $entry->count = (int)$form['editcnt_' . $listId];
         $entry->bunkered = (int)$form['editbunkered_' . $listId];
 

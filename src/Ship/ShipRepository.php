@@ -80,20 +80,26 @@ class ShipRepository extends AbstractRepository
     }
 
     /**
-     * @return array<int, int>
+     * @return array<int, ShipListItemCount>
      */
     public function getUserShipCounts(int $userId): array
     {
         $data = $this->createQueryBuilder()
-            ->select('shiplist_ship_id, SUM(shiplist_count) + SUM(shiplist_bunkered)')
+            ->select('shiplist_ship_id, SUM(shiplist_count) as count, SUM(shiplist_bunkered) as bunkered, shiplist_special_ship_exp')
             ->from('shiplist')
             ->where('shiplist_user_id = :userId')
             ->setParameter('userId', $userId)
             ->groupBy('shiplist_ship_id')
             ->execute()
-            ->fetchAllKeyValue();
+            ->fetchAllAssociative();
 
-        return array_map(fn ($value) => (int) $value, $data);
+        $result = [];
+        foreach ($data as $row) {
+            $count = new ShipListItemCount($row);
+            $result[$count->shipId] = $count;
+        }
+
+        return $result;
     }
 
     public function addShip(int $shipId, int $amount, int $userId, int $entityId): void
