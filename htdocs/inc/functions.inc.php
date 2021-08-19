@@ -5,6 +5,7 @@ use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Log\AccessLogRepository;
 use EtoA\Support\StringUtils;
 use EtoA\User\UserPropertiesRepository;
+use EtoA\User\UserRepository;
 
 /**
  * Returns a string containing the game name, version and round
@@ -58,20 +59,16 @@ function dbquery($string, $fehler = 1)
  */
 function get_user_nick($id)
 {
-    $res = dbquery("
-        SELECT
-            user_nick
-        FROM
-            users
-        WHERE
-            user_id='" . $id . "';
-    ");
-    if (mysql_num_rows($res) > 0) {
-        $arr = mysql_fetch_assoc($res);
-        return $arr['user_nick'];
-    } else {
-        return "<i>Unbekannter Benutzer</i>";
+    global $app;
+
+    /** @var UserRepository $userRepository */
+    $userRepository = $app[UserRepository::class];
+    $userNick = $userRepository->getNick($id);
+    if ($userNick !== null) {
+        return $userNick;
     }
+
+    return "<i>Unbekannter Benutzer</i>";
 }
 
 /**
