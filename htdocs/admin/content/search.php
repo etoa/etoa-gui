@@ -2,6 +2,8 @@
 
 use EtoA\Alliance\AllianceRepository;
 use EtoA\Alliance\AllianceSearch;
+use EtoA\Universe\Entity\EntityLabelSearch;
+use EtoA\Universe\Entity\EntityRepository;
 use EtoA\User\UserRepository;
 use EtoA\User\UserSearch;
 
@@ -34,21 +36,13 @@ if (isset($_POST['search_query']) && $_POST['search_query'] != "") {
     }
 
     // Planets
-    $res = dbquery("
-        SELECT
-            id
-        FROM
-            planets
-        WHERE
-            planet_name LIKE '%" . $search . "%'
-        ORDER BY planet_name
-        LIMIT 30;
-        ");
-    if (mysql_num_rows($res) > 0) {
+    /** @var EntityRepository $entityRepository */
+    $entityRepository = $app[EntityRepository::class];
+    $planets = $entityRepository->searchEntityLabels(EntityLabelSearch::create()->likePlanetName($search), 30);
+    if (count($planets) > 0) {
         echo "<h2>Planeten</h2><ul>";
-        while ($arr = mysql_fetch_array($res)) {
-            $pl = Planet::getById($arr['id']);
-            echo "<li><a href=\"?page=galaxy&sub=edit&id=" . $arr['id'] . "\">" . $pl . "</a></li>";
+        foreach ($planets as $planet) {
+            echo "<li><a href=\"?page=galaxy&sub=edit&id=" . $planet->id . "\">" . $planet->toString() . "</a></li>";
         }
         echo "</ul>";
     }
