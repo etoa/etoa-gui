@@ -612,6 +612,85 @@ class UserRepository extends AbstractRepository
             ->execute();
     }
 
+    public function save(User $user): void
+    {
+        $this->createQueryBuilder()
+            ->update('users')
+            ->set('user_name', ':name')
+            ->set('npc', ':npc')
+            ->set('user_nick', ':nick')
+            ->set('user_email', ':email')
+            ->set('user_password_temp', ':passwordTemp')
+            ->set('user_email_fix', ':emailFix')
+            ->set('dual_name', ':dualName')
+            ->set('dual_email', ':dualEmail')
+            ->set('user_race_id', ':raceId')
+            ->set('user_alliance_id', ':allianceId')
+            ->set('user_profile_text', ':profileText')
+            ->set('user_signature', ':signature')
+            ->set('user_multi_delets', ':multiDelets')
+            ->set('user_sitting_days', ':sittingDays')
+            ->set('user_chatadmin', ':chatAdmin')
+            ->set('admin', ':admin')
+            ->set('user_ghost', ':ghost')
+            ->set('user_changed_main_planet', ':userChangedMainPlanet')
+            ->set('user_profile_board_url', ':profileBoardUrl')
+            ->set('user_alliace_shippoints', ':allianceShipPoints')
+            ->set('user_alliace_shippoints_used', ':allianceShipPointsUsed')
+            ->set('user_alliance_rank_id', ':allianceRankId')
+            ->set('user_profile_img_check', ':profileImageCheck')
+            ->set('user_specialist_time', ':specialistTime')
+            ->set('user_specialist_id', ':specialistId')
+            ->set('user_profile_img', ':profileImage')
+            ->set('user_avatar', ':avatar')
+            ->set('user_password', ':password')
+            ->set('user_blocked_from', ':blockedFrom')
+            ->set('user_blocked_to', ':blockedTo')
+            ->set('user_ban_admin_id', ':banAdminId')
+            ->set('user_ban_reason', ':banReason')
+            ->set('user_hmode_from', ':hmodFrom')
+            ->set('user_hmode_to', ':hmodTo')
+            ->where('user_id = :userId')
+            ->setParameters([
+                'userId' => $user->id,
+                'name' => $user->name,
+                'npc' => $user->npc,
+                'nick' => $user->nick,
+                'email' => $user->email,
+                'passwordTemp' => $user->passwordTemp,
+                'emailFix' => $user->emailFix,
+                'dualName' => $user->dualName,
+                'dualEmail' => $user->dualEmail,
+                'raceId' => $user->raceId,
+                'allianceId' => $user->allianceId,
+                'profileText' => $user->profileText,
+                'signature' => $user->signature,
+                'multiDelets' => $user->multiDelets,
+                'sittingDays' => $user->sittingDays,
+                'chatAdmin' => $user->chatAdmin,
+                'admin' => $user->admin,
+                'ghost' => (int) $user->ghost,
+                'userChangedMainPlanet' => (int) $user->userChangedMainPlanet,
+                'profileBoardUrl' => $user->profileBoardUrl,
+                'allianceShipPoints' => $user->allianceShipPoints,
+                'allianceShipPointsUsed' => $user->allianceShipPointsUsed,
+                'allianceRankId' => $user->allianceRankId,
+                'profileImageCheck' => (int) $user->profileImageCheck,
+                'specialistTime' => $user->specialistTime,
+                'specialistId' => $user->specialistId,
+                'profileImage' => $user->profileImage,
+                'avatar' => $user->avatar,
+                'password' => $user->password,
+                'blockedFrom' => $user->blockedFrom,
+                'blockedTo' => $user->blockedTo,
+                'banAdminId' => $user->banAdminId,
+                'banReason' => $user->banReason,
+                'hmodFrom' => $user->hmodFrom,
+                'hmodTo' => $user->hmodTo,
+            ])
+            ->execute();
+    }
+
     /**
      * @return array<int, string>
      */

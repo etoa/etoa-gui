@@ -22,6 +22,7 @@ use EtoA\User\UserRepository;
 use EtoA\User\UserService;
 use EtoA\User\UserSittingRepository;
 use EtoA\User\UserWarningRepository;
+use Symfony\Component\HttpFoundation\Request;
 
 /** @var TicketRepository $ticketRepo */
 $ticketRepo = $app[TicketRepository::class];
@@ -61,6 +62,8 @@ $userHolidayService = $app[UserHolidayService::class];
 /** @var UserBannerService $userBannerService */
 $userBannerService = $app[UserBannerService::class];
 
+$request = Request::createFromGlobals();
+
 if (isset($_GET['id']))
     $id = $_GET['id'];
 elseif (isset($_GET['user_id']))
@@ -79,34 +82,33 @@ if (isset($_POST['save'])) {
     }
 
     // Speichert Usertdaten in der Tabelle "users"
-    $sql = "UPDATE users SET
-    user_name='" . $_POST['user_name'] . "',
-    npc='" . $_POST['npc'] . "',
-    user_nick='" . $_POST['user_nick'] . "',
-    user_email='" . $_POST['user_email'] . "',
-    user_password_temp='" . $_POST['user_password_temp'] . "',
-    user_email_fix='" . $_POST['user_email_fix'] . "',
-    dual_name ='" . $_POST['dual_name'] . "',
-    dual_email ='" . $_POST['dual_email'] . "',
-    user_race_id='" . $_POST['user_race_id'] . "',
-    user_alliance_id='" . $_POST['user_alliance_id'] . "',
-    user_profile_text='" . addslashes($_POST['user_profile_text']) . "',
-    user_signature='" . addslashes($_POST['user_signature']) . "',
-    user_multi_delets=" . $_POST['user_multi_delets'] . ",
-    user_sitting_days=" . $_POST['user_sitting_days'] . ",
-    user_chatadmin=" . $_POST['user_chatadmin'] . ",
-    admin=" . $_POST['admin'] . ",
-    user_ghost=" . $_POST['user_ghost'] . ",
-    user_changed_main_planet=" . $_POST['user_changed_main_planet'] . ",
-    user_profile_board_url='" . $_POST['user_profile_board_url'] . "',
-    user_alliace_shippoints='" . $_POST['user_alliace_shippoints'] . "',
-    user_alliace_shippoints_used='" . $_POST['user_alliace_shippoints_used'] . "'";
+    $user->name = $request->request->get('user_name');
+    $user->npc = $request->request->getInt('npc');
+    $user->nick = $request->request->get('user_nick');
+    $user->email = $request->request->get('user_email');
+    $user->passwordTemp = $request->request->get('user_password_temp');
+    $user->emailFix = $request->request->get('user_email_fix');
+    $user->dualName = $request->request->get('dual_name');
+    $user->dualEmail = $request->request->get('dual_email');
+    $user->raceId = $request->request->getInt('user_race_id');
+    $user->allianceId = $request->request->getInt('user_alliance_id');
+    $user->profileText = $request->request->get('user_profile_text');
+    $user->signature = $request->request->get('user_signature');
+    $user->multiDelets = $request->request->getInt('user_multi_delets');
+    $user->sittingDays = $request->request->getInt('user_sitting_days');
+    $user->chatAdmin = $request->request->getInt('user_chatadmin');
+    $user->admin = $request->request->getInt('admin');
+    $user->ghost = $request->request->getBoolean('user_ghost');
+    $user->userChangedMainPlanet = $request->request->getBoolean('user_changed_main_planet');
+    $user->profileBoardUrl = $request->request->get('user_profile_board_url');
+    $user->allianceShipPoints = $request->request->getInt('user_alliace_shippoints');
+    $user->allianceShipPointsUsed = $request->request->getInt('user_alliace_shippoints_used');
 
     if (isset($_POST['user_alliance_rank_id'])) {
-        $sql .= ",user_alliance_rank_id=" . intval($_POST['user_alliance_rank_id']) . "";
+        $user->allianceRankId = $request->request->getInt('user_alliance_rank_id');
     }
     if (isset($_POST['user_profile_img_check'])) {
-        $sql .= ",user_profile_img_check=0";
+        $user->profileImageCheck = false;
     }
 
     //new Multi
@@ -126,11 +128,11 @@ if (isset($_POST['save'])) {
 
     // Handle specialist decision
     if ($_POST['user_specialist_id'] > 0 && $_POST['user_specialist_time_h'] > 0) {
-        $sql .= ",user_specialist_time='" . mktime($_POST['user_specialist_time_h'], $_POST['user_specialist_time_i'], 0, $_POST['user_specialist_time_m'], $_POST['user_specialist_time_d'], $_POST['user_specialist_time_y']) . "'
-        ,user_specialist_id=" . $_POST['user_specialist_id'] . "	";
+        $user->specialistTime = mktime($_POST['user_specialist_time_h'], $_POST['user_specialist_time_i'], 0, $_POST['user_specialist_time_m'], $_POST['user_specialist_time_d'], $_POST['user_specialist_time_y']);
+        $user->specialistId = $request->request->getInt('user_specialist_id');
     } else {
-        $sql .= ",user_specialist_time=0
-        ,user_specialist_id=0	";
+        $user->specialistTime = 0;
+        $user->specialistId = 0;
     }
 
     // Handle  image
@@ -138,7 +140,8 @@ if (isset($_POST['save'])) {
         if (file_exists(PROFILE_IMG_DIR . "/" . $user->profileImage)) {
             unlink(PROFILE_IMG_DIR . "/" . $user->profileImage);
         }
-        $sql .= ",user_profile_img=''";
+
+        $user->profileImage = '';
     }
 
     // Handle avatar
@@ -146,12 +149,12 @@ if (isset($_POST['save'])) {
         if (file_exists(BOARD_AVATAR_DIR . "/" . $user->avatar)) {
             unlink(BOARD_AVATAR_DIR . "/" . $user->avatar);
         }
-        $sql .= ",user_avatar=''";
+        $user->avatar = '';
     }
 
     // Handle password
     if (isset($_POST['user_password']) && $_POST['user_password'] != "") {
-        $sql .= ",user_password='" . saltPasswort($_POST['user_password']) . "'";
+        $user->password = saltPasswort($_POST['user_password']);
         echo "Das Passwort wurde ge&auml;ndert!<br>";
         /** @var LogRepository $logRepository */
         $logRepository = $app[LogRepository::class];
@@ -162,31 +165,34 @@ if (isset($_POST['save'])) {
     if ($_POST['ban_enable'] == 1) {
         $ban_from = parseDatePicker('user_blocked_from', $_POST);
         $ban_to = parseDatePicker('user_blocked_to', $_POST);
-        $sql .= ",user_blocked_from='" . $ban_from . "'";
-        $sql .= ",user_blocked_to='" . $ban_to . "'";
-        $sql .= ",user_ban_admin_id='" . $_POST['user_ban_admin_id'] . "'";
-        $sql .= ",user_ban_reason='" . addslashes($_POST['user_ban_reason']) . "'";
 
-        $userService->addToUserLog($id, "account", "{nick} wird von [b]" . date("d.m.Y H:i", $ban_from) . "[/b] bis [b]" . date("d.m.Y H:i", $ban_to) . "[/b] gesperrt.\n[b]Grund:[/b] " . addslashes($_POST['user_ban_reason']) . "\n[b]Verantwortlich: [/b] " . $adminUserNicks[$_POST['user_ban_admin_id']], true);
+        $user->blockedFrom = $ban_from;
+        $user->blockedTo = $ban_to;
+        $user->banAdminId = $request->request->getInt('user_ban_admin_id');
+        $user->banReason = $request->request->get('user_ban_reason');
+
+        $adminUserNick = $adminUserNicks[$_POST['user_ban_admin_id']] ?? '';
+        $userService->addToUserLog($id, "account", "{nick} wird von [b]" . date("d.m.Y H:i", $ban_from) . "[/b] bis [b]" . date("d.m.Y H:i", $ban_to) . "[/b] gesperrt.\n[b]Grund:[/b] " . addslashes($_POST['user_ban_reason']) . "\n[b]Verantwortlich: [/b] " . $adminUserNick, true);
     } else {
-        $sql .= ",user_blocked_from=0";
-        $sql .= ",user_blocked_to=0";
-        $sql .= ",user_ban_admin_id='0'";
-        $sql .= ",user_ban_reason=''";
+        $user->blockedFrom = 0;
+        $user->blockedTo = 0;
+        $user->banAdminId = 0;
+        $user->banReason = '';
     }
 
     // Handle holiday mode
     if ($_POST['umod_enable'] == 1) {
         $userHolidayService->activateHolidayMode($logUser->getId(), true);
-        $sql .= ",user_hmode_from='" . parseDatePicker('user_hmode_from', $_POST) . "'";
-        $sql .= ",user_hmode_to='" . parseDatePicker('user_hmode_to', $_POST) . "'";
+        $user->hmodFrom = parseDatePicker('user_hmode_from', $_POST);
+        $user->hmodTo = parseDatePicker('user_hmode_to', $_POST);
     } else {
         $userHolidayService->deactivateHolidayMode($user, true);
+        $user->hmodFrom = 0;
+        $user->hmodTo = 0;
     }
 
     // Perform query
-    $sql .= " WHERE user_id='" . $id . "';";
-    dbquery($sql);
+    $userRepository->save($user);
 
     //
     // Speichert Usereinstellungen
