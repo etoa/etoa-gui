@@ -8,6 +8,54 @@ use EtoA\Core\AbstractRepository;
 
 class UserSessionRepository extends AbstractRepository
 {
+    /**
+     * @return array<string, int>
+     */
+    public function logCountPerIp(UserSessionSearch $search): array
+    {
+        $data = $this->applySearchSortLimit($this->createQueryBuilder(), $search)
+            ->select('ip_addr, COUNT(ip_addr) cnt')
+            ->from('user_sessionlog')
+            ->groupBy('ip_addr')
+            ->orderBy('cnt', 'DESC')
+            ->execute()
+            ->fetchAllKeyValue();
+
+        return array_map(fn ($value) => (int) $value, $data);
+    }
+
+    /**
+     * @return array<int, int>
+     */
+    public function countPerUserId(UserSessionSearch $search): array
+    {
+        $data = $this->applySearchSortLimit($this->createQueryBuilder(), $search)
+            ->select('user_id, COUNT(user_id) cnt')
+            ->from('user_session')
+            ->groupBy('user_id')
+            ->orderBy('cnt', 'DESC')
+            ->execute()
+            ->fetchAllKeyValue();
+
+        return array_map(fn ($value) => (int) $value, $data);
+    }
+
+    /**
+     * @return array<int, int>
+     */
+    public function logCountPerUserId(UserSessionSearch $search): array
+    {
+        $data = $this->applySearchSortLimit($this->createQueryBuilder(), $search)
+            ->select('user_id, COUNT(user_id) cnt')
+            ->from('user_sessionlog')
+            ->groupBy('user_id')
+            ->orderBy('cnt', 'DESC')
+            ->execute()
+            ->fetchAllKeyValue();
+
+        return array_map(fn ($value) => (int) $value, $data);
+    }
+
     public function count(): int
     {
         return (int) $this->createQueryBuilder()
@@ -91,11 +139,12 @@ class UserSessionRepository extends AbstractRepository
     /**
      * @return UserSession[]
      */
-    public function getSessions(): array
+    public function getSessions(UserSessionSearch $search = null): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->applySearchSortLimit($this->createQueryBuilder(), $search)
             ->select('*')
             ->from('user_sessions')
+            ->orderBy('time_action', 'DESC')
             ->execute()
             ->fetchAllAssociative();
 
@@ -239,20 +288,12 @@ class UserSessionRepository extends AbstractRepository
     /**
      * @return UserSessionLog[]
      */
-    public function getUserSessionLogs(int $userId, int $limit = null): array
+    public function getSessionLogs(UserSessionSearch $search, int $limit = null): array
     {
-        $qb = $this->createQueryBuilder()
+        $rows = $this->applySearchSortLimit($this->createQueryBuilder(), $search, null, $limit)
             ->select('*')
             ->from('user_sessionlog')
-            ->where('user_id = :userId')
-            ->setParameter('userId', $userId)
-            ->orderBy('time_action', 'DESC');
-
-        if ($limit !== null) {
-            $qb->setMaxResults($limit);
-        }
-
-        $rows = $qb
+            ->orderBy('time_action', 'DESC')
             ->execute()
             ->fetchAllAssociative();
 

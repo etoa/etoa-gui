@@ -4,10 +4,12 @@ use EtoA\HostCache\NetworkNameService;
 use EtoA\User\UserLoginFailureRepository;
 use EtoA\User\UserRepository;
 use EtoA\User\UserSessionRepository;
+use EtoA\User\UserSessionSearch;
 
 /** @var UserRepository $userRepository */
 $userRepository = $app[UserRepository::class];
-
+/** @var UserSessionRepository $userSessionRepository */
+$userSessionRepository = $app[UserSessionRepository::class];
 /** @var UserLoginFailureRepository $userLoginFailureRepository */
 $userLoginFailureRepository = $app[UserLoginFailureRepository::class];
 
@@ -70,31 +72,19 @@ if ($user > 0) {
 
         echo "<h3>Adressen mit denen dieser User bereits online war</h3>";
         if ($_SESSION['admin_ipsearch_concat']) {
-            $res = dbquery("
-                SELECT
-                    COUNT(ip_addr) as cnt,
-                    ip_addr
-                FROM
-                    user_sessionlog
-                WHERE
-                    user_id=" . $user . "
-                GROUP BY
-                    ip_addr
-                ORDER BY
-                    cnt DESC
-                ;");
-            if (mysql_num_rows($res) > 0) {
+            $ipCounts = $userSessionRepository->logCountPerIp(UserSessionSearch::create()->userId($user));
+            if (count($ipCounts) > 0) {
                 echo "<table class=\"tb\">
                     <tr>
                     <th style=\"width:150px;\">Anzahl</th>
                     <th style=\"width:130px;\">IP</th>
                     <th style=\"width:130px;\">Host</th>
                     </tr>";
-                while ($arr = mysql_fetch_array($res)) {
+                foreach ($ipCounts as $ipAddr => $count) {
                     echo "<tr>
-                        <td>" . nf($arr['cnt']) . "</td>
-                        <td><a href=\"?page=$page&amp;sub=$sub&amp;ip=" . $arr['ip_addr'] . "\">" . $arr['ip_addr'] . "</a></td>
-                        <td><a href=\"?page=$page&amp;sub=$sub&amp;host=" . $networkNameService->getHost($arr['ip_addr']) . "\">" . $networkNameService->getHost($arr['ip_addr']) . "</a></td>
+                        <td>" . nf($count) . "</td>
+                        <td><a href=\"?page=$page&amp;sub=$sub&amp;ip=" . $ipAddr . "\">" . $ipAddr . "</a></td>
+                        <td><a href=\"?page=$page&amp;sub=$sub&amp;host=" . $networkNameService->getHost($ipAddr) . "\">" . $networkNameService->getHost($ipAddr) . "</a></td>
                         </tr>";
                 }
                 echo "</table>";
@@ -125,7 +115,7 @@ if ($user > 0) {
         } else {
             /** @var UserSessionRepository $userSessionRepository */
             $userSessionRepository = $app[UserSessionRepository::class];
-            $sessionLogs = $userSessionRepository->getUserSessionLogs($user);
+            $sessionLogs = $userSessionRepository->getSessionLogs(UserSessionSearch::create()->userId($user));
             if (count($sessionLogs) > 0) {
                 echo "<table class=\"tb\">
                     <tr>
@@ -202,34 +192,20 @@ if ($user > 0) {
     echo " ]<br/>";
 
     if ($_SESSION['admin_ipsearch_concat']) {
+        $userNicks = $userRepository->searchUserNicknames();
+
         echo "<h3>User welche momentan unter dieser Adresse online sind</h3>";
-        $res = dbquery("
-            SELECT
-                users.user_id,
-                users.user_nick,
-                COUNT(user_sessions.user_id) AS cnt
-            FROM
-                user_sessions
-            INNER JOIN
-                users
-            ON
-                users.user_id = user_sessions.user_id
-                AND user_sessions.ip_addr='" . $ip . "'
-            GROUP BY
-                user_sessions.user_id
-            ORDER BY
-                cnt DESC
-            ;");
-        if (mysql_num_rows($res) > 0) {
+        $sessionCounts = $userSessionRepository->countPerUserId(UserSessionSearch::create()->ip($ip));
+        if (count($sessionCounts) > 0) {
             echo "<table class=\"tb\">
                 <tr>
                 <th style=\"width:50px;\">Anzahl</th>
                 <th>Nick</th>
                 </tr>";
-            while ($arr = mysql_fetch_array($res)) {
+            foreach ($sessionCounts as $userId => $count) {
                 echo "<tr>
-                    <td>" . nf($arr['cnt']) . "</td>
-                    <td><a href=\"?page=$page&amp;sub=$sub&amp;user=" . $arr['user_id'] . "\">" . $arr['user_nick'] . "</a></td>
+                    <td>" . nf($count) . "</td>
+                    <td><a href=\"?page=$page&amp;sub=$sub&amp;user=" . $userId . "\">" . $userNicks[$userId] . "</a></td>
                     </tr>";
             }
             echo "</table>";
@@ -238,33 +214,17 @@ if ($user > 0) {
         }
 
         echo "<h3>User welche schon mal unter dieser Adresse online waren</h3>";
-        $res = dbquery("
-            SELECT
-                users.user_id,
-                users.user_nick,
-                COUNT(user_sessionlog.user_id) AS cnt
-            FROM
-                user_sessionlog
-            INNER JOIN
-                users
-            ON
-                users.user_id = user_sessionlog.user_id
-                AND user_sessionlog.ip_addr='" . $ip . "'
-            GROUP BY
-                user_sessionlog.user_id
-            ORDER BY
-                cnt DESC
-            ;");
-        if (mysql_num_rows($res) > 0) {
+        $sessionLogCounts = $userSessionRepository->logCountPerUserId(UserSessionSearch::create()->ip($ip));
+        if (count($sessionLogCounts) > 0) {
             echo "<table class=\"tb\">
                 <tr>
                 <th style=\"width:50px;\">Anzahl</th>
                 <th>Nick</th>
                 </tr>";
-            while ($arr = mysql_fetch_array($res)) {
+            foreach ($sessionLogCounts as $userId => $count) {
                 echo "<tr>
-                    <td>" . nf($arr['cnt']) . "</td>
-                    <td><a href=\"?page=$page&amp;sub=$sub&amp;user=" . $arr['user_id'] . "\">" . $arr['user_nick'] . "</a></td>
+                    <td>" . nf($count) . "</td>
+                    <td><a href=\"?page=$page&amp;sub=$sub&amp;user=" . $userId . "\">" . $userNicks[$userId] . "</a></td>
                     </tr>";
             }
             echo "</table>";
@@ -292,42 +252,27 @@ if ($user > 0) {
         }
     } else {
         echo "<h3>User welche momentan unter dieser Adresse online sind</h3>";
-        $res = dbquery("
-            SELECT
-                users.user_id,
-                users.user_nick,
-                user_sessions.time_action,
-                user_sessions.user_agent,
-                user_sessions.ip_addr
-            FROM
-                user_sessions
-            INNER JOIN
-                users
-            ON
-                users.user_id = user_sessions.user_id
-                AND user_sessions.ip_addr='" . $ip . "'
-            ORDER BY
-                time_action DESC
-            ;");
-        if (mysql_num_rows($res) > 0) {
+        $userNicks = $userRepository->searchUserNicknames();
+        $sessions = $userSessionRepository->getSessions(UserSessionSearch::create()->ip($ip));
+        if (count($sessions) > 0) {
             echo "<table class=\"tb\">
                 <tr>
                 <th style=\"width:130px;\">Nick</th>
                 <th style=\"width:150px;\">Datum/Zeit</th>
                 <th style=\"width:60px;\">Match</th>
                 <th>Client</th></tr>";
-            while ($arr = mysql_fetch_array($res)) {
-                $browserParser = new \WhichBrowser\Parser($arr['user_agent']);
-                echo "<div id=\"tt" . $arr['user_id'] . "\" style=\"display:none;\">
-                    <a href=\"?page=user&amp;sub=ipsearch&amp;user=" . $arr['user_id'] . "\">IP-Adressen suchen</a><br/>
-                    <a href=\"?page=$page&amp;sub=edit&amp;id=" . $arr['user_id'] . "\">Daten bearbeiten</a><br/>
+            foreach ($sessions as $session) {
+                $browserParser = new \WhichBrowser\Parser($session->userAgent);
+                echo "<div id=\"tt" . $session->userId . "\" style=\"display:none;\">
+                    <a href=\"?page=user&amp;sub=ipsearch&amp;user=" . $session->userId . "\">IP-Adressen suchen</a><br/>
+                    <a href=\"?page=$page&amp;sub=edit&amp;id=" . $session->userId . "\">Daten bearbeiten</a><br/>
                     </div>";
 
                 echo "<tr>
-                    <td><a href=\"?page=$page&amp;sub=$sub&amp;user=" . $arr['user_id'] . "\" " . cTT($arr['user_nick'], "tt" . $arr['user_id']) . ">" . $arr['user_nick'] . "</a></td>
-                    <td>" . df($arr['time_action']) . "</td>
-                    <td><a href=\"?page=$page&amp;sub=$sub&amp;ip=" . $arr['ip_addr'] . "\" " . mTT('IP', $arr['ip_addr']) . ">" . ($ip == $arr['ip_addr'] ? 'IP' : '-') . "</a> /
-                    <a href=\"?page=$page&amp;sub=$sub&amp;host=" . $networkNameService->getHost($arr['ip_addr']) . "\" " . mTT('Host', $networkNameService->getHost($arr['ip_addr'])) . ">" . ($host == $networkNameService->getHost($arr['ip_addr']) ? 'Host' : '-') . "</a></td>
+                    <td><a href=\"?page=$page&amp;sub=$sub&amp;user=" . $session->userId . "\" " . cTT($userNicks[$session->userId], "tt" . $session->userId) . ">" . $userNicks[$session->userId] . "</a></td>
+                    <td>" . df($session->timeAction) . "</td>
+                    <td><a href=\"?page=$page&amp;sub=$sub&amp;ip=" . $session->ipAddr . "\" " . mTT('IP', $session->ipAddr) . ">" . ($ip == $session->ipAddr ? 'IP' : '-') . "</a> /
+                    <a href=\"?page=$page&amp;sub=$sub&amp;host=" . $networkNameService->getHost($session->ipAddr) . "\" " . mTT('Host', $networkNameService->getHost($session->ipAddr)) . ">" . ($host == $networkNameService->getHost($session->ipAddr) ? 'Host' : '-') . "</a></td>
                     <td>" . $browserParser->toString() . "</td>
                     </tr>";
             }
@@ -337,42 +282,26 @@ if ($user > 0) {
         }
 
         echo "<h3>User welche schon mal unter dieser Adresse online waren</h3>";
-        $res = dbquery("
-            SELECT
-                users.user_id,
-                users.user_nick,
-                user_sessionlog.time_action,
-                user_sessionlog.user_agent,
-                user_sessionlog.ip_addr
-            FROM
-                user_sessionlog
-            INNER JOIN
-                users
-            ON
-                users.user_id = user_sessionlog.user_id
-                AND user_sessionlog.ip_addr='" . $ip . "'
-            ORDER BY
-                time_action DESC
-            ;");
-        if (mysql_num_rows($res) > 0) {
+        $sessionLogs = $userSessionRepository->getSessionLogs(UserSessionSearch::create()->ip($ip));
+        if (count($sessionLogs) > 0) {
             echo "<table class=\"tb\">
                 <tr>
                 <th style=\"width:130px;\">Nick</th>
                 <th style=\"width:150px;\">Datum/Zeit</th>
                 <th style=\"width:60px;\">Match</th>
                 <th>Client</th></tr>";
-            while ($arr = mysql_fetch_array($res)) {
-                $browserParser = new \WhichBrowser\Parser($arr['user_agent']);
-                echo "<div id=\"tt" . $arr['user_id'] . "\" style=\"display:none;\">
-                    <a href=\"?page=user&amp;sub=ipsearch&amp;user=" . $arr['user_id'] . "\">IP-Adressen suchen</a><br/>
-                    <a href=\"?page=$page&amp;sub=edit&amp;id=" . $arr['user_id'] . "\">Daten bearbeiten</a><br/>
+            foreach ($sessionLogs as $log) {
+                $browserParser = new \WhichBrowser\Parser($log->userAgent);
+                echo "<div id=\"tt" . $log->userId . "\" style=\"display:none;\">
+                    <a href=\"?page=user&amp;sub=ipsearch&amp;user=" . $log->userId . "\">IP-Adressen suchen</a><br/>
+                    <a href=\"?page=$page&amp;sub=edit&amp;id=" . $log->userId . "\">Daten bearbeiten</a><br/>
                     </div>";
 
                 echo "<tr>
-                    <td><a href=\"?page=$page&amp;sub=$sub&amp;user=" . $arr['user_id'] . "\" " . cTT($arr['user_nick'], "tt" . $arr['user_id']) . ">" . $arr['user_nick'] . "</a></td>
-                    <td>" . df($arr['time_action']) . "</td>
-                    <td><a href=\"?page=$page&amp;sub=$sub&amp;ip=" . $arr['ip_addr'] . "\" " . mTT('IP', $arr['ip_addr']) . ">" . ($ip == $arr['ip_addr'] ? 'IP' : '-') . "</a> /
-                    <a href=\"?page=$page&amp;sub=$sub&amp;host=" . $networkNameService->getHost($arr['ip_addr']) . "\" " . mTT('Host', $networkNameService->getHost($arr['ip_addr'])) . ">" . ($host == $networkNameService->getHost($arr['ip_addr']) ? 'Host' : '-') . "</a></td>
+                    <td><a href=\"?page=$page&amp;sub=$sub&amp;user=" . $log->userId . "\" " . cTT($userNicks[$log->userId], "tt" . $log->userId) . ">" . $userNicks[$log->userId] . "</a></td>
+                    <td>" . df($log->timeAction) . "</td>
+                    <td><a href=\"?page=$page&amp;sub=$sub&amp;ip=" . $log->ipAddr . "\" " . mTT('IP', $log->ipAddr) . ">" . ($ip == $log->ipAddr ? 'IP' : '-') . "</a> /
+                    <a href=\"?page=$page&amp;sub=$sub&amp;host=" . $networkNameService->getHost($log->ipAddr) . "\" " . mTT('Host', $networkNameService->getHost($log->ipAddr)) . ">" . ($host == $networkNameService->getHost($log->ipAddr) ? 'Host' : '-') . "</a></td>
                     <td>" . $browserParser->toString() . "</td>
                     </tr>";
             }

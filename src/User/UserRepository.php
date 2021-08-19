@@ -438,6 +438,26 @@ class UserRepository extends AbstractRepository
         ]);
     }
 
+    public function updateImgCheck(int $userId, bool $check, string $image = null): bool
+    {
+        $qb = $this->createQueryBuilder()
+            ->update('users')
+            ->set('user_profile_img_check', ':check')
+            ->where('user_id = :userId')
+            ->setParameters([
+                'check' => (int) $check,
+                'userId' => $userId,
+            ]);
+
+        if ($image !== null) {
+            $qb
+                ->set('user_profile_img', ':image')
+                ->setParameter('image', $image);
+        }
+
+        return (bool) $qb->execute();
+    }
+
     public function addSittingDays(int $days): void
     {
         $this->getConnection()->executeQuery("
