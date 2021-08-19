@@ -6,6 +6,7 @@ namespace EtoA\Universe\Entity;
 
 use Doctrine\DBAL\Query\QueryBuilder;
 use EtoA\Core\AbstractRepository;
+use EtoA\Core\Database\AbstractSort;
 
 class EntityRepository extends AbstractRepository
 {
@@ -204,22 +205,35 @@ class EntityRepository extends AbstractRepository
     /**
      * @return EntityLabel[]
      */
-    public function searchEntityLabels(EntityLabelSearch $search, int $limit = null): array
+    public function searchEntityLabels(EntityLabelSearch $search, EntityLabelSort $sort, int $limit = null): array
     {
-        $data = $this->getEntityCoordinatesQueryBuilder($search, $limit)
-            ->addSelect('planets.planet_name')
-            ->addSelect('stars.name as star_name')
+        $data = $this->getEntityCoordinatesQueryBuilder($search, $sort, $limit)
+            ->addSelect('planets.planet_name, planets.planet_user_main, planets.planet_type_id as planet_type')
+            ->addSelect('stars.name as star_name, stars.type_id as star_type')
+            ->addSelect('users.user_nick, users.user_id')
             ->leftJoin('e', 'planets', 'planets', 'e.id = planets.id')
+            ->leftJoin('planets', 'users', 'users', 'users.user_id = planets.planet_user_id')
             ->leftJoin('e', 'stars', 'stars', 'e.id = stars.id')
             ->execute()
             ->fetchAllAssociative();
 
-        return array_map(fn (array $row) => new EntityLabel($row) , $data);
+        return array_map(fn (array $row) => new EntityLabel($row), $data);
     }
 
-    private function getEntityCoordinatesQueryBuilder(EntitySearch $search = null, int $limit = null): QueryBuilder
+    public function countEntityLabels(EntityLabelSearch $search = null): int
     {
-        return $this->applySearchSortLimit($this->createQueryBuilder(), $search, null, $limit)
+        return (int) $this->getEntityCoordinatesQueryBuilder($search)
+            ->select('COUNT(*)')
+            ->leftJoin('e', 'planets', 'planets', 'e.id = planets.id')
+            ->leftJoin('planets', 'users', 'users', 'users.user_id = planets.planet_user_id')
+            ->leftJoin('e', 'stars', 'stars', 'e.id = stars.id')
+            ->execute()
+            ->fetchOne();
+    }
+
+    private function getEntityCoordinatesQueryBuilder(EntitySearch $search = null, AbstractSort $sort = null, int $limit = null): QueryBuilder
+    {
+        return $this->applySearchSortLimit($this->createQueryBuilder(), $search, $sort, $limit)
             ->select(
                 'e.id',
                 'c.id as cid',

@@ -38,7 +38,7 @@ if (isset($_POST['search_query']) && $_POST['search_query'] != "") {
     // Planets
     /** @var EntityRepository $entityRepository */
     $entityRepository = $app[EntityRepository::class];
-    $planets = $entityRepository->searchEntityLabels(EntityLabelSearch::create()->likePlanetName($search), 30);
+    $planets = $entityRepository->searchEntityLabels(EntityLabelSearch::create()->likePlanetName($search), null, 30);
     if (count($planets) > 0) {
         echo "<h2>Planeten</h2><ul>";
         foreach ($planets as $planet) {

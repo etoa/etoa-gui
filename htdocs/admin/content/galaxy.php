@@ -1,7 +1,13 @@
 <?PHP
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Universe\Entity\EntityLabelSearch;
+use EtoA\Universe\Entity\EntityLabelSort;
+use EtoA\Universe\Entity\EntityRepository;
+use EtoA\Universe\Entity\EntityType;
 use EtoA\Universe\Planet\PlanetRepository;
+use EtoA\Universe\Planet\PlanetTypeRepository;
+use EtoA\Universe\Star\SolarTypeRepository;
 use EtoA\User\UserRepository;
 use Twig\Environment;
 
@@ -70,7 +76,6 @@ function entities(ConfigurationService $config)
     $order_array = array();
     $order_array['id'] = "Objekt-ID";
     $order_array['planet_name'] = "Objekt-Name";
-    $order_array['type_name'] = "Objekt-Subtyp";
     $order_array['user_nick'] = "Besitzer-Name";
 
     echo "<h1>Raumobjekte (Entitäten)</h1>";
@@ -94,144 +99,89 @@ function entities(ConfigurationService $config)
     // Search query and result
     //
     elseif (searchQueryArray($sa, $so)) {
-        $table = "entities e";
-        $joins = " INNER JOIN cells c ON c.id=e.cell_id ";
-        $selects = "";
-        $sql = "";
+        /** @var EntityRepository $entityRepository */
+        $entityRepository = $app[EntityRepository::class];
 
+        $search = EntityLabelSearch::create();
         if (isset($sa['id'])) {
-            $sql .= " AND e.id " . searchFieldSql($sa['id']);
+            $search->id((int) $sa['id']);
         }
         if (isset($sa['code'])) {
-            $sql .= " AND (";
-            $i = 0;
-            foreach ($sa['code'][1] as $code) {
-                if ($i > 0)
-                    $sql .= " OR";
-                $sql .= "
-                e.code='" . $code . "'";
-                $i++;
-            }
-            $sql .= ") ";
+            $search->codeIn($sa['code'][1]);
         }
         if (isset($sa['cell_id'])) {
-            $sql .= " AND c.id " . searchFieldSql($sa['cell_id']);
+            $search->cellId((int) $sa['cell_id']);
         }
         if (isset($sa['cell_cx'])) {
-            $sql .= " AND c.cx " . searchFieldSql($sa['cell_cx']);
+            $search->cx((int) $sa['cell_cx']);
         }
         if (isset($sa['cell_cy'])) {
-            $sql .= " AND c.cy " . searchFieldSql($sa['cell_cy']);
+            $search->cy((int) $sa['cell_cy']);
         }
         if (isset($sa['cell_c'])) {
             $val = explode("_", $sa['cell_c'][1]);
-            $sql .= " AND c.cx=" . $val[0];
-            $sql .= " AND c.cy=" . $val[1];
+            $search
+                ->cx((int) $val[0])
+                ->cy((int) $val[1]);
         }
         if (isset($sa['cell_sx'])) {
-            $sql .= " AND c.sx " . searchFieldSql($sa['cell_sx']);
+            $search->sx((int) $sa['cell_sx']);
         }
         if (isset($sa['cell_sy'])) {
-            $sql .= " AND c.sy " . searchFieldSql($sa['cell_sy']);
+            $search->sy((int) $sa['cell_sy']);
         }
         if (isset($sa['cell_s'])) {
             $val = explode("_", $sa['cell_s'][1]);
-            $sql .= " AND c.sx=" . $val[0];
-            $sql .= " AND c.sy=" . $val[1];
+            $search
+                ->sx((int) $val[0])
+                ->sy((int) $val[1]);
         }
         if (isset($sa['cell_pos'])) {
-            $sql .= " AND e.pos " . searchFieldSql($sa['cell_pos']);
+            $search->pos((int) $sa['cell_pos']);
         }
 
         if (isset($sa['name'])) {
-            $joins .= " INNER JOIN planets p ON p.id=e.id ";
-            $selects = ",p.planet_user_id,p.planet_type_id,p.planet_name";
-
-            $sql .= " AND p.planet_name " . searchFieldSql($sa['name']);
+            $search->likePlanetName($sa['name'][1]);
         }
         if (isset($sa['user_id'])) {
-            if (!stristr($joins, "planets p")) {
-                $joins .= " INNER JOIN planets p ON p.id=e.id ";
-                $selects = ",p.planet_user_id,p.planet_type_id,p.planet_name";
-            }
-            $sql .= " AND p.planet_user_id " . searchFieldSql($sa['user_id']);
+            $search->planetUserId((int) $sa['user_id']);
         }
         if (isset($sa['user_main']) && $sa['user_main'][1] < 2) {
-            if (!stristr($joins, "planets p")) {
-                $joins .= " INNER JOIN planets p ON p.id=e.id ";
-                $selects = ",p.planet_user_id,p.planet_type_id,p.planet_name";
-            }
-            $sql .= " AND p.planet_user_main='" . intval($sa['user_main'][1]) . "'";
+            $search->planetUserMain((bool) $sa['user_main'][1]);
         }
         if (isset($sa['debris']) && $sa['debris'][1] < 2) {
-            if (!stristr($joins, "planets p")) {
-                $joins .= " INNER JOIN planets p ON p.id=e.id ";
-                $selects = ",p.planet_user_id,p.planet_type_id,p.planet_name";
-            }
-            if ($sa['debris'][1] == 1)
-                $sql .= " AND (p.planet_wf_metal>0 OR p.planet_wf_crystal>0 OR p.planet_wf_plastic>0)";
-            else
-                $sql .= " AND (p.planet_wf_metal=0 AND p.planet_wf_crystal=0 AND p.planet_wf_plastic=0)";
+            $search->planetDebris($sa['debris'][1] == 1);
         }
         if (isset($sa['user_nick'])) {
-            if (!stristr($joins, "planets p")) {
-                $joins .= " INNER JOIN planets p ON p.id=e.id ";
-                $selects = ",p.planet_user_id,p.planet_type_id,p.planet_name";
-            }
-
-            $sql .= " AND users.user_nick " . searchFieldSql($sa['user_nick']);
-            $joins .= " INNER JOIN users ON p.planet_user_id=user_id ";
+            $search->likePlanetUserNick($sa['user_nick'][1]);
         }
         if (isset($sa['desc']) && $sa['desc'][1] < 2) {
-            if (!stristr($joins, "planets p")) {
-                $joins .= " INNER JOIN planets p ON p.id=e.id ";
-                $selects = ",p.planet_user_id,p.planet_type_id,p.planet_name";
-            }
-
-            if ($sa['desc'][1] == 1) {
-                $sql .= " AND p.planet_desc!='' ";
-            } else {
-                $sql .= " AND p.planet_desc='' ";
-            }
+            $search->planetHasDescription($sa['desc'][1] == 1);
         }
 
-        // Build ordering
+        $sort = EntityLabelSort::id();
         if (count($so) > 1) {
-            $sql .= " ORDER BY ";
             foreach ($so as $k => $v) {
-                if ($k != "limit") {
-                    $sql .= " " . $k . " " . ($v == "d" ? "DESC" : "ASC") . " ";
+                if (!in_array($k, ['limit', 'id'], true)) {
+                    if ($k === 'planet_name') {
+                        $sort = EntityLabelSort::planetName();
+                    } else {
+                        $sort = EntityLabelSort::userNick();
+                    }
                 }
             }
         }
 
-        // Build limit
-        $sql .= " LIMIT " . $so['limit'];
-
-        // Build query
-        $sql = "SELECT
-            SQL_CALC_FOUND_ROWS
-            e.id,
-            e.code,
-            e.pos,
-            c.sx,c.sy,c.cx,c.cy " .
-            $selects
-            . "
-        FROM " . $table . "
-        " . $joins . "
-        WHERE 1 " . $sql;
+        $entities = $entityRepository->searchEntityLabels($search, $sort, (int) $so['limit']);
 
         // Execute query
-        $res = dbquery($sql);
-        $nr = mysql_num_rows($res);
+        $nr = count($entities);
 
         // Save query
         searchQuerySave($sa, $so);
 
         // Select total found rows
-        $ares = dbquery("SELECT FOUND_ROWS()");
-        $aarr = mysql_fetch_row($ares);
-        $enr = $aarr[0];
+        $enr = $entityRepository->countEntityLabels($search);
 
         echo "<h2>Suchresultate</h2>";
         echo "<form acton=\"?page=" . $page . "\" method=\"post\">";
@@ -275,6 +225,12 @@ function entities(ConfigurationService $config)
         echo "</select> <input type=\"submit\" value=\"Anzeigen\" name=\"search_resubmit\" /></form><br/>";
 
         if ($nr > 0) {
+            /** @var PlanetTypeRepository $planetTypeRepository */
+            $planetTypeRepository = $app[PlanetTypeRepository::class];
+            $planetTypeNames = $planetTypeRepository->getPlanetTypeNames(true);
+            /** @var SolarTypeRepository $starTypeRepository */
+            $starTypeRepository = $app[SolarTypeRepository::class];
+            $starTypeNames = $starTypeRepository->getSolarTypeNames(true);
             if ($nr > 20) {
                 echo button("Neue Suche", "?page=$page&amp;newsearch") . "<br/><br/>";
             }
@@ -289,32 +245,36 @@ function entities(ConfigurationService $config)
             echo "<th>Besitzer</th>";
             echo "<th style=\"width:20px;\">&nbsp;</th>";
             echo "</tr>";
-            while ($arr = mysql_fetch_array($res)) {
-                $ent = Entity::createFactory($arr['code'], $arr['id']);
-
+            foreach ($entities as $entity) {
                 echo "<tr>";
                 echo "<td>
-                    <a href=\"?page=$page&sub=edit&id=" . $arr['id'] . "\">
-                    " . $arr['id'] . "
+                    <a href=\"?page=$page&sub=edit&id=" . $entity->id . "\">
+                    " . $entity->id . "
                     </a></td>";
                 echo "<td>
-                    <a href=\"?page=$page&sub=edit&id=" . $arr['id'] . "\">
-                    " . $arr['sx'] . "/" . $arr['sy'] . " : " . $arr['cx'] . "/" . $arr['cy'] . " : " . $arr['pos'] . "
+                    <a href=\"?page=$page&sub=edit&id=" . $entity->id . "\">
+                    " . $entity->coordinatesString() . "
                     </a>  </td>";
-                echo "<td style=\"color:" . Entity::$entityColors[$arr['code']] . "\">";
-                echo $ent->entityCodeString();
-                echo " " . ($ent->ownerMain() ? "(Hauptplanet)" : '') . "";
+                echo "<td style=\"color:" . Entity::$entityColors[$entity->code] . "\">";
+                echo $entity->codeString();
+                echo " " . ($entity->ownerMain ? "(Hauptplanet)" : '') . "";
                 echo "</td>";
-                echo "<td>" . $ent->type() . "</td>";
-                echo "<td>" . $ent->name() . "</td>";
+                $typeName = null;
+                if ($entity->code === EntityType::PLANET) {
+                    $typeName = $planetTypeNames[$entity->typeId];
+                } elseif ($entity->code === EntityType::STAR) {
+                    $typeName = $planetTypeNames[$entity->typeId];
+                }
+                echo "<td>" . $typeName . "</td>";
+                echo "<td>" . $entity->displayName() . "</td>";
                 echo "<td>";
-                if ($ent->ownerId() > 0) {
-                    echo "<a href=\"?page=user&amp;sub=edit&amp;user_id=" . $ent->ownerId() . "\" title=\"Spieler bearbeiten\">
-                        " . $ent->owner() . "</a>";
+                if ($entity->ownerId > 0) {
+                    echo "<a href=\"?page=user&amp;sub=edit&amp;user_id=" . $entity->ownerId . "\" title=\"Spieler bearbeiten\">
+                        " . $entity->ownerNick . "</a>";
                 }
                 echo "
                 </td>";
-                echo "<td>" . edit_button("?page=$page&sub=edit&id=" . $arr['id']) . "</td>";
+                echo "<td>" . edit_button("?page=$page&sub=edit&id=" . $entity->id) . "</td>";
                 echo "</tr>";
             }
             echo "</table>";
@@ -409,9 +369,9 @@ function entities(ConfigurationService $config)
         }
         echo "
         </select> <input type=\"submit\" name=\"search_submit\" value=\"Suchen\" /></form>";
-        /** @var PlanetRepository $planetRepository */
-        $planetRepository = $app[PlanetRepository::class];
-        echo "<br/>Es sind " . nf($planetRepository->count()) . " Eintr&auml;ge in der Datenbank vorhanden.";
+        /** @var EntityRepository $entityRepository */
+        $entityRepository = $app[EntityRepository::class];
+        echo "<br/>Es sind " . nf($entityRepository->countEntityLabels()) . " Eintr&auml;ge in der Datenbank vorhanden.";
 
         echo "<script type=\"text/javascript\">document.forms['dbsearch'].elements[2].focus();</script>";
     }
