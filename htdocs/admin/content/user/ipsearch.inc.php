@@ -136,8 +136,8 @@ if ($user > 0) {
                 foreach ($sessionLogs as $sessionLog) {
                     $browserParser = new \WhichBrowser\Parser($sessionLog->userAgent);
                     echo "<tr>
-                        <td><a href=\"?page=$page&amp;sub=$sub&amp;ip=" . $sessionLog->ip . "\">" . $sessionLog->ip . "</a></td>
-                        <td><a href=\"?page=$page&amp;sub=$sub&amp;host=" . $networkNameService->getHost($sessionLog->ip) . "\">" . $networkNameService->getHost($sessionLog->ip) . "</a></td>
+                        <td><a href=\"?page=$page&amp;sub=$sub&amp;ip=" . $sessionLog->ipAddr . "\">" . $sessionLog->ipAddr . "</a></td>
+                        <td><a href=\"?page=$page&amp;sub=$sub&amp;host=" . $networkNameService->getHost($sessionLog->ipAddr) . "\">" . $networkNameService->getHost($sessionLog->ipAddr) . "</a></td>
                         <td>" . df($sessionLog->timeAction) . "</td>
                         <td>" . $browserParser->toString() . "</td>
                         </tr>";

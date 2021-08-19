@@ -53,6 +53,20 @@ class UserSessionRepository extends AbstractRepository
         return $data !== false ? new UserSession($data) : null;
     }
 
+    public function findLog(string $id): ?UserSessionLog
+    {
+        $data = $this->createQueryBuilder()
+            ->select("*")
+            ->from('user_sessionlog')
+            ->where('id = :id')
+            ->setParameter('id', $id)
+            ->execute()
+            ->fetchAssociative();
+
+        return $data !== false ? new UserSessionLog($data) : null;
+    }
+
+
     public function findByParameters(string $id, int $userId, string $userAgent, int $timeLogin): ?UserSession
     {
         $data = $this->createQueryBuilder()

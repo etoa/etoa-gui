@@ -46,8 +46,8 @@ echo "<tr><th>Zeit</th>
 foreach ($sessionLogs as $sessionLog) {
     $browserParser = new \WhichBrowser\Parser($sessionLog->userAgent);
     echo "<tr><td>" . df($sessionLog->timeLogin) . "</td>";
-    echo "<td>" . $sessionLog->ip . "</td>";
-    echo "<td>" . $networkNameService->getHost($sessionLog->ip) . "</td>";
+    echo "<td>" . $sessionLog->ipAddr . "</td>";
+    echo "<td>" . $networkNameService->getHost($sessionLog->ipAddr) . "</td>";
     echo "<td>" . $browserParser->toString() . "</td></tr>";
 }
 tableEnd();
