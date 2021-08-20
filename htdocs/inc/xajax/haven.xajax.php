@@ -11,7 +11,10 @@ use EtoA\Log\LogRepository;
 use EtoA\Log\LogSeverity;
 use EtoA\Ship\ShipDataRepository;
 use EtoA\Ship\ShipRepository;
+use EtoA\Ship\ShipRequirementRepository;
 use EtoA\Ship\ShipSort;
+use EtoA\Technology\TechnologyDataRepository;
+use EtoA\Technology\TechnologyRepository;
 use EtoA\Universe\Entity\EntityCoordinates;
 use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Planet\PlanetRepository;
@@ -48,7 +51,10 @@ function havenShowShips()
     $shipRepository = $app[ShipRepository::class];
     /** @var ShipDataRepository $shipDataRepository */
     $shipDataRepository = $app[ShipDataRepository::class];
-
+    /** @var ShipRequirementRepository $shipRequirementRepository */
+    $shipRequirementRepository = $app[ShipRequirementRepository::class];
+    /** @var TechnologyRepository $technologyRepository */
+    $technologyRepository = $app[TechnologyRepository::class];
     defineImagePaths();
 
     $response = new xajaxResponse();
@@ -122,6 +128,7 @@ function havenShowShips()
     $ships = array_intersect_key($shipDataRepository->searchShips(null, ShipSort::haven()), $shipList);
     if (count($ships) != 0) {
         $fleetShips = $fleet->getShips();
+        $technologyLevels = $technologyRepository->getTechnologyLevels($fleet->ownerId());
 
         $tabulator = 1;
         echo "<form id=\"shipForm\" onsubmit=\"xajax_havenShowTarget(xajax.getFormValues('shipForm')); return false;\">";
@@ -165,25 +172,6 @@ function havenShowShips()
 
             // TODO: Rewrite this!
             //Geschwindigkeitsbohni der entsprechenden Antriebstechnologien laden und zusammenrechnen
-            $vres = dbquery("
-        SELECT
-            l.techlist_current_level,
-            t.tech_name,
-            r.req_level
-        FROM
-            ship_requirements r
-        INNER JOIN
-            techlist l
-            ON r.req_tech_id = l.techlist_tech_id
-          AND l.techlist_user_id=" . $fleet->ownerId() . "
-           INNER JOIN
-            technologies t
-              ON r.req_tech_id = t.tech_id
-          AND t.tech_type_id = '" . TECH_SPEED_CAT . "'
-        WHERE
-                    r.obj_id=" . $ship->id . "
-        GROUP BY
-            r.id;");
             if ($fleet->raceSpeedFactor() != 1)
                 $speedtechstring = "Rasse: " . get_percent_string($fleet->raceSpeedFactor(), 1) . "<br>";
             else
@@ -195,13 +183,16 @@ function havenShowShips()
                 $speedtechstring .= "";
 
             $timefactor = $fleet->raceSpeedFactor() + $fleet->specialist->fleetSpeedFactor - 1;
-            if (mysql_num_rows($vres) > 0) {
-                while ($varr = mysql_fetch_array($vres)) {
-                    if ($varr['techlist_current_level'] - $varr['req_level'] <= 0) {
+
+            $speedRequirements = $shipRequirementRepository->getRequiredSpeedTechnologies($ship->id);
+            if (count($speedRequirements) > 0) {
+                foreach ($speedRequirements as $requirement) {
+                    $currentLevel = $technologyLevels[$requirement->id] ?? 0;
+                    if ($currentLevel - $requirement->requiredLevel <= 0) {
                         $timefactor += 0;
                     } else {
-                        $timefactor += ($varr['techlist_current_level'] - $varr['req_level']) * 0.1;
-                        $speedtechstring .= $varr['tech_name'] . " " . $varr['techlist_current_level'] . ": " . get_percent_string((($varr['techlist_current_level'] - $varr['req_level']) / 10) + 1, 1) . "<br>";
+                        $timefactor += ($currentLevel - $requirement->requiredLevel) * 0.1;
+                        $speedtechstring .= $requirement->name . " " . $currentLevel . ": " . get_percent_string((($currentLevel - $requirement->requiredLevel) / 10) + 1, 1) . "<br>";
                     }
                 }
             }
