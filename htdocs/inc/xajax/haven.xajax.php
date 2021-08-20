@@ -3,6 +3,7 @@
 // Main dialogs
 
 use EtoA\Alliance\AllianceBuildingId;
+use EtoA\Alliance\AllianceBuildingRepository;
 use EtoA\Bookmark\BookmarkRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Fleet\FleetRepository;
@@ -55,6 +56,9 @@ function havenShowShips()
     $shipRequirementRepository = $app[ShipRequirementRepository::class];
     /** @var TechnologyRepository $technologyRepository */
     $technologyRepository = $app[TechnologyRepository::class];
+    /** @var AllianceBuildingRepository $allianceBuildingRepository */
+    $allianceBuildingRepository = $app[AllianceBuildingRepository::class];
+
     defineImagePaths();
 
     $response = new xajaxResponse();
@@ -90,8 +94,8 @@ function havenShowShips()
     if ($fleet->specialist->fleetMax > 0)
         echo " +3 Flotten durch " . $fleet->specialist->name;
     echo ")</td></tr>";
-    if ($fleet->owner->allianceId() > 0 && $fleet->owner->alliance->buildlist->getLevel(AllianceBuildingId::MAIN)) {
-        $flvl = $fleet->owner->alliance->buildlist->getLevel(AllianceBuildingId::FLEET_CONTROL);
+    if ($fleet->owner->allianceId() > 0 && $allianceBuildingRepository->getLevel($fleet->owner->allianceId(), AllianceBuildingId::MAIN)) {
+        $flvl = $allianceBuildingRepository->getLevel($fleet->owner->allianceId(), AllianceBuildingId::FLEET_CONTROL);
         $fleet->setAllianceSlots($flvl);
         $afleets = $fleet->getAllianceSlots();
         $pfleets = $flvl + 2;

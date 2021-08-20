@@ -211,14 +211,19 @@ class ShipDataRepository extends AbstractRepository
         return array_map(fn ($row) => new Ship($row), $data);
     }
 
-    public function getShip(int $shipId): ?Ship
+    public function getShip(int $shipId, bool $onlyShipShow = true): ?Ship
     {
-        $data = $this->createQueryBuilder()
+        $qb = $this->createQueryBuilder()
             ->select('*')
             ->from('ships')
-            ->where('ship_show = 1')
             ->andWhere('ship_id = :shipId')
-            ->setParameter('shipId', $shipId)
+            ->setParameter('shipId', $shipId);
+
+        if ($onlyShipShow) {
+            $qb->andWhere('ship_show = 1');
+        }
+
+        $data = $qb
             ->execute()
             ->fetchAssociative();
 

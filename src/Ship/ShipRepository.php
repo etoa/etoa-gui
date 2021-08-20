@@ -44,7 +44,7 @@ class ShipRepository extends AbstractRepository
     /**
      * @return ShipListItem[]
      */
-    public function findForUser(int $userId, ?int $entityId = null): array
+    public function findForUser(int $userId, ?int $entityId = null, array $shipIds = null): array
     {
         $qb = $this->createQueryBuilder()
             ->select('*')
@@ -57,6 +57,12 @@ class ShipRepository extends AbstractRepository
             $qb
                 ->andWhere('shiplist_entity_id = :entityId')
                 ->setParameter('entityId', $entityId);
+        }
+
+        if ($shipIds !== null) {
+            $qb
+                ->andWhere('shiplist_ship_id IN (:shipIds)')
+                ->setParameter('shipIds', $shipIds, Connection::PARAM_INT_ARRAY);
         }
 
         $data = $qb
