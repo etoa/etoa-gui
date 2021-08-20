@@ -275,6 +275,29 @@ class UserRepository extends AbstractRepository
         return $this->findUser(UserSearch::create()->user($userId));
     }
 
+    /**
+     * @return UserAdminView[]
+     */
+    public function searchAdminView(UserSearch $search): array
+    {
+        $where = implode(' AND ', $search->parts);
+        $data = $this->getConnection()->fetchAllAssociative('SELECT
+                users.*,
+                user_sessionlog.time_action AS time_log,
+                user_sessionlog.ip_addr AS ip_log,
+                user_sessionlog.user_agent AS agent_log,
+                user_sessions.time_action,
+                user_sessions.user_agent,
+                user_sessions.ip_addr
+            FROM users
+            LEFT JOIN user_sessionlog ON users.user_id = user_sessionlog.user_id AND user_sessionlog.time_action = (SELECT MAX(time_action) FROM user_sessionlog WHERE user_sessionlog.user_id = users.user_id)
+            LEFT JOIN user_sessions ON users.user_id = user_sessions.user_id
+            WHERE ' . $where . '
+            ORDER BY users.user_nick', $search->parameters);
+
+        return array_map(fn ($row) => new UserAdminView($row), $data);
+    }
+
     public function getUserAdminView(int $userId): ?UserAdminView
     {
         $data = $this->getConnection()->fetchAssociative('SELECT

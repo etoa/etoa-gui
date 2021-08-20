@@ -19,6 +19,7 @@ use EtoA\User\UserPropertiesRepository;
 use EtoA\User\UserRatingRepository;
 use EtoA\User\UserRatingSearch;
 use EtoA\User\UserRepository;
+use EtoA\User\UserSearch;
 use EtoA\User\UserService;
 use EtoA\User\UserSittingRepository;
 use EtoA\User\UserWarningRepository;

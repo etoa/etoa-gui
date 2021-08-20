@@ -180,32 +180,8 @@ else {
         </form><br/>";
 
     echo "Folgende User stehen unter Beobachtung:<br/><br/>";
-    $res = dbquery("
-        SELECT
-            users.user_nick,
-            users.user_points,
-            users.user_id,
-            users.user_observe,
-            MAX(user_sessionlog.time_action) AS time_log,
-            user_sessions.time_action
-        FROM
-            users
-        LEFT JOIN
-            user_sessionlog
-        ON
-            users.user_id = user_sessionlog.user_id
-        LEFT JOIN
-            user_sessions
-        ON
-            users.user_id = user_sessions.user_id
-        WHERE
-            users.user_observe IS NOT NULL
-        GROUP BY
-            users.user_id
-        ORDER BY
-            users.user_nick
-        ");
-    if (mysql_num_rows($res) > 0) {
+    $users = $userRepository->searchAdminView(UserSearch::create()->observed());
+    if (count($users) > 0) {
         echo "<table class=\"tb\">
             <tr>
                 <th style=\"width:150px;\">Nick</th>
@@ -215,26 +191,26 @@ else {
                 <th>Details</th>
                 <th style=\"width:200px;\">Optionen</th>
             </tr>";
-        while ($arr = mysql_fetch_array($res)) {
+        foreach ($users as $user) {
             echo "<tr>
-                    <td><a href=\"?page=$page&amp;sub=edit&amp;id=" . $arr['user_id'] . "\">" . $arr['user_nick'] . "</a></td>
-                    <td " . tm("Punkteverlauf", "<img src=\"../misc/stats.image.php?user=" . $arr['user_id'] . "\" alt=\"Diagramm\" style=\"width:600px;height:400px;\" />") . ">" . nf($arr['user_points']) . "</td>
-                    <td>" . stripslashes($arr['user_observe']) . "</td>";
-            if ($arr['time_action'])
+                    <td><a href=\"?page=$page&amp;sub=edit&amp;id=" . $user->id . "\">" . $user->nick . "</a></td>
+                    <td " . tm("Punkteverlauf", "<img src=\"../misc/stats.image.php?user=" . $user->id . "\" alt=\"Diagramm\" style=\"width:600px;height:400px;\" />") . ">" . nf($user->points) . "</td>
+                    <td>" . stripslashes($user->observe) . "</td>";
+            if ($user->timeAction > 0)
                 echo "<td class=\"tbldata\" style=\"color:#0f0;\">online</td>";
-            elseif ($arr['time_log'])
-                echo "<td class=\"tbldata\">" . date("d.m.Y H:i", $arr['time_log']) . "</td>";
+            elseif ($user->timeLog > 0)
+                echo "<td class=\"tbldata\">" . date("d.m.Y H:i", $user->timeLog) . "</td>";
             else
                 echo "<td class=\"tbldata\">Noch nicht eingeloggt!</td>";
 
             /** @var UserSurveillanceRepository $userSuveillanceRepository */
             $userSuveillanceRepository = $app[UserSurveillanceRepository::class];
-            $dnum = $userSuveillanceRepository->count(UserSurveillanceSearch::create()->userId($arr['user_id']));
+            $dnum = $userSuveillanceRepository->count(UserSurveillanceSearch::create()->userId($user->id));
             echo "<td>" . nf($dnum) . "</td>
                     <td>
-                        <a href=\"?page=$page&amp;sub=$sub&amp;surveillance=" . $arr['user_id'] . "\">Details</a>
-                        <a href=\"?page=$page&amp;sub=$sub&amp;text=" . $arr['user_id'] . "\">Text ändern</a>
-                        <a href=\"?page=$page&amp;sub=$sub&amp;del=" . $arr['user_id'] . "\">Entfernen</a>
+                        <a href=\"?page=$page&amp;sub=$sub&amp;surveillance=" . $user->id . "\">Details</a>
+                        <a href=\"?page=$page&amp;sub=$sub&amp;text=" . $user->id . "\">Text ändern</a>
+                        <a href=\"?page=$page&amp;sub=$sub&amp;del=" . $user->id . "\">Entfernen</a>
                     </td>
                 </tr>";
         }
