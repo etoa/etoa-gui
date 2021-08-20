@@ -1,8 +1,11 @@
 <?PHP
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Defense\DefenseDataRepository;
 use EtoA\Defense\DefenseRepository;
+use EtoA\Ship\ShipDataRepository;
 use EtoA\Ship\ShipRepository;
+use EtoA\Ship\ShipTransformRepository;
 use EtoA\UI\ResourceBoxDrawer;
 use EtoA\Universe\Planet\PlanetRepository;
 
@@ -19,6 +22,12 @@ $resourceBoxDrawer = $app[ResourceBoxDrawer::class];
 $shipRepository = $app[ShipRepository::class];
 /** @var DefenseRepository $defenseRepository */
 $defenseRepository = $app[DefenseRepository::class];
+/** @var ShipTransformRepository $shipTransformRepository */
+$shipTransformRepository = $app[ShipTransformRepository::class];
+/** @var DefenseDataRepository $defenseDataRepository */
+$defenseDataRepository = $app[DefenseDataRepository::class];
+/** @var ShipDataRepository $shipDataRepository */
+$shipDataRepository = $app[ShipDataRepository::class];
 
 if ($cp) {
     $planet = $planetRepo->find($cp->id);
@@ -31,40 +40,10 @@ if ($cp) {
         echo "Solange deine E-Mail Adresse nicht bestätigt ist, kannst du keine Flotten versenden!";
         iBoxEnd();
     } else {
-        // Count number of mobile defense structures
-        $ndarr = mysql_fetch_row(dbquery("
-        SELECT
-            COUNT(d.def_id)
-        FROM
-            defense d
-        INNER JOIN
-            obj_transforms t
-            ON t.def_id=d.def_id
-        INNER JOIN
-            deflist l
-            ON l.deflist_def_id=d.def_id
-            AND l.deflist_user_id=" . $cu->id . "
-            AND l.deflist_entity_id=" . $planet->id . "
-            AND l.deflist_count > 0"));
-        $nsarr = mysql_fetch_row(dbquery("
-        SELECT
-            COUNT(d.ship_id)
-        FROM
-            ships d
-        INNER JOIN
-            obj_transforms t
-            ON t.ship_id=d.ship_id
-        INNER JOIN
-            shiplist l
-            ON l.shiplist_ship_id=d.ship_id
-            AND l.shiplist_user_id=" . $cu->id . "
-            AND l.shiplist_entity_id=" . $planet->id . "
-            AND l.shiplist_count > 0"));
-
-        $numMobile = (int) $ndarr[0] + (int) $nsarr[0];
+        $hasMobileObjects = $shipTransformRepository->hasUserTransformableObjects($cu->getId(), $planet->id);
 
         $mode = isset($_GET['mode']) && ($_GET['mode'] != "") && ctype_alpha($_GET['mode']) ? $_GET['mode'] : 'launch';
-        if ($numMobile > 0) {
+        if ($hasMobileObjects) {
             show_tab_menu("mode", array(
                 "launch" => "Flotten versenden",
                 "transship" => "Mobile Anlagen umladen",
@@ -116,33 +95,19 @@ if ($cp) {
         // Mobile defenses
         //
         else if ($mode == "transship") {
-            if ($numMobile > 0) {
+            if ($hasMobileObjects) {
                 if (isset($_POST['dtransform_submit'])) {
                     $transformed_counter = 0;
                     if (isset($_POST['dtransform']) && count($_POST['dtransform']) > 0) {
                         foreach ($_POST['dtransform'] as $def_id => $v) {
-                            $res = dbquery("
-                                SELECT
-                                    l.deflist_count as cnt,
-                                    t.ship_id as id,
-                                    t.num_def
-                                FROM
-                                    deflist l
-                                INNER JOIN
-                                    obj_transforms t
-                                    ON t.def_id=l.deflist_def_id
-                                    AND l.deflist_user_id=" . $cu->id . "
-                                    AND l.deflist_entity_id=" . $planet->id . "
-                                    AND l.deflist_count > 0
-                                    AND l.deflist_def_id=" . intval($def_id) . "");
-                            if (mysql_num_rows($res)) {
-                                $arr = mysql_fetch_assoc($res);
-                                $packcount = intval(min(max(0, $v), $arr['cnt']));
+                            $mobileDefense = $shipTransformRepository->getDefense($cu->getId(), $planet->id, $def_id);
+                            if ($mobileDefense !== null) {
+                                $packcount = (int) min(max(0, $v), $mobileDefense->availableDefense);
 
                                 if ($packcount > 0) {
                                     $shipRepository->addShip(
-                                        (int) $arr['id'],
-                                        $defenseRepository->removeDefense((int) $def_id, $packcount, $cu->getId(), $planet->id),
+                                        $mobileDefense->shipId,
+                                        $defenseRepository->removeDefense($mobileDefense->defenseId, $packcount, $cu->getId(), $planet->id),
                                         $cu->getId(),
                                         $planet->id
                                     );
@@ -162,27 +127,13 @@ if ($cp) {
                     if (isset($_POST['stransform']) && count($_POST['stransform']) > 0) {
                         foreach ($_POST['stransform'] as $ship_id => $v) {
                             $ship_id = intval($ship_id);
-                            $res = dbquery("
-                                SELECT
-                                    l.shiplist_count as cnt,
-                                    t.def_id as id,
-                                    t.num_def
-                                FROM
-                                    shiplist l
-                                INNER JOIN
-                                    obj_transforms t
-                                    ON t.ship_id=l.shiplist_ship_id
-                                    AND l.shiplist_user_id=" . $cu->id . "
-                                    AND l.shiplist_entity_id=" . $planet->id . "
-                                    AND l.shiplist_count > 0
-                                    AND l.shiplist_ship_id=" . $ship_id . "");
-                            if (mysql_num_rows($res)) {
-                                $arr = mysql_fetch_assoc($res);
-                                $packcount = intval(min(max(0, $v), $arr['cnt']));
+                            $mobileDefense = $shipTransformRepository->getShip($cu->getId(), $planet->id, $ship_id);
+                            if ($mobileDefense !== null) {
+                                $packcount = (int) min(max(0, $v), $mobileDefense->availableShips);
                                 if ($packcount > 0) {
                                     $defenseRepository->addDefense(
-                                        (int)$arr['id'],
-                                        $shipRepository->removeShips($ship_id, $packcount, $cu->getId(), $planet->id),
+                                        $mobileDefense->defenseId,
+                                        $shipRepository->removeShips($mobileDefense->shipId, $packcount, $cu->getId(), $planet->id),
                                         $cu->getId(),
                                         $planet->id
                                     );
@@ -197,59 +148,30 @@ if ($cp) {
                     }
                 }
 
-                $has_mobile_objects = false;
-                $otres = dbquery("
-                    SELECT
-                        d.def_id as id,
-                        d.def_name as name,
-                        l.deflist_count as cnt
-                    FROM
-                        defense d
-                    INNER JOIN
-                        obj_transforms t
-                        ON t.def_id=d.def_id
-                    INNER JOIN
-                        deflist l
-                        ON l.deflist_def_id=d.def_id
-                        AND l.deflist_user_id=" . $cu->id . "
-                        AND l.deflist_entity_id=" . $planet->id . "
-                        AND l.deflist_count > 0");
-                if (mysql_num_rows($otres) > 0) {
+                $mobileDefenses = $shipTransformRepository->getDefenses($cu->getId(), $planet->id);
+                if (count($mobileDefenses) > 0) {
+                    $defenseNames = $defenseDataRepository->getDefenseNames(true);
                     echo "<form action=\"?page=$page&mode=$mode\" method=\"post\">";
                     tableStart("Verteidigungsanlagen auf Träger verladen");
                     echo "<tr><th>Typ</th><th>Anzahl</th></tr>";
-                    while ($otarr = mysql_fetch_assoc($otres)) {
-                        echo "<tr><td>" . $otarr['name'] . "</td>
-                            <td><input type=\"text\" name=\"dtransform[" . $otarr['id'] . "]\" value=\"" . $otarr['cnt'] . "\" size=\"7\" /></td></tr>";
+                    foreach ($mobileDefenses as $mobileDefense) {
+                        echo "<tr><td>" . $defenseNames[$mobileDefense->defenseId] . "</td>
+                            <td><input type=\"text\" name=\"dtransform[" . $mobileDefense->defenseId . "]\" value=\"" . $mobileDefense->availableDefense . "\" size=\"7\" /></td></tr>";
                     }
 
                     tableEnd();
                     echo "<input type=\"submit\" name=\"dtransform_submit\" value=\"Verladen\" /></form><br/>";
                 }
 
-                $otres = dbquery("
-                    SELECT
-                        d.ship_id as id,
-                        d.ship_name as name,
-                        l.shiplist_count as cnt
-                    FROM
-                        ships d
-                    INNER JOIN
-                        obj_transforms t
-                        ON t.ship_id=d.ship_id
-                    INNER JOIN
-                        shiplist l
-                        ON l.shiplist_ship_id=d.ship_id
-                        AND l.shiplist_user_id=" . $cu->id . "
-                        AND l.shiplist_entity_id=" . $planet->id . "
-                        AND l.shiplist_count > 0");
-                if (mysql_num_rows($otres) > 0) {
+                $mobileDefenses = $shipTransformRepository->getShips($cu->getId(), $planet->id);
+                if (count($mobileDefenses) > 0) {
+                    $shipNames = $shipDataRepository->getShipNames(true);
                     echo "<form action=\"?page=$page&mode=$mode\" method=\"post\">";
                     tableStart("Mobile Verteidigung installieren");
                     echo "<tr><th>Typ</th><th>Anzahl</th></tr>";
-                    while ($otarr = mysql_fetch_assoc($otres)) {
-                        echo "<tr><td>" . $otarr['name'] . "</td>
-                            <td><input type=\"text\" name=\"stransform[" . $otarr['id'] . "]\" value=\"" . $otarr['cnt'] . "\" size=\"7\" /></td></tr>";
+                    foreach ($mobileDefenses as $mobileDefense) {
+                        echo "<tr><td>" . $shipNames[$mobileDefense->shipId] . "</td>
+                            <td><input type=\"text\" name=\"stransform[" . $mobileDefense->shipId . "]\" value=\"" . $mobileDefense->availableShips . "\" size=\"7\" /></td></tr>";
                     }
 
                     tableEnd();
