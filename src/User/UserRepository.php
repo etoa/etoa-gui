@@ -275,6 +275,49 @@ class UserRepository extends AbstractRepository
         return $this->findUser(UserSearch::create()->user($userId));
     }
 
+    /**
+     * @return UserAdminView[]
+     */
+    public function searchAdminView(UserSearch $search): array
+    {
+        $where = implode(' AND ', $search->parts);
+        $data = $this->getConnection()->fetchAllAssociative('SELECT
+                users.*,
+                user_sessionlog.time_action AS time_log,
+                user_sessionlog.ip_addr AS ip_log,
+                user_sessionlog.user_agent AS agent_log,
+                user_sessions.time_action,
+                user_sessions.user_agent,
+                user_sessions.ip_addr
+            FROM users
+            LEFT JOIN user_sessionlog ON users.user_id = user_sessionlog.user_id AND user_sessionlog.time_action = (SELECT MAX(time_action) FROM user_sessionlog WHERE user_sessionlog.user_id = users.user_id)
+            LEFT JOIN user_sessions ON users.user_id = user_sessions.user_id
+            WHERE ' . $where . '
+            ORDER BY users.user_nick', $search->parameters);
+
+        return array_map(fn ($row) => new UserAdminView($row), $data);
+    }
+
+    public function getUserAdminView(int $userId): ?UserAdminView
+    {
+        $data = $this->getConnection()->fetchAssociative('SELECT
+                users.*,
+                user_sessionlog.time_action AS time_log,
+                user_sessionlog.ip_addr AS ip_log,
+                user_sessionlog.user_agent AS agent_log,
+                user_sessions.time_action,
+                user_sessions.user_agent,
+                user_sessions.ip_addr
+            FROM users
+            LEFT JOIN user_sessionlog ON users.user_id = user_sessionlog.user_id
+            LEFT JOIN user_sessions ON users.user_id = user_sessions.user_id
+            WHERE users.user_id = :userId
+            ORDER BY user_sessionlog.time_action DESC
+            LIMIT 1', ['userId' => $userId]);
+
+        return $data !== false ? new UserAdminView($data) : null;
+    }
+
     public function getUserByNick(string $nick): ?User
     {
         return $this->findUser(UserSearch::create()->nick($nick));
@@ -402,6 +445,25 @@ class UserRepository extends AbstractRepository
             ->fetchAllKeyValue();
     }
 
+    public function blockUser(int $userId, int $from, int $to, string $reason, int $adminId): void
+    {
+        $this->createQueryBuilder()
+            ->update('users')
+            ->set('user_blocked_from', ':from')
+            ->set('user_blocked_to', ':to')
+            ->set('user_ban_reason', ':reason')
+            ->set('user_ban_admin_id', ':adminId')
+            ->where('user_id = :userId')
+            ->setParameters([
+                'from' => $from,
+                'to' => $to,
+                'reason' => $reason,
+                'adminId' => $adminId,
+                'userId' => $userId,
+            ])
+            ->execute();
+    }
+
     public function removeOldBans(): void
     {
         $this->getConnection()->executeQuery("
@@ -417,6 +479,26 @@ class UserRepository extends AbstractRepository
         ", [
             'blockedBefore' => time(),
         ]);
+    }
+
+    public function updateImgCheck(int $userId, bool $check, string $image = null): bool
+    {
+        $qb = $this->createQueryBuilder()
+            ->update('users')
+            ->set('user_profile_img_check', ':check')
+            ->where('user_id = :userId')
+            ->setParameters([
+                'check' => (int) $check,
+                'userId' => $userId,
+            ]);
+
+        if ($image !== null) {
+            $qb
+                ->set('user_profile_img', ':image')
+                ->setParameter('image', $image);
+        }
+
+        return (bool) $qb->execute();
     }
 
     public function addSittingDays(int $days): void
@@ -569,6 +651,85 @@ class UserRepository extends AbstractRepository
             ->where('user_id = :userId')
             ->setParameters([
                 'userId' => $userId,
+            ])
+            ->execute();
+    }
+
+    public function save(User $user): void
+    {
+        $this->createQueryBuilder()
+            ->update('users')
+            ->set('user_name', ':name')
+            ->set('npc', ':npc')
+            ->set('user_nick', ':nick')
+            ->set('user_email', ':email')
+            ->set('user_password_temp', ':passwordTemp')
+            ->set('user_email_fix', ':emailFix')
+            ->set('dual_name', ':dualName')
+            ->set('dual_email', ':dualEmail')
+            ->set('user_race_id', ':raceId')
+            ->set('user_alliance_id', ':allianceId')
+            ->set('user_profile_text', ':profileText')
+            ->set('user_signature', ':signature')
+            ->set('user_multi_delets', ':multiDelets')
+            ->set('user_sitting_days', ':sittingDays')
+            ->set('user_chatadmin', ':chatAdmin')
+            ->set('admin', ':admin')
+            ->set('user_ghost', ':ghost')
+            ->set('user_changed_main_planet', ':userChangedMainPlanet')
+            ->set('user_profile_board_url', ':profileBoardUrl')
+            ->set('user_alliace_shippoints', ':allianceShipPoints')
+            ->set('user_alliace_shippoints_used', ':allianceShipPointsUsed')
+            ->set('user_alliance_rank_id', ':allianceRankId')
+            ->set('user_profile_img_check', ':profileImageCheck')
+            ->set('user_specialist_time', ':specialistTime')
+            ->set('user_specialist_id', ':specialistId')
+            ->set('user_profile_img', ':profileImage')
+            ->set('user_avatar', ':avatar')
+            ->set('user_password', ':password')
+            ->set('user_blocked_from', ':blockedFrom')
+            ->set('user_blocked_to', ':blockedTo')
+            ->set('user_ban_admin_id', ':banAdminId')
+            ->set('user_ban_reason', ':banReason')
+            ->set('user_hmode_from', ':hmodFrom')
+            ->set('user_hmode_to', ':hmodTo')
+            ->where('user_id = :userId')
+            ->setParameters([
+                'userId' => $user->id,
+                'name' => $user->name,
+                'npc' => $user->npc,
+                'nick' => $user->nick,
+                'email' => $user->email,
+                'passwordTemp' => $user->passwordTemp,
+                'emailFix' => $user->emailFix,
+                'dualName' => $user->dualName,
+                'dualEmail' => $user->dualEmail,
+                'raceId' => $user->raceId,
+                'allianceId' => $user->allianceId,
+                'profileText' => $user->profileText,
+                'signature' => $user->signature,
+                'multiDelets' => $user->multiDelets,
+                'sittingDays' => $user->sittingDays,
+                'chatAdmin' => $user->chatAdmin,
+                'admin' => $user->admin,
+                'ghost' => (int) $user->ghost,
+                'userChangedMainPlanet' => (int) $user->userChangedMainPlanet,
+                'profileBoardUrl' => $user->profileBoardUrl,
+                'allianceShipPoints' => $user->allianceShipPoints,
+                'allianceShipPointsUsed' => $user->allianceShipPointsUsed,
+                'allianceRankId' => $user->allianceRankId,
+                'profileImageCheck' => (int) $user->profileImageCheck,
+                'specialistTime' => $user->specialistTime,
+                'specialistId' => $user->specialistId,
+                'profileImage' => $user->profileImage,
+                'avatar' => $user->avatar,
+                'password' => $user->password,
+                'blockedFrom' => $user->blockedFrom,
+                'blockedTo' => $user->blockedTo,
+                'banAdminId' => $user->banAdminId,
+                'banReason' => $user->banReason,
+                'hmodFrom' => $user->hmodFrom,
+                'hmodTo' => $user->hmodTo,
             ])
             ->execute();
     }

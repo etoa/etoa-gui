@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace EtoA\Universe\Entity;
 
+use Doctrine\DBAL\Query\QueryBuilder;
 use EtoA\Core\AbstractRepository;
+use EtoA\Core\Database\AbstractSort;
 
 class EntityRepository extends AbstractRepository
 {
@@ -44,19 +46,7 @@ class EntityRepository extends AbstractRepository
 
     public function getEntity(int $id): ?Entity
     {
-        $data = $this->createQueryBuilder()
-            ->select(
-                'e.id',
-                'c.id as cid',
-                'code',
-                'pos',
-                'sx',
-                'sy',
-                'cx',
-                'cy'
-            )
-            ->from('entities', 'e')
-            ->innerJoin('e', 'cells', 'c', 'e.cell_id = c.id')
+        $data = $this->getEntityCoordinatesQueryBuilder()
             ->where('e.id = :id')
             ->setParameters(['id' => $id])
             ->execute()
@@ -75,19 +65,7 @@ class EntityRepository extends AbstractRepository
             return [];
         }
 
-        $data = $this->createQueryBuilder()
-            ->select(
-                'e.id',
-                'c.id as cid',
-                'code',
-                'pos',
-                'sx',
-                'sy',
-                'cx',
-                'cy'
-            )
-            ->from('entities', 'e')
-            ->innerJoin('e', 'cells', 'c', 'e.cell_id = c.id')
+        $data = $this->getEntityCoordinatesQueryBuilder()
             ->where('code IN (' . implode(',', array_fill(0, count($codes), '?')) . ')')
             ->andWhere('pos = 0')
             ->orderBy('RAND()')
@@ -101,19 +79,7 @@ class EntityRepository extends AbstractRepository
 
     public function findIncludeCell(int $id): ?Entity
     {
-        $data = $this->createQueryBuilder()
-            ->select(
-                'e.id',
-                'c.id as cid',
-                'code',
-                'pos',
-                'sx',
-                'sy',
-                'cx',
-                'cy'
-            )
-            ->from('entities', 'e')
-            ->innerJoin('e', 'cells', 'c', 'e.cell_id = c.id')
+        $data = $this->getEntityCoordinatesQueryBuilder()
             ->where('e.id = :id')
             ->setParameters([
                 'id' => $id,
@@ -126,19 +92,7 @@ class EntityRepository extends AbstractRepository
 
     public function findByCellAndPosition(int $cellId, int $position): ?Entity
     {
-        $data = $this->createQueryBuilder()
-            ->select(
-                'e.id',
-                'c.id as cid',
-                'code',
-                'pos',
-                'sx',
-                'sy',
-                'cx',
-                'cy'
-            )
-            ->from('entities', 'e')
-            ->innerJoin('e', 'cells', 'c', 'e.cell_id = c.id')
+        $data = $this->getEntityCoordinatesQueryBuilder()
             ->where('e.cell_id = :cellId')
             ->andWhere('e.pos = :position')
             ->setParameters([
@@ -153,19 +107,7 @@ class EntityRepository extends AbstractRepository
 
     public function findByCoordinates(EntityCoordinates $coordinates): ?Entity
     {
-        $data = $this->createQueryBuilder()
-            ->select(
-                'e.id',
-                'c.id as cid',
-                'code',
-                'pos',
-                'sx',
-                'sy',
-                'cx',
-                'cy'
-            )
-            ->from('entities', 'e')
-            ->innerJoin('e', 'cells', 'c', 'e.cell_id = c.id')
+        $data = $this->getEntityCoordinatesQueryBuilder()
             ->where('c.sx = :sx')
             ->andWhere('c.sy = :sy')
             ->andWhere('c.cx = :cx')
@@ -189,19 +131,7 @@ class EntityRepository extends AbstractRepository
      */
     public function searchEntities(EntitySearch $search): array
     {
-        $data = $this->applySearchSortLimit($this->createQueryBuilder(), $search)
-            ->select(
-                'e.id',
-                'c.id as cid',
-                'code',
-                'pos',
-                'sx',
-                'sy',
-                'cx',
-                'cy'
-            )
-            ->from('entities', 'e')
-            ->innerJoin('e', 'cells', 'c', 'e.cell_id = c.id')
+        $data = $this->getEntityCoordinatesQueryBuilder($search)
             ->execute()
             ->fetchAllAssociative();
 
@@ -270,5 +200,51 @@ class EntityRepository extends AbstractRepository
             ->from('entities')
             ->execute()
             ->fetchOne();
+    }
+
+    /**
+     * @return EntityLabel[]
+     */
+    public function searchEntityLabels(EntityLabelSearch $search, EntityLabelSort $sort = null, int $limit = null): array
+    {
+        $data = $this->getEntityCoordinatesQueryBuilder($search, $sort, $limit)
+            ->addSelect('planets.planet_name, planets.planet_user_main, planets.planet_type_id as planet_type')
+            ->addSelect('stars.name as star_name, stars.type_id as star_type')
+            ->addSelect('users.user_nick, users.user_id')
+            ->leftJoin('e', 'planets', 'planets', 'e.id = planets.id')
+            ->leftJoin('planets', 'users', 'users', 'users.user_id = planets.planet_user_id')
+            ->leftJoin('e', 'stars', 'stars', 'e.id = stars.id')
+            ->execute()
+            ->fetchAllAssociative();
+
+        return array_map(fn (array $row) => new EntityLabel($row), $data);
+    }
+
+    public function countEntityLabels(EntityLabelSearch $search = null): int
+    {
+        return (int) $this->getEntityCoordinatesQueryBuilder($search)
+            ->select('COUNT(*)')
+            ->leftJoin('e', 'planets', 'planets', 'e.id = planets.id')
+            ->leftJoin('planets', 'users', 'users', 'users.user_id = planets.planet_user_id')
+            ->leftJoin('e', 'stars', 'stars', 'e.id = stars.id')
+            ->execute()
+            ->fetchOne();
+    }
+
+    private function getEntityCoordinatesQueryBuilder(EntitySearch $search = null, AbstractSort $sort = null, int $limit = null): QueryBuilder
+    {
+        return $this->applySearchSortLimit($this->createQueryBuilder(), $search, $sort, $limit)
+            ->select(
+                'e.id',
+                'c.id as cid',
+                'code',
+                'pos',
+                'sx',
+                'sy',
+                'cx',
+                'cy'
+            )
+            ->from('entities', 'e')
+            ->innerJoin('e', 'cells', 'c', 'e.cell_id = c.id');
     }
 }

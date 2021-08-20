@@ -217,30 +217,9 @@ function showShipsOnPlanet($form)
         $out .= "<br/><input type=\"Button\" value=\"Neu laden\" onclick=\"showLoader('shipsOnPlanet');xajax_showShipsOnPlanet('" . $form . "');\">";
         $style = '';
     } elseif ($uid != 0) {
-        $res = dbquery("
-        SELECT
-            ship_points,
-            ship_name,
-            SUM(shiplist_count) AS cnt,
-            SUM(shiplist_bunkered) AS bunkered,
-            ship_id,
-            special_ship_need_exp as ship_xp_base,
-            special_ship_exp_factor as ship_xp_factor,
-            shiplist_special_ship_exp as shiplist_xp
-        FROM
-            shiplist
-        INNER JOIN
-            ships
-            ON shiplist_ship_id=ship_id
-            AND shiplist_user_id='" . $uid . "'
-            AND shiplist_count>0
-        GROUP BY
-            ship_id
-        ORDER BY
-            ship_name
-        ;");
-
-        if (mysql_num_rows($res) > 0) {
+        $counts = $shipRepository->getUserShipCounts((int) $uid);
+        $ships = array_intersect_key($shipDataRepository->getAllShips(true), $counts);
+        if (count($ships) > 0) {
             $out = "<table class=\"tb\">
             <tr><th>Anzahl</th>
             <th>Bunker</th>
@@ -249,21 +228,22 @@ function showShipsOnPlanet($form)
             <th>Spezielles</th>
             <th>Aktionen</th></tr>";
             $points = 0;
-            while ($arr = mysql_fetch_array($res)) {
-                $points += $arr['ship_points'] * ($arr['cnt'] + $arr['bunkered']);
-                $out .= "<tr id=\"data_" . $arr['ship_id'] . "\"><td style=\"width:80px\" id=\"cnt_" . $arr['ship_id'] . "\">" . $arr['cnt'] . "</td>
-                <td style=\"width:80px\" id=\"bunkered_" . $arr['ship_id'] . "\">" . $arr['bunkered'] . "</td>
-                <td>" . $arr['ship_name'] . "</td>
-                <td>" . ($arr['ship_points'] * $arr['cnt']) . "</td>
-                <td id=\"special_" . $arr['ship_id'] . "\">";
-                if ($arr['ship_xp_base'] > 0) {
-                    $out .= nf($arr['shiplist_xp']) . " XP, Level " . Ship::levelByXp($arr['ship_xp_base'], $arr['ship_xp_factor'], $arr['shiplist_xp']);
+            foreach ($ships as $ship) {
+                $count = $counts[$ship->id];
+                $points += $ship->points * $count->sum();
+                $out .= "<tr id=\"data_" . $ship->id . "\"><td style=\"width:80px\" id=\"cnt_" . $ship->id . "\">" . $count->count . "</td>
+                <td style=\"width:80px\" id=\"bunkered_" . $ship->id . "\">" . $count->bunkered . "</td>
+                <td>" . $ship->name . "</td>
+                <td>" . ($ship->points * $count->count) . "</td>
+                <td id=\"special_" . $ship->id . "\">";
+                if ($ship->specialNeedExp > 0) {
+                    $out .= nf($count->exp) . " XP, Level " . Ship::levelByXp($ship->specialNeedExp, $ship->specialExpFactor, $count->exp);
                 }
                 $out .= "
-                <td style=\"width:180px\" id=\"actions_" . $arr['ship_id'] . "\" id=\"actions_" . $arr['ship_id'] . "\">
-                <input type=\"button\" value=\"Bearbeiten\" onclick=\"xajax_editShipByShipId(xajax.getFormValues('selector')," . $arr['ship_id'] . ")\" />
+                <td style=\"width:180px\" id=\"actions_" . $ship->id . "\" id=\"actions_" . $ship->id . "\">
+                <input type=\"button\" value=\"Bearbeiten\" onclick=\"xajax_editShipByShipId(xajax.getFormValues('selector')," . $ship->id . ")\" />
                 </td></tr>
-                <tr><td colspan=\"6\" id=\"edit_" . $arr['ship_id'] . "\" style=\"display:none;\"></td></tr>";
+                <tr><td colspan=\"6\" id=\"edit_" . $ship->id . "\" style=\"display:none;\"></td></tr>";
             }
             $out .= "<tr><td colspan=\"3\"></td><td><b>" . nf($points) . "</b></td><td colspan=\"2\"></td></tr>";
             $out .= "</table>";
@@ -319,74 +299,54 @@ function removeShipFromPlanet($form, $listId)
 
 function editShipByListId($form, $listId)
 {
+    global $app;
+
+    /** @var ShipRepository $shipRepository */
+    $shipRepository = $app[ShipRepository::class];
+    /** @var ShipDataRepository $shipDataRepository */
+    $shipDataRepository = $app[ShipDataRepository::class];
+
     $objResponse = new xajaxResponse();
 
     $updata = explode(":", $form['entity_id']);
 
-    $res = dbquery("
-        SELECT
-            shiplist_count,
-            shiplist_bunkered,
-            shiplist_id,
-            special_ship_need_exp as ship_xp_base,
-            special_ship_exp_factor as ship_xp_factor,
-            shiplist_special_ship_exp as shiplist_xp,
-            shiplist_special_ship_bonus_weapon,
-            shiplist_special_ship_bonus_structure,
-            shiplist_special_ship_bonus_shield,
-            shiplist_special_ship_bonus_heal,
-            shiplist_special_ship_bonus_capacity,
-            shiplist_special_ship_bonus_speed,
-            shiplist_special_ship_bonus_readiness,
-            shiplist_special_ship_bonus_pilots,
-            shiplist_special_ship_bonus_tarn,
-            shiplist_special_ship_bonus_antrax,
-            shiplist_special_ship_bonus_forsteal,
-            shiplist_special_ship_bonus_build_destroy,
-            shiplist_special_ship_bonus_antrax_food,
-            shiplist_special_ship_bonus_deactivade
-        FROM
-            shiplist
-        INNER JOIN
-            ships
-            ON shiplist_ship_id=ship_id
-        AND
-            shiplist_entity_id=" . $updata[0] . "
-        ;");
+    $shipList = $shipRepository->findForUser((int) $updata[1], (int) $updata[0]);
+    if (count($shipList) > 0) {
+        $ships = $shipDataRepository->getAllShips(true);
+        foreach ($shipList as $item) {
+            $ship = $ships[$item->shipId];
 
-    if (mysql_num_rows($res)) {
-        while ($arr = mysql_fetch_array($res)) {
-            if ($arr['shiplist_id'] == $listId) {
-                $out = "<input type=\"text\" size=\"9\" maxlength=\"12\" name=\"editcnt_" . $listId . "\" value=\"" . $arr['shiplist_count'] . "\" />";
+            if ($item->id == $listId) {
+                $out = "<input type=\"text\" size=\"9\" maxlength=\"12\" name=\"editcnt_" . $item->id . "\" value=\"" . $item->count . "\" />";
                 $objResponse->assign("cnt_" . $listId, "innerHTML", $out);
-                $out = "<input type=\"text\" size=\"9\" maxlength=\"12\" name=\"editbunkered_" . $listId . "\" value=\"" . $arr['shiplist_bunkered'] . "\" />";
-                $objResponse->assign("bunkered_" . $listId, "innerHTML", $out);
-                if ($arr['ship_xp_base'] > 0) {
-                    $out = "<input type=\"hidden\" name=\"ship_special_" . $listId . "\" value=\"1\"><input type=\"text\" size=\"9\" maxlength=\"12\" name=\"editxp_" . $listId . "\" value=\"" . $arr['shiplist_xp'] . "\" onkeyup=\"xajax_calcShipLevel(" . $listId . "," . $arr['ship_xp_base'] . "," . $arr['ship_xp_factor'] . ",this.value);\" /> XP,
-                    Level <b><span id=\"editlevel_" . $listId . "\">" . Ship::levelByXp($arr['ship_xp_base'], $arr['ship_xp_factor'], $arr['shiplist_xp']) . "</span></b><br/>
+                $out = "<input type=\"text\" size=\"9\" maxlength=\"12\" name=\"editbunkered_" . $item->id . "\" value=\"" . $item->bunkered . "\" />";
+                $objResponse->assign("bunkered_" . $item->id, "innerHTML", $out);
+                if ($ship->specialNeedExp > 0) {
+                    $out = "<input type=\"hidden\" name=\"ship_special_" . $item->id . "\" value=\"1\"><input type=\"text\" size=\"9\" maxlength=\"12\" name=\"editxp_" . $item->id . "\" value=\"" . $item->specialShipExp . "\" onkeyup=\"xajax_calcShipLevel(" . $item->id . "," . $ship->specialNeedExp . "," . $ship->specialExpFactor . ",this.value);\" /> XP,
+                    Level <b><span id=\"editlevel_" . $item->id . "\">" . Ship::levelByXp($ship->specialNeedExp, $ship->specialExpFactor, $item->specialShipExp) . "</span></b><br/>
 
-                    <b>Waffenlevel:</b> <input type=\"text\" name=\"edit_bonus_weapon_" . $listId . "\" value=\"" . $arr['shiplist_special_ship_bonus_weapon'] . "\" size=\"5\" maxlength=\"20\" /><br/>
-                    <b>Strukturlevel:</b> <input type=\"text\" name=\"edit_bonus_structure_" . $listId . "\" value=\"" . $arr['shiplist_special_ship_bonus_structure'] . "\" size=\"5\" maxlength=\"20\" /><br/>
-                    <b>Schildlevel:</b> <input type=\"text\" name=\"edit_bonus_shield_" . $listId . "\" value=\"" . $arr['shiplist_special_ship_bonus_shield'] . "\" size=\"5\" maxlength=\"20\" /><br/>
-                    <b>Heallevel:</b> <input type=\"text\" name=\"edit_bonus_heal_" . $listId . "\" value=\"" . $arr['shiplist_special_ship_bonus_heal'] . "\" size=\"5\" maxlength=\"20\" /><br/>
-                    <b>Kapazit&auml;tlevel:</b> <input type=\"text\" name=\"edit_bonus_capacity_" . $listId . "\" value=\"" . $arr['shiplist_special_ship_bonus_capacity'] . "\" size=\"5\" maxlength=\"20\" /><br/>
-                    <b>Speedlevel:</b> <input type=\"text\" name=\"edit_bonus_speed_" . $listId . "\" value=\"" . $arr['shiplist_special_ship_bonus_speed'] . "\" size=\"5\" maxlength=\"20\" /><br/>
-                    <b>Bereitschaftslevel:</b> <input type=\"text\" name=\"edit_bonus_readiness_" . $listId . "\" value=\"" . $arr['shiplist_special_ship_bonus_readiness'] . "\" size=\"5\" maxlength=\"20\" /><br/>
-                    <b>Besatzungslevel:</b> <input type=\"text\" name=\"edit_bonus_pilots_" . $listId . "\" value=\"" . $arr['shiplist_special_ship_bonus_pilots'] . "\" size=\"5\" maxlength=\"20\" /><br/>
-                    <b>Tarnungslevel:</b> <input type=\"text\" name=\"edit_bonus_tarn_" . $listId . "\" value=\"" . $arr['shiplist_special_ship_bonus_tarn'] . "\" size=\"5\" maxlength=\"20\" /><br/>
-                    <b>Giftgaslevel:</b> <input type=\"text\" name=\"edit_bonus_antrax_" . $listId . "\" value=\"" . $arr['shiplist_special_ship_bonus_antrax'] . "\" size=\"5\" maxlength=\"20\" /><br/>
-                    <b>Techklaulevel:</b> <input type=\"text\" name=\"edit_bonus_forsteal_" . $listId . "\" value=\"" . $arr['shiplist_special_ship_bonus_forsteal'] . "\" size=\"5\" maxlength=\"20\" /><br/>
-                    <b>Bombardierlevel:</b> <input type=\"text\" name=\"edit_bonus_build_destroy_" . $listId . "\" value=\"" . $arr['shiplist_special_ship_bonus_build_destroy'] . "\" size=\"5\" maxlength=\"20\" /><br/>
-                    <b>Antraxlevel:</b> <input type=\"text\" name=\"edit_bonus_antrax_food_" . $listId . "\" value=\"" . $arr['shiplist_special_ship_bonus_antrax_food'] . "\" size=\"5\" maxlength=\"20\" /><br/>
-                    <b>Deaktivierlevel:</b> <input type=\"text\" name=\"edit_bonus_deactivade_" . $listId . "\" value=\"" . $arr['shiplist_special_ship_bonus_deactivade'] . "\" size=\"5\" maxlength=\"20\" />";
+                    <b>Waffenlevel:</b> <input type=\"text\" name=\"edit_bonus_weapon_" . $item->id . "\" value=\"" . $item->specialShipBonusWeapon . "\" size=\"5\" maxlength=\"20\" /><br/>
+                    <b>Strukturlevel:</b> <input type=\"text\" name=\"edit_bonus_structure_" . $item->id . "\" value=\"" . $item->specialShipBonusStructure . "\" size=\"5\" maxlength=\"20\" /><br/>
+                    <b>Schildlevel:</b> <input type=\"text\" name=\"edit_bonus_shield_" . $item->id . "\" value=\"" . $item->specialShipBonusShield . "\" size=\"5\" maxlength=\"20\" /><br/>
+                    <b>Heallevel:</b> <input type=\"text\" name=\"edit_bonus_heal_" . $item->id . "\" value=\"" . $item->specialShipBonusHeal . "\" size=\"5\" maxlength=\"20\" /><br/>
+                    <b>Kapazit&auml;tlevel:</b> <input type=\"text\" name=\"edit_bonus_capacity_" . $item->id . "\" value=\"" . $item->specialShipBonusCapacity . "\" size=\"5\" maxlength=\"20\" /><br/>
+                    <b>Speedlevel:</b> <input type=\"text\" name=\"edit_bonus_speed_" . $item->id . "\" value=\"" . $item->specialShipBonusSpeed . "\" size=\"5\" maxlength=\"20\" /><br/>
+                    <b>Bereitschaftslevel:</b> <input type=\"text\" name=\"edit_bonus_readiness_" . $item->id . "\" value=\"" . $item->specialShipBonusReadiness . "\" size=\"5\" maxlength=\"20\" /><br/>
+                    <b>Besatzungslevel:</b> <input type=\"text\" name=\"edit_bonus_pilots_" . $item->id . "\" value=\"" . $item->specialShipBonusPilots . "\" size=\"5\" maxlength=\"20\" /><br/>
+                    <b>Tarnungslevel:</b> <input type=\"text\" name=\"edit_bonus_tarn_" . $item->id . "\" value=\"" . $item->specialShipBonusTarn . "\" size=\"5\" maxlength=\"20\" /><br/>
+                    <b>Giftgaslevel:</b> <input type=\"text\" name=\"edit_bonus_antrax_" . $item->id . "\" value=\"" . $item->specialShipBonusAnthrax . "\" size=\"5\" maxlength=\"20\" /><br/>
+                    <b>Techklaulevel:</b> <input type=\"text\" name=\"edit_bonus_forsteal_" . $item->id . "\" value=\"" . $item->specialShipBonusForSteal . "\" size=\"5\" maxlength=\"20\" /><br/>
+                    <b>Bombardierlevel:</b> <input type=\"text\" name=\"edit_bonus_build_destroy_" . $item->id . "\" value=\"" . $item->specialShipBonusBuildDestroy . "\" size=\"5\" maxlength=\"20\" /><br/>
+                    <b>Antraxlevel:</b> <input type=\"text\" name=\"edit_bonus_antrax_food_" . $item->id . "\" value=\"" . $item->specialShipBonusAnthraxFood . "\" size=\"5\" maxlength=\"20\" /><br/>
+                    <b>Deaktivierlevel:</b> <input type=\"text\" name=\"edit_bonus_deactivade_" . $item->id . "\" value=\"" . $item->specialShipBonusDeactivate . "\" size=\"5\" maxlength=\"20\" />";
                 } else
                     $out = "";
                 $objResponse->assign("special_" . $listId, "innerHTML", $out);
-                $out = "<input type=\"button\" value=\"Speichern\" onclick=\"showLoader('actions_" . $listId . "');xajax_submitEditShip(xajax.getFormValues('selector')," . $listId . ");\" /> ";
+                $out = "<input type=\"button\" value=\"Speichern\" onclick=\"showLoader('actions_" . $item->id . "');xajax_submitEditShip(xajax.getFormValues('selector')," . $item->id . ");\" /> ";
                 $out .= "<input type=\"button\" value=\"Abbrechen\" onclick=\"showLoader('shipsOnPlanet');xajax_showShipsOnPlanet('" . $form['entity_id'] . "');\" />";
                 $objResponse->assign("actions_" . $listId, "innerHTML", $out);
             } else {
-                $objResponse->assign("actions_" . $arr['shiplist_id'], "innerHTML", "");
+                $objResponse->assign("actions_" . $item->id, "innerHTML", "");
             }
         }
     }
@@ -396,88 +356,59 @@ function editShipByListId($form, $listId)
 
 function editShipByShipId($form, $shipId)
 {
+    global $app;
+
+    /** @var ShipRepository $shipRepository */
+    $shipRepository = $app[ShipRepository::class];
+    /** @var ShipDataRepository $shipDataRepostiroy */
+    $shipDataRepostiroy = $app[ShipDataRepository::class];
+
     $objResponse = new xajaxResponse();
 
     $updata = explode(":", $form['entity_id']);
 
-    $res = dbquery("
-        SELECT
-            shiplist_count,
-            shiplist_bunkered,
-            shiplist_id,
-            ship_id,
-            ship_name,
-            ship_points,
-            shiplist_entity_id,
-            special_ship_need_exp as ship_xp_base,
-            special_ship_exp_factor as ship_xp_factor,
-            shiplist_special_ship_exp as shiplist_xp,
-            shiplist_special_ship_bonus_weapon,
-            shiplist_special_ship_bonus_structure,
-            shiplist_special_ship_bonus_shield,
-            shiplist_special_ship_bonus_heal,
-            shiplist_special_ship_bonus_capacity,
-            shiplist_special_ship_bonus_speed,
-            shiplist_special_ship_bonus_readiness,
-            shiplist_special_ship_bonus_pilots,
-            shiplist_special_ship_bonus_tarn,
-            shiplist_special_ship_bonus_antrax,
-            shiplist_special_ship_bonus_forsteal,
-            shiplist_special_ship_bonus_build_destroy,
-            shiplist_special_ship_bonus_antrax_food,
-            shiplist_special_ship_bonus_deactivade
-        FROM
-            shiplist
-        INNER JOIN
-            ships
-            ON shiplist_ship_id=ship_id
-        AND
-            shiplist_user_id=" . $updata[1] . "
-        AND
-            shiplist_count!=0
-        ;");
-
-    if (mysql_num_rows($res)) {
+    $shipList = $shipRepository->findForUser((int) $updata[1]);
+    if (count($shipList) > 0) {
+        $ships = $shipDataRepostiroy->getAllShips(true);
         ob_start();
         tableStart();
         $out = '';
-        while ($arr = mysql_fetch_array($res)) {
-            if ($arr['ship_id'] == $shipId) {
-                $objResponse->assign("edit_" . $shipId, "style.display", '');
-
-                $p = Planet::getById($arr['shiplist_entity_id']);
-                $listId = $arr['shiplist_id'];
+        foreach ($shipList as $item) {
+            if ($item->shipId == $shipId) {
+                $objResponse->assign("edit_" . $item->shipId, "style.display", '');
+                $p = Planet::getById($item->entityId);
+                $ship = $ships[$item->shipId];
 
                 echo "<tr><th colspan=\"6\">" . $p . "</th></tr><tr>
-                <td style=\"width:80px\" id=\"cnt_" . $arr['shiplist_id'] . "\"><input type=\"text\" size=\"9\" maxlength=\"12\" name=\"editcnt_" . $listId . "\" value=\"" . $arr['shiplist_count'] . "\" /></td>
-                <td style=\"width:80px\" id=\"bunkered_" . $arr['shiplist_id'] . "\"><input type=\"text\" size=\"9\" maxlength=\"12\" name=\"editbunkered_" . $listId . "\" value=\"" . $arr['shiplist_bunkered'] . "\" /></td>
-                <td>" . $arr['ship_name'] . "</td>
-                <td>" . ($arr['ship_points'] * ($arr['shiplist_count'] + $arr['shiplist_bunkered'])) . "</td>
-                <td id=\"special_" . $listId . "\">";
-                if ($arr['ship_xp_base'] > 0) {
-                    echo "<input type=\"hidden\" name=\"ship_special_" . $listId . "\" value=\"1\"><input type=\"text\" size=\"9\" maxlength=\"12\" name=\"editxp_" . $listId . "\" value=\"" . $arr['shiplist_xp'] . "\" onkeyup=\"xajax_calcShipLevel(" . $listId . "," . $arr['ship_xp_base'] . "," . $arr['ship_xp_factor'] . ",this.value);\" /> XP,
-                    Level <b><span id=\"editlevel_" . $listId . "\">" . Ship::levelByXp($arr['ship_xp_base'], $arr['ship_xp_factor'], $arr['shiplist_xp']) . "</span></b><br/>
+                <td style=\"width:80px\" id=\"cnt_" . $item->id . "\"><input type=\"text\" size=\"9\" maxlength=\"12\" name=\"editcnt_" . $item->id . "\" value=\"" . $item->count . "\" /></td>
+                <td style=\"width:80px\" id=\"bunkered_" . $item->id . "\"><input type=\"text\" size=\"9\" maxlength=\"12\" name=\"editbunkered_" . $item->id . "\" value=\"" . $item->bunkered . "\" /></td>
+                <td>" . $ship->name . "</td>
+                <td>" . ($ship->points * ($item->count + $item->bunkered)) . "</td>
+                <td id=\"special_" . $item->id . "\">";
+                if ($ship->specialNeedExp > 0) {
+                    echo "<input type=\"hidden\" name=\"ship_special_" . $item->id . "\" value=\"1\"><input type=\"text\" size=\"9\" maxlength=\"12\" name=\"editxp_" . $item->id . "\" value=\"" . $item->specialShipExp . "\" onkeyup=\"xajax_calcShipLevel(" . $item->id . "," . $ship->specialNeedExp . "," . $ship->specialExpFactor . ",this.value);\" /> XP,
+                    Level <b><span id=\"editlevel_" . $item->id . "\">" . Ship::levelByXp($ship->specialNeedExp, $ship->specialExpFactor, $item->specialShipExp) . "</span></b><br/>
 
-                    <b>Waffenlevel:</b> <input type=\"text\" name=\"edit_bonus_weapon_" . $listId . "\" value=\"" . $arr['shiplist_special_ship_bonus_weapon'] . "\" size=\"5\" maxlength=\"20\" /><br/>
-                    <b>Strukturlevel:</b> <input type=\"text\" name=\"edit_bonus_structure_" . $listId . "\" value=\"" . $arr['shiplist_special_ship_bonus_structure'] . "\" size=\"5\" maxlength=\"20\" /><br/>
-                    <b>Schildlevel:</b> <input type=\"text\" name=\"edit_bonus_shield_" . $listId . "\" value=\"" . $arr['shiplist_special_ship_bonus_shield'] . "\" size=\"5\" maxlength=\"20\" /><br/>
-                    <b>Heallevel:</b> <input type=\"text\" name=\"edit_bonus_heal_" . $listId . "\" value=\"" . $arr['shiplist_special_ship_bonus_heal'] . "\" size=\"5\" maxlength=\"20\" /><br/>
-                    <b>Kapazit&auml;tlevel:</b> <input type=\"text\" name=\"edit_bonus_capacity_" . $listId . "\" value=\"" . $arr['shiplist_special_ship_bonus_capacity'] . "\" size=\"5\" maxlength=\"20\" /><br/>
-                    <b>Speedlevel:</b> <input type=\"text\" name=\"edit_bonus_speed_" . $listId . "\" value=\"" . $arr['shiplist_special_ship_bonus_speed'] . "\" size=\"5\" maxlength=\"20\" /><br/>
-                    <b>Bereitschaftslevel:</b> <input type=\"text\" name=\"edit_bonus_readiness_" . $listId . "\" value=\"" . $arr['shiplist_special_ship_bonus_readiness'] . "\" size=\"5\" maxlength=\"20\" /><br/>
-                    <b>Besatzungslevel:</b> <input type=\"text\" name=\"edit_bonus_pilots_" . $listId . "\" value=\"" . $arr['shiplist_special_ship_bonus_pilots'] . "\" size=\"5\" maxlength=\"20\" /><br/>
-                    <b>Tarnungslevel:</b> <input type=\"text\" name=\"edit_bonus_tarn_" . $listId . "\" value=\"" . $arr['shiplist_special_ship_bonus_tarn'] . "\" size=\"5\" maxlength=\"20\" /><br/>
-                    <b>Giftgaslevel:</b> <input type=\"text\" name=\"edit_bonus_antrax_" . $listId . "\" value=\"" . $arr['shiplist_special_ship_bonus_antrax'] . "\" size=\"5\" maxlength=\"20\" /><br/>
-                    <b>Techklaulevel:</b> <input type=\"text\" name=\"edit_bonus_forsteal_" . $listId . "\" value=\"" . $arr['shiplist_special_ship_bonus_forsteal'] . "\" size=\"5\" maxlength=\"20\" /><br/>
-                    <b>Bombardierlevel:</b> <input type=\"text\" name=\"edit_bonus_build_destroy_" . $listId . "\" value=\"" . $arr['shiplist_special_ship_bonus_build_destroy'] . "\" size=\"5\" maxlength=\"20\" /><br/>
-                    <b>Antraxlevel:</b> <input type=\"text\" name=\"edit_bonus_antrax_food_" . $listId . "\" value=\"" . $arr['shiplist_special_ship_bonus_antrax_food'] . "\" size=\"5\" maxlength=\"20\" /><br/>
-                    <b>Deaktivierlevel:</b> <input type=\"text\" name=\"edit_bonus_deactivade_" . $listId . "\" value=\"" . $arr['shiplist_special_ship_bonus_deactivade'] . "\" size=\"5\" maxlength=\"20\" />";
+                    <b>Waffenlevel:</b> <input type=\"text\" name=\"edit_bonus_weapon_" . $item->id . "\" value=\"" . $item->specialShipBonusWeapon . "\" size=\"5\" maxlength=\"20\" /><br/>
+                    <b>Strukturlevel:</b> <input type=\"text\" name=\"edit_bonus_structure_" . $item->id . "\" value=\"" . $item->specialShipBonusStructure . "\" size=\"5\" maxlength=\"20\" /><br/>
+                    <b>Schildlevel:</b> <input type=\"text\" name=\"edit_bonus_shield_" . $item->id . "\" value=\"" . $item->specialShipBonusShield . "\" size=\"5\" maxlength=\"20\" /><br/>
+                    <b>Heallevel:</b> <input type=\"text\" name=\"edit_bonus_heal_" . $item->id . "\" value=\"" . $item->specialShipBonusHeal . "\" size=\"5\" maxlength=\"20\" /><br/>
+                    <b>Kapazit&auml;tlevel:</b> <input type=\"text\" name=\"edit_bonus_capacity_" . $item->id . "\" value=\"" . $item->specialShipBonusCapacity . "\" size=\"5\" maxlength=\"20\" /><br/>
+                    <b>Speedlevel:</b> <input type=\"text\" name=\"edit_bonus_speed_" . $item->id . "\" value=\"" . $item->specialShipBonusSpeed . "\" size=\"5\" maxlength=\"20\" /><br/>
+                    <b>Bereitschaftslevel:</b> <input type=\"text\" name=\"edit_bonus_readiness_" . $item->id . "\" value=\"" . $item->specialShipBonusReadiness . "\" size=\"5\" maxlength=\"20\" /><br/>
+                    <b>Besatzungslevel:</b> <input type=\"text\" name=\"edit_bonus_pilots_" . $item->id . "\" value=\"" . $item->specialShipBonusPilots . "\" size=\"5\" maxlength=\"20\" /><br/>
+                    <b>Tarnungslevel:</b> <input type=\"text\" name=\"edit_bonus_tarn_" . $item->id . "\" value=\"" . $item->specialShipBonusTarn . "\" size=\"5\" maxlength=\"20\" /><br/>
+                    <b>Giftgaslevel:</b> <input type=\"text\" name=\"edit_bonus_antrax_" . $item->id . "\" value=\"" . $item->specialShipBonusAnthrax . "\" size=\"5\" maxlength=\"20\" /><br/>
+                    <b>Techklaulevel:</b> <input type=\"text\" name=\"edit_bonus_forsteal_" . $item->id . "\" value=\"" . $item->specialShipBonusForSteal . "\" size=\"5\" maxlength=\"20\" /><br/>
+                    <b>Bombardierlevel:</b> <input type=\"text\" name=\"edit_bonus_build_destroy_" . $item->id . "\" value=\"" . $item->specialShipBonusBuildDestroy . "\" size=\"5\" maxlength=\"20\" /><br/>
+                    <b>Antraxlevel:</b> <input type=\"text\" name=\"edit_bonus_antrax_food_" . $item->id . "\" value=\"" . $item->specialShipBonusAnthraxFood . "\" size=\"5\" maxlength=\"20\" /><br/>
+                    <b>Deaktivierlevel:</b> <input type=\"text\" name=\"edit_bonus_deactivade_" . $item->id . "\" value=\"" . $item->specialShipBonusDeactivate . "\" size=\"5\" maxlength=\"20\" />";
                 }
-                echo "</td><td style=\"width:180px\" id=\"actions_" . $arr['shiplist_id'] . "\" id=\"actions_" . $arr['shiplist_id'] . "\"><input type=\"button\" value=\"Speichern\" onclick=\"showLoader('actions_" . $shipId . "');xajax_submitEditShip(xajax.getFormValues('selector')," . $listId . ");\" /><input type=\"button\" value=\"Löschen\" onclick=\"if (confirm('Sollen " . $arr['shiplist_count'] . " " . $arr['ship_name'] . " von diesem Planeten gel&ouml;scht werden?')) {showLoaderPrepend('shipsOnPlanet');xajax_removeShipFromPlanet(xajax.getFormValues('selector')," . $listId . ")}\" /></td></tr>";
+                echo "</td><td style=\"width:180px\" id=\"actions_" . $item->id . "\" id=\"actions_" . $item->id . "\"><input type=\"button\" value=\"Speichern\" onclick=\"showLoader('actions_" . $item->shipId . "');xajax_submitEditShip(xajax.getFormValues('selector')," . $item->id . ");\" /><input type=\"button\" value=\"Löschen\" onclick=\"if (confirm('Sollen " . $item->count . " " . $ship->name . " von diesem Planeten gel&ouml;scht werden?')) {showLoaderPrepend('shipsOnPlanet');xajax_removeShipFromPlanet(xajax.getFormValues('selector')," . $item->id . ")}\" /></td></tr>";
 
                 $out = "<input type=\"button\" value=\"Abbrechen\" onclick=\"showLoader('shipsOnPlanet');xajax_showShipsOnPlanet('" . $form['entity_id'] . "');\" />";
             } else {
-                $objResponse->assign("actions_" . $arr['ship_id'], "innerHTML", "");
+                $objResponse->assign("actions_" . $item->shipId, "innerHTML", "");
             }
         }
         tableEnd();
@@ -499,43 +430,37 @@ function calcShipLevel($slid, $base, $factor, $xp)
 
 function submitEditShip($form, $listId)
 {
+    global $app;
+
+    /** @var ShipRepository $shipRepository */
+    $shipRepository = $app[ShipRepository::class];
+
     $objResponse = new xajaxResponse();
 
-    if (isset($form['ship_special_' . $listId])) {
-        dbquery("
-        UPDATE
-            shiplist
-        SET
-            shiplist_count=" . intval($form['editcnt_' . $listId]) . ",
-            shiplist_bunkered=" . intval($form['editbunkered_' . $listId]) . ",
-            shiplist_special_ship_exp=" . intval($form['editxp_' . $listId]) . ",
-            shiplist_special_ship_bonus_weapon='" . intval($form['edit_bonus_weapon_' . $listId]) . "',
-            shiplist_special_ship_bonus_structure='" . intval($form['edit_bonus_structure_' . $listId]) . "',
-            shiplist_special_ship_bonus_shield='" . intval($form['edit_bonus_shield_' . $listId]) . "',
-            shiplist_special_ship_bonus_heal='" . intval($form['edit_bonus_heal_' . $listId]) . "',
-            shiplist_special_ship_bonus_capacity='" . intval($form['edit_bonus_capacity_' . $listId]) . "',
-            shiplist_special_ship_bonus_speed='" . intval($form['edit_bonus_speed_' . $listId]) . "',
-            shiplist_special_ship_bonus_readiness='" . intval($form['edit_bonus_readiness_' . $listId]) . "',
-            shiplist_special_ship_bonus_pilots='" . intval($form['edit_bonus_pilots_' . $listId]) . "',
-            shiplist_special_ship_bonus_tarn='" . intval($form['edit_bonus_tarn_' . $listId]) . "',
-            shiplist_special_ship_bonus_antrax='" . intval($form['edit_bonus_antrax_' . $listId]) . "',
-            shiplist_special_ship_bonus_forsteal='" . intval($form['edit_bonus_forsteal_' . $listId]) . "',
-            shiplist_special_ship_bonus_build_destroy='" . intval($form['edit_bonus_build_destroy_' . $listId]) . "',
-            shiplist_special_ship_bonus_antrax_food='" . intval($form['edit_bonus_antrax_food_' . $listId]) . "',
-            shiplist_special_ship_bonus_deactivade='" . intval($form['edit_bonus_deactivade_' . $listId]) . "'
-        WHERE
-            shiplist_id=" . intval($listId) . "
-        ;");
-    } else {
-        dbquery("
-        UPDATE
-            shiplist
-        SET
-            shiplist_count=" . intval($form['editcnt_' . $listId]) . ",
-            shiplist_bunkered=" . intval($form['editbunkered_' . $listId]) . "
-        WHERE
-            shiplist_id=" . intval($listId) . "
-        ;");
+    $entry = $shipRepository->find($listId);
+    if ($entry !== null) {
+        $entry->count = (int)$form['editcnt_' . $listId];
+        $entry->bunkered = (int)$form['editbunkered_' . $listId];
+
+        if (isset($form['ship_special_' . $listId])) {
+            $entry->specialShipExp = (int)$form['editxp_' . $listId];
+            $entry->specialShipBonusWeapon = (int)$form['edit_bonus_weapon_' . $listId];
+            $entry->specialShipBonusStructure = (int)$form['edit_bonus_structure_' . $listId];
+            $entry->specialShipBonusShield = (int)$form['edit_bonus_shield_' . $listId];
+            $entry->specialShipBonusHeal = (int)$form['edit_bonus_heal_' . $listId];
+            $entry->specialShipBonusCapacity = (int)$form['edit_bonus_capacity_' . $listId];
+            $entry->specialShipBonusSpeed = (int)$form['edit_bonus_speed_' . $listId];
+            $entry->specialShipBonusReadiness = (int)$form['edit_bonus_readiness_' . $listId];
+            $entry->specialShipBonusPilots = (int)$form['edit_bonus_pilots_' . $listId];
+            $entry->specialShipBonusTarn = (int)$form['edit_bonus_tarn_' . $listId];
+            $entry->specialShipBonusAnthrax = (int)$form['edit_bonus_antrax_' . $listId];
+            $entry->specialShipBonusForSteal = (int)$form['edit_bonus_forsteal_' . $listId];
+            $entry->specialShipBonusBuildDestroy = (int)$form['edit_bonus_build_destroy_' . $listId];
+            $entry->specialShipBonusAnthraxFood = (int)$form['edit_bonus_antrax_food_' . $listId];
+            $entry->specialShipBonusDeactivate = (int)$form['edit_bonus_deactivade_' . $listId];
+        }
+
+        $shipRepository->saveItem($entry);
     }
 
     $objResponse->script("xajax_showShipsOnPlanet('" . $form['entity_id'] . "');");
@@ -1074,19 +999,14 @@ function searchAlliance($val, $field_id = 'alliance_name', $box_id = 'citybox')
 
 function lockUser($uid, $time, $reason)
 {
+    global $app;
+
+    /** @var UserRepository $userRepository */
+    $userRepository = $app[UserRepository::class];
+
     $t1 = time();
     $t2 = $t1 + $time;
-    dbquery("
-    UPDATE
-        users
-    SET
-        user_blocked_from=" . $t1 . ",
-        user_blocked_to=" . $t2 . ",
-        user_ban_reason='" . addslashes($reason) . "',
-        user_ban_admin_id='" . $_SESSION[SESSION_NAME]['user_id'] . "'
-    WHERE
-        user_id='" . $uid . "'
-    ;");
+    $userRepository->blockUser($uid, $t1, $t2, $reason, $_SESSION[SESSION_NAME]['user_id']);
     $objResponse = new xajaxResponse();
     $objResponse->alert("Der Benutzer wurde gesperrt!");
     return $objResponse;

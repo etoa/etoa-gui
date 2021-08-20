@@ -3,10 +3,12 @@
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Ranking\RankingService;
 use EtoA\Technology\TechnologyDataRepository;
+use EtoA\Technology\TechnologyListItemSearch;
 use EtoA\Technology\TechnologyPointRepository;
 use EtoA\Technology\TechnologyRepository;
 use EtoA\Technology\TechnologySort;
 use EtoA\Universe\Planet\PlanetRepository;
+use EtoA\User\UserRepository;
 
 /** @var ConfigurationService $config */
 $config = $app[ConfigurationService::class];
@@ -22,6 +24,10 @@ $technologyPointRepository = $app[TechnologyPointRepository::class];
 
 /** @var RankingService $rankingService */
 $rankingService = $app[RankingService::class];
+/** @var PlanetRepository $planetRepository */
+$planetRepository = $app[PlanetRepository::class];
+/** @var UserRepository $userRepository */
+$userRepository = $app[UserRepository::class];
 
 //
 // Forschungspunkte
@@ -114,53 +120,8 @@ else {
             }
             $_SESSION['search']['tech']['query'] = null;
         }
-        $sql = "";
-        $query = "";
-        $sqlstart = "
-            SELECT
-                    planet_name,
-                    planets.id as id,
-              entities.pos,
-              cells.sx,cells.sy,
-              cells.cx,cells.cy,
-              user_nick,
-              user_points,
-              tech_name,
-              techlist_id,
-              techlist_build_type,
-              techlist_current_level
-            FROM
-                techlist
-            INNER JOIN
-                technologies
-            ON
-                techlist.techlist_tech_id=technologies.tech_id
-            INNER JOIN
-                planets
-            ON
-                techlist_entity_id=planets.id
-            INNER JOIN
-                entities
-            ON
-                planets.id=entities.id
-            INNER Join
-                cells
-            ON
-                entities.cell_id=cells.id
-            INNER JOIN
-                users
-            ON
-                techlist.techlist_user_id=users.user_id
-            ";
-        $sqlend = "
-            GROUP BY
-                techlist_id
-            ORDER BY
-                techlist_entity_id,
-                tech_type_id,
-                tech_order,
-                tech_name;";
 
+        $search = TechnologyListItemSearch::create();
         // Forschung hinzufügen
         if (isset($_POST['new'])) {
             $updata = explode(":", $_POST['planet_id']);
@@ -176,7 +137,7 @@ else {
                 echo "Technologie wurde hinzugefügt!<br/>";
             }
 
-            $sql = " AND user_id=" . $updata[1];
+            $search->userId((int) $updata[1]);
             $_SESSION['search']['tech']['query'] = null;
 
             // Hinzufügen
@@ -196,49 +157,45 @@ else {
                 $v = 1;
             echo "<tr><th class=\"tbltitle\">Stufe</th><td class=\"tbldata\"><input type=\"text\" name=\"techlist_current_level\" value=\"$v\" size=\"1\" maxlength=\"3\" /></td></tr>";
             echo "<tr><th class=\"tbltitle\">f&uuml;r den Spieler</th><td class=\"tbldata\"> <select name=\"planet_id\"><";
-            $pres = dbquery("SELECT user_id,user_nick,planets.id FROM users,planets WHERE planet_user_id=user_id AND planet_user_main=1 ORDER BY user_nick;");
-            while ($parr = mysql_fetch_array($pres)) {
-                echo "<option value=\"" . $parr['id'] . ":" . $parr['user_id'] . "\"";
-                if ($updata[1] == $parr['user_id']) echo " selected=\"selected\"";
-                echo ">" . $parr['user_nick'] . "</option>";
+            $userNicks = $userRepository->searchUserNicknames();
+            $mainPlanets = $planetRepository->getMainPlanets();
+            foreach ($mainPlanets as $mainPlanet) {
+                echo "<option value=\"" . $mainPlanet->id . ":" . $mainPlanet->userId . "\"";
+                if ($updata[1] == $mainPlanet->userId) echo " selected=\"selected\"";
+                echo ">" . $userNicks[$mainPlanet->userId] . "</option>";
             }
             echo "</select></td></tr>";
             tableEnd();
             echo "<input type=\"submit\" name=\"new\" value=\"Hinzuf&uuml;gen\" /></form><br/>";
-            $sql = $sqlstart . $sql . $sqlend;
-            $_SESSION['search']['tech']['query'] = $sql;
+            $_SESSION['search']['tech']['query'] = serialize($search);
         }
 
         // Suchquery generieren
         elseif (!isset($_SESSION['search']['tech']['query'])) {
-            if ($_POST['planet_id'] != '')
-                $sql .= " AND planets.id='" . $_POST['planet_id'] . "'";
+            if ($_POST['planet_id'] != '') {
+                $search->entityId((int) $_POST['planet_id']);
+            }
             if ($_POST['planet_name'] != '') {
-                if (stristr($_POST['qmode']['planet_name'], "%"))
-                    $addchars = "%";
-                else $addchars = "";
-                $sql .= " AND planet_name " . stripslashes($_POST['qmode']['planet_name']) . $_POST['planet_name'] . "$addchars'";
+                $search->likePlanetName($_POST['planet_name']);
             }
-            if ($_POST['user_id'] != '')
-                $sql .= " AND user_id='" . $_POST['user_id'] . "'";
+            if ($_POST['user_id'] != '') {
+                $search->userId((int) $_POST['user_id']);
+            }
             if ($_POST['user_nick'] != "") {
-                if (stristr($_POST['qmode']['user_nick'], "%"))
-                    $addchars = "%";
-                else $addchars = "";
-                $sql .= " AND user_nick " . stripslashes($_POST['qmode']['user_nick']) . $_POST['user_nick'] . "$addchars'";
+                $search->likeUserNick($_POST['user_nick']);
             }
-            if ($_POST['tech_id'] != '')
-                $sql .= " AND tech_id='" . $_POST['tech_id'] . "'";
+            if ($_POST['tech_id'] != '') {
+                $search->technologyId($_POST['tech_id']);
 
-            $sql = $sqlstart . $sql . $sqlend;
-            $_SESSION['search']['tech']['query'] = $sql;
+            }
+            $_SESSION['search']['tech']['query'] = serialize($search);
         } else
-            $sql = $_SESSION['search']['tech']['query'];
+            $sql = unserialize($_SESSION['search']['tech']['query'], ['allowed_classes' => [TechnologyListItemSearch::class]]);
 
-        $res = dbquery($sql);
-        if (mysql_num_rows($res) > 0) {
-            echo mysql_num_rows($res) . " Datens&auml;tze vorhanden<br/><br/>";
-            if (mysql_num_rows($res) > 20)
+        $technologyListItems = $technologyRepository->adminSearchQueueItems($search);
+        if (count($technologyListItems) > 0) {
+            echo count($technologyListItems) . " Datens&auml;tze vorhanden<br/><br/>";
+            if (count($technologyListItems) > 20)
                 echo "<input type=\"button\" value=\"Neue Suche\" onclick=\"document.location='?page=$page&amp;sub=$sub'\" /><br/><br/>";
 
             echo "<table class=\"tbl\">";
@@ -249,18 +206,18 @@ else {
             echo "<td class=\"tbltitle\" valign=\"top\">Stufe</td>";
             echo "<td class=\"tbltitle\" valign=\"top\">Status</td>";
             echo "</tr>";
-            while ($arr = mysql_fetch_array($res)) {
-                if ($arr['techlist_build_type'] == 3)
+            foreach ($technologyListItems as $item) {
+                if ($item->buildType == 3)
                     $style = " style=\"color:#0f0\"";
                 else
                     $style = "";
                 echo "<tr>";
-                echo "<td class=\"tbldata\"$style " . mTT($arr['planet_name'], $arr['sx'] . "/" . $arr['sy'] . " : " . $arr['cx'] . "/" . $arr['cy'] . " : " . $arr['pos']) . ">" . cut_string($arr['planet_name'] != '' ? $arr['planet_name'] : 'Unbenannt', 11) . "</a> [" . $arr['id'] . "]</a></td>";
-                echo "<td class=\"tbldata\"$style " . mTT($arr['user_nick'], nf($arr['user_points']) . " Punkte") . ">" . cut_string($arr['user_nick'], 11) . "</a></td>";
-                echo "<td class=\"tbldata\"$style>" . $arr['tech_name'] . "</a></td>";
-                echo "<td class=\"tbldata\"$style>" . nf($arr['techlist_current_level']) . "</a></td>";
-                echo "<td class=\"tbldata\"$style>" . $build_type[$arr['techlist_build_type']] . "</a></td>";
-                echo "<td class=\"tbldata\">" . edit_button("?page=$page&sub=$sub&action=edit&techlist_id=" . $arr['techlist_id']) . "</td>";
+                echo "<td class=\"tbldata\"$style " . mTT($item->planetName, $item->entity->coordinatesString()) . ">" . cut_string($item->planetName != '' ? $item->planetName : 'Unbenannt', 11) . "</a> [" . $item->entity->id . "]</a></td>";
+                echo "<td class=\"tbldata\"$style " . mTT($item->userNick, nf($item->userPoints) . " Punkte") . ">" . cut_string($item->userNick, 11) . "</a></td>";
+                echo "<td class=\"tbldata\"$style>" . $item->technologyName . "</a></td>";
+                echo "<td class=\"tbldata\"$style>" . nf($item->currentLevel) . "</a></td>";
+                echo "<td class=\"tbldata\"$style>" . $build_type[$item->buildType] . "</a></td>";
+                echo "<td class=\"tbldata\">" . edit_button("?page=$page&sub=$sub&action=edit&techlist_id=" . $item->id) . "</td>";
                 echo "</tr>";
             }
             echo "</table>";
@@ -288,43 +245,29 @@ else {
             $technologyRepository->removeEntry($_GET['techlist_id']);
         }
 
-        $res = dbquery("SELECT
-                                *
-                            FROM
-                                techlist
-                            INNER JOIN
-                                technologies
-                            ON
-                                techlist.techlist_tech_id=technologies.tech_id
-                                AND techlist.techlist_id='" . $_GET['techlist_id'] . "'
-                            INNER JOIN
-                                planets
-                            ON
-                                techlist.techlist_entity_id=planets.id
-                            INNER JOIN
-                                users
-                            ON
-                                techlist.techlist_user_id=users.user_id;");
-        if (mysql_num_rows($res) > 0) {
-            $arr = mysql_fetch_array($res);
-            echo "<form action=\"?page=$page&sub=$sub&action=edit&techlist_id=" . $_GET['techlist_id'] . "\" method=\"post\">";
+        $entry = $technologyRepository->getEntry($_GET['techlist_id']);
+        if ($entry !== null) {
+            $technologyNames = $technologyDataRepository->getTechnologyNames(true);
+            $userNick = $userRepository->getNick($entry->userId);
+            $planet = $planetRepository->find($entry->entityId);
+            echo "<form action=\"?page=$page&sub=$sub&action=edit&techlist_id=" . $entry->id . "\" method=\"post\">";
             echo "<table class=\"tbl\">";
-            echo "<tr><td class=\"tbltitle\" valign=\"top\">ID</td><td class=\"tbldata\">" . $arr['techlist_id'] . "</td></tr>";
-            echo "<tr><td class=\"tbltitle\" valign=\"top\">Planet</td><td class=\"tbldata\">" . $arr['planet_name'] . "</td></tr>";
-            echo "<tr><td class=\"tbltitle\" valign=\"top\">Spieler</td><td class=\"tbldata\">" . $arr['user_nick'] . "</td></tr>";
-            echo "<tr><td class=\"tbltitle\" valign=\"top\">Geb&auml;ude</td><td class=\"tbldata\">" . $arr['tech_name'] . "</td></tr>";
-            echo "<tr><td class=\"tbltitle\" valign=\"top\">Level</td><td class=\"tbldata\"><input type=\"text\" name=\"techlist_current_level\" value=\"" . $arr['techlist_current_level'] . "\" size=\"2\" maxlength=\"3\" /></td></tr>";
+            echo "<tr><td class=\"tbltitle\" valign=\"top\">ID</td><td class=\"tbldata\">" . $entry->id . "</td></tr>";
+            echo "<tr><td class=\"tbltitle\" valign=\"top\">Planet</td><td class=\"tbldata\">" . ($planet !== null ? $planet->name : '') . "</td></tr>";
+            echo "<tr><td class=\"tbltitle\" valign=\"top\">Spieler</td><td class=\"tbldata\">" . $userNick . "</td></tr>";
+            echo "<tr><td class=\"tbltitle\" valign=\"top\">Geb&auml;ude</td><td class=\"tbldata\">" . $technologyNames[$entry->id] . "</td></tr>";
+            echo "<tr><td class=\"tbltitle\" valign=\"top\">Level</td><td class=\"tbldata\"><input type=\"text\" name=\"techlist_current_level\" value=\"" . $entry->currentLevel . "\" size=\"2\" maxlength=\"3\" /></td></tr>";
             echo "<tr><td class=\"tbltitle\" valign=\"top\">Baustatus</td><td class=\"tbldata\"><select name=\"techlist_build_type\">";
             foreach ($build_type as $id => $val) {
                 echo "<option value=\"$id\"";
-                if ($arr['techlist_build_type'] == $id) echo " selected=\"selected\"";
+                if ($entry->buildType == $id) echo " selected=\"selected\"";
                 echo ">$val</option>";
             }
             echo "</select></td></tr>";
 
-            if ($arr['techlist_build_start_time'] > 0) $bst = date($config->get('admin_dateformat'), $arr['techlist_build_start_time']);
+            if ($entry->startTime > 0) $bst = date($config->get('admin_dateformat'), $entry->startTime);
             else $bst = "";
-            if ($arr['techlist_build_end_time'] > 0) $bet = date($config->get('admin_dateformat'), $arr['techlist_build_end_time']);
+            if ($entry->endTime > 0) $bet = date($config->get('admin_dateformat'), $entry->endTime);
             else $bet = "";
             echo "<tr><td class=\"tbltitle\" valign=\"top\">Baustart</td><td class=\"tbldata\"><input type=\"text\" name=\"techlist_build_start_time\" id=\"techlist_build_start_time\" value=\"$bst\" size=\"20\" maxlength=\"30\" /> <input type=\"button\" value=\"Jetzt\" onclick=\"document.getElementById('techlist_build_start_time').value='" . date("Y-m-d H:i:s") . "'\" /></td></tr>";
             echo "<tr><td class=\"tbltitle\" valign=\"top\">Bauende</td><td class=\"tbldata\"><input type=\"text\" name=\"techlist_build_end_time\" value=\"$bet\" size=\"20\" maxlength=\"30\" /></td></tr>";
@@ -361,11 +304,9 @@ else {
         echo "<table class=\"tbl\">";
         echo "<tr><td class=\"tbltitle\">Planet ID</td><td class=\"tbldata\"><input type=\"text\" name=\"planet_id\" value=\"\" size=\"20\" maxlength=\"250\" /></td></tr>";
         echo "<tr><td class=\"tbltitle\">Planetname</td><td class=\"tbldata\"><input type=\"text\" name=\"planet_name\" value=\"\" size=\"20\" maxlength=\"250\" /> ";
-        fieldqueryselbox('planet_name');
         echo "</td></tr>";
         echo "<tr><td class=\"tbltitle\">Spieler ID</td><td class=\"tbldata\"><input type=\"text\" name=\"user_id\" value=\"\" size=\"20\" maxlength=\"250\" /></td></tr>";
         echo "<tr><td class=\"tbltitle\">Spieler Nick</td><td class=\"tbldata\"><input type=\"text\" name=\"user_nick\" value=\"\" size=\"20\" maxlength=\"250\" autocomplete=\"off\" onkeyup=\"xajax_searchUser(this.value,'user_nick','citybox1');\" />&nbsp;";
-        fieldqueryselbox('user_nick');
         echo "<br><div class=\"citybox\" id=\"citybox1\">&nbsp;</div></td></tr>";
         echo "<tr><td class=\"tbltitle\">Forschung</td><td class=\"tbldata\"><select name=\"tech_id\"><option value=\"\"><i>---</i></option>";
         foreach ($technologyNames as $techId => $technologyName)
@@ -385,21 +326,10 @@ else {
         echo "</select><br>Alle Techs <input type='checkbox' name='all_techs'></td></tr>";
         echo "<tr><th class=\"tbltitle\">Stufe</th><td class=\"tbldata\"><input type=\"text\" name=\"techlist_current_level\" value=\"1\" size=\"1\" maxlength=\"3\" /></td></tr>";
         echo "<tr><th class=\"tbltitle\">f&uuml;r den Spieler</th><td class=\"tbldata\"> <select name=\"planet_id\"><";
-        $pres = dbquery("SELECT
-                                user_id,
-                                user_nick,
-                                planets.id
-                            FROM
-                                planets
-                            INNER JOIN
-                                users
-                            ON
-                                users.user_id=planets.planet_user_id
-                                AND planets.planet_user_main=1
-                            ORDER BY
-                                user_nick;");
-        while ($parr = mysql_fetch_array($pres)) {
-            echo "<option value=\"" . $parr['id'] . ":" . $parr['user_id'] . "\">" . $parr['user_nick'] . "</option>";
+        $userNicks = $userRepository->searchUserNicknames();
+        $mainPlanets = $planetRepository->getMainPlanets();
+        foreach ($mainPlanets as $mainPlanet) {
+            echo "<option value=\"" . $mainPlanet->id . ":" . $mainPlanet->userId . "\">" . $userNicks[$mainPlanet->userId] . "</option>";
         }
         echo "</select></td></tr>";
         tableEnd();

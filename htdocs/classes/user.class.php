@@ -4,6 +4,7 @@ use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Support\Mail\MailSenderService;
 use EtoA\User\UserService;
 use EtoA\User\UserSessionRepository;
+use EtoA\User\UserSessionSearch;
 
 /**
  * Provides methods for accessing user information
@@ -491,7 +492,7 @@ class User implements \EtoA\User\UserInterface
             return $userSession->timeAction;
         }
 
-        $sessionLogs = $userSessionRepository->getUserSessionLogs($this->id, 1);
+        $sessionLogs = $userSessionRepository->getSessionLogs(UserSessionSearch::create()->userId($this->id), 1);
         if (count($sessionLogs) > 0) {
             return $sessionLogs[0]->timeAction;
         }

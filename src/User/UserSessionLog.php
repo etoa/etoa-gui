@@ -7,7 +7,7 @@ class UserSessionLog
     public int $id;
     public string $sessionId;
     public int $userId;
-    public string $ip;
+    public string $ipAddr;
     public string $userAgent;
     public int $timeLogin;
     public int $timeAction;
@@ -18,7 +18,7 @@ class UserSessionLog
         $this->id = (int) $data['id'];
         $this->sessionId = $data['session_id'];
         $this->userId = (int) $data['user_id'];
-        $this->ip = $data['ip_addr'];
+        $this->ipAddr = $data['ip_addr'];
         $this->userAgent = $data['user_agent'];
         $this->timeLogin = (int) $data['time_login'];
         $this->timeAction = (int) $data['time_action'];

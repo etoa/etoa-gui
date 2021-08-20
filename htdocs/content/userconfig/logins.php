@@ -3,6 +3,7 @@
 use EtoA\HostCache\NetworkNameService;
 use EtoA\User\UserLoginFailureRepository;
 use EtoA\User\UserSessionRepository;
+use EtoA\User\UserSessionSearch;
 
 /** @var UserLoginFailureRepository $userLoginFailureRepository */
 $userLoginFailureRepository = $app[UserLoginFailureRepository::class];
@@ -38,7 +39,7 @@ foreach ($activeSessions as $session) {
 tableEnd();
 
 tableStart("Letzte 10 Logins");
-$sessionLogs = $userSessionRepository->getUserSessionLogs($cu->getId(), 10);
+$sessionLogs = $userSessionRepository->getSessionLogs(UserSessionSearch::create()->userId($cu->getId()), 10);
 echo "<tr><th>Zeit</th>
             <th>IP-Adresse</th>
             <th>Hostname</th>
@@ -46,8 +47,8 @@ echo "<tr><th>Zeit</th>
 foreach ($sessionLogs as $sessionLog) {
     $browserParser = new \WhichBrowser\Parser($sessionLog->userAgent);
     echo "<tr><td>" . df($sessionLog->timeLogin) . "</td>";
-    echo "<td>" . $sessionLog->ip . "</td>";
-    echo "<td>" . $networkNameService->getHost($sessionLog->ip) . "</td>";
+    echo "<td>" . $sessionLog->ipAddr . "</td>";
+    echo "<td>" . $networkNameService->getHost($sessionLog->ipAddr) . "</td>";
     echo "<td>" . $browserParser->toString() . "</td></tr>";
 }
 tableEnd();

@@ -1,5 +1,6 @@
 <?PHP
 
+use EtoA\Bookmark\BookmarkRepository;
 use EtoA\Building\BuildingRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Missile\MissileDataRepository;
@@ -31,7 +32,8 @@ $missileFlightRepository = $app[MissileFlightRepository::class];
 
 /** @var BuildingRepository $buildingRepository */
 $buildingRepository = $app[BuildingRepository::class];
-
+/** @var BookmarkRepository $bookmarkRepository */
+$bookmarkRepository = $app[BookmarkRepository::class];
 /** @var UserPropertiesRepository $userPropertiesRepository */
 $userPropertiesRepository = $app[UserPropertiesRepository::class];
 
@@ -597,49 +599,21 @@ if ($missileBuilding !== null && $missileBuilding->currentLevel > 0) {
                             // Bookmarks laden
                             $bookmarks = array();
                             // Gespeicherte Bookmarks
-                            $pres = dbquery("
-                            SELECT
-                                cells.sx,
-                                cells.sy,
-                                cells.cx,
-                                cells.cy,
-                                entities.pos,
-                                planets.planet_name,
-                                bookmarks.comment
-                            FROM
-                                bookmarks
-                            INNER JOIN
-                                entities
-                    ON
-                        bookmarks.user_id=" . $cu->id . "
-                        AND bookmarks.entity_id=entities.id
-                            INNER JOIN
-                                planets
-                            ON
-                                entities.id=planets.id
-                            INNER JOIN
-                                cells
-                            ON
-                                entities.cell_id=cells.id
-                            ORDER BY
-                                bookmarks.comment,
-                                bookmarks.entity_id;");
-                            if (mysql_num_rows($pres) > 0) {
-                                while ($parr = mysql_fetch_array($pres)) {
-                                    array_push(
-                                        $bookmarks,
-                                        array(
-                                            "cell_sx" => $parr['sx'],
-                                            "cell_sy" => $parr['sy'],
-                                            "cell_cx" => $parr['cx'],
-                                            "cell_cy" => $parr['cy'],
-                                            "planet_solsys_pos" => $parr['pos'],
-                                            "planet_name" => $parr['planet_name'],
-                                            "automatic" => 0,
-                                            "bookmark_comment" => $parr['comment']
-                                        )
-                                    );
-                                }
+                            $bookmarkedEntities = $bookmarkRepository->getBookmarkedEntities($cu->getId());
+                            foreach ($bookmarkedEntities as $bookmarkedEntity) {
+                                array_push(
+                                    $bookmarks,
+                                    array(
+                                        "cell_sx" => $bookmarkedEntity->sx,
+                                        "cell_sy" => $bookmarkedEntity->sy,
+                                        "cell_cx" => $bookmarkedEntity->cx,
+                                        "cell_cy" => $bookmarkedEntity->cy,
+                                        "planet_solsys_pos" => $bookmarkedEntity->pos,
+                                        "planet_name" => $bookmarkedEntity->planetName,
+                                        "automatic" => 0,
+                                        "bookmark_comment" => $bookmarkedEntity->comment
+                                    )
+                                );
                             }
 
                             $entity = $entityRepository->findIncludeCell($planet->id);

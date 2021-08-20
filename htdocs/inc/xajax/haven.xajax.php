@@ -3,6 +3,7 @@
 // Main dialogs
 
 use EtoA\Alliance\AllianceBuildingId;
+use EtoA\Bookmark\BookmarkRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Fleet\FleetRepository;
 use EtoA\Log\LogFacility;
@@ -312,6 +313,8 @@ function havenShowTarget($form)
 
     /** @var PlanetRepository $planetRepository */
     $planetRepository = $app[PlanetRepository::class];
+    /** @var BookmarkRepository $bookmarkRepository */
+    $bookmarkRepository = $app[BookmarkRepository::class];
 
     $response = new xajaxResponse();
     defineImagePaths();
@@ -499,26 +502,14 @@ function havenShowTarget($form)
                 echo ">Eigener Planet: " . $userPlanet->toString() . "</option>\n";
             }
 
-            $bRes = dbquery("
-                                SELECT
-                                    bookmarks.entity_id,
-                                    bookmarks.comment,
-                                    entities.code
-                                FROM
-                                    bookmarks
-                                INNER JOIN
-                                    entities
-                                ON bookmarks.entity_id=entities.id
-                                    AND bookmarks.user_id=" . $fleet->ownerid() . ";");
-
-            if (mysql_num_rows($bRes) > 0) {
+            $bookmarkedEntities = $bookmarkRepository->getBookmarkedEntities($fleet->ownerid());
+            if (count($bookmarkedEntities) > 0) {
                 echo "<option value=\"0\"";
                 echo ">-------------------------------</option>\n";
 
-                while ($bArr = mysql_fetch_assoc($bRes)) {
-                    $ent = Entity::createFactory($bArr['code'], $bArr['entity_id']);
-                    echo "<option value=\"" . $ent->id() . "\"";
-                    echo ">" . $ent->entityCodeString() . " - " . $ent . " (" . $bArr['comment'] . ")</option>\n";
+                foreach ($bookmarkedEntities as $bookmarkedEntity) {
+                    echo "<option value=\"" . $bookmarkedEntity->id . "\"";
+                    echo ">" . $bookmarkedEntity->toString() . "</option>\n";
                 }
             }
             echo "</select>";
@@ -619,6 +610,8 @@ function havenShowWormhole($form)
     $userUniverseDiscoveryService = $app[UserUniverseDiscoveryService::class];
     /** @var LogRepository $logRepository */
     $logRepository = $app[LogRepository::class];
+    /** @var BookmarkRepository $bookmarkRepository */
+    $bookmarkRepository = $app[BookmarkRepository::class];
 
     /** @var UserRepository $userRepository */
     $userRepository = $app[UserRepository::class];
@@ -780,26 +773,14 @@ function havenShowWormhole($form)
                         echo ">Eigener Planet: " . $userPlanet->toString() . "</option>\n";
                     }
 
-                    $bRes = dbquery("
-                                    SELECT
-                                        bookmarks.entity_id,
-                                        bookmarks.comment,
-                                        entities.code
-                                    FROM
-                                        bookmarks
-                                    INNER JOIN
-                                        entities
-                                    ON bookmarks.entity_id=entities.id
-                                        AND bookmarks.user_id=" . $fleet->ownerid() . ";");
-
-                    if (mysql_num_rows($bRes) > 0) {
+                    $bookmarkedEntities = $bookmarkRepository->getBookmarkedEntities($fleet->ownerid());
+                    if (count($bookmarkedEntities) > 0) {
                         echo "<option value=\"0\"";
                         echo ">-------------------------------</option>\n";
 
-                        while ($bArr = mysql_fetch_assoc($bRes)) {
-                            $ent = Entity::createFactory($bArr['code'], $bArr['entity_id']);
-                            echo "<option value=\"" . $ent->id() . "\"";
-                            echo ">" . $ent->entityCodeString() . " - " . $ent . " (" . $bArr['comment'] . ")</option>\n";
+                        foreach ($bookmarkedEntities as $bookmarkedEntity) {
+                            echo "<option value=\"" . $bookmarkedEntity->id . "\"";
+                            echo ">" . $bookmarkedEntity->toString() . "</option>\n";
                         }
                     }
                     echo "</select>";

@@ -83,6 +83,13 @@ class UserSearch extends AbstractSearch
         return $this;
     }
 
+    public function observed(): self
+    {
+        $this->parts[] = "user_observe IS NOT NULL";
+
+        return $this;
+    }
+
     public function notObserved(): self
     {
         $this->parts[] = "user_observe IS NULL";

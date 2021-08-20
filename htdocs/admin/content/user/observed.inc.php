@@ -3,6 +3,9 @@
 use EtoA\HostCache\NetworkNameService;
 use EtoA\User\UserRepository;
 use EtoA\User\UserSearch;
+use EtoA\User\UserSessionRepository;
+use EtoA\User\UserSurveillanceRepository;
+use EtoA\User\UserSurveillanceSearch;
 
 echo "<h1>Beobachtungsliste</h1>";
 
@@ -33,64 +36,51 @@ elseif (isset($_GET['surveillance']) && $_GET['surveillance'] > 0) {
     echo "<h2>Erweiterte Beobachtung von " . $tu . "</h2>";
 
     if (isset($_GET['session'])) {
-        $sid = $_GET['session'];
+        $sessionId = $_GET['session'];
 
-        $res = dbquery("
-            SELECT
-                *
-            FROM
-                user_sessionlog
-            WHERE
-                session_id='" . $sid . "'
-            LIMIT 1;");
-        if (mysql_num_rows($res) > 0) {
-            $arr = mysql_fetch_array($res);
-        } else {
-            $res = dbquery("
-                SELECT
-                    *
-                FROM
-                    user_sessions
-                WHERE
-                    id='" . $sid . "'
-                LIMIT 1;");
-            if (mysql_num_rows($res) > 0) {
-                $arr = mysql_fetch_array($res);
-            } else {
+        /** @var UserSessionRepository $userSessionRepository */
+        $userSessionRepository = $app[UserSessionRepository::class];
+        $userSession = $userSessionRepository->findLog($sessionId);
+        if ($userSession === null) {
+            $userSession = $userSessionRepository->find($sessionId);
+
+            if ($userSession === null) {
                 throw new \RuntimeException('User session not found');
             }
         }
 
         echo "<h3>Session";
-        if (isset($arr['time_login']) && $arr['time_login'] > 0) {
-            echo " von " . date("d.m.Y H:i", $arr['time_login']);
-            if (isset($arr['time_action']) && $arr['time_action'] > 0) {
-                echo " bis " . date("d.m.Y H:i", $arr['time_action']);
+        if ($userSession->timeLogin > 0) {
+            echo " von " . date("d.m.Y H:i", $userSession->timeLogin);
+            if ($userSession->timeAction > 0) {
+                echo " bis " . date("d.m.Y H:i", $userSession->timeAction);
             }
         } else {
-            echo " $sid";
+            echo " $userSession->id";
         }
         echo "</h3>";
 
-        $browserParser = new \WhichBrowser\Parser($arr['user_agent']);
-        echo "<p><b>IP:</b> " . $arr['ip_addr'] . "<br/>
-            <b>Host:</b> " . $networkNameService->getHost($arr['ip_addr']) . "<br/>
+        $browserParser = new \WhichBrowser\Parser($userSession->userAgent);
+        echo "<p><b>IP:</b> " . $userSession->ipAddr . "<br/>
+            <b>Host:</b> " . $networkNameService->getHost($userSession->ipAddr) . "<br/>
             <b>Client:</b> " . $browserParser->toString() . "</p>";
 
-        echo "<p>" . button("Neu laden", "?page=$page&amp;sub=$sub&amp;surveillance=" . $_GET['surveillance'] . "&amp;session=" . $_GET['session']) . " &nbsp; " .
+        echo "<p>" . button("Neu laden", "?page=$page&amp;sub=$sub&amp;surveillance=" . $_GET['surveillance'] . "&amp;session=" . $userSession->id) . " &nbsp; " .
             button("Zurück", "?page=$page&amp;sub=$sub&amp;surveillance=" . $_GET['surveillance']) . "</p>";
 
-        $res = dbquery("SELECT * FROM user_surveillance WHERE session='" . $sid . "' ORDER BY timestamp DESC;");
-        if (mysql_num_rows($res) > 0) {
+        /** @var UserSurveillanceRepository $userSuveillanceRepository */
+        $userSuveillanceRepository = $app[UserSurveillanceRepository::class];
+        $entries = $userSuveillanceRepository->search(UserSurveillanceSearch::create()->session($userSession->id));
+        if (count($entries) > 0) {
             tableStart("", "100%");
             echo "<tr><th>Zeit</th><th>Seite</th><th>Request (GET)</th><th>Query String</th><th>Formular (POST)</th></tr>";
-            while ($arr = mysql_fetch_assoc($res)) {
-                $req = wordwrap($arr['request'], 60, "\n", true);
-                $reqRaw = wordwrap($arr['request_raw'], 60, "\n", true);
-                $post = wordwrap($arr['post'], 60, "\n", true);
+            foreach ($entries as $entry) {
+                $req = wordwrap($entry->request, 60, "\n", true);
+                $reqRaw = wordwrap($entry->requestRaw, 60, "\n", true);
+                $post = wordwrap($entry->post, 60, "\n", true);
                 echo "<tr>
-                        <td>" . df($arr['timestamp'], 1) . "</td>
-                        <td>" . $arr['page'] . "</td>
+                        <td>" . df($entry->timestamp, 1) . "</td>
+                        <td>" . $entry->page . "</td>
                         <td>" . text2html($req) . "</td>
                         <td>" . text2html($reqRaw) . "</td>
                         <td>" . text2html($post) . "</td>
@@ -99,26 +89,11 @@ elseif (isset($_GET['surveillance']) && $_GET['surveillance'] > 0) {
             tableEnd();
         }
     } else {
-
-        $sessions = array();
-        $sres = dbquery("
-            SELECT
-                session,COUNT(id)
-            FROM
-                user_surveillance
-            WHERE
-                user_id=" . $_GET['surveillance'] . "
-            GROUP BY
-                session
-            ORDER BY
-                timestamp DESC
-            LIMIT
-                50000;");
-        if (mysql_num_rows($sres) > 0) {
-            while ($sarr = mysql_fetch_row($sres)) {
-                $sessions[] = array($sarr[0], $sarr[1]);
-            }
-        }
+        /** @var UserSessionRepository $userSessionRepository */
+        $userSessionRepository = $app[UserSessionRepository::class];
+        /** @var UserSurveillanceRepository $userSuveillanceRepository */
+        $userSuveillanceRepository = $app[UserSurveillanceRepository::class];
+        $sessions = $userSuveillanceRepository->countPerSession(UserSurveillanceSearch::create()->userId($_GET['surveillance']));
 
         echo "<p>Die erweiterte Beobachtung ist automatisch für User unter Beobachtung aktiv!</p>";
         echo "<p>" . button("Neu laden", "?page=$page&amp;sub=$sub&amp;surveillance=" . $_GET['surveillance']) . " &nbsp; " . button("Zurück", "?page=$page&amp;sub=$sub") . "</p>";
@@ -131,54 +106,36 @@ elseif (isset($_GET['surveillance']) && $_GET['surveillance'] > 0) {
             <th>Aktionen/Minute</th>
             <th>Optionen</th>
             </tr>";
-        foreach ($sessions as $si) {
-            if ($si[1] > 0) {
-                $sid = $si[0];
-                $res = dbquery("
-                    SELECT
-                        *
-                    FROM
-                        user_sessionlog
-                    WHERE
-                        session_id='" . $sid . "'
-                    LIMIT 1;");
-                if (mysql_num_rows($res) > 0) {
-                    $arr = mysql_fetch_array($res);
-                } else {
-                    $res = dbquery("
-                        SELECT
-                            *
-                        FROM
-                            user_sessions
-                        WHERE
-                            id='" . $sid . "'
-                        LIMIT 1;");
-                    if (mysql_num_rows($res) > 0) {
-                        $arr = mysql_fetch_array($res);
-                    } else {
+        foreach ($sessions as $sessionId => $count) {
+            if ($count > 0) {
+                $userSession = $userSessionRepository->findLog($sessionId);
+                if ($userSession === null) {
+                    $userSession = $userSessionRepository->find($sessionId);
+
+                    if ($userSession === null) {
                         throw new \RuntimeException('User session not found');
                     }
                 }
                 echo "<tr>";
-                echo "<td>" . (isset($arr['time_login']) && $arr['time_login'] > 0 ? date("d.m.Y H:i", $arr['time_login']) : '-') . "</td>";
-                echo "<td>" . (isset($arr['time_action']) && $arr['time_action'] > 0 ? date("d.m.Y H:i", $arr['time_action']) : '-') . "</td>";
+                echo "<td>" . ($userSession->timeLogin > 0 ? date("d.m.Y H:i", $userSession->timeLogin) : '-') . "</td>";
+                echo "<td>" . ($userSession->timeAction > 0 ? date("d.m.Y H:i", $userSession->timeAction) : '-') . "</td>";
                 echo "<td>";
-                $dur = max($arr['time_logout'], $arr['time_action']) - $arr['time_login'];
+                $dur = max($userSession->timeLogout ?? 0, $userSession->timeAction) - $userSession->timeLogin;
                 if ($dur > 0)
                     echo tf($dur);
                 else
                     echo "-";
                 if ($dur > 60) {
-                    $apm = round($si[1] / $dur * 60, 1);
+                    $apm = round($count / $dur * 60, 1);
                 } else if ($dur > 0) {
-                    $apm = $si[1];
+                    $apm = $count;
                 } else {
                     $apm = '-';
                 }
                 echo "</td>
-                    <td>" . $si[1] . "</td>
+                    <td>" . $count . "</td>
                     <td>" . $apm . "</td>
-                    <td><a href=\"?page=$page&sub=$sub&surveillance=" . $_GET['surveillance'] . "&amp;session=" . $si[0] . "\">Details</a></td>
+                    <td><a href=\"?page=$page&sub=$sub&surveillance=" . $_GET['surveillance'] . "&amp;session=" . $sessionId . "\">Details</a></td>
                     </tr>";
             }
         }
@@ -223,32 +180,8 @@ else {
         </form><br/>";
 
     echo "Folgende User stehen unter Beobachtung:<br/><br/>";
-    $res = dbquery("
-        SELECT
-            users.user_nick,
-            users.user_points,
-            users.user_id,
-            users.user_observe,
-            MAX(user_sessionlog.time_action) AS time_log,
-            user_sessions.time_action
-        FROM
-            users
-        LEFT JOIN
-            user_sessionlog
-        ON
-            users.user_id = user_sessionlog.user_id
-        LEFT JOIN
-            user_sessions
-        ON
-            users.user_id = user_sessions.user_id
-        WHERE
-            users.user_observe IS NOT NULL
-        GROUP BY
-            users.user_id
-        ORDER BY
-            users.user_nick
-        ");
-    if (mysql_num_rows($res) > 0) {
+    $users = $userRepository->searchAdminView(UserSearch::create()->observed());
+    if (count($users) > 0) {
         echo "<table class=\"tb\">
             <tr>
                 <th style=\"width:150px;\">Nick</th>
@@ -258,24 +191,26 @@ else {
                 <th>Details</th>
                 <th style=\"width:200px;\">Optionen</th>
             </tr>";
-        while ($arr = mysql_fetch_array($res)) {
+        foreach ($users as $user) {
             echo "<tr>
-                    <td><a href=\"?page=$page&amp;sub=edit&amp;id=" . $arr['user_id'] . "\">" . $arr['user_nick'] . "</a></td>
-                    <td " . tm("Punkteverlauf", "<img src=\"../misc/stats.image.php?user=" . $arr['user_id'] . "\" alt=\"Diagramm\" style=\"width:600px;height:400px;\" />") . ">" . nf($arr['user_points']) . "</td>
-                    <td>" . stripslashes($arr['user_observe']) . "</td>";
-            if ($arr['time_action'])
+                    <td><a href=\"?page=$page&amp;sub=edit&amp;id=" . $user->id . "\">" . $user->nick . "</a></td>
+                    <td " . tm("Punkteverlauf", "<img src=\"../misc/stats.image.php?user=" . $user->id . "\" alt=\"Diagramm\" style=\"width:600px;height:400px;\" />") . ">" . nf($user->points) . "</td>
+                    <td>" . stripslashes($user->observe) . "</td>";
+            if ($user->timeAction > 0)
                 echo "<td class=\"tbldata\" style=\"color:#0f0;\">online</td>";
-            elseif ($arr['time_log'])
-                echo "<td class=\"tbldata\">" . date("d.m.Y H:i", $arr['time_log']) . "</td>";
+            elseif ($user->timeLog > 0)
+                echo "<td class=\"tbldata\">" . date("d.m.Y H:i", $user->timeLog) . "</td>";
             else
                 echo "<td class=\"tbldata\">Noch nicht eingeloggt!</td>";
-            $dres = dbquery("SELECT COUNT(id) FROM user_surveillance WHERE user_id=" . $arr['user_id'] . ";");
-            $dnum = mysql_fetch_row($dres);
-            echo "<td>" . nf($dnum[0]) . "</td>
+
+            /** @var UserSurveillanceRepository $userSuveillanceRepository */
+            $userSuveillanceRepository = $app[UserSurveillanceRepository::class];
+            $dnum = $userSuveillanceRepository->count(UserSurveillanceSearch::create()->userId($user->id));
+            echo "<td>" . nf($dnum) . "</td>
                     <td>
-                        <a href=\"?page=$page&amp;sub=$sub&amp;surveillance=" . $arr['user_id'] . "\">Details</a>
-                        <a href=\"?page=$page&amp;sub=$sub&amp;text=" . $arr['user_id'] . "\">Text ändern</a>
-                        <a href=\"?page=$page&amp;sub=$sub&amp;del=" . $arr['user_id'] . "\">Entfernen</a>
+                        <a href=\"?page=$page&amp;sub=$sub&amp;surveillance=" . $user->id . "\">Details</a>
+                        <a href=\"?page=$page&amp;sub=$sub&amp;text=" . $user->id . "\">Text ändern</a>
+                        <a href=\"?page=$page&amp;sub=$sub&amp;del=" . $user->id . "\">Entfernen</a>
                     </td>
                 </tr>";
         }

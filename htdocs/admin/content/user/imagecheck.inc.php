@@ -21,13 +21,12 @@ if (isset($_POST['validate_submit'])) {
                 if (file_exists(PROFILE_IMG_DIR . "/" . $user->profileImage)) {
                     unlink(PROFILE_IMG_DIR . "/" . $user->profileImage);
                 }
-                dbquery("UPDATE users SET user_profile_img='',user_profile_img_check=0 WHERE user_id=" . $id . ";");
-                if (mysql_affected_rows() > 0) {
+                if ($userRepository->updateImgCheck($id, false, '')) {
                     echo "Bild entfernt!<br/><br/>";
                 }
             }
         } else {
-            dbquery("UPDATE users SET user_profile_img_check=0 WHERE user_id=" . $id . ";");
+            $userRepository->updateImgCheck($id, false);
         }
     }
 }

@@ -422,4 +422,24 @@ class FleetRepository extends AbstractRepository
             ->execute()
             ->fetchOne();
     }
+
+    public function getFleetSpecialTarnBonus(int $fleetId): float
+    {
+        $data = $this->createQueryBuilder()
+            ->select('s.special_ship_bonus_tarn, fs.fs_special_ship_bonus_tarn')
+            ->from('fleet_ships', 'fs')
+            ->innerJoin('fs', 'ships', 's', 's.ship_id = fs.fs_ship_id')
+            ->where('fs.fs_fleet_id = :fleetId')
+            ->andWhere('s.special_ship = 1')
+            ->setParameter('fleetId', $fleetId)
+            ->execute()
+            ->fetchAllAssociative();
+
+        $value = 0;
+        foreach ($data as $row) {
+            $value += (int) $row['fs_special_ship_bonus_tarn'] * (float) $row['special_ship_bonus_tarn'];
+        }
+
+        return $value;
+    }
 }

@@ -291,27 +291,7 @@ class BuildListItem
         if ($this->id > 0) {
             $buildingRepository->updateBuildingListEntry($this->id, $this->level, $this->buildType, $this->startTime, $this->endTime);
         } else {
-            dbquery("INSERT INTO
-                        buildlist
-                    (
-                        buildlist_user_id,
-                        buildlist_entity_id,
-                        buildlist_building_id,
-                        buildlist_build_type,
-                        buildlist_current_level,
-                        buildlist_build_start_time,
-                        buildlist_build_end_time
-                    )
-                    VALUES
-                    (
-                        '" . $this->ownerId . "',
-                        '" . $this->entityId . "',
-                        '" . $this->buildingId . "',
-                        '" . $this->buildType . "',
-                        '" . $this->level . "',
-                        '" . $this->startTime . "',
-                        '" . floor($this->endTime) . "'
-                    );");
+            $buildingRepository->addBuilding($this->id, $this->level, $this->ownerId, $this->entityId, $this->buildType, $this->startTime, $this->endTime);
         }
 
         $buildingRepository->markBuildingWorkingStatus($cu->getId(), (int) $cp->id, BuildingId::BUILDING, true);
