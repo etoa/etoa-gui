@@ -31,4 +31,11 @@ class BuildingSearch extends AbstractSearch
 
         return $this;
     }
+
+    public function show(): self
+    {
+        $this->parts[] = 'building_show = 1';
+
+        return $this;
+    }
 }

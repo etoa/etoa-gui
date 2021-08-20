@@ -25,7 +25,6 @@ class MissileDataRepository extends AbstractRepository
     {
         $qb = $this->createQueryBuilder()
             ->select('missile_id', 'missile_name')
-            ->addSelect()
             ->from('missiles');
 
         if (!$showAll) {

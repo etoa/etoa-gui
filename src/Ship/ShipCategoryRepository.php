@@ -21,6 +21,19 @@ class ShipCategoryRepository extends AbstractRepository
         return array_map(fn ($row) => new ShipCategory($row), $data);
     }
 
+    /**
+     * @return array<int, string>
+     */
+    public function getCategoryNames(): array
+    {
+        return $this->createQueryBuilder()
+            ->select('cat_id, cat_name')
+            ->from('ship_cat')
+            ->orderBy('cat_order')
+            ->execute()
+            ->fetchAllKeyValue();
+    }
+
     public function getCategory(int $categoryId): ?ShipCategory
     {
         $data = $this->createQueryBuilder()
