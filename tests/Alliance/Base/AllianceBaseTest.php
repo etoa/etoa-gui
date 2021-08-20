@@ -76,6 +76,8 @@ class AllianceBaseTest extends AbstractDbTestCase
         $this->assertSame($costs->plastic, -$alliance->resPlastic);
         $this->assertSame($costs->fuel, -$alliance->resFuel);
         $this->assertSame($costs->food, -$alliance->resFood);
+
+        $this->assertNotNull($this->allianceTechnologyRepository->getInProgress($allianceId));
     }
 
     public function testGetBuildingBuildStatus(): void
@@ -125,5 +127,7 @@ class AllianceBaseTest extends AbstractDbTestCase
         $this->assertSame($costs->plastic, -$alliance->resPlastic);
         $this->assertSame($costs->fuel, -$alliance->resFuel);
         $this->assertSame($costs->food, -$alliance->resFood);
+
+        $this->assertNotNull($this->allianceBuildingRepository->getInProgress($allianceId));
     }
 }

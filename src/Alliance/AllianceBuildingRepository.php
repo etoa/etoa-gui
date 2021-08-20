@@ -157,6 +157,24 @@ class AllianceBuildingRepository extends AbstractRepository
         return $result;
     }
 
+    /**
+     * @return ?array{name: string, endTime: int}
+     */
+    public function getInProgress(int $allianceId): ?array
+    {
+        $data = $this->createQueryBuilder()
+            ->select('alliance_building_name, alliance_buildlist_build_end_time')
+            ->from('alliance_buildlist')
+            ->innerJoin('alliance_buildlist', 'alliance_buildings', 'alliance_buildings', 'alliance_building_id=alliance_buildlist_building_id')
+            ->where('alliance_buildlist_alliance_id = :allianceId')
+            ->andWhere('alliance_buildlist_build_end_time > 0')
+            ->setParameter('allianceId', $allianceId)
+            ->execute()
+            ->fetchAssociative();
+
+        return $data !== false ? ['name' => $data['alliance_building_name'], 'endTime' => (int) $data['alliance_buildlist_build_end_time']] : null;
+    }
+
     public function addToAlliance(int $allianceId, int $buildingId, int $level, int $amount, int $startTime = 0, int $endTime = 0): void
     {
         $this->createQueryBuilder()

@@ -1,6 +1,8 @@
 <?PHP
 
+use EtoA\Alliance\AllianceBuildingRepository;
 use EtoA\Alliance\AllianceNewsRepository;
+use EtoA\Alliance\AllianceTechnologyRepository;
 use EtoA\Building\BuildingDataRepository;
 use EtoA\Building\BuildingRepository;
 use EtoA\Defense\DefenseDataRepository;
@@ -44,6 +46,10 @@ $defenseDataRepository = $app[DefenseDataRepository::class];
 $defenseQueRepository = $app[DefenseQueueRepository::class];
 /** @var UserPropertiesRepository $userPropertiesRepository */
 $userPropertiesRepository = $app[UserPropertiesRepository::class];
+/** @var AllianceBuildingRepository $allianceBuildingRepository */
+$allianceBuildingRepository = $app[AllianceBuildingRepository::class];
+/** @var AllianceTechnologyRepository $allianceTechnologyRepository */
+$allianceTechnologyRepository = $app[AllianceTechnologyRepository::class];
 
 $properties = $userPropertiesRepository->getOrCreateProperties($cu->id);
 
@@ -219,30 +225,18 @@ if ($cu->allianceId != 0) {
                         <tr>";
 
     // Lädt bauende Allianzgebäude
-    $res = dbquery("
-          SELECT
-            alliance_building_name,
-            alliance_buildlist_build_end_time
-          FROM
-              alliance_buildlist
-            INNER JOIN
-              alliance_buildings
-            ON alliance_building_id=alliance_buildlist_building_id
-          WHERE
-            alliance_buildlist_alliance_id='" . $cu->allianceId . "'
-            AND alliance_buildlist_build_end_time>'0';");
-    if (mysql_num_rows($res) > 0) {
-        $arr = mysql_fetch_array($res);
+    $allianceBuildingInProgress = $allianceBuildingRepository->getInProgress($cu->allianceId());
+    if ($allianceBuildingInProgress !== null) {
         echo "<td>
                                 <a href=\"?page=alliance&amp;action=base&amp;action2=buildings\" id=\"alliance_building_counter\">";
 
         //Forschung ist fertig
-        if ($arr['alliance_buildlist_build_end_time'] - time() <= 0) {
-            echo "" . $arr['alliance_building_name'] . " Fertig";
+        if ($allianceBuildingInProgress['endTime'] - time() <= 0) {
+            echo "" . $allianceBuildingInProgress['name'] . " Fertig";
         }
         //Noch am forschen
         else {
-            echo startTime($arr['alliance_buildlist_build_end_time'] - time(), 'alliance_building_counter', 0, '' . $arr['alliance_building_name'] . ' TIME');
+            echo startTime($allianceBuildingInProgress['endTime'] - time(), 'alliance_building_counter', 0, '' . $allianceBuildingInProgress['name'] . ' TIME');
         }
 
         echo "</a>
@@ -287,30 +281,18 @@ if ($cu->allianceId != 0) {
 
 
     // Lädt forschende Allianztech
-    $res = dbquery("
-          SELECT
-            alliance_tech_name,
-            alliance_techlist_build_end_time
-          FROM
-              alliance_techlist
-            INNER JOIN
-              alliance_technologies
-            ON alliance_tech_id=alliance_techlist_tech_id
-          WHERE
-            alliance_techlist_alliance_id='" . $cu->allianceId . "'
-            AND alliance_techlist_build_end_time>'0';");
-    if (mysql_num_rows($res) > 0) {
-        $arr = mysql_fetch_array($res);
+    $allianceTechnologyInProgress = $allianceTechnologyRepository->getInProgress($cu->allianceId());
+    if ($allianceTechnologyInProgress !== null) {
         echo "<td>
                                 <a href=\"?page=alliance&amp;action=base&amp;action2=research\" id=\"alliance_tech_counter\">";
 
         //Forschung ist fertig
-        if ($arr['alliance_techlist_build_end_time'] - time() <= 0) {
-            echo "" . $arr['alliance_tech_name'] . " Fertig";
+        if ($allianceTechnologyInProgress['endTime'] - time() <= 0) {
+            echo "" . $allianceTechnologyInProgress['name'] . " Fertig";
         }
         //Noch am forschen
         else {
-            echo startTime($arr['alliance_techlist_build_end_time'] - time(), 'alliance_tech_counter', 0, '' . $arr['alliance_tech_name'] . ' TIME');
+            echo startTime($allianceTechnologyInProgress['endTime'] - time(), 'alliance_tech_counter', 0, '' . $allianceTechnologyInProgress['name'] . ' TIME');
         }
 
         echo "</a>
