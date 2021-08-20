@@ -120,7 +120,9 @@ class AllianceServiceProvider implements ServiceProviderInterface
             return new AllianceBase(
                 $pimple[ConfigurationService::class],
                 $pimple[AllianceRepository::class],
-                $pimple[AllianceHistoryRepository::class]
+                $pimple[AllianceHistoryRepository::class],
+                $pimple[AllianceTechnologyRepository::class],
+                $pimple[AllianceBuildingRepository::class]
             );
         };
     }

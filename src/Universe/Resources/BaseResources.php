@@ -102,6 +102,6 @@ class BaseResources
 
     public function getSum(): int
     {
-        return $this->metal + $this->crystal + $this->plastic + $this->fuel + $this->food = $this->people;
+        return $this->metal + $this->crystal + $this->plastic + $this->fuel + $this->food + $this->people;
     }
 }

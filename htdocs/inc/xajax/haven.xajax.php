@@ -3,12 +3,19 @@
 // Main dialogs
 
 use EtoA\Alliance\AllianceBuildingId;
+use EtoA\Alliance\AllianceBuildingRepository;
 use EtoA\Bookmark\BookmarkRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Fleet\FleetRepository;
 use EtoA\Log\LogFacility;
 use EtoA\Log\LogRepository;
 use EtoA\Log\LogSeverity;
+use EtoA\Ship\ShipDataRepository;
+use EtoA\Ship\ShipRepository;
+use EtoA\Ship\ShipRequirementRepository;
+use EtoA\Ship\ShipSort;
+use EtoA\Technology\TechnologyDataRepository;
+use EtoA\Technology\TechnologyRepository;
 use EtoA\Universe\Entity\EntityCoordinates;
 use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Planet\PlanetRepository;
@@ -39,6 +46,19 @@ $xajax->register(XAJAX_FUNCTION, "havenWormholeReset");
  */
 function havenShowShips()
 {
+    global $app;
+
+    /** @var ShipRepository $shipRepository */
+    $shipRepository = $app[ShipRepository::class];
+    /** @var ShipDataRepository $shipDataRepository */
+    $shipDataRepository = $app[ShipDataRepository::class];
+    /** @var ShipRequirementRepository $shipRequirementRepository */
+    $shipRequirementRepository = $app[ShipRequirementRepository::class];
+    /** @var TechnologyRepository $technologyRepository */
+    $technologyRepository = $app[TechnologyRepository::class];
+    /** @var AllianceBuildingRepository $allianceBuildingRepository */
+    $allianceBuildingRepository = $app[AllianceBuildingRepository::class];
+
     defineImagePaths();
 
     $response = new xajaxResponse();
@@ -74,8 +94,8 @@ function havenShowShips()
     if ($fleet->specialist->fleetMax > 0)
         echo " +3 Flotten durch " . $fleet->specialist->name;
     echo ")</td></tr>";
-    if ($fleet->owner->allianceId() > 0 && $fleet->owner->alliance->buildlist->getLevel(AllianceBuildingId::MAIN)) {
-        $flvl = $fleet->owner->alliance->buildlist->getLevel(AllianceBuildingId::FLEET_CONTROL);
+    if ($fleet->owner->allianceId() > 0 && $allianceBuildingRepository->getLevel($fleet->owner->allianceId(), AllianceBuildingId::MAIN) > 0) {
+        $flvl = $allianceBuildingRepository->getLevel($fleet->owner->allianceId(), AllianceBuildingId::FLEET_CONTROL);
         $fleet->setAllianceSlots($flvl);
         $afleets = $fleet->getAllianceSlots();
         $pfleets = $flvl + 2;
@@ -108,25 +128,11 @@ function havenShowShips()
     tableEnd();
 
     // Schiffe auflisten
-    $res = dbquery("
-        SELECT
-            *
-        FROM
-        shiplist AS sl
-        INNER JOIN
-          ships AS s
-        ON
-        s.ship_id=sl.shiplist_ship_id
-            AND sl.shiplist_user_id='" . $fleet->ownerId() . "'
-            AND sl.shiplist_entity_id='" . $fleet->sourceEntity->Id() . "'
-        AND sl.shiplist_count>0
-        ORDER BY
-            s.special_ship DESC,
-            s.ship_launchable DESC,
-            s.ship_name;");
-
-    if (mysql_num_rows($res) != 0) {
-        $ships = $fleet->getShips();
+    $shipList = $shipRepository->getEntityShipCounts($fleet->ownerId(), $fleet->sourceEntity->Id());
+    $ships = array_intersect_key($shipDataRepository->searchShips(null, ShipSort::haven()), $shipList);
+    if (count($ships) != 0) {
+        $fleetShips = $fleet->getShips();
+        $technologyLevels = $technologyRepository->getTechnologyLevels($fleet->ownerId());
 
         $tabulator = 1;
         echo "<form id=\"shipForm\" onsubmit=\"xajax_havenShowTarget(xajax.getFormValues('shipForm')); return false;\">";
@@ -144,51 +150,32 @@ function havenShowShips()
 
         $jsAllShips = array();    // Array for selectable ships
         $launchable = 0;    // Counter for launchable ships
-        while ($arr = mysql_fetch_array($res)) {
-
-            if (isset($ships[$arr['ship_id']])) {
-                $val = max(0, $ships[$arr['ship_id']]['count']);
+        foreach ($ships as $ship) {
+            $count = $shipList[$ship->id];
+            if (isset($fleetShips[$ship->id])) {
+                $val = max(0, $fleetShips[$ship->id]['count']);
             } else {
                 $val = 0;
             }
 
-            if ($arr['special_ship'] == 1) {
+            if ($ship->special) {
                 echo "<tr>
                     <td style=\"width:40px;background:#000;\">
-                        <a href=\"?page=ship_upgrade&amp;id=" . $arr['ship_id'] . "\">
-                            <img src=\"" . IMAGE_PATH . "/" . IMAGE_SHIP_DIR . "/ship" . $arr['ship_id'] . "_small." . IMAGE_EXT . "\" align=\"top\" width=\"40\" height=\"40\" alt=\"Ship\" border=\"0\"/>
+                        <a href=\"?page=ship_upgrade&amp;id=" . $ship->id . "\">
+                            <img src=\"" . IMAGE_PATH . "/" . IMAGE_SHIP_DIR . "/ship" . $ship->id . "_small." . IMAGE_EXT . "\" align=\"top\" width=\"40\" height=\"40\" alt=\"Ship\" border=\"0\"/>
                         </a>
                     </td>";
             } else {
                 echo "<tr>
                     <td style=\"width:40px;background:#000;\">
-                        <a href=\"?page=help&amp;site=shipyard&amp;id=" . $arr['ship_id'] . "\">
-                            <img src=\"" . IMAGE_PATH . "/" . IMAGE_SHIP_DIR . "/ship" . $arr['ship_id'] . "_small." . IMAGE_EXT . "\" align=\"top\" width=\"40\" height=\"40\" alt=\"Ship\" border=\"0\"/>
+                        <a href=\"?page=help&amp;site=shipyard&amp;id=" . $ship->id . "\">
+                            <img src=\"" . IMAGE_PATH . "/" . IMAGE_SHIP_DIR . "/ship" . $ship->id . "_small." . IMAGE_EXT . "\" align=\"top\" width=\"40\" height=\"40\" alt=\"Ship\" border=\"0\"/>
                         </a>
                     </td>";
             }
 
             // TODO: Rewrite this!
             //Geschwindigkeitsbohni der entsprechenden Antriebstechnologien laden und zusammenrechnen
-            $vres = dbquery("
-        SELECT
-            l.techlist_current_level,
-            t.tech_name,
-            r.req_level
-        FROM
-            ship_requirements r
-        INNER JOIN
-            techlist l
-            ON r.req_tech_id = l.techlist_tech_id
-          AND l.techlist_user_id=" . $fleet->ownerId() . "
-           INNER JOIN
-            technologies t
-              ON r.req_tech_id = t.tech_id
-          AND t.tech_type_id = '" . TECH_SPEED_CAT . "'
-        WHERE
-                    r.obj_id=" . $arr['ship_id'] . "
-        GROUP BY
-            r.id;");
             if ($fleet->raceSpeedFactor() != 1)
                 $speedtechstring = "Rasse: " . get_percent_string($fleet->raceSpeedFactor(), 1) . "<br>";
             else
@@ -200,21 +187,24 @@ function havenShowShips()
                 $speedtechstring .= "";
 
             $timefactor = $fleet->raceSpeedFactor() + $fleet->specialist->fleetSpeedFactor - 1;
-            if (mysql_num_rows($vres) > 0) {
-                while ($varr = mysql_fetch_array($vres)) {
-                    if ($varr['techlist_current_level'] - $varr['req_level'] <= 0) {
+
+            $speedRequirements = $shipRequirementRepository->getRequiredSpeedTechnologies($ship->id);
+            if (count($speedRequirements) > 0) {
+                foreach ($speedRequirements as $requirement) {
+                    $currentLevel = $technologyLevels[$requirement->id] ?? 0;
+                    if ($currentLevel - $requirement->requiredLevel <= 0) {
                         $timefactor += 0;
                     } else {
-                        $timefactor += ($varr['techlist_current_level'] - $varr['req_level']) * 0.1;
-                        $speedtechstring .= $varr['tech_name'] . " " . $varr['techlist_current_level'] . ": " . get_percent_string((($varr['techlist_current_level'] - $varr['req_level']) / 10) + 1, 1) . "<br>";
+                        $timefactor += ($currentLevel - $requirement->requiredLevel) * 0.1;
+                        $speedtechstring .= $requirement->name . " " . $currentLevel . ": " . get_percent_string((($currentLevel - $requirement->requiredLevel) / 10) + 1, 1) . "<br>";
                     }
                 }
             }
 
-            $arr['ship_speed'] /= FLEET_FACTOR_F;
+            $ship->speed /= FLEET_FACTOR_F;
 
 
-            $actions = array_filter(explode(",", $arr['ship_actions']));
+            $actions = array_filter(explode(",", $ship->actions));
             $accnt = count($actions);
             $acstr = '';
             if ($accnt > 0) {
@@ -232,25 +222,25 @@ function havenShowShips()
             }
 
 
-            echo "<td " . tm($arr['ship_name'], "<img src=\"" . IMAGE_PATH . "/" . IMAGE_SHIP_DIR . "/ship" . $arr['ship_id'] . "_middle." . IMAGE_EXT . "\" style=\"float:left;margin-right:5px;\">" . text2html($arr['ship_shortcomment']) . "<br/>" . $acstr . "<br style=\"clear:both;\"/>") . ">" . $arr['ship_name'] . "</td>";
-            echo "<td width=\"190\" " . tm("Geschwindigkeit", "Grundgeschwindigkeit: " . $arr['ship_speed'] . " AE/h<br>$speedtechstring") . ">" . nf($arr['ship_speed'] * $timefactor) . " AE/h</td>";
-            echo "<td width=\"110\">" . nf($arr['ship_pilots']) . "</td>";
-            echo "<td width=\"110\">" . nf($arr['shiplist_count']) . "<br/>";
+            echo "<td " . tm($ship->name, "<img src=\"" . IMAGE_PATH . "/" . IMAGE_SHIP_DIR . "/ship" . $ship->id . "_middle." . IMAGE_EXT . "\" style=\"float:left;margin-right:5px;\">" . text2html($ship->shortComment) . "<br/>" . $acstr . "<br style=\"clear:both;\"/>") . ">" . $ship->name . "</td>";
+            echo "<td width=\"190\" " . tm("Geschwindigkeit", "Grundgeschwindigkeit: " . $ship->speed . " AE/h<br>$speedtechstring") . ">" . nf($ship->speed * $timefactor) . " AE/h</td>";
+            echo "<td width=\"110\">" . nf($ship->pilots) . "</td>";
+            echo "<td width=\"110\">" . nf($count) . "<br/>";
 
             echo "</td>";
             echo "<td width=\"110\">";
-            if ($arr['ship_launchable'] == 1 && $fleet->pilotsAvailable() >= $arr['ship_pilots']) {
+            if ($ship->launchable && $fleet->pilotsAvailable() >= $ship->pilots) {
                 echo "<input type=\"text\"
-                  id=\"ship_count_" . $arr['ship_id'] . "\"
-                  name=\"ship_count[" . $arr['ship_id'] . "]\"
+                  id=\"ship_count_" . $ship->id . "\"
+                  name=\"ship_count[" . $ship->id . "]\"
                   size=\"10\" value=\"$val\"
                   title=\"Anzahl Schiffe eingeben, die mitfliegen sollen\"
                   onclick=\"this.select();\" tabindex=\"" . $tabulator . "\"
-                  onkeyup=\"FormatNumber(this.id,this.value," . $arr['shiplist_count'] . ",'','');\"/>
+                  onkeyup=\"FormatNumber(this.id,this.value," . $count . ",'','');\"/>
               <br/>
-              <a href=\"javascript:;\" onclick=\"document.getElementById('ship_count_" . $arr['ship_id'] . "').value=" . $arr['shiplist_count'] . ";document.getElementById('ship_count_" . $arr['ship_id'] . "').select()\">Alle</a> &nbsp;
-              <a href=\"javascript:;\" onclick=\"document.getElementById('ship_count_" . $arr['ship_id'] . "').value=0;document.getElementById('ship_count_" . $arr['ship_id'] . "').select()\">Keine</a>";
-                $jsAllShips["ship_count_" . $arr['ship_id']] = $arr['shiplist_count'];
+              <a href=\"javascript:;\" onclick=\"document.getElementById('ship_count_" . $ship->id . "').value=" . $count . ";document.getElementById('ship_count_" . $ship->id . "').select()\">Alle</a> &nbsp;
+              <a href=\"javascript:;\" onclick=\"document.getElementById('ship_count_" . $ship->id . "').value=0;document.getElementById('ship_count_" . $ship->id . "').select()\">Keine</a>";
+                $jsAllShips["ship_count_" . $ship->id] = $count;
                 $launchable++;
             } else {
                 echo "-";
@@ -274,7 +264,7 @@ function havenShowShips()
         if ($fleet->error() == '') {
             if ($launchable > 0) {
                 echo "<input type=\"submit\" value=\"Weiter zur Zielauswahl &gt;&gt;&gt;\" title=\"Wenn du die Schiffe ausgew&auml;hlt hast, klicke hier um das Ziel auszuw&auml;hlen\" tabindex=\"" . ($tabulator + 1) . "\" />";
-                if (count($ships) > 0) {
+                if (count($fleetShips) > 0) {
                     echo " &nbsp; <input type=\"button\" onclick=\"xajax_havenReset()\" value=\"Reset\" />";
                 }
             }
@@ -1701,8 +1691,8 @@ function havenCheckAction($code)
 
     if ($code == "fakeattack") {
         ob_start();
-        /** @var \EtoA\Ship\ShipDataRepository $shipDataRepository */
-        $shipDataRepository = $app[\EtoA\Ship\ShipDataRepository::class];
+        /** @var ShipDataRepository $shipDataRepository */
+        $shipDataRepository = $app[ShipDataRepository::class];
         $shipNames = $shipDataRepository->getFakeableShipNames();
         echo "<td colspan=\"3\">";
         foreach ($shipNames as $shipId => $shipName) {

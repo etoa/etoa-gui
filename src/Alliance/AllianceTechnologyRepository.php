@@ -157,4 +157,22 @@ class AllianceTechnologyRepository extends AbstractRepository
 
         return $result;
     }
+
+    /**
+     * @return ?array{name: string, endTime: int}
+     */
+    public function getInProgress(int $allianceId): ?array
+    {
+        $data = $this->createQueryBuilder()
+            ->select('alliance_tech_name, alliance_techlist_build_end_time')
+            ->from('alliance_techlist')
+            ->innerJoin('alliance_techlist', 'alliance_technologies', 'alliance_technologies', 'alliance_tech_id=alliance_techlist_tech_id')
+            ->where('alliance_techlist_alliance_id = :allianceId')
+            ->andWhere('alliance_techlist_build_end_time > 0')
+            ->setParameter('allianceId', $allianceId)
+            ->execute()
+            ->fetchAssociative();
+
+        return $data !== false ? ['name' => $data['alliance_tech_name'], 'endTime' => (int) $data['alliance_techlist_build_end_time']] : null;
+    }
 }

@@ -434,6 +434,7 @@ tableEnd();
 
 // Gebäude in Auftrag geben
 if (isset($_POST['building_submit']) && checker_verify()) {
+    $allianceUser = $userRepository->getUser($cu->getId());
     if (Alliance::checkActionRights(AllianceRights::BUILD_MINISTER)) {
         if (isset($_POST['building_id']) && $_POST['building_id'] != 0) {
             $buildingId = $request->request->getInt('building_id');
@@ -441,8 +442,8 @@ if (isset($_POST['building_submit']) && checker_verify()) {
                 $alliance = $allianceRepository->getAlliance($cu->allianceId());
                 $building = $buildings[$buildingId];
                 $buildingList = $allianceBuildingRepository->getBuildList($alliance->id);
-                $allianceBase->buildBuilding($user, $alliance, $building, $buildingList[$buildingId] ?? null, AllianceItemRequirementStatus::createForBuildings($buildings, $buildingList));
-                success_msg("Forschung wurde erfolgreich in Auftrag gegeben!");
+                $allianceBase->buildBuilding($allianceUser, $alliance, $building, $buildingList[$buildingId] ?? null, AllianceItemRequirementStatus::createForBuildings($buildings, $buildingList));
+                success_msg("Gebäude wurde erfolgreich in Auftrag gegeben!");
             } catch (\RuntimeException $e) {
                 error_msg($e->getMessage());
             }
@@ -453,6 +454,7 @@ if (isset($_POST['building_submit']) && checker_verify()) {
 
 // Technologie in Auftrag geben
 if (isset($_POST['research_submit']) && checker_verify()) {
+    $allianceUser = $userRepository->getUser($cu->getId());
     if (Alliance::checkActionRights(AllianceRights::BUILD_MINISTER)) {
         if (isset($_POST['research_id']) && $_POST['research_id'] != 0) {
             $technologyId = $request->request->getInt('research_id');
@@ -460,7 +462,7 @@ if (isset($_POST['research_submit']) && checker_verify()) {
                 $alliance = $allianceRepository->getAlliance($cu->allianceId());
                 $technology = $technologies[$technologyId];
                 $technologyList = $allianceTechnologyRepository->getTechnologyList($alliance->id);
-                $allianceBase->buildTechnology($user, $alliance, $technology, $technologyList[$technologyId] ?? null, AllianceItemRequirementStatus::createForTechnologies($technologies, $technologyList));
+                $allianceBase->buildTechnology($allianceUser, $alliance, $technology, $technologyList[$technologyId] ?? null, AllianceItemRequirementStatus::createForTechnologies($technologies, $technologyList));
                 success_msg("Forschung wurde erfolgreich in Auftrag gegeben!");
             } catch (\RuntimeException $e) {
                 error_msg($e->getMessage());

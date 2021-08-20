@@ -31,5 +31,9 @@ class ShipServiceProvider implements ServiceProviderInterface
         $pimple[ShipQueueRepository::class] = function (Container $pimple): ShipQueueRepository {
             return new ShipQueueRepository($pimple['db']);
         };
+
+        $pimple[ShipTransformRepository::class] = function (Container $pimple): ShipTransformRepository {
+            return new ShipTransformRepository($pimple['db']);
+        };
     }
 }
