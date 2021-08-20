@@ -37,6 +37,11 @@ class ShipSort extends AbstractSort
         return new ShipSort(['ship_cat_id' => null, 'ship_order' => null, 'ship_name' => null]);
     }
 
+    public static function haven(): ShipSort
+    {
+        return new ShipSort(['special_ship' => 'DESC', 'ship_launchable' => 'DESC', 'ship_name' => null]);
+    }
+
     public static function specialWithUserSort(string $userSort, string $order): ShipSort
     {
         if (isset(self::USER_SORT_VALUES[$userSort])) {
