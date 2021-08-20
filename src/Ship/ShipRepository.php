@@ -42,6 +42,7 @@ class ShipRepository extends AbstractRepository
     }
 
     /**
+     * @param ?int[] $shipIds
      * @return ShipListItem[]
      */
     public function findForUser(int $userId, ?int $entityId = null, array $shipIds = null): array

@@ -94,7 +94,7 @@ function havenShowShips()
     if ($fleet->specialist->fleetMax > 0)
         echo " +3 Flotten durch " . $fleet->specialist->name;
     echo ")</td></tr>";
-    if ($fleet->owner->allianceId() > 0 && $allianceBuildingRepository->getLevel($fleet->owner->allianceId(), AllianceBuildingId::MAIN)) {
+    if ($fleet->owner->allianceId() > 0 && $allianceBuildingRepository->getLevel($fleet->owner->allianceId(), AllianceBuildingId::MAIN) > 0) {
         $flvl = $allianceBuildingRepository->getLevel($fleet->owner->allianceId(), AllianceBuildingId::FLEET_CONTROL);
         $fleet->setAllianceSlots($flvl);
         $afleets = $fleet->getAllianceSlots();
