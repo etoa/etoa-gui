@@ -32,6 +32,14 @@ class RequirementsCollection
     /**
      * @return ObjectRequirement[]
      */
+    public function getForAllObjects(): array
+    {
+        return array_merge(...$this->requirements);
+    }
+
+    /**
+     * @return ObjectRequirement[]
+     */
     public function getBuildingRequirements(int $objectId): array
     {
         if (!isset($this->requirements[$objectId])) {

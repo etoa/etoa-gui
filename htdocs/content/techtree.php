@@ -2,16 +2,33 @@
 
 use EtoA\Building\BuildingDataRepository;
 use EtoA\Building\BuildingRepository;
+use EtoA\Building\BuildingRequirementRepository;
+use EtoA\Building\BuildingSearch;
+use EtoA\Building\BuildingSort;
+use EtoA\Building\BuildingTypeDataRepository;
+use EtoA\Defense\DefenseCategoryRepository;
 use EtoA\Defense\DefenseDataRepository;
+use EtoA\Defense\DefenseRequirementRepository;
+use EtoA\Defense\DefenseSearch;
+use EtoA\Defense\DefenseSort;
+use EtoA\Missile\MissileDataRepository;
+use EtoA\Missile\MissileRequirementRepository;
 use EtoA\Race\RaceDataRepository;
+use EtoA\Ship\ShipCategoryRepository;
 use EtoA\Ship\ShipDataRepository;
 use EtoA\Ship\ShipRepository;
+use EtoA\Ship\ShipRequirementRepository;
+use EtoA\Ship\ShipSearch;
+use EtoA\Ship\ShipSort;
 use EtoA\Technology\TechnologyDataRepository;
 use EtoA\Technology\TechnologyRepository;
+use EtoA\Technology\TechnologyRequirementRepository;
+use EtoA\Technology\TechnologyTypeRepository;
 
 /** @var BuildingDataRepository $buildRepository */
 $buildRepository = $app[BuildingDataRepository::class];
-
+/** @var BuildingDataRepository $buildingDataRepository */
+$buildingDataRepository = $app[BuildingDataRepository::class];
 /** @var TechnologyDataRepository $technologyDataRepository */
 $technologyDataRepository = $app[TechnologyDataRepository::class];
 
@@ -32,76 +49,90 @@ else
     $mode = "";
 
 
+$typeNames = [];
+$raceSpecific = [];
+$itemNames = [];
 if ($mode == "tech") {
-    define('ITEMS_TBL', "technologies");
-    define('TYPES_TBL', "tech_types");
-    define('REQ_TBL', "tech_requirements");
-    define('ITEM_ID_FLD', "tech_id");
-    define('ITEM_NAME_FLD', "tech_name");
-    define('ITEM_RACE_FLD', "");
-    define('ITEM_SHOW_FLD', "tech_show");
-    define('ITEM_TYPE_FLD', "tech_type_id");
-    define('ITEM_ORDER_FLD', "tech_order");
-    define('TYPE_ORDER_FLD', "type_order");
-    define('TYPE_ID_FLD', "type_id");
-    define('TYPE_NAME_FLD', "type_name");
     define('NO_ITEMS_MSG', "In dieser Kategorie gibt es keine Technologien!");
     define('HELP_URL', "research");
+
+    /** @var TechnologyRequirementRepository $requirementsRepository */
+    $requirementsRepository = $app[TechnologyRequirementRepository::class];
+    /** @var TechnologyTypeRepository $technologyTypeRepository */
+    $technologyTypeRepository = $app[TechnologyTypeRepository::class];
+    $typeNames = $technologyTypeRepository->getTypeNames();
+    $groupedNames = [];
+    /** @var TechnologyDataRepository $technologyDataRepository */
+    $technologyDataRepository = $app[TechnologyDataRepository::class];
+    $technologies = $technologyDataRepository->getTechnologies();
+    foreach ($technologies as $technology) {
+        $groupedNames[$technology->typeId][$technology->id] = $technology->name;
+    }
 } elseif ($mode == "ships") {
-    define('ITEMS_TBL', "ships");
-    define('TYPES_TBL', "ship_cat");
-    define('REQ_TBL', "ship_requirements");
-    define('ITEM_ID_FLD', "ship_id");
-    define('ITEM_NAME_FLD', "ship_name");
-    define('ITEM_RACE_FLD', "ship_race_id");
-    define('ITEM_SHOW_FLD', "ship_buildable");
-    define('ITEM_TYPE_FLD', "ship_cat_id");
-    define('ITEM_ORDER_FLD', "ship_name");
-    define('TYPE_ORDER_FLD', "cat_order");
-    define('TYPE_ID_FLD', "cat_id");
-    define('TYPE_NAME_FLD', "cat_name");
     define('NO_ITEMS_MSG', "In dieser Kategorie gibt es keine Schiffe!");
     define('HELP_URL', "shipyard");
+
+    /** @var ShipRequirementRepository $requirementsRepository */
+    $requirementsRepository = $app[ShipRequirementRepository::class];
+    /** @var ShipCategoryRepository $shipCategoryRepository */
+    $shipCategoryRepository = $app[ShipCategoryRepository::class];
+    $typeNames = $shipCategoryRepository->getCategoryNames();
+    $groupedNames = [];
+    /** @var ShipDataRepository $shipDataRepository */
+    $shipDataRepository = $app[ShipDataRepository::class];
+    $ships = $shipDataRepository->searchShips(ShipSearch::create()->raceOrNull($cu->raceId)->buildable(), ShipSort::name());
+    foreach ($ships as $ship) {
+        $groupedNames[$ship->catId][$ship->id] = $ship->name;
+        if ($ship->raceId > 0) {
+            $raceSpecific[$ship->id] = $ship->raceId;
+        }
+    }
 } elseif ($mode == "defense") {
-    define('ITEMS_TBL', "defense");
-    define('TYPES_TBL', "def_cat");
-    define('REQ_TBL', "def_requirements");
-    define('ITEM_ID_FLD', "def_id");
-    define('ITEM_NAME_FLD', "def_name");
-    define('ITEM_RACE_FLD', "def_race_id");
-    define('ITEM_SHOW_FLD', "def_buildable");
-    define('ITEM_TYPE_FLD', "def_cat_id");
-    define('ITEM_ORDER_FLD', "def_order,def_name");
-    define('TYPE_ORDER_FLD', "cat_order");
-    define('TYPE_ID_FLD', "cat_id");
-    define('TYPE_NAME_FLD', "cat_name");
     define('NO_ITEMS_MSG', "In dieser Kategorie gibt es keine Verteidigungsanlagen!");
     define('HELP_URL', "defense");
+
+    /** @var DefenseRequirementRepository $requirementsRepository */
+    $requirementsRepository = $app[DefenseRequirementRepository::class];
+    /** @var DefenseCategoryRepository $defenseCategoryRepository */
+    $defenseCategoryRepository = $app[DefenseCategoryRepository::class];
+    $typeNames = $defenseCategoryRepository->getCategoryNames();
+    $groupedNames = [];
+    /** @var DefenseDataRepository $defenseDataRepository */
+    $defenseDataRepository = $app[DefenseDataRepository::class];
+    $defenses = $defenseDataRepository->searchDefense(DefenseSearch::create()->raceOrNull($cu->raceId)->buildable(), DefenseSort::category());
+    foreach ($defenses as $defense) {
+        $groupedNames[$defense->catId][$defense->id] = $defense->name;
+        if ($defense->raceId > 0) {
+            $raceSpecific[$defense->id] = $defense->raceId;
+        }
+    }
 } elseif ($mode == "missiles") {
-    define('ITEMS_TBL', "missiles");
-    define('REQ_TBL', "missile_requirements");
-    define('ITEM_ID_FLD', "missile_id");
-    define('ITEM_NAME_FLD', "missile_name");
-    define('ITEM_RACE_FLD', "");
-    define('ITEM_SHOW_FLD', "missile_show");
-    define('ITEM_ORDER_FLD', "missile_name");
     define('NO_ITEMS_MSG', "In dieser Kategorie gibt es keine Raketen!");
     define('HELP_URL', "missiles");
+
+    /** @var MissileDataRepository $missileDataRepository */
+    $missileDataRepository = $app[MissileDataRepository::class];
+    $itemNames = $missileDataRepository->getMissileNames();
+
+    /** @var MissileRequirementRepository $requirementsRepository */
+    $requirementsRepository = $app[MissileRequirementRepository::class];
 } elseif ($mode == "buildings") {
-    define('ITEMS_TBL', "buildings");
-    define('TYPES_TBL', "building_types");
-    define('REQ_TBL', "building_requirements");
-    define('ITEM_ID_FLD', "building_id");
-    define('ITEM_NAME_FLD', "building_name");
-    define('ITEM_RACE_FLD', "");
-    define('ITEM_SHOW_FLD', "building_show");
-    define('ITEM_TYPE_FLD', "building_type_id");
-    define('ITEM_ORDER_FLD', "building_order");
-    define('TYPE_ORDER_FLD', "type_order");
-    define('TYPE_ID_FLD', "type_id");
-    define('TYPE_NAME_FLD', "type_name");
     define('NO_ITEMS_MSG', "In dieser Kategorie gibt es keine Geb&auml;ude!");
     define('HELP_URL', "buildings");
+
+    /** @var BuildingRequirementRepository $requirementsRepository */
+    $requirementsRepository = $app[BuildingRequirementRepository::class];
+    /** @var BuildingTypeDataRepository $buildingTypeRepository */
+    $buildingTypeRepository = $app[BuildingTypeDataRepository::class];
+    $typeNames = $buildingTypeRepository->getTypeNames();
+
+    $groupedNames = [];
+    $buildings = $buildingDataRepository->searchBuildings(BuildingSearch::create()->show(), BuildingSort::type());
+    foreach ($buildings as $building) {
+        $groupedNames[$building->typeId][$building->id] = $building->name;
+    }
+} else {
+    throw new \RuntimeException('unknown category');
 }
 
 if (isset($cp)) {
@@ -142,114 +173,72 @@ if (isset($cp)) {
         $technologyRepository = $app[TechnologyRepository::class];
         $techlist = $technologyRepository->getTechnologyLevels($cu->getId());
 
-        $buildingNames = $buildRepository->getBuildingNames();
+        $buildingNames = $buildingDataRepository->getBuildingNames();
         $technologyNames = $technologyDataRepository->getTechnologyNames();
 
         // Lade Anforderungen
         $b_req = array();
-        $rres = dbquery("
-        SELECT
-            *
-        FROM
-            " . REQ_TBL . ";
-        ");
-        while ($rarr = mysql_fetch_array($rres)) {
-            if ($rarr['req_building_id'] > 0) $b_req[$rarr['obj_id']]['b'][$rarr['req_building_id']] = $rarr['req_level'];
-            if ($rarr['req_tech_id'] > 0) $b_req[$rarr['obj_id']]['t'][$rarr['req_tech_id']] = $rarr['req_level'];
+        $requirements = $requirementsRepository->getAll();
+        foreach ($requirements->getForAllObjects() as $requirement) {
+            if ($requirement->requiredBuildingId > 0) $b_req[$requirement->objectId]['b'][$requirement->requiredBuildingId] = $requirement->requiredLevel;
+            if ($requirement->requiredTechnologyId > 0) $b_req[$requirement->objectId]['t'][$requirement->requiredTechnologyId] = $requirement->requiredLevel;
         }
 
         // Wenn Kategorien vorhanden sind (Gebäude, Forschungen)
-        if (defined("TYPES_TBL") && defined("ITEM_TYPE_FLD") && defined("TYPE_ORDER_FLD")) {
-            $tres = dbquery("
-            SELECT
-                *
-            FROM
-                " . TYPES_TBL . "
-            ORDER BY
-                " . TYPE_ORDER_FLD . " ASC;");
-            while ($tarr = mysql_fetch_array($tres)) {
-                tableStart($tarr[TYPE_NAME_FLD]);
-
-                if (ITEM_RACE_FLD != "") {
-                    $res = dbquery("
-                    SELECT
-                        *
-                    FROM
-                        " . ITEMS_TBL . "
-                    WHERE
-                        " . ITEM_SHOW_FLD . "=1
-                        AND
-                        (
-                            " . ITEM_RACE_FLD . "=0
-                            OR " . ITEM_RACE_FLD . "=" . $cu->raceId . "
-                        )
-                        AND " . ITEM_TYPE_FLD . "=" . $tarr[TYPE_ID_FLD] . "
-                    ORDER BY
-                        " . ITEM_ORDER_FLD . ";
-                    ");
-                } else {
-                    $res = dbquery("
-                    SELECT
-                        *
-                    FROM
-                        " . ITEMS_TBL . "
-                    WHERE
-                        " . ITEM_SHOW_FLD . "=1
-                        AND " . ITEM_TYPE_FLD . "=" . $tarr[TYPE_ID_FLD] . "
-                    ORDER BY
-                        " . ITEM_ORDER_FLD . "
-                    ;");
-                }
+        if (count($typeNames) > 0) {
+            foreach ($typeNames as $typeId => $typeName) {
+                tableStart($typeName);
 
                 $cntr = 0;
-                if (mysql_num_rows($res) > 0) {
+                $items = $groupedNames[$typeId] ?? [];
+                if (count($items) > 0) {
                     $shipCounts = $shipRepository->getEntityShipCounts($cu->getId(), (int) $cp->id);
-                    while ($arr = mysql_fetch_array($res)) {
+                    foreach ($items as $itemId => $itemName) {
                         // Make sure epic special ships are only shown when already built
                         $show = true;
-                        if ($mode == "ships" && $arr['special_ship'] == 1) {
-                            if (!isset($shipCounts[(int) $arr[ITEM_ID_FLD]])) {
+                        if ($mode == "ships" && $typeId === 3) {
+                            if (!isset($shipCounts[$itemId])) {
                                 $show = false;
                             }
                         }
 
                         if ($show) {
-                            if (isset($b_req[$arr[ITEM_ID_FLD]]['b'])) {
-                                $b_cnt = count($b_req[$arr[ITEM_ID_FLD]]['b']);
+                            if (isset($b_req[$itemId]['b'])) {
+                                $b_cnt = count($b_req[$itemId]['b']);
                             } else {
                                 $b_cnt = 0;
                             }
 
-                            if (isset($b_req[$arr[ITEM_ID_FLD]]['t'])) {
-                                $t_cnt = count($b_req[$arr[ITEM_ID_FLD]]['t']);
+                            if (isset($b_req[$itemId]['t'])) {
+                                $t_cnt = count($b_req[$itemId]['t']);
                             } else {
                                 $t_cnt = 0;
                             }
 
                             if ($b_cnt + $t_cnt > 0) {
-                                echo "<tr><td width=\"200\" rowspan=\"" . ($b_cnt + $t_cnt) . "\"><b>" . $arr[ITEM_NAME_FLD] . "</b> " . helpLink(HELP_URL . "&amp;id=" . $arr[ITEM_ID_FLD]) . "";
+                                echo "<tr><td width=\"200\" rowspan=\"" . ($b_cnt + $t_cnt) . "\"><b>" . $itemName . "</b> " . helpLink(HELP_URL . "&amp;id=" . $itemId) . "";
                             } else {
-                                echo "<tr><td width=\"200\"><b>" . $arr[ITEM_NAME_FLD] . "</b> " . helpLink(HELP_URL . "&amp;id=" . $arr[ITEM_ID_FLD]) . "";
+                                echo "<tr><td width=\"200\"><b>" . $itemName . "</b> " . helpLink(HELP_URL . "&amp;id=" . $itemId) . "";
                             }
 
-                            if (ITEM_RACE_FLD != "" && $arr[ITEM_RACE_FLD] > 0) {
-                                echo "<br/>" . $raceNames[$arr[ITEM_RACE_FLD]] . "</td>";
+                            if (isset($raceSpecific[$itemId])) {
+                                echo "<br/>" . $raceNames[$raceSpecific[$itemId]] . "</td>";
                             } else {
                                 echo "</td>";
                             }
 
                             $using_something = 0;
-                            if (isset($b_req[$arr[ITEM_ID_FLD]]['b']) && count($b_req[$arr[ITEM_ID_FLD]]['b']) > 0) {
+                            if (isset($b_req[$itemId]['b']) && count($b_req[$itemId]['b']) > 0) {
                                 $cnt = 0;
-                                foreach ($b_req[$arr[ITEM_ID_FLD]]['b'] as $b => $l) {
-                                    if ($cnt == 0 && count($b_req[$arr[ITEM_ID_FLD]]['b']) > 1) {
+                                foreach ($b_req[$itemId]['b'] as $b => $l) {
+                                    if ($cnt == 0 && count($b_req[$itemId]['b']) > 1) {
                                         $bstyle = "border-bottom:none;";
                                     } elseif (
                                         ($cnt > 0
-                                            && $cnt < count($b_req[$arr[ITEM_ID_FLD]]['b']) - 1)
+                                            && $cnt < count($b_req[$itemId]['b']) - 1)
                                         ||
-                                        (isset($b_req[$arr[ITEM_ID_FLD]]['t'])
-                                            && count($b_req[$arr[ITEM_ID_FLD]]['t']) > 0)
+                                        (isset($b_req[$itemId]['t'])
+                                            && count($b_req[$itemId]['t']) > 0)
                                     ) {
                                         $bstyle = "border-top:none;border-bottom:none;";
                                     } elseif ($cnt != 0) {
@@ -268,18 +257,18 @@ if (isset($cp)) {
                                 $using_something = 1;
                             }
 
-                            if (isset($b_req[$arr[ITEM_ID_FLD]]['t']) && count($b_req[$arr[ITEM_ID_FLD]]['t']) > 0) {
+                            if (isset($b_req[$itemId]['t']) && count($b_req[$itemId]['t']) > 0) {
                                 $cnt = 0;
-                                foreach ($b_req[$arr[ITEM_ID_FLD]]['t'] as $b => $l) {
-                                    if ($cnt == 0 && count($b_req[$arr[ITEM_ID_FLD]]['t']) > 1 && isset($b_req[$arr[ITEM_ID_FLD]]['b']) && count($b_req[$arr[ITEM_ID_FLD]]['b']) > 0) {
+                                foreach ($b_req[$itemId]['t'] as $b => $l) {
+                                    if ($cnt == 0 && count($b_req[$itemId]['t']) > 1 && isset($b_req[$itemId]['b']) && count($b_req[$itemId]['b']) > 0) {
                                         $bstyle = "border-top:none;border-bottom:none;";
-                                    } elseif ($cnt == 0 && count($b_req[$arr[ITEM_ID_FLD]]['t']) > 1) {
+                                    } elseif ($cnt == 0 && count($b_req[$itemId]['t']) > 1) {
                                         $bstyle = "border-bottom:none;";
-                                    } elseif (($cnt > 0 && $cnt < count($b_req[$arr[ITEM_ID_FLD]]['t']) - 1)) {
+                                    } elseif (($cnt > 0 && $cnt < count($b_req[$itemId]['t']) - 1)) {
                                         $bstyle = "border-top:none;border-bottom:none;";
                                     } elseif ($cnt != 0) {
                                         $bstyle = "border-top:none;";
-                                    } elseif (count($b_req[$arr[ITEM_ID_FLD]]['b']) > 0) {
+                                    } elseif (count($b_req[$itemId]['b']) > 0) {
                                         $bstyle = "border-top:none;";
                                     } else {
                                         $bstyle = "";
@@ -311,51 +300,24 @@ if (isset($cp)) {
                 tableEnd();
             }
         }
-        // Wenn keine Kategorien vorhanden sind (Schiffe, Verteidigungsanlagen)
+        // Wenn keine Kategorien vorhanden sind (Raketen)
         else {
             tableStart();
-            if (ITEM_RACE_FLD != "") {
-                $res = dbquery("
-                SELECT
-                    *
-                FROM
-                    " . ITEMS_TBL . "
-                WHERE
-                    " . ITEM_SHOW_FLD . "=1
-                    AND
-                    (
-                        " . ITEM_RACE_FLD . "=0
-                        OR " . ITEM_RACE_FLD . "=" . $cu->raceId . "
-                    )
-                    ORDER BY
-                        " . ITEM_ORDER_FLD . ";
-                ");
-            } else {
-                $res = dbquery("
-                SELECT
-                    *
-                FROM
-                    " . ITEMS_TBL . "
-                WHERE
-                    " . ITEM_SHOW_FLD . "=1
-                ORDER BY
-                    " . ITEM_ORDER_FLD . ";");
-            }
-            if (mysql_num_rows($res) > 0) {
-                while ($arr = mysql_fetch_array($res)) {
-                    if (count($b_req[$arr[ITEM_ID_FLD]]['b']) + count($b_req[$arr[ITEM_ID_FLD]]['t']) > 0) {
-                        echo "<tr><td width=\"200\" rowspan=\"" . (count($b_req[$arr[ITEM_ID_FLD]]['b']) + count($b_req[$arr[ITEM_ID_FLD]]['t'])) . "\"><b>" . $arr[ITEM_NAME_FLD] . "</b> " . helpLink(HELP_URL . "&amp;id=" . $arr[ITEM_ID_FLD]) . "</td>";
+            if (count($itemNames) > 0) {
+                foreach ($itemNames as $itemId => $itemName) {
+                    if (count($b_req[$itemId]['b']) + count($b_req[$itemId]['t']) > 0) {
+                        echo "<tr><td width=\"200\" rowspan=\"" . (count($b_req[$itemId]['b']) + count($b_req[$itemId]['t'])) . "\"><b>" . $itemName . "</b> " . helpLink(HELP_URL . "&amp;id=" . $itemId) . "</td>";
                     } else {
-                        echo "<tr><td width=\"200\"><b>" . $arr[ITEM_NAME_FLD] . "</b> " . helpLink(HELP_URL . "&amp;id=" . $arr[ITEM_ID_FLD]) . "</td>";
+                        echo "<tr><td width=\"200\"><b>" . $itemName . "</b> " . helpLink(HELP_URL . "&amp;id=" . $itemId) . "</td>";
                     }
                     $using_something = 0;
 
-                    if (isset($b_req[$arr[ITEM_ID_FLD]]['b']) && count($b_req[$arr[ITEM_ID_FLD]]['b']) > 0) {
+                    if (isset($b_req[$itemId]['b']) && count($b_req[$itemId]['b']) > 0) {
                         $cnt = 0;
-                        foreach ($b_req[$arr[ITEM_ID_FLD]]['b'] as $b => $l) {
-                            if ($cnt == 0 && count($b_req[$arr[ITEM_ID_FLD]]['b']) > 1) {
+                        foreach ($b_req[$itemId]['b'] as $b => $l) {
+                            if ($cnt == 0 && count($b_req[$itemId]['b']) > 1) {
                                 $bstyle = "border-bottom:none;";
-                            } elseif (($cnt > 0 && $cnt < count($b_req[$arr[ITEM_ID_FLD]]['b']) - 1) || count($b_req[$arr[ITEM_ID_FLD]]['t']) > 0) {
+                            } elseif (($cnt > 0 && $cnt < count($b_req[$itemId]['b']) - 1) || count($b_req[$itemId]['t']) > 0) {
                                 $bstyle = "border-top:none;border-bottom:none;";
                             } elseif ($cnt != 0) {
                                 $bstyle = "border-top:none;";
@@ -373,18 +335,18 @@ if (isset($cp)) {
                         $using_something = 1;
                     }
 
-                    if (isset($b_req[$arr[ITEM_ID_FLD]]['t']) && count($b_req[$arr[ITEM_ID_FLD]]['t']) > 0) {
+                    if (isset($b_req[$itemId]['t']) && count($b_req[$itemId]['t']) > 0) {
                         $cnt = 0;
-                        foreach ($b_req[$arr[ITEM_ID_FLD]]['t'] as $b => $l) {
-                            if ($cnt == 0 && count($b_req[$arr[ITEM_ID_FLD]]['t']) > 1 && count($b_req[$arr[ITEM_ID_FLD]]['b']) > 0) {
+                        foreach ($b_req[$itemId]['t'] as $b => $l) {
+                            if ($cnt == 0 && count($b_req[$itemId]['t']) > 1 && count($b_req[$itemId]['b']) > 0) {
                                 $bstyle = "border-top:none;border-bottom:none;";
-                            } elseif ($cnt == 0 && count($b_req[$arr[ITEM_ID_FLD]]['t']) > 1) {
+                            } elseif ($cnt == 0 && count($b_req[$itemId]['t']) > 1) {
                                 $bstyle = "border-bottom:none;";
-                            } elseif (($cnt > 0 && $cnt < count($b_req[$arr[ITEM_ID_FLD]]['t']) - 1)) {
+                            } elseif (($cnt > 0 && $cnt < count($b_req[$itemId]['t']) - 1)) {
                                 $bstyle = "border-top:none;border-bottom:none;";
                             } elseif ($cnt != 0) {
                                 $bstyle = "border-top:none;";
-                            } elseif (count($b_req[$arr[ITEM_ID_FLD]]['b']) > 0) {
+                            } elseif (count($b_req[$itemId]['b']) > 0) {
                                 $bstyle = "border-top:none;";
                             } else {
                                 $bstyle = "";
@@ -412,7 +374,7 @@ if (isset($cp)) {
 
         echo "<select onchange=\"xajax_reqInfo(this.value,'b')\">
         <option value=\"0\">Gebäude wählen...</option>";
-        $buildingNames = $buildRepository->getBuildingNames();
+        $buildingNames = $buildingDataRepository->getBuildingNames();
         foreach ($buildingNames as $buildingId => $buildingName) {
             echo "<option value=\"" . $buildingId . "\">" . $buildingName . "</option>";
         }

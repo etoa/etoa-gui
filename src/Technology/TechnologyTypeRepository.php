@@ -21,4 +21,18 @@ class TechnologyTypeRepository extends AbstractRepository
 
         return array_map(fn (array $row) => new TechnologyType($row), $data);
     }
+
+    /**
+     * @return array<int, string>
+     */
+    public function getTypeNames(): array
+    {
+        return $this->createQueryBuilder()
+            ->select('type_id, type_name')
+            ->from('tech_types')
+            ->orderBy('type_order')
+            ->addOrderBy('type_name')
+            ->execute()
+            ->fetchAllKeyValue();
+    }
 }
