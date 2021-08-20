@@ -3,6 +3,7 @@
 use EtoA\HostCache\NetworkNameService;
 use EtoA\User\UserRepository;
 use EtoA\User\UserSessionRepository;
+use EtoA\User\UserSessionSearch;
 
 echo "<h1>User-Sessionlogs</h1>";
 
@@ -15,83 +16,67 @@ $userSessionRepository = $app[UserSessionRepository::class];
 /** @var NetworkNameService $networkNameService */
 $networkNameService = $app[NetworkNameService::class];
 
-if (isset($_POST['logshow']) || (isset($_GET['id']) && $_GET['id'] > 0)) {
-    if (isset($_GET['id']) && $_GET['id'] > 0) {
-        $userid = (int) $_GET['id'];
-        $userNick = $userRepository->getNick($userid);
-        if ($userNick !== null) {
-            echo "<h2>Session-Log f&uuml;r <a href=\"?page=user&sub=edit&user_id=" . $userid . "\">" . $userNick . "</a></h2>";
-        }
-        $res = dbquery("SELECT * FROM user_sessionlog WHERE user_id=" . $userid . " ORDER BY id DESC;");
-    } else {
-        $sqlstart = "SELECT * FROM user_sessionlog s, users u WHERE s.user_id=u.user_id";
-        $sqlend = " ORDER BY s.id DESC;";
-        $sql = '';
-        if ($_POST['user_id'] != "") {
-            $sql .= " AND s.user_id='" . $_POST['user_id'] . "'";
-        }
-        if ($_POST['user_nick'] != "") {
-            if (stristr($_POST['qmode']['user_nick'], "%"))
-                $addchars = "%";
-            else $addchars = "";
-            $sql .= " AND user_nick " . stripslashes($_POST['qmode']['user_nick']) . $_POST['user_nick'] . "$addchars'";
-        }
-        if ($_POST['log_ip'] != "") {
-            $sql .= " AND ip_addr='" . stripslashes($_POST['log_ip']) . "'";
-        }
-        if ($_POST['log_hostname'] != "") {
-            $sql .= " AND ip_addr='" . stripslashes($networkNameService->getAddr($_POST['log_ip'])) . "'";
-        }
-        if ($_POST['user_agent'] != "") {
-            if (stristr($_POST['qmode']['user_agent'], "%"))
-                $addchars = "%";
-            else $addchars = "";
-            $sql .= " AND user_agent " . stripslashes($_POST['qmode']['user_agent']) . $_POST['user_agent'] . "$addchars'";
-        }
-        if ($_POST['duration'] > 0) {
-            $sql .= " AND (time_action-time_login)>" . ($_POST['duration'] * $_POST['duration_multiplier']) . "";
-        }
-        $sql = $sqlstart . $sql . $sqlend;
-        $res = dbquery($sql);
+if (isset($_POST['logshow'])) {
+    $search = UserSessionSearch::create();
+    if ($_POST['user_id'] != "") {
+        $search->userId((int) $_POST['user_id']);
+    }
+    if ($_POST['user_nick'] != "") {
+        $search->userNickLike($_POST['user_nick']);
+    }
+    if ($_POST['log_ip'] != "") {
+        $search->ip($_POST['log_ip']);
+    }
+    if ($_POST['log_hostname'] != "") {
+        $search->ip($networkNameService->getAddr($_POST['log_ip']));
+    }
+    if ($_POST['user_agent'] != "") {
+        $search->userAgentLike($_POST['user_agent']);
+    }
+    if ($_POST['duration'] > 0) {
+        $search->minDuration($_POST['duration'] * $_POST['duration_multiplier']);
     }
 
-    if (mysql_num_rows($res) > 20)
+    $entries = $userSessionRepository->getSessionLogs($search);
+
+    if (count($entries) > 20)
         echo "<input type=\"button\" value=\"Zur &Uuml;bersicht\" onclick=\"document.location='?page=$page&amp;sub=$sub'\" /><br/><br/>";
-    if (mysql_num_rows($res) > 0) {
-        echo mysql_num_rows($res) . " Sessions gefunden!<br/><br/>";
+    if (count($entries) > 0) {
+        $userNicks = $userRepository->searchUserNicknames();
+        echo count($entries) . " Sessions gefunden!<br/><br/>";
         $cnt = 0;
         echo "<table class=\"tb\"><tr>";
         $nid = isset($_GET['id']) ? $_GET['id'] : 0;
         if ($nid == 0)
             echo "<th>Nick</th>";
         echo "<th>Login</th><th>Letzte Aktivit&auml;t</th><th>Logout</th><th>IP/Host</th><th>Client</th><th>Session-Dauer</th>";
-        while ($arr = mysql_fetch_array($res)) {
+        foreach ($entries as $entry) {
             echo "<tr>";
             if ($nid == 0)
-                echo "<tr><td><a href=\"?page=$page&amp;sub=edit&amp;user_id=" . $arr['user_id'] . "\">" . $arr['user_nick'] . "</a></td>";
-            echo "<td>" . date("d.m.Y H:i", $arr['time_login']) . "</td>";
+                echo "<tr><td><a href=\"?page=$page&amp;sub=edit&amp;user_id=" . $entry->userId . "\">" . $userNicks[$entry->userId] . "</a></td>";
+            echo "<td>" . date("d.m.Y H:i", $entry->timeLogin) . "</td>";
             echo "<td>";
-            if ($arr['time_action'] > 0)
-                echo date("d.m.Y H:i", $arr['time_action']);
+            if ($entry->timeAction > 0)
+                echo date("d.m.Y H:i", $entry->timeAction);
             else
                 echo "-";
             echo "</td>";
             echo "<td>";
-            if ($arr['time_logout'] > 0)
-                echo date("d.m.Y H:i", $arr['time_logout']);
+            if ($entry->timeLogout > 0)
+                echo date("d.m.Y H:i", $entry->timeLogout);
             else
                 echo "-";
             echo "</td>";
-            echo "<td>" . $arr['ip_addr'] . "<br/>" . $networkNameService->getHost($arr['ip_addr']) . "</td>";
-            $browserParser = new \WhichBrowser\Parser($arr['user_agent']);
+            echo "<td>" . $entry->ipAddr . "<br/>" . $networkNameService->getHost($entry->ipAddr) . "</td>";
+            $browserParser = new \WhichBrowser\Parser($entry->userAgent);
             echo "<td>" . $browserParser->toString() . "</td>";
             echo "<td>";
-            if (max($arr['time_logout'], $arr['time_action']) - $arr['time_login'] > 0)
-                echo tf(max($arr['time_logout'], $arr['time_action']) - $arr['time_login']);
+            if (max($entry->timeLogout, $entry->timeAction) - $entry->timeLogin > 0)
+                echo tf(max($entry->timeLogout, $entry->timeAction) - $entry->timeLogin);
             else
                 echo "-";
             echo "</td></tr>";
-            $cnt += max((max($arr['time_logout'], $arr['time_action']) - $arr['time_login']), 0);
+            $cnt += max((max($entry->timeLogout, $entry->timeAction) - $entry->timeLogin), 0);
         }
         echo "<tr><td colspan=\"7\"></td></tr>";
         echo "<tr><td colspan=\"6\"></td>";
@@ -110,12 +95,10 @@ if (isset($_POST['logshow']) || (isset($_GET['id']) && $_GET['id'] > 0)) {
         echo "<table class=\"tb\">";
         echo "<tr><th>ID</td><td><input type=\"text\" name=\"user_id\" value=\"\" size=\"20\" maxlength=\"250\" /></td></tr>";
         echo "<tr><th>Nickname</td><td><input type=\"text\" name=\"user_nick\" value=\"\" size=\"20\" maxlength=\"250\" autocomplete=\"off\" onkeyup=\"xajax_searchUser(this.value,'user_nick','citybox1');\"/> ";
-        fieldqueryselbox('user_nick');
         echo "<br><div class=\"citybox\" id=\"citybox1\">&nbsp;</div></td></tr>";
         echo "<tr><th>IP-Adresse</td><td><input type=\"text\" name=\"log_ip\" value=\"\" size=\"20\" maxlength=\"250\" /> </td></tr>";
         echo "<tr><th>Hostname</td><td><input type=\"text\" name=\"log_hostname\" value=\"\" size=\"20\" maxlength=\"250\" /> </td></tr>";
         echo "<tr><th>Client</td><td><input type=\"text\" name=\"user_agent\" value=\"\" size=\"20\" maxlength=\"250\" /> ";
-        fieldqueryselbox('log_client');
         echo "</td></tr>";
         echo "<tr><th>Mindestdauer</td><td><input type=\"text\" name=\"duration\" value=\"\" size=\"20\" maxlength=\"250\" /><select name=\"duration_multiplier\">";
         echo "<option value=\"1\">Sekunden</option>";

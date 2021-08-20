@@ -19,10 +19,34 @@ class UserSessionSearch extends AbstractSearch
         return $this;
     }
 
+    public function userNickLike(string $userNick): self
+    {
+        $this->parts[] = 'users.user_nick LIKE :userNick';
+        $this->parameters['userNick'] = '%' . $userNick . '%';
+
+        return $this;
+    }
+
     public function ip(string $ip): self
     {
         $this->parts[] = 'ip_addr = :ip';
         $this->parameters['ip'] = $ip;
+
+        return $this;
+    }
+
+    public function userAgentLike(string $userAgent): self
+    {
+        $this->parts[] = 'user_agent LIKE :userAgent';
+        $this->parameters['userAgent'] = '%' . $userAgent . '%';
+
+        return $this;
+    }
+
+    public function minDuration(int $seconds): self
+    {
+        $this->parts[] = '(time_action - time_login)> :minDuration';
+        $this->parameters['minDuration'] = $seconds;
 
         return $this;
     }

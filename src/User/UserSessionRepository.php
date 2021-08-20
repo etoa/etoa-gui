@@ -293,6 +293,7 @@ class UserSessionRepository extends AbstractRepository
         $rows = $this->applySearchSortLimit($this->createQueryBuilder(), $search, null, $limit)
             ->select('*')
             ->from('user_sessionlog')
+            ->innerJoin('user_sessionlog', 'users', 'users', 'users.user_id = user_sessionlog.user_id')
             ->orderBy('time_action', 'DESC')
             ->execute()
             ->fetchAllAssociative();
