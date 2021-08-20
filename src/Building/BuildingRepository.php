@@ -351,8 +351,9 @@ class BuildingRepository extends AbstractRepository
                 :entityId,
                 :buildingId,
                 :level,
+                :buildType,
                 :startTime,
-                :endTime,
+                :endTime
             ) ON DUPLICATE KEY
             UPDATE buildlist_current_level = :level;
         ', [
@@ -360,6 +361,7 @@ class BuildingRepository extends AbstractRepository
             'level' => max(0, $level),
             'entityId' => $entityId,
             'buildingId' => $buildingId,
+            'buildType' => $buildType,
             'startTime' => $startTime,
             'endTime' => $endTime,
         ]);
