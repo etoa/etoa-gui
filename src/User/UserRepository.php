@@ -275,6 +275,26 @@ class UserRepository extends AbstractRepository
         return $this->findUser(UserSearch::create()->user($userId));
     }
 
+    public function getUserAdminView(int $userId): ?UserAdminView
+    {
+        $data = $this->getConnection()->fetchAssociative('SELECT
+                users.*,
+                user_sessionlog.time_action AS time_log,
+                user_sessionlog.ip_addr AS ip_log,
+                user_sessionlog.user_agent AS agent_log,
+                user_sessions.time_action,
+                user_sessions.user_agent,
+                user_sessions.ip_addr
+            FROM users
+            LEFT JOIN user_sessionlog ON users.user_id = user_sessionlog.user_id
+            LEFT JOIN user_sessions ON users.user_id = user_sessions.user_id
+            WHERE users.user_id = :userId
+            ORDER BY user_sessionlog.time_action DESC
+            LIMIT 1', ['userId' => $userId]);
+
+        return $data !== false ? new UserAdminView($data) : null;
+    }
+
     public function getUserByNick(string $nick): ?User
     {
         return $this->findUser(UserSearch::create()->nick($nick));

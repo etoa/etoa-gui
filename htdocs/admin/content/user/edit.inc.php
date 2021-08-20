@@ -305,47 +305,15 @@ if (isset($_GET['setverified'])) {
 }
 
 // Fetch all data
-$res = dbquery("
-    SELECT
-        users.*,
-        races.*,
-        user_sessionlog.time_action AS time_log,
-        user_sessionlog.ip_addr AS ip_log,
-        user_sessionlog.user_agent AS agent_log,
-        user_sessions.time_action,
-        user_sessions.user_agent,
-        user_sessions.ip_addr
-    FROM
-        users
-    LEFT JOIN
-        races
-    ON
-        user_race_id = race_id
-    LEFT JOIN
-        user_sessionlog
-    ON
-        users.user_id = user_sessionlog.user_id
-    LEFT JOIN
-        user_sessions
-    ON
-        users.user_id = user_sessions.user_id
-    WHERE
-        users.user_id = '" . $id . "'
-    ORDER BY
-        user_sessionlog.time_action DESC
-    LIMIT 1
-    ;");
-if (mysql_num_rows($res) > 0) {
+$user = $userRepository->getUserAdminView($id);
+if ($user !== null) {
     // Load data
-    $arr = mysql_fetch_array($res);
-
-    $properties = $userPropertiesRepository->getOrCreateProperties((int) $id);
+    $properties = $userPropertiesRepository->getOrCreateProperties($user->id);
 
     // Some preparations
-    $st = $arr['user_specialist_time'] > 0 ? $arr['user_specialist_time'] : time();
+    $st = $user->specialistTime > 0 ? $user->specialistTime : time();
 
-    $ip = $arr['ip_addr'] != null ? $arr['ip_addr'] : $arr['ip_log'];
-    $browserParser = new \WhichBrowser\Parser($arr['user_agent'] ?? $arr['agent_log']);
+    $browserParser = new \WhichBrowser\Parser($user->userAgent);
     $agent = $browserParser->toString();
 
     // Javascript
@@ -380,9 +348,9 @@ if (mysql_num_rows($res) > 0) {
 
     </script>";
 
-    $twig->addGlobal('subtitle', "User bearbeiten: " . $arr['user_nick']);
+    $twig->addGlobal('subtitle', "User bearbeiten: " . $user->nick);
 
-    echo "<form action=\"?page=$page&amp;sub=edit&amp;id=" . $id . "\" method=\"post\">
+    echo "<form action=\"?page=$page&amp;sub=edit&amp;id=" . $user->id . "\" method=\"post\">
     <input type=\"hidden\" id=\"tabactive\" name=\"tabactive\" value=\"\" />";
 
     echo '<div class="tabs" id="user_edit_tabs">
@@ -411,25 +379,25 @@ if (mysql_num_rows($res) > 0) {
     echo "<table class=\"tbl\">";
     echo "<tr>
                     <td class=\"tbltitle\" style=\"width:180px;\">ID:</td>
-                    <td class=\"tbldata\">" . $arr['user_id'] . "</td>
+                    <td class=\"tbldata\">" . $user->ip . "</td>
                 </tr>
                 <tr>
                     <td class=\"tbltitle\">Registrierdatum:</td>
-                    <td class=\"tbldata\">" . df($arr['user_registered']) . "</td>
+                    <td class=\"tbldata\">" . df($user->registered) . "</td>
                 </tr>
                 <tr>
                     <td class=\"tbltitle\">Zulezt online:</td>";
-    if ($arr['time_action'])
+    if ($user->timeAction !== null)
         echo "<td class=\"tbldata\" style=\"color:#0f0;\">online</td>";
-    elseif ($arr['time_log'])
-        echo "<td class=\"tbldata\">" . date("d.m.Y H:i", $arr['time_log']) . "</td>";
+    elseif ($user->timeLog > 0)
+        echo "<td class=\"tbldata\">" . date("d.m.Y H:i", $user->timeLog) . "</td>";
     else
         echo "<td class=\"tbldata\">Noch nicht eingeloggt!</td>";
     echo        "</tr>
                 <tr>
                     <td class=\"tbltitle\">IP/Host:</td>
-                    <td class=\"tbldata\"><a href=\"?page=user&amp;sub=ipsearch&amp;ip=" . $ip . "\">" . $ip . "</a>,
-                        <a href=\"?page=user&amp;sub=ipsearch&amp;host=" . $networkNameService->getHost($ip) . "\">" . $networkNameService->getHost($ip) . "</a></td>
+                    <td class=\"tbldata\"><a href=\"?page=user&amp;sub=ipsearch&amp;ip=" . $user->ipAddr . "\">" . $user->ipAddr . "</a>,
+                        <a href=\"?page=user&amp;sub=ipsearch&amp;host=" . $networkNameService->getHost($user->ipAddr) . "\">" . $networkNameService->getHost($user->ipAddr) . "</a></td>
                 </tr>
                 <tr>
                     <td class=\"tbltitle\">Agent:</td>
@@ -438,22 +406,22 @@ if (mysql_num_rows($res) > 0) {
                 <tr>
                     <td class=\"tbltitle\">Punkte:</td>
                     <td class=\"tbldata\">
-                        " . nf($arr['user_points']) . "
+                        " . nf($user->points) . "
                         [<a href=\"javascript:;\" onclick=\"toggleBox('pointGraph')\">Verlauf anzeigen</a>]
-                        <div id=\"pointGraph\" style=\"display:none;\"><img src=\"../misc/stats.image.php?user=" . $arr['user_id'] . "\" alt=\"Diagramm\" /></div>
+                        <div id=\"pointGraph\" style=\"display:none;\"><img src=\"../misc/stats.image.php?user=" . $user->id . "\" alt=\"Diagramm\" /></div>
                     </td>
                 </tr>
                 <tr>
                     <td class=\"tbltitle\">Rang:</td>
-                    <td class=\"tbldata\">" . nf($arr['user_rank']) . " (aktuell), " . nf($arr['user_rank_highest']) . " (max)</td>
+                    <td class=\"tbldata\">" . nf($user->rank) . " (aktuell), " . nf($user->rankHighest) . " (max)</td>
                 </tr>
                 <tr>
                     <td class=\"tbltitle\">Rohstoffe von...</td>
                     <td class=\"tbldata\">
-                        Raids: " . nf($arr['user_res_from_raid']) . " t<br/>
-                        Asteroiden: " . nf($arr['user_res_from_asteroid']) . " t<br/>
-                        Nebelfelder: " . nf($arr['user_res_from_nebula']) . " t<br/>
-        Trümmerfelder: " . nf($arr['user_res_from_tf']) . " t
+                        Raids: " . nf($user->resFromRaid) . " t<br/>
+                        Asteroiden: " . nf($user->resFromAsteroid) . " t<br/>
+                        Nebelfelder: " . nf($user->resFromNebula) . " t<br/>
+        Trümmerfelder: " . nf($user->resFromTf) . " t
                     </td>
                 </tr>
                 <tr>
@@ -461,39 +429,39 @@ if (mysql_num_rows($res) > 0) {
                     <td class=\"tbldata\">";
 
 
-    if ($arr['user_observe'] != "") {
-        echo "<div>Benutzer steht unter <b>Beobachtung</b>: " . $arr['user_observe'] . " &nbsp; [<a href=\"?page=user&sub=observed&text=" . $id . "\">Ändern</a>]</div>";
+    if ($user->observe != "") {
+        echo "<div>Benutzer steht unter <b>Beobachtung</b>: " . $user->observe . " &nbsp; [<a href=\"?page=user&sub=observed&text=" . $user->id . "\">Ändern</a>]</div>";
     }
-    if ($arr['user_deleted'] != 0) {
-        echo "<div class=\"userDeletedColor\">Dieser Account ist zur Löschung am " . df($arr['user_deleted']) . " vorgemerkt</div>";
+    if ($user->deleted !== 0) {
+        echo "<div class=\"userDeletedColor\">Dieser Account ist zur Löschung am " . df($user->deleted) . " vorgemerkt</div>";
     }
-    if ($arr['user_hmode_from'] > 0) {
-        echo "<div class=\"userHolidayColor\">Dieser Account ist im Urlaubsmodus seit " . df($arr['user_hmode_from']) . " bis mindestens " . df($arr['user_hmode_to']) . "</div>";
+    if ($user->hmodFrom > 0) {
+        echo "<div class=\"userHolidayColor\">Dieser Account ist im Urlaubsmodus seit " . df($user->hmodFrom) . " bis mindestens " . df($user->hmodTo) . "</div>";
     }
-    if ($arr['user_blocked_from'] > 0 && $arr['user_blocked_to'] > time()) {
-        echo "<div class=\"userLockedColor\">Dieser Account ist im gesperrt von " . df($arr['user_blocked_from']) . " bis " . df($arr['user_blocked_to']);
-        if ($arr['user_ban_reason'] != "") {
-            echo ". Grund: " . stripslashes($arr['user_ban_reason']);
+    if ($user->blockedFrom > 0 && $user->blockedTo > time()) {
+        echo "<div class=\"userLockedColor\">Dieser Account ist im gesperrt von " . df($user->blockedFrom) . " bis " . df($user->blockedTo);
+        if ($user->banReason != "") {
+            echo ". Grund: " . stripslashes($user->banReason);
         }
         echo "</div>";
     }
-    if ($arr['admin'] != 0) {
+    if ($user->admin != 0) {
         echo "<div class=\"adminColor\">Dies ist ein Admin-Account!</div>";
     }
-    if ($arr['user_ghost'] != 0) {
+    if ($user->ghost) {
         echo "<div class=\"userGhostColor\">Dies ist ein Geist-Account. Er wird nicht in der Statistik angezeigt!</div>";
     }
-    if ($arr['user_chatadmin'] != 0) {
+    if ($user->chatAdmin != 0) {
         echo "<div>Dieser User ist ein Chat-Admin.</div>";
     }
-    if ($arr['verification_key'] != '') {
+    if ($user->verificationKey != '') {
         echo "<div>Die E-Mail Adresse ist noch nicht bestätigt [<a href=\"?page=$page&sub=$sub&id=$id&setverified\">Freischalten</a>].</div>";
     }
 
     // Kommentare
     /** @var UserCommentRepository $userCommentRepository */
     $userCommentRepository = $app[UserCommentRepository::class];
-    $commentData = $userCommentRepository->getCommentInformation($arr['user_id']);
+    $commentData = $userCommentRepository->getCommentInformation($user->id);
 
     if ($commentData['count'] > 0) {
         echo "<div><b>" . $commentData['count'] . " Kommentare</b> vorhanden, neuster Kommentar von " . df($commentData['latest']) . "
@@ -503,12 +471,12 @@ if (mysql_num_rows($res) > 0) {
 
     // Tickets
     $newTickets = $ticketRepo->findBy([
-        "user_id" => $arr['user_id'],
+        "user_id" => $user->id,
         "status" => "new",
     ]);
     $numberOfNewTickets = count($newTickets);
     $assignedTickets = $ticketRepo->findBy([
-        "user_id" => $arr['user_id'],
+        "user_id" => $user->id,
         "status" => "assigned",
     ]);
     $numberOfAssignedTickets = count($assignedTickets);
@@ -521,7 +489,7 @@ if (mysql_num_rows($res) > 0) {
     // Verwarnungen
     /** @var UserWarningRepository $userWarningRepository */
     $userWarningRepository = $app[UserWarningRepository::class];
-    $warning = $userWarningRepository->getCountAndLatestWarning($arr['user_id']);
+    $warning = $userWarningRepository->getCountAndLatestWarning($user->id);
     if ($warning['count'] > 0) {
         echo "<div><b>" . $warning['count'] . " Verwarnungen</b> vorhanden, neuste  von " . df($warning['max']) . "
                             [<a href=\"?page=user&amp;sub=warnings&amp;user=" . $id . "\">Zeigen</a>]
@@ -544,42 +512,42 @@ if (mysql_num_rows($res) > 0) {
     echo "<tr>
                 <td class=\"tbltitle\">Nick:</td>
                 <td class=\"tbldata\">
-                    <input type=\"text\" name=\"user_nick\" value=\"" . $arr['user_nick'] . "\" size=\"35\" maxlength=\"250\" />
+                    <input type=\"text\" name=\"user_nick\" value=\"" . $user->nick . "\" size=\"35\" maxlength=\"250\" />
                 </td>
                 <td>Eine Nickänderung ist grundsätzlich nicht erlaubt</td>
             </tr>
             <tr>
                 <td class=\"tbltitle\">E-Mail:</td>
                 <td class=\"tbldata\">
-                    <input type=\"text\" name=\"user_email\" value=\"" . $arr['user_email'] . "\" size=\"35\" maxlength=\"250\" />
+                    <input type=\"text\" name=\"user_email\" value=\"" . $user->email . "\" size=\"35\" maxlength=\"250\" />
                 </td>
                 <td>Rundmails gehen an diese Adresse</td>
             </tr>
             <tr>
                 <td class=\"tbltitle\">Name:</td>
                 <td class=\"tbldata\">
-                    <input type=\"text\" name=\"user_name\" value=\"" . $arr['user_name'] . "\" size=\"35\" maxlength=\"250\" />
+                    <input type=\"text\" name=\"user_name\" value=\"" . $user->name . "\" size=\"35\" maxlength=\"250\" />
                 </td>
                 <td>Bei Accountübergabe anpassen</td>
             </tr>
             <tr>
                 <td class=\"tbltitle\">E-Mail fix:</td>
                 <td class=\"tbldata\">
-                    <input type=\"text\" name=\"user_email_fix\" value=\"" . $arr['user_email_fix'] . "\" size=\"35\" maxlength=\"250\" />
+                    <input type=\"text\" name=\"user_email_fix\" value=\"" . $user->emailFix . "\" size=\"35\" maxlength=\"250\" />
                 </td>
                 <td>Bei Accountübergabe anpassen</td>
             </tr>
         </tr>
                     <td class=\"tbltitle\">Name Dual:</td>
                     <td class=\"tbldata\">
-                        <input type=\"text\" name=\"dual_name\" value=\"" . $arr['dual_name'] . "\" size=\"35\" maxlength=\"250\" />
+                        <input type=\"text\" name=\"dual_name\" value=\"" . $user->dualName . "\" size=\"35\" maxlength=\"250\" />
                     </td>
                     <td>Bei Dualänderung anpassen</td>
                 </tr>
         <tr>
                     <td class=\"tbltitle\">E-Mail Dual:</td>
                     <td class=\"tbldata\">
-                        <input type=\"text\" name=\"dual_email\" value=\"" . $arr['dual_email'] . "\" size=\"35\" maxlength=\"250\" />
+                        <input type=\"text\" name=\"dual_email\" value=\"" . $user->dualEmail . "\" size=\"35\" maxlength=\"250\" />
                     </td>
                     <td>Bei Dualänderung anpassen</td>
                 </tr>
@@ -593,7 +561,7 @@ if (mysql_num_rows($res) > 0) {
                 <tr>
                     <td class=\"tbltitle\">Temporäres Passwort:</td>
                     <td class=\"tbldata\">
-                        <input type=\"text\" name=\"user_password_temp\" value=\"" . $arr['user_password_temp'] . "\" size=\"30\" maxlength=\"30\" />
+                        <input type=\"text\" name=\"user_password_temp\" value=\"" . $user->passwordTemp . "\" size=\"30\" maxlength=\"30\" />
                     </td>
                     <td>Nur dieses wird verwendet, falls ausgefüllt</td>
                 </tr>
@@ -601,12 +569,12 @@ if (mysql_num_rows($res) > 0) {
                     <td class=\"tbltitle\">Geist:</td>
                     <td class=\"tbldata\">
                         <input type=\"radio\" name=\"user_ghost\" id=\"user_ghost1\" value=\"1\"";
-    if ($arr['user_ghost'] == 1) {
+    if ($user->ghost) {
         echo " checked=\"checked\" ";
     }
     echo " /><label for=\"user_ghost1\">Ja</label>
                         <input type=\"radio\" name=\"user_ghost\" id=\"user_ghost0\" value=\"0\" ";
-    if ($arr['user_ghost'] == 0) {
+    if (!$user->ghost) {
         echo " checked=\"checked\" ";
     }
     echo "/><label for=\"user_ghost0\">Nein</label>
@@ -617,19 +585,19 @@ if (mysql_num_rows($res) > 0) {
                     <td class=\"tbltitle\">Chat-Admin:</td>
                     <td class=\"tbldata\">
                         <input type=\"radio\" name=\"user_chatadmin\" id=\"user_chatadmin1\" value=\"1\"";
-    if ($arr['user_chatadmin'] == 1)
+    if ($user->chatAdmin === 1)
         echo " checked=\"checked\" ";
     echo " /><label for=\"user_chatadmin1\">Ja</label>
                         <input type=\"radio\" name=\"user_chatadmin\" id=\"user_chatadmin0\"value=\"0\" ";
-    if ($arr['user_chatadmin'] == 0)
+    if ($user->chatAdmin === 0)
         echo " checked=\"checked\" ";
     echo "/><label for=\"user_chatadmin0\">Nein</label><br />
                         <input type=\"radio\" name=\"user_chatadmin\" id=\"user_chatadmin2\"value=\"2\" ";
-    if ($arr['user_chatadmin'] == 2)
+    if ($user->chatAdmin === 2)
         echo " checked=\"checked\" ";
     echo "/><label for=\"user_chatadmin2\">Leiter Team Community</label><br />
                         <input type=\"radio\" name=\"user_chatadmin\" id=\"user_chatadmin3\"value=\"3\" ";
-    if ($arr['user_chatadmin'] == 3)
+    if ($user->chatAdmin === 3)
         echo " checked=\"checked\" ";
     echo "/><label for=\"user_chatadmin3\">Entwickler mit Adminrechten</label>
                         </td>
@@ -641,15 +609,15 @@ if (mysql_num_rows($res) > 0) {
                     <td class=\"tbltitle\">Admin:</td>
                     <td class=\"tbldata\">
                         <input type=\"radio\" name=\"admin\" id=\"admin1\" value=\"1\"";
-    if ($arr['admin'] == 1)
+    if ($user->admin === 1)
         echo " checked=\"checked\" ";
     echo " /><label for=\"admin1\">Ja</label>
                         <input type=\"radio\" name=\"admin\" id=\"admin0\" value=\"0\" ";
-    if ($arr['admin'] == 0)
+    if ($user->admin === 0)
         echo " checked=\"checked\" ";
     echo "/><label for=\"admin0\">Nein</label>
                         <input type=\"radio\" name=\"admin\" id=\"admin2\" value=\"2\" ";
-    if ($arr['admin'] == 2)
+    if ($user->admin === 2)
         echo " checked=\"checked\" ";
     echo "/><label for=\"admin2\">Entwickler ohne Adminrechte</label>
                     </td>
@@ -659,11 +627,11 @@ if (mysql_num_rows($res) > 0) {
                     <td class=\"tbltitle\">NPC:</td>
                     <td class=\"tbldata\">
                         <input type=\"radio\" name=\"npc\" id=\"npc1\" value=\"1\"";
-    if ($arr['npc'] == 1)
+    if ($user->npc === 1)
         echo " checked=\"checked\" ";
     echo " /><label for=\"npc1\">Ja</label>
                         <input type=\"radio\" name=\"npc\" id=\"npc0\" value=\"0\" ";
-    if ($arr['npc'] == 0)
+    if ($user->npc === 0)
         echo " checked=\"checked\" ";
     echo "/><label for=\"npc0\">Nein</label>
                     </td>
@@ -673,30 +641,30 @@ if (mysql_num_rows($res) > 0) {
                     <td class=\"tbltitle\" valign=\"top\">Sperren</td>
                     <td class=\"tbldata\">
                         <input type=\"radio\" name=\"ban_enable\" id=\"ban_enable0\" value=\"0\" onclick=\"$('#ban_options').hide();\"";
-    if ($arr['user_blocked_from'] == 0) {
+    if ($user->blockedFrom === 0) {
         echo " checked=\"checked\"";
     }
     echo " /><label for=\"ban_enable0\">Nein</label>
                         <input type=\"radio\" name=\"ban_enable\" id=\"ban_enable1\" value=\"1\" onclick=\"$('#ban_options').show();\" ";
-    if ($arr['user_blocked_from'] > 0) {
+    if ($user->blockedFrom > 0) {
         echo " checked=\"checked\"";
     }
     echo " /><label for=\"ban_enable1\">Ja</label>";
-    if ($arr['user_blocked_from'] > 0 && $arr['user_blocked_to'] < time()) {
+    if ($user->blockedFrom > 0 && $user->blockedTo < time()) {
         echo " <i><b>Diese Sperre ist abgelaufen!</b></i>";
     }
     echo "<table id=\"ban_options\">
                             <tr>
                     <td class=\"tbltitle\" valign=\"top\">Von </td>
                     <td class=\"tbldata\">";
-    showDatepicker("user_blocked_from", $arr['user_blocked_from'] > 0 ? $arr['user_blocked_from'] : time(), true);
+    showDatepicker("user_blocked_from", $user->blockedFrom > 0 ? $user->blockedFrom : time(), true);
     echo "</td>
                 </tr>
                 <tr>
                     <td class=\"tbltitle\" valign=\"top\">Bis</td>
                     <td class=\"tbldata\">";
     $userBlockedDefaultTime = 3600 * 24 * $config->get('user_ban_min_length');
-    showDatepicker("user_blocked_to", $arr['user_blocked_from'] > 0 ? $arr['user_blocked_to'] : time() + $userBlockedDefaultTime, true);
+    showDatepicker("user_blocked_to", $user->blockedFrom > 0 ? $user->blockedTo : time() + $userBlockedDefaultTime, true);
     echo "</td>
                 </tr>
                 <tr>
@@ -706,7 +674,7 @@ if (mysql_num_rows($res) > 0) {
                         <option value=\"0\">(niemand)</option>";
     foreach ($adminUserNicks as $adminUserId => $adminUserNick) {
         echo "<option value=\"" . $adminUserId . "\"";
-        if ($arr['user_ban_admin_id'] == $adminUserId) echo " selected=\"selected\"";
+        if ($user->banAdminId === $adminUserId) echo " selected=\"selected\"";
         echo ">" . $adminUserNick . "</option>\n";
     }
     echo "</select>
@@ -715,7 +683,7 @@ if (mysql_num_rows($res) > 0) {
                 <tr>
                     <td class=\"tbltitle\" valign=\"top\">Grund</td>
                     <td class=\"tbldata\">
-                        <textarea name=\"user_ban_reason\" id=\"user_ban_reason\" cols=\"45\" rows=\"2\">" . stripslashes($arr['user_ban_reason']) . "</textarea>
+                        <textarea name=\"user_ban_reason\" id=\"user_ban_reason\" cols=\"45\" rows=\"2\">" . stripslashes($user->banReason) . "</textarea>
                     </td>
                 </tr>
                 </table>";
@@ -728,25 +696,25 @@ if (mysql_num_rows($res) > 0) {
                     <td class=\"tbldata\">
                         <input type=\"radio\" name=\"umod_enable\" id=\"umod_enable0\" value=\"0\" onclick=\"$('#umod_options').hide();\" checked=\"checked\" /><label for=\"umod_enable0\">Nein</label>
                         <input type=\"radio\" name=\"umod_enable\" id=\"umod_enable1\" value=\"1\" onclick=\"$('#umod_options').show();\" ";
-    if ($arr['user_hmode_from'] > 0) {
+    if ($user->hmodFrom > 0) {
         echo " checked=\"checked\"";
     }
     echo "/><label for=\"umod_enable1\">Ja</label> ";
-    if ($arr['user_hmode_from'] > 0 && $arr['user_hmode_to'] < time()) {
+    if ($user->hmodFrom > 0 && $user->hmodTo < time()) {
         echo "<i><b>Dieser Urlaubsmodus ist abgelaufen!</b></i>";
     }
     echo "<table id=\"umod_options\">
                         <tr>
                             <td class=\"tbltitle\" valign=\"top\">Von</td>
                             <td class=\"tbldata\">";
-    showDatepicker("user_hmode_from", $arr['user_hmode_from'] > 0 ? $arr['user_hmode_from'] : time(), true);
+    showDatepicker("user_hmode_from", $user->hmodFrom > 0 ? $user->hmodFrom : time(), true);
     echo "</td>
                         </tr>
                         <tr>
                             <td class=\"tbltitle\" valign=\"top\">Bis</td>
                             <td class=\"tbldata\">";
     $userHolidayModeDefaultTime = 3600 * 24 * $config->get('user_umod_min_length');
-    showDatepicker("user_hmode_to", $arr['user_hmode_to'] > 0 ? $arr['user_hmode_to'] : time() + $userHolidayModeDefaultTime, true);
+    showDatepicker("user_hmode_to", $user->hmodTo > 0 ? $user->hmodTo : time() + $userHolidayModeDefaultTime, true);
     echo "</td>
                         </tr>
                         </table>
@@ -782,7 +750,7 @@ if (mysql_num_rows($res) > 0) {
                         <option value=\"0\">(Keine)</option>";
     foreach ($raceNames as $raceId => $raceName) {
         echo "<option value=\"" . $raceId . "\"";
-        if ((int) $arr['user_race_id'] === $raceId) echo " selected=\"selected\"";
+        if ($user->raceId === $raceId) echo " selected=\"selected\"";
         echo ">" . $raceName . "</option>\n";
     }
     echo "</select>
@@ -795,7 +763,7 @@ if (mysql_num_rows($res) > 0) {
                         <option value=\"0\">(Keiner)</option>";
     foreach ($specialistNames as $specialistId => $specialistName) {
         echo '<option value="' . $specialistId . '"';
-        if ((int) $arr['user_specialist_id'] === $specialistId) {
+        if ($user->specialistId === $specialistId) {
             echo ' selected="selected"';
         }
         echo '>' . $specialistName . '</option>';
@@ -806,14 +774,14 @@ if (mysql_num_rows($res) > 0) {
                 <tr>
                     <td class=\"tbltitle\">Allianz:</td>
                     <td class=\"tbldata\">
-                        <select id=\"user_alliance_id\" name=\"user_alliance_id\" onchange=\"loadAllianceRanks(" . $arr['user_alliance_rank_id'] . ");\">";
+                        <select id=\"user_alliance_id\" name=\"user_alliance_id\" onchange=\"loadAllianceRanks(" . $user->allianceRankId . ");\">";
     /** @var AllianceRepository $allianceRepository */
     $allianceRepository = $app[AllianceRepository::class];
     $allianceNamesWithTags = $allianceRepository->getAllianceNamesWithTags();
     echo "<option value=\"0\">(Keine)</option>";
     foreach ($allianceNamesWithTags as $allianceId => $allianceNamesWithTag) {
         echo "<option value=\"$allianceId\"";
-        if ($allianceId == $arr['user_alliance_id']) echo " selected=\"selected\"";
+        if ($allianceId === $user->allianceId) echo " selected=\"selected\"";
         echo ">" . $allianceNamesWithTag . "</option>";
     }
     echo "</select> Rang: <span id=\"ars\">-</span></td>
@@ -857,13 +825,13 @@ if (mysql_num_rows($res) > 0) {
                 <tr>
                     <td class=\"tbltitle\" valign=\"top\">Verfügbare Allianzschiffteile</td>
                     <td class=\"tbldata\">
-                        <input type=\"text\" name=\"user_alliace_shippoints\" value=\"" . $arr['user_alliace_shippoints'] . "\" size=\"10\" maxlength=\"10\" />
+                        <input type=\"text\" name=\"user_alliace_shippoints\" value=\"" . $user->allianceShipPoints . "\" size=\"10\" maxlength=\"10\" />
                     </td>
                 </tr>
                 <tr>
                     <td class=\"tbltitle\" valign=\"top\">Verbaute Allianzschiffteile</td>
                     <td class=\"tbldata\">
-                        <input type=\"text\" name=\"user_alliace_shippoints_used\" value=\"" . $arr['user_alliace_shippoints_used'] . "\" size=\"10\" maxlength=\"10\" />
+                        <input type=\"text\" name=\"user_alliace_shippoints_used\" value=\"" . $user->allianceShipPointsUsed . "\" size=\"10\" maxlength=\"10\" />
                     </td>
                 </tr>";
 
@@ -871,13 +839,13 @@ if (mysql_num_rows($res) > 0) {
     echo "<tr>
             <td class=\"tbltitle\" valign=\"top\">Gel&ouml;schte Multis</td>
             <td class=\"tbldata\">
-                <input type=\"text\" name=\"user_multi_delets\" value=\"" . $arr['user_multi_delets'] . "\" size=\"3\" maxlength=\"3\" />
+                <input type=\"text\" name=\"user_multi_delets\" value=\"" . $user->multiDelets . "\" size=\"3\" maxlength=\"3\" />
             </td>
             </tr>
             <tr>
             <td class=\"tbltitle\" valign=\"top\">Sittertage</td>
             <td class=\"tbldata\">
-                <input type=\"text\" name=\"user_sitting_days\" value=\"" . $arr['user_sitting_days'] . "\" size=\"3\" maxlength=\"3\" />
+                <input type=\"text\" name=\"user_sitting_days\" value=\"" . $user->sittingDays . "\" size=\"3\" maxlength=\"3\" />
             </td>
             </tr>";
 
@@ -887,8 +855,8 @@ if (mysql_num_rows($res) > 0) {
             <tr>
                 <td class=\"tbltitle\" valign=\"top\">Hauptplanet geändert</td>
                 <td class=\"tbldata\">
-                    <label><input type=\"radio\" name=\"user_changed_main_planet\" value=\"1\" " . ($arr['user_changed_main_planet'] ? "checked" : "") . " />&nbsp;Ja</label>&nbsp;
-                    <label><input type=\"radio\" name=\"user_changed_main_planet\" value=\"0\" " . (!$arr['user_changed_main_planet'] ? "checked" : "") . " />&nbsp;Nein</label>
+                    <label><input type=\"radio\" name=\"user_changed_main_planet\" value=\"1\" " . ($user->userChangedMainPlanet ? "checked" : "") . " />&nbsp;Ja</label>&nbsp;
+                    <label><input type=\"radio\" name=\"user_changed_main_planet\" value=\"0\" " . (!$user->userChangedMainPlanet ? "checked" : "") . " />&nbsp;Nein</label>
                 </td>
             </tr>";
 
@@ -897,7 +865,7 @@ if (mysql_num_rows($res) > 0) {
     echo "</table>";
     echo "
         <script type=\"text/javascript\">
-        loadSpecialist(" . $st . ");loadAllianceRanks(" . $arr['user_alliance_rank_id'] . ");
+        loadSpecialist(" . $st . ");loadAllianceRanks(" . $user->allianceRankId . ");
         </script>";
 
     echo '</div><div id="tabs-4">';
@@ -906,7 +874,7 @@ if (mysql_num_rows($res) > 0) {
      * Sitting & Multi
      */
 
-    $multiEntries = $userMultiRepository->getUserEntries((int) $arr['user_id'], true);
+    $multiEntries = $userMultiRepository->getUserEntries($user->id, true);
     echo '<table class="tb">
             <tr>
                 <th rowspan="' . (count($multiEntries) + 1) . '" valign="top">Eingetragene Multis</th>
@@ -933,7 +901,7 @@ if (mysql_num_rows($res) > 0) {
             </tr>';
     }
 
-    $deletedMultiEntries = $userMultiRepository->getUserEntries((int) $arr['user_id'], false);
+    $deletedMultiEntries = $userMultiRepository->getUserEntries($user->id, false);
     echo '<tr>
                 <th rowspan="' . (count($deletedMultiEntries) + 1) . '" valign="top">Gelöschte Multis</th>
                 <th>Name</th>
@@ -956,8 +924,8 @@ if (mysql_num_rows($res) > 0) {
     }
     echo '</table>';
 
-    $sittedEntries = $userSittingRepository->getWhereUser((int) $arr['user_id']);
-    $sittingEntries = $userSittingRepository->getWhereSitter((int) $arr['user_id']);
+    $sittedEntries = $userSittingRepository->getWhereUser($user->id);
+    $sittingEntries = $userSittingRepository->getWhereSitter($user->id);
     echo '<table class="tb">
             <tr>
                 <th rowspan="' . (count($sittedEntries) + 1) . '" valign="top">Wurde gesittet</th>
@@ -1035,7 +1003,7 @@ if (mysql_num_rows($res) > 0) {
         <tr>
             <td>Übrige Tage</td>
             <td>
-                ' . floor($arr['user_sitting_days'] - $used_days) . '
+                ' . floor($user->sittingDays - $used_days) . '
             </td>
         </tr>
         <tr>
@@ -1080,16 +1048,16 @@ if (mysql_num_rows($res) > 0) {
     echo "<tr>
                     <th>Profil-Text:</th>
                     <td class=\"tbldata\">
-                        <textarea name=\"user_profile_text\" cols=\"60\" rows=\"8\">" . stripslashes($arr['user_profile_text']) . "</textarea>
+                        <textarea name=\"user_profile_text\" cols=\"60\" rows=\"8\">" . stripslashes($user->profileText) . "</textarea>
                     </td>
                 </tr>
                 <tr>
                     <th>Profil-Bild:</th>
                     <td class=\"tbldata\">";
-    if ($arr['user_profile_img'] != "") {
-        if ($arr['user_profile_img_check'] == 1)
+    if ($user->profileImage != "") {
+        if ($user->profileImageCheck)
             echo "<input type=\"checkbox\" value=\"0\" name=\"user_profile_img_check\"> Bild-Verifikation bestätigen<br/>";
-        echo '<img src="' . PROFILE_IMG_DIR . '/' . $arr['user_profile_img'] . '" alt="Profil" /><br/>';
+        echo '<img src="' . PROFILE_IMG_DIR . '/' . $user->profileImage . '" alt="Profil" /><br/>';
         echo "<input type=\"checkbox\" value=\"1\" name=\"profile_img_del\"> Bild l&ouml;schen<br/>";
     } else {
         echo "<i>Keines</i>";
@@ -1099,14 +1067,14 @@ if (mysql_num_rows($res) > 0) {
                 <tr>
                     <th>Board-Signatur:</th>
                     <td class=\"tbldata\">
-                        <textarea name=\"user_signature\" cols=\"60\" rows=\"8\">" . stripslashes($arr['user_signature']) . "</textarea>
+                        <textarea name=\"user_signature\" cols=\"60\" rows=\"8\">" . $user->signature . "</textarea>
                     </td>
                 </tr>
                 <tr>
                     <th>Avatarpfad:</th>
                     <td class=\"tbldata\">";
-    if ($arr['user_avatar'] != "") {
-        echo '<img src="' . BOARD_AVATAR_DIR . '/' . $arr['user_avatar'] . '" alt="Profil" /><br/>';
+    if ($user->avatar != "") {
+        echo '<img src="' . BOARD_AVATAR_DIR . '/' . $user->avatar . '" alt="Profil" /><br/>';
         echo "<input type=\"checkbox\" value=\"1\" name=\"avatar_img_del\"> Bild l&ouml;schen<br/>";
     } else {
         echo "<i>Keines</i>";
@@ -1116,7 +1084,7 @@ if (mysql_num_rows($res) > 0) {
                 <tr>
             <th>Öffentliches Foren-Profil:</th>
             <td class=\"tbldata\">
-                <input type=\"text\" name=\"user_profile_board_url\" maxlength=\"200\" size=\"50\" value=\"" . $arr['user_profile_board_url'] . "\">
+                <input type=\"text\" name=\"user_profile_board_url\" maxlength=\"200\" size=\"50\" value=\"" . $user->profileBoardUrl . "\">
             </td>
             </tr>";
 
@@ -1346,14 +1314,14 @@ if (mysql_num_rows($res) > 0) {
         <td class=\"tbltitle\">Nachricht senden:</td>
             <td class=\"tbldata\">
                 Titel: <input type=\"text\" id=\"urgendmsgsubject\" maxlength=\"200\" size=\"50\" />
-                <input type=\"button\" onclick=\"xajax_sendUrgendMsg(" . $arr['user_id'] . ",document.getElementById('urgendmsgsubject').value,document.getElementById('urgentmsg').value)\" value=\"Senden\" /><br/>
+                <input type=\"button\" onclick=\"xajax_sendUrgendMsg(" . $user->id . ",document.getElementById('urgendmsgsubject').value,document.getElementById('urgentmsg').value)\" value=\"Senden\" /><br/>
                         Text: <textarea id=\"urgentmsg\" cols=\"60\" rows=\"4\"></textarea>
             </td>
         </tr>";
     echo "</table><br/>";
 
     echo "<h2>Letzte 5 Nachrichten</h2>";
-    echo "<input type=\"button\" onclick=\"showLoader('lastmsgbox');xajax_showLast5Messages(" . $arr['user_id'] . ",'lastmsgbox');\" value=\"Neu laden\" /><br><br>";
+    echo "<input type=\"button\" onclick=\"showLoader('lastmsgbox');xajax_showLast5Messages(" . $user->id . ",'lastmsgbox');\" value=\"Neu laden\" /><br><br>";
     echo "<div id=\"lastmsgbox\">Lade...</div>";
 
     echo '</div><div id="tabs-8">';
@@ -1363,7 +1331,7 @@ if (mysql_num_rows($res) > 0) {
      */
 
     echo "<table class=\"tbl\">";
-    $failures = $userLoginFailureRepository->getUserLoginFailures((int) $arr['user_id']);
+    $failures = $userLoginFailureRepository->getUserLoginFailures($user->id);
     if (count($failures) > 0) {
         echo "<tr>
                         <th class=\"tbltitle\">Zeit</th>
@@ -1523,7 +1491,7 @@ if (mysql_num_rows($res) > 0) {
     echo "
     <div id=\"tabEconomy\">
     Das Laden aller Wirtschaftsdaten kann einige Sekunden dauern!<br/><br/>
-    <input type=\"button\" value=\"Wirtschaftsdaten laden\" onclick=\"showLoader('tabEconomy');xajax_loadEconomy(" . $arr['user_id'] . ",'tabEconomy');\" />
+    <input type=\"button\" value=\"Wirtschaftsdaten laden\" onclick=\"showLoader('tabEconomy');xajax_loadEconomy(" . $user->id . ",'tabEconomy');\" />
     </div>";
 
     echo '
@@ -1534,7 +1502,7 @@ if (mysql_num_rows($res) > 0) {
     // Buttons
     echo "<p>";
     echo "<input type=\"submit\" name=\"save\" value=\"&Auml;nderungen &uuml;bernehmen\" class=\"positive\" /> &nbsp;";
-    if ($arr['user_deleted'] != 0) {
+    if ($user->deleted !== 0) {
         echo "<input type=\"submit\" name=\"canceldelete\" value=\"Löschantrag aufheben\" class=\"userDeletedColor\" /> &nbsp;";
     } else {
         echo "<input type=\"submit\" name=\"requestdelete\" value=\"Löschantrag erteilen\" class=\"userDeletedColor\" /> &nbsp;";
@@ -1542,27 +1510,27 @@ if (mysql_num_rows($res) > 0) {
     echo "<input type=\"submit\" name=\"delete_user\" value=\"User l&ouml;schen\" class=\"remove\" onclick=\"return confirm('Soll dieser User entg&uuml;ltig gel&ouml;scht werden?');\"></p>";
 
     echo "<hr/><p>";
-    echo button("Planeten", "?page=galaxy&sq=" . searchQueryUrl("user_id:=:" . $arr['user_id'])) . " &nbsp;";
-    echo button("Gebäude", "?page=buildings&sq=" . searchQueryUrl("user_nick:=:" . $arr['user_nick'])) . " &nbsp;";
-    echo "<input type=\"button\" value=\"Forschungen\" onclick=\"document.location='?page=techs&action=search&query=" . searchQuery(array("user_id" => $arr['user_id'])) . "'\" /> &nbsp;";
-    echo button("Schiffe", "?page=ships&sq=" . searchQueryUrl("user_nick:=:" . $arr['user_nick'])) . " &nbsp;";
-    echo button("Verteidigung", "?page=def&sq=" . searchQueryUrl("user_nick:=:" . $arr['user_nick'])) . " &nbsp;";
-    echo button("Raketen", "?page=missiles&sq=" . searchQueryUrl("user_nick:=:" . $arr['user_nick'])) . " &nbsp;";
-    echo "<input type=\"button\" value=\"IP-Adressen &amp; Hosts\" onclick=\"document.location='?page=user&amp;sub=ipsearch&amp;user=" . $arr['user_id'] . "'\" /></p>";
+    echo button("Planeten", "?page=galaxy&sq=" . searchQueryUrl("user_id:=:" . $user->id)) . " &nbsp;";
+    echo button("Gebäude", "?page=buildings&sq=" . searchQueryUrl("user_nick:=:" . $user->nick)) . " &nbsp;";
+    echo "<input type=\"button\" value=\"Forschungen\" onclick=\"document.location='?page=techs&action=search&query=" . searchQuery(array("user_id" => $user->id)) . "'\" /> &nbsp;";
+    echo button("Schiffe", "?page=ships&sq=" . searchQueryUrl("user_nick:=:" . $user->nick)) . " &nbsp;";
+    echo button("Verteidigung", "?page=def&sq=" . searchQueryUrl("user_nick:=:" . $user->nick)) . " &nbsp;";
+    echo button("Raketen", "?page=missiles&sq=" . searchQueryUrl("user_nick:=:" . $user->nick)) . " &nbsp;";
+    echo "<input type=\"button\" value=\"IP-Adressen &amp; Hosts\" onclick=\"document.location='?page=user&amp;sub=ipsearch&amp;user=" . $user->id . "'\" /></p>";
 
 
 
     echo "<hr/>";
-    echo "<p><input type=\"button\" value=\"Spielerdaten neu laden\" onclick=\"document.location='?page=$page&sub=edit&amp;user_id=" . $arr['user_id'] . "'\" /> &nbsp;";
+    echo "<p><input type=\"button\" value=\"Spielerdaten neu laden\" onclick=\"document.location='?page=$page&sub=edit&amp;user_id=" . $user->id . "'\" /> &nbsp;";
     echo "<input type=\"button\" value=\"Zur&uuml;ck zu den Suchergebnissen\" onclick=\"document.location='?page=$page&action=search'\" /> &nbsp;";
     echo "<input type=\"button\" onclick=\"document.location='?page=$page'\" value=\"Neue Suche\" /></p>";
 
 
     echo "</form>";
 
-    if ($arr['user_blocked_from'] == 0)
+    if ($user->blockedFrom === 0)
         echo "<script>$(function() { $('#ban_options').hide(); });</script>";
-    if ($arr['user_hmode_from'] == 0)
+    if ($user->blockedFrom == 0)
         echo "<script>$(function() { $('#umod_options').hide(); });</script>";
 
     echo '<script>
