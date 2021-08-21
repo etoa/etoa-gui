@@ -73,7 +73,7 @@ abstract class AdvancedForm
      * rows                 Rows (textarea)
      * cols                 Cols (textarea)
      * rcb_elem (Array)	    Checkbox-/Radio Elements (desc=>value)
-     * rcb_elem_chekced	    Value of default checked Checkbox-/Radio Element (Checkbox: has to be an array)
+     * rcb_elem_checked	    Value of default checked Checkbox-/Radio Element (Checkbox: has to be an array)
      * select_elem (Array)  Select Elements (desc=>value)
      * select_elem_checked  Value of default checked Select Element (desc=>value)
      * show_overview        Set 1 to show on overview page
@@ -358,7 +358,7 @@ abstract class AdvancedForm
                     echo "<td class=\"tbldata\" width=\"200\">";
                     foreach ($a['rcb_elem'] as $rk => $rv) {
                         echo $rk . ": <input name=\"" . $a['name'] . "\" type=\"radio\" value=\"$rv\"";
-                        if ($a['rcb_elem_chekced'] == $rv) {
+                        if ($a['rcb_elem_checked'] == $rv) {
                             echo " checked=\"checked\"";
                         }
                         echo " /> ";

@@ -44,7 +44,7 @@ abstract class SimpleForm
      * rows                 Rows (textarea)
      * cols                 Cols (textarea)
      * rcb_elem (Array)	    Checkbox-/Radio Elements (desc=>value)
-     * rcb_elem_chekced	    Value of default checked Checkbox-/Radio Element (Checkbox: has to be an array)
+     * rcb_elem_checked	    Value of default checked Checkbox-/Radio Element (Checkbox: has to be an array)
      * select_elem (Array)  Select Elements (desc=>value)
      * select_elem_checked  Value of default checked Select Element (desc=>value)
      * show_overview        Set 1 to show on overview page
