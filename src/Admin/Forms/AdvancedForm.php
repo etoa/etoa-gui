@@ -218,7 +218,7 @@ abstract class AdvancedForm extends Form
         }
         echo "</table><br/>";
         echo "<input type=\"submit\" value=\"Neuen Datensatz speichern\" name=\"new\" />&nbsp;";
-        echo "<input type=\"button\" value=\"Abbrechen\" name=\"newcancel\" onclick=\"document.location='?" . URL_SEARCH_STRING . "'\" />";
+        echo "<input type=\"button\" value=\"Abbrechen\" onclick=\"document.location='?" . URL_SEARCH_STRING . "'\" />";
         echo "</form>";
     }
 
