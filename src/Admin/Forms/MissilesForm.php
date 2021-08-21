@@ -48,7 +48,7 @@ class MissilesForm extends AdvancedForm
                 "select_elem" => "",
                 "select_elem_checked" => "",
                 "show_overview" => 1,
-                "link_in_overview" => 1
+                "link_in_overview" => 1,
             ], [
                 "name" => "missile_sdesc",
                 "text" => "Titel",
@@ -62,7 +62,7 @@ class MissilesForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ], [
                 "name" => "missile_ldesc",
                 "text" => "Text",
@@ -76,7 +76,7 @@ class MissilesForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ], [
                 "name" => "missile_costs_metal",
                 "text" => "Kosten Metall",
@@ -90,7 +90,7 @@ class MissilesForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ], [
                 "name" => "missile_costs_crystal",
                 "text" => "Kosten Kristall",
@@ -104,7 +104,7 @@ class MissilesForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ], [
                 "name" => "missile_costs_plastic",
                 "text" => "Kosten Plastik",
@@ -118,7 +118,7 @@ class MissilesForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ], [
                 "name" => "missile_costs_fuel",
                 "text" => "Kosten Treibstoff",
@@ -132,7 +132,7 @@ class MissilesForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ], [
                 "name" => "missile_costs_food",
                 "text" => "Kosten Nahrung",
@@ -146,7 +146,7 @@ class MissilesForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ], [
                 "name" => "missile_damage",
                 "text" => "Schaden",
@@ -160,7 +160,7 @@ class MissilesForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 1
+                "show_overview" => 1,
             ], [
                 "name" => "missile_speed",
                 "text" => "Geschwindigkeit",
@@ -174,7 +174,7 @@ class MissilesForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 1
+                "show_overview" => 1,
             ], [
                 "name" => "missile_range",
                 "text" => "Reichweite",
@@ -188,7 +188,7 @@ class MissilesForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 1
+                "show_overview" => 1,
             ], [
                 "name" => "missile_deactivate",
                 "text" => "EMP",
@@ -202,7 +202,7 @@ class MissilesForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 1
+                "show_overview" => 1,
             ], [
                 "name" => "missile_def",
                 "text" => "Verteidigung",
@@ -216,7 +216,7 @@ class MissilesForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 1
+                "show_overview" => 1,
             ], [
                 "name" => "missile_launchable",
                 "text" => "Startbar",
@@ -230,7 +230,7 @@ class MissilesForm extends AdvancedForm
                 "rcb_elem_chekced" => "1",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ], [
                 "name" => "missile_show",
                 "text" => "Anzeigen",
@@ -244,8 +244,8 @@ class MissilesForm extends AdvancedForm
                 "rcb_elem_chekced" => "1",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
-            ]
+                "show_overview" => 0,
+            ],
         ];
     }
 }

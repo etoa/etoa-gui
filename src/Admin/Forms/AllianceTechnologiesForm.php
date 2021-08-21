@@ -45,7 +45,7 @@ class AllianceTechnologiesForm extends AdvancedForm
                 "name" => "alliance_tech_id",
                 "text" => "ID",
                 "type" => "readonly",
-                "show_overview" => 1
+                "show_overview" => 1,
             ], [
                 "name" => "alliance_tech_name",
                 "text" => "Name",
@@ -60,7 +60,7 @@ class AllianceTechnologiesForm extends AdvancedForm
                 "select_elem" => "",
                 "select_elem_checked" => "",
                 "show_overview" => 1,
-                "link_in_overview" => 1
+                "link_in_overview" => 1,
             ], [
                 "name" => "alliance_tech_longcomment",
                 "text" => "Beschreibung",
@@ -75,7 +75,7 @@ class AllianceTechnologiesForm extends AdvancedForm
                 "select_elem" => "",
                 "select_elem_checked" => "",
                 "show_overview" => 1,
-                "line" => 1
+                "line" => 1,
             ], [
                 "name" => "alliance_tech_costs_metal",
                 "text" => "Kosten Metall",
@@ -89,7 +89,7 @@ class AllianceTechnologiesForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ], [
                 "name" => "alliance_tech_costs_crystal",
                 "text" => "Kosten Kristall",
@@ -103,7 +103,7 @@ class AllianceTechnologiesForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ], [
                 "name" => "alliance_tech_costs_plastic",
                 "text" => "Kosten Plastik",
@@ -117,7 +117,7 @@ class AllianceTechnologiesForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ], [
                 "name" => "alliance_tech_costs_fuel",
                 "text" => "Kosten Treibstoff",
@@ -131,7 +131,7 @@ class AllianceTechnologiesForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ], [
                 "name" => "alliance_tech_costs_food",
                 "text" => "Kosten Nahrung",
@@ -145,7 +145,7 @@ class AllianceTechnologiesForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ], [
                 "name" => "alliance_tech_build_time",
                 "text" => "Bauzeit (Sekunden)",
@@ -159,7 +159,7 @@ class AllianceTechnologiesForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ], [
                 "name" => "alliance_tech_costs_factor",
                 "text" => "Kostenfaktor",
@@ -174,7 +174,7 @@ class AllianceTechnologiesForm extends AdvancedForm
                 "select_elem" => "",
                 "select_elem_checked" => "",
                 "show_overview" => 0,
-                "line" => 1
+                "line" => 1,
             ], [
                 "name" => "alliance_tech_last_level",
                 "text" => "Max Level",
@@ -188,7 +188,7 @@ class AllianceTechnologiesForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 1
+                "show_overview" => 1,
             ], [
                 "name" => "alliance_tech_needed_id",
                 "text" => "Voraussetzung",
@@ -202,7 +202,7 @@ class AllianceTechnologiesForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => $this->getSelectElements('alliance_technologies', "alliance_tech_id", "alliance_tech_name", "alliance_tech_id"),
                 "select_elem_checked" => "",
-                "show_overview" => 1
+                "show_overview" => 1,
             ], [
                 "name" => "alliance_tech_needed_level",
                 "text" => "Voraussetzung Stufe",
@@ -216,7 +216,7 @@ class AllianceTechnologiesForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 1
+                "show_overview" => 1,
             ],
         ];
     }

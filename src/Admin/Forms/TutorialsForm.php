@@ -43,7 +43,7 @@ class TutorialsForm extends AdvancedForm
                 "name" => "text_id",
                 "text" => "ID",
                 "type" => "readonly",
-                "show_overview" => 1
+                "show_overview" => 1,
             ], [
                 "name" => "text_tutorial_id",
                 "text" => "Tutorial",
@@ -57,7 +57,7 @@ class TutorialsForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => $this->getSelectElements('tutorial', "tutorial_id", "tutorial_title", "tutorial_title", ["0" => "-"]),
                 "select_elem_checked" => "",
-                "show_overview" => 1
+                "show_overview" => 1,
             ], [
                 "name" => "text_title",
                 "text" => "Titel",
@@ -72,7 +72,7 @@ class TutorialsForm extends AdvancedForm
                 "select_elem" => "",
                 "select_elem_checked" => "",
                 "show_overview" => 1,
-                "link_in_overview" => 1
+                "link_in_overview" => 1,
             ], [
                 "name" => "text_content",
                 "text" => "Inhalt",
@@ -86,7 +86,7 @@ class TutorialsForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ],
         ];
     }

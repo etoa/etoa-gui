@@ -47,7 +47,7 @@ class TicketCategoriesForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 1
+                "show_overview" => 1,
             ], [
                 "name" => "sort",
                 "text" => "Sortierung",
@@ -61,7 +61,7 @@ class TicketCategoriesForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 1
+                "show_overview" => 1,
             ],
         ];
     }

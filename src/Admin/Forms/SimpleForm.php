@@ -21,12 +21,12 @@ abstract class SimpleForm
         $this->twig = $twig;
     }
 
-    protected abstract function getName(): string;
+    abstract protected function getName(): string;
 
-    protected abstract function getTable(): string;
-    protected abstract function getTableId(): string;
+    abstract protected function getTable(): string;
+    abstract protected function getTableId(): string;
 
-    protected abstract function getOverviewOrderField(): string;
+    abstract protected function getOverviewOrderField(): string;
 
     protected function getOverviewOrder(): string
     {
@@ -50,7 +50,7 @@ abstract class SimpleForm
      * select_elem_checked  Value of default checked Select Element (desc=>value)
      * show_overview        Set 1 to show on overview page
      */
-    protected abstract function getFields(): array;
+    abstract protected function getFields(): array;
 
     public static function render(Container $app, Environment $twig, Request $request): void
     {
@@ -95,13 +95,17 @@ abstract class SimpleForm
             $vsqlsp = "";
             foreach ($this->getFields() as $k => $a) {
                 $fsql .= "`" . $a['name'] . "`";
-                if ($cnt < sizeof($this->getFields())) $fsql .= ",";
+                if ($cnt < sizeof($this->getFields())) {
+                    $fsql .= ",";
+                }
                 $cnt++;
             }
             $cnt = 1;
             foreach ($this->getFields() as $k => $a) {
                 $vsql .= "'" . $a['def_val'] . "'";
-                if ($cnt < sizeof($this->getFields())) $vsql .= ",";
+                if ($cnt < sizeof($this->getFields())) {
+                    $vsql .= ",";
+                }
                 $cnt++;
             }
 
@@ -137,49 +141,63 @@ abstract class SimpleForm
                     switch ($a['type']) {
                         case "text":
                             echo "<input type=\"text\" name=\"" . $a['name'] . "[" . $arr[$this->getTableId()] . "]\" value=\"" . $arr[$a['name']] . "\" size=\"" . $a['size'] . "\" maxlength=\"" . $a['maxlen'] . "\" /></td>\n";
+
                             break;
                         case "email":
                             echo "<input type=\"text\" name=\"" . $a['name'] . "[" . $arr[$this->getTableId()] . "]\" value=\"" . $arr[$a['name']] . "\" size=\"" . $a['size'] . "\" maxlength=\"" . $a['maxlen'] . "\" /></td>\n";
+
                             break;
                         case "url":
                             echo "<input type=\"text\" name=\"" . $a['name'] . "[" . $arr[$this->getTableId()] . "]\" value=\"" . $arr[$a['name']] . "\" size=\"" . $a['size'] . "\" maxlength=\"" . $a['maxlen'] . "\" /></td>\n";
+
                             break;
                         case "numeric":
                             echo "<input type=\"text\" name=\"" . $a['name'] . "[" . $arr[$this->getTableId()] . "]\" value=\"" . $arr[$a['name']] . "\" size=\"" . $a['size'] . "\" maxlength=\"" . $a['maxlen'] . "\" /></td>\n";
+
                             break;
                         case "password":
                             echo "<input type=\"password\" name=\"" . $a['name'] . "[" . $arr[$this->getTableId()] . "]\" value=\"" . $arr[$a['name']] . "\" size=\"" . $a['size'] . "\" maxlength=\"" . $a['maxlen'] . "\" /></td>\n";
+
                             break;
                         case "timestamp":
                             echo "<input type=\"text\" name=\"" . $a['name'] . "[" . $arr[$this->getTableId()] . "]\" value=\"" . date($config->get('admin_dateformat'), intval($arr[$a['name']])) . "\" /></td>\n";
+
                             break;
                         case "textarea":
                             echo "<input type=\"text\" name=\"" . $a['name'] . "[" . $arr[$this->getTableId()] . "]\" value=\"";
-                            if (strlen($arr[$a['name']]) > 20)
+                            if (strlen($arr[$a['name']]) > 20) {
                                 echo stripslashes(substr($arr[$a['name']], 0, 18) . "...");
-                            else
+                            } else {
                                 echo stripslashes($arr[$a['name']]);
+                            }
                             echo "\" /></td>\n";
+
                             break;
                         case "radio":
                             echo "<input type=\"text\" name=\"" . $a['name'] . "[" . $arr[$this->getTableId()] . "]\" value=\"" . $arr[$a['name']] . "\" /></td>\n";
+
                             break;
                         case "checkbox":
 
                             break;
                         case "select":
                             echo "<select name=\"" . $a['name'] . "[" . $arr[$this->getTableId()] . "]\">\n";
-                            if ($arr[$a['name']] == 0 || $arr[$a['name']] == "")
+                            if ($arr[$a['name']] == 0 || $arr[$a['name']] == "") {
                                 echo "<option selected=\"selected\">(Wählen...)</option>";
+                            }
                             foreach ($a['select_elem'] as $sd => $sv) {
                                 echo "<option value=\"$sv\"";
-                                if ($arr[$a['name']] == $sv) echo " selected=\"selected\"";
+                                if ($arr[$a['name']] == $sv) {
+                                    echo " selected=\"selected\"";
+                                }
                                 echo ">$sd</option>\n";
                             }
                             echo "</select></td>\n";
+
                             break;
                         case "hidden":
                             echo "<input type=\"hidden\" name=\"" . $a['name'] . "[" . $arr[$this->getTableId()] . "]\" value=\"" . $arr[$a['name']] . "\" size=\"" . $a['size'] . "\" maxlength=\"" . $a['maxlen'] . "\" />\n";
+
                             break;
                     }
                 }

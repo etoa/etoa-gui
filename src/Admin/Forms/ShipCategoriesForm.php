@@ -42,7 +42,7 @@ class ShipCategoriesForm extends SimpleForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 1
+                "show_overview" => 1,
             ], [
                 "name" => "cat_name",
                 "text" => "Kategoriename",
@@ -56,7 +56,7 @@ class ShipCategoriesForm extends SimpleForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 1
+                "show_overview" => 1,
             ], [
                 "name" => "cat_order",
                 "text" => "Sortierung",
@@ -70,7 +70,7 @@ class ShipCategoriesForm extends SimpleForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 1
+                "show_overview" => 1,
             ], [
                 "name" => "cat_color",
                 "text" => "Farbe",
@@ -84,8 +84,8 @@ class ShipCategoriesForm extends SimpleForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 1
-            ]
+                "show_overview" => 1,
+            ],
         ];
     }
 }

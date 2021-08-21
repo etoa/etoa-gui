@@ -33,7 +33,7 @@ class RacesForm extends AdvancedForm
                 "name" => "race_id",
                 "text" => "ID",
                 "type" => "readonly",
-                "show_overview" => 1
+                "show_overview" => 1,
             ],
             [
                 "name" => "race_name",
@@ -49,7 +49,7 @@ class RacesForm extends AdvancedForm
                 "select_elem" => "",
                 "select_elem_checked" => "",
                 "show_overview" => 1,
-                "link_in_overview" => 1
+                "link_in_overview" => 1,
             ],
             [
                 "name" => "race_short_comment",
@@ -65,7 +65,7 @@ class RacesForm extends AdvancedForm
                 "select_elem" => "",
                 "select_elem_checked" => "",
                 "show_overview" => 1,
-                "overview_length" => 400
+                "overview_length" => 400,
 
             ],
             [
@@ -90,7 +90,7 @@ class RacesForm extends AdvancedForm
                 "def_val" => "",
                 "size" => "30",
                 "maxlen" => "50",
-                "show_overview" => 0
+                "show_overview" => 0,
             ],
             [
                 "name" => "race_adj2",
@@ -99,7 +99,7 @@ class RacesForm extends AdvancedForm
                 "def_val" => "",
                 "size" => "30",
                 "maxlen" => "50",
-                "show_overview" => 0
+                "show_overview" => 0,
             ],
             [
                 "name" => "race_adj3",
@@ -108,7 +108,7 @@ class RacesForm extends AdvancedForm
                 "def_val" => "",
                 "size" => "30",
                 "maxlen" => "50",
-                "show_overview" => 0
+                "show_overview" => 0,
             ],
             [
                 "name" => "race_leadertitle",
@@ -124,7 +124,7 @@ class RacesForm extends AdvancedForm
                 "select_elem" => "",
                 "select_elem_checked" => "",
                 "show_overview" => 1,
-                "overview_length" => 200
+                "overview_length" => 200,
             ],
             [
                 "name" => "race_f_metal",
@@ -139,7 +139,7 @@ class RacesForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ],
             [
                 "name" => "race_f_crystal",
@@ -154,7 +154,7 @@ class RacesForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ],
             [
                 "name" => "race_f_plastic",
@@ -169,7 +169,7 @@ class RacesForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ],
             [
                 "name" => "race_f_fuel",
@@ -184,7 +184,7 @@ class RacesForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ],
             [
                 "name" => "race_f_food",
@@ -199,7 +199,7 @@ class RacesForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ],
             [
                 "name" => "race_f_power",
@@ -214,7 +214,7 @@ class RacesForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ],
             [
                 "name" => "race_f_population",
@@ -229,7 +229,7 @@ class RacesForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ],
             [
                 "name" => "race_f_researchtime",
@@ -244,7 +244,7 @@ class RacesForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ],
             [
                 "name" => "race_f_buildtime",
@@ -259,7 +259,7 @@ class RacesForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ],
             [
                 "name" => "race_f_fleettime",
@@ -274,7 +274,7 @@ class RacesForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ],
         ];
     }

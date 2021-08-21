@@ -66,7 +66,7 @@ class TechnologiesForm extends AdvancedForm
                 "name" => "tech_id",
                 "text" => "ID",
                 "type" => "readonly",
-                "show_overview" => 1
+                "show_overview" => 1,
             ],
             [
                 "name" => "tech_name",
@@ -82,7 +82,7 @@ class TechnologiesForm extends AdvancedForm
                 "select_elem" => "",
                 "select_elem_checked" => "",
                 "show_overview" => 1,
-                "link_in_overview" => 1
+                "link_in_overview" => 1,
             ],
             [
                 "name" => "tech_type_id",
@@ -97,7 +97,7 @@ class TechnologiesForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => $this->getSelectElements('tech_types', "type_id", "type_name", "type_name"),
                 "select_elem_checked" => "",
-                "show_overview" => 1
+                "show_overview" => 1,
             ],
             [
                 "name" => "tech_shortcomment",
@@ -112,7 +112,7 @@ class TechnologiesForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ],
             [
                 "name" => "tech_longcomment",
@@ -128,7 +128,7 @@ class TechnologiesForm extends AdvancedForm
                 "select_elem" => "",
                 "select_elem_checked" => "",
                 "show_overview" => 0,
-                "line" => 1
+                "line" => 1,
             ],
             [
                 "name" => "tech_costs_metal",
@@ -143,7 +143,7 @@ class TechnologiesForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ],
             [
                 "name" => "tech_costs_crystal",
@@ -158,7 +158,7 @@ class TechnologiesForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ],
             [
                 "name" => "tech_costs_plastic",
@@ -173,7 +173,7 @@ class TechnologiesForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ],
             [
                 "name" => "tech_costs_fuel",
@@ -188,7 +188,7 @@ class TechnologiesForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ],
             [
                 "name" => "tech_costs_food",
@@ -203,7 +203,7 @@ class TechnologiesForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ],
             [
                 "name" => "tech_build_costs_factor",
@@ -219,7 +219,7 @@ class TechnologiesForm extends AdvancedForm
                 "select_elem" => "",
                 "select_elem_checked" => "",
                 "show_overview" => 0,
-                "line" => 1
+                "line" => 1,
             ],
             [
                 "name" => "tech_last_level",
@@ -234,7 +234,7 @@ class TechnologiesForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 1
+                "show_overview" => 1,
             ],
             [
                 "name" => "tech_stealable",
@@ -249,7 +249,7 @@ class TechnologiesForm extends AdvancedForm
                 "rcb_elem_chekced" => "1",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ],
         ];
     }

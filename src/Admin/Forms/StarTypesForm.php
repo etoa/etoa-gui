@@ -50,7 +50,7 @@ class StarTypesForm extends AdvancedForm
                 "select_elem" => "",
                 "select_elem_checked" => "",
                 "show_overview" => 1,
-                "link_in_overview" => 1
+                "link_in_overview" => 1,
             ], [
                 "name" => "sol_type_comment",
                 "text" => "Kommentar",
@@ -64,7 +64,7 @@ class StarTypesForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 1
+                "show_overview" => 1,
             ], [
                 "name" => "sol_type_f_metal",
                 "text" => "Metallfaktor",
@@ -78,7 +78,7 @@ class StarTypesForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ], [
                 "name" => "sol_type_f_crystal",
                 "text" => "Kristallfaktor",
@@ -92,7 +92,7 @@ class StarTypesForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ], [
                 "name" => "sol_type_f_plastic",
                 "text" => "Plastikfaktor",
@@ -106,7 +106,7 @@ class StarTypesForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ], [
                 "name" => "sol_type_f_fuel",
                 "text" => "Treibstofffaktor",
@@ -120,7 +120,7 @@ class StarTypesForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ], [
                 "name" => "sol_type_f_food",
                 "text" => "Nahrungsfaktor",
@@ -134,7 +134,7 @@ class StarTypesForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ], [
                 "name" => "sol_type_f_power",
                 "text" => "Stromfaktor",
@@ -148,7 +148,7 @@ class StarTypesForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ], [
                 "name" => "sol_type_f_population",
                 "text" => "Bevölkerungsfaktor",
@@ -162,7 +162,7 @@ class StarTypesForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ], [
                 "name" => "sol_type_f_researchtime",
                 "text" => "Forschungszeitfaktor",
@@ -176,7 +176,7 @@ class StarTypesForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ], [
                 "name" => "sol_type_f_buildtime",
                 "text" => "Bauzeitfaktor",
@@ -190,8 +190,8 @@ class StarTypesForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
-            ]
+                "show_overview" => 0,
+            ],
         ];
     }
 }

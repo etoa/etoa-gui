@@ -22,12 +22,12 @@ abstract class AdvancedForm
         $this->twig = $twig;
     }
 
-    protected abstract function getName(): string;
+    abstract protected function getName(): string;
 
-    protected abstract function getTable(): string;
-    protected abstract function getTableId(): string;
+    abstract protected function getTable(): string;
+    abstract protected function getTableId(): string;
 
-    protected abstract function getOverviewOrderField(): string;
+    abstract protected function getOverviewOrderField(): string;
 
     protected function getOverviewOrder(): string
     {
@@ -76,7 +76,7 @@ abstract class AdvancedForm
      * select_elem_checked  Value of default checked Select Element (desc=>value)
      * show_overview        Set 1 to show on overview page
      */
-    protected abstract function getFields(): array;
+    abstract protected function getFields(): array;
 
     public static function render(Container $app, Environment $twig, Request $request): void
     {
@@ -207,10 +207,11 @@ abstract class AdvancedForm
                     foreach ($this->getSwitches() as $k => $v) {
                         echo "<td valign=\"top\" class=\"tbldata\">
                     <a href=\"?" . URL_SEARCH_STRING . "&amp;switch=" . $v . "&amp;id=" . $arr[$this->getTableId()] . "\">";
-                        if ($arr[$v] == 1)
+                        if ($arr[$v] == 1) {
                             echo "<img src=\"../images/true.gif\" alt=\"true\" />";
-                        else
+                        } else {
                             echo "<img src=\"../images/false.gif\" alt=\"true\" />";
+                        }
                         echo "</td>";
                     }
                 }
@@ -218,15 +219,17 @@ abstract class AdvancedForm
                 if ($this->getTableSort() !== null && $this->getTableSortParent() !== null) {
                     echo "<td valign=\"top\" class=\"tbldata\" style=\"width:40px;\">";
 
-                    if ($cnt < mysql_num_rows($res) - 1)
+                    if ($cnt < mysql_num_rows($res) - 1) {
                         echo "<a href=\"?" . URL_SEARCH_STRING . "&amp;sortdown=" . $arr[$this->getTableId()] . "&amp;parentid=" . $arr[$this->getTableSortParent()] . "\"><img src=\"../images/down.gif\" alt=\"down\" /></a> ";
-                    else
+                    } else {
                         echo "<img src=\"../images/blank.gif\" alt=\"blank\" style=\"width:16px;\" /> ";
+                    }
 
-                    if ($cnt != 0 && $parId == $arr[$this->getTableSortParent()])
+                    if ($cnt != 0 && $parId == $arr[$this->getTableSortParent()]) {
                         echo "<a href=\"?" . URL_SEARCH_STRING . "&amp;sortup=" . $arr[$this->getTableId()] . "&amp;parentid=" . $arr[$this->getTableSortParent()] . "\"><img src=\"../images/up.gif\" alt=\"up\" /></a> ";
-                    else
+                    } else {
                         echo "<img src=\"../images/blank.gif\" alt=\"blank\" style=\"width:16px;\" /> ";
+                    }
 
                     echo "</td>";
 
@@ -260,36 +263,47 @@ abstract class AdvancedForm
                 switch ($a['type']) {
                     case "readonly":
                         echo "" . $arr[$a['name']] . "";
+
                         break;
                     case "text":
                         echo "" . $arr[$a['name']] . "";
+
                         break;
                     case "email":
                         echo "" . $arr[$a['name']] . "";
+
                         break;
                     case "url":
                         echo "" . $arr[$a['name']] . "";
+
                         break;
                     case "numeric":
                         echo "" . $arr[$a['name']] . "";
+
                         break;
                     case "password":
                         echo "" . $arr[$a['name']] . "";
+
                         break;
                     case "timestamp":
                         echo "" . date($config->get('admin_dateformat'), $arr[$a['name']]) . "";
+
                         break;
                     case "textarea":
                         echo "";
                         echo stripslashes($arr[$a['name']]);
                         echo "";
+
                         break;
                     case "radio":
                         echo "";
                         foreach ($a['rcb_elem'] as $rk => $rv) {
-                            if ($arr[$a['name']] == $rv) echo $rk;
+                            if ($arr[$a['name']] == $rv) {
+                                echo $rk;
+                            }
                         }
                         echo "";
+
                         break;
                     case "checkbox":
                         echo "";
@@ -301,20 +315,26 @@ abstract class AdvancedForm
                         }
                         for ($cbx = 0; $cbx < count($cb_temp_arr); $cbx++) {
                             echo $cb_temp_arr[$cbx];
-                            if ($cbx = count($cb_temp_arr) - 1) echo ";";
+                            if ($cbx = count($cb_temp_arr) - 1) {
+                                echo ";";
+                            }
                         }
                         echo "";
+
                         break;
                     case "select":
                         echo "";
                         foreach ($a['select_elem'] as $sd => $sv) {
-                            if ($sv == $arr[$a['name']])
+                            if ($sv == $arr[$a['name']]) {
                                 echo $sd;
+                            }
                         }
                         echo "";
+
                         break;
                     default:
                         echo "" . $arr[$a['name']] . "";
+
                         break;
                 }
                 echo "</td>";
@@ -346,67 +366,85 @@ abstract class AdvancedForm
                 case "text":
                     echo "<tr><th class=\"tbltitle\" width=\"200\">" . $a['text'] . ":</th>";
                     echo "<td class=\"tbldata\" width=\"200\"><input type=\"text\" name=\"" . $a['name'] . "\" size=\"" . $a['size'] . "\" maxlength=\"" . $a['maxlen'] . "\" value=\"" . $a['def_val'] . "\" /></td></tr>";
+
                     break;
                 case "hidden":
                     echo "<input type=\"hidden\" name=\"" . $a['name'] . "\" value=\"" . $a['def_val'] . "\" />";
+
                     break;
                 case "email":
                     echo "<tr><th class=\"tbltitle\" width=\"200\">" . $a['text'] . ":</th>";
                     echo "<td class=\"tbldata\" width=\"200\"><input type=\"text\" name=\"" . $a['name'] . "\" size=\"" . $a['size'] . "\" maxlength=\"" . $a['maxlen'] . "\" value=\"" . $a['def_val'] . "\" /></td></tr>";
+
                     break;
                 case "url":
                     echo "<tr><th class=\"tbltitle\" width=\"200\">" . $a['text'] . ":</th>";
                     echo "<td class=\"tbldata\" width=\"200\"><input type=\"text\" name=\"" . $a['name'] . "\" size=\"" . $a['size'] . "\" maxlength=\"" . $a['maxlen'] . "\" value=\"" . $a['def_val'] . "\" /></td></tr>";
+
                     break;
                 case "numeric":
                     echo "<tr><th class=\"tbltitle\" width=\"200\">" . $a['text'] . ":</th>";
                     echo "<td class=\"tbldata\" width=\"200\"><input type=\"text\" name=\"" . $a['name'] . "\" size=\"" . $a['size'] . "\" maxlength=\"" . $a['maxlen'] . "\" value=\"" . $a['def_val'] . "\" /></td></tr>";
+
                     break;
                 case "password":
                     echo "<tr><th class=\"tbltitle\" width=\"200\">" . $a['text'] . ":</th>";
                     echo "<td class=\"tbldata\" width=\"200\"><input type=\"password\" name=\"" . $a['name'] . "\" size=\"" . $a['size'] . "\" maxlength=\"" . $a['maxlen'] . "\" value=\"" . $a['def_val'] . "\" /></td></tr>";
+
                     break;
                 case "timestamp":
                     echo "<tr><th class=\"tbltitle\" width=\"200\">" . $a['text'] . ":</th>";
                     echo "<td class=\"tbldata\" width=\"200\"><input type=\"text\" name=\"" . $a['name'] . "\" size=\"" . $a['size'] . "\" maxlength=\"" . $a['maxlen'] . "\" value=\"" . $a['def_val'] . "\" /></td></tr>";
+
                     break;
                 case "textarea":
                     echo "<tr><th class=\"tbltitle\" width=\"200\">" . $a['text'] . ":</th>";
                     echo "<td class=\"tbldata\" width=\"200\"><textarea name=\"" . $a['name'] . "\" rows=\"" . $a['rows'] . "\" cols=\"" . $a['cols'] . "\">" . $a['def_val'] . "</textarea></td></tr>";
+
                     break;
                 case "radio":
                     echo "<tr><th class=\"tbltitle\" width=\"200\">" . $a['text'] . ":</th>";
                     echo "<td class=\"tbldata\" width=\"200\">";
                     foreach ($a['rcb_elem'] as $rk => $rv) {
                         echo $rk . ": <input name=\"" . $a['name'] . "\" type=\"radio\" value=\"$rv\"";
-                        if ($a['rcb_elem_chekced'] == $rv) echo " checked=\"checked\"";
+                        if ($a['rcb_elem_chekced'] == $rv) {
+                            echo " checked=\"checked\"";
+                        }
                         echo " /> ";
                     }
                     echo "</td></tr>";
+
                     break;
                 case "checkbox":
                     echo "<tr><th class=\"tbltitle\" width=\"200\">" . $a['text'] . ":</th>";
                     echo "<td class=\"tbldata\" width=\"200\">";
                     foreach ($a['rcb_elem'] as $rk => $rv) {
                         echo $rk . ": <input name=\"" . $a['name'] . "\" type=\"checkbox\" value=\"$rv\"";
-                        if (in_array($rv, $a['rcb_elem_chekced'])) echo " checked=\"checked\"";
+                        if (in_array($rv, $a['rcb_elem_chekced'])) {
+                            echo " checked=\"checked\"";
+                        }
                         echo " /> ";
                     }
                     echo "</td></tr>";
+
                     break;
                 case "select":
                     echo "<tr><th class=\"tbltitle\" width=\"200\">" . $a['text'] . ":</th>";
                     echo "<td class=\"tbldata\" width=\"200\"><select name=\"" . $a['name'] . "\">";
                     foreach ($a['select_elem'] as $rk => $rv) {
                         echo "<option value=\"$rv\"";
-                        if (isset($a['select_elem_checked']) && $a['select_elem_checked'] == $rv) echo " selected=\"selected\"";
+                        if (isset($a['select_elem_checked']) && $a['select_elem_checked'] == $rv) {
+                            echo " selected=\"selected\"";
+                        }
                         echo ">$rk</option> ";
                     }
                     echo "</td></tr>";
+
                     break;
                 case "dbimage":
                     echo "<tr><th class=\"tbltitle\" width=\"200\">" . $a['text'] . ":</th>";
                     echo "<td class=\"tbldata\" width=\"200\"><input type=\"file\" name=\"" . $a['name'] . "\" size=\"" . $a['size'] . "\" maxlength=\"" . $a['maxlen'] . "\" /></td></tr>";
+
                     break;
                 case "fleetaction":
                     echo "<tr><th class=\"tbltitle\" width=\"200\">" . $a['text'] . ":</th>";
@@ -417,10 +455,12 @@ abstract class AdvancedForm
                         echo " /> " . $ac . "<br/>";
                     }
                     echo "</td></tr>";
+
                     break;
                 default:
                     echo "<tr><th class=\"tbltitle\" width=\"200\">" . $a['text'] . ":</th>";
                     echo "<td class=\"tbldata\" width=\"200\"><input type=\"text\" name=\"" . $a['name'] . "\" size=\"" . $a['size'] . "\" maxlength=\"" . $a['maxlen'] . "\" value=\"" . $a['def_val'] . "\" /></td></tr>";
+
                     break;
             }
         }
@@ -446,8 +486,9 @@ abstract class AdvancedForm
         foreach ($this->getFields() as $k => $a) {
             if ($a['type'] != "readonly") {
                 $fsql .= "`" . $a['name'] . "`";
-                if ($cnt < sizeof($this->getFields()))
+                if ($cnt < sizeof($this->getFields())) {
                     $fsql .= ",";
+                }
             }
             $cnt++;
         }
@@ -458,33 +499,43 @@ abstract class AdvancedForm
                     break;
                 case "text":
                     $vsql .= "'" . addslashes($request->request->get($a['name'])) . "'";
+
                     break;
                 case "email":
                     $vsql .= "'" . $request->request->get($a['name']) . "'";
+
                     break;
                 case "url":
                     $vsql .= "'" . $request->request->get($a['name']) . "'";
+
                     break;
                 case "numeric":
                     $vsql .= "'" . $request->request->get($a['name']) . "'";
+
                     break;
                 case "password":
                     $vsql .= "'" . md5($request->request->get($a['name'])) . "'";
+
                     break;
                 case "timestamp":
                     $vsql .= "UNIX_TIMESTAMP('" . $request->request->get($a['name']) . "')";
+
                     break;
                 case "textarea":
                     $vsql .= "'" . addslashes($request->request->get($a['name'])) . "'";
+
                     break;
                 case "radio":
                     $vsql .= "'" . $request->request->get($a['name']) . "'";
+
                     break;
                 case "checkbox":
                     $vsql .= "'" . $request->request->get($a['name']) . "'";
+
                     break;
                 case "select":
                     $vsql .= "'" . $request->request->get($a['name']) . "'";
+
                     break;
                 case "dbimage":
 
@@ -511,20 +562,25 @@ abstract class AdvancedForm
                     $fsql .= ",`" . $a['db_image_thumb_field'] . "`,`" . $a['db_image_type_field'] . "`";
                     $vsqlsp .= ",'" . $imtdata . "','" . $_FILES[$a['name']]['type'] . "'";
                     $vsql .= "'" . $imdata . "'";
+
                     break;
                 case "fleetaction":
-                    if (is_array($request->request->get($a['name'])))
+                    if (is_array($request->request->get($a['name']))) {
                         $str = implode(",", $request->request->get($a['name']));
-                    else
+                    } else {
                         $str = "";
+                    }
                     $vsql .= "'" . $str . "'";
+
                     break;
                 default:
                     $vsql .= "'" . addslashes($request->request->get($a['name'])) . "'";
+
                     break;
             }
-            if ($cnt < sizeof($this->getFields()) && $a['type'] != "readonly")
+            if ($cnt < sizeof($this->getFields()) && $a['type'] != "readonly") {
                 $vsql .= ",";
+            }
             $cnt++;
         }
 
@@ -574,8 +630,9 @@ abstract class AdvancedForm
         echo "<tr><td style=\"vertical-align:top;\"><table style=\"width:100%;\">";
         foreach ($this->getFields() as $fieldDefinition) {
             echo "<tr id=\"row_" . $fieldDefinition['name'] . "\"";
-            if (in_array($fieldDefinition['name'], $hidden_rows, true))
+            if (in_array($fieldDefinition['name'], $hidden_rows, true)) {
                 echo " style=\"display:none;\"";
+            }
 
             echo ">\n<th class=\"tbltitle\" width=\"200\">" . $fieldDefinition['text'] . ":</th>\n";
             echo "<td class=\"tbldata\" width=\"200\">\n";
@@ -583,36 +640,46 @@ abstract class AdvancedForm
             switch ($fieldDefinition['type']) {
                 case "readonly":
                     echo $arr[$fieldDefinition['name']];
+
                     break;
                 case "text":
                     echo "<input $stl type=\"text\" name=\"" . $fieldDefinition['name'] . "\" size=\"" . $fieldDefinition['size'] . "\" maxlength=\"" . $fieldDefinition['maxlen'] . "\" value=\"" . stripslashes($arr[$fieldDefinition['name']]) . "\" />";
+
                     break;
                 case "hidden":
                     echo "<input type=\"hidden\" name=\"" . $fieldDefinition['name'] . "\" value=\"" . $arr[$fieldDefinition['name']] . "\" />";
+
                     break;
                 case "email":
                     echo "<input $stl type=\"text\" name=\"" . $fieldDefinition['name'] . "\" size=\"" . $fieldDefinition['size'] . "\" maxlength=\"" . $fieldDefinition['maxlen'] . "\" value=\"" . $arr[$fieldDefinition['name']] . "\" />";
+
                     break;
                 case "url":
                     echo "<input $stl type=\"text\" name=\"" . $fieldDefinition['name'] . "\" size=\"" . $fieldDefinition['size'] . "\" maxlength=\"" . $fieldDefinition['maxlen'] . "\" value=\"" . $arr[$fieldDefinition['name']] . "\" />";
+
                     break;
                 case "numeric":
                     echo "<input $stl type=\"text\" name=\"" . $fieldDefinition['name'] . "\" size=\"" . $fieldDefinition['size'] . "\" maxlength=\"" . $fieldDefinition['maxlen'] . "\" value=\"" . $arr[$fieldDefinition['name']] . "\" />";
+
                     break;
                 case "password":
                     echo "<input $stl type=\"password\" name=\"" . $fieldDefinition['name'] . "\" size=\"" . $fieldDefinition['size'] . "\" maxlength=\"" . $fieldDefinition['maxlen'] . "\" value=\"\" />";
+
                     break;
                 case "timestamp":
                     echo "<input $stl type=\"text\" name=\"" . $fieldDefinition['name'] . "\" size=\"" . $fieldDefinition['size'] . "\" maxlength=\"" . $fieldDefinition['maxlen'] . "\" value=\"" . date($config->get('admin_dateformat'), $arr[$fieldDefinition['name']]) . "\" />";
+
                     break;
                 case "textarea":
                     echo "<textarea $stl name=\"" . $fieldDefinition['name'] . "\" rows=\"" . $fieldDefinition['rows'] . "\" cols=\"" . $fieldDefinition['cols'] . "\">" . stripslashes($arr[$fieldDefinition['name']]) . "</textarea>";
+
                     break;
                 case "radio":
                     foreach ($fieldDefinition['rcb_elem'] as $rk => $rv) {
                         echo $rk . ": <input name=\"" . $fieldDefinition['name'] . "\" type=\"radio\" value=\"$rv\"";
-                        if ($arr[$fieldDefinition['name']] == $rv)
+                        if ($arr[$fieldDefinition['name']] == $rv) {
                             echo " checked=\"checked\"";
+                        }
 
                         $onclick_actions = array();
 
@@ -643,25 +710,31 @@ abstract class AdvancedForm
                             $hidden_rows = $fieldDefinition['hide_show'];
                         }
                     }
+
                     break;
                 case "checkbox":
                     foreach ($fieldDefinition['rcb_elem'] as $rk => $rv) {
                         echo $rk . ": <input name=\"" . $fieldDefinition['name'] . "\" type=\"checkbox\" value=\"$rv\"";
-                        if (in_array($rv, explode(";", $arr[$fieldDefinition['name']]), true))
+                        if (in_array($rv, explode(";", $arr[$fieldDefinition['name']]), true)) {
                             echo " checked=\"checked\"";
+                        }
                         echo " /> ";
                     }
                     echo "";
+
                     break;
                 case "select":
                     echo "<select name=\"" . $fieldDefinition['name'] . "\">";
                     echo "<option value=\"\">(leer)</option>";
                     foreach ($fieldDefinition['select_elem'] as $rk => $rv) {
                         echo "<option value=\"$rv\"";
-                        if ($arr[$fieldDefinition['name']] == $rv) echo " selected=\"selected\"";
+                        if ($arr[$fieldDefinition['name']] == $rv) {
+                            echo " selected=\"selected\"";
+                        }
                         echo ">$rk</option> ";
                     }
                     echo "";
+
                     break;
                 case "fleetaction":
                     echo "";
@@ -669,11 +742,13 @@ abstract class AdvancedForm
                     $actions = FleetAction::getAll();
                     foreach ($actions as $ac) {
                         echo "<input name=\"" . $fieldDefinition['name'] . "[]\" type=\"checkbox\" value=\"" . $ac->code() . "\"";
-                        if (in_array($ac->code(), $keys, true))
+                        if (in_array($ac->code(), $keys, true)) {
                             echo " checked=\"checked\"";
+                        }
                         echo " /> " . $ac . "<br/>";
                     }
                     echo "";
+
                     break;
                 default:
                     echo "<input type=\"text\" name=\"" . $fieldDefinition['name'] . "\" size=\"" . $fieldDefinition['size'] . "\" maxlength=\"" . $fieldDefinition['maxlen'] . "\" value=\"" . stripslashes($arr[$fieldDefinition['name']]) . "\" />";
@@ -707,53 +782,70 @@ abstract class AdvancedForm
                     //Case readonly: do *nothing* with the field!
                     //but instead do *not* add a comma
                     $cntadd = 0;
+
                     break;
                 case "text":
                     $sql .= "`" . $a['name'] . "` = '" . addslashes($request->request->get($a['name'])) . "'";
+
                     break;
                 case "email":
                     $sql .= "`" . $a['name'] . "` = '" . $request->request->get($a['name']) . "'";
+
                     break;
                 case "url":
                     $sql .= "`" . $a['name'] . "` = '" . $request->request->get($a['name']) . "'";
+
                     break;
                 case "numeric":
                     $sql .= "`" . $a['name'] . "` = '" . $request->request->get($a['name']) . "'";
+
                     break;
                 case "password":
-                    if ($request->request->get($a['name']) != "")
+                    if ($request->request->get($a['name']) != "") {
                         $sql .= "`" . $a['name'] . "` = '" . md5($request->request->get($a['name'])) . "'";
-                    else
+                    } else {
                         $cntadd = 0;
+                    }
+
                     break;
                 case "timestamp":
                     $sql .= "`" . $a['name'] . "` = UNIX_TIMESTAMP('" . $request->request->get($a['name']) . "')";
+
                     break;
                 case "textarea":
                     $sql .= "`" . $a['name'] . "` = '" . addslashes($request->request->get($a['name'])) . "'";
+
                     break;
                 case "radio":
                     $sql .= "`" . $a['name'] . "` = '" . $request->request->get($a['name']) . "'";
+
                     break;
                 case "checkbox":
                     $sql .= "`" . $a['name'] . "` = '" . $request->request->get($a['name']) . "'";
+
                     break;
                 case "select":
                     $sql .= "`" . $a['name'] . "` = '" . $request->request->get($a['name']) . "'";
+
                     break;
                 case "fleetaction":
-                    if (is_array($request->request->get($a['name'])))
+                    if (is_array($request->request->get($a['name']))) {
                         $str = implode(",", $request->request->get($a['name']));
-                    else
+                    } else {
                         $str = "";
+                    }
                     $sql .= "`" . $a['name'] . "` = '" . $str . "'";
+
                     break;
                 default:
                     $sql .= "`" . $a['name'] . "` = '" . addslashes($request->request->get($a['name'])) . "'";
+
                     break;
             }
             if ($cntadd == 1) {
-                if ($cnt < sizeof($this->getFields())) $sql .= ",";
+                if ($cnt < sizeof($this->getFields())) {
+                    $sql .= ",";
+                }
             }
             $cnt++;
         }
@@ -790,59 +882,76 @@ abstract class AdvancedForm
                 case "text":
                     echo "<tr><th class=\"tbltitle\" width=\"200\">" . $a['text'] . ":</th>";
                     echo "<td class=\"tbldata\" width=\"200\">" . $arr[$a['name']] . "</td></tr>";
+
                     break;
                 case "email":
                     echo "<tr><th class=\"tbltitle\" width=\"200\">" . $a['text'] . ":</th>";
                     echo "<td class=\"tbldata\" width=\"200\">" . $arr[$a['name']] . "</td></tr>";
+
                     break;
                 case "url":
                     echo "<tr><th class=\"tbltitle\" width=\"200\">" . $a['text'] . ":</th>";
                     echo "<td class=\"tbldata\" width=\"200\">" . $arr[$a['name']] . "</td></tr>";
+
                     break;
                 case "numeric":
                     echo "<tr><th class=\"tbltitle\" width=\"200\">" . $a['text'] . ":</th>";
                     echo "<td class=\"tbldata\" width=\"200\">" . $arr[$a['name']] . "</td></tr>";
+
                     break;
                 case "password":
                     echo "<tr><th class=\"tbltitle\" width=\"200\">" . $a['text'] . ":</th>";
                     echo "<td class=\"tbldata\" width=\"200\">" . $arr[$a['name']] . "</td></tr>";
+
                     break;
                 case "timestamp":
                     echo "<tr><th class=\"tbltitle\" width=\"200\">" . $a['text'] . ":</th>";
                     echo "<td class=\"tbldata\" width=\"200\">" . date($config->get('admin_dateformat'), $arr[$a['name']]) . "</td></tr>";
+
                     break;
                 case "textarea":
                     echo "<tr><th class=\"tbltitle\" width=\"200\">" . $a['text'] . ":</th>";
                     echo "<td class=\"tbldata\" width=\"200\">" . stripslashes(nl2br($arr[$a['name']])) . "</td></tr>";
+
                     break;
                 case "radio":
                     echo "<tr><th class=\"tbltitle\" width=\"200\">" . $a['text'] . ":</th>";
                     echo "<td class=\"tbldata\" width=\"200\">";
                     foreach ($a['rcb_elem'] as $rk => $rv) {
-                        if ($arr[$a['name']] == $rv) echo $rk;
+                        if ($arr[$a['name']] == $rv) {
+                            echo $rk;
+                        }
                     }
                     echo "</td></tr>";
+
                     break;
                 case "checkbox":
                     echo "<tr><th class=\"tbltitle\" width=\"200\">" . $a['text'] . ":</th>";
                     echo "<td class=\"tbldata\" width=\"200\">";
                     $cb_temp_arr = array();
                     foreach ($a['rcb_elem'] as $rk => $rv) {
-                        if (in_array($rv, explode(";", $arr[$a['name']]), true)) array_push($cb_temp_arr, $rk);
+                        if (in_array($rv, explode(";", $arr[$a['name']]), true)) {
+                            array_push($cb_temp_arr, $rk);
+                        }
                     }
                     for ($cbx = 0; $cbx < count($cb_temp_arr); $cbx++) {
                         echo $cb_temp_arr[$cbx];
-                        if ($cbx = count($cb_temp_arr) - 1) echo "<br/>";
+                        if ($cbx = count($cb_temp_arr) - 1) {
+                            echo "<br/>";
+                        }
                     }
                     echo "</td></tr>";
+
                     break;
                 case "select":
                     echo "<tr><th class=\"tbltitle\" width=\"200\">" . $a['text'] . ":</th>";
                     echo "<td class=\"tbldata\" width=\"200\">" . $arr[$a['name']] . "</td></tr>";
+
                     break;
                 default:
                     echo "<tr><th class=\"tbltitle\" width=\"200\">" . $a['text'] . ":</th>";
                     echo "<td class=\"tbldata\" width=\"200\">" . $arr[$a['name']] . "</td></tr>";
+
                     break;
             }
         }

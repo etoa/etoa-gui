@@ -42,7 +42,7 @@ class DefenseCategoriesForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 1
+                "show_overview" => 1,
             ], [
                 "name" => "cat_order",
                 "text" => "Sortierung",
@@ -56,7 +56,7 @@ class DefenseCategoriesForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 1
+                "show_overview" => 1,
             ],
         ];
     }

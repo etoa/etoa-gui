@@ -40,7 +40,7 @@ class SpecialistsForm extends AdvancedForm
                 "name" => "specialist_id",
                 "text" => "ID",
                 "type" => "readonly",
-                "show_overview" => 1
+                "show_overview" => 1,
             ],
             [
                 "name" => "specialist_name",
@@ -56,7 +56,7 @@ class SpecialistsForm extends AdvancedForm
                 "select_elem" => "",
                 "select_elem_checked" => "",
                 "show_overview" => 1,
-                "link_in_overview" => 1
+                "link_in_overview" => 1,
             ],
             [
                 "name" => "specialist_desc",
@@ -71,7 +71,7 @@ class SpecialistsForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ],
             [
                 "name" => "specialist_points_req",
@@ -86,7 +86,7 @@ class SpecialistsForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 1
+                "show_overview" => 1,
             ],
             [
                 "name" => "specialist_days",
@@ -102,7 +102,7 @@ class SpecialistsForm extends AdvancedForm
                 "select_elem" => "",
                 "select_elem_checked" => "",
                 "show_overview" => 1,
-                "line" => 1
+                "line" => 1,
             ],
             [
                 "name" => "specialist_costs_metal",
@@ -117,7 +117,7 @@ class SpecialistsForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ],
             [
                 "name" => "specialist_costs_crystal",
@@ -132,7 +132,7 @@ class SpecialistsForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ],
             [
                 "name" => "specialist_costs_plastic",
@@ -147,7 +147,7 @@ class SpecialistsForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ],
             [
                 "name" => "specialist_costs_fuel",
@@ -162,7 +162,7 @@ class SpecialistsForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ],
             [
                 "name" => "specialist_costs_food",
@@ -178,7 +178,7 @@ class SpecialistsForm extends AdvancedForm
                 "select_elem" => "",
                 "select_elem_checked" => "",
                 "show_overview" => 0,
-                "line" => 1
+                "line" => 1,
             ],
             [
                 "name" => "specialist_prod_metal",
@@ -193,7 +193,7 @@ class SpecialistsForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ],
             [
                 "name" => "specialist_prod_crystal",
@@ -208,7 +208,7 @@ class SpecialistsForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ],
             [
                 "name" => "specialist_prod_plastic",
@@ -223,7 +223,7 @@ class SpecialistsForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ],
             [
                 "name" => "specialist_prod_fuel",
@@ -238,7 +238,7 @@ class SpecialistsForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ],
             [
                 "name" => "specialist_prod_food",
@@ -253,7 +253,7 @@ class SpecialistsForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ],
             [
                 "name" => "specialist_power",
@@ -268,7 +268,7 @@ class SpecialistsForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ],
             [
                 "name" => "specialist_population",
@@ -283,7 +283,7 @@ class SpecialistsForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ],
             [
                 "name" => "specialist_time_tech",
@@ -298,7 +298,7 @@ class SpecialistsForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ],
             [
                 "name" => "specialist_time_buildings",
@@ -313,7 +313,7 @@ class SpecialistsForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ],
             [
                 "name" => "specialist_time_defense",
@@ -328,7 +328,7 @@ class SpecialistsForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ],
             [
                 "name" => "specialist_time_ships",
@@ -343,7 +343,7 @@ class SpecialistsForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ],
             [
                 "name" => "specialist_costs_defense",
@@ -358,7 +358,7 @@ class SpecialistsForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ],
             [
                 "name" => "specialist_costs_ships",
@@ -373,7 +373,7 @@ class SpecialistsForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ],
             [
                 "name" => "specialist_costs_tech",
@@ -388,7 +388,7 @@ class SpecialistsForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ],
             [
                 "name" => "specialist_fleet_speed",
@@ -403,7 +403,7 @@ class SpecialistsForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ],
             [
                 "name" => "specialist_fleet_max",
@@ -418,7 +418,7 @@ class SpecialistsForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ],
             [
                 "name" => "specialist_def_repair",
@@ -433,7 +433,7 @@ class SpecialistsForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ],
             [
                 "name" => "specialist_spy_level",
@@ -448,7 +448,7 @@ class SpecialistsForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ],
             [
                 "name" => "specialist_tarn_level",
@@ -463,7 +463,7 @@ class SpecialistsForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ],
             [
                 "name" => "specialist_trade_time",
@@ -478,7 +478,7 @@ class SpecialistsForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ],
             [
                 "name" => "specialist_trade_bonus",
@@ -493,7 +493,7 @@ class SpecialistsForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ],
         ];
     }

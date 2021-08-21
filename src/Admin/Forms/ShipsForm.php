@@ -68,7 +68,7 @@ class ShipsForm extends AdvancedForm
                 "name" => "ship_id",
                 "text" => "ID",
                 "type" => "readonly",
-                "show_overview" => 1
+                "show_overview" => 1,
             ], [
                 "name" => "ship_name",
                 "text" => "Name",
@@ -83,7 +83,7 @@ class ShipsForm extends AdvancedForm
                 "select_elem" => "",
                 "select_elem_checked" => "",
                 "show_overview" => 1,
-                "link_in_overview" => 1
+                "link_in_overview" => 1,
             ], [
                 "name" => "ship_shortcomment",
                 "text" => "Kurzbeschreibung",
@@ -97,7 +97,7 @@ class ShipsForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ], [
                 "name" => "ship_longcomment",
                 "text" => "Beschreibung",
@@ -111,7 +111,7 @@ class ShipsForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ], [
                 "name" => "ship_cat_id",
                 "text" => "Kategorie",
@@ -125,7 +125,7 @@ class ShipsForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => $this->getSelectElements('ship_cat', "cat_id", "cat_name", "cat_name", array("0" => "-")),
                 "select_elem_checked" => "",
-                "show_overview" => 1
+                "show_overview" => 1,
             ], [
                 "name" => "ship_race_id",
                 "text" => "Rasse",
@@ -134,7 +134,7 @@ class ShipsForm extends AdvancedForm
                 "select_elem" => $this->getSelectElements('races', "race_id", "race_name", "race_name", array("0" => "-")),
                 "select_elem_checked" => "",
                 "show_overview" => 1,
-                "line" => 1
+                "line" => 1,
             ], [
                 "name" => "ship_costs_metal",
                 "text" => "Kosten Metall",
@@ -148,7 +148,7 @@ class ShipsForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ], [
                 "name" => "ship_costs_crystal",
                 "text" => "Kosten Kristall",
@@ -162,7 +162,7 @@ class ShipsForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ], [
                 "name" => "ship_costs_plastic",
                 "text" => "Kosten Plastik",
@@ -176,7 +176,7 @@ class ShipsForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ], [
                 "name" => "ship_costs_fuel",
                 "text" => "Kosten Treibstoff",
@@ -190,7 +190,7 @@ class ShipsForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ], [
                 "name" => "ship_costs_food",
                 "text" => "Kosten Nahrung",
@@ -204,13 +204,13 @@ class ShipsForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ], [
                 "name" => "ship_points",
                 "text" => "Punkte",
                 "type" => "readonly",
                 "show_overview" => 0,
-                "line" => 1
+                "line" => 1,
             ], [
                 "name" => "ship_fuel_use",
                 "text" => "Treibstoffverbrauch",
@@ -224,7 +224,7 @@ class ShipsForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ], [
                 "name" => "ship_fuel_use_launch",
                 "text" => "Treibstoff Start",
@@ -238,7 +238,7 @@ class ShipsForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ], [
                 "name" => "ship_fuel_use_landing",
                 "text" => "Treibstoff Landung",
@@ -252,7 +252,7 @@ class ShipsForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ], [
                 "name" => "ship_capacity",
                 "text" => "Laderaum",
@@ -266,7 +266,7 @@ class ShipsForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ], [
                 "name" => "ship_people_capacity",
                 "text" => "Passagierraum",
@@ -280,7 +280,7 @@ class ShipsForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ], [
                 "name" => "ship_pilots",
                 "text" => "Piloten",
@@ -294,7 +294,7 @@ class ShipsForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ], [
                 "name" => "ship_bounty_bonus",
                 "text" => "max Beute",
@@ -308,7 +308,7 @@ class ShipsForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ], [
                 "name" => "ship_speed",
                 "text" => "Geschwindigkeit",
@@ -322,7 +322,7 @@ class ShipsForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ], [
                 "name" => "ship_time2start",
                 "text" => "Startzeit",
@@ -336,7 +336,7 @@ class ShipsForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ], [
                 "name" => "ship_time2land",
                 "text" => "Landezeit",
@@ -351,7 +351,7 @@ class ShipsForm extends AdvancedForm
                 "select_elem" => "",
                 "select_elem_checked" => "",
                 "show_overview" => 0,
-                "line" => 1
+                "line" => 1,
             ], [
                 "name" => "ship_structure",
                 "text" => "Struktur",
@@ -365,7 +365,7 @@ class ShipsForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ], [
                 "name" => "ship_shield",
                 "text" => "Schild",
@@ -379,7 +379,7 @@ class ShipsForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ], [
                 "name" => "ship_weapon",
                 "text" => "Waffe",
@@ -393,7 +393,7 @@ class ShipsForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ], [
                 "name" => "ship_heal",
                 "text" => "Heilung pro Runde",
@@ -408,7 +408,7 @@ class ShipsForm extends AdvancedForm
                 "select_elem" => "",
                 "select_elem_checked" => "",
                 "show_overview" => 0,
-                "line" => 1
+                "line" => 1,
             ], [
                 "name" => "ship_max_count",
                 "text" => "Max. Anzahl (0=unentlich)",
@@ -422,7 +422,7 @@ class ShipsForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ], [
                 "name" => "ship_fieldsprovide",
                 "text" => "Zur Verfüg. gest. Felder",
@@ -436,7 +436,7 @@ class ShipsForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ], [
                 "name" => "ship_fakeable",
                 "text" => "Verwenden bei Täuschangriff",
@@ -451,7 +451,7 @@ class ShipsForm extends AdvancedForm
                 "select_elem" => "",
                 "select_elem_checked" => "",
                 "show_overview" => 0,
-                "columnend" => 1
+                "columnend" => 1,
             ], [
                 "name" => "ship_actions",
                 "text" => "Aktionen",
@@ -466,7 +466,7 @@ class ShipsForm extends AdvancedForm
                 "select_elem" => "",
                 "select_elem_checked" => "",
                 "show_overview" => 0,
-                "line" => 1
+                "line" => 1,
             ], [
                 "name" => "ship_alliance_shipyard_level",
                 "text" => "Allianzschiff: Ben&ouml;tigte Werftstufe",
@@ -495,7 +495,7 @@ class ShipsForm extends AdvancedForm
                 "select_elem" => "",
                 "select_elem_checked" => "",
                 "show_overview" => 0,
-                "line" => 1
+                "line" => 1,
             ], [
                 "name" => "special_ship",
                 "text" => "Spezial Schiff",
@@ -511,7 +511,7 @@ class ShipsForm extends AdvancedForm
                 "select_elem_checked" => "",
                 "show_overview" => 0,
                 "show_hide" => array("special_ship_max_level", "special_ship_need_exp", "special_ship_exp_factor", "special_ship_bonus_weapon", "special_ship_bonus_structure", "special_ship_bonus_shield", "special_ship_bonus_heal", "special_ship_bonus_capacity", "special_ship_bonus_speed", "special_ship_bonus_pilots", "special_ship_bonus_tarn", "special_ship_bonus_antrax", "special_ship_bonus_forsteal", "special_ship_bonus_build_destroy", "special_ship_bonus_antrax_food", "special_ship_bonus_deactivade", "special_ship_bonus_readiness"),
-                "hide_show" => array("ship_tradable")
+                "hide_show" => array("ship_tradable"),
             ], [
                 "name" => "special_ship_max_level",
                 "text" => "Max. Level (0=unentlich)",
@@ -525,7 +525,7 @@ class ShipsForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ], [
                 "name" => "special_ship_need_exp",
                 "text" => "EXP",
@@ -539,7 +539,7 @@ class ShipsForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ], [
                 "name" => "special_ship_exp_factor",
                 "text" => "EXP Faktor",
@@ -553,7 +553,7 @@ class ShipsForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ], [
                 "name" => "special_ship_bonus_weapon",
                 "text" => "Waffen-Bonus (0.1=10% pro Stufe)",
@@ -567,7 +567,7 @@ class ShipsForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ], [
                 "name" => "special_ship_bonus_structure",
                 "text" => "Struktur-Bonus",
@@ -581,7 +581,7 @@ class ShipsForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ], [
                 "name" => "special_ship_bonus_shield",
                 "text" => "Schild-Bonus",
@@ -595,7 +595,7 @@ class ShipsForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ], [
                 "name" => "special_ship_bonus_heal",
                 "text" => "Heil-Bonus",
@@ -609,7 +609,7 @@ class ShipsForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ], [
                 "name" => "special_ship_bonus_capacity",
                 "text" => "Kapazität-Bonus",
@@ -623,7 +623,7 @@ class ShipsForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ], [
                 "name" => "special_ship_bonus_speed",
                 "text" => "Speed-Bonus",
@@ -637,7 +637,7 @@ class ShipsForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ], [
                 "name" => "special_ship_bonus_pilots",
                 "text" => "Piloten-Bonus",
@@ -651,7 +651,7 @@ class ShipsForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ], [
                 "name" => "special_ship_bonus_tarn",
                 "text" => "Tarn-Bonus",
@@ -665,7 +665,7 @@ class ShipsForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ], [
                 "name" => "special_ship_bonus_antrax",
                 "text" => "Giftgas-Bonus",
@@ -679,7 +679,7 @@ class ShipsForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ], [
                 "name" => "special_ship_bonus_forsteal",
                 "text" => "Techklau-Bonus",
@@ -693,7 +693,7 @@ class ShipsForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ], [
                 "name" => "special_ship_bonus_build_destroy",
                 "text" => "Bombardier-Bonus",
@@ -707,7 +707,7 @@ class ShipsForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ], [
                 "name" => "special_ship_bonus_antrax_food",
                 "text" => "Antrax-Bonus",
@@ -721,7 +721,7 @@ class ShipsForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ], [
                 "name" => "special_ship_bonus_deactivade",
                 "text" => "Deaktivier-Bonus",
@@ -735,7 +735,7 @@ class ShipsForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ], [
                 "name" => "special_ship_bonus_readiness",
                 "text" => "Bereitschafts-Bonus (Start/Landung)",
@@ -749,7 +749,7 @@ class ShipsForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ], [
                 "name" => "ship_tradable",
                 "text" => "Handelbar",
@@ -763,7 +763,7 @@ class ShipsForm extends AdvancedForm
                 "rcb_elem_chekced" => "1",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ],
         ];
     }

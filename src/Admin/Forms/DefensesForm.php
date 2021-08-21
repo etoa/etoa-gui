@@ -67,7 +67,7 @@ class DefensesForm extends AdvancedForm
                 "name" => "def_id",
                 "text" => "ID",
                 "type" => "readonly",
-                "show_overview" => 1
+                "show_overview" => 1,
             ], [
                 "name" => "def_name",
                 "text" => "Name",
@@ -82,7 +82,7 @@ class DefensesForm extends AdvancedForm
                 "select_elem" => "",
                 "select_elem_checked" => "",
                 "show_overview" => 1,
-                "link_in_overview" => 1
+                "link_in_overview" => 1,
             ], [
                 "name" => "def_shortcomment",
                 "text" => "Kurze Beschreibung",
@@ -96,7 +96,7 @@ class DefensesForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ], [
                 "name" => "def_longcomment",
                 "text" => "Lange Beschreibung",
@@ -111,7 +111,7 @@ class DefensesForm extends AdvancedForm
                 "select_elem" => "",
                 "select_elem_checked" => "",
                 "show_overview" => 0,
-                "line" => 1
+                "line" => 1,
             ], [
                 "name" => "def_costs_metal",
                 "text" => "Kosten Metall",
@@ -125,7 +125,7 @@ class DefensesForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ], [
                 "name" => "def_costs_crystal",
                 "text" => "Kosten Kristall",
@@ -139,7 +139,7 @@ class DefensesForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ], [
                 "name" => "def_costs_plastic",
                 "text" => "Kosten Plastik",
@@ -153,7 +153,7 @@ class DefensesForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ], [
                 "name" => "def_costs_fuel",
                 "text" => "Kosten Treibstoff",
@@ -167,7 +167,7 @@ class DefensesForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ], [
                 "name" => "def_costs_food",
                 "text" => "Kosten Nahrung",
@@ -181,13 +181,13 @@ class DefensesForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ], [
                 "name" => "def_points",
                 "text" => "Punkte",
                 "type" => "readonly",
                 "show_overview" => 0,
-                "columnend" => 1
+                "columnend" => 1,
             ], [
                 "name" => "def_structure",
                 "text" => "Struktur",
@@ -201,7 +201,7 @@ class DefensesForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ], [
                 "name" => "def_shield",
                 "text" => "Schild",
@@ -215,7 +215,7 @@ class DefensesForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ], [
                 "name" => "def_weapon",
                 "text" => "Waffe",
@@ -229,7 +229,7 @@ class DefensesForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ], [
                 "name" => "def_heal",
                 "text" => "Reparatur",
@@ -244,7 +244,7 @@ class DefensesForm extends AdvancedForm
                 "select_elem" => "",
                 "select_elem_checked" => "",
                 "show_overview" => 0,
-                "line" => 1
+                "line" => 1,
             ], [
                 "name" => "def_fields",
                 "text" => "Felder",
@@ -258,7 +258,7 @@ class DefensesForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 1
+                "show_overview" => 1,
             ], [
                 "name" => "def_max_count",
                 "text" => "Max Anzahl",
@@ -272,7 +272,7 @@ class DefensesForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ], [
                 "name" => "def_cat_id",
                 "text" => "Kategorie",
@@ -286,7 +286,7 @@ class DefensesForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => $this->getSelectElements('def_cat', "cat_id", "cat_name", "cat_name", array("0" => "(Keine)")),
                 "select_elem_checked" => "",
-                "show_overview" => 1
+                "show_overview" => 1,
             ], [
                 "name" => "def_race_id",
                 "text" => "Rasse",
@@ -300,8 +300,8 @@ class DefensesForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => $this->getSelectElements('races', "race_id", "race_name", "race_name", array("0" => "(Keine)")),
                 "select_elem_checked" => "",
-                "show_overview" => 1
-            ]
+                "show_overview" => 1,
+            ],
         ];
     }
 }

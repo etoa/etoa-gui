@@ -45,7 +45,7 @@ class AllianceBuildingsForm extends AdvancedForm
                 "name" => "alliance_building_id",
                 "text" => "ID",
                 "type" => "readonly",
-                "show_overview" => 1
+                "show_overview" => 1,
             ], [
                 "name" => "alliance_building_name",
                 "text" => "Name",
@@ -60,7 +60,7 @@ class AllianceBuildingsForm extends AdvancedForm
                 "select_elem" => "",
                 "select_elem_checked" => "",
                 "show_overview" => 1,
-                "link_in_overview" => 1
+                "link_in_overview" => 1,
             ], [
                 "name" => "alliance_building_shortcomment",
                 "text" => "Kurzbeschreibung",
@@ -75,7 +75,7 @@ class AllianceBuildingsForm extends AdvancedForm
                 "select_elem" => "",
                 "select_elem_checked" => "",
                 "show_overview" => 1,
-                "line" => 0
+                "line" => 0,
             ], [
                 "name" => "alliance_building_longcomment",
                 "text" => "lange Beschreibung",
@@ -90,7 +90,7 @@ class AllianceBuildingsForm extends AdvancedForm
                 "select_elem" => "",
                 "select_elem_checked" => "",
                 "show_overview" => 1,
-                "line" => 1
+                "line" => 1,
             ], [
                 "name" => "alliance_building_costs_metal",
                 "text" => "Kosten Metall",
@@ -104,7 +104,7 @@ class AllianceBuildingsForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ], [
                 "name" => "alliance_building_costs_crystal",
                 "text" => "Kosten Kristall",
@@ -118,7 +118,7 @@ class AllianceBuildingsForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ], [
                 "name" => "alliance_building_costs_plastic",
                 "text" => "Kosten Plastik",
@@ -132,7 +132,7 @@ class AllianceBuildingsForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ], [
                 "name" => "alliance_building_costs_fuel",
                 "text" => "Kosten Treibstoff",
@@ -146,7 +146,7 @@ class AllianceBuildingsForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ], [
                 "name" => "alliance_building_costs_food",
                 "text" => "Kosten Nahrung",
@@ -160,7 +160,7 @@ class AllianceBuildingsForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ], [
                 "name" => "alliance_building_build_time",
                 "text" => "Bauzeit (Sekunden)",
@@ -174,7 +174,7 @@ class AllianceBuildingsForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ], [
                 "name" => "alliance_building_costs_factor",
                 "text" => "Kostenfaktor",
@@ -189,7 +189,7 @@ class AllianceBuildingsForm extends AdvancedForm
                 "select_elem" => "",
                 "select_elem_checked" => "",
                 "show_overview" => 0,
-                "line" => 1
+                "line" => 1,
             ], [
                 "name" => "alliance_building_last_level",
                 "text" => "Max Level",
@@ -203,7 +203,7 @@ class AllianceBuildingsForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 1
+                "show_overview" => 1,
             ], [
                 "name" => "alliance_building_needed_id",
                 "text" => "Voraussetzung",
@@ -217,7 +217,7 @@ class AllianceBuildingsForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => $this->getSelectElements('alliance_buildings', "alliance_building_id", "alliance_building_name", "alliance_building_id"),
                 "select_elem_checked" => "",
-                "show_overview" => 1
+                "show_overview" => 1,
             ], [
                 "name" => "alliance_building_needed_level",
                 "text" => "Voraussetzung Stufe",
@@ -231,7 +231,7 @@ class AllianceBuildingsForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 1
+                "show_overview" => 1,
             ],
         ];
     }

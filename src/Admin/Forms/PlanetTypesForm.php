@@ -50,7 +50,7 @@ class PlanetTypesForm extends AdvancedForm
                 "select_elem" => "",
                 "select_elem_checked" => "",
                 "show_overview" => 1,
-                "link_in_overview" => 1
+                "link_in_overview" => 1,
             ], [
                 "name" => "type_comment",
                 "text" => "Kommentar",
@@ -64,7 +64,7 @@ class PlanetTypesForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 1
+                "show_overview" => 1,
             ], [
                 "name" => "type_habitable",
                 "text" => "Bewohnbar",
@@ -78,7 +78,7 @@ class PlanetTypesForm extends AdvancedForm
                 "rcb_elem_chekced" => "1",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 1
+                "show_overview" => 1,
             ], [
                 "name" => "type_f_metal",
                 "text" => "Metallfaktor",
@@ -92,7 +92,7 @@ class PlanetTypesForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ], [
                 "name" => "type_f_crystal",
                 "text" => "Kristallfaktor",
@@ -106,7 +106,7 @@ class PlanetTypesForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ], [
                 "name" => "type_f_plastic",
                 "text" => "Plastikfaktor",
@@ -120,7 +120,7 @@ class PlanetTypesForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ], [
                 "name" => "type_f_fuel",
                 "text" => "Treibstofffaktor",
@@ -134,7 +134,7 @@ class PlanetTypesForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ], [
                 "name" => "type_f_food",
                 "text" => "Nahrungsfaktor",
@@ -148,7 +148,7 @@ class PlanetTypesForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ], [
                 "name" => "type_f_power",
                 "text" => "Stromfaktor",
@@ -162,7 +162,7 @@ class PlanetTypesForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ], [
                 "name" => "type_f_population",
                 "text" => "Bevölkerungsfaktor",
@@ -176,7 +176,7 @@ class PlanetTypesForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ], [
                 "name" => "type_f_researchtime",
                 "text" => "Forschungszeitfaktor",
@@ -190,7 +190,7 @@ class PlanetTypesForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ], [
                 "name" => "type_f_buildtime",
                 "text" => "Bauzeitfaktor",
@@ -204,7 +204,7 @@ class PlanetTypesForm extends AdvancedForm
                 "rcb_elem_chekced" => "",
                 "select_elem" => "",
                 "select_elem_checked" => "",
-                "show_overview" => 0
+                "show_overview" => 0,
             ],
         ];
     }
