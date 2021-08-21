@@ -69,7 +69,7 @@ abstract class SimpleForm extends Form
         echo "</form>";
     }
 
-    private function createRecord()
+    private function createRecord(): void
     {
         $values = [];
         $params = [];
@@ -87,7 +87,7 @@ abstract class SimpleForm extends Form
         echo MessageBox::ok("", "Neuer leerer Datensatz wurde hinzugefügt!");
     }
 
-    private function applyChanges(Request $request)
+    private function applyChanges(Request $request): void
     {
         $affected = 0;
         foreach ($request->request->all() as $key => $val) {
@@ -111,7 +111,7 @@ abstract class SimpleForm extends Form
         }
     }
 
-    private function applyDeletions($request)
+    private function applyDeletions($request): void
     {
         $deleted = false;
         foreach ($request->request->all() as $key => $val) {
