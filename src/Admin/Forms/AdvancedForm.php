@@ -100,7 +100,7 @@ abstract class AdvancedForm extends Form
                 echo "<th valign=\"top\" class=\"tbltitle\">Bild</a>";
             }
             foreach ($this->getFields() as $k => $field) {
-                if ($field['show_overview'] == 1) {
+                if ($field['show_overview'] ?? false) {
                     echo "<th valign=\"top\" class=\"tbltitle\">" . $field['text'] . "</a>";
                 }
             }
@@ -139,8 +139,8 @@ abstract class AdvancedForm extends Form
                 }
 
                 foreach ($this->getFields() as $field) {
-                    if ($field['show_overview'] == 1) {
-                        $isLink = isset($field['link_in_overview']) && $field['link_in_overview'] == 1;
+                    if ($field['show_overview'] ?? false) {
+                        $isLink = $field['link_in_overview'] ?? false;
                         echo "<td class=\"tbldata\">";
                         if ($isLink) {
                             echo "<a href=\"?" . URL_SEARCH_STRING . "&amp;action=edit&amp;id=" . $arr[$this->getTableId()] . "\">";

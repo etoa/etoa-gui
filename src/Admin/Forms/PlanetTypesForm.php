@@ -45,8 +45,8 @@ class PlanetTypesForm extends AdvancedForm
                 "maxlen" => "250",
                 "rows" => "",
                 "cols" => "",
-                "show_overview" => 1,
-                "link_in_overview" => 1,
+                "show_overview" => true,
+                "link_in_overview" => true,
             ], [
                 "name" => "type_comment",
                 "text" => "Kommentar",
@@ -56,7 +56,7 @@ class PlanetTypesForm extends AdvancedForm
                 "maxlen" => "",
                 "rows" => "5",
                 "cols" => "25",
-                "show_overview" => 1,
+                "show_overview" => true,
             ], [
                 "name" => "type_habitable",
                 "text" => "Bewohnbar",
@@ -70,7 +70,7 @@ class PlanetTypesForm extends AdvancedForm
                     "Ja" => 1,
                     "Nein" => 0,
                 ],
-                "show_overview" => 1,
+                "show_overview" => true,
             ], [
                 "name" => "type_f_metal",
                 "text" => "Metallfaktor",
@@ -80,7 +80,7 @@ class PlanetTypesForm extends AdvancedForm
                 "maxlen" => "5",
                 "rows" => "",
                 "cols" => "",
-                "show_overview" => 0,
+                "show_overview" => false,
             ], [
                 "name" => "type_f_crystal",
                 "text" => "Kristallfaktor",
@@ -90,7 +90,7 @@ class PlanetTypesForm extends AdvancedForm
                 "maxlen" => "5",
                 "rows" => "",
                 "cols" => "",
-                "show_overview" => 0,
+                "show_overview" => false,
             ], [
                 "name" => "type_f_plastic",
                 "text" => "Plastikfaktor",
@@ -100,7 +100,7 @@ class PlanetTypesForm extends AdvancedForm
                 "maxlen" => "5",
                 "rows" => "",
                 "cols" => "",
-                "show_overview" => 0,
+                "show_overview" => false,
             ], [
                 "name" => "type_f_fuel",
                 "text" => "Treibstofffaktor",
@@ -110,7 +110,7 @@ class PlanetTypesForm extends AdvancedForm
                 "maxlen" => "5",
                 "rows" => "",
                 "cols" => "",
-                "show_overview" => 0,
+                "show_overview" => false,
             ], [
                 "name" => "type_f_food",
                 "text" => "Nahrungsfaktor",
@@ -120,7 +120,7 @@ class PlanetTypesForm extends AdvancedForm
                 "maxlen" => "5",
                 "rows" => "",
                 "cols" => "",
-                "show_overview" => 0,
+                "show_overview" => false,
             ], [
                 "name" => "type_f_power",
                 "text" => "Stromfaktor",
@@ -130,7 +130,7 @@ class PlanetTypesForm extends AdvancedForm
                 "maxlen" => "5",
                 "rows" => "",
                 "cols" => "",
-                "show_overview" => 0,
+                "show_overview" => false,
             ], [
                 "name" => "type_f_population",
                 "text" => "Bevölkerungsfaktor",
@@ -140,7 +140,7 @@ class PlanetTypesForm extends AdvancedForm
                 "maxlen" => "5",
                 "rows" => "",
                 "cols" => "",
-                "show_overview" => 0,
+                "show_overview" => false,
             ], [
                 "name" => "type_f_researchtime",
                 "text" => "Forschungszeitfaktor",
@@ -150,7 +150,7 @@ class PlanetTypesForm extends AdvancedForm
                 "maxlen" => "5",
                 "rows" => "",
                 "cols" => "",
-                "show_overview" => 0,
+                "show_overview" => false,
             ], [
                 "name" => "type_f_buildtime",
                 "text" => "Bauzeitfaktor",
@@ -160,7 +160,7 @@ class PlanetTypesForm extends AdvancedForm
                 "maxlen" => "5",
                 "rows" => "",
                 "cols" => "",
-                "show_overview" => 0,
+                "show_overview" => false,
             ],
         ];
     }

@@ -45,7 +45,7 @@ class AllianceTechnologiesForm extends AdvancedForm
                 "name" => "alliance_tech_id",
                 "text" => "ID",
                 "type" => "readonly",
-                "show_overview" => 1,
+                "show_overview" => true,
             ], [
                 "name" => "alliance_tech_name",
                 "text" => "Name",
@@ -55,8 +55,8 @@ class AllianceTechnologiesForm extends AdvancedForm
                 "maxlen" => "250",
                 "rows" => "",
                 "cols" => "",
-                "show_overview" => 1,
-                "link_in_overview" => 1,
+                "show_overview" => true,
+                "link_in_overview" => true,
             ], [
                 "name" => "alliance_tech_longcomment",
                 "text" => "Beschreibung",
@@ -66,7 +66,7 @@ class AllianceTechnologiesForm extends AdvancedForm
                 "maxlen" => "",
                 "rows" => "7",
                 "cols" => "35",
-                "show_overview" => 1,
+                "show_overview" => true,
                 "line" => 1,
             ], [
                 "name" => "alliance_tech_costs_metal",
@@ -77,7 +77,7 @@ class AllianceTechnologiesForm extends AdvancedForm
                 "maxlen" => "250",
                 "rows" => "",
                 "cols" => "",
-                "show_overview" => 0,
+                "show_overview" => false,
             ], [
                 "name" => "alliance_tech_costs_crystal",
                 "text" => "Kosten Kristall",
@@ -87,7 +87,7 @@ class AllianceTechnologiesForm extends AdvancedForm
                 "maxlen" => "250",
                 "rows" => "",
                 "cols" => "",
-                "show_overview" => 0,
+                "show_overview" => false,
             ], [
                 "name" => "alliance_tech_costs_plastic",
                 "text" => "Kosten Plastik",
@@ -97,7 +97,7 @@ class AllianceTechnologiesForm extends AdvancedForm
                 "maxlen" => "250",
                 "rows" => "",
                 "cols" => "",
-                "show_overview" => 0,
+                "show_overview" => false,
             ], [
                 "name" => "alliance_tech_costs_fuel",
                 "text" => "Kosten Treibstoff",
@@ -107,7 +107,7 @@ class AllianceTechnologiesForm extends AdvancedForm
                 "maxlen" => "250",
                 "rows" => "",
                 "cols" => "",
-                "show_overview" => 0,
+                "show_overview" => false,
             ], [
                 "name" => "alliance_tech_costs_food",
                 "text" => "Kosten Nahrung",
@@ -117,7 +117,7 @@ class AllianceTechnologiesForm extends AdvancedForm
                 "maxlen" => "250",
                 "rows" => "",
                 "cols" => "",
-                "show_overview" => 0,
+                "show_overview" => false,
             ], [
                 "name" => "alliance_tech_build_time",
                 "text" => "Bauzeit (Sekunden)",
@@ -127,7 +127,7 @@ class AllianceTechnologiesForm extends AdvancedForm
                 "maxlen" => "250",
                 "rows" => "",
                 "cols" => "",
-                "show_overview" => 0,
+                "show_overview" => false,
             ], [
                 "name" => "alliance_tech_costs_factor",
                 "text" => "Kostenfaktor",
@@ -137,7 +137,7 @@ class AllianceTechnologiesForm extends AdvancedForm
                 "maxlen" => "250",
                 "rows" => "",
                 "cols" => "",
-                "show_overview" => 0,
+                "show_overview" => false,
                 "line" => 1,
             ], [
                 "name" => "alliance_tech_last_level",
@@ -148,7 +148,7 @@ class AllianceTechnologiesForm extends AdvancedForm
                 "maxlen" => "250",
                 "rows" => "",
                 "cols" => "",
-                "show_overview" => 1,
+                "show_overview" => true,
             ], [
                 "name" => "alliance_tech_needed_id",
                 "text" => "Voraussetzung",
@@ -159,7 +159,7 @@ class AllianceTechnologiesForm extends AdvancedForm
                 "rows" => "",
                 "cols" => "",
                 "select_elem" => $this->getSelectElements('alliance_technologies', "alliance_tech_id", "alliance_tech_name", "alliance_tech_id"),
-                "show_overview" => 1,
+                "show_overview" => true,
             ], [
                 "name" => "alliance_tech_needed_level",
                 "text" => "Voraussetzung Stufe",
@@ -169,7 +169,7 @@ class AllianceTechnologiesForm extends AdvancedForm
                 "maxlen" => "250",
                 "rows" => "",
                 "cols" => "",
-                "show_overview" => 1,
+                "show_overview" => true,
             ],
         ];
     }

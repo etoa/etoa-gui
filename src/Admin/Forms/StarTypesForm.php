@@ -45,8 +45,8 @@ class StarTypesForm extends AdvancedForm
                 "maxlen" => "250",
                 "rows" => "",
                 "cols" => "",
-                "show_overview" => 1,
-                "link_in_overview" => 1,
+                "show_overview" => true,
+                "link_in_overview" => true,
             ], [
                 "name" => "sol_type_comment",
                 "text" => "Kommentar",
@@ -56,7 +56,7 @@ class StarTypesForm extends AdvancedForm
                 "maxlen" => "",
                 "rows" => "5",
                 "cols" => "25",
-                "show_overview" => 1,
+                "show_overview" => true,
             ], [
                 "name" => "sol_type_f_metal",
                 "text" => "Metallfaktor",
@@ -66,7 +66,7 @@ class StarTypesForm extends AdvancedForm
                 "maxlen" => "5",
                 "rows" => "",
                 "cols" => "",
-                "show_overview" => 0,
+                "show_overview" => false,
             ], [
                 "name" => "sol_type_f_crystal",
                 "text" => "Kristallfaktor",
@@ -76,7 +76,7 @@ class StarTypesForm extends AdvancedForm
                 "maxlen" => "5",
                 "rows" => "",
                 "cols" => "",
-                "show_overview" => 0,
+                "show_overview" => false,
             ], [
                 "name" => "sol_type_f_plastic",
                 "text" => "Plastikfaktor",
@@ -86,7 +86,7 @@ class StarTypesForm extends AdvancedForm
                 "maxlen" => "5",
                 "rows" => "",
                 "cols" => "",
-                "show_overview" => 0,
+                "show_overview" => false,
             ], [
                 "name" => "sol_type_f_fuel",
                 "text" => "Treibstofffaktor",
@@ -96,7 +96,7 @@ class StarTypesForm extends AdvancedForm
                 "maxlen" => "5",
                 "rows" => "",
                 "cols" => "",
-                "show_overview" => 0,
+                "show_overview" => false,
             ], [
                 "name" => "sol_type_f_food",
                 "text" => "Nahrungsfaktor",
@@ -106,7 +106,7 @@ class StarTypesForm extends AdvancedForm
                 "maxlen" => "5",
                 "rows" => "",
                 "cols" => "",
-                "show_overview" => 0,
+                "show_overview" => false,
             ], [
                 "name" => "sol_type_f_power",
                 "text" => "Stromfaktor",
@@ -116,7 +116,7 @@ class StarTypesForm extends AdvancedForm
                 "maxlen" => "5",
                 "rows" => "",
                 "cols" => "",
-                "show_overview" => 0,
+                "show_overview" => false,
             ], [
                 "name" => "sol_type_f_population",
                 "text" => "Bevölkerungsfaktor",
@@ -126,7 +126,7 @@ class StarTypesForm extends AdvancedForm
                 "maxlen" => "5",
                 "rows" => "",
                 "cols" => "",
-                "show_overview" => 0,
+                "show_overview" => false,
             ], [
                 "name" => "sol_type_f_researchtime",
                 "text" => "Forschungszeitfaktor",
@@ -136,7 +136,7 @@ class StarTypesForm extends AdvancedForm
                 "maxlen" => "5",
                 "rows" => "",
                 "cols" => "",
-                "show_overview" => 0,
+                "show_overview" => false,
             ], [
                 "name" => "sol_type_f_buildtime",
                 "text" => "Bauzeitfaktor",
@@ -146,7 +146,7 @@ class StarTypesForm extends AdvancedForm
                 "maxlen" => "5",
                 "rows" => "",
                 "cols" => "",
-                "show_overview" => 0,
+                "show_overview" => false,
             ],
         ];
     }

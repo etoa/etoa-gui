@@ -66,7 +66,7 @@ class BuildingsForm extends AdvancedForm
                 "name" => "building_id",
                 "text" => "ID",
                 "type" => "readonly",
-                "show_overview" => 1,
+                "show_overview" => true,
             ],
             [
                 "name" => "building_name",
@@ -77,8 +77,8 @@ class BuildingsForm extends AdvancedForm
                 "maxlen" => "250",
                 "rows" => "",
                 "cols" => "",
-                "show_overview" => 1,
-                "link_in_overview" => 1,
+                "show_overview" => true,
+                "link_in_overview" => true,
             ],
             [
                 "name" => "building_type_id",
@@ -90,7 +90,7 @@ class BuildingsForm extends AdvancedForm
                 "rows" => "",
                 "cols" => "",
                 "select_elem" => $this->getSelectElements('building_types', "type_id", "type_name", "type_name"),
-                "show_overview" => 1,
+                "show_overview" => true,
             ],
             [
                 "name" => "building_shortcomment",
@@ -101,7 +101,7 @@ class BuildingsForm extends AdvancedForm
                 "maxlen" => "",
                 "rows" => "7",
                 "cols" => "35",
-                "show_overview" => 0,
+                "show_overview" => false,
             ],
             [
                 "name" => "building_longcomment",
@@ -112,7 +112,7 @@ class BuildingsForm extends AdvancedForm
                 "maxlen" => "",
                 "rows" => "9",
                 "cols" => "35",
-                "show_overview" => 0,
+                "show_overview" => false,
                 "line" => 1,
             ],
             [
@@ -124,7 +124,7 @@ class BuildingsForm extends AdvancedForm
                 "maxlen" => "250",
                 "rows" => "",
                 "cols" => "",
-                "show_overview" => 0,
+                "show_overview" => false,
             ],
             [
                 "name" => "building_costs_crystal",
@@ -135,7 +135,7 @@ class BuildingsForm extends AdvancedForm
                 "maxlen" => "250",
                 "rows" => "",
                 "cols" => "",
-                "show_overview" => 0,
+                "show_overview" => false,
             ],
             [
                 "name" => "building_costs_plastic",
@@ -146,7 +146,7 @@ class BuildingsForm extends AdvancedForm
                 "maxlen" => "250",
                 "rows" => "",
                 "cols" => "",
-                "show_overview" => 0,
+                "show_overview" => false,
             ],
             [
                 "name" => "building_costs_fuel",
@@ -157,7 +157,7 @@ class BuildingsForm extends AdvancedForm
                 "maxlen" => "250",
                 "rows" => "",
                 "cols" => "",
-                "show_overview" => 0,
+                "show_overview" => false,
             ],
             [
                 "name" => "building_costs_food",
@@ -168,7 +168,7 @@ class BuildingsForm extends AdvancedForm
                 "maxlen" => "250",
                 "rows" => "",
                 "cols" => "",
-                "show_overview" => 0,
+                "show_overview" => false,
             ],
             [
                 "name" => "building_costs_power",
@@ -179,7 +179,7 @@ class BuildingsForm extends AdvancedForm
                 "maxlen" => "250",
                 "rows" => "",
                 "cols" => "",
-                "show_overview" => 0,
+                "show_overview" => false,
             ],
             [
                 "name" => "building_build_costs_factor",
@@ -190,7 +190,7 @@ class BuildingsForm extends AdvancedForm
                 "maxlen" => "250",
                 "rows" => "",
                 "cols" => "",
-                "show_overview" => 0,
+                "show_overview" => false,
             ],
             [
                 "name" => "building_demolish_costs_factor",
@@ -201,7 +201,7 @@ class BuildingsForm extends AdvancedForm
                 "maxlen" => "250",
                 "rows" => "",
                 "cols" => "",
-                "show_overview" => 0,
+                "show_overview" => false,
                 "columnend" => 1,
             ],
             [
@@ -213,7 +213,7 @@ class BuildingsForm extends AdvancedForm
                 "maxlen" => "250",
                 "rows" => "",
                 "cols" => "",
-                "show_overview" => 0,
+                "show_overview" => false,
             ],
             [
                 "name" => "building_fuel_use",
@@ -224,7 +224,7 @@ class BuildingsForm extends AdvancedForm
                 "maxlen" => "250",
                 "rows" => "",
                 "cols" => "",
-                "show_overview" => 0,
+                "show_overview" => false,
             ],
             [
                 "name" => "building_power_req",
@@ -235,7 +235,7 @@ class BuildingsForm extends AdvancedForm
                 "maxlen" => "250",
                 "rows" => "",
                 "cols" => "",
-                "show_overview" => 0,
+                "show_overview" => false,
                 "line" => 1,
             ],
             [
@@ -247,7 +247,7 @@ class BuildingsForm extends AdvancedForm
                 "maxlen" => "250",
                 "rows" => "",
                 "cols" => "",
-                "show_overview" => 0,
+                "show_overview" => false,
             ],
             [
                 "name" => "building_prod_crystal",
@@ -258,7 +258,7 @@ class BuildingsForm extends AdvancedForm
                 "maxlen" => "250",
                 "rows" => "",
                 "cols" => "",
-                "show_overview" => 0,
+                "show_overview" => false,
             ],
             [
                 "name" => "building_prod_plastic",
@@ -269,7 +269,7 @@ class BuildingsForm extends AdvancedForm
                 "maxlen" => "250",
                 "rows" => "",
                 "cols" => "",
-                "show_overview" => 0,
+                "show_overview" => false,
             ],
             [
                 "name" => "building_prod_fuel",
@@ -280,7 +280,7 @@ class BuildingsForm extends AdvancedForm
                 "maxlen" => "250",
                 "rows" => "",
                 "cols" => "",
-                "show_overview" => 0,
+                "show_overview" => false,
             ],
             [
                 "name" => "building_prod_food",
@@ -291,7 +291,7 @@ class BuildingsForm extends AdvancedForm
                 "maxlen" => "250",
                 "rows" => "",
                 "cols" => "",
-                "show_overview" => 0,
+                "show_overview" => false,
             ],
             [
                 "name" => "building_prod_power",
@@ -302,7 +302,7 @@ class BuildingsForm extends AdvancedForm
                 "maxlen" => "250",
                 "rows" => "",
                 "cols" => "",
-                "show_overview" => 0,
+                "show_overview" => false,
             ],
             [
                 "name" => "building_production_factor",
@@ -313,7 +313,7 @@ class BuildingsForm extends AdvancedForm
                 "maxlen" => "250",
                 "rows" => "",
                 "cols" => "",
-                "show_overview" => 0,
+                "show_overview" => false,
                 "line" => 1,
             ],
             [
@@ -325,7 +325,7 @@ class BuildingsForm extends AdvancedForm
                 "maxlen" => "250",
                 "rows" => "",
                 "cols" => "",
-                "show_overview" => 0,
+                "show_overview" => false,
             ],
             [
                 "name" => "building_store_crystal",
@@ -336,7 +336,7 @@ class BuildingsForm extends AdvancedForm
                 "maxlen" => "250",
                 "rows" => "",
                 "cols" => "",
-                "show_overview" => 0,
+                "show_overview" => false,
             ],
             [
                 "name" => "building_store_plastic",
@@ -347,7 +347,7 @@ class BuildingsForm extends AdvancedForm
                 "maxlen" => "250",
                 "rows" => "",
                 "cols" => "",
-                "show_overview" => 0,
+                "show_overview" => false,
             ],
             [
                 "name" => "building_store_fuel",
@@ -358,7 +358,7 @@ class BuildingsForm extends AdvancedForm
                 "maxlen" => "250",
                 "rows" => "",
                 "cols" => "",
-                "show_overview" => 0,
+                "show_overview" => false,
             ],
             [
                 "name" => "building_store_food",
@@ -369,7 +369,7 @@ class BuildingsForm extends AdvancedForm
                 "maxlen" => "250",
                 "rows" => "",
                 "cols" => "",
-                "show_overview" => 0,
+                "show_overview" => false,
             ],
             [
                 "name" => "building_store_factor",
@@ -380,7 +380,7 @@ class BuildingsForm extends AdvancedForm
                 "maxlen" => "250",
                 "rows" => "",
                 "cols" => "",
-                "show_overview" => 0,
+                "show_overview" => false,
                 "line" => 1,
             ],
             [
@@ -392,7 +392,7 @@ class BuildingsForm extends AdvancedForm
                 "maxlen" => "250",
                 "rows" => "",
                 "cols" => "",
-                "show_overview" => 1,
+                "show_overview" => true,
             ],
             [
                 "name" => "building_fields",
@@ -403,7 +403,7 @@ class BuildingsForm extends AdvancedForm
                 "maxlen" => "250",
                 "rows" => "",
                 "cols" => "",
-                "show_overview" => 0,
+                "show_overview" => false,
             ],
             [
                 "name" => "building_people_place",
@@ -414,7 +414,7 @@ class BuildingsForm extends AdvancedForm
                 "maxlen" => "250",
                 "rows" => "",
                 "cols" => "",
-                "show_overview" => 0,
+                "show_overview" => false,
             ],
             [
                 "name" => "building_fieldsprovide",
@@ -425,7 +425,7 @@ class BuildingsForm extends AdvancedForm
                 "maxlen" => "4",
                 "rows" => "",
                 "cols" => "",
-                "show_overview" => 0,
+                "show_overview" => false,
             ],
             [
                 "name" => "building_bunker_res",
@@ -436,7 +436,7 @@ class BuildingsForm extends AdvancedForm
                 "maxlen" => "250",
                 "rows" => "",
                 "cols" => "",
-                "show_overview" => 0,
+                "show_overview" => false,
             ],
             [
                 "name" => "building_bunker_fleet_count",
@@ -447,7 +447,7 @@ class BuildingsForm extends AdvancedForm
                 "maxlen" => "250",
                 "rows" => "",
                 "cols" => "",
-                "show_overview" => 0,
+                "show_overview" => false,
             ],
             [
                 "name" => "building_bunker_fleet_space",
@@ -458,7 +458,7 @@ class BuildingsForm extends AdvancedForm
                 "maxlen" => "250",
                 "rows" => "",
                 "cols" => "",
-                "show_overview" => 0,
+                "show_overview" => false,
             ],
         ];
     }

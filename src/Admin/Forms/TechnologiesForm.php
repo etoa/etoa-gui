@@ -66,7 +66,7 @@ class TechnologiesForm extends AdvancedForm
                 "name" => "tech_id",
                 "text" => "ID",
                 "type" => "readonly",
-                "show_overview" => 1,
+                "show_overview" => true,
             ],
             [
                 "name" => "tech_name",
@@ -77,8 +77,8 @@ class TechnologiesForm extends AdvancedForm
                 "maxlen" => "250",
                 "rows" => "",
                 "cols" => "",
-                "show_overview" => 1,
-                "link_in_overview" => 1,
+                "show_overview" => true,
+                "link_in_overview" => true,
             ],
             [
                 "name" => "tech_type_id",
@@ -90,7 +90,7 @@ class TechnologiesForm extends AdvancedForm
                 "rows" => "",
                 "cols" => "",
                 "select_elem" => $this->getSelectElements('tech_types', "type_id", "type_name", "type_name"),
-                "show_overview" => 1,
+                "show_overview" => true,
             ],
             [
                 "name" => "tech_shortcomment",
@@ -101,7 +101,7 @@ class TechnologiesForm extends AdvancedForm
                 "maxlen" => "",
                 "rows" => "5",
                 "cols" => "50",
-                "show_overview" => 0,
+                "show_overview" => false,
             ],
             [
                 "name" => "tech_longcomment",
@@ -112,7 +112,7 @@ class TechnologiesForm extends AdvancedForm
                 "maxlen" => "",
                 "rows" => "7",
                 "cols" => "50",
-                "show_overview" => 0,
+                "show_overview" => false,
                 "line" => 1,
             ],
             [
@@ -124,7 +124,7 @@ class TechnologiesForm extends AdvancedForm
                 "maxlen" => "250",
                 "rows" => "",
                 "cols" => "",
-                "show_overview" => 0,
+                "show_overview" => false,
             ],
             [
                 "name" => "tech_costs_crystal",
@@ -135,7 +135,7 @@ class TechnologiesForm extends AdvancedForm
                 "maxlen" => "250",
                 "rows" => "",
                 "cols" => "",
-                "show_overview" => 0,
+                "show_overview" => false,
             ],
             [
                 "name" => "tech_costs_plastic",
@@ -146,7 +146,7 @@ class TechnologiesForm extends AdvancedForm
                 "maxlen" => "250",
                 "rows" => "",
                 "cols" => "",
-                "show_overview" => 0,
+                "show_overview" => false,
             ],
             [
                 "name" => "tech_costs_fuel",
@@ -157,7 +157,7 @@ class TechnologiesForm extends AdvancedForm
                 "maxlen" => "250",
                 "rows" => "",
                 "cols" => "",
-                "show_overview" => 0,
+                "show_overview" => false,
             ],
             [
                 "name" => "tech_costs_food",
@@ -168,7 +168,7 @@ class TechnologiesForm extends AdvancedForm
                 "maxlen" => "250",
                 "rows" => "",
                 "cols" => "",
-                "show_overview" => 0,
+                "show_overview" => false,
             ],
             [
                 "name" => "tech_build_costs_factor",
@@ -179,7 +179,7 @@ class TechnologiesForm extends AdvancedForm
                 "maxlen" => "250",
                 "rows" => "",
                 "cols" => "",
-                "show_overview" => 0,
+                "show_overview" => false,
                 "line" => 1,
             ],
             [
@@ -191,7 +191,7 @@ class TechnologiesForm extends AdvancedForm
                 "maxlen" => "250",
                 "rows" => "",
                 "cols" => "",
-                "show_overview" => 1,
+                "show_overview" => true,
             ],
             [
                 "name" => "tech_stealable",
@@ -206,7 +206,7 @@ class TechnologiesForm extends AdvancedForm
                     "Ja" => 1,
                     "Nein" => 0,
                 ],
-                "show_overview" => 0,
+                "show_overview" => false,
             ],
         ];
     }

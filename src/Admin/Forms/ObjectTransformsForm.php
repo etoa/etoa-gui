@@ -39,7 +39,7 @@ class ObjectTransformsForm extends AdvancedForm
                 "rows" => "",
                 "cols" => "",
                 "select_elem" => $this->getSelectElements('defense', "def_id", "def_name", "def_order"),
-                "show_overview" => 1,
+                "show_overview" => true,
             ], [
                 "name" => "ship_id",
                 "text" => "Schiff",
@@ -50,7 +50,7 @@ class ObjectTransformsForm extends AdvancedForm
                 "rows" => "",
                 "cols" => "",
                 "select_elem" => $this->getSelectElements('ships', "ship_id", "ship_name", "ship_order"),
-                "show_overview" => 1,
+                "show_overview" => true,
             ], [
                 "name" => "costs_metal",
                 "text" => "Kosten Metall",
@@ -60,7 +60,7 @@ class ObjectTransformsForm extends AdvancedForm
                 "maxlen" => "250",
                 "rows" => "",
                 "cols" => "",
-                "show_overview" => 0,
+                "show_overview" => false,
             ], [
                 "name" => "costs_crystal",
                 "text" => "Kosten Kristall",
@@ -70,7 +70,7 @@ class ObjectTransformsForm extends AdvancedForm
                 "maxlen" => "250",
                 "rows" => "",
                 "cols" => "",
-                "show_overview" => 0,
+                "show_overview" => false,
             ], [
                 "name" => "costs_plastic",
                 "text" => "Kosten Plastik",
@@ -80,7 +80,7 @@ class ObjectTransformsForm extends AdvancedForm
                 "maxlen" => "250",
                 "rows" => "",
                 "cols" => "",
-                "show_overview" => 0,
+                "show_overview" => false,
             ], [
                 "name" => "costs_fuel",
                 "text" => "Kosten Treibstoff",
@@ -90,7 +90,7 @@ class ObjectTransformsForm extends AdvancedForm
                 "maxlen" => "250",
                 "rows" => "",
                 "cols" => "",
-                "show_overview" => 0,
+                "show_overview" => false,
             ], [
                 "name" => "costs_food",
                 "text" => "Kosten Nahrung",
@@ -100,7 +100,7 @@ class ObjectTransformsForm extends AdvancedForm
                 "maxlen" => "250",
                 "rows" => "",
                 "cols" => "",
-                "show_overview" => 0,
+                "show_overview" => false,
             ], [
                 "name" => "costs_factor_sd",
                 "text" => "Kostenfaktor S -> V",
@@ -110,7 +110,7 @@ class ObjectTransformsForm extends AdvancedForm
                 "maxlen" => "5",
                 "rows" => "",
                 "cols" => "",
-                "show_overview" => 1,
+                "show_overview" => true,
             ], [
                 "name" => "costs_factor_ds",
                 "text" => "Kostenfaktor V -> S",
@@ -120,7 +120,7 @@ class ObjectTransformsForm extends AdvancedForm
                 "maxlen" => "5",
                 "rows" => "",
                 "cols" => "",
-                "show_overview" => 1,
+                "show_overview" => true,
             ], [
                 "name" => "num_def",
                 "text" => "Anzahl V pro S",
@@ -130,7 +130,7 @@ class ObjectTransformsForm extends AdvancedForm
                 "maxlen" => "5",
                 "rows" => "",
                 "cols" => "",
-                "show_overview" => 1,
+                "show_overview" => true,
             ],
         ];
     }

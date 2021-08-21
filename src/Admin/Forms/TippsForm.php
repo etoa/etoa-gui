@@ -45,7 +45,7 @@ class TippsForm extends AdvancedForm
                 "maxlen" => "",
                 "rows" => "10",
                 "cols" => "40",
-                "show_overview" => 1,
+                "show_overview" => true,
             ],
         ];
     }

@@ -43,8 +43,8 @@ class MissilesForm extends AdvancedForm
                 "maxlen" => "250",
                 "rows" => "",
                 "cols" => "",
-                "show_overview" => 1,
-                "link_in_overview" => 1,
+                "show_overview" => true,
+                "link_in_overview" => true,
             ], [
                 "name" => "missile_sdesc",
                 "text" => "Titel",
@@ -54,7 +54,7 @@ class MissilesForm extends AdvancedForm
                 "maxlen" => "",
                 "rows" => "5",
                 "cols" => "50",
-                "show_overview" => 0,
+                "show_overview" => false,
             ], [
                 "name" => "missile_ldesc",
                 "text" => "Text",
@@ -64,7 +64,7 @@ class MissilesForm extends AdvancedForm
                 "maxlen" => "",
                 "rows" => "7",
                 "cols" => "50",
-                "show_overview" => 0,
+                "show_overview" => false,
             ], [
                 "name" => "missile_costs_metal",
                 "text" => "Kosten Metall",
@@ -74,7 +74,7 @@ class MissilesForm extends AdvancedForm
                 "maxlen" => "250",
                 "rows" => "",
                 "cols" => "",
-                "show_overview" => 0,
+                "show_overview" => false,
             ], [
                 "name" => "missile_costs_crystal",
                 "text" => "Kosten Kristall",
@@ -84,7 +84,7 @@ class MissilesForm extends AdvancedForm
                 "maxlen" => "250",
                 "rows" => "",
                 "cols" => "",
-                "show_overview" => 0,
+                "show_overview" => false,
             ], [
                 "name" => "missile_costs_plastic",
                 "text" => "Kosten Plastik",
@@ -94,7 +94,7 @@ class MissilesForm extends AdvancedForm
                 "maxlen" => "250",
                 "rows" => "",
                 "cols" => "",
-                "show_overview" => 0,
+                "show_overview" => false,
             ], [
                 "name" => "missile_costs_fuel",
                 "text" => "Kosten Treibstoff",
@@ -104,7 +104,7 @@ class MissilesForm extends AdvancedForm
                 "maxlen" => "250",
                 "rows" => "",
                 "cols" => "",
-                "show_overview" => 0,
+                "show_overview" => false,
             ], [
                 "name" => "missile_costs_food",
                 "text" => "Kosten Nahrung",
@@ -114,7 +114,7 @@ class MissilesForm extends AdvancedForm
                 "maxlen" => "250",
                 "rows" => "",
                 "cols" => "",
-                "show_overview" => 0,
+                "show_overview" => false,
             ], [
                 "name" => "missile_damage",
                 "text" => "Schaden",
@@ -124,7 +124,7 @@ class MissilesForm extends AdvancedForm
                 "maxlen" => "250",
                 "rows" => "",
                 "cols" => "",
-                "show_overview" => 1,
+                "show_overview" => true,
             ], [
                 "name" => "missile_speed",
                 "text" => "Geschwindigkeit",
@@ -134,7 +134,7 @@ class MissilesForm extends AdvancedForm
                 "maxlen" => "250",
                 "rows" => "",
                 "cols" => "",
-                "show_overview" => 1,
+                "show_overview" => true,
             ], [
                 "name" => "missile_range",
                 "text" => "Reichweite",
@@ -144,7 +144,7 @@ class MissilesForm extends AdvancedForm
                 "maxlen" => "250",
                 "rows" => "",
                 "cols" => "",
-                "show_overview" => 1,
+                "show_overview" => true,
             ], [
                 "name" => "missile_deactivate",
                 "text" => "EMP",
@@ -154,7 +154,7 @@ class MissilesForm extends AdvancedForm
                 "maxlen" => "250",
                 "rows" => "",
                 "cols" => "",
-                "show_overview" => 1,
+                "show_overview" => true,
             ], [
                 "name" => "missile_def",
                 "text" => "Verteidigung",
@@ -164,7 +164,7 @@ class MissilesForm extends AdvancedForm
                 "maxlen" => "250",
                 "rows" => "",
                 "cols" => "",
-                "show_overview" => 1,
+                "show_overview" => true,
             ], [
                 "name" => "missile_launchable",
                 "text" => "Startbar",
@@ -178,7 +178,7 @@ class MissilesForm extends AdvancedForm
                     "Ja" => 1,
                     "Nein" => 0,
                 ],
-                "show_overview" => 0,
+                "show_overview" => false,
             ], [
                 "name" => "missile_show",
                 "text" => "Anzeigen",
@@ -192,7 +192,7 @@ class MissilesForm extends AdvancedForm
                     "Ja" => 1,
                     "Nein" => 0,
                 ],
-                "show_overview" => 0,
+                "show_overview" => false,
             ],
         ];
     }

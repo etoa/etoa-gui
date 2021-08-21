@@ -33,7 +33,7 @@ class RacesForm extends AdvancedForm
                 "name" => "race_id",
                 "text" => "ID",
                 "type" => "readonly",
-                "show_overview" => 1,
+                "show_overview" => true,
             ],
             [
                 "name" => "race_name",
@@ -44,8 +44,8 @@ class RacesForm extends AdvancedForm
                 "maxlen" => "250",
                 "rows" => "",
                 "cols" => "",
-                "show_overview" => 1,
-                "link_in_overview" => 1,
+                "show_overview" => true,
+                "link_in_overview" => true,
             ],
             [
                 "name" => "race_short_comment",
@@ -56,7 +56,7 @@ class RacesForm extends AdvancedForm
                 "maxlen" => "",
                 "rows" => "3",
                 "cols" => "40",
-                "show_overview" => 1,
+                "show_overview" => true,
                 "overview_length" => 400,
 
             ],
@@ -69,7 +69,7 @@ class RacesForm extends AdvancedForm
                 "maxlen" => "",
                 "rows" => "10",
                 "cols" => "40",
-                "show_overview" => 0,
+                "show_overview" => false,
             ],
             [
                 "name" => "race_adj1",
@@ -78,7 +78,7 @@ class RacesForm extends AdvancedForm
                 "def_val" => "",
                 "size" => "30",
                 "maxlen" => "50",
-                "show_overview" => 0,
+                "show_overview" => false,
             ],
             [
                 "name" => "race_adj2",
@@ -87,7 +87,7 @@ class RacesForm extends AdvancedForm
                 "def_val" => "",
                 "size" => "30",
                 "maxlen" => "50",
-                "show_overview" => 0,
+                "show_overview" => false,
             ],
             [
                 "name" => "race_adj3",
@@ -96,7 +96,7 @@ class RacesForm extends AdvancedForm
                 "def_val" => "",
                 "size" => "30",
                 "maxlen" => "50",
-                "show_overview" => 0,
+                "show_overview" => false,
             ],
             [
                 "name" => "race_leadertitle",
@@ -107,7 +107,7 @@ class RacesForm extends AdvancedForm
                 "maxlen" => "30",
                 "rows" => "0",
                 "cols" => "0",
-                "show_overview" => 1,
+                "show_overview" => true,
                 "overview_length" => 200,
             ],
             [
@@ -119,7 +119,7 @@ class RacesForm extends AdvancedForm
                 "maxlen" => "5",
                 "rows" => "",
                 "cols" => "",
-                "show_overview" => 0,
+                "show_overview" => false,
             ],
             [
                 "name" => "race_f_crystal",
@@ -130,7 +130,7 @@ class RacesForm extends AdvancedForm
                 "maxlen" => "5",
                 "rows" => "",
                 "cols" => "",
-                "show_overview" => 0,
+                "show_overview" => false,
             ],
             [
                 "name" => "race_f_plastic",
@@ -141,7 +141,7 @@ class RacesForm extends AdvancedForm
                 "maxlen" => "5",
                 "rows" => "",
                 "cols" => "",
-                "show_overview" => 0,
+                "show_overview" => false,
             ],
             [
                 "name" => "race_f_fuel",
@@ -152,7 +152,7 @@ class RacesForm extends AdvancedForm
                 "maxlen" => "5",
                 "rows" => "",
                 "cols" => "",
-                "show_overview" => 0,
+                "show_overview" => false,
             ],
             [
                 "name" => "race_f_food",
@@ -163,7 +163,7 @@ class RacesForm extends AdvancedForm
                 "maxlen" => "5",
                 "rows" => "",
                 "cols" => "",
-                "show_overview" => 0,
+                "show_overview" => false,
             ],
             [
                 "name" => "race_f_power",
@@ -174,7 +174,7 @@ class RacesForm extends AdvancedForm
                 "maxlen" => "5",
                 "rows" => "",
                 "cols" => "",
-                "show_overview" => 0,
+                "show_overview" => false,
             ],
             [
                 "name" => "race_f_population",
@@ -185,7 +185,7 @@ class RacesForm extends AdvancedForm
                 "maxlen" => "5",
                 "rows" => "",
                 "cols" => "",
-                "show_overview" => 0,
+                "show_overview" => false,
             ],
             [
                 "name" => "race_f_researchtime",
@@ -196,7 +196,7 @@ class RacesForm extends AdvancedForm
                 "maxlen" => "5",
                 "rows" => "",
                 "cols" => "",
-                "show_overview" => 0,
+                "show_overview" => false,
             ],
             [
                 "name" => "race_f_buildtime",
@@ -207,7 +207,7 @@ class RacesForm extends AdvancedForm
                 "maxlen" => "5",
                 "rows" => "",
                 "cols" => "",
-                "show_overview" => 0,
+                "show_overview" => false,
             ],
             [
                 "name" => "race_f_fleettime",
@@ -218,7 +218,7 @@ class RacesForm extends AdvancedForm
                 "maxlen" => "5",
                 "rows" => "",
                 "cols" => "",
-                "show_overview" => 0,
+                "show_overview" => false,
             ],
         ];
     }

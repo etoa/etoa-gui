@@ -43,7 +43,7 @@ class TutorialsForm extends AdvancedForm
                 "name" => "text_id",
                 "text" => "ID",
                 "type" => "readonly",
-                "show_overview" => 1,
+                "show_overview" => true,
             ], [
                 "name" => "text_tutorial_id",
                 "text" => "Tutorial",
@@ -54,7 +54,7 @@ class TutorialsForm extends AdvancedForm
                 "rows" => "",
                 "cols" => "",
                 "select_elem" => $this->getSelectElements('tutorial', "tutorial_id", "tutorial_title", "tutorial_title", ["0" => "-"]),
-                "show_overview" => 1,
+                "show_overview" => true,
             ], [
                 "name" => "text_title",
                 "text" => "Titel",
@@ -64,8 +64,8 @@ class TutorialsForm extends AdvancedForm
                 "maxlen" => "250",
                 "rows" => "",
                 "cols" => "",
-                "show_overview" => 1,
-                "link_in_overview" => 1,
+                "show_overview" => true,
+                "link_in_overview" => true,
             ], [
                 "name" => "text_content",
                 "text" => "Inhalt",
@@ -75,7 +75,7 @@ class TutorialsForm extends AdvancedForm
                 "maxlen" => "",
                 "rows" => "15",
                 "cols" => "150",
-                "show_overview" => 0,
+                "show_overview" => false,
             ],
         ];
     }

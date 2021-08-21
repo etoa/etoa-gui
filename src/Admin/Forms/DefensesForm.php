@@ -67,7 +67,7 @@ class DefensesForm extends AdvancedForm
                 "name" => "def_id",
                 "text" => "ID",
                 "type" => "readonly",
-                "show_overview" => 1,
+                "show_overview" => true,
             ], [
                 "name" => "def_name",
                 "text" => "Name",
@@ -77,8 +77,8 @@ class DefensesForm extends AdvancedForm
                 "maxlen" => "250",
                 "rows" => "",
                 "cols" => "",
-                "show_overview" => 1,
-                "link_in_overview" => 1,
+                "show_overview" => true,
+                "link_in_overview" => true,
             ], [
                 "name" => "def_shortcomment",
                 "text" => "Kurze Beschreibung",
@@ -88,7 +88,7 @@ class DefensesForm extends AdvancedForm
                 "maxlen" => "",
                 "rows" => "5",
                 "cols" => "50",
-                "show_overview" => 0,
+                "show_overview" => false,
             ], [
                 "name" => "def_longcomment",
                 "text" => "Lange Beschreibung",
@@ -98,7 +98,7 @@ class DefensesForm extends AdvancedForm
                 "maxlen" => "",
                 "rows" => "7",
                 "cols" => "50",
-                "show_overview" => 0,
+                "show_overview" => false,
                 "line" => 1,
             ], [
                 "name" => "def_costs_metal",
@@ -109,7 +109,7 @@ class DefensesForm extends AdvancedForm
                 "maxlen" => "250",
                 "rows" => "",
                 "cols" => "",
-                "show_overview" => 0,
+                "show_overview" => false,
             ], [
                 "name" => "def_costs_crystal",
                 "text" => "Kosten Kristall",
@@ -119,7 +119,7 @@ class DefensesForm extends AdvancedForm
                 "maxlen" => "250",
                 "rows" => "",
                 "cols" => "",
-                "show_overview" => 0,
+                "show_overview" => false,
             ], [
                 "name" => "def_costs_plastic",
                 "text" => "Kosten Plastik",
@@ -129,7 +129,7 @@ class DefensesForm extends AdvancedForm
                 "maxlen" => "250",
                 "rows" => "",
                 "cols" => "",
-                "show_overview" => 0,
+                "show_overview" => false,
             ], [
                 "name" => "def_costs_fuel",
                 "text" => "Kosten Treibstoff",
@@ -139,7 +139,7 @@ class DefensesForm extends AdvancedForm
                 "maxlen" => "250",
                 "rows" => "",
                 "cols" => "",
-                "show_overview" => 0,
+                "show_overview" => false,
             ], [
                 "name" => "def_costs_food",
                 "text" => "Kosten Nahrung",
@@ -149,12 +149,12 @@ class DefensesForm extends AdvancedForm
                 "maxlen" => "250",
                 "rows" => "",
                 "cols" => "",
-                "show_overview" => 0,
+                "show_overview" => false,
             ], [
                 "name" => "def_points",
                 "text" => "Punkte",
                 "type" => "readonly",
-                "show_overview" => 0,
+                "show_overview" => false,
                 "columnend" => 1,
             ], [
                 "name" => "def_structure",
@@ -165,7 +165,7 @@ class DefensesForm extends AdvancedForm
                 "maxlen" => "250",
                 "rows" => "",
                 "cols" => "",
-                "show_overview" => 0,
+                "show_overview" => false,
             ], [
                 "name" => "def_shield",
                 "text" => "Schild",
@@ -175,7 +175,7 @@ class DefensesForm extends AdvancedForm
                 "maxlen" => "250",
                 "rows" => "",
                 "cols" => "",
-                "show_overview" => 0,
+                "show_overview" => false,
             ], [
                 "name" => "def_weapon",
                 "text" => "Waffe",
@@ -185,7 +185,7 @@ class DefensesForm extends AdvancedForm
                 "maxlen" => "250",
                 "rows" => "",
                 "cols" => "",
-                "show_overview" => 0,
+                "show_overview" => false,
             ], [
                 "name" => "def_heal",
                 "text" => "Reparatur",
@@ -195,7 +195,7 @@ class DefensesForm extends AdvancedForm
                 "maxlen" => "250",
                 "rows" => "",
                 "cols" => "",
-                "show_overview" => 0,
+                "show_overview" => false,
                 "line" => 1,
             ], [
                 "name" => "def_fields",
@@ -206,7 +206,7 @@ class DefensesForm extends AdvancedForm
                 "maxlen" => "255",
                 "rows" => "",
                 "cols" => "",
-                "show_overview" => 1,
+                "show_overview" => true,
             ], [
                 "name" => "def_max_count",
                 "text" => "Max Anzahl",
@@ -216,7 +216,7 @@ class DefensesForm extends AdvancedForm
                 "maxlen" => "255",
                 "rows" => "",
                 "cols" => "",
-                "show_overview" => 0,
+                "show_overview" => false,
             ], [
                 "name" => "def_cat_id",
                 "text" => "Kategorie",
@@ -227,7 +227,7 @@ class DefensesForm extends AdvancedForm
                 "rows" => "",
                 "cols" => "",
                 "select_elem" => $this->getSelectElements('def_cat', "cat_id", "cat_name", "cat_name", array("0" => "(Keine)")),
-                "show_overview" => 1,
+                "show_overview" => true,
             ], [
                 "name" => "def_race_id",
                 "text" => "Rasse",
@@ -238,7 +238,7 @@ class DefensesForm extends AdvancedForm
                 "rows" => "",
                 "cols" => "",
                 "select_elem" => $this->getSelectElements('races', "race_id", "race_name", "race_name", array("0" => "(Keine)")),
-                "show_overview" => 1,
+                "show_overview" => true,
             ],
         ];
     }
