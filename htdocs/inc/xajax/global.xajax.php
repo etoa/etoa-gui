@@ -389,7 +389,7 @@ function getCryptoDistance($f, $sx1, $sy1, $cx1, $cy1, $p1)
 }
 
 // Formatiert Zahlen
-function formatNumbers($field_id, $val, $format = 0, $max)
+function formatNumbers($field_id, $val, $format = 0, $max = null)
 {
     $objResponse = new xajaxResponse();
     ob_start();

@@ -6,7 +6,7 @@ use Doctrine\DBAL\Connection;
 use EtoA\Core\Configuration\ConfigurationService;
 use PHPUnit\Framework\TestCase;
 use Silex\Application;
-use Symfony\Component\HttpKernel\Client;
+use Symfony\Component\HttpKernel\HttpKernelBrowser;
 
 abstract class WebTestCase extends TestCase
 {
@@ -42,15 +42,14 @@ abstract class WebTestCase extends TestCase
     /**
      * @param array<string, mixed> $server
      */
-    public function createClient(array $server = []): Client
+    public function createClient(array $server = []): HttpKernelBrowser
     {
-        if (!class_exists('Symfony\Component\BrowserKit\Client')) {
-            throw new \LogicException('Component "symfony/browser-kit" is required by WebTestCase.'.PHP_EOL.'Run composer require symfony/browser-kit');
-        }
-
         $_SERVER['REMOTE_ADDR'] = $server['REMOTE_ADDR'] = '127.0.0.1';
 
-        return new Client($this->app, $server);
+        $this->app->boot();
+        $this->app->flush();
+
+        return new HttpKernelBrowser($this->app, $server);
     }
 
     public function loginUser(int $userId): void

@@ -2,22 +2,12 @@
 
 namespace EtoA\Ship;
 
-use Doctrine\Common\Cache\CacheProvider;
-use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Query\QueryBuilder;
 use EtoA\Core\AbstractRepository;
 
 class ShipDataRepository extends AbstractRepository
 {
     private const SHIPS_NAMES = 'ships.names';
-
-    private CacheProvider $cache;
-
-    public function __construct(Connection $connection, CacheProvider $cache)
-    {
-        parent::__construct($connection);
-        $this->cache = $cache;
-    }
 
     /**
      * @return array<int, string>

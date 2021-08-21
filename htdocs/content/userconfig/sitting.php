@@ -36,7 +36,7 @@ if (!$s->sittingActive || $s->falseSitter) {
         $user = array_unique($_POST['multi_nick']); //löscht alle users die mehrfach eingetragen wurden
         $change = false;
         foreach ($user as $id => $data) {
-            if ($user[$id] != "" && ($request->request->get('del_multi', [])[$id] ?? 0) != 1) {
+            if ($user[$id] != "" && ($request->request->all('del_multi')[$id] ?? 0) != 1) {
                 //Ist dieser User existent
                 $userIdForNick = $userRepository->getUserIdByNick($user[$id]);
                 if ($userIdForNick === null) {

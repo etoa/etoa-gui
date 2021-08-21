@@ -216,6 +216,11 @@ parameters:
 			path: src/Ranking/UserBannerService.php
 
 		-
+			message: "#^Method EtoA\\\\Ranking\\\\UserBannerService\\:\\:createUserBannerImage\\(\\) never returns resource so it can be removed from the return typehint\\.$#"
+			count: 1
+			path: src/Ranking/UserBannerService.php
+
+		-
 			message: "#^Method EtoA\\\\UI\\\\EntityCoordinatesSelector\\:\\:parse\\(\\) has parameter \\$parameters with no value type specified in iterable type Symfony\\\\Component\\\\HttpFoundation\\\\ParameterBag\\.$#"
 			count: 1
 			path: src/UI/EntityCoordinatesSelector.php

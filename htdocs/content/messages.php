@@ -200,8 +200,8 @@ function listMessagesOverview(
 
     // Selektiere löschen
     if ($request->request->has('submitdeleteselection')  && checker_verify()) {
-        if (count($request->request->get('delmsg')) > 0) {
-            foreach (array_keys($request->request->get('delmsg')) as $id) {
+        if (count($request->request->all('delmsg')) > 0) {
+            foreach (array_keys($request->request->all('delmsg')) as $id) {
                 $messageRepository->setDeleted((int) $id, true, $cu->id, $mode == "archiv");
             }
             success_msg("Nachricht(en) wurden gelöscht!");
@@ -219,10 +219,10 @@ function listMessagesOverview(
         $messageRepository->setDeletedForUser($cu->id, true, 0, $mode == "archiv");
         success_msg("Alle Systemnachrichten wurden gelöscht!");
     } elseif ($request->request->has('submitarchiving')  && checker_verify()) {
-        if (count($request->request->get('delmsg')) > 0) {
+        if (count($request->request->all('delmsg')) > 0) {
             $archiveSpace = $config->param1Int('msg_max_store') - $request->request->getInt('archived_msg_cnt');
-            if (count($request->request->get('delmsg')) <= $archiveSpace) {
-                foreach (array_keys($request->request->get('delmsg')) as $id) {
+            if (count($request->request->all('delmsg')) <= $archiveSpace) {
+                foreach (array_keys($request->request->all('delmsg')) as $id) {
                     $messageRepository->setArchived((int) $id, true, $cu->id);
                 }
                 success_msg("Nachricht(en) wurden archiviert!");

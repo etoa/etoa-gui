@@ -83,25 +83,25 @@ function saveInfo(Request $request, AllianceRepository $repository, int $id, Env
 function saveMembers(Request $request, AllianceRepository $repository, AllianceRankRepository $allianceRankRepository, Environment $twig)
 {
     // Mitgliederänderungen
-    if ($request->request->has('member_kick') && count($request->request->get('member_kick')) > 0) {
-        foreach (array_keys($request->request->get('member_kick')) as $userId) {
+    if ($request->request->has('member_kick') && count($request->request->all('member_kick')) > 0) {
+        foreach (array_keys($request->request->all('member_kick')) as $userId) {
             $repository->removeUser($userId);
         }
     }
-    if (count($request->request->get('member_rank')) > 0) {
-        foreach ($request->request->get('member_rank') as $userId => $rankId) {
+    if (count($request->request->all('member_rank')) > 0) {
+        foreach ($request->request->all('member_rank') as $userId => $rankId) {
             $repository->assignRankToUser((int) $rankId, (int) $userId);
         }
     }
     // Ränge speichern
-    if ($request->request->has('rank_del') && count($request->request->get('rank_del')) > 0) {
-        foreach (array_keys($request->request->get('rank_del')) as $rankId) {
+    if ($request->request->has('rank_del') && count($request->request->all('rank_del')) > 0) {
+        foreach (array_keys($request->request->all('rank_del')) as $rankId) {
             $allianceRankRepository->removeRank($rankId);
         }
     }
-    if ($request->request->has('rank_name') && count($request->request->get('rank_name')) > 0) {
-        foreach ($request->request->get('rank_name') as $rankId => $name) {
-            $allianceRankRepository->updateRank($rankId, $name, $request->request->get('rank_level')[$rankId]);
+    if ($request->request->has('rank_name') && count($request->request->all('rank_name')) > 0) {
+        foreach ($request->request->all('rank_name') as $rankId => $name) {
+            $allianceRankRepository->updateRank($rankId, $name, $request->request->all('rank_level')[$rankId]);
         }
     }
 
@@ -111,17 +111,17 @@ function saveMembers(Request $request, AllianceRepository $repository, AllianceR
 function saveDiplomacy(Request $request, AllianceDiplomacyRepository $repository, Environment $twig)
 {
     // Bündnisse / Kriege speichern
-    if ($request->request->has('alliance_bnd_del') && count($request->request->get('alliance_bnd_del')) > 0) {
-        foreach (array_keys($request->request->get('alliance_bnd_del')) as $diplomacyId) {
+    if ($request->request->has('alliance_bnd_del') && count($request->request->all('alliance_bnd_del')) > 0) {
+        foreach (array_keys($request->request->all('alliance_bnd_del')) as $diplomacyId) {
             $repository->deleteDiplomacy($diplomacyId);
         }
     }
-    if (count($request->request->get('alliance_bnd_level')) > 0) {
-        foreach (array_keys($request->request->get('alliance_bnd_level')) as $diplomacyId) {
+    if (count($request->request->all('alliance_bnd_level')) > 0) {
+        foreach (array_keys($request->request->all('alliance_bnd_level')) as $diplomacyId) {
             $repository->updateDiplomacy(
                 $diplomacyId,
-                $request->request->get('alliance_bnd_level')[$diplomacyId],
-                $request->request->get('alliance_bnd_name')[$diplomacyId]
+                $request->request->all('alliance_bnd_level')[$diplomacyId],
+                $request->request->all('alliance_bnd_name')[$diplomacyId]
             );
         }
     }

@@ -19,6 +19,7 @@ htdocs/tmp/*.pid
 /htdocs/designs/custom/*
 /htdocs/config/debug
 /htdocs/config/eventhandler.conf
+/cache/*
 
 *cmake_install.cmake
 eventhandler/**/Makefile
@@ -33,6 +34,7 @@ ubuntu-*-console.log
 /var/
 /vendor/
 .php_cs.cache
+.php-cs-fixer.cache
 .phpunit.result.cache
 nbproject/*
 
