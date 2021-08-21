@@ -252,81 +252,22 @@ abstract class AdvancedForm extends Form
 
         echo "<form action=\"?" . URL_SEARCH_STRING . "\" method=\"post\">";
         echo "<table>";
-        $this->createNewDataset();
+        foreach ($this->getFields() as $field) {
+            if ($field['type'] == "readonly") {
+                continue;
+            }
+
+            $name = $field['name'];
+            $value = $field['def_val'] ?? '';
+            echo "<tr>
+                <th class=\"tbltitle\" width=\"200\">" . $field['text'] . ":</th>
+                <td class=\"tbldata\" width=\"200\">" . $this->createInput($field, $name, $value) . "</td>
+            </tr>";
+        }
         echo "</table><br/>";
         echo "<input type=\"submit\" value=\"Neuen Datensatz speichern\" name=\"new\" />&nbsp;";
         echo "<input type=\"button\" value=\"Abbrechen\" name=\"newcancel\" onclick=\"document.location='?" . URL_SEARCH_STRING . "'\" />";
         echo "</form>";
-    }
-
-    private function createNewDataset(): void
-    {
-        foreach ($this->getFields() as $field) {
-            switch ($field['type']) {
-                case "readonly":
-                    break;
-                case "text":
-                    echo "<tr><th class=\"tbltitle\" width=\"200\">" . $field['text'] . ":</th>";
-                    echo "<td class=\"tbldata\" width=\"200\"><input type=\"text\" name=\"" . $field['name'] . "\" size=\"" . $field['size'] . "\" maxlength=\"" . $field['maxlen'] . "\" value=\"" . $field['def_val'] . "\" /></td></tr>";
-
-                    break;
-                case "hidden":
-                    echo "<input type=\"hidden\" name=\"" . $field['name'] . "\" value=\"" . $field['def_val'] . "\" />";
-
-                    break;
-                case "numeric":
-                    echo "<tr><th class=\"tbltitle\" width=\"200\">" . $field['text'] . ":</th>";
-                    echo "<td class=\"tbldata\" width=\"200\"><input type=\"text\" name=\"" . $field['name'] . "\" size=\"" . $field['size'] . "\" maxlength=\"" . $field['maxlen'] . "\" value=\"" . $field['def_val'] . "\" /></td></tr>";
-
-                    break;
-                case "textarea":
-                    echo "<tr><th class=\"tbltitle\" width=\"200\">" . $field['text'] . ":</th>";
-                    echo "<td class=\"tbldata\" width=\"200\"><textarea name=\"" . $field['name'] . "\" rows=\"" . $field['rows'] . "\" cols=\"" . $field['cols'] . "\">" . $field['def_val'] . "</textarea></td></tr>";
-
-                    break;
-                case "radio":
-                    echo "<tr><th class=\"tbltitle\" width=\"200\">" . $field['text'] . ":</th>";
-                    echo "<td class=\"tbldata\" width=\"200\">";
-                    foreach ($field['rcb_elem'] as $rk => $rv) {
-                        echo $rk . ": <input name=\"" . $field['name'] . "\" type=\"radio\" value=\"$rv\"";
-                        if ($field['rcb_elem_checked'] == $rv) {
-                            echo " checked=\"checked\"";
-                        }
-                        echo " /> ";
-                    }
-                    echo "</td></tr>";
-
-                    break;
-                case "select":
-                    echo "<tr><th class=\"tbltitle\" width=\"200\">" . $field['text'] . ":</th>";
-                    echo "<td class=\"tbldata\" width=\"200\"><select name=\"" . $field['name'] . "\">";
-                    foreach ($field['select_elem'] as $rk => $rv) {
-                        echo "<option value=\"$rv\"";
-                        if (isset($field['select_elem_checked']) && $field['select_elem_checked'] == $rv) {
-                            echo " selected=\"selected\"";
-                        }
-                        echo ">$rk</option> ";
-                    }
-                    echo "</td></tr>";
-
-                    break;
-                case "fleetaction":
-                    echo "<tr><th class=\"tbltitle\" width=\"200\">" . $field['text'] . ":</th>";
-                    echo "<td class=\"tbldata\" width=\"200\">";
-                    $actions = FleetAction::getAll();
-                    foreach ($actions as $ac) {
-                        echo "<label><input name=\"" . $field['name'] . "[]\" type=\"checkbox\" value=\"" . $ac->code() . "\" /> " . $ac . "</label><br/>";
-                    }
-                    echo "</td></tr>";
-
-                    break;
-                default:
-                    echo "<tr><th class=\"tbltitle\" width=\"200\">" . $field['text'] . ":</th>";
-                    echo "<td class=\"tbldata\" width=\"200\"><input type=\"text\" name=\"" . $field['name'] . "\" size=\"" . $field['size'] . "\" maxlength=\"" . $field['maxlen'] . "\" value=\"" . $field['def_val'] . "\" /></td></tr>";
-
-                    break;
-            }
-        }
     }
 
     public function store(Request $request): void
@@ -420,10 +361,30 @@ abstract class AdvancedForm extends Form
             echo "<form action=\"?" . URL_SEARCH_STRING . "\" method=\"post\">";
             echo "<input type=\"submit\" value=\"Übernehmen\" name=\"edit\" />&nbsp;";
             echo "<input type=\"button\" value=\"Abbrechen\" onclick=\"document.location='?" . URL_SEARCH_STRING . "'\" /><br/><br/>";
-
             echo "<input type=\"hidden\" name=\"" . $this->getTableId() . "\" value=\"" . $request->query->get('id') . "\" />";
             echo "<table>";
-            $this->editDataset($arr);
+            $hidden_rows = array();
+            echo "<tr><td style=\"vertical-align:top;\"><table style=\"width:100%;\">";
+            foreach ($this->getFields() as $field) {
+                echo "<tr id=\"row_" . $field['name'] . "\"";
+                if (in_array($field['name'], $hidden_rows, true)) {
+                    echo " style=\"display:none;\"";
+                }
+
+                echo ">\n<th class=\"tbltitle\" width=\"200\">" . $field['text'] . ":</th>\n";
+                echo "<td class=\"tbldata\" width=\"200\">\n";
+                $name = $field['name'];
+                $value = $arr[$field['name']];
+                echo $this->createInput($field, $name, $value, $hidden_rows);
+                echo "</td>\n</tr>\n";
+                if (isset($field['line']) && $field['line'] == 1) {
+                    echo "<tr><td style=\"height:4px;background:#000\" colspan=\"2\"></td></tr>";
+                }
+                if (isset($field['columnend']) && $field['columnend'] == 1) {
+                    echo "</table></td><td style=\"vertical-align:top;\"><table style=\"width:100%;\">";
+                }
+            }
+            echo "</table></td></tr>";
             echo "</table><br/>";
             echo "<input type=\"submit\" value=\"Übernehmen\" name=\"edit\" />&nbsp;";
             echo "<input type=\"button\" value=\"Abbrechen\" onclick=\"document.location='?" . URL_SEARCH_STRING . "'\" />";
@@ -432,36 +393,6 @@ abstract class AdvancedForm extends Form
             echo MessageBox::error("", "Datensatz nicht vorhanden.");
             echo "<input type=\"button\" value=\"Übersicht\" onclick=\"document.location='?" . URL_SEARCH_STRING . "'\" />";
         }
-    }
-
-    /**
-     * @param array<string,string> $arr
-     */
-    private function editDataset(array $arr): void
-    {
-        $hidden_rows = array();
-
-        echo "<tr><td style=\"vertical-align:top;\"><table style=\"width:100%;\">";
-        foreach ($this->getFields() as $field) {
-            echo "<tr id=\"row_" . $field['name'] . "\"";
-            if (in_array($field['name'], $hidden_rows, true)) {
-                echo " style=\"display:none;\"";
-            }
-
-            echo ">\n<th class=\"tbltitle\" width=\"200\">" . $field['text'] . ":</th>\n";
-            echo "<td class=\"tbldata\" width=\"200\">\n";
-            $name = $field['name'];
-            $value = $arr[$field['name']];
-            echo $this->createInput($field, $name, $value, $hidden_rows);
-            echo "</td>\n</tr>\n";
-            if (isset($field['line']) && $field['line'] == 1) {
-                echo "<tr><td style=\"height:4px;background:#000\" colspan=\"2\"></td></tr>";
-            }
-            if (isset($field['columnend']) && $field['columnend'] == 1) {
-                echo "</table></td><td style=\"vertical-align:top;\"><table style=\"width:100%;\">";
-            }
-        }
-        echo "</table></td></tr>";
     }
 
     public function update(Request $request): void

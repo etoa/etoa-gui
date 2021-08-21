@@ -157,12 +157,6 @@ abstract class Form
                 }
 
                 return $str;
-            case "hidden":
-                return "<input
-                    type=\"hidden\"
-                    name=\"" . $name . "\"
-                    value=\"" . $value . "\"
-                />";
             default:
                 return "<input
                     $stl
