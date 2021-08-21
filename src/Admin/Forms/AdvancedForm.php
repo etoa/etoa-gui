@@ -442,109 +442,22 @@ abstract class AdvancedForm extends Form
         $hidden_rows = array();
 
         echo "<tr><td style=\"vertical-align:top;\"><table style=\"width:100%;\">";
-        foreach ($this->getFields() as $fieldDefinition) {
-            echo "<tr id=\"row_" . $fieldDefinition['name'] . "\"";
-            if (in_array($fieldDefinition['name'], $hidden_rows, true)) {
+        foreach ($this->getFields() as $field) {
+            echo "<tr id=\"row_" . $field['name'] . "\"";
+            if (in_array($field['name'], $hidden_rows, true)) {
                 echo " style=\"display:none;\"";
             }
 
-            echo ">\n<th class=\"tbltitle\" width=\"200\">" . $fieldDefinition['text'] . ":</th>\n";
+            echo ">\n<th class=\"tbltitle\" width=\"200\">" . $field['text'] . ":</th>\n";
             echo "<td class=\"tbldata\" width=\"200\">\n";
-            $stl = (isset($fieldDefinition['def_val']) && $arr[$fieldDefinition['name']] != $fieldDefinition['def_val'] ? ' class="changed"' : '');
-            switch ($fieldDefinition['type']) {
-                case "readonly":
-                    echo $arr[$fieldDefinition['name']];
-
-                    break;
-                case "text":
-                    echo "<input $stl type=\"text\" name=\"" . $fieldDefinition['name'] . "\" size=\"" . $fieldDefinition['size'] . "\" maxlength=\"" . $fieldDefinition['maxlen'] . "\" value=\"" . $arr[$fieldDefinition['name']] . "\" />";
-
-                    break;
-                case "hidden":
-                    echo "<input type=\"hidden\" name=\"" . $fieldDefinition['name'] . "\" value=\"" . $arr[$fieldDefinition['name']] . "\" />";
-
-                    break;
-                case "numeric":
-                    echo "<input $stl type=\"text\" name=\"" . $fieldDefinition['name'] . "\" size=\"" . $fieldDefinition['size'] . "\" maxlength=\"" . $fieldDefinition['maxlen'] . "\" value=\"" . $arr[$fieldDefinition['name']] . "\" />";
-
-                    break;
-                case "textarea":
-                    echo "<textarea $stl name=\"" . $fieldDefinition['name'] . "\" rows=\"" . $fieldDefinition['rows'] . "\" cols=\"" . $fieldDefinition['cols'] . "\">" . $arr[$fieldDefinition['name']] . "</textarea>";
-
-                    break;
-                case "radio":
-                    foreach ($fieldDefinition['rcb_elem'] as $rk => $rv) {
-                        echo $rk . ": <input name=\"" . $fieldDefinition['name'] . "\" type=\"radio\" value=\"$rv\"";
-                        if ($arr[$fieldDefinition['name']] == $rv) {
-                            echo " checked=\"checked\"";
-                        }
-
-                        $onclick_actions = array();
-
-                        // Zeige andere Elemente wenn Einstellung aktiv
-                        if (isset($fieldDefinition['show_hide'])) {
-                            foreach ($fieldDefinition['show_hide'] as $sh) {
-                                $onclick_actions[] = "document.getElementById('row_" . $sh . "').style.display='" . ($rv == 1 ? "" : "none") . "';";
-                            }
-                        }
-
-                        // Verstecke andere Elemente wenn Einstellung aktiv
-                        if (isset($fieldDefinition['hide_show'])) {
-                            foreach ($fieldDefinition['hide_show'] as $sh) {
-                                $onclick_actions[] = "document.getElementById('row_" . $sh . "').style.display='" . ($rv == 1 ? "none" : "") . "';";
-                            }
-                        }
-
-                        if (count($onclick_actions) > 0) {
-                            echo " onclick=\"" . implode("", $onclick_actions) . "\"";
-                        }
-
-                        echo " /> ";
-
-                        if (isset($fieldDefinition['show_hide']) && $arr[$fieldDefinition['name']] == $rv) {
-                            $hidden_rows = $fieldDefinition['show_hide'];
-                        }
-                        if (isset($fieldDefinition['hide_show']) && $arr[$fieldDefinition['name']] != $rv) {
-                            $hidden_rows = $fieldDefinition['hide_show'];
-                        }
-                    }
-
-                    break;
-                case "select":
-                    echo "<select name=\"" . $fieldDefinition['name'] . "\">";
-                    echo "<option value=\"\">(leer)</option>";
-                    foreach ($fieldDefinition['select_elem'] as $rk => $rv) {
-                        echo "<option value=\"$rv\"";
-                        if ($arr[$fieldDefinition['name']] == $rv) {
-                            echo " selected=\"selected\"";
-                        }
-                        echo ">$rk</option> ";
-                    }
-                    echo "";
-
-                    break;
-                case "fleetaction":
-                    echo "";
-                    $keys = explode(",", $arr[$fieldDefinition['name']]);
-                    $actions = FleetAction::getAll();
-                    foreach ($actions as $ac) {
-                        echo "<label><input name=\"" . $fieldDefinition['name'] . "[]\" type=\"checkbox\" value=\"" . $ac->code() . "\"";
-                        if (in_array($ac->code(), $keys, true)) {
-                            echo " checked=\"checked\"";
-                        }
-                        echo " /> " . $ac . "</label><br/>";
-                    }
-                    echo "";
-
-                    break;
-                default:
-                    echo "<input type=\"text\" name=\"" . $fieldDefinition['name'] . "\" size=\"" . $fieldDefinition['size'] . "\" maxlength=\"" . $fieldDefinition['maxlen'] . "\" value=\"" . $arr[$fieldDefinition['name']] . "\" />";
-            }
+            $name = $field['name'];
+            $value = $arr[$field['name']];
+            echo $this->createInput($field, $name, $value, $hidden_rows);
             echo "</td>\n</tr>\n";
-            if (isset($fieldDefinition['line']) && $fieldDefinition['line'] == 1) {
+            if (isset($field['line']) && $field['line'] == 1) {
                 echo "<tr><td style=\"height:4px;background:#000\" colspan=\"2\"></td></tr>";
             }
-            if (isset($fieldDefinition['columnend']) && $fieldDefinition['columnend'] == 1) {
+            if (isset($field['columnend']) && $field['columnend'] == 1) {
                 echo "</table></td><td style=\"vertical-align:top;\"><table style=\"width:100%;\">";
             }
         }

@@ -21,55 +21,12 @@ abstract class SimpleForm extends Form
         $this->twig->addGlobal("title", $this->getName());
 
         if ($request->request->has('apply_submit')) {
-            foreach ($request->request->all() as $key => $val) {
-                if ($key != "apply_submit" && $key != "del") {
-                    foreach ($val as $k => $vl) {
-                        $this->createQueryBuilder()
-                            ->update($this->getTable())
-                            ->set($key, ':val')
-                            ->where($this->getTableId() . " = :id")
-                            ->setParameters([
-                                'id' => $k,
-                                'val' => $vl,
-                            ])
-                            ->execute();
-                    }
-                }
-            }
-            echo MessageBox::ok("", "Änderungen wurden übernommen!");
-
-            $deleted = false;
-            foreach ($request->request->all() as $key => $val) {
-                if ($key == "del") {
-                    foreach ($val as $k => $vl) {
-                        $this->createQueryBuilder()
-                            ->delete($this->getTable())
-                            ->where($this->getTableId() . " = :id")
-                            ->setParameter('id', $k)
-                            ->execute();
-                    }
-                    $deleted = true;
-                }
-            }
-            if ($deleted) {
-                echo MessageBox::ok("", "Bestimmte Daten wurden gelöscht!");
-            }
+            $this->applyChanges($request);
+            $this->applyDeletions($request);
         }
+
         if ($request->request->has('new_submit')) {
-            $values = [];
-            $params = [];
-            foreach ($this->getFields() as $k => $field) {
-                $values[$field['name']] = ':' . $field['name'];
-                $params[$field['name']] = $field['def_val'] ?? "";
-            }
-
-            $this->createQueryBuilder()
-                ->insert($this->getTable())
-                ->values($values)
-                ->setParameters($params)
-                ->execute();
-
-            echo MessageBox::ok("", "Neuer leerer Datensatz wurde hinzugefügt!");
+            $this->createRecord();
         }
 
         echo "<form action=\"?" . URL_SEARCH_STRING . "\" method=\"post\">";
@@ -84,9 +41,7 @@ abstract class SimpleForm extends Form
             echo "<table>\n";
             echo "<tr>";
             foreach ($this->getFields() as $k => $field) {
-                if ($field['show_overview'] == 1) {
-                    echo "<th class=\"tbltitle\">" . $field['text'] . "</th>";
-                }
+                echo "<th class=\"tbltitle\">" . $field['text'] . "</th>";
             }
             echo "<th class=\"tbltitle\">Löschen</th>";
             echo "</tr>\n";
@@ -94,7 +49,9 @@ abstract class SimpleForm extends Form
                 echo "<tr>";
                 foreach ($this->getFields() as $key => $field) {
                     echo "<td class=\"tbldata\">";
-                    echo $this->createInput($field, $arr);
+                    $name = $field['name'] . "[" . $arr[$this->getTableId()] . "]";
+                    $value = $arr[$field['name']];
+                    echo $this->createInput($field, $name, $value);
                     echo "</td>";
                 }
                 echo "<td class=\"tbldata\">
@@ -112,60 +69,66 @@ abstract class SimpleForm extends Form
         echo "</form>";
     }
 
-    /**
-     * @param array<string,mixed> $field
-     * @param array<string,string> $arr
-     */
-    private function createInput(array $field, array $arr): string
+    private function createRecord()
     {
-        switch ($field['type']) {
-            case "readonly":
-                return $arr[$field['name']];
-            case "numeric":
-                return "<input
-                    type=\"number\"
-                    name=\"" . $field['name'] . "[" . $arr[$this->getTableId()] . "]\"
-                    value=\"" . $arr[$field['name']] . "\"
-                />";
-            case "color":
-                return "<input
-                    type=\"color\"
-                    name=\"" . $field['name'] . "[" . $arr[$this->getTableId()] . "]\"
-                    value=\"" . $arr[$field['name']] . "\"
-                />";
-            case "textarea":
-                return "<textarea
-                    name=\"" . $field['name'] . "[" . $arr[$this->getTableId()] . "]\"
-                    >" . $arr[$field['name']] . "</textarea>";
-            case "select":
-                $str = "<select name=\"" . $field['name'] . "[" . $arr[$this->getTableId()] . "]\">";
-                if ($arr[$field['name']] == 0 || $arr[$field['name']] == "") {
-                    $str .= "<option selected=\"selected\">(Wählen...)</option>";
-                }
-                foreach ($field['select_elem'] as $sd => $sv) {
-                    $str .= "<option value=\"$sv\"";
-                    if ($arr[$field['name']] == $sv) {
-                        $str .= " selected=\"selected\"";
-                    }
-                    $str .= ">$sd</option>";
-                }
-                $str .= "</select>";
+        $values = [];
+        $params = [];
+        foreach ($this->getFields() as $k => $field) {
+            $values[$field['name']] = ':' . $field['name'];
+            $params[$field['name']] = $field['def_val'] ?? "";
+        }
 
-                return $str;
-            case "hidden":
-                return "<input
-                    type=\"hidden\"
-                    name=\"" . $field['name'] . "[" . $arr[$this->getTableId()] . "]\"
-                    value=\"" . $arr[$field['name']] . "\"
-                />";
-            default:
-                return "<input
-                    type=\"text\"
-                    name=\"" . $field['name'] . "[" . $arr[$this->getTableId()] . "]\"
-                    value=\"" . $arr[$field['name']] . "\"
-                    size=\"" . $field['size'] . "\"
-                    maxlength=\"" . $field['maxlen'] . "\"
-                />";
+        $this->createQueryBuilder()
+            ->insert($this->getTable())
+            ->values($values)
+            ->setParameters($params)
+            ->execute();
+
+        echo MessageBox::ok("", "Neuer leerer Datensatz wurde hinzugefügt!");
+    }
+
+    private function applyChanges(Request $request)
+    {
+        $affected = 0;
+        foreach ($request->request->all() as $key => $val) {
+            if ($key != "apply_submit" && $key != "del") {
+                foreach ($val as $k => $vl) {
+                    $affected += (int) $this->createQueryBuilder()
+                        ->update($this->getTable())
+                        ->set($key, ':val')
+                        ->where($this->getTableId() . " = :id")
+                        ->setParameters([
+                            'id' => $k,
+                            'val' => $vl,
+                        ])
+                        ->execute();
+                }
+            }
+        }
+
+        if ($affected > 0) {
+            echo MessageBox::ok("", "Änderungen wurden übernommen!");
+        }
+    }
+
+    private function applyDeletions($request)
+    {
+        $deleted = false;
+        foreach ($request->request->all() as $key => $val) {
+            if ($key == "del") {
+                foreach (array_keys($val) as $id) {
+                    $this->createQueryBuilder()
+                        ->delete($this->getTable())
+                        ->where($this->getTableId() . " = :id")
+                        ->setParameter('id', $id)
+                        ->execute();
+                }
+                $deleted = true;
+            }
+        }
+
+        if ($deleted) {
+            echo MessageBox::ok("", "Bestimmte Daten wurden gelöscht!");
         }
     }
 }
