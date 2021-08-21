@@ -45,10 +45,6 @@ class TippsForm extends AdvancedForm
                 "maxlen" => "",
                 "rows" => "10",
                 "cols" => "40",
-                "rcb_elem" => "",
-                "rcb_elem_checked" => "",
-                "select_elem" => "",
-                "select_elem_checked" => "",
                 "show_overview" => 1,
             ],
         ];
