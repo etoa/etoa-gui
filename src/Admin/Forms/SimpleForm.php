@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace EtoA\Admin\Forms;
 
-use EtoA\Core\Configuration\ConfigurationService;
 use MessageBox;
 use Pimple\Container;
 use Symfony\Component\HttpFoundation\Request;
@@ -15,7 +14,7 @@ abstract class SimpleForm
     protected Container $app;
     private Environment $twig;
 
-    public final function __construct(Container $app, Environment $twig)
+    final public function __construct(Container $app, Environment $twig)
     {
         $this->app = $app;
         $this->twig = $twig;
@@ -38,10 +37,10 @@ abstract class SimpleForm
      *
      * name	                DB Field Name
      * text	                Field Description
-     * type                 Field Type: text, password, textarea, timestamp, radio, select, checkbox, email, url, numeric
+     * type                 Field Type: text, textarea, radio, select, numeric
      * def_val              Default Value
-     * size                 Field length (text, password, date, email, url)
-     * maxlen               Max Text length (text, password, date, email, url)
+     * size                 Field length (text, date)
+     * maxlen               Max Text length (text, date)
      * rows                 Rows (textarea)
      * cols                 Cols (textarea)
      * rcb_elem (Array)	    Checkbox-/Radio Elements (desc=>value)
@@ -62,9 +61,6 @@ abstract class SimpleForm
     public function index(Request $request): void
     {
         $this->twig->addGlobal("title", $this->getName());
-
-        /** @var ConfigurationService $config */
-        $config = $this->app[ConfigurationService::class];
 
         if ($request->request->has('apply_submit')) {
             foreach ($request->request->all() as $key => $val) {
@@ -145,24 +141,8 @@ abstract class SimpleForm
                             echo "<input type=\"text\" name=\"" . $a['name'] . "[" . $arr[$this->getTableId()] . "]\" value=\"" . $arr[$a['name']] . "\" size=\"" . $a['size'] . "\" maxlength=\"" . $a['maxlen'] . "\" /></td>\n";
 
                             break;
-                        case "email":
-                            echo "<input type=\"text\" name=\"" . $a['name'] . "[" . $arr[$this->getTableId()] . "]\" value=\"" . $arr[$a['name']] . "\" size=\"" . $a['size'] . "\" maxlength=\"" . $a['maxlen'] . "\" /></td>\n";
-
-                            break;
-                        case "url":
-                            echo "<input type=\"text\" name=\"" . $a['name'] . "[" . $arr[$this->getTableId()] . "]\" value=\"" . $arr[$a['name']] . "\" size=\"" . $a['size'] . "\" maxlength=\"" . $a['maxlen'] . "\" /></td>\n";
-
-                            break;
                         case "numeric":
                             echo "<input type=\"text\" name=\"" . $a['name'] . "[" . $arr[$this->getTableId()] . "]\" value=\"" . $arr[$a['name']] . "\" size=\"" . $a['size'] . "\" maxlength=\"" . $a['maxlen'] . "\" /></td>\n";
-
-                            break;
-                        case "password":
-                            echo "<input type=\"password\" name=\"" . $a['name'] . "[" . $arr[$this->getTableId()] . "]\" value=\"" . $arr[$a['name']] . "\" size=\"" . $a['size'] . "\" maxlength=\"" . $a['maxlen'] . "\" /></td>\n";
-
-                            break;
-                        case "timestamp":
-                            echo "<input type=\"text\" name=\"" . $a['name'] . "[" . $arr[$this->getTableId()] . "]\" value=\"" . date($config->get('admin_dateformat'), intval($arr[$a['name']])) . "\" /></td>\n";
 
                             break;
                         case "textarea":
@@ -177,9 +157,6 @@ abstract class SimpleForm
                             break;
                         case "radio":
                             echo "<input type=\"text\" name=\"" . $a['name'] . "[" . $arr[$this->getTableId()] . "]\" value=\"" . $arr[$a['name']] . "\" /></td>\n";
-
-                            break;
-                        case "checkbox":
 
                             break;
                         case "select":

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace EtoA\Admin\Forms;
 
-use EtoA\Core\Configuration\ConfigurationService;
 use FleetAction;
 use MessageBox;
 use Pimple\Container;
@@ -16,7 +15,7 @@ abstract class AdvancedForm
     protected Container $app;
     private Environment $twig;
 
-    public final function __construct(Container $app, Environment $twig)
+    final public function __construct(Container $app, Environment $twig)
     {
         $this->app = $app;
         $this->twig = $twig;
@@ -67,10 +66,10 @@ abstract class AdvancedForm
      *
      * name	                DB Field Name
      * text	                Field Description
-     * type                 Field Type: text, password, textarea, timestamp, radio, select, checkbox, email, url, numeric
+     * type                 Field Type: text, textarea, radio, select, numeric
      * def_val              Default Value
-     * size                 Field length (text, password, date, email, url)
-     * maxlen               Max Text length (text, password, date, email, url)
+     * size                 Field length (text, date)
+     * maxlen               Max Text length (text, date)
      * rows                 Rows (textarea)
      * cols                 Cols (textarea)
      * rcb_elem (Array)	    Checkbox-/Radio Elements (desc=>value)
@@ -258,9 +257,6 @@ abstract class AdvancedForm
      */
     private function showOverview(array $arr): void
     {
-        /** @var ConfigurationService $config */
-        $config = $this->app[ConfigurationService::class];
-
         foreach ($this->getFields() as $k => $a) {
             if ($a['show_overview'] == 1) {
                 echo "<td class=\"tbldata\">";
@@ -277,24 +273,8 @@ abstract class AdvancedForm
                         echo "" . $arr[$a['name']] . "";
 
                         break;
-                    case "email":
-                        echo "" . $arr[$a['name']] . "";
-
-                        break;
-                    case "url":
-                        echo "" . $arr[$a['name']] . "";
-
-                        break;
                     case "numeric":
                         echo "" . $arr[$a['name']] . "";
-
-                        break;
-                    case "password":
-                        echo "" . $arr[$a['name']] . "";
-
-                        break;
-                    case "timestamp":
-                        echo "" . date($config->get('admin_dateformat'), intval($arr[$a['name']])) . "";
 
                         break;
                     case "textarea":
@@ -308,23 +288,6 @@ abstract class AdvancedForm
                         foreach ($a['rcb_elem'] as $rk => $rv) {
                             if ($arr[$a['name']] == $rv) {
                                 echo $rk;
-                            }
-                        }
-                        echo "";
-
-                        break;
-                    case "checkbox":
-                        echo "";
-                        $cb_temp_arr = array();
-                        foreach ($a['rcb_elem'] as $rk => $rv) {
-                            if (in_array($rv, explode(";", $arr[$a['name']]), true)) {
-                                array_push($cb_temp_arr, $rk);
-                            }
-                        }
-                        for ($cbx = 0; $cbx < count($cb_temp_arr); $cbx++) {
-                            echo $cb_temp_arr[$cbx];
-                            if ($cbx == count($cb_temp_arr) - 1) {
-                                echo ";";
                             }
                         }
                         echo "";
@@ -380,27 +343,7 @@ abstract class AdvancedForm
                     echo "<input type=\"hidden\" name=\"" . $a['name'] . "\" value=\"" . $a['def_val'] . "\" />";
 
                     break;
-                case "email":
-                    echo "<tr><th class=\"tbltitle\" width=\"200\">" . $a['text'] . ":</th>";
-                    echo "<td class=\"tbldata\" width=\"200\"><input type=\"text\" name=\"" . $a['name'] . "\" size=\"" . $a['size'] . "\" maxlength=\"" . $a['maxlen'] . "\" value=\"" . $a['def_val'] . "\" /></td></tr>";
-
-                    break;
-                case "url":
-                    echo "<tr><th class=\"tbltitle\" width=\"200\">" . $a['text'] . ":</th>";
-                    echo "<td class=\"tbldata\" width=\"200\"><input type=\"text\" name=\"" . $a['name'] . "\" size=\"" . $a['size'] . "\" maxlength=\"" . $a['maxlen'] . "\" value=\"" . $a['def_val'] . "\" /></td></tr>";
-
-                    break;
                 case "numeric":
-                    echo "<tr><th class=\"tbltitle\" width=\"200\">" . $a['text'] . ":</th>";
-                    echo "<td class=\"tbldata\" width=\"200\"><input type=\"text\" name=\"" . $a['name'] . "\" size=\"" . $a['size'] . "\" maxlength=\"" . $a['maxlen'] . "\" value=\"" . $a['def_val'] . "\" /></td></tr>";
-
-                    break;
-                case "password":
-                    echo "<tr><th class=\"tbltitle\" width=\"200\">" . $a['text'] . ":</th>";
-                    echo "<td class=\"tbldata\" width=\"200\"><input type=\"password\" name=\"" . $a['name'] . "\" size=\"" . $a['size'] . "\" maxlength=\"" . $a['maxlen'] . "\" value=\"" . $a['def_val'] . "\" /></td></tr>";
-
-                    break;
-                case "timestamp":
                     echo "<tr><th class=\"tbltitle\" width=\"200\">" . $a['text'] . ":</th>";
                     echo "<td class=\"tbldata\" width=\"200\"><input type=\"text\" name=\"" . $a['name'] . "\" size=\"" . $a['size'] . "\" maxlength=\"" . $a['maxlen'] . "\" value=\"" . $a['def_val'] . "\" /></td></tr>";
 
@@ -423,19 +366,6 @@ abstract class AdvancedForm
                     echo "</td></tr>";
 
                     break;
-                case "checkbox":
-                    echo "<tr><th class=\"tbltitle\" width=\"200\">" . $a['text'] . ":</th>";
-                    echo "<td class=\"tbldata\" width=\"200\">";
-                    foreach ($a['rcb_elem'] as $rk => $rv) {
-                        echo $rk . ": <input name=\"" . $a['name'] . "\" type=\"checkbox\" value=\"$rv\"";
-                        if (in_array($rv, $a['rcb_elem_chekced'], true)) {
-                            echo " checked=\"checked\"";
-                        }
-                        echo " /> ";
-                    }
-                    echo "</td></tr>";
-
-                    break;
                 case "select":
                     echo "<tr><th class=\"tbltitle\" width=\"200\">" . $a['text'] . ":</th>";
                     echo "<td class=\"tbldata\" width=\"200\"><select name=\"" . $a['name'] . "\">";
@@ -447,11 +377,6 @@ abstract class AdvancedForm
                         echo ">$rk</option> ";
                     }
                     echo "</td></tr>";
-
-                    break;
-                case "dbimage":
-                    echo "<tr><th class=\"tbltitle\" width=\"200\">" . $a['text'] . ":</th>";
-                    echo "<td class=\"tbldata\" width=\"200\"><input type=\"file\" name=\"" . $a['name'] . "\" size=\"" . $a['size'] . "\" maxlength=\"" . $a['maxlen'] . "\" /></td></tr>";
 
                     break;
                 case "fleetaction":
@@ -509,24 +434,8 @@ abstract class AdvancedForm
                     $vsql .= "'" . addslashes($request->request->get($a['name'])) . "'";
 
                     break;
-                case "email":
-                    $vsql .= "'" . $request->request->get($a['name']) . "'";
-
-                    break;
-                case "url":
-                    $vsql .= "'" . $request->request->get($a['name']) . "'";
-
-                    break;
                 case "numeric":
                     $vsql .= "'" . $request->request->get($a['name']) . "'";
-
-                    break;
-                case "password":
-                    $vsql .= "'" . md5($request->request->get($a['name'])) . "'";
-
-                    break;
-                case "timestamp":
-                    $vsql .= "UNIX_TIMESTAMP('" . $request->request->get($a['name']) . "')";
 
                     break;
                 case "textarea":
@@ -537,39 +446,8 @@ abstract class AdvancedForm
                     $vsql .= "'" . $request->request->get($a['name']) . "'";
 
                     break;
-                case "checkbox":
-                    $vsql .= "'" . $request->request->get($a['name']) . "'";
-
-                    break;
                 case "select":
                     $vsql .= "'" . $request->request->get($a['name']) . "'";
-
-                    break;
-                case "dbimage":
-
-                    if ($_FILES[$a['name']]['name'] != "") {
-                        $image_type = $_FILES[$a['name']]['type'];
-                        if (stristr($type, "image/")) {
-                            $iminfo = getimagesize($_FILES[$a['name']]['tmp_name']);
-                            $imdata = addslashes(fread(fopen($form_data, "r"), filesize($form_data)));
-
-                            $image = imagecreatefromjpeg($_FILES[$a['name']]['tmp_name']);
-                            $image1 = imagecreate(150, 150 * $iminfo['1'] / $iminfo['0']);
-                            $farbe_body = imagecolorallocate($image1, 51, 51, 51);
-                            imagecopyresized($image1, $image, 0, 0, 0, 0, 150, 150 * $iminfo['1'] / $iminfo['0'], $iminfo['0'], $iminfo['1']);
-                            imagejpeg($image1, $_FILES[$a['name']]['tmp_name']);
-                            $imtdata = addslashes(fread(fopen($_FILES[$a['name']]['tmp_name'], "r"), filesize($form_data)));
-                        } else {
-                            die("Sorry, this file is not an image!<br/><br/><a href=\"?\">Back</a>");
-                        }
-                    } else {
-                        die("Sorry, you haven't choosen a file!<br/><br/><a href=\"?\">Back</a>");
-                    }
-
-
-                    $fsql .= ",`" . $a['db_image_thumb_field'] . "`,`" . $a['db_image_type_field'] . "`";
-                    $vsqlsp .= ",'" . $imtdata . "','" . $_FILES[$a['name']]['type'] . "'";
-                    $vsql .= "'" . $imdata . "'";
 
                     break;
                 case "fleetaction":
@@ -633,9 +511,6 @@ abstract class AdvancedForm
      */
     private function editDataset(array $arr): void
     {
-        /** @var ConfigurationService $config */
-        $config = $this->app[ConfigurationService::class];
-
         $hidden_rows = array();
 
         echo "<tr><td style=\"vertical-align:top;\"><table style=\"width:100%;\">";
@@ -661,24 +536,8 @@ abstract class AdvancedForm
                     echo "<input type=\"hidden\" name=\"" . $fieldDefinition['name'] . "\" value=\"" . $arr[$fieldDefinition['name']] . "\" />";
 
                     break;
-                case "email":
-                    echo "<input $stl type=\"text\" name=\"" . $fieldDefinition['name'] . "\" size=\"" . $fieldDefinition['size'] . "\" maxlength=\"" . $fieldDefinition['maxlen'] . "\" value=\"" . $arr[$fieldDefinition['name']] . "\" />";
-
-                    break;
-                case "url":
-                    echo "<input $stl type=\"text\" name=\"" . $fieldDefinition['name'] . "\" size=\"" . $fieldDefinition['size'] . "\" maxlength=\"" . $fieldDefinition['maxlen'] . "\" value=\"" . $arr[$fieldDefinition['name']] . "\" />";
-
-                    break;
                 case "numeric":
                     echo "<input $stl type=\"text\" name=\"" . $fieldDefinition['name'] . "\" size=\"" . $fieldDefinition['size'] . "\" maxlength=\"" . $fieldDefinition['maxlen'] . "\" value=\"" . $arr[$fieldDefinition['name']] . "\" />";
-
-                    break;
-                case "password":
-                    echo "<input $stl type=\"password\" name=\"" . $fieldDefinition['name'] . "\" size=\"" . $fieldDefinition['size'] . "\" maxlength=\"" . $fieldDefinition['maxlen'] . "\" value=\"\" />";
-
-                    break;
-                case "timestamp":
-                    echo "<input $stl type=\"text\" name=\"" . $fieldDefinition['name'] . "\" size=\"" . $fieldDefinition['size'] . "\" maxlength=\"" . $fieldDefinition['maxlen'] . "\" value=\"" . date($config->get('admin_dateformat'), intval($arr[$fieldDefinition['name']])) . "\" />";
 
                     break;
                 case "textarea":
@@ -721,17 +580,6 @@ abstract class AdvancedForm
                             $hidden_rows = $fieldDefinition['hide_show'];
                         }
                     }
-
-                    break;
-                case "checkbox":
-                    foreach ($fieldDefinition['rcb_elem'] as $rk => $rv) {
-                        echo $rk . ": <input name=\"" . $fieldDefinition['name'] . "\" type=\"checkbox\" value=\"$rv\"";
-                        if (in_array($rv, explode(";", $arr[$fieldDefinition['name']]), true)) {
-                            echo " checked=\"checked\"";
-                        }
-                        echo " /> ";
-                    }
-                    echo "";
 
                     break;
                 case "select":
@@ -799,28 +647,8 @@ abstract class AdvancedForm
                     $sql .= "`" . $a['name'] . "` = '" . addslashes($request->request->get($a['name'])) . "'";
 
                     break;
-                case "email":
-                    $sql .= "`" . $a['name'] . "` = '" . $request->request->get($a['name']) . "'";
-
-                    break;
-                case "url":
-                    $sql .= "`" . $a['name'] . "` = '" . $request->request->get($a['name']) . "'";
-
-                    break;
                 case "numeric":
                     $sql .= "`" . $a['name'] . "` = '" . $request->request->get($a['name']) . "'";
-
-                    break;
-                case "password":
-                    if ($request->request->get($a['name']) != "") {
-                        $sql .= "`" . $a['name'] . "` = '" . md5($request->request->get($a['name'])) . "'";
-                    } else {
-                        $cntadd = 0;
-                    }
-
-                    break;
-                case "timestamp":
-                    $sql .= "`" . $a['name'] . "` = UNIX_TIMESTAMP('" . $request->request->get($a['name']) . "')";
 
                     break;
                 case "textarea":
@@ -828,10 +656,6 @@ abstract class AdvancedForm
 
                     break;
                 case "radio":
-                    $sql .= "`" . $a['name'] . "` = '" . $request->request->get($a['name']) . "'";
-
-                    break;
-                case "checkbox":
                     $sql .= "`" . $a['name'] . "` = '" . $request->request->get($a['name']) . "'";
 
                     break;
@@ -888,9 +712,6 @@ abstract class AdvancedForm
      */
     private function deleteDataset(array $arr): void
     {
-        /** @var ConfigurationService $config */
-        $config = $this->app[ConfigurationService::class];
-
         foreach ($this->getFields() as $k => $a) {
             switch ($a['type']) {
                 case "text":
@@ -898,29 +719,9 @@ abstract class AdvancedForm
                     echo "<td class=\"tbldata\" width=\"200\">" . $arr[$a['name']] . "</td></tr>";
 
                     break;
-                case "email":
-                    echo "<tr><th class=\"tbltitle\" width=\"200\">" . $a['text'] . ":</th>";
-                    echo "<td class=\"tbldata\" width=\"200\">" . $arr[$a['name']] . "</td></tr>";
-
-                    break;
-                case "url":
-                    echo "<tr><th class=\"tbltitle\" width=\"200\">" . $a['text'] . ":</th>";
-                    echo "<td class=\"tbldata\" width=\"200\">" . $arr[$a['name']] . "</td></tr>";
-
-                    break;
                 case "numeric":
                     echo "<tr><th class=\"tbltitle\" width=\"200\">" . $a['text'] . ":</th>";
                     echo "<td class=\"tbldata\" width=\"200\">" . $arr[$a['name']] . "</td></tr>";
-
-                    break;
-                case "password":
-                    echo "<tr><th class=\"tbltitle\" width=\"200\">" . $a['text'] . ":</th>";
-                    echo "<td class=\"tbldata\" width=\"200\">" . $arr[$a['name']] . "</td></tr>";
-
-                    break;
-                case "timestamp":
-                    echo "<tr><th class=\"tbltitle\" width=\"200\">" . $a['text'] . ":</th>";
-                    echo "<td class=\"tbldata\" width=\"200\">" . date($config->get('admin_dateformat'), intval($arr[$a['name']])) . "</td></tr>";
 
                     break;
                 case "textarea":
@@ -934,24 +735,6 @@ abstract class AdvancedForm
                     foreach ($a['rcb_elem'] as $rk => $rv) {
                         if ($arr[$a['name']] == $rv) {
                             echo $rk;
-                        }
-                    }
-                    echo "</td></tr>";
-
-                    break;
-                case "checkbox":
-                    echo "<tr><th class=\"tbltitle\" width=\"200\">" . $a['text'] . ":</th>";
-                    echo "<td class=\"tbldata\" width=\"200\">";
-                    $cb_temp_arr = array();
-                    foreach ($a['rcb_elem'] as $rk => $rv) {
-                        if (in_array($rv, explode(";", $arr[$a['name']]), true)) {
-                            array_push($cb_temp_arr, $rk);
-                        }
-                    }
-                    for ($cbx = 0; $cbx < count($cb_temp_arr); $cbx++) {
-                        echo $cb_temp_arr[$cbx];
-                        if ($cbx == count($cb_temp_arr) - 1) {
-                            echo "<br/>";
                         }
                     }
                     echo "</td></tr>";
