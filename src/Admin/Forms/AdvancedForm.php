@@ -125,8 +125,8 @@ abstract class AdvancedForm extends Form
                 if ($this->getImagePath() !== null) {
                     $path = preg_replace('/<DB_TABLE_ID>/', $arr[$this->getTableId()], $this->getImagePath());
                     if (is_file($path)) {
-                        $imsize = getimagesize($path);
-                        echo "<td class=\"tbldata\" style=\"background:#000;width:" . $imsize[0] . "px;\">
+                        $imageSize = getimagesize($path);
+                        echo "<td class=\"tbldata\" style=\"background:#000;width:" . $imageSize[0] . "px;\">
                             <a href=\"?" . URL_SEARCH_STRING . "&amp;action=edit&amp;id=" . $arr[$this->getTableId()] . "\">
                             <img src=\"" . $path . "\" align=\"top\"/>
                             </a></td>";
