@@ -44,7 +44,7 @@ abstract class Form
      *
      * name	                DB Field Name
      * text	                Field Description
-     * type                 Field Type: text, textarea, radio, select, numeric, color
+     * type                 Field Type: text, textarea, radio, select, numeric, decimal, color
      * def_val              Default Value
      * size                 Field length (text)
      * maxlen               Max Text length (text)
@@ -56,7 +56,6 @@ abstract class Form
      * @return array<array<string,mixed>>
      */
     abstract protected function getFields(): array;
-
 
     /**
      * @param array<string,mixed> $field
@@ -71,6 +70,14 @@ abstract class Form
                 return "<input
                     $stl
                     type=\"number\"
+                    name=\"" . $name . "\"
+                    value=\"" . $value . "\"
+                />";
+            case "decimal":
+                return "<input
+                    $stl
+                    type=\"number\"
+                    step=\".01\"
                     name=\"" . $name . "\"
                     value=\"" . $value . "\"
                 />";
