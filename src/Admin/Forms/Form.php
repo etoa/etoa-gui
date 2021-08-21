@@ -59,6 +59,7 @@ abstract class Form
 
     /**
      * @param array<string,mixed> $field
+     * @param array<string> $hidden_rows
      */
     protected function createInput(array $field, string $name, string $value, array &$hidden_rows = []): string
     {

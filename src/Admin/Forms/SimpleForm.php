@@ -111,7 +111,7 @@ abstract class SimpleForm extends Form
         }
     }
 
-    private function applyDeletions($request): void
+    private function applyDeletions(Request $request): void
     {
         $deleted = false;
         foreach ($request->request->all() as $key => $val) {
