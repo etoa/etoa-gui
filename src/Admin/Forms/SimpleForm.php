@@ -58,9 +58,9 @@ abstract class SimpleForm extends Form
         if ($request->request->has('new_submit')) {
             $values = [];
             $params = [];
-            foreach ($this->getFields() as $k => $a) {
-                $values[$a['name']] = ':'.$a['name'];
-                $params[$a['name']] = $a['def_val'] ?? "";
+            foreach ($this->getFields() as $k => $field) {
+                $values[$field['name']] = ':' . $field['name'];
+                $params[$field['name']] = $field['def_val'] ?? "";
             }
 
             $this->createQueryBuilder()
@@ -83,62 +83,23 @@ abstract class SimpleForm extends Form
         if (count($rows) > 0) {
             echo "<table>";
             echo "<tr>";
-            foreach ($this->getFields() as $k => $a) {
-                if ($a['show_overview'] == 1) {
-                    echo "<th class=\"tbltitle\">" . $a['text'] . "</th>";
+            foreach ($this->getFields() as $k => $field) {
+                if ($field['show_overview'] == 1) {
+                    echo "<th class=\"tbltitle\">" . $field['text'] . "</th>";
                 }
             }
             echo "<th class=\"tbltitle\">Löschen</th>";
             echo "</tr>";
             foreach ($rows as $arr) {
                 echo "<tr>";
-                foreach ($this->getFields() as $k => $a) {
+                foreach ($this->getFields() as $key => $field) {
                     echo "<td class=\"tbldata\">";
-                    switch ($a['type']) {
-                        case "text":
-                            echo "<input type=\"text\" name=\"" . $a['name'] . "[" . $arr[$this->getTableId()] . "]\" value=\"" . $arr[$a['name']] . "\" size=\"" . $a['size'] . "\" maxlength=\"" . $a['maxlen'] . "\" /></td>\n";
-
-                            break;
-                        case "numeric":
-                            echo "<input type=\"text\" name=\"" . $a['name'] . "[" . $arr[$this->getTableId()] . "]\" value=\"" . $arr[$a['name']] . "\" size=\"" . $a['size'] . "\" maxlength=\"" . $a['maxlen'] . "\" /></td>\n";
-
-                            break;
-                        case "textarea":
-                            echo "<input type=\"text\" name=\"" . $a['name'] . "[" . $arr[$this->getTableId()] . "]\" value=\"";
-                            if (strlen($arr[$a['name']]) > 20) {
-                                echo substr($arr[$a['name']], 0, 18) . "...";
-                            } else {
-                                echo $arr[$a['name']];
-                            }
-                            echo "\" /></td>\n";
-
-                            break;
-                        case "radio":
-                            echo "<input type=\"text\" name=\"" . $a['name'] . "[" . $arr[$this->getTableId()] . "]\" value=\"" . $arr[$a['name']] . "\" /></td>\n";
-
-                            break;
-                        case "select":
-                            echo "<select name=\"" . $a['name'] . "[" . $arr[$this->getTableId()] . "]\">\n";
-                            if ($arr[$a['name']] == 0 || $arr[$a['name']] == "") {
-                                echo "<option selected=\"selected\">(Wählen...)</option>";
-                            }
-                            foreach ($a['select_elem'] as $sd => $sv) {
-                                echo "<option value=\"$sv\"";
-                                if ($arr[$a['name']] == $sv) {
-                                    echo " selected=\"selected\"";
-                                }
-                                echo ">$sd</option>\n";
-                            }
-                            echo "</select></td>\n";
-
-                            break;
-                        case "hidden":
-                            echo "<input type=\"hidden\" name=\"" . $a['name'] . "[" . $arr[$this->getTableId()] . "]\" value=\"" . $arr[$a['name']] . "\" size=\"" . $a['size'] . "\" maxlength=\"" . $a['maxlen'] . "\" />\n";
-
-                            break;
-                    }
+                    echo $this->createInput($field, $arr);
+                    echo "</td>\n";
                 }
-                echo "<td class=\"tbldata\"><input type=\"checkbox\" name=\"del[" . $arr[$this->getTableId()] . "]\" value=\"1\" /></td>\n";
+                echo "<td class=\"tbldata\">
+                    <input type=\"checkbox\" name=\"del[" . $arr[$this->getTableId()] . "]\" value=\"1\" />
+                </td>\n";
                 echo "</tr>\n";
             }
             echo "</table><br/>";
@@ -149,5 +110,56 @@ abstract class SimpleForm extends Form
             echo "<p align=\"center\"><input type=\"submit\" name=\"new_submit\" value=\"Neuer Datensatz\" />&nbsp;</p>";
         }
         echo "</form>";
+    }
+
+    /**
+     * @param array<string,mixed> $field
+     * @param array<string,string> $arr
+     */
+    private function createInput(array $field, array $arr): string
+    {
+        switch ($field['type']) {
+            case "readonly":
+                return $arr[$field['name']];
+            case "color":
+                return "<input
+                    type=\"color\"
+                    name=\"" . $field['name'] . "[" . $arr[$this->getTableId()] . "]\"
+                    value=\"" . $arr[$field['name']] . "\"
+                />";
+            case "textarea":
+                return "<textarea
+                    name=\"" . $field['name'] . "[" . $arr[$this->getTableId()] . "]\"
+                    >" . $arr[$field['name']] . "</textarea>";
+            case "select":
+                $str = "<select name=\"" . $field['name'] . "[" . $arr[$this->getTableId()] . "]\">";
+                if ($arr[$field['name']] == 0 || $arr[$field['name']] == "") {
+                    $str .= "<option selected=\"selected\">(Wählen...)</option>";
+                }
+                foreach ($field['select_elem'] as $sd => $sv) {
+                    $str .= "<option value=\"$sv\"";
+                    if ($arr[$field['name']] == $sv) {
+                        $str .= " selected=\"selected\"";
+                    }
+                    $str .= ">$sd</option>\n";
+                }
+                $str .= "</select>";
+
+                return $str;
+            case "hidden":
+                return "<input
+                    type=\"hidden\"
+                    name=\"" . $field['name'] . "[" . $arr[$this->getTableId()] . "]\"
+                    value=\"" . $arr[$field['name']] . "\"
+                />";
+            default:
+                return "<input
+                    type=\"text\"
+                    name=\"" . $field['name'] . "[" . $arr[$this->getTableId()] . "]\"
+                    value=\"" . $arr[$field['name']] . "\"
+                    size=\"" . $field['size'] . "\"
+                    maxlength=\"" . $field['maxlen'] . "\"
+                />";
+        }
     }
 }

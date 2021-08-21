@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace EtoA\Admin\Forms;
 
-class DefenseCategoriesForm extends AdvancedForm
+class DefenseCategoriesForm extends SimpleForm
 {
     protected function getName(): string
     {

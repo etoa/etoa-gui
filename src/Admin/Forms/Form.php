@@ -43,7 +43,7 @@ abstract class Form
      *
      * name	                DB Field Name
      * text	                Field Description
-     * type                 Field Type: text, textarea, radio, select, numeric
+     * type                 Field Type: text, textarea, radio, select, numeric, color
      * def_val              Default Value
      * size                 Field length (text, date)
      * maxlen               Max Text length (text, date)

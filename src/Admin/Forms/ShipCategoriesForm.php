@@ -30,20 +30,6 @@ class ShipCategoriesForm extends SimpleForm
     {
         return [
             [
-                "name" => "cat_id",
-                "text" => "ID",
-                "type" => "text",
-                "def_val" => "",
-                "size" => "1",
-                "maxlen" => "0",
-                "rows" => "0",
-                "cols" => "0",
-                "rcb_elem" => "",
-                "rcb_elem_checked" => "",
-                "select_elem" => "",
-                "select_elem_checked" => "",
-                "show_overview" => 1,
-            ], [
                 "name" => "cat_name",
                 "text" => "Kategoriename",
                 "type" => "text",
@@ -74,7 +60,7 @@ class ShipCategoriesForm extends SimpleForm
             ], [
                 "name" => "cat_color",
                 "text" => "Farbe",
-                "type" => "text",
+                "type" => "color",
                 "def_val" => "#ffffff",
                 "size" => "7",
                 "maxlen" => "7",
