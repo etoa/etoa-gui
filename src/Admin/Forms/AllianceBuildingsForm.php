@@ -169,7 +169,7 @@ class AllianceBuildingsForm extends AdvancedForm
                 "maxlen" => "",
                 "rows" => "",
                 "cols" => "",
-                "select_elem" => $this->getSelectElements('alliance_buildings', "alliance_building_id", "alliance_building_name", "alliance_building_id"),
+                "items" => $this->getSelectElements('alliance_buildings', "alliance_building_id", "alliance_building_name", "alliance_building_id"),
                 "show_overview" => true,
             ], [
                 "name" => "alliance_building_needed_level",

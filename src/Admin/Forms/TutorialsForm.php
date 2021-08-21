@@ -53,7 +53,7 @@ class TutorialsForm extends AdvancedForm
                 "maxlen" => "250",
                 "rows" => "",
                 "cols" => "",
-                "select_elem" => $this->getSelectElements('tutorial', "tutorial_id", "tutorial_title", "tutorial_title", ["0" => "-"]),
+                "items" => $this->getSelectElements('tutorial', "tutorial_id", "tutorial_title", "tutorial_title", ["0" => "-"]),
                 "show_overview" => true,
             ], [
                 "name" => "text_title",

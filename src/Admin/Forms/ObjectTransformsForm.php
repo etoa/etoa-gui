@@ -38,7 +38,7 @@ class ObjectTransformsForm extends AdvancedForm
                 "maxlen" => "",
                 "rows" => "",
                 "cols" => "",
-                "select_elem" => $this->getSelectElements('defense', "def_id", "def_name", "def_order"),
+                "items" => $this->getSelectElements('defense', "def_id", "def_name", "def_order"),
                 "show_overview" => true,
             ], [
                 "name" => "ship_id",
@@ -49,7 +49,7 @@ class ObjectTransformsForm extends AdvancedForm
                 "maxlen" => "",
                 "rows" => "",
                 "cols" => "",
-                "select_elem" => $this->getSelectElements('ships', "ship_id", "ship_name", "ship_order"),
+                "items" => $this->getSelectElements('ships', "ship_id", "ship_name", "ship_order"),
                 "show_overview" => true,
             ], [
                 "name" => "costs_metal",

@@ -89,7 +89,7 @@ class BuildingsForm extends AdvancedForm
                 "maxlen" => "",
                 "rows" => "",
                 "cols" => "",
-                "select_elem" => $this->getSelectElements('building_types', "type_id", "type_name", "type_name"),
+                "items" => $this->getSelectElements('building_types', "type_id", "type_name", "type_name"),
                 "show_overview" => true,
             ],
             [

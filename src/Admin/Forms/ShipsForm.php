@@ -109,14 +109,14 @@ class ShipsForm extends AdvancedForm
                 "maxlen" => "250",
                 "rows" => "",
                 "cols" => "",
-                "select_elem" => $this->getSelectElements('ship_cat', "cat_id", "cat_name", "cat_name", array("0" => "-")),
+                "items" => $this->getSelectElements('ship_cat', "cat_id", "cat_name", "cat_name", array("0" => "-")),
                 "show_overview" => true,
             ], [
                 "name" => "ship_race_id",
                 "text" => "Rasse",
                 "type" => "select",
                 "def_val" => "",
-                "select_elem" => $this->getSelectElements('races', "race_id", "race_name", "race_name", array("0" => "-")),
+                "items" => $this->getSelectElements('races', "race_id", "race_name", "race_name", array("0" => "-")),
                 "show_overview" => true,
                 "line" => 1,
             ], [

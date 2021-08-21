@@ -158,7 +158,7 @@ class AllianceTechnologiesForm extends AdvancedForm
                 "maxlen" => "",
                 "rows" => "",
                 "cols" => "",
-                "select_elem" => $this->getSelectElements('alliance_technologies', "alliance_tech_id", "alliance_tech_name", "alliance_tech_id"),
+                "items" => $this->getSelectElements('alliance_technologies', "alliance_tech_id", "alliance_tech_name", "alliance_tech_id"),
                 "show_overview" => true,
             ], [
                 "name" => "alliance_tech_needed_level",

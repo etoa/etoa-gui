@@ -46,13 +46,12 @@ abstract class Form
      * text	                Field Description
      * type                 Field Type: text, textarea, radio, select, numeric, color
      * def_val              Default Value
-     * size                 Field length (text, date)
-     * maxlen               Max Text length (text, date)
+     * size                 Field length (text)
+     * maxlen               Max Text length (text)
      * rows                 Rows (textarea)
      * cols                 Cols (textarea)
-     * items (Array)	    Checkbox-/Radio Elements (desc=>value)
-     * select_elem (Array)  Select Elements (desc=>value)
-     * show_overview        Set 1 to show on overview page
+     * items (Array)	    Checkbox-/Radio-/Select-Elements (label => value)
+     * show_overview        Set true to show on overview page
      *
      * @return array<array<string,mixed>>
      */
@@ -93,12 +92,12 @@ abstract class Form
                 if ($value == 0 || $value == "") {
                     $str .= "<option selected=\"selected\">(Wählen...)</option>";
                 }
-                foreach ($field['select_elem'] as $sd => $sv) {
-                    $str .= "<option value=\"$sv\"";
-                    if ($value == $sv) {
+                foreach ($field['items'] ?? [] as $label => $val) {
+                    $str .= "<option value=\"$val\"";
+                    if ($value == $val) {
                         $str .= " selected=\"selected\"";
                     }
-                    $str .= ">$sd</option>";
+                    $str .= ">$label</option>";
                 }
                 $str .= "</select>";
 

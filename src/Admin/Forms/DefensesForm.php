@@ -226,7 +226,7 @@ class DefensesForm extends AdvancedForm
                 "maxlen" => "250",
                 "rows" => "",
                 "cols" => "",
-                "select_elem" => $this->getSelectElements('def_cat', "cat_id", "cat_name", "cat_name", array("0" => "(Keine)")),
+                "items" => $this->getSelectElements('def_cat', "cat_id", "cat_name", "cat_name", array("0" => "(Keine)")),
                 "show_overview" => true,
             ], [
                 "name" => "def_race_id",
@@ -237,7 +237,7 @@ class DefensesForm extends AdvancedForm
                 "maxlen" => "250",
                 "rows" => "",
                 "cols" => "",
-                "select_elem" => $this->getSelectElements('races', "race_id", "race_name", "race_name", array("0" => "(Keine)")),
+                "items" => $this->getSelectElements('races', "race_id", "race_name", "race_name", array("0" => "(Keine)")),
                 "show_overview" => true,
             ],
         ];

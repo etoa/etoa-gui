@@ -222,9 +222,9 @@ abstract class AdvancedForm extends Form
 
                 return '-';
             case "select":
-                foreach ($field['select_elem'] as $sd => $sv) {
-                    if ($arr[$field['name']] == $sv) {
-                        return $sd;
+                foreach ($field['items'] ?? [] as $label => $val) {
+                    if ($arr[$field['name']] == $val) {
+                        return $label;
                     }
                 }
 
