@@ -53,12 +53,12 @@ abstract class Form
      * items (Array)	    Checkbox-/Radio-/Select-Elements (label => value)
      * show_overview        Set true to show on overview page
      *
-     * @return array<array<string,mixed>>
+     * @return array<array{name:string,text:string,type:string,def_val?:string,size?:int,maxlen?:int,rows?:int,cols?:int,items?:array,show_overview?:bool,link_in_overview?:bool,show_hide?:array<string>,hide_show?:array<string>,line?:bool,columnend?:bool}>
      */
     abstract protected function getFields(): array;
 
     /**
-     * @param array<string,mixed> $field
+     * @param array{name:string,text:string,type:string,def_val?:string,size?:int,maxlen?:int,rows?:int,cols?:int,items?:array,show_overview?:bool,link_in_overview?:bool,show_hide?:array<string>,hide_show?:array<string>,line?:bool,columnend?:bool} $field
      * @param array<string> $hidden_rows
      */
     protected function createInput(array $field, string $name, string $value, array &$hidden_rows = []): string

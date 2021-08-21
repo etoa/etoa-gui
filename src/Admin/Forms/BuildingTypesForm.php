@@ -33,8 +33,8 @@ class BuildingTypesForm extends SimpleForm
                 "name" => "type_name",
                 "text" => "Kategoriename",
                 "type" => "text",
-                "size" => "30",
-                "maxlen" => "250",
+                "size" => 30,
+                "maxlen" => 250,
             ], [
                 "name" => "type_order",
                 "text" => "Sortierung",

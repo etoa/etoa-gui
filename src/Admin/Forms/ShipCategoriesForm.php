@@ -33,8 +33,8 @@ class ShipCategoriesForm extends SimpleForm
                 "name" => "cat_name",
                 "text" => "Kategoriename",
                 "type" => "text",
-                "size" => "30",
-                "maxlen" => "250",
+                "size" => 30,
+                "maxlen" => 250,
             ], [
                 "name" => "cat_order",
                 "text" => "Sortierung",

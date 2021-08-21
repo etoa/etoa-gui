@@ -199,7 +199,7 @@ abstract class AdvancedForm extends Form
     }
 
     /**
-     * @param array<string,mixed> $field
+     * @param array{name:string,text:string,type:string,def_val?:string,size?:int,maxlen?:int,rows?:int,cols?:int,items?:array,show_overview?:bool,link_in_overview?:bool,show_hide?:array<string>,hide_show?:array<string>,line?:bool,columnend?:bool} $field
      * @param array<string,string> $arr
      */
     private function showFieldValue(array $field, array $arr): string
@@ -377,10 +377,10 @@ abstract class AdvancedForm extends Form
                 $value = $arr[$field['name']];
                 echo $this->createInput($field, $name, $value, $hidden_rows);
                 echo "</td>\n</tr>\n";
-                if (isset($field['line']) && $field['line'] == 1) {
+                if ($field['line'] ?? false) {
                     echo "<tr><td style=\"height:4px;background:#000\" colspan=\"2\"></td></tr>";
                 }
-                if (isset($field['columnend']) && $field['columnend'] == 1) {
+                if ($field['columnend'] ?? false) {
                     echo "</table></td><td style=\"vertical-align:top;\"><table style=\"width:100%;\">";
                 }
             }

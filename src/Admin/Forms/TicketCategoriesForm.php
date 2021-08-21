@@ -33,8 +33,8 @@ class TicketCategoriesForm extends SimpleForm
                 "name" => "name",
                 "text" => "Name",
                 "type" => "text",
-                "size" => "40",
-                "maxlen" => "100",
+                "size" => 40,
+                "maxlen" => 100,
             ], [
                 "name" => "sort",
                 "text" => "Sortierung",
