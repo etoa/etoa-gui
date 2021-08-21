@@ -1,14 +1,14 @@
 <?PHP
 
+use EtoA\Admin\Forms\AllianceBuildingsForm;
+use EtoA\Admin\Forms\AllianceTechnologiesForm;
 use EtoA\Alliance\AllianceDiplomacyRepository;
-use EtoA\Alliance\AllianceHistoryRepository;
 use EtoA\Alliance\AllianceRankRepository;
 use EtoA\Alliance\AllianceRepository;
 use EtoA\Alliance\AllianceService;
 use EtoA\Alliance\InvalidAllianceParametersException;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\User\UserRepository;
-use EtoA\User\UserService;
 use Symfony\Component\HttpFoundation\Request;
 use Twig\Environment;
 
@@ -23,6 +23,7 @@ $allianceRankRepository = $app[AllianceRankRepository::class];
 
 /** @var AllianceDiplomacyRepository $allianceDiplomacyRepository */
 $allianceDiplomacyRepository = $app[AllianceDiplomacyRepository::class];
+
 /** @var Request */
 $request = Request::createFromGlobals();
 
@@ -32,9 +33,9 @@ $config = $app[ConfigurationService::class];
 if ($sub == "imagecheck") {
     imagecheck($request, $repository);
 } elseif ($sub == "buildingsdata") {
-    advanced_form("alliancebuildings", $twig);
+    AllianceBuildingsForm::render($app, $twig, $request);
 } elseif ($sub == "techdata") {
-    advanced_form("alliancetechnologies", $twig);
+    AllianceTechnologiesForm::render($app, $twig, $request);
 } elseif ($sub == "create") {
     create($request, $repository, $service);
 } elseif ($sub == "news") {

@@ -31,11 +31,6 @@ parameters:
 			path: htdocs/admin/inc/admin_functions.inc.php
 
 		-
-			message: "#^Variable static method call on string\\.$#"
-			count: 2
-			path: htdocs/admin/inc/advanced_forms.php
-
-		-
 			message: "#^Call to function in_array\\(\\) requires parameter \\#3 to be set\\.$#"
 			count: 1
 			path: htdocs/admin/inc/form_functions.php

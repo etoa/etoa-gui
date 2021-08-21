@@ -4,6 +4,8 @@
 // Fehlerhafte Logins
 //
 
+use EtoA\Admin\Forms\RacesForm;
+use EtoA\Admin\Forms\SpecialistsForm;
 use EtoA\Alliance\AllianceRepository;
 use EtoA\Log\LogFacility;
 use EtoA\Log\LogRepository;
@@ -107,7 +109,7 @@ elseif ($sub == "create") {
 // Fehlerhafte Logins
 //
 elseif ($sub == "specialists") {
-    advanced_form("specialists", $twig);
+    SpecialistsForm::render($app, $twig, $request);
 }
 
 //
@@ -164,7 +166,7 @@ elseif ($sub == "userlog") {
 // Rassen
 //
 elseif ($sub == "race") {
-    advanced_form("races", $twig);
+    RacesForm::render($app, $twig, $request);
 }
 
 //

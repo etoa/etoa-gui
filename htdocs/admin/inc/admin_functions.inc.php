@@ -25,19 +25,6 @@ use EtoA\User\UserRepository;
 
 /**
  * Generates a page for editing table date with
- * an advanced form
- *
- * @param string $module Module-key
- */
-function advanced_form($module, $twig)
-{
-    require_once("inc/form_functions.php");
-    require_once("forms/$module.php");
-    require_once("inc/advanced_forms.php");
-}
-
-/**
- * Generates a page for editing table date with
  * a simple form
  *
  * @param string $module Module-key
