@@ -84,8 +84,6 @@ abstract class AdvancedForm extends Form
         $this->twig->addGlobal("title", $this->getName());
         $this->twig->addGlobal("subtitle", "Übersicht");
 
-        echo "<p>Um einen Datensatz hinzuzufügen, zu ändern oder zu löschen klicke  bitte auf die entsprechenden Links oder Buttons!</p>";
-
         echo "<form action=\"?" . URL_SEARCH_STRING . "\" method=\"post\">";
         echo "<input type=\"button\" value=\"Neuer Datensatz hinzufügen\" name=\"new\" onclick=\"document.location='?" . URL_SEARCH_STRING . "&amp;action=new'\" /><br/><br/>";
 
@@ -253,7 +251,6 @@ abstract class AdvancedForm extends Form
         $this->twig->addGlobal("title", $this->getName());
         $this->twig->addGlobal("subtitle", "Neuer Datensatz");
 
-        echo "<p>Gib die Daten des neuen Datensatzes in die untenstehende Maske ein:</p>";
         echo "<form action=\"?" . URL_SEARCH_STRING . "\" method=\"post\">";
         echo "<table>";
         $this->createNewDataset();
@@ -382,7 +379,6 @@ abstract class AdvancedForm extends Form
 
         $res = mysql_query("SELECT * FROM " . $this->getTable() . " WHERE " . $this->getTableId() . "='" . $request->query->get('id') . "';");
         $arr = mysql_fetch_array($res);
-        echo "<p>Ändere die Daten des Datensatzes und klicke auf 'Übernehmen', um die Daten zu speichern:</p>";
         echo "<form action=\"?" . URL_SEARCH_STRING . "\" method=\"post\">";
         echo "<input type=\"submit\" value=\"Übernehmen\" name=\"edit\" />&nbsp;";
         echo "<input type=\"button\" value=\"Abbrechen\" name=\"editcancel\" onclick=\"document.location='?" . URL_SEARCH_STRING . "'\" /><br/><br/>";
