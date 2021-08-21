@@ -47,18 +47,18 @@ abstract class Form
      * type                 Field Type: text, textarea, radio, select, numeric, decimal, color
      * def_val              Default Value
      * size                 Field length (text)
-     * maxlen               Max Text length (text)
+     * max_len               Max Text length (text)
      * rows                 Rows (textarea)
      * cols                 Cols (textarea)
      * items (Array)	    Checkbox-/Radio-/Select-Elements (label => value)
      * show_overview        Set true to show on overview page
      *
-     * @return array<array{name:string,text:string,type:string,def_val?:string,size?:int,maxlen?:int,rows?:int,cols?:int,items?:array,show_overview?:bool,link_in_overview?:bool,show_hide?:array<string>,hide_show?:array<string>,line?:bool,columnend?:bool}>
+     * @return array<array{name:string,text:string,type:string,def_val?:string,size?:int,max_len?:int,rows?:int,cols?:int,items?:array,show_overview?:bool,link_in_overview?:bool,show_hide?:array<string>,hide_show?:array<string>,line?:bool,column_end?:bool}>
      */
     abstract protected function getFields(): array;
 
     /**
-     * @param array{name:string,text:string,type:string,def_val?:string,size?:int,maxlen?:int,rows?:int,cols?:int,items?:array,show_overview?:bool,link_in_overview?:bool,show_hide?:array<string>,hide_show?:array<string>,line?:bool,columnend?:bool} $field
+     * @param array{name:string,text:string,type:string,def_val?:string,size?:int,max_len?:int,rows?:int,cols?:int,items?:array,show_overview?:bool,link_in_overview?:bool,show_hide?:array<string>,hide_show?:array<string>,line?:bool,column_end?:bool} $field
      * @param array<string> $hidden_rows
      */
     protected function createInput(array $field, string $name, string $value, array &$hidden_rows = []): string
@@ -169,7 +169,7 @@ abstract class Form
                     name=\"" . $name . "\"
                     value=\"" . $value . "\"
                     size=\"" . $field['size'] . "\"
-                    maxlength=\"" . $field['maxlen'] . "\"
+                    maxlength=\"" . $field['max_len'] . "\"
                 />";
         }
     }

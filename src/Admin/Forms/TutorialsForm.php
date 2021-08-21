@@ -55,7 +55,7 @@ class TutorialsForm extends AdvancedForm
                 "text" => "Titel",
                 "type" => "text",
                 "size" => 20,
-                "maxlen" => 250,
+                "max_len" => 250,
                 "show_overview" => true,
                 "link_in_overview" => true,
             ], [

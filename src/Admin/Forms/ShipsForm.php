@@ -74,7 +74,7 @@ class ShipsForm extends AdvancedForm
                 "text" => "Name",
                 "type" => "text",
                 "size" => 20,
-                "maxlen" => 250,
+                "max_len" => 250,
                 "show_overview" => true,
                 "link_in_overview" => true,
             ], [
@@ -249,7 +249,7 @@ class ShipsForm extends AdvancedForm
                     "Nein" => 0,
                 ],
                 "show_overview" => false,
-                "columnend" => true,
+                "column_end" => true,
             ], [
                 "name" => "ship_actions",
                 "text" => "Aktionen",

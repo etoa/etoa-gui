@@ -73,7 +73,7 @@ class DefensesForm extends AdvancedForm
                 "text" => "Name",
                 "type" => "text",
                 "size" => 20,
-                "maxlen" => 250,
+                "max_len" => 250,
                 "show_overview" => true,
                 "link_in_overview" => true,
             ], [
@@ -126,7 +126,7 @@ class DefensesForm extends AdvancedForm
                 "text" => "Punkte",
                 "type" => "readonly",
                 "show_overview" => false,
-                "columnend" => true,
+                "column_end" => true,
             ], [
                 "name" => "def_structure",
                 "text" => "Struktur",

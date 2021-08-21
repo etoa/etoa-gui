@@ -73,7 +73,7 @@ class BuildingsForm extends AdvancedForm
                 "text" => "Name",
                 "type" => "text",
                 "size" => 20,
-                "maxlen" => 250,
+                "max_len" => 250,
                 "show_overview" => true,
                 "link_in_overview" => true,
             ],
@@ -157,7 +157,7 @@ class BuildingsForm extends AdvancedForm
                 "type" => "decimal",
                 "def_val" => "0.00",
                 "show_overview" => false,
-                "columnend" => true,
+                "column_end" => true,
             ],
             [
                 "name" => "building_power_use",

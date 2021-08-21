@@ -40,7 +40,7 @@ class RacesForm extends AdvancedForm
                 "text" => "Rasse",
                 "type" => "text",
                 "size" => 30,
-                "maxlen" => 250,
+                "max_len" => 250,
                 "show_overview" => true,
                 "link_in_overview" => true,
             ],
@@ -65,7 +65,7 @@ class RacesForm extends AdvancedForm
                 "text" => "Adjektiv männlich",
                 "type" => "text",
                 "size" => 30,
-                "maxlen" => 50,
+                "max_len" => 50,
                 "show_overview" => false,
             ],
             [
@@ -73,7 +73,7 @@ class RacesForm extends AdvancedForm
                 "text" => "Adjektiv weiblich",
                 "type" => "text",
                 "size" => 30,
-                "maxlen" => 50,
+                "max_len" => 50,
                 "show_overview" => false,
             ],
             [
@@ -81,7 +81,7 @@ class RacesForm extends AdvancedForm
                 "text" => "Adjektiv plural",
                 "type" => "text",
                 "size" => 30,
-                "maxlen" => 50,
+                "max_len" => 50,
                 "show_overview" => false,
             ],
             [
@@ -89,7 +89,7 @@ class RacesForm extends AdvancedForm
                 "text" => "Leader-Titel",
                 "type" => "text",
                 "size" => 30,
-                "maxlen" => 30,
+                "max_len" => 30,
                 "show_overview" => true,
             ],
             [

@@ -41,7 +41,7 @@ class StarTypesForm extends AdvancedForm
                 "text" => "Kategoriename",
                 "type" => "text",
                 "size" => 30,
-                "maxlen" => 250,
+                "max_len" => 250,
                 "show_overview" => true,
                 "link_in_overview" => true,
             ], [
