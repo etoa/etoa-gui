@@ -2,21 +2,11 @@
 
 namespace EtoA\Missile;
 
-use Doctrine\Common\Cache\CacheProvider;
-use Doctrine\DBAL\Connection;
 use EtoA\Core\AbstractRepository;
 
 class MissileDataRepository extends AbstractRepository
 {
     private const MISSILES_NAMES = 'missiles.names';
-
-    private CacheProvider $cache;
-
-    public function __construct(Connection $connection, CacheProvider $cache)
-    {
-        parent::__construct($connection);
-        $this->cache = $cache;
-    }
 
     /**
      * @return array<int, string>

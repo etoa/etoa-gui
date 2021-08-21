@@ -14,7 +14,7 @@ class DefenseServiceProvider implements ServiceProviderInterface
         };
 
         $pimple[DefenseDataRepository::class] = function (Container $pimple): DefenseDataRepository {
-            return new DefenseDataRepository($pimple['db'], $pimple['db.cache']);
+            return new DefenseDataRepository($pimple['db']);
         };
 
         $pimple[DefenseCategoryRepository::class] = function (Container $pimple): DefenseCategoryRepository {

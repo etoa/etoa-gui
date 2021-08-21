@@ -13,6 +13,8 @@ parameters:
         - tests
         - htdocs
 
+    reportUnmatchedIgnoredErrors: false
+
     excludePaths:
         - htdocs/libs
 
@@ -25,7 +27,6 @@ parameters:
     ignoreErrors:
         - '#Dynamic call to static method PHPUnit\\Framework\\Assert#'
         - '#Dynamic call to static method PHPUnit\\Framework\\TestCase#'
-        - '#Doctrine\\Common\\Cache\\ArrayCache#'
 
         - '#Method EtoA\\[a-z\\]+Test::[a-z]*provider[a-z]*\(\) return type has no value type specified in iterable type array#i'
         - '#Method EtoA\\[a-z\\]+Test::test[a-z]*\(\) has parameter \$[a-z]+ with no value type specified in iterable type#i'

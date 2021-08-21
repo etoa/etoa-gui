@@ -194,9 +194,9 @@ function manageReports(Request $request, ReportRepository $reportRepository, Use
             }
         }
         if ($request->request->has('subject') && $request->request->get('subject') != "") {
-            if (stristr($request->request->get('qmode')['subject'], "%")) $addchars = "%";
+            if (stristr($request->request->all('qmode')['subject'], "%")) $addchars = "%";
             else $addchars = "";
-            $sql .= " AND subject " . stripslashes($request->request->get('qmode')['subject']) . $request->request->get('subject') . "$addchars'";
+            $sql .= " AND subject " . stripslashes($request->request->all('qmode')['subject']) . $request->request->get('subject') . "$addchars'";
         }
 
         if ($request->request->getInt('read') == 1) {
