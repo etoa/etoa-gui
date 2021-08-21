@@ -367,8 +367,40 @@ abstract class AdvancedForm extends Form
 
     public function copy(Request $request): void
     {
-        DuplicateMySQLRecord($this->getTable(), $this->getTableId(), $request->query->get('id'));
-        echo MessageBox::ok("", "Datensatz kopiert!");
+        if ($this->duplicateRecord($this->getTable(), $this->getTableId(), $request->query->getInt('id'))) {
+            echo MessageBox::ok("", "Datensatz kopiert!");
+        }
+    }
+
+    private function duplicateRecord(string $table, string $id_field, int $id): bool
+    {
+        $arr = $this->createQueryBuilder()
+            ->select('*')
+            ->from($table)
+            ->where($id_field . ' = :' . $id_field)
+            ->setParameter($id_field, $id)
+            ->execute()
+            ->fetchAssociative();
+
+        if ($arr === false) {
+            return false;
+        }
+
+        unset($arr[$id_field]);
+
+        $values = $params = [];
+        foreach ($arr as $key => $value) {
+            $values[$key] = ':' . $key;
+            $params[$key] = $value;
+        }
+
+        $this->createQueryBuilder()
+            ->insert($table)
+            ->values($values)
+            ->setParameters($params)
+            ->execute();
+
+        return true;
     }
 
     public function edit(Request $request): void
