@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace EtoA\Admin\Forms;
 
-use FleetAction;
 use MessageBox;
 use Pimple\Container;
 use Symfony\Component\HttpFoundation\Request;
@@ -198,53 +197,6 @@ abstract class AdvancedForm extends Form
         echo "</table></form>";
     }
 
-    /**
-     * @param array{name:string,text:string,type:string,def_val?:string,size?:int,max_len?:int,rows?:int,cols?:int,items?:array,show_overview?:bool,link_in_overview?:bool,show_hide?:array<string>,hide_show?:array<string>,line?:bool,column_end?:bool} $field
-     * @param array<string,string> $arr
-     */
-    private function showFieldValue(array $field, array $arr): string
-    {
-        switch ($field['type']) {
-            case "textarea":
-                $str = $arr[$field['name']];
-                if (strlen($str) > 100) {
-                    $str = explode("\n", wordwrap($str, 100));
-                    $str = $str[0] . '...';
-                }
-
-                return $str;
-            case "radio":
-                foreach ($field['items'] ?? [] as $rk => $rv) {
-                    if ($arr[$field['name']] == $rv) {
-                        return $rk;
-                    }
-                }
-
-                return '-';
-            case "select":
-                foreach ($field['items'] ?? [] as $label => $val) {
-                    if ($arr[$field['name']] == $val) {
-                        return $label;
-                    }
-                }
-
-                return '-';
-            case "fleetaction":
-                $keys = explode(",", $arr[$field['name']]);
-                $actions = FleetAction::getAll();
-                $labels = [];
-                foreach ($actions as $ac) {
-                    if (in_array($ac->code(), $keys, true)) {
-                        $labels[] = $ac->displayName();
-                    }
-                }
-
-                return implode(', ', $labels);
-            default:
-                return $arr[$field['name']];
-        }
-    }
-
     public function create(): void
     {
         $this->twig->addGlobal("title", $this->getName());
@@ -286,7 +238,7 @@ abstract class AdvancedForm extends Form
             switch ($field['type']) {
                 case "readonly":
                     break;
-                case "fleetaction":
+                case "comma_list":
                     $values[$field['name']] = ':' . $field['name'];
                     $params[$field['name']] = is_array($request->request->get($field['name']))
                         ? implode(",", $request->request->get($field['name']))
@@ -417,7 +369,7 @@ abstract class AdvancedForm extends Form
             switch ($field['type']) {
                 case "readonly":
                     break;
-                case "fleetaction":
+                case "comma_list":
                     $qb->set($field['name'], ':' . $field['name']);
                     $params[$field['name']] = is_array($request->request->get($field['name']))
                         ? implode(",", $request->request->get($field['name']))

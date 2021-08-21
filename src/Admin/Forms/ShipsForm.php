@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace EtoA\Admin\Forms;
 
 use EtoA\Ranking\RankingService;
+use FleetAction;
 
 class ShipsForm extends AdvancedForm
 {
@@ -253,7 +254,8 @@ class ShipsForm extends AdvancedForm
             ], [
                 "name" => "ship_actions",
                 "text" => "Aktionen",
-                "type" => "fleetaction",
+                "type" => "comma_list",
+                'items' => $this->getFleetActionList(),
                 "show_overview" => false,
                 "line" => true,
             ], [
@@ -415,5 +417,18 @@ class ShipsForm extends AdvancedForm
                 "show_overview" => false,
             ],
         ];
+    }
+
+    /**
+     * @return array<string,string>
+     */
+    private function getFleetActionList(): array
+    {
+        $fleetActions = [];
+        foreach (FleetAction::getAll() as $ac) {
+            $fleetActions[$ac->__toString()] = $ac->code();
+        }
+
+        return $fleetActions;
     }
 }

@@ -6,7 +6,6 @@ namespace EtoA\Admin\Forms;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Query\QueryBuilder;
-use FleetAction;
 use Pimple\Container;
 use Twig\Environment;
 
@@ -44,7 +43,7 @@ abstract class Form
      *
      * name	                DB Field Name
      * text	                Field Description
-     * type                 Field Type: text, textarea, radio, select, numeric, decimal, color
+     * type                 Field Type: text, textarea, radio, select, numeric, decimal, color, comma_list
      * def_val              Default Value
      * size                 Field length (text)
      * max_len               Max Text length (text)
@@ -149,16 +148,15 @@ abstract class Form
                 }
 
                 return $str;
-            case "fleetaction":
+            case "comma_list":
                 $keys = explode(",", $value);
-                $actions = FleetAction::getAll();
                 $str = '';
-                foreach ($actions as $ac) {
-                    $str .= "<label><input name=\"" . $field['name'] . "[]\" type=\"checkbox\" value=\"" . $ac->code() . "\"";
-                    if (in_array($ac->code(), $keys, true)) {
+                foreach ($field['items'] ?? [] as $label => $val) {
+                    $str .= "<label><input name=\"" . $field['name'] . "[]\" type=\"checkbox\" value=\"" . $val . "\"";
+                    if (in_array($val, $keys, true)) {
                         $str .= " checked=\"checked\"";
                     }
-                    $str .= " /> " . $ac . "</label><br/>";
+                    $str .= " /> " . $label . "</label><br/>";
                 }
 
                 return $str;
@@ -171,6 +169,52 @@ abstract class Form
                     size=\"" . $field['size'] . "\"
                     maxlength=\"" . $field['max_len'] . "\"
                 />";
+        }
+    }
+
+    /**
+     * @param array{name:string,text:string,type:string,def_val?:string,size?:int,max_len?:int,rows?:int,cols?:int,items?:array,show_overview?:bool,link_in_overview?:bool,show_hide?:array<string>,hide_show?:array<string>,line?:bool,column_end?:bool} $field
+     * @param array<string,string> $arr
+     */
+    protected function showFieldValue(array $field, array $arr): string
+    {
+        switch ($field['type']) {
+            case "textarea":
+                $str = $arr[$field['name']];
+                if (strlen($str) > 100) {
+                    $str = explode("\n", wordwrap($str, 100));
+                    $str = $str[0] . '...';
+                }
+
+                return $str;
+            case "radio":
+                foreach ($field['items'] ?? [] as $rk => $rv) {
+                    if ($arr[$field['name']] == $rv) {
+                        return $rk;
+                    }
+                }
+
+                return '-';
+            case "select":
+                foreach ($field['items'] ?? [] as $label => $val) {
+                    if ($arr[$field['name']] == $val) {
+                        return $label;
+                    }
+                }
+
+                return '-';
+            case "comma_list":
+                $keys = explode(",", $arr[$field['name']]);
+                $labels = [];
+                foreach ($field['items'] ?? [] as $label => $val) {
+                    if (in_array($val, $keys, true)) {
+                        $labels[] = $label;
+                    }
+                }
+
+                return implode(', ', $labels);
+            default:
+                return $arr[$field['name']];
         }
     }
 }
