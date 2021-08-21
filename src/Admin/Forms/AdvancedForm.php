@@ -99,9 +99,9 @@ abstract class AdvancedForm extends Form
             if ($this->getImagePath() !== null) {
                 echo "<th valign=\"top\" class=\"tbltitle\">Bild</a>";
             }
-            foreach ($this->getFields() as $k => $a) {
-                if ($a['show_overview'] == 1) {
-                    echo "<th valign=\"top\" class=\"tbltitle\">" . $a['text'] . "</a>";
+            foreach ($this->getFields() as $k => $field) {
+                if ($field['show_overview'] == 1) {
+                    echo "<th valign=\"top\" class=\"tbltitle\">" . $field['text'] . "</a>";
                 }
             }
             if (count($this->getSwitches()) > 0) {
@@ -138,7 +138,20 @@ abstract class AdvancedForm extends Form
                     }
                 }
 
-                $this->showOverview($arr);
+                foreach ($this->getFields() as $field) {
+                    if ($field['show_overview'] == 1) {
+                        $isLink = isset($field['link_in_overview']) && $field['link_in_overview'] == 1;
+                        echo "<td class=\"tbldata\">";
+                        if ($isLink) {
+                            echo "<a href=\"?" . URL_SEARCH_STRING . "&amp;action=edit&amp;id=" . $arr[$this->getTableId()] . "\">";
+                        }
+                        echo $this->showFieldValue($field, $arr);
+                        if ($isLink) {
+                            echo "</a>";
+                        }
+                        echo "</td>";
+                    }
+                }
 
                 if (count($this->getSwitches()) > 0) {
                     foreach ($this->getSwitches() as $k => $v) {
@@ -186,63 +199,49 @@ abstract class AdvancedForm extends Form
     }
 
     /**
+     * @param array<string,mixed> $field
      * @param array<string,string> $arr
      */
-    private function showOverview(array $arr): void
+    private function showFieldValue(array $field, array $arr): string
     {
-        foreach ($this->getFields() as $k => $a) {
-            if ($a['show_overview'] == 1) {
-                echo "<td class=\"tbldata\">";
-                if (isset($a['link_in_overview']) && $a['link_in_overview'] == 1) {
-                    echo "<a href=\"?" . URL_SEARCH_STRING . "&amp;action=edit&amp;id=" . $arr[$this->getTableId()] . "\">";
+        switch ($field['type']) {
+            case "textarea":
+                $str = $arr[$field['name']];
+                if (strlen($str) > 100) {
+                    $str = explode("\n", wordwrap($str, 100));
+                    $str = $str[0] . '...';
                 }
 
-                switch ($a['type']) {
-                    case "readonly":
-                        echo "" . $arr[$a['name']] . "";
-
-                        break;
-                    case "text":
-                        echo "" . $arr[$a['name']] . "";
-
-                        break;
-                    case "numeric":
-                        echo "" . $arr[$a['name']] . "";
-
-                        break;
-                    case "textarea":
-                        echo "";
-                        echo $arr[$a['name']];
-                        echo "";
-
-                        break;
-                    case "radio":
-                        echo "";
-                        foreach ($a['rcb_elem'] as $rk => $rv) {
-                            if ($arr[$a['name']] == $rv) {
-                                echo $rk;
-                            }
-                        }
-                        echo "";
-
-                        break;
-                    case "select":
-                        echo "";
-                        foreach ($a['select_elem'] as $sd => $sv) {
-                            if ($sv == $arr[$a['name']]) {
-                                echo $sd;
-                            }
-                        }
-                        echo "";
-
-                        break;
-                    default:
-                        echo "" . $arr[$a['name']] . "";
-
-                        break;
+                return $str;
+            case "radio":
+                foreach ($field['rcb_elem'] as $rk => $rv) {
+                    if ($arr[$field['name']] == $rv) {
+                        return $rk;
+                    }
                 }
-                echo "</td>";
-            }
+
+                return '-';
+            case "select":
+                foreach ($field['select_elem'] as $sd => $sv) {
+                    if ($arr[$field['name']] == $sv) {
+                        return $sd;
+                    }
+                }
+
+                return '-';
+            case "fleetaction":
+                $keys = explode(",", $arr[$field['name']]);
+                $actions = FleetAction::getAll();
+                $labels = [];
+                foreach ($actions as $ac) {
+                    if (in_array($ac->code(), $keys, true)) {
+                        $labels[] = $ac->displayName();
+                    }
+                }
+
+                return implode(', ', $labels);
+            default:
+                return $arr[$field['name']];
         }
     }
 
@@ -262,35 +261,35 @@ abstract class AdvancedForm extends Form
 
     private function createNewDataset(): void
     {
-        foreach ($this->getFields() as $k => $a) {
-            switch ($a['type']) {
+        foreach ($this->getFields() as $field) {
+            switch ($field['type']) {
                 case "readonly":
                     break;
                 case "text":
-                    echo "<tr><th class=\"tbltitle\" width=\"200\">" . $a['text'] . ":</th>";
-                    echo "<td class=\"tbldata\" width=\"200\"><input type=\"text\" name=\"" . $a['name'] . "\" size=\"" . $a['size'] . "\" maxlength=\"" . $a['maxlen'] . "\" value=\"" . $a['def_val'] . "\" /></td></tr>";
+                    echo "<tr><th class=\"tbltitle\" width=\"200\">" . $field['text'] . ":</th>";
+                    echo "<td class=\"tbldata\" width=\"200\"><input type=\"text\" name=\"" . $field['name'] . "\" size=\"" . $field['size'] . "\" maxlength=\"" . $field['maxlen'] . "\" value=\"" . $field['def_val'] . "\" /></td></tr>";
 
                     break;
                 case "hidden":
-                    echo "<input type=\"hidden\" name=\"" . $a['name'] . "\" value=\"" . $a['def_val'] . "\" />";
+                    echo "<input type=\"hidden\" name=\"" . $field['name'] . "\" value=\"" . $field['def_val'] . "\" />";
 
                     break;
                 case "numeric":
-                    echo "<tr><th class=\"tbltitle\" width=\"200\">" . $a['text'] . ":</th>";
-                    echo "<td class=\"tbldata\" width=\"200\"><input type=\"text\" name=\"" . $a['name'] . "\" size=\"" . $a['size'] . "\" maxlength=\"" . $a['maxlen'] . "\" value=\"" . $a['def_val'] . "\" /></td></tr>";
+                    echo "<tr><th class=\"tbltitle\" width=\"200\">" . $field['text'] . ":</th>";
+                    echo "<td class=\"tbldata\" width=\"200\"><input type=\"text\" name=\"" . $field['name'] . "\" size=\"" . $field['size'] . "\" maxlength=\"" . $field['maxlen'] . "\" value=\"" . $field['def_val'] . "\" /></td></tr>";
 
                     break;
                 case "textarea":
-                    echo "<tr><th class=\"tbltitle\" width=\"200\">" . $a['text'] . ":</th>";
-                    echo "<td class=\"tbldata\" width=\"200\"><textarea name=\"" . $a['name'] . "\" rows=\"" . $a['rows'] . "\" cols=\"" . $a['cols'] . "\">" . $a['def_val'] . "</textarea></td></tr>";
+                    echo "<tr><th class=\"tbltitle\" width=\"200\">" . $field['text'] . ":</th>";
+                    echo "<td class=\"tbldata\" width=\"200\"><textarea name=\"" . $field['name'] . "\" rows=\"" . $field['rows'] . "\" cols=\"" . $field['cols'] . "\">" . $field['def_val'] . "</textarea></td></tr>";
 
                     break;
                 case "radio":
-                    echo "<tr><th class=\"tbltitle\" width=\"200\">" . $a['text'] . ":</th>";
+                    echo "<tr><th class=\"tbltitle\" width=\"200\">" . $field['text'] . ":</th>";
                     echo "<td class=\"tbldata\" width=\"200\">";
-                    foreach ($a['rcb_elem'] as $rk => $rv) {
-                        echo $rk . ": <input name=\"" . $a['name'] . "\" type=\"radio\" value=\"$rv\"";
-                        if ($a['rcb_elem_checked'] == $rv) {
+                    foreach ($field['rcb_elem'] as $rk => $rv) {
+                        echo $rk . ": <input name=\"" . $field['name'] . "\" type=\"radio\" value=\"$rv\"";
+                        if ($field['rcb_elem_checked'] == $rv) {
                             echo " checked=\"checked\"";
                         }
                         echo " /> ";
@@ -299,11 +298,11 @@ abstract class AdvancedForm extends Form
 
                     break;
                 case "select":
-                    echo "<tr><th class=\"tbltitle\" width=\"200\">" . $a['text'] . ":</th>";
-                    echo "<td class=\"tbldata\" width=\"200\"><select name=\"" . $a['name'] . "\">";
-                    foreach ($a['select_elem'] as $rk => $rv) {
+                    echo "<tr><th class=\"tbltitle\" width=\"200\">" . $field['text'] . ":</th>";
+                    echo "<td class=\"tbldata\" width=\"200\"><select name=\"" . $field['name'] . "\">";
+                    foreach ($field['select_elem'] as $rk => $rv) {
                         echo "<option value=\"$rv\"";
-                        if (isset($a['select_elem_checked']) && $a['select_elem_checked'] == $rv) {
+                        if (isset($field['select_elem_checked']) && $field['select_elem_checked'] == $rv) {
                             echo " selected=\"selected\"";
                         }
                         echo ">$rk</option> ";
@@ -312,18 +311,18 @@ abstract class AdvancedForm extends Form
 
                     break;
                 case "fleetaction":
-                    echo "<tr><th class=\"tbltitle\" width=\"200\">" . $a['text'] . ":</th>";
+                    echo "<tr><th class=\"tbltitle\" width=\"200\">" . $field['text'] . ":</th>";
                     echo "<td class=\"tbldata\" width=\"200\">";
                     $actions = FleetAction::getAll();
                     foreach ($actions as $ac) {
-                        echo "<label><input name=\"" . $a['name'] . "[]\" type=\"checkbox\" value=\"" . $ac->code() . "\" /> " . $ac . "</label><br/>";
+                        echo "<label><input name=\"" . $field['name'] . "[]\" type=\"checkbox\" value=\"" . $ac->code() . "\" /> " . $ac . "</label><br/>";
                     }
                     echo "</td></tr>";
 
                     break;
                 default:
-                    echo "<tr><th class=\"tbltitle\" width=\"200\">" . $a['text'] . ":</th>";
-                    echo "<td class=\"tbldata\" width=\"200\"><input type=\"text\" name=\"" . $a['name'] . "\" size=\"" . $a['size'] . "\" maxlength=\"" . $a['maxlen'] . "\" value=\"" . $a['def_val'] . "\" /></td></tr>";
+                    echo "<tr><th class=\"tbltitle\" width=\"200\">" . $field['text'] . ":</th>";
+                    echo "<td class=\"tbldata\" width=\"200\"><input type=\"text\" name=\"" . $field['name'] . "\" size=\"" . $field['size'] . "\" maxlength=\"" . $field['maxlen'] . "\" value=\"" . $field['def_val'] . "\" /></td></tr>";
 
                     break;
             }
@@ -377,19 +376,30 @@ abstract class AdvancedForm extends Form
         $this->twig->addGlobal("title", $this->getName());
         $this->twig->addGlobal("subtitle", "Datensatz bearbeiten");
 
-        $res = mysql_query("SELECT * FROM " . $this->getTable() . " WHERE " . $this->getTableId() . "='" . $request->query->get('id') . "';");
-        $arr = mysql_fetch_array($res);
-        echo "<form action=\"?" . URL_SEARCH_STRING . "\" method=\"post\">";
-        echo "<input type=\"submit\" value=\"Übernehmen\" name=\"edit\" />&nbsp;";
-        echo "<input type=\"button\" value=\"Abbrechen\" name=\"editcancel\" onclick=\"document.location='?" . URL_SEARCH_STRING . "'\" /><br/><br/>";
+        $arr = $this->createQueryBuilder()
+            ->select('*')
+            ->from($this->getTable())
+            ->where($this->getTableId() . " = :id")
+            ->setParameter('id', $request->query->get('id'))
+            ->execute()
+            ->fetchAssociative();
 
-        echo "<input type=\"hidden\" name=\"" . $this->getTableId() . "\" value=\"" . $request->query->get('id') . "\" />";
-        echo "<table>";
-        $this->editDataset($arr);
-        echo "</table><br/>";
-        echo "<input type=\"submit\" value=\"Übernehmen\" name=\"edit\" />&nbsp;";
-        echo "<input type=\"button\" value=\"Abbrechen\" name=\"editcancel\" onclick=\"document.location='?" . URL_SEARCH_STRING . "'\" />";
-        echo "</form>";
+        if ($arr !== false) {
+            echo "<form action=\"?" . URL_SEARCH_STRING . "\" method=\"post\">";
+            echo "<input type=\"submit\" value=\"Übernehmen\" name=\"edit\" />&nbsp;";
+            echo "<input type=\"button\" value=\"Abbrechen\" onclick=\"document.location='?" . URL_SEARCH_STRING . "'\" /><br/><br/>";
+
+            echo "<input type=\"hidden\" name=\"" . $this->getTableId() . "\" value=\"" . $request->query->get('id') . "\" />";
+            echo "<table>";
+            $this->editDataset($arr);
+            echo "</table><br/>";
+            echo "<input type=\"submit\" value=\"Übernehmen\" name=\"edit\" />&nbsp;";
+            echo "<input type=\"button\" value=\"Abbrechen\" onclick=\"document.location='?" . URL_SEARCH_STRING . "'\" />";
+            echo "</form>";
+        } else {
+            echo MessageBox::error("", "Datensatz nicht vorhanden.");
+            echo "<input type=\"button\" value=\"Übersicht\" onclick=\"document.location='?" . URL_SEARCH_STRING . "'\" />";
+        }
     }
 
     /**
@@ -521,7 +531,7 @@ abstract class AdvancedForm extends Form
     {
         $qb = $this->createQueryBuilder()
             ->update($this->getTable())
-            ->where($this->getTableId() . " = :".$this->getTableId());
+            ->where($this->getTableId() . " = :" . $this->getTableId());
 
         $params = [
             $this->getTableId() => $request->request->get($this->getTableId()),
@@ -657,63 +667,33 @@ abstract class AdvancedForm extends Form
         $this->twig->addGlobal("title", $this->getName());
         $this->twig->addGlobal("subtitle", "Datensatz löschen");
 
-        $res = mysql_query("SELECT * FROM " . $this->getTable() . " WHERE " . $this->getTableId() . "='" . $request->query->get('id') . "';");
-        $arr = mysql_fetch_array($res);
-        echo "<p>Bitte bestätige das Löschen des folgenden Datensatzes:</p>";
-        echo "<form action=\"?" . URL_SEARCH_STRING . "\" method=\"post\">";
-        echo "<input type=\"hidden\" name=\"" . $this->getTableId() . "\" value=\"" . $request->query->get('id') . "\" />";
-        echo "<table>";
-        $this->deleteDataset($arr);
-        echo "</table><br/>";
-        echo "<input type=\"submit\" value=\"Löschen\" name=\"del\" />&nbsp;";
-        echo "<input type=\"button\" value=\"Abbrechen\" name=\"delcancel\" onclick=\"document.location='?" . URL_SEARCH_STRING . "'\" />";
-        echo "</form>";
-    }
+        $arr = $this->createQueryBuilder()
+            ->select('*')
+            ->from($this->getTable())
+            ->where($this->getTableId() . " = :id")
+            ->setParameter('id', $request->query->get('id'))
+            ->execute()
+            ->fetchAssociative();
 
-    /**
-     * @param array<string,string> $arr
-     */
-    private function deleteDataset(array $arr): void
-    {
-        foreach ($this->getFields() as $k => $a) {
-            switch ($a['type']) {
-                case "text":
-                    echo "<tr><th class=\"tbltitle\" width=\"200\">" . $a['text'] . ":</th>";
-                    echo "<td class=\"tbldata\" width=\"200\">" . $arr[$a['name']] . "</td></tr>";
-
-                    break;
-                case "numeric":
-                    echo "<tr><th class=\"tbltitle\" width=\"200\">" . $a['text'] . ":</th>";
-                    echo "<td class=\"tbldata\" width=\"200\">" . $arr[$a['name']] . "</td></tr>";
-
-                    break;
-                case "textarea":
-                    echo "<tr><th class=\"tbltitle\" width=\"200\">" . $a['text'] . ":</th>";
-                    echo "<td class=\"tbldata\" width=\"200\">" . nl2br($arr[$a['name']]) . "</td></tr>";
-
-                    break;
-                case "radio":
-                    echo "<tr><th class=\"tbltitle\" width=\"200\">" . $a['text'] . ":</th>";
-                    echo "<td class=\"tbldata\" width=\"200\">";
-                    foreach ($a['rcb_elem'] as $rk => $rv) {
-                        if ($arr[$a['name']] == $rv) {
-                            echo $rk;
-                        }
-                    }
-                    echo "</td></tr>";
-
-                    break;
-                case "select":
-                    echo "<tr><th class=\"tbltitle\" width=\"200\">" . $a['text'] . ":</th>";
-                    echo "<td class=\"tbldata\" width=\"200\">" . $arr[$a['name']] . "</td></tr>";
-
-                    break;
-                default:
-                    echo "<tr><th class=\"tbltitle\" width=\"200\">" . $a['text'] . ":</th>";
-                    echo "<td class=\"tbldata\" width=\"200\">" . $arr[$a['name']] . "</td></tr>";
-
-                    break;
+        if ($arr !== false) {
+            echo "<p>Bitte bestätige das Löschen des folgenden Datensatzes:</p>";
+            echo "<form action=\"?" . URL_SEARCH_STRING . "\" method=\"post\">";
+            echo "<input type=\"hidden\" name=\"" . $this->getTableId() . "\" value=\"" . $request->query->get('id') . "\" />";
+            echo "<table>";
+            foreach ($this->getFields() as $field) {
+                echo "<tr>
+                <th class=\"tbltitle\" width=\"200\">" . $field['text'] . ":</th>
+                <td class=\"tbldata\" width=\"200\">" . $this->showFieldValue($field, $arr) . "</td>
+            </tr>";
             }
+
+            echo "</table><br/>";
+            echo "<input type=\"submit\" value=\"Löschen\" name=\"del\" />&nbsp;";
+            echo "<input type=\"button\" value=\"Abbrechen\" onclick=\"document.location='?" . URL_SEARCH_STRING . "'\" />";
+            echo "</form>";
+        } else {
+            echo MessageBox::error("", "Datensatz nicht vorhanden.");
+            echo "<input type=\"button\" value=\"Übersicht\" onclick=\"document.location='?" . URL_SEARCH_STRING . "'\" />";
         }
     }
 

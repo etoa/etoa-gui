@@ -81,7 +81,7 @@ abstract class SimpleForm extends Form
             ->fetchAllAssociative();
 
         if (count($rows) > 0) {
-            echo "<table>";
+            echo "<table>\n";
             echo "<tr>";
             foreach ($this->getFields() as $k => $field) {
                 if ($field['show_overview'] == 1) {
@@ -89,20 +89,20 @@ abstract class SimpleForm extends Form
                 }
             }
             echo "<th class=\"tbltitle\">Löschen</th>";
-            echo "</tr>";
+            echo "</tr>\n";
             foreach ($rows as $arr) {
                 echo "<tr>";
                 foreach ($this->getFields() as $key => $field) {
                     echo "<td class=\"tbldata\">";
                     echo $this->createInput($field, $arr);
-                    echo "</td>\n";
+                    echo "</td>";
                 }
                 echo "<td class=\"tbldata\">
                     <input type=\"checkbox\" name=\"del[" . $arr[$this->getTableId()] . "]\" value=\"1\" />
-                </td>\n";
+                </td>";
                 echo "</tr>\n";
             }
-            echo "</table><br/>";
+            echo "</table><br/>\n";
             echo "<input type=\"submit\" name=\"apply_submit\" value=\"Übernehmen\" />&nbsp;";
             echo "<input type=\"submit\" name=\"new_submit\" value=\"Neuer Datensatz\" />&nbsp;";
         } else {
@@ -147,7 +147,7 @@ abstract class SimpleForm extends Form
                     if ($arr[$field['name']] == $sv) {
                         $str .= " selected=\"selected\"";
                     }
-                    $str .= ">$sd</option>\n";
+                    $str .= ">$sd</option>";
                 }
                 $str .= "</select>";
 
