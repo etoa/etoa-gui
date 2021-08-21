@@ -240,9 +240,7 @@ abstract class AdvancedForm extends Form
                     break;
                 case "comma_list":
                     $values[$field['name']] = ':' . $field['name'];
-                    $params[$field['name']] = is_array($request->request->get($field['name']))
-                        ? implode(",", $request->request->get($field['name']))
-                        : "";
+                    $params[$field['name']] = implode(",", $request->request->all($field['name']));
 
                     break;
                 default:
@@ -371,9 +369,7 @@ abstract class AdvancedForm extends Form
                     break;
                 case "comma_list":
                     $qb->set($field['name'], ':' . $field['name']);
-                    $params[$field['name']] = is_array($request->request->get($field['name']))
-                        ? implode(",", $request->request->get($field['name']))
-                        : "";
+                    $params[$field['name']] = implode(",", $request->request->all($field['name']));
 
                     break;
                 default:
