@@ -638,7 +638,7 @@ function fleetEditForm(
         success_msg("Schiffe hinzugefügt");
     }
     if ($request->request->get('editship_submit', '') != "") {
-        foreach ($request->request->get('fs_ship_cnt') as $ship => $cnt) {
+        foreach ($request->request->all('fs_ship_cnt') as $ship => $cnt) {
             $fleetRepository->updateShipsInFleet(
                 $request->query->getInt('fleetedit'),
                 (int) $ship,

@@ -17,7 +17,7 @@ class ShipServiceProvider implements ServiceProviderInterface
         };
 
         $pimple[ShipDataRepository::class] = function (Container $pimple): ShipDataRepository {
-            return new ShipDataRepository($pimple['db'], $pimple['db.cache']);
+            return new ShipDataRepository($pimple['db']);
         };
 
         $pimple[ShipCategoryRepository::class] = function (Container $pimple): ShipCategoryRepository {

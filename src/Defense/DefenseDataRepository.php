@@ -2,21 +2,11 @@
 
 namespace EtoA\Defense;
 
-use Doctrine\Common\Cache\CacheProvider;
-use Doctrine\DBAL\Connection;
 use EtoA\Core\AbstractRepository;
 
 class DefenseDataRepository extends AbstractRepository
 {
     private const DEFENSE_NAMES = 'defense.names';
-
-    private CacheProvider $cache;
-
-    public function __construct(Connection $connection, CacheProvider $cache)
-    {
-        parent::__construct($connection);
-        $this->cache = $cache;
-    }
 
     /**
      * @return array<int, string>

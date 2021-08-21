@@ -71,7 +71,7 @@ function imagecheck(Request $request, AllianceRepository $repository)
     // Check submit
     //
     if ($request->request->has('validate_submit')) {
-        foreach ($request->request->get('validate') as $id => $v) {
+        foreach ($request->request->all('validate') as $id => $v) {
             if ($v == 0) {
                 if (removeAlliancePicture($repository, $id)) {
                     echo "Bild entfernt!<br/><br/>";
