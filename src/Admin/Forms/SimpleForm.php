@@ -15,7 +15,7 @@ abstract class SimpleForm
     protected Container $app;
     private Environment $twig;
 
-    public function __construct(Container $app, Environment $twig)
+    public final function __construct(Container $app, Environment $twig)
     {
         $this->app = $app;
         $this->twig = $twig;
@@ -49,6 +49,8 @@ abstract class SimpleForm
      * select_elem (Array)  Select Elements (desc=>value)
      * select_elem_checked  Value of default checked Select Element (desc=>value)
      * show_overview        Set 1 to show on overview page
+     *
+     * @return array<array<string,mixed>>
      */
     abstract protected function getFields(): array;
 

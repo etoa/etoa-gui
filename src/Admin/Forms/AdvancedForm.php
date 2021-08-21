@@ -16,7 +16,7 @@ abstract class AdvancedForm
     protected Container $app;
     private Environment $twig;
 
-    public function __construct(Container $app, Environment $twig)
+    public final function __construct(Container $app, Environment $twig)
     {
         $this->app = $app;
         $this->twig = $twig;
@@ -49,6 +49,9 @@ abstract class AdvancedForm
         return null;
     }
 
+    /**
+     * @return array<string,string>
+     */
     protected function getSwitches(): array
     {
         return [];
@@ -75,6 +78,8 @@ abstract class AdvancedForm
      * select_elem (Array)  Select Elements (desc=>value)
      * select_elem_checked  Value of default checked Select Element (desc=>value)
      * show_overview        Set 1 to show on overview page
+     *
+     * @return array<array<string,mixed>>
      */
     abstract protected function getFields(): array;
 
@@ -248,6 +253,9 @@ abstract class AdvancedForm
         echo "</table></form>";
     }
 
+    /**
+     * @param array<string,string> $arr
+     */
     private function showOverview(array $arr): void
     {
         /** @var ConfigurationService $config */
@@ -286,7 +294,7 @@ abstract class AdvancedForm
 
                         break;
                     case "timestamp":
-                        echo "" . date($config->get('admin_dateformat'), $arr[$a['name']]) . "";
+                        echo "" . date($config->get('admin_dateformat'), intval($arr[$a['name']])) . "";
 
                         break;
                     case "textarea":
@@ -315,7 +323,7 @@ abstract class AdvancedForm
                         }
                         for ($cbx = 0; $cbx < count($cb_temp_arr); $cbx++) {
                             echo $cb_temp_arr[$cbx];
-                            if ($cbx = count($cb_temp_arr) - 1) {
+                            if ($cbx == count($cb_temp_arr) - 1) {
                                 echo ";";
                             }
                         }
@@ -420,7 +428,7 @@ abstract class AdvancedForm
                     echo "<td class=\"tbldata\" width=\"200\">";
                     foreach ($a['rcb_elem'] as $rk => $rv) {
                         echo $rk . ": <input name=\"" . $a['name'] . "\" type=\"checkbox\" value=\"$rv\"";
-                        if (in_array($rv, $a['rcb_elem_chekced'])) {
+                        if (in_array($rv, $a['rcb_elem_chekced'], true)) {
                             echo " checked=\"checked\"";
                         }
                         echo " /> ";
@@ -620,6 +628,9 @@ abstract class AdvancedForm
         echo "</form>";
     }
 
+    /**
+     * @param array<string,string> $arr
+     */
     private function editDataset(array $arr): void
     {
         /** @var ConfigurationService $config */
@@ -667,7 +678,7 @@ abstract class AdvancedForm
 
                     break;
                 case "timestamp":
-                    echo "<input $stl type=\"text\" name=\"" . $fieldDefinition['name'] . "\" size=\"" . $fieldDefinition['size'] . "\" maxlength=\"" . $fieldDefinition['maxlen'] . "\" value=\"" . date($config->get('admin_dateformat'), $arr[$fieldDefinition['name']]) . "\" />";
+                    echo "<input $stl type=\"text\" name=\"" . $fieldDefinition['name'] . "\" size=\"" . $fieldDefinition['size'] . "\" maxlength=\"" . $fieldDefinition['maxlen'] . "\" value=\"" . date($config->get('admin_dateformat'), intval($arr[$fieldDefinition['name']])) . "\" />";
 
                     break;
                 case "textarea":
@@ -872,6 +883,9 @@ abstract class AdvancedForm
         echo "</form>";
     }
 
+    /**
+     * @param array<string,string> $arr
+     */
     private function deleteDataset(array $arr): void
     {
         /** @var ConfigurationService $config */
@@ -906,7 +920,7 @@ abstract class AdvancedForm
                     break;
                 case "timestamp":
                     echo "<tr><th class=\"tbltitle\" width=\"200\">" . $a['text'] . ":</th>";
-                    echo "<td class=\"tbldata\" width=\"200\">" . date($config->get('admin_dateformat'), $arr[$a['name']]) . "</td></tr>";
+                    echo "<td class=\"tbldata\" width=\"200\">" . date($config->get('admin_dateformat'), intval($arr[$a['name']])) . "</td></tr>";
 
                     break;
                 case "textarea":
@@ -936,7 +950,7 @@ abstract class AdvancedForm
                     }
                     for ($cbx = 0; $cbx < count($cb_temp_arr); $cbx++) {
                         echo $cb_temp_arr[$cbx];
-                        if ($cbx = count($cb_temp_arr) - 1) {
+                        if ($cbx == count($cb_temp_arr) - 1) {
                             echo "<br/>";
                         }
                     }
@@ -964,10 +978,14 @@ abstract class AdvancedForm
         }
     }
 
-    protected function getSelectElements($table, $value_field, $text_field, $order, $additional_values = null): array
+    /**
+     * @param null|array<mixed,string> $additional_values
+     * @return array<mixed,string>
+     */
+    protected function getSelectElements(string $table, string $value_field, string $text_field, string $order, ?array $additional_values = null): array
     {
         $r_array = array();
-        if ($additional_values && count($additional_values) > 0) {
+        if ($additional_values !== null && count($additional_values) > 0) {
             foreach ($additional_values as $val => $key) {
                 $r_array[$key] = $val;
             }

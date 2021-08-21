@@ -31,16 +31,6 @@ parameters:
 			path: htdocs/admin/inc/admin_functions.inc.php
 
 		-
-			message: "#^Call to function in_array\\(\\) requires parameter \\#3 to be set\\.$#"
-			count: 1
-			path: htdocs/admin/inc/form_functions.php
-
-		-
-			message: "#^Only booleans are allowed in an if condition, int given\\.$#"
-			count: 2
-			path: htdocs/admin/inc/form_functions.php
-
-		-
 			message: "#^Right side of && is always false\\.$#"
 			count: 1
 			path: htdocs/admin/inc/xajax_admin.inc.php
