@@ -6,7 +6,7 @@
         {"type": "vcs", "url": "https://github.com/etoa/Silex"}
     ],
     "require": {
-        "php": "^7.4",
+        "php": "^7.4||^8",
         "doctrine/dbal": "^2.13",
         "littlecubiclegames/quests": "^1.3",
         "monolog/monolog": "^2.3",
