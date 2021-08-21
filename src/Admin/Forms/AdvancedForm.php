@@ -214,7 +214,7 @@ abstract class AdvancedForm extends Form
 
                 return $str;
             case "radio":
-                foreach ($field['rcb_elem'] as $rk => $rv) {
+                foreach ($field['items'] ?? [] as $rk => $rv) {
                     if ($arr[$field['name']] == $rv) {
                         return $rk;
                     }

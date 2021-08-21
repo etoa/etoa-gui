@@ -50,8 +50,7 @@ abstract class Form
      * maxlen               Max Text length (text, date)
      * rows                 Rows (textarea)
      * cols                 Cols (textarea)
-     * rcb_elem (Array)	    Checkbox-/Radio Elements (desc=>value)
-     * rcb_elem_checked	    Value of default checked Checkbox-/Radio Element (Checkbox: has to be an array)
+     * items (Array)	    Checkbox-/Radio Elements (desc=>value)
      * select_elem (Array)  Select Elements (desc=>value)
      * show_overview        Set 1 to show on overview page
      *
@@ -106,7 +105,7 @@ abstract class Form
                 return $str;
             case "radio":
                 $str = '';
-                foreach ($field['rcb_elem'] as $label => $val) {
+                foreach ($field['items'] ?? [] as $label => $val) {
                     $str .= "<label><input name=\"" . $field['name'] . "\" type=\"radio\" value=\"$val\"";
                     if ($value == $val) {
                         $str .= " checked=\"checked\"";

@@ -197,13 +197,15 @@ class TechnologiesForm extends AdvancedForm
                 "name" => "tech_stealable",
                 "text" => "Stehlbar",
                 "type" => "radio",
-                "def_val" => "",
+                "def_val" => "1",
                 "size" => "",
                 "maxlen" => "",
                 "rows" => "",
                 "cols" => "",
-                "rcb_elem" => array("Ja" => 1, "Nein" => 0),
-                "rcb_elem_checked" => "1",
+                "items" => [
+                    "Ja" => 1,
+                    "Nein" => 0,
+                ],
                 "show_overview" => 0,
             ],
         ];

@@ -61,13 +61,15 @@ class PlanetTypesForm extends AdvancedForm
                 "name" => "type_habitable",
                 "text" => "Bewohnbar",
                 "type" => "radio",
-                "def_val" => "",
+                "def_val" => "1",
                 "size" => "",
                 "maxlen" => "",
                 "rows" => "",
                 "cols" => "",
-                "rcb_elem" => array("Ja" => 1, "Nein" => 0),
-                "rcb_elem_checked" => "1",
+                "items" => [
+                    "Ja" => 1,
+                    "Nein" => 0,
+                ],
                 "show_overview" => 1,
             ], [
                 "name" => "type_f_metal",
