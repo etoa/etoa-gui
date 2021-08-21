@@ -9,50 +9,8 @@ use Pimple\Container;
 use Symfony\Component\HttpFoundation\Request;
 use Twig\Environment;
 
-abstract class SimpleForm
+abstract class SimpleForm extends Form
 {
-    protected Container $app;
-    private Environment $twig;
-
-    final public function __construct(Container $app, Environment $twig)
-    {
-        $this->app = $app;
-        $this->twig = $twig;
-    }
-
-    abstract protected function getName(): string;
-
-    abstract protected function getTable(): string;
-    abstract protected function getTableId(): string;
-
-    abstract protected function getOverviewOrderField(): string;
-
-    protected function getOverviewOrder(): string
-    {
-        return "ASC";
-    }
-
-    /**
-     * Parameters:
-     *
-     * name	                DB Field Name
-     * text	                Field Description
-     * type                 Field Type: text, textarea, radio, select, numeric
-     * def_val              Default Value
-     * size                 Field length (text, date)
-     * maxlen               Max Text length (text, date)
-     * rows                 Rows (textarea)
-     * cols                 Cols (textarea)
-     * rcb_elem (Array)	    Checkbox-/Radio Elements (desc=>value)
-     * rcb_elem_checked	    Value of default checked Checkbox-/Radio Element (Checkbox: has to be an array)
-     * select_elem (Array)  Select Elements (desc=>value)
-     * select_elem_checked  Value of default checked Select Element (desc=>value)
-     * show_overview        Set 1 to show on overview page
-     *
-     * @return array<array<string,mixed>>
-     */
-    abstract protected function getFields(): array;
-
     public static function render(Container $app, Environment $twig, Request $request): void
     {
         (new static($app, $twig))->index($request);
@@ -66,8 +24,15 @@ abstract class SimpleForm
             foreach ($request->request->all() as $key => $val) {
                 if ($key != "apply_submit" && $key != "del") {
                     foreach ($val as $k => $vl) {
-                        $sql = "UPDATE " . $this->getTable() . " set $key='$vl' WHERE " . $this->getTableId() . "=$k;";
-                        dbquery($sql);
+                        $this->createQueryBuilder()
+                            ->update($this->getTable())
+                            ->set($key, ':val')
+                            ->where($this->getTableId() . " = :id")
+                            ->setParameters([
+                                'id' => $k,
+                                'val' => $vl,
+                            ])
+                            ->execute();
                     }
                 }
             }
@@ -77,7 +42,11 @@ abstract class SimpleForm
             foreach ($request->request->all() as $key => $val) {
                 if ($key == "del") {
                     foreach ($val as $k => $vl) {
-                        dbquery("DELETE FROM " . $this->getTable() . " WHERE " . $this->getTableId() . "='$k';");
+                        $this->createQueryBuilder()
+                            ->delete($this->getTable())
+                            ->where($this->getTableId() . " = :id")
+                            ->setParameter('id', $k)
+                            ->execute();
                     }
                     $deleted = true;
                 }
@@ -87,42 +56,31 @@ abstract class SimpleForm
             }
         }
         if ($request->request->has('new_submit')) {
-            $cnt = 1;
-            $fsql = "";
-            $vsql = "";
-            $vsqlsp = "";
+            $values = [];
+            $params = [];
             foreach ($this->getFields() as $k => $a) {
-                $fsql .= "`" . $a['name'] . "`";
-                if ($cnt < sizeof($this->getFields())) {
-                    $fsql .= ",";
-                }
-                $cnt++;
-            }
-            $cnt = 1;
-            foreach ($this->getFields() as $k => $a) {
-                $vsql .= "'" . $a['def_val'] . "'";
-                if ($cnt < sizeof($this->getFields())) {
-                    $vsql .= ",";
-                }
-                $cnt++;
+                $values[$a['name']] = ':'.$a['name'];
+                $params[$a['name']] = $a['def_val'] ?? "";
             }
 
-            $sql = "INSERT INTO " . $this->getTable() . " (";
-            $sql .= $fsql;
-            $sql .= ") VALUES(";
-            $sql .= $vsql . $vsqlsp;
-            $sql .= ");";
+            $this->createQueryBuilder()
+                ->insert($this->getTable())
+                ->values($values)
+                ->setParameters($params)
+                ->execute();
 
-            dbquery($sql);
-            if (mysql_error() !== '') {
-                echo MessageBox::ok("", "Neuer leerer Datensatz wurde hinzugefügt!");
-            }
+            echo MessageBox::ok("", "Neuer leerer Datensatz wurde hinzugefügt!");
         }
 
         echo "<form action=\"?" . URL_SEARCH_STRING . "\" method=\"post\">";
-        $sql = "SELECT * FROM " . $this->getTable() . " ORDER BY `" . $this->getOverviewOrderField() . "` " . $this->getOverviewOrder() . ";";
-        $res = dbquery($sql);
-        if (mysql_num_rows($res) != 0) {
+        $rows = $this->createQueryBuilder()
+            ->select('*')
+            ->from($this->getTable())
+            ->orderBy($this->getOverviewOrderField(), $this->getOverviewOrder())
+            ->execute()
+            ->fetchAllAssociative();
+
+        if (count($rows) > 0) {
             echo "<table>";
             echo "<tr>";
             foreach ($this->getFields() as $k => $a) {
@@ -132,7 +90,7 @@ abstract class SimpleForm
             }
             echo "<th class=\"tbltitle\">Löschen</th>";
             echo "</tr>";
-            while ($arr = mysql_fetch_assoc($res)) {
+            foreach ($rows as $arr) {
                 echo "<tr>";
                 foreach ($this->getFields() as $k => $a) {
                     echo "<td class=\"tbldata\">";
@@ -148,9 +106,9 @@ abstract class SimpleForm
                         case "textarea":
                             echo "<input type=\"text\" name=\"" . $a['name'] . "[" . $arr[$this->getTableId()] . "]\" value=\"";
                             if (strlen($arr[$a['name']]) > 20) {
-                                echo stripslashes(substr($arr[$a['name']], 0, 18) . "...");
+                                echo substr($arr[$a['name']], 0, 18) . "...";
                             } else {
-                                echo stripslashes($arr[$a['name']]);
+                                echo $arr[$a['name']];
                             }
                             echo "\" /></td>\n";
 

@@ -10,29 +10,8 @@ use Pimple\Container;
 use Symfony\Component\HttpFoundation\Request;
 use Twig\Environment;
 
-abstract class AdvancedForm
+abstract class AdvancedForm extends Form
 {
-    protected Container $app;
-    private Environment $twig;
-
-    final public function __construct(Container $app, Environment $twig)
-    {
-        $this->app = $app;
-        $this->twig = $twig;
-    }
-
-    abstract protected function getName(): string;
-
-    abstract protected function getTable(): string;
-    abstract protected function getTableId(): string;
-
-    abstract protected function getOverviewOrderField(): string;
-
-    protected function getOverviewOrder(): string
-    {
-        return "ASC";
-    }
-
     protected function getTableSort(): ?string
     {
         return null;
@@ -61,27 +40,6 @@ abstract class AdvancedForm
         return '';
     }
 
-    /**
-     * Parameters:
-     *
-     * name	                DB Field Name
-     * text	                Field Description
-     * type                 Field Type: text, textarea, radio, select, numeric
-     * def_val              Default Value
-     * size                 Field length (text, date)
-     * maxlen               Max Text length (text, date)
-     * rows                 Rows (textarea)
-     * cols                 Cols (textarea)
-     * rcb_elem (Array)	    Checkbox-/Radio Elements (desc=>value)
-     * rcb_elem_checked	    Value of default checked Checkbox-/Radio Element (Checkbox: has to be an array)
-     * select_elem (Array)  Select Elements (desc=>value)
-     * select_elem_checked  Value of default checked Select Element (desc=>value)
-     * show_overview        Set 1 to show on overview page
-     *
-     * @return array<array<string,mixed>>
-     */
-    abstract protected function getFields(): array;
-
     public static function render(Container $app, Environment $twig, Request $request): void
     {
         (new static($app, $twig))->router($request);
@@ -93,75 +51,52 @@ abstract class AdvancedForm
             $this->create();
         } elseif ($request->request->has('new')) {
             $this->store($request);
-            $this->index($request);
+            $this->index();
         } elseif ($request->query->get('action') == "copy") {
             $this->copy($request);
-            $this->index($request);
+            $this->index();
         } elseif ($request->query->get('action') == "edit") {
             $this->edit($request);
         } elseif ($request->request->has('edit')) {
             $this->update($request);
-            $this->index($request);
+            $this->index();
+        } elseif ($request->query->has('switch') && $request->query->getInt('id') > 0 && count($this->getSwitches()) > 0) {
+            $this->switch($request);
+            $this->index();
+        } elseif ($request->query->has('moveUp') && $request->query->has('parentId')) {
+            $this->moveUp($request);
+            $this->index();
+        } elseif ($request->query->has('moveDown') && $request->query->has('parentId')) {
+            $this->moveDown($request);
+            $this->index();
         } elseif ($request->query->get('action') == "del") {
             $this->confirmDelete($request);
         } elseif ($request->request->has('del')) {
             $this->delete($request);
-            $this->index($request);
+            $this->index();
         } else {
-            $this->index($request);
+            $this->index();
         }
     }
 
-    public function index(Request $request): void
+    public function index(): void
     {
         $this->twig->addGlobal("title", $this->getName());
         $this->twig->addGlobal("subtitle", "Übersicht");
 
         echo "<p>Um einen Datensatz hinzuzufügen, zu ändern oder zu löschen klicke  bitte auf die entsprechenden Links oder Buttons!</p>";
 
-        if ($request->query->has('sortup') && $request->query->has('parentid')) {
-            $res = dbquery("SELECT " . $this->getTableId() . " FROM " . $this->getTable() . " WHERE " . $this->getTableSortParent() . "=" . $request->query->get('parentid') . " ORDER BY " . $this->getTableSort() . "");
-            $cnt = 0;
-            $sorter = 0;
-            while ($arr = mysql_fetch_array($res)) {
-                dbquery("UPDATE " . $this->getTable() . " SET " . $this->getTableSort() . "=" . $cnt . " WHERE " . $this->getTableId() . "=" . $arr[$this->getTableId()] . "");
-                if ($request->query->get('sortup') == $arr[$this->getTableId()]) {
-                    $sorter = $cnt;
-                }
-                $cnt++;
-            }
-            dbquery("UPDATE " . $this->getTable() . " SET " . $this->getTableSort() . "=" . ($sorter) . " WHERE " . $this->getTableSortParent() . "=" . $request->query->get('parentid') . " AND " . $this->getTableSort() . "=" . ($sorter - 1) . "");
-            dbquery("UPDATE " . $this->getTable() . " SET " . $this->getTableSort() . "=" . ($sorter - 1) . " WHERE " . $this->getTableId() . "=" . $request->query->get('sortup') . "");
-        }
-
-        if ($request->query->has('sortdown') && $request->query->has('parentid')) {
-            $res = dbquery("SELECT " . $this->getTableId() . " FROM " . $this->getTable() . " WHERE " . $this->getTableSortParent() . "=" . $request->query->get('parentid') . " ORDER BY " . $this->getTableSort() . ";");
-            $cnt = 0;
-            $sorter = 0;
-            while ($arr = mysql_fetch_array($res)) {
-                dbquery("UPDATE " . $this->getTable() . " SET " . $this->getTableSort() . "=" . $cnt . " WHERE " . $this->getTableId() . "=" . $arr[$this->getTableId()] . "");
-                if ($request->query->get('sortdown') == $arr[$this->getTableId()]) {
-                    $sorter = $cnt;
-                }
-                $cnt++;
-            }
-            dbquery("UPDATE " . $this->getTable() . " SET " . $this->getTableSort() . "=" . ($sorter) . " WHERE " . $this->getTableSortParent() . "=" . $request->query->get('parentid') . " AND " . $this->getTableSort() . "=" . ($sorter + 1) . "");
-            dbquery("UPDATE " . $this->getTable() . " SET " . $this->getTableSort() . "=" . ($sorter + 1) . " WHERE " . $this->getTableId() . "=" . $request->query->get('sortdown') . "");
-        }
-
-
-        // Switcher
-        if (count($this->getSwitches()) > 0 && $request->query->has('switch') && $request->query->getInt('id') > 0) {
-            dbquery("UPDATE " . $this->getTable() . " SET `" . $request->query->get('switch') . "`=(`" . $request->query->get('switch') . "`+1)%2 WHERE `" . $this->getTableId() . "`=" . $request->query->get('id') . "");
-            success_msg("Aktion ausgeführt!");
-        }
-
-        // Show overview
         echo "<form action=\"?" . URL_SEARCH_STRING . "\" method=\"post\">";
         echo "<input type=\"button\" value=\"Neuer Datensatz hinzufügen\" name=\"new\" onclick=\"document.location='?" . URL_SEARCH_STRING . "&amp;action=new'\" /><br/><br/>";
 
-        $sql = "SELECT * FROM " . $this->getTable() . " ORDER BY " . $this->getOverviewOrderField() . " " . $this->getOverviewOrder() . ";";
-        if ($res = dbquery($sql)) {
+        $rows = $this->createQueryBuilder()
+            ->select('*')
+            ->from($this->getTable())
+            ->orderBy($this->getOverviewOrderField(), $this->getOverviewOrder())
+            ->execute()
+            ->fetchAllAssociative();
+
+        if (count($rows) > 0) {
             echo "<table width=\"100%\" cellpadding=\"3\" cellspacing=\"1\" align=\"center\"><tr>";
             if ($this->getImagePath() !== null) {
                 echo "<th valign=\"top\" class=\"tbltitle\">Bild</a>";
@@ -187,21 +122,21 @@ abstract class AdvancedForm
             echo "<th valign=\"top\" width=\"70\" colspan=\"2\">&nbsp;</td></tr>";
             $cnt = 0;
             $parId = null;
-            while ($arr = mysql_fetch_array($res)) {
+            foreach ($rows as $arr) {
                 echo "<tr>";
                 if ($this->getImagePath() !== null) {
                     $path = preg_replace('/<DB_TABLE_ID>/', $arr[$this->getTableId()], $this->getImagePath());
                     if (is_file($path)) {
                         $imsize = getimagesize($path);
                         echo "<td class=\"tbldata\" style=\"background:#000;width:" . $imsize[0] . "px;\">
-                    <a href=\"?" . URL_SEARCH_STRING . "&amp;action=edit&amp;id=" . $arr[$this->getTableId()] . "\">
-                    <img src=\"" . $path . "\" align=\"top\"/>
-                    </a></td>";
+                            <a href=\"?" . URL_SEARCH_STRING . "&amp;action=edit&amp;id=" . $arr[$this->getTableId()] . "\">
+                            <img src=\"" . $path . "\" align=\"top\"/>
+                            </a></td>";
                     } else {
                         echo "<td class=\"tbldata\" style=\"background:#000;width:40px;\">
-                    <a href=\"?" . URL_SEARCH_STRING . "&amp;action=edit&amp;id=" . $arr[$this->getTableId()] . "\">
-                    <img src=\"../images/blank.gif\" style=\"width:40px;height:40px;\" align=\"top\"/>
-                    </a></td>";
+                            <a href=\"?" . URL_SEARCH_STRING . "&amp;action=edit&amp;id=" . $arr[$this->getTableId()] . "\">
+                            <img src=\"../images/blank.gif\" style=\"width:40px;height:40px;\" align=\"top\"/>
+                            </a></td>";
                     }
                 }
 
@@ -223,14 +158,14 @@ abstract class AdvancedForm
                 if ($this->getTableSort() !== null && $this->getTableSortParent() !== null) {
                     echo "<td valign=\"top\" class=\"tbldata\" style=\"width:40px;\">";
 
-                    if ($cnt < mysql_num_rows($res) - 1) {
-                        echo "<a href=\"?" . URL_SEARCH_STRING . "&amp;sortdown=" . $arr[$this->getTableId()] . "&amp;parentid=" . $arr[$this->getTableSortParent()] . "\"><img src=\"../images/down.gif\" alt=\"down\" /></a> ";
+                    if ($cnt < count($rows) - 1) {
+                        echo "<a href=\"?" . URL_SEARCH_STRING . "&amp;moveDown=" . $arr[$this->getTableId()] . "&amp;parentId=" . $arr[$this->getTableSortParent()] . "\"><img src=\"../images/down.gif\" alt=\"down\" /></a> ";
                     } else {
                         echo "<img src=\"../images/blank.gif\" alt=\"blank\" style=\"width:16px;\" /> ";
                     }
 
                     if ($cnt != 0 && $parId == $arr[$this->getTableSortParent()]) {
-                        echo "<a href=\"?" . URL_SEARCH_STRING . "&amp;sortup=" . $arr[$this->getTableId()] . "&amp;parentid=" . $arr[$this->getTableSortParent()] . "\"><img src=\"../images/up.gif\" alt=\"up\" /></a> ";
+                        echo "<a href=\"?" . URL_SEARCH_STRING . "&amp;moveUp=" . $arr[$this->getTableId()] . "&amp;parentId=" . $arr[$this->getTableSortParent()] . "\"><img src=\"../images/up.gif\" alt=\"up\" /></a> ";
                     } else {
                         echo "<img src=\"../images/blank.gif\" alt=\"blank\" style=\"width:16px;\" /> ";
                     }
@@ -279,7 +214,7 @@ abstract class AdvancedForm
                         break;
                     case "textarea":
                         echo "";
-                        echo stripslashes($arr[$a['name']]);
+                        echo $arr[$a['name']];
                         echo "";
 
                         break;
@@ -384,8 +319,7 @@ abstract class AdvancedForm
                     echo "<td class=\"tbldata\" width=\"200\">";
                     $actions = FleetAction::getAll();
                     foreach ($actions as $ac) {
-                        echo "<input name=\"" . $a['name'] . "[]\" type=\"checkbox\" value=\"" . $ac->code() . "\"";
-                        echo " /> " . $ac . "<br/>";
+                        echo "<label><input name=\"" . $a['name'] . "[]\" type=\"checkbox\" value=\"" . $ac->code() . "\" /> " . $ac . "</label><br/>";
                     }
                     echo "</td></tr>";
 
@@ -401,88 +335,44 @@ abstract class AdvancedForm
 
     public function store(Request $request): void
     {
-        dbquery($this->createNewDatasetQuery($request));
+        $this->insertRecord($request);
         $hookResult = $this->runPostInsertUpdateHook();
         echo MessageBox::ok("", "Neuer Datensatz gespeichert!" . (filled($hookResult) ? ' ' . $hookResult : ''));
     }
 
-    private function createNewDatasetQuery(Request $request): string
+    private function insertRecord(Request $request): void
     {
-        global $_FILES;
-        $type = "";
-        $form_data = "";
+        $values = [];
+        $params = [];
 
-        $cnt = 1;
-        $fsql = "";
-        $vsql = "";
-        $vsqlsp = "";
-        foreach ($this->getFields() as $k => $a) {
-            if ($a['type'] != "readonly") {
-                $fsql .= "`" . $a['name'] . "`";
-                if ($cnt < sizeof($this->getFields())) {
-                    $fsql .= ",";
-                }
-            }
-            $cnt++;
-        }
-        $cnt = 1;
-        foreach ($this->getFields() as $k => $a) {
-            switch ($a['type']) {
+        foreach ($this->getFields() as $field) {
+            switch ($field['type']) {
                 case "readonly":
                     break;
-                case "text":
-                    $vsql .= "'" . addslashes($request->request->get($a['name'])) . "'";
-
-                    break;
-                case "numeric":
-                    $vsql .= "'" . $request->request->get($a['name']) . "'";
-
-                    break;
-                case "textarea":
-                    $vsql .= "'" . addslashes($request->request->get($a['name'])) . "'";
-
-                    break;
-                case "radio":
-                    $vsql .= "'" . $request->request->get($a['name']) . "'";
-
-                    break;
-                case "select":
-                    $vsql .= "'" . $request->request->get($a['name']) . "'";
-
-                    break;
                 case "fleetaction":
-                    if (is_array($request->request->get($a['name']))) {
-                        $str = implode(",", $request->request->get($a['name']));
-                    } else {
-                        $str = "";
-                    }
-                    $vsql .= "'" . $str . "'";
+                    $values[$field['name']] = ':' . $field['name'];
+                    $params[$field['name']] = is_array($request->request->get($field['name']))
+                        ? implode(",", $request->request->get($field['name']))
+                        : "";
 
                     break;
                 default:
-                    $vsql .= "'" . addslashes($request->request->get($a['name'])) . "'";
-
-                    break;
+                    $values[$field['name']] = ':' . $field['name'];
+                    $params[$field['name']] = $request->request->get($field['name']);
             }
-            if ($cnt < sizeof($this->getFields()) && $a['type'] != "readonly") {
-                $vsql .= ",";
-            }
-            $cnt++;
         }
 
-        $sql = "INSERT INTO " . $this->getTable() . " (";
-        $sql .= $fsql;
-        $sql .= ") VALUES(";
-        $sql .= $vsql . $vsqlsp;
-        $sql .= ");";
-
-        return $sql;
+        $this->createQueryBuilder()
+            ->insert($this->getTable())
+            ->values($values)
+            ->setParameters($params)
+            ->execute();
     }
 
     public function copy(Request $request): void
     {
         DuplicateMySQLRecord($this->getTable(), $this->getTableId(), $request->query->get('id'));
-        success_msg("Datensatz kopiert!");
+        echo MessageBox::ok("", "Datensatz kopiert!");
     }
 
     public function edit(Request $request): void
@@ -529,7 +419,7 @@ abstract class AdvancedForm
 
                     break;
                 case "text":
-                    echo "<input $stl type=\"text\" name=\"" . $fieldDefinition['name'] . "\" size=\"" . $fieldDefinition['size'] . "\" maxlength=\"" . $fieldDefinition['maxlen'] . "\" value=\"" . stripslashes($arr[$fieldDefinition['name']]) . "\" />";
+                    echo "<input $stl type=\"text\" name=\"" . $fieldDefinition['name'] . "\" size=\"" . $fieldDefinition['size'] . "\" maxlength=\"" . $fieldDefinition['maxlen'] . "\" value=\"" . $arr[$fieldDefinition['name']] . "\" />";
 
                     break;
                 case "hidden":
@@ -541,7 +431,7 @@ abstract class AdvancedForm
 
                     break;
                 case "textarea":
-                    echo "<textarea $stl name=\"" . $fieldDefinition['name'] . "\" rows=\"" . $fieldDefinition['rows'] . "\" cols=\"" . $fieldDefinition['cols'] . "\">" . stripslashes($arr[$fieldDefinition['name']]) . "</textarea>";
+                    echo "<textarea $stl name=\"" . $fieldDefinition['name'] . "\" rows=\"" . $fieldDefinition['rows'] . "\" cols=\"" . $fieldDefinition['cols'] . "\">" . $arr[$fieldDefinition['name']] . "</textarea>";
 
                     break;
                 case "radio":
@@ -600,17 +490,17 @@ abstract class AdvancedForm
                     $keys = explode(",", $arr[$fieldDefinition['name']]);
                     $actions = FleetAction::getAll();
                     foreach ($actions as $ac) {
-                        echo "<input name=\"" . $fieldDefinition['name'] . "[]\" type=\"checkbox\" value=\"" . $ac->code() . "\"";
+                        echo "<label><input name=\"" . $fieldDefinition['name'] . "[]\" type=\"checkbox\" value=\"" . $ac->code() . "\"";
                         if (in_array($ac->code(), $keys, true)) {
                             echo " checked=\"checked\"";
                         }
-                        echo " /> " . $ac . "<br/>";
+                        echo " /> " . $ac . "</label><br/>";
                     }
                     echo "";
 
                     break;
                 default:
-                    echo "<input type=\"text\" name=\"" . $fieldDefinition['name'] . "\" size=\"" . $fieldDefinition['size'] . "\" maxlength=\"" . $fieldDefinition['maxlen'] . "\" value=\"" . stripslashes($arr[$fieldDefinition['name']]) . "\" />";
+                    echo "<input type=\"text\" name=\"" . $fieldDefinition['name'] . "\" size=\"" . $fieldDefinition['size'] . "\" maxlength=\"" . $fieldDefinition['maxlen'] . "\" value=\"" . $arr[$fieldDefinition['name']] . "\" />";
             }
             echo "</td>\n</tr>\n";
             if (isset($fieldDefinition['line']) && $fieldDefinition['line'] == 1) {
@@ -625,68 +515,145 @@ abstract class AdvancedForm
 
     public function update(Request $request): void
     {
-        dbquery($this->editDatasetQuery($request));
-        $hookResult = $this->runPostInsertUpdateHook();
-        echo MessageBox::ok("", "Datensatz geändert!" . (filled($hookResult) ? ' ' . $hookResult : ''));
+        if ($this->updateRecord($request)) {
+            $hookResult = $this->runPostInsertUpdateHook();
+            echo MessageBox::ok("", "Datensatz geändert!" . (filled($hookResult) ? ' ' . $hookResult : ''));
+        }
     }
 
-    private function editDatasetQuery(Request $request): string
+    private function updateRecord(Request $request): bool
     {
-        $sql = "UPDATE " . $this->getTable() . " SET ";
-        $cnt = 1;
-        foreach ($this->getFields() as $k => $a) {
-            $cntadd = 1;
-            switch ($a['type']) {
+        $qb = $this->createQueryBuilder()
+            ->update($this->getTable())
+            ->where($this->getTableId() . " = :".$this->getTableId());
+
+        $params = [
+            $this->getTableId() => $request->request->get($this->getTableId()),
+        ];
+
+        foreach ($this->getFields() as $field) {
+            switch ($field['type']) {
                 case "readonly":
-                    //Case readonly: do *nothing* with the field!
-                    //but instead do *not* add a comma
-                    $cntadd = 0;
-
-                    break;
-                case "text":
-                    $sql .= "`" . $a['name'] . "` = '" . addslashes($request->request->get($a['name'])) . "'";
-
-                    break;
-                case "numeric":
-                    $sql .= "`" . $a['name'] . "` = '" . $request->request->get($a['name']) . "'";
-
-                    break;
-                case "textarea":
-                    $sql .= "`" . $a['name'] . "` = '" . addslashes($request->request->get($a['name'])) . "'";
-
-                    break;
-                case "radio":
-                    $sql .= "`" . $a['name'] . "` = '" . $request->request->get($a['name']) . "'";
-
-                    break;
-                case "select":
-                    $sql .= "`" . $a['name'] . "` = '" . $request->request->get($a['name']) . "'";
-
                     break;
                 case "fleetaction":
-                    if (is_array($request->request->get($a['name']))) {
-                        $str = implode(",", $request->request->get($a['name']));
-                    } else {
-                        $str = "";
-                    }
-                    $sql .= "`" . $a['name'] . "` = '" . $str . "'";
+                    $qb->set($field['name'], ':' . $field['name']);
+                    $params[$field['name']] = is_array($request->request->get($field['name']))
+                        ? implode(",", $request->request->get($field['name']))
+                        : "";
 
                     break;
                 default:
-                    $sql .= "`" . $a['name'] . "` = '" . addslashes($request->request->get($a['name'])) . "'";
-
-                    break;
+                    $qb->set($field['name'], ':' . $field['name']);
+                    $params[$field['name']] = $request->request->get($field['name']);
             }
-            if ($cntadd == 1) {
-                if ($cnt < sizeof($this->getFields())) {
-                    $sql .= ",";
-                }
+        }
+
+        $affected = (int) $qb->setParameters($params)
+            ->execute();
+
+        return $affected > 0;
+    }
+
+    public function switch(Request $request): void
+    {
+        $affected = (int) $this->createQueryBuilder()
+            ->update($this->getTable())
+            ->set($request->query->get('switch'), "(" . $request->query->get('switch') . " + 1) % 2")
+            ->where($this->getTableId() . ' = :id')
+            ->setParameters([
+                'id' => $request->query->get('id'),
+            ])
+            ->execute();
+
+        if ($affected > 0) {
+            echo MessageBox::ok("", "Aktion ausgeführt!");
+        }
+    }
+
+    public function moveUp(Request $request): void
+    {
+        $ids = $this->createQueryBuilder()
+            ->select($this->getTableId())
+            ->from($this->getTable())
+            ->where($this->getTableSortParent() . " = :parentId")
+            ->orderBy($this->getTableSort())
+            ->setParameter('parentId', $request->query->get('parentId'))
+            ->execute()
+            ->fetchFirstColumn();
+
+        $cnt = 0;
+        $sorter = 0;
+        foreach ($ids as $id) {
+            $this->createQueryBuilder()
+                ->update($this->getTable())
+                ->set($this->getTableSort(), (string) $cnt)
+                ->where($this->getTableId() . " = :id")
+                ->setParameter('id', $id)
+                ->execute();
+
+            if ($request->query->get('moveUp') == $id) {
+                $sorter = $cnt;
             }
             $cnt++;
         }
-        $sql .= " WHERE " . $this->getTableId() . "='" . $request->request->get($this->getTableId()) . "';";
 
-        return $sql;
+        $this->createQueryBuilder()
+            ->update($this->getTable())
+            ->set($this->getTableSort(), (string) $sorter)
+            ->where($this->getTableSortParent() . " = :parentId")
+            ->andWhere($this->getTableSort() . " = " . ($sorter - 1))
+            ->setParameter('parentId', $request->query->get('parentId'))
+            ->execute();
+
+        $this->createQueryBuilder()
+            ->update($this->getTable())
+            ->set($this->getTableSort(), (string) ($sorter - 1))
+            ->where($this->getTableId() . " = :sortUp")
+            ->setParameter('sortUp', $request->query->get('moveUp'))
+            ->execute();
+    }
+
+    public function moveDown(Request $request): void
+    {
+        $ids = $this->createQueryBuilder()
+            ->select($this->getTableId())
+            ->from($this->getTable())
+            ->where($this->getTableSortParent() . " = :parentId")
+            ->orderBy($this->getTableSort())
+            ->setParameter('parentId', $request->query->get('parentId'))
+            ->execute()
+            ->fetchFirstColumn();
+
+        $cnt = 0;
+        $sorter = 0;
+        foreach ($ids as $id) {
+            $this->createQueryBuilder()
+                ->update($this->getTable())
+                ->set($this->getTableSort(), (string) $cnt)
+                ->where($this->getTableId() . " = :id")
+                ->setParameter('id', $id)
+                ->execute();
+
+            if ($request->query->get('moveDown') == $id) {
+                $sorter = $cnt;
+            }
+            $cnt++;
+        }
+
+        $this->createQueryBuilder()
+            ->update($this->getTable())
+            ->set($this->getTableSort(), (string) $sorter)
+            ->where($this->getTableSortParent() . " = :parentId")
+            ->andWhere($this->getTableSort() . " = " . ($sorter + 1))
+            ->setParameter('parentId', $request->query->get('parentId'))
+            ->execute();
+
+        $this->createQueryBuilder()
+            ->update($this->getTable())
+            ->set($this->getTableSort(), (string) ($sorter + 1))
+            ->where($this->getTableId() . " = :sortUp")
+            ->setParameter('sortUp', $request->query->get('moveDown'))
+            ->execute();
     }
 
     public function confirmDelete(Request $request): void
@@ -726,7 +693,7 @@ abstract class AdvancedForm
                     break;
                 case "textarea":
                     echo "<tr><th class=\"tbltitle\" width=\"200\">" . $a['text'] . ":</th>";
-                    echo "<td class=\"tbldata\" width=\"200\">" . stripslashes(nl2br($arr[$a['name']])) . "</td></tr>";
+                    echo "<td class=\"tbldata\" width=\"200\">" . nl2br($arr[$a['name']]) . "</td></tr>";
 
                     break;
                 case "radio":
@@ -756,7 +723,13 @@ abstract class AdvancedForm
 
     public function delete(Request $request): void
     {
-        if (dbquery("DELETE FROM " . $this->getTable() . " WHERE " . $this->getTableId() . "='" . $request->request->get($this->getTableId()) . "';")) {
+        $affected = (int) $this->createQueryBuilder()
+            ->delete($this->getTable())
+            ->where($this->getTableId() . ' = :id')
+            ->setParameter('id', $request->request->get($this->getTableId()))
+            ->execute();
+
+        if ($affected > 0) {
             echo MessageBox::ok("", "Datensatz wurde gelöscht!");
         }
     }
@@ -773,8 +746,15 @@ abstract class AdvancedForm
                 $r_array[$key] = $val;
             }
         }
-        $res = dbquery("SELECT `$value_field`,`$text_field` FROM $table ORDER BY $order;");
-        while ($arr = mysql_fetch_array($res)) {
+
+        $rows = $this->createQueryBuilder()
+            ->select($value_field, $text_field)
+            ->from($table)
+            ->orderBy($order)
+            ->execute()
+            ->fetchAllAssociative();
+
+        foreach ($rows as $arr) {
             $r_array[$arr[$text_field]] = $arr[$value_field];
         }
 
