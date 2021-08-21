@@ -107,6 +107,7 @@ jobs:
       matrix:
         php-version:
           - "7.4"
+          - "8.0"
 
     name: PHPStan
     runs-on: ubuntu-latest
