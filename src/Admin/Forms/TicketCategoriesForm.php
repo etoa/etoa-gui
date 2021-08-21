@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace EtoA\Admin\Forms;
 
-class TicketCategoriesForm extends AdvancedForm
+class TicketCategoriesForm extends SimpleForm
 {
     protected function getName(): string
     {
@@ -24,11 +24,6 @@ class TicketCategoriesForm extends AdvancedForm
     protected function getOverviewOrderField(): string
     {
         return "sort";
-    }
-
-    protected function getTableSort(): ?string
-    {
-        return 'sort';
     }
 
     protected function getFields(): array

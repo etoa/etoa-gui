@@ -121,6 +121,12 @@ abstract class SimpleForm extends Form
         switch ($field['type']) {
             case "readonly":
                 return $arr[$field['name']];
+            case "numeric":
+                return "<input
+                    type=\"number\"
+                    name=\"" . $field['name'] . "[" . $arr[$this->getTableId()] . "]\"
+                    value=\"" . $arr[$field['name']] . "\"
+                />";
             case "color":
                 return "<input
                     type=\"color\"
