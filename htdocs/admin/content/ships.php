@@ -1,5 +1,6 @@
 <?PHP
 
+use EtoA\Admin\Forms\ShipCategoriesForm;
 use EtoA\Admin\Forms\ShipsForm;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Ranking\RankingService;
@@ -93,7 +94,7 @@ elseif ($sub == "xpcalc") {
 // Kategorien
 //
 elseif ($sub == "cat") {
-    simple_form("ship_cat", $twig);
+    ShipCategoriesForm::render($app, $twig, $request);
 }
 
 //

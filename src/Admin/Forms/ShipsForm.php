@@ -28,11 +28,6 @@ class ShipsForm extends AdvancedForm
         return "ship_cat_id ASC, ship_order, ship_name";
     }
 
-    protected function getOverviewOrder(): string
-    {
-        return "ASC";
-    }
-
     protected function getTableSort(): ?string
     {
         return 'ship_order';

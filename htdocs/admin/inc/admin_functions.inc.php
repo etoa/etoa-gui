@@ -24,19 +24,6 @@ use EtoA\Technology\TechnologyDataRepository;
 use EtoA\User\UserRepository;
 
 /**
- * Generates a page for editing table date with
- * a simple form
- *
- * @param string $module Module-key
- */
-function simple_form($module, $twig)
-{
-    require_once("inc/form_functions.php");
-    require_once("forms/$module.php");
-    require_once("inc/simple_forms.php");
-}
-
-/**
  * Displays a clickable edit button
  *
  * @param string $url Url of the link

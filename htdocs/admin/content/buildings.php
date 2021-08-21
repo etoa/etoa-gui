@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\Admin\Forms\BuildingsForm;
+use EtoA\Admin\Forms\BuildingTypesForm;
 use EtoA\Building\BuildingDataRepository;
 use EtoA\Building\BuildingPointRepository;
 use EtoA\Building\BuildingRepository;
@@ -31,7 +32,7 @@ if ($sub == "prices") {
 } elseif ($sub == "points") {
     buildingPoints($request, $repository, $buildingPointRepository, $rankingService);
 } elseif ($sub == "type") {
-    editCategories($twig);
+    editCategories($app, $twig, $request);
 } elseif ($sub == "data") {
     editData($app, $twig, $request);
 } elseif ($sub == "req") {
@@ -189,9 +190,9 @@ function buildingPoints(
     }
 }
 
-function editCategories(Environment $twig)
+function editCategories(Container $app, Environment $twig, Request $request)
 {
-    simple_form("building_types", $twig);
+    BuildingTypesForm::render($app, $twig, $request);
 }
 
 function editData(Container $app, Environment $twig, Request $request)

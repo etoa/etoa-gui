@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\Admin\Forms\TechnologiesForm;
+use EtoA\Admin\Forms\TechnologyTypesForm;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Ranking\RankingService;
 use EtoA\Technology\TechnologyDataRepository;
@@ -85,7 +86,7 @@ if ($sub == "points") {
 // Kategorien
 //
 elseif ($sub == "type") {
-    simple_form("tech_types", $twig);
+    TechnologyTypesForm::render($app, $twig, $request);
 }
 
 //
