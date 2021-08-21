@@ -9,7 +9,7 @@ $xajax->register(XAJAX_FUNCTION, 'showAllianceMembers');
 $xajax->register(XAJAX_FUNCTION, 'showAllianceMemberAddCosts');
 
 //Listet User einer Allianz auf
-function showAllianceMembers($alliance_id = 0, $field_id)
+function showAllianceMembers($alliance_id = 0, $field_id = '')
 {
     global $app;
 
@@ -91,7 +91,7 @@ function showAllianceMembers($alliance_id = 0, $field_id)
     return $objResponse;
 }
 
-function showAllianceMemberAddCosts($allianceId = 0, $form)
+function showAllianceMemberAddCosts($allianceId = 0, $form = [])
 {
     global $app;
 

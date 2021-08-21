@@ -403,7 +403,7 @@ class MessageRepository extends AbstractRepository
         return $affected > 0;
     }
 
-    public function setDeletedForUser(int $userId, bool $deleted = true, ?int $userFromId, ?bool $isArchived = null): bool
+    public function setDeletedForUser(int $userId, bool $deleted = true, int $userFromId = null, ?bool $isArchived = null): bool
     {
         $qry = $this->createQueryBuilder()
             ->update('messages')
