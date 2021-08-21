@@ -40,12 +40,10 @@ class TippsForm extends AdvancedForm
                 "name" => "tip_text",
                 "text" => "Tipp",
                 "type" => "textarea",
-                "def_val" => "",
-                "size" => "",
-                "maxlen" => "",
                 "rows" => "10",
                 "cols" => "40",
                 "show_overview" => true,
+                "link_in_overview" => true,
             ],
         ];
     }
