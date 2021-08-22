@@ -17,6 +17,7 @@ use EtoA\Ship\ShipRequirementRepository;
 use EtoA\Ship\ShipSearch;
 use EtoA\Ship\ShipSort;
 use EtoA\Support\StringUtils;
+use EtoA\Specialist\SpecialistService;
 use EtoA\Technology\TechnologyRepository;
 use EtoA\UI\ResourceBoxDrawer;
 use EtoA\Universe\Planet\PlanetRepository;
@@ -152,6 +153,10 @@ if ($shipyard !== null && $shipyard->currentLevel > 0) {
             $queue[$item->id] = $item;
         }
 
+        /** @var SpecialistService $specialistService */
+        $specialistService = $app[SpecialistService::class];
+        $specialist = $specialistService->getSpecialistOfUser($cu->id);
+
         // Bauliste vom allen Planeten laden und nach Schiffe zusammenfassen
         $queue_total = $shipQueueRepository->getUserQueuedShipCounts($cu->getId());
 
@@ -173,7 +178,7 @@ if ($shipyard !== null && $shipyard->currentLevel > 0) {
         foreach ($items as $ship) {
             $shipsByCategory[$ship->catId][] = $ship;
             $ships[$ship->id] = $ship;
-            $shipCosts[$ship->id] = PreciseResources::createFromBase($ship->getCosts())->multiply($cu->specialist->costsShip);
+            $shipCosts[$ship->id] = PreciseResources::createFromBase($ship->getCosts())->multiply($specialist !== null ? $specialist->costsShips : 1);
         }
 
         // level zählen welches die schiffswerft über dem angegeben level ist und faktor berechnen
@@ -194,11 +199,11 @@ if ($shipyard !== null && $shipyard->currentLevel > 0) {
         // Infos anzeigen
         tableStart("Werft-Infos");
         echo '<colgroup><col style="width:400px;"/><col/></colgroup>';
-        if ($cu->specialist->costsShip != 1) {
-            echo "<tr><td>Kostenreduktion durch " . $cu->specialist->name . ":</td><td>" . get_percent_string($cu->specialist->costsShip) . "</td></tr>";
+        if ($specialist !== null && $specialist->costsShips != 1) {
+            echo "<tr><td>Kostenreduktion durch " . $specialist->name . ":</td><td>" . get_percent_string($specialist->costsShips) . "</td></tr>";
         }
-        if ($cu->specialist->shipTime != 1) {
-            echo "<tr><td>Bauzeitverringerung durch " . $cu->specialist->name . ":</td><td>" . get_percent_string($cu->specialist->shipTime) . "</td></tr>";
+        if ($specialist !== null && $specialist->timeShips != 1) {
+            echo "<tr><td>Bauzeitverringerung durch " . $specialist->name . ":</td><td>" . get_percent_string($specialist->timeShips) . "</td></tr>";
         }
         echo "<tr><td>Eingestellte Arbeiter:</td><td>" . StringUtils::formatNumber($shipyard->peopleWorking);
         if (count($queue) === 0) {
@@ -446,7 +451,7 @@ if ($shipyard !== null && $shipyard->currentLevel > 0) {
                         $btime = $shipCosts[$ship_id]->getSum()
                             / $config->getInt('global_time') * $config->getFloat('ship_build_time')
                             * $time_boni_factor
-                            * $cu->specialist->shipTime;
+                            * ($specialist !== null ? $specialist->timeShips : 1);
 
                         // TODO: Überprüfen
                         //Rechnet zeit wenn arbeiter eingeteilt sind
@@ -500,7 +505,7 @@ if ($shipyard !== null && $shipyard->currentLevel > 0) {
                         [b]Schiffswerft Level:[/b] " . $shipyard->currentLevel . "
                         [b]Eingesetzte Bewohner:[/b] " . StringUtils::formatNumber($shipyard->peopleWorking) . "
                         [b]Gen-Tech Level:[/b] " . $gen_tech_level . "
-                        [b]Eingesetzter Spezialist:[/b] " . $cu->specialist->name . "
+                        [b]Eingesetzter Spezialist:[/b] " . ($specialist !== null ? $specialist->name : "Kein Spezialist"). "
 
                         [b]Kosten[/b]
                         [b]" . RES_METAL . ":[/b] " . StringUtils::formatNumber($bc['metal']) . "
@@ -753,7 +758,7 @@ if ($shipyard !== null && $shipyard->currentLevel > 0) {
                             }
 
                             // Bauzeit berechnen
-                            $btime = ($shipCosts[$shipData->id]->getSum()) / $config->getInt('global_time') * $config->getFloat('ship_build_time') * $time_boni_factor * $cu->specialist->shipTime;
+                            $btime = ($shipCosts[$shipData->id]->getSum()) / $config->getInt('global_time') * $config->getFloat('ship_build_time') * $time_boni_factor * ($specialist !== null ? $specialist->timeShips : 1);
                             $btime_min = $btime * (0.1 - ($gen_tech_level / 100));
                             $peopleOptimized = ceil(($btime - $btime_min) / $config->getInt('people_work_done'));
 

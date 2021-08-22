@@ -7,6 +7,7 @@ use EtoA\Log\GameLogFacility;
 use EtoA\Log\GameLogRepository;
 use EtoA\Log\LogSeverity;
 use EtoA\Support\StringUtils;
+use EtoA\Specialist\SpecialistService;
 use EtoA\Universe\Planet\PlanetRepository;
 
 class BuildListItem
@@ -214,12 +215,18 @@ class BuildListItem
             $buildingRepository = $app[BuildingRepository::class];
             $peopleWorking = $buildingRepository->getPeopleWorking($this->entityId);
 
+            /** @var SpecialistService $specialistService */
+            $specialistService = $app[SpecialistService::class];
+            $specialist = $specialistService->getSpecialistOfUser($cu->id);
+            $specialistBuildingCostFactor = $specialist !== null ? $specialist->costsBuildings : 1;
+            $specialistBuildTimeFactor = $specialist !== null ? $specialist->timeBuildings : 1;
+
             $bc = array();
             foreach ($resNames as $rk => $rn) {
-                $bc['costs' . $rk] = $cu->specialist->costsBuilding * $this->building->costs[$rk] * pow($this->building->costsFactor, $this->level + $levelUp);
+                $bc['costs' . $rk] = $specialistBuildingCostFactor * $this->building->costs[$rk] * pow($this->building->costsFactor, $this->level + $levelUp);
             }
 
-            $bonus = $cu->race->buildTime + $cp->typeBuildtime + $cp->starBuildtime + $cu->specialist->buildTime - 3;
+            $bonus = $cu->race->buildTime + $cp->typeBuildtime + $cp->starBuildtime + $specialistBuildTimeFactor - 3;
 
             $bc['time'] = (array_sum($bc)) / $this->config->getInt('global_time') * $this->config->getFloat('build_build_time');
             $bc['time'] *= $bonus;
@@ -230,10 +237,10 @@ class BuildListItem
             }
 
             if ($this->level != 0) {
-                $bc['costs5'] = ($cu->specialist->costsBuilding * $this->building->costs[5] * pow($this->building->prodFactor, $this->level + $levelUp)) -
-                    ($cu->specialist->costsBuilding * $this->building->costs[5] * pow($this->building->prodFactor, $this->level - 1));
+                $bc['costs5'] = ($specialistBuildingCostFactor * $this->building->costs[5] * pow($this->building->prodFactor, $this->level + $levelUp)) -
+                    ($specialistBuildingCostFactor * $this->building->costs[5] * pow($this->building->prodFactor, $this->level - 1));
             } else {
-                $bc['costs5'] = ($cu->specialist->costsBuilding * $this->building->costs[5] * pow($this->building->prodFactor, $this->level + $levelUp));
+                $bc['costs5'] = ($specialistBuildingCostFactor * $this->building->costs[5] * pow($this->building->prodFactor, $this->level + $levelUp));
             }
 
             if ($peopleWorking->building > 0) {
@@ -276,9 +283,14 @@ class BuildListItem
 
         /** @var GameLogRepository $gameLogRepository */
         $gameLogRepository = $app[GameLogRepository::class];
+
         /** @var BuildingRepository $buildingRepository */
         $buildingRepository = $app[BuildingRepository::class];
         $peopleWorking = $buildingRepository->getPeopleWorking($this->entityId);
+
+        /** @var SpecialistService $specialistService */
+        $specialistService = $app[SpecialistService::class];
+        $specialist = $specialistService->getSpecialistOfUser($cu->id);
 
         $costs = $this->getBuildCosts();
         $this->changedFields['startTime'] = "buildlist_build_start_time";
@@ -308,7 +320,7 @@ class BuildListItem
         [b]Ende:[/b] " . date("d.m.Y H:i:s", $this->endTime) . "
         [b]Eingesetzte Bewohner:[/b] " . StringUtils::formatNumber($peopleWorking->building) . "
         [b]Gen-Tech Level:[/b] " . BuildList::$GENTECH . "
-        [b]Eingesetzter Spezialist:[/b] " . $cu->specialist->name . "
+        [b]Eingesetzter Spezialist:[/b] " . ($specialist !== null ? $specialist->name : "Kein Spezialist") . "
 
         [b]Kosten[/b]
         [b]" . RES_METAL . ":[/b] " . StringUtils::formatNumber($costs['costs0']) . "
@@ -333,15 +345,21 @@ class BuildListItem
     public function getPeopleOptimized()
     {
         // TODO
-        global $resNames, $cp, $cu;
+        global $resNames, $cp, $cu, $app;
+
+        /** @var SpecialistService $specialistService */
+        $specialistService = $app[SpecialistService::class];
+        $specialist = $specialistService->getSpecialistOfUser($cu->id);
+        $specialistBuildingCostFactor = $specialist !== null ? $specialist->costsBuildings : 1;
+        $specialistBuildTimeFactor = $specialist !== null ? $specialist->timeBuildings : 1;
 
         $bc = array();
         foreach ($resNames as $rk => $rn) {
-            $bc['costs' . $rk] = $cu->specialist->costsBuilding * $this->building->costs[$rk] * pow($this->building->costsFactor, $this->level);
+            $bc['costs' . $rk] = $specialistBuildingCostFactor * $this->building->costs[$rk] * pow($this->building->costsFactor, $this->level);
         }
         $bc['costs5'] = 0;      //Energie nicht als Ressource zählen
 
-        $bonus = $cu->race->buildTime + $cp->typeBuildtime + $cp->starBuildtime + $cu->specialist->buildTime - 3;
+        $bonus = $cu->race->buildTime + $cp->typeBuildtime + $cp->starBuildtime + $specialistBuildTimeFactor - 3;
 
         $bc['time'] = (array_sum($bc)) / $this->config->getInt('global_time') * $this->config->getFloat('build_build_time');
         $bc['time'] *= $bonus;

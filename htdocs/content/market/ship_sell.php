@@ -8,6 +8,7 @@ use EtoA\Market\MarketShipRepository;
 use EtoA\Message\MarketReportRepository;
 use EtoA\Ship\ShipDataRepository;
 use EtoA\Support\StringUtils;
+use EtoA\Specialist\SpecialistService;
 use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Entity\EntityService;
 use EtoA\Universe\Planet\PlanetRepository;
@@ -33,6 +34,9 @@ $logRepository = $app[LogRepository::class];
 /** @var PlanetRepository $planetRepository */
 $planetRepository = $app[PlanetRepository::class];
 
+/** @var SpecialistService $specialistService */
+$specialistService = $app[SpecialistService::class];
+
 foreach ($_POST['ship_market_id'] as $num => $id) {
     // Lädt Angebotsdaten
     $offer = $marketShipRepository->getBuyableOffer((int) $id, $cu->getId(), (int) $cu->allianceId());
@@ -52,15 +56,17 @@ foreach ($_POST['ship_market_id'] as $num => $id) {
             $planetRepository->removeResources($cp->id(), $costs);
             $cp->reloadRes();
 
-            $seller = new User($offer->userId);
             $sellerEntity = $entityRepository->getEntity($offer->entityId);
             $ownEntity = $entityRepository->getEntity((int) $cp->id);
 
             $tradeShip = new Ship(MARKET_SHIP_ID);
 
+            $sellerSpecialist = $specialistService->getSpecialistOfUser($offer->userId);
+            $specialist = $specialistService->getSpecialistOfUser($cu->id);
+
             $dist = $entityService->distance($sellerEntity, $ownEntity);
-            $sellerFlighttime = ceil($dist / ($seller->specialist->tradeTime * $tradeShip->speed / 3600) + $tradeShip->time2start + $tradeShip->time2land);
-            $buyerFlighttime = ceil($dist / ($cu->specialist->tradeTime * $tradeShip->speed / 3600) + $tradeShip->time2start + $tradeShip->time2land);
+            $sellerFlighttime = ceil($dist / (($sellerSpecialist !== null ? $sellerSpecialist->tradeTime : 1) * $tradeShip->speed / 3600) + $tradeShip->time2start + $tradeShip->time2land);
+            $buyerFlighttime = ceil($dist / (($specialist !== null ? $specialist->tradeTime : 1) * $tradeShip->speed / 3600) + $tradeShip->time2start + $tradeShip->time2land);
 
             $launchtime = time();
             $sellerLandtime = $launchtime + $sellerFlighttime;
@@ -73,7 +79,7 @@ foreach ($_POST['ship_market_id'] as $num => $id) {
             $numBuyerShip = ($tradeShip->capacity > 0) ? ceil(array_sum($buyarr) / $tradeShip->capacity) : 1;
 
             // Fleet Buyer->Seller
-            $buyerFid = $fleetRepository->add($seller->getId(), $launchtime, (int) $sellerLandtime, $cp->id, $sellerEntity->id, \EtoA\Fleet\FleetAction::MARKET, \EtoA\Fleet\FleetStatus::DEPARTURE, $costs);
+            $buyerFid = $fleetRepository->add($offer->userId, $launchtime, (int) $sellerLandtime, $cp->id, $sellerEntity->id, \EtoA\Fleet\FleetAction::MARKET, \EtoA\Fleet\FleetStatus::DEPARTURE, $costs);
             $fleetRepository->addShipsToFleet($buyerFid, MARKET_SHIP_ID, $numBuyerShip);
 
             $marketShipRepository->delete($offer->id);
@@ -98,14 +104,14 @@ foreach ($_POST['ship_market_id'] as $num => $id) {
             );
             if (strlen($offer->text) > TRADE_POINTS_TRADETEXT_MIN_LENGTH) {
                 $userRatingService->addTradeRating(
-                    $seller->id,
+                    $offer->userId,
                     TRADE_POINTS_PER_TRADE + TRADE_POINTS_PER_TRADETEXT,
                     true,
                     'Handel #' . $offer->id . ' mit ' . $cu->id
                 );
             } else {
                 $userRatingService->addTradeRating(
-                    $seller->id,
+                    $offer->userId,
                     TRADE_POINTS_PER_TRADE,
                     true,
                     'Handel #' . $offer->id . ' mit ' . $cu->id
@@ -121,6 +127,7 @@ foreach ($_POST['ship_market_id'] as $num => $id) {
                 $shipRepository = $app[ShipDataRepository::class];
                 $shipNames = $shipRepository->getShipNames(true);
 
+                $seller = new User($offer->userId);
                 $logRepository->add(LogFacility::MULTITRADE, LogSeverity::INFO, "[page user sub=edit user_id=" . $cu->id . "][B]" . $cu->nick . "[/B][/page] hat von [page user sub=edit user_id=" . $offer->userId . "][B]" . $seller . "[/B][/page] Schiffe gekauft:\n\n" . $offer->count . " " . $shipNames[$offer->shipId] . "\n\nund das zu folgendem Preis:\n\n" . RES_METAL . ": " . StringUtils::formatNumber($offer->costs0) . "\n" . RES_CRYSTAL . ": " . StringUtils::formatNumber($offer->costs1) . "\n" . RES_PLASTIC . ": " . StringUtils::formatNumber($offer->costs2) . "\n" . RES_FUEL . ": " . StringUtils::formatNumber($offer->costs3) . "\n" . RES_FOOD . ": " . StringUtils::formatNumber($offer->costs4));
             }
 

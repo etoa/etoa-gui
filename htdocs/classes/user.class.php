@@ -59,7 +59,6 @@ class User implements \EtoA\User\UserInterface
     protected $specialistTime;
     protected $boostBonusProduction;
     protected $boostBonusBuilding;
-    protected $specialist = null;
     protected $ghost;
     protected $lastInvasion;
     protected $allianceShippoints;
@@ -387,9 +386,6 @@ class User implements \EtoA\User\UserInterface
             }
             if ($key == "alliance" && $this->alliance == null && $this->allianceId > 0) {
                 $this->alliance = new Alliance($this->allianceId);
-            }
-            if ($key == "specialist" && $this->specialist == null) {
-                $this->specialist = new Specialist($this->specialistId, $this->specialistTime);
             }
             if ($key == "holiday" && $this->holiday == null) {
                 $this->holiday = ($this->hmode_from != 0 && $this->hmode_to != 0) ? true : false;

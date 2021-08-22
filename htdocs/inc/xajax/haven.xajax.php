@@ -15,6 +15,7 @@ use EtoA\Ship\ShipRepository;
 use EtoA\Ship\ShipRequirementRepository;
 use EtoA\Ship\ShipSort;
 use EtoA\Support\StringUtils;
+use EtoA\Specialist\SpecialistService;
 use EtoA\Technology\TechnologyDataRepository;
 use EtoA\Technology\TechnologyRepository;
 use EtoA\Universe\Entity\EntityCoordinates;
@@ -51,21 +52,31 @@ function havenShowShips()
 
     /** @var ShipRepository $shipRepository */
     $shipRepository = $app[ShipRepository::class];
+
     /** @var ShipDataRepository $shipDataRepository */
     $shipDataRepository = $app[ShipDataRepository::class];
+
     /** @var ShipRequirementRepository $shipRequirementRepository */
     $shipRequirementRepository = $app[ShipRequirementRepository::class];
+
     /** @var TechnologyRepository $technologyRepository */
     $technologyRepository = $app[TechnologyRepository::class];
+
     /** @var AllianceBuildingRepository $allianceBuildingRepository */
     $allianceBuildingRepository = $app[AllianceBuildingRepository::class];
+
+    /** @var SpecialistService $specialistService */
+    $specialistService = $app[SpecialistService::class];
 
     defineImagePaths();
 
     $response = new xajaxResponse();
     ob_start();
 
+    /** @var FleetLaunch $fleet */
     $fleet = unserialize($_SESSION['haven']['fleetObj']);
+
+    $specialist = $specialistService->getSpecialistOfUser($fleet->ownerId());
 
     //Schiffsinfo
     echo "<div id=\"ship_info\"></div>";
@@ -92,8 +103,8 @@ function havenShowShips()
     else
         echo "Es k&ouml;nnen <b>keine</b> Flotten von diesem Planeten starten!";
     echo " (Flottenkontrolle Stufe " . $fleet->fleetControlLevel();
-    if ($fleet->specialist->fleetMax > 0)
-        echo " +3 Flotten durch " . $fleet->specialist->name;
+    if ($specialist !== null && $specialist->fleetMax > 0)
+        echo " +" . $specialist->fleetMax . " Flotten durch " . $specialist->name;
     echo ")</td></tr>";
     if ($fleet->owner->allianceId() > 0 && $allianceBuildingRepository->getLevel($fleet->owner->allianceId(), AllianceBuildingId::MAIN) > 0) {
         $flvl = $allianceBuildingRepository->getLevel($fleet->owner->allianceId(), AllianceBuildingId::FLEET_CONTROL);
@@ -121,15 +132,15 @@ function havenShowShips()
     }
 
     // Specialist
-    if ($fleet->specialist->fleetSpeedFactor != 1) {
+    if ($specialist !== null && $specialist->fleetSpeed != 1) {
         echo "<tr><th>Spezialistenbonus:</th><td>";
-        echo "Die Schiffe fliegen aufgrund des <b>" . $fleet->specialist->name . "</b> mit " . get_percent_string($fleet->specialist->fleetSpeedFactor, 1) . " Geschwindigkeit!";
+        echo "Die Schiffe fliegen aufgrund des <b>" . $specialist->name . "</b> mit " . get_percent_string($specialist->fleetSpeed, 1) . " Geschwindigkeit!";
         echo "</td></tr>";
     }
     tableEnd();
 
     // Schiffe auflisten
-    $shipList = $shipRepository->getEntityShipCounts($fleet->ownerId(), $fleet->sourceEntity->Id());
+    $shipList = $shipRepository->getEntityShipCounts($fleet->ownerId(), $fleet->sourceEntity->id());
     $ships = array_intersect_key($shipDataRepository->searchShips(null, ShipSort::haven()), $shipList);
     if (count($ships) != 0) {
         $fleetShips = $fleet->getShips();
@@ -182,12 +193,12 @@ function havenShowShips()
             else
                 $speedtechstring = "";
 
-            if ($fleet->specialist->fleetSpeedFactor != 1)
-                $speedtechstring .= "Spezialist: " . get_percent_string($fleet->specialist->fleetSpeedFactor, 1) . "<br>";
+            if ($specialist !== null && $specialist->fleetSpeed != 1)
+                $speedtechstring .= "Spezialist: " . get_percent_string($specialist->fleetSpeed, 1) . "<br>";
             else
                 $speedtechstring .= "";
 
-            $timefactor = $fleet->raceSpeedFactor() + $fleet->specialist->fleetSpeedFactor - 1;
+            $timefactor = $fleet->raceSpeedFactor() + ($specialist !== null ? $specialist->fleetSpeed : 1) - 1;
 
             $speedRequirements = $shipRequirementRepository->getRequiredSpeedTechnologies($ship->id);
             if (count($speedRequirements) > 0) {

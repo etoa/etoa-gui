@@ -16,6 +16,7 @@ use EtoA\Log\GameLogFacility;
 use EtoA\Log\GameLogRepository;
 use EtoA\Log\LogSeverity;
 use EtoA\Support\StringUtils;
+use EtoA\Specialist\SpecialistService;
 use EtoA\Technology\TechnologyRepository;
 use EtoA\UI\ResourceBoxDrawer;
 use EtoA\Universe\Planet\PlanetRepository;
@@ -48,6 +49,9 @@ $userPropertiesRepository = $app[UserPropertiesRepository::class];
 /** @var GameLogRepository $gameLogRepository */
 $gameLogRepository = $app[GameLogRepository::class];
 $properties = $userPropertiesRepository->getOrCreateProperties($cu->id);
+
+/** @var SpecialistService $specialistService */
+$specialistService = $app[SpecialistService::class];
 
 //Definition für "Info" Link
 define("ITEMS_TBL", "defense");
@@ -117,7 +121,7 @@ if ($factoryBuilding !== null && $factoryBuilding->currentLevel > 0) {
         // Läd alle benötigten Daten in PHP-Arrays
         //
 
-        // Vorausetzungen laden
+        // Voraussetzungen laden
         $requirements = $defenseRequirementRepository->getAll();
 
         //Technologien laden und Gentechlevel definieren
@@ -151,6 +155,10 @@ if ($factoryBuilding !== null && $factoryBuilding->currentLevel > 0) {
             }
         }
 
+        $specialist = $specialistService->getSpecialistOfUser($cu->id);
+        $specialistDefenseCostFactor = $specialist !== null ? $specialist->costsDefense : 1;
+        $specialistDefenseTimeFactor = $specialist !== null ? $specialist->timeDefense : 1;
+
         /** @var \EtoA\Defense\Defense[] $defs */
         $defs = [];
         /** @var \EtoA\Defense\Defense[][] $defenseByCategory */
@@ -159,11 +167,11 @@ if ($factoryBuilding !== null && $factoryBuilding->currentLevel > 0) {
         $defenseCosts = [];
         // Alle Verteidigung laden
         $categories = $defenseCategoryRepository->getAllCategories();
-        //Verteidigungsordnunr des Users beachten
+        //Verteidigungsordnung des Users beachten
         $items = $defenseDataRepository->searchDefense(DefenseSearch::create()->showOrBuildable()->raceOrNull($cu->raceId), DefenseSort::specialWithUserSort($properties->itemOrderDef, $properties->itemOrderWay));
         foreach ($items as $item) {
             $defs[$item->id] = $item;
-            $defenseCosts[$item->id] = PreciseResources::createFromBase($item->getCosts())->multiply($cu->specialist->costsShip);
+            $defenseCosts[$item->id] = PreciseResources::createFromBase($item->getCosts())->multiply($specialistDefenseCostFactor);
             $defenseByCategory[$item->catId][] = $item;
         }
 
@@ -195,11 +203,11 @@ if ($factoryBuilding !== null && $factoryBuilding->currentLevel > 0) {
         // Infos anzeigen
         tableStart("Fabrik-Infos");
         echo '<colgroup><col style="width:400px;"/><col/></colgroup>';
-        if ($cu->specialist->costsDefense != 1) {
-            echo "<tr><td>Kostenreduktion durch " . $cu->specialist->name . ":</td><td>" . get_percent_string($cu->specialist->costsDefense) . '</td></tr>';
+        if ($specialist !== null && $specialist->costsDefense != 1) {
+            echo "<tr><td>Kostenreduktion durch " . $specialist->name . ":</td><td>" . get_percent_string($specialist->costsDefense) . '</td></tr>';
         }
-        if ($cu->specialist->defenseTime != 1) {
-            echo "<tr><td>Bauzeitverringerung durch " . $cu->specialist->name . ":</td><td>" . get_percent_string($cu->specialist->defenseTime) . "</td></tr>";
+        if ($specialist !== null && $specialist->timeDefense != 1) {
+            echo "<tr><td>Bauzeitverringerung durch " . $specialist->name . ":</td><td>" . get_percent_string($specialist->timeDefense) . "</td></tr>";
         }
         echo "<tr><td>Eingestellte Arbeiter:</td><td>" . StringUtils::formatNumber($people_working);
         if (count($queue) === 0) {
@@ -436,7 +444,7 @@ if ($factoryBuilding !== null && $factoryBuilding->currentLevel > 0) {
                         $btime = $defenseCosts[$def_id]->getSum()
                             / $config->getInt('global_time') * $config->getFloat('def_build_time')
                             * $time_boni_factor
-                            * $cu->specialist->defenseTime;
+                            * $specialistDefenseTimeFactor;
 
                         // TODO: Überprüfen
                         //Rechnet zeit wenn arbeiter eingeteilt sind
@@ -500,7 +508,7 @@ if ($factoryBuilding !== null && $factoryBuilding->currentLevel > 0) {
                         [b]Waffenfabrik Level:[/b] " . $factoryBuilding->currentLevel . "
                         [b]Eingesetzte Bewohner:[/b] " . StringUtils::formatNumber($people_working) . "
                         [b]Gen-Tech Level:[/b] " . $gen_tech_level . "
-                        [b]Eingesetzter Spezialist:[/b] " . $cu->specialist->name . "
+                        [b]Eingesetzter Spezialist:[/b] " . ($specialist !== null ? $specialist->name : "Kein Spezialist") . "
 
                         [b]Kosten[/b]
                         [b]" . RES_METAL . ":[/b] " . StringUtils::formatNumber($bc['metal']) . "
@@ -740,7 +748,7 @@ if ($factoryBuilding !== null && $factoryBuilding->currentLevel > 0) {
                             }
 
                             // Bauzeit berechnen
-                            $btime = $defenseCosts[$defense->id]->getSum() / $config->getInt('global_time') * $config->getFloat('def_build_time') * $time_boni_factor * $cu->specialist->defenseTime;
+                            $btime = $defenseCosts[$defense->id]->getSum() / $config->getInt('global_time') * $config->getFloat('def_build_time') * $time_boni_factor * $specialistDefenseTimeFactor;
                             $btime_min = $btime * (0.1 - ($gen_tech_level / 100));
                             $peopleOptimized = ceil(($btime - $btime_min) / $config->getInt('people_work_done'));
 

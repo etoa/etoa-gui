@@ -8,6 +8,7 @@ use EtoA\Market\MarketHandler;
 use EtoA\Market\MarketResourceRepository;
 use EtoA\Message\MarketReportRepository;
 use EtoA\Support\StringUtils;
+use EtoA\Specialist\SpecialistService;
 use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Entity\EntityService;
 use EtoA\Universe\Planet\PlanetRepository;
@@ -28,6 +29,9 @@ $marketReportRepository = $app[MarketReportRepository::class];
 $logRepository = $app[LogRepository::class];
 /** @var PlanetRepository $planetRepository */
 $planetRepository = $app[PlanetRepository::class];
+
+/** @var SpecialistService $specialistService */
+$specialistService = $app[SpecialistService::class];
 
 $cnt = 0;
 $cnt_error = 0;
@@ -57,7 +61,6 @@ if (isset($_POST['ressource_market_id'])) {
                 $planetRepository->removeResources($cp->id(), $buyResource);
                 $cp->reloadRes();
 
-                $seller = new User($offer->userId);
                 $sellerEntity = $entityRepository->getEntity($offer->entityId);
                 $ownEntity = $entityRepository->getEntity((int) $cp->id);
 
@@ -65,9 +68,12 @@ if (isset($_POST['ressource_market_id'])) {
                 $tradeShip = new Ship(MARKET_SHIP_ID);
                 $numSellerShip = ($tradeShip->capacity > 0) ? ceil(array_sum($sellarr) / $tradeShip->capacity) : 1;
 
+                $sellerSpecialist = $specialistService->getSpecialistOfUser($offer->userId);
+                $specialist = $specialistService->getSpecialistOfUser($cu->id);
+
                 $dist = $entityService->distance($sellerEntity, $ownEntity);
-                $sellerFlighttime = ceil($dist / ($seller->specialist->tradeTime * $tradeShip->speed / 3600) + $tradeShip->time2start + $tradeShip->time2land);
-                $buyerFlighttime = ceil($dist / ($cu->specialist->tradeTime * $tradeShip->speed / 3600) + $tradeShip->time2start + $tradeShip->time2land);
+                $sellerFlighttime = ceil($dist / (($sellerSpecialist !== null ? $sellerSpecialist->tradeTime : 1) * $tradeShip->speed / 3600) + $tradeShip->time2start + $tradeShip->time2land);
+                $buyerFlighttime = ceil($dist / (($specialist !== null ? $specialist->tradeTime : 1) * $tradeShip->speed / 3600) + $tradeShip->time2start + $tradeShip->time2land);
 
                 $launchtime = time();
                 $sellerLandtime = $launchtime + $sellerFlighttime;
@@ -81,7 +87,7 @@ if (isset($_POST['ressource_market_id'])) {
                 $numBuyerShip = ($tradeShip->capacity > 0) ? ceil(array_sum($buyarr) / $tradeShip->capacity) : 1;
 
                 // Fleet Buyer->Seller
-                $buyerFid = $fleetRepository->add($seller->getId(), $launchtime, (int) $sellerLandtime, $cp->id, $sellerEntity->id, \EtoA\Fleet\FleetAction::MARKET, \EtoA\Fleet\FleetStatus::DEPARTURE, $buyResource);
+                $buyerFid = $fleetRepository->add($offer->userId, $launchtime, (int) $sellerLandtime, $cp->id, $sellerEntity->id, \EtoA\Fleet\FleetAction::MARKET, \EtoA\Fleet\FleetStatus::DEPARTURE, $buyResource);
                 $fleetRepository->addShipsToFleet($buyerFid, MARKET_SHIP_ID, $numBuyerShip);
 
                 // Angebot löschen
@@ -111,14 +117,14 @@ if (isset($_POST['ressource_market_id'])) {
                 );
                 if (strlen($offer->text) > TRADE_POINTS_TRADETEXT_MIN_LENGTH) {
                     $userRatingService->addTradeRating(
-                        $seller->id,
+                        $offer->userId,
                         TRADE_POINTS_PER_TRADE + TRADE_POINTS_PER_TRADETEXT,
                         true,
                         'Handel #' . $offer->id . ' mit ' . $cu->id
                     );
                 } else {
                     $userRatingService->addTradeRating(
-                        $seller->id,
+                        $offer->userId,
                         TRADE_POINTS_PER_TRADE,
                         true,
                         'Handel #' . $offer->id . ' mit ' . $cu->id
@@ -130,6 +136,7 @@ if (isset($_POST['ressource_market_id'])) {
                 $userMultiRepository = $app[UserMultiRepository::class];
                 $isMultiWith = $userMultiRepository->existsEntryWith($cu->getId(), $offer->userId);
                 if ($isMultiWith) {
+                    $seller = new User($offer->userId);
                     $logRepository->add(LogFacility::MULTITRADE, LogSeverity::INFO, "[page user sub=edit user_id=" . $cu->id . "][B]" . $cu->nick . "[/B][/page] hat von [page user sub=edit user_id=" . $offer->userId . "][B]" . $seller . "[/B][/page] Rohstoffe gekauft:\n\n" . RES_METAL . ": " . StringUtils::formatNumber($offer->sell0) . "\n" . RES_CRYSTAL . ": " . StringUtils::formatNumber($offer->sell1) . "\n" . RES_PLASTIC . ": " . StringUtils::formatNumber($offer->sell2) . "\n" . RES_FUEL . ": " . StringUtils::formatNumber($offer->sell3) . "\n" . RES_FOOD . ": " . StringUtils::formatNumber($offer->sell4) . "\n\nDies hat ihn folgende Rohstoffe gekostet:\n" . RES_METAL . ": " . StringUtils::formatNumber($offer->buy0) . "\n" . RES_CRYSTAL . ": " . StringUtils::formatNumber($offer->buy1) . "\n" . RES_PLASTIC . ": " . StringUtils::formatNumber($offer->buy2) . "\n" . RES_FUEL . ": " . StringUtils::formatNumber($offer->buy3) . "\n" . RES_FOOD . ": " . StringUtils::formatNumber($offer->buy4));
                 }
 

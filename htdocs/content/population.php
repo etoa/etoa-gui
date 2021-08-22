@@ -5,6 +5,7 @@ use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Defense\DefenseRepository;
 use EtoA\Ship\ShipRepository;
 use EtoA\Support\StringUtils;
+use EtoA\Specialist\SpecialistService;
 use EtoA\Technology\TechnologyRepository;
 use EtoA\Technology\TechnologyRequirementRepository;
 use EtoA\UI\ResourceBoxDrawer;
@@ -185,6 +186,9 @@ if ($cp) {
         tableEnd();
         echo '</form>';
 
+        /** @var SpecialistService $specialistService */
+        $specialistService = $app[SpecialistService::class];
+        $specialist = $specialistService->getSpecialistOfUser($cu->id);
 
         // Zählt alle arbeiter die eingetragen snid (besetzt oder nicht) für die anszeige!
         $peopleWorking = $buildingRepository->getPeopleWorking($planet->id);
@@ -195,7 +199,7 @@ if ($cp) {
             $capacity = 200;
         }
         $people_free = floor($planet->people) - $peopleWorking->total;
-        $people_div = $planet->people * (($config->getFloat('people_multiply')  + $cp->typePopulation + $cu->race->population + $cp->starPopulation + $cu->specialist->population - 4) * (1 - ($planet->people / ($capacity + 1))) / 24);
+        $people_div = $planet->people * (($config->getFloat('people_multiply')  + $cp->typePopulation + $cu->race->population + $cp->starPopulation + ($specialist !== null ? $specialist->prodPeople : 1) - 4) * (1 - ($planet->people / ($capacity + 1))) / 24);
 
 
         tableStart("Daten", 500);
@@ -208,8 +212,10 @@ if ($cp) {
         echo '<tr><th>Wachstumsbonus ' . $cp->typeName . '</th><td>' . get_percent_string($cp->typePopulation, 1) . "</td></tr>";
         echo '<tr><th>Wachstumsbonus ' . $cu->race->name . '</th><td>' . get_percent_string($cu->race->population, 1) . "</td></tr>";
         echo '<tr><th>Wachstumsbonus ' . $cp->starTypeName . '</th><td>' . get_percent_string($cp->starPopulation, 1) . '</td></tr>';
-        echo '<tr><th>Wachstumsbonus ' . $cu->specialist->name . '</th><td>' . get_percent_string($cu->specialist->population, 1) . '</td></tr>';
-        echo '<tr><th>Wachstumsbonus total</th><td>' . get_percent_string(array($cp->typePopulation, $cu->race->population, $cp->starPopulation, $cu->specialist->population), 1) . '</td></tr>';
+        if ($specialist !== null) {
+            echo '<tr><th>Wachstumsbonus ' . $specialist->name . '</th><td>' . get_percent_string($specialist->prodPeople, 1) . '</td></tr>';
+        }
+        echo '<tr><th>Wachstumsbonus total</th><td>' . get_percent_string(array($cp->typePopulation, $cu->race->population, $cp->starPopulation, ($specialist !== null ? $specialist->prodPeople : 1)), 1) . '</td></tr>';
         echo '<tr><th>Bevölkerungszuwachs pro Stunde</th><td>' . StringUtils::formatNumber($people_div) . '</td></tr>';
         tableEnd();
     } else

@@ -5,6 +5,7 @@ use EtoA\Building\BuildingRepository;
 use EtoA\Building\BuildingTypeDataRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Support\StringUtils;
+use EtoA\Specialist\SpecialistService;
 use EtoA\Technology\TechnologyRepository;
 use EtoA\UI\ResourceBoxDrawer;
 use EtoA\Universe\Planet\PlanetRepository;
@@ -227,13 +228,18 @@ if (isset($cp)) {
     $genTechLevel = $techlist[GEN_TECH_ID] ?? 0;
     tableStart('Bauhof-Infos');
     echo '<colgroup><col style="width:400px;"/><col/></colgroup>';
+
     // Specialist
-    if ($cu->specialist->costsBuilding != 1) {
-        echo '<tr><td>Kostenreduktion durch ' . $cu->specialist->name . ':</td><td>' . get_percent_string($cu->specialist->costsBuilding) . '</td></tr>';
+    /** @var SpecialistService $specialistService */
+    $specialistService = $app[SpecialistService::class];
+    $specialist = $specialistService->getSpecialistOfUser($cu->id);
+    if ($specialist !== null && $specialist->costsBuildings != 1) {
+        echo '<tr><td>Kostenreduktion durch ' . $specialist->name . ':</td><td>' . get_percent_string($specialist->costsBuildings) . '</td></tr>';
     }
-    if ($cu->specialist->buildTime != 1) {
-        echo '<tr><td>Bauzeitverringerung durch ' . $cu->specialist->name . ':</td><td>' . get_percent_string($cu->specialist->buildTime) . '</td></tr>';
+    if ($specialist !== null && $specialist->timeBuildings != 1) {
+        echo '<tr><td>Bauzeitverringerung durch ' . $specialist->name . ':</td><td>' . get_percent_string($specialist->timeBuildings) . '</td></tr>';
     }
+
     // Worker
     echo '<tr><td>Eingestellte Arbeiter:</td><td><span id="people_working">' . StringUtils::formatNumber($peopleWorking->building) . '</span>';
     if (!$bl->isUnderConstruction()) {
