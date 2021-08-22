@@ -5,7 +5,9 @@ use EtoA\Message\MessageCategoryRepository;
 use EtoA\Message\MessageRepository;
 use EtoA\Message\ReportRepository;
 use EtoA\Message\ReportTypes;
+use EtoA\Support\BBCodeUtils;
 use EtoA\Support\Mail\MailSenderService;
+use EtoA\Support\StringUtils;
 use EtoA\User\UserRepository;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -379,8 +381,8 @@ function manageReports(Request $request, ReportRepository $reportRepository, Use
                 echo "<tr>";
                 echo "<td style=\"$style;width:110px;\">" . date("Y-d-m H:i", $r->timestamp) . "</td>";
                 echo "<td style=\"$style\">" . ReportTypes::TYPES[$r->type] . "</td>";
-                echo "<td style=\"$style\">" . cut_string($recipient, 11) . "</td>";
-                echo "<td><div id=\"r_s_" . $rid . "\" style=\"" . $style . "cursor:pointer;\" onclick=\"$('#r_l_" . $rid . "').toggle();\">" . cut_string($r->subject, 50) . "</div><div id=\"r_l_" . $rid . "\" style=\"display:none;\"><br/>" . $r . "</div></td>";
+                echo "<td style=\"$style\">" . StringUtils::cutString($recipient, 11) . "</td>";
+                echo "<td><div id=\"r_s_" . $rid . "\" style=\"" . $style . "cursor:pointer;\" onclick=\"$('#r_l_" . $rid . "').toggle();\">" . StringUtils::cutString($r->subject, 50) . "</div><div id=\"r_l_" . $rid . "\" style=\"display:none;\"><br/>" . $r . "</div></td>";
                 echo "</tr>";
             }
             echo "</table><br/>";
@@ -492,7 +494,7 @@ function manageReports(Request $request, ReportRepository $reportRepository, Use
                     <p><input type=\"submit\" class=\"button\" name=\"user_search\" value=\"Suche starten\" /></p>
                 </form>";
 
-        echo "<br/>Es sind " . nf($reportRepository->count()) . " Einträge in der Datenbank vorhanden.";
+        echo "<br/>Es sind " . StringUtils::formatNumber($reportRepository->count()) . " Einträge in der Datenbank vorhanden.";
     }
 }
 
@@ -553,9 +555,9 @@ function manageMessages(
                     $style = "";
                 }
                 echo "<tr>";
-                echo "<td $style>" . cut_string($sender, 11) . "</a></td>";
-                echo "<td $style>" . cut_string($recipient, 11) . "</a></td>";
-                echo "<td $style " . mTT($message->subject, text2html(substr($message->text, 0, 500))) . ">" . cut_string($message->subject, 20) . "</a></td>";
+                echo "<td $style>" . StringUtils::cutString($sender, 11) . "</a></td>";
+                echo "<td $style>" . StringUtils::cutString($recipient, 11) . "</a></td>";
+                echo "<td $style " . mTT($message->subject, BBCodeUtils::toHTML(substr($message->text, 0, 500))) . ">" . StringUtils::cutString($message->subject, 20) . "</a></td>";
                 echo "<td $style>" . date("Y-d-m H:i", $message->timestamp) . "</a></td>";
                 echo "<td $style>" . ($categories[$message->catId] ?? '-') . "</td>";
                 echo "<td>" . edit_button("?page=$page&sub=edit&message_id=" . $message->id) . " ";
@@ -586,8 +588,8 @@ function manageMessages(
         echo "<tr><td class=\"tbltitle\" valign=\"top\">Sender</td><td class=\"tbldata\">$sender</td></tr>";
         echo "<tr><td class=\"tbltitle\" valign=\"top\">Empfänger</td><td class=\"tbldata\">$recipient</td></tr>";
         echo "<tr><td class=\"tbltitle\" valign=\"top\">Datum</td><td class=\"tbldata\">" . date("Y-m-d H:i:s", $message->timestamp) . "</td></tr>";
-        echo "<tr><td class=\"tbltitle\" valign=\"top\">Betreff</td><td class=\"tbldata\">" . text2html($message->subject) . "</td></tr>";
-        echo "<tr><td class=\"tbltitle\" valign=\"top\">Text</td><td class=\"tbldata\">" . text2html($message->text) . "</td></tr>";
+        echo "<tr><td class=\"tbltitle\" valign=\"top\">Betreff</td><td class=\"tbldata\">" . BBCodeUtils::toHTML($message->subject) . "</td></tr>";
+        echo "<tr><td class=\"tbltitle\" valign=\"top\">Text</td><td class=\"tbldata\">" . BBCodeUtils::toHTML($message->text) . "</td></tr>";
         echo "<tr><td class=\"tbltitle\" valign=\"top\">Quelltext</td>
         <td class=\"tbldata\"><textarea rows=\"20\" cols=\"80\" readonly=\"readonly\">" . $message->text . "</textarea></td></tr>";
         echo "<tr><td class=\"tbltitle\" valign=\"top\">Gelesen?</td><td class=\"tbldata\">";
@@ -659,7 +661,7 @@ function manageMessages(
         echo "</table>";
         echo "<br/><input type=\"submit\" class=\"button\" name=\"user_search\" value=\"Suche starten\" /></form>";
 
-        echo "<br/>Es sind " . nf($messageRepository->count()) . " Einträge in der Datenbank vorhanden.";
+        echo "<br/>Es sind " . StringUtils::formatNumber($messageRepository->count()) . " Einträge in der Datenbank vorhanden.";
     }
 }
 

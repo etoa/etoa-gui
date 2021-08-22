@@ -49,11 +49,11 @@ if ($config->getBoolean("alliance_allow")) {
                 echo "<h2>Bewerbungsstatus</h2>";
                 $alliance = $allianceRepository->getAlliance($application->allianceId);
                 if ($alliance !== null) {
-                    success_msg("Du hast dich am " . df($application->timestamp) . " bei der Allianz " . $alliance->nameWithTag . " beworben
+                    success_msg("Du hast dich am " . StringUtils::formatDate($application->timestamp) . " bei der Allianz " . $alliance->nameWithTag . " beworben
                  und musst nun darauf warten, dass deine Bewerbung akzeptiert wird!");
                     echo "<input type=\"button\" onclick=\"document.location='?page=$page&action=cancelapplication';\" value=\"Bewerbung zurückziehen\" />";
                 } else {
-                    error_msg("Du hast dich am " . df($application->timestamp) . " bei einer Allianz beworben, diese Allianz existiert aber leider nicht mehr.
+                    error_msg("Du hast dich am " . StringUtils::formatDate($application->timestamp) . " bei einer Allianz beworben, diese Allianz existiert aber leider nicht mehr.
                  Deine Bewerbung wurde deshalb gelöscht!");
                     echo "<input type=\"button\" onclick=\"document.location='?page=$page&amp;action=join';\" value=\"Bei einer anderen Allianz bewerben\" />";
                 }

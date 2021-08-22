@@ -11,6 +11,8 @@ use EtoA\Log\GameLogSearch;
 use EtoA\Log\LogSeverity;
 use EtoA\Message\MessageRepository;
 use EtoA\Ship\ShipDataRepository;
+use EtoA\Support\BBCodeUtils;
+use EtoA\Support\StringUtils;
 use EtoA\Technology\TechnologyDataRepository;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\User\UserCommentRepository;
@@ -120,7 +122,7 @@ function userPointsTable($uid, $target, $length = 100, $start = -1, $end = -1)
     for ($x = $t - 86400; $x > $t - (14 * 86400); $x -= 86400) {
         echo "<option value=\"$x\"";
         if ($x <= $start + 300 && $x >= $start - 300) echo " selected=\"selected\"";
-        echo ">" . df($x) . "</option>";
+        echo ">" . StringUtils::formatDate($x) . "</option>";
     }
     echo "</select> bis <select id=\"pointsTimeEnd\" onchange=\"xajax_userPointsTable($uid,'$target',
     document.getElementById('pointsLimit').options[document.getElementById('pointsLimit').selectedIndex].value,
@@ -130,7 +132,7 @@ function userPointsTable($uid, $target, $length = 100, $start = -1, $end = -1)
     for ($x = $t; $x > $t - (13 * 86400); $x -= 86400) {
         echo "<option value=\"$x\"";
         if ($x <= $end + 300 && $x >= $end - 300) echo " selected=\"selected\"";
-        echo ">" . df($x) . "</option>";
+        echo ">" . StringUtils::formatDate($x) . "</option>";
     }
     echo "</select>
 
@@ -150,10 +152,10 @@ function userPointsTable($uid, $target, $length = 100, $start = -1, $end = -1)
             echo "<tr>
                 <td class=\"tbldata\">" . date("d.m.Y", $points->timestamp) . "</td>
                 <td class=\"tbldata\">" . date("H:i", $points->timestamp) . "</td>
-                <td class=\"tbldata\">" . nf($points->points) . "</td>
-                <td class=\"tbldata\">" . nf($points->buildingPoints) . "</td>
-                <td class=\"tbldata\">" . nf($points->techPoints) . "</td>
-                <td class=\"tbldata\">" . nf($points->shipPoints) . "</td>
+                <td class=\"tbldata\">" . StringUtils::formatNumber($points->points) . "</td>
+                <td class=\"tbldata\">" . StringUtils::formatNumber($points->buildingPoints) . "</td>
+                <td class=\"tbldata\">" . StringUtils::formatNumber($points->techPoints) . "</td>
+                <td class=\"tbldata\">" . StringUtils::formatNumber($points->shipPoints) . "</td>
             </tr>";
         }
     } else {
@@ -194,7 +196,7 @@ function userTickets($uid, $target)
             $adminNick = $adminUserRepo->getNick($ticket->adminId);
             echo "<tr>
                 <td><a href=\"?page=tickets&id=" . $ticket->id . "\">" . $ticket->getIdString() . "</a></td>
-                <td class=\"tbldata\">" . df($ticket->timestamp) . "</td>
+                <td class=\"tbldata\">" . StringUtils::formatDate($ticket->timestamp) . "</td>
                 <td class=\"tbldata\">" . $ticketRepo->getCategoryName($ticket->catId) . "</td>
                 <td class=\"tbldata\">" . $ticket->getStatusName() . "</td>
                 <td class=\"tbldata\">" . $adminNick . "</td>
@@ -262,7 +264,7 @@ function showLast5Messages($uid, $target, $limit = 5)
         </tr>";
         foreach ($messages as $message) {
             echo "<tr>
-                <td class=\"tbldata\">" . df($message->timestamp) . "</td>
+                <td class=\"tbldata\">" . StringUtils::formatDate($message->timestamp) . "</td>
                 <td class=\"tbldata\">";
             if ($message->userFrom > 0) {
                 echo "<a href=\"?page=user&sub=edit&user_id=" . $message->userFrom . "\">" . $userRepo->getNick($message->userFrom) . "</a>";
@@ -271,7 +273,7 @@ function showLast5Messages($uid, $target, $limit = 5)
             }
             echo "</td>
                 <td class=\"tbldata\">" . $message->subject . "</td>
-                <td class=\"tbldata\">" . text2html($message->text) . "</td>
+                <td class=\"tbldata\">" . BBCodeUtils::toHTML($message->text) . "</td>
                 <td class=\"tbldata\">" . ($message->read ? "Ja" : "Nein") . "</td>
                 <td class=\"tbldata\">[<a href=\"?page=messages&sub=edit&message_id=" . $message->id . "\">Details</a>]</td>
             </tr>";
@@ -309,8 +311,8 @@ function userComments($uid, $target)
         </tr>";
         foreach ($comments as $comment) {
             echo "<tr>
-                <td class=\"tbldata\" >" . text2html($comment->text) . "</td>
-                <td class=\"tbldata\" style=\"width:200px;\">" . df($comment->timestamp) . " von " . $comment->adminNick . "</td>
+                <td class=\"tbldata\" >" . BBCodeUtils::toHTML($comment->text) . "</td>
+                <td class=\"tbldata\" style=\"width:200px;\">" . StringUtils::formatDate($comment->timestamp) . " von " . $comment->adminNick . "</td>
                 <td class=\"tbldata\" style=\"width:50px;\"><a href=\"javascript:;\" onclick=\"if (confirm('Wirklich löschen?')) {xajax_delUserComment('" . $uid . "','" . $target . "'," . $comment->id . ")}\">Löschen</a></td>
             </tr>";
         }
@@ -375,8 +377,8 @@ function userLogs($uid, $target)
     echo "<tr><th>Nachricht</th><th>Datum</th><th>IP</th></tr>";
     $logs = $userLogRepository->getUserLogs($uid, 100);
     foreach ($logs as $log) {
-        echo "<tr><td>" . text2html($log->message) . "</td>
-                        <td>" . df($log->timestamp) . "</td>
+        echo "<tr><td>" . BBCodeUtils::toHTML($log->message) . "</td>
+                        <td>" . StringUtils::formatDate($log->timestamp) . "</td>
                         <td><a href=\"?page=user&amp;sub=ipsearch&amp;ip=" . $log->host . "\">" . $log->host . "</a></td></tr>";
     }
     tableEnd();
@@ -588,17 +590,17 @@ function loadEconomy($uid, $target)
 
                 //Der Speicher ist noch nicht gefüllt
                 if ($val_res[$planet->id][$x] < $val_store[$planet->id][$x] && $val_time[$planet->id][$x] != 0) {
-                    echo " " . tm("Speicher", "Speicher voll in " . tf($val_time[$planet->id][$x]) . "") . " ";
+                    echo " " . tm("Speicher", "Speicher voll in " . StringUtils::formatTimespan($val_time[$planet->id][$x]) . "") . " ";
                     if ($val_time[$planet->id][$x] < 43200) {
                         echo " style=\"font-style:italic;\" ";
                     }
-                    echo ">" . nf($val_res[$planet->id][$x]) . "</td>";
+                    echo ">" . StringUtils::formatNumber($val_res[$planet->id][$x]) . "</td>";
                 }
                 //Speicher Gefüllt
                 else {
                     echo " " . tm("Speicher", "Speicher voll!") . "";
                     echo " style=\"\" ";
-                    echo "><b>" . nf($val_res[$planet->id][$x]) . "</b></td>";
+                    echo "><b>" . StringUtils::formatNumber($val_res[$planet->id][$x]) . "</b></td>";
                 }
             }
             echo "</tr>";
@@ -610,11 +612,11 @@ function loadEconomy($uid, $target)
                                 <tr>
                                     <td class=\"tbltitle\">Total</td>";
         for ($x = 0; $x < 6; $x++) {
-            echo "<td class=\"tbltitle\">" . nf($tot_res[$x]) . "</td>";
+            echo "<td class=\"tbltitle\">" . StringUtils::formatNumber($tot_res[$x]) . "</td>";
         }
         echo "</tr><tr><th class=\"tbltitle\">Durchschnitt</th>";
         for ($x = 0; $x < 6; $x++) {
-            echo "<td class=\"tbltitle\">" . nf($tot_res[$x] / $cnt_res) . "</td>";
+            echo "<td class=\"tbltitle\">" . StringUtils::formatNumber($tot_res[$x] / $cnt_res) . "</td>";
         }
         echo "</tr>";
         echo "</table>";
@@ -707,7 +709,7 @@ function loadEconomy($uid, $target)
                 } else {
                     echo " class=\"tbldata\"";
                 }
-                echo " " . tm($tm_header, $tm) . ">" . nf($val_prod[$planet->id][$x]) . "</td>";
+                echo " " . tm($tm_header, $tm) . ">" . StringUtils::formatNumber($val_prod[$planet->id][$x]) . "</td>";
             }
             echo "</tr>";
             $cnt_prod++;
@@ -715,10 +717,10 @@ function loadEconomy($uid, $target)
         echo "<tr><td colspan=\"6\"></td></tr>";
         echo "<tr><th class=\"tbltitle\">Total</th>";
         for ($x = 0; $x < 6; $x++)
-            echo "<td class=\"tbltitle\">" . nf($tot_prod[$x]) . "</td>";
+            echo "<td class=\"tbltitle\">" . StringUtils::formatNumber($tot_prod[$x]) . "</td>";
         echo "</tr><tr><th class=\"tbltitle\">Durchschnitt</th>";
         for ($x = 0; $x < 6; $x++)
-            echo "<td class=\"tbltitle\">" . nf($tot_prod[$x] / $cnt_prod) . "</td>";
+            echo "<td class=\"tbltitle\">" . StringUtils::formatNumber($tot_prod[$x] / $cnt_prod) . "</td>";
         echo "</tr>";
         echo "</table>";
     } else {
@@ -773,14 +775,14 @@ function loadEconomy($uid, $target)
             }
 
             echo "<tr>
-                        <td>" . df($log->timestamp) . "</td>
+                        <td>" . StringUtils::formatDate($log->timestamp) . "</td>
                         <td>" . LogSeverity::SEVERITIES[$log->severity] . "</td>
                         <td>" . $te . "</td>
                         <td>" . $ob . "</td>
                         <td>" . $obStatus . "</td>
                         <td><a href=\"javascript:;\" onclick=\"toggleBox('details" . $log->id . "')\">Details</a></td>
                         </tr>";
-            echo "<tr id=\"details" . $log->id . "\" style=\"display:none;\"><td colspan=\"9\">" . text2html($log->message) . "
+            echo "<tr id=\"details" . $log->id . "\" style=\"display:none;\"><td colspan=\"9\">" . BBCodeUtils::toHTML($log->message) . "
                         <br/><br/>IP: " . $log->ip . "</td></tr>";
         }
 
@@ -826,14 +828,14 @@ function loadEconomy($uid, $target)
             }
 
             echo "<tr>
-                        <td>" . df($log->timestamp) . "</td>
+                        <td>" . StringUtils::formatDate($log->timestamp) . "</td>
                         <td>" . LogSeverity::SEVERITIES[$log->severity] . "</td>
                         <td>" . $te . "</td>
                         <td>" . $ob . "</td>
                         <td>" . $obStatus . "</td>
                         <td><a href=\"javascript:;\" onclick=\"toggleBox('details" . $log->id . "')\">Details</a></td>
                         </tr>";
-            echo "<tr id=\"details" . $log->id . "\" style=\"display:none;\"><td colspan=\"9\">" . text2html($log->message) . "
+            echo "<tr id=\"details" . $log->id . "\" style=\"display:none;\"><td colspan=\"9\">" . BBCodeUtils::toHTML($log->message) . "
                         <br/><br/>IP: " . $log->ip . "</td></tr>";
         }
 
@@ -879,14 +881,14 @@ function loadEconomy($uid, $target)
             }
 
             echo "<tr>
-                        <td>" . df($log->timestamp) . "</td>
+                        <td>" . StringUtils::formatDate($log->timestamp) . "</td>
                         <td>" . LogSeverity::SEVERITIES[$log->severity] . "</td>
                         <td>" . $te . "</td>
                         <td>" . $ob . "</td>
                         <td>" . $obStatus . "</td>
                         <td><a href=\"javascript:;\" onclick=\"toggleBox('details" . $log->id . "')\">Details</a></td>
                         </tr>";
-            echo "<tr id=\"details" . $log->id . "\" style=\"display:none;\"><td colspan=\"9\">" . text2html($log->message) . "
+            echo "<tr id=\"details" . $log->id . "\" style=\"display:none;\"><td colspan=\"9\">" . BBCodeUtils::toHTML($log->message) . "
                         <br/><br/>IP: " . $log->ip . "</td></tr>";
         }
 
@@ -934,14 +936,14 @@ function loadEconomy($uid, $target)
             }
 
             echo "<tr>
-                        <td>" . df($log->timestamp) . "</td>
+                        <td>" . StringUtils::formatDate($log->timestamp) . "</td>
                         <td>" . LogSeverity::SEVERITIES[$log->severity] . "</td>
                         <td>" . $te . "</td>
                         <td>" . $ob . "</td>
                         <td>" . $obStatus . "</td>
                         <td><a href=\"javascript:;\" onclick=\"toggleBox('details" . $log->id . "')\">Details</a></td>
                         </tr>";
-            echo "<tr id=\"details" . $log->id . "\" style=\"display:none;\"><td colspan=\"9\">" . text2html($log->message) . "
+            echo "<tr id=\"details" . $log->id . "\" style=\"display:none;\"><td colspan=\"9\">" . BBCodeUtils::toHTML($log->message) . "
                         <br/><br/>IP: " . $log->ip . "</td></tr>";
         }
 

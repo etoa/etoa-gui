@@ -1,6 +1,8 @@
 <?PHP
 
 use EtoA\Missile\MissileDataRepository;
+use EtoA\Support\BBCodeUtils;
+use EtoA\Support\StringUtils;
 
 /** @var MissileDataRepository $missileDataRepository */
 $missileDataRepository = $app[MissileDataRepository::class];
@@ -16,7 +18,7 @@ if (isset($_GET['id'])) {
 
     $missile = $missileDataRepository->getMissile($mid);
     if ($missile !== null) {
-        HelpUtil::breadCrumbs(array("Raketen", "missiles"), array(text2html($missile->name), $missile->id), 1);
+        HelpUtil::breadCrumbs(array("Raketen", "missiles"), array($missile->name, $missile->id), 1);
         echo "<select onchange=\"document.location='?$link&amp;site=missiles&id='+this.options[this.selectedIndex].value\">";
         $missileNames = $missileDataRepository->getMissileNames();
         foreach ($missileNames as $missileId => $missileName) {
@@ -29,29 +31,29 @@ if (isset($_GET['id'])) {
         tableStart($missile->name);
 
         echo "<tr><td width=\"220\" class=\"tbltitle\"><img src=\"" . IMAGE_PATH . "/missiles/missile" . $missile->id . "." . IMAGE_EXT . "\" width=\"220\" height=\"220\" alt=\"Raketen\" /></td>";
-        echo "<td class=\"tbldata\">" . text2html($missile->longDescription) . "</td></tr>";
+        echo "<td class=\"tbldata\">" . BBCodeUtils::toHTML($missile->longDescription) . "</td></tr>";
 
         echo "<tr><td colspan=\"2\" style=\"height:30px;\"></td></tr>";
 
         echo "<tr><th class=\"tbltitle\" colspan=\"2\" style=\"text-align:center\">Kosten und technische Daten</th></tr>";
 
-        echo "<tr><td class=\"tbltitle\">" . RES_ICON_METAL . "" . RES_METAL . "</td><td class=\"tbldata\">" . nf($missile->costsMetal) . "</td></tr>";
-        echo "<tr><td class=\"tbltitle\">" . RES_ICON_CRYSTAL . "" . RES_CRYSTAL . "</td><td class=\"tbldata\">" . nf($missile->costsCrystal) . "</td></tr>";
-        echo "<tr><td class=\"tbltitle\">" . RES_ICON_PLASTIC . "" . RES_PLASTIC . "</td><td class=\"tbldata\">" . nf($missile->costsPlastic) . "</td></tr>";
-        echo "<tr><td class=\"tbltitle\">" . RES_ICON_FUEL . "" . RES_FUEL . "</td><td class=\"tbldata\">" . nf($missile->costsFuel) . "</td></tr>";
-        echo "<tr><td class=\"tbltitle\">" . RES_ICON_FOOD . "" . RES_FOOD . "</td><td class=\"tbldata\">" . nf($missile->costsFood) . "</td></tr>";
+        echo "<tr><td class=\"tbltitle\">" . RES_ICON_METAL . "" . RES_METAL . "</td><td class=\"tbldata\">" . StringUtils::formatNumber($missile->costsMetal) . "</td></tr>";
+        echo "<tr><td class=\"tbltitle\">" . RES_ICON_CRYSTAL . "" . RES_CRYSTAL . "</td><td class=\"tbldata\">" . StringUtils::formatNumber($missile->costsCrystal) . "</td></tr>";
+        echo "<tr><td class=\"tbltitle\">" . RES_ICON_PLASTIC . "" . RES_PLASTIC . "</td><td class=\"tbldata\">" . StringUtils::formatNumber($missile->costsPlastic) . "</td></tr>";
+        echo "<tr><td class=\"tbltitle\">" . RES_ICON_FUEL . "" . RES_FUEL . "</td><td class=\"tbldata\">" . StringUtils::formatNumber($missile->costsFuel) . "</td></tr>";
+        echo "<tr><td class=\"tbltitle\">" . RES_ICON_FOOD . "" . RES_FOOD . "</td><td class=\"tbldata\">" . StringUtils::formatNumber($missile->costsFood) . "</td></tr>";
 
-        echo "<tr><td class=\"tbltitle\">Geschwindigkeit</td><td class=\"tbldata\">" . nf($missile->speed) . " AE/h</td></tr>";
-        echo "<tr><td class=\"tbltitle\">Reichweite</td><td class=\"tbldata\">" . nf($missile->range) . " AE</td></tr>";
+        echo "<tr><td class=\"tbltitle\">Geschwindigkeit</td><td class=\"tbldata\">" . StringUtils::formatNumber($missile->speed) . " AE/h</td></tr>";
+        echo "<tr><td class=\"tbltitle\">Reichweite</td><td class=\"tbldata\">" . StringUtils::formatNumber($missile->range) . " AE</td></tr>";
         echo "<tr><td class=\"tbltitle\">Schaden</td>";
         if ($missile->damage === 0) {
             echo "<td class=\"tbldata\">Nein</td></tr>";
         } else {
-            echo "<td class=\"tbldata\">" . nf($missile->damage) . "</td></tr>";
+            echo "<td class=\"tbldata\">" . StringUtils::formatNumber($missile->damage) . "</td></tr>";
         }
         echo "<tr><td class=\"tbltitle\">Verteidigung</td><td class=\"tbldata\">";
         if ($missile->def > 0) {
-            echo "Ja, " . nf($missile->def) . "";
+            echo "Ja, " . StringUtils::formatNumber($missile->def) . "";
             if ($missile->def === 1) {
                 echo " Sprengkopf</td></tr>";
             } else {
@@ -62,7 +64,7 @@ if (isset($_GET['id'])) {
         }
         echo "<tr><td class=\"tbltitle\">EMP-Schaden</td><td class=\"tbldata\">";
         if ($missile->deactivate > 0) {
-            echo "Ja, deaktiviert Geb&auml;ude f&uuml;r " . tf($missile->deactivate) . "</td></tr>";
+            echo "Ja, deaktiviert Geb&auml;ude f&uuml;r " . StringUtils::formatTimespan($missile->deactivate) . "</td></tr>";
         } else {
             echo "Kein EMP-Angriff m&ouml;glich</td></tr>";
         }
@@ -118,15 +120,15 @@ else {
                             <img src=\"" . IMAGE_PATH . "/missiles/missile" . $missile->id . "_small." . IMAGE_EXT . "\" alt=\"Raketen\" width=\"40\" height=\"40\" border=\"0\"/></a></td>";
             echo "<td class=\"tbltitle\">" . $missile->name . "</td>";
             echo "<td class=\"tbldata\">" . $missile->shortDescription . "</td>";
-            echo "<td class=\"tbldata\">" . nf($missile->speed) . " AE/h</td>";
-            echo "<td class=\"tbldata\">" . nf($missile->range) . " AE</td>";
+            echo "<td class=\"tbldata\">" . StringUtils::formatNumber($missile->speed) . " AE/h</td>";
+            echo "<td class=\"tbldata\">" . StringUtils::formatNumber($missile->range) . " AE</td>";
             echo "<td class=\"tbldata\">";
             if ($missile->def > 0) {
-                echo "" . nf($missile->def) . "</td>";
+                echo "" . StringUtils::formatNumber($missile->def) . "</td>";
             } else {
                 echo "Kein</td>";
             }
-            echo "<td class=\"tbldata\">" . nf($missile->damage) . "</td></tr>";
+            echo "<td class=\"tbldata\">" . StringUtils::formatNumber($missile->damage) . "</td></tr>";
         }
         tableEnd();
     } else

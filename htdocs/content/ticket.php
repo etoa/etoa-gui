@@ -3,6 +3,8 @@
 use EtoA\Admin\AdminUserRepository;
 use EtoA\Help\TicketSystem\TicketRepository;
 use EtoA\Help\TicketSystem\TicketService;
+use EtoA\Support\BBCodeUtils;
+use EtoA\Support\StringUtils;
 use EtoA\User\UserRepository;
 
 /** @var TicketService $ticketService */
@@ -79,9 +81,9 @@ function viewTicket(
     echo "<tr><th style=\"width:120px;\">Datum</th><th style=\"width:150px;\">Autor</th><th>Nachricht</th></tr>";
     foreach ($ticketService->getMessages($ticket) as $message) {
         echo "<tr>
-        <td>" . df($message->timestamp) . "</td>
+        <td>" . StringUtils::formatDate($message->timestamp) . "</td>
         <td>" . $ticketService->getAuthorNick($message) . "</td>
-        <td>" . text2html($message->message) . "</td>
+        <td>" . BBCodeUtils::toHTML($message->message) . "</td>
         </tr>";
     }
     tableEnd();
@@ -169,7 +171,7 @@ function listTickets(
                 <td>" . $ticketRepo->getCategoryName($ticket->catId) . "</td>
                 <td>" . $ticket->getStatusName() . "</td>
                 <td><a href=\"?page=contact&rcpt=" . $ticket->adminId . "\">" . $adminUserRepo->getNick($ticket->adminId) . "</a></td>
-                <td>" . df($ticket->timestamp) . "</td>
+                <td>" . StringUtils::formatDate($ticket->timestamp) . "</td>
                 <td>
                     <a href=\"?page=$page&amp;id=" . $ticket->id . "\">Anzeigen</a>
                 </td>

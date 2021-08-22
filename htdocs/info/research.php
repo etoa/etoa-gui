@@ -1,6 +1,8 @@
 <?PHP
 
 use EtoA\Ship\ShipRequirementRepository;
+use EtoA\Support\BBCodeUtils;
+use EtoA\Support\StringUtils;
 
 $techSpeedCategory = 1;
 echo "<h2>Technologien</h2>";
@@ -15,7 +17,7 @@ if (isset($_GET['id'])) {
     $technology = $technologyDataRepository->getTechnology($tid);
 
     if ($technology !== null) {
-        HelpUtil::breadCrumbs(array("Technologien", "research"), array(text2html($technology->name), $technology->id), 1);
+        HelpUtil::breadCrumbs(array("Technologien", "research"), array($technology->name, $technology->id), 1);
         echo "<select onchange=\"document.location='?$link&site=research&id='+this.options[this.selectedIndex].value\">";
 
         $technologyNames = $technologyDataRepository->getTechnologyNames();
@@ -28,7 +30,7 @@ if (isset($_GET['id'])) {
 
         tableStart($technology->name);
         echo "<tr><th class=\"tbltitle\" style=\"width:220px;\" rowspan=\"2\"><img src=\"" . IMAGE_PATH . "/" . IMAGE_TECHNOLOGY_DIR . "/technology" . $technology->id . "." . IMAGE_EXT . "\" style=\"width:220px;height:220px;\" alt=\"Bild " . $technology->name . "\" /></td>";
-        echo "<td class=\"tbldata\" colspan=\"2\"><div align=\"justify\">" . text2html($technology->longComment) . "</div></td></tr>";
+        echo "<td class=\"tbldata\" colspan=\"2\"><div align=\"justify\">" . BBCodeUtils::toHTML($technology->longComment) . "</div></td></tr>";
         echo "<tr>
                 <td class=\"tbltitle\" style=\"height:20px;width:120px;\">Maximale Stufe:</td>
                 <td class=\"tbldata\" style=\"height:20px;\">" . $technology->lastLevel . "</td>
@@ -59,11 +61,11 @@ if (isset($_GET['id'])) {
         for ($x = 0; $x < min(30, $technology->lastLevel); $x++) {
             $bc = calcTechCosts($technology, $x);
             echo '<tr><td class="tbldata">' . ($x + 1) . '</td>
-                      <td class="tbldata" style="text-align:right;">' . nf($bc['metal']) . '</td>
-                      <td class="tbldata" style="text-align:right;">' . nf($bc['crystal']) . '</td>
-                      <td class="tbldata" style="text-align:right;">' . nf($bc['plastic']) . '</td>
-                      <td class="tbldata" style="text-align:right;">' . nf($bc['fuel']) . '</td>
-                      <td class="tbldata" style="text-align:right;">' . nf($bc['food']) . '</td></tr>';
+                      <td class="tbldata" style="text-align:right;">' . StringUtils::formatNumber($bc['metal']) . '</td>
+                      <td class="tbldata" style="text-align:right;">' . StringUtils::formatNumber($bc['crystal']) . '</td>
+                      <td class="tbldata" style="text-align:right;">' . StringUtils::formatNumber($bc['plastic']) . '</td>
+                      <td class="tbldata" style="text-align:right;">' . StringUtils::formatNumber($bc['fuel']) . '</td>
+                      <td class="tbldata" style="text-align:right;">' . StringUtils::formatNumber($bc['food']) . '</td></tr>';
         }
         tableEnd();
 

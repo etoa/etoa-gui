@@ -7,6 +7,8 @@ use EtoA\Alliance\AllianceHistoryRepository;
 use EtoA\Alliance\AllianceRankRepository;
 use EtoA\Alliance\AllianceRepository;
 use EtoA\Alliance\AllianceTechnologyRepository;
+use EtoA\Support\BBCodeUtils;
+use EtoA\Support\StringUtils;
 use Symfony\Component\HttpFoundation\Request;
 use Twig\Environment;
 
@@ -132,20 +134,20 @@ function saveResources(Request $request, AllianceRepository $repository, int $id
 {
     $repository->updateResources(
         $id,
-        nf_back($request->request->get('res_metal')),
-        nf_back($request->request->get('res_crystal')),
-        nf_back($request->request->get('res_plastic')),
-        nf_back($request->request->get('res_fuel')),
-        nf_back($request->request->get('res_food')),
+        StringUtils::parseFormattedNumber($request->request->get('res_metal')),
+        StringUtils::parseFormattedNumber($request->request->get('res_crystal')),
+        StringUtils::parseFormattedNumber($request->request->get('res_plastic')),
+        StringUtils::parseFormattedNumber($request->request->get('res_fuel')),
+        StringUtils::parseFormattedNumber($request->request->get('res_food')),
     );
 
     $repository->addResources(
         $id,
-        nf_back($request->request->get('res_metal_add')),
-        nf_back($request->request->get('res_crystal_add')),
-        nf_back($request->request->get('res_plastic_add')),
-        nf_back($request->request->get('res_fuel_add')),
-        nf_back($request->request->get('res_food_add')),
+        StringUtils::parseFormattedNumber($request->request->get('res_metal_add')),
+        StringUtils::parseFormattedNumber($request->request->get('res_crystal_add')),
+        StringUtils::parseFormattedNumber($request->request->get('res_plastic_add')),
+        StringUtils::parseFormattedNumber($request->request->get('res_fuel_add')),
+        StringUtils::parseFormattedNumber($request->request->get('res_food_add')),
     );
 
     $twig->addGlobal('successMessage', 'Ressourcen aktualisiert!');
@@ -334,7 +336,7 @@ function membersTab(array $members, array $ranks): void
             echo "<tr><td id=\"uifo" . $member['user_id'] . "\" style=\"display:none;\"><a href=\"?page=user&amp;sub=edit&amp;id=" . $member['user_id'] . "\">Daten</a><br/>
                 <a href=\"?page=sendmessage&amp;id=" . $member['user_id'] . "\">Nachricht senden</a></td>
 				<td><a href=\"?page=user&amp;sub=edit&amp;id=" . $member['user_id'] . "\" " . cTT($member['user_nick'], "uifo" . $member['user_id'] . "") . ">" . $member['user_nick'] . "</a></td>
-				<td>" . nf($member['user_points']) . " Punkte</td>
+				<td>" . StringUtils::formatNumber($member['user_points']) . " Punkte</td>
 				<td><select name=\"member_rank[" . $member['user_id'] . "]\"><option value=\"0\">-</option>";
             foreach ($ranks as $rank) {
                 echo "<option value=\"" . $rank->id . "\"";
@@ -403,7 +405,7 @@ function diplomacyTab(AllianceDiplomacyRepository $repository, int $id): void
             if ($diplomacy->level === AllianceDiplomacyLevel::PEACE) echo " selected=\"selected\"";
             echo ">Frieden</option>";
             echo "</select>";
-            echo " &nbsp; " . df($diplomacy->date) . "</td>";
+            echo " &nbsp; " . StringUtils::formatDate($diplomacy->date) . "</td>";
             echo "<td valign=\"top\"><input type=\"checkbox\" name=\"alliance_bnd_del[" . $diplomacy->id . "]\" value=\"1\" /></td></tr>";
         }
         echo "</table>";
@@ -422,7 +424,7 @@ function historyTab(AllianceHistoryRepository $historyRepository, int $id): void
     $entries = $historyRepository->findForAlliance($id);
     if (count($entries) > 0) {
         foreach ($entries as $entry) {
-            echo "<tr><td>" . date("d.m.Y H:i", $entry->timestamp) . "</td><td class=\"tbldata\">" . text2html($entry->text) . "</td></tr>";
+            echo "<tr><td>" . date("d.m.Y H:i", $entry->timestamp) . "</td><td class=\"tbldata\">" . BBCodeUtils::toHTML($entry->text) . "</td></tr>";
         }
     } else {
         echo "<tr><td colspan=\"3\" class=\"tbldata\"><i>Keine Daten vorhanden!</i></td></tr>";
@@ -436,19 +438,19 @@ function resourcesTab(\EtoA\Alliance\Alliance $alliance): void
     echo "<tr>
 			<th class=\"resmetalcolor\">Titan</th>
 			<td>
-				<input type=\"text\" name=\"res_metal\" id=\"res_metal\" value=\"" . nf($alliance->resMetal) . "\" size=\"12\" maxlength=\"20\" autocomplete=\"off\" onfocus=\"this.select()\" onclick=\"this.select()\" onkeyup=\"FormatNumber(this.id,this.value,'','','');\" onkeypress=\"return nurZahlen(event)\"/><br/>
+				<input type=\"text\" name=\"res_metal\" id=\"res_metal\" value=\"" . StringUtils::formatNumber($alliance->resMetal) . "\" size=\"12\" maxlength=\"20\" autocomplete=\"off\" onfocus=\"this.select()\" onclick=\"this.select()\" onkeyup=\"FormatNumber(this.id,this.value,'','','');\" onkeypress=\"return nurZahlen(event)\"/><br/>
 			+/-: <input type=\"text\" name=\"res_metal_add\" id=\"res_metal_add\" value=\"0\" size=\"8\" maxlength=\"20\" autocomplete=\"off\" onfocus=\"this.select()\" onclick=\"this.select()\" onkeyup=\"FormatNumber(this.id,this.value,'','','');\" onkeypress=\"return nurZahlen(event)\"/></td>";
     echo "<th class=\"rescrystalcolor\">Silizium</th>
-			<td><input type=\"text\" name=\"res_crystal\" id=\"res_crystal\" value=\"" . nf($alliance->resCrystal) . "\" size=\"12\" maxlength=\"20\" autocomplete=\"off\" onfocus=\"this.select()\" onclick=\"this.select()\" onkeyup=\"FormatNumber(this.id,this.value,'','','');\" onkeypress=\"return nurZahlen(event)\"/><br/>
+			<td><input type=\"text\" name=\"res_crystal\" id=\"res_crystal\" value=\"" . StringUtils::formatNumber($alliance->resCrystal) . "\" size=\"12\" maxlength=\"20\" autocomplete=\"off\" onfocus=\"this.select()\" onclick=\"this.select()\" onkeyup=\"FormatNumber(this.id,this.value,'','','');\" onkeypress=\"return nurZahlen(event)\"/><br/>
 			+/-: <input type=\"text\" name=\"res_crystal_add\" id=\"res_crystal_add\" value=\"0\" size=\"8\" maxlength=\"20\" autocomplete=\"off\" onfocus=\"this.select()\" onclick=\"this.select()\" onkeyup=\"FormatNumber(this.id,this.value,'','','');\" onkeypress=\"return nurZahlen(event)\"/></td></tr>";
     echo "<tr><th class=\"resplasticcolor\">PVC</th>
-			<td><input type=\"text\" name=\"res_plastic\" id=\"res_plastic\" value=\"" . nf($alliance->resPlastic) . "\" size=\"12\" maxlength=\"20\" autocomplete=\"off\" onfocus=\"this.select()\" onclick=\"this.select()\" onkeyup=\"FormatNumber(this.id,this.value,'','','');\" onkeypress=\"return nurZahlen(event)\"/><br/>
+			<td><input type=\"text\" name=\"res_plastic\" id=\"res_plastic\" value=\"" . StringUtils::formatNumber($alliance->resPlastic) . "\" size=\"12\" maxlength=\"20\" autocomplete=\"off\" onfocus=\"this.select()\" onclick=\"this.select()\" onkeyup=\"FormatNumber(this.id,this.value,'','','');\" onkeypress=\"return nurZahlen(event)\"/><br/>
 			+/-: <input type=\"text\" name=\"res_plastic_add\" id=\"res_plastic_add\" value=\"0\" size=\"8\" maxlength=\"20\" autocomplete=\"off\" onfocus=\"this.select()\" onclick=\"this.select()\" onkeyup=\"FormatNumber(this.id,this.value,'','','');\" onkeypress=\"return nurZahlen(event)\"/></td>";
     echo "<th class=\"resfuelcolor\">Tritium</th>
-			<td><input type=\"text\" name=\"res_fuel\" id=\"res_fuel\" value=\"" . nf($alliance->resFuel) . "\" size=\"12\" maxlength=\"20\" autocomplete=\"off\" onfocus=\"this.select()\" onclick=\"this.select()\" onkeyup=\"FormatNumber(this.id,this.value,'','','');\" onkeypress=\"return nurZahlen(event)\"/><br/>
+			<td><input type=\"text\" name=\"res_fuel\" id=\"res_fuel\" value=\"" . StringUtils::formatNumber($alliance->resFuel) . "\" size=\"12\" maxlength=\"20\" autocomplete=\"off\" onfocus=\"this.select()\" onclick=\"this.select()\" onkeyup=\"FormatNumber(this.id,this.value,'','','');\" onkeypress=\"return nurZahlen(event)\"/><br/>
 			+/-: <input type=\"text\" name=\"res_fuel_add\" id=\"res_fuel_add\" value=\"0\" size=\"8\" maxlength=\"20\" autocomplete=\"off\" onfocus=\"this.select()\" onclick=\"this.select()\" onkeyup=\"FormatNumber(this.id,this.value,'','','');\" onkeypress=\"return nurZahlen(event)\"/></td></tr>";
     echo "<tr><th class=\"resfoodcolor\">Nahrung</th>
-			<td><input type=\"text\" name=\"res_food\" id=\"res_food\" value=\"" . nf($alliance->resFood) . "\" size=\"12\" maxlength=\"20\" autocomplete=\"off\" onfocus=\"this.select()\" onclick=\"this.select()\" onkeyup=\"FormatNumber(this.id,this.value,'','','');\" onkeypress=\"return nurZahlen(event)\"/><br/>
+			<td><input type=\"text\" name=\"res_food\" id=\"res_food\" value=\"" . StringUtils::formatNumber($alliance->resFood) . "\" size=\"12\" maxlength=\"20\" autocomplete=\"off\" onfocus=\"this.select()\" onclick=\"this.select()\" onkeyup=\"FormatNumber(this.id,this.value,'','','');\" onkeypress=\"return nurZahlen(event)\"/><br/>
 			+/-: <input type=\"text\" name=\"res_food_add\" id=\"res_food_add\" value=\"0\" size=\"8\" maxlength=\"20\" autocomplete=\"off\" onfocus=\"this.select()\" onclick=\"this.select()\" onkeyup=\"FormatNumber(this.id,this.value,'','','');\" onkeypress=\"return nurZahlen(event)\"/></td><td colspan=\"2\">";
     tableEnd();
     echo "<p><input type=\"submit\" name=\"res_save\" value=\"Übernehmen\" /></p>";

@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\Admin\AdminNotesRepository;
+use EtoA\Support\BBCodeUtils;
 
 $adminUserId = $cu->id;
 if ($adminUserId > 0) {
@@ -90,8 +91,8 @@ function noteIndex(AdminNotesRepository $notesRepo, int $adminUserId)
             $uhrzeit = date("H:i", $note->date);
 
             echo "<tr>
-            <td width=\"120\"><b>" . text2html($note->title) . "</b><br/>" . $datum . " " . $uhrzeit . "</td>";
-            echo "<td width=\"350\">" . text2html($note->text) . "</td>";
+            <td width=\"120\"><b>" . BBCodeUtils::toHTML($note->title) . "</b><br/>" . $datum . " " . $uhrzeit . "</td>";
+            echo "<td width=\"350\">" . BBCodeUtils::toHTML($note->text) . "</td>";
             echo "<td>
             <a href=\"?page=$page&amp;chk=edit&pid=" . $note->id . "\">Bearbeiten</a><br>
             <a href=\"?page=$page&amp;chk=del&pid=" . $note->id . "\" onclick=\"return confirm('Eintrag löschen?')\">Löschen</a>

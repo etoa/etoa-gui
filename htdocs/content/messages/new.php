@@ -3,6 +3,7 @@
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Message\MessageIgnoreRepository;
 use EtoA\Message\MessageRepository;
+use EtoA\Support\StringUtils;
 use EtoA\User\UserPropertiesRepository;
 use EtoA\User\UserRepository;
 use Symfony\Component\HttpFoundation\Request;
@@ -92,11 +93,11 @@ function sendMessageForm(
         <th width=\"50\" valign=\"top\">Text:</th>
         <td width=\"250\"><textarea name=\"message_text\" id=\"message\" rows=\"12\" cols=\"60\" ";
     if ($previewNewMessage) {
-        echo "onkeyup=\"text2html(this.value,'msgPreview');\"";
+        echo "onkeyup=\"BBCodeToHTML(this.value,'msgPreview');\"";
     }
     echo ">" . $text . '</textarea><br/>' . helpLink('textformat', 'Hilfe zur Formatierung') . '</td>';
 
-    $previewFunction = $previewNewMessage ? "text2html(document.getElementById('message').value,'msgPreview');" : '';
+    $previewFunction = $previewNewMessage ? "BBCodeToHTML(document.getElementById('message').value,'msgPreview');" : '';
     echo "<td>
         <input type=\"button\" onclick=\"bbcode(this.form,'b','');" . $previewFunction . "\" value=\"B\" style=\"font-weight:bold;\">
         <input type=\"button\" onclick=\"bbcode(this.form,'i','');" . $previewFunction . "\" value=\"I\" style=\"font-style:italic;\">
@@ -170,7 +171,7 @@ function sendMessageForm(
     tableEnd();
     echo "<script type=\"text/javascript\">";
     if ($previewNewMessage) {
-        echo "text2html(document.getElementById('message').value,'msgPreview');";
+        echo "BBCodeToHTML(document.getElementById('message').value,'msgPreview');";
     }
     echo "document.getElementById('user_nick').focus()";
     echo "</script>";
@@ -308,7 +309,7 @@ function sendMessage(
         return "<b>Fehler:</b> Dieser Benutzer hat dich ignoriert, die Nachricht wurde nicht gesendet!<br/>";
     }
 
-    $check_subject = check_illegal_signs($subject);
+    $check_subject = StringUtils::checkIllegalSigns($subject);
     if ($check_subject != "") {
         return "Du hast ein unerlaubtes Zeichen ( " . $check_subject . " ) im Betreff!<br/>";
     }

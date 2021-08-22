@@ -3,6 +3,8 @@
 use EtoA\Ship\ShipDataRepository;
 use EtoA\Ship\ShipRepository;
 use EtoA\Ship\ShipSearch;
+use EtoA\Support\BBCodeUtils;
+use EtoA\Support\StringUtils;
 
 /** @var ShipRepository $shipRepository */
 $shipRepository = $app[ShipRepository::class];
@@ -127,7 +129,7 @@ if (isset($_GET['id']) && intval($_GET['id']) > 0) {
                  </tr>
                  <tr>
                      <th width=\"25%\">Erfahrung</th>
-                     <td width=\"10%\">" . nf($item->specialShipExp) . "</td>
+                     <td width=\"10%\">" . StringUtils::formatNumber($item->specialShipExp) . "</td>
                      <td width=\"65%\">Erfahrung des Schiffes</td>
                  </tr>
                  <tr>
@@ -136,7 +138,7 @@ if (isset($_GET['id']) && intval($_GET['id']) > 0) {
         if ($specialShip->specialMaxLevel <= $init_level && $specialShip->specialMaxLevel != 0) {
             echo "<td width=\"10%\"> - </td>";
         } else {
-            echo "<td width=\"10%\">" . nf($exp_for_next_level) . "</td>";
+            echo "<td width=\"10%\">" . StringUtils::formatNumber($exp_for_next_level) . "</td>";
         }
 
         echo "<td width=\"65%\">Benötigte Erfahrung bis zum nächsten LevelUp</td>
@@ -349,7 +351,7 @@ else {
                         <tr>
                             <th style=\"width:220px;\">
                                 <a href=\"?page=ship_upgrade&amp;id=" . $ship->id . "\"><img src=\"" . IMAGE_PATH . "/" . IMAGE_SHIP_DIR . "/ship" . $ship->id . "." . IMAGE_EXT . "\" width=\"220\" height=\"220\" alt=\"Klicke hier um ins Upgrade Menu zu gelangen\" title=\"Klicke hier um ins Upgrade Menu zu gelangen\" border=\"0\"/></a></th>
-                            <td colspan=\"3\">" . text2html($ship->longComment) . "</td>
+                            <td colspan=\"3\">" . BBCodeUtils::toHTML($ship->longComment) . "</td>
                         </tr>";
             echo "
                          <tr>
@@ -369,7 +371,7 @@ else {
                          </tr>
                          <tr>
                             <th class=\"tbltitle\">Erfahrung</th>
-                            <td>" . nf($item->specialShipExp) . "</td>
+                            <td>" . StringUtils::formatNumber($item->specialShipExp) . "</td>
                             <td>Erfahrung des Schiffes</td>
                          </tr>
                          <tr>
@@ -378,7 +380,7 @@ else {
             if ($ship->specialMaxLevel <= $init_level && $ship->specialMaxLevel !== 0)
                 echo "<td> - </td>";
             else
-                echo "<td>" . nf($exp_for_next_level) . "</td>";
+                echo "<td>" . StringUtils::formatNumber($exp_for_next_level) . "</td>";
 
             echo "<td>Benötigte Erfahrung bis zum nächsten LevelUp</td>
                          </tr>

@@ -4,6 +4,7 @@ use EtoA\Admin\AdminUser;
 use EtoA\Admin\AdminUserRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\HostCache\NetworkNameService;
+use EtoA\Support\BBCodeUtils;
 use EtoA\Support\Mail\MailSenderService;
 use EtoA\Text\TextRepository;
 
@@ -15,7 +16,7 @@ $textRepo = $app[TextRepository::class];
 $contactText = $textRepo->find('contact_message');
 if ($contactText->isEnabled()) {
     iBoxStart();
-    echo text2html($contactText->content);
+    echo BBCodeUtils::toHTML($contactText->content);
     iBoxEnd();
 }
 

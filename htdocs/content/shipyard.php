@@ -16,6 +16,7 @@ use EtoA\Ship\ShipRepository;
 use EtoA\Ship\ShipRequirementRepository;
 use EtoA\Ship\ShipSearch;
 use EtoA\Ship\ShipSort;
+use EtoA\Support\StringUtils;
 use EtoA\Specialist\SpecialistService;
 use EtoA\Technology\TechnologyRepository;
 use EtoA\UI\ResourceBoxDrawer;
@@ -113,7 +114,7 @@ if ($shipyard !== null && $shipyard->currentLevel > 0) {
          ****************************/
         if (
             count($_POST) > 0 && isset($_POST['sort_submit'])
-            && ctype_aldotsc($_POST['sort_value']) && ctype_aldotsc($_POST['sort_way'])
+            && StringUtils::hasAlphaDotsOrUnderlines($_POST['sort_value']) && StringUtils::hasAlphaDotsOrUnderlines($_POST['sort_way'])
         ) {
             $properties->itemOrderShip = $_POST['sort_value'];
             $properties->itemOrderWay = $_POST['sort_way'];
@@ -199,19 +200,19 @@ if ($shipyard !== null && $shipyard->currentLevel > 0) {
         tableStart("Werft-Infos");
         echo '<colgroup><col style="width:400px;"/><col/></colgroup>';
         if ($specialist !== null && $specialist->costsShips != 1) {
-            echo "<tr><td>Kostenreduktion durch " . $specialist->name . ":</td><td>" . get_percent_string($specialist->costsShips) . "</td></tr>";
+            echo "<tr><td>Kostenreduktion durch " . $specialist->name . ":</td><td>" . StringUtils::formatPercentString($specialist->costsShips) . "</td></tr>";
         }
         if ($specialist !== null && $specialist->timeShips != 1) {
-            echo "<tr><td>Bauzeitverringerung durch " . $specialist->name . ":</td><td>" . get_percent_string($specialist->timeShips) . "</td></tr>";
+            echo "<tr><td>Bauzeitverringerung durch " . $specialist->name . ":</td><td>" . StringUtils::formatPercentString($specialist->timeShips) . "</td></tr>";
         }
-        echo "<tr><td>Eingestellte Arbeiter:</td><td>" . nf($shipyard->peopleWorking);
+        echo "<tr><td>Eingestellte Arbeiter:</td><td>" . StringUtils::formatNumber($shipyard->peopleWorking);
         if (count($queue) === 0) {
             echo '&nbsp;<a href="javascript:;" onclick="toggleBox(\'changePeople\');">[&Auml;ndern]</a>';
         }
         echo "</td></tr>";
         if ($shipyard->peopleWorking > 0) {
-            echo '<tr><td>Zeitreduktion durch Arbeiter pro Auftrag:</td><td><span id="people_work_done">' . tf($config->getInt('people_work_done') * $shipyard->peopleWorking) . '</span></td></tr>';
-            echo '<tr><td>Nahrungsverbrauch durch Arbeiter pro Auftrag:</td><td><span id="people_food_require">' . nf($config->getInt('people_food_require') * $shipyard->peopleWorking) . '</span></td></tr>';
+            echo '<tr><td>Zeitreduktion durch Arbeiter pro Auftrag:</td><td><span id="people_work_done">' . StringUtils::formatTimespan($config->getInt('people_work_done') * $shipyard->peopleWorking) . '</span></td></tr>';
+            echo '<tr><td>Nahrungsverbrauch durch Arbeiter pro Auftrag:</td><td><span id="people_food_require">' . StringUtils::formatNumber($config->getInt('people_food_require') * $shipyard->peopleWorking) . '</span></td></tr>';
         }
         if ($gen_tech_level  > 0) {
             echo '<tr><td>Gentechnologie:</td><td>' . $gen_tech_level . '</td></tr>';
@@ -219,7 +220,7 @@ if ($shipyard !== null && $shipyard->currentLevel > 0) {
         }
         echo "<tr><td>Bauzeitverringerung:</td><td>";
         if ($need_bonus_level >= 0) {
-            echo get_percent_string($time_boni_factor) . " durch Stufe " . $shipyard->currentLevel;
+            echo StringUtils::formatPercentString($time_boni_factor) . " durch Stufe " . $shipyard->currentLevel;
         } else {
             echo "Stufe " . $config->getInt('build_time_boni_schiffswerft') . " erforderlich!";
         }
@@ -247,7 +248,7 @@ if ($shipyard !== null && $shipyard->currentLevel > 0) {
                             <input  type="text"
                                     name="peopleWorking"
                                     id="peopleWorking"
-                                    value="' . nf($shipyard->peopleWorking) . '"
+                                    value="' . StringUtils::formatNumber($shipyard->peopleWorking) . '"
                                     onkeyup="updatePeopleWorkingBox(this.value,\'-1\',\'-1\');"/>
                     </td>
                     </tr>
@@ -256,14 +257,14 @@ if ($shipyard !== null && $shipyard->currentLevel > 0) {
                         <td><input  type="text"
                                     name="timeReduction"
                                     id="timeReduction"
-                                    value="' . tf($config->getInt('people_work_done') * $shipyard->peopleWorking) . '"
+                                    value="' . StringUtils::formatTimespan($config->getInt('people_work_done') * $shipyard->peopleWorking) . '"
                                     onkeyup="updatePeopleWorkingBox(\'-1\',this.value,\'-1\');" /></td>
                     </tr>
                         <th>Nahrungsverbrauch</th>
                         <td><input  type="text"
                                     name="foodUsing"
                                     id="foodUsing"
-                                    value="' . nf($config->getInt('people_food_require') * $shipyard->peopleWorking) . '"
+                                    value="' . StringUtils::formatNumber($config->getInt('people_food_require') * $shipyard->peopleWorking) . '"
                                     onkeyup="updatePeopleWorkingBox(\'-1\',\'-1\',this.value);" /></td>
                     </tr>
                     <tr>
@@ -280,7 +281,7 @@ if ($shipyard !== null && $shipyard->currentLevel > 0) {
         // people working changed
         if (isset($_POST['submit_people_form'])) {
             if (count($queue) === 0) {
-                $buildingRepository->setPeopleWorking($planet->id, SHIP_BUILDING_ID, (int) nf_back($_POST['peopleWorking']));
+                $buildingRepository->setPeopleWorking($planet->id, SHIP_BUILDING_ID, StringUtils::parseFormattedNumber($_POST['peopleWorking']));
                 //success_msg("Arbeiter zugeteilt!");
             } else
                 error_msg('Arbeiter konnten nicht zugeteilt werden!');
@@ -361,7 +362,7 @@ if ($shipyard !== null && $shipyard->currentLevel > 0) {
             foreach ($_POST['build_count'] as $ship_id => $build_cnt) {
                 $ship_id = intval($ship_id);
 
-                $build_cnt = nf_back($build_cnt);
+                $build_cnt = StringUtils::parseFormattedNumber($build_cnt);
 
                 if ($build_cnt > 0 && isset($ships[$ship_id])) {
                     $buildCountOriginal = $build_cnt;
@@ -485,7 +486,7 @@ if ($shipyard !== null && $shipyard->currentLevel > 0) {
                             'queue_build_type' => 0,
                         ]);
 
-                        echo "<tr><td>" . nf($build_cnt) . " " . $ships[$ship_id]->name . " in Auftrag gegeben!</td></tr>";
+                        echo "<tr><td>" . StringUtils::formatNumber($build_cnt) . " " . $ships[$ship_id]->name . " in Auftrag gegeben!</td></tr>";
 
                         //Rohstoffe summieren, diese werden nach der Schleife abgezogen
                         $totalMetal += $bc['metal'];
@@ -499,31 +500,31 @@ if ($shipyard !== null && $shipyard->currentLevel > 0) {
 
                         [b]Start:[/b] " . date("d.m.Y H:i:s", $end_time) . "
                         [b]Ende:[/b] " . date("d.m.Y H:i:s", $end_time) . "
-                        [b]Dauer:[/b] " . tf($duration) . "
-                        [b]Dauer pro Einheit:[/b] " . tf($obj_time) . "
+                        [b]Dauer:[/b] " . StringUtils::formatTimespan($duration) . "
+                        [b]Dauer pro Einheit:[/b] " . StringUtils::formatTimespan($obj_time) . "
                         [b]Schiffswerft Level:[/b] " . $shipyard->currentLevel . "
-                        [b]Eingesetzte Bewohner:[/b] " . nf($shipyard->peopleWorking) . "
+                        [b]Eingesetzte Bewohner:[/b] " . StringUtils::formatNumber($shipyard->peopleWorking) . "
                         [b]Gen-Tech Level:[/b] " . $gen_tech_level . "
                         [b]Eingesetzter Spezialist:[/b] " . ($specialist !== null ? $specialist->name : "Kein Spezialist"). "
 
                         [b]Kosten[/b]
-                        [b]" . RES_METAL . ":[/b] " . nf($bc['metal']) . "
-                        [b]" . RES_CRYSTAL . ":[/b] " . nf($bc['crystal']) . "
-                        [b]" . RES_PLASTIC . ":[/b] " . nf($bc['plastic']) . "
-                        [b]" . RES_FUEL . ":[/b] " . nf($bc['fuel']) . "
-                        [b]" . RES_FOOD . ":[/b] " . nf($bc['food']) . "
+                        [b]" . RES_METAL . ":[/b] " . StringUtils::formatNumber($bc['metal']) . "
+                        [b]" . RES_CRYSTAL . ":[/b] " . StringUtils::formatNumber($bc['crystal']) . "
+                        [b]" . RES_PLASTIC . ":[/b] " . StringUtils::formatNumber($bc['plastic']) . "
+                        [b]" . RES_FUEL . ":[/b] " . StringUtils::formatNumber($bc['fuel']) . "
+                        [b]" . RES_FOOD . ":[/b] " . StringUtils::formatNumber($bc['food']) . "
 
                         [b]Rohstoffe auf dem Planeten[/b]
-                        [b]" . RES_METAL . ":[/b] " . nf($planet->resMetal - $totalMetal) . "
-                        [b]" . RES_CRYSTAL . ":[/b] " . nf($planet->resCrystal - $totalCrystal) . "
-                        [b]" . RES_PLASTIC . ":[/b] " . nf($planet->resPlastic - $totalPlastic) . "
-                        [b]" . RES_FUEL . ":[/b] " . nf($planet->resFuel - $totalFuel) . "
-                        [b]" . RES_FOOD . ":[/b] " . nf($planet->resFood - $totalFood);
+                        [b]" . RES_METAL . ":[/b] " . StringUtils::formatNumber($planet->resMetal - $totalMetal) . "
+                        [b]" . RES_CRYSTAL . ":[/b] " . StringUtils::formatNumber($planet->resCrystal - $totalCrystal) . "
+                        [b]" . RES_PLASTIC . ":[/b] " . StringUtils::formatNumber($planet->resPlastic - $totalPlastic) . "
+                        [b]" . RES_FUEL . ":[/b] " . StringUtils::formatNumber($planet->resFuel - $totalFuel) . "
+                        [b]" . RES_FOOD . ":[/b] " . StringUtils::formatNumber($planet->resFood - $totalFood);
 
                         $gameLogRepository->add(GameLogFacility::SHIP, LogSeverity::INFO, $log_text, $cu->id, $cu->allianceId, $planet->id, $ship_id, 1, $build_cnt);
 
                         //Daten für Log speichern
-                        $log_ships .= "<b>" . $ships[$ship_id]->name . "</b>: " . nf($build_cnt) . " (" . tf($duration) . ")<br>";
+                        $log_ships .= "<b>" . $ships[$ship_id]->name . "</b>: " . StringUtils::formatNumber($build_cnt) . " (" . StringUtils::formatTimespan($duration) . ")<br>";
                     } else {
                         echo "<tr><td>" . $ships[$ship_id]->name . ": Zu wenig Rohstoffe für diese Anzahl ($buildCountOriginal)!</td></tr>";
                     }
@@ -601,22 +602,22 @@ if ($shipyard !== null && $shipyard->currentLevel > 0) {
                 //Log schreiben
                 $log_text = "[b]Schiffsauftrag Abbruch[/b]
 
-                [b]Auftragsdauer:[/b] " . tf($queue_objtime * $queue_count) . "
+                [b]Auftragsdauer:[/b] " . StringUtils::formatTimespan($queue_objtime * $queue_count) . "
 
                 [b]Erhaltene Rohstoffe[/b]
                 [b]Faktor:[/b] " . $cancel_res_factor . "
-                [b]" . RES_METAL . ":[/b] " . nf($ret['metal']) . "
-                [b]" . RES_CRYSTAL . ":[/b] " . nf($ret['crystal']) . "
-                [b]" . RES_PLASTIC . ":[/b] " . nf($ret['plastic']) . "
-                [b]" . RES_FUEL . ":[/b] " . nf($ret['fuel']) . "
-                [b]" . RES_FOOD . ":[/b] " . nf($ret['food']) . "
+                [b]" . RES_METAL . ":[/b] " . StringUtils::formatNumber($ret['metal']) . "
+                [b]" . RES_CRYSTAL . ":[/b] " . StringUtils::formatNumber($ret['crystal']) . "
+                [b]" . RES_PLASTIC . ":[/b] " . StringUtils::formatNumber($ret['plastic']) . "
+                [b]" . RES_FUEL . ":[/b] " . StringUtils::formatNumber($ret['fuel']) . "
+                [b]" . RES_FOOD . ":[/b] " . StringUtils::formatNumber($ret['food']) . "
 
                 [b]Rohstoffe auf dem Planeten[/b]
-                [b]" . RES_METAL . ":[/b] " . nf($planet->resMetal + $ret['metal']) . "
-                [b]" . RES_CRYSTAL . ":[/b] " . nf($planet->resCrystal + $ret['crystal']) . "
-                [b]" . RES_PLASTIC . ":[/b] " . nf($planet->resPlastic + $ret['plastic']) . "
-                [b]" . RES_FUEL . ":[/b] " . nf($planet->resFuel + $ret['fuel']) . "
-                [b]" . RES_FOOD . ":[/b] " . nf($planet->resFood + $ret['food']);
+                [b]" . RES_METAL . ":[/b] " . StringUtils::formatNumber($planet->resMetal + $ret['metal']) . "
+                [b]" . RES_CRYSTAL . ":[/b] " . StringUtils::formatNumber($planet->resCrystal + $ret['crystal']) . "
+                [b]" . RES_PLASTIC . ":[/b] " . StringUtils::formatNumber($planet->resPlastic + $ret['plastic']) . "
+                [b]" . RES_FUEL . ":[/b] " . StringUtils::formatNumber($planet->resFuel + $ret['fuel']) . "
+                [b]" . RES_FOOD . ":[/b] " . StringUtils::formatNumber($planet->resFood + $ret['food']);
 
                 //Log Speichern
                 $gameLogRepository->add(GameLogFacility::SHIP, LogSeverity::INFO, $log_text, $cu->id, $cu->allianceId, $planet->id, $ship_id, 0, $queue_count);
@@ -650,9 +651,9 @@ if ($shipyard !== null && $shipyard->currentLevel > 0) {
                         </tr>";
                     echo "<tr>";
                     echo "<td colspan=\"2\">" . $ships[$data->shipId]->name . "</td>";
-                    echo "<td>" . df(time() - $obj_t_passed, 1) . "</td>";
-                    echo "<td>" . df(time() + $obj_t_remaining, 1) . "</td>";
-                    echo "<td colspan=\"2\">" . tf($obj_t_remaining) . "</td>
+                    echo "<td>" . StringUtils::formatDate(time() - $obj_t_passed) . "</td>";
+                    echo "<td>" . StringUtils::formatDate(time() + $obj_t_remaining) . "</td>";
+                    echo "<td colspan=\"2\">" . StringUtils::formatTimespan($obj_t_remaining) . "</td>
                     </tr>";
                     echo "<tr>
                             <th style=\"width:40px;\">Anzahl</th>
@@ -668,9 +669,9 @@ if ($shipyard !== null && $shipyard->currentLevel > 0) {
                 echo "<tr>";
                 echo "<td id=\"objcount\">" . $data->count . "</td>";
                 echo "<td>" . $ships[$data->shipId]->name . "</td>";
-                echo "<td>" . df($absolute_starttime, 1) . "</td>";
-                echo "<td>" . df($absolute_starttime + $data->endTime - $data->startTime, 1) . "</td>";
-                echo "<td>" . tf($data->endTime - time()) . "</td>";
+                echo "<td>" . StringUtils::formatDate($absolute_starttime) . "</td>";
+                echo "<td>" . StringUtils::formatDate($absolute_starttime + $data->endTime - $data->startTime) . "</td>";
+                echo "<td>" . StringUtils::formatTimespan($data->endTime - time()) . "</td>";
                 echo "<td id=\"cancel\">";
                 if ($cancelable) {
                     echo "<a href=\"?page=$page&amp;cancel=" . $data->id . "\" onclick=\"return confirm('Soll dieser Auftrag wirklich abgebrochen werden?');\">Abbrechen</a>";
@@ -831,7 +832,7 @@ if ($shipyard !== null && $shipyard->currentLevel > 0) {
                             //Tippbox Nachricht generieren
                             //X Schiffe baubar
                             if ($ship_max_build > 0) {
-                                $tm_cnt = "Es k&ouml;nnen maximal " . nf($ship_max_build) . " Schiffe gebaut werden.";
+                                $tm_cnt = "Es k&ouml;nnen maximal " . StringUtils::formatNumber($ship_max_build) . " Schiffe gebaut werden.";
                             }
                             //Zuwenig Rohstoffe. Wartezeit errechnen
                             elseif ($ship_max_build == 0) {
@@ -840,7 +841,7 @@ if ($shipyard !== null && $shipyard->currentLevel > 0) {
                                 //Wartezeit Titan
                                 if ($planet->prodMetal > 0) {
                                     $bwait['metal'] = ceil(($shipCosts[$shipData->id]->metal - $planet->resMetal) / $planet->prodMetal * 3600);
-                                    $bwmsg['metal'] = tm("Fehlender Rohstoff", nf($shipCosts[$shipData->id]->metal - $planet->resMetal) . " Titan<br />Bereit in " . tf($bwait['metal']) . "");
+                                    $bwmsg['metal'] = tm("Fehlender Rohstoff", StringUtils::formatNumber($shipCosts[$shipData->id]->metal - $planet->resMetal) . " Titan<br />Bereit in " . StringUtils::formatTimespan($bwait['metal']) . "");
                                 } else {
                                     $bwait['metal'] = 0;
                                     $bwmsg['metal'] = '';
@@ -849,7 +850,7 @@ if ($shipyard !== null && $shipyard->currentLevel > 0) {
                                 //Wartezeit Silizium
                                 if ($planet->prodCrystal > 0) {
                                     $bwait['crystal'] = ceil(($shipCosts[$shipData->id]->crystal - $planet->resCrystal) / $planet->prodCrystal * 3600);
-                                    $bwmsg['crystal'] = tm("Fehlender Rohstoff", nf($shipCosts[$shipData->id]->crystal - $planet->resCrystal) . " Silizium<br />Bereit in " . tf($bwait['crystal']) . "");
+                                    $bwmsg['crystal'] = tm("Fehlender Rohstoff", StringUtils::formatNumber($shipCosts[$shipData->id]->crystal - $planet->resCrystal) . " Silizium<br />Bereit in " . StringUtils::formatTimespan($bwait['crystal']) . "");
                                 } else {
                                     $bwait['crystal'] = 0;
                                     $bwmsg['crystal'] = '';
@@ -858,7 +859,7 @@ if ($shipyard !== null && $shipyard->currentLevel > 0) {
                                 //Wartezeit PVC
                                 if ($planet->prodPlastic > 0) {
                                     $bwait['plastic'] = ceil(($shipCosts[$shipData->id]->plastic - $planet->resPlastic) / $planet->prodPlastic * 3600);
-                                    $bwmsg['plastic'] = tm("Fehlender Rohstoff", nf($shipCosts[$shipData->id]->plastic - $planet->resPlastic) . " PVC<br />Bereit in " . tf($bwait['plastic']) . "");
+                                    $bwmsg['plastic'] = tm("Fehlender Rohstoff", StringUtils::formatNumber($shipCosts[$shipData->id]->plastic - $planet->resPlastic) . " PVC<br />Bereit in " . StringUtils::formatTimespan($bwait['plastic']) . "");
                                 } else {
                                     $bwait['plastic'] = 0;
                                     $bwmsg['plastic'] = '';
@@ -867,7 +868,7 @@ if ($shipyard !== null && $shipyard->currentLevel > 0) {
                                 //Wartezeit Tritium
                                 if ($planet->prodFuel > 0) {
                                     $bwait['fuel'] = ceil(($shipCosts[$shipData->id]->fuel - $planet->resFuel) / $planet->prodFuel * 3600);
-                                    $bwmsg['fuel'] = tm("Fehlender Rohstoff", nf($shipCosts[$shipData->id]->fuel - $planet->resFuel) . " Tritium<br />Bereit in " . tf($bwait['fuel']) . "");
+                                    $bwmsg['fuel'] = tm("Fehlender Rohstoff", StringUtils::formatNumber($shipCosts[$shipData->id]->fuel - $planet->resFuel) . " Tritium<br />Bereit in " . StringUtils::formatTimespan($bwait['fuel']) . "");
                                 } else {
                                     $bwait['fuel'] = 0;
                                     $bwmsg['fuel'] = '';
@@ -876,7 +877,7 @@ if ($shipyard !== null && $shipyard->currentLevel > 0) {
                                 //Wartezeit Nahrung
                                 if ($planet->prodFood > 0) {
                                     $bwait['food'] = ceil(($food_costs - $planet->resFood) / $planet->prodFood * 3600);
-                                    $bwmsg['food'] = tm("Fehlender Rohstoff", nf($food_costs - $planet->resFood) . " Nahrung<br />Bereit in " . tf($bwait['food']) . "");
+                                    $bwmsg['food'] = tm("Fehlender Rohstoff", StringUtils::formatNumber($food_costs - $planet->resFood) . " Nahrung<br />Bereit in " . StringUtils::formatTimespan($bwait['food']) . "");
                                 } else {
                                     $bwait['food'] = 0;
                                     $bwmsg['food'] = '';
@@ -885,7 +886,7 @@ if ($shipyard !== null && $shipyard->currentLevel > 0) {
                                 //Maximale Wartezeit ermitteln
                                 $bwmax = max($bwait['metal'], $bwait['crystal'], $bwait['plastic'], $bwait['fuel'], $bwait['food']);
 
-                                $tm_cnt = "Rohstoffe verf&uuml;gbar in " . tf($bwmax) . "";
+                                $tm_cnt = "Rohstoffe verf&uuml;gbar in " . StringUtils::formatTimespan($bwmax) . "";
                             } else {
                                 $tm_cnt = "";
                             }
@@ -964,11 +965,11 @@ if ($shipyard !== null && $shipyard->currentLevel > 0) {
                                     </tr>
                                     <tr>
                                         <th  height=\"30\">Vorhanden:</th>
-                                        <td colspan=\"3\">" . nf($shiplist_count) . "</td>
+                                        <td colspan=\"3\">" . StringUtils::formatNumber($shiplist_count) . "</td>
                                     </tr>
                                     <tr>
                                         <th height=\"30\">Bauzeit</th>
-                                        <td>" . tf($btime) . "</td>";
+                                        <td>" . StringUtils::formatTimespan($btime) . "</td>";
 
                                     //Maximale Anzahl erreicht
                                     if ($ship_count >= $shipData->maxCount && $shipData->maxCount !== 0) {
@@ -994,19 +995,19 @@ if ($shipyard !== null && $shipyard->currentLevel > 0) {
                                     <th height=\"20\" width=\"98\">" . RES_FOOD . "</th></tr>";
                                     echo "<tr>
                                     <td height=\"20\" width=\"110\" " . $ress_style_metal . ">
-                                        " . nf($shipCosts[$shipData->id]->metal) . "
+                                        " . StringUtils::formatNumber($shipCosts[$shipData->id]->metal) . "
                                     </td>
                                     <td height=\"20\" width=\"25%\" " . $ress_style_crystal . ">
-                                        " . nf($shipCosts[$shipData->id]->crystal) . "
+                                        " . StringUtils::formatNumber($shipCosts[$shipData->id]->crystal) . "
                                     </td>
                                     <td height=\"20\" width=\"25%\" " . $ress_style_plastic . ">
-                                        " . nf($shipCosts[$shipData->id]->plastic) . "
+                                        " . StringUtils::formatNumber($shipCosts[$shipData->id]->plastic) . "
                                     </td>
                                     <td height=\"20\" width=\"25%\" " . $ress_style_fuel . ">
-                                        " . nf($shipCosts[$shipData->id]->fuel) . "
+                                        " . StringUtils::formatNumber($shipCosts[$shipData->id]->fuel) . "
                                     </td>
                                     <td height=\"20\" width=\"25%\" " . $ress_style_food . ">
-                                        " . nf($food_costs) . "
+                                        " . StringUtils::formatNumber($food_costs) . "
                                     </td>
                                 </tr>";
                                 }
@@ -1028,14 +1029,14 @@ if ($shipyard !== null && $shipyard->currentLevel > 0) {
 
                                     echo "<th width=\"30%\">
                                             <span style=\"font-weight:500\">" . $shipData->name . "<br/>
-                                            Gebaut:</span> " . nf($shiplist_count) . "
+                                            Gebaut:</span> " . StringUtils::formatNumber($shiplist_count) . "
                                         </th>
-                                        <td width=\"13%\">" . tf($btime) . "</td>
-                                        <td width=\"10%\" " . $ress_style_metal . ">" . nf($shipCosts[$shipData->id]->metal) . "</td>
-                                        <td width=\"10%\" " . $ress_style_crystal . ">" . nf($shipCosts[$shipData->id]->crystal) . "</td>
-                                        <td width=\"10%\" " . $ress_style_plastic . ">" . nf($shipCosts[$shipData->id]->plastic) . "</td>
-                                        <td width=\"10%\" " . $ress_style_fuel . ">" . nf($shipCosts[$shipData->id]->fuel) . "</td>
-                                        <td width=\"10%\" " . $ress_style_food . ">" . nf($food_costs) . "</td>";
+                                        <td width=\"13%\">" . StringUtils::formatTimespan($btime) . "</td>
+                                        <td width=\"10%\" " . $ress_style_metal . ">" . StringUtils::formatNumber($shipCosts[$shipData->id]->metal) . "</td>
+                                        <td width=\"10%\" " . $ress_style_crystal . ">" . StringUtils::formatNumber($shipCosts[$shipData->id]->crystal) . "</td>
+                                        <td width=\"10%\" " . $ress_style_plastic . ">" . StringUtils::formatNumber($shipCosts[$shipData->id]->plastic) . "</td>
+                                        <td width=\"10%\" " . $ress_style_fuel . ">" . StringUtils::formatNumber($shipCosts[$shipData->id]->fuel) . "</td>
+                                        <td width=\"10%\" " . $ress_style_food . ">" . StringUtils::formatNumber($food_costs) . "</td>";
 
                                     //Maximale Anzahl erreicht
                                     if ($ship_count >= $shipData->maxCount && $shipData->maxCount !== 0) {

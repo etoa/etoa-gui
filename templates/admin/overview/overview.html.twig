@@ -18,15 +18,15 @@
     {% endif %}
 
     {% if adminInfo %}
-        {{ macros.messagebox(text2Html(adminInfo), 'info', 'Admin-News')}}
+        {{ macros.messagebox(BBCodeToHTML(adminInfo), 'info', 'Admin-News')}}
     {% endif %}
 
     {% if systemMessage %}
-        {{ macros.messagebox(text2Html(systemMessage) ~ '<br/><a href=\"?page=texts&amp;id=system_message\">Bearbeiten/Deaktivieren</a>', 'info', 'Systemnachricht aktiv!')}}
+        {{ macros.messagebox(BBCodeToHTML(systemMessage) ~ '<br/><a href=\"?page=texts&amp;id=system_message\">Bearbeiten/Deaktivieren</a>', 'info', 'Systemnachricht aktiv!')}}
     {% endif %}
 
     {% if configValue('offline') == 1 %}
-        {{ macros.messagebox(configValue('offline_message') ~ '<br/><a href=\"?page=overview&amp;sub=offline\">&Auml;ndern</a>', 'warning', 'Spiel offline')}}
+        {{ macros.messagebox(BBCodeToHTML(configValue('offline_message')) ~ '<br/><a href=\"?page=overview&amp;sub=offline\">&Auml;ndern</a>', 'warning', 'Spiel offline')}}
     {% endif %}
 
     {% if configValue('register_key') %}

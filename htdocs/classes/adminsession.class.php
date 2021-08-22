@@ -3,6 +3,7 @@
 use EtoA\Admin\AdminSessionManager;
 use EtoA\Admin\AdminSessionRepository;
 use EtoA\Admin\AdminUserRepository;
+use EtoA\Support\StringUtils;
 
 /**
  * Provides session and authentication management
@@ -120,7 +121,7 @@ class AdminSession extends Session
                     $this->time_action = $t;
                     return true;
                 } else {
-                    $this->lastError = "Das Timeout von " . tf($this->config->getInt('admin_timeout')) . " wurde überschritten!";
+                    $this->lastError = "Das Timeout von " . StringUtils::formatTimespan($this->config->getInt('admin_timeout')) . " wurde überschritten!";
                     $this->lastErrorCode = "timeout";
                 }
             } else {

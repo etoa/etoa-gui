@@ -2,6 +2,7 @@
 
 use EtoA\Universe\UniverseGenerator;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Support\StringUtils;
 use EtoA\Universe\Asteroid\AsteroidRepository;
 use EtoA\Universe\Cell\CellRepository;
 use EtoA\Universe\EmptySpace\EmptySpaceRepository;
@@ -346,12 +347,12 @@ function universeIndex(
             tableStart("Informationen", GALAXY_MAP_WIDTH);
             echo "<tr><th>Sektoren</th><td>" . $sectorDimensions['x'] . " x " . $sectorDimensions['y'] . "</td></tr>";
             echo "<tr><th>Zellen pro Sektor</th><td>" . $cellDimensions['x'] . " x " . $cellDimensions['y'] . "</td></tr>";
-            echo "<tr><th>Sterne</th><td>" . nf($starRepo->count()) . "</td></tr>";
-            echo "<tr><th>Planeten</th><td>" . nf($planetRepo->count()) . "</td></tr>";
-            echo "<tr><th>Asteroidenfelder</th><td>" . nf($asteroidRepo->count()) . "</td></tr>";
-            echo "<tr><th>Nebel</th><td>" . nf($nebulaRepo->count()) . "</td></tr>";
-            echo "<tr><th>Wurmlöcher</th><td>" . nf($wormholeRepo->count()) . "</td></tr>";
-            echo "<tr><th>Leerer Raum</th><td>" . nf($emptySpaceRepo->count()) . "</td></tr>";
+            echo "<tr><th>Sterne</th><td>" . StringUtils::formatNumber($starRepo->count()) . "</td></tr>";
+            echo "<tr><th>Planeten</th><td>" . StringUtils::formatNumber($planetRepo->count()) . "</td></tr>";
+            echo "<tr><th>Asteroidenfelder</th><td>" . StringUtils::formatNumber($asteroidRepo->count()) . "</td></tr>";
+            echo "<tr><th>Nebel</th><td>" . StringUtils::formatNumber($nebulaRepo->count()) . "</td></tr>";
+            echo "<tr><th>Wurmlöcher</th><td>" . StringUtils::formatNumber($wormholeRepo->count()) . "</td></tr>";
+            echo "<tr><th>Leerer Raum</th><td>" . StringUtils::formatNumber($emptySpaceRepo->count()) . "</td></tr>";
             tableEnd();
 
             echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"post\">";

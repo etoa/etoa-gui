@@ -5,6 +5,7 @@ use EtoA\Market\MarketResourceRepository;
 use EtoA\Market\MarketShipRepository;
 use EtoA\Ship\ShipDataRepository;
 use EtoA\Support\RuntimeDataStore;
+use EtoA\Support\StringUtils;
 
 /** @var RuntimeDataStore $runtimeDataStore */
 $runtimeDataStore = $app[RuntimeDataStore::class];
@@ -57,7 +58,7 @@ if ($sub == "ress") {
                 if (!$first) echo "<tr>";
                 echo "	<td width=\"110\">" . $v . "</td>
                                     <td width=\"100\">
-                                        " . nf($sellResources->get($k)) . "
+                                        " . StringUtils::formatNumber($sellResources->get($k)) . "
                                     </td>";
                 if ($first) {
                     echo "<th rowspan=\"5\">Preis:</th>";
@@ -65,7 +66,7 @@ if ($sub == "ress") {
                 }
                 echo    "<td width=\"110\">" . $v . "</td>
                                     <td width=\"100\">
-                                        " . nf($buyResources->get($k)) . "
+                                        " . StringUtils::formatNumber($buyResources->get($k)) . "
                                     </td>
                                 </tr>";
             }
@@ -133,7 +134,7 @@ if ($sub == "ress") {
                         <tr>";
             foreach ([$offer->costs0, $offer->costs1, $offer->costs2, $offer->costs3, $offer->costs4] as $cost) {
                 echo "<td width=\"100\">
-                            " . nf($cost) . "
+                            " . StringUtils::formatNumber($cost) . "
                         </td>";
             }
 
@@ -197,7 +198,7 @@ if ($sub == "ress") {
                                 <b>" . RES_METAL . "</b>:
                             </td>
                             <td>
-                                " . nf($auction->sell0) . "
+                                " . StringUtils::formatNumber($auction->sell0) . "
                             </td>";
 
             // Zurückzieh button wenn noch niemand geboten hat
@@ -235,7 +236,7 @@ if ($sub == "ress") {
                                         <b>" . RES_CRYSTAL . "</b>:
                                     </td>
                                     <td>
-                                        " . nf($auction->sell1) . "
+                                        " . StringUtils::formatNumber($auction->sell1) . "
                                     </td>
                                 </tr>
                                 <tr>
@@ -246,7 +247,7 @@ if ($sub == "ress") {
                                         <b>" . RES_PLASTIC . "</b>:
                                     </td>
                                     <td>
-                                        " . nf($auction->sell2) . "
+                                        " . StringUtils::formatNumber($auction->sell2) . "
                                     </td>
                                 </tr>
                                 <tr>
@@ -254,7 +255,7 @@ if ($sub == "ress") {
                                         <b>" . RES_FUEL . "</b>:
                                     </td>
                                     <td>
-                                        " . nf($auction->sell3) . "
+                                        " . StringUtils::formatNumber($auction->sell3) . "
                                     </td>
                                 </tr>
                                 <tr>
@@ -262,7 +263,7 @@ if ($sub == "ress") {
                                         <b>" . RES_FOOD . "</b>:
                                     </td>
                                     <td>
-                                        " . nf($auction->sell4) . "
+                                        " . StringUtils::formatNumber($auction->sell4) . "
                                     </td>
                                 </tr>";
 
@@ -285,7 +286,7 @@ if ($sub == "ress") {
                                         <b>" . RES_METAL . "</b>:
                                     </td>
                                     <td colspan=\"2\">
-                                        " . nf($auction->buy0) . "
+                                        " . StringUtils::formatNumber($auction->buy0) . "
                                     </td>
                                     <td rowspan=\"5\">
                                         &nbsp;
@@ -296,7 +297,7 @@ if ($sub == "ress") {
                                         <b>" . RES_CRYSTAL . "</b>:
                                     </td>
                                     <td colspan=\"2\">
-                                        " . nf($auction->buy1) . "
+                                        " . StringUtils::formatNumber($auction->buy1) . "
                                     </td>
                                 </tr>
                                 <tr>
@@ -304,7 +305,7 @@ if ($sub == "ress") {
                                         <b>" . RES_PLASTIC . "</b>:
                                     </td>
                                     <td colspan=\"2\">
-                                        " . nf($auction->buy2) . "
+                                        " . StringUtils::formatNumber($auction->buy2) . "
                                     </td>
                                 </tr>
                                 <tr>
@@ -312,7 +313,7 @@ if ($sub == "ress") {
                                         <b>" . RES_FUEL . "</b>:
                                     </td>
                                     <td colspan=\"2\">
-                                        " . nf($auction->buy3) . "
+                                        " . StringUtils::formatNumber($auction->buy3) . "
                                     </td>
                                 </tr>
                                 <tr>
@@ -320,7 +321,7 @@ if ($sub == "ress") {
                                         <b>" . RES_FOOD . "</b>:
                                     </td>
                                     <td colspan=\"2\">
-                                        " . nf($auction->buy4) . "
+                                        " . StringUtils::formatNumber($auction->buy4) . "
                                     </td>
                                 </tr>";
             }

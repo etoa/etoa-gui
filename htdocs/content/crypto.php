@@ -9,6 +9,8 @@ use EtoA\Fleet\Exception\FleetScanFailedException;
 use EtoA\Fleet\Exception\FleetScanPreconditionsNotMetException;
 use EtoA\Fleet\FleetScanService;
 use EtoA\Fleet\Exception\InvalidFleetScanParameterException;
+use EtoA\Support\BBCodeUtils;
+use EtoA\Support\StringUtils;
 use EtoA\UI\ResourceBoxDrawer;
 use EtoA\Universe\Entity\EntityCoordinates;
 use EtoA\Universe\Entity\EntityRepository;
@@ -70,7 +72,7 @@ if ($config->getBoolean('crypto_enable')) {
                     $out = $fleetScanService->scanFleets($currentUser, $planet, $cryptoCenterLevel, $targetEntity);
 
                     iBoxStart("Ergebnis der Analyse");
-                    echo text2html($out);
+                    echo BBCodeUtils::toHTML($out);
                     iBoxEnd();
                 } catch (FleetScanPreconditionsNotMetException | InvalidFleetScanParameterException | FleetScanFailedException $ex) {
                     error_msg($ex->getMessage());
@@ -84,7 +86,7 @@ if ($config->getBoolean('crypto_enable')) {
 
         tableStart("Kryptocenter-Infos");
         echo "<tr><th>Aktuelle Reichweite:</th>
-                <td>" . nf($config->getInt('crypto_range_per_level') * $cryptoCenterLevel) . " AE ~" . floor($config->getInt('crypto_range_per_level') * $cryptoCenterLevel / $config->getInt('cell_length')) . " Systeme (+" . $config->getInt('crypto_range_per_level') . " pro Stufe) </td></tr>";
+                <td>" . StringUtils::formatNumber($config->getInt('crypto_range_per_level') * $cryptoCenterLevel) . " AE ~" . floor($config->getInt('crypto_range_per_level') * $cryptoCenterLevel / $config->getInt('cell_length')) . " Systeme (+" . $config->getInt('crypto_range_per_level') . " pro Stufe) </td></tr>";
         if ($userCooldownDiff == 0) {
             echo '<tr><th>Zielinfo:</th><td id="targetinfo">
                                 Wähle bitte ein Ziel...
@@ -93,10 +95,10 @@ if ($config->getBoolean('crypto_enable')) {
                     </td></tr>';
         }
         echo "<tr><th>Kosten pro Scan:</th>
-                <td>" . nf($config->getInt('crypto_fuel_costs_per_scan')) . " " . RES_FUEL . " und " . nf($config->getInt('crypto_fuel_costs_per_scan')) . " " . RES_FUEL . " Allianzrohstoffe</td></tr>";
+                <td>" . StringUtils::formatNumber($config->getInt('crypto_fuel_costs_per_scan')) . " " . RES_FUEL . " und " . StringUtils::formatNumber($config->getInt('crypto_fuel_costs_per_scan')) . " " . RES_FUEL . " Allianzrohstoffe</td></tr>";
         echo "<tr><th>Abklingzeit:</th>
-                <td>" . tf($fleetScanService->calculateCooldown($cryptoCenterLevel)) . " (-" . tf($config->getInt("crypto_cooldown_reduction_per_level")) . " pro Stufe, minimal " . tf($config->getInt("crypto_min_cooldown")) . ")</td></tr>";
-        $statusText = $userCooldownDiff > 0 ? "Bereit in <span id=\"cdcd\">" . tf($userCooldownDiff) . "</span>" : "Bereit";
+                <td>" . StringUtils::formatTimespan($fleetScanService->calculateCooldown($cryptoCenterLevel)) . " (-" . StringUtils::formatTimespan($config->getInt("crypto_cooldown_reduction_per_level")) . " pro Stufe, minimal " . StringUtils::formatTimespan($config->getInt("crypto_min_cooldown")) . ")</td></tr>";
+        $statusText = $userCooldownDiff > 0 ? "Bereit in <span id=\"cdcd\">" . StringUtils::formatTimespan($userCooldownDiff) . "</span>" : "Bereit";
         echo "<tr><th>Status:</th>
                 <td>" . $statusText . "</td></tr>";
         tableEnd();
@@ -161,16 +163,16 @@ if ($config->getBoolean('crypto_enable')) {
                     </script>";
 
             if ($planet->resFuel >= $config->getInt('crypto_fuel_costs_per_scan')) {
-                echo '<input type="submit" name="scan" value="Analyse für ' . nf($config->getInt('crypto_fuel_costs_per_scan')) . ' ' . RES_FUEL . ' starten" />';
+                echo '<input type="submit" name="scan" value="Analyse für ' . StringUtils::formatNumber($config->getInt('crypto_fuel_costs_per_scan')) . ' ' . RES_FUEL . ' starten" />';
             } else {
-                echo "Zuwenig Rohstoffe für eine Analyse vorhanden, " . nf($config->getInt('crypto_fuel_costs_per_scan')) . " " . RES_FUEL . " benötigt, " . nf($planet->resFuel) . " vorhanden!";
+                echo "Zuwenig Rohstoffe für eine Analyse vorhanden, " . StringUtils::formatNumber($config->getInt('crypto_fuel_costs_per_scan')) . " " . RES_FUEL . " benötigt, " . StringUtils::formatNumber($planet->resFuel) . " vorhanden!";
             }
             echo '</form>';
             echo '</body>';
         } else {
             $userCooldown = $allianceBuildingRepository->getUserCooldown($currentUser->id, AllianceBuildingId::CRYPTO);
             echo "<b>Diese Funktion wurde vor kurzem benutzt! <br/>";
-            echo "Du musst bis " . df($userCooldown) . " warten, um die Funktion wieder zu benutzen!</b>";
+            echo "Du musst bis " . StringUtils::formatDate($userCooldown) . " warten, um die Funktion wieder zu benutzen!</b>";
             countDown("cdcd", $userCooldown);
         }
     } else {

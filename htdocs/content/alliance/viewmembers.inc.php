@@ -3,6 +3,7 @@
 use EtoA\Alliance\AllianceRankRepository;
 use EtoA\Alliance\AllianceRepository;
 use EtoA\Alliance\AllianceRights;
+use EtoA\Support\StringUtils;
 
 /** @var \EtoA\Alliance\Alliance $alliance */
 
@@ -38,7 +39,7 @@ if (Alliance::checkActionRights(AllianceRights::VIEW_MEMBERS)) {
         echo "<tr>";
         echo "<td>" . $member->nick . "</td>
             <td>" . $tp . "</td>
-            <td>" . nf($member->points) . "</td>
+            <td>" . StringUtils::formatNumber($member->points) . "</td>
             <td>" . $member->raceName . "</td>";
         if ($alliance->founderId === $member->id) {
             echo "<td>Gr&uuml;nder</td>";

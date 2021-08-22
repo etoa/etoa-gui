@@ -2,6 +2,7 @@
 
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\HostCache\NetworkNameService;
+use EtoA\Support\StringUtils;
 use EtoA\User\UserRepository;
 use EtoA\User\UserSessionManager;
 use EtoA\User\UserSessionRepository;
@@ -20,7 +21,7 @@ $networkNameService = $app[NetworkNameService::class];
 
 echo "<h2>Aktive Sessions</h2>";
 echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"post\">";
-echo "<p>Das User-Timeout beträgt " . tf($config->getInt('user_timeout')) . "</p>";
+echo "<p>Das User-Timeout beträgt " . StringUtils::formatTimespan($config->getInt('user_timeout')) . "</p>";
 
 if (isset($_GET['kick'])) {
     $userSessionManager->kick($_GET['kick']);
@@ -65,7 +66,7 @@ if (count($userSessions) > 0) {
         echo "<td class=\"tbldata\">" . $browserParser->toString() . "</td>";
         echo "<td class=\"tbldata\">";
         if (max($session->timeLogin, $session->timeAction) - $session->timeLogin > 0)
-            echo tf($session->timeAction - $session->timeLogin);
+            echo StringUtils::formatTimespan($session->timeAction - $session->timeLogin);
         else
             echo "-";
         echo "</td>";

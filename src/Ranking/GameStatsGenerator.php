@@ -8,6 +8,7 @@ use EtoA\Building\BuildingRepository;
 use EtoA\Defense\DefenseRepository;
 use EtoA\Race\RaceDataRepository;
 use EtoA\Ship\ShipRepository;
+use EtoA\Support\StringUtils;
 use EtoA\Technology\TechnologyRepository;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Universe\Planet\PlanetTypeRepository;
@@ -214,7 +215,7 @@ class GameStatsGenerator
         if ($metal !== null) {
             $out .= "<tr>
                 <td >" . RES_METAL . "</td>
-                <td >" . nf($metal['res']) . "</td>
+                <td >" . StringUtils::formatNumber((int) $metal['res']) . "</td>
                 <td >" . $metal['type'] . "</td>
             </tr>";
         }
@@ -223,7 +224,7 @@ class GameStatsGenerator
         if ($crystal !== null) {
             $out .= "<tr>
                     <td >" . RES_CRYSTAL . "</td>
-                    <td >" . nf($crystal['res']) . "</td>
+                    <td >" . StringUtils::formatNumber((int) $crystal['res']) . "</td>
                     <td >" . $crystal['type'] . "</td>
                 </tr>";
         }
@@ -232,7 +233,7 @@ class GameStatsGenerator
         if ($plastic !== null) {
             $out .= "<tr>
                     <td >" . RES_PLASTIC . "</td>
-                    <td >" . nf($plastic['res']) . "</td>
+                    <td >" . StringUtils::formatNumber((int) $plastic['res']) . "</td>
                     <td >" . $plastic['type'] . "</td>
                 </tr>";
         }
@@ -241,7 +242,7 @@ class GameStatsGenerator
         if ($fuel !== null) {
             $out .= "<tr>
                     <td >" . RES_FUEL . "</td>
-                    <td >" . nf($fuel['res']) . "</td>
+                    <td >" . StringUtils::formatNumber((int) $fuel['res']) . "</td>
                     <td >" . $fuel['type'] . "</td>
                 </tr>";
         }
@@ -250,7 +251,7 @@ class GameStatsGenerator
         if ($food !== null) {
             $out .= "<tr>
                     <td >" . RES_FOOD . "</td>
-                    <td >" . nf($food['res']) . "</td>
+                    <td >" . StringUtils::formatNumber((int) $food['res']) . "</td>
                     <td >" . $food['type'] . "</td>
                 </tr>";
             $out .= "</table>";
@@ -268,41 +269,41 @@ class GameStatsGenerator
         $metal = $this->planetRepository->getMaxMetal();
         $out .= "<tr>
                 <td >" . RES_METAL . "</td>
-                <td >" . nf($metal['sum']) . "</td>
-                <td >" . nf($metal['avg']) . "</td>
-                <td >" . nf($metal['cnt']) . "</td>
+                <td >" . StringUtils::formatNumber((int) $metal['sum']) . "</td>
+                <td >" . StringUtils::formatNumber((int) $metal['avg']) . "</td>
+                <td >" . StringUtils::formatNumber((int) $metal['cnt']) . "</td>
             </tr>";
 
         $crystal = $this->planetRepository->getMaxCrystal();
         $out .= "<tr>
                 <td >" . RES_CRYSTAL . "</td>
-                <td >" . nf($crystal['sum']) . "</td>
-                <td >" . nf($crystal['avg']) . "</td>
-                <td >" . nf($crystal['cnt']) . "</td>
+                <td >" . StringUtils::formatNumber((int) $crystal['sum']) . "</td>
+                <td >" . StringUtils::formatNumber((int) $crystal['avg']) . "</td>
+                <td >" . StringUtils::formatNumber((int) $crystal['cnt']) . "</td>
             </tr>";
 
         $plastic = $this->planetRepository->getMaxPlastic();
         $out .= "<tr>
                 <td >" . RES_PLASTIC . "</td>
-                <td >" . nf($plastic['sum']) . "</td>
-                <td >" . nf($plastic['avg']) . "</td>
-                <td >" . nf($plastic['cnt']) . "</td>
+                <td >" . StringUtils::formatNumber((int) $plastic['sum']) . "</td>
+                <td >" . StringUtils::formatNumber((int) $plastic['avg']) . "</td>
+                <td >" . StringUtils::formatNumber((int) $plastic['cnt']) . "</td>
             </tr>";
 
         $fuel = $this->planetRepository->getMaxFuel();
         $out .= "<tr>
                 <td >" . RES_FUEL . "</td>
-                <td >" . nf($fuel['sum']) . "</td>
-                <td >" . nf($fuel['avg']) . "</td>
-                <td >" . nf($fuel['cnt']) . "</td>
+                <td >" . StringUtils::formatNumber((int) $fuel['sum']) . "</td>
+                <td >" . StringUtils::formatNumber((int) $fuel['avg']) . "</td>
+                <td >" . StringUtils::formatNumber((int) $fuel['cnt']) . "</td>
             </tr>";
 
         $food = $this->planetRepository->getMaxFood();
         $out .= "<tr>
                 <td >" . RES_FOOD . "</td>
-                <td >" . nf($food['sum']) . "</td>
-                <td >" . nf($food['avg']) . "</td>
-                <td >" . nf($food['cnt']) . "</td>
+                <td >" . StringUtils::formatNumber((int) $food['sum']) . "</td>
+                <td >" . StringUtils::formatNumber((int) $food['avg']) . "</td>
+                <td >" . StringUtils::formatNumber((int) $food['cnt']) . "</td>
             </tr>";
         $out .= "</table>";
 
@@ -315,23 +316,23 @@ class GameStatsGenerator
         $out .= "<tr><th  colspan=\"3\">Max Ressourcen eines Spielers</th></tr>";
         $out .= "<tr>
                 <td >" . RES_METAL . "</td>
-                <td >" . nf($this->planetRepository->getMaxMetalOfAPlayer()) . "</td>
+                <td >" . StringUtils::formatNumber($this->planetRepository->getMaxMetalOfAPlayer()) . "</td>
             </tr>";
         $out .= "<tr>
                 <td >" . RES_CRYSTAL . "</td>
-                <td >" . nf($this->planetRepository->getMaxCrystalOfAPlayer()) . "</td>
+                <td >" . StringUtils::formatNumber($this->planetRepository->getMaxCrystalOfAPlayer()) . "</td>
             </tr>";
         $out .= "<tr>
                 <td >" . RES_PLASTIC . "</td>
-                <td >" . nf($this->planetRepository->getMaxPlasticOfAPlayer()) . "</td>
+                <td >" . StringUtils::formatNumber($this->planetRepository->getMaxPlasticOfAPlayer()) . "</td>
             </tr>";
         $out .= "<tr>
                 <td >" . RES_FUEL . "</td>
-                <td >" . nf($this->planetRepository->getMaxFuelOfAPlayer()) . "</td>
+                <td >" . StringUtils::formatNumber($this->planetRepository->getMaxFuelOfAPlayer()) . "</td>
             </tr>";
         $out .= "<tr>
                 <td >" . RES_FOOD . "</td>
-                <td >" . nf($this->planetRepository->getMaxFoodOfAPlayer()) . "</td>
+                <td >" . StringUtils::formatNumber($this->planetRepository->getMaxFoodOfAPlayer()) . "</td>
             </tr>";
         $out .= "</table>";
 
@@ -372,8 +373,8 @@ class GameStatsGenerator
             $out .= "<tr>
                 <td>" . $rank . "</td>
                 <td>" . $arr['name'] . "</td>
-                <td>" . nf($arr['max']) . "</td>
-                <td>" . nf($arr['cnt']) . "</td>
+                <td>" . StringUtils::formatNumber($arr['max']) . "</td>
+                <td>" . StringUtils::formatNumber($arr['cnt']) . "</td>
             </tr>";
             $rank++;
             $total += $arr['cnt'];
@@ -381,7 +382,7 @@ class GameStatsGenerator
         $out .= "<tr>
             <td colspan=\"2\"><b>Total</b></td>
             <td>&nbsp;</td>
-            <td><b>" . nf($total) . "</b></td>
+            <td><b>" . StringUtils::formatNumber($total) . "</b></td>
         </tr>";
         $out .= "</table>";
 
@@ -398,8 +399,8 @@ class GameStatsGenerator
             $out .= "<tr>
                 <td>" . $rank . "</td>
                 <td>" . $arr['name'] . "</td>
-                <td>" . nf($arr['max']) . "</td>
-                <td>" . nf($arr['cnt']) . "</td>
+                <td>" . StringUtils::formatNumber($arr['max']) . "</td>
+                <td>" . StringUtils::formatNumber($arr['cnt']) . "</td>
             </tr>";
             $rank++;
             $total += $arr['cnt'];
@@ -407,7 +408,7 @@ class GameStatsGenerator
         $out .= "<tr>
             <td colspan=\"2\"><b>Total</b></td>
             <td>&nbsp;</td>
-            <td><b>" . nf($total) . "</b></td>
+            <td><b>" . StringUtils::formatNumber($total) . "</b></td>
         </tr>";
         $out .= "</table>";
 
@@ -424,14 +425,14 @@ class GameStatsGenerator
             $out .= "<tr>
                 <td>" . $rank . "</td>
                 <td>" . $arr['name'] . "</td>
-                <td>" . nf($arr['cnt']) . "</td>
+                <td>" . StringUtils::formatNumber($arr['cnt']) . "</td>
             </tr>";
             $rank++;
             $total += $arr['cnt'];
         }
         $out .= "<tr>
             <td colspan=\"2\"><b>Total</b></td>
-            <td ><b>" . nf($total) . "</b></td>
+            <td ><b>" . StringUtils::formatNumber($total) . "</b></td>
         </tr>";
         $out .= "</table>";
 
@@ -471,7 +472,7 @@ class GameStatsGenerator
             $out .= "<tr>
                 <td>" . $rank . "</td>
                 <td>" . $arr['name'] . "</td>
-                <td>" . nf($arr['max']) . "</td>
+                <td>" . StringUtils::formatNumber($arr['max']) . "</td>
             </tr>";
             $rank++;
         }
@@ -489,7 +490,7 @@ class GameStatsGenerator
             $out .= "<tr>
                 <td >" . $rank . "</td>
                 <td >" . $arr['name'] . "</td>
-                <td >" . nf($arr['max']) . "</td>
+                <td >" . StringUtils::formatNumber($arr['max']) . "</td>
             </tr>";
             $rank++;
         }
@@ -507,8 +508,8 @@ class GameStatsGenerator
             $out .= "<tr>
                 <td>" . $rank . "</td>
                 <td>" . $arr['name'] . "</td>
-                <td>" . nf($arr['level']) . "</td>
-                <td>" . nf($arr['exp']) . "</td>
+                <td>" . StringUtils::formatNumber($arr['level']) . "</td>
+                <td>" . StringUtils::formatNumber($arr['exp']) . "</td>
             </tr>";
             $rank++;
         }
@@ -556,7 +557,7 @@ class GameStatsGenerator
             $out .= $design != ""
                 ? "<td>" . strtr($design, ["css_style/" => ""]) . "</td>"
                 : "<td><i>Standard</i></td>";
-            $out .= "<td>" . nf($count) . "</td>";
+            $out .= "<td>" . StringUtils::formatNumber($count) . "</td>";
             $out .= "<td>" . round(100 / $total * $count, 2) . "%</td></tr>";
         }
         $out .= "</table>";
@@ -577,7 +578,7 @@ class GameStatsGenerator
             $out .= $arr['name'] != ""
                 ? "<td>" . strtr($arr['name'], ["images/themes/" => ""]) . "</td>"
                 : "<td><i>Standard</i></td>";
-            $out .= "<td>" . nf($arr['cnt']) . "</td>";
+            $out .= "<td>" . StringUtils::formatNumber($arr['cnt']) . "</td>";
             $out .= "<td>" . round(100 / $total * $arr['cnt'], 2) . "%</td></tr>";
         }
         $out .= "</table>";
@@ -598,7 +599,7 @@ class GameStatsGenerator
             $out .= $arr['name'] != ""
                 ? "<td>" . $arr['name'] . "</td>"
                 : "<td><i>Standard</i></td>";
-            $out .= "<td>" . nf($arr['cnt']) . "</td>";
+            $out .= "<td>" . StringUtils::formatNumber($arr['cnt']) . "</td>";
             $out .= "<td>" . round(100 / $total * $arr['cnt'], 2) . "%</td></tr>";
         }
 

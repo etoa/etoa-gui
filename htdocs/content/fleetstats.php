@@ -6,6 +6,7 @@ use EtoA\Ship\ShipQueueRepository;
 use EtoA\Ship\ShipQueueSearch;
 use EtoA\Ship\ShipRepository;
 use EtoA\Ship\ShipSort;
+use EtoA\Support\StringUtils;
 use EtoA\Universe\Planet\PlanetService;
 
 /** @var PlanetService $planetService */
@@ -97,13 +98,13 @@ if (count($shiplist) > 0) {
                     $tm = "";
                     foreach ($planet_data as $planetId => $planetName) {
                         if (($shiplist_data[$ship->id][$planetId] ?? 0) > 0) {
-                            $tm .= "<b>" . $planetName . "</b>: " . nf($shiplist_data[$ship->id][$planetId]) . "<br>";
+                            $tm .= "<b>" . $planetName . "</b>: " . StringUtils::formatNumber($shiplist_data[$ship->id][$planetId]) . "<br>";
                         }
                     }
 
                     echo '
                                   <td ' . tm("Anzahl", $tm) . '>
-                                      ' . nf($total) . '
+                                      ' . StringUtils::formatNumber($total) . '
                                   </td>';
                 } else {
                     echo '
@@ -121,14 +122,14 @@ if (count($shiplist) > 0) {
                     $tm = "";
                     foreach ($planet_data as $planetId => $planetName) {
                         if (($shiplist_bunkered[$ship->id][$planetId] ?? 0) > 0) {
-                            $tm .= "<b>" . $planetName . "</b>: " . nf($shiplist_bunkered[$ship->id][$planetId]) . "<br>";
+                            $tm .= "<b>" . $planetName . "</b>: " . StringUtils::formatNumber($shiplist_bunkered[$ship->id][$planetId]) . "<br>";
                         }
                     }
 
                     if ($tm != "") {
                         echo '
                                       <td ' . tm("Anzahl", $tm) . '>
-                                          ' . nf($total) . '
+                                          ' . StringUtils::formatNumber($total) . '
                                       </td>';
                     } else
                         echo '
@@ -151,13 +152,13 @@ if (count($shiplist) > 0) {
                     $tm = "";
                     foreach ($planet_data as $planetId => $planetName) {
                         if (($queue_data[$ship->id][$planetId] ?? 0) > 0) {
-                            $tm .= "<b>" . $planetName . "</b>: " . nf($queue_data[$ship->id][$planetId]) . "<br>";
+                            $tm .= "<b>" . $planetName . "</b>: " . StringUtils::formatNumber($queue_data[$ship->id][$planetId]) . "<br>";
                         }
                     }
 
                     echo '
                                   <td ' . tm("Anzahl", $tm) . '>
-                                      ' . nf($total) . '
+                                      ' . StringUtils::formatNumber($total) . '
                                   </td>';
                 } else {
                     echo '
@@ -173,7 +174,7 @@ if (count($shiplist) > 0) {
                     $total = $fleet_data[$ship->id];
                     echo '
                                   <td>
-                                      ' . nf($total) . '
+                                      ' . StringUtils::formatNumber($total) . '
                                   </td>';
                 } else {
                     echo '

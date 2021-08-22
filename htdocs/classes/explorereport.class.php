@@ -4,6 +4,8 @@
  * and open the template in the editor.
  */
 
+use EtoA\Support\StringUtils;
+
 /**
  * Description of marketreport
  *
@@ -40,7 +42,7 @@ class ExploreReport extends Report
 
         switch ($this->subType) {
             case 'other':
-                echo "Eine Flotte vom Planeten <b>" . $start->detailLink() . "</b> hat das Ziel <b>" . $target->detailLink() . "</b> um <b>" . df($this->timestamp) . "</b> erkundet.";
+                echo "Eine Flotte vom Planeten <b>" . $start->detailLink() . "</b> hat das Ziel <b>" . $target->detailLink() . "</b> um <b>" . StringUtils::formatDate($this->timestamp) . "</b> erkundet.";
                 break;
             default:
                 etoa_dump($this);

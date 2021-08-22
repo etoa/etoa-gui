@@ -19,6 +19,7 @@ use EtoA\Technology\TechnologyRepository;
 use EtoA\Text\TextRepository;
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Support\BBCodeUtils;
 use EtoA\Support\StringUtils;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\User\UserLoginFailureRepository;
@@ -59,7 +60,7 @@ echo "<h1>&Uuml;bersicht</h1>";
 if ($s->firstView) {
     if ($config->getBoolean("round_end")) {
         iBoxStart("Ende der Runde");
-        echo "<div style=\"width:100%;text-align:center;\">Die Runde endet am <strong>" . df($config->param1Int("round_end")) . "</strong>!";
+        echo "<div style=\"width:100%;text-align:center;\">Die Runde endet am <strong>" . StringUtils::formatDate($config->param1Int("round_end")) . "</strong>!";
         if ($config->param2("round_end")) {
             echo " " . $config->param2("round_end");
         }
@@ -79,7 +80,7 @@ if ($s->firstView) {
 
 if ($s->sittingActive) {
     iBoxStart("Sitting-Modus aktiv");
-    echo "Du sittest diesen Account im Auftrag von " . $cu->nick . " bis " . df($s->sittingUntil) . ".<br> Bitte beachte die speziellen <a href= '#' onclick=\"window.open('http://www.etoa.ch/regeln','rules','width=auto,height=auto,scrollbars=yes');\">Sittingregeln</a> unter §3 - (5):<br>Während eines aktiven Sittings sind Handeln und Angreifen zwischen Sitter und Gesittetem ohne Ausnahme verboten. Gemeinsame Allianzangriffe/-verteidigungen sind hingegen gestattet.";
+    echo "Du sittest diesen Account im Auftrag von " . $cu->nick . " bis " . StringUtils::formatDate($s->sittingUntil) . ".<br> Bitte beachte die speziellen <a href= '#' onclick=\"window.open('http://www.etoa.ch/regeln','rules','width=auto,height=auto,scrollbars=yes');\">Sittingregeln</a> unter §3 - (5):<br>Während eines aktiven Sittings sind Handeln und Angreifen zwischen Sitter und Gesittetem ohne Ausnahme verboten. Gemeinsame Allianzangriffe/-verteidigungen sind hingegen gestattet.";
     iBoxEnd();
 }
 
@@ -94,7 +95,7 @@ $infoText = $textRepo->find('info');
 if ($infoText->isEnabled()) {
     echo '<div class="overviewInfoTextContainer">';
     iBoxStart(": Wichtige Information :");
-    echo text2html($infoText->content);
+    echo BBCodeUtils::toHTML($infoText->content);
     iBoxEnd();
     echo '</div>';
 }

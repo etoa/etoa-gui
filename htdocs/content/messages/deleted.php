@@ -2,6 +2,7 @@
 
 use EtoA\Message\MessageCategoryRepository;
 use EtoA\Message\MessageRepository;
+use EtoA\Support\BBCodeUtils;
 use EtoA\User\UserRepository;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -45,7 +46,7 @@ function viewDeletedMessage(
         echo "<tr><th colspan=\"2\">" . $subject . "</th></tr>";
         echo "<tr><th style=\"width:100px;\">Datum:</td><td>" . date("d.m.Y H:i", $message->timestamp) . "</td></tr>";
         echo "<tr><th>Sender:</th><td>" . userPopUp($message->userFrom, $userRepository->getNick($message->userFrom), 0) . "</td></tr>";
-        echo "<tr><th>Text:</td><td>" . text2html(addslashes($message->text)) . "</td></tr>";
+        echo "<tr><th>Text:</td><td>" . BBCodeUtils::toHTML(addslashes($message->text)) . "</td></tr>";
         tableEnd();
 
         echo "<input type=\"button\" value=\"Zurück\" onclick=\"document.location='?page=messages&mode=deleted'\" /> &nbsp; ";

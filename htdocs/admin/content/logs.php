@@ -9,6 +9,7 @@ use EtoA\Log\LogFacility;
 use EtoA\Log\LogRepository;
 use EtoA\Log\LogSeverity;
 use EtoA\Ship\ShipDataRepository;
+use EtoA\Support\StringUtils;
 use EtoA\Technology\TechnologyDataRepository;
 use Twig\Environment;
 
@@ -410,5 +411,5 @@ function newCommonLog()
     /** @var LogRepository $logRepository */
     $logRepository = $app[LogRepository::class];
     $tblcnt = $logRepository->count();
-    echo "<p>Es sind " . nf($tblcnt) . " Eintr&auml;ge in der Datenbank vorhanden.</p>";
+    echo "<p>Es sind " . StringUtils::formatNumber($tblcnt) . " Eintr&auml;ge in der Datenbank vorhanden.</p>";
 }

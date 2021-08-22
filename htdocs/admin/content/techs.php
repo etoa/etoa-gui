@@ -4,6 +4,7 @@ use EtoA\Admin\Forms\TechnologiesForm;
 use EtoA\Admin\Forms\TechnologyTypesForm;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Ranking\RankingService;
+use EtoA\Support\StringUtils;
 use EtoA\Technology\TechnologyDataRepository;
 use EtoA\Technology\TechnologyListItemSearch;
 use EtoA\Technology\TechnologyPointRepository;
@@ -62,7 +63,7 @@ if ($sub == "points") {
                 foreach ($techPoints[$technologyId] as $level => $points) {
                     if ($cnt == 0)
                         echo "<tr>";
-                    echo "<th>" . $level . "</th><td style=\"text-align: right\" title=\"$points\">" . nf($points) . "</td>";
+                    echo "<th>" . $level . "</th><td style=\"text-align: right\" title=\"$points\">" . StringUtils::formatNumber($points) . "</td>";
                     if ($cnt == "3") {
                         echo "</tr>";
                         $cnt = 0;
@@ -220,10 +221,10 @@ else {
                 else
                     $style = "";
                 echo "<tr>";
-                echo "<td class=\"tbldata\"$style " . mTT($item->planetName, $item->entity->coordinatesString()) . ">" . cut_string($item->planetName != '' ? $item->planetName : 'Unbenannt', 11) . "</a> [" . $item->entity->id . "]</a></td>";
-                echo "<td class=\"tbldata\"$style " . mTT($item->userNick, nf($item->userPoints) . " Punkte") . ">" . cut_string($item->userNick, 11) . "</a></td>";
+                echo "<td class=\"tbldata\"$style " . mTT($item->planetName, $item->entity->coordinatesString()) . ">" . StringUtils::cutString($item->planetName != '' ? $item->planetName : 'Unbenannt', 11) . "</a> [" . $item->entity->id . "]</a></td>";
+                echo "<td class=\"tbldata\"$style " . mTT($item->userNick, StringUtils::formatNumber($item->userPoints) . " Punkte") . ">" . StringUtils::cutString($item->userNick, 11) . "</a></td>";
                 echo "<td class=\"tbldata\"$style>" . $item->technologyName . "</a></td>";
-                echo "<td class=\"tbldata\"$style>" . nf($item->currentLevel) . "</a></td>";
+                echo "<td class=\"tbldata\"$style>" . StringUtils::formatNumber($item->currentLevel) . "</a></td>";
                 echo "<td class=\"tbldata\"$style>" . $build_type[$item->buildType] . "</a></td>";
                 echo "<td class=\"tbldata\">" . edit_button("?page=$page&sub=$sub&action=edit&techlist_id=" . $item->id) . "</td>";
                 echo "</tr>";
@@ -348,6 +349,6 @@ else {
             </div>';
 
         $tblcnt = $technologyRepository->count();
-        echo "<p>Es sind " . nf($tblcnt) . " Eintr&auml;ge in der Datenbank vorhanden.</p>";
+        echo "<p>Es sind " . StringUtils::formatNumber($tblcnt) . " Eintr&auml;ge in der Datenbank vorhanden.</p>";
     }
 }

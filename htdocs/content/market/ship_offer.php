@@ -8,6 +8,7 @@ use EtoA\Log\LogSeverity;
 use EtoA\Market\MarketShipRepository;
 use EtoA\Message\MarketReportRepository;
 use EtoA\Ship\ShipRepository;
+use EtoA\Support\StringUtils;
 use EtoA\Universe\Resources\BaseResources;
 use EtoA\User\UserRepository;
 
@@ -49,17 +50,17 @@ if ($_POST['ship_offer_reservation'] == 2) {
 if (!isset($errMsg)) {
 
     $ship_id = $_POST['ship_list'];
-    $ship_count = nf_back($_POST['ship_count']);
+    $ship_count = StringUtils::parseFormattedNumber($_POST['ship_count']);
 
     $costs = new BaseResources();
     foreach ($resNames as $rk => $rn) {
         // Convert formatted number back to integer
-        $costs->set($rk, max(0, (int) nf_back($_POST['ship_buy_' . $rk])));
+        $costs->set($rk, max(0, StringUtils::parseFormattedNumber($_POST['ship_buy_' . $rk])));
     }
 
     // Überprüft ob die angegebene Anzahl Schiffe noch vorhanden ist (eventuelle Zerstörung durch Kampf?)
     // Schiffe vom Planeten abziehen
-    $removed_ships_count = $shipRepository->removeShips((int) $ship_id, (int) $ship_count, $cu->getId(), (int) $cp->id);
+    $removed_ships_count = $shipRepository->removeShips((int) $ship_id, $ship_count, $cu->getId(), (int) $cp->id);
 
     // Falls alle Schiffe abgezogen werden konnten
     if ($ship_count == $removed_ships_count) {

@@ -5,6 +5,7 @@ use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Log\LogFacility;
 use EtoA\Log\LogRepository;
 use EtoA\Log\LogSeverity;
+use EtoA\Support\StringUtils;
 use EtoA\Universe\Asteroid\AsteroidRepository;
 use EtoA\Universe\EmptySpace\EmptySpaceRepository;
 use EtoA\Universe\Entity\EntityRepository;
@@ -217,7 +218,7 @@ Neuer Besitzer: [page user sub=edit user_id=" . $request->request->getInt('plane
             echo "</td>
             <th>Letzer Besitzerwechsel</th>
             <td>
-            " . ($planet->userChanged > 0 ? df($planet->userChanged) . " <input type=\"checkbox\" name=\"rst_user_changed\" value=\"1\" /> Reset" : '-') . "
+            " . ($planet->userChanged > 0 ? StringUtils::formatDate($planet->userChanged) . " <input type=\"checkbox\" name=\"rst_user_changed\" value=\"1\" /> Reset" : '-') . "
             </td>
             </tr>";
 
@@ -227,7 +228,7 @@ Neuer Besitzer: [page user sub=edit user_id=" . $request->request->getInt('plane
             <td><input type=\"text\" name=\"planet_fields\" value=\"" . $planet->fields . "\" size=\"10\" maxlength=\"250\" />
             <input type=\"text\" name=\"planet_fields_extra\" value=\"" . $planet->fieldsExtra . "\" size=\"10\" maxlength=\"250\" /></td>";
             echo "<th>Felder benutzt</th>
-            <td>" . nf($planet->fieldsUsed) . "</td></tr>";
+            <td>" . StringUtils::formatNumber($planet->fieldsUsed) . "</td></tr>";
 
             echo "<tr><th>Temperatur</th>
             <td>
@@ -280,39 +281,39 @@ Neuer Besitzer: [page user sub=edit user_id=" . $request->request->getInt('plane
             echo "<td style=\"height:2px;\" colspan=\"4\"></td></tr>";
 
             echo "<tr><th>Produktion " . RES_METAL . "</th>
-            <td>" . nf($planet->prodMetal) . "</td>";
+            <td>" . StringUtils::formatNumber($planet->prodMetal) . "</td>";
             echo "<th>Speicher " . RES_METAL . ":</th>
-            <td>" . nf($planet->storeMetal) . "</td></tr>";
+            <td>" . StringUtils::formatNumber($planet->storeMetal) . "</td></tr>";
 
             echo "<tr><th>Produktion " . RES_CRYSTAL . "</th>
-            <td>" . nf($planet->prodCrystal) . "</td>";
+            <td>" . StringUtils::formatNumber($planet->prodCrystal) . "</td>";
             echo "<th>Speicher " . RES_CRYSTAL . ":</th>
-            <td>" . nf($planet->storeCrystal) . "</td></tr>";
+            <td>" . StringUtils::formatNumber($planet->storeCrystal) . "</td></tr>";
 
             echo "<tr><th>Produktion " . RES_PLASTIC . "</th>
-            <td>" . nf($planet->prodPlastic) . "</td>";
+            <td>" . StringUtils::formatNumber($planet->prodPlastic) . "</td>";
             echo "<th>Speicher " . RES_PLASTIC . ":</th>
-            <td>" . nf($planet->storePlastic) . "</td></tr>";
+            <td>" . StringUtils::formatNumber($planet->storePlastic) . "</td></tr>";
 
             echo "<tr><th>Produktion " . RES_FUEL . "</th>
-            <td>" . nf($planet->prodFuel) . "</td>";
+            <td>" . StringUtils::formatNumber($planet->prodFuel) . "</td>";
             echo "<th>Speicher " . RES_FUEL . ":</th>
-            <td>" . nf($planet->storeFuel) . "</td></tr>";
+            <td>" . StringUtils::formatNumber($planet->storeFuel) . "</td></tr>";
 
             echo "<tr><th>Produktion " . RES_FOOD . "</th>
-            <td>" . nf($planet->prodFood) . "</td>";
+            <td>" . StringUtils::formatNumber($planet->prodFood) . "</td>";
             echo "<th>Speicher " . RES_FOOD . ":</th>
-            <td>" . nf($planet->storeFood) . "</td></tr>";
+            <td>" . StringUtils::formatNumber($planet->storeFood) . "</td></tr>";
 
             echo "<tr><th>Verbrauch Energie:</th>
-            <td>" . nf($planet->usePower) . "</td>";
+            <td>" . StringUtils::formatNumber($planet->usePower) . "</td>";
             echo "<th>Produktion Energie:</th>
-            <td>" . nf($planet->prodPower) . "</td></tr>";
+            <td>" . StringUtils::formatNumber($planet->prodPower) . "</td></tr>";
 
             echo "<tr><th>Wohnraum</th>
-            <td>" . nf($planet->peoplePlace) . "</td>";
+            <td>" . StringUtils::formatNumber($planet->peoplePlace) . "</td>";
             echo "<th>Bevölkerungswachstum</th>
-            <td>" . nf($planet->prodPeople) . "</td></tr>";
+            <td>" . StringUtils::formatNumber($planet->prodPeople) . "</td></tr>";
 
             echo "<td style=\"height:2px;\" colspan=\"4\"></td></tr>";
 
@@ -505,7 +506,7 @@ Neuer Besitzer: [page user sub=edit user_id=" . $request->request->getInt('plane
 
             echo "<form action=\"?page=$page&sub=edit&id=" . $id . "\" method=\"post\" id=\"editform\">";
             tableStart("<span style=\"color:" . Entity::$entityColors[$entity->code] . "\">Wurmloch</span>", "auto");
-            echo "<tr><th>Entstanden</th><td>" . df($wormhole->changed) . "</td><tr/>";
+            echo "<tr><th>Entstanden</th><td>" . StringUtils::formatDate($wormhole->changed) . "</td><tr/>";
             echo "<tr><th>Ziel</th>
             <td>";
             $ent = Entity::createFactoryById($wormhole->targetId);
@@ -528,7 +529,7 @@ Neuer Besitzer: [page user sub=edit user_id=" . $request->request->getInt('plane
             tableStart("<span style=\"color:" . Entity::$entityColors[$entity->code] . "\">Leerer Raum</span>", "auto");
             echo "<tr><th>Zuletzt besucht</th>
             <td>";
-            echo ($space->lastVisited > 0) ? df($space->lastVisited) : "Nie";
+            echo ($space->lastVisited > 0) ? StringUtils::formatDate($space->lastVisited) : "Nie";
             echo "</td></tr>";
             echo "</table>";
             echo "<br/>

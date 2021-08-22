@@ -6,6 +6,7 @@
 
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Ship\ShipDataRepository;
+use EtoA\Support\StringUtils;
 
 /**
  * Description of otherreport
@@ -106,7 +107,7 @@ class OtherReport extends Report
                         Eine eurer Flotten hat ihr Ziel erreicht!<br /><br />';
                 echo '<strong>Ziel: </strong>' . $ent1->detailLink() . '<br />';
                 echo '<strong>Start: </strong>' . $ent2->detailLink() . '<br />';
-                echo '<strong>Zeit: </strong>' . df($this->timestamp) . '<br />';
+                echo '<strong>Zeit: </strong>' . StringUtils::formatDate($this->timestamp) . '<br />';
                 echo '<strong>Auftrag: </strong>' . $action->name() . ' [' . FleetAction::$statusCode[$this->status] . ']<br /><br />';
 
                 echo '<strong>SCHIFFE</strong><br />';
@@ -120,7 +121,7 @@ class OtherReport extends Report
                             $data = explode(':', $ship);
                             echo '<tr>
                                     <td>' . $shipNames[(int) $data[0]] . ' </td>
-                                    <td style="text-align:right;"> ' . nf($data[1]) . '</td>
+                                    <td style="text-align:right;"> ' . StringUtils::formatNumber((int) $data[1]) . '</td>
                                 </tr>';
                         }
                     }
@@ -132,28 +133,28 @@ class OtherReport extends Report
                 foreach ($resNames as $k => $v) {
                     echo '<tr>
                         <td>' . $v . ' </td>
-                        <td style="text-align:right;"> ' . nf($this->res[$k]) . '</td>
+                        <td style="text-align:right;"> ' . StringUtils::formatNumber($this->res[$k]) . '</td>
                         </tr>';
                 }
                 echo '<tr>
                         <td>Bewohner </td>
-                        <td style="text-align:right;"> ' . nf($this->res[5]) . '</td>
+                        <td style="text-align:right;"> ' . StringUtils::formatNumber($this->res[5]) . '</td>
                     </tr>';
                 echo '</table><br/>';
                 break;
             case 'collectmetal':
-                echo 'Eine Flotte vom Planeten ' . $ent2->detailLink() . ' hat das Ziel ' . $ent1->detailLink() . ' um ' . df($this->timestamp) . ' erreicht und Rohstoffe gesammelt.<br />';
+                echo 'Eine Flotte vom Planeten ' . $ent2->detailLink() . ' hat das Ziel ' . $ent1->detailLink() . ' um ' . StringUtils::formatDate($this->timestamp) . ' erreicht und Rohstoffe gesammelt.<br />';
                 echo '<br /><strong>ROHSTOFFE:</strong><br />';
                 echo '<table>';
                 foreach ($resNames as $k => $v) {
                     echo '<tr>
                         <td>' . $v . ' </td>
-                        <td style="text-align:right;"> ' . nf($this->res[$k]) . '</td>
+                        <td style="text-align:right;"> ' . StringUtils::formatNumber($this->res[$k]) . '</td>
                         </tr>';
                 }
                 echo '<tr>
                         <td>Bewohner </td>
-                        <td style="text-align:right;"> ' . nf($this->res[5]) . '</td>
+                        <td style="text-align:right;"> ' . StringUtils::formatNumber($this->res[5]) . '</td>
                     </tr>';
                 echo '</table><br/>';
                 if ($this->ships != '') {
@@ -166,7 +167,7 @@ class OtherReport extends Report
                             $data = explode(':', $ship);
                             echo '<tr>
                                     <td>' . $shipNames[(int) $data[0]] . ' </td>
-                                    <td style="text-align:right;"> ' . nf($data[1]) . '</td>
+                                    <td style="text-align:right;"> ' . StringUtils::formatNumber((int) $data[1]) . '</td>
                                 </tr>';
                         }
                     }
@@ -180,7 +181,7 @@ class OtherReport extends Report
                 $action = FleetAction::createFactory($this->actionCode);
                 echo 'Eine Flotte von der Allianzbasis hat folgendes Ziel erreicht!<br /><br />';
                 echo '<strong>Ziel: </strong>' . $ent1->detailLink() . '<br />';
-                echo '<strong>Zeit: </strong>' . df($this->timestamp) . '<br />';
+                echo '<strong>Zeit: </strong>' . StringUtils::formatDate($this->timestamp) . '<br />';
                 echo '<strong>Auftrag: </strong>' . $action->name() . '<br /><br />';
                 echo '<strong>SCHIFFE</strong><br />';
                 if ($this->ships == '' || $this->ships == '0')
@@ -193,7 +194,7 @@ class OtherReport extends Report
                             $data = explode(':', $ship);
                             echo '<tr>
                                     <td>' . $shipNames[(int) $data[0]] . ' </td>
-                                    <td style="text-align:right;"> ' . nf($data[1]) . '</td>
+                                    <td style="text-align:right;"> ' . StringUtils::formatNumber((int) $data[1]) . '</td>
                                 </tr>';
                         }
                     }
@@ -205,7 +206,7 @@ class OtherReport extends Report
                 echo 'Die Flotte hat folgendes Ziel erreicht!<br /><br />';
                 echo '<strong>Ziel: </strong>' . $ent1->detailLink() . '<br />';
                 echo '<strong>Start: </strong>' . $ent2->detailLink() . '<br />';
-                echo '<strong>Zeit: </strong>' . df($this->timestamp) . '<br />';
+                echo '<strong>Zeit: </strong>' . StringUtils::formatDate($this->timestamp) . '<br />';
                 echo '<strong>Auftrag: </strong>' . $action->name() . ' [' . FleetAction::$statusCode[$this->status] . ']<br /><br />Die Flotte hat eine neue Kolonie errichtet! Dabei wurde ein Besiedlungsschiff verbraucht.<br />';
                 echo '<br /><strong>SCHIFFE</strong><br />';
                 if ($this->ships == '' || $this->ships == '0')
@@ -218,7 +219,7 @@ class OtherReport extends Report
                             $data = explode(':', $ship);
                             echo '<tr>
                                     <td>' . $shipNames[(int) $data[0]] . ' </td>
-                                    <td style="text-align:right;"> ' . nf($data[1]) . '</td>
+                                    <td style="text-align:right;"> ' . StringUtils::formatNumber((int) $data[1]) . '</td>
                                 </tr>';
                         }
                     }
@@ -229,12 +230,12 @@ class OtherReport extends Report
                 foreach ($resNames as $k => $v) {
                     echo '<tr>
                         <td>' . $v . ' </td>
-                        <td style="text-align:right;"> ' . nf($this->res[$k]) . '</td>
+                        <td style="text-align:right;"> ' . StringUtils::formatNumber($this->res[$k]) . '</td>
                         </tr>';
                 }
                 echo '<tr>
                         <td>Bewohner </td>
-                        <td style="text-align:right;"> ' . nf($this->res[5]) . '</td>
+                        <td style="text-align:right;"> ' . StringUtils::formatNumber($this->res[5]) . '</td>
                     </tr>';
                 echo '</table><br/>';
                 break;
@@ -243,7 +244,7 @@ class OtherReport extends Report
                 echo 'Die Flotte hat folgendes Ziel erreicht!<br /><br />';
                 echo '<strong>Ziel: </strong>' . $ent1->detailLink() . '<br />';
                 echo '<strong>Start: </strong>' . $ent2->detailLink() . '<br />';
-                echo '<strong>Zeit: </strong>' . df($this->timestamp) . '<br />';
+                echo '<strong>Zeit: </strong>' . StringUtils::formatDate($this->timestamp) . '<br />';
                 echo '<strong>Auftrag: </strong>' . $action->name() . ' [' . FleetAction::$statusCode[$this->status] . ']<br /><br />Die Flotte kann den Planeten nicht kolonialisieren';
                 if ($this->content == 1)
                     echo ',  da er bereits von einem anderen Volk kolonialisiert wurde';
@@ -262,12 +263,12 @@ class OtherReport extends Report
                 foreach ($resNames as $k => $v) {
                     echo '<tr>
                         <td>' . $v . ' </td>
-                        <td style="text-align:right;"> ' . nf($this->res[$k]) . '</td>
+                        <td style="text-align:right;"> ' . StringUtils::formatNumber($this->res[$k]) . '</td>
                         </tr>';
                 }
                 echo '<tr>
                         <td>Bewohner </td>
-                        <td style="text-align:right;"> ' . nf($this->res[5]) . '</td>
+                        <td style="text-align:right;"> ' . StringUtils::formatNumber($this->res[5]) . '</td>
                     </tr>';
                 echo '</table><br/>';
                 if ($this->ships != '') {
@@ -279,7 +280,7 @@ class OtherReport extends Report
                             $data = explode(':', $ship);
                             echo '<tr>
                                     <td>' . $shipNames[(int) $data[0]] . ' </td>
-                                    <td style="text-align:right;"> ' . nf($data[1]) . '</td>
+                                    <td style="text-align:right;"> ' . StringUtils::formatNumber((int) $data[1]) . '</td>
                                 </tr>';
                         }
                     }
@@ -294,7 +295,7 @@ class OtherReport extends Report
                 echo 'Eine Flotte vom Handelsministerium hat folgendes Ziel erreicht!<br /><br />';
                 echo '<strong>Ziel: </strong>' . $ent1->detailLink() . '<br />';
                 echo '<strong>Start: </strong>Marktplatz<br />';
-                echo '<strong>Zeit: </strong>' . df($this->timestamp) . '<br />';
+                echo '<strong>Zeit: </strong>' . StringUtils::formatDate($this->timestamp) . '<br />';
                 echo '<strong>Auftrag: </strong>' . $action->name() . ' [' . FleetAction::$statusCode[$this->status] . ']<br /><br />Die gekauften Waren sind angekommen.<br />';
                 if (!($this->ships == '' || $this->ships == '0')) {
                     echo '<br /><strong>SCHIFFE</strong><br />';
@@ -305,7 +306,7 @@ class OtherReport extends Report
                             $data = explode(':', $ship);
                             echo '<tr>
                                     <td>' . $shipNames[(int) $data[0]] . ' </td>
-                                    <td style="text-align:right;"> ' . nf($data[1]) . '</td>
+                                    <td style="text-align:right;"> ' . StringUtils::formatNumber((int) $data[1]) . '</td>
                                 </tr>';
                         }
                     }
@@ -317,28 +318,28 @@ class OtherReport extends Report
                 foreach ($resNames as $k => $v) {
                     echo '<tr>
                         <td>' . $v . ' </td>
-                        <td style="text-align:right;"> ' . nf($this->res[$k]) . '</td>
+                        <td style="text-align:right;"> ' . StringUtils::formatNumber($this->res[$k]) . '</td>
                         </tr>';
                 }
                 echo '<tr>
                         <td>Bewohner </td>
-                        <td style="text-align:right;"> ' . nf($this->res[5]) . '</td>
+                        <td style="text-align:right;"> ' . StringUtils::formatNumber($this->res[5]) . '</td>
                     </tr>';
                 echo '</table><br/>';
                 break;
             case 'collectcrystal':
-                echo 'Eine Flotte vom Planeten ' . $ent2->detailLink() . ' hat das Ziel ' . $ent1->detailLink() . ' um ' . df($this->timestamp) . ' erreicht und Rohstoffe gesammelt.<br />';
+                echo 'Eine Flotte vom Planeten ' . $ent2->detailLink() . ' hat das Ziel ' . $ent1->detailLink() . ' um ' . StringUtils::formatDate($this->timestamp) . ' erreicht und Rohstoffe gesammelt.<br />';
                 echo '<br /><strong>ROHSTOFFE</strong><br />';
                 echo '<table>';
                 foreach ($resNames as $k => $v) {
                     echo '<tr>
                         <td>' . $v . ' </td>
-                        <td style="text-align:right;"> ' . nf($this->res[$k]) . '</td>
+                        <td style="text-align:right;"> ' . StringUtils::formatNumber($this->res[$k]) . '</td>
                         </tr>';
                 }
                 echo '<tr>
                         <td>Bewohner </td>
-                        <td style="text-align:right;"> ' . nf($this->res[5]) . '</td>
+                        <td style="text-align:right;"> ' . StringUtils::formatNumber($this->res[5]) . '</td>
                     </tr>';
                 echo '</table><br/>';
                 if ($this->ships != '') {
@@ -350,7 +351,7 @@ class OtherReport extends Report
                             $data = explode(':', $ship);
                             echo '<tr>
                                     <td>' . $shipNames[(int) $data[0]] . ' </td>
-                                    <td style="text-align:right;"> ' . nf($data[1]) . '</td>
+                                    <td style="text-align:right;"> ' . StringUtils::formatNumber((int) $data[1]) . '</td>
                                 </tr>';
                         }
                     }
@@ -366,7 +367,7 @@ class OtherReport extends Report
                     Eine eurer Flotten hat hat ihr Ziel verlassen und macht sich nun auf den R&uuml;ckweg!<br /><br />';
                 echo '<strong>Ziel: </strong>' . $ent1->detailLink() . '<br />';
                 echo '<strong>Start: </strong>' . $ent2->detailLink() . '<br />';
-                echo '<strong>Zeit: </strong>' . df($this->timestamp) . '<br />';
+                echo '<strong>Zeit: </strong>' . StringUtils::formatDate($this->timestamp) . '<br />';
                 echo '<strong>Auftrag: </strong>' . $action->name() . ' [' . FleetAction::$statusCode[$this->status] . ']<br />';
                 break;
             case 'support':
@@ -376,9 +377,9 @@ class OtherReport extends Report
                     Eine Flotte hat ihr Ziel erreicht!<br /><br />';
                 echo '<strong>Ziel: </strong>' . $ent1->detailLink() . '<br />';
                 echo '<strong>Start: </strong>' . $ent2->detailLink() . '<br />';
-                echo '<strong>Ankunft: </strong>' . df($this->timestamp) . '<br />';
+                echo '<strong>Ankunft: </strong>' . StringUtils::formatDate($this->timestamp) . '<br />';
                 echo '<strong>Auftrag: </strong>' . $action->name() . ' [' . FleetAction::$statusCode[$this->status] . ']<br />';
-                echo '<strong>Ende des Auftrages: </strong>' . df($this->content) . '<br />';
+                echo '<strong>Ende des Auftrages: </strong>' . StringUtils::formatDate($this->content) . '<br />';
                 echo '<strong>Flottenbesitzer: </strong>' . $user . '<br />';
                 break;
             case  'supportfailed':
@@ -387,7 +388,7 @@ class OtherReport extends Report
                     Eine eurer Flotten konnte nicht auf ihrem Ziel landen!';
                 echo '<strong>Ziel: </strong>' . $ent1->detailLink() . '<br />';
                 echo '<strong>Start: </strong>' . $ent2->detailLink() . '<br />';
-                echo '<strong>Ankunft: </strong>' . df($this->timestamp) . '<br />';
+                echo '<strong>Ankunft: </strong>' . StringUtils::formatDate($this->timestamp) . '<br />';
                 echo '<strong>Auftrag: </strong>' . $action->name() . ' [' . FleetAction::$statusCode[$this->status] . ']<br />';
                 break;
             case 'supportoverflow':
@@ -398,66 +399,66 @@ class OtherReport extends Report
                     ' Imperatoren verteidigt, so dass Eure Flotte wieder umkehren musste. <br />';
                 echo '<strong>Ziel: </strong>' . $ent1->detailLink() . '<br />';
                 echo '<strong>Start: </strong>' . $ent2->detailLink() . '<br />';
-                echo '<strong>Ankunft: </strong>' . df($this->timestamp) . '<br />';
+                echo '<strong>Ankunft: </strong>' . StringUtils::formatDate($this->timestamp) . '<br />';
                 echo '<strong>Auftrag: </strong>' . $action->name() . ' [' . FleetAction::$statusCode[$this->status] . ']<br />';
                 break;
             case 'transport':
                 echo '<strong>TRANSPORT GELANDET</strong><br /><br />
                         Eine Flotte vom Planeten ' . $ent2->detailLink() . ' hat ihr Ziel erreicht!<br /><br />';
                 echo '<strong>Ziel: </strong>' . $ent1->detailLink() . '<br />';
-                echo '<strong>Zeit: </strong>' . df($this->timestamp) . '<br /><br />';
+                echo '<strong>Zeit: </strong>' . StringUtils::formatDate($this->timestamp) . '<br /><br />';
                 echo '<br /><strong>WAREN</strong><br />';
                 echo '<table>';
                 foreach ($resNames as $k => $v) {
                     echo '<tr>
                         <td>' . $v . ' </td>
-                        <td style="text-align:right;"> ' . nf($this->res[$k]) . '</td>
+                        <td style="text-align:right;"> ' . StringUtils::formatNumber($this->res[$k]) . '</td>
                         </tr>';
                 }
                 echo '<tr>
                         <td>Bewohner </td>
-                        <td style="text-align:right;"> ' . nf($this->res[5]) . '</td>
+                        <td style="text-align:right;"> ' . StringUtils::formatNumber($this->res[5]) . '</td>
                     </tr>';
                 echo '</table><br/>';
                 break;
             case 'collectdebris':
                 echo '<strong>TR&Uuml;MMERSAMMLER-RAPPORT</strong><br /><br />
-                    Eine Flotte vom Planeten ' . $ent2->detailLink() . ' hat das Tr&uuml;mmerfeld bei ' . $ent1->detailLink() . ' um ' . df($this->timestamp) . ' erreicht und Trümmer gesammelt.<br /><br />';
+                    Eine Flotte vom Planeten ' . $ent2->detailLink() . ' hat das Tr&uuml;mmerfeld bei ' . $ent1->detailLink() . ' um ' . StringUtils::formatDate($this->timestamp) . ' erreicht und Trümmer gesammelt.<br /><br />';
                 echo '<br /><strong>ROHSTOFFE</strong><br />';
                 echo '<table>';
                 foreach ($resNames as $k => $v) {
                     echo '<tr>
                         <td>' . $v . ' </td>
-                        <td style="text-align:right;"> ' . nf($this->res[$k]) . '</td>
+                        <td style="text-align:right;"> ' . StringUtils::formatNumber($this->res[$k]) . '</td>
                         </tr>';
                 }
                 echo '<tr>
                         <td>Bewohner </td>
-                        <td style="text-align:right;"> ' . nf($this->res[5]) . '</td>
+                        <td style="text-align:right;"> ' . StringUtils::formatNumber($this->res[5]) . '</td>
                     </tr>';
                 echo '</table><br/>';
                 break;
             case 'collectdebrisfailed':
                 echo '<strong>TR&Uuml;MMERSAMMLER-RAPPORT</strong><br /><br />
-                    Eine Flotte vom Planeten ' . $ent2->detailLink() . ' hat das Tr&uuml;mmerfeld bei ' . $ent1->detailLink() . ' um ' . df($this->timestamp) . ' erreicht.<br />
+                    Eine Flotte vom Planeten ' . $ent2->detailLink() . ' hat das Tr&uuml;mmerfeld bei ' . $ent1->detailLink() . ' um ' . StringUtils::formatDate($this->timestamp) . ' erreicht.<br />
                     Es wurden aber leider keine brauchbaren Tr&uuml;mmerteile mehr gefunden so dass die Flotte unverrichteter Dinge zur&uuml;ckkehren musste.';
                 break;
             case 'fetch':
                 echo '<strong>WAREN ABGEHOLT</strong><br /><br />
                     Eine Flotte vom Planeten ' . $ent2->detailLink() . ' hat das Ziel erreicht!<br /><br />';
                 echo '<strong>Ziel: </strong>' . $ent1->detailLink() . '<br />';
-                echo '<strong>Zeit: </strong>' . df($this->timestamp) . '<br />';
+                echo '<strong>Zeit: </strong>' . StringUtils::formatDate($this->timestamp) . '<br />';
                 echo '<br />Folgende Waren wurden abgeholt:<br />';
                 echo '<table>';
                 foreach ($resNames as $k => $v) {
                     echo '<tr>
                         <td>' . $v . ' </td>
-                        <td style="text-align:right;"> ' . nf($this->res[$k]) . '</td>
+                        <td style="text-align:right;"> ' . StringUtils::formatNumber($this->res[$k]) . '</td>
                         </tr>';
                 }
                 echo '<tr>
                         <td>Bewohner </td>
-                        <td style="text-align:right;"> ' . nf($this->res[5]) . '</td>
+                        <td style="text-align:right;"> ' . StringUtils::formatNumber($this->res[5]) . '</td>
                     </tr>';
                 echo '</table><br/>';
                 break;
@@ -470,7 +471,7 @@ class OtherReport extends Report
                         Eine eurer Flotten hat versucht auf ihrem Ziel zu laden Der Versuch scheiterte jedoch und die Flotte macht sich auf den Weg zu eurem Hauptplaneten!<br /><br />';
                 echo '<strong>Ziel: </strong>' . $ent1->detailLink() . '<br />';
                 echo '<strong>Start: </strong>' . $ent2->detailLink() . '<br />';
-                echo '<strong>Zeit: </strong>' . df($this->timestamp) . '<br />';
+                echo '<strong>Zeit: </strong>' . StringUtils::formatDate($this->timestamp) . '<br />';
                 echo '<strong>Auftrag: </strong>' . $action->name() . ' [' . FleetAction::$statusCode[$this->status] . ']<br /><br />';
                 break;
             case 'actionshot':

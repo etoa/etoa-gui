@@ -7,6 +7,7 @@ use EtoA\Log\LogSeverity;
 use EtoA\Market\MarketShipRepository;
 use EtoA\Message\MarketReportRepository;
 use EtoA\Ship\ShipDataRepository;
+use EtoA\Support\StringUtils;
 use EtoA\Specialist\SpecialistService;
 use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Entity\EntityService;
@@ -127,11 +128,11 @@ foreach ($_POST['ship_market_id'] as $num => $id) {
                 $shipNames = $shipRepository->getShipNames(true);
 
                 $seller = new User($offer->userId);
-                $logRepository->add(LogFacility::MULTITRADE, LogSeverity::INFO, "[page user sub=edit user_id=" . $cu->id . "][B]" . $cu->nick . "[/B][/page] hat von [page user sub=edit user_id=" . $offer->userId . "][B]" . $seller . "[/B][/page] Schiffe gekauft:\n\n" . $offer->count . " " . $shipNames[$offer->shipId] . "\n\nund das zu folgendem Preis:\n\n" . RES_METAL . ": " . nf($offer->costs0) . "\n" . RES_CRYSTAL . ": " . nf($offer->costs1) . "\n" . RES_PLASTIC . ": " . nf($offer->costs2) . "\n" . RES_FUEL . ": " . nf($offer->costs3) . "\n" . RES_FOOD . ": " . nf($offer->costs4));
+                $logRepository->add(LogFacility::MULTITRADE, LogSeverity::INFO, "[page user sub=edit user_id=" . $cu->id . "][B]" . $cu->nick . "[/B][/page] hat von [page user sub=edit user_id=" . $offer->userId . "][B]" . $seller . "[/B][/page] Schiffe gekauft:\n\n" . $offer->count . " " . $shipNames[$offer->shipId] . "\n\nund das zu folgendem Preis:\n\n" . RES_METAL . ": " . StringUtils::formatNumber($offer->costs0) . "\n" . RES_CRYSTAL . ": " . StringUtils::formatNumber($offer->costs1) . "\n" . RES_PLASTIC . ": " . StringUtils::formatNumber($offer->costs2) . "\n" . RES_FUEL . ": " . StringUtils::formatNumber($offer->costs3) . "\n" . RES_FOOD . ": " . StringUtils::formatNumber($offer->costs4));
             }
 
             //Marktlog schreiben
-            //						Log::add(7,Log::INFO, "Der Spieler ".$cu->nick." hat folgende Schiffe von ".$seller_user_nick." gekauft:\n\n".$arr['ship_count']." ".$arr['ship_name']."\n\nund das zu folgendem Preis:\n\n".RES_METAL.": ".nf($arr['ship_costs_metal'])."\n".RES_CRYSTAL.": ".nf($arr['ship_costs_crystal'])."\n".RES_PLASTIC.": ".nf($arr['ship_costs_plastic'])."\n".RES_FUEL.": ".nf($arr['ship_costs_fuel'])."\n".RES_FOOD.": ".nf($arr['ship_costs_food']),time());
+            //						Log::add(7,Log::INFO, "Der Spieler ".$cu->nick." hat folgende Schiffe von ".$seller_user_nick." gekauft:\n\n".$arr['ship_count']." ".$arr['ship_name']."\n\nund das zu folgendem Preis:\n\n".RES_METAL.": ".StringUtils::formatNumber($arr['ship_costs_metal'])."\n".RES_CRYSTAL.": ".StringUtils::formatNumber($arr['ship_costs_crystal'])."\n".RES_PLASTIC.": ".StringUtils::formatNumber($arr['ship_costs_plastic'])."\n".RES_FUEL.": ".StringUtils::formatNumber($arr['ship_costs_fuel'])."\n".RES_FOOD.": ".StringUtils::formatNumber($arr['ship_costs_food']),time());
 
             // Zählt die erfolgreich abgewickelten Angebote
 

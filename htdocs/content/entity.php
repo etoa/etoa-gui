@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Support\StringUtils;
 use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Entity\EntityType;
 use EtoA\Universe\Planet\PlanetRepository;
@@ -86,7 +87,7 @@ if ($id > 0) {
                         <td>" . $planet->fields . " total</td></tr>";
                     echo "<tr>
                         <th width=\"100\">Grösse:</th>
-                        <td>" . nf($config->getInt('field_squarekm') * $planet->fields) . " km&sup2;</td></tr>";
+                        <td>" . StringUtils::formatNumber($config->getInt('field_squarekm') * $planet->fields) . " km&sup2;</td></tr>";
                     echo "<tr>
                         <th width=\"100\">Temperatur:</th>
                         <td>" . $planet->tempFrom . "&deg;C bis " . $planet->tempTo . "&deg;C <br/><br/>";
@@ -112,9 +113,9 @@ if ($id > 0) {
                     if ($planet->hasDebrisField()) {
                         echo '<tr>
                         <th class="tbltitle">Trümmerfeld:</th><td>
-                        ' . RES_ICON_METAL . "" . nf($planet->wfMetal) . '<br style="clear:both;" />
-                        ' . RES_ICON_CRYSTAL . "" . nf($planet->wfCrystal) . '<br style="clear:both;" />
-                        ' . RES_ICON_PLASTIC . "" . nf($planet->wfPlastic) . '<br style="clear:both;" />
+                        ' . RES_ICON_METAL . "" . StringUtils::formatNumber($planet->wfMetal) . '<br style="clear:both;" />
+                        ' . RES_ICON_CRYSTAL . "" . StringUtils::formatNumber($planet->wfCrystal) . '<br style="clear:both;" />
+                        ' . RES_ICON_PLASTIC . "" . StringUtils::formatNumber($planet->wfPlastic) . '<br style="clear:both;" />
                         </td></tr>';
                     }
 

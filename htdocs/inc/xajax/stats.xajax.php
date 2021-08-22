@@ -5,6 +5,8 @@ use EtoA\Alliance\AllianceStatsSort;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Ranking\GameStatsGenerator;
 use EtoA\Ranking\UserTitlesService;
+use EtoA\Support\BBCodeUtils;
+use EtoA\Support\StringUtils;
 use EtoA\User\UserRatingRepository;
 use EtoA\User\UserRatingSearch;
 use EtoA\User\UserRatingSort;
@@ -75,7 +77,7 @@ function statsShowBox($mode, $sort = "", $sortOrder = "")
                     $addstyle = " class=\"userAllianceMemberColor\"";
                 echo "<tr>";
                 echo  "<td $addstyle " . tm("Punkteverlauf", "<div><img src=\"misc/alliance_stats.image.php?alliance=" . $stats->allianceId . "\" alt=\"Diagramm\" style=\"width:600px;height:400px;background:#335 url(images/loading335.gif) no-repeat 300px 200px;\" /></div>") . ">
-                " . nf($cnt) . " ";
+                " . StringUtils::formatNumber($cnt) . " ";
                 if ($stats->currentRank == $stats->lastRank)
                     echo  "<img src=\"images/stats/stat_same.gif\" alt=\"same\" width=\"21\" height=\"9\" />";
                 elseif ($stats->currentRank > $stats->lastRank)
@@ -89,9 +91,9 @@ function statsShowBox($mode, $sort = "", $sortOrder = "")
                     " . popUp("Punkteverlauf", "page=$page&amp;mode=$mode&amp;alliancedetail=" . $stats->allianceId) . "<br/>";
                 echo "</div><a $addstyle href=\"#\" " . cTT($stats->allianceName, "ttuser" . $stats->allianceId) . ">
                 " . $stats->allianceName . "</td>";
-                echo "<td $addstyle>" . nf($stats->points) . "</td>";
-                echo "<td $addstyle >" . nf($stats->userAverage) . "</td>";
-                echo "<td $addstyle>" . nf($stats->count) . "</td>";
+                echo "<td $addstyle>" . StringUtils::formatNumber($stats->points) . "</td>";
+                echo "<td $addstyle >" . StringUtils::formatNumber($stats->userAverage) . "</td>";
+                echo "<td $addstyle>" . StringUtils::formatNumber($stats->count) . "</td>";
                 echo "</tr>";
                 $cnt++;
             }
@@ -150,7 +152,7 @@ function statsShowBox($mode, $sort = "", $sortOrder = "")
                     $addstyle = " class=\"userAllianceMemberColor\"";
                 echo "<tr>
                         <td $addstyle>
-                            " . nf($cnt) . "
+                            " . StringUtils::formatNumber($cnt) . "
                         </td>";
                 echo "<td $addstyle>
                 <div id=\"ttuser" . $stats->allianceId . "\" style=\"display:none;\">
@@ -158,10 +160,10 @@ function statsShowBox($mode, $sort = "", $sortOrder = "")
                     " . popUp("Punkteverlauf", "page=$page&amp;mode=$mode&amp;alliancedetail=" . $stats->allianceId) . "<br/>";
                 echo "</div><a $addstyle href=\"#\" " . cTT($stats->allianceName, "ttuser" . $stats->allianceId) . ">
                 " . $stats->allianceTag . "</td>";
-                echo "<td $addstyle>" . nf($stats->buildingPoints) . "</td>";
-                echo "<td $addstyle>" . nf($stats->technologyPoints) . "</td>";
-                echo "<td $addstyle>" . nf($stats->shipPoints) . "</td>";
-                echo "<td $addstyle>" . nf($stats->alliancePoints) . "</td>";
+                echo "<td $addstyle>" . StringUtils::formatNumber($stats->buildingPoints) . "</td>";
+                echo "<td $addstyle>" . StringUtils::formatNumber($stats->technologyPoints) . "</td>";
+                echo "<td $addstyle>" . StringUtils::formatNumber($stats->shipPoints) . "</td>";
+                echo "<td $addstyle>" . StringUtils::formatNumber($stats->alliancePoints) . "</td>";
                 echo "</tr>";
                 $cnt++;
             }
@@ -207,10 +209,10 @@ function statsShowBox($mode, $sort = "", $sortOrder = "")
             foreach ($entries as $entry) {
                 echo "<tr>
                 <td>" . $entry->userNick . "</td>
-                <td>" . df($entry->blockedFrom) . "</td>
-                <td>" . df($entry->blockedTo) . "</td>
+                <td>" . StringUtils::formatDate($entry->blockedFrom) . "</td>
+                <td>" . StringUtils::formatDate($entry->blockedTo) . "</td>
                 <td><a href=\"mailto:" . $entry->adminEmail . "\">" . $entry->adminNick . "</a></td>
-                <td>" . text2html($entry->banReason) . "</td>
+                <td>" . BBCodeUtils::toHTML($entry->banReason) . "</td>
                 </tr>";
             }
         } else
@@ -480,7 +482,7 @@ function statsShowTable($mode, $limit = 0, $userstring = "", $absolute = 0, $ord
                     $out .= "<td $addstyle  align=\"right\" ";
                     if ($mode == "user")
                         $out .= tm("Punkteverlauf", "<div><img src=\"misc/stats.image.php?user=" . $entry->id . "\" alt=\"Diagramm\" style=\"width:600px;height:400px;background:#335 url(images/loading335.gif) no-repeat 300px 200px;\" /></div>");
-                    $out .= ">" . nf($entry->rank) . " ";
+                    $out .= ">" . StringUtils::formatNumber($entry->rank) . " ";
                     if ($entry->shift === 2)
                         $out .= "<img src=\"images/stats/stat_down.gif\" alt=\"down\" width=\"9\" height=\"12\" />";
                     elseif ($entry->shift === 1)
@@ -501,7 +503,7 @@ function statsShowTable($mode, $limit = 0, $userstring = "", $absolute = 0, $ord
                     $out .= "<td $addstyle >" . $entry->raceName . "</td>";
                     $out .= "<td $addstyle ><a $addstyle href=\"?page=sector&sector=" . $entry->sx . "," . $entry->sy . "\">" . $entry->sx . "/" . $entry->sy . "</a></td>";
                     $out .= "<td $addstyle >" . $entry->allianceTag . "</td>";
-                    $out .= "<td $addstyle >" . nf($entry->points) . "</td>";
+                    $out .= "<td $addstyle >" . StringUtils::formatNumber($entry->points) . "</td>";
                     $out .= "</tr>";
                 }
             }

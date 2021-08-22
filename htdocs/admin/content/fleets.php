@@ -9,6 +9,7 @@ use EtoA\Fleet\FleetService;
 use EtoA\Fleet\FleetStatus;
 use EtoA\Fleet\InvalidFleetParametersException;
 use EtoA\Ship\ShipDataRepository;
+use EtoA\Support\StringUtils;
 use EtoA\UI\EntityCoordinatesSelector;
 use EtoA\UI\ShipSelector;
 use EtoA\UI\UserSelector;
@@ -467,7 +468,7 @@ function fleets(
         echo '</div>
         </div>';
 
-        echo "<br/>Es sind " . nf($fleetRepository->count()) . " Einträge in der Datenbank vorhanden.";
+        echo "<br/>Es sind " . StringUtils::formatNumber($fleetRepository->count()) . " Einträge in der Datenbank vorhanden.";
     }
 }
 
@@ -499,7 +500,7 @@ function fleetEditForm(
     echo "</td></tr>";
     echo "<tr><th class=\"tbltitle\">Landezeit:</th><td class=\"tbldata\">";
     showDatepicker("landtime", $fleet->landTime, true, true);
-    echo " &nbsp; Flugdauer: " . tf($fleet->landTime - $fleet->launchTime) . "</td></tr>";
+    echo " &nbsp; Flugdauer: " . StringUtils::formatTimespan($fleet->landTime - $fleet->launchTime) . "</td></tr>";
 
     // Origin
     $srcEnt = $entityRepository->findIncludeCell($fleet->entityFrom);

@@ -4,6 +4,7 @@ use EtoA\Building\BuildingRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Defense\DefenseRepository;
 use EtoA\Ship\ShipRepository;
+use EtoA\Support\StringUtils;
 use EtoA\Specialist\SpecialistService;
 use EtoA\Technology\TechnologyRepository;
 use EtoA\Technology\TechnologyRequirementRepository;
@@ -44,16 +45,16 @@ if ($cp) {
         tableStart("Wohnfl&auml;che", 400);
         echo '<tr>
         <th style="width:150px">Grundwohnfl&auml;che</th>
-        <td>' . nf($config->param1Int('user_start_people')) . '</td>
+        <td>' . StringUtils::formatNumber($config->param1Int('user_start_people')) . '</td>
         </tr>';
         $pcnt = $config->param1Int('user_start_people');
         foreach ($peopleStorageBuildings as $storage) {
             $place = round($storage->peoplePlace * pow($storage->storeFactor, $storage->currentLevel - 1));
             echo '<tr><th>' . $storage->buildingName . '</th>
-            <td>' . nf($place) . '</td></tr>';
+            <td>' . StringUtils::formatNumber($place) . '</td></tr>';
             $pcnt += $place;
         }
-        echo '<tr><th>TOTAL</b></th><td><b>' . nf($pcnt) . '</b></td></tr>';
+        echo '<tr><th>TOTAL</b></th><td><b>' . StringUtils::formatNumber($pcnt) . '</b></td></tr>';
         tableEnd();
 
         //überprüft tätigkeit
@@ -80,7 +81,7 @@ if ($cp) {
 
                 foreach ($_POST['people_work'] as $id => $num) {
                     if (!$workingStatus[$id]) {
-                        $working += nf_back($num);
+                        $working += StringUtils::parseFormattedNumber($num);
                     }
                 }
 
@@ -88,7 +89,7 @@ if ($cp) {
 
                 foreach ($_POST['people_work'] as $buildingId => $num) {
                     if ($workingStatus[$buildingId] === 0) {
-                        $num = nf_back($num);
+                        $num = StringUtils::parseFormattedNumber($num);
                         $work = $available > 0 ? min($num, $available) : 0;
                         $available -= $num;
 
@@ -168,7 +169,7 @@ if ($cp) {
                     //Entsperrt arbeiter
                     $buildingRepository->markBuildingWorkingStatus($cu->getId(), $planet->id, $workplace->buildingId, false);
                 }
-                echo '</td><td>' . (nf($workplace->peopleWorking * $config->getInt('people_food_require'))) . ' t</td></tr>';
+                echo '</td><td>' . (StringUtils::formatNumber($workplace->peopleWorking * $config->getInt('people_food_require'))) . ' t</td></tr>';
             }
         }
 
@@ -202,20 +203,20 @@ if ($cp) {
 
 
         tableStart("Daten", 500);
-        echo '<tr><th style="width:300px">Bevölkerung total</th><td>' . nf(floor($planet->people)) . '</td></tr>';
-        echo '<tr><th>Arbeiter</th><td>' . nf($peopleWorking->total) . '</td></tr>';
-        echo '<tr><th>Freie Leute</th><td>' . nf($people_free) . '</td></tr>';
-        echo '<tr><th>Zeitreduktion pro Arbeiter und Auftrag</th><td>' . tf($config->getInt('people_work_done')) . '</td></tr>';
-        echo '<tr><th>Nahrung pro Arbeiter und Auftrag</th><td>' . nf($config->getInt('people_food_require')) . ' t</td></tr>';
-        echo '<tr><th>Grundwachstumsrate</th><td>' . get_percent_string($config->getFloat('people_multiply')) . "</td></tr>";
-        echo '<tr><th>Wachstumsbonus ' . $cp->typeName . '</th><td>' . get_percent_string($cp->typePopulation, 1) . "</td></tr>";
-        echo '<tr><th>Wachstumsbonus ' . $cu->race->name . '</th><td>' . get_percent_string($cu->race->population, 1) . "</td></tr>";
-        echo '<tr><th>Wachstumsbonus ' . $cp->starTypeName . '</th><td>' . get_percent_string($cp->starPopulation, 1) . '</td></tr>';
+        echo '<tr><th style="width:300px">Bevölkerung total</th><td>' . StringUtils::formatNumber(floor($planet->people)) . '</td></tr>';
+        echo '<tr><th>Arbeiter</th><td>' . StringUtils::formatNumber($peopleWorking->total) . '</td></tr>';
+        echo '<tr><th>Freie Leute</th><td>' . StringUtils::formatNumber($people_free) . '</td></tr>';
+        echo '<tr><th>Zeitreduktion pro Arbeiter und Auftrag</th><td>' . StringUtils::formatTimespan($config->getInt('people_work_done')) . '</td></tr>';
+        echo '<tr><th>Nahrung pro Arbeiter und Auftrag</th><td>' . StringUtils::formatNumber($config->getInt('people_food_require')) . ' t</td></tr>';
+        echo '<tr><th>Grundwachstumsrate</th><td>' . StringUtils::formatPercentString($config->getFloat('people_multiply')) . "</td></tr>";
+        echo '<tr><th>Wachstumsbonus ' . $cp->typeName . '</th><td>' . StringUtils::formatPercentString($cp->typePopulation, true) . "</td></tr>";
+        echo '<tr><th>Wachstumsbonus ' . $cu->race->name . '</th><td>' . StringUtils::formatPercentString($cu->race->population, true) . "</td></tr>";
+        echo '<tr><th>Wachstumsbonus ' . $cp->starTypeName . '</th><td>' . StringUtils::formatPercentString($cp->starPopulation, true) . '</td></tr>';
         if ($specialist !== null) {
-            echo '<tr><th>Wachstumsbonus ' . $specialist->name . '</th><td>' . get_percent_string($specialist->prodPeople, 1) . '</td></tr>';
+            echo '<tr><th>Wachstumsbonus ' . $specialist->name . '</th><td>' . StringUtils::formatPercentString($specialist->prodPeople, true) . '</td></tr>';
         }
-        echo '<tr><th>Wachstumsbonus total</th><td>' . get_percent_string(array($cp->typePopulation, $cu->race->population, $cp->starPopulation, ($specialist !== null ? $specialist->prodPeople : 1)), 1) . '</td></tr>';
-        echo '<tr><th>Bevölkerungszuwachs pro Stunde</th><td>' . nf($people_div) . '</td></tr>';
+        echo '<tr><th>Wachstumsbonus total</th><td>' . StringUtils::formatPercentString(array($cp->typePopulation, $cu->race->population, $cp->starPopulation, ($specialist !== null ? $specialist->prodPeople : 1)), true) . '</td></tr>';
+        echo '<tr><th>Bevölkerungszuwachs pro Stunde</th><td>' . StringUtils::formatNumber($people_div) . '</td></tr>';
         tableEnd();
     } else
         error_msg("Es sind noch keine Geb&auml;ude gebaut, in denen deine Bevölkerung wohnen oder arbeiten kann!");

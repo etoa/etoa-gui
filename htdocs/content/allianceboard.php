@@ -14,6 +14,8 @@ use EtoA\Alliance\Board\Category;
 use EtoA\Alliance\Board\Topic;
 use EtoA\Alliance\AllianceRankRepository;
 use EtoA\Alliance\AllianceRepository;
+use EtoA\Support\BBCodeUtils;
+use EtoA\Support\StringUtils;
 use EtoA\User\UserRepository;
 use EtoA\User\UserSearch;
 use Symfony\Component\HttpFoundation\Request;
@@ -199,7 +201,7 @@ if ($cu->allianceId > 0) {
                     echo "<form action=\"?page=$page&amp;bnd=" . $bid . "&topic=" . $post->topicId . "\" method=\"post\">";
                     echo "<input type=\"hidden\" name=\"post_id\" value=\"" . $post->id . "\" />";
                     iBoxStart("Soll der folgende Beitrag wirklich gelöscht werden?");
-                    echo text2html($post->text);
+                    echo BBCodeUtils::toHTML($post->text);
                     iBoxEnd();
                     echo "<input type=\"submit\" value=\"L&ouml;schen\" name=\"post_delete\" onclick=\"return confirm('Wirklich löschen?');\" /> &nbsp; ";
                 } else
@@ -265,7 +267,7 @@ if ($cu->allianceId > 0) {
                             echo "<tr><th style=\"width:150px;\"><a name=\"" . $post->id . "\"></a><a href=\"?page=userinfo&amp;id=" . $post->userId . "\">" . $post->userNick . "</a><br/>";
                             show_avatar($allianceUsers[$post->userId]->avatar);
                             $cpost = $allianceBoardPostRepository->getUserAlliancePostCounts($alliance->id, $cu->getId());
-                            echo "Beitr&auml;ge: " . $cpost . "<br/><br/>" . df($post->timestamp) . " Uhr";
+                            echo "Beitr&auml;ge: " . $cpost . "<br/><br/>" . StringUtils::formatDate($post->timestamp) . " Uhr";
                             if ($isAdmin || $post->userId == $cu->id)
                                 echo "<br/><a href=\"?page=$page&amp;bnd=" . $bid . "&editpost=" . $post->id . "\"><img src=\"images/edit.gif\" alt=\"edit\" style=\"border:none\" /></a> <a href=\"?page=$page&amp;bnd=" . $bid . "&delpost=" . $post->id . "\"><img src=\"images/delete.gif\" alt=\"del\" style=\"border:none;\" /></a>";
                             echo "</th>";
@@ -273,11 +275,11 @@ if ($cu->allianceId > 0) {
                             if (isset($urank) && $allianceUsers[$post->userId]->rank == count($urank) - 1)
                                 echo " style=\"color:" . ADMIN_COLOR . "\"";
 
-                            echo ">" . text2html($post->text);
+                            echo ">" . BBCodeUtils::toHTML($post->text);
                             if ($post->changed !== null)
                                 echo "<br/><br/><span style=\"font-size:8pt;\">Dieser Beitrag wurde zuletzt geändert am " . date("d.m.Y", $post->changed) . " um " . date("H:i", $post->changed) . " Uhr.</span>";
                             if ($allianceUsers[$post->userId]->signature != "")
-                                echo "<hr>" . text2html($allianceUsers[$post->userId]->signature);
+                                echo "<hr>" . BBCodeUtils::toHTML($allianceUsers[$post->userId]->signature);
                             echo "</td></tr>";
                         }
                         tableEnd();
@@ -456,7 +458,7 @@ if ($cu->allianceId > 0) {
                             echo "<td>" . $topic->count . "</td>";
                             echo "<td>" . $allianceUsers[$topic->userId]->nick . "</td>";
                             $post = $allianceBoardPostRepository->getPosts($topic->id, 1)[0];
-                            echo "<td><a href=\"?page=$page&amp;topic=" . $topic->id . "#" . $post->id . "\">" . df($post->timestamp) . "</a><br/>" . $post->userNick . "</td>";
+                            echo "<td><a href=\"?page=$page&amp;topic=" . $topic->id . "#" . $post->id . "\">" . StringUtils::formatDate($post->timestamp) . "</a><br/>" . $post->userNick . "</td>";
                             if ($isAdmin || $cu->id == $topic->userId) {
                                 echo "<td style=\"vertical-align:middle;text-align:center;\">
                                     <a href=\"?page=$page&edittopic=" . $topic->id . "\" title=\"Thema bearbeiten\">" . icon('edit') . "</a>";
@@ -528,7 +530,7 @@ if ($cu->allianceId > 0) {
                             echo "<td>" . $topic->count . "</td>";
                             echo "<td>" . $allianceUsers[$topic->userId]->nick . "</td>";
                             $post = $allianceBoardPostRepository->getPosts($topic->id, 1)[0];
-                            echo "<td><a href=\"?page=$page&amp;topic=" . $topic->id . "#" . $post->id . "\">" . df($post->timestamp) . "</a><br/>" . $post->userNick . "</td>";
+                            echo "<td><a href=\"?page=$page&amp;topic=" . $topic->id . "#" . $post->id . "\">" . StringUtils::formatDate($post->timestamp) . "</a><br/>" . $post->userNick . "</td>";
                             if ($isAdmin || $cu->id == $topic->userId) {
                                 echo "<td style=\"width:90px;\"><input type=\"button\" value=\"Bearbeiten\" onclick=\"document.location='?page=$page&bnd=" . $bid . "&edittopic=" . $topic->id . "'\" />";
                                 if ($isAdmin)
@@ -752,7 +754,7 @@ if ($cu->allianceId > 0) {
                             $accessCnt++;
                             $topic = $allianceBoardTopicRepository->getTopicWithLatestPost($category->id);
                             if ($topic !== null) {
-                                $ps = "<a href=\"?page=$page&amp;topic=" . $topic->id . "#" . $topic->post->id . "\" " . tm($topic->subject . ", " . df($topic->timestamp), "Geschrieben von: <b>" . $topic->post->userNick . "</b>") . ">" . $topic->subject . "<br/>" . df($topic->timestamp) . "</a>";
+                                $ps = "<a href=\"?page=$page&amp;topic=" . $topic->id . "#" . $topic->post->id . "\" " . tm($topic->subject . ", " . StringUtils::formatDate($topic->timestamp), "Geschrieben von: <b>" . $topic->post->userNick . "</b>") . ">" . $topic->subject . "<br/>" . StringUtils::formatDate($topic->timestamp) . "</a>";
                             } else
                                 $ps = "-";
                             echo "<tr>";
@@ -777,7 +779,7 @@ if ($cu->allianceId > 0) {
                             }
                             echo ">
                                 <b><a href=\"?page=$page&amp;bnd=0&cat=" . $category->id . "\">" . ($category->name != "" ? $category->name : "Unbenannt") . "</a></b>
-                                <br/>" . text2html($category->description) . "</td>";
+                                <br/>" . BBCodeUtils::toHTML($category->description) . "</td>";
                             echo "<td>" . $postCounts[$category->id] . "</td>";
                             echo "<td>" . $topicCounts[$category->id] . "</td>";
                             echo "<td>$ps</td>";
@@ -820,7 +822,7 @@ if ($cu->allianceId > 0) {
                             $accessCnt++;
                             $topic = $allianceBoardTopicRepository->getTopicWithLatestPost(0, $diplomacy->id);
                             if ($topic !== null) {
-                                $ps = "<a href=\"?page=$page&amp;topic=" . $topic->id . "#" . $topic->post->id . "\" " . tm($topic->subject . ", " . df($topic->timestamp), "Geschrieben von: <b>" . $topic->post->userNick . "</b>") . ">" . $topic->subject . "<br/>" . df($topic->timestamp) . "</a>"; //ToDo User auch von anderen Allianzen
+                                $ps = "<a href=\"?page=$page&amp;topic=" . $topic->id . "#" . $topic->post->id . "\" " . tm($topic->subject . ", " . StringUtils::formatDate($topic->timestamp), "Geschrieben von: <b>" . $topic->post->userNick . "</b>") . ">" . $topic->subject . "<br/>" . StringUtils::formatDate($topic->timestamp) . "</a>"; //ToDo User auch von anderen Allianzen
                             } else
                                 $ps = "-";
                             echo "<tr>";
@@ -839,7 +841,7 @@ if ($cu->allianceId > 0) {
                                 echo " " . tm("Admin-Info: " . stripslashes($diplomacy->otherAllianceName),/*"<b>Position:</b> ".$arr['cat_order']."<br/>*/ "<b>Zugriff:</b> " . $rstr) . "";
                             }
                             echo "><b><a href=\"?page=$page&amp;cat=0&bnd=" . $diplomacy->id . "\"";
-                            echo ">" . stripslashes($diplomacy->otherAllianceName) . "</a></b><br/>" . text2html($diplomacy->text) . "</td>";
+                            echo ">" . stripslashes($diplomacy->otherAllianceName) . "</a></b><br/>" . BBCodeUtils::toHTML($diplomacy->text) . "</td>";
                             echo "<td>" . $postCounts[$diplomacy->id] . "</td>";
                             echo "<td>" . $topicCounts[$diplomacy->id] . "</td>";
                             echo "<td>$ps</td>";

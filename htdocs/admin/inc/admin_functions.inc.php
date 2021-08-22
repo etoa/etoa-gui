@@ -20,6 +20,8 @@ use EtoA\Log\LogRepository;
 use EtoA\Log\LogSearch;
 use EtoA\Log\LogSeverity;
 use EtoA\Ship\ShipDataRepository;
+use EtoA\Support\BBCodeUtils;
+use EtoA\Support\StringUtils;
 use EtoA\Technology\TechnologyDataRepository;
 use EtoA\User\UserRepository;
 
@@ -386,10 +388,10 @@ function showLogs($args = null, $limit = 0)
         </tr>";
         foreach ($logs as $log) {
             echo "<tr>
-            <td>" . df($log->timestamp) . "</td>
+            <td>" . StringUtils::formatDate($log->timestamp) . "</td>
             <td>" . LogSeverity::SEVERITIES[$log->severity] . "</td>
             <td>" . LogFacility::FACILITIES[$log->facility] . "</td>
-            <td>" . text2html($log->message);
+            <td>" . BBCodeUtils::toHTML($log->message);
             if ($log->ip != "")
                 echo "<br/><br/><b>Host:</b> " . $log->ip . " (" . $networkNameService->getHost($log->ip) . ")";
             echo "</td>
@@ -526,12 +528,12 @@ function showAttackAbuseLogs($args = null, $limit = -1, $load = true)
                             //Zu viele Angriffe in einer Welle
                             if ($waveCnt > $waveMaxCnt[$eData[1]]) {
                                 $ban = 1;
-                                $banReason .= "Mehr als " . $waveMaxCnt[$eData[1]] . " Angriffe in einer Welle auf dem selben Ziel.<br />Anzahl Angriffe : " . $waveCnt . "<br />Dauer der Welle: " . tf($waveEnd - $waveStart) . "<br /><br />";
+                                $banReason .= "Mehr als " . $waveMaxCnt[$eData[1]] . " Angriffe in einer Welle auf dem selben Ziel.<br />Anzahl Angriffe : " . $waveCnt . "<br />Dauer der Welle: " . StringUtils::formatTimespan($waveEnd - $waveStart) . "<br /><br />";
                             }
                             // Sperre keine 6h gewartet zwischen Angriffen auf einen Planeten
                             if ($waveCnt == 1 && $eData[0] > $lastWave && $eData[0] < $lastWave + $timeBetweenAttacksOnEntity) {
                                 $ban = 1;
-                                $banReason .= "Der Abstand zwischen 2 Angriffen/Wellen auf ein Ziel ist kleiner als " . ($timeBetweenAttacksOnEntity / 3600) . " Stunden.<br />Dauer zwischen den beiden Angriffen: " . tf($eData[0] - $lastWave) . "<br /><br />";
+                                $banReason .= "Der Abstand zwischen 2 Angriffen/Wellen auf ein Ziel ist kleiner als " . ($timeBetweenAttacksOnEntity / 3600) . " Stunden.<br />Dauer zwischen den beiden Angriffen: " . StringUtils::formatTimespan($eData[0] - $lastWave) . "<br /><br />";
                             }
                             // Sperre wenn mehr als 2/4 Angriffe pro Planet
                             if ($waveCnt == 1 && $attackCntEntity > $attacksPerEntity[$eData[1]]) {
@@ -593,7 +595,7 @@ function showAttackAbuseLogs($args = null, $limit = -1, $load = true)
             $entity = Entity::createFactoryById($banData['entity']);
 
             echo "<tr>
-            <td>" . df($banData['timestamp']) . "</td>
+            <td>" . StringUtils::formatDate($banData['timestamp']) . "</td>
             <td>" . LogSeverity::SEVERITIES[$banData['severity']] . "</td>
             <td>$fUser</td>
             <td>$eUser</td>
@@ -704,15 +706,15 @@ function showFleetLogs($args = null, $limit = 0)
             $startEntity = Entity::createFactoryById($log->entityFromId);
             $endEntity = Entity::createFactoryById($log->entityToId);
             echo "<tr>
-            <td>" . df($log->timestamp) . "</td>
+            <td>" . StringUtils::formatDate($log->timestamp) . "</td>
             <td>" . LogSeverity::SEVERITIES[$log->severity] . "</td>
             <td>" . FleetLogFacility::FACILITIES[$log->facility] . "</td>
             <td>$owner</td>
             <td>" . $fa . " [" . FleetAction::$statusCode[$log->status] . "]</td>
             <td>" . $startEntity . "<br/>" . $startEntity->entityCodeString() . ", " . $startEntity->owner() . "</td>
             <td>" . $endEntity . "<br/>" . $endEntity->entityCodeString() . ", " . $endEntity->owner() . "</td>
-            <td>" . df($log->launchTime) . "</td>
-            <td>" . df($log->landTime) . "</td>
+            <td>" . StringUtils::formatDate($log->launchTime) . "</td>
+            <td>" . StringUtils::formatDate($log->landTime) . "</td>
             <td><a href=\"javascript:;\" onclick=\"toggleBox('details" . $log->id . "')\">Bericht</a></td>
             </tr>";
             echo "<tr id=\"details" . $log->id . "\" style=\"display:none;\"><td colspan=\"10\">";
@@ -720,14 +722,14 @@ function showFleetLogs($args = null, $limit = 0)
             echo "<tr><th>Schiffe in der Flotte</th><th>Vor der Aktion</th><th>Nach der Aktion</th></tr>";
             $sship = $log->fleetShipsStart;
             foreach ($log->fleetShipsEnd as $shipId => $count) {
-                echo "<tr><td>" . $shipNames[$shipId] . "</td><td>" . nf($count) . "</td><td>" . nf($sship[$shipId] ?? 0) . "</td></tr>";
+                echo "<tr><td>" . $shipNames[$shipId] . "</td><td>" . StringUtils::formatNumber($count) . "</td><td>" . StringUtils::formatNumber($sship[$shipId] ?? 0) . "</td></tr>";
             }
             echo tableEnd();
             tableStart("", 450);
             echo "<tr><th>Schiffe auf dem Planeten</th><th>Vor der Aktion</th><th>Nach der Aktion</th></tr>";
             $sship = $log->entityShipsStart;
             foreach ($log->entityShipsEnd as $shipId => $count) {
-                echo "<tr><td>" . $shipNames[$shipId] . "</td><td>" . nf($count) . "</td><td>" . nf($sship[$shipId] ?? 0) . "</td></tr>";
+                echo "<tr><td>" . $shipNames[$shipId] . "</td><td>" . StringUtils::formatNumber($count) . "</td><td>" . StringUtils::formatNumber($sship[$shipId] ?? 0) . "</td></tr>";
             }
             echo tableEnd();
             tableStart("", 450);
@@ -743,9 +745,9 @@ function showFleetLogs($args = null, $limit = 0)
                 array_push($eres, $sd);
             }
             foreach ($resNames as $k => $v) {
-                echo "<tr><td>" . $v . "</td><td>" . nf((int) $sres[$k]) . "</td><td>" . nf((int) $eres[$k]) . "</td></tr>";
+                echo "<tr><td>" . $v . "</td><td>" . StringUtils::formatNumber((int) $sres[$k]) . "</td><td>" . StringUtils::formatNumber((int) $eres[$k]) . "</td></tr>";
             }
-            echo "<tr><td>Bewoner</td><td>" . nf((int) $sres[5]) . "</td><td>" . nf((int) $eres[5]) . "</td></tr>";
+            echo "<tr><td>Bewoner</td><td>" . StringUtils::formatNumber((int) $sres[5]) . "</td><td>" . StringUtils::formatNumber((int) $eres[5]) . "</td></tr>";
             echo tableEnd();
 
             //Will not show Resmessage if entity was not touched (fleet cancel)
@@ -763,9 +765,9 @@ function showFleetLogs($args = null, $limit = 0)
                     array_push($eres, $sd);
                 }
                 foreach ($resNames as $k => $v) {
-                    echo "<tr><td>" . $v . "</td><td>" . nf($sres[$k]) . "</td><td>" . nf($eres[$k]) . "</td></tr>";
+                    echo "<tr><td>" . $v . "</td><td>" . StringUtils::formatNumber((int) $sres[$k]) . "</td><td>" . StringUtils::formatNumber((int) $eres[$k]) . "</td></tr>";
                 }
-                echo "<tr><td>Bewoner</td><td>" . nf($sres[5]) . "</td><td>" . nf($eres[5]) . "</td></tr>";
+                echo "<tr><td>Bewoner</td><td>" . StringUtils::formatNumber((int) $sres[5]) . "</td><td>" . StringUtils::formatNumber((int) $eres[5]) . "</td></tr>";
                 echo tableEnd();
             }
             echo $log->message;
@@ -1037,7 +1039,7 @@ function showGameLogs($args = null, $limit = 0)
             }
 
             echo "<tr>
-            <td>" . df($log->timestamp) . "</td>
+            <td>" . StringUtils::formatDate($log->timestamp) . "</td>
             <td>" . LogSeverity::SEVERITIES[$log->severity] . "</td>
             <td>" . GameLogFacility::FACILITIES[$log->facility] . "</td>
             <td>" . $tu . "</td>
@@ -1047,7 +1049,7 @@ function showGameLogs($args = null, $limit = 0)
             <td>" . $obStatus . "</td>
             <td><a href=\"javascript:;\" onclick=\"toggleBox('details" . $log->id . "')\">Details</a></td>
             </tr>";
-            echo "<tr id=\"details" . $log->id . "\" style=\"display:none;\"><td colspan=\"9\">" . text2html($log->message) . "
+            echo "<tr id=\"details" . $log->id . "\" style=\"display:none;\"><td colspan=\"9\">" . BBCodeUtils::toHTML($log->message) . "
             <br/><br/>IP: " . $log->ip . "</td></tr>";
         }
         echo "</table>";

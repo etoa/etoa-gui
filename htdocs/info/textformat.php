@@ -1,5 +1,7 @@
 <?PHP
 
+use EtoA\Support\BBCodeUtils;
+
 echo "<h2>Texformatierung</h2>";
 HelpUtil::breadCrumbs(array("Texformatierung", "textformat"));
 
@@ -361,7 +363,7 @@ echo "<tr><th class=\"tbltitle\">Das m&ouml;chtest du machen</th><th class=\"tbl
 foreach ($bb as $code) {
     echo "<tr><td class=\"tbldata\" style=\"text-align:left\">" . $code['m'] . "</td>";
     echo "<td class=\"tbldata\" style=\"text-align:left\">" . $code['b'] . "</td>";
-    echo "<td class=\"tbldata\" style=\"text-align:left\">" . text2html($code['b']) . "</td></tr>";
+    echo "<td class=\"tbldata\" style=\"text-align:left\">" . BBCodeUtils::toHTML($code['b']) . "</td></tr>";
 }
 tableEnd();
 
@@ -370,7 +372,7 @@ iBoxStart("Fehlerquellen");
 echo "Es kann vorkommen, dass du mehrere BB-Codes kombinieren möchtest (zum Beispiel eine grössere Schrift und andere Farbe).<br/>
         Dabei ist es wichtig, dass du die Reihenfolge der Tags beachtest; es gillt, immer von innen nach aussen arbeiten.<br/><br/>
         Beispiel: Text rot schreiben und Schriftgrösse 15;<br/><br/>
-        [color=red][size=15]EtoA[/size][/color] ist richtig und ergibt " . text2html('[color=red][size=15]EtoA[/size][/color]') . ", aber [color=red][size=15]EtoA[/color][/size] ist falsch und gibt kein gültiges Resultat!<br/><br/>
+        [color=red][size=15]EtoA[/size][/color] ist richtig und ergibt " . BBCodeUtils::toHTML('[color=red][size=15]EtoA[/size][/color]') . ", aber [color=red][size=15]EtoA[/color][/size] ist falsch und gibt kein gültiges Resultat!<br/><br/>
         Theoretisch kannst du so viele verschiedene Tags hinterinander hängen. Wichtig ist einfach, dass die Reihenfole immer beachtet wird. Um nicht unschöne Fehler in einer Nachricht oder in einem Forenpost zu haben, ist es immer gut, wenn ingame die Nachrichtenvorschau eingeschaltet ist und wenn man vor dem absenden des Posts noch schnell auf Vorschau klickt im Forum. So sparrt man Zeit und verhindert unschöne Fehler.";
 iBoxEnd();
 
@@ -393,7 +395,7 @@ echo "<tr><th class=\"tbltitle\">Kanton</th><th class=\"tbltitle\">BBCode</th><t
 foreach ($kt as $city) {
     echo "<tr><td class=\"tbldata\" style=\"text-align:left\">" . $city['n'] . "</td>";
     echo "<td class=\"tbldata\" style=\"text-align:left\">" . $city['f'] . "</td>";
-    echo "<td class=\"tbldata\" style=\"text-align:left\">" . text2html($city['f']) . "</td></tr>";
+    echo "<td class=\"tbldata\" style=\"text-align:left\">" . BBCodeUtils::toHTML($city['f']) . "</td></tr>";
 }
 tableEnd();
 echo '</td><td style="width:50%;vertical-align:top;">';
@@ -402,7 +404,7 @@ echo "<tr><th class=\"tbltitle\">Land</th><th class=\"tbltitle\">BBCode</th><th 
 foreach ($fl as $land) {
     echo "<tr><td class=\"tbldata\" style=\"text-align:left\">" . $land['n'] . "</td>";
     echo "<td class=\"tbldata\" style=\"text-align:left\">" . $land['f'] . "</td>";
-    echo "<td class=\"tbldata\" style=\"text-align:left\">" . text2html($land['f']) . "</td></tr>";
+    echo "<td class=\"tbldata\" style=\"text-align:left\">" . BBCodeUtils::toHTML($land['f']) . "</td></tr>";
 }
 tableEnd();
 echo '</td></tr></table>';

@@ -12,6 +12,8 @@ use EtoA\Alliance\AllianceRightRepository;
 use EtoA\Alliance\AllianceRights;
 use EtoA\Alliance\Board\AllianceBoardTopicRepository;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Support\BBCodeUtils;
+use EtoA\Support\StringUtils;
 use EtoA\User\UserRepository;
 
 /** @var ConfigurationService $config */
@@ -249,9 +251,9 @@ elseif ($cu->allianceId == 0) {
                     $check_name = str_replace(' ', '', $_POST['alliance_name']);
 
                     if ($check_name != '' && $check_tag != '') {
-                        $check_tag = check_illegal_signs($_POST['alliance_tag']);
-                        $check_name = check_illegal_signs($_POST['alliance_name']);
-                        $signs = check_illegal_signs("gibt eine liste von unerlaubten zeichen aus! ; < > & etc.");
+                        $check_tag = StringUtils::checkIllegalSigns($_POST['alliance_tag']);
+                        $check_name = StringUtils::checkIllegalSigns($_POST['alliance_name']);
+                        $signs = StringUtils::checkIllegalSigns("gibt eine liste von unerlaubten zeichen aus! ; < > & etc.");
                         if ($check_tag == "" && $check_name == "") {
 
                             // Prüft, ob dieser Tag oder Name bereits vorhanden ist
@@ -362,7 +364,7 @@ elseif ($cu->allianceId == 0) {
                 }
 
                 if ($topic !== null) {
-                    $ps = "Neuster Post: <a href=\"?page=allianceboard&amp;topic=" . $topic->id . "#" . $topic->post->id . "\"><b>" . $topic->subject . "</b>, geschrieben von: <b>" . $topic->post->userNick . "</b>, <b>" . df($topic->timestamp) . "</b></a>";
+                    $ps = "Neuster Post: <a href=\"?page=allianceboard&amp;topic=" . $topic->id . "#" . $topic->post->id . "\"><b>" . $topic->subject . "</b>, geschrieben von: <b>" . $topic->post->userNick . "</b>, <b>" . StringUtils::formatDate($topic->timestamp) . "</b></a>";
                 } else
                     $ps = "<i>Noch keine Beitr&auml;ge vorhanden";
                 echo "<tr><th>Internes Forum</th><td colspan=\"2\"><b><a href=\"?page=allianceboard\">Forum&uuml;bersicht</a></b> &nbsp; $ps</td></tr>";
@@ -494,7 +496,7 @@ elseif ($cu->allianceId == 0) {
                     $entries = $allianceHistoryRepository->findForAlliance($cu->allianceId, 5);
                     if (count($entries) > 0) {
                         foreach ($entries as $entry) {
-                            echo "<div class=\"infoLog\">" . text2html($entry->text) . " <span>" . df($entry->timestamp, 0) . "</span></div>";
+                            echo "<div class=\"infoLog\">" . BBCodeUtils::toHTML($entry->text) . " <span>" . StringUtils::formatDate($entry->timestamp, false) . "</span></div>";
                         }
                     }
                     echo "</td></tr>";
@@ -502,7 +504,7 @@ elseif ($cu->allianceId == 0) {
 
                 // Text anzeigen
                 if ($alliance->text != "") {
-                    echo "<tr><td colspan=\"3\" style=\"text-align:center\">" . text2html($alliance->text) . "</td></tr>\n";
+                    echo "<tr><td colspan=\"3\" style=\"text-align:center\">" . BBCodeUtils::toHTML($alliance->text) . "</td></tr>\n";
                 }
 
                 // Kriege
@@ -523,8 +525,8 @@ elseif ($cu->allianceId == 0) {
                                             <td>
                                                 <a href=\"?page=$page&amp;id=" . $diplomacy->otherAllianceId . "\">" . $opAlly . "</a>
                                             </td>
-                                            <td>" . nf($opAlly->points) . " / " . nf($opAlly->avgPoints) . "</td>
-                                            <td>" . df($diplomacy->date, 0) . " bis " . df($diplomacy->date + WAR_DURATION, 0) . "</td>
+                                            <td>" . StringUtils::formatNumber($opAlly->points) . " / " . StringUtils::formatNumber($opAlly->avgPoints) . "</td>
+                                            <td>" . StringUtils::formatDate($diplomacy->date, false) . " bis " . StringUtils::formatDate($diplomacy->date + WAR_DURATION, false) . "</td>
                                         </tr>";
                     }
                     echo "</table>
@@ -551,8 +553,8 @@ elseif ($cu->allianceId == 0) {
                                             <td>
                                                 <a href=\"?page=$page&amp;id=" . $diplomacy->otherAllianceId . "\">" . $opAlly . "</a>
                                             </td>
-                                            <td>" . nf($opAlly->points) . " / " . nf($opAlly->avgPoints) . "</td>
-                                            <td>" . df($diplomacy->date, 0) . " bis " . df($diplomacy->date + PEACE_DURATION, 0) . "</td>
+                                            <td>" . StringUtils::formatNumber($opAlly->points) . " / " . StringUtils::formatNumber($opAlly->avgPoints) . "</td>
+                                            <td>" . StringUtils::formatDate($diplomacy->date, false) . " bis " . StringUtils::formatDate($diplomacy->date + PEACE_DURATION, false) . "</td>
                                         </tr>";
                     }
                     echo "</table>
@@ -579,8 +581,8 @@ elseif ($cu->allianceId == 0) {
                         echo "<tr>
                                             <td>" . stripslashes($diplomacy->name) . "</td>
                                             <td><a href=\"?page=$page&amp;id=" . $diplomacy->otherAllianceId . "\">" . $opAlly . "</a></td>
-                                            <td>" . nf($opAlly->points) . " / " . nf($opAlly->avgPoints) . "</td>
-                                            <td>" . df($diplomacy->date) . "</td>
+                                            <td>" . StringUtils::formatNumber($opAlly->points) . " / " . StringUtils::formatNumber($opAlly->avgPoints) . "</td>
+                                            <td>" . StringUtils::formatDate($diplomacy->date) . "</td>
                                         </tr>";
                     }
                     echo "</table>
@@ -590,7 +592,7 @@ elseif ($cu->allianceId == 0) {
 
                 // Besucher
                 echo "<tr><th width=\"120\">Besucherzähler:</th>
-            <td colspan=\"2\">" . nf($ally->visits) . " intern / " . nf($ally->visitsExt) . " extern</td></tr>\n";
+            <td colspan=\"2\">" . StringUtils::formatNumber($ally->visits) . " intern / " . StringUtils::formatNumber($ally->visitsExt) . " extern</td></tr>\n";
 
                 // Wings
                 if ($config->getBoolean('allow_wings') && count($ally->wings) > 0) {
@@ -605,9 +607,9 @@ elseif ($cu->allianceId == 0) {
                     foreach ($ally->wings as $wid => $wdata) {
                         echo "<tr>
                     <td><a href=\"?page=alliance&amp;id=" . $wid . "\">" . $wdata . "</a></td>
-                    <td>" . nf($wdata->points) . "</td>
+                    <td>" . StringUtils::formatNumber($wdata->points) . "</td>
                     <td>" . $wdata->memberCount . "</td>
-                    <td>" . nf($wdata->avgPoints) . "</td>
+                    <td>" . StringUtils::formatNumber($wdata->avgPoints) . "</td>
                     </tr>";
                     }
                     echo "</td></tr>";
@@ -619,7 +621,7 @@ elseif ($cu->allianceId == 0) {
                 // Website
                 if ($alliance->url != "") {
                     echo "<tr><th width=\"120\">Website/Forum:</th><td colspan=\"2\"><b>" .
-                        format_link($alliance->url) . "</a></b></td></tr>\n";
+                        StringUtils::formatLink($alliance->url) . "</a></b></td></tr>\n";
                 }
 
                 // Diverses
@@ -629,7 +631,7 @@ elseif ($cu->allianceId == 0) {
                 echo "<tr>
                             <th>Punkte / Schnitt:</th>
                             <td colspan=\"2\">";
-                echo nf($ally->points) . " / " . nf($ally->avgPoints) . "";
+                echo StringUtils::formatNumber($ally->points) . " / " . StringUtils::formatNumber($ally->avgPoints) . "";
                 echo "</td>
                         </tr>";
                 echo "<tr><th width=\"120\">Gr&uuml;nder:</th>
@@ -639,7 +641,7 @@ elseif ($cu->allianceId == 0) {
                 echo "<tr>
                             <th>Gründungsdatum:</th>
                             <td colspan=\"2\">
-                                " . df($ally->foundationDate) . " (vor " . tf(time() - $ally->foundationDate) . ")
+                                " . StringUtils::formatDate($ally->foundationDate) . " (vor " . StringUtils::formatTimespan(time() - $ally->foundationDate) . ")
                             </td>
                         </tr>";
                 echo "\n</table><br/>";

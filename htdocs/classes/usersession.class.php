@@ -3,6 +3,7 @@
 use EtoA\Log\LogFacility;
 use EtoA\Log\LogRepository;
 use EtoA\Log\LogSeverity;
+use EtoA\Support\StringUtils;
 use EtoA\User\UserLoginFailureRepository;
 use EtoA\User\UserRepository;
 use EtoA\User\UserSessionManager;
@@ -137,7 +138,7 @@ class UserSession extends Session
                             $this->lastErrorCode = "name";
                         }
                     } else {
-                        $this->lastError = "Login-Timeout (" . tf(abs($realtime - $t)) . ")!";
+                        $this->lastError = "Login-Timeout (" . StringUtils::formatTimespan(abs($realtime - $t)) . ")!";
                         $this->lastErrorCode = "logintimeout";
                         $tokenlog = true;
                     }
@@ -231,7 +232,7 @@ class UserSession extends Session
                         $this->lastError = "Sitting abgelaufen!";
                     }
                 } else {
-                    $this->lastError = "Das Timeout von " . tf($this->config->getInt('user_timeout')) . " wurde überschritten!";
+                    $this->lastError = "Das Timeout von " . StringUtils::formatTimespan($this->config->getInt('user_timeout')) . " wurde überschritten!";
                 }
             } else {
                 $this->lastError = "Session nicht mehr vorhanden!";

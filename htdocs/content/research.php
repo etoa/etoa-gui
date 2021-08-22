@@ -7,7 +7,9 @@ use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Log\GameLogFacility;
 use EtoA\Log\GameLogRepository;
 use EtoA\Log\LogSeverity;
+use EtoA\Support\StringUtils;
 use EtoA\Specialist\SpecialistService;
+use EtoA\Support\BBCodeUtils;
 use EtoA\Technology\Technology;
 use EtoA\Technology\TechnologyRepository;
 use EtoA\Technology\TechnologyRequirement;
@@ -91,7 +93,7 @@ if (isset($cp)) {
         // people working changed
         if (isset($_POST['submit_people_form_gen'])) {
 
-            $set_people = nf_back($_POST['peopleWorking']);
+            $set_people = StringUtils::parseFormattedNumber($_POST['peopleWorking']);
             if (!$building_gen && $bl->setPeopleWorking(PEOPLE_BUILDING_ID, $set_people, true)) {
                 success_msg("Arbeiter zugeteilt!");
                 $new_people_set = true;
@@ -101,7 +103,7 @@ if (isset($cp)) {
         }
 
         if (isset($_POST['submit_people_form'])) {
-            $set_people = nf_back($_POST['peopleWorking']);
+            $set_people = StringUtils::parseFormattedNumber($_POST['peopleWorking']);
             if (!$building_something && $bl->setPeopleWorking(TECH_BUILDING_ID, $set_people, true)) {
                 success_msg("Arbeiter zugeteilt!");
                 $new_people_set = true;
@@ -243,7 +245,7 @@ if (isset($cp)) {
                                 <input 	type="text"
                                         name="peopleWorking"
                                         id="peopleWorking"
-                                        value="' . nf($people) . '"
+                                        value="' . StringUtils::formatNumber($people) . '"
                                         onkeyup="updatePeopleWorkingBox(this.value,\'-1\',\'-1\');"/>
                         </td>
                     </tr>';
@@ -252,14 +254,14 @@ if (isset($cp)) {
                             <td><input	type="text"
                                         name="timeReduction"
                                         id="timeReduction"
-                                        value="' . tf($config->getInt('people_work_done') * $people) . '"
+                                        value="' . StringUtils::formatTimespan($config->getInt('people_work_done') * $people) . '"
                                         onkeyup="updatePeopleWorkingBox(\'-1\',this.value,\'-1\');" /></td>
                         </tr>
                             <th>Nahrungsverbrauch</th>
                             <td><input	type="text"
                                         name="foodUsing"
                                         id="foodUsing"
-                                        value="' . nf($config->getInt('people_food_require') * $people) . '"
+                                        value="' . StringUtils::formatNumber($config->getInt('people_food_require') * $people) . '"
                                         onkeyup="updatePeopleWorkingBox(\'-1\',\'-1\',this.value);" /></td>
                         </tr>
                         <tr>
@@ -279,15 +281,15 @@ if (isset($cp)) {
         echo '<colgroup><col style="width:400px;"/><col/></colgroup>';
         // Specialist
         if ($specialist !== null && $specialist->costsTechnologies != 1) {
-            echo "<tr><td>Kostenreduktion durch " . $specialist->name . ":</td><td>" . get_percent_string($specialist->costsTechnologies) . "</td></tr>";
+            echo "<tr><td>Kostenreduktion durch " . $specialist->name . ":</td><td>" . StringUtils::formatPercentString($specialist->costsTechnologies) . "</td></tr>";
         }
         if ($specialist !== null && $specialist->timeTechnologies != 1) {
-            echo "<tr><td>Forschungszeitverringerung durch " . $specialist->name . ":</td><td>" . get_percent_string($specialist->timeTechnologies) . "</td></tr>";
+            echo "<tr><td>Forschungszeitverringerung durch " . $specialist->name . ":</td><td>" . StringUtils::formatPercentString($specialist->timeTechnologies) . "</td></tr>";
         }
         // Building level time bonus
         echo "<tr><td>Forschungszeitverringerung:</td><td>";
         if ($need_bonus_level >= 0) {
-            echo get_percent_string($time_boni_factor) . " durch Stufe " . $researchBuilding->currentLevel . " (-" . ((1 - $config->param2Float('build_time_boni_forschungslabor')) * 100) . "% maximum)";
+            echo StringUtils::formatPercentString($time_boni_factor) . " durch Stufe " . $researchBuilding->currentLevel . " (-" . ((1 - $config->param2Float('build_time_boni_forschungslabor')) * 100) . "% maximum)";
         } else {
             echo "Stufe " . $config->param1Int('build_time_boni_forschungslabor') . " erforderlich!";
         }
@@ -306,12 +308,12 @@ if (isset($cp)) {
 
         // Worker
         echo "<tr><td><th>Normal</th></td><th>Gentech</th></tr>";
-        echo "<tr><td>Eingestellte Arbeiter:</td><td>" . nf($peopleWorkingResearch);
+        echo "<tr><td>Eingestellte Arbeiter:</td><td>" . StringUtils::formatNumber($peopleWorkingResearch);
 
         if (($building_something <> 1) && ($bid > 0) && ($bid <> 23)) {
             echo '&nbsp;<a id ="link" href="javascript:;" onclick="toggleBox(\'changePeople\');">[&Auml;ndern]</a>';
         }
-        echo '</td><td>' . nf($peopleWorkingGen);
+        echo '</td><td>' . StringUtils::formatNumber($peopleWorkingGen);
 
         if (($building_gen <> 1) && ($bid == 23)) {
             echo '&nbsp;<a id ="link" href="javascript:;" onclick="toggleBox(\'changePeople\');">[&Auml;ndern]</a>';
@@ -319,8 +321,8 @@ if (isset($cp)) {
 
         echo '</td></tr>';
         if (($peopleWorkingResearch > 0) || ($peopleWorkingGen > 0)) {
-            echo "<tr><td>Zeitreduktion durch Arbeiter pro Auftrag:</td><td>" . tf($peopleTimeReduction * $peopleWorkingResearch) . "</td><td>" . tf($peopleTimeReduction * $peopleWorkingGen) . "</td></tr>";
-            echo "<tr><td>Nahrungsverbrauch durch Arbeiter pro Auftrag:</td><td>" . nf($peopleFoodConsumption * $peopleWorkingResearch) . "</td><td>" . nf($peopleFoodConsumption * $peopleWorkingGen) . "</td></tr>";
+            echo "<tr><td>Zeitreduktion durch Arbeiter pro Auftrag:</td><td>" . StringUtils::formatTimespan($peopleTimeReduction * $peopleWorkingResearch) . "</td><td>" . StringUtils::formatTimespan($peopleTimeReduction * $peopleWorkingGen) . "</td></tr>";
+            echo "<tr><td>Nahrungsverbrauch durch Arbeiter pro Auftrag:</td><td>" . StringUtils::formatNumber($peopleFoodConsumption * $peopleWorkingResearch) . "</td><td>" . StringUtils::formatNumber($peopleFoodConsumption * $peopleWorkingGen) . "</td></tr>";
         }
 
         tableEnd();
@@ -415,26 +417,26 @@ if (isset($cp)) {
                             //Log schreiben
                             $log_text = "[b]Forschung Ausbau[/b]
 
-                            [b]Erforschungsdauer:[/b] " . tf($btime) . "
+                            [b]Erforschungsdauer:[/b] " . StringUtils::formatTimespan($btime) . "
                             [b]Ende:[/b] " . date("d.m.Y H:i:s", (int) $end_time) . "
                             [b]Forschungslabor Level:[/b] " . $researchBuilding->currentLevel . "
-                            [b]Eingesetzte Bewohner:[/b] " . nf($peopleWorkingResearch) . "
+                            [b]Eingesetzte Bewohner:[/b] " . StringUtils::formatNumber($peopleWorkingResearch) . "
                             [b]Gen-Tech Level:[/b] " . GEN_TECH_LEVEL . "
                             [b]Eingesetzter Spezialist:[/b] " . ($specialist !== null ? $specialist->name : "Kein Spezialist") . "
 
                             [b]Kosten[/b]
-                            [b]" . RES_METAL . ":[/b] " . nf($bc['metal']) . "
-                            [b]" . RES_CRYSTAL . ":[/b] " . nf($bc['crystal']) . "
-                            [b]" . RES_PLASTIC . ":[/b] " . nf($bc['plastic']) . "
-                            [b]" . RES_FUEL . ":[/b] " . nf($bc['fuel']) . "
-                            [b]" . RES_FOOD . ":[/b] " . nf($bc['food']) . "
+                            [b]" . RES_METAL . ":[/b] " . StringUtils::formatNumber($bc['metal']) . "
+                            [b]" . RES_CRYSTAL . ":[/b] " . StringUtils::formatNumber($bc['crystal']) . "
+                            [b]" . RES_PLASTIC . ":[/b] " . StringUtils::formatNumber($bc['plastic']) . "
+                            [b]" . RES_FUEL . ":[/b] " . StringUtils::formatNumber($bc['fuel']) . "
+                            [b]" . RES_FOOD . ":[/b] " . StringUtils::formatNumber($bc['food']) . "
 
                             [b]Restliche Rohstoffe auf dem Planeten[/b]
-                            [b]" . RES_METAL . ":[/b] " . nf($planet->resMetal - $bc['metal']) . "
-                            [b]" . RES_CRYSTAL . ":[/b] " . nf($planet->resCrystal - $bc['crystal']) . "
-                            [b]" . RES_PLASTIC . ":[/b] " . nf($planet->resPlastic - $bc['plastic']) . "
-                            [b]" . RES_FUEL . ":[/b] " . nf($planet->resFuel - $bc['fuel']) . "
-                            [b]" . RES_FOOD . ":[/b] " . nf($planet->resFood - $bc['food']);
+                            [b]" . RES_METAL . ":[/b] " . StringUtils::formatNumber($planet->resMetal - $bc['metal']) . "
+                            [b]" . RES_CRYSTAL . ":[/b] " . StringUtils::formatNumber($planet->resCrystal - $bc['crystal']) . "
+                            [b]" . RES_PLASTIC . ":[/b] " . StringUtils::formatNumber($planet->resPlastic - $bc['plastic']) . "
+                            [b]" . RES_FUEL . ":[/b] " . StringUtils::formatNumber($planet->resFuel - $bc['fuel']) . "
+                            [b]" . RES_FOOD . ":[/b] " . StringUtils::formatNumber($planet->resFood - $bc['food']);
 
                             $gameLogRepository->add(GameLogFacility::TECH, LogSeverity::INFO, $log_text, $cu->id, $cu->allianceId, $planet->id, $technology->id, $b_status, $b_level);
 
@@ -470,18 +472,18 @@ if (isset($cp)) {
 
                         [b]Erhaltene Rohstoffe[/b]
                         [b]Faktor:[/b] " . $fac . "
-                        [b]" . RES_METAL . ":[/b] " . nf($bc['metal'] * $fac) . "
-                        [b]" . RES_CRYSTAL . ":[/b] " . nf($bc['crystal'] * $fac) . "
-                        [b]" . RES_PLASTIC . ":[/b] " . nf($bc['plastic'] * $fac) . "
-                        [b]" . RES_FUEL . ":[/b] " . nf($bc['fuel'] * $fac) . "
-                        [b]" . RES_FOOD . ":[/b] " . nf($bc['food'] * $fac) . "
+                        [b]" . RES_METAL . ":[/b] " . StringUtils::formatNumber($bc['metal'] * $fac) . "
+                        [b]" . RES_CRYSTAL . ":[/b] " . StringUtils::formatNumber($bc['crystal'] * $fac) . "
+                        [b]" . RES_PLASTIC . ":[/b] " . StringUtils::formatNumber($bc['plastic'] * $fac) . "
+                        [b]" . RES_FUEL . ":[/b] " . StringUtils::formatNumber($bc['fuel'] * $fac) . "
+                        [b]" . RES_FOOD . ":[/b] " . StringUtils::formatNumber($bc['food'] * $fac) . "
 
                         [b]Rohstoffe auf dem Planeten[/b]
-                        [b]" . RES_METAL . ":[/b] " . nf($planet->resMetal + $bc['metal'] * $fac) . "
-                        [b]" . RES_CRYSTAL . ":[/b] " . nf($planet->resCrystal + $bc['crystal'] * $fac) . "
-                        [b]" . RES_PLASTIC . ":[/b] " . nf($planet->resPlastic + $bc['plastic'] * $fac) . "
-                        [b]" . RES_FUEL . ":[/b] " . nf($planet->resFuel + $bc['fuel'] * $fac) . "
-                        [b]" . RES_FOOD . ":[/b] " . nf($planet->resFood + $bc['food'] * $fac);
+                        [b]" . RES_METAL . ":[/b] " . StringUtils::formatNumber($planet->resMetal + $bc['metal'] * $fac) . "
+                        [b]" . RES_CRYSTAL . ":[/b] " . StringUtils::formatNumber($planet->resCrystal + $bc['crystal'] * $fac) . "
+                        [b]" . RES_PLASTIC . ":[/b] " . StringUtils::formatNumber($planet->resPlastic + $bc['plastic'] * $fac) . "
+                        [b]" . RES_FUEL . ":[/b] " . StringUtils::formatNumber($planet->resFuel + $bc['fuel'] * $fac) . "
+                        [b]" . RES_FOOD . ":[/b] " . StringUtils::formatNumber($planet->resFood + $bc['food'] * $fac);
 
                         //Log Speichern
                         $gameLogRepository->add(GameLogFacility::TECH, LogSeverity::INFO, $log_text, $cu->id, $cu->allianceId, $planet->id, $technology->id, $b_status, $b_level);
@@ -503,11 +505,11 @@ if (isset($cp)) {
                 //
                 // Forschungsdaten anzeigen
                 //
-                tableStart(text2html($technology->name . " " . $b_level));
+                tableStart(BBCodeUtils::toHTML($technology->name . " " . $b_level));
                 echo "<tr><td width=\"220\" rowspan=\"3\" style=\"background:#000;;vertical-align:middle;\">
                 " . helpImageLink("research&amp;id=" . $technology->id, IMAGE_PATH . "/" . IMAGE_TECHNOLOGY_DIR . "/technology" . $technology->id . "." . IMAGE_EXT, $technology->name, "width:220px;height:220px") . "
                 </td>";
-                echo "<td valign=\"top\" colspan=\"2\">" . text2html($technology->shortComment) . "</td></tr>";
+                echo "<td valign=\"top\" colspan=\"2\">" . BBCodeUtils::toHTML($technology->shortComment) . "</td></tr>";
                 echo "<tr><th height=\"20\" width=\"50%\">Status:</th>";
                 echo "<td id=\"buildstatus\" width=\"50%\" style=\"" . $color . "\">$status_text</td></tr>";
                 echo "<tr><th height=\"20\" width=\"50%\">Stufe:</th>";
@@ -574,20 +576,20 @@ if (isset($cp)) {
                         // Baukosten-String
                         $bcstring = "<td";
                         if ($bc['metal'] > $planet->resMetal)
-                            $bcstring .= $notAvStyle . " " . tm("Fehlender Rohstoff", "<b>" . nf($bc['metal'] - $planet->resMetal) . "</b> " . RES_METAL . "<br/>Bereit in <b>" . tf($bwait['metal']) . "</b>");
-                        $bcstring .= ">" . nf($bc['metal']) . "</td><td";
+                            $bcstring .= $notAvStyle . " " . tm("Fehlender Rohstoff", "<b>" . StringUtils::formatNumber($bc['metal'] - $planet->resMetal) . "</b> " . RES_METAL . "<br/>Bereit in <b>" . StringUtils::formatTimespan($bwait['metal']) . "</b>");
+                        $bcstring .= ">" . StringUtils::formatNumber($bc['metal']) . "</td><td";
                         if ($bc['crystal'] > $planet->resCrystal)
-                            $bcstring .= $notAvStyle . " " . tm("Fehlender Rohstoff", nf($bc['crystal'] - $planet->resCrystal) . " " . RES_CRYSTAL . "<br/>Bereit in <b>" . tf($bwait['crystal']) . "</b>");
-                        $bcstring .= ">" . nf($bc['crystal']) . "</td><td";
+                            $bcstring .= $notAvStyle . " " . tm("Fehlender Rohstoff", StringUtils::formatNumber($bc['crystal'] - $planet->resCrystal) . " " . RES_CRYSTAL . "<br/>Bereit in <b>" . StringUtils::formatTimespan($bwait['crystal']) . "</b>");
+                        $bcstring .= ">" . StringUtils::formatNumber($bc['crystal']) . "</td><td";
                         if ($bc['plastic'] > $planet->resPlastic)
-                            $bcstring .= $notAvStyle . " " . tm("Fehlender Rohstoff", nf($bc['plastic'] - $planet->resPlastic) . " " . RES_PLASTIC . "<br/>Bereit in <b>" . tf($bwait['plastic']) . "</b>");
-                        $bcstring .= ">" . nf($bc['plastic']) . "</td><td";
+                            $bcstring .= $notAvStyle . " " . tm("Fehlender Rohstoff", StringUtils::formatNumber($bc['plastic'] - $planet->resPlastic) . " " . RES_PLASTIC . "<br/>Bereit in <b>" . StringUtils::formatTimespan($bwait['plastic']) . "</b>");
+                        $bcstring .= ">" . StringUtils::formatNumber($bc['plastic']) . "</td><td";
                         if ($bc['fuel'] > $planet->resFuel)
-                            $bcstring .= $notAvStyle . " " . tm("Fehlender Rohstoff", nf($bc['fuel'] - $planet->resFuel) . " " . RES_FUEL . "<br/>Bereit in <b>" . tf($bwait['fuel']) . "</b>");
-                        $bcstring .= ">" . nf($bc['fuel']) . "</td><td";
+                            $bcstring .= $notAvStyle . " " . tm("Fehlender Rohstoff", StringUtils::formatNumber($bc['fuel'] - $planet->resFuel) . " " . RES_FUEL . "<br/>Bereit in <b>" . StringUtils::formatTimespan($bwait['fuel']) . "</b>");
+                        $bcstring .= ">" . StringUtils::formatNumber($bc['fuel']) . "</td><td";
                         if ($bc['food'] > $planet->resFood)
-                            $bcstring .= $notAvStyle . " " . tm("Fehlender Rohstoff", nf($bc['food'] - $planet->resFood) . " " . RES_FOOD . "<br/>Bereit in <b>" . tf($bwait['food']) . "</b>");
-                        $bcstring .= ">" . nf($bc['food']) . "</td></tr>";
+                            $bcstring .= $notAvStyle . " " . tm("Fehlender Rohstoff", StringUtils::formatNumber($bc['food'] - $planet->resFood) . " " . RES_FOOD . "<br/>Bereit in <b>" . StringUtils::formatTimespan($bwait['food']) . "</b>");
+                        $bcstring .= ">" . StringUtils::formatNumber($bc['food']) . "</td></tr>";
                         // Maximale Stufe erreicht
 
                         if ($b_level >= $technology->lastLevel) {
@@ -598,35 +600,35 @@ if (isset($cp)) {
                             //Sonderfeld Gentech
                             if ($technology->id == GEN_TECH_ID) {
                                 if (!$building_gen) {
-                                    echo "<tr><td><input type=\"submit\" class=\"button\" name=\"command_build\" value=\"Erforschen\"></td><td>" . tf($btime) . "</td>";
-                                    echo "<td>" . nf($bc['metal']) . "</td><td>" . nf($bc['crystal']) . "</td><td>" . nf($bc['plastic']) . "</td><td>" . nf($bc['fuel']) . "</td><td>" . nf($bc['food']) . "</td></tr>";
+                                    echo "<tr><td><input type=\"submit\" class=\"button\" name=\"command_build\" value=\"Erforschen\"></td><td>" . StringUtils::formatTimespan($btime) . "</td>";
+                                    echo "<td>" . StringUtils::formatNumber($bc['metal']) . "</td><td>" . StringUtils::formatNumber($bc['crystal']) . "</td><td>" . StringUtils::formatNumber($bc['plastic']) . "</td><td>" . StringUtils::formatNumber($bc['fuel']) . "</td><td>" . StringUtils::formatNumber($bc['food']) . "</td></tr>";
                                 } else {
-                                    echo "<tr><td style=\"color:red;\">Erforschen</td><td>" . tf($btime) . "</td>";
+                                    echo "<tr><td style=\"color:red;\">Erforschen</td><td>" . StringUtils::formatTimespan($btime) . "</td>";
                                     echo $bcstring;
                                     echo "<tr><td colspan=\"7\"><i>Es kann nichts erforscht werden da gerade an einer anderen Technik geforscht wird!</i></td></tr>";
                                 }
                             } else {
-                                echo "<tr><td style=\"color:red;\">Erforschen</td><td>" . tf($btime) . "</td>";
+                                echo "<tr><td style=\"color:red;\">Erforschen</td><td>" . StringUtils::formatTimespan($btime) . "</td>";
                                 echo $bcstring;
                                 echo "<tr><td colspan=\"7\"><i>Es kann nichts erforscht werden da gerade an einer anderen Technik geforscht wird!</i></td></tr>";
                             }
                         }
                         // Zuwenig Rohstoffe vorhanden
                         elseif ($planet->resMetal < $bc['metal'] || $planet->resCrystal < $bc['crystal']  || $planet->resPlastic < $bc['plastic']  || $planet->resFuel < $bc['fuel']  || $planet->resFood < $bc['food']) {
-                            echo "<tr><td style=\"color:red;\">Erforschen</td><td>" . tf($btime) . "</td>";
+                            echo "<tr><td style=\"color:red;\">Erforschen</td><td>" . StringUtils::formatTimespan($btime) . "</td>";
                             echo $bcstring;
                             echo "<tr><td colspan=\"7\"><i>Keine Weiterentwicklung m&ouml;glich, zuwenig Rohstoffe!</i></td></tr>";
                         }
                         // Forschen
                         elseif ($b_level == 0) {
-                            echo "<tr><td><input type=\"submit\" class=\"button\" name=\"command_build\" value=\"Erforschen\"></td><td>" . tf($btime) . "</td>";
-                            echo "<td>" . nf($bc['metal']) . "</td><td>" . nf($bc['crystal']) . "</td><td>" . nf($bc['plastic']) . "</td><td>" . nf($bc['fuel']) . "</td><td>" . nf($bc['food']) . "</td></tr>";
+                            echo "<tr><td><input type=\"submit\" class=\"button\" name=\"command_build\" value=\"Erforschen\"></td><td>" . StringUtils::formatTimespan($btime) . "</td>";
+                            echo "<td>" . StringUtils::formatNumber($bc['metal']) . "</td><td>" . StringUtils::formatNumber($bc['crystal']) . "</td><td>" . StringUtils::formatNumber($bc['plastic']) . "</td><td>" . StringUtils::formatNumber($bc['fuel']) . "</td><td>" . StringUtils::formatNumber($bc['food']) . "</td></tr>";
                         }
                         // Ausbauen
                         else {
                             echo ($building_something);
-                            echo "<tr><td><input type=\"submit\" class=\"button\" name=\"command_build\" value=\"Erforschen\"></td><td>" . tf($btime) . "</td>";
-                            echo "<td>" . nf($bc['metal']) . "</td><td>" . nf($bc['crystal']) . "</td><td>" . nf($bc['plastic']) . "</td><td>" . nf($bc['fuel']) . "</td><td>" . nf($bc['food']) . "</td></tr>";
+                            echo "<tr><td><input type=\"submit\" class=\"button\" name=\"command_build\" value=\"Erforschen\"></td><td>" . StringUtils::formatTimespan($btime) . "</td>";
+                            echo "<td>" . StringUtils::formatNumber($bc['metal']) . "</td><td>" . StringUtils::formatNumber($bc['crystal']) . "</td><td>" . StringUtils::formatNumber($bc['plastic']) . "</td><td>" . StringUtils::formatNumber($bc['fuel']) . "</td><td>" . StringUtils::formatNumber($bc['food']) . "</td></tr>";
                         }
                     }
 
@@ -638,7 +640,7 @@ if (isset($cp)) {
                             echo '<td id="buildtime" style="vertical-align:middle;">-</td>
                         <td colspan="5"  id="progressbar" style="text-align:center;vertical-align:middle;font-weight:bold;"></td></tr>';
                             if ($b_level < $technology->lastLevel - 1)
-                                echo "<tr><td width=\"90\">N&auml;chste Stufe:</td><td>" . tf($btimen) . "</td><td>" . nf($bcn['metal']) . "</td><td>" . nf($bcn['crystal']) . "</td><td>" . nf($bcn['plastic']) . "</td><td>" . nf($bcn['fuel']) . "</td><td>" . nf($bcn['food']) . "</td></tr>";
+                                echo "<tr><td width=\"90\">N&auml;chste Stufe:</td><td>" . StringUtils::formatTimespan($btimen) . "</td><td>" . StringUtils::formatNumber($bcn['metal']) . "</td><td>" . StringUtils::formatNumber($bcn['crystal']) . "</td><td>" . StringUtils::formatNumber($bcn['plastic']) . "</td><td>" . StringUtils::formatNumber($bcn['fuel']) . "</td><td>" . StringUtils::formatNumber($bcn['food']) . "</td></tr>";
                             countDown("buildtime", $end_time, "buildcancel");
                             jsProgressBar("progressbar", $start_time, $end_time);
                         } else {
@@ -650,7 +652,7 @@ if (isset($cp)) {
                     tableEnd();
 
                     if (isset($bwmax) && $bwmax > 0)
-                        echo "Wartezeit bis gen&uuml;gend Rohstoffe zum Forschen vorhanden sind: <b>" . tf($bwmax) . "</b><br/><br/>";
+                        echo "Wartezeit bis gen&uuml;gend Rohstoffe zum Forschen vorhanden sind: <b>" . StringUtils::formatTimespan($bwmax) . "</b><br/><br/>";
 
 
 
@@ -818,7 +820,7 @@ if (isset($cp)) {
                                 // Ist im Bau
                                 elseif (isset($techlist[$tech->id]) && $techlist[$tech->id]->buildType === 3) {
                                     $subtitle =  "Forschung auf Stufe " . ($b_level + 1);
-                                    $tmtext = "<span style=\"color:#0f0\">Wird erforscht!<br/>Dauer: " . tf($end_time - time()) . "</span><br/>";
+                                    $tmtext = "<span style=\"color:#0f0\">Wird erforscht!<br/>Dauer: " . StringUtils::formatTimespan($end_time - time()) . "</span><br/>";
                                     $color = '#0f0';
                                     if ($use_img_filter) {
                                         $filterStyleClass = "filter-building";

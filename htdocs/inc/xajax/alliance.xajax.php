@@ -2,6 +2,8 @@
 
 use EtoA\Alliance\AllianceMemberCosts;
 use EtoA\Alliance\AllianceRepository;
+use EtoA\Support\BBCodeUtils;
+use EtoA\Support\StringUtils;
 use EtoA\User\UserStatRepository;
 use EtoA\User\UserStatSearch;
 
@@ -50,19 +52,19 @@ function showAllianceMembers($alliance_id = 0, $field_id = '')
                         <a href=\"?page=userinfo&id=" . $entry->id . "\">" . $entry->nick . "</a>
                     </td>
                     <td>
-                        " . nf($entry->points) . "
+                        " . StringUtils::formatNumber($entry->points) . "
                     </td>
                     <td>
-                        " . nf($entry->buildingPoints) . "
+                        " . StringUtils::formatNumber($entry->buildingPoints) . "
                     </td>
                     <td>
-                        " . nf($entry->shipPoints) . "
+                        " . StringUtils::formatNumber($entry->shipPoints) . "
                     </td>
                     <td>
-                        " . nf($entry->techPoints) . "
+                        " . StringUtils::formatNumber($entry->techPoints) . "
                     </td>
                     <td>
-                        " . nf($entry->expPoints) . "
+                        " . StringUtils::formatNumber($entry->expPoints) . "
                     </td>
                 </tr>";
             }
@@ -108,12 +110,10 @@ function showAllianceMemberAddCosts($allianceId = 0, $form = [])
         if ($answear == 2) $cnt++;
     }
     if ($allianceId != 0) {
-        $alliance = new Alliance($allianceId);
-
         $currentUserCount = $allianceRepository->countUsers($allianceId);
         $costs = $allianceMemberCosts->calculate($allianceId, $currentUserCount, $currentUserCount + $cnt);
 
-        echo text2html("Bei der Aufnahme von " . $cnt . " Member werden dem Allianzkonto folgende Rohstoffe abgezogen:\n[b]" . RES_METAL . "[/b]: " . nf($costs->metal) . "\n[b]" . RES_CRYSTAL . "[/b]: " . nf($costs->crystal) . "\n[b]" . RES_PLASTIC . "[/b]: " . nf($costs->plastic) . "\n[b]" . RES_FUEL . "[/b]: " . nf($costs->fuel) . "\n[b]" . RES_FOOD . "[/b]: " . nf($costs->food));
+        echo BBCodeUtils::toHTML("Bei der Aufnahme von " . $cnt . " Member werden dem Allianzkonto folgende Rohstoffe abgezogen:\n[b]" . RES_METAL . "[/b]: " . StringUtils::formatNumber($costs->metal) . "\n[b]" . RES_CRYSTAL . "[/b]: " . StringUtils::formatNumber($costs->crystal) . "\n[b]" . RES_PLASTIC . "[/b]: " . StringUtils::formatNumber($costs->plastic) . "\n[b]" . RES_FUEL . "[/b]: " . StringUtils::formatNumber($costs->fuel) . "\n[b]" . RES_FOOD . "[/b]: " . StringUtils::formatNumber($costs->food));
     }
 
     $objResponse->assign("memberCostsTD", "innerHTML", ob_get_contents());

@@ -4,6 +4,7 @@ use EtoA\Building\BuildingDataRepository;
 use EtoA\Building\BuildingRepository;
 use EtoA\Building\BuildingTypeDataRepository;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Support\StringUtils;
 use EtoA\Specialist\SpecialistService;
 use EtoA\Technology\TechnologyRepository;
 use EtoA\UI\ResourceBoxDrawer;
@@ -106,7 +107,7 @@ if (isset($cp)) {
 
         // people working changed
         if (isset($_POST['submit_people_form'])) {
-            if ($bl->setPeopleWorking(BUILD_BUILDING_ID, nf_back($_POST['peopleWorking'])))
+            if ($bl->setPeopleWorking(BUILD_BUILDING_ID, StringUtils::parseFormattedNumber($_POST['peopleWorking'])))
                 success_msg("Arbeiter zugeteilt!");
             else
                 error_msg('Arbeiter konnten nicht zugeteilt werden!');
@@ -189,7 +190,7 @@ if (isset($cp)) {
                             <input 	type="text"
                                     name="peopleWorking"
                                     id="peopleWorking"
-                                    value="' . nf($peopleWorking->building) . '"
+                                    value="' . StringUtils::formatNumber($peopleWorking->building) . '"
                                     onkeyup="updatePeopleWorkingBox(this.value,\'-1\',\'-1\');"/>
                     </td>
                     </tr>
@@ -198,14 +199,14 @@ if (isset($cp)) {
                         <td><input	type="text"
                                     name="timeReduction"
                                     id="timeReduction"
-                                    value="' . tf($config->getInt('people_work_done') * $peopleWorking->building) . '"
+                                    value="' . StringUtils::formatTimespan($config->getInt('people_work_done') * $peopleWorking->building) . '"
                                     onkeyup="updatePeopleWorkingBox(\'-1\',this.value,\'-1\');" /></td>
                     </tr>
                         <th>Nahrungsverbrauch</th>
                         <td><input	type="text"
                                     name="foodUsing"
                                     id="foodUsing"
-                                    value="' . nf($config->getInt('people_food_require') * $peopleWorking->building) . '"
+                                    value="' . StringUtils::formatNumber($config->getInt('people_food_require') * $peopleWorking->building) . '"
                                     onkeyup="updatePeopleWorkingBox(\'-1\',\'-1\',this.value);" /></td>
                     </tr>
                     <tr>
@@ -233,21 +234,21 @@ if (isset($cp)) {
     $specialistService = $app[SpecialistService::class];
     $specialist = $specialistService->getSpecialistOfUser($cu->id);
     if ($specialist !== null && $specialist->costsBuildings != 1) {
-        echo '<tr><td>Kostenreduktion durch ' . $specialist->name . ':</td><td>' . get_percent_string($specialist->costsBuildings) . '</td></tr>';
+        echo '<tr><td>Kostenreduktion durch ' . $specialist->name . ':</td><td>' . StringUtils::formatPercentString($specialist->costsBuildings) . '</td></tr>';
     }
     if ($specialist !== null && $specialist->timeBuildings != 1) {
-        echo '<tr><td>Bauzeitverringerung durch ' . $specialist->name . ':</td><td>' . get_percent_string($specialist->timeBuildings) . '</td></tr>';
+        echo '<tr><td>Bauzeitverringerung durch ' . $specialist->name . ':</td><td>' . StringUtils::formatPercentString($specialist->timeBuildings) . '</td></tr>';
     }
 
     // Worker
-    echo '<tr><td>Eingestellte Arbeiter:</td><td><span id="people_working">' . nf($peopleWorking->building) . '</span>';
+    echo '<tr><td>Eingestellte Arbeiter:</td><td><span id="people_working">' . StringUtils::formatNumber($peopleWorking->building) . '</span>';
     if (!$bl->isUnderConstruction()) {
         echo '&nbsp;<a href="javascript:;" onclick="toggleBox(\'changePeople\');">[&Auml;ndern]</a>';
     }
     echo '</td></tr>';
     if ($peopleWorking->building > 0) {
-        echo '<tr><td>Zeitreduktion durch Arbeiter pro Auftrag:</td><td><span id="people_work_done">' . tf($config->getInt('people_work_done') * $peopleWorking->building) . '</span></td></tr>';
-        echo '<tr><td>Nahrungsverbrauch durch Arbeiter pro Auftrag:</td><td><span id="people_food_require">' . nf($config->getInt('people_food_require') * $peopleWorking->building) . '</span></td></tr>';
+        echo '<tr><td>Zeitreduktion durch Arbeiter pro Auftrag:</td><td><span id="people_work_done">' . StringUtils::formatTimespan($config->getInt('people_work_done') * $peopleWorking->building) . '</span></td></tr>';
+        echo '<tr><td>Nahrungsverbrauch durch Arbeiter pro Auftrag:</td><td><span id="people_food_require">' . StringUtils::formatNumber($config->getInt('people_food_require') * $peopleWorking->building) . '</span></td></tr>';
     }
     // Genetics technology level
     if ($genTechLevel > 0) {
@@ -256,7 +257,7 @@ if (isset($cp)) {
     }
     // Boost system
     if ($config->getBoolean('boost_system_enable')) {
-        echo '<tr><td>Geschwindigkeitsboost:</td><td>' . get_percent_string($cu->boostBonusBuilding + 1) . '</td></tr>';
+        echo '<tr><td>Geschwindigkeitsboost:</td><td>' . StringUtils::formatPercentString($cu->boostBonusBuilding + 1) . '</td></tr>';
     }
     tableEnd();
 
@@ -329,9 +330,9 @@ if (isset($cp)) {
                     if ($bl->checkBuildable($bid) == 0) {
                         echo '<tr>
                                 <td style="color:red;">Bauen</td>
-                                <td>' . tf($costs['time']) . '</td>'
+                                <td>' . StringUtils::formatTimespan($costs['time']) . '</td>'
                             . $waitArr['string'] . '
-                                <td>' . nf_up($costs['costs5']) . '</td>
+                                <td>' . StringUtils::formatNumber(ceil($costs['costs5'])) . '</td>
                             </tr>';
                     }
 
@@ -347,7 +348,7 @@ if (isset($cp)) {
                                 <td>
                                     <input type="submit" class="button" name="command_build" value="Bauen">
                                 </td>
-                                <td>' . tf($costs['time']) . '</td>';
+                                <td>' . StringUtils::formatTimespan($costs['time']) . '</td>';
                     }
                     // Ausbauen
                     else {
@@ -355,12 +356,12 @@ if (isset($cp)) {
                                 <td>
                                     <input type="submit" class="button" name="command_build" value="Ausbauen">
                                 </td>
-                                <td>' . tf($costs['time']) . '</td>';
+                                <td>' . StringUtils::formatTimespan($costs['time']) . '</td>';
                     }
                     foreach ($resNames as $rk => $rn) {
-                        echo '<td>' . nf_up($costs['costs' . $rk]) . '</td>';
+                        echo '<td>' . StringUtils::formatNumber(ceil($costs['costs' . $rk])) . '</td>';
                     }
-                    echo '<td>' . nf_up($costs['costs5']) . '</td>';
+                    echo '<td>' . StringUtils::formatNumber(ceil($costs['costs5'])) . '</td>';
                     echo '</tr>';
                 }
             }
@@ -373,9 +374,9 @@ if (isset($cp)) {
                 if (!$bl->checkDemolishable($bid)) {
                     echo '<tr class="demolishActionContainer">
                                 <td style="color:red;">Abreissen</td>
-                                <td>' . tf($demolishCosts['time']) . '</td>'
+                                <td>' . StringUtils::formatTimespan($demolishCosts['time']) . '</td>'
                         . $waitArr['string'] . '
-                                <td>' . nf_up($costs['costs5']) . '</td>
+                                <td>' . StringUtils::formatNumber(ceil($costs['costs5'])) . '</td>
                             </tr>
                             <tr class="demolishActionContainer">
                                 <td colspan="8">
@@ -387,11 +388,11 @@ if (isset($cp)) {
                                 <td>
                                     <input type="submit" class="button" name="command_demolish" value="Abreissen" onclick="if (this.value==\'Abreissen\'){return confirm(\'Geb&auml;de wirklich abreissen?\');}">
                                 </td>
-                                <td>' . tf($demolishCosts['time']) . '</td>';
+                                <td>' . StringUtils::formatTimespan($demolishCosts['time']) . '</td>';
                     foreach ($resNames as $rk => $rn) {
-                        echo '<td>' . nf_up($demolishCosts['costs' . $rk]) . '</td>';
+                        echo '<td>' . StringUtils::formatNumber(ceil($demolishCosts['costs' . $rk])) . '</td>';
                     }
-                    echo '<td>' . nf_up($demolishCosts['costs5']) . '</td>';
+                    echo '<td>' . StringUtils::formatNumber(ceil($demolishCosts['costs5'])) . '</td>';
                     echo '</tr>';
                 }
             }
@@ -410,11 +411,11 @@ if (isset($cp)) {
                     $costs = $bl->getCosts($bid, 'build', 1);
                     echo '<tr>
                                     <td width="90">N&auml;chste Stufe:</td>
-                                    <td>' . tf($costs['time']) . '</td>';
+                                    <td>' . StringUtils::formatTimespan($costs['time']) . '</td>';
                     foreach ($resNames as $rk => $rn) {
-                        echo '<td>' . nf_up($costs['costs' . $rk]) . '</td>';
+                        echo '<td>' . StringUtils::formatNumber(ceil($costs['costs' . $rk])) . '</td>';
                     }
-                    echo '<td>' . nf_up($costs['costs5']) . '</td>';
+                    echo '<td>' . StringUtils::formatNumber(ceil($costs['costs5'])) . '</td>';
                     echo '</tr>';
                 }
             }
@@ -443,10 +444,10 @@ if (isset($cp)) {
             }
 
             if ($item->getWaitingTime() > 0) {
-                echo "Wartezeit bis gen&uuml;gend Rohstoffe zum Bau vorhanden sind: <b>" . tf($item->getWaitingTime()) . "</b><br/>";
+                echo "Wartezeit bis gen&uuml;gend Rohstoffe zum Bau vorhanden sind: <b>" . StringUtils::formatTimespan($item->getWaitingTime()) . "</b><br/>";
             }
             if (isset($dWaitArray) && $dWaitArray[1] > 0) {
-                echo "Wartezeit bis gen&uuml;gend Rohstoffe zum Abriss vorhanden sind: <b>" . tf($dWaitArray[1]) . "</b><br/>";
+                echo "Wartezeit bis gen&uuml;gend Rohstoffe zum Abriss vorhanden sind: <b>" . StringUtils::formatTimespan($dWaitArray[1]) . "</b><br/>";
             }
             echo "<br/>";
 
@@ -545,7 +546,7 @@ if (isset($cp)) {
                     // Ist im Bau
                     elseif ($it->current()->buildType == 3) {
                         $subtitle =  "Ausbau auf Stufe " . ($it->current()->level + 1);
-                        $tmtext = "<span style=\"color:#0f0\">Wird ausgebaut<br/>Dauer: " . tf($it->current()->endTime - time()) . "</span><br/>";
+                        $tmtext = "<span style=\"color:#0f0\">Wird ausgebaut<br/>Dauer: " . StringUtils::formatTimespan($it->current()->endTime - time()) . "</span><br/>";
                         $color = '#0f0';
                         if ($use_img_filter) {
                             $filterStyleClass = "filter-building";
@@ -554,7 +555,7 @@ if (isset($cp)) {
                     //Wird abgerissen
                     elseif ($it->current()->buildType == 4) {
                         $subtitle = "Abriss auf Stufe " . ($it->current()->level - 1);
-                        $tmtext = "<span style=\"color:#f90\">Wird abgerissen!<br/>Dauer: " . tf($it->current()->endTime - time()) . "</span><br/>";
+                        $tmtext = "<span style=\"color:#f90\">Wird abgerissen!<br/>Dauer: " . StringUtils::formatTimespan($it->current()->endTime - time()) . "</span><br/>";
                         $color = '#f90';
                         if ($use_img_filter) {
                             $filterStyleClass = "filter-destructing";
@@ -596,7 +597,7 @@ if (isset($cp)) {
                                 </td>
                                 <th width=\"45%\">
                                     <span style=\"font-weight:500\">" . $it->current()->building . "<br/>
-                                            Stufe:</span> " . nf($it->current()->level) . "
+                                            Stufe:</span> " . StringUtils::formatNumber($it->current()->level) . "
                                         </th>";
                         if (!$bl->requirementsPassed($it->key()) || $it->current()->isMaxLevel()) {
                             echo "<td width=\"90%\" style=\"color:#999\" colspan=\"7\" " . tm($it->current()->building, $subtitle . "<br/>" . $tmtext) . ">" . $subtitle . "</td>";
@@ -612,7 +613,7 @@ if (isset($cp)) {
                             countDown("buildtime", $it->current()->endTime, "buildcancel");
                             jsProgressBar("progressbar", $it->current()->startTime, $it->current()->endTime);
                         } else {
-                            echo '<td>' . tf($it->current()->getBuildTime()) . '</td>' . $waitArr['string'];
+                            echo '<td>' . StringUtils::formatTimespan($it->current()->getBuildTime()) . '</td>' . $waitArr['string'];
 
                             //Maximale Anzahl erreicht oder anderes Gebäude im Bau
                             if ($tmtext != "" || $bl->isUnderConstruction()) {

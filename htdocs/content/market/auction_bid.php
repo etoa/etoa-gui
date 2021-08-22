@@ -6,6 +6,7 @@ use EtoA\Log\LogSeverity;
 use EtoA\Market\MarketAuctionRepository;
 use EtoA\Message\MarketReportRepository;
 use EtoA\Support\RuntimeDataStore;
+use EtoA\Support\StringUtils;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Universe\Resources\BaseResources;
 use EtoA\User\UserMultiRepository;
@@ -27,8 +28,8 @@ $buyRes = array();
 $newBuyResource = new BaseResources();
 foreach ($resNames as $rk => $rn) {
     if (isset($_POST['new_buy_' . $rk])) {
-        $newBuyResource->set($rk, nf_back($_POST['new_buy_' . $rk]));
-        $buyRes[$rk] = nf_back($_POST['new_buy_' . $rk]);
+        $newBuyResource->set($rk, StringUtils::parseFormattedNumber($_POST['new_buy_' . $rk]));
+        $buyRes[$rk] = StringUtils::parseFormattedNumber($_POST['new_buy_' . $rk]);
     } else
         $buyRes[$rk] = 0;
 }
@@ -120,12 +121,12 @@ if ($auction !== null && $auction->dateEnd > time()) {
                 if ($isMultiWith) {
                     // TODO
                     $seller = new User($auction->userId);
-                    $logRepository->add(LogFacility::MULTITRADE, LogSeverity::INFO, "[page user sub=edit user_id=" . $cu->id . "][B]" . $cu->nick . "[/B][/page] hat an einer Auktion von [page user sub=edit user_id=" . $auction->userId . "][B]" . $seller . "[/B][/page] gewonnen:\n\nRohstoffe:\n" . RES_METAL . ": " . nf($auction->sell0) . "\n" . RES_CRYSTAL . ": " . nf($auction->sell1) . "\n" . RES_PLASTIC . ": " . nf($auction->sell2) . "\n" . RES_FUEL . ": " . nf($auction->sell3) . "\n" . RES_FOOD . ": " . nf($auction->sell4) . "\n\nDies hat ihn folgende Rohstoffe gekostet:\n" . RES_METAL . ": " . $newBuyResource->metal . "\n" . RES_CRYSTAL . ": " . $newBuyResource->crystal . "\n" . RES_PLASTIC . ": " . $newBuyResource->plastic . "\n" . RES_FUEL . ": " . $newBuyResource->fuel . "\n" . RES_FOOD . ": " . $newBuyResource->food . "");
+                    $logRepository->add(LogFacility::MULTITRADE, LogSeverity::INFO, "[page user sub=edit user_id=" . $cu->id . "][B]" . $cu->nick . "[/B][/page] hat an einer Auktion von [page user sub=edit user_id=" . $auction->userId . "][B]" . $seller . "[/B][/page] gewonnen:\n\nRohstoffe:\n" . RES_METAL . ": " . StringUtils::formatNumber($auction->sell0) . "\n" . RES_CRYSTAL . ": " . StringUtils::formatNumber($auction->sell1) . "\n" . RES_PLASTIC . ": " . StringUtils::formatNumber($auction->sell2) . "\n" . RES_FUEL . ": " . StringUtils::formatNumber($auction->sell3) . "\n" . RES_FOOD . ": " . StringUtils::formatNumber($auction->sell4) . "\n\nDies hat ihn folgende Rohstoffe gekostet:\n" . RES_METAL . ": " . $newBuyResource->metal . "\n" . RES_CRYSTAL . ": " . $newBuyResource->crystal . "\n" . RES_PLASTIC . ": " . $newBuyResource->plastic . "\n" . RES_FUEL . ": " . $newBuyResource->fuel . "\n" . RES_FOOD . ": " . $newBuyResource->food . "");
                 }
 
                 // Log schreiben
                 //// TODO
-                //					Log::add(7, Log::INFO, "Es wurde folgende Auktion erfolgreich beendet: Der Spieler ".$cu->nick." hat vom Spieler ".$partner_user_nick."  folgende Waren ersteigert:\n\nRohstoffe:\n".RES_METAL.": ".nf($arr['auction_sell_metal'])."\n".RES_CRYSTAL.": ".nf($arr['auction_sell_crystal'])."\n".RES_PLASTIC.": ".nf($arr['auction_sell_plastic'])."\n".RES_FUEL.": ".nf($arr['auction_sell_fuel'])."\n".RES_FOOD.": ".nf($arr['auction_sell_food'])."\n\nDies hat ihn folgende Rohstoffe gekostet:".RES_METAL.": ".nf($_POST['auction_new_buy_metal'])."\n".RES_CRYSTAL.": ".nf($_POST['auction_new_buy_crystal'])."\n".RES_PLASTIC.": ".nf($_POST['auction_new_buy_plastic'])."\n".RES_FUEL.": ".nf($_POST['auction_new_buy_fuel'])."\n".RES_FOOD.": ".nf($_POST['auction_new_buy_food'])."\n\nDie Auktion wird nach ".AUCTION_DELAY_TIME." Stunden gel&ouml;scht",time());
+                //					Log::add(7, Log::INFO, "Es wurde folgende Auktion erfolgreich beendet: Der Spieler ".$cu->nick." hat vom Spieler ".$partner_user_nick."  folgende Waren ersteigert:\n\nRohstoffe:\n".RES_METAL.": ".StringUtils::formatNumber($arr['auction_sell_metal'])."\n".RES_CRYSTAL.": ".StringUtils::formatNumber($arr['auction_sell_crystal'])."\n".RES_PLASTIC.": ".StringUtils::formatNumber($arr['auction_sell_plastic'])."\n".RES_FUEL.": ".StringUtils::formatNumber($arr['auction_sell_fuel'])."\n".RES_FOOD.": ".StringUtils::formatNumber($arr['auction_sell_food'])."\n\nDies hat ihn folgende Rohstoffe gekostet:".RES_METAL.": ".StringUtils::formatNumber($_POST['auction_new_buy_metal'])."\n".RES_CRYSTAL.": ".StringUtils::formatNumber($_POST['auction_new_buy_crystal'])."\n".RES_PLASTIC.": ".StringUtils::formatNumber($_POST['auction_new_buy_plastic'])."\n".RES_FUEL.": ".StringUtils::formatNumber($_POST['auction_new_buy_fuel'])."\n".RES_FOOD.": ".StringUtils::formatNumber($_POST['auction_new_buy_food'])."\n\nDie Auktion wird nach ".AUCTION_DELAY_TIME." Stunden gel&ouml;scht",time());
 
 
                 success_msg("Gratulation, du hast die Auktion gewonnen, da du den maximal Betrag geboten hast!");

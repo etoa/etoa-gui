@@ -8,6 +8,7 @@ use EtoA\Fleet\FleetRepository;
 use EtoA\Fleet\FleetSearchParameters;
 use EtoA\Specialist\SpecialistDataRepository;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Support\StringUtils;
 use EtoA\Technology\TechnologyRepository;
 use EtoA\UI\ResourceBoxDrawer;
 use EtoA\Universe\Planet\PlanetRepository;
@@ -96,7 +97,7 @@ if (isset($_POST['submit_engage']) && isset($_POST['engage'])) {
         }
     } else {
         error_msg('Es ist bereits ein Spezialist eingestellt.
-        Seine Anstellung dauert noch bis ' . df($cu->specialistTime) . '.
+        Seine Anstellung dauert noch bis ' . StringUtils::formatDate($cu->specialistTime) . '.
         Du musst warten bis seine Anstellung beendet ist!');
     }
 }
@@ -213,10 +214,10 @@ if ($cu->specialistId > 0 && $cu->specialistTime > $t) {
     </tr>';
     echo '<tr>
     <td>' . $specialist->name . '</td>
-    <td>' . df($cu->specialistTime) . '</td>
+    <td>' . StringUtils::formatDate($cu->specialistTime) . '</td>
     <td id="countDownElem">';
     if ($cu->specialistTime - $t > 0)
-        echo tf($cu->specialistTime - $t);
+        echo StringUtils::formatTimespan($cu->specialistTime - $t);
     else
         echo 'Anstellung abgelaufen!';
     echo '</td>
@@ -264,7 +265,7 @@ foreach ($specialists as $specialist) {
     echo '<tr>';
     echo '<th style="width:140px;">' . $specialist->name . '</th>';
     echo '<td>';
-    echo nf($specialist->pointsRequirement);
+    echo StringUtils::formatNumber($specialist->pointsRequirement);
     echo '</td>';
     echo '<td>';
     echo $specialist->days . ' Tage';
@@ -273,11 +274,11 @@ foreach ($specialists as $specialist) {
     echo $avail . " / " . $totAvail;
     echo '</td>';
     echo '<td style="width:150px;">';
-    echo RES_ICON_METAL . nf($specialist->costsMetal * $factor) . ' ' . RES_METAL . '<br style="clear:both;"/>';
-    echo RES_ICON_CRYSTAL . nf($specialist->costsCrystal * $factor) . ' ' . RES_CRYSTAL . '<br style="clear:both;"/>';
-    echo RES_ICON_PLASTIC . nf($specialist->costsPlastic * $factor) . ' ' . RES_PLASTIC . '<br style="clear:both;"/>';
-    echo RES_ICON_FUEL . nf($specialist->costsFuel * $factor) . ' ' . RES_FUEL . '<br style="clear:both;"/>';
-    echo RES_ICON_FOOD . nf($specialist->costsFood * $factor) . ' ' . RES_FOOD . '<br style="clear:both;"/>';
+    echo RES_ICON_METAL . StringUtils::formatNumber($specialist->costsMetal * $factor) . ' ' . RES_METAL . '<br style="clear:both;"/>';
+    echo RES_ICON_CRYSTAL . StringUtils::formatNumber($specialist->costsCrystal * $factor) . ' ' . RES_CRYSTAL . '<br style="clear:both;"/>';
+    echo RES_ICON_PLASTIC . StringUtils::formatNumber($specialist->costsPlastic * $factor) . ' ' . RES_PLASTIC . '<br style="clear:both;"/>';
+    echo RES_ICON_FUEL . StringUtils::formatNumber($specialist->costsFuel * $factor) . ' ' . RES_FUEL . '<br style="clear:both;"/>';
+    echo RES_ICON_FOOD . StringUtils::formatNumber($specialist->costsFood * $factor) . ' ' . RES_FOOD . '<br style="clear:both;"/>';
     echo '</td>';
     if (!$s_active) {
         echo '<td>';

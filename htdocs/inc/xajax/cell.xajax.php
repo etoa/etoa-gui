@@ -1,5 +1,6 @@
 <?PHP
 
+use EtoA\Support\StringUtils;
 use EtoA\User\UserPropertiesRepository;
 
 $xajax->register(XAJAX_FUNCTION, 'launchSypProbe');
@@ -35,7 +36,7 @@ function launchSypProbe($tid)
                                         $flObj = new Fleet($fid);
 
 
-                                        $str = "$probeCount Spionagesonden unterwegs. Ankunft in " . tf($flObj->remainingTime());
+                                        $str = "$probeCount Spionagesonden unterwegs. Ankunft in " . StringUtils::formatTimespan($flObj->remainingTime());
                                         $launched = true;
                                     } else
                                         $str = $fleet->error();
@@ -102,7 +103,7 @@ function launchAnalyzeProbe($tid)
                                         $flObj = new Fleet($fid);
 
 
-                                        $str = "$probeCount Analysatoren unterwegs. Ankunft in " . tf($flObj->remainingTime());
+                                        $str = "$probeCount Analysatoren unterwegs. Ankunft in " . StringUtils::formatTimespan($flObj->remainingTime());
                                         $launched = true;
                                     } else
                                         $str = $fleet->error();
@@ -173,7 +174,7 @@ function launchExplorerProbe($tcid)
                                             $flObj = new Fleet($fid);
 
 
-                                            $str = "$probeCount Explorer unterwegs. Ankunft in " . tf($flObj->remainingTime());
+                                            $str = "$probeCount Explorer unterwegs. Ankunft in " . StringUtils::formatTimespan($flObj->remainingTime());
                                             $launched = true;
                                         } else
                                             $str = $fleet->error();

@@ -1,5 +1,6 @@
 <?PHP
 
+use EtoA\Support\StringUtils;
 use EtoA\Universe\Star\SolarTypeRepository;
 
 /** @var SolarTypeRepository $solarTypeRepository */
@@ -47,15 +48,15 @@ foreach ($solarTypes as $solarType) {
                 <img src=\"" . IMAGE_PATH . "/stars/star" . $solarType->id . "_small." . IMAGE_EXT . "\" width=\"40\" height=\"40\" alt=\"Stern\"/></a></td>";
 
     echo "<td " . tm($solarType->name, $solarType->comment) . "><b>" . $solarType->name . "</b></td>";
-    echo "<td>" . get_percent_string($solarType->metal, 1) . "</td>";
-    echo "<td>" . get_percent_string($solarType->crystal, 1) . "</td>";
-    echo "<td>" . get_percent_string($solarType->plastic, 1) . "</td>";
-    echo "<td>" . get_percent_string($solarType->fuel, 1) . "</td>";
-    echo "<td>" . get_percent_string($solarType->food, 1) . "</td>";
-    echo "<td>" . get_percent_string($solarType->power, 1) . "</td>";
-    echo "<td>" . get_percent_string($solarType->people, 1) . "</td>";
-    echo "<td>" . get_percent_string($solarType->researchTime, 1, 1) . "</td>";
-    echo "<td>" . get_percent_string($solarType->buildTime, 1, 1) . "</td>";
+    echo "<td>" . StringUtils::formatPercentString($solarType->metal, true) . "</td>";
+    echo "<td>" . StringUtils::formatPercentString($solarType->crystal, true) . "</td>";
+    echo "<td>" . StringUtils::formatPercentString($solarType->plastic, true) . "</td>";
+    echo "<td>" . StringUtils::formatPercentString($solarType->fuel, true) . "</td>";
+    echo "<td>" . StringUtils::formatPercentString($solarType->food, true) . "</td>";
+    echo "<td>" . StringUtils::formatPercentString($solarType->power, true) . "</td>";
+    echo "<td>" . StringUtils::formatPercentString($solarType->people, true) . "</td>";
+    echo "<td>" . StringUtils::formatPercentString($solarType->researchTime, true, true) . "</td>";
+    echo "<td>" . StringUtils::formatPercentString($solarType->buildTime, true, true) . "</td>";
     echo "</tr>";
 }
 tableEnd();

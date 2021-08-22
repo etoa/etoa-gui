@@ -8,6 +8,8 @@ use EtoA\Defense\DefenseRepository;
 use EtoA\Fleet\FleetRepository;
 use EtoA\Ship\ShipDataRepository;
 use EtoA\Ship\ShipRepository;
+use EtoA\Support\BBCodeUtils;
+use EtoA\Support\StringUtils;
 use EtoA\Technology\TechnologyDataRepository;
 use EtoA\Technology\TechnologyRepository;
 use EtoA\UI\ResourceBoxDrawer;
@@ -82,7 +84,7 @@ if (isset($cp)) {
                 echo "</form>";
             } else {
                 echo "Die Kolonie kann wegen eines kürzlich stattgefundenen Besitzerwechsels<br/>
-                erst ab <b>" . df($threshold) . "</b> gelöscht werden!<br/><br/>
+                erst ab <b>" . StringUtils::formatDate($threshold) . "</b> gelöscht werden!<br/><br/>
                 <input type=\"button\" value=\"Zurück\" onclick=\"document.location='?page=$page'\" />";
             }
         } else {
@@ -117,7 +119,7 @@ if (isset($cp)) {
                 }
             } else {
                 echo "Die Kolonie kann wegen eines kürzlich stattgefundenen Besitzerwechsels<br/>
-                erst ab <b>" . df($threshold) . "</b> gelöscht werden!<br/><br/>
+                erst ab <b>" . StringUtils::formatDate($threshold) . "</b> gelöscht werden!<br/><br/>
                 <input type=\"button\" value=\"Zurück\" onclick=\"document.location='?page=$page'\" />";
             }
         } else {
@@ -141,7 +143,7 @@ if (isset($cp)) {
                     echo "</form>";
                 } else {
                     echo "Die Kolonie kann wegen eines kürzlich stattgefundenen Besitzerwechsels<br/>
-                    erst ab <b>" . df($threshold) . "</b> zu deinem Hauptplaneten gemacht werden!<br/><br/>
+                    erst ab <b>" . StringUtils::formatDate($threshold) . "</b> zu deinem Hauptplaneten gemacht werden!<br/><br/>
                     <input type=\"button\" value=\"Zurück\" onclick=\"document.location='?page=$page'\" />";
                 }
             } else {
@@ -177,7 +179,7 @@ if (isset($cp)) {
                 }
             } else {
                 echo "Die Kolonie kann wegen eines kürzlich stattgefundenen Besitzerwechsels<br/>
-                erst ab <b>" . df($threshold) . "</b> zu deinem Hauptplaneten gemacht werden!<br/><br/>
+                erst ab <b>" . StringUtils::formatDate($threshold) . "</b> zu deinem Hauptplaneten gemacht werden!<br/><br/>
                 <input type=\"button\" value=\"Zurück\" onclick=\"document.location='?page=$page'\" />";
             }
         } else {
@@ -193,7 +195,7 @@ if (isset($cp)) {
             if ($request->request->get('planet_name', '') != '') {
                 $planetRepo->setNameAndComment(
                     $planet->id,
-                    stripBBCode($request->request->get('planet_name')),
+                    BBCodeUtils::removeBBCode($request->request->get('planet_name')),
                     $request->request->get('planet_desc')
                 );
                 if ($request->request->get('planet_name') !== $planet->name) {
@@ -246,18 +248,18 @@ if (isset($cp)) {
         <img src=\"" . $planetService->imagePath($planet, 'b') . "\" style=\"width:220px;height:220px;\" alt=\"Planet\" /></div>";
         echo "<div class=\"planetOverviewName\"><a href=\"javascript:;\" onclick=\"showTab('tabName')\">" . $planet->name . "</a></div>";
         echo "<div class=\"planetOverviewList\">
-        <div class=\"planetOverviewItem\">Grösse</div> " . nf($config->getInt('field_squarekm') * $planet->fields) . " km&sup2;<br style=\"clear:left;\"/>
+        <div class=\"planetOverviewItem\">Grösse</div> " . StringUtils::formatNumber($config->getInt('field_squarekm') * $planet->fields) . " km&sup2;<br style=\"clear:left;\"/>
         <div class=\"planetOverviewItem\">Temperatur</div>	" . $planet->tempFrom . " &deg;C bis " . $planet->tempTo . " &deg;C <br style=\"clear:left;\"/>
         <div class=\"planetOverviewItem\">System</div> <a href=\"?page=cell&amp;id=" . $cp->cellId() . "&amp;hl=" . $planet->id . "\">" . $cp->getSectorSolsys() . "</a> (Position " . $cp->pos . ")<br style=\"clear:left;\"/>
         <div class=\"planetOverviewItem\">Kennung</div> <a href=\"?page=entity&amp;id=" . $planet->id . "\">" . $planet->id . "</a><br style=\"clear:left;\"/>
         <div class=\"planetOverviewItem\">Stern</div> " . helpLink("stars", $cp->starTypeName) . "<br style=\"clear:left;\"/>
         <div class=\"planetOverviewItem\">Planetentyp</div> " . helpLink("planets", $cp->type()) . "<br style=\"clear:left;\"/>
-        <div class=\"planetOverviewItem\">Felder</div> <a href=\"javascript:;\" onclick=\"showTab('tabFields')\">" . nf($planet->fieldsUsed) . " von " . (nf($planet->fields)) . " benutzt</a> (" . round($planet->fieldsUsed / $planet->fields * 100) . "%)<br style=\"clear:left;\"/>";
+        <div class=\"planetOverviewItem\">Felder</div> <a href=\"javascript:;\" onclick=\"showTab('tabFields')\">" . StringUtils::formatNumber($planet->fieldsUsed) . " von " . (StringUtils::formatNumber($planet->fields)) . " benutzt</a> (" . round($planet->fieldsUsed / $planet->fields * 100) . "%)<br style=\"clear:left;\"/>";
         if ($planet->hasDebrisField()) {
             echo "<div class=\"planetOverviewItem\">Trümmerfeld</div>
-            <span class=\"resmetal\">" . nf($planet->wfMetal, 0, 1) . "</span>
-            <span class=\"rescrystal\">" . nf($planet->wfCrystal, 0, 1) . "</span>
-            <span class=\"resplastic\">" . nf($planet->wfPlastic, 0, 1) . "</span>
+            <span class=\"resmetal\">" . StringUtils::formatNumber($planet->wfMetal, false, true) . "</span>
+            <span class=\"rescrystal\">" . StringUtils::formatNumber($planet->wfCrystal, false, true) . "</span>
+            <span class=\"resplastic\">" . StringUtils::formatNumber($planet->wfPlastic, false, true) . "</span>
             <br style=\"clear:left;\"/>";
         }
         if (filled($planet->description)) {
@@ -298,7 +300,7 @@ if (isset($cp)) {
         echo "<tr>
         <tr><td colspan=\"2\">
         <img src=\"misc/progress.image.php?r=1&w=650&p=" . round($planet->fieldsUsed / $planet->fields * 100) . "\" alt=\"progress\" style=\"width:100%;\"/>
-        <br/>Benutzt: " . $planet->fieldsUsed . ", Total: " . nf($planet->fields) . " = " . nf($cp->fieldsBase) . " Basisfelder + " . nf($planet->fieldsExtra) . " zusätzliche Felder<br/></td></tr>
+        <br/>Benutzt: " . $planet->fieldsUsed . ", Total: " . StringUtils::formatNumber($planet->fields) . " = " . StringUtils::formatNumber($cp->fieldsBase) . " Basisfelder + " . StringUtils::formatNumber($planet->fieldsExtra) . " zusätzliche Felder<br/></td></tr>
         <tr><td style=\"width:50%;vertical-align:top;padding:5px;\">";
         tableStart("Gebäude", '100%');
 
@@ -314,11 +316,11 @@ if (isset($cp)) {
                 $building = $buildings[$buildingId];
                 echo "<tr><th>" . $building->name . "</th>";
                 echo "<td>" . $buildingLevel . "</td>";
-                echo "<td>" . nf($buildingLevel * $building->fields) . "</td></tr>";
+                echo "<td>" . StringUtils::formatNumber($buildingLevel * $building->fields) . "</td></tr>";
                 $fcnt += $buildingLevel * $building->fields;
             }
             unset($v);
-            echo "<tr><th colspan=\"2\">Total</th><td>" . nf($fcnt) . "</td></tr>";
+            echo "<tr><th colspan=\"2\">Total</th><td>" . StringUtils::formatNumber($fcnt) . "</td></tr>";
         } else
             echo "<tr><td><i>Keine Gebäude vorhanden!</i></td></tr>";
         tableEnd();
@@ -333,11 +335,11 @@ if (isset($cp)) {
             foreach ($defenseCounts as $defenseId => $count) {
                 echo "<tr><th>" . $defenses[$defenseId]->name . "</th>";
                 echo "<td>" . $count . "</td>";
-                echo "<td>" . nf($count * $defenses[$defenseId]->fields) . "</td></tr>";
+                echo "<td>" . StringUtils::formatNumber($count * $defenses[$defenseId]->fields) . "</td></tr>";
                 $dfcnt += $count * $defenses[$defenseId]->fields;
             }
 
-            echo "<tr><th colspan=\"2\">Total</th><td>" . nf($dfcnt) . "</td></tr>";
+            echo "<tr><th colspan=\"2\">Total</th><td>" . StringUtils::formatNumber($dfcnt) . "</td></tr>";
         } else
             echo "<tr><td><i>Keine Verteidigungsanlagen vorhanden!</i></td></tr>";
         tableEnd();
@@ -390,47 +392,47 @@ if (isset($cp)) {
             echo "<tr><th><b>Einheit</b></th><th>Grundwerte</th><th>Aktuelle Werte</th></tr>";
             echo "<tr>
                     <td><b>Struktur:</b></td>
-                    <td>" . nf($totalStructure) . "</td>
-                    <td>" . nf($totalStructure * ($structure_tech_a + $bonusStructure));
+                    <td>" . StringUtils::formatNumber($totalStructure) . "</td>
+                    <td>" . StringUtils::formatNumber($totalStructure * ($structure_tech_a + $bonusStructure));
             if ($structure_tech_a > 1) {
-                echo " (" . get_percent_string($structure_tech_a, 1) . " durch " . $techNames[STRUCTURE_TECH_ID] . " " . $structure_tech_level;
+                echo " (" . StringUtils::formatPercentString($structure_tech_a, true) . " durch " . $techNames[STRUCTURE_TECH_ID] . " " . $structure_tech_level;
                 if ($bonusStructure > 0)
-                    echo ", " . get_percent_string((1 + $bonusStructure), 1) . " durch Spezialschiffe";
+                    echo ", " . StringUtils::formatPercentString((1 + $bonusStructure), true) . " durch Spezialschiffe";
                 echo ")";
             }
             echo "</td></tr>";
             echo "<tr><td><b>Schilder:</b></td>
-                    <td>" . nf($totalShield) . "</td>
-                    <td>" . nf($totalShield * ($shield_tech_a + $bonusShield));
+                    <td>" . StringUtils::formatNumber($totalShield) . "</td>
+                    <td>" . StringUtils::formatNumber($totalShield * ($shield_tech_a + $bonusShield));
             if ($shield_tech_a > 1) {
-                echo " (" . get_percent_string($shield_tech_a, 1) . " durch " . $techNames[SHIELD_TECH_ID] . " " . $shield_tech_level;
+                echo " (" . StringUtils::formatPercentString($shield_tech_a, true) . " durch " . $techNames[SHIELD_TECH_ID] . " " . $shield_tech_level;
                 if ($bonusShield > 0)
-                    echo ", " . get_percent_string((1 + $bonusShield), 1) . " durch Spezialschiffe";
+                    echo ", " . StringUtils::formatPercentString((1 + $bonusShield), true) . " durch Spezialschiffe";
                 echo ")";
             }
             echo "</td></tr>";
             echo "<tr><td><b>Waffen:</b></td>
-                    <td>" . nf($totalWeapon) . "</td>
-                    <td>" . nf($totalWeapon * ($weapon_tech_a + $bonusWeapon));
+                    <td>" . StringUtils::formatNumber($totalWeapon) . "</td>
+                    <td>" . StringUtils::formatNumber($totalWeapon * ($weapon_tech_a + $bonusWeapon));
             if ($weapon_tech_a > 1) {
-                echo " (" . get_percent_string($weapon_tech_a, 1) . " durch " . $techNames[WEAPON_TECH_ID] . " " . $weapon_tech_level;
+                echo " (" . StringUtils::formatPercentString($weapon_tech_a, true) . " durch " . $techNames[WEAPON_TECH_ID] . " " . $weapon_tech_level;
                 if ($bonusWeapon > 0)
-                    echo ", " . get_percent_string((1 + $bonusWeapon), 1) . " durch Spezialschiffe";
+                    echo ", " . StringUtils::formatPercentString((1 + $bonusWeapon), true) . " durch Spezialschiffe";
                 echo ")";
             }
             echo "</td></tr>";
             echo "<tr><td><b>Reparatur:</b></td>
-                    <td>" . nf($totalHeal) . "</td>
-                    <td>" . nf($totalHeal * ($heal_tech_a + $bonusHeal));
+                    <td>" . StringUtils::formatNumber($totalHeal) . "</td>
+                    <td>" . StringUtils::formatNumber($totalHeal * ($heal_tech_a + $bonusHeal));
             if ($heal_tech_a > 1) {
-                echo " (" . get_percent_string($heal_tech_a, 1) . " durch " . $techNames[REGENA_TECH_ID] . " " . $heal_tech_level;
+                echo " (" . StringUtils::formatPercentString($heal_tech_a, true) . " durch " . $techNames[REGENA_TECH_ID] . " " . $heal_tech_level;
                 if ($bonusHeal > 0)
-                    echo ", " . get_percent_string((1 + $bonusHeal), 1) . " durch Spezialschiffe";
+                    echo ", " . StringUtils::formatPercentString((1 + $bonusHeal), true) . " durch Spezialschiffe";
                 echo ")";
             }
             echo "</td></tr>";
             echo "<tr><td><b>Anzahl Schiffe:</b></td>
-            <td colspan=\"2\">" . nf(array_sum($shipCounts)) . "</td></tr>";
+            <td colspan=\"2\">" . StringUtils::formatNumber(array_sum($shipCounts)) . "</td></tr>";
         } else {
             echo "<tr><td><i>Keine Schiffe vorhanden!</i></td></tr>";
         }
@@ -443,8 +445,8 @@ if (isset($cp)) {
         foreach (array_unique(array_merge(array_keys($bunkerCounts), array_keys($shipCounts))) as $shipId) {
             echo "<tr>
                 <td>" . $shipNames[$shipId] . "</td>
-                <td>" . nf($shipCounts[$shipId] ?? 0) . "</td>
-                <td>" . nf($bunkerCounts[$shipId] ?? 0) . "</td>
+                <td>" . StringUtils::formatNumber($shipCounts[$shipId] ?? 0) . "</td>
+                <td>" . StringUtils::formatNumber($bunkerCounts[$shipId] ?? 0) . "</td>
                 </tr>";
         }
         unset($v);
@@ -485,47 +487,47 @@ if (isset($cp)) {
             echo "<tr><th><b>Einheit</b></th><th>Grundwerte</th><th>Aktuelle Werte</th></tr>";
             echo "<tr>
                     <td><b>Struktur:</b></td>
-                    <td>" . nf($totalStructure) . "</td>
-                    <td>" . nf($totalStructure * ($structure_tech_a + $bonusStructure));
+                    <td>" . StringUtils::formatNumber($totalStructure) . "</td>
+                    <td>" . StringUtils::formatNumber($totalStructure * ($structure_tech_a + $bonusStructure));
             if ($structure_tech_a > 1) {
-                echo " (" . get_percent_string($structure_tech_a, 1) . " durch " . $techNames[STRUCTURE_TECH_ID] . " " . $structure_tech_level;
+                echo " (" . StringUtils::formatPercentString($structure_tech_a, true) . " durch " . $techNames[STRUCTURE_TECH_ID] . " " . $structure_tech_level;
                 if ($bonusStructure > 0)
-                    echo ", " . get_percent_string((1 + $bonusStructure), 1) . " durch Spezialschiffe";
+                    echo ", " . StringUtils::formatPercentString((1 + $bonusStructure), true) . " durch Spezialschiffe";
                 echo ")";
             }
             echo "</td></tr>";
             echo "<tr><td><b>Schilder:</b></td>
-                    <td>" . nf($totalShield) . "</td>
-                    <td>" . nf($totalShield * ($shield_tech_a + $bonusShield));
+                    <td>" . StringUtils::formatNumber($totalShield) . "</td>
+                    <td>" . StringUtils::formatNumber($totalShield * ($shield_tech_a + $bonusShield));
             if ($shield_tech_a > 1) {
-                echo " (" . get_percent_string($shield_tech_a, 1) . " durch " . $techNames[SHIELD_TECH_ID] . " " . $shield_tech_level;
+                echo " (" . StringUtils::formatPercentString($shield_tech_a, true) . " durch " . $techNames[SHIELD_TECH_ID] . " " . $shield_tech_level;
                 if ($bonusShield > 0)
-                    echo ", " . get_percent_string((1 + $bonusShield), 1) . " durch Spezialschiffe";
+                    echo ", " . StringUtils::formatPercentString((1 + $bonusShield), true) . " durch Spezialschiffe";
                 echo ")";
             }
             echo "</td></tr>";
             echo "<tr><td><b>Waffen:</b></td>
-                    <td>" . nf($totalWeapon) . "</td>
-                    <td>" . nf($totalWeapon * ($weapon_tech_a + $bonusWeapon));
+                    <td>" . StringUtils::formatNumber($totalWeapon) . "</td>
+                    <td>" . StringUtils::formatNumber($totalWeapon * ($weapon_tech_a + $bonusWeapon));
             if ($weapon_tech_a > 1) {
-                echo " (" . get_percent_string($weapon_tech_a, 1) . " durch " . $techNames[WEAPON_TECH_ID] . " " . $weapon_tech_level;
+                echo " (" . StringUtils::formatPercentString($weapon_tech_a, true) . " durch " . $techNames[WEAPON_TECH_ID] . " " . $weapon_tech_level;
                 if ($bonusWeapon > 0)
-                    echo ", " . get_percent_string((1 + $bonusWeapon), 1) . " durch Spezialschiffe";
+                    echo ", " . StringUtils::formatPercentString((1 + $bonusWeapon), true) . " durch Spezialschiffe";
                 echo ")";
             }
             echo "</td></tr>";
             echo "<tr><td><b>Reparatur:</b></td>
-                    <td>" . nf($totalHeal) . "</td>
-                    <td>" . nf($totalHeal * ($heal_tech_a + $bonusHeal));
+                    <td>" . StringUtils::formatNumber($totalHeal) . "</td>
+                    <td>" . StringUtils::formatNumber($totalHeal * ($heal_tech_a + $bonusHeal));
             if ($heal_tech_a > 1) {
-                echo " (" . get_percent_string($heal_tech_a, 1) . " durch " . $techNames[REGENA_TECH_ID] . " " . $heal_tech_level;
+                echo " (" . StringUtils::formatPercentString($heal_tech_a, true) . " durch " . $techNames[REGENA_TECH_ID] . " " . $heal_tech_level;
                 if ($bonusHeal > 0)
-                    echo ", " . get_percent_string((1 + $bonusHeal), 1) . " durch Spezialschiffe";
+                    echo ", " . StringUtils::formatPercentString((1 + $bonusHeal), true) . " durch Spezialschiffe";
                 echo ")";
             }
             echo "</td></tr>";
             echo "<tr><td><b>Anzahl Anlagen:</b></td>
-            <td colspan=\"2\">" . nf(array_sum($defenseCounts)) . "</td></tr>";
+            <td colspan=\"2\">" . StringUtils::formatNumber(array_sum($defenseCounts)) . "</td></tr>";
         } else {
             echo "<tr><td><i>Keine Verteidigung vorhanden!</i></td></tr>";
         }
@@ -536,8 +538,8 @@ if (isset($cp)) {
         foreach ($defenseCounts as $defenseId => $defenseCount) {
             echo "<tr>
                 <td>" . $defenses[$defenseId]->name . "</td>
-                <td>" . nf($defenseCount) . "</td>
-                <td>" . nf($defenseCount * $defenses[$defenseId]->fields) . "</td>
+                <td>" . StringUtils::formatNumber($defenseCount) . "</td>
+                <td>" . StringUtils::formatNumber($defenseCount * $defenses[$defenseId]->fields) . "</td>
                 </tr>";
         }
         unset($v);

@@ -1,5 +1,6 @@
 <?PHP
 
+use EtoA\Support\StringUtils;
 use EtoA\User\UserWarningRepository;
 
 echo "<h1>Einstellungen</h1>";
@@ -69,7 +70,7 @@ elseif ($mode == 'warnings') {
         foreach ($warnings as $warning) {
             echo "<tr>
                                 <td>" . stripslashes(nl2br($warning->text)) . "</td>
-                                <td>" . df($warning->date) . "</td>
+                                <td>" . StringUtils::formatDate($warning->date) . "</td>
                                 <td><a href=\"?page=contact&rcpt=" . $warning->adminId . "\">" . $warning->adminNick . "</a>
                                 </td>
                             </tr>";

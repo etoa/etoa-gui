@@ -225,3 +225,8 @@ parameters:
 			count: 1
 			path: src/UI/EntityCoordinatesSelector.php
 
+		-
+			message: "#^Method EtoA\\\\Support\\\\ImageUtils\\:\\:imageCreateFromFile\\(\\) has no return typehint specified\\.$#"
+			count: 1
+			path: src/Support/ImageUtils.php
+

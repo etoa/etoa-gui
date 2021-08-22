@@ -6,6 +6,7 @@ use EtoA\Fleet\FleetRepository;
 use EtoA\Fleet\FleetSearch;
 use EtoA\Log\FleetLogRepository;
 use EtoA\Ship\ShipRepository;
+use EtoA\Support\StringUtils;
 use EtoA\Specialist\SpecialistService;
 use EtoA\Technology\TechnologyRepository;
 use EtoA\Universe\Entity\EntityService;
@@ -184,7 +185,7 @@ class FleetLaunch
             if (null === $fleetControl || $fleetControl->currentLevel === 0) {
                 $this->error = "Der Raumschiffhafen ist noch nicht gebaut.";
             } elseif ($fleetControl->isDeactivated()) {
-                $this->error = "Dieser Raumschiffhafen ist bis " . df($fleetControl->deactivated) . " deaktiviert.";
+                $this->error = "Dieser Raumschiffhafen ist bis " . StringUtils::formatDate($fleetControl->deactivated) . " deaktiviert.";
             } else {
                 /** @var FleetRepository $fleetRepository */
                 $fleetRepository = $app[FleetRepository::class];
@@ -212,7 +213,7 @@ class FleetLaunch
                 }
             }
         } else {
-            $this->error = "Wegen einer Flottensperre können bis " . df($config->param2Int('flightban_time')) . " keine Flotten gestartet werden! " . $config->param1('flightban');
+            $this->error = "Wegen einer Flottensperre können bis " . StringUtils::formatDate($config->param2Int('flightban_time')) . " keine Flotten gestartet werden! " . $config->param1('flightban');
         }
         return $this->havenOk;
     }
@@ -278,7 +279,7 @@ class FleetLaunch
                             }
                         }
                     }
-                    $cnt = min(nf_back($cnt), $arr['shiplist_count']);
+                    $cnt = min(StringUtils::parseFormattedNumber($cnt), $arr['shiplist_count']);
 
                     $this->ships[$sid] = array(
                         "count" => $cnt,
@@ -445,11 +446,11 @@ class FleetLaunch
                     $this->targetOk = true;
                     return $this->targetOk;
                 } else
-                    $this->error = "Zu wenig Laderaum für soviel Treibstoff und Nahrung (" . nf(abs($this->getCapacity())) . " zuviel)!";
+                    $this->error = "Zu wenig Laderaum für soviel Treibstoff und Nahrung (" . StringUtils::formatNumber(abs($this->getCapacity())) . " zuviel)!";
             } else
-                $this->error = "Zuwenig Nahrung! " . nf($this->sourceEntity->resFood()) . " t " . RES_FOOD . " vorhanden, " . nf($this->getCostsFood()) . " t benötigt.";
+                $this->error = "Zuwenig Nahrung! " . StringUtils::formatNumber($this->sourceEntity->resFood()) . " t " . RES_FOOD . " vorhanden, " . StringUtils::formatNumber($this->getCostsFood()) . " t benötigt.";
         } else
-            $this->error = "Zuwenig Treibstoff! " . nf($this->sourceEntity->resFuel()) . " t " . RES_FUEL . " vorhanden, " . nf($this->getCosts()) . " t benötigt.";
+            $this->error = "Zuwenig Treibstoff! " . StringUtils::formatNumber($this->sourceEntity->resFuel()) . " t " . RES_FUEL . " vorhanden, " . StringUtils::formatNumber($this->getCosts()) . " t benötigt.";
         return false;
     }
 
@@ -756,12 +757,12 @@ class FleetLaunch
 
         $battleban = false;
         if ($config->getBoolean("battleban") && $config->param1Int("battleban_time") <= time() && $config->param2Int("battleban_time") > time()) {
-            $this->error = "Kampfsperre von " . df($config->param1Int("battleban_time")) . " bis " . df($config->param2Int("battleban_time")) . ". " . $config->param1("battleban");
+            $this->error = "Kampfsperre von " . StringUtils::formatDate($config->param1Int("battleban_time")) . " bis " . StringUtils::formatDate($config->param2Int("battleban_time")) . ". " . $config->param1("battleban");
             $battleban = true;
         }
 
         if ($config->getBoolean("flightban") && $config->param1Int("flightban_time") <= time() && $config->param2Int("flightban_time") > time()) {
-            $this->error = "Flottensperre von " . df($config->param1Int("flightban_time")) . " bis " . df($config->param2Int("flightban_time")) . ". " . $config->param1("flightban");
+            $this->error = "Flottensperre von " . StringUtils::formatDate($config->param1Int("flightban_time")) . " bis " . StringUtils::formatDate($config->param2Int("flightban_time")) . ". " . $config->param1("flightban");
         } else {
             $noobProtectionErrorAdded = false;
 

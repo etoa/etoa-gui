@@ -17,6 +17,7 @@ use EtoA\Ship\ShipDataRepository;
 use EtoA\Ship\ShipListItemCount;
 use EtoA\Ship\ShipQueueRepository;
 use EtoA\Ship\ShipRepository;
+use EtoA\Support\StringUtils;
 use EtoA\UI\ResourceBoxDrawer;
 use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Planet\PlanetRepository;
@@ -163,11 +164,11 @@ function changeResBox(metal, crystal, plastic, fuel, food)
 if (isset($_POST['storage_submit']) && checker_verify()) {
     // Formatiert Eingaben
     $resources = new BaseResources();
-    $resources->metal = (int) nf_back($_POST['spend_metal']);
-    $resources->crystal = (int) nf_back($_POST['spend_crystal']);
-    $resources->plastic = (int) nf_back($_POST['spend_plastic']);
-    $resources->fuel = (int) nf_back($_POST['spend_fuel']);
-    $resources->food = (int) nf_back($_POST['spend_food']);
+    $resources->metal = StringUtils::parseFormattedNumber($_POST['spend_metal']);
+    $resources->crystal = StringUtils::parseFormattedNumber($_POST['spend_crystal']);
+    $resources->plastic = StringUtils::parseFormattedNumber($_POST['spend_plastic']);
+    $resources->fuel = StringUtils::parseFormattedNumber($_POST['spend_fuel']);
+    $resources->food = StringUtils::parseFormattedNumber($_POST['spend_food']);
 
     // Prüft, ob Rohstoffe angegeben wurden
     if ($resources->getSum() > 0) {
@@ -267,7 +268,7 @@ if (isset($_POST['ship_submit']) && checker_verify()) {
             $to_much = false;
             foreach ($_POST['buy_ship'] as $ship_id => $build_cnt) {
                 // Formatiert die eingegebene Zahl (entfernt z.B. die Trennzeichen)
-                $build_cnt = nf_back($build_cnt);
+                $build_cnt = StringUtils::parseFormattedNumber($build_cnt);
 
                 if ($build_cnt > 0) {
                     // Zählt die Anzahl Schiffe dieses Typs im ganzen Account...
@@ -331,7 +332,7 @@ if (isset($_POST['ship_submit']) && checker_verify()) {
                         $cnt = 0;
                         foreach ($_POST['buy_ship'] as $ship_id => $build_cnt) {
                             // Formatiert die eingegebene Zahl (entfernt z.B. die Trennzeichen)
-                            $build_cnt = (int) nf_back($build_cnt);
+                            $build_cnt = StringUtils::parseFormattedNumber($build_cnt);
 
                             if ($build_cnt > 0) {
                                 $fleetRepository->addShipsToFleet($fleetId, $ship_id, $build_cnt);
@@ -343,7 +344,7 @@ if (isset($_POST['ship_submit']) && checker_verify()) {
                                 }
 
                                 // Listet gewählte Schiffe für Log auf
-                                $log .= "[b]" . $_POST['ship_name_' . $ship_id . ''] . ":[/b] " . nf($build_cnt) . "\n";
+                                $log .= "[b]" . $_POST['ship_name_' . $ship_id . ''] . ":[/b] " . StringUtils::formatNumber($build_cnt) . "\n";
 
                                 $cnt++;
                             }
@@ -352,7 +353,7 @@ if (isset($_POST['ship_submit']) && checker_verify()) {
                         // Zur Allianzgeschichte hinzufügen
                         /** @var AllianceHistoryRepository $allianceHistoryRepository */
                         $allianceHistoryRepository = $app[AllianceHistoryRepository::class];
-                        $allianceHistoryRepository->addEntry((int) $cu->allianceId, "Folgende Schiffe wurden für [b]" . get_user_nick($_POST['user_buy_ship']) . "[/b] hergestellt:\n" . $log . "\n" . nf($ship_costs) . " Teile wurden dafür benötigt.");
+                        $allianceHistoryRepository->addEntry((int) $cu->allianceId, "Folgende Schiffe wurden für [b]" . get_user_nick($_POST['user_buy_ship']) . "[/b] hergestellt:\n" . $log . "\n" . StringUtils::formatNumber($ship_costs) . " Teile wurden dafür benötigt.");
                     } else {
                         error_msg("Der gewählte User hat nicht genügend Teile übrig!");
                     }
@@ -408,11 +409,11 @@ echo "<tr>
                 <th style=\"width:20%;vertical-align:middle;\">" . RES_ICON_FOOD . " " . RES_FOOD . "</th>
             </tr>
             <tr>
-                <td " . $style0 . " id=\"resBoxMetal\">" . nf($cu->alliance->resMetal) . " t</td>
-                <td " . $style1 . " id=\"resBoxCrystal\">" . nf($cu->alliance->resCrystal) . " t</td>
-                <td " . $style2 . "id=\"resBoxPlastic\">" . nf($cu->alliance->resPlastic) . " t</td>
-                <td " . $style3 . "id=\"resBoxFuel\">" . nf($cu->alliance->resFuel) . " t</td>
-                <td " . $style4 . "id=\"resBoxFood\">" . nf($cu->alliance->resFood) . " t</td>
+                <td " . $style0 . " id=\"resBoxMetal\">" . StringUtils::formatNumber($cu->alliance->resMetal) . " t</td>
+                <td " . $style1 . " id=\"resBoxCrystal\">" . StringUtils::formatNumber($cu->alliance->resCrystal) . " t</td>
+                <td " . $style2 . "id=\"resBoxPlastic\">" . StringUtils::formatNumber($cu->alliance->resPlastic) . " t</td>
+                <td " . $style3 . "id=\"resBoxFuel\">" . StringUtils::formatNumber($cu->alliance->resFuel) . " t</td>
+                <td " . $style4 . "id=\"resBoxFood\">" . StringUtils::formatNumber($cu->alliance->resFood) . " t</td>
             </tr>";
 tableEnd();
 
@@ -550,7 +551,7 @@ if (count($buildings) > 0) {
                     $message = "<input type=\"button\" class=\"button\" name=\"storage_submit\" id=\"storage_submit\" value=\"Fehlende Rohstoffe einzahlen\" " . tm("Nicht genügend Rohstoffe", "Es sind nicht genügend Rohstoffe vorhanden!<br>Klick auf den Button um die fehlenden Rohstoffe einzuzahlen.") . " onclick=\"setSpends(" . $need->metal . ", " . $need->crystal . ", " . $need->plastic . ", " . $need->fuel . ", " . $need->food . ");\"/>";
                     foreach ($resName as $id => $resourceName) {
                         if ($need->get($id) > 0) {
-                            $style[$id] = "style=\"color:red;\" " . tm("Fehlender Rohstoff", "" . nf($need->get($id)) . " " . $resourceName . "") . "";
+                            $style[$id] = "style=\"color:red;\" " . tm("Fehlender Rohstoff", "" . StringUtils::formatNumber($need->get($id)) . " " . $resourceName . "") . "";
                         }
                     }
                     break;
@@ -571,12 +572,12 @@ if (count($buildings) > 0) {
                 <th width=\"15%\">" . RES_FOOD . "</th>
             </tr><tr>
                 <td width=\"7%\">" . ($level + 1) . "</th>
-                <td width=\"18%\">" . tf($building->calculateBuildTime($level+ 1)) . "</th>
-                <td " . $style[0] . " width=\"15%\">" . nf($costs->metal) . "</td>
-                <td " . $style[1] . " width=\"15%\">" . nf($costs->crystal) . "</td>
-                <td " . $style[2] . " width=\"15%\">" . nf($costs->plastic) . "</td>
-                <td " . $style[3] . " width=\"15%\">" . nf($costs->fuel) . "</td>
-                <td " . $style[4] . " width=\"15%\">" . nf($costs->food) . "</td>
+                <td width=\"18%\">" . StringUtils::formatTimespan($building->calculateBuildTime($level+ 1)) . "</th>
+                <td " . $style[0] . " width=\"15%\">" . StringUtils::formatNumber($costs->metal) . "</td>
+                <td " . $style[1] . " width=\"15%\">" . StringUtils::formatNumber($costs->crystal) . "</td>
+                <td " . $style[2] . " width=\"15%\">" . StringUtils::formatNumber($costs->plastic) . "</td>
+                <td " . $style[3] . " width=\"15%\">" . StringUtils::formatNumber($costs->fuel) . "</td>
+                <td " . $style[4] . " width=\"15%\">" . StringUtils::formatNumber($costs->food) . "</td>
             </tr>
             <tr>
                 <td colspan=\"7\" style=\"text-align:center;" . $style_message . "\" name=\"build_message_building_" . $building->id . "\" id=\"build_message_building_" . $building->id . "\">" . $message . "</td>";
@@ -662,7 +663,7 @@ if ($allianceResearchLevel > 0 && count($technologies) > 0) {
                     $message = "<input type=\"button\" class=\"button\" name=\"storage_submit\" id=\"storage_submit\" value=\"Fehlende Rohstoffe einzahlen\" " . tm("Nicht genügend Rohstoffe", "Es sind nicht genügend Rohstoffe vorhanden!<br>Klick auf den Button um die fehlenden Rohstoffe einzuzahlen.") . " onclick=\"setSpends(" . $need->metal . ", " . $need->crystal . ", " . $need->plastic . ", " . $need->fuel . ", " . $need->food . ");\"/>";
                     foreach ($resName as $id => $resourceName) {
                         if ($need->get($id) > 0) {
-                            $style[$id] = "style=\"color:red;\" " . tm("Fehlender Rohstoff", "" . nf($need->get($id)) . " " . $resourceName . "") . "";
+                            $style[$id] = "style=\"color:red;\" " . tm("Fehlender Rohstoff", "" . StringUtils::formatNumber($need->get($id)) . " " . $resourceName . "") . "";
                         }
                     }
                     break;
@@ -680,12 +681,12 @@ if ($allianceResearchLevel > 0 && count($technologies) > 0) {
                 <th width=\"15%\">" . RES_FOOD . "</th>
             </tr><tr>
                 <td width=\"7%\">" . ($level + 1) . "</th>
-                <td width=\"18%\">" . tf($technology->calculateBuildTime($level + 1)) . "</th>
-                <td " . $style[0] . " width=\"15%\">" . nf($costs->metal) . "</td>
-                <td " . $style[1] . " width=\"15%\">" . nf($costs->crystal) . "</td>
-                <td " . $style[2] . " width=\"15%\">" . nf($costs->plastic) . "</td>
-                <td " . $style[3] . " width=\"15%\">" . nf($costs->fuel) . "</td>
-                <td " . $style[4] . " width=\"15%\">" . nf($costs->food) . "</td>
+                <td width=\"18%\">" . StringUtils::formatTimespan($technology->calculateBuildTime($level + 1)) . "</th>
+                <td " . $style[0] . " width=\"15%\">" . StringUtils::formatNumber($costs->metal) . "</td>
+                <td " . $style[1] . " width=\"15%\">" . StringUtils::formatNumber($costs->crystal) . "</td>
+                <td " . $style[2] . " width=\"15%\">" . StringUtils::formatNumber($costs->plastic) . "</td>
+                <td " . $style[3] . " width=\"15%\">" . StringUtils::formatNumber($costs->fuel) . "</td>
+                <td " . $style[4] . " width=\"15%\">" . StringUtils::formatNumber($costs->food) . "</td>
             </tr>
             <tr>
                 <td colspan=\"7\" style=\"text-align:center;" . $style_message . "\" name=\"build_message_research_" . $technology->id . "\" id=\"build_message_research_" . $technology->id . "\">" . $message . "</td>";
@@ -725,35 +726,35 @@ tableStart("Rohstoffe einzahlen");
 echo "<tr>
                 <th style=\"width:100px;\">" . RES_METAL . "</th>
                 <td style=\"width:150px;\">
-                    <input type=\"text\" value=\"0\" name=\"spend_metal\" id=\"spend_metal\" size=\"9\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value," . $cp->resMetal . ",'','');\"> <a href=\"javascript:;\" onclick=\"document.getElementById('spend_metal').value='" . nf($cp->resMetal) . "';\">alles</a>
+                    <input type=\"text\" value=\"0\" name=\"spend_metal\" id=\"spend_metal\" size=\"9\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value," . $cp->resMetal . ",'','');\"> <a href=\"javascript:;\" onclick=\"document.getElementById('spend_metal').value='" . StringUtils::formatNumber($cp->resMetal) . "';\">alles</a>
                 </td>
             </tr>";
 // Silizium
 echo "<tr>
                 <th>" . RES_CRYSTAL . "</th>
                 <td>
-                    <input type=\"text\" value=\"0\" name=\"spend_crystal\" id=\"spend_crystal\" size=\"9\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value," . $cp->resCrystal . ",'','');\"> <a href=\"javascript:;\" onclick=\"document.getElementById('spend_crystal').value='" . nf($cp->resCrystal) . "';\">alles</a>
+                    <input type=\"text\" value=\"0\" name=\"spend_crystal\" id=\"spend_crystal\" size=\"9\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value," . $cp->resCrystal . ",'','');\"> <a href=\"javascript:;\" onclick=\"document.getElementById('spend_crystal').value='" . StringUtils::formatNumber($cp->resCrystal) . "';\">alles</a>
                 </td>
             </tr>";
 // PVC
 echo "<tr>
                 <th>" . RES_PLASTIC . "</th>
                 <td>
-                    <input type=\"text\" value=\"0\" name=\"spend_plastic\" id=\"spend_plastic\" size=\"9\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value," . $cp->resPlastic . ",'','');\"> <a href=\"javascript:;\" onclick=\"document.getElementById('spend_plastic').value='" . nf($cp->resPlastic) . "';\">alles</a>
+                    <input type=\"text\" value=\"0\" name=\"spend_plastic\" id=\"spend_plastic\" size=\"9\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value," . $cp->resPlastic . ",'','');\"> <a href=\"javascript:;\" onclick=\"document.getElementById('spend_plastic').value='" . StringUtils::formatNumber($cp->resPlastic) . "';\">alles</a>
                 </td>
             </tr>";
 // Tritium
 echo "<tr>
                 <th>" . RES_FUEL . "</th>
                 <td>
-                    <input type=\"text\" value=\"0\" name=\"spend_fuel\" id=\"spend_fuel\" size=\"9\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value," . $cp->resFuel . ",'','');\"> <a href=\"javascript:;\" onclick=\"document.getElementById('spend_fuel').value='" . nf($cp->resFuel) . "';\">alles</a>
+                    <input type=\"text\" value=\"0\" name=\"spend_fuel\" id=\"spend_fuel\" size=\"9\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value," . $cp->resFuel . ",'','');\"> <a href=\"javascript:;\" onclick=\"document.getElementById('spend_fuel').value='" . StringUtils::formatNumber($cp->resFuel) . "';\">alles</a>
                 </td>
             </tr>";
 // Nahrung
 echo "<tr>
                 <th>" . RES_FOOD . "</th>
                 <td>
-                    <input type=\"text\" value=\"0\" name=\"spend_food\" id=\"spend_food\" size=\"9\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value," . $cp->resFood . ",'','');\"> <a href=\"javascript:;\" onclick=\"document.getElementById('spend_food').value='" . nf($cp->resFood) . "';\">alles</a>
+                    <input type=\"text\" value=\"0\" name=\"spend_food\" id=\"spend_food\" size=\"9\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value," . $cp->resFood . ",'','');\"> <a href=\"javascript:;\" onclick=\"document.getElementById('spend_food').value='" . StringUtils::formatNumber($cp->resFood) . "';\">alles</a>
                 </td>
             </tr>";
 tableEnd();
@@ -847,11 +848,11 @@ if ($sum) {
                         <th style=\"width:20%\">" . RES_FOOD . "</th>
                     </tr>";
         echo "<tr>
-                        <td>" . nf($resources->metal) . "</td>
-                        <td>" . nf($resources->crystal) . "</td>
-                        <td>" . nf($resources->plastic) . "</td>
-                        <td>" . nf($resources->fuel) . "</td>
-                        <td>" . nf($resources->food) . "</td>
+                        <td>" . StringUtils::formatNumber($resources->metal) . "</td>
+                        <td>" . StringUtils::formatNumber($resources->crystal) . "</td>
+                        <td>" . StringUtils::formatNumber($resources->plastic) . "</td>
+                        <td>" . StringUtils::formatNumber($resources->fuel) . "</td>
+                        <td>" . StringUtils::formatNumber($resources->food) . "</td>
                     </tr>";
         tableEnd();
     } else {
@@ -885,7 +886,7 @@ else {
     $spendEntries = $allianceSpendRepository->getSpent($cu->allianceId(), $user, $limit);
     if (count($spendEntries) > 0) {
         foreach ($spendEntries as $entry) {
-            tableStart("" . $cu->alliance->members[$entry->userId] . " - " . df($entry->time) . "");
+            tableStart("" . $cu->alliance->members[$entry->userId] . " - " . StringUtils::formatDate($entry->time) . "");
             echo "<tr>
                             <th style=\"width:20%\">" . RES_METAL . "</th>
                             <th style=\"width:20%\">" . RES_CRYSTAL . "</th>
@@ -894,11 +895,11 @@ else {
                             <th style=\"width:20%\">" . RES_FOOD . "</th>
                         </tr>";
             echo "<tr>
-                            <td>" . nf($entry->metal) . "</td>
-                            <td>" . nf($entry->crystal) . "</td>
-                            <td>" . nf($entry->plastic) . "</td>
-                            <td>" . nf($entry->fuel) . "</td>
-                            <td>" . nf($entry->food) . "</td>
+                            <td>" . StringUtils::formatNumber($entry->metal) . "</td>
+                            <td>" . StringUtils::formatNumber($entry->crystal) . "</td>
+                            <td>" . StringUtils::formatNumber($entry->plastic) . "</td>
+                            <td>" . StringUtils::formatNumber($entry->fuel) . "</td>
+                            <td>" . StringUtils::formatNumber($entry->food) . "</td>
                         </tr>";
             tableEnd();
         }
@@ -991,16 +992,16 @@ if ($allianceShipyardLevel > 0) {
                             <th style=\"width:10%\">Anzahl</th>
                         </tr>
                         <tr>
-                            <td>" . nf($ship->weapon) . "</td>
-                            <td>" . nf($ship->structure) . "</td>
-                            <td>" . nf($ship->shield) . "</td>
-                            <td>" . nf($ship->speed) . " AE/h</td>
-                            <td>" . tf($ship->timeToStart / FLEET_FACTOR_S) . "</td>
-                            <td>" . tf($ship->timeToLand / FLEET_FACTOR_S) . "</td>";
+                            <td>" . StringUtils::formatNumber($ship->weapon) . "</td>
+                            <td>" . StringUtils::formatNumber($ship->structure) . "</td>
+                            <td>" . StringUtils::formatNumber($ship->shield) . "</td>
+                            <td>" . StringUtils::formatNumber($ship->speed) . " AE/h</td>
+                            <td>" . StringUtils::formatTimespan($ship->timeToStart / FLEET_FACTOR_S) . "</td>
+                            <td>" . StringUtils::formatTimespan($ship->timeToLand / FLEET_FACTOR_S) . "</td>";
             if ($ship->maxCount !== 0 && $ship->maxCount <= $ship_count) {
                 echo "<td colspan=\"2\"><i>Maximalanzahl erreicht</i></td>";
             } else {
-                echo "<td>" . nf($ship->allianceCosts * $cost_factor) . " <input type=\"hidden\" value=\"" . $ship->allianceCosts * $cost_factor . "\" id=\"ship_costs_" . $ship->id . "\" name=\"ship_costs_" . $ship->id . "\" /></td>
+                echo "<td>" . StringUtils::formatNumber($ship->allianceCosts * $cost_factor) . " <input type=\"hidden\" value=\"" . $ship->allianceCosts * $cost_factor . "\" id=\"ship_costs_" . $ship->id . "\" name=\"ship_costs_" . $ship->id . "\" /></td>
                             <td>
                                 <input type=\"text\" value=\"0\" name=\"buy_ship[" . $ship->id . "]\" id=\"buy_ship_" . $ship->id . "\" size=\"4\" maxlength=\"6\" onkeyup=\"FormatNumber(this.id,this.value, '', '', '');\"/>";
             }
@@ -1024,7 +1025,7 @@ if ($allianceShipyardLevel > 0) {
     echo "<tr>
                     <td style=\"text-align:center;\">
                         <select id=\"user_buy_ship\" name=\"user_buy_ship\">
-                            <option value=\"" . $cu->id . "\">" . $cu . " (" . nf($cu->allianceShippoints - $ship_costed) . ")</option>
+                            <option value=\"" . $cu->id . "\">" . $cu . " (" . StringUtils::formatNumber($cu->allianceShippoints - $ship_costed) . ")</option>
                         </select><br/><br/>
                     <input type=\"submit\" class=\"button\" name=\"ship_submit\" id=\"ship_submit\" value=\"Schiffe herstellen\" " . tm("Schiffe herstellen", "Stellt aus den vorhandenen Teilen die gewünschten Schiffe für den ausgewählten User her.") . ">
                     </td>

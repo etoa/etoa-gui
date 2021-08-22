@@ -3,6 +3,8 @@
 use EtoA\Alliance\AllianceDiplomacyLevel;
 use EtoA\Alliance\AllianceDiplomacyRepository;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Support\BBCodeUtils;
+use EtoA\Support\StringUtils;
 
 /** @var ConfigurationService $config */
 $config = $app[ConfigurationService::class];
@@ -38,7 +40,7 @@ if ($infoAlly->valid) {
     if ($infoAlly->text != "") {
         echo "<tr>
                         <td colspan=\"2\" style=\"text-align:center;\">
-                            " . text2html($infoAlly->text) . "
+                            " . BBCodeUtils::toHTML($infoAlly->text) . "
                         </td>
                     </tr>";
     }
@@ -62,8 +64,8 @@ if ($infoAlly->valid) {
                                     <td>
                                         <a href=\"?page=$page&amp;id=" . $opAlly->id . "\">" . $opAlly . "</a>
                                     </td>
-                                    <td>" . nf($opAlly->points) . " / " . nf($opAlly->avgPoints) . "</td>
-                                    <td>" . df($diplomacy->date, 0) . " bis " . df($diplomacy->date + WAR_DURATION, 0) . "</td>
+                                    <td>" . StringUtils::formatNumber($opAlly->points) . " / " . StringUtils::formatNumber($opAlly->avgPoints) . "</td>
+                                    <td>" . StringUtils::formatDate($diplomacy->date, false) . " bis " . StringUtils::formatDate($diplomacy->date + WAR_DURATION, false) . "</td>
                                 </tr>";
         }
         echo "</table>
@@ -90,8 +92,8 @@ if ($infoAlly->valid) {
                                     <td>
                                         <a href=\"?page=$page&amp;id=" . $opAlly->id . "\">" . $opAlly . "</a>
                                     </td>
-                                    <td>" . nf($opAlly->points) . " / " . nf($opAlly->avgPoints) . "</td>
-                                    <td>" . df($diplomacy->date, 0) . " bis " . df($diplomacy->date + PEACE_DURATION, 0) . "</td>
+                                    <td>" . StringUtils::formatNumber($opAlly->points) . " / " . StringUtils::formatNumber($opAlly->avgPoints) . "</td>
+                                    <td>" . StringUtils::formatDate($diplomacy->date, false) . " bis " . StringUtils::formatDate($diplomacy->date + PEACE_DURATION, false) . "</td>
                                 </tr>";
         }
         echo "</table>
@@ -118,8 +120,8 @@ if ($infoAlly->valid) {
             echo "<tr>
                                     <td>" . stripslashes($diplomacy->name) . "</td>
                                     <td><a href=\"?page=$page&amp;id=" . $opAlly->id . "\">" . $opAlly . "</a></td>
-                                    <td>" . nf($opAlly->points) . " / " . nf($opAlly->avgPoints) . "</td>
-                                    <td>" . df($diplomacy->date) . "</td>
+                                    <td>" . StringUtils::formatNumber($opAlly->points) . " / " . StringUtils::formatNumber($opAlly->avgPoints) . "</td>
+                                    <td>" . StringUtils::formatDate($diplomacy->date) . "</td>
                                 </tr>";
         }
         echo "</table>
@@ -141,7 +143,7 @@ if ($infoAlly->valid) {
     echo "<tr>
                     <th>Punkte / Durchschnitt:</th>
                     <td>";
-    echo nf($infoAlly->points) . " / " . nf($infoAlly->avgPoints) . "";
+    echo StringUtils::formatNumber($infoAlly->points) . " / " . StringUtils::formatNumber($infoAlly->avgPoints) . "";
     echo "</td>
                 </tr>";
 
@@ -157,7 +159,7 @@ if ($infoAlly->valid) {
     echo "<tr>
                     <th>Gründungsdatum:</th>
                     <td>
-                        " . df($infoAlly->foundationDate) . " (vor " . tf(time() - $infoAlly->foundationDate) . ")
+                        " . StringUtils::formatDate($infoAlly->foundationDate) . " (vor " . StringUtils::formatTimespan(time() - $infoAlly->foundationDate) . ")
                     </td>
                 </tr>";
 
@@ -165,7 +167,7 @@ if ($infoAlly->valid) {
     if ($infoAlly->url != "") {
         echo "<tr>
                         <th>Website/Forum:</th>
-                        <td><b>" . format_link($infoAlly->url) . "</b></td>
+                        <td><b>" . StringUtils::formatLink($infoAlly->url) . "</b></td>
                     </tr>";
     }
 

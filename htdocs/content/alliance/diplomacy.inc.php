@@ -50,6 +50,7 @@ use EtoA\Alliance\AllianceRepository;
 use EtoA\Alliance\AllianceRights;
 use EtoA\Alliance\Board\AllianceBoardTopicRepository;
 use EtoA\Message\MessageRepository;
+use EtoA\Support\BBCodeUtils;
 use EtoA\Support\StringUtils;
 
 if (Alliance::checkActionRights(AllianceRights::RELATIONS)) {
@@ -154,11 +155,11 @@ if (Alliance::checkActionRights(AllianceRights::RELATIONS)) {
                             </tr>";
                     echo "<tr>
                                 <th style=\"width:200px;\">Bündnissname</th>
-                                <td>" . text2html($diplomacy->name) . "</td>
+                                <td>" . BBCodeUtils::toHTML($diplomacy->name) . "</td>
                             </tr>";
                     echo "<tr>
                                 <th style=\"width:200px;\">Text</th>
-                                <td>" . text2html($diplomacy->text) . "</td>
+                                <td>" . BBCodeUtils::toHTML($diplomacy->text) . "</td>
                             </tr>";
                     if ($diplomacy->alliance1Id == $cu->allianceId) {
                         echo "<tr>
@@ -188,7 +189,7 @@ if (Alliance::checkActionRights(AllianceRights::RELATIONS)) {
                             </tr>";
                     echo "<tr>
                                 <th style=\"width:200px;\">Anfragetext</th>
-                                <td>" . text2html($diplomacy->text) . "</td>
+                                <td>" . BBCodeUtils::toHTML($diplomacy->text) . "</td>
                             </tr>";
                     echo "<tr>
                                 <th style=\"width:200px;\">Öffentlicher Text</th>
@@ -206,7 +207,7 @@ if (Alliance::checkActionRights(AllianceRights::RELATIONS)) {
                             </tr>";
                     echo "<tr>
                                 <th style=\"width:200px;\">Kriegserklärung</th>
-                                <td>" . text2html($diplomacy->text) . "</td>
+                                <td>" . BBCodeUtils::toHTML($diplomacy->text) . "</td>
                             </tr>";
                     if ($diplomacy->alliance1Id == $cu->allianceId) {
                         echo "<tr>
@@ -216,7 +217,7 @@ if (Alliance::checkActionRights(AllianceRights::RELATIONS)) {
                     } else {
                         echo "<tr>
                                     <th style=\"width:200px;\">Öffentlicher Text</th>
-                                    <td>" . text2html($diplomacy->publicText) . "</td>
+                                    <td>" . BBCodeUtils::toHTML($diplomacy->publicText) . "</td>
                                 </tr>";
                     }
                     tableEnd();
@@ -456,30 +457,30 @@ if (Alliance::checkActionRights(AllianceRights::RELATIONS)) {
                                 </a>
                             </td>
                             <td>
-                             " . text2html($otherAlliance->name) . "
+                             " . BBCodeUtils::toHTML($otherAlliance->name) . "
                             </td>";
 
                 if (isset($relations[$otherAlliance->id])) {
                     $relation = $relations[$otherAlliance->id];
                     if ($relation->level === AllianceDiplomacyLevel::BND_CONFIRMED) {
                         echo "<td style=\"color:#0f0;\">B&uuml;ndnis</td>";
-                        echo "<td>" . df($relation->date) . "</td>";
+                        echo "<td>" . StringUtils::formatDate($relation->date) . "</td>";
                         echo "<td>" . $relation->name . "</td>";
                     } elseif ($relation->level === AllianceDiplomacyLevel::WAR) {
                         echo "<td style=\"color:#f00;\">Krieg</td>";
-                        echo "<td>" . df($relation->date) . "</td>";
-                        echo "<td>" . df($relation->date + WAR_DURATION) . "</td>";
+                        echo "<td>" . StringUtils::formatDate($relation->date) . "</td>";
+                        echo "<td>" . StringUtils::formatDate($relation->date + WAR_DURATION) . "</td>";
                     } elseif ($relation->level === AllianceDiplomacyLevel::PEACE) {
                         echo "<td style=\"color:#3f9;\">Frieden</td>";
-                        echo "<td>" . df($relation->date) . "</td>";
-                        echo "<td>" . df($relation->date + PEACE_DURATION) . "</td>";
+                        echo "<td>" . StringUtils::formatDate($relation->date) . "</td>";
+                        echo "<td>" . StringUtils::formatDate($relation->date + PEACE_DURATION) . "</td>";
                     } elseif ($relation->level === AllianceDiplomacyLevel::BND_REQUEST) {
                         if ($relation->alliance2Id === $otherAlliance->id) {
                             echo "<td style=\"color:#ff0;\">Anfrage</td>";
                         } else {
                             echo "<td style=\"color:#f90;\">Anfrage an uns</td>";
                         }
-                        echo "<td>" . df($relation->date) . "</td>";
+                        echo "<td>" . StringUtils::formatDate($relation->date) . "</td>";
                         echo "<td>-</td>";
                     } else {
                         echo "<td>-</td>";

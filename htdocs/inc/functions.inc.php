@@ -4,6 +4,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Log\AccessLogRepository;
 use EtoA\Specialist\SpecialistService;
+use EtoA\Support\BBCodeUtils;
 use EtoA\Support\StringUtils;
 use EtoA\User\UserPropertiesRepository;
 use EtoA\User\UserRepository;
@@ -70,154 +71,6 @@ function get_user_nick($id)
     }
 
     return "<i>Unbekannter Benutzer</i>";
-}
-
-/**
- * Format number
- */
-function nf($number, $colorize = 0, $ex = 0)    // Number format
-{
-    if ($ex == 1) {
-        if ($number > 1000000000)
-            $n = round($number / 1000000000, 3) . " G";
-        elseif ($number > 1000000)
-            $n = round($number / 1000000, 3) . " M";
-        elseif ($number > 1000)
-            $n = round($number / 1000, 3) . " K";
-        else
-            $n = round($number, 0);
-        return $n;
-    } else
-        $n = number_format($number, 0, ",", "`");
-    if ($colorize == 1) {
-        if ($number > 0)
-            return "<span style=\"color:#0f0\">" . $n . "</span>";
-        if ($number < 0)
-            return "<span style=\"color:#f00\">" . $n . "</span>";
-    }
-    return $n;
-}
-
-/**
- * Format number (round up)
- */
-function nf_up($number, $colorize = 0, $ex = 0)    // Number format
-{
-    return nf(ceil($number), $colorize, $ex);
-}
-
-/**
- * Convert formated number back to integer
- */
-function nf_back($number, $colorize = 0)
-{
-    $number = str_replace('`', '', $number);
-    $number = str_replace('%', '', $number);
-    $number = intval($number);
-    if ($colorize == 1) {
-        if ($number > 0)
-            return "<span style=\"color:#0f0\">" . number_format($number, 0, ",", ".") . "</span>";
-        if ($number < 0)
-            return "<span style=\"color:#f00\">" . number_format($number, 0, ",", ".") . "</span>";
-    }
-    $number = abs($number);
-    return $number;
-}
-
-/**
- * Convert formated number back to integer (positive & negative number)
- */
-function nf_back_sign($number, $colorize = 0)
-{
-    $number = str_replace('`', '', $number);
-    $number = (float) str_replace('%', '', $number);
-    if ($colorize == 1) {
-        if ($number > 0)
-            return "<span style=\"color:#0f0\">" . number_format($number, 0, ",", ".") . "</span>";
-        if ($number < 0)
-            return "<span style=\"color:#f00\">" . number_format($number, 0, ",", ".") . "</span>";
-    }
-
-    return (int) $number;
-}
-
-/**
- * Format time in seconds to hour,minute,seconds
- */
-function tf($ts)    // Time format
-{
-    $w = floor($ts / 3600 / 24 / 7);
-    $ts -= $w * 3600 * 24 * 7;
-    $t = floor($ts / 3600 / 24);
-    $h = floor(($ts - ($t * 3600 * 24)) / 3600);
-    $m = floor(($ts - ($t * 3600 * 24) - ($h * 3600)) / 60);
-    $s = floor(($ts - ($t * 3600 * 24) - ($h * 3600) - ($m * 60)));
-
-    $str = "";
-    if ($w > 0)
-        $str .= $w . "w ";
-    if ($t > 0)
-        $str .=  $t . "d ";
-    if ($h > 0)
-        $str .=  $h . "h ";
-    if ($m > 0)
-        $str .=  $m . "m ";
-    if ($s > 0)
-        $str .=  $s . "s ";
-
-    return $str;
-}
-
-/**
- * Corrects a web url
- */
-function format_link($string)
-{
-    $string = preg_replace("#([ \n])(http|https|ftp)://([^ ,\n]*)#i", "\\1[url]\\2://\\3[/url]", $string);
-    $string = preg_replace("#([ \n])www\\.([^ ,\n]*)#i", "\\1[url]https://www.\\2[/url]", $string);
-    $string = preg_replace("#^(http|https|ftp)://([^ ,\n]*)#i", "[url]\\1://\\2[/url]", $string);
-    $string = preg_replace("#^www\\.([^ ,\n]*)#i", "[url]https://www.\\1[/url]", $string);
-    $string = preg_replace('#\[url\]www.([^\[]*)\[/url\]#i', '<a href="https://www.\1">\1</a>', $string);
-    $string = preg_replace('#\[url\]([^\[]*)\[/url\]#i', '<a href="\1">\1</a>', $string);
-    $string = preg_replace('#\[mailurl\]([^\[]*)\[/mailurl\]#i', '<a href="\1">Link</a>', $string);
-    return $string;
-}
-
-/**
- * Überprüft ob unerlaubte Zeichen im Text sind und gibt Antwort zurück
- *
- * @todo Should be removed (better use some regex and strip-/addslashes/trim
- */
-function check_illegal_signs($string)
-{
-    if (
-        !stristr($string, "'")
-        && !stristr($string, "<")
-        && !stristr($string, ">")
-        && !stristr($string, "?")
-        && !stristr($string, "\"")
-        && !stristr($string, "$")
-        && !stristr($string, "!")
-        && !stristr($string, "=")
-        && !stristr($string, ";")
-        && !stristr($string, "&")
-    ) {
-        return "";
-    } else {
-        return "&lt; &gt; &apos; &quot; ? ! $ = ; &amp;";
-    }
-}
-
-
-/**
- * Cuts a string by a given length
- */
-function cut_string($string, $num)
-{
-    if (strlen($string) > $num + 3)
-        return substr($string, 0, $num) . "...";
-    else
-        return $string;
 }
 
 /**
@@ -314,7 +167,7 @@ function iBoxEnd()
 function success_msg($text)
 {
     iBoxStart("Erfolg", "success");
-    echo text2html($text);
+    echo BBCodeUtils::toHTML($text);
     iBoxEnd();
 }
 
@@ -326,7 +179,7 @@ function success_msg($text)
 function info_msg($text)
 {
     iBoxStart("Information", "information");
-    echo text2html($text);
+    echo BBCodeUtils::toHTML($text);
     iBoxEnd();
 }
 
@@ -355,15 +208,15 @@ function error_msg($text, $type = 0, $exit = 0, $addition = 0, $stacktrace = nul
     }
 
     iBoxStart($title, "error");
-    echo text2html($text);
+    echo BBCodeUtils::toHTML($text);
 
     // Addition
     switch ($addition) {
         case 1:
-            echo text2html("\n\n[url " . FORUM_URL . "]Zum Forum[/url] | [email mail@etoa.ch]Mail an die Spielleitung[/email]");
+            echo BBCodeUtils::toHTML("\n\n[url " . FORUM_URL . "]Zum Forum[/url] | [email mail@etoa.ch]Mail an die Spielleitung[/email]");
             break;
         case 2:
-            echo text2html("\n\n[url " . DEVCENTER_PATH . "]Fehler melden[/url]");
+            echo BBCodeUtils::toHTML("\n\n[url " . DEVCENTER_PATH . "]Fehler melden[/url]");
             break;
         default:
             echo '';
@@ -379,46 +232,6 @@ function error_msg($text, $type = 0, $exit = 0, $addition = 0, $stacktrace = nul
         echo "</body></html>";
         exit;
     }
-}
-
-/**
- * Prozentwert generieren und zurückgeben
- *
- * $val: Einzelner Wert oder Array von Werten als Dezimalzahl; 1.0 = 0%
- * $colors: Farben anzeigen (1) oder nicht anzeigen (0)
- */
-function get_percent_string($val, $colors = 0, $inverse = 0)
-{
-    $string = 0;
-    if (is_array($val)) {
-        foreach ($val as $v) {
-            $string += ($v * 100) - 100;
-        }
-    } else
-        $string = ($val * 100) - 100;
-
-    $string = round($string, 2);
-
-    if ($string > 0) {
-        if ($colors != 0) {
-            if ($inverse == 1)
-                $string = "<span style=\"color:#f00\">+" . $string . "%</span>";
-            else
-                $string = "<span style=\"color:#0f0\">+" . $string . "%</span>";
-        } else
-            $string = $string . "%";
-    } elseif ($string < 0) {
-        if ($colors != 0) {
-            if ($inverse == 1)
-                $string = "<span style=\"color:#0f0\">" . $string . "%</span>";
-            else
-                $string = "<span style=\"color:#f00\">" . $string . "%</span>";
-        } else
-            $string = $string . "%";
-    } else {
-        $string = "0%";
-    }
-    return $string;
 }
 
 /**
@@ -687,17 +500,6 @@ function button($label, $target)
 }
 
 /**
- * Prevents negative numbers
- */
-function zeroPlus($val)
-{
-    if ($val < 0)
-        return 0;
-    else
-        return $val;
-}
-
-/**
  * Diese Funktion liefert 5 Optionsfelder in denen man den Tag,Monat,Jahr,Stunde,Minute auswählen kann
  */
 function show_timebox($element_name, $def_val, $seconds = 0)
@@ -789,25 +591,6 @@ function tm($title, $text)
 }
 
 /**
- * Date format
- */
-function df($date, $seconds = 1)
-{
-    if ($seconds == 1) {
-        if (date("dmY") == date("dmY", $date))
-            $string = "Heute, " . date("H:i:s", $date);
-        else
-            $string = date("d.m.Y, H:i:s", $date);
-    } else {
-        if (date("dmY") == date("dmY", $date))
-            $string = "Heute, " . date("H:i", $date);
-        else
-            $string = date("d.m.Y, H:i", $date);
-    }
-    return $string;
-}
-
-/**
  * Zeigt ein Avatarbild an
  */
 function show_avatar($avatar = BOARD_DEFAULT_IMAGE)
@@ -836,112 +619,6 @@ function timerStop($starttime)
     $render_time = explode(" ", microtime());
     $rtime = (float) $render_time[1] + (float) $render_time[0] - $starttime;
     return round($rtime, 3);
-}
-
-function imagecreatefromfile($path, $user_functions = false)
-{
-    $info = @getimagesize($path);
-
-    if (!$info) {
-        return false;
-    }
-
-    $functions = array(
-        IMAGETYPE_GIF => 'imagecreatefromgif',
-        IMAGETYPE_JPEG => 'imagecreatefromjpeg',
-        IMAGETYPE_PNG => 'imagecreatefrompng',
-        IMAGETYPE_WBMP => 'imagecreatefromwbmp',
-        IMAGETYPE_XBM => 'imagecreatefromwxbm',
-    );
-
-    if ($user_functions) {
-        $functions[IMAGETYPE_BMP] = 'imagecreatefrombmp';
-    }
-
-    if (!isset($functions[$info[2]])) {
-        return false;
-    }
-
-    if (!function_exists($functions[$info[2]])) {
-        return false;
-    }
-
-    return $functions[$info[2]]($path);
-}
-
-
-/**
- * Resizes a image and save it to a given filename
- *
- */
-function resizeImage($fileFrom, $fileTo, $newMaxWidth = 0, $newMaxHeight = 0, $type = "jpeg")
-{
-    if (!in_array($type, ['png', 'gif', 'jpeg', 'jpg'], true)) {
-        return false;
-    }
-
-    if ($img = imagecreatefromfile($fileFrom)) {
-        $width = imagesx($img);
-        $height = imagesy($img);
-        $resize = false;
-
-        $newWidth = $newMaxWidth;;
-        $newHeight = $newMaxHeight;
-        if ($width > $newMaxWidth) {
-            $newWidth = $newMaxWidth;
-            $newHeight = (int) ($height * ($newWidth / $width));
-            if ($newHeight > $newMaxHeight) {
-                $newHeight = $newMaxHeight;
-                $newWidth = (int) ($width * ($newHeight / $height));
-            }
-            $resize = true;
-        } else if ($height > $newMaxHeight) {
-            $newHeight = $newMaxHeight;
-            $newWidth = (int) ($width * ($newHeight / $height));
-            $resize = true;
-        }
-
-        if ($resize) {
-            // resize using appropriate function
-            if (GD_VERSION == 2) {
-                $imageId =  imagecreatetruecolor($newWidth, $newHeight);
-
-                imagealphablending($imageId, false);
-                imagesavealpha($imageId, true);
-                $transparent = imagecolorallocatealpha($imageId, 255, 255, 255, 127);
-                imagefilledrectangle($imageId, 0, 0, $newWidth, $newHeight, $transparent);
-
-                imagecopyresampled($imageId, $img, 0, 0, 0, 0, $newWidth, $newHeight, $width, $height);
-            } else {
-                $imageId = imagecreate($newWidth, $newHeight);
-                imagecopyresized($imageId, $img, 0, 0, 0, 0, $newWidth, $newHeight, $width, $height);
-            }
-            $handle = $imageId;
-            // free original image
-            imagedestroy($img);
-        } else {
-            $handle = $img;
-        }
-
-        switch ($type) {
-            case 'png':
-                imagepng($handle, $fileTo);
-                break;
-            case 'gif':
-                imagegif($handle, $fileTo);
-                break;
-            case 'jpg':
-            case 'jpeg':
-                imagejpeg($handle, $fileTo, 100);
-                break;
-            default:
-                throw new \InvalidArgumentException('Unknown image type: ' . $type);
-        }
-
-        imagedestroy($handle);
-        return true;
-    }
-    return false;
 }
 
 /**
@@ -1007,30 +684,6 @@ function calcTechCosts(\EtoA\Technology\Technology $technology, $l, $fac = 1)
     $bc['fuel'] = $fac * $technology->costsFuel * pow($technology->buildCostsFactor, $l);
     $bc['food'] = $fac * $technology->costsFood * pow($technology->buildCostsFactor, $l);
     return $bc;
-}
-
-/**
- * Formates a given number of bytes to a humand readable string of Bytes, Kilobytes,
- * Megabytes, Gigabytes or Terabytes and rounds it to three digits
- *
- * @param int $s Number of bytes
- * @return string Well-formated byte number
- * @author Nicolas Perrenoud
- */
-function byte_format($s)
-{
-    if ($s >= 1099511627776) {
-        return round($s / 1099511627776, 3) . " TB";
-    }
-    if ($s >= 1073741824) {
-        return round($s / 1073741824, 3) . " GB";
-    } elseif ($s >= 1048576) {
-        return round($s / 1048576, 3) . " MB";
-    } elseif ($s >= 1024) {
-        return round($s / 1024, 3) . " KB";
-    } else {
-        return round($s) . " B";
-    }
 }
 
 /**
@@ -1426,52 +1079,6 @@ function getLoginUrl($args = array())
     return $url;
 }
 
-function createZipFromDirectory($dir, $zipFile)
-{
-
-    $zip = new ZipArchive();
-    if ($zip->open($zipFile, ZIPARCHIVE::CREATE) !== TRUE) {
-        throw new Exception("Cannot open ZIP file " . $zipFile);
-    }
-
-    // create recursive directory iterator
-    $files = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($dir), RecursiveIteratorIterator::LEAVES_ONLY);
-
-    // let's iterate
-    foreach ($files as $name => $file) {
-        $new_filename = substr($name, strlen(dirname($dir)) + 1);
-        if (is_file($file)) {
-            $zip->addFile($file, $new_filename);
-        }
-    }
-
-    // close the zip file
-    if (!$zip->close()) {
-        throw new Exception("There was a problem writing the ZIP archive " . $zipFile);
-    }
-}
-
-/**
- * Recursively remove a directory and its contents
- */
-function rrmdir($dir)
-{
-    if (is_dir($dir)) {
-        $objects = scandir($dir);
-        foreach ($objects as $object) {
-            if ($object != "." && $object != "..") {
-                if (filetype($dir . "/" . $object) == "dir") {
-                    rrmdir($dir . "/" . $object);
-                } else {
-                    unlink($dir . "/" . $object);
-                }
-            }
-        }
-        reset($objects);
-        rmdir($dir);
-    }
-}
-
 /**
  * Returns true if the debug mode is enabled
  * by checking the existence of the file config/debug
@@ -1513,21 +1120,6 @@ function unix_command_exists(string $cmd): bool
 function getAbsPath(string $path): string
 {
     return (substr($path, 0, 1) != "/" ? realpath(RELATIVE_ROOT) . '/' : '') . $path;
-}
-
-/**
- * Textfunktionen einbinden
- */
-include_once __DIR__ . '/text.inc.php';
-
-/**
- * Remove BBCode
- */
-function stripBBCode($text_to_search)
-{
-    $pattern = '|[[\\/\\!]*?[^\\[\\]]*?]|si';
-    $replace = '';
-    return preg_replace($pattern, $replace, $text_to_search);
 }
 
 if (!function_exists('blank')) {

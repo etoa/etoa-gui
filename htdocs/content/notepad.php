@@ -1,6 +1,8 @@
 <?PHP
 
 use EtoA\Notepad\NotepadRepository;
+use EtoA\Support\BBCodeUtils;
+use EtoA\Support\StringUtils;
 use Symfony\Component\HttpFoundation\Request;
 
 /** @var NotepadRepository $notepadRepository */
@@ -68,8 +70,8 @@ else {
         tableStart("Meine Notizen");
         foreach ($notepadRepository->findAll($cu->id) as $note) {
             echo "<tr><td width=\"120px\"><b>" . $note->subject . "</b>
-                <br/>" . df($note->timestamp) . "</td>";
-            echo "<td>" . text2html($note->text) . "</td>";
+                <br/>" . StringUtils::formatDate($note->timestamp) . "</td>";
+            echo "<td>" . BBCodeUtils::toHTML($note->text) . "</td>";
             echo "<td style=\"width:130px;\"><a href=\"?page=$page&amp;action=edit&amp;id=" . $note->id . "\">Bearbeiten</a> &nbsp; ";
             echo "<a href=\"?page=$page&amp;action=delete&amp;id=" . $note->id . "\" onclick=\"return confirm('Soll die Notiz " . $note->subject . " wirklich gel&ouml;scht werden?');\">L&ouml;schen</a></td></tr>";
         }

@@ -1,5 +1,6 @@
 <?PHP
 
+use EtoA\Support\BBCodeUtils;
 use EtoA\Tutorial\TutorialManager;
 
 class GetTutorialJsonResponder extends JsonResponder
@@ -26,7 +27,7 @@ class GetTutorialJsonResponder extends JsonResponder
         $tutorialText = $tutorialManager->getText((int) $params['id'], $currentStep);
         if ($tutorialText != null) {
             $data['title'] = $tutorialText->title;
-            $data['content'] = text2html($tutorialText->content);
+            $data['content'] = BBCodeUtils::toHTML($tutorialText->content);
             $data['prev'] = $tutorialText->prev;
             $data['next'] = $tutorialText->next;
 

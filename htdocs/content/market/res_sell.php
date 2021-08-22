@@ -7,6 +7,7 @@ use EtoA\Log\LogSeverity;
 use EtoA\Market\MarketHandler;
 use EtoA\Market\MarketResourceRepository;
 use EtoA\Message\MarketReportRepository;
+use EtoA\Support\StringUtils;
 use EtoA\Specialist\SpecialistService;
 use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Entity\EntityService;
@@ -136,7 +137,7 @@ if (isset($_POST['ressource_market_id'])) {
                 $isMultiWith = $userMultiRepository->existsEntryWith($cu->getId(), $offer->userId);
                 if ($isMultiWith) {
                     $seller = new User($offer->userId);
-                    $logRepository->add(LogFacility::MULTITRADE, LogSeverity::INFO, "[page user sub=edit user_id=" . $cu->id . "][B]" . $cu->nick . "[/B][/page] hat von [page user sub=edit user_id=" . $offer->userId . "][B]" . $seller . "[/B][/page] Rohstoffe gekauft:\n\n" . RES_METAL . ": " . nf($offer->sell0) . "\n" . RES_CRYSTAL . ": " . nf($offer->sell1) . "\n" . RES_PLASTIC . ": " . nf($offer->sell2) . "\n" . RES_FUEL . ": " . nf($offer->sell3) . "\n" . RES_FOOD . ": " . nf($offer->sell4) . "\n\nDies hat ihn folgende Rohstoffe gekostet:\n" . RES_METAL . ": " . nf($offer->buy0) . "\n" . RES_CRYSTAL . ": " . nf($offer->buy1) . "\n" . RES_PLASTIC . ": " . nf($offer->buy2) . "\n" . RES_FUEL . ": " . nf($offer->buy3) . "\n" . RES_FOOD . ": " . nf($offer->buy4));
+                    $logRepository->add(LogFacility::MULTITRADE, LogSeverity::INFO, "[page user sub=edit user_id=" . $cu->id . "][B]" . $cu->nick . "[/B][/page] hat von [page user sub=edit user_id=" . $offer->userId . "][B]" . $seller . "[/B][/page] Rohstoffe gekauft:\n\n" . RES_METAL . ": " . StringUtils::formatNumber($offer->sell0) . "\n" . RES_CRYSTAL . ": " . StringUtils::formatNumber($offer->sell1) . "\n" . RES_PLASTIC . ": " . StringUtils::formatNumber($offer->sell2) . "\n" . RES_FUEL . ": " . StringUtils::formatNumber($offer->sell3) . "\n" . RES_FOOD . ": " . StringUtils::formatNumber($offer->sell4) . "\n\nDies hat ihn folgende Rohstoffe gekostet:\n" . RES_METAL . ": " . StringUtils::formatNumber($offer->buy0) . "\n" . RES_CRYSTAL . ": " . StringUtils::formatNumber($offer->buy1) . "\n" . RES_PLASTIC . ": " . StringUtils::formatNumber($offer->buy2) . "\n" . RES_FUEL . ": " . StringUtils::formatNumber($offer->buy3) . "\n" . RES_FOOD . ": " . StringUtils::formatNumber($offer->buy4));
                 }
 
                 // Zählt die erfolgreich abgewickelten Angebote

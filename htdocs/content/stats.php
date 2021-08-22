@@ -3,7 +3,9 @@
 use EtoA\Alliance\AlliancePointsRepository;
 use EtoA\Alliance\AllianceRepository;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Support\BBCodeUtils;
 use EtoA\Support\RuntimeDataStore;
+use EtoA\Support\StringUtils;
 use EtoA\User\UserPointsRepository;
 use EtoA\User\UserRepository;
 
@@ -30,10 +32,10 @@ if (isset($_GET['userdetail']) && intval($_GET['userdetail']) > 0) {
     $userRepository = $app[UserRepository::class];
     $user = $userRepository->getUser($udid);
     if ($user !== null) {
-        tableStart("Statistiken f&uuml;r " . text2html($user->nick) . "");
+        tableStart("Statistiken f&uuml;r " . BBCodeUtils::toHTML($user->nick) . "");
 
         echo "<tr><td colspan=\"6\" style=\"text-align:center;\">
-                <b>Punkte aktuell:</b> " . nf($user->points) . ", <b>Rang aktuell:</b> " . $user->rank . "
+                <b>Punkte aktuell:</b> " . StringUtils::formatNumber($user->points) . ", <b>Rang aktuell:</b> " . $user->rank . "
             </td></tr>";
         echo "<tr><td colspan=\"6\" style=\"text-align:center;\">
                 <img src=\"misc/stats.image.php?user=" . $user->id . "\" alt=\"Diagramm\" />
@@ -46,7 +48,7 @@ if (isset($_GET['userdetail']) && intval($_GET['userdetail']) > 0) {
             echo "<tr><th>Datum</th><th>Zeit</th><th>Punkte</th><th>Flotte</th><th>Forschung</th><th>Geb&auml;ude</th></tr>";
             foreach ($pointEntries as $entry) {
                 echo "<tr><td>" . date("d.m.Y", $entry->timestamp) . "</td><td>" . date("H:i", $entry->timestamp) . "</td>";
-                echo "<td>" . nf($entry->points) . "</td><td>" . nf($entry->shipPoints) . "</td><td>" . nf($entry->techPoints) . "</td><td>" . nf($entry->buildingPoints) . "</td></tr>";
+                echo "<td>" . StringUtils::formatNumber($entry->points) . "</td><td>" . StringUtils::formatNumber($entry->shipPoints) . "</td><td>" . StringUtils::formatNumber($entry->techPoints) . "</td><td>" . StringUtils::formatNumber($entry->buildingPoints) . "</td></tr>";
             }
         } else {
             echo "<tr><td colspan=\"6\"><i>Keine Punktedaten vorhanden!</td></tr>";
@@ -63,8 +65,8 @@ if (isset($_GET['userdetail']) && intval($_GET['userdetail']) > 0) {
 
     $alliance = $allianceRepository->getAlliance($adid);
     if ($alliance !== null) {
-        echo "<h2>Punktedetails f&uuml;r [" . text2html($alliance->tag) . "] " . text2html($alliance->name) . "</h2>";
-        echo "<b>Punkte aktuell:</b> " . nf($alliance->points) . ", <b>Rang aktuell:</b> " . $alliance->currentRank . "<br/><br/>";
+        echo "<h2>Punktedetails f&uuml;r [" . BBCodeUtils::toHTML($alliance->tag) . "] " . BBCodeUtils::toHTML($alliance->name) . "</h2>";
+        echo "<b>Punkte aktuell:</b> " . StringUtils::formatNumber($alliance->points) . ", <b>Rang aktuell:</b> " . $alliance->currentRank . "<br/><br/>";
         echo "<img src=\"misc/alliance_stats.image.php?alliance=" . $alliance->id . "\" alt=\"Diagramm\" /><br/><br/>";
         $pointEntries = $alliancePointsRepository->getPoints($alliance->id, 48);
         if (count($pointEntries) > 0) {
@@ -72,7 +74,7 @@ if (isset($_GET['userdetail']) && intval($_GET['userdetail']) > 0) {
             echo "<tr><th>Datum</th><th>Zeit</th><th>Punkte</th><th>User-Schnitt</th><th>User</th></tr>";
             foreach ($pointEntries as $entry) {
                 echo "<tr><td>" . date("d.m.Y", $entry->timestamp) . "</td><td>" . date("H:i", $entry->timestamp) . "</td>";
-                echo "<td>" . nf($entry->points) . "</td><td>" . nf($entry->avg) . "</td><td>" . nf($entry->count) . "</td></tr>";
+                echo "<td>" . StringUtils::formatNumber($entry->points) . "</td><td>" . StringUtils::formatNumber($entry->avg) . "</td><td>" . StringUtils::formatNumber($entry->count) . "</td></tr>";
             }
             tableEnd();
             echo "<input type=\"button\" value=\"Allianzdetails anzeigen\" onclick=\"document.location='?page=alliance&info_id=" . $alliance->id . "'\" /> &nbsp; ";
@@ -152,7 +154,7 @@ else {
         <br/>";
     $statsUpdate = $runtimeDataStore->get('statsupdate');
     if ($statsUpdate != null) {
-        echo "Letzte Aktualisierung: <b>" . df($statsUpdate) . " Uhr</b><br/>";
+        echo "Letzte Aktualisierung: <b>" . StringUtils::formatDate((int) $statsUpdate) . " Uhr</b><br/>";
     }
     echo "Die Aktualisierung der Punkte erfolgt ";
     $h = $config->getInt('points_update') / 3600;

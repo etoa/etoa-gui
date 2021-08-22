@@ -19,6 +19,7 @@ use EtoA\Notepad\NotepadRepository;
 use EtoA\Ranking\PointsService;
 use EtoA\Ship\ShipQueueRepository;
 use EtoA\Ship\ShipRepository;
+use EtoA\Support\StringUtils;
 use EtoA\Technology\TechnologyRepository;
 use EtoA\User\UserCommentRepository;
 use EtoA\User\UserLogRepository;
@@ -292,7 +293,7 @@ function cleanupOverView(
     foreach ($days as $ds) {
         echo "<option value=\"" . (24 * 3600 * $ds) . "\" " . ($ds == $config->getInt('messages_threshold_days')  ? " selected=\"selected\"" : "") . ">" . $ds . " Tage</option>";
     }
-    echo "</select> (" . nf($messageRepository->countNotArchived()) . " total).<br/>";
+    echo "</select> (" . StringUtils::formatNumber($messageRepository->countNotArchived()) . " total).<br/>";
 
     echo '<input type="radio" name="only_deleted_reports" value="1" checked="checked" /> <b>Nur \'gelöschte\' Nachrichten löschen:</b> ';
     echo 'Älter als <select name="message_timestamp_deleted">';
@@ -304,7 +305,7 @@ function cleanupOverView(
     foreach ($days as $ds) {
         echo "<option value=\"" . (24 * 3600 * $ds) . "\" " . ($ds == $config->param1Int('messages_threshold_days')  ? " selected=\"selected\"" : "") . ">" . $ds . " Tage</option>";
     }
-    echo "</select> (" . nf($messageRepository->countDeleted()) . " total).";
+    echo "</select> (" . StringUtils::formatNumber($messageRepository->countDeleted()) . " total).";
     echo '</fieldset><br/>';
 
     /* Reports */
@@ -318,7 +319,7 @@ function cleanupOverView(
     foreach ($days as $ds) {
         echo "<option value=\"" . (24 * 3600 * $ds) . "\" " . ($ds == $config->param1Int('messages_threshold_days')  ? " selected=\"selected\"" : "") . " >" . $ds . " Tage</option>";
     }
-    echo "</select> (" . nf($reportRepository->countNotArchived()) . " total).<br/>";
+    echo "</select> (" . StringUtils::formatNumber($reportRepository->countNotArchived()) . " total).<br/>";
 
     echo '<input type="radio" name="only_deleted" value="1" checked="checked" /> <b>Nur \'gelöschte\' Berichte löschen:</b> ';
     echo 'Älter als <select name="report_timestamp_deleted">';
@@ -329,7 +330,7 @@ function cleanupOverView(
     foreach ($days as $ds) {
         echo "<option value=\"" . (24 * 3600 * $ds) . "\" " . ($ds == $config->param1Int('reports_threshold_days')  ? " selected=\"selected\"" : "") . ">" . $ds . " Tage</option>";
     }
-    echo "</select> (" . nf($reportRepository->countDeleted()) . " total).";
+    echo "</select> (" . StringUtils::formatNumber($reportRepository->countDeleted()) . " total).";
     echo '</fieldset><br/>';
 
     // Logs
@@ -346,7 +347,7 @@ function cleanupOverView(
     foreach ($days as $ds) {
         echo "<option value=\"" . (24 * 3600 * $ds) . "\" " . ($ds == $config->getInt('log_threshold_days')  ? " selected=\"selected\"" : "") . ">" . $ds . " Tage</option>";
     }
-    echo "</select> sind (" . nf($tblcnt) . " total).";
+    echo "</select> sind (" . StringUtils::formatNumber($tblcnt) . " total).";
     echo '</fieldset><br/>';
 
     // User-Sessions
@@ -363,7 +364,7 @@ function cleanupOverView(
     foreach ($days as $ds) {
         echo "<option value=\"" . (24 * 3600 * $ds) . "\" " . ($ds == $config->getInt('log_threshold_days')  ? " selected=\"selected\"" : "") . ">" . $ds . " Tage</option>";
     }
-    echo "</select> sind (" . nf($tblcnt) . " total).";
+    echo "</select> sind (" . StringUtils::formatNumber($tblcnt) . " total).";
     echo '</fieldset><br/>';
 
     // User-Points
@@ -379,21 +380,21 @@ function cleanupOverView(
     foreach ($days as $ds) {
         echo "<option value=\"" . (24 * 3600 * $ds) . "\" " . ($ds == $config->getInt('log_threshold_days')  ? " selected=\"selected\"" : "") . ">" . $ds . " Tage</option>";
     }
-    echo "</select> sind (Total: " . nf($tblcnt) . " User,";
+    echo "</select> sind (Total: " . StringUtils::formatNumber($tblcnt) . " User,";
 
     /** @var AlliancePointsRepository $alliancePointsRepository */
     $alliancePointsRepository = $app[AlliancePointsRepository::class];
     $tblcnt = $alliancePointsRepository->count();
-    echo " " . nf($tblcnt) . " Allianz).";
+    echo " " . StringUtils::formatNumber($tblcnt) . " Allianz).";
     echo '</fieldset><br/>';
 
     // Inactive
     echo '<fieldset><legend><input type="checkbox" value="1" name="cl_inactive" /> User</legend>';
-    echo nf($userService->getNumInactive()) . " inaktive Benutzer löschen (" . $config->param2Int('user_inactive_days') . " Tage seit der Registration ohne Login oder " . $config->param1Int('user_inactive_days') . " Tage nicht mehr eingeloggt)<br/>";
+    echo StringUtils::formatNumber($userService->getNumInactive()) . " inaktive Benutzer löschen (" . $config->param2Int('user_inactive_days') . " Tage seit der Registration ohne Login oder " . $config->param1Int('user_inactive_days') . " Tage nicht mehr eingeloggt)<br/>";
     /** @var UserRepository $userRepository */
     $userRepository = $app[UserRepository::class];
     $tblcnt = count($userRepository->findDeleted());
-    echo nf($tblcnt) . " als gelöscht markierte Benutzer endgültig löschen";
+    echo StringUtils::formatNumber($tblcnt) . " als gelöscht markierte Benutzer endgültig löschen";
 
     echo '</fieldset><br/>';
 
@@ -455,22 +456,22 @@ function cleanupOverView(
     $shipQueueRepository = $app[ShipQueueRepository::class];
     $sqcount = $shipQueueRepository->getOrphanedCount($userIds);
 
-    echo '<input type="checkbox" value="1" name="del_user_log" /> ' . nf($lcount) . " verwaiste <strong>Userlogs</strong> gefunden<br/>";
-    echo '<input type="checkbox" value="1" name="del_user_ratings" /> ' . nf($rcount) . " verwaiste <strong>Ratings</strong> gefunden<br/>";
-    echo '<input type="checkbox" value="1" name="del_user_properties" /> ' . nf($pcount) . " verwaiste <strong>Properties</strong> gefunden<br/>";
-    echo '<input type="checkbox" value="1" name="del_user_multi" /> ' . nf($mcount) . " verwaiste <strong>Multieinträge</strong> gefunden<br/>";
-    echo '<input type="checkbox" value="1" name="del_user_comments" /> ' . nf($ccount) . " verwaiste <strong>Adminkommentare</strong> gefunden<br/>";
+    echo '<input type="checkbox" value="1" name="del_user_log" /> ' . StringUtils::formatNumber($lcount) . " verwaiste <strong>Userlogs</strong> gefunden<br/>";
+    echo '<input type="checkbox" value="1" name="del_user_ratings" /> ' . StringUtils::formatNumber($rcount) . " verwaiste <strong>Ratings</strong> gefunden<br/>";
+    echo '<input type="checkbox" value="1" name="del_user_properties" /> ' . StringUtils::formatNumber($pcount) . " verwaiste <strong>Properties</strong> gefunden<br/>";
+    echo '<input type="checkbox" value="1" name="del_user_multi" /> ' . StringUtils::formatNumber($mcount) . " verwaiste <strong>Multieinträge</strong> gefunden<br/>";
+    echo '<input type="checkbox" value="1" name="del_user_comments" /> ' . StringUtils::formatNumber($ccount) . " verwaiste <strong>Adminkommentare</strong> gefunden<br/>";
     $numOrphanedTickets = count($ticketRepo->findOrphanedIds());
-    echo '<input type="checkbox" value="1" name="del_tickets" /> ' . nf($numOrphanedTickets) . " verwaiste <strong>Tickets</strong> gefunden<br/>";
-    echo '<input type="checkbox" value="1" name="del_reports" /> ' . nf($recount) . " verwaiste <strong>Berichte</strong> gefunden<br/>";
-    echo '<input type="checkbox" value="1" name="del_notepad" /> ' . nf($ncount) . " verwaiste <strong>Notizen</strong> gefunden<br/>";
-    echo '<input type="checkbox" value="1" name="del_shiplist" /> ' . nf($slcount) . " verwaiste <strong>Schiffdatensätze</strong> gefunden<br/>";
-    echo '<input type="checkbox" value="1" name="del_ship_queue" /> ' . nf($sqcount) . " verwaiste <strong>Schiffbauaufträge</strong> gefunden<br/>";
-    echo '<input type="checkbox" value="1" name="del_deflist" /> ' . nf($dlcount) . " verwaiste <strong>Defdatensätze</strong> gefunden<br/>";
-    echo '<input type="checkbox" value="1" name="del_def_queue" /> ' . nf($dqcount) . " verwaiste <strong>Defbauaufträge</strong> gefunden<br/>";
-    echo '<input type="checkbox" value="1" name="del_buildlist" /> ' . nf($blcount) . " verwaiste <strong>Gebäude</strong> gefunden<br/>";
-    echo '<input type="checkbox" value="1" name="del_techlist" /> ' . nf($tlcount) . " verwaiste <strong>Technologien</strong> gefunden<br/>";
-    echo '<input type="checkbox" value="1" name="del_missilelist" /> ' . nf($mlcount) . " verwaiste <strong>Raketen</strong> gefunden<br/>";
+    echo '<input type="checkbox" value="1" name="del_tickets" /> ' . StringUtils::formatNumber($numOrphanedTickets) . " verwaiste <strong>Tickets</strong> gefunden<br/>";
+    echo '<input type="checkbox" value="1" name="del_reports" /> ' . StringUtils::formatNumber($recount) . " verwaiste <strong>Berichte</strong> gefunden<br/>";
+    echo '<input type="checkbox" value="1" name="del_notepad" /> ' . StringUtils::formatNumber($ncount) . " verwaiste <strong>Notizen</strong> gefunden<br/>";
+    echo '<input type="checkbox" value="1" name="del_shiplist" /> ' . StringUtils::formatNumber($slcount) . " verwaiste <strong>Schiffdatensätze</strong> gefunden<br/>";
+    echo '<input type="checkbox" value="1" name="del_ship_queue" /> ' . StringUtils::formatNumber($sqcount) . " verwaiste <strong>Schiffbauaufträge</strong> gefunden<br/>";
+    echo '<input type="checkbox" value="1" name="del_deflist" /> ' . StringUtils::formatNumber($dlcount) . " verwaiste <strong>Defdatensätze</strong> gefunden<br/>";
+    echo '<input type="checkbox" value="1" name="del_def_queue" /> ' . StringUtils::formatNumber($dqcount) . " verwaiste <strong>Defbauaufträge</strong> gefunden<br/>";
+    echo '<input type="checkbox" value="1" name="del_buildlist" /> ' . StringUtils::formatNumber($blcount) . " verwaiste <strong>Gebäude</strong> gefunden<br/>";
+    echo '<input type="checkbox" value="1" name="del_techlist" /> ' . StringUtils::formatNumber($tlcount) . " verwaiste <strong>Technologien</strong> gefunden<br/>";
+    echo '<input type="checkbox" value="1" name="del_missilelist" /> ' . StringUtils::formatNumber($mlcount) . " verwaiste <strong>Raketen</strong> gefunden<br/>";
     echo '</fieldset><br/>';
 
     /* Object lists */
@@ -501,11 +502,11 @@ function cleanupOverView(
     $tcnt = $technologyRepository->countEmpty();
     $ttcnt = $technologyRepository->count();
 
-    echo "<b>Leere Schiffdatensätze:</b> " . nf($scnt) . " vorhanden (" . nf($stcnt) . " total).<br/>";
-    echo "<b>Leere Verteidigungsdatensätze:</b> " . nf($dcnt) . " vorhanden (" . nf($dtcnt) . " total).<br/>";
-    echo "<b>Leere Raketendatensäte:</b> " . nf($mcnt) . " vorhanden (" . nf($mtcnt) . " total).<br/>";
-    echo "<b>Leere Gebäudedatensätze:</b> " . nf($bcnt) . " vorhanden (" . nf($btcnt) . " total).<br/>";
-    echo "<b>Leere Forschungsdatensätze:</b> " . nf($tcnt) . " vorhanden (" . nf($ttcnt) . " total).<br/>";
+    echo "<b>Leere Schiffdatensätze:</b> " . StringUtils::formatNumber($scnt) . " vorhanden (" . StringUtils::formatNumber($stcnt) . " total).<br/>";
+    echo "<b>Leere Verteidigungsdatensätze:</b> " . StringUtils::formatNumber($dcnt) . " vorhanden (" . StringUtils::formatNumber($dtcnt) . " total).<br/>";
+    echo "<b>Leere Raketendatensäte:</b> " . StringUtils::formatNumber($mcnt) . " vorhanden (" . StringUtils::formatNumber($mtcnt) . " total).<br/>";
+    echo "<b>Leere Gebäudedatensätze:</b> " . StringUtils::formatNumber($bcnt) . " vorhanden (" . StringUtils::formatNumber($btcnt) . " total).<br/>";
+    echo "<b>Leere Forschungsdatensätze:</b> " . StringUtils::formatNumber($tcnt) . " vorhanden (" . StringUtils::formatNumber($ttcnt) . " total).<br/>";
     echo '</fieldset><br/>';
 
     echo '<input type="submit" name="submit_cleanup_selected" value="Selektiere ausführen" /> &nbsp; ';

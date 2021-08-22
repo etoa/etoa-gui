@@ -4,6 +4,8 @@ use EtoA\Race\RaceDataRepository;
 use EtoA\Ship\ShipCategoryRepository;
 use EtoA\Ship\ShipDataRepository;
 use EtoA\Ship\ShipRequirementRepository;
+use EtoA\Support\BBCodeUtils;
+use EtoA\Support\StringUtils;
 
 define("RANKING_SHIP_STRUCTURE", 20000);
 define("RANKING_SHIP_SHIELD", 25000);
@@ -69,7 +71,7 @@ if (isset($_GET['id'])) {
     $ship = $shipDataRepository->getShip($sid);
     if ($ship !== null) {
         $shipCategory = $shipCategoryRepository->getCategory($ship->catId);
-        HelpUtil::breadCrumbs(array("Schiffe", "shipyard"), array(text2html($ship->name), $ship->id), 1);
+        HelpUtil::breadCrumbs(array("Schiffe", "shipyard"), array($ship->name, $ship->id), 1);
         echo "<select onchange=\"document.location='?page=help&site=shipyard&id='+this.options[this.selectedIndex].value\">";
         $shipNames = $shipDataRepository->getShipNames();
         foreach ($shipNames as $shipId => $shipName) {
@@ -86,7 +88,7 @@ if (isset($_GET['id'])) {
                 <img src=\"" . IMAGE_PATH . "/" . IMAGE_SHIP_DIR . "/ship" . $ship->id . "." . IMAGE_EXT . "\" width=\"220\" height=\"220\" alt=\"Schiff\" />
             </td>
             <td class=\"tbldata\" colspan=\"3\">
-                " . text2html($ship->longComment) . "
+                " . BBCodeUtils::toHTML($ship->longComment) . "
             </td>
         </tr>";
 
@@ -102,7 +104,7 @@ if (isset($_GET['id'])) {
         </tr>";
 
         echo "<tr><th class=\"tbltitle\">Kategorie:</th><td class=\"tbldata\" colspan=\"3\">" . $shipCategory->name . "</td></tr>";
-        echo "<tr><th class=\"tbltitle\">Anzahl Piloten:</th><td class=\"tbldata\" colspan=\"3\">" . nf($ship->pilots) . "</td></tr>";
+        echo "<tr><th class=\"tbltitle\">Anzahl Piloten:</th><td class=\"tbldata\" colspan=\"3\">" . StringUtils::formatNumber($ship->pilots) . "</td></tr>";
 
         echo "<tr><td colspan=\"4\" style=\"height:30px;\"></td></tr>";
 
@@ -114,35 +116,35 @@ if (isset($_GET['id'])) {
             <table class=\"tb\">";
         echo "<tr>
                         <td style=\"width:170px;font-weight:bold;\" class=\"resmetal\">" . RES_METAL . "</td>
-                        <td style=\"width:350px\">" . nf($ship->costsMetal) . " t</td>
+                        <td style=\"width:350px\">" . StringUtils::formatNumber($ship->costsMetal) . " t</td>
                 </tr>";
         echo "<tr>
                         <td style=\"font-weight:bold;\" class=\"rescrystal\">" . RES_CRYSTAL . "</td>
-                        <td style=\"width:350px\">" . nf($ship->costsCrystal) . " t</td>
+                        <td style=\"width:350px\">" . StringUtils::formatNumber($ship->costsCrystal) . " t</td>
                 </tr>";
         echo "<tr>
                         <td style=\"font-weight:bold;\" class=\"resplastic\">" . RES_PLASTIC . "</td>
-                        <td style=\"width:350px\">" . nf($ship->costsPlastic) . " t</td>
+                        <td style=\"width:350px\">" . StringUtils::formatNumber($ship->costsPlastic) . " t</td>
                 </tr>";
         echo "<tr>
                         <td style=\"font-weight:bold;\" class=\"resfuel\">" . RES_FUEL . "</td>
-                        <td style=\"width:350px\">" . nf($ship->costsFuel) . " t</td>
+                        <td style=\"width:350px\">" . StringUtils::formatNumber($ship->costsFuel) . " t</td>
                 </tr>";
         echo "<tr>
                         <td style=\"font-weight:bold;\" class=\"resfood\">" . RES_FOOD . "</td>
-                        <td style=\"width:350px\">" . nf($ship->costsFood) . " t</td>
+                        <td style=\"width:350px\">" . StringUtils::formatNumber($ship->costsFood) . " t</td>
                 </tr>";
         echo "<tr>
                         <td style=\"font-weight:bold;\" class=\"resfuel\">/100 AE</td>
-                        <td style=\"width:350px\">" . nf($ship->fuelUse) . " t</td>
+                        <td style=\"width:350px\">" . StringUtils::formatNumber($ship->fuelUse) . " t</td>
                 </tr>";
         echo "<tr>
                         <td style=\"font-weight:bold;\" class=\"resfuel\">Start</td>
-                        <td style=\"width:350px\">" . nf($ship->fuelUseLaunch) . " t</td>
+                        <td style=\"width:350px\">" . StringUtils::formatNumber($ship->fuelUseLaunch) . " t</td>
                 </tr>";
         echo "<tr>
                         <td style=\"font-weight:bold;\" class=\"resfuel\">Landung</td>
-                        <td style=\"width:350px\">" . nf($ship->fuelUseLanding) . " t</td>
+                        <td style=\"width:350px\">" . StringUtils::formatNumber($ship->fuelUseLanding) . " t</td>
                 </tr>";
 
         echo "</table>
@@ -151,16 +153,16 @@ if (isset($_GET['id'])) {
                 <table class=\"tb\" style=\"width:100%\">";
         echo "<tr>
                         <td style=\"font-weight:bold;\">Struktur</td>
-                        <td>" . nf($ship->structure) . "</td></tr>";
+                        <td>" . StringUtils::formatNumber($ship->structure) . "</td></tr>";
         echo "<tr>
                         <td style=\"font-weight:bold;\">Schutzschild</td>
-                        <td>" . nf($ship->shield) . "</td></tr>";
+                        <td>" . StringUtils::formatNumber($ship->shield) . "</td></tr>";
         echo "<tr>
                         <td style=\"font-weight:bold;\">Waffen</td>
-                        <td>" . nf($ship->weapon) . "</td></tr>";
+                        <td>" . StringUtils::formatNumber($ship->weapon) . "</td></tr>";
         echo "<tr>
                         <td style=\"font-weight:bold;\">Heilung</td>
-                        <td>" . nf($ship->heal) . "</td></tr>";
+                        <td>" . StringUtils::formatNumber($ship->heal) . "</td></tr>";
         echo "<tr>
                         <td style=\"font-weight:bold;\">Antriebstechnologie</td>
                         <td>";
@@ -175,19 +177,19 @@ if (isset($_GET['id'])) {
         echo "</td></tr>";
         echo "<tr>
                         <td style=\"font-weight:bold;\">Laderaum</td>
-                        <td>" . nf($ship->capacity) . " t</td></tr>";
+                        <td>" . StringUtils::formatNumber($ship->capacity) . " t</td></tr>";
         echo "<tr>
                         <td style=\"font-weight:bold;\">Passagierraum</td>
-                        <td>" . nf($ship->peopleCapacity) . "</td></tr>";
+                        <td>" . StringUtils::formatNumber($ship->peopleCapacity) . "</td></tr>";
         echo "<tr>
                         <td style=\"font-weight:bold;\">Geschwindigkeit</td>
-                        <td>" . nf($ship->speed / FLEET_FACTOR_F) . " AE/h</td></tr>";
+                        <td>" . StringUtils::formatNumber($ship->speed / FLEET_FACTOR_F) . " AE/h</td></tr>";
         echo "<tr>
                         <td style=\"font-weight:bold;\">Startdauer</td>
-                        <td>" . tf($ship->timeToStart / FLEET_FACTOR_S) . "</td></tr>";
+                        <td>" . StringUtils::formatTimespan($ship->timeToStart / FLEET_FACTOR_S) . "</td></tr>";
         echo "<tr>
                         <td style=\"font-weight:bold;\">Landedauer</td>
-                        <td>" . tf($ship->timeToLand / FLEET_FACTOR_L) . "</td></tr>";
+                        <td>" . StringUtils::formatTimespan($ship->timeToLand / FLEET_FACTOR_L) . "</td></tr>";
         echo "</table>
             </td></tr>";
 
@@ -295,19 +297,19 @@ else {
                 echo "<tr><td style=\"background:#000;width:40px;\">
                     <a href=\"?$link&site=$site&id=" . $ship->id . "\">
                     <img src=\"$s_img\" alt=\"Schiffbild\" width=\"40\" height=\"40\" border=\"0\"/></a></td>";
-                echo "<td " . tm($ship->name, text2html($ship->shortComment) . "<br/><br/>" . shipRanking($ship)) . ">
+                echo "<td " . tm($ship->name, BBCodeUtils::toHTML($ship->shortComment) . "<br/><br/>" . shipRanking($ship)) . ">
                         <a href=\"?$link&site=$site&id=" . $ship->id . "\">" . $ship->name . "</a>
                     </td>";
                 echo "<td>";
                 echo $ship->raceId > 0 ? $raceNames[$ship->raceId] : '-';
-                echo "<td>" . nf($ship->capacity) . "</td>";
-                echo "<td>" . nf($ship->speed) . "</td>";
-                echo "<td>" . nf($ship->fuelUse) . "</td>";
-                echo "<td>" . nf($ship->weapon) . "</td>";
-                echo "<td>" . nf($ship->structure) . "</td>";
-                echo "<td>" . nf($ship->shield) . "</td>";
-                echo "<td>" . nf($ship->pilots) . "</td>";
-                echo "<td>" . nf($ship->points) . "</td>
+                echo "<td>" . StringUtils::formatNumber($ship->capacity) . "</td>";
+                echo "<td>" . StringUtils::formatNumber($ship->speed) . "</td>";
+                echo "<td>" . StringUtils::formatNumber($ship->fuelUse) . "</td>";
+                echo "<td>" . StringUtils::formatNumber($ship->weapon) . "</td>";
+                echo "<td>" . StringUtils::formatNumber($ship->structure) . "</td>";
+                echo "<td>" . StringUtils::formatNumber($ship->shield) . "</td>";
+                echo "<td>" . StringUtils::formatNumber($ship->pilots) . "</td>";
+                echo "<td>" . StringUtils::formatNumber($ship->points) . "</td>
                     </tr>";
             }
             tableEnd();

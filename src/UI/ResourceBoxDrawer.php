@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace EtoA\UI;
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Support\StringUtils;
 use EtoA\Universe\Planet\Planet;
 use EtoA\User\UserPropertiesRepository;
 
@@ -84,7 +85,7 @@ class ResourceBoxDrawer
             . $this->getResourceRow($style4, RES_FOOD, "images/resources/food.png", $planet->resFood, $planet->storeFood, $planet->prodFood)
             . $this->getResourceRow($style5, "Bevölkerung", "images/resources/people.png", $planet->people, $planet->peoplePlace, $planet->prodPeople)
 
-            . "<td class=\"$style6\" " . mTT(RES_POWER, "<img width=\"40px\" height=\"40px\" src=\"images/resources/power.png\" style=\"float:left;margin-right:5px;\"/> <b>Produktion:</b> " . nf($planet->prodPower) . "<br/><b>Verfügbar:</b> " . nf($power_rest) . "<br/><b>Verbrauch:</b> " . nf($planet->usePower) . "<br style=\"clear:both;\"/>") . ">" . nf($power_rest) . "</td>
+            . "<td class=\"$style6\" " . mTT(RES_POWER, "<img width=\"40px\" height=\"40px\" src=\"images/resources/power.png\" style=\"float:left;margin-right:5px;\"/> <b>Produktion:</b> " . StringUtils::formatNumber($planet->prodPower) . "<br/><b>Verfügbar:</b> " . StringUtils::formatNumber($power_rest) . "<br/><b>Verbrauch:</b> " . StringUtils::formatNumber($planet->usePower) . "<br style=\"clear:both;\"/>") . ">" . StringUtils::formatNumber($power_rest) . "</td>
         </tr></table>";
 
         return $rtn;
@@ -133,7 +134,7 @@ class ResourceBoxDrawer
             . $this->getResourceRow($style3, RES_FUEL, "images/resources/fuel.png", $planet->resFuel, $planet->storeFuel, $planet->prodFuel, true)
             . $this->getResourceRow($style4, RES_FOOD, "images/resources/food.png", $planet->resFood, $planet->storeFood, $planet->prodFood, true)
             . $this->getResourceRow($style5, "Bevölkerung", "images/resources/people.png", $planet->people, $planet->peoplePlace, $planet->prodPeople, true)
-            . "<span class=\"respower " . $style6 . "\" " . mTT(RES_POWER, "<img src=\"images/resources/power.png\" style=\"float:left;margin-right:5px;\"/> <b>Produktion:</b> " . nf($planet->prodPower) . "<br/><b>Verfügbar:</b> " . nf($power_rest) . "<br/><b>Verbrauch:</b> " . nf($planet->usePower) . "<br style=\"clear:both;\"/>") . ">" . nf($power_rest, 0, 1) . "</span>
+            . "<span class=\"respower " . $style6 . "\" " . mTT(RES_POWER, "<img src=\"images/resources/power.png\" style=\"float:left;margin-right:5px;\"/> <b>Produktion:</b> " . StringUtils::formatNumber($planet->prodPower) . "<br/><b>Verfügbar:</b> " . StringUtils::formatNumber($power_rest) . "<br/><b>Verbrauch:</b> " . StringUtils::formatNumber($planet->usePower) . "<br style=\"clear:both;\"/>") . ">" . StringUtils::formatNumber($power_rest, false, true) . "</span>
         </div>
         </div>";
 
@@ -146,7 +147,7 @@ class ResourceBoxDrawer
             $shortAmount ? '<span class="%s" %s>%s</span>' : '<td class="%s" %s>%s</td>',
             $style,
             $this->getResourceTooltip($title, $icon, $amount, $store, $production),
-            $shortAmount ? nf($amount, 0, 1) : nf(floor($amount))
+            $shortAmount ? StringUtils::formatNumber($amount, false, true) : StringUtils::formatNumber(floor($amount))
         );
     }
 
@@ -155,7 +156,7 @@ class ResourceBoxDrawer
         $remainingStore = $store - $amount;
         $storeFullMessage = '';
         if ($production > 0 && $remainingStore > 0 && $title != 'Bevölkerung') {
-            $storeFullMessage = sprintf('<br><b>Voll in:</b> %s', tf(($remainingStore / $production) * 3600));
+            $storeFullMessage = sprintf('<br><b>Voll in:</b> %s', StringUtils::formatTimespan(($remainingStore / $production) * 3600));
         }
 
         return mTT(
@@ -163,8 +164,8 @@ class ResourceBoxDrawer
             sprintf(
                 '<img width="40px" height="40px" src="%s" style="float:left;margin-right:5px;"/> <b>Vorhanden:</b> %s<br/><b>Speicher:</b> %s%s<br style=\"clear:both;\"/>',
                 $icon,
-                nf($amount),
-                nf($store),
+                StringUtils::formatNumber($amount),
+                StringUtils::formatNumber($store),
                 $storeFullMessage
             )
         );

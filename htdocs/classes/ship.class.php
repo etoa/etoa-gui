@@ -1,5 +1,7 @@
 <?PHP
 
+use EtoA\Support\StringUtils;
+
 class Ship
 {
     public int $id;
@@ -148,14 +150,14 @@ class Ship
 			$this->shortComment<br/><br/>
 			<table style=\"width:260px;font-size:small;\">
 			<tr>
-			<td>Schaden:</td><td>" . nf($this->weapon) . "</td>
-			<td>Regeneration:</td><td>" . nf($this->heal) . "</td>
+			<td>Schaden:</td><td>" . StringUtils::formatNumber($this->weapon) . "</td>
+			<td>Regeneration:</td><td>" . StringUtils::formatNumber($this->heal) . "</td>
 			</tr><tr>
-			<td>Schild:</td><td>" . nf($this->shield) . "</td>
-			<td>Kapazität:</td><td>" . nf($this->capacity) . "</td>
+			<td>Schild:</td><td>" . StringUtils::formatNumber($this->shield) . "</td>
+			<td>Kapazität:</td><td>" . StringUtils::formatNumber($this->capacity) . "</td>
 			</tr><tr>
-			<td>Struktur:</td><td>" . nf($this->structure) . "</td>
-			<td>Speed:</td><td>" . nf($this->speed) . "</td>
+			<td>Struktur:</td><td>" . StringUtils::formatNumber($this->structure) . "</td>
+			<td>Speed:</td><td>" . StringUtils::formatNumber($this->speed) . "</td>
 			</tr>
 			</table><br/>" . $this->getActions(1) . "</div>
 			<br style=\"clear:both;\"/></div></div>";

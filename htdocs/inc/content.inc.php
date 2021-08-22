@@ -3,9 +3,11 @@
 use EtoA\Admin\AdminUserRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Quest\QuestResponseListener;
+use EtoA\Support\BBCodeUtils;
 use EtoA\Support\Mail\MailSenderService;
 use EtoA\Text\TextRepository;
 use EtoA\Support\RuntimeDataStore;
+use EtoA\Support\StringUtils;
 use EtoA\Tip\TipRepository;
 use EtoA\Tutorial\TutorialManager;
 use EtoA\User\UserPropertiesRepository;
@@ -52,7 +54,7 @@ if (!$cu->isSetup() && $page != "help" && $page != "contact") {
         if ($tipText !== null) {
             echo "<br/>";
             iBoxStart("<span style=\"color:#0f0;\">TIPP</span>");
-            echo text2html($tipText);
+            echo BBCodeUtils::toHTML($tipText);
             iBoxEnd();
         }
     }
@@ -65,7 +67,7 @@ if (!$cu->isSetup() && $page != "help" && $page != "contact") {
     if ($systemMessage->isEnabled()) {
         echo "<br />";
         iBoxStart("<span style=\"color:red;\">WICHTIGE SYSTEMNACHRICHT</span>");
-        echo text2html($systemMessage->content);
+        echo BBCodeUtils::toHTML($systemMessage->content);
         iBoxEnd();
     }
 
@@ -76,7 +78,7 @@ if (!$cu->isSetup() && $page != "help" && $page != "contact") {
         if ($infoText->isEnabled()) {
             echo "<br />";
             iBoxStart("<span style=\"color:red;\">UPDATEDIENST</span>");
-            echo text2html($infoText->content);
+            echo BBCodeUtils::toHTML($infoText->content);
             iBoxEnd();
         }
     }
@@ -106,7 +108,7 @@ if (!$cu->isSetup() && $page != "help" && $page != "contact") {
         $page != 'userconfig'
     ) {
         echo '<h1>Dein Account ist zut Löschung vorgeschlagen!</h1>';
-        echo 'Die Löschung erfolgt frühestens um <b>' . df($cu->deleted) . '</b>!<br/><br/>
+        echo 'Die Löschung erfolgt frühestens um <b>' . StringUtils::formatDate($cu->deleted) . '</b>!<br/><br/>
         <input type="button" onclick="document.location=\'?page=userconfig&mode=misc\'" value="Löschung aufheben" />
         <input type="button" onclick="document.location=\'?page=contact\'" value="Admin kontaktieren" /> ';
     }
@@ -123,8 +125,8 @@ if (!$cu->isSetup() && $page != "help" && $page != "contact") {
         <b>Grund:</b> ' . $cu->ban_reason . '.<br/>
         <b>Zeitraum:</b> <span style="color:#f90">' . date("d.m.Y, H:i", $cu->blocked_from) . '</span>
         bis <span style="color:#0f0">' . date("d.m.Y, H:i", $cu->blocked_to) . '</span><br/>
-        <b>Gesamtdauer der Sperre:</b> ' . tf($cu->blocked_to - $cu->blocked_from) . '<br/>
-        <b>Dauer:</b> ' . tf($cu->blocked_to - max(time(), $cu->blocked_from)) . '<br/>';
+        <b>Gesamtdauer der Sperre:</b> ' . StringUtils::formatTimespan($cu->blocked_to - $cu->blocked_from) . '<br/>
+        <b>Dauer:</b> ' . StringUtils::formatTimespan($cu->blocked_to - max(time(), $cu->blocked_from)) . '<br/>';
 
         /** @var AdminUserRepository $adminUserRepository */
         $adminUserRepository = $app[AdminUserRepository::class];
@@ -154,13 +156,13 @@ if (!$cu->isSetup() && $page != "help" && $page != "contact") {
             echo '<br/><span style="color:#0f0">Die Minimaldauer ist abgelaufen!</span><br/><br/>
             <input type="button" onclick="document.location=\'?page=userconfig&mode=misc\'" value="Einstellungen" /><br/>';
         } else {
-            echo 'Zeit bis Deaktivierung möglich ist: <b>' . tf($cu->hmode_to - max(time(), $cu->hmode_from)) . '</b><br/>';
+            echo 'Zeit bis Deaktivierung möglich ist: <b>' . StringUtils::formatTimespan($cu->hmode_to - max(time(), $cu->hmode_from)) . '</b><br/>';
         }
         echo '<br/>Solltest du Fragen oder Probleme mit dem Urlaubsmodus haben,<br/>
         dann <a href="?page=contact">melde</a> dich bei einem Game-Administrator.';
     } elseif ($s->sittingActive && $s->falseSitter && $page != "userconfig") {
         echo '<h1>Sitting ist aktiv</h1>
-        Dein Account wird gesitted bis <b>' . df($s->sittingUntil) . '</b><br/><br/>';
+        Dein Account wird gesitted bis <b>' . StringUtils::formatDate($s->sittingUntil) . '</b><br/><br/>';
         echo button("Einstellungen", "?page=userconfig&mode=sitting");
     }
 

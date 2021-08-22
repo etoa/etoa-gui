@@ -1,6 +1,8 @@
 <?PHP
 
 use EtoA\HostCache\NetworkNameService;
+use EtoA\Support\BBCodeUtils;
+use EtoA\Support\StringUtils;
 use EtoA\User\UserRepository;
 use EtoA\User\UserSearch;
 use EtoA\User\UserSessionRepository;
@@ -79,11 +81,11 @@ elseif (isset($_GET['surveillance']) && $_GET['surveillance'] > 0) {
                 $reqRaw = wordwrap($entry->requestRaw, 60, "\n", true);
                 $post = wordwrap($entry->post, 60, "\n", true);
                 echo "<tr>
-                        <td>" . df($entry->timestamp, 1) . "</td>
+                        <td>" . StringUtils::formatDate($entry->timestamp) . "</td>
                         <td>" . $entry->page . "</td>
-                        <td>" . text2html($req) . "</td>
-                        <td>" . text2html($reqRaw) . "</td>
-                        <td>" . text2html($post) . "</td>
+                        <td>" . BBCodeUtils::toHTML($req) . "</td>
+                        <td>" . BBCodeUtils::toHTML($reqRaw) . "</td>
+                        <td>" . BBCodeUtils::toHTML($post) . "</td>
                     </tr>";
             }
             tableEnd();
@@ -122,7 +124,7 @@ elseif (isset($_GET['surveillance']) && $_GET['surveillance'] > 0) {
                 echo "<td>";
                 $dur = max($userSession->timeLogout ?? 0, $userSession->timeAction) - $userSession->timeLogin;
                 if ($dur > 0)
-                    echo tf($dur);
+                    echo StringUtils::formatTimespan($dur);
                 else
                     echo "-";
                 if ($dur > 60) {
@@ -194,7 +196,7 @@ else {
         foreach ($users as $user) {
             echo "<tr>
                     <td><a href=\"?page=$page&amp;sub=edit&amp;id=" . $user->id . "\">" . $user->nick . "</a></td>
-                    <td " . tm("Punkteverlauf", "<img src=\"../misc/stats.image.php?user=" . $user->id . "\" alt=\"Diagramm\" style=\"width:600px;height:400px;\" />") . ">" . nf($user->points) . "</td>
+                    <td " . tm("Punkteverlauf", "<img src=\"../misc/stats.image.php?user=" . $user->id . "\" alt=\"Diagramm\" style=\"width:600px;height:400px;\" />") . ">" . StringUtils::formatNumber($user->points) . "</td>
                     <td>" . stripslashes($user->observe) . "</td>";
             if ($user->timeAction > 0)
                 echo "<td class=\"tbldata\" style=\"color:#0f0;\">online</td>";
@@ -206,7 +208,7 @@ else {
             /** @var UserSurveillanceRepository $userSuveillanceRepository */
             $userSuveillanceRepository = $app[UserSurveillanceRepository::class];
             $dnum = $userSuveillanceRepository->count(UserSurveillanceSearch::create()->userId($user->id));
-            echo "<td>" . nf($dnum) . "</td>
+            echo "<td>" . StringUtils::formatNumber($dnum) . "</td>
                     <td>
                         <a href=\"?page=$page&amp;sub=$sub&amp;surveillance=" . $user->id . "\">Details</a>
                         <a href=\"?page=$page&amp;sub=$sub&amp;text=" . $user->id . "\">Text ändern</a>

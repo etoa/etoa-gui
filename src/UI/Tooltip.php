@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace EtoA\UI;
 
+use EtoA\Support\BBCodeUtils;
+
 class Tooltip
 {
     const TOOLTIP_TEXT_COLOR = '#eef';
@@ -32,7 +34,7 @@ class Tooltip
 
     public function addText(string $text): void
     {
-        $this->add(text2html($text) . "<br/>");
+        $this->add(BBCodeUtils::toHTML($text) . "<br/>");
     }
 
     public function addHtml(string $text): void

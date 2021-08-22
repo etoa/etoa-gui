@@ -3,6 +3,8 @@
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\DefaultItem\DefaultItemRepository;
 use EtoA\Race\RaceDataRepository;
+use EtoA\Support\BBCodeUtils;
+use EtoA\Support\StringUtils;
 use EtoA\Text\TextRepository;
 use EtoA\UI\Tooltip;
 use EtoA\Universe\Entity\EntityRepository;
@@ -237,64 +239,64 @@ if ($mode == "itemsets" && isset($planet)) {
     echo "<th>TOTAL</th></tr>";
 
     echo "<tr><td class=\"tbldata\">" . RES_ICON_METAL . "Produktion " . RES_METAL . "</td>";
-    echo "<td class=\"tbldata\">" . get_percent_string($planetType->metal, 1) . "</td>";
-    echo "<td class=\"tbldata\">" . get_percent_string($cu->race->metal, 1) . "</td>";
-    echo "<td class=\"tbldata\">" . get_percent_string($starType->metal, 1) . "</td>";
-    echo "<td class=\"tbldata\">" . get_percent_string([$planetType->metal, $cu->race->metal, $starType->metal], 1) . "</td></tr>";
+    echo "<td class=\"tbldata\">" . StringUtils::formatPercentString($planetType->metal, true) . "</td>";
+    echo "<td class=\"tbldata\">" . StringUtils::formatPercentString($cu->race->metal, true) . "</td>";
+    echo "<td class=\"tbldata\">" . StringUtils::formatPercentString($starType->metal, true) . "</td>";
+    echo "<td class=\"tbldata\">" . StringUtils::formatPercentString([$planetType->metal, $cu->race->metal, $starType->metal], true) . "</td></tr>";
 
     echo "<tr><td class=\"tbldata\">" . RES_ICON_CRYSTAL . "Produktion " . RES_CRYSTAL . "</td>";
-    echo "<td class=\"tbldata\">" . get_percent_string($planetType->crystal, 1) . "</td>";
-    echo "<td class=\"tbldata\">" . get_percent_string($cu->race->crystal, 1) . "</td>";
-    echo "<td class=\"tbldata\">" . get_percent_string($starType->crystal, 1) . "</td>";
-    echo "<td class=\"tbldata\">" . get_percent_string([$planetType->crystal, $cu->race->crystal, $starType->crystal], 1) . "</td></tr>";
+    echo "<td class=\"tbldata\">" . StringUtils::formatPercentString($planetType->crystal, true) . "</td>";
+    echo "<td class=\"tbldata\">" . StringUtils::formatPercentString($cu->race->crystal, true) . "</td>";
+    echo "<td class=\"tbldata\">" . StringUtils::formatPercentString($starType->crystal, true) . "</td>";
+    echo "<td class=\"tbldata\">" . StringUtils::formatPercentString([$planetType->crystal, $cu->race->crystal, $starType->crystal], true) . "</td></tr>";
 
     echo "<tr><td class=\"tbldata\">" . RES_ICON_PLASTIC . "Produktion " . RES_PLASTIC . "</td>";
-    echo "<td class=\"tbldata\">" . get_percent_string($planetType->plastic, 1) . "</td>";
-    echo "<td class=\"tbldata\">" . get_percent_string($cu->race->plastic, 1) . "</td>";
-    echo "<td class=\"tbldata\">" . get_percent_string($starType->plastic, 1) . "</td>";
-    echo "<td class=\"tbldata\">" . get_percent_string([$planetType->plastic, $cu->race->plastic, $starType->plastic], 1) . "</td></tr>";
+    echo "<td class=\"tbldata\">" . StringUtils::formatPercentString($planetType->plastic, true) . "</td>";
+    echo "<td class=\"tbldata\">" . StringUtils::formatPercentString($cu->race->plastic, true) . "</td>";
+    echo "<td class=\"tbldata\">" . StringUtils::formatPercentString($starType->plastic, true) . "</td>";
+    echo "<td class=\"tbldata\">" . StringUtils::formatPercentString([$planetType->plastic, $cu->race->plastic, $starType->plastic], true) . "</td></tr>";
 
     echo "<tr><td class=\"tbldata\">" . RES_ICON_FUEL . "Produktion " . RES_FUEL . "</td>";
-    echo "<td class=\"tbldata\">" . get_percent_string($planetType->fuel, 1) . "</td>";
-    echo "<td class=\"tbldata\">" . get_percent_string($cu->race->fuel, 1) . "</td>";
-    echo "<td class=\"tbldata\">" . get_percent_string($starType->fuel, 1) . "</td>";
-    echo "<td class=\"tbldata\">" . get_percent_string([$planetType->fuel, $cu->race->fuel, $starType->fuel], 1) . "</td></tr>";
+    echo "<td class=\"tbldata\">" . StringUtils::formatPercentString($planetType->fuel, true) . "</td>";
+    echo "<td class=\"tbldata\">" . StringUtils::formatPercentString($cu->race->fuel, true) . "</td>";
+    echo "<td class=\"tbldata\">" . StringUtils::formatPercentString($starType->fuel, true) . "</td>";
+    echo "<td class=\"tbldata\">" . StringUtils::formatPercentString([$planetType->fuel, $cu->race->fuel, $starType->fuel], true) . "</td></tr>";
 
     echo "<tr><td class=\"tbldata\">" . RES_ICON_FOOD . "Produktion " . RES_FOOD . "</td>";
-    echo "<td class=\"tbldata\">" . get_percent_string($planetType->food, 1) . "</td>";
-    echo "<td class=\"tbldata\">" . get_percent_string($cu->race->food, 1) . "</td>";
-    echo "<td class=\"tbldata\">" . get_percent_string($starType->food, 1) . "</td>";
-    echo "<td class=\"tbldata\">" . get_percent_string([$planetType->food, $cu->race->food, $starType->food], 1) . "</td></tr>";
+    echo "<td class=\"tbldata\">" . StringUtils::formatPercentString($planetType->food, true) . "</td>";
+    echo "<td class=\"tbldata\">" . StringUtils::formatPercentString($cu->race->food, true) . "</td>";
+    echo "<td class=\"tbldata\">" . StringUtils::formatPercentString($starType->food, true) . "</td>";
+    echo "<td class=\"tbldata\">" . StringUtils::formatPercentString([$planetType->food, $cu->race->food, $starType->food], true) . "</td></tr>";
 
     echo "<tr><td class=\"tbldata\">" . RES_ICON_POWER . "Produktion Energie</td>";
-    echo "<td class=\"tbldata\">" . get_percent_string($planetType->power, 1) . "</td>";
-    echo "<td class=\"tbldata\">" . get_percent_string($cu->race->power, 1) . "</td>";
-    echo "<td class=\"tbldata\">" . get_percent_string($starType->power, 1) . "</td>";
-    echo "<td class=\"tbldata\">" . get_percent_string([$planetType->power, $cu->race->power, $starType->power], 1) . "</td></tr>";
+    echo "<td class=\"tbldata\">" . StringUtils::formatPercentString($planetType->power, true) . "</td>";
+    echo "<td class=\"tbldata\">" . StringUtils::formatPercentString($cu->race->power, true) . "</td>";
+    echo "<td class=\"tbldata\">" . StringUtils::formatPercentString($starType->power, true) . "</td>";
+    echo "<td class=\"tbldata\">" . StringUtils::formatPercentString([$planetType->power, $cu->race->power, $starType->power], true) . "</td></tr>";
 
     echo "<tr><td class=\"tbldata\">" . RES_ICON_PEOPLE . "Bevölkerungswachstum</td>";
-    echo "<td class=\"tbldata\">" . get_percent_string($planetType->people, 1) . "</td>";
-    echo "<td class=\"tbldata\">" . get_percent_string($cu->race->population, 1) . "</td>";
-    echo "<td class=\"tbldata\">" . get_percent_string($starType->people, 1) . "</td>";
-    echo "<td class=\"tbldata\">" . get_percent_string([$planetType->people, $cu->race->population, $starType->people], 1) . "</td></tr>";
+    echo "<td class=\"tbldata\">" . StringUtils::formatPercentString($planetType->people, true) . "</td>";
+    echo "<td class=\"tbldata\">" . StringUtils::formatPercentString($cu->race->population, true) . "</td>";
+    echo "<td class=\"tbldata\">" . StringUtils::formatPercentString($starType->people, true) . "</td>";
+    echo "<td class=\"tbldata\">" . StringUtils::formatPercentString([$planetType->people, $cu->race->population, $starType->people], true) . "</td></tr>";
 
     echo "<tr><td class=\"tbldata\">" . RES_ICON_TIME . "Forschungszeit</td>";
-    echo "<td class=\"tbldata\">" . get_percent_string($planetType->researchTime, 1, 1) . "</td>";
-    echo "<td class=\"tbldata\">" . get_percent_string($cu->race->researchTime, 1, 1) . "</td>";
-    echo "<td class=\"tbldata\">" . get_percent_string($starType->researchTime, 1, 1) . "</td>";
-    echo "<td class=\"tbldata\">" . get_percent_string([$planetType->researchTime, $cu->race->researchTime, $starType->researchTime], 1, 1) . "</td></tr>";
+    echo "<td class=\"tbldata\">" . StringUtils::formatPercentString($planetType->researchTime, true, true) . "</td>";
+    echo "<td class=\"tbldata\">" . StringUtils::formatPercentString($cu->race->researchTime, true, true) . "</td>";
+    echo "<td class=\"tbldata\">" . StringUtils::formatPercentString($starType->researchTime, true, true) . "</td>";
+    echo "<td class=\"tbldata\">" . StringUtils::formatPercentString([$planetType->researchTime, $cu->race->researchTime, $starType->researchTime], true, true) . "</td></tr>";
 
     echo "<tr><td class=\"tbldata\">" . RES_ICON_TIME . "Bauzeit (Geb&auml;ude)</td>";
-    echo "<td class=\"tbldata\">" . get_percent_string($planetType->buildTime, 1, 1) . "</td>";
-    echo "<td class=\"tbldata\">" . get_percent_string($cu->race->buildTime, 1, 1) . "</td>";
-    echo "<td class=\"tbldata\">" . get_percent_string($starType->buildTime, 1, 1) . "</td>";
-    echo "<td class=\"tbldata\">" . get_percent_string([$planetType->buildTime, $cu->race->buildTime, $starType->buildTime], 1, 1) . "</td></tr>";
+    echo "<td class=\"tbldata\">" . StringUtils::formatPercentString($planetType->buildTime, true, true) . "</td>";
+    echo "<td class=\"tbldata\">" . StringUtils::formatPercentString($cu->race->buildTime, true, true) . "</td>";
+    echo "<td class=\"tbldata\">" . StringUtils::formatPercentString($starType->buildTime, true, true) . "</td>";
+    echo "<td class=\"tbldata\">" . StringUtils::formatPercentString([$planetType->buildTime, $cu->race->buildTime, $starType->buildTime], true, true) . "</td></tr>";
 
     echo "<tr><td class=\"tbldata\">" . RES_ICON_TIME . "Fluggeschwindigkeit</td>";
     echo "<td class=\"tbldata\">-</td>";
-    echo "<td class=\"tbldata\">" . get_percent_string($cu->race->fleetSpeedFactor, 1) . "</td>";
+    echo "<td class=\"tbldata\">" . StringUtils::formatPercentString($cu->race->fleetSpeedFactor, true) . "</td>";
     echo "<td class=\"tbldata\">-</td>";
-    echo "<td class=\"tbldata\">" . get_percent_string($cu->race->fleetSpeedFactor, 1) . "</td></tr>";
+    echo "<td class=\"tbldata\">" . StringUtils::formatPercentString($cu->race->fleetSpeedFactor, true) . "</td></tr>";
     tableEnd();
 
     echo "<input type=\"submit\" name=\"submit_chooseplanet\" value=\"Auswählen\" />
@@ -375,7 +377,7 @@ if ($mode == "itemsets" && isset($planet)) {
     $welcomeText = $textRepo->find('welcome_message');
     if ($welcomeText->isEnabled()) {
         iBoxStart("Willkommen");
-        echo text2html($welcomeText->content);
+        echo BBCodeUtils::toHTML($welcomeText->content);
         iBoxEnd();
 
         /** @var \EtoA\Message\MessageRepository $messageRepository */

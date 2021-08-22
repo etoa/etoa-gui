@@ -5,6 +5,7 @@ use EtoA\Building\BuildingRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Ship\ShipDataRepository;
 use EtoA\Ship\ShipRepository;
+use EtoA\Support\StringUtils;
 use EtoA\Universe\Planet\Planet;
 
 /** @var ConfigurationService $config */
@@ -40,7 +41,7 @@ foreach ($buildings as $building) {
     <td>" . $building->buildCostsFactor . "</td>
     <td>" . $building->productionFactor . "</td>
     <td>" . $building->fields . "</td>
-        <td>" . nf($sum) . "</td>
+        <td>" . StringUtils::formatNumber($sum) . "</td>
         </tr>";
 }
 
@@ -64,7 +65,7 @@ foreach ($ships as $ship) {
     <td></td>
     <td></td>
     <td></td>
-    <td>" . nf($sum) . "</td>
+    <td>" . StringUtils::formatNumber($sum) . "</td>
     </tr>";
 }
 tableEnd();

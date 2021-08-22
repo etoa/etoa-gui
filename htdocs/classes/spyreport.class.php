@@ -7,6 +7,7 @@
 use EtoA\Building\BuildingDataRepository;
 use EtoA\Defense\DefenseDataRepository;
 use EtoA\Ship\ShipDataRepository;
+use EtoA\Support\StringUtils;
 use EtoA\Technology\TechnologyDataRepository;
 
 /**
@@ -110,9 +111,9 @@ class SpyReport extends Report
                             if ($building != '') {
                                 $data = explode(':', $building);
                                 echo '<tr>
-										<td>' . $buildingNames[(int) $data[0]] . ' </td>
-										<td style="text-align:right;"> ' . $data[1] . '</td>
-									</tr>';
+                                        <td>' . $buildingNames[(int) $data[0]] . ' </td>
+                                        <td style="text-align:right;"> ' . $data[1] . '</td>
+                                    </tr>';
                             }
                         }
                         echo '</table>';
@@ -132,9 +133,9 @@ class SpyReport extends Report
                             if ($tech != '') {
                                 $data = explode(':', $tech);
                                 echo '<tr>
-										<td>' . $technologyNames[(int) $data[0]] . ' </td>
-										<td style="text-align:right;"> ' . $data[1] . '</td>
-									</tr>';
+                                        <td>' . $technologyNames[(int) $data[0]] . ' </td>
+                                        <td style="text-align:right;"> ' . $data[1] . '</td>
+                                    </tr>';
                             }
                         }
                         echo '</table>';
@@ -155,9 +156,9 @@ class SpyReport extends Report
                             if ($ship != '') {
                                 $data = explode(':', $ship);
                                 echo '<tr>
-										<td>' . $shipNames[(int) $data[0]] . ' </td>
-										<td style="text-align:right;"> ' . nf($data[1]) . '</td>
-									</tr>';
+                                        <td>' . $shipNames[(int) $data[0]] . ' </td>
+                                        <td style="text-align:right;"> ' . StringUtils::formatNumber((int) $data[1]) . '</td>
+                                    </tr>';
                             }
                         }
                         echo '</table>';
@@ -177,9 +178,9 @@ class SpyReport extends Report
                             if ($defense != '') {
                                 $data = explode(':', $defense);
                                 echo '<tr>
-										<td>' . $defenseNames[(int) $data[0]] . ' </td>
-										<td style="text-align:right;"> ' . nf($data[1]) . '</td>
-									</tr>';
+                                        <td>' . $defenseNames[(int) $data[0]] . ' </td>
+                                        <td style="text-align:right;"> ' . StringUtils::formatNumber((int) $data[1]) . '</td>
+                                    </tr>';
                             }
                         }
                         echo '</table>';
@@ -190,14 +191,14 @@ class SpyReport extends Report
                     echo '<table>';
                     foreach ($resNames as $k => $v) {
                         echo '<tr>
-							<td>' . $v . ' </td>
-							<td style="text-align:right;"> ' . nf($this->res[$k]) . '</td>
-							</tr>';
+                            <td>' . $v . ' </td>
+                            <td style="text-align:right;"> ' . StringUtils::formatNumber($this->res[$k]) . '</td>
+                            </tr>';
                     }
                     echo '<tr>
-							<td>Bewohner </td>
-							<td style="text-align:right;"> ' . nf($this->res[5]) . '</td>
-						</tr>';
+                            <td>Bewohner </td>
+                            <td style="text-align:right;"> ' . StringUtils::formatNumber($this->res[5]) . '</td>
+                        </tr>';
                     echo '</table><br/>';
                 }
                 echo '<br /><strong>Spionageabwehr:</strong> ' . $this->spydefense . '%<br />';
@@ -219,17 +220,17 @@ class SpyReport extends Report
                 echo '<strong>Spionageabwehr:</strong> ' . $this->spydefense . '%';
                 break;
             case 'analyze':
-                echo 'Eine Flotte vom Planeten ' . $ent2->detailLink() . ' hat das Ziel ' . $ent1->detailLink() . ' um ' . df($this->timestamp) . ' analysiert.<br /><br />';
+                echo 'Eine Flotte vom Planeten ' . $ent2->detailLink() . ' hat das Ziel ' . $ent1->detailLink() . ' um ' . StringUtils::formatDate($this->timestamp) . ' analysiert.<br /><br />';
                 echo '<br /><strong>ROHSTOFFE:</strong><br />';
                 echo '<table>';
                 foreach ($resNames as $k => $v) {
-                    echo '<tr><td>' . $v . ' </td><td style="text-align:right;"> ' . nf($this->res[$k]) . '</td></tr>';
+                    echo '<tr><td>' . $v . ' </td><td style="text-align:right;"> ' . StringUtils::formatNumber($this->res[$k]) . '</td></tr>';
                 }
-                echo '<tr><td>Bewohner </td><td style="text-align:right;"> ' . nf($this->res[5]) . '</td></tr>';
+                echo '<tr><td>Bewohner </td><td style="text-align:right;"> ' . StringUtils::formatNumber($this->res[5]) . '</td></tr>';
                 echo '</table><br/>';
                 break;
             case 'analyzefaild':
-                echo 'Eine Flotte vom Planeten ' . $ent2->detailLink() . ' versuchte das Ziel ' . $ent1->detailLink() . ' um ' . df($this->timestamp) . ' zu analysiert, kehrte jedoch erfolglos wieder zurück.<br />';
+                echo 'Eine Flotte vom Planeten ' . $ent2->detailLink() . ' versuchte das Ziel ' . $ent1->detailLink() . ' um ' . StringUtils::formatDate($this->timestamp) . ' zu analysiert, kehrte jedoch erfolglos wieder zurück.<br />';
                 break;
 
             default:

@@ -7,7 +7,7 @@
     <h2>{{ subtitle }}</h2>
 
     {% if text|default(false) %}
-        <div style="border:1px solid #ccc; background:#eee;padding:5px;border-radius:5px;">{{ text2html(text.content)|raw }}</div>
+        <div style="border:1px solid #ccc; background:#eee;padding:5px;border-radius:5px;">{{ BBCodeToHTML(text.content)|raw }}</div>
     {% else %}
         {{ macros.messagebox('Ungültige Text ID', 'error') }}
     {% endif %}

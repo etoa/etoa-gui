@@ -2,6 +2,7 @@
 
 use EtoA\Alliance\AllianceRepository;
 use EtoA\HostCache\NetworkNameService;
+use EtoA\Support\StringUtils;
 use EtoA\User\UserMultiRepository;
 use EtoA\User\UserSittingRepository;
 
@@ -99,7 +100,7 @@ if (isset($_GET['ip'])) {
             echo ">" . date("d.m.Y H:i", $iparr['time_log']) . "";
         else
             echo ">Noch nicht eingeloggt!";
-        echo "</td><td $uCol>" . nf($iparr['user_points']) . "</td>";
+        echo "</td><td $uCol>" . StringUtils::formatNumber($iparr['user_points']) . "</td>";
 
         $multiEntries = $userMultiRepository->getUserEntries((int) $iparr['user_id']);
         if (count($multiEntries) > 0) {
@@ -119,7 +120,7 @@ if (isset($_GET['ip'])) {
         } else {
             echo "<td $uCol>-</td>";
         }
-        echo "<td $uCol>" . nf($iparr['user_multi_delets']) . "</td>";
+        echo "<td $uCol>" . StringUtils::formatNumber($iparr['user_multi_delets']) . "</td>";
         echo "</tr>";
     }
     echo "</table>";

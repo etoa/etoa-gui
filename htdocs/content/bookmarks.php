@@ -4,6 +4,8 @@ use EtoA\Bookmark\BookmarkOrder;
 use EtoA\Bookmark\BookmarkRepository;
 use EtoA\Bookmark\FleetBookmarkRepository;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Support\BBCodeUtils;
+use EtoA\Support\StringUtils;
 use EtoA\Universe\Entity\EntityCoordinates;
 use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Planet\PlanetRepository;
@@ -72,37 +74,34 @@ if ((isset($_POST['submitEdit']) || isset($_POST['submitNew'])) && (isset($_POST
             $addships = "";
             foreach ($_POST['ship_count'] as $sid => $count) {
                 if ($addships == "")
-                    $addships .= (int) $sid . ":" . nf_back($count);
+                    $addships .= (int) $sid . ":" . StringUtils::parseFormattedNumber($count);
                 else
-                    $addships .= "," . (int) $sid . ":" . nf_back($count);
+                    $addships .= "," . (int) $sid . ":" . StringUtils::parseFormattedNumber($count);
             }
 
-            $speed = max(1, min(100, (int) nf_back($_POST['value'])));
+            $speed = max(1, min(100, StringUtils::parseFormattedNumber($_POST['value'])));
 
-            // Create restring
             $freight = new BaseResources();
-            $freight->metal = (int) nf_back_sign($_POST['res0']);
-            $freight->crystal = (int) nf_back_sign($_POST['res1']);
-            $freight->plastic = (int) nf_back_sign($_POST['res2']);
-            $freight->fuel = (int) nf_back_sign($_POST['res3']);
-            $freight->food = (int) nf_back_sign($_POST['res4']);
-            $freight->people = (int) nf_back_sign($_POST['res5']);
+            $freight->metal = StringUtils::parseFormattedNumberSigned($_POST['res0']);
+            $freight->crystal = StringUtils::parseFormattedNumberSigned($_POST['res1']);
+            $freight->plastic = StringUtils::parseFormattedNumberSigned($_POST['res2']);
+            $freight->fuel = StringUtils::parseFormattedNumberSigned($_POST['res3']);
+            $freight->food = StringUtils::parseFormattedNumberSigned($_POST['res4']);
+            $freight->people = StringUtils::parseFormattedNumberSigned($_POST['res5']);
 
             $fetch = new BaseResources();
-            $fetch->metal = max(0, (int) nf_back($_POST['fetch0']));
-            $fetch->crystal = max(0, (int) nf_back($_POST['fetch1']));
-            $fetch->plastic = max(0, (int) nf_back($_POST['fetch2']));
-            $fetch->fuel = max(0, (int) nf_back($_POST['fetch3']));
-            $fetch->food = max(0, (int) nf_back($_POST['fetch4']));
-            $fetch->people = max(0, (int) nf_back($_POST['fetch5']));
+            $fetch->metal = max(0, StringUtils::parseFormattedNumber($_POST['fetch0']));
+            $fetch->crystal = max(0, StringUtils::parseFormattedNumber($_POST['fetch1']));
+            $fetch->plastic = max(0, StringUtils::parseFormattedNumber($_POST['fetch2']));
+            $fetch->fuel = max(0, StringUtils::parseFormattedNumber($_POST['fetch3']));
+            $fetch->food = max(0, StringUtils::parseFormattedNumber($_POST['fetch4']));
+            $fetch->people = max(0, StringUtils::parseFormattedNumber($_POST['fetch5']));
 
-            // Save new bookmark
             if (isset($_POST['submitNew'])) {
                 $fleetBookmarkRepository->add($user->id, $_POST['name'], $entity->id, $addships, $freight, $fetch, $_POST['action'], $speed);
 
                 success_msg("Der Favorit wurde hinzugef&uuml;gt!");
             } elseif (isset($_POST['submitEdit'])) {
-                // Update edidet bookmark
                 $fleetBookmarkRepository->update((int) $_POST['id'], $user->id, $_POST['name'], $entity->id, $addships, $freight, $fetch, $_POST['action'], $speed);
 
                 success_msg("Der Favorit wurde gespeichert!");
@@ -145,7 +144,7 @@ if ($mode == "fleet") {
             $ac = FleetAction::createFactory($bookmark->action);
 
             echo "<tr>
-                    <td>" . text2html($bookmark->name) . "</td>
+                    <td>" . BBCodeUtils::toHTML($bookmark->name) . "</td>
                     <td style=\"width:40px;background:#000\"><img src=\"" . $ent->imagePath() . "\" /></td>
                     <td>" . $ent . "<br/>(" . $ent->entityCodeString() . ")</td>
                     <td>" . $ac . "</td>
@@ -153,7 +152,7 @@ if ($mode == "fleet") {
 
             // Creating ship-print-string
             foreach ($bookmark->ships as $shipId => $count) {
-                echo nf($count) . " " . $shipNames[$shipId] . "<br />";
+                echo StringUtils::formatNumber($count) . " " . $shipNames[$shipId] . "<br />";
             }
             echo "</td>
                     <td id=\"fleet_bm_actions_" . $bookmark->id . "\" class=\"tbldata\">
@@ -478,7 +477,7 @@ if ($mode == "fleet") {
     /****************************
      *  Sortiereingaben speichern *
      ****************************/
-    if (count($_POST) > 0 && isset($_POST['sort_submit']) && isset($_POST['sort_value']) && ctype_aldotsc($_POST['sort_value']) && isset($_POST['sort_way']) && ctype_aldotsc($_POST['sort_way'])) {
+    if (count($_POST) > 0 && isset($_POST['sort_submit']) && isset($_POST['sort_value']) && StringUtils::hasAlphaDotsOrUnderlines($_POST['sort_value']) && isset($_POST['sort_way']) && StringUtils::hasAlphaDotsOrUnderlines($_POST['sort_way'])) {
         $properties->itemOrderBookmark = $_POST['sort_value'];
         $properties->itemOrderWay = $_POST['sort_way'];
         $userPropertiesRepository->storeProperties($cu->id, $properties);
@@ -609,7 +608,7 @@ if ($mode == "fleet") {
         iBoxEnd();
 
         // List bookmarks
-        $bookmarks = $bookmarkRepository->findForUser($user->id, new BookmarkOrder($properties->itemOrderBookmark , $properties->itemOrderWay));
+        $bookmarks = $bookmarkRepository->findForUser($user->id, new BookmarkOrder($properties->itemOrderBookmark, $properties->itemOrderWay));
         if (count($bookmarks) > 0) {
             tableStart("Gespeicherte Favoriten");
             /*************
@@ -660,7 +659,7 @@ if ($mode == "fleet") {
                                     <td>" . $ent->entityCodeString() . "</td>
                                     <td><a href=\"?page=cell&amp;id=" . $ent->cellId() . "&amp;hl=" . $ent->id() . "\">" . $ent . "</a></td>
                                     <td>" . $ent->owner() . "</td>
-                                    <td>" . text2html($bookmark->comment) . "</td>
+                                    <td>" . BBCodeUtils::toHTML($bookmark->comment) . "</td>
                                     <td>";
 
                 // Action icons added by river, Info link moved to coordinates (above)

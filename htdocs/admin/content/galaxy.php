@@ -3,6 +3,7 @@
 use EtoA\Admin\Forms\PlanetTypesForm;
 use EtoA\Admin\Forms\StarTypesForm;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Support\StringUtils;
 use EtoA\Universe\Entity\EntityLabelSearch;
 use EtoA\Universe\Entity\EntityLabelSort;
 use EtoA\Universe\Entity\EntityRepository;
@@ -378,7 +379,7 @@ function entities(ConfigurationService $config)
         </select> <input type=\"submit\" name=\"search_submit\" value=\"Suchen\" /></form>";
         /** @var EntityRepository $entityRepository */
         $entityRepository = $app[EntityRepository::class];
-        echo "<br/>Es sind " . nf($entityRepository->countEntityLabels()) . " Eintr&auml;ge in der Datenbank vorhanden.";
+        echo "<br/>Es sind " . StringUtils::formatNumber($entityRepository->countEntityLabels()) . " Eintr&auml;ge in der Datenbank vorhanden.";
 
         echo "<script type=\"text/javascript\">document.forms['dbsearch'].elements[2].focus();</script>";
     }

@@ -928,13 +928,8 @@ function addFontColor(id, colorId) {
 *
 * @param $string Text to wrap BB-Codes into HTML
 * @return Wrapped text
-*
-* @author MrCage | Nicolas Perrenoud
-*
-* @last editing: Demora | Selina Tanner 04.06.2007
 */
-
-function text2html(text, target) {
+function BBCodeToHTML(text, target) {
   text = htmlEntities(text);
   text = text.replace(/\n/g, "<br/>");
 
@@ -1077,7 +1072,7 @@ function updatePeopleWorkingBox(people, time, food) {
 
   document.getElementById('peopleWorking').value = FormatNumber('return', people, peopleFree, '', '');
   document.getElementById('foodUsing').value = FormatNumber('return', food, 0, '', '');
-  document.getElementById('timeReduction').value = tf(time);
+  document.getElementById('timeReduction').value = formatTimespan(time);
 }
 
 // checks if the last sign is a letter
@@ -1119,7 +1114,7 @@ function tf_back(time) {
   return value;
 }
 
-function tf(time)	// Time format
+function formatTimespan(time)
 {
   var w = Math.floor(time / 3600 / 24 / 7);
   time -= w * 3600 * 24 * 7;

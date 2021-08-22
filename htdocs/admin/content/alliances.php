@@ -8,6 +8,8 @@ use EtoA\Alliance\AllianceRepository;
 use EtoA\Alliance\AllianceService;
 use EtoA\Alliance\InvalidAllianceParametersException;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Support\BBCodeUtils;
+use EtoA\Support\StringUtils;
 use EtoA\User\UserRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Twig\Environment;
@@ -401,7 +403,7 @@ function searchResults(Request $request, AllianceRepository $repository, Environ
             echo "<td>" . $alliance['alliance_id'] . "</td>";
             echo "<td>[" . $alliance['alliance_tag'] . "] <a href=\"?page=$page&sub=edit&alliance_id=" . $alliance['alliance_id'] . "\">" . $alliance['alliance_name'] . "</a></td>";
             echo "<td>" . $userNicks[(int) $alliance['alliance_founder_id']] . "</td>";
-            echo "<td>" . df($alliance['alliance_foundation_date']) . "</td>";
+            echo "<td>" . StringUtils::formatDate((int) $alliance['alliance_foundation_date']) . "</td>";
             echo "<td>" . $alliance['cnt'] . "</td>";
             echo "<td style=\"width:50px;\">";
             echo del_button("?page=$page&sub=drop&alliance_id=" . $alliance['alliance_id']) . "</td>";
@@ -436,7 +438,7 @@ function drop(Request $request, AllianceRepository $repository)
         echo "<tr><td class=\"tbltitle\" valign=\"top\">Gründer</td>
 			<td class=\"tbldata\">" . $userNicks[$alliance->founderId] . "</td></tr>";
         echo "<tr><td class=\"tbltitle\" valign=\"top\">Text</td>
-			<td class=\"tbldata\">" . text2html($alliance->text) . "</td></tr>";
+			<td class=\"tbldata\">" . BBCodeUtils::toHTML($alliance->text) . "</td></tr>";
         echo "<tr><td class=\"tbltitle\" valign=\"top\">Gründung</td>
 			<td class=\"tbldata\">" . date("Y-m-d H:i:s", $alliance->foundationTimestamp) . "</td></tr>";
         echo "<tr><td class=\"tbltitle\" valign=\"top\">Website</td>
@@ -509,7 +511,7 @@ function index(Request $request, AllianceRepository $repository, Environment $tw
     echo "</td></tr>";
     echo "</table>";
     echo "<br/><input type=\"submit\" name=\"alliance_search\" value=\"Suche starten\" /> (wenn nichts eingegeben wird werden alle Datensätze angezeigt)</form>";
-    echo "<br/>Es sind " . nf($repository->count()) . " Einträge in der Datenbank vorhanden.";
+    echo "<br/>Es sind " . StringUtils::formatNumber($repository->count()) . " Einträge in der Datenbank vorhanden.";
 }
 
 function removeAlliancePicture(AllianceRepository $repository, int $allianceId): bool

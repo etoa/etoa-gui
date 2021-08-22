@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\HostCache\NetworkNameService;
+use EtoA\Support\StringUtils;
 use EtoA\User\UserRepository;
 use EtoA\User\UserSessionRepository;
 use EtoA\User\UserSessionSearch;
@@ -72,7 +73,7 @@ if (isset($_POST['logshow'])) {
             echo "<td>" . $browserParser->toString() . "</td>";
             echo "<td>";
             if (max($entry->timeLogout, $entry->timeAction) - $entry->timeLogin > 0)
-                echo tf(max($entry->timeLogout, $entry->timeAction) - $entry->timeLogin);
+                echo StringUtils::formatTimespan(max($entry->timeLogout, $entry->timeAction) - $entry->timeLogin);
             else
                 echo "-";
             echo "</td></tr>";
@@ -80,7 +81,7 @@ if (isset($_POST['logshow'])) {
         }
         echo "<tr><td colspan=\"7\"></td></tr>";
         echo "<tr><td colspan=\"6\"></td>";
-        echo "<td>" . tf($cnt) . "</td></tr>";
+        echo "<td>" . StringUtils::formatTimespan($cnt) . "</td></tr>";
         echo "</table>";
     } else
         echo "<i>Keine Eintr&auml;ge vorhanden</i>";
@@ -107,7 +108,7 @@ if (isset($_POST['logshow'])) {
         echo "</select></td></tr>";
         echo "</table>";
         echo "<br/><input type=\"submit\" name=\"logshow\" value=\"Suche starten\" /></form>";
-        echo "<br/>Es sind " . nf($logCount) . " Eintr&auml;ge in der Datenbank vorhanden.<br/><br/>";
+        echo "<br/>Es sind " . StringUtils::formatNumber($logCount) . " Eintr&auml;ge in der Datenbank vorhanden.<br/><br/>";
     } else
         echo "<i>Keine Eintr&auml;ge vorhanden</i><br/><br/>";
 }

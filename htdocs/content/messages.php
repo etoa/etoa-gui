@@ -4,6 +4,8 @@ use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Message\MessageCategory;
 use EtoA\Message\MessageCategoryRepository;
 use EtoA\Message\MessageRepository;
+use EtoA\Support\BBCodeUtils;
+use EtoA\Support\StringUtils;
 use EtoA\User\UserPropertiesRepository;
 use EtoA\User\UserRepository;
 use Symfony\Component\HttpFoundation\Request;
@@ -115,7 +117,7 @@ function viewSingleMessage(
         tableStart();
         echo "<tr><th colspan=\"2\">" . $subj . "</th></tr>";
         echo "<tr><th width=\"50\" valign=\"top\">Datum:</th>
-        <td width=\"250\">" . df($message->timestamp) . "</td></tr>";
+        <td width=\"250\">" . StringUtils::formatDate($message->timestamp) . "</td></tr>";
         echo "<tr><th width=\"50\" valign=\"top\">Sender:</th>
         <td width=\"250\">" . userPopUp($message->userFrom, $userRepository->getNick($message->userFrom), 0) . "</td></tr>";
         echo "<tr><td class=\"tbltitle\" width=\"50\" valign=\"top\">Text:<br/>";
@@ -126,7 +128,7 @@ function viewSingleMessage(
         if (filled($message->text)) {
             echo $request->query->has('src')
                 ? '<textarea rows="30" cols="60" readonly="readonly">' . htmlentities($message->text, ENT_QUOTES, 'UTF-8') . '</textarea>'
-                : text2html(addslashes($message->text));
+                : BBCodeUtils::toHTML(addslashes($message->text));
         } else {
             echo "<i>Kein Text</i>";
         }
@@ -297,12 +299,12 @@ function listMessagesOverview(
 
         if (count($messages) > 0) {
             echo "<tr>
-                <th colspan=\"4\">" . text2html($category->name) . " (" . count($messages) . " Nachrichten)</th>
+                <th colspan=\"4\">" . BBCodeUtils::toHTML($category->name) . " (" . count($messages) . " Nachrichten)</th>
                 <th style=\"text-align:center;\"><input type=\"button\" id=\"selectBtn[" . $category->id . "]\" value=\"X\" onclick=\"xajax_messagesSelectAllInCategory(" . $category->id . "," . count($messages) . ",this.value)\"/></td>
             </tr>";
         } else {
             echo "<tr>
-                <th colspan=\"5\">" . text2html($category->name) . "</th>
+                <th colspan=\"5\">" . BBCodeUtils::toHTML($category->name) . "</th>
             </tr>";
         }
 
@@ -342,7 +344,7 @@ function listMessagesOverview(
                 <td style=\"width:66%;\" ";
                 if ($previewMessages) {
                     // subj has already been encoded above
-                    echo tm($subj, htmlentities(substr(strip_bbcode($message->text), 0, 500), ENT_QUOTES, 'UTF-8'));
+                    echo tm($subj, htmlentities(substr(BBCodeUtils::stripBBCode($message->text), 0, 500), ENT_QUOTES, 'UTF-8'));
                 }
                 echo ">";
                 if ($message->massMail) {
@@ -366,7 +368,7 @@ function listMessagesOverview(
                 echo "</tr>\n";
                 if ($previewMessages) {
                     echo "<tr style=\"display:none;\" id=\"msgtext" . $message->id . "\"><td colspan=\"5\" class=\"tbldata\">";
-                    echo text2html(addslashes($message->text));
+                    echo BBCodeUtils::toHTML(addslashes($message->text));
                     echo "<br/><br/>";
                     $msgadd = "&amp;message_text=" . base64_encode((string) $message->id) . "&amp;message_sender=" . base64_encode($sender);
                     if (substr($message->subject, 0, 3) == "Fw:") {

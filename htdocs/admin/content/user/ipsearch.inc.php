@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\HostCache\NetworkNameService;
+use EtoA\Support\StringUtils;
 use EtoA\User\UserLoginFailureRepository;
 use EtoA\User\UserRepository;
 use EtoA\User\UserSessionRepository;
@@ -82,7 +83,7 @@ if ($user > 0) {
                     </tr>";
                 foreach ($ipCounts as $ipAddr => $count) {
                     echo "<tr>
-                        <td>" . nf($count) . "</td>
+                        <td>" . StringUtils::formatNumber($count) . "</td>
                         <td><a href=\"?page=$page&amp;sub=$sub&amp;ip=" . $ipAddr . "\">" . $ipAddr . "</a></td>
                         <td><a href=\"?page=$page&amp;sub=$sub&amp;host=" . $networkNameService->getHost($ipAddr) . "\">" . $networkNameService->getHost($ipAddr) . "</a></td>
                         </tr>";
@@ -128,7 +129,7 @@ if ($user > 0) {
                     echo "<tr>
                         <td><a href=\"?page=$page&amp;sub=$sub&amp;ip=" . $sessionLog->ipAddr . "\">" . $sessionLog->ipAddr . "</a></td>
                         <td><a href=\"?page=$page&amp;sub=$sub&amp;host=" . $networkNameService->getHost($sessionLog->ipAddr) . "\">" . $networkNameService->getHost($sessionLog->ipAddr) . "</a></td>
-                        <td>" . df($sessionLog->timeAction) . "</td>
+                        <td>" . StringUtils::formatDate($sessionLog->timeAction) . "</td>
                         <td>" . $browserParser->toString() . "</td>
                         </tr>";
                 }
@@ -151,7 +152,7 @@ if ($user > 0) {
                     echo "<tr>
                         <td><a href=\"?page=$page&amp;sub=$sub&amp;ip=" . $failure->ip . "\">" . $failure->ip . "</a></td>
                         <td><a href=\"?page=$page&amp;sub=$sub&amp;host=" . $failure->host . "\">" . $failure->host . "</a></td>
-                        <td>" . df($failure->time) . "</td>
+                        <td>" . StringUtils::formatDate($failure->time) . "</td>
                         <td>" . $failure->client . "</td>
                         </tr>";
                 }
@@ -204,7 +205,7 @@ if ($user > 0) {
                 </tr>";
             foreach ($sessionCounts as $userId => $count) {
                 echo "<tr>
-                    <td>" . nf($count) . "</td>
+                    <td>" . StringUtils::formatNumber($count) . "</td>
                     <td><a href=\"?page=$page&amp;sub=$sub&amp;user=" . $userId . "\">" . $userNicks[$userId] . "</a></td>
                     </tr>";
             }
@@ -223,7 +224,7 @@ if ($user > 0) {
                 </tr>";
             foreach ($sessionLogCounts as $userId => $count) {
                 echo "<tr>
-                    <td>" . nf($count) . "</td>
+                    <td>" . StringUtils::formatNumber($count) . "</td>
                     <td><a href=\"?page=$page&amp;sub=$sub&amp;user=" . $userId . "\">" . $userNicks[$userId] . "</a></td>
                     </tr>";
             }
@@ -242,7 +243,7 @@ if ($user > 0) {
                 </tr>";
             foreach ($failures as $failure) {
                 echo "<tr>
-                    <td>" . nf($failure['count']) . "</td>
+                    <td>" . StringUtils::formatNumber($failure['count']) . "</td>
                     <td><a href=\"?page=user&amp;sub=$sub&amp;user=" . $failure['userId'] . "\">" . $failure['userNick'] . "</a></td>
                     </tr>";
             }
@@ -270,7 +271,7 @@ if ($user > 0) {
 
                 echo "<tr>
                     <td><a href=\"?page=$page&amp;sub=$sub&amp;user=" . $session->userId . "\" " . cTT($userNicks[$session->userId], "tt" . $session->userId) . ">" . $userNicks[$session->userId] . "</a></td>
-                    <td>" . df($session->timeAction) . "</td>
+                    <td>" . StringUtils::formatDate($session->timeAction) . "</td>
                     <td><a href=\"?page=$page&amp;sub=$sub&amp;ip=" . $session->ipAddr . "\" " . mTT('IP', $session->ipAddr) . ">" . ($ip == $session->ipAddr ? 'IP' : '-') . "</a> /
                     <a href=\"?page=$page&amp;sub=$sub&amp;host=" . $networkNameService->getHost($session->ipAddr) . "\" " . mTT('Host', $networkNameService->getHost($session->ipAddr)) . ">" . ($host == $networkNameService->getHost($session->ipAddr) ? 'Host' : '-') . "</a></td>
                     <td>" . $browserParser->toString() . "</td>
@@ -299,7 +300,7 @@ if ($user > 0) {
 
                 echo "<tr>
                     <td><a href=\"?page=$page&amp;sub=$sub&amp;user=" . $log->userId . "\" " . cTT($userNicks[$log->userId], "tt" . $log->userId) . ">" . $userNicks[$log->userId] . "</a></td>
-                    <td>" . df($log->timeAction) . "</td>
+                    <td>" . StringUtils::formatDate($log->timeAction) . "</td>
                     <td><a href=\"?page=$page&amp;sub=$sub&amp;ip=" . $log->ipAddr . "\" " . mTT('IP', $log->ipAddr) . ">" . ($ip == $log->ipAddr ? 'IP' : '-') . "</a> /
                     <a href=\"?page=$page&amp;sub=$sub&amp;host=" . $networkNameService->getHost($log->ipAddr) . "\" " . mTT('Host', $networkNameService->getHost($log->ipAddr)) . ">" . ($host == $networkNameService->getHost($log->ipAddr) ? 'Host' : '-') . "</a></td>
                     <td>" . $browserParser->toString() . "</td>
@@ -327,7 +328,7 @@ if ($user > 0) {
                     </div>";
                 echo "<tr>
                     <td><a href=\"?page=user&amp;sub=$sub&amp;user=" . $failure->userId . "\" " . cTT($failure->userNick, "tt" . $failure->userId) . ">" . $failure->userNick . "</a></td>
-                    <td>" . df($failure->time) . "</td>
+                    <td>" . StringUtils::formatDate($failure->time) . "</td>
                     <td><a href=\"?page=$page&amp;sub=$sub&amp;ip=" . $failure->ip . "\" " . mTT('IP', $failure->ip) . ">" . ($ip == $failure->ip ? 'IP' : '-') . "</a> /
                     <a href=\"?page=$page&amp;sub=$sub&amp;host=" . $networkNameService->getHost($failure->ip) . "\" " . mTT('Host', $networkNameService->getHost($failure->ip)) . ">" . ($host == $networkNameService->getHost($failure->ip) ? 'Host' : '-') . "</a></td>
                     <td>" . $failure->client . "</td>

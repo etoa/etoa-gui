@@ -11,6 +11,7 @@ use EtoA\Log\LogFacility;
 use EtoA\Log\LogRepository;
 use EtoA\Log\LogSeverity;
 use EtoA\Race\RaceDataRepository;
+use EtoA\Support\StringUtils;
 use EtoA\User\UserRepository;
 use EtoA\User\UserSearch;
 use EtoA\User\UserService;
@@ -343,11 +344,11 @@ else {
                 echo "<td>" . $user->id . "</td>";
                 echo "<td><a href=\"?page=$page&amp;sub=edit&amp;id=" . $user->id . "\">" . $user->nick . "</a></td>";
                 echo "<td " . $uCol . ">" . $status . "</td>";
-                echo "<td title=\"" . $user->name . "\">" . cut_string($user->name, 15) . "</td>";
-                echo "<td title=\"" . $user->email . "\">" . cut_string($user->email, 15) . "</td>";
-                echo "<td title=\"" . $user->dualName . "\">" . cut_string($user->dualName, 15) . "</td>";
-                echo "<td title=\"" . $user->dualEmail . "\">" . cut_string($user->dualEmail, 15) . "</td>";
-                echo "<td>" . nf($user->points) . "</td>";
+                echo "<td title=\"" . $user->name . "\">" . StringUtils::cutString($user->name, 15) . "</td>";
+                echo "<td title=\"" . $user->email . "\">" . StringUtils::cutString($user->email, 15) . "</td>";
+                echo "<td title=\"" . $user->dualName . "\">" . StringUtils::cutString($user->dualName, 15) . "</td>";
+                echo "<td title=\"" . $user->dualEmail . "\">" . StringUtils::cutString($user->dualEmail, 15) . "</td>";
+                echo "<td>" . StringUtils::formatNumber($user->points) . "</td>";
                 echo "<td>" . ($user->allianceId > 0 ? $allianceNameWithTags[$user->allianceId] : '-') . "</td>";
                 echo "<td>" . ($user->raceId > 0 ? $raceNames[$user->raceId] : '-') . "</td>";
                 echo "<td>
@@ -415,6 +416,6 @@ else {
         echo "</table>";
         echo "<br/><input type=\"submit\" name=\"user_search\" value=\"Suche starten\" /> (wenn nichts eingegeben wird werden alle Datens&auml;tze angezeigt)</form>";
 
-        echo "<br/>Es sind " . nf($userRepository->count()) . " Eintr&auml;ge in der Datenbank vorhanden.";
+        echo "<br/>Es sind " . StringUtils::formatNumber($userRepository->count()) . " Eintr&auml;ge in der Datenbank vorhanden.";
     }
 }

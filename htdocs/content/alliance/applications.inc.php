@@ -9,6 +9,8 @@ use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Log\LogFacility;
 use EtoA\Log\LogRepository;
 use EtoA\Log\LogSeverity;
+use EtoA\Support\BBCodeUtils;
+use EtoA\Support\StringUtils;
 use EtoA\User\UserRepository;
 use EtoA\User\UserService;
 
@@ -126,13 +128,13 @@ if (Alliance::checkActionRights(AllianceRights::APPLICATIONS)) {
                     </tr>";
         foreach ($applications as $application) {
             echo "<tr>
-            <td " . tm("Info", "Rang: " . $application->userRank . "<br>Punkte: " . nf($application->userPoints) . "<br>Registriert: " . date("d.m.Y H:i", $application->userRegistered) . "") . ">
+            <td " . tm("Info", "Rang: " . $application->userRank . "<br>Punkte: " . StringUtils::formatNumber($application->userPoints) . "<br>Registriert: " . date("d.m.Y H:i", $application->userRegistered) . "") . ">
                 <a href=\"?page=userinfo&id=" . $application->userId . "\">" . $application->userNick . "</a>";
 
             // Übergibt Usernick dem Formular, damit beim Submit nicht nochmals eine DB Abfrage gestartet werden muss
             echo "<input type=\"hidden\" name=\"application_user_nick_" . $application->userId . "\" value=\"" . $application->userNick . "\" />
             </td>
-            <td>" . df($application->timestamp) . "<br/><br/>" . text2html($application->text) . "</td>
+            <td>" . StringUtils::formatDate($application->timestamp) . "<br/><br/>" . BBCodeUtils::toHTML($application->text) . "</td>
             <td>
                 <textarea rows=\"6\" cols=\"40\" name=\"application_answer_text[" . $application->userId . "]\" /></textarea><br/>" . helpLink('textformat', 'Hilfe zur Formatierung') . "
             </td>

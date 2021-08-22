@@ -4,6 +4,7 @@ use EtoA\Alliance\AllianceNewsRepository;
 use EtoA\Alliance\AllianceRepository;
 use EtoA\Alliance\AllianceRights;
 use EtoA\Alliance\TownhallService;
+use EtoA\Support\BBCodeUtils;
 use EtoA\Support\StringUtils;
 use EtoA\User\UserRatingService;
 
@@ -13,8 +14,8 @@ if (Alliance::checkActionRights(AllianceRights::ALLIANCE_NEWS)) {
 
     echo "<h2>Allianznews</h2>";
     if ((isset($_POST['newssubmit']) || isset($_POST['newssubmitsend'])) && checker_verify()) {
-        if (check_illegal_signs($_POST['news_title']) != "") {
-            error_msg("Ungültige Zeichen (" . check_illegal_signs($_POST['news_title']) . ") im Newstitel!!");
+        if (StringUtils::checkIllegalSigns($_POST['news_title']) != "") {
+            error_msg("Ungültige Zeichen (" . StringUtils::checkIllegalSigns($_POST['news_title']) . ") im Newstitel!!");
             $_SESSION['alliance']['news']['news_title'] = $_POST['news_title'];
             $_SESSION['alliance']['news']['news_text'] = $_POST['news_text'];
             $_SESSION['alliance']['news']['alliance_id'] = $_POST['alliance_id'];
@@ -53,7 +54,7 @@ if (Alliance::checkActionRights(AllianceRights::ALLIANCE_NEWS)) {
             $_SESSION['alliance']['news']['alliance_id'] = $_POST['alliance_id'];
             $_SESSION['alliance']['news']['preview'] = TRUE;
             iBoxStart("Vorschau - " . $_POST['news_title']);
-            echo text2html($_POST['news_text']);
+            echo BBCodeUtils::toHTML($_POST['news_text']);
             iBoxEnd();
         } else {
             $_SESSION['alliance'] = array();

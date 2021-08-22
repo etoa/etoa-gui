@@ -5,6 +5,7 @@
  */
 
 use EtoA\Ship\ShipDataRepository;
+use EtoA\Support\StringUtils;
 
 /**
  * Description of marketreport
@@ -97,8 +98,8 @@ class MarketReport extends Report
                     if ($this->resSell[$k] + $this->resBuy[$k] > 0)
                         echo "<tr>
 						<td>" . $v . "</td>
-						<td>" . nf($this->resSell[$k]) . "</td>
-						<td>" . nf($this->resBuy[$k]) . "</td>
+						<td>" . StringUtils::formatNumber($this->resSell[$k]) . "</td>
+						<td>" . StringUtils::formatNumber($this->resBuy[$k]) . "</td>
 						</tr>";
                 }
                 echo "</table><br/>";
@@ -119,9 +120,9 @@ class MarketReport extends Report
                     if ($this->resSell[$k] + $this->resBuy[$k] > 0)
                         echo "<tr>
 						<td>" . $v . "</td>
-						<td>" . nf($this->resSell[$k]) . "</td>
-						<td>" . nf($this->resBuy[$k]) . "</td>
-						<td>" . nf($this->resSell[$k] * $this->factor) . "</td>
+						<td>" . StringUtils::formatNumber($this->resSell[$k]) . "</td>
+						<td>" . StringUtils::formatNumber($this->resBuy[$k]) . "</td>
+						<td>" . StringUtils::formatNumber($this->resSell[$k] * $this->factor) . "</td>
 						</tr>";
                 }
                 echo "</table><br/>";
@@ -147,14 +148,14 @@ class MarketReport extends Report
                     if ($this->resSell[$k] + $this->resBuy[$k] > 0)
                         echo "<tr>
 						<td>" . $v . "</td>
-						<td>" . nf($this->resSell[$k]) . "</td>
-						<td>" . nf($this->resBuy[$k]) . "</td>
+						<td>" . StringUtils::formatNumber($this->resSell[$k]) . "</td>
+						<td>" . StringUtils::formatNumber($this->resBuy[$k]) . "</td>
 						</tr>";
                 }
                 echo "</table><br/>";
                 $buyerFleet = new Fleet($this->fleet2Id);
                 if ($buyerFleet->valid())
-                    echo " Landung: " . df($buyerFleet->landTime()) . "";
+                    echo " Landung: " . StringUtils::formatDate($buyerFleet->landTime()) . "";
                 break;
 
             case "resbought":
@@ -174,14 +175,14 @@ class MarketReport extends Report
                     if ($this->resSell[$k] + $this->resBuy[$k] > 0)
                         echo "<tr>
 						<td>" . $v . "</td>
-						<td>" . nf($this->resSell[$k]) . "</td>
-						<td>" . nf($this->resBuy[$k]) . "</td>
+						<td>" . StringUtils::formatNumber($this->resSell[$k]) . "</td>
+						<td>" . StringUtils::formatNumber($this->resBuy[$k]) . "</td>
 						</tr>";
                 }
                 echo "</table><br/>";
                 echo "Die Waren werden vom Marktplatz nach " . $ent->detailLink() . " geliefert.";
                 if ($sellerFleet->valid())
-                    echo " Landung: " . df($sellerFleet->landTime()) . "";
+                    echo " Landung: " . StringUtils::formatDate($sellerFleet->landTime()) . "";
                 break;
 
             case "shipadd":
@@ -193,7 +194,7 @@ class MarketReport extends Report
 				auf " . $ent->detailLink() . " eingestellt:<br/><br/>";
                 if ($this->content != "")
                     echo $this->content . "<br/><br/>";
-                echo "" . nf($this->shipCount) . " <b>" . $shipNames[$this->shipId] . "</b> <br/><br/> ";
+                echo "" . StringUtils::formatNumber($this->shipCount) . " <b>" . $shipNames[$this->shipId] . "</b> <br/><br/> ";
                 echo "zu einem Preis von: <br/><br/>";
                 echo "<table class=\"tb\" style=\"width:auto;margin:5px;\">";
                 echo "<tr>
@@ -204,7 +205,7 @@ class MarketReport extends Report
                     if ($this->resSell[$k] + $this->resBuy[$k] > 0)
                         echo "<tr>
 						<td>" . $v . "</td>
-						<td>" . nf($this->resBuy[$k]) . "</td>
+						<td>" . StringUtils::formatNumber($this->resBuy[$k]) . "</td>
 						</tr>";
                 }
                 echo "</table><br/>";
@@ -217,7 +218,7 @@ class MarketReport extends Report
 
                 echo "Du hast das Angebot #" . $this->recordId . " im <a href=\"?page=market&amp;mode=user_sell&amp;change_entity=" . $this->entity1Id . "\">Marktplatz</a>
 				auf " . $ent->detailLink() . " abgebrochen!<br/><br/>";
-                echo "" . nf($this->shipCount) . " <b>" . $shipNames[$this->shipId] . "</b> <br/><br/> ";
+                echo "" . StringUtils::formatNumber($this->shipCount) . " <b>" . $shipNames[$this->shipId] . "</b> <br/><br/> ";
                 echo "zu einem Preis von: <br/><br/>";
                 echo "<table class=\"tb\" style=\"width:auto;margin:5px;\">";
                 echo "<tr>
@@ -228,7 +229,7 @@ class MarketReport extends Report
                     if ($this->resSell[$k] + $this->resBuy[$k] > 0)
                         echo "<tr>
 						<td>" . $v . "</td>
-						<td>" . nf($this->resBuy[$k]) . "</td>
+						<td>" . StringUtils::formatNumber($this->resBuy[$k]) . "</td>
 						</tr>";
                 }
                 echo "</table><br/>";
@@ -243,7 +244,7 @@ class MarketReport extends Report
                 $ent2 = Entity::createFactoryById($this->entity2Id);
                 $sellerFleet = new Fleet($this->fleet2Id);
                 echo "Du hast folgendes Angebot (#" . $this->recordId . ") von " . $op->detailLink() . " gekauft:<br/><br/>";
-                echo "" . nf($this->shipCount) . " <b>" . $shipNames[$this->shipId] . "</b> <br/><br/> ";
+                echo "" . StringUtils::formatNumber($this->shipCount) . " <b>" . $shipNames[$this->shipId] . "</b> <br/><br/> ";
                 echo "zu einem Preis von: <br/><br/>";
                 echo "<table class=\"tb\" style=\"width:auto;margin:5px;\">";
                 echo "<tr>
@@ -254,14 +255,14 @@ class MarketReport extends Report
                     if ($this->resSell[$k] + $this->resBuy[$k] > 0)
                         echo "<tr>
 						<td>" . $v . "</td>
-						<td>" . nf($this->resBuy[$k]) . "</td>
+						<td>" . StringUtils::formatNumber($this->resBuy[$k]) . "</td>
 						</tr>";
                 }
                 echo "</table><br/>";
 
                 echo "Die Waren werden vom Marktplatz nach " . $ent->detailLink() . " geliefert.";
                 if ($sellerFleet->valid())
-                    echo " Landung: " . df($sellerFleet->landTime()) . "";
+                    echo " Landung: " . StringUtils::formatDate($sellerFleet->landTime()) . "";
                 break;
             case "shipsold":
                 /** @var ShipDataRepository $shipRepository */
@@ -273,7 +274,7 @@ class MarketReport extends Report
 
                 echo "Du hast folgendes Angebot (#" . $this->recordId . ") im <a href=\"?page=market&amp;mode=user_sell&amp;change_entity=" . $this->entity1Id . "\">Marktplatz</a>
 				auf " . $ent->detailLink() . " an " . $op->detailLink() . " verkauft:<br/><br/>";
-                echo "" . nf($this->shipCount) . " <b>" . $shipNames[$this->shipId] . "</b> <br/><br/> ";
+                echo "" . StringUtils::formatNumber($this->shipCount) . " <b>" . $shipNames[$this->shipId] . "</b> <br/><br/> ";
                 echo "zu einem Preis von: <br/><br/>";
                 echo "<table class=\"tb\" style=\"width:auto;margin:5px;\">";
                 echo "<tr>
@@ -284,14 +285,14 @@ class MarketReport extends Report
                     if ($this->resSell[$k] + $this->resBuy[$k] > 0)
                         echo "<tr>
 						<td>" . $v . "</td>
-						<td>" . nf($this->resBuy[$k]) . "</td>
+						<td>" . StringUtils::formatNumber($this->resBuy[$k]) . "</td>
 						</tr>";
                 }
                 echo "</table><br/>";
                 echo "Die Waren werden vom Marktplatz nach " . $ent->detailLink() . " geliefert.";
                 $buyerFleet = new Fleet($this->fleet2Id);
                 if ($buyerFleet->valid())
-                    echo " Landung: " . df($buyerFleet->landTime()) . "";
+                    echo " Landung: " . StringUtils::formatDate($buyerFleet->landTime()) . "";
                 break;
             case 'auctionadd':
                 echo "Du hast folgendes Angebot (#" . $this->recordId . ") im <a href=\"?page=market&amp;mode=user_sell&amp;change_entity=" . $this->entity1Id . "\">Marktplatz</a>
@@ -307,11 +308,11 @@ class MarketReport extends Report
                     if ($this->resSell[$k] > 0)
                         echo "<tr>
 						<td>" . $v . "</td>
-						<td>" . nf($this->resSell[$k]) . "</td>
+						<td>" . StringUtils::formatNumber($this->resSell[$k]) . "</td>
 						</tr>";
                 }
                 echo "</table><br/>";
-                echo 'Die Auktion endet am ' . df($this->timestamp2) . '.';
+                echo 'Die Auktion endet am ' . StringUtils::formatDate($this->timestamp2) . '.';
                 break;
             case 'auctioncancel':
                 echo "Du hast das Angebot #" . $this->recordId . " im <a href=\"?page=market&amp;mode=user_sell&amp;change_entity=" . $this->entity1Id . "\">Marktplatz</a>
@@ -326,8 +327,8 @@ class MarketReport extends Report
                     if ($this->resSell[$k] > 0)
                         echo "<tr>
 							<td>" . $v . "</td>
-							<td>" . nf($this->resSell[$k]) . "</td>
-							<td>" . nf($this->resSell[$k] * $this->factor) . "</td>
+							<td>" . StringUtils::formatNumber($this->resSell[$k]) . "</td>
+							<td>" . StringUtils::formatNumber($this->resSell[$k] * $this->factor) . "</td>
 						</tr>";
                 }
                 echo "</table><br/>";
@@ -356,8 +357,8 @@ class MarketReport extends Report
                     if ($this->resSell[$k] + $this->resBuy[$k] > 0)
                         echo "<tr>
 							<td>" . $v . "</td>
-							<td>" . nf($this->resSell[$k]) . "</td>
-							<td>" . nf($this->resBuy[$k]) . "</td>
+							<td>" . StringUtils::formatNumber($this->resSell[$k]) . "</td>
+							<td>" . StringUtils::formatNumber($this->resBuy[$k]) . "</td>
 						</tr>";
                 }
                 echo "</table><br/>";
@@ -376,8 +377,8 @@ class MarketReport extends Report
                     if ($this->resSell[$k] + $this->resBuy[$k] > 0)
                         echo "<tr>
 							<td>" . $v . "</td>
-							<td>" . nf($this->resSell[$k]) . "</td>
-							<td>" . nf($this->resBuy[$k]) . "</td>
+							<td>" . StringUtils::formatNumber($this->resSell[$k]) . "</td>
+							<td>" . StringUtils::formatNumber($this->resBuy[$k]) . "</td>
 						</tr>";
                 }
                 echo "</table><br/>";

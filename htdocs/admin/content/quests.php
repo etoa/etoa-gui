@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use EtoA\Quest\QuestPresenter;
 use EtoA\Quest\QuestRepository;
+use EtoA\Support\StringUtils;
 use LittleCubicleGames\Quests\Workflow\QuestDefinition;
 
 $twig->addGlobal('title', 'Quests');
@@ -154,7 +155,7 @@ if ($sub === 'list') {
                 echo '<tr>
                         <td>' . $data['id'] . '</td>';
 
-                echo "<td class=\"tbldata\"$style " . mTT($data['user_nick'], nf($data['user_points']) . " Punkte") . ">" . cut_string($data['user_nick'], 11) . "</a></td>";
+                echo "<td class=\"tbldata\"$style " . mTT($data['user_nick'], StringUtils::formatNumber($data['user_points']) . " Punkte") . ">" . StringUtils::cutString($data['user_nick'], 11) . "</a></td>";
                 echo "<td class=\"tbldata\"$style>" . $questMap[$data['quest_data_id']] . "</a></td>";
                 echo "<td class=\"tbldata\"$style>" . $data['state'] . '</td>';
                 echo "<td class=\"tbldata\">" . edit_button("?page=$page&sub=$sub&action=edit&quest_id=" . $data['id']) . "</td>";

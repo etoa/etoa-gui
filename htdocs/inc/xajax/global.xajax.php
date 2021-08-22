@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Support\StringUtils;
 use EtoA\Universe\Entity\EntityCoordinates;
 use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Entity\EntityService;
@@ -206,14 +207,14 @@ function getFlightTargetInfo($f, $sx1, $sy1, $cx1, $cy1, $p1)
             if ($targetEntity !== null) {
                 $distanceValue = $entityService->distanceByCoords($sourceCoordinates, $targetCoordinates);
                 $timeforflight = $distanceValue / $speed * 3600;
-                $distance = sprintf('%s AE', nf($distanceValue));
+                $distance = sprintf('%s AE', StringUtils::formatNumber($distanceValue));
             } else {
                 $distanceValue = -1;
                 $distance = '-';
                 $timeforflight = null;
             }
 
-            $objResponse->assign("time", "innerHTML", tf($timeforflight));
+            $objResponse->assign("time", "innerHTML", StringUtils::formatTimespan($timeforflight));
             $objResponse->assign("timeforflight", "value", $timeforflight);
             $objResponse->assign("distance", "innerHTML", $distance);
 
@@ -222,7 +223,7 @@ function getFlightTargetInfo($f, $sx1, $sy1, $cx1, $cy1, $p1)
                 $launch = false;
             } elseif ($distanceValue > $range) {
                 $objResponse->assign("distance", "style.color", "#f00");
-                $objResponse->append("distance", "innerHTML", " (zu weit entfernt, " . nf($range) . " max)");
+                $objResponse->append("distance", "innerHTML", " (zu weit entfernt, " . StringUtils::formatNumber($range) . " max)");
                 $launch = false;
             } else {
                 $objResponse->assign("distance", "style.color", "#0f0");
@@ -366,10 +367,10 @@ function getCryptoDistance($f, $sx1, $sy1, $cx1, $cy1, $p1)
 
     $distance = $entityService->distanceByCoords($sourceCoordinates, $targetCoordinates);
 
-    $objResponse->assign("distance", "innerHTML", nf($distance) . " AE");
+    $objResponse->assign("distance", "innerHTML", StringUtils::formatNumber($distance) . " AE");
     if ($distance > $range) {
         $objResponse->assign("distance", "style.color", "#f00");
-        $objResponse->append("distance", "innerHTML", " (zu weit entfernt, " . nf($range) . " max)");
+        $objResponse->append("distance", "innerHTML", " (zu weit entfernt, " . StringUtils::formatNumber($range) . " max)");
         $launch = false;
     } else {
         $objResponse->assign("distance", "style.color", "#0f0");
@@ -403,7 +404,7 @@ function formatNumbers($field_id, $val, $format = 0, $max = null)
 
     $val = abs((int) $val);
     if ($format == 1) {
-        $out = nf($val);
+        $out = StringUtils::formatNumber($val);
     } else {
         $out = $val;
     }

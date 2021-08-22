@@ -11,6 +11,8 @@ use EtoA\Fleet\FleetSearch;
 use EtoA\Message\MessageRepository;
 use EtoA\Message\ReportRepository;
 use EtoA\Notepad\NotepadRepository;
+use EtoA\Support\BBCodeUtils;
+use EtoA\Support\StringUtils;
 use EtoA\Text\TextRepository;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\User\UserPropertiesRepository;
@@ -130,8 +132,8 @@ try {
     if ($config->getBoolean('offline') && !in_array($_SERVER['REMOTE_ADDR'], $allowed_ips, true)) {
         iBoxStart('Spiel offline', 750);
         echo "<img src=\"images/maintenance.jpg\" alt=\"maintenance\" /><br/><br/>";
-        if ($config->get('offline_message') != "") {
-            echo text2html($config->get('offline_ message')) . "<br/><br/>";
+        if (filled($config->get('offline_message'))) {
+            echo BBCodeUtils::toHTML($config->get('offline_message')) . "<br/><br/>";
         } else {
             echo "Das Spiel ist aufgrund von Wartungsarbeiten momentan offline! Schaue sp&auml;ter nochmals vorbei!<br/><br/>";
         }
@@ -290,7 +292,7 @@ try {
         'usersOnline' => $usersOnline,
         'usersTotal' => $userCount,
         'notes' => $numNotes,
-        'userPoints' => nf($cu->points),
+        'userPoints' => StringUtils::formatNumber($cu->points),
         'userNick' => $cu->nick,
         'page' => $page,
         'mode' => $mode,

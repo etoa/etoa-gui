@@ -1,5 +1,6 @@
 <?PHP
 
+use EtoA\Support\StringUtils;
 use EtoA\UI\Tooltip;
 use EtoA\Universe\Planet\PlanetTypeRepository;
 
@@ -63,15 +64,15 @@ foreach ($planetTypes as $planetType) {
         $tt->addGoodCond("Ermöglich " . RES_FUEL . "abbau");
     $tt->addComment($planetType->comment);
     echo "<td class=\"tbltitle\" " . $tt->toString() . ">" . $planetType->name . "</td>";
-    echo "<td class=\"tbldata\">" . get_percent_string($planetType->metal, 1) . "</td>";
-    echo "<td class=\"tbldata\">" . get_percent_string($planetType->crystal, 1) . "</td>";
-    echo "<td class=\"tbldata\">" . get_percent_string($planetType->plastic, 1) . "</td>";
-    echo "<td class=\"tbldata\">" . get_percent_string($planetType->fuel, 1) . "</td>";
-    echo "<td class=\"tbldata\">" . get_percent_string($planetType->food, 1) . "</td>";
-    echo "<td class=\"tbldata\">" . get_percent_string($planetType->power, 1) . "</td>";
-    echo "<td class=\"tbldata\">" . get_percent_string($planetType->people, 1) . "</td>";
-    echo "<td class=\"tbldata\">" . get_percent_string($planetType->researchTime, 1, 1) . "</td>";
-    echo "<td class=\"tbldata\">" . get_percent_string($planetType->buildTime, 1, 1) . "</td>";
+    echo "<td class=\"tbldata\">" . StringUtils::formatPercentString($planetType->metal, true) . "</td>";
+    echo "<td class=\"tbldata\">" . StringUtils::formatPercentString($planetType->crystal, true) . "</td>";
+    echo "<td class=\"tbldata\">" . StringUtils::formatPercentString($planetType->plastic, true) . "</td>";
+    echo "<td class=\"tbldata\">" . StringUtils::formatPercentString($planetType->fuel, true) . "</td>";
+    echo "<td class=\"tbldata\">" . StringUtils::formatPercentString($planetType->food, true) . "</td>";
+    echo "<td class=\"tbldata\">" . StringUtils::formatPercentString($planetType->power, true) . "</td>";
+    echo "<td class=\"tbldata\">" . StringUtils::formatPercentString($planetType->people, true) . "</td>";
+    echo "<td class=\"tbldata\">" . StringUtils::formatPercentString($planetType->researchTime, true, true) . "</td>";
+    echo "<td class=\"tbldata\">" . StringUtils::formatPercentString($planetType->buildTime, true, true) . "</td>";
     echo "</tr>";
 }
 tableEnd();

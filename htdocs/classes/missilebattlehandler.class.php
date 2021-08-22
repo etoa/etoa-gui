@@ -10,6 +10,7 @@ use EtoA\Missile\MissileDataRepository;
 use EtoA\Missile\MissileFlight;
 use EtoA\Missile\MissileFlightRepository;
 use EtoA\Missile\MissileRepository;
+use EtoA\Support\StringUtils;
 use EtoA\Universe\Planet\PlanetRepository;
 
 class MissileBattleHandler
@@ -215,8 +216,8 @@ class MissileBattleHandler
                         if ($attackingMissile->deactivate > 0) {
                             $toBeDeactivated = $buildingRepository->getDeactivatableBuilding($flight->targetPlanetId);
                             if ($toBeDeactivated !== null) {
-                                $msg_a .= "Das Gebäude " . $toBeDeactivated['building_name'] . " wurde für " . tf($attackingMissile->deactivate) . " deaktiviert!\n";
-                                $msg_d .= "Euer Gebäude " . $toBeDeactivated['building_name'] . " wurde für " . tf($attackingMissile->deactivate) . " deaktiviert!\n";
+                                $msg_a .= "Das Gebäude " . $toBeDeactivated['building_name'] . " wurde für " . StringUtils::formatTimespan($attackingMissile->deactivate) . " deaktiviert!\n";
+                                $msg_d .= "Euer Gebäude " . $toBeDeactivated['building_name'] . " wurde für " . StringUtils::formatTimespan($attackingMissile->deactivate) . " deaktiviert!\n";
                                 $buildingRepository->deactivateBuilding($toBeDeactivated['buildlist_id'], $time + $attackingMissile->deactivate);
                             }
                         }

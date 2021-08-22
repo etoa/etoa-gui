@@ -154,7 +154,7 @@ class ChatPushJsonResponder extends JsonResponder
                             $list[] = array(
                                 'nick' => $ban->userNick,
                                 'reason' => $ban->reason,
-                                'date' => df($ban->timestamp)
+                                'date' => StringUtils::formatDate($ban->timestamp)
                             );
                         }
 

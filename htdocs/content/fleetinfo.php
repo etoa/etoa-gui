@@ -7,6 +7,8 @@ use EtoA\Alliance\AllianceRights;
 use EtoA\Log\LogFacility;
 use EtoA\Log\LogRepository;
 use EtoA\Log\LogSeverity;
+use EtoA\Support\BBCodeUtils;
+use EtoA\Support\StringUtils;
 use EtoA\User\UserRepository;
 use EtoA\User\UserUniverseDiscoveryService;
 
@@ -129,36 +131,36 @@ if ($valid > 0) {
     tableStart("Piloten &amp; Verbrauch", "50%");
     echo "<tr>
             <th style=\"width:150px;\">" . RES_ICON_PEOPLE . "Piloten:</th>
-            <td class=\"tbldata\">" . nf($fd->pilots()) . "</td></tr>";
+            <td class=\"tbldata\">" . StringUtils::formatNumber($fd->pilots()) . "</td></tr>";
     echo "<tr>
             <th>" . RES_ICON_FUEL . "" . RES_FUEL . ":</th>
-            <td class=\"tbldata\">" . nf($fd->usageFuel()) . "</td></tr>";
+            <td class=\"tbldata\">" . StringUtils::formatNumber($fd->usageFuel()) . "</td></tr>";
     echo "<tr>
             <th>" . RES_ICON_FOOD . "" . RES_FOOD . ":</th>
-            <td class=\"tbldata\">" . nf($fd->usageFood()) . "</td></tr>";
+            <td class=\"tbldata\">" . StringUtils::formatNumber($fd->usageFood()) . "</td></tr>";
     echo "<tr>
             <th>" . RES_ICON_POWER . " " . RES_POWER . ":</th>
-            <td class=\"tbldata\">" . nf($fd->usagePower()) . "</td></tr>";
+            <td class=\"tbldata\">" . StringUtils::formatNumber($fd->usagePower()) . "</td></tr>";
     tableEnd();
 
     tableStart("Passagierraum", "50%");
-    echo "<tr><th>" . RES_ICON_PEOPLE . "Passagiere</th><td class=\"tbldata\">" . nf($fd->resPeople()) . "</td></tr>";
-    echo "<tr><th style=\"width:150px;\">Freier Platz:</th><td class=\"tbldata\">" . nf($fd->getFreePeopleCapacity()) . "</td></tr>";
-    echo "<tr><th style=\"width:150px;\">Totaler Platz:</th><td class=\"tbldata\">" . nf($fd->getPeopleCapacity()) . "</td></tr>";
+    echo "<tr><th>" . RES_ICON_PEOPLE . "Passagiere</th><td class=\"tbldata\">" . StringUtils::formatNumber($fd->resPeople()) . "</td></tr>";
+    echo "<tr><th style=\"width:150px;\">Freier Platz:</th><td class=\"tbldata\">" . StringUtils::formatNumber($fd->getFreePeopleCapacity()) . "</td></tr>";
+    echo "<tr><th style=\"width:150px;\">Totaler Platz:</th><td class=\"tbldata\">" . StringUtils::formatNumber($fd->getPeopleCapacity()) . "</td></tr>";
     tableEnd();
 
     echo "</td><td style=\"width:5%;vertical-align:top;\"></td><td style=\"width:45%;vertical-align:top;\">";
 
     // Frachtraum
     tableStart("Frachtraum", "50%");
-    echo "<tr><th>" . RES_ICON_METAL . "" . RES_METAL . "</th><td class=\"tbldata\">" . nf($fd->resMetal()) . " t</td></tr>";
-    echo "<tr><th>" . RES_ICON_CRYSTAL . "" . RES_CRYSTAL . "</th><td class=\"tbldata\" >" . nf($fd->resCrystal()) . " t</td></tr>";
-    echo "<tr><th>" . RES_ICON_PLASTIC . "" . RES_PLASTIC . "</th><td class=\"tbldata\">" . nf($fd->resPlastic()) . " t</td></tr>";
-    echo "<tr><th>" . RES_ICON_FUEL . "" . RES_FUEL . "</th><td class=\"tbldata\">" . nf($fd->resFuel()) . " t</td></tr>";
-    echo "<tr><th>" . RES_ICON_FOOD . "" . RES_FOOD . "</th><td class=\"tbldata\">" . nf($fd->resFood()) . " t</td></tr>";
-    echo "<tr><th>" . RES_ICON_POWER . "" . RES_POWER . "</th><td class=\"tbldata\">" . nf($fd->resPower()) . " t</td></tr>";
-    echo "<tr><th style=\"width:150px;\">Freier Frachtraum:</th><td class=\"tbldata\">" . nf($fd->getFreeCapacity()) . " t</td></tr>";
-    echo "<tr><th style=\"width:150px;\">Totaler Frachtraum:</th><td class=\"tbldata\">" . nf($fd->getCapacity()) . " t</td></tr>";
+    echo "<tr><th>" . RES_ICON_METAL . "" . RES_METAL . "</th><td class=\"tbldata\">" . StringUtils::formatNumber($fd->resMetal()) . " t</td></tr>";
+    echo "<tr><th>" . RES_ICON_CRYSTAL . "" . RES_CRYSTAL . "</th><td class=\"tbldata\" >" . StringUtils::formatNumber($fd->resCrystal()) . " t</td></tr>";
+    echo "<tr><th>" . RES_ICON_PLASTIC . "" . RES_PLASTIC . "</th><td class=\"tbldata\">" . StringUtils::formatNumber($fd->resPlastic()) . " t</td></tr>";
+    echo "<tr><th>" . RES_ICON_FUEL . "" . RES_FUEL . "</th><td class=\"tbldata\">" . StringUtils::formatNumber($fd->resFuel()) . " t</td></tr>";
+    echo "<tr><th>" . RES_ICON_FOOD . "" . RES_FOOD . "</th><td class=\"tbldata\">" . StringUtils::formatNumber($fd->resFood()) . " t</td></tr>";
+    echo "<tr><th>" . RES_ICON_POWER . "" . RES_POWER . "</th><td class=\"tbldata\">" . StringUtils::formatNumber($fd->resPower()) . " t</td></tr>";
+    echo "<tr><th style=\"width:150px;\">Freier Frachtraum:</th><td class=\"tbldata\">" . StringUtils::formatNumber($fd->getFreeCapacity()) . " t</td></tr>";
+    echo "<tr><th style=\"width:150px;\">Totaler Frachtraum:</th><td class=\"tbldata\">" . StringUtils::formatNumber($fd->getCapacity()) . " t</td></tr>";
     tableEnd();
 
 
@@ -180,8 +182,8 @@ if ($valid > 0) {
                         " . $ship->img() . "</td>";
             echo "<td class=\"tbldata\">
                     <b>" . $ship->name() . "</b><br/>
-                " . text2html($ship->shortComment()) . "</td>";
-            echo "<td class=\"tbldata\" style=\"width:50px;\">" . nf($scnt) . "</td></tr>";
+                " . BBCodeUtils::toHTML($ship->shortComment()) . "</td>";
+            echo "<td class=\"tbldata\" style=\"width:50px;\">" . StringUtils::formatNumber($scnt) . "</td></tr>";
         }
         tableEnd();
     }

@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\HostCache\NetworkNameService;
+use EtoA\Support\StringUtils;
 use EtoA\User\UserLoginFailureRepository;
 use EtoA\User\UserSessionRepository;
 use EtoA\User\UserSessionSearch;
@@ -30,8 +31,8 @@ echo "<tr>
             <th>Client</th></tr>";
 foreach ($activeSessions as $session) {
     $browserParser = new \WhichBrowser\Parser($session->userAgent);
-    echo "<tr><td>" . df($session->timeLogin) . "</td>";
-    echo "<td>" . df($session->timeAction) . "</td>";
+    echo "<tr><td>" . StringUtils::formatDate($session->timeLogin) . "</td>";
+    echo "<td>" . StringUtils::formatDate($session->timeAction) . "</td>";
     echo "<td>" . $session->ipAddr . "</td>";
     echo "<td>" . $networkNameService->getHost($session->ipAddr) . "</td>";
     echo "<td>" . $browserParser->toString() . "</td></tr>";
@@ -46,7 +47,7 @@ echo "<tr><th>Zeit</th>
             <th>Client</th></tr>";
 foreach ($sessionLogs as $sessionLog) {
     $browserParser = new \WhichBrowser\Parser($sessionLog->userAgent);
-    echo "<tr><td>" . df($sessionLog->timeLogin) . "</td>";
+    echo "<tr><td>" . StringUtils::formatDate($sessionLog->timeLogin) . "</td>";
     echo "<td>" . $sessionLog->ipAddr . "</td>";
     echo "<td>" . $networkNameService->getHost($sessionLog->ipAddr) . "</td>";
     echo "<td>" . $browserParser->toString() . "</td></tr>";
@@ -61,7 +62,7 @@ if (count($failures) > 0) {
                 <th>Hostname</th>
                 <th>Client</th></tr>";
     foreach ($failures as $failure) {
-        echo "<tr><td>" . df($failure->time) . "</td>";
+        echo "<tr><td>" . StringUtils::formatDate($failure->time) . "</td>";
         echo "<td>" . $failure->ip . "</td>";
         echo "<td>" . $networkNameService->getHost($failure->ip) . "</td>";
         echo "<td>" . $failure->client . "</td></tr>";

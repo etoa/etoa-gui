@@ -9,6 +9,8 @@ use EtoA\Alliance\AllianceRights;
 use EtoA\Log\LogFacility;
 use EtoA\Log\LogRepository;
 use EtoA\Log\LogSeverity;
+use EtoA\Support\BBCodeUtils;
+use EtoA\Support\StringUtils;
 
 /** @var AllianceBuildingRepository $allianceBuildingRepository */
 $allianceBuildingRepository = $app[AllianceBuildingRepository::class];
@@ -121,19 +123,19 @@ if ($allianceFleetControlLevel >= ALLIANCE_FLEET_SHOW_DETAIL && $rights) {
             tableStart("Piloten &amp; Verbrauch", "50%");
             echo "<tr>
                         <th style=\"width:150px;\">" . RES_ICON_PEOPLE . "Piloten:</th>
-                        <td>" . nf($fd->pilots()) . "</td>
+                        <td>" . StringUtils::formatNumber($fd->pilots()) . "</td>
                     </tr>
                     <tr>
                         <th>" . RES_ICON_FUEL . "" . RES_FUEL . ":</th>
-                        <td>" . nf($fd->usageFuel()) . "</td>
+                        <td>" . StringUtils::formatNumber($fd->usageFuel()) . "</td>
                     </tr>
                     <tr>
                         <th>" . RES_ICON_FOOD . "" . RES_FOOD . ":</th>
-                        <td>" . nf($fd->usageFood()) . "</td>
+                        <td>" . StringUtils::formatNumber($fd->usageFood()) . "</td>
                     </tr>
                     <tr>
                         <th>" . RES_ICON_POWER . " " . RES_POWER . ":</th>
-                        <td>" . nf($fd->usagePower()) . "</td>
+                        <td>" . StringUtils::formatNumber($fd->usagePower()) . "</td>
                     </tr>";
             tableEnd();
 
@@ -143,50 +145,50 @@ if ($allianceFleetControlLevel >= ALLIANCE_FLEET_SHOW_DETAIL && $rights) {
             tableStart("Frachtraum", "50%");
             echo "<tr>
                         <th>" . RES_ICON_METAL . "" . RES_METAL . "</th>
-                        <td>" . nf($fd->resMetal()) . " t</td>
+                        <td>" . StringUtils::formatNumber($fd->resMetal()) . " t</td>
                     </tr>
                     <tr>
                         <th>" . RES_ICON_CRYSTAL . "" . RES_CRYSTAL . "</th>
-                        <td>" . nf($fd->resCrystal()) . " t</td>
+                        <td>" . StringUtils::formatNumber($fd->resCrystal()) . " t</td>
                     </tr>
                     <tr>
                         <td>" . RES_ICON_PLASTIC . "" . RES_PLASTIC . "</th>
-                        <td>" . nf($fd->resPlastic()) . " t</td>
+                        <td>" . StringUtils::formatNumber($fd->resPlastic()) . " t</td>
                     </tr>
                     <tr>
                         <th>" . RES_ICON_FUEL . "" . RES_FUEL . "</th>
-                        <td>" . nf($fd->resFuel()) . " t</td>
+                        <td>" . StringUtils::formatNumber($fd->resFuel()) . " t</td>
                     </tr>
                     <tr>
                         <th>" . RES_ICON_FOOD . "" . RES_FOOD . "</th>
-                        <td>" . nf($fd->resFood()) . " t</td>
+                        <td>" . StringUtils::formatNumber($fd->resFood()) . " t</td>
                     </tr>
                     <tr>
                         <th>" . RES_ICON_POWER . "" . RES_POWER . "</th>
-                        <td>" . nf($fd->resPower()) . " t</td>
+                        <td>" . StringUtils::formatNumber($fd->resPower()) . " t</td>
                     </tr>
                     <tr>
                         <th style=\"width:150px;\">Freier Frachtraum:</th>
-                        <td>" . nf($fd->getFreeCapacity()) . " t</td>
+                        <td>" . StringUtils::formatNumber($fd->getFreeCapacity()) . " t</td>
                     </tr>
                     <tr>
                         <th style=\"width:150px;\">Totaler Frachtraum:</th>
-                        <td>" . nf($fd->getCapacity()) . " t</td>
+                        <td>" . StringUtils::formatNumber($fd->getCapacity()) . " t</td>
                     </tr>";
             tableEnd();
 
             tableStart("Passagierraum", "50%");
             echo "<tr>
                         <th>" . RES_ICON_PEOPLE . "Passagiere</th>
-                        <td>" . nf($fd->resPeople()) . "</td>
+                        <td>" . StringUtils::formatNumber($fd->resPeople()) . "</td>
                     </tr>
                     <tr>
                         <th style=\"width:150px;\">Freier Platz:</th>
-                        <td>" . nf($fd->getFreePeopleCapacity()) . "</td>
+                        <td>" . StringUtils::formatNumber($fd->getFreePeopleCapacity()) . "</td>
                     </tr>
                     <tr>
                         <th style=\"width:150px;\">Totaler Platz:</th>
-                        <td>" . nf($fd->getPeopleCapacity()) . "</td>
+                        <td>" . StringUtils::formatNumber($fd->getPeopleCapacity()) . "</td>
                     </tr>";
             tableEnd();
 
@@ -209,9 +211,9 @@ if ($allianceFleetControlLevel >= ALLIANCE_FLEET_SHOW_DETAIL && $rights) {
                                 </td>
                                 <td>
                                     <b>" . $ship->name() . "</b><br/>
-                                    " . text2html($ship->shortComment()) . "
+                                    " . BBCodeUtils::toHTML($ship->shortComment()) . "
                                 </td>
-                                <td style=\"width:50px;\">" . nf($scnt) . "</td>
+                                <td style=\"width:50px;\">" . StringUtils::formatNumber($scnt) . "</td>
                             </tr>";
                 }
                 tableEnd();
