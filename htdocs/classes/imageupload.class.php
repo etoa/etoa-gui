@@ -1,5 +1,6 @@
 <?PHP
 
+use EtoA\Support\ImageUtils;
 use EtoA\Support\StringUtils;
 
 class ImageUpload
@@ -74,7 +75,7 @@ class ImageUpload
                             }
 
                             if (is_array($this->resize) && ($ims[0] > $this->resize[0] || $ims[1] > $this->resize[1])) {
-                                if (!resizeImage($fpath, $fpath, $this->resize[0], $this->resize[1], $ext)) {
+                                if (!ImageUtils::resizeImage($fpath, $fpath, $this->resize[0], $this->resize[1], $ext)) {
                                     error_msg("Bildgrösse konnte nicht angepasst werden!");
                                     @unlink($fpath);
                                     return false;

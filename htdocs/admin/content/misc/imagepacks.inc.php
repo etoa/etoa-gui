@@ -11,6 +11,7 @@ use EtoA\Missile\MissileDataRepository;
 use EtoA\Race\RaceDataRepository;
 use EtoA\Ship\ShipDataRepository;
 use EtoA\Ship\ShipSort;
+use EtoA\Support\ImageUtils;
 use EtoA\Technology\TechnologyDataRepository;
 use EtoA\Technology\TechnologySort;
 use EtoA\Universe\Star\SolarTypeRepository;
@@ -105,14 +106,14 @@ if (isset($_GET['manage'])) {
                                     $sa = getimagesize($file);
                                     if ($sa[0] != $sizew) {
                                         $str = "Falsche Grösse: <i>$filestr</i> (" . $sa[0] . " statt $sizew) ";
-                                        if (resizeImage($baseFile, $file, $sizew, $sizew, $ext)) {
+                                        if (ImageUtils::resizeImage($baseFile, $file, $sizew, $sizew, $ext)) {
                                             $str .= "<span style=\"color:#0f0;\">KORRIGIERT!</span>";
                                         }
                                         $results[] = $str;
                                     }
                                 } else {
                                     $str = "Bild fehlt: $filestr ";
-                                    if (resizeImage($baseFile, $file, $sizew, $sizew, $ext)) {
+                                    if (ImageUtils::resizeImage($baseFile, $file, $sizew, $sizew, $ext)) {
                                         $str .= "<span style=\"color:#0f0;\">KORRIGIERT!</span>";
                                     }
                                     $results[] = $str;
