@@ -3,6 +3,7 @@
 use Doctrine\Common\Collections\ArrayCollection;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Log\AccessLogRepository;
+use EtoA\Specialist\SpecialistService;
 use EtoA\Support\StringUtils;
 use EtoA\User\UserPropertiesRepository;
 use EtoA\User\UserRepository;
@@ -261,8 +262,7 @@ function tableStart($title = "", $width = 0, $layout = "", $id = "")
             if ($properties->cssStyle == "Graphite") {
                 $w = "width:650px";
             }
-         }
-
+        }
     }
     if ($id != "") {
         $id = "id=\"" . $id . "\"";
@@ -962,6 +962,10 @@ function calcBuildingCosts(\EtoA\Building\Building $building, $level, $fac = 1)
     /** @var ConfigurationService $config */
     $config = $app[ConfigurationService::class];
 
+    /** @var SpecialistService $specialistService */
+    $specialistService = $app[SpecialistService::class];
+    $specialist = $specialistService->getSpecialistOfUser($cu->id);
+
     $bc = array();
     $bc['metal'] = $fac * $building->costsMetal * pow($building->buildCostsFactor, $level);
     $bc['crystal'] = $fac * $building->costsCrystal * pow($building->buildCostsFactor, $level);
@@ -978,7 +982,7 @@ function calcBuildingCosts(\EtoA\Building\Building $building, $level, $fac = 1)
     if (isset($cp->starBuildtime))
         $starBuildTime = $cp->starBuildtime;
 
-    $bonus = $cu->race->buildTime + $typeBuildTime + $starBuildTime + $cu->specialist->buildTime - 3;
+    $bonus = $cu->race->buildTime + $typeBuildTime + $starBuildTime + ($specialist !== null ? $specialist->timeBuildings : 1) - 3;
     $bc['time'] = ($bc['metal'] + $bc['crystal'] + $bc['plastic'] + $bc['fuel'] + $bc['food']) / $config->getInt('global_time') * $config->getFloat('build_build_time');
     $bc['time'] *= $bonus;
     return $bc;

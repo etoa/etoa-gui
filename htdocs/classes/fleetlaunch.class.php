@@ -6,6 +6,7 @@ use EtoA\Fleet\FleetRepository;
 use EtoA\Fleet\FleetSearch;
 use EtoA\Log\FleetLogRepository;
 use EtoA\Ship\ShipRepository;
+use EtoA\Specialist\SpecialistService;
 use EtoA\Technology\TechnologyRepository;
 use EtoA\Universe\Entity\EntityService;
 use EtoA\Universe\Planet\PlanetRepository;
@@ -77,7 +78,6 @@ class FleetLaunch
         $this->ownerId = $ownerEnt->id;
         $this->ownerRaceName = $ownerEnt->race->name;
         $this->raceSpeedFactor = $ownerEnt->race->fleetSpeedFactor;
-        $this->specialist = $ownerEnt->specialist;
         $this->possibleFleetStarts = 0;
         $this->fleetSlotsUsed = 0;
         $this->fleetControlLevel = 0;
@@ -191,7 +191,15 @@ class FleetLaunch
                 $this->fleetSlotsUsed = $fleetRepository->count(FleetSearch::create()->user($this->ownerId)->controlledByEntity($this->sourceEntity->id()));
 
                 $this->fleetControlLevel = $fleetControl->currentLevel;
-                $totalSlots = FLEET_NOCONTROL_NUM + $this->fleetControlLevel + $this->specialist->fleetMax;
+                $totalSlots = FLEET_NOCONTROL_NUM + $this->fleetControlLevel;
+
+                /** @var SpecialistService $specialistService */
+                $specialistService = $app[SpecialistService::class];
+                $specialist = $specialistService->getSpecialistOfUser($this->ownerId);
+                if ($specialist !== null) {
+                    $totalSlots += $specialist->fleetMax;
+                }
+
                 $this->possibleFleetStarts = $totalSlots - $this->fleetSlotsUsed;
 
                 if ($this->possibleFleetStarts > 0) {
@@ -218,6 +226,8 @@ class FleetLaunch
      */
     function addShip($sid, $cnt)
     {
+        global $app;
+
         if ($this->havenOk) {
             if (!$this->shipsFixed) {
                 $res = dbquery("
@@ -254,7 +264,11 @@ class FleetLaunch
                         GROUP BY
                             r.id");
 
-                    $timefactor = $this->raceSpeedFactor() + $this->specialist->fleetSpeedFactor - 1;
+                    /** @var SpecialistService $specialistService */
+                    $specialistService = $app[SpecialistService::class];
+                    $specialist = $specialistService->getSpecialistOfUser($this->ownerId);
+
+                    $timefactor = $this->raceSpeedFactor() + ($specialist !== null ? $specialist->fleetSpeed : 1) - 1;
                     if (mysql_num_rows($vres) > 0) {
                         while ($varr = mysql_fetch_array($vres)) {
                             if ($varr['techlist_current_level'] - $varr['req_level'] <= 0) {

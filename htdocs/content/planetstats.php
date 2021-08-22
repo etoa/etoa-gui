@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Specialist\SpecialistService;
 use EtoA\Universe\Planet\PlanetRepository;
 
 /** @var ConfigurationService $config */
@@ -136,6 +137,10 @@ foreach ($planets as $planet) {
 // Rohstoffe/Bewohner und Speicher
 //
 
+/** @var SpecialistService $specialistService */
+$specialistService = $app[SpecialistService::class];
+$specialist = $specialistService->getSpecialistOfUser($cu->id);
+
 tableStart("Rohstoffe und Bewohner");
 echo '<tr><th>Name:</th>
 <th>' . RES_METAL . '</th>
@@ -163,7 +168,7 @@ foreach ($planets as $planet) {
                 $capacity = 200;
             }
 
-            $people_div = $cp->people * (($config->getFloat('people_multiply')  + $cp->typePopulation + $cu->race->population + $cp->starPopulation + $cu->specialist->population - 4) * (1 - ($cp->people / ($capacity + 1))) / 24);
+            $people_div = $cp->people * (($config->getFloat('people_multiply')  + $cp->typePopulation + $cu->race->population + $cp->starPopulation + ($specialist !== null ? $specialist->prodPeople : 1) - 4) * (1 - ($cp->people / ($capacity + 1))) / 24);
 
             if ($x < 5) {
                 echo ' ' . tm("Speicher", "Speicher voll in " . tf($val_time[$planet->id][$x]) . "") . '> ';

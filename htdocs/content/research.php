@@ -7,6 +7,7 @@ use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Log\GameLogFacility;
 use EtoA\Log\GameLogRepository;
 use EtoA\Log\LogSeverity;
+use EtoA\Specialist\SpecialistService;
 use EtoA\Technology\Technology;
 use EtoA\Technology\TechnologyRepository;
 use EtoA\Technology\TechnologyRequirement;
@@ -142,6 +143,10 @@ if (isset($cp)) {
         $technologyRequirementRepository = $app[TechnologyRequirementRepository::class];
         $requirements = $technologyRequirementRepository->getAll();
 
+        /** @var SpecialistService $specialistService */
+        $specialistService = $app[SpecialistService::class];
+        $specialist = $specialistService->getSpecialistOfUser($cu->id);
+
         $bid = 0;
 
         if ((isset($_GET['id']) && intval($_GET['id']) > 0) || (count($_POST) > 0    && checker_verify())) {
@@ -195,12 +200,14 @@ if (isset($cp)) {
 
                 foreach ($resNames as $rk => $rn) {
                     //BUGFIX by river: costsResearch factor. Still whole code is wrong, but at least consistent now.
-                    $bc['costs' . $rk] = $cu->specialist->costsResearch * $costs[$rk] * pow($technology->buildCostsFactor, $level);
+                    $bc['costs' . $rk] = ($specialist !== null ? $specialist->costsTechnologies : 1) * $costs[$rk] * pow($technology->buildCostsFactor, $level);
                 }
                 $bc['costs5'] = $costs[5] * pow($technology->buildCostsFactor, $level);
 
                 $bonus = $cu->race->researchTime + $cp->typeResearchtime + $cp->starResearchtime - 2;
-                $bonus *= $cu->specialist->researchTime;
+                if ($specialist !== null) {
+                    $bonus *= $specialist->timeTechnologies;
+                }
 
                 $bc['time'] = (array_sum($bc)) / $config->getInt('global_time') * $config->getFloat('res_build_time') * $time_boni_factor;
                 $bc['time'] *= $bonus;
@@ -271,11 +278,11 @@ if (isset($cp)) {
 
         echo '<colgroup><col style="width:400px;"/><col/></colgroup>';
         // Specialist
-        if ($cu->specialist->costsResearch != 1) {
-            echo "<tr><td>Kostenreduktion durch " . $cu->specialist->name . ":</td><td>" . get_percent_string($cu->specialist->costsResearch) . "</td></tr>";
+        if ($specialist !== null && $specialist->costsTechnologies != 1) {
+            echo "<tr><td>Kostenreduktion durch " . $specialist->name . ":</td><td>" . get_percent_string($specialist->costsTechnologies) . "</td></tr>";
         }
-        if ($cu->specialist->researchTime != 1) {
-            echo "<tr><td>Forschungszeitverringerung durch " . $cu->specialist->name . ":</td><td>" . get_percent_string($cu->specialist->researchTime) . "</td></tr>";
+        if ($specialist !== null && $specialist->timeTechnologies != 1) {
+            echo "<tr><td>Forschungszeitverringerung durch " . $specialist->name . ":</td><td>" . get_percent_string($specialist->timeTechnologies) . "</td></tr>";
         }
         // Building level time bonus
         echo "<tr><td>Forschungszeitverringerung:</td><td>";
@@ -352,19 +359,22 @@ if (isset($cp)) {
                 }
 
 
-                $bc = calcTechCosts($technology, $b_level, $cu->specialist->costsResearch);
-                $bcn = calcTechCosts($technology, $b_level + 1, $cu->specialist->costsResearch);
+                $bc = calcTechCosts($technology, $b_level, $specialist !== null ? $specialist->costsTechnologies : 1);
+                $bcn = calcTechCosts($technology, $b_level + 1, $specialist !== null ? $specialist->costsTechnologies : 1);
 
                 // Bauzeit
                 $bonus = $cu->race->researchTime + $cp->typeResearchtime + $cp->starResearchtime - 2;
 
                 $btime = ($bc['metal'] + $bc['crystal'] + $bc['plastic'] + $bc['fuel'] + $bc['food']) / $config->getInt('global_time') * $config->getFloat('res_build_time') * $time_boni_factor;
-                $btime *= $bonus * $cu->specialist->researchTime;
+                if ($specialist !== null) {
+                    $btime *= $bonus * $specialist->timeTechnologies;
+                }
 
                 //Nächste Stufe
                 $btimen = ($bcn['metal'] + $bcn['crystal'] + $bcn['plastic'] + $bcn['fuel'] + $bcn['food']) / $config->getInt('global_time') * $config->getFloat('res_build_time') * $time_boni_factor;
-                $btimen  *= $bonus * $cu->specialist->researchTime;
-
+                if ($specialist !== null) {
+                    $btimen  *= $bonus * $specialist->timeTechnologies;
+                }
 
                 // Berechnet mindest Bauzeit in beachtung von Gentechlevel
                 $btime_min = $btime * $minBuildTimeFactor;
@@ -410,7 +420,7 @@ if (isset($cp)) {
                             [b]Forschungslabor Level:[/b] " . $researchBuilding->currentLevel . "
                             [b]Eingesetzte Bewohner:[/b] " . nf($peopleWorkingResearch) . "
                             [b]Gen-Tech Level:[/b] " . GEN_TECH_LEVEL . "
-                            [b]Eingesetzter Spezialist:[/b] " . $cu->specialist->name . "
+                            [b]Eingesetzter Spezialist:[/b] " . ($specialist !== null ? $specialist->name : "Kein Spezialist") . "
 
                             [b]Kosten[/b]
                             [b]" . RES_METAL . ":[/b] " . nf($bc['metal']) . "
@@ -818,7 +828,7 @@ if (isset($cp)) {
                                 // Untätig
                                 else {
                                     // Baukostenberechnung          Baukosten = Grundkosten * (Kostenfaktor ^ Ausbaustufe)
-                                    $bc = calcTechCosts($tech, $b_level, $cu->specialist->costsResearch);
+                                    $bc = calcTechCosts($tech, $b_level, $specialist !== null ? $specialist->costsTechnologies : 1);
 
                                     // Zuwenig Ressourcen
                                     if ($b_level < $tech->lastLevel && ($planet->resMetal < $bc['metal'] || $planet->resCrystal < $bc['crystal']  || $planet->resPlastic < $bc['plastic']  || $planet->resFuel < $bc['fuel']  || $planet->resFood < $bc['food'])) {
