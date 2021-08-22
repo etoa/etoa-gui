@@ -7,6 +7,7 @@ use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Log\GameLogFacility;
 use EtoA\Log\GameLogRepository;
 use EtoA\Log\LogSeverity;
+use EtoA\Race\RaceDataRepository;
 use EtoA\Support\StringUtils;
 use EtoA\Specialist\SpecialistService;
 use EtoA\Support\BBCodeUtils;
@@ -148,6 +149,9 @@ if (isset($cp)) {
         /** @var SpecialistService $specialistService */
         $specialistService = $app[SpecialistService::class];
         $specialist = $specialistService->getSpecialistOfUser($cu->id);
+        /** @var RaceDataRepository $raceRepository */
+        $raceRepository = $app[RaceDataRepository::class];
+        $race = $raceRepository->getRace($cu->raceId);
 
         $bid = 0;
 
@@ -206,7 +210,7 @@ if (isset($cp)) {
                 }
                 $bc['costs5'] = $costs[5] * pow($technology->buildCostsFactor, $level);
 
-                $bonus = $cu->race->researchTime + $cp->typeResearchtime + $cp->starResearchtime - 2;
+                $bonus = $race->researchTime + $cp->typeResearchtime + $cp->starResearchtime - 2;
                 if ($specialist !== null) {
                     $bonus *= $specialist->timeTechnologies;
                 }
@@ -365,7 +369,7 @@ if (isset($cp)) {
                 $bcn = calcTechCosts($technology, $b_level + 1, $specialist !== null ? $specialist->costsTechnologies : 1);
 
                 // Bauzeit
-                $bonus = $cu->race->researchTime + $cp->typeResearchtime + $cp->starResearchtime - 2;
+                $bonus = $race->researchTime + $cp->typeResearchtime + $cp->starResearchtime - 2;
 
                 $btime = ($bc['metal'] + $bc['crystal'] + $bc['plastic'] + $bc['fuel'] + $bc['food']) / $config->getInt('global_time') * $config->getFloat('res_build_time') * $time_boni_factor;
                 if ($specialist !== null) {

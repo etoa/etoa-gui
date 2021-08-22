@@ -2,6 +2,7 @@
 
 use EtoA\Alliance\AllianceRankRepository;
 use EtoA\Alliance\AllianceRepository;
+use EtoA\Race\RaceDataRepository;
 use EtoA\Support\BBCodeUtils;
 use EtoA\Support\StringUtils;
 use EtoA\User\UserLogRepository;
@@ -17,6 +18,8 @@ $userRepository = $app[UserRepository::class];
 $allianceRankRepository = $app[AllianceRankRepository::class];
 /** @var AllianceRepository $allianceRepository */
 $allianceRepository = $app[AllianceRepository::class];
+/** @var RaceDataRepository $raceRepository */
+$raceRepository = $app[RaceDataRepository::class];
 
 echo "<h1>Benutzerprofil</h1>";
 
@@ -48,9 +51,11 @@ if ($uid > 0) {
             echo "<tr><td colspan=\"2\" style=\"text-align:center\">" . BBCodeUtils::toHTML($user->profileText) . "</td></tr>";
         }
         echo "<tr><th style=\"width:120px;\">Punkte:</th><td>" . StringUtils::formatNumber($user->points) . "</td></tr>";
+
+        $race = $raceRepository->getRace($user->raceId);
         echo "<tr>
           <th>Rasse:</th>
-          <td>" . $user->race->name . "</td>
+          <td>" . $race->name . "</td>
       </tr>";
         if ($user->allianceId != 0) {
             echo "<tr><th style=\"width:120px;\">Allianz:</th><td>";

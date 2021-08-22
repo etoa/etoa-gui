@@ -6,6 +6,7 @@ use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Log\GameLogFacility;
 use EtoA\Log\GameLogRepository;
 use EtoA\Log\LogSeverity;
+use EtoA\Race\RaceDataRepository;
 use EtoA\Support\StringUtils;
 use EtoA\Specialist\SpecialistService;
 use EtoA\Universe\Planet\PlanetRepository;
@@ -215,6 +216,10 @@ class BuildListItem
             $buildingRepository = $app[BuildingRepository::class];
             $peopleWorking = $buildingRepository->getPeopleWorking($this->entityId);
 
+            /** @var RaceDataRepository $raceRepository */
+            $raceRepository = $app[RaceDataRepository::class];
+            $race = $raceRepository->getRace($cu->raceId);
+
             /** @var SpecialistService $specialistService */
             $specialistService = $app[SpecialistService::class];
             $specialist = $specialistService->getSpecialistOfUser($cu->id);
@@ -226,7 +231,7 @@ class BuildListItem
                 $bc['costs' . $rk] = $specialistBuildingCostFactor * $this->building->costs[$rk] * pow($this->building->costsFactor, $this->level + $levelUp);
             }
 
-            $bonus = $cu->race->buildTime + $cp->typeBuildtime + $cp->starBuildtime + $specialistBuildTimeFactor - 3;
+            $bonus = $race->buildTime + $cp->typeBuildtime + $cp->starBuildtime + $specialistBuildTimeFactor - 3;
 
             $bc['time'] = (array_sum($bc)) / $this->config->getInt('global_time') * $this->config->getFloat('build_build_time');
             $bc['time'] *= $bonus;
@@ -347,6 +352,10 @@ class BuildListItem
         // TODO
         global $resNames, $cp, $cu, $app;
 
+        /** @var RaceDataRepository $raceRepository */
+        $raceRepository = $app[RaceDataRepository::class];
+        $race = $raceRepository->getRace($cu->raceId);
+
         /** @var SpecialistService $specialistService */
         $specialistService = $app[SpecialistService::class];
         $specialist = $specialistService->getSpecialistOfUser($cu->id);
@@ -359,7 +368,7 @@ class BuildListItem
         }
         $bc['costs5'] = 0;      //Energie nicht als Ressource zählen
 
-        $bonus = $cu->race->buildTime + $cp->typeBuildtime + $cp->starBuildtime + $specialistBuildTimeFactor - 3;
+        $bonus = $race->buildTime + $cp->typeBuildtime + $cp->starBuildtime + $specialistBuildTimeFactor - 3;
 
         $bc['time'] = (array_sum($bc)) / $this->config->getInt('global_time') * $this->config->getFloat('build_build_time');
         $bc['time'] *= $bonus;

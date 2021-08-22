@@ -5,6 +5,7 @@ use EtoA\Building\BuildingDataRepository;
 use EtoA\Building\BuildingRepository;
 use EtoA\Building\BuildingSearch;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Race\RaceDataRepository;
 use EtoA\Ship\ShipDataRepository;
 use EtoA\Ship\ShipRepository;
 use EtoA\Ship\ShipSearch;
@@ -35,10 +36,13 @@ $backendMessageService = $app[BackendMessageService::class];
 $shipDataRepository = $app[ShipDataRepository::class];
 /** @var ShipRepository $shipRepository */
 $shipRepository = $app[ShipRepository::class];
+/** @var RaceDataRepository $raceRespository */
+$raceRespository = $app[RaceDataRepository::class];
 
 if ($cp) {
 
     $planet = $planetRepo->find($cp->id);
+    $race = $raceRespository->getRace($cu->raceId);
 
     /** @var SpecialistService $specialistService */
     $specialistService = $app[SpecialistService::class];
@@ -141,23 +145,23 @@ if ($cp) {
 
             // Addieren der Planeten-, Rassen- und Spezialistenboni
             if ($bareBuildingProduction['metal'] != "") {
-                $boni = $cp->typeMetal - 1 + $cu->race->metal - 1 + $cp->starMetal - 1 + ($specialist !== null ? $specialist->prodMetal : 1) - 1;
+                $boni = $cp->typeMetal - 1 + $race->metal - 1 + $cp->starMetal - 1 + ($specialist !== null ? $specialist->prodMetal : 1) - 1;
                 $prodIncludingBoni['metal'] += $bareBuildingProduction['metal'] * $boni;
             }
             if ($bareBuildingProduction['crystal'] != "") {
-                $boni = $cp->typeCrystal - 1 + $cu->race->crystal - 1 + $cp->starCrystal - 1 + ($specialist !== null ? $specialist->prodCrystal : 1) - 1;
+                $boni = $cp->typeCrystal - 1 + $race->crystal - 1 + $cp->starCrystal - 1 + ($specialist !== null ? $specialist->prodCrystal : 1) - 1;
                 $prodIncludingBoni['crystal'] += $bareBuildingProduction['crystal'] * $boni;
             }
             if ($bareBuildingProduction['plastic'] != "") {
-                $boni = $cp->typePlastic - 1 + $cu->race->plastic - 1 + $cp->starPlastic - 1 + ($specialist !== null ? $specialist->prodPlastic : 1) - 1;
+                $boni = $cp->typePlastic - 1 + $race->plastic - 1 + $cp->starPlastic - 1 + ($specialist !== null ? $specialist->prodPlastic : 1) - 1;
                 $prodIncludingBoni['plastic'] += $bareBuildingProduction['plastic'] * $boni;
             }
             if ($bareBuildingProduction['fuel'] != "") {
-                $boni = $cp->typeFuel - 1 + $cu->race->fuel - 1 + $cp->starFuel - 1 + ($specialist !== null ? $specialist->prodFuel : 1) - 1  + $planet->getFuelProductionBonusFactor() * -1;
+                $boni = $cp->typeFuel - 1 + $race->fuel - 1 + $cp->starFuel - 1 + ($specialist !== null ? $specialist->prodFuel : 1) - 1  + $planet->getFuelProductionBonusFactor() * -1;
                 $prodIncludingBoni['fuel'] += $bareBuildingProduction['fuel'] * $boni;
             }
             if ($bareBuildingProduction['food'] != "") {
-                $boni = $cp->typeFood - 1 + $cu->race->food - 1 + $cp->starFood - 1 + ($specialist !== null ? $specialist->prodFood : 1) - 1;
+                $boni = $cp->typeFood - 1 + $race->food - 1 + $cp->starFood - 1 + ($specialist !== null ? $specialist->prodFood : 1) - 1;
                 $prodIncludingBoni['food'] += $bareBuildingProduction['food'] * $boni;
             }
 
@@ -354,7 +358,7 @@ if ($cp) {
     }
 
     // Summarize all bonus factors
-    $bonusFactor = 1 + ($cp->typePower + $cu->race->power + $cp->starPower + ($specialist !== null ? $specialist->prodPower : 1) + $energyTechPowerBonusFactor - 5);
+    $bonusFactor = 1 + ($cp->typePower + $race->power + $cp->starPower + ($specialist !== null ? $specialist->prodPower : 1) + $energyTechPowerBonusFactor - 5);
 
     $cnt['power'] = 0;
 
@@ -492,7 +496,7 @@ if ($cp) {
 
     echo "<tr><th>Rohstoff</th>
         <th>" . $cp->typeName . "</th>";
-    echo "<th>" . $cu->race->name . "</th>";
+    echo "<th>" . $race->name . "</th>";
     echo "<th>" . $cp->starTypeName . "</th>";
     if ($specialist !== null) {
         echo "<th>" . $specialist->name . "</th>";
@@ -502,93 +506,93 @@ if ($cp) {
 
     echo "<tr><td>" . RES_ICON_METAL . "Produktion " . RES_METAL . "</td>";
     echo "<td>" . StringUtils::formatPercentString($cp->typeMetal, true) . "</td>";
-    echo "<td>" . StringUtils::formatPercentString($cu->race->metal, true) . "</td>";
+    echo "<td>" . StringUtils::formatPercentString($race->metal, true) . "</td>";
     echo "<td>" . StringUtils::formatPercentString($cp->starMetal, true) . "</td>";
     if ($specialist !== null) {
         echo "<td>" . StringUtils::formatPercentString($specialist->prodMetal, true) . "</td>";
     }
     echo "<td>-</td>";
-    echo "<td>" . StringUtils::formatPercentString(array($cp->typeMetal, $cu->race->metal, $cp->starMetal, ($specialist !== null ? $specialist->prodMetal : 1)), true) . "</td></tr>";
+    echo "<td>" . StringUtils::formatPercentString(array($cp->typeMetal, $race->metal, $cp->starMetal, ($specialist !== null ? $specialist->prodMetal : 1)), true) . "</td></tr>";
 
     echo "<tr><td>" . RES_ICON_CRYSTAL . "Produktion " . RES_CRYSTAL . "</td>";
     echo "<td>" . StringUtils::formatPercentString($cp->typeCrystal, true) . "</td>";
-    echo "<td>" . StringUtils::formatPercentString($cu->race->crystal, true) . "</td>";
+    echo "<td>" . StringUtils::formatPercentString($race->crystal, true) . "</td>";
     echo "<td>" . StringUtils::formatPercentString($cp->starCrystal, true) . "</td>";
     if ($specialist !== null) {
         echo "<td>" . StringUtils::formatPercentString($specialist->prodCrystal, true) . "</td>";
     }
     echo "<td>-</td>";
-    echo "<td>" . StringUtils::formatPercentString(array($cp->typeCrystal, $cu->race->crystal, $cp->starCrystal, ($specialist !== null ? $specialist->prodCrystal : 1)), true) . "</td></tr>";
+    echo "<td>" . StringUtils::formatPercentString(array($cp->typeCrystal, $race->crystal, $cp->starCrystal, ($specialist !== null ? $specialist->prodCrystal : 1)), true) . "</td></tr>";
 
     echo "<tr><td>" . RES_ICON_PLASTIC . "Produktion " . RES_PLASTIC . "</td>";
     echo "<td>" . StringUtils::formatPercentString($cp->typePlastic, true) . "</td>";
-    echo "<td>" . StringUtils::formatPercentString($cu->race->plastic, true) . "</td>";
+    echo "<td>" . StringUtils::formatPercentString($race->plastic, true) . "</td>";
     echo "<td>" . StringUtils::formatPercentString($cp->starPlastic, true) . "</td>";
     if ($specialist !== null) {
         echo "<td>" . StringUtils::formatPercentString($specialist->prodPlastic, true) . "</td>";
     }
     echo "<td>-</td>";
-    echo "<td>" . StringUtils::formatPercentString(array($cp->typePlastic, $cu->race->plastic, $cp->starPlastic, ($specialist !== null ? $specialist->prodPlastic : 1)), true) . "</td></tr>";
+    echo "<td>" . StringUtils::formatPercentString(array($cp->typePlastic, $race->plastic, $cp->starPlastic, ($specialist !== null ? $specialist->prodPlastic : 1)), true) . "</td></tr>";
 
     echo "<tr><td>" . RES_ICON_FUEL . "Produktion " . RES_FUEL . "</td>";
     echo "<td>" . StringUtils::formatPercentString($cp->typeFuel, true) . "</td>";
-    echo "<td>" . StringUtils::formatPercentString($cu->race->fuel, true) . "</td>";
+    echo "<td>" . StringUtils::formatPercentString($race->fuel, true) . "</td>";
     echo "<td>" . StringUtils::formatPercentString($cp->starFuel, true) . "</td>";
     if ($specialist !== null) {
         echo "<td>" . StringUtils::formatPercentString($specialist->prodFuel, true) . "</td>";
     }
     echo "<td>-</td>";
-    echo "<td>" . StringUtils::formatPercentString(array($cp->typeFuel, $cu->race->fuel, $cp->starFuel, ($specialist !== null ? $specialist->prodFuel : 1)), true) . "</td></tr>";
+    echo "<td>" . StringUtils::formatPercentString(array($cp->typeFuel, $race->fuel, $cp->starFuel, ($specialist !== null ? $specialist->prodFuel : 1)), true) . "</td></tr>";
 
     echo "<tr><td>" . RES_ICON_FOOD . "Produktion " . RES_FOOD . "</td>";
     echo "<td>" . StringUtils::formatPercentString($cp->typeFood, true) . "</td>";
-    echo "<td>" . StringUtils::formatPercentString($cu->race->food, true) . "</td>";
+    echo "<td>" . StringUtils::formatPercentString($race->food, true) . "</td>";
     echo "<td>" . StringUtils::formatPercentString($cp->starFood, true) . "</td>";
     if ($specialist !== null) {
         echo "<td>" . StringUtils::formatPercentString($specialist->prodFood, true) . "</td>";
     }
     echo "<td>-</td>";
-    echo "<td>" . StringUtils::formatPercentString(array($cp->typeFood, $cu->race->food, $cp->starFood, ($specialist !== null ? $specialist->prodFood : 1)), true) . "</td></tr>";
+    echo "<td>" . StringUtils::formatPercentString(array($cp->typeFood, $race->food, $cp->starFood, ($specialist !== null ? $specialist->prodFood : 1)), true) . "</td></tr>";
 
     echo "<tr><td>" . RES_ICON_POWER . "Produktion Energie</td>";
     echo "<td>" . StringUtils::formatPercentString($cp->typePower, true) . "</td>";
-    echo "<td>" . StringUtils::formatPercentString($cu->race->power, true) . "</td>";
+    echo "<td>" . StringUtils::formatPercentString($race->power, true) . "</td>";
     echo "<td>" . StringUtils::formatPercentString($cp->starPower, true) . "</td>";
     if ($specialist !== null) {
         echo "<td>" . StringUtils::formatPercentString($specialist->prodPower, true) . "</td>";
     }
     echo "<td>" . StringUtils::formatPercentString($energyTechPowerBonusFactor, true) . "</td>";
-    echo "<td>" . StringUtils::formatPercentString(array($cp->typePower, $cu->race->power, $cp->starPower, ($specialist !== null ? $specialist->prodPower : 1), $energyTechPowerBonusFactor), true) . "</td></tr>";
+    echo "<td>" . StringUtils::formatPercentString(array($cp->typePower, $race->power, $cp->starPower, ($specialist !== null ? $specialist->prodPower : 1), $energyTechPowerBonusFactor), true) . "</td></tr>";
 
     echo "<tr><td>" . RES_ICON_PEOPLE . "Bev&ouml;lkerungswachstum</td>";
     echo "<td>" . StringUtils::formatPercentString($cp->typePopulation, true) . "</td>";
-    echo "<td>" . StringUtils::formatPercentString($cu->race->population, true) . "</td>";
+    echo "<td>" . StringUtils::formatPercentString($race->population, true) . "</td>";
     echo "<td>" . StringUtils::formatPercentString($cp->starPopulation, true) . "</td>";
     if ($specialist !== null) {
         echo "<td>" . StringUtils::formatPercentString($specialist->prodPeople, true) . "</td>";
     }
     echo "<td>-</td>";
-    echo "<td>" . StringUtils::formatPercentString(array($cp->typePopulation, $cu->race->population, $cp->starPopulation, ($specialist !== null ? $specialist->prodPeople : 1)), true) . "</td></tr>";
+    echo "<td>" . StringUtils::formatPercentString(array($cp->typePopulation, $race->population, $cp->starPopulation, ($specialist !== null ? $specialist->prodPeople : 1)), true) . "</td></tr>";
 
     echo "<tr><td>" . RES_ICON_TIME . "Forschungszeit</td>";
     echo "<td>" . StringUtils::formatPercentString($cp->typeResearchtime, true, true) . "</td>";
-    echo "<td>" . StringUtils::formatPercentString($cu->race->researchTime, true, true) . "</td>";
+    echo "<td>" . StringUtils::formatPercentString($race->researchTime, true, true) . "</td>";
     echo "<td>" . StringUtils::formatPercentString($cp->starResearchtime, true, true) . "</td>";
     if ($specialist !== null) {
         echo "<td>" . StringUtils::formatPercentString($specialist->timeTechnologies, true, true) . "</td>";
     }
     echo "<td>-</td>";
-    echo "<td>" . StringUtils::formatPercentString(array($cp->typeResearchtime, $cu->race->researchTime, $cp->starResearchtime, ($specialist !== null ? $specialist->timeTechnologies : 1)), true, true) . "</td></tr>";
+    echo "<td>" . StringUtils::formatPercentString(array($cp->typeResearchtime, $race->researchTime, $cp->starResearchtime, ($specialist !== null ? $specialist->timeTechnologies : 1)), true, true) . "</td></tr>";
 
     echo "<tr><td>" . RES_ICON_TIME . "Bauzeit (Geb&auml;ude)</td>";
     echo "<td>" . StringUtils::formatPercentString($cp->typeBuildtime, true, true) . "</td>";
-    echo "<td>" . StringUtils::formatPercentString($cu->race->buildTime, true, true) . "</td>";
+    echo "<td>" . StringUtils::formatPercentString($race->buildTime, true, true) . "</td>";
     echo "<td>" . StringUtils::formatPercentString($cp->starBuildtime, true, true) . "</td>";
     if ($specialist !== null) {
         echo "<td>" . StringUtils::formatPercentString($specialist->timeBuildings, true, true) . "</td>";
     }
     echo "<td>-</td>";
-    echo "<td>" . StringUtils::formatPercentString(array($cp->typeBuildtime, $cu->race->buildTime, $cp->starBuildtime, ($specialist !== null ? $specialist->timeBuildings : 1)), true, true) . "</td></tr>";
+    echo "<td>" . StringUtils::formatPercentString(array($cp->typeBuildtime, $race->buildTime, $cp->starBuildtime, ($specialist !== null ? $specialist->timeBuildings : 1)), true, true) . "</td></tr>";
 
     echo "<tr><td>" . RES_ICON_TIME . "Bauzeit (Schiffe)</td>";
     echo "<td>-</td>";
@@ -612,13 +616,13 @@ if ($cp) {
 
     echo "<tr><td>" . RES_ICON_TIME . "Fluggeschwindigkeit</td>";
     echo "<td>-</td>";
-    echo "<td>" . StringUtils::formatPercentString($cu->race->fleetSpeedFactor, true) . "</td>";
+    echo "<td>" . StringUtils::formatPercentString($race->fleetTime, true) . "</td>";
     echo "<td>-</td>";
     if ($specialist !== null) {
         echo "<td>" . StringUtils::formatPercentString($specialist->fleetSpeed, true) . "</td>";
     }
     echo "<td>-</td>";
-    echo "<td>" . StringUtils::formatPercentString(array($cu->race->fleetSpeedFactor, ($specialist !== null ? $specialist->fleetSpeed : 1)), true) . "</td></tr>";
+    echo "<td>" . StringUtils::formatPercentString(array($race->fleetTime, ($specialist !== null ? $specialist->fleetSpeed : 1)), true) . "</td></tr>";
 
     tableEnd();
 } else {

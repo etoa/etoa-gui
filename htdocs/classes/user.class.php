@@ -68,7 +68,6 @@ class User implements \EtoA\User\UserInterface
 
     // Sub-objects and their id's
     protected $raceId;
-    protected $race = null;
     protected $allianceId;
     protected ?Alliance $alliance = null;
     protected $rating = null;
@@ -221,9 +220,7 @@ class User implements \EtoA\User\UserInterface
                 " . self::tableName . "
             SET ";
             foreach ($this->changedFields as $k => $v) {
-                if ($k == "race")
-                    $sql .= " user_race_id=" . $this->raceId . ",";
-                elseif ($k == "alliance")
+                if ($k == "alliance")
                     $sql .= " user_alliance_id=" . $this->allianceId . ",";
                 elseif ($k == "allianceRankId")
                     $sql .= " user_alliance_rank_id=" . $this->allianceRankId . ",";
@@ -278,13 +275,6 @@ class User implements \EtoA\User\UserInterface
         try {
             if (!property_exists($this, $key))
                 throw new EException("Property $key existiert nicht in der Klasse " . __CLASS__);
-
-            if ($key == "race") {
-                $this->$key = $val;
-                $this->raceId = ($this->race == null) ? 0 : $this->race->id;
-                $this->changedFields[$key] = true;
-                return true;
-            }
             if ($key == "alliance") {
 
                 // TODO
@@ -312,12 +302,7 @@ class User implements \EtoA\User\UserInterface
                 $this->changedFields["allianceRankId"] = 0;
                 return true;
             }
-            if ($key == "race") {
-                $this->$key = $val;
-                $this->raceId = $this->race->id;
-                $this->changedFields[$key] = true;
-                return true;
-            } elseif ($key == "visits") {
+            if ($key == "visits") {
                 $this->$key = intval($val);
                 $this->changedFields[$key] = true;
                 return true;
@@ -337,7 +322,7 @@ class User implements \EtoA\User\UserInterface
                 return true;
             } elseif ($key == "rating") {
                 throw new EException("Property $key der Klasse  " . __CLASS__ . " ist nicht änderbar!");
-            } elseif ($key == "raceId") {
+            } elseif ($key == "raceId" || $key == "race") {
                 throw new EException("Property $key der Klasse  " . __CLASS__ . " ist nicht änderbar!");
             } elseif ($key == "allianceId") {
                 throw new EException("Property $key der Klasse  " . __CLASS__ . " ist nicht änderbar!");
@@ -381,9 +366,6 @@ class User implements \EtoA\User\UserInterface
             if (!property_exists($this, $key))
                 throw new EException("Property $key existiert nicht in " . __CLASS__);
 
-            if ($key == "race" && $this->race == null && $this->raceId > 0) {
-                $this->race = new Race($this->raceId);
-            }
             if ($key == "alliance" && $this->alliance == null && $this->allianceId > 0) {
                 $this->alliance = new Alliance($this->allianceId);
             }
