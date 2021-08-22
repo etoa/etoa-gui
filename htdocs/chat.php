@@ -61,4 +61,4 @@ echo $twig->render('layout/chat.html.twig', [
 
 ]);
 
-dbclose();
+DBManager::getInstance()->close();

@@ -47,7 +47,7 @@ if (!@include($init))
 
 // Connect to database
 try {
-    dbconnect();
+    DBManager::getInstance()->connect();
 } catch (DBException $ex) {
     echo $ex;
     exit(1);
@@ -323,5 +323,4 @@ else
     show_usage();
 }
 
-// DB schliessen
-dbclose();
+DBManager::getInstance()->close();

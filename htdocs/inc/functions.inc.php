@@ -31,22 +31,6 @@ function getAppVersion()
 }
 
 /**
- * Baut die Datenbankverbindung auf
- */
-function dbconnect($throwError = 1)
-{
-    return DBManager::getInstance()->connect($throwError);
-}
-
-/**
- * Trennt die Datenbankverbindung
- */
-function dbclose()
-{
-    return DBManager::getInstance()->close();
-}
-
-/**
  * Führt eine Datenbankabfrage aus
  *
  * @param string $string SQL-Abfrage

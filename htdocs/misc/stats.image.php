@@ -1,9 +1,4 @@
 <?PHP
-//
-// EtoA-Punktdiagramm
-// (c) 2006 by Nicolas Perrenoud, mrcage@etoa.ch
-// Created 28.10.2006
-//
 
 use EtoA\Support\StringUtils;
 
@@ -116,29 +111,12 @@ if ($uid > 0 && count($_SESSION) > 0) {
                 $last_x = $x0;
                 $last_y = $y0;
 
-                /*
-                    // Schatten
-                    for ($i=SHADOW_L;$i>0;$i--)
-                    {
-                        imageline($im, $left+$i, B_B+B_H-(B_H*$p/$pmax)-$i, $left+B_W+$i, B_B+B_H-(B_H*$p/$pmax)-$i, $s_col[$i]);
-                        imageline($im, $left+B_W+$i, B_B+B_H-(B_H*$p/$pmax)-$i, $left+B_W+$i, B_B+B_H-$i, $s_col[$i]);
-                    }*/
-                /*
-                    // Balken
-                    for ($x=0;$x<B_W;$x++)
-                    {
-                        imageline($im, $left+$x, B_B+B_H-(B_H*$p/$pmax), $left+$x, B_B+B_H, $b_col[$x]);
-                    }
-                    // Rahmen
-                    imagerectangle($im, $left, B_B+B_H-(B_H*$p/$pmax), $left+B_W, B_B+B_H, $black);
-                    */
                 // Zeit
                 if ($cnt % 3 == 1) {
                     imagestring($im, FONT_SIZE, $left + (B_W / 2) - imagefontwidth(1) * 5 / 2, B_B + B_H + 5, date("H:i", $t), $black);
                     imagestring($im, FONT_SIZE, $left - 8 + (B_W / 2) - imagefontwidth(1) * 5 / 2, B_B + B_H + 13, date("d.m.y", $t), $black);
                 }
                 // Punkte
-
                 imagestringup($im, FONT_SIZE, $left + (B_W / 2) - imagefontheight(1), B_H + B_B - 10, StringUtils::formatNumber($p), $black);
 
                 $cnt++;
@@ -151,8 +129,4 @@ if ($uid > 0 && count($_SESSION) > 0) {
     imagestring($im, 3, 10, 10, "Fehler! Keine ID angegeben oder du bist nicht eingeloggt!", $black);
 imagepng($im);
 
-
-
-
-
-dbclose();
+DBManager::getInstance()->close();

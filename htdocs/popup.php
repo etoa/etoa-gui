@@ -69,5 +69,5 @@ try {
         'content' => $ex,
     ]);
 } finally {
-    dbclose();
+    DBManager::getInstance()->close();
 }

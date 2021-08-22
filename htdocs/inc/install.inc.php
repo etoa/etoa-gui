@@ -50,18 +50,19 @@ if (isset($_POST['install_check'])) {
             'password' => $_SESSION['INSTALL']['db_password'],
         ];
         $app['db.options'] = $dbCfg;
-        if (DBManager::getInstance()->connect(0, $dbCfg)) {
+        try {
+            DBManager::getInstance()->connect($dbCfg);
             $successMessage = 'Datenbankverbindung erfolgreich!';
 
             $_SESSION['INSTALL']['step'] = 2;
             $step = 2;
-        } else {
-            $errorMessage = 'Verbindung fehlgeschlagen! Fehler: ' . mysql_error();
+        } catch (DBException $ex) {
+            $errorMessage = 'Verbindung fehlgeschlagen! Fehler: ' . $ex->getMessage();
             $_SESSION['INSTALL']['step'] = 1;
             $step = 1;
         }
     } else {
-        $errorMessage = 'Achtung! Du hast nicht alle Felder ausgef&uuml;lt!';
+        $errorMessage = 'Achtung! Du hast nicht alle Felder ausgefüllt!';
     }
 } elseif ($_POST['step2_submit'] ?? false) {
     $step = 2;
@@ -75,7 +76,7 @@ if (isset($_POST['install_check'])) {
         $step = 3;
         $_SESSION['INSTALL']['step'] = 3;
     } else {
-        $errorMessage = 'Achtung! Du hast nicht alle Felder ausgef&uuml;lt!';
+        $errorMessage = 'Achtung! Du hast nicht alle Felder ausgefült!';
     }
 }
 
@@ -93,7 +94,8 @@ if ($step === 3) {
         'password' => $_SESSION['INSTALL']['db_password'],
     );
     $app['db.options'] = $dbCfg;
-    DBManager::getInstance()->connect(0, $dbCfg);
+
+    DBManager::getInstance()->connect($dbCfg);
 
     $dbConfigString = json_encode($dbCfg, JSON_PRETTY_PRINT);
 
@@ -145,7 +147,8 @@ if ($step === 2) {
         'password' => $_SESSION['INSTALL']['db_password'],
     ];
     $app['db.options'] = $dbCfg;
-    DBManager::getInstance()->connect(0, $dbCfg);
+
+    DBManager::getInstance()->connect($dbCfg);
 
     // Migrate database
     ob_start();
