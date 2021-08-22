@@ -65,35 +65,6 @@ function del_button($url, $ocl = "")
         return "<a href=\"$url\"><img src=\"../images/icons/delete.png\" alt=\"Löschen\" style=\"width:18px;height:15px;border:none;\" title=\"Löschen\" /></a>";
 }
 
-// Wandelt den Text in brauchbare HTML um
-function encode_logtext($string)
-{
-    $string = preg_replace('/\[USER_ID=([0-9]*);USER_NICK=([^\[]*)\]/i', '<a href="?page=user&sub=edit&user_id=\1">\2</a>', $string);
-    $string = preg_replace('/\[PLANET_ID=([0-9]*);PLANET_NAME=([^\[]*)\]/i', '<a href="?page=galaxy&sub=edit&id=\1">\2</a>', $string);
-
-    return $string;
-}
-
-/**
- * DEPRECATED!
- * Displays a select box for choosing the search method
- * for varchar/text mysql table fields ('contains', 'part of'
- * and negotiations of those two)
- *
- * @param string $name Field name
- */
-function fieldqueryselbox($name)
-{
-    echo "<select name=\"qmode[$name]\">";
-    echo "<option value=\"LIKE '%\">enth&auml;lt</option>";
-    echo "<option value=\"LIKE '\">ist gleich</option>";
-    echo "<option value=\"NOT LIKE '%\">enth&auml;lt nicht</option>";
-    echo "<option value=\"NOT LIKE '\">ist ungleich</option>";
-    echo "<option value=\"< '\">ist kleiner</option>";
-    echo "<option value=\"> '\">ist gr&ouml;sser</option>";
-    echo "</select>";
-}
-
 function fieldComparisonSelectBox(string $name): string
 {
     $options = [
@@ -294,29 +265,6 @@ function searchFieldTextOptions($name)
 }
 
 /**
- * Displays a select box for choosing the search method
- * for varchar/text mysql table fields ('contains', 'part of'
- * and negotiations of those two)
- *
- * @param string $name Field name
- */
-function searchFieldNumberOptions($name)
-{
-    ob_start();
-    echo "<select name=\"qmode[$name]\">";
-    echo "<option value=\"=\">=</option>";
-    echo "<option value=\"!=\">!=</option>";
-    echo "<option value=\"<\">&lt;</option>";
-    echo "<option value=\"<=\">&lt;=</option>";
-    echo "<option value=\">\">&gt;</option>";
-    echo "<option value=\">=\">&gt;=</option>";
-    echo "</select>";
-    $res = ob_get_contents();
-    ob_end_clean();
-    return $res;
-}
-
-/**
  * Resolves the name of a given search operator
  *
  * @return string Operator name
@@ -343,60 +291,6 @@ function searchFieldOptionsName($operator = '')
         default:
             return "gleich";
     }
-}
-
-function searchFieldSql($item)
-{
-    $operator = $item[0];
-    $value = $item[1];
-    switch ($operator) {
-        case "=":
-            return " LIKE '" . $value . "' ";
-        case "!=":
-            return " NOT LIKE '" . $value . "' ";
-        case "%":
-            return " LIKE '%" . $value . "%' ";
-        case "!%":
-            return " NOT LIKE '%" . $value . "%' ";
-        case "<":
-            return " < " . intval($value) . " ";
-        case "<=":
-            return " <= " . intval($value) . " ";
-        case ">":
-            return " > " . intval($value) . " ";
-        case ">=":
-            return " >= " . intval($value) . " ";
-        default:
-            return " ='" . $value . "'";
-    }
-}
-
-
-
-function tail($file, $num_to_get = 10)
-{
-    if ($fp = fopen($file, 'r')) {
-        $position = filesize($file);
-        fseek($fp, $position - 1);
-        $data = '';
-        $chunklen = 4096;
-        while ($position >= 0) {
-            $position = $position - $chunklen;
-            if ($position < 0) {
-                $chunklen = abs($position);
-                $position = 0;
-            }
-            fseek($fp, $position);
-            $data = fread($fp, $chunklen) . $data;
-            if (substr_count($data, "\n") >= $num_to_get + 1) {
-                preg_match("!(.*?\n){" . ($num_to_get - 1) . "}$!", $data, $match);
-                return $match[0];
-            }
-        }
-        fclose($fp);
-        return $data;
-    }
-    return false;
 }
 
 function drawTechTreeForSingleItem(string $type, \EtoA\Requirement\RequirementsCollection $requirements, int $objectId, array $technologyNames, array $buildingNames)
