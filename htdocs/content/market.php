@@ -125,14 +125,14 @@ if ($config->getBoolean('market_enabled')) {
             echo "<tr><th>Rückzugsgebühren:</th>
                 <td>Wenn du ein Angebot von diesem Planet zur&uuml;ckziehst erh&auml;lst du " . ($return_factor * 100) . "% des Angebotes zur&uuml;ck (abgerundet).</td></tr>";
             echo "<tr><th>Verkaufsgebühren:</th>
-                <td>Die Verkaufsgeb&uuml;hr des Marktplatzes betr&auml;gt " . get_percent_string(MARKET_TAX, 1, 1) . "";
+                <td>Die Verkaufsgeb&uuml;hr des Marktplatzes betr&auml;gt " . StringUtils::formatPercentString(MARKET_TAX, true, true) . "";
             if ($specialist !== null && $specialist->tradeBonus != 1) {
-                echo " (inkl " . get_percent_string($specialist->tradeBonus, 1, 1) . " Kostenverringerung durch " . $specialist->name . "!";
+                echo " (inkl " . StringUtils::formatPercentString($specialist->tradeBonus, true, true) . " Kostenverringerung durch " . $specialist->name . "!";
             }
             echo "	</td></tr>";
             if ($specialist !== null && $specialist->tradeTime != 1) {
                 echo "<tr><th>Handelsflottengeschwindigkeit:</th>
-                    <td>Die Handelsflotten fliegen durch " . $specialist->name . " mit " . get_percent_string($specialist->tradeTime, 1) . " Geschwindigkeit!
+                    <td>Die Handelsflotten fliegen durch " . $specialist->name . " mit " . StringUtils::formatPercentString($specialist->tradeTime, true) . " Geschwindigkeit!
                     </td></tr>";
             }
             if ($cu->allianceId() > 0) {

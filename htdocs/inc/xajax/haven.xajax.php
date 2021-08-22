@@ -127,14 +127,14 @@ function havenShowShips()
     // Rasse
     if ($fleet->raceSpeedFactor() != 1) {
         echo "<tr><th>Rassenbonus:</th><td>";
-        echo "Die Schiffe fliegen aufgrund deiner Rasse <b>" . $fleet->ownerRaceName . "</b> mit " . get_percent_string($fleet->raceSpeedFactor, 1) . " Geschwindigkeit!";
+        echo "Die Schiffe fliegen aufgrund deiner Rasse <b>" . $fleet->ownerRaceName . "</b> mit " . StringUtils::formatPercentString($fleet->raceSpeedFactor, true) . " Geschwindigkeit!";
         echo "</td></tr>";
     }
 
     // Specialist
     if ($specialist !== null && $specialist->fleetSpeed != 1) {
         echo "<tr><th>Spezialistenbonus:</th><td>";
-        echo "Die Schiffe fliegen aufgrund des <b>" . $specialist->name . "</b> mit " . get_percent_string($specialist->fleetSpeed, 1) . " Geschwindigkeit!";
+        echo "Die Schiffe fliegen aufgrund des <b>" . $specialist->name . "</b> mit " . StringUtils::formatPercentString($specialist->fleetSpeed, true) . " Geschwindigkeit!";
         echo "</td></tr>";
     }
     tableEnd();
@@ -189,12 +189,12 @@ function havenShowShips()
             // TODO: Rewrite this!
             //Geschwindigkeitsbohni der entsprechenden Antriebstechnologien laden und zusammenrechnen
             if ($fleet->raceSpeedFactor() != 1)
-                $speedtechstring = "Rasse: " . get_percent_string($fleet->raceSpeedFactor(), 1) . "<br>";
+                $speedtechstring = "Rasse: " . StringUtils::formatPercentString($fleet->raceSpeedFactor(), true) . "<br>";
             else
                 $speedtechstring = "";
 
             if ($specialist !== null && $specialist->fleetSpeed != 1)
-                $speedtechstring .= "Spezialist: " . get_percent_string($specialist->fleetSpeed, 1) . "<br>";
+                $speedtechstring .= "Spezialist: " . StringUtils::formatPercentString($specialist->fleetSpeed, true) . "<br>";
             else
                 $speedtechstring .= "";
 
@@ -208,7 +208,7 @@ function havenShowShips()
                         $timefactor += 0;
                     } else {
                         $timefactor += ($currentLevel - $requirement->requiredLevel) * 0.1;
-                        $speedtechstring .= $requirement->name . " " . $currentLevel . ": " . get_percent_string((($currentLevel - $requirement->requiredLevel) / 10) + 1, 1) . "<br>";
+                        $speedtechstring .= $requirement->name . " " . $currentLevel . ": " . StringUtils::formatPercentString((($currentLevel - $requirement->requiredLevel) / 10) + 1, true) . "<br>";
                     }
                 }
             }
@@ -548,7 +548,7 @@ function havenShowTarget($form)
             echo "<tr><th>Geschwindigkeit:</th>
                         <td id=\"speed\">" . StringUtils::formatNumber($fleet->getSpeed()) . " AE/h";
             if ($fleet->sBonusSpeed > 1)
-                echo " (inkl. " . get_percent_string($fleet->sBonusSpeed, 1) . " Mysticum-Bonus)";
+                echo " (inkl. " . StringUtils::formatPercentString($fleet->sBonusSpeed, true) . " Mysticum-Bonus)";
             echo "</td></tr>";
             echo "<tr><th>Dauer:</th>
                         <td><span id=\"duration\" style=\"font-weight:bold;\">-</span> (inkl. Start- und Landezeit von " . StringUtils::formatTimespan($fleet->getTimeLaunchLand()) . ")</td></tr>";
@@ -559,7 +559,7 @@ function havenShowTarget($form)
             echo "<tr><th>Piloten:</th>
                         <td>" . StringUtils::formatNumber($fleet->getPilots());
             if ($fleet->sBonusPilots != 1)
-                echo " (inkl. " . get_percent_string($fleet->sBonusPilots, 1, 1) . " Mysticum-Bonus)";
+                echo " (inkl. " . StringUtils::formatPercentString($fleet->sBonusPilots, true, true) . " Mysticum-Bonus)";
             echo "</td></tr>";
             echo "<tr><th>Bemerkungen:</th>
                         <td id=\"comment\">-</td></tr>";
@@ -655,7 +655,7 @@ function havenShowWormhole($form)
                         <tr><th width=\"25%\"><b>Kosten/100 AE:</b></th><td>" . StringUtils::formatNumber($fleet->getCostsPerHundredAE()) . " t " . RES_FUEL . "</td>";
                 $speedString = StringUtils::formatNumber($fleet->getSpeed()) . " AE/h";
                 if ($fleet->sBonusSpeed > 1)
-                    $speedString .= " (inkl. " . get_percent_string($fleet->sBonusSpeed, 1) . " Mysticum-Bonus)";
+                    $speedString .= " (inkl. " . StringUtils::formatPercentString($fleet->sBonusSpeed, true) . " Mysticum-Bonus)";
                 echo "<tr><th width=\"25%\"><b>Geschwindigkeit:</b></th><td>" . $speedString . "</td>
                         <tr><th width=\"25%\"><b>Dauer:</b></th><td>" . StringUtils::formatTimespan($fleet->getDuration()) . " (inkl. Start- und Landezeit von " . StringUtils::formatTimespan($fleet->getTimeLaunchLand()) . ")</td>
                         <tr><th width=\"25%\"><b>Treibstoff:</b></th><td>" . StringUtils::formatNumber($fleet->getCosts()) . " t " . RES_FUEL . "  (inkl. Start- und Landeverbrauch von " . StringUtils::formatNumber($fleet->getCostsLaunchLand()) . " " . RES_FUEL . ")</td>
@@ -819,7 +819,7 @@ function havenShowWormhole($form)
                     echo "<tr><th>Geschwindigkeit:</th>
                             <td id=\"speed\">" . StringUtils::formatNumber($fleet->getSpeed()) . " AE/h";
                     if ($fleet->sBonusSpeed > 1)
-                        echo " (inkl. " . get_percent_string($fleet->sBonusSpeed, 1) . " Mysticum-Bonus)";
+                        echo " (inkl. " . StringUtils::formatPercentString($fleet->sBonusSpeed, true) . " Mysticum-Bonus)";
                     echo "</td></tr>";
                     echo "<tr><th>Dauer:</th>
                             <td><span id=\"duration\" style=\"font-weight:bold;\">-</span> (inkl. Start- und Landezeit von " . StringUtils::formatTimespan($fleet->getTimeLaunchLand()) . ")</td></tr>";
@@ -830,7 +830,7 @@ function havenShowWormhole($form)
                     echo "<tr><th>Piloten:</th>
                             <td>" . StringUtils::formatNumber($fleet->getPilots());
                     if ($fleet->sBonusPilots != 1)
-                        echo " (inkl. " . get_percent_string($fleet->sBonusPilots, 1, 1) . " Mysticum-Bonus)";
+                        echo " (inkl. " . StringUtils::formatPercentString($fleet->sBonusPilots, true, true) . " Mysticum-Bonus)";
                     echo "</td></tr>";
                     echo "<tr><th>Bemerkungen:</th>
                             <td id=\"comment\">-</td></tr>";
@@ -1276,7 +1276,7 @@ function havenTargetInfo($form)
 
             $speedString = StringUtils::formatNumber($fleet->getSpeed()) . " AE/h";
             if ($fleet->sBonusSpeed > 1)
-                $speedString .= " (inkl. " . get_percent_string($fleet->sBonusSpeed, 1) . " Mysticum-Bonus)";
+                $speedString .= " (inkl. " . StringUtils::formatPercentString($fleet->sBonusSpeed, true) . " Mysticum-Bonus)";
 
             echo "<img src=\"" . $ent->imagePath() . "\" style=\"float:left;\" >";
 
@@ -1405,7 +1405,7 @@ function havenBookmark($form)
 
     $speedString = StringUtils::formatNumber($fleet->getSpeed()) . " AE/h";
     if ($fleet->sBonusSpeed > 1)
-        $speedString .= " (inkl. " . get_percent_string($fleet->sBonusSpeed, 1) . " Mysticum-Bonus)";
+        $speedString .= " (inkl. " . StringUtils::formatPercentString($fleet->sBonusSpeed, true) . " Mysticum-Bonus)";
 
     $absX = (($csx - 1) * $config->param1Int('num_of_cells')) + $ccx;
     $absY = (($csy - 1) * $config->param2Int('num_of_cells')) + $ccy;

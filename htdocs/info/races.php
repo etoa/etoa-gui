@@ -5,6 +5,7 @@ declare(strict_types=1);
 use EtoA\Defense\DefenseDataRepository;
 use EtoA\Race\RaceDataRepository;
 use EtoA\Ship\ShipDataRepository;
+use EtoA\Support\StringUtils;
 
 /** @var RaceDataRepository $raceRepository */
 $raceRepository = $app[RaceDataRepository::class];
@@ -40,34 +41,34 @@ if ($request->query->has('id')) {
     tableStart('', 300);
     echo "<tr><th colspan=\"2\">St&auml;rken / Schw&auml;chen:</th></tr>";
     if ($race->metal !== 1.0) {
-        echo "<tr><th>" . RES_ICON_METAL . "Produktion von " . RES_METAL . ":</td><td>" . get_percent_string($race->metal, 1) . "</td></tr>";
+        echo "<tr><th>" . RES_ICON_METAL . "Produktion von " . RES_METAL . ":</td><td>" . StringUtils::formatPercentString($race->metal, true) . "</td></tr>";
     }
     if ($race->crystal !== 1.0) {
-        echo "<tr><th>" . RES_ICON_CRYSTAL . "Produktion von " . RES_CRYSTAL . ":</td><td>" . get_percent_string($race->crystal, 1) . "</td></tr>";
+        echo "<tr><th>" . RES_ICON_CRYSTAL . "Produktion von " . RES_CRYSTAL . ":</td><td>" . StringUtils::formatPercentString($race->crystal, true) . "</td></tr>";
     }
     if ($race->plastic !== 1.0) {
-        echo "<tr><th>" . RES_ICON_PLASTIC . "Produktion von " . RES_PLASTIC . ":</td><td>" . get_percent_string($race->plastic, 1) . "</td></tr>";
+        echo "<tr><th>" . RES_ICON_PLASTIC . "Produktion von " . RES_PLASTIC . ":</td><td>" . StringUtils::formatPercentString($race->plastic, true) . "</td></tr>";
     }
     if ($race->fuel !== 1.0) {
-        echo "<tr><th>" . RES_ICON_FUEL . "Produktion von " . RES_FUEL . ":</td><td>" . get_percent_string($race->fuel, 1) . "</td></tr>";
+        echo "<tr><th>" . RES_ICON_FUEL . "Produktion von " . RES_FUEL . ":</td><td>" . StringUtils::formatPercentString($race->fuel, true) . "</td></tr>";
     }
     if ($race->food !== 1.0) {
-        echo "<tr><th>" . RES_ICON_FOOD . "Produktion von " . RES_FOOD . ":</td><td>" . get_percent_string($race->food, 1) . "</td></tr>";
+        echo "<tr><th>" . RES_ICON_FOOD . "Produktion von " . RES_FOOD . ":</td><td>" . StringUtils::formatPercentString($race->food, true) . "</td></tr>";
     }
     if ($race->power !== 1.0) {
-        echo "<tr><th>" . RES_ICON_POWER . "Produktion von Energie:</td><td>" . get_percent_string($race->power, 1) . "</td></tr>";
+        echo "<tr><th>" . RES_ICON_POWER . "Produktion von Energie:</td><td>" . StringUtils::formatPercentString($race->power, true) . "</td></tr>";
     }
     if ($race->population !== 1.0) {
-        echo "<tr><th>" . RES_ICON_PEOPLE . "Bevölkerungswachstum:</td><td>" . get_percent_string($race->population, 1) . "</td></tr>";
+        echo "<tr><th>" . RES_ICON_PEOPLE . "Bevölkerungswachstum:</td><td>" . StringUtils::formatPercentString($race->population, true) . "</td></tr>";
     }
     if ($race->researchTime !== 1.0) {
-        echo "<tr><th>" . RES_ICON_TIME . "Forschungszeit:</td><td>" . get_percent_string($race->researchTime, 1, 1) . "</td></tr>";
+        echo "<tr><th>" . RES_ICON_TIME . "Forschungszeit:</td><td>" . StringUtils::formatPercentString($race->researchTime, true, true) . "</td></tr>";
     }
     if ($race->buildTime !== 1.0) {
-        echo "<tr><th>" . RES_ICON_TIME . "Bauzeit:</td><td>" . get_percent_string($race->buildTime, 1, 1) . "</td></tr>";
+        echo "<tr><th>" . RES_ICON_TIME . "Bauzeit:</td><td>" . StringUtils::formatPercentString($race->buildTime, true, true) . "</td></tr>";
     }
     if ($race->fleetTime !== 1.0) {
-        echo "<tr><th>" . RES_ICON_TIME . "Fluggeschwindigkeit:</td><td>" . get_percent_string($race->fleetTime, 1) . "</td></tr>";
+        echo "<tr><th>" . RES_ICON_TIME . "Fluggeschwindigkeit:</td><td>" . StringUtils::formatPercentString($race->fleetTime, true) . "</td></tr>";
     }
     tableEnd();
 
@@ -172,16 +173,16 @@ if ($request->query->has('id')) {
 
     foreach ($races as $race) {
         echo "<tr><td class=\"tbltitle\">" . $race->name . "</td>";
-        echo "<td>" . get_percent_string($race->metal, 1) . "</td>";
-        echo "<td>" . get_percent_string($race->crystal, 1) . "</td>";
-        echo "<td>" . get_percent_string($race->plastic, 1) . "</td>";
-        echo "<td>" . get_percent_string($race->fuel, 1) . "</td>";
-        echo "<td>" . get_percent_string($race->food, 1) . "</td>";
-        echo "<td>" . get_percent_string($race->power, 1) . "</td>";
-        echo "<td>" . get_percent_string($race->population, 1) . "</td>";
-        echo "<td>" . get_percent_string($race->researchTime, 1, 1) . "</td>";
-        echo "<td>" . get_percent_string($race->buildTime, 1, 1) . "</td>";
-        echo "<td>" . get_percent_string($race->fleetTime, 1) . "</td></tr>";
+        echo "<td>" . StringUtils::formatPercentString($race->metal, true) . "</td>";
+        echo "<td>" . StringUtils::formatPercentString($race->crystal, true) . "</td>";
+        echo "<td>" . StringUtils::formatPercentString($race->plastic, true) . "</td>";
+        echo "<td>" . StringUtils::formatPercentString($race->fuel, true) . "</td>";
+        echo "<td>" . StringUtils::formatPercentString($race->food, true) . "</td>";
+        echo "<td>" . StringUtils::formatPercentString($race->power, true) . "</td>";
+        echo "<td>" . StringUtils::formatPercentString($race->population, true) . "</td>";
+        echo "<td>" . StringUtils::formatPercentString($race->researchTime, true, true) . "</td>";
+        echo "<td>" . StringUtils::formatPercentString($race->buildTime, true, true) . "</td>";
+        echo "<td>" . StringUtils::formatPercentString($race->fleetTime, true) . "</td></tr>";
     }
     tableEnd();
 }

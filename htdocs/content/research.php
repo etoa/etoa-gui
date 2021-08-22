@@ -280,15 +280,15 @@ if (isset($cp)) {
         echo '<colgroup><col style="width:400px;"/><col/></colgroup>';
         // Specialist
         if ($specialist !== null && $specialist->costsTechnologies != 1) {
-            echo "<tr><td>Kostenreduktion durch " . $specialist->name . ":</td><td>" . get_percent_string($specialist->costsTechnologies) . "</td></tr>";
+            echo "<tr><td>Kostenreduktion durch " . $specialist->name . ":</td><td>" . StringUtils::formatPercentString($specialist->costsTechnologies) . "</td></tr>";
         }
         if ($specialist !== null && $specialist->timeTechnologies != 1) {
-            echo "<tr><td>Forschungszeitverringerung durch " . $specialist->name . ":</td><td>" . get_percent_string($specialist->timeTechnologies) . "</td></tr>";
+            echo "<tr><td>Forschungszeitverringerung durch " . $specialist->name . ":</td><td>" . StringUtils::formatPercentString($specialist->timeTechnologies) . "</td></tr>";
         }
         // Building level time bonus
         echo "<tr><td>Forschungszeitverringerung:</td><td>";
         if ($need_bonus_level >= 0) {
-            echo get_percent_string($time_boni_factor) . " durch Stufe " . $researchBuilding->currentLevel . " (-" . ((1 - $config->param2Float('build_time_boni_forschungslabor')) * 100) . "% maximum)";
+            echo StringUtils::formatPercentString($time_boni_factor) . " durch Stufe " . $researchBuilding->currentLevel . " (-" . ((1 - $config->param2Float('build_time_boni_forschungslabor')) * 100) . "% maximum)";
         } else {
             echo "Stufe " . $config->param1Int('build_time_boni_forschungslabor') . " erforderlich!";
         }

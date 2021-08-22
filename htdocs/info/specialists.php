@@ -36,58 +36,58 @@ foreach ($specialists as $specialist) {
     echo '<td style="width:220px;">';
     $bonus = '';
     if ($specialist->prodMetal !== 1.0) {
-        $bonus .= get_percent_string($specialist->prodMetal, 1) . ' ' . RES_METAL . 'produktion<br/>';
+        $bonus .= StringUtils::formatPercentString($specialist->prodMetal, true) . ' ' . RES_METAL . 'produktion<br/>';
     }
     if ($specialist->prodCrystal !== 1.0) {
-        $bonus .= get_percent_string($specialist->prodCrystal, 1) . ' ' . RES_CRYSTAL . 'produktion<br/>';
+        $bonus .= StringUtils::formatPercentString($specialist->prodCrystal, true) . ' ' . RES_CRYSTAL . 'produktion<br/>';
     }
     if ($specialist->prodPlastic !== 1.0) {
-        $bonus .= get_percent_string($specialist->prodPlastic, 1) . ' ' . RES_PLASTIC . 'produktion<br/>';
+        $bonus .= StringUtils::formatPercentString($specialist->prodPlastic, true) . ' ' . RES_PLASTIC . 'produktion<br/>';
     }
     if ($specialist->prodFuel !== 1.0) {
-        $bonus .= get_percent_string($specialist->prodFuel, 1) . ' ' . RES_FUEL . 'produktion<br/>';
+        $bonus .= StringUtils::formatPercentString($specialist->prodFuel, true) . ' ' . RES_FUEL . 'produktion<br/>';
     }
     if ($specialist->prodFood !== 1.0) {
-        $bonus .= get_percent_string($specialist->prodFood, 1) . ' ' . RES_FOOD . 'sproduktion<br/>';
+        $bonus .= StringUtils::formatPercentString($specialist->prodFood, true) . ' ' . RES_FOOD . 'sproduktion<br/>';
     }
     if ($specialist->prodPower !== 1.0) {
-        $bonus .= get_percent_string($specialist->prodPower, 1) . ' Stromerzeugung<br/>';
+        $bonus .= StringUtils::formatPercentString($specialist->prodPower, true) . ' Stromerzeugung<br/>';
     }
     if ($specialist->prodPeople !== 1.0) {
-        $bonus .= get_percent_string($specialist->prodPeople, 1) . ' Bevölkerungswachstum<br/>';
+        $bonus .= StringUtils::formatPercentString($specialist->prodPeople, true) . ' Bevölkerungswachstum<br/>';
     }
     if ($specialist->timeTechnologies !== 1.0) {
-        $bonus .= get_percent_string($specialist->timeTechnologies, 1, 1) . ' Forschungszeit<br/>';
+        $bonus .= StringUtils::formatPercentString($specialist->timeTechnologies, true, true) . ' Forschungszeit<br/>';
     }
     if ($specialist->timeBuildings !== 1.0) {
-        $bonus .= get_percent_string($specialist->timeBuildings, 1, 1) . ' Gebäudebauzeit<br/>';
+        $bonus .= StringUtils::formatPercentString($specialist->timeBuildings, true, true) . ' Gebäudebauzeit<br/>';
     }
     if ($specialist->timeDefense !== 1.0) {
-        $bonus .= get_percent_string($specialist->timeDefense, 1, 1) . ' Verteidigungsbauzeit<br/>';
+        $bonus .= StringUtils::formatPercentString($specialist->timeDefense, true, true) . ' Verteidigungsbauzeit<br/>';
     }
     if ($specialist->timeShips !== 1.0) {
-        $bonus .= get_percent_string($specialist->timeShips, 1, 1) . ' Schiffbauzeit<br/>';
+        $bonus .= StringUtils::formatPercentString($specialist->timeShips, true, true) . ' Schiffbauzeit<br/>';
     }
     if ($specialist->costsBuildings !== 1.0) {
-        $bonus .= get_percent_string($specialist->costsBuildings, 1, 1) . ' Gebäudekosten<br/>';
+        $bonus .= StringUtils::formatPercentString($specialist->costsBuildings, true, true) . ' Gebäudekosten<br/>';
     }
     if ($specialist->costsDefense !== 1.0) {
-        $bonus .= get_percent_string($specialist->costsDefense, 1, 1) . ' Verteidigungskosten<br/>';
+        $bonus .= StringUtils::formatPercentString($specialist->costsDefense, true, true) . ' Verteidigungskosten<br/>';
     }
     if ($specialist->costsShips !== 1.0) {
-        $bonus .= get_percent_string($specialist->costsShips, 1, 1) . ' Schiffbaukosten<br/>';
+        $bonus .= StringUtils::formatPercentString($specialist->costsShips, true, true) . ' Schiffbaukosten<br/>';
     }
     if ($specialist->costsTechnologies !== 1.0) {
-        $bonus .= get_percent_string($specialist->costsTechnologies, 1, 1) . ' Forschungskosten<br/>';
+        $bonus .= StringUtils::formatPercentString($specialist->costsTechnologies, true, true) . ' Forschungskosten<br/>';
     }
     if ($specialist->fleetSpeed !== 1.0) {
-        $bonus .= get_percent_string($specialist->fleetSpeed, 1) . ' Flottengeschwindigkeit<br/>';
+        $bonus .= StringUtils::formatPercentString($specialist->fleetSpeed, true) . ' Flottengeschwindigkeit<br/>';
     }
     if ($specialist->fleetMax !== 0) {
         $bonus .= '<span style="color:#0f0;">+' . $specialist->fleetMax . '</span> zusätzliche Flotten<br/>';
     }
     if ($specialist->defenseRepair !== 1.0) {
-        $bonus .= get_percent_string($specialist->defenseRepair, 1) . ' Verteidigungswiederherstellung<br/>';
+        $bonus .= StringUtils::formatPercentString($specialist->defenseRepair, true) . ' Verteidigungswiederherstellung<br/>';
     }
     if ($specialist->spyLevel !== 0) {
         $bonus .= '<span style="color:#0f0;">+' . $specialist->spyLevel . '</span> zusätzliche Spionagelevel<br/>';
@@ -96,10 +96,10 @@ foreach ($specialists as $specialist) {
         $bonus .= '<span style="color:#0f0;">+' . $specialist->tarnLevel . '</span> zusätzliche Tarnlevel<br/>';
     }
     if ($specialist->tradeTime !== 1.0) {
-        $bonus .= get_percent_string($specialist->tradeTime, 1) . ' Handelsflottengeschwindigkeit<br/>';
+        $bonus .= StringUtils::formatPercentString($specialist->tradeTime, true) . ' Handelsflottengeschwindigkeit<br/>';
     }
     if ($specialist->tradeBonus !== 1.0) {
-        $bonus .= get_percent_string($specialist->tradeBonus, 1, 1) . ' Handelskosten<br/>';
+        $bonus .= StringUtils::formatPercentString($specialist->tradeBonus, true, true) . ' Handelskosten<br/>';
     }
 
     echo $bonus;

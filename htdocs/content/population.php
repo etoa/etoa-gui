@@ -208,14 +208,14 @@ if ($cp) {
         echo '<tr><th>Freie Leute</th><td>' . StringUtils::formatNumber($people_free) . '</td></tr>';
         echo '<tr><th>Zeitreduktion pro Arbeiter und Auftrag</th><td>' . StringUtils::formatTimespan($config->getInt('people_work_done')) . '</td></tr>';
         echo '<tr><th>Nahrung pro Arbeiter und Auftrag</th><td>' . StringUtils::formatNumber($config->getInt('people_food_require')) . ' t</td></tr>';
-        echo '<tr><th>Grundwachstumsrate</th><td>' . get_percent_string($config->getFloat('people_multiply')) . "</td></tr>";
-        echo '<tr><th>Wachstumsbonus ' . $cp->typeName . '</th><td>' . get_percent_string($cp->typePopulation, 1) . "</td></tr>";
-        echo '<tr><th>Wachstumsbonus ' . $cu->race->name . '</th><td>' . get_percent_string($cu->race->population, 1) . "</td></tr>";
-        echo '<tr><th>Wachstumsbonus ' . $cp->starTypeName . '</th><td>' . get_percent_string($cp->starPopulation, 1) . '</td></tr>';
+        echo '<tr><th>Grundwachstumsrate</th><td>' . StringUtils::formatPercentString($config->getFloat('people_multiply')) . "</td></tr>";
+        echo '<tr><th>Wachstumsbonus ' . $cp->typeName . '</th><td>' . StringUtils::formatPercentString($cp->typePopulation, true) . "</td></tr>";
+        echo '<tr><th>Wachstumsbonus ' . $cu->race->name . '</th><td>' . StringUtils::formatPercentString($cu->race->population, true) . "</td></tr>";
+        echo '<tr><th>Wachstumsbonus ' . $cp->starTypeName . '</th><td>' . StringUtils::formatPercentString($cp->starPopulation, true) . '</td></tr>';
         if ($specialist !== null) {
-            echo '<tr><th>Wachstumsbonus ' . $specialist->name . '</th><td>' . get_percent_string($specialist->prodPeople, 1) . '</td></tr>';
+            echo '<tr><th>Wachstumsbonus ' . $specialist->name . '</th><td>' . StringUtils::formatPercentString($specialist->prodPeople, true) . '</td></tr>';
         }
-        echo '<tr><th>Wachstumsbonus total</th><td>' . get_percent_string(array($cp->typePopulation, $cu->race->population, $cp->starPopulation, ($specialist !== null ? $specialist->prodPeople : 1)), 1) . '</td></tr>';
+        echo '<tr><th>Wachstumsbonus total</th><td>' . StringUtils::formatPercentString(array($cp->typePopulation, $cu->race->population, $cp->starPopulation, ($specialist !== null ? $specialist->prodPeople : 1)), true) . '</td></tr>';
         echo '<tr><th>Bevölkerungszuwachs pro Stunde</th><td>' . StringUtils::formatNumber($people_div) . '</td></tr>';
         tableEnd();
     } else

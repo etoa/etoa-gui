@@ -204,10 +204,10 @@ if ($factoryBuilding !== null && $factoryBuilding->currentLevel > 0) {
         tableStart("Fabrik-Infos");
         echo '<colgroup><col style="width:400px;"/><col/></colgroup>';
         if ($specialist !== null && $specialist->costsDefense != 1) {
-            echo "<tr><td>Kostenreduktion durch " . $specialist->name . ":</td><td>" . get_percent_string($specialist->costsDefense) . '</td></tr>';
+            echo "<tr><td>Kostenreduktion durch " . $specialist->name . ":</td><td>" . StringUtils::formatPercentString($specialist->costsDefense) . '</td></tr>';
         }
         if ($specialist !== null && $specialist->timeDefense != 1) {
-            echo "<tr><td>Bauzeitverringerung durch " . $specialist->name . ":</td><td>" . get_percent_string($specialist->timeDefense) . "</td></tr>";
+            echo "<tr><td>Bauzeitverringerung durch " . $specialist->name . ":</td><td>" . StringUtils::formatPercentString($specialist->timeDefense) . "</td></tr>";
         }
         echo "<tr><td>Eingestellte Arbeiter:</td><td>" . StringUtils::formatNumber($people_working);
         if (count($queue) === 0) {
@@ -224,7 +224,7 @@ if ($factoryBuilding !== null && $factoryBuilding->currentLevel > 0) {
         }
         echo '<tr><td>Bauzeitverringerung:</td><td>';
         if ($need_bonus_level >= 0) {
-            echo get_percent_string($time_boni_factor) . " durch Stufe " . $factoryBuilding->currentLevel . "";
+            echo StringUtils::formatPercentString($time_boni_factor) . " durch Stufe " . $factoryBuilding->currentLevel . "";
         } else {
             echo "Stufe " . $config->param1Int('build_time_boni_waffenfabrik') . " erforderlich!";
         }

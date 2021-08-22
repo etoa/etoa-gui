@@ -234,10 +234,10 @@ if (isset($cp)) {
     $specialistService = $app[SpecialistService::class];
     $specialist = $specialistService->getSpecialistOfUser($cu->id);
     if ($specialist !== null && $specialist->costsBuildings != 1) {
-        echo '<tr><td>Kostenreduktion durch ' . $specialist->name . ':</td><td>' . get_percent_string($specialist->costsBuildings) . '</td></tr>';
+        echo '<tr><td>Kostenreduktion durch ' . $specialist->name . ':</td><td>' . StringUtils::formatPercentString($specialist->costsBuildings) . '</td></tr>';
     }
     if ($specialist !== null && $specialist->timeBuildings != 1) {
-        echo '<tr><td>Bauzeitverringerung durch ' . $specialist->name . ':</td><td>' . get_percent_string($specialist->timeBuildings) . '</td></tr>';
+        echo '<tr><td>Bauzeitverringerung durch ' . $specialist->name . ':</td><td>' . StringUtils::formatPercentString($specialist->timeBuildings) . '</td></tr>';
     }
 
     // Worker
@@ -257,7 +257,7 @@ if (isset($cp)) {
     }
     // Boost system
     if ($config->getBoolean('boost_system_enable')) {
-        echo '<tr><td>Geschwindigkeitsboost:</td><td>' . get_percent_string($cu->boostBonusBuilding + 1) . '</td></tr>';
+        echo '<tr><td>Geschwindigkeitsboost:</td><td>' . StringUtils::formatPercentString($cu->boostBonusBuilding + 1) . '</td></tr>';
     }
     tableEnd();
 

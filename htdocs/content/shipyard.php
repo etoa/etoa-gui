@@ -200,10 +200,10 @@ if ($shipyard !== null && $shipyard->currentLevel > 0) {
         tableStart("Werft-Infos");
         echo '<colgroup><col style="width:400px;"/><col/></colgroup>';
         if ($specialist !== null && $specialist->costsShips != 1) {
-            echo "<tr><td>Kostenreduktion durch " . $specialist->name . ":</td><td>" . get_percent_string($specialist->costsShips) . "</td></tr>";
+            echo "<tr><td>Kostenreduktion durch " . $specialist->name . ":</td><td>" . StringUtils::formatPercentString($specialist->costsShips) . "</td></tr>";
         }
         if ($specialist !== null && $specialist->timeShips != 1) {
-            echo "<tr><td>Bauzeitverringerung durch " . $specialist->name . ":</td><td>" . get_percent_string($specialist->timeShips) . "</td></tr>";
+            echo "<tr><td>Bauzeitverringerung durch " . $specialist->name . ":</td><td>" . StringUtils::formatPercentString($specialist->timeShips) . "</td></tr>";
         }
         echo "<tr><td>Eingestellte Arbeiter:</td><td>" . StringUtils::formatNumber($shipyard->peopleWorking);
         if (count($queue) === 0) {
@@ -220,7 +220,7 @@ if ($shipyard !== null && $shipyard->currentLevel > 0) {
         }
         echo "<tr><td>Bauzeitverringerung:</td><td>";
         if ($need_bonus_level >= 0) {
-            echo get_percent_string($time_boni_factor) . " durch Stufe " . $shipyard->currentLevel;
+            echo StringUtils::formatPercentString($time_boni_factor) . " durch Stufe " . $shipyard->currentLevel;
         } else {
             echo "Stufe " . $config->getInt('build_time_boni_schiffswerft') . " erforderlich!";
         }

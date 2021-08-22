@@ -277,46 +277,6 @@ function error_msg($text, $type = 0, $exit = 0, $addition = 0, $stacktrace = nul
 }
 
 /**
- * Prozentwert generieren und zurückgeben
- *
- * $val: Einzelner Wert oder Array von Werten als Dezimalzahl; 1.0 = 0%
- * $colors: Farben anzeigen (1) oder nicht anzeigen (0)
- */
-function get_percent_string($val, $colors = 0, $inverse = 0)
-{
-    $string = 0;
-    if (is_array($val)) {
-        foreach ($val as $v) {
-            $string += ($v * 100) - 100;
-        }
-    } else
-        $string = ($val * 100) - 100;
-
-    $string = round($string, 2);
-
-    if ($string > 0) {
-        if ($colors != 0) {
-            if ($inverse == 1)
-                $string = "<span style=\"color:#f00\">+" . $string . "%</span>";
-            else
-                $string = "<span style=\"color:#0f0\">+" . $string . "%</span>";
-        } else
-            $string = $string . "%";
-    } elseif ($string < 0) {
-        if ($colors != 0) {
-            if ($inverse == 1)
-                $string = "<span style=\"color:#0f0\">" . $string . "%</span>";
-            else
-                $string = "<span style=\"color:#f00\">" . $string . "%</span>";
-        } else
-            $string = $string . "%";
-    } else {
-        $string = "0%";
-    }
-    return $string;
-}
-
-/**
  * Tabulator-Menü anzeigen
  *
  * $varname: Name des Modusfeldes

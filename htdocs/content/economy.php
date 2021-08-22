@@ -390,7 +390,7 @@ if ($cp) {
             $pwrt = $pwr * $shipCounts[$ship->id];
             echo "<tr><th>" . $ship->name . " (" . StringUtils::formatNumber($shipCounts[$ship->id]) . ")</th>";
             echo "<td colspan=\"3\">" . StringUtils::formatNumber($pwrt) . "
-                (Energie pro Satellit: " . (($pwr)) . " = " . $ship->powerProduction . " Basis, " . $solarTempString . " bedingt durch Entfernung zur Sonne, " . get_percent_string($bonusFactor, 1) . " durch Energiebonus)</td>";
+                (Energie pro Satellit: " . (($pwr)) . " = " . $ship->powerProduction . " Basis, " . $solarTempString . " bedingt durch Entfernung zur Sonne, " . StringUtils::formatPercentString($bonusFactor, true) . " durch Energiebonus)</td>";
             echo "</tr>";
             $cnt['power'] += $pwrt;
         }
@@ -501,124 +501,124 @@ if ($cp) {
     echo "<th>TOTAL</th></tr>";
 
     echo "<tr><td>" . RES_ICON_METAL . "Produktion " . RES_METAL . "</td>";
-    echo "<td>" . get_percent_string($cp->typeMetal, 1) . "</td>";
-    echo "<td>" . get_percent_string($cu->race->metal, 1) . "</td>";
-    echo "<td>" . get_percent_string($cp->starMetal, 1) . "</td>";
+    echo "<td>" . StringUtils::formatPercentString($cp->typeMetal, true) . "</td>";
+    echo "<td>" . StringUtils::formatPercentString($cu->race->metal, true) . "</td>";
+    echo "<td>" . StringUtils::formatPercentString($cp->starMetal, true) . "</td>";
     if ($specialist !== null) {
-        echo "<td>" . get_percent_string($specialist->prodMetal, 1) . "</td>";
+        echo "<td>" . StringUtils::formatPercentString($specialist->prodMetal, true) . "</td>";
     }
     echo "<td>-</td>";
-    echo "<td>" . get_percent_string(array($cp->typeMetal, $cu->race->metal, $cp->starMetal, ($specialist !== null ? $specialist->prodMetal : 1)), 1) . "</td></tr>";
+    echo "<td>" . StringUtils::formatPercentString(array($cp->typeMetal, $cu->race->metal, $cp->starMetal, ($specialist !== null ? $specialist->prodMetal : 1)), true) . "</td></tr>";
 
     echo "<tr><td>" . RES_ICON_CRYSTAL . "Produktion " . RES_CRYSTAL . "</td>";
-    echo "<td>" . get_percent_string($cp->typeCrystal, 1) . "</td>";
-    echo "<td>" . get_percent_string($cu->race->crystal, 1) . "</td>";
-    echo "<td>" . get_percent_string($cp->starCrystal, 1) . "</td>";
+    echo "<td>" . StringUtils::formatPercentString($cp->typeCrystal, true) . "</td>";
+    echo "<td>" . StringUtils::formatPercentString($cu->race->crystal, true) . "</td>";
+    echo "<td>" . StringUtils::formatPercentString($cp->starCrystal, true) . "</td>";
     if ($specialist !== null) {
-        echo "<td>" . get_percent_string($specialist->prodCrystal, 1) . "</td>";
+        echo "<td>" . StringUtils::formatPercentString($specialist->prodCrystal, true) . "</td>";
     }
     echo "<td>-</td>";
-    echo "<td>" . get_percent_string(array($cp->typeCrystal, $cu->race->crystal, $cp->starCrystal, ($specialist !== null ? $specialist->prodCrystal : 1)), 1) . "</td></tr>";
+    echo "<td>" . StringUtils::formatPercentString(array($cp->typeCrystal, $cu->race->crystal, $cp->starCrystal, ($specialist !== null ? $specialist->prodCrystal : 1)), true) . "</td></tr>";
 
     echo "<tr><td>" . RES_ICON_PLASTIC . "Produktion " . RES_PLASTIC . "</td>";
-    echo "<td>" . get_percent_string($cp->typePlastic, 1) . "</td>";
-    echo "<td>" . get_percent_string($cu->race->plastic, 1) . "</td>";
-    echo "<td>" . get_percent_string($cp->starPlastic, 1) . "</td>";
+    echo "<td>" . StringUtils::formatPercentString($cp->typePlastic, true) . "</td>";
+    echo "<td>" . StringUtils::formatPercentString($cu->race->plastic, true) . "</td>";
+    echo "<td>" . StringUtils::formatPercentString($cp->starPlastic, true) . "</td>";
     if ($specialist !== null) {
-        echo "<td>" . get_percent_string($specialist->prodPlastic, 1) . "</td>";
+        echo "<td>" . StringUtils::formatPercentString($specialist->prodPlastic, true) . "</td>";
     }
     echo "<td>-</td>";
-    echo "<td>" . get_percent_string(array($cp->typePlastic, $cu->race->plastic, $cp->starPlastic, ($specialist !== null ? $specialist->prodPlastic : 1)), 1) . "</td></tr>";
+    echo "<td>" . StringUtils::formatPercentString(array($cp->typePlastic, $cu->race->plastic, $cp->starPlastic, ($specialist !== null ? $specialist->prodPlastic : 1)), true) . "</td></tr>";
 
     echo "<tr><td>" . RES_ICON_FUEL . "Produktion " . RES_FUEL . "</td>";
-    echo "<td>" . get_percent_string($cp->typeFuel, 1) . "</td>";
-    echo "<td>" . get_percent_string($cu->race->fuel, 1) . "</td>";
-    echo "<td>" . get_percent_string($cp->starFuel, 1) . "</td>";
+    echo "<td>" . StringUtils::formatPercentString($cp->typeFuel, true) . "</td>";
+    echo "<td>" . StringUtils::formatPercentString($cu->race->fuel, true) . "</td>";
+    echo "<td>" . StringUtils::formatPercentString($cp->starFuel, true) . "</td>";
     if ($specialist !== null) {
-        echo "<td>" . get_percent_string($specialist->prodFuel, 1) . "</td>";
+        echo "<td>" . StringUtils::formatPercentString($specialist->prodFuel, true) . "</td>";
     }
     echo "<td>-</td>";
-    echo "<td>" . get_percent_string(array($cp->typeFuel, $cu->race->fuel, $cp->starFuel, ($specialist !== null ? $specialist->prodFuel : 1)), 1) . "</td></tr>";
+    echo "<td>" . StringUtils::formatPercentString(array($cp->typeFuel, $cu->race->fuel, $cp->starFuel, ($specialist !== null ? $specialist->prodFuel : 1)), true) . "</td></tr>";
 
     echo "<tr><td>" . RES_ICON_FOOD . "Produktion " . RES_FOOD . "</td>";
-    echo "<td>" . get_percent_string($cp->typeFood, 1) . "</td>";
-    echo "<td>" . get_percent_string($cu->race->food, 1) . "</td>";
-    echo "<td>" . get_percent_string($cp->starFood, 1) . "</td>";
+    echo "<td>" . StringUtils::formatPercentString($cp->typeFood, true) . "</td>";
+    echo "<td>" . StringUtils::formatPercentString($cu->race->food, true) . "</td>";
+    echo "<td>" . StringUtils::formatPercentString($cp->starFood, true) . "</td>";
     if ($specialist !== null) {
-        echo "<td>" . get_percent_string($specialist->prodFood, 1) . "</td>";
+        echo "<td>" . StringUtils::formatPercentString($specialist->prodFood, true) . "</td>";
     }
     echo "<td>-</td>";
-    echo "<td>" . get_percent_string(array($cp->typeFood, $cu->race->food, $cp->starFood, ($specialist !== null ? $specialist->prodFood : 1)), 1) . "</td></tr>";
+    echo "<td>" . StringUtils::formatPercentString(array($cp->typeFood, $cu->race->food, $cp->starFood, ($specialist !== null ? $specialist->prodFood : 1)), true) . "</td></tr>";
 
     echo "<tr><td>" . RES_ICON_POWER . "Produktion Energie</td>";
-    echo "<td>" . get_percent_string($cp->typePower, 1) . "</td>";
-    echo "<td>" . get_percent_string($cu->race->power, 1) . "</td>";
-    echo "<td>" . get_percent_string($cp->starPower, 1) . "</td>";
+    echo "<td>" . StringUtils::formatPercentString($cp->typePower, true) . "</td>";
+    echo "<td>" . StringUtils::formatPercentString($cu->race->power, true) . "</td>";
+    echo "<td>" . StringUtils::formatPercentString($cp->starPower, true) . "</td>";
     if ($specialist !== null) {
-        echo "<td>" . get_percent_string($specialist->prodPower, 1) . "</td>";
+        echo "<td>" . StringUtils::formatPercentString($specialist->prodPower, true) . "</td>";
     }
-    echo "<td>" . get_percent_string($energyTechPowerBonusFactor, 1) . "</td>";
-    echo "<td>" . get_percent_string(array($cp->typePower, $cu->race->power, $cp->starPower, ($specialist !== null ? $specialist->prodPower : 1), $energyTechPowerBonusFactor), 1) . "</td></tr>";
+    echo "<td>" . StringUtils::formatPercentString($energyTechPowerBonusFactor, true) . "</td>";
+    echo "<td>" . StringUtils::formatPercentString(array($cp->typePower, $cu->race->power, $cp->starPower, ($specialist !== null ? $specialist->prodPower : 1), $energyTechPowerBonusFactor), true) . "</td></tr>";
 
     echo "<tr><td>" . RES_ICON_PEOPLE . "Bev&ouml;lkerungswachstum</td>";
-    echo "<td>" . get_percent_string($cp->typePopulation, 1) . "</td>";
-    echo "<td>" . get_percent_string($cu->race->population, 1) . "</td>";
-    echo "<td>" . get_percent_string($cp->starPopulation, 1) . "</td>";
+    echo "<td>" . StringUtils::formatPercentString($cp->typePopulation, true) . "</td>";
+    echo "<td>" . StringUtils::formatPercentString($cu->race->population, true) . "</td>";
+    echo "<td>" . StringUtils::formatPercentString($cp->starPopulation, true) . "</td>";
     if ($specialist !== null) {
-        echo "<td>" . get_percent_string($specialist->prodPeople, 1) . "</td>";
+        echo "<td>" . StringUtils::formatPercentString($specialist->prodPeople, true) . "</td>";
     }
     echo "<td>-</td>";
-    echo "<td>" . get_percent_string(array($cp->typePopulation, $cu->race->population, $cp->starPopulation, ($specialist !== null ? $specialist->prodPeople : 1)), 1) . "</td></tr>";
+    echo "<td>" . StringUtils::formatPercentString(array($cp->typePopulation, $cu->race->population, $cp->starPopulation, ($specialist !== null ? $specialist->prodPeople : 1)), true) . "</td></tr>";
 
     echo "<tr><td>" . RES_ICON_TIME . "Forschungszeit</td>";
-    echo "<td>" . get_percent_string($cp->typeResearchtime, 1, 1) . "</td>";
-    echo "<td>" . get_percent_string($cu->race->researchTime, 1, 1) . "</td>";
-    echo "<td>" . get_percent_string($cp->starResearchtime, 1, 1) . "</td>";
+    echo "<td>" . StringUtils::formatPercentString($cp->typeResearchtime, true, true) . "</td>";
+    echo "<td>" . StringUtils::formatPercentString($cu->race->researchTime, true, true) . "</td>";
+    echo "<td>" . StringUtils::formatPercentString($cp->starResearchtime, true, true) . "</td>";
     if ($specialist !== null) {
-        echo "<td>" . get_percent_string($specialist->timeTechnologies, 1, 1) . "</td>";
+        echo "<td>" . StringUtils::formatPercentString($specialist->timeTechnologies, true, true) . "</td>";
     }
     echo "<td>-</td>";
-    echo "<td>" . get_percent_string(array($cp->typeResearchtime, $cu->race->researchTime, $cp->starResearchtime, ($specialist !== null ? $specialist->timeTechnologies : 1)), 1, 1) . "</td></tr>";
+    echo "<td>" . StringUtils::formatPercentString(array($cp->typeResearchtime, $cu->race->researchTime, $cp->starResearchtime, ($specialist !== null ? $specialist->timeTechnologies : 1)), true, true) . "</td></tr>";
 
     echo "<tr><td>" . RES_ICON_TIME . "Bauzeit (Geb&auml;ude)</td>";
-    echo "<td>" . get_percent_string($cp->typeBuildtime, 1, 1) . "</td>";
-    echo "<td>" . get_percent_string($cu->race->buildTime, 1, 1) . "</td>";
-    echo "<td>" . get_percent_string($cp->starBuildtime, 1, 1) . "</td>";
+    echo "<td>" . StringUtils::formatPercentString($cp->typeBuildtime, true, true) . "</td>";
+    echo "<td>" . StringUtils::formatPercentString($cu->race->buildTime, true, true) . "</td>";
+    echo "<td>" . StringUtils::formatPercentString($cp->starBuildtime, true, true) . "</td>";
     if ($specialist !== null) {
-        echo "<td>" . get_percent_string($specialist->timeBuildings, 1, 1) . "</td>";
+        echo "<td>" . StringUtils::formatPercentString($specialist->timeBuildings, true, true) . "</td>";
     }
     echo "<td>-</td>";
-    echo "<td>" . get_percent_string(array($cp->typeBuildtime, $cu->race->buildTime, $cp->starBuildtime, ($specialist !== null ? $specialist->timeBuildings : 1)), 1, 1) . "</td></tr>";
+    echo "<td>" . StringUtils::formatPercentString(array($cp->typeBuildtime, $cu->race->buildTime, $cp->starBuildtime, ($specialist !== null ? $specialist->timeBuildings : 1)), true, true) . "</td></tr>";
 
     echo "<tr><td>" . RES_ICON_TIME . "Bauzeit (Schiffe)</td>";
     echo "<td>-</td>";
     echo "<td>-</td>";
     echo "<td>-</td>";
     if ($specialist !== null) {
-        echo "<td>" . get_percent_string($specialist->timeShips, 1, 1) . "</td>";
+        echo "<td>" . StringUtils::formatPercentString($specialist->timeShips, true, true) . "</td>";
     }
     echo "<td>-</td>";
-    echo "<td>" . get_percent_string(($specialist !== null ? $specialist->timeShips : 1), 1, 1) . "</td></tr>";
+    echo "<td>" . StringUtils::formatPercentString(($specialist !== null ? $specialist->timeShips : 1), true, true) . "</td></tr>";
 
     echo "<tr><td>" . RES_ICON_TIME . "Bauzeit (Verteidigung)</td>";
     echo "<td>-</td>";
     echo "<td>-</td>";
     echo "<td>-</td>";
     if ($specialist !== null) {
-        echo "<td>" . get_percent_string($specialist->timeDefense, 1, 1) . "</td>";
+        echo "<td>" . StringUtils::formatPercentString($specialist->timeDefense, true, true) . "</td>";
     }
     echo "<td>-</td>";
-    echo "<td>" . get_percent_string(($specialist !== null ? $specialist->timeDefense : 1), 1, 1) . "</td></tr>";
+    echo "<td>" . StringUtils::formatPercentString(($specialist !== null ? $specialist->timeDefense : 1), true, true) . "</td></tr>";
 
     echo "<tr><td>" . RES_ICON_TIME . "Fluggeschwindigkeit</td>";
     echo "<td>-</td>";
-    echo "<td>" . get_percent_string($cu->race->fleetSpeedFactor, 1) . "</td>";
+    echo "<td>" . StringUtils::formatPercentString($cu->race->fleetSpeedFactor, true) . "</td>";
     echo "<td>-</td>";
     if ($specialist !== null) {
-        echo "<td>" . get_percent_string($specialist->fleetSpeed, 1) . "</td>";
+        echo "<td>" . StringUtils::formatPercentString($specialist->fleetSpeed, true) . "</td>";
     }
     echo "<td>-</td>";
-    echo "<td>" . get_percent_string(array($cu->race->fleetSpeedFactor, ($specialist !== null ? $specialist->fleetSpeed : 1)), 1) . "</td></tr>";
+    echo "<td>" . StringUtils::formatPercentString(array($cu->race->fleetSpeedFactor, ($specialist !== null ? $specialist->fleetSpeed : 1)), true) . "</td></tr>";
 
     tableEnd();
 } else {

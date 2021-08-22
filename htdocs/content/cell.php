@@ -191,23 +191,23 @@ if ($cell->isValid()) {
                 if ($ent->habitable == 1) $tm .= "Ja";
                 else $tm .= "Nein	";
                 if ($ent->typeMetal != 1)
-                    $tm .= "<br/><b>" . RES_METAL . ":</b> " . get_percent_string($ent->typeMetal, 1);
+                    $tm .= "<br/><b>" . RES_METAL . ":</b> " . StringUtils::formatPercentString($ent->typeMetal, true);
                 if ($ent->typeCrystal != 1)
-                    $tm .= "<br/><b>" . RES_CRYSTAL . ":</b> " . get_percent_string($ent->typeCrystal, 1);
+                    $tm .= "<br/><b>" . RES_CRYSTAL . ":</b> " . StringUtils::formatPercentString($ent->typeCrystal, true);
                 if ($ent->typePlastic != 1)
-                    $tm .= "<br/><b>" . RES_PLASTIC . ":</b> " . get_percent_string($ent->typePlastic, 1);
+                    $tm .= "<br/><b>" . RES_PLASTIC . ":</b> " . StringUtils::formatPercentString($ent->typePlastic, true);
                 if ($ent->typeFuel != 1)
-                    $tm .= "<br/><b>" . RES_FUEL . ":</b> " . get_percent_string($ent->typeFuel, 1);
+                    $tm .= "<br/><b>" . RES_FUEL . ":</b> " . StringUtils::formatPercentString($ent->typeFuel, true);
                 if ($ent->typeFood != 1)
-                    $tm .= "<br/><b>" . RES_FOOD . ":</b> " . get_percent_string($ent->typeFood, 1);
+                    $tm .= "<br/><b>" . RES_FOOD . ":</b> " . StringUtils::formatPercentString($ent->typeFood, true);
                 if ($ent->typePower != 1)
-                    $tm .= "<br/><b>Energie:</b> " . get_percent_string($ent->typePower, 1);
+                    $tm .= "<br/><b>Energie:</b> " . StringUtils::formatPercentString($ent->typePower, true);
                 if ($ent->typePopulation != 1)
-                    $tm .= "<br/><b>Bewohner:</b> " . get_percent_string($ent->typePopulation, 1);
+                    $tm .= "<br/><b>Bewohner:</b> " . StringUtils::formatPercentString($ent->typePopulation, true);
                 if ($ent->typeResearchtime != 1)
-                    $tm .= "<br/><b>Foschungszeit:</b> " . get_percent_string($ent->typeResearchtime, 1, 1);
+                    $tm .= "<br/><b>Foschungszeit:</b> " . StringUtils::formatPercentString($ent->typeResearchtime, true, true);
                 if ($ent->typeBuildtime != 1)
-                    $tm .= "<br/><b>Bauzeit:</b> " . get_percent_string($ent->typeBuildtime, 1, 1);
+                    $tm .= "<br/><b>Bauzeit:</b> " . StringUtils::formatPercentString($ent->typeBuildtime, true, true);
                 $tm .= "<br /><br/><b>Wärmebonus</b>: ";
                 $solarProdBonus = $planet->solarPowerBonus();
                 $color = $solarProdBonus >= 0 ? '#0f0' : '#f00';
