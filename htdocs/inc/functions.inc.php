@@ -542,17 +542,6 @@ function button($label, $target)
 }
 
 /**
- * Prevents negative numbers
- */
-function zeroPlus($val)
-{
-    if ($val < 0)
-        return 0;
-    else
-        return $val;
-}
-
-/**
  * Diese Funktion liefert 5 Optionsfelder in denen man den Tag,Monat,Jahr,Stunde,Minute auswählen kann
  */
 function show_timebox($element_name, $def_val, $seconds = 0)

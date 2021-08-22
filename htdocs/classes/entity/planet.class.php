@@ -158,15 +158,15 @@ class Planet extends Entity
 
         $p->temp_from = $arr['planet_temp_from'];
         $p->temp_to = $arr['planet_temp_to'];
-        $p->people = zeroPlus($arr['planet_people']);
-        $p->people_place = zeroPlus($arr['planet_people_place']);
+        $p->people = max(0, $arr['planet_people']);
+        $p->people_place = max(0, $arr['planet_people_place']);
 
-        $p->resMetal = zeroPlus(floor($arr['planet_res_metal']));
-        $p->resCrystal = zeroPlus(floor($arr['planet_res_crystal']));
-        $p->resPlastic = zeroPlus(floor($arr['planet_res_plastic']));
-        $p->resFuel = zeroPlus(floor($arr['planet_res_fuel']));
-        $p->resFood = zeroPlus(floor($arr['planet_res_food']));
-        $p->usePower = zeroPlus(floor($arr['planet_use_power']));
+        $p->resMetal = max(0, floor($arr['planet_res_metal']));
+        $p->resCrystal = max(0, floor($arr['planet_res_crystal']));
+        $p->resPlastic = max(0, floor($arr['planet_res_plastic']));
+        $p->resFuel = max(0, floor($arr['planet_res_fuel']));
+        $p->resFood = max(0, floor($arr['planet_res_food']));
+        $p->usePower = max(0, floor($arr['planet_use_power']));
 
         $p->resources = array(
             $p->resMetal,
@@ -176,11 +176,11 @@ class Planet extends Entity
             $p->resFood
         );
 
-        $p->bunkerMetal = zeroPlus($arr['planet_bunker_metal']);
-        $p->bunkerCrystal = zeroPlus($arr['planet_bunker_crystal']);
-        $p->bunkerPlastic = zeroPlus($arr['planet_bunker_plastic']);
-        $p->bunkerFuel = zeroPlus($arr['planet_bunker_fuel']);
-        $p->bunkerFood = zeroPlus($arr['planet_bunker_food']);
+        $p->bunkerMetal = max(0, $arr['planet_bunker_metal']);
+        $p->bunkerCrystal = max(0, $arr['planet_bunker_crystal']);
+        $p->bunkerPlastic = max(0, $arr['planet_bunker_plastic']);
+        $p->bunkerFuel = max(0, $arr['planet_bunker_fuel']);
+        $p->bunkerFood = max(0, $arr['planet_bunker_food']);
 
         $p->storeMetal = $arr['planet_store_metal'];
         $p->storeCrystal = $arr['planet_store_crystal'];
@@ -193,7 +193,7 @@ class Planet extends Entity
         $p->prodPlastic = $arr['planet_prod_plastic'];
         $p->prodFuel = $arr['planet_prod_fuel'];
         $p->prodFood = $arr['planet_prod_food'];
-        $p->prodPower = zeroPlus($arr['planet_prod_power']);
+        $p->prodPower = max(0, $arr['planet_prod_power']);
         $p->prodPeople = $arr['planet_prod_people'];
 
         $p->isMain = ($arr['planet_user_main'] == 1);
