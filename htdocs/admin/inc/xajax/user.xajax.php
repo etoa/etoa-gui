@@ -39,7 +39,7 @@ function showTimeBox($parent, $name, $value, $show = 1)
     $or = new xajaxResponse();
     ob_start();
     if ($show > 0) {
-        show_timebox($name, intval($value), 1);
+        echo '<input type="datetime-local" value="'.date("Y-m-d\TH:i:s", intval($value)).'" step="1" name="'.$name.'">';
     } else {
         echo "-";
     }

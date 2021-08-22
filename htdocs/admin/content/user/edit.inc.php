@@ -130,8 +130,8 @@ if (isset($_POST['save'])) {
     }
 
     // Handle specialist decision
-    if ($_POST['user_specialist_id'] > 0 && $_POST['user_specialist_time_h'] > 0) {
-        $user->specialistTime = mktime($_POST['user_specialist_time_h'], $_POST['user_specialist_time_i'], 0, $_POST['user_specialist_time_m'], $_POST['user_specialist_time_d'], $_POST['user_specialist_time_y']);
+    if ($_POST['user_specialist_id'] > 0 && $_POST['user_specialist_time'] > 0) {
+        $user->specialistTime = strtotime($_POST['user_specialist_time']);
         $user->specialistId = $request->request->getInt('user_specialist_id');
     } else {
         $user->specialistTime = 0;

@@ -76,18 +76,11 @@ function checkFights()
         }
 
         function resetFilter() {
-            clock = new Date(<?PHP time() ?>);
-
-            // Wandelt Timestamp in Stunden, Minuten und Sekunden um
-            document.getElementById('searchtime_y').value = clock.getYear();
-            document.getElementById('searchtime_m').value = clock.getMonth();
-            document.getElementById('searchtime_d').value = clock.getDay();
-            document.getElementById('searchtime_h').value = clock.getHours();
-            document.getElementById('searchtime_i').value = clock.getMinutes();
-            document.getElementById('searchtime_s').value = clock.getSeconds();
-
-            document.getElementById('searchentity').value = '';
-            document.getElementById('searchuser').value = '';
+            const now = new Date(<?PHP time() ?>);
+            now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+            document.getElementById('searchtime').value = now.toISOString().slice(0,16);
+            document.getElementById('searchfuser').value = '';
+            document.getElementById('searcheuser').value = '';
             applyFilter(0);
         }
     </script>
@@ -110,7 +103,7 @@ function checkFights()
     }
     echo "</select> &nbsp; ";
     echo " <label for=\"searchtime\">Zeit:</label> ";
-    show_timebox("searchtime", time());
+    echo '<input type="datetime-local" value="'.date("Y-m-d\TH:i", time()).'" name="searchtime" id="searchtime">';
     echo "&nbsp; ";
     echo "<br/><br/>";
     echo " <label for=\"searchfuser\">Angreifer:</label> <input type=\"text\" id=\"searchfuser\" name=\"searchfuser\" value=\"\" autocomplete=\"off\" /> &nbsp; ";
@@ -325,13 +318,9 @@ function debrisLog()
         }
 
         function resetFilter() {
-
-            var clock = new Date();
-            document.getElementById('searchtime_y').value = clock.getFullYear();
-            document.getElementById('searchtime_m').value = clock.getMonth() + 1;
-            document.getElementById('searchtime_d').value = clock.getUTCDate();
-            document.getElementById('searchtime_h').value = clock.getHours();
-            document.getElementById('searchtime_i').value = clock.getMinutes();
+            const now = new Date();
+            now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+            document.getElementById('searchtime').value = now.toISOString().slice(0,16);
             document.getElementById('searchuser').value = '';
             document.getElementById('searchadmin').value = '';
             applyFilter(0);
@@ -348,7 +337,7 @@ function debrisLog()
     echo "<br/><br/>";
 
     echo " <label for=\"searchtime\">Zeit:</label> ";
-    show_timebox("searchtime", time());
+    echo '<input type="datetime-local" value="'.date("Y-m-d\TH:i", time()).'" name="searchtime" id="searchtime">';
 
     echo " &nbsp; <input type=\"submit\" value=\"Anwenden\" onclick=\"applyFilter(0);return false;\" /> &nbsp;
     <input type=\"button\" value=\"Reset\" onclick=\"resetFilter();\" />";

@@ -101,7 +101,7 @@ if (!$s->sittingActive || $s->falseSitter) {
                             $pw = saltPasswort($_POST['sitter_password1']);
 
                             if (!$userRepository->exists(UserSearch::create()->user($cu->getId())->password($pw))) {
-                                $tm_from = mktime($_POST['date_from_h'], $_POST['date_from_i'], 0, $_POST['date_from_m'], $_POST['date_from_d'], $_POST['date_from_y']);
+                                $tm_from = strtotime($_POST['date_from']);
                                 $tm_to = $tm_from + $_POST['date_to_days'] * 86400;
 
                                 /** @var UserSittingRepository $userSittingRepository */
@@ -162,7 +162,7 @@ if (!$s->sittingActive || $s->falseSitter) {
 
 
                 echo "<tr><th>Zeitraun:</th><td>Von ";
-                show_timebox("date_from", isset($tm_from) ? $tm_from : time());
+                echo '<input type="datetime-local" value="'.date("Y-m-d\TH:i", isset($tm_from) ? $tm_from : time()).'" name="date_from">';
                 echo " Dauer (Tage) ";
 
                 // erstellt ein Optionsfeld mit den anzahl sitting tagen die der user noch zur verfügung hat
