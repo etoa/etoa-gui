@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\HostCache\NetworkNameService;
+use EtoA\Support\StringUtils;
 use EtoA\User\UserLoginFailureRepository;
 use EtoA\User\UserRepository;
 use EtoA\User\UserSessionRepository;
@@ -82,7 +83,7 @@ if ($user > 0) {
                     </tr>";
                 foreach ($ipCounts as $ipAddr => $count) {
                     echo "<tr>
-                        <td>" . nf($count) . "</td>
+                        <td>" . StringUtils::formatNumber($count) . "</td>
                         <td><a href=\"?page=$page&amp;sub=$sub&amp;ip=" . $ipAddr . "\">" . $ipAddr . "</a></td>
                         <td><a href=\"?page=$page&amp;sub=$sub&amp;host=" . $networkNameService->getHost($ipAddr) . "\">" . $networkNameService->getHost($ipAddr) . "</a></td>
                         </tr>";
@@ -204,7 +205,7 @@ if ($user > 0) {
                 </tr>";
             foreach ($sessionCounts as $userId => $count) {
                 echo "<tr>
-                    <td>" . nf($count) . "</td>
+                    <td>" . StringUtils::formatNumber($count) . "</td>
                     <td><a href=\"?page=$page&amp;sub=$sub&amp;user=" . $userId . "\">" . $userNicks[$userId] . "</a></td>
                     </tr>";
             }
@@ -223,7 +224,7 @@ if ($user > 0) {
                 </tr>";
             foreach ($sessionLogCounts as $userId => $count) {
                 echo "<tr>
-                    <td>" . nf($count) . "</td>
+                    <td>" . StringUtils::formatNumber($count) . "</td>
                     <td><a href=\"?page=$page&amp;sub=$sub&amp;user=" . $userId . "\">" . $userNicks[$userId] . "</a></td>
                     </tr>";
             }
@@ -242,7 +243,7 @@ if ($user > 0) {
                 </tr>";
             foreach ($failures as $failure) {
                 echo "<tr>
-                    <td>" . nf($failure['count']) . "</td>
+                    <td>" . StringUtils::formatNumber($failure['count']) . "</td>
                     <td><a href=\"?page=user&amp;sub=$sub&amp;user=" . $failure['userId'] . "\">" . $failure['userNick'] . "</a></td>
                     </tr>";
             }

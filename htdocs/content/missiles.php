@@ -261,7 +261,7 @@ if ($missileBuilding !== null && $missileBuilding->currentLevel > 0) {
                     <td>' . df($flight->landTime) . '</td>
                     <td>';
                     foreach ($flight->missiles as $missileId => $count) {
-                        echo nf($count) . ' ' . $missileNames[$missileId] . '<br/>';
+                        echo StringUtils::formatNumber($count) . ' ' . $missileNames[$missileId] . '<br/>';
                     }
                     echo '</td>
                     <td><a href="?page=' . $page . '&amp;selfdestruct=' . $flight->id . '" onclick="return confirm(\'Sollen die gewählten Raketen wirklich selbstzerstört werden?\')">Selbstzerstörung</a></td></tr>';
@@ -290,7 +290,7 @@ if ($missileBuilding !== null && $missileBuilding->currentLevel > 0) {
                             </tr>
                             <tr>
                                 <td style="text-align:center;">
-                                    ' . nf($cnt) . ' von ' . nf($max_space) . ', ' . round($cnt / $max_space * 100, 0) . '%
+                                    ' . StringUtils::formatNumber($cnt) . ' von ' . StringUtils::formatNumber($max_space) . ', ' . round($cnt / $max_space * 100, 0) . '%
                             </tr>';
                 tableEnd();
 
@@ -364,7 +364,7 @@ if ($missileBuilding !== null && $missileBuilding->currentLevel > 0) {
                         //Tippbox Nachricht generieren
                         //X Anlagen baubar
                         if ($missile_max_build > 0) {
-                            $tm_cnt = "Es k&ouml;nnen maximal " . nf($missile_max_build) . " Raketen gekauft werden.";
+                            $tm_cnt = "Es k&ouml;nnen maximal " . StringUtils::formatNumber($missile_max_build) . " Raketen gekauft werden.";
                         }
                         //Zu wenig Felder.
                         elseif ($store == 0) {
@@ -476,19 +476,19 @@ if ($missileBuilding !== null && $missileBuilding->currentLevel > 0) {
                                 <th>Geschwindigkeit:</th>
                                 <td>";
                             if ($missile->speed > 0) {
-                                echo "" . nf($missile->speed) . "";
+                                echo "" . StringUtils::formatNumber($missile->speed) . "";
                             } else {
                                 echo "-";
                             }
                             echo "</td>
                                 <th rowspan=\"2\">Vorhanden:</th>
-                                <td rowspan=\"2\">" . nf($available_missles) . "</td>
+                                <td rowspan=\"2\">" . StringUtils::formatNumber($available_missles) . "</td>
                             </tr>
                             <tr>
                                 <th>Reichweite:</th>
                                 <td>";
                             if ($missile->range > 0) {
-                                echo "" . nf($missile->range) . " AE";
+                                echo "" . StringUtils::formatNumber($missile->range) . " AE";
                             } else {
                                 echo "-";
                             }
@@ -509,9 +509,9 @@ if ($missileBuilding !== null && $missileBuilding->currentLevel > 0) {
                                 <td>";
 
                             if ($missile->def > 0) {
-                                echo nf($missile->def);
+                                echo StringUtils::formatNumber($missile->def);
                             } elseif ($missile->damage > 0) {
-                                echo nf($missile->damage);
+                                echo StringUtils::formatNumber($missile->damage);
                             } else {
                                 echo "0";
                             }
@@ -541,19 +541,19 @@ if ($missileBuilding !== null && $missileBuilding->currentLevel > 0) {
                                 <th height=\"20\" width=\"98\">" . RES_FOOD . "</th></tr>";
                             echo "<tr>
                                 <td height=\"20\" width=\"110\" " . $ress_style_metal . ">
-                                    " . nf($missile->costsMetal) . "
+                                    " . StringUtils::formatNumber($missile->costsMetal) . "
                                 </td>
                                 <td height=\"20\" width=\"25%\" " . $ress_style_crystal . ">
-                                    " . nf($missile->costsCrystal) . "
+                                    " . StringUtils::formatNumber($missile->costsCrystal) . "
                                 </td>
                                 <td height=\"20\" width=\"25%\" " . $ress_style_plastic . ">
-                                    " . nf($missile->costsPlastic) . "
+                                    " . StringUtils::formatNumber($missile->costsPlastic) . "
                                 </td>
                                 <td height=\"20\" width=\"25%\" " . $ress_style_fuel . ">
-                                    " . nf($missile->costsFuel) . "
+                                    " . StringUtils::formatNumber($missile->costsFuel) . "
                                 </td>
                                 <td height=\"20\" width=\"25%\" " . $ress_style_food . ">
-                                    " . nf($missile->costsFood) . "
+                                    " . StringUtils::formatNumber($missile->costsFood) . "
                                 </td>
                             </tr>";
                         }
@@ -568,12 +568,12 @@ if ($missileBuilding !== null && $missileBuilding->currentLevel > 0) {
                             echo "<th width=\"40%\">
                                         " . $missile->name . "<br/>
                                         <span style=\"font-weight:500;font-size:8pt;\">
-                                        <b>Vorhanden:</b> " . nf($missilelist[$missile->id]) . "</span></th>
-                                    <td width=\"10%\" " . $ress_style_metal . ">" . nf($missile->costsMetal) . "</td>
-                                    <td width=\"10%\" " . $ress_style_crystal . ">" . nf($missile->costsCrystal) . "</td>
-                                    <td width=\"10%\" " . $ress_style_plastic . ">" . nf($missile->costsPlastic) . "</td>
-                                    <td width=\"10%\" " . $ress_style_fuel . ">" . nf($missile->costsFuel) . "</td>
-                                    <td width=\"10%\" " . $ress_style_food . ">" . nf($missile->costsFood) . "</td>
+                                        <b>Vorhanden:</b> " . StringUtils::formatNumber($missilelist[$missile->id]) . "</span></th>
+                                    <td width=\"10%\" " . $ress_style_metal . ">" . StringUtils::formatNumber($missile->costsMetal) . "</td>
+                                    <td width=\"10%\" " . $ress_style_crystal . ">" . StringUtils::formatNumber($missile->costsCrystal) . "</td>
+                                    <td width=\"10%\" " . $ress_style_plastic . ">" . StringUtils::formatNumber($missile->costsPlastic) . "</td>
+                                    <td width=\"10%\" " . $ress_style_fuel . ">" . StringUtils::formatNumber($missile->costsFuel) . "</td>
+                                    <td width=\"10%\" " . $ress_style_food . ">" . StringUtils::formatNumber($missile->costsFood) . "</td>
                                     <td>
                                         <input type=\"text\" value=\"0\" id=\"missile_count_" . $missile->id . "\" name=\"missile_count[" . $missile->id . "]\" size=\"5\" maxlength=\"9\" " . tm("", $tm_cnt) . " tabindex=\"0\" onkeyup=\"FormatNumber(this.id,this.value, " . $missile_max_number . ", '', '');\"/><br><a href=\"javascript:;\" onclick=\"document.getElementById('missile_count_" . $missile->id . "').value=" . $missile_max_build . ";\">max</a>
                                     </td>

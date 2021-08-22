@@ -170,7 +170,7 @@ function buildingPoints(
                     if ($cnt == 0) {
                         echo "<tr>";
                     }
-                    echo "<th>" . $level . "</th><td style=\"text-align: right\" title=\"$points\">" . nf($points) . "</td>";
+                    echo "<th>" . $level . "</th><td style=\"text-align: right\" title=\"$points\">" . StringUtils::formatNumber($points) . "</td>";
                     if ($cnt == "3") {
                         echo "</tr>";
                         $cnt = 0;
@@ -323,7 +323,7 @@ function buildingList(
                 echo "<td class=\"tbldata\"><a href=\"?page=galaxy&amp;sub=edit&amp;id=" . $arr['buildlist_entity_id'] . "\" title=\"" . $arr['planet_name'] . "\">" . StringUtils::cutString($arr['planet_name'] != '' ? $arr['planet_name'] : 'Unbenannt', 11) . "</a> [" . $arr['id'] . "]</td>";
                 echo "<td class=\"tbldata\"><a href=\"?page=user&amp;sub=edit&amp;user_id=" . $arr['buildlist_user_id'] . "\" title=\"" . $arr['user_nick'] . "\">" . StringUtils::cutString($arr['user_nick'], 11) . "</a></td>";
                 echo "<td class=\"tbldata\">" . $arr['building_name'] . "</td>";
-                echo "<td class=\"tbldata\">" . nf($arr['buildlist_current_level']) . "</td>";
+                echo "<td class=\"tbldata\">" . StringUtils::formatNumber($arr['buildlist_current_level']) . "</td>";
                 echo "<td class=\"tbldata\" style=\"background:" . $build_colors[$arr['buildlist_build_type']] . "\">" . $buildTypes[$arr['buildlist_build_type']] . "</td>";
                 echo "<td class=\"tbldata\">" . edit_button("?page=$page&amp;sub=$sub&amp;action=edit&amp;buildlist_id=" . $arr['buildlist_id']) . "</td>";
                 echo "</tr>";
@@ -438,6 +438,6 @@ function buildingList(
                 </div>
             </div>';
 
-        echo "<p>Es sind <b>" . nf($repository->numBuildingListEntries()) . "</b> Einträge in der Datenbank vorhanden.</p>";
+        echo "<p>Es sind <b>" . StringUtils::formatNumber($repository->numBuildingListEntries()) . "</b> Einträge in der Datenbank vorhanden.</p>";
     }
 }

@@ -7,6 +7,7 @@ use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Log\LogFacility;
 use EtoA\Log\LogRepository;
 use EtoA\Log\LogSeverity;
+use EtoA\Support\StringUtils;
 use EtoA\User\UserRepository;
 
 /** @var ConfigurationService $config */
@@ -147,7 +148,7 @@ if (Alliance::checkActionRights(AllianceRights::EDIT_MEMBERS)) {
         echo "<tr>";
         // Nick, Planet, Punkte
         echo "<td>" . $mv . "</td>
-            <td>" . nf($mv->points) . "</td>";
+            <td>" . StringUtils::formatNumber($mv->points) . "</td>";
         // Zuletzt online
         if ((time() - $config->getInt('online_threshold') * 60) < $mv->acttime)
             echo "<td style=\"color:#0f0;\">online</td>";
@@ -215,7 +216,7 @@ if (Alliance::checkActionRights(AllianceRights::EDIT_MEMBERS)) {
             foreach ($wdata->members as $uid => $udata) {
                 echo "<tr>
                         <td>" . $udata . "</td>
-                        <td>" . nf($udata->points) . "</td>";
+                        <td>" . StringUtils::formatNumber($udata->points) . "</td>";
                 // Zuletzt online
                 if ((time() - $config->getInt('online_threshold') * 60) < $udata->acttime)
                     echo "<td style=\"color:#0f0;\">online</td>";

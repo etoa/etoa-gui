@@ -348,7 +348,7 @@ else {
                 echo "<td title=\"" . $user->email . "\">" . StringUtils::cutString($user->email, 15) . "</td>";
                 echo "<td title=\"" . $user->dualName . "\">" . StringUtils::cutString($user->dualName, 15) . "</td>";
                 echo "<td title=\"" . $user->dualEmail . "\">" . StringUtils::cutString($user->dualEmail, 15) . "</td>";
-                echo "<td>" . nf($user->points) . "</td>";
+                echo "<td>" . StringUtils::formatNumber($user->points) . "</td>";
                 echo "<td>" . ($user->allianceId > 0 ? $allianceNameWithTags[$user->allianceId] : '-') . "</td>";
                 echo "<td>" . ($user->raceId > 0 ? $raceNames[$user->raceId] : '-') . "</td>";
                 echo "<td>
@@ -416,6 +416,6 @@ else {
         echo "</table>";
         echo "<br/><input type=\"submit\" name=\"user_search\" value=\"Suche starten\" /> (wenn nichts eingegeben wird werden alle Datens&auml;tze angezeigt)</form>";
 
-        echo "<br/>Es sind " . nf($userRepository->count()) . " Eintr&auml;ge in der Datenbank vorhanden.";
+        echo "<br/>Es sind " . StringUtils::formatNumber($userRepository->count()) . " Eintr&auml;ge in der Datenbank vorhanden.";
     }
 }

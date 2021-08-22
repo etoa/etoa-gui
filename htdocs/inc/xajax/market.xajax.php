@@ -158,8 +158,8 @@ function marketSearch($form, $order = "distance", $orderDirection = 0)
                     if ($sellResources->get($rk) > 0 || $buyResources->get($rk) > 0) {
                         echo "<tr>
                                         <td class=\"rescolor" . $rk . " rname\">" . $resIcons[$rk] . "<b>" . $rn . "</b>:</td>
-                                        <td class=\"rescolor" . $rk . " rsupp\">" . ($sellResources->get($rk) > 0 ? nf($sellResources->get($rk)) : '-') . "</td>
-                                        <td class=\"rescolor" . $rk . " rdema\">" . ($buyResources->get($rk) > 0 ? nf($buyResources->get($rk)) : '-') . "</td>";
+                                        <td class=\"rescolor" . $rk . " rsupp\">" . ($sellResources->get($rk) > 0 ? StringUtils::formatNumber($sellResources->get($rk)) : '-') . "</td>
+                                        <td class=\"rescolor" . $rk . " rdema\">" . ($buyResources->get($rk) > 0 ? StringUtils::formatNumber($buyResources->get($rk)) : '-') . "</td>";
                         if ($i == 0) {
 
                             echo "<td rowspan=\"" . $cres . "\" class=\"usrinfo\">
@@ -280,7 +280,7 @@ function marketSearch($form, $order = "distance", $orderDirection = 0)
                             echo "<td rowspan=\"$resCnt\">" . $offer->count . " <a href=\"?page=help&site=shipyard&id=" . $offer->shipId . "\">" . $shipNames[$offer->shipId] . "</a></td>";
                         }
                         echo "<td class=\"rescolor" . $rk . " rname\">" . $resIcons[$rk] . "<b>" . $rn . "</b>:</td>
-                            <td class=\"rescolor" . $rk . " rdema\">" . nf($costs->get($rk)) . "</td>";
+                            <td class=\"rescolor" . $rk . " rdema\">" . StringUtils::formatNumber($costs->get($rk)) . "</td>";
                         if ($i++ == 0) {
                             $tu = new User($offer->userId);
                             echo "<td rowspan=\"$resCnt\" class=\"usrinfo\">" . $tu->detailLink() . "</td>";
@@ -370,7 +370,7 @@ function marketSearch($form, $order = "distance", $orderDirection = 0)
                 foreach ($resNames as $rk => $rn) {
                     if ($sellResources->get($rk) > 0) {
                         echo "<span class=\"rescolor" . $rk . "\">";
-                        echo $resIcons[$rk] . $rn . ": " . nf($sellResources->get($rk)) . "</span><br style=\"clear:both;\" />";
+                        echo $resIcons[$rk] . $rn . ": " . StringUtils::formatNumber($sellResources->get($rk)) . "</span><br style=\"clear:both;\" />";
                     }
                 }
                 echo "</td>
@@ -383,7 +383,7 @@ function marketSearch($form, $order = "distance", $orderDirection = 0)
                 foreach ($resNames as $rk => $rn) {
                     if ($currencyResources->get($rk) > 0) {
                         echo "<span class=\"rescolor" . $rk . "\">";
-                        echo $resIcons[$rk] . $rn . ": " . nf($buyFilter->get($rk));
+                        echo $resIcons[$rk] . $rn . ": " . StringUtils::formatNumber($buyFilter->get($rk));
                         echo "</span><br style=\"clear:both;\" />";
                     }
                 }
@@ -514,17 +514,17 @@ function showAuctionDetail($id)
                 echo "<tr>
                 <th style=\"vertical-align:middle;\" class=\"rescolor" . $rk . "\">" . $rn . ":</th>
                 <td id=\"auction_sell_metal_field\" style=\"vertical-align:middle;\"  class=\"rescolor" . $rk . "\">
-                    " . nf($sellResources->get($rk)) . "
+                    " . StringUtils::formatNumber($sellResources->get($rk)) . "
                 </td>
                 <th style=\"text-align:center;vertical-align:middle;\">" . $factor[$rk] . "</th>
                 <td id=\"auction_buy_" . $rk . "_field\" style=\"vertical-align:middle;\">
-                    " . nf($buyResources->get($rk)) . "
+                    " . StringUtils::formatNumber($buyResources->get($rk)) . "
                 </td>
                 <td style=\"vertical-align:middle;\">";
                 if ($currencyResources->get($rk) == 1) {
 
                     //calcMarketAuctionPrice(0);
-                    echo "<input type=\"text\" value=\"" . nf($buyResources->get($rk)) . "\" name=\"new_buy_" . $rk . "\" id=\"new_buy_" . $rk . "\" size=\"9\" maxlength=\"15\" onkeyup=\"xajax_calcMarketAuctionPrice(xajax.getFormValues('auction_show_selector'));FormatNumber(this.id,this.value," . $ownResources[$rk] . ",'','');\"/>";
+                    echo "<input type=\"text\" value=\"" . StringUtils::formatNumber($buyResources->get($rk)) . "\" name=\"new_buy_" . $rk . "\" id=\"new_buy_" . $rk . "\" size=\"9\" maxlength=\"15\" onkeyup=\"xajax_calcMarketAuctionPrice(xajax.getFormValues('auction_show_selector'));FormatNumber(this.id,this.value," . $ownResources[$rk] . ",'','');\"/>";
                 } else {
                     echo " - ";
                 }
@@ -644,7 +644,7 @@ function calcMarketRessPrice($val, $last_update = 0)
         }
 
         // Generiert Link mit dem Min./Max. Betrag. Bei draufklcikt wird der Wert sofort ins Feld geschrieben und dannach Formatiert
-        $out_ress_min_max_metal = "<a href=\"javascript:;\" onclick=\"document.getElementById('ress_buy_metal').value=" . ($val['ress_buy_metal'] + $ress_buy_metal_min) . ";xajax_calcMarketRessPrice(xajax.getFormValues('ress_selector'));xajax_formatNumbers('ress_buy_metal','" . ($val['ress_buy_metal'] + $ress_buy_metal_min) . "',1,'');\">+" . nf($ress_buy_metal_min) . "</a> / <a href=\"javascript:;\" onclick=\"document.getElementById('ress_buy_metal').value=" . ($val['ress_buy_metal'] + $ress_buy_metal_max) . ";xajax_calcMarketRessPrice(xajax.getFormValues('ress_selector'));xajax_formatNumbers('ress_buy_metal','" . ($val['ress_buy_metal'] + $ress_buy_metal_max) . "',1,'');\">+" . nf($ress_buy_metal_max) . "</a>";
+        $out_ress_min_max_metal = "<a href=\"javascript:;\" onclick=\"document.getElementById('ress_buy_metal').value=" . ($val['ress_buy_metal'] + $ress_buy_metal_min) . ";xajax_calcMarketRessPrice(xajax.getFormValues('ress_selector'));xajax_formatNumbers('ress_buy_metal','" . ($val['ress_buy_metal'] + $ress_buy_metal_min) . "',1,'');\">+" . StringUtils::formatNumber($ress_buy_metal_min) . "</a> / <a href=\"javascript:;\" onclick=\"document.getElementById('ress_buy_metal').value=" . ($val['ress_buy_metal'] + $ress_buy_metal_max) . ";xajax_calcMarketRessPrice(xajax.getFormValues('ress_selector'));xajax_formatNumbers('ress_buy_metal','" . ($val['ress_buy_metal'] + $ress_buy_metal_max) . "',1,'');\">+" . StringUtils::formatNumber($ress_buy_metal_max) . "</a>";
 
         // Gibt das Preisfeld frei
         $objResponse->assign("ress_buy_metal", "disabled", false);
@@ -703,7 +703,7 @@ function calcMarketRessPrice($val, $last_update = 0)
         }
 
         // Generiert Link mit dem Min./Max. Betrag. Bei draufklcikt wird der Wert sofort ins Feld geschrieben und dannach Formatiert
-        $out_ress_min_max_crystal = "<a href=\"javascript:;\" onclick=\"document.getElementById('ress_buy_crystal').value=" . ($val['ress_buy_crystal'] + $ress_buy_crystal_min) . ";xajax_calcMarketRessPrice(xajax.getFormValues('ress_selector'));xajax_formatNumbers('ress_buy_crystal','" . ($val['ress_buy_crystal'] + $ress_buy_crystal_min) . "',1,'');\">+" . nf($ress_buy_crystal_min) . "</a> / <a href=\"javascript:;\" onclick=\"document.getElementById('ress_buy_crystal').value=" . ($val['ress_buy_crystal'] + $ress_buy_crystal_max) . ";xajax_calcMarketRessPrice(xajax.getFormValues('ress_selector'));xajax_formatNumbers('ress_buy_crystal','" . ($val['ress_buy_crystal'] + $ress_buy_crystal_max) . "',1,'');\">+" . nf($ress_buy_crystal_max) . "</a>";
+        $out_ress_min_max_crystal = "<a href=\"javascript:;\" onclick=\"document.getElementById('ress_buy_crystal').value=" . ($val['ress_buy_crystal'] + $ress_buy_crystal_min) . ";xajax_calcMarketRessPrice(xajax.getFormValues('ress_selector'));xajax_formatNumbers('ress_buy_crystal','" . ($val['ress_buy_crystal'] + $ress_buy_crystal_min) . "',1,'');\">+" . StringUtils::formatNumber($ress_buy_crystal_min) . "</a> / <a href=\"javascript:;\" onclick=\"document.getElementById('ress_buy_crystal').value=" . ($val['ress_buy_crystal'] + $ress_buy_crystal_max) . ";xajax_calcMarketRessPrice(xajax.getFormValues('ress_selector'));xajax_formatNumbers('ress_buy_crystal','" . ($val['ress_buy_crystal'] + $ress_buy_crystal_max) . "',1,'');\">+" . StringUtils::formatNumber($ress_buy_crystal_max) . "</a>";
 
         // Gibt das Preisfeld frei
         $objResponse->assign("ress_buy_crystal", "disabled", false);
@@ -763,7 +763,7 @@ function calcMarketRessPrice($val, $last_update = 0)
         }
 
         // Generiert Link mit dem Min./Max. Betrag. Bei draufklcikt wird der Wert sofort ins Feld geschrieben und dannach Formatiert
-        $out_ress_min_max_plastic = "<a href=\"javascript:;\" onclick=\"document.getElementById('ress_buy_plastic').value=" . ($val['ress_buy_plastic'] + $ress_buy_plastic_min) . ";xajax_calcMarketRessPrice(xajax.getFormValues('ress_selector'));xajax_formatNumbers('ress_buy_plastic','" . ($val['ress_buy_plastic'] + $ress_buy_plastic_min) . "',1,'');\">+" . nf($ress_buy_plastic_min) . "</a> / <a href=\"javascript:;\" onclick=\"document.getElementById('ress_buy_plastic').value=" . ($val['ress_buy_plastic'] + $ress_buy_plastic_max) . ";xajax_calcMarketRessPrice(xajax.getFormValues('ress_selector'));xajax_formatNumbers('ress_buy_plastic','" . ($val['ress_buy_plastic'] + $ress_buy_plastic_max) . "',1,'');\">+" . nf($ress_buy_plastic_max) . "</a>";
+        $out_ress_min_max_plastic = "<a href=\"javascript:;\" onclick=\"document.getElementById('ress_buy_plastic').value=" . ($val['ress_buy_plastic'] + $ress_buy_plastic_min) . ";xajax_calcMarketRessPrice(xajax.getFormValues('ress_selector'));xajax_formatNumbers('ress_buy_plastic','" . ($val['ress_buy_plastic'] + $ress_buy_plastic_min) . "',1,'');\">+" . StringUtils::formatNumber($ress_buy_plastic_min) . "</a> / <a href=\"javascript:;\" onclick=\"document.getElementById('ress_buy_plastic').value=" . ($val['ress_buy_plastic'] + $ress_buy_plastic_max) . ";xajax_calcMarketRessPrice(xajax.getFormValues('ress_selector'));xajax_formatNumbers('ress_buy_plastic','" . ($val['ress_buy_plastic'] + $ress_buy_plastic_max) . "',1,'');\">+" . StringUtils::formatNumber($ress_buy_plastic_max) . "</a>";
 
         // Gibt das Preisfeld frei
         $objResponse->assign("ress_buy_plastic", "disabled", false);
@@ -823,7 +823,7 @@ function calcMarketRessPrice($val, $last_update = 0)
         }
 
         // Generiert Link mit dem Min./Max. Betrag. Bei draufklcikt wird der Wert sofort ins Feld geschrieben und dannach Formatiert
-        $out_ress_min_max_fuel = "<a href=\"javascript:;\" onclick=\"document.getElementById('ress_buy_fuel').value=" . ($val['ress_buy_fuel'] + $ress_buy_fuel_min) . ";xajax_calcMarketRessPrice(xajax.getFormValues('ress_selector'));xajax_formatNumbers('ress_buy_fuel','" . ($val['ress_buy_fuel'] + $ress_buy_fuel_min) . "',1,'');\">+" . nf($ress_buy_fuel_min) . "</a> / <a href=\"javascript:;\" onclick=\"document.getElementById('ress_buy_fuel').value=" . ($val['ress_buy_fuel'] + $ress_buy_fuel_max) . ";xajax_calcMarketRessPrice(xajax.getFormValues('ress_selector'));xajax_formatNumbers('ress_buy_fuel','" . ($val['ress_buy_fuel'] + $ress_buy_fuel_max) . "',1,'');\">+" . nf($ress_buy_fuel_max) . "</a>";
+        $out_ress_min_max_fuel = "<a href=\"javascript:;\" onclick=\"document.getElementById('ress_buy_fuel').value=" . ($val['ress_buy_fuel'] + $ress_buy_fuel_min) . ";xajax_calcMarketRessPrice(xajax.getFormValues('ress_selector'));xajax_formatNumbers('ress_buy_fuel','" . ($val['ress_buy_fuel'] + $ress_buy_fuel_min) . "',1,'');\">+" . StringUtils::formatNumber($ress_buy_fuel_min) . "</a> / <a href=\"javascript:;\" onclick=\"document.getElementById('ress_buy_fuel').value=" . ($val['ress_buy_fuel'] + $ress_buy_fuel_max) . ";xajax_calcMarketRessPrice(xajax.getFormValues('ress_selector'));xajax_formatNumbers('ress_buy_fuel','" . ($val['ress_buy_fuel'] + $ress_buy_fuel_max) . "',1,'');\">+" . StringUtils::formatNumber($ress_buy_fuel_max) . "</a>";
 
         // Gibt das Preisfeld frei
         $objResponse->assign("ress_buy_fuel", "disabled", false);
@@ -884,7 +884,7 @@ function calcMarketRessPrice($val, $last_update = 0)
         }
 
         // Generiert Link mit dem Min./Max. Betrag. Bei draufklcikt wird der Wert sofort ins Feld geschrieben und dannach Formatiert
-        $out_ress_min_max_food = "<a href=\"javascript:;\" onclick=\"document.getElementById('ress_buy_food').value=" . ($val['ress_buy_food'] + $ress_buy_food_min) . ";xajax_calcMarketRessPrice(xajax.getFormValues('ress_selector'));xajax_formatNumbers('ress_buy_food','" . ($val['ress_buy_food'] + $ress_buy_food_min) . "',1,'');\">+" . nf($ress_buy_food_min) . "</a> / <a href=\"javascript:;\" onclick=\"document.getElementById('ress_buy_food').value=" . ($val['ress_buy_food'] + $ress_buy_food_max) . ";xajax_calcMarketRessPrice(xajax.getFormValues('ress_selector'));xajax_formatNumbers('ress_buy_food','" . ($val['ress_buy_food'] + $ress_buy_food_max) . "',1,'');\">+" . nf($ress_buy_food_max) . "</a>";
+        $out_ress_min_max_food = "<a href=\"javascript:;\" onclick=\"document.getElementById('ress_buy_food').value=" . ($val['ress_buy_food'] + $ress_buy_food_min) . ";xajax_calcMarketRessPrice(xajax.getFormValues('ress_selector'));xajax_formatNumbers('ress_buy_food','" . ($val['ress_buy_food'] + $ress_buy_food_min) . "',1,'');\">+" . StringUtils::formatNumber($ress_buy_food_min) . "</a> / <a href=\"javascript:;\" onclick=\"document.getElementById('ress_buy_food').value=" . ($val['ress_buy_food'] + $ress_buy_food_max) . ";xajax_calcMarketRessPrice(xajax.getFormValues('ress_selector'));xajax_formatNumbers('ress_buy_food','" . ($val['ress_buy_food'] + $ress_buy_food_max) . "',1,'');\">+" . StringUtils::formatNumber($ress_buy_food_max) . "</a>";
 
         // Gibt das Preisfeld frei
         $objResponse->assign("ress_buy_food", "disabled", false);
@@ -979,7 +979,7 @@ function calcMarketRessPrice($val, $last_update = 0)
             + $val['ress_sell_fuel'] * (MARKET_SELL_TAX - 1)
             + $val['ress_sell_food'] * (MARKET_SELL_TAX - 1);
 
-        $out_check_message = "<div style=\"color:#0f0;font-weight:bold;\">OK!<br>Verkaufsgebühren: " . nf($sell_tax) . " t</div>";
+        $out_check_message = "<div style=\"color:#0f0;font-weight:bold;\">OK!<br>Verkaufsgebühren: " . StringUtils::formatNumber($sell_tax) . " t</div>";
         $objResponse->assign("ressource_sell_submit", "disabled", false);
         $objResponse->assign("ressource_sell_submit", "style.color", '#0f0');
 
@@ -998,17 +998,17 @@ function calcMarketRessPrice($val, $last_update = 0)
     $objResponse->assign("ress_min_max_fuel", "innerHTML", $out_ress_min_max_fuel);
     $objResponse->assign("ress_min_max_food", "innerHTML", $out_ress_min_max_food);
 
-    $objResponse->assign("ress_sell_metal", "value", nf($val['ress_sell_metal']));
-    $objResponse->assign("ress_sell_crystal", "value", nf($val['ress_sell_crystal']));
-    $objResponse->assign("ress_sell_plastic", "value", nf($val['ress_sell_plastic']));
-    $objResponse->assign("ress_sell_fuel", "value", nf($val['ress_sell_fuel']));
-    $objResponse->assign("ress_sell_food", "value", nf($val['ress_sell_food']));
+    $objResponse->assign("ress_sell_metal", "value", StringUtils::formatNumber($val['ress_sell_metal']));
+    $objResponse->assign("ress_sell_crystal", "value", StringUtils::formatNumber($val['ress_sell_crystal']));
+    $objResponse->assign("ress_sell_plastic", "value", StringUtils::formatNumber($val['ress_sell_plastic']));
+    $objResponse->assign("ress_sell_fuel", "value", StringUtils::formatNumber($val['ress_sell_fuel']));
+    $objResponse->assign("ress_sell_food", "value", StringUtils::formatNumber($val['ress_sell_food']));
 
-    $objResponse->assign("ress_buy_metal", "value", nf($val['ress_buy_metal']));
-    $objResponse->assign("ress_buy_crystal", "value", nf($val['ress_buy_crystal']));
-    $objResponse->assign("ress_buy_plastic", "value", nf($val['ress_buy_plastic']));
-    $objResponse->assign("ress_buy_fuel", "value", nf($val['ress_buy_fuel']));
-    $objResponse->assign("ress_buy_food", "value", nf($val['ress_buy_food']));
+    $objResponse->assign("ress_buy_metal", "value", StringUtils::formatNumber($val['ress_buy_metal']));
+    $objResponse->assign("ress_buy_crystal", "value", StringUtils::formatNumber($val['ress_buy_crystal']));
+    $objResponse->assign("ress_buy_plastic", "value", StringUtils::formatNumber($val['ress_buy_plastic']));
+    $objResponse->assign("ress_buy_fuel", "value", StringUtils::formatNumber($val['ress_buy_fuel']));
+    $objResponse->assign("ress_buy_food", "value", StringUtils::formatNumber($val['ress_buy_food']));
 
 
     $objResponse->assign("check_message", "innerHTML", $out_check_message);
@@ -1151,11 +1151,11 @@ function calcMarketShipPrice($val, $new_ship = 0, $last_update = 0)
         $val['ship_buy_food'] = $ship_costs_food_total;
 
         //Ändert Daten beim "Angebot Feld" welches gesperrt ist für Änderungen
-        $objResponse->assign("ship_sell_metal", "value", nf($ship_costs_metal_total));
-        $objResponse->assign("ship_sell_crystal", "value", nf($ship_costs_crystal_total));
-        $objResponse->assign("ship_sell_plastic", "value", nf($ship_costs_plastic_total));
-        $objResponse->assign("ship_sell_fuel", "value", nf($ship_costs_fuel_total));
-        $objResponse->assign("ship_sell_food", "value", nf($ship_costs_food_total));
+        $objResponse->assign("ship_sell_metal", "value", StringUtils::formatNumber($ship_costs_metal_total));
+        $objResponse->assign("ship_sell_crystal", "value", StringUtils::formatNumber($ship_costs_crystal_total));
+        $objResponse->assign("ship_sell_plastic", "value", StringUtils::formatNumber($ship_costs_plastic_total));
+        $objResponse->assign("ship_sell_fuel", "value", StringUtils::formatNumber($ship_costs_fuel_total));
+        $objResponse->assign("ship_sell_food", "value", StringUtils::formatNumber($ship_costs_food_total));
     }
 
 
@@ -1212,7 +1212,7 @@ function calcMarketShipPrice($val, $new_ship = 0, $last_update = 0)
     }
 
     // Generiert Link mit dem Min./Max. Betrag. Bei draufklick wird der Wert sofort ins Feld geschrieben
-    $out_ship_min_max_metal = "<a href=\"javascript:;\" onclick=\"document.getElementById('ship_buy_metal').value=" . ($val['ship_buy_metal'] + $ship_buy_metal_ship_min) . ";xajax_calcMarketShipPrice(xajax.getFormValues('ship_selector'));xajax_formatNumbers('ship_buy_metal','" . ($val['ship_buy_metal'] + $ship_buy_metal_ship_min) . "',1,'');\">+" . nf($ship_buy_metal_ship_min) . "</a> / <a href=\"javascript:;\" onclick=\"document.getElementById('ship_buy_metal').value=" . ($val['ship_buy_metal'] + $ship_buy_metal_max) . ";xajax_calcMarketShipPrice(xajax.getFormValues('ship_selector'));xajax_formatNumbers('ship_buy_metal','" . ($val['ship_buy_metal'] + $ship_buy_metal_max) . "',1,'');\">+" . nf($ship_buy_metal_max) . "</a>";
+    $out_ship_min_max_metal = "<a href=\"javascript:;\" onclick=\"document.getElementById('ship_buy_metal').value=" . ($val['ship_buy_metal'] + $ship_buy_metal_ship_min) . ";xajax_calcMarketShipPrice(xajax.getFormValues('ship_selector'));xajax_formatNumbers('ship_buy_metal','" . ($val['ship_buy_metal'] + $ship_buy_metal_ship_min) . "',1,'');\">+" . StringUtils::formatNumber($ship_buy_metal_ship_min) . "</a> / <a href=\"javascript:;\" onclick=\"document.getElementById('ship_buy_metal').value=" . ($val['ship_buy_metal'] + $ship_buy_metal_max) . ";xajax_calcMarketShipPrice(xajax.getFormValues('ship_selector'));xajax_formatNumbers('ship_buy_metal','" . ($val['ship_buy_metal'] + $ship_buy_metal_max) . "',1,'');\">+" . StringUtils::formatNumber($ship_buy_metal_max) . "</a>";
 
 
 
@@ -1266,7 +1266,7 @@ function calcMarketShipPrice($val, $new_ship = 0, $last_update = 0)
     }
 
     // Generiert Link mit dem Min./Max. Betrag. Bei draufklick wird der Wert sofort ins Feld geschrieben
-    $out_ship_min_max_crystal = "<a href=\"javascript:;\" onclick=\"document.getElementById('ship_buy_crystal').value=" . ($val['ship_buy_crystal'] + $ship_buy_crystal_min) . ";xajax_calcMarketShipPrice(xajax.getFormValues('ship_selector'));xajax_formatNumbers('ship_buy_crystal','" . ($val['ship_buy_crystal'] + $ship_buy_crystal_min) . "',1,'');\">+" . nf($ship_buy_crystal_min) . "</a> / <a href=\"javascript:;\" onclick=\"document.getElementById('ship_buy_crystal').value=" . ($val['ship_buy_crystal'] + $ship_buy_crystal_max) . ";xajax_calcMarketShipPrice(xajax.getFormValues('ship_selector'));xajax_formatNumbers('ship_buy_crystal','" . ($val['ship_buy_crystal'] + $ship_buy_crystal_max) . "',1,'');\">+" . nf($ship_buy_crystal_max) . "</a>";
+    $out_ship_min_max_crystal = "<a href=\"javascript:;\" onclick=\"document.getElementById('ship_buy_crystal').value=" . ($val['ship_buy_crystal'] + $ship_buy_crystal_min) . ";xajax_calcMarketShipPrice(xajax.getFormValues('ship_selector'));xajax_formatNumbers('ship_buy_crystal','" . ($val['ship_buy_crystal'] + $ship_buy_crystal_min) . "',1,'');\">+" . StringUtils::formatNumber($ship_buy_crystal_min) . "</a> / <a href=\"javascript:;\" onclick=\"document.getElementById('ship_buy_crystal').value=" . ($val['ship_buy_crystal'] + $ship_buy_crystal_max) . ";xajax_calcMarketShipPrice(xajax.getFormValues('ship_selector'));xajax_formatNumbers('ship_buy_crystal','" . ($val['ship_buy_crystal'] + $ship_buy_crystal_max) . "',1,'');\">+" . StringUtils::formatNumber($ship_buy_crystal_max) . "</a>";
 
 
 
@@ -1318,7 +1318,7 @@ function calcMarketShipPrice($val, $new_ship = 0, $last_update = 0)
     }
 
     // Generiert Link mit dem Min./Max. Betrag. Bei draufklick wird der Wert sofort ins Feld geschrieben
-    $out_ship_min_max_plastic = "<a href=\"javascript:;\" onclick=\"document.getElementById('ship_buy_plastic').value=" . ($val['ship_buy_plastic'] + $ship_buy_plastic_min) . ";xajax_calcMarketShipPrice(xajax.getFormValues('ship_selector'));xajax_formatNumbers('ship_buy_plastic','" . ($val['ship_buy_plastic'] + $ship_buy_plastic_min) . "',1,'');\">+" . nf($ship_buy_plastic_min) . "</a> / <a href=\"javascript:;\" onclick=\"document.getElementById('ship_buy_plastic').value=" . ($val['ship_buy_plastic'] + $ship_buy_plastic_max) . ";xajax_calcMarketShipPrice(xajax.getFormValues('ship_selector'));xajax_formatNumbers('ship_buy_plastic','" . ($val['ship_buy_plastic'] + $ship_buy_plastic_max) . "',1,'');\">+" . nf($ship_buy_plastic_max) . "</a>";
+    $out_ship_min_max_plastic = "<a href=\"javascript:;\" onclick=\"document.getElementById('ship_buy_plastic').value=" . ($val['ship_buy_plastic'] + $ship_buy_plastic_min) . ";xajax_calcMarketShipPrice(xajax.getFormValues('ship_selector'));xajax_formatNumbers('ship_buy_plastic','" . ($val['ship_buy_plastic'] + $ship_buy_plastic_min) . "',1,'');\">+" . StringUtils::formatNumber($ship_buy_plastic_min) . "</a> / <a href=\"javascript:;\" onclick=\"document.getElementById('ship_buy_plastic').value=" . ($val['ship_buy_plastic'] + $ship_buy_plastic_max) . ";xajax_calcMarketShipPrice(xajax.getFormValues('ship_selector'));xajax_formatNumbers('ship_buy_plastic','" . ($val['ship_buy_plastic'] + $ship_buy_plastic_max) . "',1,'');\">+" . StringUtils::formatNumber($ship_buy_plastic_max) . "</a>";
 
 
 
@@ -1372,7 +1372,7 @@ function calcMarketShipPrice($val, $new_ship = 0, $last_update = 0)
     }
 
     // Generiert Link mit dem Min./Max. Betrag. Bei draufklick wird der Wert sofort ins Feld geschrieben
-    $out_ship_min_max_fuel = "<a href=\"javascript:;\" onclick=\"document.getElementById('ship_buy_fuel').value=" . ($val['ship_buy_fuel'] + $ship_buy_fuel_min) . ";xajax_calcMarketShipPrice(xajax.getFormValues('ship_selector'));xajax_formatNumbers('ship_buy_fuel','" . ($val['ship_buy_fuel'] + $ship_buy_fuel_min) . "',1,'');\">+" . nf($ship_buy_fuel_min) . "</a> / <a href=\"javascript:;\" onclick=\"document.getElementById('ship_buy_fuel').value=" . ($val['ship_buy_fuel'] + $ship_buy_fuel_max) . ";xajax_calcMarketShipPrice(xajax.getFormValues('ship_selector'));xajax_formatNumbers('ship_buy_fuel','" . ($val['ship_buy_fuel'] + $ship_buy_fuel_max) . "',1,'');\">+" . nf($ship_buy_fuel_max) . "</a>";
+    $out_ship_min_max_fuel = "<a href=\"javascript:;\" onclick=\"document.getElementById('ship_buy_fuel').value=" . ($val['ship_buy_fuel'] + $ship_buy_fuel_min) . ";xajax_calcMarketShipPrice(xajax.getFormValues('ship_selector'));xajax_formatNumbers('ship_buy_fuel','" . ($val['ship_buy_fuel'] + $ship_buy_fuel_min) . "',1,'');\">+" . StringUtils::formatNumber($ship_buy_fuel_min) . "</a> / <a href=\"javascript:;\" onclick=\"document.getElementById('ship_buy_fuel').value=" . ($val['ship_buy_fuel'] + $ship_buy_fuel_max) . ";xajax_calcMarketShipPrice(xajax.getFormValues('ship_selector'));xajax_formatNumbers('ship_buy_fuel','" . ($val['ship_buy_fuel'] + $ship_buy_fuel_max) . "',1,'');\">+" . StringUtils::formatNumber($ship_buy_fuel_max) . "</a>";
 
 
 
@@ -1424,7 +1424,7 @@ function calcMarketShipPrice($val, $new_ship = 0, $last_update = 0)
     }
 
     // Generiert Link mit dem Min./Max. Betrag. Bei draufklick wird der Wert sofort ins Feld geschrieben
-    $out_ship_min_max_food = "<a href=\"javascript:;\" onclick=\"document.getElementById('ship_buy_food').value=" . ($val['ship_buy_food'] + $ship_buy_food_min) . ";xajax_calcMarketShipPrice(xajax.getFormValues('ship_selector'));xajax_formatNumbers('ship_buy_food','" . ($val['ship_buy_food'] + $ship_buy_food_min) . "',1,'');\">+" . nf($ship_buy_food_min) . "</a> / <a href=\"javascript:;\" onclick=\"document.getElementById('ship_buy_food').value=" . ($val['ship_buy_food'] + $ship_buy_food_max) . ";xajax_calcMarketShipPrice(xajax.getFormValues('ship_selector'));xajax_formatNumbers('ship_buy_food','" . ($val['ship_buy_food'] + $ship_buy_food_max) . "',1,'');\">+" . nf($ship_buy_food_max) . "</a>";
+    $out_ship_min_max_food = "<a href=\"javascript:;\" onclick=\"document.getElementById('ship_buy_food').value=" . ($val['ship_buy_food'] + $ship_buy_food_min) . ";xajax_calcMarketShipPrice(xajax.getFormValues('ship_selector'));xajax_formatNumbers('ship_buy_food','" . ($val['ship_buy_food'] + $ship_buy_food_min) . "',1,'');\">+" . StringUtils::formatNumber($ship_buy_food_min) . "</a> / <a href=\"javascript:;\" onclick=\"document.getElementById('ship_buy_food').value=" . ($val['ship_buy_food'] + $ship_buy_food_max) . ";xajax_calcMarketShipPrice(xajax.getFormValues('ship_selector'));xajax_formatNumbers('ship_buy_food','" . ($val['ship_buy_food'] + $ship_buy_food_max) . "',1,'');\">+" . StringUtils::formatNumber($ship_buy_food_max) . "</a>";
 
 
     //
@@ -1493,13 +1493,13 @@ function calcMarketShipPrice($val, $new_ship = 0, $last_update = 0)
     $objResponse->assign("ship_min_max_fuel", "innerHTML", $out_ship_min_max_fuel);
     $objResponse->assign("ship_min_max_food", "innerHTML", $out_ship_min_max_food);
 
-    $objResponse->assign("ship_buy_metal", "value", nf($val['ship_buy_metal']));
-    $objResponse->assign("ship_buy_crystal", "value", nf($val['ship_buy_crystal']));
-    $objResponse->assign("ship_buy_plastic", "value", nf($val['ship_buy_plastic']));
-    $objResponse->assign("ship_buy_fuel", "value", nf($val['ship_buy_fuel']));
-    $objResponse->assign("ship_buy_food", "value", nf($val['ship_buy_food']));
+    $objResponse->assign("ship_buy_metal", "value", StringUtils::formatNumber($val['ship_buy_metal']));
+    $objResponse->assign("ship_buy_crystal", "value", StringUtils::formatNumber($val['ship_buy_crystal']));
+    $objResponse->assign("ship_buy_plastic", "value", StringUtils::formatNumber($val['ship_buy_plastic']));
+    $objResponse->assign("ship_buy_fuel", "value", StringUtils::formatNumber($val['ship_buy_fuel']));
+    $objResponse->assign("ship_buy_food", "value", StringUtils::formatNumber($val['ship_buy_food']));
 
-    $objResponse->assign("ship_count", "value", nf($ship_count));
+    $objResponse->assign("ship_count", "value", StringUtils::formatNumber($ship_count));
 
     $objResponse->assign("ship_check_message", "innerHTML", $out_ship_check_message);
 
@@ -1741,7 +1741,7 @@ function checkMarketAuctionFormular($val, $last_update = 0)
             + $val['auction_sell_fuel'] * (MARKET_SELL_TAX - 1)
             + $val['auction_sell_food'] * (MARKET_SELL_TAX - 1);
 
-        $out_auction_check_message = "<div style=\"color:#0f0;font-weight:bold;\">OK!<br>Verkaufsgebühren: " . nf($sell_tax) . " t</div>";
+        $out_auction_check_message = "<div style=\"color:#0f0;font-weight:bold;\">OK!<br>Verkaufsgebühren: " . StringUtils::formatNumber($sell_tax) . " t</div>";
         $objResponse->assign("auction_sell_submit", "disabled", false);
         $objResponse->assign("auction_sell_submit", "style.color", '#0f0');
 
@@ -1755,11 +1755,11 @@ function checkMarketAuctionFormular($val, $last_update = 0)
     // XAJAX ändert Daten
     $objResponse->assign("auction_check_message", "innerHTML", $out_auction_check_message);
 
-    $objResponse->assign("auction_sell_metal", "value", nf($val['auction_sell_metal']));
-    $objResponse->assign("auction_sell_crystal", "value", nf($val['auction_sell_crystal']));
-    $objResponse->assign("auction_sell_plastic", "value", nf($val['auction_sell_plastic']));
-    $objResponse->assign("auction_sell_fuel", "value", nf($val['auction_sell_fuel']));
-    $objResponse->assign("auction_sell_food", "value", nf($val['auction_sell_food']));
+    $objResponse->assign("auction_sell_metal", "value", StringUtils::formatNumber($val['auction_sell_metal']));
+    $objResponse->assign("auction_sell_crystal", "value", StringUtils::formatNumber($val['auction_sell_crystal']));
+    $objResponse->assign("auction_sell_plastic", "value", StringUtils::formatNumber($val['auction_sell_plastic']));
+    $objResponse->assign("auction_sell_fuel", "value", StringUtils::formatNumber($val['auction_sell_fuel']));
+    $objResponse->assign("auction_sell_food", "value", StringUtils::formatNumber($val['auction_sell_food']));
 
 
     $objResponse->assign("marketinfo", "innerHTML", ob_get_contents());
@@ -1963,7 +1963,7 @@ function calcMarketAuctionPrice($val, $last_update = 0)
     // XAJAX ändert Daten
     foreach ($resNames as $rid => $r) {
         $objResponse->assign("auction_min_max_" . $rid, "innerHTML", $outMinMax[$rid]);
-        $objResponse->assign("new_buy_" . $rid, "value", nf($val['new_buy_' . $rid]));
+        $objResponse->assign("new_buy_" . $rid, "value", StringUtils::formatNumber($val['new_buy_' . $rid]));
     }
 
 

@@ -57,7 +57,7 @@ if ($sub == "battlepoints") {
     if (count($defenses) > 0) {
         echo "<table class=\"tb\">";
         foreach ($defenses as $defense) {
-            echo "<tr><th>" . $defense->name . "</th><td style=\"width:70%; text-align: right\"  title=\"$defense->points\">" . nf($defense->points) . "</td></tr>";
+            echo "<tr><th>" . $defense->name . "</th><td style=\"width:70%; text-align: right\"  title=\"$defense->points\">" . StringUtils::formatNumber($defense->points) . "</td></tr>";
         }
         echo "</table>";
     }
@@ -146,9 +146,9 @@ elseif ($sub == "queue") {
                 echo "<tr>";
                 echo "<td class=\"tbldata\" $style>" . $entry->id . "</a></td>";
                 echo "<td class=\"tbldata\"$style " . mTT($entry->defenseName, "<b>Verteidigungs-ID:</b> " . $entry->id) . ">" . $entry->defenseName . "</td>";
-                echo "<td class=\"tbldata\"$style>" . nf($entry->count) . "</td>";
+                echo "<td class=\"tbldata\"$style>" . StringUtils::formatNumber($entry->count) . "</td>";
                 echo "<td class=\"tbldata\"$style " . mTT($entry->planetName, "<b>Planet-ID:</b> " . $entry->entityId . "<br/><b>Koordinaten:</b> " . $entry->entity->sx . "/" . $entry->entity->sy . " : " . $entry->entity->cx . "/" . $entry->entity->cy . " : " . $entry->entity->pos) . ">" . StringUtils::cutString($entry->planetName, 11) . "</td>";
-                echo "<td class=\"tbldata\"$style " . mTT($entry->userNick, "<b>User-ID:</b> " . $entry->userId . "<br/><b>Punkte:</b> " . nf($entry->userPoints)) . ">" . StringUtils::cutString($entry->userNick, 11) . "</td>";
+                echo "<td class=\"tbldata\"$style " . mTT($entry->userNick, "<b>User-ID:</b> " . $entry->userId . "<br/><b>Punkte:</b> " . StringUtils::formatNumber($entry->userPoints)) . ">" . StringUtils::cutString($entry->userNick, 11) . "</td>";
                 echo "<td class=\"tbldata\"$style>" . df($entry->startTime, 1) . "</td>";
                 echo "<td class=\"tbldata\"$style>" . df($entry->endTime, 1) . "</td>";
                 echo "<td class=\"tbldata\"$style>" . edit_button("?page=$page&sub=$sub&action=edit&id=" . $entry->id);
@@ -263,7 +263,7 @@ elseif ($sub == "queue") {
         echo "</table>";
         echo "<br/><input type=\"submit\" class=\"button\" name=\"defqueue_search\" value=\"Suche starten\" /></form>";
         $tblcnt = $defenseQueueRepository->count();
-        echo "<br/>Es sind " . nf($tblcnt) . " Eintr&auml;ge in der Datenbank vorhanden.<br/>";
+        echo "<br/>Es sind " . StringUtils::formatNumber($tblcnt) . " Eintr&auml;ge in der Datenbank vorhanden.<br/>";
     }
 }
 
@@ -361,9 +361,9 @@ else {
                 echo "<tr>";
                 echo "<td class=\"tbldata\" $style>" . $item->id . "</a></td>";
                 echo "<td class=\"tbldata\" $style" . mTT($item->planetName, "<b>Planet-ID:</b> " . $item->entityId . "<br/><b>Koordinaten:</b> " . $item->entity->sx . "/" . $item->entity->sy . " : " . $item->entity->cx . "/" . $item->entity->cy . " : " . $item->entity->pos) . ">" . StringUtils::cutString($item->planetName, 11) . "</a></td>";
-                echo "<td class=\"tbldata\" $style" . mTT($item->userNick, "<b>User-ID:</b> " . $item->userId . "<br/><b>Punkte:</b> " . nf($item->userPoints)) . ">" . StringUtils::cutString($item->userNick, 11) . "</a></td>";
+                echo "<td class=\"tbldata\" $style" . mTT($item->userNick, "<b>User-ID:</b> " . $item->userId . "<br/><b>Punkte:</b> " . StringUtils::formatNumber($item->userPoints)) . ">" . StringUtils::cutString($item->userNick, 11) . "</a></td>";
                 echo "<td class=\"tbldata\" $style" . mTT($item->defenseName, "<b>Verteidigungs-ID:</b> " . $item->defenseId) . ">" . $item->defenseName . "</a></td>";
-                echo "<td class=\"tbldata\" $style>" . nf($item->count) . "</a></td>";
+                echo "<td class=\"tbldata\" $style>" . StringUtils::formatNumber($item->count) . "</a></td>";
                 echo "<td class=\"tbldata\">" . edit_button("?page=$page&sub=$sub&action=edit&deflist_id=" . $item->id) . "</td>";
                 echo "</tr>";
             }
@@ -469,7 +469,7 @@ else {
         }
 
         $tblcnt = $defenseRepository->count();
-        echo "Es sind " . nf($tblcnt) . " Eintr&auml;ge in der Datenbank vorhanden.<br/><br />";
+        echo "Es sind " . StringUtils::formatNumber($tblcnt) . " Eintr&auml;ge in der Datenbank vorhanden.<br/><br />";
 
 
         // Suchmaske

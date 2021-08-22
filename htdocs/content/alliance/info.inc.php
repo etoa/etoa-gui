@@ -63,7 +63,7 @@ if ($infoAlly->valid) {
                                     <td>
                                         <a href=\"?page=$page&amp;id=" . $opAlly->id . "\">" . $opAlly . "</a>
                                     </td>
-                                    <td>" . nf($opAlly->points) . " / " . nf($opAlly->avgPoints) . "</td>
+                                    <td>" . StringUtils::formatNumber($opAlly->points) . " / " . StringUtils::formatNumber($opAlly->avgPoints) . "</td>
                                     <td>" . df($diplomacy->date, 0) . " bis " . df($diplomacy->date + WAR_DURATION, 0) . "</td>
                                 </tr>";
         }
@@ -91,7 +91,7 @@ if ($infoAlly->valid) {
                                     <td>
                                         <a href=\"?page=$page&amp;id=" . $opAlly->id . "\">" . $opAlly . "</a>
                                     </td>
-                                    <td>" . nf($opAlly->points) . " / " . nf($opAlly->avgPoints) . "</td>
+                                    <td>" . StringUtils::formatNumber($opAlly->points) . " / " . StringUtils::formatNumber($opAlly->avgPoints) . "</td>
                                     <td>" . df($diplomacy->date, 0) . " bis " . df($diplomacy->date + PEACE_DURATION, 0) . "</td>
                                 </tr>";
         }
@@ -119,7 +119,7 @@ if ($infoAlly->valid) {
             echo "<tr>
                                     <td>" . stripslashes($diplomacy->name) . "</td>
                                     <td><a href=\"?page=$page&amp;id=" . $opAlly->id . "\">" . $opAlly . "</a></td>
-                                    <td>" . nf($opAlly->points) . " / " . nf($opAlly->avgPoints) . "</td>
+                                    <td>" . StringUtils::formatNumber($opAlly->points) . " / " . StringUtils::formatNumber($opAlly->avgPoints) . "</td>
                                     <td>" . df($diplomacy->date) . "</td>
                                 </tr>";
         }
@@ -142,7 +142,7 @@ if ($infoAlly->valid) {
     echo "<tr>
                     <th>Punkte / Durchschnitt:</th>
                     <td>";
-    echo nf($infoAlly->points) . " / " . nf($infoAlly->avgPoints) . "";
+    echo StringUtils::formatNumber($infoAlly->points) . " / " . StringUtils::formatNumber($infoAlly->avgPoints) . "";
     echo "</td>
                 </tr>";
 

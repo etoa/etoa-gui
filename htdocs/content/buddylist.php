@@ -2,6 +2,7 @@
 
 use EtoA\BuddyList\BuddyListRepository;
 use EtoA\Message\MessageRepository;
+use EtoA\Support\StringUtils;
 use EtoA\User\UserRepository;
 
 echo "<h1>Buddylist</h1>";
@@ -105,7 +106,7 @@ if (isset($_GET['comment']) && intval($_GET['comment']) > 0) {
                             <td>" . $buddy->userNick . "</td>";
             if ($buddy->allowed) {
                 $tp = Planet::getById($buddy->planetId);
-                echo "<td>" . nf($buddy->points) . "</td>";
+                echo "<td>" . StringUtils::formatNumber($buddy->points) . "</td>";
                 echo "<td><a href=\"?page=cell&amp;id=" . $tp->cellId() . "&amp;hl=" . $tp->id() . "\">" . $tp . "</a></td>";
                 if ($buddy->isOnline)
                     echo "<td style=\"color:#0f0;\">online</td>";
@@ -144,7 +145,7 @@ if (isset($_GET['comment']) && intval($_GET['comment']) > 0) {
         foreach ($pendingBuddies as $pending) {
             echo "<tr>
                                     <td class=\"tbldata\">" . $pending->userNick . "</td>";
-            echo "<td>" . nf($pending->points) . "</td>";
+            echo "<td>" . StringUtils::formatNumber($pending->points) . "</td>";
             echo "<td style=\"width:280px;\">
                                     <a href=\"?page=messages&mode=new&message_user_to=" . $pending->userId . "\" title=\"Nachricht\">Nachricht</a>
                                     <a href=\"?page=userinfo&amp;id=" . $pending->userId . "\" title=\"Info\">Profil</a>

@@ -11,6 +11,7 @@ use EtoA\Fleet\FleetSearch;
 use EtoA\Message\MessageRepository;
 use EtoA\Message\ReportRepository;
 use EtoA\Notepad\NotepadRepository;
+use EtoA\Support\StringUtils;
 use EtoA\Text\TextRepository;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\User\UserPropertiesRepository;
@@ -290,7 +291,7 @@ try {
         'usersOnline' => $usersOnline,
         'usersTotal' => $userCount,
         'notes' => $numNotes,
-        'userPoints' => nf($cu->points),
+        'userPoints' => StringUtils::formatNumber($cu->points),
         'userNick' => $cu->nick,
         'page' => $page,
         'mode' => $mode,

@@ -2,6 +2,7 @@
 
 use EtoA\Admin\AdminUserRepository;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Support\StringUtils;
 use EtoA\Universe\Cell\CellRepository;
 use EtoA\Universe\Entity\EntityType;
 use EtoA\Universe\Planet\PlanetRepository;
@@ -185,7 +186,7 @@ if ($cell->isValid()) {
                 $planet = $planetRepo->find($ent->id());
 
                 $tm = "";
-                $tm .= "<b>Felder</b>: " . nf($ent->fields);
+                $tm .= "<b>Felder</b>: " . StringUtils::formatNumber($ent->fields);
                 $tm .= "<br/><b>Bewohnbar</b>: ";
                 if ($ent->habitable == 1) $tm .= "Ja";
                 else $tm .= "Nein	";
@@ -245,11 +246,11 @@ if ($cell->isValid()) {
                 if ($planet->hasDebrisField()) {
                     echo "<br/><span style=\"color:#817339;font-weight:bold\" " . tm(
                         "Trümmerfeld",
-                        RES_ICON_METAL . nf($planet->wfMetal) . " " .
+                        RES_ICON_METAL . StringUtils::formatNumber($planet->wfMetal) . " " .
                             RES_METAL . "<br style=\"clear:both\" />" .
-                            RES_ICON_CRYSTAL . nf($planet->wfCrystal) . " " .
+                            RES_ICON_CRYSTAL . StringUtils::formatNumber($planet->wfCrystal) . " " .
                             RES_CRYSTAL . "<br style=\"clear:both\" />" .
-                            RES_ICON_PLASTIC . nf($planet->wfPlastic) . " " .
+                            RES_ICON_PLASTIC . StringUtils::formatNumber($planet->wfPlastic) . " " .
                             RES_PLASTIC . "<br style=\"clear:both\" />"
                     ) . ">Trümmerfeld</span> ";
                 }
@@ -259,7 +260,7 @@ if ($cell->isValid()) {
                     <td $addstyle>";
             if ($ent->ownerId() > 0) {
                 $header = $ent->owner();
-                $tm = "Punkte: " . nf($ent->owner->points) . "<br style=\"clear:both\" />";
+                $tm = "Punkte: " . StringUtils::formatNumber($ent->owner->points) . "<br style=\"clear:both\" />";
                 if ($ent->ownerAlliance() > 0)
                     $tm .= "Allianz: " . $ent->owner->alliance . "<br style=\"clear:both\" />";
                 if ($tm_info != "")

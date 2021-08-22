@@ -3,6 +3,7 @@
 /** @var Alliance $ally */
 
 use EtoA\Alliance\AllianceRights;
+use EtoA\Support\StringUtils;
 
 if (Alliance::checkActionRights(AllianceRights::EDIT_DATA)) {
     echo "<h2>Allianzdaten &auml;ndern</h2>";
@@ -43,7 +44,7 @@ if (Alliance::checkActionRights(AllianceRights::EDIT_DATA)) {
         echo '<img src="' . $ally->imageUrl . '" alt="Profil" /><br/>';
         echo "<input type=\"checkbox\" value=\"1\" name=\"alliance_img_del\"> Bild l&ouml;schen<br/>";
     }
-    echo "Allianzbild heraufladen/&auml;ndern: <input type=\"file\" name=\"alliance_img_file\" /><br/><b>Regeln:</b> Max " . ALLIANCE_IMG_MAX_WIDTH . "*" . ALLIANCE_IMG_MAX_HEIGHT . " Pixel, Bilder grösser als " . ALLIANCE_IMG_WIDTH . "*" . ALLIANCE_IMG_HEIGHT . " werden automatisch verkleinert.<br/>Format: GIF, JPG oder PNG. Grösse: Max " . nf(ALLIANCE_IMG_MAX_SIZE) . " Byte</td>
+    echo "Allianzbild heraufladen/&auml;ndern: <input type=\"file\" name=\"alliance_img_file\" /><br/><b>Regeln:</b> Max " . ALLIANCE_IMG_MAX_WIDTH . "*" . ALLIANCE_IMG_MAX_HEIGHT . " Pixel, Bilder grösser als " . ALLIANCE_IMG_WIDTH . "*" . ALLIANCE_IMG_HEIGHT . " werden automatisch verkleinert.<br/>Format: GIF, JPG oder PNG. Grösse: Max " . StringUtils::formatNumber(ALLIANCE_IMG_MAX_SIZE) . " Byte</td>
     </tr>
     <tr>
         <th>Bewerbungen zulassen:</th>

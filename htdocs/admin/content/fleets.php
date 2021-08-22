@@ -468,7 +468,7 @@ function fleets(
         echo '</div>
         </div>';
 
-        echo "<br/>Es sind " . nf($fleetRepository->count()) . " Einträge in der Datenbank vorhanden.";
+        echo "<br/>Es sind " . StringUtils::formatNumber($fleetRepository->count()) . " Einträge in der Datenbank vorhanden.";
     }
 }
 

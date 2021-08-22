@@ -201,14 +201,14 @@ if ($factoryBuilding !== null && $factoryBuilding->currentLevel > 0) {
         if ($cu->specialist->defenseTime != 1) {
             echo "<tr><td>Bauzeitverringerung durch " . $cu->specialist->name . ":</td><td>" . get_percent_string($cu->specialist->defenseTime) . "</td></tr>";
         }
-        echo "<tr><td>Eingestellte Arbeiter:</td><td>" . nf($people_working);
+        echo "<tr><td>Eingestellte Arbeiter:</td><td>" . StringUtils::formatNumber($people_working);
         if (count($queue) === 0) {
             echo '&nbsp;<a href="javascript:;" onclick="toggleBox(\'changePeople\');">[&Auml;ndern]</a>';
         }
         echo "</td></tr>";
         if ($peopleWorking->defense > 0) {
             echo '<tr><td>Zeitreduktion durch Arbeiter pro Auftrag:</td><td><span id="people_work_done">' . StringUtils::formatTimespan($config->getInt('people_work_done') * $peopleWorking->defense) . '</span></td></tr>';
-            echo '<tr><td>Nahrungsverbrauch durch Arbeiter pro Auftrag:</td><td><span id="people_food_require">' . nf($config->getInt('people_food_require') * $peopleWorking->defense) . '</span></td></tr>';
+            echo '<tr><td>Nahrungsverbrauch durch Arbeiter pro Auftrag:</td><td><span id="people_food_require">' . StringUtils::formatNumber($config->getInt('people_food_require') * $peopleWorking->defense) . '</span></td></tr>';
         }
         if ($gen_tech_level  > 0) {
             echo '<tr><td>Gentechnologie:</td><td>' . $gen_tech_level . '</td></tr>';
@@ -244,7 +244,7 @@ if ($factoryBuilding !== null && $factoryBuilding->currentLevel > 0) {
                                 <input  type="text"
                                         name="peopleWorking"
                                         id="peopleWorking"
-                                        value="' . nf($peopleWorking->defense) . '"
+                                        value="' . StringUtils::formatNumber($peopleWorking->defense) . '"
                                         onkeyup="updatePeopleWorkingBox(this.value,\'-1\',\'-1\');"/>
                         </td>
                         </tr>
@@ -260,7 +260,7 @@ if ($factoryBuilding !== null && $factoryBuilding->currentLevel > 0) {
                             <td><input  type="text"
                                         name="foodUsing"
                                         id="foodUsing"
-                                        value="' . nf($config->getInt('people_food_require') * $peopleWorking->defense) . '"
+                                        value="' . StringUtils::formatNumber($config->getInt('people_food_require') * $peopleWorking->defense) . '"
                                         onkeyup="updatePeopleWorkingBox(\'-1\',\'-1\',this.value);" /></td>
                         </tr>
                         <tr>
@@ -479,7 +479,7 @@ if ($factoryBuilding !== null && $factoryBuilding->currentLevel > 0) {
                             $queueItemCounts[$def_id] += $build_cnt;
                         }
 
-                        echo "<tr><td>" . nf($build_cnt) . " " . $defs[$def_id]->name . " in Auftrag gegeben!</td></tr>";
+                        echo "<tr><td>" . StringUtils::formatNumber($build_cnt) . " " . $defs[$def_id]->name . " in Auftrag gegeben!</td></tr>";
 
                         //Rohstoffe summieren, diese werden nach der Schleife abgezogen
                         $totalMetal += $bc['metal'];
@@ -498,23 +498,23 @@ if ($factoryBuilding !== null && $factoryBuilding->currentLevel > 0) {
                         [b]Dauer:[/b] " . StringUtils::formatTimespan($duration) . "
                         [b]Dauer pro Einheit:[/b] " . StringUtils::formatTimespan($obj_time) . "
                         [b]Waffenfabrik Level:[/b] " . $factoryBuilding->currentLevel . "
-                        [b]Eingesetzte Bewohner:[/b] " . nf($people_working) . "
+                        [b]Eingesetzte Bewohner:[/b] " . StringUtils::formatNumber($people_working) . "
                         [b]Gen-Tech Level:[/b] " . $gen_tech_level . "
                         [b]Eingesetzter Spezialist:[/b] " . $cu->specialist->name . "
 
                         [b]Kosten[/b]
-                        [b]" . RES_METAL . ":[/b] " . nf($bc['metal']) . "
-                        [b]" . RES_CRYSTAL . ":[/b] " . nf($bc['crystal']) . "
-                        [b]" . RES_PLASTIC . ":[/b] " . nf($bc['plastic']) . "
-                        [b]" . RES_FUEL . ":[/b] " . nf($bc['fuel']) . "
-                        [b]" . RES_FOOD . ":[/b] " . nf($bc['food']) . "
+                        [b]" . RES_METAL . ":[/b] " . StringUtils::formatNumber($bc['metal']) . "
+                        [b]" . RES_CRYSTAL . ":[/b] " . StringUtils::formatNumber($bc['crystal']) . "
+                        [b]" . RES_PLASTIC . ":[/b] " . StringUtils::formatNumber($bc['plastic']) . "
+                        [b]" . RES_FUEL . ":[/b] " . StringUtils::formatNumber($bc['fuel']) . "
+                        [b]" . RES_FOOD . ":[/b] " . StringUtils::formatNumber($bc['food']) . "
 
                         [b]Rohstoffe auf dem Planeten[/b]
-                        [b]" . RES_METAL . ":[/b] " . nf($planet->resMetal - $totalMetal) . "
-                        [b]" . RES_CRYSTAL . ":[/b] " . nf($planet->resCrystal - $totalCrystal) . "
-                        [b]" . RES_PLASTIC . ":[/b] " . nf($planet->resPlastic - $totalPlastic) . "
-                        [b]" . RES_FUEL . ":[/b] " . nf($planet->resFuel - $totalFuel) . "
-                        [b]" . RES_FOOD . ":[/b] " . nf($planet->resFood - $totalFood);
+                        [b]" . RES_METAL . ":[/b] " . StringUtils::formatNumber($planet->resMetal - $totalMetal) . "
+                        [b]" . RES_CRYSTAL . ":[/b] " . StringUtils::formatNumber($planet->resCrystal - $totalCrystal) . "
+                        [b]" . RES_PLASTIC . ":[/b] " . StringUtils::formatNumber($planet->resPlastic - $totalPlastic) . "
+                        [b]" . RES_FUEL . ":[/b] " . StringUtils::formatNumber($planet->resFuel - $totalFuel) . "
+                        [b]" . RES_FOOD . ":[/b] " . StringUtils::formatNumber($planet->resFood - $totalFood);
 
                         $gameLogRepository->add(GameLogFacility::DEF, LogSeverity::INFO, $log_text, $cu->id, $cu->allianceId, $planet->id, $def_id, 1, $build_cnt);
                     } else {
@@ -600,18 +600,18 @@ if ($factoryBuilding !== null && $factoryBuilding->currentLevel > 0) {
 
                 [b]Erhaltene Rohstoffe[/b]
                 [b]Faktor:[/b] " . $cancel_res_factor . "
-                [b]" . RES_METAL . ":[/b] " . nf($ret['metal']) . "
-                [b]" . RES_CRYSTAL . ":[/b] " . nf($ret['crystal']) . "
-                [b]" . RES_PLASTIC . ":[/b] " . nf($ret['plastic']) . "
-                [b]" . RES_FUEL . ":[/b] " . nf($ret['fuel']) . "
-                [b]" . RES_FOOD . ":[/b] " . nf($ret['food']) . "
+                [b]" . RES_METAL . ":[/b] " . StringUtils::formatNumber($ret['metal']) . "
+                [b]" . RES_CRYSTAL . ":[/b] " . StringUtils::formatNumber($ret['crystal']) . "
+                [b]" . RES_PLASTIC . ":[/b] " . StringUtils::formatNumber($ret['plastic']) . "
+                [b]" . RES_FUEL . ":[/b] " . StringUtils::formatNumber($ret['fuel']) . "
+                [b]" . RES_FOOD . ":[/b] " . StringUtils::formatNumber($ret['food']) . "
 
                 [b]Rohstoffe auf dem Planeten[/b]
-                [b]" . RES_METAL . ":[/b] " . nf($planet->resMetal + $ret['metal']) . "
-                [b]" . RES_CRYSTAL . ":[/b] " . nf($planet->resCrystal + $ret['crystal']) . "
-                [b]" . RES_PLASTIC . ":[/b] " . nf($planet->resPlastic + $ret['plastic']) . "
-                [b]" . RES_FUEL . ":[/b] " . nf($planet->resFuel + $ret['fuel']) . "
-                [b]" . RES_FOOD . ":[/b] " . nf($planet->resFood + $ret['food']);
+                [b]" . RES_METAL . ":[/b] " . StringUtils::formatNumber($planet->resMetal + $ret['metal']) . "
+                [b]" . RES_CRYSTAL . ":[/b] " . StringUtils::formatNumber($planet->resCrystal + $ret['crystal']) . "
+                [b]" . RES_PLASTIC . ":[/b] " . StringUtils::formatNumber($planet->resPlastic + $ret['plastic']) . "
+                [b]" . RES_FUEL . ":[/b] " . StringUtils::formatNumber($planet->resFuel + $ret['fuel']) . "
+                [b]" . RES_FOOD . ":[/b] " . StringUtils::formatNumber($planet->resFood + $ret['food']);
 
                 //Log Speichern
                 $gameLogRepository->add(GameLogFacility::DEF, LogSeverity::INFO, $log_text, $cu->id, $cu->allianceId, $planet->id, $defId, 0, $queue_count);
@@ -819,7 +819,7 @@ if ($factoryBuilding !== null && $factoryBuilding->currentLevel > 0) {
                             //Tippbox Nachricht generieren
                             //X Schiffe baubar
                             if ($def_max_build > 0) {
-                                $tm_cnt = "Es k&ouml;nnen maximal " . nf($def_max_build) . " Anlagen gebaut werden.";
+                                $tm_cnt = "Es k&ouml;nnen maximal " . StringUtils::formatNumber($def_max_build) . " Anlagen gebaut werden.";
                             }
                             //Zuwenig Rohstoffe. Wartezeit errechnen
                             elseif ($def_max_build == 0) {
@@ -828,7 +828,7 @@ if ($factoryBuilding !== null && $factoryBuilding->currentLevel > 0) {
                                 //Wartezeit Titan
                                 if ($planet->prodMetal > 0) {
                                     $bwait['metal'] = ceil(($defenseCosts[$defense->id]->metal - $planet->resMetal) / $planet->prodMetal * 3600);
-                                    $bwmsg['metal'] = tm("Fehlender Rohstoff", nf($defenseCosts[$defense->id]->metal - $planet->resMetal) . " Titan<br />Bereit in " . StringUtils::formatTimespan($bwait['metal']) . "");
+                                    $bwmsg['metal'] = tm("Fehlender Rohstoff", StringUtils::formatNumber($defenseCosts[$defense->id]->metal - $planet->resMetal) . " Titan<br />Bereit in " . StringUtils::formatTimespan($bwait['metal']) . "");
                                 } else {
                                     $bwait['metal'] = 0;
                                 }
@@ -836,7 +836,7 @@ if ($factoryBuilding !== null && $factoryBuilding->currentLevel > 0) {
                                 //Wartezeit Silizium
                                 if ($planet->prodCrystal > 0) {
                                     $bwait['crystal'] = ceil(($defenseCosts[$defense->id]->crystal - $planet->resCrystal) / $planet->prodCrystal * 3600);
-                                    $bwmsg['crystal'] = tm("Fehlender Rohstoff", nf($defenseCosts[$defense->id]->crystal - $planet->resCrystal) . " Silizium<br />Bereit in " . StringUtils::formatTimespan($bwait['crystal']) . "");
+                                    $bwmsg['crystal'] = tm("Fehlender Rohstoff", StringUtils::formatNumber($defenseCosts[$defense->id]->crystal - $planet->resCrystal) . " Silizium<br />Bereit in " . StringUtils::formatTimespan($bwait['crystal']) . "");
                                 } else {
                                     $bwait['crystal'] = 0;
                                 }
@@ -844,7 +844,7 @@ if ($factoryBuilding !== null && $factoryBuilding->currentLevel > 0) {
                                 //Wartezeit PVC
                                 if ($planet->prodPlastic > 0) {
                                     $bwait['plastic'] = ceil(($defenseCosts[$defense->id]->plastic - $planet->resPlastic) / $planet->prodPlastic * 3600);
-                                    $bwmsg['plastic'] = tm("Fehlender Rohstoff", nf($defenseCosts[$defense->id]->plastic - $planet->resPlastic) . " PVC<br />Bereit in " . StringUtils::formatTimespan($bwait['plastic']) . "");
+                                    $bwmsg['plastic'] = tm("Fehlender Rohstoff", StringUtils::formatNumber($defenseCosts[$defense->id]->plastic - $planet->resPlastic) . " PVC<br />Bereit in " . StringUtils::formatTimespan($bwait['plastic']) . "");
                                 } else {
                                     $bwait['plastic'] = 0;
                                 }
@@ -852,7 +852,7 @@ if ($factoryBuilding !== null && $factoryBuilding->currentLevel > 0) {
                                 //Wartezeit Tritium
                                 if ($planet->prodFuel > 0) {
                                     $bwait['fuel'] = ceil(($defenseCosts[$defense->id]->fuel - $planet->resFuel) / $planet->prodFuel * 3600);
-                                    $bwmsg['fuel'] = tm("Fehlender Rohstoff", nf($defenseCosts[$defense->id]->fuel - $planet->resFuel) . " Tritium<br />Bereit in " . StringUtils::formatTimespan($bwait['fuel']) . "");
+                                    $bwmsg['fuel'] = tm("Fehlender Rohstoff", StringUtils::formatNumber($defenseCosts[$defense->id]->fuel - $planet->resFuel) . " Tritium<br />Bereit in " . StringUtils::formatTimespan($bwait['fuel']) . "");
                                 } else {
                                     $bwait['fuel'] = 0;
                                 }
@@ -860,7 +860,7 @@ if ($factoryBuilding !== null && $factoryBuilding->currentLevel > 0) {
                                 //Wartezeit Nahrung
                                 if ($planet->prodFood > 0) {
                                     $bwait['food'] = ceil(($food_costs - $planet->resFood) / $planet->prodFood * 3600);
-                                    $bwmsg['food'] = tm("Fehlender Rohstoff", nf($food_costs - $planet->resFood) . " Nahrung<br />Bereit in " . StringUtils::formatTimespan($bwait['food']) . "");
+                                    $bwmsg['food'] = tm("Fehlender Rohstoff", StringUtils::formatNumber($food_costs - $planet->resFood) . " Nahrung<br />Bereit in " . StringUtils::formatTimespan($bwait['food']) . "");
                                 } else {
                                     $bwait['food'] = 0;
                                 }
@@ -937,9 +937,9 @@ if ($factoryBuilding !== null && $factoryBuilding->currentLevel > 0) {
                                     </tr>
                                     <tr>
                                         <th  height=\"30\">Vorhanden:</th>
-                                        <td>" . nf($deflist_count) . "</td>
+                                        <td>" . StringUtils::formatNumber($deflist_count) . "</td>
                                         <th>Felder pro Einheit:</th>
-                                        <td>" . nf($defense->fields) . "</td>
+                                        <td>" . StringUtils::formatNumber($defense->fields) . "</td>
                                     </tr>
                                     <tr>
                                         <th height=\"30\">Bauzeit</th>
@@ -966,19 +966,19 @@ if ($factoryBuilding !== null && $factoryBuilding->currentLevel > 0) {
                                             <th height=\"20\" width=\"98\">" . RES_FOOD . "</th></tr>
                                         <tr>
                                         <td height=\"20\" width=\"110\" " . $ress_style_metal . ">
-                                            " . nf($defenseCosts[$defense->id]->metal) . "
+                                            " . StringUtils::formatNumber($defenseCosts[$defense->id]->metal) . "
                                         </td>
                                         <td height=\"20\" width=\"25%\" " . $ress_style_crystal . ">
-                                            " . nf($defenseCosts[$defense->id]->crystal) . "
+                                            " . StringUtils::formatNumber($defenseCosts[$defense->id]->crystal) . "
                                         </td>
                                         <td height=\"20\" width=\"25%\" " . $ress_style_plastic . ">
-                                            " . nf($defenseCosts[$defense->id]->plastic) . "
+                                            " . StringUtils::formatNumber($defenseCosts[$defense->id]->plastic) . "
                                         </td>
                                         <td height=\"20\" width=\"25%\" " . $ress_style_fuel . ">
-                                            " . nf($defenseCosts[$defense->id]->fuel) . "
+                                            " . StringUtils::formatNumber($defenseCosts[$defense->id]->fuel) . "
                                         </td>
                                         <td height=\"20\" width=\"25%\" " . $ress_style_food . ">
-                                            " . nf($food_costs) . "
+                                            " . StringUtils::formatNumber($food_costs) . "
                                         </td>
                                     </tr>";
                             }
@@ -992,14 +992,14 @@ if ($factoryBuilding !== null && $factoryBuilding->currentLevel > 0) {
                                         </td>
                                         <th width=\"30%\">
                                             <span style=\"font-weight:500\">" . $defense->name . "<br/>
-                                            Gebaut:</span> " . nf($deflist_count) . "
+                                            Gebaut:</span> " . StringUtils::formatNumber($deflist_count) . "
                                         </th>
                                         <td width=\"13%\">" . StringUtils::formatTimespan($btime) . "</td>
-                                        <td width=\"10%\" " . $ress_style_metal . ">" . nf($defenseCosts[$defense->id]->metal) . "</td>
-                                        <td width=\"10%\" " . $ress_style_crystal . ">" . nf($defenseCosts[$defense->id]->crystal) . "</td>
-                                        <td width=\"10%\" " . $ress_style_plastic . ">" . nf($defenseCosts[$defense->id]->plastic) . "</td>
-                                        <td width=\"10%\" " . $ress_style_fuel . ">" . nf($defenseCosts[$defense->id]->fuel) . "</td>
-                                        <td width=\"10%\" " . $ress_style_food . ">" . nf($food_costs) . "</td>";
+                                        <td width=\"10%\" " . $ress_style_metal . ">" . StringUtils::formatNumber($defenseCosts[$defense->id]->metal) . "</td>
+                                        <td width=\"10%\" " . $ress_style_crystal . ">" . StringUtils::formatNumber($defenseCosts[$defense->id]->crystal) . "</td>
+                                        <td width=\"10%\" " . $ress_style_plastic . ">" . StringUtils::formatNumber($defenseCosts[$defense->id]->plastic) . "</td>
+                                        <td width=\"10%\" " . $ress_style_fuel . ">" . StringUtils::formatNumber($defenseCosts[$defense->id]->fuel) . "</td>
+                                        <td width=\"10%\" " . $ress_style_food . ">" . StringUtils::formatNumber($food_costs) . "</td>";
 
                                 //Maximale Anzahl erreicht
                                 if ($def_count >= $defense->maxCount && $defense->maxCount != 0) {

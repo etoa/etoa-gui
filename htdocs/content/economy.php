@@ -8,6 +8,7 @@ use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Ship\ShipDataRepository;
 use EtoA\Ship\ShipRepository;
 use EtoA\Ship\ShipSearch;
+use EtoA\Support\StringUtils;
 use EtoA\Technology\TechnologyRepository;
 use EtoA\UI\ResourceBoxDrawer;
 use EtoA\Universe\Planet\PlanetRepository;
@@ -177,14 +178,14 @@ if ($cp) {
 
             // Werte anzeigen
             foreach ($resourceKeys as $resourceKey) {
-                echo "<td " . tm("Grundproduktion ohne Boni", nf(floor($bareBuildingProduction[$resourceKey])) . " t/h") . ">" . nf($prodIncludingBoni[$resourceKey], 1) . "</td>";
+                echo "<td " . tm("Grundproduktion ohne Boni", StringUtils::formatNumber(floor($bareBuildingProduction[$resourceKey])) . " t/h") . ">" . StringUtils::formatNumber($prodIncludingBoni[$resourceKey], true) . "</td>";
             }
             // energy
             echo "<td";
             if ($building_power_use > 0) {
                 echo " style=\"color:#f00\"";
             }
-            echo ">" . nf(ceil($building_power_use * $buildlist->prodPercent)) . "</td>";
+            echo ">" . StringUtils::formatNumber(ceil($building_power_use * $buildlist->prodPercent)) . "</td>";
             echo "<td>";
 
             if ($buildlist->buildType == RES_BUILDING_CAT) {
@@ -235,15 +236,15 @@ if ($cp) {
 
             echo "<tr><th>TOTAL Produktion</th>";
             foreach ($resourceKeys as $resourceKey) {
-                echo "<td style=\"color:#0f0\"" . tm("Grundproduktion ohne Boni", nf(floor($baseResourceProd[$resourceKey])) . " t/h") . ">" . nf($cnt[$resourceKey]) . "</td>";
+                echo "<td style=\"color:#0f0\"" . tm("Grundproduktion ohne Boni", StringUtils::formatNumber(floor($baseResourceProd[$resourceKey])) . " t/h") . ">" . StringUtils::formatNumber($cnt[$resourceKey]) . "</td>";
             }
-            echo "<td style=\"color:#f00\">" . nf($pwrcnt) . "</td>";
+            echo "<td style=\"color:#f00\">" . StringUtils::formatNumber($pwrcnt) . "</td>";
             echo "<td></td>";
             echo "</tr>";
 
             echo "<tr><th>Boost (" . $cu->boostBonusProduction . ")</th>";
             foreach ($resourceKeys as $resourceKey) {
-                echo "<td style=\"color:#0f0\">" . nf($bonusProd[$resourceKey]) . "</td>";
+                echo "<td style=\"color:#0f0\">" . StringUtils::formatNumber($bonusProd[$resourceKey]) . "</td>";
             }
             echo "<td style=\"color:#f00\">-</td>";
             echo "<td></td>";
@@ -258,9 +259,9 @@ if ($cp) {
 
         echo "<tr><th>TOTAL pro Stunde</th>";
         foreach ($resourceKeys as $resourceKey) {
-            echo "<td style=\"color:#0f0\">" . nf($cnt[$resourceKey]) . "</td>";
+            echo "<td style=\"color:#0f0\">" . StringUtils::formatNumber($cnt[$resourceKey]) . "</td>";
         }
-        echo "<td style=\"color:#f00\">" . nf($pwrcnt) . "</td>";
+        echo "<td style=\"color:#f00\">" . StringUtils::formatNumber($pwrcnt) . "</td>";
         echo "<td rowspan=\"3\" style=\"color:#f00;vertical-align:middle;\">
                 <input type=\"submit\" name=\"submitpercent\" class=\"button\" style=\"font-size:8pt;\" value=\"Speichern\" />
             </td>";
@@ -269,7 +270,7 @@ if ($cp) {
         echo "<tr><th>TOTAL pro Tag</th>";
         $fact = 24;
         foreach ($resourceKeys as $resourceKey) {
-            echo "<td style=\"color:#0f0\">" . nf($fact * $cnt[$resourceKey]) . "</td>";
+            echo "<td style=\"color:#0f0\">" . StringUtils::formatNumber($fact * $cnt[$resourceKey]) . "</td>";
         }
         echo "<td style=\"color:#f00\">-</td>";
         echo "</tr>";
@@ -277,7 +278,7 @@ if ($cp) {
         $fact = 168;
         echo "<tr><th>TOTAL pro Woche</th>";
         foreach ($resourceKeys as $resourceKey) {
-            echo "<td style=\"color:#0f0\">" . nf($fact * $cnt[$resourceKey]) . "</td>";
+            echo "<td style=\"color:#0f0\">" . StringUtils::formatNumber($fact * $cnt[$resourceKey]) . "</td>";
         }
         echo "<td style=\"color:#f00\">-</td>";
         echo "</tr>";
@@ -287,7 +288,7 @@ if ($cp) {
 
         // Bei zuwenig Strom Warnmessage
         if ($pwrcnt > $planet->prodPower) {
-            echo "<tr><td colspan=\"8\" style=\"color:#f00; text-align:center;\">Zuwenig Energie! " . nf(floor($pwrcnt)) . " ben&ouml;tigt, " . nf(floor($planet->prodPower)) . " verf&uuml;gbar. Gesamtproduktion wird auf " . (round($planet->prodPower / $pwrcnt, 3) * 100) . "% gesenkt!</td></tr>";
+            echo "<tr><td colspan=\"8\" style=\"color:#f00; text-align:center;\">Zuwenig Energie! " . StringUtils::formatNumber(floor($pwrcnt)) . " ben&ouml;tigt, " . StringUtils::formatNumber(floor($planet->prodPower)) . " verf&uuml;gbar. Gesamtproduktion wird auf " . (round($planet->prodPower / $pwrcnt, 3) * 100) . "% gesenkt!</td></tr>";
 
             foreach ($resourceKeys as $resourceKey) {
                 $cnt[$resourceKey] = floor($cnt[$resourceKey] * $planet->prodPower / $pwrcnt);
@@ -295,10 +296,10 @@ if ($cp) {
 
             echo "<tr><th>TOTAL</th>";
             foreach ($resourceKeys as $resourceKey) {
-                echo "<td>" . nf($cnt[$resourceKey]) . "</td>";
+                echo "<td>" . StringUtils::formatNumber($cnt[$resourceKey]) . "</td>";
             }
 
-            echo "<td colspan=\"2\">" . nf(floor($planet->prodPower)) . "</td>";
+            echo "<td colspan=\"2\">" . StringUtils::formatNumber(floor($planet->prodPower)) . "</td>";
             echo "</tr>";
         }
         tableEnd();
@@ -321,7 +322,7 @@ if ($cp) {
     if ($blvl > 0) {
         iBoxStart("Rohstoffbunker");
         echo "In deinem <b>" . $bunkerBuilding->name . "</b> der Stufe <b>$blvl</b> werden bei einem
-            Angriff <b>" . nf($bunkerBuilding->calculateBunkerResources($blvl)) . "</b> Resourcen gesichert!";
+            Angriff <b>" . StringUtils::formatNumber($bunkerBuilding->calculateBunkerResources($blvl)) . "</b> Resourcen gesichert!";
         iBoxEnd();
     }
 
@@ -364,7 +365,7 @@ if ($cp) {
             $prodIncludingBoni['power'] *= $bonusFactor;
 
             echo "<tr><th>" . $building->name . " (" . $buildlist->currentLevel . ")</th>";
-            echo "<td colspan=\"3\">" . nf(floor($prodIncludingBoni['power'])) . "</td></tr>";
+            echo "<td colspan=\"3\">" . StringUtils::formatNumber(floor($prodIncludingBoni['power'])) . "</td></tr>";
 
             // Zum Total hinzufügen
             $cnt['power'] += $prodIncludingBoni['power'];
@@ -382,8 +383,8 @@ if ($cp) {
             $pwr = ($ship->powerProduction + $solarProdBonus);
             $pwr *= $bonusFactor;
             $pwrt = $pwr * $shipCounts[$ship->id];
-            echo "<tr><th>" . $ship->name . " (" . nf($shipCounts[$ship->id]) . ")</th>";
-            echo "<td colspan=\"3\">" . nf($pwrt) . "
+            echo "<tr><th>" . $ship->name . " (" . StringUtils::formatNumber($shipCounts[$ship->id]) . ")</th>";
+            echo "<td colspan=\"3\">" . StringUtils::formatNumber($pwrt) . "
                 (Energie pro Satellit: " . (($pwr)) . " = " . $ship->powerProduction . " Basis, " . $solarTempString . " bedingt durch Entfernung zur Sonne, " . get_percent_string($bonusFactor, 1) . " durch Energiebonus)</td>";
             echo "</tr>";
             $cnt['power'] += $pwrt;
@@ -393,11 +394,11 @@ if ($cp) {
     // Totals
     $powerProduced = $cnt['power'];
     echo "<tr><th style=\"height:2px;\" colspan=\"4\"></th></tr>";
-    echo "<tr><th>TOTAL produziert</td><td colspan=\"3\">" . nf($powerProduced) . "</th></tr>";
+    echo "<tr><th>TOTAL produziert</td><td colspan=\"3\">" . StringUtils::formatNumber($powerProduced) . "</th></tr>";
     if ($powerProduced != 0) {
         $powerFree = $powerProduced - $powerUsed;
         echo "<tr><th>Benutzt</td><td";
-        echo ">" . nf($powerUsed) . "</td><td>" . round($powerUsed / $powerProduced * 100, 2) . "%</th>
+        echo ">" . StringUtils::formatNumber($powerUsed) . "</td><td>" . round($powerUsed / $powerProduced * 100, 2) . "%</th>
             <td>
             <img src=\"misc/progress.image.php?r=1&w=100&p=" . round($powerUsed / $powerProduced * 100, 2) . "\" alt=\"progress\" />
             </td>
@@ -407,7 +408,7 @@ if ($cp) {
         else
             $style = " style=\"color:#0f0\"";
         echo "<tr><th>Verfügbar</td><td $style>
-            " . nf($powerFree) . "
+            " . StringUtils::formatNumber($powerFree) . "
             </td>
             <td $style>
             " . round($powerFree / $powerProduced * 100, 2) . "%</td>
@@ -434,7 +435,7 @@ if ($cp) {
         echo "<tr><th>Grundkapazit&auml;t</th>";
         $storetotal = [];
         for ($x = 0; $x < 5; $x++) {
-            echo "<td>" . nf($config->getInt('def_store_capacity')) . "</td>";
+            echo "<td>" . StringUtils::formatNumber($config->getInt('def_store_capacity')) . "</td>";
             $storetotal[$x] = $config->getInt('def_store_capacity');
         }
         echo "</tr>";
@@ -451,14 +452,14 @@ if ($cp) {
             $store[4] = round($building->storeFood * pow($building->storeFactor, $level));
             foreach ($store as $id => $sd) {
                 $storetotal[$id] += $sd;
-                echo "<td>" . nf($sd) . "</td>";
+                echo "<td>" . StringUtils::formatNumber($sd) . "</td>";
             }
             echo "</tr>";
         }
         echo "<tr><th style=\"height:2px;\" colspan=\"6\"></th></tr>";
         echo "<tr><th>TOTAL</th>";
         foreach ($storetotal as $id => $sd) {
-            echo "<td>" . nf($sd, 1) . "</td>";
+            echo "<td>" . StringUtils::formatNumber($sd, true) . "</td>";
         }
         echo "</tr>";
         echo "<tr><th>Benuzt</th>";

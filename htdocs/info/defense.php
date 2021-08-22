@@ -4,6 +4,7 @@ use EtoA\Defense\DefenseCategoryRepository;
 use EtoA\Defense\DefenseDataRepository;
 use EtoA\Race\RaceDataRepository;
 use EtoA\Ship\ShipDataRepository;
+use EtoA\Support\StringUtils;
 
 /** @var RaceDataRepository $raceRepository */
 $raceRepository = $app[RaceDataRepository::class];
@@ -34,17 +35,17 @@ if (isset($_GET['id']) && intval($_GET['id']) > 0) {
         echo "<td class=\"tbldata\">" . text2html($defense->longComment) . "</td></tr>";
         echo "<tr><td class=\"tbltitle\">Rasse</td><td class=\"tbldata\">";
         echo $defense->raceId > 0 ? $raceNames[$defense->raceId] . "</td></tr>" : "-</td></tr>";
-        echo "<tr><td class=\"tbltitle\">" . RES_ICON_METAL . "" . RES_METAL . "</td><td class=\"tbldata\">" . nf($defense->costsMetal) . "</td></tr>";
-        echo "<tr><td class=\"tbltitle\">" . RES_ICON_CRYSTAL . "" . RES_CRYSTAL . "</td><td class=\"tbldata\">" . nf($defense->costsCrystal) . "</td></tr>";
-        echo "<tr><td class=\"tbltitle\">" . RES_ICON_PLASTIC . "" . RES_PLASTIC . "</td><td class=\"tbldata\">" . nf($defense->costsPlastic) . "</td></tr>";
-        echo "<tr><td class=\"tbltitle\">" . RES_ICON_FUEL . "" . RES_FUEL . "</td><td class=\"tbldata\">" . nf($defense->costsFuel) . "</td></tr>";
-        echo "<tr><td class=\"tbltitle\">" . RES_ICON_FOOD . "" . RES_FOOD . "</td><td class=\"tbldata\">" . nf($defense->costsFood) . "</td></tr>";
-        echo "<tr><td class=\"tbltitle\">Struktur</td><td class=\"tbldata\">" . nf($defense->structure) . "</td></tr>";
-        echo "<tr><td class=\"tbltitle\">Abwehrschild</td><td class=\"tbldata\">" . nf($defense->shield) . "</td></tr>";
-        echo "<tr><td class=\"tbltitle\">Schusskraft</td><td class=\"tbldata\">" . nf($defense->weapon) . "</td></tr>";
-        echo "<tr><td class=\"tbltitle\">Reparatur</td><td class=\"tbldata\">" . nf($defense->heal) . "</td></tr>";
-        echo "<tr><td class=\"tbltitle\">Platzverbrauch</td><td class=\"tbldata\">" . nf($defense->fields) . " Felder</td></tr>";
-        echo "<tr><td class=\"tbltitle\">Max. Anzahl</td><td class=\"tbldata\">" . nf($defense->maxCount) . "</td></tr>";
+        echo "<tr><td class=\"tbltitle\">" . RES_ICON_METAL . "" . RES_METAL . "</td><td class=\"tbldata\">" . StringUtils::formatNumber($defense->costsMetal) . "</td></tr>";
+        echo "<tr><td class=\"tbltitle\">" . RES_ICON_CRYSTAL . "" . RES_CRYSTAL . "</td><td class=\"tbldata\">" . StringUtils::formatNumber($defense->costsCrystal) . "</td></tr>";
+        echo "<tr><td class=\"tbltitle\">" . RES_ICON_PLASTIC . "" . RES_PLASTIC . "</td><td class=\"tbldata\">" . StringUtils::formatNumber($defense->costsPlastic) . "</td></tr>";
+        echo "<tr><td class=\"tbltitle\">" . RES_ICON_FUEL . "" . RES_FUEL . "</td><td class=\"tbldata\">" . StringUtils::formatNumber($defense->costsFuel) . "</td></tr>";
+        echo "<tr><td class=\"tbltitle\">" . RES_ICON_FOOD . "" . RES_FOOD . "</td><td class=\"tbldata\">" . StringUtils::formatNumber($defense->costsFood) . "</td></tr>";
+        echo "<tr><td class=\"tbltitle\">Struktur</td><td class=\"tbldata\">" . StringUtils::formatNumber($defense->structure) . "</td></tr>";
+        echo "<tr><td class=\"tbltitle\">Abwehrschild</td><td class=\"tbldata\">" . StringUtils::formatNumber($defense->shield) . "</td></tr>";
+        echo "<tr><td class=\"tbltitle\">Schusskraft</td><td class=\"tbldata\">" . StringUtils::formatNumber($defense->weapon) . "</td></tr>";
+        echo "<tr><td class=\"tbltitle\">Reparatur</td><td class=\"tbldata\">" . StringUtils::formatNumber($defense->heal) . "</td></tr>";
+        echo "<tr><td class=\"tbltitle\">Platzverbrauch</td><td class=\"tbldata\">" . StringUtils::formatNumber($defense->fields) . " Felder</td></tr>";
+        echo "<tr><td class=\"tbltitle\">Max. Anzahl</td><td class=\"tbldata\">" . StringUtils::formatNumber($defense->maxCount) . "</td></tr>";
         tableEnd();
 
         /** @var ShipDataRepository $shipDataRepository */
@@ -119,12 +120,12 @@ if (isset($_GET['id']) && intval($_GET['id']) > 0) {
                     echo $raceNames[$defense->raceId];
                 else
                     echo "-";
-                echo "<td>" . nf($defense->fields) . "</td>";
-                echo "<td>" . nf($defense->weapon) . "</td>";
-                echo "<td>" . nf($defense->structure) . "</td>";
-                echo "<td>" . nf($defense->shield) . "</td>";
-                echo "<td>" . nf($defense->heal) . "</td>";
-                echo "<td>" . nf($defense->points) . "</td></tr>";
+                echo "<td>" . StringUtils::formatNumber($defense->fields) . "</td>";
+                echo "<td>" . StringUtils::formatNumber($defense->weapon) . "</td>";
+                echo "<td>" . StringUtils::formatNumber($defense->structure) . "</td>";
+                echo "<td>" . StringUtils::formatNumber($defense->shield) . "</td>";
+                echo "<td>" . StringUtils::formatNumber($defense->heal) . "</td>";
+                echo "<td>" . StringUtils::formatNumber($defense->points) . "</td></tr>";
             }
             tableEnd();
         }

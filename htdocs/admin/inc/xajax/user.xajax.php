@@ -151,10 +151,10 @@ function userPointsTable($uid, $target, $length = 100, $start = -1, $end = -1)
             echo "<tr>
                 <td class=\"tbldata\">" . date("d.m.Y", $points->timestamp) . "</td>
                 <td class=\"tbldata\">" . date("H:i", $points->timestamp) . "</td>
-                <td class=\"tbldata\">" . nf($points->points) . "</td>
-                <td class=\"tbldata\">" . nf($points->buildingPoints) . "</td>
-                <td class=\"tbldata\">" . nf($points->techPoints) . "</td>
-                <td class=\"tbldata\">" . nf($points->shipPoints) . "</td>
+                <td class=\"tbldata\">" . StringUtils::formatNumber($points->points) . "</td>
+                <td class=\"tbldata\">" . StringUtils::formatNumber($points->buildingPoints) . "</td>
+                <td class=\"tbldata\">" . StringUtils::formatNumber($points->techPoints) . "</td>
+                <td class=\"tbldata\">" . StringUtils::formatNumber($points->shipPoints) . "</td>
             </tr>";
         }
     } else {
@@ -593,13 +593,13 @@ function loadEconomy($uid, $target)
                     if ($val_time[$planet->id][$x] < 43200) {
                         echo " style=\"font-style:italic;\" ";
                     }
-                    echo ">" . nf($val_res[$planet->id][$x]) . "</td>";
+                    echo ">" . StringUtils::formatNumber($val_res[$planet->id][$x]) . "</td>";
                 }
                 //Speicher Gefüllt
                 else {
                     echo " " . tm("Speicher", "Speicher voll!") . "";
                     echo " style=\"\" ";
-                    echo "><b>" . nf($val_res[$planet->id][$x]) . "</b></td>";
+                    echo "><b>" . StringUtils::formatNumber($val_res[$planet->id][$x]) . "</b></td>";
                 }
             }
             echo "</tr>";
@@ -611,11 +611,11 @@ function loadEconomy($uid, $target)
                                 <tr>
                                     <td class=\"tbltitle\">Total</td>";
         for ($x = 0; $x < 6; $x++) {
-            echo "<td class=\"tbltitle\">" . nf($tot_res[$x]) . "</td>";
+            echo "<td class=\"tbltitle\">" . StringUtils::formatNumber($tot_res[$x]) . "</td>";
         }
         echo "</tr><tr><th class=\"tbltitle\">Durchschnitt</th>";
         for ($x = 0; $x < 6; $x++) {
-            echo "<td class=\"tbltitle\">" . nf($tot_res[$x] / $cnt_res) . "</td>";
+            echo "<td class=\"tbltitle\">" . StringUtils::formatNumber($tot_res[$x] / $cnt_res) . "</td>";
         }
         echo "</tr>";
         echo "</table>";
@@ -708,7 +708,7 @@ function loadEconomy($uid, $target)
                 } else {
                     echo " class=\"tbldata\"";
                 }
-                echo " " . tm($tm_header, $tm) . ">" . nf($val_prod[$planet->id][$x]) . "</td>";
+                echo " " . tm($tm_header, $tm) . ">" . StringUtils::formatNumber($val_prod[$planet->id][$x]) . "</td>";
             }
             echo "</tr>";
             $cnt_prod++;
@@ -716,10 +716,10 @@ function loadEconomy($uid, $target)
         echo "<tr><td colspan=\"6\"></td></tr>";
         echo "<tr><th class=\"tbltitle\">Total</th>";
         for ($x = 0; $x < 6; $x++)
-            echo "<td class=\"tbltitle\">" . nf($tot_prod[$x]) . "</td>";
+            echo "<td class=\"tbltitle\">" . StringUtils::formatNumber($tot_prod[$x]) . "</td>";
         echo "</tr><tr><th class=\"tbltitle\">Durchschnitt</th>";
         for ($x = 0; $x < 6; $x++)
-            echo "<td class=\"tbltitle\">" . nf($tot_prod[$x] / $cnt_prod) . "</td>";
+            echo "<td class=\"tbltitle\">" . StringUtils::formatNumber($tot_prod[$x] / $cnt_prod) . "</td>";
         echo "</tr>";
         echo "</table>";
     } else {

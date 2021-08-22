@@ -11,6 +11,7 @@ use EtoA\Log\LogSeverity;
 use EtoA\Race\RaceDataRepository;
 use EtoA\Ranking\UserBannerService;
 use EtoA\Specialist\SpecialistDataRepository;
+use EtoA\Support\StringUtils;
 use EtoA\User\UserCommentRepository;
 use EtoA\User\UserHolidayService;
 use EtoA\User\UserLoginFailureRepository;
@@ -407,22 +408,22 @@ if ($user !== null) {
                 <tr>
                     <td class=\"tbltitle\">Punkte:</td>
                     <td class=\"tbldata\">
-                        " . nf($user->points) . "
+                        " . StringUtils::formatNumber($user->points) . "
                         [<a href=\"javascript:;\" onclick=\"toggleBox('pointGraph')\">Verlauf anzeigen</a>]
                         <div id=\"pointGraph\" style=\"display:none;\"><img src=\"../misc/stats.image.php?user=" . $user->id . "\" alt=\"Diagramm\" /></div>
                     </td>
                 </tr>
                 <tr>
                     <td class=\"tbltitle\">Rang:</td>
-                    <td class=\"tbldata\">" . nf($user->rank) . " (aktuell), " . nf($user->rankHighest) . " (max)</td>
+                    <td class=\"tbldata\">" . StringUtils::formatNumber($user->rank) . " (aktuell), " . StringUtils::formatNumber($user->rankHighest) . " (max)</td>
                 </tr>
                 <tr>
                     <td class=\"tbltitle\">Rohstoffe von...</td>
                     <td class=\"tbldata\">
-                        Raids: " . nf($user->resFromRaid) . " t<br/>
-                        Asteroiden: " . nf($user->resFromAsteroid) . " t<br/>
-                        Nebelfelder: " . nf($user->resFromNebula) . " t<br/>
-        Trümmerfelder: " . nf($user->resFromTf) . " t
+                        Raids: " . StringUtils::formatNumber($user->resFromRaid) . " t<br/>
+                        Asteroiden: " . StringUtils::formatNumber($user->resFromAsteroid) . " t<br/>
+                        Nebelfelder: " . StringUtils::formatNumber($user->resFromNebula) . " t<br/>
+        Trümmerfelder: " . StringUtils::formatNumber($user->resFromTf) . " t
                     </td>
                 </tr>
                 <tr>

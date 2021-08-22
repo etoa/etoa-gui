@@ -175,7 +175,7 @@ foreach ($planets as $planet) {
             if ($val_time[$planet->id][$x] < 43200) {
                 echo '<i>';
             }
-            echo nf($val_res[$planet->id][$x]);
+            echo StringUtils::formatNumber($val_res[$planet->id][$x]);
             if ($val_time[$planet->id][$x] < 43200) {
                 echo '</i>';
             }
@@ -185,7 +185,7 @@ foreach ($planets as $planet) {
         else {
             echo ' ' . tm("Speicher", "Speicher voll!") . '';
             echo ' style="" ';
-            echo '><b>' . nf($val_res[$planet->id][$x]) . '</b></td>';
+            echo '><b>' . StringUtils::formatNumber($val_res[$planet->id][$x]) . '</b></td>';
         }
     }
     echo '</tr>';
@@ -194,10 +194,10 @@ foreach ($planets as $planet) {
 echo '<tr><td colspan="7"></td></tr>';
 echo '<tr><th>Total</th>';
 for ($x = 0; $x < 6; $x++)
-    echo '<td>' . nf($tot_res[$x]) . '</td>';
+    echo '<td>' . StringUtils::formatNumber($tot_res[$x]) . '</td>';
 echo '</tr><tr><th>Durchschnitt</th>';
 for ($x = 0; $x < 6; $x++)
-    echo '<th>' . nf($tot_res[$x] / $cnt_res) . '</th>';
+    echo '<th>' . StringUtils::formatNumber($tot_res[$x] / $cnt_res) . '</th>';
 echo '</tr>';
 tableEnd();
 
@@ -238,7 +238,7 @@ foreach ($planets as $planet) {
         } else {
             echo ' ';
         }
-        echo '>' . nf($val_prod[$planet->id][$x]) . '</td>';
+        echo '>' . StringUtils::formatNumber($val_prod[$planet->id][$x]) . '</td>';
     }
     echo '</tr>';
     $cnt_prod++;
@@ -246,10 +246,10 @@ foreach ($planets as $planet) {
 echo '<tr><td colspan="7"></td></tr>';
 echo '<tr><th>Total</th>';
 for ($x = 0; $x < 6; $x++)
-    echo '<td>' . nf($tot_prod[$x]) . '</td>';
+    echo '<td>' . StringUtils::formatNumber($tot_prod[$x]) . '</td>';
 echo '</tr><tr><th>Durchschnitt</th>';
 for ($x = 0; $x < 6; $x++)
-    echo '<th>' . nf($tot_prod[$x] / $cnt_prod) . '</th>';
+    echo '<th>' . StringUtils::formatNumber($tot_prod[$x] / $cnt_prod) . '</th>';
 echo '</tr>';
 tableEnd();
 

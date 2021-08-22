@@ -6,6 +6,7 @@ namespace EtoA\Ranking;
 
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Race\RaceDataRepository;
+use EtoA\Support\StringUtils;
 use EtoA\User\UserRatingRepository;
 use EtoA\User\UserRatingSearch;
 use EtoA\User\UserRatingSort;
@@ -92,7 +93,7 @@ class UserTitlesService
                         </td>
                         <td class=\"tbldata\" style=\"vertical-align:middle;padding-top:0px;padding-left:15px;\">
                             <span style=\"font-size:13pt;color:#ff0;\">" . $stat->nick . "</span><br/><br/>
-                            " . nf($stat->points) . " Punkte<br/><br/>";
+                            " . StringUtils::formatNumber($stat->points) . " Punkte<br/><br/>";
                     echo "[<a href=\"" . $profile . "\">Profil</a>]";
                     echo "</td>
                     </tr>";
@@ -146,7 +147,7 @@ class UserTitlesService
                         </td>
                         <td class=\"tbldata\" style=\"vertical-align:middle;padding-top:0px;padding-left:15px;\">
                             <span style=\"font-size:13pt;color:#ff0;\">" . $rating->userNick . "</span><br/><br/>
-                            " . nf($rating->rating) . " Punkte<br/><br/>";
+                            " . StringUtils::formatNumber($rating->rating) . " Punkte<br/><br/>";
                     echo "[<a href=\"" . $profile . "\">Profil</a>]";
                     echo "</td>
                     </tr>";
@@ -186,7 +187,7 @@ class UserTitlesService
                         </td>
                         <td class=\"tbldata\" style=\"vertical-align:middle;padding-top:0px;padding-left:15px;\">
                             <span style=\"font-size:13pt;color:#ff0;\">" . $user->nick . "</span><br/><br/>
-                            " . nf($user->points) . " Punkte &nbsp;&nbsp;&nbsp;";
+                            " . StringUtils::formatNumber($user->points) . " Punkte &nbsp;&nbsp;&nbsp;";
                 echo "[<a href=\"" . $profile . "\">Profil</a>]";
                 echo "</td>
                     </tr>";

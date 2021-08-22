@@ -72,37 +72,11 @@ function get_user_nick($id)
 }
 
 /**
- * Format number
- */
-function nf($number, $colorize = 0, $ex = 0)    // Number format
-{
-    if ($ex == 1) {
-        if ($number > 1000000000)
-            $n = round($number / 1000000000, 3) . " G";
-        elseif ($number > 1000000)
-            $n = round($number / 1000000, 3) . " M";
-        elseif ($number > 1000)
-            $n = round($number / 1000, 3) . " K";
-        else
-            $n = round($number, 0);
-        return $n;
-    } else
-        $n = number_format($number, 0, ",", "`");
-    if ($colorize == 1) {
-        if ($number > 0)
-            return "<span style=\"color:#0f0\">" . $n . "</span>";
-        if ($number < 0)
-            return "<span style=\"color:#f00\">" . $n . "</span>";
-    }
-    return $n;
-}
-
-/**
  * Format number (round up)
  */
 function nf_up($number, $colorize = 0, $ex = 0)    // Number format
 {
-    return nf(ceil($number), $colorize, $ex);
+    return StringUtils::formatNumber(ceil($number), $colorize, $ex);
 }
 
 /**

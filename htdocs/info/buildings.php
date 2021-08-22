@@ -4,6 +4,7 @@ use EtoA\Building\BuildingDataRepository;
 use EtoA\Building\BuildingRepository;
 use EtoA\Building\BuildingTypeDataRepository;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Support\StringUtils;
 
 /** @var ConfigurationService $config */
 $config = $app[ConfigurationService::class];
@@ -68,9 +69,9 @@ if ($request->query->has('id') && $request->query->getInt('id') > 0) {
                 $prod_item = round($building->prodMetal * pow($building->productionFactor, $level - 1));
                 $power_use = round($building->powerUse * pow($building->productionFactor, $level - 1));
                 if ($level === $currentLevel) {
-                    echo "<tr><td class=\"tbldata2\">$level</td><td class=\"tbldata2\">" . nf($prod_item) . "</td><td class=\"tbldata2\">" . nf($power_use) . "</td></tr>";
+                    echo "<tr><td class=\"tbldata2\">$level</td><td class=\"tbldata2\">" . StringUtils::formatNumber($prod_item) . "</td><td class=\"tbldata2\">" . StringUtils::formatNumber($power_use) . "</td></tr>";
                 } else {
-                    echo "<tr><td>$level</td><td>" . nf($prod_item) . "</td><td>" . nf($power_use) . "</td></tr>";
+                    echo "<tr><td>$level</td><td>" . StringUtils::formatNumber($prod_item) . "</td><td>" . StringUtils::formatNumber($power_use) . "</td></tr>";
                 }
             }
 
@@ -85,9 +86,9 @@ if ($request->query->has('id') && $request->query->getInt('id') > 0) {
                 $prod_item = round($building->prodCrystal * pow($building->productionFactor, $level - 1));
                 $power_use = round($building->powerUse * pow($building->productionFactor, $level - 1));
                 if ($level === $currentLevel) {
-                    echo "<tr><td class=\"tbldata2\">$level</td><td class=\"tbldata2\">" . nf($prod_item) . "</td><td class=\"tbldata2\">" . nf($power_use) . "</td></tr>";
+                    echo "<tr><td class=\"tbldata2\">$level</td><td class=\"tbldata2\">" . StringUtils::formatNumber($prod_item) . "</td><td class=\"tbldata2\">" . StringUtils::formatNumber($power_use) . "</td></tr>";
                 } else {
-                    echo "<tr><td>$level</td><td>" . nf($prod_item) . "</td><td>" . nf($power_use) . "</td></tr>";
+                    echo "<tr><td>$level</td><td>" . StringUtils::formatNumber($prod_item) . "</td><td>" . StringUtils::formatNumber($power_use) . "</td></tr>";
                 }
             }
 
@@ -102,9 +103,9 @@ if ($request->query->has('id') && $request->query->getInt('id') > 0) {
                 $prod_item = round($building->prodPlastic * pow($building->productionFactor, $level - 1));
                 $power_use = round($building->powerUse * pow($building->productionFactor, $level - 1));
                 if ($level === $currentLevel) {
-                    echo "<tr><td class=\"tbldata2\">$level</td><td class=\"tbldata2\">" . nf($prod_item) . "</td><td class=\"tbldata2\">" . nf($power_use) . "</td></tr>";
+                    echo "<tr><td class=\"tbldata2\">$level</td><td class=\"tbldata2\">" . StringUtils::formatNumber($prod_item) . "</td><td class=\"tbldata2\">" . StringUtils::formatNumber($power_use) . "</td></tr>";
                 } else {
-                    echo "<tr><td>$level</td><td>" . nf($prod_item) . "</td><td>" . nf($power_use) . "</td></tr>";
+                    echo "<tr><td>$level</td><td>" . StringUtils::formatNumber($prod_item) . "</td><td>" . StringUtils::formatNumber($power_use) . "</td></tr>";
                 }
             }
 
@@ -119,9 +120,9 @@ if ($request->query->has('id') && $request->query->getInt('id') > 0) {
                 $prod_item = round($building->prodFuel * pow($building->productionFactor, $level - 1));
                 $power_use = round($building->powerUse * pow($building->productionFactor, $level - 1));
                 if ($level === $currentLevel) {
-                    echo "<tr><td class=\"tbldata2\">$level</td><td class=\"tbldata2\">" . nf($prod_item) . "</td><td class=\"tbldata2\">" . nf($power_use) . "</td></tr>";
+                    echo "<tr><td class=\"tbldata2\">$level</td><td class=\"tbldata2\">" . StringUtils::formatNumber($prod_item) . "</td><td class=\"tbldata2\">" . StringUtils::formatNumber($power_use) . "</td></tr>";
                 } else {
-                    echo "<tr><td>$level</td><td>" . nf($prod_item) . "</td><td>" . nf($power_use) . "</td></tr>";
+                    echo "<tr><td>$level</td><td>" . StringUtils::formatNumber($prod_item) . "</td><td>" . StringUtils::formatNumber($power_use) . "</td></tr>";
                 }
             }
 
@@ -136,9 +137,9 @@ if ($request->query->has('id') && $request->query->getInt('id') > 0) {
                 $prod_item = round($building->prodFood * pow($building->productionFactor, $level - 1));
                 $power_use = round($building->powerUse * pow($building->productionFactor, $level - 1));
                 if ($level === $currentLevel) {
-                    echo "<tr><td class=\"tbldata2\">$level</td><td class=\"tbldata2\">" . nf($prod_item) . "</td><td class=\"tbldata2\">" . nf($power_use) . "</td></tr>";
+                    echo "<tr><td class=\"tbldata2\">$level</td><td class=\"tbldata2\">" . StringUtils::formatNumber($prod_item) . "</td><td class=\"tbldata2\">" . StringUtils::formatNumber($power_use) . "</td></tr>";
                 } else {
-                    echo "<tr><td>$level</td><td>" . nf($prod_item) . "</td><td>" . nf($power_use) . "</td></tr>";
+                    echo "<tr><td>$level</td><td>" . StringUtils::formatNumber($prod_item) . "</td><td>" . StringUtils::formatNumber($power_use) . "</td></tr>";
                 }
             }
 
@@ -149,20 +150,20 @@ if ($request->query->has('id') && $request->query->getInt('id') > 0) {
         elseif ($building->id === 6) {
             tableStart("Produktion (ohne Boni)");
             echo "<tr><th>Rohstoff</th><th>Prod.</th><th>Lager</th></tr>";
-            echo "<tr><td>" . RES_METAL . "</td><td>" . nf($building->prodMetal) . "</td><td>" . nf($building->storeMetal) . "</td></tr>";
-            echo "<tr><td>" . RES_CRYSTAL . "</td><td>" . nf($building->prodCrystal) . "</td><td>" . nf($building->storeCrystal) . "</td></tr>";
-            echo "<tr><td>" . RES_PLASTIC . "</td><td>" . nf($building->prodPlastic) . "</td><td>" . nf($building->storePlastic) . "</td></tr>";
-            echo "<tr><td>" . RES_FUEL . "</td><td>" . nf($building->prodFuel) . "</td><td>" . nf($building->storeFuel) . "</td></tr>";
-            echo "<tr><td>" . RES_FOOD . "</td><td>" . nf($building->prodFood) . "</td><td>" . nf($building->storeFood) . "</td></tr>";
-            echo "<tr><td>Bewohner</td><td>-</td><td> " . nf($building->peoplePlace) . " Plätze</td></tr>";
-            echo "<tr><td>Energie</td><td>" . nf($building->prodPower) . "</td><td>-</td></tr>";
+            echo "<tr><td>" . RES_METAL . "</td><td>" . StringUtils::formatNumber($building->prodMetal) . "</td><td>" . StringUtils::formatNumber($building->storeMetal) . "</td></tr>";
+            echo "<tr><td>" . RES_CRYSTAL . "</td><td>" . StringUtils::formatNumber($building->prodCrystal) . "</td><td>" . StringUtils::formatNumber($building->storeCrystal) . "</td></tr>";
+            echo "<tr><td>" . RES_PLASTIC . "</td><td>" . StringUtils::formatNumber($building->prodPlastic) . "</td><td>" . StringUtils::formatNumber($building->storePlastic) . "</td></tr>";
+            echo "<tr><td>" . RES_FUEL . "</td><td>" . StringUtils::formatNumber($building->prodFuel) . "</td><td>" . StringUtils::formatNumber($building->storeFuel) . "</td></tr>";
+            echo "<tr><td>" . RES_FOOD . "</td><td>" . StringUtils::formatNumber($building->prodFood) . "</td><td>" . StringUtils::formatNumber($building->storeFood) . "</td></tr>";
+            echo "<tr><td>Bewohner</td><td>-</td><td> " . StringUtils::formatNumber($building->peoplePlace) . " Plätze</td></tr>";
+            echo "<tr><td>Energie</td><td>" . StringUtils::formatNumber($building->prodPower) . "</td><td>-</td></tr>";
             tableEnd();
         }
 
         // Wohnmodul
         elseif ($building->id === 7) {
             $basePeoplePlace = $buildingDataRepository->getBuilding(6)->peoplePlace;
-            echo "Beachte das es einen Grundwohnraum für <b>" . nf($config->param1Int('user_start_people')) . "</b> Menschen pro Planet gibt. Ebenfalls bietet die
+            echo "Beachte das es einen Grundwohnraum für <b>" . StringUtils::formatNumber($config->param1Int('user_start_people')) . "</b> Menschen pro Planet gibt. Ebenfalls bietet die
                 <a href=\"?$link&amp;site=buildings&amp;id=6\">Planetenbasis</a> Platz für <b>" . $basePeoplePlace . "</b> Menschen.<br/>";
 
             tableStart("Platz f&uuml;r Bewohner");
@@ -175,12 +176,12 @@ if ($request->query->has('id') && $request->query->getInt('id') > 0) {
                 $prod_item = round($building->peoplePlace * pow($building->storeFactor, $level - 1));
                 if ($level === $currentLevel) {
                     echo "<tr><td class=\"tbldata2\">$level</td>
-                         <td class=\"tbldata2\">" . nf($prod_item) . "</td>
-                         <td class=\"tbldata2\">" . nf($prod_item + $basePeoplePlace + $config->param1Int('user_start_people')) . "</td>
+                         <td class=\"tbldata2\">" . StringUtils::formatNumber($prod_item) . "</td>
+                         <td class=\"tbldata2\">" . StringUtils::formatNumber($prod_item + $basePeoplePlace + $config->param1Int('user_start_people')) . "</td>
                          </tr>";
                 } else {
-                    echo "<tr><td>$level</td><td>" . nf($prod_item) . "</td>
-                          <td>" . nf($prod_item + $basePeoplePlace + $config->param1Int('user_start_people')) . "</td></tr>";
+                    echo "<tr><td>$level</td><td>" . StringUtils::formatNumber($prod_item) . "</td>
+                          <td>" . StringUtils::formatNumber($prod_item + $basePeoplePlace + $config->param1Int('user_start_people')) . "</td></tr>";
                 }
             }
 
@@ -198,9 +199,9 @@ if ($request->query->has('id') && $request->query->getInt('id') > 0) {
                 $prod_item = round($building->prodPower * pow($building->productionFactor, $level - 1));
                 $power_use = round($building->powerUse * pow($building->productionFactor, $level - 1));
                 if ($level === $currentLevel) {
-                    echo "<tr><td class=\"tbldata2\">$level</td><td class=\"tbldata2\">" . nf($prod_item) . "</td></tr>";
+                    echo "<tr><td class=\"tbldata2\">$level</td><td class=\"tbldata2\">" . StringUtils::formatNumber($prod_item) . "</td></tr>";
                 } else {
-                    echo "<tr><td>$level</td><td>" . nf($prod_item) . "</td></tr>";
+                    echo "<tr><td>$level</td><td>" . StringUtils::formatNumber($prod_item) . "</td></tr>";
                 }
             }
 
@@ -210,14 +211,14 @@ if ($request->query->has('id') && $request->query->getInt('id') > 0) {
         // Titanspeicher
         elseif ($building->id === 16) {
             $baseStoreMetal = $buildingDataRepository->getBuilding(6)->storeMetal;
-            tableStart("Lagerkapazit&auml;t (inklusive Planetenbasiskapazit&auml;t (" . nf($baseStoreMetal) . ") und Standardkapazit&auml;t (" . nf($config->getInt("def_store_capacity")) . ") des Planeten)");
+            tableStart("Lagerkapazit&auml;t (inklusive Planetenbasiskapazit&auml;t (" . StringUtils::formatNumber($baseStoreMetal) . ") und Standardkapazit&auml;t (" . StringUtils::formatNumber($config->getInt("def_store_capacity")) . ") des Planeten)");
             echo "<tr><th>Stufe</th><th>Kapazit&auml;t</th></tr>";
             for ($level = $b_level; $level < SHOWLEVELS + $b_level; $level++) {
                 $prod_item = $config->getInt("def_store_capacity") + $baseStoreMetal + round($building->storeMetal * pow($building->storeFactor, $level - 1));
                 if ($level === $currentLevel) {
-                    echo "<tr><td class=\"tbldata2\">$level</td><td class=\"tbldata2\">" . nf($prod_item) . "</td></tr>";
+                    echo "<tr><td class=\"tbldata2\">$level</td><td class=\"tbldata2\">" . StringUtils::formatNumber($prod_item) . "</td></tr>";
                 } else {
-                    echo "<tr><td>$level</td><td>" . nf($prod_item) . "</td></tr>";
+                    echo "<tr><td>$level</td><td>" . StringUtils::formatNumber($prod_item) . "</td></tr>";
                 }
             }
 
@@ -227,14 +228,14 @@ if ($request->query->has('id') && $request->query->getInt('id') > 0) {
         // Siliziumspeicher
         elseif ($building->id === 17) {
             $baseStoreCrystal = $buildingDataRepository->getBuilding(6)->storeCrystal;
-            tableStart("Lagerkapazit&auml;t (inklusive Planetenbasiskapazit&auml;t (" . nf($baseStoreCrystal) . ") und Standardkapazit&auml;t (" . nf($config->getInt("def_store_capacity")) . ") des Planeten)");
+            tableStart("Lagerkapazit&auml;t (inklusive Planetenbasiskapazit&auml;t (" . StringUtils::formatNumber($baseStoreCrystal) . ") und Standardkapazit&auml;t (" . StringUtils::formatNumber($config->getInt("def_store_capacity")) . ") des Planeten)");
             echo "<tr><th>Stufe</th><th>Kapazit&auml;t</th></tr>";
             for ($level = $b_level; $level < SHOWLEVELS + $b_level; $level++) {
                 $prod_item = $config->getInt("def_store_capacity") + $baseStoreCrystal + round($building->storeCrystal * pow($building->storeFactor, $level - 1));
                 if ($level === $currentLevel) {
-                    echo "<tr><td class=\"tbldata2\">$level</td><td class=\"tbldata2\">" . nf($prod_item) . "</td></tr>";
+                    echo "<tr><td class=\"tbldata2\">$level</td><td class=\"tbldata2\">" . StringUtils::formatNumber($prod_item) . "</td></tr>";
                 } else {
-                    echo "<tr><td>$level</td><td>" . nf($prod_item) . "</td></tr>";
+                    echo "<tr><td>$level</td><td>" . StringUtils::formatNumber($prod_item) . "</td></tr>";
                 }
             }
 
@@ -244,14 +245,14 @@ if ($request->query->has('id') && $request->query->getInt('id') > 0) {
         // Lagerhalle
         elseif ($building->id === 18) {
             $baseStorePlastic = $buildingDataRepository->getBuilding(6)->storePlastic;
-            tableStart("Kapazit&auml;t inklusive Planetenbasiskapazit&auml;t (" . nf($baseStorePlastic) . ") und Standardkapazit&auml;t (" . nf($config->getInt("def_store_capacity")) . ")");
+            tableStart("Kapazit&auml;t inklusive Planetenbasiskapazit&auml;t (" . StringUtils::formatNumber($baseStorePlastic) . ") und Standardkapazit&auml;t (" . StringUtils::formatNumber($config->getInt("def_store_capacity")) . ")");
             echo "<tr><th>Stufe</th><th>Kapazit&auml;t</th></tr>";
             for ($level = $b_level; $level < SHOWLEVELS + $b_level; $level++) {
                 $prod_item = $config->getInt("def_store_capacity") + $baseStorePlastic + round($building->storePlastic * pow($building->storeFactor, $level - 1));
                 if ($level === $currentLevel) {
-                    echo "<tr><td class=\"tbldata2\">$level</td><td class=\"tbldata2\">" . nf($prod_item) . "</td></tr>";
+                    echo "<tr><td class=\"tbldata2\">$level</td><td class=\"tbldata2\">" . StringUtils::formatNumber($prod_item) . "</td></tr>";
                 } else {
-                    echo "<tr><td>$level</td><td>" . nf($prod_item) . "</td></tr>";
+                    echo "<tr><td>$level</td><td>" . StringUtils::formatNumber($prod_item) . "</td></tr>";
                 }
             }
 
@@ -261,14 +262,14 @@ if ($request->query->has('id') && $request->query->getInt('id') > 0) {
         // Nahrungssilos
         elseif ($building->id === 19) {
             $baseStoreFood = $buildingDataRepository->getBuilding(6)->storeFood;
-            tableStart("Lagerkapazit&auml;t (inklusive Planetenbasiskapazit&auml;t (" . nf($baseStoreFood) . ") und Standardkapazit&auml;t (" . nf($config->getInt("def_store_capacity")) . ") des Planeten)");
+            tableStart("Lagerkapazit&auml;t (inklusive Planetenbasiskapazit&auml;t (" . StringUtils::formatNumber($baseStoreFood) . ") und Standardkapazit&auml;t (" . StringUtils::formatNumber($config->getInt("def_store_capacity")) . ") des Planeten)");
             echo "<tr><th>Stufe</th><th>Kapazit&auml;t</th></tr>";
             for ($level = $b_level; $level < SHOWLEVELS + $b_level; $level++) {
                 $prod_item = $config->getInt("def_store_capacity") + $baseStoreFood + round($building->storeFood * pow($building->storeFactor, $level - 1));
                 if ($level === $currentLevel) {
-                    echo "<tr><td class=\"tbldata2\">$level</td><td class=\"tbldata2\">" . nf($prod_item) . "</td></tr>";
+                    echo "<tr><td class=\"tbldata2\">$level</td><td class=\"tbldata2\">" . StringUtils::formatNumber($prod_item) . "</td></tr>";
                 } else {
-                    echo "<tr><td>$level</td><td>" . nf($prod_item) . "</td></tr>";
+                    echo "<tr><td>$level</td><td>" . StringUtils::formatNumber($prod_item) . "</td></tr>";
                 }
             }
 
@@ -278,14 +279,14 @@ if ($request->query->has('id') && $request->query->getInt('id') > 0) {
         // Tritiumsilo
         elseif ($building->id === 20) {
             $baseStoreFuel = $buildingDataRepository->getBuilding(6)->storeFuel;
-            tableStart("Lagerkapazit&auml;t (inklusive Planetenbasiskapazit&auml;t (" . nf($baseStoreFuel) . ") und Standardkapazit&auml;t (" . nf($config->getInt("def_store_capacity")) . ") des Planeten)");
+            tableStart("Lagerkapazit&auml;t (inklusive Planetenbasiskapazit&auml;t (" . StringUtils::formatNumber($baseStoreFuel) . ") und Standardkapazit&auml;t (" . StringUtils::formatNumber($config->getInt("def_store_capacity")) . ") des Planeten)");
             echo "<tr><th>Stufe</th><th>Kapazit&auml;t</th></tr>";
             for ($level = $b_level; $level < SHOWLEVELS + $b_level; $level++) {
                 $prod_item = $config->getInt("def_store_capacity") + $baseStoreFuel + round($building->storeFuel * pow($building->storeFactor, $level - 1));
                 if ($level === $currentLevel) {
-                    echo "<tr><td class=\"tbldata2\">$level</td><td class=\"tbldata2\">" . nf($prod_item) . "</td></tr>";
+                    echo "<tr><td class=\"tbldata2\">$level</td><td class=\"tbldata2\">" . StringUtils::formatNumber($prod_item) . "</td></tr>";
                 } else {
-                    echo "<tr><td>$level</td><td>" . nf($prod_item) . "</td></tr>";
+                    echo "<tr><td>$level</td><td>" . StringUtils::formatNumber($prod_item) . "</td></tr>";
                 }
             }
 
@@ -301,30 +302,30 @@ if ($request->query->has('id') && $request->query->getInt('id') > 0) {
                 $power_use = round($building->powerUse * pow($building->productionFactor, $level - 1));
 
                 if ($level === $currentLevel) {
-                    echo "<tr><td class=\"tbldata2\">$level</td><td class=\"tbldata2\">" . nf($prod_item) . "</td><td class=\"tbldata2\">" . nf($power_use) . "</td>";
+                    echo "<tr><td class=\"tbldata2\">$level</td><td class=\"tbldata2\">" . StringUtils::formatNumber($prod_item) . "</td><td class=\"tbldata2\">" . StringUtils::formatNumber($power_use) . "</td>";
                 } else {
-                    echo "<tr><td>$level</td><td>" . nf($prod_item) . "</td><td>" . nf($power_use) . "</td>";
+                    echo "<tr><td>$level</td><td>" . StringUtils::formatNumber($prod_item) . "</td><td>" . StringUtils::formatNumber($power_use) . "</td>";
                 }
 
                 $prod_item = round($building->storeMetal * pow($building->storeFactor, $level - 1));
                 if ($level === $currentLevel) {
-                    echo "<td class=\"tbldata2\">" . nf($prod_item) . "</td>";
+                    echo "<td class=\"tbldata2\">" . StringUtils::formatNumber($prod_item) . "</td>";
                 } else {
-                    echo "<td>" . nf($prod_item) . "</td>";
+                    echo "<td>" . StringUtils::formatNumber($prod_item) . "</td>";
                 }
 
                 $prod_item = round($building->storeCrystal * pow($building->storeFactor, $level - 1));
                 if ($level === $currentLevel) {
-                    echo "<td class=\"tbldata2\">" . nf($prod_item) . "</td>";
+                    echo "<td class=\"tbldata2\">" . StringUtils::formatNumber($prod_item) . "</td>";
                 } else {
-                    echo "<td>" . nf($prod_item) . "</td>";
+                    echo "<td>" . StringUtils::formatNumber($prod_item) . "</td>";
                 }
 
                 $prod_item = round($building->storePlastic * pow($building->storeFactor, $level - 1));
                 if ($level === $currentLevel) {
-                    echo "<td class=\"tbldata2\">" . nf($prod_item) . "</td>";
+                    echo "<td class=\"tbldata2\">" . StringUtils::formatNumber($prod_item) . "</td>";
                 } else {
-                    echo "<td>" . nf($prod_item) . "</td>";
+                    echo "<td>" . StringUtils::formatNumber($prod_item) . "</td>";
                 }
             }
 
@@ -338,9 +339,9 @@ if ($request->query->has('id') && $request->query->getInt('id') > 0) {
             for ($level = $b_level; $level < SHOWLEVELS + $b_level; $level++) {
                 $power_use = round($building->powerUse * pow($building->productionFactor, $level - 1));
                 if ($level === $currentLevel) {
-                    echo "<tr><td class=\"tbldata2\">$level</td><td class=\"tbldata2\">" . nf($power_use) . "</td></tr>";
+                    echo "<tr><td class=\"tbldata2\">$level</td><td class=\"tbldata2\">" . StringUtils::formatNumber($power_use) . "</td></tr>";
                 } else {
-                    echo "<tr><td>$level</td><td>" . nf($power_use) . "</td></tr>";
+                    echo "<tr><td>$level</td><td>" . StringUtils::formatNumber($power_use) . "</td></tr>";
                 }
             }
 
@@ -353,9 +354,9 @@ if ($request->query->has('id') && $request->query->getInt('id') > 0) {
             for ($level = $b_level; $level < $building->lastLevel + $b_level; $level++) {
                 $prod_item = round($building->bunkerRes * pow($building->storeFactor, $level - 1));
                 if ($level === $currentLevel) {
-                    echo "<tr><td class=\"tbldata2\">$level</td><td class=\"tbldata2\">" . nf($prod_item) . "</td></tr>";
+                    echo "<tr><td class=\"tbldata2\">$level</td><td class=\"tbldata2\">" . StringUtils::formatNumber($prod_item) . "</td></tr>";
                 } else {
-                    echo "<tr><td>$level</td><td>" . nf($prod_item) . "</td></tr>";
+                    echo "<tr><td>$level</td><td>" . StringUtils::formatNumber($prod_item) . "</td></tr>";
                 }
             }
 
@@ -369,16 +370,16 @@ if ($request->query->has('id') && $request->query->getInt('id') > 0) {
             for ($level = $b_level; $level < $building->lastLevel + $b_level; $level++) {
                 $prod_item = round($building->bunkerFleetSpace * pow($building->storeFactor, $level - 1));
                 if ($level === $currentLevel) {
-                    echo "<tr><td class=\"tbldata2\">$level</td><td class=\"tbldata2\">" . nf($prod_item) . "</td>";
+                    echo "<tr><td class=\"tbldata2\">$level</td><td class=\"tbldata2\">" . StringUtils::formatNumber($prod_item) . "</td>";
                 } else {
-                    echo "<tr><td>$level</td><td>" . nf($prod_item) . "</td>";
+                    echo "<tr><td>$level</td><td>" . StringUtils::formatNumber($prod_item) . "</td>";
                 }
 
                 $prod_item = round($building->bunkerFleetCount * pow($building->storeFactor, $level - 1));
                 if ($level === $currentLevel) {
-                    echo "<td class=\"tbldata2\">" . nf($prod_item) . "</td></tr>";
+                    echo "<td class=\"tbldata2\">" . StringUtils::formatNumber($prod_item) . "</td></tr>";
                 } else {
-                    echo "<td>" . nf($prod_item) . "</td></tr>";
+                    echo "<td>" . StringUtils::formatNumber($prod_item) . "</td></tr>";
                 }
             }
 
@@ -397,13 +398,13 @@ if ($request->query->has('id') && $request->query->getInt('id') > 0) {
         for ($x = 0; $x < min(30, $building->lastLevel); $x++) {
             $bc = calcBuildingCosts($building, $x);
             echo '<tr><td>' . ($x + 1) . '</td>
-                    <td style="text-align:right;">' . nf($bc['metal']) . '</td>
-                    <td style="text-align:right;">' . nf($bc['crystal']) . '</td>
-                    <td style="text-align:right;">' . nf($bc['plastic']) . '</td>
-                    <td style="text-align:right;">' . nf($bc['fuel']) . '</td>
-                    <td style="text-align:right;">' . nf($bc['food']) . '</td>
-   <!-- 	  <td style="text-align:right;">' . nf($bc['power']) . '</td>      -->
-                    <td style="text-align:right;">' . nf($building->fields * ($x + 1)) . '</td></tr>';
+                    <td style="text-align:right;">' . StringUtils::formatNumber($bc['metal']) . '</td>
+                    <td style="text-align:right;">' . StringUtils::formatNumber($bc['crystal']) . '</td>
+                    <td style="text-align:right;">' . StringUtils::formatNumber($bc['plastic']) . '</td>
+                    <td style="text-align:right;">' . StringUtils::formatNumber($bc['fuel']) . '</td>
+                    <td style="text-align:right;">' . StringUtils::formatNumber($bc['food']) . '</td>
+   <!-- 	  <td style="text-align:right;">' . StringUtils::formatNumber($bc['power']) . '</td>      -->
+                    <td style="text-align:right;">' . StringUtils::formatNumber($building->fields * ($x + 1)) . '</td></tr>';
         }
         tableEnd();
 

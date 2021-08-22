@@ -3,6 +3,7 @@
 use EtoA\Building\BuildingDataRepository;
 use EtoA\Building\BuildingRepository;
 use EtoA\Ship\ShipRepository;
+use EtoA\Support\StringUtils;
 use EtoA\UI\ResourceBoxDrawer;
 use EtoA\Universe\Planet\PlanetRepository;
 
@@ -118,8 +119,8 @@ if ($cp) {
                 }
 
                 echo "<td " . tm($ships[$shipId]->name, "<img src=\"" . IMAGE_PATH . "/" . IMAGE_SHIP_DIR . "/ship" . $shipId . "_middle." . IMAGE_EXT . "\" style=\"float:left;margin-right:5px;\">" . text2html($ships[$shipId]->shortComment) . "<br/>" . $acstr . "<br style=\"clear:both;\"/>") . ">" . $ships[$shipId]->name . "</td>";
-                echo "<td width=\"150\">" . nf($ships[$shipId]->structure) . "</td>";
-                echo "<td width=\"110\">" . nf($bunkeredCount) . "<br/>";
+                echo "<td width=\"150\">" . StringUtils::formatNumber($ships[$shipId]->structure) . "</td>";
+                echo "<td width=\"110\">" . StringUtils::formatNumber($bunkeredCount) . "<br/>";
 
                 echo "</td>";
                 echo "<td width=\"110\"><input type=\"text\"
@@ -136,7 +137,7 @@ if ($cp) {
                 $count += $bunkeredCount;
                 $jsAllShips["ship_bunker_count_" . $shipId] = $bunkeredCount;
             }
-            echo "<tr><th colspan=\"2\">Benutzt:</th><td>" . nf($structure) . "/" . nf($fleetBunker->calculateBunkerFleetSpace($fleetBunkerLevel)) . "</td><td>" . nf($count) . "/" . nf($fleetBunker->calculateBunkerFleetCount($fleetBunkerLevel)) . "</td><td >";
+            echo "<tr><th colspan=\"2\">Benutzt:</th><td>" . StringUtils::formatNumber($structure) . "/" . StringUtils::formatNumber($fleetBunker->calculateBunkerFleetSpace($fleetBunkerLevel)) . "</td><td>" . StringUtils::formatNumber($count) . "/" . StringUtils::formatNumber($fleetBunker->calculateBunkerFleetCount($fleetBunkerLevel)) . "</td><td >";
 
             // Select all ships button
             echo "<a href=\"javascript:;\" onclick=\"";
@@ -242,8 +243,8 @@ if ($cp) {
                 }
 
                 echo "<td " . tm($ships[$shipId]->name, "<img src=\"" . IMAGE_PATH . "/" . IMAGE_SHIP_DIR . "/ship" . $shipId . "_middle." . IMAGE_EXT . "\" style=\"float:left;margin-right:5px;\">" . text2html($ships[$shipId]->shortComment) . "<br/>" . $acstr . "<br style=\"clear:both;\"/>") . ">" . $ships[$shipId]->name . "</td>";
-                echo "<td width=\"150\">" . nf($ships[$shipId]->structure) . "</td>";
-                echo "<td width=\"110\">" . nf($shipCount) . "<br/>";
+                echo "<td width=\"150\">" . StringUtils::formatNumber($ships[$shipId]->structure) . "</td>";
+                echo "<td width=\"110\">" . StringUtils::formatNumber($shipCount) . "<br/>";
 
                 echo "</td>";
                 echo "<td width=\"110\"><input type=\"text\"
@@ -304,17 +305,17 @@ if ($cp) {
             tableStart("Rohstoffbunker", 400);
             echo "
             <tr><th style=\"width:150px\">" . RES_ICON_METAL . "" . RES_METAL . "</th>
-            <td><input type=\"text\" id=\"bunker_metal\" name=\"bunker_metal\" value=\"" . nf($planet->bunkerMetal) . "\" size=\"8\" maxlength=\"20\" onKeyUp=\"FormatNumber(this.id,this.value, '', '', '');\"/></td></tr>
+            <td><input type=\"text\" id=\"bunker_metal\" name=\"bunker_metal\" value=\"" . StringUtils::formatNumber($planet->bunkerMetal) . "\" size=\"8\" maxlength=\"20\" onKeyUp=\"FormatNumber(this.id,this.value, '', '', '');\"/></td></tr>
             <tr><th style=\"width:150px\">" . RES_ICON_CRYSTAL . "" . RES_CRYSTAL . "</th>
-                <td><input type=\"text\" id=\"bunker_crysttal\" name=\"bunker_crystal\" value=\"" . nf($planet->bunkerCrystal) . "\" size=\"8\" maxlength=\"20\" onKeyUp=\"FormatNumber(this.id,this.value, '', '', '');\"/></td></tr>
+                <td><input type=\"text\" id=\"bunker_crysttal\" name=\"bunker_crystal\" value=\"" . StringUtils::formatNumber($planet->bunkerCrystal) . "\" size=\"8\" maxlength=\"20\" onKeyUp=\"FormatNumber(this.id,this.value, '', '', '');\"/></td></tr>
             <tr><th style=\"width:150px\">" . RES_ICON_PLASTIC . "" . RES_PLASTIC . "</th>
-                <td><input type=\"text\" id=\"bunker_plastic\" name=\"bunker_plastic\" value=\"" . nf($planet->bunkerPlastic) . "\" size=\"8\" maxlength=\"20\" onKeyUp=\"FormatNumber(this.id,this.value, '', '', '');\"/></td></tr>
+                <td><input type=\"text\" id=\"bunker_plastic\" name=\"bunker_plastic\" value=\"" . StringUtils::formatNumber($planet->bunkerPlastic) . "\" size=\"8\" maxlength=\"20\" onKeyUp=\"FormatNumber(this.id,this.value, '', '', '');\"/></td></tr>
             <tr><th style=\"width:150px\">" . RES_ICON_FUEL . "" . RES_FUEL . "</th>
-                <td><input type=\"text\" id=\"bunker_fuel\" name=\"bunker_fuel\" value=\"" . nf($planet->bunkerFuel) . "\" size=\"8\" maxlength=\"20\" onKeyUp=\"FormatNumber(this.id,this.value, '', '', '');\"/></td></tr>
+                <td><input type=\"text\" id=\"bunker_fuel\" name=\"bunker_fuel\" value=\"" . StringUtils::formatNumber($planet->bunkerFuel) . "\" size=\"8\" maxlength=\"20\" onKeyUp=\"FormatNumber(this.id,this.value, '', '', '');\"/></td></tr>
             <tr><th style=\"width:150px\">" . RES_ICON_FOOD . "" . RES_FOOD . "</th>
-                <td><input type=\"text\" id=\"bunker_food\" name=\"bunker_food\" value=\"" . nf($planet->bunkerFood) . "\" size=\"8\" maxlength=\"20\" onKeyUp=\"FormatNumber(this.id,this.value, '', '', '');\"/></td></tr>
+                <td><input type=\"text\" id=\"bunker_food\" name=\"bunker_food\" value=\"" . StringUtils::formatNumber($planet->bunkerFood) . "\" size=\"8\" maxlength=\"20\" onKeyUp=\"FormatNumber(this.id,this.value, '', '', '');\"/></td></tr>
             <tr><th style=\"width:150px\">Benutzt:</th>
-            <td>" . nf($bunkered) . "/" . nf($resBunker->calculateBunkerResources($resBunkerLevel)) . "</td></tr>
+            <td>" . StringUtils::formatNumber($bunkered) . "/" . StringUtils::formatNumber($resBunker->calculateBunkerResources($resBunkerLevel)) . "</td></tr>
             <tr><th>Verfügbar:</th><td><img src=\"misc/progress.image.php?r=1&w=100&p=" . round($bunkered / $resBunker->calculateBunkerResources($resBunkerLevel) * 100) . "\" alt=\"progress\" /></td></tr>";
             tableEnd();
             echo "<input type=\"submit\" name=\"submit_bunker_res\" value=\"Speichern\" />";

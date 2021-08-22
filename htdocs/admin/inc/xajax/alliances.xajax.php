@@ -4,6 +4,7 @@ use EtoA\Alliance\AllianceNewsRepository;
 use EtoA\Alliance\AllianceRepository;
 use EtoA\Alliance\AllianceSpendRepository;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Support\StringUtils;
 use EtoA\User\UserRepository;
 use EtoA\User\UserSearch;
 
@@ -288,11 +289,11 @@ function showSpend($allianceId, $form)
                             <th class=\"resfoodcolor\" style=\"width:20%\">" . RES_FOOD . "</th>
                         </tr>";
             echo "<tr>
-                            <td>" . nf($resources->metal) . "</td>
-                            <td>" . nf($resources->crystal) . "</td>
-                            <td>" . nf($resources->plastic) . "</td>
-                            <td>" . nf($resources->fuel) . "</td>
-                            <td>" . nf($resources->food) . "</td>
+                            <td>" . StringUtils::formatNumber($resources->metal) . "</td>
+                            <td>" . StringUtils::formatNumber($resources->crystal) . "</td>
+                            <td>" . StringUtils::formatNumber($resources->plastic) . "</td>
+                            <td>" . StringUtils::formatNumber($resources->fuel) . "</td>
+                            <td>" . StringUtils::formatNumber($resources->food) . "</td>
                         </tr>";
             tableEnd();
         } else {
@@ -332,11 +333,11 @@ function showSpend($allianceId, $form)
                                 <th class=\"resfoodcolor\" style=\"width:20%\">" . RES_FOOD . "</th>
                             </tr>";
                 echo "<tr>
-                                <td>" . nf($entry->metal) . "</td>
-                                <td>" . nf($entry->crystal) . "</td>
-                                <td>" . nf($entry->plastic) . "</td>
-                                <td>" . nf($entry->fuel) . "</td>
-                                <td>" . nf($entry->food) . "</td>
+                                <td>" . StringUtils::formatNumber($entry->metal) . "</td>
+                                <td>" . StringUtils::formatNumber($entry->crystal) . "</td>
+                                <td>" . StringUtils::formatNumber($entry->plastic) . "</td>
+                                <td>" . StringUtils::formatNumber($entry->fuel) . "</td>
+                                <td>" . StringUtils::formatNumber($entry->food) . "</td>
                             </tr>";
                 tableEnd();
             }

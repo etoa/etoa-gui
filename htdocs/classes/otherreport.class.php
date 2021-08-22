@@ -6,6 +6,7 @@
 
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Ship\ShipDataRepository;
+use EtoA\Support\StringUtils;
 
 /**
  * Description of otherreport
@@ -120,7 +121,7 @@ class OtherReport extends Report
                             $data = explode(':', $ship);
                             echo '<tr>
                                     <td>' . $shipNames[(int) $data[0]] . ' </td>
-                                    <td style="text-align:right;"> ' . nf($data[1]) . '</td>
+                                    <td style="text-align:right;"> ' . StringUtils::formatNumber((int) $data[1]) . '</td>
                                 </tr>';
                         }
                     }
@@ -132,12 +133,12 @@ class OtherReport extends Report
                 foreach ($resNames as $k => $v) {
                     echo '<tr>
                         <td>' . $v . ' </td>
-                        <td style="text-align:right;"> ' . nf($this->res[$k]) . '</td>
+                        <td style="text-align:right;"> ' . StringUtils::formatNumber($this->res[$k]) . '</td>
                         </tr>';
                 }
                 echo '<tr>
                         <td>Bewohner </td>
-                        <td style="text-align:right;"> ' . nf($this->res[5]) . '</td>
+                        <td style="text-align:right;"> ' . StringUtils::formatNumber($this->res[5]) . '</td>
                     </tr>';
                 echo '</table><br/>';
                 break;
@@ -148,12 +149,12 @@ class OtherReport extends Report
                 foreach ($resNames as $k => $v) {
                     echo '<tr>
                         <td>' . $v . ' </td>
-                        <td style="text-align:right;"> ' . nf($this->res[$k]) . '</td>
+                        <td style="text-align:right;"> ' . StringUtils::formatNumber($this->res[$k]) . '</td>
                         </tr>';
                 }
                 echo '<tr>
                         <td>Bewohner </td>
-                        <td style="text-align:right;"> ' . nf($this->res[5]) . '</td>
+                        <td style="text-align:right;"> ' . StringUtils::formatNumber($this->res[5]) . '</td>
                     </tr>';
                 echo '</table><br/>';
                 if ($this->ships != '') {
@@ -166,7 +167,7 @@ class OtherReport extends Report
                             $data = explode(':', $ship);
                             echo '<tr>
                                     <td>' . $shipNames[(int) $data[0]] . ' </td>
-                                    <td style="text-align:right;"> ' . nf($data[1]) . '</td>
+                                    <td style="text-align:right;"> ' . StringUtils::formatNumber((int) $data[1]) . '</td>
                                 </tr>';
                         }
                     }
@@ -193,7 +194,7 @@ class OtherReport extends Report
                             $data = explode(':', $ship);
                             echo '<tr>
                                     <td>' . $shipNames[(int) $data[0]] . ' </td>
-                                    <td style="text-align:right;"> ' . nf($data[1]) . '</td>
+                                    <td style="text-align:right;"> ' . StringUtils::formatNumber((int) $data[1]) . '</td>
                                 </tr>';
                         }
                     }
@@ -218,7 +219,7 @@ class OtherReport extends Report
                             $data = explode(':', $ship);
                             echo '<tr>
                                     <td>' . $shipNames[(int) $data[0]] . ' </td>
-                                    <td style="text-align:right;"> ' . nf($data[1]) . '</td>
+                                    <td style="text-align:right;"> ' . StringUtils::formatNumber((int) $data[1]) . '</td>
                                 </tr>';
                         }
                     }
@@ -229,12 +230,12 @@ class OtherReport extends Report
                 foreach ($resNames as $k => $v) {
                     echo '<tr>
                         <td>' . $v . ' </td>
-                        <td style="text-align:right;"> ' . nf($this->res[$k]) . '</td>
+                        <td style="text-align:right;"> ' . StringUtils::formatNumber($this->res[$k]) . '</td>
                         </tr>';
                 }
                 echo '<tr>
                         <td>Bewohner </td>
-                        <td style="text-align:right;"> ' . nf($this->res[5]) . '</td>
+                        <td style="text-align:right;"> ' . StringUtils::formatNumber($this->res[5]) . '</td>
                     </tr>';
                 echo '</table><br/>';
                 break;
@@ -262,12 +263,12 @@ class OtherReport extends Report
                 foreach ($resNames as $k => $v) {
                     echo '<tr>
                         <td>' . $v . ' </td>
-                        <td style="text-align:right;"> ' . nf($this->res[$k]) . '</td>
+                        <td style="text-align:right;"> ' . StringUtils::formatNumber($this->res[$k]) . '</td>
                         </tr>';
                 }
                 echo '<tr>
                         <td>Bewohner </td>
-                        <td style="text-align:right;"> ' . nf($this->res[5]) . '</td>
+                        <td style="text-align:right;"> ' . StringUtils::formatNumber($this->res[5]) . '</td>
                     </tr>';
                 echo '</table><br/>';
                 if ($this->ships != '') {
@@ -279,7 +280,7 @@ class OtherReport extends Report
                             $data = explode(':', $ship);
                             echo '<tr>
                                     <td>' . $shipNames[(int) $data[0]] . ' </td>
-                                    <td style="text-align:right;"> ' . nf($data[1]) . '</td>
+                                    <td style="text-align:right;"> ' . StringUtils::formatNumber((int) $data[1]) . '</td>
                                 </tr>';
                         }
                     }
@@ -305,7 +306,7 @@ class OtherReport extends Report
                             $data = explode(':', $ship);
                             echo '<tr>
                                     <td>' . $shipNames[(int) $data[0]] . ' </td>
-                                    <td style="text-align:right;"> ' . nf($data[1]) . '</td>
+                                    <td style="text-align:right;"> ' . StringUtils::formatNumber((int) $data[1]) . '</td>
                                 </tr>';
                         }
                     }
@@ -317,12 +318,12 @@ class OtherReport extends Report
                 foreach ($resNames as $k => $v) {
                     echo '<tr>
                         <td>' . $v . ' </td>
-                        <td style="text-align:right;"> ' . nf($this->res[$k]) . '</td>
+                        <td style="text-align:right;"> ' . StringUtils::formatNumber($this->res[$k]) . '</td>
                         </tr>';
                 }
                 echo '<tr>
                         <td>Bewohner </td>
-                        <td style="text-align:right;"> ' . nf($this->res[5]) . '</td>
+                        <td style="text-align:right;"> ' . StringUtils::formatNumber($this->res[5]) . '</td>
                     </tr>';
                 echo '</table><br/>';
                 break;
@@ -333,12 +334,12 @@ class OtherReport extends Report
                 foreach ($resNames as $k => $v) {
                     echo '<tr>
                         <td>' . $v . ' </td>
-                        <td style="text-align:right;"> ' . nf($this->res[$k]) . '</td>
+                        <td style="text-align:right;"> ' . StringUtils::formatNumber($this->res[$k]) . '</td>
                         </tr>';
                 }
                 echo '<tr>
                         <td>Bewohner </td>
-                        <td style="text-align:right;"> ' . nf($this->res[5]) . '</td>
+                        <td style="text-align:right;"> ' . StringUtils::formatNumber($this->res[5]) . '</td>
                     </tr>';
                 echo '</table><br/>';
                 if ($this->ships != '') {
@@ -350,7 +351,7 @@ class OtherReport extends Report
                             $data = explode(':', $ship);
                             echo '<tr>
                                     <td>' . $shipNames[(int) $data[0]] . ' </td>
-                                    <td style="text-align:right;"> ' . nf($data[1]) . '</td>
+                                    <td style="text-align:right;"> ' . StringUtils::formatNumber((int) $data[1]) . '</td>
                                 </tr>';
                         }
                     }
@@ -411,12 +412,12 @@ class OtherReport extends Report
                 foreach ($resNames as $k => $v) {
                     echo '<tr>
                         <td>' . $v . ' </td>
-                        <td style="text-align:right;"> ' . nf($this->res[$k]) . '</td>
+                        <td style="text-align:right;"> ' . StringUtils::formatNumber($this->res[$k]) . '</td>
                         </tr>';
                 }
                 echo '<tr>
                         <td>Bewohner </td>
-                        <td style="text-align:right;"> ' . nf($this->res[5]) . '</td>
+                        <td style="text-align:right;"> ' . StringUtils::formatNumber($this->res[5]) . '</td>
                     </tr>';
                 echo '</table><br/>';
                 break;
@@ -428,12 +429,12 @@ class OtherReport extends Report
                 foreach ($resNames as $k => $v) {
                     echo '<tr>
                         <td>' . $v . ' </td>
-                        <td style="text-align:right;"> ' . nf($this->res[$k]) . '</td>
+                        <td style="text-align:right;"> ' . StringUtils::formatNumber($this->res[$k]) . '</td>
                         </tr>';
                 }
                 echo '<tr>
                         <td>Bewohner </td>
-                        <td style="text-align:right;"> ' . nf($this->res[5]) . '</td>
+                        <td style="text-align:right;"> ' . StringUtils::formatNumber($this->res[5]) . '</td>
                     </tr>';
                 echo '</table><br/>';
                 break;
@@ -452,12 +453,12 @@ class OtherReport extends Report
                 foreach ($resNames as $k => $v) {
                     echo '<tr>
                         <td>' . $v . ' </td>
-                        <td style="text-align:right;"> ' . nf($this->res[$k]) . '</td>
+                        <td style="text-align:right;"> ' . StringUtils::formatNumber($this->res[$k]) . '</td>
                         </tr>';
                 }
                 echo '<tr>
                         <td>Bewohner </td>
-                        <td style="text-align:right;"> ' . nf($this->res[5]) . '</td>
+                        <td style="text-align:right;"> ' . StringUtils::formatNumber($this->res[5]) . '</td>
                     </tr>';
                 echo '</table><br/>';
                 break;

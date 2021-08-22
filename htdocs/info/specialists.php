@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\Specialist\SpecialistDataRepository;
+use EtoA\Support\StringUtils;
 
 echo "<h2>Spezialisten</h2>";
 HelpUtil::breadCrumbs(array("Spezialisten", "specialists"));
@@ -29,7 +30,7 @@ echo "</tr>";
 foreach ($specialists as $specialist) {
     echo '<tr>';
     echo '<th style="width:140px;">' . $specialist->name . '<br/>
-        <span style="font-size:8pt;font-weight:500;">Ab ' . nf($specialist->pointsRequirement) . ' Punkten<br/>
+        <span style="font-size:8pt;font-weight:500;">Ab ' . StringUtils::formatNumber($specialist->pointsRequirement) . ' Punkten<br/>
         Anstellbar für ' . $specialist->days . ' Tage</span></th>';
     echo '<td>' . $specialist->description . '</td>';
     echo '<td style="width:220px;">';
@@ -104,11 +105,11 @@ foreach ($specialists as $specialist) {
     echo $bonus;
     echo '</td>';
     echo '<td style="width:120px;">';
-    echo nf($specialist->costsMetal) . ' ' . RES_METAL . '<br/>';
-    echo nf($specialist->costsCrystal) . ' ' . RES_CRYSTAL . '<br/>';
-    echo nf($specialist->costsPlastic) . ' ' . RES_PLASTIC . '<br/>';
-    echo nf($specialist->costsFuel) . ' ' . RES_FUEL . '<br/>';
-    echo nf($specialist->costsFood) . ' ' . RES_FOOD . '<br/>';
+    echo StringUtils::formatNumber($specialist->costsMetal) . ' ' . RES_METAL . '<br/>';
+    echo StringUtils::formatNumber($specialist->costsCrystal) . ' ' . RES_CRYSTAL . '<br/>';
+    echo StringUtils::formatNumber($specialist->costsPlastic) . ' ' . RES_PLASTIC . '<br/>';
+    echo StringUtils::formatNumber($specialist->costsFuel) . ' ' . RES_FUEL . '<br/>';
+    echo StringUtils::formatNumber($specialist->costsFood) . ' ' . RES_FOOD . '<br/>';
     echo '</td>';
     echo '</tr>';
 }

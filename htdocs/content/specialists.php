@@ -265,7 +265,7 @@ foreach ($specialists as $specialist) {
     echo '<tr>';
     echo '<th style="width:140px;">' . $specialist->name . '</th>';
     echo '<td>';
-    echo nf($specialist->pointsRequirement);
+    echo StringUtils::formatNumber($specialist->pointsRequirement);
     echo '</td>';
     echo '<td>';
     echo $specialist->days . ' Tage';
@@ -274,11 +274,11 @@ foreach ($specialists as $specialist) {
     echo $avail . " / " . $totAvail;
     echo '</td>';
     echo '<td style="width:150px;">';
-    echo RES_ICON_METAL . nf($specialist->costsMetal * $factor) . ' ' . RES_METAL . '<br style="clear:both;"/>';
-    echo RES_ICON_CRYSTAL . nf($specialist->costsCrystal * $factor) . ' ' . RES_CRYSTAL . '<br style="clear:both;"/>';
-    echo RES_ICON_PLASTIC . nf($specialist->costsPlastic * $factor) . ' ' . RES_PLASTIC . '<br style="clear:both;"/>';
-    echo RES_ICON_FUEL . nf($specialist->costsFuel * $factor) . ' ' . RES_FUEL . '<br style="clear:both;"/>';
-    echo RES_ICON_FOOD . nf($specialist->costsFood * $factor) . ' ' . RES_FOOD . '<br style="clear:both;"/>';
+    echo RES_ICON_METAL . StringUtils::formatNumber($specialist->costsMetal * $factor) . ' ' . RES_METAL . '<br style="clear:both;"/>';
+    echo RES_ICON_CRYSTAL . StringUtils::formatNumber($specialist->costsCrystal * $factor) . ' ' . RES_CRYSTAL . '<br style="clear:both;"/>';
+    echo RES_ICON_PLASTIC . StringUtils::formatNumber($specialist->costsPlastic * $factor) . ' ' . RES_PLASTIC . '<br style="clear:both;"/>';
+    echo RES_ICON_FUEL . StringUtils::formatNumber($specialist->costsFuel * $factor) . ' ' . RES_FUEL . '<br style="clear:both;"/>';
+    echo RES_ICON_FOOD . StringUtils::formatNumber($specialist->costsFood * $factor) . ' ' . RES_FOOD . '<br style="clear:both;"/>';
     echo '</td>';
     if (!$s_active) {
         echo '<td>';

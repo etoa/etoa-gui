@@ -4,6 +4,7 @@ use EtoA\Bookmark\BookmarkOrder;
 use EtoA\Bookmark\BookmarkRepository;
 use EtoA\Bookmark\FleetBookmarkRepository;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Support\StringUtils;
 use EtoA\Universe\Entity\EntityCoordinates;
 use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Planet\PlanetRepository;
@@ -153,7 +154,7 @@ if ($mode == "fleet") {
 
             // Creating ship-print-string
             foreach ($bookmark->ships as $shipId => $count) {
-                echo nf($count) . " " . $shipNames[$shipId] . "<br />";
+                echo StringUtils::formatNumber($count) . " " . $shipNames[$shipId] . "<br />";
             }
             echo "</td>
                     <td id=\"fleet_bm_actions_" . $bookmark->id . "\" class=\"tbldata\">

@@ -1,5 +1,6 @@
 <?PHP
 
+use EtoA\Support\StringUtils;
 use EtoA\User\UserRepository;
 use EtoA\User\UserToXml;
 
@@ -91,27 +92,27 @@ if (isset($_GET['file'])) {
                         </tr>";
                     echo "<tr>
                             <td class=\"tbldata\">" . RES_METAL . ":</td>
-                            <td class=\"tbldata\"> " . nf(intval($p->metal)) . "</td>
+                            <td class=\"tbldata\"> " . StringUtils::formatNumber(intval($p->metal)) . "</td>
                         </tr>";
                     echo "<tr>
                             <td class=\"tbldata\">" . RES_CRYSTAL . ":</td>
-                            <td class=\"tbldata\"> " . nf(intval($p->crystal)) . "</td>
+                            <td class=\"tbldata\"> " . StringUtils::formatNumber(intval($p->crystal)) . "</td>
                         </tr>";
                     echo "<tr>
                             <td class=\"tbldata\">" . RES_PLASTIC . ":</td>
-                            <td class=\"tbldata\"> " . nf(intval($p->plastic)) . "</td>
+                            <td class=\"tbldata\"> " . StringUtils::formatNumber(intval($p->plastic)) . "</td>
                         </tr>";
                     echo "<tr>
                             <td class=\"tbldata\">" . RES_FUEL . ":</td>
-                            <td class=\"tbldata\"> " . nf(intval($p->fuel)) . "</td>
+                            <td class=\"tbldata\"> " . StringUtils::formatNumber(intval($p->fuel)) . "</td>
                         </tr>";
                     echo "<tr>
                             <td class=\"tbldata\">" . RES_FOOD . ":</td>
-                            <td class=\"tbldata\"> " . nf(intval($p->food)) . "</td>
+                            <td class=\"tbldata\"> " . StringUtils::formatNumber(intval($p->food)) . "</td>
                         </tr>";
                     echo "<tr>
                             <td class=\"tbldata\">Bewohner:</td>
-                            <td class=\"tbldata\"> " . nf(intval($p->people)) . "</td>
+                            <td class=\"tbldata\"> " . StringUtils::formatNumber(intval($p->people)) . "</td>
                         </tr>";
                 }
             }

@@ -46,7 +46,7 @@ if ($uid > 0) {
         if ($user->profileText != "") {
             echo "<tr><td colspan=\"2\" style=\"text-align:center\">" . text2html($user->profileText) . "</td></tr>";
         }
-        echo "<tr><th style=\"width:120px;\">Punkte:</th><td>" . nf($user->points) . "</td></tr>";
+        echo "<tr><th style=\"width:120px;\">Punkte:</th><td>" . StringUtils::formatNumber($user->points) . "</td></tr>";
         echo "<tr>
           <th>Rasse:</th>
           <td>" . $user->race->name . "</td>
@@ -66,13 +66,13 @@ if ($uid > 0) {
             echo "<a href=\"?page=alliance&amp;id=" . $user->allianceId . "\">" . $alliance->nameWithTag     . "</a></td></tr>";
         }
         if ($user->visits > 0) {
-            echo "<tr><th style=\"width:120px;\">Besucherz&auml;hler:</th><td>" . nf($user->visits) . " Besucher</td></tr>";
+            echo "<tr><th style=\"width:120px;\">Besucherz&auml;hler:</th><td>" . StringUtils::formatNumber($user->visits) . " Besucher</td></tr>";
         }
         if ($user->rank > 0) {
-            echo "<tr><th style=\"width:120px;\">Aktueller Rang:</th><td>" . nf($user->rank) . "</td></tr>";
+            echo "<tr><th style=\"width:120px;\">Aktueller Rang:</th><td>" . StringUtils::formatNumber($user->rank) . "</td></tr>";
         }
         if ($user->rankHighest > 0) {
-            echo "<tr><th style=\"width:120px;\">Bester Rang:</th><td>" . nf($user->rankHighest) . "</td></tr>";
+            echo "<tr><th style=\"width:120px;\">Bester Rang:</th><td>" . StringUtils::formatNumber($user->rankHighest) . "</td></tr>";
         }
 
         /** @var UserRatingRepository $userRatingRepository */
@@ -82,17 +82,17 @@ if ($uid > 0) {
 
         $battleRating = $userRatingRepository->getBattleRating($ratingSearch)[0] ?? null;
         if ($battleRating !== null && $battleRating->rating > 0) {
-            echo "<tr><th style=\"width:120px;\">Kampfpunkte:</th><td>" . nf($battleRating->rating) . " (Gewonnen/Verloren/Total: " . nf($battleRating->battlesWon) . "/" . nf($battleRating->battlesLost) . "/" . nf($battleRating->battlesFought) . ")</td></tr>";
+            echo "<tr><th style=\"width:120px;\">Kampfpunkte:</th><td>" . StringUtils::formatNumber($battleRating->rating) . " (Gewonnen/Verloren/Total: " . StringUtils::formatNumber($battleRating->battlesWon) . "/" . StringUtils::formatNumber($battleRating->battlesLost) . "/" . StringUtils::formatNumber($battleRating->battlesFought) . ")</td></tr>";
         }
 
         $tradeRating = $userRatingRepository->getTradeRating($ratingSearch)[0] ?? null;
         if ($tradeRating !== null && $tradeRating->rating > 0) {
-            echo "<tr><th style=\"width:120px;\">Handelspunkte:</th><td>" . nf($tradeRating->rating) . " (Einkäufe/Verkäufe: " . nf($tradeRating->tradesBuy) . "/" . nf($tradeRating->tradesSell) . ")</td></tr>";
+            echo "<tr><th style=\"width:120px;\">Handelspunkte:</th><td>" . StringUtils::formatNumber($tradeRating->rating) . " (Einkäufe/Verkäufe: " . StringUtils::formatNumber($tradeRating->tradesBuy) . "/" . StringUtils::formatNumber($tradeRating->tradesSell) . ")</td></tr>";
         }
 
         $diplomacyRating = $userRatingRepository->getDiplomacyRating($ratingSearch)[0] ?? null;
         if ($diplomacyRating !== null && $diplomacyRating->rating > 0) {
-            echo "<tr><th style=\"width:120px;\">Diplomatiepunkte:</th><td>" . nf($diplomacyRating->rating) . "</td></tr>";
+            echo "<tr><th style=\"width:120px;\">Diplomatiepunkte:</th><td>" . StringUtils::formatNumber($diplomacyRating->rating) . "</td></tr>";
         }
 
         if ($user->profileBoardUrl != "") {
@@ -153,10 +153,10 @@ if ($uid > 0) {
             $resourcesUser = $userRepository->getUser($cu->getId());
             if ($resourcesUser !== null) {
                 iBoxStart("Rohstoffe von...");
-                echo "Raids: " . nf($resourcesUser->resFromRaid) . " t</br>";
-                echo "Asteroiden: " . nf($resourcesUser->resFromAsteroid) . " t</br>";
-                echo "Nebelfelder: " . nf($resourcesUser->resFromNebula) . " t</br>";
-                echo "Trümmerfelder: " . nf($resourcesUser->resFromTf) . " t";
+                echo "Raids: " . StringUtils::formatNumber($resourcesUser->resFromRaid) . " t</br>";
+                echo "Asteroiden: " . StringUtils::formatNumber($resourcesUser->resFromAsteroid) . " t</br>";
+                echo "Nebelfelder: " . StringUtils::formatNumber($resourcesUser->resFromNebula) . " t</br>";
+                echo "Trümmerfelder: " . StringUtils::formatNumber($resourcesUser->resFromTf) . " t";
                 iBoxEnd();
             }
         }

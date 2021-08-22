@@ -11,6 +11,7 @@ use EtoA\Missile\MissileRepository;
 use EtoA\Requirement\RequirementRepositoryProvider;
 use EtoA\Ship\ShipDataRepository;
 use EtoA\Ship\ShipRepository;
+use EtoA\Support\StringUtils;
 use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Entity\EntitySearch;
 use EtoA\Universe\Entity\EntityType;
@@ -200,7 +201,7 @@ function showShipsOnPlanet($form)
                 <td>" . ($itemPoints) . "</td>
                 <td id=\"special_" . $item->id . "\">";
                 if ($ship->specialNeedExp > 0) {
-                    $out .= nf($item->specialShipExp) . " XP, Level " . Ship::levelByXp($ship->specialNeedExp, $ship->specialExpFactor, $item->specialShipExp);
+                    $out .= StringUtils::formatNumber($item->specialShipExp) . " XP, Level " . Ship::levelByXp($ship->specialNeedExp, $ship->specialExpFactor, $item->specialShipExp);
                 }
                 $out .= "
                 <td style=\"width:180px\" id=\"actions_" . $item->id . "\" id=\"actions_" . $item->id . "\">
@@ -209,7 +210,7 @@ function showShipsOnPlanet($form)
                 </td>
                 </tr>";
             }
-            $out .= "<tr><td colspan=\"3\"></td><td><b>" . nf($points) . "</b></td><td colspan=\"2\"></td></tr>";
+            $out .= "<tr><td colspan=\"3\"></td><td><b>" . StringUtils::formatNumber($points) . "</b></td><td colspan=\"2\"></td></tr>";
             $out .= "</table>";
         } else {
             $out = "Keine Schiffe vorhanden!<br/>";
@@ -237,7 +238,7 @@ function showShipsOnPlanet($form)
                 <td>" . ($ship->points * $count->count) . "</td>
                 <td id=\"special_" . $ship->id . "\">";
                 if ($ship->specialNeedExp > 0) {
-                    $out .= nf($count->exp) . " XP, Level " . Ship::levelByXp($ship->specialNeedExp, $ship->specialExpFactor, $count->exp);
+                    $out .= StringUtils::formatNumber($count->exp) . " XP, Level " . Ship::levelByXp($ship->specialNeedExp, $ship->specialExpFactor, $count->exp);
                 }
                 $out .= "
                 <td style=\"width:180px\" id=\"actions_" . $ship->id . "\" id=\"actions_" . $ship->id . "\">
@@ -245,7 +246,7 @@ function showShipsOnPlanet($form)
                 </td></tr>
                 <tr><td colspan=\"6\" id=\"edit_" . $ship->id . "\" style=\"display:none;\"></td></tr>";
             }
-            $out .= "<tr><td colspan=\"3\"></td><td><b>" . nf($points) . "</b></td><td colspan=\"2\"></td></tr>";
+            $out .= "<tr><td colspan=\"3\"></td><td><b>" . StringUtils::formatNumber($points) . "</b></td><td colspan=\"2\"></td></tr>";
             $out .= "</table>";
         } else {
             $out = "Keine Schiffe vorhanden!<br/>";
@@ -1024,12 +1025,12 @@ function buildingPrices($id, $lvl)
     $objResponse = new xajaxResponse();
     $building = $buildingRepository->getBuilding($id);
     $bc = calcBuildingCosts($building, $lvl);
-    $objResponse->assign("c1_metal", "innerHTML", nf($bc['metal']));
-    $objResponse->assign("c1_crystal", "innerHTML", nf($bc['crystal']));
-    $objResponse->assign("c1_plastic", "innerHTML", nf($bc['plastic']));
-    $objResponse->assign("c1_fuel", "innerHTML", nf($bc['fuel']));
-    $objResponse->assign("c1_food", "innerHTML", nf($bc['food']));
-    $objResponse->assign("c1_power", "innerHTML", nf($bc['power']));
+    $objResponse->assign("c1_metal", "innerHTML", StringUtils::formatNumber($bc['metal']));
+    $objResponse->assign("c1_crystal", "innerHTML", StringUtils::formatNumber($bc['crystal']));
+    $objResponse->assign("c1_plastic", "innerHTML", StringUtils::formatNumber($bc['plastic']));
+    $objResponse->assign("c1_fuel", "innerHTML", StringUtils::formatNumber($bc['fuel']));
+    $objResponse->assign("c1_food", "innerHTML", StringUtils::formatNumber($bc['food']));
+    $objResponse->assign("c1_power", "innerHTML", StringUtils::formatNumber($bc['power']));
 
     return $objResponse;
 }
@@ -1059,17 +1060,17 @@ function totalBuildingPrices($form)
         $bctt['plastic'] += $bct['plastic'];
         $bctt['fuel'] += $bct['fuel'];
         $bctt['food'] += $bct['food'];
-        $objResponse->assign("b_metal_" . $id, "innerHTML", nf($bct['metal']));
-        $objResponse->assign("b_crystal_" . $id, "innerHTML", nf($bct['crystal']));
-        $objResponse->assign("b_plastic_" . $id, "innerHTML", nf($bct['plastic']));
-        $objResponse->assign("b_fuel_" . $id, "innerHTML", nf($bct['fuel']));
-        $objResponse->assign("b_food_" . $id, "innerHTML", nf($bct['food']));
+        $objResponse->assign("b_metal_" . $id, "innerHTML", StringUtils::formatNumber($bct['metal']));
+        $objResponse->assign("b_crystal_" . $id, "innerHTML", StringUtils::formatNumber($bct['crystal']));
+        $objResponse->assign("b_plastic_" . $id, "innerHTML", StringUtils::formatNumber($bct['plastic']));
+        $objResponse->assign("b_fuel_" . $id, "innerHTML", StringUtils::formatNumber($bct['fuel']));
+        $objResponse->assign("b_food_" . $id, "innerHTML", StringUtils::formatNumber($bct['food']));
     }
-    $objResponse->assign("t_metal", "innerHTML", nf($bctt['metal']));
-    $objResponse->assign("t_crystal", "innerHTML", nf($bctt['crystal']));
-    $objResponse->assign("t_plastic", "innerHTML", nf($bctt['plastic']));
-    $objResponse->assign("t_fuel", "innerHTML", nf($bctt['fuel']));
-    $objResponse->assign("t_food", "innerHTML", nf($bctt['food']));
+    $objResponse->assign("t_metal", "innerHTML", StringUtils::formatNumber($bctt['metal']));
+    $objResponse->assign("t_crystal", "innerHTML", StringUtils::formatNumber($bctt['crystal']));
+    $objResponse->assign("t_plastic", "innerHTML", StringUtils::formatNumber($bctt['plastic']));
+    $objResponse->assign("t_fuel", "innerHTML", StringUtils::formatNumber($bctt['fuel']));
+    $objResponse->assign("t_food", "innerHTML", StringUtils::formatNumber($bctt['food']));
 
 
     return $objResponse;

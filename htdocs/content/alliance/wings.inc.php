@@ -3,6 +3,7 @@
 use EtoA\Alliance\AllianceRepository;
 use EtoA\Alliance\AllianceRights;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Support\StringUtils;
 
 /** @var ConfigurationService $config */
 $config = $app[ConfigurationService::class];
@@ -80,9 +81,9 @@ if ($config->getBoolean('allow_wings') && Alliance::checkActionRights(AllianceRi
         foreach ($ally->wings as $wid => $wdata) {
             echo "<tr>
             <td>" . $wdata . "</td>
-            <td>" . nf($wdata->points) . "</td>
+            <td>" . StringUtils::formatNumber($wdata->points) . "</td>
             <td>" . $wdata->memberCount . "</td>
-            <td>" . nf($wdata->avgPoints) . "</td>
+            <td>" . StringUtils::formatNumber($wdata->avgPoints) . "</td>
             <td>
                 <a href=\"?page=alliance&amp;id=" . $wid . "\">Allianzseite</a> &nbsp;
                 <a href=\"?page=alliance&amp;action=wings&amp;remove=" . $wid . "\" onclick=\"return confirm('Wingzuordnung wirklich aufheben?')\">Entfernen</a>
@@ -105,9 +106,9 @@ if ($config->getBoolean('allow_wings') && Alliance::checkActionRights(AllianceRi
         foreach ($ally->wingRequests as $wid => $wdata) {
             echo "<tr>
             <td>" . $wdata . "</td>
-            <td>" . nf($wdata->points) . "</td>
+            <td>" . StringUtils::formatNumber($wdata->points) . "</td>
             <td>" . $wdata->memberCount . "</td>
-            <td>" . nf($wdata->avgPoints) . "</td>
+            <td>" . StringUtils::formatNumber($wdata->avgPoints) . "</td>
             <td>
                 <a href=\"?page=alliance&amp;id=" . $wid . "\">Allianzseite</a> &nbsp;
                 <a href=\"?page=alliance&amp;action=wings&amp;cancelreq=" . $wid . "\" onclick=\"return confirm('Anftage wirklich zurückziehen?')\">Zurückziehen</a>

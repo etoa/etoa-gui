@@ -493,7 +493,7 @@ function manageReports(Request $request, ReportRepository $reportRepository, Use
                     <p><input type=\"submit\" class=\"button\" name=\"user_search\" value=\"Suche starten\" /></p>
                 </form>";
 
-        echo "<br/>Es sind " . nf($reportRepository->count()) . " Einträge in der Datenbank vorhanden.";
+        echo "<br/>Es sind " . StringUtils::formatNumber($reportRepository->count()) . " Einträge in der Datenbank vorhanden.";
     }
 }
 
@@ -660,7 +660,7 @@ function manageMessages(
         echo "</table>";
         echo "<br/><input type=\"submit\" class=\"button\" name=\"user_search\" value=\"Suche starten\" /></form>";
 
-        echo "<br/>Es sind " . nf($messageRepository->count()) . " Einträge in der Datenbank vorhanden.";
+        echo "<br/>Es sind " . StringUtils::formatNumber($messageRepository->count()) . " Einträge in der Datenbank vorhanden.";
     }
 }
 

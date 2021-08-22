@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\Ranking\RankingService;
+use EtoA\Support\StringUtils;
 use Pimple\Container;
 
 /**
@@ -18,7 +19,7 @@ class CalculateRankingTask implements IPeriodicTask
     function run()
     {
         $result = $this->rankingService->calc();
-        return "Die Punkte von " . $result->numberOfUsers . " Spielern wurden aktualisiert; ein Spieler hat durchschnittlich " . nf($result->getAveragePoints()) . " Punkte";
+        return "Die Punkte von " . $result->numberOfUsers . " Spielern wurden aktualisiert; ein Spieler hat durchschnittlich " . StringUtils::formatNumber($result->getAveragePoints()) . " Punkte";
     }
 
     function getDescription()

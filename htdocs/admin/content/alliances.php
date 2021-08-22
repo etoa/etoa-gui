@@ -8,6 +8,7 @@ use EtoA\Alliance\AllianceRepository;
 use EtoA\Alliance\AllianceService;
 use EtoA\Alliance\InvalidAllianceParametersException;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Support\StringUtils;
 use EtoA\User\UserRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Twig\Environment;
@@ -509,7 +510,7 @@ function index(Request $request, AllianceRepository $repository, Environment $tw
     echo "</td></tr>";
     echo "</table>";
     echo "<br/><input type=\"submit\" name=\"alliance_search\" value=\"Suche starten\" /> (wenn nichts eingegeben wird werden alle Datensätze angezeigt)</form>";
-    echo "<br/>Es sind " . nf($repository->count()) . " Einträge in der Datenbank vorhanden.";
+    echo "<br/>Es sind " . StringUtils::formatNumber($repository->count()) . " Einträge in der Datenbank vorhanden.";
 }
 
 function removeAlliancePicture(AllianceRepository $repository, int $allianceId): bool

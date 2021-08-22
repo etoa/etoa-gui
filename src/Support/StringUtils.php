@@ -250,4 +250,33 @@ class StringUtils
 
         return $str;
     }
+
+    public static function formatNumber(float $number, bool $colorize = false, bool $ex = false): string
+    {
+        if ($ex) {
+            if ($number > 1000000000) {
+                $n = round($number / 1000000000, 3) . " G";
+            } elseif ($number > 1000000) {
+                $n = round($number / 1000000, 3) . " M";
+            } elseif ($number > 1000) {
+                $n = round($number / 1000, 3) . " K";
+            } else {
+                $n = round($number, 0);
+            }
+
+            return $n;
+        } else {
+            $n = number_format($number, 0, ",", "`");
+        }
+        if ($colorize) {
+            if ($number > 0) {
+                return "<span style=\"color:#0f0\">" . $n . "</span>";
+            }
+            if ($number < 0) {
+                return "<span style=\"color:#f00\">" . $n . "</span>";
+            }
+        }
+
+        return $n;
+    }
 }

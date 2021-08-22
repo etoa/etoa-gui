@@ -108,7 +108,7 @@ if (isset($_POST['logshow'])) {
         echo "</select></td></tr>";
         echo "</table>";
         echo "<br/><input type=\"submit\" name=\"logshow\" value=\"Suche starten\" /></form>";
-        echo "<br/>Es sind " . nf($logCount) . " Eintr&auml;ge in der Datenbank vorhanden.<br/><br/>";
+        echo "<br/>Es sind " . StringUtils::formatNumber($logCount) . " Eintr&auml;ge in der Datenbank vorhanden.<br/><br/>";
     } else
         echo "<i>Keine Eintr&auml;ge vorhanden</i><br/><br/>";
 }

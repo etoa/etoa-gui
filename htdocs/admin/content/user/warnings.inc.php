@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\Admin\AdminUserRepository;
+use EtoA\Support\StringUtils;
 use EtoA\User\UserRepository;
 use EtoA\User\UserWarningRepository;
 
@@ -98,7 +99,7 @@ if (isset($_GET['edit'])) {
         foreach ($warningCounts as $warningCount) {
             echo "<div style=\"padding:5px;border-bottom:1px solid #fff\">
                 <b>" . $warningCount['nick'] . "</b> &nbsp;
-                [<a href=\"#\" onclick=\"toggleBox('w" . $warningCount['userId'] . "')\">" . nf($warningCount['count']) . " Verwarnungen</a>] &nbsp;
+                [<a href=\"#\" onclick=\"toggleBox('w" . $warningCount['userId'] . "')\">" . StringUtils::formatNumber($warningCount['count']) . " Verwarnungen</a>] &nbsp;
                 [<a href=\"?page=user&amp;sub=edit&amp;id=" . $warningCount['userId'] . "\">Daten</a>] &nbsp;
                 <table id=\"w" . $warningCount['userId'] . "\" style=\"margin-top:10px;" . ((isset($_GET['user']) && $_GET['user'] == $warningCount['userId']) ? "" : "display:none;") . "\" class=\"tb\">
                     <tr>

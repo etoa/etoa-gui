@@ -195,7 +195,7 @@ else {
         foreach ($users as $user) {
             echo "<tr>
                     <td><a href=\"?page=$page&amp;sub=edit&amp;id=" . $user->id . "\">" . $user->nick . "</a></td>
-                    <td " . tm("Punkteverlauf", "<img src=\"../misc/stats.image.php?user=" . $user->id . "\" alt=\"Diagramm\" style=\"width:600px;height:400px;\" />") . ">" . nf($user->points) . "</td>
+                    <td " . tm("Punkteverlauf", "<img src=\"../misc/stats.image.php?user=" . $user->id . "\" alt=\"Diagramm\" style=\"width:600px;height:400px;\" />") . ">" . StringUtils::formatNumber($user->points) . "</td>
                     <td>" . stripslashes($user->observe) . "</td>";
             if ($user->timeAction > 0)
                 echo "<td class=\"tbldata\" style=\"color:#0f0;\">online</td>";
@@ -207,7 +207,7 @@ else {
             /** @var UserSurveillanceRepository $userSuveillanceRepository */
             $userSuveillanceRepository = $app[UserSurveillanceRepository::class];
             $dnum = $userSuveillanceRepository->count(UserSurveillanceSearch::create()->userId($user->id));
-            echo "<td>" . nf($dnum) . "</td>
+            echo "<td>" . StringUtils::formatNumber($dnum) . "</td>
                     <td>
                         <a href=\"?page=$page&amp;sub=$sub&amp;surveillance=" . $user->id . "\">Details</a>
                         <a href=\"?page=$page&amp;sub=$sub&amp;text=" . $user->id . "\">Text ändern</a>

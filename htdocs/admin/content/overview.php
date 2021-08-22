@@ -297,7 +297,7 @@ function adminSessionLogView(
 
         echo "<h2>Logs löschen</h2>";
         echo "<form action=\"?page=$page&sub=$sub\" method=\"post\">";
-        echo "Es sind " . nf($sessionRepository->countSessionLog()) . " Einträge in der Datenbank vorhanden.<br/><br/>
+        echo "Es sind " . StringUtils::formatNumber($sessionRepository->countSessionLog()) . " Einträge in der Datenbank vorhanden.<br/><br/>
                 Einträge löschen die älter als <select name=\"log_timestamp\">";
         foreach ($logDelTimespan as $k => $lts) {
             echo "<option value=\"" . $k . "\">" . $lts[1] . "</option>";

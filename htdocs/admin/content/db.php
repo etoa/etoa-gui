@@ -81,7 +81,7 @@ else {
             $dbStats[] = [
                 'name' => $tn[$k],
                 'size' => byte_format($ts[$k]),
-                'entries' => nf($tr[$k]),
+                'entries' => StringUtils::formatNumber((int) $tr[$k]),
                 'engine' => $engines[$k],
             ];
         }
@@ -91,7 +91,7 @@ else {
             $dbStats[] = [
                 'name' => $tn[$k],
                 'size' => byte_format($ts[$k]),
-                'entries' => nf($tr[$k]),
+                'entries' => StringUtils::formatNumber((int) $tr[$k]),
                 'engine' => $engines[$k],
             ];
         }
@@ -101,7 +101,7 @@ else {
             $dbStats[] = [
                 'name' => $tn[$k],
                 'size' => byte_format($ts[$k]),
-                'entries' => nf($tr[$k]),
+                'entries' => StringUtils::formatNumber((int) $tr[$k]),
                 'engine' => $engines[$k],
             ];
         }
@@ -111,7 +111,7 @@ else {
             $dbStats[] = [
                 'name' => $tn[$k],
                 'size' => byte_format($ts[$k]),
-                'entries' => nf($tr[$k]),
+                'entries' => StringUtils::formatNumber((int) $tr[$k]),
                 'engine' => $engines[$k],
             ];
         }
@@ -120,7 +120,7 @@ else {
     echo $twig->render('admin/database/database.html.twig', [
         'dbStats' => $dbStats,
         'dbName' => $dbManagerRepository->getDatabaseName(),
-        'dbRows' => nf($rows),
+        'dbRows' => StringUtils::formatNumber($rows),
         'dbSize' => byte_format($datal),
         'serverUptime' => StringUtils::formatTimespan($uts),
         'serverStarted' => df(time() - $uts),
@@ -130,22 +130,22 @@ else {
         'bytesSentHour' => byte_format($uth > 0 ? $st['bytes_sent'] / $uth : 0),
         'bytesTotal' => byte_format($st['bytes_received'] + $st['bytes_sent']),
         'bytesTotalHour' => byte_format($uth > 0 ? ($st['bytes_received'] + $st['bytes_sent']) / $uth : 0),
-        'maxUsedConnections' => nf($st['max_used_connections']),
-        'abortedConnections' => nf($st['aborted_connects']),
-        'abortedConnectsHour' => nf($uth > 0 ? $st['aborted_connects'] / $uth : 0),
-        'abortedClients' => nf($st['aborted_clients']),
-        'abortedClientsHour' => nf($uth > 0 ? ($st['aborted_clients']) / $uth : 0),
-        'connections' => nf($st['connections']),
-        'connectionsHour' => nf($uth > 0 ? ($st['connections']) / $uth : 0),
-        'questions' => nf($st['questions']),
-        'avgQuestionsDay' => nf($uth > 0 ? $st['questions'] / $uth * 24 : 0),
-        'avgQuestionsHour' => nf($uth > 0 ? $st['questions'] / $uth : 0),
-        'avgQuestionsMinute' => nf($utm > 0 ? $st['questions'] / $utm : 0),
-        'avgQuestionsSecond' => nf($uts > 0 ? $st['questions'] / $uts : 0),
-        'slowQueries' => nf($st['slow_queries']),
-        'createdTmpDiskTables' => nf($st['created_tmp_disk_tables']),
-        'openTables' => nf($st['open_tables']),
-        'openedTables' => nf($st['opened_tables']),
+        'maxUsedConnections' => StringUtils::formatNumber($st['max_used_connections']),
+        'abortedConnections' => StringUtils::formatNumber($st['aborted_connects']),
+        'abortedConnectsHour' => StringUtils::formatNumber($uth > 0 ? $st['aborted_connects'] / $uth : 0),
+        'abortedClients' => StringUtils::formatNumber($st['aborted_clients']),
+        'abortedClientsHour' => StringUtils::formatNumber($uth > 0 ? ($st['aborted_clients']) / $uth : 0),
+        'connections' => StringUtils::formatNumber($st['connections']),
+        'connectionsHour' => StringUtils::formatNumber($uth > 0 ? ($st['connections']) / $uth : 0),
+        'questions' => StringUtils::formatNumber($st['questions']),
+        'avgQuestionsDay' => StringUtils::formatNumber($uth > 0 ? $st['questions'] / $uth * 24 : 0),
+        'avgQuestionsHour' => StringUtils::formatNumber($uth > 0 ? $st['questions'] / $uth : 0),
+        'avgQuestionsMinute' => StringUtils::formatNumber($utm > 0 ? $st['questions'] / $utm : 0),
+        'avgQuestionsSecond' => StringUtils::formatNumber($uts > 0 ? $st['questions'] / $uts : 0),
+        'slowQueries' => StringUtils::formatNumber($st['slow_queries']),
+        'createdTmpDiskTables' => StringUtils::formatNumber($st['created_tmp_disk_tables']),
+        'openTables' => StringUtils::formatNumber($st['open_tables']),
+        'openedTables' => StringUtils::formatNumber($st['opened_tables']),
     ]);
     exit();
 }

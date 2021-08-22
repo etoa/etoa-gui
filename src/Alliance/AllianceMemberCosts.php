@@ -3,9 +3,9 @@
 namespace EtoA\Alliance;
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Support\StringUtils;
 use EtoA\Universe\Resources\BaseResources;
 use EtoA\Universe\Resources\ResourceNames;
-use function nf;
 
 class AllianceMemberCosts
 {
@@ -34,7 +34,7 @@ class AllianceMemberCosts
         if ($costs->getSum() > 0) {
             $this->allianceRepository->addResources($allianceId, -$costs->metal, -$costs->crystal, -$costs->plastic, -$costs->fuel, -$costs->food, $newMemberCount);
 
-            $this->allianceHistoryRepository->addEntry($allianceId, "Dem Allianzkonto wurden folgende Rohstoffe abgezogen:\n[b]" . ResourceNames::METAL . "[/b]: " . nf($costs->metal) . "\n[b]" . ResourceNames::CRYSTAL . "[/b]: " . nf($costs->crystal) . "\n[b]" . ResourceNames::PLASTIC . "[/b]: " . nf($costs->plastic) . "\n[b]" . ResourceNames::FUEL . "[/b]: " . nf($costs->fuel) . "\n[b]" . ResourceNames::FOOD . "[/b]: " . nf($costs->food) . "\n\nDie Allianzobjekte sind nun für " . $newMemberCount . " Mitglieder verfügbar!");
+            $this->allianceHistoryRepository->addEntry($allianceId, "Dem Allianzkonto wurden folgende Rohstoffe abgezogen:\n[b]" . ResourceNames::METAL . "[/b]: " . StringUtils::formatNumber($costs->metal) . "\n[b]" . ResourceNames::CRYSTAL . "[/b]: " . StringUtils::formatNumber($costs->crystal) . "\n[b]" . ResourceNames::PLASTIC . "[/b]: " . StringUtils::formatNumber($costs->plastic) . "\n[b]" . ResourceNames::FUEL . "[/b]: " . StringUtils::formatNumber($costs->fuel) . "\n[b]" . ResourceNames::FOOD . "[/b]: " . StringUtils::formatNumber($costs->food) . "\n\nDie Allianzobjekte sind nun für " . $newMemberCount . " Mitglieder verfügbar!");
         }
 
         return $costs;

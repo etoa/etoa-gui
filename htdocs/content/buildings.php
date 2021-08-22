@@ -189,7 +189,7 @@ if (isset($cp)) {
                             <input 	type="text"
                                     name="peopleWorking"
                                     id="peopleWorking"
-                                    value="' . nf($peopleWorking->building) . '"
+                                    value="' . StringUtils::formatNumber($peopleWorking->building) . '"
                                     onkeyup="updatePeopleWorkingBox(this.value,\'-1\',\'-1\');"/>
                     </td>
                     </tr>
@@ -205,7 +205,7 @@ if (isset($cp)) {
                         <td><input	type="text"
                                     name="foodUsing"
                                     id="foodUsing"
-                                    value="' . nf($config->getInt('people_food_require') * $peopleWorking->building) . '"
+                                    value="' . StringUtils::formatNumber($config->getInt('people_food_require') * $peopleWorking->building) . '"
                                     onkeyup="updatePeopleWorkingBox(\'-1\',\'-1\',this.value);" /></td>
                     </tr>
                     <tr>
@@ -235,14 +235,14 @@ if (isset($cp)) {
         echo '<tr><td>Bauzeitverringerung durch ' . $cu->specialist->name . ':</td><td>' . get_percent_string($cu->specialist->buildTime) . '</td></tr>';
     }
     // Worker
-    echo '<tr><td>Eingestellte Arbeiter:</td><td><span id="people_working">' . nf($peopleWorking->building) . '</span>';
+    echo '<tr><td>Eingestellte Arbeiter:</td><td><span id="people_working">' . StringUtils::formatNumber($peopleWorking->building) . '</span>';
     if (!$bl->isUnderConstruction()) {
         echo '&nbsp;<a href="javascript:;" onclick="toggleBox(\'changePeople\');">[&Auml;ndern]</a>';
     }
     echo '</td></tr>';
     if ($peopleWorking->building > 0) {
         echo '<tr><td>Zeitreduktion durch Arbeiter pro Auftrag:</td><td><span id="people_work_done">' . StringUtils::formatTimespan($config->getInt('people_work_done') * $peopleWorking->building) . '</span></td></tr>';
-        echo '<tr><td>Nahrungsverbrauch durch Arbeiter pro Auftrag:</td><td><span id="people_food_require">' . nf($config->getInt('people_food_require') * $peopleWorking->building) . '</span></td></tr>';
+        echo '<tr><td>Nahrungsverbrauch durch Arbeiter pro Auftrag:</td><td><span id="people_food_require">' . StringUtils::formatNumber($config->getInt('people_food_require') * $peopleWorking->building) . '</span></td></tr>';
     }
     // Genetics technology level
     if ($genTechLevel > 0) {
@@ -591,7 +591,7 @@ if (isset($cp)) {
                                 </td>
                                 <th width=\"45%\">
                                     <span style=\"font-weight:500\">" . $it->current()->building . "<br/>
-                                            Stufe:</span> " . nf($it->current()->level) . "
+                                            Stufe:</span> " . StringUtils::formatNumber($it->current()->level) . "
                                         </th>";
                         if (!$bl->requirementsPassed($it->key()) || $it->current()->isMaxLevel()) {
                             echo "<td width=\"90%\" style=\"color:#999\" colspan=\"7\" " . tm($it->current()->building, $subtitle . "<br/>" . $tmtext) . ">" . $subtitle . "</td>";

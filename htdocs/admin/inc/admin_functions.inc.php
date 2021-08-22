@@ -721,14 +721,14 @@ function showFleetLogs($args = null, $limit = 0)
             echo "<tr><th>Schiffe in der Flotte</th><th>Vor der Aktion</th><th>Nach der Aktion</th></tr>";
             $sship = $log->fleetShipsStart;
             foreach ($log->fleetShipsEnd as $shipId => $count) {
-                echo "<tr><td>" . $shipNames[$shipId] . "</td><td>" . nf($count) . "</td><td>" . nf($sship[$shipId] ?? 0) . "</td></tr>";
+                echo "<tr><td>" . $shipNames[$shipId] . "</td><td>" . StringUtils::formatNumber($count) . "</td><td>" . StringUtils::formatNumber($sship[$shipId] ?? 0) . "</td></tr>";
             }
             echo tableEnd();
             tableStart("", 450);
             echo "<tr><th>Schiffe auf dem Planeten</th><th>Vor der Aktion</th><th>Nach der Aktion</th></tr>";
             $sship = $log->entityShipsStart;
             foreach ($log->entityShipsEnd as $shipId => $count) {
-                echo "<tr><td>" . $shipNames[$shipId] . "</td><td>" . nf($count) . "</td><td>" . nf($sship[$shipId] ?? 0) . "</td></tr>";
+                echo "<tr><td>" . $shipNames[$shipId] . "</td><td>" . StringUtils::formatNumber($count) . "</td><td>" . StringUtils::formatNumber($sship[$shipId] ?? 0) . "</td></tr>";
             }
             echo tableEnd();
             tableStart("", 450);
@@ -744,9 +744,9 @@ function showFleetLogs($args = null, $limit = 0)
                 array_push($eres, $sd);
             }
             foreach ($resNames as $k => $v) {
-                echo "<tr><td>" . $v . "</td><td>" . nf((int) $sres[$k]) . "</td><td>" . nf((int) $eres[$k]) . "</td></tr>";
+                echo "<tr><td>" . $v . "</td><td>" . StringUtils::formatNumber((int) $sres[$k]) . "</td><td>" . StringUtils::formatNumber((int) $eres[$k]) . "</td></tr>";
             }
-            echo "<tr><td>Bewoner</td><td>" . nf((int) $sres[5]) . "</td><td>" . nf((int) $eres[5]) . "</td></tr>";
+            echo "<tr><td>Bewoner</td><td>" . StringUtils::formatNumber((int) $sres[5]) . "</td><td>" . StringUtils::formatNumber((int) $eres[5]) . "</td></tr>";
             echo tableEnd();
 
             //Will not show Resmessage if entity was not touched (fleet cancel)
@@ -764,9 +764,9 @@ function showFleetLogs($args = null, $limit = 0)
                     array_push($eres, $sd);
                 }
                 foreach ($resNames as $k => $v) {
-                    echo "<tr><td>" . $v . "</td><td>" . nf($sres[$k]) . "</td><td>" . nf($eres[$k]) . "</td></tr>";
+                    echo "<tr><td>" . $v . "</td><td>" . StringUtils::formatNumber((int) $sres[$k]) . "</td><td>" . StringUtils::formatNumber((int) $eres[$k]) . "</td></tr>";
                 }
-                echo "<tr><td>Bewoner</td><td>" . nf($sres[5]) . "</td><td>" . nf($eres[5]) . "</td></tr>";
+                echo "<tr><td>Bewoner</td><td>" . StringUtils::formatNumber((int) $sres[5]) . "</td><td>" . StringUtils::formatNumber((int) $eres[5]) . "</td></tr>";
                 echo tableEnd();
             }
             echo $log->message;

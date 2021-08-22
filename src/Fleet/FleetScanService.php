@@ -124,12 +124,12 @@ class FleetScanService
 
         $cryptoFuelCostsPerScan = $this->config->getInt('crypto_fuel_costs_per_scan');
         if ($planet->resFuel < $cryptoFuelCostsPerScan) {
-            throw new FleetScanPreconditionsNotMetException("Zuwenig " . RES_FUEL . ", " . nf($cryptoFuelCostsPerScan) . " benötigt, " . nf($planet->resFuel) . " vorhanden!");
+            throw new FleetScanPreconditionsNotMetException("Zuwenig " . RES_FUEL . ", " . StringUtils::formatNumber($cryptoFuelCostsPerScan) . " benötigt, " . StringUtils::formatNumber($planet->resFuel) . " vorhanden!");
         }
 
         $alliance = $this->allianceRepository->getAlliance($currentUser->allianceId);
         if ($alliance->resFuel < $cryptoFuelCostsPerScan) {
-            throw new FleetScanPreconditionsNotMetException("Zuwenig Allianzrohstoffe " . RES_FUEL . ", " . nf($cryptoFuelCostsPerScan) . " benötigt, " . nf($alliance->resFuel) . " vorhanden!");
+            throw new FleetScanPreconditionsNotMetException("Zuwenig Allianzrohstoffe " . RES_FUEL . ", " . StringUtils::formatNumber($cryptoFuelCostsPerScan) . " benötigt, " . StringUtils::formatNumber($alliance->resFuel) . " vorhanden!");
         }
 
         if ($targetEntity === null || $targetEntity->code != EntityType::PLANET) {
@@ -140,7 +140,7 @@ class FleetScanService
         $dist = $this->entityService->distance($sourceEntity, $targetEntity);
         $cryptoRangePerLevel = $this->config->getInt('crypto_range_per_level');
         if ($dist > $cryptoRangePerLevel * $cryptoCenterLevel) {
-            throw new InvalidFleetScanParameterException("Das Ziel ist zu weit entfernt (" . nf(ceil($dist)) . " AE, momentan sind " . nf($cryptoRangePerLevel * $cryptoCenterLevel) . " möglich, " . $cryptoRangePerLevel . " pro Gebäudestufe)!");
+            throw new InvalidFleetScanParameterException("Das Ziel ist zu weit entfernt (" . StringUtils::formatNumber(ceil($dist)) . " AE, momentan sind " . StringUtils::formatNumber($cryptoRangePerLevel * $cryptoCenterLevel) . " möglich, " . $cryptoRangePerLevel . " pro Gebäudestufe)!");
         }
 
         $cooldownTime = time() + $this->calculateCooldown($cryptoCenterLevel);

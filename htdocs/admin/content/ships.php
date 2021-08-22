@@ -56,7 +56,7 @@ if ($sub == "battlepoints") {
     $ships = $shipDataRepository->getAllShips(true, 'ship_points');
     echo "<table class=\"tb\">";
     foreach ($ships as $ship) {
-        echo "<tr><th>" . $ship->name . "</th><td style=\"width:70%; text-align: right\" title=\"$ship->points\">" . nf($ship->points) . "</td></tr>";
+        echo "<tr><th>" . $ship->name . "</th><td style=\"width:70%; text-align: right\" title=\"$ship->points\">" . StringUtils::formatNumber($ship->points) . "</td></tr>";
     }
     echo "</table>";
 }
@@ -85,7 +85,7 @@ elseif ($sub == "xpcalc") {
 
     echo "<table class=\"tb\"><tr><th>Level</th><th>Experience</th></tr>";
     for ($level = 1; $level <= 30; $level++) {
-        echo "<tr><td>$level</td><td>" . nf(Ship::xpByLevel($ship_xp, $ship_xp_multiplier, $level)) . "</td></tr>";
+        echo "<tr><td>$level</td><td>" . StringUtils::formatNumber(Ship::xpByLevel($ship_xp, $ship_xp_multiplier, $level)) . "</td></tr>";
     }
     echo "</table>";
 }
@@ -193,9 +193,9 @@ elseif ($sub == "queue") {
                 echo "<tr>";
                 echo "<td class=\"tbldata\" $style>" . $shipQueueItem->id . "</a></td>";
                 echo "<td class=\"tbldata\"$style " . mTT($shipQueueItem->shipName, "<b>Schiff-ID:</b> " . $shipQueueItem->shipId) . ">" . $shipQueueItem->shipName . "</td>";
-                echo "<td class=\"tbldata\"$style>" . nf($shipQueueItem->count) . "</td>";
+                echo "<td class=\"tbldata\"$style>" . StringUtils::formatNumber($shipQueueItem->count) . "</td>";
                 echo "<td class=\"tbldata\"$style " . mTT($shipQueueItem->planetName, "<b>Planet-ID:</b> " . $shipQueueItem->entityId . "<br/><b>Koordinaten:</b> " . $shipQueueItem->entity->sx . "/" . $shipQueueItem->entity->sy . " : " . $shipQueueItem->entity->cx . "/" . $shipQueueItem->entity->cy . " : " . $shipQueueItem->entity->pos) . ">" . StringUtils::cutString($shipQueueItem->planetName, 11) . "</td>";
-                echo "<td class=\"tbldata\"$style " . mTT($shipQueueItem->userNick, "<b>User-ID:</b> " . $shipQueueItem->userId . "<br/><b>Punkte:</b> " . nf($shipQueueItem->userPoints)) . ">" . StringUtils::cutString($shipQueueItem->userNick, 11) . "</td>";
+                echo "<td class=\"tbldata\"$style " . mTT($shipQueueItem->userNick, "<b>User-ID:</b> " . $shipQueueItem->userId . "<br/><b>Punkte:</b> " . StringUtils::formatNumber($shipQueueItem->userPoints)) . ">" . StringUtils::cutString($shipQueueItem->userNick, 11) . "</td>";
                 echo "<td class=\"tbldata\"$style>" . df($shipQueueItem->startTime, 1) . "</td>";
                 echo "<td class=\"tbldata\"$style>" . df($shipQueueItem->endTime, 1) . "</td>";
                 echo "<td class=\"tbldata\"$style>" . edit_button("?page=$page&sub=$sub&action=edit&id=" . $shipQueueItem->id);
@@ -313,7 +313,7 @@ elseif ($sub == "queue") {
         echo "</table>";
         echo "<p><input type=\"submit\" class=\"button\" name=\"shipqueue_search\" value=\"Suche starten\" /></p></form>";
         $tblcnt = $shipQueueRepository->count();
-        echo "<p>Es sind " . nf($tblcnt) . " Eintr&auml;ge in der Datenbank vorhanden.</p>";
+        echo "<p>Es sind " . StringUtils::formatNumber($tblcnt) . " Eintr&auml;ge in der Datenbank vorhanden.</p>";
     }
 }
 
@@ -392,5 +392,5 @@ else {
         }
     }
 
-    echo "<br/>Es sind <b>" . nf($tblcnt) . "</b> Eintr&auml;ge in der Datenbank vorhanden.";
+    echo "<br/>Es sind <b>" . StringUtils::formatNumber($tblcnt) . "</b> Eintr&auml;ge in der Datenbank vorhanden.";
 }

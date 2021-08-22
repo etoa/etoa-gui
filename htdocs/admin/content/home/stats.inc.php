@@ -5,6 +5,7 @@ use EtoA\Alliance\AllianceStatsSort;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Ranking\UserTitlesService;
 use EtoA\Support\RuntimeDataStore;
+use EtoA\Support\StringUtils;
 use EtoA\User\UserRatingRepository;
 use EtoA\User\UserStatRepository;
 use EtoA\User\UserStatSearch;
@@ -163,12 +164,12 @@ elseif ($mode == "alliances") {
         $count = 1;
         foreach ($allianceStats as $stats) {
             echo "<tr>";
-            echo "<td align=\"right\">" . nf($count) . "</td>";
+            echo "<td align=\"right\">" . StringUtils::formatNumber($count) . "</td>";
             echo "<td>" . $stats->allianceTag . "</td>";
             echo "<td>" . $stats->allianceName . "</td>";
-            echo "<td>" . nf($stats->points) . "</td>";
-            echo "<td>" . nf($stats->userAverage) . "</td>";
-            echo "<td>" . nf($stats->count) . "</td>";
+            echo "<td>" . StringUtils::formatNumber($stats->points) . "</td>";
+            echo "<td>" . StringUtils::formatNumber($stats->userAverage) . "</td>";
+            echo "<td>" . StringUtils::formatNumber($stats->count) . "</td>";
             echo "<td>" . edit_button("?page=alliances&amp;sub=edit&amp;alliance_id=" . $stats->allianceId . "") . "</td>";
             echo "</tr>";
             $count++;
@@ -225,17 +226,17 @@ elseif ($mode == "base") {
         foreach ($allianceStats as $stats) {
             echo "<tr>
                         <td>
-                            " . nf($cnt, 1) . "
+                            " . StringUtils::formatNumber($cnt, true) . "
                         </td>";
             echo "<td >
                 <div id=\"ttuser" . $stats->allianceId . "\" style=\"display:none;\">
                     <a href=\"?page=alliances&amp;sub=edit&amp;id=" . $stats->allianceId . "\">Allianzseite</a><br/>";
             echo "</div><a href=\"#\" " . cTT($stats->allianceName, "ttuser" . $stats->allianceId) . ">
                 " . $stats->allianceTag . "</td>";
-            echo "<td >" . nf($stats->buildingPoints) . "</td>";
-            echo "<td >" . nf($stats->technologyPoints) . "</td>";
-            echo "<td >" . nf($stats->shipPoints) . "</td>";
-            echo "<td >" . nf($stats->alliancePoints) . "</td>";
+            echo "<td >" . StringUtils::formatNumber($stats->buildingPoints) . "</td>";
+            echo "<td >" . StringUtils::formatNumber($stats->technologyPoints) . "</td>";
+            echo "<td >" . StringUtils::formatNumber($stats->shipPoints) . "</td>";
+            echo "<td >" . StringUtils::formatNumber($stats->alliancePoints) . "</td>";
             echo "<td>" . edit_button("?page=alliances&amp;sub=edit&amp;alliance_id=" . $stats->allianceId . "") . "</td>";
             echo "</tr>";
             $cnt++;
@@ -273,7 +274,7 @@ elseif ($mode == "diplomacy" || $mode == "battle" || $mode == "trade") {
                     echo "<td>" . $rating->userNick . "</td>";
                     echo "<td>" . $rating->raceName . "</td>";
                     echo "<td >" . $rating->allianceTag . "</td>";
-                    echo "<td>" . nf($rating->rating) . "</td>";
+                    echo "<td>" . StringUtils::formatNumber($rating->rating) . "</td>";
                     echo "<td>
                             " . edit_button("?page=user&amp;sub=edit&amp;id=" . $rating->userId . "") . "
                             </td>";
@@ -310,10 +311,10 @@ elseif ($mode == "diplomacy" || $mode == "battle" || $mode == "trade") {
                     echo "<td>" . $rating->userNick . "</td>";
                     echo "<td>" . $rating->raceName . "</td>";
                     echo "<td >" . $rating->allianceTag . "</td>";
-                    echo "<td>" . nf($rating->battlesWon) . "</td>";
-                    echo "<td>" . nf($rating->battlesLost) . "</td>";
-                    echo "<td>" . nf($rating->battlesFought) . "</td>";
-                    echo "<td>" . nf($rating->rating) . "</td>";
+                    echo "<td>" . StringUtils::formatNumber($rating->battlesWon) . "</td>";
+                    echo "<td>" . StringUtils::formatNumber($rating->battlesLost) . "</td>";
+                    echo "<td>" . StringUtils::formatNumber($rating->battlesFought) . "</td>";
+                    echo "<td>" . StringUtils::formatNumber($rating->rating) . "</td>";
                     echo "<td>
                             " . edit_button("?page=user&amp;sub=edit&amp;id=" . $rating->userId . "") . "
                             </td>";
@@ -349,9 +350,9 @@ elseif ($mode == "diplomacy" || $mode == "battle" || $mode == "trade") {
                     echo "<td>" . $rating->userNick . "</td>";
                     echo "<td>" . $rating->raceName . "</td>";
                     echo "<td >" . $rating->allianceTag . "</td>";
-                    echo "<td>" . nf($rating->tradesBuy) . "</td>";
-                    echo "<td>" . nf($rating->tradesSell) . "</td>";
-                    echo "<td>" . nf($rating->rating) . "</td>";
+                    echo "<td>" . StringUtils::formatNumber($rating->tradesBuy) . "</td>";
+                    echo "<td>" . StringUtils::formatNumber($rating->tradesSell) . "</td>";
+                    echo "<td>" . StringUtils::formatNumber($rating->rating) . "</td>";
                     echo "<td>
                             " . edit_button("?page=user&amp;sub=edit&amp;id=" . $rating->userId . "") . "
                             </td>";
@@ -430,7 +431,7 @@ else {
             }
             echo "<tr>";
 
-            echo "<td $addstyle  align=\"right\">" . nf($stat->rank) . "";
+            echo "<td $addstyle  align=\"right\">" . StringUtils::formatNumber($stat->rank) . "";
             if ($stat->shift === 2)
                 echo "<img src=\"../images/stats/stat_down.gif\" alt=\"down\" width=\"9\" height=\"12\" />";
             elseif ($stat->shift === 1)
@@ -442,7 +443,7 @@ else {
             echo "<td $addstyle >" . $stat->raceName . "</td>";
             echo "<td  $addstyle >" . $stat->sx . "/" . $stat->sy . "</td>";
             echo "<td  $addstyle >" . $stat->allianceTag . "</td>";
-            echo "<td $addstyle >" . nf($stat->points) . "</td>";
+            echo "<td $addstyle >" . StringUtils::formatNumber($stat->points) . "</td>";
             echo "<td $addstyle >
                 " . edit_button("?page=user&amp;sub=edit&amp;id=" . $stat->id . "") . "
                 </td>";

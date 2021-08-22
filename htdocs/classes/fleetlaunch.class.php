@@ -6,6 +6,7 @@ use EtoA\Fleet\FleetRepository;
 use EtoA\Fleet\FleetSearch;
 use EtoA\Log\FleetLogRepository;
 use EtoA\Ship\ShipRepository;
+use EtoA\Support\StringUtils;
 use EtoA\Technology\TechnologyRepository;
 use EtoA\Universe\Entity\EntityService;
 use EtoA\Universe\Planet\PlanetRepository;
@@ -431,11 +432,11 @@ class FleetLaunch
                     $this->targetOk = true;
                     return $this->targetOk;
                 } else
-                    $this->error = "Zu wenig Laderaum für soviel Treibstoff und Nahrung (" . nf(abs($this->getCapacity())) . " zuviel)!";
+                    $this->error = "Zu wenig Laderaum für soviel Treibstoff und Nahrung (" . StringUtils::formatNumber(abs($this->getCapacity())) . " zuviel)!";
             } else
-                $this->error = "Zuwenig Nahrung! " . nf($this->sourceEntity->resFood()) . " t " . RES_FOOD . " vorhanden, " . nf($this->getCostsFood()) . " t benötigt.";
+                $this->error = "Zuwenig Nahrung! " . StringUtils::formatNumber($this->sourceEntity->resFood()) . " t " . RES_FOOD . " vorhanden, " . StringUtils::formatNumber($this->getCostsFood()) . " t benötigt.";
         } else
-            $this->error = "Zuwenig Treibstoff! " . nf($this->sourceEntity->resFuel()) . " t " . RES_FUEL . " vorhanden, " . nf($this->getCosts()) . " t benötigt.";
+            $this->error = "Zuwenig Treibstoff! " . StringUtils::formatNumber($this->sourceEntity->resFuel()) . " t " . RES_FUEL . " vorhanden, " . StringUtils::formatNumber($this->getCosts()) . " t benötigt.";
         return false;
     }
 

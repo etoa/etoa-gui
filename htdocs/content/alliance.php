@@ -524,7 +524,7 @@ elseif ($cu->allianceId == 0) {
                                             <td>
                                                 <a href=\"?page=$page&amp;id=" . $diplomacy->otherAllianceId . "\">" . $opAlly . "</a>
                                             </td>
-                                            <td>" . nf($opAlly->points) . " / " . nf($opAlly->avgPoints) . "</td>
+                                            <td>" . StringUtils::formatNumber($opAlly->points) . " / " . StringUtils::formatNumber($opAlly->avgPoints) . "</td>
                                             <td>" . df($diplomacy->date, 0) . " bis " . df($diplomacy->date + WAR_DURATION, 0) . "</td>
                                         </tr>";
                     }
@@ -552,7 +552,7 @@ elseif ($cu->allianceId == 0) {
                                             <td>
                                                 <a href=\"?page=$page&amp;id=" . $diplomacy->otherAllianceId . "\">" . $opAlly . "</a>
                                             </td>
-                                            <td>" . nf($opAlly->points) . " / " . nf($opAlly->avgPoints) . "</td>
+                                            <td>" . StringUtils::formatNumber($opAlly->points) . " / " . StringUtils::formatNumber($opAlly->avgPoints) . "</td>
                                             <td>" . df($diplomacy->date, 0) . " bis " . df($diplomacy->date + PEACE_DURATION, 0) . "</td>
                                         </tr>";
                     }
@@ -580,7 +580,7 @@ elseif ($cu->allianceId == 0) {
                         echo "<tr>
                                             <td>" . stripslashes($diplomacy->name) . "</td>
                                             <td><a href=\"?page=$page&amp;id=" . $diplomacy->otherAllianceId . "\">" . $opAlly . "</a></td>
-                                            <td>" . nf($opAlly->points) . " / " . nf($opAlly->avgPoints) . "</td>
+                                            <td>" . StringUtils::formatNumber($opAlly->points) . " / " . StringUtils::formatNumber($opAlly->avgPoints) . "</td>
                                             <td>" . df($diplomacy->date) . "</td>
                                         </tr>";
                     }
@@ -591,7 +591,7 @@ elseif ($cu->allianceId == 0) {
 
                 // Besucher
                 echo "<tr><th width=\"120\">Besucherzähler:</th>
-            <td colspan=\"2\">" . nf($ally->visits) . " intern / " . nf($ally->visitsExt) . " extern</td></tr>\n";
+            <td colspan=\"2\">" . StringUtils::formatNumber($ally->visits) . " intern / " . StringUtils::formatNumber($ally->visitsExt) . " extern</td></tr>\n";
 
                 // Wings
                 if ($config->getBoolean('allow_wings') && count($ally->wings) > 0) {
@@ -606,9 +606,9 @@ elseif ($cu->allianceId == 0) {
                     foreach ($ally->wings as $wid => $wdata) {
                         echo "<tr>
                     <td><a href=\"?page=alliance&amp;id=" . $wid . "\">" . $wdata . "</a></td>
-                    <td>" . nf($wdata->points) . "</td>
+                    <td>" . StringUtils::formatNumber($wdata->points) . "</td>
                     <td>" . $wdata->memberCount . "</td>
-                    <td>" . nf($wdata->avgPoints) . "</td>
+                    <td>" . StringUtils::formatNumber($wdata->avgPoints) . "</td>
                     </tr>";
                     }
                     echo "</td></tr>";
@@ -630,7 +630,7 @@ elseif ($cu->allianceId == 0) {
                 echo "<tr>
                             <th>Punkte / Schnitt:</th>
                             <td colspan=\"2\">";
-                echo nf($ally->points) . " / " . nf($ally->avgPoints) . "";
+                echo StringUtils::formatNumber($ally->points) . " / " . StringUtils::formatNumber($ally->avgPoints) . "";
                 echo "</td>
                         </tr>";
                 echo "<tr><th width=\"120\">Gr&uuml;nder:</th>

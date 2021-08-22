@@ -10,6 +10,7 @@ use EtoA\Log\LogSeverity;
 use EtoA\Ship\ShipDataRepository;
 use EtoA\Ship\ShipRepository;
 use EtoA\Ship\ShipSearch;
+use EtoA\Support\StringUtils;
 use EtoA\Technology\TechnologyRepository;
 use EtoA\UI\ResourceBoxDrawer;
 use EtoA\Universe\Planet\PlanetRepository;
@@ -116,11 +117,11 @@ if ($tech_level > 0) {
 
 
             //Log schreiben
-            $log = "Der User [page user sub=edit user_id=" . $cu->id . "] [B]" . $cu . "[/B] [/page] hat auf dem Planeten [page galaxy sub=edit id=" . $planet->id . "][B]" . $planet->name . "[/B][/page] folgende Schiffe mit dem r&uuml;ckgabewert von " . ($payback * 100) . "% recycelt:\n\n" . $log_ships . "\nDies hat ihm folgende Rohstoffe gegeben:\n" . RES_METAL . ": " . nf($pb[0]) . "\n" . RES_CRYSTAL . ": " . nf($pb[1]) . "\n" . RES_PLASTIC . ": " . nf($pb[2]) . "\n" . RES_FUEL . ": " . nf($pb[3]) . "\n" . RES_FOOD . ": " . nf($pb[4]) . "\n";
+            $log = "Der User [page user sub=edit user_id=" . $cu->id . "] [B]" . $cu . "[/B] [/page] hat auf dem Planeten [page galaxy sub=edit id=" . $planet->id . "][B]" . $planet->name . "[/B][/page] folgende Schiffe mit dem r&uuml;ckgabewert von " . ($payback * 100) . "% recycelt:\n\n" . $log_ships . "\nDies hat ihm folgende Rohstoffe gegeben:\n" . RES_METAL . ": " . StringUtils::formatNumber($pb[0]) . "\n" . RES_CRYSTAL . ": " . StringUtils::formatNumber($pb[1]) . "\n" . RES_PLASTIC . ": " . StringUtils::formatNumber($pb[2]) . "\n" . RES_FUEL . ": " . StringUtils::formatNumber($pb[3]) . "\n" . RES_FOOD . ": " . StringUtils::formatNumber($pb[4]) . "\n";
 
             $logRepository->add(LogFacility::RECYCLING, LogSeverity::INFO, $log);
         }
-        success_msg(nf($cnt) . " Schiffe erfolgreich recycelt!");
+        success_msg(StringUtils::formatNumber($cnt) . " Schiffe erfolgreich recycelt!");
         foreach ($recycled as $id => $num) {
             $app['dispatcher']->dispatch(new \EtoA\Ship\Event\ShipRecycle($id, $num), \EtoA\Ship\Event\ShipRecycle::RECYCLE_SUCCESS);
         }
@@ -175,11 +176,11 @@ if ($tech_level > 0) {
             $planet->resFood += $pb[4];
 
             //Log schreiben
-            $log = "Der User [page user sub=edit user_id=" . $cu->id . "] [B]" . $cu . "[/B] [/page] hat auf dem Planeten [page galaxy sub=edit id=" . $planet->id . "][B]" . $planet->name . "[/B][/page] folgende Verteidigungsanlagen mit dem r&uuml;ckgabewert von " . ($payback * 100) . "% recycelt:\n\n" . $log_def . "\nDies hat ihm folgende Rohstoffe gegeben:\n" . RES_METAL . ": " . nf($pb[0]) . "\n" . RES_CRYSTAL . ": " . nf($pb[1]) . "\n" . RES_PLASTIC . ": " . nf($pb[2]) . "\n" . RES_FUEL . ": " . nf($pb[3]) . "\n" . RES_FOOD . ": " . nf($pb[4]) . "\n";
+            $log = "Der User [page user sub=edit user_id=" . $cu->id . "] [B]" . $cu . "[/B] [/page] hat auf dem Planeten [page galaxy sub=edit id=" . $planet->id . "][B]" . $planet->name . "[/B][/page] folgende Verteidigungsanlagen mit dem r&uuml;ckgabewert von " . ($payback * 100) . "% recycelt:\n\n" . $log_def . "\nDies hat ihm folgende Rohstoffe gegeben:\n" . RES_METAL . ": " . StringUtils::formatNumber($pb[0]) . "\n" . RES_CRYSTAL . ": " . StringUtils::formatNumber($pb[1]) . "\n" . RES_PLASTIC . ": " . StringUtils::formatNumber($pb[2]) . "\n" . RES_FUEL . ": " . StringUtils::formatNumber($pb[3]) . "\n" . RES_FOOD . ": " . StringUtils::formatNumber($pb[4]) . "\n";
 
             $logRepository->add(LogFacility::RECYCLING, LogSeverity::INFO, $log);
         }
-        success_msg("" . nf($cnt) . " Verteidigungsanlagen erfolgreich recycelt!");
+        success_msg("" . StringUtils::formatNumber($cnt) . " Verteidigungsanlagen erfolgreich recycelt!");
         foreach ($recycled as $id => $num) {
             $app['dispatcher']->dispatch(new \EtoA\Defense\Event\DefenseRecycle($id, $num), \EtoA\Defense\Event\DefenseRecycle::RECYCLE_SUCCESS);
         }
@@ -212,7 +213,7 @@ if ($tech_level > 0) {
                                 <a href=\"" . HELP_URL_SHIP . "&amp;id=" . $shipId . "\"><img src=\"$s_img\" width=\"40\"  height=\"40\" border=\"0\"/></a>
                             </td>";
             echo "<td width=\"66%\" valign=\"middle\">" . $shipName . "</td>";
-            echo "<td width=\"22%\" valign=\"middle\">" . nf($shipCounts[$shipId]) . "</td>";
+            echo "<td width=\"22%\" valign=\"middle\">" . StringUtils::formatNumber($shipCounts[$shipId]) . "</td>";
             echo "<td width=\"12%\" valign=\"middle\"><input type=\"text\" name=\"ship_count[" . $shipId . "]\" size=\"8\" maxlength=\"" . strlen((string) $shipCounts[$shipId]) . "\" value=\"0\" title=\"Anzahl welche recyclet werden sollen\" tabindex=\"" . $tabulator . "\" onKeyPress=\"return nurZahlen(event)\">
                             </td>
                     </tr>\n";
@@ -250,7 +251,7 @@ if ($tech_level > 0) {
                                 <a href=\"" . HELP_URL_DEF . "&amp;id=" . $defenseId . "\"><img src=\"$s_img\" width=\"40\"  height=\"40\" border=\"0\"/></a>
                             </td>";
             echo "<td width=\"66%\" valign=\"middle\">" . $defenseName . "</td>";
-            echo "<td width=\"22%\" valign=\"middle\">" . nf($defenseCounts[$defenseId]) . "</td>";
+            echo "<td width=\"22%\" valign=\"middle\">" . StringUtils::formatNumber($defenseCounts[$defenseId]) . "</td>";
             echo "<td width=\"12%\" valign=\"middle\"><input type=\"text\" name=\"def_count[" . $defenseId . "]\" size=\"8\" maxlength=\"" . strlen((string) $defenseCounts[$defenseId]) . "\" value=\"0\" tabindex=\"" . $tabulator . "\" onKeyPress=\"return nurZahlen(event)\"></td>
                     </tr>\n";
             $tabulator++;

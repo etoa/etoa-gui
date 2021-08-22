@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\Ship\ShipRequirementRepository;
+use EtoA\Support\StringUtils;
 
 $techSpeedCategory = 1;
 echo "<h2>Technologien</h2>";
@@ -59,11 +60,11 @@ if (isset($_GET['id'])) {
         for ($x = 0; $x < min(30, $technology->lastLevel); $x++) {
             $bc = calcTechCosts($technology, $x);
             echo '<tr><td class="tbldata">' . ($x + 1) . '</td>
-                      <td class="tbldata" style="text-align:right;">' . nf($bc['metal']) . '</td>
-                      <td class="tbldata" style="text-align:right;">' . nf($bc['crystal']) . '</td>
-                      <td class="tbldata" style="text-align:right;">' . nf($bc['plastic']) . '</td>
-                      <td class="tbldata" style="text-align:right;">' . nf($bc['fuel']) . '</td>
-                      <td class="tbldata" style="text-align:right;">' . nf($bc['food']) . '</td></tr>';
+                      <td class="tbldata" style="text-align:right;">' . StringUtils::formatNumber($bc['metal']) . '</td>
+                      <td class="tbldata" style="text-align:right;">' . StringUtils::formatNumber($bc['crystal']) . '</td>
+                      <td class="tbldata" style="text-align:right;">' . StringUtils::formatNumber($bc['plastic']) . '</td>
+                      <td class="tbldata" style="text-align:right;">' . StringUtils::formatNumber($bc['fuel']) . '</td>
+                      <td class="tbldata" style="text-align:right;">' . StringUtils::formatNumber($bc['food']) . '</td></tr>';
         }
         tableEnd();
 

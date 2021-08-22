@@ -7,6 +7,7 @@ namespace EtoA\Ranking;
 use EtoA\Alliance\AllianceRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Race\RaceDataRepository;
+use EtoA\Support\StringUtils;
 use EtoA\User\UserRepository;
 use GdImage;
 
@@ -50,7 +51,7 @@ class UserBannerService
             } elseif ($user->ghost) {
                 $pt = "";
             } else {
-                $pt = "  -  " . nf($user->points) . " Punkte, Platz " . $user->rank . "";
+                $pt = "  -  " . StringUtils::formatNumber($user->points) . " Punkte, Platz " . $user->rank . "";
             }
             $text = $this->config->get('roundname') . $pt;
 

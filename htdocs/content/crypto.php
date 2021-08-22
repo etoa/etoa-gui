@@ -85,7 +85,7 @@ if ($config->getBoolean('crypto_enable')) {
 
         tableStart("Kryptocenter-Infos");
         echo "<tr><th>Aktuelle Reichweite:</th>
-                <td>" . nf($config->getInt('crypto_range_per_level') * $cryptoCenterLevel) . " AE ~" . floor($config->getInt('crypto_range_per_level') * $cryptoCenterLevel / $config->getInt('cell_length')) . " Systeme (+" . $config->getInt('crypto_range_per_level') . " pro Stufe) </td></tr>";
+                <td>" . StringUtils::formatNumber($config->getInt('crypto_range_per_level') * $cryptoCenterLevel) . " AE ~" . floor($config->getInt('crypto_range_per_level') * $cryptoCenterLevel / $config->getInt('cell_length')) . " Systeme (+" . $config->getInt('crypto_range_per_level') . " pro Stufe) </td></tr>";
         if ($userCooldownDiff == 0) {
             echo '<tr><th>Zielinfo:</th><td id="targetinfo">
                                 Wähle bitte ein Ziel...
@@ -94,7 +94,7 @@ if ($config->getBoolean('crypto_enable')) {
                     </td></tr>';
         }
         echo "<tr><th>Kosten pro Scan:</th>
-                <td>" . nf($config->getInt('crypto_fuel_costs_per_scan')) . " " . RES_FUEL . " und " . nf($config->getInt('crypto_fuel_costs_per_scan')) . " " . RES_FUEL . " Allianzrohstoffe</td></tr>";
+                <td>" . StringUtils::formatNumber($config->getInt('crypto_fuel_costs_per_scan')) . " " . RES_FUEL . " und " . StringUtils::formatNumber($config->getInt('crypto_fuel_costs_per_scan')) . " " . RES_FUEL . " Allianzrohstoffe</td></tr>";
         echo "<tr><th>Abklingzeit:</th>
                 <td>" . StringUtils::formatTimespan($fleetScanService->calculateCooldown($cryptoCenterLevel)) . " (-" . StringUtils::formatTimespan($config->getInt("crypto_cooldown_reduction_per_level")) . " pro Stufe, minimal " . StringUtils::formatTimespan($config->getInt("crypto_min_cooldown")) . ")</td></tr>";
         $statusText = $userCooldownDiff > 0 ? "Bereit in <span id=\"cdcd\">" . StringUtils::formatTimespan($userCooldownDiff) . "</span>" : "Bereit";
@@ -162,9 +162,9 @@ if ($config->getBoolean('crypto_enable')) {
                     </script>";
 
             if ($planet->resFuel >= $config->getInt('crypto_fuel_costs_per_scan')) {
-                echo '<input type="submit" name="scan" value="Analyse für ' . nf($config->getInt('crypto_fuel_costs_per_scan')) . ' ' . RES_FUEL . ' starten" />';
+                echo '<input type="submit" name="scan" value="Analyse für ' . StringUtils::formatNumber($config->getInt('crypto_fuel_costs_per_scan')) . ' ' . RES_FUEL . ' starten" />';
             } else {
-                echo "Zuwenig Rohstoffe für eine Analyse vorhanden, " . nf($config->getInt('crypto_fuel_costs_per_scan')) . " " . RES_FUEL . " benötigt, " . nf($planet->resFuel) . " vorhanden!";
+                echo "Zuwenig Rohstoffe für eine Analyse vorhanden, " . StringUtils::formatNumber($config->getInt('crypto_fuel_costs_per_scan')) . " " . RES_FUEL . " benötigt, " . StringUtils::formatNumber($planet->resFuel) . " vorhanden!";
             }
             echo '</form>';
             echo '</body>';

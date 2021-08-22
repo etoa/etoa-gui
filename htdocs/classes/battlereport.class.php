@@ -4,6 +4,7 @@ use EtoA\Building\BuildingDataRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Defense\DefenseDataRepository;
 use EtoA\Ship\ShipDataRepository;
+use EtoA\Support\StringUtils;
 use EtoA\Technology\TechnologyDataRepository;
 
 /**
@@ -157,7 +158,7 @@ class BattleReport extends Report
 
         switch ($this->subType) {
             case 'antrax':
-                echo 'Eine Flotte vom Planeten ' . $ent2->detailLink() . ' hat einen Antraxangriff auf den Planeten ' . $ent1->detailLink() . ' verübt. Es starben dabei ' . nf($this->res[5]) . ' Bewohner und ' . nf($this->res[4]) . ' t Nahrung wurden verbrannt.';
+                echo 'Eine Flotte vom Planeten ' . $ent2->detailLink() . ' hat einen Antraxangriff auf den Planeten ' . $ent1->detailLink() . ' verübt. Es starben dabei ' . StringUtils::formatNumber($this->res[5]) . ' Bewohner und ' . StringUtils::formatNumber($this->res[4]) . ' t Nahrung wurden verbrannt.';
                 break;
             case 'antraxfailed':
                 echo 'Eine Flotte vom Planeten ' . $ent2->detailLink() . ' hat erfolglos einen Antraxangriff auf den Planeten ' . $ent1->detailLink() . ' verübt.';
@@ -187,7 +188,7 @@ class BattleReport extends Report
                     echo 'Hinweis: Der Spieler hat keine Gebäudeeinrichtungen, welche deaktiviert werden können!';
                 break;
             case 'gasattack':
-                echo 'Eine Flotte vom Planeten ' . $ent2->detailLink() . ' hat einen Giftgasangriff auf den Planeten ' . $ent1->detailLink() . ' verübt. Es starben dabei ' . nf($this->res[5]) . ' Bewohner.';
+                echo 'Eine Flotte vom Planeten ' . $ent2->detailLink() . ' hat einen Giftgasangriff auf den Planeten ' . $ent1->detailLink() . ' verübt. Es starben dabei ' . StringUtils::formatNumber($this->res[5]) . ' Bewohner.';
                 break;
             case 'gasattackfailed':
                 echo 'Eine Flotte vom Planeten ' . $ent2->detailLink() . ' hat erfolglos einen Giftgasangriff auf den Planeten ' . $ent1->detailLink() . ' verübt.';
@@ -207,7 +208,7 @@ class BattleReport extends Report
                             $data = explode(':', $ship);
                             echo '<tr>
                                     <td>' . $shipNames[(int) $data[0]] . ' </td>
-                                    <td style="text-align:right;"> ' . nf($data[1]) . '</td>
+                                    <td style="text-align:right;"> ' . StringUtils::formatNumber((int) $data[1]) . '</td>
                                 </tr>';
                         }
                     }
@@ -219,12 +220,12 @@ class BattleReport extends Report
                 foreach ($resNames as $k => $v) {
                     echo '<tr>
                         <td>' . $v . ' </td>
-                        <td style="text-align:right;"> ' . nf($this->res[$k]) . '</td>
+                        <td style="text-align:right;"> ' . StringUtils::formatNumber($this->res[$k]) . '</td>
                         </tr>';
                 }
                 echo '<tr>
                         <td>Bewohner </td>
-                        <td style="text-align:right;"> ' . nf($this->res[5]) . '</td>
+                        <td style="text-align:right;"> ' . StringUtils::formatNumber($this->res[5]) . '</td>
                     </tr>';
                 echo '</table><br/>';
                 break;
@@ -302,7 +303,7 @@ class BattleReport extends Report
                             $data = explode(':', $ship);
                             echo '<tr>
                                                     <td>' . $shipNames[(int) $data[0]] . ' </td>
-                                                    <td style="text-align:right;"> ' . nf($data[1]) . '</td>
+                                                    <td style="text-align:right;"> ' . StringUtils::formatNumber((int) $data[1]) . '</td>
                                                 </tr>';
                         }
                     }
@@ -320,7 +321,7 @@ class BattleReport extends Report
                             $data = explode(':', $ship);
                             echo '<tr>
                                                     <td>' . $shipNames[(int) $data[0]] . ' </td>
-                                                    <td style="text-align:right;"> ' . nf($data[1]) . '</td>
+                                                    <td style="text-align:right;"> ' . StringUtils::formatNumber((int) $data[1]) . '</td>
                                                 </tr>';
                         }
                     }
@@ -345,7 +346,7 @@ class BattleReport extends Report
                             $data = explode(':', $defense);
                             echo '<tr>
                                                     <td>' . $defenseNames[(int) $data[0]] . ' </td>
-                                                    <td style="text-align:right;"> ' . nf($data[1]) . '</td>
+                                                    <td style="text-align:right;"> ' . StringUtils::formatNumber((int) $data[1]) . '</td>
                                                 </tr>';
                         }
                     }
@@ -359,13 +360,13 @@ class BattleReport extends Report
                                 <strong>DATEN DES ANGREIFERS</strong><br />
                                 <table>
                                     <tr>
-                                        <td>Schild (' . $this->shieldTech . '%):</td><td style="text-align:right;"> ' . nf($this->shield) . '</td>
+                                        <td>Schild (' . $this->shieldTech . '%):</td><td style="text-align:right;"> ' . StringUtils::formatNumber($this->shield) . '</td>
                                     </tr><tr>
-                                        <td>Struktur (' . $this->structureTech . '%):</td><td style="text-align:right;"> ' . nf($this->structure) . '</td>
+                                        <td>Struktur (' . $this->structureTech . '%):</td><td style="text-align:right;"> ' . StringUtils::formatNumber($this->structure) . '</td>
                                     </tr><tr>
-                                        <td>Waffen (' . $this->weaponTech . '%):</td><td style="text-align:right;"> ' . nf($this->weapon[1]) . '</td>
+                                        <td>Waffen (' . $this->weaponTech . '%):</td><td style="text-align:right;"> ' . StringUtils::formatNumber($this->weapon[1]) . '</td>
                                     </tr><tr>
-                                        <td>Einheiten:</td><td style="text-align:right;"> ' . nf($this->count[1]) . '</td>
+                                        <td>Einheiten:</td><td style="text-align:right;"> ' . StringUtils::formatNumber($this->count[1]) . '</td>
                                     </tr>
                                 </table>
                             </td>
@@ -373,13 +374,13 @@ class BattleReport extends Report
                                 <strong>DATEN DES VERTEIDIGERS</strong><br />
                                 <table>
                                     <tr>
-                                        <td>Schild (' . $this->entityShieldTech . '%):</td><td style="text-align:right;"> ' . nf($this->entityShield) . '</td>
+                                        <td>Schild (' . $this->entityShieldTech . '%):</td><td style="text-align:right;"> ' . StringUtils::formatNumber($this->entityShield) . '</td>
                                     </tr><tr>
-                                        <td>Struktur (' . $this->entityStructureTech . '%):</td><td style="text-align:right;"> ' . nf($this->entityStructure) . '</td>
+                                        <td>Struktur (' . $this->entityStructureTech . '%):</td><td style="text-align:right;"> ' . StringUtils::formatNumber($this->entityStructure) . '</td>
                                     </tr><tr>
-                                        <td>Waffen (' . $this->entityWeaponTech . '%):</td><td style="text-align:right;"> ' . nf($this->entityWeapon[1]) . '</td>
+                                        <td>Waffen (' . $this->entityWeaponTech . '%):</td><td style="text-align:right;"> ' . StringUtils::formatNumber($this->entityWeapon[1]) . '</td>
                                     </tr><tr>
-                                        <td>Einheiten:</td><td style="text-align:right;"> ' . nf($this->entityCount[1]) . '</td>
+                                        <td>Einheiten:</td><td style="text-align:right;"> ' . StringUtils::formatNumber($this->entityCount[1]) . '</td>
                                     </tr>
                                 </table>
                             <br /></td>
@@ -393,16 +394,16 @@ class BattleReport extends Report
                     $shieldStructure = max(0, $shieldStructure - $this->entityWeapon[$rnd]);
                     $entityShieldStructure = max(0, $entityShieldStructure - $this->weapon[$rnd]);
 
-                    echo '<br />' . nf($this->count[$rnd]) . ' Einheiten des Angreifers schiessen mit einer Stärke von ' . nf($this->weapon[$rnd]) . ' auf den Verteidiger. Der Verteidiger hat danach noch ' . nf($entityShieldStructure) . ' Struktur- und Schildpunkte.<br /><br />';
-                    echo nf($this->entityCount[$rnd]) . ' Einheiten des Verteidigers schiessen mit einer Stärke von ' . nf($this->entityWeapon[$rnd]) . ' auf den Angreifer. Der Angreifer hat danach noch ' . nf($shieldStructure) . ' Struktur- und Schildpunkte.<br /><br />';
+                    echo '<br />' . StringUtils::formatNumber($this->count[$rnd]) . ' Einheiten des Angreifers schiessen mit einer Stärke von ' . StringUtils::formatNumber($this->weapon[$rnd]) . ' auf den Verteidiger. Der Verteidiger hat danach noch ' . StringUtils::formatNumber($entityShieldStructure) . ' Struktur- und Schildpunkte.<br /><br />';
+                    echo StringUtils::formatNumber($this->entityCount[$rnd]) . ' Einheiten des Verteidigers schiessen mit einer Stärke von ' . StringUtils::formatNumber($this->entityWeapon[$rnd]) . ' auf den Angreifer. Der Angreifer hat danach noch ' . StringUtils::formatNumber($shieldStructure) . ' Struktur- und Schildpunkte.<br /><br />';
 
                     if ($this->heal[$rnd] > 0 && $shieldStructure < $initShieldStructure) {
                         $shieldStructure = min($initShieldStructure, ($shieldStructure + $this->heal[$rnd]));
-                        echo 'Die Einheiten des Angreifers heilen ' . nf($this->heal[$rnd]) . ' Struktur- und Schildpunkte. Der Angreifer hat danach wieder ' . nf($shieldStructure) . ' Struktur- und Schildpunkte<br /><br />';
+                        echo 'Die Einheiten des Angreifers heilen ' . StringUtils::formatNumber($this->heal[$rnd]) . ' Struktur- und Schildpunkte. Der Angreifer hat danach wieder ' . StringUtils::formatNumber($shieldStructure) . ' Struktur- und Schildpunkte<br /><br />';
                     }
                     if ($this->entityHeal[$rnd] > 0 && $entityShieldStructure < $entityInitShieldStructure) {
                         $entityShieldStructure = min($entityInitShieldStructure, ($entityShieldStructure + $this->entityHeal[$rnd]));
-                        echo 'Die Einheiten des Verteidiger heilen ' . nf($this->entityHeal[$rnd]) . ' Struktur- und Schildpunkte. Der Verteidiger hat danach wieder ' . nf($entityShieldStructure) . ' Struktur- und Schildpunkte<br /><br />';
+                        echo 'Die Einheiten des Verteidiger heilen ' . StringUtils::formatNumber($this->entityHeal[$rnd]) . ' Struktur- und Schildpunkte. Der Verteidiger hat danach wieder ' . StringUtils::formatNumber($entityShieldStructure) . ' Struktur- und Schildpunkte<br /><br />';
                     }
 
                     if ($rnd == 5 || $this->count[$rnd + 1] == 0 || $this->entityCount[$rnd + 1] == 0) break;
@@ -432,12 +433,12 @@ class BattleReport extends Report
                     foreach ($resNames as $k => $v) {
                         echo '<tr>
                                             <td>' . $v . ' </td>
-                                            <td style="text-align:right;"> ' . nf($this->res[$k]) . '</td>
+                                            <td style="text-align:right;"> ' . StringUtils::formatNumber($this->res[$k]) . '</td>
                                             </tr>';
                     }
                     echo '<tr>
                                             <td>Bewohner </td>
-                                            <td style="text-align:right;"> ' . nf($this->res[5]) . '</td>
+                                            <td style="text-align:right;"> ' . StringUtils::formatNumber($this->res[5]) . '</td>
                                         </tr>';
                     echo '</table>';
                 }
@@ -448,7 +449,7 @@ class BattleReport extends Report
                 foreach ($this->wf as $k => $wf) {
                     echo '<tr>
                                             <td>' . $resNames[$k] . ' </td>
-                                            <td style="text-align:right;"> ' . nf($wf) . '</td>
+                                            <td style="text-align:right;"> ' . StringUtils::formatNumber($wf) . '</td>
                                         </tr>';
                 }
                 echo '</table><br/>
@@ -470,7 +471,7 @@ class BattleReport extends Report
                             $data = explode(':', $ship);
                             echo '<tr>
                                                     <td>' . $shipNames[(int) $data[0]] . ' </td>
-                                                    <td style="text-align:right;"> ' . nf($data[1]) . '</td>
+                                                    <td style="text-align:right;"> ' . StringUtils::formatNumber((int) $data[1]) . '</td>
                                                 </tr>';
                         }
                     }
@@ -489,10 +490,10 @@ class BattleReport extends Report
                             echo '<tr>
                                                     <td>' . $shipNames[(int) $data[0]] . ' </td>';
                             if ($data[2] > 0) {
-                                echo '<td style="text-align:right;"> ' . nf($data[1]) . '</td>';
-                                echo '<td>(+' . nf($data[2]) . ')</td>';
+                                echo '<td style="text-align:right;"> ' . StringUtils::formatNumber((int) $data[1]) . '</td>';
+                                echo '<td>(+' . StringUtils::formatNumber((int) $data[2]) . ')</td>';
                             } else {
-                                echo '<td style="text-align:right;"> ' . nf($data[1]) . '</td>';
+                                echo '<td style="text-align:right;"> ' . StringUtils::formatNumber((int) $data[1]) . '</td>';
                             }
                             echo    '</tr>';
                         }
@@ -507,10 +508,10 @@ class BattleReport extends Report
                     echo '<tr>
                             <td>';
                     if ($this->exp >= 0)
-                        echo 'Gewonnene EXP: ' . nf($this->exp);
+                        echo 'Gewonnene EXP: ' . StringUtils::formatNumber($this->exp);
                     echo '	</td><td>';
                     if ($this->entityExp >= 0)
-                        echo 'Gewonnene EXP: ' . nf($this->entityExp);
+                        echo 'Gewonnene EXP: ' . StringUtils::formatNumber($this->entityExp);
                     echo '<br /><br /></td>
                         </tr>';
                 }
@@ -531,10 +532,10 @@ class BattleReport extends Report
                             echo '<tr>
                                                     <td>' . $defenseNames[(int) $data[0]] . ' </td>';
                             if ($data[2] > 0) {
-                                echo '<td style="text-align:right;"> ' . nf($data[1]) . '</td>';
-                                echo '<td>(+' . nf($data[2]) . ')</td>';
+                                echo '<td style="text-align:right;"> ' . StringUtils::formatNumber((int) $data[1]) . '</td>';
+                                echo '<td>(+' . StringUtils::formatNumber((int) $data[2]) . ')</td>';
                             } else {
-                                echo '<td style="text-align:right;"> ' . nf($data[1]) . '</td>';
+                                echo '<td style="text-align:right;"> ' . StringUtils::formatNumber((int) $data[1]) . '</td>';
                             }
                             echo    '</tr>';
                         }

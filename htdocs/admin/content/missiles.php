@@ -4,6 +4,7 @@ use EtoA\Admin\Forms\MissilesForm;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Missile\MissileDataRepository;
 use EtoA\Missile\MissileRepository;
+use EtoA\Support\StringUtils;
 use Pimple\Container;
 use Symfony\Component\HttpFoundation\Request;
 use Twig\Environment;
@@ -110,5 +111,5 @@ function missileOverview(ConfigurationService $config, MissileDataRepository $mi
         }
     }
 
-    echo "Es sind " . nf($missileRepository->count()) . " Einträge in der Datenbank vorhanden.<br/>";
+    echo "Es sind " . StringUtils::formatNumber($missileRepository->count()) . " Einträge in der Datenbank vorhanden.<br/>";
 }
