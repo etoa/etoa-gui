@@ -48,6 +48,8 @@ $userSetupService = $app[UserSetupService::class];
 
 /** @var UserRepository $userRepository */
 $userRepository = $app[UserRepository::class];
+/** @var RaceDataRepository $raceRepository */
+$raceRepository = $app[RaceDataRepository::class];
 
 /** @var Request */
 $request = Request::createFromGlobals();
@@ -63,14 +65,15 @@ echo "<div class=\"userSetupContainer\">";
 
 $mode = null;
 
+$currentUser = $userRepository->getUser($cu->getId());
+
 // Apply chosen itemset
 /** @var UserSession $s */
 if (isset($s->itemset_key) && $request->request->has(md5($s->itemset_key)) && $request->request->has('itemset_id')) {
-    $userSetupService->addItemSetListToPlanet($s->itemset_planet, $cu->id, $request->request->getInt('itemset_id'));
+    $userSetupService->addItemSetListToPlanet($s->itemset_planet, $currentUser->id, $request->request->getInt('itemset_id'));
     $s->itemset_key = null;
     $s->itemset_planet = null;
-    $userRepository->setSetupFinished($cu->id);
-    $cu->setSetup();
+    $userRepository->setSetupFinished($currentUser->id);
     $mode = "finished";
 } elseif ($request->request->has('submit_chooseplanet') && $request->request->getInt('choosenplanetid') > 0 && checker_verify() && !isset($cp)) {
     $planetId = $request->request->getInt('choosenplanetid');
@@ -79,14 +82,14 @@ if (isset($s->itemset_key) && $request->request->has(md5($s->itemset_key)) && $r
     if ($planet !== null && $planetTypeRepository->isHabitable($planet->typeId) && $planet->userId == 0 && $planet->fields > $config->getInt('user_min_fields')) {
 
         $planetRepo->reset($planetId);
-        $planetRepo->assignToUser($planetId, $cu->id, true);
+        $planetRepo->assignToUser($planetId, $currentUser->id, true);
         $planetService->setDefaultResources($planetId);
 
         $entity = $entityRepository->findIncludeCell($planetId);
 
         /** @var UserService $userService */
         $userService = $app[UserService::class];
-        $userService->addToUserLog($cu->id, "planets", "{nick} wählt [b]" . $entity->toString() . "[/b] als Hauptplanet aus.");
+        $userService->addToUserLog($currentUser->id, "planets", "{nick} wählt [b]" . $entity->toString() . "[/b] als Hauptplanet aus.");
 
         /** @var DefaultItemRepository $defaultItemRepository */
         $defaultItemRepository = $app[DefaultItemRepository::class];
@@ -94,13 +97,11 @@ if (isset($s->itemset_key) && $request->request->has(md5($s->itemset_key)) && $r
         if (count($sets) > 1) {
             $mode = "itemsets";
         } elseif (count($sets) === 1) {
-            $userSetupService->addItemSetListToPlanet($planetId, $cu->id, $sets[0]->id);
-            $userRepository->setSetupFinished($cu->id);
-            $cu->setSetup();
+            $userSetupService->addItemSetListToPlanet($planetId, $currentUser->id, $sets[0]->id);
+            $userRepository->setSetupFinished($currentUser->id);
             $mode = "finished";
         } else {
-            $userRepository->setSetupFinished($cu->id);
-            $cu->setSetup();
+            $userRepository->setSetupFinished($currentUser->id);
             $mode = "finished";
         }
     }
@@ -126,12 +127,13 @@ if (isset($s->itemset_key) && $request->request->has(md5($s->itemset_key)) && $r
         Bitte wähle einen anderen Sektor!<br/><br/>";
         $mode = "choosesector";
     }
-} elseif ($cu->raceId > 0 && !isset($cp)) {
+} elseif ($currentUser->raceId > 0 && !isset($cp)) {
     $mode = "choosesector";
 } elseif ($request->request->has('submit_setup1') && $request->request->getInt('register_user_race_id') > 0 && checker_verify()) {
-    $cu->race = new Race($request->request->getInt('register_user_race_id'));
+    $currentUser->raceId = $request->request->getInt('register_user_race_id');
+    $userRepository->save($currentUser);
     $mode = "choosesector";
-} elseif ($cu->raceId == 0) {
+} elseif ($currentUser->raceId === 0) {
     $mode = "race";
 }
 
@@ -165,6 +167,7 @@ if ($mode == "itemsets" && isset($planet)) {
     $starEntity = $entityRepository->findByCellAndPosition($entity->cellId, 0);
     $star = $starRepository->find($starEntity->id);
     $starType = $solarTypeRepository->find($star->typeId);
+    $race = $raceRepository->getRace($currentUser->raceId);
 
     echo "<input type=\"hidden\" name=\"choosenplanetid\" value=\"" . $planet->id . "\" />";
     echo "Folgender Planet wurde für Euch ausgewählt:<br/><br/>";
@@ -234,69 +237,69 @@ if ($mode == "itemsets" && isset($planet)) {
     tableStart("Bonis dieser Zusammenstellung", 600);
     echo "<tr><th>Rohstoff</th>
     <th>" . $planetType->name . "</th>";
-    echo "<th>" . $cu->race->name . "</th>";
+    echo "<th>" . $race->name . "</th>";
     echo "<th>" . $starType->name . "</th>";
     echo "<th>TOTAL</th></tr>";
 
     echo "<tr><td class=\"tbldata\">" . RES_ICON_METAL . "Produktion " . RES_METAL . "</td>";
     echo "<td class=\"tbldata\">" . StringUtils::formatPercentString($planetType->metal, true) . "</td>";
-    echo "<td class=\"tbldata\">" . StringUtils::formatPercentString($cu->race->metal, true) . "</td>";
+    echo "<td class=\"tbldata\">" . StringUtils::formatPercentString($race->metal, true) . "</td>";
     echo "<td class=\"tbldata\">" . StringUtils::formatPercentString($starType->metal, true) . "</td>";
-    echo "<td class=\"tbldata\">" . StringUtils::formatPercentString([$planetType->metal, $cu->race->metal, $starType->metal], true) . "</td></tr>";
+    echo "<td class=\"tbldata\">" . StringUtils::formatPercentString([$planetType->metal, $race->metal, $starType->metal], true) . "</td></tr>";
 
     echo "<tr><td class=\"tbldata\">" . RES_ICON_CRYSTAL . "Produktion " . RES_CRYSTAL . "</td>";
     echo "<td class=\"tbldata\">" . StringUtils::formatPercentString($planetType->crystal, true) . "</td>";
-    echo "<td class=\"tbldata\">" . StringUtils::formatPercentString($cu->race->crystal, true) . "</td>";
+    echo "<td class=\"tbldata\">" . StringUtils::formatPercentString($race->crystal, true) . "</td>";
     echo "<td class=\"tbldata\">" . StringUtils::formatPercentString($starType->crystal, true) . "</td>";
-    echo "<td class=\"tbldata\">" . StringUtils::formatPercentString([$planetType->crystal, $cu->race->crystal, $starType->crystal], true) . "</td></tr>";
+    echo "<td class=\"tbldata\">" . StringUtils::formatPercentString([$planetType->crystal, $race->crystal, $starType->crystal], true) . "</td></tr>";
 
     echo "<tr><td class=\"tbldata\">" . RES_ICON_PLASTIC . "Produktion " . RES_PLASTIC . "</td>";
     echo "<td class=\"tbldata\">" . StringUtils::formatPercentString($planetType->plastic, true) . "</td>";
-    echo "<td class=\"tbldata\">" . StringUtils::formatPercentString($cu->race->plastic, true) . "</td>";
+    echo "<td class=\"tbldata\">" . StringUtils::formatPercentString($race->plastic, true) . "</td>";
     echo "<td class=\"tbldata\">" . StringUtils::formatPercentString($starType->plastic, true) . "</td>";
-    echo "<td class=\"tbldata\">" . StringUtils::formatPercentString([$planetType->plastic, $cu->race->plastic, $starType->plastic], true) . "</td></tr>";
+    echo "<td class=\"tbldata\">" . StringUtils::formatPercentString([$planetType->plastic, $race->plastic, $starType->plastic], true) . "</td></tr>";
 
     echo "<tr><td class=\"tbldata\">" . RES_ICON_FUEL . "Produktion " . RES_FUEL . "</td>";
     echo "<td class=\"tbldata\">" . StringUtils::formatPercentString($planetType->fuel, true) . "</td>";
-    echo "<td class=\"tbldata\">" . StringUtils::formatPercentString($cu->race->fuel, true) . "</td>";
+    echo "<td class=\"tbldata\">" . StringUtils::formatPercentString($race->fuel, true) . "</td>";
     echo "<td class=\"tbldata\">" . StringUtils::formatPercentString($starType->fuel, true) . "</td>";
-    echo "<td class=\"tbldata\">" . StringUtils::formatPercentString([$planetType->fuel, $cu->race->fuel, $starType->fuel], true) . "</td></tr>";
+    echo "<td class=\"tbldata\">" . StringUtils::formatPercentString([$planetType->fuel, $race->fuel, $starType->fuel], true) . "</td></tr>";
 
     echo "<tr><td class=\"tbldata\">" . RES_ICON_FOOD . "Produktion " . RES_FOOD . "</td>";
     echo "<td class=\"tbldata\">" . StringUtils::formatPercentString($planetType->food, true) . "</td>";
-    echo "<td class=\"tbldata\">" . StringUtils::formatPercentString($cu->race->food, true) . "</td>";
+    echo "<td class=\"tbldata\">" . StringUtils::formatPercentString($race->food, true) . "</td>";
     echo "<td class=\"tbldata\">" . StringUtils::formatPercentString($starType->food, true) . "</td>";
-    echo "<td class=\"tbldata\">" . StringUtils::formatPercentString([$planetType->food, $cu->race->food, $starType->food], true) . "</td></tr>";
+    echo "<td class=\"tbldata\">" . StringUtils::formatPercentString([$planetType->food, $race->food, $starType->food], true) . "</td></tr>";
 
     echo "<tr><td class=\"tbldata\">" . RES_ICON_POWER . "Produktion Energie</td>";
     echo "<td class=\"tbldata\">" . StringUtils::formatPercentString($planetType->power, true) . "</td>";
-    echo "<td class=\"tbldata\">" . StringUtils::formatPercentString($cu->race->power, true) . "</td>";
+    echo "<td class=\"tbldata\">" . StringUtils::formatPercentString($race->power, true) . "</td>";
     echo "<td class=\"tbldata\">" . StringUtils::formatPercentString($starType->power, true) . "</td>";
-    echo "<td class=\"tbldata\">" . StringUtils::formatPercentString([$planetType->power, $cu->race->power, $starType->power], true) . "</td></tr>";
+    echo "<td class=\"tbldata\">" . StringUtils::formatPercentString([$planetType->power, $race->power, $starType->power], true) . "</td></tr>";
 
     echo "<tr><td class=\"tbldata\">" . RES_ICON_PEOPLE . "Bevölkerungswachstum</td>";
     echo "<td class=\"tbldata\">" . StringUtils::formatPercentString($planetType->people, true) . "</td>";
-    echo "<td class=\"tbldata\">" . StringUtils::formatPercentString($cu->race->population, true) . "</td>";
+    echo "<td class=\"tbldata\">" . StringUtils::formatPercentString($race->population, true) . "</td>";
     echo "<td class=\"tbldata\">" . StringUtils::formatPercentString($starType->people, true) . "</td>";
-    echo "<td class=\"tbldata\">" . StringUtils::formatPercentString([$planetType->people, $cu->race->population, $starType->people], true) . "</td></tr>";
+    echo "<td class=\"tbldata\">" . StringUtils::formatPercentString([$planetType->people, $race->population, $starType->people], true) . "</td></tr>";
 
     echo "<tr><td class=\"tbldata\">" . RES_ICON_TIME . "Forschungszeit</td>";
     echo "<td class=\"tbldata\">" . StringUtils::formatPercentString($planetType->researchTime, true, true) . "</td>";
-    echo "<td class=\"tbldata\">" . StringUtils::formatPercentString($cu->race->researchTime, true, true) . "</td>";
+    echo "<td class=\"tbldata\">" . StringUtils::formatPercentString($race->researchTime, true, true) . "</td>";
     echo "<td class=\"tbldata\">" . StringUtils::formatPercentString($starType->researchTime, true, true) . "</td>";
-    echo "<td class=\"tbldata\">" . StringUtils::formatPercentString([$planetType->researchTime, $cu->race->researchTime, $starType->researchTime], true, true) . "</td></tr>";
+    echo "<td class=\"tbldata\">" . StringUtils::formatPercentString([$planetType->researchTime, $race->researchTime, $starType->researchTime], true, true) . "</td></tr>";
 
     echo "<tr><td class=\"tbldata\">" . RES_ICON_TIME . "Bauzeit (Geb&auml;ude)</td>";
     echo "<td class=\"tbldata\">" . StringUtils::formatPercentString($planetType->buildTime, true, true) . "</td>";
-    echo "<td class=\"tbldata\">" . StringUtils::formatPercentString($cu->race->buildTime, true, true) . "</td>";
+    echo "<td class=\"tbldata\">" . StringUtils::formatPercentString($race->buildTime, true, true) . "</td>";
     echo "<td class=\"tbldata\">" . StringUtils::formatPercentString($starType->buildTime, true, true) . "</td>";
-    echo "<td class=\"tbldata\">" . StringUtils::formatPercentString([$planetType->buildTime, $cu->race->buildTime, $starType->buildTime], true, true) . "</td></tr>";
+    echo "<td class=\"tbldata\">" . StringUtils::formatPercentString([$planetType->buildTime, $race->buildTime, $starType->buildTime], true, true) . "</td></tr>";
 
     echo "<tr><td class=\"tbldata\">" . RES_ICON_TIME . "Fluggeschwindigkeit</td>";
     echo "<td class=\"tbldata\">-</td>";
-    echo "<td class=\"tbldata\">" . StringUtils::formatPercentString($cu->race->fleetSpeedFactor, true) . "</td>";
+    echo "<td class=\"tbldata\">" . StringUtils::formatPercentString($race->fleetTime, true) . "</td>";
     echo "<td class=\"tbldata\">-</td>";
-    echo "<td class=\"tbldata\">" . StringUtils::formatPercentString($cu->race->fleetSpeedFactor, true) . "</td></tr>";
+    echo "<td class=\"tbldata\">" . StringUtils::formatPercentString($race->fleetTime, true) . "</td></tr>";
     tableEnd();
 
     echo "<input type=\"submit\" name=\"submit_chooseplanet\" value=\"Auswählen\" />
@@ -382,7 +385,7 @@ if ($mode == "itemsets" && isset($planet)) {
 
         /** @var \EtoA\Message\MessageRepository $messageRepository */
         $messageRepository = $app[\EtoA\Message\MessageRepository::class];
-        $messageRepository->createSystemMessage($cu->id, USER_MSG_CAT_ID, 'Willkommen', $welcomeText->content);
+        $messageRepository->createSystemMessage($currentUser->id, USER_MSG_CAT_ID, 'Willkommen', $welcomeText->content);
     }
     echo '<input type="button" value="Zum Heimatplaneten" onclick="document.location=\'?page=planetoverview\'" />';
 } else {

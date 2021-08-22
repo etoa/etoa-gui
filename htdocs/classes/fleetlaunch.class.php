@@ -5,6 +5,7 @@ use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Fleet\FleetRepository;
 use EtoA\Fleet\FleetSearch;
 use EtoA\Log\FleetLogRepository;
+use EtoA\Race\RaceDataRepository;
 use EtoA\Ship\ShipRepository;
 use EtoA\Support\StringUtils;
 use EtoA\Specialist\SpecialistService;
@@ -74,11 +75,15 @@ class FleetLaunch
         // TODO
         global $app;
 
+        /** @var RaceDataRepository $raceRepository */
+        $raceRepository = $app[RaceDataRepository::class];
+        $race = $raceRepository->getRace($ownerEnt->raceId);
+
         $this->sourceEntity = $sourceEnt;
         $this->owner = $ownerEnt;
         $this->ownerId = $ownerEnt->id;
-        $this->ownerRaceName = $ownerEnt->race->name;
-        $this->raceSpeedFactor = $ownerEnt->race->fleetSpeedFactor;
+        $this->ownerRaceName = $race->name;
+        $this->raceSpeedFactor = $race->fleetTime;
         $this->possibleFleetStarts = 0;
         $this->fleetSlotsUsed = 0;
         $this->fleetControlLevel = 0;
