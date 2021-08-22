@@ -110,7 +110,7 @@ if ($factoryBuilding !== null && $factoryBuilding->currentLevel > 0) {
          ****************************/
         if (
             count($_POST) > 0 && isset($_POST['sort_submit'])
-            && ctype_aldotsc($_POST['sort_value']) && ctype_aldotsc($_POST['sort_way'])
+            && StringUtils::hasAlphaDotsOrUnderlines($_POST['sort_value']) && StringUtils::hasAlphaDotsOrUnderlines($_POST['sort_way'])
         ) {
             $properties->itemOrderDef = $_POST['sort_value'];
             $properties->itemOrderWay = $_POST['sort_way'];

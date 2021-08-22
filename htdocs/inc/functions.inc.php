@@ -1317,11 +1317,6 @@ function getAbsPath(string $path): string
     return (substr($path, 0, 1) != "/" ? realpath(RELATIVE_ROOT) . '/' : '') . $path;
 }
 
-/**
- * Textfunktionen einbinden
- */
-include_once __DIR__ . '/text.inc.php';
-
 if (!function_exists('blank')) {
     /**
      * Determine if the given value is "blank".

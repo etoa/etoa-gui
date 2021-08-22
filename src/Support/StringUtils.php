@@ -368,4 +368,12 @@ class StringUtils
 
         return round($s) . " B";
     }
+
+    /**
+     * Returns true if the string contains alphabetic characters, dots or underlines
+     */
+    public static function hasAlphaDotsOrUnderlines(string $str): bool
+    {
+        return ctype_alpha(str_replace('_', '', str_replace('.', '', $str)));
+    }
 }

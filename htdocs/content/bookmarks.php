@@ -480,7 +480,7 @@ if ($mode == "fleet") {
     /****************************
      *  Sortiereingaben speichern *
      ****************************/
-    if (count($_POST) > 0 && isset($_POST['sort_submit']) && isset($_POST['sort_value']) && ctype_aldotsc($_POST['sort_value']) && isset($_POST['sort_way']) && ctype_aldotsc($_POST['sort_way'])) {
+    if (count($_POST) > 0 && isset($_POST['sort_submit']) && isset($_POST['sort_value']) && StringUtils::hasAlphaDotsOrUnderlines($_POST['sort_value']) && isset($_POST['sort_way']) && StringUtils::hasAlphaDotsOrUnderlines($_POST['sort_way'])) {
         $properties->itemOrderBookmark = $_POST['sort_value'];
         $properties->itemOrderWay = $_POST['sort_way'];
         $userPropertiesRepository->storeProperties($cu->id, $properties);
