@@ -123,10 +123,10 @@ class BBCodeUtils
         $string = preg_replace("#^ftp://([^ ,\n]*)#i", "[url]ftp://\\1[/url]", $string);
         $string = preg_replace("#^www\\.([^ ,\n]*)#i", "[url]http://www.\\1[/url]", $string);
 
-        $string = preg_replace_callback('#\[url=([^\[]*)\]([^\[]*)\[/url\]#i', 'bbcode_urls_to_links_with_newtab', $string);
-        $string = preg_replace_callback('#\[url ([^\[]*)\]([^\[]*)\[/url\]#i', 'bbcode_urls_to_links_with_newtab', $string);
-        $string = preg_replace_callback('#\[url\]([^\[]*)\[/url\]#i', 'bbcode_urls_to_links_with_newtab', $string);
-        $string = preg_replace_callback('#\[page ([^\[]*)\]([^\[]*)\[/page\]#i', 'bbcode_page_to_links', $string);
+        $string = preg_replace_callback('#\[url=([^\[]*)\]([^\[]*)\[/url\]#i', [BBCodeUtils::class, 'bbcode_urls_to_links_with_newtab'], $string);
+        $string = preg_replace_callback('#\[url ([^\[]*)\]([^\[]*)\[/url\]#i', [BBCodeUtils::class, 'bbcode_urls_to_links_with_newtab'], $string);
+        $string = preg_replace_callback('#\[url\]([^\[]*)\[/url\]#i', [BBCodeUtils::class, 'bbcode_urls_to_links_with_newtab'], $string);
+        $string = preg_replace_callback('#\[page ([^\[]*)\]([^\[]*)\[/page\]#i', [BBCodeUtils::class, 'bbcode_page_to_links'], $string);
 
         $string = preg_replace('#\[mailurl=([^\[]*)\]([^\[]*)\[/mailurl\]#i', '<a href="mailto:\1">\2</a>', $string);
         $string = preg_replace('#\[mailurl ([^\[]*)\]([^\[]*)\[/mailurl\]#i', '<a href="mailto:\1">\2</a>', $string);
@@ -196,6 +196,57 @@ class BBCodeUtils
         $string = stripslashes($string);
 
         return $string;
+    }
+
+    /**
+     *	Callback-Funktion für preg_replace_callback zum Unterscheiden externer URLs in bbcode
+     *
+     * @param string[] $match Array mit [0]=> ganzer String, [1]..[n]=> subpatterns in ()
+     * @return string mit html-links
+     *
+     * Im javascript gibt es bereits sowas.
+     * Diese Funktion überprüft nicht, ob eine valide URL vorliegt.
+     */
+    private static function bbcode_urls_to_links_with_newtab($match): string
+    {
+        $url = $match[1];
+        $scheme = parse_url($url, PHP_URL_SCHEME);
+        $host = parse_url($url, PHP_URL_HOST);
+        $path = parse_url($url, PHP_URL_PATH);
+        // bei relativen / unvollständigen URLs automatisch
+        // scheme, host und path hinzufügen.
+        // Setzt eine gültige URL voraus.
+        if ($scheme === null) {
+            if ($host === null) {
+                if ($path === null) {
+                    $url = '/' . $url;
+                }
+                $url = $_SERVER['SERVER_NAME'] . $url;
+            }
+            $url = 'http://' . $url;
+        }
+        $intern = (preg_match('#etoa.ch$|etoa.net$#i', parse_url($url, PHP_URL_HOST)) === 1);
+
+        return '<a href="' . $url . '"' . ($intern ? '' : ' target="_blank"') . '>' . (isset($match[2]) ? $match[2] : $match[1]) . '</a>';
+    }
+
+    private static function bbcode_page_to_links(string $match): string
+    {
+        $parts = array();
+        if (preg_match('/^([a-z\_]+)(?:\s+(.+))?$/i', $match[1], $parts)) {
+            $page = $parts[1];
+            $url = '?page=' . $page;
+            if (isset($parts[2])) {
+                foreach (preg_split('/\s+/', $parts[2]) as $e) {
+                    $url .= '&' . $e;
+                }
+            }
+        } else {
+            $url = $match[1];
+        }
+        $label = (isset($match[2]) ? $match[2] : $match[1]);
+
+        return '<a href="' . $url . '">' . $label . '</a>';
     }
 
     public static function stripBBCode(string $value): string
