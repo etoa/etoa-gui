@@ -5,7 +5,7 @@ namespace EtoA\Building;
 use Pimple\Container;
 use Pimple\ServiceProviderInterface;
 
-class BuidingServiceProvider implements ServiceProviderInterface
+class BuildingServiceProvider implements ServiceProviderInterface
 {
     public function register(Container $pimple): void
     {
