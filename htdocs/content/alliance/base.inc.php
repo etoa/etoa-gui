@@ -164,11 +164,11 @@ function changeResBox(metal, crystal, plastic, fuel, food)
 if (isset($_POST['storage_submit']) && checker_verify()) {
     // Formatiert Eingaben
     $resources = new BaseResources();
-    $resources->metal = (int) StringUtils::parseFormattedNumber($_POST['spend_metal']);
-    $resources->crystal = (int) StringUtils::parseFormattedNumber($_POST['spend_crystal']);
-    $resources->plastic = (int) StringUtils::parseFormattedNumber($_POST['spend_plastic']);
-    $resources->fuel = (int) StringUtils::parseFormattedNumber($_POST['spend_fuel']);
-    $resources->food = (int) StringUtils::parseFormattedNumber($_POST['spend_food']);
+    $resources->metal = StringUtils::parseFormattedNumber($_POST['spend_metal']);
+    $resources->crystal = StringUtils::parseFormattedNumber($_POST['spend_crystal']);
+    $resources->plastic = StringUtils::parseFormattedNumber($_POST['spend_plastic']);
+    $resources->fuel = StringUtils::parseFormattedNumber($_POST['spend_fuel']);
+    $resources->food = StringUtils::parseFormattedNumber($_POST['spend_food']);
 
     // Prüft, ob Rohstoffe angegeben wurden
     if ($resources->getSum() > 0) {
@@ -332,7 +332,7 @@ if (isset($_POST['ship_submit']) && checker_verify()) {
                         $cnt = 0;
                         foreach ($_POST['buy_ship'] as $ship_id => $build_cnt) {
                             // Formatiert die eingegebene Zahl (entfernt z.B. die Trennzeichen)
-                            $build_cnt = (int) StringUtils::parseFormattedNumber($build_cnt);
+                            $build_cnt = StringUtils::parseFormattedNumber($build_cnt);
 
                             if ($build_cnt > 0) {
                                 $fleetRepository->addShipsToFleet($fleetId, $ship_id, $build_cnt);

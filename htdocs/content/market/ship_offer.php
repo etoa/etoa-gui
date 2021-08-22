@@ -55,12 +55,12 @@ if (!isset($errMsg)) {
     $costs = new BaseResources();
     foreach ($resNames as $rk => $rn) {
         // Convert formatted number back to integer
-        $costs->set($rk, max(0, (int) StringUtils::parseFormattedNumber($_POST['ship_buy_' . $rk])));
+        $costs->set($rk, max(0, StringUtils::parseFormattedNumber($_POST['ship_buy_' . $rk])));
     }
 
     // Überprüft ob die angegebene Anzahl Schiffe noch vorhanden ist (eventuelle Zerstörung durch Kampf?)
     // Schiffe vom Planeten abziehen
-    $removed_ships_count = $shipRepository->removeShips((int) $ship_id, (int) $ship_count, $cu->getId(), (int) $cp->id);
+    $removed_ships_count = $shipRepository->removeShips((int) $ship_id, $ship_count, $cu->getId(), (int) $cp->id);
 
     // Falls alle Schiffe abgezogen werden konnten
     if ($ship_count == $removed_ships_count) {

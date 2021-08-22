@@ -31,7 +31,7 @@ foreach ($resNames as $rk => $rn) {
     // Convert formatted number back to integer
     $_POST['auction_sell_' . $rk] = StringUtils::parseFormattedNumber($_POST['auction_sell_' . $rk]);
 
-    $sell->set($rk, max((int) StringUtils::parseFormattedNumber($_POST['auction_sell_' . $rk]), 0));
+    $sell->set($rk, max(StringUtils::parseFormattedNumber($_POST['auction_sell_' . $rk]), 0));
     $currency->set($rk, max(0, StringUtils::parseFormattedNumber($_POST['auction_buy_' . $rk] ?? 0)));
 
     // Prüft ob noch immer genug Rohstoffe auf dem Planeten sind (eventueller verlust durch Kampf?)
