@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\Fleet\FleetRepository;
+use EtoA\Specialist\SpecialistService;
 use EtoA\Technology\TechnologyRepository;
 
 class FleetManager
@@ -51,19 +52,24 @@ class FleetManager
         /** @var FleetRepository $fleetRepository */
         $fleetRepository = $app[FleetRepository::class];
 
+        /** @var SpecialistService $specialistService */
+        $specialistService = $app[SpecialistService::class];
+
+        /** @var TechnologyRepository $technologyRepository */
+        $technologyRepository = $app[TechnologyRepository::class];
+
         $this->count = 0;
         $this->aggressivCount = 0;
         $this->fleet = array();
 
-        //User Spytech
-        /** @var TechnologyRepository $technologyRepository */
-        $technologyRepository = $app[TechnologyRepository::class];
         $this->userSpyTechLevel = $technologyRepository->getTechnologyLevel((int) $this->userId, SPY_TECH_ID);
 
-        $specialist = new Specialist(0, 0, $this->userId);
-        $this->userSpyTechLevel += $specialist->spyLevel;
+        $specialist = $specialistService->getSpecialistOfUser($this->userId);
+        if ($specialist !== null) {
+            $this->userSpyTechLevel += $specialist->spyLevel;
+        }
 
-        if (SPY_TECH_SHOW_ATTITUDE <= (int) $this->userSpyTechLevel) {
+        if (SPY_TECH_SHOW_ATTITUDE <= $this->userSpyTechLevel) {
             //Lädt Flottendaten
             // TODO: This is not good query because it needs to know the planet table structure
 
@@ -94,8 +100,11 @@ class FleetManager
                     if ($cFleet->getAction()->visible()) {
                         if ($cFleet->getAction()->attitude() == 3) {
                             $opTarnTech = $technologyRepository->getTechnologyLevel((int) $cFleet->ownerId(), TARN_TECH_ID);
-                            $specialist = new Specialist(0, 0, $cFleet->ownerId());
-                            $opTarnTech += $specialist->tarnLevel;
+
+                            $opponentSpecialist = $specialistService->getSpecialistOfUser($cFleet->ownerId());
+                            if ($opponentSpecialist !== null) {
+                                $opTarnTech += $opponentSpecialist->tarnLevel;
+                            }
 
                             $diffTimeFactor = max($opTarnTech - $this->userSpyTechLevel, 0);
                             $specialShipBonusTarn = 0;

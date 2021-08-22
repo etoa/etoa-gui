@@ -5,11 +5,11 @@ use EtoA\Market\MarketResource;
 use EtoA\Market\MarketResourceRepository as MarketResourceRepositoryAlias;
 use EtoA\Market\MarketShipRepository;
 use EtoA\Ship\ShipDataRepository;
+use EtoA\Specialist\SpecialistService;
 use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Entity\EntityService;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Universe\Resources\BaseResources;
-use EtoA\User\UserRepository;
 
 $xajax->register(XAJAX_FUNCTION, 'calcMarketRessPrice');
 $xajax->register(XAJAX_FUNCTION, 'calcMarketRessBuy');
@@ -30,10 +30,15 @@ function marketSearch($form, $order = "distance", $orderDirection = 0)
 
     /** @var EntityRepository $entityRepository */
     $entityRepository = $app[EntityRepository::class];
+
     /** @var EntityService $entityService */
     $entityService = $app[EntityService::class];
+
     /** @var MarketResourceRepositoryAlias $marketResourceRepository */
     $marketResourceRepository = $app[MarketResourceRepositoryAlias::class];
+
+    /** @var SpecialistService $specialistService */
+    $specialistService = $app[SpecialistService::class];
 
     //
     // Resources
@@ -64,7 +69,8 @@ function marketSearch($form, $order = "distance", $orderDirection = 0)
         if ($nr > 0) {
             $currentEntity = $entityRepository->getEntity($_SESSION['cpid']);
             $tradeShip = new Ship(MARKET_SHIP_ID);
-            $specialist = new Specialist(0, 0, $_SESSION['user_id']);
+
+            $specialist = $specialistService->getSpecialistOfUser(intval($_SESSION['user_id']));
 
             $i = 0;
             foreach ($offers as $offer) {
@@ -83,6 +89,7 @@ function marketSearch($form, $order = "distance", $orderDirection = 0)
                 if ($show) {
                     $sellerEntity = $entityRepository->getEntity($offer->entityId);
                     $dist = $entityService->distance($sellerEntity, $currentEntity);
+                    $specialistTradeTime = $specialist !== null ? $specialist->tradeTime : 1;
 
                     $data[$i] = [
                         'offer' => $offer,
@@ -90,7 +97,7 @@ function marketSearch($form, $order = "distance", $orderDirection = 0)
                         'buy_total' => $buyResources->getSum(),
                         'used_res' => 0,
                         'distance' => $dist,
-                        'duration' => ceil($dist / ($tradeShip->speed * $specialist->tradeTime) * 3600 + $tradeShip->time2start + $tradeShip->time2land),
+                        'duration' => ceil($dist / ($tradeShip->speed * $specialistTradeTime) * 3600 + $tradeShip->time2start + $tradeShip->time2land),
                     ];
 
                     foreach ($resNames as $rk => $rn) {
