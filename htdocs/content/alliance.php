@@ -250,9 +250,9 @@ elseif ($cu->allianceId == 0) {
                     $check_name = str_replace(' ', '', $_POST['alliance_name']);
 
                     if ($check_name != '' && $check_tag != '') {
-                        $check_tag = check_illegal_signs($_POST['alliance_tag']);
-                        $check_name = check_illegal_signs($_POST['alliance_name']);
-                        $signs = check_illegal_signs("gibt eine liste von unerlaubten zeichen aus! ; < > & etc.");
+                        $check_tag = StringUtils::checkIllegalSigns($_POST['alliance_tag']);
+                        $check_name = StringUtils::checkIllegalSigns($_POST['alliance_name']);
+                        $signs = StringUtils::checkIllegalSigns("gibt eine liste von unerlaubten zeichen aus! ; < > & etc.");
                         if ($check_tag == "" && $check_name == "") {
 
                             // Prüft, ob dieser Tag oder Name bereits vorhanden ist

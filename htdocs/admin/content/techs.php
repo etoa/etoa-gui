@@ -4,6 +4,7 @@ use EtoA\Admin\Forms\TechnologiesForm;
 use EtoA\Admin\Forms\TechnologyTypesForm;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Ranking\RankingService;
+use EtoA\Support\StringUtils;
 use EtoA\Technology\TechnologyDataRepository;
 use EtoA\Technology\TechnologyListItemSearch;
 use EtoA\Technology\TechnologyPointRepository;
@@ -220,8 +221,8 @@ else {
                 else
                     $style = "";
                 echo "<tr>";
-                echo "<td class=\"tbldata\"$style " . mTT($item->planetName, $item->entity->coordinatesString()) . ">" . cut_string($item->planetName != '' ? $item->planetName : 'Unbenannt', 11) . "</a> [" . $item->entity->id . "]</a></td>";
-                echo "<td class=\"tbldata\"$style " . mTT($item->userNick, nf($item->userPoints) . " Punkte") . ">" . cut_string($item->userNick, 11) . "</a></td>";
+                echo "<td class=\"tbldata\"$style " . mTT($item->planetName, $item->entity->coordinatesString()) . ">" . StringUtils::cutString($item->planetName != '' ? $item->planetName : 'Unbenannt', 11) . "</a> [" . $item->entity->id . "]</a></td>";
+                echo "<td class=\"tbldata\"$style " . mTT($item->userNick, nf($item->userPoints) . " Punkte") . ">" . StringUtils::cutString($item->userNick, 11) . "</a></td>";
                 echo "<td class=\"tbldata\"$style>" . $item->technologyName . "</a></td>";
                 echo "<td class=\"tbldata\"$style>" . nf($item->currentLevel) . "</a></td>";
                 echo "<td class=\"tbldata\"$style>" . $build_type[$item->buildType] . "</a></td>";

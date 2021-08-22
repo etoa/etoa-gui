@@ -9,6 +9,7 @@ use EtoA\Ship\ShipQueueRepository;
 use EtoA\Ship\ShipQueueSearch;
 use EtoA\Ship\ShipRepository;
 use EtoA\Ship\ShipSort;
+use EtoA\Support\StringUtils;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\User\UserRepository;
 use Symfony\Component\HttpFoundation\Request;
@@ -207,8 +208,8 @@ elseif ($sub == "queue") {
                 echo "<td class=\"tbldata\" $style>" . $shipQueueItem->id . "</a></td>";
                 echo "<td class=\"tbldata\"$style " . mTT($shipQueueItem->shipName, "<b>Schiff-ID:</b> " . $shipQueueItem->shipId) . ">" . $shipQueueItem->shipName . "</td>";
                 echo "<td class=\"tbldata\"$style>" . nf($shipQueueItem->count) . "</td>";
-                echo "<td class=\"tbldata\"$style " . mTT($shipQueueItem->planetName, "<b>Planet-ID:</b> " . $shipQueueItem->entityId . "<br/><b>Koordinaten:</b> " . $shipQueueItem->entity->sx . "/" . $shipQueueItem->entity->sy . " : " . $shipQueueItem->entity->cx . "/" . $shipQueueItem->entity->cy . " : " . $shipQueueItem->entity->pos) . ">" . cut_string($shipQueueItem->planetName, 11) . "</td>";
-                echo "<td class=\"tbldata\"$style " . mTT($shipQueueItem->userNick, "<b>User-ID:</b> " . $shipQueueItem->userId . "<br/><b>Punkte:</b> " . nf($shipQueueItem->userPoints)) . ">" . cut_string($shipQueueItem->userNick, 11) . "</td>";
+                echo "<td class=\"tbldata\"$style " . mTT($shipQueueItem->planetName, "<b>Planet-ID:</b> " . $shipQueueItem->entityId . "<br/><b>Koordinaten:</b> " . $shipQueueItem->entity->sx . "/" . $shipQueueItem->entity->sy . " : " . $shipQueueItem->entity->cx . "/" . $shipQueueItem->entity->cy . " : " . $shipQueueItem->entity->pos) . ">" . StringUtils::cutString($shipQueueItem->planetName, 11) . "</td>";
+                echo "<td class=\"tbldata\"$style " . mTT($shipQueueItem->userNick, "<b>User-ID:</b> " . $shipQueueItem->userId . "<br/><b>Punkte:</b> " . nf($shipQueueItem->userPoints)) . ">" . StringUtils::cutString($shipQueueItem->userNick, 11) . "</td>";
                 echo "<td class=\"tbldata\"$style>" . df($shipQueueItem->startTime, 1) . "</td>";
                 echo "<td class=\"tbldata\"$style>" . df($shipQueueItem->endTime, 1) . "</td>";
                 echo "<td class=\"tbldata\"$style>" . edit_button("?page=$page&sub=$sub&action=edit&id=" . $shipQueueItem->id);

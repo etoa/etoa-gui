@@ -177,6 +177,45 @@ class StringUtils
         $string = preg_replace('#\[url\]www.([^\[]*)\[/url\]#i', '<a href="https://www.\1">\1</a>', $string);
         $string = preg_replace('#\[url\]([^\[]*)\[/url\]#i', '<a href="\1">\1</a>', $string);
         $string = preg_replace('#\[mailurl\]([^\[]*)\[/mailurl\]#i', '<a href="\1">Link</a>', $string);
+
+        return $string;
+    }
+
+    /**
+     * Überprüft ob unerlaubte Zeichen im Text sind und gibt Antwort zurück
+     *
+     * @todo Should be removed (better use some regex and strip-/addslashes/trim
+     */
+    public static function checkIllegalSigns(string $string): string
+    {
+        if (
+            !stristr($string, "'")
+            && !stristr($string, "<")
+            && !stristr($string, ">")
+            && !stristr($string, "?")
+            && !stristr($string, "\"")
+            && !stristr($string, "$")
+            && !stristr($string, "!")
+            && !stristr($string, "=")
+            && !stristr($string, ";")
+            && !stristr($string, "&")
+        ) {
+            return "";
+        }
+
+        return "&lt; &gt; &apos; &quot; ? ! $ = ; &amp;";
+    }
+
+
+    /**
+     * Cuts a string by a given length
+     */
+    public static function cutString(string $string, int $num): string
+    {
+        if (strlen($string) > $num + 3) {
+            return substr($string, 0, $num) . "...";
+        }
+
         return $string;
     }
 }

@@ -5,6 +5,7 @@ use EtoA\Market\MarketResource;
 use EtoA\Market\MarketResourceRepository as MarketResourceRepositoryAlias;
 use EtoA\Market\MarketShipRepository;
 use EtoA\Ship\ShipDataRepository;
+use EtoA\Support\StringUtils;
 use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Entity\EntityService;
 use EtoA\Universe\Planet\PlanetRepository;
@@ -963,8 +964,8 @@ function calcMarketRessPrice($val, $last_update = 0)
         $objResponse->assign("ressource_sell_submit", "style.color", '#f00');
     }
     // Unerlaubte Zeichen im Werbetext
-    elseif (check_illegal_signs($val['ressource_text']) != "") {
-        $out_check_message = "<div style=\"color:red;font-weight:bold;\">Unerlaubte Zeichen im Werbetext (" . check_illegal_signs("><$") . ")!</div>";
+    elseif (StringUtils::checkIllegalSigns($val['ressource_text']) != "") {
+        $out_check_message = "<div style=\"color:red;font-weight:bold;\">Unerlaubte Zeichen im Werbetext (" . StringUtils::checkIllegalSigns("><$") . ")!</div>";
 
         $objResponse->assign("ressource_sell_submit", "disabled", true);
         $objResponse->assign("ressource_sell_submit", "style.color", '#f00');
@@ -1464,8 +1465,8 @@ function calcMarketShipPrice($val, $new_ship = 0, $last_update = 0)
         $objResponse->assign("ship_sell_submit", "style.color", '#f00');
     }
     // Unerlaubte Zeichen im Werbetext
-    elseif (check_illegal_signs($val['ship_text']) != "") {
-        $out_ship_check_message = "<div style=\"color:red;font-weight:bold;\">Unerlaubte Zeichen im Werbetext (" . check_illegal_signs("><$") . ")!</div>";
+    elseif (StringUtils::checkIllegalSigns($val['ship_text']) != "") {
+        $out_ship_check_message = "<div style=\"color:red;font-weight:bold;\">Unerlaubte Zeichen im Werbetext (" . StringUtils::checkIllegalSigns("><$") . ")!</div>";
 
         $objResponse->assign("ship_sell_submit", "disabled", true);
         $objResponse->assign("ship_sell_submit", "style.color", '#f00');
@@ -1725,8 +1726,8 @@ function checkMarketAuctionFormular($val, $last_update = 0)
         $objResponse->assign("auction_sell_submit", "style.color", '#f00');
     }
     // Unerlaubte Zeichen im Werbetext
-    elseif (check_illegal_signs($val['auction_text']) != "") {
-        $out_auction_check_message = "<div style=\"color:red;font-weight:bold;\">Unerlaubte Zeichen im Werbetext (" . check_illegal_signs("><$") . ")!</div>";
+    elseif (StringUtils::checkIllegalSigns($val['auction_text']) != "") {
+        $out_auction_check_message = "<div style=\"color:red;font-weight:bold;\">Unerlaubte Zeichen im Werbetext (" . StringUtils::checkIllegalSigns("><$") . ")!</div>";
 
         $objResponse->assign("auction_sell_submit", "disabled", true);
         $objResponse->assign("auction_sell_submit", "style.color", '#f00');

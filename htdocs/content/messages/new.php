@@ -3,6 +3,7 @@
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Message\MessageIgnoreRepository;
 use EtoA\Message\MessageRepository;
+use EtoA\Support\StringUtils;
 use EtoA\User\UserPropertiesRepository;
 use EtoA\User\UserRepository;
 use Symfony\Component\HttpFoundation\Request;
@@ -308,7 +309,7 @@ function sendMessage(
         return "<b>Fehler:</b> Dieser Benutzer hat dich ignoriert, die Nachricht wurde nicht gesendet!<br/>";
     }
 
-    $check_subject = check_illegal_signs($subject);
+    $check_subject = StringUtils::checkIllegalSigns($subject);
     if ($check_subject != "") {
         return "Du hast ein unerlaubtes Zeichen ( " . $check_subject . " ) im Betreff!<br/>";
     }

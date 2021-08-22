@@ -168,43 +168,6 @@ function tf($ts)    // Time format
 }
 
 /**
- * Überprüft ob unerlaubte Zeichen im Text sind und gibt Antwort zurück
- *
- * @todo Should be removed (better use some regex and strip-/addslashes/trim
- */
-function check_illegal_signs($string)
-{
-    if (
-        !stristr($string, "'")
-        && !stristr($string, "<")
-        && !stristr($string, ">")
-        && !stristr($string, "?")
-        && !stristr($string, "\"")
-        && !stristr($string, "$")
-        && !stristr($string, "!")
-        && !stristr($string, "=")
-        && !stristr($string, ";")
-        && !stristr($string, "&")
-    ) {
-        return "";
-    } else {
-        return "&lt; &gt; &apos; &quot; ? ! $ = ; &amp;";
-    }
-}
-
-
-/**
- * Cuts a string by a given length
- */
-function cut_string($string, $num)
-{
-    if (strlen($string) > $num + 3)
-        return substr($string, 0, $num) . "...";
-    else
-        return $string;
-}
-
-/**
  * Checks for a valid mail address
  */
 function checkEmail($email)

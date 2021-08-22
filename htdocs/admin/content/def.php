@@ -12,6 +12,7 @@ use EtoA\Defense\DefenseQueueSearch;
 use EtoA\Defense\DefenseRepository;
 use EtoA\Defense\DefenseSort;
 use EtoA\Ranking\RankingService;
+use EtoA\Support\StringUtils;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\User\UserRepository;
 use Symfony\Component\HttpFoundation\Request;
@@ -160,8 +161,8 @@ elseif ($sub == "queue") {
                 echo "<td class=\"tbldata\" $style>" . $entry->id . "</a></td>";
                 echo "<td class=\"tbldata\"$style " . mTT($entry->defenseName, "<b>Verteidigungs-ID:</b> " . $entry->id) . ">" . $entry->defenseName . "</td>";
                 echo "<td class=\"tbldata\"$style>" . nf($entry->count) . "</td>";
-                echo "<td class=\"tbldata\"$style " . mTT($entry->planetName, "<b>Planet-ID:</b> " . $entry->entityId . "<br/><b>Koordinaten:</b> " . $entry->entity->sx . "/" . $entry->entity->sy . " : " . $entry->entity->cx . "/" . $entry->entity->cy . " : " . $entry->entity->pos) . ">" . cut_string($entry->planetName, 11) . "</td>";
-                echo "<td class=\"tbldata\"$style " . mTT($entry->userNick, "<b>User-ID:</b> " . $entry->userId . "<br/><b>Punkte:</b> " . nf($entry->userPoints)) . ">" . cut_string($entry->userNick, 11) . "</td>";
+                echo "<td class=\"tbldata\"$style " . mTT($entry->planetName, "<b>Planet-ID:</b> " . $entry->entityId . "<br/><b>Koordinaten:</b> " . $entry->entity->sx . "/" . $entry->entity->sy . " : " . $entry->entity->cx . "/" . $entry->entity->cy . " : " . $entry->entity->pos) . ">" . StringUtils::cutString($entry->planetName, 11) . "</td>";
+                echo "<td class=\"tbldata\"$style " . mTT($entry->userNick, "<b>User-ID:</b> " . $entry->userId . "<br/><b>Punkte:</b> " . nf($entry->userPoints)) . ">" . StringUtils::cutString($entry->userNick, 11) . "</td>";
                 echo "<td class=\"tbldata\"$style>" . df($entry->startTime, 1) . "</td>";
                 echo "<td class=\"tbldata\"$style>" . df($entry->endTime, 1) . "</td>";
                 echo "<td class=\"tbldata\"$style>" . edit_button("?page=$page&sub=$sub&action=edit&id=" . $entry->id);
@@ -373,8 +374,8 @@ else {
 
                 echo "<tr>";
                 echo "<td class=\"tbldata\" $style>" . $item->id . "</a></td>";
-                echo "<td class=\"tbldata\" $style" . mTT($item->planetName, "<b>Planet-ID:</b> " . $item->entityId . "<br/><b>Koordinaten:</b> " . $item->entity->sx . "/" . $item->entity->sy . " : " . $item->entity->cx . "/" . $item->entity->cy . " : " . $item->entity->pos) . ">" . cut_string($item->planetName, 11) . "</a></td>";
-                echo "<td class=\"tbldata\" $style" . mTT($item->userNick, "<b>User-ID:</b> " . $item->userId . "<br/><b>Punkte:</b> " . nf($item->userPoints)) . ">" . cut_string($item->userNick, 11) . "</a></td>";
+                echo "<td class=\"tbldata\" $style" . mTT($item->planetName, "<b>Planet-ID:</b> " . $item->entityId . "<br/><b>Koordinaten:</b> " . $item->entity->sx . "/" . $item->entity->sy . " : " . $item->entity->cx . "/" . $item->entity->cy . " : " . $item->entity->pos) . ">" . StringUtils::cutString($item->planetName, 11) . "</a></td>";
+                echo "<td class=\"tbldata\" $style" . mTT($item->userNick, "<b>User-ID:</b> " . $item->userId . "<br/><b>Punkte:</b> " . nf($item->userPoints)) . ">" . StringUtils::cutString($item->userNick, 11) . "</a></td>";
                 echo "<td class=\"tbldata\" $style" . mTT($item->defenseName, "<b>Verteidigungs-ID:</b> " . $item->defenseId) . ">" . $item->defenseName . "</a></td>";
                 echo "<td class=\"tbldata\" $style>" . nf($item->count) . "</a></td>";
                 echo "<td class=\"tbldata\">" . edit_button("?page=$page&sub=$sub&action=edit&deflist_id=" . $item->id) . "</td>";

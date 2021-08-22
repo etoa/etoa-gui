@@ -6,6 +6,7 @@ use EtoA\Message\MessageRepository;
 use EtoA\Message\ReportRepository;
 use EtoA\Message\ReportTypes;
 use EtoA\Support\Mail\MailSenderService;
+use EtoA\Support\StringUtils;
 use EtoA\User\UserRepository;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -379,8 +380,8 @@ function manageReports(Request $request, ReportRepository $reportRepository, Use
                 echo "<tr>";
                 echo "<td style=\"$style;width:110px;\">" . date("Y-d-m H:i", $r->timestamp) . "</td>";
                 echo "<td style=\"$style\">" . ReportTypes::TYPES[$r->type] . "</td>";
-                echo "<td style=\"$style\">" . cut_string($recipient, 11) . "</td>";
-                echo "<td><div id=\"r_s_" . $rid . "\" style=\"" . $style . "cursor:pointer;\" onclick=\"$('#r_l_" . $rid . "').toggle();\">" . cut_string($r->subject, 50) . "</div><div id=\"r_l_" . $rid . "\" style=\"display:none;\"><br/>" . $r . "</div></td>";
+                echo "<td style=\"$style\">" . StringUtils::cutString($recipient, 11) . "</td>";
+                echo "<td><div id=\"r_s_" . $rid . "\" style=\"" . $style . "cursor:pointer;\" onclick=\"$('#r_l_" . $rid . "').toggle();\">" . StringUtils::cutString($r->subject, 50) . "</div><div id=\"r_l_" . $rid . "\" style=\"display:none;\"><br/>" . $r . "</div></td>";
                 echo "</tr>";
             }
             echo "</table><br/>";
@@ -553,9 +554,9 @@ function manageMessages(
                     $style = "";
                 }
                 echo "<tr>";
-                echo "<td $style>" . cut_string($sender, 11) . "</a></td>";
-                echo "<td $style>" . cut_string($recipient, 11) . "</a></td>";
-                echo "<td $style " . mTT($message->subject, text2html(substr($message->text, 0, 500))) . ">" . cut_string($message->subject, 20) . "</a></td>";
+                echo "<td $style>" . StringUtils::cutString($sender, 11) . "</a></td>";
+                echo "<td $style>" . StringUtils::cutString($recipient, 11) . "</a></td>";
+                echo "<td $style " . mTT($message->subject, text2html(substr($message->text, 0, 500))) . ">" . StringUtils::cutString($message->subject, 20) . "</a></td>";
                 echo "<td $style>" . date("Y-d-m H:i", $message->timestamp) . "</a></td>";
                 echo "<td $style>" . ($categories[$message->catId] ?? '-') . "</td>";
                 echo "<td>" . edit_button("?page=$page&sub=edit&message_id=" . $message->id) . " ";
