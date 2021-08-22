@@ -572,9 +572,9 @@ class BuildListItem
         foreach ($resNames as $rk => $rn) {
             $wTime['string'] .= '<td ';
             if ($costs['costs' . $rk] > $cp->getRes1($rk)) {
-                $wTime['string'] .= $notAvStyle . ' ' . tm('Fehlender Rohstoff', '<strong>' . nf_up($costs['costs' . $rk] - $cp->getRes1($rk)) . '</strong> ' . $rn . '<br />Bereit in <strong>' . StringUtils::formatTimespan($wTime[$rk]) . '</strong>');
+                $wTime['string'] .= $notAvStyle . ' ' . tm('Fehlender Rohstoff', '<strong>' . StringUtils::formatNumber(ceil($costs['costs' . $rk] - $cp->getRes1($rk))) . '</strong> ' . $rn . '<br />Bereit in <strong>' . StringUtils::formatTimespan($wTime[$rk]) . '</strong>');
             }
-            $wTime['string'] .= '>' . nf_up($costs['costs' . $rk]) . '</td>';
+            $wTime['string'] .= '>' . StringUtils::formatNumber(ceil($costs['costs' . $rk])) . '</td>';
         }
         return $wTime;
     }

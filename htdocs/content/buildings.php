@@ -332,7 +332,7 @@ if (isset($cp)) {
                                 <td style="color:red;">Bauen</td>
                                 <td>' . StringUtils::formatTimespan($costs['time']) . '</td>'
                             . $waitArr['string'] . '
-                                <td>' . nf_up($costs['costs5']) . '</td>
+                                <td>' . StringUtils::formatNumber(ceil($costs['costs5'])) . '</td>
                             </tr>';
                     }
 
@@ -359,9 +359,9 @@ if (isset($cp)) {
                                 <td>' . StringUtils::formatTimespan($costs['time']) . '</td>';
                     }
                     foreach ($resNames as $rk => $rn) {
-                        echo '<td>' . nf_up($costs['costs' . $rk]) . '</td>';
+                        echo '<td>' . StringUtils::formatNumber(ceil($costs['costs' . $rk])) . '</td>';
                     }
-                    echo '<td>' . nf_up($costs['costs5']) . '</td>';
+                    echo '<td>' . StringUtils::formatNumber(ceil($costs['costs5'])) . '</td>';
                     echo '</tr>';
                 }
             }
@@ -376,7 +376,7 @@ if (isset($cp)) {
                                 <td style="color:red;">Abreissen</td>
                                 <td>' . StringUtils::formatTimespan($demolishCosts['time']) . '</td>'
                         . $waitArr['string'] . '
-                                <td>' . nf_up($costs['costs5']) . '</td>
+                                <td>' . StringUtils::formatNumber(ceil($costs['costs5'])) . '</td>
                             </tr>
                             <tr class="demolishActionContainer">
                                 <td colspan="8">
@@ -390,9 +390,9 @@ if (isset($cp)) {
                                 </td>
                                 <td>' . StringUtils::formatTimespan($demolishCosts['time']) . '</td>';
                     foreach ($resNames as $rk => $rn) {
-                        echo '<td>' . nf_up($demolishCosts['costs' . $rk]) . '</td>';
+                        echo '<td>' . StringUtils::formatNumber(ceil($demolishCosts['costs' . $rk])) . '</td>';
                     }
-                    echo '<td>' . nf_up($demolishCosts['costs5']) . '</td>';
+                    echo '<td>' . StringUtils::formatNumber(ceil($demolishCosts['costs5'])) . '</td>';
                     echo '</tr>';
                 }
             }
@@ -413,9 +413,9 @@ if (isset($cp)) {
                                     <td width="90">N&auml;chste Stufe:</td>
                                     <td>' . StringUtils::formatTimespan($costs['time']) . '</td>';
                     foreach ($resNames as $rk => $rn) {
-                        echo '<td>' . nf_up($costs['costs' . $rk]) . '</td>';
+                        echo '<td>' . StringUtils::formatNumber(ceil($costs['costs' . $rk])) . '</td>';
                     }
-                    echo '<td>' . nf_up($costs['costs5']) . '</td>';
+                    echo '<td>' . StringUtils::formatNumber(ceil($costs['costs5'])) . '</td>';
                     echo '</tr>';
                 }
             }
