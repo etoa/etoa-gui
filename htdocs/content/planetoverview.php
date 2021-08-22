@@ -8,6 +8,7 @@ use EtoA\Defense\DefenseRepository;
 use EtoA\Fleet\FleetRepository;
 use EtoA\Ship\ShipDataRepository;
 use EtoA\Ship\ShipRepository;
+use EtoA\Support\BBCodeUtils;
 use EtoA\Support\StringUtils;
 use EtoA\Technology\TechnologyDataRepository;
 use EtoA\Technology\TechnologyRepository;
@@ -194,7 +195,7 @@ if (isset($cp)) {
             if ($request->request->get('planet_name', '') != '') {
                 $planetRepo->setNameAndComment(
                     $planet->id,
-                    StringUtils::stripBBCode($request->request->get('planet_name')),
+                    BBCodeUtils::removeBBCode($request->request->get('planet_name')),
                     $request->request->get('planet_desc')
                 );
                 if ($request->request->get('planet_name') !== $planet->name) {
