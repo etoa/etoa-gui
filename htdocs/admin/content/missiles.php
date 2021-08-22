@@ -1,28 +1,36 @@
 <?PHP
 
+use EtoA\Admin\Forms\MissilesForm;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Missile\MissileDataRepository;
 use EtoA\Missile\MissileRepository;
+use Pimple\Container;
+use Symfony\Component\HttpFoundation\Request;
 use Twig\Environment;
 
 /** @var ConfigurationService $config */
 $config = $app[ConfigurationService::class];
+
 /** @var MissileDataRepository $missileDataRepository */
 $missileDataRepository = $app[MissileDataRepository::class];
+
 /** @var MissileRepository $missileRepository */
 $missileRepository = $app[MissileRepository::class];
 
+/** @var Request */
+$request = Request::createFromGlobals();
+
 if ($sub == "data") {
-    editMissileData($twig);
+    editMissileData($app, $twig, $request);
 } elseif ($sub == "req") {
     missileRequirements($twig);
 } else {
     missileOverview($config, $missileDataRepository, $missileRepository);
 }
 
-function editMissileData(Environment $twig): void
+function editMissileData(Container $app, Environment $twig, Request $request): void
 {
-    advanced_form("missiles", $twig);
+    MissilesForm::render($app, $twig, $request);
 }
 
 function missileRequirements(Environment $twig): void

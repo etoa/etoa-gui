@@ -3,6 +3,14 @@
 //
 // Start-Items
 //
+
+use EtoA\Admin\Forms\TicketCategoriesForm;
+use EtoA\Admin\Forms\TippsForm;
+use Symfony\Component\HttpFoundation\Request;
+
+/** @var Request $request */
+$request = Request::createFromGlobals();
+
 if ($sub == "defaultitems") {
     include("config/defaultitems.inc.php");
 }
@@ -11,14 +19,14 @@ if ($sub == "defaultitems") {
 // Tipps
 //
 elseif ($sub == "tipps") {
-    advanced_form("tipps", $twig);
+    TippsForm::render($app, $twig, $request);
 }
 
 //
 // Ticket-Cat
 //
 elseif ($sub == "ticketcat") {
-    advanced_form("ticketcat", $twig);
+    TicketCategoriesForm::render($app, $twig, $request);
 }
 
 //

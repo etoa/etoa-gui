@@ -1,5 +1,7 @@
 <?PHP
 
+use EtoA\Admin\Forms\ShipCategoriesForm;
+use EtoA\Admin\Forms\ShipsForm;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Ranking\RankingService;
 use EtoA\Ship\ShipDataRepository;
@@ -9,6 +11,7 @@ use EtoA\Ship\ShipRepository;
 use EtoA\Ship\ShipSort;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\User\UserRepository;
+use Symfony\Component\HttpFoundation\Request;
 
 /** @var ConfigurationService $config */
 $config = $app[ConfigurationService::class];
@@ -21,13 +24,18 @@ $shipRepository = $app[ShipRepository::class];
 
 /** @var ShipQueueRepository $shipQueueRepository */
 $shipQueueRepository = $app[ShipQueueRepository::class];
+
 /** @var UserRepository $userRepository */
 $userRepository = $app[UserRepository::class];
+
 /** @var PlanetRepository $planetRepository */
 $planetRepository = $app[PlanetRepository::class];
 
 /** @var RankingService $rankingService */
 $rankingService = $app[RankingService::class];
+
+/** @var Request */
+$request = Request::createFromGlobals();
 
 //
 // Battlepoints
@@ -86,14 +94,14 @@ elseif ($sub == "xpcalc") {
 // Kategorien
 //
 elseif ($sub == "cat") {
-    simple_form("ship_cat", $twig);
+    ShipCategoriesForm::render($app, $twig, $request);
 }
 
 //
 // Daten
 //
 elseif ($sub == "data") {
-    advanced_form("ships", $twig);
+    ShipsForm::render($app, $twig, $request);
 }
 
 //

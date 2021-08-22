@@ -1,5 +1,7 @@
 <?PHP
 
+use EtoA\Admin\Forms\PlanetTypesForm;
+use EtoA\Admin\Forms\StarTypesForm;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Universe\Entity\EntityLabelSearch;
 use EtoA\Universe\Entity\EntityLabelSort;
@@ -9,6 +11,8 @@ use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Universe\Planet\PlanetTypeRepository;
 use EtoA\Universe\Star\SolarTypeRepository;
 use EtoA\User\UserRepository;
+use Pimple\Container;
+use Symfony\Component\HttpFoundation\Request;
 use Twig\Environment;
 
 /** @var ConfigurationService $config */
@@ -16,6 +20,9 @@ $config = $app[ConfigurationService::class];
 
 /** @var UserRepository $userRepository */
 $userRepository = $app[UserRepository::class];
+
+/** @var Request $request */
+$request = Request::createFromGlobals();
 
 if ($sub == "map") {
     galaxyMap($config, $userRepository, $twig);
@@ -26,9 +33,9 @@ if ($sub == "map") {
 } elseif ($sub == "galaxycheck") {
     galaxyCheck();
 } elseif ($sub == "planet_types") {
-    planetTypes($twig);
+    planetTypes($app, $twig, $request);
 } elseif ($sub == "sol_types") {
-    starTypes($twig);
+    starTypes($app, $twig, $request);
 } else {
     entities($config);
 }
@@ -56,14 +63,14 @@ function galaxyCheck()
     require("galaxy/galaxycheck.php");
 }
 
-function planetTypes(Environment $twig)
+function planetTypes(Container $app, Environment $twig, Request $request)
 {
-    advanced_form("planet_types", $twig);
+    PlanetTypesForm::render($app, $twig, $request);
 }
 
-function starTypes(Environment $twig)
+function starTypes(Container $app, Environment $twig, Request $request)
 {
-    advanced_form("sol_types", $twig);
+    StarTypesForm::render($app, $twig, $request);
 }
 
 function entities(ConfigurationService $config)

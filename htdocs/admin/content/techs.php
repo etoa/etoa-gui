@@ -1,5 +1,7 @@
 <?PHP
 
+use EtoA\Admin\Forms\TechnologiesForm;
+use EtoA\Admin\Forms\TechnologyTypesForm;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Ranking\RankingService;
 use EtoA\Technology\TechnologyDataRepository;
@@ -9,6 +11,7 @@ use EtoA\Technology\TechnologyRepository;
 use EtoA\Technology\TechnologySort;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\User\UserRepository;
+use Symfony\Component\HttpFoundation\Request;
 
 /** @var ConfigurationService $config */
 $config = $app[ConfigurationService::class];
@@ -24,10 +27,15 @@ $technologyPointRepository = $app[TechnologyPointRepository::class];
 
 /** @var RankingService $rankingService */
 $rankingService = $app[RankingService::class];
+
 /** @var PlanetRepository $planetRepository */
 $planetRepository = $app[PlanetRepository::class];
+
 /** @var UserRepository $userRepository */
 $userRepository = $app[UserRepository::class];
+
+/** @var Request */
+$request = Request::createFromGlobals();
 
 //
 // Forschungspunkte
@@ -78,14 +86,14 @@ if ($sub == "points") {
 // Kategorien
 //
 elseif ($sub == "type") {
-    simple_form("tech_types", $twig);
+    TechnologyTypesForm::render($app, $twig, $request);
 }
 
 //
 // Technologien
 //
 elseif ($sub == "data") {
-    advanced_form("technologies", $twig);
+    TechnologiesForm::render($app, $twig, $request);
 }
 //
 // Anforderungen

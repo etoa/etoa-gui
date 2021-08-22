@@ -1,5 +1,7 @@
 <?PHP
 
+use EtoA\Admin\Forms\BuildingsForm;
+use EtoA\Admin\Forms\BuildingTypesForm;
 use EtoA\Building\BuildingDataRepository;
 use EtoA\Building\BuildingPointRepository;
 use EtoA\Building\BuildingRepository;
@@ -13,7 +15,7 @@ use Twig\Environment;
 /** @var BuildingRepository $repository */
 $repository = $app[BuildingRepository::class];
 
-/** @var Request */
+/** @var Request $request */
 $request = Request::createFromGlobals();
 
 /** @var ConfigurationService $config */
@@ -30,9 +32,9 @@ if ($sub == "prices") {
 } elseif ($sub == "points") {
     buildingPoints($request, $repository, $buildingPointRepository, $rankingService);
 } elseif ($sub == "type") {
-    editCategories($twig);
+    editCategories($app, $twig, $request);
 } elseif ($sub == "data") {
-    editData($twig);
+    editData($app, $twig, $request);
 } elseif ($sub == "req") {
     requirements($twig, $app);
 } else {
@@ -188,14 +190,14 @@ function buildingPoints(
     }
 }
 
-function editCategories(Environment $twig)
+function editCategories(Container $app, Environment $twig, Request $request)
 {
-    simple_form("building_types", $twig);
+    BuildingTypesForm::render($app, $twig, $request);
 }
 
-function editData(Environment $twig)
+function editData(Container $app, Environment $twig, Request $request)
 {
-    advanced_form("buildings", $twig);
+    BuildingsForm::render($app, $twig, $request);
 }
 
 function requirements(Environment $twig, Container $app)

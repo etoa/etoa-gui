@@ -24,32 +24,6 @@ use EtoA\Technology\TechnologyDataRepository;
 use EtoA\User\UserRepository;
 
 /**
- * Generates a page for editing table date with
- * an advanced form
- *
- * @param string $module Module-key
- */
-function advanced_form($module, $twig)
-{
-    require_once("inc/form_functions.php");
-    require_once("forms/$module.php");
-    require_once("inc/advanced_forms.php");
-}
-
-/**
- * Generates a page for editing table date with
- * a simple form
- *
- * @param string $module Module-key
- */
-function simple_form($module, $twig)
-{
-    require_once("inc/form_functions.php");
-    require_once("forms/$module.php");
-    require_once("inc/simple_forms.php");
-}
-
-/**
  * Displays a clickable edit button
  *
  * @param string $url Url of the link
@@ -423,31 +397,6 @@ function tail($file, $num_to_get = 10)
         return $data;
     }
     return false;
-}
-
-function DuplicateMySQLRecord($table, $id_field, $id)
-{
-    // load the original record into an array
-    $result = dbquery("SELECT * FROM {$table} WHERE {$id_field}={$id}");
-    $original_record = mysql_fetch_assoc($result);
-
-    // insert the new record and get the new auto_increment id
-    mysql_query("INSERT INTO {$table} (`{$id_field}`) VALUES (NULL)");
-    $newid = mysql_insert_id();
-
-    // generate the query to update the new record with the previous values
-    $query = "UPDATE {$table} SET ";
-    foreach ($original_record as $key => $value) {
-        if ($key != $id_field) {
-            $query .= '`' . $key . '` = "' . str_replace('"', '\"', $value) . '", ';
-        }
-    }
-    $query = substr($query, 0, strlen($query) - 2); # lop off the extra trailing comma
-    $query .= " WHERE {$id_field}={$newid}";
-    dbquery($query);
-
-    // return the new id
-    return $newid;
 }
 
 function drawTechTreeForSingleItem(string $type, \EtoA\Requirement\RequirementsCollection $requirements, int $objectId, array $technologyNames, array $buildingNames)

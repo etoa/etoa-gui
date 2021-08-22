@@ -1,5 +1,8 @@
 <?PHP
 
+use EtoA\Admin\Forms\DefenseCategoriesForm;
+use EtoA\Admin\Forms\DefensesForm;
+use EtoA\Admin\Forms\ObjectTransformsForm;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Defense\Defense;
 use EtoA\Defense\DefenseDataRepository;
@@ -63,7 +66,7 @@ if ($sub == "battlepoints") {
 //
 //
 elseif ($sub == "transforms") {
-    advanced_form("obj_transforms", $twig);
+    ObjectTransformsForm::render($app, $twig, $request);
 }
 
 //
@@ -277,21 +280,19 @@ elseif ($sub == "queue") {
     }
 }
 
-
 //
 // Bearbeiten
 //
 elseif ($sub == "data") {
-    advanced_form("defense", $twig);
+    DefensesForm::render($app, $twig, $request);
 }
 
 //
 // Kategorien
 //
 elseif ($sub == "cat") {
-    advanced_form("def_cat", $twig);
+    DefenseCategoriesForm::render($app, $twig, $request);
 }
-
 
 //
 // Voraussetzungen
