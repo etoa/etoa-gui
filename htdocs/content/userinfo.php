@@ -2,6 +2,7 @@
 
 use EtoA\Alliance\AllianceRankRepository;
 use EtoA\Alliance\AllianceRepository;
+use EtoA\Support\StringUtils;
 use EtoA\User\UserLogRepository;
 use EtoA\User\UserRatingRepository;
 use EtoA\User\UserRatingSearch;
@@ -98,7 +99,7 @@ if ($uid > 0) {
             echo "<tr><th style=\"width:120px;\">Foren-Profil:</th><td><a href=\"" . $user->profileBoardUrl . "\">" . $user->profileBoardUrl . "</a></td></tr>";
         }
         if ($user->registered > 0) {
-            echo "<tr><th style=\"width:120px;\">Registriert:</th><td>" . df($user->registered) . " (dabei seit " . tf(time() - $user->registered) . ")</td></tr>";
+            echo "<tr><th style=\"width:120px;\">Registriert:</th><td>" . df($user->registered) . " (dabei seit " . StringUtils::formatTimespan(time() - $user->registered) . ")</td></tr>";
         }
         if ($user->admin) {
             echo "<tr><th style=\"width:120px;\">Game-Admin:</th><td class=\"adminColor\">Dies ist ein Account eines Game-Admins. Er darf gemäss Regeln nicht angegriffen werden.</td></tr>";

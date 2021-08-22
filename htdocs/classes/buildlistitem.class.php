@@ -6,6 +6,7 @@ use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Log\GameLogFacility;
 use EtoA\Log\GameLogRepository;
 use EtoA\Log\LogSeverity;
+use EtoA\Support\StringUtils;
 use EtoA\Universe\Planet\PlanetRepository;
 
 class BuildListItem
@@ -303,7 +304,7 @@ class BuildListItem
         //Log schreiben
         $log_text = "[b]Gebäudebau[/b]
 
-        [b]Baudauer:[/b] " . tf($costs['time']) . "
+        [b]Baudauer:[/b] " . StringUtils::formatTimespan($costs['time']) . "
         [b]Ende:[/b] " . date("d.m.Y H:i:s", $this->endTime) . "
         [b]Eingesetzte Bewohner:[/b] " . nf($peopleWorking->building) . "
         [b]Gen-Tech Level:[/b] " . BuildList::$GENTECH . "
@@ -383,7 +384,7 @@ class BuildListItem
         //Log schreiben
         $log_text = "[b]Gebäudeabriss[/b]
 
-        [b]Abrissdauer:[/b] " . tf($costs['time']) . "
+        [b]Abrissdauer:[/b] " . StringUtils::formatTimespan($costs['time']) . "
         [b]Ende:[/b] " . date("d.m.Y H:i:s", $this->endTime) . "
 
         [b]Kosten[/b]
@@ -553,7 +554,7 @@ class BuildListItem
         foreach ($resNames as $rk => $rn) {
             $wTime['string'] .= '<td ';
             if ($costs['costs' . $rk] > $cp->getRes1($rk)) {
-                $wTime['string'] .= $notAvStyle . ' ' . tm('Fehlender Rohstoff', '<strong>' . nf_up($costs['costs' . $rk] - $cp->getRes1($rk)) . '</strong> ' . $rn . '<br />Bereit in <strong>' . tf($wTime[$rk]) . '</strong>');
+                $wTime['string'] .= $notAvStyle . ' ' . tm('Fehlender Rohstoff', '<strong>' . nf_up($costs['costs' . $rk] - $cp->getRes1($rk)) . '</strong> ' . $rn . '<br />Bereit in <strong>' . StringUtils::formatTimespan($wTime[$rk]) . '</strong>');
             }
             $wTime['string'] .= '>' . nf_up($costs['costs' . $rk]) . '</td>';
         }

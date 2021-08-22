@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace EtoA\UI;
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Support\StringUtils;
 use EtoA\Universe\Planet\Planet;
 use EtoA\User\UserPropertiesRepository;
 
@@ -155,7 +156,7 @@ class ResourceBoxDrawer
         $remainingStore = $store - $amount;
         $storeFullMessage = '';
         if ($production > 0 && $remainingStore > 0 && $title != 'Bevölkerung') {
-            $storeFullMessage = sprintf('<br><b>Voll in:</b> %s', tf(($remainingStore / $production) * 3600));
+            $storeFullMessage = sprintf('<br><b>Voll in:</b> %s', StringUtils::formatTimespan(($remainingStore / $production) * 3600));
         }
 
         return mTT(

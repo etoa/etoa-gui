@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\HostCache\NetworkNameService;
+use EtoA\Support\StringUtils;
 use EtoA\User\UserRepository;
 use EtoA\User\UserSearch;
 use EtoA\User\UserSessionRepository;
@@ -122,7 +123,7 @@ elseif (isset($_GET['surveillance']) && $_GET['surveillance'] > 0) {
                 echo "<td>";
                 $dur = max($userSession->timeLogout ?? 0, $userSession->timeAction) - $userSession->timeLogin;
                 if ($dur > 0)
-                    echo tf($dur);
+                    echo StringUtils::formatTimespan($dur);
                 else
                     echo "-";
                 if ($dur > 60) {

@@ -158,7 +158,7 @@ if ($infoAlly->valid) {
     echo "<tr>
                     <th>Gründungsdatum:</th>
                     <td>
-                        " . df($infoAlly->foundationDate) . " (vor " . tf(time() - $infoAlly->foundationDate) . ")
+                        " . df($infoAlly->foundationDate) . " (vor " . StringUtils::formatTimespan(time() - $infoAlly->foundationDate) . ")
                     </td>
                 </tr>";
 

@@ -4,6 +4,7 @@ use EtoA\Building\BuildingRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Defense\DefenseRepository;
 use EtoA\Ship\ShipRepository;
+use EtoA\Support\StringUtils;
 use EtoA\Technology\TechnologyRepository;
 use EtoA\Technology\TechnologyRequirementRepository;
 use EtoA\UI\ResourceBoxDrawer;
@@ -201,7 +202,7 @@ if ($cp) {
         echo '<tr><th style="width:300px">Bevölkerung total</th><td>' . nf(floor($planet->people)) . '</td></tr>';
         echo '<tr><th>Arbeiter</th><td>' . nf($peopleWorking->total) . '</td></tr>';
         echo '<tr><th>Freie Leute</th><td>' . nf($people_free) . '</td></tr>';
-        echo '<tr><th>Zeitreduktion pro Arbeiter und Auftrag</th><td>' . tf($config->getInt('people_work_done')) . '</td></tr>';
+        echo '<tr><th>Zeitreduktion pro Arbeiter und Auftrag</th><td>' . StringUtils::formatTimespan($config->getInt('people_work_done')) . '</td></tr>';
         echo '<tr><th>Nahrung pro Arbeiter und Auftrag</th><td>' . nf($config->getInt('people_food_require')) . ' t</td></tr>';
         echo '<tr><th>Grundwachstumsrate</th><td>' . get_percent_string($config->getFloat('people_multiply')) . "</td></tr>";
         echo '<tr><th>Wachstumsbonus ' . $cp->typeName . '</th><td>' . get_percent_string($cp->typePopulation, 1) . "</td></tr>";

@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\Missile\MissileDataRepository;
+use EtoA\Support\StringUtils;
 
 /** @var MissileDataRepository $missileDataRepository */
 $missileDataRepository = $app[MissileDataRepository::class];
@@ -62,7 +63,7 @@ if (isset($_GET['id'])) {
         }
         echo "<tr><td class=\"tbltitle\">EMP-Schaden</td><td class=\"tbldata\">";
         if ($missile->deactivate > 0) {
-            echo "Ja, deaktiviert Geb&auml;ude f&uuml;r " . tf($missile->deactivate) . "</td></tr>";
+            echo "Ja, deaktiviert Geb&auml;ude f&uuml;r " . StringUtils::formatTimespan($missile->deactivate) . "</td></tr>";
         } else {
             echo "Kein EMP-Angriff m&ouml;glich</td></tr>";
         }

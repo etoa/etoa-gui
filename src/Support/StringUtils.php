@@ -218,4 +218,36 @@ class StringUtils
 
         return $string;
     }
+
+    /**
+     * Format time in seconds to hour, minute, seconds
+     */
+    public static function formatTimespan(float $ts): string
+    {
+        $w = floor($ts / 3600 / 24 / 7);
+        $ts -= $w * 3600 * 24 * 7;
+        $t = floor($ts / 3600 / 24);
+        $h = floor(($ts - ($t * 3600 * 24)) / 3600);
+        $m = floor(($ts - ($t * 3600 * 24) - ($h * 3600)) / 60);
+        $s = floor(($ts - ($t * 3600 * 24) - ($h * 3600) - ($m * 60)));
+
+        $str = "";
+        if ($w > 0) {
+            $str .= $w . "w ";
+        }
+        if ($t > 0) {
+            $str .= $t . "d ";
+        }
+        if ($h > 0) {
+            $str .= $h . "h ";
+        }
+        if ($m > 0) {
+            $str .= $m . "m ";
+        }
+        if ($s > 0) {
+            $str .= $s . "s ";
+        }
+
+        return $str;
+    }
 }

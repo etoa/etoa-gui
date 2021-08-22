@@ -4,6 +4,7 @@ use EtoA\Bookmark\FleetBookmarkRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Ship\ShipDataRepository;
 use EtoA\Ship\ShipSearch;
+use EtoA\Support\StringUtils;
 use EtoA\Universe\Entity\EntityCoordinates;
 use EtoA\Universe\Entity\EntityRepository;
 use EtoA\User\UserRepository;
@@ -89,7 +90,7 @@ function launchBookmarkProbe($bid)
                                         $flObj = new Fleet($fid);
 
 
-                                        $str = "Folgende Schiffe sind unterwegs: $shipOutput. Ankunft in " . tf($flObj->remainingTime());
+                                        $str = "Folgende Schiffe sind unterwegs: $shipOutput. Ankunft in " . StringUtils::formatTimespan($flObj->remainingTime());
                                         $launched = true;
                                     } else
                                         $str = $fleet->error();

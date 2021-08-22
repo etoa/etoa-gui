@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Support\StringUtils;
 use EtoA\Universe\Entity\EntityCoordinates;
 use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Entity\EntityService;
@@ -213,7 +214,7 @@ function getFlightTargetInfo($f, $sx1, $sy1, $cx1, $cy1, $p1)
                 $timeforflight = null;
             }
 
-            $objResponse->assign("time", "innerHTML", tf($timeforflight));
+            $objResponse->assign("time", "innerHTML", StringUtils::formatTimespan($timeforflight));
             $objResponse->assign("timeforflight", "value", $timeforflight);
             $objResponse->assign("distance", "innerHTML", $distance);
 

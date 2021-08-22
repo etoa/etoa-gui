@@ -640,7 +640,7 @@ elseif ($cu->allianceId == 0) {
                 echo "<tr>
                             <th>Gründungsdatum:</th>
                             <td colspan=\"2\">
-                                " . df($ally->foundationDate) . " (vor " . tf(time() - $ally->foundationDate) . ")
+                                " . df($ally->foundationDate) . " (vor " . StringUtils::formatTimespan(time() - $ally->foundationDate) . ")
                             </td>
                         </tr>";
                 echo "\n</table><br/>";

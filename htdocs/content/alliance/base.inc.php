@@ -17,6 +17,7 @@ use EtoA\Ship\ShipDataRepository;
 use EtoA\Ship\ShipListItemCount;
 use EtoA\Ship\ShipQueueRepository;
 use EtoA\Ship\ShipRepository;
+use EtoA\Support\StringUtils;
 use EtoA\UI\ResourceBoxDrawer;
 use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Planet\PlanetRepository;
@@ -571,7 +572,7 @@ if (count($buildings) > 0) {
                 <th width=\"15%\">" . RES_FOOD . "</th>
             </tr><tr>
                 <td width=\"7%\">" . ($level + 1) . "</th>
-                <td width=\"18%\">" . tf($building->calculateBuildTime($level+ 1)) . "</th>
+                <td width=\"18%\">" . StringUtils::formatTimespan($building->calculateBuildTime($level+ 1)) . "</th>
                 <td " . $style[0] . " width=\"15%\">" . nf($costs->metal) . "</td>
                 <td " . $style[1] . " width=\"15%\">" . nf($costs->crystal) . "</td>
                 <td " . $style[2] . " width=\"15%\">" . nf($costs->plastic) . "</td>
@@ -680,7 +681,7 @@ if ($allianceResearchLevel > 0 && count($technologies) > 0) {
                 <th width=\"15%\">" . RES_FOOD . "</th>
             </tr><tr>
                 <td width=\"7%\">" . ($level + 1) . "</th>
-                <td width=\"18%\">" . tf($technology->calculateBuildTime($level + 1)) . "</th>
+                <td width=\"18%\">" . StringUtils::formatTimespan($technology->calculateBuildTime($level + 1)) . "</th>
                 <td " . $style[0] . " width=\"15%\">" . nf($costs->metal) . "</td>
                 <td " . $style[1] . " width=\"15%\">" . nf($costs->crystal) . "</td>
                 <td " . $style[2] . " width=\"15%\">" . nf($costs->plastic) . "</td>
@@ -995,8 +996,8 @@ if ($allianceShipyardLevel > 0) {
                             <td>" . nf($ship->structure) . "</td>
                             <td>" . nf($ship->shield) . "</td>
                             <td>" . nf($ship->speed) . " AE/h</td>
-                            <td>" . tf($ship->timeToStart / FLEET_FACTOR_S) . "</td>
-                            <td>" . tf($ship->timeToLand / FLEET_FACTOR_S) . "</td>";
+                            <td>" . StringUtils::formatTimespan($ship->timeToStart / FLEET_FACTOR_S) . "</td>
+                            <td>" . StringUtils::formatTimespan($ship->timeToLand / FLEET_FACTOR_S) . "</td>";
             if ($ship->maxCount !== 0 && $ship->maxCount <= $ship_count) {
                 echo "<td colspan=\"2\"><i>Maximalanzahl erreicht</i></td>";
             } else {

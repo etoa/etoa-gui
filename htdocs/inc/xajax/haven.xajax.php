@@ -14,6 +14,7 @@ use EtoA\Ship\ShipDataRepository;
 use EtoA\Ship\ShipRepository;
 use EtoA\Ship\ShipRequirementRepository;
 use EtoA\Ship\ShipSort;
+use EtoA\Support\StringUtils;
 use EtoA\Technology\TechnologyDataRepository;
 use EtoA\Technology\TechnologyRepository;
 use EtoA\Universe\Entity\EntityCoordinates;
@@ -539,7 +540,7 @@ function havenShowTarget($form)
                 echo " (inkl. " . get_percent_string($fleet->sBonusSpeed, 1) . " Mysticum-Bonus)";
             echo "</td></tr>";
             echo "<tr><th>Dauer:</th>
-                        <td><span id=\"duration\" style=\"font-weight:bold;\">-</span> (inkl. Start- und Landezeit von " . tf($fleet->getTimeLaunchLand()) . ")</td></tr>";
+                        <td><span id=\"duration\" style=\"font-weight:bold;\">-</span> (inkl. Start- und Landezeit von " . StringUtils::formatTimespan($fleet->getTimeLaunchLand()) . ")</td></tr>";
             echo "<tr><th>Treibstoff:</th>
                         <td><span id=\"costs\" style=\"font-weight:bold;\">-</span> (inkl. Start- und Landeverbrauch von " . nf($fleet->getCostsLaunchLand()) . " " . RES_FUEL . ")</td></tr>";
             echo "<tr><th>Nahrung:</th>
@@ -645,7 +646,7 @@ function havenShowWormhole($form)
                 if ($fleet->sBonusSpeed > 1)
                     $speedString .= " (inkl. " . get_percent_string($fleet->sBonusSpeed, 1) . " Mysticum-Bonus)";
                 echo "<tr><th width=\"25%\"><b>Geschwindigkeit:</b></th><td>" . $speedString . "</td>
-                        <tr><th width=\"25%\"><b>Dauer:</b></th><td>" . tf($fleet->getDuration()) . " (inkl. Start- und Landezeit von " . tf($fleet->getTimeLaunchLand()) . ")</td>
+                        <tr><th width=\"25%\"><b>Dauer:</b></th><td>" . StringUtils::formatTimespan($fleet->getDuration()) . " (inkl. Start- und Landezeit von " . StringUtils::formatTimespan($fleet->getTimeLaunchLand()) . ")</td>
                         <tr><th width=\"25%\"><b>Treibstoff:</b></th><td>" . nf($fleet->getCosts()) . " t " . RES_FUEL . "  (inkl. Start- und Landeverbrauch von " . nf($fleet->getCostsLaunchLand()) . " " . RES_FUEL . ")</td>
                         <tr><th width=\"25%\"><b>Nahrung:</b></th><td>" . nf($fleet->getCostsFood()) . " t " . RES_FOOD . "</td>
                         <tr><th width=\"25%\"><b>Piloten:</b></th><td>" . nf($fleet->getPilots()) . "</td>";
@@ -810,7 +811,7 @@ function havenShowWormhole($form)
                         echo " (inkl. " . get_percent_string($fleet->sBonusSpeed, 1) . " Mysticum-Bonus)";
                     echo "</td></tr>";
                     echo "<tr><th>Dauer:</th>
-                            <td><span id=\"duration\" style=\"font-weight:bold;\">-</span> (inkl. Start- und Landezeit von " . tf($fleet->getTimeLaunchLand()) . ")</td></tr>";
+                            <td><span id=\"duration\" style=\"font-weight:bold;\">-</span> (inkl. Start- und Landezeit von " . StringUtils::formatTimespan($fleet->getTimeLaunchLand()) . ")</td></tr>";
                     echo "<tr><th>Treibstoff:</th>
                             <td><span id=\"costs\" style=\"font-weight:bold;\">-</span> (inkl. Start- und Landeverbrauch von " . nf($fleet->getCostsLaunchLand()) . " " . RES_FUEL . ")</td></tr>";
                     echo "<tr><th>Nahrung:</th>
@@ -930,7 +931,7 @@ function havenShowAction($form)
                     echo "<tr><th>Entfernung:</th>
                             <td id=\"distance\">" . nf($fleet->getDistance()) . " AE</td></tr>";
                     echo "<tr><th>Dauer:</th>
-                            <td><span id=\"duration\" style=\"font-weight:bold;\">" . tf($fleet->getDuration()) . "</span></td></tr>";
+                            <td><span id=\"duration\" style=\"font-weight:bold;\">" . StringUtils::formatTimespan($fleet->getDuration()) . "</span></td></tr>";
                     echo "<tr><th>Treibstoff:</th>
                             <td><span id=\"costs\" style=\"font-weight:bold;\">" . nf($fleet->getCosts()) . " t " . RES_FUEL . "</span></td></tr>";
                     echo "<tr><th>Nahrung:</th>
@@ -1175,7 +1176,7 @@ function havenShowLaunch($form)
 
                     $response->assign("havenContentAction", "innerHTML", ob_get_contents());
                     $response->assign("havenContentAction", "style.display", '');
-                    $response->assign('support', 'innerHTML', tf($fleet->getSupportTime()));
+                    $response->assign('support', 'innerHTML', StringUtils::formatTimespan($fleet->getSupportTime()));
                     ob_end_clean();
                     $_SESSION['haven']['fleetObj'] = serialize($fleet);
 
@@ -1270,7 +1271,7 @@ function havenTargetInfo($form)
 
             echo "<br/>&nbsp;&nbsp; " . $ent . " (" . $ent->entityCodeString() . ", Besitzer: " . $ent->owner() . ")";
             $response->assign('distance', 'innerHTML', nf($fleet->getDistance()) . " AE");
-            $response->assign('duration', 'innerHTML', tf($fleet->getDuration()) . "");
+            $response->assign('duration', 'innerHTML', StringUtils::formatTimespan($fleet->getDuration()) . "");
             $response->assign('speed', 'innerHTML', $speedString);
             $response->assign('costae', 'innerHTML', nf($fleet->getCostsPerHundredAE()) . " t " . RES_FUEL . "");
             $response->assign('costs', 'innerHTML', nf($fleet->getCosts()) . " t " . RES_FUEL . "");
@@ -1412,7 +1413,7 @@ function havenBookmark($form)
 
     echo "<br/>&nbsp;&nbsp; " . $ent . " (" . $ent->entityCodeString() . ", Besitzer: " . $ent->owner() . ")";
     $response->assign('distance', 'innerHTML', nf($fleet->getDistance()) . " AE");
-    $response->assign('duration', 'innerHTML', tf($fleet->getDuration()) . "");
+    $response->assign('duration', 'innerHTML', StringUtils::formatTimespan($fleet->getDuration()) . "");
     $response->assign('speed', 'innerHTML', $speedString);
     $response->assign('costae', 'innerHTML', nf($fleet->getCostsPerHundredAE()) . " t " . RES_FUEL . "");
     $response->assign('costs', 'innerHTML', nf($fleet->getCosts()) . " t " . RES_FUEL . "");
@@ -1779,7 +1780,7 @@ function havenAllianceAttack($id)
     $response->assign('duration_percent', 'innerHTML', ob_get_contents());
     $response->assign('speed', 'innerHTML', nf($fleet->getSpeed()) . " AE/h");
     $response->assign('costae', 'innerHTML', nf($fleet->getCostsPerHundredAE()) . " t " . RES_FUEL . "");
-    $response->assign('duration', 'innerHTML', tf($fleet->getDuration()) . "");
+    $response->assign('duration', 'innerHTML', StringUtils::formatTimespan($fleet->getDuration()) . "");
     $response->assign('costs', 'innerHTML', nf($fleet->getCosts()) . " t " . RES_FUEL . "");
     $response->assign('food', 'innerHTML', nf($fleet->getCostsFood()) . " t " . RES_FOOD . "");
     $response->assign('comment', 'innerHTML', $comment);

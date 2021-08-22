@@ -20,6 +20,7 @@ use EtoA\Log\LogRepository;
 use EtoA\Log\LogSearch;
 use EtoA\Log\LogSeverity;
 use EtoA\Ship\ShipDataRepository;
+use EtoA\Support\StringUtils;
 use EtoA\Technology\TechnologyDataRepository;
 use EtoA\User\UserRepository;
 
@@ -526,12 +527,12 @@ function showAttackAbuseLogs($args = null, $limit = -1, $load = true)
                             //Zu viele Angriffe in einer Welle
                             if ($waveCnt > $waveMaxCnt[$eData[1]]) {
                                 $ban = 1;
-                                $banReason .= "Mehr als " . $waveMaxCnt[$eData[1]] . " Angriffe in einer Welle auf dem selben Ziel.<br />Anzahl Angriffe : " . $waveCnt . "<br />Dauer der Welle: " . tf($waveEnd - $waveStart) . "<br /><br />";
+                                $banReason .= "Mehr als " . $waveMaxCnt[$eData[1]] . " Angriffe in einer Welle auf dem selben Ziel.<br />Anzahl Angriffe : " . $waveCnt . "<br />Dauer der Welle: " . StringUtils::formatTimespan($waveEnd - $waveStart) . "<br /><br />";
                             }
                             // Sperre keine 6h gewartet zwischen Angriffen auf einen Planeten
                             if ($waveCnt == 1 && $eData[0] > $lastWave && $eData[0] < $lastWave + $timeBetweenAttacksOnEntity) {
                                 $ban = 1;
-                                $banReason .= "Der Abstand zwischen 2 Angriffen/Wellen auf ein Ziel ist kleiner als " . ($timeBetweenAttacksOnEntity / 3600) . " Stunden.<br />Dauer zwischen den beiden Angriffen: " . tf($eData[0] - $lastWave) . "<br /><br />";
+                                $banReason .= "Der Abstand zwischen 2 Angriffen/Wellen auf ein Ziel ist kleiner als " . ($timeBetweenAttacksOnEntity / 3600) . " Stunden.<br />Dauer zwischen den beiden Angriffen: " . StringUtils::formatTimespan($eData[0] - $lastWave) . "<br /><br />";
                             }
                             // Sperre wenn mehr als 2/4 Angriffe pro Planet
                             if ($waveCnt == 1 && $attackCntEntity > $attacksPerEntity[$eData[1]]) {

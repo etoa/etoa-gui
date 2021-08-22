@@ -5,6 +5,7 @@ use EtoA\Alliance\AllianceBuildingRepository;
 use EtoA\Building\BuildingRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Market\MarketRepository;
+use EtoA\Support\StringUtils;
 use EtoA\UI\ResourceBoxDrawer;
 use EtoA\Universe\Planet\PlanetRepository;
 
@@ -95,7 +96,7 @@ if ($config->getBoolean('market_enabled')) {
             if ($alliance_market_level > 0) {
                 $allianceMarketCooldown = $allianceBuildingRepository->getCooldown($cu->allianceId(), AllianceBuildingId::MARKET);
                 if ($allianceMarketCooldown > time()) {
-                    $status_text = "Bereit in <span id=\"cdcd\">" . tf($allianceMarketCooldown - time() . "</span>");
+                    $status_text = "Bereit in <span id=\"cdcd\">" . StringUtils::formatTimespan($allianceMarketCooldown - time()) . "</span>";
                     $cd_enabled = true;
                 } else {
                     $status_text = "Bereit";

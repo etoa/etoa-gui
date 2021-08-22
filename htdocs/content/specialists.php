@@ -8,6 +8,7 @@ use EtoA\Fleet\FleetRepository;
 use EtoA\Fleet\FleetSearchParameters;
 use EtoA\Specialist\SpecialistDataRepository;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Support\StringUtils;
 use EtoA\Technology\TechnologyRepository;
 use EtoA\UI\ResourceBoxDrawer;
 use EtoA\Universe\Planet\PlanetRepository;
@@ -216,7 +217,7 @@ if ($cu->specialistId > 0 && $cu->specialistTime > $t) {
     <td>' . df($cu->specialistTime) . '</td>
     <td id="countDownElem">';
     if ($cu->specialistTime - $t > 0)
-        echo tf($cu->specialistTime - $t);
+        echo StringUtils::formatTimespan($cu->specialistTime - $t);
     else
         echo 'Anstellung abgelaufen!';
     echo '</td>

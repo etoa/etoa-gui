@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\Support\DB\DatabaseManagerRepository;
+use EtoA\Support\StringUtils;
 
 $twig->addGlobal('title', 'Datenbank');
 
@@ -121,7 +122,7 @@ else {
         'dbName' => $dbManagerRepository->getDatabaseName(),
         'dbRows' => nf($rows),
         'dbSize' => byte_format($datal),
-        'serverUptime' => tf($uts),
+        'serverUptime' => StringUtils::formatTimespan($uts),
         'serverStarted' => df(time() - $uts),
         'bytesReceived' => byte_format($st['bytes_received']),
         'bytesReceivedHour' => byte_format($uth > 0 ? $st['bytes_received'] / $uth : 0),

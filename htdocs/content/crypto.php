@@ -9,6 +9,7 @@ use EtoA\Fleet\Exception\FleetScanFailedException;
 use EtoA\Fleet\Exception\FleetScanPreconditionsNotMetException;
 use EtoA\Fleet\FleetScanService;
 use EtoA\Fleet\Exception\InvalidFleetScanParameterException;
+use EtoA\Support\StringUtils;
 use EtoA\UI\ResourceBoxDrawer;
 use EtoA\Universe\Entity\EntityCoordinates;
 use EtoA\Universe\Entity\EntityRepository;
@@ -95,8 +96,8 @@ if ($config->getBoolean('crypto_enable')) {
         echo "<tr><th>Kosten pro Scan:</th>
                 <td>" . nf($config->getInt('crypto_fuel_costs_per_scan')) . " " . RES_FUEL . " und " . nf($config->getInt('crypto_fuel_costs_per_scan')) . " " . RES_FUEL . " Allianzrohstoffe</td></tr>";
         echo "<tr><th>Abklingzeit:</th>
-                <td>" . tf($fleetScanService->calculateCooldown($cryptoCenterLevel)) . " (-" . tf($config->getInt("crypto_cooldown_reduction_per_level")) . " pro Stufe, minimal " . tf($config->getInt("crypto_min_cooldown")) . ")</td></tr>";
-        $statusText = $userCooldownDiff > 0 ? "Bereit in <span id=\"cdcd\">" . tf($userCooldownDiff) . "</span>" : "Bereit";
+                <td>" . StringUtils::formatTimespan($fleetScanService->calculateCooldown($cryptoCenterLevel)) . " (-" . StringUtils::formatTimespan($config->getInt("crypto_cooldown_reduction_per_level")) . " pro Stufe, minimal " . StringUtils::formatTimespan($config->getInt("crypto_min_cooldown")) . ")</td></tr>";
+        $statusText = $userCooldownDiff > 0 ? "Bereit in <span id=\"cdcd\">" . StringUtils::formatTimespan($userCooldownDiff) . "</span>" : "Bereit";
         echo "<tr><th>Status:</th>
                 <td>" . $statusText . "</td></tr>";
         tableEnd();

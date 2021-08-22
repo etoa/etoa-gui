@@ -18,6 +18,7 @@ use EtoA\Fleet\Exception\InvalidFleetScanParameterException;
 use EtoA\Message\MessageRepository;
 use EtoA\Ship\ShipDataRepository;
 use EtoA\Specialist\SpecialistDataRepository;
+use EtoA\Support\StringUtils;
 use EtoA\Technology\TechnologyRepository;
 use EtoA\Universe\Entity\Entity;
 use EtoA\Universe\Entity\EntityRepository;
@@ -118,7 +119,7 @@ class FleetScanService
     {
         $userCooldownDiff = $this->getUserCooldownDifference($currentUser->id);
         if ($userCooldownDiff > 0) {
-            throw new FleetScanPreconditionsNotMetException("Diese Funktion wurde vor kurzem benutzt. Sie ist wieder verfügbar in ".tf($userCooldownDiff).".");
+            throw new FleetScanPreconditionsNotMetException("Diese Funktion wurde vor kurzem benutzt. Sie ist wieder verfügbar in " . StringUtils::formatTimespan($userCooldownDiff) . ".");
         }
 
         $cryptoFuelCostsPerScan = $this->config->getInt('crypto_fuel_costs_per_scan');

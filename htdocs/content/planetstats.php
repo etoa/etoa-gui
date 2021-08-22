@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Support\StringUtils;
 use EtoA\Universe\Planet\PlanetRepository;
 
 /** @var ConfigurationService $config */
@@ -166,7 +167,7 @@ foreach ($planets as $planet) {
             $people_div = $cp->people * (($config->getFloat('people_multiply')  + $cp->typePopulation + $cu->race->population + $cp->starPopulation + $cu->specialist->population - 4) * (1 - ($cp->people / ($capacity + 1))) / 24);
 
             if ($x < 5) {
-                echo ' ' . tm("Speicher", "Speicher voll in " . tf($val_time[$planet->id][$x]) . "") . '> ';
+                echo ' ' . tm("Speicher", "Speicher voll in " . StringUtils::formatTimespan($val_time[$planet->id][$x]) . "") . '> ';
             } else {
                 echo ' ' . tm("Wachstum", "Wachstum pro Stunde: " . round($people_div) . "") . '> ';
             }

@@ -1077,7 +1077,7 @@ function updatePeopleWorkingBox(people, time, food) {
 
   document.getElementById('peopleWorking').value = FormatNumber('return', people, peopleFree, '', '');
   document.getElementById('foodUsing').value = FormatNumber('return', food, 0, '', '');
-  document.getElementById('timeReduction').value = tf(time);
+  document.getElementById('timeReduction').value = formatTimespan(time);
 }
 
 // checks if the last sign is a letter
@@ -1119,7 +1119,7 @@ function tf_back(time) {
   return value;
 }
 
-function tf(time)	// Time format
+function formatTimespan(time)
 {
   var w = Math.floor(time / 3600 / 24 / 7);
   time -= w * 3600 * 24 * 7;

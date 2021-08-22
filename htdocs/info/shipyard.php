@@ -4,6 +4,7 @@ use EtoA\Race\RaceDataRepository;
 use EtoA\Ship\ShipCategoryRepository;
 use EtoA\Ship\ShipDataRepository;
 use EtoA\Ship\ShipRequirementRepository;
+use EtoA\Support\StringUtils;
 
 define("RANKING_SHIP_STRUCTURE", 20000);
 define("RANKING_SHIP_SHIELD", 25000);
@@ -184,10 +185,10 @@ if (isset($_GET['id'])) {
                         <td>" . nf($ship->speed / FLEET_FACTOR_F) . " AE/h</td></tr>";
         echo "<tr>
                         <td style=\"font-weight:bold;\">Startdauer</td>
-                        <td>" . tf($ship->timeToStart / FLEET_FACTOR_S) . "</td></tr>";
+                        <td>" . StringUtils::formatTimespan($ship->timeToStart / FLEET_FACTOR_S) . "</td></tr>";
         echo "<tr>
                         <td style=\"font-weight:bold;\">Landedauer</td>
-                        <td>" . tf($ship->timeToLand / FLEET_FACTOR_L) . "</td></tr>";
+                        <td>" . StringUtils::formatTimespan($ship->timeToLand / FLEET_FACTOR_L) . "</td></tr>";
         echo "</table>
             </td></tr>";
 

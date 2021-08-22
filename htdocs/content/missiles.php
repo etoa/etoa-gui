@@ -9,6 +9,7 @@ use EtoA\Missile\MissileFlightSearch;
 use EtoA\Missile\MissileRepository;
 use EtoA\Missile\MissileRequirement;
 use EtoA\Missile\MissileRequirementRepository;
+use EtoA\Support\StringUtils;
 use EtoA\Technology\TechnologyRepository;
 use EtoA\UI\ResourceBoxDrawer;
 use EtoA\Universe\Entity\EntityRepository;
@@ -254,7 +255,7 @@ if ($missileBuilding !== null && $missileBuilding->currentLevel > 0) {
                 tableStart("Abgefeuerte Raketen");
                 echo "<tr><th>Ziel</th><th>Flugdauer</th><th>Ankunftszeit</th><th>Raketen</th><th>Optionen</th></tr>";
                 foreach ($flights as $flight) {
-                    $countdown = ($flight->landTime - $time >= 0) ? tf($flight->landTime - $time) : 'Im Ziel';
+                    $countdown = ($flight->landTime - $time >= 0) ? StringUtils::formatTimespan($flight->landTime - $time) : 'Im Ziel';
                     echo '<tr><td>' . $flight->targetPlanetName . '</td>
                     <td>' . $countdown . '</td>
                     <td>' . df($flight->landTime) . '</td>
@@ -410,7 +411,7 @@ if ($missileBuilding !== null && $missileBuilding->currentLevel > 0) {
                             //Maximale Wartezeit ermitteln
                             $bwmax = max($bwait['metal'], $bwait['crystal'], $bwait['plastic'], $bwait['fuel'], $bwait['food']);
 
-                            $tm_cnt = "Rohstoffe verf&uuml;gbar in " . tf($bwmax) . "";
+                            $tm_cnt = "Rohstoffe verf&uuml;gbar in " . StringUtils::formatTimespan($bwmax) . "";
                         } else {
                             $tm_cnt = "";
                         }
@@ -524,7 +525,7 @@ if ($missileBuilding !== null && $missileBuilding->currentLevel > 0) {
                             <th>EMP:</th>
                             <td>";
                             if ($missile->deactivate > 0) {
-                                echo tf($missile->deactivate);
+                                echo StringUtils::formatTimespan($missile->deactivate);
                             } else {
                                 echo "Nein";
                             }

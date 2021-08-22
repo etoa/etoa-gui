@@ -165,7 +165,7 @@ function marketSearch($form, $order = "distance", $orderDirection = 0)
                             echo "<td rowspan=\"" . $cres . "\" class=\"usrinfo\">
                                                 <a href=\"?page=userinfo&amp;id=" . $arr['offer']->userId . "\">" . get_user_nick($arr['offer']->userId) . "</a></td>";
                             echo "<td rowspan=\"" . $cres . "\" class=\"duration\">
-                                                " . tf($arr['duration']) . "
+                                                " . StringUtils::formatTimespan($arr['duration']) . "
                                                 </td>
                                                 <td rowspan=\"" . $cres . "\">
                                                     " . $reservation . "<br />
@@ -361,7 +361,7 @@ function marketSearch($form, $order = "distance", $orderDirection = 0)
                 }
                 // und sonst Zeit bis zum Ende anzeigen
                 else {
-                    $rest_time = tf($rest_time);
+                    $rest_time = StringUtils::formatTimespan($rest_time);
                 }
 
                 echo "<tr>
@@ -434,7 +434,7 @@ function showAuctionDetail($id)
         }
         // und sonst Zeit bis zum Ende anzeigen
         else {
-            $rest_time_str = tf($rest_time);
+            $rest_time_str = StringUtils::formatTimespan($rest_time);
         }
 
         $seller = new User($auction->userId);

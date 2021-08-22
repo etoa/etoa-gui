@@ -183,20 +183,6 @@ elseif ($sub == "queue") {
                     $error = true;
                     $errorMsg = "Planet geh&ouml;rt nicht dem Schiffbesitzer! Wird auf den Heimatplaneten verschoben";
                 }
-                /*
-                    // Zu viele Schiffe im Bau
-                    if ($arr['shiplist_build_count']*$arr['shiplist_build_object_time'] > $arr['shiplist_build_end_time']-$arr['shiplist_build_start_time'])
-                    {
-                        $error=true;
-                        $errorMsg="Bauzeit fehlerhaft, zu kurze Gesamtzeit (".tf($arr['shiplist_build_count']*$arr['shiplist_build_object_time'])." n&ouml;tig, ".tf($arr['shiplist_build_end_time']-$arr['shiplist_build_start_time'])." vorhanden)!";
-                    }
-                    // Bauzeit pro Objekt ist fehlerhaft
-                    if ($arr['shiplist_build_object_time']!=0 && ($arr['shiplist_build_end_time']-$arr['shiplist_build_start_time'])%$arr['shiplist_build_object_time']!=0)
-                    {
-                        $error=true;
-                        $errorMsg="Bauanzahl fehlerhaft!";
-                    }
-                    */
 
                 if ($error)
                     $style = " style=\"color:#f30\"";
@@ -282,7 +268,7 @@ elseif ($sub == "queue") {
                 <input type=\"button\" value=\"Jetzt\" onclick=\"document.getElementById('shiplist_build_start_time').value='" . date("Y-d-m h:i") . "'\" /></td></tr>";
             echo "<tr><td class=\"tbltitle\">Bauende</td><td class=\"tbldata\">
                 <input type=\"text\" id=\"shiplist_build_end_time\" name=\"queue_endtime\" value=\"$bet\" size=\"20\" maxlength=\"30\" /></td></tr>";
-            echo "<tr><td class=\"tbltitle\">Bauzeit pro Schiff</td><td class=\"tbldata\">" . tf($queue->objectTime) . "</td></tr>";
+            echo "<tr><td class=\"tbltitle\">Bauzeit pro Schiff</td><td class=\"tbldata\">" . StringUtils::formatTimespan($queue->objectTime) . "</td></tr>";
             echo "</table><br/>";
             echo "<input type=\"submit\" name=\"save\" value=\"&Uuml;bernehmen\" class=\"button\" />&nbsp;";
             echo "<input type=\"submit\" name=\"build_finish\" value=\"Bau fertigstellen\" />&nbsp;";

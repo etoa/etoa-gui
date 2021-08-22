@@ -11,6 +11,7 @@ use EtoA\Log\GameLogSearch;
 use EtoA\Log\LogSeverity;
 use EtoA\Message\MessageRepository;
 use EtoA\Ship\ShipDataRepository;
+use EtoA\Support\StringUtils;
 use EtoA\Technology\TechnologyDataRepository;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\User\UserCommentRepository;
@@ -588,7 +589,7 @@ function loadEconomy($uid, $target)
 
                 //Der Speicher ist noch nicht gefüllt
                 if ($val_res[$planet->id][$x] < $val_store[$planet->id][$x] && $val_time[$planet->id][$x] != 0) {
-                    echo " " . tm("Speicher", "Speicher voll in " . tf($val_time[$planet->id][$x]) . "") . " ";
+                    echo " " . tm("Speicher", "Speicher voll in " . StringUtils::formatTimespan($val_time[$planet->id][$x]) . "") . " ";
                     if ($val_time[$planet->id][$x] < 43200) {
                         echo " style=\"font-style:italic;\" ";
                     }

@@ -7,6 +7,7 @@ use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Log\GameLogFacility;
 use EtoA\Log\GameLogRepository;
 use EtoA\Log\LogSeverity;
+use EtoA\Support\StringUtils;
 use EtoA\Technology\Technology;
 use EtoA\Technology\TechnologyRepository;
 use EtoA\Technology\TechnologyRequirement;
@@ -245,7 +246,7 @@ if (isset($cp)) {
                             <td><input	type="text"
                                         name="timeReduction"
                                         id="timeReduction"
-                                        value="' . tf($config->getInt('people_work_done') * $people) . '"
+                                        value="' . StringUtils::formatTimespan($config->getInt('people_work_done') * $people) . '"
                                         onkeyup="updatePeopleWorkingBox(\'-1\',this.value,\'-1\');" /></td>
                         </tr>
                             <th>Nahrungsverbrauch</th>
@@ -312,7 +313,7 @@ if (isset($cp)) {
 
         echo '</td></tr>';
         if (($peopleWorkingResearch > 0) || ($peopleWorkingGen > 0)) {
-            echo "<tr><td>Zeitreduktion durch Arbeiter pro Auftrag:</td><td>" . tf($peopleTimeReduction * $peopleWorkingResearch) . "</td><td>" . tf($peopleTimeReduction * $peopleWorkingGen) . "</td></tr>";
+            echo "<tr><td>Zeitreduktion durch Arbeiter pro Auftrag:</td><td>" . StringUtils::formatTimespan($peopleTimeReduction * $peopleWorkingResearch) . "</td><td>" . StringUtils::formatTimespan($peopleTimeReduction * $peopleWorkingGen) . "</td></tr>";
             echo "<tr><td>Nahrungsverbrauch durch Arbeiter pro Auftrag:</td><td>" . nf($peopleFoodConsumption * $peopleWorkingResearch) . "</td><td>" . nf($peopleFoodConsumption * $peopleWorkingGen) . "</td></tr>";
         }
 
@@ -405,7 +406,7 @@ if (isset($cp)) {
                             //Log schreiben
                             $log_text = "[b]Forschung Ausbau[/b]
 
-                            [b]Erforschungsdauer:[/b] " . tf($btime) . "
+                            [b]Erforschungsdauer:[/b] " . StringUtils::formatTimespan($btime) . "
                             [b]Ende:[/b] " . date("d.m.Y H:i:s", (int) $end_time) . "
                             [b]Forschungslabor Level:[/b] " . $researchBuilding->currentLevel . "
                             [b]Eingesetzte Bewohner:[/b] " . nf($peopleWorkingResearch) . "
@@ -564,19 +565,19 @@ if (isset($cp)) {
                         // Baukosten-String
                         $bcstring = "<td";
                         if ($bc['metal'] > $planet->resMetal)
-                            $bcstring .= $notAvStyle . " " . tm("Fehlender Rohstoff", "<b>" . nf($bc['metal'] - $planet->resMetal) . "</b> " . RES_METAL . "<br/>Bereit in <b>" . tf($bwait['metal']) . "</b>");
+                            $bcstring .= $notAvStyle . " " . tm("Fehlender Rohstoff", "<b>" . nf($bc['metal'] - $planet->resMetal) . "</b> " . RES_METAL . "<br/>Bereit in <b>" . StringUtils::formatTimespan($bwait['metal']) . "</b>");
                         $bcstring .= ">" . nf($bc['metal']) . "</td><td";
                         if ($bc['crystal'] > $planet->resCrystal)
-                            $bcstring .= $notAvStyle . " " . tm("Fehlender Rohstoff", nf($bc['crystal'] - $planet->resCrystal) . " " . RES_CRYSTAL . "<br/>Bereit in <b>" . tf($bwait['crystal']) . "</b>");
+                            $bcstring .= $notAvStyle . " " . tm("Fehlender Rohstoff", nf($bc['crystal'] - $planet->resCrystal) . " " . RES_CRYSTAL . "<br/>Bereit in <b>" . StringUtils::formatTimespan($bwait['crystal']) . "</b>");
                         $bcstring .= ">" . nf($bc['crystal']) . "</td><td";
                         if ($bc['plastic'] > $planet->resPlastic)
-                            $bcstring .= $notAvStyle . " " . tm("Fehlender Rohstoff", nf($bc['plastic'] - $planet->resPlastic) . " " . RES_PLASTIC . "<br/>Bereit in <b>" . tf($bwait['plastic']) . "</b>");
+                            $bcstring .= $notAvStyle . " " . tm("Fehlender Rohstoff", nf($bc['plastic'] - $planet->resPlastic) . " " . RES_PLASTIC . "<br/>Bereit in <b>" . StringUtils::formatTimespan($bwait['plastic']) . "</b>");
                         $bcstring .= ">" . nf($bc['plastic']) . "</td><td";
                         if ($bc['fuel'] > $planet->resFuel)
-                            $bcstring .= $notAvStyle . " " . tm("Fehlender Rohstoff", nf($bc['fuel'] - $planet->resFuel) . " " . RES_FUEL . "<br/>Bereit in <b>" . tf($bwait['fuel']) . "</b>");
+                            $bcstring .= $notAvStyle . " " . tm("Fehlender Rohstoff", nf($bc['fuel'] - $planet->resFuel) . " " . RES_FUEL . "<br/>Bereit in <b>" . StringUtils::formatTimespan($bwait['fuel']) . "</b>");
                         $bcstring .= ">" . nf($bc['fuel']) . "</td><td";
                         if ($bc['food'] > $planet->resFood)
-                            $bcstring .= $notAvStyle . " " . tm("Fehlender Rohstoff", nf($bc['food'] - $planet->resFood) . " " . RES_FOOD . "<br/>Bereit in <b>" . tf($bwait['food']) . "</b>");
+                            $bcstring .= $notAvStyle . " " . tm("Fehlender Rohstoff", nf($bc['food'] - $planet->resFood) . " " . RES_FOOD . "<br/>Bereit in <b>" . StringUtils::formatTimespan($bwait['food']) . "</b>");
                         $bcstring .= ">" . nf($bc['food']) . "</td></tr>";
                         // Maximale Stufe erreicht
 
@@ -588,34 +589,34 @@ if (isset($cp)) {
                             //Sonderfeld Gentech
                             if ($technology->id == GEN_TECH_ID) {
                                 if (!$building_gen) {
-                                    echo "<tr><td><input type=\"submit\" class=\"button\" name=\"command_build\" value=\"Erforschen\"></td><td>" . tf($btime) . "</td>";
+                                    echo "<tr><td><input type=\"submit\" class=\"button\" name=\"command_build\" value=\"Erforschen\"></td><td>" . StringUtils::formatTimespan($btime) . "</td>";
                                     echo "<td>" . nf($bc['metal']) . "</td><td>" . nf($bc['crystal']) . "</td><td>" . nf($bc['plastic']) . "</td><td>" . nf($bc['fuel']) . "</td><td>" . nf($bc['food']) . "</td></tr>";
                                 } else {
-                                    echo "<tr><td style=\"color:red;\">Erforschen</td><td>" . tf($btime) . "</td>";
+                                    echo "<tr><td style=\"color:red;\">Erforschen</td><td>" . StringUtils::formatTimespan($btime) . "</td>";
                                     echo $bcstring;
                                     echo "<tr><td colspan=\"7\"><i>Es kann nichts erforscht werden da gerade an einer anderen Technik geforscht wird!</i></td></tr>";
                                 }
                             } else {
-                                echo "<tr><td style=\"color:red;\">Erforschen</td><td>" . tf($btime) . "</td>";
+                                echo "<tr><td style=\"color:red;\">Erforschen</td><td>" . StringUtils::formatTimespan($btime) . "</td>";
                                 echo $bcstring;
                                 echo "<tr><td colspan=\"7\"><i>Es kann nichts erforscht werden da gerade an einer anderen Technik geforscht wird!</i></td></tr>";
                             }
                         }
                         // Zuwenig Rohstoffe vorhanden
                         elseif ($planet->resMetal < $bc['metal'] || $planet->resCrystal < $bc['crystal']  || $planet->resPlastic < $bc['plastic']  || $planet->resFuel < $bc['fuel']  || $planet->resFood < $bc['food']) {
-                            echo "<tr><td style=\"color:red;\">Erforschen</td><td>" . tf($btime) . "</td>";
+                            echo "<tr><td style=\"color:red;\">Erforschen</td><td>" . StringUtils::formatTimespan($btime) . "</td>";
                             echo $bcstring;
                             echo "<tr><td colspan=\"7\"><i>Keine Weiterentwicklung m&ouml;glich, zuwenig Rohstoffe!</i></td></tr>";
                         }
                         // Forschen
                         elseif ($b_level == 0) {
-                            echo "<tr><td><input type=\"submit\" class=\"button\" name=\"command_build\" value=\"Erforschen\"></td><td>" . tf($btime) . "</td>";
+                            echo "<tr><td><input type=\"submit\" class=\"button\" name=\"command_build\" value=\"Erforschen\"></td><td>" . StringUtils::formatTimespan($btime) . "</td>";
                             echo "<td>" . nf($bc['metal']) . "</td><td>" . nf($bc['crystal']) . "</td><td>" . nf($bc['plastic']) . "</td><td>" . nf($bc['fuel']) . "</td><td>" . nf($bc['food']) . "</td></tr>";
                         }
                         // Ausbauen
                         else {
                             echo ($building_something);
-                            echo "<tr><td><input type=\"submit\" class=\"button\" name=\"command_build\" value=\"Erforschen\"></td><td>" . tf($btime) . "</td>";
+                            echo "<tr><td><input type=\"submit\" class=\"button\" name=\"command_build\" value=\"Erforschen\"></td><td>" . StringUtils::formatTimespan($btime) . "</td>";
                             echo "<td>" . nf($bc['metal']) . "</td><td>" . nf($bc['crystal']) . "</td><td>" . nf($bc['plastic']) . "</td><td>" . nf($bc['fuel']) . "</td><td>" . nf($bc['food']) . "</td></tr>";
                         }
                     }
@@ -628,7 +629,7 @@ if (isset($cp)) {
                             echo '<td id="buildtime" style="vertical-align:middle;">-</td>
                         <td colspan="5"  id="progressbar" style="text-align:center;vertical-align:middle;font-weight:bold;"></td></tr>';
                             if ($b_level < $technology->lastLevel - 1)
-                                echo "<tr><td width=\"90\">N&auml;chste Stufe:</td><td>" . tf($btimen) . "</td><td>" . nf($bcn['metal']) . "</td><td>" . nf($bcn['crystal']) . "</td><td>" . nf($bcn['plastic']) . "</td><td>" . nf($bcn['fuel']) . "</td><td>" . nf($bcn['food']) . "</td></tr>";
+                                echo "<tr><td width=\"90\">N&auml;chste Stufe:</td><td>" . StringUtils::formatTimespan($btimen) . "</td><td>" . nf($bcn['metal']) . "</td><td>" . nf($bcn['crystal']) . "</td><td>" . nf($bcn['plastic']) . "</td><td>" . nf($bcn['fuel']) . "</td><td>" . nf($bcn['food']) . "</td></tr>";
                             countDown("buildtime", $end_time, "buildcancel");
                             jsProgressBar("progressbar", $start_time, $end_time);
                         } else {
@@ -640,7 +641,7 @@ if (isset($cp)) {
                     tableEnd();
 
                     if (isset($bwmax) && $bwmax > 0)
-                        echo "Wartezeit bis gen&uuml;gend Rohstoffe zum Forschen vorhanden sind: <b>" . tf($bwmax) . "</b><br/><br/>";
+                        echo "Wartezeit bis gen&uuml;gend Rohstoffe zum Forschen vorhanden sind: <b>" . StringUtils::formatTimespan($bwmax) . "</b><br/><br/>";
 
 
 
@@ -808,7 +809,7 @@ if (isset($cp)) {
                                 // Ist im Bau
                                 elseif (isset($techlist[$tech->id]) && $techlist[$tech->id]->buildType === 3) {
                                     $subtitle =  "Forschung auf Stufe " . ($b_level + 1);
-                                    $tmtext = "<span style=\"color:#0f0\">Wird erforscht!<br/>Dauer: " . tf($end_time - time()) . "</span><br/>";
+                                    $tmtext = "<span style=\"color:#0f0\">Wird erforscht!<br/>Dauer: " . StringUtils::formatTimespan($end_time - time()) . "</span><br/>";
                                     $color = '#0f0';
                                     if ($use_img_filter) {
                                         $filterStyleClass = "filter-building";

@@ -6,6 +6,7 @@ use EtoA\Market\MarketResourceRepository;
 use EtoA\Market\MarketShipRepository;
 use EtoA\Message\MarketReportRepository;
 use EtoA\Ship\ShipRepository;
+use EtoA\Support\StringUtils;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Universe\Resources\BaseResources;
 use EtoA\Universe\Resources\PreciseResources;
@@ -298,7 +299,7 @@ else {
             }
             // und sonst Zeit bis zum Ende anzeigen
             else {
-                $rest_time = tf($rest_time);
+                $rest_time = StringUtils::formatTimespan($rest_time);
             }
 
             echo "<tr>

@@ -141,33 +141,6 @@ function nf_back_sign($number, $colorize = 0)
 }
 
 /**
- * Format time in seconds to hour,minute,seconds
- */
-function tf($ts)    // Time format
-{
-    $w = floor($ts / 3600 / 24 / 7);
-    $ts -= $w * 3600 * 24 * 7;
-    $t = floor($ts / 3600 / 24);
-    $h = floor(($ts - ($t * 3600 * 24)) / 3600);
-    $m = floor(($ts - ($t * 3600 * 24) - ($h * 3600)) / 60);
-    $s = floor(($ts - ($t * 3600 * 24) - ($h * 3600) - ($m * 60)));
-
-    $str = "";
-    if ($w > 0)
-        $str .= $w . "w ";
-    if ($t > 0)
-        $str .=  $t . "d ";
-    if ($h > 0)
-        $str .=  $h . "h ";
-    if ($m > 0)
-        $str .=  $m . "m ";
-    if ($s > 0)
-        $str .=  $s . "s ";
-
-    return $str;
-}
-
-/**
  * Checks for a valid mail address
  */
 function checkEmail($email)

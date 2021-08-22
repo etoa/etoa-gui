@@ -13,6 +13,7 @@ use EtoA\Log\LogRepository;
 use EtoA\Log\LogSeverity;
 use EtoA\Ranking\GameStatsGenerator;
 use EtoA\Support\DB\DatabaseManagerRepository;
+use EtoA\Support\StringUtils;
 use EtoA\Text\TextRepository;
 use EtoA\Universe\Cell\CellRepository;
 use League\CommonMark\MarkdownConverterInterface;
@@ -184,7 +185,7 @@ function adminSessionLogForUserView(
                 echo "</td>";
                 echo "<td>";
                 if (max($arr->timeLogout, $arr->timeAction) - $arr->timeLogin > 0) {
-                    echo tf(max($arr->timeLogout, $arr->timeAction) - $arr->timeLogin);
+                    echo StringUtils::formatTimespan(max($arr->timeLogout, $arr->timeAction) - $arr->timeLogin);
                 } else {
                     echo "-";
                 }
@@ -250,7 +251,7 @@ function adminSessionLogView(
     }
 
     echo "<h2>Aktive Sessions</h2>";
-    echo "Das Timeout beträgt " . tf($config->getInt('admin_timeout')) . "<br/><br/>";
+    echo "Das Timeout beträgt " . StringUtils::formatTimespan($config->getInt('admin_timeout')) . "<br/><br/>";
 
     $sessions = $sessionRepository->findAll();
 
@@ -274,7 +275,7 @@ function adminSessionLogView(
                     <td>" . $arr->userNick . "</td>
                     <td>" . date("d.m.Y H:i", $arr->timeLogin) . "</td>
                     <td>" . date("d.m.Y H:i", $arr->timeAction) . "</td>
-                    <td>" . tf($arr->timeAction - $arr->timeLogin) . "</td>
+                    <td>" . StringUtils::formatTimespan($arr->timeAction - $arr->timeLogin) . "</td>
                     <td title=\"" . $networkNameService->getHost($arr->ipAddr) . "\">" . $arr->ipAddr . "</td>
                     <td title=\"" . $arr->userAgent . "\">" . $browserParser->toString() . "</td>
                     <td><a href=\"?page=$page&amp;sub=$sub&amp;kick=" . $arr->userId . "\">Kick</a></td>
