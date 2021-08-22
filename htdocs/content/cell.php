@@ -143,12 +143,12 @@ if ($cell->isValid()) {
                     $tm_info = "Urlaubsmodus";
                 }
                 // Lange Inaktiv
-                elseif ($ent->owner->lastOnline < time() - USER_INACTIVE_LONG * 86400) {
+                elseif ($ent->owner->lastOnline < time() - $config->param2Int('user_inactive_days') * 86400) {
                     $class .= "userLongInactiveColor";
                     $tm_info = "Lange Inaktiv";
                 }
                 // Inaktiv
-                elseif ($ent->owner->lastOnline < time() - USER_INACTIVE_SHOW * 86400) {
+                elseif ($ent->owner->lastOnline < time() - $config->getInt('user_inactive_days') * 86400) {
                     $class .= "userInactiveColor";
                     $tm_info = "Inaktiv";
                 }
@@ -348,8 +348,8 @@ if ($cell->isValid()) {
             <span class=\"userSelfColor\">Eigener Planet</span>,
             <span class=\"userLockedColor\">Gesperrt</span>,
             <span class=\"userHolidayColor\">Urlaubsmodus</span>,
-            <span class=\"userInactiveColor\">Inaktiv (" . USER_INACTIVE_SHOW . " Tage)</span>,
-            <span class=\"userLongInactiveColor\">Inaktiv (" . USER_INACTIVE_LONG . " Tage)</span><br/>
+            <span class=\"userInactiveColor\">Inaktiv (" . $config->getInt('user_inactive_days') . " Tage)</span>,
+            <span class=\"userLongInactiveColor\">Inaktiv (" . $config->param2Int('user_inactive_days') . " Tage)</span><br/>
             <span class=\"noobColor\">Anf&auml;ngerschutz</span>,
             <span class=\"friendColor\">B&uuml;ndnis</span>,
             <span class=\"enemyColor\">Krieg</span>,

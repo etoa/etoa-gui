@@ -475,5 +475,5 @@ if ($statsUpdate !== null) {
 echo "<b>Legende:</b>
     <span class=\"userLockedColor\">Gesperrt</span>,
     <span class=\"userHolidayColor\">Urlaubsmodus</span>,
-    <span class=\"userInactiveColor\">Inaktiv (" . USER_INACTIVE_SHOW . " Tage)</span>,
+    <span class=\"userInactiveColor\">Inaktiv (" . $config->getInt('user_inactive_days') . " Tage)</span>,
     </div>";

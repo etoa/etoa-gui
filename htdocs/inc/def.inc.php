@@ -15,9 +15,6 @@ define("USER_INACTIVE_SHOW", $config->getInt('user_inactive_days'));
 // Zeit bis "Inaktiv" Status Long (atm 14 Tage)
 define("USER_INACTIVE_LONG", $config->param2Int('user_inactive_days'));
 
-// Nachrichten
-define("FLOOD_CONTROL", $config->getInt('msg_flood_control'));    // Wartezeit bis zur nächsten Nachricht
-
 // Kriegsdauer
 define("WAR_DURATION", 3600 * $config->getInt('alliance_war_time'));
 define("PEACE_DURATION", 3600 * $config->param1Int('alliance_war_time'));

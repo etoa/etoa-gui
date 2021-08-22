@@ -1,5 +1,6 @@
 <?php
 
+use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Message\MessageIgnoreRepository;
 use EtoA\Message\MessageRepository;
 use EtoA\User\UserPropertiesRepository;
@@ -21,6 +22,9 @@ $userPropertiesRepository = $app[UserPropertiesRepository::class];
 /** @var Request */
 $request = Request::createFromGlobals();
 
+/** @var ConfigurationService $config */
+$config = $app[ConfigurationService::class];
+
 if (!$cu->isVerified) {
     iBoxStart("Funktion gesperrt");
     echo "Solange deine E-Mail Adresse nicht bestätigt ist, kannst du keine Nachrichten versenden!";
@@ -36,6 +40,7 @@ if (!$cu->isVerified) {
             $userRepository,
             $messageRepository,
             $messageIgnoreRepository,
+            $config,
             $cu,
             $app['dispatcher']
         );
@@ -250,6 +255,7 @@ function submitSendMessage(
     UserRepository $userRepository,
     MessageRepository $messageRepository,
     MessageIgnoreRepository $messageIgnoreRepository,
+    ConfigurationService $config,
     User $cu,
     $dispatcher
 ): void {
@@ -262,6 +268,7 @@ function submitSendMessage(
             $userRepository,
             $messageRepository,
             $messageIgnoreRepository,
+            $config,
             $cu->id,
             $recipientName,
             $request->request->get('message_subject'),
@@ -279,6 +286,7 @@ function sendMessage(
     UserRepository $userRepository,
     MessageRepository $messageRepository,
     MessageIgnoreRepository $messageIgnoreRepository,
+    ConfigurationService $config,
     int $senderId,
     string $recipientName,
     string $subject,
@@ -291,9 +299,9 @@ function sendMessage(
         return "<b>Fehler:</b> Der Benutzer <b>" . $recipientName . "</b> existiert nicht!<br/>";
     }
 
-    $flood_interval = time() - FLOOD_CONTROL;
+    $flood_interval = time() - $config->getInt('msg_flood_control');
     if (isset($_SESSION['messagesSent'][$recipientUserId]) && $_SESSION['messagesSent'][$recipientUserId] > $flood_interval) {
-        return "<b>Flood-Kontrolle!</b> Du kannst erst nach " . FLOOD_CONTROL . " Sekunden eine neue Nachricht an " . $recipientName . " schreiben!<br/>";
+        return "<b>Flood-Kontrolle!</b> Du kannst erst nach " . $config->getInt('msg_flood_control') . " Sekunden eine neue Nachricht an " . $recipientName . " schreiben!<br/>";
     }
 
     if ($messageIgnoreRepository->isRecipientIgnoringSender($senderId, $recipientUserId)) {

@@ -107,7 +107,7 @@ class RankingService
     public function calc(): RankingCalculationResult
     {
         $time = time();
-        $inactiveTime = 86400 * USER_INACTIVE_SHOW;
+        $inactiveTime = 86400 * $this->config->getInt('user_inactive_days');
         $allpoints = 0;
 
         $shipPoints = $this->shipDataRepository->getShipPoints();

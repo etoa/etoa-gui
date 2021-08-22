@@ -147,7 +147,7 @@ else {
         <span class=\"userSelfColor\">Eigener Account</span>,
         <span class=\"userLockedColor\">Gesperrt</span>,
         <span class=\"userHolidayColor\">Urlaubsmodus</span>,
-        <span class=\"userInactiveColor\">Inaktiv (" . USER_INACTIVE_SHOW . " Tage)</span>,
+        <span class=\"userInactiveColor\">Inaktiv (" . $config->getInt('user_inactive_days') . " Tage)</span>,
         <span class=\"userAllianceMemberColor\">Allianz(-mitglied)</span>
         <br/>";
     $statsUpdate = $runtimeDataStore->get('statsupdate');
