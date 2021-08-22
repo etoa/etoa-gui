@@ -1,18 +1,21 @@
 <?PHP
 
+use Symfony\Component\HttpFoundation\Request;
+
+/** @var Request $request */
+$request = Request::createFromGlobals();
+
 echo '<h1>Hilfe</h1>';
 
 $link = "page=" . $page;
 
 // Help page
-if (isset($_GET['site']) && ctype_alsc($_GET['site']) && $_GET['site'] != "") {
-    $site = $_GET['site'];
-    if ($site != "") {
-        if (file_exists(RELATIVE_ROOT . "info/$site.php")) {
-            include(RELATIVE_ROOT . "info/$site.php");
-        } else {
-            error_msg("Hilfedatei nicht gefunden!");
-        }
+if ($request->query->has('site')) {
+    $site = $request->query->get('site');
+    if (filled($site) && preg_match('/^[a-z\_]+$/', $site) && file_exists(RELATIVE_ROOT . "info/$site.php")) {
+        include(RELATIVE_ROOT . "info/$site.php");
+    } else {
+        error_msg("Hilfedatei nicht gefunden!");
     }
     return_btn();
 }

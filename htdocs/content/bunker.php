@@ -7,6 +7,7 @@ use EtoA\Support\BBCodeUtils;
 use EtoA\Support\StringUtils;
 use EtoA\UI\ResourceBoxDrawer;
 use EtoA\Universe\Planet\PlanetRepository;
+use Symfony\Component\HttpFoundation\Request;
 
 /** @var PlanetRepository $planetRepo */
 $planetRepo = $app[PlanetRepository::class];
@@ -20,6 +21,9 @@ $shipRepository = $app[ShipRepository::class];
 $buildingDataRepository = $app[BuildingDataRepository::class];
 /** @var BuildingRepository $buildingRepository */
 $buildingRepository = $app[BuildingRepository::class];
+
+/** @var Request $request */
+$request = Request::createFromGlobals();
 
 if ($cp) {
     $planet = $planetRepo->find($cp->id);
@@ -35,7 +39,7 @@ if ($cp) {
     );
     show_tab_menu("mode", $tabitems);
 
-    $mode = (isset($_GET['mode']) && ctype_alsc($_GET['mode'])) ? $_GET['mode'] : "res";
+    $mode = $request->query->get('mode', "res");
 
     $fleetBunkerLevel = $buildingRepository->getBuildingLevel($cu->getId(), FLEET_BUNKER_ID, $planet->id);
     $resBunkerLevel = $buildingRepository->getBuildingLevel($cu->getId(), RES_BUNKER_ID, $planet->id);
