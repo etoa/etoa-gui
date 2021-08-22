@@ -285,4 +285,4 @@ else
 }
 echo imagepng($im);
 
-dbclose();
+DBManager::getInstance()->close();

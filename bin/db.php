@@ -323,5 +323,4 @@ else
     show_usage();
 }
 
-// DB schliessen
-dbclose();
+DBManager::getInstance()->close();

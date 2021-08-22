@@ -90,8 +90,7 @@ try {
         }
     }
 
-    // DB schliessen
-    dbclose();
+    DBManager::getInstance()->close();
 
 } catch (DBException $ex) {
     echo $ex;

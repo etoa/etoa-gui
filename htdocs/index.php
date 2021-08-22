@@ -323,5 +323,5 @@ try {
 } finally {
     $_SESSION['lastpage'] = $page;
 
-    dbclose();
+    DBManager::getInstance()->close();
 }
