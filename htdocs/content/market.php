@@ -5,6 +5,7 @@ use EtoA\Alliance\AllianceBuildingRepository;
 use EtoA\Building\BuildingRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Market\MarketRepository;
+use EtoA\Specialist\SpecialistService;
 use EtoA\UI\ResourceBoxDrawer;
 use EtoA\Universe\Planet\PlanetRepository;
 
@@ -61,8 +62,12 @@ if ($config->getBoolean('market_enabled')) {
         // Header
         //<editor-fold>
 
-        define("MARKET_LEVEL",$market->currentLevel);
-        define("MARKET_TAX", max(1, MARKET_SELL_TAX * $cu->specialist->tradeBonus));
+        /** @var SpecialistService $specialistService */
+        $specialistService = $app[SpecialistService::class];
+        $specialist = $specialistService->getSpecialistOfUser($cu->id);
+
+        define("MARKET_LEVEL", $market->currentLevel);
+        define("MARKET_TAX", max(1, MARKET_SELL_TAX * ($specialist !== null ? $specialist->tradeBonus : 1)));
 
         // Show title
         echo '<h1>Marktplatz (Stufe ' . $market->currentLevel . ') des Planeten ' . $planet->name . '</h1>';
@@ -120,13 +125,13 @@ if ($config->getBoolean('market_enabled')) {
                 <td>Wenn du ein Angebot von diesem Planet zur&uuml;ckziehst erh&auml;lst du " . ($return_factor * 100) . "% des Angebotes zur&uuml;ck (abgerundet).</td></tr>";
             echo "<tr><th>Verkaufsgebühren:</th>
                 <td>Die Verkaufsgeb&uuml;hr des Marktplatzes betr&auml;gt " . get_percent_string(MARKET_TAX, 1, 1) . "";
-            if ($cu->specialist->tradeBonus != 1) {
-                echo " (inkl " . get_percent_string($cu->specialist->tradeBonus, 1, 1) . " Kostenverringerung durch " . $cu->specialist->name . "!";
+            if ($specialist !== null && $specialist->tradeBonus != 1) {
+                echo " (inkl " . get_percent_string($specialist->tradeBonus, 1, 1) . " Kostenverringerung durch " . $specialist->name . "!";
             }
             echo "	</td></tr>";
-            if ($cu->specialist->tradeTime != 1) {
+            if ($specialist !== null && $specialist->tradeTime != 1) {
                 echo "<tr><th>Handelsflottengeschwindigkeit:</th>
-                    <td>Die Handelsflotten fliegen durch " . $cu->specialist->name . " mit " . get_percent_string($cu->specialist->tradeTime, 1) . " Geschwindigkeit!
+                    <td>Die Handelsflotten fliegen durch " . $specialist->name . " mit " . get_percent_string($specialist->tradeTime, 1) . " Geschwindigkeit!
                     </td></tr>";
             }
             if ($cu->allianceId() > 0) {
