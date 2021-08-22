@@ -6,7 +6,7 @@ require_once __DIR__ . '/../../vendor/autoload.php';
 require __DIR__ . '/init.inc.php';
 
 // Connect to database
-dbconnect();
+DBManager::getInstance()->connect();
 
 if (!isset($app)) {
     $app = require __DIR__ . '/../../src/app.php';

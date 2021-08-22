@@ -54,10 +54,7 @@ class DBManager implements ISingleton
         return self::configFile;
     }
 
-    /**
-     * Baut die Datenbankverbindung auf
-     */
-    function connect($throwError = 1, $tempCfg = null)
+    function connect(?array $tempCfg = null): void
     {
         if ($this->dbCfg == null && $tempCfg == null) {
             $this->loadConfig();
@@ -67,17 +64,14 @@ class DBManager implements ISingleton
             $this->dbCfg = $tempCfg;
         }
         $dbCfg = $this->dbCfg;
+
         if (!$this->handle = @mysql_connect($dbCfg['host'], $dbCfg['user'], $dbCfg['password'], $dbCfg['dbname'])) {
-            if ($throwError == 1) {
-                throw new DBException("Zum Datenbankserver auf <b>" . $dbCfg['host'] . "</b> kann keine Verbindung hergestellt werden!");
-            }
-
-            return false;
+            throw new DBException("Zum Datenbankserver auf <b>" . $dbCfg['host'] . "</b> kann keine Verbindung hergestellt werden!");
         }
-        $this->isOpen = true;
-        dbquery("SET NAMES 'utf8';");
 
-        return true;
+        $this->isOpen = true;
+
+        $this->query("SET NAMES 'utf8';");
     }
 
     /**
@@ -94,7 +88,7 @@ class DBManager implements ISingleton
      * Führt eine Datenbankabfrage aus
      *
      * @param string $string SQL-Abfrage
-     * #param int $fehler Erzwing Fehleranzeige, Standard: 1
+     * #param int $fehler Erzwingt Fehleranzeige, Standard: 1
      */
     function query($string, $fehler = 1)
     {

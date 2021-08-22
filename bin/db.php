@@ -47,7 +47,7 @@ if (!@include($init))
 
 // Connect to database
 try {
-    dbconnect();
+    DBManager::getInstance()->connect();
 } catch (DBException $ex) {
     echo $ex;
     exit(1);
