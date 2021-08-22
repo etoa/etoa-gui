@@ -1321,16 +1321,6 @@ function getAbsPath(string $path): string
  */
 include_once __DIR__ . '/text.inc.php';
 
-/**
- * Remove BBCode
- */
-function stripBBCode($text_to_search)
-{
-    $pattern = '|[[\\/\\!]*?[^\\[\\]]*?]|si';
-    $replace = '';
-    return preg_replace($pattern, $replace, $text_to_search);
-}
-
 if (!function_exists('blank')) {
     /**
      * Determine if the given value is "blank".

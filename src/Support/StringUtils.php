@@ -368,4 +368,15 @@ class StringUtils
 
         return round($s) . " B";
     }
+
+    /**
+     * Remove BBCode
+     */
+    public static function stripBBCode(string $text_to_search): string
+    {
+        $pattern = '|[[\\/\\!]*?[^\\[\\]]*?]|si';
+        $replace = '';
+
+        return preg_replace($pattern, $replace, $text_to_search);
+    }
 }

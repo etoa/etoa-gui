@@ -194,7 +194,7 @@ if (isset($cp)) {
             if ($request->request->get('planet_name', '') != '') {
                 $planetRepo->setNameAndComment(
                     $planet->id,
-                    stripBBCode($request->request->get('planet_name')),
+                    StringUtils::stripBBCode($request->request->get('planet_name')),
                     $request->request->get('planet_desc')
                 );
                 if ($request->request->get('planet_name') !== $planet->name) {
