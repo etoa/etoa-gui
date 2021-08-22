@@ -210,13 +210,17 @@ class StringUtils
     /**
      * Cuts a string by a given length
      */
-    public static function cutString(string $string, int $num): string
+    public static function cutString(?string $value, int $num): string
     {
-        if (strlen($string) > $num + 3) {
-            return substr($string, 0, $num) . "...";
+        if ($value === null) {
+            return '';
         }
 
-        return $string;
+        if (strlen($value) > $num + 3) {
+            return substr($value, 0, $num) . "...";
+        }
+
+        return $value;
     }
 
     /**
