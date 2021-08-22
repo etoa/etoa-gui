@@ -81,14 +81,13 @@ if ((isset($_POST['submitEdit']) || isset($_POST['submitNew'])) && (isset($_POST
 
             $speed = max(1, min(100, StringUtils::parseFormattedNumber($_POST['value'])));
 
-            // Create restring
             $freight = new BaseResources();
-            $freight->metal = (int) nf_back_sign($_POST['res0']);
-            $freight->crystal = (int) nf_back_sign($_POST['res1']);
-            $freight->plastic = (int) nf_back_sign($_POST['res2']);
-            $freight->fuel = (int) nf_back_sign($_POST['res3']);
-            $freight->food = (int) nf_back_sign($_POST['res4']);
-            $freight->people = (int) nf_back_sign($_POST['res5']);
+            $freight->metal = StringUtils::parseFormattedNumberSigned($_POST['res0']);
+            $freight->crystal = StringUtils::parseFormattedNumberSigned($_POST['res1']);
+            $freight->plastic = StringUtils::parseFormattedNumberSigned($_POST['res2']);
+            $freight->fuel = StringUtils::parseFormattedNumberSigned($_POST['res3']);
+            $freight->food = StringUtils::parseFormattedNumberSigned($_POST['res4']);
+            $freight->people = StringUtils::parseFormattedNumberSigned($_POST['res5']);
 
             $fetch = new BaseResources();
             $fetch->metal = max(0, StringUtils::parseFormattedNumber($_POST['fetch0']));
@@ -98,13 +97,11 @@ if ((isset($_POST['submitEdit']) || isset($_POST['submitNew'])) && (isset($_POST
             $fetch->food = max(0, StringUtils::parseFormattedNumber($_POST['fetch4']));
             $fetch->people = max(0, StringUtils::parseFormattedNumber($_POST['fetch5']));
 
-            // Save new bookmark
             if (isset($_POST['submitNew'])) {
                 $fleetBookmarkRepository->add($user->id, $_POST['name'], $entity->id, $addships, $freight, $fetch, $_POST['action'], $speed);
 
                 success_msg("Der Favorit wurde hinzugef&uuml;gt!");
             } elseif (isset($_POST['submitEdit'])) {
-                // Update edidet bookmark
                 $fleetBookmarkRepository->update((int) $_POST['id'], $user->id, $_POST['name'], $entity->id, $addships, $freight, $fetch, $_POST['action'], $speed);
 
                 success_msg("Der Favorit wurde gespeichert!");
@@ -611,7 +608,7 @@ if ($mode == "fleet") {
         iBoxEnd();
 
         // List bookmarks
-        $bookmarks = $bookmarkRepository->findForUser($user->id, new BookmarkOrder($properties->itemOrderBookmark , $properties->itemOrderWay));
+        $bookmarks = $bookmarkRepository->findForUser($user->id, new BookmarkOrder($properties->itemOrderBookmark, $properties->itemOrderWay));
         if (count($bookmarks) > 0) {
             tableStart("Gespeicherte Favoriten");
             /*************

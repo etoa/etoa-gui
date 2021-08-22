@@ -313,6 +313,17 @@ class StringUtils
     }
 
     /**
+     * Convert formatted number back to integer (positive & negative number)
+     */
+    public static function parseFormattedNumberSigned(string $number): int
+    {
+        $number = str_replace('`', '', $number);
+        $number = (float) str_replace('%', '', $number);
+
+        return (int) $number;
+    }
+
+    /**
      * Prozentwert generieren und zurückgeben
      *
      * @param float|int|array<float|int> $val Einzelner Wert oder Array von Werten als Dezimalzahl; 1.0 = 0%
