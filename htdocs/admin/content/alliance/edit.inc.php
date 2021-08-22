@@ -134,20 +134,20 @@ function saveResources(Request $request, AllianceRepository $repository, int $id
 {
     $repository->updateResources(
         $id,
-        nf_back($request->request->get('res_metal')),
-        nf_back($request->request->get('res_crystal')),
-        nf_back($request->request->get('res_plastic')),
-        nf_back($request->request->get('res_fuel')),
-        nf_back($request->request->get('res_food')),
+        StringUtils::parseFormattedNumber($request->request->get('res_metal')),
+        StringUtils::parseFormattedNumber($request->request->get('res_crystal')),
+        StringUtils::parseFormattedNumber($request->request->get('res_plastic')),
+        StringUtils::parseFormattedNumber($request->request->get('res_fuel')),
+        StringUtils::parseFormattedNumber($request->request->get('res_food')),
     );
 
     $repository->addResources(
         $id,
-        nf_back($request->request->get('res_metal_add')),
-        nf_back($request->request->get('res_crystal_add')),
-        nf_back($request->request->get('res_plastic_add')),
-        nf_back($request->request->get('res_fuel_add')),
-        nf_back($request->request->get('res_food_add')),
+        StringUtils::parseFormattedNumber($request->request->get('res_metal_add')),
+        StringUtils::parseFormattedNumber($request->request->get('res_crystal_add')),
+        StringUtils::parseFormattedNumber($request->request->get('res_plastic_add')),
+        StringUtils::parseFormattedNumber($request->request->get('res_fuel_add')),
+        StringUtils::parseFormattedNumber($request->request->get('res_food_add')),
     );
 
     $twig->addGlobal('successMessage', 'Ressourcen aktualisiert!');

@@ -118,7 +118,7 @@ if ($missileBuilding !== null && $missileBuilding->currentLevel > 0) {
                 $launch = array();
                 $lcnt = 0;
                 foreach ($_POST['count'] as $k => $v) {
-                    $v = intval(nf_back($v));
+                    $v = intval(StringUtils::parseFormattedNumber($v));
                     $k = intval($k);
 
                     if ($v > 0) {
@@ -226,7 +226,7 @@ if ($missileBuilding !== null && $missileBuilding->currentLevel > 0) {
                     $valid = false;
                     foreach ($_POST['missile_count'] as $k => $v) {
 
-                        $v = nf_back($v);
+                        $v = StringUtils::parseFormattedNumber($v);
                         $k = intval($k);
 
                         if ($v > 0) {

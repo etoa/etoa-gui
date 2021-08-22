@@ -93,7 +93,7 @@ if (isset($cp)) {
         // people working changed
         if (isset($_POST['submit_people_form_gen'])) {
 
-            $set_people = nf_back($_POST['peopleWorking']);
+            $set_people = StringUtils::parseFormattedNumber($_POST['peopleWorking']);
             if (!$building_gen && $bl->setPeopleWorking(PEOPLE_BUILDING_ID, $set_people, true)) {
                 success_msg("Arbeiter zugeteilt!");
                 $new_people_set = true;
@@ -103,7 +103,7 @@ if (isset($cp)) {
         }
 
         if (isset($_POST['submit_people_form'])) {
-            $set_people = nf_back($_POST['peopleWorking']);
+            $set_people = StringUtils::parseFormattedNumber($_POST['peopleWorking']);
             if (!$building_something && $bl->setPeopleWorking(TECH_BUILDING_ID, $set_people, true)) {
                 success_msg("Arbeiter zugeteilt!");
                 $new_people_set = true;

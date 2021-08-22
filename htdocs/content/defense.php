@@ -285,7 +285,7 @@ if ($factoryBuilding !== null && $factoryBuilding->currentLevel > 0) {
         // people working changed
         if (isset($_POST['submit_people_form'])) {
             if (count($queue) === 0) {
-                $buildingRepository->setPeopleWorking($planet->id, DEF_BUILDING_ID, (int) nf_back($_POST['peopleWorking']));
+                $buildingRepository->setPeopleWorking($planet->id, DEF_BUILDING_ID, (int) StringUtils::parseFormattedNumber($_POST['peopleWorking']));
                 //success_msg("Arbeiter zugeteilt!");
             } else
                 error_msg('Arbeiter konnten nicht zugeteilt werden!');
@@ -360,7 +360,7 @@ if ($factoryBuilding !== null && $factoryBuilding->currentLevel > 0) {
             //
             $counter = 0;
             foreach ($_POST['build_count'] as $def_id => $build_cnt) {
-                $build_cnt = nf_back($build_cnt);
+                $build_cnt = StringUtils::parseFormattedNumber($build_cnt);
 
                 if ($build_cnt > 0 && isset($defs[$def_id])) {
                     // Zählt die Anzahl Verteidigugn dieses Typs im ganzen Account...

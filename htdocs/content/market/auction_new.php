@@ -6,6 +6,7 @@ use EtoA\Log\LogRepository;
 use EtoA\Log\LogSeverity;
 use EtoA\Market\MarketAuctionRepository;
 use EtoA\Message\MarketReportRepository;
+use EtoA\Support\StringUtils;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Universe\Resources\BaseResources;
 
@@ -28,10 +29,10 @@ $sell = new BaseResources();
 
 foreach ($resNames as $rk => $rn) {
     // Convert formatted number back to integer
-    $_POST['auction_sell_' . $rk] = nf_back($_POST['auction_sell_' . $rk]);
+    $_POST['auction_sell_' . $rk] = StringUtils::parseFormattedNumber($_POST['auction_sell_' . $rk]);
 
-    $sell->set($rk, max((int) nf_back($_POST['auction_sell_' . $rk]), 0));
-    $currency->set($rk, max(0, nf_back($_POST['auction_buy_' . $rk] ?? 0)));
+    $sell->set($rk, max((int) StringUtils::parseFormattedNumber($_POST['auction_sell_' . $rk]), 0));
+    $currency->set($rk, max(0, StringUtils::parseFormattedNumber($_POST['auction_buy_' . $rk] ?? 0)));
 
     // Prüft ob noch immer genug Rohstoffe auf dem Planeten sind (eventueller verlust durch Kampf?)
     if ($sell->get($rk) > 0 && $sell->get($rk) * MARKET_TAX > $cp->resources[$rk]) {

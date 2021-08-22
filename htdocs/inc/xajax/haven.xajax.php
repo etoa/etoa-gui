@@ -1096,12 +1096,12 @@ function havenShowLaunch($form)
 
         if ($fleet->setAction($form['fleet_action'])) {
             if ($form['fleet_action'] == "fetch") {
-                $fetch1 = $fleet->fetchResource(1, nf_back($form['fetch1']));
-                $fetch2 = $fleet->fetchResource(2, nf_back($form['fetch2']));
-                $fetch3 = $fleet->fetchResource(3, nf_back($form['fetch3']));
-                $fetch4 = $fleet->fetchResource(4, nf_back($form['fetch4']));
-                $fetch5 = $fleet->fetchResource(5, nf_back($form['fetch5']));
-                $fetch6 = $fleet->fetchResource(6, nf_back($form['fetchp']));
+                $fetch1 = $fleet->fetchResource(1, StringUtils::parseFormattedNumber($form['fetch1']));
+                $fetch2 = $fleet->fetchResource(2, StringUtils::parseFormattedNumber($form['fetch2']));
+                $fetch3 = $fleet->fetchResource(3, StringUtils::parseFormattedNumber($form['fetch3']));
+                $fetch4 = $fleet->fetchResource(4, StringUtils::parseFormattedNumber($form['fetch4']));
+                $fetch5 = $fleet->fetchResource(5, StringUtils::parseFormattedNumber($form['fetch5']));
+                $fetch6 = $fleet->fetchResource(6, StringUtils::parseFormattedNumber($form['fetchp']));
                 $load1 = $fleet->loadResource(1, 0);
                 $load2 = $fleet->loadResource(2, 0);
                 $load3 = $fleet->loadResource(3, 0);
@@ -1109,11 +1109,11 @@ function havenShowLaunch($form)
                 $load5 = $fleet->loadResource(5, 0);
                 $load6 = $fleet->loadPeople(0);
             } else {
-                $load1 = $fleet->loadResource(1, nf_back($form['res1']));
-                $load2 = $fleet->loadResource(2, nf_back($form['res2']));
-                $load3 = $fleet->loadResource(3, nf_back($form['res3']));
-                $load4 = $fleet->loadResource(4, nf_back($form['res4']));
-                $load5 = $fleet->loadResource(5, nf_back($form['res5']));
+                $load1 = $fleet->loadResource(1, StringUtils::parseFormattedNumber($form['res1']));
+                $load2 = $fleet->loadResource(2, StringUtils::parseFormattedNumber($form['res2']));
+                $load3 = $fleet->loadResource(3, StringUtils::parseFormattedNumber($form['res3']));
+                $load4 = $fleet->loadResource(4, StringUtils::parseFormattedNumber($form['res4']));
+                $load5 = $fleet->loadResource(5, StringUtils::parseFormattedNumber($form['res5']));
             }
 
             if ($form['fleet_action'] == "fakeattack") {
@@ -1479,7 +1479,7 @@ function havenBookmark($form)
 function havenCheckRes($id, $val)
 {
     $response = new xajaxResponse();
-    $val = max(0, intval(nf_back($val)));
+    $val = max(0, intval(StringUtils::parseFormattedNumber($val)));
 
     $fleet = unserialize($_SESSION['haven']['fleetObj']);
 
@@ -1525,7 +1525,7 @@ function havenSetResAll()
         else
             $val = floor($fleet->sourceEntity->getRes($id));
 
-        $val = max(0, intval(nf_back($val)));
+        $val = max(0, intval($val));
         $erg = $fleet->loadResource($id, $val);
         $response->assign('res' . $id, 'value', StringUtils::formatNumber($erg));
     }
@@ -1534,7 +1534,7 @@ function havenSetResAll()
 
     // max. People
     $val = floor($fleet->sourceEntity->people());
-    $val = max(0, intval(nf_back($val)));
+    $val = max(0, intval($val));
     $erg = $fleet->loadPeople($val);
     $response->assign('resp', 'value', StringUtils::formatNumber($erg));
     $response->assign('peoplefree', 'innerHTML', StringUtils::formatNumber($fleet->getPeopleCapacity()) . " / " . StringUtils::formatNumber($fleet->getTotalPeopleCapacity()));
@@ -1582,7 +1582,7 @@ function havenSetFetchAll()
 function havenCheckPeople($val)
 {
     $response = new xajaxResponse();
-    $val = max(0, intval(nf_back($val)));
+    $val = max(0, intval(StringUtils::parseFormattedNumber($val)));
 
     $fleet = unserialize($_SESSION['haven']['fleetObj']);
 

@@ -28,8 +28,8 @@ $buyRes = array();
 $newBuyResource = new BaseResources();
 foreach ($resNames as $rk => $rn) {
     if (isset($_POST['new_buy_' . $rk])) {
-        $newBuyResource->set($rk, nf_back($_POST['new_buy_' . $rk]));
-        $buyRes[$rk] = nf_back($_POST['new_buy_' . $rk]);
+        $newBuyResource->set($rk, StringUtils::parseFormattedNumber($_POST['new_buy_' . $rk]));
+        $buyRes[$rk] = StringUtils::parseFormattedNumber($_POST['new_buy_' . $rk]);
     } else
         $buyRes[$rk] = 0;
 }

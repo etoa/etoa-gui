@@ -279,7 +279,7 @@ class FleetLaunch
                             }
                         }
                     }
-                    $cnt = min(nf_back($cnt), $arr['shiplist_count']);
+                    $cnt = min(StringUtils::parseFormattedNumber($cnt), $arr['shiplist_count']);
 
                     $this->ships[$sid] = array(
                         "count" => $cnt,

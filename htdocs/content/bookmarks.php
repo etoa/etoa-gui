@@ -74,12 +74,12 @@ if ((isset($_POST['submitEdit']) || isset($_POST['submitNew'])) && (isset($_POST
             $addships = "";
             foreach ($_POST['ship_count'] as $sid => $count) {
                 if ($addships == "")
-                    $addships .= (int) $sid . ":" . nf_back($count);
+                    $addships .= (int) $sid . ":" . StringUtils::parseFormattedNumber($count);
                 else
-                    $addships .= "," . (int) $sid . ":" . nf_back($count);
+                    $addships .= "," . (int) $sid . ":" . StringUtils::parseFormattedNumber($count);
             }
 
-            $speed = max(1, min(100, (int) nf_back($_POST['value'])));
+            $speed = max(1, min(100, (int) StringUtils::parseFormattedNumber($_POST['value'])));
 
             // Create restring
             $freight = new BaseResources();
@@ -91,12 +91,12 @@ if ((isset($_POST['submitEdit']) || isset($_POST['submitNew'])) && (isset($_POST
             $freight->people = (int) nf_back_sign($_POST['res5']);
 
             $fetch = new BaseResources();
-            $fetch->metal = max(0, (int) nf_back($_POST['fetch0']));
-            $fetch->crystal = max(0, (int) nf_back($_POST['fetch1']));
-            $fetch->plastic = max(0, (int) nf_back($_POST['fetch2']));
-            $fetch->fuel = max(0, (int) nf_back($_POST['fetch3']));
-            $fetch->food = max(0, (int) nf_back($_POST['fetch4']));
-            $fetch->people = max(0, (int) nf_back($_POST['fetch5']));
+            $fetch->metal = max(0, (int) StringUtils::parseFormattedNumber($_POST['fetch0']));
+            $fetch->crystal = max(0, (int) StringUtils::parseFormattedNumber($_POST['fetch1']));
+            $fetch->plastic = max(0, (int) StringUtils::parseFormattedNumber($_POST['fetch2']));
+            $fetch->fuel = max(0, (int) StringUtils::parseFormattedNumber($_POST['fetch3']));
+            $fetch->food = max(0, (int) StringUtils::parseFormattedNumber($_POST['fetch4']));
+            $fetch->people = max(0, (int) StringUtils::parseFormattedNumber($_POST['fetch5']));
 
             // Save new bookmark
             if (isset($_POST['submitNew'])) {

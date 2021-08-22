@@ -587,17 +587,17 @@ function calcMarketRessPrice($val, $last_update = 0)
         $val['ress_buy_food'] = 0;
     }
 
-    $val['ress_sell_metal'] = min(nf_back($val['ress_sell_metal']), floor($val['res_metal'] / MARKET_SELL_TAX));
-    $val['ress_sell_crystal'] = min(nf_back($val['ress_sell_crystal']), floor($val['res_crystal'] / MARKET_SELL_TAX));
-    $val['ress_sell_plastic'] = min(nf_back($val['ress_sell_plastic']), floor($val['res_plastic'] / MARKET_SELL_TAX));
-    $val['ress_sell_fuel'] = min(nf_back($val['ress_sell_fuel']), floor($val['res_fuel'] / MARKET_SELL_TAX));
-    $val['ress_sell_food'] = min(nf_back($val['ress_sell_food']), floor($val['res_food'] / MARKET_SELL_TAX));
+    $val['ress_sell_metal'] = min(StringUtils::parseFormattedNumber($val['ress_sell_metal']), floor($val['res_metal'] / MARKET_SELL_TAX));
+    $val['ress_sell_crystal'] = min(StringUtils::parseFormattedNumber($val['ress_sell_crystal']), floor($val['res_crystal'] / MARKET_SELL_TAX));
+    $val['ress_sell_plastic'] = min(StringUtils::parseFormattedNumber($val['ress_sell_plastic']), floor($val['res_plastic'] / MARKET_SELL_TAX));
+    $val['ress_sell_fuel'] = min(StringUtils::parseFormattedNumber($val['ress_sell_fuel']), floor($val['res_fuel'] / MARKET_SELL_TAX));
+    $val['ress_sell_food'] = min(StringUtils::parseFormattedNumber($val['ress_sell_food']), floor($val['res_food'] / MARKET_SELL_TAX));
 
-    $val['ress_buy_metal'] = nf_back($val['ress_buy_metal']);
-    $val['ress_buy_crystal'] = nf_back($val['ress_buy_crystal']);
-    $val['ress_buy_plastic'] = nf_back($val['ress_buy_plastic']);
-    $val['ress_buy_fuel'] = nf_back($val['ress_buy_fuel']);
-    $val['ress_buy_food'] = nf_back($val['ress_buy_food']);
+    $val['ress_buy_metal'] = StringUtils::parseFormattedNumber($val['ress_buy_metal']);
+    $val['ress_buy_crystal'] = StringUtils::parseFormattedNumber($val['ress_buy_crystal']);
+    $val['ress_buy_plastic'] = StringUtils::parseFormattedNumber($val['ress_buy_plastic']);
+    $val['ress_buy_fuel'] = StringUtils::parseFormattedNumber($val['ress_buy_fuel']);
+    $val['ress_buy_food'] = StringUtils::parseFormattedNumber($val['ress_buy_food']);
 
 
     //
@@ -1127,7 +1127,7 @@ function calcMarketShipPrice($val, $new_ship = 0, $last_update = 0)
     $objResponse->assign("ship_check_submit", "value", 0);
 
     $ship = $val['ship_list'];
-    $ship_count = min(nf_back($val['ship_count']), $_SESSION['market']['ship_data'][$ship]['shiplist_count']);
+    $ship_count = min(StringUtils::parseFormattedNumber($val['ship_count']), $_SESSION['market']['ship_data'][$ship]['shiplist_count']);
     $ship_max_count = $_SESSION['market']['ship_data'][$ship]['shiplist_count'];
     $ship_costs_metal = $_SESSION['market']['ship_data'][$ship]['ship_costs_metal'];
     $ship_costs_crystal = $_SESSION['market']['ship_data'][$ship]['ship_costs_crystal'];
@@ -1135,11 +1135,11 @@ function calcMarketShipPrice($val, $new_ship = 0, $last_update = 0)
     $ship_costs_fuel = $_SESSION['market']['ship_data'][$ship]['ship_costs_fuel'];
     $ship_costs_food = $_SESSION['market']['ship_data'][$ship]['ship_costs_food'];
 
-    $val['ship_buy_metal'] = nf_back($val['ship_buy_metal']);
-    $val['ship_buy_crystal'] = nf_back($val['ship_buy_crystal']);
-    $val['ship_buy_plastic'] = nf_back($val['ship_buy_plastic']);
-    $val['ship_buy_fuel'] = nf_back($val['ship_buy_fuel']);
-    $val['ship_buy_food'] = nf_back($val['ship_buy_food']);
+    $val['ship_buy_metal'] = StringUtils::parseFormattedNumber($val['ship_buy_metal']);
+    $val['ship_buy_crystal'] = StringUtils::parseFormattedNumber($val['ship_buy_crystal']);
+    $val['ship_buy_plastic'] = StringUtils::parseFormattedNumber($val['ship_buy_plastic']);
+    $val['ship_buy_fuel'] = StringUtils::parseFormattedNumber($val['ship_buy_fuel']);
+    $val['ship_buy_food'] = StringUtils::parseFormattedNumber($val['ship_buy_food']);
 
 
     // Rechnet gesamt Kosten pro Rohstoff (Kosten * Anzahl) (Dient als Basis für Min/Max rechnung)
@@ -1649,11 +1649,11 @@ function checkMarketAuctionFormular($val, $last_update = 0)
     $objResponse->assign("auction_buy_food", "value", 1);
 
 
-    $val['auction_sell_metal'] = min(nf_back($val['auction_sell_metal']), floor($val['res_metal'] / MARKET_SELL_TAX));
-    $val['auction_sell_crystal'] = min(nf_back($val['auction_sell_crystal']), floor($val['res_crystal'] / MARKET_SELL_TAX));
-    $val['auction_sell_plastic'] = min(nf_back($val['auction_sell_plastic']), floor($val['res_plastic'] / MARKET_SELL_TAX));
-    $val['auction_sell_fuel'] = min(nf_back($val['auction_sell_fuel']), floor($val['res_fuel'] / MARKET_SELL_TAX));
-    $val['auction_sell_food'] = min(nf_back($val['auction_sell_food']), floor($val['res_food'] / MARKET_SELL_TAX));
+    $val['auction_sell_metal'] = min(StringUtils::parseFormattedNumber($val['auction_sell_metal']), floor($val['res_metal'] / MARKET_SELL_TAX));
+    $val['auction_sell_crystal'] = min(StringUtils::parseFormattedNumber($val['auction_sell_crystal']), floor($val['res_crystal'] / MARKET_SELL_TAX));
+    $val['auction_sell_plastic'] = min(StringUtils::parseFormattedNumber($val['auction_sell_plastic']), floor($val['res_plastic'] / MARKET_SELL_TAX));
+    $val['auction_sell_fuel'] = min(StringUtils::parseFormattedNumber($val['auction_sell_fuel']), floor($val['res_fuel'] / MARKET_SELL_TAX));
+    $val['auction_sell_food'] = min(StringUtils::parseFormattedNumber($val['auction_sell_food']), floor($val['res_food'] / MARKET_SELL_TAX));
 
 
     // Deselektiert Preiskästchen wenn vom gleichen Rohstoff verkauft wird
@@ -1791,11 +1791,11 @@ function calcMarketAuctionPrice($val, $last_update = 0)
     // Eingaben wurden noch nicht geprüft
     $objResponse->assign("auction_show_check_submit", "value", 0);
 
-    $val['new_buy_0'] = min(nf_back($val['new_buy_0'] ?? 0), floor($val['res_0']));
-    $val['new_buy_1'] = min(nf_back($val['new_buy_1'] ?? 0), floor($val['res_1']));
-    $val['new_buy_2'] = min(nf_back($val['new_buy_2'] ?? 0), floor($val['res_2']));
-    $val['new_buy_3'] = min(nf_back($val['new_buy_3'] ?? 0), floor($val['res_3']));
-    $val['new_buy_4'] = min(nf_back($val['new_buy_4'] ?? 0), floor($val['res_4']));
+    $val['new_buy_0'] = min(StringUtils::parseFormattedNumber($val['new_buy_0'] ?? 0), floor($val['res_0']));
+    $val['new_buy_1'] = min(StringUtils::parseFormattedNumber($val['new_buy_1'] ?? 0), floor($val['res_1']));
+    $val['new_buy_2'] = min(StringUtils::parseFormattedNumber($val['new_buy_2'] ?? 0), floor($val['res_2']));
+    $val['new_buy_3'] = min(StringUtils::parseFormattedNumber($val['new_buy_3'] ?? 0), floor($val['res_3']));
+    $val['new_buy_4'] = min(StringUtils::parseFormattedNumber($val['new_buy_4'] ?? 0), floor($val['res_4']));
 
     etoa_dump($val);
     // Errechnet Rohstoffwert vom Höchstbietenden

@@ -81,7 +81,7 @@ if ($cp) {
 
                 foreach ($_POST['people_work'] as $id => $num) {
                     if (!$workingStatus[$id]) {
-                        $working += nf_back($num);
+                        $working += StringUtils::parseFormattedNumber($num);
                     }
                 }
 
@@ -89,7 +89,7 @@ if ($cp) {
 
                 foreach ($_POST['people_work'] as $buildingId => $num) {
                     if ($workingStatus[$buildingId] === 0) {
-                        $num = nf_back($num);
+                        $num = StringUtils::parseFormattedNumber($num);
                         $work = $available > 0 ? min($num, $available) : 0;
                         $available -= $num;
 

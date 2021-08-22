@@ -74,24 +74,6 @@ function get_user_nick($id)
 }
 
 /**
- * Convert formated number back to integer
- */
-function nf_back($number, $colorize = 0)
-{
-    $number = str_replace('`', '', $number);
-    $number = str_replace('%', '', $number);
-    $number = intval($number);
-    if ($colorize == 1) {
-        if ($number > 0)
-            return "<span style=\"color:#0f0\">" . number_format($number, 0, ",", ".") . "</span>";
-        if ($number < 0)
-            return "<span style=\"color:#f00\">" . number_format($number, 0, ",", ".") . "</span>";
-    }
-    $number = abs($number);
-    return $number;
-}
-
-/**
  * Convert formated number back to integer (positive & negative number)
  */
 function nf_back_sign($number, $colorize = 0)

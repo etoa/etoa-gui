@@ -4,6 +4,7 @@ use EtoA\Alliance\AllianceBuildingId;
 use EtoA\Alliance\AllianceBuildingRepository;
 use EtoA\Market\MarketResourceRepository;
 use EtoA\Message\MarketReportRepository;
+use EtoA\Support\StringUtils;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Universe\Resources\BaseResources;
 use EtoA\Universe\Resources\PreciseResources;
@@ -51,9 +52,9 @@ if (!isset($errMsg)) {
     $costs = new BaseResources();
     foreach ($resNames as $rk => $rn) {
         // Convert formatted number back to integer
-        $_POST['res_sell_' . $rk] = nf_back($_POST['res_sell_' . $rk]);
+        $_POST['res_sell_' . $rk] = StringUtils::parseFormattedNumber($_POST['res_sell_' . $rk]);
         if (isset($_POST['res_buy_' . $rk]))
-            $_POST['res_buy_' . $rk] = nf_back($_POST['res_buy_' . $rk]);
+            $_POST['res_buy_' . $rk] = StringUtils::parseFormattedNumber($_POST['res_buy_' . $rk]);
 
         // Prüft ob noch immer genug Rohstoffe auf dem Planeten sind (eventueller verlust durch Kampf?)
         if (isset($_POST['res_sell_' . $rk]) && $_POST['res_sell_' . $rk] * MARKET_TAX > $cp->resources[$rk]) {

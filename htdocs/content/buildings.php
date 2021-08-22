@@ -107,7 +107,7 @@ if (isset($cp)) {
 
         // people working changed
         if (isset($_POST['submit_people_form'])) {
-            if ($bl->setPeopleWorking(BUILD_BUILDING_ID, nf_back($_POST['peopleWorking'])))
+            if ($bl->setPeopleWorking(BUILD_BUILDING_ID, StringUtils::parseFormattedNumber($_POST['peopleWorking'])))
                 success_msg("Arbeiter zugeteilt!");
             else
                 error_msg('Arbeiter konnten nicht zugeteilt werden!');

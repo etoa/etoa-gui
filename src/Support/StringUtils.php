@@ -300,6 +300,29 @@ class StringUtils
     }
 
     /**
+     * Convert formatted number back to integer
+     *
+     * @return int|float|string
+     */
+    public static function parseFormattedNumber(string $number, bool $colorize = false)
+    {
+        $number = str_replace('`', '', $number);
+        $number = str_replace('%', '', $number);
+        $number = intval($number);
+        if ($colorize == 1) {
+            if ($number > 0) {
+                return "<span style=\"color:#0f0\">" . number_format($number, 0, ",", ".") . "</span>";
+            }
+            if ($number < 0) {
+                return "<span style=\"color:#f00\">" . number_format($number, 0, ",", ".") . "</span>";
+            }
+        }
+        $number = abs($number);
+
+        return $number;
+    }
+
+    /**
      * Prozentwert generieren und zurückgeben
      *
      * @param float|int|array<float|int> $val Einzelner Wert oder Array von Werten als Dezimalzahl; 1.0 = 0%

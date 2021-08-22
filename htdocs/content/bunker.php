@@ -61,7 +61,7 @@ if ($cp) {
             if (isset($_POST['submit_bunker_fleet']) && checker_verify()) {
                 $count = 0;
                 foreach ($_POST['ship_bunker_count'] as $shipId => $cnt) {
-                    $cnt = nf_back($cnt);
+                    $cnt = StringUtils::parseFormattedNumber($cnt);
                     if ($cnt > 0) {
                         $cnt = $shipRepository->leaveBunker($cu->getId(), $planet->id, $shipId, $cnt);
                         $count += $cnt;
@@ -177,7 +177,7 @@ if ($cp) {
                 }
 
                 foreach ($_POST['ship_bunker_count'] as $shipId => $cnt) {
-                    $cnt = nf_back($cnt);
+                    $cnt = StringUtils::parseFormattedNumber($cnt);
                     if ($cnt > 0) {
                         $countBunker = min($count, $cnt);
                         $spaceBunker = $ships[$shipId]->structure > 0 ? min($cnt, $structure / $ships[$shipId]->structure) : $cnt;
@@ -283,17 +283,17 @@ if ($cp) {
     } else {
         if ($resBunkerLevel > 0) {
             if (isset($_POST['submit_bunker_res']) && checker_verify()) {
-                $sum = nf_back($_POST['bunker_metal']) + nf_back($_POST['bunker_crystal']) + nf_back($_POST['bunker_plastic']) + nf_back($_POST['bunker_fuel']) + nf_back($_POST['bunker_food']);
+                $sum = StringUtils::parseFormattedNumber($_POST['bunker_metal']) + StringUtils::parseFormattedNumber($_POST['bunker_crystal']) + StringUtils::parseFormattedNumber($_POST['bunker_plastic']) + StringUtils::parseFormattedNumber($_POST['bunker_fuel']) + StringUtils::parseFormattedNumber($_POST['bunker_food']);
                 $percent = $sum / $resBunker->calculateBunkerResources($resBunkerLevel);
                 if ($percent < 1) $percent = 1;
 
                 $planetRepo->updateBunker(
                     $planet->id,
-                    nf_back($_POST['bunker_metal']) / $percent,
-                    nf_back($_POST['bunker_crystal']) / $percent,
-                    nf_back($_POST['bunker_plastic']) / $percent,
-                    nf_back($_POST['bunker_fuel']) / $percent,
-                    nf_back($_POST['bunker_food']) / $percent
+                    StringUtils::parseFormattedNumber($_POST['bunker_metal']) / $percent,
+                    StringUtils::parseFormattedNumber($_POST['bunker_crystal']) / $percent,
+                    StringUtils::parseFormattedNumber($_POST['bunker_plastic']) / $percent,
+                    StringUtils::parseFormattedNumber($_POST['bunker_fuel']) / $percent,
+                    StringUtils::parseFormattedNumber($_POST['bunker_food']) / $percent
                 );
                 $planet = $planetRepo->find($cp->id);
 
