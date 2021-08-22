@@ -344,7 +344,7 @@ function listMessagesOverview(
                 <td style=\"width:66%;\" ";
                 if ($previewMessages) {
                     // subj has already been encoded above
-                    echo tm($subj, htmlentities(substr(strip_bbcode($message->text), 0, 500), ENT_QUOTES, 'UTF-8'));
+                    echo tm($subj, htmlentities(substr(BBCodeUtils::stripBBCode($message->text), 0, 500), ENT_QUOTES, 'UTF-8'));
                 }
                 echo ">";
                 if ($message->massMail) {

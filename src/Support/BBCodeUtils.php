@@ -197,4 +197,9 @@ class BBCodeUtils
 
         return $string;
     }
+
+    public static function stripBBCode(string $string): string
+    {
+        return preg_replace('#\[(.*)\]([^\[]*)\[/(.*)\]#i', '\2', $string);
+    }
 }

@@ -61,8 +61,3 @@ function ctype_aldotsc($str)
 {
     return ctype_alpha(str_replace('_', '', str_replace('.', '', $str)));
 }
-
-function strip_bbcode($string)
-{
-    return preg_replace('#\[(.*)\]([^\[]*)\[/(.*)\]#i', '\2', $string);
-}
