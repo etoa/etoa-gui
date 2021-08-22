@@ -5,6 +5,7 @@ use EtoA\Log\LogFacility;
 use EtoA\Log\LogRepository;
 use EtoA\Log\LogSeverity;
 use EtoA\Support\DB\DatabaseBackupService;
+use EtoA\Support\StringUtils;
 
 /** @var ConfigurationService $config */
 $config = $app[ConfigurationService::class];
@@ -116,7 +117,7 @@ if ($dir !== null) {
         $backups[] = [
             'filename' => $f,
             'date' => substr($f, strpos($f, '-') + 1, 16),
-            'createdAt' => df(filectime($dir . '/' . $f)),
+            'createdAt' => StringUtils::formatDate(filectime($dir . '/' . $f)),
             'size' => byte_format(filesize($dir . '/' . $f)),
             'downloadLink' => createDownloadLink($dir . '/' . $f),
         ];

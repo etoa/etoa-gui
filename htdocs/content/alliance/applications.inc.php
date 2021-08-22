@@ -133,7 +133,7 @@ if (Alliance::checkActionRights(AllianceRights::APPLICATIONS)) {
             // Übergibt Usernick dem Formular, damit beim Submit nicht nochmals eine DB Abfrage gestartet werden muss
             echo "<input type=\"hidden\" name=\"application_user_nick_" . $application->userId . "\" value=\"" . $application->userNick . "\" />
             </td>
-            <td>" . df($application->timestamp) . "<br/><br/>" . text2html($application->text) . "</td>
+            <td>" . StringUtils::formatDate($application->timestamp) . "<br/><br/>" . text2html($application->text) . "</td>
             <td>
                 <textarea rows=\"6\" cols=\"40\" name=\"application_answer_text[" . $application->userId . "]\" /></textarea><br/>" . helpLink('textformat', 'Hilfe zur Formatierung') . "
             </td>

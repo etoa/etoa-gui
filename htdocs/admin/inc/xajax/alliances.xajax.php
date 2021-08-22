@@ -37,7 +37,7 @@ function allianceNewsLoad()
             </tr>';
         foreach ($allNews as $news) {
             echo '<tr>
-                <td rowspan="2">' . df($news->date) . '</td>';
+                <td rowspan="2">' . StringUtils::formatDate($news->date) . '</td>';
             echo '<td id="news_' . $news->id . '_alliance" style="border-bottom:1px dotted #999;"><b>';
             if ($news->authorAllianceTag != '') {
                 echo '[' . $news->authorAllianceTag . '] ' . $news->authorAllianceName;
@@ -324,7 +324,7 @@ function showSpend($allianceId, $form)
         $spendEntries = $allianceSpendRepository->getSpent($allianceId, $user, (int) $limit);
         if (count($spendEntries) > 0) {
             foreach ($spendEntries as $entry) {
-                tableStart("" . $memberNicks[$entry->userId] . " - " . df($entry->time) . "");
+                tableStart("" . $memberNicks[$entry->userId] . " - " . StringUtils::formatDate($entry->time) . "");
                 echo "<tr>
                                 <th class=\"resmetalcolor\" style=\"width:20%\">" . RES_METAL . "</th>
                                 <th class=\"rescrystalcolor\" style=\"width:20%\">" . RES_CRYSTAL . "</th>

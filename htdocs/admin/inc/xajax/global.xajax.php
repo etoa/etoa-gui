@@ -724,7 +724,7 @@ function showBuildingsOnPlanet($form)
                 $out .= "<tr><td style=\"width:80px\" id=\"cnt_" . $entry->id . "\">" . $entry->currentLevel . "</td>
                 <td style=\"width:100px\" id=\"type_" . $entry->id . "\">" . $buildTypes[$entry->buildType] . "</td>
                 <td style=\"width:300px\" id=\"time_" . $entry->id . "\">";
-                $out .= ($entry->endTime > 0) ? "Start: " . df($entry->startTime) . "<br />Ende: " . df($entry->endTime) : "";
+                $out .= ($entry->endTime > 0) ? "Start: " . StringUtils::formatDate($entry->startTime) . "<br />Ende: " . StringUtils::formatDate($entry->endTime) : "";
                 $out .= "</td>
                 <th>" . $buildingNames[$entry->buildingId] . "</th>
                 <td style=\"width:150px\" id=\"actions_" . $entry->id . "\"><a href=\"javascript:;\" onclick=\"xajax_editBuilding(xajax.getFormValues('selector')," . $entry->id . ")\">Bearbeiten</a>

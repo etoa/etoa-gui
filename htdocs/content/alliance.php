@@ -363,7 +363,7 @@ elseif ($cu->allianceId == 0) {
                 }
 
                 if ($topic !== null) {
-                    $ps = "Neuster Post: <a href=\"?page=allianceboard&amp;topic=" . $topic->id . "#" . $topic->post->id . "\"><b>" . $topic->subject . "</b>, geschrieben von: <b>" . $topic->post->userNick . "</b>, <b>" . df($topic->timestamp) . "</b></a>";
+                    $ps = "Neuster Post: <a href=\"?page=allianceboard&amp;topic=" . $topic->id . "#" . $topic->post->id . "\"><b>" . $topic->subject . "</b>, geschrieben von: <b>" . $topic->post->userNick . "</b>, <b>" . StringUtils::formatDate($topic->timestamp) . "</b></a>";
                 } else
                     $ps = "<i>Noch keine Beitr&auml;ge vorhanden";
                 echo "<tr><th>Internes Forum</th><td colspan=\"2\"><b><a href=\"?page=allianceboard\">Forum&uuml;bersicht</a></b> &nbsp; $ps</td></tr>";
@@ -495,7 +495,7 @@ elseif ($cu->allianceId == 0) {
                     $entries = $allianceHistoryRepository->findForAlliance($cu->allianceId, 5);
                     if (count($entries) > 0) {
                         foreach ($entries as $entry) {
-                            echo "<div class=\"infoLog\">" . text2html($entry->text) . " <span>" . df($entry->timestamp, 0) . "</span></div>";
+                            echo "<div class=\"infoLog\">" . text2html($entry->text) . " <span>" . StringUtils::formatDate($entry->timestamp, false) . "</span></div>";
                         }
                     }
                     echo "</td></tr>";
@@ -525,7 +525,7 @@ elseif ($cu->allianceId == 0) {
                                                 <a href=\"?page=$page&amp;id=" . $diplomacy->otherAllianceId . "\">" . $opAlly . "</a>
                                             </td>
                                             <td>" . StringUtils::formatNumber($opAlly->points) . " / " . StringUtils::formatNumber($opAlly->avgPoints) . "</td>
-                                            <td>" . df($diplomacy->date, 0) . " bis " . df($diplomacy->date + WAR_DURATION, 0) . "</td>
+                                            <td>" . StringUtils::formatDate($diplomacy->date, false) . " bis " . StringUtils::formatDate($diplomacy->date + WAR_DURATION, false) . "</td>
                                         </tr>";
                     }
                     echo "</table>
@@ -553,7 +553,7 @@ elseif ($cu->allianceId == 0) {
                                                 <a href=\"?page=$page&amp;id=" . $diplomacy->otherAllianceId . "\">" . $opAlly . "</a>
                                             </td>
                                             <td>" . StringUtils::formatNumber($opAlly->points) . " / " . StringUtils::formatNumber($opAlly->avgPoints) . "</td>
-                                            <td>" . df($diplomacy->date, 0) . " bis " . df($diplomacy->date + PEACE_DURATION, 0) . "</td>
+                                            <td>" . StringUtils::formatDate($diplomacy->date, false) . " bis " . StringUtils::formatDate($diplomacy->date + PEACE_DURATION, false) . "</td>
                                         </tr>";
                     }
                     echo "</table>
@@ -581,7 +581,7 @@ elseif ($cu->allianceId == 0) {
                                             <td>" . stripslashes($diplomacy->name) . "</td>
                                             <td><a href=\"?page=$page&amp;id=" . $diplomacy->otherAllianceId . "\">" . $opAlly . "</a></td>
                                             <td>" . StringUtils::formatNumber($opAlly->points) . " / " . StringUtils::formatNumber($opAlly->avgPoints) . "</td>
-                                            <td>" . df($diplomacy->date) . "</td>
+                                            <td>" . StringUtils::formatDate($diplomacy->date) . "</td>
                                         </tr>";
                     }
                     echo "</table>
@@ -640,7 +640,7 @@ elseif ($cu->allianceId == 0) {
                 echo "<tr>
                             <th>Gründungsdatum:</th>
                             <td colspan=\"2\">
-                                " . df($ally->foundationDate) . " (vor " . StringUtils::formatTimespan(time() - $ally->foundationDate) . ")
+                                " . StringUtils::formatDate($ally->foundationDate) . " (vor " . StringUtils::formatTimespan(time() - $ally->foundationDate) . ")
                             </td>
                         </tr>";
                 echo "\n</table><br/>";

@@ -2,6 +2,7 @@
 
 use EtoA\Backend\BackendMessageService;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Support\StringUtils;
 use EtoA\User\UserHolidayService;
 use EtoA\User\UserRepository;
 use EtoA\User\UserService;
@@ -27,7 +28,7 @@ $umod = false;
 
 if (isset($_POST['hmod_on']) && checker_verify()) {
     if ($userHolidayService->activateHolidayMode($cu->getId())) {
-        success_msg("Du bist nun im Urlaubsmodus bis [b]" . df(time()) . "[/b].");
+        success_msg("Du bist nun im Urlaubsmodus bis [b]" . StringUtils::formatDate(time()) . "[/b].");
         $userService->addToUserLog($cu->id, "settings", "{nick} ist nun im Urlaub.", true);
         $umod = true;
     } else {
@@ -72,7 +73,7 @@ elseif (isset($_POST['remove_submit'])) {
     if ($userService->deleteRequest($cu->id, $_POST['remove_password'])) {
         $s = Null;
         session_destroy();
-        success_msg("Deine Daten werden am " . df(time() + ($config->getInt('user_delete_days') * 3600 * 24)) . " Uhr von unserem System gelöscht! Wir w&uuml;nschen weiterhin viel Erfolg im Netz!");
+        success_msg("Deine Daten werden am " . StringUtils::formatDate(time() + ($config->getInt('user_delete_days') * 3600 * 24)) . " Uhr von unserem System gelöscht! Wir w&uuml;nschen weiterhin viel Erfolg im Netz!");
         $userHolidayService->activateHolidayMode($cu->getId(), true);
         $userService->addToUserLog($cu->id, "settings", "{nick} hat seinen Account zur Löschung freigegeben.", true);
         echo '<input type="button" value="Zur Startseite" onclick="document.location=\'' . getLoginUrl() . '\'" />';
@@ -109,7 +110,7 @@ else {
         if ($cu->hmode_from > 0 && $cu->hmode_from < time() && $cu->hmode_to < time()) {
             echo "<input type=\"submit\" style=\"color:#0f0\" name=\"hmod_off\" value=\"Urlaubsmodus deaktivieren\" />";
         } elseif ($cu->hmode_from > 0 && $cu->hmode_from < time() && $cu->hmode_to >= time() || $umod) {
-            echo "<span style=\"color:#f90\">Urlaubsmodus ist aktiv bis mindestens <b>" . df($cu->hmode_to) . "</b>!</span>";
+            echo "<span style=\"color:#f90\">Urlaubsmodus ist aktiv bis mindestens <b>" . StringUtils::formatDate($cu->hmode_to) . "</b>!</span>";
         } else {
             echo "<input type=\"submit\" value=\"Urlaubsmodus aktivieren\" name=\"hmod_on\" onclick=\"return confirm('Soll der Urlaubsmodus wirklich aktiviert werden?')\" />";
         }

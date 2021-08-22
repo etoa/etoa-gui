@@ -112,7 +112,7 @@ if (isset($_GET['edit'])) {
             foreach ($userWarnings as $warning) {
                 echo "<tr>
                                 <td>" . stripslashes(nl2br($warning->text)) . "</td>
-                                <td>" . df($warning->date) . "</td>
+                                <td>" . StringUtils::formatDate($warning->date) . "</td>
                                 <td><b>" . $warning->adminNick . "</b></td>
                                 <td>
                                     <a href=\"?page=$page&amp;sub=$sub&amp;edit=" . $warning->id . "\">Bearbeiten</a>

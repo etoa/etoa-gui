@@ -1,5 +1,6 @@
 <?PHP
 
+use EtoA\Support\StringUtils;
 use EtoA\User\UserSittingRepository;
 
 echo "<h1>Sitting: Laufende Sitteraccounts</h1>";
@@ -18,7 +19,7 @@ if (count($entries) > 0) {
         echo "<tr>";
         echo "<td>" . $entry->userNick . "</td>";
         echo "<td>" . $entry->sitterNick . "</td>";
-        echo "<td>" . df($entry->dateFrom) . "</td><td>" . df($entry->dateTo) . "</td>";
+        echo "<td>" . StringUtils::formatDate($entry->dateFrom) . "</td><td>" . StringUtils::formatDate($entry->dateTo) . "</td>";
         echo "</tr>";
     }
     echo "</table>";

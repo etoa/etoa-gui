@@ -3,6 +3,7 @@
 /** @var mixed[] $arr alliance data */
 use EtoA\Alliance\AlliancePollRepository;
 use EtoA\Alliance\AllianceRights;
+use EtoA\Support\StringUtils;
 
 /** @var AlliancePollRepository $alliancePollRepository */
 $alliancePollRepository = $app[AlliancePollRepository::class];
@@ -152,7 +153,7 @@ if (Alliance::checkActionRights(AllianceRights::POLLS)) {
             foreach ($polls as $poll) {
                 echo "<tr><td>" . stripslashes($poll->title) . "</td>";
                 echo "<td>" . stripslashes($poll->question) . "</td>";
-                echo "<td>" . df($poll->timestamp) . "</td>";
+                echo "<td>" . StringUtils::formatDate($poll->timestamp) . "</td>";
                 echo "<td><a href=\"?page=$page&amp;action=" . $_GET['action'] . "&amp;edit=" . $poll->id . "\">Bearbeiten</a> ";
                 if ($poll->active)
                     echo "<a href=\"?page=$page&amp;action=" . $_GET['action'] . "&amp;deactivate=" . $poll->id . "\">Deaktivieren</a> ";

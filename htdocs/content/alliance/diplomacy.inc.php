@@ -463,23 +463,23 @@ if (Alliance::checkActionRights(AllianceRights::RELATIONS)) {
                     $relation = $relations[$otherAlliance->id];
                     if ($relation->level === AllianceDiplomacyLevel::BND_CONFIRMED) {
                         echo "<td style=\"color:#0f0;\">B&uuml;ndnis</td>";
-                        echo "<td>" . df($relation->date) . "</td>";
+                        echo "<td>" . StringUtils::formatDate($relation->date) . "</td>";
                         echo "<td>" . $relation->name . "</td>";
                     } elseif ($relation->level === AllianceDiplomacyLevel::WAR) {
                         echo "<td style=\"color:#f00;\">Krieg</td>";
-                        echo "<td>" . df($relation->date) . "</td>";
-                        echo "<td>" . df($relation->date + WAR_DURATION) . "</td>";
+                        echo "<td>" . StringUtils::formatDate($relation->date) . "</td>";
+                        echo "<td>" . StringUtils::formatDate($relation->date + WAR_DURATION) . "</td>";
                     } elseif ($relation->level === AllianceDiplomacyLevel::PEACE) {
                         echo "<td style=\"color:#3f9;\">Frieden</td>";
-                        echo "<td>" . df($relation->date) . "</td>";
-                        echo "<td>" . df($relation->date + PEACE_DURATION) . "</td>";
+                        echo "<td>" . StringUtils::formatDate($relation->date) . "</td>";
+                        echo "<td>" . StringUtils::formatDate($relation->date + PEACE_DURATION) . "</td>";
                     } elseif ($relation->level === AllianceDiplomacyLevel::BND_REQUEST) {
                         if ($relation->alliance2Id === $otherAlliance->id) {
                             echo "<td style=\"color:#ff0;\">Anfrage</td>";
                         } else {
                             echo "<td style=\"color:#f90;\">Anfrage an uns</td>";
                         }
-                        echo "<td>" . df($relation->date) . "</td>";
+                        echo "<td>" . StringUtils::formatDate($relation->date) . "</td>";
                         echo "<td>-</td>";
                     } else {
                         echo "<td>-</td>";

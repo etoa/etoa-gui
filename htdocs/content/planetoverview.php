@@ -83,7 +83,7 @@ if (isset($cp)) {
                 echo "</form>";
             } else {
                 echo "Die Kolonie kann wegen eines kürzlich stattgefundenen Besitzerwechsels<br/>
-                erst ab <b>" . df($threshold) . "</b> gelöscht werden!<br/><br/>
+                erst ab <b>" . StringUtils::formatDate($threshold) . "</b> gelöscht werden!<br/><br/>
                 <input type=\"button\" value=\"Zurück\" onclick=\"document.location='?page=$page'\" />";
             }
         } else {
@@ -118,7 +118,7 @@ if (isset($cp)) {
                 }
             } else {
                 echo "Die Kolonie kann wegen eines kürzlich stattgefundenen Besitzerwechsels<br/>
-                erst ab <b>" . df($threshold) . "</b> gelöscht werden!<br/><br/>
+                erst ab <b>" . StringUtils::formatDate($threshold) . "</b> gelöscht werden!<br/><br/>
                 <input type=\"button\" value=\"Zurück\" onclick=\"document.location='?page=$page'\" />";
             }
         } else {
@@ -142,7 +142,7 @@ if (isset($cp)) {
                     echo "</form>";
                 } else {
                     echo "Die Kolonie kann wegen eines kürzlich stattgefundenen Besitzerwechsels<br/>
-                    erst ab <b>" . df($threshold) . "</b> zu deinem Hauptplaneten gemacht werden!<br/><br/>
+                    erst ab <b>" . StringUtils::formatDate($threshold) . "</b> zu deinem Hauptplaneten gemacht werden!<br/><br/>
                     <input type=\"button\" value=\"Zurück\" onclick=\"document.location='?page=$page'\" />";
                 }
             } else {
@@ -178,7 +178,7 @@ if (isset($cp)) {
                 }
             } else {
                 echo "Die Kolonie kann wegen eines kürzlich stattgefundenen Besitzerwechsels<br/>
-                erst ab <b>" . df($threshold) . "</b> zu deinem Hauptplaneten gemacht werden!<br/><br/>
+                erst ab <b>" . StringUtils::formatDate($threshold) . "</b> zu deinem Hauptplaneten gemacht werden!<br/><br/>
                 <input type=\"button\" value=\"Zurück\" onclick=\"document.location='?page=$page'\" />";
             }
         } else {

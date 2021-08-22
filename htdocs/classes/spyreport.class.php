@@ -220,7 +220,7 @@ class SpyReport extends Report
                 echo '<strong>Spionageabwehr:</strong> ' . $this->spydefense . '%';
                 break;
             case 'analyze':
-                echo 'Eine Flotte vom Planeten ' . $ent2->detailLink() . ' hat das Ziel ' . $ent1->detailLink() . ' um ' . df($this->timestamp) . ' analysiert.<br /><br />';
+                echo 'Eine Flotte vom Planeten ' . $ent2->detailLink() . ' hat das Ziel ' . $ent1->detailLink() . ' um ' . StringUtils::formatDate($this->timestamp) . ' analysiert.<br /><br />';
                 echo '<br /><strong>ROHSTOFFE:</strong><br />';
                 echo '<table>';
                 foreach ($resNames as $k => $v) {
@@ -230,7 +230,7 @@ class SpyReport extends Report
                 echo '</table><br/>';
                 break;
             case 'analyzefaild':
-                echo 'Eine Flotte vom Planeten ' . $ent2->detailLink() . ' versuchte das Ziel ' . $ent1->detailLink() . ' um ' . df($this->timestamp) . ' zu analysiert, kehrte jedoch erfolglos wieder zurück.<br />';
+                echo 'Eine Flotte vom Planeten ' . $ent2->detailLink() . ' versuchte das Ziel ' . $ent1->detailLink() . ' um ' . StringUtils::formatDate($this->timestamp) . ' zu analysiert, kehrte jedoch erfolglos wieder zurück.<br />';
                 break;
 
             default:

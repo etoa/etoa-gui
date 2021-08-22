@@ -99,7 +99,7 @@ if ($uid > 0) {
             echo "<tr><th style=\"width:120px;\">Foren-Profil:</th><td><a href=\"" . $user->profileBoardUrl . "\">" . $user->profileBoardUrl . "</a></td></tr>";
         }
         if ($user->registered > 0) {
-            echo "<tr><th style=\"width:120px;\">Registriert:</th><td>" . df($user->registered) . " (dabei seit " . StringUtils::formatTimespan(time() - $user->registered) . ")</td></tr>";
+            echo "<tr><th style=\"width:120px;\">Registriert:</th><td>" . StringUtils::formatDate($user->registered) . " (dabei seit " . StringUtils::formatTimespan(time() - $user->registered) . ")</td></tr>";
         }
         if ($user->admin) {
             echo "<tr><th style=\"width:120px;\">Game-Admin:</th><td class=\"adminColor\">Dies ist ein Account eines Game-Admins. Er darf gemäss Regeln nicht angegriffen werden.</td></tr>";
@@ -122,7 +122,7 @@ if ($uid > 0) {
         if (count($logs) > 0) {
             foreach ($logs as $log) {
                 echo "<div class=\"infoLog\">" . text2html($log->message);
-                echo "<span>" . df($log->timestamp, 0) . "";
+                echo "<span>" . StringUtils::formatDate($log->timestamp, false) . "";
                 echo "</span>
                     </div>";
             }
@@ -139,7 +139,7 @@ if ($uid > 0) {
             if (count($logs) > 0) {
                 foreach ($logs as $log) {
                     echo "<div class=\"infoLog\">" . text2html($log->message);
-                    echo "<span>" . df($log->timestamp) . "";
+                    echo "<span>" . StringUtils::formatDate($log->timestamp) . "";
                     echo "</span>
                         </div>";
                 }

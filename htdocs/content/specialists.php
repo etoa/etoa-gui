@@ -97,7 +97,7 @@ if (isset($_POST['submit_engage']) && isset($_POST['engage'])) {
         }
     } else {
         error_msg('Es ist bereits ein Spezialist eingestellt.
-        Seine Anstellung dauert noch bis ' . df($cu->specialistTime) . '.
+        Seine Anstellung dauert noch bis ' . StringUtils::formatDate($cu->specialistTime) . '.
         Du musst warten bis seine Anstellung beendet ist!');
     }
 }
@@ -214,7 +214,7 @@ if ($cu->specialistId > 0 && $cu->specialistTime > $t) {
     </tr>';
     echo '<tr>
     <td>' . $specialist->name . '</td>
-    <td>' . df($cu->specialistTime) . '</td>
+    <td>' . StringUtils::formatDate($cu->specialistTime) . '</td>
     <td id="countDownElem">';
     if ($cu->specialistTime - $t > 0)
         echo StringUtils::formatTimespan($cu->specialistTime - $t);

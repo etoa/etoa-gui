@@ -404,7 +404,7 @@ function diplomacyTab(AllianceDiplomacyRepository $repository, int $id): void
             if ($diplomacy->level === AllianceDiplomacyLevel::PEACE) echo " selected=\"selected\"";
             echo ">Frieden</option>";
             echo "</select>";
-            echo " &nbsp; " . df($diplomacy->date) . "</td>";
+            echo " &nbsp; " . StringUtils::formatDate($diplomacy->date) . "</td>";
             echo "<td valign=\"top\"><input type=\"checkbox\" name=\"alliance_bnd_del[" . $diplomacy->id . "]\" value=\"1\" /></td></tr>";
         }
         echo "</table>";

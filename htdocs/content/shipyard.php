@@ -651,8 +651,8 @@ if ($shipyard !== null && $shipyard->currentLevel > 0) {
                         </tr>";
                     echo "<tr>";
                     echo "<td colspan=\"2\">" . $ships[$data->shipId]->name . "</td>";
-                    echo "<td>" . df(time() - $obj_t_passed, 1) . "</td>";
-                    echo "<td>" . df(time() + $obj_t_remaining, 1) . "</td>";
+                    echo "<td>" . StringUtils::formatDate(time() - $obj_t_passed) . "</td>";
+                    echo "<td>" . StringUtils::formatDate(time() + $obj_t_remaining) . "</td>";
                     echo "<td colspan=\"2\">" . StringUtils::formatTimespan($obj_t_remaining) . "</td>
                     </tr>";
                     echo "<tr>
@@ -669,8 +669,8 @@ if ($shipyard !== null && $shipyard->currentLevel > 0) {
                 echo "<tr>";
                 echo "<td id=\"objcount\">" . $data->count . "</td>";
                 echo "<td>" . $ships[$data->shipId]->name . "</td>";
-                echo "<td>" . df($absolute_starttime, 1) . "</td>";
-                echo "<td>" . df($absolute_starttime + $data->endTime - $data->startTime, 1) . "</td>";
+                echo "<td>" . StringUtils::formatDate($absolute_starttime) . "</td>";
+                echo "<td>" . StringUtils::formatDate($absolute_starttime + $data->endTime - $data->startTime) . "</td>";
                 echo "<td>" . StringUtils::formatTimespan($data->endTime - time()) . "</td>";
                 echo "<td id=\"cancel\">";
                 if ($cancelable) {

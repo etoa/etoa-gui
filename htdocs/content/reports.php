@@ -3,6 +3,7 @@
 use EtoA\Message\ReportRepository;
 use EtoA\Message\ReportSearch;
 use EtoA\Message\ReportTypes;
+use EtoA\Support\StringUtils;
 
 /** @var ReportRepository $reportRepository */
 $reportRepository = $app[ReportRepository::class];
@@ -135,7 +136,7 @@ if (count($reports) > 0) {
             <td id=\"header" . $rid . "\"><a href=\"javascript:;\" onclick=\"toggleBox('report" . $rid . "');xajax_reportSetRead(" . $rid . ")\" >" . $r->subject . "</a></td>";
         if ($type == "all")
             echo "<td><b>" . $r->typeName() . "</b></td>";
-        echo "<td>" . df($r->timestamp) . "</td>";
+        echo "<td>" . StringUtils::formatDate($r->timestamp) . "</td>";
         echo "<td id=\"del" . $rid . "\" style=\"width:2%;text-align:center;padding:0px;vertical-align:middle;\">
                             <input id=\"delreport[" . $cnt . "]\" type=\"checkbox\" name=\"delreport[" . $rid . "]\" value=\"1\" title=\"Report zum L&ouml;schen markieren\" /></td></tr>";
         echo "<tr><td colspan=\"5\" style=\"padding:10px;display:none;\" id=\"report" . $rid . "\">";

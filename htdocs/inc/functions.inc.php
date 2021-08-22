@@ -633,25 +633,6 @@ function tm($title, $text)
 }
 
 /**
- * Date format
- */
-function df($date, $seconds = 1)
-{
-    if ($seconds == 1) {
-        if (date("dmY") == date("dmY", $date))
-            $string = "Heute, " . date("H:i:s", $date);
-        else
-            $string = date("d.m.Y, H:i:s", $date);
-    } else {
-        if (date("dmY") == date("dmY", $date))
-            $string = "Heute, " . date("H:i", $date);
-        else
-            $string = date("d.m.Y, H:i", $date);
-    }
-    return $string;
-}
-
-/**
  * Zeigt ein Avatarbild an
  */
 function show_avatar($avatar = BOARD_DEFAULT_IMAGE)

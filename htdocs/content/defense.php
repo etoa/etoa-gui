@@ -655,8 +655,8 @@ if ($factoryBuilding !== null && $factoryBuilding->currentLevel > 0) {
                             </tr>
                             <tr>
                             <td colspan=\"2\">" . $defs[$queueItem->defenseId]->name . "</td>
-                            <td>" . df($time - $obj_t_passed, 1) . "</td>
-                            <td>" . df($time + $obj_t_remaining, 1) . "</td>
+                            <td>" . StringUtils::formatDate($time - $obj_t_passed) . "</td>
+                            <td>" . StringUtils::formatDate($time + $obj_t_remaining) . "</td>
                             <td colspan=\"2\">" . StringUtils::formatTimespan($obj_t_remaining) . "</td>
                         </tr>
                         <tr>
@@ -673,8 +673,8 @@ if ($factoryBuilding !== null && $factoryBuilding->currentLevel > 0) {
                     echo "<tr>
                             <td id=\"objcount\">" . $queueItem->count . "</td>
                             <td>" . $defs[$queueItem->defenseId]->name . "</td>
-                            <td>" . df($absolute_starttime, 1) . "</td>
-                            <td>" . df($absolute_starttime + $queueItem->endTime - $queueItem->startTime, 1) . "</td>
+                            <td>" . StringUtils::formatDate($absolute_starttime) . "</td>
+                            <td>" . StringUtils::formatDate($absolute_starttime + $queueItem->endTime - $queueItem->startTime) . "</td>
                             <td>" . StringUtils::formatTimespan($queueItem->endTime - time()) . "</td>
                             <td id=\"cancel\">";
                     if ($cancelable) {

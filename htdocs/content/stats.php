@@ -153,7 +153,7 @@ else {
         <br/>";
     $statsUpdate = $runtimeDataStore->get('statsupdate');
     if ($statsUpdate != null) {
-        echo "Letzte Aktualisierung: <b>" . df($statsUpdate) . " Uhr</b><br/>";
+        echo "Letzte Aktualisierung: <b>" . StringUtils::formatDate((int) $statsUpdate) . " Uhr</b><br/>";
     }
     echo "Die Aktualisierung der Punkte erfolgt ";
     $h = $config->getInt('points_update') / 3600;

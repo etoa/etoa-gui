@@ -107,7 +107,7 @@ if (!$cu->isSetup() && $page != "help" && $page != "contact") {
         $page != 'userconfig'
     ) {
         echo '<h1>Dein Account ist zut Löschung vorgeschlagen!</h1>';
-        echo 'Die Löschung erfolgt frühestens um <b>' . df($cu->deleted) . '</b>!<br/><br/>
+        echo 'Die Löschung erfolgt frühestens um <b>' . StringUtils::formatDate($cu->deleted) . '</b>!<br/><br/>
         <input type="button" onclick="document.location=\'?page=userconfig&mode=misc\'" value="Löschung aufheben" />
         <input type="button" onclick="document.location=\'?page=contact\'" value="Admin kontaktieren" /> ';
     }
@@ -161,7 +161,7 @@ if (!$cu->isSetup() && $page != "help" && $page != "contact") {
         dann <a href="?page=contact">melde</a> dich bei einem Game-Administrator.';
     } elseif ($s->sittingActive && $s->falseSitter && $page != "userconfig") {
         echo '<h1>Sitting ist aktiv</h1>
-        Dein Account wird gesitted bis <b>' . df($s->sittingUntil) . '</b><br/><br/>';
+        Dein Account wird gesitted bis <b>' . StringUtils::formatDate($s->sittingUntil) . '</b><br/><br/>';
         echo button("Einstellungen", "?page=userconfig&mode=sitting");
     }
 

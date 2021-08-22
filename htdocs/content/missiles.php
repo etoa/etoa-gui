@@ -258,7 +258,7 @@ if ($missileBuilding !== null && $missileBuilding->currentLevel > 0) {
                     $countdown = ($flight->landTime - $time >= 0) ? StringUtils::formatTimespan($flight->landTime - $time) : 'Im Ziel';
                     echo '<tr><td>' . $flight->targetPlanetName . '</td>
                     <td>' . $countdown . '</td>
-                    <td>' . df($flight->landTime) . '</td>
+                    <td>' . StringUtils::formatDate($flight->landTime) . '</td>
                     <td>';
                     foreach ($flight->missiles as $missileId => $count) {
                         echo StringUtils::formatNumber($count) . ' ' . $missileNames[$missileId] . '<br/>';
@@ -723,7 +723,7 @@ if ($missileBuilding !== null && $missileBuilding->currentLevel > 0) {
                 info_msg("Keine Raketen verfügbar!");
             }
         } else {
-            info_msg("Dieses Gebäude ist noch bis " . df($missileBuilding->deactivated) . " deaktiviert!");
+            info_msg("Dieses Gebäude ist noch bis " . StringUtils::formatDate($missileBuilding->deactivated) . " deaktiviert!");
         }
     } else {
         info_msg("Zu wenig Energie verfügbar! Gebäude ist deaktiviert!");

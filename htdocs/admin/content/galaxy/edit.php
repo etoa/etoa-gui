@@ -218,7 +218,7 @@ Neuer Besitzer: [page user sub=edit user_id=" . $request->request->getInt('plane
             echo "</td>
             <th>Letzer Besitzerwechsel</th>
             <td>
-            " . ($planet->userChanged > 0 ? df($planet->userChanged) . " <input type=\"checkbox\" name=\"rst_user_changed\" value=\"1\" /> Reset" : '-') . "
+            " . ($planet->userChanged > 0 ? StringUtils::formatDate($planet->userChanged) . " <input type=\"checkbox\" name=\"rst_user_changed\" value=\"1\" /> Reset" : '-') . "
             </td>
             </tr>";
 
@@ -506,7 +506,7 @@ Neuer Besitzer: [page user sub=edit user_id=" . $request->request->getInt('plane
 
             echo "<form action=\"?page=$page&sub=edit&id=" . $id . "\" method=\"post\" id=\"editform\">";
             tableStart("<span style=\"color:" . Entity::$entityColors[$entity->code] . "\">Wurmloch</span>", "auto");
-            echo "<tr><th>Entstanden</th><td>" . df($wormhole->changed) . "</td><tr/>";
+            echo "<tr><th>Entstanden</th><td>" . StringUtils::formatDate($wormhole->changed) . "</td><tr/>";
             echo "<tr><th>Ziel</th>
             <td>";
             $ent = Entity::createFactoryById($wormhole->targetId);
@@ -529,7 +529,7 @@ Neuer Besitzer: [page user sub=edit user_id=" . $request->request->getInt('plane
             tableStart("<span style=\"color:" . Entity::$entityColors[$entity->code] . "\">Leerer Raum</span>", "auto");
             echo "<tr><th>Zuletzt besucht</th>
             <td>";
-            echo ($space->lastVisited > 0) ? df($space->lastVisited) : "Nie";
+            echo ($space->lastVisited > 0) ? StringUtils::formatDate($space->lastVisited) : "Nie";
             echo "</td></tr>";
             echo "</table>";
             echo "<br/>

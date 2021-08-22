@@ -387,7 +387,7 @@ function showLogs($args = null, $limit = 0)
         </tr>";
         foreach ($logs as $log) {
             echo "<tr>
-            <td>" . df($log->timestamp) . "</td>
+            <td>" . StringUtils::formatDate($log->timestamp) . "</td>
             <td>" . LogSeverity::SEVERITIES[$log->severity] . "</td>
             <td>" . LogFacility::FACILITIES[$log->facility] . "</td>
             <td>" . text2html($log->message);
@@ -594,7 +594,7 @@ function showAttackAbuseLogs($args = null, $limit = -1, $load = true)
             $entity = Entity::createFactoryById($banData['entity']);
 
             echo "<tr>
-            <td>" . df($banData['timestamp']) . "</td>
+            <td>" . StringUtils::formatDate($banData['timestamp']) . "</td>
             <td>" . LogSeverity::SEVERITIES[$banData['severity']] . "</td>
             <td>$fUser</td>
             <td>$eUser</td>
@@ -705,15 +705,15 @@ function showFleetLogs($args = null, $limit = 0)
             $startEntity = Entity::createFactoryById($log->entityFromId);
             $endEntity = Entity::createFactoryById($log->entityToId);
             echo "<tr>
-            <td>" . df($log->timestamp) . "</td>
+            <td>" . StringUtils::formatDate($log->timestamp) . "</td>
             <td>" . LogSeverity::SEVERITIES[$log->severity] . "</td>
             <td>" . FleetLogFacility::FACILITIES[$log->facility] . "</td>
             <td>$owner</td>
             <td>" . $fa . " [" . FleetAction::$statusCode[$log->status] . "]</td>
             <td>" . $startEntity . "<br/>" . $startEntity->entityCodeString() . ", " . $startEntity->owner() . "</td>
             <td>" . $endEntity . "<br/>" . $endEntity->entityCodeString() . ", " . $endEntity->owner() . "</td>
-            <td>" . df($log->launchTime) . "</td>
-            <td>" . df($log->landTime) . "</td>
+            <td>" . StringUtils::formatDate($log->launchTime) . "</td>
+            <td>" . StringUtils::formatDate($log->landTime) . "</td>
             <td><a href=\"javascript:;\" onclick=\"toggleBox('details" . $log->id . "')\">Bericht</a></td>
             </tr>";
             echo "<tr id=\"details" . $log->id . "\" style=\"display:none;\"><td colspan=\"10\">";
@@ -1038,7 +1038,7 @@ function showGameLogs($args = null, $limit = 0)
             }
 
             echo "<tr>
-            <td>" . df($log->timestamp) . "</td>
+            <td>" . StringUtils::formatDate($log->timestamp) . "</td>
             <td>" . LogSeverity::SEVERITIES[$log->severity] . "</td>
             <td>" . GameLogFacility::FACILITIES[$log->facility] . "</td>
             <td>" . $tu . "</td>

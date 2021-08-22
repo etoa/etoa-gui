@@ -3,6 +3,7 @@
 use EtoA\User\UserMultiRepository;
 use EtoA\User\UserRepository;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Support\StringUtils;
 use EtoA\User\UserSearch;
 use EtoA\User\UserSittingRepository;
 use Symfony\Component\HttpFoundation\Request;
@@ -274,8 +275,8 @@ if (!$s->sittingActive || $s->falseSitter) {
                 $days -= $tdays;
                 echo "<tr>
                 <td>" . $entry->sitterNick . "</td>
-                <td>" . df($entry->dateFrom) . "</td>
-                <td>" . df($entry->dateTo) . "</td>
+                <td>" . StringUtils::formatDate($entry->dateFrom) . "</td>
+                <td>" . StringUtils::formatDate($entry->dateTo) . "</td>
                 <td>" . $tdays . "</td>
                 <td>";
                 if ($entry->dateFrom > time()) {

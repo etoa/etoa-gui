@@ -8,6 +8,7 @@ use EtoA\Help\TicketSystem\TicketRepository;
 use EtoA\Help\TicketSystem\TicketService;
 use EtoA\Help\TicketSystem\TicketSolution;
 use EtoA\Help\TicketSystem\TicketStatus;
+use EtoA\Support\StringUtils;
 use EtoA\User\UserRepository;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -195,7 +196,7 @@ function ticketDetails(
         echo '</td></tr>';
     }
     echo '<tr><th>Letzte Änderung:</th><td>';
-    echo df($ticket->timestamp);
+    echo StringUtils::formatDate($ticket->timestamp);
     echo '</td></tr>';
     echo '<tr><th>Admin-Kommentar:</th><td colspan="3">';
     echo '<textarea name="admin_comment" style="color:#00008B" rows="4" cols="60">' . $ticket->adminComment . '</textarea>
@@ -211,7 +212,7 @@ function ticketDetails(
     <th>Nachricht</th></tr>";
     foreach ($ticketService->getMessages($ticket) as $message) {
         echo "<tr>
-        <td>" . df($message->timestamp) . "</td>
+        <td>" . StringUtils::formatDate($message->timestamp) . "</td>
         <td>" . $ticketService->getAuthorNick($message) . "</td>
         <td>" . text2html($message->message) . "</td>
         </tr>";
@@ -300,7 +301,7 @@ function closedTickets(
             <td>" . $userRepo->getNick($ticket->userId) . "</td>
             <td>" . ($adminUserRepo->getNick($ticket->adminId) ?? '?') . "</td>
             <td>" . $ticketMessageRepo->count($ticket->id) . "</td>
-            <td>" . df($ticket->timestamp) . "</td>
+            <td>" . StringUtils::formatDate($ticket->timestamp) . "</td>
             </tr>";
         }
         tableEnd();
@@ -349,7 +350,7 @@ function activeTickets(
             <td>" . $ticket->getStatusName() . "</td>
             <td>" . $ticketRepo->getCategoryName($ticket->catId) . "</td>
             <td><a href=\"javascript:;\" " . cTT($userNick, "tt" . $ticket->id) . ">" . $userNick . "</a></td>
-            <td>" . df($ticket->timestamp) . "</td>
+            <td>" . StringUtils::formatDate($ticket->timestamp) . "</td>
             </tr>";
             $cnt++;
         }
@@ -375,7 +376,7 @@ function activeTickets(
                 <td>" . $ticketRepo->getCategoryName($ticket->catId) . "</td>
                 <td>" . $userNick . "</td>
                 <td>" . $ticketMessageRepo->count($ticket->id) . "</td>
-                <td>" . df($ticket->timestamp) . "</td>
+                <td>" . StringUtils::formatDate($ticket->timestamp) . "</td>
                 </tr>";
             $cnt++;
         }

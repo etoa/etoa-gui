@@ -208,8 +208,8 @@ function statsShowBox($mode, $sort = "", $sortOrder = "")
             foreach ($entries as $entry) {
                 echo "<tr>
                 <td>" . $entry->userNick . "</td>
-                <td>" . df($entry->blockedFrom) . "</td>
-                <td>" . df($entry->blockedTo) . "</td>
+                <td>" . StringUtils::formatDate($entry->blockedFrom) . "</td>
+                <td>" . StringUtils::formatDate($entry->blockedTo) . "</td>
                 <td><a href=\"mailto:" . $entry->adminEmail . "\">" . $entry->adminNick . "</a></td>
                 <td>" . text2html($entry->banReason) . "</td>
                 </tr>";

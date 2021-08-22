@@ -251,6 +251,25 @@ class StringUtils
         return $str;
     }
 
+    public static function formatDate(int $date, bool $seconds = true): string
+    {
+        if ($seconds) {
+            if (date("dmY") == date("dmY", $date)) {
+                $string = "Heute, " . date("H:i:s", $date);
+            } else {
+                $string = date("d.m.Y, H:i:s", $date);
+            }
+        } else {
+            if (date("dmY") == date("dmY", $date)) {
+                $string = "Heute, " . date("H:i", $date);
+            } else {
+                $string = date("d.m.Y, H:i", $date);
+            }
+        }
+
+        return $string;
+    }
+
     public static function formatNumber(float $number, bool $colorize = false, bool $ex = false): string
     {
         if ($ex) {

@@ -155,7 +155,7 @@ class MarketReport extends Report
                 echo "</table><br/>";
                 $buyerFleet = new Fleet($this->fleet2Id);
                 if ($buyerFleet->valid())
-                    echo " Landung: " . df($buyerFleet->landTime()) . "";
+                    echo " Landung: " . StringUtils::formatDate($buyerFleet->landTime()) . "";
                 break;
 
             case "resbought":
@@ -182,7 +182,7 @@ class MarketReport extends Report
                 echo "</table><br/>";
                 echo "Die Waren werden vom Marktplatz nach " . $ent->detailLink() . " geliefert.";
                 if ($sellerFleet->valid())
-                    echo " Landung: " . df($sellerFleet->landTime()) . "";
+                    echo " Landung: " . StringUtils::formatDate($sellerFleet->landTime()) . "";
                 break;
 
             case "shipadd":
@@ -262,7 +262,7 @@ class MarketReport extends Report
 
                 echo "Die Waren werden vom Marktplatz nach " . $ent->detailLink() . " geliefert.";
                 if ($sellerFleet->valid())
-                    echo " Landung: " . df($sellerFleet->landTime()) . "";
+                    echo " Landung: " . StringUtils::formatDate($sellerFleet->landTime()) . "";
                 break;
             case "shipsold":
                 /** @var ShipDataRepository $shipRepository */
@@ -292,7 +292,7 @@ class MarketReport extends Report
                 echo "Die Waren werden vom Marktplatz nach " . $ent->detailLink() . " geliefert.";
                 $buyerFleet = new Fleet($this->fleet2Id);
                 if ($buyerFleet->valid())
-                    echo " Landung: " . df($buyerFleet->landTime()) . "";
+                    echo " Landung: " . StringUtils::formatDate($buyerFleet->landTime()) . "";
                 break;
             case 'auctionadd':
                 echo "Du hast folgendes Angebot (#" . $this->recordId . ") im <a href=\"?page=market&amp;mode=user_sell&amp;change_entity=" . $this->entity1Id . "\">Marktplatz</a>
@@ -312,7 +312,7 @@ class MarketReport extends Report
 						</tr>";
                 }
                 echo "</table><br/>";
-                echo 'Die Auktion endet am ' . df($this->timestamp2) . '.';
+                echo 'Die Auktion endet am ' . StringUtils::formatDate($this->timestamp2) . '.';
                 break;
             case 'auctioncancel':
                 echo "Du hast das Angebot #" . $this->recordId . " im <a href=\"?page=market&amp;mode=user_sell&amp;change_entity=" . $this->entity1Id . "\">Marktplatz</a>

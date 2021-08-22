@@ -224,7 +224,7 @@ if ($config->getBoolean('market_enabled')) {
                 countDown("cdcd", $allianceMarketCooldown);
             }
         } else {
-            info_msg("Dieses Gebäude ist noch bis " . df($market->deactivated) . " deaktiviert!");
+            info_msg("Dieses Gebäude ist noch bis " . StringUtils::formatDate($market->deactivated) . " deaktiviert!");
         }
     }
 

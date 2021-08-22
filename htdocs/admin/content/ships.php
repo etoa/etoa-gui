@@ -196,8 +196,8 @@ elseif ($sub == "queue") {
                 echo "<td class=\"tbldata\"$style>" . StringUtils::formatNumber($shipQueueItem->count) . "</td>";
                 echo "<td class=\"tbldata\"$style " . mTT($shipQueueItem->planetName, "<b>Planet-ID:</b> " . $shipQueueItem->entityId . "<br/><b>Koordinaten:</b> " . $shipQueueItem->entity->sx . "/" . $shipQueueItem->entity->sy . " : " . $shipQueueItem->entity->cx . "/" . $shipQueueItem->entity->cy . " : " . $shipQueueItem->entity->pos) . ">" . StringUtils::cutString($shipQueueItem->planetName, 11) . "</td>";
                 echo "<td class=\"tbldata\"$style " . mTT($shipQueueItem->userNick, "<b>User-ID:</b> " . $shipQueueItem->userId . "<br/><b>Punkte:</b> " . StringUtils::formatNumber($shipQueueItem->userPoints)) . ">" . StringUtils::cutString($shipQueueItem->userNick, 11) . "</td>";
-                echo "<td class=\"tbldata\"$style>" . df($shipQueueItem->startTime, 1) . "</td>";
-                echo "<td class=\"tbldata\"$style>" . df($shipQueueItem->endTime, 1) . "</td>";
+                echo "<td class=\"tbldata\"$style>" . StringUtils::formatDate($shipQueueItem->startTime) . "</td>";
+                echo "<td class=\"tbldata\"$style>" . StringUtils::formatDate($shipQueueItem->endTime) . "</td>";
                 echo "<td class=\"tbldata\"$style>" . edit_button("?page=$page&sub=$sub&action=edit&id=" . $shipQueueItem->id);
                 echo "</td>";
                 echo "</tr>";

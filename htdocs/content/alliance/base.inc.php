@@ -886,7 +886,7 @@ else {
     $spendEntries = $allianceSpendRepository->getSpent($cu->allianceId(), $user, $limit);
     if (count($spendEntries) > 0) {
         foreach ($spendEntries as $entry) {
-            tableStart("" . $cu->alliance->members[$entry->userId] . " - " . df($entry->time) . "");
+            tableStart("" . $cu->alliance->members[$entry->userId] . " - " . StringUtils::formatDate($entry->time) . "");
             echo "<tr>
                             <th style=\"width:20%\">" . RES_METAL . "</th>
                             <th style=\"width:20%\">" . RES_CRYSTAL . "</th>

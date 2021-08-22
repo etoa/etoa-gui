@@ -123,7 +123,7 @@ else {
         'dbRows' => StringUtils::formatNumber($rows),
         'dbSize' => byte_format($datal),
         'serverUptime' => StringUtils::formatTimespan($uts),
-        'serverStarted' => df(time() - $uts),
+        'serverStarted' => StringUtils::formatDate(time() - $uts),
         'bytesReceived' => byte_format($st['bytes_received']),
         'bytesReceivedHour' => byte_format($uth > 0 ? $st['bytes_received'] / $uth : 0),
         'bytesSent' => byte_format($st['bytes_sent']),

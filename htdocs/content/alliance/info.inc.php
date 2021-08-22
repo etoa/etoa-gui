@@ -64,7 +64,7 @@ if ($infoAlly->valid) {
                                         <a href=\"?page=$page&amp;id=" . $opAlly->id . "\">" . $opAlly . "</a>
                                     </td>
                                     <td>" . StringUtils::formatNumber($opAlly->points) . " / " . StringUtils::formatNumber($opAlly->avgPoints) . "</td>
-                                    <td>" . df($diplomacy->date, 0) . " bis " . df($diplomacy->date + WAR_DURATION, 0) . "</td>
+                                    <td>" . StringUtils::formatDate($diplomacy->date, false) . " bis " . StringUtils::formatDate($diplomacy->date + WAR_DURATION, false) . "</td>
                                 </tr>";
         }
         echo "</table>
@@ -92,7 +92,7 @@ if ($infoAlly->valid) {
                                         <a href=\"?page=$page&amp;id=" . $opAlly->id . "\">" . $opAlly . "</a>
                                     </td>
                                     <td>" . StringUtils::formatNumber($opAlly->points) . " / " . StringUtils::formatNumber($opAlly->avgPoints) . "</td>
-                                    <td>" . df($diplomacy->date, 0) . " bis " . df($diplomacy->date + PEACE_DURATION, 0) . "</td>
+                                    <td>" . StringUtils::formatDate($diplomacy->date, false) . " bis " . StringUtils::formatDate($diplomacy->date + PEACE_DURATION, false) . "</td>
                                 </tr>";
         }
         echo "</table>
@@ -120,7 +120,7 @@ if ($infoAlly->valid) {
                                     <td>" . stripslashes($diplomacy->name) . "</td>
                                     <td><a href=\"?page=$page&amp;id=" . $opAlly->id . "\">" . $opAlly . "</a></td>
                                     <td>" . StringUtils::formatNumber($opAlly->points) . " / " . StringUtils::formatNumber($opAlly->avgPoints) . "</td>
-                                    <td>" . df($diplomacy->date) . "</td>
+                                    <td>" . StringUtils::formatDate($diplomacy->date) . "</td>
                                 </tr>";
         }
         echo "</table>
@@ -158,7 +158,7 @@ if ($infoAlly->valid) {
     echo "<tr>
                     <th>Gründungsdatum:</th>
                     <td>
-                        " . df($infoAlly->foundationDate) . " (vor " . StringUtils::formatTimespan(time() - $infoAlly->foundationDate) . ")
+                        " . StringUtils::formatDate($infoAlly->foundationDate) . " (vor " . StringUtils::formatTimespan(time() - $infoAlly->foundationDate) . ")
                     </td>
                 </tr>";
 

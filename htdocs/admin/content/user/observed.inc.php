@@ -80,7 +80,7 @@ elseif (isset($_GET['surveillance']) && $_GET['surveillance'] > 0) {
                 $reqRaw = wordwrap($entry->requestRaw, 60, "\n", true);
                 $post = wordwrap($entry->post, 60, "\n", true);
                 echo "<tr>
-                        <td>" . df($entry->timestamp, 1) . "</td>
+                        <td>" . StringUtils::formatDate($entry->timestamp) . "</td>
                         <td>" . $entry->page . "</td>
                         <td>" . text2html($req) . "</td>
                         <td>" . text2html($reqRaw) . "</td>

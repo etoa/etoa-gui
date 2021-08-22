@@ -471,7 +471,7 @@ else {
 }
 $statsUpdate = $runtimeDataStore->get('statsupdate');
 if ($statsUpdate !== null) {
-    echo "Letzte Aktualisierung: <b>" . df($statsUpdate) . " Uhr</b><br/>";
+    echo "Letzte Aktualisierung: <b>" . StringUtils::formatDate((int) $statsUpdate) . " Uhr</b><br/>";
 }
 echo "<b>Legende:</b>
     <span class=\"userLockedColor\">Gesperrt</span>,

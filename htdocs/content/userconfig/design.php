@@ -1,5 +1,6 @@
 <?PHP
 
+use EtoA\Support\StringUtils;
 use EtoA\User\UserPropertiesRepository;
 
 $imagepacks = get_imagepacks();
@@ -237,7 +238,7 @@ foreach ($imagepacks as $k => $v) {
                 <td><a href=\"" . $path . "\">" . $file . "</a></td>
                 <td><a href=\"mailto:" . $v['email'] . "\">" . $v['author'] . "</a></td>
                 <td>" . byte_format($fs) . "</td>
-                <td>" . df($t) . "</td>
+                <td>" . StringUtils::formatDate($t) . "</td>
                 </tr>";
             }
         }

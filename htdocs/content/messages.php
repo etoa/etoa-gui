@@ -4,6 +4,7 @@ use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Message\MessageCategory;
 use EtoA\Message\MessageCategoryRepository;
 use EtoA\Message\MessageRepository;
+use EtoA\Support\StringUtils;
 use EtoA\User\UserPropertiesRepository;
 use EtoA\User\UserRepository;
 use Symfony\Component\HttpFoundation\Request;
@@ -115,7 +116,7 @@ function viewSingleMessage(
         tableStart();
         echo "<tr><th colspan=\"2\">" . $subj . "</th></tr>";
         echo "<tr><th width=\"50\" valign=\"top\">Datum:</th>
-        <td width=\"250\">" . df($message->timestamp) . "</td></tr>";
+        <td width=\"250\">" . StringUtils::formatDate($message->timestamp) . "</td></tr>";
         echo "<tr><th width=\"50\" valign=\"top\">Sender:</th>
         <td width=\"250\">" . userPopUp($message->userFrom, $userRepository->getNick($message->userFrom), 0) . "</td></tr>";
         echo "<tr><td class=\"tbltitle\" width=\"50\" valign=\"top\">Text:<br/>";

@@ -258,7 +258,7 @@ class BattleReport extends Report
             case 'battle':
                 echo '<strong>KAMPFBERICHT</strong><br />
                     vom Planeten ' . $ent1->detailLink() . '<br />
-                    <strong>Zeit:</strong> ' . df($this->timestamp) . '<br /><br />
+                    <strong>Zeit:</strong> ' . StringUtils::formatDate($this->timestamp) . '<br /><br />
                     <table class="battleTable" width="100%">
                         <tr>
                             <td>
@@ -551,7 +551,7 @@ class BattleReport extends Report
             case 'battlefailed':
                 echo '<strong>KAMPFBERICHT</strong><br />
                     vom Planeten ' . $ent1->detailLink() . '<br />
-                    <strong>Zeit:</strong> ' . df($this->timestamp) . '<br /><br />
+                    <strong>Zeit:</strong> ' . StringUtils::formatDate($this->timestamp) . '<br /><br />
                     <table class="battleTable" width="100%">
                         <tr>
                             <td>
@@ -591,7 +591,7 @@ class BattleReport extends Report
             case 'battleban':
                 echo '<strong>KAMPFBERICHT</strong><br />
                     vom Planeten ' . $ent1->detailLink() . '<br />
-                    <strong>Zeit:</strong> ' . df($this->timestamp) . '<br /><br />
+                    <strong>Zeit:</strong> ' . StringUtils::formatDate($this->timestamp) . '<br /><br />
                     <table class="battleTable" width="100%">
                         <tr>
                             <td>

@@ -3,6 +3,7 @@
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\HostCache\NetworkNameService;
 use EtoA\Log\AccessLogRepository;
+use EtoA\Support\StringUtils;
 
 /** @var ConfigurationService $config */
 $config = $app[ConfigurationService::class];
@@ -140,7 +141,7 @@ function fileSharing()
                     echo "<tr>
                         <td><a href=\"" . createDownloadLink($file) . "\">$f</a></td>
                         <td>" . byte_format(filesize($file)) . "</td>
-                        <td>" . df(filemtime($file)) . "</td>
+                        <td>" . StringUtils::formatDate(filemtime($file)) . "</td>
                         <td>
                             <a href=\"?page=$page&amp;sub=$sub&amp;action=rename&" . $link . "\">Umbenennen</a>
                             <a href=\"?page=$page&amp;sub=$sub&amp;action=delete&" . $link . "\" onclick=\"return confirm('Soll diese Datei wirklich gelöscht werden?')\">Löschen</a>

@@ -149,8 +149,8 @@ elseif ($sub == "queue") {
                 echo "<td class=\"tbldata\"$style>" . StringUtils::formatNumber($entry->count) . "</td>";
                 echo "<td class=\"tbldata\"$style " . mTT($entry->planetName, "<b>Planet-ID:</b> " . $entry->entityId . "<br/><b>Koordinaten:</b> " . $entry->entity->sx . "/" . $entry->entity->sy . " : " . $entry->entity->cx . "/" . $entry->entity->cy . " : " . $entry->entity->pos) . ">" . StringUtils::cutString($entry->planetName, 11) . "</td>";
                 echo "<td class=\"tbldata\"$style " . mTT($entry->userNick, "<b>User-ID:</b> " . $entry->userId . "<br/><b>Punkte:</b> " . StringUtils::formatNumber($entry->userPoints)) . ">" . StringUtils::cutString($entry->userNick, 11) . "</td>";
-                echo "<td class=\"tbldata\"$style>" . df($entry->startTime, 1) . "</td>";
-                echo "<td class=\"tbldata\"$style>" . df($entry->endTime, 1) . "</td>";
+                echo "<td class=\"tbldata\"$style>" . StringUtils::formatDate($entry->startTime) . "</td>";
+                echo "<td class=\"tbldata\"$style>" . StringUtils::formatDate($entry->endTime) . "</td>";
                 echo "<td class=\"tbldata\"$style>" . edit_button("?page=$page&sub=$sub&action=edit&id=" . $entry->id);
                 echo "</td>";
                 echo "</tr>";

@@ -385,7 +385,7 @@ if ($user !== null) {
                 </tr>
                 <tr>
                     <td class=\"tbltitle\">Registrierdatum:</td>
-                    <td class=\"tbldata\">" . df($user->registered) . "</td>
+                    <td class=\"tbldata\">" . StringUtils::formatDate($user->registered) . "</td>
                 </tr>
                 <tr>
                     <td class=\"tbltitle\">Zulezt online:</td>";
@@ -435,13 +435,13 @@ if ($user !== null) {
         echo "<div>Benutzer steht unter <b>Beobachtung</b>: " . $user->observe . " &nbsp; [<a href=\"?page=user&sub=observed&text=" . $user->id . "\">Ändern</a>]</div>";
     }
     if ($user->deleted !== 0) {
-        echo "<div class=\"userDeletedColor\">Dieser Account ist zur Löschung am " . df($user->deleted) . " vorgemerkt</div>";
+        echo "<div class=\"userDeletedColor\">Dieser Account ist zur Löschung am " . StringUtils::formatDate($user->deleted) . " vorgemerkt</div>";
     }
     if ($user->hmodFrom > 0) {
-        echo "<div class=\"userHolidayColor\">Dieser Account ist im Urlaubsmodus seit " . df($user->hmodFrom) . " bis mindestens " . df($user->hmodTo) . "</div>";
+        echo "<div class=\"userHolidayColor\">Dieser Account ist im Urlaubsmodus seit " . StringUtils::formatDate($user->hmodFrom) . " bis mindestens " . StringUtils::formatDate($user->hmodTo) . "</div>";
     }
     if ($user->blockedFrom > 0 && $user->blockedTo > time()) {
-        echo "<div class=\"userLockedColor\">Dieser Account ist im gesperrt von " . df($user->blockedFrom) . " bis " . df($user->blockedTo);
+        echo "<div class=\"userLockedColor\">Dieser Account ist im gesperrt von " . StringUtils::formatDate($user->blockedFrom) . " bis " . StringUtils::formatDate($user->blockedTo);
         if ($user->banReason != "") {
             echo ". Grund: " . stripslashes($user->banReason);
         }
@@ -466,7 +466,7 @@ if ($user !== null) {
     $commentData = $userCommentRepository->getCommentInformation($user->id);
 
     if ($commentData['count'] > 0) {
-        echo "<div><b>" . $commentData['count'] . " Kommentare</b> vorhanden, neuster Kommentar von " . df($commentData['latest']) . "
+        echo "<div><b>" . $commentData['count'] . " Kommentare</b> vorhanden, neuster Kommentar von " . StringUtils::formatDate($commentData['latest']) . "
                             [<a href=\"javascript:;\" onclick=\"$('.tabs').tabs('select', 10);\">Zeigen</a>]
                             </div>";
     }
@@ -493,7 +493,7 @@ if ($user !== null) {
     $userWarningRepository = $app[UserWarningRepository::class];
     $warning = $userWarningRepository->getCountAndLatestWarning($user->id);
     if ($warning['count'] > 0) {
-        echo "<div><b>" . $warning['count'] . " Verwarnungen</b> vorhanden, neuste  von " . df($warning['max']) . "
+        echo "<div><b>" . $warning['count'] . " Verwarnungen</b> vorhanden, neuste  von " . StringUtils::formatDate($warning['max']) . "
                             [<a href=\"?page=user&amp;sub=warnings&amp;user=" . $id . "\">Zeigen</a>]
                             </div>";
     }
@@ -895,7 +895,7 @@ if ($user !== null) {
                     ' . $multi->reason . '
                 </td>
                 <td>
-                    ' . ($multi->timestamp > 0 ? df($multi->timestamp) : '-') . '
+                    ' . ($multi->timestamp > 0 ? StringUtils::formatDate($multi->timestamp) : '-') . '
                 </td>
                 <td>
                     <input type="checkbox" name="del_multi[' . $multi->multiUserId . ']" value="1">
@@ -920,7 +920,7 @@ if ($user !== null) {
                     ' . $multi->reason . '
                 </td>
                 <td>
-                    ' . ($multi->timestamp > 0 ? df($multi->timestamp) : '-') . '
+                    ' . ($multi->timestamp > 0 ? StringUtils::formatDate($multi->timestamp) : '-') . '
                 </td>
             </tr>';
     }
@@ -946,10 +946,10 @@ if ($user !== null) {
                     <a href="?page=user&sub=edit&user_id=' . $sittedEntry->sitterId . '">' . $sittedEntry->sitterNick . '</a>
                 </td>
                 <td>
-                    ' . df($sittedEntry->dateFrom) . '
+                    ' . StringUtils::formatDate($sittedEntry->dateFrom) . '
                 </td>
                 <td>
-                    ' . df($sittedEntry->dateTo) . '
+                    ' . StringUtils::formatDate($sittedEntry->dateTo) . '
                 </td>';
         if ($sittedEntry->dateTo > $time) {
             echo '<td>
@@ -973,10 +973,10 @@ if ($user !== null) {
                     <a href="?page=user&sub=edit&user_id=' . $sittingEntry->userId . '">' . $sittingEntry->userNick . '</a>
                 </td>
                 <td>
-                    ' . df($sittingEntry->dateFrom) . '
+                    ' . StringUtils::formatDate($sittingEntry->dateFrom) . '
                 </td>
                 <td>
-                    ' . df($sittingEntry->dateTo) . '
+                    ' . StringUtils::formatDate($sittingEntry->dateTo) . '
                 </td>
             </tr>';
     }
@@ -1095,7 +1095,7 @@ if ($user !== null) {
     if (file_exists($name)) {
         echo '
                 <img src="' . $name . '" alt="Banner"><br>
-                Generiert: ' . df(filemtime($name)) . '<br/>
+                Generiert: ' . StringUtils::formatDate(filemtime($name)) . '<br/>
                 <textarea readonly="readonly" rows="2" cols="65">&lt;a href="' . USERBANNER_LINK_URL . '"&gt;&lt;img src="' . $config->get('roundurl') . '/' . $name . '" width="468" height="60" alt="EtoA Online-Game" border="0" /&gt;&lt;/a&gt;</textarea>
                 <textarea readonly="readonly" rows="2" cols="65">[url=' . USERBANNER_LINK_URL . '][img]' . $config->get('roundurl') . '/' . $name . '[/img][/url]</textarea>';
     }
@@ -1343,7 +1343,7 @@ if ($user !== null) {
                     </tr>";
         foreach ($failures as $failure) {
             echo "<tr>
-                                            <td class=\"tbldata\">" . df($failure->time) . "</td>
+                                            <td class=\"tbldata\">" . StringUtils::formatDate($failure->time) . "</td>
                                             <td class=\"tbldata\">
                                                 <a href=\"?page=$page&amp;sub=ipsearch&amp;ip=" . $failure->ip . "\">" . $failure->ip . "</a>
                                             </td>
@@ -1431,7 +1431,7 @@ if ($user !== null) {
                 <td>" . $ticket->getStatusName() . "</td>
                 <td>" . $ticketRepo->getCategoryName($ticket->catId) . "</td>
                 <td>" . ($ticket->adminId > 0 ? $adminUserRepo->getNick($ticket->adminId) : '-') . "</td>
-                <td>" . df($ticket->timestamp) . "</td>
+                <td>" . StringUtils::formatDate($ticket->timestamp) . "</td>
             </tr>";
         }
         tableEnd();
@@ -1464,7 +1464,7 @@ if ($user !== null) {
         foreach ($comments as $comment) {
             echo "<tr>
                 <td class=\"tbldata\" >" . text2html($comment->text) . "</td>
-                <td class=\"tbldata\" style=\"width:200px;\">" . df($comment->timestamp) . " von " . $comment->adminNick . "</td>
+                <td class=\"tbldata\" style=\"width:200px;\">" . StringUtils::formatDate($comment->timestamp) . " von " . $comment->adminNick . "</td>
                 <td class=\"tbldata\" style=\"width:50px;\"><a href=\"javascript:;\" onclick=\"if (confirm('Wirklich löschen?')) {xajax_delUserComment('" . $id . "','commentsBox'," . $comment->id . ")}\">Löschen</a></td>
             </tr>";
         }

@@ -121,7 +121,7 @@ function userPointsTable($uid, $target, $length = 100, $start = -1, $end = -1)
     for ($x = $t - 86400; $x > $t - (14 * 86400); $x -= 86400) {
         echo "<option value=\"$x\"";
         if ($x <= $start + 300 && $x >= $start - 300) echo " selected=\"selected\"";
-        echo ">" . df($x) . "</option>";
+        echo ">" . StringUtils::formatDate($x) . "</option>";
     }
     echo "</select> bis <select id=\"pointsTimeEnd\" onchange=\"xajax_userPointsTable($uid,'$target',
     document.getElementById('pointsLimit').options[document.getElementById('pointsLimit').selectedIndex].value,
@@ -131,7 +131,7 @@ function userPointsTable($uid, $target, $length = 100, $start = -1, $end = -1)
     for ($x = $t; $x > $t - (13 * 86400); $x -= 86400) {
         echo "<option value=\"$x\"";
         if ($x <= $end + 300 && $x >= $end - 300) echo " selected=\"selected\"";
-        echo ">" . df($x) . "</option>";
+        echo ">" . StringUtils::formatDate($x) . "</option>";
     }
     echo "</select>
 
@@ -195,7 +195,7 @@ function userTickets($uid, $target)
             $adminNick = $adminUserRepo->getNick($ticket->adminId);
             echo "<tr>
                 <td><a href=\"?page=tickets&id=" . $ticket->id . "\">" . $ticket->getIdString() . "</a></td>
-                <td class=\"tbldata\">" . df($ticket->timestamp) . "</td>
+                <td class=\"tbldata\">" . StringUtils::formatDate($ticket->timestamp) . "</td>
                 <td class=\"tbldata\">" . $ticketRepo->getCategoryName($ticket->catId) . "</td>
                 <td class=\"tbldata\">" . $ticket->getStatusName() . "</td>
                 <td class=\"tbldata\">" . $adminNick . "</td>
@@ -263,7 +263,7 @@ function showLast5Messages($uid, $target, $limit = 5)
         </tr>";
         foreach ($messages as $message) {
             echo "<tr>
-                <td class=\"tbldata\">" . df($message->timestamp) . "</td>
+                <td class=\"tbldata\">" . StringUtils::formatDate($message->timestamp) . "</td>
                 <td class=\"tbldata\">";
             if ($message->userFrom > 0) {
                 echo "<a href=\"?page=user&sub=edit&user_id=" . $message->userFrom . "\">" . $userRepo->getNick($message->userFrom) . "</a>";
@@ -311,7 +311,7 @@ function userComments($uid, $target)
         foreach ($comments as $comment) {
             echo "<tr>
                 <td class=\"tbldata\" >" . text2html($comment->text) . "</td>
-                <td class=\"tbldata\" style=\"width:200px;\">" . df($comment->timestamp) . " von " . $comment->adminNick . "</td>
+                <td class=\"tbldata\" style=\"width:200px;\">" . StringUtils::formatDate($comment->timestamp) . " von " . $comment->adminNick . "</td>
                 <td class=\"tbldata\" style=\"width:50px;\"><a href=\"javascript:;\" onclick=\"if (confirm('Wirklich löschen?')) {xajax_delUserComment('" . $uid . "','" . $target . "'," . $comment->id . ")}\">Löschen</a></td>
             </tr>";
         }
@@ -377,7 +377,7 @@ function userLogs($uid, $target)
     $logs = $userLogRepository->getUserLogs($uid, 100);
     foreach ($logs as $log) {
         echo "<tr><td>" . text2html($log->message) . "</td>
-                        <td>" . df($log->timestamp) . "</td>
+                        <td>" . StringUtils::formatDate($log->timestamp) . "</td>
                         <td><a href=\"?page=user&amp;sub=ipsearch&amp;ip=" . $log->host . "\">" . $log->host . "</a></td></tr>";
     }
     tableEnd();
@@ -774,7 +774,7 @@ function loadEconomy($uid, $target)
             }
 
             echo "<tr>
-                        <td>" . df($log->timestamp) . "</td>
+                        <td>" . StringUtils::formatDate($log->timestamp) . "</td>
                         <td>" . LogSeverity::SEVERITIES[$log->severity] . "</td>
                         <td>" . $te . "</td>
                         <td>" . $ob . "</td>
@@ -827,7 +827,7 @@ function loadEconomy($uid, $target)
             }
 
             echo "<tr>
-                        <td>" . df($log->timestamp) . "</td>
+                        <td>" . StringUtils::formatDate($log->timestamp) . "</td>
                         <td>" . LogSeverity::SEVERITIES[$log->severity] . "</td>
                         <td>" . $te . "</td>
                         <td>" . $ob . "</td>
@@ -880,7 +880,7 @@ function loadEconomy($uid, $target)
             }
 
             echo "<tr>
-                        <td>" . df($log->timestamp) . "</td>
+                        <td>" . StringUtils::formatDate($log->timestamp) . "</td>
                         <td>" . LogSeverity::SEVERITIES[$log->severity] . "</td>
                         <td>" . $te . "</td>
                         <td>" . $ob . "</td>
@@ -935,7 +935,7 @@ function loadEconomy($uid, $target)
             }
 
             echo "<tr>
-                        <td>" . df($log->timestamp) . "</td>
+                        <td>" . StringUtils::formatDate($log->timestamp) . "</td>
                         <td>" . LogSeverity::SEVERITIES[$log->severity] . "</td>
                         <td>" . $te . "</td>
                         <td>" . $ob . "</td>

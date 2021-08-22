@@ -1,5 +1,6 @@
 <?PHP
 
+use EtoA\Support\StringUtils;
 use EtoA\User\UserLoginFailureRepository;
 /** @var UserLoginFailureRepository $userLoginFailureRepository */
 $userLoginFailureRepository = $app[UserLoginFailureRepository::class];
@@ -46,7 +47,7 @@ if (count($failures) > 0) {
                 <th><a href=\"?page=$page&amp;sub=$sub&amp;order=4\">Client</a></th>
                 </tr>";
     foreach ($failures as $failure) {
-        echo "<tr><td class=\"tbldata\">" . df($failure->time) . "</td>";
+        echo "<tr><td class=\"tbldata\">" . StringUtils::formatDate($failure->time) . "</td>";
         echo "<td class=\"tbldata\"><a href=\"?page=user&amp;sub=edit&amp;id=" . $failure->userId . "\">" . $failure->userNick . "</a></td>";
         echo "<td class=\"tbldata\"><a href=\"?page=user&amp;sub=ipsearch&amp;ip=" . $failure->ip . "\">" . $failure->ip . "</a></td>";
         echo "<td class=\"tbldata\"><a href=\"?page=user&amp;sub=ipsearch&amp;host=" . $failure->host . "\">" . $failure->host . "</a></td>

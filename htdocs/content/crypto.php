@@ -171,7 +171,7 @@ if ($config->getBoolean('crypto_enable')) {
         } else {
             $userCooldown = $allianceBuildingRepository->getUserCooldown($currentUser->id, AllianceBuildingId::CRYPTO);
             echo "<b>Diese Funktion wurde vor kurzem benutzt! <br/>";
-            echo "Du musst bis " . df($userCooldown) . " warten, um die Funktion wieder zu benutzen!</b>";
+            echo "Du musst bis " . StringUtils::formatDate($userCooldown) . " warten, um die Funktion wieder zu benutzen!</b>";
             countDown("cdcd", $userCooldown);
         }
     } else {

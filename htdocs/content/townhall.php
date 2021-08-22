@@ -7,6 +7,7 @@ use EtoA\Alliance\AllianceDiplomacyLevel;
 use EtoA\Alliance\AllianceDiplomacyRepository;
 use EtoA\Alliance\AllianceDiplomacySearch;
 use EtoA\Alliance\AllianceNewsRepository;
+use EtoA\Support\StringUtils;
 
 /** @var AllianceNewsRepository $allianceNewsRepository */
 $allianceNewsRepository = $app[AllianceNewsRepository::class];
@@ -49,7 +50,7 @@ if (count($publicNews) > 0) {
         $sid = "sth" . $news->id;
 
         echo "<tr><td>" . text2html($news->title) . "</td>";
-        echo "<td>" . df($news->date) . "</td>";
+        echo "<td>" . StringUtils::formatDate($news->date) . "</td>";
         if ($news->authorAllianceName != "" && $news->authorAllianceTag != "") {
             echo "<td " . tm($news->authorAllianceTag, text2html($news->authorAllianceName)) . ">
                                 <a href=\"?page=alliance&amp;info_id=" . $news->authorAllianceId . "\">" . $news->authorAllianceTag . "</a>
@@ -96,7 +97,7 @@ if (count($internalNews) > 0) {
         $sid = "sth" . $news->id;
 
         echo "<tr><td>" . text2html($news->title) . "</td>";
-        echo "<td>" . df($news->date) . "</td>";
+        echo "<td>" . StringUtils::formatDate($news->date) . "</td>";
         if ($news->authorAllianceName != "" && $news->authorAllianceTag != "") {
             echo "<td " . tm($news->authorAllianceTag, text2html($news->authorAllianceName)) . ">
                     <a href=\"?page=alliance&amp;info_id=" . $news->authorAllianceId . "\">" . $news->authorAllianceTag . "</a>
@@ -148,7 +149,7 @@ if (count($bnds) > 0) {
                 <td><a href=\"?page=alliance&amp;info_id=" . $diplomacy->alliance1Id . "\" " . tm($diplomacy->alliance1Tag, text2html($diplomacy->alliance1Name)) . ">" . text2html($diplomacy->alliance1Name) . "</td>
                 <td><a href=\"?page=alliance&amp;info_id=" . $diplomacy->alliance2Id . "\" " . tm($diplomacy->alliance2Tag, text2html($diplomacy->alliance2Name)) . ">" . text2html($diplomacy->alliance2Name) . "</td>
                 <td>" . stripslashes($diplomacy->name) . "</td>
-                <td>" . df($diplomacy->date) . "</td>
+                <td>" . StringUtils::formatDate($diplomacy->date) . "</td>
                 <td>";
         if ($diplomacy->publicText != "") {
             echo "[<a href=\"javascript:;\" onclick=\"toggleText('" . $id . "','" . $sid . "');\" id=\"" . $sid . "\">Anzeigen</a>]";
@@ -188,8 +189,8 @@ if (count($wars) > 0) {
         echo "<tr>
                 <td><a href=\"?page=alliance&amp;info_id=" . $diplomacy->alliance1Id . "\" " . tm($diplomacy->alliance1Tag, text2html($diplomacy->alliance1Name)) . ">" . text2html($diplomacy->alliance1Name) . "</td>
                 <td><a href=\"?page=alliance&amp;info_id=" . $diplomacy->alliance2Id . "\" " . tm($diplomacy->alliance2Tag, text2html($diplomacy->alliance2Name)) . ">" . text2html($diplomacy->alliance2Name) . "</td>
-                <td>" . df($diplomacy->date) . "</td>
-                <td>" . df($diplomacy->date + WAR_DURATION) . "</td>
+                <td>" . StringUtils::formatDate($diplomacy->date) . "</td>
+                <td>" . StringUtils::formatDate($diplomacy->date + WAR_DURATION) . "</td>
                 <td>";
         if ($diplomacy->publicText != "") {
             echo "[<a href=\"javascript:;\" onclick=\"toggleText('" . $id . "','" . $sid . "');\" id=\"" . $sid . "\">Anzeigen</a>]";
@@ -226,8 +227,8 @@ if (count($peace) > 0) {
         echo "<tr>
                 <td><a href=\"?page=alliance&amp;info_id=" . $diplomacy->alliance1Id . "\" " . tm($diplomacy->alliance1Tag, text2html($diplomacy->alliance1Name)) . ">" . text2html($diplomacy->alliance1Name) . "</td>
                 <td><a href=\"?page=alliance&amp;info_id=" . $diplomacy->alliance2Id . "\" " . tm($diplomacy->alliance2Tag, text2html($diplomacy->alliance2Name)) . ">" . text2html($diplomacy->alliance2Name) . "</td>
-                <td>" . df($diplomacy->date) . "</td>
-                <td>" . df($diplomacy->date + PEACE_DURATION) . "</td>
+                <td>" . StringUtils::formatDate($diplomacy->date) . "</td>
+                <td>" . StringUtils::formatDate($diplomacy->date + PEACE_DURATION) . "</td>
             </tr>";
     }
     tableEnd();
