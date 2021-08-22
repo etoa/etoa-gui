@@ -47,7 +47,6 @@ if (!defined('ADMIN_MODE')) {
 }
 
 define('ERROR_LOGFILE', LOG_DIR . "/errors.log");
-define('DBERROR_LOGFILE', LOG_DIR . "/dberrors.log");
 
 // Entwickler Link
 define("DEVCENTER_PATH", "http://dev.etoa.ch");

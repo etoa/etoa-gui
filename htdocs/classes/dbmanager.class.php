@@ -62,24 +62,22 @@ class DBManager implements ISingleton
         if ($this->dbCfg == null && $tempCfg == null) {
             $this->loadConfig();
         }
-        try {
-            if (is_array($tempCfg) && count($tempCfg) > 0) {
-                $this->dbCfg = $tempCfg;
-            }
-            $dbCfg = $this->dbCfg;
-            if (!$this->handle = @mysql_connect($dbCfg['host'], $dbCfg['user'], $dbCfg['password'], $dbCfg['dbname'])) {
-                if ($throwError == 1)
-                    throw new DBException("Zum Datenbankserver auf <b>" . $dbCfg['host'] . "</b> kann keine Verbindung hergestellt werden!");
-                else
-                    return false;
-            }
-            $this->isOpen = true;
-            dbquery("SET NAMES 'utf8';");
-            return true;
-        } catch (DBException $e) {
-            $this->writeMsgToErrorLog($e->getErrStr());
-            throw $e;
+
+        if (is_array($tempCfg) && count($tempCfg) > 0) {
+            $this->dbCfg = $tempCfg;
         }
+        $dbCfg = $this->dbCfg;
+        if (!$this->handle = @mysql_connect($dbCfg['host'], $dbCfg['user'], $dbCfg['password'], $dbCfg['dbname'])) {
+            if ($throwError == 1) {
+                throw new DBException("Zum Datenbankserver auf <b>" . $dbCfg['host'] . "</b> kann keine Verbindung hergestellt werden!");
+            }
+
+            return false;
+        }
+        $this->isOpen = true;
+        dbquery("SET NAMES 'utf8';");
+
+        return true;
     }
 
     /**
@@ -106,32 +104,9 @@ class DBManager implements ISingleton
 
         if ($result = mysql_query($string, $this->handle)) {
             return $result;
-        } elseif ($fehler == 1) {
-            try {
-                throw new DBException($string);
-            } catch (DBException $e) {
-                $this->writeMsgToErrorLog($e->getErrStr());
-                throw $e;
-            }
         }
-    }
-
-    /**
-     * Writes a message to error log
-     */
-    private function writeMsgToErrorLog($message)
-    {
-        if (defined('ERROR_LOGFILE')) {
-            global $cu;
-            if (!file_exists(DBERROR_LOGFILE)) {
-                touch(DBERROR_LOGFILE);
-                chmod(DBERROR_LOGFILE, 0662);
-            }
-            $f = fopen(DBERROR_LOGFILE, "a+");
-
-            $cu = $cu instanceof \EtoA\Admin\AdminUser ? $cu->nick : $cu;
-            fwrite($f, date("d.m.Y H:i:s") . ", " . (isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : 'local') . ", " . $cu . "\n" . $message . "\n\n");
-            fclose($f);
+        if ($fehler == 1) {
+            throw new DBException($string);
         }
     }
 

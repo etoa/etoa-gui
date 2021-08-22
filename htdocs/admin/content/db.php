@@ -34,13 +34,6 @@ elseif ($sub === "backup") {
 }
 
 //
-// Error log
-//
-elseif ($sub === "errorlog") {
-    require("db/errorlog.inc.php");
-}
-
-//
 // Clean-Up
 //
 elseif ($sub === 'cleanup') {
