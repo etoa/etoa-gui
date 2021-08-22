@@ -46,7 +46,7 @@ abstract class Form
      * type                 Field Type: text, textarea, radio, select, numeric, decimal, color, comma_list
      * def_val              Default Value
      * size                 Field length (text)
-     * max_len               Max Text length (text)
+     * max_len              Max Text length (text)
      * rows                 Rows (textarea)
      * cols                 Cols (textarea)
      * items (Array)	    Checkbox-/Radio-/Select-Elements (label => value)
@@ -58,9 +58,8 @@ abstract class Form
 
     /**
      * @param array{name:string,text:string,type:string,def_val?:string,size?:int,max_len?:int,rows?:int,cols?:int,items?:array,show_overview?:bool,link_in_overview?:bool,show_hide?:array<string>,hide_show?:array<string>,line?:bool,column_end?:bool} $field
-     * @param array<string> $hidden_rows
      */
-    protected function createInput(array $field, string $name, string $value, array &$hidden_rows = []): string
+    protected function createInput(array $field, string $name, string $value): string
     {
         $stl = isset($field['def_val']) && $value != $field['def_val'] ? ' class="changed"' : '';
         switch ($field['type']) {
@@ -138,13 +137,6 @@ abstract class Form
                     }
 
                     $str .= " /> $label</label><br>";
-
-                    if (isset($field['show_hide']) && $value == $val) {
-                        $hidden_rows = $field['show_hide'];
-                    }
-                    if (isset($field['hide_show']) && $value != $val) {
-                        $hidden_rows = $field['hide_show'];
-                    }
                 }
 
                 return $str;

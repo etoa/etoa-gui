@@ -313,19 +313,33 @@ abstract class AdvancedForm extends Form
             echo "<input type=\"button\" value=\"Abbrechen\" onclick=\"document.location='?" . URL_SEARCH_STRING . "'\" /><br/><br/>";
             echo "<input type=\"hidden\" name=\"" . $this->getTableId() . "\" value=\"" . $request->query->get('id') . "\" />";
             echo "<table>";
-            $hidden_rows = array();
+
+            $hiddenRows = [];
+            foreach ($this->getFields() as $field) {
+                if ($field['type'] == "radio") {
+                    $value = $arr[$field['name']];
+                    foreach ($field['items'] ?? [] as $val) {
+                        if (isset($field['show_hide']) && $value == $val) {
+                            $hiddenRows = $field['show_hide'];
+                        }
+                        if (isset($field['hide_show']) && $value != $val) {
+                            $hiddenRows = $field['hide_show'];
+                        }
+                    }
+                }
+            }
+
             echo "<tr><td style=\"vertical-align:top;\"><table style=\"width:100%;\">";
             foreach ($this->getFields() as $field) {
                 echo "<tr id=\"row_" . $field['name'] . "\"";
-                if (in_array($field['name'], $hidden_rows, true)) {
+                if (in_array($field['name'], $hiddenRows, true)) {
                     echo " style=\"display:none;\"";
                 }
-
                 echo ">\n<th class=\"tbltitle\" width=\"200\">" . $field['text'] . ":</th>\n";
                 echo "<td class=\"tbldata\" width=\"200\">\n";
                 $name = $field['name'];
                 $value = $arr[$field['name']];
-                echo $this->createInput($field, $name, $value, $hidden_rows);
+                echo $this->createInput($field, $name, $value);
                 echo "</td>\n</tr>\n";
                 if ($field['line'] ?? false) {
                     echo "<tr><td style=\"height:4px;background:#000\" colspan=\"2\"></td></tr>";
