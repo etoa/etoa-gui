@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Support\FileUtils;
 use EtoA\User\UserPropertiesRepository;
 
 /** @var ConfigurationService $config */
@@ -56,7 +57,7 @@ if (isset($_POST['submit'])) {
                                             // Remove existing design, if it exists
                                             $existingDesign = $customDesignDir . '/' . $uploadedDesignDir;
                                             if (is_dir($existingDesign)) {
-                                                rrmdir($existingDesign);
+                                                FileUtils::removeDirectory($existingDesign);
                                             }
 
                                             // Extract design
@@ -104,7 +105,7 @@ else if (isset($_GET['download'])) {
         $dir = $designs[$design]['dir'];
 
         try {
-            createZipFromDirectory($dir, $zipFile);
+            FileUtils::createZipFromDirectory($dir, $zipFile);
             header('Content-Type: application/zip');
             header('Content-disposition: attachment; filename=' . $design . '.zip');
             header('Content-Length: ' . filesize($zipFile));
@@ -121,7 +122,7 @@ else if (isset($_GET['remove'])) {
     $design = $_GET['remove'];
     if (isset($designs[$design]) && $designs[$design]['custom']) {
         $dir = $designs[$design]['dir'];
-        rrmdir($dir);
+        FileUtils::removeDirectory($dir);
         $successMessage = 'Design gelöscht';
         $designs = get_designs();
     }

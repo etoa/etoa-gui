@@ -11,6 +11,7 @@ use EtoA\Missile\MissileDataRepository;
 use EtoA\Race\RaceDataRepository;
 use EtoA\Ship\ShipDataRepository;
 use EtoA\Ship\ShipSort;
+use EtoA\Support\FileUtils;
 use EtoA\Support\ImageUtils;
 use EtoA\Technology\TechnologyDataRepository;
 use EtoA\Technology\TechnologySort;
@@ -148,7 +149,7 @@ if (isset($_GET['download'])) {
         $dir = $imagepacks[$imagepack]['dir'];
 
         try {
-            createZipFromDirectory($dir, $zipFile);
+            FileUtils::createZipFromDirectory($dir, $zipFile);
             header('Content-Type: application/zip');
             header('Content-disposition: attachment; filename=' . $imagepack . '.zip');
             header('Content-Length: ' . filesize($zipFile));

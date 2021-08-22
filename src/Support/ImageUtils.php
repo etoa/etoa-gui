@@ -6,9 +6,6 @@ namespace EtoA\Support;
 
 class ImageUtils
 {
-    /**
-     * @return resource|false
-     */
     private static function imageCreateFromFile(string $path, bool $user_functions = false)
     {
         $info = @getimagesize($path);

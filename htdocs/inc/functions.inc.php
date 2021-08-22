@@ -1079,52 +1079,6 @@ function getLoginUrl($args = array())
     return $url;
 }
 
-function createZipFromDirectory($dir, $zipFile)
-{
-
-    $zip = new ZipArchive();
-    if ($zip->open($zipFile, ZIPARCHIVE::CREATE) !== TRUE) {
-        throw new Exception("Cannot open ZIP file " . $zipFile);
-    }
-
-    // create recursive directory iterator
-    $files = new RecursiveIteratorIterator(new RecursiveDirectoryIterator($dir), RecursiveIteratorIterator::LEAVES_ONLY);
-
-    // let's iterate
-    foreach ($files as $name => $file) {
-        $new_filename = substr($name, strlen(dirname($dir)) + 1);
-        if (is_file($file)) {
-            $zip->addFile($file, $new_filename);
-        }
-    }
-
-    // close the zip file
-    if (!$zip->close()) {
-        throw new Exception("There was a problem writing the ZIP archive " . $zipFile);
-    }
-}
-
-/**
- * Recursively remove a directory and its contents
- */
-function rrmdir($dir)
-{
-    if (is_dir($dir)) {
-        $objects = scandir($dir);
-        foreach ($objects as $object) {
-            if ($object != "." && $object != "..") {
-                if (filetype($dir . "/" . $object) == "dir") {
-                    rrmdir($dir . "/" . $object);
-                } else {
-                    unlink($dir . "/" . $object);
-                }
-            }
-        }
-        reset($objects);
-        rmdir($dir);
-    }
-}
-
 /**
  * Returns true if the debug mode is enabled
  * by checking the existence of the file config/debug
