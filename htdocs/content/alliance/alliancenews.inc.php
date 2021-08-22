@@ -4,6 +4,7 @@ use EtoA\Alliance\AllianceNewsRepository;
 use EtoA\Alliance\AllianceRepository;
 use EtoA\Alliance\AllianceRights;
 use EtoA\Alliance\TownhallService;
+use EtoA\Support\BBCodeUtils;
 use EtoA\Support\StringUtils;
 use EtoA\User\UserRatingService;
 
@@ -53,7 +54,7 @@ if (Alliance::checkActionRights(AllianceRights::ALLIANCE_NEWS)) {
             $_SESSION['alliance']['news']['alliance_id'] = $_POST['alliance_id'];
             $_SESSION['alliance']['news']['preview'] = TRUE;
             iBoxStart("Vorschau - " . $_POST['news_title']);
-            echo text2html($_POST['news_text']);
+            echo BBCodeUtils::toHTML($_POST['news_text']);
             iBoxEnd();
         } else {
             $_SESSION['alliance'] = array();

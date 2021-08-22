@@ -4,6 +4,7 @@ use EtoA\Building\BuildingDataRepository;
 use EtoA\Building\BuildingRepository;
 use EtoA\Building\BuildingTypeDataRepository;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Support\BBCodeUtils;
 use EtoA\Support\StringUtils;
 
 /** @var ConfigurationService $config */
@@ -25,7 +26,7 @@ if ($request->query->has('id') && $request->query->getInt('id') > 0) {
 
     $building = $buildingDataRepository->getBuilding($currentBuildingId);
     if ($building !== null) {
-        HelpUtil::breadCrumbs(["Geb&auml;ude", "buildings"], [text2html($building->name), $building->id], 1);
+        HelpUtil::breadCrumbs(["Geb&auml;ude", "buildings"], [$building->name, $building->id], 1);
         echo "<select onchange=\"document.location='?$link&amp;site=buildings&id='+this.options[this.selectedIndex].value\">";
         $buildingNames = $buildingDataRepository->getBuildingNames();
         foreach ($buildingNames as $buildingId => $buildingName) {
@@ -46,13 +47,13 @@ if ($request->query->has('id') && $request->query->getInt('id') > 0) {
             $currentLevel = $buildingRepository->getBuildingLevel((int) $cu->id, $currentBuildingId, (int) $cp->id);
         }
 
-        tableStart(text2html($building->name));
+        tableStart($building->name);
         echo "<tr>
             <th style=\"width:220px;background:#000;padding:0px;\" rowspan=\"2\">
                 <img src=\"" . IMAGE_PATH . "/" . IMAGE_BUILDING_DIR . "/building" . $building->id . "." . IMAGE_EXT . "\" style=\"width:220px;height:220px;background:#000;margin:0px;\" align=\"top\" alt=\"Bild " . $building->name . "\" />
             </th>
             <td colspan=\"2\">
-                <div align=\"justify\">" . text2html($building->longComment) . "</div>
+                <div align=\"justify\">" . BBCodeUtils::toHTML($building->longComment) . "</div>
             </td>
         </tr>
         <tr>
@@ -467,16 +468,16 @@ else {
 
     foreach ($buildingTypeNames as $buildingTypeId => $buildingTypeName) {
         $buildings = $buildingDataRepository->getBuildingsByType($buildingTypeId);
-        tableStart("<span>" . text2html($buildingTypeName) . "</span>");
+        tableStart("<span>" . $buildingTypeName . "</span>");
         foreach ($buildings as $building) {
             echo "<tr>
                 <td style=\"width:40px;padding:0px;background:#000;vertical-align:middle;\">
                     <a href=\"?$link&amp;site=$site&id=" . $building->id . "\">
-                        <img src=\"" . IMAGE_PATH . "/" . IMAGE_BUILDING_DIR . "/building" . $building->id . "_small." . IMAGE_EXT . "\" align=\"top\" style=\"width:40px;height:40px;background:#000;margin:0px;\" alt=\"Bild " . text2html($building->name) . "\" border=\"0\"/></a></td>";
+                        <img src=\"" . IMAGE_PATH . "/" . IMAGE_BUILDING_DIR . "/building" . $building->id . "_small." . IMAGE_EXT . "\" align=\"top\" style=\"width:40px;height:40px;background:#000;margin:0px;\" alt=\"Bild " . $building->name . "\" border=\"0\"/></a></td>";
             echo "<td style=\"width:130px;\">
-                <a href=\"?$link&amp;site=$site&amp;id=" . $building->id . "\"><b>" . text2html($building->name) . "</a></a>
+                <a href=\"?$link&amp;site=$site&amp;id=" . $building->id . "\"><b>" . $building->name . "</a></a>
             </td>";
-            echo "<td>" . text2html($building->shortComment) . "</td>";
+            echo "<td>" . BBCodeUtils::toHTML($building->shortComment) . "</td>";
             echo "<td style=\"width:90px\">";
             if ($building->fields === 0) {
                 echo "<b>Keine Felder</b></td>";

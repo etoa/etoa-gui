@@ -4,6 +4,7 @@ use EtoA\Race\RaceDataRepository;
 use EtoA\Ship\ShipCategoryRepository;
 use EtoA\Ship\ShipDataRepository;
 use EtoA\Ship\ShipRequirementRepository;
+use EtoA\Support\BBCodeUtils;
 use EtoA\Support\StringUtils;
 
 define("RANKING_SHIP_STRUCTURE", 20000);
@@ -70,7 +71,7 @@ if (isset($_GET['id'])) {
     $ship = $shipDataRepository->getShip($sid);
     if ($ship !== null) {
         $shipCategory = $shipCategoryRepository->getCategory($ship->catId);
-        HelpUtil::breadCrumbs(array("Schiffe", "shipyard"), array(text2html($ship->name), $ship->id), 1);
+        HelpUtil::breadCrumbs(array("Schiffe", "shipyard"), array($ship->name, $ship->id), 1);
         echo "<select onchange=\"document.location='?page=help&site=shipyard&id='+this.options[this.selectedIndex].value\">";
         $shipNames = $shipDataRepository->getShipNames();
         foreach ($shipNames as $shipId => $shipName) {
@@ -87,7 +88,7 @@ if (isset($_GET['id'])) {
                 <img src=\"" . IMAGE_PATH . "/" . IMAGE_SHIP_DIR . "/ship" . $ship->id . "." . IMAGE_EXT . "\" width=\"220\" height=\"220\" alt=\"Schiff\" />
             </td>
             <td class=\"tbldata\" colspan=\"3\">
-                " . text2html($ship->longComment) . "
+                " . BBCodeUtils::toHTML($ship->longComment) . "
             </td>
         </tr>";
 
@@ -296,7 +297,7 @@ else {
                 echo "<tr><td style=\"background:#000;width:40px;\">
                     <a href=\"?$link&site=$site&id=" . $ship->id . "\">
                     <img src=\"$s_img\" alt=\"Schiffbild\" width=\"40\" height=\"40\" border=\"0\"/></a></td>";
-                echo "<td " . tm($ship->name, text2html($ship->shortComment) . "<br/><br/>" . shipRanking($ship)) . ">
+                echo "<td " . tm($ship->name, BBCodeUtils::toHTML($ship->shortComment) . "<br/><br/>" . shipRanking($ship)) . ">
                         <a href=\"?$link&site=$site&id=" . $ship->id . "\">" . $ship->name . "</a>
                     </td>";
                 echo "<td>";

@@ -11,6 +11,7 @@ use EtoA\Log\GameLogSearch;
 use EtoA\Log\LogSeverity;
 use EtoA\Message\MessageRepository;
 use EtoA\Ship\ShipDataRepository;
+use EtoA\Support\BBCodeUtils;
 use EtoA\Support\StringUtils;
 use EtoA\Technology\TechnologyDataRepository;
 use EtoA\Universe\Planet\PlanetRepository;
@@ -272,7 +273,7 @@ function showLast5Messages($uid, $target, $limit = 5)
             }
             echo "</td>
                 <td class=\"tbldata\">" . $message->subject . "</td>
-                <td class=\"tbldata\">" . text2html($message->text) . "</td>
+                <td class=\"tbldata\">" . BBCodeUtils::toHTML($message->text) . "</td>
                 <td class=\"tbldata\">" . ($message->read ? "Ja" : "Nein") . "</td>
                 <td class=\"tbldata\">[<a href=\"?page=messages&sub=edit&message_id=" . $message->id . "\">Details</a>]</td>
             </tr>";
@@ -310,7 +311,7 @@ function userComments($uid, $target)
         </tr>";
         foreach ($comments as $comment) {
             echo "<tr>
-                <td class=\"tbldata\" >" . text2html($comment->text) . "</td>
+                <td class=\"tbldata\" >" . BBCodeUtils::toHTML($comment->text) . "</td>
                 <td class=\"tbldata\" style=\"width:200px;\">" . StringUtils::formatDate($comment->timestamp) . " von " . $comment->adminNick . "</td>
                 <td class=\"tbldata\" style=\"width:50px;\"><a href=\"javascript:;\" onclick=\"if (confirm('Wirklich löschen?')) {xajax_delUserComment('" . $uid . "','" . $target . "'," . $comment->id . ")}\">Löschen</a></td>
             </tr>";
@@ -376,7 +377,7 @@ function userLogs($uid, $target)
     echo "<tr><th>Nachricht</th><th>Datum</th><th>IP</th></tr>";
     $logs = $userLogRepository->getUserLogs($uid, 100);
     foreach ($logs as $log) {
-        echo "<tr><td>" . text2html($log->message) . "</td>
+        echo "<tr><td>" . BBCodeUtils::toHTML($log->message) . "</td>
                         <td>" . StringUtils::formatDate($log->timestamp) . "</td>
                         <td><a href=\"?page=user&amp;sub=ipsearch&amp;ip=" . $log->host . "\">" . $log->host . "</a></td></tr>";
     }
@@ -781,7 +782,7 @@ function loadEconomy($uid, $target)
                         <td>" . $obStatus . "</td>
                         <td><a href=\"javascript:;\" onclick=\"toggleBox('details" . $log->id . "')\">Details</a></td>
                         </tr>";
-            echo "<tr id=\"details" . $log->id . "\" style=\"display:none;\"><td colspan=\"9\">" . text2html($log->message) . "
+            echo "<tr id=\"details" . $log->id . "\" style=\"display:none;\"><td colspan=\"9\">" . BBCodeUtils::toHTML($log->message) . "
                         <br/><br/>IP: " . $log->ip . "</td></tr>";
         }
 
@@ -834,7 +835,7 @@ function loadEconomy($uid, $target)
                         <td>" . $obStatus . "</td>
                         <td><a href=\"javascript:;\" onclick=\"toggleBox('details" . $log->id . "')\">Details</a></td>
                         </tr>";
-            echo "<tr id=\"details" . $log->id . "\" style=\"display:none;\"><td colspan=\"9\">" . text2html($log->message) . "
+            echo "<tr id=\"details" . $log->id . "\" style=\"display:none;\"><td colspan=\"9\">" . BBCodeUtils::toHTML($log->message) . "
                         <br/><br/>IP: " . $log->ip . "</td></tr>";
         }
 
@@ -887,7 +888,7 @@ function loadEconomy($uid, $target)
                         <td>" . $obStatus . "</td>
                         <td><a href=\"javascript:;\" onclick=\"toggleBox('details" . $log->id . "')\">Details</a></td>
                         </tr>";
-            echo "<tr id=\"details" . $log->id . "\" style=\"display:none;\"><td colspan=\"9\">" . text2html($log->message) . "
+            echo "<tr id=\"details" . $log->id . "\" style=\"display:none;\"><td colspan=\"9\">" . BBCodeUtils::toHTML($log->message) . "
                         <br/><br/>IP: " . $log->ip . "</td></tr>";
         }
 
@@ -942,7 +943,7 @@ function loadEconomy($uid, $target)
                         <td>" . $obStatus . "</td>
                         <td><a href=\"javascript:;\" onclick=\"toggleBox('details" . $log->id . "')\">Details</a></td>
                         </tr>";
-            echo "<tr id=\"details" . $log->id . "\" style=\"display:none;\"><td colspan=\"9\">" . text2html($log->message) . "
+            echo "<tr id=\"details" . $log->id . "\" style=\"display:none;\"><td colspan=\"9\">" . BBCodeUtils::toHTML($log->message) . "
                         <br/><br/>IP: " . $log->ip . "</td></tr>";
         }
 

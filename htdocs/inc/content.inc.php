@@ -3,6 +3,7 @@
 use EtoA\Admin\AdminUserRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Quest\QuestResponseListener;
+use EtoA\Support\BBCodeUtils;
 use EtoA\Support\Mail\MailSenderService;
 use EtoA\Text\TextRepository;
 use EtoA\Support\RuntimeDataStore;
@@ -53,7 +54,7 @@ if (!$cu->isSetup() && $page != "help" && $page != "contact") {
         if ($tipText !== null) {
             echo "<br/>";
             iBoxStart("<span style=\"color:#0f0;\">TIPP</span>");
-            echo text2html($tipText);
+            echo BBCodeUtils::toHTML($tipText);
             iBoxEnd();
         }
     }
@@ -66,7 +67,7 @@ if (!$cu->isSetup() && $page != "help" && $page != "contact") {
     if ($systemMessage->isEnabled()) {
         echo "<br />";
         iBoxStart("<span style=\"color:red;\">WICHTIGE SYSTEMNACHRICHT</span>");
-        echo text2html($systemMessage->content);
+        echo BBCodeUtils::toHTML($systemMessage->content);
         iBoxEnd();
     }
 
@@ -77,7 +78,7 @@ if (!$cu->isSetup() && $page != "help" && $page != "contact") {
         if ($infoText->isEnabled()) {
             echo "<br />";
             iBoxStart("<span style=\"color:red;\">UPDATEDIENST</span>");
-            echo text2html($infoText->content);
+            echo BBCodeUtils::toHTML($infoText->content);
             iBoxEnd();
         }
     }

@@ -6,6 +6,7 @@ use EtoA\Defense\DefenseRepository;
 use EtoA\Ship\ShipDataRepository;
 use EtoA\Ship\ShipRepository;
 use EtoA\Ship\ShipTransformRepository;
+use EtoA\Support\BBCodeUtils;
 use EtoA\UI\ResourceBoxDrawer;
 use EtoA\Universe\Planet\PlanetRepository;
 
@@ -61,7 +62,7 @@ if ($cp) {
             //
             if ($config->getBoolean("battleban") && $config->param1Int("battleban_time") <= time() && $config->param2Int("battleban_time") > time()) {
                 iBoxStart("Kampfsperre");
-                echo 'Es ist momentan nicht m&ouml;glich andere Spieler anzugreifen. Grund: ' . text2html($config->param1("battleban")) . '<br />Die Sperre dauert vom ' . date("d.m.Y", $config->param1Int("battleban_time")) . ' um ' . date("H:i", $config->param1Int("battleban_time")) . ' Uhr bis am ' . date("d.m.Y", $config->param2Int("battleban_time")) . " um " . date("H:i", $config->param2Int("battleban_time")) . ' Uhr!';
+                echo 'Es ist momentan nicht m&ouml;glich andere Spieler anzugreifen. Grund: ' . BBCodeUtils::toHTML($config->param1("battleban")) . '<br />Die Sperre dauert vom ' . date("d.m.Y", $config->param1Int("battleban_time")) . ' um ' . date("H:i", $config->param1Int("battleban_time")) . ' Uhr bis am ' . date("d.m.Y", $config->param2Int("battleban_time")) . " um " . date("H:i", $config->param2Int("battleban_time")) . ' Uhr!';
                 iBoxEnd();
             }
 

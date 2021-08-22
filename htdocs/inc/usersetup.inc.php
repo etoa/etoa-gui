@@ -3,6 +3,7 @@
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\DefaultItem\DefaultItemRepository;
 use EtoA\Race\RaceDataRepository;
+use EtoA\Support\BBCodeUtils;
 use EtoA\Support\StringUtils;
 use EtoA\Text\TextRepository;
 use EtoA\UI\Tooltip;
@@ -376,7 +377,7 @@ if ($mode == "itemsets" && isset($planet)) {
     $welcomeText = $textRepo->find('welcome_message');
     if ($welcomeText->isEnabled()) {
         iBoxStart("Willkommen");
-        echo text2html($welcomeText->content);
+        echo BBCodeUtils::toHTML($welcomeText->content);
         iBoxEnd();
 
         /** @var \EtoA\Message\MessageRepository $messageRepository */

@@ -12,6 +12,7 @@ use EtoA\Alliance\AllianceRightRepository;
 use EtoA\Alliance\AllianceRights;
 use EtoA\Alliance\Board\AllianceBoardTopicRepository;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Support\BBCodeUtils;
 use EtoA\Support\StringUtils;
 use EtoA\User\UserRepository;
 
@@ -495,7 +496,7 @@ elseif ($cu->allianceId == 0) {
                     $entries = $allianceHistoryRepository->findForAlliance($cu->allianceId, 5);
                     if (count($entries) > 0) {
                         foreach ($entries as $entry) {
-                            echo "<div class=\"infoLog\">" . text2html($entry->text) . " <span>" . StringUtils::formatDate($entry->timestamp, false) . "</span></div>";
+                            echo "<div class=\"infoLog\">" . BBCodeUtils::toHTML($entry->text) . " <span>" . StringUtils::formatDate($entry->timestamp, false) . "</span></div>";
                         }
                     }
                     echo "</td></tr>";
@@ -503,7 +504,7 @@ elseif ($cu->allianceId == 0) {
 
                 // Text anzeigen
                 if ($alliance->text != "") {
-                    echo "<tr><td colspan=\"3\" style=\"text-align:center\">" . text2html($alliance->text) . "</td></tr>\n";
+                    echo "<tr><td colspan=\"3\" style=\"text-align:center\">" . BBCodeUtils::toHTML($alliance->text) . "</td></tr>\n";
                 }
 
                 // Kriege

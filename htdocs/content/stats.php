@@ -3,6 +3,7 @@
 use EtoA\Alliance\AlliancePointsRepository;
 use EtoA\Alliance\AllianceRepository;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Support\BBCodeUtils;
 use EtoA\Support\RuntimeDataStore;
 use EtoA\Support\StringUtils;
 use EtoA\User\UserPointsRepository;
@@ -31,7 +32,7 @@ if (isset($_GET['userdetail']) && intval($_GET['userdetail']) > 0) {
     $userRepository = $app[UserRepository::class];
     $user = $userRepository->getUser($udid);
     if ($user !== null) {
-        tableStart("Statistiken f&uuml;r " . text2html($user->nick) . "");
+        tableStart("Statistiken f&uuml;r " . BBCodeUtils::toHTML($user->nick) . "");
 
         echo "<tr><td colspan=\"6\" style=\"text-align:center;\">
                 <b>Punkte aktuell:</b> " . StringUtils::formatNumber($user->points) . ", <b>Rang aktuell:</b> " . $user->rank . "
@@ -64,7 +65,7 @@ if (isset($_GET['userdetail']) && intval($_GET['userdetail']) > 0) {
 
     $alliance = $allianceRepository->getAlliance($adid);
     if ($alliance !== null) {
-        echo "<h2>Punktedetails f&uuml;r [" . text2html($alliance->tag) . "] " . text2html($alliance->name) . "</h2>";
+        echo "<h2>Punktedetails f&uuml;r [" . BBCodeUtils::toHTML($alliance->tag) . "] " . BBCodeUtils::toHTML($alliance->name) . "</h2>";
         echo "<b>Punkte aktuell:</b> " . StringUtils::formatNumber($alliance->points) . ", <b>Rang aktuell:</b> " . $alliance->currentRank . "<br/><br/>";
         echo "<img src=\"misc/alliance_stats.image.php?alliance=" . $alliance->id . "\" alt=\"Diagramm\" /><br/><br/>";
         $pointEntries = $alliancePointsRepository->getPoints($alliance->id, 48);

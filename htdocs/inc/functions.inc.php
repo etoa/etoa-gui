@@ -4,6 +4,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Log\AccessLogRepository;
 use EtoA\Specialist\SpecialistService;
+use EtoA\Support\BBCodeUtils;
 use EtoA\Support\StringUtils;
 use EtoA\User\UserPropertiesRepository;
 use EtoA\User\UserRepository;
@@ -209,7 +210,7 @@ function iBoxEnd()
 function success_msg($text)
 {
     iBoxStart("Erfolg", "success");
-    echo text2html($text);
+    echo BBCodeUtils::toHTML($text);
     iBoxEnd();
 }
 
@@ -221,7 +222,7 @@ function success_msg($text)
 function info_msg($text)
 {
     iBoxStart("Information", "information");
-    echo text2html($text);
+    echo BBCodeUtils::toHTML($text);
     iBoxEnd();
 }
 
@@ -250,15 +251,15 @@ function error_msg($text, $type = 0, $exit = 0, $addition = 0, $stacktrace = nul
     }
 
     iBoxStart($title, "error");
-    echo text2html($text);
+    echo BBCodeUtils::toHTML($text);
 
     // Addition
     switch ($addition) {
         case 1:
-            echo text2html("\n\n[url " . FORUM_URL . "]Zum Forum[/url] | [email mail@etoa.ch]Mail an die Spielleitung[/email]");
+            echo BBCodeUtils::toHTML("\n\n[url " . FORUM_URL . "]Zum Forum[/url] | [email mail@etoa.ch]Mail an die Spielleitung[/email]");
             break;
         case 2:
-            echo text2html("\n\n[url " . DEVCENTER_PATH . "]Fehler melden[/url]");
+            echo BBCodeUtils::toHTML("\n\n[url " . DEVCENTER_PATH . "]Fehler melden[/url]");
             break;
         default:
             echo '';

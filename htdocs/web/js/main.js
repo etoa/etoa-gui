@@ -928,13 +928,8 @@ function addFontColor(id, colorId) {
 *
 * @param $string Text to wrap BB-Codes into HTML
 * @return Wrapped text
-*
-* @author MrCage | Nicolas Perrenoud
-*
-* @last editing: Demora | Selina Tanner 04.06.2007
 */
-
-function text2html(text, target) {
+function BBCodeToHTML(text, target) {
   text = htmlEntities(text);
   text = text.replace(/\n/g, "<br/>");
 

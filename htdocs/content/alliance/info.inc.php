@@ -3,6 +3,7 @@
 use EtoA\Alliance\AllianceDiplomacyLevel;
 use EtoA\Alliance\AllianceDiplomacyRepository;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Support\BBCodeUtils;
 use EtoA\Support\StringUtils;
 
 /** @var ConfigurationService $config */
@@ -39,7 +40,7 @@ if ($infoAlly->valid) {
     if ($infoAlly->text != "") {
         echo "<tr>
                         <td colspan=\"2\" style=\"text-align:center;\">
-                            " . text2html($infoAlly->text) . "
+                            " . BBCodeUtils::toHTML($infoAlly->text) . "
                         </td>
                     </tr>";
     }

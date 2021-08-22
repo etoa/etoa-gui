@@ -4,6 +4,7 @@ use EtoA\Bookmark\BookmarkOrder;
 use EtoA\Bookmark\BookmarkRepository;
 use EtoA\Bookmark\FleetBookmarkRepository;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Support\BBCodeUtils;
 use EtoA\Support\StringUtils;
 use EtoA\Universe\Entity\EntityCoordinates;
 use EtoA\Universe\Entity\EntityRepository;
@@ -146,7 +147,7 @@ if ($mode == "fleet") {
             $ac = FleetAction::createFactory($bookmark->action);
 
             echo "<tr>
-                    <td>" . text2html($bookmark->name) . "</td>
+                    <td>" . BBCodeUtils::toHTML($bookmark->name) . "</td>
                     <td style=\"width:40px;background:#000\"><img src=\"" . $ent->imagePath() . "\" /></td>
                     <td>" . $ent . "<br/>(" . $ent->entityCodeString() . ")</td>
                     <td>" . $ac . "</td>
@@ -661,7 +662,7 @@ if ($mode == "fleet") {
                                     <td>" . $ent->entityCodeString() . "</td>
                                     <td><a href=\"?page=cell&amp;id=" . $ent->cellId() . "&amp;hl=" . $ent->id() . "\">" . $ent . "</a></td>
                                     <td>" . $ent->owner() . "</td>
-                                    <td>" . text2html($bookmark->comment) . "</td>
+                                    <td>" . BBCodeUtils::toHTML($bookmark->comment) . "</td>
                                     <td>";
 
                 // Action icons added by river, Info link moved to coordinates (above)

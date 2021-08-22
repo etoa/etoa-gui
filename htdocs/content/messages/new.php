@@ -93,11 +93,11 @@ function sendMessageForm(
         <th width=\"50\" valign=\"top\">Text:</th>
         <td width=\"250\"><textarea name=\"message_text\" id=\"message\" rows=\"12\" cols=\"60\" ";
     if ($previewNewMessage) {
-        echo "onkeyup=\"text2html(this.value,'msgPreview');\"";
+        echo "onkeyup=\"BBCodeToHTML(this.value,'msgPreview');\"";
     }
     echo ">" . $text . '</textarea><br/>' . helpLink('textformat', 'Hilfe zur Formatierung') . '</td>';
 
-    $previewFunction = $previewNewMessage ? "text2html(document.getElementById('message').value,'msgPreview');" : '';
+    $previewFunction = $previewNewMessage ? "BBCodeToHTML(document.getElementById('message').value,'msgPreview');" : '';
     echo "<td>
         <input type=\"button\" onclick=\"bbcode(this.form,'b','');" . $previewFunction . "\" value=\"B\" style=\"font-weight:bold;\">
         <input type=\"button\" onclick=\"bbcode(this.form,'i','');" . $previewFunction . "\" value=\"I\" style=\"font-style:italic;\">
@@ -171,7 +171,7 @@ function sendMessageForm(
     tableEnd();
     echo "<script type=\"text/javascript\">";
     if ($previewNewMessage) {
-        echo "text2html(document.getElementById('message').value,'msgPreview');";
+        echo "BBCodeToHTML(document.getElementById('message').value,'msgPreview');";
     }
     echo "document.getElementById('user_nick').focus()";
     echo "</script>";

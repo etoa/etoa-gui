@@ -4,6 +4,7 @@ namespace EtoA\Core\Twig;
 
 use EtoA\Admin\AdminRoleManager;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Support\BBCodeUtils;
 use Pimple\Container;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
@@ -29,7 +30,7 @@ class TwigExtension extends AbstractExtension
             new TwigFunction('version', [$this, 'getVersion']),
             new TwigFunction('etoaUrl', [$this, 'getUrl']),
             new TwigFunction('onClick', [$this, 'getOnClick']),
-            new TwigFunction('text2Html', [$this, 'text2Html']),
+            new TwigFunction('BBCodeToHTML', [$this, 'BBCodeToHTML']),
             new TwigFunction('configValue', [$this, 'getConfigValue']),
             new TwigFunction('isAdminAllowed', [$this, 'isAdminAllowed']),
             new TwigFunction('renderTime', [$this, 'renderTime']),
@@ -97,9 +98,9 @@ class TwigExtension extends AbstractExtension
         }
     }
 
-    public function text2Html(string $string): string
+    public function BBCodeToHTML(string $string): string
     {
-        return text2html($string);
+        return BBCodeUtils::toHTML($string);
     }
 
     public function getConfigValue(string $key): string

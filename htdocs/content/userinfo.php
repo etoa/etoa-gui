@@ -2,6 +2,7 @@
 
 use EtoA\Alliance\AllianceRankRepository;
 use EtoA\Alliance\AllianceRepository;
+use EtoA\Support\BBCodeUtils;
 use EtoA\Support\StringUtils;
 use EtoA\User\UserLogRepository;
 use EtoA\User\UserRatingRepository;
@@ -44,7 +45,7 @@ if ($uid > 0) {
             }
         }
         if ($user->profileText != "") {
-            echo "<tr><td colspan=\"2\" style=\"text-align:center\">" . text2html($user->profileText) . "</td></tr>";
+            echo "<tr><td colspan=\"2\" style=\"text-align:center\">" . BBCodeUtils::toHTML($user->profileText) . "</td></tr>";
         }
         echo "<tr><th style=\"width:120px;\">Punkte:</th><td>" . StringUtils::formatNumber($user->points) . "</td></tr>";
         echo "<tr>
@@ -121,7 +122,7 @@ if ($uid > 0) {
         $logs = $userLogRepository->getUserLogs($user->getId(), 10, true);
         if (count($logs) > 0) {
             foreach ($logs as $log) {
-                echo "<div class=\"infoLog\">" . text2html($log->message);
+                echo "<div class=\"infoLog\">" . BBCodeUtils::toHTML($log->message);
                 echo "<span>" . StringUtils::formatDate($log->timestamp, false) . "";
                 echo "</span>
                     </div>";
@@ -138,7 +139,7 @@ if ($uid > 0) {
             $logs = $userLogRepository->getUserLogs($user->getId(), 30, false);
             if (count($logs) > 0) {
                 foreach ($logs as $log) {
-                    echo "<div class=\"infoLog\">" . text2html($log->message);
+                    echo "<div class=\"infoLog\">" . BBCodeUtils::toHTML($log->message);
                     echo "<span>" . StringUtils::formatDate($log->timestamp) . "";
                     echo "</span>
                         </div>";

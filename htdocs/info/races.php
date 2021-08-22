@@ -5,6 +5,7 @@ declare(strict_types=1);
 use EtoA\Defense\DefenseDataRepository;
 use EtoA\Race\RaceDataRepository;
 use EtoA\Ship\ShipDataRepository;
+use EtoA\Support\BBCodeUtils;
 use EtoA\Support\StringUtils;
 
 /** @var RaceDataRepository $raceRepository */
@@ -21,7 +22,7 @@ if ($request->query->has('id')) {
 
     echo "<h2>Rassen</h2>";
 
-    HelpUtil::breadCrumbs(["Rassen", "races"], [text2html($race->name), $race->id], 1);
+    HelpUtil::breadCrumbs(["Rassen", "races"], [$race->name, $race->id], 1);
     echo "<select onchange=\"document.location='?$link&amp;site=races&id='+this.options[this.selectedIndex].value\">";
     foreach ($raceNames as $id => $raceName) {
 
@@ -35,7 +36,7 @@ if ($request->query->has('id')) {
     echo "</select><br/><br/>";
 
     // Info text
-    echo text2html($race->comment) . "<br/><br/>";
+    echo BBCodeUtils::toHTML($race->comment) . "<br/><br/>";
 
     // Bonus / Malus
     tableStart('', 300);
@@ -83,8 +84,8 @@ if ($request->query->has('id')) {
         echo  "<tr><th colspan=\"3\">Spezielle Schiffe:</th></tr>";
         foreach ($ships as $ship) {
             echo "<tr><td style=\"background:black;\"><img src=\"" . $ship->getImagePath() . "\" style=\"width:40px;height:40px;border:none;\" alt=\"ship" . $ship->id . "\" /></td>
-            <th style=\"width:180px;\">" . text2html($ship->name) . "</th>
-            <td>" . text2html($ship->shortComment) . "</td></tr>";
+            <th style=\"width:180px;\">" . $ship->name . "</th>
+            <td>" . BBCodeUtils::toHTML($ship->shortComment) . "</td></tr>";
         }
         tableEnd();
     }
@@ -99,8 +100,8 @@ if ($request->query->has('id')) {
         foreach ($defenses as $defense) {
             $s_img = IMAGE_PATH . "/" . IMAGE_DEF_DIR . "/def" . $defense->id . "_small." . IMAGE_EXT;
             echo "<tr><td style=\"background:black;\"><img src=\"" . $s_img . "\" style=\"width:40px;height:40px;border:none;\" alt=\"def" . $defense->id . "\" /></td>
-            <th style=\"width:180px;\">" . text2html($defense->name) . "</th>
-            <td>" . text2html($defense->shortComment) . "</td></tr>";
+            <th style=\"width:180px;\">" . $defense->name . "</th>
+            <td>" . BBCodeUtils::toHTML($defense->shortComment) . "</td></tr>";
         }
         tableEnd();
     }
@@ -150,7 +151,7 @@ if ($request->query->has('id')) {
     foreach ($races as $race) {
         echo "<tr>";
         echo "<td><a href=\"?$link&amp;site=races&amp;id=" . $race->id . "\">" . $race->name . "</a></td>";
-        echo "<td>" . text2html($race->shortComment) . "</td></tr>";
+        echo "<td>" . BBCodeUtils::toHTML($race->shortComment) . "</td></tr>";
     }
     tableEnd();
 

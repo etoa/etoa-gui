@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\HostCache\NetworkNameService;
+use EtoA\Support\BBCodeUtils;
 use EtoA\Support\StringUtils;
 use EtoA\User\UserRepository;
 use EtoA\User\UserSearch;
@@ -82,9 +83,9 @@ elseif (isset($_GET['surveillance']) && $_GET['surveillance'] > 0) {
                 echo "<tr>
                         <td>" . StringUtils::formatDate($entry->timestamp) . "</td>
                         <td>" . $entry->page . "</td>
-                        <td>" . text2html($req) . "</td>
-                        <td>" . text2html($reqRaw) . "</td>
-                        <td>" . text2html($post) . "</td>
+                        <td>" . BBCodeUtils::toHTML($req) . "</td>
+                        <td>" . BBCodeUtils::toHTML($reqRaw) . "</td>
+                        <td>" . BBCodeUtils::toHTML($post) . "</td>
                     </tr>";
             }
             tableEnd();

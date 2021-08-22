@@ -9,6 +9,7 @@ use EtoA\Fleet\Exception\FleetScanFailedException;
 use EtoA\Fleet\Exception\FleetScanPreconditionsNotMetException;
 use EtoA\Fleet\FleetScanService;
 use EtoA\Fleet\Exception\InvalidFleetScanParameterException;
+use EtoA\Support\BBCodeUtils;
 use EtoA\Support\StringUtils;
 use EtoA\UI\ResourceBoxDrawer;
 use EtoA\Universe\Entity\EntityCoordinates;
@@ -71,7 +72,7 @@ if ($config->getBoolean('crypto_enable')) {
                     $out = $fleetScanService->scanFleets($currentUser, $planet, $cryptoCenterLevel, $targetEntity);
 
                     iBoxStart("Ergebnis der Analyse");
-                    echo text2html($out);
+                    echo BBCodeUtils::toHTML($out);
                     iBoxEnd();
                 } catch (FleetScanPreconditionsNotMetException | InvalidFleetScanParameterException | FleetScanFailedException $ex) {
                     error_msg($ex->getMessage());

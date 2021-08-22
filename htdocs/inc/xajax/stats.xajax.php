@@ -5,6 +5,7 @@ use EtoA\Alliance\AllianceStatsSort;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Ranking\GameStatsGenerator;
 use EtoA\Ranking\UserTitlesService;
+use EtoA\Support\BBCodeUtils;
 use EtoA\Support\StringUtils;
 use EtoA\User\UserRatingRepository;
 use EtoA\User\UserRatingSearch;
@@ -211,7 +212,7 @@ function statsShowBox($mode, $sort = "", $sortOrder = "")
                 <td>" . StringUtils::formatDate($entry->blockedFrom) . "</td>
                 <td>" . StringUtils::formatDate($entry->blockedTo) . "</td>
                 <td><a href=\"mailto:" . $entry->adminEmail . "\">" . $entry->adminNick . "</a></td>
-                <td>" . text2html($entry->banReason) . "</td>
+                <td>" . BBCodeUtils::toHTML($entry->banReason) . "</td>
                 </tr>";
             }
         } else

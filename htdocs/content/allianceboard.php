@@ -14,6 +14,7 @@ use EtoA\Alliance\Board\Category;
 use EtoA\Alliance\Board\Topic;
 use EtoA\Alliance\AllianceRankRepository;
 use EtoA\Alliance\AllianceRepository;
+use EtoA\Support\BBCodeUtils;
 use EtoA\Support\StringUtils;
 use EtoA\User\UserRepository;
 use EtoA\User\UserSearch;
@@ -200,7 +201,7 @@ if ($cu->allianceId > 0) {
                     echo "<form action=\"?page=$page&amp;bnd=" . $bid . "&topic=" . $post->topicId . "\" method=\"post\">";
                     echo "<input type=\"hidden\" name=\"post_id\" value=\"" . $post->id . "\" />";
                     iBoxStart("Soll der folgende Beitrag wirklich gelöscht werden?");
-                    echo text2html($post->text);
+                    echo BBCodeUtils::toHTML($post->text);
                     iBoxEnd();
                     echo "<input type=\"submit\" value=\"L&ouml;schen\" name=\"post_delete\" onclick=\"return confirm('Wirklich löschen?');\" /> &nbsp; ";
                 } else
@@ -274,11 +275,11 @@ if ($cu->allianceId > 0) {
                             if (isset($urank) && $allianceUsers[$post->userId]->rank == count($urank) - 1)
                                 echo " style=\"color:" . ADMIN_COLOR . "\"";
 
-                            echo ">" . text2html($post->text);
+                            echo ">" . BBCodeUtils::toHTML($post->text);
                             if ($post->changed !== null)
                                 echo "<br/><br/><span style=\"font-size:8pt;\">Dieser Beitrag wurde zuletzt geändert am " . date("d.m.Y", $post->changed) . " um " . date("H:i", $post->changed) . " Uhr.</span>";
                             if ($allianceUsers[$post->userId]->signature != "")
-                                echo "<hr>" . text2html($allianceUsers[$post->userId]->signature);
+                                echo "<hr>" . BBCodeUtils::toHTML($allianceUsers[$post->userId]->signature);
                             echo "</td></tr>";
                         }
                         tableEnd();
@@ -778,7 +779,7 @@ if ($cu->allianceId > 0) {
                             }
                             echo ">
                                 <b><a href=\"?page=$page&amp;bnd=0&cat=" . $category->id . "\">" . ($category->name != "" ? $category->name : "Unbenannt") . "</a></b>
-                                <br/>" . text2html($category->description) . "</td>";
+                                <br/>" . BBCodeUtils::toHTML($category->description) . "</td>";
                             echo "<td>" . $postCounts[$category->id] . "</td>";
                             echo "<td>" . $topicCounts[$category->id] . "</td>";
                             echo "<td>$ps</td>";
@@ -840,7 +841,7 @@ if ($cu->allianceId > 0) {
                                 echo " " . tm("Admin-Info: " . stripslashes($diplomacy->otherAllianceName),/*"<b>Position:</b> ".$arr['cat_order']."<br/>*/ "<b>Zugriff:</b> " . $rstr) . "";
                             }
                             echo "><b><a href=\"?page=$page&amp;cat=0&bnd=" . $diplomacy->id . "\"";
-                            echo ">" . stripslashes($diplomacy->otherAllianceName) . "</a></b><br/>" . text2html($diplomacy->text) . "</td>";
+                            echo ">" . stripslashes($diplomacy->otherAllianceName) . "</a></b><br/>" . BBCodeUtils::toHTML($diplomacy->text) . "</td>";
                             echo "<td>" . $postCounts[$diplomacy->id] . "</td>";
                             echo "<td>" . $topicCounts[$diplomacy->id] . "</td>";
                             echo "<td>$ps</td>";

@@ -8,6 +8,7 @@ use EtoA\Help\TicketSystem\TicketRepository;
 use EtoA\Help\TicketSystem\TicketService;
 use EtoA\Help\TicketSystem\TicketSolution;
 use EtoA\Help\TicketSystem\TicketStatus;
+use EtoA\Support\BBCodeUtils;
 use EtoA\Support\StringUtils;
 use EtoA\User\UserRepository;
 use Symfony\Component\HttpFoundation\Request;
@@ -214,7 +215,7 @@ function ticketDetails(
         echo "<tr>
         <td>" . StringUtils::formatDate($message->timestamp) . "</td>
         <td>" . $ticketService->getAuthorNick($message) . "</td>
-        <td>" . text2html($message->message) . "</td>
+        <td>" . BBCodeUtils::toHTML($message->message) . "</td>
         </tr>";
     }
     tableEnd();

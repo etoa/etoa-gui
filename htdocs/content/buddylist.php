@@ -2,6 +2,7 @@
 
 use EtoA\BuddyList\BuddyListRepository;
 use EtoA\Message\MessageRepository;
+use EtoA\Support\BBCodeUtils;
 use EtoA\Support\StringUtils;
 use EtoA\User\UserRepository;
 
@@ -118,7 +119,7 @@ if (isset($_GET['comment']) && intval($_GET['comment']) > 0) {
                 echo "<td colspan=\"3\"><i>Noch keine Erlaubnis</i></td>";
             echo "<td>";
             if ($buddy->comment != "") {
-                echo text2html($buddy->comment);
+                echo BBCodeUtils::toHTML($buddy->comment);
             }
             echo "</td>";
             echo "<td>

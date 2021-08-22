@@ -7,6 +7,7 @@ use EtoA\Alliance\AllianceRights;
 use EtoA\Log\LogFacility;
 use EtoA\Log\LogRepository;
 use EtoA\Log\LogSeverity;
+use EtoA\Support\BBCodeUtils;
 use EtoA\Support\StringUtils;
 use EtoA\User\UserRepository;
 use EtoA\User\UserUniverseDiscoveryService;
@@ -181,7 +182,7 @@ if ($valid > 0) {
                         " . $ship->img() . "</td>";
             echo "<td class=\"tbldata\">
                     <b>" . $ship->name() . "</b><br/>
-                " . text2html($ship->shortComment()) . "</td>";
+                " . BBCodeUtils::toHTML($ship->shortComment()) . "</td>";
             echo "<td class=\"tbldata\" style=\"width:50px;\">" . StringUtils::formatNumber($scnt) . "</td></tr>";
         }
         tableEnd();

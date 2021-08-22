@@ -3,6 +3,7 @@
 use EtoA\Admin\AdminUserRepository;
 use EtoA\Help\TicketSystem\TicketRepository;
 use EtoA\Help\TicketSystem\TicketService;
+use EtoA\Support\BBCodeUtils;
 use EtoA\Support\StringUtils;
 use EtoA\User\UserRepository;
 
@@ -82,7 +83,7 @@ function viewTicket(
         echo "<tr>
         <td>" . StringUtils::formatDate($message->timestamp) . "</td>
         <td>" . $ticketService->getAuthorNick($message) . "</td>
-        <td>" . text2html($message->message) . "</td>
+        <td>" . BBCodeUtils::toHTML($message->message) . "</td>
         </tr>";
     }
     tableEnd();

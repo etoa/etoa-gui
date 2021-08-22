@@ -9,6 +9,7 @@ use EtoA\Alliance\AllianceRights;
 use EtoA\Log\LogFacility;
 use EtoA\Log\LogRepository;
 use EtoA\Log\LogSeverity;
+use EtoA\Support\BBCodeUtils;
 use EtoA\Support\StringUtils;
 
 /** @var AllianceBuildingRepository $allianceBuildingRepository */
@@ -210,7 +211,7 @@ if ($allianceFleetControlLevel >= ALLIANCE_FLEET_SHOW_DETAIL && $rights) {
                                 </td>
                                 <td>
                                     <b>" . $ship->name() . "</b><br/>
-                                    " . text2html($ship->shortComment()) . "
+                                    " . BBCodeUtils::toHTML($ship->shortComment()) . "
                                 </td>
                                 <td style=\"width:50px;\">" . StringUtils::formatNumber($scnt) . "</td>
                             </tr>";

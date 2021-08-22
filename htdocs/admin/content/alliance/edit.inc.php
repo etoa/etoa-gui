@@ -7,6 +7,7 @@ use EtoA\Alliance\AllianceHistoryRepository;
 use EtoA\Alliance\AllianceRankRepository;
 use EtoA\Alliance\AllianceRepository;
 use EtoA\Alliance\AllianceTechnologyRepository;
+use EtoA\Support\BBCodeUtils;
 use EtoA\Support\StringUtils;
 use Symfony\Component\HttpFoundation\Request;
 use Twig\Environment;
@@ -423,7 +424,7 @@ function historyTab(AllianceHistoryRepository $historyRepository, int $id): void
     $entries = $historyRepository->findForAlliance($id);
     if (count($entries) > 0) {
         foreach ($entries as $entry) {
-            echo "<tr><td>" . date("d.m.Y H:i", $entry->timestamp) . "</td><td class=\"tbldata\">" . text2html($entry->text) . "</td></tr>";
+            echo "<tr><td>" . date("d.m.Y H:i", $entry->timestamp) . "</td><td class=\"tbldata\">" . BBCodeUtils::toHTML($entry->text) . "</td></tr>";
         }
     } else {
         echo "<tr><td colspan=\"3\" class=\"tbldata\"><i>Keine Daten vorhanden!</i></td></tr>";

@@ -5,6 +5,7 @@ use EtoA\Defense\DefenseSearch;
 use EtoA\Race\RaceDataRepository;
 use EtoA\Ship\ShipDataRepository;
 use EtoA\Ship\ShipSearch;
+use EtoA\Support\BBCodeUtils;
 use EtoA\Support\StringUtils;
 
 class GetRaceInfosJsonResponder extends JsonResponder
@@ -35,7 +36,7 @@ class GetRaceInfosJsonResponder extends JsonResponder
             if ($race !== null) {
                 ob_start();
 
-                echo text2html($race->comment) . "<br/><br/>";
+                echo BBCodeUtils::toHTML($race->comment) . "<br/><br/>";
                 tableStart('', 300);
                 echo "<tr><th colspan=\"2\">St&auml;rken / Schw&auml;chen:</th></tr>";
                 if ($race->metal !== 1.00) {
@@ -76,8 +77,8 @@ class GetRaceInfosJsonResponder extends JsonResponder
                 if (count($ships) > 0) {
                     foreach ($ships as $ship) {
                         echo "<tr><td style=\"background:black;\"><img src=\"" . $ship->getImagePath() . "\" style=\"width:40px;height:40px;border:none;\" alt=\"ship" . $ship->id . "\" /></td>
-					<th style=\"width:180px;\">" . text2html($ship->name) . "</th>
-					<td>" . text2html($ship->shortComment) . "</td></tr>";
+					<th style=\"width:180px;\">" . BBCodeUtils::toHTML($ship->name) . "</th>
+					<td>" . BBCodeUtils::toHTML($ship->shortComment) . "</td></tr>";
                     }
                 } else
                     echo "<tr><td colspan=\"3\">Keine Rassenschiffe vorhanden</td></tr>";
@@ -89,8 +90,8 @@ class GetRaceInfosJsonResponder extends JsonResponder
                 if (count($defense) > 0) {
                     foreach ($defense as $def) {
                         echo "<tr><td style=\"background:black;\"><img src=\"" . $def->getImagePath() . "\" style=\"width:40px;height:40px;border:none;\" alt=\"def" . $def->id . "\" /></td>
-					<th style=\"width:180px;\">" . text2html($def->name) . "</th>
-					<td>" . text2html($def->shortComment) . "</td></tr>";
+					<th style=\"width:180px;\">" . BBCodeUtils::toHTML($def->name) . "</th>
+					<td>" . BBCodeUtils::toHTML($def->shortComment) . "</td></tr>";
                     }
                 } else
                     echo "<tr><td colspan=\"3\">Keine Rassenverteidigung vorhanden</td></tr>";

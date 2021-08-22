@@ -11,6 +11,7 @@ use EtoA\Log\LogSeverity;
 use EtoA\Race\RaceDataRepository;
 use EtoA\Ranking\UserBannerService;
 use EtoA\Specialist\SpecialistDataRepository;
+use EtoA\Support\BBCodeUtils;
 use EtoA\Support\StringUtils;
 use EtoA\User\UserCommentRepository;
 use EtoA\User\UserHolidayService;
@@ -1463,7 +1464,7 @@ if ($user !== null) {
         </tr>";
         foreach ($comments as $comment) {
             echo "<tr>
-                <td class=\"tbldata\" >" . text2html($comment->text) . "</td>
+                <td class=\"tbldata\" >" . BBCodeUtils::toHTML($comment->text) . "</td>
                 <td class=\"tbldata\" style=\"width:200px;\">" . StringUtils::formatDate($comment->timestamp) . " von " . $comment->adminNick . "</td>
                 <td class=\"tbldata\" style=\"width:50px;\"><a href=\"javascript:;\" onclick=\"if (confirm('Wirklich löschen?')) {xajax_delUserComment('" . $id . "','commentsBox'," . $comment->id . ")}\">Löschen</a></td>
             </tr>";

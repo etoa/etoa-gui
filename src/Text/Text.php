@@ -10,7 +10,7 @@ class Text
     public string $label;
     public string $description;
     public string $content;
-    public int $updated;
+    public int $updated = 0;
     public bool $enabled = true;
     public bool $isOriginal = true;
 

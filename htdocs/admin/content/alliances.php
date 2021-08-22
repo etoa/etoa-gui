@@ -8,6 +8,7 @@ use EtoA\Alliance\AllianceRepository;
 use EtoA\Alliance\AllianceService;
 use EtoA\Alliance\InvalidAllianceParametersException;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Support\BBCodeUtils;
 use EtoA\Support\StringUtils;
 use EtoA\User\UserRepository;
 use Symfony\Component\HttpFoundation\Request;
@@ -437,7 +438,7 @@ function drop(Request $request, AllianceRepository $repository)
         echo "<tr><td class=\"tbltitle\" valign=\"top\">Gründer</td>
 			<td class=\"tbldata\">" . $userNicks[$alliance->founderId] . "</td></tr>";
         echo "<tr><td class=\"tbltitle\" valign=\"top\">Text</td>
-			<td class=\"tbldata\">" . text2html($alliance->text) . "</td></tr>";
+			<td class=\"tbldata\">" . BBCodeUtils::toHTML($alliance->text) . "</td></tr>";
         echo "<tr><td class=\"tbltitle\" valign=\"top\">Gründung</td>
 			<td class=\"tbldata\">" . date("Y-m-d H:i:s", $alliance->foundationTimestamp) . "</td></tr>";
         echo "<tr><td class=\"tbltitle\" valign=\"top\">Website</td>

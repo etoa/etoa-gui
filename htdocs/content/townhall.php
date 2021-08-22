@@ -7,6 +7,7 @@ use EtoA\Alliance\AllianceDiplomacyLevel;
 use EtoA\Alliance\AllianceDiplomacyRepository;
 use EtoA\Alliance\AllianceDiplomacySearch;
 use EtoA\Alliance\AllianceNewsRepository;
+use EtoA\Support\BBCodeUtils;
 use EtoA\Support\StringUtils;
 
 /** @var AllianceNewsRepository $allianceNewsRepository */
@@ -49,10 +50,10 @@ if (count($publicNews) > 0) {
         $id = "th" . $news->id;
         $sid = "sth" . $news->id;
 
-        echo "<tr><td>" . text2html($news->title) . "</td>";
+        echo "<tr><td>" . BBCodeUtils::toHTML($news->title) . "</td>";
         echo "<td>" . StringUtils::formatDate($news->date) . "</td>";
         if ($news->authorAllianceName != "" && $news->authorAllianceTag != "") {
-            echo "<td " . tm($news->authorAllianceTag, text2html($news->authorAllianceName)) . ">
+            echo "<td " . tm($news->authorAllianceTag, BBCodeUtils::toHTML($news->authorAllianceName)) . ">
                                 <a href=\"?page=alliance&amp;info_id=" . $news->authorAllianceId . "\">" . $news->authorAllianceTag . "</a>
                             </td>";
         } else {
@@ -62,7 +63,7 @@ if (count($publicNews) > 0) {
             [<a href=\"javascript:;\" onclick=\"toggleText('" . $id . "','" . $sid . "');\" id=\"" . $sid . "\">Anzeigen</a>]
             </td></tr>";
         echo "<tr id=\"" . $id . "\" style=\"display:none;\">
-                <td colspan=\"5\">" . text2html(stripslashes($news->text)) . "
+                <td colspan=\"5\">" . BBCodeUtils::toHTML(stripslashes($news->text)) . "
                 <br/><br/>-------------------------------------<br/>";
         if ($news->authorUserId > 0) {
             echo "Geschrieben von <b><a href=\"?page=userinfo&amp;id=" . $news->authorUserId . "\">" . $news->authorUserNick . "</a></b>";
@@ -96,10 +97,10 @@ if (count($internalNews) > 0) {
         $id = "th" . $news->id;
         $sid = "sth" . $news->id;
 
-        echo "<tr><td>" . text2html($news->title) . "</td>";
+        echo "<tr><td>" . BBCodeUtils::toHTML($news->title) . "</td>";
         echo "<td>" . StringUtils::formatDate($news->date) . "</td>";
         if ($news->authorAllianceName != "" && $news->authorAllianceTag != "") {
-            echo "<td " . tm($news->authorAllianceTag, text2html($news->authorAllianceName)) . ">
+            echo "<td " . tm($news->authorAllianceTag, BBCodeUtils::toHTML($news->authorAllianceName)) . ">
                     <a href=\"?page=alliance&amp;info_id=" . $news->authorAllianceId . "\">" . $news->authorAllianceTag . "</a>
 
                 </td>";
@@ -110,7 +111,7 @@ if (count($internalNews) > 0) {
             [<a href=\"javascript:;\" onclick=\"toggleText('" . $id . "','" . $sid . "');\" id=\"" . $sid . "\">Anzeigen</a>]
             </td></tr>";
         echo "<tr id=\"" . $id . "\" style=\"display:none;\">
-                <td colspan=\"5\">" . text2html(stripslashes($news->text)) . "
+                <td colspan=\"5\">" . BBCodeUtils::toHTML(stripslashes($news->text)) . "
                 <br/><br/>-------------------------------------<br/>";
         if ($news->authorUserId > 0) {
             echo "Geschrieben von <b><a href=\"?page=userinfo&amp;id=" . $news->authorUserId . "\">" . $news->authorUserNick . "</a></b>";
@@ -146,8 +147,8 @@ if (count($bnds) > 0) {
         $id = "bnd" . $diplomacy->id;
         $sid = "sbnd" . $diplomacy->id;
         echo "<tr>
-                <td><a href=\"?page=alliance&amp;info_id=" . $diplomacy->alliance1Id . "\" " . tm($diplomacy->alliance1Tag, text2html($diplomacy->alliance1Name)) . ">" . text2html($diplomacy->alliance1Name) . "</td>
-                <td><a href=\"?page=alliance&amp;info_id=" . $diplomacy->alliance2Id . "\" " . tm($diplomacy->alliance2Tag, text2html($diplomacy->alliance2Name)) . ">" . text2html($diplomacy->alliance2Name) . "</td>
+                <td><a href=\"?page=alliance&amp;info_id=" . $diplomacy->alliance1Id . "\" " . tm($diplomacy->alliance1Tag, BBCodeUtils::toHTML($diplomacy->alliance1Name)) . ">" . BBCodeUtils::toHTML($diplomacy->alliance1Name) . "</td>
+                <td><a href=\"?page=alliance&amp;info_id=" . $diplomacy->alliance2Id . "\" " . tm($diplomacy->alliance2Tag, BBCodeUtils::toHTML($diplomacy->alliance2Name)) . ">" . BBCodeUtils::toHTML($diplomacy->alliance2Name) . "</td>
                 <td>" . stripslashes($diplomacy->name) . "</td>
                 <td>" . StringUtils::formatDate($diplomacy->date) . "</td>
                 <td>";
@@ -159,7 +160,7 @@ if (count($bnds) > 0) {
         echo "</td>
             </tr>";
         echo "<tr id=\"" . $id . "\" style=\"display:none;\">
-                <td colspan=\"5\">" . text2html(stripslashes($diplomacy->publicText)) . "</td>
+                <td colspan=\"5\">" . BBCodeUtils::toHTML(stripslashes($diplomacy->publicText)) . "</td>
             </tr>";
     }
     tableEnd();
@@ -187,8 +188,8 @@ if (count($wars) > 0) {
         $id = "war" . $diplomacy->id;
         $sid = "swar" . $diplomacy->id;
         echo "<tr>
-                <td><a href=\"?page=alliance&amp;info_id=" . $diplomacy->alliance1Id . "\" " . tm($diplomacy->alliance1Tag, text2html($diplomacy->alliance1Name)) . ">" . text2html($diplomacy->alliance1Name) . "</td>
-                <td><a href=\"?page=alliance&amp;info_id=" . $diplomacy->alliance2Id . "\" " . tm($diplomacy->alliance2Tag, text2html($diplomacy->alliance2Name)) . ">" . text2html($diplomacy->alliance2Name) . "</td>
+                <td><a href=\"?page=alliance&amp;info_id=" . $diplomacy->alliance1Id . "\" " . tm($diplomacy->alliance1Tag, BBCodeUtils::toHTML($diplomacy->alliance1Name)) . ">" . BBCodeUtils::toHTML($diplomacy->alliance1Name) . "</td>
+                <td><a href=\"?page=alliance&amp;info_id=" . $diplomacy->alliance2Id . "\" " . tm($diplomacy->alliance2Tag, BBCodeUtils::toHTML($diplomacy->alliance2Name)) . ">" . BBCodeUtils::toHTML($diplomacy->alliance2Name) . "</td>
                 <td>" . StringUtils::formatDate($diplomacy->date) . "</td>
                 <td>" . StringUtils::formatDate($diplomacy->date + WAR_DURATION) . "</td>
                 <td>";
@@ -200,7 +201,7 @@ if (count($wars) > 0) {
         echo "</td>
             </tr>";
         echo "<tr id=\"" . $id . "\" style=\"display:none;\">
-                <td colspan=\"5\">" . text2html(stripslashes($diplomacy->publicText)) . "</td>
+                <td colspan=\"5\">" . BBCodeUtils::toHTML(stripslashes($diplomacy->publicText)) . "</td>
             </tr>";
     }
     tableEnd();
@@ -225,8 +226,8 @@ if (count($peace) > 0) {
         </tr>";
     foreach ($peace as $diplomacy) {
         echo "<tr>
-                <td><a href=\"?page=alliance&amp;info_id=" . $diplomacy->alliance1Id . "\" " . tm($diplomacy->alliance1Tag, text2html($diplomacy->alliance1Name)) . ">" . text2html($diplomacy->alliance1Name) . "</td>
-                <td><a href=\"?page=alliance&amp;info_id=" . $diplomacy->alliance2Id . "\" " . tm($diplomacy->alliance2Tag, text2html($diplomacy->alliance2Name)) . ">" . text2html($diplomacy->alliance2Name) . "</td>
+                <td><a href=\"?page=alliance&amp;info_id=" . $diplomacy->alliance1Id . "\" " . tm($diplomacy->alliance1Tag, BBCodeUtils::toHTML($diplomacy->alliance1Name)) . ">" . BBCodeUtils::toHTML($diplomacy->alliance1Name) . "</td>
+                <td><a href=\"?page=alliance&amp;info_id=" . $diplomacy->alliance2Id . "\" " . tm($diplomacy->alliance2Tag, BBCodeUtils::toHTML($diplomacy->alliance2Name)) . ">" . BBCodeUtils::toHTML($diplomacy->alliance2Name) . "</td>
                 <td>" . StringUtils::formatDate($diplomacy->date) . "</td>
                 <td>" . StringUtils::formatDate($diplomacy->date + PEACE_DURATION) . "</td>
             </tr>";

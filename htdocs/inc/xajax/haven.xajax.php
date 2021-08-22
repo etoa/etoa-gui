@@ -16,6 +16,7 @@ use EtoA\Ship\ShipRequirementRepository;
 use EtoA\Ship\ShipSort;
 use EtoA\Support\StringUtils;
 use EtoA\Specialist\SpecialistService;
+use EtoA\Support\BBCodeUtils;
 use EtoA\Technology\TechnologyDataRepository;
 use EtoA\Technology\TechnologyRepository;
 use EtoA\Universe\Entity\EntityCoordinates;
@@ -234,7 +235,7 @@ function havenShowShips()
             }
 
 
-            echo "<td " . tm($ship->name, "<img src=\"" . IMAGE_PATH . "/" . IMAGE_SHIP_DIR . "/ship" . $ship->id . "_middle." . IMAGE_EXT . "\" style=\"float:left;margin-right:5px;\">" . text2html($ship->shortComment) . "<br/>" . $acstr . "<br style=\"clear:both;\"/>") . ">" . $ship->name . "</td>";
+            echo "<td " . tm($ship->name, "<img src=\"" . IMAGE_PATH . "/" . IMAGE_SHIP_DIR . "/ship" . $ship->id . "_middle." . IMAGE_EXT . "\" style=\"float:left;margin-right:5px;\">" . BBCodeUtils::toHTML($ship->shortComment) . "<br/>" . $acstr . "<br style=\"clear:both;\"/>") . ">" . $ship->name . "</td>";
             echo "<td width=\"190\" " . tm("Geschwindigkeit", "Grundgeschwindigkeit: " . $ship->speed . " AE/h<br>$speedtechstring") . ">" . StringUtils::formatNumber($ship->speed * $timefactor) . " AE/h</td>";
             echo "<td width=\"110\">" . StringUtils::formatNumber($ship->pilots) . "</td>";
             echo "<td width=\"110\">" . StringUtils::formatNumber($count) . "<br/>";

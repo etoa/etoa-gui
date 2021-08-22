@@ -19,6 +19,7 @@ use EtoA\Technology\TechnologyRepository;
 use EtoA\Text\TextRepository;
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Support\BBCodeUtils;
 use EtoA\Support\StringUtils;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\User\UserLoginFailureRepository;
@@ -94,7 +95,7 @@ $infoText = $textRepo->find('info');
 if ($infoText->isEnabled()) {
     echo '<div class="overviewInfoTextContainer">';
     iBoxStart(": Wichtige Information :");
-    echo text2html($infoText->content);
+    echo BBCodeUtils::toHTML($infoText->content);
     iBoxEnd();
     echo '</div>';
 }

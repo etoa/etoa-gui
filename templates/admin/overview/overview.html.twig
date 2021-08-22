@@ -18,11 +18,11 @@
     {% endif %}
 
     {% if adminInfo %}
-        {{ macros.messagebox(text2Html(adminInfo), 'info', 'Admin-News')}}
+        {{ macros.messagebox(BBCodeToHTML(adminInfo), 'info', 'Admin-News')}}
     {% endif %}
 
     {% if systemMessage %}
-        {{ macros.messagebox(text2Html(systemMessage) ~ '<br/><a href=\"?page=texts&amp;id=system_message\">Bearbeiten/Deaktivieren</a>', 'info', 'Systemnachricht aktiv!')}}
+        {{ macros.messagebox(BBCodeToHTML(systemMessage) ~ '<br/><a href=\"?page=texts&amp;id=system_message\">Bearbeiten/Deaktivieren</a>', 'info', 'Systemnachricht aktiv!')}}
     {% endif %}
 
     {% if configValue('offline') == 1 %}

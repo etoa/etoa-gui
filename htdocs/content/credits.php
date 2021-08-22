@@ -1,5 +1,6 @@
 <?PHP
 
+use EtoA\Support\BBCodeUtils;
 use EtoA\Text\TextRepository;
 
 echo '<h1>Credits</h1>';
@@ -10,7 +11,7 @@ $textRepo = $app[TextRepository::class];
 $credits = $textRepo->find('credits');
 if ($credits->isEnabled()) {
     iBoxStart();
-    echo text2html($credits->content);
+    echo BBCodeUtils::toHTML($credits->content);
     iBoxEnd();
 }
 

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace EtoA\Alliance;
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Support\BBCodeUtils;
 
 class TownhallService
 {
@@ -50,8 +51,8 @@ class TownhallService
         // The records were retrieved OK, let's start building the item tags
         foreach ($publicNews as $news) {
             $rssValue .= "		<item>\r\n";
-            $rssValue .= "			<title>" . text2html($news->title) . "</title>\r\n";
-            $rssValue .= "			<description>" . text2html(substr($news->text, 0, 100)) . "</description>\r\n";
+            $rssValue .= "			<title>" . BBCodeUtils::toHTML($news->title) . "</title>\r\n";
+            $rssValue .= "			<description>" . BBCodeUtils::toHTML(substr($news->text, 0, 100)) . "</description>\r\n";
             $rssValue .= "			<link>http://www.etoa.ch</link>\r\n";
             $rssValue .= "		</item>\r\n";
         }

@@ -11,6 +11,7 @@ use EtoA\Fleet\FleetSearch;
 use EtoA\Message\MessageRepository;
 use EtoA\Message\ReportRepository;
 use EtoA\Notepad\NotepadRepository;
+use EtoA\Support\BBCodeUtils;
 use EtoA\Support\StringUtils;
 use EtoA\Text\TextRepository;
 use EtoA\Universe\Planet\PlanetRepository;
@@ -132,7 +133,7 @@ try {
         iBoxStart('Spiel offline', 750);
         echo "<img src=\"images/maintenance.jpg\" alt=\"maintenance\" /><br/><br/>";
         if ($config->get('offline_message') != "") {
-            echo text2html($config->get('offline_ message')) . "<br/><br/>";
+            echo BBCodeUtils::toHTML($config->get('offline_ message')) . "<br/><br/>";
         } else {
             echo "Das Spiel ist aufgrund von Wartungsarbeiten momentan offline! Schaue sp&auml;ter nochmals vorbei!<br/><br/>";
         }

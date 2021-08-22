@@ -4,6 +4,7 @@ use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Log\LogFacility;
 use EtoA\Log\LogRepository;
 use EtoA\Log\LogSeverity;
+use EtoA\Support\BBCodeUtils;
 
 /** @var ConfigurationService $config */
 $config = $app[ConfigurationService::class];
@@ -100,7 +101,7 @@ if (isset($_GET['run'])) {
 // Handle result message
 $updateResults = null;
 if (isset($_SESSION['update_results'])) {
-    $updateResults = text2html($_SESSION['update_results']);
+    $updateResults = BBCodeUtils::toHTML($_SESSION['update_results']);
     unset($_SESSION['update_results']);
 }
 

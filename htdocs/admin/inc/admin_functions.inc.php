@@ -20,6 +20,7 @@ use EtoA\Log\LogRepository;
 use EtoA\Log\LogSearch;
 use EtoA\Log\LogSeverity;
 use EtoA\Ship\ShipDataRepository;
+use EtoA\Support\BBCodeUtils;
 use EtoA\Support\StringUtils;
 use EtoA\Technology\TechnologyDataRepository;
 use EtoA\User\UserRepository;
@@ -390,7 +391,7 @@ function showLogs($args = null, $limit = 0)
             <td>" . StringUtils::formatDate($log->timestamp) . "</td>
             <td>" . LogSeverity::SEVERITIES[$log->severity] . "</td>
             <td>" . LogFacility::FACILITIES[$log->facility] . "</td>
-            <td>" . text2html($log->message);
+            <td>" . BBCodeUtils::toHTML($log->message);
             if ($log->ip != "")
                 echo "<br/><br/><b>Host:</b> " . $log->ip . " (" . $networkNameService->getHost($log->ip) . ")";
             echo "</td>
@@ -1048,7 +1049,7 @@ function showGameLogs($args = null, $limit = 0)
             <td>" . $obStatus . "</td>
             <td><a href=\"javascript:;\" onclick=\"toggleBox('details" . $log->id . "')\">Details</a></td>
             </tr>";
-            echo "<tr id=\"details" . $log->id . "\" style=\"display:none;\"><td colspan=\"9\">" . text2html($log->message) . "
+            echo "<tr id=\"details" . $log->id . "\" style=\"display:none;\"><td colspan=\"9\">" . BBCodeUtils::toHTML($log->message) . "
             <br/><br/>IP: " . $log->ip . "</td></tr>";
         }
         echo "</table>";

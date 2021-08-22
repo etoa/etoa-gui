@@ -50,6 +50,7 @@ use EtoA\Alliance\AllianceRepository;
 use EtoA\Alliance\AllianceRights;
 use EtoA\Alliance\Board\AllianceBoardTopicRepository;
 use EtoA\Message\MessageRepository;
+use EtoA\Support\BBCodeUtils;
 use EtoA\Support\StringUtils;
 
 if (Alliance::checkActionRights(AllianceRights::RELATIONS)) {
@@ -154,11 +155,11 @@ if (Alliance::checkActionRights(AllianceRights::RELATIONS)) {
                             </tr>";
                     echo "<tr>
                                 <th style=\"width:200px;\">Bündnissname</th>
-                                <td>" . text2html($diplomacy->name) . "</td>
+                                <td>" . BBCodeUtils::toHTML($diplomacy->name) . "</td>
                             </tr>";
                     echo "<tr>
                                 <th style=\"width:200px;\">Text</th>
-                                <td>" . text2html($diplomacy->text) . "</td>
+                                <td>" . BBCodeUtils::toHTML($diplomacy->text) . "</td>
                             </tr>";
                     if ($diplomacy->alliance1Id == $cu->allianceId) {
                         echo "<tr>
@@ -188,7 +189,7 @@ if (Alliance::checkActionRights(AllianceRights::RELATIONS)) {
                             </tr>";
                     echo "<tr>
                                 <th style=\"width:200px;\">Anfragetext</th>
-                                <td>" . text2html($diplomacy->text) . "</td>
+                                <td>" . BBCodeUtils::toHTML($diplomacy->text) . "</td>
                             </tr>";
                     echo "<tr>
                                 <th style=\"width:200px;\">Öffentlicher Text</th>
@@ -206,7 +207,7 @@ if (Alliance::checkActionRights(AllianceRights::RELATIONS)) {
                             </tr>";
                     echo "<tr>
                                 <th style=\"width:200px;\">Kriegserklärung</th>
-                                <td>" . text2html($diplomacy->text) . "</td>
+                                <td>" . BBCodeUtils::toHTML($diplomacy->text) . "</td>
                             </tr>";
                     if ($diplomacy->alliance1Id == $cu->allianceId) {
                         echo "<tr>
@@ -216,7 +217,7 @@ if (Alliance::checkActionRights(AllianceRights::RELATIONS)) {
                     } else {
                         echo "<tr>
                                     <th style=\"width:200px;\">Öffentlicher Text</th>
-                                    <td>" . text2html($diplomacy->publicText) . "</td>
+                                    <td>" . BBCodeUtils::toHTML($diplomacy->publicText) . "</td>
                                 </tr>";
                     }
                     tableEnd();
@@ -456,7 +457,7 @@ if (Alliance::checkActionRights(AllianceRights::RELATIONS)) {
                                 </a>
                             </td>
                             <td>
-                             " . text2html($otherAlliance->name) . "
+                             " . BBCodeUtils::toHTML($otherAlliance->name) . "
                             </td>";
 
                 if (isset($relations[$otherAlliance->id])) {

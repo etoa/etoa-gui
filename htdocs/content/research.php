@@ -9,6 +9,7 @@ use EtoA\Log\GameLogRepository;
 use EtoA\Log\LogSeverity;
 use EtoA\Support\StringUtils;
 use EtoA\Specialist\SpecialistService;
+use EtoA\Support\BBCodeUtils;
 use EtoA\Technology\Technology;
 use EtoA\Technology\TechnologyRepository;
 use EtoA\Technology\TechnologyRequirement;
@@ -504,11 +505,11 @@ if (isset($cp)) {
                 //
                 // Forschungsdaten anzeigen
                 //
-                tableStart(text2html($technology->name . " " . $b_level));
+                tableStart(BBCodeUtils::toHTML($technology->name . " " . $b_level));
                 echo "<tr><td width=\"220\" rowspan=\"3\" style=\"background:#000;;vertical-align:middle;\">
                 " . helpImageLink("research&amp;id=" . $technology->id, IMAGE_PATH . "/" . IMAGE_TECHNOLOGY_DIR . "/technology" . $technology->id . "." . IMAGE_EXT, $technology->name, "width:220px;height:220px") . "
                 </td>";
-                echo "<td valign=\"top\" colspan=\"2\">" . text2html($technology->shortComment) . "</td></tr>";
+                echo "<td valign=\"top\" colspan=\"2\">" . BBCodeUtils::toHTML($technology->shortComment) . "</td></tr>";
                 echo "<tr><th height=\"20\" width=\"50%\">Status:</th>";
                 echo "<td id=\"buildstatus\" width=\"50%\" style=\"" . $color . "\">$status_text</td></tr>";
                 echo "<tr><th height=\"20\" width=\"50%\">Stufe:</th>";

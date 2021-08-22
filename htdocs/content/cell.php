@@ -2,6 +2,7 @@
 
 use EtoA\Admin\AdminUserRepository;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Support\BBCodeUtils;
 use EtoA\Support\StringUtils;
 use EtoA\Universe\Cell\CellRepository;
 use EtoA\Universe\Entity\EntityType;
@@ -256,7 +257,7 @@ if ($cell->isValid()) {
                 }
             }
             echo "</td>
-                    <td $addstyle><a $class href=\"?page=entity&amp;id=" . $ent->id() . "\">" . text2html($ent->name()) . "</a></td>
+                    <td $addstyle><a $class href=\"?page=entity&amp;id=" . $ent->id() . "\">" . BBCodeUtils::toHTML($ent->name()) . "</a></td>
                     <td $addstyle>";
             if ($ent->ownerId() > 0) {
                 $header = $ent->owner();

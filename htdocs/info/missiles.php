@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\Missile\MissileDataRepository;
+use EtoA\Support\BBCodeUtils;
 use EtoA\Support\StringUtils;
 
 /** @var MissileDataRepository $missileDataRepository */
@@ -17,7 +18,7 @@ if (isset($_GET['id'])) {
 
     $missile = $missileDataRepository->getMissile($mid);
     if ($missile !== null) {
-        HelpUtil::breadCrumbs(array("Raketen", "missiles"), array(text2html($missile->name), $missile->id), 1);
+        HelpUtil::breadCrumbs(array("Raketen", "missiles"), array($missile->name, $missile->id), 1);
         echo "<select onchange=\"document.location='?$link&amp;site=missiles&id='+this.options[this.selectedIndex].value\">";
         $missileNames = $missileDataRepository->getMissileNames();
         foreach ($missileNames as $missileId => $missileName) {
@@ -30,7 +31,7 @@ if (isset($_GET['id'])) {
         tableStart($missile->name);
 
         echo "<tr><td width=\"220\" class=\"tbltitle\"><img src=\"" . IMAGE_PATH . "/missiles/missile" . $missile->id . "." . IMAGE_EXT . "\" width=\"220\" height=\"220\" alt=\"Raketen\" /></td>";
-        echo "<td class=\"tbldata\">" . text2html($missile->longDescription) . "</td></tr>";
+        echo "<td class=\"tbldata\">" . BBCodeUtils::toHTML($missile->longDescription) . "</td></tr>";
 
         echo "<tr><td colspan=\"2\" style=\"height:30px;\"></td></tr>";
 

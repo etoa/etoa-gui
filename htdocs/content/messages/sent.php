@@ -1,6 +1,7 @@
 <?php
 
 use EtoA\Message\MessageRepository;
+use EtoA\Support\BBCodeUtils;
 use EtoA\User\UserRepository;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -40,7 +41,7 @@ function viewSentMessage(
         echo "<tr><th colspan=\"2\">" . $subject . "</th></tr>";
         echo "<tr><th style=\"width:100px;\">Datum:</td><td>" . date("d.m.Y H:i", $message->timestamp) . "</td></tr>";
         echo "<tr><th>Empfänger:</th><td>" . userPopUp($message->userTo, $userRepository->getNick($message->userTo), 0) . "</td></tr>";
-        echo "<tr><th>Text:</td><td>" . text2html(addslashes($message->text)) . "</td></tr>";
+        echo "<tr><th>Text:</td><td>" . BBCodeUtils::toHTML(addslashes($message->text)) . "</td></tr>";
         tableEnd();
 
         echo "<input type=\"button\" value=\"Zurück\" onclick=\"document.location='?page=messages&mode=sent'\" /> &nbsp; ";
