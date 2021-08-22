@@ -3,6 +3,7 @@
 use EtoA\Alliance\AllianceDiplomacyLevel;
 use EtoA\Alliance\AllianceDiplomacyRepository;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Support\StringUtils;
 
 /** @var ConfigurationService $config */
 $config = $app[ConfigurationService::class];
@@ -165,7 +166,7 @@ if ($infoAlly->valid) {
     if ($infoAlly->url != "") {
         echo "<tr>
                         <th>Website/Forum:</th>
-                        <td><b>" . format_link($infoAlly->url) . "</b></td>
+                        <td><b>" . StringUtils::formatLink($infoAlly->url) . "</b></td>
                     </tr>";
     }
 

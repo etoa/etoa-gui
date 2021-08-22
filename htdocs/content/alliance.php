@@ -12,6 +12,7 @@ use EtoA\Alliance\AllianceRightRepository;
 use EtoA\Alliance\AllianceRights;
 use EtoA\Alliance\Board\AllianceBoardTopicRepository;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Support\StringUtils;
 use EtoA\User\UserRepository;
 
 /** @var ConfigurationService $config */
@@ -619,7 +620,7 @@ elseif ($cu->allianceId == 0) {
                 // Website
                 if ($alliance->url != "") {
                     echo "<tr><th width=\"120\">Website/Forum:</th><td colspan=\"2\"><b>" .
-                        format_link($alliance->url) . "</a></b></td></tr>\n";
+                        StringUtils::formatLink($alliance->url) . "</a></b></td></tr>\n";
                 }
 
                 // Diverses

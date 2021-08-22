@@ -168,21 +168,6 @@ function tf($ts)    // Time format
 }
 
 /**
- * Corrects a web url
- */
-function format_link($string)
-{
-    $string = preg_replace("#([ \n])(http|https|ftp)://([^ ,\n]*)#i", "\\1[url]\\2://\\3[/url]", $string);
-    $string = preg_replace("#([ \n])www\\.([^ ,\n]*)#i", "\\1[url]https://www.\\2[/url]", $string);
-    $string = preg_replace("#^(http|https|ftp)://([^ ,\n]*)#i", "[url]\\1://\\2[/url]", $string);
-    $string = preg_replace("#^www\\.([^ ,\n]*)#i", "[url]https://www.\\1[/url]", $string);
-    $string = preg_replace('#\[url\]www.([^\[]*)\[/url\]#i', '<a href="https://www.\1">\1</a>', $string);
-    $string = preg_replace('#\[url\]([^\[]*)\[/url\]#i', '<a href="\1">\1</a>', $string);
-    $string = preg_replace('#\[mailurl\]([^\[]*)\[/mailurl\]#i', '<a href="\1">Link</a>', $string);
-    return $string;
-}
-
-/**
  * Überprüft ob unerlaubte Zeichen im Text sind und gibt Antwort zurück
  *
  * @todo Should be removed (better use some regex and strip-/addslashes/trim

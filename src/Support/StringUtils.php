@@ -159,9 +159,24 @@ class StringUtils
             chr(13) . chr(10) => '<br />',    // CR LF
             chr(10) . chr(13) => '<br />',    // LF CR
             chr(10) => '<br />',             // LF
-            chr(13) => '<br />' ,             // CR
+            chr(13) => '<br />',             // CR
         );
 
         return strtr($str, $controlChars);
+    }
+
+    /**
+     * Corrects a web url
+     */
+    public static function formatLink(string $string): string
+    {
+        $string = preg_replace("#([ \n])(http|https|ftp)://([^ ,\n]*)#i", "\\1[url]\\2://\\3[/url]", $string);
+        $string = preg_replace("#([ \n])www\\.([^ ,\n]*)#i", "\\1[url]https://www.\\2[/url]", $string);
+        $string = preg_replace("#^(http|https|ftp)://([^ ,\n]*)#i", "[url]\\1://\\2[/url]", $string);
+        $string = preg_replace("#^www\\.([^ ,\n]*)#i", "[url]https://www.\\1[/url]", $string);
+        $string = preg_replace('#\[url\]www.([^\[]*)\[/url\]#i', '<a href="https://www.\1">\1</a>', $string);
+        $string = preg_replace('#\[url\]([^\[]*)\[/url\]#i', '<a href="\1">\1</a>', $string);
+        $string = preg_replace('#\[mailurl\]([^\[]*)\[/mailurl\]#i', '<a href="\1">Link</a>', $string);
+        return $string;
     }
 }
