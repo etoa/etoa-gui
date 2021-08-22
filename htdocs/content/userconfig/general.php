@@ -1,6 +1,9 @@
 <?PHP
 
 // Datenänderung übernehmen
+
+use EtoA\Support\StringUtils;
+
 if (isset($_POST['data_submit']) && $_POST['data_submit'] != "" && checker_verify()) {
     if (checkEmail($_POST['user_email'])) {
 
@@ -85,7 +88,7 @@ if ($cu->profileImage != "") {
 echo "Profilbild heraufladen/&auml;ndern: <input type=\"file\" name=\"user_profile_img_file\" /><br/>
           <b>Regeln:</b> Max " . PROFILE_MAX_IMG_WIDTH . "*" . PROFILE_MAX_IMG_HEIGHT . " Pixel, Bilder grösser als
           " . PROFILE_IMG_WIDTH . "*" . PROFILE_IMG_HEIGHT . " werden automatisch verkleinert.<br/>
-          Format: GIF, JPG oder PNG. Grösse: Max " . byte_format(PROFILE_IMG_MAX_SIZE) . " </td>
+          Format: GIF, JPG oder PNG. Grösse: Max " . StringUtils::formatBytes(PROFILE_IMG_MAX_SIZE) . " </td>
       </tr>";
 echo "<tr>
           <th width=\"35%\">Allianzforum-Signatur:</th>
@@ -103,7 +106,7 @@ if ($cu->avatar != "" && $cu->avatar != BOARD_DEFAULT_IMAGE) {
 echo "Avatar heraufladen/&auml;ndern: <input type=\"file\" name=\"user_avatar_file\" /><br/>
           <b>Regeln:</b> Max " . BOARD_AVATAR_MAX_WIDTH . "*" . BOARD_AVATAR_MAX_HEIGHT . " Pixel, Bilder grösser als
           " . BOARD_AVATAR_WIDTH . "*" . BOARD_AVATAR_HEIGHT . " werden automatisch verkleinert.<br/>
-          Format: GIF, JPG oder PNG. Grösse: Max " . byte_format(BOARD_AVATAR_MAX_SIZE) . " </td>
+          Format: GIF, JPG oder PNG. Grösse: Max " . StringUtils::formatBytes(BOARD_AVATAR_MAX_SIZE) . " </td>
       </tr>";
 echo "<tr>
         <th width=\"35%\">Link zum öffentliches Foren-Profil:</th>

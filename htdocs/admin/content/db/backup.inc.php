@@ -118,7 +118,7 @@ if ($dir !== null) {
             'filename' => $f,
             'date' => substr($f, strpos($f, '-') + 1, 16),
             'createdAt' => StringUtils::formatDate(filectime($dir . '/' . $f)),
-            'size' => byte_format(filesize($dir . '/' . $f)),
+            'size' => StringUtils::formatBytes(filesize($dir . '/' . $f)),
             'downloadLink' => createDownloadLink($dir . '/' . $f),
         ];
     }

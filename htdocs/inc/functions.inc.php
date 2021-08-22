@@ -835,30 +835,6 @@ function calcTechCosts(\EtoA\Technology\Technology $technology, $l, $fac = 1)
 }
 
 /**
- * Formates a given number of bytes to a humand readable string of Bytes, Kilobytes,
- * Megabytes, Gigabytes or Terabytes and rounds it to three digits
- *
- * @param int $s Number of bytes
- * @return string Well-formated byte number
- * @author Nicolas Perrenoud
- */
-function byte_format($s)
-{
-    if ($s >= 1099511627776) {
-        return round($s / 1099511627776, 3) . " TB";
-    }
-    if ($s >= 1073741824) {
-        return round($s / 1073741824, 3) . " GB";
-    } elseif ($s >= 1048576) {
-        return round($s / 1048576, 3) . " MB";
-    } elseif ($s >= 1024) {
-        return round($s / 1024, 3) . " KB";
-    } else {
-        return round($s) . " B";
-    }
-}
-
-/**
  * Generates a password using the password string, and possibly a user selected seed
  *
  * @param string $pw Password from user

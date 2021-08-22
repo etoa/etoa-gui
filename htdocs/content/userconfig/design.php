@@ -237,7 +237,7 @@ foreach ($imagepacks as $k => $v) {
                 <td>" . $v['name'] . "</td>
                 <td><a href=\"" . $path . "\">" . $file . "</a></td>
                 <td><a href=\"mailto:" . $v['email'] . "\">" . $v['author'] . "</a></td>
-                <td>" . byte_format($fs) . "</td>
+                <td>" . StringUtils::formatBytes($fs) . "</td>
                 <td>" . StringUtils::formatDate($t) . "</td>
                 </tr>";
             }

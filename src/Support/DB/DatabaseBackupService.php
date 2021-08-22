@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace EtoA\Support\DB;
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Support\StringUtils;
 use Exception;
 
 class DatabaseBackupService
@@ -197,7 +198,7 @@ class DatabaseBackupService
                 throw new Exception("Fehler beim Erstellen der Backup-Datei " . $file . ". Es wurde keine Datei erstellt.");
             }
 
-            return "Backup " . $file . " erstellt, Dateigrösse: " . byte_format(filesize($file));
+            return "Backup " . $file . " erstellt, Dateigrösse: " . StringUtils::formatBytes(filesize($file));
         } else {
             throw new Exception("Das Backup Verzeichnis " . $backupDir . " existiert nicht!");
         }

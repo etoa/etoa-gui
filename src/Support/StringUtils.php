@@ -343,4 +343,29 @@ class StringUtils
 
         return $string;
     }
+
+    /**
+     * Formates a given number of bytes to a human readable string of Bytes, Kilobytes,
+     * Megabytes, Gigabytes or Terabytes and rounds it to three digits
+     *
+     * @param int $s Number of bytes
+     * @return string Well-formatted byte number
+     */
+    public static function formatBytes(int $s): string
+    {
+        if ($s >= 1099511627776) {
+            return round($s / 1099511627776, 3) . " TB";
+        }
+        if ($s >= 1073741824) {
+            return round($s / 1073741824, 3) . " GB";
+        }
+        if ($s >= 1048576) {
+            return round($s / 1048576, 3) . " MB";
+        }
+        if ($s >= 1024) {
+            return round($s / 1024, 3) . " KB";
+        }
+
+        return round($s) . " B";
+    }
 }

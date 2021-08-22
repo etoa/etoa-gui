@@ -140,7 +140,7 @@ function fileSharing()
                     $link = "file=" . base64_encode($f) . "&h=" . md5($f);
                     echo "<tr>
                         <td><a href=\"" . createDownloadLink($file) . "\">$f</a></td>
-                        <td>" . byte_format(filesize($file)) . "</td>
+                        <td>" . StringUtils::formatBytes(filesize($file)) . "</td>
                         <td>" . StringUtils::formatDate(filemtime($file)) . "</td>
                         <td>
                             <a href=\"?page=$page&amp;sub=$sub&amp;action=rename&" . $link . "\">Umbenennen</a>

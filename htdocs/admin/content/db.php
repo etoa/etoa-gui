@@ -80,7 +80,7 @@ else {
         foreach ($tr as $k => $v) {
             $dbStats[] = [
                 'name' => $tn[$k],
-                'size' => byte_format($ts[$k]),
+                'size' => StringUtils::formatBytes($ts[$k]),
                 'entries' => StringUtils::formatNumber((int) $tr[$k]),
                 'engine' => $engines[$k],
             ];
@@ -90,7 +90,7 @@ else {
         foreach ($tn as $k => $v) {
             $dbStats[] = [
                 'name' => $tn[$k],
-                'size' => byte_format($ts[$k]),
+                'size' => StringUtils::formatBytes($ts[$k]),
                 'entries' => StringUtils::formatNumber((int) $tr[$k]),
                 'engine' => $engines[$k],
             ];
@@ -100,7 +100,7 @@ else {
         foreach ($engines as $k => $v) {
             $dbStats[] = [
                 'name' => $tn[$k],
-                'size' => byte_format($ts[$k]),
+                'size' => StringUtils::formatBytes($ts[$k]),
                 'entries' => StringUtils::formatNumber((int) $tr[$k]),
                 'engine' => $engines[$k],
             ];
@@ -110,7 +110,7 @@ else {
         foreach ($ts as $k => $v) {
             $dbStats[] = [
                 'name' => $tn[$k],
-                'size' => byte_format($ts[$k]),
+                'size' => StringUtils::formatBytes($ts[$k]),
                 'entries' => StringUtils::formatNumber((int) $tr[$k]),
                 'engine' => $engines[$k],
             ];
@@ -121,15 +121,15 @@ else {
         'dbStats' => $dbStats,
         'dbName' => $dbManagerRepository->getDatabaseName(),
         'dbRows' => StringUtils::formatNumber($rows),
-        'dbSize' => byte_format($datal),
+        'dbSize' => StringUtils::formatBytes($datal),
         'serverUptime' => StringUtils::formatTimespan($uts),
         'serverStarted' => StringUtils::formatDate(time() - $uts),
-        'bytesReceived' => byte_format($st['bytes_received']),
-        'bytesReceivedHour' => byte_format($uth > 0 ? $st['bytes_received'] / $uth : 0),
-        'bytesSent' => byte_format($st['bytes_sent']),
-        'bytesSentHour' => byte_format($uth > 0 ? $st['bytes_sent'] / $uth : 0),
-        'bytesTotal' => byte_format($st['bytes_received'] + $st['bytes_sent']),
-        'bytesTotalHour' => byte_format($uth > 0 ? ($st['bytes_received'] + $st['bytes_sent']) / $uth : 0),
+        'bytesReceived' => StringUtils::formatBytes($st['bytes_received']),
+        'bytesReceivedHour' => StringUtils::formatBytes($uth > 0 ? $st['bytes_received'] / $uth : 0),
+        'bytesSent' => StringUtils::formatBytes($st['bytes_sent']),
+        'bytesSentHour' => StringUtils::formatBytes($uth > 0 ? $st['bytes_sent'] / $uth : 0),
+        'bytesTotal' => StringUtils::formatBytes($st['bytes_received'] + $st['bytes_sent']),
+        'bytesTotalHour' => StringUtils::formatBytes($uth > 0 ? ($st['bytes_received'] + $st['bytes_sent']) / $uth : 0),
         'maxUsedConnections' => StringUtils::formatNumber($st['max_used_connections']),
         'abortedConnections' => StringUtils::formatNumber($st['aborted_connects']),
         'abortedConnectsHour' => StringUtils::formatNumber($uth > 0 ? $st['aborted_connects'] / $uth : 0),

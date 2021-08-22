@@ -1,4 +1,7 @@
 <?PHP
+
+use EtoA\Support\StringUtils;
+
 class ImageUpload
 {
     private $field;
@@ -89,7 +92,7 @@ class ImageUpload
                     error_msg("Ungültige Bilddatei!");
                 }
             } else {
-                error_msg("Das Bild ist zu gross (" . byte_format($iarr['size']) . ", max " . byte_format($this->maxSize) . " erlaubt)!");
+                error_msg("Das Bild ist zu gross (" . StringUtils::formatBytes($iarr['size']) . ", max " . StringUtils::formatBytes($this->maxSize) . " erlaubt)!");
             }
         } else {
             error_msg("Keine Datei hochgeladen!");
