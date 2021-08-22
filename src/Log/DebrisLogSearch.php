@@ -29,7 +29,7 @@ class DebrisLogSearch extends AbstractSearch
 
     public function timeBefore(int $timestamp): self
     {
-        $this->parts[] = 'time < = :timeBefore';
+        $this->parts[] = 'time <= :timeBefore';
         $this->parameters['timeBefore'] = $timestamp;
 
         return $this;
