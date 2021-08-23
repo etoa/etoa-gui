@@ -104,4 +104,20 @@ class SolarTypeRepository extends AbstractRepository
             'cnt' => (int) $arr['cnt'],
         ], $data);
     }
+
+    public function getSolarTypeForEntity(int $entityId): ?SolarType
+    {
+        $data = $this->getConnection()
+            ->executeQuery(
+                "SELECT sol_types.* FROM sol_types
+                INNER JOIN stars ON sol_types.sol_type_id = stars.type_id
+                INNER JOIN entities AS sentity ON stars.id = sentity.id
+                INNER JOIN cells ON cells.id = sentity.cell_id AND sentity.pos = 0
+                INNER JOIN entities AS pentity ON cells.id = pentity.cell_id AND pentity.id = :entityId",
+                ['entityId' => $entityId]
+            )
+            ->fetchAssociative();
+
+        return $data !== false ? new SolarType($data) : null;
+    }
 }

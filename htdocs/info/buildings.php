@@ -2,13 +2,21 @@
 
 use EtoA\Building\BuildingDataRepository;
 use EtoA\Building\BuildingRepository;
+use EtoA\Building\BuildingService;
 use EtoA\Building\BuildingTypeDataRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Support\BBCodeUtils;
 use EtoA\Support\StringUtils;
+use EtoA\User\UserRepository;
 
 /** @var ConfigurationService $config */
 $config = $app[ConfigurationService::class];
+
+/** @var BuildingService $buildingService */
+$buildingService = $app[BuildingService::class];
+
+/** @var UserRepository $userRepository */
+$userRepository = $app[UserRepository::class];
 
 /** @var \Symfony\Component\HttpFoundation\Request $request */
 
@@ -388,24 +396,31 @@ if ($request->query->has('id') && $request->query->getInt('id') > 0) {
         }
 
         tableStart("Kostenentwicklung (Faktor: " . $building->buildCostsFactor . ")");
-        echo "<tr><th style=\"text-align:center;\">Level</th>
-                <th>" . RES_ICON_METAL . "" . RES_METAL . "</th>
-                <th>" . RES_ICON_CRYSTAL . "" . RES_CRYSTAL . "</th>
-                <th>" . RES_ICON_PLASTIC . "" . RES_PLASTIC . "</th>
-                <th>" . RES_ICON_FUEL . "" . RES_FUEL . "</th>
-            <th>" . RES_ICON_FOOD . "" . RES_FOOD . "</th>
-   <!-- 	<th>" . RES_ICON_POWER . "Energie</th>     -->
-                <th>Felder</th></tr>";
-        for ($x = 0; $x < min(30, $building->lastLevel); $x++) {
-            $bc = calcBuildingCosts($building, $x);
-            echo '<tr><td>' . ($x + 1) . '</td>
-                    <td style="text-align:right;">' . StringUtils::formatNumber($bc['metal']) . '</td>
-                    <td style="text-align:right;">' . StringUtils::formatNumber($bc['crystal']) . '</td>
-                    <td style="text-align:right;">' . StringUtils::formatNumber($bc['plastic']) . '</td>
-                    <td style="text-align:right;">' . StringUtils::formatNumber($bc['fuel']) . '</td>
-                    <td style="text-align:right;">' . StringUtils::formatNumber($bc['food']) . '</td>
-   <!-- 	  <td style="text-align:right;">' . StringUtils::formatNumber($bc['power']) . '</td>      -->
-                    <td style="text-align:right;">' . StringUtils::formatNumber($building->fields * ($x + 1)) . '</td></tr>';
+        echo "<tr>
+            <th style=\"text-align:center;\">Level</th>
+            <th>" . RES_ICON_METAL . "" . RES_METAL . "</th>
+            <th>" . RES_ICON_CRYSTAL . "" . RES_CRYSTAL . "</th>
+            <th>" . RES_ICON_PLASTIC . "" . RES_PLASTIC . "</th>
+            <th>" . RES_ICON_FUEL . "" . RES_FUEL . "</th>
+            <th>" . RES_ICON_FOOD . "" . RES_FOOD . "</th>";
+        if ($building->costsPower > 0) {
+            echo "<th>" . RES_ICON_POWER . "Energie</th>";
+        }
+        echo "<th>Felder</th></tr>";
+        $user = isset($cu) && $cu instanceof \User ? $userRepository->getUser($cu->id) : null;
+        for ($level = 0; $level < min(30, $building->lastLevel); $level++) {
+            $costs = $buildingService->calculateCosts($building, $level, $user);
+            echo '<tr>
+                <td>' . ($level + 1) . '</td>
+                <td style="text-align:right;">' . StringUtils::formatNumber($costs->metal) . '</td>
+                <td style="text-align:right;">' . StringUtils::formatNumber($costs->crystal) . '</td>
+                <td style="text-align:right;">' . StringUtils::formatNumber($costs->plastic) . '</td>
+                <td style="text-align:right;">' . StringUtils::formatNumber($costs->fuel) . '</td>
+                <td style="text-align:right;">' . StringUtils::formatNumber($costs->food) . '</td>';
+            if ($building->costsPower > 0) {
+                echo '<td style="text-align:right;">' . StringUtils::formatNumber($costs->power) . '</td>';
+            }
+            echo '<td style="text-align:right;">' . StringUtils::formatNumber($building->fields * ($level + 1)) . '</td></tr>';
         }
         tableEnd();
 
@@ -417,10 +432,9 @@ if ($request->query->has('id') && $request->query->getInt('id') > 0) {
     }
 
     echo "<input type=\"button\" value=\"Geb&auml;ude&uuml;bersicht\" onclick=\"document.location='?$link&amp;site=$site'\" /> &nbsp; ";
-    if (!$popup) {
-        echo "<input type=\"button\" value=\"Technikbaum\" onclick=\"document.location='?page=techtree&mode=buildings'\" /> &nbsp; ";
-    }
-    if (isset($_SESSION['lastpage']) && $_SESSION['lastpage'] == "buildings" && !$popup) {
+    echo "<input type=\"button\" value=\"Technikbaum\" onclick=\"document.location='?page=techtree&mode=buildings'\" /> &nbsp; ";
+
+    if (isset($_SESSION['lastpage']) && $_SESSION['lastpage'] == "buildings") {
         echo "<input type=\"button\" value=\"Zur&uuml;ck zum Bauhof\" onclick=\"document.location='?page=buildings'\" /> &nbsp; ";
     }
 }

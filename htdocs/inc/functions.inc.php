@@ -607,53 +607,6 @@ function timerStop($starttime)
 }
 
 /**
- * Calculates costs per level for a given building costs array
- *
- * @param int $level Level
- * @param float $fac costFactor (like specialist)
- * @return array<string, float> Array of calculated costs
- *
- */
-function calcBuildingCosts(\EtoA\Building\Building $building, $level, $fac = 1)
-{
-    global $cp;
-    global $cu;
-
-    global $app;
-
-    /** @var ConfigurationService $config */
-    $config = $app[ConfigurationService::class];
-
-    /** @var SpecialistService $specialistService */
-    $specialistService = $app[SpecialistService::class];
-    $specialist = $specialistService->getSpecialistOfUser($cu->id);
-    /** @var RaceDataRepository $raceRepository */
-    $raceRepository = $app[RaceDataRepository::class];
-    $race = $raceRepository->getRace($cu->raceId);
-
-    $bc = array();
-    $bc['metal'] = $fac * $building->costsMetal * pow($building->buildCostsFactor, $level);
-    $bc['crystal'] = $fac * $building->costsCrystal * pow($building->buildCostsFactor, $level);
-    $bc['plastic'] = $fac * $building->costsPlastic * pow($building->buildCostsFactor, $level);
-    $bc['fuel'] = $fac * $building->costsFuel * pow($building->buildCostsFactor, $level);
-    $bc['food'] = $fac * $building->costsFood * pow($building->buildCostsFactor, $level);
-    $bc['power'] = $fac * $building->costsPower * pow($building->buildCostsFactor, $level);
-
-    $typeBuildTime = 1.0;
-    $starBuildTime = 1.0;
-
-    if (isset($cp->typeBuildtime))
-        $typeBuildTime = $cp->typeBuildtime;
-    if (isset($cp->starBuildtime))
-        $starBuildTime = $cp->starBuildtime;
-
-    $bonus = $race->buildTime + $typeBuildTime + $starBuildTime + ($specialist !== null ? $specialist->timeBuildings : 1) - 3;
-    $bc['time'] = ($bc['metal'] + $bc['crystal'] + $bc['plastic'] + $bc['fuel'] + $bc['food']) / $config->getInt('global_time') * $config->getFloat('build_build_time');
-    $bc['time'] *= $bonus;
-    return $bc;
-}
-
-/**
  * Calculates costs per level for a given technology costs array
  *
  * @param int $l Level
@@ -663,7 +616,6 @@ function calcBuildingCosts(\EtoA\Building\Building $building, $level, $fac = 1)
  */
 function calcTechCosts(\EtoA\Technology\Technology $technology, $l, $fac = 1)
 {
-
     // Baukostenberechnung          Baukosten = Grundkosten * (Kostenfaktor ^ Ausbaustufe)
     $bc = array();
     $bc['metal'] = $fac * $technology->costsMetal * pow($technology->buildCostsFactor, $l);

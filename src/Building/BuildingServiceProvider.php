@@ -2,6 +2,11 @@
 
 namespace EtoA\Building;
 
+use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Race\RaceDataRepository;
+use EtoA\Specialist\SpecialistService;
+use EtoA\Universe\Planet\PlanetTypeRepository;
+use EtoA\Universe\Star\SolarTypeRepository;
 use Pimple\Container;
 use Pimple\ServiceProviderInterface;
 
@@ -27,6 +32,16 @@ class BuildingServiceProvider implements ServiceProviderInterface
 
         $pimple[BuildingRequirementRepository::class] = function (Container $pimple): BuildingRequirementRepository {
             return new BuildingRequirementRepository($pimple['db']);
+        };
+
+        $pimple[BuildingService::class] = function (Container $pimple): BuildingService {
+            return new BuildingService(
+                $pimple[ConfigurationService::class],
+                $pimple[SpecialistService::class],
+                $pimple[RaceDataRepository::class],
+                $pimple[PlanetTypeRepository::class],
+                $pimple[SolarTypeRepository::class],
+            );
         };
     }
 }
