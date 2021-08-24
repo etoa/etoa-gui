@@ -607,26 +607,6 @@ function timerStop($starttime)
 }
 
 /**
- * Calculates costs per level for a given technology costs array
- *
- * @param int $l Level
- * @param float $fac costFactor (like specialist)
- * @return array<string, float> Array of calculated costs
- *
- */
-function calcTechCosts(\EtoA\Technology\Technology $technology, $l, $fac = 1)
-{
-    // Baukostenberechnung          Baukosten = Grundkosten * (Kostenfaktor ^ Ausbaustufe)
-    $bc = array();
-    $bc['metal'] = $fac * $technology->costsMetal * pow($technology->buildCostsFactor, $l);
-    $bc['crystal'] = $fac * $technology->costsCrystal * pow($technology->buildCostsFactor, $l);
-    $bc['plastic'] = $fac * $technology->costsPlastic * pow($technology->buildCostsFactor, $l);
-    $bc['fuel'] = $fac * $technology->costsFuel * pow($technology->buildCostsFactor, $l);
-    $bc['food'] = $fac * $technology->costsFood * pow($technology->buildCostsFactor, $l);
-    return $bc;
-}
-
-/**
  * Generates a password using the password string, and possibly a user selected seed
  *
  * @param string $pw Password from user

@@ -3,14 +3,21 @@
 use EtoA\Ship\ShipRequirementRepository;
 use EtoA\Support\BBCodeUtils;
 use EtoA\Support\StringUtils;
+use EtoA\Technology\TechnologyDataRepository;
+use EtoA\Technology\TechnologyService;
+use EtoA\User\UserRepository;
 
 $techSpeedCategory = 1;
 echo "<h2>Technologien</h2>";
 
-/** @var \EtoA\Technology\TechnologyDataRepository $technologyDataRepository */
-$technologyDataRepository = $app[\EtoA\Technology\TechnologyDataRepository::class];
+/** @var TechnologyDataRepository $technologyDataRepository */
+$technologyDataRepository = $app[TechnologyDataRepository::class];
 
-//Detail
+/** @var TechnologyService $technologyService */
+$technologyService = $app[TechnologyService::class];
+
+/** @var UserRepository $userRepository */
+$userRepository = $app[UserRepository::class];
 
 if (isset($_GET['id'])) {
     $tid = intval($_GET['id']);
@@ -52,20 +59,31 @@ if (isset($_GET['id'])) {
 
         // Kostenentwicklung
         tableStart("Kostenentwicklung (Faktor: " . $technology->buildCostsFactor . ")");
-        echo "<tr><th class=\"tbltitle\" style=\"text-align:center;\">Level</th>
-                  <th class=\"tbltitle\">" . RES_ICON_METAL . "" . RES_METAL . "</th>
-                  <th class=\"tbltitle\">" . RES_ICON_CRYSTAL . "" . RES_CRYSTAL . "</th>
-                  <th class=\"tbltitle\">" . RES_ICON_PLASTIC . "" . RES_PLASTIC . "</th>
-                  <th class=\"tbltitle\">" . RES_ICON_FUEL . "" . RES_FUEL . "</th>
-                  <th class=\"tbltitle\">" . RES_ICON_FOOD . "" . RES_FOOD . "</th></tr>";
-        for ($x = 0; $x < min(30, $technology->lastLevel); $x++) {
-            $bc = calcTechCosts($technology, $x);
-            echo '<tr><td class="tbldata">' . ($x + 1) . '</td>
-                      <td class="tbldata" style="text-align:right;">' . StringUtils::formatNumber($bc['metal']) . '</td>
-                      <td class="tbldata" style="text-align:right;">' . StringUtils::formatNumber($bc['crystal']) . '</td>
-                      <td class="tbldata" style="text-align:right;">' . StringUtils::formatNumber($bc['plastic']) . '</td>
-                      <td class="tbldata" style="text-align:right;">' . StringUtils::formatNumber($bc['fuel']) . '</td>
-                      <td class="tbldata" style="text-align:right;">' . StringUtils::formatNumber($bc['food']) . '</td></tr>';
+        echo "<tr>
+            <th class=\"tbltitle\" style=\"text-align:center;\">Level</th>
+            <th class=\"tbltitle\">" . RES_ICON_METAL . "" . RES_METAL . "</th>
+            <th class=\"tbltitle\">" . RES_ICON_CRYSTAL . "" . RES_CRYSTAL . "</th>
+            <th class=\"tbltitle\">" . RES_ICON_PLASTIC . "" . RES_PLASTIC . "</th>
+            <th class=\"tbltitle\">" . RES_ICON_FUEL . "" . RES_FUEL . "</th>
+            <th class=\"tbltitle\">" . RES_ICON_FOOD . "" . RES_FOOD . "</th>";
+        if ($technology->costsPower > 0) {
+            echo "<th>" . RES_ICON_POWER . "Energie</th>";
+        }
+        echo "</tr>";
+        $user = isset($cu) && $cu instanceof \User ? $userRepository->getUser($cu->id) : null;
+        for ($level = 0; $level < min(30, $technology->lastLevel); $level++) {
+            $costs = $technologyService->calculateCosts($technology, $level, $user);
+            echo '<tr>
+                <td class="tbldata">' . ($level + 1) . '</td>
+                <td class="tbldata" style="text-align:right;">' . StringUtils::formatNumber($costs->metal) . '</td>
+                <td class="tbldata" style="text-align:right;">' . StringUtils::formatNumber($costs->crystal) . '</td>
+                <td class="tbldata" style="text-align:right;">' . StringUtils::formatNumber($costs->plastic) . '</td>
+                <td class="tbldata" style="text-align:right;">' . StringUtils::formatNumber($costs->fuel) . '</td>
+                <td class="tbldata" style="text-align:right;">' . StringUtils::formatNumber($costs->food) . '</td>';
+            if ($technology->costsPower > 0) {
+                echo '<td class="tbldata" style="text-align:right;">' . StringUtils::formatNumber($costs->power) . '</td>';
+            }
+            echo '</tr>';
         }
         tableEnd();
 
@@ -75,8 +93,7 @@ if (isset($_GET['id'])) {
     } else
         echo "Technologiedaten nicht gefunden!";
     echo "<input type=\"button\" value=\"Technologie&uuml;bersicht\" onclick=\"document.location='?$link&amp;site=$site'\" /> &nbsp; ";
-    if (!$popup)
-        echo "<input type=\"button\" value=\"Technikbaum\" onclick=\"document.location='?page=techtree&mode=tech'\" /> &nbsp; ";
+    echo "<input type=\"button\" value=\"Technikbaum\" onclick=\"document.location='?page=techtree&mode=tech'\" /> &nbsp; ";
 }
 
 //�bersicht

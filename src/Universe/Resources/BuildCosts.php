@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace EtoA\Universe\Resources;
 
+use EtoA\Universe\Planet\Planet;
+
 class BuildCosts
 {
     public float $metal = 0;
@@ -32,6 +34,11 @@ class BuildCosts
         return $costs;
     }
 
+    public function clone(): BuildCosts
+    {
+        return clone $this;
+    }
+
     public function add(BuildCosts $costs): BuildCosts
     {
         $this->metal += $costs->metal;
@@ -58,6 +65,16 @@ class BuildCosts
 
     public function total(): float
     {
-        return $this->metal + $this->crystal + $this->plastic + $this->fuel + $this->food + $this->power;
+        return $this->metal + $this->crystal + $this->plastic + $this->fuel + $this->food;
+    }
+
+    public function isCoveredOnPlanet(Planet $planet): bool
+    {
+        return $planet->resMetal >= $this->metal
+            && $planet->resCrystal >= $this->crystal
+            && $planet->resPlastic >= $this->plastic
+            && $planet->resFuel >= $this->fuel
+            && $planet->resFood >= $this->food
+            && $planet->prodPower >= $this->power;
     }
 }

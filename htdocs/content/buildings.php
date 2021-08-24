@@ -178,7 +178,7 @@ if (isset($cp)) {
                 <input type="hidden" name="workDone" id="workDone" value="' . $config->getInt('people_work_done') . '" />
                 <input type="hidden" name="foodRequired" id="foodRequired" value="' . $config->getInt('people_food_require') . '" />
                 <input type="hidden" name="peopleFree" id="peopleFree" value="' . $peopleFree . '" />
-                <input type="hidden" name="foodAvaiable" id="foodAvaiable" value="' . $cp->getRes1(4) . '" />';
+                <input type="hidden" name="foodAvailable" id="foodAvailable" value="' . $cp->getRes1(4) . '" />';
     if ($properties->itemShow == 'full' && $bid > 0 && $bl->item($bid) !== false) {
         $box .= '<input type="hidden" name="peopleOptimized" id="peopleOptimized" value="' . $bl->item($bid)->getPeopleOptimized() . '" />';
     } else {

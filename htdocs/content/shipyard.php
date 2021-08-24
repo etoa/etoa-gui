@@ -239,7 +239,7 @@ if ($shipyard !== null && $shipyard->currentLevel > 0) {
                 <input type="hidden" name="workDone" id="workDone" value="' . $config->getInt('people_work_done') . '" />
                 <input type="hidden" name="foodRequired" id="foodRequired" value="' . $config->getInt('people_food_require') . '" />
                 <input type="hidden" name="peopleFree" id="peopleFree" value="' . $peopleFree . '" />
-                <input type="hidden" name="foodAvaiable" id="foodAvaiable" value="' . $planet->resFood . '" />
+                <input type="hidden" name="foodAvailable" id="foodAvailable" value="' . $planet->resFood . '" />
                 <input type="hidden" name="peopleOptimized" id="peopleOptimized" value="0" />';
 
         $box .= '   <tr>

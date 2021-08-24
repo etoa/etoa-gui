@@ -399,6 +399,22 @@ class PlanetRepository extends AbstractRepository
         return $affected > 0;
     }
 
+    /**
+     * @param BaseResources|PreciseResources $resources
+     */
+    public function addPreciseResources(int $id, $resources): bool
+    {
+        return $this->addResources(
+            $id,
+            $resources->metal,
+            $resources->crystal,
+            $resources->plastic,
+            $resources->fuel,
+            $resources->food,
+            $resources->people
+        );
+    }
+
     public function addResources(
         int $id,
         float $resMetal,
