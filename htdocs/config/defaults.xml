@@ -429,9 +429,6 @@ https://etoa.ch</v>
       <v comment="Maximaler Marktkurs" type="float">10</v>
     </item>
 
-    <item name="default_image_path" cat="7">
-      <v comment="Standard-Bildpaket" type="text">images/imagepacks/Discovery</v>
-    </item>
     <item name="default_css_style" cat="7">
       <v comment="Standard Design" type="text">Revolution</v>
     </item>

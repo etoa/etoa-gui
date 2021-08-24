@@ -960,7 +960,7 @@ function defineImagePaths()
 
     $properties = $cu !== null ? $userPropertiesRepository->getOrCreateProperties($cu->id) : null;
 
-    if (!defined('IMAGE_PATH')) {
+    if (!defined('CSS_STYLE')) {
         if (!isset($cu) && isset($_SESSION['user_id'])) {
             $cu = new User($_SESSION['user_id']);
         }
@@ -974,15 +974,6 @@ function defineImagePaths()
             }
         }
         define('CSS_STYLE', $design);
-
-        // Image paths
-        if (isset($properties) && $properties->imageUrl != '' && $properties->imageExt != '') {
-            define('IMAGE_PATH', $properties->imageUrl);
-            define('IMAGE_EXT', $properties->imageExt);
-        } else {
-            define("IMAGE_PATH", (ADMIN_MODE ? '../' : '') . $config->get('default_image_path'));
-            define("IMAGE_EXT", "png");
-        }
     }
 }
 

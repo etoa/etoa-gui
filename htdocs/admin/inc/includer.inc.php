@@ -13,11 +13,6 @@ if (isDebugEnabled()) {
 }
 ErrorHandler::register();
 
-define('IMAGE_PATH', "../images/imagepacks/Discovery");
-define('IMAGE_EXT', "png");
-
-// Feste Konstanten
-
 define('SESSION_NAME', "adminsession");
 
 define('URL_SEARCH_STRING', "page=$page&amp;sub=$sub&amp;tmp=1");
