@@ -156,10 +156,6 @@ define("SMILIE_DIR", IMAGE_DIR . "/smilies");
 
 // Bilder
 define("IMAGEPACK_DIRECTORY", IMAGE_DIR . "/imagepacks");
-
-// Bilder
-define("IMAGEPACK_DOWNLOAD_DIRECTORY", CACHE_ROOT . "/imagepacks");
-
 define('IMAGE_PATH', RELATIVE_ROOT . "images/imagepacks/Discovery");
 define('IMAGE_EXT', "png");
 

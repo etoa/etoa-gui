@@ -7,8 +7,6 @@ namespace EtoA\User;
 class UserProperties
 {
     public ?string $cssStyle;
-    public ?string $imageUrl;
-    public ?string $imageExt;
     public int $planetCircleWidth;
     public string $itemShow;
     public string $itemOrderShip;
@@ -41,8 +39,6 @@ class UserProperties
     public function __construct(array $arr)
     {
         $this->cssStyle = filled($arr['css_style']) ? $arr['css_style'] : null;
-        $this->imageUrl = filled($arr['image_url']) ? $arr['image_url'] : null;
-        $this->imageExt = filled($arr['image_ext']) ? $arr['image_ext'] : null;
         $this->planetCircleWidth = (int) $arr['planet_circle_width'];
         $this->itemShow = $arr['item_show'];
         $this->itemOrderShip = $arr['item_order_ship'];
