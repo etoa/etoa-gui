@@ -792,7 +792,7 @@ if (isset($cp)) {
                                 }
                                 // Untätig
                                 else {
-                                    $costs = $technologyService->calculateCosts($technology, $currentLevel, $user);
+                                    $costs = $technologyService->calculateCosts($tech, $currentLevel, $user);
 
                                     // Zuwenig Ressourcen
                                     if ($currentLevel < $tech->lastLevel && !$costs->isCoveredOnPlanet($planet)) {
