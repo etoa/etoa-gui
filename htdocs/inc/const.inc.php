@@ -73,9 +73,6 @@ define("DESIGN_STYLESHEET_FILE_NAME", "style.css");
 // Design main script file name
 define("DESIGN_SCRIPT_FILE_NAME", "scripts.js");
 
-// Imagepack configuration file name
-define("IMAGEPACK_CONFIG_FILE_NAME", "imagepack.xml");
-
 // Eventhandler configuration file name
 define('EVENTHANDLER_CONFIG_FILE_NAME', 'eventhandler.conf');
 
