@@ -411,7 +411,7 @@ class PlanetRepository extends AbstractRepository
             $resources->plastic,
             $resources->fuel,
             $resources->food,
-            $resources->people
+            (int) $resources->people
         );
     }
 

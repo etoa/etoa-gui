@@ -65,7 +65,7 @@ class BuildingService
         if ($user !== null) {
             $race = $this->raceRepository->getRace($user->raceId);
             if ($race !== null) {
-                $factor = $race->buildTime - 1;
+                $factor += $race->buildTime - 1;
             }
 
             $specialist = $this->specialistService->getSpecialistOfUser($user->id);

@@ -65,7 +65,7 @@ class TechnologyService
         if ($user !== null) {
             $race = $this->raceRepository->getRace($user->raceId);
             if ($race !== null) {
-                $factor = $race->researchTime - 1;
+                $factor += $race->researchTime - 1;
             }
 
             $specialist = $this->specialistService->getSpecialistOfUser($user->id);
