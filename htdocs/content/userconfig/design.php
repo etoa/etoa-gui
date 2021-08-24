@@ -3,7 +3,6 @@
 use EtoA\Support\StringUtils;
 use EtoA\User\UserPropertiesRepository;
 
-$imagepacks = get_imagepacks();
 $designs = get_designs();
 
 /** @var UserPropertiesRepository $userPropertiesRepository */
@@ -31,22 +30,6 @@ if (isset($_POST['data_submit_design']) && $_POST['data_submit_design'] != "") {
     $properties->helpBox = $_POST['helpbox'] == 1;
     $properties->noteBox = $_POST['notebox'] == 1;
     $properties->showAdds = $_POST['show_adds'] == 1;
-
-    if (isset($_POST['image_ext']) && $_POST['image_ext'] && isset($_POST['image_url']) && $_POST['image_url']) {
-        $properties->imageUrl = htmlentities($_POST['image_url']);
-        $properties->imageExt = htmlentities($_POST['image_ext']);
-    } else if (isset($_POST['image_select']) && isset($imagepacks[$_POST['image_select']])) {
-        $imp = $imagepacks[$_POST['image_select']];
-        $properties->imageUrl = $imp['path'];
-        if (isset($_POST['image_ext']) && in_array($_POST['image_ext'], $imp['extensions'], true)) {
-            $properties->imageExt = $_POST['image_ext'];
-        } else {
-            $properties->imageExt = $imp['extensions'][0];
-        }
-    } else {
-        $properties->imageUrl = null;
-        $properties->imageExt = null;
-    }
 
     $userPropertiesRepository->storeProperties($cu->id, $properties);
 
@@ -86,25 +69,6 @@ foreach ($designs as $k => $v) {
 echo "</select>
                 <div id=\"designInfo\"></div>";
 echo "<script type=\"text/javascript;\">xajax_designInfo(document.getElementById('designSelector').options[document.getElementById('designSelector').selectedIndex].value);</script>";
-echo "</tr>";
-
-// Bildpacket wählen
-echo "<tr>
-            <th>Bildpaket w&auml;hlen:</th>
-            <td width=\"64%\" colspan=\"4\">
-                <select id=\"image_select\" name=\"image_select\" onchange=\"xajax_imagePackInfo(this.options[this.selectedIndex].value);\">";
-echo "<option value=\"\">(Selbstdefiniert oder Standard)</option>";
-foreach ($imagepacks as $k => $v) {
-    echo "<option value=\"" . $k . "\"";
-    if ($properties->imageUrl == $v['path']) {
-        echo " selected=\"selected\"";
-    }
-    echo ">" . $v['name'] . "</option>";
-}
-echo "</select> <span id=\"imagePackExtension\"></span><br/>
-                <div id=\"imagePackInfo\"></div>";
-echo "<script type=\"text/javascript;\">xajax_imagePackInfo(document.getElementById('image_select').options[document.getElementById('image_select').selectedIndex].value,'" . $properties->imageExt . "','" . $properties->imageUrl . "');</script>";
-echo "</td>";
 echo "</tr>";
 
 //Planetkreisgrösse
@@ -215,36 +179,3 @@ echo "/> Deaktiviert
 tableEnd();
 
 echo "<input type=\"submit\" name=\"data_submit_design\" value=\"&Uuml;bernehmen\"></form><br/><br/>";
-
-
-tableStart("Bildpakete herunterladen");
-$cnt = 0;
-echo '<tr>
-        <th class="tbltitle">Bildpaket</th>
-        <th class="tbltitle">Datei</th>
-        <th class="tbltitle">Autor</th>
-        <th class="tbltitle">Grösse</th>
-        <th class="tbltitle">Letzte Änderung</th></tr>';
-foreach ($imagepacks as $k => $v) {
-    if (isset($v['files']) && count($v['files']) > 0) {
-        foreach ($v['files'] as $file) {
-            $path = IMAGEPACK_DOWNLOAD_DIRECTORY . "/" . $file;
-            if (is_file($path)) {
-                $cnt++;
-                $fs = filesize($path);
-                $t = filemtime($path);
-                echo "<tr>
-                <td>" . $v['name'] . "</td>
-                <td><a href=\"" . $path . "\">" . $file . "</a></td>
-                <td><a href=\"mailto:" . $v['email'] . "\">" . $v['author'] . "</a></td>
-                <td>" . StringUtils::formatBytes($fs) . "</td>
-                <td>" . StringUtils::formatDate($t) . "</td>
-                </tr>";
-            }
-        }
-    }
-}
-if ($cnt == 0) {
-    echo '<tr><td colspan="5" class="tbldata"><i>Keine Downloads vorhanden!</i></tr>';
-}
-tableEnd();

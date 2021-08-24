@@ -525,16 +525,8 @@ class GameStatsGenerator
         $out = "<h2>Sonstiges</h2>";
         $out .= "<table width=\"95%\"><tr>";
 
-        $out .= "<td style=\"width:33%;vertical-align:top;\">";
+        $out .= "<td style=\"vertical-align:top;\">";
         $out .= $this->designStats($limit);
-        $out .= "</td>";
-
-        $out .= "<td style=\"width:33%;vertical-align:top;\">";
-        $out .= $this->imagePackStats($limit);
-        $out .= "</td>";
-
-        $out .= "<td style=\"width:33%;vertical-align:top;\">";
-        $out .= $this->imageExtensionStats($limit);
         $out .= "</td>";
 
         $out .= "</tr>";
@@ -560,49 +552,6 @@ class GameStatsGenerator
             $out .= "<td>" . StringUtils::formatNumber($count) . "</td>";
             $out .= "<td>" . round(100 / $total * $count, 2) . "%</td></tr>";
         }
-        $out .= "</table>";
-
-        return $out;
-    }
-
-    private function imagePackStats(int $limit): string
-    {
-        $out = "<table width=\"100%\" class=\"tb\">";
-        $out .= "<tr><th colspan=\"4\">Bildpaket</th></tr>";
-        $rank = 1;
-        $total = 0;
-        foreach ($this->userPropertiesRepository->getImagePackStats($limit) as $arr) {
-            $total += $arr['cnt'];
-            $out .= "<tr>
-                <td>" . $rank++ . "</td>";
-            $out .= $arr['name'] != ""
-                ? "<td>" . strtr($arr['name'], ["images/themes/" => ""]) . "</td>"
-                : "<td><i>Standard</i></td>";
-            $out .= "<td>" . StringUtils::formatNumber($arr['cnt']) . "</td>";
-            $out .= "<td>" . round(100 / $total * $arr['cnt'], 2) . "%</td></tr>";
-        }
-        $out .= "</table>";
-
-        return $out;
-    }
-
-    private function imageExtensionStats(int $limit): string
-    {
-        $out = "<table width=\"100%\" class=\"tb\">";
-        $out .= "<tr><th colspan=\"4\">Bild-Erweiterung</th></tr>";
-        $rank = 1;
-        $total = 0;
-        foreach ($this->userPropertiesRepository->getImageExtensionStats($limit) as $arr) {
-            $total += $arr['cnt'];
-            $out .= "<tr>
-                <td>" . $rank++ . "</td>";
-            $out .= $arr['name'] != ""
-                ? "<td>" . $arr['name'] . "</td>"
-                : "<td><i>Standard</i></td>";
-            $out .= "<td>" . StringUtils::formatNumber($arr['cnt']) . "</td>";
-            $out .= "<td>" . round(100 / $total * $arr['cnt'], 2) . "%</td></tr>";
-        }
-
         $out .= "</table>";
 
         return $out;

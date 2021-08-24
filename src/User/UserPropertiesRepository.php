@@ -61,8 +61,6 @@ class UserPropertiesRepository extends AbstractRepository
             ->update('user_properties')
             ->where('id = :userId')
             ->set('css_style', ':cssStyle')
-            ->set('image_url', ':imageUrl')
-            ->set('image_ext', ':imageExt')
             ->set('planet_circle_width', ':planetCircleWidth')
             ->set('item_show', ':itemShow')
             ->set('item_order_ship', ':itemOrderShip')
@@ -94,8 +92,6 @@ class UserPropertiesRepository extends AbstractRepository
             ->setParameters([
                 'userId' => $userId,
                 'cssStyle' => $properties->cssStyle,
-                'imageUrl' => $properties->imageUrl,
-                'imageExt' => $properties->imageExt,
                 'planetCircleWidth' => $properties->planetCircleWidth,
                 'itemShow' => $properties->itemShow,
                 'itemOrderShip' => $properties->itemOrderShip,
@@ -149,58 +145,6 @@ class UserPropertiesRepository extends AbstractRepository
             ->fetchAllKeyValue();
 
         return array_map(fn ($value) => (int) $value, $data);
-    }
-
-    /**
-     * @return array<int, array{name: string, cnt: int}>
-     */
-    public function getImagePackStats(int $limit): array
-    {
-        $data = $this->getConnection()
-            ->executeQuery(
-                "SELECT
-                    image_url as name,
-                    COUNT(id) as cnt
-                FROM
-                    user_properties
-                GROUP BY
-                    image_url
-                ORDER BY
-                    cnt DESC
-                LIMIT $limit;"
-            )
-            ->fetchAllAssociative();
-
-        return array_map(fn ($arr) => [
-            'name' => (string) $arr['name'],
-            'cnt' => (int) $arr['cnt'],
-        ], $data);
-    }
-
-    /**
-     * @return array<int, array{name: string, cnt: int}>
-     */
-    public function getImageExtensionStats(int $limit): array
-    {
-        $data = $this->getConnection()
-            ->executeQuery(
-                "SELECT
-                    image_ext as name,
-                    COUNT(id) as cnt
-                FROM
-                    user_properties
-                GROUP BY
-                    image_ext
-                ORDER BY
-                    cnt DESC
-                LIMIT $limit;"
-            )
-            ->fetchAllAssociative();
-
-        return array_map(fn ($arr) => [
-            'name' => (string) $arr['name'],
-            'cnt' => (int) $arr['cnt'],
-        ], $data);
     }
 
     /**

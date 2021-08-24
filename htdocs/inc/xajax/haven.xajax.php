@@ -69,8 +69,6 @@ function havenShowShips()
     /** @var SpecialistService $specialistService */
     $specialistService = $app[SpecialistService::class];
 
-    defineImagePaths();
-
     $response = new xajaxResponse();
     ob_start();
 
@@ -320,7 +318,6 @@ function havenShowTarget($form)
     $bookmarkRepository = $app[BookmarkRepository::class];
 
     $response = new xajaxResponse();
-    defineImagePaths();
 
     // Get fleet object
     $fleet = unserialize($_SESSION['haven']['fleetObj']);
@@ -894,7 +891,6 @@ function havenShowAction($form)
     $userRepository = $app[UserRepository::class];
 
     $response = new xajaxResponse();
-    defineImagePaths();
 
     // Do some checks
     if (count($form) > 0) {

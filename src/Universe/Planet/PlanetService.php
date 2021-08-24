@@ -83,7 +83,6 @@ class PlanetService
 
     public function imagePath(Planet $planet, string $opt = ""): string
     {
-        defineImagePaths();
         if ($opt == "b") {
             return IMAGE_PATH . "/planets/planet" . $planet->image . "." . IMAGE_EXT;
         }

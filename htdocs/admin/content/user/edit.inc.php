@@ -202,8 +202,6 @@ if (isset($_POST['save'])) {
     //
 
     $properties = $userPropertiesRepository->getOrCreateProperties((int) $id);
-    $properties->imageUrl = filled($_POST['image_url']) ? $_POST['image_url'] : null;
-    $properties->imageExt = filled($_POST['image_ext']) ? $_POST['image_ext'] : null;
     $properties->cssStyle = filled($_POST['css_style']) ? $_POST['css_style'] : null;
     $properties->planetCircleWidth = $_POST['planet_circle_width'];
     $properties->itemShow = $_POST['item_show'];
@@ -1109,7 +1107,6 @@ if ($user !== null) {
      * Design
      */
 
-    $imagepacks = get_imagepacks();
     $designs = get_designs();
 
     echo "<table class=\"tbl\" style=\"width:1000px\">";
@@ -1126,36 +1123,8 @@ if ($user !== null) {
         echo ">" . $v['name'] . "</option>";
     }
     echo "</select>
-            </td>
-                </tr>
-                <tr>
-                    <td class=\"tbltitle\">Bildpaket / Dateiendung:</td>
-                    <td class=\"tbldata\">
-                        <input type=\"text\" name=\"image_url\" id=\"image_url\" size=\"45\" maxlength=\"250\" value=\"" . $properties->imageUrl . "\">
-                        <input type=\"text\" name=\"image_ext\" id=\"image_ext\" value=\"" . $properties->imageExt . "\" size=\"3\" maxlength=\"6\" />
-                        &nbsp; <input type=\"button\" onclick=\"
-                        var imageSetVal = document.getElementById('imageSelector').options[document.getElementById('imageSelector').selectedIndex].value;
-                        if (imageSetVal!='') {
-                        var ImageSet = imageSetVal.split(':');
-                        document.getElementById('image_url').value=ImageSet[0];
-                        document.getElementById('image_ext').value=ImageSet[1];
-                        } else {
-                        document.getElementById('image_url').value='';
-                        document.getElementById('image_ext').value='';
-                        }
-                        \" value=\"&lt;&lt;\" /> &nbsp; ";
-    echo "<select id=\"imageSelector\">
-                <option value=\"\">(Bitte wählen)</option>";
-    foreach ($imagepacks as $v) {
-        foreach ($v['extensions'] as $e) {
-            echo "<option value=\"" . $v['path'] . ":" . $e . "\"";
-            if ($properties->imageUrl == $v['path']) echo " selected=\"selected\"";
-            echo ">" . $v['name'] . " ($e)</option>";
-        }
-    }
-    echo "</select>
-            </td>
-</tr>
+        </td>
+    </tr>
     <tr>
     <td class=\"tbltitle\">Planetkreisgr&ouml;sse:</td>
     <td class=\"tbldata\" width=\"64%\" colspan=\"4\">

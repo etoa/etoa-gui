@@ -103,7 +103,6 @@ class Wormhole extends Entity
 
     function imagePath($opt = "")
     {
-        defineImagePaths();
         if (!$this->dataLoaded) {
             $this->loadData();
         }

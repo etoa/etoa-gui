@@ -243,77 +243,6 @@ function show_tab_menu($varname, $data)
 }
 
 /**
- * Get imagepacks
- */
-function get_imagepacks()
-{
-    $packs = array();
-    if ($d = opendir(IMAGEPACK_DIRECTORY)) {
-        while ($f = readdir($d)) {
-            $dir = IMAGEPACK_DIRECTORY . "/" . $f;
-            if (is_dir($dir) && $f != ".." && $f != ".") {
-                $file = $dir . "/" . IMAGEPACK_CONFIG_FILE_NAME;
-
-                if (is_file($file)) {
-                    $pack = [];
-                    $pack['dir'] = $dir;
-                    $pack['path'] = substr($dir, strlen(RELATIVE_ROOT));
-                    $xml = new XMLReader();
-                    $xml->open($file);
-                    while ($xml->read()) {
-                        switch ($xml->name) {
-                            case "name":
-                                $xml->read();
-                                $pack['name'] = $xml->value;
-                                $xml->read();
-                                break;
-                            case "description":
-                                $xml->read();
-                                $pack['description'] = $xml->value;
-                                $xml->read();
-                                break;
-                            case "version":
-                                $xml->read();
-                                $pack['version'] = $xml->value;
-                                $xml->read();
-                                break;
-                            case "changed":
-                                $xml->read();
-                                $pack['changed'] = $xml->value;
-                                $xml->read();
-                                break;
-                            case "extensions":
-                                $xml->read();
-                                $pack['extensions'] = explode(",", $xml->value);
-                                $xml->read();
-                                break;
-                            case "author":
-                                $xml->read();
-                                $pack['author'] = $xml->value;
-                                $xml->read();
-                                break;
-                            case "email":
-                                $xml->read();
-                                $pack['email'] = $xml->value;
-                                $xml->read();
-                                break;
-                            case "files":
-                                $xml->read();
-                                $pack['files'] = explode(",", $xml->value);
-                                $xml->read();
-                                break;
-                        }
-                    }
-                    $xml->close();
-                    $packs[basename($dir)] = $pack;
-                }
-            }
-        }
-    }
-    return $packs;
-}
-
-/**
  * Wählt die verschiedenen Designs aus und schreibt sie in ein array. by Lamborghini
  */
 function get_designs()
@@ -944,46 +873,6 @@ function forward($url, $msgTitle = null, $msgText = null)
     header("Location: " . $url);
     echo "<h1>" . $msgTitle . "</h1><p>" . $msgText . "</p><p>Falls die Weiterleitung nicht klappt, <a href=\"" . $url . "l\">hier</a> klicken...</p>";
     exit;
-}
-
-function defineImagePaths()
-{
-    // TODO
-    global $cu;
-    global $app;
-
-    /** @var ConfigurationService $config */
-    $config = $app[ConfigurationService::class];
-
-    /** @var UserPropertiesRepository $userPropertiesRepository */
-    $userPropertiesRepository = $app[UserPropertiesRepository::class];
-
-    $properties = $cu !== null ? $userPropertiesRepository->getOrCreateProperties($cu->id) : null;
-
-    if (!defined('IMAGE_PATH')) {
-        if (!isset($cu) && isset($_SESSION['user_id'])) {
-            $cu = new User($_SESSION['user_id']);
-        }
-
-        $design = DESIGN_DIRECTORY . "/official/" . $config->get('default_css_style');
-        if (isset($properties) && $properties->cssStyle != '') {
-            if (is_dir(DESIGN_DIRECTORY . "/custom/" . $properties->cssStyle)) {
-                $design = DESIGN_DIRECTORY . "/custom/" . $properties->cssStyle;
-            } else if (is_dir(DESIGN_DIRECTORY . "/official/" . $properties->cssStyle)) {
-                $design = DESIGN_DIRECTORY . "/official/" . $properties->cssStyle;
-            }
-        }
-        define('CSS_STYLE', $design);
-
-        // Image paths
-        if (isset($properties) && $properties->imageUrl != '' && $properties->imageExt != '') {
-            define('IMAGE_PATH', $properties->imageUrl);
-            define('IMAGE_EXT', $properties->imageExt);
-        } else {
-            define("IMAGE_PATH", (ADMIN_MODE ? '../' : '') . $config->get('default_image_path'));
-            define("IMAGE_EXT", "png");
-        }
-    }
 }
 
 function logAccess($target, $domain = "", $sub = "")
