@@ -875,37 +875,6 @@ function forward($url, $msgTitle = null, $msgText = null)
     exit;
 }
 
-function defineImagePaths()
-{
-    // TODO
-    global $cu;
-    global $app;
-
-    /** @var ConfigurationService $config */
-    $config = $app[ConfigurationService::class];
-
-    /** @var UserPropertiesRepository $userPropertiesRepository */
-    $userPropertiesRepository = $app[UserPropertiesRepository::class];
-
-    $properties = $cu !== null ? $userPropertiesRepository->getOrCreateProperties($cu->id) : null;
-
-    if (!defined('CSS_STYLE')) {
-        if (!isset($cu) && isset($_SESSION['user_id'])) {
-            $cu = new User($_SESSION['user_id']);
-        }
-
-        $design = DESIGN_DIRECTORY . "/official/" . $config->get('default_css_style');
-        if (isset($properties) && $properties->cssStyle != '') {
-            if (is_dir(DESIGN_DIRECTORY . "/custom/" . $properties->cssStyle)) {
-                $design = DESIGN_DIRECTORY . "/custom/" . $properties->cssStyle;
-            } else if (is_dir(DESIGN_DIRECTORY . "/official/" . $properties->cssStyle)) {
-                $design = DESIGN_DIRECTORY . "/official/" . $properties->cssStyle;
-            }
-        }
-        define('CSS_STYLE', $design);
-    }
-}
-
 function logAccess($target, $domain = "", $sub = "")
 {
     // TODO

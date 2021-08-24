@@ -17,10 +17,7 @@ class GetRaceInfosJsonResponder extends JsonResponder
 
     function getResponse($params)
     {
-
         $data = array();
-
-        defineImagePaths();
 
         $val = $params['id'];
 

@@ -92,7 +92,6 @@ class AsteroidField extends Entity
 
     function imagePath($opt = "")
     {
-        defineImagePaths();
         $numImages = 5;
         $r = ($this->id % $numImages) + 1;
         return IMAGE_PATH . "/asteroids/asteroids" . $r . "_small." . IMAGE_EXT;
