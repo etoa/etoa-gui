@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace EtoA\Ranking;
 
+use EtoA\Alliance\AllianceBuildingRepository;
 use EtoA\Alliance\AllianceRepository;
 use EtoA\Alliance\AllianceStats;
 use EtoA\Alliance\AllianceStatsRepository;
+use EtoA\Alliance\AllianceTechnologyRepository;
 use EtoA\Building\Building;
 use EtoA\Building\BuildingDataRepository;
 use EtoA\Building\BuildingPointRepository;
@@ -59,6 +61,8 @@ class RankingService
     private UserStatRepository $userStatRepository;
     private UserRepository $userRepository;
     private EntityRepository $entityRepository;
+    private AllianceBuildingRepository $allianceBuildingRepository;
+    private AllianceTechnologyRepository $allianceTechnologyRepository;
 
     public function __construct(
         ConfigurationService $config,
@@ -517,44 +521,29 @@ class RankingService
         $this->allianceStatsRepository->deleteAll();
 
         // Technologien laden
-        $res = dbquery("
-                SELECT
-                    alliance_tech_id,
-                    alliance_tech_costs_factor,
-                    alliance_tech_last_level,
-                    (alliance_tech_costs_metal+alliance_tech_costs_crystal+alliance_tech_costs_plastic+alliance_tech_costs_fuel+alliance_tech_costs_food) as costs
-                FROM
-                    alliance_technologies;
-            ");
-        $techs = array();
-        $level = 1;
-        while ($arr = mysql_fetch_row($res)) {
+        $technologies = $this->allianceTechnologyRepository->findAll();
+        $technologyPoints = [];
+        foreach ($technologies as $technology) {
             $level = 1;
             $points = 0;
-            while ($level <= $arr[2]) {
-                $points += $arr[3] * $arr[1] ** ($level - 1) / $this->config->param1Int('points_update');
-                $techs[$arr[0]][$level] = $points;
+            $baseCost = $technology->getCosts()->getSum();
+            while ($level <= $technology->lastLevel) {
+                $points += $baseCost * $technology->buildFactor ** ($level - 1) / $this->config->param1Int('points_update');
+                $technologyPoints[$technology->id][$level] = $points;
                 $level++;
             }
         }
 
         // Gebäude laden
-        $res = dbquery("
-                SELECT
-                    alliance_building_id,
-                    alliance_building_costs_factor,
-                    alliance_building_last_level,
-                    (alliance_building_costs_metal+alliance_building_costs_crystal+alliance_building_costs_plastic+alliance_building_costs_fuel+alliance_building_costs_food) as costs
-                FROM
-                    alliance_buildings;
-            ");
-        $buildings = array();
-        while ($arr = mysql_fetch_row($res)) {
+        $buildings = $this->allianceBuildingRepository->findAll();
+        $buildingPoints = array();
+        foreach ($buildings as $building) {
             $level = 1;
             $points = 0;
-            while ($level <= $arr[2]) {
-                $points += $arr[3] * $arr[1] ** ($level - 1) / $this->config->param1Int('points_update');
-                $buildings[$arr[0]][$level] = $points;
+            $baseCosts = $building->getCosts()->getSum();
+            while ($level <= $building->lastLevel) {
+                $points += $baseCosts * $building->buildFactor ** ($level - 1) / $this->config->param1Int('points_update');
+                $buildingPoints[$building->id][$level] = $points;
                 $level++;
             }
         }
@@ -600,7 +589,7 @@ class RankingService
                                     AND alliance_buildlist_current_level>0;");
                 if (mysql_num_rows($bres) > 0) {
                     while ($barr = mysql_fetch_row($bres)) {
-                        $bpoints += $buildings[$barr[0]][$barr[1]];
+                        $bpoints += $buildingPoints[$barr[0]][$barr[1]];
                     }
                 }
 
@@ -614,7 +603,7 @@ class RankingService
                                     AND alliance_techlist_current_level>0;");
                 if (mysql_num_rows($tres) > 0) {
                     while ($tarr = mysql_fetch_row($tres)) {
-                        $tpoints += $techs[$tarr[0]][$tarr[1]];
+                        $tpoints += $technologyPoints[$tarr[0]][$tarr[1]];
                     }
                 }
 
@@ -668,8 +657,8 @@ class RankingService
             }
         }
 
-        unset($buildings);
-        unset($techs);
+        unset($buildingPoints);
+        unset($technologyPoints);
 
         // Zeit in Config speichern
         $this->runtimeDataStore->set('statsupdate', (string) time());
