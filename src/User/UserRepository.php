@@ -811,4 +811,48 @@ class UserRepository extends AbstractRepository
 
         return array_map(fn (array $row) => new Pillory($row), $data);
     }
+
+    public function updatePointsAndRank(UserStatistic $userStatistic, int $highestRank): void
+    {
+        $this->createQueryBuilder()
+            ->update('users')
+            ->set('user_rank', ':rank')
+            ->set('user_points', ':points')
+            ->set('user_rank_highest', ':highestRank')
+            ->where('user_id = :userId')
+            ->setParameters([
+                'userId' => $userStatistic->userId,
+                'rank' => $userStatistic->rank,
+                'points' => $userStatistic->points,
+                'highestRank' => $highestRank,
+            ])
+            ->execute();
+    }
+
+    public function updateUserBoost(int $userId, float $productionBoost, float $buildingBoost): void
+    {
+        $this->createQueryBuilder()
+            ->update('users')
+            ->set('boost_bonus_production', ':production')
+            ->set('boost_bonus_building', ':building')
+            ->where('user_id = :userId')
+            ->setParameters([
+                'userId' => $userId,
+                'production' => $productionBoost,
+                'building' => $buildingBoost,
+            ])
+            ->execute();
+    }
+
+    public function resetBoost(): void
+    {
+        $this->createQueryBuilder()
+            ->update('users')
+            ->set('boost_bonus_production', ':zero')
+            ->set('boost_bonus_building', ':zero')
+            ->setParameters([
+                'zero' => 0,
+            ])
+            ->execute();
+    }
 }

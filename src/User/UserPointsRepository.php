@@ -7,6 +7,39 @@ use EtoA\Core\AbstractRepository;
 class UserPointsRepository extends AbstractRepository
 {
     /**
+     * @param UserStatistic[] $userStats
+     */
+    public function addEntries(array $userStats, int $timestamp): void
+    {
+        if (count($userStats) === 0) {
+            return;
+        }
+
+        $parameters = [];
+        foreach ($userStats as $stats) {
+            $parameters[] = $stats->userId;
+            $parameters[] = $timestamp;
+            $parameters[] = $stats->points;
+            $parameters[] = $stats->shipPoints;
+            $parameters[] = $stats->techPoints;
+            $parameters[] = $stats->buildingPoints;
+        }
+
+        $insertRow = implode(',', array_fill(0, count($userStats), '(?, ?, ?, ?, ?, ?)'));
+
+        $this->getConnection()->executeQuery('
+            INSERT INTO user_points (
+                point_user_id,
+                point_timestamp,
+                point_points,
+                point_ship_points,
+                point_tech_points,
+                point_building_points
+            ) VALUES ' . $insertRow, $parameters)
+        ->execute();
+    }
+
+    /**
      * @return UserPoints[]
      */
     public function getPoints(int $userId, int $limit = null, int $start = null, int $end = null): array
