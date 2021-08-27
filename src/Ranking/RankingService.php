@@ -550,6 +550,8 @@ class RankingService
                 SUM(u.points) DESC
             ;");
 
+        $usedAllianceShipPoints = $this->userRepository->getUsedAllianceShipPoints();
+
         /** @var AllianceStats[] $allianceStats */
         $allianceStats = [];
         if (mysql_num_rows($res) > 0) {
@@ -571,18 +573,7 @@ class RankingService
                     $tpoints += $technologyPoints[$technologyId][$level];
                 }
 
-                $sres = dbquery("SELECT
-                                      SUM(`user_alliace_shippoints_used`)
-                                FROM
-                                    users
-                                WHERE
-                                    user_alliance_id='" . $arr['alliance_id'] . "'
-                                GROUP BY
-                                    user_alliance_id
-                                LIMIT 1;");
-                $sarr = mysql_fetch_row($sres);
-
-                $apoints = $tpoints + $bpoints + $sarr[0];
+                $apoints = $tpoints + $bpoints + $usedAllianceShipPoints[$arr['alliance_id']] ?? 0;
                 $points = $apoints + $upoints;
 
                 $stats = AllianceStats::createFromData(

@@ -539,6 +539,19 @@ class UserRepository extends AbstractRepository
             ->execute();
     }
 
+    /**
+     * @return array<int, int>
+     */
+    public function getUsedAllianceShipPoints(): array
+    {
+        $this->createQueryBuilder()
+            ->select('user_alliance_id, SUM(user_alliace_shippoints_used)')
+            ->from('users')
+            ->groupBy('user_alliance_id')
+            ->execute()
+            ->fetchAllKeyValue();
+    }
+
     public function markAllianceShipPointsAsUsed(int $userId, int $shipCost): void
     {
         $this->createQueryBuilder()
