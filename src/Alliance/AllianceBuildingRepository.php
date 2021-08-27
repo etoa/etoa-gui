@@ -68,6 +68,23 @@ class AllianceBuildingRepository extends AbstractRepository
             ->fetchOne();
     }
 
+    /**
+     * @return array<int, int>
+     */
+    public function getLevels(int $allianceId): array
+    {
+        return $this->createQueryBuilder()
+            ->select('alliance_buildlist_building_id, alliance_buildlist_current_level')
+            ->from('alliance_buildlist')
+            ->where('alliance_buildlist_alliance_id = :alliance')
+            ->andWhere('alliance_buildlist_current_level > 0')
+            ->setParameters([
+                'alliance' => $allianceId,
+            ])
+            ->execute()
+            ->fetchAllKeyValue();
+    }
+
     public function getCooldown(int $allianceId, int $buildingId): int
     {
         return (int) $this->createQueryBuilder()

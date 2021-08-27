@@ -539,6 +539,19 @@ class UserRepository extends AbstractRepository
             ->execute();
     }
 
+    /**
+     * @return array<int, int>
+     */
+    public function getUsedAllianceShipPoints(): array
+    {
+        return $this->createQueryBuilder()
+            ->select('user_alliance_id, SUM(user_alliace_shippoints_used)')
+            ->from('users')
+            ->groupBy('user_alliance_id')
+            ->execute()
+            ->fetchAllKeyValue();
+    }
+
     public function markAllianceShipPointsAsUsed(int $userId, int $shipCost): void
     {
         $this->createQueryBuilder()
@@ -797,5 +810,49 @@ class UserRepository extends AbstractRepository
             ->fetchAllAssociative();
 
         return array_map(fn (array $row) => new Pillory($row), $data);
+    }
+
+    public function updatePointsAndRank(UserStatistic $userStatistic, int $highestRank): void
+    {
+        $this->createQueryBuilder()
+            ->update('users')
+            ->set('user_rank', ':rank')
+            ->set('user_points', ':points')
+            ->set('user_rank_highest', ':highestRank')
+            ->where('user_id = :userId')
+            ->setParameters([
+                'userId' => $userStatistic->userId,
+                'rank' => $userStatistic->rank,
+                'points' => $userStatistic->points,
+                'highestRank' => $highestRank,
+            ])
+            ->execute();
+    }
+
+    public function updateUserBoost(int $userId, float $productionBoost, float $buildingBoost): void
+    {
+        $this->createQueryBuilder()
+            ->update('users')
+            ->set('boost_bonus_production', ':production')
+            ->set('boost_bonus_building', ':building')
+            ->where('user_id = :userId')
+            ->setParameters([
+                'userId' => $userId,
+                'production' => $productionBoost,
+                'building' => $buildingBoost,
+            ])
+            ->execute();
+    }
+
+    public function resetBoost(): void
+    {
+        $this->createQueryBuilder()
+            ->update('users')
+            ->set('boost_bonus_production', ':zero')
+            ->set('boost_bonus_building', ':zero')
+            ->setParameters([
+                'zero' => 0,
+            ])
+            ->execute();
     }
 }

@@ -46,6 +46,18 @@ class AllianceTechnology
         return IMAGE_PATH . "/" . IMAGE_ALLIANCE_TECHNOLOGY_DIR . "/technology" . $this->id . "_middle." . IMAGE_EXT;
     }
 
+    public function getCosts(): BaseResources
+    {
+        $costs = new BaseResources();
+        $costs->metal = $this->costsMetal;
+        $costs->crystal = $this->costsCrystal;
+        $costs->plastic = $this->costsPlastic;
+        $costs->fuel = $this->costsFuel;
+        $costs->food = $this->costsFood;
+
+        return $costs;
+    }
+
     public function calculateCosts(int $level, int $members, float $memberCostsFactor): BaseResources
     {
         $level = max(1, $level);
