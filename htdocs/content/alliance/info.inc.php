@@ -2,6 +2,7 @@
 
 use EtoA\Alliance\AllianceDiplomacyLevel;
 use EtoA\Alliance\AllianceDiplomacyRepository;
+use EtoA\Alliance\AllianceRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Support\BBCodeUtils;
 use EtoA\Support\StringUtils;
@@ -10,6 +11,8 @@ use EtoA\Support\StringUtils;
 $config = $app[ConfigurationService::class];
 /** @var AllianceDiplomacyRepository $allianceDiplomacyRepository */
 $allianceDiplomacyRepository = $app[AllianceDiplomacyRepository::class];
+/** @var AllianceRepository $allianceRepository */
+$allianceRepository = $app[AllianceRepository::class];
 
 if (isset($_GET['id']) && intval($_GET['id']) > 0)
     $id = intval($_GET['id']);
@@ -18,8 +21,9 @@ else
 
 $infoAlly = new Alliance($id);
 if ($infoAlly->valid) {
-    if ($cu->allianceId != $infoAlly->id)
-        $infoAlly->visitsExt++;
+    if ($cu->allianceId != $infoAlly->id) {
+        $allianceRepository->addVisit($infoAlly->id, true);
+    }
 
     tableStart($infoAlly);
     if ($infoAlly->image != "" && is_file($infoAlly->imageUrl)) {

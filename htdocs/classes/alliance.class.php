@@ -134,59 +134,6 @@ class Alliance
     }
 
     /**
-     * Destruktor
-     */
-    function __destruct()
-    {
-        $cnt = count($this->changedFields);
-        if ($cnt > 0) {
-            $sql = "UPDATE
-                    alliances
-                SET ";
-            foreach ($this->changedFields as $k => $v) {
-                if ($k == "visits")
-                    $sql .= " alliance_visits=" . $this->$k . ",";
-                elseif ($k == "visitsExt")
-                    $sql .= " alliance_visits_ext=" . $this->$k . ",";
-                elseif ($k == "founderId")
-                    $sql .= " alliance_founder_id=" . $this->$k . ",";
-                else
-                    echo " $k has no valid UPDATE query!<br/>";
-            }
-            $sql .= " alliance_id=alliance_id WHERE
-                        alliance_id=" . $this->id . ";";
-            dbquery($sql);
-        }
-        unset($this->changedFields);
-    }
-
-    /**
-     * Chances alliance properties
-     */
-    public function __set($key, $val)
-    {
-        try {
-            if (!property_exists($this, $key))
-                throw new EException("Property $key existiert nicht in der Klasse " . __CLASS__);
-
-            if ($key == "visits") {
-                $this->$key = intval($val);
-                $this->changedFields[$key] = true;
-                return true;
-            }
-            if ($key == "visitsExt") {
-                $this->$key = intval($val);
-                $this->changedFields[$key] = true;
-                return true;
-            }
-
-            throw new EException("Property $key der Klasse  " . __CLASS__ . " ist nicht änderbar!");
-        } catch (EException $e) {
-            echo $e;
-        }
-    }
-
-    /**
      * Gets alliance properties
      */
     public function __get($key)

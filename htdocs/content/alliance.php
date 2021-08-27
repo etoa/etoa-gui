@@ -345,9 +345,7 @@ elseif ($cu->allianceId == 0) {
             }
             // Allianzdaten anzeigen
             else {
-
-                $ally->visits++;
-
+                $allianceRepository->addVisit($ally->id);
 
                 tableStart("[" . stripslashes($alliance->tag) . "] " . stripslashes($alliance->name));
                 if ($alliance->image != "") {
