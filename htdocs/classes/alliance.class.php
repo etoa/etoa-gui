@@ -1,25 +1,12 @@
 <?php
 
-use EtoA\Alliance\AllianceApplicationRepository;
-use EtoA\Alliance\AllianceBuildingRepository;
-use EtoA\Alliance\AllianceDiplomacyLevel;
 use EtoA\Alliance\AllianceDiplomacyRepository;
 use EtoA\Alliance\AllianceHistoryRepository;
 use EtoA\Alliance\AllianceMemberCosts;
-use EtoA\Alliance\AllianceNewsRepository;
-use EtoA\Alliance\AlliancePointsRepository;
-use EtoA\Alliance\AlliancePollRepository;
 use EtoA\Alliance\AllianceRankRepository;
 use EtoA\Alliance\AllianceRepository;
 use EtoA\Alliance\AllianceRights;
-use EtoA\Alliance\AllianceSpendRepository;
-use EtoA\Alliance\AllianceTechnologyRepository;
-use EtoA\Alliance\Board\AllianceBoardCategoryRepository;
-use EtoA\Alliance\Board\AllianceBoardTopicRepository;
 use EtoA\Core\Configuration\ConfigurationService;
-use EtoA\Log\LogFacility;
-use EtoA\Log\LogRepository;
-use EtoA\Log\LogSeverity;
 use EtoA\Message\MessageRepository;
 use EtoA\User\UserService;
 
@@ -639,109 +626,6 @@ class Alliance
             }
             return true;
         }
-        return false;
-    }
-
-    /**
-     * Delete alliance
-     */
-    function delete(&$user = null)
-    {
-        // TODO
-        global $app;
-
-        if (!$this->isAtWar()) {
-            /** @var AllianceRepository $allianceRepository */
-            $allianceRepository = $app[AllianceRepository::class];
-
-            /** @var AllianceBoardTopicRepository $allianceBoardTopicRepository */
-            $allianceBoardTopicRepository = $app[AllianceBoardTopicRepository::class];
-            /** @var AllianceBoardCategoryRepository $allianceBoardCategoryRepository */
-            $allianceBoardCategoryRepository = $app[AllianceBoardCategoryRepository::class];
-            $allianceBoardCategoryRepository->deleteAllCategories($this->id);
-
-            /** @var AllianceApplicationRepository $allianceApplicationRepository */
-            $allianceApplicationRepository = $app[AllianceApplicationRepository::class];
-            $allianceApplicationRepository->deleteAllianceApplication($this->id);
-
-            /** @var AllianceDiplomacyRepository $allianceDiplomacyRepository */
-            $allianceDiplomacyRepository = $app[AllianceDiplomacyRepository::class];
-            $diplomacies = $allianceDiplomacyRepository->getDiplomacies($this->id);
-            foreach ($diplomacies as $diplomacy) {
-                $allianceBoardTopicRepository->deleteBndTopic($diplomacy->id);
-            }
-            $allianceDiplomacyRepository->deleteAllianceDiplomacies($this->id);
-
-            /** @var AllianceBuildingRepository $allianceBuildingRepository */
-            $allianceBuildingRepository = $app[AllianceBuildingRepository::class];
-            $allianceBuildingRepository->removeForAlliance($this->id);
-
-            /** @var AllianceHistoryRepository $allianceHistoryRepository */
-            $allianceHistoryRepository = $app[AllianceHistoryRepository::class];
-            $allianceHistoryRepository->removeForAlliance($this->id);
-
-            /** @var AlliancePointsRepository $alliancePointsRepository */
-            $alliancePointsRepository = $app[AlliancePointsRepository::class];
-            $alliancePointsRepository->removeForAlliance($this->id);
-
-            /** @var AllianceNewsRepository $allianceNewsRepository */
-            $allianceNewsRepository = $app[AllianceNewsRepository::class];
-            $allianceNewsRepository->deleteAllianceEntries($this->id);
-
-            /** @var AlliancePollRepository $alliancePollRepository */
-            $alliancePollRepository = $app[AlliancePollRepository::class];
-            $alliancePollRepository->deleteAllianceEntries($this->id);
-
-            /** @var AllianceRankRepository $allianceRankRepository */
-            $allianceRankRepository = $app[AllianceRankRepository::class];
-            $allianceRankRepository->deleteAllianceRanks($this->id);
-
-            /** @var AllianceSpendRepository $allianceSpendRepository */
-            $allianceSpendRepository = $app[AllianceSpendRepository::class];
-            $allianceSpendRepository->deleteAllianceEntries($this->id);
-
-            /** @var AllianceTechnologyRepository $allianceTechnologyRepository */
-            $allianceTechnologyRepository = $app[AllianceTechnologyRepository::class];
-            $allianceTechnologyRepository->removeForAlliance($this->id);
-
-            /** @var LogRepository $logRepository */
-            $logRepository = $app[LogRepository::class];
-
-            dbquery("UPDATE alliances
-                SET
-                    alliance_mother=0
-                WHERE
-                    alliance_mother='" . $this->id . "';");
-            dbquery("UPDATE alliances
-                SET
-                    alliance_mother_request=0
-                WHERE
-                    alliance_mother_request='" . $this->id . "';");
-
-            // Set user alliance link to null
-            if ($this->members == null)
-                $this->getMembers();
-            foreach ($this->members as &$member) {
-                $member->alliance = null;
-            }
-            unset($member);
-
-            // Daten löschen
-            $allianceRepository->remove($this->id);
-
-            //Log schreiben
-            if ($user != null) {
-                $user->alliance = null;
-
-                /** @var UserService $userService */
-                $userService = $app[UserService::class];
-                $userService->addToUserLog($user->id, "alliance", "{nick} löst die Allianz [b]" . $this->__toString() . "[/b] auf.");
-                $logRepository->add(LogFacility::ALLIANCE, LogSeverity::INFO, "Die Allianz [b]" . $this->__toString() . "[/b] wurde von " . $user . " aufgelöst!");
-            } else
-                $logRepository->add(LogFacility::ALLIANCE, LogSeverity::INFO, "Die Allianz [b]" . $this->__toString() . "[/b] wurde gelöscht!");
-            return true;
-        }
-
         return false;
     }
 

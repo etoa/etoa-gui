@@ -10,6 +10,7 @@ use EtoA\Alliance\AllianceRepository;
 use EtoA\Alliance\AllianceRight;
 use EtoA\Alliance\AllianceRightRepository;
 use EtoA\Alliance\AllianceRights;
+use EtoA\Alliance\AllianceService;
 use EtoA\Alliance\Board\AllianceBoardTopicRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Support\BBCodeUtils;
@@ -334,7 +335,11 @@ elseif ($cu->allianceId == 0) {
                 && checker_verify()
                 && !$cu->alliance->isAtWar()
             ) {
-                $ally->delete($cu);
+                $alliance = $allianceRepository->getAlliance($cu->allianceId());
+                $user = $userRepository->getUser($cu->getId());
+                /** @var AllianceService $allianceService */
+                $allianceService = $app[AllianceService::class];
+                $allianceService->delete($alliance, $user);
                 echo "Die Allianz wurde aufgel&ouml;st!<br/><br/>
             <input type=\"button\" onclick=\"document.location='?page=$page';\" value=\"&Uuml;bersicht\" />";
             }

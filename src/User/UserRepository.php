@@ -76,6 +76,19 @@ class UserRepository extends AbstractRepository
             ->execute();
     }
 
+    public function resetAllianceId(int $allianceId): void
+    {
+        $this->createQueryBuilder()
+            ->update('users')
+            ->set('user_alliance_id', ':zero')
+            ->set('user_alliance_rank_id', ':zero')
+            ->where('user_alliance_id = :allianceId')
+            ->setParameters([
+                'zero' => 0,
+                'allianceId' => $allianceId,
+            ])
+            ->execute();
+    }
 
     public function hasUserRankId(int $allianceId, int $userId, int $rankId): bool
     {

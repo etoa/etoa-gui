@@ -636,4 +636,18 @@ class AllianceRepository extends AbstractRepository
             ->setParameter('timestamp', $timestamp)
             ->execute();
     }
+
+    public function resetMother(int $allianceId): void
+    {
+        $this->createQueryBuilder()
+            ->update('alliances')
+            ->set('alliance_mother', ':zero')
+            ->set('alliance_mother', ':zero')
+            ->where('alliance_mother = :allianceId OR alliance_mother_request = :allianceId')
+            ->setParameters([
+                'zero' => 0,
+                'allianceId' => $allianceId,
+            ])
+            ->execute();
+    }
 }
