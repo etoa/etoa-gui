@@ -77,4 +77,14 @@ class EntitySearch extends AbstractSearch
 
         return $this;
     }
+
+    public function coordinates(EntityCoordinates $coordinates): self
+    {
+        return $this
+            ->sx($coordinates->sx)
+            ->sy($coordinates->sy)
+            ->cx($coordinates->cx)
+            ->cy($coordinates->cy)
+            ->pos($coordinates->pos);
+    }
 }
