@@ -129,12 +129,12 @@ if ($cell->isValid()) {
                     $tm_info = "Admin/Entwickler";
                 }
                 // Krieg
-                elseif ($ent->owner->allianceId > 0 && $cu->allianceId > 0 && $cu->alliance->checkWar($ent->owner->allianceId)) {
+                elseif ($allianceDiplomacyRepository->existsDiplomacyBetween($cu->allianceId(), $ent->owner->allianceId, AllianceDiplomacyLevel::WAR)) {
                     $class .= "enemyColor";
                     $tm_info = "Krieg";
                 }
                 // Bündniss
-                elseif ($allianceDiplomacyRepository->existsDiplomacyBetween($cu->alliance, $ent->owner->allianceId, AllianceDiplomacyLevel::BND_CONFIRMED)) {
+                elseif ($allianceDiplomacyRepository->existsDiplomacyBetween($cu->allianceId(), $ent->owner->allianceId(), AllianceDiplomacyLevel::BND_CONFIRMED)) {
                     $class .= "friendColor";
                     $tm_info = "B&uuml;ndnis";
                 }
