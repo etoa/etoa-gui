@@ -1,6 +1,8 @@
 <?PHP
 
 use EtoA\Admin\AdminUserRepository;
+use EtoA\Alliance\AllianceDiplomacyLevel;
+use EtoA\Alliance\AllianceDiplomacyRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Support\BBCodeUtils;
 use EtoA\Support\StringUtils;
@@ -30,6 +32,8 @@ $userRepository = $app[UserRepository::class];
 $starRepository = $app[StarRepository::class];
 /** @var UserUniverseDiscoveryService $userUniverseDiscoveryService */
 $userUniverseDiscoveryService = $app[UserUniverseDiscoveryService::class];
+/** @var AllianceDiplomacyRepository $allianceDiplomacyRepository */
+$allianceDiplomacyRepository = $app[AllianceDiplomacyRepository::class];
 
 $user = $userRepository->getUser($cu->id);
 
@@ -130,7 +134,7 @@ if ($cell->isValid()) {
                     $tm_info = "Krieg";
                 }
                 // Bündniss
-                elseif ($ent->owner->allianceId > 0 && $cu->allianceId > 0 && $cu->alliance->checkBnd($ent->owner->allianceId)) {
+                elseif ($allianceDiplomacyRepository->existsDiplomacyBetween($cu->alliance, $ent->owner->allianceId, AllianceDiplomacyLevel::BND_CONFIRMED)) {
                     $class .= "friendColor";
                     $tm_info = "B&uuml;ndnis";
                 }

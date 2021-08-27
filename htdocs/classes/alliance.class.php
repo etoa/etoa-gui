@@ -825,23 +825,6 @@ class Alliance
         return false;
     }
 
-    /**
-     * Bndcheck
-     */
-
-    public function checkBnd($allianceId)
-    {
-        global $app;
-
-        if ($this->id != $allianceId && $allianceId > 0) {
-            /** @var AllianceDiplomacyRepository $allianceDiplomacyRepository */
-            $allianceDiplomacyRepository = $app[AllianceDiplomacyRepository::class];
-
-            return $allianceDiplomacyRepository->existsDiplomacyBetween($this->id, $allianceId, AllianceDiplomacyLevel::BND_CONFIRMED);
-        }
-        return false;
-    }
-
     static function allianceShipPointsUpdate()
     {
         // TODO
