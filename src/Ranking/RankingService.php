@@ -64,28 +64,8 @@ class RankingService
     private AllianceBuildingRepository $allianceBuildingRepository;
     private AllianceTechnologyRepository $allianceTechnologyRepository;
 
-    public function __construct(
-        ConfigurationService $config,
-        RuntimeDataStore $runtimeDataStore,
-        AllianceRepository $allianceRepository,
-        AllianceStatsRepository $allianceStatsRepository,
-        PlanetRepository $planetRepository,
-        BuildingRepository $buildingRepository,
-        BuildingDataRepository $buildingDataRepository,
-        BuildingPointRepository $buildingPointRepository,
-        TechnologyRepository $technologyRepository,
-        TechnologyDataRepository $technologyDataRepository,
-        TechnologyPointRepository $technologyPointRepository,
-        ShipRepository $shipRepository,
-        ShipDataRepository $shipDataRepository,
-        FleetRepository $fleetRepository,
-        DefenseRepository $defenseRepository,
-        DefenseDataRepository $defenseDataRepository,
-        RaceDataRepository $raceRepository,
-        UserStatRepository $userStatRepository,
-        UserRepository $userRepository,
-        EntityRepository $entityRepository
-    ) {
+    public function __construct(ConfigurationService $config, RuntimeDataStore $runtimeDataStore, AllianceRepository $allianceRepository, AllianceStatsRepository $allianceStatsRepository, PlanetRepository $planetRepository, BuildingRepository $buildingRepository, BuildingDataRepository $buildingDataRepository, BuildingPointRepository $buildingPointRepository, TechnologyRepository $technologyRepository, TechnologyDataRepository $technologyDataRepository, TechnologyPointRepository $technologyPointRepository, ShipRepository $shipRepository, ShipDataRepository $shipDataRepository, FleetRepository $fleetRepository, DefenseRepository $defenseRepository, DefenseDataRepository $defenseDataRepository, RaceDataRepository $raceRepository, UserStatRepository $userStatRepository, UserRepository $userRepository, EntityRepository $entityRepository, AllianceBuildingRepository $allianceBuildingRepository, AllianceTechnologyRepository $allianceTechnologyRepository)
+    {
         $this->config = $config;
         $this->runtimeDataStore = $runtimeDataStore;
         $this->allianceRepository = $allianceRepository;
@@ -106,6 +86,8 @@ class RankingService
         $this->userStatRepository = $userStatRepository;
         $this->userRepository = $userRepository;
         $this->entityRepository = $entityRepository;
+        $this->allianceBuildingRepository = $allianceBuildingRepository;
+        $this->allianceTechnologyRepository = $allianceTechnologyRepository;
     }
 
     public function calc(): RankingCalculationResult
@@ -579,32 +561,14 @@ class RankingService
                     $upoints = floor($arr['upoints'] / $this->config->param2Int('points_update'));
                 }
 
-                $bres = dbquery("SELECT
-                                     alliance_buildlist_building_id,
-                                    alliance_buildlist_current_level
-                                FROM
-                                    alliance_buildlist
-                                WHERE
-                                    alliance_buildlist_alliance_id='" . $arr['alliance_id'] . "'
-                                    AND alliance_buildlist_current_level>0;");
-                if (mysql_num_rows($bres) > 0) {
-                    while ($barr = mysql_fetch_row($bres)) {
-                        $bpoints += $buildingPoints[$barr[0]][$barr[1]];
-                    }
+                $buildingLevels = $this->allianceBuildingRepository->getLevels($arr['alliance_id']);
+                foreach ($buildingLevels as $buildingId => $level) {
+                    $bpoints += $buildingPoints[$buildingId][$level];
                 }
 
-                $tres = dbquery("SELECT
-                                     alliance_techlist_tech_id,
-                                    alliance_techlist_current_level
-                                FROM
-                                    alliance_techlist
-                                WHERE
-                                    alliance_techlist_alliance_id='" . $arr['alliance_id'] . "'
-                                    AND alliance_techlist_current_level>0;");
-                if (mysql_num_rows($tres) > 0) {
-                    while ($tarr = mysql_fetch_row($tres)) {
-                        $tpoints += $technologyPoints[$tarr[0]][$tarr[1]];
-                    }
+                $technologyLevels = $this->allianceTechnologyRepository->getLevels($arr['alliance_id']);
+                foreach ($technologyLevels as $technologyId => $level) {
+                    $tpoints += $technologyPoints[$technologyId][$level];
                 }
 
                 $sres = dbquery("SELECT

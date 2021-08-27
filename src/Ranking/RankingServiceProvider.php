@@ -4,8 +4,10 @@ declare(strict_types=1);
 
 namespace EtoA\Ranking;
 
+use EtoA\Alliance\AllianceBuildingRepository;
 use EtoA\Alliance\AllianceRepository;
 use EtoA\Alliance\AllianceStatsRepository;
+use EtoA\Alliance\AllianceTechnologyRepository;
 use EtoA\Building\BuildingDataRepository;
 use EtoA\Building\BuildingPointRepository;
 use EtoA\Building\BuildingRepository;
@@ -81,6 +83,8 @@ class RankingServiceProvider implements ServiceProviderInterface
                 $pimple[UserStatRepository::class],
                 $pimple[UserRepository::class],
                 $pimple[EntityRepository::class],
+                $pimple[AllianceBuildingRepository::class],
+                $pimple[AllianceTechnologyRepository::class],
             );
         };
 
