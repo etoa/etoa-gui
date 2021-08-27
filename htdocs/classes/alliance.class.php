@@ -179,33 +179,6 @@ class Alliance
                 $this->changedFields[$key] = true;
                 return true;
             }
-            if ($key == "founderId") {
-                if ($this->members == null)
-                    $this->getMembers();
-                if (isset($this->members[$val])) {
-                    $this->$key = intval($val);
-                    $this->founder = &$this->members[$val];
-
-                    // TODO
-                    global $app;
-
-                    /** @var AllianceHistoryRepository $allianceHistoryRepository */
-                    $allianceHistoryRepository = $app[AllianceHistoryRepository::class];
-                    $allianceHistoryRepository->addEntry($this->id, "Der Spieler [b]" . $this->founder . "[/b] wird zum Gründer befördert.");
-
-                    /** @var MessageRepository $messageRepository */
-                    $messageRepository = $app[MessageRepository::class];
-                    $messageRepository->createSystemMessage($this->founder->id, MSG_ALLYMAIL_CAT, "Gründer", "Du hast nun die Gründerrechte deiner Allianz!");
-
-                    /** @var UserService $userService */
-                    $userService = $app[UserService::class];
-                    $userService->addToUserLog($this->founder->id, "alliance", "{nick} ist nun Gründer der Allianz " . $this->__toString());
-
-                    $this->changedFields[$key] = true;
-                    return true;
-                }
-                return false;
-            }
 
             throw new EException("Property $key der Klasse  " . __CLASS__ . " ist nicht änderbar!");
         } catch (EException $e) {

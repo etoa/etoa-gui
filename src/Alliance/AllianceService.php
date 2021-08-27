@@ -9,6 +9,7 @@ use EtoA\Alliance\Board\AllianceBoardTopicRepository;
 use EtoA\Log\LogFacility;
 use EtoA\Log\LogRepository;
 use EtoA\Log\LogSeverity;
+use EtoA\Message\MessageRepository;
 use EtoA\User\User;
 use EtoA\User\UserRepository;
 use EtoA\User\UserService;
@@ -31,8 +32,9 @@ class AllianceService
     private AllianceSpendRepository $allianceSpendRepository;
     private AllianceTechnologyRepository $allianceTechnologyRepository;
     private LogRepository $logRepository;
+    private MessageRepository $messageRepository;
 
-    public function __construct(AllianceRepository $repository, UserRepository $userRepository, AllianceHistoryRepository $allianceHistoryRepository, UserService $userService, AllianceDiplomacyRepository $allianceDiplomacyRepository, AllianceBoardCategoryRepository $allianceBoardCategoryRepository, AllianceApplicationRepository $allianceApplicationRepository, AllianceBoardTopicRepository $allianceBoardTopicRepository, AllianceBuildingRepository $allianceBuildingRepository, AlliancePointsRepository $alliancePointsRepository, AllianceNewsRepository $allianceNewsRepository, AlliancePollRepository $alliancePollRepository, AllianceRankRepository $allianceRankRepository, AllianceSpendRepository $allianceSpendRepository, AllianceTechnologyRepository $allianceTechnologyRepository, LogRepository $logRepository)
+    public function __construct(AllianceRepository $repository, UserRepository $userRepository, AllianceHistoryRepository $allianceHistoryRepository, UserService $userService, AllianceDiplomacyRepository $allianceDiplomacyRepository, AllianceBoardCategoryRepository $allianceBoardCategoryRepository, AllianceApplicationRepository $allianceApplicationRepository, AllianceBoardTopicRepository $allianceBoardTopicRepository, AllianceBuildingRepository $allianceBuildingRepository, AlliancePointsRepository $alliancePointsRepository, AllianceNewsRepository $allianceNewsRepository, AlliancePollRepository $alliancePollRepository, AllianceRankRepository $allianceRankRepository, AllianceSpendRepository $allianceSpendRepository, AllianceTechnologyRepository $allianceTechnologyRepository, LogRepository $logRepository, MessageRepository $messageRepository)
     {
         $this->repository = $repository;
         $this->userRepository = $userRepository;
@@ -50,6 +52,7 @@ class AllianceService
         $this->allianceSpendRepository = $allianceSpendRepository;
         $this->allianceTechnologyRepository = $allianceTechnologyRepository;
         $this->logRepository = $logRepository;
+        $this->messageRepository = $messageRepository;
     }
 
     public function create(string $tag, string $name, ?int $founderId): Alliance
@@ -89,6 +92,19 @@ class AllianceService
         $this->allianceHistoryRepository->addEntry($id, "Die Allianz [b]" . $alliance->toString() . "[/b] wurde von [b]" . $founder->nick . "[/b] gegründet!");
 
         return $alliance;
+    }
+
+    public function changeFounder(Alliance $alliance, User $founder): bool
+    {
+        if ($alliance->id !== $founder->allianceId) {
+            return false;
+        }
+
+        $this->allianceHistoryRepository->addEntry($alliance->id, "Der Spieler [b]" . $founder->nick . "[/b] wird zum Gründer befördert.");
+        $this->messageRepository->createSystemMessage($founder->id, MSG_ALLYMAIL_CAT, "Gründer", "Du hast nun die Gründerrechte deiner Allianz!");
+        $this->userService->addToUserLog($founder->id, "alliance", "{nick} ist nun Gründer der Allianz " . $alliance->nameWithTag);
+
+        return true;
     }
 
     public function delete(Alliance $alliance, User $user = null): bool

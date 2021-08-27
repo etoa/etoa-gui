@@ -6,6 +6,7 @@ namespace EtoA\Alliance;
 
 use EtoA\Alliance\Base\AllianceBase;
 use EtoA\Log\LogRepository;
+use EtoA\Message\MessageRepository;
 use EtoA\User\UserRepository;
 use EtoA\Alliance\Board\AllianceBoardCategoryRankRepository;
 use EtoA\Alliance\Board\AllianceBoardCategoryRepository;
@@ -85,6 +86,7 @@ class AllianceServiceProvider implements ServiceProviderInterface
                 $pimple[AllianceSpendRepository::class],
                 $pimple[AllianceTechnologyRepository::class],
                 $pimple[LogRepository::class],
+                $pimple[MessageRepository::class],
             );
         };
 

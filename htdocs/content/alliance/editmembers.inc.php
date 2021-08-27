@@ -2,7 +2,9 @@
 
 use EtoA\Alliance\AllianceHistoryRepository;
 use EtoA\Alliance\AllianceRankRepository;
+use EtoA\Alliance\AllianceRepository;
 use EtoA\Alliance\AllianceRights;
+use EtoA\Alliance\AllianceService;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Log\LogFacility;
 use EtoA\Log\LogRepository;
@@ -12,7 +14,8 @@ use EtoA\User\UserRepository;
 
 /** @var ConfigurationService $config */
 $config = $app[ConfigurationService::class];
-
+/** @var AllianceRepository $allianceRepository */
+$allianceRepository = $app[AllianceRepository::class];
 /** @var AllianceHistoryRepository */
 $allianceHistoryRepository = $app[AllianceHistoryRepository::class];
 /** @var AllianceRankRepository $allianceRankRepository */
@@ -108,7 +111,12 @@ if (Alliance::checkActionRights(AllianceRights::EDIT_MEMBERS)) {
         $fid = intval($_GET['setfounder']);
 
         if (isset($ally->members[$fid])) {
-            $ally->founderId = $fid;
+            $alliance = $allianceRepository->getAlliance($ally->id);
+            $newFounder = $userRepository->getUser($fid);
+
+            /** @var AllianceService $allianceService */
+            $allianceService = $app[AllianceService::class];
+            $allianceService->changeFounder($alliance, $newFounder);
             $logRepository->add(LogFacility::ALLIANCE, LogSeverity::INFO, "Der Spieler [b]" . $ally->founder . "[/b] wird vom Spieler [b]" . $cu . "[/b] zum Gründer befördert.");
             success_msg("Gründer ge&auml;ndert!");
         } else
