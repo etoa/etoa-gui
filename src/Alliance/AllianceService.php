@@ -6,6 +6,7 @@ namespace EtoA\Alliance;
 
 use EtoA\Alliance\Board\AllianceBoardCategoryRepository;
 use EtoA\Alliance\Board\AllianceBoardTopicRepository;
+use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Log\LogFacility;
 use EtoA\Log\LogRepository;
 use EtoA\Log\LogSeverity;
@@ -33,8 +34,10 @@ class AllianceService
     private AllianceTechnologyRepository $allianceTechnologyRepository;
     private LogRepository $logRepository;
     private MessageRepository $messageRepository;
+    private ConfigurationService $config;
+    private AllianceMemberCosts $allianceMemberCosts;
 
-    public function __construct(AllianceRepository $repository, UserRepository $userRepository, AllianceHistoryRepository $allianceHistoryRepository, UserService $userService, AllianceDiplomacyRepository $allianceDiplomacyRepository, AllianceBoardCategoryRepository $allianceBoardCategoryRepository, AllianceApplicationRepository $allianceApplicationRepository, AllianceBoardTopicRepository $allianceBoardTopicRepository, AllianceBuildingRepository $allianceBuildingRepository, AlliancePointsRepository $alliancePointsRepository, AllianceNewsRepository $allianceNewsRepository, AlliancePollRepository $alliancePollRepository, AllianceRankRepository $allianceRankRepository, AllianceSpendRepository $allianceSpendRepository, AllianceTechnologyRepository $allianceTechnologyRepository, LogRepository $logRepository, MessageRepository $messageRepository)
+    public function __construct(AllianceRepository $repository, UserRepository $userRepository, AllianceHistoryRepository $allianceHistoryRepository, UserService $userService, AllianceDiplomacyRepository $allianceDiplomacyRepository, AllianceBoardCategoryRepository $allianceBoardCategoryRepository, AllianceApplicationRepository $allianceApplicationRepository, AllianceBoardTopicRepository $allianceBoardTopicRepository, AllianceBuildingRepository $allianceBuildingRepository, AlliancePointsRepository $alliancePointsRepository, AllianceNewsRepository $allianceNewsRepository, AlliancePollRepository $alliancePollRepository, AllianceRankRepository $allianceRankRepository, AllianceSpendRepository $allianceSpendRepository, AllianceTechnologyRepository $allianceTechnologyRepository, LogRepository $logRepository, MessageRepository $messageRepository, ConfigurationService $config, AllianceMemberCosts $allianceMemberCosts)
     {
         $this->repository = $repository;
         $this->userRepository = $userRepository;
@@ -53,9 +56,11 @@ class AllianceService
         $this->allianceTechnologyRepository = $allianceTechnologyRepository;
         $this->logRepository = $logRepository;
         $this->messageRepository = $messageRepository;
+        $this->config = $config;
+        $this->allianceMemberCosts = $allianceMemberCosts;
     }
 
-    public function create(string $tag, string $name, ?int $founderId): Alliance
+    public function create(string $tag, string $name, ?int $founderId): AllianceWithMemberCount
     {
         if (!filled($name) || !filled($tag)) {
             throw new InvalidAllianceParametersException("Name/Tag fehlt!");
@@ -92,6 +97,32 @@ class AllianceService
         $this->allianceHistoryRepository->addEntry($id, "Die Allianz [b]" . $alliance->toString() . "[/b] wurde von [b]" . $founder->nick . "[/b] gegründet!");
 
         return $alliance;
+    }
+
+    public function addMember(AllianceWithMemberCount $alliance, User $user): bool
+    {
+        if ($alliance->id === $user->allianceId) {
+            return false;
+        }
+
+        $newMemberCount = $alliance->memberCount + 1;
+        $maxMemberCount = $this->config->getInt("alliance_max_member_count");
+        if ($maxMemberCount > 0 && $newMemberCount + 1 > $maxMemberCount) {
+            return false;
+        }
+
+        $this->messageRepository->createSystemMessage($user->id, MSG_ALLYMAIL_CAT, "Allianzaufnahme", "Du wurdest in die Allianz [b]" . $alliance->nameWithTag . "[/b] aufgenommen!");
+        $this->allianceHistoryRepository->addEntry($alliance->id, "[b]" . $user->nick . "[/b] wurde als neues Mitglied aufgenommen");
+        $this->allianceMemberCosts->increase($alliance->id, $alliance->memberCount, $newMemberCount);
+        $this->userRepository->setAllianceId($user->id, $alliance->id);
+        if ($user->allianceId > 0) {
+            $previousAlliance = $this->repository->getAlliance($user->allianceId);
+            $this->userService->addToUserLog($user->id, "alliance", "{nick} ist nun kein Mitglied mehr der Allianz [b]" . $previousAlliance->nameWithTag . "[/b].");
+        }
+
+        $alliance->memberCount++;
+
+        return true;
     }
 
     public function changeFounder(Alliance $alliance, User $founder): bool

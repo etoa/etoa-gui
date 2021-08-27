@@ -209,47 +209,6 @@ class Alliance
     }
 
     /**
-     * Adds a new user to the alliance
-     */
-    public function addMember($userId)
-    {
-        // TODO
-        global $app;
-
-        $this->getMembers();
-        $currentMemberCount = count($this->members);
-        if (!isset($this->members[$userId])) {
-            $maxMemberCount = $this->config->getInt("alliance_max_member_count");
-            if ($maxMemberCount > 0 && $this->memberCount > $maxMemberCount) {
-                return false;
-            }
-
-            $tmpUser = new User($userId);
-            if ($tmpUser->isValid) {
-                if ($tmpUser->alliance === $this) {
-                    $this->members[$userId] = $tmpUser;
-
-                    /** @var MessageRepository $messageRepository */
-                    $messageRepository = $app[MessageRepository::class];
-                    $messageRepository->createSystemMessage($userId, MSG_ALLYMAIL_CAT, "Allianzaufnahme", "Du wurdest in die Allianz [b]" . $this->__toString() . "[/b] aufgenommen!");
-
-                    /** @var AllianceHistoryRepository $allianceHistoryRepository */
-                    $allianceHistoryRepository = $app[AllianceHistoryRepository::class];
-                    $allianceHistoryRepository->addEntry($this->id, "[b]" . $tmpUser . "[/b] wurde als neues Mitglied aufgenommen");
-
-                    /** @var AllianceMemberCosts $allianceMemberCosts */
-                    $allianceMemberCosts = $app[AllianceMemberCosts::class];
-                    $allianceMemberCosts->increase($this->id, $currentMemberCount, count($this->members));
-
-                    return true;
-                }
-            }
-            unset($tmpUser);
-        }
-        return false;
-    }
-
-    /**
      * Removes an user from the alliance
      */
     public function kickMember($userId, $kick = 1)

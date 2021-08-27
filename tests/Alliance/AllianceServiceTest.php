@@ -38,6 +38,21 @@ class AllianceServiceTest extends WebTestCase
         $this->assertNotNull($this->repository->getAlliance($alliance->id));
     }
 
+    public function testAddMember(): void
+    {
+        $tag = 'TEST';
+        $name = 'The Testers';
+        $founderId = $this->userRepository->create('tester', 'John Doe', 'tester@example.com', '12345678');
+        $_SERVER['REMOTE_ADDR'] = '127.0.0.1';
+
+        $otherUserId = $this->userRepository->create('other', 'Other Doe', 'other@example.com', '12345678');
+        $otherUser = $this->userRepository->getUser($otherUserId);
+
+        $alliance = $this->service->create($tag, $name, $founderId);
+
+        $this->assertTrue($this->service->addMember($alliance, $otherUser));
+    }
+
     public function testChangeFounder(): void
     {
         $_SERVER['REMOTE_ADDR'] = '127.0.0.1';

@@ -24,11 +24,14 @@ $allianceRankRepository = $app[AllianceRankRepository::class];
 $userRepository = $app[UserRepository::class];
 /** @var LogRepository $logRepository */
 $logRepository = $app[LogRepository::class];
+/** @var AllianceService $allianceService */
+$allianceService = $app[AllianceService::class];
 
 /** @var Alliance $ally */
 /** @var bool $isFounder */
 
 if (Alliance::checkActionRights(AllianceRights::EDIT_MEMBERS)) {
+    $currentAlliance = $allianceRepository->getAlliance($ally->id);
 
     echo "<h2>Allianzmitglieder</h2>";
     // Ränge laden
@@ -88,15 +91,17 @@ if (Alliance::checkActionRights(AllianceRights::EDIT_MEMBERS)) {
             // TODO: A cool user-swap-function for alliances would be a better solution.
             if (count($checked_arr) > 0) {
                 foreach ($checked_arr as $moving_user_id => $target_alliance) {
+                    $toBeAddedUser = $userRepository->getUser($moving_user_id);
                     if ($target_alliance == $ally->id) {
-                        if ($ally->addMember($moving_user_id)) {
-                            success_msg($ally->members[$moving_user_id] . " wurde umgeteilt!");
+                        if ($allianceService->addMember($currentAlliance, $toBeAddedUser)) {
+                            success_msg($toBeAddedUser->nick . " wurde umgeteilt!");
                         } else {
                             error_msg("Umteilung nicht möglich, User ist bereits Mitglied oder die maximale Anzahl an Mitgliedern wurde erreicht!");
                         }
                     } else {
-                        if ($ally->wings[$target_alliance]->addMember($moving_user_id)) {
-                            success_msg($ally->wings[$target_alliance]->members[$moving_user_id] . " wurde verschoben!");
+                        $wing = $allianceRepository->getAlliance($target_alliance);
+                        if ($allianceService->addMember($currentAlliance, $toBeAddedUser)) {
+                            success_msg($toBeAddedUser->nick . " wurde verschoben!");
                         } else {
                             error_msg("Verschiebung nicht möglich, User ist bereits Mitglied oder die maximale Anzahl an Mitgliedern wurde erreicht!");
                         }
