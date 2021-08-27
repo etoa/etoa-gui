@@ -111,7 +111,7 @@ class RankingService
 
         $race = $this->raceRepository->getRaceNames();
 
-        $alliance = $this->allianceRepository->getAllianceTags();
+        $allianceTags = $this->allianceRepository->getAllianceTags();
 
         // Load 'old' ranks
         $res = dbquery("
@@ -228,7 +228,7 @@ class RankingService
                         " . $points_building . ",
                         " . $points_exp . ",
                         '" . $user->nick . "',
-                        '" . ($user->allianceId > 0 ? $alliance[$user->allianceId] : '') . "',
+                        '" . ($user->allianceId > 0 ? $allianceTags[$user->allianceId] : '') . "',
                         '" . $user->allianceId . "',
                         '" . ($user->raceId > 0 ? $race[$user->raceId] : '') . "',
                         '" . $sx . "',
@@ -530,68 +530,48 @@ class RankingService
             }
         }
 
-        $res = dbquery("SELECT
-                a.alliance_tag,
-                a.alliance_name,
-                a.alliance_id,
-                a.alliance_rank_current,
-                COUNT(*) AS cnt,
-                SUM(u.points) AS upoints,
-                AVG(u.points) AS uavg
-            FROM
-                alliances as a
-            INNER JOIN
-                user_stats as u
-            ON
-                u.alliance_id=a.alliance_id
-            GROUP BY
-                a.alliance_id
-            ORDER BY
-                SUM(u.points) DESC
-            ;");
-
         $usedAllianceShipPoints = $this->userRepository->getUsedAllianceShipPoints();
 
+        $alliances = $this->allianceRepository->getAllianceStats();
         /** @var AllianceStats[] $allianceStats */
         $allianceStats = [];
-        if (mysql_num_rows($res) > 0) {
-            while ($arr = mysql_fetch_assoc($res)) {
-                $upoints = 0;
-                $bpoints = 0;
-                $tpoints = 0;
-                if ($arr['upoints'] > 0 && $this->config->param2Int('points_update') > 0) {
-                    $upoints = floor($arr['upoints'] / $this->config->param2Int('points_update'));
-                }
-
-                $buildingLevels = $this->allianceBuildingRepository->getLevels($arr['alliance_id']);
-                foreach ($buildingLevels as $buildingId => $level) {
-                    $bpoints += $buildingPoints[$buildingId][$level];
-                }
-
-                $technologyLevels = $this->allianceTechnologyRepository->getLevels($arr['alliance_id']);
-                foreach ($technologyLevels as $technologyId => $level) {
-                    $tpoints += $technologyPoints[$technologyId][$level];
-                }
-
-                $apoints = $tpoints + $bpoints + $usedAllianceShipPoints[$arr['alliance_id']] ?? 0;
-                $points = $apoints + $upoints;
-
-                $stats = AllianceStats::createFromData(
-                    (int) $arr['alliance_id'],
-                    $arr['alliance_tag'],
-                    $arr['alliance_name'],
-                    (int) $arr['cnt'],
-                    (int) $points,
-                    (int) $upoints,
-                    (int) $apoints,
-                    (int) $tpoints,
-                    (int) $bpoints,
-                    (int) $arr['uavg'],
-                    (int) $arr['cnt'],
-                    (int) $arr['alliance_rank_current']
-                );
-                $allianceStats[] = $stats;
+        foreach ($alliances as $alliance) {
+            $allianceId = (int) $alliance['alliance_id'];
+            $upoints = 0;
+            $bpoints = 0;
+            $tpoints = 0;
+            if ($alliance['upoints'] > 0 && $this->config->param2Int('points_update') > 0) {
+                $upoints = floor($alliance['upoints'] / $this->config->param2Int('points_update'));
             }
+
+            $buildingLevels = $this->allianceBuildingRepository->getLevels($allianceId);
+            foreach ($buildingLevels as $buildingId => $level) {
+                $bpoints += $buildingPoints[$buildingId][$level];
+            }
+
+            $technologyLevels = $this->allianceTechnologyRepository->getLevels($allianceId);
+            foreach ($technologyLevels as $technologyId => $level) {
+                $tpoints += $technologyPoints[$technologyId][$level];
+            }
+
+            $apoints = $tpoints + $bpoints + $usedAllianceShipPoints[$allianceId] ?? 0;
+            $points = $apoints + $upoints;
+
+            $stats = AllianceStats::createFromData(
+                $allianceId,
+                $alliance['alliance_tag'],
+                $alliance['alliance_name'],
+                (int) $alliance['cnt'],
+                (int) $points,
+                (int) $upoints,
+                (int) $apoints,
+                (int) $tpoints,
+                (int) $bpoints,
+                (int) $alliance['uavg'],
+                (int) $alliance['cnt'],
+                (int) $alliance['alliance_rank_current']
+            );
+            $allianceStats[] = $stats;
         }
 
         usort($allianceStats, fn (AllianceStats $a, AllianceStats $b) => $b->points <=> $a->points);
@@ -600,14 +580,7 @@ class RankingService
             foreach ($allianceStats as $stats) {
                 $stats->currentRank = $rank;
                 $this->allianceStatsRepository->add($stats);
-                dbquery("UPDATE
-                                alliances
-                            SET
-                                alliance_points='" . $stats->points . "',
-                                alliance_rank_current='" . $stats->currentRank . "',
-                                alliance_rank_last='" . $stats->lastRank . "'
-                            WHERE
-                                alliance_id='" . $stats->allianceId . "';");
+                $this->allianceRepository->updatePointsAndRank($stats->allianceId, $stats->points, $stats->currentRank, $stats->lastRank);
                 $rank++;
             }
         }

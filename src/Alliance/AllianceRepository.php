@@ -595,6 +595,39 @@ class AllianceRepository extends AbstractRepository
             ->execute();
     }
 
+    /**
+     * @return array{alliance_tag: string, alliance_name: string, alliance_id: string, alliance_rank_current: string, cnt: string, upoints: string, uavg: string}[]
+     */
+    public function getAllianceStats(): array
+    {
+        return $this->createQueryBuilder()
+            ->select('a.alliance_tag, a.alliance_name, a.alliance_id, a.alliance_rank_current')
+            ->addSelect('COUNT(*) AS cnt, SUM(u.points) AS upoints, AVG(u.points) AS uavg')
+            ->from('alliances', 'a')
+            ->innerJoin('a', 'user_stats', 'u', 'u.alliance_id = a.alliance_id')
+            ->groupBy('a.alliance_id')
+            ->orderBy('SUM(u.points)', 'DESC')
+            ->execute()
+            ->fetchAllAssociative();
+    }
+
+    public function updatePointsAndRank(int $allianceId, int $points, int $rank, int $lastRank): void
+    {
+        $this->createQueryBuilder()
+            ->update('alliances')
+            ->set('alliance_points', ':points')
+            ->set('alliance_rank_current', ':rank')
+            ->set('alliance_rank_last', ':lastRank')
+            ->where('alliance_id = :id')
+            ->setParameters([
+                'id' => $allianceId,
+                'points' => $points,
+                'rank' => $rank,
+                'lastRank' => $lastRank,
+            ])
+            ->execute();
+    }
+
     public function removePointsByTimestamp(int $timestamp): int
     {
         return (int) $this->createQueryBuilder()
