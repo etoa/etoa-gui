@@ -14,10 +14,10 @@ class UserSessionRepository extends AbstractRepository
     public function logCountPerIp(UserSessionSearch $search): array
     {
         $data = $this->applySearchSortLimit($this->createQueryBuilder(), $search)
-            ->select('ip_addr, COUNT(ip_addr) cnt')
-            ->from('user_sessionlog')
-            ->groupBy('ip_addr')
-            ->orderBy('cnt', 'DESC')
+            ->select('s.ip_addr, COUNT(s.ip_addr) cnt')
+            ->from('user_sessionlog', 's')
+            ->groupBy('s.ip_addr')
+            ->orderBy('s.cnt', 'DESC')
             ->execute()
             ->fetchAllKeyValue();
 
@@ -30,10 +30,10 @@ class UserSessionRepository extends AbstractRepository
     public function countPerUserId(UserSessionSearch $search): array
     {
         $data = $this->applySearchSortLimit($this->createQueryBuilder(), $search)
-            ->select('user_id, COUNT(user_id) cnt')
-            ->from('user_session')
-            ->groupBy('user_id')
-            ->orderBy('cnt', 'DESC')
+            ->select('s.user_id, COUNT(s.user_id) cnt')
+            ->from('user_session', 's')
+            ->groupBy('s.user_id')
+            ->orderBy('s.cnt', 'DESC')
             ->execute()
             ->fetchAllKeyValue();
 
@@ -46,10 +46,10 @@ class UserSessionRepository extends AbstractRepository
     public function logCountPerUserId(UserSessionSearch $search): array
     {
         $data = $this->applySearchSortLimit($this->createQueryBuilder(), $search)
-            ->select('user_id, COUNT(user_id) cnt')
-            ->from('user_sessionlog')
-            ->groupBy('user_id')
-            ->orderBy('cnt', 'DESC')
+            ->select('s.user_id, COUNT(s.user_id) cnt')
+            ->from('user_sessionlog', 's')
+            ->groupBy('s.user_id')
+            ->orderBy('s.cnt', 'DESC')
             ->execute()
             ->fetchAllKeyValue();
 
@@ -143,8 +143,8 @@ class UserSessionRepository extends AbstractRepository
     {
         $data = $this->applySearchSortLimit($this->createQueryBuilder(), $search)
             ->select('*')
-            ->from('user_sessions')
-            ->orderBy('time_action', 'DESC')
+            ->from('user_sessions', 's')
+            ->orderBy('s.time_action', 'DESC')
             ->execute()
             ->fetchAllAssociative();
 
@@ -292,9 +292,9 @@ class UserSessionRepository extends AbstractRepository
     {
         $rows = $this->applySearchSortLimit($this->createQueryBuilder(), $search, null, $limit)
             ->select('*')
-            ->from('user_sessionlog')
-            ->innerJoin('user_sessionlog', 'users', 'users', 'users.user_id = user_sessionlog.user_id')
-            ->orderBy('time_action', 'DESC')
+            ->from('user_sessionlog', 's')
+            ->innerJoin('s', 'users', 'users', 'users.user_id = s.user_id')
+            ->orderBy('s.time_action', 'DESC')
             ->execute()
             ->fetchAllAssociative();
 
