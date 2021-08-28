@@ -156,7 +156,7 @@ elseif ($cu->allianceId == 0) {
         //
         // Allianz auflösen bestätigen
         //
-        elseif (isset($_GET['action']) && $_GET['action'] == "liquidate"  && !$cu->alliance->isAtWar()) {
+        elseif (isset($_GET['action']) && $_GET['action'] == "liquidate"  && !$allianceDiplomacyRepository->isAtWar($cu->allianceId())) {
             if (Alliance::checkActionRights(AllianceRights::LIQUIDATE)) {
                 require("alliance/liquidate.inc.php");
             }
@@ -210,7 +210,7 @@ elseif ($cu->allianceId == 0) {
         //
         // Allianz verlassen (Durchführen)
         //
-        elseif (isset($_GET['action']) && $_GET['action'] == "leave" && !$isFounder && !$cu->alliance->isAtWar()) {
+        elseif (isset($_GET['action']) && $_GET['action'] == "leave" && !$isFounder && !$allianceDiplomacyRepository->isAtWar($cu->allianceId())) {
             echo "<h2>Allianz-Austritt</h2>";
             if ($cu->allianceId != 0) {
                 if (isset($_POST['submit_leave'])) {
@@ -336,7 +336,7 @@ elseif ($cu->allianceId == 0) {
                 && $isFounder
                 && $cu->allianceId == $_POST['id_control']
                 && checker_verify()
-                && !$cu->alliance->isAtWar()
+                && !$allianceDiplomacyRepository->isAtWar($cu->allianceId())
             ) {
                 $alliance = $allianceRepository->getAlliance($cu->allianceId());
                 $user = $userRepository->getUser($cu->getId());
@@ -472,10 +472,8 @@ elseif ($cu->allianceId == 0) {
                 if ($isFounder || $myRight[AllianceRights::APPLICATION_TEMPLATE]) {
                     $adminBox["Bewerbungsvorlage"] = "?page=$page&action=applicationtemplate";
                 }
-                if ($isFounder && !$cu->alliance->isAtWar()) {
+                if ($isFounder && !$allianceDiplomacyRepository->isAtWar($cu->allianceId())) {
                     $adminBox["Allianz aufl&ouml;sen"] = "?page=$page&action=liquidate";
-                }
-                if (!$isFounder && !$cu->alliance->isAtWar()) {
                     $adminBox["Allianz verlassen"] = "?page=$page&action=leave";
                     //array_push($adminBox,"<a href=\"\" onclick=\"return confirm('Allianz wirklich verlassen?');\"></a>");
                 }

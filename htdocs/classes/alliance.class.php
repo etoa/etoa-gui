@@ -470,13 +470,4 @@ class Alliance
 
         return $allianceRankRepository->hasActionRights($this->id, $cu->allianceRankId, $action);
     }
-
-    public function isAtWar()
-    {
-        global $app;
-        /** @var AllianceDiplomacyRepository $allianceDiplomacyRepository */
-        $allianceDiplomacyRepository = $app[AllianceDiplomacyRepository::class];
-
-        return $allianceDiplomacyRepository->isAtWar($this->id);
-    }
 }

@@ -1,5 +1,6 @@
 <?PHP
 
+use EtoA\Alliance\AllianceDiplomacyRepository;
 use EtoA\Alliance\AllianceHistoryRepository;
 use EtoA\Alliance\AllianceRankRepository;
 use EtoA\Alliance\AllianceRepository;
@@ -26,6 +27,8 @@ $userRepository = $app[UserRepository::class];
 $logRepository = $app[LogRepository::class];
 /** @var AllianceService $allianceService */
 $allianceService = $app[AllianceService::class];
+/** @var AllianceDiplomacyRepository $allianceDiplomacyRepository */
+$allianceDiplomacyRepository = $app[AllianceDiplomacyRepository::class];
 
 /** @var Alliance $ally */
 /** @var bool $isFounder */
@@ -128,7 +131,7 @@ if (Alliance::checkActionRights(AllianceRights::EDIT_MEMBERS)) {
     }
 
     // Mitglied kicken
-    if (isset($_GET['kickuser']) && intval($_GET['kickuser']) > 0 && checker_verify() && !$cu->alliance->isAtWar()) {
+    if (isset($_GET['kickuser']) && intval($_GET['kickuser']) > 0 && checker_verify() && !$allianceDiplomacyRepository->isAtWar($cu->allianceId())) {
         $kid = intval($_GET['kickuser']);
 
         $toBeKickedUser = $userRepository->getUser($kid);
@@ -183,7 +186,7 @@ if (Alliance::checkActionRights(AllianceRights::EDIT_MEMBERS)) {
 
         if ($config->getBoolean('allow_wings') && count($ally->wings) > 0) {
             echo "<td>";
-            if ($ally->founderId != $mk && !$ally->isAtWar()) {
+            if ($ally->founderId != $mk && !$allianceDiplomacyRepository->isAtWar($ally->id)) {
                 echo "<select name=\"moveuser[" . $ally->id . "][" . $mk . "]\">
                     <option value=\"\">Keine Änderung</option>";
                 foreach ($ally->wings as $wk => $wv) {
@@ -206,7 +209,7 @@ if (Alliance::checkActionRights(AllianceRights::EDIT_MEMBERS)) {
         if ($isFounder && $cu->id != $mk)
             echo "<a href=\"?page=alliance&amp;action=editmembers&amp;setfounder=" . $mk . "\" onclick=\"return confirm('Soll der Spieler \'" . $mv . "\' wirklich zum Gründer bef&ouml;rdert werden? Dir werden dabei die Gründerrechte entzogen!');\">Gründer</a><br/>";
 
-        if ($cu->id != $mk && $mk != $ally->founderId && !$cu->alliance->isAtWar()) {
+        if ($cu->id != $mk && $mk != $ally->founderId && !$allianceDiplomacyRepository->isAtWar($cu->allianceId())) {
             echo "<a href=\"?page=$page&amp;action=editmembers&amp;kickuser=" . $mk . checker_get_link_key() . "\" onclick=\"return confirm('Soll " . $mv . " wirklich aus der Allianz ausgeschlosen werden?');\">Kicken</a>";
         }
         echo "</td></tr>";
