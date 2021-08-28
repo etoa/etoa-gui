@@ -119,7 +119,7 @@ if (Alliance::checkActionRights(AllianceRights::EDIT_MEMBERS)) {
 
         $newFounder = $userRepository->getUser($fid);
         $alliance = $allianceRepository->getAlliance($ally->id);
-        if ($newFounder && $newFounder->allianceId === $alliance->id) {
+        if ($newFounder !== null && $newFounder->allianceId === $alliance->id) {
             $allianceService->changeFounder($alliance, $newFounder);
             $logRepository->add(LogFacility::ALLIANCE, LogSeverity::INFO, "Der Spieler [b]" . $ally->founder . "[/b] wird vom Spieler [b]" . $cu . "[/b] zum Gründer befördert.");
             success_msg("Gründer ge&auml;ndert!");
@@ -132,7 +132,7 @@ if (Alliance::checkActionRights(AllianceRights::EDIT_MEMBERS)) {
         $kid = intval($_GET['kickuser']);
 
         $toBeKickedUser = $userRepository->getUser($kid);
-        if ($toBeKickedUser && $toBeKickedUser->allianceId === $currentAlliance->id) {
+        if ($toBeKickedUser !== null && $toBeKickedUser->allianceId === $currentAlliance->id) {
             if ($allianceService->kickMember($currentAlliance, $toBeKickedUser)) {
                 $logRepository->add(LogFacility::ALLIANCE, LogSeverity::INFO, "Der Spieler [b]" . $toBeKickedUser->nick . "[/b] wurde von [b]" . $cu . "[/b] aus der Allianz [b]" . $currentAlliance->nameWithTag . "[/b] ausgeschlossen!");
                 success_msg("Der Spieler [b]" . $toBeKickedUser->nick . "[/b] wurde aus der Allianz ausgeschlossen!");

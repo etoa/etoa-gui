@@ -186,7 +186,7 @@ if (isset($_POST['storage_submit']) && checker_verify()) {
             $cp->reloadRes();
 
             // Rohstoffe der Allianz gutschreiben
-            $allianceRepository->addResources($this->id, $resources->metal, $resources->crystal, $resources->plastic, $resources->fuel, $resources->food);
+            $allianceRepository->addResources($cu->allianceId(), $resources->metal, $resources->crystal, $resources->plastic, $resources->fuel, $resources->food);
 
             // Spende speichern
             $allianceSpendRepository->addEntry($cu->allianceId(), $cu->getId(), $resources);
