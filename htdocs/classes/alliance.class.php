@@ -509,24 +509,6 @@ class Alliance
     }
 
     /**
-     * Changes allianceresources
-     */
-    function changeRes($m, $c, $p, $fu, $fo, $pw = 0)
-    {
-        global $app;
-
-        /** @var AllianceRepository $allianceRepository */
-        $allianceRepository = $app[AllianceRepository::class];
-        $allianceRepository->addResources($this->id, $m, $c, $p, $fu, $fo);
-
-        $this->resMetal += $m;
-        $this->resCrystal += $c;
-        $this->resPlastic += $p;
-        $this->resFuel += $fu;
-        $this->resFood += $fo;
-    }
-
-    /**
      * Check rights for an action
      * @param AllianceRights::* $action
      */
