@@ -23,6 +23,7 @@ use EtoA\Universe\Entity\EntityCoordinates;
 use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\User\UserRepository;
+use EtoA\User\UserSearch;
 use EtoA\User\UserUniverseDiscoveryService;
 
 $xajax->register(XAJAX_FUNCTION, "havenShowShips");
@@ -1597,6 +1598,10 @@ function havenCheckPeople($val)
 function havenCheckAction($code)
 {
     global $app;
+
+    /** @var UserRepository $userRepository */
+    $userRepository = $app[UserRepository::class];
+
     $response = new xajaxResponse();
     $fleet = unserialize($_SESSION['haven']['fleetObj']);
     ob_start();
@@ -1721,8 +1726,9 @@ function havenCheckAction($code)
         ob_start();
         echo "<td colspan=\"2\"><textarea name=\"message_text\" id=\"message\" rows=\"10\" cols=\"55\"></textarea></td>
             <td>";
-        foreach ($fleet->owner->alliance->members as $mk => $mv) {
-            echo "<input type=\"checkbox\" name=\"msgUser[]\" name=\"msgUser[]\" value=\"$mk\" checked=\"checked\">&nbsp;$mv<br>";
+        $allianceMemberNames = $userRepository->searchUserNicknames(UserSearch::create()->allianceId($fleet->owner->allianceId()));
+        foreach ($allianceMemberNames as $userId => $userNick) {
+            echo "<input type=\"checkbox\" name=\"msgUser[]\" name=\"msgUser[]\" value=\"$userId\" checked=\"checked\">&nbsp;$userNick<br>";
         }
         echo "</td>";
         $response->assign('msg', 'innerHTML', ob_get_contents());

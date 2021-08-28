@@ -38,7 +38,6 @@ class Alliance
 
     protected $wings = null;
     protected $wingRequests = null;
-    protected $members = null;
     protected $ranks = null;
 
     protected $founderId;
@@ -150,8 +149,6 @@ class Alliance
                 throw new EException("Property $key existiert nicht in der Klasse " . __CLASS__);
 
             // Do actions for some special properties
-            if ($key == "members" && $this->members == null)
-                $this->getMembers();
             if ($key == "wings" && $this->wings == null)
                 $this->getWings();
             if ($key == "wingRequests" && $this->wingRequests == null)
@@ -161,10 +158,7 @@ class Alliance
             if ($key == "motherRequest" && $this->motherRequest == null)
                 $this->motherRequest = new Alliance($this->motherRequestId);
             if ($key == "founder" && $this->founder == null) {
-                if (isset($this->members[$this->founderId]))
-                    $this->founder = &$this->members[$this->founderId];
-                else
-                    $this->founder = new User($this->founderId);
+                $this->founder = new User($this->founderId);
             }
 
             // Protected properties
@@ -177,35 +171,6 @@ class Alliance
             echo $e;
             return null;
         }
-    }
-
-    //
-    // Member management
-    //
-
-    /**
-     * Returns alliance members as an array of user objecs
-     * Use $object->members from outside of the class
-     */
-    private function &getMembers()
-    {
-        if ($this->members == null) {
-            $this->members = array();
-            $res = dbquery("
-                SELECT
-                    user_id
-                FROM
-                    users
-                WHERE
-                    user_alliance_id=" . $this->id . "
-                ");
-            if (mysql_num_rows($res) > 0) {
-                while ($arr = mysql_fetch_row($res)) {
-                    $this->members[$arr[0]] = new User($arr[0]);
-                }
-            }
-        }
-        return $this->members;
     }
 
     //

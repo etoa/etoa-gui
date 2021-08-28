@@ -23,6 +23,7 @@ use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Universe\Resources\BaseResources;
 use EtoA\User\UserRepository;
+use EtoA\User\UserSearch;
 use Symfony\Component\HttpFoundation\Request;
 
 /** @var ConfigurationService $config */
@@ -311,8 +312,10 @@ if (isset($_POST['ship_submit']) && checker_verify()) {
 
 
                 if ($total_build_cnt > 0) {
+                    $shipUserId = (int) $_POST['user_buy_ship'];
+                    $allianceMembers = $userRepository->searchUsers(UserSearch::create()->allianceId($cu->allianceId())->user($shipUserId));
                     // Prüft ob Schiffspunkte noch ausreichend sind
-                    if ($cu->alliance->members[$_POST['user_buy_ship']]->allianceShippoints >= $ship_costs) {
+                    if (isset($allianceMembers[$shipUserId]) && $allianceMembers[$shipUserId]->allianceShipPoints >= $ship_costs) {
                         // Zieht Punkte vom Konto ab
                         $userRepository->markAllianceShipPointsAsUsed($_POST['user_buy_ship'], $ship_costs);
                         $ship_costed = $ship_costs;
@@ -807,8 +810,9 @@ echo "<tr>
                 <select id=\"user_spends\" name=\"user_spends\">
                         <option value=\"0\">alle</option>";
 // Allianzuser
-foreach ($cu->alliance->members as $id => $data) {
-    echo "<option value=\"" . $id . "\">" . $data . "</option>";
+$allianceMemberNames = $userRepository->searchUserNicknames(UserSearch::create()->allianceId($cu->allianceId()));
+foreach ($allianceMemberNames as $userId => $userNick) {
+    echo "<option value=\"" . $userId . "\">" . $userNick . "</option>";
 }
 echo "</select>
             </td>
@@ -828,10 +832,13 @@ echo "</form>";
 
 // Einzahlungen werden summiert und ausgegeben
 if ($sum) {
+    $user_message = "";
+
     if ($user > 0) {
-        $user_message = "von " . $cu->alliance->members[$user] . " ";
-    } else {
-        $user_message = "";
+        $allianceMemberNames = $userRepository->searchUserNicknames(UserSearch::create()->allianceId($cu->allianceId()));
+        if (isset($allianceMemberNames[$user])) {
+            $user_message = "von " . $allianceMemberNames[$user] . " ";
+        }
     }
 
     echo "Es werden die bisher eingezahlten Rohstoffe " . $user_message . " angezeigt.<br><br>";
@@ -863,13 +870,14 @@ if ($sum) {
 }
 // Einzahlungen werden einzelen ausgegeben
 else {
+    $user_message = "";
 
     if ($user > 0) {
-        $user_message = "von " . $cu->alliance->members[$user] . " ";
-    } else {
-        $user_message = "";
+        $allianceMemberNames = $userRepository->searchUserNicknames(UserSearch::create()->allianceId($cu->allianceId()));
+        if (isset($allianceMemberNames[$user])) {
+            $user_message = "von " . $allianceMemberNames[$user] . " ";
+        }
     }
-
 
     if ($limit > 0) {
         if ($limit == 1) {
@@ -885,8 +893,9 @@ else {
     // Läd Einzahlungen
     $spendEntries = $allianceSpendRepository->getSpent($cu->allianceId(), $user, $limit);
     if (count($spendEntries) > 0) {
+        $allianceMemberNames = $userRepository->searchUserNicknames(UserSearch::create()->allianceId($cu->allianceId()));
         foreach ($spendEntries as $entry) {
-            tableStart("" . $cu->alliance->members[$entry->userId] . " - " . StringUtils::formatDate($entry->time) . "");
+            tableStart("" . $allianceMemberNames[$entry->userId] . " - " . StringUtils::formatDate($entry->time) . "");
             echo "<tr>
                             <th style=\"width:20%\">" . RES_METAL . "</th>
                             <th style=\"width:20%\">" . RES_CRYSTAL . "</th>
