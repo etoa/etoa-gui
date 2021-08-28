@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace EtoA\Alliance;
 
 use EtoA\Alliance\Base\AllianceBase;
+use EtoA\Fleet\FleetRepository;
 use EtoA\Log\LogRepository;
 use EtoA\Message\MessageRepository;
 use EtoA\User\UserRepository;
@@ -89,6 +90,7 @@ class AllianceServiceProvider implements ServiceProviderInterface
                 $pimple[MessageRepository::class],
                 $pimple[ConfigurationService::class],
                 $pimple[AllianceMemberCosts::class],
+                $pimple[FleetRepository::class],
             );
         };
 

@@ -7,6 +7,9 @@ namespace EtoA\Alliance;
 use EtoA\Alliance\Board\AllianceBoardCategoryRepository;
 use EtoA\Alliance\Board\AllianceBoardTopicRepository;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Fleet\FleetAction;
+use EtoA\Fleet\FleetRepository;
+use EtoA\Fleet\FleetSearch;
 use EtoA\Log\LogFacility;
 use EtoA\Log\LogRepository;
 use EtoA\Log\LogSeverity;
@@ -36,8 +39,9 @@ class AllianceService
     private MessageRepository $messageRepository;
     private ConfigurationService $config;
     private AllianceMemberCosts $allianceMemberCosts;
+    private FleetRepository $fleetRepository;
 
-    public function __construct(AllianceRepository $repository, UserRepository $userRepository, AllianceHistoryRepository $allianceHistoryRepository, UserService $userService, AllianceDiplomacyRepository $allianceDiplomacyRepository, AllianceBoardCategoryRepository $allianceBoardCategoryRepository, AllianceApplicationRepository $allianceApplicationRepository, AllianceBoardTopicRepository $allianceBoardTopicRepository, AllianceBuildingRepository $allianceBuildingRepository, AlliancePointsRepository $alliancePointsRepository, AllianceNewsRepository $allianceNewsRepository, AlliancePollRepository $alliancePollRepository, AllianceRankRepository $allianceRankRepository, AllianceSpendRepository $allianceSpendRepository, AllianceTechnologyRepository $allianceTechnologyRepository, LogRepository $logRepository, MessageRepository $messageRepository, ConfigurationService $config, AllianceMemberCosts $allianceMemberCosts)
+    public function __construct(AllianceRepository $repository, UserRepository $userRepository, AllianceHistoryRepository $allianceHistoryRepository, UserService $userService, AllianceDiplomacyRepository $allianceDiplomacyRepository, AllianceBoardCategoryRepository $allianceBoardCategoryRepository, AllianceApplicationRepository $allianceApplicationRepository, AllianceBoardTopicRepository $allianceBoardTopicRepository, AllianceBuildingRepository $allianceBuildingRepository, AlliancePointsRepository $alliancePointsRepository, AllianceNewsRepository $allianceNewsRepository, AlliancePollRepository $alliancePollRepository, AllianceRankRepository $allianceRankRepository, AllianceSpendRepository $allianceSpendRepository, AllianceTechnologyRepository $allianceTechnologyRepository, LogRepository $logRepository, MessageRepository $messageRepository, ConfigurationService $config, AllianceMemberCosts $allianceMemberCosts, FleetRepository $fleetRepository)
     {
         $this->repository = $repository;
         $this->userRepository = $userRepository;
@@ -58,6 +62,7 @@ class AllianceService
         $this->messageRepository = $messageRepository;
         $this->config = $config;
         $this->allianceMemberCosts = $allianceMemberCosts;
+        $this->fleetRepository = $fleetRepository;
     }
 
     public function create(string $tag, string $name, ?int $founderId): AllianceWithMemberCount
@@ -121,6 +126,35 @@ class AllianceService
         }
 
         $alliance->memberCount++;
+
+        return true;
+    }
+
+    public function kickMember(AllianceWithMemberCount $alliance, User $user, bool $kick = true): bool
+    {
+        if ($alliance->id !== $user->allianceId) {
+            return false;
+        }
+
+        if ($this->allianceDiplomacyRepository->isAtWar($alliance->id)) {
+            return false;
+        }
+
+        if ($this->fleetRepository->exists(FleetSearch::create()->user($user->id)->actionIn([FleetAction::ALLIANCE, FleetAction::SUPPORT]))) {
+            return false;
+        }
+
+        if ($kick) {
+            $this->messageRepository->createSystemMessage($user->id, MSG_ALLYMAIL_CAT, "Allianzausschluss", "Du wurdest aus der Allianz [b]" . $alliance->nameWithTag . "[/b] ausgeschlossen!");
+        } else {
+            $this->messageRepository->createSystemMessage($alliance->founderId, MSG_ALLYMAIL_CAT, "Allianzaustritt", "Der Spieler " . $user->nick . " trat aus der Allianz aus!");
+        }
+
+        $this->allianceHistoryRepository->addEntry($alliance->id, "[b]" . $user->nick . "[/b] ist nun kein Mitglied mehr von uns.");
+        $this->userRepository->setAllianceId($user->id, $alliance->id, 0, time());
+        $this->userService->addToUserLog($user->id, "alliance", "{nick} ist nun kein Mitglied mehr der Allianz " . $alliance->nameWithTag . ".");
+
+        $alliance->memberCount--;
 
         return true;
     }

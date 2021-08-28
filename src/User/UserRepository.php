@@ -55,7 +55,7 @@ class UserRepository extends AbstractRepository
             ->fetchOne();
     }
 
-    public function setAllianceId(int $userId, int $allianceId, int $rankId = null): void
+    public function setAllianceId(int $userId, int $allianceId, int $rankId = null, int $leaveTimestamp = null): void
     {
         $qb = $this->createQueryBuilder()
             ->update('users')
@@ -70,6 +70,12 @@ class UserRepository extends AbstractRepository
             $qb
                 ->set('user_alliance_rank_id', ':rank')
                 ->setParameter('rank', $rankId);
+        }
+
+        if ($leaveTimestamp !== null) {
+            $qb
+                ->set('user_alliance_leave', ':leave')
+                ->setParameter('leave', $leaveTimestamp);
         }
 
         $qb

@@ -29,6 +29,8 @@ $allianceDiplomacyRepository = $app[AllianceDiplomacyRepository::class];
 $userRepository = $app[UserRepository::class];
 /** @var AllianceRightRepository $allianceRightRepository */
 $allianceRightRepository = $app[AllianceRightRepository::class];
+/** @var AllianceService $allianceService */
+$allianceService = $app[AllianceService::class];
 
 echo "<h1>Allianz</h1>";
 echo "<div id=\"allianceinfo\"></div>"; //nur zu entwicklungszwecken!
@@ -212,7 +214,8 @@ elseif ($cu->allianceId == 0) {
             echo "<h2>Allianz-Austritt</h2>";
             if ($cu->allianceId != 0) {
                 if (isset($_POST['submit_leave'])) {
-                    if ($ally->kickMember($cu->id, 0)) {
+                    $user = $userRepository->getUser($cu->getId());
+                    if ($allianceService->kickMember($alliance, $user, false)) {
                         success_msg("Du bist aus der Allianz ausgetreten!");
                     } else {
                         error_msg("Du konntest nicht aus der Allianz austreten, da die Allianz entweder im Krieg ist oder du noch Allianzflotten in der Luft hast!!");
@@ -337,8 +340,7 @@ elseif ($cu->allianceId == 0) {
             ) {
                 $alliance = $allianceRepository->getAlliance($cu->allianceId());
                 $user = $userRepository->getUser($cu->getId());
-                /** @var AllianceService $allianceService */
-                $allianceService = $app[AllianceService::class];
+
                 $allianceService->delete($alliance, $user);
                 echo "Die Allianz wurde aufgel&ouml;st!<br/><br/>
             <input type=\"button\" onclick=\"document.location='?page=$page';\" value=\"&Uuml;bersicht\" />";

@@ -208,44 +208,6 @@ class Alliance
         return $this->members;
     }
 
-    /**
-     * Removes an user from the alliance
-     */
-    public function kickMember($userId, $kick = 1)
-    {
-        // TODO
-        global $app;
-
-        if (!$this->isAtWar()) {
-            $res = dbquery("SELECT id FROM fleet WHERE user_id='" . $userId . "' AND (action='alliance' OR action='support') LIMIT 1;");
-            if (mysql_num_rows($res) == 0) {
-                $this->getMembers();
-                if ($this->members[$userId]->isValid) {
-                    $this->members[$userId]->alliance = null;
-                    $this->members[$userId]->allianceLeave = time();
-                    if ($this->members[$userId]->allianceId == 0) {
-                        /** @var MessageRepository $messageRepository */
-                        $messageRepository = $app[MessageRepository::class];
-                        if ($kick == 1) {
-                            $messageRepository->createSystemMessage($userId, MSG_ALLYMAIL_CAT, "Allianzausschluss", "Du wurdest aus der Allianz [b]" . $this->__toString() . "[/b] ausgeschlossen!");
-                        } else {
-                            $messageRepository->createSystemMessage($this->__get('founder')->id, MSG_ALLYMAIL_CAT, "Allianzaustritt", "Der Spieler " . $this->members[$userId] . " trat aus der Allianz aus!");
-                        }
-
-                        /** @var AllianceHistoryRepository $allianceHistoryRepository */
-                        $allianceHistoryRepository = $app[AllianceHistoryRepository::class];
-                        $allianceHistoryRepository->addEntry($this->id, "[b]" . $this->members[$userId] . "[/b] ist nun kein Mitglied mehr von uns.");
-
-                        unset($this->members[$userId]);
-                        return true;
-                    }
-                }
-            }
-        }
-
-        return false;
-    }
-
     //
     // Wing management
     //

@@ -55,10 +55,21 @@ class FleetSearch extends AbstractSearch
     /**
      * @param string[] $actions
      */
+    public function actionIn(array $actions): self
+    {
+        $this->parts[] = 'action IN (:actions)';
+        $this->stringArrayParameters['actions'] = $actions;
+
+        return $this;
+    }
+
+    /**
+     * @param string[] $actions
+     */
     public function actionNotIn(array $actions): self
     {
-        $this->parts[] = 'action NOT IN (:actions)';
-        $this->stringArrayParameters['actions'] = $actions;
+        $this->parts[] = 'action NOT IN (:notActions)';
+        $this->stringArrayParameters['notActions'] = $actions;
 
         return $this;
     }

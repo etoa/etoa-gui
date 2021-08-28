@@ -72,11 +72,13 @@ if (Alliance::checkActionRights(AllianceRights::EDIT_MEMBERS)) {
                             $uk = intval($uk);
                             $wt = intval($wt);
                             if ($wt != 0) {
-                                if ($wf != $wt && ($wf == $ally->id || isset($ally->wings[$wf])) && ($wt == $ally->id || isset($ally->wings[$wt]))) {
-                                    if ($wf == $ally->id) {
-                                        $ally->kickMember($uk);
+                                if ($wf != $wt && ($wf == $currentAlliance->id || isset($ally->wings[$wf])) && ($wt == $currentAlliance->id || isset($ally->wings[$wt]))) {
+                                    $toBeRemovedUser = $userRepository->getUser($uk);
+                                    if ($wf == $currentAlliance->id) {
+                                        $allianceService->kickMember($currentAlliance, $toBeRemovedUser);
                                     } else {
-                                        $ally->wings[$wf]->kickMember($uk);
+                                        $wing = $allianceRepository->getAlliance($wf);
+                                        $allianceService->kickMember($wing, $toBeRemovedUser);;
                                     }
 
                                     $checked_arr[$uk] = $wt;
@@ -92,7 +94,7 @@ if (Alliance::checkActionRights(AllianceRights::EDIT_MEMBERS)) {
             if (count($checked_arr) > 0) {
                 foreach ($checked_arr as $moving_user_id => $target_alliance) {
                     $toBeAddedUser = $userRepository->getUser($moving_user_id);
-                    if ($target_alliance == $ally->id) {
+                    if ($target_alliance == $currentAlliance->id) {
                         if ($allianceService->addMember($currentAlliance, $toBeAddedUser)) {
                             success_msg($toBeAddedUser->nick . " wurde umgeteilt!");
                         } else {
@@ -115,12 +117,9 @@ if (Alliance::checkActionRights(AllianceRights::EDIT_MEMBERS)) {
     if (isset($_GET['setfounder']) && intval($_GET['setfounder']) > 0 && $isFounder && $cu->id != intval($_GET['setfounder'])) {
         $fid = intval($_GET['setfounder']);
 
-        if (isset($ally->members[$fid])) {
-            $alliance = $allianceRepository->getAlliance($ally->id);
-            $newFounder = $userRepository->getUser($fid);
-
-            /** @var AllianceService $allianceService */
-            $allianceService = $app[AllianceService::class];
+        $newFounder = $userRepository->getUser($fid);
+        $alliance = $allianceRepository->getAlliance($ally->id);
+        if ($newFounder && $newFounder->allianceId === $alliance->id) {
             $allianceService->changeFounder($alliance, $newFounder);
             $logRepository->add(LogFacility::ALLIANCE, LogSeverity::INFO, "Der Spieler [b]" . $ally->founder . "[/b] wird vom Spieler [b]" . $cu . "[/b] zum Gründer befördert.");
             success_msg("Gründer ge&auml;ndert!");
@@ -132,11 +131,11 @@ if (Alliance::checkActionRights(AllianceRights::EDIT_MEMBERS)) {
     if (isset($_GET['kickuser']) && intval($_GET['kickuser']) > 0 && checker_verify() && !$cu->alliance->isAtWar()) {
         $kid = intval($_GET['kickuser']);
 
-        if (isset($ally->members[$kid])) {
-            $tmpUser = $ally->members[$kid];
-            if ($ally->kickMember($kid)) {
-                $logRepository->add(LogFacility::ALLIANCE, LogSeverity::INFO, "Der Spieler [b]" . $tmpUser . "[/b] wurde von [b]" . $cu . "[/b] aus der Allianz [b]" . $ally . "[/b] ausgeschlossen!");
-                success_msg("Der Spieler [b]" . $tmpUser . "[/b] wurde aus der Allianz ausgeschlossen!");
+        $toBeKickedUser = $userRepository->getUser($kid);
+        if ($toBeKickedUser && $toBeKickedUser->allianceId === $currentAlliance->id) {
+            if ($allianceService->kickMember($currentAlliance, $toBeKickedUser)) {
+                $logRepository->add(LogFacility::ALLIANCE, LogSeverity::INFO, "Der Spieler [b]" . $toBeKickedUser->nick . "[/b] wurde von [b]" . $cu . "[/b] aus der Allianz [b]" . $currentAlliance->nameWithTag . "[/b] ausgeschlossen!");
+                success_msg("Der Spieler [b]" . $toBeKickedUser->nick . "[/b] wurde aus der Allianz ausgeschlossen!");
                 unset($tmpUser);
             } else {
                 error_msg("Der Spieler konnte nicht aus der Allianz ausgeschlossen werden, da er in einem Allianzangriff unterwegs ist!");
