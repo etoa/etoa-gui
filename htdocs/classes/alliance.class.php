@@ -479,44 +479,4 @@ class Alliance
 
         return $allianceDiplomacyRepository->isAtWar($this->id);
     }
-
-    static function allianceShipPointsUpdate()
-    {
-        // TODO
-        global $app;
-
-        /** @var ConfigurationService $config */
-        $config = $app[ConfigurationService::class];
-
-        $pres = dbquery("SELECT
-                            alliance_buildlist_alliance_id,
-                            alliance_buildlist_current_level,
-                            alliance_res_metal,
-                            alliance_res_crystal,
-                            alliance_res_plastic,
-                            alliance_res_fuel,
-                            alliance_res_food
-                        FROM
-                            alliance_buildlist
-                        INNER JOIN
-                            alliances
-                        ON
-                            alliance_id=alliance_buildlist_alliance_id
-                            AND alliance_buildlist_building_id='3'
-                        ");
-        while ($parr = mysql_fetch_row($pres)) {
-            if (!($parr[2] < 0 || $parr[3] < 0 || $parr[4] < 0 || $parr[5] < 0 || $parr[6] < 0)) {
-                // New exponential algorithm by river
-                // NOTE: if changed, also change in content/alliance/base.inc.php
-                $shipPointsAdd = ceil($config->getInt("alliance_shippoints_per_hour") * pow($config->getFloat('alliance_shippoints_base'), ($parr[1] - 1)));
-
-                dbquery("UPDATE
-                            users
-                        SET
-                            user_alliace_shippoints=user_alliace_shippoints + '" . $shipPointsAdd . "'
-                        WHERE
-                             user_alliance_id='" . $parr[0] . "';");
-            }
-        }
-    }
 }

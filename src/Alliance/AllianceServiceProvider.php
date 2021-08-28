@@ -94,6 +94,14 @@ class AllianceServiceProvider implements ServiceProviderInterface
             );
         };
 
+        $pimple[AllianceShipPointsService::class] = function (Container $pimple): AllianceShipPointsService {
+            return new AllianceShipPointsService(
+                $pimple[ConfigurationService::class],
+                $pimple[AllianceBuildingRepository::class],
+                $pimple[UserRepository::class],
+            );
+        };
+
         $pimple[AllianceBoardCategoryRepository::class] = function (Container $pimple): AllianceBoardCategoryRepository {
             return new AllianceBoardCategoryRepository($pimple['db']);
         };

@@ -11,6 +11,9 @@ trait DbTestTrait
         $environment = 'testing';
         $debug = true;
 
+        $_SERVER['REMOTE_ADDR'] = '127.0.0.1';
+        include_once dirname(__DIR__) . '/htdocs/inc/functions.inc.php';
+
         return require dirname(__DIR__).'/src/app.php';
     }
 
@@ -28,6 +31,7 @@ trait DbTestTrait
         $this->connection->executeQuery('TRUNCATE allianceboard_catranks');
         $this->connection->executeQuery('TRUNCATE allianceboard_topics');
         $this->connection->executeQuery('TRUNCATE allianceboard_posts');
+        $this->connection->executeQuery('TRUNCATE alliance_buildlist');
         $this->connection->executeQuery('TRUNCATE bookmarks');
         $this->connection->executeQuery('TRUNCATE buddylist');
         $this->connection->executeQuery('TRUNCATE chat');

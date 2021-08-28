@@ -585,6 +585,19 @@ class UserRepository extends AbstractRepository
             ->execute();
     }
 
+    public function addAllianceShipPoints(int $allianceId, int $points): void
+    {
+        $this->createQueryBuilder()
+            ->update('users')
+            ->set('user_alliace_shippoints', 'user_alliace_shippoints + :points')
+            ->where('user_alliance_id = :allianceId')
+            ->setParameters([
+                'allianceId' => $allianceId,
+                'points' => $points,
+            ])
+            ->execute();
+    }
+
     public function remove(int $id): bool
     {
         $affected = (int) $this->createQueryBuilder()
