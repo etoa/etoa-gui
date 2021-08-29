@@ -651,6 +651,21 @@ class AllianceRepository extends AbstractRepository
             ->execute();
     }
 
+    public function setMotherOrRequest(int $allianceId, int $motherId, int $motherRequestId): void
+    {
+        $this->createQueryBuilder()
+            ->update('alliances')
+            ->set('alliance_mother', ':motherId')
+            ->set('alliance_mother_request', ':motherRequestId')
+            ->where('alliance_id = :allianceId')
+            ->setParameters([
+                'allianceId' => $allianceId,
+                'motherId' => $motherId,
+                'motherRequestId' => $motherRequestId,
+            ])
+            ->execute();
+    }
+
     public function addVisit(int $allianceId, bool $external = false): void
     {
         $property = $external ? 'alliance_visits_ext' : 'alliance_visits';
