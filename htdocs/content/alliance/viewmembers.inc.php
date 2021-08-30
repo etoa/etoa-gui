@@ -6,8 +6,9 @@ use EtoA\Alliance\AllianceRights;
 use EtoA\Support\StringUtils;
 
 /** @var \EtoA\Alliance\Alliance $alliance */
+/** @var \EtoA\Alliance\UserAlliancePermission $userAlliancePermission */
 
-if (Alliance::checkActionRights(AllianceRights::VIEW_MEMBERS)) {
+if ($userAlliancePermission->checkHasRights(AllianceRights::VIEW_MEMBERS, $page)) {
 
     /** @var AllianceRankRepository $allianceRankRepository */
     $allianceRankRepository = $app[AllianceRankRepository::class];

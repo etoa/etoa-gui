@@ -4,6 +4,7 @@ use EtoA\Alliance\AllianceBuildingId;
 use EtoA\Alliance\AllianceBuildingRepository;
 use EtoA\Alliance\AllianceRepository;
 use EtoA\Alliance\AllianceRights;
+use EtoA\Alliance\AllianceService;
 use EtoA\Log\LogFacility;
 use EtoA\Log\LogRepository;
 use EtoA\Log\LogSeverity;
@@ -22,6 +23,8 @@ $allianceRepository = $app[AllianceRepository::class];
 $userUniverseDiscoveryService = $app[UserUniverseDiscoveryService::class];
 /** @var LogRepository $logRepository */
 $logRepository = $app[LogRepository::class];
+/** @var AllianceService $allianceService */
+$allianceService = $app[AllianceService::class];
 
 $user = $userRepository->getUser($cu->id);
 
@@ -37,18 +40,22 @@ $fd = new Fleet($fleet_id, -1, $lead_id);
 if ($fd->valid()) {
     if ($fd->ownerId() == $cu->id) {
         $valid = 10;
-    } elseif ($cu->alliance->checkActionRightsNA(AllianceRights::FLEET_MINISTER)) {
-        $allianceFleetControlLevel = $allianceBuildingRepository->getLevel($cu->allianceId(), AllianceBuildingId::FLEET_CONTROL);
-        if ($fd->getAction()->code() == "support" && $fd->ownerAllianceId() == $cu->allianceId() && $cu->allianceId() > 0 && ($fd->status() == 0 || $fd->status() == 3)) {
-            $valid = $allianceFleetControlLevel;
-        } elseif ($fd->getAction()->code() == "alliance" && $fd->ownerAllianceId() == $cu->allianceId() && $cu->allianceId() > 0) {
-            if ($fd->status() == 0) {
-                if ($lead_id > 0 && ($allianceFleetControlLevel >= ALLIANCE_FLEET_SHOW)) {
-                    $valid = $allianceFleetControlLevel;
-                }
-            } elseif ($fd->status() == 3) {
-                if ($allianceFleetControlLevel >= ALLIANCE_FLEET_SHOW_PART) {
-                    $valid = $allianceFleetControlLevel;
+    } else {
+        $alliance = $allianceRepository->getAlliance($user->allianceId);
+        $userAlliancePermission = $allianceService->getUserAlliancePermissions($alliance, $user);
+        if ($userAlliancePermission->hasRights(AllianceRights::FLEET_MINISTER)) {
+            $allianceFleetControlLevel = $allianceBuildingRepository->getLevel($cu->allianceId(), AllianceBuildingId::FLEET_CONTROL);
+            if ($fd->getAction()->code() == "support" && $fd->ownerAllianceId() == $cu->allianceId() && $cu->allianceId() > 0 && ($fd->status() == 0 || $fd->status() == 3)) {
+                $valid = $allianceFleetControlLevel;
+            } elseif ($fd->getAction()->code() == "alliance" && $fd->ownerAllianceId() == $cu->allianceId() && $cu->allianceId() > 0) {
+                if ($fd->status() == 0) {
+                    if ($lead_id > 0 && ($allianceFleetControlLevel >= ALLIANCE_FLEET_SHOW)) {
+                        $valid = $allianceFleetControlLevel;
+                    }
+                } elseif ($fd->status() == 3) {
+                    if ($allianceFleetControlLevel >= ALLIANCE_FLEET_SHOW_PART) {
+                        $valid = $allianceFleetControlLevel;
+                    }
                 }
             }
         }

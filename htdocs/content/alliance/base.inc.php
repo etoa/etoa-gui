@@ -58,6 +58,7 @@ $allianceBase = $app[AllianceBase::class];
 $allianceBuildingRepository = $app[AllianceBuildingRepository::class];
 
 /** @var \EtoA\Alliance\Alliance $alliance */
+/** @var \EtoA\Alliance\UserAlliancePermission $userAlliancePermission */
 
 /** @var Request $request */
 $request = Request::createFromGlobals();
@@ -254,7 +255,7 @@ $fleet = $fleetRepository->getUserFleetShipCounts($cu->getId());
 
 $ship_costed = 0;
 if (isset($_POST['ship_submit']) && checker_verify()) {
-    if ($cu->alliance->checkActionRightsNA(AllianceRights::BUILD_MINISTER) || $cu->id == $_POST['user_buy_ship']) {
+    if ($userAlliancePermission->hasRights(AllianceRights::BUILD_MINISTER) || $cu->id == $_POST['user_buy_ship']) {
         // Prüft, ob ein User gewählt wurde
         if ($_POST['user_buy_ship'] > 0) {
             // Gebaute Schiffe laden
@@ -442,7 +443,7 @@ tableEnd();
 // Gebäude in Auftrag geben
 if (isset($_POST['building_submit']) && checker_verify()) {
     $allianceUser = $userRepository->getUser($cu->getId());
-    if (Alliance::checkActionRights(AllianceRights::BUILD_MINISTER)) {
+    if ($userAlliancePermission->checkHasRights(AllianceRights::BUILD_MINISTER, $page)) {
         if (isset($_POST['building_id']) && $_POST['building_id'] != 0) {
             $buildingId = $request->request->getInt('building_id');
             try {
@@ -461,7 +462,7 @@ if (isset($_POST['building_submit']) && checker_verify()) {
 // Technologie in Auftrag geben
 if (isset($_POST['research_submit']) && checker_verify()) {
     $allianceUser = $userRepository->getUser($cu->getId());
-    if (Alliance::checkActionRights(AllianceRights::BUILD_MINISTER)) {
+    if ($userAlliancePermission->checkHasRights(AllianceRights::BUILD_MINISTER, $page)) {
         if (isset($_POST['research_id']) && $_POST['research_id'] != 0) {
             $technologyId = $request->request->getInt('research_id');
             try {

@@ -8,10 +8,16 @@ use EtoA\Support\BBCodeUtils;
 use EtoA\Support\StringUtils;
 use EtoA\User\UserRatingService;
 
-if (Alliance::checkActionRights(AllianceRights::ALLIANCE_NEWS)) {
-    /** @var AllianceNewsRepository $allianceNewsRepository */
-    $allianceNewsRepository = $app[AllianceNewsRepository::class];
+/** @var AllianceNewsRepository $allianceNewsRepository */
+$allianceNewsRepository = $app[AllianceNewsRepository::class];
+/** @var TownhallService $townhallService */
+$townhallService = $app[TownhallService::class];
+/** @var AllianceRepository $allianceRepository */
+$allianceRepository = $app[AllianceRepository::class];
 
+/** @var \EtoA\Alliance\UserAlliancePermission $userAlliancePermission */
+
+if ($userAlliancePermission->checkHasRights(AllianceRights::ALLIANCE_NEWS, $page)) {
     echo "<h2>Allianznews</h2>";
     if ((isset($_POST['newssubmit']) || isset($_POST['newssubmitsend'])) && checker_verify()) {
         if (StringUtils::checkIllegalSigns($_POST['news_title']) != "") {
@@ -38,10 +44,6 @@ if (Alliance::checkActionRights(AllianceRights::ALLIANCE_NEWS)) {
                     "Rathausnews verfasst (ID:" . $newsId . ", " . $_POST['news_text'] . ")"
                 );
             }
-
-
-            /** @var TownhallService $townhallService */
-            $townhallService = $app[TownhallService::class];
 
             // Update rss file
             $townhallService->genRss();
@@ -118,10 +120,7 @@ if (Alliance::checkActionRights(AllianceRights::ALLIANCE_NEWS)) {
     }
     echo '<option ' . $selected . ' value="0" style="font-weight:bold;color:#0f0;">Öffentliches Rathaus</option>';
 
-    /** @var AllianceRepository $allianceRepository */
-    $allianceRepository = $app[AllianceRepository::class];
     $allianceNamesWithTags = $allianceRepository->getAllianceNamesWithTags();
-
     foreach ($allianceNamesWithTags as $allianceId => $allianceNamesWithTag) {
         $selected = ($aid == $allianceId) ? 'selected="selected" ' : "";
 

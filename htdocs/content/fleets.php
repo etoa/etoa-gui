@@ -2,7 +2,9 @@
 
 use EtoA\Alliance\AllianceBuildingId;
 use EtoA\Alliance\AllianceBuildingRepository;
+use EtoA\Alliance\AllianceRepository;
 use EtoA\Alliance\AllianceRights;
+use EtoA\Alliance\AllianceService;
 use EtoA\Fleet\FleetRepository;
 use EtoA\Ship\ShipDataRepository;
 use EtoA\User\UserRepository;
@@ -18,6 +20,10 @@ $userUniverseDiscoveryService = $app[UserUniverseDiscoveryService::class];
 $userRepository = $app[UserRepository::class];
 /** @var AllianceBuildingRepository $allianceBuildingRepository */
 $allianceBuildingRepository = $app[AllianceBuildingRepository::class];
+/** @var AllianceService $allianceService */
+$allianceService = $app[AllianceService::class];
+/** @var AllianceRepository $allianceRepository */
+$allianceRepository = $app[AllianceRepository::class];
 
 $user = $userRepository->getUser($cu->id);
 
@@ -47,12 +53,15 @@ if (isset($_GET['mode']) && $_GET['mode'] == "alliance" && $cu->allianceId > 0) 
                             <th>Start / Ziel</th>
                             <th>Start / Landung</th>
                         </tr>";
+
+                $alliance = $allianceRepository->getAlliance($user->allianceId);
+                $userAlliancePermission = $allianceService->getUserAlliancePermissions($alliance, $user);
                 foreach ($fm->getAll() as $fid => $fd) {
                     $cdarr["cd" . $fid] = $fd->landTime();
 
                     echo "<tr>";
                     echo "<td>";
-                    if ($cu->alliance->checkActionRightsNA(AllianceRights::FLEET_MINISTER))
+                    if ($userAlliancePermission->hasRights(AllianceRights::FLEET_MINISTER))
                         echo "<a href=\"?page=fleetinfo&id=" . $fid . "\">";
 
                     echo "<span style=\"font-weight:bold;color:" . FleetAction::$attitudeColor[$fd->getAction()->attitude()] . "\">
@@ -105,6 +114,9 @@ if (isset($_GET['mode']) && $_GET['mode'] == "alliance" && $cu->allianceId > 0) 
                             <th>Start / Landung</th>
                             <th>Auftrag / Status</th>
                         </tr>";
+
+                $alliance = $allianceRepository->getAlliance($user->allianceId);
+                $userAlliancePermission = $allianceService->getUserAlliancePermissions($alliance, $user);
                 foreach ($fm->getAll() as $fid => $fd) {
                     $cdarr["cd" . $fid] = $fd->landTime();
 
@@ -119,7 +131,7 @@ if (isset($_GET['mode']) && $_GET['mode'] == "alliance" && $cu->allianceId > 0) 
                         date("d.m.y, H:i:s", $fd->landTime()) . "
                                 </td>
                                 <td>";
-                    if ($cu->alliance->checkActionRightsNA(AllianceRights::FLEET_MINISTER))
+                    if ($userAlliancePermission->hasRights(AllianceRights::FLEET_MINISTER))
                         echo "<a href=\"?page=fleetinfo&id=" . $fid . "&lead_id=" . $fid . "\">";
 
                     echo "<span style=\"color:" . FleetAction::$attitudeColor[$fd->getAction()->attitude()] . "\">

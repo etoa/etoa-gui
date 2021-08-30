@@ -1,6 +1,7 @@
 <?PHP
 
-/** @var mixed[] $arr alliance data */
+/** @var \EtoA\Alliance\UserAlliancePermission $userAlliancePermission */
+
 use EtoA\Alliance\AlliancePollRepository;
 use EtoA\Alliance\AllianceRights;
 use EtoA\Support\StringUtils;
@@ -8,7 +9,7 @@ use EtoA\Support\StringUtils;
 /** @var AlliancePollRepository $alliancePollRepository */
 $alliancePollRepository = $app[AlliancePollRepository::class];
 
-if (Alliance::checkActionRights(AllianceRights::POLLS)) {
+if ($userAlliancePermission->checkHasRights(AllianceRights::POLLS, $page)) {
     echo "<h2>Umfragen verwalten</h2>";
     if (isset($_GET['pollaction']) && $_GET['pollaction'] == "create") {
         if (isset($_POST['pollsubmitnew']) && $_POST['pollsubmitnew'] && checker_verify()) {

@@ -33,8 +33,9 @@ $allianceDiplomacyRepository = $app[AllianceDiplomacyRepository::class];
 
 /** @var \EtoA\Alliance\Alliance $alliance */
 /** @var bool $isFounder */
+/** @var \EtoA\Alliance\UserAlliancePermission $userAlliancePermission */
 
-if (Alliance::checkActionRights(AllianceRights::EDIT_MEMBERS)) {
+if ($userAlliancePermission->checkHasRights(AllianceRights::EDIT_MEMBERS, $page)) {
     $currentAlliance = $allianceRepository->getAlliance($alliance->id);
 
     echo "<h2>Allianzmitglieder</h2>";

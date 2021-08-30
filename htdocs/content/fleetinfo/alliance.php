@@ -6,6 +6,7 @@
 use EtoA\Alliance\AllianceBuildingRepository;
 use EtoA\Alliance\AllianceRepository;
 use EtoA\Alliance\AllianceRights;
+use EtoA\Alliance\AllianceService;
 use EtoA\Log\LogFacility;
 use EtoA\Log\LogRepository;
 use EtoA\Log\LogSeverity;
@@ -18,7 +19,12 @@ $allianceBuildingRepository = $app[AllianceBuildingRepository::class];
 $allianceRepository = $app[AllianceRepository::class];
 /** @var LogRepository $logRepository */
 $logRepository = $app[LogRepository::class];
+/** @var AllianceService $allianceService */
+$allianceService = $app[AllianceService::class];
+/** @var \EtoA\User\UserRepository $userRepository */
+$userRepository = $app[\EtoA\User\UserRepository::class];
 
+$user = $userRepository->getUser($cu->getId());
 $lead_id = (int) $_GET['lead_id'] > 0 ? (int) $_GET['lead_id'] : -1;
 
 $rights = true;
@@ -31,7 +37,9 @@ else
     $rights = false;
 
 if ($allianceFleetControlLevel >= ALLIANCE_FLEET_SHOW_DETAIL && $rights) {
-    if ($cu->alliance->checkActionRightsNA(AllianceRights::FLEET_MINISTER) || $cu->id == $fd->ownerId()) {
+    $alliance = $allianceRepository->getAlliance($user->allianceId);
+    $userAlliancePermission = $allianceService->getUserAlliancePermissions($alliance, $user);
+    if ($userAlliancePermission->hasRights(AllianceRights::FLEET_MINISTER) || $cu->id == $fd->ownerId()) {
         //
         // Flottendaten laden und überprüfen ob die Flotte existiert
         //

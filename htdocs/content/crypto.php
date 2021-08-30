@@ -4,6 +4,7 @@ use EtoA\Alliance\AllianceBuildingId;
 use EtoA\Alliance\AllianceBuildingRepository;
 use EtoA\Alliance\AllianceRepository;
 use EtoA\Alliance\AllianceRights;
+use EtoA\Alliance\AllianceService;
 use EtoA\Bookmark\BookmarkService;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Fleet\Exception\FleetScanFailedException;
@@ -44,7 +45,8 @@ $allianceRepository = $app[AllianceRepository::class];
 
 /** @var ResourceBoxDrawer $resourceBoxDrawer */
 $resourceBoxDrawer = $app[ResourceBoxDrawer::class];
-
+/** @var AllianceService $allianceService */
+$allianceService = $app[AllianceService::class];
 /** @var Request */
 $request = Request::createFromGlobals();
 
@@ -63,7 +65,8 @@ if ($config->getBoolean('crypto_enable')) {
         echo $resourceBoxDrawer->getHTML($planet);
 
         if ($request->request->has('scan') && checker_verify()) {
-            if ($cu->alliance->checkActionRightsNA(AllianceRights::CRYPTO_MINISTER)) {
+            $userAlliancePermission = $allianceService->getUserAlliancePermissions($alliance, $currentUser);
+            if ($userAlliancePermission->hasRights(AllianceRights::CRYPTO_MINISTER)) {
                 $targetCoordinates = new EntityCoordinates(
                     $request->request->getInt('sx'),
                     $request->request->getInt('sy'),

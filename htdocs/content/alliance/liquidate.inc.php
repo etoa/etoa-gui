@@ -1,10 +1,11 @@
 <?PHP
 
 /** @var \EtoA\Alliance\AllianceWithMemberCount $alliance */
+/** @var \EtoA\Alliance\UserAlliancePermission $userAlliancePermission */
 
 use EtoA\Alliance\AllianceRights;
 
-if (Alliance::checkActionRights(AllianceRights::LIQUIDATE)) {
+if ($userAlliancePermission->checkHasRights(AllianceRights::LIQUIDATE, $page)) {
     echo "<h2>Allianz aufl&ouml;sen</h2>";
 
     // Prüft, ob noch Mitglieder vorhanden sind (keine Bewerbungen!)

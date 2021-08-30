@@ -91,6 +91,7 @@ class AllianceServiceProvider implements ServiceProviderInterface
                 $pimple[ConfigurationService::class],
                 $pimple[AllianceMemberCosts::class],
                 $pimple[FleetRepository::class],
+                $pimple[AllianceRightRepository::class],
             );
         };
 

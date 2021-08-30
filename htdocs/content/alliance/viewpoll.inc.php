@@ -1,7 +1,5 @@
 <?PHP
 
-/** @var mixed[] $arr alliance data */
-
 use EtoA\Alliance\AlliancePollRepository;
 
 /** @var AlliancePollRepository $alliancePollRepository */

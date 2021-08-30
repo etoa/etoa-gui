@@ -1,11 +1,12 @@
 <?PHP
 
 /** @var \EtoA\Alliance\Alliance $alliance */
+/** @var \EtoA\Alliance\UserAlliancePermission $userAlliancePermission */
 
 use EtoA\Alliance\AllianceRights;
 use EtoA\Support\StringUtils;
 
-if (Alliance::checkActionRights(AllianceRights::EDIT_DATA)) {
+if ($userAlliancePermission->checkHasRights(AllianceRights::EDIT_DATA, $page)) {
     echo "<h2>Allianzdaten &auml;ndern</h2>";
 
     echo "<form action=\"?page=$page\" method=\"post\" enctype=\"multipart/form-data\">";

@@ -119,45 +119,4 @@ class Alliance
             $this->valid = true;
         }
     }
-
-
-    //
-    // Wing management
-    //
-
-    /**
-     * Check rights for an action
-     * @param AllianceRights::* $action
-     */
-    static function checkActionRights(string $action, $msg = TRUE): bool
-    {
-        global $myRight, $isFounder, $page;
-        if ($isFounder || $myRight[$action]) {
-            return true;
-        }
-
-        if ($msg) {
-            error_msg("Keine Berechtigung!");
-            echo "<input type=\"button\" onclick=\"document.location='?page=$page';\" value=\"Zur&uuml;ck\" />";
-        }
-        return false;
-    }
-
-    /**
-     * Check rights for an action
-     * use this function if you're not on the alliance page
-     *
-     * @param AllianceRights::* $action
-     */
-    function checkActionRightsNA(string $action): bool
-    {
-        global $cu, $app;
-
-        if ($this->founderId == $cu->id) return true;
-
-        /** @var AllianceRankRepository $allianceRankRepository */
-        $allianceRankRepository = $app[AllianceRankRepository::class];
-
-        return $allianceRankRepository->hasActionRights($this->id, $cu->allianceRankId, $action);
-    }
 }

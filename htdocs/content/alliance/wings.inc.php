@@ -14,14 +14,16 @@ $config = $app[ConfigurationService::class];
 $allianceRepository = $app[AllianceRepository::class];
 /** @var AllianceWingService $allianceWingService */
 $allianceWingService = $app[AllianceWingService::class];
-$currentAlliance = $allianceRepository->getAlliance($cu->allianceId);
 
-if ($config->getBoolean('allow_wings') && Alliance::checkActionRights(AllianceRights::WINGS)) {
+/** @var \EtoA\Alliance\Alliance $alliance */
+/** @var \EtoA\Alliance\UserAlliancePermission $userAlliancePermission */
+
+if ($config->getBoolean('allow_wings') && $userAlliancePermission->checkHasRights(AllianceRights::WINGS, $page)) {
     echo "<h2>Wings verwalten</h2>";
 
     if (isset($_GET['remove']) && intval($_GET['remove']) > 0) {
         $wing = $allianceRepository->getAlliance(intval($_GET['remove']));
-        if ($wing !== null && $allianceWingService->removeWing($currentAlliance, $wing))
+        if ($wing !== null && $allianceWingService->removeWing($alliance, $wing))
             success_msg("Wing entfernt!");
         else
             error_msg("Wing konnte nicht entfernt werden!");
@@ -29,7 +31,7 @@ if ($config->getBoolean('allow_wings') && Alliance::checkActionRights(AllianceRi
 
     if (isset($_GET['cancelreq']) && intval($_GET['cancelreq']) > 0) {
         $wingRequestAlliance = $allianceRepository->getAlliance(intval($_GET['cancelreq']));
-        if ($wingRequestAlliance !== null && $allianceWingService->cancelWingRequest($currentAlliance, $wingRequestAlliance))
+        if ($wingRequestAlliance !== null && $allianceWingService->cancelWingRequest($alliance, $wingRequestAlliance))
             success_msg("Anfrage zurückgezogen!");
         else
             error_msg("Anfrage konnte nicht zurückgezogen werden!");
@@ -37,30 +39,30 @@ if ($config->getBoolean('allow_wings') && Alliance::checkActionRights(AllianceRi
 
     if (isset($_POST['add_wing_id']) && intval($_POST['add_wing_id']) > 0) {
         $wingRequestAlliance = $allianceRepository->getAlliance(intval($_POST['add_wing_id']));
-        if ($wingRequestAlliance !== null && $allianceWingService->addWingRequest($currentAlliance, $wingRequestAlliance))
+        if ($wingRequestAlliance !== null && $allianceWingService->addWingRequest($alliance, $wingRequestAlliance))
             success_msg("Winganfrage hinzugefügt. Der Gründer der angefragten Allianz wurde informiert!");
         else
             error_msg("Es ist bereits eine Anfrage vorhanden oder die Allianz ist schon ein Wing einer anderen Allianz!");
     }
 
-    if (isset($_POST['grant_req']) && $currentAlliance->motherRequest > 0) {
-        $motherRequestAlliance = $allianceRepository->getAlliance($currentAlliance->motherRequest);
-        if ($motherRequestAlliance !== null && $allianceWingService->acceptWingRequest($motherRequestAlliance, $currentAlliance))
+    if (isset($_POST['grant_req']) && $alliance->motherRequest > 0) {
+        $motherRequestAlliance = $allianceRepository->getAlliance($alliance->motherRequest);
+        if ($motherRequestAlliance !== null && $allianceWingService->acceptWingRequest($motherRequestAlliance, $alliance))
             success_msg("Winganfrage bestätigt!");
         else
             error_msg("Es ist ein Problem aufgetreten!");
     }
 
-    if (isset($_POST['revoke_req']) && $currentAlliance->motherRequest > 0) {
-        $motherRequestAlliance = $allianceRepository->getAlliance($currentAlliance->motherRequest);
-        if ($motherRequestAlliance !== null && $allianceWingService->declineWingRequest($motherRequestAlliance, $currentAlliance))
+    if (isset($_POST['revoke_req']) && $alliance->motherRequest > 0) {
+        $motherRequestAlliance = $allianceRepository->getAlliance($alliance->motherRequest);
+        if ($motherRequestAlliance !== null && $allianceWingService->declineWingRequest($motherRequestAlliance, $alliance))
             success_msg("Winganfrage zurückgewiesen!");
         else
             error_msg("Es ist ein Problem aufgetreten!");
     }
 
-    if ($currentAlliance->motherRequest > 0) {
-        $motherRequestAlliance = $allianceRepository->getAlliance($currentAlliance->motherRequest);
+    if ($alliance->motherRequest > 0) {
+        $motherRequestAlliance = $allianceRepository->getAlliance($alliance->motherRequest);
         echo "<form action=\"?page=$page&amp;action=wings\" method=\"post\">";
         iBoxStart("Wing-Anfrage");
         echo "Die Allianz " . $motherRequestAlliance->nameWithTag . " will diese Allianz als Wing hinzufügen.<br/><br/>";
@@ -70,8 +72,8 @@ if ($config->getBoolean('allow_wings') && Alliance::checkActionRights(AllianceRi
         echo "</form>";
     }
 
-    if ($currentAlliance->motherId > 0) {
-        $motherAlliance = $allianceRepository->getAlliance($currentAlliance->motherId);
+    if ($alliance->motherId > 0) {
+        $motherAlliance = $allianceRepository->getAlliance($alliance->motherId);
         echo "<form action=\"?page=$page&amp;action=wings\" method=\"post\">";
         iBoxStart("Wing");
         echo "Diese Allianz ist ein Wing von " . $motherAlliance->nameWithTag . ".<br/><br/>";
@@ -79,7 +81,7 @@ if ($config->getBoolean('allow_wings') && Alliance::checkActionRights(AllianceRi
         echo "</form>";
     }
 
-    $wingAlliances = $allianceRepository->searchAlliances(AllianceSearch::create()->motherId($currentAlliance->id));
+    $wingAlliances = $allianceRepository->searchAlliances(AllianceSearch::create()->motherId($alliance->id));
     if (count($wingAlliances) > 0) {
         tableStart("Wings");
         echo "<tr>
@@ -105,7 +107,7 @@ if ($config->getBoolean('allow_wings') && Alliance::checkActionRights(AllianceRi
         tableEnd();
     }
 
-    $wingRequestAlliances = $allianceRepository->searchAlliances(AllianceSearch::create()->motherRequestAllianceId($currentAlliance->id));
+    $wingRequestAlliances = $allianceRepository->searchAlliances(AllianceSearch::create()->motherRequestAllianceId($alliance->id));
     if (count($wingRequestAlliances) > 0) {
         tableStart("Wing-Anfragen");
         echo "<tr>
@@ -135,7 +137,7 @@ if ($config->getBoolean('allow_wings') && Alliance::checkActionRights(AllianceRi
     iBoxStart("Allianz als Wing hinzufügen");
     echo "Allianz wählen: <select name=\"add_wing_id\">";
     foreach ($allianceRepository->getAllianceNamesWithTags() as $allianceId => $allianceNameWithTag) {
-        if ($allianceId !== $currentAlliance->id && !isset($wingAlliances[$allianceId]))
+        if ($allianceId !== $alliance->id && !isset($wingAlliances[$allianceId]))
             echo "<option value=\"$allianceId\">$allianceNameWithTag</option>";
     }
     echo "</select> &nbsp;

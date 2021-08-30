@@ -9,14 +9,16 @@ use EtoA\User\UserSearch;
 $messageRepository = $app[MessageRepository::class];
 /** @var UserRepository $userRepository */
 $userRepository = $app[UserRepository::class];
-/** @var mixed[] $arr alliance data */
 
-if (Alliance::checkActionRights(AllianceRights::MASS_MAIL)) {
+/** @var \EtoA\Alliance\UserAlliancePermission $userAlliancePermission */
+/** @var \EtoA\Alliance\Alliance $alliance */
+
+if ($userAlliancePermission->checkHasRights(AllianceRights::MASS_MAIL, $page)) {
     echo "<h2>Rundmail</h2>";
 
     // Nachricht senden
     if (isset($_POST['submit']) && checker_verify()) {
-        $allianceUsers = $userRepository->searchUserNicknames(UserSearch::create()->allianceId((int) $arr['alliance_id'])->notUser($cu->getId()));
+        $allianceUsers = $userRepository->searchUserNicknames(UserSearch::create()->allianceId($alliance->id)->notUser($cu->getId()));
         if (count($allianceUsers) > 0) {
             foreach (array_keys($allianceUsers) as $allianceUserId) {
                 $subject = addslashes($_POST['message_subject']) . "";

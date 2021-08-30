@@ -41,6 +41,8 @@ $allianceRightRepository = $app[AllianceRightRepository::class];
 
 $request = Request::createFromGlobals();
 
+/** @var \EtoA\Alliance\UserAlliancePermission $userAlliancePermission */
+
 echo "<h1>Allianzforum</h1>";
 
 // Prüfen ob User in Allianz ist
@@ -79,15 +81,12 @@ if ($cu->allianceId > 0) {
 
         /** @var array<int, AllianceRight> $rights */
         $rights = [];
-        /** @var array<string, bool> $myRight */
-        $myRight = [];
         $allianceRights = $allianceRightRepository->getRights();
         if (count($allianceRights) > 0) {
             $rightIds = $allianceRankRepository->getAvailableRightIds($cu->allianceId(), $myRankId);
 
             foreach ($allianceRights as $right) {
                 $rights[$right->id] = $right;
-                $myRight[$right->key] = in_array($right->id, $rightIds, true);
             }
         }
 
@@ -127,7 +126,7 @@ if ($cu->allianceId > 0) {
 
 
         // Board-Admin prüfen
-        if (Alliance::checkActionRights(AllianceRights::ALLIANCE_BOARD, FALSE) || $isFounder)
+        if ($userAlliancePermission->hasRights(AllianceRights::ALLIANCE_BOARD))
             $isAdmin = true;
         else
             $isAdmin = false;

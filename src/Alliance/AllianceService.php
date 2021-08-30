@@ -40,8 +40,9 @@ class AllianceService
     private ConfigurationService $config;
     private AllianceMemberCosts $allianceMemberCosts;
     private FleetRepository $fleetRepository;
+    private AllianceRightRepository $allianceRightRepository;
 
-    public function __construct(AllianceRepository $repository, UserRepository $userRepository, AllianceHistoryRepository $allianceHistoryRepository, UserService $userService, AllianceDiplomacyRepository $allianceDiplomacyRepository, AllianceBoardCategoryRepository $allianceBoardCategoryRepository, AllianceApplicationRepository $allianceApplicationRepository, AllianceBoardTopicRepository $allianceBoardTopicRepository, AllianceBuildingRepository $allianceBuildingRepository, AlliancePointsRepository $alliancePointsRepository, AllianceNewsRepository $allianceNewsRepository, AlliancePollRepository $alliancePollRepository, AllianceRankRepository $allianceRankRepository, AllianceSpendRepository $allianceSpendRepository, AllianceTechnologyRepository $allianceTechnologyRepository, LogRepository $logRepository, MessageRepository $messageRepository, ConfigurationService $config, AllianceMemberCosts $allianceMemberCosts, FleetRepository $fleetRepository)
+    public function __construct(AllianceRepository $repository, UserRepository $userRepository, AllianceHistoryRepository $allianceHistoryRepository, UserService $userService, AllianceDiplomacyRepository $allianceDiplomacyRepository, AllianceBoardCategoryRepository $allianceBoardCategoryRepository, AllianceApplicationRepository $allianceApplicationRepository, AllianceBoardTopicRepository $allianceBoardTopicRepository, AllianceBuildingRepository $allianceBuildingRepository, AlliancePointsRepository $alliancePointsRepository, AllianceNewsRepository $allianceNewsRepository, AlliancePollRepository $alliancePollRepository, AllianceRankRepository $allianceRankRepository, AllianceSpendRepository $allianceSpendRepository, AllianceTechnologyRepository $allianceTechnologyRepository, LogRepository $logRepository, MessageRepository $messageRepository, ConfigurationService $config, AllianceMemberCosts $allianceMemberCosts, FleetRepository $fleetRepository, AllianceRightRepository $allianceRightRepository)
     {
         $this->repository = $repository;
         $this->userRepository = $userRepository;
@@ -63,6 +64,7 @@ class AllianceService
         $this->config = $config;
         $this->allianceMemberCosts = $allianceMemberCosts;
         $this->fleetRepository = $fleetRepository;
+        $this->allianceRightRepository = $allianceRightRepository;
     }
 
     public function create(string $tag, string $name, ?int $founderId): AllianceWithMemberCount
@@ -213,5 +215,24 @@ class AllianceService
         }
 
         return false;
+    }
+
+    public function getUserAlliancePermissions(Alliance $alliance, User $user): UserAlliancePermission
+    {
+        if ($alliance->founderId === $user->id) {
+            return new UserAlliancePermission(true, []);
+        }
+
+        $userRights = [];
+        $allianceRights = $this->allianceRightRepository->getRights();
+        if (count($allianceRights) > 0) {
+            $rightIds = $this->allianceRankRepository->getAvailableRightIds($alliance->id, $user->allianceRankId);
+
+            foreach ($allianceRights as $right) {
+                $userRights[$right->key] = in_array($right->id, $rightIds, true);
+            }
+        }
+
+        return new UserAlliancePermission(false, array_keys(array_unique($userRights)));
     }
 }
