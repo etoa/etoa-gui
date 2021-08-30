@@ -631,6 +631,8 @@ elseif ($cu->allianceId == 0) {
                         StringUtils::formatLink($alliance->url) . "</a></b></td></tr>\n";
                 }
 
+                $founderNick = $userRepository->getNick($alliance->founderId);
+
                 // Diverses
                 echo "<tr><th width=\"120\">Mitglieder:</th>
             <td colspan=\"2\">" . $alliance->memberCount . "</td></tr>\n";
@@ -643,7 +645,7 @@ elseif ($cu->allianceId == 0) {
                         </tr>";
                 echo "<tr><th width=\"120\">Gr&uuml;nder:</th>
             <td colspan=\"2\">
-                <a href=\"?page=userinfo&amp;id=" . $alliance->founderId . "\">" . $ally->founder . "</a></td></tr>";
+                <a href=\"?page=userinfo&amp;id=" . $alliance->founderId . "\">" . $founderNick . "</a></td></tr>";
                 // Gründung
                 echo "<tr>
                             <th>Gründungsdatum:</th>

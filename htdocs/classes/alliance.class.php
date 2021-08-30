@@ -153,9 +153,6 @@ class Alliance
                 $this->mother = new Alliance($this->motherId);
             if ($key == "motherRequest" && $this->motherRequest == null)
                 $this->motherRequest = new Alliance($this->motherRequestId);
-            if ($key == "founder" && $this->founder == null) {
-                $this->founder = new User($this->founderId);
-            }
 
             // Protected properties
             if ($key == "changedFields")
