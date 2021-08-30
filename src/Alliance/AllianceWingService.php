@@ -68,7 +68,7 @@ class AllianceWingService
 
         $this->allianceRepository->setMotherOrRequest($wing->id, 0, 0);
 
-        $this->messageRepository->createSystemMessage($alliance->founderId ,MessageCategoryId::ALLIANCE, "Wing-Anfrage zurückgewiesen", "Die Allianz [b]" . $wing->nameWithTag . "[/b] hat die Wing-Anfrage zurückgewiesen.");
+        $this->messageRepository->createSystemMessage($alliance->founderId, MessageCategoryId::ALLIANCE, "Wing-Anfrage zurückgewiesen", "Die Allianz [b]" . $wing->nameWithTag . "[/b] hat die Wing-Anfrage zurückgewiesen.");
 
         $wing->motherRequest = 0;
         $wing->motherId = 0;

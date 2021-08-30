@@ -24,7 +24,7 @@ class AllianceShipPointsService
         foreach ($shipyardLevels as $allianceId => $level) {
             // New exponential algorithm by river
             // NOTE: if changed, also change in content/alliance/base.inc.php
-            $shipPointsAdd = (int) ceil($this->config->getInt("alliance_shippoints_per_hour") * pow($this->config->getFloat('alliance_shippoints_base'), ($level - 1)));
+            $shipPointsAdd = (int) ceil($this->config->getInt("alliance_shippoints_per_hour") * $this->config->getFloat('alliance_shippoints_base') ** ($level - 1));
 
             $this->userRepository->addAllianceShipPoints($allianceId, $shipPointsAdd);
         }

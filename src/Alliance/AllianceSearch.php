@@ -26,4 +26,20 @@ class AllianceSearch extends AbstractSearch
 
         return $this;
     }
+
+    public function motherId(int $motherAllianceId): self
+    {
+        $this->parts[] = 'alliance_mother = :motherAllianceId';
+        $this->parameters['motherAllianceId'] = $motherAllianceId;
+
+        return $this;
+    }
+
+    public function motherRequestAllianceId(int $motherRequestAllianceId): self
+    {
+        $this->parts[] = 'alliance_mother_request = :motherRequestAllianceId';
+        $this->parameters['motherRequestAllianceId'] = $motherRequestAllianceId;
+
+        return $this;
+    }
 }

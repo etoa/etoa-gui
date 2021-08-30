@@ -149,10 +149,6 @@ class Alliance
                 throw new EException("Property $key existiert nicht in der Klasse " . __CLASS__);
 
             // Do actions for some special properties
-            if ($key == "wings" && $this->wings == null)
-                $this->getWings();
-            if ($key == "wingRequests" && $this->wingRequests == null)
-                $this->getWingRequests();
             if ($key == "mother" && $this->mother == null)
                 $this->mother = new Alliance($this->motherId);
             if ($key == "motherRequest" && $this->motherRequest == null)
@@ -176,54 +172,6 @@ class Alliance
     //
     // Wing management
     //
-
-    /**
-     * Returns all wings of this alliance as an array of alliance objects
-     * Use $object->wings from outside of the class
-     */
-    private function &getWings()
-    {
-        if ($this->wings == null) {
-            $this->wings = array();
-            $res = dbquery("
-              SELECT
-                  alliance_id
-              FROM
-                  alliances
-              WHERE
-                  alliance_mother=" . $this->id . "
-                  AND alliance_id!=" . $this->id . "
-              ");
-            if (mysql_num_rows($res) > 0) {
-                while ($arr = mysql_fetch_row($res)) {
-                    $this->wings[$arr[0]] = new Alliance($arr[0]);
-                }
-            }
-        }
-        return $this->wings;
-    }
-
-    private function &getWingRequests()
-    {
-        if ($this->wingRequests == null) {
-            $this->wingRequests = array();
-            $res = dbquery("
-              SELECT
-                  alliance_id
-              FROM
-                  alliances
-              WHERE
-                  alliance_mother_request=" . $this->id . "
-                  AND alliance_id!=" . $this->id . "
-              ");
-            if (mysql_num_rows($res) > 0) {
-                while ($arr = mysql_fetch_row($res)) {
-                    $this->wingRequests[$arr[0]] = new Alliance($arr[0]);
-                }
-            }
-        }
-        return $this->wingRequests;
-    }
 
     /**
      * Check rights for an action

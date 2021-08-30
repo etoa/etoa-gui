@@ -54,6 +54,31 @@ class AllianceRepository extends AbstractRepository
     }
 
     /**
+     * @return array<int, AllianceWithMemberCount>
+     */
+    public function searchAlliances(AllianceSearch $search = null, int $limit = null): array
+    {
+        $data = $this->applySearchSortLimit($this->createQueryBuilder(), $search, null, $limit)
+            ->select("a.*")
+            ->addSelect('COUNT(u.user_id) as member_count')
+            ->from('alliances', 'a')
+            ->leftJoin('a', 'users', 'u', 'u.user_alliance_id=a.alliance_id')
+            ->groupBy('a.alliance_id')
+            ->orderBy('a.alliance_name')
+            ->addOrderBy('a.alliance_tag')
+            ->execute()
+            ->fetchAllAssociative();
+
+        $result = [];
+        foreach ($data as $row) {
+            $alliance = new AllianceWithMemberCount($row);
+            $result[$alliance->id] = $alliance;
+        }
+
+        return $result;
+    }
+
+    /**
      * @return array<int, string>
      */
     public function getAllianceTags(): array

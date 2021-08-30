@@ -3,7 +3,6 @@
 namespace EtoA\Alliance;
 
 use EtoA\AbstractDbTestCase;
-use EtoA\User\UserRepository;
 
 class AllianceShipPointsServiceTest extends AbstractDbTestCase
 {

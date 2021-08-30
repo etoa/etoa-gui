@@ -10,6 +10,7 @@ use EtoA\Alliance\AllianceRepository;
 use EtoA\Alliance\AllianceRight;
 use EtoA\Alliance\AllianceRightRepository;
 use EtoA\Alliance\AllianceRights;
+use EtoA\Alliance\AllianceSearch;
 use EtoA\Alliance\AllianceService;
 use EtoA\Alliance\Board\AllianceBoardTopicRepository;
 use EtoA\Core\Configuration\ConfigurationService;
@@ -81,7 +82,7 @@ elseif ($cu->allianceId == 0) {
         }
 
         // Gründer prüfen
-        $isFounder = ($ally->founderId == $cu->id) ? true : false;
+        $isFounder = ($alliance->founderId == $cu->id) ? true : false;
 
         //
         // Allianzdaten ändern
@@ -347,7 +348,7 @@ elseif ($cu->allianceId == 0) {
             }
             // Allianzdaten anzeigen
             else {
-                $allianceRepository->addVisit($ally->id);
+                $allianceRepository->addVisit($alliance->id);
 
                 tableStart("[" . stripslashes($alliance->tag) . "] " . stripslashes($alliance->name));
                 if ($alliance->image != "") {
@@ -400,16 +401,16 @@ elseif ($cu->allianceId == 0) {
                 }
 
                 // Wing-Anfrage
-                if ($config->getBoolean('allow_wings') && ($isFounder || $myRight[AllianceRights::WINGS]) && $ally->motherRequestId > 0) {
+                if ($config->getBoolean('allow_wings') && ($isFounder || $myRight[AllianceRights::WINGS]) && $alliance->motherRequest > 0) {
                     echo "<tr><th colspan=\"3\" align=\"center\">
                 <div align=\"center\"><b><a href=\"?page=$page&action=wings\">Es ist eine Wing-Anfrage vorhanden!</a></b></div>
                 </th></tr>";
                 }
 
-                if ($config->getBoolean('allow_wings') && $ally->motherId != 0) {
+                if ($config->getBoolean('allow_wings') && $alliance->motherId !== 0) {
                     echo "<tr>
                                 <th colspan=\"3\" style=\"text-align:center;\">
-                                    Diese Allianz ist ein Wing von <b><a href=\"?page=$page&amp;action=info&amp;id=" . $ally->motherId . "\">" . $ally->mother . "</a></b>
+                                    Diese Allianz ist ein Wing von <b><a href=\"?page=$page&amp;action=info&amp;id=" . $alliance->motherId . "\">" . $ally->mother . "</a></b>
                                 </th>
                             </tr>";
                 }
@@ -511,7 +512,7 @@ elseif ($cu->allianceId == 0) {
                 }
 
                 // Kriege
-                $wars = $allianceDiplomacyRepository->getDiplomacies($ally->id, AllianceDiplomacyLevel::WAR);
+                $wars = $allianceDiplomacyRepository->getDiplomacies($alliance->id, AllianceDiplomacyLevel::WAR);
                 if (count($wars) > 0) {
                     echo "<tr>
                                 <th>Kriege:</th>
@@ -539,7 +540,7 @@ elseif ($cu->allianceId == 0) {
 
 
                 // Friedensabkommen
-                $peace = $allianceDiplomacyRepository->getDiplomacies($ally->id, AllianceDiplomacyLevel::PEACE);
+                $peace = $allianceDiplomacyRepository->getDiplomacies($alliance->id, AllianceDiplomacyLevel::PEACE);
                 if (count($peace) > 0) {
                     echo "<tr>
                                 <th>Friedensabkommen:</th>
@@ -566,7 +567,7 @@ elseif ($cu->allianceId == 0) {
                 }
 
                 // Bündnisse
-                $bnds = $allianceDiplomacyRepository->getDiplomacies($ally->id, AllianceDiplomacyLevel::BND_CONFIRMED);
+                $bnds = $allianceDiplomacyRepository->getDiplomacies($alliance->id, AllianceDiplomacyLevel::BND_CONFIRMED);
                 if (count($bnds) > 0) {
                     echo "<tr>
                                 <th>Bündnisse:</th>
@@ -598,26 +599,29 @@ elseif ($cu->allianceId == 0) {
             <td colspan=\"2\">" . StringUtils::formatNumber($ally->visits) . " intern / " . StringUtils::formatNumber($ally->visitsExt) . " extern</td></tr>\n";
 
                 // Wings
-                if ($config->getBoolean('allow_wings') && count($ally->wings) > 0) {
-                    echo "<tr><th width=\"120\">Wings:</th><td colspan=\"2\">";
-                    echo "<table class=\"tb\">";
-                    echo "<tr>
+                if ($config->getBoolean('allow_wings')) {
+                    $wings = $allianceRepository->searchAlliances(AllianceSearch::create()->motherId($alliance->id));
+                    if (count($wings) > 0) {
+                        echo "<tr><th width=\"120\">Wings:</th><td colspan=\"2\">";
+                        echo "<table class=\"tb\">";
+                        echo "<tr>
                     <th>Name</th>
                     <th>Punkte</th>
                     <th>Mitglieder</th>
                     <th>Punkteschnitt</th>
                 </tr>";
-                    foreach ($ally->wings as $wid => $wdata) {
-                        echo "<tr>
-                    <td><a href=\"?page=alliance&amp;id=" . $wid . "\">" . $wdata . "</a></td>
-                    <td>" . StringUtils::formatNumber($wdata->points) . "</td>
-                    <td>" . $wdata->memberCount . "</td>
-                    <td>" . StringUtils::formatNumber($wdata->avgPoints) . "</td>
+                        foreach ($wings as $wing) {
+                            echo "<tr>
+                    <td><a href=\"?page=alliance&amp;id=" . $wing->id . "\">" . $wing->nameWithTag . "</a></td>
+                    <td>" . StringUtils::formatNumber($wing->points) . "</td>
+                    <td>" . $wing->memberCount . "</td>
+                    <td>" . StringUtils::formatNumber($wing->averagePoints) . "</td>
                     </tr>";
+                        }
+                        echo "</td></tr>";
+                        tableEnd();
+                        echo "</td></tr>";
                     }
-                    echo "</td></tr>";
-                    tableEnd();
-                    echo "</td></tr>";
                 }
 
 
@@ -629,17 +633,17 @@ elseif ($cu->allianceId == 0) {
 
                 // Diverses
                 echo "<tr><th width=\"120\">Mitglieder:</th>
-            <td colspan=\"2\">" . $ally->memberCount . "</td></tr>\n";
+            <td colspan=\"2\">" . $alliance->memberCount . "</td></tr>\n";
                 // Punkte
                 echo "<tr>
                             <th>Punkte / Schnitt:</th>
                             <td colspan=\"2\">";
-                echo StringUtils::formatNumber($ally->points) . " / " . StringUtils::formatNumber($ally->avgPoints) . "";
+                echo StringUtils::formatNumber($alliance->points) . " / " . StringUtils::formatNumber($alliance->averagePoints) . "";
                 echo "</td>
                         </tr>";
                 echo "<tr><th width=\"120\">Gr&uuml;nder:</th>
             <td colspan=\"2\">
-                <a href=\"?page=userinfo&amp;id=" . $ally->founderId . "\">" . $ally->founder . "</a></td></tr>";
+                <a href=\"?page=userinfo&amp;id=" . $alliance->founderId . "\">" . $ally->founder . "</a></td></tr>";
                 // Gründung
                 echo "<tr>
                             <th>Gründungsdatum:</th>
