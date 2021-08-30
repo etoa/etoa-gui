@@ -1,6 +1,6 @@
 <?PHP
 
-/** @var Alliance $ally */
+/** @var \EtoA\Alliance\AllianceWithMemberCount $alliance */
 
 use EtoA\Alliance\AllianceRights;
 
@@ -8,7 +8,7 @@ if (Alliance::checkActionRights(AllianceRights::LIQUIDATE)) {
     echo "<h2>Allianz aufl&ouml;sen</h2>";
 
     // Prüft, ob noch Mitglieder vorhanden sind (keine Bewerbungen!)
-    if (count($ally->members) > 1) {
+    if ($alliance->memberCount > 1) {
         error_msg("Allianz kann nicht aufgel&ouml;st werden, da sie noch Mitglieder hat. L&ouml;sche zuerst die Mitglieder!");
         echo "<input type=\"button\" onclick=\"document.location='?page=$page';\" value=\"Zur&uuml;ck\" />";
     } else {

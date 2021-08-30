@@ -1,8 +1,7 @@
 <?PHP
 
-use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Alliance\AllianceDiplomacyRepository;
 use EtoA\Support\Mail\MailSenderService;
-use EtoA\User\UserService;
 use EtoA\User\UserSessionRepository;
 use EtoA\User\UserSessionSearch;
 
@@ -69,7 +68,6 @@ class User implements \EtoA\User\UserInterface
     // Sub-objects and their id's
     protected $raceId;
     protected $allianceId;
-    protected ?Alliance $alliance = null;
     protected $rating = null;
     protected $properties = null;
     protected $changedFields;
@@ -275,33 +273,6 @@ class User implements \EtoA\User\UserInterface
         try {
             if (!property_exists($this, $key))
                 throw new EException("Property $key existiert nicht in der Klasse " . __CLASS__);
-            if ($key == "alliance") {
-
-                // TODO
-                global $app;
-
-                /** @var UserService $userService */
-                $userService = $app[UserService::class];
-
-                $tmpAlly = $this->$key;
-                $this->$key = $val;
-                if ($this->alliance == null) {
-                    $this->allianceId = 0;
-                    if ($tmpAlly != null)
-                        $userService->addToUserLog($this->id, "alliance", "{nick} ist nun kein Mitglied mehr der Allianz [b]" . $tmpAlly . "[/b].");
-                } else {
-                    if ($tmpAlly != null)
-                        $userService->addToUserLog($this->id, "alliance", "{nick} ist nun kein Mitglied mehr der Allianz " . $tmpAlly . ".");
-                    $userService->addToUserLog($this->id, "alliance", "{nick} ist nun Mitglied der Allianz " . $this->alliance . ".");
-                    $this->allianceId = $this->alliance->id;
-                }
-                unset($tmpAlly);
-
-                $this->allianceRankId = 0;
-                $this->changedFields[$key] = true;
-                $this->changedFields["allianceRankId"] = 0;
-                return true;
-            }
             if ($key == "visits") {
                 $this->$key = intval($val);
                 $this->changedFields[$key] = true;
@@ -366,9 +337,6 @@ class User implements \EtoA\User\UserInterface
             if (!property_exists($this, $key))
                 throw new EException("Property $key existiert nicht in " . __CLASS__);
 
-            if ($key == "alliance" && $this->alliance == null && $this->allianceId > 0) {
-                $this->alliance = new Alliance($this->allianceId);
-            }
             if ($key == "holiday" && $this->holiday == null) {
                 $this->holiday = ($this->hmode_from != 0 && $this->hmode_to != 0) ? true : false;
             }
@@ -494,7 +462,11 @@ class User implements \EtoA\User\UserInterface
 
     public function canAttackUser(User $u)
     {
-        // somehow $this->alliance doesn't use the getter
+        global $app;
+
+        /** @var AllianceDiplomacyRepository $allianceDiplomacyRepository */
+        $allianceDiplomacyRepository = $app[AllianceDiplomacyRepository::class];
+
         // neither does $u->locked, wtf
 
         // att allowed if war is active
@@ -502,7 +474,8 @@ class User implements \EtoA\User\UserInterface
         // or att allowed if target user is inactive
         // or att allowed if target user is locked
         if ($this->allianceId() > 0 && $u->allianceId() > 0) {
-            return $this->__get('alliance')->checkWar($u->allianceId())
+
+            return $allianceDiplomacyRepository->isAtWar($this->allianceId(), $u->allianceId())
                 || !$this->isUserNoobProtected($u)
                 || $u->isInactiv()
                 || $u->__get('locked')

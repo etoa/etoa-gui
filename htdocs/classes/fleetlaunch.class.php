@@ -1,5 +1,6 @@
 <?PHP
 
+use EtoA\Alliance\AllianceDiplomacyRepository;
 use EtoA\Building\BuildingRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Fleet\FleetRepository;
@@ -751,6 +752,8 @@ class FleetLaunch
 
         /** @var ConfigurationService $config */
         $config = $app[ConfigurationService::class];
+        /** @var AllianceDiplomacyRepository $allianceDiplomacyRepository */
+        $allianceDiplomacyRepository = $app[AllianceDiplomacyRepository::class];
 
         $this->error = '';
 
@@ -793,11 +796,11 @@ class FleetLaunch
                                     // and it is an agressive action
                                     $ai->attitude() == 3 &&
                                     // and the two alliances are not at war against each other
-                                    !$this->sourceEntity->owner->alliance->checkWar($this->targetEntity->ownerAlliance())) || (
+                                    !$allianceDiplomacyRepository->isAtWar($this->sourceEntity->owner->allianceId(), $this->targetEntity->ownerAlliance())) || (
                                     // or it is a defensive action
                                     $ai->attitude() == 1 &&
                                     // and the user's alliance is not at war
-                                    !$this->owner->alliance->isAtWar()))))
+                                    !$allianceDiplomacyRepository->isAtWar($this->owner->allianceId())))))
                 ) {
                     continue;
                 }
@@ -841,7 +844,7 @@ class FleetLaunch
                                         ) {
                                             if ($this->owner->canAttackPlanet($this->targetEntity)) {
                                                 if (strpos($ai, 'Bombardierung')) {
-                                                    if ($this->owner->alliance->checkWar($this->targetEntity->owner->alliance->id))
+                                                    if ($allianceDiplomacyRepository->isAtWar($this->sourceEntity->owner->allianceId(), $this->targetEntity->ownerAlliance()))
                                                         $actionObjs[$i] = $ai;
                                                 } else
                                                     $actionObjs[$i] = $ai;

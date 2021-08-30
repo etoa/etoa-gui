@@ -120,45 +120,6 @@ class Alliance
         }
     }
 
-    //
-    // Magic functions
-    //
-
-    /**
-     * Returns a propperly formated alliance name
-     */
-    public function __toString()
-    {
-        return "[" . $this->tag . "] " . $this->name;
-    }
-
-    /**
-     * Gets alliance properties
-     */
-    public function __get($key)
-    {
-        try {
-            // Return special non-defined properties
-            if ($key == "avgPoints")
-                return floor($this->points / $this->memberCount);
-            if ($key == "imageUrl")
-                return ALLIANCE_IMG_DIR . "/" . $this->image;
-
-            // Check if property exists
-            if (!property_exists($this, $key))
-                throw new EException("Property $key existiert nicht in der Klasse " . __CLASS__);
-
-            // Protected properties
-            if ($key == "changedFields")
-                throw new EException("Property $key der Klasse " . __CLASS__ . " ist geschützt!");
-
-
-            return $this->$key;
-        } catch (EException $e) {
-            echo $e;
-            return null;
-        }
-    }
 
     //
     // Wing management

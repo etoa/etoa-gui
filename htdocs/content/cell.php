@@ -3,6 +3,7 @@
 use EtoA\Admin\AdminUserRepository;
 use EtoA\Alliance\AllianceDiplomacyLevel;
 use EtoA\Alliance\AllianceDiplomacyRepository;
+use EtoA\Alliance\AllianceRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Support\BBCodeUtils;
 use EtoA\Support\StringUtils;
@@ -34,6 +35,8 @@ $starRepository = $app[StarRepository::class];
 $userUniverseDiscoveryService = $app[UserUniverseDiscoveryService::class];
 /** @var AllianceDiplomacyRepository $allianceDiplomacyRepository */
 $allianceDiplomacyRepository = $app[AllianceDiplomacyRepository::class];
+/** @var AllianceRepository $allianceRepository */
+$allianceRepository = $app[AllianceRepository::class];
 
 $user = $userRepository->getUser($cu->id);
 
@@ -266,8 +269,11 @@ if ($cell->isValid()) {
             if ($ent->ownerId() > 0) {
                 $header = $ent->owner();
                 $tm = "Punkte: " . StringUtils::formatNumber($ent->owner->points) . "<br style=\"clear:both\" />";
-                if ($ent->ownerAlliance() > 0)
-                    $tm .= "Allianz: " . $ent->owner->alliance . "<br style=\"clear:both\" />";
+                if ($ent->ownerAlliance() > 0) {
+                    $ownerAlliance = $allianceRepository->getAlliance($ent->owner->allianceId());
+                    $tm .= "Allianz: " . $ownerAlliance->nameWithTag . "<br style=\"clear:both\" />";
+                }
+
                 if ($tm_info != "")
                     $header .= " (<span $class>" . $tm_info . "</span>)";
                 echo "<span style=\"color:#817339;font-weight:bold\" " . tm($header, $tm) . "><a $class href=\"?page=userinfo&amp;id=" . $ent->ownerId() . "\">" . $ent->owner() . "</a></span> ";

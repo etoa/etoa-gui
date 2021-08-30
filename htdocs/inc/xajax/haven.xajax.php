@@ -4,6 +4,7 @@
 
 use EtoA\Alliance\AllianceBuildingId;
 use EtoA\Alliance\AllianceBuildingRepository;
+use EtoA\Alliance\AllianceRepository;
 use EtoA\Bookmark\BookmarkRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Fleet\FleetRepository;
@@ -1132,13 +1133,16 @@ function havenShowLaunch($form)
                     $ac = FleetAction::createFactory($form['fleet_action']);
 
                     // bugfix - check for alliance added by river
-                    if ($form['fleet_action'] == "alliance" && $fleet->getLeader() == 0 && $fleet->owner->alliance && count($form['msgUser']) > 0) {
+                    if ($form['fleet_action'] == "alliance" && $fleet->getLeader() == 0 && $fleet->owner->allianceid() > 0 && count($form['msgUser']) > 0) {
 
                         /** @var \EtoA\Message\MessageRepository $messageRepository */
                         $messageRepository = $app[\EtoA\Message\MessageRepository::class];
+                        /** @var AllianceRepository $allianceRepository */
+                        $allianceRepository = $app[AllianceRepository::class];
 
+                        $fleetOwnerAlliance = $allianceRepository->getAlliance($fleet->owner->allianceId());
                         $subject = "Allianzangriff (" . $fleet->targetEntity . ")";
-                        $text = "[b]Angriffsdaten:[/b][table][tr][td]Flottenkennzeichen:[/td][td]" . $fleet->owner->alliance->tag . "-" . $fid . "[/td][/tr][tr][td]Flottenleader:[/td][td]" . $fleet->owner->nick . "[/td][/tr][tr][td]Zielplanet:[/td][td]" . $fleet->targetEntity . "[/td][/tr][tr][td]Ankunftszeit:[/td][td]" . date("d.m.y, H:i:s", $fleet->landTime) . "[/td][/tr][/table]" . $form['message_text'];
+                        $text = "[b]Angriffsdaten:[/b][table][tr][td]Flottenkennzeichen:[/td][td]" . $fleetOwnerAlliance->tag . "-" . $fid . "[/td][/tr][tr][td]Flottenleader:[/td][td]" . $fleet->owner->nick . "[/td][/tr][tr][td]Zielplanet:[/td][td]" . $fleet->targetEntity . "[/td][/tr][tr][td]Ankunftszeit:[/td][td]" . date("d.m.y, H:i:s", $fleet->landTime) . "[/td][/tr][/table]" . $form['message_text'];
                         foreach ($form['msgUser'] as $uid) {
                             $messageRepository->sendFromUserToUser(
                                 (int) $fleet->ownerId(),
@@ -1235,7 +1239,8 @@ function havenTargetInfo($form)
     $entityRepository = $app[EntityRepository::class];
     /** @var UserUniverseDiscoveryService $userUniverseDiscoveryService */
     $userUniverseDiscoveryService = $app[UserUniverseDiscoveryService::class];
-
+    /** @var AllianceRepository $allianceRepository */
+    $allianceRepository = $app[AllianceRepository::class];
     /** @var UserRepository $userRepository */
     $userRepository = $app[UserRepository::class];
 
@@ -1298,10 +1303,11 @@ function havenTargetInfo($form)
             if ($ent->ownerId() > 0 && is_array($fleet->aFleets) && count($fleet->aFleets) > 0) {
                 $alliance .= "<table style=\"width:100%;\">";
                 $counter = 0;
+                $fleetOwnerAlliance = $allianceRepository->getAlliance($fleet->owner->allianceId());
                 foreach ($fleet->aFleets as $f) {
                     if ($f['entity_to'] == $ent->id()) {
                         $counter++;
-                        $alliance .= "<tr><input type=\"button\" style=\"width:100%;\" onclick=\"xajax_havenAllianceAttack(" . $f["id"] . ")\" name=\"" . $fleet->owner->alliance->tag . "-" . $f["id"] . "\" value=\"Flottenleader: " . get_user_nick($f["user_id"]) . " Ankunftszeit: " . date("d.m.y, H:i:s", $f["landtime"]) . "\"/></tr>";
+                        $alliance .= "<tr><input type=\"button\" style=\"width:100%;\" onclick=\"xajax_havenAllianceAttack(" . $f["id"] . ")\" name=\"" . $fleetOwnerAlliance->tag . "-" . $f["id"] . "\" value=\"Flottenleader: " . get_user_nick($f["user_id"]) . " Ankunftszeit: " . date("d.m.y, H:i:s", $f["landtime"]) . "\"/></tr>";
                     }
                 }
                 $alliance .= "</table>";
@@ -1360,7 +1366,8 @@ function havenBookmark($form)
     $entityRepositroy = $app[EntityRepository::class];
     /** @var UserUniverseDiscoveryService $userUniverseDiscoveryService */
     $userUniverseDiscoveryService = $app[UserUniverseDiscoveryService::class];
-
+    /** @var AllianceRepository $allianceRepository */
+    $allianceRepository = $app[AllianceRepository::class];
     /** @var UserRepository $userRepository */
     $userRepository = $app[UserRepository::class];
 
@@ -1446,10 +1453,11 @@ function havenBookmark($form)
     if ($ent->ownerId() > 0 && is_array($fleet->aFleets) && count($fleet->aFleets) > 0) {
         $alliance .= "<table style=\"width:100%;\">";
         $counter = 0;
+        $fleetOwnerAlliance = $allianceRepository->getAlliance($fleet->owner->allianceId());
         foreach ($fleet->aFleets as $f) {
             if ($f['entity_to'] == $ent->id()) {
                 $counter++;
-                $alliance .= "<tr><input type=\"button\" style=\"width:100%;\" onclick=\"xajax_havenAllianceAttack(" . $f["id"] . ")\" name=\"" . $fleet->owner->alliance->tag . "-" . $f["id"] . "\" value=\"Flottenleader: " . get_user_nick($f["user_id"]) . " Ankunftszeit: " . date("d.m.y, H:i:s", $f["landtime"]) . "\"/></tr>";
+                $alliance .= "<tr><input type=\"button\" style=\"width:100%;\" onclick=\"xajax_havenAllianceAttack(" . $f["id"] . ")\" name=\"" . $fleetOwnerAlliance->tag . "-" . $f["id"] . "\" value=\"Flottenleader: " . get_user_nick($f["user_id"]) . " Ankunftszeit: " . date("d.m.y, H:i:s", $f["landtime"]) . "\"/></tr>";
             }
         }
         $alliance .= "</table>";

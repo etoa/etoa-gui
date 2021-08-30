@@ -2,6 +2,7 @@
 
 use Doctrine\DBAL\Query\QueryBuilder;
 use EtoA\Admin\AdminUserRepository;
+use EtoA\Alliance\AllianceRepository;
 use EtoA\Building\BuildingDataRepository;
 use EtoA\Defense\DefenseDataRepository;
 use EtoA\HostCache\NetworkNameService;
@@ -868,6 +869,8 @@ function showGameLogs($args = null, $limit = 0)
 
     /** @var GameLogRepository $gameLogRepository */
     $gameLogRepository = $app[GameLogRepository::class];
+    /** @var AllianceRepository $alianceRepository */
+    $alianceRepository = $app[AllianceRepository::class];
 
     $paginationLimit = 25;
 
@@ -966,7 +969,7 @@ function showGameLogs($args = null, $limit = 0)
         </tr>";
         foreach ($logs as $log) {
             $tu = ($log->userId > 0) ? new User($log->userId) : "-";
-            $ta = ($log->allianceId > 0) ? new Alliance($log->allianceId) : "-";
+            $ta = ($log->allianceId > 0) ? $alianceRepository->getAlliance($log->allianceId) : null;
             $te = ($log->entityId > 0) ? Entity::createFactoryById($log->entityId) : "-";
             switch ($log->facility) {
                 case GameLogFacility::BUILD:
@@ -1043,7 +1046,7 @@ function showGameLogs($args = null, $limit = 0)
             <td>" . LogSeverity::SEVERITIES[$log->severity] . "</td>
             <td>" . GameLogFacility::FACILITIES[$log->facility] . "</td>
             <td>" . $tu . "</td>
-            <td>" . $ta . "</td>
+            <td>" . ($ta !== null ? $ta->nameWithTag : '') . "</td>
             <td>" . $te . "</td>
             <td>" . $ob . "</td>
             <td>" . $obStatus . "</td>

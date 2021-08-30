@@ -57,7 +57,9 @@ $allianceBase = $app[AllianceBase::class];
 /** @var AllianceBuildingRepository $allianceBuildingRepository */
 $allianceBuildingRepository = $app[AllianceBuildingRepository::class];
 
-/** @var Request */
+/** @var \EtoA\Alliance\Alliance $alliance */
+
+/** @var Request $request */
 $request = Request::createFromGlobals();
 
 $planet = $planetRepo->find($cp->id);
@@ -385,20 +387,21 @@ $style2 = "";
 $style3 = "";
 $style4 = "";
 
+$alliance = $allianceRepository->getAlliance($alliance->id);
 // Negative Rohstoffe farblich hervorben
-if ($cu->alliance->resMetal < 0) {
+if ($alliance->resMetal < 0) {
     $style0 = "style=\"color:red;\"";
 }
-if ($cu->alliance->resCrystal < 0) {
+if ($alliance->resCrystal < 0) {
     $style1 = "style=\"color:red;\"";
 }
-if ($cu->alliance->resPlastic < 0) {
+if ($alliance->resPlastic < 0) {
     $style2 = "style=\"color:red;\"";
 }
-if ($cu->alliance->resFuel < 0) {
+if ($alliance->resFuel < 0) {
     $style3 = "style=\"color:red;\"";
 }
-if ($cu->alliance->resFood < 0) {
+if ($alliance->resFood < 0) {
     $style4 = "style=\"color:red;\"";
 }
 
@@ -412,11 +415,11 @@ echo "<tr>
                 <th style=\"width:20%;vertical-align:middle;\">" . RES_ICON_FOOD . " " . RES_FOOD . "</th>
             </tr>
             <tr>
-                <td " . $style0 . " id=\"resBoxMetal\">" . StringUtils::formatNumber($cu->alliance->resMetal) . " t</td>
-                <td " . $style1 . " id=\"resBoxCrystal\">" . StringUtils::formatNumber($cu->alliance->resCrystal) . " t</td>
-                <td " . $style2 . "id=\"resBoxPlastic\">" . StringUtils::formatNumber($cu->alliance->resPlastic) . " t</td>
-                <td " . $style3 . "id=\"resBoxFuel\">" . StringUtils::formatNumber($cu->alliance->resFuel) . " t</td>
-                <td " . $style4 . "id=\"resBoxFood\">" . StringUtils::formatNumber($cu->alliance->resFood) . " t</td>
+                <td " . $style0 . " id=\"resBoxMetal\">" . StringUtils::formatNumber($alliance->resMetal) . " t</td>
+                <td " . $style1 . " id=\"resBoxCrystal\">" . StringUtils::formatNumber($alliance->resCrystal) . " t</td>
+                <td " . $style2 . "id=\"resBoxPlastic\">" . StringUtils::formatNumber($alliance->resPlastic) . " t</td>
+                <td " . $style3 . "id=\"resBoxFuel\">" . StringUtils::formatNumber($alliance->resFuel) . " t</td>
+                <td " . $style4 . "id=\"resBoxFood\">" . StringUtils::formatNumber($alliance->resFood) . " t</td>
             </tr>";
 tableEnd();
 
@@ -443,7 +446,6 @@ if (isset($_POST['building_submit']) && checker_verify()) {
         if (isset($_POST['building_id']) && $_POST['building_id'] != 0) {
             $buildingId = $request->request->getInt('building_id');
             try {
-                $alliance = $allianceRepository->getAlliance($cu->allianceId());
                 $building = $buildings[$buildingId];
                 $buildingList = $allianceBuildingRepository->getBuildList($alliance->id);
                 $allianceBase->buildBuilding($allianceUser, $alliance, $building, $buildingList[$buildingId] ?? null, AllianceItemRequirementStatus::createForBuildings($buildings, $buildingList));
@@ -463,7 +465,6 @@ if (isset($_POST['research_submit']) && checker_verify()) {
         if (isset($_POST['research_id']) && $_POST['research_id'] != 0) {
             $technologyId = $request->request->getInt('research_id');
             try {
-                $alliance = $allianceRepository->getAlliance($cu->allianceId());
                 $technology = $technologies[$technologyId];
                 $technologyList = $allianceTechnologyRepository->getTechnologyList($alliance->id);
                 $allianceBase->buildTechnology($allianceUser, $alliance, $technology, $technologyList[$technologyId] ?? null, AllianceItemRequirementStatus::createForTechnologies($technologies, $technologyList));
@@ -943,7 +944,7 @@ if ($allianceShipyardLevel > 0) {
     tableStart("Guthaben Übersicht");
 
     echo "<tr>";
-    if ($cu->alliance->resMetal < 0 || $cu->alliance->resCrystal < 0 || $cu->alliance->resPlastic < 0 || $cu->alliance->resFuel < 0 || $cu->alliance->resFood < 0) {
+    if ($alliance->resMetal < 0 || $alliance->resCrystal < 0 || $alliance->resPlastic < 0 || $alliance->resFuel < 0 || $alliance->resFood < 0) {
         echo "<td style=\"text-align:center;\"><span " . tm("Produktionsstop", "Die Produktion wurde unterbrochen, da negative Rohstoffe vorhanden sind.") . ">Schiffsteile pro Stunde: 0</span></td>";
     } else {
         // if changed, also change classes/alliance.class.php

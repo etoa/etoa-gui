@@ -63,9 +63,6 @@ elseif ($cu->allianceId == 0) {
     // Allianzdaten laden
     $alliance = $allianceRepository->getAlliance($cu->allianceId());
     if ($alliance !== null) {
-        $ally = new Alliance($cu->allianceId);
-
-
         // Rechte laden
         /** @var array<int, AllianceRight> $rights */
         $rights = [];
@@ -319,9 +316,6 @@ elseif ($cu->allianceId == 0) {
                 $allianceRepository->update($alliance->id, $alliance_tag, $alliance_name, $_POST['alliance_text'], $alliance->applicationTemplate, $_POST['alliance_url'], $alliance->founderId, $updatedAllianceImage, (bool) $_POST['alliance_accept_applications'], (bool) $_POST['alliance_accept_bnd'], (bool) $_POST['alliance_public_memberlist']);
                 $alliance = $allianceRepository->getAlliance($cu->allianceId());
                 echo "Die &Auml;nderungen wurden übernommen!<br/>" . $message . "<br/>";
-
-                // Hack
-                $ally = new Alliance($cu->allianceId);
             }
 
             // Bewerbungsvorlage speichern
@@ -408,9 +402,10 @@ elseif ($cu->allianceId == 0) {
                 }
 
                 if ($config->getBoolean('allow_wings') && $alliance->motherId !== 0) {
+                    $motherAlliance = $allianceRepository->getAlliance($alliance->motherId);
                     echo "<tr>
                                 <th colspan=\"3\" style=\"text-align:center;\">
-                                    Diese Allianz ist ein Wing von <b><a href=\"?page=$page&amp;action=info&amp;id=" . $alliance->motherId . "\">" . $ally->mother . "</a></b>
+                                    Diese Allianz ist ein Wing von <b><a href=\"?page=$page&amp;action=info&amp;id=" . $alliance->motherId . "\">" . $motherAlliance->nameWithTag . "</a></b>
                                 </th>
                             </tr>";
                 }
@@ -524,12 +519,12 @@ elseif ($cu->allianceId == 0) {
                                             <th>Zeitraum</th>
                                         </tr>";
                     foreach ($wars as $diplomacy) {
-                        $opAlly = new Alliance($diplomacy->otherAllianceId);
+                        $opAlliance = $allianceRepository->getAlliance($diplomacy->otherAllianceId);
                         echo "<tr>
                                             <td>
-                                                <a href=\"?page=$page&amp;id=" . $diplomacy->otherAllianceId . "\">" . $opAlly . "</a>
+                                                <a href=\"?page=$page&amp;id=" . $diplomacy->otherAllianceId . "\">" . $opAlliance->nameWithTag . "</a>
                                             </td>
-                                            <td>" . StringUtils::formatNumber($opAlly->points) . " / " . StringUtils::formatNumber($opAlly->avgPoints) . "</td>
+                                            <td>" . StringUtils::formatNumber($opAlliance->points) . " / " . StringUtils::formatNumber($opAlliance->averagePoints) . "</td>
                                             <td>" . StringUtils::formatDate($diplomacy->date, false) . " bis " . StringUtils::formatDate($diplomacy->date + WAR_DURATION, false) . "</td>
                                         </tr>";
                     }
@@ -552,12 +547,12 @@ elseif ($cu->allianceId == 0) {
                                             <th>Zeitraum</th>
                                         </tr>";
                     foreach ($peace as $diplomacy) {
-                        $opAlly = new Alliance($diplomacy->otherAllianceId);
+                        $opAlliance = $allianceRepository->getAlliance($diplomacy->otherAllianceId);
                         echo "<tr>
                                             <td>
-                                                <a href=\"?page=$page&amp;id=" . $diplomacy->otherAllianceId . "\">" . $opAlly . "</a>
+                                                <a href=\"?page=$page&amp;id=" . $diplomacy->otherAllianceId . "\">" . $opAlliance->nameWithTag . "</a>
                                             </td>
-                                            <td>" . StringUtils::formatNumber($opAlly->points) . " / " . StringUtils::formatNumber($opAlly->avgPoints) . "</td>
+                                            <td>" . StringUtils::formatNumber($opAlliance->points) . " / " . StringUtils::formatNumber($opAlliance->averagePoints) . "</td>
                                             <td>" . StringUtils::formatDate($diplomacy->date, false) . " bis " . StringUtils::formatDate($diplomacy->date + PEACE_DURATION, false) . "</td>
                                         </tr>";
                     }
@@ -581,11 +576,11 @@ elseif ($cu->allianceId == 0) {
                                         </tr>";
 
                     foreach ($bnds as $diplomacy) {
-                        $opAlly = new Alliance($diplomacy->otherAllianceId);
+                        $opAlliance = $allianceRepository->getAlliance($diplomacy->otherAllianceId);
                         echo "<tr>
                                             <td>" . stripslashes($diplomacy->name) . "</td>
-                                            <td><a href=\"?page=$page&amp;id=" . $diplomacy->otherAllianceId . "\">" . $opAlly . "</a></td>
-                                            <td>" . StringUtils::formatNumber($opAlly->points) . " / " . StringUtils::formatNumber($opAlly->avgPoints) . "</td>
+                                            <td><a href=\"?page=$page&amp;id=" . $diplomacy->otherAllianceId . "\">" . $opAlliance->nameWithTag . "</a></td>
+                                            <td>" . StringUtils::formatNumber($opAlliance->points) . " / " . StringUtils::formatNumber($opAlliance->averagePoints) . "</td>
                                             <td>" . StringUtils::formatDate($diplomacy->date) . "</td>
                                         </tr>";
                     }
@@ -596,7 +591,7 @@ elseif ($cu->allianceId == 0) {
 
                 // Besucher
                 echo "<tr><th width=\"120\">Besucherzähler:</th>
-            <td colspan=\"2\">" . StringUtils::formatNumber($ally->visits) . " intern / " . StringUtils::formatNumber($ally->visitsExt) . " extern</td></tr>\n";
+            <td colspan=\"2\">" . StringUtils::formatNumber($alliance->visits) . " intern / " . StringUtils::formatNumber($alliance->visitsExternal) . " extern</td></tr>\n";
 
                 // Wings
                 if ($config->getBoolean('allow_wings')) {
@@ -650,7 +645,7 @@ elseif ($cu->allianceId == 0) {
                 echo "<tr>
                             <th>Gründungsdatum:</th>
                             <td colspan=\"2\">
-                                " . StringUtils::formatDate($ally->foundationDate) . " (vor " . StringUtils::formatTimespan(time() - $ally->foundationDate) . ")
+                                " . StringUtils::formatDate($alliance->foundationTimestamp) . " (vor " . StringUtils::formatTimespan(time() - $alliance->foundationTimestamp) . ")
                             </td>
                         </tr>";
                 echo "\n</table><br/>";

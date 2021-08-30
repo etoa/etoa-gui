@@ -31,11 +31,11 @@ $allianceService = $app[AllianceService::class];
 /** @var AllianceDiplomacyRepository $allianceDiplomacyRepository */
 $allianceDiplomacyRepository = $app[AllianceDiplomacyRepository::class];
 
-/** @var Alliance $ally */
+/** @var \EtoA\Alliance\Alliance $alliance */
 /** @var bool $isFounder */
 
 if (Alliance::checkActionRights(AllianceRights::EDIT_MEMBERS)) {
-    $currentAlliance = $allianceRepository->getAlliance($ally->id);
+    $currentAlliance = $allianceRepository->getAlliance($alliance->id);
 
     echo "<h2>Allianzmitglieder</h2>";
     // Ränge laden
