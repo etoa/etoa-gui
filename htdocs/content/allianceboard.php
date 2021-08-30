@@ -6,6 +6,7 @@ use EtoA\Alliance\AllianceDiplomacyRepository;
 use EtoA\Alliance\AllianceRight;
 use EtoA\Alliance\AllianceRightRepository;
 use EtoA\Alliance\AllianceRights;
+use EtoA\Alliance\AllianceService;
 use EtoA\Alliance\Board\AllianceBoardCategoryRankRepository;
 use EtoA\Alliance\Board\AllianceBoardCategoryRepository;
 use EtoA\Alliance\Board\AllianceBoardPostRepository;
@@ -38,10 +39,10 @@ $allianceDiplomacyRepository = $app[AllianceDiplomacyRepository::class];
 $userRepository = $app[UserRepository::class];
 /** @var AllianceRightRepository $allianceRightRepository */
 $allianceRightRepository = $app[AllianceRightRepository::class];
+/** @var AllianceService $allianceService */
+$allianceService = $app[AllianceService::class];
 
 $request = Request::createFromGlobals();
-
-/** @var \EtoA\Alliance\UserAlliancePermission $userAlliancePermission */
 
 echo "<h1>Allianzforum</h1>";
 
@@ -126,12 +127,8 @@ if ($cu->allianceId > 0) {
 
 
         // Board-Admin prüfen
-        if ($userAlliancePermission->hasRights(AllianceRights::ALLIANCE_BOARD))
-            $isAdmin = true;
-        else
-            $isAdmin = false;
-
-
+        $userAlliancePermission = $allianceService->getUserAlliancePermissions($alliance, $user);
+        $isAdmin = $userAlliancePermission->hasRights(AllianceRights::ALLIANCE_BOARD);
 
         //
         // Create new post in topic
