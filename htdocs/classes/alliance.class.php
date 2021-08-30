@@ -148,12 +148,6 @@ class Alliance
             if (!property_exists($this, $key))
                 throw new EException("Property $key existiert nicht in der Klasse " . __CLASS__);
 
-            // Do actions for some special properties
-            if ($key == "mother" && $this->mother == null)
-                $this->mother = new Alliance($this->motherId);
-            if ($key == "motherRequest" && $this->motherRequest == null)
-                $this->motherRequest = new Alliance($this->motherRequestId);
-
             // Protected properties
             if ($key == "changedFields")
                 throw new EException("Property $key der Klasse " . __CLASS__ . " ist geschützt!");

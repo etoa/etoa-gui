@@ -35,9 +35,10 @@ if ($infoAlly->valid) {
                     </tr>";
     }
     if ($config->getBoolean('allow_wings') && $infoAlly->motherId != 0) {
+        $motherAlliance = $allianceRepository->getAlliance($infoAlly->motherId);
         echo "<tr>
                         <th colspan=\"2\" style=\"text-align:center;\">
-                            Diese Allianz ist ein Wing von <b><a href=\"?page=$page&amp;action=info&amp;id=" . $infoAlly->motherId . "\">" . $infoAlly->mother . "</a></b>
+                            Diese Allianz ist ein Wing von <b><a href=\"?page=$page&amp;action=info&amp;id=" . $motherAlliance->id . "\">" . $motherAlliance->nameWithTag . "</a></b>
                         </th>
                     </tr>";
     }
