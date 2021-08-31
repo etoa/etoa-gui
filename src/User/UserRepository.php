@@ -55,7 +55,7 @@ class UserRepository extends AbstractRepository
             ->fetchOne();
     }
 
-    public function setAllianceId(int $userId, int $allianceId, int $rankId = null): void
+    public function setAllianceId(int $userId, int $allianceId, int $rankId = null, int $leaveTimestamp = null): void
     {
         $qb = $this->createQueryBuilder()
             ->update('users')
@@ -72,10 +72,29 @@ class UserRepository extends AbstractRepository
                 ->setParameter('rank', $rankId);
         }
 
+        if ($leaveTimestamp !== null) {
+            $qb
+                ->set('user_alliance_leave', ':leave')
+                ->setParameter('leave', $leaveTimestamp);
+        }
+
         $qb
             ->execute();
     }
 
+    public function resetAllianceId(int $allianceId): void
+    {
+        $this->createQueryBuilder()
+            ->update('users')
+            ->set('user_alliance_id', ':zero')
+            ->set('user_alliance_rank_id', ':zero')
+            ->where('user_alliance_id = :allianceId')
+            ->setParameters([
+                'zero' => 0,
+                'allianceId' => $allianceId,
+            ])
+            ->execute();
+    }
 
     public function hasUserRankId(int $allianceId, int $userId, int $rankId): bool
     {
@@ -562,6 +581,19 @@ class UserRepository extends AbstractRepository
             ->setParameters([
                 'userId' => $userId,
                 'costs' => $shipCost,
+            ])
+            ->execute();
+    }
+
+    public function addAllianceShipPoints(int $allianceId, int $points): void
+    {
+        $this->createQueryBuilder()
+            ->update('users')
+            ->set('user_alliace_shippoints', 'user_alliace_shippoints + :points')
+            ->where('user_alliance_id = :allianceId')
+            ->setParameters([
+                'allianceId' => $allianceId,
+                'points' => $points,
             ])
             ->execute();
     }

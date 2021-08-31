@@ -6,6 +6,8 @@ namespace EtoA\Fleet;
 
 class FleetAction
 {
+    public const ALLIANCE = 'alliance';
+    public const SUPPORT = 'support';
     public const FLIGHT = 'flight';
     public const SPY = 'spy';
     public const DELIVERY = 'delivery';

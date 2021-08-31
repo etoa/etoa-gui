@@ -2,51 +2,59 @@
 
 use EtoA\Alliance\AllianceDiplomacyLevel;
 use EtoA\Alliance\AllianceDiplomacyRepository;
+use EtoA\Alliance\AllianceRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Support\BBCodeUtils;
 use EtoA\Support\StringUtils;
+use EtoA\User\UserRepository;
 
 /** @var ConfigurationService $config */
 $config = $app[ConfigurationService::class];
 /** @var AllianceDiplomacyRepository $allianceDiplomacyRepository */
 $allianceDiplomacyRepository = $app[AllianceDiplomacyRepository::class];
+/** @var AllianceRepository $allianceRepository */
+$allianceRepository = $app[AllianceRepository::class];
+/** @var UserRepository $userRepository */
+$userRepository = $app[UserRepository::class];
 
 if (isset($_GET['id']) && intval($_GET['id']) > 0)
     $id = intval($_GET['id']);
 else
     $id = intval($_GET['info_id']);
 
-$infoAlly = new Alliance($id);
-if ($infoAlly->valid) {
-    if ($cu->allianceId != $infoAlly->id)
-        $infoAlly->visitsExt++;
+$infoAlliance = $allianceRepository->getAlliance($id);
+if ($infoAlliance !== null) {
+    if ($cu->allianceId() !== $infoAlliance->id) {
+        $allianceRepository->addVisit($infoAlliance->id, true);
+    }
 
-    tableStart($infoAlly);
-    if ($infoAlly->image != "" && is_file($infoAlly->imageUrl)) {
-        $ims = getimagesize($infoAlly->imageUrl);
+    tableStart($infoAlliance->nameWithTag);
+    if ($infoAlliance->getImageUrl() !== null && is_file($infoAlliance->getImageUrl())) {
+        $ims = getimagesize($infoAlliance->getImageUrl());
         echo "<tr>
                         <td colspan=\"3\" style=\"text-align:center;background:#000\">
-                            <img src=\"" . $infoAlly->imageUrl . "\" alt=\"Allianz-Logo\" style=\"width:" . $ims[0] . "px;height:" . $ims[1] . "\" />
+                            <img src=\"" . $infoAlliance->getImageUrl() . "\" alt=\"Allianz-Logo\" style=\"width:" . $ims[0] . "px;height:" . $ims[1] . "\" />
                         </td>
                     </tr>";
     }
-    if ($config->getBoolean('allow_wings') && $infoAlly->motherId != 0) {
+    if ($config->getBoolean('allow_wings') && $infoAlliance->motherId !== 0) {
+        $motherAlliance = $allianceRepository->getAlliance($infoAlliance->motherId);
         echo "<tr>
                         <th colspan=\"2\" style=\"text-align:center;\">
-                            Diese Allianz ist ein Wing von <b><a href=\"?page=$page&amp;action=info&amp;id=" . $infoAlly->motherId . "\">" . $infoAlly->mother . "</a></b>
+                            Diese Allianz ist ein Wing von <b><a href=\"?page=$page&amp;action=info&amp;id=" . $motherAlliance->id . "\">" . $motherAlliance->nameWithTag . "</a></b>
                         </th>
                     </tr>";
     }
-    if ($infoAlly->text != "") {
+    if ($infoAlliance->text != "") {
         echo "<tr>
                         <td colspan=\"2\" style=\"text-align:center;\">
-                            " . BBCodeUtils::toHTML($infoAlly->text) . "
+                            " . BBCodeUtils::toHTML($infoAlliance->text) . "
                         </td>
                     </tr>";
     }
 
     // Kriege
-    $wars = $allianceDiplomacyRepository->getDiplomacies($infoAlly->id, AllianceDiplomacyLevel::WAR);
+    $wars = $allianceDiplomacyRepository->getDiplomacies($infoAlliance->id, AllianceDiplomacyLevel::WAR);
     if (count($wars) > 0) {
 
         echo "<tr>
@@ -59,12 +67,12 @@ if ($infoAlly->valid) {
                                     <th>Zeitraum</th>
                                 </tr>";
         foreach ($wars as $diplomacy) {
-            $opAlly = new Alliance($diplomacy->otherAllianceId);
+            $opAlliance = $allianceRepository->getAlliance($diplomacy->otherAllianceId);
             echo "<tr>
                                     <td>
-                                        <a href=\"?page=$page&amp;id=" . $opAlly->id . "\">" . $opAlly . "</a>
+                                        <a href=\"?page=$page&amp;id=" . $opAlliance->id . "\">" . $opAlliance->nameWithTag . "</a>
                                     </td>
-                                    <td>" . StringUtils::formatNumber($opAlly->points) . " / " . StringUtils::formatNumber($opAlly->avgPoints) . "</td>
+                                    <td>" . StringUtils::formatNumber($opAlliance->points) . " / " . StringUtils::formatNumber($opAlliance->averagePoints) . "</td>
                                     <td>" . StringUtils::formatDate($diplomacy->date, false) . " bis " . StringUtils::formatDate($diplomacy->date + WAR_DURATION, false) . "</td>
                                 </tr>";
         }
@@ -75,7 +83,7 @@ if ($infoAlly->valid) {
 
 
     // Friedensabkommen
-    $peace = $allianceDiplomacyRepository->getDiplomacies($infoAlly->id, AllianceDiplomacyLevel::PEACE);
+    $peace = $allianceDiplomacyRepository->getDiplomacies($infoAlliance->id, AllianceDiplomacyLevel::PEACE);
     if (count($peace) > 0) {
         echo "<tr>
                         <th>Friedensabkommen:</th>
@@ -87,12 +95,12 @@ if ($infoAlly->valid) {
                                     <th>Zeitraum</th>
                                 </tr>";
         foreach ($peace as $diplomacy) {
-            $opAlly = new Alliance($diplomacy->otherAllianceId);
+            $opAlliance = $allianceRepository->getAlliance($diplomacy->otherAllianceId);
             echo "<tr>
                                     <td>
-                                        <a href=\"?page=$page&amp;id=" . $opAlly->id . "\">" . $opAlly . "</a>
+                                        <a href=\"?page=$page&amp;id=" . $opAlliance->id . "\">" . $opAlliance->nameWithTag . "</a>
                                     </td>
-                                    <td>" . StringUtils::formatNumber($opAlly->points) . " / " . StringUtils::formatNumber($opAlly->avgPoints) . "</td>
+                                    <td>" . StringUtils::formatNumber($opAlliance->points) . " / " . StringUtils::formatNumber($opAlliance->averagePoints) . "</td>
                                     <td>" . StringUtils::formatDate($diplomacy->date, false) . " bis " . StringUtils::formatDate($diplomacy->date + PEACE_DURATION, false) . "</td>
                                 </tr>";
         }
@@ -102,7 +110,7 @@ if ($infoAlly->valid) {
     }
 
     // Bündnisse
-    $bnds = $allianceDiplomacyRepository->getDiplomacies($infoAlly->id, AllianceDiplomacyLevel::BND_CONFIRMED);
+    $bnds = $allianceDiplomacyRepository->getDiplomacies($infoAlliance->id, AllianceDiplomacyLevel::BND_CONFIRMED);
     if (count($bnds) > 0) {
         echo "<tr>
                         <th>Bündnisse:</th>
@@ -116,11 +124,11 @@ if ($infoAlly->valid) {
                                 </tr>";
 
         foreach ($bnds as $diplomacy) {
-            $opAlly = new Alliance($diplomacy->otherAllianceId);
+            $opAlliance = $allianceRepository->getAlliance($diplomacy->otherAllianceId);
             echo "<tr>
                                     <td>" . stripslashes($diplomacy->name) . "</td>
-                                    <td><a href=\"?page=$page&amp;id=" . $opAlly->id . "\">" . $opAlly . "</a></td>
-                                    <td>" . StringUtils::formatNumber($opAlly->points) . " / " . StringUtils::formatNumber($opAlly->avgPoints) . "</td>
+                                    <td><a href=\"?page=$page&amp;id=" . $opAlliance->id . "\">" . $opAlliance->nameWithTag . "</a></td>
+                                    <td>" . StringUtils::formatNumber($opAlliance->points) . " / " . StringUtils::formatNumber($opAlliance->averagePoints) . "</td>
                                     <td>" . StringUtils::formatDate($diplomacy->date) . "</td>
                                 </tr>";
         }
@@ -133,8 +141,8 @@ if ($infoAlly->valid) {
     echo "<tr>
                     <th style=\"width:250px;\">Mitglieder:</th>
                     <td id=\"members\">";
-    echo $infoAlly->memberCount;
-    if ($infoAlly->publicMemberList)
+    echo $infoAlliance->memberCount;
+    if ($infoAlliance->publicMemberList)
         echo " [<a href=\"javascript:;\" onclick=\"xajax_showAllianceMembers('" . intval($id) . "','members')\" >Anzeigen</a>]";
     echo "</td>
                 </tr>";
@@ -143,15 +151,16 @@ if ($infoAlly->valid) {
     echo "<tr>
                     <th>Punkte / Durchschnitt:</th>
                     <td>";
-    echo StringUtils::formatNumber($infoAlly->points) . " / " . StringUtils::formatNumber($infoAlly->avgPoints) . "";
+    echo StringUtils::formatNumber($infoAlliance->points) . " / " . StringUtils::formatNumber($infoAlliance->averagePoints) . "";
     echo "</td>
                 </tr>";
 
     // Gründer
+    $founderNick = $userRepository->getNick($infoAlliance->founderId);
     echo "<tr>
                     <th>Gr&uuml;nder:</th>
                     <td>
-                        <a href=\"?page=userinfo&amp;id=" . $infoAlly->founderId . "\">" . $infoAlly->founder . "</a>
+                        <a href=\"?page=userinfo&amp;id=" . $infoAlliance->founderId . "\">" . $founderNick . "</a>
                     </td>
                 </tr>";
 
@@ -159,15 +168,15 @@ if ($infoAlly->valid) {
     echo "<tr>
                     <th>Gründungsdatum:</th>
                     <td>
-                        " . StringUtils::formatDate($infoAlly->foundationDate) . " (vor " . StringUtils::formatTimespan(time() - $infoAlly->foundationDate) . ")
+                        " . StringUtils::formatDate($infoAlliance->foundationTimestamp) . " (vor " . StringUtils::formatTimespan(time() - $infoAlliance->foundationTimestamp) . ")
                     </td>
                 </tr>";
 
     // Url
-    if ($infoAlly->url != "") {
+    if ($infoAlliance->url != "") {
         echo "<tr>
                         <th>Website/Forum:</th>
-                        <td><b>" . StringUtils::formatLink($infoAlly->url) . "</b></td>
+                        <td><b>" . StringUtils::formatLink($infoAlliance->url) . "</b></td>
                     </tr>";
     }
 
@@ -175,13 +184,13 @@ if ($infoAlly->valid) {
     echo "<tr>
                     <th>Akzeptiert Bewerbungen:</th>
                     <td>
-                        " . ($infoAlly->acceptApplications ? "Ja" : "Nein") . "
+                        " . ($infoAlliance->acceptApplications ? "Ja" : "Nein") . "
                     </td>
                 </tr>";
     echo "<tr>
                     <th>Akzeptiert Bündnissanfragen:</th>
                     <td>
-                        " . ($infoAlly->acceptPact ? "Ja" : "Nein") . "
+                        " . ($infoAlliance->acceptBnd ? "Ja" : "Nein") . "
                     </td>
                 </tr>";
 

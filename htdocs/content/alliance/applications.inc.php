@@ -27,7 +27,9 @@ $allianceMemberCosts = $app[AllianceMemberCosts::class];
 /** @var LogRepository $logRepository */
 $logRepository = $app[LogRepository::class];
 
-if (Alliance::checkActionRights(AllianceRights::APPLICATIONS)) {
+/** @var \EtoA\Alliance\UserAlliancePermission $userAlliancePermission */
+
+if ($userAlliancePermission->checkHasRights(AllianceRights::APPLICATIONS, $page)) {
     $maxMemberCount = $config->getInt("alliance_max_member_count");
 
     echo "<h2>Bewerbungen</h2>";

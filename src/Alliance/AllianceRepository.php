@@ -54,6 +54,31 @@ class AllianceRepository extends AbstractRepository
     }
 
     /**
+     * @return array<int, AllianceWithMemberCount>
+     */
+    public function searchAlliances(AllianceSearch $search = null, int $limit = null): array
+    {
+        $data = $this->applySearchSortLimit($this->createQueryBuilder(), $search, null, $limit)
+            ->select("a.*")
+            ->addSelect('COUNT(u.user_id) as member_count')
+            ->from('alliances', 'a')
+            ->leftJoin('a', 'users', 'u', 'u.user_alliance_id=a.alliance_id')
+            ->groupBy('a.alliance_id')
+            ->orderBy('a.alliance_name')
+            ->addOrderBy('a.alliance_tag')
+            ->execute()
+            ->fetchAllAssociative();
+
+        $result = [];
+        foreach ($data as $row) {
+            $alliance = new AllianceWithMemberCount($row);
+            $result[$alliance->id] = $alliance;
+        }
+
+        return $result;
+    }
+
+    /**
      * @return array<int, string>
      */
     public function getAllianceTags(): array
@@ -634,6 +659,47 @@ class AllianceRepository extends AbstractRepository
             ->delete('alliance_points')
             ->where("point_timestamp < :timestamp")
             ->setParameter('timestamp', $timestamp)
+            ->execute();
+    }
+
+    public function resetMother(int $allianceId): void
+    {
+        $this->createQueryBuilder()
+            ->update('alliances')
+            ->set('alliance_mother', ':zero')
+            ->set('alliance_mother', ':zero')
+            ->where('alliance_mother = :allianceId OR alliance_mother_request = :allianceId')
+            ->setParameters([
+                'zero' => 0,
+                'allianceId' => $allianceId,
+            ])
+            ->execute();
+    }
+
+    public function setMotherOrRequest(int $allianceId, int $motherId, int $motherRequestId): void
+    {
+        $this->createQueryBuilder()
+            ->update('alliances')
+            ->set('alliance_mother', ':motherId')
+            ->set('alliance_mother_request', ':motherRequestId')
+            ->where('alliance_id = :allianceId')
+            ->setParameters([
+                'allianceId' => $allianceId,
+                'motherId' => $motherId,
+                'motherRequestId' => $motherRequestId,
+            ])
+            ->execute();
+    }
+
+    public function addVisit(int $allianceId, bool $external = false): void
+    {
+        $property = $external ? 'alliance_visits_ext' : 'alliance_visits';
+
+        $this->createQueryBuilder()
+            ->update('alliances')
+            ->set($property, $property . ' + 1')
+            ->where('alliance_id = :allianceId')
+            ->setParameter('allianceId', $allianceId)
             ->execute();
     }
 }

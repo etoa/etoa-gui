@@ -6,6 +6,7 @@ use EtoA\Alliance\AllianceDiplomacyRepository;
 use EtoA\Alliance\AllianceRight;
 use EtoA\Alliance\AllianceRightRepository;
 use EtoA\Alliance\AllianceRights;
+use EtoA\Alliance\AllianceService;
 use EtoA\Alliance\Board\AllianceBoardCategoryRankRepository;
 use EtoA\Alliance\Board\AllianceBoardCategoryRepository;
 use EtoA\Alliance\Board\AllianceBoardPostRepository;
@@ -38,6 +39,8 @@ $allianceDiplomacyRepository = $app[AllianceDiplomacyRepository::class];
 $userRepository = $app[UserRepository::class];
 /** @var AllianceRightRepository $allianceRightRepository */
 $allianceRightRepository = $app[AllianceRightRepository::class];
+/** @var AllianceService $allianceService */
+$allianceService = $app[AllianceService::class];
 
 $request = Request::createFromGlobals();
 
@@ -79,15 +82,12 @@ if ($cu->allianceId > 0) {
 
         /** @var array<int, AllianceRight> $rights */
         $rights = [];
-        /** @var array<string, bool> $myRight */
-        $myRight = [];
         $allianceRights = $allianceRightRepository->getRights();
         if (count($allianceRights) > 0) {
             $rightIds = $allianceRankRepository->getAvailableRightIds($cu->allianceId(), $myRankId);
 
             foreach ($allianceRights as $right) {
                 $rights[$right->id] = $right;
-                $myRight[$right->key] = in_array($right->id, $rightIds, true);
             }
         }
 
@@ -127,12 +127,8 @@ if ($cu->allianceId > 0) {
 
 
         // Board-Admin prüfen
-        if (Alliance::checkActionRights(AllianceRights::ALLIANCE_BOARD, FALSE) || $isFounder)
-            $isAdmin = true;
-        else
-            $isAdmin = false;
-
-
+        $userAlliancePermission = $allianceService->getUserAlliancePermissions($alliance, $user);
+        $isAdmin = $userAlliancePermission->hasRights(AllianceRights::ALLIANCE_BOARD);
 
         //
         // Create new post in topic

@@ -230,7 +230,10 @@ class BBCodeUtils
         return '<a href="' . $url . '"' . ($intern ? '' : ' target="_blank"') . '>' . (isset($match[2]) ? $match[2] : $match[1]) . '</a>';
     }
 
-    private static function bbcode_page_to_links(string $match): string
+    /**
+     * @param string[] $match
+     */
+    private static function bbcode_page_to_links(array $match): string
     {
         $parts = array();
         if (preg_match('/^([a-z\_]+)(?:\s+(.+))?$/i', $match[1], $parts)) {

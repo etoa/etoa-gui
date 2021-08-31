@@ -43,7 +43,7 @@ if ($sub == "imagecheck") {
 } elseif ($sub == "news") {
     news($config);
 } elseif ($sub == "crap") {
-    crap($request, $repository, $allianceRankRepository, $allianceDiplomacyRepository);
+    crap($request, $repository, $allianceRankRepository, $allianceDiplomacyRepository, $service);
 } else {
     $twig->addGlobal('title', 'Allianzen');
 
@@ -58,7 +58,7 @@ if ($sub == "imagecheck") {
     } elseif ($request->query->has('sub') && $request->query->get('sub') == "drop" && $request->query->has('alliance_id')) {
         drop($request, $repository);
     } else {
-        index($request, $repository, $twig);
+        index($request, $repository, $twig, $service);
     }
 }
 
@@ -255,7 +255,7 @@ function news(ConfigurationService $config)
     echo '<script type="text/javascript">xajax_allianceNewsLoad()</script>';
 }
 
-function crap(Request $request, AllianceRepository $repository, AllianceRankRepository $allianceRankRepository, AllianceDiplomacyRepository $allianceDiplomacyRepository)
+function crap(Request $request, AllianceRepository $repository, AllianceRankRepository $allianceRankRepository, AllianceDiplomacyRepository $allianceDiplomacyRepository, AllianceService $allianceService)
 {
     global $page;
     global $sub;
@@ -276,8 +276,8 @@ function crap(Request $request, AllianceRepository $repository, AllianceRankRepo
         if (count($alliances) > 0) {
             foreach ($alliances as $alliance) {
                 if ($repository->countUsers((int) $alliance['alliance_id']) == 0) {
-                    $alliance = new Alliance($alliance['alliance_id']);
-                    if ($alliance->delete()) {
+                    $alliance = $repository->getAlliance((int) $alliance['alliance_id']);
+                    if ($allianceService->delete($alliance)) {
                         $cnt++;
                     }
                 }
@@ -471,14 +471,14 @@ function drop(Request $request, AllianceRepository $repository)
     }
 }
 
-function index(Request $request, AllianceRepository $repository, Environment $twig)
+function index(Request $request, AllianceRepository $repository, Environment $twig, AllianceService $allianceService)
 {
     global $page;
 
     // Allianz löschen
     if ($request->request->has('drop')) {
-        $ally = new Alliance($request->request->getInt('alliance_id'));
-        if ($ally->delete()) {
+        $alliance = $repository->getAlliance($request->request->getInt('alliance_id'));
+        if ($allianceService->delete($alliance)) {
             echo "Die Allianz wurde gelöscht!<br/><br/>";
         } else {
             echo MessageBox::error("", "Allianz konnte nicht gelöscht werden (ist sie in einem aktiven Krieg?)");

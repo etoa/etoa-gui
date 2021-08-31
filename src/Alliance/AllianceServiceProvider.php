@@ -5,6 +5,9 @@ declare(strict_types=1);
 namespace EtoA\Alliance;
 
 use EtoA\Alliance\Base\AllianceBase;
+use EtoA\Fleet\FleetRepository;
+use EtoA\Log\LogRepository;
+use EtoA\Message\MessageRepository;
 use EtoA\User\UserRepository;
 use EtoA\Alliance\Board\AllianceBoardCategoryRankRepository;
 use EtoA\Alliance\Board\AllianceBoardCategoryRepository;
@@ -72,6 +75,39 @@ class AllianceServiceProvider implements ServiceProviderInterface
                 $pimple[UserRepository::class],
                 $pimple[AllianceHistoryRepository::class],
                 $pimple[UserService::class],
+                $pimple[AllianceDiplomacyRepository::class],
+                $pimple[AllianceBoardCategoryRepository::class],
+                $pimple[AllianceApplicationRepository::class],
+                $pimple[AllianceBoardTopicRepository::class],
+                $pimple[AllianceBuildingRepository::class],
+                $pimple[AlliancePointsRepository::class],
+                $pimple[AllianceNewsRepository::class],
+                $pimple[AlliancePollRepository::class],
+                $pimple[AllianceRankRepository::class],
+                $pimple[AllianceSpendRepository::class],
+                $pimple[AllianceTechnologyRepository::class],
+                $pimple[LogRepository::class],
+                $pimple[MessageRepository::class],
+                $pimple[ConfigurationService::class],
+                $pimple[AllianceMemberCosts::class],
+                $pimple[FleetRepository::class],
+                $pimple[AllianceRightRepository::class],
+            );
+        };
+
+        $pimple[AllianceShipPointsService::class] = function (Container $pimple): AllianceShipPointsService {
+            return new AllianceShipPointsService(
+                $pimple[ConfigurationService::class],
+                $pimple[AllianceBuildingRepository::class],
+                $pimple[UserRepository::class],
+            );
+        };
+
+        $pimple[AllianceWingService::class] = function (Container $pimple): AllianceWingService {
+            return new AllianceWingService(
+                $pimple[AllianceHistoryRepository::class],
+                $pimple[MessageRepository::class],
+                $pimple[AllianceRepository::class],
             );
         };
 

@@ -1,5 +1,6 @@
 <?PHP
 
+use EtoA\Alliance\AllianceRepository;
 use EtoA\Backend\BackendMessageService;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Log\LogFacility;
@@ -57,6 +58,8 @@ $planetService = $app[PlanetService::class];
 $backendMessageService = $app[BackendMessageService::class];
 /** @var LogRepository $logRepository */
 $logRepository = $app[LogRepository::class];
+/** @var AllianceRepository $allianceRepository */
+$allianceRepository = $app[AllianceRepository::class];
 
 /** @var Request */
 $request = Request::createFromGlobals();
@@ -199,9 +202,9 @@ Neuer Besitzer: [page user sub=edit user_id=" . $request->request->getInt('plane
             if ($planet->userId > 0) {
                 $allianceId = $userRepo->getAllianceId($planet->userId);
                 if ($allianceId > 0) {
-                    $ally = new Alliance($allianceId);
-                    echo $ally . " &nbsp; ";
-                    unset($ally);
+                    $alliance = $allianceRepository->getAlliance($allianceId);
+                    echo $alliance->nameWithTag . " &nbsp; ";
+                    unset($alliance);
                 }
             }
             echo "<input type=\"hidden\" name=\"planet_user_id_old\" value=\"" . $planet->userId . "\">";

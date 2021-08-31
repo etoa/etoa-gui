@@ -76,6 +76,15 @@ class Alliance
         return "[" . $this->tag . "] " . $this->name;
     }
 
+    public function getImageUrl(): ?string
+    {
+        if ($this->image == '') {
+            return null;
+        }
+
+        return ALLIANCE_IMG_DIR . "/" . $this->image;
+    }
+
     public function getResources(): BaseResources
     {
         $resources = new BaseResources();

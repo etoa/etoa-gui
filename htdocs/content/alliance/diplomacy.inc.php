@@ -53,7 +53,9 @@ use EtoA\Message\MessageRepository;
 use EtoA\Support\BBCodeUtils;
 use EtoA\Support\StringUtils;
 
-if (Alliance::checkActionRights(AllianceRights::RELATIONS)) {
+/** @var \EtoA\Alliance\UserAlliancePermission $userAlliancePermission */
+
+if ($userAlliancePermission->checkHasRights(AllianceRights::RELATIONS, $page)) {
     echo "<h2>Diplomatie</h2>";
 
     /** @var AllianceRepository $allianceRepository */

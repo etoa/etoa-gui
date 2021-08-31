@@ -37,4 +37,63 @@ class AllianceServiceTest extends WebTestCase
         $this->assertEquals($founderId, $alliance->founderId);
         $this->assertNotNull($this->repository->getAlliance($alliance->id));
     }
+
+    public function testAddMember(): void
+    {
+        $tag = 'TEST';
+        $name = 'The Testers';
+        $founderId = $this->userRepository->create('tester', 'John Doe', 'tester@example.com', '12345678');
+        $_SERVER['REMOTE_ADDR'] = '127.0.0.1';
+
+        $otherUserId = $this->userRepository->create('other', 'Other Doe', 'other@example.com', '12345678');
+        $otherUser = $this->userRepository->getUser($otherUserId);
+
+        $alliance = $this->service->create($tag, $name, $founderId);
+
+        $this->assertTrue($this->service->addMember($alliance, $otherUser));
+    }
+
+    public function testKickMember(): void
+    {
+        $tag = 'TEST';
+        $name = 'The Testers';
+        $founderId = $this->userRepository->create('tester', 'John Doe', 'tester@example.com', '12345678');
+        $_SERVER['REMOTE_ADDR'] = '127.0.0.1';
+
+        $otherUserId = $this->userRepository->create('other', 'Other Doe', 'other@example.com', '12345678');
+        $otherUser = $this->userRepository->getUser($otherUserId);
+
+        $alliance = $this->service->create($tag, $name, $founderId);
+
+        $this->assertTrue($this->service->addMember($alliance, $otherUser));
+
+        $otherUser = $this->userRepository->getUser($otherUserId);
+        $this->assertTrue($this->service->kickMember($alliance, $otherUser));
+    }
+
+    public function testChangeFounder(): void
+    {
+        $_SERVER['REMOTE_ADDR'] = '127.0.0.1';
+
+        $tag = 'TEST';
+        $name = 'The Testers';
+        $founderId = $this->userRepository->create('tester', 'John Doe', 'tester@example.com', '12345678');
+
+        $alliance = $this->service->create($tag, $name, $founderId);
+        $founder = $this->userRepository->getUser($founderId);
+        $founder->allianceId = $alliance->id;
+
+        $this->assertTrue($this->service->changeFounder($alliance, $founder));
+    }
+
+    public function testDelete(): void
+    {
+        $tag = 'TEST';
+        $name = 'The Testers';
+        $founderId = $this->userRepository->create('tester', 'John Doe', 'tester@example.com', '12345678');
+
+        $alliance = $this->service->create($tag, $name, $founderId);
+
+        $this->assertTrue($this->service->delete($alliance));
+    }
 }

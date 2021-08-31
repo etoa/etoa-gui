@@ -1,6 +1,9 @@
 <?PHP
 
 use EtoA\Admin\AdminUserRepository;
+use EtoA\Alliance\AllianceDiplomacyLevel;
+use EtoA\Alliance\AllianceDiplomacyRepository;
+use EtoA\Alliance\AllianceRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Support\BBCodeUtils;
 use EtoA\Support\StringUtils;
@@ -30,6 +33,10 @@ $userRepository = $app[UserRepository::class];
 $starRepository = $app[StarRepository::class];
 /** @var UserUniverseDiscoveryService $userUniverseDiscoveryService */
 $userUniverseDiscoveryService = $app[UserUniverseDiscoveryService::class];
+/** @var AllianceDiplomacyRepository $allianceDiplomacyRepository */
+$allianceDiplomacyRepository = $app[AllianceDiplomacyRepository::class];
+/** @var AllianceRepository $allianceRepository */
+$allianceRepository = $app[AllianceRepository::class];
 
 $user = $userRepository->getUser($cu->id);
 
@@ -125,12 +132,12 @@ if ($cell->isValid()) {
                     $tm_info = "Admin/Entwickler";
                 }
                 // Krieg
-                elseif ($ent->owner->allianceId > 0 && $cu->allianceId > 0 && $cu->alliance->checkWar($ent->owner->allianceId)) {
+                elseif ($allianceDiplomacyRepository->existsDiplomacyBetween($cu->allianceId(), $ent->owner->allianceId, AllianceDiplomacyLevel::WAR)) {
                     $class .= "enemyColor";
                     $tm_info = "Krieg";
                 }
                 // Bündniss
-                elseif ($ent->owner->allianceId > 0 && $cu->allianceId > 0 && $cu->alliance->checkBnd($ent->owner->allianceId)) {
+                elseif ($allianceDiplomacyRepository->existsDiplomacyBetween($cu->allianceId(), $ent->owner->allianceId(), AllianceDiplomacyLevel::BND_CONFIRMED)) {
                     $class .= "friendColor";
                     $tm_info = "B&uuml;ndnis";
                 }
@@ -262,8 +269,11 @@ if ($cell->isValid()) {
             if ($ent->ownerId() > 0) {
                 $header = $ent->owner();
                 $tm = "Punkte: " . StringUtils::formatNumber($ent->owner->points) . "<br style=\"clear:both\" />";
-                if ($ent->ownerAlliance() > 0)
-                    $tm .= "Allianz: " . $ent->owner->alliance . "<br style=\"clear:both\" />";
+                if ($ent->ownerAlliance() > 0) {
+                    $ownerAlliance = $allianceRepository->getAlliance($ent->owner->allianceId());
+                    $tm .= "Allianz: " . $ownerAlliance->nameWithTag . "<br style=\"clear:both\" />";
+                }
+
                 if ($tm_info != "")
                     $header .= " (<span $class>" . $tm_info . "</span>)";
                 echo "<span style=\"color:#817339;font-weight:bold\" " . tm($header, $tm) . "><a $class href=\"?page=userinfo&amp;id=" . $ent->ownerId() . "\">" . $ent->owner() . "</a></span> ";
