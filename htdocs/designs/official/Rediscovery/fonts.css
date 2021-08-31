@@ -1,0 +1,48 @@
+@font-face {
+  font-family: "Zekton";
+  src: url("fonts/Zekton/zekton_rg.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Zekton-Italic";
+  src: url("fonts/Zekton/zekton_rg_it.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Zekton-Bold";
+  src: url("fonts/Zekton/zekton_bd.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Zekton-BoldItalic";
+  src: url("fonts/Zekton/zekton_bd_it.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Zekton-Light";
+  src: url("fonts/Zekton/zekton_ul.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Zekton-Condensed";
+  src: url("fonts/Zekton/zekton_cd_rg.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Zekton-CondensedItalic";
+  src: url("fonts/Zekton/zekton_cd_rg_it.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Ethnocentric";
+  src: url("fonts/Ethnocentric/ethnocentric_rg-webfont.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Ethnocentric-Light";
+  src: url("fonts/Ethnocentric/ethnocentric_lt-webfont.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Ethnocentric-Bold";
+  src: url("fonts/Ethnocentric/ethnocentric_bd-webfont.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Ethnocentric-Italic";
+  src: url("fonts/Ethnocentric/ethnocentric_rg_it-webfont.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Ethnocentric-BoldItalic";
+  src: url("fonts/Ethnocentric/ethnocentric_bd_it-webfont.woff2") format("woff2");
+}
