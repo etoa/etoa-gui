@@ -1,169 +1,165 @@
-{% extends 'layout/base.html.twig' %}
 {#
 -----------------------------------------------------------------------------------------------------------------------------------
 //--Beschreibung       :         Re:Discovery-Menuedesign Version
 //--Version            :         1.0
 //--Datum              :         21. August 2021
 //--Autor              :         Michael van Ingen & HeaX
-//--ToDo               :         Postthere & Attacked-States (in script.js)
 //--                             Ingame-Buttonstyle wie im Menue anpassen (button1, button2 ? )
 //--                             Preload nach dem Logon 1x Ausführen, damit er aus dem Body herausgenommen werden kann
 //---------------------------------------------------------------------------------------------------------------------------------
 #}
-{% block layoutContent %}
-  <div id="app">
-    {# --------------------------------- Mobile Reload Hinweis --------------------------------- #}
-    <div class="mobile-reloader"></div>
+<div id="app">
+  {# --------------------------------- Mobile Reload Hinweis --------------------------------- #}
+  <div class="mobile-reloader"></div>
 
-    {# ----------------------------------- Obere Menueleiste ----------------------------------- #}
-    <div class="navigation-top">
-      <a href="?page=stats">Statistiken</a>
-      <a href="{{ etoaUrl('forum') }}" target="_blank">Forum</a>
-      <a href="javascript:"
-         onclick="{{ onClick('chat') }}">Chat</a>
-      <a href="javascript:"
-         onclick="{{ onClick('teamspeak') }}">Discord</a>
-      <a href="?page=userconfig">Einstellungen</a>
-      <a href="javascript:"
-         onclick="{{ onClick('rules') }}">Regeln</a>
-      <a href="javascript:"
-         onclick="{{ onClick('helpcenter') }}">HelpCenter</a>
-      <a href="?logout=1">Eject</a>
-    </div>
-
-    {# ----------------------------------- Linke Menueleiste ----------------------------------- #}
-    <div class="navigation-main">
-      <!-- Top Section -->
-      <section id="nav-top">
-        <a id="navigate-overview" class="button-round-blue" href="?page=overview"></a>
-        <span id="server-time-label">Serverzeit</span>
-        <span id="server-time" class="servertime">{{ serverTime() }}</span>
-        <span id="current-planet-name" class="current-planet">{{ currentPlanetName }}</span>
-        <a id="navigate-help" class="button-round-blue"
-          {% if helpBox %}
-          href="javascript:" onclick="window.open('popup.php?page=help','help','status=no,width=800,height=600,scrollbars=yes,resizable=yes');"
-        {% else %}
-          href="?page=help"
-          {% endif %}></a>
-        <div id="planet-dropdown" class="planet-dropdown"
-             onmouseout="this.setAttribute('data-expanded', 'false');return true;">
-          {% for planet in planetList %}
-            <a href="{{ planet.url|raw }}"
-               class="button-blue {% if planet.current %}active{% endif %}">{{ planet.label }}</a>
-          {% endfor %}
-        </div>
-        <a id="toggle-planet-dropdown" class="button-triangular" href="javascript:"></a>
-        <a id="change-planet-previous" class="button-triangular" href="javascript:"
-           onclick="document.location='?page={{ page }}&mode={{ mode }}&change_entity={{ prevPlanetId }}'"></a>
-        <a id="change-planet-hext" class="button-triangular" href="javascript:"
-           onclick="document.location='?page={{ page }}&mode={{ mode }}&change_entity={{ nextPlanetId }}'"></a>
-      </section>
-
-      <!-- Middle Section -->
-      <section id="nav-common">
-        <span class="section-label">Allgemeines</span>
-        <a class="button-blue" href="?page=alliance">Allianz</a>
-        <a class="button-blue" href="?page=townhall">Rathaus</a>
-        <a class="button-blue" href="?page=sector">Raumkarte</a>
-        <a class="button-blue" href="?page=fleets">Flotten</a>
-        <a class="button-blue" href="?page=bookmarks">Favoriten</a>
-      </section>
-
-      <section id="nav-planet">
-        <span class="section-label">Planet</span>
-        <a class="button-blue" href="?page=planetoverview">Informationen</a>
-        <a class="button-blue" href="?page=economy">Wirtschaft</a>
-        <a class="button-blue" href="?page=population">Bevölkerung</a>
-        <a class="button-blue" href="?page=techtree">Technikbaum</a>
-        <a class="button-blue" href="?page=haven">Raumschiffhafen</a>
-        <a class="button-blue" href="?page=market">Marktplatz</a>
-        <a class="button-blue" href="?page=crypto">Kryptocenter</a>
-        <a class="button-blue" href="?page=bunker">Bunker</a>
-      </section>
-
-      <section id="nav-production">
-        <span class="section-label">Produktion</span>
-        <a class="button-blue" href="?page=buildings">Bauhof</a>
-        <a class="button-blue" href="?page=research">Forschung</a>
-        <a class="button-blue" href="?page=shipyard">Raumschiffswerft</a>
-        <a class="button-blue" href="?page=defense">Verteidigungsanlagen</a>
-        <a class="button-blue" href="?page=recycle">Recycling</a>
-        <a class="button-blue" href="?page=missiles">Raketensilo</a>
-      </section>
-
-      <section id="nav-other">
-        <span class="section-label">Sonstiges</span>
-        <a class="button-blue {% if buddys %}text-glow-green{% endif %}" href="?page=buddylist">Buddyliste</a>
-      </section>
-
-      <section id="nav-bottom">
-        <!-- Bottom Section -->
-        <a id="navigate-messages" class="button-round-blue {% if messages > 0 %}unread{% endif %}"
-           href="?page=messages"></a>
-        <a id="navigate-reports" class="button-round-blue {% if newReports > 0 %}unread{% endif %}"
-           href="?page=reports"></a>
-        <a id="navigate-fleets-2" class="button-attack {% if fleetAttack > 0 %}attack-alert{% endif %}"
-           href="?page=fleets">Angriff</a>
-        <a id="navigate-notes" class="button-round-blue"
-          {% if noteBox %}
-          href="javascript:" onclick="window.open('popup.php?page=notepad','notes','status=no,width=800,height=600,scrollbars=yes,resizable=yes');"
-        {% else %}
-          href="?page=notepad"
-          {% endif %}></a>
-      </section>
-    </div>
-
-    {# ----------------------------------- Mobile Menueleiste ----------------------------------- #}
-    <div class="navigation-mobile">
-      <!-- Hauptnavigation Mobile -->
-      <section id="mobile-shortcuts">
-        <!-- Hauptmenue toggle -->
-        <a id="main-menu-toggle" class="button-round-blue" href="javascript:"></a>
-        <!-- Serverzeit -->
-        <span id="server-time-mobile" class="servertime">{{ serverTime() }}</span>
-        <!-- Flottenalarm -->
-        <a id="navigate-fleets-mobile" class="button-attack {% if fleetAttack > 0 %}attack-alert{% endif %}"
-           href="?page=fleets">Angriff</a>
-        <!-- Mobilemenue toggle -->
-        <a id="top-menu-toggle" class="button-round-blue" href="javascript:"></a>
-      </section>
-      <!-- Schnellzugriff für Planetenwahl -->
-      <section id="mobile-planet-selection">
-        <span
-          id="current-planet-name-mobile"
-          class="current-planet"
-        >{{ currentPlanetName }}</span>
-        <div id="planet-dropdown-mobile" class="planet-dropdown">
-          {% for planet in planetList %}
-            <a href="{{ planet.url|raw }}"
-               class="button-blue {% if planet.current %}active{% endif %}">{{ planet.label }}</a>
-          {% endfor %}
-        </div>
-        <a id="change-planet-previous-mobile" class="button-triangular" href="javascript:"
-           onclick="document.location='?page={{ page }}&mode={{ mode }}&change_entity={{ prevPlanetId }}'"></a>
-        <a id="change-planet-next-mobile" class="button-triangular" href="javascript:"
-           onclick="document.location='?page={{ page }}&mode={{ mode }}&change_entity={{ nextPlanetId }}'"></a>
-      </section>
-    </div>
-
-    {# -----------------------------------  Game-Area ----------------------------------- #}
-
-    {% if adds %}
-      <div id="adds">
-        {{ addBanner }}
-      </div>
-    {% endif %}
-
-    {% include 'layout/chunks/tutorial.html.twig' %}
-    {% include 'layout/chunks/quests.html.twig' %}
-
-    <div id="game-area">
-      <div id="contentwrap">
-        {{ content|default('')|raw }}
-        {% block content %}
-        {% endblock %}
-      </div>
-    </div>
-
+  {# ----------------------------------- Obere Menueleiste ----------------------------------- #}
+  <div class="navigation-top">
+    <a href="?page=stats">Statistiken</a>
+    <a href="{{ etoaUrl('forum') }}" target="_blank">Forum</a>
+    <a href="javascript:"
+       onclick="{{ onClick('chat') }}">Chat</a>
+    <a href="javascript:"
+       onclick="{{ onClick('teamspeak') }}">Discord</a>
+    <a href="?page=userconfig">Einstellungen</a>
+    <a href="javascript:"
+       onclick="{{ onClick('rules') }}">Regeln</a>
+    <a href="javascript:"
+       onclick="{{ onClick('helpcenter') }}">HelpCenter</a>
+    <a href="?logout=1">Eject</a>
   </div>
-{% endblock %}
+
+  {# ----------------------------------- Linke Menueleiste ----------------------------------- #}
+  <div class="navigation-main">
+    <!-- Top Section -->
+    <section id="nav-top">
+      <a id="navigate-overview" class="button-round-blue" href="?page=overview"></a>
+      <span id="server-time-label">Serverzeit</span>
+      <span id="server-time" class="servertime">{{ serverTime() }}</span>
+      <span id="current-planet-name" class="current-planet">{{ currentPlanetName }}</span>
+      <a id="navigate-help" class="button-round-blue"
+        {% if helpBox %}
+        href="javascript:" onclick="window.open('popup.php?page=help','help','status=no,width=800,height=600,scrollbars=yes,resizable=yes');"
+      {% else %}
+        href="?page=help"
+        {% endif %}></a>
+      <div id="planet-dropdown" class="planet-dropdown"
+           onmouseout="this.setAttribute('data-expanded', 'false');return true;">
+        {% for planet in planetList %}
+          <a href="{{ planet.url|raw }}"
+             class="button-blue {% if planet.current %}active{% endif %}">{{ planet.label }}</a>
+        {% endfor %}
+      </div>
+      <a id="toggle-planet-dropdown" class="button-triangular" href="javascript:"></a>
+      <a id="change-planet-previous" class="button-triangular" href="javascript:"
+         onclick="document.location='?page={{ page }}&mode={{ mode }}&change_entity={{ prevPlanetId }}'"></a>
+      <a id="change-planet-hext" class="button-triangular" href="javascript:"
+         onclick="document.location='?page={{ page }}&mode={{ mode }}&change_entity={{ nextPlanetId }}'"></a>
+    </section>
+
+    <!-- Middle Section -->
+    <section id="nav-common">
+      <span class="section-label">Allgemeines</span>
+      <a class="button-blue" href="?page=alliance">Allianz</a>
+      <a class="button-blue" href="?page=townhall">Rathaus</a>
+      <a class="button-blue" href="?page=sector">Raumkarte</a>
+      <a class="button-blue" href="?page=fleets">Flotten</a>
+      <a class="button-blue" href="?page=bookmarks">Favoriten</a>
+    </section>
+
+    <section id="nav-planet">
+      <span class="section-label">Planet</span>
+      <a class="button-blue" href="?page=planetoverview">Informationen</a>
+      <a class="button-blue" href="?page=economy">Wirtschaft</a>
+      <a class="button-blue" href="?page=population">Bevölkerung</a>
+      <a class="button-blue" href="?page=techtree">Technikbaum</a>
+      <a class="button-blue" href="?page=haven">Raumschiffhafen</a>
+      <a class="button-blue" href="?page=market">Marktplatz</a>
+      <a class="button-blue" href="?page=crypto">Kryptocenter</a>
+      <a class="button-blue" href="?page=bunker">Bunker</a>
+    </section>
+
+    <section id="nav-production">
+      <span class="section-label">Produktion</span>
+      <a class="button-blue" href="?page=buildings">Bauhof</a>
+      <a class="button-blue" href="?page=research">Forschung</a>
+      <a class="button-blue" href="?page=shipyard">Raumschiffswerft</a>
+      <a class="button-blue" href="?page=defense">Verteidigungsanlagen</a>
+      <a class="button-blue" href="?page=recycle">Recycling</a>
+      <a class="button-blue" href="?page=missiles">Raketensilo</a>
+    </section>
+
+    <section id="nav-other">
+      <span class="section-label">Sonstiges</span>
+      <a class="button-blue {% if buddys %}text-glow-green{% endif %}" href="?page=buddylist">Buddyliste</a>
+    </section>
+
+    <section id="nav-bottom">
+      <!-- Bottom Section -->
+      <a id="navigate-messages" class="button-round-blue {% if messages > 0 %}unread{% endif %}"
+         href="?page=messages"></a>
+      <a id="navigate-reports" class="button-round-blue {% if newReports > 0 %}unread{% endif %}"
+         href="?page=reports"></a>
+      <a id="navigate-fleets-2" class="button-attack {% if fleetAttack > 0 %}attack-alert{% endif %}"
+         href="?page=fleets">Angriff</a>
+      <a id="navigate-notes" class="button-round-blue"
+        {% if noteBox %}
+        href="javascript:" onclick="window.open('popup.php?page=notepad','notes','status=no,width=800,height=600,scrollbars=yes,resizable=yes');"
+      {% else %}
+        href="?page=notepad"
+        {% endif %}></a>
+    </section>
+  </div>
+
+  {# ----------------------------------- Mobile Menueleiste ----------------------------------- #}
+  <div class="navigation-mobile">
+    <!-- Hauptnavigation Mobile -->
+    <section id="mobile-shortcuts">
+      <!-- Hauptmenue toggle -->
+      <a id="main-menu-toggle" class="button-round-blue" href="javascript:"></a>
+      <!-- Serverzeit -->
+      <span id="server-time-mobile" class="servertime">{{ serverTime() }}</span>
+      <!-- Flottenalarm -->
+      <a id="navigate-fleets-mobile" class="button-attack {% if fleetAttack > 0 %}attack-alert{% endif %}"
+         href="?page=fleets">Angriff</a>
+      <!-- Mobilemenue toggle -->
+      <a id="top-menu-toggle" class="button-round-blue" href="javascript:"></a>
+    </section>
+    <!-- Schnellzugriff für Planetenwahl -->
+    <section id="mobile-planet-selection">
+      <span
+        id="current-planet-name-mobile"
+        class="current-planet"
+      >{{ currentPlanetName }}</span>
+      <div id="planet-dropdown-mobile" class="planet-dropdown">
+        {% for planet in planetList %}
+          <a href="{{ planet.url|raw }}"
+             class="button-blue {% if planet.current %}active{% endif %}">{{ planet.label }}</a>
+        {% endfor %}
+      </div>
+      <a id="change-planet-previous-mobile" class="button-triangular" href="javascript:"
+         onclick="document.location='?page={{ page }}&mode={{ mode }}&change_entity={{ prevPlanetId }}'"></a>
+      <a id="change-planet-next-mobile" class="button-triangular" href="javascript:"
+         onclick="document.location='?page={{ page }}&mode={{ mode }}&change_entity={{ nextPlanetId }}'"></a>
+    </section>
+  </div>
+
+  {# -----------------------------------  Game-Area ----------------------------------- #}
+
+  {% if adds %}
+    <div id="adds">
+      {{ addBanner }}
+    </div>
+  {% endif %}
+
+  {% include 'layout/chunks/tutorial.html.twig' %}
+  {% include 'layout/chunks/quests.html.twig' %}
+
+  <div id="game-area">
+    <div id="contentwrap">
+      {{ content|default('')|raw }}
+      {% block content %}
+      {% endblock %}
+    </div>
+  </div>
+
+</div>
