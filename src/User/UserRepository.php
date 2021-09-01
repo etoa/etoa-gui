@@ -887,4 +887,57 @@ class UserRepository extends AbstractRepository
             ])
             ->execute();
     }
+
+    /**
+     * @return array{user_blocked_from: string, user_blocked_to: string, user_hmode_from: string, user_deleted: string, user_deleted: string, admin: string, user_ghost: string, user_alliance_id: string, user_id: string, user_points: string, user_nick: string, time_log: string, time_action: string, user_name: string, user_email: string, user_email_fix: string, user_multi_delets: string}[]
+     */
+    public function getUsersWithIp(string $ip): array
+    {
+        return $this->getConnection()->fetchAllAssociative('
+            SELECT
+                users.user_blocked_from,
+                users.user_blocked_to,
+                users.user_hmode_from,
+                users.user_deleted,
+                users.admin,
+                users.user_ghost,
+                users.user_alliance_id,
+                users.user_id,
+                users.user_points,
+                users.user_nick,
+                user_sessionlog.time_action AS time_log,
+                user_sessions.time_action,
+                users.user_name,
+                users.user_email,
+                users.user_email_fix,
+                users.user_multi_delets
+            FROM
+                users
+                LEFT JOIN
+                    user_sessions
+                ON
+                users.user_id=user_sessions.user_id
+            INNER JOIN
+                user_sessionlog
+            ON
+                users.user_id=user_sessionlog.user_id
+                INNER JOIN (
+                    SELECT
+                        user_id,
+                        MAX( time_action ) AS last_action
+                    FROM
+                        user_sessionlog
+                    GROUP BY
+                        user_id
+                ) AS log
+                ON
+                    user_sessionlog.user_id = log.user_id
+                    AND user_sessionlog.time_action = log.last_action
+                    AND (user_sessions.ip_addr = :ip OR user_sessionlog.ip_addr = :ip)
+            ORDER BY
+                time_log DESC
+        ', [
+            'ip' => $ip,
+        ]);
+    }
 }

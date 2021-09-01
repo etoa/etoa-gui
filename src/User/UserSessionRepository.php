@@ -300,4 +300,41 @@ class UserSessionRepository extends AbstractRepository
 
         return array_map(fn (array $row) => new UserSessionLog($row), $rows);
     }
+
+    /**
+     * @return string[]
+     */
+    public function getLatestUserIps(): array
+    {
+        $data = $this->getConnection()->fetchAllAssociative('
+            SELECT
+                user_sessionlog.ip_addr AS log_ip,
+                user_sessions.ip_addr
+            FROM
+                user_sessionlog
+            INNER JOIN (
+                SELECT
+                    user_id,
+                    MAX( time_action ) AS last_action
+                FROM
+                    user_sessionlog
+                GROUP BY
+                    user_id
+            ) AS log
+            ON
+                user_sessionlog.user_id = log.user_id
+                AND user_sessionlog.time_action = log.last_action
+            LEFT JOIN
+                user_sessions
+            ON
+                user_sessionlog.user_id = user_sessions.user_id
+        ');
+
+        $ips = [];
+        foreach ($data as $row) {
+            $ips[] = $row['ip_addr'] == null ? $row['log_ip'] : $row['ip_addr'];
+        }
+
+        return $ips;
+    }
 }
