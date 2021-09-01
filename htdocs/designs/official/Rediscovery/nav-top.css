@@ -1,0 +1,161 @@
+.navigation-top {
+  height: 4.4375rem;
+  background-image: url("images/nav_top.png");
+  background-position: 26.56rem 0;
+  background-repeat: no-repeat;
+  background-size: 64rem;
+  position: relative;
+  padding: 1.5rem 4.55rem 0 28.20rem;
+  width: 91rem;
+  display: flex;
+  flex-direction: row;
+  justify-items: stretch;
+}
+
+.navigation-top a {
+  position: relative;
+  font-family: "Zekton-BoldItalic", sans-serif;
+  text-shadow: rgba(0, 0, 0, 1) 0.1rem 0.1rem 0.3em;
+}
+
+.navigation-top a:active {
+  filter: brightness(120%);
+}
+
+.navigation-top a:last-child:active {
+  color: rgba(255, 255, 255, 0.8) !important;
+  text-shadow: red 0 0 0.5rem;
+}
+
+@media screen and (min-width: 601px){
+
+  .navigation-top::before {
+    content: "";
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 26.56rem;
+    height: 4.4375rem;
+    background-image: url("images/nav_topleft.png");
+    background-size: 100%;
+  }
+
+  .navigation-top::after {
+    content: "";
+    display: block;
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    width: 23rem;
+    height: 4.4375rem;
+    background-image: url("images/logo.png");
+    background-repeat: no-repeat;
+    background-size: 100%;
+  }
+
+  .navigation-top a:not(:last-child) {
+    flex: 1 1 0;
+    text-align: center;
+    padding-top: 0.8rem;
+    text-decoration: none;
+    color: var(--color-text-light);
+    font-size: 1.1rem;
+    width: 100%;
+  }
+
+  #app.mouse .navigation-top a:not(:last-child):hover {
+    text-shadow: rgba(0, 0, 0, 1) 0.1rem 0.1rem 0.3em, var(--color-glow-blue) 0 0 1rem;
+  }
+
+  .navigation-top a:not(:last-child):active {
+    text-shadow: rgba(0, 0, 0, 1) 0.1rem 0.1rem 0.3em, var(--color-glow-blue) 0 0 1rem;
+  }
+
+  .navigation-top a:last-child {
+    position: absolute;
+    display: block;
+    top: 0;
+    right: 0.5rem;
+    width: 4rem;
+    height: 100%;
+    color: rgba(255, 255, 255, 0.5);
+    font-family: "Ethnocentric-Bold", sans-serif;
+    font-size: 0.8rem;
+    transform: translate(1.65rem, 0.33rem) rotate(-70deg);
+  }
+
+  #app.mouse .navigation-top a:last-child:hover {
+    text-shadow: red 0 0 1rem;
+    color: rgba(255, 255, 255, 0.7);
+  }
+
+  #app.mouse .navigation-top a:not(:last-child):hover::after {
+    content: "";
+    position: absolute;
+    top: -0.833rem;
+    left: -1.5rem;
+    width: 11.67rem;
+    height: 4.67rem;
+    background-image: url("images/button_skewed_hover.png");
+    background-size: 100%;
+    background-position: center;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .navigation-top {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    width: 20rem;
+    height: auto;
+    padding: 1rem 1rem;
+    z-index: 100;
+    display: block;
+    background: #000000 url("../Discovery/images/cellpic3.gif") repeat;
+    transform: translateX(-50%);
+    border: 1px solid white;
+    box-sizing: border-box;
+  }
+  .navigation-top:not([data-expanded="true"]){
+    display: none;
+  }
+  .navigation-top a{
+    display: block;
+    text-align: center;
+    width: 100%;
+    height: 3.9rem;
+    padding: 1.25rem 2rem;
+    line-height: 1.5rem;
+    box-sizing: border-box;
+    font-size: 1.5rem;
+    background-image: url("images/nav_main_button_normal.png");
+    background-size: 100% 100%;
+    background-position: center;
+    background-repeat: no-repeat;
+    color: var(--color-text-lighter);
+    font-family: Zekton-BoldItalic, sans-serif;
+    text-shadow: black 0.05rem 0.05rem 0.1rem;
+  }
+
+  .navigation-top a:last-child{
+    margin-top: 1rem;
+    color: #FFBABA;
+    text-shadow: red 0.05rem 0.05rem 0.3rem, black 0.05rem 0.05rem 0.1rem;
+  }
+
+  .navigation-top a:hover {
+    cursor: pointer;
+    background-image: url("images/nav_main_button_hover.png");
+    background-size: 100% 100%;
+    color: white;
+    text-shadow: rgba(255, 255, 255, 1) 0 0 0.3rem;
+  }
+
+  .navigation-top a:active {
+    background-image: url("images/nav_main_button_hover.png");
+    background-size: 100% 100%;
+    filter: brightness(120%) !important;
+  }
+}

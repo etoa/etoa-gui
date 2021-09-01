@@ -1,0 +1,93 @@
+@import url("reset.css");
+
+@import url("../../../web/css/game.css");
+
+@import url("discovery.css");
+
+@import url("fonts.css");
+@import url("colors.css");
+
+@import url("tutorial.css");
+@import url("reloader.css");
+@import url("nav-common.css");
+@import url("nav-top.css?r=3");
+@import url("nav-main.css");
+@import url("nav-mobile.css");
+@import url("game.css");
+@import url("uebersicht.css");
+@import url("bauhof.css");
+@import url("schiffswerft.css");
+@import url("verteidigungsanlagen.css");
+
+html, body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-image: url("images/background_medium.jpg");
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  font-size: 1em;
+}
+
+img {
+  border: none;
+}
+
+div {
+  box-sizing: border-box;
+}
+
+#app {
+  position: relative;
+}
+
+#app[data-interactable="false"]::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  min-height: 100vh;
+  z-index: 99;
+  background-color: black;
+  opacity: 0.4;
+}
+
+#game-area {
+  overflow-x: auto;
+}
+
+@media screen and (min-width: 601px){
+  .tbl caption, table.tb caption{
+    font-size: 1.2rem;
+  }
+}
+
+
+@media screen and (min-width: 1024px) {
+  body {
+    background-image: url("images/background_large.jpg");
+    background-position: 0 0;
+    background-size: auto 100%;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .resBoxTable{
+    table-layout: fixed;
+    max-width: 100%;
+  }
+  .resBoxTable th{
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+  .resBoxTable td{
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+}

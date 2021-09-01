@@ -1,0 +1,184 @@
+.planet_circle_outer_container {
+  padding: 10rem;
+  max-width: 60rem;
+}
+
+#planet_circle_inner_container {
+  width: 100%;
+  padding-bottom: 100%;
+}
+
+#planet_circle_inner_container .planet {
+  width: 6.25rem;
+  height: 6.25rem;
+}
+
+#planet_circle_inner_container .planetImage {
+  width: 100%;
+  height: 100%;
+}
+
+#planet_circle_inner_container .planetLabel {
+  padding: 0.5rem;
+  box-sizing: border-box;
+  pointer-events: none;
+}
+
+.planet {
+  position: absolute;
+  transform: translate(-50%, -50%);
+}
+
+.planetLabel{
+  white-space: nowrap;
+  padding: 0.2rem;
+}
+
+.planet-1 {
+  left: 50%;
+  top: 0;
+}
+
+.planet-2 {
+  left: 70.34%;
+  top: 4.32%;
+}
+
+.planet-3 {
+  left: 87.16%;
+  top: 16.54%;
+}
+
+.planet-4 {
+  left: 97.55%;
+  top: 34.55%;
+}
+
+.planet-5 {
+  left: 99.73%;
+  top: 55.23%;
+}
+
+.planet-6 {
+  left: 93.3%;
+  top: 75%;
+}
+
+.planet-7 {
+  left: 79.39%;
+  top: 90.45%;
+}
+
+.planet-8 {
+  left: 60.4%;
+  top: 98.91%;
+}
+
+.planet-9 {
+  left: 39.6%;
+  top: 98.91%;
+}
+
+.planet-10 {
+  left: 20.61%;
+  top: 90.45%;
+}
+
+.planet-11 {
+  left: 6.7%;
+  top: 75%;
+}
+
+.planet-12 {
+  left: 0.27%;
+  top: 55.23%;
+}
+
+.planet-13 {
+  left: 2.45%;
+  top: 34.55%;
+}
+
+.planet-14 {
+  left: 12.84%;
+  top: 16.54%;
+}
+
+.planet-15 {
+  left: 29.66%;
+  top: 4.32%;
+}
+
+.planet-1 .planetLabel{
+  top: 0;
+  left: 50%;
+  transform: translate(-50%, -100%);
+}
+
+.planet-2 .planetLabel
+{
+  top: 0;
+  left: 100%;
+  transform: translate(0, -100%);
+}
+
+.planet-3 .planetLabel,
+.planet-4 .planetLabel,
+.planet-5 .planetLabel,
+.planet-6 .planetLabel
+{
+  top: 0;
+  left: 100%;
+}
+.planet-7 .planetLabel{
+  top: 50%;
+  left: 100%;
+}
+.planet-8 .planetLabel{
+  top: 100%;
+  left: 0;
+}
+.planet-9 .planetLabel{
+  top: 100%;
+  right: 0;
+  text-align: right;
+}
+.planet-10 .planetLabel{
+  top: 50%;
+  right: 100%;
+  text-align: right;
+}
+.planet-11 .planetLabel,
+.planet-12 .planetLabel,
+.planet-13 .planetLabel,
+.planet-14 .planetLabel
+{
+  top: 0;
+  right: 100%;
+  text-align: right;
+}
+.planet-15 .planetLabel
+{
+  top: 0;
+  right: 100%;
+  text-align: right;
+  transform: translate(0, -100%);
+}
+
+@media screen and (max-width: 600px) {
+  .planet_circle_outer_container {
+    margin-top: 5rem;
+    padding: 3rem;
+  }
+
+  .planetLabel {
+    position: absolute;
+    top: 100%!important;
+    left: 50%!important;
+    right: initial!important;
+    transform: translate(-50%, -100%)!important;
+    text-align: center!important;
+    text-shadow: rgba(0,0,0,1) 0 0 0.5rem;
+    border-radius: 0.2rem;
+  }
+}

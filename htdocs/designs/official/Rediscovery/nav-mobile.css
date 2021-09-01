@@ -1,0 +1,173 @@
+.navigation-mobile {
+  position: relative;
+  width: 34.333rem;
+  height: 7.583rem;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 4.9rem;
+}
+
+#mobile-shortcuts {
+  background-image: url("images/nav_mobile.png");
+  background-repeat: no-repeat;
+  background-size: 100%;
+  background-position: bottom;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.1s ease-in-out;
+}
+
+#server-time-mobile{
+  position: absolute;
+  top: 2.4rem;
+  left: 9.7rem;
+}
+
+#navigate-fleets-mobile{
+  position: absolute;
+  top: 2rem;
+  left: 18.9rem;
+}
+
+#main-menu-toggle {
+  position: absolute;
+  background-image: url("images/button_mobile_menu_toggle_normal.png");
+  background-size: 100%;
+  top: 0.93rem;
+  left: 1.416rem;
+  width: 5.15rem;
+  height: 5.15rem;
+}
+
+#app.mouse #main-menu-toggle:hover {
+  background-image: url("images/button_mobile_menu_toggle_hover.png");
+}
+
+#main-menu-toggle:active {
+  background-image: url("images/button_mobile_menu_toggle_active.png") !important;
+}
+
+#top-menu-toggle {
+  position: absolute;
+  background-image: url("images/button_mobile_menu_hamburger_normal.png");
+  background-size: 100%;
+  top: 1.017rem;
+  right: 1.5rem;
+  width: 3.35rem;
+  height: 3.35rem;
+}
+
+#app.mouse #top-menu-toggle:hover {
+  background-image: url("images/button_mobile_menu_hamburger_hover.png");
+}
+
+#top-menu-toggle:active {
+  background-image: url("images/button_mobile_menu_hamburger_active.png") !important;
+}
+
+#mobile-planet-selection{
+  position: relative;
+  width: 34.333rem;
+  box-sizing: border-box;
+  background-color: black;
+  user-select: none;
+  padding: 0.5rem 4rem;
+}
+
+#mobile-planet-selection .current-planet:hover{
+  cursor: pointer;
+}
+
+#mobile-planet-selection:not(.attached){
+  border-radius: 2rem;
+  box-shadow: black 0 0 1rem;
+}
+#mobile-planet-selection.attached{
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform:translateX(-50%);
+  z-index: 101;
+  box-shadow: black 0 0 3rem;
+  border-bottom-left-radius: 3rem;
+  border-bottom-right-radius: 3rem;
+  background-color: rgba(0,0,0,0.7);
+}
+
+#mobile-planet-selection .current-planet{
+  display: block;
+  text-align: center;
+  width: 100%;
+  height: 3.9rem;
+  font-size: 1.5rem;
+  vertical-align: middle;
+  padding: 0.95rem 0;
+  box-sizing: border-box;
+  background-image: url("images/nav_main_button_normal.png");
+  background-repeat: no-repeat;
+  background-size: 100% 100%;
+}
+
+#mobile-planet-selection .current-planet::after{
+  content: "▼";
+  margin-left: 1rem;
+  display: inline;
+  font-size: 0.66em;
+  position: relative;
+  top: -0.05em;
+}
+
+#change-planet-previous-mobile{
+  position: absolute;
+  top: 50%;
+  left: 0.5rem;
+  transform: translateY(-50%);
+}
+
+#change-planet-next-mobile{
+  position: absolute;
+  top: 50%;
+  right: 0.5rem;
+  transform: translateY(-50%) rotate(180deg);
+}
+
+#toggle-planet-dropdown-mobile{
+  margin-left: 1rem;
+  display: inline-block;
+  transform: rotate(-90deg);
+}
+
+#planet-dropdown-mobile{
+  position: absolute;
+  top: 4.9rem;
+  left: 4rem;
+  width: 26.333rem;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+#planet-dropdown-mobile a {
+  display: block;
+  font-size: 1.5rem;
+  line-height: 1.5rem;
+  padding: 1.25rem 2rem;
+  box-sizing: border-box;
+  height: 3.9rem;
+  text-align: center;
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+}
+
+#app.mouse #planet-dropdown-mobile a:hover{
+  background-size: 100% 100%;
+}
+
+#planet-dropdown-mobile a{
+  background-size: 100% 100%!important;
+}
+
+@media screen and (min-width: 601px) {
+  .navigation-mobile {
+    display: none;
+  }
+}

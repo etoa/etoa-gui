@@ -1,0 +1,268 @@
+.resmetal,
+.tb .resmetal {
+  background: url("../../../images/resources/metal_s.png") 0.0833rem 0.0833rem no-repeat;
+  padding: 0px 0.8333rem 0.0833rem 1.5833rem;
+}
+
+.rescrystal,
+.tb .rescrystal {
+  background: url("../../../images/resources/crystal_s.png") 0.0833rem 0.0833rem no-repeat;
+  padding: 0px 0.8333rem 0.0833rem 1.5833rem;
+}
+
+.resplastic,
+.tb .resplastic {
+  background: url("../../../images/resources/plastic_s.png") 0.0833rem 0.0833rem no-repeat;
+  padding: 0px 0.8333rem 0.0833rem 1.5833rem;
+}
+
+.resfuel,
+.tb .resfuel {
+  background: url("../../../images/resources/fuel_s.png") 0.0833rem 0.0833rem no-repeat;
+  padding: 0px 0.8333rem 0.0833rem 1.5833rem;
+}
+
+.resfood,
+.tb .resfood {
+  background: url("../../../images/resources/food_s.png") 0.0833rem 0.0833rem no-repeat;
+  padding: 0px 0.8333rem 0.0833rem 1.5833rem;
+}
+
+.respeople,
+.tb .respeople {
+  background: url("../../../images/resources/people_s.png") 0.0833rem 0.0833rem no-repeat;
+  padding: 0px 0.8333rem 0.0833rem 1.5833rem;
+}
+
+.respower,
+.tb .respower {
+  background: url("../../../images/resources/power_s.png") 0.0833rem 0.0833rem no-repeat;
+  padding: 0px 0.8333rem 0.0833rem 1.5833rem;
+}
+
+.respoweru,
+.tb .respoweru {
+  background: url("../../../images/resources/poweru_s.png") 0.0833rem 0.0833rem no-repeat;
+  padding: 0px 0.8333rem 0.0833rem 1.5833rem;
+}
+
+.restime,
+.tb .restime {
+  background: url("../../../images/resources/time_s.png") 0.0833rem 0.0833rem no-repeat;
+  padding: 0px 0.8333rem 0.0833rem 1.5833rem;
+}
+
+.resfield,
+.tb .resfield {
+  background: url("../../../images/resources/field_s.png") 0.0833rem 0.0833rem no-repeat;
+  padding: 0px 0.8333rem 0.0833rem 1.5833rem;
+}
+
+.resmetal,
+.tb .resmetal,
+.rescrystal,
+.tb .rescrystal,
+.resplastic,
+.tb .resplastic,
+.resfuel,
+.tb .resfuel,
+.resfood,
+.tb .resfood,
+.respeople,
+.tb .respeople,
+.respower,
+.tb .respower,
+.respoweru,
+.tb .respoweru,
+.restime,
+.tb .restime,
+.resfield,
+.tb .resfield {
+  background-size: 1rem;
+  image-rendering: crisp-edges;
+}
+
+/*
+* Search-Box
+*/
+
+.search {
+  background: #000 url("../../../web/images/search.png") 0.167rem 0.0833rem no-repeat;
+  padding-left: 1.67rem;
+}
+
+.search:focus {
+  background: #222 url("../../../web/images/search.png") 0.167rem 0.0833rem no-repeat;
+  padding-left: 1.67rem;
+}
+
+/*
+* BB-Code Items
+*/
+
+.bbtable td,
+.bbtable th {
+  padding: 0.167rem;
+}
+
+/*
+* Resource display
+*/
+
+img.resIcon {
+  float: left;
+  margin-right: 0.4167rem;
+}
+
+#resbox span {
+  padding-right: 0.4167rem;
+}
+
+/*
+* Planet resources box
+*/
+
+.resBoxTitleCell {
+  height: 1.67rem;
+}
+
+/*
+* Message-Boxes
+*/
+
+.criticalErrorBox {
+  margin-top: 1.25rem;
+  margin-bottom: 1.25rem;
+}
+
+.criticalErrorBox h2 {
+  padding: 0.8333rem;
+  font-size: 1.25rem;
+}
+
+.criticalErrorBox div {
+  padding: 0.8333rem;
+}
+
+/*
+* User and alliance info log
+*/
+
+.infoLog {
+  padding: 0.25rem 0px 0.4167rem 0px;
+}
+
+.infoLog span {
+  font-size: 7pt;
+  padding-left: 1.25rem;
+  padding-right: 0.4167rem;
+}
+
+/*
+* Market
+*/
+
+#market_search_filter_category_selector {
+  margin-right: 1.67rem;
+}
+
+#market_search_filter_container_res span {
+  padding-top: 0.25rem;
+  padding-right: 0.25rem;
+  width: 8.33rem;
+}
+
+#market_search_filter_container_res label {
+  width: 4.167rem;
+  padding-top: 0.25rem;
+  padding-left: 0.25rem;
+}
+
+/*
+* Preview of chat color in user settings -> Game
+*/
+
+#chatPreview {
+  padding: 0.4167rem 1.67rem;
+}
+
+/*
+* Fleet bookmark ship selection auto-complete
+*/
+
+#shiplist ul {
+  padding: 0 0.8333rem 0 0.8333rem;
+}
+
+#shiplist a {
+  padding: 0.4167rem;
+}
+
+/*
+* Tooltip
+*/
+
+.tooltip {
+  font-size: 9pt;
+  padding: 0.0833rem;
+  max-width: 33.333rem;
+  z-index: 1000;
+}
+
+.tooltip .tttitle {
+  padding: 0.167rem;
+  margin-bottom: 0.167rem;
+}
+
+.tooltip .ttcontent {
+  padding: 0.333rem;
+}
+
+/*
+* Xajax Suchliste z.b. bei Usereingabe in Nachrichten
+*/
+
+.citybox {
+  z-index: 10;
+  background: #223;
+}
+
+.citybox ul {
+  padding: 0 0.8333rem 0 0.8333rem;
+}
+
+.citybox a {
+  padding: 0.4167rem;
+}
+
+/*
+* Exceptions
+*/
+
+.exception-container {
+  margin: 0.8333rem;
+}
+
+.exception-message {
+  padding: 0.667rem;
+  margin: 1.67rem 0;
+}
+
+table.stacktrace td,
+table.stacktrace th {
+  padding: 0.25rem;
+}
+
+/*
+* Fleet info box
+*/
+
+.fleetInfoContainer .infoboxcontent {
+  padding: 0.25rem !important;
+}
+
+.fleetInfoProgress {
+  top: 1.4167rem;
+  width: 1.33rem;
+  height: 1.33rem;
+}

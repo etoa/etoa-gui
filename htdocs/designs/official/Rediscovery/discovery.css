@@ -1,0 +1,1252 @@
+/*
+* EtoA Discovery Design by Greaser
+*/
+
+@import url("../../../web/css/game.css");
+
+body {
+  background-color: black;
+  color: white;
+  font-family: verdana, sans-serif, arial;
+  font-size: 0.833rem;
+  border: none;
+}
+
+img {
+  border: none;
+}
+
+a {
+  color: white;
+  text-decoration: underline;
+  background: none;
+}
+
+a:hover {
+  color: #ffffff;
+  text-decoration: none;
+  background: none;
+}
+
+h1 {
+  font-size: 0.917rem;
+  text-align: center;
+  margin-top: 0.4375rem;
+  margin-bottom: 0.5rem;
+}
+
+h1:before {
+  content: ":: ";
+}
+
+h1:after {
+  content: " ::";
+}
+
+h2 {
+  font-size: 0.833rem;
+  text-align: center;
+  margin-top: 0.4375rem;
+  margin-bottom: 0.3125rem;
+}
+
+h2:before {
+  content: ": ";
+}
+
+h2:after {
+  content: " :";
+}
+
+table {
+  border-collapse: collapse;
+  border: none;
+}
+
+/* Wenn sich der cursor in einem text feld befindet... */
+/* Internet Explorer unterst�tzt diese funktion nicht!!!*/
+input:focus,
+textarea:focus,
+select:focus {
+  border: 1px solid #ff0;
+  background: #002;
+  color: #fff;
+}
+
+/*Definiert die Buttons bei "bauhof" oder "forschung", hintergrund sollte der selbe wie tbldata sein*/
+button {
+  background: #000000 url("../Discovery/images/cellpic3.gif");
+  border: none;
+  cursor: pointer;
+}
+
+/* Definiert die verschieden button typen im normal zustand */
+/* Internet Explorer unterst�tzt diese funktion nicht!!!*/
+input[type="submit"],
+input[type="reset"],
+input[type="button"] {
+  background: #222255 url("../Discovery/images/button1.jpg");
+  color: #fff;
+  font-weight: bold;
+  padding: 0.0625rem 0.25rem;
+}
+
+input[type="submit"]:focus,
+input[type="reset"]:focus,
+input[type="button"]:focus {
+  background: #222255 url("../Discovery/images/button1.jpg");
+  color: #fff;
+  font-weight: bold;
+  border: 1px solid #ff0;
+}
+
+/* Definiert die verschieden button typen im hover zustand */
+/* Internet Explorer unterst�tzt diese funktion nicht!!!*/
+input:hover[type="submit"],
+input:hover[type="reset"],
+input:hover[type="button"] {
+  background: #222255 url("../Discovery/images/button2.jpg");
+  color: #fff;
+  font-weight: bold;
+}
+
+/* Definiert die verschieden button typen im normal zustand */
+/* Internet Explorer unterst�tzt diese funktion nicht!!!*/
+input[type="submit"][disabled="disabled"],
+input[type="reset"][disabled="disabled"],
+input[type="button"][disabled="disabled"],
+input[type="submit"][disabled="disabled"]:hover,
+input[type="reset"][disabled="disabled"]:hover,
+input[type="button"][disabled="disabled"]:hover {
+  background: #444;
+  color: #fff;
+  font-weight: bold;
+}
+
+input,
+select,
+textarea {
+  border: solid #fff 1px;
+  font-family: arial;
+  font-size: 1rem;
+  background: #000;
+  color: #fff;
+}
+
+#layoutbox {
+  width: 80%;
+  margin: 0 auto;
+  background: #6e7591;
+  font-size: 0.833rem;
+  vertical-align: top;
+  border: 1px solid #fff;
+}
+
+#chat_color {
+  width: 3.75rem;
+}
+
+#topbar {
+  text-align: right;
+  padding-right: 0.625rem;
+  background: #424962;
+  height: 1.1875rem;
+  border: 1px solid #fff;
+}
+
+#topbar a {
+  text-decoration: none;
+  font-weight: bold;
+}
+
+#topbar a:hover {
+  text-decoration: none;
+  color: #aaa;
+  font-weight: bold;
+}
+
+#logo {
+  background: #000 url("../../images/logo.jpg") no-repeat;
+  width:  10.9375rem;
+  height: 4.5rem;
+  border: 1px solid #fff;
+}
+
+#banner {
+  text-align: center;
+  background: #000 url("../../images/banner.jpg") no-repeat;
+  height: 4.5rem;
+  border: 1px solid #fff;
+}
+
+#selectbar {
+  background: #222;
+  width:  10.9375rem;
+}
+
+#selectbar select {
+  width:  10.9375rem;
+  background: #222;
+  color: #fff;
+}
+
+#middlebar {
+  background: #6e7591;
+  height: 1.3125rem;
+  border: 1px solid #fff;
+  border-right: none;
+  padding-left: 0.9375rem;
+}
+
+#clockbar {
+  background: #6e7591;
+  width: 21.875rem;
+  padding-left: 0.5rem;
+  border: 1px solid #fff;
+  height: 1.3125rem;
+  border-left: none;
+  text-align: right;
+}
+
+#content {
+  background: #9198ab;
+  background: #606578;
+  height: 28.125rem;
+  vertical-align: top;
+  padding: 0.25rem 0.625rem 0.625rem 0.625rem;
+  border: 1px solid #fff;
+  text-align: center;
+}
+
+#copy {
+  background: #646b84;
+  border: 1px solid #fff;
+  padding-left: 0.5rem;
+}
+
+#bottombar {
+  padding-top: 0.25rem;
+  padding-right: 0.25rem;
+  text-align: right;
+  background: #646b84;
+  height: 1.5625rem;
+  vertical-align: top;
+}
+
+#menu1 {
+  padding: 0 0 2.5rem 0;
+  background: #6e7591;
+  width:  10.9375rem;
+  vertical-align: top;
+  border: 1px solid #fff;
+}
+
+#menu1 div {
+  font-weight: bold;
+  background: #225;
+  color: #fff;
+  text-decoration: none;
+  width:  10.9375rem;
+  padding: 0.125rem 0.125rem 0.125rem 0.5rem;
+  margin: 0 auto;
+  border-bottom: solid 1px #e6e6e6;
+  border-top: none;
+  height: 1rem;
+}
+
+#menu1 a {
+  display: block;
+  background: #626b84;
+  color: #eee;
+  text-decoration: none;
+  width:  10.9375rem;
+  padding: 0.125rem 0.125rem 0.125rem 0.5rem;
+  margin: 0 auto;
+  border-bottom: solid 1px #e6e6e6;
+}
+
+#menu1 a:hover {
+  background-color: silver;
+  color: #445543;
+  text-decoration: none;
+  border-bottom: solid 1px #e6e6e6;
+}
+
+.tbltitle,
+table.tb th {
+  font-size: 0.833rem;
+  font-weight: bold;
+  border: 1px solid #fff;
+  background: #000000 url("../Discovery/images/cellpic4.gif");
+  padding: 0.125rem;
+  text-align: left;
+}
+
+.tbldata,
+table.tb td {
+  font-size: 1rem;
+  color: #fff;
+  border: 1px solid #fff;
+  background: #000000 url("../Discovery/images/cellpic3.gif");
+  padding: 0.1875rem;
+  text-align: left;
+}
+
+/* Ressourcen Speicher voll / Bewohner -> farbe wenn geb�ude baut */
+/* rest muss gleich wie .tbldata sein! */
+.tbldata2 {
+  font-size: 1rem;
+  color: red;
+  border: 1px solid #ffffff;
+  background: #000000 url("../Discovery/images/cellpic3.gif");
+  padding: 0.1875rem;
+  vertical-align: top;
+  text-align: left;
+}
+
+/* Energie wenn sie Positiv ist (standart ist hellgr�n) */
+/* rest muss gleich wie .tbldata sein! */
+.tbldata3 {
+  font-size: 1rem;
+  color: #0f0;
+  border: 1px solid #ffffff;
+  background: #000000 url("../Discovery/images/cellpic3.gif");
+  padding: 0.1875rem;
+  vertical-align: top;
+  text-align: left;
+}
+
+/* Tabellenfelder mit Warntext (Standart ist orange) */
+/* rest muss gleich wie .tbldata sein! */
+.tbldata4 {
+  font-size: 1rem;
+  color: #f90;
+  border: 1px solid #ffffff;
+  background: #000000 url("../Discovery/images/cellpic3.gif");
+  padding: 0.1875rem;
+  vertical-align: top;
+  text-align: left;
+}
+
+.tblblack,
+.tb td.tblblack,
+.tb th.tblblack {
+  font-size: 1rem;
+  color: #fff;
+  border: 1px solid #fff;
+  background: #000;
+}
+
+/* Allgemeine Tabellen definition welche gestreckt ist (infobox) */
+.tbl,
+table.tb {
+  width: 100%;
+  margin: 0.9375rem auto;
+}
+
+.tbl caption,
+table.tb caption {
+  border: 1px solid #fff;
+  border-bottom: none;
+  font-size: 0.833rem;
+  font-weight: bold;
+  background: #225 url(images/cellpic.gif);
+  padding: 0.25rem;
+  text-align: center;
+}
+
+.tblc {
+  margin: 0 auto;
+  border: 1px solid #ffffff;
+}
+
+div.infoboxtitle {
+  font-size: 0.833rem;
+  font-weight: bold;
+  border: 1px solid #fff;
+  background: #225 url(images/cellpic.gif);
+  padding: 0.25rem;
+  text-align: center;
+}
+
+td.infoboxtitle,
+.tb td.infoboxtitle,
+.tb th.infoboxtitle {
+  font-size: 0.833rem;
+  font-weight: bold;
+  background: #225 url(images/cellpic.gif);
+  padding: 0.25rem;
+  text-align: center;
+}
+
+div.infoboxcontent {
+  font-size: 1rem;
+  color: #fff;
+  border: none;
+  border-left: 1px solid #fff;
+  border-right: 1px solid #fff;
+  border-bottom: 1px solid #fff;
+  background: #225 url(images/cellpic3.gif);
+  padding: 0.25rem;
+  text-align: left;
+}
+
+.statsTab {
+  /*width:7.5rem;*/
+  height: 1.25rem;
+  border: 1px solid #fff;
+  margin: 0;
+  padding: 0;
+}
+
+table.statsNav {
+  width: 99%;
+  border: 1px solid #fff;
+  margin: 0 auto;
+}
+
+td.statsNav {
+  background: #000000 url(images/tabulator.gif);
+}
+
+/*
+* Galaxy and secotr maps
+*/
+
+#galaxy_map_nav {
+  text-align: center;
+  vertical-align: middle;
+}
+
+#galaxy_map_container {
+  background: black url("../../../images/main_bg.jpg");
+  text-align: center;
+  padding: 0;
+}
+
+#sector_map_nav {
+  text-align: center;
+  vertical-align: middle;
+}
+
+#sector_map_container {
+  background: black url("../../../images/main_bg.jpg");
+  padding: 0;
+  margin: 0;
+}
+
+#sector_map_table {
+  margin: 0.3125rem auto;
+}
+
+#sector_map_table .sector_map_neighbour_nav {
+  text-align: center;
+  vertical-align: middle;
+  border: none;
+  background: transparent;
+  padding: 0;
+  margin: 0;
+}
+
+#sector_map_table .sector_map_cell {
+  padding: 0;
+  margin: 0;
+  line-height: 0;
+  background: black;
+  border: none;
+}
+
+#sector_map_table .sector_map_cell img.cell_number_spacer {
+  width: 2.5rem;
+  height: 2.1875rem;
+}
+
+#sector_map_table .sector_map_cell img.cell_number_vertical {
+  margin-right: 0.3125rem;
+  margin-left: 0.3125rem;
+  width: 1.875rem;
+  height: 2.5rem;
+  border-bottom: 1px dashed #555;
+}
+
+#sector_map_table .sector_map_cell img.cell_number_horizontal {
+  margin-top: 0.3125rem;
+  margin-bottom: 0.3125rem;
+  width: 2.5rem;
+  height: 1.5625rem;
+  border-left: 1px dashed #555;
+}
+
+#sector_map_table .sector_map_cell a {
+  border: none;
+  text-decoration: none;
+  display: inline-block;
+  border-left: 1px dashed #555;
+  border-bottom: 1px dashed #555;
+  margin: 0;
+  padding: 0;
+  line-height: 0;
+  width: 2.5rem;
+  height: 2.5rem;
+  vertical-align: top;
+}
+
+#sector_map_table .sector_map_cell a img {
+  width: 2.5rem;
+  height: 2.5rem;
+}
+
+#sector_map_table .sector_map_cell a img.hovered,
+#sector_map_table .sector_map_cell a img:hover {
+  background: url("../../../images/map/hovercell.png");
+  background-size: 100%;
+}
+
+#sector_map_table .sector_map_cell a img.selected {
+  background: url("../../../images/map/selectedcell.png");
+  background-size: 100%;
+}
+
+#sector_map_table .sector_map_cell a img.owned {
+  background: url("../../../images/map/owncell.png");
+  background-size: 100%;
+}
+
+/* Übersicht -> planetenliste */
+/* \"Courier New\", Courier, mono; */
+
+.PlaniTextLinks {
+  color: #ffffff;
+  font-family: "Arial", Courier, mono;
+  font-size: 0.6875rem;
+  text-align: right;
+  vertical-align: middle;
+}
+.PlaniTextRechts {
+  color: #ffffff;
+  font-family: "Arial", Courier, mono;
+  font-size: 0.6875rem;
+  text-align: left;
+  vertical-align: middle;
+}
+.PlaniTextOben {
+  color: #ffffff;
+  font-family: "Arial", Courier, mono;
+  font-size: 0.6875rem;
+  text-align: center;
+  vertical-align: bottom;
+}
+
+.PlaniTextCenter {
+  color: #ffffff;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 1.3125rem;
+  text-align: left;
+  vertical-align: baseline;
+  font-weight: lighter;
+}
+.PlaniTextCenterPlanetname {
+  color: #ffffff;
+  font-family: "SF Chaerilidae", sans-serif;
+  font-size: 1.875rem;
+  text-align: center;
+  vertical-align: baseline;
+  font-weight: lighter;
+}
+.PlaniTextCenterBeschreibung {
+  color: #ffffff;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 1.3125rem;
+  text-align: right;
+  vertical-align: baseline;
+  font-weight: lighter;
+}
+.PlaniTextCenterRessourcen {
+  color: #ffffff;
+  font-family: "SF Chaerilidae", sans-serif;
+  font-size: 1.5rem;
+  text-align: center;
+  vertical-align: baseline;
+  font-weight: lighter;
+}
+.PlaniTextCenterStore {
+  color: red;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 1.3125rem;
+  text-align: left;
+  vertical-align: baseline;
+  font-weight: lighter;
+}
+.PlaniTextCenterPower {
+  color: #0f0;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 1.3125rem;
+  text-align: left;
+  vertical-align: baseline;
+  font-weight: lighter;
+}
+
+/* Definition des ganzen Layouts */
+
+.Stil1 {
+  color: #ffffff;
+}
+body {
+  background-color: #000000;
+}
+.Stil2 {
+  font-family: verdana, sans-serif, arial;
+}
+.Stil3 {
+  font-size: 2.25rem;
+}
+
+body {
+  background-attachment: fixed;
+}
+
+/* .Stil4 {font-size: 0.5625rem} */
+.Stil6 {
+  font-size: 0.8125rem;
+  font-family: verdana, sans-serif, arial;
+}
+
+div.Spielbereich_ {
+  position: absolute;
+  left: 18.125rem;
+  top: 4rem;
+  width: 44.625rem;
+  height: 44rem;
+  text-align: center;
+}
+
+#game-area {
+  text-align: center;
+}
+
+#contentwrap {
+  padding: 1.25rem;
+}
+
+hr {
+  height: 0.0625rem;
+  border: 1px solid #111;
+}
+
+table.tab {
+  margin: 0 auto;
+  border: 1px solid #000;
+  border-collapse: collapse;
+}
+
+td.havenTab {
+  width: 12.5rem;
+  height: 1.875rem;
+  border: 1px solid #000;
+  margin: 0;
+  padding: 0;
+  background: #ddf;
+  color: #222;
+  font-weight: bold;
+  text-align: center;
+  text-decoration: none;
+}
+
+td.havenTab:hover {
+  background: #889;
+  color: #000;
+  text-decoration: none;
+}
+
+#havenBox,
+#havenInfoBox {
+  border: 1px solid #000;
+  width: 37.5rem;
+  margin: 0 auto;
+}
+
+/* Xajax Suchliste z.b. bei Usereingabe in Nachrichten*/
+.citybox {
+  position: absolute;
+  z-index: 10;
+  border: 1px #ccc solid;
+  border-top: none;
+  border-bottom: none;
+  background: #223;
+  padding: 0;
+  display: none;
+}
+
+.citybox ul {
+  padding: 0 0.625rem 0 0.625rem;
+  margin: 0;
+}
+
+.citybox li {
+  list-style: none;
+  padding-left: 0;
+}
+
+.citybox a {
+  text-decoration: none;
+  color: #aaa;
+  display: block;
+  padding: 0.3125rem;
+  border-bottom: 1px solid #fff;
+}
+.citybox a:hover {
+  color: #fff;
+  background: #575763;
+}
+
+.boxLayout {
+  margin: 0.9375rem auto;
+  width: 100%;
+}
+
+.boxLayout.success .infoboxtitle {
+  color: #0f0;
+}
+
+.boxLayout.information .infoboxtitle {
+  color: #0ff;
+}
+
+.boxLayout.error .infoboxtitle {
+  color: #f00;
+}
+
+/* Resource */
+#resbox {
+  margin-bottom: 1.25rem;
+  width: 40.625rem;
+  border: 1px solid #fff;
+}
+
+#resboxheader {
+  background: url("../Discovery/images/cellpic.gif") no-repeat;
+  height: 1.3125rem;
+  color: #fff;
+  font-weight: bold;
+  padding-left: 1.25rem;
+  padding-top: 0.3125rem;
+  border-bottom: 1px solid #fff;
+}
+
+#resboxcontent {
+  padding: 0.3125rem;
+  background: #333 url("../Discovery/images/cellpic3.gif") repeat;
+}
+
+.buildOverviewObjectContainer {
+  width: 7.5rem;
+  height: 7.5rem;
+  text-align: center;
+  padding: 0;
+  margin-bottom: -0.0625rem;
+  border-right: 1px solid;
+  border-bottom: 1px solid;
+  float: left;
+  background-repeat: no-repeat;
+  position: relative;
+  overflow: hidden;
+}
+
+.buildOverviewObjectTitle {
+  font-weight: normal;
+  position: absolute;
+  background: url("../Discovery/images/transheader1.png") top right no-repeat;
+  margin-top: 0.0625rem;
+  padding: 0.1875rem 0.9375rem 0.1875rem 0.1875rem;
+  font-size: 1rem;
+  float: left;
+  z-index: 10;
+}
+
+.buildOverviewObjectSubTitle {
+  display: none;
+  float: left;
+}
+
+.buildOverviewLink {
+  display: block;
+  width: 7.5rem;
+  height: 7.5rem;
+  padding: 0;
+  margin: 0;
+  border: none;
+}
+
+.buildOverviewObjectLevel {
+  text-align: right;
+  font-size: 1.67rem;
+  font-weight: bold;
+  background: url("../Discovery/images/transfooter1.png") no-repeat;
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 3.75rem;
+  padding: 0.1875rem;
+  padding-right: 0.3125rem;
+  float: left;
+}
+
+.buildOverviewObjectImage {
+  display: none;
+  float: left;
+}
+
+.buildOverviewObjectNone,
+.tb td.buildOverviewObjectNone {
+  border: none;
+}
+
+.planetOverviewName {
+  position: absolute;
+  left: 1.25rem;
+  top: 0.9375rem;
+  font-size: 1.5rem;
+}
+
+.planetOverviewName a {
+  text-decoration: none;
+}
+
+.planetOverviewList {
+  position: absolute;
+  left: 1.25rem;
+  bottom: 1.25rem;
+  font-size: 0.75rem;
+}
+
+.planetOverviewItem {
+  float: left;
+  width: 7.5rem;
+  font-size: 0.75rem;
+  font-weight: bold;
+  height: 1.0625rem;
+}
+
+/* Tab Menu */
+.tabMenu {
+  display: table;
+  margin: 0.625rem auto 0 auto;
+  border-left: 1px solid #fff;
+}
+
+.tabMenu a {
+  display: block;
+  float: left;
+  height: 1.3125rem;
+  color: #fff;
+  text-decoration: none;
+  padding: 0.4375rem 0.625rem 0.1875rem 0.625rem;
+  background: url("../Discovery/images/tab1.png") top right no-repeat;
+  border-bottom: 1px solid #fff;
+  border-top: 1px solid #fff;
+}
+
+.tabMenu a:hover {
+  display: block;
+  float: left;
+  height: 1.3125rem;
+  color: #ddd;
+  padding: 0.4375rem 0.625rem 0.1875rem 0.625rem;
+  background: url("../Discovery/images/tab2.png") top right no-repeat;
+}
+
+.tabMenu a.tabEnabled {
+  display: block;
+  float: left;
+  color: #ddd;
+  height: 1.3125rem;
+  padding: 0.4375rem 0.625rem 0.1875rem 0.625rem;
+  background: url("../Discovery/images/tab2.png") top right no-repeat;
+}
+
+.tabMenu a.tabLast {
+  border-right: 1px solid #fff;
+}
+
+/* Pulldown Menu */
+
+/* Get rid of the margin, padding and bullets in the unordered lists */
+#pmenu {
+  padding: 0;
+  margin: 0.625rem auto 0 auto;
+  list-style-type: none;
+  display: table;
+  border: 1px solid #fff;
+}
+
+#pmenu ul {
+  padding: 0;
+  margin: 0;
+  list-style-type: none;
+  display: block;
+}
+
+/* Hide the sub levels */
+#pmenu li ul {
+  display: none;
+}
+
+/* Set up the link size, color and borders */
+#pmenu li a,
+#pmenu li a:visited {
+  display: block;
+  font-size: 0.75rem;
+  color: #fff;
+  padding: 0.1875rem 0.625rem 0 0.625rem;
+  height: 1.75rem;
+  line-height: 1.5rem;
+  text-decoration: none;
+  text-indent: 0.3125rem;
+  border: none;
+  text-align: center;
+}
+
+/* Set up the sub level borders */
+#pmenu li ul li a,
+#pmenu li ul li a:visited {
+  border: 1px solid #fff;
+  width: 6.875rem;
+  text-align: left;
+  border-top: none;
+}
+#pmenu li a.enclose,
+#pmenu li a.enclose:visited {
+  border-width: 1px;
+}
+
+/* Set up the list items */
+#pmenu li {
+  float: left;
+  background: #225 url("../Discovery/images/tab1.png") top right no-repeat;
+}
+#pmenu li.tc {
+  display: table-cell;
+}
+
+/* For Non-IE browsers and IE7 */
+#pmenu li:hover {
+  position: relative;
+}
+/* Make the hovered list color persist */
+#pmenu li:hover > a {
+  background: #225 url("../Discovery/images/tab2.png") repeat-x;
+  color: #fff;
+}
+/* For Non-IE and IE7 make the sublevels visible on list hover. This is all it needs */
+#pmenu li:hover > ul {
+  display: block;
+  position: absolute;
+  top: -0.6875rem;
+  left: 5rem;
+  padding: 0.625rem 1.875rem 1.875rem 1.875rem;
+  background: transparent;
+  width: 7.5rem;
+}
+/* Position the first sub level beneath the top level liinks */
+#pmenu > li:hover > ul {
+  left: -1.875rem;
+  top: 1.375rem;
+}
+
+/* get rid of the table */
+#pmenu table {
+  position: absolute;
+  border-collapse: collapse;
+  top: 0;
+  left: 0;
+  z-index: 100;
+  font-size: 1em;
+}
+
+/* For IE5.5 and IE6 give the hovered links a position relative and a change of background and foreground color. This is needed to trigger IE to show the sub levels */
+* html #pmenu li a:hover {
+  position: relative;
+  background: #223;
+  color: #c00;
+}
+
+/* For accessibility of the top level menu when tabbing */
+#pmenu li a:active,
+#pmenu li a:focus {
+  background: #225 url("../Discovery/images/tab2.png") repeat-x;
+  color: #fff;
+}
+
+/* Set up the pointers for the sub level indication */
+#pmenu li.fly {
+}
+#pmenu li.drop {
+}
+
+/* This lot is for IE5.5 and IE6 ONLY and is necessary to make the sublevels appear */
+
+/* change the drop down levels from display:none; to visibility:hidden; */
+* html #pmenu li ul {
+  visibility: hidden;
+  display: block;
+  position: absolute;
+  top: -0.6875rem;
+  left: 5rem;
+  padding: 0.625rem 1.875rem 1.875rem 1.875rem;
+  background: transparent;
+}
+
+/* keep the third level+ hidden when you hover on first level link */
+#pmenu li a:hover ul ul {
+  visibility: hidden;
+}
+/* keep the fourth level+ hidden when you hover on second level link */
+#pmenu li a:hover ul a:hover ul ul {
+  visibility: hidden;
+}
+/* keep the fifth level hidden when you hover on third level link */
+#pmenu li a:hover ul a:hover ul a:hover ul ul {
+  visibility: hidden;
+}
+/* keep the sixth level hidden when you hover on fourth level link */
+#pmenu li a:hover ul a:hover ul a:hover ul a:hover ul ul {
+  visibility: hidden;
+}
+
+/* make the second level visible when hover on first level link and position it */
+#pmenu li a:hover ul {
+  visibility: visible;
+  left: -1.875rem;
+  top: 0.875rem;
+}
+
+/* make the third level visible when you hover over second level link and position it and all further levels */
+#pmenu li a:hover ul a:hover ul {
+  visibility: visible;
+  top: -0.6875rem;
+  left: 5rem;
+}
+/* make the fourth level visible when you hover over third level link */
+#pmenu li a:hover ul a:hover ul a:hover ul {
+  visibility: visible;
+}
+/* make the fifth level visible when you hover over fourth level link */
+#pmenu li a:hover ul a:hover ul a:hover ul a:hover ul {
+  visibility: visible;
+}
+/* make the sixth level visible when you hover over fifth level link */
+#pmenu li a:hover ul a:hover ul a:hover ul a:hover ul a:hover ul {
+  visibility: visible;
+}
+
+/* Techtree */
+
+.techtreeItemContainer {
+  margin: 0 auto 0.625rem auto;
+  display: table;
+  text-align: center;
+  max-width: 36.25rem;
+}
+
+.techtreeMainItem {
+  position: relative;
+  width: 7.5rem;
+  height: 7.5rem;
+  border: 1px solid #fff;
+  margin: 0.625rem auto;
+}
+
+.techtreeItem {
+  margin: 0.625rem;
+  position: relative;
+  float: left;
+  width: 7.5rem;
+  height: 7.5rem;
+  border: 1px solid black;
+}
+.techtreeItemLevel {
+  position: absolute;
+  top: 0;
+  background: url("../Discovery/images/transheader1.png") top right;
+  color: #fff;
+  padding: 0.1875rem 0.9375rem 0.1875rem 0.1875rem;
+}
+.techtreeItemName {
+  position: absolute;
+  bottom: 0;
+  font-size: 1rem;
+  padding: 0.3125rem;
+  background: url("../Discovery/images/trans1.png");
+  color: #fff;
+  width: 6.875rem;
+}
+
+/* Statistics */
+
+#statsHeaderContainer {
+  margin-bottom: 0.625rem;
+}
+
+#statsSearchContainer {
+  text-align: left;
+  float: left;
+}
+
+#statsNav1,
+#statsNav2 {
+  text-align: right;
+  float: right;
+}
+
+#statsNav1 input,
+#statsNav2 input {
+  margin-right: 0.3125rem;
+}
+
+#statsTable {
+  margin: 0;
+  padding: 0;
+  margin-bottom: 0.625rem;
+}
+
+.loadingMsg {
+  padding: 1.25rem;
+  background: url("../Discovery/images/loading.gif") top center no-repeat;
+  text-align: center;
+}
+
+#layoutframe {
+  position: relative;
+  margin: 0;
+  padding: 0;
+}
+
+#chatframe {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 14.375rem;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 100;
+  border-left: 1px solid #777;
+}
+
+/**
+* Fleet bookmarks
+*/
+#bookmarkShiplistInputTable td.thumb {
+  width: 2.5rem;
+  background: #000;
+}
+
+#bookmarkShiplistInputTable td.thumb img {
+  width: 2.5rem;
+  height: 2.5rem;
+  border: 0;
+  vertical-align: top;
+}
+
+#bookmarkShiplistInputTable td.count {
+  width: 5.625rem;
+}
+
+#bookmarkShiplistInputTable td.actions {
+  width: 1.875rem;
+  text-align: center;
+}
+
+/*
+* Tutorial
+*/
+#tutorialContainer,
+#quest-app {
+  position: absolute;
+  right: 0.625rem;
+  top: 3.75rem;
+  z-index: 500;
+}
+
+.tutorialBox {
+  width: 28.125rem;
+  text-align: left;
+  border: 1px solid #fff;
+  background: url("../Discovery/images/cellpic3.gif") repeat scroll 0 0 #60606b;
+  box-shadow: 0 0 1.25rem 0.1875rem #000;
+  margin-bottom: 0.3125rem;
+}
+
+.tutorialTitle {
+  font-weight: bold;
+  border-bottom: 1px solid #fff;
+  background: url("../Discovery/images/cellpic4.gif") repeat scroll 0 0 #2c2c31;
+  padding: 0.125rem 0.3125rem;
+}
+
+.tutorialContent {
+  padding: 0.125rem 0.3125rem;
+}
+
+.tutorialFooter {
+  border-top: 1px solid #fff;
+  background: url("../Discovery/images/cellpic4.gif") repeat scroll 0 0 #2c2c31;
+  padding: 0.125rem 0.3125rem;
+}
+
+/*
+* Three column list (alliance page)
+*/
+
+.threeColumnList {
+  -webkit-column-count: 3; /* Chrome, Safari, Opera */
+  -moz-column-count: 3; /* Firefox */
+  column-count: 3;
+}
+
+.allianceManagementLinks a {
+  padding: 0.1875rem;
+  display: inline-block;
+}
+
+@media screen and (min-width: 601px) {
+
+  #sector_map_table .sector_map_cell img.cell_number_spacer {
+    width: 3.625rem;
+    height: 3.125rem;
+  }
+
+  #sector_map_table .sector_map_cell img.cell_number_vertical {
+    margin-right: 0.3125rem;
+    margin-left: 0.3125rem;
+    width: 3rem;
+    height: 4rem;
+    border-bottom: 1px dashed #555;
+  }
+
+  #sector_map_table .sector_map_cell img.cell_number_horizontal {
+    margin-top: 0.3125rem;
+    margin-bottom: 0.3125rem;
+    width: 4rem;
+    height: 2.5rem;
+    border-left: 1px dashed #555;
+  }
+
+  #sector_map_table .sector_map_cell a {
+    border: none;
+    text-decoration: none;
+    display: inline-block;
+    border-left: 1px dashed #555;
+    border-bottom: 1px dashed #555;
+    margin: 0;
+    padding: 0;
+    line-height: 0;
+    width: 4rem;
+    height: 4rem;
+    vertical-align: top;
+  }
+
+  #sector_map_table .sector_map_cell a img {
+    width: 4rem;
+    height: 4rem;
+  }
+}

@@ -1,0 +1,262 @@
+.navigation-main {
+  position: absolute;
+  top: 5rem;
+  left: 0.5rem;
+  background-image: url("images/nav_main.png");
+  background-size: 100%;
+  width: 24.75rem;
+  height: 72rem;
+  transition: transform 0.1s ease-in-out;
+  z-index: 100;
+}
+
+#game-area {
+  margin-left: 26rem;
+  max-width: 70rem;
+  margin-right: 10rem;
+}
+
+.navigation-main section {
+  position: absolute;
+  box-sizing: border-box;
+}
+
+.navigation-main section .section-label {
+  display: block;
+  font-family: "Ethnocentric-Light", sans-serif;
+  color: var(--color-text-light);
+  text-shadow: rgba(0, 0, 0, 1) 0 0 0.3em;
+  margin-bottom: 0.05rem;
+  font-size: 1rem;
+}
+
+section#nav-top {
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 12.7rem;
+}
+
+.button-round-blue {
+  border-radius: 50%;
+}
+
+#navigate-overview,
+#navigate-messages,
+#navigate-reports {
+  position: absolute;
+  background-size: 100%;
+  width: 5.15rem;
+  height: 5.15rem;
+}
+
+#navigate-overview {
+  top: 1.7rem;
+  left: 1.7rem;
+  background-image: url("images/button_home_normal.png");
+}
+
+#navigate-messages,
+#navigate-reports {
+  bottom: 1.6rem;
+  width: 2.6rem;
+}
+
+#app.mouse .button-round-blue:hover {
+  box-shadow: 0 0 0.5rem var(--color-glow-blue);
+}
+
+#navigate-help,
+#navigate-notes {
+  position: absolute;
+  background-size: 100%;
+  width: 3.35rem;
+  height: 3.35rem;
+}
+
+#app.mouse #navigate-overview:hover {
+  background-image: url("images/button_home_hover.png");
+}
+
+#navigate-overview:active {
+  background-image: url("images/button_home_active.png") !important;
+}
+
+#navigate-help {
+  top: 1.25rem;
+  right: 1.35rem;
+  background-image: url("images/button_help_normal.png");
+}
+
+#app.mouse #navigate-help:hover {
+  background-image: url("images/button_help_hover.png");
+}
+
+#navigate-help:active {
+  background-image: url("images/button_help_active.png") !important;
+}
+
+#app.mouse #navigate-messages:hover,
+#app.mouse #navigate-reports:hover {
+  box-shadow: none;
+}
+
+#navigate-messages {
+  left: 1.5rem;
+  background-image: url("images/button_messages_normal.png");
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+#navigate-messages.unread {
+  background-image: url("images/button_messages_unread.png");
+}
+
+#app.mouse #navigate-messages:hover {
+  background-image: url("images/button_messages_hover.png");
+}
+
+#navigate-messages:active {
+  background-image: url("images/button_messages_active.png") !important;
+}
+
+#navigate-reports {
+  left: 4rem;
+  background-image: url("images/button_reports_normal.png");
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+#navigate-reports.unread {
+  background-image: url("images/button_reports_unread.png");
+}
+
+#app.mouse #navigate-reports:hover {
+  background-image: url("images/button_reports_hover.png");
+}
+
+#navigate-reports:active {
+  background-image: url("images/button_reports_active.png") !important;
+}
+
+#navigate-notes {
+  bottom: 1.25rem;
+  right: 3.55rem;
+  background-image: url("images/button_notes_normal.png");
+}
+
+#app.mouse #navigate-notes:hover {
+  background-image: url("images/button_notes_hover.png");
+}
+
+#navigate-notes:active {
+  background-image: url("images/button_notes_active.png") !important;
+}
+
+#server-time-label {
+  position: absolute;
+  right: 12.9rem;
+  top: 3.6rem;
+  text-align: right;
+  font-family: Zekton-CondensedItalic, sans-serif;
+  font-size: 1rem;
+  color: var(--color-text-light);
+  text-shadow: rgba(0, 0, 0, 1) 0 0 0.2rem;
+}
+
+#server-time {
+  position: absolute;
+  left: 13.25rem;
+  top: 3.78rem;
+}
+
+#current-planet-name {
+  position: absolute;
+  left: 2.7rem;
+  top: 8.235rem;
+  max-width: 19rem;
+}
+
+.navigation-main .button-triangular{
+  top: 10.6rem;
+}
+
+#change-planet-previous {
+  left: 1.76rem;
+}
+
+#change-planet-hext {
+  left: 4.5rem;
+  transform: rotate(180deg);
+}
+
+#toggle-planet-dropdown {
+  left: 20.6rem;
+  transform: rotate(-90deg);
+}
+
+#planet-dropdown{
+  position: absolute;
+  top: 10.2rem;
+  left: 1.5rem;
+}
+
+#navigate-fleets-2 {
+  position: absolute;
+  top: 3.40rem;
+  left: 8.7rem;
+}
+
+section#nav-common,
+section#nav-planet,
+section#nav-production,
+section#nav-other {
+  left: 3.37rem;
+  width: 15.75rem;
+}
+
+section#nav-common {
+  top: 12.78rem;
+  height: 11.745rem;
+  padding-top: 0.45rem;
+}
+
+section#nav-planet {
+  top: 24.615rem;
+  height: 18.36rem;
+  padding-top: 0.855rem;
+}
+
+section#nav-production {
+  top: 43.02rem;
+  height: 13.95rem;
+  padding-top: 0.54rem;
+}
+
+section#nav-other {
+  top: 56.925rem;
+  height: 4.14em;
+  padding-top: 0.675rem;
+}
+
+section#nav-bottom {
+  top: 61.11rem;
+  left: 0;
+  height: 7.875rem;
+  width: 100%;
+}
+
+@media screen and (max-width: 600px) {
+  .navigation-main{
+    top: 0;
+  }
+  .navigation-main:not([data-expanded="true"]) {
+    transform: translateX(-110%);
+  }
+
+  #game-area {
+    margin-left: 0;
+    margin-right: 0;
+    max-width: 100%;
+  }
+}

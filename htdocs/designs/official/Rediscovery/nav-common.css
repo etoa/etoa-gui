@@ -1,0 +1,123 @@
+.servertime {
+  color: white;
+  font-family: Courier, monospace;
+  font-size: 1rem;
+}
+
+#app .button-attack {
+  display: block;
+  width: 7.6rem;
+  height: 2rem;
+  box-sizing: border-box;
+  padding-top: 0.2rem;
+  background-image: url("images/button_red_rectangular.png");
+  background-size: 100%;
+  text-align: center;
+  font-family: Ethnocentric, sans-serif;
+  font-size: 1.1rem;
+  color: rgba(255, 255, 255, 0.5);
+}
+
+#app.mouse .button-attack:hover {
+  box-shadow: rgba(255, 128, 128, 0.5) 0 0 1rem;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+#app .button-attack:active {
+  box-shadow: rgba(255, 192, 192, 0.5) 0 0 1rem !important;
+  color: rgba(255, 255, 255, 0.8) !important;
+}
+
+.attack-alert {
+  animation: alert 1s ease infinite;
+}
+
+.button-blue.text-glow-green{
+  text-shadow: lime 0 0 1rem, lime 0 0 0.5rem, lime 0 0 0.2rem;
+  color: #88FF88;
+}
+
+.button-triangular {
+  position: absolute;
+  width: 2rem;
+  height: 2rem;
+  background-image: url("images/button_triangular_blue_normal.png");
+  background-size: 100%;
+  background-position: center;
+}
+
+.button-triangular:hover {
+  background-image: url("images/button_triangular_blue_hover.png");
+  filter: drop-shadow(0 0 0.4rem var(--color-glow-blue));
+  background-position: center;
+  background-size: 100%;
+}
+
+.button-triangular:active,
+.button-blue:active {
+  filter: brightness(120%) !important;
+}
+
+.current-planet{
+  color: white;
+  font-family: Zekton, sans-serif;
+  font-size: 1rem;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.planet-dropdown {
+  background-color: #0d0d41;
+  border: 1px solid white;
+  width: 18rem;
+  display: none;
+  z-index: 999;
+}
+
+.planet-dropdown[data-expanded="true"] {
+  display: block;
+}
+
+.button-blue {
+  display: block;
+  width: 100%;
+  height: 2.025rem;
+  background-image: url("images/nav_main_button_normal.png");
+  background-size: 100%;
+  background-position: center;
+  background-repeat: no-repeat;
+  box-sizing: border-box;
+  padding: 0.22rem 1.2rem;
+  color: var(--color-text-lighter);
+  font-family: Zekton-BoldItalic, sans-serif;
+  font-size: 1.2rem;
+  text-shadow: black 0.05rem 0.05rem 0.1rem;
+}
+
+#app.mouse .button-blue:hover,
+#app.mouse .button-blue:active {
+  cursor: pointer;
+  background-image: url("images/nav_main_button_hover.png");
+  background-size: 100%;
+  color: white;
+  text-shadow: rgba(255, 255, 255, 1) 0 0 0.3rem;
+}
+
+@keyframes alert {
+  0% {
+    box-shadow: rgba(255, 0, 0, 1) 0 0 3rem;
+    color: rgba(255, 255, 255, 1);
+    text-shadow: rgba(255, 0, 0, 1) 0 0 0.1rem;
+  }
+  50% {
+    box-shadow: rgba(255, 0, 0, 0.5) 0 0 1rem;
+    color: rgba(255, 255, 255, 0.5);
+    text-shadow: rgba(255, 0, 0, 0.5) 0 0 0.1rem;
+  }
+  100% {
+    box-shadow: rgba(255, 0, 0, 1) 0 0 3rem;
+    color: rgba(255, 255, 255, 1);
+    text-shadow: rgba(255, 0, 0, 1) 0 0 0.1rem;
+  }
+}
