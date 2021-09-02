@@ -24,6 +24,7 @@ use EtoA\Ship\ShipDataRepository;
 use EtoA\Support\BBCodeUtils;
 use EtoA\Support\StringUtils;
 use EtoA\Technology\TechnologyDataRepository;
+use EtoA\Universe\Resources\ResourceNames;
 use EtoA\User\UserRepository;
 
 /**
@@ -618,7 +619,7 @@ function showAttackAbuseLogs($args = null, $limit = -1, $load = true)
 
 function showFleetLogs($args = null, $limit = 0)
 {
-    global $resNames, $app;
+    global $app;
 
     /** @var UserRepository $userRepository */
     $userRepository = $app[UserRepository::class];
@@ -745,7 +746,7 @@ function showFleetLogs($args = null, $limit = 0)
             foreach ($esres as $sd) {
                 array_push($eres, $sd);
             }
-            foreach ($resNames as $k => $v) {
+            foreach (ResourceNames::NAMES as $k => $v) {
                 echo "<tr><td>" . $v . "</td><td>" . StringUtils::formatNumber((int) $sres[$k]) . "</td><td>" . StringUtils::formatNumber((int) $eres[$k]) . "</td></tr>";
             }
             echo "<tr><td>Bewoner</td><td>" . StringUtils::formatNumber((int) $sres[5]) . "</td><td>" . StringUtils::formatNumber((int) $eres[5]) . "</td></tr>";
@@ -765,7 +766,7 @@ function showFleetLogs($args = null, $limit = 0)
                 foreach ($esres as $sd) {
                     array_push($eres, $sd);
                 }
-                foreach ($resNames as $k => $v) {
+                foreach (ResourceNames::NAMES as $k => $v) {
                     echo "<tr><td>" . $v . "</td><td>" . StringUtils::formatNumber((int) $sres[$k]) . "</td><td>" . StringUtils::formatNumber((int) $eres[$k]) . "</td></tr>";
                 }
                 echo "<tr><td>Bewoner</td><td>" . StringUtils::formatNumber((int) $sres[5]) . "</td><td>" . StringUtils::formatNumber((int) $eres[5]) . "</td></tr>";

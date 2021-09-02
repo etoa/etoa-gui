@@ -16,6 +16,7 @@ use EtoA\Technology\TechnologyRepository;
 use EtoA\Universe\Entity\EntityService;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Universe\Resources\BaseResources;
+use EtoA\Universe\Resources\ResourceNames;
 
 /**
  * Fleet launch class, provides the full workflow for starting a fleet
@@ -1020,7 +1021,7 @@ class FleetLaunch
     // subtracts the payload ress (not support/flight fuel and food)
     function finalLoadResource()
     {
-        global $resNames, $app;
+        global $app;
 
         /** @var PlanetRepository $planetRepository */
         $planetRepository = $app[PlanetRepository::class];
@@ -1028,7 +1029,7 @@ class FleetLaunch
         $this->sourceEntity->reloadRes();
         $resources = new BaseResources();
 
-        foreach ($resNames as $rk => $rn) {
+        foreach (ResourceNames::NAMES as $rk => $rn) {
             $id = $rk + 1;
             if ($this->res[$id] >= 0) {
                 $ammount = $this->res[$id];

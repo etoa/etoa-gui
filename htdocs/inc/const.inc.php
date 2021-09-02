@@ -179,8 +179,6 @@ define("RES_POWER", "Energie");
 define("RES_TIME", "Zeit");
 define("RES_FIELDS", "Felder");
 
-$resNames = array(RES_METAL, RES_CRYSTAL, RES_PLASTIC, RES_FUEL, RES_FOOD);
-
 define('RES_ICON_METAL', '<img class="resIcon" src="images/resources/metal_s.png" alt="' . RES_METAL . '" />');
 define('RES_ICON_CRYSTAL', '<img class="resIcon" src="images/resources/crystal_s.png" alt="' . RES_CRYSTAL . '" />');
 define('RES_ICON_PLASTIC', '<img class="resIcon" src="images/resources/plastic_s.png" alt="' . RES_PLASTIC . '" />');

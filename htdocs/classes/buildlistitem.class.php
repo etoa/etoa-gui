@@ -10,6 +10,7 @@ use EtoA\Race\RaceDataRepository;
 use EtoA\Support\StringUtils;
 use EtoA\Specialist\SpecialistService;
 use EtoA\Universe\Planet\PlanetRepository;
+use EtoA\Universe\Resources\ResourceNames;
 
 class BuildListItem
 {
@@ -210,7 +211,7 @@ class BuildListItem
     {
         if (!(count($this->costs) > 0 && !$levelUp) || !(count($this->nextCosts) > 0  && $levelUp)) {
             // TODO
-            global $resNames, $cp, $cu, $bl, $app;
+            global $cp, $cu, $bl, $app;
 
             /** @var BuildingRepository $buildingRepository */
             $buildingRepository = $app[BuildingRepository::class];
@@ -227,7 +228,7 @@ class BuildListItem
             $specialistBuildTimeFactor = $specialist !== null ? $specialist->timeBuildings : 1;
 
             $bc = array();
-            foreach ($resNames as $rk => $rn) {
+            foreach (ResourceNames::NAMES as $rk => $rn) {
                 $bc['costs' . $rk] = $specialistBuildingCostFactor * $this->building->costs[$rk] * pow($this->building->costsFactor, $this->level + $levelUp);
             }
 
@@ -350,7 +351,7 @@ class BuildListItem
     public function getPeopleOptimized()
     {
         // TODO
-        global $resNames, $cp, $cu, $app;
+        global $cp, $cu, $app;
 
         /** @var RaceDataRepository $raceRepository */
         $raceRepository = $app[RaceDataRepository::class];
@@ -363,7 +364,7 @@ class BuildListItem
         $specialistBuildTimeFactor = $specialist !== null ? $specialist->timeBuildings : 1;
 
         $bc = array();
-        foreach ($resNames as $rk => $rn) {
+        foreach (ResourceNames::NAMES as $rk => $rn) {
             $bc['costs' . $rk] = $specialistBuildingCostFactor * $this->building->costs[$rk] * pow($this->building->costsFactor, $this->level);
         }
         $bc['costs5'] = 0;      //Energie nicht als Ressource zählen
@@ -542,12 +543,12 @@ class BuildListItem
     public function getWaitingTime()
     {
         // TODO
-        global $cp, $resNames;
+        global $cp;
 
         $costs = $this->getBuildCosts(0);
         $wTime = array();
         // Wartezeiten auf Ressourcen berechnen
-        foreach ($resNames as $rk => $rn) {
+        foreach (ResourceNames::NAMES as $rk => $rn) {
             if ($cp->getProd($rk)) {
                 $wTime[$rk] = ceil(($costs['costs' . $rk] - $cp->getRes1($rk)) / $cp->getProd($rk) * 3600);
             } else
@@ -559,7 +560,7 @@ class BuildListItem
     public function waitingTimeString($type = 'build')
     {
         // TODO
-        global $cp, $resNames;
+        global $cp;
 
         $notAvStyle = " style=\"color:red;\"";
         if ($type == 'build')
@@ -569,7 +570,7 @@ class BuildListItem
 
         $wTime = array();
         // Wartezeiten auf Ressourcen berechnen
-        foreach ($resNames as $rk => $rn) {
+        foreach (ResourceNames::NAMES as $rk => $rn) {
             if ($cp->getProd($rk)) {
                 $wTime[$rk] = ceil(($costs['costs' . $rk] - $cp->getRes1($rk)) / $cp->getProd($rk) * 3600);
             } else
@@ -578,7 +579,7 @@ class BuildListItem
         $wTime['max'] = max($wTime);
 
         $wTime['string'] = "";
-        foreach ($resNames as $rk => $rn) {
+        foreach (ResourceNames::NAMES as $rk => $rn) {
             $wTime['string'] .= '<td ';
             if ($costs['costs' . $rk] > $cp->getRes1($rk)) {
                 $wTime['string'] .= $notAvStyle . ' ' . tm('Fehlender Rohstoff', '<strong>' . StringUtils::formatNumber(ceil($costs['costs' . $rk] - $cp->getRes1($rk))) . '</strong> ' . $rn . '<br />Bereit in <strong>' . StringUtils::formatTimespan($wTime[$rk]) . '</strong>');

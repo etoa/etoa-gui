@@ -12,6 +12,7 @@ use EtoA\Specialist\SpecialistService;
 use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Entity\EntityService;
 use EtoA\Universe\Planet\PlanetRepository;
+use EtoA\Universe\Resources\ResourceNames;
 use EtoA\User\UserMultiRepository;
 use EtoA\User\UserRatingService;
 
@@ -36,8 +37,8 @@ $specialistService = $app[SpecialistService::class];
 $cnt = 0;
 $cnt_error = 0;
 
-$supplyTotal = array_fill(0, count($resNames), 0);
-$demandTotal = array_fill(0, count($resNames), 0);
+$supplyTotal = array_fill(0, count(ResourceNames::NAMES), 0);
+$demandTotal = array_fill(0, count(ResourceNames::NAMES), 0);
 
 if (isset($_POST['ressource_market_id'])) {
     foreach ($_POST['ressource_market_id'] as $num => $id) {
@@ -52,7 +53,7 @@ if (isset($_POST['ressource_market_id'])) {
             $sellarr = array();
             $buyResource = $offer->getBuyResources();
             $sellResources = $offer->getSellResources();
-            foreach ($resNames as $rk => $rn) {
+            foreach (ResourceNames::NAMES as $rk => $rn) {
                 $buyarr[$rk] = $buyResource->get($rk);
                 $sellarr[$rk] = $sellResources->get($rk);
             }
@@ -94,7 +95,7 @@ if (isset($_POST['ressource_market_id'])) {
                 $marketResourceRepository->delete($offer->id);
 
                 // Add values for market rate calculation and
-                foreach ($resNames as $rk => $rn) {
+                foreach (ResourceNames::NAMES as $rk => $rn) {
                     $supplyTotal[$rk] += $sellarr[$rk];
                     $demandTotal[$rk] += $buyarr[$rk];
                 }

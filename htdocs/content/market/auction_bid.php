@@ -9,6 +9,7 @@ use EtoA\Support\RuntimeDataStore;
 use EtoA\Support\StringUtils;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Universe\Resources\BaseResources;
+use EtoA\Universe\Resources\ResourceNames;
 use EtoA\User\UserMultiRepository;
 use EtoA\User\UserRatingService;
 
@@ -26,7 +27,7 @@ $logRepository = $app[LogRepository::class];
 // Speichert Bieterangebot in Array
 $buyRes = array();
 $newBuyResource = new BaseResources();
-foreach ($resNames as $rk => $rn) {
+foreach (ResourceNames::NAMES as $rk => $rn) {
     if (isset($_POST['new_buy_' . $rk])) {
         $newBuyResource->set($rk, StringUtils::parseFormattedNumber($_POST['new_buy_' . $rk]));
         $buyRes[$rk] = StringUtils::parseFormattedNumber($_POST['new_buy_' . $rk]);
@@ -46,7 +47,7 @@ if ($auction !== null && $auction->dateEnd > time()) {
 
         $sellResources = $auction->getSellResources();
         $currentBuyResources = $auction->getBuyResources();
-        foreach ($resNames as $rk => $rn) {
+        foreach (ResourceNames::NAMES as $rk => $rn) {
             $rate = (float) $runtimeDataStore->get('market_rate_' . $rk, (string) 1);
 
             // Errechnet Rohstoffwert vom Angebot
@@ -72,7 +73,7 @@ if ($auction !== null && $auction->dateEnd > time()) {
                 }
 
                 $bid = new BaseResources();
-                foreach ($resNames as $rk => $rn) {
+                foreach (ResourceNames::NAMES as $rk => $rn) {
                     $bid->set($rk, $buyRes[$rk]);
                 }
 
@@ -142,7 +143,7 @@ if ($auction !== null && $auction->dateEnd > time()) {
                 }
 
                 $bid = new BaseResources();
-                foreach ($resNames as $rk => $rn) {
+                foreach (ResourceNames::NAMES as $rk => $rn) {
                     $bid->set($rk, $buyRes[$rk]);
                 }
 

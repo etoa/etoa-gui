@@ -9,6 +9,7 @@ use EtoA\Message\MarketReportRepository;
 use EtoA\Support\StringUtils;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Universe\Resources\BaseResources;
+use EtoA\Universe\Resources\ResourceNames;
 
 /** @var MarketReportRepository $marketReportRepository */
 $marketReportRepository = $app[MarketReportRepository::class];
@@ -27,7 +28,7 @@ $subtracted = [];
 $currency = new BaseResources();
 $sell = new BaseResources();
 
-foreach ($resNames as $rk => $rn) {
+foreach (ResourceNames::NAMES as $rk => $rn) {
     // Convert formatted number back to integer
     $_POST['auction_sell_' . $rk] = StringUtils::parseFormattedNumber($_POST['auction_sell_' . $rk]);
 
@@ -51,7 +52,7 @@ $ress_update = 0;
 if ($ok && $cp->checkRes($subtracted)) {
     // Rohstoffe + Taxe vom Planetenkonto abziehen
     $bidCosts = new BaseResources();
-    foreach ($resNames as $rk => $rn) {
+    foreach (ResourceNames::NAMES as $rk => $rn) {
         $bidCosts->set($rk, $subtracted[$rk]);
     }
     $planetRepository->removeResources($cp->id(), $bidCosts);

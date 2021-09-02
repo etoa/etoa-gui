@@ -12,6 +12,7 @@ use EtoA\Technology\TechnologyRepository;
 use EtoA\UI\ResourceBoxDrawer;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Technology\TechnologyDataRepository;
+use EtoA\Universe\Resources\ResourceNames;
 use EtoA\User\UserPropertiesRepository;
 
 /** @var ConfigurationService $config */
@@ -360,7 +361,7 @@ if (isset($cp)) {
                                 </td>
                                 <td>' . StringUtils::formatTimespan($costs['time']) . '</td>';
                     }
-                    foreach ($resNames as $rk => $rn) {
+                    foreach (ResourceNames::NAMES as $rk => $rn) {
                         echo '<td>' . StringUtils::formatNumber(ceil($costs['costs' . $rk])) . '</td>';
                     }
                     echo '<td>' . StringUtils::formatNumber(ceil($costs['costs5'])) . '</td>';
@@ -391,7 +392,7 @@ if (isset($cp)) {
                                     <input type="submit" class="button" name="command_demolish" value="Abreissen" onclick="if (this.value==\'Abreissen\'){return confirm(\'Geb&auml;de wirklich abreissen?\');}">
                                 </td>
                                 <td>' . StringUtils::formatTimespan($demolishCosts['time']) . '</td>';
-                    foreach ($resNames as $rk => $rn) {
+                    foreach (ResourceNames::NAMES as $rk => $rn) {
                         echo '<td>' . StringUtils::formatNumber(ceil($demolishCosts['costs' . $rk])) . '</td>';
                     }
                     echo '<td>' . StringUtils::formatNumber(ceil($demolishCosts['costs5'])) . '</td>';
@@ -414,7 +415,7 @@ if (isset($cp)) {
                     echo '<tr>
                                     <td width="90">N&auml;chste Stufe:</td>
                                     <td>' . StringUtils::formatTimespan($costs['time']) . '</td>';
-                    foreach ($resNames as $rk => $rn) {
+                    foreach (ResourceNames::NAMES as $rk => $rn) {
                         echo '<td>' . StringUtils::formatNumber(ceil($costs['costs' . $rk])) . '</td>';
                     }
                     echo '<td>' . StringUtils::formatNumber(ceil($costs['costs5'])) . '</td>';

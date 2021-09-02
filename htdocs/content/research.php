@@ -20,6 +20,7 @@ use EtoA\Technology\TechnologyTypeRepository;
 use EtoA\UI\ResourceBoxDrawer;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Technology\TechnologyDataRepository;
+use EtoA\Universe\Resources\ResourceNames;
 use EtoA\User\UserPropertiesRepository;
 
 /** @var ConfigurationService $config */
@@ -205,7 +206,7 @@ if (isset($cp)) {
                     $level = $techlist[$technology->id]->currentLevel;
                 }
 
-                foreach ($resNames as $rk => $rn) {
+                foreach (ResourceNames::NAMES as $rk => $rn) {
                     //BUGFIX by river: costsResearch factor. Still whole code is wrong, but at least consistent now.
                     $bc['costs' . $rk] = ($specialist !== null ? $specialist->costsTechnologies : 1) * $costs[$rk] * pow($technology->buildCostsFactor, $level);
                 }

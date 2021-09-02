@@ -13,6 +13,7 @@ use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Entity\EntityService;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Universe\Resources\BaseResources;
+use EtoA\Universe\Resources\ResourceNames;
 use EtoA\User\UserMultiRepository;
 use EtoA\User\UserRatingService;
 
@@ -44,7 +45,7 @@ foreach ($_POST['ship_market_id'] as $num => $id) {
     if ($offer !== null) {
         $buyarr = array();
         $costs = $offer->getCosts();
-        foreach ($resNames as $rk => $rn) {
+        foreach (ResourceNames::NAMES as $rk => $rn) {
             $buyarr[$rk] = $costs->get($rk);
         }
 
