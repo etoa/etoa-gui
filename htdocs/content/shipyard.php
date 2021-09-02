@@ -88,7 +88,7 @@ $planet = $planetRepo->find($cp->id);
 $technologyRepository = $app[TechnologyRepository::class];
 $techlist = $technologyRepository->getTechnologyLevels($cu->getId());
 
-$shipyard = $buildingRepository->getEntityBuilding($cu->getId(), $planet->id, SHIP_BUILDING_ID);
+$shipyard = $buildingRepository->getEntityBuilding($cu->getId(), $planet->id, BuildingId::SHIPYARD);
 
 //Tabulator var setzten (für das fortbewegen des cursors im forumular)
 $tabulator = 1;
@@ -281,7 +281,7 @@ if ($shipyard !== null && $shipyard->currentLevel > 0) {
         // people working changed
         if (isset($_POST['submit_people_form'])) {
             if (count($queue) === 0) {
-                $buildingRepository->setPeopleWorking($planet->id, SHIP_BUILDING_ID, StringUtils::parseFormattedNumber($_POST['peopleWorking']));
+                $buildingRepository->setPeopleWorking($planet->id, BuildingId::SHIPYARD, StringUtils::parseFormattedNumber($_POST['peopleWorking']));
                 //success_msg("Arbeiter zugeteilt!");
             } else
                 error_msg('Arbeiter konnten nicht zugeteilt werden!');

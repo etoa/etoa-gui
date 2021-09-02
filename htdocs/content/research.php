@@ -61,7 +61,7 @@ if (isset($cp)) {
 
     $bl = new BuildList($planet->id, $cu->id);
 
-    $researchBuilding = $buildingRepository->getEntityBuilding($cu->getId(), $planet->id, TECH_BUILDING_ID);
+    $researchBuilding = $buildingRepository->getEntityBuilding($cu->getId(), $planet->id, BuildingId::TECHNOLOGY);
     if ($researchBuilding !== null && $researchBuilding->currentLevel > 0) {
         define("GEN_TECH_LEVEL", $technologyRepository->getTechnologyLevel($cu->getId(), GEN_TECH_ID));
         $minBuildTimeFactor = (0.1 - (GEN_TECH_LEVEL / 100));
@@ -95,7 +95,7 @@ if (isset($cp)) {
         if (isset($_POST['submit_people_form_gen'])) {
 
             $set_people = StringUtils::parseFormattedNumber($_POST['peopleWorking']);
-            if (!$building_gen && $bl->setPeopleWorking(PEOPLE_BUILDING_ID, $set_people, true)) {
+            if (!$building_gen && $bl->setPeopleWorking(BuildingId::PEOPLE, $set_people, true)) {
                 success_msg("Arbeiter zugeteilt!");
                 $new_people_set = true;
             } else {
@@ -105,7 +105,7 @@ if (isset($cp)) {
 
         if (isset($_POST['submit_people_form'])) {
             $set_people = StringUtils::parseFormattedNumber($_POST['peopleWorking']);
-            if (!$building_something && $bl->setPeopleWorking(TECH_BUILDING_ID, $set_people, true)) {
+            if (!$building_something && $bl->setPeopleWorking(BuildingId::TECHNOLOGY, $set_people, true)) {
                 success_msg("Arbeiter zugeteilt!");
                 $new_people_set = true;
             } else {

@@ -1,5 +1,6 @@
 <?PHP
 
+use EtoA\Building\BuildingId;
 use EtoA\Building\BuildingRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Defense\DefenseRepository;
@@ -60,11 +61,11 @@ if ($cp) {
 
         //überprüft tätigkeit
         $workingStatus = [
-            SHIP_BUILDING_ID => $shipRepository->countBuildInProgress($cu->getId(), $planet->id),
-            DEF_BUILDING_ID => $defenseRepository->countBuildInProgress($cu->getId(), $planet->id),
-            TECH_BUILDING_ID => $technologyRepository->countResearchInProgress($cu->getId(), $planet->id),
-            BUILD_BUILDING_ID => $buildingRepository->countBuildInProgress($cu->getId(), $planet->id),
-            PEOPLE_BUILDING_ID =>  (int) $technologyRepository->isTechInProgress($cu->getId(), GEN_TECH_ID),
+            BuildingId::SHIPYARD => $shipRepository->countBuildInProgress($cu->getId(), $planet->id),
+            BuildingId::DEFENSE => $defenseRepository->countBuildInProgress($cu->getId(), $planet->id),
+            BuildingId::TECHNOLOGY => $technologyRepository->countResearchInProgress($cu->getId(), $planet->id),
+            BuildingId::BUILDING => $buildingRepository->countBuildInProgress($cu->getId(), $planet->id),
+            BuildingId::PEOPLE =>  (int) $technologyRepository->isTechInProgress($cu->getId(), GEN_TECH_ID),
         ];
 
         //
@@ -119,7 +120,7 @@ if ($cp) {
         if (count($workplaces) > 0) {
             $work_available = true;
             foreach ($workplaces as $workplace) {
-                if ($workplace->buildingId === PEOPLE_BUILDING_ID) {
+                if ($workplace->buildingId === BuildingId::PEOPLE) {
                     $requirements_passed = true;
                     $requirements = $technologyRequirementRepository->getRequirements(GEN_TECH_ID);
 
@@ -147,10 +148,10 @@ if ($cp) {
 
                 echo '<tr><td style="width:150px">';
                 switch ($workplace->buildingId) {
-                    case BUILD_BUILDING_ID:
+                    case BuildingId::BUILDING:
                         echo 'Bauhof';
                         break;
-                    case PEOPLE_BUILDING_ID:
+                    case BuildingId::PEOPLE:
                         echo 'Genlabor';
                         break;
                     default:

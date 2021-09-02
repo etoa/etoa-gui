@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\Building\BuildingDataRepository;
+use EtoA\Building\BuildingId;
 use EtoA\Building\BuildingRepository;
 use EtoA\Building\BuildingTypeDataRepository;
 use EtoA\Core\Configuration\ConfigurationService;
@@ -107,7 +108,7 @@ if (isset($cp)) {
 
         // people working changed
         if (isset($_POST['submit_people_form'])) {
-            if ($bl->setPeopleWorking(BUILD_BUILDING_ID, StringUtils::parseFormattedNumber($_POST['peopleWorking'])))
+            if ($bl->setPeopleWorking(BuildingId::BUILDING, StringUtils::parseFormattedNumber($_POST['peopleWorking'])))
                 success_msg("Arbeiter zugeteilt!");
             else
                 error_msg('Arbeiter konnten nicht zugeteilt werden!');

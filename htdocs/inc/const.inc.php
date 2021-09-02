@@ -321,25 +321,6 @@ define('SPY_DEFENSE_FACTOR_SHIPS', 0.5);
 // Spionageabwehr/Tarnabwehr: Gewichtung der Tarntechnik
 define('SPY_DEFENSE_FACTOR_TARN', 10);
 
-/***********/
-/* Gebäude */
-/***********/
-
-// Gebäude welches den Status des Bauhofes wiedergibt
-define("BUILD_BUILDING_ID", \EtoA\Building\BuildingId::BUILDING);
-
-// Gebäude welches den Status das Wohnheim wiedergibt
-define("PEOPLE_BUILDING_ID", \EtoA\Building\BuildingId::PEOPLE);
-
-// Gebäude welches den Status des Forschungslabors wiedergibt
-define("TECH_BUILDING_ID", \EtoA\Building\BuildingId::TECHNOLOGY);
-
-// Gebäude welches den Status der Schiffswerft wiedergibt
-define("SHIP_BUILDING_ID", \EtoA\Building\BuildingId::SHIPYARD);
-
-// Gebäude welches den Status der Waffenfabrik wiedergibt
-define("DEF_BUILDING_ID", \EtoA\Building\BuildingId::DEFENSE);
-
 /*************************/
 /* Flotten & Kampfsystem */
 /*************************/
