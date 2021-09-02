@@ -9,6 +9,7 @@ use EtoA\Log\GameLogFacility;
 use EtoA\Log\GameLogRepository;
 use EtoA\Log\GameLogSearch;
 use EtoA\Log\LogSeverity;
+use EtoA\Message\MessageCategoryId;
 use EtoA\Message\MessageRepository;
 use EtoA\Ship\ShipDataRepository;
 use EtoA\Support\BBCodeUtils;
@@ -222,7 +223,7 @@ function sendUrgendMsg($uid, $subject, $text)
     if ($text != "" && $subject != "") {
         /** @var \EtoA\Message\MessageRepository $messageRepository */
         $messageRepository = $app[\EtoA\Message\MessageRepository::class];
-        $messageRepository->createSystemMessage((int) $uid, USER_MSG_CAT_ID, $subject, $text);
+        $messageRepository->createSystemMessage((int) $uid, MessageCategoryId::USER, $subject, $text);
 
         $or->alert("Nachricht gesendet!");
         $or->assign('urgendmsgsubject', "value", "");

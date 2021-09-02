@@ -198,7 +198,7 @@ class MessageRepository extends AbstractRepository
                 ->setParameters([
                     'senderId' => $senderId,
                     'receiverId' => $receiverId,
-                    'catId' => $catId != 0 ? $catId : USER_MSG_CAT_ID,
+                    'catId' => $catId != 0 ? $catId : MessageCategoryId::USER,
                 ])
                 ->execute();
 

@@ -13,6 +13,7 @@ use EtoA\Fleet\FleetSearch;
 use EtoA\Log\LogFacility;
 use EtoA\Log\LogRepository;
 use EtoA\Log\LogSeverity;
+use EtoA\Message\MessageCategoryId;
 use EtoA\Message\MessageRepository;
 use EtoA\User\User;
 use EtoA\User\UserRepository;
@@ -118,7 +119,7 @@ class AllianceService
             return false;
         }
 
-        $this->messageRepository->createSystemMessage($user->id, MSG_ALLYMAIL_CAT, "Allianzaufnahme", "Du wurdest in die Allianz [b]" . $alliance->nameWithTag . "[/b] aufgenommen!");
+        $this->messageRepository->createSystemMessage($user->id, MessageCategoryId::ALLIANCE, "Allianzaufnahme", "Du wurdest in die Allianz [b]" . $alliance->nameWithTag . "[/b] aufgenommen!");
         $this->allianceHistoryRepository->addEntry($alliance->id, "[b]" . $user->nick . "[/b] wurde als neues Mitglied aufgenommen");
         $this->allianceMemberCosts->increase($alliance->id, $alliance->memberCount, $newMemberCount);
         $this->userRepository->setAllianceId($user->id, $alliance->id);
@@ -147,9 +148,9 @@ class AllianceService
         }
 
         if ($kick) {
-            $this->messageRepository->createSystemMessage($user->id, MSG_ALLYMAIL_CAT, "Allianzausschluss", "Du wurdest aus der Allianz [b]" . $alliance->nameWithTag . "[/b] ausgeschlossen!");
+            $this->messageRepository->createSystemMessage($user->id, MessageCategoryId::ALLIANCE, "Allianzausschluss", "Du wurdest aus der Allianz [b]" . $alliance->nameWithTag . "[/b] ausgeschlossen!");
         } else {
-            $this->messageRepository->createSystemMessage($alliance->founderId, MSG_ALLYMAIL_CAT, "Allianzaustritt", "Der Spieler " . $user->nick . " trat aus der Allianz aus!");
+            $this->messageRepository->createSystemMessage($alliance->founderId, MessageCategoryId::ALLIANCE, "Allianzaustritt", "Der Spieler " . $user->nick . " trat aus der Allianz aus!");
         }
 
         $this->allianceHistoryRepository->addEntry($alliance->id, "[b]" . $user->nick . "[/b] ist nun kein Mitglied mehr von uns.");
@@ -168,7 +169,7 @@ class AllianceService
         }
 
         $this->allianceHistoryRepository->addEntry($alliance->id, "Der Spieler [b]" . $founder->nick . "[/b] wird zum Gründer befördert.");
-        $this->messageRepository->createSystemMessage($founder->id, MSG_ALLYMAIL_CAT, "Gründer", "Du hast nun die Gründerrechte deiner Allianz!");
+        $this->messageRepository->createSystemMessage($founder->id, MessageCategoryId::ALLIANCE, "Gründer", "Du hast nun die Gründerrechte deiner Allianz!");
         $this->userService->addToUserLog($founder->id, "alliance", "{nick} ist nun Gründer der Allianz " . $alliance->nameWithTag);
 
         return true;

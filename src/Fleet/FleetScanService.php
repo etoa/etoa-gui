@@ -15,6 +15,7 @@ use EtoA\Defense\DefenseRepository;
 use EtoA\Fleet\Exception\FleetScanFailedException;
 use EtoA\Fleet\Exception\FleetScanPreconditionsNotMetException;
 use EtoA\Fleet\Exception\InvalidFleetScanParameterException;
+use EtoA\Message\MessageCategoryId;
 use EtoA\Message\MessageRepository;
 use EtoA\Ship\ShipDataRepository;
 use EtoA\Specialist\SpecialistDataRepository;
@@ -162,7 +163,7 @@ class FleetScanService
             if ($opJam > 0 && $targetOwner !== null) {
                 $this->messageRepository->createSystemMessage(
                     $targetOwner->id,
-                    SHIP_SPY_MSG_CAT_ID,
+                    MessageCategoryId::SHIP_SPY,
                     "Störsender erfolgreich",
                     "Eure Techniker haben festgestellt, dass von einem anderen Planeten eine Entschlüsselung eures Funkverkehrs versucht wurde. Daraufhin haben eure Störsender die Funknetze mit falschen Werten überlastet, so dass die gegnerische Analyse fehlschlug!"
                 );
@@ -185,7 +186,7 @@ class FleetScanService
         if ($targetOwner !== null) {
             $this->messageRepository->createSystemMessage(
                 $targetOwner->id,
-                SHIP_SPY_MSG_CAT_ID,
+                MessageCategoryId::SHIP_SPY,
                 "Funkstörung",
                 "Eure Flottenkontrolle hat soeben eine kurzzeitige Störung des Kommunikationsnetzes festgestellt. Es kann sein, dass fremde Spione in das Netz eingedrungen sind und Flottendaten geklaut haben."
             );
@@ -193,7 +194,7 @@ class FleetScanService
 
         $this->messageRepository->createSystemMessage(
             $currentUser->id,
-            SHIP_MISC_MSG_CAT_ID,
+            MessageCategoryId::MISC,
             "Kryptocenter-Bericht",
             $out
         );

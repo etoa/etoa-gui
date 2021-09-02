@@ -206,30 +206,6 @@ define('GALAXY_MAP_DOT_RADIUS', 3);
 define('GALAXY_MAP_WIDTH', 500);
 define('GALAXY_MAP_LEGEND_HEIGHT', 40);
 
-//
-// Nachrichten
-//
-
-// Cat-ID Persönliche Nachrichten
-define("USER_MSG_CAT_ID", 1);
-
-define('MISC_MSG_CAT_ID', 5);
-
-// Cat-ID Spionageberichte
-define("SHIP_SPY_MSG_CAT_ID", 2);
-
-// Cat-ID Kriegsberichte
-define("SHIP_WAR_MSG_CAT_ID", 3);
-
-// Cat-ID Überwachungsberichte
-define("SHIP_MONITOR_MSG_CAT_ID", 4);
-
-// Cat-ID Sonstige Nachrichten
-define("SHIP_MISC_MSG_CAT_ID", 5);
-
-// Cat-ID Allianz
-define("MSG_ALLYMAIL_CAT", 6);
-
 // Punkteberechnung
 define('DIPLOMACY_POINTS_PER_NEWS', 4);
 define('DIPLOMACY_POINTS_PER_PACT', 1);

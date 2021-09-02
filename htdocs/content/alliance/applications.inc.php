@@ -9,6 +9,7 @@ use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Log\LogFacility;
 use EtoA\Log\LogRepository;
 use EtoA\Log\LogSeverity;
+use EtoA\Message\MessageCategoryId;
 use EtoA\Support\BBCodeUtils;
 use EtoA\Support\StringUtils;
 use EtoA\User\UserRepository;
@@ -57,7 +58,7 @@ if ($userAlliancePermission->checkHasRights(AllianceRights::APPLICATIONS, $page)
                     // Nachricht an den Bewerber schicken
                     /** @var \EtoA\Message\MessageRepository $messageRepository */
                     $messageRepository = $app[\EtoA\Message\MessageRepository::class];
-                    $messageRepository->createSystemMessage($id, MSG_ALLYMAIL_CAT, "Bewerbung angenommen", "Deine Allianzbewerbung wurde angenommen!\n\n[b]Antwort:[/b]\n" . addslashes($_POST['application_answer_text'][$id]));
+                    $messageRepository->createSystemMessage($id, MessageCategoryId::ALLIANCE, "Bewerbung angenommen", "Deine Allianzbewerbung wurde angenommen!\n\n[b]Antwort:[/b]\n" . addslashes($_POST['application_answer_text'][$id]));
 
                     // Log schreiben
                     /** @var AllianceHistoryRepository $allianceHistoryRepository */
@@ -81,7 +82,7 @@ if ($userAlliancePermission->checkHasRights(AllianceRights::APPLICATIONS, $page)
                     // Nachricht an den Bewerber schicken
                     /** @var \EtoA\Message\MessageRepository $messageRepository */
                     $messageRepository = $app[\EtoA\Message\MessageRepository::class];
-                    $messageRepository->createSystemMessage($id, MSG_ALLYMAIL_CAT, "Bewerbung abgelehnt", "Deine Allianzbewerbung wurde abgelehnt!\n\n[b]Antwort:[/b]\n" . addslashes($_POST['application_answer_text'][$id]));
+                    $messageRepository->createSystemMessage($id, MessageCategoryId::ALLIANCE, "Bewerbung abgelehnt", "Deine Allianzbewerbung wurde abgelehnt!\n\n[b]Antwort:[/b]\n" . addslashes($_POST['application_answer_text'][$id]));
 
                     // Log schreiben
                     /** @var AllianceHistoryRepository $allianceHistoryRepository */
@@ -98,7 +99,7 @@ if ($userAlliancePermission->checkHasRights(AllianceRights::APPLICATIONS, $page)
                         // Nachricht an den Bewerber schicken
                         /** @var \EtoA\Message\MessageRepository $messageRepository */
                         $messageRepository = $app[\EtoA\Message\MessageRepository::class];
-                        $messageRepository->createSystemMessage($id, MSG_ALLYMAIL_CAT, "Bewerbung: Nachricht", "Antwort auf die Bewerbung an die Allianz [b]" . $alliance->nameWithTag . "[/b]:\n" . $_POST['application_answer_text'][$id] . "");
+                        $messageRepository->createSystemMessage($id, MessageCategoryId::ALLIANCE, "Bewerbung: Nachricht", "Antwort auf die Bewerbung an die Allianz [b]" . $alliance->nameWithTag . "[/b]:\n" . $_POST['application_answer_text'][$id] . "");
 
                         $cnt++;
                         success_msg($nick . ": Nachricht gesendet");

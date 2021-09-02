@@ -5,6 +5,7 @@ use EtoA\Alliance\AllianceDiplomacyRepository;
 use EtoA\Alliance\AllianceDiplomacySearch;
 use EtoA\Alliance\AllianceHistoryRepository;
 use EtoA\Alliance\AllianceRepository;
+use EtoA\Message\MessageCategoryId;
 use EtoA\Message\MessageRepository;
 use EtoA\User\UserRatingService;
 use Pimple\Container;
@@ -60,8 +61,8 @@ class WarPeaceUpdateTask implements IPeriodicTask
                 $this->allianceHistoryRepository->addEntry($war->alliance2Id, $text);
 
                 // Send message to leader
-                $this->messageRepository->createSystemMessage($this->allianceRepository->getFounderId($war->alliance1Id), MSG_ALLYMAIL_CAT, "Krieg beendet", $text . " Während dieser Friedenszeit kann kein neuer Krieg erklärt werden!");
-                $this->messageRepository->createSystemMessage($this->allianceRepository->getFounderId($war->alliance2Id), MSG_ALLYMAIL_CAT, "Krieg beendet", $text . " Während dieser Friedenszeit kann kein neuer Krieg erklärt werden!");
+                $this->messageRepository->createSystemMessage($this->allianceRepository->getFounderId($war->alliance1Id), MessageCategoryId::ALLIANCE, "Krieg beendet", $text . " Während dieser Friedenszeit kann kein neuer Krieg erklärt werden!");
+                $this->messageRepository->createSystemMessage($this->allianceRepository->getFounderId($war->alliance2Id), MessageCategoryId::ALLIANCE, "Krieg beendet", $text . " Während dieser Friedenszeit kann kein neuer Krieg erklärt werden!");
 
                 // Assing diplomacy points
                 $this->userRatingService->addDiplomacyRating(
@@ -86,8 +87,8 @@ class WarPeaceUpdateTask implements IPeriodicTask
                 $this->allianceHistoryRepository->addEntry($diplomacy->alliance2Id, $text);
 
                 // Send message to leader
-                $this->messageRepository->createSystemMessage($this->allianceRepository->getFounderId($diplomacy->alliance1Id), MSG_ALLYMAIL_CAT, "Friedensvertrag abgelaufen", $text);
-                $this->messageRepository->createSystemMessage($this->allianceRepository->getFounderId($diplomacy->alliance2Id), MSG_ALLYMAIL_CAT, "Friedensvertrag abgelaufen", $text);
+                $this->messageRepository->createSystemMessage($this->allianceRepository->getFounderId($diplomacy->alliance1Id), MessageCategoryId::ALLIANCE, "Friedensvertrag abgelaufen", $text);
+                $this->messageRepository->createSystemMessage($this->allianceRepository->getFounderId($diplomacy->alliance2Id), MessageCategoryId::ALLIANCE, "Friedensvertrag abgelaufen", $text);
 
                 $this->allianceDiplomacyRepository->deleteDiplomacy($diplomacy->id);
             }

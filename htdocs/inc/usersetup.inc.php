@@ -2,6 +2,7 @@
 
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\DefaultItem\DefaultItemRepository;
+use EtoA\Message\MessageCategoryId;
 use EtoA\Race\RaceDataRepository;
 use EtoA\Support\BBCodeUtils;
 use EtoA\Support\StringUtils;
@@ -385,7 +386,7 @@ if ($mode == "itemsets" && isset($planet)) {
 
         /** @var \EtoA\Message\MessageRepository $messageRepository */
         $messageRepository = $app[\EtoA\Message\MessageRepository::class];
-        $messageRepository->createSystemMessage($currentUser->id, USER_MSG_CAT_ID, 'Willkommen', $welcomeText->content);
+        $messageRepository->createSystemMessage($currentUser->id, MessageCategoryId::USER, 'Willkommen', $welcomeText->content);
     }
     echo '<input type="button" value="Zum Heimatplaneten" onclick="document.location=\'?page=planetoverview\'" />';
 } else {

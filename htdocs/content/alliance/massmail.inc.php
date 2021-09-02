@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\Alliance\AllianceRights;
+use EtoA\Message\MessageCategoryId;
 use EtoA\Message\MessageRepository;
 use EtoA\User\UserRepository;
 use EtoA\User\UserSearch;
@@ -28,7 +29,7 @@ if ($userAlliancePermission->checkHasRights(AllianceRights::MASS_MAIL, $page)) {
                     $allianceUserId,
                     $_POST['message_subject'],
                     $_POST['message_text'],
-                    MSG_ALLYMAIL_CAT
+                    MessageCategoryId::ALLIANCE
                 );
             }
             success_msg("Nachricht wurde gesendet!");
