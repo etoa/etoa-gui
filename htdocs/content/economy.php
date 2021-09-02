@@ -5,6 +5,7 @@ use EtoA\Building\BuildingDataRepository;
 use EtoA\Building\BuildingId;
 use EtoA\Building\BuildingRepository;
 use EtoA\Building\BuildingSearch;
+use EtoA\Building\BuildingTypeId;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Race\RaceDataRepository;
 use EtoA\Ship\ShipDataRepository;
@@ -198,7 +199,7 @@ if ($cp) {
             echo ">" . StringUtils::formatNumber(ceil($building_power_use * $buildlist->prodPercent)) . "</td>";
             echo "<td>";
 
-            if ($buildlist->buildType == RES_BUILDING_CAT) {
+            if ($buildlist->buildType == BuildingTypeId::RES) {
                 echo "<select name=\"buildlist_prod_percent[" . $building->id . "]\">\n";
                 $prod_percent = $buildlist->prodPercent;
                 for ($x = 0; $x < 1; $x += 0.1) {
