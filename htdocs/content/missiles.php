@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\Bookmark\BookmarkRepository;
+use EtoA\Building\BuildingId;
 use EtoA\Building\BuildingRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Missile\MissileDataRepository;
@@ -59,7 +60,7 @@ $planet = $planetRepo->find($cp->id);
 echo "<form action=\"?page=$page\" method=\"post\">";
 
 // Gebäude Level und Arbeiter laden
-$missileBuilding = $buildingRepository->getEntityBuilding($cu->getId(), $planet->id, BUILD_MISSILE_ID);
+$missileBuilding = $buildingRepository->getEntityBuilding($cu->getId(), $planet->id, BuildingId::MISSILE);
 
 // Prüfen ob Gebäude gebaut ist
 if ($missileBuilding !== null && $missileBuilding->currentLevel > 0) {

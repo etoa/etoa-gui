@@ -4,6 +4,7 @@ use EtoA\Building\BuildingRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Defense\DefenseDataRepository;
 use EtoA\Defense\DefenseRepository;
+use EtoA\Message\MessageCategoryId;
 use EtoA\Message\MessageRepository;
 use EtoA\Missile\Missile;
 use EtoA\Missile\MissileDataRepository;
@@ -59,7 +60,7 @@ class MissileBattleHandler
 
             // Schickt Nachricht an den Angreifer
             $msg = $config->param2('battleban_arrival_text');
-            $messageRepository->createSystemMessage($planetUserId, SHIP_WAR_MSG_CAT_ID, 'Ergebnis des Raketenangriffs', $msg);
+            $messageRepository->createSystemMessage($planetUserId, MessageCategoryId::SHIP_WAR, 'Ergebnis des Raketenangriffs', $msg);
 
             return;
         }
@@ -233,8 +234,8 @@ class MissileBattleHandler
                     $missileRepository->setMissileCount($itemId, $count);
                 }
 
-                $messageRepository->createSystemMessage($flight->entityFromId, SHIP_WAR_MSG_CAT_ID, 'Ergebnis des Raketenangriffs', $msg_a);
-                $messageRepository->createSystemMessage($targetUserId, SHIP_WAR_MSG_CAT_ID, 'Raketenangriff', $msg_d);
+                $messageRepository->createSystemMessage($flight->entityFromId, MessageCategoryId::SHIP_WAR, 'Ergebnis des Raketenangriffs', $msg_a);
+                $messageRepository->createSystemMessage($targetUserId, MessageCategoryId::SHIP_WAR, 'Raketenangriff', $msg_d);
             }
         }
     }

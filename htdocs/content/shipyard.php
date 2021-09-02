@@ -18,6 +18,7 @@ use EtoA\Ship\ShipSearch;
 use EtoA\Ship\ShipSort;
 use EtoA\Support\StringUtils;
 use EtoA\Specialist\SpecialistService;
+use EtoA\Technology\TechnologyId;
 use EtoA\Technology\TechnologyRepository;
 use EtoA\UI\ResourceBoxDrawer;
 use EtoA\Universe\Planet\PlanetRepository;
@@ -88,7 +89,7 @@ $planet = $planetRepo->find($cp->id);
 $technologyRepository = $app[TechnologyRepository::class];
 $techlist = $technologyRepository->getTechnologyLevels($cu->getId());
 
-$shipyard = $buildingRepository->getEntityBuilding($cu->getId(), $planet->id, SHIP_BUILDING_ID);
+$shipyard = $buildingRepository->getEntityBuilding($cu->getId(), $planet->id, BuildingId::SHIPYARD);
 
 //Tabulator var setzten (für das fortbewegen des cursors im forumular)
 $tabulator = 1;
@@ -129,7 +130,7 @@ if ($shipyard !== null && $shipyard->currentLevel > 0) {
         $requirements = $shipRequirementRepository->getAll();
 
         //Gentechlevel definieren
-        $gen_tech_level = $techlist[GEN_TECH_ID] ?? 0;
+        $gen_tech_level = $techlist[TechnologyId::GEN] ?? 0;
 
         // Gebaute Schiffe laden
         /** @var array<int, array<int, int>> $shiplist */
@@ -281,7 +282,7 @@ if ($shipyard !== null && $shipyard->currentLevel > 0) {
         // people working changed
         if (isset($_POST['submit_people_form'])) {
             if (count($queue) === 0) {
-                $buildingRepository->setPeopleWorking($planet->id, SHIP_BUILDING_ID, StringUtils::parseFormattedNumber($_POST['peopleWorking']));
+                $buildingRepository->setPeopleWorking($planet->id, BuildingId::SHIPYARD, StringUtils::parseFormattedNumber($_POST['peopleWorking']));
                 //success_msg("Arbeiter zugeteilt!");
             } else
                 error_msg('Arbeiter konnten nicht zugeteilt werden!');

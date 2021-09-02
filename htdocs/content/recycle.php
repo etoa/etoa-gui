@@ -11,6 +11,7 @@ use EtoA\Ship\ShipDataRepository;
 use EtoA\Ship\ShipRepository;
 use EtoA\Ship\ShipSearch;
 use EtoA\Support\StringUtils;
+use EtoA\Technology\TechnologyId;
 use EtoA\Technology\TechnologyRepository;
 use EtoA\UI\ResourceBoxDrawer;
 use EtoA\Universe\Planet\PlanetRepository;
@@ -48,7 +49,7 @@ echo $resourceBoxDrawer->getHTML($planet);
 //Recycling Level laden
 /** @var TechnologyRepository $technologyRepository */
 $technologyRepository = $app[TechnologyRepository::class];
-$tech_level = $technologyRepository->getTechnologyLevel($cu->getId(), RECYC_TECH_ID);
+$tech_level = $technologyRepository->getTechnologyLevel($cu->getId(), TechnologyId::RECYCLING);
 
 if ($tech_level > 0) {
     $payback_max = RECYC_MAX_PAYBACK;

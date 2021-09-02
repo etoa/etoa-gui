@@ -2,8 +2,10 @@
 
 use EtoA\Backend\BackendMessageService;
 use EtoA\Building\BuildingDataRepository;
+use EtoA\Building\BuildingId;
 use EtoA\Building\BuildingRepository;
 use EtoA\Building\BuildingSearch;
+use EtoA\Building\BuildingTypeId;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Race\RaceDataRepository;
 use EtoA\Ship\ShipDataRepository;
@@ -11,6 +13,7 @@ use EtoA\Ship\ShipRepository;
 use EtoA\Ship\ShipSearch;
 use EtoA\Support\StringUtils;
 use EtoA\Specialist\SpecialistService;
+use EtoA\Technology\TechnologyId;
 use EtoA\Technology\TechnologyRepository;
 use EtoA\UI\ResourceBoxDrawer;
 use EtoA\Universe\Planet\PlanetRepository;
@@ -197,7 +200,7 @@ if ($cp) {
             echo ">" . StringUtils::formatNumber(ceil($building_power_use * $buildlist->prodPercent)) . "</td>";
             echo "<td>";
 
-            if ($buildlist->buildType == RES_BUILDING_CAT) {
+            if ($buildlist->buildType == BuildingTypeId::RES) {
                 echo "<select name=\"buildlist_prod_percent[" . $building->id . "]\">\n";
                 $prod_percent = $buildlist->prodPercent;
                 for ($x = 0; $x < 1; $x += 0.1) {
@@ -215,7 +218,7 @@ if ($cp) {
                 }
                 echo "</select>";
                 echo "&nbsp; <img src=\"misc/progress.image.php?w=50&p=" . ($buildlist->prodPercent * 100) . "\" alt=\"progress\" />";
-            } elseif ($building->id == BUILD_MISSILE_ID || $building->id == BUILD_CRYPTO_ID) {
+            } elseif ($building->id == BuildingId::MISSILE || $building->id == BuildingId::CRYPTO) {
                 echo "<select name=\"buildlist_prod_percent[" . $building->id . "]\">\n";
                 echo "<option value=\"1\"";
                 if ($buildlist->prodPercent == 1) echo " selected=\"selected\"";
@@ -326,8 +329,8 @@ if ($cp) {
     //
     // Resource Bunker
     //
-    $blvl = $buildingRepository->getBuildingLevel($cu->getId(), RES_BUNKER_ID, $planet->id);
-    $bunkerBuilding = $buildingDataRepository->getBuilding(RES_BUNKER_ID);
+    $blvl = $buildingRepository->getBuildingLevel($cu->getId(), BuildingId::RES_BUNKER, $planet->id);
+    $bunkerBuilding = $buildingDataRepository->getBuilding(BuildingId::RES_BUNKER);
     if ($blvl > 0) {
         iBoxStart("Rohstoffbunker");
         echo "In deinem <b>" . $bunkerBuilding->name . "</b> der Stufe <b>$blvl</b> werden bei einem
@@ -348,7 +351,7 @@ if ($cp) {
 
     /** @var TechnologyRepository $technologyRepository */
     $technologyRepository = $app[TechnologyRepository::class];
-    $energyTechLevel = $technologyRepository->getTechnologyLevel($cu->getId(), ENERGY_TECH_ID);
+    $energyTechLevel = $technologyRepository->getTechnologyLevel($cu->getId(), TechnologyId::ENERGY);
 
     $energyTechPowerBonusRequiredLevel = $config->getInt('energy_tech_power_bonus_required_level');
     if ($energyTechLevel > $energyTechPowerBonusRequiredLevel) {

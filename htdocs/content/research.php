@@ -12,6 +12,7 @@ use EtoA\Support\StringUtils;
 use EtoA\Specialist\SpecialistService;
 use EtoA\Support\BBCodeUtils;
 use EtoA\Technology\Technology;
+use EtoA\Technology\TechnologyId;
 use EtoA\Technology\TechnologyRepository;
 use EtoA\Technology\TechnologyRequirement;
 use EtoA\Technology\TechnologyRequirementRepository;
@@ -61,9 +62,9 @@ if (isset($cp)) {
 
     $bl = new BuildList($planet->id, $cu->id);
 
-    $researchBuilding = $buildingRepository->getEntityBuilding($cu->getId(), $planet->id, TECH_BUILDING_ID);
+    $researchBuilding = $buildingRepository->getEntityBuilding($cu->getId(), $planet->id, BuildingId::TECHNOLOGY);
     if ($researchBuilding !== null && $researchBuilding->currentLevel > 0) {
-        define("GEN_TECH_LEVEL", $technologyRepository->getTechnologyLevel($cu->getId(), GEN_TECH_ID));
+        define("GEN_TECH_LEVEL", $technologyRepository->getTechnologyLevel($cu->getId(), TechnologyId::GEN));
         $minBuildTimeFactor = (0.1 - (GEN_TECH_LEVEL / 100));
 
         // Überschrift
@@ -95,7 +96,7 @@ if (isset($cp)) {
         if (isset($_POST['submit_people_form_gen'])) {
 
             $set_people = StringUtils::parseFormattedNumber($_POST['peopleWorking']);
-            if (!$building_gen && $bl->setPeopleWorking(PEOPLE_BUILDING_ID, $set_people, true)) {
+            if (!$building_gen && $bl->setPeopleWorking(BuildingId::PEOPLE, $set_people, true)) {
                 success_msg("Arbeiter zugeteilt!");
                 $new_people_set = true;
             } else {
@@ -105,7 +106,7 @@ if (isset($cp)) {
 
         if (isset($_POST['submit_people_form'])) {
             $set_people = StringUtils::parseFormattedNumber($_POST['peopleWorking']);
-            if (!$building_something && $bl->setPeopleWorking(TECH_BUILDING_ID, $set_people, true)) {
+            if (!$building_something && $bl->setPeopleWorking(BuildingId::TECHNOLOGY, $set_people, true)) {
                 success_msg("Arbeiter zugeteilt!");
                 $new_people_set = true;
             } else {
@@ -180,7 +181,7 @@ if (isset($cp)) {
         $checker = ob_get_contents();
         ob_end_clean();
 
-        if ($bid == GEN_TECH_ID)
+        if ($bid == TechnologyId::GEN)
             $peopleFree = floor($planet->people) - $peopleWorking->total + ($peopleWorkingGen);
         else
             $peopleFree = floor($planet->people) - $peopleWorking->total + ($peopleWorkingResearch);
@@ -384,7 +385,7 @@ if (isset($cp)) {
 
                 // Berechnet mindest Bauzeit in beachtung von Gentechlevel
                 $btime_min = $btime * $minBuildTimeFactor;
-                if ($bid != GEN_TECH_ID) {
+                if ($bid != TechnologyId::GEN) {
                     $btime = $btime - $peopleWorkingResearch * $peopleTimeReduction;
                     if ($btime < $btime_min) {
                         $btime = $btime_min;
@@ -408,7 +409,7 @@ if (isset($cp)) {
                             $start_time = time();
                             $end_time = time() + $btime;
                             $technologyRepository->updateBuildStatus($cu->getId(), $planet->id, $technology->id, 3, $start_time, (int) $end_time);
-                            $buildingId = $technology->id === GEN_TECH_ID ? BuildingId::PEOPLE : BuildingId::TECHNOLOGY;
+                            $buildingId = $technology->id === TechnologyId::GEN ? BuildingId::PEOPLE : BuildingId::TECHNOLOGY;
                             $buildingRepository->markBuildingWorkingStatus($cu->getId(), $planet->id, $buildingId, true);
 
                             $planet_id = $planet->id;
@@ -459,7 +460,7 @@ if (isset($cp)) {
                         $fac = ($end_time - time()) / ($end_time - $start_time);
                         $technologyRepository->updateBuildStatus($cu->getId(), 0, $technology->id, 0, 0, 0);
 
-                        $buildingId = $technology->id === GEN_TECH_ID ? BuildingId::PEOPLE : BuildingId::TECHNOLOGY;
+                        $buildingId = $technology->id === TechnologyId::GEN ? BuildingId::PEOPLE : BuildingId::TECHNOLOGY;
                         $buildingRepository->markBuildingWorkingStatus($cu->getId(), $planet->id, $buildingId, false);
 
                         //Rohstoffe zurückgeben und aktualisieren
@@ -602,7 +603,7 @@ if (isset($cp)) {
                         // Es wird bereits geforscht
                         elseif ($building_something) {
                             //Sonderfeld Gentech
-                            if ($technology->id == GEN_TECH_ID) {
+                            if ($technology->id == TechnologyId::GEN) {
                                 if (!$building_gen) {
                                     echo "<tr><td><input type=\"submit\" class=\"button\" name=\"command_build\" value=\"Erforschen\"></td><td>" . StringUtils::formatTimespan($btime) . "</td>";
                                     echo "<td>" . StringUtils::formatNumber($bc['metal']) . "</td><td>" . StringUtils::formatNumber($bc['crystal']) . "</td><td>" . StringUtils::formatNumber($bc['plastic']) . "</td><td>" . StringUtils::formatNumber($bc['fuel']) . "</td><td>" . StringUtils::formatNumber($bc['food']) . "</td></tr>";

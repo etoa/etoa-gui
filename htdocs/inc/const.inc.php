@@ -206,30 +206,6 @@ define('GALAXY_MAP_DOT_RADIUS', 3);
 define('GALAXY_MAP_WIDTH', 500);
 define('GALAXY_MAP_LEGEND_HEIGHT', 40);
 
-//
-// Nachrichten
-//
-
-// Cat-ID Persönliche Nachrichten
-define("USER_MSG_CAT_ID", 1);
-
-define('MISC_MSG_CAT_ID', 5);
-
-// Cat-ID Spionageberichte
-define("SHIP_SPY_MSG_CAT_ID", 2);
-
-// Cat-ID Kriegsberichte
-define("SHIP_WAR_MSG_CAT_ID", 3);
-
-// Cat-ID Überwachungsberichte
-define("SHIP_MONITOR_MSG_CAT_ID", 4);
-
-// Cat-ID Sonstige Nachrichten
-define("SHIP_MISC_MSG_CAT_ID", 5);
-
-// Cat-ID Allianz
-define("MSG_ALLYMAIL_CAT", 6);
-
 // Punkteberechnung
 define('DIPLOMACY_POINTS_PER_NEWS', 4);
 define('DIPLOMACY_POINTS_PER_PACT', 1);
@@ -262,45 +238,10 @@ define("BUILDING_QUEUE_DELAY", 60);
 /* Technologien */
 /****************/
 
-// ID der Strukturtechnik
-define("STRUCTURE_TECH_ID", 9);
-
-// ID der Schildtechnik
-define("SHIELD_TECH_ID", 10);
-
-// ID der Waffentechnik
-define("WEAPON_TECH_ID", 8);
-
-// ID der Regenatechnik
-define("REGENA_TECH_ID", 19);
-
-// ID der Tarntechnik
-define("TARN_TECH_ID", 11);
-
-// ID der Tarntechnik
-define("COMPUTER_TECH_ID", 25);
-
-// ID der Recyclingtechnologie
-define("RECYC_TECH_ID", 12);
-
-// ID der Bombentechnik
-define("BOMB_TECH_ID", 15);
-
-// ID der Gentechnologie
-define('GEN_TECH_ID', 23);
-
-// ID der Energietechnologie
-define('ENERGY_TECH_ID', 3);
-
-// ID der Wurmlochforschung
-define("TECH_WORMHOLE", 22);
-
 //
 // Ab diesem Level Sieht man von gegnerischen flotten diese infos...
 //
 
-// ...Gebäude des Gegners
-define("SPY_TECH_ID", 7);
 // ...Gesinnung des Gegners (friedlich/feindlich)
 define("SPY_TECH_SHOW_ATTITUDE", 1);
 // ...Anzahl der Schiffe
@@ -344,56 +285,6 @@ define('SPY_DEFENSE_FACTOR_SHIPS', 0.5);
 
 // Spionageabwehr/Tarnabwehr: Gewichtung der Tarntechnik
 define('SPY_DEFENSE_FACTOR_TARN', 10);
-
-/***********/
-/* Gebäude */
-/***********/
-
-define("BUILDING_GENERAL_CAT", 1);
-define("BUILDING_RES_CAT", 2);
-define("BUILDING_POWER_CAT", 3);
-define("BUILDING_STORE_CAT", 4);
-
-define("RES_BUILDING_CAT", 2);
-
-// Gebäude welches den Status des Bauhofes wiedergibt
-define("BUILD_BUILDING_ID", \EtoA\Building\BuildingId::BUILDING);
-
-// Gebäude welches den Status das Wohnheim wiedergibt
-define("PEOPLE_BUILDING_ID", \EtoA\Building\BuildingId::PEOPLE);
-
-// Gebäude welches den Status des Forschungslabors wiedergibt
-define("TECH_BUILDING_ID", \EtoA\Building\BuildingId::TECHNOLOGY);
-
-// Gebäude welches den Status der Schiffswerft wiedergibt
-define("SHIP_BUILDING_ID", \EtoA\Building\BuildingId::SHIPYARD);
-
-// Gebäude welches den Status der Waffenfabrik wiedergibt
-define("DEF_BUILDING_ID", \EtoA\Building\BuildingId::DEFENSE);
-
-// ID der Schiffswerft
-define("SHIPYARD_ID", 9);
-
-// ID der Waffenfabrik
-define("FACTORY_ID", 10);
-
-// ID des Marktplatzes
-define('MARKTPLATZ_ID', 21);
-
-// ID der Flottenkontrolle
-define("FLEET_CONTROL_ID", 11);
-
-// ID des Kryptocenters
-define("BUILD_CRYPTO_ID", 24);
-
-// ID des Raketensilos
-define("BUILD_MISSILE_ID", 25);
-
-// ID des Rohstoffbunkers
-define("RES_BUNKER_ID", 26);
-
-// ID des Flottenbunkers
-define("FLEET_BUNKER_ID", 27);
 
 /*************************/
 /* Flotten & Kampfsystem */

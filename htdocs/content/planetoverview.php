@@ -11,6 +11,7 @@ use EtoA\Ship\ShipRepository;
 use EtoA\Support\BBCodeUtils;
 use EtoA\Support\StringUtils;
 use EtoA\Technology\TechnologyDataRepository;
+use EtoA\Technology\TechnologyId;
 use EtoA\Technology\TechnologyRepository;
 use EtoA\UI\ResourceBoxDrawer;
 use EtoA\Universe\Entity\EntityRepository;
@@ -360,16 +361,16 @@ if (isset($cp)) {
         $shipCounts = $shipRepo->getEntityShipCounts($cu->getId(), $planet->id);
         if (count($shipCounts) > 0) {
             $ships = $shipDataRepository->getAllShips(true);
-            $shield_tech_level = $techlist[SHIELD_TECH_ID] ?? 0;
+            $shield_tech_level = $techlist[TechnologyId::SHILED] ?? 0;
             $shield_tech_a = 1 + ($shield_tech_level / 10);
 
-            $structure_tech_level = $techlist[STRUCTURE_TECH_ID] ?? 0;
+            $structure_tech_level = $techlist[TechnologyId::STRUCTURE] ?? 0;
             $structure_tech_a = 1 + ($structure_tech_level / 10);
 
-            $weapon_tech_level = $techlist[WEAPON_TECH_ID] ?? 0;
+            $weapon_tech_level = $techlist[TechnologyId::WEAPON] ?? 0;
             $weapon_tech_a = 1 + ($weapon_tech_level / 10);
 
-            $heal_tech_level = $techlist[REGENA_TECH_ID] ?? 0;
+            $heal_tech_level = $techlist[TechnologyId::REGENA] ?? 0;
             $heal_tech_a = 1 + ($heal_tech_level / 10);
 
             $totalStructure = 0;
@@ -395,7 +396,7 @@ if (isset($cp)) {
                     <td>" . StringUtils::formatNumber($totalStructure) . "</td>
                     <td>" . StringUtils::formatNumber($totalStructure * ($structure_tech_a + $bonusStructure));
             if ($structure_tech_a > 1) {
-                echo " (" . StringUtils::formatPercentString($structure_tech_a, true) . " durch " . $techNames[STRUCTURE_TECH_ID] . " " . $structure_tech_level;
+                echo " (" . StringUtils::formatPercentString($structure_tech_a, true) . " durch " . $techNames[TechnologyId::STRUCTURE] . " " . $structure_tech_level;
                 if ($bonusStructure > 0)
                     echo ", " . StringUtils::formatPercentString((1 + $bonusStructure), true) . " durch Spezialschiffe";
                 echo ")";
@@ -405,7 +406,7 @@ if (isset($cp)) {
                     <td>" . StringUtils::formatNumber($totalShield) . "</td>
                     <td>" . StringUtils::formatNumber($totalShield * ($shield_tech_a + $bonusShield));
             if ($shield_tech_a > 1) {
-                echo " (" . StringUtils::formatPercentString($shield_tech_a, true) . " durch " . $techNames[SHIELD_TECH_ID] . " " . $shield_tech_level;
+                echo " (" . StringUtils::formatPercentString($shield_tech_a, true) . " durch " . $techNames[TechnologyId::SHILED] . " " . $shield_tech_level;
                 if ($bonusShield > 0)
                     echo ", " . StringUtils::formatPercentString((1 + $bonusShield), true) . " durch Spezialschiffe";
                 echo ")";
@@ -415,7 +416,7 @@ if (isset($cp)) {
                     <td>" . StringUtils::formatNumber($totalWeapon) . "</td>
                     <td>" . StringUtils::formatNumber($totalWeapon * ($weapon_tech_a + $bonusWeapon));
             if ($weapon_tech_a > 1) {
-                echo " (" . StringUtils::formatPercentString($weapon_tech_a, true) . " durch " . $techNames[WEAPON_TECH_ID] . " " . $weapon_tech_level;
+                echo " (" . StringUtils::formatPercentString($weapon_tech_a, true) . " durch " . $techNames[TechnologyId::WEAPON] . " " . $weapon_tech_level;
                 if ($bonusWeapon > 0)
                     echo ", " . StringUtils::formatPercentString((1 + $bonusWeapon), true) . " durch Spezialschiffe";
                 echo ")";
@@ -425,7 +426,7 @@ if (isset($cp)) {
                     <td>" . StringUtils::formatNumber($totalHeal) . "</td>
                     <td>" . StringUtils::formatNumber($totalHeal * ($heal_tech_a + $bonusHeal));
             if ($heal_tech_a > 1) {
-                echo " (" . StringUtils::formatPercentString($heal_tech_a, true) . " durch " . $techNames[REGENA_TECH_ID] . " " . $heal_tech_level;
+                echo " (" . StringUtils::formatPercentString($heal_tech_a, true) . " durch " . $techNames[TechnologyId::REGENA] . " " . $heal_tech_level;
                 if ($bonusHeal > 0)
                     echo ", " . StringUtils::formatPercentString((1 + $bonusHeal), true) . " durch Spezialschiffe";
                 echo ")";
@@ -460,16 +461,16 @@ if (isset($cp)) {
         echo "<div id=\"tabDefense\" style=\"" . ($sub == "defense" ? '' : 'display:none;') . "\">";
         tableStart("Kampfstärke");
         if (count($defenseCounts) > 0) {
-            $shield_tech_level = $techlist[SHIELD_TECH_ID] ?? 0;
+            $shield_tech_level = $techlist[TechnologyId::SHILED] ?? 0;
             $shield_tech_a = 1 + ($shield_tech_level / 10);
 
-            $structure_tech_level = $techlist[STRUCTURE_TECH_ID] ?? 0;
+            $structure_tech_level = $techlist[TechnologyId::STRUCTURE] ?? 0;
             $structure_tech_a = 1 + ($structure_tech_level / 10);
 
-            $weapon_tech_level = $techlist[WEAPON_TECH_ID] ?? 0;
+            $weapon_tech_level = $techlist[TechnologyId::WEAPON] ?? 0;
             $weapon_tech_a = 1 + ($weapon_tech_level / 10);
 
-            $heal_tech_level = $techlist[REGENA_TECH_ID] ?? 0;
+            $heal_tech_level = $techlist[TechnologyId::REGENA] ?? 0;
             $heal_tech_a = 1 + ($heal_tech_level / 10);
 
             $totalStructure = 0;
@@ -490,7 +491,7 @@ if (isset($cp)) {
                     <td>" . StringUtils::formatNumber($totalStructure) . "</td>
                     <td>" . StringUtils::formatNumber($totalStructure * ($structure_tech_a + $bonusStructure));
             if ($structure_tech_a > 1) {
-                echo " (" . StringUtils::formatPercentString($structure_tech_a, true) . " durch " . $techNames[STRUCTURE_TECH_ID] . " " . $structure_tech_level;
+                echo " (" . StringUtils::formatPercentString($structure_tech_a, true) . " durch " . $techNames[TechnologyId::STRUCTURE] . " " . $structure_tech_level;
                 if ($bonusStructure > 0)
                     echo ", " . StringUtils::formatPercentString((1 + $bonusStructure), true) . " durch Spezialschiffe";
                 echo ")";
@@ -500,7 +501,7 @@ if (isset($cp)) {
                     <td>" . StringUtils::formatNumber($totalShield) . "</td>
                     <td>" . StringUtils::formatNumber($totalShield * ($shield_tech_a + $bonusShield));
             if ($shield_tech_a > 1) {
-                echo " (" . StringUtils::formatPercentString($shield_tech_a, true) . " durch " . $techNames[SHIELD_TECH_ID] . " " . $shield_tech_level;
+                echo " (" . StringUtils::formatPercentString($shield_tech_a, true) . " durch " . $techNames[TechnologyId::SHILED] . " " . $shield_tech_level;
                 if ($bonusShield > 0)
                     echo ", " . StringUtils::formatPercentString((1 + $bonusShield), true) . " durch Spezialschiffe";
                 echo ")";
@@ -510,7 +511,7 @@ if (isset($cp)) {
                     <td>" . StringUtils::formatNumber($totalWeapon) . "</td>
                     <td>" . StringUtils::formatNumber($totalWeapon * ($weapon_tech_a + $bonusWeapon));
             if ($weapon_tech_a > 1) {
-                echo " (" . StringUtils::formatPercentString($weapon_tech_a, true) . " durch " . $techNames[WEAPON_TECH_ID] . " " . $weapon_tech_level;
+                echo " (" . StringUtils::formatPercentString($weapon_tech_a, true) . " durch " . $techNames[TechnologyId::WEAPON] . " " . $weapon_tech_level;
                 if ($bonusWeapon > 0)
                     echo ", " . StringUtils::formatPercentString((1 + $bonusWeapon), true) . " durch Spezialschiffe";
                 echo ")";
@@ -520,7 +521,7 @@ if (isset($cp)) {
                     <td>" . StringUtils::formatNumber($totalHeal) . "</td>
                     <td>" . StringUtils::formatNumber($totalHeal * ($heal_tech_a + $bonusHeal));
             if ($heal_tech_a > 1) {
-                echo " (" . StringUtils::formatPercentString($heal_tech_a, true) . " durch " . $techNames[REGENA_TECH_ID] . " " . $heal_tech_level;
+                echo " (" . StringUtils::formatPercentString($heal_tech_a, true) . " durch " . $techNames[TechnologyId::REGENA] . " " . $heal_tech_level;
                 if ($bonusHeal > 0)
                     echo ", " . StringUtils::formatPercentString((1 + $bonusHeal), true) . " durch Spezialschiffe";
                 echo ")";

@@ -49,6 +49,7 @@ use EtoA\Alliance\AllianceHistoryRepository;
 use EtoA\Alliance\AllianceRepository;
 use EtoA\Alliance\AllianceRights;
 use EtoA\Alliance\Board\AllianceBoardTopicRepository;
+use EtoA\Message\MessageCategoryId;
 use EtoA\Message\MessageRepository;
 use EtoA\Support\BBCodeUtils;
 use EtoA\Support\StringUtils;
@@ -281,7 +282,7 @@ if ($userAlliancePermission->checkHasRights(AllianceRights::RELATIONS, $page)) {
 
                 //Nachricht an den Leader der gegnerischen Allianz schreiben
                 $founderId = $allianceRepository->getFounderId($id);
-                $messageRepository->createSystemMessage($founderId, MSG_ALLYMAIL_CAT, 'Bündnisanfrage', "Die Allianz [b]" . $allianceNamesWithTags[$cu->allianceId] . "[/b] fragt euch für ein Bündnis an.\n
+                $messageRepository->createSystemMessage($founderId, MessageCategoryId::ALLIANCE, 'Bündnisanfrage', "Die Allianz [b]" . $allianceNamesWithTags[$cu->allianceId] . "[/b] fragt euch für ein Bündnis an.\n
                         [b]Text:[/b] " . addslashes($_POST['alliance_bnd_text']) . "\n
                         Geschrieben von [b]" . $cu->nick . "[/b].\n Gehe auf die [page=alliance]Allianzseite[/page] um die Anfrage zu bearbeiten!");
             }
@@ -303,7 +304,7 @@ if ($userAlliancePermission->checkHasRights(AllianceRights::RELATIONS, $page)) {
 
                 //Nachricht an den Leader der gegnerischen Allianz schreiben
                 $founderId = $allianceRepository->getFounderId($id);
-                $messageRepository->createSystemMessage($founderId, MSG_ALLYMAIL_CAT, 'Kriegserklärung', "Die Allianz [b]" . $allianceNamesWithTags[$cu->allianceId] . "[/b] erklärt euch den Krieg!\n
+                $messageRepository->createSystemMessage($founderId, MessageCategoryId::ALLIANCE, 'Kriegserklärung', "Die Allianz [b]" . $allianceNamesWithTags[$cu->allianceId] . "[/b] erklärt euch den Krieg!\n
                         Die Kriegserklärung wurde von [b]" . $cu->nick . "[/b] geschrieben.\n Geh auf die Allianzseite für mehr Details!");
             }
         }
@@ -344,7 +345,7 @@ if ($userAlliancePermission->checkHasRights(AllianceRights::RELATIONS, $page)) {
 
                 // Send message to leader
                 $founderId = $allianceRepository->getFounderId($opId);
-                $messageRepository->createSystemMessage($founderId, MSG_ALLYMAIL_CAT, "Bündnis " . $diplomacy->name . " beendet", "Die Allianz [b][" . $selfTag . "] " . $selfName . "[/b] beendet ihr Bündnis [b]" . $diplomacy->name . "[/b] mit eurer Allianz!\n
+                $messageRepository->createSystemMessage($founderId, MessageCategoryId::ALLIANCE, "Bündnis " . $diplomacy->name . " beendet", "Die Allianz [b][" . $selfTag . "] " . $selfName . "[/b] beendet ihr Bündnis [b]" . $diplomacy->name . "[/b] mit eurer Allianz!\n
                         Ausgelöst von [b]" . $cu->nick . "[/b].\nBegründung: " . $_POST['pact_end_text']);
 
                 echo "Das B&uuml;ndnis <b>" . $diplomacy->name . "</b> mit der Allianz <b>" . $opName . "</b> wurde aufgel&ouml;st!<br/><br/>";
@@ -361,7 +362,7 @@ if ($userAlliancePermission->checkHasRights(AllianceRights::RELATIONS, $page)) {
 
                 // Inform opposite leader
                 $otherAlliance = $allianceRepository->getAlliance($diplomacy->alliance2Id);
-                $messageRepository->createSystemMessage($otherAlliance->founderId, MSG_ALLYMAIL_CAT, "Anfrage zurückgenommen", "Die Allianz [b]" . $diplomacy->alliance1Name . "[/b] hat ihre Büdnisanfrage wieder zurückgezogen.");
+                $messageRepository->createSystemMessage($otherAlliance->founderId, MessageCategoryId::ALLIANCE, "Anfrage zurückgenommen", "Die Allianz [b]" . $diplomacy->alliance1Name . "[/b] hat ihre Büdnisanfrage wieder zurückgezogen.");
 
                 // Display message
                 echo "Anfrage gel&ouml;scht! Die Allianzleitung der Allianz <b>" . $diplomacy->otherAllianceName . "</b> wurde per Nachricht dar&uuml;ber informiert.<br/><br/>";
@@ -377,7 +378,7 @@ if ($userAlliancePermission->checkHasRights(AllianceRights::RELATIONS, $page)) {
                 // Send message to alliance leader
                 $otherFounderId = $allianceRepository->getFounderId($diplomacy->alliance1Id);
                 $text = "Das Bündnis [b]" . $diplomacy->name . "[/b] zwischen den Allianzen [b][" . $diplomacy->alliance1Tag . "] " . $diplomacy->alliance1Name . "[/b] und [b][" . $diplomacy->alliance2Tag . "] " . $diplomacy->alliance2Name . "[/b] ist zustande gekommen!\n\nBitte denke daran, einen öffentlichen Text zum Bündnis hinzuzufügen!\n[b]Nachricht:[/b] " . $_POST['pact_answer'];
-                $messageRepository->createSystemMessage($otherFounderId, MSG_ALLYMAIL_CAT, "Bündnis angenommen", $text);
+                $messageRepository->createSystemMessage($otherFounderId, MessageCategoryId::ALLIANCE, "Bündnis angenommen", $text);
 
                 // Log decision
                 $text = "Die Allianzen [b][" . $diplomacy->alliance1Tag . "] " . $diplomacy->alliance1Name . "[/b] und [b][" . $diplomacy->alliance2Tag . "] " . $diplomacy->alliance2Name . "[/b] schliessen ein Bündnis!";
@@ -399,7 +400,7 @@ if ($userAlliancePermission->checkHasRights(AllianceRights::RELATIONS, $page)) {
                 // Nachricht an den Leader der anfragenden Allianz
                 $otherFounderId = $allianceRepository->getFounderId($diplomacy->alliance1Id);
                 $text = "Die Bündnisanfrage [b]" . $diplomacy->name . "[/b] wurde von der Allianz [b][" . $diplomacy->alliance2Tag . "] " . $diplomacy->alliance2Name . "[/b] abgelehnt!\n\n[b]Nachricht:[/b] " . $_POST['pact_answer'];
-                $messageRepository->createSystemMessage($otherFounderId, MSG_ALLYMAIL_CAT, "Bündnisantrag abgelehnt", $text);
+                $messageRepository->createSystemMessage($otherFounderId, MessageCategoryId::ALLIANCE, "Bündnisantrag abgelehnt", $text);
 
                 // Löscht BND
                 $allianceDiplomacyRepository->deleteDiplomacy($diplomacy->id);

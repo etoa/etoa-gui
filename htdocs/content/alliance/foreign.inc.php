@@ -6,6 +6,7 @@ use EtoA\Alliance\AllianceRepository;
 use EtoA\Alliance\AllianceService;
 use EtoA\Alliance\InvalidAllianceParametersException;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Message\MessageCategoryId;
 use EtoA\Message\MessageRepository;
 use EtoA\Support\StringUtils;
 
@@ -38,7 +39,7 @@ if ($config->getBoolean("alliance_allow")) {
             // Bewerbung zurückziehen
             if (isset($_GET['action']) && $_GET['action'] == "cancelapplication") {
                 $alliance = $allianceRepository->getAlliance($application->allianceId);
-                $messageRepository->createSystemMessage($alliance->founderId, MSG_ALLYMAIL_CAT, "Bewerbung zurückgezogen", "Der Spieler " . $cu->nick . " hat die Bewerbung bei deiner Allianz zurückgezogen!");
+                $messageRepository->createSystemMessage($alliance->founderId, MessageCategoryId::ALLIANCE, "Bewerbung zurückgezogen", "Der Spieler " . $cu->nick . " hat die Bewerbung bei deiner Allianz zurückgezogen!");
                 $allianceHistoryRepository->addEntry($application->allianceId, "Der Spieler [b]" . $cu->nick . "[/b] zieht seine Bewerbung zurück.");
                 $allianceApplicationRepository->deleteApplication($cu->getId(), $application->allianceId);
                 echo "Deine Bewerbung wurde gel&ouml;scht!<br/><br/>
@@ -134,7 +135,7 @@ if ($config->getBoolean("alliance_allow")) {
                 $aid = (int) $_POST['user_alliance_id'];
                 if ($_POST['user_alliance_application'] != '') {
                     $alliance = $allianceRepository->getAlliance($aid);
-                    $messageRepository->createSystemMessage($alliance->founderId, MSG_ALLYMAIL_CAT, "Bewerbung", "Der Spieler " . $cu->nick . " hat sich bei deiner Allianz beworben. Gehe auf die [page=alliance&action=applications]Allianzseite[/page] für Details!");
+                    $messageRepository->createSystemMessage($alliance->founderId, MessageCategoryId::ALLIANCE, "Bewerbung", "Der Spieler " . $cu->nick . " hat sich bei deiner Allianz beworben. Gehe auf die [page=alliance&action=applications]Allianzseite[/page] für Details!");
                     $allianceHistoryRepository->addEntry($aid, "Der Spieler [b]" . $cu->nick . "[/b] bewirbt sich sich bei der Allianz.");
                     $allianceApplicationRepository->addApplication($cu->getId(), $aid, $_POST['user_alliance_application']);
 

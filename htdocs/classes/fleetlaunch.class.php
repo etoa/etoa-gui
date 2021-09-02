@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\Alliance\AllianceDiplomacyRepository;
+use EtoA\Building\BuildingId;
 use EtoA\Building\BuildingRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Fleet\FleetRepository;
@@ -10,6 +11,7 @@ use EtoA\Race\RaceDataRepository;
 use EtoA\Ship\ShipRepository;
 use EtoA\Support\StringUtils;
 use EtoA\Specialist\SpecialistService;
+use EtoA\Technology\TechnologyId;
 use EtoA\Technology\TechnologyRepository;
 use EtoA\Universe\Entity\EntityService;
 use EtoA\Universe\Planet\PlanetRepository;
@@ -147,7 +149,7 @@ class FleetLaunch
         //Wormhole enable?
         /** @var TechnologyRepository $technologyRepository */
         $technologyRepository = $app[TechnologyRepository::class];
-        $this->wormholeEnable = $technologyRepository->getTechnologyLevel((int) $this->ownerId, TECH_WORMHOLE) > 0;
+        $this->wormholeEnable = $technologyRepository->getTechnologyLevel((int) $this->ownerId, TechnologyId::WORMHOLE) > 0;
     }
 
     //
@@ -185,7 +187,7 @@ class FleetLaunch
 
             /** @var BuildingRepository $buildingRepository */
             $buildingRepository = $app[BuildingRepository::class];
-            $fleetControl = $buildingRepository->getEntityBuilding((int) $this->ownerId, (int) $this->sourceEntity->id(), FLEET_CONTROL_ID);
+            $fleetControl = $buildingRepository->getEntityBuilding((int) $this->ownerId, (int) $this->sourceEntity->id(), BuildingId::FLEET_CONTROL);
 
             // Check if haven is out of order
             if (null === $fleetControl || $fleetControl->currentLevel === 0) {

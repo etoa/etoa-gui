@@ -1,11 +1,13 @@
 <?PHP
 
 use EtoA\Building\BuildingDataRepository;
+use EtoA\Building\BuildingId;
 use EtoA\Building\BuildingRepository;
 use EtoA\Building\BuildingTypeDataRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Support\StringUtils;
 use EtoA\Specialist\SpecialistService;
+use EtoA\Technology\TechnologyId;
 use EtoA\Technology\TechnologyRepository;
 use EtoA\UI\ResourceBoxDrawer;
 use EtoA\Universe\Planet\PlanetRepository;
@@ -107,7 +109,7 @@ if (isset($cp)) {
 
         // people working changed
         if (isset($_POST['submit_people_form'])) {
-            if ($bl->setPeopleWorking(BUILD_BUILDING_ID, StringUtils::parseFormattedNumber($_POST['peopleWorking'])))
+            if ($bl->setPeopleWorking(BuildingId::BUILDING, StringUtils::parseFormattedNumber($_POST['peopleWorking'])))
                 success_msg("Arbeiter zugeteilt!");
             else
                 error_msg('Arbeiter konnten nicht zugeteilt werden!');
@@ -225,7 +227,7 @@ if (isset($cp)) {
     //
     // create infobox incl. editable stuff for working people adjustements
     //
-    $genTechLevel = $techlist[GEN_TECH_ID] ?? 0;
+    $genTechLevel = $techlist[TechnologyId::GEN] ?? 0;
     tableStart('Bauhof-Infos');
     echo '<colgroup><col style="width:400px;"/><col/></colgroup>';
 

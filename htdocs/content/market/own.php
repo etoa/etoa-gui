@@ -1,5 +1,6 @@
 <?php
 
+use EtoA\Building\BuildingId;
 use EtoA\Building\BuildingRepository;
 use EtoA\Market\MarketAuctionRepository;
 use EtoA\Market\MarketResourceRepository;
@@ -35,7 +36,7 @@ if (isset($_POST['ship_cancel'])) {
 
         $offer = $marketShipRepository->getUserOffer($smid, $cu->getId());
         if ($offer !== null) {
-            $marketLevel = $buildingRepository->getBuildingLevel($cu->getId(), MARKTPLATZ_ID, $offer->entityId);
+            $marketLevel = $buildingRepository->getBuildingLevel($cu->getId(), BuildingId::MARKET, $offer->entityId);
             $return_factor = floor((1 - 1 / ($marketLevel + 1)) * 100) / 100;
             $costs = $offer->getCosts();
             $returnCount = (int) floor($offer->count * $return_factor);
@@ -67,7 +68,7 @@ elseif (isset($_POST['ressource_cancel']) && isset($_POST['ressource_market_id']
     $offer = $marketResourceRepository->getUserOffer($rmid, $cu->getId());
     if ($offer !== null) {
         $rarr = array();
-        $marketLevel = $buildingRepository->getBuildingLevel($cu->getId(), MARKTPLATZ_ID, $offer->entityId);
+        $marketLevel = $buildingRepository->getBuildingLevel($cu->getId(), BuildingId::MARKET, $offer->entityId);
         $return_factor = floor((1 - 1 / ($marketLevel + 1)) * 100) / 100;
         $sellResources = $offer->getSellResources();
         $returnResources = new PreciseResources();
@@ -102,7 +103,7 @@ elseif (isset($_POST['auction_cancel']) && isset($_POST['auction_cancel_id'])) {
     if ($auction !== null) {
         // Rohstoffe zurückgeben
         $rarr = array();
-        $marketLevel = $buildingRepository->getBuildingLevel($cu->getId(), MARKTPLATZ_ID, $auction->entityId);
+        $marketLevel = $buildingRepository->getBuildingLevel($cu->getId(), BuildingId::MARKET, $auction->entityId);
         $return_factor = floor((1 - 1 / ($marketLevel + 1)) * 100) / 100;
         $sellResources = $auction->getSellResources();
         $returnResources = new PreciseResources();
@@ -165,7 +166,7 @@ else {
             $i = 0;
 
             $te = Entity::createFactoryById($offer->entityId);
-            $marketLevel = $buildingRepository->getBuildingLevel($cu->getId(), MARKTPLATZ_ID, $offer->entityId);
+            $marketLevel = $buildingRepository->getBuildingLevel($cu->getId(), BuildingId::MARKET, $offer->entityId);
             $return_factor = floor((1 - 1 / ($marketLevel + 1)) * 100) / 100;
             $info_string = "Wenn du das Angebot zur&uuml;ckziehst erh&auml;lst du " . ($return_factor * 100) . "% des Angebotes zur&uuml;ck (abgerundet).";
             if ($te != null) {
@@ -233,7 +234,7 @@ else {
 
             $i = 0;
             $resCnt = count($resNames);
-            $marketLevel = $buildingRepository->getBuildingLevel($cu->getId(), MARKTPLATZ_ID, $offer->entityId);
+            $marketLevel = $buildingRepository->getBuildingLevel($cu->getId(), BuildingId::MARKET, $offer->entityId);
             $return_factor = floor((1 - 1 / ($marketLevel + 1)) * 100) / 100;
             $info_string = "Wenn du das Angebot zur&uuml;ckziehst erh&auml;lst du " . ($return_factor * 100) . "% des Angebotes zur&uuml;ck (abgerundet).";
 
@@ -326,7 +327,7 @@ else {
                 }
             }
             echo "</td>";
-            $marketLevel = $buildingRepository->getBuildingLevel($cu->getId(), MARKTPLATZ_ID, $auction->entityId);
+            $marketLevel = $buildingRepository->getBuildingLevel($cu->getId(), BuildingId::MARKET, $auction->entityId);
             $return_factor = floor((1 - 1 / ($marketLevel + 1)) * 100) / 100;
             $info_string = "Wenn du das Angebot zur&uuml;ckziehst erh&auml;lst du " . ($return_factor * 100) . "% des Angebotes zur&uuml;ck (abgerundet).";
             echo "<td " . tt($info_string) . " style=\"width:100px;\">";

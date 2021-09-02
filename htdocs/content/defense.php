@@ -17,6 +17,7 @@ use EtoA\Log\GameLogRepository;
 use EtoA\Log\LogSeverity;
 use EtoA\Support\StringUtils;
 use EtoA\Specialist\SpecialistService;
+use EtoA\Technology\TechnologyId;
 use EtoA\Technology\TechnologyRepository;
 use EtoA\UI\ResourceBoxDrawer;
 use EtoA\Universe\Planet\PlanetRepository;
@@ -85,7 +86,7 @@ $planet = $planetRepo->find($cp->id);
 $tabulator = 1;
 
 //Fabrik Level und Arbeiter laden
-$factoryBuilding = $buildingRepository->getEntityBuilding($cu->getId(), $planet->id, FACTORY_ID);
+$factoryBuilding = $buildingRepository->getEntityBuilding($cu->getId(), $planet->id, BuildingId::DEFENSE);
 
 // Prüfen ob Fabrik gebaut ist
 if ($factoryBuilding !== null && $factoryBuilding->currentLevel > 0) {
@@ -130,8 +131,8 @@ if ($factoryBuilding !== null && $factoryBuilding->currentLevel > 0) {
         $technologyRepository = $app[TechnologyRepository::class];
         $techlist = $technologyRepository->getTechnologyLevels($cu->getId());
 
-        if (isset($techlist[GEN_TECH_ID]) && $techlist[GEN_TECH_ID] > 0) {
-            $gen_tech_level = $techlist[GEN_TECH_ID];
+        if (isset($techlist[TechnologyId::GEN]) && $techlist[TechnologyId::GEN] > 0) {
+            $gen_tech_level = $techlist[TechnologyId::GEN];
         }
 
         //Gebäude laden
@@ -285,7 +286,7 @@ if ($factoryBuilding !== null && $factoryBuilding->currentLevel > 0) {
         // people working changed
         if (isset($_POST['submit_people_form'])) {
             if (count($queue) === 0) {
-                $buildingRepository->setPeopleWorking($planet->id, DEF_BUILDING_ID, StringUtils::parseFormattedNumber($_POST['peopleWorking']));
+                $buildingRepository->setPeopleWorking($planet->id, BuildingId::DEFENSE, StringUtils::parseFormattedNumber($_POST['peopleWorking']));
                 //success_msg("Arbeiter zugeteilt!");
             } else
                 error_msg('Arbeiter konnten nicht zugeteilt werden!');
