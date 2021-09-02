@@ -5,6 +5,7 @@ use EtoA\Ship\ShipDataRepository;
 use EtoA\Ship\ShipRepository;
 use EtoA\Ship\ShipSearch;
 use EtoA\Ship\ShipSort;
+use EtoA\Universe\Resources\ResourceNames;
 
 /** @var ConfigurationService $config */
 $config = $app[ConfigurationService::class];
@@ -51,7 +52,7 @@ if ($possible > 0) {
 
         // Titan
         echo "<tr>
-                <th style=\"vertical-align:middle;\">" . RES_METAL . ":</th>
+                <th style=\"vertical-align:middle;\">" . ResourceNames::METAL . ":</th>
                 <td style=\"vertical-align:middle;\">
                     <input type=\"text\" value=\"0\" name=\"res_sell_0\" id=\"ress_sell_metal\" size=\"9\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value," . $cp->resMetal . ",'','');calcMarketRessPrice('0');\"/>
                 </td>
@@ -64,7 +65,7 @@ if ($possible > 0) {
 
         // Silizium
         echo "<tr>
-                <th style=\"vertical-align:middle;\">" . RES_CRYSTAL . ":</th>
+                <th style=\"vertical-align:middle;\">" . ResourceNames::CRYSTAL . ":</th>
                 <td style=\"vertical-align:middle;\">
                     <input type=\"text\" value=\"0\" name=\"res_sell_1\" id=\"ress_sell_crystal\" size=\"9\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value," . $cp->resCrystal . ",'','');calcMarketRessPrice('0');\"/>
                 </td>
@@ -77,7 +78,7 @@ if ($possible > 0) {
 
         // PVC
         echo "<tr>
-                <th style=\"vertical-align:middle;\">" . RES_PLASTIC . ":</th>
+                <th style=\"vertical-align:middle;\">" . ResourceNames::PLASTIC . ":</th>
                 <td style=\"vertical-align:middle;\">
                     <input type=\"text\" value=\"0\" name=\"res_sell_2\" id=\"ress_sell_plastic\" size=\"9\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value," . $cp->resPlastic . ",'','');calcMarketRessPrice('0');\"/>
                 </td>
@@ -90,7 +91,7 @@ if ($possible > 0) {
 
         // Tritium
         echo "<tr>
-                <th style=\"vertical-align:middle;\">" . RES_FUEL . ":</th>
+                <th style=\"vertical-align:middle;\">" . ResourceNames::FUEL . ":</th>
                 <td style=\"vertical-align:middle;\">
                     <input type=\"text\" value=\"0\" name=\"res_sell_3\" id=\"ress_sell_fuel\" size=\"9\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value," . $cp->resFuel . ",'','');calcMarketRessPrice('0');\"/>
                 </td>
@@ -103,7 +104,7 @@ if ($possible > 0) {
 
         // Nahrung
         echo "<tr>
-                <th style=\"vertical-align:middle;\">" . RES_FOOD . ":</th>
+                <th style=\"vertical-align:middle;\">" . ResourceNames::FOOD . ":</th>
                 <td style=\"vertical-align:middle;\">
                     <input type=\"text\" value=\"0\" name=\"res_sell_4\" id=\"ress_sell_food\" size=\"9\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value," . $cp->resFood . ",'','');calcMarketRessPrice('0');\"/>
                 </td>
@@ -235,7 +236,7 @@ if ($possible > 0) {
                 </tr>";
             // Titan
             echo "<tr>
-                    <th style=\"vertical-align:middle;\">" . RES_METAL . ":</th>
+                    <th style=\"vertical-align:middle;\">" . ResourceNames::METAL . ":</th>
                     <td id=\"ship_sell_metal_field\" style=\"vertical-align:middle;\">
                         <input type=\"text\" value=\"0\" name=\"ship_sell_metal\" id=\"ship_sell_metal\" size=\"7\" maxlength=\"15\" disabled=\"disabled\"/>
                     </td>
@@ -247,7 +248,7 @@ if ($possible > 0) {
                 </tr>";
             // Silizium
             echo "<tr>
-                    <th style=\"vertical-align:middle;\">" . RES_CRYSTAL . ":</th>
+                    <th style=\"vertical-align:middle;\">" . ResourceNames::CRYSTAL . ":</th>
                     <td id=\"ship_sell_crystal_field\" style=\"vertical-align:middle;\">
                         <input type=\"text\" value=\"0\" name=\"ship_sell_crystal\" id=\"ship_sell_crystal\" size=\"7\" maxlength=\"15\" disabled=\"disabled\"/>
                     </td>
@@ -259,7 +260,7 @@ if ($possible > 0) {
                 </tr>";
             // PVC
             echo "<tr>
-                    <th style=\"vertical-align:middle;\">" . RES_PLASTIC . ":</th>
+                    <th style=\"vertical-align:middle;\">" . ResourceNames::PLASTIC . ":</th>
                     <td id=\"ship_sell_plastic_field\" style=\"vertical-align:middle;\">
                         <input type=\"text\" value=\"0\" name=\"ship_sell_plastic\" id=\"ship_sell_plastic\" size=\"7\" maxlength=\"15\" disabled=\"disabled\"/>
                     </td>
@@ -271,7 +272,7 @@ if ($possible > 0) {
                 </tr>";
             // Tritium
             echo "<tr>
-                    <th style=\"vertical-align:middle;\">" . RES_FUEL . ":</th>
+                    <th style=\"vertical-align:middle;\">" . ResourceNames::FUEL . ":</th>
                     <td id=\"ship_sell_fuel_field\" style=\"vertical-align:middle;\">
                         <input type=\"text\" value=\"0\" name=\"ship_sell_fuel\" id=\"ship_sell_fuel\" size=\"7\" maxlength=\"15\" disabled=\"disabled\"/>
                     </td>
@@ -283,7 +284,7 @@ if ($possible > 0) {
                 </tr>";
             // Nahrung
             echo "<tr>
-                    <th style=\"vertical-align:middle;\">" . RES_FOOD . ":</th>
+                    <th style=\"vertical-align:middle;\">" . ResourceNames::FOOD . ":</th>
                     <td id=\"ship_sell_food_field\" style=\"vertical-align:middle;\">
                         <input type=\"text\" value=\"0\" name=\"ship_sell_food\" id=\"ship_sell_food\" size=\"7\" maxlength=\"15\" disabled=\"disabled\"/>
                     </td>
@@ -382,7 +383,7 @@ if ($possible > 0) {
 
         // Titan
         echo "<tr>
-                <th style=\"vertical-align:middle;\">" . RES_METAL . ":</th>
+                <th style=\"vertical-align:middle;\">" . ResourceNames::METAL . ":</th>
                 <td style=\"vertical-align:middle;\">
                     <input type=\"text\" value=\"0\" name=\"auction_sell_0\" id=\"auction_sell_metal\" size=\"7\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value," . $cp->resMetal . ",'','');checkMarketAuctionFormular(0);\"/>
                 </td>
@@ -395,7 +396,7 @@ if ($possible > 0) {
 
         // Silizium und "Dauer" Feld
         echo "<tr>
-                <th style=\"vertical-align:middle;\">" . RES_CRYSTAL . ":</th>
+                <th style=\"vertical-align:middle;\">" . ResourceNames::CRYSTAL . ":</th>
                 <td style=\"vertical-align:middle;\">
                     <input type=\"text\" value=\"0\" name=\"auction_sell_1\" id=\"auction_sell_crystal\" size=\"7\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value," . $cp->resCrystal . ",'','');checkMarketAuctionFormular(0);\"/>
                 </td>
@@ -426,7 +427,7 @@ if ($possible > 0) {
 
         // PVC
         echo "<tr>
-                <th style=\"vertical-align:middle;\">" . RES_PLASTIC . ":</th>
+                <th style=\"vertical-align:middle;\">" . ResourceNames::PLASTIC . ":</th>
                 <td style=\"vertical-align:middle;\">
                     <input type=\"text\" value=\"0\" name=\"auction_sell_2\" id=\"auction_sell_plastic\" size=\"7\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value," . $cp->resPlastic . ",'','');checkMarketAuctionFormular(0);\"/>
                 </td>
@@ -439,7 +440,7 @@ if ($possible > 0) {
 
         // Tritium und "Ende" Feld
         echo "<tr>
-                <th style=\"vertical-align:middle;\">" . RES_FUEL . ":</th>
+                <th style=\"vertical-align:middle;\">" . ResourceNames::FUEL . ":</th>
                 <td style=\"vertical-align:middle;\">
                     <input type=\"text\" value=\"0\" name=\"auction_sell_3\" id=\"auction_sell_fuel\" size=\"7\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value," . $cp->resFuel . ",'','');checkMarketAuctionFormular(0);\"/>
                 </td>
@@ -453,7 +454,7 @@ if ($possible > 0) {
 
         // Nahrung
         echo "<tr>
-                <th style=\"vertical-align:middle;\">" . RES_FOOD . ":</th>
+                <th style=\"vertical-align:middle;\">" . ResourceNames::FOOD . ":</th>
                 <td style=\"vertical-align:middle;\">
                     <input type=\"text\" value=\"0\" name=\"auction_sell_4\" id=\"auction_sell_food\" size=\"7\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value," . $cp->resFood . ",'','');checkMarketAuctionFormular(0);\"/>
                 </td>

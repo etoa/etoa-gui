@@ -169,16 +169,6 @@ define("RANDOM_EVENTS_PER_UPDATE", 1);
 // Homepage
 define('DEFAULT_PAGE', "overview");
 
-// Rohstoffbenennung
-define("RES_METAL", "Titan");
-define("RES_CRYSTAL", "Silizium");
-define("RES_PLASTIC", "PVC");
-define("RES_FUEL", "Tritium");
-define("RES_FOOD", "Nahrung");
-define("RES_POWER", "Energie");
-define("RES_TIME", "Zeit");
-define("RES_FIELDS", "Felder");
-
 // Regular expressions
 define('REGEXP_NAME', '/^.[^0-9\'\"\?\<\>\$\!\=\;\&]*$/');
 define('REGEXP_NICK', '/^.[^\'\"\?\<\>\$\!\=\;\&]*$/');

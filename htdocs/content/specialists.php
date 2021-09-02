@@ -13,6 +13,7 @@ use EtoA\Technology\TechnologyRepository;
 use EtoA\UI\ResourceBoxDrawer;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Universe\Resources\ResIcons;
+use EtoA\Universe\Resources\ResourceNames;
 use EtoA\User\UserRepository;
 
 /** @var SpecialistDataRepository $speciaistRepository */
@@ -275,11 +276,11 @@ foreach ($specialists as $specialist) {
     echo $avail . " / " . $totAvail;
     echo '</td>';
     echo '<td style="width:150px;">';
-    echo ResIcons::METAL . StringUtils::formatNumber($specialist->costsMetal * $factor) . ' ' . RES_METAL . '<br style="clear:both;"/>';
-    echo ResIcons::CRYSTAL . StringUtils::formatNumber($specialist->costsCrystal * $factor) . ' ' . RES_CRYSTAL . '<br style="clear:both;"/>';
-    echo ResIcons::PLASTIC . StringUtils::formatNumber($specialist->costsPlastic * $factor) . ' ' . RES_PLASTIC . '<br style="clear:both;"/>';
-    echo ResIcons::FUEL . StringUtils::formatNumber($specialist->costsFuel * $factor) . ' ' . RES_FUEL . '<br style="clear:both;"/>';
-    echo ResIcons::FOOD . StringUtils::formatNumber($specialist->costsFood * $factor) . ' ' . RES_FOOD . '<br style="clear:both;"/>';
+    echo ResIcons::METAL . StringUtils::formatNumber($specialist->costsMetal * $factor) . ' ' . ResourceNames::METAL . '<br style="clear:both;"/>';
+    echo ResIcons::CRYSTAL . StringUtils::formatNumber($specialist->costsCrystal * $factor) . ' ' . ResourceNames::CRYSTAL . '<br style="clear:both;"/>';
+    echo ResIcons::PLASTIC . StringUtils::formatNumber($specialist->costsPlastic * $factor) . ' ' . ResourceNames::PLASTIC . '<br style="clear:both;"/>';
+    echo ResIcons::FUEL . StringUtils::formatNumber($specialist->costsFuel * $factor) . ' ' . ResourceNames::FUEL . '<br style="clear:both;"/>';
+    echo ResIcons::FOOD . StringUtils::formatNumber($specialist->costsFood * $factor) . ' ' . ResourceNames::FOOD . '<br style="clear:both;"/>';
     echo '</td>';
     if (!$s_active) {
         echo '<td>';

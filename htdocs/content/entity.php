@@ -6,6 +6,7 @@ use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Entity\EntityType;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Universe\Resources\ResIcons;
+use EtoA\Universe\Resources\ResourceNames;
 use EtoA\User\UserRepository;
 use EtoA\User\UserUniverseDiscoveryService;
 
@@ -103,7 +104,7 @@ if ($id > 0) {
                     $fuelProdBonus = $planet->fuelProductionBonus();
                     $color = $fuelProdBonus >= 0 ? '#0f0' : '#f00';
                     echo "<span style=\"color:" . $color . "\">" . ($fuelProdBonus > 0 ? '+' : '') . $fuelProdBonus . "%</span>";
-                    echo " " . RES_FUEL . "-Produktion </td></tr>";
+                    echo " " . ResourceNames::FUEL . "-Produktion </td></tr>";
 
                     if (filled($planet->description)) {
                         echo "<tr>

@@ -509,11 +509,11 @@ if (isset($cp)) {
                     echo "<tr>
                             <th colspan=\"2\">Gebäude</th>
                             <th>Zeit</th>
-                            <th>" . RES_METAL . "</th>
-                            <th>" . RES_CRYSTAL . "</th>
-                            <th>" . RES_PLASTIC . "</th>
-                            <th>" . RES_FUEL . "</th>
-                            <th>" . RES_FOOD . "</th>
+                            <th>" . ResourceNames::METAL . "</th>
+                            <th>" . ResourceNames::CRYSTAL . "</th>
+                            <th>" . ResourceNames::PLASTIC . "</th>
+                            <th>" . ResourceNames::FUEL . "</th>
+                            <th>" . ResourceNames::FOOD . "</th>
                             <th>Ausbau</th>
                         </tr>";
                 }

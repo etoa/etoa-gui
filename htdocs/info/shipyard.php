@@ -6,6 +6,7 @@ use EtoA\Ship\ShipDataRepository;
 use EtoA\Ship\ShipRequirementRepository;
 use EtoA\Support\BBCodeUtils;
 use EtoA\Support\StringUtils;
+use EtoA\Universe\Resources\ResourceNames;
 
 define("RANKING_SHIP_STRUCTURE", 20000);
 define("RANKING_SHIP_SHIELD", 25000);
@@ -115,23 +116,23 @@ if (isset($_GET['id'])) {
             <td style=\"padding:0px;\">
             <table class=\"tb\">";
         echo "<tr>
-                        <td style=\"width:170px;font-weight:bold;\" class=\"resmetal\">" . RES_METAL . "</td>
+                        <td style=\"width:170px;font-weight:bold;\" class=\"resmetal\">" . ResourceNames::METAL . "</td>
                         <td style=\"width:350px\">" . StringUtils::formatNumber($ship->costsMetal) . " t</td>
                 </tr>";
         echo "<tr>
-                        <td style=\"font-weight:bold;\" class=\"rescrystal\">" . RES_CRYSTAL . "</td>
+                        <td style=\"font-weight:bold;\" class=\"rescrystal\">" . ResourceNames::CRYSTAL . "</td>
                         <td style=\"width:350px\">" . StringUtils::formatNumber($ship->costsCrystal) . " t</td>
                 </tr>";
         echo "<tr>
-                        <td style=\"font-weight:bold;\" class=\"resplastic\">" . RES_PLASTIC . "</td>
+                        <td style=\"font-weight:bold;\" class=\"resplastic\">" . ResourceNames::PLASTIC . "</td>
                         <td style=\"width:350px\">" . StringUtils::formatNumber($ship->costsPlastic) . " t</td>
                 </tr>";
         echo "<tr>
-                        <td style=\"font-weight:bold;\" class=\"resfuel\">" . RES_FUEL . "</td>
+                        <td style=\"font-weight:bold;\" class=\"resfuel\">" . ResourceNames::FUEL . "</td>
                         <td style=\"width:350px\">" . StringUtils::formatNumber($ship->costsFuel) . " t</td>
                 </tr>";
         echo "<tr>
-                        <td style=\"font-weight:bold;\" class=\"resfood\">" . RES_FOOD . "</td>
+                        <td style=\"font-weight:bold;\" class=\"resfood\">" . ResourceNames::FOOD . "</td>
                         <td style=\"width:350px\">" . StringUtils::formatNumber($ship->costsFood) . " t</td>
                 </tr>";
         echo "<tr>

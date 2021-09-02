@@ -65,7 +65,7 @@ if ($ok && $cp->checkRes($subtracted)) {
 
     //Nachricht senden
     $marketReportRepository->addAuctionReport($auctionId, $cu->getId(), $cp->id, 0, $sell, "auctionadd", $currency, $_POST['auction_text'], MARKET_TAX, $auction_end_time);
-    $logRepository->add(LogFacility::MARKET, LogSeverity::INFO, "Der Spieler " . $cu->nick . " hat folgende Rohstoffe zur versteigerung angeboten:\n\n" . RES_METAL . ": " . $sell->metal . "\n" . RES_CRYSTAL . ": " . $sell->crystal . "\n" . RES_PLASTIC . ": " . $sell->plastic . "\n" . RES_FUEL . ": " . $sell->fuel . "\n" . RES_FOOD . ": " . $sell->food . "\n\nAuktionsende: " . date("d.m.Y H:i", $auction_end_time) . "");
+    $logRepository->add(LogFacility::MARKET, LogSeverity::INFO, "Der Spieler " . $cu->nick . " hat folgende Rohstoffe zur versteigerung angeboten:\n\n" . ResourceNames::METAL . ": " . $sell->metal . "\n" . ResourceNames::CRYSTAL . ": " . $sell->crystal . "\n" . ResourceNames::PLASTIC . ": " . $sell->plastic . "\n" . ResourceNames::FUEL . ": " . $sell->fuel . "\n" . ResourceNames::FOOD . ": " . $sell->food . "\n\nAuktionsende: " . date("d.m.Y H:i", $auction_end_time) . "");
 
     // todo: report
 

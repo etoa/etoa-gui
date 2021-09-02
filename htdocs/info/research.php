@@ -4,6 +4,7 @@ use EtoA\Ship\ShipRequirementRepository;
 use EtoA\Support\BBCodeUtils;
 use EtoA\Support\StringUtils;
 use EtoA\Universe\Resources\ResIcons;
+use EtoA\Universe\Resources\ResourceNames;
 
 $techSpeedCategory = 1;
 echo "<h2>Technologien</h2>";
@@ -54,11 +55,11 @@ if (isset($_GET['id'])) {
         // Kostenentwicklung
         tableStart("Kostenentwicklung (Faktor: " . $technology->buildCostsFactor . ")");
         echo "<tr><th class=\"tbltitle\" style=\"text-align:center;\">Level</th>
-                  <th class=\"tbltitle\">" . ResIcons::METAL . "" . RES_METAL . "</th>
-                  <th class=\"tbltitle\">" . ResIcons::CRYSTAL . "" . RES_CRYSTAL . "</th>
-                  <th class=\"tbltitle\">" . ResIcons::PLASTIC . "" . RES_PLASTIC . "</th>
-                  <th class=\"tbltitle\">" . ResIcons::FUEL . "" . RES_FUEL . "</th>
-                  <th class=\"tbltitle\">" . ResIcons::FOOD . "" . RES_FOOD . "</th></tr>";
+                  <th class=\"tbltitle\">" . ResIcons::METAL . "" . ResourceNames::METAL . "</th>
+                  <th class=\"tbltitle\">" . ResIcons::CRYSTAL . "" . ResourceNames::CRYSTAL . "</th>
+                  <th class=\"tbltitle\">" . ResIcons::PLASTIC . "" . ResourceNames::PLASTIC . "</th>
+                  <th class=\"tbltitle\">" . ResIcons::FUEL . "" . ResourceNames::FUEL . "</th>
+                  <th class=\"tbltitle\">" . ResIcons::FOOD . "" . ResourceNames::FOOD . "</th></tr>";
         for ($x = 0; $x < min(30, $technology->lastLevel); $x++) {
             $bc = calcTechCosts($technology, $x);
             echo '<tr><td class="tbldata">' . ($x + 1) . '</td>

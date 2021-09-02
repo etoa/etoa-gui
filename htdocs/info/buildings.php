@@ -8,6 +8,7 @@ use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Support\BBCodeUtils;
 use EtoA\Support\StringUtils;
 use EtoA\Universe\Resources\ResIcons;
+use EtoA\Universe\Resources\ResourceNames;
 
 /** @var ConfigurationService $config */
 $config = $app[ConfigurationService::class];
@@ -66,7 +67,7 @@ if ($request->query->has('id') && $request->query->getInt('id') > 0) {
 
         // Metallmine
         if ($building->id === 1) {
-            tableStart("Produktion von " . RES_METAL . " (ohne Boni)");
+            tableStart("Produktion von " . ResourceNames::METAL . " (ohne Boni)");
             echo "<tr><th>Stufe</th><th>Produktion</th><th>Energie</th></tr>";
             for ($level = $b_level; $level < SHOWLEVELS + $b_level; $level++) {
                 $prod_item = round($building->prodMetal * pow($building->productionFactor, $level - 1));
@@ -83,7 +84,7 @@ if ($request->query->has('id') && $request->query->getInt('id') > 0) {
 
         // Siliziummine
         elseif ($building->id === 2) {
-            tableStart("Produktion von " . RES_CRYSTAL . " (ohne Boni)");
+            tableStart("Produktion von " . ResourceNames::CRYSTAL . " (ohne Boni)");
             echo "<tr><th>Stufe</th><th>Produktion</th><th>Energie</th></tr>";
             for ($level = $b_level; $level < SHOWLEVELS + $b_level; $level++) {
                 $prod_item = round($building->prodCrystal * pow($building->productionFactor, $level - 1));
@@ -100,7 +101,7 @@ if ($request->query->has('id') && $request->query->getInt('id') > 0) {
 
         // Chemiefabrik
         elseif ($building->id === 3) {
-            tableStart("Produktion von " . RES_PLASTIC . " (ohne Boni)");
+            tableStart("Produktion von " . ResourceNames::PLASTIC . " (ohne Boni)");
             echo "<tr><th>Stufe</th><th>Produktion</th><th>Energie</th></tr>";
             for ($level = $b_level; $level < SHOWLEVELS + $b_level; $level++) {
                 $prod_item = round($building->prodPlastic * pow($building->productionFactor, $level - 1));
@@ -117,7 +118,7 @@ if ($request->query->has('id') && $request->query->getInt('id') > 0) {
 
         // Tritiumsynthetizer
         elseif ($building->id === 4) {
-            tableStart("Produktion von " . RES_FUEL . " (ohne Boni)");
+            tableStart("Produktion von " . ResourceNames::FUEL . " (ohne Boni)");
             echo "<tr><th>Stufe</th><th>Produktion</th><th>Energie</th></tr>";
             for ($level = $b_level; $level < SHOWLEVELS + $b_level; $level++) {
                 $prod_item = round($building->prodFuel * pow($building->productionFactor, $level - 1));
@@ -134,7 +135,7 @@ if ($request->query->has('id') && $request->query->getInt('id') > 0) {
 
         // Gewächshaus
         elseif ($building->id === 5) {
-            tableStart("Produktion von " . RES_FOOD . " (ohne Boni)");
+            tableStart("Produktion von " . ResourceNames::FOOD . " (ohne Boni)");
             echo "<tr><th>Stufe</th><th>Produktion</th><th>Energie</th></tr>";
             for ($level = $b_level; $level < SHOWLEVELS + $b_level; $level++) {
                 $prod_item = round($building->prodFood * pow($building->productionFactor, $level - 1));
@@ -153,11 +154,11 @@ if ($request->query->has('id') && $request->query->getInt('id') > 0) {
         elseif ($building->id === 6) {
             tableStart("Produktion (ohne Boni)");
             echo "<tr><th>Rohstoff</th><th>Prod.</th><th>Lager</th></tr>";
-            echo "<tr><td>" . RES_METAL . "</td><td>" . StringUtils::formatNumber($building->prodMetal) . "</td><td>" . StringUtils::formatNumber($building->storeMetal) . "</td></tr>";
-            echo "<tr><td>" . RES_CRYSTAL . "</td><td>" . StringUtils::formatNumber($building->prodCrystal) . "</td><td>" . StringUtils::formatNumber($building->storeCrystal) . "</td></tr>";
-            echo "<tr><td>" . RES_PLASTIC . "</td><td>" . StringUtils::formatNumber($building->prodPlastic) . "</td><td>" . StringUtils::formatNumber($building->storePlastic) . "</td></tr>";
-            echo "<tr><td>" . RES_FUEL . "</td><td>" . StringUtils::formatNumber($building->prodFuel) . "</td><td>" . StringUtils::formatNumber($building->storeFuel) . "</td></tr>";
-            echo "<tr><td>" . RES_FOOD . "</td><td>" . StringUtils::formatNumber($building->prodFood) . "</td><td>" . StringUtils::formatNumber($building->storeFood) . "</td></tr>";
+            echo "<tr><td>" . ResourceNames::METAL . "</td><td>" . StringUtils::formatNumber($building->prodMetal) . "</td><td>" . StringUtils::formatNumber($building->storeMetal) . "</td></tr>";
+            echo "<tr><td>" . ResourceNames::CRYSTAL . "</td><td>" . StringUtils::formatNumber($building->prodCrystal) . "</td><td>" . StringUtils::formatNumber($building->storeCrystal) . "</td></tr>";
+            echo "<tr><td>" . ResourceNames::PLASTIC . "</td><td>" . StringUtils::formatNumber($building->prodPlastic) . "</td><td>" . StringUtils::formatNumber($building->storePlastic) . "</td></tr>";
+            echo "<tr><td>" . ResourceNames::FUEL . "</td><td>" . StringUtils::formatNumber($building->prodFuel) . "</td><td>" . StringUtils::formatNumber($building->storeFuel) . "</td></tr>";
+            echo "<tr><td>" . ResourceNames::FOOD . "</td><td>" . StringUtils::formatNumber($building->prodFood) . "</td><td>" . StringUtils::formatNumber($building->storeFood) . "</td></tr>";
             echo "<tr><td>Bewohner</td><td>-</td><td> " . StringUtils::formatNumber($building->peoplePlace) . " Plätze</td></tr>";
             echo "<tr><td>Energie</td><td>" . StringUtils::formatNumber($building->prodPower) . "</td><td>-</td></tr>";
             tableEnd();
@@ -299,7 +300,7 @@ if ($request->query->has('id') && $request->query->getInt('id') > 0) {
         // Orbitalplatform
         elseif ($building->id === 22) {
             tableStart("Zus&auml;tzliche Felder");
-            echo "<tr><th>Stufe</th><th>Felder</th><th>Energieverbrauch</th><th>Speicher " . RES_METAL . "</th><th>Speicher " . RES_CRYSTAL . "</th><th>Speicher " . RES_PLASTIC . "</th></tr>";
+            echo "<tr><th>Stufe</th><th>Felder</th><th>Energieverbrauch</th><th>Speicher " . ResourceNames::METAL . "</th><th>Speicher " . ResourceNames::CRYSTAL . "</th><th>Speicher " . ResourceNames::PLASTIC . "</th></tr>";
             for ($level = $b_level; $level < SHOWLEVELS + $b_level; $level++) {
                 $prod_item = round($building->fieldsProvide * pow($building->productionFactor, $level - 1));
                 $power_use = round($building->powerUse * pow($building->productionFactor, $level - 1));
@@ -391,11 +392,11 @@ if ($request->query->has('id') && $request->query->getInt('id') > 0) {
 
         tableStart("Kostenentwicklung (Faktor: " . $building->buildCostsFactor . ")");
         echo "<tr><th style=\"text-align:center;\">Level</th>
-                <th>" . ResIcons::METAL . "" . RES_METAL . "</th>
-                <th>" . ResIcons::CRYSTAL . "" . RES_CRYSTAL . "</th>
-                <th>" . ResIcons::PLASTIC . "" . RES_PLASTIC . "</th>
-                <th>" . ResIcons::FUEL . "" . RES_FUEL . "</th>
-            <th>" . ResIcons::FOOD . "" . RES_FOOD . "</th>
+                <th>" . ResIcons::METAL . "" . ResourceNames::METAL . "</th>
+                <th>" . ResIcons::CRYSTAL . "" . ResourceNames::CRYSTAL . "</th>
+                <th>" . ResIcons::PLASTIC . "" . ResourceNames::PLASTIC . "</th>
+                <th>" . ResIcons::FUEL . "" . ResourceNames::FUEL . "</th>
+            <th>" . ResIcons::FOOD . "" . ResourceNames::FOOD . "</th>
    <!-- 	<th>" . ResIcons::POWER . "Energie</th>     -->
                 <th>Felder</th></tr>";
         for ($x = 0; $x < min(30, $building->lastLevel); $x++) {

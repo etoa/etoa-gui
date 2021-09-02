@@ -13,6 +13,7 @@ use EtoA\Log\LogSeverity;
 use EtoA\Support\BBCodeUtils;
 use EtoA\Support\StringUtils;
 use EtoA\Universe\Resources\ResIcons;
+use EtoA\Universe\Resources\ResourceNames;
 
 /** @var AllianceBuildingRepository $allianceBuildingRepository */
 $allianceBuildingRepository = $app[AllianceBuildingRepository::class];
@@ -135,15 +136,15 @@ if ($allianceFleetControlLevel >= ALLIANCE_FLEET_SHOW_DETAIL && $rights) {
                         <td>" . StringUtils::formatNumber($fd->pilots()) . "</td>
                     </tr>
                     <tr>
-                        <th>" . ResIcons::FUEL . "" . RES_FUEL . ":</th>
+                        <th>" . ResIcons::FUEL . "" . ResourceNames::FUEL . ":</th>
                         <td>" . StringUtils::formatNumber($fd->usageFuel()) . "</td>
                     </tr>
                     <tr>
-                        <th>" . ResIcons::FOOD . "" . RES_FOOD . ":</th>
+                        <th>" . ResIcons::FOOD . "" . ResourceNames::FOOD . ":</th>
                         <td>" . StringUtils::formatNumber($fd->usageFood()) . "</td>
                     </tr>
                     <tr>
-                        <th>" . ResIcons::POWER . " " . RES_POWER . ":</th>
+                        <th>" . ResIcons::POWER . " " . ResourceNames::POWER . ":</th>
                         <td>" . StringUtils::formatNumber($fd->usagePower()) . "</td>
                     </tr>";
             tableEnd();
@@ -153,27 +154,27 @@ if ($allianceFleetControlLevel >= ALLIANCE_FLEET_SHOW_DETAIL && $rights) {
             // Frachtraum
             tableStart("Frachtraum", "50%");
             echo "<tr>
-                        <th>" . ResIcons::METAL . "" . RES_METAL . "</th>
+                        <th>" . ResIcons::METAL . "" . ResourceNames::METAL . "</th>
                         <td>" . StringUtils::formatNumber($fd->resMetal()) . " t</td>
                     </tr>
                     <tr>
-                        <th>" . ResIcons::CRYSTAL . "" . RES_CRYSTAL . "</th>
+                        <th>" . ResIcons::CRYSTAL . "" . ResourceNames::CRYSTAL . "</th>
                         <td>" . StringUtils::formatNumber($fd->resCrystal()) . " t</td>
                     </tr>
                     <tr>
-                        <td>" . ResIcons::PLASTIC . "" . RES_PLASTIC . "</th>
+                        <td>" . ResIcons::PLASTIC . "" . ResourceNames::PLASTIC . "</th>
                         <td>" . StringUtils::formatNumber($fd->resPlastic()) . " t</td>
                     </tr>
                     <tr>
-                        <th>" . ResIcons::FUEL . "" . RES_FUEL . "</th>
+                        <th>" . ResIcons::FUEL . "" . ResourceNames::FUEL . "</th>
                         <td>" . StringUtils::formatNumber($fd->resFuel()) . " t</td>
                     </tr>
                     <tr>
-                        <th>" . ResIcons::FOOD . "" . RES_FOOD . "</th>
+                        <th>" . ResIcons::FOOD . "" . ResourceNames::FOOD . "</th>
                         <td>" . StringUtils::formatNumber($fd->resFood()) . " t</td>
                     </tr>
                     <tr>
-                        <th>" . ResIcons::POWER . "" . RES_POWER . "</th>
+                        <th>" . ResIcons::POWER . "" . ResourceNames::POWER . "</th>
                         <td>" . StringUtils::formatNumber($fd->resPower()) . " t</td>
                     </tr>
                     <tr>

@@ -5,6 +5,7 @@ use EtoA\Alliance\AllianceRepository;
 use EtoA\Alliance\AllianceSpendRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Support\StringUtils;
+use EtoA\Universe\Resources\ResourceNames;
 use EtoA\User\UserRepository;
 use EtoA\User\UserSearch;
 
@@ -282,11 +283,11 @@ function showSpend($allianceId, $form)
         if ($resources->getSum() > 0) {
             tableStart("Total eingezahlte Rohstoffe " . $user_message . "");
             echo "<tr>
-                            <th class=\"resmetalcolor\" style=\"width:20%\">" . RES_METAL . "</th>
-                            <th class=\"rescrystalcolor\" style=\"width:20%\">" . RES_CRYSTAL . "</th>
-                            <th class=\"resplasticcolor\" style=\"width:20%\">" . RES_PLASTIC . "</th>
-                            <th class=\"resfuelcolor\" style=\"width:20%\">" . RES_FUEL . "</th>
-                            <th class=\"resfoodcolor\" style=\"width:20%\">" . RES_FOOD . "</th>
+                            <th class=\"resmetalcolor\" style=\"width:20%\">" . ResourceNames::METAL . "</th>
+                            <th class=\"rescrystalcolor\" style=\"width:20%\">" . ResourceNames::CRYSTAL . "</th>
+                            <th class=\"resplasticcolor\" style=\"width:20%\">" . ResourceNames::PLASTIC . "</th>
+                            <th class=\"resfuelcolor\" style=\"width:20%\">" . ResourceNames::FUEL . "</th>
+                            <th class=\"resfoodcolor\" style=\"width:20%\">" . ResourceNames::FOOD . "</th>
                         </tr>";
             echo "<tr>
                             <td>" . StringUtils::formatNumber($resources->metal) . "</td>
@@ -326,11 +327,11 @@ function showSpend($allianceId, $form)
             foreach ($spendEntries as $entry) {
                 tableStart("" . $memberNicks[$entry->userId] . " - " . StringUtils::formatDate($entry->time) . "");
                 echo "<tr>
-                                <th class=\"resmetalcolor\" style=\"width:20%\">" . RES_METAL . "</th>
-                                <th class=\"rescrystalcolor\" style=\"width:20%\">" . RES_CRYSTAL . "</th>
-                                <th class=\"resplasticcolor\" style=\"width:20%\">" . RES_PLASTIC . "</th>
-                                <th class=\"resfuelcolor\" style=\"width:20%\">" . RES_FUEL . "</th>
-                                <th class=\"resfoodcolor\" style=\"width:20%\">" . RES_FOOD . "</th>
+                                <th class=\"resmetalcolor\" style=\"width:20%\">" . ResourceNames::METAL . "</th>
+                                <th class=\"rescrystalcolor\" style=\"width:20%\">" . ResourceNames::CRYSTAL . "</th>
+                                <th class=\"resplasticcolor\" style=\"width:20%\">" . ResourceNames::PLASTIC . "</th>
+                                <th class=\"resfuelcolor\" style=\"width:20%\">" . ResourceNames::FUEL . "</th>
+                                <th class=\"resfoodcolor\" style=\"width:20%\">" . ResourceNames::FOOD . "</th>
                             </tr>";
                 echo "<tr>
                                 <td>" . StringUtils::formatNumber($entry->metal) . "</td>

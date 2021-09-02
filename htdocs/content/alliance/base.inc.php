@@ -23,6 +23,7 @@ use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Universe\Resources\BaseResources;
 use EtoA\Universe\Resources\ResIcons;
+use EtoA\Universe\Resources\ResourceNames;
 use EtoA\User\UserRepository;
 use EtoA\User\UserSearch;
 use Symfony\Component\HttpFoundation\Request;
@@ -410,11 +411,11 @@ if ($alliance->resFood < 0) {
 
 tableStart("Allianz Ressourcen");
 echo "<tr>
-                <th style=\"width:20%;vertical-align:middle;\">" . ResIcons::METAL . " " . RES_METAL . "</th>
-                <th style=\"width:20%;vertical-align:middle;\">" . ResIcons::CRYSTAL . " " . RES_CRYSTAL . "</th>
-                <th style=\"width:20%;vertical-align:middle;\">" . ResIcons::PLASTIC . " " . RES_PLASTIC . "</th>
-                <th style=\"width:20%;vertical-align:middle;\">" . ResIcons::FUEL . " " . RES_FUEL . "</th>
-                <th style=\"width:20%;vertical-align:middle;\">" . ResIcons::FOOD . " " . RES_FOOD . "</th>
+                <th style=\"width:20%;vertical-align:middle;\">" . ResIcons::METAL . " " . ResourceNames::METAL . "</th>
+                <th style=\"width:20%;vertical-align:middle;\">" . ResIcons::CRYSTAL . " " . ResourceNames::CRYSTAL . "</th>
+                <th style=\"width:20%;vertical-align:middle;\">" . ResIcons::PLASTIC . " " . ResourceNames::PLASTIC . "</th>
+                <th style=\"width:20%;vertical-align:middle;\">" . ResIcons::FUEL . " " . ResourceNames::FUEL . "</th>
+                <th style=\"width:20%;vertical-align:middle;\">" . ResIcons::FOOD . " " . ResourceNames::FOOD . "</th>
             </tr>
             <tr>
                 <td " . $style0 . " id=\"resBoxMetal\">" . StringUtils::formatNumber($alliance->resMetal) . " t</td>
@@ -482,11 +483,11 @@ $alliance = $allianceRepository->getAlliance($cu->allianceId());
 $allianceResources = $alliance->getResources();
 
 $resName = array(
-    0 => RES_METAL,
-    1 => RES_CRYSTAL,
-    2 => RES_PLASTIC,
-    3 => RES_FUEL,
-    4 => RES_FOOD
+    0 => ResourceNames::METAL,
+    1 => ResourceNames::CRYSTAL,
+    2 => ResourceNames::PLASTIC,
+    3 => ResourceNames::FUEL,
+    4 => ResourceNames::FOOD
 );
 
 
@@ -571,11 +572,11 @@ if (count($buildings) > 0) {
 
             echo "<th width=\"7%\">Stufe</th>
                 <th width=\"18%\">Zeit</th>
-                <th width=\"15%\">" . RES_METAL . "</th>
-                <th width=\"15%\">" . RES_CRYSTAL . "</th>
-                <th width=\"15%\">" . RES_PLASTIC . "</th>
-                <th width=\"15%\">" . RES_FUEL . "</th>
-                <th width=\"15%\">" . RES_FOOD . "</th>
+                <th width=\"15%\">" . ResourceNames::METAL . "</th>
+                <th width=\"15%\">" . ResourceNames::CRYSTAL . "</th>
+                <th width=\"15%\">" . ResourceNames::PLASTIC . "</th>
+                <th width=\"15%\">" . ResourceNames::FUEL . "</th>
+                <th width=\"15%\">" . ResourceNames::FOOD . "</th>
             </tr><tr>
                 <td width=\"7%\">" . ($level + 1) . "</th>
                 <td width=\"18%\">" . StringUtils::formatTimespan($building->calculateBuildTime($level+ 1)) . "</th>
@@ -680,11 +681,11 @@ if ($allianceResearchLevel > 0 && count($technologies) > 0) {
 
             echo "<th width=\"7%\">Stufe</th>
                 <th width=\"18%\">Zeit</th>
-                <th width=\"15%\">" . RES_METAL . "</th>
-                <th width=\"15%\">" . RES_CRYSTAL . "</th>
-                <th width=\"15%\">" . RES_PLASTIC . "</th>
-                <th width=\"15%\">" . RES_FUEL . "</th>
-                <th width=\"15%\">" . RES_FOOD . "</th>
+                <th width=\"15%\">" . ResourceNames::METAL . "</th>
+                <th width=\"15%\">" . ResourceNames::CRYSTAL . "</th>
+                <th width=\"15%\">" . ResourceNames::PLASTIC . "</th>
+                <th width=\"15%\">" . ResourceNames::FUEL . "</th>
+                <th width=\"15%\">" . ResourceNames::FOOD . "</th>
             </tr><tr>
                 <td width=\"7%\">" . ($level + 1) . "</th>
                 <td width=\"18%\">" . StringUtils::formatTimespan($technology->calculateBuildTime($level + 1)) . "</th>
@@ -730,35 +731,35 @@ tableStart("Rohstoffe einzahlen");
 
 // Titan
 echo "<tr>
-                <th style=\"width:100px;\">" . RES_METAL . "</th>
+                <th style=\"width:100px;\">" . ResourceNames::METAL . "</th>
                 <td style=\"width:150px;\">
                     <input type=\"text\" value=\"0\" name=\"spend_metal\" id=\"spend_metal\" size=\"9\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value," . $cp->resMetal . ",'','');\"> <a href=\"javascript:;\" onclick=\"document.getElementById('spend_metal').value='" . StringUtils::formatNumber($cp->resMetal) . "';\">alles</a>
                 </td>
             </tr>";
 // Silizium
 echo "<tr>
-                <th>" . RES_CRYSTAL . "</th>
+                <th>" . ResourceNames::CRYSTAL . "</th>
                 <td>
                     <input type=\"text\" value=\"0\" name=\"spend_crystal\" id=\"spend_crystal\" size=\"9\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value," . $cp->resCrystal . ",'','');\"> <a href=\"javascript:;\" onclick=\"document.getElementById('spend_crystal').value='" . StringUtils::formatNumber($cp->resCrystal) . "';\">alles</a>
                 </td>
             </tr>";
 // PVC
 echo "<tr>
-                <th>" . RES_PLASTIC . "</th>
+                <th>" . ResourceNames::PLASTIC . "</th>
                 <td>
                     <input type=\"text\" value=\"0\" name=\"spend_plastic\" id=\"spend_plastic\" size=\"9\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value," . $cp->resPlastic . ",'','');\"> <a href=\"javascript:;\" onclick=\"document.getElementById('spend_plastic').value='" . StringUtils::formatNumber($cp->resPlastic) . "';\">alles</a>
                 </td>
             </tr>";
 // Tritium
 echo "<tr>
-                <th>" . RES_FUEL . "</th>
+                <th>" . ResourceNames::FUEL . "</th>
                 <td>
                     <input type=\"text\" value=\"0\" name=\"spend_fuel\" id=\"spend_fuel\" size=\"9\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value," . $cp->resFuel . ",'','');\"> <a href=\"javascript:;\" onclick=\"document.getElementById('spend_fuel').value='" . StringUtils::formatNumber($cp->resFuel) . "';\">alles</a>
                 </td>
             </tr>";
 // Nahrung
 echo "<tr>
-                <th>" . RES_FOOD . "</th>
+                <th>" . ResourceNames::FOOD . "</th>
                 <td>
                     <input type=\"text\" value=\"0\" name=\"spend_food\" id=\"spend_food\" size=\"9\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value," . $cp->resFood . ",'','');\"> <a href=\"javascript:;\" onclick=\"document.getElementById('spend_food').value='" . StringUtils::formatNumber($cp->resFood) . "';\">alles</a>
                 </td>
@@ -851,11 +852,11 @@ if ($sum) {
     if ($resources->getSum() > 0) {
         tableStart("Total eingezahlte Rohstoffe " . $user_message . "");
         echo "<tr>
-                        <th style=\"width:20%\">" . RES_METAL . "</th>
-                        <th style=\"width:20%\">" . RES_CRYSTAL . "</th>
-                        <th style=\"width:20%\">" . RES_PLASTIC . "</th>
-                        <th style=\"width:20%\">" . RES_FUEL . "</th>
-                        <th style=\"width:20%\">" . RES_FOOD . "</th>
+                        <th style=\"width:20%\">" . ResourceNames::METAL . "</th>
+                        <th style=\"width:20%\">" . ResourceNames::CRYSTAL . "</th>
+                        <th style=\"width:20%\">" . ResourceNames::PLASTIC . "</th>
+                        <th style=\"width:20%\">" . ResourceNames::FUEL . "</th>
+                        <th style=\"width:20%\">" . ResourceNames::FOOD . "</th>
                     </tr>";
         echo "<tr>
                         <td>" . StringUtils::formatNumber($resources->metal) . "</td>
@@ -900,11 +901,11 @@ else {
         foreach ($spendEntries as $entry) {
             tableStart("" . $allianceMemberNames[$entry->userId] . " - " . StringUtils::formatDate($entry->time) . "");
             echo "<tr>
-                            <th style=\"width:20%\">" . RES_METAL . "</th>
-                            <th style=\"width:20%\">" . RES_CRYSTAL . "</th>
-                            <th style=\"width:20%\">" . RES_PLASTIC . "</th>
-                            <th style=\"width:20%\">" . RES_FUEL . "</th>
-                            <th style=\"width:20%\">" . RES_FOOD . "</th>
+                            <th style=\"width:20%\">" . ResourceNames::METAL . "</th>
+                            <th style=\"width:20%\">" . ResourceNames::CRYSTAL . "</th>
+                            <th style=\"width:20%\">" . ResourceNames::PLASTIC . "</th>
+                            <th style=\"width:20%\">" . ResourceNames::FUEL . "</th>
+                            <th style=\"width:20%\">" . ResourceNames::FOOD . "</th>
                         </tr>";
             echo "<tr>
                             <td>" . StringUtils::formatNumber($entry->metal) . "</td>

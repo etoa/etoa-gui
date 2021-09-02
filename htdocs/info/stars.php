@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\Support\StringUtils;
+use EtoA\Universe\Resources\ResourceNames;
 use EtoA\Universe\Star\SolarTypeRepository;
 
 /** @var SolarTypeRepository $solarTypeRepository */
@@ -31,11 +32,11 @@ if (isset($_GET['order']) && ctype_alpha($_GET['order'])) {
 
 tableStart("Sternenboni");
 echo "<tr><th colspan=\"2\" ><a href=\"?$link&amp;site=$site&amp;order=name\">Name</a></th>";
-echo "<th><a href=\"?$link&amp;site=$site&amp;order=f_metal\">" . RES_METAL . "</th>";
-echo "<th><a href=\"?$link&amp;site=$site&amp;order=f_crystal\">" . RES_CRYSTAL . "</th>";
-echo "<th><a href=\"?$link&amp;site=$site&amp;order=f_plastic\">" . RES_PLASTIC . "</th>";
-echo "<th><a href=\"?$link&amp;site=$site&amp;order=f_fuel\">" . RES_FUEL . "</th>";
-echo "<th><a href=\"?$link&amp;site=$site&amp;order=f_food\">" . RES_FOOD . "</th>";
+echo "<th><a href=\"?$link&amp;site=$site&amp;order=f_metal\">" . ResourceNames::METAL . "</th>";
+echo "<th><a href=\"?$link&amp;site=$site&amp;order=f_crystal\">" . ResourceNames::CRYSTAL . "</th>";
+echo "<th><a href=\"?$link&amp;site=$site&amp;order=f_plastic\">" . ResourceNames::PLASTIC . "</th>";
+echo "<th><a href=\"?$link&amp;site=$site&amp;order=f_fuel\">" . ResourceNames::FUEL . "</th>";
+echo "<th><a href=\"?$link&amp;site=$site&amp;order=f_food\">" . ResourceNames::FOOD . "</th>";
 echo "<th><a href=\"?$link&amp;site=$site&amp;order=f_power\">Energie</th>";
 echo "<th><a href=\"?$link&amp;site=$site&amp;order=f_population\">Wachstum</th>";
 echo "<th><a href=\"?$link&amp;site=$site&amp;order=f_researchtime\">Forschungszeit</th>";

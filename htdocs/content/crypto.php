@@ -17,6 +17,7 @@ use EtoA\UI\ResourceBoxDrawer;
 use EtoA\Universe\Entity\EntityCoordinates;
 use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Planet\PlanetRepository;
+use EtoA\Universe\Resources\ResourceNames;
 use EtoA\User\UserRepository;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -102,7 +103,7 @@ if ($config->getBoolean('crypto_enable')) {
                     </td></tr>';
         }
         echo "<tr><th>Kosten pro Scan:</th>
-                <td>" . StringUtils::formatNumber($config->getInt('crypto_fuel_costs_per_scan')) . " " . RES_FUEL . " und " . StringUtils::formatNumber($config->getInt('crypto_fuel_costs_per_scan')) . " " . RES_FUEL . " Allianzrohstoffe</td></tr>";
+                <td>" . StringUtils::formatNumber($config->getInt('crypto_fuel_costs_per_scan')) . " " . ResourceNames::FUEL . " und " . StringUtils::formatNumber($config->getInt('crypto_fuel_costs_per_scan')) . " " . ResourceNames::FUEL . " Allianzrohstoffe</td></tr>";
         echo "<tr><th>Abklingzeit:</th>
                 <td>" . StringUtils::formatTimespan($fleetScanService->calculateCooldown($cryptoCenterLevel)) . " (-" . StringUtils::formatTimespan($config->getInt("crypto_cooldown_reduction_per_level")) . " pro Stufe, minimal " . StringUtils::formatTimespan($config->getInt("crypto_min_cooldown")) . ")</td></tr>";
         $statusText = $userCooldownDiff > 0 ? "Bereit in <span id=\"cdcd\">" . StringUtils::formatTimespan($userCooldownDiff) . "</span>" : "Bereit";
@@ -170,9 +171,9 @@ if ($config->getBoolean('crypto_enable')) {
                     </script>";
 
             if ($planet->resFuel >= $config->getInt('crypto_fuel_costs_per_scan')) {
-                echo '<input type="submit" name="scan" value="Analyse für ' . StringUtils::formatNumber($config->getInt('crypto_fuel_costs_per_scan')) . ' ' . RES_FUEL . ' starten" />';
+                echo '<input type="submit" name="scan" value="Analyse für ' . StringUtils::formatNumber($config->getInt('crypto_fuel_costs_per_scan')) . ' ' . ResourceNames::FUEL . ' starten" />';
             } else {
-                echo "Zuwenig Rohstoffe für eine Analyse vorhanden, " . StringUtils::formatNumber($config->getInt('crypto_fuel_costs_per_scan')) . " " . RES_FUEL . " benötigt, " . StringUtils::formatNumber($planet->resFuel) . " vorhanden!";
+                echo "Zuwenig Rohstoffe für eine Analyse vorhanden, " . StringUtils::formatNumber($config->getInt('crypto_fuel_costs_per_scan')) . " " . ResourceNames::FUEL . " benötigt, " . StringUtils::formatNumber($planet->resFuel) . " vorhanden!";
             }
             echo '</form>';
             echo '</body>';

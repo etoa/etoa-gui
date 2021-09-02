@@ -122,7 +122,7 @@ elseif (isset($_POST['auction_cancel']) && isset($_POST['auction_cancel_id'])) {
         //Auktion löschen
         $marketAuctionRepository->deleteAuction($auction->id);
         $marketReportRepository->addAuctionReport($auction->id, $cu->getId(), $auction->entityId, 0, $sellResources, 'auctioncancel', new BaseResources(), null, $return_factor);
-        //			Log::add(7, Log::INFO, "Der Spieler ".$cu->nick." zieht folgende Auktion zur&uuml;ck:\nRohstoffe:\n".RES_METAL.": ".$acrow['sell_metal']."\n".RES_CRYSTAL.": ".$acrow['sell_crystal']."\n".RES_PLASTIC.": ".$acrow['sell_plastic']."\n".RES_FUEL.": ".$acrow['sell_fuel']."\n".RES_FOOD.": ".$acrow['sell_food']."\n\nEr erh&auml;lt ".(round($return_factor,2)*100)."% der Waren erstattet!",time());
+        //			Log::add(7, Log::INFO, "Der Spieler ".$cu->nick." zieht folgende Auktion zur&uuml;ck:\nRohstoffe:\n".ResourceNames::METAL.": ".$acrow['sell_metal']."\n".ResourceNames::CRYSTAL.": ".$acrow['sell_crystal']."\n".ResourceNames::PLASTIC.": ".$acrow['sell_plastic']."\n".ResourceNames::FUEL.": ".$acrow['sell_fuel']."\n".ResourceNames::FOOD.": ".$acrow['sell_food']."\n\nEr erh&auml;lt ".(round($return_factor,2)*100)."% der Waren erstattet!",time());
 
         success_msg("Auktion wurde gel&ouml;scht und du hast " . ($return_factor * 100) . "% der angebotenen Waren zur&uuml;ck erhalten (es wird abgerundet)!");
     } else {

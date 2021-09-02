@@ -18,6 +18,7 @@ use EtoA\Technology\TechnologyRepository;
 use EtoA\UI\ResourceBoxDrawer;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Universe\Resources\ResIcons;
+use EtoA\Universe\Resources\ResourceNames;
 
 /** @var ConfigurationService $config */
 $config = $app[ConfigurationService::class];
@@ -102,12 +103,12 @@ if ($cp) {
         tableStart("Rohstoffproduktion und Energieverbrauch");
         echo "<tr>
                         <th style=\"width:200px;\">Geb&auml;ude</th>";
-        echo "<th class=\"resmetalcolor\">" . RES_METAL . "</th>";
-        echo "<th class=\"rescrystalcolor\">" . RES_CRYSTAL . "</th>";
-        echo "<th class=\"resplasticcolor\">" . RES_PLASTIC . "</th>";
-        echo "<th class=\"resfuelcolor\">" . RES_FUEL . "</th>";
-        echo "<th class=\"resfoodcolor\">" . RES_FOOD . "</th>";
-        echo "<th class=\"respowercolor\" colspan=\"2\">" . RES_POWER . "</th>";
+        echo "<th class=\"resmetalcolor\">" . ResourceNames::METAL . "</th>";
+        echo "<th class=\"rescrystalcolor\">" . ResourceNames::CRYSTAL . "</th>";
+        echo "<th class=\"resplasticcolor\">" . ResourceNames::PLASTIC . "</th>";
+        echo "<th class=\"resfuelcolor\">" . ResourceNames::FUEL . "</th>";
+        echo "<th class=\"resfoodcolor\">" . ResourceNames::FOOD . "</th>";
+        echo "<th class=\"respowercolor\" colspan=\"2\">" . ResourceNames::POWER . "</th>";
         echo "</tr>";
 
         $pwrcnt = 0;
@@ -187,7 +188,7 @@ if ($cp) {
             } else {
                 $fuelBonus .= "<span style=\"color:#f00\">" . $spw . "%</span>";
             }
-            $fuelBonus .= " " . RES_FUEL . "-Produktion";
+            $fuelBonus .= " " . ResourceNames::FUEL . "-Produktion";
 
             // Werte anzeigen
             foreach ($resourceKeys as $resourceKey) {
@@ -438,11 +439,11 @@ if ($cp) {
     if (count($storageBuildings) > 0) {
         tableStart("Lagerkapazit&auml;t");
         echo "<tr><th style=\"width:160px\">Geb&auml;ude</th>";
-        echo "<th>" . ResIcons::METAL . "" . RES_METAL . "</th>";
-        echo "<th>" . ResIcons::CRYSTAL . "" . RES_CRYSTAL . "</th>";
-        echo "<th>" . ResIcons::PLASTIC . "" . RES_PLASTIC . "</th>";
-        echo "<th>" . ResIcons::FUEL . "" . RES_FUEL . "</th>";
-        echo "<th>" . ResIcons::FOOD . "" . RES_FOOD . "</th>";
+        echo "<th>" . ResIcons::METAL . "" . ResourceNames::METAL . "</th>";
+        echo "<th>" . ResIcons::CRYSTAL . "" . ResourceNames::CRYSTAL . "</th>";
+        echo "<th>" . ResIcons::PLASTIC . "" . ResourceNames::PLASTIC . "</th>";
+        echo "<th>" . ResIcons::FUEL . "" . ResourceNames::FUEL . "</th>";
+        echo "<th>" . ResIcons::FOOD . "" . ResourceNames::FOOD . "</th>";
         echo "</tr>";
 
         echo "<tr><th>Grundkapazit&auml;t</th>";
@@ -508,7 +509,7 @@ if ($cp) {
     echo "<th>Technologie</th>";
     echo "<th>TOTAL</th></tr>";
 
-    echo "<tr><td>" . ResIcons::METAL . "Produktion " . RES_METAL . "</td>";
+    echo "<tr><td>" . ResIcons::METAL . "Produktion " . ResourceNames::METAL . "</td>";
     echo "<td>" . StringUtils::formatPercentString($cp->typeMetal, true) . "</td>";
     echo "<td>" . StringUtils::formatPercentString($race->metal, true) . "</td>";
     echo "<td>" . StringUtils::formatPercentString($cp->starMetal, true) . "</td>";
@@ -518,7 +519,7 @@ if ($cp) {
     echo "<td>-</td>";
     echo "<td>" . StringUtils::formatPercentString(array($cp->typeMetal, $race->metal, $cp->starMetal, ($specialist !== null ? $specialist->prodMetal : 1)), true) . "</td></tr>";
 
-    echo "<tr><td>" . ResIcons::CRYSTAL . "Produktion " . RES_CRYSTAL . "</td>";
+    echo "<tr><td>" . ResIcons::CRYSTAL . "Produktion " . ResourceNames::CRYSTAL . "</td>";
     echo "<td>" . StringUtils::formatPercentString($cp->typeCrystal, true) . "</td>";
     echo "<td>" . StringUtils::formatPercentString($race->crystal, true) . "</td>";
     echo "<td>" . StringUtils::formatPercentString($cp->starCrystal, true) . "</td>";
@@ -528,7 +529,7 @@ if ($cp) {
     echo "<td>-</td>";
     echo "<td>" . StringUtils::formatPercentString(array($cp->typeCrystal, $race->crystal, $cp->starCrystal, ($specialist !== null ? $specialist->prodCrystal : 1)), true) . "</td></tr>";
 
-    echo "<tr><td>" . ResIcons::PLASTIC . "Produktion " . RES_PLASTIC . "</td>";
+    echo "<tr><td>" . ResIcons::PLASTIC . "Produktion " . ResourceNames::PLASTIC . "</td>";
     echo "<td>" . StringUtils::formatPercentString($cp->typePlastic, true) . "</td>";
     echo "<td>" . StringUtils::formatPercentString($race->plastic, true) . "</td>";
     echo "<td>" . StringUtils::formatPercentString($cp->starPlastic, true) . "</td>";
@@ -538,7 +539,7 @@ if ($cp) {
     echo "<td>-</td>";
     echo "<td>" . StringUtils::formatPercentString(array($cp->typePlastic, $race->plastic, $cp->starPlastic, ($specialist !== null ? $specialist->prodPlastic : 1)), true) . "</td></tr>";
 
-    echo "<tr><td>" . ResIcons::FUEL . "Produktion " . RES_FUEL . "</td>";
+    echo "<tr><td>" . ResIcons::FUEL . "Produktion " . ResourceNames::FUEL . "</td>";
     echo "<td>" . StringUtils::formatPercentString($cp->typeFuel, true) . "</td>";
     echo "<td>" . StringUtils::formatPercentString($race->fuel, true) . "</td>";
     echo "<td>" . StringUtils::formatPercentString($cp->starFuel, true) . "</td>";
@@ -548,7 +549,7 @@ if ($cp) {
     echo "<td>-</td>";
     echo "<td>" . StringUtils::formatPercentString(array($cp->typeFuel, $race->fuel, $cp->starFuel, ($specialist !== null ? $specialist->prodFuel : 1)), true) . "</td></tr>";
 
-    echo "<tr><td>" . ResIcons::FOOD . "Produktion " . RES_FOOD . "</td>";
+    echo "<tr><td>" . ResIcons::FOOD . "Produktion " . ResourceNames::FOOD . "</td>";
     echo "<td>" . StringUtils::formatPercentString($cp->typeFood, true) . "</td>";
     echo "<td>" . StringUtils::formatPercentString($race->food, true) . "</td>";
     echo "<td>" . StringUtils::formatPercentString($cp->starFood, true) . "</td>";

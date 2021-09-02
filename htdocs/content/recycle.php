@@ -15,6 +15,7 @@ use EtoA\Technology\TechnologyId;
 use EtoA\Technology\TechnologyRepository;
 use EtoA\UI\ResourceBoxDrawer;
 use EtoA\Universe\Planet\PlanetRepository;
+use EtoA\Universe\Resources\ResourceNames;
 
 /** @var ConfigurationService $config */
 $config = $app[ConfigurationService::class];
@@ -118,7 +119,7 @@ if ($tech_level > 0) {
 
 
             //Log schreiben
-            $log = "Der User [page user sub=edit user_id=" . $cu->id . "] [B]" . $cu . "[/B] [/page] hat auf dem Planeten [page galaxy sub=edit id=" . $planet->id . "][B]" . $planet->name . "[/B][/page] folgende Schiffe mit dem r&uuml;ckgabewert von " . ($payback * 100) . "% recycelt:\n\n" . $log_ships . "\nDies hat ihm folgende Rohstoffe gegeben:\n" . RES_METAL . ": " . StringUtils::formatNumber($pb[0]) . "\n" . RES_CRYSTAL . ": " . StringUtils::formatNumber($pb[1]) . "\n" . RES_PLASTIC . ": " . StringUtils::formatNumber($pb[2]) . "\n" . RES_FUEL . ": " . StringUtils::formatNumber($pb[3]) . "\n" . RES_FOOD . ": " . StringUtils::formatNumber($pb[4]) . "\n";
+            $log = "Der User [page user sub=edit user_id=" . $cu->id . "] [B]" . $cu . "[/B] [/page] hat auf dem Planeten [page galaxy sub=edit id=" . $planet->id . "][B]" . $planet->name . "[/B][/page] folgende Schiffe mit dem r&uuml;ckgabewert von " . ($payback * 100) . "% recycelt:\n\n" . $log_ships . "\nDies hat ihm folgende Rohstoffe gegeben:\n" . ResourceNames::METAL . ": " . StringUtils::formatNumber($pb[0]) . "\n" . ResourceNames::CRYSTAL . ": " . StringUtils::formatNumber($pb[1]) . "\n" . ResourceNames::PLASTIC . ": " . StringUtils::formatNumber($pb[2]) . "\n" . ResourceNames::FUEL . ": " . StringUtils::formatNumber($pb[3]) . "\n" . ResourceNames::FOOD . ": " . StringUtils::formatNumber($pb[4]) . "\n";
 
             $logRepository->add(LogFacility::RECYCLING, LogSeverity::INFO, $log);
         }
@@ -177,7 +178,7 @@ if ($tech_level > 0) {
             $planet->resFood += $pb[4];
 
             //Log schreiben
-            $log = "Der User [page user sub=edit user_id=" . $cu->id . "] [B]" . $cu . "[/B] [/page] hat auf dem Planeten [page galaxy sub=edit id=" . $planet->id . "][B]" . $planet->name . "[/B][/page] folgende Verteidigungsanlagen mit dem r&uuml;ckgabewert von " . ($payback * 100) . "% recycelt:\n\n" . $log_def . "\nDies hat ihm folgende Rohstoffe gegeben:\n" . RES_METAL . ": " . StringUtils::formatNumber($pb[0]) . "\n" . RES_CRYSTAL . ": " . StringUtils::formatNumber($pb[1]) . "\n" . RES_PLASTIC . ": " . StringUtils::formatNumber($pb[2]) . "\n" . RES_FUEL . ": " . StringUtils::formatNumber($pb[3]) . "\n" . RES_FOOD . ": " . StringUtils::formatNumber($pb[4]) . "\n";
+            $log = "Der User [page user sub=edit user_id=" . $cu->id . "] [B]" . $cu . "[/B] [/page] hat auf dem Planeten [page galaxy sub=edit id=" . $planet->id . "][B]" . $planet->name . "[/B][/page] folgende Verteidigungsanlagen mit dem r&uuml;ckgabewert von " . ($payback * 100) . "% recycelt:\n\n" . $log_def . "\nDies hat ihm folgende Rohstoffe gegeben:\n" . ResourceNames::METAL . ": " . StringUtils::formatNumber($pb[0]) . "\n" . ResourceNames::CRYSTAL . ": " . StringUtils::formatNumber($pb[1]) . "\n" . ResourceNames::PLASTIC . ": " . StringUtils::formatNumber($pb[2]) . "\n" . ResourceNames::FUEL . ": " . StringUtils::formatNumber($pb[3]) . "\n" . ResourceNames::FOOD . ": " . StringUtils::formatNumber($pb[4]) . "\n";
 
             $logRepository->add(LogFacility::RECYCLING, LogSeverity::INFO, $log);
         }
