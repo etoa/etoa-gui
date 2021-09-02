@@ -11,6 +11,7 @@ use EtoA\Support\StringUtils;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Universe\Resources\BaseResources;
 use EtoA\Universe\Resources\PreciseResources;
+use EtoA\Universe\Resources\ResIcons;
 use EtoA\Universe\Resources\ResourceNames;
 
 /** @var ShipRepository $shipRepository */
@@ -175,7 +176,7 @@ else {
                 $sellResources = $offer->getSellResources();
                 foreach (ResourceNames::NAMES as $rk => $rn) {
                     echo "<tr>
-                    <td class=\"rescolor" . $rk . "\">" . $resIcons[$rk] . " <b>" . $rn . "</b>:</td>
+                    <td class=\"rescolor" . $rk . "\">" . ResIcons::ICONS[$rk] . " <b>" . $rn . "</b>:</td>
                     <td class=\"rescolor" . $rk . "\">" . ($sellResources->get($rk) > 0 ? StringUtils::formatNumber($sellResources->get($rk)) : '-') . "</td>
                     <td class=\"rescolor" . $rk . "\">" . ($buyResources->get($rk) > 0 ? StringUtils::formatNumber($buyResources->get($rk)) : '-') . "</td>";
                     if ($i++ == 0) {
@@ -246,7 +247,7 @@ else {
                     $ship = new Ship($offer->shipId);
                     echo "<td rowspan=\"$resCnt\">" . $offer->count . " <a href=\"?page=help&site=shipyard&id=" . $offer->shipId . "\">" . $ship->toolTip() . "</a></td>";
                 }
-                echo "<td class=\"rescolor" . $rk . "\">" . $resIcons[$rk] . "<b>" . $rn . "</b>:</td>
+                echo "<td class=\"rescolor" . $rk . "\">" . ResIcons::ICONS[$rk] . "<b>" . $rn . "</b>:</td>
                     <td class=\"rescolor" . $rk . "\">" . StringUtils::formatNumber($costs->get($rk)) . "</td>";
                 if ($i++ == 0) {
                     echo "<td rowspan=\"$resCnt\">" . date("d.m.Y  G:i:s", $offer->date) . "<br/><br/>" . stripslashes($offer->text) . "</td>";
@@ -310,7 +311,7 @@ else {
             foreach (ResourceNames::NAMES as $rk => $rn) {
                 if ($sellResources->get($rk) > 0) {
                     echo "<span class=\"rescolor" . $rk . "\">";
-                    echo $resIcons[$rk] . $rn . ": " . StringUtils::formatNumber($sellResources->get($rk)) . "</span><br style=\"clear:both;\" />";
+                    echo ResIcons::ICONS[$rk] . $rn . ": " . StringUtils::formatNumber($sellResources->get($rk)) . "</span><br style=\"clear:both;\" />";
                 }
             }
             echo "</td>
@@ -323,7 +324,7 @@ else {
             foreach (ResourceNames::NAMES as $rk => $rn) {
                 if ($currencyResources->get($rk) > 0) {
                     echo "<span class=\"rescolor" . $rk . "\">";
-                    echo $resIcons[$rk] . $rn . ": " . StringUtils::formatNumber($buyResources->get($rk));
+                    echo ResIcons::ICONS[$rk] . $rn . ": " . StringUtils::formatNumber($buyResources->get($rk));
                     echo "</span><br style=\"clear:both;\" />";
                 }
             }

@@ -11,6 +11,7 @@ use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Entity\EntityService;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Universe\Resources\BaseResources;
+use EtoA\Universe\Resources\ResIcons;
 use EtoA\Universe\Resources\ResourceNames;
 
 $xajax->register(XAJAX_FUNCTION, 'calcMarketRessPrice');
@@ -26,7 +27,7 @@ $xajax->register(XAJAX_FUNCTION, 'showAuctionDetail');
 
 function marketSearch($form, $order = "distance", $orderDirection = 0)
 {
-    global $resIcons, $app;
+    global $app;
     ob_start();
     $ajax = new xajaxResponse();
 
@@ -165,7 +166,7 @@ function marketSearch($form, $order = "distance", $orderDirection = 0)
                 foreach (ResourceNames::NAMES as $rk => $rn) {
                     if ($sellResources->get($rk) > 0 || $buyResources->get($rk) > 0) {
                         echo "<tr>
-                                        <td class=\"rescolor" . $rk . " rname\">" . $resIcons[$rk] . "<b>" . $rn . "</b>:</td>
+                                        <td class=\"rescolor" . $rk . " rname\">" . ResIcons::ICONS[$rk] . "<b>" . $rn . "</b>:</td>
                                         <td class=\"rescolor" . $rk . " rsupp\">" . ($sellResources->get($rk) > 0 ? StringUtils::formatNumber($sellResources->get($rk)) : '-') . "</td>
                                         <td class=\"rescolor" . $rk . " rdema\">" . ($buyResources->get($rk) > 0 ? StringUtils::formatNumber($buyResources->get($rk)) : '-') . "</td>";
                         if ($i == 0) {
@@ -287,7 +288,7 @@ function marketSearch($form, $order = "distance", $orderDirection = 0)
                         if ($i == 0) {
                             echo "<td rowspan=\"$resCnt\">" . $offer->count . " <a href=\"?page=help&site=shipyard&id=" . $offer->shipId . "\">" . $shipNames[$offer->shipId] . "</a></td>";
                         }
-                        echo "<td class=\"rescolor" . $rk . " rname\">" . $resIcons[$rk] . "<b>" . $rn . "</b>:</td>
+                        echo "<td class=\"rescolor" . $rk . " rname\">" . ResIcons::ICONS[$rk] . "<b>" . $rn . "</b>:</td>
                             <td class=\"rescolor" . $rk . " rdema\">" . StringUtils::formatNumber($costs->get($rk)) . "</td>";
                         if ($i++ == 0) {
                             $tu = new User($offer->userId);
@@ -378,7 +379,7 @@ function marketSearch($form, $order = "distance", $orderDirection = 0)
                 foreach (ResourceNames::NAMES as $rk => $rn) {
                     if ($sellResources->get($rk) > 0) {
                         echo "<span class=\"rescolor" . $rk . "\">";
-                        echo $resIcons[$rk] . $rn . ": " . StringUtils::formatNumber($sellResources->get($rk)) . "</span><br style=\"clear:both;\" />";
+                        echo ResIcons::ICONS[$rk] . $rn . ": " . StringUtils::formatNumber($sellResources->get($rk)) . "</span><br style=\"clear:both;\" />";
                     }
                 }
                 echo "</td>
@@ -391,7 +392,7 @@ function marketSearch($form, $order = "distance", $orderDirection = 0)
                 foreach (ResourceNames::NAMES as $rk => $rn) {
                     if ($currencyResources->get($rk) > 0) {
                         echo "<span class=\"rescolor" . $rk . "\">";
-                        echo $resIcons[$rk] . $rn . ": " . StringUtils::formatNumber($buyFilter->get($rk));
+                        echo ResIcons::ICONS[$rk] . $rn . ": " . StringUtils::formatNumber($buyFilter->get($rk));
                         echo "</span><br style=\"clear:both;\" />";
                     }
                 }
