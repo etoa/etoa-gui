@@ -52,6 +52,18 @@ class PreciseResources
         return $resources;
     }
 
+    public static function createFromCosts(BuildCosts $costs): PreciseResources
+    {
+        $resources = new PreciseResources();
+        $resources->metal = $costs->metal;
+        $resources->crystal = $costs->crystal;
+        $resources->plastic = $costs->plastic;
+        $resources->fuel = $costs->fuel;
+        $resources->food = $costs->food;
+
+        return $resources;
+    }
+
     public function multiply(float $factor): PreciseResources
     {
         $resources = new PreciseResources();

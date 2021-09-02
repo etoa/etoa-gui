@@ -4,6 +4,7 @@ use EtoA\Alliance\AllianceRepository;
 use EtoA\Alliance\AllianceSearch;
 use EtoA\Building\BuildingDataRepository;
 use EtoA\Building\BuildingRepository;
+use EtoA\Building\BuildingService;
 use EtoA\Defense\DefenseDataRepository;
 use EtoA\Defense\DefenseRepository;
 use EtoA\Missile\MissileDataRepository;
@@ -17,6 +18,8 @@ use EtoA\Universe\Entity\EntitySearch;
 use EtoA\Universe\Entity\EntityType;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Universe\Planet\PlanetSearch;
+use EtoA\Universe\Resources\BuildCosts;
+use EtoA\User\User;
 use EtoA\User\UserRepository;
 use EtoA\User\UserSearch;
 
@@ -878,10 +881,10 @@ function searchUser($val, $field_id = 'user_nick', $box_id = 'citybox')
 
     $userNicks = $userRepository->searchUserNicknames(UserSearch::create()->nickLike($val), 20);
     $nCount = count($userNicks);
-        foreach ($userNicks as $nick) {
-            $sOut .= "<a href=\"#\" onclick=\"javascript:document.getElementById('" . $field_id . "').value='" . htmlentities($nick) . "';document.getElementById('" . $box_id . "').style.display = 'none';\">" . htmlentities($nick) . "</a>";
-            $sLastHit = $nick;
-        }
+    foreach ($userNicks as $nick) {
+        $sOut .= "<a href=\"#\" onclick=\"javascript:document.getElementById('" . $field_id . "').value='" . htmlentities($nick) . "';document.getElementById('" . $box_id . "').style.display = 'none';\">" . htmlentities($nick) . "</a>";
+        $sLastHit = $nick;
+    }
 
     if ($nCount > 20) {
         $sOut = "";
@@ -1015,63 +1018,60 @@ function lockUser($uid, $time, $reason)
 
 /***********/
 
-function buildingPrices($id, $lvl)
+function buildingPrices(int $id, int $level)
 {
     global $app;
 
     /** @var BuildingDataRepository $buildingRepository */
     $buildingRepository = $app[BuildingDataRepository::class];
 
+    /** @var BuildingService $buildingService */
+    $buildingService = $app[BuildingService::class];
+
     $objResponse = new xajaxResponse();
     $building = $buildingRepository->getBuilding($id);
-    $bc = calcBuildingCosts($building, $lvl);
-    $objResponse->assign("c1_metal", "innerHTML", StringUtils::formatNumber($bc['metal']));
-    $objResponse->assign("c1_crystal", "innerHTML", StringUtils::formatNumber($bc['crystal']));
-    $objResponse->assign("c1_plastic", "innerHTML", StringUtils::formatNumber($bc['plastic']));
-    $objResponse->assign("c1_fuel", "innerHTML", StringUtils::formatNumber($bc['fuel']));
-    $objResponse->assign("c1_food", "innerHTML", StringUtils::formatNumber($bc['food']));
-    $objResponse->assign("c1_power", "innerHTML", StringUtils::formatNumber($bc['power']));
+    $costs = $buildingService->calculateCosts($building, $level);
+    $objResponse->assign("c1_metal", "innerHTML", StringUtils::formatNumber($costs->metal));
+    $objResponse->assign("c1_crystal", "innerHTML", StringUtils::formatNumber($costs->crystal));
+    $objResponse->assign("c1_plastic", "innerHTML", StringUtils::formatNumber($costs->plastic));
+    $objResponse->assign("c1_fuel", "innerHTML", StringUtils::formatNumber($costs->fuel));
+    $objResponse->assign("c1_food", "innerHTML", StringUtils::formatNumber($costs->food));
+    $objResponse->assign("c1_power", "innerHTML", StringUtils::formatNumber($costs->power));
 
     return $objResponse;
 }
 
-function totalBuildingPrices($form)
+function totalBuildingPrices(array $form)
 {
     global $app;
 
     /** @var BuildingDataRepository $buildingRepository */
     $buildingRepository = $app[BuildingDataRepository::class];
 
-    $objResponse = new xajaxResponse();
-    $bctt = array();
-    foreach ($form['b_lvl'] as $id => $lvl) {
-        $building = $buildingRepository->getBuilding($id);
-        $bct = array();
-        for ($x = 0; $x < $lvl; $x++) {
-            $bc = calcBuildingCosts($building, $x);
-            $bct['metal'] += $bc['metal'];
-            $bct['crystal'] += $bc['crystal'];
-            $bct['plastic'] += $bc['plastic'];
-            $bct['fuel'] += $bc['fuel'];
-            $bct['food'] += $bc['food'];
-        }
-        $bctt['metal'] += $bct['metal'];
-        $bctt['crystal'] += $bct['crystal'];
-        $bctt['plastic'] += $bct['plastic'];
-        $bctt['fuel'] += $bct['fuel'];
-        $bctt['food'] += $bct['food'];
-        $objResponse->assign("b_metal_" . $id, "innerHTML", StringUtils::formatNumber($bct['metal']));
-        $objResponse->assign("b_crystal_" . $id, "innerHTML", StringUtils::formatNumber($bct['crystal']));
-        $objResponse->assign("b_plastic_" . $id, "innerHTML", StringUtils::formatNumber($bct['plastic']));
-        $objResponse->assign("b_fuel_" . $id, "innerHTML", StringUtils::formatNumber($bct['fuel']));
-        $objResponse->assign("b_food_" . $id, "innerHTML", StringUtils::formatNumber($bct['food']));
-    }
-    $objResponse->assign("t_metal", "innerHTML", StringUtils::formatNumber($bctt['metal']));
-    $objResponse->assign("t_crystal", "innerHTML", StringUtils::formatNumber($bctt['crystal']));
-    $objResponse->assign("t_plastic", "innerHTML", StringUtils::formatNumber($bctt['plastic']));
-    $objResponse->assign("t_fuel", "innerHTML", StringUtils::formatNumber($bctt['fuel']));
-    $objResponse->assign("t_food", "innerHTML", StringUtils::formatNumber($bctt['food']));
+    /** @var BuildingService $buildingService */
+    $buildingService = $app[BuildingService::class];
 
+    $objResponse = new xajaxResponse();
+
+    $grandTotalCosts = new BuildCosts();
+    foreach ($form['b_lvl'] as $id => $maxLevel) {
+        $building = $buildingRepository->getBuilding($id);
+        $totalCosts = new BuildCosts();
+        for ($level = 0; $level < $maxLevel; $level++) {
+            $totalCosts->add($buildingService->calculateCosts($building, $level));
+        }
+        $grandTotalCosts->add($totalCosts);
+        $objResponse->assign("b_metal_" . $id, "innerHTML", StringUtils::formatNumber($totalCosts->metal));
+        $objResponse->assign("b_crystal_" . $id, "innerHTML", StringUtils::formatNumber($totalCosts->crystal));
+        $objResponse->assign("b_plastic_" . $id, "innerHTML", StringUtils::formatNumber($totalCosts->plastic));
+        $objResponse->assign("b_fuel_" . $id, "innerHTML", StringUtils::formatNumber($totalCosts->fuel));
+        $objResponse->assign("b_food_" . $id, "innerHTML", StringUtils::formatNumber($totalCosts->food));
+    }
+    $objResponse->assign("t_metal", "innerHTML", StringUtils::formatNumber($grandTotalCosts->metal));
+    $objResponse->assign("t_crystal", "innerHTML", StringUtils::formatNumber($grandTotalCosts->crystal));
+    $objResponse->assign("t_plastic", "innerHTML", StringUtils::formatNumber($grandTotalCosts->plastic));
+    $objResponse->assign("t_fuel", "innerHTML", StringUtils::formatNumber($grandTotalCosts->fuel));
+    $objResponse->assign("t_food", "innerHTML", StringUtils::formatNumber($grandTotalCosts->food));
 
     return $objResponse;
 }

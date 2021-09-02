@@ -2,6 +2,11 @@
 
 namespace EtoA\Technology;
 
+use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Race\RaceDataRepository;
+use EtoA\Specialist\SpecialistService;
+use EtoA\Universe\Planet\PlanetTypeRepository;
+use EtoA\Universe\Star\SolarTypeRepository;
 use Pimple\Container;
 use Pimple\ServiceProviderInterface;
 
@@ -27,6 +32,16 @@ class TechnologyServiceProvider implements ServiceProviderInterface
 
         $pimple[TechnologyPointRepository::class] = function (Container $pimple): TechnologyPointRepository {
             return new TechnologyPointRepository($pimple['db']);
+        };
+
+        $pimple[TechnologyService::class] = function (Container $pimple): TechnologyService {
+            return new TechnologyService(
+                $pimple[ConfigurationService::class],
+                $pimple[SpecialistService::class],
+                $pimple[RaceDataRepository::class],
+                $pimple[PlanetTypeRepository::class],
+                $pimple[SolarTypeRepository::class],
+            );
         };
     }
 }
