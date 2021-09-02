@@ -45,7 +45,7 @@ parameters:
         - '#Class [a-z0-9_]+ implements generic interface IteratorAggregate but does not specify its types: TKey, TValue#i'
         - '#Method [a-z0-9_]+::get[a-z]*Iterator\(\) return#i'
 
-        - '#Variable \$(twig|cfg|xajax|s|page|resIcons|index|link|site|app|cu|conf|mode|popup|cp|planets|time) might not be define#'
+        - '#Variable \$(twig|xajax|s|page|resIcons|index|link|site|app|cu|mode|popup|cp|planets|time) might not be define#'
         - '#Variable \$(css_theme|sub|db_fields) might not be define#'
         - '#Access to (protected|private) property [a-z]+::\$[a-z]+#i'
         - '#Access to an undefined property [a-z]+::#i'
