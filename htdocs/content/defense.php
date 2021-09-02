@@ -85,7 +85,7 @@ $planet = $planetRepo->find($cp->id);
 $tabulator = 1;
 
 //Fabrik Level und Arbeiter laden
-$factoryBuilding = $buildingRepository->getEntityBuilding($cu->getId(), $planet->id, FACTORY_ID);
+$factoryBuilding = $buildingRepository->getEntityBuilding($cu->getId(), $planet->id, BuildingId::DEFENSE);
 
 // Prüfen ob Fabrik gebaut ist
 if ($factoryBuilding !== null && $factoryBuilding->currentLevel > 0) {

@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\Alliance\AllianceDiplomacyRepository;
+use EtoA\Building\BuildingId;
 use EtoA\Building\BuildingRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Fleet\FleetRepository;
@@ -185,7 +186,7 @@ class FleetLaunch
 
             /** @var BuildingRepository $buildingRepository */
             $buildingRepository = $app[BuildingRepository::class];
-            $fleetControl = $buildingRepository->getEntityBuilding((int) $this->ownerId, (int) $this->sourceEntity->id(), FLEET_CONTROL_ID);
+            $fleetControl = $buildingRepository->getEntityBuilding((int) $this->ownerId, (int) $this->sourceEntity->id(), BuildingId::FLEET_CONTROL);
 
             // Check if haven is out of order
             if (null === $fleetControl || $fleetControl->currentLevel === 0) {

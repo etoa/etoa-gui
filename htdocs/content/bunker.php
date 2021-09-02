@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\Building\BuildingDataRepository;
+use EtoA\Building\BuildingId;
 use EtoA\Building\BuildingRepository;
 use EtoA\Ship\ShipRepository;
 use EtoA\Support\BBCodeUtils;
@@ -41,10 +42,10 @@ if ($cp) {
 
     $mode = $request->query->get('mode', "res");
 
-    $fleetBunkerLevel = $buildingRepository->getBuildingLevel($cu->getId(), FLEET_BUNKER_ID, $planet->id);
-    $resBunkerLevel = $buildingRepository->getBuildingLevel($cu->getId(), RES_BUNKER_ID, $planet->id);
-    $fleetBunker = $buildingDataRepository->getBuilding(FLEET_BUNKER_ID);
-    $resBunker = $buildingDataRepository->getBuilding(RES_BUNKER_ID);
+    $fleetBunkerLevel = $buildingRepository->getBuildingLevel($cu->getId(), BuildingId::FLEET_BUNKER, $planet->id);
+    $resBunkerLevel = $buildingRepository->getBuildingLevel($cu->getId(), BuildingId::RES_BUNKER, $planet->id);
+    $fleetBunker = $buildingDataRepository->getBuilding(BuildingId::FLEET_BUNKER);
+    $resBunker = $buildingDataRepository->getBuilding(BuildingId::RES_BUNKER);
 
     $ships = [];
     if ($mode == "fleet" || $mode == "bunker") {

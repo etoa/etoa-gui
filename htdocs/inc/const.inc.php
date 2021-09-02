@@ -347,30 +347,6 @@ define("SHIP_BUILDING_ID", \EtoA\Building\BuildingId::SHIPYARD);
 // Gebäude welches den Status der Waffenfabrik wiedergibt
 define("DEF_BUILDING_ID", \EtoA\Building\BuildingId::DEFENSE);
 
-// ID der Schiffswerft
-define("SHIPYARD_ID", 9);
-
-// ID der Waffenfabrik
-define("FACTORY_ID", 10);
-
-// ID des Marktplatzes
-define('MARKTPLATZ_ID', 21);
-
-// ID der Flottenkontrolle
-define("FLEET_CONTROL_ID", 11);
-
-// ID des Kryptocenters
-define("BUILD_CRYPTO_ID", 24);
-
-// ID des Raketensilos
-define("BUILD_MISSILE_ID", 25);
-
-// ID des Rohstoffbunkers
-define("RES_BUNKER_ID", 26);
-
-// ID des Flottenbunkers
-define("FLEET_BUNKER_ID", 27);
-
 /*************************/
 /* Flotten & Kampfsystem */
 /*************************/

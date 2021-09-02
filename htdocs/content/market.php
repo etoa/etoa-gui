@@ -2,6 +2,7 @@
 
 use EtoA\Alliance\AllianceBuildingId;
 use EtoA\Alliance\AllianceBuildingRepository;
+use EtoA\Building\BuildingId;
 use EtoA\Building\BuildingRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Market\MarketRepository;
@@ -56,7 +57,7 @@ $planet = $planetRepo->find($cp->id);
 if ($config->getBoolean('market_enabled')) {
     $mode = isset($_GET['mode']) ? $_GET['mode'] : "";
 
-    $market = $buildingRepository->getEntityBuilding($cu->getId(), $planet->id, MARKTPLATZ_ID);
+    $market = $buildingRepository->getEntityBuilding($cu->getId(), $planet->id, BuildingId::MARKET);
 
     //Überprüfung ob der Marktplatz schon gebaut wurde
     if ($market !== null && $market->currentLevel > 0) {
