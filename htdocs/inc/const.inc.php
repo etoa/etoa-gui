@@ -238,45 +238,10 @@ define("BUILDING_QUEUE_DELAY", 60);
 /* Technologien */
 /****************/
 
-// ID der Strukturtechnik
-define("STRUCTURE_TECH_ID", 9);
-
-// ID der Schildtechnik
-define("SHIELD_TECH_ID", 10);
-
-// ID der Waffentechnik
-define("WEAPON_TECH_ID", 8);
-
-// ID der Regenatechnik
-define("REGENA_TECH_ID", 19);
-
-// ID der Tarntechnik
-define("TARN_TECH_ID", 11);
-
-// ID der Tarntechnik
-define("COMPUTER_TECH_ID", 25);
-
-// ID der Recyclingtechnologie
-define("RECYC_TECH_ID", 12);
-
-// ID der Bombentechnik
-define("BOMB_TECH_ID", 15);
-
-// ID der Gentechnologie
-define('GEN_TECH_ID', 23);
-
-// ID der Energietechnologie
-define('ENERGY_TECH_ID', 3);
-
-// ID der Wurmlochforschung
-define("TECH_WORMHOLE", 22);
-
 //
 // Ab diesem Level Sieht man von gegnerischen flotten diese infos...
 //
 
-// ...Gebäude des Gegners
-define("SPY_TECH_ID", 7);
 // ...Gesinnung des Gegners (friedlich/feindlich)
 define("SPY_TECH_SHOW_ATTITUDE", 1);
 // ...Anzahl der Schiffe

@@ -177,7 +177,7 @@ class TechnologyRepository extends AbstractRepository
             ->setParameters([
                 'userId' => $userId,
                 'entityId' => $entityId,
-                'techId' => GEN_TECH_ID,
+                'techId' => TechnologyId::GEN,
             ])
             ->execute()
             ->fetchOne();

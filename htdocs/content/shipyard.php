@@ -18,6 +18,7 @@ use EtoA\Ship\ShipSearch;
 use EtoA\Ship\ShipSort;
 use EtoA\Support\StringUtils;
 use EtoA\Specialist\SpecialistService;
+use EtoA\Technology\TechnologyId;
 use EtoA\Technology\TechnologyRepository;
 use EtoA\UI\ResourceBoxDrawer;
 use EtoA\Universe\Planet\PlanetRepository;
@@ -129,7 +130,7 @@ if ($shipyard !== null && $shipyard->currentLevel > 0) {
         $requirements = $shipRequirementRepository->getAll();
 
         //Gentechlevel definieren
-        $gen_tech_level = $techlist[GEN_TECH_ID] ?? 0;
+        $gen_tech_level = $techlist[TechnologyId::GEN] ?? 0;
 
         // Gebaute Schiffe laden
         /** @var array<int, array<int, int>> $shiplist */

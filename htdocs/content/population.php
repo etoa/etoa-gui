@@ -8,6 +8,7 @@ use EtoA\Race\RaceDataRepository;
 use EtoA\Ship\ShipRepository;
 use EtoA\Support\StringUtils;
 use EtoA\Specialist\SpecialistService;
+use EtoA\Technology\TechnologyId;
 use EtoA\Technology\TechnologyRepository;
 use EtoA\Technology\TechnologyRequirementRepository;
 use EtoA\UI\ResourceBoxDrawer;
@@ -65,7 +66,7 @@ if ($cp) {
             BuildingId::DEFENSE => $defenseRepository->countBuildInProgress($cu->getId(), $planet->id),
             BuildingId::TECHNOLOGY => $technologyRepository->countResearchInProgress($cu->getId(), $planet->id),
             BuildingId::BUILDING => $buildingRepository->countBuildInProgress($cu->getId(), $planet->id),
-            BuildingId::PEOPLE =>  (int) $technologyRepository->isTechInProgress($cu->getId(), GEN_TECH_ID),
+            BuildingId::PEOPLE =>  (int) $technologyRepository->isTechInProgress($cu->getId(), TechnologyId::GEN),
         ];
 
         //
@@ -122,13 +123,13 @@ if ($cp) {
             foreach ($workplaces as $workplace) {
                 if ($workplace->buildingId === BuildingId::PEOPLE) {
                     $requirements_passed = true;
-                    $requirements = $technologyRequirementRepository->getRequirements(GEN_TECH_ID);
+                    $requirements = $technologyRequirementRepository->getRequirements(TechnologyId::GEN);
 
                     /** @var TechnologyRepository $technologyRepository */
                     $technologyRepository = $app[TechnologyRepository::class];
                     $techlist = $technologyRepository->getTechnologyLevels($cu->getId());
 
-                    foreach ($requirements->getAll(GEN_TECH_ID) as $requirement) {
+                    foreach ($requirements->getAll(TechnologyId::GEN) as $requirement) {
                         if ($requirement->requiredTechnologyId > 0) {
                             if ($requirement->requiredLevel > ($techlist[$requirement->requiredTechnologyId] ?? 0)) {
                                 $requirements_passed = false;

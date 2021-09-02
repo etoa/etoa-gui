@@ -7,6 +7,7 @@ use EtoA\Building\BuildingTypeDataRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Support\StringUtils;
 use EtoA\Specialist\SpecialistService;
+use EtoA\Technology\TechnologyId;
 use EtoA\Technology\TechnologyRepository;
 use EtoA\UI\ResourceBoxDrawer;
 use EtoA\Universe\Planet\PlanetRepository;
@@ -226,7 +227,7 @@ if (isset($cp)) {
     //
     // create infobox incl. editable stuff for working people adjustements
     //
-    $genTechLevel = $techlist[GEN_TECH_ID] ?? 0;
+    $genTechLevel = $techlist[TechnologyId::GEN] ?? 0;
     tableStart('Bauhof-Infos');
     echo '<colgroup><col style="width:400px;"/><col/></colgroup>';
 

@@ -11,6 +11,7 @@ use EtoA\Race\RaceDataRepository;
 use EtoA\Ship\ShipRepository;
 use EtoA\Support\StringUtils;
 use EtoA\Specialist\SpecialistService;
+use EtoA\Technology\TechnologyId;
 use EtoA\Technology\TechnologyRepository;
 use EtoA\Universe\Entity\EntityService;
 use EtoA\Universe\Planet\PlanetRepository;
@@ -148,7 +149,7 @@ class FleetLaunch
         //Wormhole enable?
         /** @var TechnologyRepository $technologyRepository */
         $technologyRepository = $app[TechnologyRepository::class];
-        $this->wormholeEnable = $technologyRepository->getTechnologyLevel((int) $this->ownerId, TECH_WORMHOLE) > 0;
+        $this->wormholeEnable = $technologyRepository->getTechnologyLevel((int) $this->ownerId, TechnologyId::WORMHOLE) > 0;
     }
 
     //

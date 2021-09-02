@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\Building\BuildingRepository;
+use EtoA\Technology\TechnologyId;
 use EtoA\Technology\TechnologyRepository;
 
 class BuildList implements IteratorAggregate
@@ -94,7 +95,7 @@ class BuildList implements IteratorAggregate
         /** @var TechnologyRepository $technologyRepository */
         $technologyRepository = $app[TechnologyRepository::class];
 
-        self::$GENTECH = $technologyRepository->getTechnologyLevel((int) $this->ownerId, GEN_TECH_ID);
+        self::$GENTECH = $technologyRepository->getTechnologyLevel((int) $this->ownerId, TechnologyId::GEN);
         $this->items = array();
         $this->count = 0;
 

@@ -14,6 +14,7 @@ use EtoA\Ship\ShipDataRepository;
 use EtoA\Ship\ShipQueueRepository;
 use EtoA\Ship\ShipQueueSearch;
 use EtoA\Technology\TechnologyDataRepository;
+use EtoA\Technology\TechnologyId;
 use EtoA\Technology\TechnologyListItemSearch;
 use EtoA\Technology\TechnologyRepository;
 use EtoA\Text\TextRepository;
@@ -168,7 +169,7 @@ else {
 //
 $technologyNames = $technologyDataRepository->getTechnologyNames(true);
 //Lädt forschende Tech
-$technologyInProgress = $technologyRepository->searchEntry(TechnologyListItemSearch::create()->userId($cu->getId())->notTechnologyId(GEN_TECH_ID)->underConstruction());
+$technologyInProgress = $technologyRepository->searchEntry(TechnologyListItemSearch::create()->userId($cu->getId())->notTechnologyId(TechnologyId::GEN)->underConstruction());
 if ($technologyInProgress !== null) {
     echo "<td><a href=\"?page=research&amp;change_entity=" . $technologyInProgress->entityId . "\" id=\"tech_counter\">";
     //Forschung ist fertig
@@ -188,7 +189,7 @@ if ($technologyInProgress !== null) {
 //
 //Gentech
 //
-$genTechnologyInProgress = $technologyRepository->searchEntry(TechnologyListItemSearch::create()->userId($cu->getId())->technologyId(GEN_TECH_ID)->underConstruction());
+$genTechnologyInProgress = $technologyRepository->searchEntry(TechnologyListItemSearch::create()->userId($cu->getId())->technologyId(TechnologyId::GEN)->underConstruction());
 if ($genTechnologyInProgress !== null) {
     echo "
         <tr >

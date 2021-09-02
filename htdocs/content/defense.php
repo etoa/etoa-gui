@@ -17,6 +17,7 @@ use EtoA\Log\GameLogRepository;
 use EtoA\Log\LogSeverity;
 use EtoA\Support\StringUtils;
 use EtoA\Specialist\SpecialistService;
+use EtoA\Technology\TechnologyId;
 use EtoA\Technology\TechnologyRepository;
 use EtoA\UI\ResourceBoxDrawer;
 use EtoA\Universe\Planet\PlanetRepository;
@@ -130,8 +131,8 @@ if ($factoryBuilding !== null && $factoryBuilding->currentLevel > 0) {
         $technologyRepository = $app[TechnologyRepository::class];
         $techlist = $technologyRepository->getTechnologyLevels($cu->getId());
 
-        if (isset($techlist[GEN_TECH_ID]) && $techlist[GEN_TECH_ID] > 0) {
-            $gen_tech_level = $techlist[GEN_TECH_ID];
+        if (isset($techlist[TechnologyId::GEN]) && $techlist[TechnologyId::GEN] > 0) {
+            $gen_tech_level = $techlist[TechnologyId::GEN];
         }
 
         //Gebäude laden

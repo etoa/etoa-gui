@@ -13,6 +13,7 @@ use EtoA\Ship\ShipRepository;
 use EtoA\Ship\ShipSearch;
 use EtoA\Support\StringUtils;
 use EtoA\Specialist\SpecialistService;
+use EtoA\Technology\TechnologyId;
 use EtoA\Technology\TechnologyRepository;
 use EtoA\UI\ResourceBoxDrawer;
 use EtoA\Universe\Planet\PlanetRepository;
@@ -350,7 +351,7 @@ if ($cp) {
 
     /** @var TechnologyRepository $technologyRepository */
     $technologyRepository = $app[TechnologyRepository::class];
-    $energyTechLevel = $technologyRepository->getTechnologyLevel($cu->getId(), ENERGY_TECH_ID);
+    $energyTechLevel = $technologyRepository->getTechnologyLevel($cu->getId(), TechnologyId::ENERGY);
 
     $energyTechPowerBonusRequiredLevel = $config->getInt('energy_tech_power_bonus_required_level');
     if ($energyTechLevel > $energyTechPowerBonusRequiredLevel) {
