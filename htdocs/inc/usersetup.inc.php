@@ -13,6 +13,7 @@ use EtoA\Universe\Entity\EntityType;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Universe\Planet\PlanetService;
 use EtoA\Universe\Planet\PlanetTypeRepository;
+use EtoA\Universe\Resources\ResIcons;
 use EtoA\Universe\Star\SolarTypeRepository;
 use EtoA\Universe\Star\StarRepository;
 use EtoA\User\UserRepository;
@@ -242,61 +243,61 @@ if ($mode == "itemsets" && isset($planet)) {
     echo "<th>" . $starType->name . "</th>";
     echo "<th>TOTAL</th></tr>";
 
-    echo "<tr><td class=\"tbldata\">" . RES_ICON_METAL . "Produktion " . RES_METAL . "</td>";
+    echo "<tr><td class=\"tbldata\">" . ResIcons::METAL . "Produktion " . RES_METAL . "</td>";
     echo "<td class=\"tbldata\">" . StringUtils::formatPercentString($planetType->metal, true) . "</td>";
     echo "<td class=\"tbldata\">" . StringUtils::formatPercentString($race->metal, true) . "</td>";
     echo "<td class=\"tbldata\">" . StringUtils::formatPercentString($starType->metal, true) . "</td>";
     echo "<td class=\"tbldata\">" . StringUtils::formatPercentString([$planetType->metal, $race->metal, $starType->metal], true) . "</td></tr>";
 
-    echo "<tr><td class=\"tbldata\">" . RES_ICON_CRYSTAL . "Produktion " . RES_CRYSTAL . "</td>";
+    echo "<tr><td class=\"tbldata\">" . ResIcons::CRYSTAL . "Produktion " . RES_CRYSTAL . "</td>";
     echo "<td class=\"tbldata\">" . StringUtils::formatPercentString($planetType->crystal, true) . "</td>";
     echo "<td class=\"tbldata\">" . StringUtils::formatPercentString($race->crystal, true) . "</td>";
     echo "<td class=\"tbldata\">" . StringUtils::formatPercentString($starType->crystal, true) . "</td>";
     echo "<td class=\"tbldata\">" . StringUtils::formatPercentString([$planetType->crystal, $race->crystal, $starType->crystal], true) . "</td></tr>";
 
-    echo "<tr><td class=\"tbldata\">" . RES_ICON_PLASTIC . "Produktion " . RES_PLASTIC . "</td>";
+    echo "<tr><td class=\"tbldata\">" . ResIcons::PLASTIC . "Produktion " . RES_PLASTIC . "</td>";
     echo "<td class=\"tbldata\">" . StringUtils::formatPercentString($planetType->plastic, true) . "</td>";
     echo "<td class=\"tbldata\">" . StringUtils::formatPercentString($race->plastic, true) . "</td>";
     echo "<td class=\"tbldata\">" . StringUtils::formatPercentString($starType->plastic, true) . "</td>";
     echo "<td class=\"tbldata\">" . StringUtils::formatPercentString([$planetType->plastic, $race->plastic, $starType->plastic], true) . "</td></tr>";
 
-    echo "<tr><td class=\"tbldata\">" . RES_ICON_FUEL . "Produktion " . RES_FUEL . "</td>";
+    echo "<tr><td class=\"tbldata\">" . ResIcons::FUEL . "Produktion " . RES_FUEL . "</td>";
     echo "<td class=\"tbldata\">" . StringUtils::formatPercentString($planetType->fuel, true) . "</td>";
     echo "<td class=\"tbldata\">" . StringUtils::formatPercentString($race->fuel, true) . "</td>";
     echo "<td class=\"tbldata\">" . StringUtils::formatPercentString($starType->fuel, true) . "</td>";
     echo "<td class=\"tbldata\">" . StringUtils::formatPercentString([$planetType->fuel, $race->fuel, $starType->fuel], true) . "</td></tr>";
 
-    echo "<tr><td class=\"tbldata\">" . RES_ICON_FOOD . "Produktion " . RES_FOOD . "</td>";
+    echo "<tr><td class=\"tbldata\">" . ResIcons::FOOD . "Produktion " . RES_FOOD . "</td>";
     echo "<td class=\"tbldata\">" . StringUtils::formatPercentString($planetType->food, true) . "</td>";
     echo "<td class=\"tbldata\">" . StringUtils::formatPercentString($race->food, true) . "</td>";
     echo "<td class=\"tbldata\">" . StringUtils::formatPercentString($starType->food, true) . "</td>";
     echo "<td class=\"tbldata\">" . StringUtils::formatPercentString([$planetType->food, $race->food, $starType->food], true) . "</td></tr>";
 
-    echo "<tr><td class=\"tbldata\">" . RES_ICON_POWER . "Produktion Energie</td>";
+    echo "<tr><td class=\"tbldata\">" . ResIcons::POWER . "Produktion Energie</td>";
     echo "<td class=\"tbldata\">" . StringUtils::formatPercentString($planetType->power, true) . "</td>";
     echo "<td class=\"tbldata\">" . StringUtils::formatPercentString($race->power, true) . "</td>";
     echo "<td class=\"tbldata\">" . StringUtils::formatPercentString($starType->power, true) . "</td>";
     echo "<td class=\"tbldata\">" . StringUtils::formatPercentString([$planetType->power, $race->power, $starType->power], true) . "</td></tr>";
 
-    echo "<tr><td class=\"tbldata\">" . RES_ICON_PEOPLE . "Bevölkerungswachstum</td>";
+    echo "<tr><td class=\"tbldata\">" . ResIcons::PEOPLE . "Bevölkerungswachstum</td>";
     echo "<td class=\"tbldata\">" . StringUtils::formatPercentString($planetType->people, true) . "</td>";
     echo "<td class=\"tbldata\">" . StringUtils::formatPercentString($race->population, true) . "</td>";
     echo "<td class=\"tbldata\">" . StringUtils::formatPercentString($starType->people, true) . "</td>";
     echo "<td class=\"tbldata\">" . StringUtils::formatPercentString([$planetType->people, $race->population, $starType->people], true) . "</td></tr>";
 
-    echo "<tr><td class=\"tbldata\">" . RES_ICON_TIME . "Forschungszeit</td>";
+    echo "<tr><td class=\"tbldata\">" . ResIcons::TIME . "Forschungszeit</td>";
     echo "<td class=\"tbldata\">" . StringUtils::formatPercentString($planetType->researchTime, true, true) . "</td>";
     echo "<td class=\"tbldata\">" . StringUtils::formatPercentString($race->researchTime, true, true) . "</td>";
     echo "<td class=\"tbldata\">" . StringUtils::formatPercentString($starType->researchTime, true, true) . "</td>";
     echo "<td class=\"tbldata\">" . StringUtils::formatPercentString([$planetType->researchTime, $race->researchTime, $starType->researchTime], true, true) . "</td></tr>";
 
-    echo "<tr><td class=\"tbldata\">" . RES_ICON_TIME . "Bauzeit (Geb&auml;ude)</td>";
+    echo "<tr><td class=\"tbldata\">" . ResIcons::TIME . "Bauzeit (Geb&auml;ude)</td>";
     echo "<td class=\"tbldata\">" . StringUtils::formatPercentString($planetType->buildTime, true, true) . "</td>";
     echo "<td class=\"tbldata\">" . StringUtils::formatPercentString($race->buildTime, true, true) . "</td>";
     echo "<td class=\"tbldata\">" . StringUtils::formatPercentString($starType->buildTime, true, true) . "</td>";
     echo "<td class=\"tbldata\">" . StringUtils::formatPercentString([$planetType->buildTime, $race->buildTime, $starType->buildTime], true, true) . "</td></tr>";
 
-    echo "<tr><td class=\"tbldata\">" . RES_ICON_TIME . "Fluggeschwindigkeit</td>";
+    echo "<tr><td class=\"tbldata\">" . ResIcons::TIME . "Fluggeschwindigkeit</td>";
     echo "<td class=\"tbldata\">-</td>";
     echo "<td class=\"tbldata\">" . StringUtils::formatPercentString($race->fleetTime, true) . "</td>";
     echo "<td class=\"tbldata\">-</td>";

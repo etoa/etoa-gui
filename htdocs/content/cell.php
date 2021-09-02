@@ -10,6 +10,7 @@ use EtoA\Support\StringUtils;
 use EtoA\Universe\Cell\CellRepository;
 use EtoA\Universe\Entity\EntityType;
 use EtoA\Universe\Planet\PlanetRepository;
+use EtoA\Universe\Resources\ResIcons;
 use EtoA\Universe\Star\StarRepository;
 use EtoA\User\UserPropertiesRepository;
 use EtoA\User\UserRepository;
@@ -254,11 +255,11 @@ if ($cell->isValid()) {
                 if ($planet->hasDebrisField()) {
                     echo "<br/><span style=\"color:#817339;font-weight:bold\" " . tm(
                         "Trümmerfeld",
-                        RES_ICON_METAL . StringUtils::formatNumber($planet->wfMetal) . " " .
+                            ResIcons::METAL . StringUtils::formatNumber($planet->wfMetal) . " " .
                             RES_METAL . "<br style=\"clear:both\" />" .
-                            RES_ICON_CRYSTAL . StringUtils::formatNumber($planet->wfCrystal) . " " .
+                            ResIcons::CRYSTAL . StringUtils::formatNumber($planet->wfCrystal) . " " .
                             RES_CRYSTAL . "<br style=\"clear:both\" />" .
-                            RES_ICON_PLASTIC . StringUtils::formatNumber($planet->wfPlastic) . " " .
+                            ResIcons::PLASTIC . StringUtils::formatNumber($planet->wfPlastic) . " " .
                             RES_PLASTIC . "<br style=\"clear:both\" />"
                     ) . ">Trümmerfeld</span> ";
                 }

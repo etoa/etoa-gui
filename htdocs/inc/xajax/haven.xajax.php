@@ -23,6 +23,7 @@ use EtoA\Technology\TechnologyRepository;
 use EtoA\Universe\Entity\EntityCoordinates;
 use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Planet\PlanetRepository;
+use EtoA\Universe\Resources\ResIcons;
 use EtoA\User\UserRepository;
 use EtoA\User\UserSearch;
 use EtoA\User\UserUniverseDiscoveryService;
@@ -998,44 +999,44 @@ function havenShowAction($form)
                         <tr><th>Freie Passagierplätze:</th>
                         <td style=\"width:150px;\" id=\"peoplefree\">" . StringUtils::formatNumber($fleet->getPeopleCapacity()) . "</td>
                         </td></tr>
-                        <tr id=\"resbox1\" style=\"display:;\"><th>" . RES_ICON_METAL . "" . RES_METAL . "</th>
+                        <tr id=\"resbox1\" style=\"display:;\"><th>" . ResIcons::METAL . "" . RES_METAL . "</th>
                         <td><input type=\"text\" name=\"res1\" id=\"res1\" value=\"" . $fleet->getLoadedRes(1) . "\" size=\"12\" tabindex=\"" . ($tabindex++) . "\" onblur=\"xajax_havenCheckRes(1,this.value)\" />
                         <a href=\"javascript:;\" onclick=\"xajax_havenCheckRes(1," . floor($fleet->sourceEntity->getRes(1)) . ");\">max</a></td></tr>
-                        <tr id=\"resbox2\" style=\"display:;\"><th>" . RES_ICON_CRYSTAL . "" . RES_CRYSTAL . "</th>
+                        <tr id=\"resbox2\" style=\"display:;\"><th>" . ResIcons::CRYSTAL . "" . RES_CRYSTAL . "</th>
                         <td><input type=\"text\" name=\"res2\" id=\"res2\" value=\"" . $fleet->getLoadedRes(2) . "\" size=\"12\" tabindex=\"" . ($tabindex++) . "\" onblur=\"xajax_havenCheckRes(2,this.value)\" />
                         <a href=\"javascript:;\" onclick=\"xajax_havenCheckRes(2," . floor($fleet->sourceEntity->getRes(2)) . ");\">max</a></td></tr>
-                        <tr id=\"resbox3\" style=\"display:;\"><th>" . RES_ICON_PLASTIC . "" . RES_PLASTIC . "</th>
+                        <tr id=\"resbox3\" style=\"display:;\"><th>" . ResIcons::PLASTIC . "" . RES_PLASTIC . "</th>
                         <td><input type=\"text\" name=\"res3\" id=\"res3\" value=\"" . $fleet->getLoadedRes(3) . "\" size=\"12\" tabindex=\"" . ($tabindex++) . "\" onblur=\"xajax_havenCheckRes(3,this.value)\" />
                         <a href=\"javascript:;\" onclick=\"xajax_havenCheckRes(3," . floor($fleet->sourceEntity->getRes(3)) . ");\">max</a></td></tr>
-                        <tr id=\"resbox4\" style=\"display:;\"><th>" . RES_ICON_FUEL . "" . RES_FUEL . "</th>
+                        <tr id=\"resbox4\" style=\"display:;\"><th>" . ResIcons::FUEL . "" . RES_FUEL . "</th>
                         <td><input type=\"text\" name=\"res4\" id=\"res4\" value=\"" . $fleet->getLoadedRes(4) . "\" size=\"12\" tabindex=\"" . ($tabindex++) . "\" onblur=\"xajax_havenCheckRes(4,this.value)\" />
                         <a href=\"javascript:;\" onclick=\"xajax_havenCheckRes(4," . floor($fleet->sourceEntity->getRes(4)) . ");\">max</a></td></tr>
-                        <tr id=\"resbox5\" style=\"display:;\"><th>" . RES_ICON_FOOD . "" . RES_FOOD . "</th>
+                        <tr id=\"resbox5\" style=\"display:;\"><th>" . ResIcons::FOOD . "" . RES_FOOD . "</th>
                         <td><input type=\"text\" name=\"res5\" id=\"res5\" value=\"" . $fleet->getLoadedRes(5) . "\" size=\"12\" tabindex=\"" . ($tabindex++) . "\" onblur=\"xajax_havenCheckRes(5,this.value)\" />
                         <a href=\"javascript:;\" onclick=\"xajax_havenCheckRes(5," . floor($fleet->sourceEntity->getRes(5)) . ");\">max</a></td></tr>
-                        <tr id=\"resbox6\" style=\"display:;\"><th>" . RES_ICON_PEOPLE . "Passagiere</th>
+                        <tr id=\"resbox6\" style=\"display:;\"><th>" . ResIcons::PEOPLE . "Passagiere</th>
                         <td><input type=\"text\" name=\"resp\" id=\"resp\" value=\"" . $fleet->capacityPeopleLoaded . "\" size=\"12\" tabindex=\"" . ($tabindex++) . "\" onblur=\"xajax_havenCheckPeople(this.value)\" />
                         <a href=\"javascript:;\" onclick=\"xajax_havenCheckPeople(" . floor($fleet->sourceEntity->people()) . ");\">max</a></td></tr>
                         <tr id=\"resbox7\" style=\"display:;\"><th id=\"respercent\">&nbsp;</th>
                         <td>&nbsp;
                         <a href=\"javascript:;\" onclick=\"xajax_havenSetResAll();\">Alles einladen</a></td></tr>
 
-                        <tr id=\"fetchbox1\" style=\"display:none;\"><th>" . RES_ICON_METAL . "" . RES_METAL . "</th>
+                        <tr id=\"fetchbox1\" style=\"display:none;\"><th>" . ResIcons::METAL . "" . RES_METAL . "</th>
                         <td><input type=\"text\" name=\"fetch1\" id=\"fres1\" value=\"0\" size=\"12\" onkeyup=\"FormatNumber(this.id,this.value, '" . $fleet->getTotalCapacity() . "', '', '');\"/>
                         <a href=\"javascript:;\" onclick=\"document.getElementById('fres1').value=" . $fleet->getTotalCapacity() . "\">max</a></td></tr>
-                        <tr id=\"fetchbox2\" style=\"display:none;\"><th>" . RES_ICON_CRYSTAL . "" . RES_CRYSTAL . "</th>
+                        <tr id=\"fetchbox2\" style=\"display:none;\"><th>" . ResIcons::CRYSTAL . "" . RES_CRYSTAL . "</th>
                         <td><input type=\"text\" name=\"fetch2\" id=\"fres2\" value=\"0\" size=\"12\" onkeyup=\"FormatNumber(this.id,this.value, '" . $fleet->getTotalCapacity() . "', '', '');\"/>
                         <a href=\"javascript:;\" onclick=\"document.getElementById('fres2').value=" . $fleet->getTotalCapacity() . "\">max</a></td></tr>
-                        <tr id=\"fetchbox3\" style=\"display:none;\"><th>" . RES_ICON_PLASTIC . "" . RES_PLASTIC . "</th>
+                        <tr id=\"fetchbox3\" style=\"display:none;\"><th>" . ResIcons::PLASTIC . "" . RES_PLASTIC . "</th>
                         <td><input type=\"text\" name=\"fetch3\" id=\"fres3\" value=\"0\" size=\"12\" onkeyup=\"FormatNumber(this.id,this.value, '" . $fleet->getTotalCapacity() . "', '', '');\"/>
                         <a href=\"javascript:;\" onclick=\"document.getElementById('fres3').value=" . $fleet->getTotalCapacity() . "\">max</a></td></tr>
-                        <tr id=\"fetchbox4\" style=\"display:none;\"><th>" . RES_ICON_FUEL . "" . RES_FUEL . "</th>
+                        <tr id=\"fetchbox4\" style=\"display:none;\"><th>" . ResIcons::FUEL . "" . RES_FUEL . "</th>
                         <td><input type=\"text\" name=\"fetch4\" id=\"fres4\" value=\"0\" size=\"12\" onkeyup=\"FormatNumber(this.id,this.value, '" . $fleet->getTotalCapacity() . "', '', '');\"/>
                         <a href=\"javascript:;\" onclick=\"document.getElementById('fres4').value=" . $fleet->getTotalCapacity() . "\">max</a></td></tr>
-                        <tr id=\"fetchbox5\" style=\"display:none;\"><th>" . RES_ICON_FOOD . "" . RES_FOOD . "</th>
+                        <tr id=\"fetchbox5\" style=\"display:none;\"><th>" . ResIcons::FOOD . "" . RES_FOOD . "</th>
                         <td><input type=\"text\" name=\"fetch5\" id=\"fres5\" value=\"0\" size=\"12\" onkeyup=\"FormatNumber(this.id,this.value, '" . $fleet->getTotalCapacity() . "', '', '');\"/>
                         <a href=\"javascript:;\" onclick=\"document.getElementById('fres5').value=" . $fleet->getTotalCapacity() . "\">max</a></td></tr>
-                        <tr id=\"fetchbox6\" style=\"display:none;\"><th>" . RES_ICON_PEOPLE . "Passagiere</th>
+                        <tr id=\"fetchbox6\" style=\"display:none;\"><th>" . ResIcons::PEOPLE . "Passagiere</th>
                         <td><input type=\"text\" name=\"fetchp\" id=\"fresp\" value=\"0\" size=\"12\" onkeyup=\"FormatNumber(this.id,this.value, '" . $fleet->getTotalPeopleCapacity() . "', '', '');\"/>
                         <a href=\"javascript:;\" onclick=\"document.getElementById('fresp').value=" . $fleet->getTotalPeopleCapacity() . "\">max</a></td></tr>
                         <tr id=\"fetchbox7\" style=\"display:none;\"><th>&nbsp;</th>

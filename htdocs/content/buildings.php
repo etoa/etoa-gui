@@ -12,6 +12,7 @@ use EtoA\Technology\TechnologyRepository;
 use EtoA\UI\ResourceBoxDrawer;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Technology\TechnologyDataRepository;
+use EtoA\Universe\Resources\ResIcons;
 use EtoA\Universe\Resources\ResourceNames;
 use EtoA\User\UserPropertiesRepository;
 
@@ -317,13 +318,13 @@ if (isset($cp)) {
             tableStart('Bauoptionen');
             echo '<tr>
                     <th width="16%">Aktion</td>
-                    <th width="14%">' . RES_ICON_TIME . ' Zeit</th>
-                    <th width="14%">' . RES_ICON_METAL . '</td>
-                    <th width="14%">' . RES_ICON_CRYSTAL . '</td>
-                    <th width="14%">' . RES_ICON_PLASTIC . '</td>
-                    <th width="14%">' . RES_ICON_FUEL . '</td>
-                    <th width="14%">' . RES_ICON_FOOD . '</td>
-                    <th width="14%">' . RES_ICON_POWER . '</td>
+                    <th width="14%">' . ResIcons::TIME . ' Zeit</th>
+                    <th width="14%">' . ResIcons::METAL . '</td>
+                    <th width="14%">' . ResIcons::CRYSTAL . '</td>
+                    <th width="14%">' . ResIcons::PLASTIC . '</td>
+                    <th width="14%">' . ResIcons::FUEL . '</td>
+                    <th width="14%">' . ResIcons::FOOD . '</td>
+                    <th width="14%">' . ResIcons::POWER . '</td>
                 </tr>';
 
             // Bauen

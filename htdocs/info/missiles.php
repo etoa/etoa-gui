@@ -3,6 +3,7 @@
 use EtoA\Missile\MissileDataRepository;
 use EtoA\Support\BBCodeUtils;
 use EtoA\Support\StringUtils;
+use EtoA\Universe\Resources\ResIcons;
 
 /** @var MissileDataRepository $missileDataRepository */
 $missileDataRepository = $app[MissileDataRepository::class];
@@ -37,11 +38,11 @@ if (isset($_GET['id'])) {
 
         echo "<tr><th class=\"tbltitle\" colspan=\"2\" style=\"text-align:center\">Kosten und technische Daten</th></tr>";
 
-        echo "<tr><td class=\"tbltitle\">" . RES_ICON_METAL . "" . RES_METAL . "</td><td class=\"tbldata\">" . StringUtils::formatNumber($missile->costsMetal) . "</td></tr>";
-        echo "<tr><td class=\"tbltitle\">" . RES_ICON_CRYSTAL . "" . RES_CRYSTAL . "</td><td class=\"tbldata\">" . StringUtils::formatNumber($missile->costsCrystal) . "</td></tr>";
-        echo "<tr><td class=\"tbltitle\">" . RES_ICON_PLASTIC . "" . RES_PLASTIC . "</td><td class=\"tbldata\">" . StringUtils::formatNumber($missile->costsPlastic) . "</td></tr>";
-        echo "<tr><td class=\"tbltitle\">" . RES_ICON_FUEL . "" . RES_FUEL . "</td><td class=\"tbldata\">" . StringUtils::formatNumber($missile->costsFuel) . "</td></tr>";
-        echo "<tr><td class=\"tbltitle\">" . RES_ICON_FOOD . "" . RES_FOOD . "</td><td class=\"tbldata\">" . StringUtils::formatNumber($missile->costsFood) . "</td></tr>";
+        echo "<tr><td class=\"tbltitle\">" . ResIcons::METAL . "" . RES_METAL . "</td><td class=\"tbldata\">" . StringUtils::formatNumber($missile->costsMetal) . "</td></tr>";
+        echo "<tr><td class=\"tbltitle\">" . ResIcons::CRYSTAL . "" . RES_CRYSTAL . "</td><td class=\"tbldata\">" . StringUtils::formatNumber($missile->costsCrystal) . "</td></tr>";
+        echo "<tr><td class=\"tbltitle\">" . ResIcons::PLASTIC . "" . RES_PLASTIC . "</td><td class=\"tbldata\">" . StringUtils::formatNumber($missile->costsPlastic) . "</td></tr>";
+        echo "<tr><td class=\"tbltitle\">" . ResIcons::FUEL . "" . RES_FUEL . "</td><td class=\"tbldata\">" . StringUtils::formatNumber($missile->costsFuel) . "</td></tr>";
+        echo "<tr><td class=\"tbltitle\">" . ResIcons::FOOD . "" . RES_FOOD . "</td><td class=\"tbldata\">" . StringUtils::formatNumber($missile->costsFood) . "</td></tr>";
 
         echo "<tr><td class=\"tbltitle\">Geschwindigkeit</td><td class=\"tbldata\">" . StringUtils::formatNumber($missile->speed) . " AE/h</td></tr>";
         echo "<tr><td class=\"tbltitle\">Reichweite</td><td class=\"tbldata\">" . StringUtils::formatNumber($missile->range) . " AE</td></tr>";

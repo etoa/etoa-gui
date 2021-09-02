@@ -7,6 +7,7 @@ use EtoA\Building\BuildingTypeId;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Support\BBCodeUtils;
 use EtoA\Support\StringUtils;
+use EtoA\Universe\Resources\ResIcons;
 
 /** @var ConfigurationService $config */
 $config = $app[ConfigurationService::class];
@@ -390,12 +391,12 @@ if ($request->query->has('id') && $request->query->getInt('id') > 0) {
 
         tableStart("Kostenentwicklung (Faktor: " . $building->buildCostsFactor . ")");
         echo "<tr><th style=\"text-align:center;\">Level</th>
-                <th>" . RES_ICON_METAL . "" . RES_METAL . "</th>
-                <th>" . RES_ICON_CRYSTAL . "" . RES_CRYSTAL . "</th>
-                <th>" . RES_ICON_PLASTIC . "" . RES_PLASTIC . "</th>
-                <th>" . RES_ICON_FUEL . "" . RES_FUEL . "</th>
-            <th>" . RES_ICON_FOOD . "" . RES_FOOD . "</th>
-   <!-- 	<th>" . RES_ICON_POWER . "Energie</th>     -->
+                <th>" . ResIcons::METAL . "" . RES_METAL . "</th>
+                <th>" . ResIcons::CRYSTAL . "" . RES_CRYSTAL . "</th>
+                <th>" . ResIcons::PLASTIC . "" . RES_PLASTIC . "</th>
+                <th>" . ResIcons::FUEL . "" . RES_FUEL . "</th>
+            <th>" . ResIcons::FOOD . "" . RES_FOOD . "</th>
+   <!-- 	<th>" . ResIcons::POWER . "Energie</th>     -->
                 <th>Felder</th></tr>";
         for ($x = 0; $x < min(30, $building->lastLevel); $x++) {
             $bc = calcBuildingCosts($building, $x);

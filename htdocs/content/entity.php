@@ -5,6 +5,7 @@ use EtoA\Support\StringUtils;
 use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Entity\EntityType;
 use EtoA\Universe\Planet\PlanetRepository;
+use EtoA\Universe\Resources\ResIcons;
 use EtoA\User\UserRepository;
 use EtoA\User\UserUniverseDiscoveryService;
 
@@ -113,9 +114,9 @@ if ($id > 0) {
                     if ($planet->hasDebrisField()) {
                         echo '<tr>
                         <th class="tbltitle">Trümmerfeld:</th><td>
-                        ' . RES_ICON_METAL . "" . StringUtils::formatNumber($planet->wfMetal) . '<br style="clear:both;" />
-                        ' . RES_ICON_CRYSTAL . "" . StringUtils::formatNumber($planet->wfCrystal) . '<br style="clear:both;" />
-                        ' . RES_ICON_PLASTIC . "" . StringUtils::formatNumber($planet->wfPlastic) . '<br style="clear:both;" />
+                        ' . ResIcons::METAL . "" . StringUtils::formatNumber($planet->wfMetal) . '<br style="clear:both;" />
+                        ' . ResIcons::CRYSTAL . "" . StringUtils::formatNumber($planet->wfCrystal) . '<br style="clear:both;" />
+                        ' . ResIcons::PLASTIC . "" . StringUtils::formatNumber($planet->wfPlastic) . '<br style="clear:both;" />
                         </td></tr>';
                     }
 

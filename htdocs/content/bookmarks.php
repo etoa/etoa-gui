@@ -10,6 +10,7 @@ use EtoA\Universe\Entity\EntityCoordinates;
 use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Universe\Resources\BaseResources;
+use EtoA\Universe\Resources\ResIcons;
 use EtoA\User\UserPropertiesRepository;
 use EtoA\User\UserRepository;
 use EtoA\User\UserUniverseDiscoveryService;
@@ -409,7 +410,7 @@ if ($mode == "fleet") {
             <th>Abholauftrag</th>
         </tr>
         <tr>
-            <th>' . RES_ICON_METAL . '' . RES_METAL . '</th>
+            <th>' . ResIcons::METAL . '' . RES_METAL . '</th>
             <td>
                 <input type="text" name="res0" id="res0" value="' . $data['res']->metal . '" size="16" onkeyup="FormatSignedNumber(this.id,this.value, \'\', \'\', \'\');" />
             </td>
@@ -418,7 +419,7 @@ if ($mode == "fleet") {
             </td>
         </tr>
         <tr>
-            <th>' . RES_ICON_CRYSTAL . '' . RES_CRYSTAL . '</th>
+            <th>' . ResIcons::CRYSTAL . '' . RES_CRYSTAL . '</th>
             <td>
                 <input type="text" name="res1" id="res1" value="' . $data['res']->crystal . '" size="16" onkeyup="FormatSignedNumber(this.id,this.value, \'\', \'\', \'\');" />
             </td>
@@ -427,7 +428,7 @@ if ($mode == "fleet") {
             </td>
         </tr>
         <tr>
-            <th>' . RES_ICON_PLASTIC . '' . RES_PLASTIC . '</th>
+            <th>' . ResIcons::PLASTIC . '' . RES_PLASTIC . '</th>
             <td>
                 <input type="text" name="res2" id="res2" value="' . $data['res']->plastic . '" size="16" onkeyup="FormatSignedNumber(this.id,this.value, \'\', \'\', \'\');" />
             </td>
@@ -436,7 +437,7 @@ if ($mode == "fleet") {
             </td>
         </tr>
         <tr>
-            <th>' . RES_ICON_FUEL . '' . RES_FUEL . '</th>
+            <th>' . ResIcons::FUEL . '' . RES_FUEL . '</th>
             <td>
                 <input type="text" name="res3" id="res3" value="' . $data['res']->fuel . '" size="16" onkeyup="FormatSignedNumber(this.id,this.value, \'\', \'\', \'\');" />
             </td>
@@ -445,7 +446,7 @@ if ($mode == "fleet") {
             </td>
         </tr>
         <tr>
-            <th>' . RES_ICON_FOOD . '' . RES_FOOD . '</th>
+            <th>' . ResIcons::FOOD . '' . RES_FOOD . '</th>
             <td>
                 <input type="text" name="res4" id="res4" value="' . $data['res']->food . '" size="16" onkeyup="FormatSignedNumber(this.id,this.value, \'\', \'\', \'\');" />
             </td>
@@ -454,7 +455,7 @@ if ($mode == "fleet") {
             </td>
         </tr>
         <tr>
-            <th>' . RES_ICON_PEOPLE . 'Passagiere</th>
+            <th>' . ResIcons::PEOPLE . 'Passagiere</th>
             <td>
                 <input type="text" name="res5" id="res5" value="' . $data['res']->people . '" size="16" onkeyup="FormatSignedNumber(this.id,this.value, \'\', \'\', \'\');" />
             </td>

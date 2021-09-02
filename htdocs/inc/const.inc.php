@@ -179,17 +179,6 @@ define("RES_POWER", "Energie");
 define("RES_TIME", "Zeit");
 define("RES_FIELDS", "Felder");
 
-define('RES_ICON_METAL', '<img class="resIcon" src="images/resources/metal_s.png" alt="' . RES_METAL . '" />');
-define('RES_ICON_CRYSTAL', '<img class="resIcon" src="images/resources/crystal_s.png" alt="' . RES_CRYSTAL . '" />');
-define('RES_ICON_PLASTIC', '<img class="resIcon" src="images/resources/plastic_s.png" alt="' . RES_PLASTIC . '" />');
-define('RES_ICON_FUEL', '<img class="resIcon" src="images/resources/fuel_s.png" alt="' . RES_FUEL . '" />');
-define('RES_ICON_FOOD', '<img class="resIcon" src="images/resources/food_s.png" alt="Nahrung" />');
-define('RES_ICON_POWER', '<img class="resIcon" src="images/resources/power_s.png" alt="Energie" />');
-define('RES_ICON_POWER_USE', '<img class="resIcon" src="images/resources/poweru_s.png" alt="Energieverbrauch" />');
-define('RES_ICON_PEOPLE', '<img class="resIcon" src="images/resources/people_s.png" alt="Bevölkerung" />');
-define('RES_ICON_TIME', '<img class="resIcon" src="images/resources/time_s.png" alt="Zeit" />');
-define('RES_ICON_FIELDS', '<img class="resIcon" src="images/resources/field_s.png" alt="Felder" />');
-
 // Regular expressions
 define('REGEXP_NAME', '/^.[^0-9\'\"\?\<\>\$\!\=\;\&]*$/');
 define('REGEXP_NICK', '/^.[^\'\"\?\<\>\$\!\=\;\&]*$/');

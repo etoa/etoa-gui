@@ -22,6 +22,7 @@ use EtoA\UI\ResourceBoxDrawer;
 use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Universe\Resources\BaseResources;
+use EtoA\Universe\Resources\ResIcons;
 use EtoA\User\UserRepository;
 use EtoA\User\UserSearch;
 use Symfony\Component\HttpFoundation\Request;
@@ -409,11 +410,11 @@ if ($alliance->resFood < 0) {
 
 tableStart("Allianz Ressourcen");
 echo "<tr>
-                <th style=\"width:20%;vertical-align:middle;\">" . RES_ICON_METAL . " " . RES_METAL . "</th>
-                <th style=\"width:20%;vertical-align:middle;\">" . RES_ICON_CRYSTAL . " " . RES_CRYSTAL . "</th>
-                <th style=\"width:20%;vertical-align:middle;\">" . RES_ICON_PLASTIC . " " . RES_PLASTIC . "</th>
-                <th style=\"width:20%;vertical-align:middle;\">" . RES_ICON_FUEL . " " . RES_FUEL . "</th>
-                <th style=\"width:20%;vertical-align:middle;\">" . RES_ICON_FOOD . " " . RES_FOOD . "</th>
+                <th style=\"width:20%;vertical-align:middle;\">" . ResIcons::METAL . " " . RES_METAL . "</th>
+                <th style=\"width:20%;vertical-align:middle;\">" . ResIcons::CRYSTAL . " " . RES_CRYSTAL . "</th>
+                <th style=\"width:20%;vertical-align:middle;\">" . ResIcons::PLASTIC . " " . RES_PLASTIC . "</th>
+                <th style=\"width:20%;vertical-align:middle;\">" . ResIcons::FUEL . " " . RES_FUEL . "</th>
+                <th style=\"width:20%;vertical-align:middle;\">" . ResIcons::FOOD . " " . RES_FOOD . "</th>
             </tr>
             <tr>
                 <td " . $style0 . " id=\"resBoxMetal\">" . StringUtils::formatNumber($alliance->resMetal) . " t</td>
