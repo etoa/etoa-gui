@@ -7,6 +7,7 @@ use EtoA\Alliance\AllianceRights;
 use EtoA\Alliance\AllianceService;
 use EtoA\Fleet\FleetRepository;
 use EtoA\Fleet\FleetSearch;
+use EtoA\Fleet\FleetStatus;
 use EtoA\Ship\ShipDataRepository;
 use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Entity\EntitySearch;
@@ -82,15 +83,10 @@ if (isset($_GET['mode']) && $_GET['mode'] == "alliance" && $cu->allianceId > 0) 
                         echo "Ankunft in <b><span id=\"cd" . $supportFleet->id . "\">-</span></b>";
                     }
                     echo "</td>";
-                    if ($action->visibleSource()) {
-                        $source = Entity::createFactoryById($supportFleet->entityFrom);
-                    } else {
-                        $source = Entity::createFactory($action->sourceCode());
-                    }
-
+                    $source = $entityRepository->searchEntityLabel(EntitySearch::create()->id($supportFleet->entityFrom));
                     $target = $entityRepository->searchEntityLabel(EntitySearch::create()->id($supportFleet->entityTo));
-                    echo "<td><b>" . $source->entityCodeString() . "</b>
-                                <a href=\"?page=cell&amp;id=" . $source->cellId() . "&amp;hl=" . $source->id() . "\">" . $source . "</a><br/>
+                    echo "<td><b>" . $source->codeString() . "</b>
+                                <a href=\"?page=cell&amp;id=" . $source->cellId . "&amp;hl=" . $source->id . "\">" . $source->toString() . "</a><br/>
                                 <b>" . $target->codeString() . "</b>
                                 <a href=\"?page=cell&amp;id=" . $target->cellId . "&amp;hl=" . $target->id . "\">" . $target->toString() . "</a>
                             </td>
@@ -112,9 +108,8 @@ if (isset($_GET['mode']) && $_GET['mode'] == "alliance" && $cu->allianceId > 0) 
                 iBoxEnd();
             }
 
-            $fm = new FleetManager($cu->id, $cu->allianceId);
-            $fm->loadAllianceAttacks();
-            if ($fm->count() > 0) {
+            $allianceAttackFleets = $fleetRepository->search(FleetSearch::create()->actionIn([\EtoA\Fleet\FleetAction::ALLIANCE])->nextId($cu->allianceId())->status(FleetStatus::DEPARTURE)->isLeader());
+            if (count($allianceAttackFleets) > 0) {
                 $cdarr = array();
 
                 echo "Klicke auf den Auftrag um die Details einer Flotte anzuzeigen<br/><br/>";
@@ -128,35 +123,38 @@ if (isset($_GET['mode']) && $_GET['mode'] == "alliance" && $cu->allianceId > 0) 
 
                 $alliance = $allianceRepository->getAlliance($user->allianceId);
                 $userAlliancePermission = $allianceService->getUserAlliancePermissions($alliance, $user);
-                foreach ($fm->getAll() as $fid => $fd) {
-                    $cdarr["cd" . $fid] = $fd->landTime();
+                foreach ($allianceAttackFleets as $allianceAttackFleet) {
+                    $cdarr["cd" . $allianceAttackFleet->id] = $allianceAttackFleet->landTime;
 
+                    $source = $entityRepository->searchEntityLabel(EntitySearch::create()->id($allianceAttackFleet->entityFrom));
+                    $target = $entityRepository->searchEntityLabel(EntitySearch::create()->id($allianceAttackFleet->entityTo));
                     echo "<tr>
-                                <td><b>" . $fd->getSource()->entityCodeString() . "</b>
-                                    <a href=\"?page=cell&amp;id=" . $fd->getSource()->cellId() . "&amp;hl=" . $fd->getSource()->id() . "\">" . $fd->getSource() . "</a><br/>
-                                    <b>" . $fd->getTarget()->entityCodeString() . "</b>
-                                    <a href=\"?page=cell&amp;id=" . $fd->getTarget()->cellId() . "&amp;hl=" . $fd->getTarget()->id() . "\">" . $fd->getTarget() . "</a>
+                                <td><b>" . $source->codeString() . "</b>
+                                    <a href=\"?page=cell&amp;id=" . $source->cellId . "&amp;hl=" . $source->id . "\">" . $source->toString() . "</a><br/>
+                                    <b>" . $target->codeString() . "</b>
+                                    <a href=\"?page=cell&amp;id=" . $target->cellId . "&amp;hl=" . $target->id . "\">" . $target->toString() . "</a>
                                 </td>
                                 <td>" .
-                        date("d.m.y, H:i:s", $fd->launchTime()) . "<br/>" .
-                        date("d.m.y, H:i:s", $fd->landTime()) . "
+                        date("d.m.y, H:i:s", $allianceAttackFleet->launchTime) . "<br/>" .
+                        date("d.m.y, H:i:s", $allianceAttackFleet->landTime) . "
                                 </td>
                                 <td>";
                     if ($userAlliancePermission->hasRights(AllianceRights::FLEET_MINISTER))
-                        echo "<a href=\"?page=fleetinfo&id=" . $fid . "&lead_id=" . $fid . "\">";
+                        echo "<a href=\"?page=fleetinfo&id=" . $allianceAttackFleet->id . "&lead_id=" . $allianceAttackFleet->id . "\">";
 
-                    echo "<span style=\"color:" . FleetAction::$attitudeColor[$fd->getAction()->attitude()] . "\">
-                                            " . $fd->getAction()->name() . "
-                                        </span> [" . FleetAction::$statusCode[$fd->status()] . "]
+                    $action = FleetAction::createFactory($allianceAttackFleet->action);
+                    echo "<span style=\"color:" . FleetAction::$attitudeColor[$action->attitude()] . "\">
+                                            " . $action->name() . "
+                                        </span> [" . FleetAction::$statusCode[$allianceAttackFleet->status] . "]
                                     </a><br/>";
-                    if ($fd->landTime() < time()) {
-                        if ($fd->status() > 0) {
+                    if ($allianceAttackFleet->landTime < time()) {
+                        if ($allianceAttackFleet->status > 0) {
                             echo "Flotte landet...";
                         } else {
                             echo "Zielaktion wird durchgef&uuml;hrt...";
                         }
                     } else {
-                        echo "Ankunft in <b><span id=\"cd" . $fid . "\">-</span></b>";
+                        echo "Ankunft in <b><span id=\"cd" . $allianceAttackFleet->id . "\">-</span></b>";
                     }
                     echo "</td></tr>";
                 }

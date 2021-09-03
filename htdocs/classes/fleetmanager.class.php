@@ -133,36 +133,6 @@ class FleetManager
         }
     }
 
-    function loadAllianceAttacks()
-    {
-        $this->count = 0;
-        $this->fleet = array();
-        //Lädt Flottendaten
-        $fres = dbquery("
-			SELECT
-				id
-			FROM
-				fleet
-			WHERE
-				next_id='" . $this->allianceId . "'
-				AND leader_id=id
-				AND action='alliance'
-				AND status='0'
-			ORDER BY
-				landtime DESC;");
-        if (mysql_num_rows($fres) > 0) {
-            while ($farr = mysql_fetch_row($fres)) {
-                $this->fleet[$farr[0]] = new Fleet($farr[0]);
-                $this->count++;
-            }
-        }
-    }
-
-
-
-
-
-
     function count()
     {
         return $this->count;
