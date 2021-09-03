@@ -2,6 +2,7 @@
 
 use EtoA\Bookmark\FleetBookmarkRepository;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Fleet\FleetRepository;
 use EtoA\Ship\ShipDataRepository;
 use EtoA\Ship\ShipSearch;
 use EtoA\Support\StringUtils;
@@ -44,6 +45,9 @@ function launchBookmarkProbe($bid)
 
     /** @var FleetBookmarkRepository $fleetBookMarkRepository */
     $fleetBookMarkRepository = $app[FleetBookmarkRepository::class];
+    /** @var FleetRepository $fleetRepository */
+    $fleetRepository = $app[FleetRepository::class];
+
     $cp = Entity::createFactoryById($_SESSION['cpid']);
 
     $objResponse = new xajaxResponse();
@@ -87,10 +91,10 @@ function launchBookmarkProbe($bid)
                                     $fleet->fetchResource(5, $bookmark->freight->people);
 
                                     if ($fid = $fleet->launch()) {
-                                        $flObj = new Fleet($fid);
+                                        $flObj = $fleetRepository->find($fid);
 
 
-                                        $str = "Folgende Schiffe sind unterwegs: $shipOutput. Ankunft in " . StringUtils::formatTimespan($flObj->remainingTime());
+                                        $str = "Folgende Schiffe sind unterwegs: $shipOutput. Ankunft in " . StringUtils::formatTimespan($flObj->getRemainingTime());
                                         $launched = true;
                                     } else
                                         $str = $fleet->error();
