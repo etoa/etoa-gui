@@ -1,6 +1,7 @@
 <?php
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Universe\Resources\ResourceNames;
 
 /** @var ConfigurationService $config */
 $config = $app[ConfigurationService::class];
@@ -11,7 +12,7 @@ HelpUtil::breadCrumbs(array("Ressourcen", "resources"));
 tableStart("Grundeinstellungen");
 echo "<tr>
     <td class=\"tbltitle\" style=\"width:40px;\"><img src=\"images/resources/metal.png\"></td>
-    <td class=\"tbldata\"><b>" . RES_METAL . " (Marktwert: " . $config->getFloat('market_metal_factor') . ")</b><br/>
+    <td class=\"tbldata\"><b>" . ResourceNames::METAL . " (Marktwert: " . $config->getFloat('market_metal_factor') . ")</b><br/>
     Titan ist ein Metall, welches leicht, fest, dehnbar, weiß-metallisch glänzend und
     korrosionsbeständig ist. Es ist besonders für Anwendungen geeignet, bei
     denen es auf hohe Korrosionsbeständigkeit, Festigkeit und geringes Gewicht ankommt. Titan ist
@@ -20,7 +21,7 @@ echo "<tr>
 </tr>";
 echo "<tr>
     <td class=\"tbltitle\" style=\"width:40px;\"><img src=\"images/resources/crystal.png\"></td>
-    <td class=\"tbldata\"><b>" . RES_CRYSTAL . " (Marktwert: " . $config->getFloat('market_crystal_factor') . ")</b><br/>
+    <td class=\"tbldata\"><b>" . ResourceNames::CRYSTAL . " (Marktwert: " . $config->getFloat('market_crystal_factor') . ")</b><br/>
     Silicium ist ein klassisches Halbmetall und weist daher sowohl Eigenschaften von Metallen als
     auch von Nichtmetallen auf. Reines, elementares Silicium besitzt eine grau-schwarze Farbe
     und weist einen typisch metallischen, oftmals bronzenen bis bläulichen Glanz auf.
@@ -34,7 +35,7 @@ echo "<tr>
 </tr>";
 echo "<tr>
     <td class=\"tbltitle\" style=\"width:40px;\"><img src=\"images/resources/plastic.png\"></td>
-    <td class=\"tbldata\"><b>" . RES_PLASTIC . " (Marktwert: " . $config->getFloat('market_plastic_factor') . ")</b><br/>
+    <td class=\"tbldata\"><b>" . ResourceNames::PLASTIC . " (Marktwert: " . $config->getFloat('market_plastic_factor') . ")</b><br/>
     Polyvinylchlorid (Kurzzeichen PVC) ist ein amorpher thermoplastischer Kunststoff.
     Es ist hart und spröde, von weißer Farbe und wird erst durch Zugabe von Weichmachern
     und Stabilisatoren weicher, formbar und für technische Anwendungen geeignet.
@@ -43,7 +44,7 @@ echo "<tr>
 </tr>";
 echo "<tr>
     <td class=\"tbltitle\" style=\"width:40px;\"><img src=\"images/resources/fuel.png\"></td>
-    <td class=\"tbldata\"><b>" . RES_FUEL . " (Marktwert: " . $config->getFloat('market_fuel_factor') . ")</b><br/>
+    <td class=\"tbldata\"><b>" . ResourceNames::FUEL . " (Marktwert: " . $config->getFloat('market_fuel_factor') . ")</b><br/>
     Tritium (von griechisch tritós »der Dritte«) ist neben Protium und Deuterium
     ein natürliches Isotop des Wasserstoffes. Tritium ist radioaktiv da es leicht zerfällt
     und muss sehr sorgfältig gelagert werden. Es muss meistens künstlich durch einen Synthetisyzer hergestellt
@@ -56,7 +57,7 @@ echo "<tr>
 </tr>";
 echo "<tr>
     <td class=\"tbltitle\" style=\"width:40px;\"><img src=\"images/resources/food.png\"></td>
-    <td class=\"tbldata\"><b>" . RES_FOOD . " (Marktwert: " . $config->getFloat('market_food_factor') . ")</b><br/>
+    <td class=\"tbldata\"><b>" . ResourceNames::FOOD . " (Marktwert: " . $config->getFloat('market_food_factor') . ")</b><br/>
     Nahrung wächst in Gewächshäusern und wird gebraucht um deine arbeitende Bevölkerung und deine
     Piloten zu versorgen.
     </td>

@@ -11,6 +11,8 @@ use EtoA\Support\StringUtils;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Universe\Resources\BaseResources;
 use EtoA\Universe\Resources\PreciseResources;
+use EtoA\Universe\Resources\ResIcons;
+use EtoA\Universe\Resources\ResourceNames;
 
 /** @var ShipRepository $shipRepository */
 $shipRepository = $app[ShipRepository::class];
@@ -72,7 +74,7 @@ elseif (isset($_POST['ressource_cancel']) && isset($_POST['ressource_market_id']
         $return_factor = floor((1 - 1 / ($marketLevel + 1)) * 100) / 100;
         $sellResources = $offer->getSellResources();
         $returnResources = new PreciseResources();
-        foreach ($resNames as $rk => $rn) {
+        foreach (ResourceNames::NAMES as $rk => $rn) {
             if ($sellResources->get($rk) > 0) {
                 // todo: when non on the planet where the deal belongs to, the return_factor
                 // is based on the local marketplace, for better or worse... change that so that the
@@ -107,7 +109,7 @@ elseif (isset($_POST['auction_cancel']) && isset($_POST['auction_cancel_id'])) {
         $return_factor = floor((1 - 1 / ($marketLevel + 1)) * 100) / 100;
         $sellResources = $auction->getSellResources();
         $returnResources = new PreciseResources();
-        foreach ($resNames as $rk => $rn) {
+        foreach (ResourceNames::NAMES as $rk => $rn) {
             if ($sellResources->get($rk) > 0) {
                 // todo: when non on the planet where the deal belongs to, the return_factor
                 // is based on the local marketplace, for better or worse... change that so that the
@@ -120,7 +122,7 @@ elseif (isset($_POST['auction_cancel']) && isset($_POST['auction_cancel_id'])) {
         //Auktion löschen
         $marketAuctionRepository->deleteAuction($auction->id);
         $marketReportRepository->addAuctionReport($auction->id, $cu->getId(), $auction->entityId, 0, $sellResources, 'auctioncancel', new BaseResources(), null, $return_factor);
-        //			Log::add(7, Log::INFO, "Der Spieler ".$cu->nick." zieht folgende Auktion zur&uuml;ck:\nRohstoffe:\n".RES_METAL.": ".$acrow['sell_metal']."\n".RES_CRYSTAL.": ".$acrow['sell_crystal']."\n".RES_PLASTIC.": ".$acrow['sell_plastic']."\n".RES_FUEL.": ".$acrow['sell_fuel']."\n".RES_FOOD.": ".$acrow['sell_food']."\n\nEr erh&auml;lt ".(round($return_factor,2)*100)."% der Waren erstattet!",time());
+        //			Log::add(7, Log::INFO, "Der Spieler ".$cu->nick." zieht folgende Auktion zur&uuml;ck:\nRohstoffe:\n".ResourceNames::METAL.": ".$acrow['sell_metal']."\n".ResourceNames::CRYSTAL.": ".$acrow['sell_crystal']."\n".ResourceNames::PLASTIC.": ".$acrow['sell_plastic']."\n".ResourceNames::FUEL.": ".$acrow['sell_fuel']."\n".ResourceNames::FOOD.": ".$acrow['sell_food']."\n\nEr erh&auml;lt ".(round($return_factor,2)*100)."% der Waren erstattet!",time());
 
         success_msg("Auktion wurde gel&ouml;scht und du hast " . ($return_factor * 100) . "% der angebotenen Waren zur&uuml;ck erhalten (es wird abgerundet)!");
     } else {
@@ -172,9 +174,9 @@ else {
             if ($te != null) {
                 $buyResources = $offer->getBuyResources();
                 $sellResources = $offer->getSellResources();
-                foreach ($resNames as $rk => $rn) {
+                foreach (ResourceNames::NAMES as $rk => $rn) {
                     echo "<tr>
-                    <td class=\"rescolor" . $rk . "\">" . $resIcons[$rk] . " <b>" . $rn . "</b>:</td>
+                    <td class=\"rescolor" . $rk . "\">" . ResIcons::ICONS[$rk] . " <b>" . $rn . "</b>:</td>
                     <td class=\"rescolor" . $rk . "\">" . ($sellResources->get($rk) > 0 ? StringUtils::formatNumber($sellResources->get($rk)) : '-') . "</td>
                     <td class=\"rescolor" . $rk . "\">" . ($buyResources->get($rk) > 0 ? StringUtils::formatNumber($buyResources->get($rk)) : '-') . "</td>";
                     if ($i++ == 0) {
@@ -233,19 +235,19 @@ else {
             }
 
             $i = 0;
-            $resCnt = count($resNames);
+            $resCnt = count(ResourceNames::NAMES);
             $marketLevel = $buildingRepository->getBuildingLevel($cu->getId(), BuildingId::MARKET, $offer->entityId);
             $return_factor = floor((1 - 1 / ($marketLevel + 1)) * 100) / 100;
             $info_string = "Wenn du das Angebot zur&uuml;ckziehst erh&auml;lst du " . ($return_factor * 100) . "% des Angebotes zur&uuml;ck (abgerundet).";
 
             $costs = $offer->getCosts();
-            foreach ($resNames as $rk => $rn) {
+            foreach (ResourceNames::NAMES as $rk => $rn) {
                 echo "<tr>";
                 if ($i == 0) {
                     $ship = new Ship($offer->shipId);
                     echo "<td rowspan=\"$resCnt\">" . $offer->count . " <a href=\"?page=help&site=shipyard&id=" . $offer->shipId . "\">" . $ship->toolTip() . "</a></td>";
                 }
-                echo "<td class=\"rescolor" . $rk . "\">" . $resIcons[$rk] . "<b>" . $rn . "</b>:</td>
+                echo "<td class=\"rescolor" . $rk . "\">" . ResIcons::ICONS[$rk] . "<b>" . $rn . "</b>:</td>
                     <td class=\"rescolor" . $rk . "\">" . StringUtils::formatNumber($costs->get($rk)) . "</td>";
                 if ($i++ == 0) {
                     echo "<td rowspan=\"$resCnt\">" . date("d.m.Y  G:i:s", $offer->date) . "<br/><br/>" . stripslashes($offer->text) . "</td>";
@@ -306,10 +308,10 @@ else {
             echo "<tr>
                 <td>";
             $sellResources = $auction->getSellResources();
-            foreach ($resNames as $rk => $rn) {
+            foreach (ResourceNames::NAMES as $rk => $rn) {
                 if ($sellResources->get($rk) > 0) {
                     echo "<span class=\"rescolor" . $rk . "\">";
-                    echo $resIcons[$rk] . $rn . ": " . StringUtils::formatNumber($sellResources->get($rk)) . "</span><br style=\"clear:both;\" />";
+                    echo ResIcons::ICONS[$rk] . $rn . ": " . StringUtils::formatNumber($sellResources->get($rk)) . "</span><br style=\"clear:both;\" />";
                 }
             }
             echo "</td>
@@ -319,10 +321,10 @@ else {
                 <td>";
             $currencyResources = $auction->getCurrencyResources();
             $buyResources = $auction->getBuyResources();
-            foreach ($resNames as $rk => $rn) {
+            foreach (ResourceNames::NAMES as $rk => $rn) {
                 if ($currencyResources->get($rk) > 0) {
                     echo "<span class=\"rescolor" . $rk . "\">";
-                    echo $resIcons[$rk] . $rn . ": " . StringUtils::formatNumber($buyResources->get($rk));
+                    echo ResIcons::ICONS[$rk] . $rn . ": " . StringUtils::formatNumber($buyResources->get($rk));
                     echo "</span><br style=\"clear:both;\" />";
                 }
             }

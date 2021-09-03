@@ -8,6 +8,8 @@ use EtoA\Support\BBCodeUtils;
 use EtoA\Support\StringUtils;
 use EtoA\UI\ResourceBoxDrawer;
 use EtoA\Universe\Planet\PlanetRepository;
+use EtoA\Universe\Resources\ResIcons;
+use EtoA\Universe\Resources\ResourceNames;
 use Symfony\Component\HttpFoundation\Request;
 
 /** @var PlanetRepository $planetRepo */
@@ -310,15 +312,15 @@ if ($cp) {
             checker_init();
             tableStart("Rohstoffbunker", 400);
             echo "
-            <tr><th style=\"width:150px\">" . RES_ICON_METAL . "" . RES_METAL . "</th>
+            <tr><th style=\"width:150px\">" . ResIcons::METAL . "" . ResourceNames::METAL . "</th>
             <td><input type=\"text\" id=\"bunker_metal\" name=\"bunker_metal\" value=\"" . StringUtils::formatNumber($planet->bunkerMetal) . "\" size=\"8\" maxlength=\"20\" onKeyUp=\"FormatNumber(this.id,this.value, '', '', '');\"/></td></tr>
-            <tr><th style=\"width:150px\">" . RES_ICON_CRYSTAL . "" . RES_CRYSTAL . "</th>
+            <tr><th style=\"width:150px\">" . ResIcons::CRYSTAL . "" . ResourceNames::CRYSTAL . "</th>
                 <td><input type=\"text\" id=\"bunker_crysttal\" name=\"bunker_crystal\" value=\"" . StringUtils::formatNumber($planet->bunkerCrystal) . "\" size=\"8\" maxlength=\"20\" onKeyUp=\"FormatNumber(this.id,this.value, '', '', '');\"/></td></tr>
-            <tr><th style=\"width:150px\">" . RES_ICON_PLASTIC . "" . RES_PLASTIC . "</th>
+            <tr><th style=\"width:150px\">" . ResIcons::PLASTIC . "" . ResourceNames::PLASTIC . "</th>
                 <td><input type=\"text\" id=\"bunker_plastic\" name=\"bunker_plastic\" value=\"" . StringUtils::formatNumber($planet->bunkerPlastic) . "\" size=\"8\" maxlength=\"20\" onKeyUp=\"FormatNumber(this.id,this.value, '', '', '');\"/></td></tr>
-            <tr><th style=\"width:150px\">" . RES_ICON_FUEL . "" . RES_FUEL . "</th>
+            <tr><th style=\"width:150px\">" . ResIcons::FUEL . "" . ResourceNames::FUEL . "</th>
                 <td><input type=\"text\" id=\"bunker_fuel\" name=\"bunker_fuel\" value=\"" . StringUtils::formatNumber($planet->bunkerFuel) . "\" size=\"8\" maxlength=\"20\" onKeyUp=\"FormatNumber(this.id,this.value, '', '', '');\"/></td></tr>
-            <tr><th style=\"width:150px\">" . RES_ICON_FOOD . "" . RES_FOOD . "</th>
+            <tr><th style=\"width:150px\">" . ResIcons::FOOD . "" . ResourceNames::FOOD . "</th>
                 <td><input type=\"text\" id=\"bunker_food\" name=\"bunker_food\" value=\"" . StringUtils::formatNumber($planet->bunkerFood) . "\" size=\"8\" maxlength=\"20\" onKeyUp=\"FormatNumber(this.id,this.value, '', '', '');\"/></td></tr>
             <tr><th style=\"width:150px\">Benutzt:</th>
             <td>" . StringUtils::formatNumber($bunkered) . "/" . StringUtils::formatNumber($resBunker->calculateBunkerResources($resBunkerLevel)) . "</td></tr>

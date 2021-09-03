@@ -6,6 +6,7 @@ use EtoA\Market\MarketShipRepository;
 use EtoA\Ship\ShipDataRepository;
 use EtoA\Support\RuntimeDataStore;
 use EtoA\Support\StringUtils;
+use EtoA\Universe\Resources\ResourceNames;
 
 /** @var RuntimeDataStore $runtimeDataStore */
 $runtimeDataStore = $app[RuntimeDataStore::class];
@@ -54,7 +55,7 @@ if ($sub == "ress") {
             $first = true;
             $sellResources = $offer->getSellResources();
             $buyResources = $offer->getBuyResources();
-            foreach ($resNames as $k => $v) {
+            foreach (ResourceNames::NAMES as $k => $v) {
                 if (!$first) echo "<tr>";
                 echo "	<td width=\"110\">" . $v . "</td>
                                     <td width=\"100\">
@@ -125,7 +126,7 @@ if ($sub == "ress") {
                             </td>
                         </tr>
                         <tr>";
-            foreach ($resNames as $k => $v) {
+            foreach (ResourceNames::NAMES as $k => $v) {
                 echo "<th width=\"100\">
                             " . $v . "
                         </th>";
@@ -195,7 +196,7 @@ if ($sub == "ress") {
             }
 
             echo "<td>
-                                <b>" . RES_METAL . "</b>:
+                                <b>" . ResourceNames::METAL . "</b>:
                             </td>
                             <td>
                                 " . StringUtils::formatNumber($auction->sell0) . "
@@ -233,7 +234,7 @@ if ($sub == "ress") {
             }
 
             echo "		<td>
-                                        <b>" . RES_CRYSTAL . "</b>:
+                                        <b>" . ResourceNames::CRYSTAL . "</b>:
                                     </td>
                                     <td>
                                         " . StringUtils::formatNumber($auction->sell1) . "
@@ -244,7 +245,7 @@ if ($sub == "ress") {
                                         $rest_time
                                     </td>
                                     <td>
-                                        <b>" . RES_PLASTIC . "</b>:
+                                        <b>" . ResourceNames::PLASTIC . "</b>:
                                     </td>
                                     <td>
                                         " . StringUtils::formatNumber($auction->sell2) . "
@@ -252,7 +253,7 @@ if ($sub == "ress") {
                                 </tr>
                                 <tr>
                                     <td>
-                                        <b>" . RES_FUEL . "</b>:
+                                        <b>" . ResourceNames::FUEL . "</b>:
                                     </td>
                                     <td>
                                         " . StringUtils::formatNumber($auction->sell3) . "
@@ -260,7 +261,7 @@ if ($sub == "ress") {
                                 </tr>
                                 <tr>
                                     <td>
-                                        <b>" . RES_FOOD . "</b>:
+                                        <b>" . ResourceNames::FOOD . "</b>:
                                     </td>
                                     <td>
                                         " . StringUtils::formatNumber($auction->sell4) . "
@@ -283,7 +284,7 @@ if ($sub == "ress") {
                                         Geboten " . date("d.m.Y  G:i:s", $auction->currentBuyerDate) . "
                                     </td>
                                     <td>
-                                        <b>" . RES_METAL . "</b>:
+                                        <b>" . ResourceNames::METAL . "</b>:
                                     </td>
                                     <td colspan=\"2\">
                                         " . StringUtils::formatNumber($auction->buy0) . "
@@ -294,7 +295,7 @@ if ($sub == "ress") {
                                 </tr>
                                 <tr>
                                     <td>
-                                        <b>" . RES_CRYSTAL . "</b>:
+                                        <b>" . ResourceNames::CRYSTAL . "</b>:
                                     </td>
                                     <td colspan=\"2\">
                                         " . StringUtils::formatNumber($auction->buy1) . "
@@ -302,7 +303,7 @@ if ($sub == "ress") {
                                 </tr>
                                 <tr>
                                     <td>
-                                        <b>" . RES_PLASTIC . "</b>:
+                                        <b>" . ResourceNames::PLASTIC . "</b>:
                                     </td>
                                     <td colspan=\"2\">
                                         " . StringUtils::formatNumber($auction->buy2) . "
@@ -310,7 +311,7 @@ if ($sub == "ress") {
                                 </tr>
                                 <tr>
                                     <td>
-                                        <b>" . RES_FUEL . "</b>:
+                                        <b>" . ResourceNames::FUEL . "</b>:
                                     </td>
                                     <td colspan=\"2\">
                                         " . StringUtils::formatNumber($auction->buy3) . "
@@ -318,7 +319,7 @@ if ($sub == "ress") {
                                 </tr>
                                 <tr>
                                     <td>
-                                        <b>" . RES_FOOD . "</b>:
+                                        <b>" . ResourceNames::FOOD . "</b>:
                                     </td>
                                     <td colspan=\"2\">
                                         " . StringUtils::formatNumber($auction->buy4) . "
@@ -346,7 +347,7 @@ if ($sub == "ress") {
 
     echo "<table class=\"tb\" style=\"width:200px;\">";
     for ($i = 0; $i < NUM_RESOURCES; $i++) {
-        echo "<tr><th>" . $resNames[$i] . "</th><td>" . $runtimeDataStore->get('market_rate_' . $i, (string) 1) . "</td></tr>";
+        echo "<tr><th>" . ResourceNames::NAMES[$i] . "</th><td>" . $runtimeDataStore->get('market_rate_' . $i, (string) 1) . "</td></tr>";
     }
     echo "</table>";
 

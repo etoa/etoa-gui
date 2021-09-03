@@ -27,10 +27,10 @@ class MarketResourceRepositoryTest extends AbstractDbTestCase
     {
         $this->repository->add(1, 2, 3, 4, 'Text', new BaseResources(), new BaseResources());
 
-        $this->assertNotEmpty($this->repository->getBuyableOffers(3, 4, new BaseResources(), new BaseResources(), []));
+        $this->assertNotEmpty($this->repository->getBuyableOffers(3, 4, new BaseResources(), new BaseResources()));
 
-        $this->assertEmpty($this->repository->getBuyableOffers(99, 4, new BaseResources(), new BaseResources(), []));
-        $this->assertEmpty($this->repository->getBuyableOffers(3, 99, new BaseResources(), new BaseResources(), []));
+        $this->assertEmpty($this->repository->getBuyableOffers(99, 4, new BaseResources(), new BaseResources()));
+        $this->assertEmpty($this->repository->getBuyableOffers(3, 99, new BaseResources(), new BaseResources()));
     }
 
     public function testCountBuyableOffers(): void

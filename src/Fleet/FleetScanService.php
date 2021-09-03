@@ -28,6 +28,7 @@ use EtoA\Universe\Entity\EntityType;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Universe\Entity\EntityService;
 use EtoA\Universe\Planet\Planet;
+use EtoA\Universe\Resources\ResourceNames;
 use EtoA\User\User;
 use EtoA\User\UserRepository;
 
@@ -126,12 +127,12 @@ class FleetScanService
 
         $cryptoFuelCostsPerScan = $this->config->getInt('crypto_fuel_costs_per_scan');
         if ($planet->resFuel < $cryptoFuelCostsPerScan) {
-            throw new FleetScanPreconditionsNotMetException("Zuwenig " . RES_FUEL . ", " . StringUtils::formatNumber($cryptoFuelCostsPerScan) . " benötigt, " . StringUtils::formatNumber($planet->resFuel) . " vorhanden!");
+            throw new FleetScanPreconditionsNotMetException("Zuwenig " . ResourceNames::FUEL . ", " . StringUtils::formatNumber($cryptoFuelCostsPerScan) . " benötigt, " . StringUtils::formatNumber($planet->resFuel) . " vorhanden!");
         }
 
         $alliance = $this->allianceRepository->getAlliance($currentUser->allianceId);
         if ($alliance->resFuel < $cryptoFuelCostsPerScan) {
-            throw new FleetScanPreconditionsNotMetException("Zuwenig Allianzrohstoffe " . RES_FUEL . ", " . StringUtils::formatNumber($cryptoFuelCostsPerScan) . " benötigt, " . StringUtils::formatNumber($alliance->resFuel) . " vorhanden!");
+            throw new FleetScanPreconditionsNotMetException("Zuwenig Allianzrohstoffe " . ResourceNames::FUEL . ", " . StringUtils::formatNumber($cryptoFuelCostsPerScan) . " benötigt, " . StringUtils::formatNumber($alliance->resFuel) . " vorhanden!");
         }
 
         if ($targetEntity === null || $targetEntity->code != EntityType::PLANET) {

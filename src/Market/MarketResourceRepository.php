@@ -4,6 +4,7 @@ namespace EtoA\Market;
 
 use EtoA\Core\AbstractRepository;
 use EtoA\Universe\Resources\BaseResources;
+use EtoA\Universe\Resources\ResourceNames;
 
 class MarketResourceRepository extends AbstractRepository
 {
@@ -67,10 +68,9 @@ class MarketResourceRepository extends AbstractRepository
     }
 
     /**
-     * @param array<int, string> $resNames
      * @return MarketResource[]
      */
-    public function getBuyableOffers(int $userId, int $allianceId, BaseResources $sellFilter, BaseResources $buyFilter, array $resNames): array
+    public function getBuyableOffers(int $userId, int $allianceId, BaseResources $sellFilter, BaseResources $buyFilter): array
     {
         $qb = $this->createQueryBuilder()
             ->select('*')
@@ -85,7 +85,7 @@ class MarketResourceRepository extends AbstractRepository
 
         if ($sellFilter->getSum() > 0) {
             $filter = [];
-            foreach (array_keys($resNames) as $index) {
+            foreach (array_keys(ResourceNames::NAMES) as $index) {
                 if ($sellFilter->get($index) > 0) {
                     $filter[] = 'sell_' . $index . ' > 0';
                 }
@@ -95,7 +95,7 @@ class MarketResourceRepository extends AbstractRepository
 
         if ($buyFilter->getSum() > 0) {
             $filter = [];
-            foreach (array_keys($resNames) as $index) {
+            foreach (array_keys(ResourceNames::NAMES) as $index) {
                 if ($buyFilter->get($index) > 0) {
                     $filter[] = 'buy_' . $index . ' > 0';
                 }

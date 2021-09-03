@@ -13,6 +13,7 @@ use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Entity\EntityService;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Universe\Resources\BaseResources;
+use EtoA\Universe\Resources\ResourceNames;
 use EtoA\User\UserMultiRepository;
 use EtoA\User\UserRatingService;
 
@@ -44,7 +45,7 @@ foreach ($_POST['ship_market_id'] as $num => $id) {
     if ($offer !== null) {
         $buyarr = array();
         $costs = $offer->getCosts();
-        foreach ($resNames as $rk => $rn) {
+        foreach (ResourceNames::NAMES as $rk => $rn) {
             $buyarr[$rk] = $costs->get($rk);
         }
 
@@ -128,11 +129,11 @@ foreach ($_POST['ship_market_id'] as $num => $id) {
                 $shipNames = $shipRepository->getShipNames(true);
 
                 $seller = new User($offer->userId);
-                $logRepository->add(LogFacility::MULTITRADE, LogSeverity::INFO, "[page user sub=edit user_id=" . $cu->id . "][B]" . $cu->nick . "[/B][/page] hat von [page user sub=edit user_id=" . $offer->userId . "][B]" . $seller . "[/B][/page] Schiffe gekauft:\n\n" . $offer->count . " " . $shipNames[$offer->shipId] . "\n\nund das zu folgendem Preis:\n\n" . RES_METAL . ": " . StringUtils::formatNumber($offer->costs0) . "\n" . RES_CRYSTAL . ": " . StringUtils::formatNumber($offer->costs1) . "\n" . RES_PLASTIC . ": " . StringUtils::formatNumber($offer->costs2) . "\n" . RES_FUEL . ": " . StringUtils::formatNumber($offer->costs3) . "\n" . RES_FOOD . ": " . StringUtils::formatNumber($offer->costs4));
+                $logRepository->add(LogFacility::MULTITRADE, LogSeverity::INFO, "[page user sub=edit user_id=" . $cu->id . "][B]" . $cu->nick . "[/B][/page] hat von [page user sub=edit user_id=" . $offer->userId . "][B]" . $seller . "[/B][/page] Schiffe gekauft:\n\n" . $offer->count . " " . $shipNames[$offer->shipId] . "\n\nund das zu folgendem Preis:\n\n" . ResourceNames::METAL . ": " . StringUtils::formatNumber($offer->costs0) . "\n" . ResourceNames::CRYSTAL . ": " . StringUtils::formatNumber($offer->costs1) . "\n" . ResourceNames::PLASTIC . ": " . StringUtils::formatNumber($offer->costs2) . "\n" . ResourceNames::FUEL . ": " . StringUtils::formatNumber($offer->costs3) . "\n" . ResourceNames::FOOD . ": " . StringUtils::formatNumber($offer->costs4));
             }
 
             //Marktlog schreiben
-            //						Log::add(7,Log::INFO, "Der Spieler ".$cu->nick." hat folgende Schiffe von ".$seller_user_nick." gekauft:\n\n".$arr['ship_count']." ".$arr['ship_name']."\n\nund das zu folgendem Preis:\n\n".RES_METAL.": ".StringUtils::formatNumber($arr['ship_costs_metal'])."\n".RES_CRYSTAL.": ".StringUtils::formatNumber($arr['ship_costs_crystal'])."\n".RES_PLASTIC.": ".StringUtils::formatNumber($arr['ship_costs_plastic'])."\n".RES_FUEL.": ".StringUtils::formatNumber($arr['ship_costs_fuel'])."\n".RES_FOOD.": ".StringUtils::formatNumber($arr['ship_costs_food']),time());
+            //						Log::add(7,Log::INFO, "Der Spieler ".$cu->nick." hat folgende Schiffe von ".$seller_user_nick." gekauft:\n\n".$arr['ship_count']." ".$arr['ship_name']."\n\nund das zu folgendem Preis:\n\n".ResourceNames::METAL.": ".StringUtils::formatNumber($arr['ship_costs_metal'])."\n".ResourceNames::CRYSTAL.": ".StringUtils::formatNumber($arr['ship_costs_crystal'])."\n".ResourceNames::PLASTIC.": ".StringUtils::formatNumber($arr['ship_costs_plastic'])."\n".ResourceNames::FUEL.": ".StringUtils::formatNumber($arr['ship_costs_fuel'])."\n".ResourceNames::FOOD.": ".StringUtils::formatNumber($arr['ship_costs_food']),time());
 
             // Zählt die erfolgreich abgewickelten Angebote
 

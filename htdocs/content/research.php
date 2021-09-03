@@ -20,6 +20,7 @@ use EtoA\Technology\TechnologyTypeRepository;
 use EtoA\UI\ResourceBoxDrawer;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Technology\TechnologyDataRepository;
+use EtoA\Universe\Resources\ResourceNames;
 use EtoA\User\UserPropertiesRepository;
 
 /** @var ConfigurationService $config */
@@ -205,7 +206,7 @@ if (isset($cp)) {
                     $level = $techlist[$technology->id]->currentLevel;
                 }
 
-                foreach ($resNames as $rk => $rn) {
+                foreach (ResourceNames::NAMES as $rk => $rn) {
                     //BUGFIX by river: costsResearch factor. Still whole code is wrong, but at least consistent now.
                     $bc['costs' . $rk] = ($specialist !== null ? $specialist->costsTechnologies : 1) * $costs[$rk] * pow($technology->buildCostsFactor, $level);
                 }
@@ -430,18 +431,18 @@ if (isset($cp)) {
                             [b]Eingesetzter Spezialist:[/b] " . ($specialist !== null ? $specialist->name : "Kein Spezialist") . "
 
                             [b]Kosten[/b]
-                            [b]" . RES_METAL . ":[/b] " . StringUtils::formatNumber($bc['metal']) . "
-                            [b]" . RES_CRYSTAL . ":[/b] " . StringUtils::formatNumber($bc['crystal']) . "
-                            [b]" . RES_PLASTIC . ":[/b] " . StringUtils::formatNumber($bc['plastic']) . "
-                            [b]" . RES_FUEL . ":[/b] " . StringUtils::formatNumber($bc['fuel']) . "
-                            [b]" . RES_FOOD . ":[/b] " . StringUtils::formatNumber($bc['food']) . "
+                            [b]" . ResourceNames::METAL . ":[/b] " . StringUtils::formatNumber($bc['metal']) . "
+                            [b]" . ResourceNames::CRYSTAL . ":[/b] " . StringUtils::formatNumber($bc['crystal']) . "
+                            [b]" . ResourceNames::PLASTIC . ":[/b] " . StringUtils::formatNumber($bc['plastic']) . "
+                            [b]" . ResourceNames::FUEL . ":[/b] " . StringUtils::formatNumber($bc['fuel']) . "
+                            [b]" . ResourceNames::FOOD . ":[/b] " . StringUtils::formatNumber($bc['food']) . "
 
                             [b]Restliche Rohstoffe auf dem Planeten[/b]
-                            [b]" . RES_METAL . ":[/b] " . StringUtils::formatNumber($planet->resMetal - $bc['metal']) . "
-                            [b]" . RES_CRYSTAL . ":[/b] " . StringUtils::formatNumber($planet->resCrystal - $bc['crystal']) . "
-                            [b]" . RES_PLASTIC . ":[/b] " . StringUtils::formatNumber($planet->resPlastic - $bc['plastic']) . "
-                            [b]" . RES_FUEL . ":[/b] " . StringUtils::formatNumber($planet->resFuel - $bc['fuel']) . "
-                            [b]" . RES_FOOD . ":[/b] " . StringUtils::formatNumber($planet->resFood - $bc['food']);
+                            [b]" . ResourceNames::METAL . ":[/b] " . StringUtils::formatNumber($planet->resMetal - $bc['metal']) . "
+                            [b]" . ResourceNames::CRYSTAL . ":[/b] " . StringUtils::formatNumber($planet->resCrystal - $bc['crystal']) . "
+                            [b]" . ResourceNames::PLASTIC . ":[/b] " . StringUtils::formatNumber($planet->resPlastic - $bc['plastic']) . "
+                            [b]" . ResourceNames::FUEL . ":[/b] " . StringUtils::formatNumber($planet->resFuel - $bc['fuel']) . "
+                            [b]" . ResourceNames::FOOD . ":[/b] " . StringUtils::formatNumber($planet->resFood - $bc['food']);
 
                             $gameLogRepository->add(GameLogFacility::TECH, LogSeverity::INFO, $log_text, $cu->id, $cu->allianceId, $planet->id, $technology->id, $b_status, $b_level);
 
@@ -477,18 +478,18 @@ if (isset($cp)) {
 
                         [b]Erhaltene Rohstoffe[/b]
                         [b]Faktor:[/b] " . $fac . "
-                        [b]" . RES_METAL . ":[/b] " . StringUtils::formatNumber($bc['metal'] * $fac) . "
-                        [b]" . RES_CRYSTAL . ":[/b] " . StringUtils::formatNumber($bc['crystal'] * $fac) . "
-                        [b]" . RES_PLASTIC . ":[/b] " . StringUtils::formatNumber($bc['plastic'] * $fac) . "
-                        [b]" . RES_FUEL . ":[/b] " . StringUtils::formatNumber($bc['fuel'] * $fac) . "
-                        [b]" . RES_FOOD . ":[/b] " . StringUtils::formatNumber($bc['food'] * $fac) . "
+                        [b]" . ResourceNames::METAL . ":[/b] " . StringUtils::formatNumber($bc['metal'] * $fac) . "
+                        [b]" . ResourceNames::CRYSTAL . ":[/b] " . StringUtils::formatNumber($bc['crystal'] * $fac) . "
+                        [b]" . ResourceNames::PLASTIC . ":[/b] " . StringUtils::formatNumber($bc['plastic'] * $fac) . "
+                        [b]" . ResourceNames::FUEL . ":[/b] " . StringUtils::formatNumber($bc['fuel'] * $fac) . "
+                        [b]" . ResourceNames::FOOD . ":[/b] " . StringUtils::formatNumber($bc['food'] * $fac) . "
 
                         [b]Rohstoffe auf dem Planeten[/b]
-                        [b]" . RES_METAL . ":[/b] " . StringUtils::formatNumber($planet->resMetal + $bc['metal'] * $fac) . "
-                        [b]" . RES_CRYSTAL . ":[/b] " . StringUtils::formatNumber($planet->resCrystal + $bc['crystal'] * $fac) . "
-                        [b]" . RES_PLASTIC . ":[/b] " . StringUtils::formatNumber($planet->resPlastic + $bc['plastic'] * $fac) . "
-                        [b]" . RES_FUEL . ":[/b] " . StringUtils::formatNumber($planet->resFuel + $bc['fuel'] * $fac) . "
-                        [b]" . RES_FOOD . ":[/b] " . StringUtils::formatNumber($planet->resFood + $bc['food'] * $fac);
+                        [b]" . ResourceNames::METAL . ":[/b] " . StringUtils::formatNumber($planet->resMetal + $bc['metal'] * $fac) . "
+                        [b]" . ResourceNames::CRYSTAL . ":[/b] " . StringUtils::formatNumber($planet->resCrystal + $bc['crystal'] * $fac) . "
+                        [b]" . ResourceNames::PLASTIC . ":[/b] " . StringUtils::formatNumber($planet->resPlastic + $bc['plastic'] * $fac) . "
+                        [b]" . ResourceNames::FUEL . ":[/b] " . StringUtils::formatNumber($planet->resFuel + $bc['fuel'] * $fac) . "
+                        [b]" . ResourceNames::FOOD . ":[/b] " . StringUtils::formatNumber($planet->resFood + $bc['food'] * $fac);
 
                         //Log Speichern
                         $gameLogRepository->add(GameLogFacility::TECH, LogSeverity::INFO, $log_text, $cu->id, $cu->allianceId, $planet->id, $technology->id, $b_status, $b_level);
@@ -554,11 +555,11 @@ if (isset($cp)) {
                     echo "<tr>
                 <th width=\"16%\">Aktion</th>
                 <th width=\"14%\">Zeit</th>
-                <th width=\"14%\">" . RES_METAL . "</th>
-                <th width=\"14%\">" . RES_CRYSTAL . "</th>
-                <th width=\"14%\">" . RES_PLASTIC . "</th>
-                <th width=\"14%\">" . RES_FUEL . "</th>
-                <th width=\"14%\">" . RES_FOOD . "</th></tr>";
+                <th width=\"14%\">" . ResourceNames::METAL . "</th>
+                <th width=\"14%\">" . ResourceNames::CRYSTAL . "</th>
+                <th width=\"14%\">" . ResourceNames::PLASTIC . "</th>
+                <th width=\"14%\">" . ResourceNames::FUEL . "</th>
+                <th width=\"14%\">" . ResourceNames::FOOD . "</th></tr>";
 
                     $notAvStyle = " style=\"color:red;\"";
 
@@ -581,19 +582,19 @@ if (isset($cp)) {
                         // Baukosten-String
                         $bcstring = "<td";
                         if ($bc['metal'] > $planet->resMetal)
-                            $bcstring .= $notAvStyle . " " . tm("Fehlender Rohstoff", "<b>" . StringUtils::formatNumber($bc['metal'] - $planet->resMetal) . "</b> " . RES_METAL . "<br/>Bereit in <b>" . StringUtils::formatTimespan($bwait['metal']) . "</b>");
+                            $bcstring .= $notAvStyle . " " . tm("Fehlender Rohstoff", "<b>" . StringUtils::formatNumber($bc['metal'] - $planet->resMetal) . "</b> " . ResourceNames::METAL . "<br/>Bereit in <b>" . StringUtils::formatTimespan($bwait['metal']) . "</b>");
                         $bcstring .= ">" . StringUtils::formatNumber($bc['metal']) . "</td><td";
                         if ($bc['crystal'] > $planet->resCrystal)
-                            $bcstring .= $notAvStyle . " " . tm("Fehlender Rohstoff", StringUtils::formatNumber($bc['crystal'] - $planet->resCrystal) . " " . RES_CRYSTAL . "<br/>Bereit in <b>" . StringUtils::formatTimespan($bwait['crystal']) . "</b>");
+                            $bcstring .= $notAvStyle . " " . tm("Fehlender Rohstoff", StringUtils::formatNumber($bc['crystal'] - $planet->resCrystal) . " " . ResourceNames::CRYSTAL . "<br/>Bereit in <b>" . StringUtils::formatTimespan($bwait['crystal']) . "</b>");
                         $bcstring .= ">" . StringUtils::formatNumber($bc['crystal']) . "</td><td";
                         if ($bc['plastic'] > $planet->resPlastic)
-                            $bcstring .= $notAvStyle . " " . tm("Fehlender Rohstoff", StringUtils::formatNumber($bc['plastic'] - $planet->resPlastic) . " " . RES_PLASTIC . "<br/>Bereit in <b>" . StringUtils::formatTimespan($bwait['plastic']) . "</b>");
+                            $bcstring .= $notAvStyle . " " . tm("Fehlender Rohstoff", StringUtils::formatNumber($bc['plastic'] - $planet->resPlastic) . " " . ResourceNames::PLASTIC . "<br/>Bereit in <b>" . StringUtils::formatTimespan($bwait['plastic']) . "</b>");
                         $bcstring .= ">" . StringUtils::formatNumber($bc['plastic']) . "</td><td";
                         if ($bc['fuel'] > $planet->resFuel)
-                            $bcstring .= $notAvStyle . " " . tm("Fehlender Rohstoff", StringUtils::formatNumber($bc['fuel'] - $planet->resFuel) . " " . RES_FUEL . "<br/>Bereit in <b>" . StringUtils::formatTimespan($bwait['fuel']) . "</b>");
+                            $bcstring .= $notAvStyle . " " . tm("Fehlender Rohstoff", StringUtils::formatNumber($bc['fuel'] - $planet->resFuel) . " " . ResourceNames::FUEL . "<br/>Bereit in <b>" . StringUtils::formatTimespan($bwait['fuel']) . "</b>");
                         $bcstring .= ">" . StringUtils::formatNumber($bc['fuel']) . "</td><td";
                         if ($bc['food'] > $planet->resFood)
-                            $bcstring .= $notAvStyle . " " . tm("Fehlender Rohstoff", StringUtils::formatNumber($bc['food'] - $planet->resFood) . " " . RES_FOOD . "<br/>Bereit in <b>" . StringUtils::formatTimespan($bwait['food']) . "</b>");
+                            $bcstring .= $notAvStyle . " " . tm("Fehlender Rohstoff", StringUtils::formatNumber($bc['food'] - $planet->resFood) . " " . ResourceNames::FOOD . "<br/>Bereit in <b>" . StringUtils::formatTimespan($bwait['food']) . "</b>");
                         $bcstring .= ">" . StringUtils::formatNumber($bc['food']) . "</td></tr>";
                         // Maximale Stufe erreicht
 

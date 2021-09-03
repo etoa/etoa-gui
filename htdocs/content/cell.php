@@ -10,6 +10,8 @@ use EtoA\Support\StringUtils;
 use EtoA\Universe\Cell\CellRepository;
 use EtoA\Universe\Entity\EntityType;
 use EtoA\Universe\Planet\PlanetRepository;
+use EtoA\Universe\Resources\ResIcons;
+use EtoA\Universe\Resources\ResourceNames;
 use EtoA\Universe\Star\StarRepository;
 use EtoA\User\UserPropertiesRepository;
 use EtoA\User\UserRepository;
@@ -199,15 +201,15 @@ if ($cell->isValid()) {
                 if ($ent->habitable == 1) $tm .= "Ja";
                 else $tm .= "Nein	";
                 if ($ent->typeMetal != 1)
-                    $tm .= "<br/><b>" . RES_METAL . ":</b> " . StringUtils::formatPercentString($ent->typeMetal, true);
+                    $tm .= "<br/><b>" . ResourceNames::METAL . ":</b> " . StringUtils::formatPercentString($ent->typeMetal, true);
                 if ($ent->typeCrystal != 1)
-                    $tm .= "<br/><b>" . RES_CRYSTAL . ":</b> " . StringUtils::formatPercentString($ent->typeCrystal, true);
+                    $tm .= "<br/><b>" . ResourceNames::CRYSTAL . ":</b> " . StringUtils::formatPercentString($ent->typeCrystal, true);
                 if ($ent->typePlastic != 1)
-                    $tm .= "<br/><b>" . RES_PLASTIC . ":</b> " . StringUtils::formatPercentString($ent->typePlastic, true);
+                    $tm .= "<br/><b>" . ResourceNames::PLASTIC . ":</b> " . StringUtils::formatPercentString($ent->typePlastic, true);
                 if ($ent->typeFuel != 1)
-                    $tm .= "<br/><b>" . RES_FUEL . ":</b> " . StringUtils::formatPercentString($ent->typeFuel, true);
+                    $tm .= "<br/><b>" . ResourceNames::FUEL . ":</b> " . StringUtils::formatPercentString($ent->typeFuel, true);
                 if ($ent->typeFood != 1)
-                    $tm .= "<br/><b>" . RES_FOOD . ":</b> " . StringUtils::formatPercentString($ent->typeFood, true);
+                    $tm .= "<br/><b>" . ResourceNames::FOOD . ":</b> " . StringUtils::formatPercentString($ent->typeFood, true);
                 if ($ent->typePower != 1)
                     $tm .= "<br/><b>Energie:</b> " . StringUtils::formatPercentString($ent->typePower, true);
                 if ($ent->typePopulation != 1)
@@ -225,7 +227,7 @@ if ($cell->isValid()) {
                 $fuelProdBonus = $planet->fuelProductionBonus();
                 $color = $fuelProdBonus >= 0 ? '#0f0' : '#f00';
                 $tm .= "<span style=\"color:" . $color . "\">" . ($fuelProdBonus > 0 ? '+' : '') . $fuelProdBonus . "%</span>";
-                $tm .= " " . RES_FUEL . "-Produktion";
+                $tm .= " " . ResourceNames::FUEL . "-Produktion";
             }
 
             echo "<tr>
@@ -254,12 +256,12 @@ if ($cell->isValid()) {
                 if ($planet->hasDebrisField()) {
                     echo "<br/><span style=\"color:#817339;font-weight:bold\" " . tm(
                         "Trümmerfeld",
-                        RES_ICON_METAL . StringUtils::formatNumber($planet->wfMetal) . " " .
-                            RES_METAL . "<br style=\"clear:both\" />" .
-                            RES_ICON_CRYSTAL . StringUtils::formatNumber($planet->wfCrystal) . " " .
-                            RES_CRYSTAL . "<br style=\"clear:both\" />" .
-                            RES_ICON_PLASTIC . StringUtils::formatNumber($planet->wfPlastic) . " " .
-                            RES_PLASTIC . "<br style=\"clear:both\" />"
+                            ResIcons::METAL . StringUtils::formatNumber($planet->wfMetal) . " " .
+                            ResourceNames::METAL . "<br style=\"clear:both\" />" .
+                            ResIcons::CRYSTAL . StringUtils::formatNumber($planet->wfCrystal) . " " .
+                            ResourceNames::CRYSTAL . "<br style=\"clear:both\" />" .
+                            ResIcons::PLASTIC . StringUtils::formatNumber($planet->wfPlastic) . " " .
+                            ResourceNames::PLASTIC . "<br style=\"clear:both\" />"
                     ) . ">Trümmerfeld</span> ";
                 }
             }

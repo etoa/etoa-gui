@@ -7,6 +7,7 @@ namespace EtoA\UI;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Support\StringUtils;
 use EtoA\Universe\Planet\Planet;
+use EtoA\Universe\Resources\ResourceNames;
 use EtoA\User\UserPropertiesRepository;
 
 /**
@@ -69,23 +70,23 @@ class ResourceBoxDrawer
         }
 
         $rtn = tableStart("Ressourcen") . "<tr>
-        <th class=\"resBoxTitleCell\"><div class=\"resmetal\">" . RES_METAL . "</div></th>
-        <th class=\"resBoxTitleCell\"><div class=\"rescrystal\">" . RES_CRYSTAL . "</div></th>
-        <th class=\"resBoxTitleCell\"><div class=\"resplastic\">" . RES_PLASTIC . "</div></th>
-        <th class=\"resBoxTitleCell\"><div class=\"resfuel\">" . RES_FUEL . "</div></th>
-        <th class=\"resBoxTitleCell\"><div class=\"resfood\">" . RES_FOOD . "</div></th>
+        <th class=\"resBoxTitleCell\"><div class=\"resmetal\">" . ResourceNames::METAL . "</div></th>
+        <th class=\"resBoxTitleCell\"><div class=\"rescrystal\">" . ResourceNames::CRYSTAL . "</div></th>
+        <th class=\"resBoxTitleCell\"><div class=\"resplastic\">" . ResourceNames::PLASTIC . "</div></th>
+        <th class=\"resBoxTitleCell\"><div class=\"resfuel\">" . ResourceNames::FUEL . "</div></th>
+        <th class=\"resBoxTitleCell\"><div class=\"resfood\">" . ResourceNames::FOOD . "</div></th>
         <th class=\"resBoxTitleCell\"><div class=\"respeople\">Bewohner</div></th>
         <th class=\"resBoxTitleCell\"><div class=\"respower\">Energie</div></th>
         </tr><tr>"
 
-            . $this->getResourceRow($style0, RES_METAL, "images/resources/metal.png", $planet->resMetal, $planet->storeMetal, $planet->prodMetal)
-            . $this->getResourceRow($style1, RES_CRYSTAL, "images/resources/crystal.png", $planet->resCrystal, $planet->storeCrystal, $planet->prodCrystal)
-            . $this->getResourceRow($style2, RES_PLASTIC, "images/resources/plastic.png", $planet->resPlastic, $planet->storePlastic, $planet->prodPlastic)
-            . $this->getResourceRow($style3, RES_FUEL, "images/resources/fuel.png", $planet->resFuel, $planet->storeFuel, $planet->prodFuel)
-            . $this->getResourceRow($style4, RES_FOOD, "images/resources/food.png", $planet->resFood, $planet->storeFood, $planet->prodFood)
+            . $this->getResourceRow($style0, ResourceNames::METAL, "images/resources/metal.png", $planet->resMetal, $planet->storeMetal, $planet->prodMetal)
+            . $this->getResourceRow($style1, ResourceNames::CRYSTAL, "images/resources/crystal.png", $planet->resCrystal, $planet->storeCrystal, $planet->prodCrystal)
+            . $this->getResourceRow($style2, ResourceNames::PLASTIC, "images/resources/plastic.png", $planet->resPlastic, $planet->storePlastic, $planet->prodPlastic)
+            . $this->getResourceRow($style3, ResourceNames::FUEL, "images/resources/fuel.png", $planet->resFuel, $planet->storeFuel, $planet->prodFuel)
+            . $this->getResourceRow($style4, ResourceNames::FOOD, "images/resources/food.png", $planet->resFood, $planet->storeFood, $planet->prodFood)
             . $this->getResourceRow($style5, "Bevölkerung", "images/resources/people.png", $planet->people, $planet->peoplePlace, $planet->prodPeople)
 
-            . "<td class=\"$style6\" " . mTT(RES_POWER, "<img width=\"40px\" height=\"40px\" src=\"images/resources/power.png\" style=\"float:left;margin-right:5px;\"/> <b>Produktion:</b> " . StringUtils::formatNumber($planet->prodPower) . "<br/><b>Verfügbar:</b> " . StringUtils::formatNumber($power_rest) . "<br/><b>Verbrauch:</b> " . StringUtils::formatNumber($planet->usePower) . "<br style=\"clear:both;\"/>") . ">" . StringUtils::formatNumber($power_rest) . "</td>
+            . "<td class=\"$style6\" " . mTT(ResourceNames::POWER, "<img width=\"40px\" height=\"40px\" src=\"images/resources/power.png\" style=\"float:left;margin-right:5px;\"/> <b>Produktion:</b> " . StringUtils::formatNumber($planet->prodPower) . "<br/><b>Verfügbar:</b> " . StringUtils::formatNumber($power_rest) . "<br/><b>Verbrauch:</b> " . StringUtils::formatNumber($planet->usePower) . "<br style=\"clear:both;\"/>") . ">" . StringUtils::formatNumber($power_rest) . "</td>
         </tr></table>";
 
         return $rtn;
@@ -128,13 +129,13 @@ class ResourceBoxDrawer
         $rtn = "<div id=\"resbox\">
         <div id=\"resboxheader\">Resourcen</div>
         <div id=\"resboxcontent\">"
-            . $this->getResourceRow($style0, RES_METAL, "images/resources/metal.png", $planet->resMetal, $planet->storeMetal, $planet->prodMetal, true)
-            . $this->getResourceRow($style1, RES_CRYSTAL, "images/resources/crystal.png", $planet->resCrystal, $planet->storeCrystal, $planet->prodCrystal, true)
-            . $this->getResourceRow($style2, RES_PLASTIC, "images/resources/plastic.png", $planet->resPlastic, $planet->storePlastic, $planet->prodPlastic, true)
-            . $this->getResourceRow($style3, RES_FUEL, "images/resources/fuel.png", $planet->resFuel, $planet->storeFuel, $planet->prodFuel, true)
-            . $this->getResourceRow($style4, RES_FOOD, "images/resources/food.png", $planet->resFood, $planet->storeFood, $planet->prodFood, true)
+            . $this->getResourceRow($style0, ResourceNames::METAL, "images/resources/metal.png", $planet->resMetal, $planet->storeMetal, $planet->prodMetal, true)
+            . $this->getResourceRow($style1, ResourceNames::CRYSTAL, "images/resources/crystal.png", $planet->resCrystal, $planet->storeCrystal, $planet->prodCrystal, true)
+            . $this->getResourceRow($style2, ResourceNames::PLASTIC, "images/resources/plastic.png", $planet->resPlastic, $planet->storePlastic, $planet->prodPlastic, true)
+            . $this->getResourceRow($style3, ResourceNames::FUEL, "images/resources/fuel.png", $planet->resFuel, $planet->storeFuel, $planet->prodFuel, true)
+            . $this->getResourceRow($style4, ResourceNames::FOOD, "images/resources/food.png", $planet->resFood, $planet->storeFood, $planet->prodFood, true)
             . $this->getResourceRow($style5, "Bevölkerung", "images/resources/people.png", $planet->people, $planet->peoplePlace, $planet->prodPeople, true)
-            . "<span class=\"respower " . $style6 . "\" " . mTT(RES_POWER, "<img src=\"images/resources/power.png\" style=\"float:left;margin-right:5px;\"/> <b>Produktion:</b> " . StringUtils::formatNumber($planet->prodPower) . "<br/><b>Verfügbar:</b> " . StringUtils::formatNumber($power_rest) . "<br/><b>Verbrauch:</b> " . StringUtils::formatNumber($planet->usePower) . "<br style=\"clear:both;\"/>") . ">" . StringUtils::formatNumber($power_rest, false, true) . "</span>
+            . "<span class=\"respower " . $style6 . "\" " . mTT(ResourceNames::POWER, "<img src=\"images/resources/power.png\" style=\"float:left;margin-right:5px;\"/> <b>Produktion:</b> " . StringUtils::formatNumber($planet->prodPower) . "<br/><b>Verfügbar:</b> " . StringUtils::formatNumber($power_rest) . "<br/><b>Verbrauch:</b> " . StringUtils::formatNumber($planet->usePower) . "<br style=\"clear:both;\"/>") . ">" . StringUtils::formatNumber($power_rest, false, true) . "</span>
         </div>
         </div>";
 

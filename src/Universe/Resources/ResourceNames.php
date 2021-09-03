@@ -12,4 +12,12 @@ class ResourceNames
     public const POWER = 'Energie';
     public const TIME = 'Zeit';
     public const FIELDS = 'Felder';
+
+    public const NAMES = [
+        self::METAL,
+        self::CRYSTAL,
+        self::PLASTIC,
+        self::FUEL,
+        self::FOOD,
+    ];
 }

@@ -16,6 +16,7 @@ use EtoA\Technology\TechnologyRepository;
 use EtoA\Universe\Entity\EntityService;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Universe\Resources\BaseResources;
+use EtoA\Universe\Resources\ResourceNames;
 
 /**
  * Fleet launch class, provides the full workflow for starting a fleet
@@ -456,9 +457,9 @@ class FleetLaunch
                 } else
                     $this->error = "Zu wenig Laderaum für soviel Treibstoff und Nahrung (" . StringUtils::formatNumber(abs($this->getCapacity())) . " zuviel)!";
             } else
-                $this->error = "Zuwenig Nahrung! " . StringUtils::formatNumber($this->sourceEntity->resFood()) . " t " . RES_FOOD . " vorhanden, " . StringUtils::formatNumber($this->getCostsFood()) . " t benötigt.";
+                $this->error = "Zuwenig Nahrung! " . StringUtils::formatNumber($this->sourceEntity->resFood()) . " t " . ResourceNames::FOOD . " vorhanden, " . StringUtils::formatNumber($this->getCostsFood()) . " t benötigt.";
         } else
-            $this->error = "Zuwenig Treibstoff! " . StringUtils::formatNumber($this->sourceEntity->resFuel()) . " t " . RES_FUEL . " vorhanden, " . StringUtils::formatNumber($this->getCosts()) . " t benötigt.";
+            $this->error = "Zuwenig Treibstoff! " . StringUtils::formatNumber($this->sourceEntity->resFuel()) . " t " . ResourceNames::FUEL . " vorhanden, " . StringUtils::formatNumber($this->getCosts()) . " t benötigt.";
         return false;
     }
 
@@ -1020,7 +1021,7 @@ class FleetLaunch
     // subtracts the payload ress (not support/flight fuel and food)
     function finalLoadResource()
     {
-        global $resNames, $app;
+        global $app;
 
         /** @var PlanetRepository $planetRepository */
         $planetRepository = $app[PlanetRepository::class];
@@ -1028,7 +1029,7 @@ class FleetLaunch
         $this->sourceEntity->reloadRes();
         $resources = new BaseResources();
 
-        foreach ($resNames as $rk => $rn) {
+        foreach (ResourceNames::NAMES as $rk => $rn) {
             $id = $rk + 1;
             if ($this->res[$id] >= 0) {
                 $ammount = $this->res[$id];

@@ -6,6 +6,7 @@
 
 use EtoA\Ship\ShipDataRepository;
 use EtoA\Support\StringUtils;
+use EtoA\Universe\Resources\ResourceNames;
 
 /**
  * Description of marketreport
@@ -46,7 +47,6 @@ class MarketReport extends Report
 
     public function __construct($args)
     {
-        global $resNames;
         parent::__construct($args);
         if ($this->valid) {
             $res = dbquery("SELECT * FROM reports_market WHERE id=" . $this->id . ";");
@@ -55,7 +55,7 @@ class MarketReport extends Report
                 $this->subType = $arr['subtype'];
                 $this->recordId = $arr['record_id'];
                 $this->factor = $arr['factor'];
-                foreach ($resNames as $rk => $rn) {
+                foreach (ResourceNames::NAMES as $rk => $rn) {
                     $this->resSell[$rk] = $arr['sell_' . $rk];
                     $this->resBuy[$rk] = $arr['buy_' . $rk];
                 }
@@ -78,7 +78,7 @@ class MarketReport extends Report
 
     function __toString()
     {
-        global $resNames, $app;
+        global $app;
 
         ob_start();
         $ent = Entity::createFactoryById($this->entity1Id);
@@ -94,7 +94,7 @@ class MarketReport extends Report
 				<th>Angebot:</th>
 				<th>Preis:</th>
 				</tr>";
-                foreach ($resNames as $k => $v) {
+                foreach (ResourceNames::NAMES as $k => $v) {
                     if ($this->resSell[$k] + $this->resBuy[$k] > 0)
                         echo "<tr>
 						<td>" . $v . "</td>
@@ -116,7 +116,7 @@ class MarketReport extends Report
 				<th>Preis:</th>
 				<th>Retour:</th>
 				</tr>";
-                foreach ($resNames as $k => $v) {
+                foreach (ResourceNames::NAMES as $k => $v) {
                     if ($this->resSell[$k] + $this->resBuy[$k] > 0)
                         echo "<tr>
 						<td>" . $v . "</td>
@@ -144,7 +144,7 @@ class MarketReport extends Report
 				<th style=\"width:100px;\">Rohstoff:</th>
 				<th>Angebot:</th>
 				<th>Preis:</th></tr>";
-                foreach ($resNames as $k => $v) {
+                foreach (ResourceNames::NAMES as $k => $v) {
                     if ($this->resSell[$k] + $this->resBuy[$k] > 0)
                         echo "<tr>
 						<td>" . $v . "</td>
@@ -171,7 +171,7 @@ class MarketReport extends Report
 				<th>Angebot:</th>
 				<th>Preis:</th>
 				</tr>";
-                foreach ($resNames as $k => $v) {
+                foreach (ResourceNames::NAMES as $k => $v) {
                     if ($this->resSell[$k] + $this->resBuy[$k] > 0)
                         echo "<tr>
 						<td>" . $v . "</td>
@@ -201,7 +201,7 @@ class MarketReport extends Report
 				<th style=\"width:100px;\">Rohstoff:</th>
 				<th>Preis:</th>
 				</tr>";
-                foreach ($resNames as $k => $v) {
+                foreach (ResourceNames::NAMES as $k => $v) {
                     if ($this->resSell[$k] + $this->resBuy[$k] > 0)
                         echo "<tr>
 						<td>" . $v . "</td>
@@ -225,7 +225,7 @@ class MarketReport extends Report
 				<th style=\"width:100px;\">Rohstoff:</th>
 				<th>Preis:</th>
 				</tr>";
-                foreach ($resNames as $k => $v) {
+                foreach (ResourceNames::NAMES as $k => $v) {
                     if ($this->resSell[$k] + $this->resBuy[$k] > 0)
                         echo "<tr>
 						<td>" . $v . "</td>
@@ -251,7 +251,7 @@ class MarketReport extends Report
 				<th style=\"width:100px;\">Rohstoff:</th>
 				<th>Preis:</th>
 				</tr>";
-                foreach ($resNames as $k => $v) {
+                foreach (ResourceNames::NAMES as $k => $v) {
                     if ($this->resSell[$k] + $this->resBuy[$k] > 0)
                         echo "<tr>
 						<td>" . $v . "</td>
@@ -281,7 +281,7 @@ class MarketReport extends Report
 				<th style=\"width:100px;\">Rohstoff:</th>
 				<th>Preis:</th>
 				</tr>";
-                foreach ($resNames as $k => $v) {
+                foreach (ResourceNames::NAMES as $k => $v) {
                     if ($this->resSell[$k] + $this->resBuy[$k] > 0)
                         echo "<tr>
 						<td>" . $v . "</td>
@@ -304,7 +304,7 @@ class MarketReport extends Report
 					<th style=\"width:100px;\">Rohstoff:</th>
 					<th>Angebot:</th>
 					</tr>";
-                foreach ($resNames as $k => $v) {
+                foreach (ResourceNames::NAMES as $k => $v) {
                     if ($this->resSell[$k] > 0)
                         echo "<tr>
 						<td>" . $v . "</td>
@@ -323,7 +323,7 @@ class MarketReport extends Report
 					<th>Angebot:</th>
 					<th>Retour:</th>
 					</tr>";
-                foreach ($resNames as $k => $v) {
+                foreach (ResourceNames::NAMES as $k => $v) {
                     if ($this->resSell[$k] > 0)
                         echo "<tr>
 							<td>" . $v . "</td>
@@ -353,7 +353,7 @@ class MarketReport extends Report
 					<th>Angebot:</th>
 					<th>Preis:</th>
 					</tr>";
-                foreach ($resNames as $k => $v) {
+                foreach (ResourceNames::NAMES as $k => $v) {
                     if ($this->resSell[$k] + $this->resBuy[$k] > 0)
                         echo "<tr>
 							<td>" . $v . "</td>
@@ -373,7 +373,7 @@ class MarketReport extends Report
 					<th>Angebot:</th>
 					<th>Preis:</th>
 					</tr>";
-                foreach ($resNames as $k => $v) {
+                foreach (ResourceNames::NAMES as $k => $v) {
                     if ($this->resSell[$k] + $this->resBuy[$k] > 0)
                         echo "<tr>
 							<td>" . $v . "</td>

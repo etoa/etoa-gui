@@ -11,6 +11,8 @@ use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Entity\EntityService;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Universe\Resources\BaseResources;
+use EtoA\Universe\Resources\ResIcons;
+use EtoA\Universe\Resources\ResourceNames;
 
 $xajax->register(XAJAX_FUNCTION, 'calcMarketRessPrice');
 $xajax->register(XAJAX_FUNCTION, 'calcMarketRessBuy');
@@ -25,7 +27,7 @@ $xajax->register(XAJAX_FUNCTION, 'showAuctionDetail');
 
 function marketSearch($form, $order = "distance", $orderDirection = 0)
 {
-    global $resNames, $resIcons, $app;
+    global $app;
     ob_start();
     $ajax = new xajaxResponse();
 
@@ -48,7 +50,7 @@ function marketSearch($form, $order = "distance", $orderDirection = 0)
         // Build resource type filter query
         $sellFilter = new BaseResources();
         $buyFilter = new BaseResources();
-        foreach ($resNames as $rk => $rv) {
+        foreach (ResourceNames::NAMES as $rk => $rv) {
             if (isset($form['market_search_filter_supply_' . $rk]) && $form['market_search_filter_supply_' . $rk] == 1) {
                 $sellFilter->set($rk, 1);
             }
@@ -62,7 +64,7 @@ function marketSearch($form, $order = "distance", $orderDirection = 0)
             $te = Entity::createFactoryById($_SESSION['cpid']);
         }
 
-        $offers = $marketResourceRepository->getBuyableOffers((int) $_SESSION['user_id'], (int) $_SESSION['alliance_id'], $sellFilter, $buyFilter, $resNames);
+        $offers = $marketResourceRepository->getBuyableOffers((int) $_SESSION['user_id'], (int) $_SESSION['alliance_id'], $sellFilter, $buyFilter);
 
         $nr = count($offers);
         /** @var array<array{offer: MarketResource, sell_total: int, buy_total: int, used_res: int, distance: float, duration: float}> $data */
@@ -79,7 +81,7 @@ function marketSearch($form, $order = "distance", $orderDirection = 0)
                 $buyResources = $offer->getBuyResources();
                 $sellResources = $offer->getSellResources();
                 if (isset($te)) {
-                    foreach ($resNames as $rk => $rn) {
+                    foreach (ResourceNames::NAMES as $rk => $rn) {
                         if ($te->resources[$rk] < $buyResources->get($rk)) {
                             $show = false;
                             break;
@@ -101,7 +103,7 @@ function marketSearch($form, $order = "distance", $orderDirection = 0)
                         'duration' => ceil($dist / ($tradeShip->speed * $specialistTradeTime) * 3600 + $tradeShip->time2start + $tradeShip->time2land),
                     ];
 
-                    foreach ($resNames as $rk => $rn) {
+                    foreach (ResourceNames::NAMES as $rk => $rn) {
                         if ($sellResources->get($rk) > 0 || $buyResources->get($rk) > 0)
                             $data[$i]['used_res']++;
                     }
@@ -161,10 +163,10 @@ function marketSearch($form, $order = "distance", $orderDirection = 0)
                 $buyResources = $arr['offer']->getBuyResources();
                 $sellResources = $arr['offer']->getSellResources();
                 echo '<tbody class="offer">';
-                foreach ($resNames as $rk => $rn) {
+                foreach (ResourceNames::NAMES as $rk => $rn) {
                     if ($sellResources->get($rk) > 0 || $buyResources->get($rk) > 0) {
                         echo "<tr>
-                                        <td class=\"rescolor" . $rk . " rname\">" . $resIcons[$rk] . "<b>" . $rn . "</b>:</td>
+                                        <td class=\"rescolor" . $rk . " rname\">" . ResIcons::ICONS[$rk] . "<b>" . $rn . "</b>:</td>
                                         <td class=\"rescolor" . $rk . " rsupp\">" . ($sellResources->get($rk) > 0 ? StringUtils::formatNumber($sellResources->get($rk)) : '-') . "</td>
                                         <td class=\"rescolor" . $rk . " rdema\">" . ($buyResources->get($rk) > 0 ? StringUtils::formatNumber($buyResources->get($rk)) : '-') . "</td>";
                         if ($i == 0) {
@@ -246,7 +248,7 @@ function marketSearch($form, $order = "distance", $orderDirection = 0)
                 $show = true;
                 $costs = $offer->getCosts();
                 if (isset($te)) {
-                    foreach ($resNames as $rk => $rn) {
+                    foreach (ResourceNames::NAMES as $rk => $rn) {
                         if ($te->resources[$rk] < $costs->get($rk)) {
                             $show = false;
                             break;
@@ -278,15 +280,15 @@ function marketSearch($form, $order = "distance", $orderDirection = 0)
                     }
 
                     $i = 0;
-                    $resCnt = count($resNames);
+                    $resCnt = count(ResourceNames::NAMES);
 
                     echo '<tbody class="offer">';
-                    foreach ($resNames as $rk => $rn) {
+                    foreach (ResourceNames::NAMES as $rk => $rn) {
                         echo "<tr>";
                         if ($i == 0) {
                             echo "<td rowspan=\"$resCnt\">" . $offer->count . " <a href=\"?page=help&site=shipyard&id=" . $offer->shipId . "\">" . $shipNames[$offer->shipId] . "</a></td>";
                         }
-                        echo "<td class=\"rescolor" . $rk . " rname\">" . $resIcons[$rk] . "<b>" . $rn . "</b>:</td>
+                        echo "<td class=\"rescolor" . $rk . " rname\">" . ResIcons::ICONS[$rk] . "<b>" . $rn . "</b>:</td>
                             <td class=\"rescolor" . $rk . " rdema\">" . StringUtils::formatNumber($costs->get($rk)) . "</td>";
                         if ($i++ == 0) {
                             $tu = new User($offer->userId);
@@ -374,10 +376,10 @@ function marketSearch($form, $order = "distance", $orderDirection = 0)
                 echo "<tr>
                         <td>";
                 $sellResources = $auction->getSellResources();
-                foreach ($resNames as $rk => $rn) {
+                foreach (ResourceNames::NAMES as $rk => $rn) {
                     if ($sellResources->get($rk) > 0) {
                         echo "<span class=\"rescolor" . $rk . "\">";
-                        echo $resIcons[$rk] . $rn . ": " . StringUtils::formatNumber($sellResources->get($rk)) . "</span><br style=\"clear:both;\" />";
+                        echo ResIcons::ICONS[$rk] . $rn . ": " . StringUtils::formatNumber($sellResources->get($rk)) . "</span><br style=\"clear:both;\" />";
                     }
                 }
                 echo "</td>
@@ -387,10 +389,10 @@ function marketSearch($form, $order = "distance", $orderDirection = 0)
                         <td>";
                 $currencyResources = $auction->getCurrencyResources();
                 $buyFilter = $auction->getBuyResources();
-                foreach ($resNames as $rk => $rn) {
+                foreach (ResourceNames::NAMES as $rk => $rn) {
                     if ($currencyResources->get($rk) > 0) {
                         echo "<span class=\"rescolor" . $rk . "\">";
-                        echo $resIcons[$rk] . $rn . ": " . StringUtils::formatNumber($buyFilter->get($rk));
+                        echo ResIcons::ICONS[$rk] . $rn . ": " . StringUtils::formatNumber($buyFilter->get($rk));
                         echo "</span><br style=\"clear:both;\" />";
                     }
                 }
@@ -417,7 +419,7 @@ function marketSearch($form, $order = "distance", $orderDirection = 0)
 
 function showAuctionDetail($id)
 {
-    global $resNames, $app;
+    global $app;
     ob_start();
     $ajax = new xajaxResponse();
 
@@ -468,7 +470,7 @@ function showAuctionDetail($id)
             3 => $planet->resFuel,
             4 => $planet->resFood,
         ];
-        foreach ($resNames as $rk => $rn) {
+        foreach (ResourceNames::NAMES as $rk => $rn) {
             // Rohstoffe
             echo "<input type=\"hidden\" value=\"" . $ownResources[$rk] . "\" name=\"res_$rk\" id=\"res_$rk\"/>";
             // Angebot
@@ -517,7 +519,7 @@ function showAuctionDetail($id)
             </tr>";
 
             $factor = array(MARKET_METAL_FACTOR, MARKET_CRYSTAL_FACTOR, MARKET_PLASTIC_FACTOR, MARKET_FUEL_FACTOR, MARKET_FOOD_FACTOR);
-            foreach ($resNames as $rk => $rn) {
+            foreach (ResourceNames::NAMES as $rk => $rn) {
                 echo "<tr>
                 <th style=\"vertical-align:middle;\" class=\"rescolor" . $rk . "\">" . $rn . ":</th>
                 <td id=\"auction_sell_metal_field\" style=\"vertical-align:middle;\"  class=\"rescolor" . $rk . "\">
@@ -1827,8 +1829,7 @@ function calcMarketAuctionPrice($val, $last_update = 0)
         MARKET_FOOD_FACTOR
     );
 
-    global $resNames;
-    foreach ($resNames as $rid => $r) {
+    foreach (ResourceNames::NAMES as $rid => $r) {
         // MaxBetrag
         // Errechnet Grundbetrag (Noch ohne Abzüge eingegebenen Preisen)
         $buyMax[$rid] = $val['sell_0'] / $factor[$rid] * $factor[0] * AUCTION_PRICE_FACTOR_MAX
@@ -1968,7 +1969,7 @@ function calcMarketAuctionPrice($val, $last_update = 0)
     $objResponse->assign("auction_show_last_update", "value", $last_update);
 
     // XAJAX ändert Daten
-    foreach ($resNames as $rid => $r) {
+    foreach (ResourceNames::NAMES as $rid => $r) {
         $objResponse->assign("auction_min_max_" . $rid, "innerHTML", $outMinMax[$rid]);
         $objResponse->assign("new_buy_" . $rid, "value", StringUtils::formatNumber($val['new_buy_' . $rid]));
     }

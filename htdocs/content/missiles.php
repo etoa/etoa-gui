@@ -16,6 +16,7 @@ use EtoA\Technology\TechnologyRepository;
 use EtoA\UI\ResourceBoxDrawer;
 use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Planet\PlanetRepository;
+use EtoA\Universe\Resources\ResourceNames;
 use EtoA\User\UserPropertiesRepository;
 
 /** @var ConfigurationService $config */
@@ -536,11 +537,11 @@ if ($missileBuilding !== null && $missileBuilding->currentLevel > 0) {
 
                             echo "</tr>";
                             echo "<tr>
-                                <th height=\"20\" width=\"110\">" . RES_METAL . ":</th>
-                                <th height=\"20\" width=\"97\">" . RES_CRYSTAL . ":</th>
-                                <th height=\"20\" width=\"98\">" . RES_PLASTIC . ":</th>
-                                <th height=\"20\" width=\"97\">" . RES_FUEL . ":</th>
-                                <th height=\"20\" width=\"98\">" . RES_FOOD . "</th></tr>";
+                                <th height=\"20\" width=\"110\">" . ResourceNames::METAL . ":</th>
+                                <th height=\"20\" width=\"97\">" . ResourceNames::CRYSTAL . ":</th>
+                                <th height=\"20\" width=\"98\">" . ResourceNames::PLASTIC . ":</th>
+                                <th height=\"20\" width=\"97\">" . ResourceNames::FUEL . ":</th>
+                                <th height=\"20\" width=\"98\">" . ResourceNames::FOOD . "</th></tr>";
                             echo "<tr>
                                 <td height=\"20\" width=\"110\" " . $ress_style_metal . ">
                                     " . StringUtils::formatNumber($missile->costsMetal) . "

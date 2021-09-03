@@ -10,6 +10,7 @@ use EtoA\Message\MarketReportRepository;
 use EtoA\Ship\ShipRepository;
 use EtoA\Support\StringUtils;
 use EtoA\Universe\Resources\BaseResources;
+use EtoA\Universe\Resources\ResourceNames;
 use EtoA\User\UserRepository;
 
 /** @var int $alliance_market_level */
@@ -53,7 +54,7 @@ if (!isset($errMsg)) {
     $ship_count = StringUtils::parseFormattedNumber($_POST['ship_count']);
 
     $costs = new BaseResources();
-    foreach ($resNames as $rk => $rn) {
+    foreach (ResourceNames::NAMES as $rk => $rn) {
         // Convert formatted number back to integer
         $costs->set($rk, max(0, StringUtils::parseFormattedNumber($_POST['ship_buy_' . $rk])));
     }

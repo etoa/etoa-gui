@@ -12,6 +12,8 @@ use EtoA\Technology\TechnologyRepository;
 use EtoA\UI\ResourceBoxDrawer;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Technology\TechnologyDataRepository;
+use EtoA\Universe\Resources\ResIcons;
+use EtoA\Universe\Resources\ResourceNames;
 use EtoA\User\UserPropertiesRepository;
 
 /** @var ConfigurationService $config */
@@ -316,13 +318,13 @@ if (isset($cp)) {
             tableStart('Bauoptionen');
             echo '<tr>
                     <th width="16%">Aktion</td>
-                    <th width="14%">' . RES_ICON_TIME . ' Zeit</th>
-                    <th width="14%">' . RES_ICON_METAL . '</td>
-                    <th width="14%">' . RES_ICON_CRYSTAL . '</td>
-                    <th width="14%">' . RES_ICON_PLASTIC . '</td>
-                    <th width="14%">' . RES_ICON_FUEL . '</td>
-                    <th width="14%">' . RES_ICON_FOOD . '</td>
-                    <th width="14%">' . RES_ICON_POWER . '</td>
+                    <th width="14%">' . ResIcons::TIME . ' Zeit</th>
+                    <th width="14%">' . ResIcons::METAL . '</td>
+                    <th width="14%">' . ResIcons::CRYSTAL . '</td>
+                    <th width="14%">' . ResIcons::PLASTIC . '</td>
+                    <th width="14%">' . ResIcons::FUEL . '</td>
+                    <th width="14%">' . ResIcons::FOOD . '</td>
+                    <th width="14%">' . ResIcons::POWER . '</td>
                 </tr>';
 
             // Bauen
@@ -360,7 +362,7 @@ if (isset($cp)) {
                                 </td>
                                 <td>' . StringUtils::formatTimespan($costs['time']) . '</td>';
                     }
-                    foreach ($resNames as $rk => $rn) {
+                    foreach (ResourceNames::NAMES as $rk => $rn) {
                         echo '<td>' . StringUtils::formatNumber(ceil($costs['costs' . $rk])) . '</td>';
                     }
                     echo '<td>' . StringUtils::formatNumber(ceil($costs['costs5'])) . '</td>';
@@ -391,7 +393,7 @@ if (isset($cp)) {
                                     <input type="submit" class="button" name="command_demolish" value="Abreissen" onclick="if (this.value==\'Abreissen\'){return confirm(\'Geb&auml;de wirklich abreissen?\');}">
                                 </td>
                                 <td>' . StringUtils::formatTimespan($demolishCosts['time']) . '</td>';
-                    foreach ($resNames as $rk => $rn) {
+                    foreach (ResourceNames::NAMES as $rk => $rn) {
                         echo '<td>' . StringUtils::formatNumber(ceil($demolishCosts['costs' . $rk])) . '</td>';
                     }
                     echo '<td>' . StringUtils::formatNumber(ceil($demolishCosts['costs5'])) . '</td>';
@@ -414,7 +416,7 @@ if (isset($cp)) {
                     echo '<tr>
                                     <td width="90">N&auml;chste Stufe:</td>
                                     <td>' . StringUtils::formatTimespan($costs['time']) . '</td>';
-                    foreach ($resNames as $rk => $rn) {
+                    foreach (ResourceNames::NAMES as $rk => $rn) {
                         echo '<td>' . StringUtils::formatNumber(ceil($costs['costs' . $rk])) . '</td>';
                     }
                     echo '<td>' . StringUtils::formatNumber(ceil($costs['costs5'])) . '</td>';
@@ -507,11 +509,11 @@ if (isset($cp)) {
                     echo "<tr>
                             <th colspan=\"2\">Gebäude</th>
                             <th>Zeit</th>
-                            <th>" . RES_METAL . "</th>
-                            <th>" . RES_CRYSTAL . "</th>
-                            <th>" . RES_PLASTIC . "</th>
-                            <th>" . RES_FUEL . "</th>
-                            <th>" . RES_FOOD . "</th>
+                            <th>" . ResourceNames::METAL . "</th>
+                            <th>" . ResourceNames::CRYSTAL . "</th>
+                            <th>" . ResourceNames::PLASTIC . "</th>
+                            <th>" . ResourceNames::FUEL . "</th>
+                            <th>" . ResourceNames::FOOD . "</th>
                             <th>Ausbau</th>
                         </tr>";
                 }

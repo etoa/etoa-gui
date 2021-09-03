@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\Support\StringUtils;
+use EtoA\Universe\Resources\ResourceNames;
 use EtoA\User\UserRepository;
 use EtoA\User\UserToXml;
 
@@ -91,23 +92,23 @@ if (isset($_GET['file'])) {
                             <td class=\"tbldata\">" . $p->type . " (Id: " . $p->type['id'] . ")</td>
                         </tr>";
                     echo "<tr>
-                            <td class=\"tbldata\">" . RES_METAL . ":</td>
+                            <td class=\"tbldata\">" . ResourceNames::METAL . ":</td>
                             <td class=\"tbldata\"> " . StringUtils::formatNumber(intval($p->metal)) . "</td>
                         </tr>";
                     echo "<tr>
-                            <td class=\"tbldata\">" . RES_CRYSTAL . ":</td>
+                            <td class=\"tbldata\">" . ResourceNames::CRYSTAL . ":</td>
                             <td class=\"tbldata\"> " . StringUtils::formatNumber(intval($p->crystal)) . "</td>
                         </tr>";
                     echo "<tr>
-                            <td class=\"tbldata\">" . RES_PLASTIC . ":</td>
+                            <td class=\"tbldata\">" . ResourceNames::PLASTIC . ":</td>
                             <td class=\"tbldata\"> " . StringUtils::formatNumber(intval($p->plastic)) . "</td>
                         </tr>";
                     echo "<tr>
-                            <td class=\"tbldata\">" . RES_FUEL . ":</td>
+                            <td class=\"tbldata\">" . ResourceNames::FUEL . ":</td>
                             <td class=\"tbldata\"> " . StringUtils::formatNumber(intval($p->fuel)) . "</td>
                         </tr>";
                     echo "<tr>
-                            <td class=\"tbldata\">" . RES_FOOD . ":</td>
+                            <td class=\"tbldata\">" . ResourceNames::FOOD . ":</td>
                             <td class=\"tbldata\"> " . StringUtils::formatNumber(intval($p->food)) . "</td>
                         </tr>";
                     echo "<tr>

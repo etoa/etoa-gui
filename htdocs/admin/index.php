@@ -128,7 +128,6 @@ function adminView(
     global $page;
     global $sub;
     global $app;
-    global $resNames;
     global $cu;
 
     // Load admin user data

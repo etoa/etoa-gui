@@ -12,6 +12,8 @@ use EtoA\Log\LogRepository;
 use EtoA\Log\LogSeverity;
 use EtoA\Support\BBCodeUtils;
 use EtoA\Support\StringUtils;
+use EtoA\Universe\Resources\ResIcons;
+use EtoA\Universe\Resources\ResourceNames;
 
 /** @var AllianceBuildingRepository $allianceBuildingRepository */
 $allianceBuildingRepository = $app[AllianceBuildingRepository::class];
@@ -130,19 +132,19 @@ if ($allianceFleetControlLevel >= ALLIANCE_FLEET_SHOW_DETAIL && $rights) {
 
             tableStart("Piloten &amp; Verbrauch", "50%");
             echo "<tr>
-                        <th style=\"width:150px;\">" . RES_ICON_PEOPLE . "Piloten:</th>
+                        <th style=\"width:150px;\">" . ResIcons::PEOPLE . "Piloten:</th>
                         <td>" . StringUtils::formatNumber($fd->pilots()) . "</td>
                     </tr>
                     <tr>
-                        <th>" . RES_ICON_FUEL . "" . RES_FUEL . ":</th>
+                        <th>" . ResIcons::FUEL . "" . ResourceNames::FUEL . ":</th>
                         <td>" . StringUtils::formatNumber($fd->usageFuel()) . "</td>
                     </tr>
                     <tr>
-                        <th>" . RES_ICON_FOOD . "" . RES_FOOD . ":</th>
+                        <th>" . ResIcons::FOOD . "" . ResourceNames::FOOD . ":</th>
                         <td>" . StringUtils::formatNumber($fd->usageFood()) . "</td>
                     </tr>
                     <tr>
-                        <th>" . RES_ICON_POWER . " " . RES_POWER . ":</th>
+                        <th>" . ResIcons::POWER . " " . ResourceNames::POWER . ":</th>
                         <td>" . StringUtils::formatNumber($fd->usagePower()) . "</td>
                     </tr>";
             tableEnd();
@@ -152,27 +154,27 @@ if ($allianceFleetControlLevel >= ALLIANCE_FLEET_SHOW_DETAIL && $rights) {
             // Frachtraum
             tableStart("Frachtraum", "50%");
             echo "<tr>
-                        <th>" . RES_ICON_METAL . "" . RES_METAL . "</th>
+                        <th>" . ResIcons::METAL . "" . ResourceNames::METAL . "</th>
                         <td>" . StringUtils::formatNumber($fd->resMetal()) . " t</td>
                     </tr>
                     <tr>
-                        <th>" . RES_ICON_CRYSTAL . "" . RES_CRYSTAL . "</th>
+                        <th>" . ResIcons::CRYSTAL . "" . ResourceNames::CRYSTAL . "</th>
                         <td>" . StringUtils::formatNumber($fd->resCrystal()) . " t</td>
                     </tr>
                     <tr>
-                        <td>" . RES_ICON_PLASTIC . "" . RES_PLASTIC . "</th>
+                        <td>" . ResIcons::PLASTIC . "" . ResourceNames::PLASTIC . "</th>
                         <td>" . StringUtils::formatNumber($fd->resPlastic()) . " t</td>
                     </tr>
                     <tr>
-                        <th>" . RES_ICON_FUEL . "" . RES_FUEL . "</th>
+                        <th>" . ResIcons::FUEL . "" . ResourceNames::FUEL . "</th>
                         <td>" . StringUtils::formatNumber($fd->resFuel()) . " t</td>
                     </tr>
                     <tr>
-                        <th>" . RES_ICON_FOOD . "" . RES_FOOD . "</th>
+                        <th>" . ResIcons::FOOD . "" . ResourceNames::FOOD . "</th>
                         <td>" . StringUtils::formatNumber($fd->resFood()) . " t</td>
                     </tr>
                     <tr>
-                        <th>" . RES_ICON_POWER . "" . RES_POWER . "</th>
+                        <th>" . ResIcons::POWER . "" . ResourceNames::POWER . "</th>
                         <td>" . StringUtils::formatNumber($fd->resPower()) . " t</td>
                     </tr>
                     <tr>
@@ -187,7 +189,7 @@ if ($allianceFleetControlLevel >= ALLIANCE_FLEET_SHOW_DETAIL && $rights) {
 
             tableStart("Passagierraum", "50%");
             echo "<tr>
-                        <th>" . RES_ICON_PEOPLE . "Passagiere</th>
+                        <th>" . ResIcons::PEOPLE . "Passagiere</th>
                         <td>" . StringUtils::formatNumber($fd->resPeople()) . "</td>
                     </tr>
                     <tr>

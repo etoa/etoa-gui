@@ -12,6 +12,7 @@ use EtoA\Specialist\SpecialistService;
 use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Entity\EntityService;
 use EtoA\Universe\Planet\PlanetRepository;
+use EtoA\Universe\Resources\ResourceNames;
 use EtoA\User\UserMultiRepository;
 use EtoA\User\UserRatingService;
 
@@ -36,8 +37,8 @@ $specialistService = $app[SpecialistService::class];
 $cnt = 0;
 $cnt_error = 0;
 
-$supplyTotal = array_fill(0, count($resNames), 0);
-$demandTotal = array_fill(0, count($resNames), 0);
+$supplyTotal = array_fill(0, count(ResourceNames::NAMES), 0);
+$demandTotal = array_fill(0, count(ResourceNames::NAMES), 0);
 
 if (isset($_POST['ressource_market_id'])) {
     foreach ($_POST['ressource_market_id'] as $num => $id) {
@@ -52,7 +53,7 @@ if (isset($_POST['ressource_market_id'])) {
             $sellarr = array();
             $buyResource = $offer->getBuyResources();
             $sellResources = $offer->getSellResources();
-            foreach ($resNames as $rk => $rn) {
+            foreach (ResourceNames::NAMES as $rk => $rn) {
                 $buyarr[$rk] = $buyResource->get($rk);
                 $sellarr[$rk] = $sellResources->get($rk);
             }
@@ -94,7 +95,7 @@ if (isset($_POST['ressource_market_id'])) {
                 $marketResourceRepository->delete($offer->id);
 
                 // Add values for market rate calculation and
-                foreach ($resNames as $rk => $rn) {
+                foreach (ResourceNames::NAMES as $rk => $rn) {
                     $supplyTotal[$rk] += $sellarr[$rk];
                     $demandTotal[$rk] += $buyarr[$rk];
                 }
@@ -137,7 +138,7 @@ if (isset($_POST['ressource_market_id'])) {
                 $isMultiWith = $userMultiRepository->existsEntryWith($cu->getId(), $offer->userId);
                 if ($isMultiWith) {
                     $seller = new User($offer->userId);
-                    $logRepository->add(LogFacility::MULTITRADE, LogSeverity::INFO, "[page user sub=edit user_id=" . $cu->id . "][B]" . $cu->nick . "[/B][/page] hat von [page user sub=edit user_id=" . $offer->userId . "][B]" . $seller . "[/B][/page] Rohstoffe gekauft:\n\n" . RES_METAL . ": " . StringUtils::formatNumber($offer->sell0) . "\n" . RES_CRYSTAL . ": " . StringUtils::formatNumber($offer->sell1) . "\n" . RES_PLASTIC . ": " . StringUtils::formatNumber($offer->sell2) . "\n" . RES_FUEL . ": " . StringUtils::formatNumber($offer->sell3) . "\n" . RES_FOOD . ": " . StringUtils::formatNumber($offer->sell4) . "\n\nDies hat ihn folgende Rohstoffe gekostet:\n" . RES_METAL . ": " . StringUtils::formatNumber($offer->buy0) . "\n" . RES_CRYSTAL . ": " . StringUtils::formatNumber($offer->buy1) . "\n" . RES_PLASTIC . ": " . StringUtils::formatNumber($offer->buy2) . "\n" . RES_FUEL . ": " . StringUtils::formatNumber($offer->buy3) . "\n" . RES_FOOD . ": " . StringUtils::formatNumber($offer->buy4));
+                    $logRepository->add(LogFacility::MULTITRADE, LogSeverity::INFO, "[page user sub=edit user_id=" . $cu->id . "][B]" . $cu->nick . "[/B][/page] hat von [page user sub=edit user_id=" . $offer->userId . "][B]" . $seller . "[/B][/page] Rohstoffe gekauft:\n\n" . ResourceNames::METAL . ": " . StringUtils::formatNumber($offer->sell0) . "\n" . ResourceNames::CRYSTAL . ": " . StringUtils::formatNumber($offer->sell1) . "\n" . ResourceNames::PLASTIC . ": " . StringUtils::formatNumber($offer->sell2) . "\n" . ResourceNames::FUEL . ": " . StringUtils::formatNumber($offer->sell3) . "\n" . ResourceNames::FOOD . ": " . StringUtils::formatNumber($offer->sell4) . "\n\nDies hat ihn folgende Rohstoffe gekostet:\n" . ResourceNames::METAL . ": " . StringUtils::formatNumber($offer->buy0) . "\n" . ResourceNames::CRYSTAL . ": " . StringUtils::formatNumber($offer->buy1) . "\n" . ResourceNames::PLASTIC . ": " . StringUtils::formatNumber($offer->buy2) . "\n" . ResourceNames::FUEL . ": " . StringUtils::formatNumber($offer->buy3) . "\n" . ResourceNames::FOOD . ": " . StringUtils::formatNumber($offer->buy4));
                 }
 
                 // Zählt die erfolgreich abgewickelten Angebote

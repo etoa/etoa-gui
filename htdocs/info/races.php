@@ -7,6 +7,8 @@ use EtoA\Race\RaceDataRepository;
 use EtoA\Ship\ShipDataRepository;
 use EtoA\Support\BBCodeUtils;
 use EtoA\Support\StringUtils;
+use EtoA\Universe\Resources\ResIcons;
+use EtoA\Universe\Resources\ResourceNames;
 
 /** @var RaceDataRepository $raceRepository */
 $raceRepository = $app[RaceDataRepository::class];
@@ -42,34 +44,34 @@ if ($request->query->has('id')) {
     tableStart('', 300);
     echo "<tr><th colspan=\"2\">St&auml;rken / Schw&auml;chen:</th></tr>";
     if ($race->metal !== 1.0) {
-        echo "<tr><th>" . RES_ICON_METAL . "Produktion von " . RES_METAL . ":</td><td>" . StringUtils::formatPercentString($race->metal, true) . "</td></tr>";
+        echo "<tr><th>" . ResIcons::METAL . "Produktion von " . ResourceNames::METAL . ":</td><td>" . StringUtils::formatPercentString($race->metal, true) . "</td></tr>";
     }
     if ($race->crystal !== 1.0) {
-        echo "<tr><th>" . RES_ICON_CRYSTAL . "Produktion von " . RES_CRYSTAL . ":</td><td>" . StringUtils::formatPercentString($race->crystal, true) . "</td></tr>";
+        echo "<tr><th>" . ResIcons::CRYSTAL . "Produktion von " . ResourceNames::CRYSTAL . ":</td><td>" . StringUtils::formatPercentString($race->crystal, true) . "</td></tr>";
     }
     if ($race->plastic !== 1.0) {
-        echo "<tr><th>" . RES_ICON_PLASTIC . "Produktion von " . RES_PLASTIC . ":</td><td>" . StringUtils::formatPercentString($race->plastic, true) . "</td></tr>";
+        echo "<tr><th>" . ResIcons::PLASTIC . "Produktion von " . ResourceNames::PLASTIC . ":</td><td>" . StringUtils::formatPercentString($race->plastic, true) . "</td></tr>";
     }
     if ($race->fuel !== 1.0) {
-        echo "<tr><th>" . RES_ICON_FUEL . "Produktion von " . RES_FUEL . ":</td><td>" . StringUtils::formatPercentString($race->fuel, true) . "</td></tr>";
+        echo "<tr><th>" . ResIcons::FUEL . "Produktion von " . ResourceNames::FUEL . ":</td><td>" . StringUtils::formatPercentString($race->fuel, true) . "</td></tr>";
     }
     if ($race->food !== 1.0) {
-        echo "<tr><th>" . RES_ICON_FOOD . "Produktion von " . RES_FOOD . ":</td><td>" . StringUtils::formatPercentString($race->food, true) . "</td></tr>";
+        echo "<tr><th>" . ResIcons::FOOD . "Produktion von " . ResourceNames::FOOD . ":</td><td>" . StringUtils::formatPercentString($race->food, true) . "</td></tr>";
     }
     if ($race->power !== 1.0) {
-        echo "<tr><th>" . RES_ICON_POWER . "Produktion von Energie:</td><td>" . StringUtils::formatPercentString($race->power, true) . "</td></tr>";
+        echo "<tr><th>" . ResIcons::POWER . "Produktion von Energie:</td><td>" . StringUtils::formatPercentString($race->power, true) . "</td></tr>";
     }
     if ($race->population !== 1.0) {
-        echo "<tr><th>" . RES_ICON_PEOPLE . "Bevölkerungswachstum:</td><td>" . StringUtils::formatPercentString($race->population, true) . "</td></tr>";
+        echo "<tr><th>" . ResIcons::PEOPLE . "Bevölkerungswachstum:</td><td>" . StringUtils::formatPercentString($race->population, true) . "</td></tr>";
     }
     if ($race->researchTime !== 1.0) {
-        echo "<tr><th>" . RES_ICON_TIME . "Forschungszeit:</td><td>" . StringUtils::formatPercentString($race->researchTime, true, true) . "</td></tr>";
+        echo "<tr><th>" . ResIcons::TIME . "Forschungszeit:</td><td>" . StringUtils::formatPercentString($race->researchTime, true, true) . "</td></tr>";
     }
     if ($race->buildTime !== 1.0) {
-        echo "<tr><th>" . RES_ICON_TIME . "Bauzeit:</td><td>" . StringUtils::formatPercentString($race->buildTime, true, true) . "</td></tr>";
+        echo "<tr><th>" . ResIcons::TIME . "Bauzeit:</td><td>" . StringUtils::formatPercentString($race->buildTime, true, true) . "</td></tr>";
     }
     if ($race->fleetTime !== 1.0) {
-        echo "<tr><th>" . RES_ICON_TIME . "Fluggeschwindigkeit:</td><td>" . StringUtils::formatPercentString($race->fleetTime, true) . "</td></tr>";
+        echo "<tr><th>" . ResIcons::TIME . "Fluggeschwindigkeit:</td><td>" . StringUtils::formatPercentString($race->fleetTime, true) . "</td></tr>";
     }
     tableEnd();
 
@@ -161,11 +163,11 @@ if ($request->query->has('id')) {
 
     tableStart("Bonus-Malus Vergleichstabelle");
     echo "<tr><th><a href=\"?$link&amp;site=$site&amp;order=name\">Name</a></th>";
-    echo "<th><a href=\"?$link&amp;site=$site&amp;order=f_metal\">" . RES_METAL . "</a></th>";
-    echo "<th><a href=\"?$link&amp;site=$site&amp;order=f_crystal\">" . RES_CRYSTAL . "</a></th>";
-    echo "<th><a href=\"?$link&amp;site=$site&amp;order=f_plastic\">" . RES_PLASTIC . "</a></th>";
-    echo "<th><a href=\"?$link&amp;site=$site&amp;order=f_fuel\">" . RES_FUEL . "</a></th>";
-    echo "<th><a href=\"?$link&amp;site=$site&amp;order=f_food\">" . RES_FOOD . "</a></th>";
+    echo "<th><a href=\"?$link&amp;site=$site&amp;order=f_metal\">" . ResourceNames::METAL . "</a></th>";
+    echo "<th><a href=\"?$link&amp;site=$site&amp;order=f_crystal\">" . ResourceNames::CRYSTAL . "</a></th>";
+    echo "<th><a href=\"?$link&amp;site=$site&amp;order=f_plastic\">" . ResourceNames::PLASTIC . "</a></th>";
+    echo "<th><a href=\"?$link&amp;site=$site&amp;order=f_fuel\">" . ResourceNames::FUEL . "</a></th>";
+    echo "<th><a href=\"?$link&amp;site=$site&amp;order=f_food\">" . ResourceNames::FOOD . "</a></th>";
     echo "<th><a href=\"?$link&amp;site=$site&amp;order=f_power\">Energie</a></th>";
     echo "<th><a href=\"?$link&amp;site=$site&amp;order=f_population\">Wachstum</a></th>";
     echo "<th><a href=\"?$link&amp;site=$site&amp;order=f_researchtime\">Forschungszeit</a></th>";

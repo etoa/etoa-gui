@@ -17,6 +17,7 @@ use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Entity\EntityService;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Universe\Resources\BaseResources;
+use EtoA\Universe\Resources\ResourceNames;
 use EtoA\User\UserRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Twig\Environment;
@@ -544,42 +545,42 @@ function fleetEditForm(
         <td class=\"tbldata\">
             <input type=\"text\" name=\"pilots\" value=\"" . $fleet->pilots . "\" size=\"10\" /></td></tr>";
     echo "<tr>
-        <td class=\"tbltitle\">Verbrauch: " . RES_FUEL . ":</td>
+        <td class=\"tbltitle\">Verbrauch: " . ResourceNames::FUEL . ":</td>
         <td class=\"tbldata\">
             <input type=\"text\" name=\"usage_fuel\" value=\"" . $fleet->usageFuel . "\" size=\"10\" /></td></tr>";
     echo "<tr>
-        <td class=\"tbltitle\">Verbrauch: " . RES_FOOD . ":</td>
+        <td class=\"tbltitle\">Verbrauch: " . ResourceNames::FOOD . ":</td>
         <td class=\"tbldata\">
             <input type=\"text\" name=\"usage_food\" value=\"" . $fleet->usageFood . "\" size=\"10\" /></td></tr>";
     echo "<tr>
-        <td class=\"tbltitle\">Verbrauch: " . RES_POWER . ":</td>
+        <td class=\"tbltitle\">Verbrauch: " . ResourceNames::POWER . ":</td>
         <td class=\"tbldata\">
             <input type=\"text\" name=\"usage_power\" value=\"" . $fleet->usagePower . "\" size=\"10\" /></td></tr>";
 
     // Freight
     echo "<tr><td style=\"background:#000;height:2px;\" colspan=\"2\"></td></tr>";
     echo "<tr>
-        <td class=\"tbltitle\">Fracht: " . RES_METAL . ":</td>
+        <td class=\"tbltitle\">Fracht: " . ResourceNames::METAL . ":</td>
         <td class=\"tbldata\">
             <input type=\"text\" name=\"res_metal\" value=\"" . $fleet->resMetal . "\" size=\"10\" /></td></tr>";
     echo "<tr>
-        <td class=\"tbltitle\">Fracht: " . RES_CRYSTAL . "::</td>
+        <td class=\"tbltitle\">Fracht: " . ResourceNames::CRYSTAL . "::</td>
         <td class=\"tbldata\">
             <input type=\"text\" name=\"res_crystal\" value=\"" . $fleet->resCrystal . "\" size=\"10\" /></td></tr>";
     echo "<tr>
-        <td class=\"tbltitle\">Fracht: " . RES_PLASTIC . ":</td>
+        <td class=\"tbltitle\">Fracht: " . ResourceNames::PLASTIC . ":</td>
         <td class=\"tbldata\">
             <input type=\"text\" name=\"res_plastic\" value=\"" . $fleet->resPlastic . "\" size=\"10\" /></td></tr>";
     echo "<tr>
-        <td class=\"tbltitle\">Fracht: " . RES_FUEL . ":</td>
+        <td class=\"tbltitle\">Fracht: " . ResourceNames::FUEL . ":</td>
         <td class=\"tbldata\">
             <input type=\"text\" name=\"res_fuel\" value=\"" . $fleet->resFuel . "\" size=\"10\" /></td></tr>";
     echo "<tr>
-        <td class=\"tbltitle\">Fracht: " . RES_FOOD . ":</td>
+        <td class=\"tbltitle\">Fracht: " . ResourceNames::FOOD . ":</td>
         <td class=\"tbldata\">
             <input type=\"text\" name=\"res_food\" value=\"" . $fleet->resFood . "\" size=\"10\" /></td></tr>";
     echo "<tr>
-        <td class=\"tbltitle\">Fracht: " . RES_POWER . ":</td>
+        <td class=\"tbltitle\">Fracht: " . ResourceNames::POWER . ":</td>
         <td class=\"tbldata\">
             <input type=\"text\" name=\"res_power\" value=\"" . $fleet->resPower . "\" size=\"10\" /></td></tr>";
     echo "<tr>
@@ -589,27 +590,27 @@ function fleetEditForm(
 
     echo "<tr><td style=\"background:#000;height:2px;\" colspan=\"2\"></td></tr>";
     echo "<tr>
-        <td class=\"tbltitle\">Abholen: " . RES_METAL . ":</td>
+        <td class=\"tbltitle\">Abholen: " . ResourceNames::METAL . ":</td>
         <td class=\"tbldata\">
             <input type=\"text\" name=\"fetch_metal\" value=\"" . $fleet->fetchMetal . "\" size=\"10\" /></td></tr>";
     echo "<tr>
-        <td class=\"tbltitle\">Abholen: " . RES_CRYSTAL . "::</td>
+        <td class=\"tbltitle\">Abholen: " . ResourceNames::CRYSTAL . "::</td>
         <td class=\"tbldata\">
             <input type=\"text\" name=\"fetch_crystal\" value=\"" . $fleet->fetchCrystal . "\" size=\"10\" /></td></tr>";
     echo "<tr>
-        <td class=\"tbltitle\">Abholen: " . RES_PLASTIC . ":</td>
+        <td class=\"tbltitle\">Abholen: " . ResourceNames::PLASTIC . ":</td>
         <td class=\"tbldata\">
             <input type=\"text\" name=\"fetch_plastic\" value=\"" . $fleet->fetchPlastic . "\" size=\"10\" /></td></tr>";
     echo "<tr>
-        <td class=\"tbltitle\">Abholen: " . RES_FUEL . ":</td>
+        <td class=\"tbltitle\">Abholen: " . ResourceNames::FUEL . ":</td>
         <td class=\"tbldata\">
             <input type=\"text\" name=\"fetch_fuel\" value=\"" . $fleet->fetchFuel . "\" size=\"10\" /></td></tr>";
     echo "<tr>
-        <td class=\"tbltitle\">Abholen: " . RES_FOOD . ":</td>
+        <td class=\"tbltitle\">Abholen: " . ResourceNames::FOOD . ":</td>
         <td class=\"tbldata\">
             <input type=\"text\" name=\"fetch_food\" value=\"" . $fleet->fetchFood . "\" size=\"10\" /></td></tr>";
     echo "<tr>
-        <td class=\"tbltitle\">Abholen: " . RES_POWER . ":</td>
+        <td class=\"tbltitle\">Abholen: " . ResourceNames::POWER . ":</td>
         <td class=\"tbldata\">
             <input type=\"text\" name=\"fetch_power\" value=\"" . $fleet->fetchPower . "\" size=\"10\" /></td></tr>";
     echo "<tr>

@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\Support\RuntimeDataStore;
+use EtoA\Universe\Resources\ResourceNames;
 
 /** @var RuntimeDataStore $runtimeDataStore */
 $runtimeDataStore = $app[RuntimeDataStore::class];
@@ -22,12 +23,12 @@ echo "<table class=\"tb\">";
 echo "<tr>
         <th style=\"width:15%\"></th>";
 for ($i = 0; $i < NUM_RESOURCES; $i++) {
-    echo "		<th style=\"width:17%\">" . $resNames[$i] . "</th>";
+    echo "		<th style=\"width:17%\">" . ResourceNames::NAMES[$i] . "</th>";
 }
 echo "</tr>";
 for ($i = 0; $i < NUM_RESOURCES; $i++) {
     echo "<tr>
-            <th>" . $resNames[$i] . "</th>";
+            <th>" . ResourceNames::NAMES[$i] . "</th>";
     for ($j = 0; $j < NUM_RESOURCES; $j++) {
         if ($i == $j)
             echo "<td>-</td>";
@@ -40,8 +41,8 @@ for ($i = 0; $i < NUM_RESOURCES; $i++) {
 }
 echo "</table><br/>";
 
-echo "<b>Beispiel:</b> Eine Tonne " . $resNames[0] . " hat den Wert von " . round($currentRates[0] / $currentRates[1], 2) . " Tonnen " . $resNames[1] . ".<br/>
-    Für eine Tonne " . $resNames[1] . " muss man " . round($currentRates[1] / $currentRates[0], 2) . " Tonnen " . $resNames[0] . " aufwenden.<br/><br/>";
+echo "<b>Beispiel:</b> Eine Tonne " . ResourceNames::NAMES[0] . " hat den Wert von " . round($currentRates[0] / $currentRates[1], 2) . " Tonnen " . ResourceNames::NAMES[1] . ".<br/>
+    Für eine Tonne " . ResourceNames::NAMES[1] . " muss man " . round($currentRates[1] / $currentRates[0], 2) . " Tonnen " . ResourceNames::NAMES[0] . " aufwenden.<br/><br/>";
 echo "<b>Legende:</b><br/><br/> kleiner Bedarf/grosses Angebot
         <span style=\"background:#0f0;width;50px;\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
         <span style=\"background:#ff0;width;50px;\">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
@@ -60,7 +61,7 @@ echo "<tr>
 for ($i = 0; $i < NUM_RESOURCES; $i++) {
     $r = $currentRates[$i];
     echo "<tr>
-            <th>" . $resNames[$i] . "</th>
+            <th>" . ResourceNames::NAMES[$i] . "</th>
             <td" . HelpUtil::colorizeMarketRate($r) . ">" . $r . "</td>
         </tr>";
 }

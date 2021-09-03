@@ -6,6 +6,7 @@ use EtoA\Defense\DefenseDataRepository;
 use EtoA\Ship\ShipDataRepository;
 use EtoA\Support\StringUtils;
 use EtoA\Technology\TechnologyDataRepository;
+use EtoA\Universe\Resources\ResourceNames;
 
 /**
  * Description of battlereport
@@ -57,7 +58,6 @@ class BattleReport extends Report
 
         $this->config = $app[ConfigurationService::class];
 
-        global $resNames;
         parent::__construct($args);
         if ($this->valid) {
             $res = dbquery("SELECT * FROM reports_battle WHERE id=" . $this->id . ";");
@@ -94,7 +94,7 @@ class BattleReport extends Report
                 $this->restoreCivilShips = $arr['restore_civil_ships'];
                 $this->result = $arr['result'];
                 $this->res = array();
-                foreach ($resNames as $rk => $rn)
+                foreach (ResourceNames::NAMES as $rk => $rn)
                     $this->res[$rk] = $arr['res_' . $rk];
                 $this->res[5] = $arr['res_5'];
                 $this->wf = array($arr['wf_0'], $arr['wf_1'], $arr['wf_2']);
@@ -145,7 +145,7 @@ class BattleReport extends Report
 
     function __toString()
     {
-        global $resNames, $app;
+        global $app;
 
         ob_start();
         $ent1 = Entity::createFactoryById($this->entity1Id);
@@ -217,7 +217,7 @@ class BattleReport extends Report
 
                 echo '<br /><strong>WAREN</strong><br />';
                 echo '<table>';
-                foreach ($resNames as $k => $v) {
+                foreach (ResourceNames::NAMES as $k => $v) {
                     echo '<tr>
                         <td>' . $v . ' </td>
                         <td style="text-align:right;"> ' . StringUtils::formatNumber($this->res[$k]) . '</td>
@@ -430,7 +430,7 @@ class BattleReport extends Report
                 echo '<strong>BEUTE</strong><br />';
                 if ($this->result == 1) {
                     echo '<table>';
-                    foreach ($resNames as $k => $v) {
+                    foreach (ResourceNames::NAMES as $k => $v) {
                         echo '<tr>
                                             <td>' . $v . ' </td>
                                             <td style="text-align:right;"> ' . StringUtils::formatNumber($this->res[$k]) . '</td>
@@ -448,7 +448,7 @@ class BattleReport extends Report
                 echo '<table>';
                 foreach ($this->wf as $k => $wf) {
                     echo '<tr>
-                                            <td>' . $resNames[$k] . ' </td>
+                                            <td>' . ResourceNames::NAMES[$k] . ' </td>
                                             <td style="text-align:right;"> ' . StringUtils::formatNumber($wf) . '</td>
                                         </tr>';
                 }
