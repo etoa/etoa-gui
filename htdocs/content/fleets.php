@@ -8,6 +8,7 @@ use EtoA\Alliance\AllianceService;
 use EtoA\Fleet\FleetRepository;
 use EtoA\Fleet\FleetSearch;
 use EtoA\Fleet\FleetStatus;
+use EtoA\Fleet\ForeignFleetLoader;
 use EtoA\Ship\ShipDataRepository;
 use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Entity\EntitySearch;
@@ -248,15 +249,18 @@ else {
     // Gegnerische Flotten
     //
     $header = 0;
-    $fm = new FleetManager($cu->id, $cu->allianceId);
-    $fm->loadForeign();
-    if ($fm->count() > 0) {
+    /** @var ForeignFleetLoader $foreignFleetLoader */
+    $foreignFleetLoader = $app[ForeignFleetLoader::class];
+    $foreignFleets = $foreignFleetLoader->getVisibleFleets($cu->getId());
+    if (count($foreignFleets->visibleFleets) > 0) {
         $show_num = 0;
         tableStart("Fremde Flotten");
-        foreach ($fm->getAll() as $fid => $fd) {
+        foreach ($foreignFleets->visibleFleets as $foreignFleet) {
             // Is the attitude visible?
-            if (SPY_TECH_SHOW_ATTITUDE <= $fm->spyTech()) {
-                $attitude = $fd->getAction()->attitude();
+            /** @var \FleetAction $action */
+            $action = \FleetAction::createFactory($foreignFleet->action);
+            if (SPY_TECH_SHOW_ATTITUDE <= $foreignFleets->userSpyLevel) {
+                $attitude = $action->attitude();
             } else {
                 $attitude = 4;
             }
@@ -264,14 +268,10 @@ else {
             $attitudeString = FleetAction::$attitudeString[$attitude];
 
             // Is the number of ships visible?
-            if (SPY_TECH_SHOW_NUM <= $fm->spyTech()) {
+            if (SPY_TECH_SHOW_NUM <= $foreignFleets->userSpyLevel) {
                 $show_num = 1;
 
-                //Zählt gefakte Schiffe wenn Aktion=Fakeangriff
-                if ($fd->getAction()->code() == "fakeattack") {
-                    $shipsCount = $fleetRepository->countShipsInFleet($fid);
-                } else
-                    $shipsCount = $fd->countShips();
+                $shipsCount = $fleetRepository->countShipsInFleet($foreignFleet->id);
             } else {
                 $shipsCount = -1;
             }
@@ -279,16 +279,24 @@ else {
             //Opfer sieht die einzelnen Schiffstypen in der Flotte
             $shipStr = array();
             $showShips = false;
-            if (SPY_TECH_SHOW_SHIPS <= $fm->spyTech()) {
+            if (SPY_TECH_SHOW_SHIPS <= $foreignFleets->userSpyLevel) {
                 $showShips = true; {
 
                     $ships = array();
 
-                    //build new array with possible fake ships
-                    foreach ($fd->getShipIds() as $sid => $scnt) {
-                        array_key_exists($fd->parseFake($sid), $ships) ?
-                            $ships[$fd->parseFake($sid)] = $ships[$fd->parseFake($sid)] + $scnt :
-                            $ships[$fd->parseFake($sid)] = $scnt;
+                    if ($foreignFleet->leaderId > 0) {
+                        $fleetShips = $fleetRepository->findAllShipsForLeader($foreignFleet->leaderId);
+                    } else {
+                        $fleetShips = $fleetRepository->findAllShipsInFleet($foreignFleet->id, null);
+                    }
+
+                    foreach ($fleetShips as $fleetShip) {
+                        $shipId = $fleetShip->shipFaked > 0 ? $fleetShip->shipFaked : $fleetShip->shipId;
+                        if (!isset($ships[$shipId])) {
+                            $ships[$shipId] = 0;
+                        }
+
+                        $ships[$shipId] += $fleetShip->count;
                     }
 
                     /** @var ShipDataRepository $shipRepository */
@@ -298,7 +306,7 @@ else {
                         $str = "";
 
                         //Opfer sieht die genau Anzahl jedes Schifftypes in einer Flotte
-                        if (SPY_TECH_SHOW_NUMSHIPS <= $fm->spyTech()) {
+                        if (SPY_TECH_SHOW_NUMSHIPS <= $foreignFleets->userSpyLevel) {
                             $str = "" . $scnt . " ";
                         }
                         $str .= "" . $shipNames[$sid];
@@ -308,8 +316,8 @@ else {
             }
 
             // Show action
-            if (SPY_TECH_SHOW_ACTION <= $fm->spyTech()) {
-                $shipAction = $fd->getAction()->displayName();
+            if (SPY_TECH_SHOW_ACTION <= $foreignFleets->userSpyLevel) {
+                $shipAction = $action->displayName();
             } else {
                 $shipAction = $attitudeString;
             }
@@ -324,20 +332,22 @@ else {
                 $header = 1;
             }
 
+            $source = $entityRepository->searchEntityLabel(EntitySearch::create()->id($foreignFleet->entityFrom));
+            $target = $entityRepository->searchEntityLabel(EntitySearch::create()->id($foreignFleet->entityTo));
             echo "<tr>
-                    <td><b>" . $fd->getSource()->entityCodeString() . "</b>
-                    <a href=\"?page=cell&amp;id=" . $fd->getSource()->cellId() . "&amp;hl=" . $fd->getSource()->id() . "\">" . $fd->getSource() . "</a><br/>";
-            echo "<b>" . $fd->getTarget()->entityCodeString() . "</b>
-                    <a href=\"?page=cell&amp;id=" . $fd->getTarget()->cellId() . "&amp;hl=" . $fd->getTarget()->id() . "\">" . $fd->getTarget() . "</a></td>";
+                    <td><b>" . $source->codeString() . "</b>
+                    <a href=\"?page=cell&amp;id=" . $source->cellId . "&amp;hl=" . $source->id . "\">" . $source->toString() . "</a><br/>";
+            echo "<b>" . $target->codeString() . "</b>
+                    <a href=\"?page=cell&amp;id=" . $target->cellId . "&amp;hl=" . $target->id . "\">" . $target->toString() . "</a></td>";
             echo "<td>
-                    " . date("d.m.y, H:i:s", $fd->launchTime()) . "<br/>";
-            echo date("d.m.y, H:i:s", $fd->landTime()) . "</td>";
+                    " . date("d.m.y, H:i:s", $foreignFleet->launchTime) . "<br/>";
+            echo date("d.m.y, H:i:s", $foreignFleet->landTime) . "</td>";
             echo "<td>
                     <span style=\"color:" . $attitudeColor . "\">
                     " . $shipAction . "
-                    </span> [" . FleetAction::$statusCode[$fd->status()] . "]<br/>";
+                    </span> [" . FleetAction::$statusCode[$foreignFleet->status] . "]<br/>";
             echo "<td>
-                    <a href=\"?page=messages&mode=new&message_user_to=" . $fd->ownerId() . "\">" . get_user_nick($fd->ownerId()) . "</a>
+                    <a href=\"?page=messages&mode=new&message_user_to=" . $foreignFleet->userId . "\">" . get_user_nick($foreignFleet->userId) . "</a>
                     </td>";
             echo "</tr>";
             if ($show_num == 1) {
@@ -354,10 +364,6 @@ else {
                         }
                         echo $value;
                     }
-                    /*if ($shipAction)
-                        {
-                            echo ";<br><b>Vorhaben:</b> ".$shipAction."";
-                        }*/
                 }
                 echo "</td></tr>";
             }

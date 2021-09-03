@@ -89,6 +89,14 @@ class FleetSearch extends AbstractSearch
         return $this;
     }
 
+    public function filterNonLeadingAllianceAttacks(): self
+    {
+        $this->parts[] = '!(fleet.action = :allianceAttackAction AND fleet.leader_id != fleet.id)';
+        $this->parameters['allianceAttackAction'] = FleetAction::ALLIANCE;
+
+        return $this;
+    }
+
     public function nextId(int $nextId): self
     {
         $this->parts[] = 'next_id = :nextId';

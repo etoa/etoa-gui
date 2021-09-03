@@ -2,6 +2,7 @@
 
 use Doctrine\Common\Collections\ArrayCollection;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Fleet\ForeignFleetLoader;
 use EtoA\Log\AccessLogRepository;
 use EtoA\Race\RaceDataRepository;
 use EtoA\Specialist\SpecialistService;
@@ -332,10 +333,14 @@ function parseDesignInfoFile($file)
  * @param int $user_id User ID
  *
  */
-function check_fleet_incomming($user_id)
+function check_fleet_incomming($user_id): int
 {
-    $fm = new FleetManager($user_id);
-    return $fm->loadAggressiv();
+    global $app;
+
+    /** @var ForeignFleetLoader $loader */
+    $loader = $app[ForeignFleetLoader::class];
+
+    return $loader->getVisibleFleets($user_id)->aggressiveCount;
 }
 
 /**

@@ -11,6 +11,7 @@ use EtoA\Defense\DefenseQueueSearch;
 use EtoA\Fleet\FleetRepository;
 use EtoA\Fleet\FleetSearch;
 use EtoA\Fleet\FleetStatus;
+use EtoA\Fleet\ForeignFleetLoader;
 use EtoA\Ship\ShipDataRepository;
 use EtoA\Ship\ShipQueueRepository;
 use EtoA\Ship\ShipQueueSearch;
@@ -151,15 +152,17 @@ else {
 //
 // Fremde Flotten
 //
-$fm = new FleetManager($cu->id, $cu->allianceId);
-$fm->loadForeign();
+/** @var ForeignFleetLoader $foreignFleetLoader */
+$foreignFleetLoader = $app[ForeignFleetLoader::class];
+
+$result = $foreignFleetLoader->getVisibleFleets($cu->getId());
 //Mehrere Flotten
-if ($fm->count() > 1) {
-    echo "<td><a href=\"?page=fleets\" style=\"" . $fm->attitude() . "\"><b>" . $fm->count() . "</b> fremde Flotten</a></td>";
+if (count($result->visibleFleets) > 1) {
+    echo "<td><a href=\"?page=fleets\" style=\"" . $result->getAttitude() . "\"><b>" . count($result->visibleFleets) . "</b> fremde Flotten</a></td>";
 }
 //Eine Flotte
-elseif ($fm->count() == 1) {
-    echo "<td><a href=\"?page=fleets\" style=\"" . $fm->attitude() . "\"><b>" . $fm->count() . "</b> fremde Flotte</a></td>";
+elseif (count($result->visibleFleets) === 1) {
+    echo "<td><a href=\"?page=fleets\" style=\"" . $result->getAttitude() . "\"><b>" . count($result->visibleFleets) . "</b> fremde Flotte</a></td>";
 }
 //Keine Flotten
 else {

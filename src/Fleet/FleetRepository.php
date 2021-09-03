@@ -267,7 +267,7 @@ class FleetRepository extends AbstractRepository
     /**
      * @return array<FleetShip>
      */
-    public function findAllShipsInFleet(int $fleetId, bool $faked = false): array
+    public function findAllShipsInFleet(int $fleetId, ?bool $faked = false): array
     {
         $data = $this->createQueryBuilder()
             ->select('*')
@@ -277,6 +277,25 @@ class FleetRepository extends AbstractRepository
             ->setParameters([
                 'fleetId' => $fleetId,
                 'faked' => $faked,
+            ])
+            ->execute()
+            ->fetchAllAssociative();
+
+        return array_map(fn ($arr) => new FleetShip($arr), $data);
+    }
+
+    /**
+     * @return array<FleetShip>
+     */
+    public function findAllShipsForLeader(int $leaderId): array
+    {
+        $data = $this->createQueryBuilder()
+            ->select('fs.*')
+            ->from('fleet_ships', 'fs')
+            ->innerJoin('fs', 'fleet', 'f', 'f.id = fs.fleet_id')
+            ->where('f.leader_id = :leaderId')
+            ->setParameters([
+                'leaderId' => $leaderId,
             ])
             ->execute()
             ->fetchAllAssociative();
