@@ -11,6 +11,13 @@ class FleetSearch extends AbstractSearch
         return new FleetSearch();
     }
 
+    public function isLeader(): self
+    {
+        $this->parts[] = 'fleet.id = fleet.leader_id';
+
+        return $this;
+    }
+
     public function user(int $userId): self
     {
         $this->parts[] = 'user_id = :fleetUserId';
@@ -44,6 +51,14 @@ class FleetSearch extends AbstractSearch
         return $this;
     }
 
+    public function allianceId(int $allianceId): self
+    {
+        $this->parts[] = 'users.user_alliance_id = :allianceId';
+        $this->parameters['allianceId'] = $allianceId;
+
+        return $this;
+    }
+
     public function status(int $status): self
     {
         $this->parts[] = 'status = :status';
@@ -70,6 +85,14 @@ class FleetSearch extends AbstractSearch
     {
         $this->parts[] = 'action NOT IN (:notActions)';
         $this->stringArrayParameters['notActions'] = $actions;
+
+        return $this;
+    }
+
+    public function nextId(int $nextId): self
+    {
+        $this->parts[] = 'next_id = :nextId';
+        $this->parameters['nextId'] = $nextId;
 
         return $this;
     }

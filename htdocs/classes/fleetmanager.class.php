@@ -133,32 +133,6 @@ class FleetManager
         }
     }
 
-    function loadAllianceSupport()
-    {
-        $this->count = 0;
-        $this->fleet = array();
-        //Lädt Flottendaten
-        // TODO: This is not good query because it needs to know the planet table structure
-        $fres = dbquery("
-			SELECT
-				f.id
-			FROM
-				fleet f
-			INNER JOIN
-				users u
-				ON u.user_alliance_id='" . $this->allianceId . "'
-				AND u.user_id=f.user_id
-				AND action='support'
-			ORDER BY
-				landtime DESC;");
-        if (mysql_num_rows($fres) > 0) {
-            while ($farr = mysql_fetch_row($fres)) {
-                $this->fleet[$farr[0]] = new Fleet($farr[0]);
-                $this->count++;
-            }
-        }
-    }
-
     function loadAllianceAttacks()
     {
         $this->count = 0;

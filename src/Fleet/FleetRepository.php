@@ -4,7 +4,10 @@ declare(strict_types=1);
 
 namespace EtoA\Fleet;
 
+use Doctrine\DBAL\Query\QueryBuilder;
 use EtoA\Core\AbstractRepository;
+use EtoA\Core\Database\AbstractSearch;
+use EtoA\Core\Database\AbstractSort;
 use EtoA\Universe\Resources\BaseResources;
 
 class FleetRepository extends AbstractRepository
@@ -409,18 +412,27 @@ class FleetRepository extends AbstractRepository
 
     public function exists(FleetSearch $search): bool
     {
-        $qb = $this->applySearchSortLimit($this->createQueryBuilder(), $search);
-
-        if (isset($search->parameters['planetUserId'])) {
-            $qb->innerJoin('fleet', 'planets', 'planets', 'fleet.entity_to = planets.id');
-        }
-
-        return (bool) $qb
+        return (bool) $this->applySearchSortLimit($this->createQueryBuilder(), $search)
             ->select('1')
             ->from('fleet')
             ->setMaxResults(1)
             ->execute()
             ->fetchOne();
+    }
+
+    /**
+     * @return Fleet[]
+     */
+    public function search(FleetSearch $search): array
+    {
+        $data = $this->applySearchSortLimit($this->createQueryBuilder(), $search)
+            ->select('fleet.*')
+            ->from('fleet')
+            ->orderBy('fleet.landtime', 'DESC')
+            ->execute()
+            ->fetchAllAssociative();
+
+        return array_map(fn (array $row) => new Fleet($row), $data);
     }
 
     public function getFleetSpecialTarnBonus(int $fleetId): float
@@ -441,5 +453,20 @@ class FleetRepository extends AbstractRepository
         }
 
         return $value;
+    }
+
+    protected function applySearchSortLimit(QueryBuilder $qb, AbstractSearch $search = null, AbstractSort $sorts = null, int $limit = null, int $offset = null): QueryBuilder
+    {
+        $qb = parent::applySearchSortLimit($qb, $search, $sorts, $limit, $offset);
+
+        if (isset($search->parameters['planetUserId'])) {
+            $qb->innerJoin('fleet', 'planets', 'planets', 'fleet.entity_to = planets.id');
+        }
+
+        if (isset($search->parameters['allianceId'])) {
+            $qb->innerJoin('fleet', 'users', 'users', 'fleet.user_id = users.user_id');
+        }
+
+        return $qb;
     }
 }

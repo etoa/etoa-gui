@@ -10,6 +10,7 @@ use EtoA\Defense\DefenseQueueRepository;
 use EtoA\Defense\DefenseQueueSearch;
 use EtoA\Fleet\FleetRepository;
 use EtoA\Fleet\FleetSearch;
+use EtoA\Fleet\FleetStatus;
 use EtoA\Ship\ShipDataRepository;
 use EtoA\Ship\ShipQueueRepository;
 use EtoA\Ship\ShipQueueSearch;
@@ -251,14 +252,14 @@ if ($cu->allianceId != 0) {
     //
     // Supportflotten Flotten
     //
-    $fm->loadAllianceSupport();
+    $allianceSupportFleetCount = $fleetRepository->count(FleetSearch::create()->actionIn([\EtoA\Fleet\FleetAction::SUPPORT])->allianceId($cu->allianceId()));
     //Mehrere Flotten
-    if ($fm->count() > 1) {
-        echo "<td><a href=\"?page=fleets&mode=alliance\"><b>" . $fm->count() . "</b> Supportflotten</a></td>";
+    if ($allianceSupportFleetCount > 1) {
+        echo "<td><a href=\"?page=fleets&mode=alliance\"><b>" . $allianceSupportFleetCount . "</b> Supportflotten</a></td>";
     }
     //Eine Flotte
-    elseif ($fm->count() == 1) {
-        echo "<td><a href=\"?page=fleets&mode=alliance\"><b>" . $fm->count() . "</b> Supportflotte</a></td>";
+    elseif ($allianceSupportFleetCount == 1) {
+        echo "<td><a href=\"?page=fleets&mode=alliance\"><b>" . $allianceSupportFleetCount . "</b> Supportflotte</a></td>";
     }
     //Keine Flotten
     else {
@@ -268,14 +269,14 @@ if ($cu->allianceId != 0) {
     //
     // Allianzangriffs
     //
-    $fm->loadAllianceAttacks();
+    $allianceAttackFleetCount = $fleetRepository->count(FleetSearch::create()->actionIn([\EtoA\Fleet\FleetAction::ALLIANCE])->nextId($cu->allianceId())->status(FleetStatus::DEPARTURE)->isLeader());
     //Mehrere Flotten
-    if ($fm->count() > 1) {
-        echo "<td><a href=\"?page=fleets&mode=alliance\"><b>" . $fm->count() . "</b> Allianzangriffe</a></td>";
+    if ($allianceAttackFleetCount > 1) {
+        echo "<td><a href=\"?page=fleets&mode=alliance\"><b>" . $allianceAttackFleetCount . "</b> Allianzangriffe</a></td>";
     }
     //Eine Flotte
-    elseif ($fm->count() == 1) {
-        echo "<td><a href=\"?page=fleets&mode=alliance\"><b>" . $fm->count() . "</b> Allianzangriff</a></td>";
+    elseif ($allianceAttackFleetCount === 1) {
+        echo "<td><a href=\"?page=fleets&mode=alliance\"><b>" . $allianceAttackFleetCount . "</b> Allianzangriff</a></td>";
     }
     //Keine Flotten
     else {
