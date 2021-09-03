@@ -660,40 +660,6 @@ class Fleet
     }
 
     /**
-     * Add a given ammount of ships specified by
-     * their id to the fleet
-     */
-    function addShips($shipId, $count)
-    {
-        dbquery("
-			UPDATE
-				fleet_ships
-			SET
-				fs_ship_cnt=fs_ship_cnt+" . $count . "
-			WHERE
-				fs_fleet_id=" . $this->id . "
-				AND fs_ship_id=" . $shipId . ";");
-        if (mysql_affected_rows() == 0) {
-            dbquery("
-				INSERT INTO
-					fleet_ships
-				(
-					fs_fleet_id,
-					fs_ship_id,
-					fs_ship_cnt
-				)
-				VALUES
-				(
-					" . $this->id . ",
-					" . $shipId . ",
-					" . $count . "
-				);");
-        }
-        $this->shipIds[$shipId] = $this->shipIds[$shipId] + $count;
-        return true;
-    }
-
-    /**
      * Removes support fuel/food for
      * cancelled fleet
      */
