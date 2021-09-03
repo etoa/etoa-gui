@@ -4,6 +4,7 @@
  * and open the template in the editor.
  */
 
+use EtoA\Fleet\FleetRepository;
 use EtoA\Ship\ShipDataRepository;
 use EtoA\Support\StringUtils;
 use EtoA\Universe\Resources\ResourceNames;
@@ -80,6 +81,9 @@ class MarketReport extends Report
     {
         global $app;
 
+        /** @var FleetRepository $fleetRepository */
+        $fleetRepository = $app[FleetRepository::class];
+
         ob_start();
         $ent = Entity::createFactoryById($this->entity1Id);
         switch ($this->subType) {
@@ -153,15 +157,14 @@ class MarketReport extends Report
 						</tr>";
                 }
                 echo "</table><br/>";
-                $buyerFleet = new Fleet($this->fleet2Id);
-                if ($buyerFleet->valid())
-                    echo " Landung: " . StringUtils::formatDate($buyerFleet->landTime()) . "";
+                $buyerFleet = $fleetRepository->find($this->fleet2Id);
+                if ($buyerFleet !== null)
+                    echo " Landung: " . StringUtils::formatDate($buyerFleet->landTime) . "";
                 break;
 
             case "resbought":
                 $op = new User($this->opponent1Id);
                 $ent2 = Entity::createFactoryById($this->entity2Id);
-                $sellerFleet = new Fleet($this->fleet2Id);
                 echo "Du hast folgendes Angebot (#" . $this->recordId . ") von " . $op->detailLink() . " gekauft:<br/><br/>";
                 if ($this->content != "")
                     echo $this->content . "<br/><br/>";
@@ -181,8 +184,10 @@ class MarketReport extends Report
                 }
                 echo "</table><br/>";
                 echo "Die Waren werden vom Marktplatz nach " . $ent->detailLink() . " geliefert.";
-                if ($sellerFleet->valid())
-                    echo " Landung: " . StringUtils::formatDate($sellerFleet->landTime()) . "";
+
+                $sellerFleet = $fleetRepository->find($this->fleet2Id);
+                if ($sellerFleet !== null)
+                    echo " Landung: " . StringUtils::formatDate($sellerFleet->landTime) . "";
                 break;
 
             case "shipadd":
@@ -242,7 +247,6 @@ class MarketReport extends Report
 
                 $op = new User($this->opponent1Id);
                 $ent2 = Entity::createFactoryById($this->entity2Id);
-                $sellerFleet = new Fleet($this->fleet2Id);
                 echo "Du hast folgendes Angebot (#" . $this->recordId . ") von " . $op->detailLink() . " gekauft:<br/><br/>";
                 echo "" . StringUtils::formatNumber($this->shipCount) . " <b>" . $shipNames[$this->shipId] . "</b> <br/><br/> ";
                 echo "zu einem Preis von: <br/><br/>";
@@ -261,8 +265,9 @@ class MarketReport extends Report
                 echo "</table><br/>";
 
                 echo "Die Waren werden vom Marktplatz nach " . $ent->detailLink() . " geliefert.";
-                if ($sellerFleet->valid())
-                    echo " Landung: " . StringUtils::formatDate($sellerFleet->landTime()) . "";
+                $sellerFleet = $fleetRepository->find($this->fleet2Id);
+                if ($sellerFleet !== null)
+                    echo " Landung: " . StringUtils::formatDate($sellerFleet->landTime) . "";
                 break;
             case "shipsold":
                 /** @var ShipDataRepository $shipRepository */
@@ -290,9 +295,9 @@ class MarketReport extends Report
                 }
                 echo "</table><br/>";
                 echo "Die Waren werden vom Marktplatz nach " . $ent->detailLink() . " geliefert.";
-                $buyerFleet = new Fleet($this->fleet2Id);
-                if ($buyerFleet->valid())
-                    echo " Landung: " . StringUtils::formatDate($buyerFleet->landTime()) . "";
+                $buyerFleet = $fleetRepository->find($this->fleet2Id);
+                if ($buyerFleet !== null)
+                    echo " Landung: " . StringUtils::formatDate($buyerFleet->landTime) . "";
                 break;
             case 'auctionadd':
                 echo "Du hast folgendes Angebot (#" . $this->recordId . ") im <a href=\"?page=market&amp;mode=user_sell&amp;change_entity=" . $this->entity1Id . "\">Marktplatz</a>
