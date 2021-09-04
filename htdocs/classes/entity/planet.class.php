@@ -3,6 +3,7 @@
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Support\StringUtils;
 use EtoA\Universe\Planet\PlanetRepository;
+use EtoA\Universe\Resources\ResourceNames;
 
 /**
  * Planet class
@@ -284,7 +285,6 @@ class Planet extends Entity
     }
     function imagePath($opt = "")
     {
-        defineImagePaths();
         if ($opt == "b") {
             return IMAGE_PATH . "/planets/planet" . $this->image . "." . IMAGE_EXT;
         }
@@ -439,9 +439,7 @@ class Planet extends Entity
 
     function checkRes($data)
     {
-        global $resNames;
-
-        foreach ($resNames as $rk => $rn) {
+        foreach (ResourceNames::NAMES as $rk => $rn) {
             if (isset($data[$rk]) && $data[$rk] >= 0) {
                 if ($this->resources[$rk] - intval($data[$rk]) < 0)
                     return false;

@@ -7,6 +7,7 @@
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Ship\ShipDataRepository;
 use EtoA\Support\StringUtils;
+use EtoA\Universe\Resources\ResourceNames;
 
 /**
  * Description of otherreport
@@ -51,7 +52,6 @@ class OtherReport extends Report
 
     public function __construct($args)
     {
-        global $resNames;
         parent::__construct($args);
         if ($this->valid) {
             $res = dbquery("SELECT * FROM reports_other WHERE id=" . $this->id . ";");
@@ -60,7 +60,7 @@ class OtherReport extends Report
                 $this->subType = $arr['subtype'];
                 $this->ships = $arr['ships'];
                 $this->res = array();
-                foreach ($resNames as $rk => $rn)
+                foreach (ResourceNames::NAMES as $rk => $rn)
                     $this->res[$rk] = $arr['res_' . $rk];
                 $this->res[5] = $arr['res_5'];
                 $this->fleetId = $arr['fleet_id'];
@@ -86,8 +86,6 @@ class OtherReport extends Report
     function __toString()
     {
         // TODO
-        global $resNames;
-
         global $app;
 
         /** @var ConfigurationService $config */
@@ -130,7 +128,7 @@ class OtherReport extends Report
 
                 echo '<br /><strong>WAREN</strong><br />';
                 echo '<table>';
-                foreach ($resNames as $k => $v) {
+                foreach (ResourceNames::NAMES as $k => $v) {
                     echo '<tr>
                         <td>' . $v . ' </td>
                         <td style="text-align:right;"> ' . StringUtils::formatNumber($this->res[$k]) . '</td>
@@ -146,7 +144,7 @@ class OtherReport extends Report
                 echo 'Eine Flotte vom Planeten ' . $ent2->detailLink() . ' hat das Ziel ' . $ent1->detailLink() . ' um ' . StringUtils::formatDate($this->timestamp) . ' erreicht und Rohstoffe gesammelt.<br />';
                 echo '<br /><strong>ROHSTOFFE:</strong><br />';
                 echo '<table>';
-                foreach ($resNames as $k => $v) {
+                foreach (ResourceNames::NAMES as $k => $v) {
                     echo '<tr>
                         <td>' . $v . ' </td>
                         <td style="text-align:right;"> ' . StringUtils::formatNumber($this->res[$k]) . '</td>
@@ -227,7 +225,7 @@ class OtherReport extends Report
                 }
                 echo '<br /><strong>WAREN</strong><br />';
                 echo '<table>';
-                foreach ($resNames as $k => $v) {
+                foreach (ResourceNames::NAMES as $k => $v) {
                     echo '<tr>
                         <td>' . $v . ' </td>
                         <td style="text-align:right;"> ' . StringUtils::formatNumber($this->res[$k]) . '</td>
@@ -260,7 +258,7 @@ class OtherReport extends Report
                 echo 'Eine Flotte vom Planeten ' . $ent2->detailLink() . ' hat den Planeten ' . $ent1->detailLink() . ' erkundet und Gas gesaugt.<br />';
                 echo '<br /><strong>ROHSTOFFE</strong><br />';
                 echo '<table>';
-                foreach ($resNames as $k => $v) {
+                foreach (ResourceNames::NAMES as $k => $v) {
                     echo '<tr>
                         <td>' . $v . ' </td>
                         <td style="text-align:right;"> ' . StringUtils::formatNumber($this->res[$k]) . '</td>
@@ -315,7 +313,7 @@ class OtherReport extends Report
 
                 echo '<br /><strong>WAREN</strong><br />';
                 echo '<table>';
-                foreach ($resNames as $k => $v) {
+                foreach (ResourceNames::NAMES as $k => $v) {
                     echo '<tr>
                         <td>' . $v . ' </td>
                         <td style="text-align:right;"> ' . StringUtils::formatNumber($this->res[$k]) . '</td>
@@ -331,7 +329,7 @@ class OtherReport extends Report
                 echo 'Eine Flotte vom Planeten ' . $ent2->detailLink() . ' hat das Ziel ' . $ent1->detailLink() . ' um ' . StringUtils::formatDate($this->timestamp) . ' erreicht und Rohstoffe gesammelt.<br />';
                 echo '<br /><strong>ROHSTOFFE</strong><br />';
                 echo '<table>';
-                foreach ($resNames as $k => $v) {
+                foreach (ResourceNames::NAMES as $k => $v) {
                     echo '<tr>
                         <td>' . $v . ' </td>
                         <td style="text-align:right;"> ' . StringUtils::formatNumber($this->res[$k]) . '</td>
@@ -409,7 +407,7 @@ class OtherReport extends Report
                 echo '<strong>Zeit: </strong>' . StringUtils::formatDate($this->timestamp) . '<br /><br />';
                 echo '<br /><strong>WAREN</strong><br />';
                 echo '<table>';
-                foreach ($resNames as $k => $v) {
+                foreach (ResourceNames::NAMES as $k => $v) {
                     echo '<tr>
                         <td>' . $v . ' </td>
                         <td style="text-align:right;"> ' . StringUtils::formatNumber($this->res[$k]) . '</td>
@@ -426,7 +424,7 @@ class OtherReport extends Report
                     Eine Flotte vom Planeten ' . $ent2->detailLink() . ' hat das Tr&uuml;mmerfeld bei ' . $ent1->detailLink() . ' um ' . StringUtils::formatDate($this->timestamp) . ' erreicht und Trümmer gesammelt.<br /><br />';
                 echo '<br /><strong>ROHSTOFFE</strong><br />';
                 echo '<table>';
-                foreach ($resNames as $k => $v) {
+                foreach (ResourceNames::NAMES as $k => $v) {
                     echo '<tr>
                         <td>' . $v . ' </td>
                         <td style="text-align:right;"> ' . StringUtils::formatNumber($this->res[$k]) . '</td>
@@ -450,7 +448,7 @@ class OtherReport extends Report
                 echo '<strong>Zeit: </strong>' . StringUtils::formatDate($this->timestamp) . '<br />';
                 echo '<br />Folgende Waren wurden abgeholt:<br />';
                 echo '<table>';
-                foreach ($resNames as $k => $v) {
+                foreach (ResourceNames::NAMES as $k => $v) {
                     echo '<tr>
                         <td>' . $v . ' </td>
                         <td style="text-align:right;"> ' . StringUtils::formatNumber($this->res[$k]) . '</td>

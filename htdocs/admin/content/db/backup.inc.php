@@ -6,6 +6,7 @@ use EtoA\Log\LogRepository;
 use EtoA\Log\LogSeverity;
 use EtoA\Support\DB\DatabaseBackupService;
 use EtoA\Support\StringUtils;
+use Symfony\Component\Lock\LockFactory;
 
 /** @var ConfigurationService $config */
 $config = $app[ConfigurationService::class];
@@ -19,20 +20,20 @@ $logRepository = $app[LogRepository::class];
 $successMessage = null;
 $errorMessage = null;
 if (isset($_POST['create'])) {
-    $mtx = new Mutex();
+    /** @var LockFactory $lockFactory */
+    $lockFactory = $app[LockFactory::class];
+    $lock = $lockFactory->createLock('db');
 
     try {
         $dir = $databaseBackupService->getBackupDir();
         $gzip = $config->getBoolean('backup_use_gzip');
 
-        // Acquire mutex
-        $mtx->acquire();
+        $lock->acquire(true);
 
         // Do the backup
         $log = $databaseBackupService->backupDB($dir, $gzip);
 
-        // Release mutex
-        $mtx->release();
+        $lock->release();
 
         // Write log
         $logRepository->add(LogFacility::SYSTEM, LogSeverity::INFO, "[b]Datenbank-Backup[/b]\n" . $log);
@@ -40,8 +41,7 @@ if (isset($_POST['create'])) {
         // Show message
         $successMessage = $log;
     } catch (Exception $e) {
-        // Release mutex
-        $mtx->release();
+        $lock->release();
 
         // Write log
         $logRepository->add(LogFacility::SYSTEM, LogSeverity::ERROR, "[b]Datenbank-Backup[/b]\nFehler: " . $e->getMessage());
@@ -59,11 +59,12 @@ elseif (isset($_GET['action']) && $_GET['action'] === "backuprestore" && $_GET['
         $restorePoint = $_GET['date'];
         $gzip = $config->getBoolean('backup_use_gzip');
 
-        $mtx = new Mutex();
+        /** @var LockFactory $lockFactory */
+        $lockFactory = $app[LockFactory::class];
+        $lock = $lockFactory->createLock('db');
 
         try {
-            // Acquire mutex
-            $mtx->acquire();
+            $lock->acquire(true);
 
             // Backup current database
             $log = 'Anlegen einer Sicherungskopie: ';
@@ -73,30 +74,25 @@ elseif (isset($_GET['action']) && $_GET['action'] === "backuprestore" && $_GET['
             $log .= "\nWiederherstellen der Datenbank: ";
             $log .= $databaseBackupService->restoreDB($dir, $restorePoint);
 
-            // Release mutex
-            $mtx->release();
-
             // Write log
             $logRepository->add(LogFacility::SYSTEM, LogSeverity::INFO, "[b]Datenbank-Restore[/b]\n" . $log);
 
             // Show message
             $successMessage = 'Das Backup ' . $restorePoint . ' wurde wiederhergestellt und es wurde eine Sicherungskopie der vorherigen Daten angelegt!';
         } catch (Exception $e) {
-            // Release mutex
-            $mtx->release();
-
             // Write log
             $logRepository->add(LogFacility::SYSTEM, LogSeverity::ERROR, "[b]Datenbank-Restore[/b]\nDie Datenbank konnte nicht vom Backup [b]" . $restorePoint . "[/b] aus dem Verzeichnis [b]" . $dir . "[/b] wiederhergestellt werden: " . $e->getMessage());
 
             // Show message
             $errorMessage = 'Beim Ausf&uuml;hren des Restore-Befehls trat ein Fehler auf! ' . $e->getMessage();
+        } finally {
+            $lock->release();
         }
     } catch (Exception $e) {
         $errorMessage = 'Beim Ausf&uuml;hren des Backup-Befehls trat ein Fehler auf! ' . $e->getMessage();
     }
 }
 
-$frm = new Form("bustn", "?page=$page&amp;sub=$sub");
 if (isset($_POST['submit_changes'])) {
     $config->set("backup_dir", $_POST['backup_dir']);
     $config->set("backup_retention_time", $_POST['backup_retention_time']);

@@ -431,7 +431,7 @@ double Fleet::addMetal(double metal, bool total) {
     if (metal>=initCapa)
         metal = initCapa;
 
-    if (metal*initCapa)
+    if (metal && initCapa)
         this->resMetal += raidedMetal = metal*this->getCapacity()/initCapa;
 
     if (total && fleets.size()) {
@@ -450,7 +450,7 @@ double Fleet::addCrystal(double crystal, bool total) {
     if (crystal>=initCapa)
         crystal = initCapa;
 
-    if (crystal*initCapa)
+    if (crystal && initCapa)
         this->resCrystal += raidedCrystal = crystal*this->getCapacity()/initCapa;
     if (total && fleets.size()) {
         std::vector<Fleet*>::iterator it;
@@ -468,7 +468,7 @@ double Fleet::addPlastic(double plastic, bool total) {
     if (plastic>=initCapa)
         plastic = initCapa;
 
-    if (plastic*initCapa)
+    if (plastic && initCapa)
         this->resPlastic += raidedPlastic = plastic*this->getCapacity()/initCapa;
     if (total && fleets.size()) {
         std::vector<Fleet*>::iterator it;
@@ -486,7 +486,7 @@ double Fleet::addFuel(double fuel, bool total) {
     if (fuel>=initCapa)
         fuel = initCapa;
 
-    if (fuel*initCapa)
+    if (fuel && initCapa)
         this->resFuel += raidedFuel = fuel*this->getCapacity()/initCapa;
     if (total && fleets.size()) {
         std::vector<Fleet*>::iterator it;
@@ -504,7 +504,7 @@ double Fleet::addFood(double food, bool total) {
     if (food>=initCapa)
         food = initCapa;
 
-    if (food*this->getCapacity(total))
+    if (food && this->getCapacity(total))
         this->resFood += raidedFood = food*this->getCapacity()/initCapa;
     if (total && fleets.size()) {
         std::vector<Fleet*>::iterator it;
@@ -520,7 +520,7 @@ double Fleet::addPower(double power, bool total) {
     if (power>=this->getCapacity())
         power = this->getCapacity();
 
-    if (power*this->getCapacity(total))
+    if (power && this->getCapacity(total))
         this->resPower += power*this->getCapacity()/this->getCapacity(total);
     if (total && fleets.size()) {
         std::vector<Fleet*>::iterator it;
@@ -536,7 +536,7 @@ double Fleet::addPeople(double people, bool total) {
     if (people>=this->getPeopleCapacity())
         people = this->getPeopleCapacity();
 
-    if (people*this->getPeopleCapacity(total))
+    if (people && this->getPeopleCapacity(total))
         this->resPeople += people*this->getPeopleCapacity()/this->getPeopleCapacity(total);
     if (total && fleets.size()) {
         std::vector<Fleet*>::iterator it;

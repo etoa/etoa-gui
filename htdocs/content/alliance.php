@@ -10,6 +10,8 @@ use EtoA\Alliance\AllianceRepository;
 use EtoA\Alliance\AllianceRight;
 use EtoA\Alliance\AllianceRightRepository;
 use EtoA\Alliance\AllianceRights;
+use EtoA\Alliance\AllianceSearch;
+use EtoA\Alliance\AllianceService;
 use EtoA\Alliance\Board\AllianceBoardTopicRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Support\BBCodeUtils;
@@ -28,6 +30,8 @@ $allianceDiplomacyRepository = $app[AllianceDiplomacyRepository::class];
 $userRepository = $app[UserRepository::class];
 /** @var AllianceRightRepository $allianceRightRepository */
 $allianceRightRepository = $app[AllianceRightRepository::class];
+/** @var AllianceService $allianceService */
+$allianceService = $app[AllianceService::class];
 
 echo "<h1>Allianz</h1>";
 echo "<div id=\"allianceinfo\"></div>"; //nur zu entwicklungszwecken!
@@ -59,32 +63,28 @@ elseif ($cu->allianceId == 0) {
     // Allianzdaten laden
     $alliance = $allianceRepository->getAlliance($cu->allianceId());
     if ($alliance !== null) {
-        $ally = new Alliance($cu->allianceId);
-
-
+        $currentUser = $userRepository->getUser($cu->getId());
+        $userAlliancePermission = $allianceService->getUserAlliancePermissions($alliance, $currentUser);
         // Rechte laden
         /** @var array<int, AllianceRight> $rights */
         $rights = [];
-        /** @var array<string, bool> $myRight */
-        $myRight = [];
         $allianceRights = $allianceRightRepository->getRights();
         if (count($allianceRights) > 0) {
             $rightIds = $allianceRankRepository->getAvailableRightIds($cu->allianceId(), $myRankId);
 
             foreach ($allianceRights as $right) {
                 $rights[$right->id] = $right;
-                $myRight[$right->key] = in_array($right->id, $rightIds, true);
             }
         }
 
         // Gründer prüfen
-        $isFounder = ($ally->founderId == $cu->id) ? true : false;
+        $isFounder = ($alliance->founderId == $cu->id) ? true : false;
 
         //
         // Allianzdaten ändern
         //
         if (isset($_GET['action']) && $_GET['action'] == "editdata") {
-            if (Alliance::checkActionRights(AllianceRights::EDIT_DATA)) {
+            if ($userAlliancePermission->checkHasRights(AllianceRights::EDIT_DATA, $page)) {
                 require("alliance/editdata.inc.php");
             }
         }
@@ -93,7 +93,7 @@ elseif ($cu->allianceId == 0) {
         // Bewerbungsvorlage bearbeiten
         //
         elseif (isset($_GET['action']) && $_GET['action'] == "applicationtemplate") {
-            if (Alliance::checkActionRights(AllianceRights::APPLICATION_TEMPLATE)) {
+            if ($userAlliancePermission->checkHasRights(AllianceRights::APPLICATION_TEMPLATE, $page)) {
                 require("alliance/applicationtemplate.inc.php");
             }
         }
@@ -109,7 +109,7 @@ elseif ($cu->allianceId == 0) {
         // Umfragen erstellen / bearbeiten
         //
         elseif (isset($_GET['action']) && $_GET['action'] == "polls") {
-            if (Alliance::checkActionRights(AllianceRights::POLLS)) {
+            if ($userAlliancePermission->checkHasRights(AllianceRights::POLLS, $page)) {
                 require("alliance/polls.inc.php");
             }
         }
@@ -118,7 +118,7 @@ elseif ($cu->allianceId == 0) {
         // Mitglieder bearbeiten
         //
         elseif (isset($_GET['action']) && $_GET['action'] == "editmembers") {
-            if (Alliance::checkActionRights(AllianceRights::EDIT_MEMBERS)) {
+            if ($userAlliancePermission->checkHasRights(AllianceRights::EDIT_MEMBERS, $page)) {
                 require("alliance/editmembers.inc.php");
             }
         }
@@ -127,7 +127,7 @@ elseif ($cu->allianceId == 0) {
         // Rundmail
         //
         elseif (isset($_GET['action']) && $_GET['action'] == "massmail") {
-            if (Alliance::checkActionRights(AllianceRights::MASS_MAIL)) {
+            if ($userAlliancePermission->checkHasRights(AllianceRights::MASS_MAIL, $page)) {
                 require("alliance/massmail.inc.php");
             }
         }
@@ -136,7 +136,7 @@ elseif ($cu->allianceId == 0) {
         // Ränge
         //
         elseif (isset($_GET['action']) && $_GET['action'] == "ranks") {
-            if (Alliance::checkActionRights(AllianceRights::RANKS)) {
+            if ($userAlliancePermission->checkHasRights(AllianceRights::RANKS, $page)) {
                 require("alliance/ranks.inc.php");
             }
         }
@@ -145,7 +145,7 @@ elseif ($cu->allianceId == 0) {
         // Bewerbungen
         //
         elseif (isset($_GET['action']) && $_GET['action'] == "applications") {
-            if (Alliance::checkActionRights(AllianceRights::APPLICATIONS)) {
+            if ($userAlliancePermission->checkHasRights(AllianceRights::APPLICATIONS, $page)) {
                 require("alliance/applications.inc.php");
             }
         }
@@ -153,8 +153,8 @@ elseif ($cu->allianceId == 0) {
         //
         // Allianz auflösen bestätigen
         //
-        elseif (isset($_GET['action']) && $_GET['action'] == "liquidate"  && !$cu->alliance->isAtWar()) {
-            if (Alliance::checkActionRights(AllianceRights::LIQUIDATE)) {
+        elseif (isset($_GET['action']) && $_GET['action'] == "liquidate"  && !$allianceDiplomacyRepository->isAtWar($cu->allianceId())) {
+            if ($userAlliancePermission->checkHasRights(AllianceRights::LIQUIDATE, $page)) {
                 require("alliance/liquidate.inc.php");
             }
         }
@@ -163,7 +163,7 @@ elseif ($cu->allianceId == 0) {
         // Allianz-News
         //
         elseif (isset($_GET['action']) && $_GET['action'] == "alliancenews") {
-            if (Alliance::checkActionRights(AllianceRights::ALLIANCE_NEWS)) {
+            if ($userAlliancePermission->checkHasRights(AllianceRights::ALLIANCE_NEWS, $page)) {
                 require("alliance/alliancenews.inc.php");
             }
         }
@@ -172,7 +172,7 @@ elseif ($cu->allianceId == 0) {
         // Bündniss-/Kriegspartner wählen
         //
         elseif (isset($_GET['action']) && $_GET['action'] == "relations") {
-            if (Alliance::checkActionRights(AllianceRights::RELATIONS)) {
+            if ($userAlliancePermission->checkHasRights(AllianceRights::RELATIONS, $page)) {
                 require("alliance/diplomacy.inc.php");
             }
         }
@@ -181,7 +181,7 @@ elseif ($cu->allianceId == 0) {
         // Geschichte anzeigen
         //
         elseif (isset($_GET['action']) && $_GET['action'] == "history") {
-            if (Alliance::checkActionRights(AllianceRights::HISTORY)) {
+            if ($userAlliancePermission->checkHasRights(AllianceRights::HISTORY, $page)) {
                 require("alliance/history.inc.php");
             }
         }
@@ -190,7 +190,7 @@ elseif ($cu->allianceId == 0) {
         // Mitglieder anzeigen
         //
         elseif (isset($_GET['action']) && $_GET['action'] == "viewmembers") {
-            if (Alliance::checkActionRights(AllianceRights::VIEW_MEMBERS)) {
+            if ($userAlliancePermission->checkHasRights(AllianceRights::VIEW_MEMBERS, $page)) {
                 require("alliance/viewmembers.inc.php");
             }
         }
@@ -199,7 +199,7 @@ elseif ($cu->allianceId == 0) {
         // Wings verwalten
         //
         elseif (isset($_GET['action']) && $_GET['action'] == "wings" && $config->getBoolean('allow_wings')) {
-            if (Alliance::checkActionRights(AllianceRights::WINGS)) {
+            if ($userAlliancePermission->checkHasRights(AllianceRights::WINGS, $page)) {
                 require("alliance/wings.inc.php");
             }
         }
@@ -207,11 +207,12 @@ elseif ($cu->allianceId == 0) {
         //
         // Allianz verlassen (Durchführen)
         //
-        elseif (isset($_GET['action']) && $_GET['action'] == "leave" && !$isFounder && !$cu->alliance->isAtWar()) {
+        elseif (isset($_GET['action']) && $_GET['action'] == "leave" && !$isFounder && !$allianceDiplomacyRepository->isAtWar($cu->allianceId())) {
             echo "<h2>Allianz-Austritt</h2>";
             if ($cu->allianceId != 0) {
                 if (isset($_POST['submit_leave'])) {
-                    if ($ally->kickMember($cu->id, 0)) {
+                    $user = $userRepository->getUser($cu->getId());
+                    if ($allianceService->kickMember($alliance, $user, false)) {
                         success_msg("Du bist aus der Allianz ausgetreten!");
                     } else {
                         error_msg("Du konntest nicht aus der Allianz austreten, da die Allianz entweder im Krieg ist oder du noch Allianzflotten in der Luft hast!!");
@@ -314,9 +315,6 @@ elseif ($cu->allianceId == 0) {
                 $allianceRepository->update($alliance->id, $alliance_tag, $alliance_name, $_POST['alliance_text'], $alliance->applicationTemplate, $_POST['alliance_url'], $alliance->founderId, $updatedAllianceImage, (bool) $_POST['alliance_accept_applications'], (bool) $_POST['alliance_accept_bnd'], (bool) $_POST['alliance_public_memberlist']);
                 $alliance = $allianceRepository->getAlliance($cu->allianceId());
                 echo "Die &Auml;nderungen wurden übernommen!<br/>" . $message . "<br/>";
-
-                // Hack
-                $ally = new Alliance($cu->allianceId);
             }
 
             // Bewerbungsvorlage speichern
@@ -332,17 +330,18 @@ elseif ($cu->allianceId == 0) {
                 && $isFounder
                 && $cu->allianceId == $_POST['id_control']
                 && checker_verify()
-                && !$cu->alliance->isAtWar()
+                && !$allianceDiplomacyRepository->isAtWar($cu->allianceId())
             ) {
-                $ally->delete($cu);
+                $alliance = $allianceRepository->getAlliance($cu->allianceId());
+                $user = $userRepository->getUser($cu->getId());
+
+                $allianceService->delete($alliance, $user);
                 echo "Die Allianz wurde aufgel&ouml;st!<br/><br/>
             <input type=\"button\" onclick=\"document.location='?page=$page';\" value=\"&Uuml;bersicht\" />";
             }
             // Allianzdaten anzeigen
             else {
-
-                $ally->visits++;
-
+                $allianceRepository->addVisit($alliance->id);
 
                 tableStart("[" . stripslashes($alliance->tag) . "] " . stripslashes($alliance->name));
                 if ($alliance->image != "") {
@@ -357,7 +356,7 @@ elseif ($cu->allianceId == 0) {
                 // Internes Forum verlinken
                 /** @var AllianceBoardTopicRepository $allianceBoardTopicRepository */
                 $allianceBoardTopicRepository = $app[AllianceBoardTopicRepository::class];
-                if ($myRight[AllianceRights::ALLIANCE_BOARD] || $isFounder) {
+                if ($userAlliancePermission->hasRights(AllianceRights::ALLIANCE_BOARD)) {
                     $topic = $allianceBoardTopicRepository->getAllianceTopicWithLatestPost($alliance->id);
                 } else {
                     $topic = $allianceBoardTopicRepository->getAllianceTopicWithLatestPost($alliance->id, $myRankId);
@@ -383,7 +382,7 @@ elseif ($cu->allianceId == 0) {
                 }
 
                 // Bewerbungen anzeigen
-                if ($isFounder || $myRight[AllianceRights::APPLICATIONS]) {
+                if ($userAlliancePermission->hasRights(AllianceRights::APPLICATIONS)) {
                     /** @var AllianceApplicationRepository $allianceApplicationRepository */
                     $allianceApplicationRepository = $app[AllianceApplicationRepository::class];
                     $applications = $allianceApplicationRepository->countApplications($cu->allianceId());
@@ -395,23 +394,24 @@ elseif ($cu->allianceId == 0) {
                 }
 
                 // Wing-Anfrage
-                if ($config->getBoolean('allow_wings') && ($isFounder || $myRight[AllianceRights::WINGS]) && $ally->motherRequestId > 0) {
+                if ($config->getBoolean('allow_wings') && ($userAlliancePermission->hasRights(AllianceRights::WINGS)) && $alliance->motherRequest > 0) {
                     echo "<tr><th colspan=\"3\" align=\"center\">
                 <div align=\"center\"><b><a href=\"?page=$page&action=wings\">Es ist eine Wing-Anfrage vorhanden!</a></b></div>
                 </th></tr>";
                 }
 
-                if ($config->getBoolean('allow_wings') && $ally->motherId != 0) {
+                if ($config->getBoolean('allow_wings') && $alliance->motherId !== 0) {
+                    $motherAlliance = $allianceRepository->getAlliance($alliance->motherId);
                     echo "<tr>
                                 <th colspan=\"3\" style=\"text-align:center;\">
-                                    Diese Allianz ist ein Wing von <b><a href=\"?page=$page&amp;action=info&amp;id=" . $ally->motherId . "\">" . $ally->mother . "</a></b>
+                                    Diese Allianz ist ein Wing von <b><a href=\"?page=$page&amp;action=info&amp;id=" . $alliance->motherId . "\">" . $motherAlliance->nameWithTag . "</a></b>
                                 </th>
                             </tr>";
                 }
 
 
                 // Bündnissanfragen anzeigen
-                if ($isFounder || $myRight[AllianceRights::RELATIONS]) {
+                if ($userAlliancePermission->hasRights(AllianceRights::RELATIONS)) {
                     if ($allianceDiplomacyRepository->hasPendingBndRequests($cu->allianceId()))
                         echo "<tr>
                         <th colspan=\"3\" style=\"text-align:center;color:#0f0\">
@@ -422,7 +422,7 @@ elseif ($cu->allianceId == 0) {
                 // Kriegserklärung anzeigen
                 $time = time() - 192600;
                 if ($allianceDiplomacyRepository->wasWarDeclaredAgainstSince($cu->allianceId(), $time)) {
-                    if ($isFounder || $myRight[AllianceRights::RELATIONS])
+                    if ($userAlliancePermission->hasRights(AllianceRights::RELATIONS))
                         echo "<tr>
                     <th colspan=\"3\" align=\"center\"><b>
                         <div align=\"center\"><a href=\"?page=$page&action=relations\">Deiner Allianz wurde in den letzten 36h der Krieg erkl&auml;rt!</a></div></b></th></tr>";
@@ -433,44 +433,42 @@ elseif ($cu->allianceId == 0) {
                 // Verwaltung
                 $adminBox = array();
 
-                if ($isFounder || $myRight[AllianceRights::VIEW_MEMBERS]) {
+                if ($userAlliancePermission->hasRights(AllianceRights::VIEW_MEMBERS)) {
                     $adminBox["Mitglieder anzeigen"] = "?page=$page&amp;action=viewmembers";
                 }
                 $adminBox["Allianzbasis"] = "?page=$page&action=base";
-                if ($config->getBoolean('allow_wings') && ($isFounder || $myRight[AllianceRights::WINGS])) {
+                if ($config->getBoolean('allow_wings') && $userAlliancePermission->hasRights(AllianceRights::WINGS)) {
                     $adminBox["Wings verwalten"] = "?page=$page&action=wings";
                 }
-                if ($isFounder || $myRight[AllianceRights::HISTORY]) {
+                if ($userAlliancePermission->hasRights(AllianceRights::HISTORY)) {
                     $adminBox["Geschichte"] = "?page=$page&action=history";
                 }
-                if ($isFounder || $myRight[AllianceRights::ALLIANCE_NEWS]) {
+                if ($userAlliancePermission->hasRights(AllianceRights::ALLIANCE_NEWS)) {
                     $adminBox["Allianznews (Rathaus)"] = "?page=$page&action=alliancenews";
                 }
-                if ($isFounder || $myRight[AllianceRights::RELATIONS]) {
+                if ($userAlliancePermission->hasRights(AllianceRights::RELATIONS)) {
                     $adminBox["Diplomatie"] = "?page=$page&action=relations";
                 }
-                if ($isFounder || $myRight[AllianceRights::POLLS]) {
+                if ($userAlliancePermission->hasRights(AllianceRights::POLLS)) {
                     $adminBox["Umfragen verwalten"] = "?page=$page&action=polls";
                 }
-                if ($isFounder || $myRight[AllianceRights::MASS_MAIL]) {
+                if ($userAlliancePermission->hasRights(AllianceRights::MASS_MAIL)) {
                     $adminBox["Rundmail"] = "?page=$page&action=massmail";
                 }
-                if ($isFounder || $myRight[AllianceRights::EDIT_MEMBERS]) {
+                if ($userAlliancePermission->hasRights(AllianceRights::EDIT_MEMBERS)) {
                     $adminBox["Mitglieder verwalten"] = "?page=$page&action=editmembers";
                 }
-                if ($isFounder || $myRight[AllianceRights::RANKS]) {
+                if ($userAlliancePermission->hasRights(AllianceRights::RANKS)) {
                     $adminBox["Ränge"] = "?page=$page&action=ranks";
                 }
-                if ($isFounder || $myRight[AllianceRights::EDIT_DATA]) {
+                if ($userAlliancePermission->hasRights(AllianceRights::EDIT_DATA)) {
                     $adminBox["Allianz-Daten bearbeiten"] = "?page=$page&amp;action=editdata";
                 }
-                if ($isFounder || $myRight[AllianceRights::APPLICATION_TEMPLATE]) {
+                if ($userAlliancePermission->hasRights(AllianceRights::APPLICATION_TEMPLATE)) {
                     $adminBox["Bewerbungsvorlage"] = "?page=$page&action=applicationtemplate";
                 }
-                if ($isFounder && !$cu->alliance->isAtWar()) {
+                if ($isFounder && !$allianceDiplomacyRepository->isAtWar($cu->allianceId())) {
                     $adminBox["Allianz aufl&ouml;sen"] = "?page=$page&action=liquidate";
-                }
-                if (!$isFounder && !$cu->alliance->isAtWar()) {
                     $adminBox["Allianz verlassen"] = "?page=$page&action=leave";
                     //array_push($adminBox,"<a href=\"\" onclick=\"return confirm('Allianz wirklich verlassen?');\"></a>");
                 }
@@ -486,7 +484,7 @@ elseif ($cu->allianceId == 0) {
 
 
                 // Letzte Ereignisse anzeigen
-                if ($isFounder || $myRight[AllianceRights::HISTORY]) {
+                if ($userAlliancePermission->hasRights(AllianceRights::HISTORY)) {
                     echo "<tr>
                     <th width=\"120\">Letzte Ereignisse:</th>
                     <td colspan=\"2\">";
@@ -508,7 +506,7 @@ elseif ($cu->allianceId == 0) {
                 }
 
                 // Kriege
-                $wars = $allianceDiplomacyRepository->getDiplomacies($ally->id, AllianceDiplomacyLevel::WAR);
+                $wars = $allianceDiplomacyRepository->getDiplomacies($alliance->id, AllianceDiplomacyLevel::WAR);
                 if (count($wars) > 0) {
                     echo "<tr>
                                 <th>Kriege:</th>
@@ -520,12 +518,12 @@ elseif ($cu->allianceId == 0) {
                                             <th>Zeitraum</th>
                                         </tr>";
                     foreach ($wars as $diplomacy) {
-                        $opAlly = new Alliance($diplomacy->otherAllianceId);
+                        $opAlliance = $allianceRepository->getAlliance($diplomacy->otherAllianceId);
                         echo "<tr>
                                             <td>
-                                                <a href=\"?page=$page&amp;id=" . $diplomacy->otherAllianceId . "\">" . $opAlly . "</a>
+                                                <a href=\"?page=$page&amp;id=" . $diplomacy->otherAllianceId . "\">" . $opAlliance->nameWithTag . "</a>
                                             </td>
-                                            <td>" . StringUtils::formatNumber($opAlly->points) . " / " . StringUtils::formatNumber($opAlly->avgPoints) . "</td>
+                                            <td>" . StringUtils::formatNumber($opAlliance->points) . " / " . StringUtils::formatNumber($opAlliance->averagePoints) . "</td>
                                             <td>" . StringUtils::formatDate($diplomacy->date, false) . " bis " . StringUtils::formatDate($diplomacy->date + WAR_DURATION, false) . "</td>
                                         </tr>";
                     }
@@ -536,7 +534,7 @@ elseif ($cu->allianceId == 0) {
 
 
                 // Friedensabkommen
-                $peace = $allianceDiplomacyRepository->getDiplomacies($ally->id, AllianceDiplomacyLevel::PEACE);
+                $peace = $allianceDiplomacyRepository->getDiplomacies($alliance->id, AllianceDiplomacyLevel::PEACE);
                 if (count($peace) > 0) {
                     echo "<tr>
                                 <th>Friedensabkommen:</th>
@@ -548,12 +546,12 @@ elseif ($cu->allianceId == 0) {
                                             <th>Zeitraum</th>
                                         </tr>";
                     foreach ($peace as $diplomacy) {
-                        $opAlly = new Alliance($diplomacy->otherAllianceId);
+                        $opAlliance = $allianceRepository->getAlliance($diplomacy->otherAllianceId);
                         echo "<tr>
                                             <td>
-                                                <a href=\"?page=$page&amp;id=" . $diplomacy->otherAllianceId . "\">" . $opAlly . "</a>
+                                                <a href=\"?page=$page&amp;id=" . $diplomacy->otherAllianceId . "\">" . $opAlliance->nameWithTag . "</a>
                                             </td>
-                                            <td>" . StringUtils::formatNumber($opAlly->points) . " / " . StringUtils::formatNumber($opAlly->avgPoints) . "</td>
+                                            <td>" . StringUtils::formatNumber($opAlliance->points) . " / " . StringUtils::formatNumber($opAlliance->averagePoints) . "</td>
                                             <td>" . StringUtils::formatDate($diplomacy->date, false) . " bis " . StringUtils::formatDate($diplomacy->date + PEACE_DURATION, false) . "</td>
                                         </tr>";
                     }
@@ -563,7 +561,7 @@ elseif ($cu->allianceId == 0) {
                 }
 
                 // Bündnisse
-                $bnds = $allianceDiplomacyRepository->getDiplomacies($ally->id, AllianceDiplomacyLevel::BND_CONFIRMED);
+                $bnds = $allianceDiplomacyRepository->getDiplomacies($alliance->id, AllianceDiplomacyLevel::BND_CONFIRMED);
                 if (count($bnds) > 0) {
                     echo "<tr>
                                 <th>Bündnisse:</th>
@@ -577,11 +575,11 @@ elseif ($cu->allianceId == 0) {
                                         </tr>";
 
                     foreach ($bnds as $diplomacy) {
-                        $opAlly = new Alliance($diplomacy->otherAllianceId);
+                        $opAlliance = $allianceRepository->getAlliance($diplomacy->otherAllianceId);
                         echo "<tr>
                                             <td>" . stripslashes($diplomacy->name) . "</td>
-                                            <td><a href=\"?page=$page&amp;id=" . $diplomacy->otherAllianceId . "\">" . $opAlly . "</a></td>
-                                            <td>" . StringUtils::formatNumber($opAlly->points) . " / " . StringUtils::formatNumber($opAlly->avgPoints) . "</td>
+                                            <td><a href=\"?page=$page&amp;id=" . $diplomacy->otherAllianceId . "\">" . $opAlliance->nameWithTag . "</a></td>
+                                            <td>" . StringUtils::formatNumber($opAlliance->points) . " / " . StringUtils::formatNumber($opAlliance->averagePoints) . "</td>
                                             <td>" . StringUtils::formatDate($diplomacy->date) . "</td>
                                         </tr>";
                     }
@@ -592,29 +590,32 @@ elseif ($cu->allianceId == 0) {
 
                 // Besucher
                 echo "<tr><th width=\"120\">Besucherzähler:</th>
-            <td colspan=\"2\">" . StringUtils::formatNumber($ally->visits) . " intern / " . StringUtils::formatNumber($ally->visitsExt) . " extern</td></tr>\n";
+            <td colspan=\"2\">" . StringUtils::formatNumber($alliance->visits) . " intern / " . StringUtils::formatNumber($alliance->visitsExternal) . " extern</td></tr>\n";
 
                 // Wings
-                if ($config->getBoolean('allow_wings') && count($ally->wings) > 0) {
-                    echo "<tr><th width=\"120\">Wings:</th><td colspan=\"2\">";
-                    echo "<table class=\"tb\">";
-                    echo "<tr>
+                if ($config->getBoolean('allow_wings')) {
+                    $wings = $allianceRepository->searchAlliances(AllianceSearch::create()->motherId($alliance->id));
+                    if (count($wings) > 0) {
+                        echo "<tr><th width=\"120\">Wings:</th><td colspan=\"2\">";
+                        echo "<table class=\"tb\">";
+                        echo "<tr>
                     <th>Name</th>
                     <th>Punkte</th>
                     <th>Mitglieder</th>
                     <th>Punkteschnitt</th>
                 </tr>";
-                    foreach ($ally->wings as $wid => $wdata) {
-                        echo "<tr>
-                    <td><a href=\"?page=alliance&amp;id=" . $wid . "\">" . $wdata . "</a></td>
-                    <td>" . StringUtils::formatNumber($wdata->points) . "</td>
-                    <td>" . $wdata->memberCount . "</td>
-                    <td>" . StringUtils::formatNumber($wdata->avgPoints) . "</td>
+                        foreach ($wings as $wing) {
+                            echo "<tr>
+                    <td><a href=\"?page=alliance&amp;id=" . $wing->id . "\">" . $wing->nameWithTag . "</a></td>
+                    <td>" . StringUtils::formatNumber($wing->points) . "</td>
+                    <td>" . $wing->memberCount . "</td>
+                    <td>" . StringUtils::formatNumber($wing->averagePoints) . "</td>
                     </tr>";
+                        }
+                        echo "</td></tr>";
+                        tableEnd();
+                        echo "</td></tr>";
                     }
-                    echo "</td></tr>";
-                    tableEnd();
-                    echo "</td></tr>";
                 }
 
 
@@ -624,24 +625,26 @@ elseif ($cu->allianceId == 0) {
                         StringUtils::formatLink($alliance->url) . "</a></b></td></tr>\n";
                 }
 
+                $founderNick = $userRepository->getNick($alliance->founderId);
+
                 // Diverses
                 echo "<tr><th width=\"120\">Mitglieder:</th>
-            <td colspan=\"2\">" . $ally->memberCount . "</td></tr>\n";
+            <td colspan=\"2\">" . $alliance->memberCount . "</td></tr>\n";
                 // Punkte
                 echo "<tr>
                             <th>Punkte / Schnitt:</th>
                             <td colspan=\"2\">";
-                echo StringUtils::formatNumber($ally->points) . " / " . StringUtils::formatNumber($ally->avgPoints) . "";
+                echo StringUtils::formatNumber($alliance->points) . " / " . StringUtils::formatNumber($alliance->averagePoints) . "";
                 echo "</td>
                         </tr>";
                 echo "<tr><th width=\"120\">Gr&uuml;nder:</th>
             <td colspan=\"2\">
-                <a href=\"?page=userinfo&amp;id=" . $ally->founderId . "\">" . $ally->founder . "</a></td></tr>";
+                <a href=\"?page=userinfo&amp;id=" . $alliance->founderId . "\">" . $founderNick . "</a></td></tr>";
                 // Gründung
                 echo "<tr>
                             <th>Gründungsdatum:</th>
                             <td colspan=\"2\">
-                                " . StringUtils::formatDate($ally->foundationDate) . " (vor " . StringUtils::formatTimespan(time() - $ally->foundationDate) . ")
+                                " . StringUtils::formatDate($alliance->foundationTimestamp) . " (vor " . StringUtils::formatTimespan(time() - $alliance->foundationTimestamp) . ")
                             </td>
                         </tr>";
                 echo "\n</table><br/>";

@@ -5,6 +5,7 @@ use EtoA\Race\RaceDataRepository;
 use EtoA\Support\StringUtils;
 use EtoA\Specialist\SpecialistService;
 use EtoA\Universe\Planet\PlanetRepository;
+use EtoA\Universe\Resources\ResourceNames;
 
 /** @var ConfigurationService $config */
 $config = $app[ConfigurationService::class];
@@ -149,11 +150,11 @@ $race = $raceRepository->getRace($cu->raceId);
 
 tableStart("Rohstoffe und Bewohner");
 echo '<tr><th>Name:</th>
-<th>' . RES_METAL . '</th>
-<th>' . RES_CRYSTAL . '</th>
-<th>' . RES_PLASTIC . '</th>
-<th>' . RES_FUEL . '</th>
-<th>' . RES_FOOD . '</th>
+<th>' . ResourceNames::METAL . '</th>
+<th>' . ResourceNames::CRYSTAL . '</th>
+<th>' . ResourceNames::PLASTIC . '</th>
+<th>' . ResourceNames::FUEL . '</th>
+<th>' . ResourceNames::FOOD . '</th>
 <th>Bewohner</th></tr>';
 foreach ($planets as $planet) {
     echo '<tr><td><a href="?page=economy&amp;change_entity=' . $planet->id . '">' . $planet->name . '</a></td>';
@@ -231,11 +232,11 @@ foreach ($planets as $planet) {
 
 tableStart("Produktion");
 echo '<tr><th>Name:</th>
-<th>' . RES_METAL . '</th>
-<th>' . RES_CRYSTAL . '</th>
-<th>' . RES_PLASTIC . '</th>
-<th>' . RES_FUEL . '</th>
-<th>' . RES_FOOD . '</th>
+<th>' . ResourceNames::METAL . '</th>
+<th>' . ResourceNames::CRYSTAL . '</th>
+<th>' . ResourceNames::PLASTIC . '</th>
+<th>' . ResourceNames::FUEL . '</th>
+<th>' . ResourceNames::FOOD . '</th>
 <th>Energie</th></tr>';
 foreach ($planets as $planet) {
     echo '<tr><td><a href="?page=economy&amp;change_entity=' . $planet->id . '">' . $planet->name . '</a></td>';

@@ -2,7 +2,9 @@
 
 use EtoA\Alliance\AllianceBuildingId;
 use EtoA\Alliance\AllianceBuildingRepository;
+use EtoA\Alliance\AllianceRepository;
 use EtoA\Alliance\AllianceRights;
+use EtoA\Alliance\AllianceService;
 use EtoA\Bookmark\BookmarkService;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Fleet\Exception\FleetScanFailedException;
@@ -15,6 +17,7 @@ use EtoA\UI\ResourceBoxDrawer;
 use EtoA\Universe\Entity\EntityCoordinates;
 use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Planet\PlanetRepository;
+use EtoA\Universe\Resources\ResourceNames;
 use EtoA\User\UserRepository;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -38,10 +41,13 @@ $fleetScanService = $app[FleetScanService::class];
 
 /** @var AllianceBuildingRepository $allianceBuildingRepository */
 $allianceBuildingRepository = $app[AllianceBuildingRepository::class];
+/** @var AllianceRepository $allianceRepository */
+$allianceRepository = $app[AllianceRepository::class];
 
 /** @var ResourceBoxDrawer $resourceBoxDrawer */
 $resourceBoxDrawer = $app[ResourceBoxDrawer::class];
-
+/** @var AllianceService $allianceService */
+$allianceService = $app[AllianceService::class];
 /** @var Request */
 $request = Request::createFromGlobals();
 
@@ -55,11 +61,13 @@ $cryptoCenterLevel = $allianceBuildingRepository->getLevel($currentUser->allianc
 if ($config->getBoolean('crypto_enable')) {
     // Prüfen ob Gebäude gebaut ist
     if ($cryptoCenterLevel > 0) {
-        echo "<h1>Allianzkryptocenter (Stufe " . $cryptoCenterLevel . ") der Allianz " . $cu->alliance . "</h1>";
+        $alliance = $allianceRepository->getAlliance($cu->allianceId());
+        echo "<h1>Allianzkryptocenter (Stufe " . $cryptoCenterLevel . ") der Allianz " . $alliance->nameWithTag . "</h1>";
         echo $resourceBoxDrawer->getHTML($planet);
 
         if ($request->request->has('scan') && checker_verify()) {
-            if ($cu->alliance->checkActionRightsNA(AllianceRights::CRYPTO_MINISTER)) {
+            $userAlliancePermission = $allianceService->getUserAlliancePermissions($alliance, $currentUser);
+            if ($userAlliancePermission->hasRights(AllianceRights::CRYPTO_MINISTER)) {
                 $targetCoordinates = new EntityCoordinates(
                     $request->request->getInt('sx'),
                     $request->request->getInt('sy'),
@@ -95,7 +103,7 @@ if ($config->getBoolean('crypto_enable')) {
                     </td></tr>';
         }
         echo "<tr><th>Kosten pro Scan:</th>
-                <td>" . StringUtils::formatNumber($config->getInt('crypto_fuel_costs_per_scan')) . " " . RES_FUEL . " und " . StringUtils::formatNumber($config->getInt('crypto_fuel_costs_per_scan')) . " " . RES_FUEL . " Allianzrohstoffe</td></tr>";
+                <td>" . StringUtils::formatNumber($config->getInt('crypto_fuel_costs_per_scan')) . " " . ResourceNames::FUEL . " und " . StringUtils::formatNumber($config->getInt('crypto_fuel_costs_per_scan')) . " " . ResourceNames::FUEL . " Allianzrohstoffe</td></tr>";
         echo "<tr><th>Abklingzeit:</th>
                 <td>" . StringUtils::formatTimespan($fleetScanService->calculateCooldown($cryptoCenterLevel)) . " (-" . StringUtils::formatTimespan($config->getInt("crypto_cooldown_reduction_per_level")) . " pro Stufe, minimal " . StringUtils::formatTimespan($config->getInt("crypto_min_cooldown")) . ")</td></tr>";
         $statusText = $userCooldownDiff > 0 ? "Bereit in <span id=\"cdcd\">" . StringUtils::formatTimespan($userCooldownDiff) . "</span>" : "Bereit";
@@ -163,9 +171,9 @@ if ($config->getBoolean('crypto_enable')) {
                     </script>";
 
             if ($planet->resFuel >= $config->getInt('crypto_fuel_costs_per_scan')) {
-                echo '<input type="submit" name="scan" value="Analyse für ' . StringUtils::formatNumber($config->getInt('crypto_fuel_costs_per_scan')) . ' ' . RES_FUEL . ' starten" />';
+                echo '<input type="submit" name="scan" value="Analyse für ' . StringUtils::formatNumber($config->getInt('crypto_fuel_costs_per_scan')) . ' ' . ResourceNames::FUEL . ' starten" />';
             } else {
-                echo "Zuwenig Rohstoffe für eine Analyse vorhanden, " . StringUtils::formatNumber($config->getInt('crypto_fuel_costs_per_scan')) . " " . RES_FUEL . " benötigt, " . StringUtils::formatNumber($planet->resFuel) . " vorhanden!";
+                echo "Zuwenig Rohstoffe für eine Analyse vorhanden, " . StringUtils::formatNumber($config->getInt('crypto_fuel_costs_per_scan')) . " " . ResourceNames::FUEL . " benötigt, " . StringUtils::formatNumber($planet->resFuel) . " vorhanden!";
             }
             echo '</form>';
             echo '</body>';

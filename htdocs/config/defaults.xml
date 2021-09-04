@@ -429,34 +429,8 @@ https://etoa.ch</v>
       <v comment="Maximaler Marktkurs" type="float">10</v>
     </item>
 
-    <item name="default_image_path" cat="7">
-      <v comment="Standard-Bildpaket" type="text">images/imagepacks/Discovery</v>
-    </item>
     <item name="default_css_style" cat="7">
       <v comment="Standard Design" type="text">Revolution</v>
-    </item>
-    <item name="imagepack_zip_format" cat="7">
-      <v comment="Zip-Format f&#xFC;r Bildpakete" type="text">zip</v>
-    </item>
-    <item name="imagepack_predirectory" cat="7">
-      <v comment="Bildpaket-Vorverzeichniss" type="text"/>
-    </item>
-    <item name="imagesize" cat="7">
-      <v comment="Bildgr&#xF6;sse Gross" type="int">220</v>
-      <p1 comment="Bildgr&#xF6;sse Mittel" type="int">120</p1>
-      <p2 comment="Bildgr&#xF6;sse Klein" type="int">40</p2>
-    </item>
-    <item name="num_nebula_images" cat="7">
-      <v comment="Anzahl Sternennebel Bilder" type="int">9</v>
-    </item>
-    <item name="num_asteroid_images" cat="7">
-      <v comment="Anzahl Asteroiden Bilder" type="int">5</v>
-    </item>
-    <item name="num_space_images" cat="7">
-      <v comment="Anzahl Raum Bilder" type="int">10</v>
-    </item>
-    <item name="num_wormhole_images" cat="7">
-      <v comment="Anzahl Wurmloch Bilder" type="int">1</v>
     </item>
 
     <item name="wordbanlist" cat="8">

@@ -5,6 +5,8 @@ use EtoA\Support\StringUtils;
 use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Entity\EntityType;
 use EtoA\Universe\Planet\PlanetRepository;
+use EtoA\Universe\Resources\ResIcons;
+use EtoA\Universe\Resources\ResourceNames;
 use EtoA\User\UserRepository;
 use EtoA\User\UserUniverseDiscoveryService;
 
@@ -102,7 +104,7 @@ if ($id > 0) {
                     $fuelProdBonus = $planet->fuelProductionBonus();
                     $color = $fuelProdBonus >= 0 ? '#0f0' : '#f00';
                     echo "<span style=\"color:" . $color . "\">" . ($fuelProdBonus > 0 ? '+' : '') . $fuelProdBonus . "%</span>";
-                    echo " " . RES_FUEL . "-Produktion </td></tr>";
+                    echo " " . ResourceNames::FUEL . "-Produktion </td></tr>";
 
                     if (filled($planet->description)) {
                         echo "<tr>
@@ -113,9 +115,9 @@ if ($id > 0) {
                     if ($planet->hasDebrisField()) {
                         echo '<tr>
                         <th class="tbltitle">Trümmerfeld:</th><td>
-                        ' . RES_ICON_METAL . "" . StringUtils::formatNumber($planet->wfMetal) . '<br style="clear:both;" />
-                        ' . RES_ICON_CRYSTAL . "" . StringUtils::formatNumber($planet->wfCrystal) . '<br style="clear:both;" />
-                        ' . RES_ICON_PLASTIC . "" . StringUtils::formatNumber($planet->wfPlastic) . '<br style="clear:both;" />
+                        ' . ResIcons::METAL . "" . StringUtils::formatNumber($planet->wfMetal) . '<br style="clear:both;" />
+                        ' . ResIcons::CRYSTAL . "" . StringUtils::formatNumber($planet->wfCrystal) . '<br style="clear:both;" />
+                        ' . ResIcons::PLASTIC . "" . StringUtils::formatNumber($planet->wfPlastic) . '<br style="clear:both;" />
                         </td></tr>';
                     }
 

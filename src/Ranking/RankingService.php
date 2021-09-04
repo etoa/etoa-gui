@@ -4,9 +4,11 @@ declare(strict_types=1);
 
 namespace EtoA\Ranking;
 
+use EtoA\Alliance\AllianceBuildingRepository;
 use EtoA\Alliance\AllianceRepository;
 use EtoA\Alliance\AllianceStats;
 use EtoA\Alliance\AllianceStatsRepository;
+use EtoA\Alliance\AllianceTechnologyRepository;
 use EtoA\Building\Building;
 use EtoA\Building\BuildingDataRepository;
 use EtoA\Building\BuildingPointRepository;
@@ -28,8 +30,10 @@ use EtoA\Technology\TechnologyPointRepository;
 use EtoA\Technology\TechnologyRepository;
 use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Planet\PlanetRepository;
+use EtoA\User\UserPointsRepository;
 use EtoA\User\UserRepository;
 use EtoA\User\UserSearch;
+use EtoA\User\UserStatistic;
 use EtoA\User\UserStatRepository;
 
 /**
@@ -59,29 +63,12 @@ class RankingService
     private UserStatRepository $userStatRepository;
     private UserRepository $userRepository;
     private EntityRepository $entityRepository;
+    private AllianceBuildingRepository $allianceBuildingRepository;
+    private AllianceTechnologyRepository $allianceTechnologyRepository;
+    private UserPointsRepository $userPointsRepository;
 
-    public function __construct(
-        ConfigurationService $config,
-        RuntimeDataStore $runtimeDataStore,
-        AllianceRepository $allianceRepository,
-        AllianceStatsRepository $allianceStatsRepository,
-        PlanetRepository $planetRepository,
-        BuildingRepository $buildingRepository,
-        BuildingDataRepository $buildingDataRepository,
-        BuildingPointRepository $buildingPointRepository,
-        TechnologyRepository $technologyRepository,
-        TechnologyDataRepository $technologyDataRepository,
-        TechnologyPointRepository $technologyPointRepository,
-        ShipRepository $shipRepository,
-        ShipDataRepository $shipDataRepository,
-        FleetRepository $fleetRepository,
-        DefenseRepository $defenseRepository,
-        DefenseDataRepository $defenseDataRepository,
-        RaceDataRepository $raceRepository,
-        UserStatRepository $userStatRepository,
-        UserRepository $userRepository,
-        EntityRepository $entityRepository
-    ) {
+    public function __construct(ConfigurationService $config, RuntimeDataStore $runtimeDataStore, AllianceRepository $allianceRepository, AllianceStatsRepository $allianceStatsRepository, PlanetRepository $planetRepository, BuildingRepository $buildingRepository, BuildingDataRepository $buildingDataRepository, BuildingPointRepository $buildingPointRepository, TechnologyRepository $technologyRepository, TechnologyDataRepository $technologyDataRepository, TechnologyPointRepository $technologyPointRepository, ShipRepository $shipRepository, ShipDataRepository $shipDataRepository, FleetRepository $fleetRepository, DefenseRepository $defenseRepository, DefenseDataRepository $defenseDataRepository, RaceDataRepository $raceRepository, UserStatRepository $userStatRepository, UserRepository $userRepository, EntityRepository $entityRepository, AllianceBuildingRepository $allianceBuildingRepository, AllianceTechnologyRepository $allianceTechnologyRepository, UserPointsRepository $userPointsRepository)
+    {
         $this->config = $config;
         $this->runtimeDataStore = $runtimeDataStore;
         $this->allianceRepository = $allianceRepository;
@@ -102,6 +89,9 @@ class RankingService
         $this->userStatRepository = $userStatRepository;
         $this->userRepository = $userRepository;
         $this->entityRepository = $entityRepository;
+        $this->allianceBuildingRepository = $allianceBuildingRepository;
+        $this->allianceTechnologyRepository = $allianceTechnologyRepository;
+        $this->userPointsRepository = $userPointsRepository;
     }
 
     public function calc(): RankingCalculationResult
@@ -125,39 +115,21 @@ class RankingService
 
         $race = $this->raceRepository->getRaceNames();
 
-        $alliance = $this->allianceRepository->getAllianceTags();
+        $allianceTags = $this->allianceRepository->getAllianceTags();
 
         // Load 'old' ranks
-        $res = dbquery("
-                SELECT
-                    id,
-                    rank,
-                    rank_ships,
-                    rank_tech,
-                    rank_buildings,
-                    rank_exp
-                FROM
-                    user_stats;
-            ");
+        $ranks = $this->userStatRepository->getUserRanks();
         $oldranks = array();
-        if (mysql_num_rows($res) > 0) {
-            while ($arr = mysql_fetch_row($res)) {
-                $oldranks[$arr[0]][0] = $arr[1];
-                $oldranks[$arr[0]][1] = $arr[2];
-                $oldranks[$arr[0]][2] = $arr[3];
-                $oldranks[$arr[0]][3] = $arr[4];
-                $oldranks[$arr[0]][4] = $arr[5];
-            }
+        foreach ($ranks as $userRanks) {
+            $oldranks[$userRanks['id']][0] = $userRanks['rank'];
+            $oldranks[$userRanks['id']][1] = $userRanks['rank_ships'];
+            $oldranks[$userRanks['id']][2] = $userRanks['rank_tech'];
+            $oldranks[$userRanks['id']][3] = $userRanks['rank_buildings'];
+            $oldranks[$userRanks['id']][4] = $userRanks['rank_exp'];
         }
 
-        // Statistiktabelle leeren
-        $this->userStatRepository->truncate();
-
-        $user_stats_query = "";
-        $user_points_query = "";
         $user_rank_highest = [];
         $max_points_building = 0;
-        $points_building_arr = [];
         $max_points = 0;
         $points_arr = [];
 
@@ -165,6 +137,9 @@ class RankingService
         $users = $this->userRepository->searchUsers(UserSearch::create()
             ->notGhost()
             ->inHolidays($includeUsersInHolidas ? null : false));
+
+        /** @var UserStatistic[] $userStats */
+        $userStats = [];
         foreach ($users as $user) {
             // first 24hours no highest rank calculation
             if (time() > (3600 * 24 + $this->config->param1Int("enable_login"))) {
@@ -225,7 +200,7 @@ class RankingService
 
             $techList = $this->technologyRepository->getTechnologyLevels($user->id);
             foreach ($techList as $technologyId => $level) {
-                $p = round($techPoints[$technologyId][$level]);
+                $p = round($techPoints[$technologyId][$level] ?? 0);
                 $points += $p;
                 $points_tech += $p;
             }
@@ -233,421 +208,228 @@ class RankingService
             $points_exp = max(0, $this->shipRepository->getSpecialShipExperienceSumForUser($user->id));
             $points_exp += max(0, $this->fleetRepository->getSpecialShipExperienceSumForUser($user->id));
 
-            // Save part of insert query
-            $user_stats_query .= ",(
-                        " . $user->id . ",
-                        " . $points . ",
-                        " . $points_ships . ",
-                        " . $points_tech . ",
-                        " . $points_building . ",
-                        " . $points_exp . ",
-                        '" . $user->nick . "',
-                        '" . ($user->allianceId > 0 ? $alliance[$user->allianceId] : '') . "',
-                        '" . $user->allianceId . "',
-                        '" . ($user->raceId > 0 ? $race[$user->raceId] : '') . "',
-                        '" . $sx . "',
-                        '" . $sy . "',
-                        '" . ($user->blockedTo > $time ? 1 : 0) . "',
-                        '" . ($user->logoutTime < $time - $inactiveTime ? 1 : 0) . "',
-                        '" . ($user->hmodFrom > 0 ? 1 : 0) . "'
-                    )";
-            $user_points_query .= ",(
-                        '" . $user->id . "',
-                        '" . time() . "',
-                        '" . $points . "',
-                        '" . $points_ships . "',
-                        '" . $points_tech . "',
-                        '" . $points_building . "'
-                    )";
+            $userStats[] = UserStatistic::createFromCalculation(
+                $user,
+                $user->blockedTo > $time,
+                $user->hmodFrom > 0,
+                $user->logoutTime < $time - $inactiveTime,
+                $user->allianceId,
+                $user->allianceId > 0 ? $allianceTags[$user->allianceId] : null,
+                $user->raceId > 0 ? $race[$user->raceId] : null,
+                $sx,
+                $sy,
+                (int) $points,
+                (int) $points_ships,
+                (int) $points_tech,
+                (int) $points_building,
+                $points_exp
+            );
 
             $allpoints += $points;
 
             $max_points_building = max($max_points_building, $points_building);
-            $points_building_arr[$user->id] = $points_building;
         }
 
-        // Save points in memory cached table
-        if ($user_stats_query != "") {
-            dbquery("
-                    INSERT INTO
-                        user_stats
-                    (
-                        id,
-                        points,
-                        points_ships,
-                        points_tech,
-                        points_buildings,
-                        points_exp,
-                        nick,
-                        alliance_tag,
-                        alliance_id,
-                        race_name,
-                        sx,
-                        sy,
-                        blocked,
-                        inactive,
-                        hmod
-                    )
-                    VALUES
-                        " . substr($user_stats_query, 1) . "
-                    ;
-                ");
-        }
-
-        // Save points to user points table
-        if ($user_points_query != "") {
-            dbquery("
-                    INSERT INTO
-                    user_points
-                    (
-                        point_user_id,
-                        point_timestamp,
-                        point_points,
-                        point_ship_points,
-                        point_tech_points,
-                        point_building_points
-                    )
-                    VALUES
-                        " . substr($user_points_query, 1) . "
-                ");
-        }
-
-        // Ranking (Total Points)
-        $res = dbquery("
-            SELECT
-                id,
-                points
-            FROM
-                user_stats
-            ORDER BY
-                points DESC;
-            ");
-        $cnt = 1;
-        if (mysql_num_rows($res) > 0) {
-            while ($arr = mysql_fetch_row($res)) {
-                $rs = 0;
-                if (isset($oldranks[$arr[0]])) {
-                    if ($cnt < $oldranks[$arr[0]][0]) {
-                        $rs = 1;
-                    } elseif ($cnt > $oldranks[$arr[0]][0]) {
-                        $rs = 2;
+        // Calculate rank shift
+        usort($userStats, fn (UserStatistic $a, UserStatistic $b) => $b->points <=> $a->points);
+        if (count($userStats) > 0) {
+            $rank = 1;
+            foreach ($userStats as $stats) {
+                $rankShift = 0;
+                if (isset($oldranks[$stats->userId])) {
+                    if ($rank < $oldranks[$stats->userId][0]) {
+                        $rankShift = 1;
+                    } elseif ($rank > $oldranks[$stats->userId][0]) {
+                        $rankShift = 2;
                     }
                 }
-                dbquery("
-                    UPDATE
-                        user_stats
-                    SET
-                        rank=" . $cnt . ",
-                        rankshift=" . $rs . "
-                    WHERE
-                        id=" . $arr[0] . ";");
-                dbquery("
-                    UPDATE
-                        users
-                    SET
-                        user_rank=" . $cnt . ",
-                        user_points=" . $arr[1] . ",
-                        user_rank_highest=" . min($cnt, $user_rank_highest[$arr[0]]) . "
-                    WHERE
-                        user_id=" . $arr[0] . "
-                    ");
 
-                $max_points = max($max_points, $arr[1]);
-                $points_arr[$arr[0]] = $arr[1];
+                $stats->rank = $rank;
+                $stats->rankShift = $rankShift;
+                $rank++;
 
-                $cnt++;
+                $this->userRepository->updatePointsAndRank($stats, $user_rank_highest[$stats->userId]);
+
+                $max_points = max($max_points, $stats->points);
+                $points_arr[$stats->userId] = $stats->points;
             }
         }
+
+        // Calculate ship rank shift
+        usort($userStats, fn (UserStatistic $a, UserStatistic $b) => $b->shipPoints <=> $a->shipPoints);
+        if (count($userStats) > 0) {
+            $rank = 1;
+            foreach ($userStats as $stats) {
+                $rankShift = 0;
+                if (isset($oldranks[$stats->userId])) {
+                    if ($rank < $oldranks[$stats->userId][1]) {
+                        $rankShift = 1;
+                    } elseif ($rank > $oldranks[$stats->userId][1]) {
+                        $rankShift = 2;
+                    }
+                }
+
+                $stats->rankShips = $rank;
+                $stats->rankShiftShips = $rankShift;
+                $rank++;
+            }
+        }
+
+        // Calculate technology rank shift
+        usort($userStats, fn (UserStatistic $a, UserStatistic $b) => $b->techPoints <=> $a->techPoints);
+        if (count($userStats) > 0) {
+            $rank = 1;
+            foreach ($userStats as $stats) {
+                $rankShift = 0;
+                if (isset($oldranks[$stats->userId])) {
+                    if ($rank < $oldranks[$stats->userId][2]) {
+                        $rankShift = 1;
+                    } elseif ($rank > $oldranks[$stats->userId][2]) {
+                        $rankShift = 2;
+                    }
+                }
+
+                $stats->rankTech = $rank;
+                $stats->rankShiftTech = $rankShift;
+                $rank++;
+            }
+        }
+
+        // Calculate building rank shift
+        usort($userStats, fn (UserStatistic $a, UserStatistic $b) => $b->buildingPoints <=> $a->buildingPoints);
+        if (count($userStats) > 0) {
+            $rank = 1;
+            foreach ($userStats as $stats) {
+                $rankShift = 0;
+                if (isset($oldranks[$stats->userId])) {
+                    if ($rank < $oldranks[$stats->userId][3]) {
+                        $rankShift = 1;
+                    } elseif ($rank > $oldranks[$stats->userId][3]) {
+                        $rankShift = 2;
+                    }
+                }
+
+                $stats->rankBuildings = $rank;
+                $stats->rankShiftBuilding = $rankShift;
+                $rank++;
+            }
+        }
+
+        // Calculate exp rank shift
+        usort($userStats, fn (UserStatistic $a, UserStatistic $b) => $b->expPoints <=> $a->expPoints);
+        if (count($userStats) > 0) {
+            $rank = 1;
+            foreach ($userStats as $stats) {
+                $rankShift = 0;
+                if (isset($oldranks[$stats->userId])) {
+                    if ($rank < $oldranks[$stats->userId][4]) {
+                        $rankShift = 1;
+                    } elseif ($rank > $oldranks[$stats->userId][4]) {
+                        $rankShift = 2;
+                    }
+                }
+
+                $stats->rankExp = $rank;
+                $stats->rankShiftExp = $rankShift;
+                $rank++;
+            }
+        }
+
+        // Statistiktabelle leeren
+        $this->userStatRepository->truncate();
+        // Save points in memory cached table
+        $this->userStatRepository->addEntries($userStats);
+
+        // Save points to user points table
+        $this->userPointsRepository->addEntries($userStats, $time);
 
         // Update boost bonus
         if ($this->config->getBoolean('boost_system_enable') && $max_points_building > 0) {
             $max_prod = $this->config->getFloat('boost_system_max_res_prod_bonus');
             $max_build = $this->config->getFloat('boost_system_max_building_speed_bonus');
-            foreach ($points_arr as $uid => $up) {
-                dbquery("
-                        UPDATE
-                            users
-                        SET
-                            boost_bonus_production=" . ($max_prod * ($max_points - $up) / $max_points) . ",
-                            boost_bonus_building=" . ($max_build * ($max_points - $up) / $max_points) . "
-                        WHERE
-                            user_id=" . $uid . ";");
+            foreach ($points_arr as $userId => $userPoints) {
+                $this->userRepository->updateUserBoost($userId, ($max_prod * ($max_points - $userPoints) / $max_points), ($max_build * ($max_points - $userPoints) / $max_points));
             }
         } else {
-            dbquery("
-                    UPDATE
-                        users
-                    SET
-                        boost_bonus_production=0,
-                        boost_bonus_building=0;");
+            $this->userRepository->resetBoost();
         }
 
         unset($user_rank_highest);
-
-        // Ranking (Ships)
-        $res = dbquery("
-            SELECT
-                id
-            FROM
-                user_stats
-            ORDER BY
-                points_ships DESC;
-            ");
-        $cnt = 1;
-        if (mysql_num_rows($res) > 0) {
-            while ($arr = mysql_fetch_row($res)) {
-                $rs = 0;
-                if (isset($oldranks[$arr[0]])) {
-                    if ($cnt < $oldranks[$arr[0]][1]) {
-                        $rs = 1;
-                    } elseif ($cnt > $oldranks[$arr[0]][1]) {
-                        $rs = 2;
-                    }
-                }
-                dbquery("
-                    UPDATE
-                        user_stats
-                    SET
-                        rank_ships=" . $cnt . ",
-                        rankshift_ships=" . $rs . "
-                    WHERE
-                        id=" . $arr[0] . ";");
-                $cnt++;
-            }
-        }
-
-        // Ranking (Tech)
-        $res = dbquery("
-            SELECT
-                id
-            FROM
-                user_stats
-            ORDER BY
-                points_tech DESC;
-            ");
-        $cnt = 1;
-        if (mysql_num_rows($res) > 0) {
-            while ($arr = mysql_fetch_row($res)) {
-                $rs = 0;
-                if (isset($oldranks[$arr[0]])) {
-                    if ($cnt < $oldranks[$arr[0]][2]) {
-                        $rs = 1;
-                    } elseif ($cnt > $oldranks[$arr[0]][2]) {
-                        $rs = 2;
-                    }
-                }
-                dbquery("
-                    UPDATE
-                        user_stats
-                    SET
-                        rank_tech=" . $cnt . ",
-                        rankshift_tech=" . $rs . "
-                    WHERE
-                        id=" . $arr[0] . ";");
-                $cnt++;
-            }
-        }
-
-        // Ranking (Buildings)
-        $res = dbquery("
-            SELECT
-                id
-            FROM
-                user_stats
-            ORDER BY
-                points_buildings DESC;
-            ");
-        $cnt = 1;
-        if (mysql_num_rows($res) > 0) {
-            while ($arr = mysql_fetch_row($res)) {
-                $rs = 0;
-                if (isset($oldranks[$arr[0]])) {
-                    if ($cnt < $oldranks[$arr[0]][3]) {
-                        $rs = 1;
-                    } elseif ($cnt > $oldranks[$arr[0]][3]) {
-                        $rs = 2;
-                    }
-                }
-                dbquery("
-                    UPDATE
-                        user_stats
-                    SET
-                        rank_buildings=" . $cnt . ",
-                        rankshift_buildings=" . $rs . "
-                    WHERE
-                        id=" . $arr[0] . ";");
-                $cnt++;
-            }
-        }
-
-        // Ranking (Exp)
-        $res = dbquery("
-            SELECT
-                id
-            FROM
-                user_stats
-            ORDER BY
-                points_exp DESC;
-            ");
-        $cnt = 1;
-        if (mysql_num_rows($res) > 0) {
-            while ($arr = mysql_fetch_row($res)) {
-                $rs = 0;
-                if (isset($oldranks[$arr[0]])) {
-                    if ($cnt < $oldranks[$arr[0]][4]) {
-                        $rs = 1;
-                    } elseif ($cnt > $oldranks[$arr[0]][4]) {
-                        $rs = 2;
-                    }
-                }
-                dbquery("
-                    UPDATE
-                        user_stats
-                    SET
-                        rank_exp=" . $cnt . ",
-                        rankshift_exp=" . $rs . "
-                    WHERE
-                        id=" . $arr[0] . ";");
-                $cnt++;
-            }
-        }
         unset($oldranks);
 
         // Allianz Statistik generieren
         $this->allianceStatsRepository->deleteAll();
 
         // Technologien laden
-        $res = dbquery("
-                SELECT
-                    alliance_tech_id,
-                    alliance_tech_costs_factor,
-                    alliance_tech_last_level,
-                    (alliance_tech_costs_metal+alliance_tech_costs_crystal+alliance_tech_costs_plastic+alliance_tech_costs_fuel+alliance_tech_costs_food) as costs
-                FROM
-                    alliance_technologies;
-            ");
-        $techs = array();
-        $level = 1;
-        while ($arr = mysql_fetch_row($res)) {
+        $technologies = $this->allianceTechnologyRepository->findAll();
+        $technologyPoints = [];
+        foreach ($technologies as $technology) {
             $level = 1;
             $points = 0;
-            while ($level <= $arr[2]) {
-                $points += $arr[3] * $arr[1] ** ($level - 1) / $this->config->param1Int('points_update');
-                $techs[$arr[0]][$level] = $points;
+            $baseCost = $technology->getCosts()->getSum();
+            while ($level <= $technology->lastLevel) {
+                $points += $baseCost * $technology->buildFactor ** ($level - 1) / $this->config->param1Int('points_update');
+                $technologyPoints[$technology->id][$level] = $points;
                 $level++;
             }
         }
 
         // Gebäude laden
-        $res = dbquery("
-                SELECT
-                    alliance_building_id,
-                    alliance_building_costs_factor,
-                    alliance_building_last_level,
-                    (alliance_building_costs_metal+alliance_building_costs_crystal+alliance_building_costs_plastic+alliance_building_costs_fuel+alliance_building_costs_food) as costs
-                FROM
-                    alliance_buildings;
-            ");
-        $buildings = array();
-        while ($arr = mysql_fetch_row($res)) {
+        $buildings = $this->allianceBuildingRepository->findAll();
+        $buildingPoints = array();
+        foreach ($buildings as $building) {
             $level = 1;
             $points = 0;
-            while ($level <= $arr[2]) {
-                $points += $arr[3] * $arr[1] ** ($level - 1) / $this->config->param1Int('points_update');
-                $buildings[$arr[0]][$level] = $points;
+            $baseCosts = $building->getCosts()->getSum();
+            while ($level <= $building->lastLevel) {
+                $points += $baseCosts * $building->buildFactor ** ($level - 1) / $this->config->param1Int('points_update');
+                $buildingPoints[$building->id][$level] = $points;
                 $level++;
             }
         }
 
-        $res = dbquery("SELECT
-                a.alliance_tag,
-                a.alliance_name,
-                a.alliance_id,
-                a.alliance_rank_current,
-                COUNT(*) AS cnt,
-                SUM(u.points) AS upoints,
-                AVG(u.points) AS uavg
-            FROM
-                alliances as a
-            INNER JOIN
-                user_stats as u
-            ON
-                u.alliance_id=a.alliance_id
-            GROUP BY
-                a.alliance_id
-            ORDER BY
-                SUM(u.points) DESC
-            ;");
+        $usedAllianceShipPoints = $this->userRepository->getUsedAllianceShipPoints();
 
+        $alliances = $this->allianceRepository->getAllianceStats();
         /** @var AllianceStats[] $allianceStats */
         $allianceStats = [];
-        if (mysql_num_rows($res) > 0) {
-            while ($arr = mysql_fetch_assoc($res)) {
-                $upoints = 0;
-                $bpoints = 0;
-                $tpoints = 0;
-                if ($arr['upoints'] > 0 && $this->config->param2Int('points_update') > 0) {
-                    $upoints = floor($arr['upoints'] / $this->config->param2Int('points_update'));
-                }
-
-                $bres = dbquery("SELECT
-                                     alliance_buildlist_building_id,
-                                    alliance_buildlist_current_level
-                                FROM
-                                    alliance_buildlist
-                                WHERE
-                                    alliance_buildlist_alliance_id='" . $arr['alliance_id'] . "'
-                                    AND alliance_buildlist_current_level>0;");
-                if (mysql_num_rows($bres) > 0) {
-                    while ($barr = mysql_fetch_row($bres)) {
-                        $bpoints += $buildings[$barr[0]][$barr[1]];
-                    }
-                }
-
-                $tres = dbquery("SELECT
-                                     alliance_techlist_tech_id,
-                                    alliance_techlist_current_level
-                                FROM
-                                    alliance_techlist
-                                WHERE
-                                    alliance_techlist_alliance_id='" . $arr['alliance_id'] . "'
-                                    AND alliance_techlist_current_level>0;");
-                if (mysql_num_rows($tres) > 0) {
-                    while ($tarr = mysql_fetch_row($tres)) {
-                        $tpoints += $techs[$tarr[0]][$tarr[1]];
-                    }
-                }
-
-                $sres = dbquery("SELECT
-                                      SUM(`user_alliace_shippoints_used`)
-                                FROM
-                                    users
-                                WHERE
-                                    user_alliance_id='" . $arr['alliance_id'] . "'
-                                GROUP BY
-                                    user_alliance_id
-                                LIMIT 1;");
-                $sarr = mysql_fetch_row($sres);
-
-                $apoints = $tpoints + $bpoints + $sarr[0];
-                $points = $apoints + $upoints;
-
-                $stats = AllianceStats::createFromData(
-                    (int) $arr['alliance_id'],
-                    $arr['alliance_tag'],
-                    $arr['alliance_name'],
-                    (int) $arr['cnt'],
-                    (int) $points,
-                    (int) $upoints,
-                    (int) $apoints,
-                    (int) $tpoints,
-                    (int) $bpoints,
-                    (int) $arr['uavg'],
-                    (int) $arr['cnt'],
-                    (int) $arr['alliance_rank_current']
-                );
-                $allianceStats[] = $stats;
+        foreach ($alliances as $alliance) {
+            $allianceId = (int) $alliance['alliance_id'];
+            $upoints = 0;
+            $bpoints = 0;
+            $tpoints = 0;
+            if ($alliance['upoints'] > 0 && $this->config->param2Int('points_update') > 0) {
+                $upoints = floor($alliance['upoints'] / $this->config->param2Int('points_update'));
             }
+
+            $buildingLevels = $this->allianceBuildingRepository->getLevels($allianceId);
+            foreach ($buildingLevels as $buildingId => $level) {
+                $bpoints += $buildingPoints[$buildingId][$level];
+            }
+
+            $technologyLevels = $this->allianceTechnologyRepository->getLevels($allianceId);
+            foreach ($technologyLevels as $technologyId => $level) {
+                $tpoints += $technologyPoints[$technologyId][$level];
+            }
+
+            $apoints = $tpoints + $bpoints + $usedAllianceShipPoints[$allianceId] ?? 0;
+            $points = $apoints + $upoints;
+
+            $stats = AllianceStats::createFromData(
+                $allianceId,
+                $alliance['alliance_tag'],
+                $alliance['alliance_name'],
+                (int) $alliance['cnt'],
+                (int) $points,
+                (int) $upoints,
+                (int) $apoints,
+                (int) $tpoints,
+                (int) $bpoints,
+                (int) $alliance['uavg'],
+                (int) $alliance['cnt'],
+                (int) $alliance['alliance_rank_current']
+            );
+            $allianceStats[] = $stats;
         }
 
         usort($allianceStats, fn (AllianceStats $a, AllianceStats $b) => $b->points <=> $a->points);
@@ -656,20 +438,13 @@ class RankingService
             foreach ($allianceStats as $stats) {
                 $stats->currentRank = $rank;
                 $this->allianceStatsRepository->add($stats);
-                dbquery("UPDATE
-                                alliances
-                            SET
-                                alliance_points='" . $stats->points . "',
-                                alliance_rank_current='" . $stats->currentRank . "',
-                                alliance_rank_last='" . $stats->lastRank . "'
-                            WHERE
-                                alliance_id='" . $stats->allianceId . "';");
+                $this->allianceRepository->updatePointsAndRank($stats->allianceId, $stats->points, $stats->currentRank, $stats->lastRank);
                 $rank++;
             }
         }
 
-        unset($buildings);
-        unset($techs);
+        unset($buildingPoints);
+        unset($technologyPoints);
 
         // Zeit in Config speichern
         $this->runtimeDataStore->set('statsupdate', (string) time());

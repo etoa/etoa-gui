@@ -1,6 +1,7 @@
 <?PHP
 
 use Pimple\Container;
+use Symfony\Component\Lock\LockFactory;
 
 /**
  * Runs periodic tasks
@@ -10,10 +11,12 @@ class PeriodicTaskRunner
     private $totalDuration = 0;
 
     private Container $app;
+    private LockFactory $lockFactory;
 
     function __construct(Container $app)
     {
         $this->app = $app;
+        $this->lockFactory = $app[LockFactory::class];
     }
 
     function runTask($taskIdentifier)
@@ -24,18 +27,21 @@ class PeriodicTaskRunner
 
             // Acquire mutex
             $tmr = timerStart();
-            $mtx = new Mutex();
-            $mtx->acquire();
-            $acquireDuration = timerStop($tmr);
 
-            // Run task and measure time
-            $tmr = timerStart();
-            $task = new $klass($this->app);
-            $output = $task->run();
-            $duration = timerStop($tmr);
+            $lock = $this->lockFactory->createLock('task-runner');
+            $lock->acquire(true);
 
-            // Release mutex
-            $mtx->release();
+            try {
+                $acquireDuration = timerStop($tmr);
+
+                // Run task and measure time
+                $tmr = timerStart();
+                $task = new $klass($this->app);
+                $output = $task->run();
+                $duration = timerStop($tmr);
+            } finally {
+                $lock->release();
+            }
 
             // Add to total duration
             $this->totalDuration += $duration;
@@ -49,9 +55,9 @@ class PeriodicTaskRunner
                 return $output . "\n";
             }
             return '';
-        } else {
-            throw new Exception("Invalid periodic task identifier");
         }
+
+        throw new Exception("Invalid periodic task identifier");
     }
 
     function getTotalDuration()

@@ -7,6 +7,8 @@ use EtoA\Ship\ShipDataRepository;
 use EtoA\Ship\ShipSearch;
 use EtoA\Support\BBCodeUtils;
 use EtoA\Support\StringUtils;
+use EtoA\Universe\Resources\ResIcons;
+use EtoA\Universe\Resources\ResourceNames;
 
 class GetRaceInfosJsonResponder extends JsonResponder
 {
@@ -17,10 +19,7 @@ class GetRaceInfosJsonResponder extends JsonResponder
 
     function getResponse($params)
     {
-
         $data = array();
-
-        defineImagePaths();
 
         $val = $params['id'];
 
@@ -40,34 +39,34 @@ class GetRaceInfosJsonResponder extends JsonResponder
                 tableStart('', 300);
                 echo "<tr><th colspan=\"2\">St&auml;rken / Schw&auml;chen:</th></tr>";
                 if ($race->metal !== 1.00) {
-                    echo "<tr><th>" . RES_ICON_METAL . "Produktion von " . RES_METAL . ":</td><td>" . StringUtils::formatPercentString($race->metal, true) . "</td></tr>";
+                    echo "<tr><th>" . ResIcons::METAL . "Produktion von " . ResourceNames::METAL . ":</td><td>" . StringUtils::formatPercentString($race->metal, true) . "</td></tr>";
                 }
                 if ($race->crystal !== 1.0) {
-                    echo "<tr><th>" . RES_ICON_CRYSTAL . "Produktion von " . RES_CRYSTAL . ":</td><td>" . StringUtils::formatPercentString($race->crystal, true) . "</td></tr>";
+                    echo "<tr><th>" . ResIcons::CRYSTAL . "Produktion von " . ResourceNames::CRYSTAL . ":</td><td>" . StringUtils::formatPercentString($race->crystal, true) . "</td></tr>";
                 }
                 if ($race->plastic !== 1.0) {
-                    echo "<tr><th>" . RES_ICON_PLASTIC . "Produktion von " . RES_PLASTIC . ":</td><td>" . StringUtils::formatPercentString($race->plastic, true) . "</td></tr>";
+                    echo "<tr><th>" . ResIcons::PLASTIC . "Produktion von " . ResourceNames::PLASTIC . ":</td><td>" . StringUtils::formatPercentString($race->plastic, true) . "</td></tr>";
                 }
                 if ($race->fuel !== 1.0) {
-                    echo "<tr><th>" . RES_ICON_FUEL . "Produktion von " . RES_FUEL . ":</td><td>" . StringUtils::formatPercentString($race->fuel, true) . "</td></tr>";
+                    echo "<tr><th>" . ResIcons::FUEL . "Produktion von " . ResourceNames::FUEL . ":</td><td>" . StringUtils::formatPercentString($race->fuel, true) . "</td></tr>";
                 }
                 if ($race->food !== 1.0) {
-                    echo "<tr><th>" . RES_ICON_FOOD . "Produktion von " . RES_FOOD . ":</td><td>" . StringUtils::formatPercentString($race->food, true) . "</td></tr>";
+                    echo "<tr><th>" . ResIcons::FOOD . "Produktion von " . ResourceNames::FOOD . ":</td><td>" . StringUtils::formatPercentString($race->food, true) . "</td></tr>";
                 }
                 if ($race->power !== 1.0) {
-                    echo "<tr><th>" . RES_ICON_POWER . "Produktion von Energie:</td><td>" . StringUtils::formatPercentString($race->power, true) . "</td></tr>";
+                    echo "<tr><th>" . ResIcons::POWER . "Produktion von Energie:</td><td>" . StringUtils::formatPercentString($race->power, true) . "</td></tr>";
                 }
                 if ($race->population !== 1.0) {
-                    echo "<tr><th>" . RES_ICON_PEOPLE . "Bevölkerungswachstum:</td><td>" . StringUtils::formatPercentString($race->population, true) . "</td></tr>";
+                    echo "<tr><th>" . ResIcons::PEOPLE . "Bevölkerungswachstum:</td><td>" . StringUtils::formatPercentString($race->population, true) . "</td></tr>";
                 }
                 if ($race->researchTime !== 1.0) {
-                    echo "<tr><th>" . RES_ICON_TIME . "Forschungszeit:</td><td>" . StringUtils::formatPercentString($race->researchTime, true, true) . "</td></tr>";
+                    echo "<tr><th>" . ResIcons::TIME . "Forschungszeit:</td><td>" . StringUtils::formatPercentString($race->researchTime, true, true) . "</td></tr>";
                 }
                 if ($race->buildTime !== 1.0) {
-                    echo "<tr><th>" . RES_ICON_TIME . "Bauzeit:</td><td>" . StringUtils::formatPercentString($race->buildTime, true, true) . "</td></tr>";
+                    echo "<tr><th>" . ResIcons::TIME . "Bauzeit:</td><td>" . StringUtils::formatPercentString($race->buildTime, true, true) . "</td></tr>";
                 }
                 if ($race->fleetTime !== 1.0) {
-                    echo "<tr><th>" . RES_ICON_TIME . "Fluggeschwindigkeit:</td><td>" . StringUtils::formatPercentString($race->fleetTime, true) . "</td></tr>";
+                    echo "<tr><th>" . ResIcons::TIME . "Fluggeschwindigkeit:</td><td>" . StringUtils::formatPercentString($race->fleetTime, true) . "</td></tr>";
                 }
                 tableEnd();
                 tableStart('', 500);

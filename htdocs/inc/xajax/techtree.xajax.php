@@ -16,8 +16,6 @@ function reqInfo($id, $cat = 'b')
     $or = new xajaxResponse();
     ob_start();
 
-    defineImagePaths();
-
     /** @var \EtoA\Building\BuildingDataRepository $buildingRepository */
     $buildingRepository = $app[\EtoA\Building\BuildingDataRepository::class];
     $buildingNames = $buildingRepository->getBuildingNames();

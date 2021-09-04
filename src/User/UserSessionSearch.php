@@ -13,7 +13,7 @@ class UserSessionSearch extends AbstractSearch
 
     public function userId(int $userId): self
     {
-        $this->parts[] = 'user_id = :userId';
+        $this->parts[] = 's.user_id = :userId';
         $this->parameters['userId'] = $userId;
 
         return $this;
@@ -29,7 +29,7 @@ class UserSessionSearch extends AbstractSearch
 
     public function ip(string $ip): self
     {
-        $this->parts[] = 'ip_addr = :ip';
+        $this->parts[] = 's.ip_addr = :ip';
         $this->parameters['ip'] = $ip;
 
         return $this;
@@ -37,7 +37,7 @@ class UserSessionSearch extends AbstractSearch
 
     public function userAgentLike(string $userAgent): self
     {
-        $this->parts[] = 'user_agent LIKE :userAgent';
+        $this->parts[] = 's.user_agent LIKE :userAgent';
         $this->parameters['userAgent'] = '%' . $userAgent . '%';
 
         return $this;
@@ -45,7 +45,7 @@ class UserSessionSearch extends AbstractSearch
 
     public function minDuration(int $seconds): self
     {
-        $this->parts[] = '(time_action - time_login)> :minDuration';
+        $this->parts[] = '(s.time_action - s.time_login)> :minDuration';
         $this->parameters['minDuration'] = $seconds;
 
         return $this;

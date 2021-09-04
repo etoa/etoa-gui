@@ -22,7 +22,10 @@ use EtoA\UI\ResourceBoxDrawer;
 use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Universe\Resources\BaseResources;
+use EtoA\Universe\Resources\ResIcons;
+use EtoA\Universe\Resources\ResourceNames;
 use EtoA\User\UserRepository;
+use EtoA\User\UserSearch;
 use Symfony\Component\HttpFoundation\Request;
 
 /** @var ConfigurationService $config */
@@ -56,7 +59,10 @@ $allianceBase = $app[AllianceBase::class];
 /** @var AllianceBuildingRepository $allianceBuildingRepository */
 $allianceBuildingRepository = $app[AllianceBuildingRepository::class];
 
-/** @var Request */
+/** @var \EtoA\Alliance\Alliance $alliance */
+/** @var \EtoA\Alliance\UserAlliancePermission $userAlliancePermission */
+
+/** @var Request $request */
 $request = Request::createFromGlobals();
 
 $planet = $planetRepo->find($cp->id);
@@ -185,7 +191,7 @@ if (isset($_POST['storage_submit']) && checker_verify()) {
             $cp->reloadRes();
 
             // Rohstoffe der Allianz gutschreiben
-            $cu->alliance->changeRes($resources->metal, $resources->crystal, $resources->plastic, $resources->fuel, $resources->food);
+            $allianceRepository->addResources($cu->allianceId(), $resources->metal, $resources->crystal, $resources->plastic, $resources->fuel, $resources->food);
 
             // Spende speichern
             $allianceSpendRepository->addEntry($cu->allianceId(), $cu->getId(), $resources);
@@ -251,7 +257,7 @@ $fleet = $fleetRepository->getUserFleetShipCounts($cu->getId());
 
 $ship_costed = 0;
 if (isset($_POST['ship_submit']) && checker_verify()) {
-    if ($cu->alliance->checkActionRightsNA(AllianceRights::BUILD_MINISTER) || $cu->id == $_POST['user_buy_ship']) {
+    if ($userAlliancePermission->hasRights(AllianceRights::BUILD_MINISTER) || $cu->id == $_POST['user_buy_ship']) {
         // Prüft, ob ein User gewählt wurde
         if ($_POST['user_buy_ship'] > 0) {
             // Gebaute Schiffe laden
@@ -311,8 +317,10 @@ if (isset($_POST['ship_submit']) && checker_verify()) {
 
 
                 if ($total_build_cnt > 0) {
+                    $shipUserId = (int) $_POST['user_buy_ship'];
+                    $allianceMembers = $userRepository->searchUsers(UserSearch::create()->allianceId($cu->allianceId())->user($shipUserId));
                     // Prüft ob Schiffspunkte noch ausreichend sind
-                    if ($cu->alliance->members[$_POST['user_buy_ship']]->allianceShippoints >= $ship_costs) {
+                    if (isset($allianceMembers[$shipUserId]) && $allianceMembers[$shipUserId]->allianceShipPoints >= $ship_costs) {
                         // Zieht Punkte vom Konto ab
                         $userRepository->markAllianceShipPointsAsUsed($_POST['user_buy_ship'], $ship_costs);
                         $ship_costed = $ship_costs;
@@ -382,38 +390,39 @@ $style2 = "";
 $style3 = "";
 $style4 = "";
 
+$alliance = $allianceRepository->getAlliance($alliance->id);
 // Negative Rohstoffe farblich hervorben
-if ($cu->alliance->resMetal < 0) {
+if ($alliance->resMetal < 0) {
     $style0 = "style=\"color:red;\"";
 }
-if ($cu->alliance->resCrystal < 0) {
+if ($alliance->resCrystal < 0) {
     $style1 = "style=\"color:red;\"";
 }
-if ($cu->alliance->resPlastic < 0) {
+if ($alliance->resPlastic < 0) {
     $style2 = "style=\"color:red;\"";
 }
-if ($cu->alliance->resFuel < 0) {
+if ($alliance->resFuel < 0) {
     $style3 = "style=\"color:red;\"";
 }
-if ($cu->alliance->resFood < 0) {
+if ($alliance->resFood < 0) {
     $style4 = "style=\"color:red;\"";
 }
 
 
 tableStart("Allianz Ressourcen");
 echo "<tr>
-                <th style=\"width:20%;vertical-align:middle;\">" . RES_ICON_METAL . " " . RES_METAL . "</th>
-                <th style=\"width:20%;vertical-align:middle;\">" . RES_ICON_CRYSTAL . " " . RES_CRYSTAL . "</th>
-                <th style=\"width:20%;vertical-align:middle;\">" . RES_ICON_PLASTIC . " " . RES_PLASTIC . "</th>
-                <th style=\"width:20%;vertical-align:middle;\">" . RES_ICON_FUEL . " " . RES_FUEL . "</th>
-                <th style=\"width:20%;vertical-align:middle;\">" . RES_ICON_FOOD . " " . RES_FOOD . "</th>
+                <th style=\"width:20%;vertical-align:middle;\">" . ResIcons::METAL . " " . ResourceNames::METAL . "</th>
+                <th style=\"width:20%;vertical-align:middle;\">" . ResIcons::CRYSTAL . " " . ResourceNames::CRYSTAL . "</th>
+                <th style=\"width:20%;vertical-align:middle;\">" . ResIcons::PLASTIC . " " . ResourceNames::PLASTIC . "</th>
+                <th style=\"width:20%;vertical-align:middle;\">" . ResIcons::FUEL . " " . ResourceNames::FUEL . "</th>
+                <th style=\"width:20%;vertical-align:middle;\">" . ResIcons::FOOD . " " . ResourceNames::FOOD . "</th>
             </tr>
             <tr>
-                <td " . $style0 . " id=\"resBoxMetal\">" . StringUtils::formatNumber($cu->alliance->resMetal) . " t</td>
-                <td " . $style1 . " id=\"resBoxCrystal\">" . StringUtils::formatNumber($cu->alliance->resCrystal) . " t</td>
-                <td " . $style2 . "id=\"resBoxPlastic\">" . StringUtils::formatNumber($cu->alliance->resPlastic) . " t</td>
-                <td " . $style3 . "id=\"resBoxFuel\">" . StringUtils::formatNumber($cu->alliance->resFuel) . " t</td>
-                <td " . $style4 . "id=\"resBoxFood\">" . StringUtils::formatNumber($cu->alliance->resFood) . " t</td>
+                <td " . $style0 . " id=\"resBoxMetal\">" . StringUtils::formatNumber($alliance->resMetal) . " t</td>
+                <td " . $style1 . " id=\"resBoxCrystal\">" . StringUtils::formatNumber($alliance->resCrystal) . " t</td>
+                <td " . $style2 . "id=\"resBoxPlastic\">" . StringUtils::formatNumber($alliance->resPlastic) . " t</td>
+                <td " . $style3 . "id=\"resBoxFuel\">" . StringUtils::formatNumber($alliance->resFuel) . " t</td>
+                <td " . $style4 . "id=\"resBoxFood\">" . StringUtils::formatNumber($alliance->resFood) . " t</td>
             </tr>";
 tableEnd();
 
@@ -436,11 +445,10 @@ tableEnd();
 // Gebäude in Auftrag geben
 if (isset($_POST['building_submit']) && checker_verify()) {
     $allianceUser = $userRepository->getUser($cu->getId());
-    if (Alliance::checkActionRights(AllianceRights::BUILD_MINISTER)) {
+    if ($userAlliancePermission->checkHasRights(AllianceRights::BUILD_MINISTER, $page)) {
         if (isset($_POST['building_id']) && $_POST['building_id'] != 0) {
             $buildingId = $request->request->getInt('building_id');
             try {
-                $alliance = $allianceRepository->getAlliance($cu->allianceId());
                 $building = $buildings[$buildingId];
                 $buildingList = $allianceBuildingRepository->getBuildList($alliance->id);
                 $allianceBase->buildBuilding($allianceUser, $alliance, $building, $buildingList[$buildingId] ?? null, AllianceItemRequirementStatus::createForBuildings($buildings, $buildingList));
@@ -456,11 +464,10 @@ if (isset($_POST['building_submit']) && checker_verify()) {
 // Technologie in Auftrag geben
 if (isset($_POST['research_submit']) && checker_verify()) {
     $allianceUser = $userRepository->getUser($cu->getId());
-    if (Alliance::checkActionRights(AllianceRights::BUILD_MINISTER)) {
+    if ($userAlliancePermission->checkHasRights(AllianceRights::BUILD_MINISTER, $page)) {
         if (isset($_POST['research_id']) && $_POST['research_id'] != 0) {
             $technologyId = $request->request->getInt('research_id');
             try {
-                $alliance = $allianceRepository->getAlliance($cu->allianceId());
                 $technology = $technologies[$technologyId];
                 $technologyList = $allianceTechnologyRepository->getTechnologyList($alliance->id);
                 $allianceBase->buildTechnology($allianceUser, $alliance, $technology, $technologyList[$technologyId] ?? null, AllianceItemRequirementStatus::createForTechnologies($technologies, $technologyList));
@@ -476,11 +483,11 @@ $alliance = $allianceRepository->getAlliance($cu->allianceId());
 $allianceResources = $alliance->getResources();
 
 $resName = array(
-    0 => RES_METAL,
-    1 => RES_CRYSTAL,
-    2 => RES_PLASTIC,
-    3 => RES_FUEL,
-    4 => RES_FOOD
+    0 => ResourceNames::METAL,
+    1 => ResourceNames::CRYSTAL,
+    2 => ResourceNames::PLASTIC,
+    3 => ResourceNames::FUEL,
+    4 => ResourceNames::FOOD
 );
 
 
@@ -565,11 +572,11 @@ if (count($buildings) > 0) {
 
             echo "<th width=\"7%\">Stufe</th>
                 <th width=\"18%\">Zeit</th>
-                <th width=\"15%\">" . RES_METAL . "</th>
-                <th width=\"15%\">" . RES_CRYSTAL . "</th>
-                <th width=\"15%\">" . RES_PLASTIC . "</th>
-                <th width=\"15%\">" . RES_FUEL . "</th>
-                <th width=\"15%\">" . RES_FOOD . "</th>
+                <th width=\"15%\">" . ResourceNames::METAL . "</th>
+                <th width=\"15%\">" . ResourceNames::CRYSTAL . "</th>
+                <th width=\"15%\">" . ResourceNames::PLASTIC . "</th>
+                <th width=\"15%\">" . ResourceNames::FUEL . "</th>
+                <th width=\"15%\">" . ResourceNames::FOOD . "</th>
             </tr><tr>
                 <td width=\"7%\">" . ($level + 1) . "</th>
                 <td width=\"18%\">" . StringUtils::formatTimespan($building->calculateBuildTime($level+ 1)) . "</th>
@@ -674,11 +681,11 @@ if ($allianceResearchLevel > 0 && count($technologies) > 0) {
 
             echo "<th width=\"7%\">Stufe</th>
                 <th width=\"18%\">Zeit</th>
-                <th width=\"15%\">" . RES_METAL . "</th>
-                <th width=\"15%\">" . RES_CRYSTAL . "</th>
-                <th width=\"15%\">" . RES_PLASTIC . "</th>
-                <th width=\"15%\">" . RES_FUEL . "</th>
-                <th width=\"15%\">" . RES_FOOD . "</th>
+                <th width=\"15%\">" . ResourceNames::METAL . "</th>
+                <th width=\"15%\">" . ResourceNames::CRYSTAL . "</th>
+                <th width=\"15%\">" . ResourceNames::PLASTIC . "</th>
+                <th width=\"15%\">" . ResourceNames::FUEL . "</th>
+                <th width=\"15%\">" . ResourceNames::FOOD . "</th>
             </tr><tr>
                 <td width=\"7%\">" . ($level + 1) . "</th>
                 <td width=\"18%\">" . StringUtils::formatTimespan($technology->calculateBuildTime($level + 1)) . "</th>
@@ -724,35 +731,35 @@ tableStart("Rohstoffe einzahlen");
 
 // Titan
 echo "<tr>
-                <th style=\"width:100px;\">" . RES_METAL . "</th>
+                <th style=\"width:100px;\">" . ResourceNames::METAL . "</th>
                 <td style=\"width:150px;\">
                     <input type=\"text\" value=\"0\" name=\"spend_metal\" id=\"spend_metal\" size=\"9\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value," . $cp->resMetal . ",'','');\"> <a href=\"javascript:;\" onclick=\"document.getElementById('spend_metal').value='" . StringUtils::formatNumber($cp->resMetal) . "';\">alles</a>
                 </td>
             </tr>";
 // Silizium
 echo "<tr>
-                <th>" . RES_CRYSTAL . "</th>
+                <th>" . ResourceNames::CRYSTAL . "</th>
                 <td>
                     <input type=\"text\" value=\"0\" name=\"spend_crystal\" id=\"spend_crystal\" size=\"9\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value," . $cp->resCrystal . ",'','');\"> <a href=\"javascript:;\" onclick=\"document.getElementById('spend_crystal').value='" . StringUtils::formatNumber($cp->resCrystal) . "';\">alles</a>
                 </td>
             </tr>";
 // PVC
 echo "<tr>
-                <th>" . RES_PLASTIC . "</th>
+                <th>" . ResourceNames::PLASTIC . "</th>
                 <td>
                     <input type=\"text\" value=\"0\" name=\"spend_plastic\" id=\"spend_plastic\" size=\"9\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value," . $cp->resPlastic . ",'','');\"> <a href=\"javascript:;\" onclick=\"document.getElementById('spend_plastic').value='" . StringUtils::formatNumber($cp->resPlastic) . "';\">alles</a>
                 </td>
             </tr>";
 // Tritium
 echo "<tr>
-                <th>" . RES_FUEL . "</th>
+                <th>" . ResourceNames::FUEL . "</th>
                 <td>
                     <input type=\"text\" value=\"0\" name=\"spend_fuel\" id=\"spend_fuel\" size=\"9\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value," . $cp->resFuel . ",'','');\"> <a href=\"javascript:;\" onclick=\"document.getElementById('spend_fuel').value='" . StringUtils::formatNumber($cp->resFuel) . "';\">alles</a>
                 </td>
             </tr>";
 // Nahrung
 echo "<tr>
-                <th>" . RES_FOOD . "</th>
+                <th>" . ResourceNames::FOOD . "</th>
                 <td>
                     <input type=\"text\" value=\"0\" name=\"spend_food\" id=\"spend_food\" size=\"9\" maxlength=\"15\" onkeyup=\"FormatNumber(this.id,this.value," . $cp->resFood . ",'','');\"> <a href=\"javascript:;\" onclick=\"document.getElementById('spend_food').value='" . StringUtils::formatNumber($cp->resFood) . "';\">alles</a>
                 </td>
@@ -807,8 +814,9 @@ echo "<tr>
                 <select id=\"user_spends\" name=\"user_spends\">
                         <option value=\"0\">alle</option>";
 // Allianzuser
-foreach ($cu->alliance->members as $id => $data) {
-    echo "<option value=\"" . $id . "\">" . $data . "</option>";
+$allianceMemberNames = $userRepository->searchUserNicknames(UserSearch::create()->allianceId($cu->allianceId()));
+foreach ($allianceMemberNames as $userId => $userNick) {
+    echo "<option value=\"" . $userId . "\">" . $userNick . "</option>";
 }
 echo "</select>
             </td>
@@ -828,10 +836,13 @@ echo "</form>";
 
 // Einzahlungen werden summiert und ausgegeben
 if ($sum) {
+    $user_message = "";
+
     if ($user > 0) {
-        $user_message = "von " . $cu->alliance->members[$user] . " ";
-    } else {
-        $user_message = "";
+        $allianceMemberNames = $userRepository->searchUserNicknames(UserSearch::create()->allianceId($cu->allianceId()));
+        if (isset($allianceMemberNames[$user])) {
+            $user_message = "von " . $allianceMemberNames[$user] . " ";
+        }
     }
 
     echo "Es werden die bisher eingezahlten Rohstoffe " . $user_message . " angezeigt.<br><br>";
@@ -841,11 +852,11 @@ if ($sum) {
     if ($resources->getSum() > 0) {
         tableStart("Total eingezahlte Rohstoffe " . $user_message . "");
         echo "<tr>
-                        <th style=\"width:20%\">" . RES_METAL . "</th>
-                        <th style=\"width:20%\">" . RES_CRYSTAL . "</th>
-                        <th style=\"width:20%\">" . RES_PLASTIC . "</th>
-                        <th style=\"width:20%\">" . RES_FUEL . "</th>
-                        <th style=\"width:20%\">" . RES_FOOD . "</th>
+                        <th style=\"width:20%\">" . ResourceNames::METAL . "</th>
+                        <th style=\"width:20%\">" . ResourceNames::CRYSTAL . "</th>
+                        <th style=\"width:20%\">" . ResourceNames::PLASTIC . "</th>
+                        <th style=\"width:20%\">" . ResourceNames::FUEL . "</th>
+                        <th style=\"width:20%\">" . ResourceNames::FOOD . "</th>
                     </tr>";
         echo "<tr>
                         <td>" . StringUtils::formatNumber($resources->metal) . "</td>
@@ -863,13 +874,14 @@ if ($sum) {
 }
 // Einzahlungen werden einzelen ausgegeben
 else {
+    $user_message = "";
 
     if ($user > 0) {
-        $user_message = "von " . $cu->alliance->members[$user] . " ";
-    } else {
-        $user_message = "";
+        $allianceMemberNames = $userRepository->searchUserNicknames(UserSearch::create()->allianceId($cu->allianceId()));
+        if (isset($allianceMemberNames[$user])) {
+            $user_message = "von " . $allianceMemberNames[$user] . " ";
+        }
     }
-
 
     if ($limit > 0) {
         if ($limit == 1) {
@@ -885,14 +897,15 @@ else {
     // Läd Einzahlungen
     $spendEntries = $allianceSpendRepository->getSpent($cu->allianceId(), $user, $limit);
     if (count($spendEntries) > 0) {
+        $allianceMemberNames = $userRepository->searchUserNicknames(UserSearch::create()->allianceId($cu->allianceId()));
         foreach ($spendEntries as $entry) {
-            tableStart("" . $cu->alliance->members[$entry->userId] . " - " . StringUtils::formatDate($entry->time) . "");
+            tableStart("" . $allianceMemberNames[$entry->userId] . " - " . StringUtils::formatDate($entry->time) . "");
             echo "<tr>
-                            <th style=\"width:20%\">" . RES_METAL . "</th>
-                            <th style=\"width:20%\">" . RES_CRYSTAL . "</th>
-                            <th style=\"width:20%\">" . RES_PLASTIC . "</th>
-                            <th style=\"width:20%\">" . RES_FUEL . "</th>
-                            <th style=\"width:20%\">" . RES_FOOD . "</th>
+                            <th style=\"width:20%\">" . ResourceNames::METAL . "</th>
+                            <th style=\"width:20%\">" . ResourceNames::CRYSTAL . "</th>
+                            <th style=\"width:20%\">" . ResourceNames::PLASTIC . "</th>
+                            <th style=\"width:20%\">" . ResourceNames::FUEL . "</th>
+                            <th style=\"width:20%\">" . ResourceNames::FOOD . "</th>
                         </tr>";
             echo "<tr>
                             <td>" . StringUtils::formatNumber($entry->metal) . "</td>
@@ -934,7 +947,7 @@ if ($allianceShipyardLevel > 0) {
     tableStart("Guthaben Übersicht");
 
     echo "<tr>";
-    if ($cu->alliance->resMetal < 0 || $cu->alliance->resCrystal < 0 || $cu->alliance->resPlastic < 0 || $cu->alliance->resFuel < 0 || $cu->alliance->resFood < 0) {
+    if ($alliance->resMetal < 0 || $alliance->resCrystal < 0 || $alliance->resPlastic < 0 || $alliance->resFuel < 0 || $alliance->resFood < 0) {
         echo "<td style=\"text-align:center;\"><span " . tm("Produktionsstop", "Die Produktion wurde unterbrochen, da negative Rohstoffe vorhanden sind.") . ">Schiffsteile pro Stunde: 0</span></td>";
     } else {
         // if changed, also change classes/alliance.class.php

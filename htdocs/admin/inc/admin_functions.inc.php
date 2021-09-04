@@ -2,6 +2,7 @@
 
 use Doctrine\DBAL\Query\QueryBuilder;
 use EtoA\Admin\AdminUserRepository;
+use EtoA\Alliance\AllianceRepository;
 use EtoA\Building\BuildingDataRepository;
 use EtoA\Defense\DefenseDataRepository;
 use EtoA\HostCache\NetworkNameService;
@@ -23,6 +24,7 @@ use EtoA\Ship\ShipDataRepository;
 use EtoA\Support\BBCodeUtils;
 use EtoA\Support\StringUtils;
 use EtoA\Technology\TechnologyDataRepository;
+use EtoA\Universe\Resources\ResourceNames;
 use EtoA\User\UserRepository;
 
 /**
@@ -617,7 +619,7 @@ function showAttackAbuseLogs($args = null, $limit = -1, $load = true)
 
 function showFleetLogs($args = null, $limit = 0)
 {
-    global $resNames, $app;
+    global $app;
 
     /** @var UserRepository $userRepository */
     $userRepository = $app[UserRepository::class];
@@ -744,7 +746,7 @@ function showFleetLogs($args = null, $limit = 0)
             foreach ($esres as $sd) {
                 array_push($eres, $sd);
             }
-            foreach ($resNames as $k => $v) {
+            foreach (ResourceNames::NAMES as $k => $v) {
                 echo "<tr><td>" . $v . "</td><td>" . StringUtils::formatNumber((int) $sres[$k]) . "</td><td>" . StringUtils::formatNumber((int) $eres[$k]) . "</td></tr>";
             }
             echo "<tr><td>Bewoner</td><td>" . StringUtils::formatNumber((int) $sres[5]) . "</td><td>" . StringUtils::formatNumber((int) $eres[5]) . "</td></tr>";
@@ -764,7 +766,7 @@ function showFleetLogs($args = null, $limit = 0)
                 foreach ($esres as $sd) {
                     array_push($eres, $sd);
                 }
-                foreach ($resNames as $k => $v) {
+                foreach (ResourceNames::NAMES as $k => $v) {
                     echo "<tr><td>" . $v . "</td><td>" . StringUtils::formatNumber((int) $sres[$k]) . "</td><td>" . StringUtils::formatNumber((int) $eres[$k]) . "</td></tr>";
                 }
                 echo "<tr><td>Bewoner</td><td>" . StringUtils::formatNumber((int) $sres[5]) . "</td><td>" . StringUtils::formatNumber((int) $eres[5]) . "</td></tr>";
@@ -868,6 +870,8 @@ function showGameLogs($args = null, $limit = 0)
 
     /** @var GameLogRepository $gameLogRepository */
     $gameLogRepository = $app[GameLogRepository::class];
+    /** @var AllianceRepository $alianceRepository */
+    $alianceRepository = $app[AllianceRepository::class];
 
     $paginationLimit = 25;
 
@@ -966,7 +970,7 @@ function showGameLogs($args = null, $limit = 0)
         </tr>";
         foreach ($logs as $log) {
             $tu = ($log->userId > 0) ? new User($log->userId) : "-";
-            $ta = ($log->allianceId > 0) ? new Alliance($log->allianceId) : "-";
+            $ta = ($log->allianceId > 0) ? $alianceRepository->getAlliance($log->allianceId) : null;
             $te = ($log->entityId > 0) ? Entity::createFactoryById($log->entityId) : "-";
             switch ($log->facility) {
                 case GameLogFacility::BUILD:
@@ -1043,7 +1047,7 @@ function showGameLogs($args = null, $limit = 0)
             <td>" . LogSeverity::SEVERITIES[$log->severity] . "</td>
             <td>" . GameLogFacility::FACILITIES[$log->facility] . "</td>
             <td>" . $tu . "</td>
-            <td>" . $ta . "</td>
+            <td>" . ($ta !== null ? $ta->nameWithTag : '') . "</td>
             <td>" . $te . "</td>
             <td>" . $ob . "</td>
             <td>" . $obStatus . "</td>

@@ -1,5 +1,7 @@
 <?php
 
+use EtoA\Universe\Resources\ResourceNames;
+
 $_SESSION['alliance_id'] = $cu->allianceId();
 
 if (isset($_GET['searchcat']) && $_GET['searchcat'] == "auctions")
@@ -34,13 +36,13 @@ echo "</select></div>";
 // Resource filter
 echo "<div id=\"market_search_filter_container_res\" style=\"\">";
 echo "<span>Angebot:</span>";
-foreach ($resNames as $rk => $rn) {
+foreach (ResourceNames::NAMES as $rk => $rn) {
     echo "<input id=\"market_search_filter_supply_" . $rk . "\" name=\"market_search_filter_supply_" . $rk . "\" type=\"checkbox\" value=\"1\" checked=\"checked\"  onclick=\"applySearchFilter();\" />
         <label for=\"market_search_filter_supply_" . $rk . "\" class=\"rescolor" . $rk . "\">" . $rn . "</label>";
 }
 echo "<br/>";
 echo "<span>Preis:</span>";
-foreach ($resNames as $rk => $rn) {
+foreach (ResourceNames::NAMES as $rk => $rn) {
     echo "<input id=\"market_search_filter_demand_" . $rk . "\" name=\"market_search_filter_demand_" . $rk . "\" type=\"checkbox\" value=\"1\" checked=\"checked\" onclick=\"applySearchFilter();\" />
         <label for=\"market_search_filter_demand_" . $rk . "\" class=\"rescolor" . $rk . "\">" . $rn . "</label>";
 }
@@ -52,7 +54,7 @@ echo "</div>";
 // Ship filter
 echo "<div id=\"market_search_filter_container_ship\" style=\"display:none;\">";
 echo "<span>Preis:</span>";
-foreach ($resNames as $rk => $rn) {
+foreach (ResourceNames::NAMES as $rk => $rn) {
     echo "<input id=\"market_ship_search_filter_demand_" . $rk . "\" name=\"market_ship_search_filter_demand_" . $rk . "\" type=\"checkbox\" value=\"1\" checked=\"checked\" onclick=\"applySearchFilter();\" />
         <label for=\"market_ship_search_filter_demand_" . $rk . "\" class=\"rescolor" . $rk . "\">" . $rn . "</label>";
 }

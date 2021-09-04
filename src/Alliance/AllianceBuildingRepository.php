@@ -68,6 +68,23 @@ class AllianceBuildingRepository extends AbstractRepository
             ->fetchOne();
     }
 
+    /**
+     * @return array<int, int>
+     */
+    public function getLevels(int $allianceId): array
+    {
+        return $this->createQueryBuilder()
+            ->select('alliance_buildlist_building_id, alliance_buildlist_current_level')
+            ->from('alliance_buildlist')
+            ->where('alliance_buildlist_alliance_id = :alliance')
+            ->andWhere('alliance_buildlist_current_level > 0')
+            ->setParameters([
+                'alliance' => $allianceId,
+            ])
+            ->execute()
+            ->fetchAllKeyValue();
+    }
+
     public function getCooldown(int $allianceId, int $buildingId): int
     {
         return (int) $this->createQueryBuilder()
@@ -241,5 +258,30 @@ class AllianceBuildingRepository extends AbstractRepository
             ->where('alliance_buildlist_alliance_id = :allianceId')
             ->setParameter('allianceId', $allianceId)
             ->execute();
+    }
+
+
+    /**
+     * @return array<int, int>
+     */
+    public function getShipyardLevelsWhereNonNegativeResources(): array
+    {
+        $data = $this->createQueryBuilder()
+            ->select('alliance_id, alliance_buildlist_current_level')
+            ->addSelect('alliance_buildlist_current_level')
+            ->from('alliances')
+            ->innerJoin('alliances', 'alliance_buildlist', 'alliance_buildlist', 'alliance_id = alliance_buildlist_alliance_id')
+            ->where('alliance_buildlist_building_id = :buildingId')
+            ->andWhere('alliance_res_metal >= 0')
+            ->andWhere('alliance_res_crystal >= 0')
+            ->andWhere('alliance_res_plastic >= 0')
+            ->andWhere('alliance_res_fuel >= 0')
+            ->andWhere('alliance_res_food >= 0')
+            ->andWhere('alliance_buildlist_current_level > 0')
+            ->setParameter('buildingId', AllianceBuildingId::SHIPYARD)
+            ->execute()
+            ->fetchAllKeyValue();
+
+        return array_map(fn ($value) => (int) $value, $data);
     }
 }

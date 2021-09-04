@@ -17,10 +17,12 @@ use EtoA\Log\GameLogRepository;
 use EtoA\Log\LogSeverity;
 use EtoA\Support\StringUtils;
 use EtoA\Specialist\SpecialistService;
+use EtoA\Technology\TechnologyId;
 use EtoA\Technology\TechnologyRepository;
 use EtoA\UI\ResourceBoxDrawer;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Universe\Resources\PreciseResources;
+use EtoA\Universe\Resources\ResourceNames;
 use EtoA\User\UserPropertiesRepository;
 
 /** @var ConfigurationService $config */
@@ -85,7 +87,7 @@ $planet = $planetRepo->find($cp->id);
 $tabulator = 1;
 
 //Fabrik Level und Arbeiter laden
-$factoryBuilding = $buildingRepository->getEntityBuilding($cu->getId(), $planet->id, FACTORY_ID);
+$factoryBuilding = $buildingRepository->getEntityBuilding($cu->getId(), $planet->id, BuildingId::DEFENSE);
 
 // Prüfen ob Fabrik gebaut ist
 if ($factoryBuilding !== null && $factoryBuilding->currentLevel > 0) {
@@ -130,8 +132,8 @@ if ($factoryBuilding !== null && $factoryBuilding->currentLevel > 0) {
         $technologyRepository = $app[TechnologyRepository::class];
         $techlist = $technologyRepository->getTechnologyLevels($cu->getId());
 
-        if (isset($techlist[GEN_TECH_ID]) && $techlist[GEN_TECH_ID] > 0) {
-            $gen_tech_level = $techlist[GEN_TECH_ID];
+        if (isset($techlist[TechnologyId::GEN]) && $techlist[TechnologyId::GEN] > 0) {
+            $gen_tech_level = $techlist[TechnologyId::GEN];
         }
 
         //Gebäude laden
@@ -230,7 +232,7 @@ if ($factoryBuilding !== null && $factoryBuilding->currentLevel > 0) {
         }
         echo '</td></tr>';
         if ($cancel_res_factor > 0) {
-            echo "<tr><td>Ressourcenrückgabe bei Abbruch:</td><td>" . ($cancel_res_factor * 100) . "% (ohne " . RES_FOOD . ", " . (DEFQUEUE_CANCEL_END * 100) . "% maximal)</td></tr>";
+            echo "<tr><td>Ressourcenrückgabe bei Abbruch:</td><td>" . ($cancel_res_factor * 100) . "% (ohne " . ResourceNames::FOOD . ", " . (DEFQUEUE_CANCEL_END * 100) . "% maximal)</td></tr>";
             $cancelable = true;
         } else {
             echo "<tr><td>Abbruchmöglichkeit:</td><td>Stufe " . DEFQUEUE_CANCEL_MIN_LEVEL . " erforderlich!</td></tr>";
@@ -285,7 +287,7 @@ if ($factoryBuilding !== null && $factoryBuilding->currentLevel > 0) {
         // people working changed
         if (isset($_POST['submit_people_form'])) {
             if (count($queue) === 0) {
-                $buildingRepository->setPeopleWorking($planet->id, DEF_BUILDING_ID, StringUtils::parseFormattedNumber($_POST['peopleWorking']));
+                $buildingRepository->setPeopleWorking($planet->id, BuildingId::DEFENSE, StringUtils::parseFormattedNumber($_POST['peopleWorking']));
                 //success_msg("Arbeiter zugeteilt!");
             } else
                 error_msg('Arbeiter konnten nicht zugeteilt werden!');
@@ -511,18 +513,18 @@ if ($factoryBuilding !== null && $factoryBuilding->currentLevel > 0) {
                         [b]Eingesetzter Spezialist:[/b] " . ($specialist !== null ? $specialist->name : "Kein Spezialist") . "
 
                         [b]Kosten[/b]
-                        [b]" . RES_METAL . ":[/b] " . StringUtils::formatNumber($bc['metal']) . "
-                        [b]" . RES_CRYSTAL . ":[/b] " . StringUtils::formatNumber($bc['crystal']) . "
-                        [b]" . RES_PLASTIC . ":[/b] " . StringUtils::formatNumber($bc['plastic']) . "
-                        [b]" . RES_FUEL . ":[/b] " . StringUtils::formatNumber($bc['fuel']) . "
-                        [b]" . RES_FOOD . ":[/b] " . StringUtils::formatNumber($bc['food']) . "
+                        [b]" . ResourceNames::METAL . ":[/b] " . StringUtils::formatNumber($bc['metal']) . "
+                        [b]" . ResourceNames::CRYSTAL . ":[/b] " . StringUtils::formatNumber($bc['crystal']) . "
+                        [b]" . ResourceNames::PLASTIC . ":[/b] " . StringUtils::formatNumber($bc['plastic']) . "
+                        [b]" . ResourceNames::FUEL . ":[/b] " . StringUtils::formatNumber($bc['fuel']) . "
+                        [b]" . ResourceNames::FOOD . ":[/b] " . StringUtils::formatNumber($bc['food']) . "
 
                         [b]Rohstoffe auf dem Planeten[/b]
-                        [b]" . RES_METAL . ":[/b] " . StringUtils::formatNumber($planet->resMetal - $totalMetal) . "
-                        [b]" . RES_CRYSTAL . ":[/b] " . StringUtils::formatNumber($planet->resCrystal - $totalCrystal) . "
-                        [b]" . RES_PLASTIC . ":[/b] " . StringUtils::formatNumber($planet->resPlastic - $totalPlastic) . "
-                        [b]" . RES_FUEL . ":[/b] " . StringUtils::formatNumber($planet->resFuel - $totalFuel) . "
-                        [b]" . RES_FOOD . ":[/b] " . StringUtils::formatNumber($planet->resFood - $totalFood);
+                        [b]" . ResourceNames::METAL . ":[/b] " . StringUtils::formatNumber($planet->resMetal - $totalMetal) . "
+                        [b]" . ResourceNames::CRYSTAL . ":[/b] " . StringUtils::formatNumber($planet->resCrystal - $totalCrystal) . "
+                        [b]" . ResourceNames::PLASTIC . ":[/b] " . StringUtils::formatNumber($planet->resPlastic - $totalPlastic) . "
+                        [b]" . ResourceNames::FUEL . ":[/b] " . StringUtils::formatNumber($planet->resFuel - $totalFuel) . "
+                        [b]" . ResourceNames::FOOD . ":[/b] " . StringUtils::formatNumber($planet->resFood - $totalFood);
 
                         $gameLogRepository->add(GameLogFacility::DEF, LogSeverity::INFO, $log_text, $cu->id, $cu->allianceId, $planet->id, $def_id, 1, $build_cnt);
                     } else {
@@ -608,18 +610,18 @@ if ($factoryBuilding !== null && $factoryBuilding->currentLevel > 0) {
 
                 [b]Erhaltene Rohstoffe[/b]
                 [b]Faktor:[/b] " . $cancel_res_factor . "
-                [b]" . RES_METAL . ":[/b] " . StringUtils::formatNumber($ret['metal']) . "
-                [b]" . RES_CRYSTAL . ":[/b] " . StringUtils::formatNumber($ret['crystal']) . "
-                [b]" . RES_PLASTIC . ":[/b] " . StringUtils::formatNumber($ret['plastic']) . "
-                [b]" . RES_FUEL . ":[/b] " . StringUtils::formatNumber($ret['fuel']) . "
-                [b]" . RES_FOOD . ":[/b] " . StringUtils::formatNumber($ret['food']) . "
+                [b]" . ResourceNames::METAL . ":[/b] " . StringUtils::formatNumber($ret['metal']) . "
+                [b]" . ResourceNames::CRYSTAL . ":[/b] " . StringUtils::formatNumber($ret['crystal']) . "
+                [b]" . ResourceNames::PLASTIC . ":[/b] " . StringUtils::formatNumber($ret['plastic']) . "
+                [b]" . ResourceNames::FUEL . ":[/b] " . StringUtils::formatNumber($ret['fuel']) . "
+                [b]" . ResourceNames::FOOD . ":[/b] " . StringUtils::formatNumber($ret['food']) . "
 
                 [b]Rohstoffe auf dem Planeten[/b]
-                [b]" . RES_METAL . ":[/b] " . StringUtils::formatNumber($planet->resMetal + $ret['metal']) . "
-                [b]" . RES_CRYSTAL . ":[/b] " . StringUtils::formatNumber($planet->resCrystal + $ret['crystal']) . "
-                [b]" . RES_PLASTIC . ":[/b] " . StringUtils::formatNumber($planet->resPlastic + $ret['plastic']) . "
-                [b]" . RES_FUEL . ":[/b] " . StringUtils::formatNumber($planet->resFuel + $ret['fuel']) . "
-                [b]" . RES_FOOD . ":[/b] " . StringUtils::formatNumber($planet->resFood + $ret['food']);
+                [b]" . ResourceNames::METAL . ":[/b] " . StringUtils::formatNumber($planet->resMetal + $ret['metal']) . "
+                [b]" . ResourceNames::CRYSTAL . ":[/b] " . StringUtils::formatNumber($planet->resCrystal + $ret['crystal']) . "
+                [b]" . ResourceNames::PLASTIC . ":[/b] " . StringUtils::formatNumber($planet->resPlastic + $ret['plastic']) . "
+                [b]" . ResourceNames::FUEL . ":[/b] " . StringUtils::formatNumber($planet->resFuel + $ret['fuel']) . "
+                [b]" . ResourceNames::FOOD . ":[/b] " . StringUtils::formatNumber($planet->resFood + $ret['food']);
 
                 //Log Speichern
                 $gameLogRepository->add(GameLogFacility::DEF, LogSeverity::INFO, $log_text, $cu->id, $cu->allianceId, $planet->id, $defId, 0, $queue_count);
@@ -709,11 +711,11 @@ if ($factoryBuilding !== null && $factoryBuilding->currentLevel > 0) {
                         echo "<tr>
                                         <th colspan=\"2\">Anlage</th>
                                         <th>Zeit</th>
-                                        <th>" . RES_METAL . "</th>
-                                        <th>" . RES_CRYSTAL . "</th>
-                                        <th>" . RES_PLASTIC . "</th>
-                                        <th>" . RES_FUEL . "</th>
-                                        <th>" . RES_FOOD . "</th>
+                                        <th>" . ResourceNames::METAL . "</th>
+                                        <th>" . ResourceNames::CRYSTAL . "</th>
+                                        <th>" . ResourceNames::PLASTIC . "</th>
+                                        <th>" . ResourceNames::FUEL . "</th>
+                                        <th>" . ResourceNames::FOOD . "</th>
                                         <th>Anzahl</th>
                                     </tr>";
                     }
@@ -967,11 +969,11 @@ if ($factoryBuilding !== null && $factoryBuilding->currentLevel > 0) {
 
                                 echo "</tr>
                                         <tr>
-                                            <th height=\"20\" width=\"110\">" . RES_METAL . ":</th>
-                                            <th height=\"20\" width=\"97\">" . RES_CRYSTAL . ":</th>
-                                            <th height=\"20\" width=\"98\">" . RES_PLASTIC . ":</th>
-                                            <th height=\"20\" width=\"97\">" . RES_FUEL . ":</th>
-                                            <th height=\"20\" width=\"98\">" . RES_FOOD . "</th></tr>
+                                            <th height=\"20\" width=\"110\">" . ResourceNames::METAL . ":</th>
+                                            <th height=\"20\" width=\"97\">" . ResourceNames::CRYSTAL . ":</th>
+                                            <th height=\"20\" width=\"98\">" . ResourceNames::PLASTIC . ":</th>
+                                            <th height=\"20\" width=\"97\">" . ResourceNames::FUEL . ":</th>
+                                            <th height=\"20\" width=\"98\">" . ResourceNames::FOOD . "</th></tr>
                                         <tr>
                                         <td height=\"20\" width=\"110\" " . $ress_style_metal . ">
                                             " . StringUtils::formatNumber($defenseCosts[$defense->id]->metal) . "

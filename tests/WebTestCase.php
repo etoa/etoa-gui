@@ -24,6 +24,8 @@ abstract class WebTestCase extends TestCase
     public function createApplication(): Application
     {
         include_once dirname(__DIR__) . '/htdocs/inc/mysqli_polyfill.php';
+        include_once dirname(__DIR__) . '/htdocs/inc/functions.inc.php';
+        
         $app = $this->setupApplication();
         $app['etoa.quests.enabled'] = true;
         $this->connection = $app['db'];

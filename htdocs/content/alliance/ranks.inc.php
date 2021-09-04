@@ -5,13 +5,13 @@ use EtoA\Alliance\AllianceRight;
 use EtoA\Alliance\AllianceRights;
 use EtoA\User\UserRepository;
 
-/** @var mixed[] $arr alliance data */
 /** @var array<int, AllianceRight> $rights */
+/** @var \EtoA\Alliance\UserAlliancePermission $userAlliancePermission */
 
 /** @var UserRepository $userRepository */
 $userRepository = $app[UserRepository::class];
 
-if (Alliance::checkActionRights(AllianceRights::RANKS)) {
+if ($userAlliancePermission->checkHasRights(AllianceRights::RANKS, $page)) {
     /** @var AllianceRankRepository $allianceRankRepository */
     $allianceRankRepository = $app[AllianceRankRepository::class];
 

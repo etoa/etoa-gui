@@ -10,6 +10,7 @@ use EtoA\Race\RaceDataRepository;
 use EtoA\Support\StringUtils;
 use EtoA\Specialist\SpecialistService;
 use EtoA\Universe\Planet\PlanetRepository;
+use EtoA\Universe\Resources\ResourceNames;
 
 class BuildListItem
 {
@@ -210,7 +211,7 @@ class BuildListItem
     {
         if (!(count($this->costs) > 0 && !$levelUp) || !(count($this->nextCosts) > 0  && $levelUp)) {
             // TODO
-            global $resNames, $cp, $cu, $bl, $app;
+            global $cp, $cu, $bl, $app;
 
             /** @var BuildingRepository $buildingRepository */
             $buildingRepository = $app[BuildingRepository::class];
@@ -227,7 +228,7 @@ class BuildListItem
             $specialistBuildTimeFactor = $specialist !== null ? $specialist->timeBuildings : 1;
 
             $bc = array();
-            foreach ($resNames as $rk => $rn) {
+            foreach (ResourceNames::NAMES as $rk => $rn) {
                 $bc['costs' . $rk] = $specialistBuildingCostFactor * $this->building->costs[$rk] * pow($this->building->costsFactor, $this->level + $levelUp);
             }
 
@@ -328,18 +329,18 @@ class BuildListItem
         [b]Eingesetzter Spezialist:[/b] " . ($specialist !== null ? $specialist->name : "Kein Spezialist") . "
 
         [b]Kosten[/b]
-        [b]" . RES_METAL . ":[/b] " . StringUtils::formatNumber($costs['costs0']) . "
-        [b]" . RES_CRYSTAL . ":[/b] " . StringUtils::formatNumber($costs['costs1']) . "
-        [b]" . RES_PLASTIC . ":[/b] " . StringUtils::formatNumber($costs['costs2']) . "
-        [b]" . RES_FUEL . ":[/b] " . StringUtils::formatNumber($costs['costs3']) . "
-        [b]" . RES_FOOD . ":[/b] " . StringUtils::formatNumber($costs['costs4']) . "
+        [b]" . ResourceNames::METAL . ":[/b] " . StringUtils::formatNumber($costs['costs0']) . "
+        [b]" . ResourceNames::CRYSTAL . ":[/b] " . StringUtils::formatNumber($costs['costs1']) . "
+        [b]" . ResourceNames::PLASTIC . ":[/b] " . StringUtils::formatNumber($costs['costs2']) . "
+        [b]" . ResourceNames::FUEL . ":[/b] " . StringUtils::formatNumber($costs['costs3']) . "
+        [b]" . ResourceNames::FOOD . ":[/b] " . StringUtils::formatNumber($costs['costs4']) . "
 
         [b]Restliche Rohstoffe auf dem Planeten[/b]
-        [b]" . RES_METAL . ":[/b] " . StringUtils::formatNumber($cp->resMetal) . "
-        [b]" . RES_CRYSTAL . ":[/b] " . StringUtils::formatNumber($cp->resCrystal) . "
-        [b]" . RES_PLASTIC . ":[/b] " . StringUtils::formatNumber($cp->resPlastic) . "
-        [b]" . RES_FUEL . ":[/b] " . StringUtils::formatNumber($cp->resFuel) . "
-        [b]" . RES_FOOD . ":[/b] " . StringUtils::formatNumber($cp->resFood) . "";
+        [b]" . ResourceNames::METAL . ":[/b] " . StringUtils::formatNumber($cp->resMetal) . "
+        [b]" . ResourceNames::CRYSTAL . ":[/b] " . StringUtils::formatNumber($cp->resCrystal) . "
+        [b]" . ResourceNames::PLASTIC . ":[/b] " . StringUtils::formatNumber($cp->resPlastic) . "
+        [b]" . ResourceNames::FUEL . ":[/b] " . StringUtils::formatNumber($cp->resFuel) . "
+        [b]" . ResourceNames::FOOD . ":[/b] " . StringUtils::formatNumber($cp->resFood) . "";
 
         //Log Speichern
         $gameLogRepository->add(GameLogFacility::BUILD, LogSeverity::INFO, $log_text, $cu->id, $cu->allianceId, $cp->id, $this->buildingId, 3, $this->level);
@@ -350,7 +351,7 @@ class BuildListItem
     public function getPeopleOptimized()
     {
         // TODO
-        global $resNames, $cp, $cu, $app;
+        global $cp, $cu, $app;
 
         /** @var RaceDataRepository $raceRepository */
         $raceRepository = $app[RaceDataRepository::class];
@@ -363,7 +364,7 @@ class BuildListItem
         $specialistBuildTimeFactor = $specialist !== null ? $specialist->timeBuildings : 1;
 
         $bc = array();
-        foreach ($resNames as $rk => $rn) {
+        foreach (ResourceNames::NAMES as $rk => $rn) {
             $bc['costs' . $rk] = $specialistBuildingCostFactor * $this->building->costs[$rk] * pow($this->building->costsFactor, $this->level);
         }
         $bc['costs5'] = 0;      //Energie nicht als Ressource zählen
@@ -415,18 +416,18 @@ class BuildListItem
         [b]Ende:[/b] " . date("d.m.Y H:i:s", $this->endTime) . "
 
         [b]Kosten[/b]
-        [b]" . RES_METAL . ":[/b] " . StringUtils::formatNumber($costs['costs0']) . "
-        [b]" . RES_CRYSTAL . ":[/b] " . StringUtils::formatNumber($costs['costs1']) . "
-        [b]" . RES_PLASTIC . ":[/b] " . StringUtils::formatNumber($costs['costs2']) . "
-        [b]" . RES_FUEL . ":[/b] " . StringUtils::formatNumber($costs['costs3']) . "
-        [b]" . RES_FOOD . ":[/b] " . StringUtils::formatNumber($costs['costs4']) . "
+        [b]" . ResourceNames::METAL . ":[/b] " . StringUtils::formatNumber($costs['costs0']) . "
+        [b]" . ResourceNames::CRYSTAL . ":[/b] " . StringUtils::formatNumber($costs['costs1']) . "
+        [b]" . ResourceNames::PLASTIC . ":[/b] " . StringUtils::formatNumber($costs['costs2']) . "
+        [b]" . ResourceNames::FUEL . ":[/b] " . StringUtils::formatNumber($costs['costs3']) . "
+        [b]" . ResourceNames::FOOD . ":[/b] " . StringUtils::formatNumber($costs['costs4']) . "
 
         [b]Restliche Rohstoffe auf dem Planeten[/b]
-        [b]" . RES_METAL . ":[/b] " . StringUtils::formatNumber($cp->resMetal) . "
-        [b]" . RES_CRYSTAL . ":[/b] " . StringUtils::formatNumber($cp->resCrystal) . "
-        [b]" . RES_PLASTIC . ":[/b] " . StringUtils::formatNumber($cp->resPlastic) . "
-        [b]" . RES_FUEL . ":[/b] " . StringUtils::formatNumber($cp->resFuel) . "
-        [b]" . RES_FOOD . ":[/b] " . StringUtils::formatNumber($cp->resFood) . "";
+        [b]" . ResourceNames::METAL . ":[/b] " . StringUtils::formatNumber($cp->resMetal) . "
+        [b]" . ResourceNames::CRYSTAL . ":[/b] " . StringUtils::formatNumber($cp->resCrystal) . "
+        [b]" . ResourceNames::PLASTIC . ":[/b] " . StringUtils::formatNumber($cp->resPlastic) . "
+        [b]" . ResourceNames::FUEL . ":[/b] " . StringUtils::formatNumber($cp->resFuel) . "
+        [b]" . ResourceNames::FOOD . ":[/b] " . StringUtils::formatNumber($cp->resFood) . "";
 
         //Log Speichern
         $gameLogRepository->add(GameLogFacility::BUILD, LogSeverity::INFO, $log_text, $cu->id, $cu->allianceId, $cp->id, $this->buildingId, 4, $this->level);
@@ -467,18 +468,18 @@ class BuildListItem
 
 [b]Erhaltene Rohstoffe[/b]
 [b]Faktor:[/b] " . $fac . "
-[b]" . RES_METAL . ":[/b] " . StringUtils::formatNumber($costs['costs0'] * $fac) . "
-[b]" . RES_CRYSTAL . ":[/b] " . StringUtils::formatNumber($costs['costs1'] * $fac) . "
-[b]" . RES_PLASTIC . ":[/b] " . StringUtils::formatNumber($costs['costs2'] * $fac) . "
-[b]" . RES_FUEL . ":[/b] " . StringUtils::formatNumber($costs['costs3'] * $fac) . "
-[b]" . RES_FOOD . ":[/b] " . StringUtils::formatNumber($costs['costs4'] * $fac) . "
+[b]" . ResourceNames::METAL . ":[/b] " . StringUtils::formatNumber($costs['costs0'] * $fac) . "
+[b]" . ResourceNames::CRYSTAL . ":[/b] " . StringUtils::formatNumber($costs['costs1'] * $fac) . "
+[b]" . ResourceNames::PLASTIC . ":[/b] " . StringUtils::formatNumber($costs['costs2'] * $fac) . "
+[b]" . ResourceNames::FUEL . ":[/b] " . StringUtils::formatNumber($costs['costs3'] * $fac) . "
+[b]" . ResourceNames::FOOD . ":[/b] " . StringUtils::formatNumber($costs['costs4'] * $fac) . "
 
 [b]Rohstoffe auf dem Planeten[/b]
-[b]" . RES_METAL . ":[/b] " . StringUtils::formatNumber($cp->resMetal) . "
-[b]" . RES_CRYSTAL . ":[/b] " . StringUtils::formatNumber($cp->resCrystal) . "
-[b]" . RES_PLASTIC . ":[/b] " . StringUtils::formatNumber($cp->resPlastic) . "
-[b]" . RES_FUEL . ":[/b] " . StringUtils::formatNumber($cp->resFuel) . "
-[b]" . RES_FOOD . ":[/b] " . StringUtils::formatNumber($cp->resFood) . "";
+[b]" . ResourceNames::METAL . ":[/b] " . StringUtils::formatNumber($cp->resMetal) . "
+[b]" . ResourceNames::CRYSTAL . ":[/b] " . StringUtils::formatNumber($cp->resCrystal) . "
+[b]" . ResourceNames::PLASTIC . ":[/b] " . StringUtils::formatNumber($cp->resPlastic) . "
+[b]" . ResourceNames::FUEL . ":[/b] " . StringUtils::formatNumber($cp->resFuel) . "
+[b]" . ResourceNames::FOOD . ":[/b] " . StringUtils::formatNumber($cp->resFood) . "";
 
             //Log Speichern
             $gameLogRepository->add(GameLogFacility::BUILD, LogSeverity::INFO, $log_text, $cu->id, $cu->allianceId, $cp->id, $this->buildingId, 1, $this->level);
@@ -518,18 +519,18 @@ class BuildListItem
 
             [b]Erhaltene Rohstoffe[/b]
             [b]Faktor:[/b] " . $fac . "
-            [b]" . RES_METAL . ":[/b] " . StringUtils::formatNumber($costs['costs0'] * $fac) . "
-            [b]" . RES_CRYSTAL . ":[/b] " . StringUtils::formatNumber($costs['costs1'] * $fac) . "
-            [b]" . RES_PLASTIC . ":[/b] " . StringUtils::formatNumber($costs['costs2'] * $fac) . "
-            [b]" . RES_FUEL . ":[/b] " . StringUtils::formatNumber($costs['costs3'] * $fac) . "
-            [b]" . RES_FOOD . ":[/b] " . StringUtils::formatNumber($costs['costs4'] * $fac) . "
+            [b]" . ResourceNames::METAL . ":[/b] " . StringUtils::formatNumber($costs['costs0'] * $fac) . "
+            [b]" . ResourceNames::CRYSTAL . ":[/b] " . StringUtils::formatNumber($costs['costs1'] * $fac) . "
+            [b]" . ResourceNames::PLASTIC . ":[/b] " . StringUtils::formatNumber($costs['costs2'] * $fac) . "
+            [b]" . ResourceNames::FUEL . ":[/b] " . StringUtils::formatNumber($costs['costs3'] * $fac) . "
+            [b]" . ResourceNames::FOOD . ":[/b] " . StringUtils::formatNumber($costs['costs4'] * $fac) . "
 
             [b]Rohstoffe auf dem Planeten[/b]
-            [b]" . RES_METAL . ":[/b] " . StringUtils::formatNumber($cp->resMetal) . "
-            [b]" . RES_CRYSTAL . ":[/b] " . StringUtils::formatNumber($cp->resCrystal) . "
-            [b]" . RES_PLASTIC . ":[/b] " . StringUtils::formatNumber($cp->resPlastic) . "
-            [b]" . RES_FUEL . ":[/b] " . StringUtils::formatNumber($cp->resFuel) . "
-            [b]" . RES_FOOD . ":[/b] " . StringUtils::formatNumber($cp->resFood) . "";
+            [b]" . ResourceNames::METAL . ":[/b] " . StringUtils::formatNumber($cp->resMetal) . "
+            [b]" . ResourceNames::CRYSTAL . ":[/b] " . StringUtils::formatNumber($cp->resCrystal) . "
+            [b]" . ResourceNames::PLASTIC . ":[/b] " . StringUtils::formatNumber($cp->resPlastic) . "
+            [b]" . ResourceNames::FUEL . ":[/b] " . StringUtils::formatNumber($cp->resFuel) . "
+            [b]" . ResourceNames::FOOD . ":[/b] " . StringUtils::formatNumber($cp->resFood) . "";
 
             //Log Speichern
             $gameLogRepository->add(GameLogFacility::BUILD, LogSeverity::INFO, $log_text, $cu->id, $cu->allianceId, $cp->id, $this->buildingId, 2, $this->level);
@@ -542,12 +543,12 @@ class BuildListItem
     public function getWaitingTime()
     {
         // TODO
-        global $cp, $resNames;
+        global $cp;
 
         $costs = $this->getBuildCosts(0);
         $wTime = array();
         // Wartezeiten auf Ressourcen berechnen
-        foreach ($resNames as $rk => $rn) {
+        foreach (ResourceNames::NAMES as $rk => $rn) {
             if ($cp->getProd($rk)) {
                 $wTime[$rk] = ceil(($costs['costs' . $rk] - $cp->getRes1($rk)) / $cp->getProd($rk) * 3600);
             } else
@@ -559,7 +560,7 @@ class BuildListItem
     public function waitingTimeString($type = 'build')
     {
         // TODO
-        global $cp, $resNames;
+        global $cp;
 
         $notAvStyle = " style=\"color:red;\"";
         if ($type == 'build')
@@ -569,7 +570,7 @@ class BuildListItem
 
         $wTime = array();
         // Wartezeiten auf Ressourcen berechnen
-        foreach ($resNames as $rk => $rn) {
+        foreach (ResourceNames::NAMES as $rk => $rn) {
             if ($cp->getProd($rk)) {
                 $wTime[$rk] = ceil(($costs['costs' . $rk] - $cp->getRes1($rk)) / $cp->getProd($rk) * 3600);
             } else
@@ -578,7 +579,7 @@ class BuildListItem
         $wTime['max'] = max($wTime);
 
         $wTime['string'] = "";
-        foreach ($resNames as $rk => $rn) {
+        foreach (ResourceNames::NAMES as $rk => $rn) {
             $wTime['string'] .= '<td ';
             if ($costs['costs' . $rk] > $cp->getRes1($rk)) {
                 $wTime['string'] .= $notAvStyle . ' ' . tm('Fehlender Rohstoff', '<strong>' . StringUtils::formatNumber(ceil($costs['costs' . $rk] - $cp->getRes1($rk))) . '</strong> ' . $rn . '<br />Bereit in <strong>' . StringUtils::formatTimespan($wTime[$rk]) . '</strong>');

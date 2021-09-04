@@ -2,16 +2,17 @@
 
 use EtoA\Alliance\AllianceRights;
 
-/** @var mixed[] $arr */
+/** @var \EtoA\Alliance\Alliance $alliance */
+/** @var \EtoA\Alliance\UserAlliancePermission $userAlliancePermission */
 
-if (Alliance::checkActionRights(AllianceRights::APPLICATION_TEMPLATE)) {
+if ($userAlliancePermission->checkHasRights(AllianceRights::APPLICATION_TEMPLATE, $page)) {
 
     echo "<h2>Bewerbungsvorlage bearbeiten</h2>";
     echo "<form action=\"?page=$page\" method=\"post\">";
     checker_init();
     tableStart("Bewerbungsvorlage");
     echo "<tr><th>Text:</td>
-    <td><textarea rows=\"15\" cols=\"60\" name=\"alliance_application_template\">" . stripslashes($arr['alliance_application_template']) . "</textarea><br/>" . helpLink('textformat', 'Hilfe zur Formatierung') . "</td></tr>";
+    <td><textarea rows=\"15\" cols=\"60\" name=\"alliance_application_template\">" . stripslashes($alliance->applicationTemplate) . "</textarea><br/>" . helpLink('textformat', 'Hilfe zur Formatierung') . "</td></tr>";
     echo "<tr><th>Beispiel:</td><td>";
     echo nl2br('Dein Name:
 Dein Alter:

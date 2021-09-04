@@ -2,6 +2,7 @@
 
 use EtoA\Fleet\FleetRepository;
 use EtoA\Specialist\SpecialistService;
+use EtoA\Technology\TechnologyId;
 use EtoA\Technology\TechnologyRepository;
 
 class FleetManager
@@ -62,7 +63,7 @@ class FleetManager
         $this->aggressivCount = 0;
         $this->fleet = array();
 
-        $this->userSpyTechLevel = $technologyRepository->getTechnologyLevel((int) $this->userId, SPY_TECH_ID);
+        $this->userSpyTechLevel = $technologyRepository->getTechnologyLevel((int) $this->userId, TechnologyId::SPY);
 
         $specialist = $specialistService->getSpecialistOfUser($this->userId);
         if ($specialist !== null) {
@@ -99,7 +100,7 @@ class FleetManager
 
                     if ($cFleet->getAction()->visible()) {
                         if ($cFleet->getAction()->attitude() == 3) {
-                            $opTarnTech = $technologyRepository->getTechnologyLevel((int) $cFleet->ownerId(), TARN_TECH_ID);
+                            $opTarnTech = $technologyRepository->getTechnologyLevel((int) $cFleet->ownerId(), TechnologyId::TARN);
 
                             $opponentSpecialist = $specialistService->getSpecialistOfUser($cFleet->ownerId());
                             if ($opponentSpecialist !== null) {

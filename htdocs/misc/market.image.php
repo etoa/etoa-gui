@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Universe\Resources\ResourceNames;
 
 include("image.inc.php");
 
@@ -122,7 +123,7 @@ include("image.inc.php");
 		{
 			imagestring($im,1,$lastx[$i]+5,$lasty[$i]-3, (string) round($rates[$i],2),$rCol[$i]);
 
-			imagestring($im,5,$graphtx+20+($graphw/NUM_RESOURCES*$i),$graphby+25,$resNames[$i],$rCol[$i]);
+			imagestring($im,5,$graphtx+20+($graphw/NUM_RESOURCES*$i),$graphby+25,ResourceNames::NAMES[$i],$rCol[$i]);
 		}
 
 		// Timestampss

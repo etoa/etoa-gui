@@ -1,5 +1,6 @@
 <?PHP
 
+use EtoA\Alliance\AllianceRepository;
 use EtoA\Backend\BackendMessageService;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Log\LogFacility;
@@ -14,6 +15,7 @@ use EtoA\Universe\Nebula\NebulaRepository;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Universe\Planet\PlanetService;
 use EtoA\Universe\Planet\PlanetTypeRepository;
+use EtoA\Universe\Resources\ResourceNames;
 use EtoA\Universe\Star\SolarTypeRepository;
 use EtoA\Universe\Star\StarRepository;
 use EtoA\Universe\Wormhole\WormholeRepository;
@@ -57,6 +59,8 @@ $planetService = $app[PlanetService::class];
 $backendMessageService = $app[BackendMessageService::class];
 /** @var LogRepository $logRepository */
 $logRepository = $app[LogRepository::class];
+/** @var AllianceRepository $allianceRepository */
+$allianceRepository = $app[AllianceRepository::class];
 
 /** @var Request */
 $request = Request::createFromGlobals();
@@ -199,9 +203,9 @@ Neuer Besitzer: [page user sub=edit user_id=" . $request->request->getInt('plane
             if ($planet->userId > 0) {
                 $allianceId = $userRepo->getAllianceId($planet->userId);
                 if ($allianceId > 0) {
-                    $ally = new Alliance($allianceId);
-                    echo $ally . " &nbsp; ";
-                    unset($ally);
+                    $alliance = $allianceRepository->getAlliance($allianceId);
+                    echo $alliance->nameWithTag . " &nbsp; ";
+                    unset($alliance);
                 }
             }
             echo "<input type=\"hidden\" name=\"planet_user_id_old\" value=\"" . $planet->userId . "\">";
@@ -280,29 +284,29 @@ Neuer Besitzer: [page user sub=edit user_id=" . $request->request->getInt('plane
 
             echo "<td style=\"height:2px;\" colspan=\"4\"></td></tr>";
 
-            echo "<tr><th>Produktion " . RES_METAL . "</th>
+            echo "<tr><th>Produktion " . ResourceNames::METAL . "</th>
             <td>" . StringUtils::formatNumber($planet->prodMetal) . "</td>";
-            echo "<th>Speicher " . RES_METAL . ":</th>
+            echo "<th>Speicher " . ResourceNames::METAL . ":</th>
             <td>" . StringUtils::formatNumber($planet->storeMetal) . "</td></tr>";
 
-            echo "<tr><th>Produktion " . RES_CRYSTAL . "</th>
+            echo "<tr><th>Produktion " . ResourceNames::CRYSTAL . "</th>
             <td>" . StringUtils::formatNumber($planet->prodCrystal) . "</td>";
-            echo "<th>Speicher " . RES_CRYSTAL . ":</th>
+            echo "<th>Speicher " . ResourceNames::CRYSTAL . ":</th>
             <td>" . StringUtils::formatNumber($planet->storeCrystal) . "</td></tr>";
 
-            echo "<tr><th>Produktion " . RES_PLASTIC . "</th>
+            echo "<tr><th>Produktion " . ResourceNames::PLASTIC . "</th>
             <td>" . StringUtils::formatNumber($planet->prodPlastic) . "</td>";
-            echo "<th>Speicher " . RES_PLASTIC . ":</th>
+            echo "<th>Speicher " . ResourceNames::PLASTIC . ":</th>
             <td>" . StringUtils::formatNumber($planet->storePlastic) . "</td></tr>";
 
-            echo "<tr><th>Produktion " . RES_FUEL . "</th>
+            echo "<tr><th>Produktion " . ResourceNames::FUEL . "</th>
             <td>" . StringUtils::formatNumber($planet->prodFuel) . "</td>";
-            echo "<th>Speicher " . RES_FUEL . ":</th>
+            echo "<th>Speicher " . ResourceNames::FUEL . ":</th>
             <td>" . StringUtils::formatNumber($planet->storeFuel) . "</td></tr>";
 
-            echo "<tr><th>Produktion " . RES_FOOD . "</th>
+            echo "<tr><th>Produktion " . ResourceNames::FOOD . "</th>
             <td>" . StringUtils::formatNumber($planet->prodFood) . "</td>";
-            echo "<th>Speicher " . RES_FOOD . ":</th>
+            echo "<th>Speicher " . ResourceNames::FOOD . ":</th>
             <td>" . StringUtils::formatNumber($planet->storeFood) . "</td></tr>";
 
             echo "<tr><th>Verbrauch Energie:</th>
@@ -404,24 +408,24 @@ Neuer Besitzer: [page user sub=edit user_id=" . $request->request->getInt('plane
             echo "<form action=\"?page=$page&sub=edit&id=" . $id . "\" method=\"post\" id=\"editform\">";
             tableStart("<span style=\"color:" . Entity::$entityColors[$entity->code] . "\">Asteroidenfeld</span>", "auto");
 
-            echo "<tr><th>" . RES_METAL . "</th>
+            echo "<tr><th>" . ResourceNames::METAL . "</th>
             <td><input type=\"text\" name=\"res_metal\" value=\"" . intval($asteroid->resMetal) . "\" size=\"12\" maxlength=\"20\" /><br/>
             +/-: <input type=\"text\" name=\"res_metal_add\" value=\"0\" size=\"8\" maxlength=\"20\" /></td>";
-            echo "<th>" . RES_CRYSTAL . "</th>
+            echo "<th>" . ResourceNames::CRYSTAL . "</th>
             <td><input type=\"text\" name=\"res_crystal\" value=\"" . intval($asteroid->resCrystal) . "\" size=\"12\" maxlength=\"20\" /><br/>
             +/-: <input type=\"text\" name=\"res_crystal_add\" value=\"0\" size=\"8\" maxlength=\"20\" /></td></tr>";
 
-            echo "<tr><th>" . RES_PLASTIC . "</th>
+            echo "<tr><th>" . ResourceNames::PLASTIC . "</th>
             <td><input type=\"text\" name=\"res_plastic\" value=\"" . intval($asteroid->resPlastic) . "\" size=\"12\" maxlength=\"20\" /><br/>
             +/-: <input type=\"text\" name=\"res_plastic_add\" value=\"0\" size=\"8\" maxlength=\"20\" /></td>";
-            echo "<th>" . RES_FUEL . "</th>
+            echo "<th>" . ResourceNames::FUEL . "</th>
             <td><input type=\"text\" name=\"res_fuel\" value=\"" . intval($asteroid->resFuel) . "\" size=\"12\" maxlength=\"20\" /><br/>
             +/-: <input type=\"text\" name=\"res_fuel_add\" value=\"0\" size=\"8\" maxlength=\"20\" /></td></tr>";
 
-            echo "<tr><th>" . RES_FOOD . "</th>
+            echo "<tr><th>" . ResourceNames::FOOD . "</th>
             <td><input type=\"text\" name=\"res_food\" value=\"" . intval($asteroid->resFood) . "\" size=\"12\" maxlength=\"20\" /><br/>
             +/-: <input type=\"text\" name=\"res_food_add\" value=\"0\" size=\"8\" maxlength=\"20\" /></td>";
-            echo "<th>" . RES_POWER . "</th>
+            echo "<th>" . ResourceNames::POWER . "</th>
             <td><input type=\"text\" name=\"res_power\" value=\"" . intval($asteroid->resPower) . "\" size=\"12\" maxlength=\"20\" /><br/>
             +/-: <input type=\"text\" name=\"res_power_add\" value=\"0\" size=\"8\" maxlength=\"20\" /></td></tr>";
 
@@ -462,24 +466,24 @@ Neuer Besitzer: [page user sub=edit user_id=" . $request->request->getInt('plane
             echo "<form action=\"?page=$page&sub=edit&id=" . $id . "\" method=\"post\" id=\"editform\">";
             tableStart("<span style=\"color:" . Entity::$entityColors[$entity->code] . "\">Interstellarer Nebel</span>", "auto");
 
-            echo "<tr><th>" . RES_METAL . "</th>
+            echo "<tr><th>" . ResourceNames::METAL . "</th>
             <td><input type=\"text\" name=\"res_metal\" value=\"" . intval($nebula->resMetal) . "\" size=\"12\" maxlength=\"20\" /><br/>
             +/-: <input type=\"text\" name=\"res_metal_add\" value=\"0\" size=\"8\" maxlength=\"20\" /></td>";
-            echo "<th>" . RES_CRYSTAL . "</th>
+            echo "<th>" . ResourceNames::CRYSTAL . "</th>
             <td><input type=\"text\" name=\"res_crystal\" value=\"" . intval($nebula->resCrystal) . "\" size=\"12\" maxlength=\"20\" /><br/>
             +/-: <input type=\"text\" name=\"res_crystal_add\" value=\"0\" size=\"8\" maxlength=\"20\" /></td></tr>";
 
-            echo "<tr><th>" . RES_PLASTIC . "</th>
+            echo "<tr><th>" . ResourceNames::PLASTIC . "</th>
             <td><input type=\"text\" name=\"res_plastic\" value=\"" . intval($nebula->resPlastic) . "\" size=\"12\" maxlength=\"20\" /><br/>
             +/-: <input type=\"text\" name=\"res_plastic_add\" value=\"0\" size=\"8\" maxlength=\"20\" /></td>";
-            echo "<th>" . RES_FUEL . "</th>
+            echo "<th>" . ResourceNames::FUEL . "</th>
             <td><input type=\"text\" name=\"res_fuel\" value=\"" . intval($nebula->resFuel) . "\" size=\"12\" maxlength=\"20\" /><br/>
             +/-: <input type=\"text\" name=\"res_fuel_add\" value=\"0\" size=\"8\" maxlength=\"20\" /></td></tr>";
 
-            echo "<tr><th>" . RES_FOOD . "</th>
+            echo "<tr><th>" . ResourceNames::FOOD . "</th>
             <td><input type=\"text\" name=\"res_food\" value=\"" . intval($nebula->resFood) . "\" size=\"12\" maxlength=\"20\" /><br/>
             +/-: <input type=\"text\" name=\"res_food_add\" value=\"0\" size=\"8\" maxlength=\"20\" /></td>";
-            echo "<th>" . RES_POWER . "</th>
+            echo "<th>" . ResourceNames::POWER . "</th>
             <td><input type=\"text\" name=\"res_power\" value=\"" . intval($nebula->resPower) . "\" size=\"12\" maxlength=\"20\" /><br/>
             +/-: <input type=\"text\" name=\"res_power_add\" value=\"0\" size=\"8\" maxlength=\"20\" /></td></tr>";
 

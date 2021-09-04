@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\Alliance\AllianceRights;
+use EtoA\Message\MessageCategoryId;
 use EtoA\Message\MessageRepository;
 use EtoA\User\UserRepository;
 use EtoA\User\UserSearch;
@@ -9,14 +10,16 @@ use EtoA\User\UserSearch;
 $messageRepository = $app[MessageRepository::class];
 /** @var UserRepository $userRepository */
 $userRepository = $app[UserRepository::class];
-/** @var mixed[] $arr alliance data */
 
-if (Alliance::checkActionRights(AllianceRights::MASS_MAIL)) {
+/** @var \EtoA\Alliance\UserAlliancePermission $userAlliancePermission */
+/** @var \EtoA\Alliance\Alliance $alliance */
+
+if ($userAlliancePermission->checkHasRights(AllianceRights::MASS_MAIL, $page)) {
     echo "<h2>Rundmail</h2>";
 
     // Nachricht senden
     if (isset($_POST['submit']) && checker_verify()) {
-        $allianceUsers = $userRepository->searchUserNicknames(UserSearch::create()->allianceId((int) $arr['alliance_id'])->notUser($cu->getId()));
+        $allianceUsers = $userRepository->searchUserNicknames(UserSearch::create()->allianceId($alliance->id)->notUser($cu->getId()));
         if (count($allianceUsers) > 0) {
             foreach (array_keys($allianceUsers) as $allianceUserId) {
                 $subject = addslashes($_POST['message_subject']) . "";
@@ -26,7 +29,7 @@ if (Alliance::checkActionRights(AllianceRights::MASS_MAIL)) {
                     $allianceUserId,
                     $_POST['message_subject'],
                     $_POST['message_text'],
-                    MSG_ALLYMAIL_CAT
+                    MessageCategoryId::ALLIANCE
                 );
             }
             success_msg("Nachricht wurde gesendet!");

@@ -3,6 +3,9 @@
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Log\DebrisLogRepository;
 use EtoA\Market\MarketResourceRepository as MarketResourceRepositoryAlias;
+use EtoA\Universe\Entity\EntityCoordinates;
+use EtoA\Universe\Entity\EntityLabelSearch;
+use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Resources\BaseResources;
 
 $xajax->register(XAJAX_FUNCTION, "showNumberField");
@@ -118,6 +121,11 @@ function createPlayers($nr)
 
 function createValues($form, $nr)
 {
+    global  $app;
+
+    /** @var EntityRepository $entityRepository */
+    $entityRepository = $app[EntityRepository::class];
+
     $response = new xajaxResponse();
     $error = false;
 
@@ -134,14 +142,14 @@ function createValues($form, $nr)
             </tr>';
 
     for ($fields = 1; $fields <= $nr; $fields++) {
-        $entity = Entity::createFactoryByCoords($form['search_cell_s1' . $fields], $form['search_cell_s2' . $fields], $form['search_cell_c1' . $fields], $form['search_cell_c2' . $fields], $form['search_cell_pos' . $fields]);
-        if (!$entity) {
+        $entity = $entityRepository->searchEntityLabel(EntityLabelSearch::create()->coordinates(new EntityCoordinates($form['search_cell_s1' . $fields], $form['search_cell_s2' . $fields], $form['search_cell_c1' . $fields], $form['search_cell_c2' . $fields], $form['search_cell_pos' . $fields])));
+        if ($entity === null) {
             $error = true;
         } else {
             echo '
             <tr>
-                <td>' . $entity->owner()->nick . '</td>
-                <td>' . $entity . '</td>
+                <td>' . $entity->ownerNick . '</td>
+                <td>' . $entity->toString() . '</td>
                 <td><input type = "number" value ="' . (round($form['total_tit'] * ($form['percent' . $fields] / 100))) . '" name="tit' . $fields . '"/></td>
                 <td><input type = "number" value ="' . (round($form['total_sili'] * ($form['percent' . $fields] / 100))) . '" name ="sili' . $fields . '"/></td>
                 <td><input type = "number" value ="' . (round($form['total_pvc'] * ($form['percent' . $fields] / 100))) . '" name ="pvc' . $fields . '"/></td>
@@ -173,21 +181,23 @@ function splitDebris($formValues, $formPlayers)
     $marketResourceRepository = $app[MarketResourceRepositoryAlias::class];
     /** @var DebrisLogRepository $debrisLogRepository */
     $debrisLogRepository = $app[DebrisLogRepository::class];
+    /** @var EntityRepository $entityRepository */
+    $entityRepository = $app[EntityRepository::class];
 
     for ($fields = 1; $fields <= $players; $fields++) {
-        $entity = Entity::createFactoryByCoords($formPlayers['search_cell_s1' . $fields], $formPlayers['search_cell_s2' . $fields], $formPlayers['search_cell_c1' . $fields], $formPlayers['search_cell_c2' . $fields], $formPlayers['search_cell_pos' . $fields]);
-        if ($entity && $entity->userId) {
+        $entity = $entityRepository->searchEntityLabel(EntityLabelSearch::create()->coordinates(new EntityCoordinates($formPlayers['search_cell_s1' . $fields], $formPlayers['search_cell_s2' . $fields], $formPlayers['search_cell_c1' . $fields], $formPlayers['search_cell_c2' . $fields], $formPlayers['search_cell_pos' . $fields])));
+        if ($entity !== null && $entity->ownerId > 0) {
             if ($fields == 1) {
                 $resource = new BaseResources();
                 $resource->metal = (intval($formPlayers['total_tit']) - intval($formValues['tit' . $fields]));
                 $resource->crystal = (intval($formPlayers['total_sili']) - intval($formValues['sili' . $fields]));
                 $resource->plastic = (intval($formPlayers['total_pvc']) - intval($formValues['pvc' . $fields]));
 
-                $marketResourceRepository->add(0, 299, (int) $entity->userId, 0, 'Trümmerfeld', new BaseResources(), $resource);
+                $marketResourceRepository->add(0, 299, $entity->ownerId, 0, 'Trümmerfeld', new BaseResources(), $resource);
 
                 $debrisLogRepository->add(
                     $_SESSION['user_id'],
-                    $entity->userId,
+                    $entity->ownerId,
                     (-1 * (intval($formPlayers['total_tit']) - intval($formValues['tit' . $fields]))),
                     (-1 * (intval($formPlayers['total_sili']) - intval($formValues['sili' . $fields]))),
                     (-1 * (intval($formPlayers['total_pvc']) - intval($formValues['pvc' . $fields])))
@@ -198,9 +208,9 @@ function splitDebris($formValues, $formPlayers)
                 $resource->crystal = (int) $formValues['sili' . $fields];
                 $resource->plastic = (int) $formValues['pvc' . $fields];
 
-                $marketResourceRepository->add(0, 299, (int) $entity->userId, 0, 'Trümmerfeld', new BaseResources(), $resource);
+                $marketResourceRepository->add(0, 299, $entity->ownerId, 0, 'Trümmerfeld', new BaseResources(), $resource);
 
-                $debrisLogRepository->add($_SESSION['user_id'], $entity->userId, $resource->metal, $resource->crystal, $resource->plastic);
+                $debrisLogRepository->add($_SESSION['user_id'], $entity->ownerId, $resource->metal, $resource->crystal, $resource->plastic);
             }
 
             $response->assign("tfContent", "innerHTML", "Trümmerfeld aufgeteilt!");

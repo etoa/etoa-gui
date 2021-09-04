@@ -9,6 +9,7 @@ use EtoA\Building\BuildingSort;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Ranking\RankingService;
 use EtoA\Support\StringUtils;
+use EtoA\Universe\Resources\ResourceNames;
 use Pimple\Container;
 use Symfony\Component\HttpFoundation\Request;
 use Twig\Environment;
@@ -71,11 +72,11 @@ function priceCalculator(BuildingRepository $repository)
                 <th>Gebäude</th>
                 <th>Stufe</th>
                 <th>Zeit</th>
-                <th>" . RES_METAL . "</th>
-                <th>" . RES_CRYSTAL . "</th>
-                <th>" . RES_PLASTIC . "</th>
-                <th>" . RES_FUEL . "</th>
-                <th>" . RES_FOOD . "</th>
+                <th>" . ResourceNames::METAL . "</th>
+                <th>" . ResourceNames::CRYSTAL . "</th>
+                <th>" . ResourceNames::PLASTIC . "</th>
+                <th>" . ResourceNames::FUEL . "</th>
+                <th>" . ResourceNames::FOOD . "</th>
                 <th>Energie</th>
             </tr>";
     echo "<tr>
@@ -105,11 +106,11 @@ function priceCalculator(BuildingRepository $repository)
         <tr>
             <th>Gebäude</th>
             <th>Level</th>
-            <th>" . RES_METAL . "</th>
-            <th>" . RES_CRYSTAL . "</th>
-            <th>" . RES_PLASTIC . "</th>
-            <th>" . RES_FUEL . "</th>
-            <th>" . RES_FOOD . "</th>
+            <th>" . ResourceNames::METAL . "</th>
+            <th>" . ResourceNames::CRYSTAL . "</th>
+            <th>" . ResourceNames::PLASTIC . "</th>
+            <th>" . ResourceNames::FUEL . "</th>
+            <th>" . ResourceNames::FOOD . "</th>
         </tr>";
     foreach ($buildingNames as $key => $value) {
         echo "<tr>

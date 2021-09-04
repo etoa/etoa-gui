@@ -12,6 +12,7 @@ use EtoA\Support\StringUtils;
 use EtoA\Technology\TechnologyRepository;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Universe\Planet\PlanetTypeRepository;
+use EtoA\Universe\Resources\ResourceNames;
 use EtoA\Universe\Star\SolarTypeRepository;
 use EtoA\User\UserPropertiesRepository;
 use Exception;
@@ -214,7 +215,7 @@ class GameStatsGenerator
         $metal = $this->planetRepository->getMaxMetalOnAPlanet();
         if ($metal !== null) {
             $out .= "<tr>
-                <td >" . RES_METAL . "</td>
+                <td >" . ResourceNames::METAL . "</td>
                 <td >" . StringUtils::formatNumber((int) $metal['res']) . "</td>
                 <td >" . $metal['type'] . "</td>
             </tr>";
@@ -223,7 +224,7 @@ class GameStatsGenerator
         $crystal = $this->planetRepository->getMaxCrystalOnAPlanet();
         if ($crystal !== null) {
             $out .= "<tr>
-                    <td >" . RES_CRYSTAL . "</td>
+                    <td >" . ResourceNames::CRYSTAL . "</td>
                     <td >" . StringUtils::formatNumber((int) $crystal['res']) . "</td>
                     <td >" . $crystal['type'] . "</td>
                 </tr>";
@@ -232,7 +233,7 @@ class GameStatsGenerator
         $plastic = $this->planetRepository->getMaxPlasticOnAPlanet();
         if ($plastic !== null) {
             $out .= "<tr>
-                    <td >" . RES_PLASTIC . "</td>
+                    <td >" . ResourceNames::PLASTIC . "</td>
                     <td >" . StringUtils::formatNumber((int) $plastic['res']) . "</td>
                     <td >" . $plastic['type'] . "</td>
                 </tr>";
@@ -241,7 +242,7 @@ class GameStatsGenerator
         $fuel = $this->planetRepository->getMaxFuelOnAPlanet();
         if ($fuel !== null) {
             $out .= "<tr>
-                    <td >" . RES_FUEL . "</td>
+                    <td >" . ResourceNames::FUEL . "</td>
                     <td >" . StringUtils::formatNumber((int) $fuel['res']) . "</td>
                     <td >" . $fuel['type'] . "</td>
                 </tr>";
@@ -250,7 +251,7 @@ class GameStatsGenerator
         $food = $this->planetRepository->getMaxFoodOnAPlanet();
         if ($food !== null) {
             $out .= "<tr>
-                    <td >" . RES_FOOD . "</td>
+                    <td >" . ResourceNames::FOOD . "</td>
                     <td >" . StringUtils::formatNumber((int) $food['res']) . "</td>
                     <td >" . $food['type'] . "</td>
                 </tr>";
@@ -268,7 +269,7 @@ class GameStatsGenerator
 
         $metal = $this->planetRepository->getMaxMetal();
         $out .= "<tr>
-                <td >" . RES_METAL . "</td>
+                <td >" . ResourceNames::METAL . "</td>
                 <td >" . StringUtils::formatNumber((int) $metal['sum']) . "</td>
                 <td >" . StringUtils::formatNumber((int) $metal['avg']) . "</td>
                 <td >" . StringUtils::formatNumber((int) $metal['cnt']) . "</td>
@@ -276,7 +277,7 @@ class GameStatsGenerator
 
         $crystal = $this->planetRepository->getMaxCrystal();
         $out .= "<tr>
-                <td >" . RES_CRYSTAL . "</td>
+                <td >" . ResourceNames::CRYSTAL . "</td>
                 <td >" . StringUtils::formatNumber((int) $crystal['sum']) . "</td>
                 <td >" . StringUtils::formatNumber((int) $crystal['avg']) . "</td>
                 <td >" . StringUtils::formatNumber((int) $crystal['cnt']) . "</td>
@@ -284,7 +285,7 @@ class GameStatsGenerator
 
         $plastic = $this->planetRepository->getMaxPlastic();
         $out .= "<tr>
-                <td >" . RES_PLASTIC . "</td>
+                <td >" . ResourceNames::PLASTIC . "</td>
                 <td >" . StringUtils::formatNumber((int) $plastic['sum']) . "</td>
                 <td >" . StringUtils::formatNumber((int) $plastic['avg']) . "</td>
                 <td >" . StringUtils::formatNumber((int) $plastic['cnt']) . "</td>
@@ -292,7 +293,7 @@ class GameStatsGenerator
 
         $fuel = $this->planetRepository->getMaxFuel();
         $out .= "<tr>
-                <td >" . RES_FUEL . "</td>
+                <td >" . ResourceNames::FUEL . "</td>
                 <td >" . StringUtils::formatNumber((int) $fuel['sum']) . "</td>
                 <td >" . StringUtils::formatNumber((int) $fuel['avg']) . "</td>
                 <td >" . StringUtils::formatNumber((int) $fuel['cnt']) . "</td>
@@ -300,7 +301,7 @@ class GameStatsGenerator
 
         $food = $this->planetRepository->getMaxFood();
         $out .= "<tr>
-                <td >" . RES_FOOD . "</td>
+                <td >" . ResourceNames::FOOD . "</td>
                 <td >" . StringUtils::formatNumber((int) $food['sum']) . "</td>
                 <td >" . StringUtils::formatNumber((int) $food['avg']) . "</td>
                 <td >" . StringUtils::formatNumber((int) $food['cnt']) . "</td>
@@ -315,23 +316,23 @@ class GameStatsGenerator
         $out = "<table width=\"100%\" class=\"tb\">";
         $out .= "<tr><th  colspan=\"3\">Max Ressourcen eines Spielers</th></tr>";
         $out .= "<tr>
-                <td >" . RES_METAL . "</td>
+                <td >" . ResourceNames::METAL . "</td>
                 <td >" . StringUtils::formatNumber($this->planetRepository->getMaxMetalOfAPlayer()) . "</td>
             </tr>";
         $out .= "<tr>
-                <td >" . RES_CRYSTAL . "</td>
+                <td >" . ResourceNames::CRYSTAL . "</td>
                 <td >" . StringUtils::formatNumber($this->planetRepository->getMaxCrystalOfAPlayer()) . "</td>
             </tr>";
         $out .= "<tr>
-                <td >" . RES_PLASTIC . "</td>
+                <td >" . ResourceNames::PLASTIC . "</td>
                 <td >" . StringUtils::formatNumber($this->planetRepository->getMaxPlasticOfAPlayer()) . "</td>
             </tr>";
         $out .= "<tr>
-                <td >" . RES_FUEL . "</td>
+                <td >" . ResourceNames::FUEL . "</td>
                 <td >" . StringUtils::formatNumber($this->planetRepository->getMaxFuelOfAPlayer()) . "</td>
             </tr>";
         $out .= "<tr>
-                <td >" . RES_FOOD . "</td>
+                <td >" . ResourceNames::FOOD . "</td>
                 <td >" . StringUtils::formatNumber($this->planetRepository->getMaxFoodOfAPlayer()) . "</td>
             </tr>";
         $out .= "</table>";
@@ -525,16 +526,8 @@ class GameStatsGenerator
         $out = "<h2>Sonstiges</h2>";
         $out .= "<table width=\"95%\"><tr>";
 
-        $out .= "<td style=\"width:33%;vertical-align:top;\">";
+        $out .= "<td style=\"vertical-align:top;\">";
         $out .= $this->designStats($limit);
-        $out .= "</td>";
-
-        $out .= "<td style=\"width:33%;vertical-align:top;\">";
-        $out .= $this->imagePackStats($limit);
-        $out .= "</td>";
-
-        $out .= "<td style=\"width:33%;vertical-align:top;\">";
-        $out .= $this->imageExtensionStats($limit);
         $out .= "</td>";
 
         $out .= "</tr>";
@@ -560,49 +553,6 @@ class GameStatsGenerator
             $out .= "<td>" . StringUtils::formatNumber($count) . "</td>";
             $out .= "<td>" . round(100 / $total * $count, 2) . "%</td></tr>";
         }
-        $out .= "</table>";
-
-        return $out;
-    }
-
-    private function imagePackStats(int $limit): string
-    {
-        $out = "<table width=\"100%\" class=\"tb\">";
-        $out .= "<tr><th colspan=\"4\">Bildpaket</th></tr>";
-        $rank = 1;
-        $total = 0;
-        foreach ($this->userPropertiesRepository->getImagePackStats($limit) as $arr) {
-            $total += $arr['cnt'];
-            $out .= "<tr>
-                <td>" . $rank++ . "</td>";
-            $out .= $arr['name'] != ""
-                ? "<td>" . strtr($arr['name'], ["images/themes/" => ""]) . "</td>"
-                : "<td><i>Standard</i></td>";
-            $out .= "<td>" . StringUtils::formatNumber($arr['cnt']) . "</td>";
-            $out .= "<td>" . round(100 / $total * $arr['cnt'], 2) . "%</td></tr>";
-        }
-        $out .= "</table>";
-
-        return $out;
-    }
-
-    private function imageExtensionStats(int $limit): string
-    {
-        $out = "<table width=\"100%\" class=\"tb\">";
-        $out .= "<tr><th colspan=\"4\">Bild-Erweiterung</th></tr>";
-        $rank = 1;
-        $total = 0;
-        foreach ($this->userPropertiesRepository->getImageExtensionStats($limit) as $arr) {
-            $total += $arr['cnt'];
-            $out .= "<tr>
-                <td>" . $rank++ . "</td>";
-            $out .= $arr['name'] != ""
-                ? "<td>" . $arr['name'] . "</td>"
-                : "<td><i>Standard</i></td>";
-            $out .= "<td>" . StringUtils::formatNumber($arr['cnt']) . "</td>";
-            $out .= "<td>" . round(100 / $total * $arr['cnt'], 2) . "%</td></tr>";
-        }
-
         $out .= "</table>";
 
         return $out;

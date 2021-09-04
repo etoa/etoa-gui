@@ -2,6 +2,7 @@
 
 use EtoA\Building\BuildingDataRepository;
 use EtoA\Building\BuildingRepository;
+use EtoA\Building\BuildingTypeId;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Ship\ShipDataRepository;
 use EtoA\Ship\ShipRepository;
@@ -22,7 +23,7 @@ echo "<tr><td colspan=\"6\">
 $buildingRepository = $app[BuildingRepository::class];
 /** @var BuildingDataRepository $buildingDataRepository */
 $buildingDataRepository = $app[BuildingDataRepository::class];
-$buildings = $buildingDataRepository->getBuildingsByType(BUILDING_POWER_CAT);
+$buildings = $buildingDataRepository->getBuildingsByType(BuildingTypeId::POWER);
 
 echo "<tr>
 <th>Produktionsanlage</th>

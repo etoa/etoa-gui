@@ -8,6 +8,7 @@ use EtoA\Support\StringUtils;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Universe\Resources\BaseResources;
 use EtoA\Universe\Resources\PreciseResources;
+use EtoA\Universe\Resources\ResourceNames;
 use EtoA\User\UserRepository;
 
 /** @var int $alliance_market_level */
@@ -50,7 +51,7 @@ if (!isset($errMsg)) {
 
     $sellResources = new BaseResources();
     $costs = new BaseResources();
-    foreach ($resNames as $rk => $rn) {
+    foreach (ResourceNames::NAMES as $rk => $rn) {
         // Convert formatted number back to integer
         $_POST['res_sell_' . $rk] = StringUtils::parseFormattedNumber($_POST['res_sell_' . $rk]);
         if (isset($_POST['res_buy_' . $rk]))

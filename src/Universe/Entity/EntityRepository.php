@@ -205,19 +205,33 @@ class EntityRepository extends AbstractRepository
     /**
      * @return EntityLabel[]
      */
-    public function searchEntityLabels(EntityLabelSearch $search, EntityLabelSort $sort = null, int $limit = null): array
+    public function searchEntityLabels(EntitySearch $search, EntityLabelSort $sort = null, int $limit = null): array
     {
-        $data = $this->getEntityCoordinatesQueryBuilder($search, $sort, $limit)
+        $data = $this->entityLabelQuerBuilder($search, $sort, $limit)
+            ->execute()
+            ->fetchAllAssociative();
+
+        return array_map(fn (array $row) => new EntityLabel($row), $data);
+    }
+
+    public function searchEntityLabel(EntitySearch $search, EntityLabelSort $sort = null): ?EntityLabel
+    {
+        $data = $this->entityLabelQuerBuilder($search, $sort, 1)
+            ->execute()
+            ->fetchAssociative();
+
+        return $data !== false ? new EntityLabel($data) : null;
+    }
+
+    private function entityLabelQuerBuilder(EntitySearch $search, EntityLabelSort $sort = null, int $limit = null): QueryBuilder
+    {
+        return $this->getEntityCoordinatesQueryBuilder($search, $sort, $limit)
             ->addSelect('planets.planet_name, planets.planet_user_main, planets.planet_type_id as planet_type')
             ->addSelect('stars.name as star_name, stars.type_id as star_type')
             ->addSelect('users.user_nick, users.user_id')
             ->leftJoin('e', 'planets', 'planets', 'e.id = planets.id')
             ->leftJoin('planets', 'users', 'users', 'users.user_id = planets.planet_user_id')
-            ->leftJoin('e', 'stars', 'stars', 'e.id = stars.id')
-            ->execute()
-            ->fetchAllAssociative();
-
-        return array_map(fn (array $row) => new EntityLabel($row), $data);
+            ->leftJoin('e', 'stars', 'stars', 'e.id = stars.id');
     }
 
     public function countEntityLabels(EntityLabelSearch $search = null): int

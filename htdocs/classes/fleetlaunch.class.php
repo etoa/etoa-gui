@@ -1,5 +1,7 @@
 <?PHP
 
+use EtoA\Alliance\AllianceDiplomacyRepository;
+use EtoA\Building\BuildingId;
 use EtoA\Building\BuildingRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Fleet\FleetRepository;
@@ -9,10 +11,12 @@ use EtoA\Race\RaceDataRepository;
 use EtoA\Ship\ShipRepository;
 use EtoA\Support\StringUtils;
 use EtoA\Specialist\SpecialistService;
+use EtoA\Technology\TechnologyId;
 use EtoA\Technology\TechnologyRepository;
 use EtoA\Universe\Entity\EntityService;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Universe\Resources\BaseResources;
+use EtoA\Universe\Resources\ResourceNames;
 
 /**
  * Fleet launch class, provides the full workflow for starting a fleet
@@ -146,7 +150,7 @@ class FleetLaunch
         //Wormhole enable?
         /** @var TechnologyRepository $technologyRepository */
         $technologyRepository = $app[TechnologyRepository::class];
-        $this->wormholeEnable = $technologyRepository->getTechnologyLevel((int) $this->ownerId, TECH_WORMHOLE) > 0;
+        $this->wormholeEnable = $technologyRepository->getTechnologyLevel((int) $this->ownerId, TechnologyId::WORMHOLE) > 0;
     }
 
     //
@@ -184,7 +188,7 @@ class FleetLaunch
 
             /** @var BuildingRepository $buildingRepository */
             $buildingRepository = $app[BuildingRepository::class];
-            $fleetControl = $buildingRepository->getEntityBuilding((int) $this->ownerId, (int) $this->sourceEntity->id(), FLEET_CONTROL_ID);
+            $fleetControl = $buildingRepository->getEntityBuilding((int) $this->ownerId, (int) $this->sourceEntity->id(), BuildingId::FLEET_CONTROL);
 
             // Check if haven is out of order
             if (null === $fleetControl || $fleetControl->currentLevel === 0) {
@@ -453,9 +457,9 @@ class FleetLaunch
                 } else
                     $this->error = "Zu wenig Laderaum für soviel Treibstoff und Nahrung (" . StringUtils::formatNumber(abs($this->getCapacity())) . " zuviel)!";
             } else
-                $this->error = "Zuwenig Nahrung! " . StringUtils::formatNumber($this->sourceEntity->resFood()) . " t " . RES_FOOD . " vorhanden, " . StringUtils::formatNumber($this->getCostsFood()) . " t benötigt.";
+                $this->error = "Zuwenig Nahrung! " . StringUtils::formatNumber($this->sourceEntity->resFood()) . " t " . ResourceNames::FOOD . " vorhanden, " . StringUtils::formatNumber($this->getCostsFood()) . " t benötigt.";
         } else
-            $this->error = "Zuwenig Treibstoff! " . StringUtils::formatNumber($this->sourceEntity->resFuel()) . " t " . RES_FUEL . " vorhanden, " . StringUtils::formatNumber($this->getCosts()) . " t benötigt.";
+            $this->error = "Zuwenig Treibstoff! " . StringUtils::formatNumber($this->sourceEntity->resFuel()) . " t " . ResourceNames::FUEL . " vorhanden, " . StringUtils::formatNumber($this->getCosts()) . " t benötigt.";
         return false;
     }
 
@@ -751,6 +755,8 @@ class FleetLaunch
 
         /** @var ConfigurationService $config */
         $config = $app[ConfigurationService::class];
+        /** @var AllianceDiplomacyRepository $allianceDiplomacyRepository */
+        $allianceDiplomacyRepository = $app[AllianceDiplomacyRepository::class];
 
         $this->error = '';
 
@@ -793,11 +799,11 @@ class FleetLaunch
                                     // and it is an agressive action
                                     $ai->attitude() == 3 &&
                                     // and the two alliances are not at war against each other
-                                    !$this->sourceEntity->owner->alliance->checkWar($this->targetEntity->ownerAlliance())) || (
+                                    !$allianceDiplomacyRepository->isAtWar($this->sourceEntity->owner->allianceId(), $this->targetEntity->ownerAlliance())) || (
                                     // or it is a defensive action
                                     $ai->attitude() == 1 &&
                                     // and the user's alliance is not at war
-                                    !$this->owner->alliance->isAtWar()))))
+                                    !$allianceDiplomacyRepository->isAtWar($this->owner->allianceId())))))
                 ) {
                     continue;
                 }
@@ -841,7 +847,7 @@ class FleetLaunch
                                         ) {
                                             if ($this->owner->canAttackPlanet($this->targetEntity)) {
                                                 if (strpos($ai, 'Bombardierung')) {
-                                                    if ($this->owner->alliance->checkWar($this->targetEntity->owner->alliance->id))
+                                                    if ($allianceDiplomacyRepository->isAtWar($this->sourceEntity->owner->allianceId(), $this->targetEntity->ownerAlliance()))
                                                         $actionObjs[$i] = $ai;
                                                 } else
                                                     $actionObjs[$i] = $ai;
@@ -1015,7 +1021,7 @@ class FleetLaunch
     // subtracts the payload ress (not support/flight fuel and food)
     function finalLoadResource()
     {
-        global $resNames, $app;
+        global $app;
 
         /** @var PlanetRepository $planetRepository */
         $planetRepository = $app[PlanetRepository::class];
@@ -1023,7 +1029,7 @@ class FleetLaunch
         $this->sourceEntity->reloadRes();
         $resources = new BaseResources();
 
-        foreach ($resNames as $rk => $rn) {
+        foreach (ResourceNames::NAMES as $rk => $rn) {
             $id = $rk + 1;
             if ($this->res[$id] >= 0) {
                 $ammount = $this->res[$id];

@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace EtoA\Help\TicketSystem;
 
 use EtoA\Admin\AdminUserRepository;
+use EtoA\Message\MessageCategoryId;
 use EtoA\Message\MessageRepository;
 use EtoA\User\UserRepository;
 
@@ -53,7 +54,7 @@ Dein [page ticket id=" . $ticket->id . "]Ticket #" . $ticket->getIdString() . "[
 Es wird sich in Kürze ein Admin um dein Anliegen kümmern.
 
 Dein Admin-Team";
-        $this->userMessageRepo->createSystemMessage($ticket->userId, USER_MSG_CAT_ID, "Dein Ticket " . $ticket->getIdString() . ' wurde erstellt', $text);
+        $this->userMessageRepo->createSystemMessage($ticket->userId, MessageCategoryId::USER, "Dein Ticket " . $ticket->getIdString() . ' wurde erstellt', $text);
 
         return $ticket;
     }
@@ -151,7 +152,7 @@ Dein [page ticket id=" . $ticket->id . "]Ticket " . $ticket->getIdString() . "[/
 [page ticket id=" . $ticket->id . "]Klicke HIER um die Änderungen anzusehen.[/page]
 
 Dein Admin-Team";
-            $this->userMessageRepo->createSystemMessage($ticket->userId, USER_MSG_CAT_ID, "Dein Ticket " . $ticket->getIdString() . ' wurde aktualisiert', $text);
+            $this->userMessageRepo->createSystemMessage($ticket->userId, MessageCategoryId::USER, "Dein Ticket " . $ticket->getIdString() . ' wurde aktualisiert', $text);
         }
 
         return $ticketMessage;

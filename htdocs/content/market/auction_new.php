@@ -9,6 +9,7 @@ use EtoA\Message\MarketReportRepository;
 use EtoA\Support\StringUtils;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Universe\Resources\BaseResources;
+use EtoA\Universe\Resources\ResourceNames;
 
 /** @var MarketReportRepository $marketReportRepository */
 $marketReportRepository = $app[MarketReportRepository::class];
@@ -27,7 +28,7 @@ $subtracted = [];
 $currency = new BaseResources();
 $sell = new BaseResources();
 
-foreach ($resNames as $rk => $rn) {
+foreach (ResourceNames::NAMES as $rk => $rn) {
     // Convert formatted number back to integer
     $_POST['auction_sell_' . $rk] = StringUtils::parseFormattedNumber($_POST['auction_sell_' . $rk]);
 
@@ -51,7 +52,7 @@ $ress_update = 0;
 if ($ok && $cp->checkRes($subtracted)) {
     // Rohstoffe + Taxe vom Planetenkonto abziehen
     $bidCosts = new BaseResources();
-    foreach ($resNames as $rk => $rn) {
+    foreach (ResourceNames::NAMES as $rk => $rn) {
         $bidCosts->set($rk, $subtracted[$rk]);
     }
     $planetRepository->removeResources($cp->id(), $bidCosts);
@@ -64,7 +65,7 @@ if ($ok && $cp->checkRes($subtracted)) {
 
     //Nachricht senden
     $marketReportRepository->addAuctionReport($auctionId, $cu->getId(), $cp->id, 0, $sell, "auctionadd", $currency, $_POST['auction_text'], MARKET_TAX, $auction_end_time);
-    $logRepository->add(LogFacility::MARKET, LogSeverity::INFO, "Der Spieler " . $cu->nick . " hat folgende Rohstoffe zur versteigerung angeboten:\n\n" . RES_METAL . ": " . $sell->metal . "\n" . RES_CRYSTAL . ": " . $sell->crystal . "\n" . RES_PLASTIC . ": " . $sell->plastic . "\n" . RES_FUEL . ": " . $sell->fuel . "\n" . RES_FOOD . ": " . $sell->food . "\n\nAuktionsende: " . date("d.m.Y H:i", $auction_end_time) . "");
+    $logRepository->add(LogFacility::MARKET, LogSeverity::INFO, "Der Spieler " . $cu->nick . " hat folgende Rohstoffe zur versteigerung angeboten:\n\n" . ResourceNames::METAL . ": " . $sell->metal . "\n" . ResourceNames::CRYSTAL . ": " . $sell->crystal . "\n" . ResourceNames::PLASTIC . ": " . $sell->plastic . "\n" . ResourceNames::FUEL . ": " . $sell->fuel . "\n" . ResourceNames::FOOD . ": " . $sell->food . "\n\nAuktionsende: " . date("d.m.Y H:i", $auction_end_time) . "");
 
     // todo: report
 

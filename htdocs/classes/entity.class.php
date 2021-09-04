@@ -314,57 +314,6 @@ abstract class Entity
 
     /**
      * Creates an instance of a child class
-     * using the factory design pattern
-     */
-    public static function createFactoryByCoords($c1, $c2, $c3, $c4, $c5)
-    {
-        $res = dbquery("
-        SELECT
-            entities.id,
-            code
-        FROM
-            entities
-        INNER JOIN
-            cells on entities.cell_id=cells.id
-        AND sx=" . intval($c1) . "
-        AND sy=" . intval($c2) . "
-        AND cx=" . intval($c3) . "
-        AND cy=" . intval($c4) . "
-        AND pos=" . intval($c5) . "
-        LIMIT 1;
-        ");
-        if (mysql_num_rows($res) > 0) {
-            $arr = mysql_fetch_array($res);
-            $type = $arr[1];
-            $id = $arr[0];
-
-            switch ($type) {
-                case EntityType::STAR:
-                    return new Star($id);
-                case EntityType::PLANET:
-                    return Planet::getById($id);
-                case EntityType::ASTEROID:
-                    return new AsteroidField($id);
-                case EntityType::NEBULA:
-                    return new Nebula($id);
-                case EntityType::WORMHOLE:
-                    return new Wormhole($id);
-                case EntityType::EMPTY_SPACE:
-                    return new EmptySpace($id);
-                case EntityType::MARKET:
-                    return new Market($id);
-                case EntityType::ALLIANCE_MARKET:
-                    return new Allianz($id);
-                default:
-                    return new UnknownEntity($id);
-            }
-        } else {
-            return false;
-        }
-    }
-
-    /**
-     * Creates an instance of a child class
      *
      */
     public static function createFactoryUnkownCell($cell = 0)

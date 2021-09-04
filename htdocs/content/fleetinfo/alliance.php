@@ -6,11 +6,14 @@
 use EtoA\Alliance\AllianceBuildingRepository;
 use EtoA\Alliance\AllianceRepository;
 use EtoA\Alliance\AllianceRights;
+use EtoA\Alliance\AllianceService;
 use EtoA\Log\LogFacility;
 use EtoA\Log\LogRepository;
 use EtoA\Log\LogSeverity;
 use EtoA\Support\BBCodeUtils;
 use EtoA\Support\StringUtils;
+use EtoA\Universe\Resources\ResIcons;
+use EtoA\Universe\Resources\ResourceNames;
 
 /** @var AllianceBuildingRepository $allianceBuildingRepository */
 $allianceBuildingRepository = $app[AllianceBuildingRepository::class];
@@ -18,7 +21,12 @@ $allianceBuildingRepository = $app[AllianceBuildingRepository::class];
 $allianceRepository = $app[AllianceRepository::class];
 /** @var LogRepository $logRepository */
 $logRepository = $app[LogRepository::class];
+/** @var AllianceService $allianceService */
+$allianceService = $app[AllianceService::class];
+/** @var \EtoA\User\UserRepository $userRepository */
+$userRepository = $app[\EtoA\User\UserRepository::class];
 
+$user = $userRepository->getUser($cu->getId());
 $lead_id = (int) $_GET['lead_id'] > 0 ? (int) $_GET['lead_id'] : -1;
 
 $rights = true;
@@ -31,7 +39,9 @@ else
     $rights = false;
 
 if ($allianceFleetControlLevel >= ALLIANCE_FLEET_SHOW_DETAIL && $rights) {
-    if ($cu->alliance->checkActionRightsNA(AllianceRights::FLEET_MINISTER) || $cu->id == $fd->ownerId()) {
+    $alliance = $allianceRepository->getAlliance($user->allianceId);
+    $userAlliancePermission = $allianceService->getUserAlliancePermissions($alliance, $user);
+    if ($userAlliancePermission->hasRights(AllianceRights::FLEET_MINISTER) || $cu->id == $fd->ownerId()) {
         //
         // Flottendaten laden und überprüfen ob die Flotte existiert
         //
@@ -122,19 +132,19 @@ if ($allianceFleetControlLevel >= ALLIANCE_FLEET_SHOW_DETAIL && $rights) {
 
             tableStart("Piloten &amp; Verbrauch", "50%");
             echo "<tr>
-                        <th style=\"width:150px;\">" . RES_ICON_PEOPLE . "Piloten:</th>
+                        <th style=\"width:150px;\">" . ResIcons::PEOPLE . "Piloten:</th>
                         <td>" . StringUtils::formatNumber($fd->pilots()) . "</td>
                     </tr>
                     <tr>
-                        <th>" . RES_ICON_FUEL . "" . RES_FUEL . ":</th>
+                        <th>" . ResIcons::FUEL . "" . ResourceNames::FUEL . ":</th>
                         <td>" . StringUtils::formatNumber($fd->usageFuel()) . "</td>
                     </tr>
                     <tr>
-                        <th>" . RES_ICON_FOOD . "" . RES_FOOD . ":</th>
+                        <th>" . ResIcons::FOOD . "" . ResourceNames::FOOD . ":</th>
                         <td>" . StringUtils::formatNumber($fd->usageFood()) . "</td>
                     </tr>
                     <tr>
-                        <th>" . RES_ICON_POWER . " " . RES_POWER . ":</th>
+                        <th>" . ResIcons::POWER . " " . ResourceNames::POWER . ":</th>
                         <td>" . StringUtils::formatNumber($fd->usagePower()) . "</td>
                     </tr>";
             tableEnd();
@@ -144,27 +154,27 @@ if ($allianceFleetControlLevel >= ALLIANCE_FLEET_SHOW_DETAIL && $rights) {
             // Frachtraum
             tableStart("Frachtraum", "50%");
             echo "<tr>
-                        <th>" . RES_ICON_METAL . "" . RES_METAL . "</th>
+                        <th>" . ResIcons::METAL . "" . ResourceNames::METAL . "</th>
                         <td>" . StringUtils::formatNumber($fd->resMetal()) . " t</td>
                     </tr>
                     <tr>
-                        <th>" . RES_ICON_CRYSTAL . "" . RES_CRYSTAL . "</th>
+                        <th>" . ResIcons::CRYSTAL . "" . ResourceNames::CRYSTAL . "</th>
                         <td>" . StringUtils::formatNumber($fd->resCrystal()) . " t</td>
                     </tr>
                     <tr>
-                        <td>" . RES_ICON_PLASTIC . "" . RES_PLASTIC . "</th>
+                        <td>" . ResIcons::PLASTIC . "" . ResourceNames::PLASTIC . "</th>
                         <td>" . StringUtils::formatNumber($fd->resPlastic()) . " t</td>
                     </tr>
                     <tr>
-                        <th>" . RES_ICON_FUEL . "" . RES_FUEL . "</th>
+                        <th>" . ResIcons::FUEL . "" . ResourceNames::FUEL . "</th>
                         <td>" . StringUtils::formatNumber($fd->resFuel()) . " t</td>
                     </tr>
                     <tr>
-                        <th>" . RES_ICON_FOOD . "" . RES_FOOD . "</th>
+                        <th>" . ResIcons::FOOD . "" . ResourceNames::FOOD . "</th>
                         <td>" . StringUtils::formatNumber($fd->resFood()) . " t</td>
                     </tr>
                     <tr>
-                        <th>" . RES_ICON_POWER . "" . RES_POWER . "</th>
+                        <th>" . ResIcons::POWER . "" . ResourceNames::POWER . "</th>
                         <td>" . StringUtils::formatNumber($fd->resPower()) . " t</td>
                     </tr>
                     <tr>
@@ -179,7 +189,7 @@ if ($allianceFleetControlLevel >= ALLIANCE_FLEET_SHOW_DETAIL && $rights) {
 
             tableStart("Passagierraum", "50%");
             echo "<tr>
-                        <th>" . RES_ICON_PEOPLE . "Passagiere</th>
+                        <th>" . ResIcons::PEOPLE . "Passagiere</th>
                         <td>" . StringUtils::formatNumber($fd->resPeople()) . "</td>
                     </tr>
                     <tr>

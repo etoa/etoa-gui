@@ -9,6 +9,7 @@ use EtoA\Defense\DefenseDataRepository;
 use EtoA\Ship\ShipDataRepository;
 use EtoA\Support\StringUtils;
 use EtoA\Technology\TechnologyDataRepository;
+use EtoA\Universe\Resources\ResourceNames;
 
 /**
  * Description of spyreport
@@ -39,7 +40,6 @@ class SpyReport extends Report
 
     public function __construct($args)
     {
-        global $resNames;
         parent::__construct($args);
         if ($this->valid) {
             $res = dbquery("SELECT * FROM reports_spy WHERE id=" . $this->id . ";");
@@ -51,7 +51,7 @@ class SpyReport extends Report
                 $this->ships = $arr['ships'];
                 $this->def = $arr['defense'];
                 $this->res = array();
-                foreach ($resNames as $rk => $rn)
+                foreach (ResourceNames::NAMES as $rk => $rn)
                     $this->res[$rk] = $arr['res_' . $rk];
                 $this->res[5] = $arr['res_5'];
                 $this->spydefense = $arr['spydefense'];
@@ -85,7 +85,7 @@ class SpyReport extends Report
 
     function __toString()
     {
-        global $resNames, $app;
+        global $app;
 
         ob_start();
         $ent1 = Entity::createFactoryById($this->entity1Id);
@@ -189,7 +189,7 @@ class SpyReport extends Report
                 if (array_sum($this->res) > 0) {
                     echo '<br /><strong>ROHSTOFFE:</strong><br />';
                     echo '<table>';
-                    foreach ($resNames as $k => $v) {
+                    foreach (ResourceNames::NAMES as $k => $v) {
                         echo '<tr>
                             <td>' . $v . ' </td>
                             <td style="text-align:right;"> ' . StringUtils::formatNumber($this->res[$k]) . '</td>
@@ -223,7 +223,7 @@ class SpyReport extends Report
                 echo 'Eine Flotte vom Planeten ' . $ent2->detailLink() . ' hat das Ziel ' . $ent1->detailLink() . ' um ' . StringUtils::formatDate($this->timestamp) . ' analysiert.<br /><br />';
                 echo '<br /><strong>ROHSTOFFE:</strong><br />';
                 echo '<table>';
-                foreach ($resNames as $k => $v) {
+                foreach (ResourceNames::NAMES as $k => $v) {
                     echo '<tr><td>' . $v . ' </td><td style="text-align:right;"> ' . StringUtils::formatNumber($this->res[$k]) . '</td></tr>';
                 }
                 echo '<tr><td>Bewohner </td><td style="text-align:right;"> ' . StringUtils::formatNumber($this->res[5]) . '</td></tr>';

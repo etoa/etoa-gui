@@ -6,6 +6,8 @@ use EtoA\Race\RaceDataRepository;
 use EtoA\Ship\ShipDataRepository;
 use EtoA\Support\BBCodeUtils;
 use EtoA\Support\StringUtils;
+use EtoA\Universe\Resources\ResIcons;
+use EtoA\Universe\Resources\ResourceNames;
 
 /** @var RaceDataRepository $raceRepository */
 $raceRepository = $app[RaceDataRepository::class];
@@ -36,11 +38,11 @@ if (isset($_GET['id']) && intval($_GET['id']) > 0) {
         echo "<td class=\"tbldata\">" . BBCodeUtils::toHTML($defense->longComment) . "</td></tr>";
         echo "<tr><td class=\"tbltitle\">Rasse</td><td class=\"tbldata\">";
         echo $defense->raceId > 0 ? $raceNames[$defense->raceId] . "</td></tr>" : "-</td></tr>";
-        echo "<tr><td class=\"tbltitle\">" . RES_ICON_METAL . "" . RES_METAL . "</td><td class=\"tbldata\">" . StringUtils::formatNumber($defense->costsMetal) . "</td></tr>";
-        echo "<tr><td class=\"tbltitle\">" . RES_ICON_CRYSTAL . "" . RES_CRYSTAL . "</td><td class=\"tbldata\">" . StringUtils::formatNumber($defense->costsCrystal) . "</td></tr>";
-        echo "<tr><td class=\"tbltitle\">" . RES_ICON_PLASTIC . "" . RES_PLASTIC . "</td><td class=\"tbldata\">" . StringUtils::formatNumber($defense->costsPlastic) . "</td></tr>";
-        echo "<tr><td class=\"tbltitle\">" . RES_ICON_FUEL . "" . RES_FUEL . "</td><td class=\"tbldata\">" . StringUtils::formatNumber($defense->costsFuel) . "</td></tr>";
-        echo "<tr><td class=\"tbltitle\">" . RES_ICON_FOOD . "" . RES_FOOD . "</td><td class=\"tbldata\">" . StringUtils::formatNumber($defense->costsFood) . "</td></tr>";
+        echo "<tr><td class=\"tbltitle\">" . ResIcons::METAL . "" . ResourceNames::METAL . "</td><td class=\"tbldata\">" . StringUtils::formatNumber($defense->costsMetal) . "</td></tr>";
+        echo "<tr><td class=\"tbltitle\">" . ResIcons::CRYSTAL . "" . ResourceNames::CRYSTAL . "</td><td class=\"tbldata\">" . StringUtils::formatNumber($defense->costsCrystal) . "</td></tr>";
+        echo "<tr><td class=\"tbltitle\">" . ResIcons::PLASTIC . "" . ResourceNames::PLASTIC . "</td><td class=\"tbldata\">" . StringUtils::formatNumber($defense->costsPlastic) . "</td></tr>";
+        echo "<tr><td class=\"tbltitle\">" . ResIcons::FUEL . "" . ResourceNames::FUEL . "</td><td class=\"tbldata\">" . StringUtils::formatNumber($defense->costsFuel) . "</td></tr>";
+        echo "<tr><td class=\"tbltitle\">" . ResIcons::FOOD . "" . ResourceNames::FOOD . "</td><td class=\"tbldata\">" . StringUtils::formatNumber($defense->costsFood) . "</td></tr>";
         echo "<tr><td class=\"tbltitle\">Struktur</td><td class=\"tbldata\">" . StringUtils::formatNumber($defense->structure) . "</td></tr>";
         echo "<tr><td class=\"tbltitle\">Abwehrschild</td><td class=\"tbldata\">" . StringUtils::formatNumber($defense->shield) . "</td></tr>";
         echo "<tr><td class=\"tbltitle\">Schusskraft</td><td class=\"tbldata\">" . StringUtils::formatNumber($defense->weapon) . "</td></tr>";

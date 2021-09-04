@@ -2,6 +2,7 @@
 
 use EtoA\Specialist\SpecialistDataRepository;
 use EtoA\Support\StringUtils;
+use EtoA\Universe\Resources\ResourceNames;
 
 echo "<h2>Spezialisten</h2>";
 HelpUtil::breadCrumbs(array("Spezialisten", "specialists"));
@@ -36,19 +37,19 @@ foreach ($specialists as $specialist) {
     echo '<td style="width:220px;">';
     $bonus = '';
     if ($specialist->prodMetal !== 1.0) {
-        $bonus .= StringUtils::formatPercentString($specialist->prodMetal, true) . ' ' . RES_METAL . 'produktion<br/>';
+        $bonus .= StringUtils::formatPercentString($specialist->prodMetal, true) . ' ' . ResourceNames::METAL . 'produktion<br/>';
     }
     if ($specialist->prodCrystal !== 1.0) {
-        $bonus .= StringUtils::formatPercentString($specialist->prodCrystal, true) . ' ' . RES_CRYSTAL . 'produktion<br/>';
+        $bonus .= StringUtils::formatPercentString($specialist->prodCrystal, true) . ' ' . ResourceNames::CRYSTAL . 'produktion<br/>';
     }
     if ($specialist->prodPlastic !== 1.0) {
-        $bonus .= StringUtils::formatPercentString($specialist->prodPlastic, true) . ' ' . RES_PLASTIC . 'produktion<br/>';
+        $bonus .= StringUtils::formatPercentString($specialist->prodPlastic, true) . ' ' . ResourceNames::PLASTIC . 'produktion<br/>';
     }
     if ($specialist->prodFuel !== 1.0) {
-        $bonus .= StringUtils::formatPercentString($specialist->prodFuel, true) . ' ' . RES_FUEL . 'produktion<br/>';
+        $bonus .= StringUtils::formatPercentString($specialist->prodFuel, true) . ' ' . ResourceNames::FUEL . 'produktion<br/>';
     }
     if ($specialist->prodFood !== 1.0) {
-        $bonus .= StringUtils::formatPercentString($specialist->prodFood, true) . ' ' . RES_FOOD . 'sproduktion<br/>';
+        $bonus .= StringUtils::formatPercentString($specialist->prodFood, true) . ' ' . ResourceNames::FOOD . 'sproduktion<br/>';
     }
     if ($specialist->prodPower !== 1.0) {
         $bonus .= StringUtils::formatPercentString($specialist->prodPower, true) . ' Stromerzeugung<br/>';
@@ -105,11 +106,11 @@ foreach ($specialists as $specialist) {
     echo $bonus;
     echo '</td>';
     echo '<td style="width:120px;">';
-    echo StringUtils::formatNumber($specialist->costsMetal) . ' ' . RES_METAL . '<br/>';
-    echo StringUtils::formatNumber($specialist->costsCrystal) . ' ' . RES_CRYSTAL . '<br/>';
-    echo StringUtils::formatNumber($specialist->costsPlastic) . ' ' . RES_PLASTIC . '<br/>';
-    echo StringUtils::formatNumber($specialist->costsFuel) . ' ' . RES_FUEL . '<br/>';
-    echo StringUtils::formatNumber($specialist->costsFood) . ' ' . RES_FOOD . '<br/>';
+    echo StringUtils::formatNumber($specialist->costsMetal) . ' ' . ResourceNames::METAL . '<br/>';
+    echo StringUtils::formatNumber($specialist->costsCrystal) . ' ' . ResourceNames::CRYSTAL . '<br/>';
+    echo StringUtils::formatNumber($specialist->costsPlastic) . ' ' . ResourceNames::PLASTIC . '<br/>';
+    echo StringUtils::formatNumber($specialist->costsFuel) . ' ' . ResourceNames::FUEL . '<br/>';
+    echo StringUtils::formatNumber($specialist->costsFood) . ' ' . ResourceNames::FOOD . '<br/>';
     echo '</td>';
     echo '</tr>';
 }

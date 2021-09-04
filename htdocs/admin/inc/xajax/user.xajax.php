@@ -9,12 +9,14 @@ use EtoA\Log\GameLogFacility;
 use EtoA\Log\GameLogRepository;
 use EtoA\Log\GameLogSearch;
 use EtoA\Log\LogSeverity;
+use EtoA\Message\MessageCategoryId;
 use EtoA\Message\MessageRepository;
 use EtoA\Ship\ShipDataRepository;
 use EtoA\Support\BBCodeUtils;
 use EtoA\Support\StringUtils;
 use EtoA\Technology\TechnologyDataRepository;
 use EtoA\Universe\Planet\PlanetRepository;
+use EtoA\Universe\Resources\ResourceNames;
 use EtoA\User\UserCommentRepository;
 use EtoA\User\UserLogRepository;
 use EtoA\User\UserPointsRepository;
@@ -222,7 +224,7 @@ function sendUrgendMsg($uid, $subject, $text)
     if ($text != "" && $subject != "") {
         /** @var \EtoA\Message\MessageRepository $messageRepository */
         $messageRepository = $app[\EtoA\Message\MessageRepository::class];
-        $messageRepository->createSystemMessage((int) $uid, USER_MSG_CAT_ID, $subject, $text);
+        $messageRepository->createSystemMessage((int) $uid, MessageCategoryId::USER, $subject, $text);
 
         $or->alert("Nachricht gesendet!");
         $or->assign('urgendmsgsubject', "value", "");
@@ -565,11 +567,11 @@ function loadEconomy($uid, $target)
         echo "<table class=\"tbl\">";
         echo "<tr>
                                     <td class=\"tbltitle\">Name:</td>
-                                    <td class=\"tbltitle\">" . RES_METAL . "</td>
-                                    <td class=\"tbltitle\">" . RES_CRYSTAL . "</td>
-                                    <td class=\"tbltitle\">" . RES_PLASTIC . "</td>
-                                    <td class=\"tbltitle\">" . RES_FUEL . "</td>
-                                    <td class=\"tbltitle\">" . RES_FOOD . "</td>
+                                    <td class=\"tbltitle\">" . ResourceNames::METAL . "</td>
+                                    <td class=\"tbltitle\">" . ResourceNames::CRYSTAL . "</td>
+                                    <td class=\"tbltitle\">" . ResourceNames::PLASTIC . "</td>
+                                    <td class=\"tbltitle\">" . ResourceNames::FUEL . "</td>
+                                    <td class=\"tbltitle\">" . ResourceNames::FOOD . "</td>
                                     <td class=\"tbltitle\">Bewohner</td>
                                 </tr>";
         foreach ($userPlanets as $planet) {
@@ -650,11 +652,11 @@ function loadEconomy($uid, $target)
         echo "<h2>Produktion</h2>";
         echo "<table class=\"tbl\">";
         echo "<tr><th class=\"tbltitle\">Name:</th>
-                    <th class=\"tbltitle\">" . RES_METAL . "</th>
-                    <th class=\"tbltitle\">" . RES_CRYSTAL . "</th>
-                    <th class=\"tbltitle\">" . RES_PLASTIC . "</th>
-                    <th class=\"tbltitle\">" . RES_FUEL . "</th>
-                    <th class=\"tbltitle\">" . RES_FOOD . "</th>
+                    <th class=\"tbltitle\">" . ResourceNames::METAL . "</th>
+                    <th class=\"tbltitle\">" . ResourceNames::CRYSTAL . "</th>
+                    <th class=\"tbltitle\">" . ResourceNames::PLASTIC . "</th>
+                    <th class=\"tbltitle\">" . ResourceNames::FUEL . "</th>
+                    <th class=\"tbltitle\">" . ResourceNames::FOOD . "</th>
                     <th class=\"tbltitle\">Energie</th></tr>";
         foreach ($userPlanets as $planet) {
             echo "<tr><td class=\"tbldata\"><a href=\"?page=galaxy&amp;sub=edit&amp;id=" . $planet->id . "\">" . $planet->toString() . "</a></td>";

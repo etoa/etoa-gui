@@ -1,15 +1,19 @@
 <?PHP
 
 use EtoA\Building\BuildingDataRepository;
+use EtoA\Building\BuildingId;
 use EtoA\Building\BuildingRepository;
 use EtoA\Building\BuildingTypeDataRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Support\StringUtils;
 use EtoA\Specialist\SpecialistService;
+use EtoA\Technology\TechnologyId;
 use EtoA\Technology\TechnologyRepository;
 use EtoA\UI\ResourceBoxDrawer;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Technology\TechnologyDataRepository;
+use EtoA\Universe\Resources\ResIcons;
+use EtoA\Universe\Resources\ResourceNames;
 use EtoA\User\UserPropertiesRepository;
 
 /** @var ConfigurationService $config */
@@ -107,7 +111,7 @@ if (isset($cp)) {
 
         // people working changed
         if (isset($_POST['submit_people_form'])) {
-            if ($bl->setPeopleWorking(BUILD_BUILDING_ID, StringUtils::parseFormattedNumber($_POST['peopleWorking'])))
+            if ($bl->setPeopleWorking(BuildingId::BUILDING, StringUtils::parseFormattedNumber($_POST['peopleWorking'])))
                 success_msg("Arbeiter zugeteilt!");
             else
                 error_msg('Arbeiter konnten nicht zugeteilt werden!');
@@ -225,7 +229,7 @@ if (isset($cp)) {
     //
     // create infobox incl. editable stuff for working people adjustements
     //
-    $genTechLevel = $techlist[GEN_TECH_ID] ?? 0;
+    $genTechLevel = $techlist[TechnologyId::GEN] ?? 0;
     tableStart('Bauhof-Infos');
     echo '<colgroup><col style="width:400px;"/><col/></colgroup>';
 
@@ -314,13 +318,13 @@ if (isset($cp)) {
             tableStart('Bauoptionen');
             echo '<tr>
                     <th width="16%">Aktion</td>
-                    <th width="14%">' . RES_ICON_TIME . ' Zeit</th>
-                    <th width="14%">' . RES_ICON_METAL . '</td>
-                    <th width="14%">' . RES_ICON_CRYSTAL . '</td>
-                    <th width="14%">' . RES_ICON_PLASTIC . '</td>
-                    <th width="14%">' . RES_ICON_FUEL . '</td>
-                    <th width="14%">' . RES_ICON_FOOD . '</td>
-                    <th width="14%">' . RES_ICON_POWER . '</td>
+                    <th width="14%">' . ResIcons::TIME . ' Zeit</th>
+                    <th width="14%">' . ResIcons::METAL . '</td>
+                    <th width="14%">' . ResIcons::CRYSTAL . '</td>
+                    <th width="14%">' . ResIcons::PLASTIC . '</td>
+                    <th width="14%">' . ResIcons::FUEL . '</td>
+                    <th width="14%">' . ResIcons::FOOD . '</td>
+                    <th width="14%">' . ResIcons::POWER . '</td>
                 </tr>';
 
             // Bauen
@@ -358,7 +362,7 @@ if (isset($cp)) {
                                 </td>
                                 <td>' . StringUtils::formatTimespan($costs['time']) . '</td>';
                     }
-                    foreach ($resNames as $rk => $rn) {
+                    foreach (ResourceNames::NAMES as $rk => $rn) {
                         echo '<td>' . StringUtils::formatNumber(ceil($costs['costs' . $rk])) . '</td>';
                     }
                     echo '<td>' . StringUtils::formatNumber(ceil($costs['costs5'])) . '</td>';
@@ -389,7 +393,7 @@ if (isset($cp)) {
                                     <input type="submit" class="button" name="command_demolish" value="Abreissen" onclick="if (this.value==\'Abreissen\'){return confirm(\'Geb&auml;de wirklich abreissen?\');}">
                                 </td>
                                 <td>' . StringUtils::formatTimespan($demolishCosts['time']) . '</td>';
-                    foreach ($resNames as $rk => $rn) {
+                    foreach (ResourceNames::NAMES as $rk => $rn) {
                         echo '<td>' . StringUtils::formatNumber(ceil($demolishCosts['costs' . $rk])) . '</td>';
                     }
                     echo '<td>' . StringUtils::formatNumber(ceil($demolishCosts['costs5'])) . '</td>';
@@ -412,7 +416,7 @@ if (isset($cp)) {
                     echo '<tr>
                                     <td width="90">N&auml;chste Stufe:</td>
                                     <td>' . StringUtils::formatTimespan($costs['time']) . '</td>';
-                    foreach ($resNames as $rk => $rn) {
+                    foreach (ResourceNames::NAMES as $rk => $rn) {
                         echo '<td>' . StringUtils::formatNumber(ceil($costs['costs' . $rk])) . '</td>';
                     }
                     echo '<td>' . StringUtils::formatNumber(ceil($costs['costs5'])) . '</td>';
@@ -505,11 +509,11 @@ if (isset($cp)) {
                     echo "<tr>
                             <th colspan=\"2\">Gebäude</th>
                             <th>Zeit</th>
-                            <th>" . RES_METAL . "</th>
-                            <th>" . RES_CRYSTAL . "</th>
-                            <th>" . RES_PLASTIC . "</th>
-                            <th>" . RES_FUEL . "</th>
-                            <th>" . RES_FOOD . "</th>
+                            <th>" . ResourceNames::METAL . "</th>
+                            <th>" . ResourceNames::CRYSTAL . "</th>
+                            <th>" . ResourceNames::PLASTIC . "</th>
+                            <th>" . ResourceNames::FUEL . "</th>
+                            <th>" . ResourceNames::FOOD . "</th>
                             <th>Ausbau</th>
                         </tr>";
                 }

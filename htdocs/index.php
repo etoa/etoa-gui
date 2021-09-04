@@ -98,8 +98,17 @@ $properties = $userPropertiesRepository->getOrCreateProperties($cu->id);
 // Design / layout properties
 //
 
-// Design
-defineImagePaths();
+if (!defined('CSS_STYLE')) {
+    $design = DESIGN_DIRECTORY . "/official/" . $config->get('default_css_style');
+    if (filled($properties->cssStyle)) {
+        if (is_dir(DESIGN_DIRECTORY . "/custom/" . $properties->cssStyle)) {
+            $design = DESIGN_DIRECTORY . "/custom/" . $properties->cssStyle;
+        } else if (is_dir(DESIGN_DIRECTORY . "/official/" . $properties->cssStyle)) {
+            $design = DESIGN_DIRECTORY . "/official/" . $properties->cssStyle;
+        }
+    }
+    define('CSS_STYLE', $design);
+}
 
 //
 // Page content

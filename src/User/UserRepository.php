@@ -55,7 +55,7 @@ class UserRepository extends AbstractRepository
             ->fetchOne();
     }
 
-    public function setAllianceId(int $userId, int $allianceId, int $rankId = null): void
+    public function setAllianceId(int $userId, int $allianceId, int $rankId = null, int $leaveTimestamp = null): void
     {
         $qb = $this->createQueryBuilder()
             ->update('users')
@@ -72,10 +72,29 @@ class UserRepository extends AbstractRepository
                 ->setParameter('rank', $rankId);
         }
 
+        if ($leaveTimestamp !== null) {
+            $qb
+                ->set('user_alliance_leave', ':leave')
+                ->setParameter('leave', $leaveTimestamp);
+        }
+
         $qb
             ->execute();
     }
 
+    public function resetAllianceId(int $allianceId): void
+    {
+        $this->createQueryBuilder()
+            ->update('users')
+            ->set('user_alliance_id', ':zero')
+            ->set('user_alliance_rank_id', ':zero')
+            ->where('user_alliance_id = :allianceId')
+            ->setParameters([
+                'zero' => 0,
+                'allianceId' => $allianceId,
+            ])
+            ->execute();
+    }
 
     public function hasUserRankId(int $allianceId, int $userId, int $rankId): bool
     {
@@ -539,6 +558,19 @@ class UserRepository extends AbstractRepository
             ->execute();
     }
 
+    /**
+     * @return array<int, int>
+     */
+    public function getUsedAllianceShipPoints(): array
+    {
+        return $this->createQueryBuilder()
+            ->select('user_alliance_id, SUM(user_alliace_shippoints_used)')
+            ->from('users')
+            ->groupBy('user_alliance_id')
+            ->execute()
+            ->fetchAllKeyValue();
+    }
+
     public function markAllianceShipPointsAsUsed(int $userId, int $shipCost): void
     {
         $this->createQueryBuilder()
@@ -549,6 +581,19 @@ class UserRepository extends AbstractRepository
             ->setParameters([
                 'userId' => $userId,
                 'costs' => $shipCost,
+            ])
+            ->execute();
+    }
+
+    public function addAllianceShipPoints(int $allianceId, int $points): void
+    {
+        $this->createQueryBuilder()
+            ->update('users')
+            ->set('user_alliace_shippoints', 'user_alliace_shippoints + :points')
+            ->where('user_alliance_id = :allianceId')
+            ->setParameters([
+                'allianceId' => $allianceId,
+                'points' => $points,
             ])
             ->execute();
     }
@@ -797,5 +842,102 @@ class UserRepository extends AbstractRepository
             ->fetchAllAssociative();
 
         return array_map(fn (array $row) => new Pillory($row), $data);
+    }
+
+    public function updatePointsAndRank(UserStatistic $userStatistic, int $highestRank): void
+    {
+        $this->createQueryBuilder()
+            ->update('users')
+            ->set('user_rank', ':rank')
+            ->set('user_points', ':points')
+            ->set('user_rank_highest', ':highestRank')
+            ->where('user_id = :userId')
+            ->setParameters([
+                'userId' => $userStatistic->userId,
+                'rank' => $userStatistic->rank,
+                'points' => $userStatistic->points,
+                'highestRank' => $highestRank,
+            ])
+            ->execute();
+    }
+
+    public function updateUserBoost(int $userId, float $productionBoost, float $buildingBoost): void
+    {
+        $this->createQueryBuilder()
+            ->update('users')
+            ->set('boost_bonus_production', ':production')
+            ->set('boost_bonus_building', ':building')
+            ->where('user_id = :userId')
+            ->setParameters([
+                'userId' => $userId,
+                'production' => $productionBoost,
+                'building' => $buildingBoost,
+            ])
+            ->execute();
+    }
+
+    public function resetBoost(): void
+    {
+        $this->createQueryBuilder()
+            ->update('users')
+            ->set('boost_bonus_production', ':zero')
+            ->set('boost_bonus_building', ':zero')
+            ->setParameters([
+                'zero' => 0,
+            ])
+            ->execute();
+    }
+
+    /**
+     * @return array{user_blocked_from: string, user_blocked_to: string, user_hmode_from: string, user_deleted: string, user_deleted: string, admin: string, user_ghost: string, user_alliance_id: string, user_id: string, user_points: string, user_nick: string, time_log: string, time_action: string, user_name: string, user_email: string, user_email_fix: string, user_multi_delets: string}[]
+     */
+    public function getUsersWithIp(string $ip): array
+    {
+        return $this->getConnection()->fetchAllAssociative('
+            SELECT
+                users.user_blocked_from,
+                users.user_blocked_to,
+                users.user_hmode_from,
+                users.user_deleted,
+                users.admin,
+                users.user_ghost,
+                users.user_alliance_id,
+                users.user_id,
+                users.user_points,
+                users.user_nick,
+                user_sessionlog.time_action AS time_log,
+                user_sessions.time_action,
+                users.user_name,
+                users.user_email,
+                users.user_email_fix,
+                users.user_multi_delets
+            FROM
+                users
+                LEFT JOIN
+                    user_sessions
+                ON
+                users.user_id=user_sessions.user_id
+            INNER JOIN
+                user_sessionlog
+            ON
+                users.user_id=user_sessionlog.user_id
+                INNER JOIN (
+                    SELECT
+                        user_id,
+                        MAX( time_action ) AS last_action
+                    FROM
+                        user_sessionlog
+                    GROUP BY
+                        user_id
+                ) AS log
+                ON
+                    user_sessionlog.user_id = log.user_id
+                    AND user_sessionlog.time_action = log.last_action
+                    AND (user_sessions.ip_addr = :ip OR user_sessionlog.ip_addr = :ip)
+            ORDER BY
+                time_log DESC
+        ', [
+            'ip' => $ip,
+        ]);
     }
 }

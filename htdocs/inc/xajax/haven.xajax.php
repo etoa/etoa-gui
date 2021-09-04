@@ -4,6 +4,7 @@
 
 use EtoA\Alliance\AllianceBuildingId;
 use EtoA\Alliance\AllianceBuildingRepository;
+use EtoA\Alliance\AllianceRepository;
 use EtoA\Bookmark\BookmarkRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Fleet\FleetRepository;
@@ -22,7 +23,10 @@ use EtoA\Technology\TechnologyRepository;
 use EtoA\Universe\Entity\EntityCoordinates;
 use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Planet\PlanetRepository;
+use EtoA\Universe\Resources\ResIcons;
+use EtoA\Universe\Resources\ResourceNames;
 use EtoA\User\UserRepository;
+use EtoA\User\UserSearch;
 use EtoA\User\UserUniverseDiscoveryService;
 
 $xajax->register(XAJAX_FUNCTION, "havenShowShips");
@@ -68,8 +72,6 @@ function havenShowShips()
 
     /** @var SpecialistService $specialistService */
     $specialistService = $app[SpecialistService::class];
-
-    defineImagePaths();
 
     $response = new xajaxResponse();
     ob_start();
@@ -320,7 +322,6 @@ function havenShowTarget($form)
     $bookmarkRepository = $app[BookmarkRepository::class];
 
     $response = new xajaxResponse();
-    defineImagePaths();
 
     // Get fleet object
     $fleet = unserialize($_SESSION['haven']['fleetObj']);
@@ -361,7 +362,7 @@ function havenShowTarget($form)
                         <td>" . $sd['name'] . "</td>
                         <td>" . StringUtils::formatNumber($sd['pilots']) . "</td>
                         <td>" . round($fleet->getSpeed() / $sd['speed'] * 100 / $fleet->sBonusSpeed) . "%</td>
-                        <td>" . StringUtils::formatNumber($sd['costs_per_ae']) . " " . RES_FUEL . "</td></tr>";
+                        <td>" . StringUtils::formatNumber($sd['costs_per_ae']) . " " . ResourceNames::FUEL . "</td></tr>";
                 $shipCount++;
             }
             if ($shipCount > 1) {
@@ -545,7 +546,7 @@ function havenShowTarget($form)
             echo "<tr><th>Entfernung:</th>
                         <td id=\"distance\">-</td></tr>";
             echo "<tr><th width=\"25%\">Kosten/100 AE:</th>
-                        <td id=\"costae\">" . StringUtils::formatNumber($fleet->getCostsPerHundredAE()) . " t " . RES_FUEL . "</td></tr>";
+                        <td id=\"costae\">" . StringUtils::formatNumber($fleet->getCostsPerHundredAE()) . " t " . ResourceNames::FUEL . "</td></tr>";
             echo "<tr><th>Geschwindigkeit:</th>
                         <td id=\"speed\">" . StringUtils::formatNumber($fleet->getSpeed()) . " AE/h";
             if ($fleet->sBonusSpeed > 1)
@@ -554,7 +555,7 @@ function havenShowTarget($form)
             echo "<tr><th>Dauer:</th>
                         <td><span id=\"duration\" style=\"font-weight:bold;\">-</span> (inkl. Start- und Landezeit von " . StringUtils::formatTimespan($fleet->getTimeLaunchLand()) . ")</td></tr>";
             echo "<tr><th>Treibstoff:</th>
-                        <td><span id=\"costs\" style=\"font-weight:bold;\">-</span> (inkl. Start- und Landeverbrauch von " . StringUtils::formatNumber($fleet->getCostsLaunchLand()) . " " . RES_FUEL . ")</td></tr>";
+                        <td><span id=\"costs\" style=\"font-weight:bold;\">-</span> (inkl. Start- und Landeverbrauch von " . StringUtils::formatNumber($fleet->getCostsLaunchLand()) . " " . ResourceNames::FUEL . ")</td></tr>";
             echo "<tr><th>Nahrung:</th>
                         <td><span id=\"food\"  style=\"font-weight:bold;\">-</span></td></tr>";
             echo "<tr><th>Piloten:</th>
@@ -653,14 +654,14 @@ function havenShowWormhole($form)
                                 <br/>&nbsp;&nbsp; " . $fleet->targetEntity . " (" . $fleet->targetEntity->entityCodeString() . ", Besitzer: " . $fleet->targetEntity->owner() . ")
                             </td></tr>
                         <tr><th width=\"25%\"><b>Entfernung:</b></th><td>" . StringUtils::formatNumber($fleet->getDistance()) . " AE" . "</td>
-                        <tr><th width=\"25%\"><b>Kosten/100 AE:</b></th><td>" . StringUtils::formatNumber($fleet->getCostsPerHundredAE()) . " t " . RES_FUEL . "</td>";
+                        <tr><th width=\"25%\"><b>Kosten/100 AE:</b></th><td>" . StringUtils::formatNumber($fleet->getCostsPerHundredAE()) . " t " . ResourceNames::FUEL . "</td>";
                 $speedString = StringUtils::formatNumber($fleet->getSpeed()) . " AE/h";
                 if ($fleet->sBonusSpeed > 1)
                     $speedString .= " (inkl. " . StringUtils::formatPercentString($fleet->sBonusSpeed, true) . " Mysticum-Bonus)";
                 echo "<tr><th width=\"25%\"><b>Geschwindigkeit:</b></th><td>" . $speedString . "</td>
                         <tr><th width=\"25%\"><b>Dauer:</b></th><td>" . StringUtils::formatTimespan($fleet->getDuration()) . " (inkl. Start- und Landezeit von " . StringUtils::formatTimespan($fleet->getTimeLaunchLand()) . ")</td>
-                        <tr><th width=\"25%\"><b>Treibstoff:</b></th><td>" . StringUtils::formatNumber($fleet->getCosts()) . " t " . RES_FUEL . "  (inkl. Start- und Landeverbrauch von " . StringUtils::formatNumber($fleet->getCostsLaunchLand()) . " " . RES_FUEL . ")</td>
-                        <tr><th width=\"25%\"><b>Nahrung:</b></th><td>" . StringUtils::formatNumber($fleet->getCostsFood()) . " t " . RES_FOOD . "</td>
+                        <tr><th width=\"25%\"><b>Treibstoff:</b></th><td>" . StringUtils::formatNumber($fleet->getCosts()) . " t " . ResourceNames::FUEL . "  (inkl. Start- und Landeverbrauch von " . StringUtils::formatNumber($fleet->getCostsLaunchLand()) . " " . ResourceNames::FUEL . ")</td>
+                        <tr><th width=\"25%\"><b>Nahrung:</b></th><td>" . StringUtils::formatNumber($fleet->getCostsFood()) . " t " . ResourceNames::FOOD . "</td>
                         <tr><th width=\"25%\"><b>Piloten:</b></th><td>" . StringUtils::formatNumber($fleet->getPilots()) . "</td>";
 
                 $response->assign("havenContentTarget", "innerHTML", ob_get_contents());
@@ -816,7 +817,7 @@ function havenShowWormhole($form)
                     echo "<tr><th>Entfernung:</th>
                             <td id=\"distance\">-</td></tr>";
                     echo "<tr><th width=\"25%\">Kosten/100 AE:</th>
-                            <td id=\"costae\">" . StringUtils::formatNumber($fleet->getCostsPerHundredAE()) . " t " . RES_FUEL . "</td></tr>";
+                            <td id=\"costae\">" . StringUtils::formatNumber($fleet->getCostsPerHundredAE()) . " t " . ResourceNames::FUEL . "</td></tr>";
                     echo "<tr><th>Geschwindigkeit:</th>
                             <td id=\"speed\">" . StringUtils::formatNumber($fleet->getSpeed()) . " AE/h";
                     if ($fleet->sBonusSpeed > 1)
@@ -825,7 +826,7 @@ function havenShowWormhole($form)
                     echo "<tr><th>Dauer:</th>
                             <td><span id=\"duration\" style=\"font-weight:bold;\">-</span> (inkl. Start- und Landezeit von " . StringUtils::formatTimespan($fleet->getTimeLaunchLand()) . ")</td></tr>";
                     echo "<tr><th>Treibstoff:</th>
-                            <td><span id=\"costs\" style=\"font-weight:bold;\">-</span> (inkl. Start- und Landeverbrauch von " . StringUtils::formatNumber($fleet->getCostsLaunchLand()) . " " . RES_FUEL . ")</td></tr>";
+                            <td><span id=\"costs\" style=\"font-weight:bold;\">-</span> (inkl. Start- und Landeverbrauch von " . StringUtils::formatNumber($fleet->getCostsLaunchLand()) . " " . ResourceNames::FUEL . ")</td></tr>";
                     echo "<tr><th>Nahrung:</th>
                             <td><span id=\"food\"  style=\"font-weight:bold;\">-</span></td></tr>";
                     echo "<tr><th>Piloten:</th>
@@ -894,7 +895,6 @@ function havenShowAction($form)
     $userRepository = $app[UserRepository::class];
 
     $response = new xajaxResponse();
-    defineImagePaths();
 
     // Do some checks
     if (count($form) > 0) {
@@ -945,9 +945,9 @@ function havenShowAction($form)
                     echo "<tr><th>Dauer:</th>
                             <td><span id=\"duration\" style=\"font-weight:bold;\">" . StringUtils::formatTimespan($fleet->getDuration()) . "</span></td></tr>";
                     echo "<tr><th>Treibstoff:</th>
-                            <td><span id=\"costs\" style=\"font-weight:bold;\">" . StringUtils::formatNumber($fleet->getCosts()) . " t " . RES_FUEL . "</span></td></tr>";
+                            <td><span id=\"costs\" style=\"font-weight:bold;\">" . StringUtils::formatNumber($fleet->getCosts()) . " t " . ResourceNames::FUEL . "</span></td></tr>";
                     echo "<tr><th>Nahrung:</th>
-                            <td><span id=\"costsFood\" style=\"font-weight:bold;\">" . StringUtils::formatNumber($fleet->getCostsFood()) . " t " . RES_FOOD . "</span></td></tr>";
+                            <td><span id=\"costsFood\" style=\"font-weight:bold;\">" . StringUtils::formatNumber($fleet->getCostsFood()) . " t " . ResourceNames::FOOD . "</span></td></tr>";
                     echo "<tr id=\"supportTime\" style=\"display: none;\"><th>Supportzeit:</th><td id=\"support\"></td></tr>";
                     tableEnd();
 
@@ -1000,44 +1000,44 @@ function havenShowAction($form)
                         <tr><th>Freie Passagierplätze:</th>
                         <td style=\"width:150px;\" id=\"peoplefree\">" . StringUtils::formatNumber($fleet->getPeopleCapacity()) . "</td>
                         </td></tr>
-                        <tr id=\"resbox1\" style=\"display:;\"><th>" . RES_ICON_METAL . "" . RES_METAL . "</th>
+                        <tr id=\"resbox1\" style=\"display:;\"><th>" . ResIcons::METAL . "" . ResourceNames::METAL . "</th>
                         <td><input type=\"text\" name=\"res1\" id=\"res1\" value=\"" . $fleet->getLoadedRes(1) . "\" size=\"12\" tabindex=\"" . ($tabindex++) . "\" onblur=\"xajax_havenCheckRes(1,this.value)\" />
                         <a href=\"javascript:;\" onclick=\"xajax_havenCheckRes(1," . floor($fleet->sourceEntity->getRes(1)) . ");\">max</a></td></tr>
-                        <tr id=\"resbox2\" style=\"display:;\"><th>" . RES_ICON_CRYSTAL . "" . RES_CRYSTAL . "</th>
+                        <tr id=\"resbox2\" style=\"display:;\"><th>" . ResIcons::CRYSTAL . "" . ResourceNames::CRYSTAL . "</th>
                         <td><input type=\"text\" name=\"res2\" id=\"res2\" value=\"" . $fleet->getLoadedRes(2) . "\" size=\"12\" tabindex=\"" . ($tabindex++) . "\" onblur=\"xajax_havenCheckRes(2,this.value)\" />
                         <a href=\"javascript:;\" onclick=\"xajax_havenCheckRes(2," . floor($fleet->sourceEntity->getRes(2)) . ");\">max</a></td></tr>
-                        <tr id=\"resbox3\" style=\"display:;\"><th>" . RES_ICON_PLASTIC . "" . RES_PLASTIC . "</th>
+                        <tr id=\"resbox3\" style=\"display:;\"><th>" . ResIcons::PLASTIC . "" . ResourceNames::PLASTIC . "</th>
                         <td><input type=\"text\" name=\"res3\" id=\"res3\" value=\"" . $fleet->getLoadedRes(3) . "\" size=\"12\" tabindex=\"" . ($tabindex++) . "\" onblur=\"xajax_havenCheckRes(3,this.value)\" />
                         <a href=\"javascript:;\" onclick=\"xajax_havenCheckRes(3," . floor($fleet->sourceEntity->getRes(3)) . ");\">max</a></td></tr>
-                        <tr id=\"resbox4\" style=\"display:;\"><th>" . RES_ICON_FUEL . "" . RES_FUEL . "</th>
+                        <tr id=\"resbox4\" style=\"display:;\"><th>" . ResIcons::FUEL . "" . ResourceNames::FUEL . "</th>
                         <td><input type=\"text\" name=\"res4\" id=\"res4\" value=\"" . $fleet->getLoadedRes(4) . "\" size=\"12\" tabindex=\"" . ($tabindex++) . "\" onblur=\"xajax_havenCheckRes(4,this.value)\" />
                         <a href=\"javascript:;\" onclick=\"xajax_havenCheckRes(4," . floor($fleet->sourceEntity->getRes(4)) . ");\">max</a></td></tr>
-                        <tr id=\"resbox5\" style=\"display:;\"><th>" . RES_ICON_FOOD . "" . RES_FOOD . "</th>
+                        <tr id=\"resbox5\" style=\"display:;\"><th>" . ResIcons::FOOD . "" . ResourceNames::FOOD . "</th>
                         <td><input type=\"text\" name=\"res5\" id=\"res5\" value=\"" . $fleet->getLoadedRes(5) . "\" size=\"12\" tabindex=\"" . ($tabindex++) . "\" onblur=\"xajax_havenCheckRes(5,this.value)\" />
                         <a href=\"javascript:;\" onclick=\"xajax_havenCheckRes(5," . floor($fleet->sourceEntity->getRes(5)) . ");\">max</a></td></tr>
-                        <tr id=\"resbox6\" style=\"display:;\"><th>" . RES_ICON_PEOPLE . "Passagiere</th>
+                        <tr id=\"resbox6\" style=\"display:;\"><th>" . ResIcons::PEOPLE . "Passagiere</th>
                         <td><input type=\"text\" name=\"resp\" id=\"resp\" value=\"" . $fleet->capacityPeopleLoaded . "\" size=\"12\" tabindex=\"" . ($tabindex++) . "\" onblur=\"xajax_havenCheckPeople(this.value)\" />
                         <a href=\"javascript:;\" onclick=\"xajax_havenCheckPeople(" . floor($fleet->sourceEntity->people()) . ");\">max</a></td></tr>
                         <tr id=\"resbox7\" style=\"display:;\"><th id=\"respercent\">&nbsp;</th>
                         <td>&nbsp;
                         <a href=\"javascript:;\" onclick=\"xajax_havenSetResAll();\">Alles einladen</a></td></tr>
 
-                        <tr id=\"fetchbox1\" style=\"display:none;\"><th>" . RES_ICON_METAL . "" . RES_METAL . "</th>
+                        <tr id=\"fetchbox1\" style=\"display:none;\"><th>" . ResIcons::METAL . "" . ResourceNames::METAL . "</th>
                         <td><input type=\"text\" name=\"fetch1\" id=\"fres1\" value=\"0\" size=\"12\" onkeyup=\"FormatNumber(this.id,this.value, '" . $fleet->getTotalCapacity() . "', '', '');\"/>
                         <a href=\"javascript:;\" onclick=\"document.getElementById('fres1').value=" . $fleet->getTotalCapacity() . "\">max</a></td></tr>
-                        <tr id=\"fetchbox2\" style=\"display:none;\"><th>" . RES_ICON_CRYSTAL . "" . RES_CRYSTAL . "</th>
+                        <tr id=\"fetchbox2\" style=\"display:none;\"><th>" . ResIcons::CRYSTAL . "" . ResourceNames::CRYSTAL . "</th>
                         <td><input type=\"text\" name=\"fetch2\" id=\"fres2\" value=\"0\" size=\"12\" onkeyup=\"FormatNumber(this.id,this.value, '" . $fleet->getTotalCapacity() . "', '', '');\"/>
                         <a href=\"javascript:;\" onclick=\"document.getElementById('fres2').value=" . $fleet->getTotalCapacity() . "\">max</a></td></tr>
-                        <tr id=\"fetchbox3\" style=\"display:none;\"><th>" . RES_ICON_PLASTIC . "" . RES_PLASTIC . "</th>
+                        <tr id=\"fetchbox3\" style=\"display:none;\"><th>" . ResIcons::PLASTIC . "" . ResourceNames::PLASTIC . "</th>
                         <td><input type=\"text\" name=\"fetch3\" id=\"fres3\" value=\"0\" size=\"12\" onkeyup=\"FormatNumber(this.id,this.value, '" . $fleet->getTotalCapacity() . "', '', '');\"/>
                         <a href=\"javascript:;\" onclick=\"document.getElementById('fres3').value=" . $fleet->getTotalCapacity() . "\">max</a></td></tr>
-                        <tr id=\"fetchbox4\" style=\"display:none;\"><th>" . RES_ICON_FUEL . "" . RES_FUEL . "</th>
+                        <tr id=\"fetchbox4\" style=\"display:none;\"><th>" . ResIcons::FUEL . "" . ResourceNames::FUEL . "</th>
                         <td><input type=\"text\" name=\"fetch4\" id=\"fres4\" value=\"0\" size=\"12\" onkeyup=\"FormatNumber(this.id,this.value, '" . $fleet->getTotalCapacity() . "', '', '');\"/>
                         <a href=\"javascript:;\" onclick=\"document.getElementById('fres4').value=" . $fleet->getTotalCapacity() . "\">max</a></td></tr>
-                        <tr id=\"fetchbox5\" style=\"display:none;\"><th>" . RES_ICON_FOOD . "" . RES_FOOD . "</th>
+                        <tr id=\"fetchbox5\" style=\"display:none;\"><th>" . ResIcons::FOOD . "" . ResourceNames::FOOD . "</th>
                         <td><input type=\"text\" name=\"fetch5\" id=\"fres5\" value=\"0\" size=\"12\" onkeyup=\"FormatNumber(this.id,this.value, '" . $fleet->getTotalCapacity() . "', '', '');\"/>
                         <a href=\"javascript:;\" onclick=\"document.getElementById('fres5').value=" . $fleet->getTotalCapacity() . "\">max</a></td></tr>
-                        <tr id=\"fetchbox6\" style=\"display:none;\"><th>" . RES_ICON_PEOPLE . "Passagiere</th>
+                        <tr id=\"fetchbox6\" style=\"display:none;\"><th>" . ResIcons::PEOPLE . "Passagiere</th>
                         <td><input type=\"text\" name=\"fetchp\" id=\"fresp\" value=\"0\" size=\"12\" onkeyup=\"FormatNumber(this.id,this.value, '" . $fleet->getTotalPeopleCapacity() . "', '', '');\"/>
                         <a href=\"javascript:;\" onclick=\"document.getElementById('fresp').value=" . $fleet->getTotalPeopleCapacity() . "\">max</a></td></tr>
                         <tr id=\"fetchbox7\" style=\"display:none;\"><th>&nbsp;</th>
@@ -1135,13 +1135,16 @@ function havenShowLaunch($form)
                     $ac = FleetAction::createFactory($form['fleet_action']);
 
                     // bugfix - check for alliance added by river
-                    if ($form['fleet_action'] == "alliance" && $fleet->getLeader() == 0 && $fleet->owner->alliance && count($form['msgUser']) > 0) {
+                    if ($form['fleet_action'] == "alliance" && $fleet->getLeader() == 0 && $fleet->owner->allianceid() > 0 && count($form['msgUser']) > 0) {
 
                         /** @var \EtoA\Message\MessageRepository $messageRepository */
                         $messageRepository = $app[\EtoA\Message\MessageRepository::class];
+                        /** @var AllianceRepository $allianceRepository */
+                        $allianceRepository = $app[AllianceRepository::class];
 
+                        $fleetOwnerAlliance = $allianceRepository->getAlliance($fleet->owner->allianceId());
                         $subject = "Allianzangriff (" . $fleet->targetEntity . ")";
-                        $text = "[b]Angriffsdaten:[/b][table][tr][td]Flottenkennzeichen:[/td][td]" . $fleet->owner->alliance->tag . "-" . $fid . "[/td][/tr][tr][td]Flottenleader:[/td][td]" . $fleet->owner->nick . "[/td][/tr][tr][td]Zielplanet:[/td][td]" . $fleet->targetEntity . "[/td][/tr][tr][td]Ankunftszeit:[/td][td]" . date("d.m.y, H:i:s", $fleet->landTime) . "[/td][/tr][/table]" . $form['message_text'];
+                        $text = "[b]Angriffsdaten:[/b][table][tr][td]Flottenkennzeichen:[/td][td]" . $fleetOwnerAlliance->tag . "-" . $fid . "[/td][/tr][tr][td]Flottenleader:[/td][td]" . $fleet->owner->nick . "[/td][/tr][tr][td]Zielplanet:[/td][td]" . $fleet->targetEntity . "[/td][/tr][tr][td]Ankunftszeit:[/td][td]" . date("d.m.y, H:i:s", $fleet->landTime) . "[/td][/tr][/table]" . $form['message_text'];
                         foreach ($form['msgUser'] as $uid) {
                             $messageRepository->sendFromUserToUser(
                                 (int) $fleet->ownerId(),
@@ -1163,23 +1166,23 @@ function havenShowLaunch($form)
                             <td style=\"color:" . FleetAction::$attitudeColor[$ac->attitude()] . "\">" . $ac->name() . "</td>
                         </tr>";
                     echo "<tr>
-                            <td><b>Ladung: " . RES_METAL . "</b></td>
+                            <td><b>Ladung: " . ResourceNames::METAL . "</b></td>
                             <td>" . StringUtils::formatNumber($fleet->getLoadedRes(1)) . "</td>
                         </tr>";
                     echo "<tr>
-                            <td><b>Ladung: " . RES_CRYSTAL . "</b></td>
+                            <td><b>Ladung: " . ResourceNames::CRYSTAL . "</b></td>
                             <td>" . StringUtils::formatNumber($fleet->getLoadedRes(2)) . "</td>
                         </tr>";
                     echo "<tr>
-                            <td><b>Ladung: " . RES_PLASTIC . "</b></td>
+                            <td><b>Ladung: " . ResourceNames::PLASTIC . "</b></td>
                             <td>" . StringUtils::formatNumber($fleet->getLoadedRes(3)) . "</td>
                         </tr>";
                     echo "<tr>
-                            <td><b>Ladung: " . RES_FUEL . "</b></td>
+                            <td><b>Ladung: " . ResourceNames::FUEL . "</b></td>
                             <td>" . StringUtils::formatNumber($fleet->getLoadedRes(4)) . "</td>
                         </tr>";
                     echo "<tr>
-                            <td><b>Ladung: " . RES_FOOD . "</b></td>
+                            <td><b>Ladung: " . ResourceNames::FOOD . "</b></td>
                             <td>" . StringUtils::formatNumber($fleet->getLoadedRes(5)) . "</td>
                         </tr>";
                     tableEnd();
@@ -1238,7 +1241,8 @@ function havenTargetInfo($form)
     $entityRepository = $app[EntityRepository::class];
     /** @var UserUniverseDiscoveryService $userUniverseDiscoveryService */
     $userUniverseDiscoveryService = $app[UserUniverseDiscoveryService::class];
-
+    /** @var AllianceRepository $allianceRepository */
+    $allianceRepository = $app[AllianceRepository::class];
     /** @var UserRepository $userRepository */
     $userRepository = $app[UserRepository::class];
 
@@ -1285,9 +1289,9 @@ function havenTargetInfo($form)
             $response->assign('distance', 'innerHTML', StringUtils::formatNumber($fleet->getDistance()) . " AE");
             $response->assign('duration', 'innerHTML', StringUtils::formatTimespan($fleet->getDuration()) . "");
             $response->assign('speed', 'innerHTML', $speedString);
-            $response->assign('costae', 'innerHTML', StringUtils::formatNumber($fleet->getCostsPerHundredAE()) . " t " . RES_FUEL . "");
-            $response->assign('costs', 'innerHTML', StringUtils::formatNumber($fleet->getCosts()) . " t " . RES_FUEL . "");
-            $response->assign('food', 'innerHTML', StringUtils::formatNumber($fleet->getCostsFood()) . " t " . RES_FOOD . "");
+            $response->assign('costae', 'innerHTML', StringUtils::formatNumber($fleet->getCostsPerHundredAE()) . " t " . ResourceNames::FUEL . "");
+            $response->assign('costs', 'innerHTML', StringUtils::formatNumber($fleet->getCosts()) . " t " . ResourceNames::FUEL . "");
+            $response->assign('food', 'innerHTML', StringUtils::formatNumber($fleet->getCostsFood()) . " t " . ResourceNames::FOOD . "");
             $response->assign('targetinfo', 'style.color', '#fff');
 
             $target = true;
@@ -1301,10 +1305,11 @@ function havenTargetInfo($form)
             if ($ent->ownerId() > 0 && is_array($fleet->aFleets) && count($fleet->aFleets) > 0) {
                 $alliance .= "<table style=\"width:100%;\">";
                 $counter = 0;
+                $fleetOwnerAlliance = $allianceRepository->getAlliance($fleet->owner->allianceId());
                 foreach ($fleet->aFleets as $f) {
                     if ($f['entity_to'] == $ent->id()) {
                         $counter++;
-                        $alliance .= "<tr><input type=\"button\" style=\"width:100%;\" onclick=\"xajax_havenAllianceAttack(" . $f["id"] . ")\" name=\"" . $fleet->owner->alliance->tag . "-" . $f["id"] . "\" value=\"Flottenleader: " . get_user_nick($f["user_id"]) . " Ankunftszeit: " . date("d.m.y, H:i:s", $f["landtime"]) . "\"/></tr>";
+                        $alliance .= "<tr><input type=\"button\" style=\"width:100%;\" onclick=\"xajax_havenAllianceAttack(" . $f["id"] . ")\" name=\"" . $fleetOwnerAlliance->tag . "-" . $f["id"] . "\" value=\"Flottenleader: " . get_user_nick($f["user_id"]) . " Ankunftszeit: " . date("d.m.y, H:i:s", $f["landtime"]) . "\"/></tr>";
                     }
                 }
                 $alliance .= "</table>";
@@ -1363,7 +1368,8 @@ function havenBookmark($form)
     $entityRepositroy = $app[EntityRepository::class];
     /** @var UserUniverseDiscoveryService $userUniverseDiscoveryService */
     $userUniverseDiscoveryService = $app[UserUniverseDiscoveryService::class];
-
+    /** @var AllianceRepository $allianceRepository */
+    $allianceRepository = $app[AllianceRepository::class];
     /** @var UserRepository $userRepository */
     $userRepository = $app[UserRepository::class];
 
@@ -1427,9 +1433,9 @@ function havenBookmark($form)
     $response->assign('distance', 'innerHTML', StringUtils::formatNumber($fleet->getDistance()) . " AE");
     $response->assign('duration', 'innerHTML', StringUtils::formatTimespan($fleet->getDuration()) . "");
     $response->assign('speed', 'innerHTML', $speedString);
-    $response->assign('costae', 'innerHTML', StringUtils::formatNumber($fleet->getCostsPerHundredAE()) . " t " . RES_FUEL . "");
-    $response->assign('costs', 'innerHTML', StringUtils::formatNumber($fleet->getCosts()) . " t " . RES_FUEL . "");
-    $response->assign('food', 'innerHTML', StringUtils::formatNumber($fleet->getCostsFood()) . " t " . RES_FOOD . "");
+    $response->assign('costae', 'innerHTML', StringUtils::formatNumber($fleet->getCostsPerHundredAE()) . " t " . ResourceNames::FUEL . "");
+    $response->assign('costs', 'innerHTML', StringUtils::formatNumber($fleet->getCosts()) . " t " . ResourceNames::FUEL . "");
+    $response->assign('food', 'innerHTML', StringUtils::formatNumber($fleet->getCostsFood()) . " t " . ResourceNames::FOOD . "");
     $response->assign('targetinfo', 'style.color', "#fff");
 
     $target = true;
@@ -1449,10 +1455,11 @@ function havenBookmark($form)
     if ($ent->ownerId() > 0 && is_array($fleet->aFleets) && count($fleet->aFleets) > 0) {
         $alliance .= "<table style=\"width:100%;\">";
         $counter = 0;
+        $fleetOwnerAlliance = $allianceRepository->getAlliance($fleet->owner->allianceId());
         foreach ($fleet->aFleets as $f) {
             if ($f['entity_to'] == $ent->id()) {
                 $counter++;
-                $alliance .= "<tr><input type=\"button\" style=\"width:100%;\" onclick=\"xajax_havenAllianceAttack(" . $f["id"] . ")\" name=\"" . $fleet->owner->alliance->tag . "-" . $f["id"] . "\" value=\"Flottenleader: " . get_user_nick($f["user_id"]) . " Ankunftszeit: " . date("d.m.y, H:i:s", $f["landtime"]) . "\"/></tr>";
+                $alliance .= "<tr><input type=\"button\" style=\"width:100%;\" onclick=\"xajax_havenAllianceAttack(" . $f["id"] . ")\" name=\"" . $fleetOwnerAlliance->tag . "-" . $f["id"] . "\" value=\"Flottenleader: " . get_user_nick($f["user_id"]) . " Ankunftszeit: " . date("d.m.y, H:i:s", $f["landtime"]) . "\"/></tr>";
             }
         }
         $alliance .= "</table>";
@@ -1601,6 +1608,10 @@ function havenCheckPeople($val)
 function havenCheckAction($code)
 {
     global $app;
+
+    /** @var UserRepository $userRepository */
+    $userRepository = $app[UserRepository::class];
+
     $response = new xajaxResponse();
     $fleet = unserialize($_SESSION['haven']['fleetObj']);
     ob_start();
@@ -1660,8 +1671,8 @@ function havenCheckAction($code)
         $fleet->setSupportTime(0);
         $response->assign("supportTime", "style.display", 'none');
         $response->assign("support", "innerHTML", "");
-        $response->assign('costs', 'innerHTML', StringUtils::formatNumber($fleet->getCosts()) . " t " . RES_FUEL);
-        $response->assign('costsFood', 'innerHTML', "" . StringUtils::formatNumber($fleet->getCostsFood()) . " t " . RES_FOOD . "");
+        $response->assign('costs', 'innerHTML', StringUtils::formatNumber($fleet->getCosts()) . " t " . ResourceNames::FUEL);
+        $response->assign('costsFood', 'innerHTML', "" . StringUtils::formatNumber($fleet->getCostsFood()) . " t " . ResourceNames::FOOD . "");
         $response->assign('resfree', 'innerHTML', StringUtils::formatNumber($fleet->getCapacity()) . " / " . StringUtils::formatNumber($fleet->getTotalCapacity()));
         $response->assign('resfree', 'style.color', "#0f0");
     }
@@ -1725,8 +1736,9 @@ function havenCheckAction($code)
         ob_start();
         echo "<td colspan=\"2\"><textarea name=\"message_text\" id=\"message\" rows=\"10\" cols=\"55\"></textarea></td>
             <td>";
-        foreach ($fleet->owner->alliance->members as $mk => $mv) {
-            echo "<input type=\"checkbox\" name=\"msgUser[]\" name=\"msgUser[]\" value=\"$mk\" checked=\"checked\">&nbsp;$mv<br>";
+        $allianceMemberNames = $userRepository->searchUserNicknames(UserSearch::create()->allianceId($fleet->owner->allianceId()));
+        foreach ($allianceMemberNames as $userId => $userNick) {
+            echo "<input type=\"checkbox\" name=\"msgUser[]\" name=\"msgUser[]\" value=\"$userId\" checked=\"checked\">&nbsp;$userNick<br>";
         }
         echo "</td>";
         $response->assign('msg', 'innerHTML', ob_get_contents());
@@ -1791,10 +1803,10 @@ function havenAllianceAttack($id)
     }
     $response->assign('duration_percent', 'innerHTML', ob_get_contents());
     $response->assign('speed', 'innerHTML', StringUtils::formatNumber($fleet->getSpeed()) . " AE/h");
-    $response->assign('costae', 'innerHTML', StringUtils::formatNumber($fleet->getCostsPerHundredAE()) . " t " . RES_FUEL . "");
+    $response->assign('costae', 'innerHTML', StringUtils::formatNumber($fleet->getCostsPerHundredAE()) . " t " . ResourceNames::FUEL . "");
     $response->assign('duration', 'innerHTML', StringUtils::formatTimespan($fleet->getDuration()) . "");
-    $response->assign('costs', 'innerHTML', StringUtils::formatNumber($fleet->getCosts()) . " t " . RES_FUEL . "");
-    $response->assign('food', 'innerHTML', StringUtils::formatNumber($fleet->getCostsFood()) . " t " . RES_FOOD . "");
+    $response->assign('costs', 'innerHTML', StringUtils::formatNumber($fleet->getCosts()) . " t " . ResourceNames::FUEL . "");
+    $response->assign('food', 'innerHTML', StringUtils::formatNumber($fleet->getCostsFood()) . " t " . ResourceNames::FOOD . "");
     $response->assign('comment', 'innerHTML', $comment);
 
     ob_end_clean();
@@ -1827,13 +1839,13 @@ function havenCheckSupport($form)
 
     $fleet->setSupportTime($supportTime);
 
-    $fuel = StringUtils::formatNumber($fleet->getCosts()) . " t " . RES_FUEL;
-    $food = StringUtils::formatNumber($fleet->getCostsFood()) . " t " . RES_FOOD;
+    $fuel = StringUtils::formatNumber($fleet->getCosts()) . " t " . ResourceNames::FUEL;
+    $food = StringUtils::formatNumber($fleet->getCostsFood()) . " t " . ResourceNames::FOOD;
 
     if ($supportTime) {
-        $fuel .= " (+ " . StringUtils::formatNumber($fleet->getSupportFuel()) . " t " . RES_FUEL . " Supportkosten)";
+        $fuel .= " (+ " . StringUtils::formatNumber($fleet->getSupportFuel()) . " t " . ResourceNames::FUEL . " Supportkosten)";
         if ($fleet->getSupportFood()) {
-            $food .= " (+ " . StringUtils::formatNumber($fleet->getSupportFood()) . " t " . RES_FOOD . " Supportkosten)";
+            $food .= " (+ " . StringUtils::formatNumber($fleet->getSupportFood()) . " t " . ResourceNames::FOOD . " Supportkosten)";
         }
     }
 

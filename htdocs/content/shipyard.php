@@ -18,10 +18,12 @@ use EtoA\Ship\ShipSearch;
 use EtoA\Ship\ShipSort;
 use EtoA\Support\StringUtils;
 use EtoA\Specialist\SpecialistService;
+use EtoA\Technology\TechnologyId;
 use EtoA\Technology\TechnologyRepository;
 use EtoA\UI\ResourceBoxDrawer;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Universe\Resources\PreciseResources;
+use EtoA\Universe\Resources\ResourceNames;
 use EtoA\User\UserPropertiesRepository;
 
 /** @var ConfigurationService $config */
@@ -88,7 +90,7 @@ $planet = $planetRepo->find($cp->id);
 $technologyRepository = $app[TechnologyRepository::class];
 $techlist = $technologyRepository->getTechnologyLevels($cu->getId());
 
-$shipyard = $buildingRepository->getEntityBuilding($cu->getId(), $planet->id, SHIP_BUILDING_ID);
+$shipyard = $buildingRepository->getEntityBuilding($cu->getId(), $planet->id, BuildingId::SHIPYARD);
 
 //Tabulator var setzten (für das fortbewegen des cursors im forumular)
 $tabulator = 1;
@@ -129,7 +131,7 @@ if ($shipyard !== null && $shipyard->currentLevel > 0) {
         $requirements = $shipRequirementRepository->getAll();
 
         //Gentechlevel definieren
-        $gen_tech_level = $techlist[GEN_TECH_ID] ?? 0;
+        $gen_tech_level = $techlist[TechnologyId::GEN] ?? 0;
 
         // Gebaute Schiffe laden
         /** @var array<int, array<int, int>> $shiplist */
@@ -226,7 +228,7 @@ if ($shipyard !== null && $shipyard->currentLevel > 0) {
         }
         echo "</td></tr>";
         if ($cancel_res_factor > 0) {
-            echo "<tr><td>Ressourcenrückgabe bei Abbruch:</td><td>" . ($cancel_res_factor * 100) . "% (ohne " . RES_FOOD . ", " . (SHIPQUEUE_CANCEL_END * 100) . "% maximal)</td></tr>";
+            echo "<tr><td>Ressourcenrückgabe bei Abbruch:</td><td>" . ($cancel_res_factor * 100) . "% (ohne " . ResourceNames::FOOD . ", " . (SHIPQUEUE_CANCEL_END * 100) . "% maximal)</td></tr>";
             $cancelable = true;
         } else {
             echo "<tr><td>Abbruchmöglichkeit:</td><td>Stufe " . SHIPQUEUE_CANCEL_MIN_LEVEL . " erforderlich!</td></tr>";
@@ -281,7 +283,7 @@ if ($shipyard !== null && $shipyard->currentLevel > 0) {
         // people working changed
         if (isset($_POST['submit_people_form'])) {
             if (count($queue) === 0) {
-                $buildingRepository->setPeopleWorking($planet->id, SHIP_BUILDING_ID, StringUtils::parseFormattedNumber($_POST['peopleWorking']));
+                $buildingRepository->setPeopleWorking($planet->id, BuildingId::SHIPYARD, StringUtils::parseFormattedNumber($_POST['peopleWorking']));
                 //success_msg("Arbeiter zugeteilt!");
             } else
                 error_msg('Arbeiter konnten nicht zugeteilt werden!');
@@ -508,18 +510,18 @@ if ($shipyard !== null && $shipyard->currentLevel > 0) {
                         [b]Eingesetzter Spezialist:[/b] " . ($specialist !== null ? $specialist->name : "Kein Spezialist"). "
 
                         [b]Kosten[/b]
-                        [b]" . RES_METAL . ":[/b] " . StringUtils::formatNumber($bc['metal']) . "
-                        [b]" . RES_CRYSTAL . ":[/b] " . StringUtils::formatNumber($bc['crystal']) . "
-                        [b]" . RES_PLASTIC . ":[/b] " . StringUtils::formatNumber($bc['plastic']) . "
-                        [b]" . RES_FUEL . ":[/b] " . StringUtils::formatNumber($bc['fuel']) . "
-                        [b]" . RES_FOOD . ":[/b] " . StringUtils::formatNumber($bc['food']) . "
+                        [b]" . ResourceNames::METAL . ":[/b] " . StringUtils::formatNumber($bc['metal']) . "
+                        [b]" . ResourceNames::CRYSTAL . ":[/b] " . StringUtils::formatNumber($bc['crystal']) . "
+                        [b]" . ResourceNames::PLASTIC . ":[/b] " . StringUtils::formatNumber($bc['plastic']) . "
+                        [b]" . ResourceNames::FUEL . ":[/b] " . StringUtils::formatNumber($bc['fuel']) . "
+                        [b]" . ResourceNames::FOOD . ":[/b] " . StringUtils::formatNumber($bc['food']) . "
 
                         [b]Rohstoffe auf dem Planeten[/b]
-                        [b]" . RES_METAL . ":[/b] " . StringUtils::formatNumber($planet->resMetal - $totalMetal) . "
-                        [b]" . RES_CRYSTAL . ":[/b] " . StringUtils::formatNumber($planet->resCrystal - $totalCrystal) . "
-                        [b]" . RES_PLASTIC . ":[/b] " . StringUtils::formatNumber($planet->resPlastic - $totalPlastic) . "
-                        [b]" . RES_FUEL . ":[/b] " . StringUtils::formatNumber($planet->resFuel - $totalFuel) . "
-                        [b]" . RES_FOOD . ":[/b] " . StringUtils::formatNumber($planet->resFood - $totalFood);
+                        [b]" . ResourceNames::METAL . ":[/b] " . StringUtils::formatNumber($planet->resMetal - $totalMetal) . "
+                        [b]" . ResourceNames::CRYSTAL . ":[/b] " . StringUtils::formatNumber($planet->resCrystal - $totalCrystal) . "
+                        [b]" . ResourceNames::PLASTIC . ":[/b] " . StringUtils::formatNumber($planet->resPlastic - $totalPlastic) . "
+                        [b]" . ResourceNames::FUEL . ":[/b] " . StringUtils::formatNumber($planet->resFuel - $totalFuel) . "
+                        [b]" . ResourceNames::FOOD . ":[/b] " . StringUtils::formatNumber($planet->resFood - $totalFood);
 
                         $gameLogRepository->add(GameLogFacility::SHIP, LogSeverity::INFO, $log_text, $cu->id, $cu->allianceId, $planet->id, $ship_id, 1, $build_cnt);
 
@@ -606,18 +608,18 @@ if ($shipyard !== null && $shipyard->currentLevel > 0) {
 
                 [b]Erhaltene Rohstoffe[/b]
                 [b]Faktor:[/b] " . $cancel_res_factor . "
-                [b]" . RES_METAL . ":[/b] " . StringUtils::formatNumber($ret['metal']) . "
-                [b]" . RES_CRYSTAL . ":[/b] " . StringUtils::formatNumber($ret['crystal']) . "
-                [b]" . RES_PLASTIC . ":[/b] " . StringUtils::formatNumber($ret['plastic']) . "
-                [b]" . RES_FUEL . ":[/b] " . StringUtils::formatNumber($ret['fuel']) . "
-                [b]" . RES_FOOD . ":[/b] " . StringUtils::formatNumber($ret['food']) . "
+                [b]" . ResourceNames::METAL . ":[/b] " . StringUtils::formatNumber($ret['metal']) . "
+                [b]" . ResourceNames::CRYSTAL . ":[/b] " . StringUtils::formatNumber($ret['crystal']) . "
+                [b]" . ResourceNames::PLASTIC . ":[/b] " . StringUtils::formatNumber($ret['plastic']) . "
+                [b]" . ResourceNames::FUEL . ":[/b] " . StringUtils::formatNumber($ret['fuel']) . "
+                [b]" . ResourceNames::FOOD . ":[/b] " . StringUtils::formatNumber($ret['food']) . "
 
                 [b]Rohstoffe auf dem Planeten[/b]
-                [b]" . RES_METAL . ":[/b] " . StringUtils::formatNumber($planet->resMetal + $ret['metal']) . "
-                [b]" . RES_CRYSTAL . ":[/b] " . StringUtils::formatNumber($planet->resCrystal + $ret['crystal']) . "
-                [b]" . RES_PLASTIC . ":[/b] " . StringUtils::formatNumber($planet->resPlastic + $ret['plastic']) . "
-                [b]" . RES_FUEL . ":[/b] " . StringUtils::formatNumber($planet->resFuel + $ret['fuel']) . "
-                [b]" . RES_FOOD . ":[/b] " . StringUtils::formatNumber($planet->resFood + $ret['food']);
+                [b]" . ResourceNames::METAL . ":[/b] " . StringUtils::formatNumber($planet->resMetal + $ret['metal']) . "
+                [b]" . ResourceNames::CRYSTAL . ":[/b] " . StringUtils::formatNumber($planet->resCrystal + $ret['crystal']) . "
+                [b]" . ResourceNames::PLASTIC . ":[/b] " . StringUtils::formatNumber($planet->resPlastic + $ret['plastic']) . "
+                [b]" . ResourceNames::FUEL . ":[/b] " . StringUtils::formatNumber($planet->resFuel + $ret['fuel']) . "
+                [b]" . ResourceNames::FOOD . ":[/b] " . StringUtils::formatNumber($planet->resFood + $ret['food']);
 
                 //Log Speichern
                 $gameLogRepository->add(GameLogFacility::SHIP, LogSeverity::INFO, $log_text, $cu->id, $cu->allianceId, $planet->id, $ship_id, 0, $queue_count);
@@ -710,11 +712,11 @@ if ($shipyard !== null && $shipyard->currentLevel > 0) {
                         echo '<tr>
                                         <th colspan="2" class="tbltitle">Schiff</th>
                                         <th class="tbltitle">Zeit</th>
-                                        <th class="tbltitle">' . RES_METAL . '</th>
-                                        <th class="tbltitle">' . RES_CRYSTAL . '</th>
-                                        <th class="tbltitle">' . RES_PLASTIC . '</th>
-                                        <th class="tbltitle">' . RES_FUEL . '</th>
-                                        <th class="tbltitle">' . RES_FOOD . '</th>
+                                        <th class="tbltitle">' . ResourceNames::METAL . '</th>
+                                        <th class="tbltitle">' . ResourceNames::CRYSTAL . '</th>
+                                        <th class="tbltitle">' . ResourceNames::PLASTIC . '</th>
+                                        <th class="tbltitle">' . ResourceNames::FUEL . '</th>
+                                        <th class="tbltitle">' . ResourceNames::FOOD . '</th>
                                         <th class="tbltitle">Anzahl</th>
                                     </tr>';
                     }
@@ -988,11 +990,11 @@ if ($shipyard !== null && $shipyard->currentLevel > 0) {
                                     }
                                     echo "</tr>";
                                     echo "<tr>
-                                    <th height=\"20\" width=\"110\">" . RES_METAL . ":</th>
-                                    <th height=\"20\" width=\"97\">" . RES_CRYSTAL . ":</th>
-                                    <th height=\"20\" width=\"98\">" . RES_PLASTIC . ":</th>
-                                    <th height=\"20\" width=\"97\">" . RES_FUEL . ":</th>
-                                    <th height=\"20\" width=\"98\">" . RES_FOOD . "</th></tr>";
+                                    <th height=\"20\" width=\"110\">" . ResourceNames::METAL . ":</th>
+                                    <th height=\"20\" width=\"97\">" . ResourceNames::CRYSTAL . ":</th>
+                                    <th height=\"20\" width=\"98\">" . ResourceNames::PLASTIC . ":</th>
+                                    <th height=\"20\" width=\"97\">" . ResourceNames::FUEL . ":</th>
+                                    <th height=\"20\" width=\"98\">" . ResourceNames::FOOD . "</th></tr>";
                                     echo "<tr>
                                     <td height=\"20\" width=\"110\" " . $ress_style_metal . ">
                                         " . StringUtils::formatNumber($shipCosts[$shipData->id]->metal) . "

@@ -92,7 +92,7 @@ class ShipRepository extends AbstractRepository
     public function getUserShipCounts(int $userId): array
     {
         $data = $this->createQueryBuilder()
-            ->select('shiplist_ship_id, SUM(shiplist_count) as count, SUM(shiplist_bunkered) as bunkered, shiplist_special_ship_exp')
+            ->select('shiplist_ship_id, SUM(shiplist_count) as count, SUM(shiplist_bunkered) as bunkered, SUM(shiplist_special_ship_exp) as shiplist_special_ship_exp')
             ->from('shiplist')
             ->where('shiplist_user_id = :userId')
             ->setParameter('userId', $userId)

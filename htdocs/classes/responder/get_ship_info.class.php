@@ -16,8 +16,6 @@ class GetShipInfoJsonResponder extends JsonResponder
         /** @var ShipDataRepository $shipRepository */
         $shipRepository = $this->app[ShipDataRepository::class];
 
-        defineImagePaths();
-
         $data = array();
 
         $search = ShipSearch::create()->showOrBuildable();

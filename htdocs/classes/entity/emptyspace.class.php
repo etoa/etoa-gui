@@ -91,7 +91,6 @@ class EmptySpace extends Entity
 
     function imagePath($opt = "")
     {
-        defineImagePaths();
         $numImages = 10;
         $r = ($this->id % $numImages) + 1;
         return IMAGE_PATH . "/space/space" . $r . "_small." . IMAGE_EXT;

@@ -8,6 +8,7 @@ use EtoA\Log\LogSeverity;
 use EtoA\Support\DB\DatabaseBackupService;
 use EtoA\Support\DB\DatabaseManagerRepository;
 use EtoA\Support\DB\DatabaseMigrationService;
+use Symfony\Component\Lock\LockFactory;
 
 require_once __DIR__ . '/../vendor/autoload.php';
 
@@ -73,12 +74,13 @@ if ($action == "migrate" || $action == "reset")
         $app->boot();
     }
 
-    $mtx = new Mutex();
+    /** @var LockFactory $lockFactory */
+    $lockFactory = $app[LockFactory::class];
+    $lock = $lockFactory->createLock('db');
 
-    try
-    {
+    try {
         // Acquire mutex
-        $mtx->acquire();
+        $lock->acquire(true);
 
         /** @var DatabaseManagerRepository */
         $databaseManager = $app[DatabaseManagerRepository::class];
@@ -108,14 +110,14 @@ if ($action == "migrate" || $action == "reset")
         }
 
         // Release mutex
-        $mtx->release();
+        $lock->release();
 
         exit(0);
     }
     catch (Exception $e)
     {
         // Release mutex
-        $mtx->release();
+        $lock->release();
 
         // Show output
         echo "Fehler: ".$e->getMessage();
@@ -144,18 +146,18 @@ else if ($action == "backup")
 
     $dir = $databaseBackupService->getBackupDir();
     $gzip = $config->getBoolean('backup_use_gzip');
-    $mtx = new Mutex();
 
-    try
-    {
-        // Acquire mutex
-        $mtx->acquire();
+    /** @var LockFactory $lockFactory */
+    $lockFactory = $app[LockFactory::class];
+    $lock = $lockFactory->createLock('db');
+
+    try {
+        $lock->acquire(true);
 
         // Restore database
         $log = $databaseBackupService->backupDB($dir, $gzip);
 
-        // Release mutex
-        $mtx->release();
+        $lock->release();
 
         // Write log
         $logRepository->add(LogFacility::SYSTEM, LogSeverity::INFO, "[b]Datenbank-Backup Skript[/b]\n".$log);
@@ -166,11 +168,8 @@ else if ($action == "backup")
         }
 
         exit(0);
-    }
-    catch (Exception $e)
-    {
-        // Release mutex
-        $mtx->release();
+    } catch (Exception $e) {
+        $lock->release();
 
         // Write log
         $logRepository->add(LogFacility::SYSTEM, LogSeverity::ERROR, "[b]Datenbank-Backup Skript[/b]\nDie Datenbank konnte nicht in das Verzeichnis [b]".$dir."[/b] gesichert werden: ".$e->getMessage());
@@ -204,18 +203,18 @@ else if ($action == "restore")
     if (isset($args[0]))
     {
         $restorePoint = $args[0];
-        $mtx = new Mutex();
 
-        try
-        {
-            // Acquire mutex
-            $mtx->acquire();
+        /** @var LockFactory $lockFactory */
+        $lockFactory = $app[LockFactory::class];
+        $lock = $lockFactory->createLock('db');
+
+        try {
+            $lock->acquire(true);
 
             // Restore database
             $log = $databaseBackupService->restoreDB($dir, $restorePoint);
 
-            // Release mutex
-            $mtx->release();
+            $lock->release();
 
             // Write log
             $logRepository->add(LogFacility::SYSTEM, LogSeverity::INFO, "[b]Datenbank-Restore Skript[/b]\n".$log);
@@ -226,11 +225,8 @@ else if ($action == "restore")
             }
 
             exit(0);
-        }
-        catch (Exception $e)
-        {
-            // Release mutex
-            $mtx->release();
+        } catch (Exception $e) {
+            $lock->release();
 
             // Write log
             $logRepository->add(LogFacility::SYSTEM, LogSeverity::ERROR, "[b]Datenbank-Restore Skript[/b]\nDie Datenbank konnte nicht vom Backup [b]".$restorePoint."[/b] aus dem Verzeichnis [b]".$dir."[/b] wiederhergestellt werden: ".$e->getMessage());

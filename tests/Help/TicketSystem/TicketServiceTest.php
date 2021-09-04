@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace EtoA\Help\TicketSystem;
 
 use EtoA\AbstractDbTestCase;
+use EtoA\Message\MessageCategoryId;
 use EtoA\Message\MessageRepository;
 
 // TODO define at a more suitable place, or find a way to make these definitions obsolete
@@ -56,7 +57,7 @@ class TicketServiceTest extends AbstractDbTestCase
         $userMessages = $this->userMessageRepository->findByRecipient($userId);
         $this->assertCount(1, $userMessages);
         $this->assertEquals('Dein Ticket #000001 wurde erstellt', $userMessages[0]->subject);
-        $this->assertEquals(USER_MSG_CAT_ID, $userMessages[0]->catId);
+        $this->assertEquals(MessageCategoryId::USER, $userMessages[0]->catId);
     }
 
     public function testAssign(): void

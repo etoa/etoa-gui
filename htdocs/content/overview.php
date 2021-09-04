@@ -14,6 +14,7 @@ use EtoA\Ship\ShipDataRepository;
 use EtoA\Ship\ShipQueueRepository;
 use EtoA\Ship\ShipQueueSearch;
 use EtoA\Technology\TechnologyDataRepository;
+use EtoA\Technology\TechnologyId;
 use EtoA\Technology\TechnologyListItemSearch;
 use EtoA\Technology\TechnologyRepository;
 use EtoA\Text\TextRepository;
@@ -22,6 +23,7 @@ use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Support\BBCodeUtils;
 use EtoA\Support\StringUtils;
 use EtoA\Universe\Planet\PlanetRepository;
+use EtoA\Universe\Resources\ResourceNames;
 use EtoA\User\UserLoginFailureRepository;
 use EtoA\User\UserPropertiesRepository;
 
@@ -168,7 +170,7 @@ else {
 //
 $technologyNames = $technologyDataRepository->getTechnologyNames(true);
 //Lädt forschende Tech
-$technologyInProgress = $technologyRepository->searchEntry(TechnologyListItemSearch::create()->userId($cu->getId())->notTechnologyId(GEN_TECH_ID)->underConstruction());
+$technologyInProgress = $technologyRepository->searchEntry(TechnologyListItemSearch::create()->userId($cu->getId())->notTechnologyId(TechnologyId::GEN)->underConstruction());
 if ($technologyInProgress !== null) {
     echo "<td><a href=\"?page=research&amp;change_entity=" . $technologyInProgress->entityId . "\" id=\"tech_counter\">";
     //Forschung ist fertig
@@ -188,7 +190,7 @@ if ($technologyInProgress !== null) {
 //
 //Gentech
 //
-$genTechnologyInProgress = $technologyRepository->searchEntry(TechnologyListItemSearch::create()->userId($cu->getId())->technologyId(GEN_TECH_ID)->underConstruction());
+$genTechnologyInProgress = $technologyRepository->searchEntry(TechnologyListItemSearch::create()->userId($cu->getId())->technologyId(TechnologyId::GEN)->underConstruction());
 if ($genTechnologyInProgress !== null) {
     echo "
         <tr >
@@ -452,11 +454,11 @@ tableEnd();
         document.getElementById("planet_info_text_res_food").className = 'resfoodcolor';
         document.getElementById("planet_info_text_people").className = 'respeoplecolor';
         document.getElementById("planet_info_text_power").className = 'respowercolor';
-        document.getElementById("planet_info_text_res_metal").firstChild.nodeValue = '<?php echo RES_METAL . ":"; ?>';
-        document.getElementById("planet_info_text_res_crystal").firstChild.nodeValue = '<?php echo RES_CRYSTAL . ":"; ?>';
-        document.getElementById("planet_info_text_res_plastic").firstChild.nodeValue = '<?php echo RES_PLASTIC . ":"; ?>';
-        document.getElementById("planet_info_text_res_fuel").firstChild.nodeValue = '<?php echo RES_FUEL . ":"; ?>';
-        document.getElementById("planet_info_text_res_food").firstChild.nodeValue = '<?php echo RES_FOOD . ":"; ?>';
+        document.getElementById("planet_info_text_res_metal").firstChild.nodeValue = '<?php echo ResourceNames::METAL . ":"; ?>';
+        document.getElementById("planet_info_text_res_crystal").firstChild.nodeValue = '<?php echo ResourceNames::CRYSTAL . ":"; ?>';
+        document.getElementById("planet_info_text_res_plastic").firstChild.nodeValue = '<?php echo ResourceNames::PLASTIC . ":"; ?>';
+        document.getElementById("planet_info_text_res_fuel").firstChild.nodeValue = '<?php echo ResourceNames::FUEL . ":"; ?>';
+        document.getElementById("planet_info_text_res_food").firstChild.nodeValue = '<?php echo ResourceNames::FOOD . ":"; ?>';
         document.getElementById("planet_info_text_people").firstChild.nodeValue = 'Bewohner:';
         document.getElementById("planet_info_text_power").firstChild.nodeValue = 'Energie:';
     }

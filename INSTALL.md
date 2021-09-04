@@ -109,8 +109,7 @@ Misc
 
 The admin panel can be accessed at roundx/admin.
 
- * Go to Admin-Panel => Config => Imagepacks and generate the downloadable imagepack files
- * Go to Admin-Panel => Config => Generate Universe to create the universe for this round
+  * Go to Admin-Panel => Config => Generate Universe to create the universe for this round
 
 Debug mode
 ----------

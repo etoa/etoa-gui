@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\Building\BuildingDataRepository;
+use EtoA\Building\BuildingTypeId;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Ship\ShipDataRepository;
 use EtoA\Universe\Planet\Planet;
@@ -68,7 +69,7 @@ $strx = P_LEFT;
 $i = 0;
 /** @var BuildingDataRepository $buildingRepository */
 $buildingRepository = $app[BuildingDataRepository::class];
-$buildings = $buildingRepository->getBuildingsByType(BUILDING_POWER_CAT);
+$buildings = $buildingRepository->getBuildingsByType(BuildingTypeId::POWER);
 foreach ($buildings as $building) {
     $startX = $areaOriginX;
     $startY = $areaOriginY;

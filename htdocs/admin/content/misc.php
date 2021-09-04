@@ -36,12 +36,7 @@ elseif ($sub == "designs") {
     include("misc/designs.inc.php");
 }
 
-//
-// Bildpakete
-//
-elseif ($sub == "imagepacks") {
-    include("misc/imagepacks.inc.php");
-} else {
+else {
     echo "<h1>Diverses</h1>";
     echo "Wähle eine Unterseite aus dem Menü!";
 }

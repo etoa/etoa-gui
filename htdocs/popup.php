@@ -34,13 +34,6 @@ if (isset($cu) && filled($properties->cssStyle)) {
     }
 }
 define('CSS_STYLE', $design);
-if (isset($cu) && filled($properties->imageUrl) && filled($properties->imageExt)) {
-    define('IMAGE_PATH', $properties->imageUrl);
-    define('IMAGE_EXT', $properties->imageExt);
-} else {
-    define('IMAGE_PATH', $config->get('default_image_path'));
-    define('IMAGE_EXT', 'png');
-}
 
 $errorMessage = null;
 try {

@@ -16,7 +16,7 @@ use EtoA\Universe\Planet\PlanetTypeRepository;
 use EtoA\Universe\Star\SolarTypeRepository;
 use EtoA\Universe\Star\StarRepository;
 use EtoA\Universe\Wormhole\WormholeRepository;
-use Mutex;
+use Symfony\Component\Lock\LockFactory;
 
 class UniverseGenerator
 {
@@ -31,6 +31,7 @@ class UniverseGenerator
     private NebulaRepository $nebulaRepo;
     private WormholeRepository $wormholeRepo;
     private EmptySpaceRepository $emptySpaceRepo;
+    private LockFactory $lockFactory;
 
     /**
      * @var array<int>
@@ -55,7 +56,8 @@ class UniverseGenerator
         AsteroidRepository $asteroidRepo,
         NebulaRepository $nebulaRepo,
         WormholeRepository $wormholeRepo,
-        EmptySpaceRepository $emptySpaceRepo
+        EmptySpaceRepository $emptySpaceRepo,
+        LockFactory $lockFactory
     ) {
         $this->config = $config;
         $this->solarTypesRepo = $solarTypesRepo;
@@ -68,6 +70,7 @@ class UniverseGenerator
         $this->nebulaRepo = $nebulaRepo;
         $this->wormholeRepo = $wormholeRepo;
         $this->emptySpaceRepo = $emptySpaceRepo;
+        $this->lockFactory = $lockFactory;
 
         $this->init();
     }
@@ -88,8 +91,8 @@ class UniverseGenerator
     {
         $output = [];
 
-        $lock = new Mutex();
-        $lock->acquire();
+        $lock = $this->lockFactory->createLock('universe');
+        $lock->acquire(true);
 
         $mapPrecision = max(0, $mapPrecision);
         $mapPrecision = min($mapPrecision, 100);

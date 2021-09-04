@@ -54,6 +54,31 @@ class AllianceRepository extends AbstractRepository
     }
 
     /**
+     * @return array<int, AllianceWithMemberCount>
+     */
+    public function searchAlliances(AllianceSearch $search = null, int $limit = null): array
+    {
+        $data = $this->applySearchSortLimit($this->createQueryBuilder(), $search, null, $limit)
+            ->select("a.*")
+            ->addSelect('COUNT(u.user_id) as member_count')
+            ->from('alliances', 'a')
+            ->leftJoin('a', 'users', 'u', 'u.user_alliance_id=a.alliance_id')
+            ->groupBy('a.alliance_id')
+            ->orderBy('a.alliance_name')
+            ->addOrderBy('a.alliance_tag')
+            ->execute()
+            ->fetchAllAssociative();
+
+        $result = [];
+        foreach ($data as $row) {
+            $alliance = new AllianceWithMemberCount($row);
+            $result[$alliance->id] = $alliance;
+        }
+
+        return $result;
+    }
+
+    /**
      * @return array<int, string>
      */
     public function getAllianceTags(): array
@@ -595,12 +620,86 @@ class AllianceRepository extends AbstractRepository
             ->execute();
     }
 
+    /**
+     * @return array{alliance_tag: string, alliance_name: string, alliance_id: string, alliance_rank_current: string, cnt: string, upoints: string, uavg: string}[]
+     */
+    public function getAllianceStats(): array
+    {
+        return $this->createQueryBuilder()
+            ->select('a.alliance_tag, a.alliance_name, a.alliance_id, a.alliance_rank_current')
+            ->addSelect('COUNT(*) AS cnt, SUM(u.points) AS upoints, AVG(u.points) AS uavg')
+            ->from('alliances', 'a')
+            ->innerJoin('a', 'user_stats', 'u', 'u.alliance_id = a.alliance_id')
+            ->groupBy('a.alliance_id')
+            ->orderBy('SUM(u.points)', 'DESC')
+            ->execute()
+            ->fetchAllAssociative();
+    }
+
+    public function updatePointsAndRank(int $allianceId, int $points, int $rank, int $lastRank): void
+    {
+        $this->createQueryBuilder()
+            ->update('alliances')
+            ->set('alliance_points', ':points')
+            ->set('alliance_rank_current', ':rank')
+            ->set('alliance_rank_last', ':lastRank')
+            ->where('alliance_id = :id')
+            ->setParameters([
+                'id' => $allianceId,
+                'points' => $points,
+                'rank' => $rank,
+                'lastRank' => $lastRank,
+            ])
+            ->execute();
+    }
+
     public function removePointsByTimestamp(int $timestamp): int
     {
         return (int) $this->createQueryBuilder()
             ->delete('alliance_points')
             ->where("point_timestamp < :timestamp")
             ->setParameter('timestamp', $timestamp)
+            ->execute();
+    }
+
+    public function resetMother(int $allianceId): void
+    {
+        $this->createQueryBuilder()
+            ->update('alliances')
+            ->set('alliance_mother', ':zero')
+            ->set('alliance_mother', ':zero')
+            ->where('alliance_mother = :allianceId OR alliance_mother_request = :allianceId')
+            ->setParameters([
+                'zero' => 0,
+                'allianceId' => $allianceId,
+            ])
+            ->execute();
+    }
+
+    public function setMotherOrRequest(int $allianceId, int $motherId, int $motherRequestId): void
+    {
+        $this->createQueryBuilder()
+            ->update('alliances')
+            ->set('alliance_mother', ':motherId')
+            ->set('alliance_mother_request', ':motherRequestId')
+            ->where('alliance_id = :allianceId')
+            ->setParameters([
+                'allianceId' => $allianceId,
+                'motherId' => $motherId,
+                'motherRequestId' => $motherRequestId,
+            ])
+            ->execute();
+    }
+
+    public function addVisit(int $allianceId, bool $external = false): void
+    {
+        $property = $external ? 'alliance_visits_ext' : 'alliance_visits';
+
+        $this->createQueryBuilder()
+            ->update('alliances')
+            ->set($property, $property . ' + 1')
+            ->where('alliance_id = :allianceId')
+            ->setParameter('allianceId', $allianceId)
             ->execute();
     }
 }
