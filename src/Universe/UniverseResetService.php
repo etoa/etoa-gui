@@ -10,7 +10,7 @@ use EtoA\Support\DB\DatabaseManagerRepository;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\User\UserRepository;
 use EtoA\User\UserToXml;
-use Mutex;
+use Symfony\Component\Lock\LockFactory;
 
 class UniverseResetService
 {
@@ -18,17 +18,20 @@ class UniverseResetService
     private UserRepository $userRepo;
     private PlanetRepository $planetRepo;
     private DatabaseManagerRepository $databaseManager;
+    private LockFactory $lockFactory;
 
     public function __construct(
         ConfigurationService $config,
         UserRepository $userRepo,
         PlanetRepository $planetRepo,
-        DatabaseManagerRepository $databaseManager
+        DatabaseManagerRepository $databaseManager,
+        LockFactory $lockFactory
     ) {
         $this->config = $config;
         $this->userRepo = $userRepo;
         $this->planetRepo = $planetRepo;
         $this->databaseManager = $databaseManager;
+        $this->lockFactory = $lockFactory;
     }
 
     /**
@@ -37,8 +40,8 @@ class UniverseResetService
      */
     public function reset(bool $all = true): void
     {
-        $mtx = new Mutex();
-        $mtx->acquire();
+        $lock = $this->lockFactory->createLock('universe');
+        $lock->acquire(true);
 
         $tbl = [];
         $tbl[] = "cells";
@@ -153,6 +156,6 @@ class UniverseResetService
             }
         }
 
-        $mtx->release();
+        $lock->release();
     }
 }

@@ -5,6 +5,7 @@ use EtoA\Log\LogRepository;
 use EtoA\Log\LogSeverity;
 use EtoA\Support\DB\SchemaMigrationRepository;
 use EtoA\Support\DB\DatabaseMigrationService;
+use Symfony\Component\Lock\LockFactory;
 
 /** @var SchemaMigrationRepository $schemaMigrationRepository */
 $schemaMigrationRepository = $app[SchemaMigrationRepository::class];
@@ -17,10 +18,12 @@ $logRepository = $app[LogRepository::class];
 $successMessage = null;
 $errorMessage = null;
 if (isset($_POST['migrate'])) {
-    $mtx = new Mutex();
+    /** @var LockFactory $lockFactory */
+    $lockFactory = $app[LockFactory::class];
+    $lock = $lockFactory->createLock('db');
 
     try {
-        $mtx->acquire();
+        $lock->acquire(true);
 
         // Migrate schema
         $cnt = $databaseMigrationService->migrate();
@@ -30,10 +33,9 @@ if (isset($_POST['migrate'])) {
             $successMessage = 'Datenbankschema wurde aktualisiert!';
         }
 
-        $mtx->release();
+        $lock->release();
     } catch (Exception $e) {
-        // Release mutex
-        $mtx->release();
+        $lock->release();
 
         // Write log
         $logRepository->add(LogFacility::SYSTEM, LogSeverity::ERROR, "[b]Datenbank-Migration fehlgeschlagen[/b]\nFehler: ".$e->getMessage());

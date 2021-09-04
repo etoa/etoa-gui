@@ -26,6 +26,7 @@ use EtoA\Universe\Wormhole\WormholeService;
 use EtoA\User\UserRepository;
 use Pimple\Container;
 use Pimple\ServiceProviderInterface;
+use Symfony\Component\Lock\LockFactory;
 
 class UniverseServiceProvider implements ServiceProviderInterface
 {
@@ -95,7 +96,8 @@ class UniverseServiceProvider implements ServiceProviderInterface
                 $pimple[AsteroidRepository::class],
                 $pimple[NebulaRepository::class],
                 $pimple[WormholeRepository::class],
-                $pimple[EmptySpaceRepository::class]
+                $pimple[EmptySpaceRepository::class],
+                $pimple[LockFactory::class]
             );
         };
 
@@ -104,7 +106,8 @@ class UniverseServiceProvider implements ServiceProviderInterface
                 $pimple[ConfigurationService::class],
                 $pimple[UserRepository::class],
                 $pimple[PlanetRepository::class],
-                $pimple[DatabaseManagerRepository::class]
+                $pimple[DatabaseManagerRepository::class],
+                $pimple[LockFactory::class]
             );
         };
 
