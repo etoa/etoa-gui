@@ -11,6 +11,7 @@ if ((bool) $app['debug']) {
     \Symfony\Component\ErrorHandler\Debug::enable();
 }
 $app->register(new \EtoA\Core\MonologServiceProvider());
+$app->register(new \EtoA\Core\LockServiceProvider());
 $app->register(new Silex\Provider\ServiceControllerServiceProvider());
 $app->register(new \EtoA\Core\TwigServiceProvider(), [
     'twig.path' => __DIR__.'/../templates',

@@ -8,6 +8,7 @@ use EtoA\Support\DB\DatabaseBackupService;
 use EtoA\Support\DB\DatabaseManagerRepository;
 use EtoA\Support\DB\DatabaseMigrationService;
 use EtoA\Support\DB\SchemaMigrationRepository;
+use Symfony\Component\Lock\LockFactory;
 
 /** @var ConfigurationService $config */
 $config = $app[ConfigurationService::class];
@@ -30,7 +31,9 @@ $persistentTables = fetchJsonConfig("persistent-tables.conf");
 
 $action = $_POST['action'] ?? null;
 if (isset($_POST['submit'])) {
-    $mtx = new Mutex();
+    /** @var LockFactory $lockFactory */
+    $lockFactory = $app[LockFactory::class];
+    $lock = $lockFactory->createLock('db');
 
     try {
         // Do the backup
@@ -38,19 +41,13 @@ if (isset($_POST['submit'])) {
         $gzip = $config->getBoolean('backup_use_gzip');
 
         // Acquire mutex
-        $mtx->acquire();
+        $lock->acquire(true);
 
         // Do the backup
         $log = $databaseBackupService->backupDB($dir, $gzip);
 
-        // Release mutex
-        $mtx->release();
-
         // Truncate tables
         if ($action === "truncate") {
-            $mtx = new Mutex();
-            $mtx->acquire();
-
             $tables = $databaseManager->getTables();
             $emptyTables = [];
             foreach ($tables as $t) {
@@ -69,16 +66,11 @@ if (isset($_POST['submit'])) {
             $cr = $config->restoreDefaults();
             $config->reload();
 
-            $mtx->release();
-
             $successMessage = count($emptyTables) . " Tabellen geleert, $cr Einstellungen auf Standard zurückgesetzt!";
         }
 
         // Drop tables
         else if ($action === "drop") {
-            $mtx = new Mutex();
-            $mtx->acquire();
-
             // Drop tables
             $tc = $databaseManager->dropAllTables();
 
@@ -89,19 +81,16 @@ if (isset($_POST['submit'])) {
             $config->restoreDefaults();
             $config->reload();
 
-            $mtx->release();
-
             $successMessage = $tc . ' Tabellen gelöscht, Datenbankschema neu initialisiert!';
         }
     } catch (Exception $e) {
-        // Release mutex
-        $mtx->release();
-
         // Write log
         $logRepository->add(LogFacility::SYSTEM, LogSeverity::ERROR, "[b]Datenbank-Reset fehlgeschlagen[/b]\nFehler: " . $e->getMessage());
 
         // Show message
         $errorMessage = 'Beim Ausführen des Resaet-Befehls trat ein Fehler auf: ' . $e->getMessage();
+    } finally {
+        $lock->release();
     }
 }
 echo $twig->render('admin/database/reset.html.twig', [
