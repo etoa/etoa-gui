@@ -76,9 +76,11 @@ function checkFights()
         }
 
         function resetFilter() {
-            const now = new Date(<?PHP time() ?>);
-            now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
-            document.getElementById('searchtime').value = now.toISOString().slice(0,16);
+            const dateTimeString = DateTime.fromISO('<?= date(DateTime::ISO8601) ?>')
+                .setZone('<?= date_default_timezone_get() ?>')
+                .toISO({ includeOffset: false, suppressMilliseconds: true })
+                .slice(0,16);
+            document.getElementById('searchtime').value = dateTimeString;
             document.getElementById('searchfuser').value = '';
             document.getElementById('searcheuser').value = '';
             applyFilter(0);
@@ -318,9 +320,11 @@ function debrisLog()
         }
 
         function resetFilter() {
-            const now = new Date();
-            now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
-            document.getElementById('searchtime').value = now.toISOString().slice(0,16);
+            const dateTimeString = DateTime.fromISO('<?= date(DateTime::ISO8601) ?>')
+                .setZone('<?= date_default_timezone_get() ?>')
+                .toISO({ includeOffset: false, suppressMilliseconds: true })
+                .slice(0,16);
+            document.getElementById('searchtime').value = dateTimeString;
             document.getElementById('searchuser').value = '';
             document.getElementById('searchadmin').value = '';
             applyFilter(0);
