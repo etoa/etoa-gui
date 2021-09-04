@@ -33,7 +33,6 @@ function accessLog(ConfigurationService $config, AccessLogRepository $accessLogR
 
     echo "<h2>Seitenzugriffe</h2>";
 
-    $frm = new Form("accesslog", "?page=$page&amp;sub=$sub");
     if (isset($_POST['submit_toggle'])) {
         $config->set("accesslog", !$config->getBoolean('accesslog'));
         success_msg("Einstellungen gespeichert");
@@ -43,7 +42,7 @@ function accessLog(ConfigurationService $config, AccessLogRepository $accessLogR
         success_msg("Aufzeichnungen gelöscht");
     }
 
-    echo $frm->begin();
+    echo '<form id="accesslog" action="?page=' . $page . '&amp;sub=' . $sub. '" method="post">';
     if ($config->getBoolean('accesslog')) {
         echo "<p>Seitenzugriffe werden aufgezeichnet.
         <input type=\"submit\" value=\"Deaktivieren\" name=\"submit_toggle\"  />";
@@ -52,7 +51,7 @@ function accessLog(ConfigurationService $config, AccessLogRepository $accessLogR
         <input type=\"submit\" value=\"Aktivieren\" name=\"submit_toggle\"  />";
     }
     echo " <input type=\"submit\" value=\"Aufzeichnungen löschen\" name=\"submit_truncate\"  /></p>";
-    echo $frm->end();
+    echo '</form>';
 
     $domains = array('ingame', 'public', 'admin');
 
