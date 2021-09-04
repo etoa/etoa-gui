@@ -7,3 +7,6 @@ import generatePlanetName from './planetname'
 window.generatePlanetName = generatePlanetName
 
 import './tutorial.js'
+
+import { DateTime } from "luxon";
+window.DateTime = DateTime;

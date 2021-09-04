@@ -815,9 +815,9 @@ function editBuilding($form, $listId)
                 if ($entry->id == $listId) {
                     ob_start();
                     echo "Start: ";
-                    show_timebox("editstart_" . $entry->id, $entry->startTime, 1);
+                    echo '<input type="datetime-local" value="' . ($entry->startTime > 0 ? date("Y-m-d\TH:i:s", $entry->startTime) : '') . '" step="1" name="' . "editstart_" . $entry->id . '">';
                     echo "<br />Ende: ";
-                    show_timebox("editend_" . $entry->id, $entry->endTime, 1);
+                    echo '<input type="datetime-local" value="' . ($entry->endTime > 0 ? date("Y-m-d\TH:i:s", $entry->endTime) : '') . '" step="1" name="' . "editend_" . $entry->id . '">';
                     $objResponse->assign("time_" . $entry->id, "innerHTML", ob_get_clean());
                     ob_start();
                     echo '<select name="editbuildtype_' . $entry->id . '">';
@@ -855,8 +855,8 @@ function submitEditBuilding($form, $listId)
     $objResponse = new xajaxResponse();
 
     $status = intval($form['editbuildtype_' . $listId]);
-    $endtime = $status > 0 ? mktime($form['editend_' . $listId . '_h'], $form['editend_' . $listId . '_i'], $form['editend_' . $listId . '_s'], $form['editend_' . $listId . '_m'], $form['editend_' . $listId . '_d'], $form['editend_' . $listId . '_y']) : '0';
-    $starttime = $status > 0 ? mktime($form['editstart_' . $listId . '_h'], $form['editstart_' . $listId . '_i'], $form['editstart_' . $listId . '_s'], $form['editstart_' . $listId . '_m'], $form['editstart_' . $listId . '_d'], $form['editstart_' . $listId . '_y']) : '0';
+    $endtime = $status > 0 ? strtotime($form['editend_' . $listId]) : '0';
+    $starttime = $status > 0 ? strtotime($form['editstart_' . $listId]) : '0';
 
     $buildingRepository->updateBuildingListEntry((int) $listId, (int) $form['editcnt_' . $listId], $status, $starttime, $endtime);
     $objResponse->script("xajax_showBuildingsOnPlanet('" . $form['entity_id'] . "');");
@@ -878,10 +878,10 @@ function searchUser($val, $field_id = 'user_nick', $box_id = 'citybox')
 
     $userNicks = $userRepository->searchUserNicknames(UserSearch::create()->nickLike($val), 20);
     $nCount = count($userNicks);
-        foreach ($userNicks as $nick) {
-            $sOut .= "<a href=\"#\" onclick=\"javascript:document.getElementById('" . $field_id . "').value='" . htmlentities($nick) . "';document.getElementById('" . $box_id . "').style.display = 'none';\">" . htmlentities($nick) . "</a>";
-            $sLastHit = $nick;
-        }
+    foreach ($userNicks as $nick) {
+        $sOut .= "<a href=\"#\" onclick=\"javascript:document.getElementById('" . $field_id . "').value='" . htmlentities($nick) . "';document.getElementById('" . $box_id . "').style.display = 'none';\">" . htmlentities($nick) . "</a>";
+        $sLastHit = $nick;
+    }
 
     if ($nCount > 20) {
         $sOut = "";

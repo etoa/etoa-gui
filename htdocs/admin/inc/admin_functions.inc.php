@@ -421,7 +421,7 @@ function showAttackAbuseLogs($args = null, $limit = -1, $load = true)
         $action = is_array($args) && isset($args['flaction']) ? $args['flaction'] : 0;
         $sev = is_array($args) && isset($args['logsev'])  ? $args['logsev'] : 0;
 
-        $landtime = is_array($args) ? mktime($args['searchtime_h'], $args['searchtime_i'], $args['searchtime_s'], $args['searchtime_m'], $args['searchtime_d'], $args['searchtime_y']) : time();
+        $landtime = is_array($args) ? strtotime($args['searchtime']) : time();
 
         if (isset($args['searchfuser']) && $args['searchfuser'] != "" && !is_numeric($args['searchfuser'])) {
             $args['searchfuser'] = $userRepository->getUserIdByNick($args['searchfuser']);
@@ -792,13 +792,13 @@ function showDebrisLogs($args = null, $limit = 0)
     /** @var DebrisLogRepository $debrisLogRepository */
     $debrisLogRepository = $app[DebrisLogRepository::class];
 
-    $maxtime = is_array($args) ? mktime($args['searchtime_h'], $args['searchtime_i'], $args['searchtime_s'], $args['searchtime_m'], $args['searchtime_d'], $args['searchtime_y']) : time();
+    $maxtime = is_array($args) ? strtotime($args['searchtime']) : time();
 
     $paginationLimit = 50;
 
     $search = DebrisLogSearch::create()->timeBefore($maxtime);
     if (isset($args['searchuser']) && trim($args['searchuser']) != '') {
-        $search->userId($userRepository->getUserIdByNick($args['searchuser']));
+        $search->userId($userRepository->getUserIdByNick($args['searchuser']) ?? 0);
     }
     if (isset($args['searchadmin']) && trim($args['searchadmin']) != '') {
         $admin = $adminUserRepo->findOneByNick($args['searchadmin']);

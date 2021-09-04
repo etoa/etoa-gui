@@ -7,6 +7,9 @@ require('jquery-ui-bundle')
 require('jquery-mousewheel')
 require('./jquery.mapbox.js')
 
+import { DateTime } from "luxon";
+window.DateTime = DateTime;
+
 $(function () {
   // Load tabs
   $(".tabs").tabs();
