@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\Log\FleetLogRepository;
+use EtoA\Ship\ShipDataRepository;
 use EtoA\Universe\Resources\BaseResources;
 
 /**
@@ -23,7 +24,8 @@ class Fleet
     private $launchTime;
     private $landTime;
     private $nextActionTime;
-    private $ships;
+    /** @var ?\EtoA\Ship\Ship[] */
+    private ?array $ships = null;
     /** @var Fleet[] */
     public array $fleets;
 
@@ -419,10 +421,15 @@ class Fleet
      */
     function getShips()
     {
+        global $app;
+
+        /** @var ShipDataRepository $shipDataRepository */
+        $shipDataRepository = $app[ShipDataRepository::class];
+
         if (!isset($this->ships)) {
             $this->ships = array();
             foreach ($this->getShipIds() as $sid => $cnt) {
-                $this->ships[$sid] = new Ship($sid);
+                $this->ships[$sid] = $shipDataRepository->getShip($sid, false);
             }
         }
         return $this->ships;
@@ -436,8 +443,8 @@ class Fleet
         $this->capacity = 0;
         $this->BCapa = 1;
         foreach ($this->getShips() as $sid => $sobj) {
-            $this->capacity += $sobj->capacity() * $this->shipsIds[$sid];
-            $this->BCapa += $sobj->bCapa * 10;
+            $this->capacity += $sobj->capacity * $this->shipsIds[$sid];
+            $this->BCapa += $sobj->specialBonusCapacity * 10;
         }
 
         return $this->capacity * $this->BCapa;
@@ -450,7 +457,7 @@ class Fleet
     {
         $this->peopleCapacity = 0;
         foreach ($this->getShips() as $sid => $sobj) {
-            $this->peopleCapacity += $sobj->peopleCapacity() * $this->shipsIds[$sid];
+            $this->peopleCapacity += $sobj->peopleCapacity * $this->shipsIds[$sid];
         }
         return $this->peopleCapacity;
     }

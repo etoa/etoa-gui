@@ -10,6 +10,8 @@ use EtoA\Alliance\AllianceService;
 use EtoA\Log\LogFacility;
 use EtoA\Log\LogRepository;
 use EtoA\Log\LogSeverity;
+use EtoA\Ship\ShipDataRepository;
+use EtoA\Ship\ShipRenderer;
 use EtoA\Support\BBCodeUtils;
 use EtoA\Support\StringUtils;
 use EtoA\Universe\Resources\ResIcons;
@@ -25,6 +27,9 @@ $logRepository = $app[LogRepository::class];
 $allianceService = $app[AllianceService::class];
 /** @var \EtoA\User\UserRepository $userRepository */
 $userRepository = $app[\EtoA\User\UserRepository::class];
+/** @var ShipDataRepository $shipDataRepository */
+$shipDataRepository = $app[ShipDataRepository::class];
+$shipRenderer = new ShipRenderer();
 
 $user = $userRepository->getUser($cu->getId());
 $lead_id = (int) $_GET['lead_id'] > 0 ? (int) $_GET['lead_id'] : -1;
@@ -214,14 +219,14 @@ if ($allianceFleetControlLevel >= ALLIANCE_FLEET_SHOW_DETAIL && $rights) {
                             <td width=\"50\">Anzahl</td>
                         </tr>";
                 foreach ($fd->getShipIds() as $sid => $scnt) {
-                    $ship = new Ship($sid);
+                    $ship = $shipDataRepository->getShip($sid, false);
                     echo "<tr>
                                 <td style=\"width:40px;background:#000\">
-                                    " . $ship->img() . "
+                                    " . $shipRenderer->image($ship) . "
                                 </td>
                                 <td>
-                                    <b>" . $ship->name() . "</b><br/>
-                                    " . BBCodeUtils::toHTML($ship->shortComment()) . "
+                                    <b>" . $ship->name . "</b><br/>
+                                    " . BBCodeUtils::toHTML($ship->shortComment) . "
                                 </td>
                                 <td style=\"width:50px;\">" . StringUtils::formatNumber($scnt) . "</td>
                             </tr>";

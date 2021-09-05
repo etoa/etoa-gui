@@ -8,6 +8,8 @@ use EtoA\Alliance\AllianceService;
 use EtoA\Log\LogFacility;
 use EtoA\Log\LogRepository;
 use EtoA\Log\LogSeverity;
+use EtoA\Ship\ShipDataRepository;
+use EtoA\Ship\ShipRenderer;
 use EtoA\Support\BBCodeUtils;
 use EtoA\Support\StringUtils;
 use EtoA\Universe\Resources\ResIcons;
@@ -27,6 +29,9 @@ $userUniverseDiscoveryService = $app[UserUniverseDiscoveryService::class];
 $logRepository = $app[LogRepository::class];
 /** @var AllianceService $allianceService */
 $allianceService = $app[AllianceService::class];
+/** @var ShipDataRepository $shipDataRepository */
+$shipDataRepository = $app[ShipDataRepository::class];
+$shipRenderer = new ShipRenderer();
 
 $user = $userRepository->getUser($cu->id);
 
@@ -185,13 +190,13 @@ if ($valid > 0) {
                 <th colspan=\"2\">Schifftyp</th>
                 <th width=\"50\">Anzahl</th></tr>";
         foreach ($fd->getShipIds() as $sid => $scnt) {
-            $ship = new Ship($sid);
+            $ship = $shipDataRepository->getShip($sid, false);
             echo "<tr>
                     <td class=\"tbldata\" style=\"width:40px;height: 40px;background:#000\">
-                        " . $ship->img() . "</td>";
+                        " . $shipRenderer->image($ship) . "</td>";
             echo "<td class=\"tbldata\">
-                    <b>" . $ship->name() . "</b><br/>
-                " . BBCodeUtils::toHTML($ship->shortComment()) . "</td>";
+                    <b>" . $ship->name . "</b><br/>
+                " . BBCodeUtils::toHTML($ship->shortComment) . "</td>";
             echo "<td class=\"tbldata\" style=\"width:50px;\">" . StringUtils::formatNumber($scnt) . "</td></tr>";
         }
         tableEnd();
