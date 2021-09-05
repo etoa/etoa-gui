@@ -27,15 +27,19 @@ class ShipRenderer
 			</tr>
 			</table><br/>" . $this->actions($ship) . "</div>
 			<br style=\"clear:both;\"/></div></div>";
+
         return $tt . "<span " . tt('shiptt' . $ship->id) . ">" . $ship->name . "</span>";
     }
 
     public function image(Ship $ship, string $type = "small", string $float = null): string
     {
-        if ($float === "left")
+        if ($float === "left") {
             return "<img src=\"" . $ship->getImagePath($type) . "\" style=\"float:left;margin-right:6px;\"/>";
-        if ($float === "right")
+        }
+        if ($float === "right") {
             return "<img src=\"" . $ship->getImagePath($type) . "\" style=\"float:right;\"/>";
+        }
+
         return "<img src=\"" . $ship->getImagePath($type) . "\" style=\"\"/>";
     }
 
