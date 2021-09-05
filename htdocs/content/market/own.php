@@ -6,6 +6,8 @@ use EtoA\Market\MarketAuctionRepository;
 use EtoA\Market\MarketResourceRepository;
 use EtoA\Market\MarketShipRepository;
 use EtoA\Message\MarketReportRepository;
+use EtoA\Ship\ShipDataRepository;
+use EtoA\Ship\ShipRenderer;
 use EtoA\Ship\ShipRepository;
 use EtoA\Support\StringUtils;
 use EtoA\Universe\Planet\PlanetRepository;
@@ -29,6 +31,9 @@ $marketResourceRepository = $app[MarketResourceRepository::class];
 $marketShipRepository = $app[MarketShipRepository::class];
 /** @var MarketReportRepository $marketReportRepository */
 $marketReportRepository = $app[MarketReportRepository::class];
+/** @var ShipDataRepository $shipDataRepository */
+$shipDataRepository = $app[ShipDataRepository::class];
+$shipRenderer = new ShipRenderer();
 
 // Schiffangebot löschen
 // <editor-fold>
@@ -244,8 +249,8 @@ else {
             foreach (ResourceNames::NAMES as $rk => $rn) {
                 echo "<tr>";
                 if ($i == 0) {
-                    $ship = new Ship($offer->shipId);
-                    echo "<td rowspan=\"$resCnt\">" . $offer->count . " <a href=\"?page=help&site=shipyard&id=" . $offer->shipId . "\">" . $ship->toolTip() . "</a></td>";
+                    $ship = $shipDataRepository->getShip($offer->shipId, false);
+                    echo "<td rowspan=\"$resCnt\">" . $offer->count . " <a href=\"?page=help&site=shipyard&id=" . $offer->shipId . "\">" . $shipRenderer->tooltip($ship) . "</a></td>";
                 }
                 echo "<td class=\"rescolor" . $rk . "\">" . ResIcons::ICONS[$rk] . "<b>" . $rn . "</b>:</td>
                     <td class=\"rescolor" . $rk . "\">" . StringUtils::formatNumber($costs->get($rk)) . "</td>";

@@ -5,6 +5,7 @@ use EtoA\Market\MarketResource;
 use EtoA\Market\MarketResourceRepository as MarketResourceRepositoryAlias;
 use EtoA\Market\MarketShipRepository;
 use EtoA\Ship\ShipDataRepository;
+use EtoA\Ship\ShipId;
 use EtoA\Support\StringUtils;
 use EtoA\Specialist\SpecialistService;
 use EtoA\Universe\Entity\EntityRepository;
@@ -42,6 +43,8 @@ function marketSearch($form, $order = "distance", $orderDirection = 0)
 
     /** @var SpecialistService $specialistService */
     $specialistService = $app[SpecialistService::class];
+    /** @var ShipDataRepository $shipDataRepository */
+    $shipDataRepository = $app[ShipDataRepository::class];
 
     //
     // Resources
@@ -71,7 +74,7 @@ function marketSearch($form, $order = "distance", $orderDirection = 0)
         $data = [];
         if ($nr > 0) {
             $currentEntity = $entityRepository->getEntity($_SESSION['cpid']);
-            $tradeShip = new Ship(MARKET_SHIP_ID);
+            $tradeShip = $shipDataRepository->getShip(ShipId::MARKET, false);
 
             $specialist = $specialistService->getSpecialistOfUser(intval($_SESSION['user_id']));
 
@@ -100,7 +103,7 @@ function marketSearch($form, $order = "distance", $orderDirection = 0)
                         'buy_total' => $buyResources->getSum(),
                         'used_res' => 0,
                         'distance' => $dist,
-                        'duration' => ceil($dist / ($tradeShip->speed * $specialistTradeTime) * 3600 + $tradeShip->time2start + $tradeShip->time2land),
+                        'duration' => ceil($dist / ($tradeShip->speed * $specialistTradeTime) * 3600 + $tradeShip->timeToStart + $tradeShip->timeToLand),
                     ];
 
                     foreach (ResourceNames::NAMES as $rk => $rn) {

@@ -11,6 +11,7 @@ use EtoA\Missile\MissileRepository;
 use EtoA\Requirement\RequirementRepositoryProvider;
 use EtoA\Ship\ShipDataRepository;
 use EtoA\Ship\ShipRepository;
+use EtoA\Ship\ShipXpCalculator;
 use EtoA\Support\StringUtils;
 use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Entity\EntitySearch;
@@ -201,7 +202,7 @@ function showShipsOnPlanet($form)
                 <td>" . ($itemPoints) . "</td>
                 <td id=\"special_" . $item->id . "\">";
                 if ($ship->specialNeedExp > 0) {
-                    $out .= StringUtils::formatNumber($item->specialShipExp) . " XP, Level " . Ship::levelByXp($ship->specialNeedExp, $ship->specialExpFactor, $item->specialShipExp);
+                    $out .= StringUtils::formatNumber($item->specialShipExp) . " XP, Level " . ShipXpCalculator::levelByXp($ship->specialNeedExp, $ship->specialExpFactor, $item->specialShipExp);
                 }
                 $out .= "
                 <td style=\"width:180px\" id=\"actions_" . $item->id . "\" id=\"actions_" . $item->id . "\">
@@ -238,7 +239,7 @@ function showShipsOnPlanet($form)
                 <td>" . ($ship->points * $count->count) . "</td>
                 <td id=\"special_" . $ship->id . "\">";
                 if ($ship->specialNeedExp > 0) {
-                    $out .= StringUtils::formatNumber($count->exp) . " XP, Level " . Ship::levelByXp($ship->specialNeedExp, $ship->specialExpFactor, $count->exp);
+                    $out .= StringUtils::formatNumber($count->exp) . " XP, Level " . ShipXpCalculator::levelByXp($ship->specialNeedExp, $ship->specialExpFactor, $count->exp);
                 }
                 $out .= "
                 <td style=\"width:180px\" id=\"actions_" . $ship->id . "\" id=\"actions_" . $ship->id . "\">
@@ -324,7 +325,7 @@ function editShipByListId($form, $listId)
                 $objResponse->assign("bunkered_" . $item->id, "innerHTML", $out);
                 if ($ship->specialNeedExp > 0) {
                     $out = "<input type=\"hidden\" name=\"ship_special_" . $item->id . "\" value=\"1\"><input type=\"text\" size=\"9\" maxlength=\"12\" name=\"editxp_" . $item->id . "\" value=\"" . $item->specialShipExp . "\" onkeyup=\"xajax_calcShipLevel(" . $item->id . "," . $ship->specialNeedExp . "," . $ship->specialExpFactor . ",this.value);\" /> XP,
-                    Level <b><span id=\"editlevel_" . $item->id . "\">" . Ship::levelByXp($ship->specialNeedExp, $ship->specialExpFactor, $item->specialShipExp) . "</span></b><br/>
+                    Level <b><span id=\"editlevel_" . $item->id . "\">" . ShipXpCalculator::levelByXp($ship->specialNeedExp, $ship->specialExpFactor, $item->specialShipExp) . "</span></b><br/>
 
                     <b>Waffenlevel:</b> <input type=\"text\" name=\"edit_bonus_weapon_" . $item->id . "\" value=\"" . $item->specialShipBonusWeapon . "\" size=\"5\" maxlength=\"20\" /><br/>
                     <b>Strukturlevel:</b> <input type=\"text\" name=\"edit_bonus_structure_" . $item->id . "\" value=\"" . $item->specialShipBonusStructure . "\" size=\"5\" maxlength=\"20\" /><br/>
@@ -388,7 +389,7 @@ function editShipByShipId($form, $shipId)
                 <td id=\"special_" . $item->id . "\">";
                 if ($ship->specialNeedExp > 0) {
                     echo "<input type=\"hidden\" name=\"ship_special_" . $item->id . "\" value=\"1\"><input type=\"text\" size=\"9\" maxlength=\"12\" name=\"editxp_" . $item->id . "\" value=\"" . $item->specialShipExp . "\" onkeyup=\"xajax_calcShipLevel(" . $item->id . "," . $ship->specialNeedExp . "," . $ship->specialExpFactor . ",this.value);\" /> XP,
-                    Level <b><span id=\"editlevel_" . $item->id . "\">" . Ship::levelByXp($ship->specialNeedExp, $ship->specialExpFactor, $item->specialShipExp) . "</span></b><br/>
+                    Level <b><span id=\"editlevel_" . $item->id . "\">" . ShipXpCalculator::levelByXp($ship->specialNeedExp, $ship->specialExpFactor, $item->specialShipExp) . "</span></b><br/>
 
                     <b>Waffenlevel:</b> <input type=\"text\" name=\"edit_bonus_weapon_" . $item->id . "\" value=\"" . $item->specialShipBonusWeapon . "\" size=\"5\" maxlength=\"20\" /><br/>
                     <b>Strukturlevel:</b> <input type=\"text\" name=\"edit_bonus_structure_" . $item->id . "\" value=\"" . $item->specialShipBonusStructure . "\" size=\"5\" maxlength=\"20\" /><br/>
@@ -425,7 +426,7 @@ function calcShipLevel($slid, $base, $factor, $xp)
 {
     $objResponse = new xajaxResponse();
 
-    $objResponse->assign("editlevel_" . $slid, "innerHTML", Ship::levelByXp($base, $factor, $xp));
+    $objResponse->assign("editlevel_" . $slid, "innerHTML", ShipXpCalculator::levelByXp($base, $factor, $xp));
     return $objResponse;
 }
 

@@ -9,6 +9,7 @@ use EtoA\Ship\ShipQueueRepository;
 use EtoA\Ship\ShipQueueSearch;
 use EtoA\Ship\ShipRepository;
 use EtoA\Ship\ShipSort;
+use EtoA\Ship\ShipXpCalculator;
 use EtoA\Support\StringUtils;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\User\UserRepository;
@@ -85,7 +86,7 @@ elseif ($sub == "xpcalc") {
 
     echo "<table class=\"tb\"><tr><th>Level</th><th>Experience</th></tr>";
     for ($level = 1; $level <= 30; $level++) {
-        echo "<tr><td>$level</td><td>" . StringUtils::formatNumber(Ship::xpByLevel($ship_xp, $ship_xp_multiplier, $level)) . "</td></tr>";
+        echo "<tr><td>$level</td><td>" . StringUtils::formatNumber(ShipXpCalculator::xpByLevel($ship_xp, $ship_xp_multiplier, $level)) . "</td></tr>";
     }
     echo "</table>";
 }

@@ -7,6 +7,8 @@ use EtoA\Log\LogSeverity;
 use EtoA\Market\MarketHandler;
 use EtoA\Market\MarketResourceRepository;
 use EtoA\Message\MarketReportRepository;
+use EtoA\Ship\ShipDataRepository;
+use EtoA\Ship\ShipId;
 use EtoA\Support\StringUtils;
 use EtoA\Specialist\SpecialistService;
 use EtoA\Universe\Entity\EntityRepository;
@@ -30,7 +32,8 @@ $marketReportRepository = $app[MarketReportRepository::class];
 $logRepository = $app[LogRepository::class];
 /** @var PlanetRepository $planetRepository */
 $planetRepository = $app[PlanetRepository::class];
-
+/** @var ShipDataRepository $shipDataRepository */
+$shipDataRepository = $app[ShipDataRepository::class];
 /** @var SpecialistService $specialistService */
 $specialistService = $app[SpecialistService::class];
 
@@ -66,15 +69,15 @@ if (isset($_POST['ressource_market_id'])) {
                 $ownEntity = $entityRepository->getEntity((int) $cp->id);
 
                 $id = $sellerEntity !== null ? $sellerEntity->id : 0;
-                $tradeShip = new Ship(MARKET_SHIP_ID);
+                $tradeShip = $shipDataRepository->getShip(ShipId::MARKET, false);
                 $numSellerShip = ($tradeShip->capacity > 0) ? ceil(array_sum($sellarr) / $tradeShip->capacity) : 1;
 
                 $sellerSpecialist = $specialistService->getSpecialistOfUser($offer->userId);
                 $specialist = $specialistService->getSpecialistOfUser($cu->id);
 
                 $dist = $entityService->distance($sellerEntity, $ownEntity);
-                $sellerFlighttime = ceil($dist / (($sellerSpecialist !== null ? $sellerSpecialist->tradeTime : 1) * $tradeShip->speed / 3600) + $tradeShip->time2start + $tradeShip->time2land);
-                $buyerFlighttime = ceil($dist / (($specialist !== null ? $specialist->tradeTime : 1) * $tradeShip->speed / 3600) + $tradeShip->time2start + $tradeShip->time2land);
+                $sellerFlighttime = ceil($dist / (($sellerSpecialist !== null ? $sellerSpecialist->tradeTime : 1) * $tradeShip->speed / 3600) + $tradeShip->timeToStart + $tradeShip->timeToLand);
+                $buyerFlighttime = ceil($dist / (($specialist !== null ? $specialist->tradeTime : 1) * $tradeShip->speed / 3600) + $tradeShip->timeToStart + $tradeShip->timeToLand);
 
                 $launchtime = time();
                 $sellerLandtime = $launchtime + $sellerFlighttime;
