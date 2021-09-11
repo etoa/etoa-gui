@@ -206,63 +206,6 @@ class User implements \EtoA\User\UserInterface
     }
 
     /**
-     * The destructor saves pedning changes
-     */
-    function __destruct()
-    {
-        if ($this->changedFields && count($this->changedFields) > 0) {
-            $sql = "UPDATE
-                " . self::tableName . "
-            SET ";
-            foreach ($this->changedFields as $k => $v) {
-                if ($k == "alliance")
-                    $sql .= " user_alliance_id=" . $this->allianceId . ",";
-                elseif ($k == "allianceRankId")
-                    $sql .= " user_alliance_rank_id=" . $this->allianceRankId . ",";
-                elseif ($k == "specialistId")
-                    $sql .= " user_specialist_id=" . $this->specialistId . ",";
-                elseif ($k == "specialistTime")
-                    $sql .= " user_specialist_time=" . $this->specialistTime . ",";
-                elseif ($k == "visits")
-                    $sql .= " user_visits=" . $this->visits . ",";
-                elseif ($k == "email")
-                    $sql .= " user_email='" . $this->email . "',";
-                elseif ($k == "d_realName")
-                    $sql .= " dual_name='" . $this->d_realName . "',";
-                elseif ($k == "d_email")
-                    $sql .= " dual_email='" . $this->d_email . "',";
-                elseif ($k == "allianceLeave")
-                    $sql .= " user_alliance_leave='" . $this->allianceLeave . "',";
-                elseif ($k == "profileText")
-                    $sql .= " user_profile_text='" . $this->profileText . "',";
-                elseif ($k == "signature")
-                    $sql .= " user_signature='" . $this->signature . "',";
-                elseif ($k == "profileBoardUrl")
-                    $sql .= " user_profile_board_url='" . $this->profileBoardUrl . "',";
-                elseif ($k == "profileImage") {
-                    if ($this->profileImage == "")
-                        $sql .= " user_profile_img='',user_profile_img_check=0,";
-                    else
-                        $sql .= " user_profile_img='" . $this->profileImage . "',user_profile_img_check=1,";
-                } elseif ($k == "avatar") {
-                    $sql .= " user_avatar='" . $this->avatar . "',";
-                } elseif ($k == "hmode_from") {
-                    $sql .= " user_hmode_from=" . $this->hmode_from . ",";
-                } elseif ($k == "hmode_to") {
-                    $sql .= " user_hmode_to=" . $this->hmode_to . ",";
-                } elseif ($k === 'changedMainPlanet') {
-                    // do nothing
-                } else
-                    echo " $k has no valid UPDATE query!<br/>";
-            }
-            $sql .= " user_id=user_id WHERE
-                    user_id=" . $this->id . ";";
-            dbquery($sql);
-        }
-        unset($this->changedFields);
-    }
-
-    /**
      * Getter
      */
     public function __get($key)
