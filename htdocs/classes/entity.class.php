@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Entity\EntityType;
 
 /**
@@ -197,30 +198,19 @@ abstract class Entity
     public function loadCoords()
     {
         if (!$this->coordsLoaded) {
-            $res = dbquery("
-            SELECT
-                sx,
-                sy,
-                cx,
-                cy,
-                pos,
-                cells.id
-            FROM
-                cells
-            INNER JOIN
-                entities
-                ON entities.cell_id=cells.id
-                AND entities.id='" . $this->id . "'
-            LIMIT 1;
-            ");
-            if (mysql_num_rows($res) > 0) {
-                $arr = mysql_fetch_row($res);
-                $this->sx = $arr[0];
-                $this->sy = $arr[1];
-                $this->cx = $arr[2];
-                $this->cy = $arr[3];
-                $this->pos = $arr[4];
-                $this->cellId = $arr[5];
+            global $app;
+
+            /** @var EntityRepository $entityRepository */
+            $entityRepository = $app[EntityRepository::class];
+
+            $entity = $entityRepository->getEntity($this->id);
+            if ($entity !== null) {
+                $this->sx = $entity->sx;
+                $this->sy = $entity->sy;
+                $this->cx = $entity->cx;
+                $this->cy = $entity->cy;
+                $this->pos = $entity->pos;
+                $this->cellId = $entity->cellId;
                 $this->coordsLoaded = true;
             }
         }
@@ -274,23 +264,19 @@ abstract class Entity
      */
     public static function createFactoryById($id)
     {
-        $res = dbquery("
-        SELECT
-            code
-        FROM
-            entities
-        WHERE
-            id=" . intval($id) . "
-        ");
-        if (mysql_num_rows($res) > 0) {
-            $arr = mysql_fetch_array($res);
-            $type = $arr[0];
+        global $app;
 
-            switch ($type) {
+        /** @var EntityRepository $entityRepository */
+        $entityRepository = $app[EntityRepository::class];
+
+        $entity = $entityRepository->getEntity($id);
+
+        if ($entity !== null) {
+            switch ($entity->code) {
                 case EntityType::STAR:
-                    return new Star($id);
+                    return new Star($id, $entity);
                 case EntityType::PLANET:
-                    return Planet::getById($id);
+                    return Planet::getById($id, $entity);
                 case EntityType::ASTEROID:
                     return new AsteroidField($id);
                 case EntityType::NEBULA:
@@ -318,20 +304,14 @@ abstract class Entity
      */
     public static function createFactoryUnkownCell($cell = 0)
     {
-        $res = dbquery("
-        SELECT
-            entities.id
-        FROM
-            entities
-        WHERE
-            entities.cell_id='" . intval($cell) . "'
-            AND entities.pos='0'
-        LIMIT 1;");
+        global $app;
 
-        if (mysql_num_rows($res) > 0) {
-            $arr = mysql_fetch_array($res);
-            $id = $arr[0];
-            return new UnknownEntity($id);
+        /** @var EntityRepository $entityRepository */
+        $entityRepository = $app[EntityRepository::class];
+
+        $entity = $entityRepository->findByCellAndPosition($cell, 0);
+        if ($entity !== null) {
+            return new UnknownEntity($entity->id);
         }
 
         return false;

@@ -1,5 +1,10 @@
 <?PHP
 
+use EtoA\Universe\Entity\EntityRepository;
+use EtoA\Universe\Star\SolarType;
+use EtoA\Universe\Star\SolarTypeRepository;
+use EtoA\Universe\Star\StarRepository;
+
 /**
  * Star-Class
  *
@@ -20,44 +25,46 @@ class Star extends Entity
     protected $cx;
     protected $cy;
     protected $cellId;
+    private ?SolarType $solType = null;
 
     /**
      * The constructor
      */
-    public function __construct($id = 0)
+    public function __construct($id = 0, \EtoA\Universe\Entity\Entity $entity = null)
     {
+        global $app;
+
+        if ($entity === null) {
+            /** @var EntityRepository $entityRepository */
+            $entityRepository = $app[EntityRepository::class];
+            $entity = $entityRepository->getEntity($id);
+        }
+
         $this->isValid = false;
         $this->coordsLoaded = false;
         $this->isVisible = true;
 
-        $res = dbquery("
-			SELECT
-	    	stars.name,
-	    	stars.type_id,
-	    	entities.pos,
-	    	sol_types.sol_type_name
-			FROM
-	    	stars
-	    INNER JOIN
-	    	entities
-	    ON entities.id=stars.id
-				AND	stars.id='" . intval($id) . "'
-			INNER JOIN sol_types
-				ON stars.type_id=sol_types.sol_type_id;");
-        if (mysql_num_rows($res)) {
-            $arr = mysql_fetch_row($res);
-            $this->id = $id;
+        /** @var StarRepository $starRepository */
+        $starRepository = $app[StarRepository::class];
+        $star = $starRepository->find($id);
 
-            if ($arr[0] != "") {
-                $this->name = stripslashes($arr[0]);
+        if ($star !== null) {
+            /** @var SolarTypeRepository $solTypeRepository */
+            $solTypeRepository = $app[SolarTypeRepository::class];
+            $this->solType = $solTypeRepository->find($star->typeId);
+
+            $this->id = $star->id;
+
+            if ($star->name != "") {
+                $this->name = stripslashes($star->name);
                 $this->named = true;
             } else {
                 $this->name = "Unbenannt";
                 $this->named = false;
             }
-            $this->typeId = $arr[1];
-            $this->pos = $arr[2];
-            $this->typeName = $arr[3];
+            $this->typeId = $star->typeId;
+            $this->pos = $entity->pos;
+            $this->typeName = $this->solType->name;
 
             $this->isValid = true;
         }
@@ -65,26 +72,17 @@ class Star extends Entity
 
     public function typeData()
     {
-        $res = dbquery("
-				SELECT
-					*
-				FROM
-					sol_types
-				WHERE
-					sol_type_id=" . $this->typeId . "
-				;");
-        $arr = mysql_fetch_assoc($res);
         $rtn = array(
-            "metal" => $arr['sol_type_f_metal'],
-            "crystal" => $arr['sol_type_f_crystal'],
-            "plastic" => $arr['sol_type_f_plastic'],
-            "fuel" => $arr['sol_type_f_fuel'],
-            "food" => $arr['sol_type_f_food'],
-            "power" => $arr['sol_type_f_power'],
-            "population" => $arr['sol_type_f_population'],
-            "buildtime" => $arr['sol_type_f_buildtime'],
-            "researchtime" => $arr['sol_type_f_researchtime'],
-            "comment" => $arr['sol_type_comment']
+            "metal" => $this->solType->metal,
+            "crystal" => $this->solType->crystal,
+            "plastic" => $this->solType->plastic,
+            "fuel" => $this->solType->fuel,
+            "food" => $this->solType->food,
+            "power" => $this->solType->power,
+            "population" => $this->solType->people,
+            "buildtime" => $this->solType->buildTime,
+            "researchtime" => $this->solType->researchTime,
+            "comment" => $this->solType->comment
         );
         return $rtn;
     }

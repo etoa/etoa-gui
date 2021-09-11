@@ -1,6 +1,9 @@
 <?PHP
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Universe\Entity\EntityRepository;
+use EtoA\Universe\Entity\EntitySearch;
+use EtoA\Universe\Entity\EntitySort;
 
 /**
  * Space cells class
@@ -30,23 +33,15 @@ class Cell
         $this->isValid = false;
         $this->entities = null;
 
-        $res = dbquery("
-        SELECT
-        cells.sx,
-        cells.sy,
-        cells.cx,
-        cells.cy
-        FROM
-        cells
-        WHERE
-                id='" . intval($id) . "';");
-        if (mysql_num_rows($res)) {
-            $arr = mysql_fetch_row($res);
-            $this->id = $id;
-            $this->sx = $arr[0];
-            $this->sy = $arr[1];
-            $this->cx = $arr[2];
-            $this->cy = $arr[3];
+        /** @var EntityRepository $entityRepository */
+        $entityRepository = $app[EntityRepository::class];
+        $entity = $entityRepository->getEntity($id);
+        if ($entity !== null) {
+            $this->id = $entity->id;
+            $this->sx = $entity->sx;
+            $this->sy = $entity->sy;
+            $this->cx = $entity->cx;
+            $this->cy = $entity->cy;
             $this->isValid = true;
         }
     }
@@ -65,19 +60,13 @@ class Cell
     {
         if ($this->entities == null) {
             $this->entities = array();
-            $res = dbquery("
-            SELECT
-                id,
-                code
-            FROM
-                entities
-            WHERE
-                cell_id=" . $this->id . "
-            ORDER BY
-                pos
-            ");
-            while ($arr = mysql_fetch_row($res)) {
-                $this->entities[] = Entity::createFactory($arr[1], $arr[0]);
+            global $app;
+
+            /** @var EntityRepository $entityRepository */
+            $entityRepository = $app[EntityRepository::class];
+            $entities = $entityRepository->searchEntities(EntitySearch::create()->cellId($this->id), EntitySort::pos());
+            foreach ($entities as $entity) {
+                $this->entities[] = Entity::createFactory($entity->code, $entity->id);
             }
         }
         return $this->entities;

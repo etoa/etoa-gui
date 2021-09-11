@@ -46,6 +46,23 @@ class StarRepository extends AbstractRepository
         return $data !== false ? new Star($data) : null;
     }
 
+    public function findStarForCell(int $cellId): ?Star
+    {
+        $data = $this->createQueryBuilder()
+            ->select('s.*')
+            ->from('stars', 's')
+            ->innerJoin('s', 'entity', 'e', 'e.id = s.id')
+            ->where('e.cell_id = :cellId')
+            ->andWhere('e.pos = 0')
+            ->setParameters([
+                'cellId' => $cellId,
+            ])
+            ->execute()
+            ->fetchAssociative();
+
+        return $data !== false ? new Star($data) : null;
+    }
+
     public function add(int $id, int $typeId): void
     {
         $this->createQueryBuilder()

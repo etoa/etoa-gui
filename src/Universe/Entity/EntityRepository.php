@@ -129,9 +129,9 @@ class EntityRepository extends AbstractRepository
     /**
      * @return Entity[]
      */
-    public function searchEntities(EntitySearch $search): array
+    public function searchEntities(EntitySearch $search, EntitySort $sort = null): array
     {
-        $data = $this->getEntityCoordinatesQueryBuilder($search)
+        $data = $this->getEntityCoordinatesQueryBuilder($search, $sort)
             ->execute()
             ->fetchAllAssociative();
 
