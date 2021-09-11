@@ -51,7 +51,7 @@ class StarRepository extends AbstractRepository
         $data = $this->createQueryBuilder()
             ->select('s.*')
             ->from('stars', 's')
-            ->innerJoin('s', 'entity', 'e', 'e.id = s.id')
+            ->innerJoin('s', 'entities', 'e', 'e.id = s.id')
             ->where('e.cell_id = :cellId')
             ->andWhere('e.pos = 0')
             ->setParameters([
