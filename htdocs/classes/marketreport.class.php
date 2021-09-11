@@ -5,6 +5,7 @@
  */
 
 use EtoA\Fleet\FleetRepository;
+use EtoA\Message\ReportRepository;
 use EtoA\Ship\ShipDataRepository;
 use EtoA\Support\StringUtils;
 use EtoA\Universe\Resources\ResourceNames;
@@ -49,26 +50,26 @@ class MarketReport extends Report
     public function __construct(\EtoA\Message\Report $args)
     {
         parent::__construct($args);
-        if ($this->valid) {
-            $res = dbquery("SELECT * FROM reports_market WHERE id=" . $this->id . ";");
-            if (mysql_num_rows($res) > 0) {
-                $arr = mysql_fetch_assoc($res);
-                $this->subType = $arr['subtype'];
-                $this->recordId = $arr['record_id'];
-                $this->factor = $arr['factor'];
-                foreach (ResourceNames::NAMES as $rk => $rn) {
-                    $this->resSell[$rk] = $arr['sell_' . $rk];
-                    $this->resBuy[$rk] = $arr['buy_' . $rk];
-                }
-                $this->fleet1Id = $arr['fleet1_id'];
-                $this->fleet2Id = $arr['fleet2_id'];
-                $this->shipId = $arr['ship_id'];
-                $this->shipCount = $arr['ship_count'];
-                $this->timestamp2 = $arr['timestamp2'];
-            } else {
-                $this->valid = false;
-                return;
+
+        global $app;
+        /** @var ReportRepository $reportRepository */
+        $reportRepository = $app[ReportRepository::class];
+        $arr = $reportRepository->getBattleData($this->id);
+        if ($arr !== null) {
+            $this->subType = $arr['subtype'];
+            $this->recordId = $arr['record_id'];
+            $this->factor = $arr['factor'];
+            foreach (ResourceNames::NAMES as $rk => $rn) {
+                $this->resSell[$rk] = $arr['sell_' . $rk];
+                $this->resBuy[$rk] = $arr['buy_' . $rk];
             }
+            $this->fleet1Id = $arr['fleet1_id'];
+            $this->fleet2Id = $arr['fleet2_id'];
+            $this->shipId = $arr['ship_id'];
+            $this->shipCount = $arr['ship_count'];
+            $this->timestamp2 = $arr['timestamp2'];
+        } else {
+            $this->valid = false;
         }
     }
 

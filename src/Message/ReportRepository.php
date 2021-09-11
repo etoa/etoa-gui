@@ -242,4 +242,44 @@ class ReportRepository extends AbstractRepository
             ->setParameter('timestamp', $beforeTimestamp)
             ->execute();
     }
+
+    /**
+     * @return ?array<string, mixed>
+     */
+    public function getBattleData(int $id): ?array
+    {
+        $data = $this->getConnection()->fetchAssociative('SELECT * FROM reports_battle WHERE id = :id', ['id' => $id]);
+
+        return $data !== false ? $data : null;
+    }
+
+    /**
+     * @return ?array<string, mixed>
+     */
+    public function getMarketData(int $id): ?array
+    {
+        $data = $this->getConnection()->fetchAssociative('SELECT * FROM reports_market WHERE id = :id', ['id' => $id]);
+
+        return $data !== false ? $data : null;
+    }
+
+    /**
+     * @return ?array<string, mixed>
+     */
+    public function getOtherData(int $id): ?array
+    {
+        $data = $this->getConnection()->fetchAssociative('SELECT * FROM reports_other WHERE id = :id', ['id' => $id]);
+
+        return $data !== false ? $data : null;
+    }
+
+    /**
+     * @return ?array<string, mixed>
+     */
+    public function getSpyData(int $id): ?array
+    {
+        $data = $this->getConnection()->fetchAssociative('SELECT * FROM reports_spy WHERE id = :id', ['id' => $id]);
+
+        return $data !== false ? $data : null;
+    }
 }

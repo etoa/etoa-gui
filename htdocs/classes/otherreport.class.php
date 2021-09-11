@@ -5,6 +5,7 @@
  */
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Message\ReportRepository;
 use EtoA\Ship\ShipDataRepository;
 use EtoA\Support\StringUtils;
 use EtoA\Universe\Resources\ResourceNames;
@@ -53,23 +54,22 @@ class OtherReport extends Report
     public function __construct(\EtoA\Message\Report $args)
     {
         parent::__construct($args);
-        if ($this->valid) {
-            $res = dbquery("SELECT * FROM reports_other WHERE id=" . $this->id . ";");
-            if (mysql_num_rows($res) > 0) {
-                $arr = mysql_fetch_assoc($res);
-                $this->subType = $arr['subtype'];
-                $this->ships = $arr['ships'];
-                $this->res = array();
-                foreach (ResourceNames::NAMES as $rk => $rn)
-                    $this->res[$rk] = $arr['res_' . $rk];
-                $this->res[5] = $arr['res_5'];
-                $this->fleetId = $arr['fleet_id'];
-                $this->status = $arr['status'];
-                $this->actionCode = $arr['action'];
-            } else {
-                $this->valid = false;
-                return;
-            }
+        global $app;
+        /** @var ReportRepository $reportRepository */
+        $reportRepository = $app[ReportRepository::class];
+        $arr = $reportRepository->getBattleData($this->id);
+        if ($arr !== null) {
+            $this->subType = $arr['subtype'];
+            $this->ships = $arr['ships'];
+            $this->res = array();
+            foreach (ResourceNames::NAMES as $rk => $rn)
+                $this->res[$rk] = $arr['res_' . $rk];
+            $this->res[5] = $arr['res_5'];
+            $this->fleetId = $arr['fleet_id'];
+            $this->status = $arr['status'];
+            $this->actionCode = $arr['action'];
+        } else {
+            $this->valid = false;
         }
     }
 
