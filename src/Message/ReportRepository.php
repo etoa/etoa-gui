@@ -68,6 +68,18 @@ class ReportRepository extends AbstractRepository
         return array_map(fn (array $row) => new Report($row), $data);
     }
 
+    public function searchReport(ReportSearch $search): ?Report
+    {
+        $data = $this->applySearchSortLimit($this->createQueryBuilder(), $search)
+            ->select('*')
+            ->from('reports')
+            ->setMaxResults(1)
+            ->execute()
+            ->fetchAllAssociative();
+
+        return $data !== false ? new Report($data) : null;
+    }
+
     public function countReports(ReportSearch $search): int
     {
         $qb = $this->createQueryBuilder()
@@ -157,6 +169,22 @@ class ReportRepository extends AbstractRepository
         }
 
         $qb
+            ->execute();
+    }
+
+    public function markAsRead(int $userId, array $ids): void
+    {
+        if (count($ids) === 0) {
+            return;
+        }
+
+        $this->createQueryBuilder()
+            ->update('reports')
+            ->set('read', '1')
+            ->where('user_id = :userId')
+            ->andWhere('id IN (:ids)')
+            ->setParameter('userId', $userId)
+            ->setParameter('ids', $ids, Connection::PARAM_INT_ARRAY)
             ->execute();
     }
 

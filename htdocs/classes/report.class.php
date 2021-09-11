@@ -93,28 +93,6 @@ abstract class Report
         return null;
     }
 
-    function __set($field, $value)
-    {
-        try {
-            if (isset($this->$field)) {
-                if ($field == "read") {
-                    $this->$field = $value;
-                    dbquery("UPDATE reports SET `" . $field . "`=" . ($value ? 1 : 0) . " WHERE id=$this->id;");
-                    return true;
-                } elseif ($field == "deleted") {
-                    $this->$field = $value;
-                    dbquery("UPDATE reports SET `" . $field . "`=" . ($value ? 1 : 0) . " WHERE id=$this->id;");
-                    return true;
-                }
-                throw new EException("Property $field is write protected!");
-            }
-            throw new EException("Property $field does not exists!");
-        } catch (EException $e) {
-            echo $e;
-            return false;
-        }
-    }
-
 
     public abstract function createSubject();
 

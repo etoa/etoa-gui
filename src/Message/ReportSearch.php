@@ -11,6 +11,14 @@ class ReportSearch extends AbstractSearch
         return new ReportSearch();
     }
 
+    public function id(int $id): self
+    {
+        $this->parts[] = 'id = :id';
+        $this->parameters['id'] = $id;
+
+        return $this;
+    }
+
     public function userId(int $userId): self
     {
         $this->parts[] = 'user_id = :userId';
