@@ -1,5 +1,6 @@
 <?PHP
 
+use EtoA\Fleet\FleetRepository;
 use EtoA\Support\StringUtils;
 use EtoA\User\UserPropertiesRepository;
 
@@ -20,7 +21,8 @@ function launchSypProbe($tid)
 
     /** @var UserPropertiesRepository $userPropertiesRepository */
     $userPropertiesRepository = $app[UserPropertiesRepository::class];
-
+    /** @var FleetRepository $fleetRepository */
+    $fleetRepository = $app[FleetRepository::class];
     $properties = $userPropertiesRepository->getOrCreateProperties($cp->owner()->id);
 
     if ($properties->spyShipId > 0) {
@@ -33,10 +35,10 @@ function launchSypProbe($tid)
                             if ($fleet->checkTarget()) {
                                 if ($fleet->setAction("spy")) {
                                     if ($fid = $fleet->launch()) {
-                                        $flObj = new Fleet($fid);
+                                        $flObj = $fleetRepository->find($fid);
 
 
-                                        $str = "$probeCount Spionagesonden unterwegs. Ankunft in " . StringUtils::formatTimespan($flObj->remainingTime());
+                                        $str = "$probeCount Spionagesonden unterwegs. Ankunft in " . StringUtils::formatTimespan($flObj->getRemainingTime());
                                         $launched = true;
                                     } else
                                         $str = $fleet->error();
@@ -87,7 +89,8 @@ function launchAnalyzeProbe($tid)
 
     /** @var UserPropertiesRepository $userPropertiesRepository */
     $userPropertiesRepository = $app[UserPropertiesRepository::class];
-
+    /** @var FleetRepository $fleetRepository */
+    $fleetRepository = $app[FleetRepository::class];
     $properties = $userPropertiesRepository->getOrCreateProperties($cp->owner()->id);
 
     if ($properties->analyzeShipId > 0) {
@@ -100,10 +103,9 @@ function launchAnalyzeProbe($tid)
                             if ($fleet->checkTarget()) {
                                 if ($fleet->setAction("analyze")) {
                                     if ($fid = $fleet->launch()) {
-                                        $flObj = new Fleet($fid);
+                                        $flObj = $fleetRepository->find($fid);
 
-
-                                        $str = "$probeCount Analysatoren unterwegs. Ankunft in " . StringUtils::formatTimespan($flObj->remainingTime());
+                                        $str = "$probeCount Analysatoren unterwegs. Ankunft in " . StringUtils::formatTimespan($flObj->getRemainingTime());
                                         $launched = true;
                                     } else
                                         $str = $fleet->error();
@@ -154,6 +156,8 @@ function launchExplorerProbe($tcid)
 
     /** @var UserPropertiesRepository $userPropertiesRepository */
     $userPropertiesRepository = $app[UserPropertiesRepository::class];
+    /** @var FleetRepository $fleetRepository */
+    $fleetRepository = $app[FleetRepository::class];
 
     $properties = $userPropertiesRepository->getOrCreateProperties($cp->owner()->id);
 
@@ -171,10 +175,10 @@ function launchExplorerProbe($tcid)
                                 if ($fleet->checkTarget()) {
                                     if ($fleet->setAction("explore")) {
                                         if ($fid = $fleet->launch()) {
-                                            $flObj = new Fleet($fid);
+                                            $flObj = $fleetRepository->find($fid);
 
 
-                                            $str = "$probeCount Explorer unterwegs. Ankunft in " . StringUtils::formatTimespan($flObj->remainingTime());
+                                            $str = "$probeCount Explorer unterwegs. Ankunft in " . StringUtils::formatTimespan($flObj->getRemainingTime());
                                             $launched = true;
                                         } else
                                             $str = $fleet->error();

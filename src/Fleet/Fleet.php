@@ -74,4 +74,9 @@ class Fleet
         $this->fetchPeople = (int) $data['fetch_people'];
         $this->flag = (int) $data['flag'];
     }
+
+    public function getRemainingTime(): int
+    {
+        return max(0, $this->landTime - time());
+    }
 }

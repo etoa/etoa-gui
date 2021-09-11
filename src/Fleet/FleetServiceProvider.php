@@ -12,6 +12,7 @@ use EtoA\Message\MessageRepository;
 use EtoA\Ship\ShipDataRepository;
 use EtoA\Ship\ShipRepository;
 use EtoA\Specialist\SpecialistDataRepository;
+use EtoA\Specialist\SpecialistService;
 use EtoA\Technology\TechnologyRepository;
 use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Entity\EntityService;
@@ -37,6 +38,14 @@ class FleetServiceProvider implements ServiceProviderInterface
                 $pimple[EntityRepository::class],
                 $pimple[FleetRepository::class],
                 $pimple[ShipRepository::class]
+            );
+        };
+
+        $pimple[ForeignFleetLoader::class] = function (Container $pimple): ForeignFleetLoader {
+            return new ForeignFleetLoader(
+                $pimple[FleetRepository::class],
+                $pimple[TechnologyRepository::class],
+                $pimple[SpecialistService::class],
             );
         };
 

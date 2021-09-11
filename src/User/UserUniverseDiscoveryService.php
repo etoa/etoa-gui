@@ -6,6 +6,7 @@ namespace EtoA\User;
 
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Universe\Cell\Cell;
+use EtoA\Universe\Entity\Entity;
 
 class UserUniverseDiscoveryService
 {
@@ -31,6 +32,17 @@ class UserUniverseDiscoveryService
             $user->discoveryMask = str_repeat('0', $sx_num * $cx_num * $sy_num * $cy_num);
             $this->userRepository->saveDiscoveryMask($user->id, $user->discoveryMask);
         }
+    }
+
+    public function isEntityDiscovered(User $user, Entity $entity): bool
+    {
+        $cx_num = $this->config->param1Int('num_of_cells');
+        $cy_num = $this->config->param2Int('num_of_cells');
+
+        $absX = (($entity->sx - 1) * $cx_num) + $entity->cx;
+        $absY = (($entity->sy - 1) * $cy_num) + $entity->cy;
+
+        return $this->discovered($user, $absX, $absY);
     }
 
     public function discovered(User $user, int $absX, int $absY): bool
