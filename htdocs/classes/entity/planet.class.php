@@ -2,8 +2,12 @@
 
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Support\StringUtils;
+use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Planet\PlanetRepository;
+use EtoA\Universe\Planet\PlanetTypeRepository;
 use EtoA\Universe\Resources\ResourceNames;
+use EtoA\Universe\Star\SolarTypeRepository;
+use EtoA\Universe\Star\StarRepository;
 
 /**
  * Planet class
@@ -45,129 +49,115 @@ class Planet extends Entity
         $this->isVisible = true;
     }
 
-    public static function getById($id)
+    public static function getById($id, \EtoA\Universe\Entity\Entity $entity = null)
     {
-        $res = dbquery("
-		SELECT
-			planets.*,
-			cells.sx,
-			cells.sy,
-			cells.cx,
-			cells.cy,
-			cells.id as cell_id,
-			pentity.pos,
-			planet_types.*,
-			sol_types.*
-		FROM
-		(
-			planets
-			INNER JOIN
-				planet_types
-				ON planets.planet_type_id = planet_types.type_id
-				AND planets.id='" . intval($id) . "'
-		)
-		INNER JOIN
-		(
-			entities AS pentity
-			INNER JOIN cells
-				ON cells.id = pentity.cell_id
-			INNER JOIN
-				entities AS sentity
-				ON cells.id = sentity.cell_id
-				AND sentity.pos =0
-			INNER JOIN stars
-				ON stars.id = sentity.id
-			INNER JOIN sol_types
-				ON sol_types.sol_type_id = stars.type_id
-		)
-		ON planets.id = pentity.id
-		LIMIT 1;
-		;");
-        if (mysql_num_rows($res) > 0) {
-            $arr = mysql_fetch_assoc($res);
-            $p = self::getByArray($arr);
+        global $app;
+
+        if ($entity === null) {
+            /** @var EntityRepository $entityRepository */
+            $entityRepository = $app[EntityRepository::class];
+            $entity = $entityRepository->getEntity($id);
+        }
+
+        /** @var PlanetRepository $planetRepository */
+        $planetRepository = $app[PlanetRepository::class];
+        $planet = $planetRepository->find($id);
+
+        if ($planet !== null && $entity !== null) {
+            $p = self::getByArray($planet, $entity);
             $p->isValid = true;
             return $p;
         }
         return null;
     }
 
-    private static function getByArray($arr)
+    private static function getByArray(\EtoA\Universe\Planet\Planet $planet, \EtoA\Universe\Entity\Entity $entity)
     {
+        global $app;
+
         $p = new Planet();
 
-        $p->id = $arr['id'];
-        $p->cellId = $arr['cell_id'];
-        $p->userId = $arr['planet_user_id'];
-        $p->name = $arr['planet_name'] != "" ? ($arr['planet_name']) : 'Unbenannt';
-        $p->desc = $arr['planet_desc'];
-        $p->image = $arr['planet_image'];
-        $p->updated = $arr['planet_last_updated'];
-        $p->userChanged = $arr['planet_user_changed'];
-        $p->lastUserId = $arr['planet_last_user_id'];
+        $p->id = $planet->id;
+        $p->cellId = $entity->cellId;
+        $p->userId = $planet->userId;
+        $p->name = $planet->displayName();
+        $p->desc = $planet->description;
+        $p->image = $planet->image;
+        $p->updated = $planet->lastUpdated;
+        $p->userChanged = $planet->userChanged;
+        $p->lastUserId = $planet->lastUserId;
 
-        $p->owner = new User($arr['planet_user_id']);
+        $p->owner = new User($planet->userId);
 
-        $p->sx = $arr['sx'];
-        $p->sy = $arr['sy'];
-        $p->cx = $arr['cx'];
-        $p->cy = $arr['cy'];
-        $p->pos = $arr['pos'];
+        $p->sx = $entity->sx;
+        $p->sy = $entity->sy;
+        $p->cx = $entity->cx;
+        $p->cy = $entity->cy;
+        $p->pos = $entity->pos;
 
-        $p->typeId = $arr['type_id'];
-        $p->typeName = $arr['type_name'];
+        /** @var PlanetTypeRepository $planetTypeRepository */
+        $planetTypeRepository = $app[PlanetTypeRepository::class];
+        $planetType = $planetTypeRepository->get($planet->typeId);
+        $p->typeId = $planetType->id;
+        $p->typeName = $planetType->name;
 
-        $p->habitable = (bool)$arr['type_habitable'];
-        $p->collectGas = (bool)$arr['type_collect_gas'];
+        $p->habitable = $planetType->habitable;
+        $p->collectGas = $planetType->collectGas;
 
-        $p->typeMetal = $arr['type_f_metal'];
-        $p->typeCrystal = $arr['type_f_crystal'];
-        $p->typePlastic = $arr['type_f_plastic'];
-        $p->typeFuel = $arr['type_f_fuel'];
-        $p->typeFood = $arr['type_f_food'];
-        $p->typePower = $arr['type_f_power'];
-        $p->typePopulation = $arr['type_f_population'];
-        $p->typeResearchtime = $arr['type_f_researchtime'];
-        $p->typeBuildtime = $arr['type_f_buildtime'];
+        $p->typeMetal = $planetType->metal;
+        $p->typeCrystal = $planetType->crystal;
+        $p->typePlastic = $planetType->plastic;
+        $p->typeFuel = $planetType->fuel;
+        $p->typeFood = $planetType->food;
+        $p->typePower = $planetType->power;
+        $p->typePopulation = $planetType->people;
+        $p->typeResearchtime = $planetType->researchTime;
+        $p->typeBuildtime = $planetType->buildTime;
 
-        $p->starTypeId = $arr['sol_type_id'];
-        $p->starTypeName = $arr['sol_type_name'];
-        $p->starMetal = $arr['sol_type_f_metal'];
-        $p->starCrystal = $arr['sol_type_f_crystal'];
-        $p->starPlastic = $arr['sol_type_f_plastic'];
-        $p->starFuel = $arr['sol_type_f_fuel'];
-        $p->starFood = $arr['sol_type_f_food'];
-        $p->starPower = $arr['sol_type_f_power'];
-        $p->starPopulation = $arr['sol_type_f_population'];
-        $p->starResearchtime = $arr['sol_type_f_researchtime'];
-        $p->starBuildtime = $arr['sol_type_f_buildtime'];
+        /** @var StarRepository $starRepository */
+        $starRepository = $app[StarRepository::class];
+        $star = $starRepository->findStarForCell($entity->cellId);
+        /** @var SolarTypeRepository $starTypeRepository */
+        $starTypeRepository = $app[SolarTypeRepository::class];
+        $starType = $starTypeRepository->find($star->typeId);
+        $p->starTypeId = $starType->id;
+        $p->starTypeName = $starType->name;
+        $p->starMetal = $starType->metal;
+        $p->starCrystal = $starType->crystal;
+        $p->starPlastic = $starType->plastic;
+        $p->starFuel = $starType->fuel;
+        $p->starFood = $starType->food;
+        $p->starPower = $starType->power;
+        $p->starPopulation = $starType->people;
+        $p->starResearchtime = $starType->researchTime;
+        $p->starBuildtime = $starType->buildTime;
 
-        $p->debrisMetal = $arr['planet_wf_metal'];
-        $p->debrisCrystal = $arr['planet_wf_crystal'];
-        $p->debrisPlastic = $arr['planet_wf_plastic'];
+        $p->debrisMetal = $planet->wfMetal;
+        $p->debrisCrystal = $planet->wfCrystal;
+        $p->debrisPlastic = $planet->wfPlastic;
 
         $p->debrisField = ($p->debrisMetal + $p->debrisCrystal + $p->debrisPlastic > 0);
 
-        $p->fieldsBase = $arr['planet_fields'];
-        $p->fieldsExtra = $arr['planet_fields_extra'];
-        $p->fieldsUsed = $arr['planet_fields_used'];
+        $p->fieldsBase = $planet->fields;
+        $p->fieldsExtra = $planet->fieldsExtra;
+        $p->fieldsUsed = $planet->fieldsUsed;
 
-        $p->fields_extra = $arr['planet_fields_extra'];
-        $p->fields_used = $arr['planet_fields_used'];
+        $p->fields_extra = $planet->fieldsExtra;
+        $p->fields_used = $planet->fieldsUsed;
 
         $p->fields = $p->fieldsBase + $p->fieldsExtra;
 
-        $p->temp_from = $arr['planet_temp_from'];
-        $p->temp_to = $arr['planet_temp_to'];
-        $p->people = max(0, $arr['planet_people']);
-        $p->people_place = max(0, $arr['planet_people_place']);
+        $p->temp_from = $planet->tempFrom;
+        $p->temp_to = $planet->tempTo;
+        $p->people = max(0, $planet->people);
+        $p->people_place = max(0, $planet->peoplePlace);
 
-        $p->resMetal = max(0, floor($arr['planet_res_metal']));
-        $p->resCrystal = max(0, floor($arr['planet_res_crystal']));
-        $p->resPlastic = max(0, floor($arr['planet_res_plastic']));
-        $p->resFuel = max(0, floor($arr['planet_res_fuel']));
-        $p->resFood = max(0, floor($arr['planet_res_food']));
-        $p->usePower = max(0, floor($arr['planet_use_power']));
+        $p->resMetal = max(0, floor($planet->resMetal));
+        $p->resCrystal = max(0, floor($planet->resCrystal));
+        $p->resPlastic = max(0, floor($planet->resPlastic));
+        $p->resFuel = max(0, floor($planet->resFuel));
+        $p->resFood = max(0, floor($planet->resFood));
+        $p->usePower = max(0, floor($planet->usePower));
 
         $p->resources = array(
             $p->resMetal,
@@ -177,27 +167,27 @@ class Planet extends Entity
             $p->resFood
         );
 
-        $p->bunkerMetal = max(0, $arr['planet_bunker_metal']);
-        $p->bunkerCrystal = max(0, $arr['planet_bunker_crystal']);
-        $p->bunkerPlastic = max(0, $arr['planet_bunker_plastic']);
-        $p->bunkerFuel = max(0, $arr['planet_bunker_fuel']);
-        $p->bunkerFood = max(0, $arr['planet_bunker_food']);
+        $p->bunkerMetal = max(0, $planet->bunkerMetal);
+        $p->bunkerCrystal = max(0, $planet->bunkerCrystal);
+        $p->bunkerPlastic = max(0, $planet->bunkerPlastic);
+        $p->bunkerFuel = max(0, $planet->bunkerFuel);
+        $p->bunkerFood = max(0, $planet->bunkerFood);
 
-        $p->storeMetal = $arr['planet_store_metal'];
-        $p->storeCrystal = $arr['planet_store_crystal'];
-        $p->storePlastic = $arr['planet_store_plastic'];
-        $p->storeFuel = $arr['planet_store_fuel'];
-        $p->storeFood = $arr['planet_store_food'];
+        $p->storeMetal = $planet->storeMetal;
+        $p->storeCrystal = $planet->storeCrystal;
+        $p->storePlastic = $planet->storePlastic;
+        $p->storeFuel = $planet->storeFuel;
+        $p->storeFood = $planet->storeFood;
 
-        $p->prodMetal = $arr['planet_prod_metal'];
-        $p->prodCrystal = $arr['planet_prod_crystal'];
-        $p->prodPlastic = $arr['planet_prod_plastic'];
-        $p->prodFuel = $arr['planet_prod_fuel'];
-        $p->prodFood = $arr['planet_prod_food'];
-        $p->prodPower = max(0, $arr['planet_prod_power']);
-        $p->prodPeople = $arr['planet_prod_people'];
+        $p->prodMetal = $planet->prodMetal;
+        $p->prodCrystal = $planet->prodCrystal;
+        $p->prodPlastic = $planet->prodPlastic;
+        $p->prodFuel = $planet->prodFuel;
+        $p->prodFood = $planet->prodFood;
+        $p->prodPower = max(0, $planet->prodPower);
+        $p->prodPeople = $planet->prodPeople;
 
-        $p->isMain = ($arr['planet_user_main'] == 1);
+        $p->isMain = $planet->mainPlanet;
 
         return $p;
     }

@@ -84,6 +84,21 @@ class PlanetTypeRepository extends AbstractRepository
         return $data !== false ? $data : null;
     }
 
+    public function get(int $id): ?PlanetType
+    {
+        $data = $this->createQueryBuilder()
+            ->select('*')
+            ->from('planet_types')
+            ->where('type_id = :id')
+            ->setParameters([
+                'id' => $id,
+            ])
+            ->execute()
+            ->fetchOne();
+
+        return $data !== false ? new PlanetType($data) : null;
+    }
+
     /**
      * @return array<int, array{name: string, cnt: int}>
      */

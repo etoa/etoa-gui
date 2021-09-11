@@ -270,12 +270,13 @@ abstract class Entity
         $entityRepository = $app[EntityRepository::class];
 
         $entity = $entityRepository->getEntity($id);
+
         if ($entity !== null) {
             switch ($entity->code) {
                 case EntityType::STAR:
-                    return new Star($id);
+                    return new Star($id, $entity);
                 case EntityType::PLANET:
-                    return Planet::getById($id);
+                    return Planet::getById($id, $entity);
                 case EntityType::ASTEROID:
                     return new AsteroidField($id);
                 case EntityType::NEBULA:
