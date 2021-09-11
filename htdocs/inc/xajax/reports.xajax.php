@@ -1,26 +1,41 @@
 <?PHP
 
+use EtoA\Message\ReportRepository;
+use EtoA\Message\ReportSearch;
+
 $xajax->register(XAJAX_FUNCTION, 'reportSetRead');
 $xajax->register(XAJAX_FUNCTION, 'reportSetDeleted');
 $xajax->register(XAJAX_FUNCTION, 'reportSelectAll');
 
 function reportSetRead($id)
 {
+    global $app, $cu;
+
+    /** @var ReportRepository $reportRepository */
+    $reportRepository = $app[ReportRepository::class];
+    $reportRepository->markAsRead($cu->getId(), [$id]);
+
     $or = new xajaxResponse();
-    $r = Report::createFactory($id);
-    $r->read = true;
     $or->assign("repimg" . $id, "src", "images/pm_normal.gif");
     return $or;
 }
 
 function reportSetDeleted($id)
 {
+    global $app, $cu;
+
+    /** @var ReportRepository $reportRepository */
+    $reportRepository = $app[ReportRepository::class];
+
+    $report = $reportRepository->searchReport(ReportSearch::create()->id($id)->userId($cu->getId()));
+
     $or = new xajaxResponse();
-    $r = Report::createFactory($id);
-    $r->deleted = true;
+    $r = Report::createFactory($report);
+    $reportRepository->delete($cu->getId(), (bool) $r->archived, [$id]);
     $or->assign("header" . $id, 'innerHTML', "<i>" . $r->subject . " (gel&ouml;scht)</i>");
     $or->assign("del" . $id, 'innerHTML', "");
     $or->assign("repimg" . $id, "src", "images/delete.gif");
+
     return $or;
 }
 

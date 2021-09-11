@@ -5,6 +5,8 @@ use EtoA\Log\LogFacility;
 use EtoA\Log\LogRepository;
 use EtoA\Log\LogSeverity;
 use EtoA\Message\ReportRepository;
+use EtoA\Message\ReportSearch;
+use EtoA\Message\ReportSort;
 use EtoA\Message\ReportTypes;
 
 /**
@@ -35,42 +37,23 @@ abstract class Report
     /**
      * Class constructor. To be called from the derived class.
      *
-     * @param mixed $id Accepts a record id or an array of already fetched record data
+     * @param \EtoA\Message\Report $report Accepts a record id or an array of already fetched record data
      */
-    public function __construct($id)
+    public function __construct(\EtoA\Message\Report $report)
     {
-        if (is_integer($id)) {
-            $res = dbquery("
-            SELECT
-                *
-            FROM
-                reports
-            WHERE
-                id=" . intval($id) . "
-            LIMIT 1;
-            ");
-            if (mysql_num_rows($res) > 0) {
-                $arr = mysql_fetch_assoc($res);
-            }
-        } elseif (is_array($id)) {
-            $arr = $id;
-        }
+        $this->id = $report->id;
+        $this->timestamp = $report->timestamp;
+        $this->type = $report->type;
+        $this->read = $report->read;
+        $this->deleted = $report->deleted;
+        $this->userId = $report->userId;
+        $this->allianceId = $report->allianceId;
+        $this->content = $report->content;
+        $this->entity1Id = $report->entity1Id;
+        $this->entity2Id = $report->entity2Id;
+        $this->opponent1Id = $report->opponentId;
 
-        if (isset($arr)) {
-            $this->id = intval($arr['id']);
-            $this->timestamp = $arr['timestamp'];
-            $this->type = $arr['type'];
-            $this->read = $arr['read'] == 1;
-            $this->deleted = $arr['deleted'] == 1;
-            $this->userId = (int) $arr['user_id'];
-            $this->allianceId = $arr['alliance_id'];
-            $this->content = $arr['content'];
-            $this->entity1Id = $arr['entity1_id'];
-            $this->entity2Id = $arr['entity2_id'];
-            $this->opponent1Id = $arr['opponent1_id'];
-
-            $this->valid = true;
-        }
+        $this->valid = true;
     }
 
     /**
@@ -93,75 +76,22 @@ abstract class Report
         return null;
     }
 
-    function __set($field, $value)
-    {
-        try {
-            if (isset($this->$field)) {
-                if ($field == "read") {
-                    $this->$field = $value;
-                    dbquery("UPDATE reports SET `" . $field . "`=" . ($value ? 1 : 0) . " WHERE id=$this->id;");
-                    return true;
-                } elseif ($field == "deleted") {
-                    $this->$field = $value;
-                    dbquery("UPDATE reports SET `" . $field . "`=" . ($value ? 1 : 0) . " WHERE id=$this->id;");
-                    return true;
-                }
-                throw new EException("Property $field is write protected!");
-            }
-            throw new EException("Property $field does not exists!");
-        } catch (EException $e) {
-            echo $e;
-            return false;
-        }
-    }
-
 
     public abstract function createSubject();
 
     /**
-     * Gets a list of reports
-     *
-     * @param string|array $where WHERE conditions where $arrayKey is database field name
-     * and $arrayValue is database field value
-     * @param string $order ORDER query string
-     * @return array|int Array containing a list of reports
+     * @return \Report[]
      */
-    static function &find($where = null, $order = null, $limit = "", $count = 0, $admin = false, $join = "")
+    static function find(ReportSearch $search, int $limit = null, int $first = null): array
     {
-        if ($order == null)
-            $order = " timestamp DESC ";
+        global $app;
+        /** @var ReportRepository $reportRepository */
+        $reportRepository = $app[ReportRepository::class];
+        $reports = $reportRepository->searchReports($search, $limit, $first);
 
-        $wheres    = $admin ? "WHERE 1 " : " WHERE deleted=0 ";
-        $archived = false;
-
-        if (is_array($where)) {
-            foreach ($where as $k => $v) {
-                $wheres .= " AND `" . $k . "`='" . $v . "'";
-                if ($k == "archived") $archived = true;
-            }
-            if (!$archived) $wheres .= " AND `archived`='false'";
-        } elseif ($admin)
-            $wheres .= $where;
-
-        if ($count > 0) {
-            $sql = "SELECT COUNT(id) FROM reports $join $wheres ORDER BY $order";
-            if ($limit != "" || $limit > 0)
-                $sql .= " LIMIT $limit";
-            $res = dbquery($sql);
-            $arr = mysql_fetch_row($res);
-            return $arr[0];
-        }
-
-        $sql = "SELECT * FROM reports $join $wheres ORDER BY $order";
-
-        if ($limit != "" || $limit > 0)
-            $sql .= " LIMIT $limit";
-        $res = dbquery($sql);
-        $rtn = array();
-        if (mysql_num_rows($res) > 0) {
-            while ($arr = mysql_fetch_assoc($res)) {
-                $rtn[$arr['id']] = Report::createFactory($arr);
-            }
+        $rtn = [];
+        foreach ($reports as $report) {
+            $rtn[$report->id] = Report::createFactory($report);
         }
         return $rtn;
     }
@@ -169,44 +99,22 @@ abstract class Report
     /**
      * Factory design pattern for getting instances depending on funcion argument
      *
-     * @param mixed $args Array containing fetched database record or a record id
-     * @return ?Report New report object instance
+     * @return Report New report object instance
      */
-    static function createFactory($args)
+    static function createFactory(\EtoA\Message\Report $report)
     {
-        $type = null;
-        if (is_array($args) && isset($args['type'])) {
-            $type = $args['type'];
-        } elseif (intval($args) > 0) {
-            $sql = "SELECT * FROM reports WHERE id=" . $args . " LIMIT 1;";
-            $res = dbquery($sql);
-            if (mysql_num_rows($res) > 0) {
-                $args = mysql_fetch_assoc($res);
-                $type = $args['type'];
-            }
+        switch ($report->type) {
+            case 'market':
+                return new MarketReport($report);
+            case 'explore':
+                return new ExploreReport($report);
+            case 'spy':
+                return new SpyReport($report);
+            case 'battle':
+                return new BattleReport($report);
+            default:
+                return new OtherReport($report);
         }
-
-        try {
-            if (isset($type)) {
-                switch ($type) {
-                    case 'market':
-                        return new MarketReport($args);
-                    case 'explore':
-                        return new ExploreReport($args);
-                    case 'spy':
-                        return new SpyReport($args);
-                    case 'battle':
-                        return new BattleReport($args);
-                    default:
-                        return new OtherReport($args);
-                }
-            }
-            throw new EException("Keine passende Reportklasse für $type gefunden!");
-        } catch (EException $e) {
-            echo $e;
-        }
-
-        return null;
     }
 
     function typeName()
@@ -250,4 +158,6 @@ abstract class Report
 
         return $nr;
     }
+
+    abstract public function __toString();
 }

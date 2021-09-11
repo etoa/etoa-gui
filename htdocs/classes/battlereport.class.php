@@ -3,6 +3,7 @@
 use EtoA\Building\BuildingDataRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Defense\DefenseDataRepository;
+use EtoA\Message\ReportRepository;
 use EtoA\Ship\ShipDataRepository;
 use EtoA\Support\StringUtils;
 use EtoA\Technology\TechnologyDataRepository;
@@ -51,7 +52,7 @@ class BattleReport extends Report
 
     private ConfigurationService $config;
 
-    public function __construct($args)
+    public function __construct(\EtoA\Message\Report $args)
     {
         // TODO
         global $app;
@@ -59,50 +60,50 @@ class BattleReport extends Report
         $this->config = $app[ConfigurationService::class];
 
         parent::__construct($args);
-        if ($this->valid) {
-            $res = dbquery("SELECT * FROM reports_battle WHERE id=" . $this->id . ";");
-            if (mysql_num_rows($res) > 0) {
-                $arr = mysql_fetch_assoc($res);
-                $this->subType = $arr['subtype'];
-                $this->user = $arr['user'];
-                $this->entityUser = $arr['entity_user'];
-                $this->ships = $arr['ships'];
-                $this->entityShips = $arr['entity_ships'];
-                $this->entityDef = $arr['entity_def'];
-                $this->weaponTech = $arr['weapon_tech'];
-                $this->shieldTech = $arr['shield_tech'];
-                $this->structureTech = $arr['structure_tech'];
-                $this->weapon = array(0, $arr['weapon_1'], $arr['weapon_2'], $arr['weapon_3'], $arr['weapon_4'], $arr['weapon_5']);
-                $this->shield = $arr['shield'];
-                $this->structure = $arr['structure'];
-                $this->heal = array(0, $arr['heal_1'], $arr['heal_2'], $arr['heal_3'], $arr['heal_4'], $arr['heal_5']);
-                $this->count = array(0, $arr['count_1'], $arr['count_2'], $arr['count_3'], $arr['count_4'], $arr['count_5']);
-                $this->exp = $arr['exp'];
-                $this->entityWeaponTech = $arr['entity_weapon_tech'];
-                $this->entityShieldTech = $arr['entity_shield_tech'];
-                $this->entityStructureTech = $arr['entity_structure_tech'];
-                $this->entityWeapon = array(0, $arr['entity_weapon_1'], $arr['entity_weapon_2'], $arr['entity_weapon_3'], $arr['entity_weapon_4'], $arr['entity_weapon_5']);
-                $this->entityShield = $arr['entity_shield'];
-                $this->entityStructure = $arr['entity_structure'];
-                $this->entityHeal = array(0, $arr['entity_heal_1'], $arr['entity_heal_2'], $arr['entity_heal_3'], $arr['entity_heal_4'], $arr['entity_heal_5']);
-                $this->entityCount = array(0, $arr['entity_count_1'], $arr['entity_count_2'], $arr['entity_count_3'], $arr['entity_count_4'], $arr['entity_count_5']);
-                $this->entityExp = $arr['entity_exp'];
-                $this->shipsEnd = $arr['ships_end'];
-                $this->entityShipsEnd = $arr['entity_ships_end'];
-                $this->entityDefEnd = $arr['entity_def_end'];
-                $this->restore = $arr['restore'];
-                $this->restoreCivilShips = $arr['restore_civil_ships'];
-                $this->result = $arr['result'];
-                $this->res = array();
-                foreach (ResourceNames::NAMES as $rk => $rn)
-                    $this->res[$rk] = $arr['res_' . $rk];
-                $this->res[5] = $arr['res_5'];
-                $this->wf = array($arr['wf_0'], $arr['wf_1'], $arr['wf_2']);
-                $this->fleetId = $arr['fleet_id'];
-            } else {
-                $this->valid = false;
-                return;
-            }
+
+        /** @var ReportRepository $reportRepository */
+        $reportRepository = $app[ReportRepository::class];
+        $arr = $reportRepository->getBattleData($this->id);
+        if ($arr !== null) {
+            $this->subType = $arr['subtype'];
+            $this->user = $arr['user'];
+            $this->entityUser = $arr['entity_user'];
+            $this->ships = $arr['ships'];
+            $this->entityShips = $arr['entity_ships'];
+            $this->entityDef = $arr['entity_def'];
+            $this->weaponTech = $arr['weapon_tech'];
+            $this->shieldTech = $arr['shield_tech'];
+            $this->structureTech = $arr['structure_tech'];
+            $this->weapon = array(0, $arr['weapon_1'], $arr['weapon_2'], $arr['weapon_3'], $arr['weapon_4'], $arr['weapon_5']);
+            $this->shield = $arr['shield'];
+            $this->structure = $arr['structure'];
+            $this->heal = array(0, $arr['heal_1'], $arr['heal_2'], $arr['heal_3'], $arr['heal_4'], $arr['heal_5']);
+            $this->count = array(0, $arr['count_1'], $arr['count_2'], $arr['count_3'], $arr['count_4'], $arr['count_5']);
+            $this->exp = $arr['exp'];
+            $this->entityWeaponTech = $arr['entity_weapon_tech'];
+            $this->entityShieldTech = $arr['entity_shield_tech'];
+            $this->entityStructureTech = $arr['entity_structure_tech'];
+            $this->entityWeapon = array(0, $arr['entity_weapon_1'], $arr['entity_weapon_2'], $arr['entity_weapon_3'], $arr['entity_weapon_4'], $arr['entity_weapon_5']);
+            $this->entityShield = $arr['entity_shield'];
+            $this->entityStructure = $arr['entity_structure'];
+            $this->entityHeal = array(0, $arr['entity_heal_1'], $arr['entity_heal_2'], $arr['entity_heal_3'], $arr['entity_heal_4'], $arr['entity_heal_5']);
+            $this->entityCount = array(0, $arr['entity_count_1'], $arr['entity_count_2'], $arr['entity_count_3'], $arr['entity_count_4'], $arr['entity_count_5']);
+            $this->entityExp = $arr['entity_exp'];
+            $this->shipsEnd = $arr['ships_end'];
+            $this->entityShipsEnd = $arr['entity_ships_end'];
+            $this->entityDefEnd = $arr['entity_def_end'];
+            $this->restore = $arr['restore'];
+            $this->restoreCivilShips = $arr['restore_civil_ships'];
+            $this->result = $arr['result'];
+            $this->res = array();
+            foreach (ResourceNames::NAMES as $rk => $rn)
+                $this->res[$rk] = $arr['res_' . $rk];
+            $this->res[5] = $arr['res_5'];
+            $this->wf = array($arr['wf_0'], $arr['wf_1'], $arr['wf_2']);
+            $this->fleetId = $arr['fleet_id'];
+        } else {
+            $this->valid = false;
+            return;
         }
     }
 

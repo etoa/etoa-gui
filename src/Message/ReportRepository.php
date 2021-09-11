@@ -68,6 +68,19 @@ class ReportRepository extends AbstractRepository
         return array_map(fn (array $row) => new Report($row), $data);
     }
 
+    public function searchReport(ReportSearch $search): ?Report
+    {
+        $data = $this->applySearchSortLimit($this->createQueryBuilder(), $search)
+            ->select('*')
+            ->from('reports')
+            ->orderBy('timestamp', 'DESC')
+            ->setMaxResults(1)
+            ->execute()
+            ->fetchAssociative();
+
+        return $data !== false ? new Report($data) : null;
+    }
+
     public function countReports(ReportSearch $search): int
     {
         $qb = $this->createQueryBuilder()
@@ -161,6 +174,25 @@ class ReportRepository extends AbstractRepository
     }
 
     /**
+     * @param int[] $ids
+     */
+    public function markAsRead(int $userId, array $ids): void
+    {
+        if (count($ids) === 0) {
+            return;
+        }
+
+        $this->createQueryBuilder()
+            ->update('reports')
+            ->set('read', '1')
+            ->where('user_id = :userId')
+            ->andWhere('id IN (:ids)')
+            ->setParameter('userId', $userId)
+            ->setParameter('ids', $ids, Connection::PARAM_INT_ARRAY)
+            ->execute();
+    }
+
+    /**
      * @param int[] $availableUserIds
      */
     public function getOrphanedCount(array $availableUserIds): int
@@ -209,5 +241,45 @@ class ReportRepository extends AbstractRepository
             ->andWhere('timestamp < :timestamp')
             ->setParameter('timestamp', $beforeTimestamp)
             ->execute();
+    }
+
+    /**
+     * @return ?array<string, mixed>
+     */
+    public function getBattleData(int $id): ?array
+    {
+        $data = $this->getConnection()->fetchAssociative('SELECT * FROM reports_battle WHERE id = :id', ['id' => $id]);
+
+        return $data !== false ? $data : null;
+    }
+
+    /**
+     * @return ?array<string, mixed>
+     */
+    public function getMarketData(int $id): ?array
+    {
+        $data = $this->getConnection()->fetchAssociative('SELECT * FROM reports_market WHERE id = :id', ['id' => $id]);
+
+        return $data !== false ? $data : null;
+    }
+
+    /**
+     * @return ?array<string, mixed>
+     */
+    public function getOtherData(int $id): ?array
+    {
+        $data = $this->getConnection()->fetchAssociative('SELECT * FROM reports_other WHERE id = :id', ['id' => $id]);
+
+        return $data !== false ? $data : null;
+    }
+
+    /**
+     * @return ?array<string, mixed>
+     */
+    public function getSpyData(int $id): ?array
+    {
+        $data = $this->getConnection()->fetchAssociative('SELECT * FROM reports_spy WHERE id = :id', ['id' => $id]);
+
+        return $data !== false ? $data : null;
     }
 }

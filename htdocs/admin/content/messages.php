@@ -4,6 +4,7 @@ use EtoA\Admin\AdminUser;
 use EtoA\Message\MessageCategoryRepository;
 use EtoA\Message\MessageRepository;
 use EtoA\Message\ReportRepository;
+use EtoA\Message\ReportSearch;
 use EtoA\Message\ReportTypes;
 use EtoA\Support\BBCodeUtils;
 use EtoA\Support\Mail\MailSenderService;
@@ -176,47 +177,43 @@ function manageReports(Request $request, ReportRepository $reportRepository, Use
     // Suchresultate
     //
     if ($request->request->has('user_search') && $request->request->get('user_search') != "" || $request->query->get('action') == "searchresults") {
-        $sql = '';
+        $search = ReportSearch::create();
         if ($request->request->getInt('user_id') > 0) {
-            $sql .= " AND user_id='" . $request->request->getInt('user_id') . "' ";
-        }
-        if ($request->request->get('user_nick') != "") {
+            $search->userId($request->request->getInt('user_id'));
+        } elseif ($request->request->get('user_nick') != "") {
             $uid = $userRepository->getUserIdByNick($request->request->get('user_nick'));
             if ($uid !== null) {
-                $sql .= " AND user_id='" . $uid . "' ";
+                $search->userId($uid);
             }
         }
+
         if ($request->request->getInt('opponent1_id') > 0) {
-            $sql .= " AND opponent1_id='" . $request->request->getInt('opponent1_id') . "' ";
-        }
-        if ($request->request->get('opponent1_nick') != "") {
+            $search->opponentId($request->request->getInt('opponent1_id'));
+        } elseif ($request->request->get('opponent1_nick') != "") {
             $uid = $userRepository->getUserIdByNick($request->request->get('opponent1_nick'));
             if ($uid !== null) {
-                $sql .= " AND opponent1_id='" . $uid . "' ";
+                $search->opponentId($uid);
             }
-        }
-        if ($request->request->has('subject') && $request->request->get('subject') != "") {
-            if (stristr($request->request->all('qmode')['subject'], "%")) $addchars = "%";
-            else $addchars = "";
-            $sql .= " AND subject " . stripslashes($request->request->all('qmode')['subject']) . $request->request->get('subject') . "$addchars'";
         }
 
         if ($request->request->getInt('read') == 1) {
-            $sql .= " AND (read=1)";
+            $search->read(true);
         } elseif ($request->request->getInt('read') == 0) {
-            $sql .= " AND (read=0)";
+            $search->read(false);
         }
         if ($request->request->getInt('deleted') == 1) {
-            $sql .= " AND (deleted=1)";
+            $search->deleted(true);
         } else if ($request->request->getInt('deleted') == 0) {
-            $sql .= " AND (deleted=0)";
+            $search->deleted(false);
         }
-        if ($request->request->get('type') != "")
-            $sql .= " AND type='" . $request->request->get('type') . "' ";
+
+        if ($request->request->get('type') != "") {
+            $search->type($request->request->get('type'));
+        }
 
         if ($request->request->get('date_from') != "") {
             if ($ts = strtotime($request->request->get('date_from'))) {
-                $sql .= " AND (timestamp>" . $ts . ")";
+                $search->dateFrom($ts);
             } else {
                 echo "Ungültiges Datum";
             }
@@ -224,113 +221,17 @@ function manageReports(Request $request, ReportRepository $reportRepository, Use
 
         if ($request->request->get('date_to') != "") {
             if ($ts = strtotime($request->request->get('date_to'))) {
-                $sql .= " AND (timestamp<" . $ts . ")";
+                $search->dateTo($ts);
             } else {
                 echo "Ungültiges Datum";
             }
         }
 
         if ($request->request->getInt('entity1_id') > 0) {
-            $sql .= " AND (entity1_id=" . $request->request->getInt('entity1_id') . " OR entity2_id=" . $request->request->getInt('entity1_id') . ") ";
+            $search->entityId($request->request->getInt('entity1_id'), 1);
         }
         if ($request->request->getInt('entity2_id') > 0) {
-            $sql .= " AND (entity2_id=" . $request->request->getInt('entity2_id') . " OR entity1_id=" . $request->request->getInt('entity2_id') . ") ";
-        }
-
-        //data tables
-        $join = '';
-        if ($request->request->has('type') && $request->request->get('type') != "") {
-            $join = " INNER JOIN `reports_" . $request->request->get('type') . "` AS rd ON reports.id=rd.id ";
-        }
-
-        if ($request->request->has('subtype') && $request->request->get('subtype') != "") {
-            $sql .= " AND rd.subtype='" . $request->request->get('subtype') . "'";
-        }
-
-        //market
-        if ($request->request->has('type') && $request->request->get('type') == 'market') {
-            if ($request->request->getInt('fleet1_id') > 0) {
-                $sql .= " AND (rd.fleet1_id=" . $request->request->getInt('fleet1_id') . " OR rd.fleet2_id=" . $request->request->getInt('fleet1_id') . ") ";
-            }
-            if ($request->request->getInt('fleet2_id') > 0) {
-                $sql .= " AND (rd.fleet2_id=" . $request->request->getInt('fleet2_id') . " OR rd.fleet1_id=" . $request->request->get('fleet2_id') . ") ";
-            }
-
-            if ($request->request->getInt('ship_id') > 0) {
-                $sql .= " AND rd.ship_id=" . $request->request->getInt('ship_id');
-            }
-            if ($request->request->get('ship_count') > 0) {
-                $sql .= " AND rd.ship_count=" . $request->request->getInt('ship_count');
-            }
-
-            if ($request->request->has('sell_0') && $request->request->getInt('sell_0') == 1)
-                $sql .= " AND rd.sell_0>'0'";
-            if ($request->request->has('sell_1') && $request->request->getInt('sell_1') == 1)
-                $sql .= " AND rd.sell_1>'0'";
-            if ($request->request->has('sell_2') && $request->request->getInt('sell_2') == 1)
-                $sql .= " AND rd.sell_2>'0'";
-            if ($request->request->has('sell_3') && $request->request->getInt('sell_3') == 1)
-                $sql .= " AND rd.sell_3>'0'";
-            if ($request->request->has('sell_4') && $request->request->getInt('sell_4') == 1)
-                $sql .= " AND rd.sell_4>'0'";
-
-            if ($request->request->has('buy_0') && $request->request->getInt('buy_0') == 1)
-                $sql .= " AND rd.buy_0>'0'";
-            if ($request->request->has('buy_1') && $request->request->getInt('buy_1') == 1)
-                $sql .= " AND rd.buy_1>'0'";
-            if ($request->request->has('buy_2') && $request->request->getInt('buy_2') == 1)
-                $sql .= " AND rd.buy_2>'0'";
-            if ($request->request->has('buy_3') && $request->request->getInt('buy_3') == 1)
-                $sql .= " AND rd.buy_3>'0'";
-            if ($request->request->has('buy_4') && $request->request->getInt('buy_4') == 1)
-                $sql .= " AND rd.buy_4>'0'";
-        }
-
-        //battle
-        if ($request->request->has('type') && $request->request->get('type') == 'battle') {
-            // TODO
-            echo "TODO";
-        }
-
-        //other
-        if ($request->request->has('type') && $request->request->get('type') == 'other') {
-            if ($request->request->getInt('fleet1_id') > 0) {
-                $sql .= " AND (rd.fleet1_id=" . $request->request->getInt('fleet1_id') . " OR rd.fleet2_id=" . $request->request->getInt('fleet1_id') . ") ";
-            }
-
-            if ($request->request->getInt('ship_id') > 0) {
-                if ($request->request->getInt('ship_count') > 0) {
-                    $sql .= " AND rd.ships LIKE '%" . $request->request->getInt('ship_id') . ":" . $request->request->getInt('ship_count') . ",%'";
-                } else {
-                    $sql .= " AND rd.ships LIKE '%" . $request->request->getInt('ship_id') . ":%'";
-                }
-            } elseif ($request->request->getInt("ship_count") != "") {
-                $sql .= " AND rd.ships LIKE '%:" . $request->request->getInt('ship_count') . ",%'";
-            }
-
-            if ($request->request->has('res_0') && $request->request->getInt('res_0') == 1) {
-                $sql .= " AND rd.res_0>'0'";
-            }
-            if ($request->request->has('res_1') && $request->request->getInt('res_1') == 1) {
-                $sql .= " AND rd.res_1>'0'";
-            }
-            if ($request->request->has('res_2') && $request->request->getInt('res_2') == 1) {
-                $sql .= " AND rd.res_2>'0'";
-            }
-            if ($request->request->has('res_3') && $request->request->getInt('res_3') == 1) {
-                $sql .= " AND rd.res_3>'0'";
-            }
-            if ($request->request->has('res_4') && $request->request->getInt('res_4') == 1) {
-                $sql .= " AND rd.res_4>'0'";
-            }
-
-            if ($request->request->get('status') != "") {
-                $sql .= " AND rd.status='" . $request->request->get('status') . "'";
-            }
-
-            if ($request->request->get('action') != "") {
-                $sql .= " AND rd.action='" . $request->request->get('action') . "'";
-            }
+            $search->entityId($request->request->getInt('entity2_id'), 2);
         }
 
         //LIMIT
@@ -340,7 +241,7 @@ function manageReports(Request $request, ReportRepository $reportRepository, Use
             $limit = 1;
         }
 
-        $reports = Report::find($sql, null, $limit, 0, true, $join);
+        $reports = Report::find($search, $limit);
 
         $cnt = count($reports);
         echo $cnt . " Datensätze vorhanden<br/><br/>";
@@ -363,8 +264,6 @@ function manageReports(Request $request, ReportRepository $reportRepository, Use
                     if ($r->entityShips == "" || $r->entityShips == 0)
                         continue;
                 }
-
-                $sql .= ($request->request->getInt('entity_ships') == 1) ? " AND rd.entity_ships != '' " : " AND rd.entity_ships='' ";
 
                 $recipient = $r->userId > 0
                     ? $userRepository->getNick($r->userId)

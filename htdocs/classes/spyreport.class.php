@@ -6,6 +6,7 @@
 
 use EtoA\Building\BuildingDataRepository;
 use EtoA\Defense\DefenseDataRepository;
+use EtoA\Message\ReportRepository;
 use EtoA\Ship\ShipDataRepository;
 use EtoA\Support\StringUtils;
 use EtoA\Technology\TechnologyDataRepository;
@@ -38,29 +39,28 @@ class SpyReport extends Report
     protected $coverage;
     protected $fleetId;
 
-    public function __construct($args)
+    public function __construct(\EtoA\Message\Report $args)
     {
         parent::__construct($args);
-        if ($this->valid) {
-            $res = dbquery("SELECT * FROM reports_spy WHERE id=" . $this->id . ";");
-            if (mysql_num_rows($res) > 0) {
-                $arr = mysql_fetch_assoc($res);
-                $this->subType = $arr['subtype'];
-                $this->buildings = $arr['buildings'];
-                $this->technologies = $arr['technologies'];
-                $this->ships = $arr['ships'];
-                $this->def = $arr['defense'];
-                $this->res = array();
-                foreach (ResourceNames::NAMES as $rk => $rn)
-                    $this->res[$rk] = $arr['res_' . $rk];
-                $this->res[5] = $arr['res_5'];
-                $this->spydefense = $arr['spydefense'];
-                $this->coverage = $arr['coverage'];
-                $this->fleetId = $arr['fleet_id'];
-            } else {
-                $this->valid = false;
-                return;
-            }
+        global $app;
+        /** @var ReportRepository $reportRepository */
+        $reportRepository = $app[ReportRepository::class];
+        $arr = $reportRepository->getBattleData($this->id);
+        if ($arr !== null) {
+            $this->subType = $arr['subtype'];
+            $this->buildings = $arr['buildings'];
+            $this->technologies = $arr['technologies'];
+            $this->ships = $arr['ships'];
+            $this->def = $arr['defense'];
+            $this->res = array();
+            foreach (ResourceNames::NAMES as $rk => $rn)
+                $this->res[$rk] = $arr['res_' . $rk];
+            $this->res[5] = $arr['res_5'];
+            $this->spydefense = $arr['spydefense'];
+            $this->coverage = $arr['coverage'];
+            $this->fleetId = $arr['fleet_id'];
+        } else {
+            $this->valid = false;
         }
     }
 
