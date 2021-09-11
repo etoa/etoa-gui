@@ -94,7 +94,7 @@ class PlanetTypeRepository extends AbstractRepository
                 'id' => $id,
             ])
             ->execute()
-            ->fetchOne();
+            ->fetchAssociative();
 
         return $data !== false ? new PlanetType($data) : null;
     }

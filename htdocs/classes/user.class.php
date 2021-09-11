@@ -266,69 +266,6 @@ class User implements \EtoA\User\UserInterface
     }
 
     /**
-     * Setter
-     */
-    public function __set($key, $val)
-    {
-        try {
-            if (!property_exists($this, $key))
-                throw new EException("Property $key existiert nicht in der Klasse " . __CLASS__);
-            if ($key == "visits") {
-                $this->$key = intval($val);
-                $this->changedFields[$key] = true;
-                return true;
-            } elseif ($key == "profileImage") {
-                if (is_file(PROFILE_IMG_DIR . "/" . $this->profileImage)) {
-                    unlink(PROFILE_IMG_DIR . "/" . $this->profileImage);
-                }
-                $this->$key = $val;
-                $this->changedFields[$key] = true;
-                return true;
-            } elseif ($key == "avatar") {
-                if (is_file(BOARD_AVATAR_DIR . "/" . $this->avatar)) {
-                    unlink(BOARD_AVATAR_DIR . "/" . $this->avatar);
-                }
-                $this->$key = $val;
-                $this->changedFields[$key] = true;
-                return true;
-            } elseif ($key == "rating") {
-                throw new EException("Property $key der Klasse  " . __CLASS__ . " ist nicht änderbar!");
-            } elseif ($key == "raceId" || $key == "race") {
-                throw new EException("Property $key der Klasse  " . __CLASS__ . " ist nicht änderbar!");
-            } elseif ($key == "allianceId") {
-                throw new EException("Property $key der Klasse  " . __CLASS__ . " ist nicht änderbar!");
-            } elseif ($key == "email") {
-                if ($val != $this->$key) {
-                    if (checkEmail($val)) {
-                        // TODO
-                        global $app;
-
-                        /** @var MailSenderService $mailSenderService */
-                        $mailSenderService = $app[MailSenderService::class];
-
-                        $subject = "Änderung deiner E-Mail-Adresse";
-                        $text = "Die E-Mail-Adresse deines Accounts " . $this->nick . " wurde von " . $this->email . " auf " . $val . " geändert!";
-                        $mailSenderService->send($subject, $text, $this->email);
-                        if ($this->emailFix != $this->email) {
-                            $mailSenderService->send($subject, $text, $this->emailFix);
-                        }
-                        $this->$key = $val;
-                        $this->changedFields[$key] = true;
-                    } else {
-                        error_msg("Ungültige Mail-Adresse!");
-                    }
-                }
-            } else {
-                $this->$key = $val;
-                $this->changedFields[$key] = true;
-                return true;
-            }
-        } catch (EException $e) {
-            echo $e;
-        }
-    }
-
-    /**
      * Getter
      */
     public function __get($key)
