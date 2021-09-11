@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Universe\Wormhole\WormholeRepository;
 
 /**
  * Class for nebula entity
@@ -143,21 +144,15 @@ class Wormhole extends Entity
     function loadData()
     {
         if ($this->dataLoaded == false) {
-            $res = dbquery("
-				SELECT
-					target_id,
-					persistent,
-					changed
-				FROM
-					wormholes
-				WHERE
-					id=" . $this->id . ";
-				");
-            if (mysql_num_rows($res) > 0) {
-                $arr = mysql_fetch_assoc($res);
-                $this->targetId = $arr['target_id'];
-                $this->persistent = ($arr['persistent'] == 1);
-                $this->changed = $arr['changed'];
+            global $app;
+
+            /** @var WormholeRepository $wormholeRepository */
+            $wormholeRepository = $app[WormholeRepository::class];
+            $wormhole = $wormholeRepository->find($this->id);
+            if ($wormhole !== null) {
+                $this->targetId = $wormhole->targetId;
+                $this->persistent = $wormhole->persistent;
+                $this->changed = $wormhole->changed;
                 $this->dataLoaded = true;
             }
         }

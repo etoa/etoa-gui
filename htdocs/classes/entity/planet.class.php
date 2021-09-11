@@ -92,7 +92,7 @@ class Planet extends Entity
         return null;
     }
 
-    public static function getByArray($arr)
+    private static function getByArray($arr)
     {
         $p = new Planet();
 
