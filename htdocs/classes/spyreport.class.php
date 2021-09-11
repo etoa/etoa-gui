@@ -38,7 +38,7 @@ class SpyReport extends Report
     protected $coverage;
     protected $fleetId;
 
-    public function __construct($args)
+    public function __construct(\EtoA\Message\Report $args)
     {
         parent::__construct($args);
         if ($this->valid) {

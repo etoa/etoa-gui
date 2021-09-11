@@ -5,6 +5,9 @@ use EtoA\Alliance\AllianceDiplomacyLevel;
 use EtoA\Alliance\AllianceDiplomacyRepository;
 use EtoA\Alliance\AllianceRepository;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Message\ReportRepository;
+use EtoA\Message\ReportSearch;
+use EtoA\Message\ReportSort;
 use EtoA\Support\BBCodeUtils;
 use EtoA\Support\StringUtils;
 use EtoA\Universe\Cell\CellRepository;
@@ -322,9 +325,11 @@ if ($cell->isValid()) {
 
             if (in_array("analyze", $ent->allowedFleetActions(), true)) {
                 if ($properties->showCellreports) {
-                    $reports = Report::find(array("type" => "spy", "user_id" => $cu->id, "entity1_id" => $ent->id()), "timestamp DESC", 1, 0, true);
-                    if (count($reports) > 0) {
-                        $r = array_pop($reports);
+                    /** @var ReportRepository $reportRepository */
+                    $reportRepository = $app[ReportRepository::class];
+                    $report = $reportRepository->searchReport(ReportSearch::create()->userId($user->id)->type('spy')->entity1Id($ent->id()));
+                    if ($report !== null) {
+                        $r = Report::createFactory($report);
                         echo "<span " . tm($r->subject, $r . "<br style=\"clear:both\" />") . "><a href=\"javascript:;\" onclick=\"xajax_launchAnalyzeProbe(" . $ent->id() . ");\" title=\"Analysieren\">" . icon("spy") . "</a></span>";
                     } else
                         echo "<a href=\"javascript:;\" onclick=\"xajax_launchAnalyzeProbe(" . $ent->id() . ");\" title=\"Analysieren\">" . icon("spy") . "</a> ";

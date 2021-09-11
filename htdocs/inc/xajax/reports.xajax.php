@@ -27,8 +27,10 @@ function reportSetDeleted($id)
     /** @var ReportRepository $reportRepository */
     $reportRepository = $app[ReportRepository::class];
 
+    $report = $reportRepository->searchReport(ReportSearch::create()->id($id)->userId($cu->getId()));
+
     $or = new xajaxResponse();
-    $r = Report::createFactory($id);
+    $r = Report::createFactory($report);
     $reportRepository->delete($cu->getId(), (bool) $r->archived, [$id]);
     $or->assign("header" . $id, 'innerHTML', "<i>" . $r->subject . " (gel&ouml;scht)</i>");
     $or->assign("del" . $id, 'innerHTML', "");

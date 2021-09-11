@@ -51,7 +51,7 @@ class BattleReport extends Report
 
     private ConfigurationService $config;
 
-    public function __construct($args)
+    public function __construct(\EtoA\Message\Report $args)
     {
         // TODO
         global $app;

@@ -2,6 +2,7 @@
 
 use EtoA\Message\ReportRepository;
 use EtoA\Message\ReportSearch;
+use EtoA\Message\ReportSort;
 use EtoA\Message\ReportTypes;
 use EtoA\Support\StringUtils;
 
@@ -70,18 +71,17 @@ elseif (isset($_POST['submitdeleteall']) && checker_verify()) {
 // Limit for pagination
 $limit =  (isset($_GET['limit'])) ? intval($_GET['limit']) : 0;
 $limit -= $limit % REPORT_LIMIT;
-$limitstr = $limit . "," . REPORT_LIMIT;
 
 // Load all reports
 if ($type == "all") {
     $search = ReportSearch::create()->userId($cu->getId())->deleted(false)->archived(false);
-    $reports = Report::find(array("user_id" => $cu->id), "timestamp DESC", $limitstr);
+    $reports = Report::find($search, REPORT_LIMIT, $limit);
 } elseif ($type == "archiv") {
     $search = ReportSearch::create()->userId($cu->getId())->deleted(false)->archived(true);
-    $reports = Report::find(array("user_id" => $cu->id, "archived" => true), "timestamp DESC", $limitstr);
+    $reports = Report::find($search, REPORT_LIMIT, $limit);
 } else {
     $search = ReportSearch::create()->userId($cu->getId())->type($type)->deleted(false)->archived(false);
-    $reports = Report::find(array("type" => $type, "user_id" => $cu->id), "timestamp DESC", $limitstr);
+    $reports = Report::find($search, REPORT_LIMIT, $limit);
 }
 
 $totalReportsCount = $reportRepository->countReports($search);

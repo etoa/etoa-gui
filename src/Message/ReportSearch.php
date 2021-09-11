@@ -83,6 +83,14 @@ class ReportSearch extends AbstractSearch
         return $this;
     }
 
+    public function entity1Id(int $entityId): self
+    {
+        $this->parts[] = 'entity1_id = :entity1Id';
+        $this->parameters['entity1Id'] = $entityId;
+
+        return $this;
+    }
+
     public function entityId(int $entityId, int $identifier = null): self
     {
         $this->parts[] = sprintf('entity1_id = :entityId%s OR entity2_id = :entityId%s', $identifier, $identifier);

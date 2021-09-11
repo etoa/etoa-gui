@@ -73,9 +73,10 @@ class ReportRepository extends AbstractRepository
         $data = $this->applySearchSortLimit($this->createQueryBuilder(), $search)
             ->select('*')
             ->from('reports')
+            ->orderBy('timestamp', 'DESC')
             ->setMaxResults(1)
             ->execute()
-            ->fetchAllAssociative();
+            ->fetchAssociative();
 
         return $data !== false ? new Report($data) : null;
     }
@@ -172,6 +173,9 @@ class ReportRepository extends AbstractRepository
             ->execute();
     }
 
+    /**
+     * @param int[] $ids
+     */
     public function markAsRead(int $userId, array $ids): void
     {
         if (count($ids) === 0) {
