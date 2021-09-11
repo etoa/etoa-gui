@@ -2,6 +2,7 @@
 
 use EtoA\Alliance\AllianceDiplomacyRepository;
 use EtoA\Support\Mail\MailSenderService;
+use EtoA\User\UserRepository;
 use EtoA\User\UserSessionRepository;
 use EtoA\User\UserSessionSearch;
 
@@ -84,93 +85,89 @@ class User implements \EtoA\User\UserInterface
     public function __construct($id)
     {
         $this->isValid = false;
-        $this->id = $id;
 
-        $res = dbquery("
-        SELECT
-            " . self::tableName . ".*
-        FROM
-            " . self::tableName . "
-        WHERE
-            user_id='" . $id . "'
-        LIMIT 1
-        ;");
-        if (mysql_num_rows($res) > 0) {
-            $arr = mysql_fetch_assoc($res);
-            $this->nick = $arr['user_nick'];
-            $this->pw = $arr['user_password'];
-            $this->realName = $arr['user_name'];
-            $this->email = $arr['user_email'];
-            $this->emailFix = $arr['user_email_fix'];
+        global $app;
+        /** @var UserRepository $userRepository */
+        $userRepository = $app[UserRepository::class];
+        $user = $userRepository->getUser($id);
 
-            $this->d_email = $arr['dual_email'];
-            $this->d_realName = $arr['dual_name'];
+        if ($user !== null) {
+            $this->id = $user->id;
+            $this->nick = $user->nick;
+            $this->pw = $user->password;
+            $this->realName = $user->name;
+            $this->email = $user->email;
+            $this->emailFix = $user->emailFix;
 
-            $this->lastOnline = $arr['user_logouttime'];
+            $this->d_email = $user->dualEmail;
+            $this->d_realName = $user->dualName;
+
+            $this->lastOnline = $user->logoutTime;
             $this->acttime = null;
-            $this->points = $arr['user_points'];
+            $this->points = $user->points;
 
-            $this->blocked_from = $arr['user_blocked_from'];
-            $this->blocked_to = $arr['user_blocked_to'];
-            $this->ban_reason = $arr['user_ban_reason'];
-            $this->ban_admin_id = $arr['user_ban_admin_id'];
+            $this->blocked_from = $user->blockedFrom;
+            $this->blocked_to = $user->blockedTo;
+            $this->ban_reason = $user->banReason;
+            $this->ban_admin_id = $user->banAdminId;
 
-            $this->hmode_from = $arr['user_hmode_from'];
-            $this->hmode_to = $arr['user_hmode_to'];
+            $this->hmode_from = $user->hmodFrom;
+            $this->hmode_to = $user->hmodTo;
 
-            $this->deleted = $arr['user_deleted'];
+            $this->deleted = $user->deleted;
 
-            $this->monitored = ($arr['user_observe'] != "") ? true : false;
+            $this->monitored = ($user->observe != "") ? true : false;
 
-            $this->registered = $arr['user_registered'];
-            $this->setup = $arr['user_setup'] == 1 ? true : false;
-            $this->chatadmin = $arr['user_chatadmin'] == 1 ? true : false;
-            $this->admin = $arr['admin'] == 1 ? true : false;
-            $this->npc = $arr['npc'] == 1 ? true : false;
-            $this->developer = $arr['admin'] == 2 ? true : false;
-            $this->ghost = $arr['user_ghost'] == 1 ? true : false;
+            $this->registered = $user->registered;
+            $this->setup = $user->setup;
+            $this->chatadmin = $user->chatAdmin == 1 ? true : false;
+            $this->admin = $user->admin == 1 ? true : false;
+            $this->npc = $user->npc == 1 ? true : false;
+            $this->developer = $user->admin == 2 ? true : false;
+            $this->ghost = $user->ghost;
 
             $this->ip = $_SERVER['REMOTE_ADDR'];
 
-            $this->visits = $arr['user_visits'];
+            $this->visits = $user->visits;
 
-            $this->profileImage = $arr['user_profile_img'];
-            $this->profileText = $arr['user_profile_text'];
-            $this->profileBoardUrl = $arr['user_profile_board_url'];
-            $this->signature = $arr['user_signature'];
-            $this->avatar = $arr['user_avatar'];
+            $this->profileImage = $user->profileImage;
+            $this->profileText = $user->profileText;
+            $this->profileBoardUrl = $user->profileBoardUrl;
+            $this->signature = $user->signature;
+            $this->avatar = $user->avatar;
 
 
-            $this->allianceId = $arr['user_alliance_id'];
-            $this->allianceRankId = $arr['user_alliance_rank_id'];
-            $this->allianceLeave = $arr['user_alliance_leave'];
+            $this->allianceId = $user->allianceId;
+            $this->allianceRankId = $user->allianceRankId;
+            $this->allianceLeave = $user->allianceLeave;
 
-            $this->sittingDays = $arr['user_sitting_days'];
+            $this->sittingDays = $user->sittingDays;
 
-            $this->rank = $arr['user_rank'];
-            $this->rankHighest = $arr['user_rank_highest'];
+            $this->rank = $user->rank;
+            $this->rankHighest = $user->rankHighest;
 
-            $this->specialistId = $arr['user_specialist_id'];
-            $this->specialistTime = $arr['user_specialist_time'];
+            $this->specialistId = $user->specialistId;
+            $this->specialistTime = $user->specialistTime;
 
-            $this->boostBonusProduction = $arr['boost_bonus_production'];
-            $this->boostBonusBuilding = $arr['boost_bonus_building'];
+            $this->boostBonusProduction = $user->boosBonusProduction;
+            $this->boostBonusBuilding = $user->boosBonusBuilding;
 
-            $this->lastInvasion = $arr['lastinvasion'];
+            $this->lastInvasion = $user->lastInvasion;
 
-            $this->changedMainPlanet = $arr['user_changed_main_planet'];
+            $this->changedMainPlanet = $user->userChangedMainPlanet;
 
-            $this->raceId = $arr['user_race_id'];
+            $this->raceId = $user->raceId;
 
-            $this->allianceShippoints = $arr['user_alliace_shippoints'];
+            $this->allianceShippoints = $user->allianceShipPoints;
 
             $this->changedFields = array();
 
-            $this->isVerified = ($arr['verification_key'] == '');
-            $this->verificationKey = $arr['verification_key'];
+            $this->isVerified = ($user->verificationKey == '');
+            $this->verificationKey = $user->verificationKey;
 
             $this->isValid = true;
         } else {
+            $this->id = $id;
             $this->nick = "Niemand";
 
             $this->points = 0;
