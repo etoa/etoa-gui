@@ -52,9 +52,6 @@ define("DESIGN_STYLESHEET_FILE_NAME", "style.css");
 // Design main script file name
 define("DESIGN_SCRIPT_FILE_NAME", "scripts.js");
 
-// Tech Ordner
-define("IMAGE_TECHNOLOGY_DIR", "technologies");
-
 // Planeten Ordner
 define("IMAGE_PLANET_DIR", "planets");
 

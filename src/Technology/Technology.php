@@ -40,4 +40,16 @@ class Technology
         $this->order = (int) $data['tech_order'];
         $this->stealable = (bool) $data['tech_stealable'];
     }
+
+    public function getImagePath(string $type): string
+    {
+        switch ($type) {
+            case 'small':
+                return IMAGE_PATH."/technologies/technology".$this->id."_small.".IMAGE_EXT;
+            case 'medium':
+                return IMAGE_PATH."/technologies/technology".$this->id."_middle.".IMAGE_EXT;
+            default:
+                return IMAGE_PATH."/technologies/technology".$this->id.".".IMAGE_EXT;
+        }
+    }
 }

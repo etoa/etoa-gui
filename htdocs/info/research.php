@@ -31,7 +31,7 @@ if (isset($_GET['id'])) {
         echo "</select><br/><br/>";
 
         tableStart($technology->name);
-        echo "<tr><th class=\"tbltitle\" style=\"width:220px;\" rowspan=\"2\"><img src=\"" . IMAGE_PATH . "/" . IMAGE_TECHNOLOGY_DIR . "/technology" . $technology->id . "." . IMAGE_EXT . "\" style=\"width:220px;height:220px;\" alt=\"Bild " . $technology->name . "\" /></td>";
+        echo "<tr><th class=\"tbltitle\" style=\"width:220px;\" rowspan=\"2\"><img src=\"" . $technology->getImagePath('medium') . "\" style=\"width:220px;height:220px;\" alt=\"Bild " . $technology->name . "\" /></td>";
         echo "<td class=\"tbldata\" colspan=\"2\"><div align=\"justify\">" . BBCodeUtils::toHTML($technology->longComment) . "</div></td></tr>";
         echo "<tr>
                 <td class=\"tbltitle\" style=\"height:20px;width:120px;\">Maximale Stufe:</td>
@@ -98,7 +98,7 @@ else {
                     echo "<tr>
                             <td style=\"width:40px;padding:0px;background:#000\">
                                 <a href=\"?$link&amp;site=$site&amp;id=" . $technology->id . "\">
-                                    <img src=\"" . IMAGE_PATH . "/" . IMAGE_TECHNOLOGY_DIR . "/technology" . $technology->id . "_small." . IMAGE_EXT . "\" width=\"40\" height=\"40\" alt=\"Bild " . $technology->name . "\" border=\"0\"/>
+                                    <img src=\"" . $technology->getImagePath('small') . "\" width=\"40\" height=\"40\" alt=\"Bild " . $technology->name . "\" border=\"0\"/>
                                 </a>
                             </td>";
                     echo "<td style=\"width:160px;\">
