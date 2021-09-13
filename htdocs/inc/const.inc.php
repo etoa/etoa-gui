@@ -5,13 +5,6 @@ define('APP_NAME', 'EtoA');
 // Timezone
 define('TIMEZONE', 'Europe/Zurich');
 
-/***********
- * Database *
- ***********/
-
-define("WINDOWS_MYSQL_PATH", "c:\\xampp\\mysql\\bin\\mysql.exe");
-define("WINDOWS_MYSQLDUMP_PATH", "c:\\xampp\\mysql\\bin\\mysqldump.exe");
-
 // Cache directory
 if (!defined('CACHE_ROOT')) {
     define('CACHE_ROOT', RELATIVE_ROOT . 'cache');

@@ -64,8 +64,8 @@ class DatabaseBackupService
 
     public function loadFile(string $file): void
     {
-        $mysql = isWindowsOS() ? WINDOWS_MYSQL_PATH : "mysql";
-        $mysqldump = isWindowsOS() ? WINDOWS_MYSQLDUMP_PATH : "mysqldump";
+        $mysql = isWindowsOS() ? "c:\\xampp\\mysql\\bin\\mysql.exe" : "mysql";
+        $mysqldump = isWindowsOS() ? "c:\\xampp\\mysql\\bin\\mysqldump.exe" : "mysqldump";
         if (file_exists($file)) {
             $ext = pathinfo($file, PATHINFO_EXTENSION);
             if ($ext == "gz") {
@@ -160,7 +160,7 @@ class DatabaseBackupService
 
     public function backupDB(string $backupDir, bool $gzip): string
     {
-        $mysqldump = isWindowsOS() ? WINDOWS_MYSQLDUMP_PATH : "mysqldump";
+        $mysqldump = isWindowsOS() ? "c:\\xampp\\mysql\\bin\\mysqldump.exe" : "mysqldump";
 
         if (is_dir($backupDir)) {
             $file = $backupDir . "/" . $this->databaseManagerRepository->getDatabaseName() . "-" . date("Y-m-d-H-i") . ".sql";
