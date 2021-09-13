@@ -1,5 +1,6 @@
 <?PHP
 
+use EtoA\Alliance\AllianceDiplomacyPoints;
 use EtoA\Alliance\AllianceNewsRepository;
 use EtoA\Alliance\AllianceRepository;
 use EtoA\Alliance\AllianceRights;
@@ -40,7 +41,7 @@ if ($userAlliancePermission->checkHasRights(AllianceRights::ALLIANCE_NEWS, $page
                 // 2nd param is only for logging, Log::add() escapes string properly
                 $userRatingService->addDiplomacyRating(
                     $cu->id,
-                    DIPLOMACY_POINTS_PER_NEWS,
+                    AllianceDiplomacyPoints::POINTS_PER_NEWS,
                     "Rathausnews verfasst (ID:" . $newsId . ", " . $_POST['news_text'] . ")"
                 );
             }
