@@ -149,11 +149,6 @@ define("IMAGEPACK_DIRECTORY", IMAGE_DIR . "/imagepacks");
 define('IMAGE_PATH', RELATIVE_ROOT . "images/imagepacks/Discovery");
 define('IMAGE_EXT', "png");
 
-/*********************/
-/* Zufallsereignisse */
-/*********************/
-
-define("RANDOM_EVENTS_PER_UPDATE", 1);
 
 /****************************/
 /* Allgemeine Einstellungen */
@@ -173,15 +168,6 @@ define("COLONY_DELETE_THRESHOLD", 24 * 3600 * 5);
 define('GALAXY_MAP_DOT_RADIUS', 3);
 define('GALAXY_MAP_WIDTH', 500);
 define('GALAXY_MAP_LEGEND_HEIGHT', 40);
-
-// Tipps beim Start aktivieren
-define("ENABLE_TIPS", 1);
-
-// Permissions for uploaded files
-define('FILE_UPLOAD_PERMS', 0644);
-
-// Zeitverzögerung zwischen zwei Bauaufträgen in der Warteschlange
-define("BUILDING_QUEUE_DELAY", 60);
 
 /****************/
 /* Technologien */
@@ -218,22 +204,6 @@ define("SPY_ATTACK_SHOW_DEFENSE", 5);
 define("SPY_ATTACK_SHOW_RESSOURCEN", 9);
 // ...die Supportflotten auf dem Planeten
 define("SPY_ATTACK_SHOW_SUPPORT", 11);
-
-//
-// Spionageabwehr
-//
-
-// Maximale Spionageabwehr in Prozent
-define('SPY_DEFENSE_MAX', 90);
-
-// Spionageabwehr: Gewichtung der Technologien
-define('SPY_DEFENSE_FACTOR_TECH', 20);
-
-// Spionageabwehr: Gewichtung der Sonden
-define('SPY_DEFENSE_FACTOR_SHIPS', 0.5);
-
-// Spionageabwehr/Tarnabwehr: Gewichtung der Tarntechnik
-define('SPY_DEFENSE_FACTOR_TARN', 10);
 
 // Anzahl Flotten die OHNE Flottenkontrolle fliegen können
 define("FLEET_NOCONTROL_NUM", 1);

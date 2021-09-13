@@ -71,7 +71,7 @@ class ImageUpload
                             }
                             move_uploaded_file($source, $fpath);
                             if (isUnixOS()) {
-                                chmod($fpath, FILE_UPLOAD_PERMS);
+                                chmod($fpath, 0644);
                             }
 
                             if (is_array($this->resize) && ($ims[0] > $this->resize[0] || $ims[1] > $this->resize[1])) {
