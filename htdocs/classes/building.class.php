@@ -1,5 +1,7 @@
 <?PHP
 
+use EtoA\Building\BuildingRequirementRepository;
+
 class Building
 {
     private $id;
@@ -17,63 +19,33 @@ class Building
 
     private $isValid = false;
 
-    public function __construct($id, $small = false)
+    public function __construct(array $arr)
     {
-        try {
-            if (is_array($id)) {
-                $arr = $id;
-            } else {
-                if ($small)
-                    $select = " building_id, building_type, building_name ";
-                else
-                    $select = " * ";
+        $this->id = $arr['building_id'];
+        $this->typeId = $arr['building_type_id'];
+        $this->name = $arr['building_name'];
 
-                $res = dbquery("
-                    SELECT
-                        " . $select . "
-                    FROM
-                        buildings
-                    WHERE
-                        building_id='" . intval($id) . "'
-                    LIMIT 1");
-                if (mysql_num_rows($res) > 0)
-                    $arr = mysql_fetch_assoc($res);
-                else {
-                    throw new EException("Gebäude $id existiert nicht!");
-                }
-            }
+        $this->shortDesc = $arr['building_shortcomment'];
+        $this->longDesc = $arr['building_longcomment'];
+        $this->fields = $arr['building_fields'];
+        $this->maxLevel = $arr['building_last_level'];
 
-            $this->id = $arr['building_id'];
-            $this->typeId = $arr['building_type_id'];
-            $this->name = $arr['building_name'];
+        $this->costs[0] = $arr['building_costs_metal'];
+        $this->costs[1] = $arr['building_costs_crystal'];
+        $this->costs[2] = $arr['building_costs_plastic'];
+        $this->costs[3] = $arr['building_costs_fuel'];
+        $this->costs[4] = $arr['building_costs_food'];
+        $this->costs[5] = $arr['building_costs_power'];
+        $this->costsFactor = $arr['building_build_costs_factor'];
+        $this->demolishCostsFactor = $arr['building_demolish_costs_factor'];
+        $this->storeFactor = $arr['building_store_factor'];
+        $this->prodFactor = $arr['building_production_factor'];
 
-            if (!$small) {
-                $this->shortDesc = $arr['building_shortcomment'];
-                $this->longDesc = $arr['building_longcomment'];
-                $this->fields = $arr['building_fields'];
-                $this->maxLevel = $arr['building_last_level'];
+        $this->bunkerRes = $arr['building_bunker_res'];
+        $this->bunkerFleetCount = $arr['building_bunker_fleet_count'];
+        $this->bunkerFleetSpace = $arr['building_bunker_fleet_space'];
 
-                $this->costs[0] = $arr['building_costs_metal'];
-                $this->costs[1] = $arr['building_costs_crystal'];
-                $this->costs[2] = $arr['building_costs_plastic'];
-                $this->costs[3] = $arr['building_costs_fuel'];
-                $this->costs[4] = $arr['building_costs_food'];
-                $this->costs[5] = $arr['building_costs_power'];
-                $this->costsFactor = $arr['building_build_costs_factor'];
-                $this->demolishCostsFactor = $arr['building_demolish_costs_factor'];
-                $this->storeFactor = $arr['building_store_factor'];
-                $this->prodFactor = $arr['building_production_factor'];
-
-                $this->bunkerRes = $arr['building_bunker_res'];
-                $this->bunkerFleetCount = $arr['building_bunker_fleet_count'];
-                $this->bunkerFleetSpace = $arr['building_bunker_fleet_space'];
-            }
-
-            $this->isValid = true;
-        } catch (Exception $e) {
-            echo $e;
-            return;
-        }
+        $this->isValid = true;
     }
 
     function isValid()
@@ -154,23 +126,20 @@ class Building
 
     private function loadRequirements()
     {
+        global $app;
+
+        /** @var BuildingRequirementRepository $buildingRequirementRepository */
+        $buildingRequirementRepository = $app[BuildingRequirementRepository::class];
+
         $this->bRequirements = array();
         $this->tRequirements = array();
-        $res = dbquery("
-            SELECT
-                req_building_id,
-                req_tech_id,
-                req_level
-            FROM
-                building_requirements
-            WHERE
-                obj_id=" . $this->id . "
-            ");
-        while ($arr = mysql_fetch_row($res)) {
-            if ($arr[1] > 0)
-                $this->tRequirements[$arr[1]] = $arr[2];
-            if ($arr[0] > 0)
-                $this->bRequirements[$arr[0]] = $arr[2];
+
+        $requirements = $buildingRequirementRepository->getRequirements($this->id);
+        foreach ($requirements->getAll($this->id) as $requirement) {
+            if ($requirement->requiredTechnologyId > 0)
+                $this->tRequirements[$requirement->requiredTechnologyId] = $requirement->requiredLevel;
+            if ($requirement->requiredBuildingId > 0)
+                $this->bRequirements[$requirement->requiredBuildingId] = $requirement->requiredLevel;
         }
     }
 

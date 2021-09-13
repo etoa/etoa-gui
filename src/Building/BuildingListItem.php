@@ -41,4 +41,9 @@ class BuildingListItem
     {
         return $this->deactivated > time();
     }
+
+    public function isUnderConstruction(): bool
+    {
+        return in_array($this->buildType, [3, 4], true) && $this->endTime > time();
+    }
 }

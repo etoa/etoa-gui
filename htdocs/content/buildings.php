@@ -62,7 +62,7 @@ if (isset($cp)) {
     $technologyRepository = $app[TechnologyRepository::class];
     $techlist = $technologyRepository->getTechnologyLevels($cu->getId());
 
-    $bl = new BuildList($planet->id, $cu->id, 2);
+    $bl = new BuildList($planet->id, $cu->id);
     $bid = 0;
 
     // create posted id for small view

@@ -61,8 +61,6 @@ if ($properties->imageFilter) {
 if (isset($cp)) {
     $planet = $planetRepo->find($cp->id);
 
-    $bl = new BuildList($planet->id, $cu->id);
-
     $researchBuilding = $buildingRepository->getEntityBuilding($cu->getId(), $planet->id, BuildingId::TECHNOLOGY);
     if ($researchBuilding !== null && $researchBuilding->currentLevel > 0) {
         define("GEN_TECH_LEVEL", $technologyRepository->getTechnologyLevel($cu->getId(), TechnologyId::GEN));
@@ -95,9 +93,11 @@ if (isset($cp)) {
         $new_people_set = false;
         // people working changed
         if (isset($_POST['submit_people_form_gen'])) {
-
-            $set_people = StringUtils::parseFormattedNumber($_POST['peopleWorking']);
-            if (!$building_gen && $bl->setPeopleWorking(BuildingId::PEOPLE, $set_people, true)) {
+            $peopleWorking = $buildingRepository->getPeopleWorking($planet->id);
+            $toBeAssignedPeople = StringUtils::parseFormattedNumber($_POST['peopleWorking']);
+            $free = $cp->people - $peopleWorking->total + $peopleWorking->getById(BuildingId::PEOPLE);
+            if (!$building_gen && $free > $toBeAssignedPeople) {
+                $buildingRepository->setPeopleWorking($planet->id, BuildingId::PEOPLE, $toBeAssignedPeople);
                 success_msg("Arbeiter zugeteilt!");
                 $new_people_set = true;
             } else {
@@ -106,18 +106,17 @@ if (isset($cp)) {
         }
 
         if (isset($_POST['submit_people_form'])) {
-            $set_people = StringUtils::parseFormattedNumber($_POST['peopleWorking']);
-            if (!$building_something && $bl->setPeopleWorking(BuildingId::TECHNOLOGY, $set_people, true)) {
+            $peopleWorking = $buildingRepository->getPeopleWorking($planet->id);
+            $toBeAssignedPeople = StringUtils::parseFormattedNumber($_POST['peopleWorking']);
+            $free = $cp->people - $peopleWorking->total + $peopleWorking->getById(BuildingId::TECHNOLOGY);
+            if (!$building_something && $free > $toBeAssignedPeople) {
+                $buildingRepository->setPeopleWorking($planet->id, BuildingId::TECHNOLOGY, $toBeAssignedPeople);
                 success_msg("Arbeiter zugeteilt!");
                 $new_people_set = true;
             } else {
                 error_msg('Arbeiter konnten nicht zugeteilt werden!');
             }
         }
-
-        // reload buildlist and techlist in case the number of workers has changed.
-        $bl = new BuildList($planet->id, $cu->id);
-
         $minBuildTimeFactor = (0.1 - (GEN_TECH_LEVEL / 100));
 
         // People working in the tech building.
