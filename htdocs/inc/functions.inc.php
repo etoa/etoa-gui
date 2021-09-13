@@ -881,7 +881,7 @@ function getLoginUrl($args = array())
  */
 function isDebugEnabled(): bool
 {
-    return file_exists(RELATIVE_ROOT . 'config/debug');
+    return file_exists(__DIR__ . '/../config/debug');
 }
 
 /**
@@ -915,7 +915,7 @@ function unix_command_exists(string $cmd): bool
 
 function getAbsPath(string $path): string
 {
-    return (substr($path, 0, 1) != "/" ? realpath(RELATIVE_ROOT) . '/' : '') . $path;
+    return (substr($path, 0, 1) != "/" ? realpath(__DIR__) . '/../../htdocs/' : '') . $path;
 }
 
 if (!function_exists('blank')) {

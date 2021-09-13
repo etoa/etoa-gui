@@ -37,9 +37,9 @@ if (!configFileExists($cbConfigFile)) {
         exit(1);
     } else {
         if (ADMIN_MODE) {
-            forward(RELATIVE_ROOT);
+            forward('../');
         }
-        require(RELATIVE_ROOT . "inc/install.inc.php");
+        require __DIR__ . "/install.inc.php";
         exit();
     }
 }

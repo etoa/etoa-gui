@@ -22,7 +22,7 @@ class DatabaseMigrationService
      */
     public function getPendingMigrations(): array
     {
-        $files = glob(RELATIVE_ROOT . '../db/migrations/*.sql');
+        $files = glob($this->getDatabaseDirectory() . 'migrations/*.sql');
         natsort($files);
         $migrations = [];
         foreach ($files as $f) {
@@ -39,10 +39,10 @@ class DatabaseMigrationService
     public function migrate(): int
     {
         if (!$this->schemaMigrationRepository->hasMigrationTable()) {
-            $this->databaseBackupService->loadFile(RELATIVE_ROOT . '../db/init_schema_migrations.sql');
+            $this->databaseBackupService->loadFile($this->getDatabaseDirectory() . 'db/init_schema_migrations.sql');
         }
 
-        $files = glob(RELATIVE_ROOT . '../db/migrations/*.sql');
+        $files = glob($this->getDatabaseDirectory() .'migrations/*.sql');
         natsort($files);
         $cnt = 0;
         foreach ($files as $f) {
@@ -57,5 +57,10 @@ class DatabaseMigrationService
         }
 
         return $cnt;
+    }
+
+    private function getDatabaseDirectory(): string
+    {
+        return __DIR__ . '/../../../db/';
     }
 }

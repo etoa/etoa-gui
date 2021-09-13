@@ -29,7 +29,7 @@ class DatabaseBackupService
                 return $backupDir;
             }
         } else {
-            $backupDir = RELATIVE_ROOT . '../backup';
+            $backupDir = __DIR__ . '/../../../backup';
             if (is_dir($backupDir)) {
                 return $backupDir;
             }

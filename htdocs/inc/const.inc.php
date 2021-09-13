@@ -17,21 +17,6 @@ if (!defined('CACHE_ROOT')) {
     define('CACHE_ROOT', RELATIVE_ROOT . 'cache');
 }
 
-// Log directory
-if (!defined('LOG_DIR')) {
-    define('LOG_DIR', RELATIVE_ROOT . 'log');
-}
-
-// Class directory
-if (!defined('CLASS_ROOT')) {
-    define('CLASS_ROOT', RELATIVE_ROOT . 'classes');
-}
-
-// Data file directory
-if (!defined('DATA_DIR')) {
-    define('DATA_DIR', RELATIVE_ROOT . "data");
-}
-
 // Image directory
 if (!defined('IMAGE_DIR')) {
     define('IMAGE_DIR', RELATIVE_ROOT . "images");
@@ -41,8 +26,6 @@ if (!defined('IMAGE_DIR')) {
 if (!defined('ADMIN_MODE')) {
     define('ADMIN_MODE', false);
 }
-
-define('ERROR_LOGFILE', LOG_DIR . "/errors.log");
 
 // Entwickler Link
 define("DEVCENTER_PATH", "http://dev.etoa.ch");

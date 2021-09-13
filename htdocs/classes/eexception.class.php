@@ -1,12 +1,14 @@
 <?PHP
 class EException extends Exception
 {
+    public const LOG_FILE = __DIR__ . '/../log/errors.log';
+
     public function __toString()
     {
         global $cu;
 
         $str = "Allgemeiner Fehler: " . parent::getMessage() . "\nDatei: " . parent::getFile() . ", Zeile: " . parent::getLine() . "\nStack-Trace: " . parent::getTraceAsString() . "";
-        $f = fopen(ERROR_LOGFILE, "a+");
+        $f = fopen(self::LOG_FILE, "a+");
         fwrite($f, date("d.m.Y H:i:s") . ", " . $_SERVER['REMOTE_ADDR'] . ", " . $cu . "\n" . $str . "\n\n");
         fclose($f);
         if (!isCLI()) {

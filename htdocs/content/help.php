@@ -12,8 +12,8 @@ $link = "page=" . $page;
 // Help page
 if ($request->query->has('site')) {
     $site = $request->query->get('site');
-    if (filled($site) && preg_match('/^[a-z\_]+$/', $site) && file_exists(RELATIVE_ROOT . "info/$site.php")) {
-        include(RELATIVE_ROOT . "info/$site.php");
+    if (filled($site) && preg_match('/^[a-z\_]+$/', $site) && file_exists(__DIR__ . "/../info/$site.php")) {
+        include __DIR__ . "/../info/$site.php";
     } else {
         error_msg("Hilfedatei nicht gefunden!");
     }

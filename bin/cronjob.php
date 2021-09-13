@@ -38,7 +38,7 @@ if (!isset($app)) {
 }
 
 // Load default values
-require_once(RELATIVE_ROOT."inc/def.inc.php");
+require_once __DIR__ . "/../htdocs/inc/def.inc.php";
 
 $args = array_splice($_SERVER['argv'], 1);
 
