@@ -12,6 +12,7 @@ use Pimple\ServiceProviderInterface;
 
 class DoctrineServiceProvider implements ServiceProviderInterface
 {
+    public const CONFIG_FILE = 'db.conf';
     public function register(Container $pimple): void
     {
         $pimple['db.default_options'] = [
@@ -52,14 +53,23 @@ class DoctrineServiceProvider implements ServiceProviderInterface
                 $pimple['db.options'] = [];
             }
 
-            $options = array_replace($pimple['db.default_options'], $pimple['db.options']);
+            $config = $pimple['db.options'];
             if ($pimple['app.environment'] === 'testing') {
-                $options['dbname'] = $options['dbname'] . '_test';
+                $config['dbname'] = $config['dbname'] . '_test';
             }
 
-            \DBManager::getInstance()->setDatabaseConfig($options);
+            return $pimple['db.factory']($config);
+        };
 
-            return DriverManager::getConnection($options, $pimple['db.config'], $pimple['db.event_manager']);
+        $pimple['db.factory'] = function (Container $pimple): callable {
+            return function (array $config) use ($pimple): Connection {
+                $options = array_replace($pimple['db.default_options'], $config);
+                if ($pimple['app.environment'] === 'testing') {
+                    $options['dbname'] = $options['dbname'] . '_test';
+                }
+
+                return DriverManager::getConnection($options, $pimple['db.config'], $pimple['db.event_manager']);
+            };
         };
 
         $pimple['db.querybuilder'] = function (Container $pimple): QueryBuilder {
