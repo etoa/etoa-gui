@@ -9,7 +9,6 @@ if (!defined('RELATIVE_ROOT')) {
 }
 
 // Load constants
-require_once __DIR__ . '/mysqli_polyfill.php';
 require_once __DIR__ . '/const.inc.php';
 
 // Load functions

@@ -22,8 +22,6 @@ parameters:
         - htdocs/inc/init.inc.php
         - htdocs/admin/inc/admin_functions.inc.php
 
-    scanFiles:
-        - htdocs/inc/mysqli_polyfill.php
     ignoreErrors:
         - '#Dynamic call to static method PHPUnit\\Framework\\Assert#'
         - '#Dynamic call to static method PHPUnit\\Framework\\TestCase#'
