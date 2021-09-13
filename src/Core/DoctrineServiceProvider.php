@@ -64,9 +64,6 @@ class DoctrineServiceProvider implements ServiceProviderInterface
         $pimple['db.factory'] = function (Container $pimple): callable {
             return function (array $config) use ($pimple): Connection {
                 $options = array_replace($pimple['db.default_options'], $config);
-                if ($pimple['app.environment'] === 'testing') {
-                    $options['dbname'] = $options['dbname'] . '_test';
-                }
 
                 return DriverManager::getConnection($options, $pimple['db.config'], $pimple['db.event_manager']);
             };
