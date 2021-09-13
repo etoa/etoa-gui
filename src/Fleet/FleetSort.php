@@ -2,7 +2,6 @@
 
 namespace EtoA\Fleet;
 
-use EtoA\Building\BuildingSort;
 use EtoA\Core\Database\AbstractSort;
 
 class FleetSort extends AbstractSort
