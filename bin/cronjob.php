@@ -65,9 +65,7 @@ if ($config->getBoolean('update_enabled'))
     $log.= "\nTotal: ".$tr->getTotalDuration().' sec';
 
     // Write log
-    if (LOG_UPDATES) {
-        $severity = LogSeverity::INFO;
-    } elseif ($tr->getTotalDuration() > LOG_UPDATES_THRESHOLD) {
+    if ($tr->getTotalDuration() > 10) {
         $severity = LogSeverity::WARNING;
     } else {
         $severity = LogSeverity::DEBUG;

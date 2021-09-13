@@ -208,8 +208,6 @@ define('CONTACT_REQUIRED_MAIL_SUFFIX', "@etoa.ch");
  * Updates *
  ***********/
 
-define('LOG_UPDATES', false);
-define('LOG_UPDATES_THRESHOLD', 10);
 define('USERSTATS_OUTFILE', CACHE_ROOT . "/out/userstats.png");
 define('XML_INFO_FILE', CACHE_ROOT . "/xml/info.xml");
 
