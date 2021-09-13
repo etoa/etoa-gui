@@ -87,13 +87,13 @@ if (isset($_POST['ressource_market_id'])) {
 
                 // Fleet Seller -> Buyer
                 $sellerFid = $fleetRepository->add($cu->getId(), $launchtime, (int) $buyerLandtime, $id, $cp->id, \EtoA\Fleet\FleetAction::MARKET, \EtoA\Fleet\FleetStatus::DEPARTURE, $sellResources);
-                $fleetRepository->addShipsToFleet($sellerFid, MARKET_SHIP_ID, $numSellerShip);
+                $fleetRepository->addShipsToFleet($sellerFid, ShipId::MARKET, $numSellerShip);
 
                 $numBuyerShip = ($tradeShip->capacity > 0) ? ceil(array_sum($buyarr) / $tradeShip->capacity) : 1;
 
                 // Fleet Buyer->Seller
                 $buyerFid = $fleetRepository->add($offer->userId, $launchtime, (int) $sellerLandtime, $cp->id, $sellerEntity->id, \EtoA\Fleet\FleetAction::MARKET, \EtoA\Fleet\FleetStatus::DEPARTURE, $buyResource);
-                $fleetRepository->addShipsToFleet($buyerFid, MARKET_SHIP_ID, $numBuyerShip);
+                $fleetRepository->addShipsToFleet($buyerFid, ShipId::MARKET, $numBuyerShip);
 
                 // Angebot löschen
                 $marketResourceRepository->delete($offer->id);

@@ -84,7 +84,7 @@ foreach ($_POST['ship_market_id'] as $num => $id) {
 
             // Fleet Buyer->Seller
             $buyerFid = $fleetRepository->add($offer->userId, $launchtime, (int) $sellerLandtime, $cp->id, $sellerEntity->id, \EtoA\Fleet\FleetAction::MARKET, \EtoA\Fleet\FleetStatus::DEPARTURE, $costs);
-            $fleetRepository->addShipsToFleet($buyerFid, MARKET_SHIP_ID, $numBuyerShip);
+            $fleetRepository->addShipsToFleet($buyerFid, ShipId::MARKET, $numBuyerShip);
 
             $marketShipRepository->delete($offer->id);
             $cnt++;

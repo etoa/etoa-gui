@@ -258,16 +258,6 @@ define("DEFAULT_ACTION", "to");
 // Anzahl Runden
 define("BATTLE_ROUNDS", 5);
 
-/*********/
-/* Markt */
-/*********/
-
-// Handelsschiff ID
-define("MARKET_SHIP_ID", 16);
-
-// Log-Cat ID
-define("MARKET_LOG_CAT", 7);
-
 // Anzahl Rohstofftypen im Spiel
 define('NUM_RESOURCES', 5);
 
