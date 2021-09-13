@@ -12,6 +12,7 @@ use EtoA\Message\MessageRepository;
 use EtoA\Message\ReportRepository;
 use EtoA\Notepad\NotepadRepository;
 use EtoA\Support\BBCodeUtils;
+use EtoA\Support\ExternalUrl;
 use EtoA\Support\StringUtils;
 use EtoA\Text\TextRepository;
 use EtoA\Universe\Planet\PlanetRepository;
@@ -172,7 +173,7 @@ try {
     // Zugriff erlauben und Inhalt anzeigen
     else {
         if ($s->firstView && $properties->startUpChat == 1) {
-            echo "<script type=\"text/javascript\">" . CHAT_ONCLICK . "</script>";
+            echo "<script type=\"text/javascript\">" . ExternalUrl::CHAT_ON_CLICK . "</script>";
         }
 
         if ($cu->isSetup()) {

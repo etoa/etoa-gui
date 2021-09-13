@@ -8,6 +8,7 @@ use EtoA\Log\AccessLogRepository;
 use EtoA\Race\RaceDataRepository;
 use EtoA\Specialist\SpecialistService;
 use EtoA\Support\BBCodeUtils;
+use EtoA\Support\ExternalUrl;
 use EtoA\Support\StringUtils;
 use EtoA\User\UserPropertiesRepository;
 use EtoA\User\UserRepository;
@@ -189,10 +190,10 @@ function error_msg($text, $type = 0, $exit = 0, $addition = 0, $stacktrace = nul
     // Addition
     switch ($addition) {
         case 1:
-            echo BBCodeUtils::toHTML("\n\n[url " . FORUM_URL . "]Zum Forum[/url] | [email mail@etoa.ch]Mail an die Spielleitung[/email]");
+            echo BBCodeUtils::toHTML("\n\n[url " . ExternalUrl::FORUM . "]Zum Forum[/url] | [email mail@etoa.ch]Mail an die Spielleitung[/email]");
             break;
         case 2:
-            echo BBCodeUtils::toHTML("\n\n[url " . DEVCENTER_PATH . "]Fehler melden[/url]");
+            echo BBCodeUtils::toHTML("\n\n[url " . ExternalUrl::DEV_CENTER . "]Fehler melden[/url]");
             break;
         default:
             echo '';
@@ -201,7 +202,7 @@ function error_msg($text, $type = 0, $exit = 0, $addition = 0, $stacktrace = nul
     // Stacktrace
     if (isset($stacktrace)) {
         echo "<div style=\"text-align:left;border-top:1px solid #000;\">
-        <b>Stack-Trace:</b><br/>" . nl2br($stacktrace) . "<br/><a href=\"" . DEVCENTER_PATH . "\" target=\"_blank\">Fehler melden</a></div>";
+        <b>Stack-Trace:</b><br/>" . nl2br($stacktrace) . "<br/><a href=\"" . ExternalUrl::DEV_CENTER . "\" target=\"_blank\">Fehler melden</a></div>";
     }
     iBoxEnd();
     if ($exit > 0) {

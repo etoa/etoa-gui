@@ -1,5 +1,6 @@
 <?PHP
 
+use EtoA\Support\ExternalUrl;
 use Symfony\Component\HttpFoundation\Request;
 
 /** @var Request $request */
@@ -60,19 +61,19 @@ else {
         $links = [
             [
                 'label' => 'Häufig gestellte Fragen',
-                'onclick' => HELPCENTER_ONCLICK
+                'onclick' => ExternalUrl::HELP_CENTER_ON_CLICK,
             ],
             [
                 'label' => 'Regeln',
-                'onclick' => RULES_ONCLICK
+                'onclick' => ExternalUrl::RULES_ON_CLICK,
             ],
             [
                 'label' => 'Forum',
-                'url' => FORUM_URL
+                'url' => ExternalUrl::FORUM,
             ],
             [
                 'label' => 'Fehler melden',
-                'url' => DEVCENTER_PATH
+                'url' => ExternalUrl::DEV_CENTER,
             ]
         ];
         tableStart("Externe Resourcen");

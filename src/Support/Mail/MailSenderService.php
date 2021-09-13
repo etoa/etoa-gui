@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace EtoA\Support\Mail;
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Support\ExternalUrl;
 use Swift_Mailer;
 use Swift_Message;
 use Swift_SendmailTransport;
@@ -69,6 +70,6 @@ class MailSenderService
 Escape to Andromeda - Das Sci-Fi Browsergame - http://etoa.ch
 Copyright (C) 2004 EtoA-Gaming, Schweiz
 Kontakt: mail@etoa.ch
-Forum: " . FORUM_URL;
+Forum: " . ExternalUrl::FORUM;
     }
 }

@@ -15,12 +15,6 @@ if (!defined('ADMIN_MODE')) {
     define('ADMIN_MODE', false);
 }
 
-// Entwickler Link
-define("DEVCENTER_PATH", "http://dev.etoa.ch");
-
-// Entwickler Link (popup)
-define("DEVCENTER_ONCLICK", "window.open('" . DEVCENTER_PATH . "','dev','width=1024,height=768,scrollbars=yes');");
-
 /***********************************/
 /* Directory names                 */
 /***********************************/
@@ -53,39 +47,6 @@ define("IMAGE_BUILDING_DIR", "buildings");
 
 // Default login server URL
 define('INSTALLER_DEFAULT_LOGINSERVER_URL', 'https://etoa.ch');
-
-/***********************************/
-/* Design, Layout, Allgmeine Pfade */
-/***********************************/
-
-//
-// Externe Pfade
-//
-
-// Helpcenter Link
-define("HELPCENTER_URL", "http://www.etoa.ch/help/?page=faq");
-define('HELPCENTER_ONCLICK', "window.open('" . HELPCENTER_URL . "','helpcenter','width=1024,height=700,scrollbars=yes');");
-
-// Forum Link
-define("FORUM_URL", "http://forum.etoa.ch");
-
-// Chat
-define('CHAT_URL', "chatframe.php");
-define('CHAT_ONCLICK', "parent.top.location='chatframe.php';");
-
-// Teamspeak
-define('TEAMSPEAK_URL', "https://discord.gg/7d2ndEU");
-define('TEAMSPEAK_ONCLICK', "window.open('" . TEAMSPEAK_URL . "','_blank');");
-
-// Game-Rules
-define('RULES_URL', 'http://www.etoa.ch/regeln');
-define('RULES_ONCLICK', "window.open('" . RULES_URL . "','rules','width=auto,height=auto,scrollbars=yes');");
-
-// Privacy statement
-define('PRIVACY_URL', 'http://www.etoa.ch/privacy');
-
-// URL for user banner HTML snippet
-define('USERBANNER_LINK_URL', 'http://www.etoa.ch');
 
 /***********************************/
 /* Directory- and file paths       */

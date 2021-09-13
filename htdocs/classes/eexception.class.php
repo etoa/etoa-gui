@@ -1,4 +1,7 @@
 <?PHP
+
+use EtoA\Support\ExternalUrl;
+
 class EException extends Exception
 {
     public const LOG_FILE = __DIR__ . '/../log/errors.log';
@@ -16,7 +19,7 @@ class EException extends Exception
                 <b>Datei:</b> " . parent::getFile() . ", <b>Zeile:</b> " . parent::getLine() . "";
             $str .= "<div style=\"text-align:left;border-top:1px solid #000;\">
                 <b>Stack-Trace:</b><br/>" . nl2br(parent::getTraceAsString()) . "<br/>
-                <a href=\"" . DEVCENTER_PATH . "\" target=\"_blank\">Fehler melden</a></div>
+                <a href=\"" . ExternalUrl::DEV_CENTER . "\" target=\"_blank\">Fehler melden</a></div>
                 </div></div>";
             return $str;
         }

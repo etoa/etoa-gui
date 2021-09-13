@@ -4,6 +4,7 @@ use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Log\LogFacility;
 use EtoA\Log\LogRepository;
 use EtoA\Log\LogSeverity;
+use EtoA\Support\ExternalUrl;
 use EtoA\Support\Mail\MailSenderService;
 use EtoA\User\UserService;
 
@@ -39,8 +40,8 @@ function getRegisterParams(ConfigurationService $config, \EtoA\User\UserReposito
         'appName' => APP_NAME,
         'nameMaxLength' => $config->getInt('name_length'),
         'nickMaxLength' => $config->param2Int('nick_length'),
-        'rulesUrl' => RULES_URL,
-        'privacyUrl' => PRIVACY_URL,
+        'rulesUrl' => ExternalUrl::RULES,
+        'privacyUrl' => ExternalUrl::PRIVACY,
     ];
 }
 
@@ -74,7 +75,7 @@ if (($_POST['register_submit'] ?? false) && $config->getBoolean('enable_register
             $email_text .= $verificationUrl . "\n\n";
         }
         $email_text .= "WICHTIG: Gib dein Passwort an niemanden weiter. Gib dein Passwort auch auf keiner Seite ausser unserer Loginseite ein. Ein Game-Admin oder Entwickler wird dich auch nie nach dem Passwort fragen!\n";
-        $email_text .= "Desweiteren solltest du dich mit den Regeln (" . RULES_URL . ") bekannt machen, da ein Regelverstoss eine (zeitweilige) Sperrung deines Accounts zur Folge haben kann!\n\n";
+        $email_text .= "Desweiteren solltest du dich mit den Regeln (" . ExternalUrl::RULES . ") bekannt machen, da ein Regelverstoss eine (zeitweilige) Sperrung deines Accounts zur Folge haben kann!\n\n";
         $email_text .= "Viel Spass beim Spielen!\nDas EtoA-Team";
 
         $mailSenderService->send("Account-Registrierung", $email_text, $newUser->email);
