@@ -110,9 +110,6 @@ define('RSS_DIR', CACHE_ROOT . "/rss");
 // Pfade
 //
 
-// Smilies
-define("SMILIE_DIR", IMAGE_DIR . "/smilies");
-
 // Bilder
 define("IMAGEPACK_DIRECTORY", IMAGE_DIR . "/imagepacks");
 define('IMAGE_PATH', RELATIVE_ROOT . "images/imagepacks/Discovery");
