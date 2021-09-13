@@ -181,15 +181,6 @@ define('GALAXY_MAP_DOT_RADIUS', 3);
 define('GALAXY_MAP_WIDTH', 500);
 define('GALAXY_MAP_LEGEND_HEIGHT', 40);
 
-// Punkteberechnung
-define('BATTLE_POINTS_A_W', 3);
-define('BATTLE_POINTS_A_D', 1);
-define('BATTLE_POINTS_A_L', 1);
-define('BATTLE_POINTS_D_W', 2);
-define('BATTLE_POINTS_D_D', 1);
-define('BATTLE_POINTS_D_L', 0);
-define('BATTLE_POINTS_SPECIAL', 1);
-
 // Tipps beim Start aktivieren
 define("ENABLE_TIPS", 1);
 
