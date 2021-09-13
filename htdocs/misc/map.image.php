@@ -284,5 +284,3 @@ else
     imagestring($im,5,10,10,"Nicht eingeloggt!",$colWhite);
 }
 echo imagepng($im);
-
-DBManager::getInstance()->close();

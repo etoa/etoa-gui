@@ -132,5 +132,3 @@ imageline($im,P_LEFT,P_TOP,P_LEFT,$h-LEGEND_HEIGHT-P_BOTTOM,$colBlack);
 
 
 echo imagepng($im);
-
-DBManager::getInstance()->close();

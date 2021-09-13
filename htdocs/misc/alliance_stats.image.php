@@ -126,5 +126,3 @@ if ($aid > 0 && count($_SESSION) > 0) {
 } else
     imagestring($im, 3, 10, 10, "Fehler! Keine ID angegeben oder du bist nicht eingeloggt!", $black);
 imagepng($im);
-
-DBManager::getInstance()->close();
