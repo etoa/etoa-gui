@@ -10,11 +10,6 @@ if (!defined('CACHE_ROOT')) {
     define('CACHE_ROOT', RELATIVE_ROOT . 'cache');
 }
 
-// Image directory
-if (!defined('IMAGE_DIR')) {
-    define('IMAGE_DIR', RELATIVE_ROOT . "images");
-}
-
 // Admin mode?
 if (!defined('ADMIN_MODE')) {
     define('ADMIN_MODE', false);
@@ -104,7 +99,6 @@ define('RSS_DIR', CACHE_ROOT . "/rss");
 //
 
 // Bilder
-define("IMAGEPACK_DIRECTORY", IMAGE_DIR . "/imagepacks");
 define('IMAGE_PATH', RELATIVE_ROOT . "images/imagepacks/Discovery");
 
 
