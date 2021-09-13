@@ -5,6 +5,7 @@ use EtoA\Log\LogFacility;
 use EtoA\Log\LogRepository;
 use EtoA\Log\LogSeverity;
 use EtoA\Market\MarketShipRepository;
+use EtoA\Market\TradePoints;
 use EtoA\Message\MarketReportRepository;
 use EtoA\Ship\ShipDataRepository;
 use EtoA\Ship\ShipId;
@@ -101,21 +102,21 @@ foreach ($_POST['ship_market_id'] as $num => $id) {
 
             $userRatingService->addTradeRating(
                 $cu->id,
-                TRADE_POINTS_PER_TRADE,
+                TradePoints::POINTS_PER_TRADE,
                 false,
                 'Handel #' . $offer->id . ' mit ' . $offer->userId
             );
-            if (strlen($offer->text) > TRADE_POINTS_TRADETEXT_MIN_LENGTH) {
+            if (strlen($offer->text) > TradePoints::POINTS_TRADE_TEXT_MIN_LENGTH) {
                 $userRatingService->addTradeRating(
                     $offer->userId,
-                    TRADE_POINTS_PER_TRADE + TRADE_POINTS_PER_TRADETEXT,
+                    TradePoints::POINTS_PER_TRADE + TradePoints::POINTS_PER_TRADE_TEXT,
                     true,
                     'Handel #' . $offer->id . ' mit ' . $cu->id
                 );
             } else {
                 $userRatingService->addTradeRating(
                     $offer->userId,
-                    TRADE_POINTS_PER_TRADE,
+                    TradePoints::POINTS_PER_TRADE,
                     true,
                     'Handel #' . $offer->id . ' mit ' . $cu->id
                 );

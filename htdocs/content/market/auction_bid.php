@@ -4,6 +4,7 @@ use EtoA\Log\LogFacility;
 use EtoA\Log\LogRepository;
 use EtoA\Log\LogSeverity;
 use EtoA\Market\MarketAuctionRepository;
+use EtoA\Market\TradePoints;
 use EtoA\Message\MarketReportRepository;
 use EtoA\Support\RuntimeDataStore;
 use EtoA\Support\StringUtils;
@@ -91,21 +92,21 @@ if ($auction !== null && $auction->dateEnd > time()) {
 
                 $userRatingService->addTradeRating(
                     $cu->id,
-                    TRADE_POINTS_PER_TRADE,
+                    TradePoints::POINTS_PER_TRADE,
                     false,
                     'Handel #' . $auction->id . ' mit ' . $auction->userId
                 );
-                if (strlen($auction->text) > TRADE_POINTS_TRADETEXT_MIN_LENGTH) {
+                if (strlen($auction->text) > TradePoints::POINTS_TRADE_TEXT_MIN_LENGTH) {
                     $userRatingService->addTradeRating(
                         $auction->userId,
-                        TRADE_POINTS_PER_TRADE + TRADE_POINTS_PER_TRADETEXT,
+                        TradePoints::POINTS_PER_TRADE + TradePoints::POINTS_PER_TRADE_TEXT,
                         true,
                         'Handel #' . $auction->id . ' mit ' . $cu->id
                     );
                 } else {
                     $userRatingService->addTradeRating(
                         $auction->userId,
-                        TRADE_POINTS_PER_TRADE,
+                        TradePoints::POINTS_PER_TRADE,
                         true,
                         'Handel #' . $auction->id . ' mit ' . $cu->id
                     );

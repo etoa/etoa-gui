@@ -182,11 +182,6 @@ define('GALAXY_MAP_WIDTH', 500);
 define('GALAXY_MAP_LEGEND_HEIGHT', 40);
 
 // Punkteberechnung
-define('TRADE_POINTS_PER_TRADE', 1);
-define('TRADE_POINTS_PER_AUCTION', 1);
-define('TRADE_POINTS_PER_TRADETEXT', 1);
-define('TRADE_POINTS_TRADETEXT_MIN_LENGTH', 15);
-
 define('BATTLE_POINTS_A_W', 3);
 define('BATTLE_POINTS_A_D', 1);
 define('BATTLE_POINTS_A_L', 1);
