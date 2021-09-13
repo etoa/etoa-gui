@@ -235,28 +235,8 @@ define('SPY_DEFENSE_FACTOR_SHIPS', 0.5);
 // Spionageabwehr/Tarnabwehr: Gewichtung der Tarntechnik
 define('SPY_DEFENSE_FACTOR_TARN', 10);
 
-/*************************/
-/* Flotten & Kampfsystem */
-/*************************/
-
-//
-// Sonstige Flottendefinitionen
-//
-
-// Flotten Log ID (Kategorie)
-define("FLEET_ACTION_LOG_CAT", 13);
-
 // Anzahl Flotten die OHNE Flottenkontrolle fliegen können
 define("FLEET_NOCONTROL_NUM", 1);
-
-// Kategorie der Antriebstechniken
-define("TECH_SPEED_CAT", 1);
-
-// Standartflug "Transport hinflug" ??? (wieso das?)
-define("DEFAULT_ACTION", "to");
-
-// Anzahl Runden
-define("BATTLE_ROUNDS", 5);
 
 // Anzahl Rohstofftypen im Spiel
 define('NUM_RESOURCES', 5);
