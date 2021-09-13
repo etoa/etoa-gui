@@ -260,14 +260,6 @@ try {
 
     $gameMenu = new GameMenu('game-menu.conf');
 
-    if (ADD_BANNER == "") {
-        $twig->addGlobal('adds', false);
-    } elseif ($properties->showAdds || FORCE_ADDS == 1) {
-        $twig->addGlobal('adds', true);
-    } else {
-        $twig->addGlobal('adds', false);
-    }
-
     /** @var TextRepository $textRepo */
     $textRepo = $app[TextRepository::class];
     $infoText = $textRepo->find('info');
@@ -277,7 +269,6 @@ try {
 
     $globals = array_merge($currentPlanetData, [
         'design' => strtolower(str_replace('designs/official/', '', CSS_STYLE)),
-        'addBanner' => ADD_BANNER,
         'gameTitle' => getGameIdentifier(),
         'templateDir' => CSS_STYLE,
         'xajaxJS' => $xajax->getJavascript(XAJAX_DIR),
