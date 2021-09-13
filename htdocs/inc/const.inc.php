@@ -37,10 +37,6 @@ if (!defined('IMAGE_DIR')) {
     define('IMAGE_DIR', RELATIVE_ROOT . "images");
 }
 
-// xAjax
-define('XAJAX_DIR', RELATIVE_ROOT . "libs/xajax");
-define('XAJAX_DEBUG', false);
-
 // Admin mode?
 if (!defined('ADMIN_MODE')) {
     define('ADMIN_MODE', false);

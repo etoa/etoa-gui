@@ -271,7 +271,7 @@ try {
         'design' => strtolower(str_replace('designs/official/', '', CSS_STYLE)),
         'gameTitle' => getGameIdentifier(),
         'templateDir' => CSS_STYLE,
-        'xajaxJS' => $xajax->getJavascript(XAJAX_DIR),
+        'xajaxJS' => $xajax->getJavascript(),
         'bodyTopStuff' => getInitTT(),
         'ownFleetCount' => $ownFleetCount,
         'messages' => $newMessages,

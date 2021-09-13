@@ -19,7 +19,7 @@ require_once __DIR__ . '/../../vendor/autoload.php';
 require __DIR__ . '/inc/includer.inc.php';
 $app = require __DIR__ . '/../../src/app.php';
 
-$twig->addGlobal('ajaxJs', $xajax->getJavascript(XAJAX_DIR));
+$twig->addGlobal('ajaxJs', $xajax->getJavascript());
 $twig->addGlobal('pageTitle', getGameIdentifier() . ' Administration');
 $twig->addGlobal('bodyTopStuff', getInitTT());
 

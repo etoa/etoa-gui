@@ -57,7 +57,7 @@ if (file_exists(CSS_STYLE . '/external.css')) {
 $twig->addGlobal('gameTitle', getGameIdentifier() . (isset($indexpage[$index]) ? ' - ' . $indexpage[$index]['label'] : ''));
 $twig->addGlobal('templateDir', CSS_STYLE);
 $twig->addGlobal('additionalCss', $additionalCss);
-$twig->addGlobal('xajaxJS', $xajax->getJavascript(XAJAX_DIR));
+$twig->addGlobal('xajaxJS', $xajax->getJavascript());
 $twig->addGlobal('bodyTopStuff', getInitTT());
 
 //

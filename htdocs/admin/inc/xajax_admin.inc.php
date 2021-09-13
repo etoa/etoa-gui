@@ -1,10 +1,10 @@
 <?PHP
 
-require_once(XAJAX_DIR . "/xajax_core/xajax.inc.php");
+require_once __DIR__ . "/../../libs/xajax/xajax_core/xajax.inc.php";
 
 $xajax = new xajax();
-$xajax->configure("javascript URI", XAJAX_DIR);
-$xajax->configure('debug', (defined('XAJAX_DEBUG') && XAJAX_DEBUG));
+$xajax->configure("javascript URI", __DIR__ . "/../../libs/xajax");
+$xajax->configure('debug', isDebugEnabled());
 
 require_once("inc/xajax/global.xajax.php");
 

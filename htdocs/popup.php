@@ -49,7 +49,7 @@ if ($loggedIn) {
 
 echo $twig->render('layout/popup.html.twig', [
     'templateDir' => CSS_STYLE,
-    'xajaxJS' => $xajax->getJavascript(XAJAX_DIR),
+    'xajaxJS' => $xajax->getJavascript(),
     'bodyTopStuff' => getInitTT(),
     'errorMessage' => $errorMessage,
     'content' => ob_get_clean(),
