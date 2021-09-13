@@ -1,5 +1,6 @@
 <?PHP
 
+use EtoA\Admin\AllianceBoardAvatar;
 use EtoA\Alliance\AllianceDiplomacy;
 use EtoA\Alliance\AllianceDiplomacyLevel;
 use EtoA\Alliance\AllianceDiplomacyRepository;
@@ -555,7 +556,7 @@ if ($cu->allianceId > 0) {
             $d = opendir(BOARD_BULLET_DIR);
             $bullets = array();
             while ($f = readdir($d)) {
-                if (is_file(BOARD_BULLET_DIR . "/" . $f) && !is_dir(BOARD_BULLET_DIR . "/" . $f) && $f != BOARD_DEFAULT_IMAGE) {
+                if (is_file(BOARD_BULLET_DIR . "/" . $f) && !is_dir(BOARD_BULLET_DIR . "/" . $f) && $f != AllianceBoardAvatar::DEFAULT_IMAGE) {
                     array_push($bullets, $f);
                 }
             }
@@ -574,9 +575,9 @@ if ($cu->allianceId > 0) {
             }
             echo "</td></tr>";
             echo "<tr><th style=\"width:110px;\">Symbol:</th><td>";
-            echo "<img src=\"" . BOARD_BULLET_DIR . "/" . BOARD_DEFAULT_IMAGE . "\" style=\"width:38px;height:35px;\" id=\"bullet\" />";
+            echo "<img src=\"" . BOARD_BULLET_DIR . "/" . AllianceBoardAvatar::DEFAULT_IMAGE . "\" style=\"width:38px;height:35px;\" id=\"bullet\" />";
             echo "<br/>Symbol wählen: <select name=\"cat_bullet\" changeBullet=\"changeAvatar(this);\" onmousemove=\"changeBullet(this);\" onkeyup=\"changeBullet(this);\">";
-            echo "<option value=\"" . BOARD_DEFAULT_IMAGE . "\">Standard-Symbol</option>";
+            echo "<option value=\"" . AllianceBoardAvatar::DEFAULT_IMAGE . "\">Standard-Symbol</option>";
 
             foreach ($bullets as $a) {
                 echo "<option value=\"$a\"";
@@ -600,7 +601,7 @@ if ($cu->allianceId > 0) {
                 $d = opendir(BOARD_BULLET_DIR);
                 $bullets = array();
                 while ($f = readdir($d)) {
-                    if (is_file(BOARD_BULLET_DIR . "/" . $f) && !is_dir(BOARD_BULLET_DIR . "/" . $f) && $f != BOARD_DEFAULT_IMAGE) {
+                    if (is_file(BOARD_BULLET_DIR . "/" . $f) && !is_dir(BOARD_BULLET_DIR . "/" . $f) && $f != AllianceBoardAvatar::DEFAULT_IMAGE) {
                         array_push($bullets, $f);
                     }
                 }
@@ -623,10 +624,10 @@ if ($cu->allianceId > 0) {
                 }
                 echo "</td></tr>";
                 echo "<tr><th style=\"width:110px;\">Symbol:</th><td>";
-                if ($category->bullet == "" || !is_file(BOARD_BULLET_DIR . "/" . $category->bullet)) $category->bullet = BOARD_DEFAULT_IMAGE;
+                if ($category->bullet == "" || !is_file(BOARD_BULLET_DIR . "/" . $category->bullet)) $category->bullet = AllianceBoardAvatar::DEFAULT_IMAGE;
                 echo "<img src=\"" . BOARD_BULLET_DIR . "/" . $category->bullet . "\" style=\"width:38px;height:35px;\" id=\"bullet\" />";
                 echo "<br/>Symbol ändern: <select name=\"cat_bullet\" onmousemove=\"changeBullet(this);\" onkeyup=\"changeBullet(this);\">";
-                echo "<option value=\"" . BOARD_DEFAULT_IMAGE . "\">Standard-Symbol</option>";
+                echo "<option value=\"" . AllianceBoardAvatar::DEFAULT_IMAGE . "\">Standard-Symbol</option>";
                 foreach ($bullets as $a) {
                     echo "<option value=\"$a\"";
                     if ($a == $category->bullet && $category->bullet != "") echo " selected=\"selected\"";
@@ -652,7 +653,7 @@ if ($cu->allianceId > 0) {
                 $d = opendir(BOARD_BULLET_DIR);
                 $bullets = array();
                 while ($f = readdir($d)) {
-                    if (is_file(BOARD_BULLET_DIR . "/" . $f) && !is_dir(BOARD_BULLET_DIR . "/" . $f) && $f != BOARD_DEFAULT_IMAGE) {
+                    if (is_file(BOARD_BULLET_DIR . "/" . $f) && !is_dir(BOARD_BULLET_DIR . "/" . $f) && $f != AllianceBoardAvatar::DEFAULT_IMAGE) {
                         array_push($bullets, $f);
                     }
                 }
@@ -754,7 +755,7 @@ if ($cu->allianceId > 0) {
                             } else
                                 $ps = "-";
                             echo "<tr>";
-                            if ($category->bullet == "" || !is_file(BOARD_BULLET_DIR . "/" . $category->bullet)) $category->bullet = BOARD_DEFAULT_IMAGE;
+                            if ($category->bullet == "" || !is_file(BOARD_BULLET_DIR . "/" . $category->bullet)) $category->bullet = AllianceBoardAvatar::DEFAULT_IMAGE;
                             echo "<td style=\"width:40px;vertical-align:middle;\">
                                     <a href=\"?page=$page&amp;bnd=0&cat=" . $category->id . "\">
                                         <img src=\"" . BOARD_BULLET_DIR . "/" . $category->bullet . "\" style=\"width:40px;height:40px;\" />
@@ -822,7 +823,7 @@ if ($cu->allianceId > 0) {
                             } else
                                 $ps = "-";
                             echo "<tr>";
-                            echo "<td style=\"width:40px;\"><img src=\"" . BOARD_BULLET_DIR . "/" . BOARD_DEFAULT_IMAGE . "\" style=\"width:40px;height:40px;\" /></td>";
+                            echo "<td style=\"width:40px;\"><img src=\"" . BOARD_BULLET_DIR . "/" . AllianceBoardAvatar::DEFAULT_IMAGE . "\" style=\"width:40px;height:40px;\" /></td>";
                             echo "<td style=\"width:300px;\"";
                             if ($isAdmin) {
                                 $rstr = "";

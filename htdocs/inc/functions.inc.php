@@ -1,6 +1,7 @@
 <?PHP
 
 use Doctrine\Common\Collections\ArrayCollection;
+use EtoA\Admin\AllianceBoardAvatar;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Fleet\ForeignFleetLoader;
 use EtoA\Log\AccessLogRepository;
@@ -426,9 +427,9 @@ function tm($title, $text)
 /**
  * Zeigt ein Avatarbild an
  */
-function show_avatar($avatar = BOARD_DEFAULT_IMAGE)
+function show_avatar($avatar = AllianceBoardAvatar::DEFAULT_IMAGE)
 {
-    if ($avatar == "") $avatar = BOARD_DEFAULT_IMAGE;
+    if ($avatar == "") $avatar = AllianceBoardAvatar::DEFAULT_IMAGE;
     echo "<div style=\"padding:8px;\">";
     echo "<img id=\"avatar\" src=\"" . BOARD_AVATAR_DIR . "/" . $avatar . "\" alt=\"avatar\" style=\"width:64px;height:64px;\"/></div>";
 }

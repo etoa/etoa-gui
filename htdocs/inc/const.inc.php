@@ -186,23 +186,6 @@ define("BOARD_BULLET_DIR", "images/boardbullets");
 // Verzeichnis der Avatare
 define("BOARD_AVATAR_DIR", CACHE_ROOT . "/avatars");
 
-// Standard Foren-Icon
-define("BOARD_DEFAULT_IMAGE", "default.png");
-define("BOARD_ADMIN_RANK", 4);
-
-// Avatar-Breite
-define("BOARD_AVATAR_MAX_WIDTH", 1024);
-
-// Avatar-Höhe
-define("BOARD_AVATAR_MAX_HEIGHT", 1024);
-
-// Profilbild-Grösse in Byte
-define("BOARD_AVATAR_MAX_SIZE", 2097152);
-
-// Avatar-Breite
-define("BOARD_AVATAR_WIDTH", 64);
-define("BOARD_AVATAR_HEIGHT", 64);
-
 if (!defined('GD_VERSION')) {
     define("GD_VERSION", 2);
 }
@@ -214,42 +197,12 @@ if (!defined('GD_VERSION')) {
 // Verzeichnis der User-Profilbilder
 define("PROFILE_IMG_DIR", CACHE_ROOT . "/userprofiles");
 
-// Profilbild-Breite
-define("PROFILE_IMG_WIDTH", 640);
-
-// Profilbild-Höhe
-define("PROFILE_IMG_HEIGHT", 480);
-
-// Max. Profilbild-Breite
-define("PROFILE_MAX_IMG_WIDTH", 1280);
-
-// Max. Profilbild-Höhe
-define("PROFILE_MAX_IMG_HEIGHT", 1024);
-
-// Profilbild-Grösse in Byte
-define("PROFILE_IMG_MAX_SIZE", 2097152);
-
 //
 // Allianzbild
 //
 
 // Verzeichnis der Allianz-Bilder
 define("ALLIANCE_IMG_DIR", CACHE_ROOT . "/allianceprofiles");
-
-// Allianzbild-Breite
-define("ALLIANCE_IMG_WIDTH", 800);
-
-// Allianzbild-Höhe
-define("ALLIANCE_IMG_HEIGHT", 600);
-
-// Max. Allianzbild-Breite
-define("ALLIANCE_IMG_MAX_WIDTH", 1280);
-
-// Max. Allianzbild-Höhe
-define("ALLIANCE_IMG_MAX_HEIGHT", 1024);
-
-// Max. Allianzbild-Grösse in Byte
-define("ALLIANCE_IMG_MAX_SIZE", 2000000);
 
 /****************/
 /* Sonstiges */
@@ -271,6 +224,4 @@ define('XML_INFO_FILE', CACHE_ROOT . "/xml/info.xml");
  * Userbanner *
  ***********/
 
-define('USERBANNER_WIDTH', 468);
-define('USERBANNER_HEIGTH', 60);
 define('USERBANNER_DIR', CACHE_ROOT . '/userbanner');

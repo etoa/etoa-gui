@@ -17,8 +17,8 @@ $userNicks = $userRepository->searchUserNicknames();
 foreach ($userNicks as $userId => $userNick) {
     $name = $userBannerService->getUserBannerPath($userId);
     if (file_exists($name)) {
-        echo '<img src="' . $name . '" alt="Banner" style="width:' . USERBANNER_WIDTH . 'px;heigth:' . USERBANNER_HEIGTH . 'px;" /> ';
+        echo '<img src="' . $name . '" alt="Banner" style="width:' . UserBannerService::BANNER_WIDTH . 'px;heigth:' . UserBannerService::BANNER_HEIGHT . 'px;" /> ';
     } else {
-        echo '<div  style="display:inline-block; width:' . USERBANNER_WIDTH . 'px;heigth:' . USERBANNER_HEIGTH . 'px;">Banner für <b>' . $userNick . '</b> existiert nicht!</div> ';
+        echo '<div  style="display:inline-block; width:' . UserBannerService::BANNER_WIDTH . 'px;heigth:' . UserBannerService::BANNER_HEIGHT . 'px;">Banner für <b>' . $userNick . '</b> existiert nicht!</div> ';
     }
 }
