@@ -177,14 +177,14 @@ function havenShowShips()
                 echo "<tr>
                     <td style=\"width:40px;background:#000;\">
                         <a href=\"?page=ship_upgrade&amp;id=" . $ship->id . "\">
-                            <img src=\"" . IMAGE_PATH . "/" . IMAGE_SHIP_DIR . "/ship" . $ship->id . "_small." . IMAGE_EXT . "\" align=\"top\" width=\"40\" height=\"40\" alt=\"Ship\" border=\"0\"/>
+                            <img src=\"" . $ship->getImagePath('small') . "\" align=\"top\" width=\"40\" height=\"40\" alt=\"Ship\" border=\"0\"/>
                         </a>
                     </td>";
             } else {
                 echo "<tr>
                     <td style=\"width:40px;background:#000;\">
                         <a href=\"?page=help&amp;site=shipyard&amp;id=" . $ship->id . "\">
-                            <img src=\"" . IMAGE_PATH . "/" . IMAGE_SHIP_DIR . "/ship" . $ship->id . "_small." . IMAGE_EXT . "\" align=\"top\" width=\"40\" height=\"40\" alt=\"Ship\" border=\"0\"/>
+                            <img src=\"" . $ship->getImagePath('small') . "\" align=\"top\" width=\"40\" height=\"40\" alt=\"Ship\" border=\"0\"/>
                         </a>
                     </td>";
             }
@@ -237,7 +237,7 @@ function havenShowShips()
             }
 
 
-            echo "<td " . tm($ship->name, "<img src=\"" . IMAGE_PATH . "/" . IMAGE_SHIP_DIR . "/ship" . $ship->id . "_middle." . IMAGE_EXT . "\" style=\"float:left;margin-right:5px;\">" . BBCodeUtils::toHTML($ship->shortComment) . "<br/>" . $acstr . "<br style=\"clear:both;\"/>") . ">" . $ship->name . "</td>";
+            echo "<td " . tm($ship->name, "<img src=\"" . $ship->getImagePath('medium') . "\" style=\"float:left;margin-right:5px;\">" . BBCodeUtils::toHTML($ship->shortComment) . "<br/>" . $acstr . "<br style=\"clear:both;\"/>") . ">" . $ship->name . "</td>";
             echo "<td width=\"190\" " . tm("Geschwindigkeit", "Grundgeschwindigkeit: " . $ship->speed . " AE/h<br>$speedtechstring") . ">" . StringUtils::formatNumber($ship->speed * $timefactor) . " AE/h</td>";
             echo "<td width=\"110\">" . StringUtils::formatNumber($ship->pilots) . "</td>";
             echo "<td width=\"110\">" . StringUtils::formatNumber($count) . "<br/>";

@@ -133,11 +133,11 @@ class Ship
     {
         switch ($type) {
             case 'small':
-                return IMAGE_PATH."/".IMAGE_SHIP_DIR."/ship".$this->id."_small.".IMAGE_EXT;
+                return IMAGE_PATH."/ships/ship".$this->id."_small.".IMAGE_EXT;
             case 'medium':
-                return IMAGE_PATH."/".IMAGE_SHIP_DIR."/ship".$this->id."_middle.".IMAGE_EXT;
+                return IMAGE_PATH."/ships/ship".$this->id."_middle.".IMAGE_EXT;
             default:
-                return IMAGE_PATH."/".IMAGE_SHIP_DIR."/ship".$this->id.".".IMAGE_EXT;
+                return IMAGE_PATH."/ships/ship".$this->id.".".IMAGE_EXT;
         }
     }
 

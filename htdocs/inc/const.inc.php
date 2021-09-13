@@ -55,23 +55,12 @@ define("DESIGN_SCRIPT_FILE_NAME", "scripts.js");
 // Tech Ordner
 define("IMAGE_TECHNOLOGY_DIR", "technologies");
 
-// Schiffe Ordner
-define("IMAGE_SHIP_DIR", "ships");
-
 // Planeten Ordner
 define("IMAGE_PLANET_DIR", "planets");
 
 // Gebäude Ordner
 define("IMAGE_BUILDING_DIR", "buildings");
 
-// Def Ordner
-define("IMAGE_DEF_DIR", "defense");
-
-// Allianzgebäude
-define("IMAGE_ALLIANCE_BUILDING_DIR", "abuildings");
-
-// Allianztech
-define("IMAGE_ALLIANCE_TECHNOLOGY_DIR", "atechnologies");
 
 /***********************************/
 /* Installer */

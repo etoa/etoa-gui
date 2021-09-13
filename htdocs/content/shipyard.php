@@ -947,7 +947,7 @@ if ($shipyard !== null && $shipyard->currentLevel > 0) {
                                                     <td colspan=\"5\" style=\"height:5px;\"></td>
                                             </tr>";
                                     }
-                                    $s_img = IMAGE_PATH . "/" . IMAGE_SHIP_DIR . "/ship" . $shipData->id . "_middle." . IMAGE_EXT;
+                                    $s_img = $shipData->getImagePath('medium');
 
                                     echo "<tr>
                                         <th colspan=\"5\" height=\"20\">" . $shipData->name . "</th>
@@ -1017,7 +1017,7 @@ if ($shipyard !== null && $shipyard->currentLevel > 0) {
                                 }
                                 //Einfache Ansicht der Schiffsliste
                                 else {
-                                    $s_img = IMAGE_PATH . "/" . IMAGE_SHIP_DIR . "/ship" . $shipData->id . "_small." . IMAGE_EXT;
+                                    $s_img = $shipData->getImagePath('small');
 
                                     echo "<tr>
                                         <td>";

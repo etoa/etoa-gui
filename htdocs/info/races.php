@@ -100,7 +100,7 @@ if ($request->query->has('id')) {
         tableStart('', 500);
         echo  "<tr><th colspan=\"3\">Spezielle Verteidigung:</th></tr>";
         foreach ($defenses as $defense) {
-            $s_img = IMAGE_PATH . "/" . IMAGE_DEF_DIR . "/def" . $defense->id . "_small." . IMAGE_EXT;
+            $s_img = $defense->getImagePath('small');
             echo "<tr><td style=\"background:black;\"><img src=\"" . $s_img . "\" style=\"width:40px;height:40px;border:none;\" alt=\"def" . $defense->id . "\" /></td>
             <th style=\"width:180px;\">" . $defense->name . "</th>
             <td>" . BBCodeUtils::toHTML($defense->shortComment) . "</td></tr>";

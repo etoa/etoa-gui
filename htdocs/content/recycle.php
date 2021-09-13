@@ -192,7 +192,6 @@ if ($tech_level > 0) {
     //
     //Schiffe
     //
-    $shipNames = $shipDataRepository->searchShipNames(ShipSearch::create()->buildable()->special(false));
     $shipCounts = $shipRepository->getEntityShipCounts($cu->getId(), $planet->id);
     if (count($shipCounts) > 0) {
         echo "<form action=\"?page=$page\" method=\"POST\">";
@@ -204,17 +203,19 @@ if ($tech_level > 0) {
                     </tr>\n";
 
         $tabulator = 1;
-        foreach ($shipNames as $shipId => $shipName) {
+
+        $recyclableShips = $shipDataRepository->searchShips(ShipSearch::create()->buildable()->special(false));
+        foreach ($recyclableShips as $shipId => $ship) {
             if (!isset($shipCounts[$shipId])) {
                 continue;
             }
 
-            $s_img = IMAGE_PATH . "/" . IMAGE_SHIP_DIR . "/ship" . $shipId . "_small." . IMAGE_EXT;
+            $s_img = $ship->getImagePath('small');
             echo "<tr>
                             <td width=\"40\">
                                 <a href=\"" . HELP_URL_SHIP . "&amp;id=" . $shipId . "\"><img src=\"$s_img\" width=\"40\"  height=\"40\" border=\"0\"/></a>
                             </td>";
-            echo "<td width=\"66%\" valign=\"middle\">" . $shipName . "</td>";
+            echo "<td width=\"66%\" valign=\"middle\">" . $ship->name . "</td>";
             echo "<td width=\"22%\" valign=\"middle\">" . StringUtils::formatNumber($shipCounts[$shipId]) . "</td>";
             echo "<td width=\"12%\" valign=\"middle\"><input type=\"text\" name=\"ship_count[" . $shipId . "]\" size=\"8\" maxlength=\"" . strlen((string) $shipCounts[$shipId]) . "\" value=\"0\" title=\"Anzahl welche recyclet werden sollen\" tabindex=\"" . $tabulator . "\" onKeyPress=\"return nurZahlen(event)\">
                             </td>
@@ -231,7 +232,6 @@ if ($tech_level > 0) {
     //
     //Verteidigung
     //
-    $defenseNames = $defenseDataRepository->searchDefenseNames(DefenseSearch::create()->buildable());
     $defenseCounts = $defenseRepository->getEntityDefenseCounts($cu->getId(), $planet->id);
     if (count($defenseCounts) > 0) {
         echo "<form action=\"?page=$page\" method=\"POST\">";
@@ -242,17 +242,19 @@ if ($tech_level > 0) {
                         <th valign=\"top\" width=\"110\">Auswahl</th>
                     </tr>\n";
         $tabulator = 1;
-        foreach ($defenseNames as $defenseId => $defenseName) {
+
+        $recyclableDefenses = $defenseDataRepository->searchDefense(DefenseSearch::create()->buildable());
+        foreach ($recyclableDefenses as $defenseId => $defense) {
             if (!isset($defenseCounts[$defenseId])) {
                 continue;
             }
 
-            $s_img = IMAGE_PATH . "/" . IMAGE_DEF_DIR . "/def" . $defenseId . "_small." . IMAGE_EXT; //image angepasst by Lamborghini
+            $s_img = $defense->getImagePath('small');
             echo "<tr>
                             <td width=\"40\">
                                 <a href=\"" . HELP_URL_DEF . "&amp;id=" . $defenseId . "\"><img src=\"$s_img\" width=\"40\"  height=\"40\" border=\"0\"/></a>
                             </td>";
-            echo "<td width=\"66%\" valign=\"middle\">" . $defenseName . "</td>";
+            echo "<td width=\"66%\" valign=\"middle\">" . $defense->name . "</td>";
             echo "<td width=\"22%\" valign=\"middle\">" . StringUtils::formatNumber($defenseCounts[$defenseId]) . "</td>";
             echo "<td width=\"12%\" valign=\"middle\"><input type=\"text\" name=\"def_count[" . $defenseId . "]\" size=\"8\" maxlength=\"" . strlen((string) $defenseCounts[$defenseId]) . "\" value=\"0\" tabindex=\"" . $tabulator . "\" onKeyPress=\"return nurZahlen(event)\"></td>
                     </tr>\n";

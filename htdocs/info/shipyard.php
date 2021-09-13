@@ -86,7 +86,7 @@ if (isset($_GET['id'])) {
 
         echo "<tr>
             <td class=\"tbltitle\" style=\"width:220px;background:#000\">
-                <img src=\"" . IMAGE_PATH . "/" . IMAGE_SHIP_DIR . "/ship" . $ship->id . "." . IMAGE_EXT . "\" width=\"220\" height=\"220\" alt=\"Schiff\" />
+                <img src=\"" . $ship->getImagePath('other') . "\" width=\"220\" height=\"220\" alt=\"Schiff\" />
             </td>
             <td class=\"tbldata\" colspan=\"3\">
                 " . BBCodeUtils::toHTML($ship->longComment) . "
@@ -294,7 +294,7 @@ else {
                 </tr>";
 
             foreach ($ships as $ship) {
-                $s_img = IMAGE_PATH . "/" . IMAGE_SHIP_DIR . "/ship" . $ship->id . "_small." . IMAGE_EXT;
+                $s_img = $ship->getImagePath('small');
                 echo "<tr><td style=\"background:#000;width:40px;\">
                     <a href=\"?$link&site=$site&id=" . $ship->id . "\">
                     <img src=\"$s_img\" alt=\"Schiffbild\" width=\"40\" height=\"40\" border=\"0\"/></a></td>";

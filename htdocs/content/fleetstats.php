@@ -76,7 +76,7 @@ if (count($shiplist) > 0) {
                 || (isset($fleet_data[$ship->id]) && $fleet_data[$ship->id] > 0)
                 || (isset($shiplist_bunkered[$ship->id]) && array_sum($shiplist_bunkered[$ship->id]) > 0)
             ) {
-                $s_img = IMAGE_PATH . "/" . IMAGE_SHIP_DIR . "/ship" . $ship->id . "_small." . IMAGE_EXT;
+                $s_img = $ship->getImagePath('small');
                 echo '<tr>
                                   <td style="background:#000" style="width:40px;height:40px;">';
 

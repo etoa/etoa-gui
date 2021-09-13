@@ -34,7 +34,7 @@ if (isset($_GET['id']) && intval($_GET['id']) > 0) {
         echo "</select><br/><br/>";
 
         tableStart($defense->name);
-        echo "<tr><td width=\"220\" class=\"tbltitle\"><img src=\"" . IMAGE_PATH . "/" . IMAGE_DEF_DIR . "/def" . $defense->id . "." . IMAGE_EXT . "\" width=\"220\" height=\"220\" alt=\"Verteidigung\" /></td>";
+        echo "<tr><td width=\"220\" class=\"tbltitle\"><img src=\"" . $defense->getImagePath('other') . "\" width=\"220\" height=\"220\" alt=\"Verteidigung\" /></td>";
         echo "<td class=\"tbldata\">" . BBCodeUtils::toHTML($defense->longComment) . "</td></tr>";
         echo "<tr><td class=\"tbltitle\">Rasse</td><td class=\"tbldata\">";
         echo $defense->raceId > 0 ? $raceNames[$defense->raceId] . "</td></tr>" : "-</td></tr>";
@@ -113,7 +113,7 @@ if (isset($_GET['id']) && intval($_GET['id']) > 0) {
                         <th><a href=\"?$link&amp;site=$site&amp;order=points\">Wert</a></th>
                     </tr>";
             foreach ($defenses as $defense) {
-                $s_img = IMAGE_PATH . "/" . IMAGE_DEF_DIR . "/def" . $defense->id . "_small." . IMAGE_EXT;
+                $s_img = $defense->getImagePath('small');
                 echo "<tr><td class=\"tbldata\" style=\"width:40px;background:#000;\">
                         <a href=\"?$link&site=$site&id=" . $defense->id . "\"><img src=\"$s_img\" alt=\"Verteidigung\" width=\"40\" height=\"40\" border=\"0\"/></a></td>";
                 echo "<td>

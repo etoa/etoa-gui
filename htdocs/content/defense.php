@@ -935,7 +935,7 @@ if ($factoryBuilding !== null && $factoryBuilding->currentLevel > 0) {
                                             <td colspan=\"5\" style=\"height:5px;\"></td>
                                     </tr>";
                                 }
-                                $s_img = IMAGE_PATH . "/" . IMAGE_DEF_DIR . "/def" . $defense->id . "_middle." . IMAGE_EXT;
+                                $s_img = $defense->getImagePath('medium');
 
                                 echo "<tr>
                                         <th colspan=\"5\" height=\"20\">" . $defense->name . "</th>
@@ -996,7 +996,7 @@ if ($factoryBuilding !== null && $factoryBuilding->currentLevel > 0) {
                             }
                             //Einfache Ansicht der Schiffsliste
                             else {
-                                $s_img = IMAGE_PATH . "/" . IMAGE_DEF_DIR . "/def" . $defense->id . "_small." . IMAGE_EXT;
+                                $s_img = $defense->getImagePath('small');
 
                                 echo "<tr>
                                         <td>

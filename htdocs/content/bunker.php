@@ -98,13 +98,13 @@ if ($cp) {
                 if ($ships[$shipId]->special) {
                     echo "<tr>
                         <td style=\"width:40px;background:#000;\">
-                                <img src=\"" . IMAGE_PATH . "/" . IMAGE_SHIP_DIR . "/ship" . $shipId . "_small." . IMAGE_EXT . "\" align=\"top\" width=\"40\" height=\"40\" alt=\"Ship\" border=\"0\"/>
+                                <img src=\"" . $ships[$shipId]->getImagePath('small') . "\" align=\"top\" width=\"40\" height=\"40\" alt=\"Ship\" border=\"0\"/>
                         </td>";
                 } else {
                     echo "<tr>
                         <td style=\"width:40px;background:#000;\">
                             <a href=\"?page=help&amp;site=shipyard&amp;id=" . $shipId . "\">
-                                <img src=\"" . IMAGE_PATH . "/" . IMAGE_SHIP_DIR . "/ship" . $shipId . "_small." . IMAGE_EXT . "\" align=\"top\" width=\"40\" height=\"40\" alt=\"Ship\" border=\"0\"/>
+                                <img src=\"" . $ships[$shipId]->getImagePath('small') . "\" align=\"top\" width=\"40\" height=\"40\" alt=\"Ship\" border=\"0\"/>
                             </a>
                         </td>";
                 }
@@ -126,7 +126,7 @@ if ($cp) {
                     $acstr .= "";
                 }
 
-                echo "<td " . tm($ships[$shipId]->name, "<img src=\"" . IMAGE_PATH . "/" . IMAGE_SHIP_DIR . "/ship" . $shipId . "_middle." . IMAGE_EXT . "\" style=\"float:left;margin-right:5px;\">" . BBCodeUtils::toHTML($ships[$shipId]->shortComment) . "<br/>" . $acstr . "<br style=\"clear:both;\"/>") . ">" . $ships[$shipId]->name . "</td>";
+                echo "<td " . tm($ships[$shipId]->name, "<img src=\"" . $ships[$shipId]->getImagePath('medium') . "\" style=\"float:left;margin-right:5px;\">" . BBCodeUtils::toHTML($ships[$shipId]->shortComment) . "<br/>" . $acstr . "<br style=\"clear:both;\"/>") . ">" . $ships[$shipId]->name . "</td>";
                 echo "<td width=\"150\">" . StringUtils::formatNumber($ships[$shipId]->structure) . "</td>";
                 echo "<td width=\"110\">" . StringUtils::formatNumber($bunkeredCount) . "<br/>";
 
@@ -221,14 +221,14 @@ if ($cp) {
                     echo "<tr>
                         <td style=\"width:40px;background:#000;\">
                             <a href=\"?page=ship_upgrade&amp;id=" . $shipId . "\">
-                                <img src=\"" . IMAGE_PATH . "/" . IMAGE_SHIP_DIR . "/ship" . $shipId . "_small." . IMAGE_EXT . "\" align=\"top\" width=\"40\" height=\"40\" alt=\"Ship\" border=\"0\"/>
+                                <img src=\"" . $ships[$shipId]->getImagePath('small') . "\" align=\"top\" width=\"40\" height=\"40\" alt=\"Ship\" border=\"0\"/>
                             </a>
                         </td>";
                 } else {
                     echo "<tr>
                         <td style=\"width:40px;background:#000;\">
                             <a href=\"?page=help&amp;site=shipyard&amp;id=" . $shipId . "\">
-                                <img src=\"" . IMAGE_PATH . "/" . IMAGE_SHIP_DIR . "/ship" . $shipId . "_small." . IMAGE_EXT . "\" align=\"top\" width=\"40\" height=\"40\" alt=\"Ship\" border=\"0\"/>
+                                <img src=\"" . $ships[$shipId]->getImagePath('small') . "\" align=\"top\" width=\"40\" height=\"40\" alt=\"Ship\" border=\"0\"/>
                             </a>
                         </td>";
                 }
@@ -250,7 +250,7 @@ if ($cp) {
                     $acstr .= "";
                 }
 
-                echo "<td " . tm($ships[$shipId]->name, "<img src=\"" . IMAGE_PATH . "/" . IMAGE_SHIP_DIR . "/ship" . $shipId . "_middle." . IMAGE_EXT . "\" style=\"float:left;margin-right:5px;\">" . BBCodeUtils::toHTML($ships[$shipId]->shortComment) . "<br/>" . $acstr . "<br style=\"clear:both;\"/>") . ">" . $ships[$shipId]->name . "</td>";
+                echo "<td " . tm($ships[$shipId]->name, "<img src=\"" . $ships[$shipId]->getImagePath('medium') . "\" style=\"float:left;margin-right:5px;\">" . BBCodeUtils::toHTML($ships[$shipId]->shortComment) . "<br/>" . $acstr . "<br style=\"clear:both;\"/>") . ">" . $ships[$shipId]->name . "</td>";
                 echo "<td width=\"150\">" . StringUtils::formatNumber($ships[$shipId]->structure) . "</td>";
                 echo "<td width=\"110\">" . StringUtils::formatNumber($shipCount) . "<br/>";
 

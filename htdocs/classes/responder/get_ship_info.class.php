@@ -50,7 +50,7 @@ class GetShipInfoJsonResponder extends JsonResponder
                     $acstr .= "";
                 }
 
-                $data['tooltip'] = "<img src=\"" . IMAGE_PATH . "/" . IMAGE_SHIP_DIR . "/ship" . $ship->id . "_middle." . IMAGE_EXT . "\" style=\"float:left;margin-right:5px;\">" . BBCodeUtils::toHTML($ship->shortComment) . "<br/>" . $acstr . "<br style=\"clear:both;\"/>";
+                $data['tooltip'] = "<img src=\"" . $ship->getImagePath('medium') . "\" style=\"float:left;margin-right:5px;\">" . BBCodeUtils::toHTML($ship->shortComment) . "<br/>" . $acstr . "<br style=\"clear:both;\"/>";
 
                 $data['launchable'] = $ship->launchable;
             }
