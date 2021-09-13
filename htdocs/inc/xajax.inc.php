@@ -3,7 +3,7 @@
 require_once __DIR__ . "/../libs/xajax/xajax_core/xajax.inc.php";
 
 $xajax = new xajax();
-$xajax->configure("javascript URI", __DIR__ . "/../libs/xajax");
+$xajax->configure("javascript URI", "../libs/xajax");
 $xajax->configure('debug', isDebugEnabled());
 
 require_once __DIR__  . "/xajax/global.xajax.php";
