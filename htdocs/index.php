@@ -331,6 +331,4 @@ try {
     throw $exception;
 } finally {
     $_SESSION['lastpage'] = $page;
-
-    DBManager::getInstance()->close();
 }

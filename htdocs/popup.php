@@ -61,6 +61,4 @@ try {
         'templateDir' => CSS_STYLE,
         'content' => $ex,
     ]);
-} finally {
-    DBManager::getInstance()->close();
 }

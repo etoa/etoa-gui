@@ -318,5 +318,3 @@ else
     echo "\nUnknown action!\n";
     show_usage();
 }
-
-DBManager::getInstance()->close();

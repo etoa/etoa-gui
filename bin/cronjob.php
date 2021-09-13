@@ -89,9 +89,6 @@ try {
             echo $text;
         }
     }
-
-    DBManager::getInstance()->close();
-
 } catch (DBException $ex) {
     echo $ex;
     exit(1);

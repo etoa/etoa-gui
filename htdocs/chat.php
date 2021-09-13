@@ -60,5 +60,3 @@ echo $twig->render('layout/chat.html.twig', [
     'errorMessage' => $errorMessage,
 
 ]);
-
-DBManager::getInstance()->close();

@@ -75,16 +75,6 @@ class DBManager implements ISingleton
     }
 
     /**
-     * Trennt die Datenbankverbindung
-     */
-    function close()
-    {
-        @mysql_close($this->handle);
-        unset($this->handle);
-        $this->isOpen = false;
-    }
-
-    /**
      * Führt eine Datenbankabfrage aus
      *
      * @param string $string SQL-Abfrage
