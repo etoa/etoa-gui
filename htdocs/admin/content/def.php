@@ -287,7 +287,7 @@ elseif ($sub == "cat") {
 elseif ($sub == "req") {
     define("TITLE", "Verteidigungsanforderungen");
     define("REQ_TBL", "def_requirements");
-    define("ITEM_IMAGE_PATH", IMAGE_PATH . "/defense/def<DB_TABLE_ID>_small." . IMAGE_EXT);
+    define("ITEM_IMAGE_PATH", IMAGE_PATH . "/defense/def<DB_TABLE_ID>_small.png");
 
     /** @var DefenseDataRepository $defenseDataRepository */
     $defenseDataRepository = $app[DefenseDataRepository::class];

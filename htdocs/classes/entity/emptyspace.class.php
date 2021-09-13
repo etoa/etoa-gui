@@ -93,7 +93,7 @@ class EmptySpace extends Entity
     {
         $numImages = 10;
         $r = ($this->id % $numImages) + 1;
-        return IMAGE_PATH . "/space/space" . $r . "_small." . IMAGE_EXT;
+        return IMAGE_PATH . "/space/space" . $r . "_small.png";
     }
 
     /**

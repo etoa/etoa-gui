@@ -67,11 +67,11 @@ class Defense
     {
         switch ($type) {
             case 'small':
-                return IMAGE_PATH."/defense/def".$this->id."_small.".IMAGE_EXT;
+                return IMAGE_PATH."/defense/def".$this->id."_small.png";
             case 'medium':
-                return IMAGE_PATH."/defense/def".$this->id."_middle.".IMAGE_EXT;
+                return IMAGE_PATH."/defense/def".$this->id."_middle.png";
             default:
-                return IMAGE_PATH."/defense/def".$this->id.".".IMAGE_EXT;
+                return IMAGE_PATH."/defense/def".$this->id.".png";
         }
     }
 

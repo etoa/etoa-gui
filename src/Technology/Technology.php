@@ -45,11 +45,11 @@ class Technology
     {
         switch ($type) {
             case 'small':
-                return IMAGE_PATH."/technologies/technology".$this->id."_small.".IMAGE_EXT;
+                return IMAGE_PATH."/technologies/technology".$this->id."_small.png";
             case 'medium':
-                return IMAGE_PATH."/technologies/technology".$this->id."_middle.".IMAGE_EXT;
+                return IMAGE_PATH."/technologies/technology".$this->id."_middle.png";
             default:
-                return IMAGE_PATH."/technologies/technology".$this->id.".".IMAGE_EXT;
+                return IMAGE_PATH."/technologies/technology".$this->id.".png";
         }
     }
 }

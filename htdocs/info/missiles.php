@@ -32,7 +32,7 @@ if (isset($_GET['id'])) {
 
         tableStart($missile->name);
 
-        echo "<tr><td width=\"220\" class=\"tbltitle\"><img src=\"" . IMAGE_PATH . "/missiles/missile" . $missile->id . "." . IMAGE_EXT . "\" width=\"220\" height=\"220\" alt=\"Raketen\" /></td>";
+        echo "<tr><td width=\"220\" class=\"tbltitle\"><img src=\"" . IMAGE_PATH . "/missiles/missile" . $missile->id . ".png" . "\" width=\"220\" height=\"220\" alt=\"Raketen\" /></td>";
         echo "<td class=\"tbldata\">" . BBCodeUtils::toHTML($missile->longDescription) . "</td></tr>";
 
         echo "<tr><td colspan=\"2\" style=\"height:30px;\"></td></tr>";
@@ -119,7 +119,7 @@ else {
         foreach ($missiles as $missile) {
             echo "<tr><td class=\"tbldata\" style=\"width:40px;background:#000\">
                             <a href=\"?$link&amp;site=$site&amp;id=" . $missile->id . "\">
-                            <img src=\"" . IMAGE_PATH . "/missiles/missile" . $missile->id . "_small." . IMAGE_EXT . "\" alt=\"Raketen\" width=\"40\" height=\"40\" border=\"0\"/></a></td>";
+                            <img src=\"" . IMAGE_PATH . "/missiles/missile" . $missile->id . "_small.png" . "\" alt=\"Raketen\" width=\"40\" height=\"40\" border=\"0\"/></a></td>";
             echo "<td class=\"tbltitle\">" . $missile->name . "</td>";
             echo "<td class=\"tbldata\">" . $missile->shortDescription . "</td>";
             echo "<td class=\"tbldata\">" . StringUtils::formatNumber($missile->speed) . " AE/h</td>";

@@ -43,7 +43,7 @@ class AllianceBuilding
 
     public function getImagePath(): string
     {
-        return IMAGE_PATH . "/" . IMAGE_BUILDING_DIR . "/building" . $this->id . "_middle." . IMAGE_EXT;
+        return IMAGE_PATH . "/" . IMAGE_BUILDING_DIR . "/building" . $this->id . "_middle.png";
     }
 
     public function getCosts(): BaseResources

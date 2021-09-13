@@ -40,7 +40,7 @@ class DefensesForm extends AdvancedForm
 
     protected function getImagePath(): ?string
     {
-        return IMAGE_PATH . "/defense/def<DB_TABLE_ID>_small." . IMAGE_EXT;
+        return IMAGE_PATH . "/defense/def<DB_TABLE_ID>_small.png";
     }
 
     protected function getSwitches(): array

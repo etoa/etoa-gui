@@ -94,7 +94,7 @@ class Nebula extends Entity
     {
         $numImages = 9;
         $r = ($this->id % $numImages) + 1;
-        return IMAGE_PATH . "/nebulas/nebula" . $r . "_small." . IMAGE_EXT;
+        return IMAGE_PATH . "/nebulas/nebula" . $r . "_small.png";
     }
 
     /**

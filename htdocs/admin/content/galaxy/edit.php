@@ -240,7 +240,7 @@ Neuer Besitzer: [page user sub=edit user_id=" . $request->request->getInt('plane
                 bis <input type=\"text\" name=\"planet_temp_to\" value=\"" . $planet->tempTo . "\" size=\"4\" maxlength=\"5\" /> &deg;C
             </td>";
             $imPath = IMAGE_PATH . "/planets/planet";
-            $imPathPost = "_small." . IMAGE_EXT;
+            $imPathPost = "_small.png";
             echo "<th>Bild</th>
             <td>
             <img id=\"pimg\" src=\"" . $imPath . $planet->image . $imPathPost . "\" style=\"float:left;\" />
@@ -360,7 +360,7 @@ Neuer Besitzer: [page user sub=edit user_id=" . $request->request->getInt('plane
             <td><input type=\"text\" name=\"name\" value=\"" . $star->name . "\" size=\"20\" maxlength=\"250\" /></td>";
             echo "<th>Typ</th>
             <td>
-            <img src=\"" . IMAGE_PATH . "/stars/star" . $star->typeId . "_small." . IMAGE_EXT . "\" style=\"float:left;\" />
+            <img src=\"" . IMAGE_PATH . "/stars/star" . $star->typeId . "_small.png" . "\" style=\"float:left;\" />
             <select name=\"type_id\">";
             $solarTypeNames = $solarTypeRepository->getSolarTypeNames(true);
             foreach ($solarTypeNames as $solarTypeId => $solarTypeName) {

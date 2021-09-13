@@ -105,7 +105,7 @@ elseif ($sub == "req") {
     define("REQ_TBL", "tech_requirements");
     define("ITEM_ENABLE_FLD", "tech_show");
 
-    define("ITEM_IMAGE_PATH", IMAGE_PATH . "/technologies/technology<DB_TABLE_ID>_small." . IMAGE_EXT);
+    define("ITEM_IMAGE_PATH", IMAGE_PATH . "/technologies/technology<DB_TABLE_ID>_small.png");
 
     $objectNames = $technologyDataRepository->getTechnologyNames(true, TechnologySort::type());
     include("inc/requirements.inc.php");

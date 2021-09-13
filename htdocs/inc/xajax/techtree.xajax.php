@@ -47,11 +47,11 @@ function reqInfo($id, $cat = 'b')
 
     $items = [];
     foreach ($requirements->getBuildingRequirements($id) as $requirement) {
-        $items[] = array($requirement->requiredBuildingId, $buildingNames[$requirement->requiredBuildingId], $requirement->requiredLevel, IMAGE_PATH . "/buildings/building" . $requirement->requiredBuildingId . "_middle." . IMAGE_EXT, "xajax_reqInfo(" . $requirement->requiredBuildingId . ",'b')");
+        $items[] = array($requirement->requiredBuildingId, $buildingNames[$requirement->requiredBuildingId], $requirement->requiredLevel, IMAGE_PATH . "/buildings/building" . $requirement->requiredBuildingId . "_middle.png", "xajax_reqInfo(" . $requirement->requiredBuildingId . ",'b')");
     }
 
     foreach ($requirements->getTechnologyRequirements($id) as $requirement) {
-        $items[] = array($requirement->requiredTechnologyId, $technologyNames[$requirement->requiredTechnologyId], $requirement->requiredLevel, IMAGE_PATH . "/technologies/technology" . $requirement->requiredTechnologyId . "_middle." . IMAGE_EXT, "xajax_reqInfo(" . $requirement->requiredTechnologyId . ",'b')");
+        $items[] = array($requirement->requiredTechnologyId, $technologyNames[$requirement->requiredTechnologyId], $requirement->requiredLevel, IMAGE_PATH . "/technologies/technology" . $requirement->requiredTechnologyId . "_middle.png", "xajax_reqInfo(" . $requirement->requiredTechnologyId . ",'b')");
     }
 
     if (count($items) > 0) {
@@ -74,19 +74,19 @@ function reqInfo($id, $cat = 'b')
     //
 
     if ($cat == 'b') {
-        $img = IMAGE_PATH . "/buildings/building" . $id . "_middle." . IMAGE_EXT;
+        $img = IMAGE_PATH . "/buildings/building" . $id . "_middle.png";
         $name = $buildingNames[$id];
     } elseif ($cat == 't') {
-        $img = IMAGE_PATH . "/technologies/technology" . $id . "_middle." . IMAGE_EXT;
+        $img = IMAGE_PATH . "/technologies/technology" . $id . "_middle.png";
         $name = $technologyNames[$id];
     } elseif ($cat == 's') {
-        $img = IMAGE_PATH . "/ships/ship" . $id . "_middle." . IMAGE_EXT;
+        $img = IMAGE_PATH . "/ships/ship" . $id . "_middle.png";
         $name = $shipNames[$id];
     } elseif ($cat == 'd') {
-        $img = IMAGE_PATH . "/defense/def" . $id . "_middle." . IMAGE_EXT;
+        $img = IMAGE_PATH . "/defense/def" . $id . "_middle.png";
         $name = $defenseNames[$id];
     } elseif ($cat == 'm') {
-        $img = IMAGE_PATH . "/missiles/missile" . $id . "_middle." . IMAGE_EXT;
+        $img = IMAGE_PATH . "/missiles/missile" . $id . "_middle.png";
         $name = $missileNames[$id];
     } else {
         throw new \InvalidArgumentException('Unknown category:' . $cat);
@@ -130,27 +130,27 @@ function reqInfo($id, $cat = 'b')
         $items = array();
         foreach ($buildingRequirements as $requirement) {
             if (isset($buildingNames[$requirement->objectId])) {
-                $items[] = array($requirement->objectId, $buildingNames[$requirement->objectId], $requirement->requiredLevel, IMAGE_PATH . "/buildings/building" . $requirement->objectId . "_middle." . IMAGE_EXT, "xajax_reqInfo(" . $requirement->objectId . ",'b')");
+                $items[] = array($requirement->objectId, $buildingNames[$requirement->objectId], $requirement->requiredLevel, IMAGE_PATH . "/buildings/building" . $requirement->objectId . "_middle.png", "xajax_reqInfo(" . $requirement->objectId . ",'b')");
             }
         }
         foreach ($technologyRequirements as $requirement) {
             if (isset($technologyNames[$requirement->objectId])) {
-                $items[] = array($requirement->objectId, $technologyNames[$requirement->objectId], $requirement->requiredLevel, IMAGE_PATH . "/technologies/technology" . $requirement->objectId . "_middle." . IMAGE_EXT, "xajax_reqInfo(" . $requirement->objectId . ",'t')");
+                $items[] = array($requirement->objectId, $technologyNames[$requirement->objectId], $requirement->requiredLevel, IMAGE_PATH . "/technologies/technology" . $requirement->objectId . "_middle.png", "xajax_reqInfo(" . $requirement->objectId . ",'t')");
             }
         }
         foreach ($shipRequirements as $requirement) {
             if (isset($shipNames[$requirement->objectId])) {
-                $items[] = array($requirement->objectId, $shipNames[$requirement->objectId], $requirement->requiredLevel, IMAGE_PATH . "/ships/ship" . $requirement->objectId . "_middle." . IMAGE_EXT, "xajax_reqInfo(" . $requirement->objectId . ",'s')");
+                $items[] = array($requirement->objectId, $shipNames[$requirement->objectId], $requirement->requiredLevel, IMAGE_PATH . "/ships/ship" . $requirement->objectId . "_middle.png", "xajax_reqInfo(" . $requirement->objectId . ",'s')");
             }
         }
         foreach ($defenseRequirements as $requirement) {
             if (isset($defenseNames[$requirement->objectId])) {
-                $items[] = array($requirement->objectId, $defenseNames[$requirement->objectId], $requirement->requiredLevel, IMAGE_PATH . "/defense/def" . $requirement->objectId . "_middle." . IMAGE_EXT, "xajax_reqInfo(" . $requirement->objectId . ",'d')");
+                $items[] = array($requirement->objectId, $defenseNames[$requirement->objectId], $requirement->requiredLevel, IMAGE_PATH . "/defense/def" . $requirement->objectId . "_middle.png", "xajax_reqInfo(" . $requirement->objectId . ",'d')");
             }
         }
         foreach ($missileRequirements as $requirement) {
             if (isset($missileNames[$requirement->objectId])) {
-                $items[] = array($requirement->objectId, $missileNames[$requirement->objectId], $requirement->requiredLevel, IMAGE_PATH . "/missiles/missile" . $requirement->objectId . "_middle." . IMAGE_EXT, "xajax_reqInfo(" . $requirement->objectId . ",'m')");
+                $items[] = array($requirement->objectId, $missileNames[$requirement->objectId], $requirement->requiredLevel, IMAGE_PATH . "/missiles/missile" . $requirement->objectId . "_middle.png", "xajax_reqInfo(" . $requirement->objectId . ",'m')");
             }
         }
 
