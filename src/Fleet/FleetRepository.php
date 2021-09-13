@@ -8,6 +8,7 @@ use Doctrine\DBAL\Query\QueryBuilder;
 use EtoA\Core\AbstractRepository;
 use EtoA\Core\Database\AbstractSearch;
 use EtoA\Core\Database\AbstractSort;
+use EtoA\Ship\ShipListItem;
 use EtoA\Universe\Resources\BaseResources;
 
 class FleetRepository extends AbstractRepository
@@ -19,6 +20,30 @@ class FleetRepository extends AbstractRepository
             ->from('fleet')
             ->execute()
             ->fetchOne();
+    }
+
+    /**
+     * @return int[]
+     */
+    public function getUserIds(FleetSearch $search = null): array
+    {
+        return array_map(fn (array $row) => (int) $row['user_id'], $this->applySearchSortLimit($this->createQueryBuilder(), $search)
+            ->select("DISTINCT user_id")
+            ->from('fleet')
+            ->execute()
+            ->fetchAllAssociative());
+    }
+
+    /**
+     * @return int[]
+     */
+    public function getEntityToIds(FleetSearch $search = null): array
+    {
+        return array_map(fn (array $row) => (int) $row['entity_to'], $this->applySearchSortLimit($this->createQueryBuilder(), $search)
+            ->select("DISTINCT entity_to")
+            ->from('fleet')
+            ->execute()
+            ->fetchAllAssociative());
     }
 
     public function countLeaderFleets(int $leaderId): int
@@ -136,8 +161,10 @@ class FleetRepository extends AbstractRepository
         return array_map(fn ($arr) => new Fleet($arr), $data);
     }
 
-    public function add(int $userId, int $launchTime, int $landTime, int $entityFrom, int $entityTo, string $action, int $status, BaseResources $resources): int
+    public function add(int $userId, int $launchTime, int $landTime, int $entityFrom, int $entityTo, string $action, int $status, BaseResources $resources, BaseResources $fetch = null, int $pilots = 0, int $fuelUsage = 0, int $foodUsage = 0, int $powerUsage = 0, int $leaderId = 0, int $nextId = 0, int $nextActionTime = 0, int $supportFuelUsage = 0, int $supportFoodUsage = 0): int
     {
+        $fetch = $fetch !== null ? $fetch : new BaseResources();
+
         $this->createQueryBuilder()
             ->insert('fleet')
             ->values([
@@ -153,6 +180,22 @@ class FleetRepository extends AbstractRepository
                 'res_plastic' => ':resPlastic',
                 'res_fuel' => ':resFuel',
                 'res_food' => ':resFood',
+                'res_people' => ':resPeople',
+                'fetch_metal' => ':fetchMetal',
+                'fetch_crystal' => ':fetchCrystal',
+                'fetch_plastic' => ':fetchPlastic',
+                'fetch_fuel' => ':fetchFuel',
+                'fetch_food' => ':fetchFood',
+                'fetch_people' => ':fetchPeople',
+                'pilots' => ':pilots',
+                'usage_fuel' => ':usageFuel',
+                'usage_food' => ':usageFood',
+                'usage_power' => ':usagePower',
+                'support_usage_food' => ':supportUsageFood',
+                'support_usage_fuel' => ':supportUsageFuel',
+                'leader_id' => ':leaderId',
+                'next_id' => ':nextId',
+                'nextactiontime' => ':nextActionTime',
             ])
             ->setParameters([
                 'userId' => $userId,
@@ -167,6 +210,22 @@ class FleetRepository extends AbstractRepository
                 'resPlastic' => $resources->plastic,
                 'resFuel' => $resources->fuel,
                 'resFood' => $resources->food,
+                'resPeople' => $resources->people,
+                'fetchMetal' => $fetch->metal,
+                'fetchCrystal' => $fetch->crystal,
+                'fetchPlastic' => $fetch->plastic,
+                'fetchFuel' => $fetch->fuel,
+                'fetchFood' => $fetch->food,
+                'fetchPeople' => $fetch->people,
+                'pilots' => $pilots,
+                'usageFuel' => $fuelUsage,
+                'usageFood' => $foodUsage,
+                'usagePower' => $powerUsage,
+                'supportUsageFood' => $supportFoodUsage,
+                'supportUsageFuel' => $supportFuelUsage,
+                'leaderId' => $leaderId,
+                'nextId' => $nextId,
+                'nextActionTime' => $nextActionTime,
             ])
             ->execute();
 
@@ -190,6 +249,20 @@ class FleetRepository extends AbstractRepository
                 'entityFrom' => $entityFrom,
                 'entityTo' => $entityTo,
                 'status' => $status,
+            ])
+            ->execute();
+    }
+
+    public function markAsLeader(int $id, int $allianceId): void
+    {
+        $this->createQueryBuilder()
+            ->update('fleet')
+            ->set('leader_id', ':id')
+            ->set('next_id', ':allianceId')
+            ->where('id = :id')
+            ->setParameters([
+                'id' => $id,
+                'allianceId' => $allianceId,
             ])
             ->execute();
     }
@@ -318,6 +391,56 @@ class FleetRepository extends AbstractRepository
             ->fetchAssociative();
 
         return $data !== false ? new FleetShip($data) : null;
+    }
+
+    public function addSpecialShipsToFleet(int $fleetId, int $shipId, int $count, ShipListItem $item): void
+    {
+        $this->createQueryBuilder()
+            ->insert('fleet_ships')
+            ->values([
+                'fs_fleet_id' => ':fleetId',
+                'fs_ship_id' => ':shipId',
+                'fs_ship_cnt' => ':count',
+                'fs_special_ship' => '1',
+                'fs_special_ship_level' => ':level',
+                'fs_special_ship_exp' => ':exp',
+                'fs_special_ship_bonus_weapon' => ':bonusWeapon',
+                'fs_special_ship_bonus_structure' => ':bonusStructure',
+                'fs_special_ship_bonus_shield' => ':bonusShield',
+                'fs_special_ship_bonus_heal' => ':bonusHeal',
+                'fs_special_ship_bonus_capacity' => ':bonusCapacity',
+                'fs_special_ship_bonus_speed' => ':bonusSpeed',
+                'fs_special_ship_bonus_readiness' => ':bonusReadiness',
+                'fs_special_ship_bonus_pilots' => ':bonusPilots',
+                'fs_special_ship_bonus_tarn' => ':bonusTarn',
+                'fs_special_ship_bonus_antrax' => ':bonusAntrax',
+                'fs_special_ship_bonus_forsteal' => ':bonusForsteal',
+                'fs_special_ship_bonus_build_destroy' => ':bonusBuildDestroy',
+                'fs_special_ship_bonus_antrax_food' => ':bonusAntraxFood',
+                'fs_special_ship_bonus_deactivade' => ':bonusDeactivade',
+            ])
+            ->setParameters([
+                'fleetId' => $fleetId,
+                'shipId' => $shipId,
+                'count' => $count,
+                'level' => $item->specialShipLevel,
+                'exp' => $item->specialShipExp,
+                'bonusWeapon' => $item->specialShipBonusWeapon,
+                'bonusStructure' => $item->specialShipBonusStructure,
+                'bonusShield' => $item->specialShipBonusShield,
+                'bonusHeal' => $item->specialShipBonusHeal,
+                'bonusCapacity' => $item->specialShipBonusCapacity,
+                'bonusSpeed' => $item->specialShipBonusSpeed,
+                'bonusReadiness' => $item->specialShipBonusReadiness,
+                'bonusPilots' => $item->specialShipBonusPilots,
+                'bonusTarn' => $item->specialShipBonusTarn,
+                'bonusAntrax' => $item->specialShipBonusAnthrax,
+                'bonusForsteal' => $item->specialShipBonusForSteal,
+                'bonusBuildDestroy' => $item->specialShipBonusBuildDestroy,
+                'bonusAntraxFood' => $item->specialShipBonusAnthraxFood,
+                'bonusDeactivade' => $item->specialShipBonusDeactivate,
+            ])
+            ->execute();
     }
 
     public function addShipsToFleet(int $fleetId, int $shipId, int $count, int $fakeId = 0): void

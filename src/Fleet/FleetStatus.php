@@ -9,4 +9,5 @@ class FleetStatus
     public const DEPARTURE = 0;
     public const ARRIVAL = 1;
     public const CANCELLED = 2;
+    public const WAITING = 3;
 }
