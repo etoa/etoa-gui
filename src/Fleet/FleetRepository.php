@@ -67,6 +67,39 @@ class FleetRepository extends AbstractRepository
             ->execute()
             ->fetchOne();
     }
+
+    /**
+     * @return array<int, int>
+     */
+    public function getFleetShipCounts(int $fleetId): array
+    {
+        return array_map(fn ($value) => (int) $value, $this->createQueryBuilder()
+            ->select('fs_ship_id, fs_ship_cnt')
+            ->from('fleet_ships')
+            ->where('fs_fleet_id = :fleetId')
+            ->andWhere('fs_ship_cnt > 0')
+            ->setParameter('fleetId', $fleetId)
+            ->execute()
+            ->fetchAllKeyValue());
+    }
+
+    /**
+     * @return array<int, int>
+     */
+    public function getLeaderShipCounts(int $leaderId): array
+    {
+        return array_map(fn ($value) => (int) $value, $this->createQueryBuilder()
+            ->select('fs_ship_id, SUM(fs_ship_cnt)')
+            ->from('fleet_ships')
+            ->innerJoin('fleet_ships', 'fleet', 'fleet', 'fleet.id = fs_fleet_id')
+            ->where('fleet.leader_id = :leaderId')
+            ->andWhere('fs_ship_cnt > 0')
+            ->groupBy('fs_ship_id')
+            ->setParameter('leaderId', $leaderId)
+            ->execute()
+            ->fetchAllKeyValue());
+    }
+
     public function hasFleetsRelatedToEntity(int $entityId): bool
     {
         $count = (int) $this->createQueryBuilder()
@@ -232,15 +265,16 @@ class FleetRepository extends AbstractRepository
         return (int) $this->getConnection()->lastInsertId();
     }
 
-    public function update(int $id, int $launchTime, int $landTime, int $entityFrom, int $entityTo, int $status): void
+    public function update(int $id, int $launchTime, int $landTime, int $entityFrom, int $entityTo, int $status, int $leaderId = 0, BaseResources $resources = null, int $usageFuel = null, int $usageFood = null): bool
     {
-        $this->createQueryBuilder()
+        $qb = $this->createQueryBuilder()
             ->update('fleet')
             ->set('launchtime', ':launchTime')
             ->set('landtime', ':landTime')
             ->set('entity_from', ':entityFrom')
             ->set('entity_to', ':entityTo')
             ->set('status', ':status')
+            ->set('leader_id', ':leaderId')
             ->where('id = :id')
             ->setParameters([
                 'id' => $id,
@@ -249,7 +283,38 @@ class FleetRepository extends AbstractRepository
                 'entityFrom' => $entityFrom,
                 'entityTo' => $entityTo,
                 'status' => $status,
-            ])
+                'leaderId' => $leaderId,
+            ]);
+
+        if ($resources !== null) {
+            $qb
+                ->set('res_metal', ':resMetal')
+                ->set('res_crystal', ':resCrystal')
+                ->set('res_plastic', ':resPlastic')
+                ->set('res_fuel', ':resFuel')
+                ->set('res_food', ':resFood')
+                ->set('res_people', ':resPeople')
+                ->setParameter('resMetal', $resources->metal)
+                ->setParameter('resCrystal', $resources->crystal)
+                ->setParameter('resPlastic', $resources->plastic)
+                ->setParameter('resFuel', $resources->fuel)
+                ->setParameter('resFood', $resources->food)
+                ->setParameter('resPeople', $resources->people);
+        }
+
+        if ($usageFuel !== null) {
+            $qb
+                ->set('usage_fuel', ':usageFuel')
+                ->setParameter('usageFuel', $usageFuel);
+        }
+
+        if ($usageFood !== null) {
+            $qb
+                ->set('usage_food', ':usageFood')
+                ->setParameter('usageFood', $usageFood);
+        }
+
+        return (bool) $qb
             ->execute();
     }
 
@@ -263,6 +328,44 @@ class FleetRepository extends AbstractRepository
             ->setParameters([
                 'id' => $id,
                 'allianceId' => $allianceId,
+            ])
+            ->execute();
+    }
+
+    public function promoteNewAllianceFleetLeader(int $newLeader, int $existingLeader, int $landTime): void
+    {
+        $this->createQueryBuilder()
+            ->update('fleet')
+            ->set('status', ':status')
+            ->set('landtime', ':landTime')
+            ->where('id = :id')
+            ->setParameters([
+                'status' => FleetStatus::DEPARTURE,
+                'landTime' => $landTime,
+                'id' => $newLeader,
+            ])
+            ->execute();
+
+        $this->createQueryBuilder()
+            ->update('fleet')
+            ->set('leader_id', ':newLeaderId')
+            ->where('leader_id = :existingLeaderId')
+            ->setParameters([
+                'existingLeaderId' => $existingLeader,
+                'newLeaderId' => $newLeader,
+            ])
+            ->execute();
+    }
+
+    public function removeSupportRes(int $fleetId): void
+    {
+        $this->createQueryBuilder()
+            ->update('fleet')
+            ->set('support_usage_fuel', '0')
+            ->set('support_usage_food', '0')
+            ->where('id = :id')
+            ->setParameters([
+                'id' => $fleetId,
             ])
             ->execute();
     }
@@ -565,12 +668,13 @@ class FleetRepository extends AbstractRepository
     /**
      * @return Fleet[]
      */
-    public function search(FleetSearch $search): array
+    public function search(FleetSearch $search, FleetSort $sort = null): array
     {
-        $data = $this->applySearchSortLimit($this->createQueryBuilder(), $search)
+        $sort = $sort !== null ? $sort : FleetSort::landtime('DESC');
+
+        $data = $this->applySearchSortLimit($this->createQueryBuilder(), $search, $sort)
             ->select('fleet.*')
             ->from('fleet')
-            ->orderBy('fleet.landtime', 'DESC')
             ->execute()
             ->fetchAllAssociative();
 

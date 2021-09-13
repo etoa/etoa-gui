@@ -11,6 +11,14 @@ class FleetSearch extends AbstractSearch
         return new FleetSearch();
     }
 
+    public function id(int $id): self
+    {
+        $this->parts[] = 'id = :id';
+        $this->parameters['id'] = $id;
+
+        return $this;
+    }
+
     public function isLeader(): self
     {
         $this->parts[] = 'fleet.id = fleet.leader_id';
