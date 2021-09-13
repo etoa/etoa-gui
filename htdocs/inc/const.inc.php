@@ -354,15 +354,6 @@ define("ALLIANCE_IMG_MAX_HEIGHT", 1024);
 define("ALLIANCE_IMG_MAX_SIZE", 2000000);
 
 /****************/
-/* Allianz Flottenkontrolle */
-/****************/
-define("ALLIANCE_FLEET_SHOW", 1);
-define("ALLIANCE_FLEET_SHOW_DETAIL", 2);
-define("ALLIANCE_FLEET_SEND_HOME", 3);
-define("ALLIANCE_FLEET_SHOW_PART", 4);
-define("ALLIANCE_FLEET_SEND_HOME_PART", 5);
-
-/****************/
 /* Sonstiges */
 /****************/
 

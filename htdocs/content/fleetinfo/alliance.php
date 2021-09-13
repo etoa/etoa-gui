@@ -4,6 +4,7 @@
 /** @var Fleet $fd */
 
 use EtoA\Alliance\AllianceBuildingRepository;
+use EtoA\Alliance\AllianceFleetControlLevel;
 use EtoA\Alliance\AllianceRepository;
 use EtoA\Alliance\AllianceRights;
 use EtoA\Alliance\AllianceService;
@@ -40,10 +41,10 @@ $allianceFleetControlLevel = $allianceBuildingRepository->getLevel($cu->alliance
 if ($lead_id > 0)
     $fd = new Fleet($fleet_id, -1, $lead_id);
 else
-        if ($allianceFleetControlLevel < ALLIANCE_FLEET_SHOW_PART && $cu->id != $fd->ownerId())
+        if ($allianceFleetControlLevel < AllianceFleetControlLevel::SHOW_PART && $cu->id != $fd->ownerId())
     $rights = false;
 
-if ($allianceFleetControlLevel >= ALLIANCE_FLEET_SHOW_DETAIL && $rights) {
+if ($allianceFleetControlLevel >= AllianceFleetControlLevel::SHOW_DETAIL && $rights) {
     $alliance = $allianceRepository->getAlliance($user->allianceId);
     $userAlliancePermission = $allianceService->getUserAlliancePermissions($alliance, $user);
     if ($userAlliancePermission->hasRights(AllianceRights::FLEET_MINISTER) || $cu->id == $fd->ownerId()) {
@@ -122,7 +123,7 @@ if ($allianceFleetControlLevel >= ALLIANCE_FLEET_SHOW_DETAIL && $rights) {
                         <td id=\"flighttime\" style=\"color:#ff0\">-</td>
                     </tr>";
 
-            if ($fd->id() == $fd->leaderId() && $lead_id > 0 && $allianceFleetControlLevel >= ALLIANCE_FLEET_SHOW_PART) {
+            if ($fd->id() == $fd->leaderId() && $lead_id > 0 && $allianceFleetControlLevel >= AllianceFleetControlLevel::SHOW_PART) {
                 $alliance = $allianceRepository->getAlliance($cu->allianceId());
                 $allianceTag = $alliance !== null ? $alliance->tag : null;
                 echo "<th>Teilflotten:</th>

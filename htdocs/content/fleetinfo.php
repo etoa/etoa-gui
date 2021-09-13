@@ -2,6 +2,7 @@
 
 use EtoA\Alliance\AllianceBuildingId;
 use EtoA\Alliance\AllianceBuildingRepository;
+use EtoA\Alliance\AllianceFleetControlLevel;
 use EtoA\Alliance\AllianceRepository;
 use EtoA\Alliance\AllianceRights;
 use EtoA\Alliance\AllianceService;
@@ -56,11 +57,11 @@ if ($fd->valid()) {
                 $valid = $allianceFleetControlLevel;
             } elseif ($fd->getAction()->code() == "alliance" && $fd->ownerAllianceId() == $cu->allianceId() && $cu->allianceId() > 0) {
                 if ($fd->status() == 0) {
-                    if ($lead_id > 0 && ($allianceFleetControlLevel >= ALLIANCE_FLEET_SHOW)) {
+                    if ($lead_id > 0 && ($allianceFleetControlLevel >= AllianceFleetControlLevel::SHOW)) {
                         $valid = $allianceFleetControlLevel;
                     }
                 } elseif ($fd->status() == 3) {
-                    if ($allianceFleetControlLevel >= ALLIANCE_FLEET_SHOW_PART) {
+                    if ($allianceFleetControlLevel >= AllianceFleetControlLevel::SHOW_PART) {
                         $valid = $allianceFleetControlLevel;
                     }
                 }
@@ -72,7 +73,7 @@ if ($fd->valid()) {
 if ($valid > 0) {
     // Flugabbruch ausl�sen
     if (isset($_POST['cancel']) != "" && checker_verify()) {
-        if ($valid >= ALLIANCE_FLEET_SEND_HOME_PART) {
+        if ($valid >= AllianceFleetControlLevel::SEND_HOME_PART) {
             if ($fd->cancelFlight()) {
                 success_msg("Flug erfolgreich abgebrochen!");
             } else {
@@ -84,7 +85,7 @@ if ($valid > 0) {
     }
 
     if (isset($_POST['cancel_alliance']) != "" && checker_verify()) {
-        if ($valid >= ALLIANCE_FLEET_SEND_HOME) {
+        if ($valid >= AllianceFleetControlLevel::SEND_HOME) {
             if ($fd->cancelFlight(true)) {
                 success_msg("Flug erfolgreich abgebrochen!");
                 $logRepository->add(LogFacility::FLEETACTION, LogSeverity::INFO, "Der Spieler [b]" . $cu->nick . "[/b] bricht den ganzen Allianzflug seiner Flotte [b]" . $fleet_id . "[/b] ab");
@@ -208,11 +209,11 @@ if ($valid > 0) {
     echo "<input type=\"button\" onClick=\"document.location='?page=fleets'\" value=\"Zur&uuml;ck zur Flotten&uuml;bersicht\"> &nbsp;";
 
     // Abbrechen-Button anzeigen
-    if ($valid >= ALLIANCE_FLEET_SEND_HOME && ($fd->status() == 0 && $lead_id > 0) && $fd->landTime() > time()) {
+    if ($valid >= AllianceFleetControlLevel::SEND_HOME && ($fd->status() == 0 && $lead_id > 0) && $fd->landTime() > time()) {
         checker_init();
         echo "<input type=\"submit\" name=\"cancel_alliance\" value=\"Allianzangriff abbrechen und zum Heimatplanet zur&uuml;ckkehren\"  onclick=\"return confirm('Willst du diesen Allianzangriff wirklich abbrechen? Merke du brichst damit den ganzen Allianzangriff ab!');\">";
     } elseif (
-        $valid >= ALLIANCE_FLEET_SEND_HOME_PART
+        $valid >= AllianceFleetControlLevel::SEND_HOME_PART
         && (($fd->status() == 0
             && $lead_id < 0) || $fd->status() == 3) && $fd->landTime() > time() && $fd->getAction()->cancelable()
     ) {
