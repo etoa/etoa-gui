@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use EtoA\Backend\EventHandlerManager;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Support\DB\DatabaseMigrationService;
 use Twig\Environment;
@@ -115,7 +116,7 @@ password = ' . $dbCfg['password'] . '
     $config->set("loginurl", $_SESSION['INSTALL']['loginserver_url']);
 
     writeConfigFile(\EtoA\Core\DoctrineServiceProvider::CONFIG_FILE, $dbConfigString);
-    writeConfigFile(EVENTHANDLER_CONFIG_FILE_NAME, $dbConfigStingEventHandler);
+    writeConfigFile(EventHandlerManager::CONFIG_FILE_NAME, $dbConfigStingEventHandler);
 
     if (configFileExists(\EtoA\Core\DoctrineServiceProvider::CONFIG_FILE)) {
         $_SESSION['INSTALL']['step'] = 1;
@@ -130,8 +131,8 @@ password = ' . $dbCfg['password'] . '
         'dbConfigFile' => getConfigFilePath(\EtoA\Core\DoctrineServiceProvider::CONFIG_FILE),
         'dbConfigString' => $dbConfigString,
 
-        'eventHandlerConfigFileMissing' => !configFileExists(EVENTHANDLER_CONFIG_FILE_NAME),
-        'eventHandlerConfigFile' => getConfigFilePath(EVENTHANDLER_CONFIG_FILE_NAME),
+        'eventHandlerConfigFileMissing' => !configFileExists(EventHandlerManager::CONFIG_FILE_NAME),
+        'eventHandlerConfigFile' => getConfigFilePath(EventHandlerManager::CONFIG_FILE_NAME),
         'eventHandlerConfigString' => $dbConfigStingEventHandler,
 
         'loginUrl' => getLoginUrl(),

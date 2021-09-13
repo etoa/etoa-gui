@@ -9,6 +9,8 @@ use Exception;
 
 class EventHandlerManager
 {
+    public const CONFIG_FILE_NAME = 'eventhandler.conf';
+
     private ConfigurationService $config;
 
     public function __construct(
@@ -91,6 +93,6 @@ class EventHandlerManager
 
     private function getConfigFile(): string
     {
-        return realpath(RELATIVE_ROOT . 'config/' . EVENTHANDLER_CONFIG_FILE_NAME);
+        return realpath(RELATIVE_ROOT . 'config/' . EventHandlerManager::CONFIG_FILE_NAME);
     }
 }

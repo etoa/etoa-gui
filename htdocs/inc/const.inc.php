@@ -73,9 +73,6 @@ define("DESIGN_STYLESHEET_FILE_NAME", "style.css");
 // Design main script file name
 define("DESIGN_SCRIPT_FILE_NAME", "scripts.js");
 
-// Eventhandler configuration file name
-define('EVENTHANDLER_CONFIG_FILE_NAME', 'eventhandler.conf');
-
 // Tech Ordner
 define("IMAGE_TECHNOLOGY_DIR", "technologies");
 
