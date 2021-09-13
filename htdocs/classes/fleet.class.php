@@ -1,8 +1,13 @@
 <?PHP
 
+use EtoA\Fleet\FleetRepository;
+use EtoA\Fleet\FleetSearch;
+use EtoA\Fleet\FleetSort;
+use EtoA\Fleet\FleetStatus;
 use EtoA\Log\FleetLogRepository;
 use EtoA\Ship\ShipDataRepository;
 use EtoA\Universe\Resources\BaseResources;
+use EtoA\User\UserRepository;
 
 /**
  * Handles data and actions for a fleet object
@@ -37,65 +42,58 @@ class Fleet
      */
     public function __construct($fid, $uid = -1, $leadid = -1)
     {
+        $search = FleetSearch::create();
         if ($uid >= 0) {
-            $uidStr = " AND user_id=" . $uid . "";
-        } else {
-            $uidStr = "";
+            $search->user($uid);
         }
 
         if ($leadid > 0) {
-            $leadStr = " leader_id=" . $leadid . "";
+            $search->leader($leadid);
         } else {
-            $leadStr = " id=" . $fid . "";
+            $search->id($fid);
         }
 
         $this->valid = false;
-        $res = dbquery("
-			SELECT
-				*
-			FROM
-				fleet
-			WHERE
-				 " . $leadStr . "
-				" . $uidStr . "
-			ORDER BY
-				launchtime ASC
-			;");
-        if (mysql_num_rows($res) > 0) {
-            $arr = mysql_fetch_assoc($res);
-            $this->id = $fid;
-            $this->ownerId = $arr['user_id'];
-            $this->leaderId = $arr['leader_id'];
-            $this->sourceId = $arr['entity_from'];
-            $this->targetId = $arr['entity_to'];
-            $this->nextId = $arr['next_id']; //special value for alliance Actions
-            $this->actionCode = $arr['action'];
-            $this->status = $arr['status'];
-            $this->launchTime = $arr['launchtime'];
-            $this->landTime = $arr['landtime'];
-            $this->nextActionTime = $arr['nextactiontime'];
-            $this->pilots = $arr['pilots'];
 
-            $this->usageFuel = $arr['usage_fuel'] + $arr['support_usage_fuel'];
-            $this->usageFood = $arr['usage_food'] + $arr['support_usage_food'];
-            $this->usagePower = $arr['usage_power'];
+        global $app;
+        /** @var FleetRepository $fleetRepository */
+        $fleetRepository = $app[FleetRepository::class];
+        $fleets = $fleetRepository->search($search, FleetSort::launchtime('ASC'));
+        if (count($fleets) > 0) {
+            $fleet = $fleets[0];
+            $this->id = $fleet->id;
+            $this->ownerId = $fleet->userId;
+            $this->leaderId = $fleet->leaderId;
+            $this->sourceId = $fleet->entityFrom;
+            $this->targetId = $fleet->entityTo;
+            $this->nextId = $fleet->nextId; //special value for alliance Actions
+            $this->actionCode = $fleet->action;
+            $this->status = $fleet->status;
+            $this->launchTime = $fleet->launchTime;
+            $this->landTime = $fleet->landTime;
+            $this->nextActionTime = $fleet->nextActionTime;
+            $this->pilots = $fleet->pilots;
 
-            $this->resMetal = $arr['res_metal'];
-            $this->resCrystal = $arr['res_crystal'];
-            $this->resPlastic = $arr['res_plastic'];
-            $this->resFuel = $arr['res_fuel'];
-            $this->resFood = $arr['res_food'];
-            $this->resPower = $arr['res_power'];
-            $this->resPeople = $arr['res_people'];
+            $this->usageFuel = $fleet->usageFuel + $fleet->supportUsageFuel;
+            $this->usageFood = $fleet->usageFood + $fleet->supportUsageFood;
+            $this->usagePower = $fleet->usagePower;
+
+            $this->resMetal = $fleet->resMetal;
+            $this->resCrystal = $fleet->resCrystal;
+            $this->resPlastic = $fleet->resPlastic;
+            $this->resFuel = $fleet->resFuel;
+            $this->resFood = $fleet->resFood;
+            $this->resPower = $fleet->resPower;
+            $this->resPeople = $fleet->resPeople;
 
             $this->valid = true;
 
             // TODO: Needs some improvement / redesign
             $this->fleets = array();
-            if (mysql_num_rows($res) > 1) {
-                while ($arr = mysql_fetch_assoc($res)) {
-                    if ($arr['status'] == 3) {
-                        $this->fleets[$arr['id']] = new Fleet($arr['id']);
+            if (count($fleets) > 1) {
+                foreach ($fleets as $otherFleet) {
+                    if ($otherFleet->status === FleetStatus::WAITING && $fleet->id !== $otherFleet->id) {
+                        $this->fleets[$otherFleet->id] = new Fleet($otherFleet->id);
                     }
                 }
             }
@@ -130,18 +128,13 @@ class Fleet
         return $this->landTime;
     }
 
-    function ownerAllianceId()
+    function ownerAllianceId(): int
     {
-        $res = dbquery("
-						   	SELECT
-								user_alliance_id
-							FROM
-								users
-							WHERE
-								user_id='" . $this->ownerId() . "'
-							LIMIT 1;");
-        $arr = mysql_fetch_row($res);
-        return $arr[0];
+        global $app;
+        /** @var UserRepository $userRepository */
+        $userRepository = $app[UserRepository::class];
+
+        return $userRepository->getAllianceId($this->ownerId());
     }
 
     function remainingTime()
@@ -328,68 +321,17 @@ class Fleet
      */
     private function loadShipIds($fleet = -1)
     {
-        $this->shipsIds = array();
-        $this->shipCount = 0;
+        global $app;
+        /** @var FleetRepository $fleetRepository */
+        $fleetRepository = $app[FleetRepository::class];
+
         if (count($this->fleets) > 0 && $fleet < 0) {
-            $sres = dbquery("
-					SELECT
-						fs_ship_id,
-						SUM( fs_ship_cnt )
-					FROM
-						fleet_ships
-					INNER JOIN
-						fleet
-					ON
-						fleet.id = fs_fleet_id
-						AND fleet.leader_id = '" . $this->id . "'
-						AND (fs_ship_cnt > '0')
-					GROUP BY
-						fs_ship_id
-				;");
+            $this->shipsIds = $fleetRepository->getLeaderShipCounts($this->id);
         } else {
-
-            $sres = dbquery("
-				SELECT
-					fs_ship_id,
-					fs_ship_cnt
-				FROM
-			fleet_ships
-				WHERE
-			fs_fleet_id='" . $this->id . "'
-			AND fs_ship_cnt > '0'
-			;");
+            $this->shipsIds = $fleetRepository->getFleetShipCounts($this->id);
         }
-        if (mysql_num_rows($sres) > 0) {
-            while ($arr = mysql_fetch_row($sres)) {
-                $this->shipsIds[$arr[0]] = $arr[1];
-                $this->shipCount += $arr[1];
-            }
-        }
-    }
 
-
-    /**
-     * Only used for fake attacks
-     * Parses the id from original ship to id from fakeship
-     */
-    function parseFake($id)
-    {
-        $res = dbquery(
-            "
-				SELECT
-					fs_ship_faked
-				FROM
-					fleet_ships
-				WHERE
-					fs_fleet_id='" . $this->id . "'
-					AND fs_ship_cnt > '0'
-					AND fs_ship_id = '" . $id . "'
-					AND fs_ship_faked > 0;"
-        );
-        if (mysql_num_rows($res))
-            return mysql_result($res, 0);
-
-        return $id;
+        $this->shipCount = array_sum($this->shipsIds);
     }
 
     /**
@@ -495,6 +437,8 @@ class Fleet
     function cancelFlight($alliance = false, $is_child = false)
     {
         global $app;
+        /** @var FleetRepository $fleetRepository */
+        $fleetRepository = $app[FleetRepository::class];
 
         if ($this->status == 0 || $this->status == 3) {
             if ($this->landTime() > time() || $is_child) {
@@ -505,31 +449,10 @@ class Fleet
                                 $f->cancelFlight(false, true);
                             }
                         } else {
-                            $res = dbquery("SELECT
-														id
-												FROM
-													fleet
-												WHERE
-													leader_id='" . $this->id . "'
-													AND next_id='" . $this->nextId . "'
-													AND status='3'
-												LIMIT 1;");
-                            if (mysql_num_rows($res) > 0) {
-                                $arr = mysql_fetch_row($res);
-                                dbquery("UPDATE
-												fleet
-											SET
-												status='0',
-												landtime='" . $this->landTime . "'
-											WHERE
-												id='" . $arr[0] . "'
-											LIMIT 1;");
-                                dbquery("UPDATE
-												fleet
-											SET
-												leader_id='" . $arr[0] . "'
-											WHERE
-												leader_id='" . $this->id . "';");
+                            $allianceFleets = $fleetRepository->search(FleetSearch::create()->leader($this->id)->nextId($this->nextId)->status(FleetStatus::WAITING));
+                            if (count($allianceFleets) > 0) {
+                                $newLeaderFleet = $allianceFleets[0];
+                                $fleetRepository->promoteNewAllianceFleetLeader($newLeaderFleet->id, $this->id, $this->landTime);
                             }
                         }
                     }
@@ -615,7 +538,9 @@ class Fleet
                     /** @var FleetLogRepository $fleetLogRepository */
                     $fleetLogRepository = $app[FleetLogRepository::class];
                     $fleetLogRepository->addCancel($this->id, $this->ownerId, $this->targetId, $this->sourceId, $logLaunchTime, $logLandTime, $this->actionCode, $this->status, $this->pilots, $this->usageFuel, $this->usageFood, $resourceStart, $resourcesEnd);
-                    if ($this->update())
+
+                    $ok = $fleetRepository->update($this->id, $this->launchTime, $this->landTime, $this->sourceId, $this->targetId, $this->status, $this->leaderId, $resourcesEnd, $this->usageFuel, $this->usageFood);
+                    if ($ok)
                         return true;
                 } else {
                     $this->error = "Abbruch nicht erlaubt!";
@@ -628,51 +553,15 @@ class Fleet
     }
 
     /**
-     * Updates changed data with the database
-     */
-    private function update()
-    {
-        dbquery("
-			UPDATE
-				fleet
-			SET
-				launchtime='" . $this->launchTime . "',
-				landtime='" . $this->landTime . "',
-				entity_from=" . $this->sourceId . ",
-				entity_to=" . $this->targetId . ",
-				status='" . $this->status . "',
-				leader_id='" . $this->leaderId . "',
-				usage_fuel='" . $this->usageFuel . "',
-				usage_food='" . $this->usageFood . "',
-				usage_power='" . $this->usagePower . "',
-				res_metal='" . $this->resMetal . "',
-				res_crystal='" . $this->resCrystal . "',
-				res_plastic='" . $this->resPlastic . "',
-				res_fuel='" . $this->resFuel . "',
-				res_food='" . $this->resFood . "',
-				res_power='" . $this->resPower . "',
-				res_people='" . $this->resPeople . "'
-			WHERE
-				id='" . $this->id . "';");
-        if (mysql_affected_rows() > 0)
-            return true;
-        return false;
-    }
-
-    /**
      * Removes support fuel/food for
      * cancelled fleet
      */
     function removeSupportRes()
     {
-        dbquery("
-			UPDATE
-				fleet
-			SET
-                support_usage_fuel='0',
-                support_usage_food='0'
-			WHERE
-				id='" . $this->id . "';");
+        global $app;
+        /** @var FleetRepository $fleetRepository */
+        $fleetRepository = $app[FleetRepository::class];
+        $fleetRepository->removeSupportRes($this->id);
     }
 
 

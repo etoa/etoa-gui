@@ -31,7 +31,7 @@ if (isDebugEnabled()) {
 }
 
 // Include db config
-$cbConfigFile = DBManager::getInstance()->getConfigFile();
+$cbConfigFile = \EtoA\Core\DoctrineServiceProvider::CONFIG_FILE;
 if (!configFileExists($cbConfigFile)) {
     if (isCLI()) {
         echo "Database configuration file $cbConfigFile does not exist!";

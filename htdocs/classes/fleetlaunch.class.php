@@ -6,9 +6,12 @@ use EtoA\Building\BuildingRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Fleet\FleetRepository;
 use EtoA\Fleet\FleetSearch;
+use EtoA\Fleet\FleetStatus;
 use EtoA\Log\FleetLogRepository;
 use EtoA\Race\RaceDataRepository;
+use EtoA\Ship\ShipDataRepository;
 use EtoA\Ship\ShipRepository;
+use EtoA\Ship\ShipRequirementRepository;
 use EtoA\Support\StringUtils;
 use EtoA\Specialist\SpecialistService;
 use EtoA\Technology\TechnologyId;
@@ -65,7 +68,10 @@ class FleetLaunch
     private $error;
     public $sBonusSpeed;
     public $wormholeEnable;
-    public $aFleets;
+    /** @var \EtoA\Fleet\Fleet[] */
+    public array $aFleets = [];
+    /** @var int[] */
+    private array $supportedAllianceEntities = [];
     public $allianceSlots;
     private string $entityResourceLogStart;
 
@@ -127,8 +133,6 @@ class FleetLaunch
         $this->supportCostsFoodPerSec = 0;
         $this->leaderId = 0;
         $this->fakeId = 0;
-        $this->sFleets = NULL;
-        $this->aFleets = NULL;
 
         $this->shipActions = array();
 
@@ -240,105 +244,74 @@ class FleetLaunch
 
         if ($this->havenOk) {
             if (!$this->shipsFixed) {
-                $res = dbquery("
-                SELECT
-                    *
-                FROM
-            ships
-            INNER JOIN
-            shiplist
-                ON
-            ship_id=shiplist_ship_id
-                    AND shiplist_user_id='" . $this->ownerId() . "'
-                    AND shiplist_entity_id='" . $this->sourceEntity->id() . "'
-            AND ship_id=" . $sid . "
-            AND shiplist_count>0;");
-                if (mysql_num_rows($res) > 0) {
-                    $arr = mysql_fetch_array($res);
-                    $vres = dbquery("
-                            SELECT
-                            l.techlist_current_level,
-                            r.req_level
-                        FROM
-                            ship_requirements r
-                        INNER JOIN
-                            techlist l
-                        ON r.req_tech_id = l.techlist_tech_id
-                            AND l.techlist_user_id=" . $this->ownerId() . "
-                        INNER JOIN
-                            technologies t
-                        ON r.req_tech_id = t.tech_id
-                            AND t.tech_type_id = '1'
-                        WHERE
-                            r.obj_id=" . $sid . "
-                        GROUP BY
-                            r.id");
+                /** @var ShipRequirementRepository $shipRequirementRepository */
+                $shipRequirementRepository = $app[ShipRequirementRepository::class];
+                /** @var TechnologyRepository $technologyRepository */
+                $technologyRepository = $app[TechnologyRepository::class];
+                /** @var ShipRepository $shipListRepository */
+                $shipListRepository = $app[ShipRepository::class];
+                $shipItems = $shipListRepository->findForUser($this->ownerId(), $this->sourceEntity->id(), [$sid]);
+                if (count($shipItems) === 1 && $shipItems[0]->count > 0) {
+                    $shipItem = $shipItems[0];
+
+                    /** @var ShipDataRepository $shipDataRepository */
+                    $shipDataRepository = $app[ShipDataRepository::class];
+                    $ship = $shipDataRepository->getShip($sid, false);
 
                     /** @var SpecialistService $specialistService */
                     $specialistService = $app[SpecialistService::class];
                     $specialist = $specialistService->getSpecialistOfUser($this->ownerId);
 
                     $timefactor = $this->raceSpeedFactor() + ($specialist !== null ? $specialist->fleetSpeed : 1) - 1;
-                    if (mysql_num_rows($vres) > 0) {
-                        while ($varr = mysql_fetch_array($vres)) {
-                            if ($varr['techlist_current_level'] - $varr['req_level'] <= 0) {
+
+                    $requirements = $shipRequirementRepository->getRequiredSpeedTechnologies($sid);
+                    if (count($requirements) > 0) {
+                        $technologyLevels = $technologyRepository->getTechnologyLevels($this->ownerId());
+                        foreach ($requirements as $requirement) {
+                            $level = $technologyLevels[$requirement->id] ?? 0;
+                            if ($level - $requirement->requiredLevel <= 0) {
                                 $timefactor += 0;
                             } else {
-                                $timefactor += max(0, ($varr['techlist_current_level'] - $varr['req_level']) * 0.1);
+                                $timefactor += max(0, ($level - $requirement->requiredLevel) * 0.1);
                             }
                         }
                     }
-                    $cnt = min(StringUtils::parseFormattedNumber($cnt), $arr['shiplist_count']);
+                    $cnt = min(StringUtils::parseFormattedNumber($cnt), $shipItem->count);
 
                     $this->ships[$sid] = array(
                         "count" => $cnt,
-                        "speed" => ($arr['ship_speed'] / FLEET_FACTOR_F) * $timefactor,
-                        "fuel_use" => $arr['ship_fuel_use'] * $cnt,
-                        "fake" => strpos($arr['ship_actions'], "fakeattack"),
-                        "name" => $arr['ship_name'],
-                        "pilots" => $arr['ship_pilots'] * $cnt,
-                        "special" => $arr['special_ship'],
-                        "actions" => explode(",", $arr['ship_actions']),
-                        "sLevel" => $arr['shiplist_special_ship_level'],
-                        "sExp" => $arr['shiplist_special_ship_exp'],
-                        "sBonusWeapon" => $arr['shiplist_special_ship_bonus_weapon'],
-                        "sBonusStructure" => $arr['shiplist_special_ship_bonus_structure'],
-                        "sBonusShield" => $arr['shiplist_special_ship_bonus_shield'],
-                        "sBonusHeal" => $arr['shiplist_special_ship_bonus_heal'],
-                        "sBonusCapacity" => $arr['shiplist_special_ship_bonus_capacity'],
-                        "sBonusSpeed" => $arr['shiplist_special_ship_bonus_speed'],
-                        "sBonusReadiness" => $arr['shiplist_special_ship_bonus_readiness'],
-                        "sBonusPilots" => $arr['shiplist_special_ship_bonus_pilots'],
-                        "sBonusTarn" => $arr['shiplist_special_ship_bonus_tarn'],
-                        "sBonusAntrax" => $arr['shiplist_special_ship_bonus_antrax'],
-                        "sBonusForsteal" => $arr['shiplist_special_ship_bonus_forsteal'],
-                        "sBonusBuildDestroy" => $arr['shiplist_special_ship_bonus_build_destroy'],
-                        "sBonusAntraxFood" => $arr['shiplist_special_ship_bonus_antrax_food'],
-                        "sBonusDeactivade" => $arr['shiplist_special_ship_bonus_deactivade']
+                        "speed" => ($shipItem['ship_speed'] / FLEET_FACTOR_F) * $timefactor,
+                        "fuel_use" => $ship->speed * $cnt,
+                        "fake" => strpos($ship->actions, "fakeattack"),
+                        "name" => $ship->name,
+                        "pilots" => $ship->pilots * $cnt,
+                        "special" => $ship->special,
+                        "actions" => array_filter(explode(",", $ship->actions)),
+                        'item' => $shipItem,
                     );
 
-                    if ($arr['special_ship']) {
-                        $this->sBonusSpeed += $arr['shiplist_special_ship_bonus_speed'] * $arr['special_ship_bonus_speed'];
-                        $this->sBonusReadiness += $arr['shiplist_special_ship_bonus_readiness'] * $arr['special_ship_bonus_readiness'];
-                        $this->sBonusPilots = max(0, $this->sBonusPilots - $arr['shiplist_special_ship_bonus_pilots'] * $arr['special_ship_bonus_pilots']);
-                        $this->sBonusCapacity += $arr['shiplist_special_ship_bonus_capacity'] * $arr['special_ship_bonus_capacity'];
+                    if ($ship->special) {
+                        $this->sBonusSpeed += $shipItem->specialShipBonusSpeed * $ship->specialBonusSpeed;
+                        $this->sBonusReadiness += $shipItem->specialShipBonusReadiness * $ship->specialBonusReadiness;
+                        $this->sBonusPilots = max(0, $this->sBonusPilots - $shipItem->specialShipBonusPilots * $ship->specialBonusPilots);
+                        $this->sBonusCapacity += $shipItem->specialShipBonusCapacity * $ship->specialBonusCapacity;
                     }
 
-                    $this->shipActions = array_merge($this->shipActions, explode(",", $arr['ship_actions']));
+                    $this->shipActions = array_merge($this->shipActions, explode(",", $ship->actions));
                     $this->shipActions = array_unique($this->shipActions);
 
                     // Set global speed
                     if ($this->speed <= 0) {
-                        $this->speed = ($arr['ship_speed'] / FLEET_FACTOR_F) * $timefactor;
+                        $this->speed = ($ship->speed / FLEET_FACTOR_F) * $timefactor;
                     } else {
-                        $this->speed = min($this->speed, ($arr['ship_speed'] / FLEET_FACTOR_F) * $timefactor);
+                        $this->speed = min($this->speed, ($ship->speed / FLEET_FACTOR_F) * $timefactor);
                     }
 
-                    $this->timeLaunchLand = max($this->timeLaunchLand, $arr['ship_time2land'] / FLEET_FACTOR_S + $arr['ship_time2start'] / FLEET_FACTOR_L);
-                    $this->costsLaunchLand += 2 * ($arr['ship_fuel_use_launch'] + $arr['ship_fuel_use_landing']) * $cnt;
-                    $this->pilots += $arr['ship_pilots'] * $cnt;
-                    $this->capacityTotal += $arr['ship_capacity'] * $cnt;
-                    $this->capacityPeopleTotal += $arr['ship_people_capacity'] * $cnt;
+                    $this->timeLaunchLand = max($this->timeLaunchLand, $ship->timeToLand / FLEET_FACTOR_S + $ship->timeToStart / FLEET_FACTOR_L);
+                    $this->costsLaunchLand += 2 * ($ship->fuelUseLaunch + $ship->fuelUseLanding) * $cnt;
+                    $this->pilots += $ship->pilots * $cnt;
+                    $this->capacityTotal += $ship->capacity * $cnt;
+                    $this->capacityPeopleTotal += $ship->peopleCapacity * $cnt;
                     $this->shipCount += $cnt;
 
                     return $cnt;
@@ -373,7 +346,7 @@ class FleetLaunch
                     $this->costsPerHundredAE += $cpae;
                 }
                 $this->shipsFixed = true;
-                $this->error == "";
+                $this->error = "";
                 return $this->shipsFixed;
             } else
                 $this->error = "Es sind zuwenig Piloten für diese Flotte vorhanden.(" . $this->pilotsAvailable() . " verfügbar, " . $this->getPilots() . " benötigt)";
@@ -529,125 +502,29 @@ class FleetLaunch
                     }
 
                     // Create fleet record
-                    $sql = "
-                    INSERT INTO
-                        fleet
-                    (
-                        user_id,
-                        leader_id,
-                        entity_from,
-                        entity_to,
-                        next_id,
-                        launchtime,
-                        landtime,
-                        nextactiontime,
-                        action,
-                        status,
-                        pilots,
-                        usage_fuel,
-                        usage_food,
-                        usage_power,
-                        support_usage_food,
-                        support_usage_fuel,
-                        res_metal,
-                        res_crystal,
-                        res_plastic,
-                        res_fuel,
-                        res_food,
-                        res_people,
-                        fetch_metal,
-                        fetch_crystal,
-                        fetch_plastic,
-                        fetch_fuel,
-                        fetch_food,
-                        fetch_people
-                    )
-                    VALUES
-                    (
-                        " . $this->ownerId . ",
-                        " . $this->leaderId . ",
-                        " . $this->sourceEntity->id() . ",
-                        " . $this->targetEntity->id() . ",
-                        " . $nextId . ",
-                        " . $time . ",
-                        " . $this->landTime . ",
-                        " . $this->supportTime . ",
-                        '" . $this->action . "',
-                        '" . $status . "',
-                        " . $this->getPilots() . ",
-                        " . $this->getCosts() . ",
-                        " . $this->getCostsFood() . ",
-                        " . $this->getCostsPower() . ",
-                        " . $this->supportCostsFood . ",
-                        " . $this->supportCostsFuel . ",
-                        " . $this->res[1] . ",
-                        " . $this->res[2] . ",
-                        " . $this->res[3] . ",
-                        " . $this->res[4] . ",
-                        " . $this->res[5] . ",
-                        " . $this->capacityPeopleLoaded . ",
-                        " . $this->fetch[1] . ",
-                        " . $this->fetch[2] . ",
-                        " . $this->fetch[3] . ",
-                        " . $this->fetch[4] . ",
-                        " . $this->fetch[5] . ",
-                        " . $this->fetch[6] . "
-                    )
-                    ";
-                    dbquery($sql);
-                    $fid = mysql_insert_id();
+                    $resources = new BaseResources();
+                    $resources->metal = $this->res[1];
+                    $resources->crystal = $this->res[2];
+                    $resources->plastic = $this->res[3];
+                    $resources->fuel = $this->res[4];
+                    $resources->food = $this->res[5];
+                    $resources->people = $this->capacityPeopleLoaded;
+
+                    $fetch = new BaseResources();
+                    $fetch->metal = $this->fetch[1];
+                    $fetch->crystal = $this->fetch[2];
+                    $fetch->plastic = $this->fetch[3];
+                    $fetch->fuel = $this->fetch[4];
+                    $fetch->food = $this->fetch[5];
+                    $fetch->people = $this->fetch[6];
+
+                    $fid = $fleetRepository->add($this->ownerId, $time, $this->landTime, $this->sourceEntity->id(), $this->targetEntity->id(), $this->action, $status, $resources, $fetch, $this->getPilots(), $this->getCosts(), $this->getCostsFood(), $this->getCostsPower(), $this->leaderId, $nextId, $this->supportTime, $this->supportCostsFuel, $this->supportCostsFood);
 
                     $shipLog = "";
                     foreach ($this->ships as $sid => $sda) {
                         $shipLog .= $sid . ":" . $sda['count'] . ",";
                         if ($sda['special']) {
-                            dbquery("INSERT INTO
-                            fleet_ships
-                            (
-                                fs_fleet_id,
-                                fs_ship_id,
-                                fs_ship_cnt,
-                                fs_special_ship,
-                                fs_special_ship_level,
-                                fs_special_ship_exp,
-                                fs_special_ship_bonus_weapon,
-                                fs_special_ship_bonus_structure,
-                                fs_special_ship_bonus_shield,
-                                fs_special_ship_bonus_heal,
-                                fs_special_ship_bonus_capacity,
-                                fs_special_ship_bonus_speed,
-                                fs_special_ship_bonus_readiness,
-                                fs_special_ship_bonus_pilots,
-                                fs_special_ship_bonus_tarn,
-                                fs_special_ship_bonus_antrax,
-                                fs_special_ship_bonus_forsteal,
-                                fs_special_ship_bonus_build_destroy,
-                                fs_special_ship_bonus_antrax_food,
-                                fs_special_ship_bonus_deactivade
-                            )
-                            VALUES
-                            (
-                                " . $fid . ",
-                                " . $sid . ",
-                                " . $sda['count'] . ",
-                                '1',
-                                " . $sda['sLevel'] . ",
-                                " . $sda['sExp'] . ",
-                                " . $sda['sBonusWeapon'] . ",
-                                " . $sda['sBonusStructure'] . ",
-                                " . $sda['sBonusShield'] . ",
-                                " . $sda['sBonusHeal'] . ",
-                                " . $sda['sBonusCapacity'] . ",
-                                " . $sda['sBonusSpeed'] . ",
-                                " . $sda['sBonusReadiness'] . ",
-                                " . $sda['sBonusPilots'] . ",
-                                " . $sda['sBonusTarn'] . ",
-                                " . $sda['sBonusAntrax'] . ",
-                                " . $sda['sBonusForsteal'] . ",
-                                " . $sda['sBonusBuildDestroy'] . ",
-                                " . $sda['sBonusAntraxFood'] . ",
-                                " . $sda['sBonusDeactivade'] . "
-                            );");
+                            $fleetRepository->addSpecialShipsToFleet($fid, $sid, $sda['count'], $sda['item']);
                         } elseif ($sda['fake'] !== false) {
                             $fleetRepository->addShipsToFleet($fid, $sid, $sda['count'], $this->fakeId);
                         } else {
@@ -676,16 +553,8 @@ class FleetLaunch
                     $fleetLogRepository = $app[FleetLogRepository::class];
                     $fleetLogRepository->addLaunch($fid, $this->ownerId, $this->sourceEntity->id, $this->targetEntity->id(), $time, $this->landTime, $this->action, $this->getPilots(), $this->getCosts() + $this->supportCostsFuel, $this->getCostsFood() + $this->supportCostsFood, $resources, $fetch, $shipLog, $this->entityResourceLogStart, $this->sourceEntity->getResourceLog());
 
-
-                    if ($this->action == "alliance" && $this->leaderId == 0) {
-                        dbquery("
-                                UPDATE
-                                    fleet
-                                SET
-                                    leader_id='" . $fid . "',
-                                    next_id='" . $this->sourceEntity->ownerAlliance() . "'
-                                WHERE
-                                    id='" . $fid . "';");
+                    if ($this->action === \EtoA\Fleet\FleetAction::ALLIANCE && $this->leaderId == 0) {
+                        $fleetRepository->markAsLeader($fid, $this->sourceEntity->ownerAlliance());
                     }
                     return $fid;
                 } else {
@@ -1158,45 +1027,16 @@ class FleetLaunch
 
     function loadAllianceFleets()
     {
-        $this->sFleets = array();
+        global $app;
+
+        $this->supportedAllianceEntities = array();
         $this->aFleets = array();
         if ($this->sourceEntity->ownerAlliance()) {
-            $res = dbquery("
-                    SELECT
-                        id,
-                        user_id,
-                        entity_to,
-                        landtime
-                    FROM
-                        fleet
-                    WHERE
-                        leader_id>'0'
-                        AND action='alliance'
-                        AND next_id='" . $this->sourceEntity->ownerAlliance() . "'
-                        AND status='0'
-                    ORDER BY
-                        landtime ASC;");
-            if (mysql_num_rows($res) > 0) {
-                while ($arr = mysql_fetch_assoc($res)) {
-                    array_push($this->aFleets, $arr);
-                }
-            }
+            /** @var FleetRepository $fleetRepository */
+            $fleetRepository = $app[FleetRepository::class];
+            $this->aFleets = array_reverse($fleetRepository->search(FleetSearch::create()->isLeader()->actionIn([\EtoA\Fleet\FleetAction::ALLIANCE])->nextId($this->sourceEntity->ownerAlliance())->status(FleetStatus::DEPARTURE)));
 
-            $res = dbquery("
-                        SELECT
-                            entity_to
-                        FROM
-                            `fleet`
-                        WHERE
-                            action='support'
-                            AND (status='0' || status='3')
-                        GROUP BY
-                            entity_to;");
-            if (mysql_num_rows($res) > 0) {
-                while ($arr = mysql_fetch_row($res)) {
-                    array_push($this->sFleets, $arr[0]);
-                }
-            }
+            $this->supportedAllianceEntities = $fleetRepository->getEntityToIds(FleetSearch::create()->actionIn([\EtoA\Fleet\FleetAction::SUPPORT])->statusIn([FleetStatus::DEPARTURE, FleetStatus::WAITING])->allianceId($this->sourceEntity->ownerAlliance()));
         }
     }
 
@@ -1210,7 +1050,7 @@ class FleetLaunch
     function getAllianceSlots()
     {
         if ($this->sourceEntity->ownerAlliance() && isset($this->allianceSlots)) {
-            return $this->allianceSlots - count($this->aFleets) - count($this->sFleets);
+            return $this->allianceSlots - count($this->aFleets) - count($this->supportedAllianceEntities);
         }
     }
 
@@ -1225,25 +1065,14 @@ class FleetLaunch
             return true;
         }
         // Check number of users participating in the alliance attack
-        $res = dbquery('
-            SELECT
-                `user_id`
-            FROM
-                `fleet`
-            WHERE
-                `leader_id` = ' . $leaderid . '
-            GROUP BY
-                `user_id`
-        ;');
-        if (mysql_num_rows($res) < $config->param1Int('alliance_fleets_max_players')) {
+        /** @var FleetRepository $fleetRepository */
+        $fleetRepository = $app[FleetRepository::class];
+        $participatingUsers = $fleetRepository->getUserIds(FleetSearch::create()->leader($leaderid));
+        if (count($participatingUsers) < $config->param1Int('alliance_fleets_max_players')) {
             return true;
         }
-        while ($arr = mysql_fetch_assoc($res)) {
-            if ($this->ownerId == $arr['user_id']) {
-                return true;
-            }
-        }
-        return false;
+
+        return in_array((int) $this->ownerId, $participatingUsers, true);
     }
 
     function checkDefNum()
@@ -1255,38 +1084,22 @@ class FleetLaunch
         if (!$config->getBoolean('alliance_fleets_max_players')) {
             return true;
         }
+
         // check the number of supporters on that planet
-        $res = dbquery('
-            SELECT
-                `user_id`
-            FROM
-                `fleet`
-            WHERE
-                `action`="support"
-            AND
-                (status=0 || status=3)
-            AND
-                `entity_to` = "' . $this->targetEntity->id() . '"
-            AND
-                `user_id` != "' . $this->targetEntity->ownerId() . '"
-            GROUP BY
-                `user_id`
-        ;');
+        /** @var FleetRepository $fleetRepository */
+        $fleetRepository = $app[FleetRepository::class];
+        $participatingUsers = $fleetRepository->getUserIds(FleetSearch::create()->actionIn([\EtoA\Fleet\FleetAction::SUPPORT])->statusIn([FleetStatus::DEPARTURE, FleetStatus::WAITING])->entityTo($this->targetEntity->id())->notUser($this->targetEntity->ownerId()));
         // user id is guaranteed to not be the target owner, so the number is reduced
         // by one, because we always have one slot reserved for the planet's owner
-        if (mysql_num_rows($res) < ($config->param1Int('alliance_fleets_max_players') - 1)) {
+        if (count($participatingUsers) < ($config->param1Int('alliance_fleets_max_players') - 1)) {
             return true;
         }
         // if the maximum of user slots is already reached, we check whether there
         // is already a support fleet from the same user
-        while ($arr = mysql_fetch_assoc($res)) {
-            // if the user already supports this planet with one fleet, he can
-            // send even more fleets to support the same planet
-            if ($this->ownerId == $arr['user_id']) {
-                return true;
-            }
-        }
-        return false;
+
+        // if the user already supports this planet with one fleet, he can
+        // send even more fleets to support the same planet
+        return in_array((int) $this->ownerId, $participatingUsers, true);
     }
 
 

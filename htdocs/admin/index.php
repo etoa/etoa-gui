@@ -219,7 +219,6 @@ function adminView(
 
     // Write all changes of $s to the session variable
     $_SESSION[SESSION_NAME] = $s;
-    DBManager::getInstance()->close();
 
     echo $twig->render('admin/default.html.twig', [
         'content' => ob_get_clean(),

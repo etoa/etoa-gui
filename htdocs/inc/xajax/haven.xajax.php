@@ -1124,8 +1124,8 @@ function havenShowLaunch($form)
             $duration *= 3600;    // Convert to seconds
             $duration = ceil($duration);
             $maxTime = 0;
-            if (isset($fleet->aFleets)) {
-                $maxTime = $fleet->aFleets[0]['landtime'] - time() - $fleet->getTimeLaunchLand() - $fleet->duration1;
+            if (count($fleet->aFleets) > 0)  {
+                $maxTime = $fleet->aFleets[0]->landTime - time() - $fleet->getTimeLaunchLand() - $fleet->duration1;
             }
 
             //check for alliance+time to join
@@ -1302,14 +1302,14 @@ function havenTargetInfo($form)
                 $action = "<input id=\"cooseAction\" tabindex=\"9\" type=\"submit\" value=\"Weiter zur Aktionsauswahl &gt;&gt;&gt;\"  /> &nbsp;";
             }
 
-            if ($ent->ownerId() > 0 && is_array($fleet->aFleets) && count($fleet->aFleets) > 0) {
+            if ($ent->ownerId() > 0 && count($fleet->aFleets) > 0) {
                 $alliance .= "<table style=\"width:100%;\">";
                 $counter = 0;
                 $fleetOwnerAlliance = $allianceRepository->getAlliance($fleet->owner->allianceId());
                 foreach ($fleet->aFleets as $f) {
-                    if ($f['entity_to'] == $ent->id()) {
+                    if ($f->entityTo == $ent->id()) {
                         $counter++;
-                        $alliance .= "<tr><input type=\"button\" style=\"width:100%;\" onclick=\"xajax_havenAllianceAttack(" . $f["id"] . ")\" name=\"" . $fleetOwnerAlliance->tag . "-" . $f["id"] . "\" value=\"Flottenleader: " . get_user_nick($f["user_id"]) . " Ankunftszeit: " . date("d.m.y, H:i:s", $f["landtime"]) . "\"/></tr>";
+                        $alliance .= "<tr><input type=\"button\" style=\"width:100%;\" onclick=\"xajax_havenAllianceAttack(" . $f->id . ")\" name=\"" . $fleetOwnerAlliance->tag . "-" . $f->id . "\" value=\"Flottenleader: " . get_user_nick($f->userId) . " Ankunftszeit: " . date("d.m.y, H:i:s", $f->landTime) . "\"/></tr>";
                     }
                 }
                 $alliance .= "</table>";
@@ -1452,14 +1452,14 @@ function havenBookmark($form)
     }
     // $action = "<input id=\"cooseAction\" tabindex=\"9\" type=\"submit\" value=\"Weiter zur Aktionsauswahl &gt;&gt;&gt;\"  /> &nbsp;";
 
-    if ($ent->ownerId() > 0 && is_array($fleet->aFleets) && count($fleet->aFleets) > 0) {
+    if ($ent->ownerId() > 0 && count($fleet->aFleets) > 0) {
         $alliance .= "<table style=\"width:100%;\">";
         $counter = 0;
         $fleetOwnerAlliance = $allianceRepository->getAlliance($fleet->owner->allianceId());
         foreach ($fleet->aFleets as $f) {
-            if ($f['entity_to'] == $ent->id()) {
+            if ($f->entityTo == $ent->id()) {
                 $counter++;
-                $alliance .= "<tr><input type=\"button\" style=\"width:100%;\" onclick=\"xajax_havenAllianceAttack(" . $f["id"] . ")\" name=\"" . $fleetOwnerAlliance->tag . "-" . $f["id"] . "\" value=\"Flottenleader: " . get_user_nick($f["user_id"]) . " Ankunftszeit: " . date("d.m.y, H:i:s", $f["landtime"]) . "\"/></tr>";
+                $alliance .= "<tr><input type=\"button\" style=\"width:100%;\" onclick=\"xajax_havenAllianceAttack(" . $f->id . ")\" name=\"" . $fleetOwnerAlliance->tag . "-" . $f->id . "\" value=\"Flottenleader: " . get_user_nick($f->userId) . " Ankunftszeit: " . date("d.m.y, H:i:s", $f->landTime) . "\"/></tr>";
             }
         }
         $alliance .= "</table>";

@@ -26,7 +26,7 @@ if (!isset($_SESSION['INSTALL'])) {
     $_SESSION['INSTALL'] = [];
 }
 
-if (configFileExists(DBManager::getInstance()->getConfigFile())) {
+if (configFileExists(\EtoA\Core\DoctrineServiceProvider::CONFIG_FILE)) {
     echo $twig->render('install/install.html.twig', [
         'currentStep' => 4,
         'successMessage' => 'Ihre Konfigurationsdatei existiert bereits!',
@@ -51,12 +51,14 @@ if (isset($_POST['install_check'])) {
         ];
         $app['db.options'] = $dbCfg;
         try {
-            DBManager::getInstance()->connect($dbCfg);
+            /** @var \Doctrine\DBAL\Connection $connection */
+            $connection = $app['db.factory']($dbCfg);
+            $connection->connect();
             $successMessage = 'Datenbankverbindung erfolgreich!';
 
             $_SESSION['INSTALL']['step'] = 2;
             $step = 2;
-        } catch (DBException $ex) {
+        } catch (\Doctrine\DBAL\Exception\ConnectionException $ex) {
             $errorMessage = 'Verbindung fehlgeschlagen! Fehler: ' . $ex->getMessage();
             $_SESSION['INSTALL']['step'] = 1;
             $step = 1;
@@ -95,8 +97,6 @@ if ($step === 3) {
     );
     $app['db.options'] = $dbCfg;
 
-    DBManager::getInstance()->connect($dbCfg);
-
     $dbConfigString = json_encode($dbCfg, JSON_PRETTY_PRINT);
 
     $dbConfigStingEventHandler = '[mysql]
@@ -114,10 +114,10 @@ password = ' . $dbCfg['password'] . '
     $config->set("roundurl", $_SESSION['INSTALL']['round_url']);
     $config->set("loginurl", $_SESSION['INSTALL']['loginserver_url']);
 
-    writeConfigFile(DBManager::getInstance()->getConfigFile(), $dbConfigString);
+    writeConfigFile(\EtoA\Core\DoctrineServiceProvider::CONFIG_FILE, $dbConfigString);
     writeConfigFile(EVENTHANDLER_CONFIG_FILE_NAME, $dbConfigStingEventHandler);
 
-    if (configFileExists(DBManager::getInstance()->getConfigFile())) {
+    if (configFileExists(\EtoA\Core\DoctrineServiceProvider::CONFIG_FILE)) {
         $_SESSION['INSTALL']['step'] = 1;
     }
 
@@ -126,8 +126,8 @@ password = ' . $dbCfg['password'] . '
         'currentStep' => $step,
         'successMessage' => 'Konfiguration gespeichert!',
         'errorMessage' => $errorMessage,
-        'dbConfigFileMissing' => !configFileExists(DBManager::getInstance()->getConfigFile()),
-        'dbConfigFile' => getConfigFilePath(DBManager::getInstance()->getConfigFile()),
+        'dbConfigFileMissing' => !configFileExists(\EtoA\Core\DoctrineServiceProvider::CONFIG_FILE),
+        'dbConfigFile' => getConfigFilePath(\EtoA\Core\DoctrineServiceProvider::CONFIG_FILE),
         'dbConfigString' => $dbConfigString,
 
         'eventHandlerConfigFileMissing' => !configFileExists(EVENTHANDLER_CONFIG_FILE_NAME),
@@ -147,8 +147,6 @@ if ($step === 2) {
         'password' => $_SESSION['INSTALL']['db_password'],
     ];
     $app['db.options'] = $dbCfg;
-
-    DBManager::getInstance()->connect($dbCfg);
 
     // Migrate database
     ob_start();

@@ -11,6 +11,14 @@ class FleetSearch extends AbstractSearch
         return new FleetSearch();
     }
 
+    public function id(int $id): self
+    {
+        $this->parts[] = 'id = :id';
+        $this->parameters['id'] = $id;
+
+        return $this;
+    }
+
     public function isLeader(): self
     {
         $this->parts[] = 'fleet.id = fleet.leader_id';
@@ -68,6 +76,17 @@ class FleetSearch extends AbstractSearch
     }
 
     /**
+     * @param int[] $status
+     */
+    public function statusIn(array $status): self
+    {
+        $this->parts[] = 'status IN (:status)';
+        $this->stringArrayParameters['statusIN'] = $status;
+
+        return $this;
+    }
+
+    /**
      * @param string[] $actions
      */
     public function actionIn(array $actions): self
@@ -101,6 +120,22 @@ class FleetSearch extends AbstractSearch
     {
         $this->parts[] = 'next_id = :nextId';
         $this->parameters['nextId'] = $nextId;
+
+        return $this;
+    }
+
+    public function entityTo(int $entityTo): self
+    {
+        $this->parts[] = 'entity_to = :entityTo';
+        $this->parameters['entityTo'] = $entityTo;
+
+        return $this;
+    }
+
+    public function leader(int $leader): self
+    {
+        $this->parts[] = 'leader_id = :leader';
+        $this->parameters['leader'] = $leader;
 
         return $this;
     }

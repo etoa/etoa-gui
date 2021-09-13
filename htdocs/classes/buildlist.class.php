@@ -27,16 +27,14 @@ class BuildList implements IteratorAggregate
      * Constructor
      * @param int $entityId
      * @param int $ownerId
-     * @param int $load
      *
      * @access public
      */
-    public function __construct($entityId, $ownerId, $load = 0)
+    public function __construct($entityId, $ownerId)
     {
         $this->entityId = $entityId;
         $this->ownerId = $ownerId;
-        if ($load > 0)
-            $this->load($load);
+        $this->load();
     }
 
     /**
@@ -88,74 +86,26 @@ class BuildList implements IteratorAggregate
         return new ArrayIterator($catItems);
     }
 
-    private function load($load = 1)
+    private function load()
     {
         global $app;
 
         /** @var TechnologyRepository $technologyRepository */
         $technologyRepository = $app[TechnologyRepository::class];
+        /** @var BuildingRepository $buildingRepository */
+        $buildingRepository = $app[BuildingRepository::class];
 
         self::$GENTECH = $technologyRepository->getTechnologyLevel((int) $this->ownerId, TechnologyId::GEN);
         $this->items = array();
-        $this->count = 0;
 
-        if ($load == 3) {
-            $sql = "SELECT
-							l.*,
-							i.*
-						FROM
-							buildlist l
-						INNER JOIN
-							buildings i
-						ON
-							l.buildlist_building_id = i.building_id
-							AND l.buildlist_entity_id='" . $this->entityId . "'
-							AND l.buildlist_current_level>='0'
-						ORDER BY
-							i.building_order,
-							i.building_name;";
-        } elseif ($load == 2) {
-            $sql = "SELECT
-							l.*,
-							i.*
-						FROM
-							buildings i
-						LEFT JOIN
-							buildlist l
-						ON
-							l.buildlist_building_id = i.building_id
-							AND l.buildlist_entity_id='" . $this->entityId . "'
-						WHERE i.building_show='1'
-						ORDER BY
-							i.building_order,
-							i.building_name;";
-        } else //this is for the cases $load==0 and $load==1
-        {
-            $sql = "SELECT
-							l.*,
-							i.*
-						FROM
-							buildlist l
-						INNER JOIN
-							buildings i
-						ON
-							l.buildlist_building_id = i.building_id
-							AND l.buildlist_entity_id='" . $this->entityId . "'
-							AND l.buildlist_current_level>'0'
-						ORDER BY
-							i.building_order,
-							i.building_name;";
-        }
-        $res = dbquery($sql);
+        $list = $buildingRepository->getLegacyBuildList($this->entityId);
+        $this->count = count($list);
+        foreach ($list as $arr) {
+            $this->items[$arr['building_id']] = new BuildListItem($arr);
+            $this->count++;
 
-        if (mysql_num_rows($res) > 0) {
-            while ($arr = mysql_fetch_assoc($res)) {
-                $this->items[$arr['building_id']] = new BuildListItem($arr);
-                $this->count++;
-
-                if (($arr['buildlist_build_type'] == 3 || $arr['buildlist_build_type'] == 4) && $arr['buildlist_build_end_time'] > time()) {
-                    self::$underConstruction = true;
-                }
+            if (($arr['buildlist_build_type'] == 3 || $arr['buildlist_build_type'] == 4) && $arr['buildlist_build_end_time'] > time()) {
+                self::$underConstruction = true;
             }
         }
     }
@@ -348,7 +298,7 @@ class BuildList implements IteratorAggregate
     function checkDemolishable($bid)
     {
         // check all the buildings
-        $this->load(3);
+        $this->load();
 
         if (!$this->getDeactivated($bid)) {
             if (!$this->isUnderConstruction()) {

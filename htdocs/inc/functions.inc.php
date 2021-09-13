@@ -32,17 +32,6 @@ function getAppVersion()
 }
 
 /**
- * Führt eine Datenbankabfrage aus
- *
- * @param string $string SQL-Abfrage
- * #param int $fehler Erzwing Fehleranzeige, Standard: 1
- */
-function dbquery($string, $fehler = 1)
-{
-    return DBManager::getInstance()->query($string, $fehler);
-}
-
-/**
  * User-Nick via User-Id auslesen
  */
 function get_user_nick($id)

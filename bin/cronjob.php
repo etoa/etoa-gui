@@ -32,14 +32,6 @@ if (!@include($init))
     exit(1);
 }
 
-// Connect to database
-try {
-    DBManager::getInstance()->connect();
-} catch (DBException $ex) {
-    echo $ex;
-    exit(1);
-}
-
 if (!isset($app)) {
     $app = require __DIR__ .'/../src/app.php';
     $app->boot();
@@ -89,9 +81,6 @@ try {
             echo $text;
         }
     }
-
-    DBManager::getInstance()->close();
-
 } catch (DBException $ex) {
     echo $ex;
     exit(1);

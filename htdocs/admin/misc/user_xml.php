@@ -16,7 +16,6 @@ if (isset($_SESSION['adminsession'])) {
         //header('Content-Length: ' . filesize($file));
         header('Content-Disposition: attachment; filename="user' . $_GET['id'] . '.xml"');
         echo $userToXml->generate((int) $_GET['id']);
-        DBManager::getInstance()->close();
     } else {
         echo "User-ID nicht vorhanden!";
     }

@@ -46,14 +46,6 @@ if (!@include($init))
     exit(1);
 }
 
-// Connect to database
-try {
-    DBManager::getInstance()->connect();
-} catch (DBException $ex) {
-    echo $ex;
-    exit(1);
-}
-
 $args = array_splice($_SERVER['argv'], 1);
 $action = array_shift($args);
 
@@ -318,5 +310,3 @@ else
     echo "\nUnknown action!\n";
     show_usage();
 }
-
-DBManager::getInstance()->close();

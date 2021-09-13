@@ -46,26 +46,13 @@ class BuildListItem
     private ConfigurationService $config;
     private PlanetRepository $planetRepo;
 
-    /**
-     * @param int|array $id
-     * @param bool|int $load
-     */
-    public function __construct($id, $load = 0)
+    public function __construct(array $arr)
     {
         // TODO
         global $app;
 
         $this->config = $app[ConfigurationService::class];
         $this->planetRepo = $app[PlanetRepository::class];
-
-        if (is_array($id)) {
-            $arr = $id;
-        } else {
-            if ($id > 0 && $load == 1) {
-                $arr = $this->load($id);
-            } else
-                return;
-        }
 
         if (intval($arr['buildlist_id']) > 0) {
             $this->id = $arr['buildlist_id'];
@@ -130,13 +117,7 @@ class BuildListItem
         try {
             if (!property_exists($this, $key))
                 throw new EException("Property $key existiert nicht in " . __CLASS__);
-            if ($key == "building" && $this->building == null) {
-                if (!$this->id > 0) {
-                    throw new EException("Property $key existiert nicht in " . __CLASS__ . ". Daten nicht vorhanden");
-                } else {
-                    $this->load($this->id);
-                }
-            } elseif ($key == "bunkerRes") {
+            if ($key == "bunkerRes") {
                 return $this->building->bunkerRes * intpow($this->building->storeFactor, $this->level - 1);
             } elseif ($key == "bunkerFleetCount") {
                 return $this->building->bunkerFleetCount * intpow($this->building->storeFactor, $this->level - 1);
@@ -148,27 +129,6 @@ class BuildListItem
         } catch (EException $e) {
             echo $e;
             return null;
-        }
-    }
-
-    private function load($id)
-    {
-        $res = dbquery("SELECT
-            l.*,
-            i.*
-        FROM
-            buildlist l
-        INNER JOIN
-            buildings i
-        ON
-            l.buildlist_building_id = i.building_id
-            AND l.buildlist_id='" . $id . "'
-        LIMIT 1;");
-
-        if (mysql_num_rows($res) > 0)
-            return mysql_fetch_assoc($res);
-        else {
-            throw new EException("Buildlisteintrag $id existiert nicht!");
         }
     }
 
