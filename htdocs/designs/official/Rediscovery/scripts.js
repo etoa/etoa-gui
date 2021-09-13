@@ -11,6 +11,14 @@ const REFERENCE_WIDTH = 1680;
 const REFERENCE_Height = 1440;
 const REFERENCE_FONT_SIZE = 16;
 
+let dpiScale = sessionStorage.getItem("devicePixelRatio");
+if(dpiScale==null){
+  dpiScale = window.devicePixelRatio;
+  sessionStorage.setItem("devicePixelRatio", dpiScale);
+}
+
+const DPI_SCALE = dpiScale;
+
 class App {
   element;
 
@@ -51,11 +59,13 @@ class App {
     this.mountArmory();
   }
 
+
   mountMainNavigation() {
     const planetDropdownToggle = document.querySelector(
       "#toggle-planet-dropdown"
     );
     const planetDropdown = document.querySelector("#planet-dropdown");
+    const serverTime = document.querySelector("#server-time");
     planetDropdownToggle.addEventListener("click", () => {
       planetDropdown.setAttribute(
         "data-expanded",
@@ -64,6 +74,7 @@ class App {
           : "false"
       );
     });
+    this.mountServerTime(serverTime);
   }
 
   mountMobileNavigation() {
@@ -72,6 +83,7 @@ class App {
     const mainMenu = document.querySelector(".navigation-main");
     const topMenu = document.querySelector(".navigation-top");
     const mobileReloader = document.querySelector(".mobile-reloader");
+    const serverTime = document.querySelector("#server-time-mobile");
     const planetNameMobile = document.querySelector(
       "#current-planet-name-mobile"
     );
@@ -98,7 +110,36 @@ class App {
     this.planetDropdownMobile = planetDropdownMobile;
     this.planetSelectionMobile = planetSelectionMobile;
     this.planetSelectionMobileAttachPoint = planetSelectionMobile.offsetTop;
+    this.mountServerTime(serverTime);
     this.onScroll();
+  }
+
+  mountServerTime(element){
+    const timeParts = element.innerText.split(":");
+    if(timeParts.length < 3){
+      console.warn("Failed to mount server time on element "+element);
+      return;
+    }
+    const hour = parseInt(timeParts[0]);
+    const minute = parseInt(timeParts[1]);
+    const second = parseInt(timeParts[2]);
+
+    const startDate = new Date();
+    const referenceTime = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDay(), hour, minute, second);
+    const offset = referenceTime.getTime() - startDate.getTime();
+
+    const tickServertime = ()=>{
+      if(!element){
+        return;
+      }
+      const now = new Date((new Date()).getTime() - offset);
+      element.innerText = now.toLocaleTimeString('de-DE');
+      setTimeout(()=>{
+        tickServertime();
+      }, 500);
+    };
+
+    tickServertime();
   }
 
   mountResourceBar() {
@@ -410,17 +451,22 @@ class App {
   }
 
   updateScaling() {
-    const aspectRatio = window.innerWidth / window.innerHeight;
-    const widthFactor = Math.min(1, window.innerWidth / REFERENCE_WIDTH);
-    const heightFactor = Math.min(0.8, window.innerHeight / REFERENCE_Height);
+    const screen = window.screen;
+    const aspectRatio = screen.width / screen.height;
+    const currentWidth = screen.width;
+    const currentHeight = screen.height;
+
+    const widthFactor = Math.min(1, currentWidth / REFERENCE_WIDTH);
+    const heightFactor = Math.min(0.8, currentHeight / REFERENCE_Height);
     const heightFactorAdjusted = Math.max(
       aspectRatio > 2 ? widthFactor : 0,
       heightFactor
     );
-    const isTablet = window.innerWidth <= 600;
-    const isMobile = window.innerWidth <= 414;
+    const isTablet = currentWidth <= 600;
+    const isMobile = currentWidth <= 414;
+    const isDesktop = currentWidth >= 1024;
     const mobileFactor = isMobile ? 1.75 : isTablet ? 1.5 : 1;
-    const factor = Math.min(widthFactor, heightFactorAdjusted) * mobileFactor;
+    const factor = isDesktop ? 1 / DPI_SCALE : Math.min(widthFactor, heightFactorAdjusted) * mobileFactor;
     document.documentElement.style.fontSize = factor + "em";
     this.isMobile = isMobile;
     this.isTablet = isTablet;

@@ -122,8 +122,20 @@ img.resIcon {
 * Planet resources box
 */
 
-.resBoxTitleCell {
-  height: 1.67rem;
+table th.resBoxTitleCell {
+  padding: 0 0.125rem;
+}
+
+table th.resBoxTitleCell > div {
+  height: 1em;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  line-height: 1em;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-right: 0!important;
+  font-size: 1rem;
+  margin: 0.333rem 0;
 }
 
 /*

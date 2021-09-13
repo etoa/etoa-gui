@@ -25,11 +25,12 @@ a {
 a:hover {
   color: #ffffff;
   text-decoration: none;
-  background: none;
 }
 
+:link, :visited { text-decoration: underline }
+
 h1 {
-  font-size: 0.917rem;
+  font-size: 1.25rem;
   text-align: center;
   margin-top: 0.4375rem;
   margin-bottom: 0.5rem;
@@ -68,7 +69,7 @@ table {
 input:focus,
 textarea:focus,
 select:focus {
-  border: 1px solid #ff0;
+  border: 0.083rem solid #ff0;
   background: #002;
   color: #fff;
 }
@@ -97,7 +98,7 @@ input[type="button"]:focus {
   background: #222255 url("../Discovery/images/button1.jpg");
   color: #fff;
   font-weight: bold;
-  border: 1px solid #ff0;
+  border: 0.083rem solid #ff0;
 }
 
 /* Definiert die verschieden button typen im hover zustand */
@@ -126,7 +127,7 @@ input[type="button"][disabled="disabled"]:hover {
 input,
 select,
 textarea {
-  border: solid #fff 1px;
+  border: solid #fff 0.083rem;
   font-family: arial;
   font-size: 1rem;
   background: #000;
@@ -139,7 +140,7 @@ textarea {
   background: #6e7591;
   font-size: 0.833rem;
   vertical-align: top;
-  border: 1px solid #fff;
+  border: 0.083rem solid #fff;
 }
 
 #chat_color {
@@ -151,7 +152,7 @@ textarea {
   padding-right: 0.625rem;
   background: #424962;
   height: 1.1875rem;
-  border: 1px solid #fff;
+  border: 0.083rem solid #fff;
 }
 
 #topbar a {
@@ -169,14 +170,14 @@ textarea {
   background: #000 url("../../images/logo.jpg") no-repeat;
   width:  10.9375rem;
   height: 4.5rem;
-  border: 1px solid #fff;
+  border: 0.083rem solid #fff;
 }
 
 #banner {
   text-align: center;
   background: #000 url("../../images/banner.jpg") no-repeat;
   height: 4.5rem;
-  border: 1px solid #fff;
+  border: 0.083rem solid #fff;
 }
 
 #selectbar {
@@ -193,7 +194,7 @@ textarea {
 #middlebar {
   background: #6e7591;
   height: 1.3125rem;
-  border: 1px solid #fff;
+  border: 0.083rem solid #fff;
   border-right: none;
   padding-left: 0.9375rem;
 }
@@ -202,7 +203,7 @@ textarea {
   background: #6e7591;
   width: 21.875rem;
   padding-left: 0.5rem;
-  border: 1px solid #fff;
+  border: 0.083rem solid #fff;
   height: 1.3125rem;
   border-left: none;
   text-align: right;
@@ -214,13 +215,13 @@ textarea {
   height: 28.125rem;
   vertical-align: top;
   padding: 0.25rem 0.625rem 0.625rem 0.625rem;
-  border: 1px solid #fff;
+  border: 0.083rem solid #fff;
   text-align: center;
 }
 
 #copy {
   background: #646b84;
-  border: 1px solid #fff;
+  border: 0.083rem solid #fff;
   padding-left: 0.5rem;
 }
 
@@ -238,7 +239,7 @@ textarea {
   background: #6e7591;
   width:  10.9375rem;
   vertical-align: top;
-  border: 1px solid #fff;
+  border: 0.083rem solid #fff;
 }
 
 #menu1 div {
@@ -249,7 +250,7 @@ textarea {
   width:  10.9375rem;
   padding: 0.125rem 0.125rem 0.125rem 0.5rem;
   margin: 0 auto;
-  border-bottom: solid 1px #e6e6e6;
+  border-bottom: solid 0.083rem #e6e6e6;
   border-top: none;
   height: 1rem;
 }
@@ -262,21 +263,21 @@ textarea {
   width:  10.9375rem;
   padding: 0.125rem 0.125rem 0.125rem 0.5rem;
   margin: 0 auto;
-  border-bottom: solid 1px #e6e6e6;
+  border-bottom: solid 0.083rem #e6e6e6;
 }
 
 #menu1 a:hover {
   background-color: silver;
   color: #445543;
   text-decoration: none;
-  border-bottom: solid 1px #e6e6e6;
+  border-bottom: solid 0.083rem #e6e6e6;
 }
 
 .tbltitle,
 table.tb th {
-  font-size: 0.833rem;
+  font-size: 1rem;
   font-weight: bold;
-  border: 1px solid #fff;
+  border: 0.083rem solid #fff;
   background: #000000 url("../Discovery/images/cellpic4.gif");
   padding: 0.125rem;
   text-align: left;
@@ -286,7 +287,7 @@ table.tb th {
 table.tb td {
   font-size: 1rem;
   color: #fff;
-  border: 1px solid #fff;
+  border: 0.083rem solid #fff;
   background: #000000 url("../Discovery/images/cellpic3.gif");
   padding: 0.1875rem;
   text-align: left;
@@ -297,7 +298,7 @@ table.tb td {
 .tbldata2 {
   font-size: 1rem;
   color: red;
-  border: 1px solid #ffffff;
+  border: 0.083rem solid #ffffff;
   background: #000000 url("../Discovery/images/cellpic3.gif");
   padding: 0.1875rem;
   vertical-align: top;
@@ -309,7 +310,7 @@ table.tb td {
 .tbldata3 {
   font-size: 1rem;
   color: #0f0;
-  border: 1px solid #ffffff;
+  border: 0.083rem solid #ffffff;
   background: #000000 url("../Discovery/images/cellpic3.gif");
   padding: 0.1875rem;
   vertical-align: top;
@@ -321,7 +322,7 @@ table.tb td {
 .tbldata4 {
   font-size: 1rem;
   color: #f90;
-  border: 1px solid #ffffff;
+  border: 0.083rem solid #ffffff;
   background: #000000 url("../Discovery/images/cellpic3.gif");
   padding: 0.1875rem;
   vertical-align: top;
@@ -333,7 +334,7 @@ table.tb td {
 .tb th.tblblack {
   font-size: 1rem;
   color: #fff;
-  border: 1px solid #fff;
+  border: 0.083rem solid #fff;
   background: #000;
 }
 
@@ -346,7 +347,7 @@ table.tb {
 
 .tbl caption,
 table.tb caption {
-  border: 1px solid #fff;
+  border: 0.083rem solid #fff;
   border-bottom: none;
   font-size: 0.833rem;
   font-weight: bold;
@@ -357,13 +358,13 @@ table.tb caption {
 
 .tblc {
   margin: 0 auto;
-  border: 1px solid #ffffff;
+  border: 0.083rem solid #ffffff;
 }
 
 div.infoboxtitle {
-  font-size: 0.833rem;
+  font-size: 1rem;
   font-weight: bold;
-  border: 1px solid #fff;
+  border: 0.083rem solid #fff;
   background: #225 url(images/cellpic.gif);
   padding: 0.25rem;
   text-align: center;
@@ -383,9 +384,9 @@ div.infoboxcontent {
   font-size: 1rem;
   color: #fff;
   border: none;
-  border-left: 1px solid #fff;
-  border-right: 1px solid #fff;
-  border-bottom: 1px solid #fff;
+  border-left: 0.083rem solid #fff;
+  border-right: 0.083rem solid #fff;
+  border-bottom: 0.083rem solid #fff;
   background: #225 url(images/cellpic3.gif);
   padding: 0.25rem;
   text-align: left;
@@ -394,14 +395,14 @@ div.infoboxcontent {
 .statsTab {
   /*width:7.5rem;*/
   height: 1.25rem;
-  border: 1px solid #fff;
+  border: 0.083rem solid #fff;
   margin: 0;
   padding: 0;
 }
 
 table.statsNav {
   width: 99%;
-  border: 1px solid #fff;
+  border: 0.083rem solid #fff;
   margin: 0 auto;
 }
 
@@ -466,7 +467,7 @@ td.statsNav {
   margin-left: 0.3125rem;
   width: 1.875rem;
   height: 2.5rem;
-  border-bottom: 1px dashed #555;
+  border-bottom: 0.083rem dashed #555;
 }
 
 #sector_map_table .sector_map_cell img.cell_number_horizontal {
@@ -474,15 +475,15 @@ td.statsNav {
   margin-bottom: 0.3125rem;
   width: 2.5rem;
   height: 1.5625rem;
-  border-left: 1px dashed #555;
+  border-left: 0.083rem dashed #555;
 }
 
 #sector_map_table .sector_map_cell a {
   border: none;
   text-decoration: none;
   display: inline-block;
-  border-left: 1px dashed #555;
-  border-bottom: 1px dashed #555;
+  border-left: 0.083rem dashed #555;
+  border-bottom: 0.083rem dashed #555;
   margin: 0;
   padding: 0;
   line-height: 0;
@@ -630,19 +631,19 @@ div.Spielbereich_ {
 
 hr {
   height: 0.0625rem;
-  border: 1px solid #111;
+  border: 0.083rem solid #111;
 }
 
 table.tab {
   margin: 0 auto;
-  border: 1px solid #000;
+  border: 0.083rem solid #000;
   border-collapse: collapse;
 }
 
 td.havenTab {
   width: 12.5rem;
   height: 1.875rem;
-  border: 1px solid #000;
+  border: 0.083rem solid #000;
   margin: 0;
   padding: 0;
   background: #ddf;
@@ -660,7 +661,7 @@ td.havenTab:hover {
 
 #havenBox,
 #havenInfoBox {
-  border: 1px solid #000;
+  border: 0.083rem solid #000;
   width: 37.5rem;
   margin: 0 auto;
 }
@@ -669,7 +670,7 @@ td.havenTab:hover {
 .citybox {
   position: absolute;
   z-index: 10;
-  border: 1px #ccc solid;
+  border: 0.083rem #ccc solid;
   border-top: none;
   border-bottom: none;
   background: #223;
@@ -692,7 +693,7 @@ td.havenTab:hover {
   color: #aaa;
   display: block;
   padding: 0.3125rem;
-  border-bottom: 1px solid #fff;
+  border-bottom: 0.083rem solid #fff;
 }
 .citybox a:hover {
   color: #fff;
@@ -720,7 +721,7 @@ td.havenTab:hover {
 #resbox {
   margin-bottom: 1.25rem;
   width: 40.625rem;
-  border: 1px solid #fff;
+  border: 0.083rem solid #fff;
 }
 
 #resboxheader {
@@ -730,7 +731,7 @@ td.havenTab:hover {
   font-weight: bold;
   padding-left: 1.25rem;
   padding-top: 0.3125rem;
-  border-bottom: 1px solid #fff;
+  border-bottom: 0.083rem solid #fff;
 }
 
 #resboxcontent {
@@ -744,8 +745,8 @@ td.havenTab:hover {
   text-align: center;
   padding: 0;
   margin-bottom: -0.0625rem;
-  border-right: 1px solid;
-  border-bottom: 1px solid;
+  border-right: 0.083rem solid;
+  border-bottom: 0.083rem solid;
   float: left;
   background-repeat: no-repeat;
   position: relative;
@@ -831,41 +832,47 @@ td.havenTab:hover {
 .tabMenu {
   display: table;
   margin: 0.625rem auto 0 auto;
-  border-left: 1px solid #fff;
+  border-left: 0.083rem solid #fff;
 }
 
 .tabMenu a {
   display: block;
   float: left;
-  height: 1.3125rem;
+  height: 3em;
+  line-height: 3em;
   color: #fff;
   text-decoration: none;
-  padding: 0.4375rem 0.625rem 0.1875rem 0.625rem;
+  padding: 0 0.625rem;
   background: url("../Discovery/images/tab1.png") top right no-repeat;
-  border-bottom: 1px solid #fff;
-  border-top: 1px solid #fff;
+  background-size: 100% 100%;
+  border-bottom: 0.083rem solid #fff;
+  border-top: 0.083rem solid #fff;
 }
 
 .tabMenu a:hover {
   display: block;
   float: left;
-  height: 1.3125rem;
+  height: 3em;
+  line-height: 3em;
   color: #ddd;
-  padding: 0.4375rem 0.625rem 0.1875rem 0.625rem;
+  padding: 0 0.625rem;
   background: url("../Discovery/images/tab2.png") top right no-repeat;
+  background-size: 100% 100%;
 }
 
 .tabMenu a.tabEnabled {
   display: block;
   float: left;
   color: #ddd;
-  height: 1.3125rem;
-  padding: 0.4375rem 0.625rem 0.1875rem 0.625rem;
+  height: 3em;
+  line-height: 3em;
+  padding: 0 0.625rem;
   background: url("../Discovery/images/tab2.png") top right no-repeat;
+  background-size: 100% 100%;
 }
 
 .tabMenu a.tabLast {
-  border-right: 1px solid #fff;
+  border-right: 0.083rem solid #fff;
 }
 
 /* Pulldown Menu */
@@ -876,7 +883,8 @@ td.havenTab:hover {
   margin: 0.625rem auto 0 auto;
   list-style-type: none;
   display: table;
-  border: 1px solid #fff;
+  border: 0.083rem solid #fff;
+  background: #225 url("images/cellpic3.gif");
 }
 
 #pmenu ul {
@@ -895,11 +903,11 @@ td.havenTab:hover {
 #pmenu li a,
 #pmenu li a:visited {
   display: block;
-  font-size: 0.75rem;
+  font-size: 1rem;
   color: #fff;
-  padding: 0.1875rem 0.625rem 0 0.625rem;
-  height: 1.75rem;
-  line-height: 1.5rem;
+  padding: 0 0.625rem 0 0.625rem;
+  height: 3em;
+  line-height: 3em;
   text-decoration: none;
   text-indent: 0.3125rem;
   border: none;
@@ -909,14 +917,14 @@ td.havenTab:hover {
 /* Set up the sub level borders */
 #pmenu li ul li a,
 #pmenu li ul li a:visited {
-  border: 1px solid #fff;
+  border: 0.083rem solid #fff;
   width: 6.875rem;
   text-align: left;
   border-top: none;
 }
 #pmenu li a.enclose,
 #pmenu li a.enclose:visited {
-  border-width: 1px;
+  border-width: 0.083rem;
 }
 
 /* Set up the list items */
@@ -1052,7 +1060,7 @@ td.havenTab:hover {
   position: relative;
   width: 7.5rem;
   height: 7.5rem;
-  border: 1px solid #fff;
+  border: 0.083rem solid #fff;
   margin: 0.625rem auto;
 }
 
@@ -1062,7 +1070,7 @@ td.havenTab:hover {
   float: left;
   width: 7.5rem;
   height: 7.5rem;
-  border: 1px solid black;
+  border: 0.083rem solid black;
 }
 .techtreeItemLevel {
   position: absolute;
@@ -1129,7 +1137,7 @@ td.havenTab:hover {
   width: 14.375rem;
   background: rgba(0, 0, 0, 0.6);
   z-index: 100;
-  border-left: 1px solid #777;
+  border-left: 0.083rem solid #777;
 }
 
 /**
@@ -1170,7 +1178,7 @@ td.havenTab:hover {
 .tutorialBox {
   width: 28.125rem;
   text-align: left;
-  border: 1px solid #fff;
+  border: 0.083rem solid #fff;
   background: url("../Discovery/images/cellpic3.gif") repeat scroll 0 0 #60606b;
   box-shadow: 0 0 1.25rem 0.1875rem #000;
   margin-bottom: 0.3125rem;
@@ -1178,7 +1186,7 @@ td.havenTab:hover {
 
 .tutorialTitle {
   font-weight: bold;
-  border-bottom: 1px solid #fff;
+  border-bottom: 0.083rem solid #fff;
   background: url("../Discovery/images/cellpic4.gif") repeat scroll 0 0 #2c2c31;
   padding: 0.125rem 0.3125rem;
 }
@@ -1188,7 +1196,7 @@ td.havenTab:hover {
 }
 
 .tutorialFooter {
-  border-top: 1px solid #fff;
+  border-top: 0.083rem solid #fff;
   background: url("../Discovery/images/cellpic4.gif") repeat scroll 0 0 #2c2c31;
   padding: 0.125rem 0.3125rem;
 }
@@ -1208,7 +1216,7 @@ td.havenTab:hover {
   display: inline-block;
 }
 
-@media screen and (min-width: 601px) {
+@media screen and (min-width: 600.083rem) {
 
   #sector_map_table .sector_map_cell img.cell_number_spacer {
     width: 3.625rem;
@@ -1220,7 +1228,7 @@ td.havenTab:hover {
     margin-left: 0.3125rem;
     width: 3rem;
     height: 4rem;
-    border-bottom: 1px dashed #555;
+    border-bottom: 0.083rem dashed #555;
   }
 
   #sector_map_table .sector_map_cell img.cell_number_horizontal {
@@ -1228,15 +1236,15 @@ td.havenTab:hover {
     margin-bottom: 0.3125rem;
     width: 4rem;
     height: 2.5rem;
-    border-left: 1px dashed #555;
+    border-left: 0.083rem dashed #555;
   }
 
   #sector_map_table .sector_map_cell a {
     border: none;
     text-decoration: none;
     display: inline-block;
-    border-left: 1px dashed #555;
-    border-bottom: 1px dashed #555;
+    border-left: 0.083rem dashed #555;
+    border-bottom: 0.083rem dashed #555;
     margin: 0;
     padding: 0;
     line-height: 0;

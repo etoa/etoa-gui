@@ -16,6 +16,7 @@
   position: relative;
   font-family: "Zekton-BoldItalic", sans-serif;
   text-shadow: rgba(0, 0, 0, 1) 0.1rem 0.1rem 0.3em;
+  text-decoration: none;
 }
 
 .navigation-top a:active {
@@ -75,10 +76,12 @@
   .navigation-top a:last-child {
     position: absolute;
     display: block;
-    top: 0;
-    right: 0.5rem;
-    width: 4rem;
-    height: 100%;
+    top: 0.4rem;
+    right: 1.6rem;
+    width: 5rem;
+    height: 3rem;
+    text-align: center;
+    line-height: 3rem;
     color: rgba(255, 255, 255, 0.5);
     font-family: "Ethnocentric-Bold", sans-serif;
     font-size: 0.8rem;
@@ -92,6 +95,7 @@
 
   #app.mouse .navigation-top a:not(:last-child):hover::after {
     content: "";
+    pointer-events: none;
     position: absolute;
     top: -0.833rem;
     left: -1.5rem;
