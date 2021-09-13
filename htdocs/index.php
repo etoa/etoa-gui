@@ -30,15 +30,8 @@ $watch->start('render');
 $request = \Symfony\Component\HttpFoundation\Request::createFromGlobals();
 
 // Funktionen und Config einlesen
-try {
-    require_once __DIR__ . '/inc/bootstrap.inc.php';
-} catch (DBException $ex) {
-    require_once __DIR__ . '/../src/minimalapp.php';
-    echo $app['twig']->render('layout/empty.html.twig', [
-        'content' => $ex,
-    ]);
-    exit;
-}
+
+require_once __DIR__ . '/inc/bootstrap.inc.php';
 
 // Set no-cache header
 header("Cache-Control: no-cache, must-revalidate");
@@ -321,11 +314,6 @@ try {
 
     echo $twig->render('layout/game.html.twig', [
         'content' => ob_get_clean(),
-    ]);
-} catch (DBException $e) {
-    ob_clean();
-    echo $twig->render('layout/empty.html.twig', [
-        'content' => $e,
     ]);
 } catch (\Throwable $exception) {
     throw $exception;

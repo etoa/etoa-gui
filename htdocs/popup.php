@@ -36,29 +36,22 @@ if (isset($cu) && filled($properties->cssStyle)) {
 define('CSS_STYLE', $design);
 
 $errorMessage = null;
-try {
-    ob_start();
-    if ($loggedIn) {
-        if ($page && $page !== DEFAULT_PAGE) {
-            $popup = true;
-            require __DIR__ . '/inc/content.inc.php';
-        }
-    } else {
-        $errorMessage = 'Du bist nicht eingeloggt!';
-    }
 
-    echo $twig->render('layout/popup.html.twig', [
-        'templateDir' => CSS_STYLE,
-        'xajaxJS' => $xajax->getJavascript(XAJAX_DIR),
-        'bodyTopStuff' => getInitTT(),
-        'errorMessage' => $errorMessage,
-        'content' => ob_get_clean(),
-        'gameTitle' => getGameIdentifier(),
-    ]);
-} catch (DBException $ex) {
-    ob_clean();
-    echo $twig->render('layout/popup.html.twig', [
-        'templateDir' => CSS_STYLE,
-        'content' => $ex,
-    ]);
+ob_start();
+if ($loggedIn) {
+    if ($page && $page !== DEFAULT_PAGE) {
+        $popup = true;
+        require __DIR__ . '/inc/content.inc.php';
+    }
+} else {
+    $errorMessage = 'Du bist nicht eingeloggt!';
 }
+
+echo $twig->render('layout/popup.html.twig', [
+    'templateDir' => CSS_STYLE,
+    'xajaxJS' => $xajax->getJavascript(XAJAX_DIR),
+    'bodyTopStuff' => getInitTT(),
+    'errorMessage' => $errorMessage,
+    'content' => ob_get_clean(),
+    'gameTitle' => getGameIdentifier(),
+]);

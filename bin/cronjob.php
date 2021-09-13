@@ -44,44 +44,39 @@ $args = array_splice($_SERVER['argv'], 1);
 
 $verbose = in_array("-v", $args, true);
 
-try {
+/** @var ConfigurationService */
+$config = $app[ConfigurationService::class];
+/** @var LogRepository $logRepository */
+$logRepository = $app[LogRepository::class];
 
-    /** @var ConfigurationService */
-    $config = $app[ConfigurationService::class];
-    /** @var LogRepository $logRepository */
-    $logRepository = $app[LogRepository::class];
+// Prüfen ob Updates eingeschaltet sind
+if ($config->getBoolean('update_enabled'))
+{
+    $time = time();
 
-    // Prüfen ob Updates eingeschaltet sind
-    if ($config->getBoolean('update_enabled'))
-    {
-        $time = time();
-
-        // Execute tasks
-        $tr = new PeriodicTaskRunner($app);
-        $log = '';
-        foreach (PeriodicTaskRunner::getScheduleFromConfig() as $tc) {
-            if (PeriodicTaskRunner::shouldRun($tc['schedule'], $time)) {
-                $log.= $tc['name'].': '.$tr->runTask($tc['name']);
-            }
-        }
-        $log.= "\nTotal: ".$tr->getTotalDuration().' sec';
-
-        // Write log
-        if (LOG_UPDATES) {
-            $severity = LogSeverity::INFO;
-        } elseif ($tr->getTotalDuration() > LOG_UPDATES_THRESHOLD) {
-            $severity = LogSeverity::WARNING;
-        } else {
-            $severity = LogSeverity::DEBUG;
-        }
-        $text = "Periodische Tasks (".date("d.m.Y H:i:s",$time)."):\n\n".$log;
-        $logRepository->add(LogFacility::UPDATES, $severity, $text);
-
-        if ($verbose) {
-            echo $text;
+    // Execute tasks
+    $tr = new PeriodicTaskRunner($app);
+    $log = '';
+    foreach (PeriodicTaskRunner::getScheduleFromConfig() as $tc) {
+        if (PeriodicTaskRunner::shouldRun($tc['schedule'], $time)) {
+            $log.= $tc['name'].': '.$tr->runTask($tc['name']);
         }
     }
-} catch (DBException $ex) {
-    echo $ex;
-    exit(1);
+    $log.= "\nTotal: ".$tr->getTotalDuration().' sec';
+
+    // Write log
+    if (LOG_UPDATES) {
+        $severity = LogSeverity::INFO;
+    } elseif ($tr->getTotalDuration() > LOG_UPDATES_THRESHOLD) {
+        $severity = LogSeverity::WARNING;
+    } else {
+        $severity = LogSeverity::DEBUG;
+    }
+    $text = "Periodische Tasks (".date("d.m.Y H:i:s",$time)."):\n\n".$log;
+    $logRepository->add(LogFacility::UPDATES, $severity, $text);
+
+    if ($verbose) {
+        echo $text;
+    }
 }
+
