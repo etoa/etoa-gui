@@ -16,100 +16,84 @@ ob_start();
 
 require_once __DIR__ . '/../../vendor/autoload.php';
 
-try {
-    require __DIR__ . '/inc/includer.inc.php';
-    $app = require __DIR__ . '/../../src/app.php';
-} catch (DBException $ex) {
-    ob_clean();
-    require_once __DIR__ . '/../../src/minimalapp.php';
-    echo $app['twig']->render('layout/empty.html.twig', [
-        'content' => $ex,
-    ]);
-    exit;
-}
+require __DIR__ . '/inc/includer.inc.php';
+$app = require __DIR__ . '/../../src/app.php';
 
 $twig->addGlobal('ajaxJs', $xajax->getJavascript(XAJAX_DIR));
 $twig->addGlobal('pageTitle', getGameIdentifier() . ' Administration');
 $twig->addGlobal('bodyTopStuff', getInitTT());
 
-try {
-    // Login if requested
-    if (isset($_POST['login_submit'])) {
-        if (!$s->login($_POST)) {
-            include __DIR__ . '/inc/admin_login.inc.php';
-            return;
-        }
 
-        if ($_SERVER['QUERY_STRING']) {
-            forward("?" . $_SERVER['QUERY_STRING']);
-        } else {
-            forward(".");
-        }
-    }
-
-    // Perform logout if requested
-    if (isset($_GET['logout']) && $_GET['logout'] != null) {
-        $s->logout();
-        forward('.', "Logout");
-    }
-
-    // Validate session
-    if (!$s->validate()) {
+// Login if requested
+if (isset($_POST['login_submit'])) {
+    if (!$s->login($_POST)) {
         include __DIR__ . '/inc/admin_login.inc.php';
-    } else {
-        /** @var AdminUserRepository $adminUserRepo */
-        $adminUserRepo = $app[AdminUserRepository::class];
-
-        /** @var UserRepository $userRepo */
-        $userRepo = $app[UserRepository::class];
-
-        /** @var UserSessionRepository $userSessionRepo */
-        $userSessionRepo = $app[UserSessionRepository::class];
-
-        /** @var AdminNotesRepository $notesRepo */
-        $notesRepo = $app[AdminNotesRepository::class];
-
-        /** @var AdminRoleManager $roleManager */
-        $roleManager = $app[AdminRoleManager::class];
-
-        /** @var AdminSessionRepository $sessionRepository */
-        $sessionRepository = $app[AdminSessionRepository::class];
-
-        /** @var DatabaseManagerRepository $databaseManager */
-        $databaseManager = $app[DatabaseManagerRepository::class];
-
-        /** @var TicketRepository $ticketRepo */
-        $ticketRepo = $app[TicketRepository::class];
-
-        /** @var ConfigurationService $config */
-        $config = $app[ConfigurationService::class];
-
-        /** @var EventHandlerManager $eventHandlerManager */
-        $eventHandlerManager = $app[EventHandlerManager::class];
-
-        adminView(
-            $s,
-            $adminUserRepo,
-            $userRepo,
-            $userSessionRepo,
-            $notesRepo,
-            $roleManager,
-            $sessionRepository,
-            $databaseManager,
-            $ticketRepo,
-            $config,
-            $eventHandlerManager,
-            $twig
-        );
+        return;
     }
-} catch (DBException $ex) {
-    ob_clean();
-    require_once __DIR__ . '/../../src/minimalapp.php';
-    echo $app['twig']->render('layout/empty.html.twig', [
-        'content' => $ex,
-    ]);
-    exit;
+
+    if ($_SERVER['QUERY_STRING']) {
+        forward("?" . $_SERVER['QUERY_STRING']);
+    } else {
+        forward(".");
+    }
 }
+
+// Perform logout if requested
+if (isset($_GET['logout']) && $_GET['logout'] != null) {
+    $s->logout();
+    forward('.', "Logout");
+}
+
+// Validate session
+if (!$s->validate()) {
+    include __DIR__ . '/inc/admin_login.inc.php';
+} else {
+    /** @var AdminUserRepository $adminUserRepo */
+    $adminUserRepo = $app[AdminUserRepository::class];
+
+    /** @var UserRepository $userRepo */
+    $userRepo = $app[UserRepository::class];
+
+    /** @var UserSessionRepository $userSessionRepo */
+    $userSessionRepo = $app[UserSessionRepository::class];
+
+    /** @var AdminNotesRepository $notesRepo */
+    $notesRepo = $app[AdminNotesRepository::class];
+
+    /** @var AdminRoleManager $roleManager */
+    $roleManager = $app[AdminRoleManager::class];
+
+    /** @var AdminSessionRepository $sessionRepository */
+    $sessionRepository = $app[AdminSessionRepository::class];
+
+    /** @var DatabaseManagerRepository $databaseManager */
+    $databaseManager = $app[DatabaseManagerRepository::class];
+
+    /** @var TicketRepository $ticketRepo */
+    $ticketRepo = $app[TicketRepository::class];
+
+    /** @var ConfigurationService $config */
+    $config = $app[ConfigurationService::class];
+
+    /** @var EventHandlerManager $eventHandlerManager */
+    $eventHandlerManager = $app[EventHandlerManager::class];
+
+    adminView(
+        $s,
+        $adminUserRepo,
+        $userRepo,
+        $userSessionRepo,
+        $notesRepo,
+        $roleManager,
+        $sessionRepository,
+        $databaseManager,
+        $ticketRepo,
+        $config,
+        $eventHandlerManager,
+        $twig
+    );
+}
+
 
 function adminView(
     AdminSession $s,
