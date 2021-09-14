@@ -434,7 +434,7 @@ function show_avatar($avatar = AllianceBoardAvatar::DEFAULT_IMAGE)
 {
     if ($avatar == "") $avatar = AllianceBoardAvatar::DEFAULT_IMAGE;
     echo "<div style=\"padding:8px;\">";
-    echo "<img id=\"avatar\" src=\"" . BOARD_AVATAR_DIR . "/" . $avatar . "\" alt=\"avatar\" style=\"width:64px;height:64px;\"/></div>";
+    echo "<img id=\"avatar\" src=\"" . AllianceBoardAvatar::IMAGE_PATH . $avatar . "\" alt=\"avatar\" style=\"width:64px;height:64px;\"/></div>";
 }
 
 /**

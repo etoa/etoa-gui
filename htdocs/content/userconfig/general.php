@@ -19,7 +19,7 @@ if (isset($_POST['data_submit']) && $_POST['data_submit'] != "" && checker_verif
         if (isset($_POST['avatar_del']) && $_POST['avatar_del'] == 1) {
             $user->avatar = "";
         } elseif ($_FILES['user_avatar_file']['tmp_name'] != "") {
-            $imup = new ImageUpload('user_avatar_file', BOARD_AVATAR_DIR, "user_" . $cu->id . "_" . time());
+            $imup = new ImageUpload('user_avatar_file', $app['app.webroot_dir'] . AllianceBoardAvatar::IMAGE_PATH, "user_" . $cu->id . "_" . time());
             $imup->setMaxSize(AllianceBoardAvatar::AVATAR_MAX_SIZE);
             $imup->setMaxDim(AllianceBoardAvatar::AVATAR_MAX_WIDTH, AllianceBoardAvatar::AVATAR_MAX_HEIGHT);
             $imup->enableResizing(AllianceBoardAvatar::AVATAR_WIDTH, AllianceBoardAvatar::AVATAR_HEIGHT);
@@ -126,7 +126,7 @@ echo "<tr>
           <th width=\"35%\">Allianzforum-Avatar:</th>
           <td>";
 if ($user->avatar != "" && $user->avatar != AllianceBoardAvatar::DEFAULT_IMAGE) {
-    if (is_file(BOARD_AVATAR_DIR . "/" . $user->avatar)) {
+    if (is_file($app['app.webroot_dir'] . "/" . $user->getAvatarUrl())) {
         show_avatar($user->avatar);
         echo "<input type=\"checkbox\" value=\"1\" name=\"avatar_del\"> Avatar l&ouml;schen<br/>";
     }

@@ -4,6 +4,7 @@ namespace EtoA\Admin;
 
 class AllianceBoardAvatar
 {
+    public const IMAGE_PATH = '/cache/avatars/';
 
     // Standard Foren-Icon
     public const DEFAULT_IMAGE = "default.png";

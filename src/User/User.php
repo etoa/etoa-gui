@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace EtoA\User;
 
+use EtoA\Admin\AllianceBoardAvatar;
+
 class User
 {
     public const NAME_PATTERN = '/^.[^0-9\'\"\?\<\>\$\!\=\;\&]*$/';
@@ -153,5 +155,14 @@ class User
         }
 
         return ProfileImage::IMAGE_PATH . $this->profileImage;
+    }
+
+    public function getAvatarUrl(): ?string
+    {
+        if ($this->avatar == '') {
+            return null;
+        }
+
+        return AllianceBoardAvatar::IMAGE_PATH . $this->avatar;
     }
 }

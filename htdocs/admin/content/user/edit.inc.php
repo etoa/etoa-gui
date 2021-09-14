@@ -150,8 +150,9 @@ if (isset($_POST['save'])) {
 
     // Handle avatar
     if (isset($_POST['avatar_img_del']) && $_POST['avatar_img_del'] == 1) {
-        if (file_exists(BOARD_AVATAR_DIR . "/" . $user->avatar)) {
-            unlink(BOARD_AVATAR_DIR . "/" . $user->avatar);
+        $path = $app['app.webroot_dir'] . $user->getAvatarUrl();
+        if (file_exists($path)) {
+            unlink($path);
         }
         $user->avatar = '';
     }
@@ -1076,7 +1077,7 @@ if ($user !== null) {
                     <th>Avatarpfad:</th>
                     <td class=\"tbldata\">";
     if ($user->avatar != "") {
-        echo '<img src="' . BOARD_AVATAR_DIR . '/' . $user->avatar . '" alt="Profil" /><br/>';
+        echo '<img src="' . $user->getAvatarUrl() . '" alt="Profil" /><br/>';
         echo "<input type=\"checkbox\" value=\"1\" name=\"avatar_img_del\"> Bild l&ouml;schen<br/>";
     } else {
         echo "<i>Keines</i>";
