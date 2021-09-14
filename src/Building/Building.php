@@ -2,7 +2,9 @@
 
 namespace EtoA\Building;
 
-class Building
+use EtoA\Core\ObjectWithImage;
+
+class Building implements ObjectWithImage
 {
     public int $id;
     public string $name;
@@ -106,11 +108,11 @@ class Building
     {
         switch ($type) {
             case 'small':
-                return IMAGE_PATH."/buildings/building".$this->id."_small.png";
+                return self::BASE_PATH."/buildings/building".$this->id."_small.png";
             case 'medium':
-                return IMAGE_PATH."/buildings/building".$this->id."_middle.png";
+                return self::BASE_PATH."/buildings/building".$this->id."_middle.png";
             default:
-                return IMAGE_PATH."/buildings/building".$this->id.".png";
+                return self::BASE_PATH."/buildings/building".$this->id.".png";
         }
     }
 }

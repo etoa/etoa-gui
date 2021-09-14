@@ -2,7 +2,9 @@
 
 namespace EtoA\Missile;
 
-class Missile
+use EtoA\Core\ObjectWithImage;
+
+class Missile implements ObjectWithImage
 {
     public int $id;
     public string $name;
@@ -39,5 +41,17 @@ class Missile
         $this->def = (int) $data['missile_def'];
         $this->launchable = (bool) $data['missile_launchable'];
         $this->show = (bool) $data['missile_show'];
+    }
+
+    public function getImagePath(string $type = "small"): string
+    {
+        switch ($type) {
+            case 'small':
+                return self::BASE_PATH."/missiles/missile".$this->id."_small.png";
+            case 'medium':
+                return self::BASE_PATH."/missiles/missile".$this->id."_middle.png";
+            default:
+                return self::BASE_PATH."/missiles/missile".$this->id.".png";
+        }
     }
 }

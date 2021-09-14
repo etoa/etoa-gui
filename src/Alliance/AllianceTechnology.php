@@ -2,9 +2,10 @@
 
 namespace EtoA\Alliance;
 
+use EtoA\Core\ObjectWithImage;
 use EtoA\Universe\Resources\BaseResources;
 
-class AllianceTechnology
+class AllianceTechnology implements ObjectWithImage
 {
     public int $id;
     public string $name;
@@ -43,7 +44,7 @@ class AllianceTechnology
 
     public function getImagePath(): string
     {
-        return IMAGE_PATH . "/atechnologies/technology" . $this->id . "_middle.png";
+        return self::BASE_PATH . "/atechnologies/technology" . $this->id . "_middle.png";
     }
 
     public function getCosts(): BaseResources

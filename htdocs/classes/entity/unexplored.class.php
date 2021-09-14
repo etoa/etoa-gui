@@ -1,5 +1,7 @@
 <?PHP
 
+use EtoA\Core\ObjectWithImage;
+
 /**
  * Class for empty space entities
  */
@@ -92,8 +94,7 @@ class UnExplored extends Entity
 
     function imagePath($opt = "")
     {
-        $r = mt_rand(1, 10);
-        return IMAGE_PATH . "/unexplored/ue1.png";
+        return ObjectWithImage::BASE_PATH . "/unexplored/ue1.png";
     }
 
     /**

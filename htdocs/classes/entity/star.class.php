@@ -1,5 +1,6 @@
 <?PHP
 
+use EtoA\Core\ObjectWithImage;
 use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Star\SolarType;
 use EtoA\Universe\Star\SolarTypeRepository;
@@ -158,9 +159,9 @@ class Star extends Entity
     function imagePath($opt = "")
     {
         if ($opt == "b") {
-            return IMAGE_PATH . "/stars/star" . $this->typeId . ".png";
+            return ObjectWithImage::BASE_PATH . "/stars/star" . $this->typeId . ".png";
         }
-        return IMAGE_PATH . "/stars/star" . $this->typeId . "_small.png";
+        return ObjectWithImage::BASE_PATH . "/stars/star" . $this->typeId . "_small.png";
     }
 
     /**

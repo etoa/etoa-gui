@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace EtoA\Universe\Star;
 
-class SolarType
+use EtoA\Core\ObjectWithImage;
+
+class SolarType implements ObjectWithImage
 {
     public int $id;
     public string $name;
@@ -35,5 +37,17 @@ class SolarType
         $this->comment = $data['sol_type_comment'];
         $this->researchTime = (float) $data['sol_type_f_researchtime'];
         $this->consider = (bool) $data['sol_type_consider'];
+    }
+
+    public function getImagePath(string $type = "small"): string
+    {
+        switch ($type) {
+            case 'small':
+                return self::BASE_PATH."/stars/star".$this->id."_small.png";
+            case 'medium':
+                return self::BASE_PATH."/stars/star".$this->id."_middle.png";
+            default:
+                return self::BASE_PATH."/stars/star".$this->id.".png";
+        }
     }
 }

@@ -463,7 +463,7 @@ if ($missileBuilding !== null && $missileBuilding->currentLevel > 0) {
                                 </tr>";
                             }
 
-                            $d_img = IMAGE_PATH . '/missiles/missile' . $missile->id . '_middle.png';
+                            $d_img = $missile->getImagePath('middle');
                             echo "<tr>
                                 <th colspan=\"5\">" . $missile->name . "</th>
                             </tr>
@@ -563,7 +563,7 @@ if ($missileBuilding !== null && $missileBuilding->currentLevel > 0) {
 
                         //Einfache Ansicht der Schiffsliste
                         else {
-                            $d_img = IMAGE_PATH . '/missiles/missile' . $missile->id . '_middle.png';
+                            $d_img = $missile->getImagePath('middle');
                             echo "<tr>
                                     <td>";
                             //Bild mit Link zur Hilfe darstellen

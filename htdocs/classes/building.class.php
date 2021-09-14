@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\Building\BuildingRequirementRepository;
+use EtoA\Core\ObjectWithImage;
 
 class Building
 {
@@ -87,17 +88,17 @@ class Building
 
     function imgPathSmall()
     {
-        return IMAGE_PATH . "/buildings/building" . $this->id . "_small.png";
+        return ObjectWithImage::BASE_PATH . "/buildings/building" . $this->id . "_small.png";
     }
 
     function imgPathMiddle()
     {
-        return IMAGE_PATH . "/buildings/building" . $this->id . "_middle.png";
+        return ObjectWithImage::BASE_PATH . "/buildings/building" . $this->id . "_middle.png";
     }
 
     function imgPathBig()
     {
-        return IMAGE_PATH . "/buildings/building" . $this->id . ".png";
+        return ObjectWithImage::BASE_PATH . "/buildings/building" . $this->id . ".png";
     }
 
     function imgSmall()

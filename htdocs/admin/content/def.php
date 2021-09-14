@@ -4,6 +4,7 @@ use EtoA\Admin\Forms\DefenseCategoriesForm;
 use EtoA\Admin\Forms\DefensesForm;
 use EtoA\Admin\Forms\ObjectTransformsForm;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Core\ObjectWithImage;
 use EtoA\Defense\Defense;
 use EtoA\Defense\DefenseDataRepository;
 use EtoA\Defense\DefenseListSearch;
@@ -287,7 +288,7 @@ elseif ($sub == "cat") {
 elseif ($sub == "req") {
     define("TITLE", "Verteidigungsanforderungen");
     define("REQ_TBL", "def_requirements");
-    define("ITEM_IMAGE_PATH", IMAGE_PATH . "/defense/def<DB_TABLE_ID>_small.png");
+    define("ITEM_IMAGE_PATH", ObjectWithImage::BASE_PATH . "/defense/def<DB_TABLE_ID>_small.png");
 
     /** @var DefenseDataRepository $defenseDataRepository */
     $defenseDataRepository = $app[DefenseDataRepository::class];

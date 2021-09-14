@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace EtoA\Universe\Planet;
 
-class Planet
+use EtoA\Core\ObjectWithImage;
+
+class Planet implements ObjectWithImage
 {
     public int $id;
     public int $userId;
@@ -148,11 +150,11 @@ class Planet
     {
         switch ($type) {
             case 'small':
-                return IMAGE_PATH . "/planets/planet" . $this->image . "_small.png";
+                return self::BASE_PATH . "/planets/planet" . $this->image . "_small.png";
             case 'medium':
-                return IMAGE_PATH . "/planets/planet" . $this->image . "_middle.png";
+                return self::BASE_PATH . "/planets/planet" . $this->image . "_middle.png";
             default:
-                return IMAGE_PATH . "/planets/planet" . $this->image . ".png";
+                return self::BASE_PATH . "/planets/planet" . $this->image . ".png";
         }
     }
 }

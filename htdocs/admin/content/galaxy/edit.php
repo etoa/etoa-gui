@@ -3,6 +3,7 @@
 use EtoA\Alliance\AllianceRepository;
 use EtoA\Backend\BackendMessageService;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Core\ObjectWithImage;
 use EtoA\Log\LogFacility;
 use EtoA\Log\LogRepository;
 use EtoA\Log\LogSeverity;
@@ -239,11 +240,11 @@ Neuer Besitzer: [page user sub=edit user_id=" . $request->request->getInt('plane
                 <input type=\"text\" name=\"planet_temp_from\" value=\"" . $planet->tempFrom . "\" size=\"4\" maxlength=\"5\" />
                 bis <input type=\"text\" name=\"planet_temp_to\" value=\"" . $planet->tempTo . "\" size=\"4\" maxlength=\"5\" /> &deg;C
             </td>";
-            $imPath = IMAGE_PATH . "/planets/planet";
+            $imPath = ObjectWithImage::BASE_PATH . "/planets/planet";
             $imPathPost = "_small.png";
             echo "<th>Bild</th>
             <td>
-            <img id=\"pimg\" src=\"" . $imPath . $planet->image . $imPathPost . "\" style=\"float:left;\" />
+            <img id=\"pimg\" src=\"" . $planet->getImagePath('small') . "\" style=\"float:left;\" />
             <select name=\"planet_image\" onchange=\"document.getElementById('pimg').src='$imPath'+this.value+'$imPathPost'\">";
             echo "<option value=\"\">Undefiniert</option>";
 
@@ -360,7 +361,7 @@ Neuer Besitzer: [page user sub=edit user_id=" . $request->request->getInt('plane
             <td><input type=\"text\" name=\"name\" value=\"" . $star->name . "\" size=\"20\" maxlength=\"250\" /></td>";
             echo "<th>Typ</th>
             <td>
-            <img src=\"" . IMAGE_PATH . "/stars/star" . $star->typeId . "_small.png" . "\" style=\"float:left;\" />
+            <img src=\"" . $star->getImagePath('small') . "\" style=\"float:left;\" />
             <select name=\"type_id\">";
             $solarTypeNames = $solarTypeRepository->getSolarTypeNames(true);
             foreach ($solarTypeNames as $solarTypeId => $solarTypeName) {

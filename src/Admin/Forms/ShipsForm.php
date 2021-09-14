@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace EtoA\Admin\Forms;
 
+use EtoA\Core\ObjectWithImage;
 use EtoA\Ranking\RankingService;
 use FleetAction;
 
@@ -41,7 +42,7 @@ class ShipsForm extends AdvancedForm
 
     protected function getImagePath(): ?string
     {
-        return IMAGE_PATH . "/ships/ship<DB_TABLE_ID>_small.png";
+        return ObjectWithImage::BASE_PATH . "/ships/ship<DB_TABLE_ID>_small.png";
     }
 
     protected function getSwitches(): array

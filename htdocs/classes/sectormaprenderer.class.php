@@ -1,5 +1,6 @@
 <?PHP
 
+use EtoA\Core\ObjectWithImage;
 use EtoA\UI\Tooltip;
 use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Entity\EntitySearch;
@@ -211,7 +212,7 @@ class SectorMapRenderer
                     if (isset($this->undiscoveredCellJavaScript)) {
                         $js = preg_replace('/##ID##/', (string) $cells[$xcoords][$ycoords]->cellId, $this->undiscoveredCellJavaScript);
                     }
-                    $img = IMAGE_PATH . "/unexplored/" . $fogImg . ".png";
+                    $img = ObjectWithImage::BASE_PATH . "/unexplored/" . $fogImg . ".png";
                 }
 
                 // Title or tooltip

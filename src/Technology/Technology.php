@@ -2,7 +2,9 @@
 
 namespace EtoA\Technology;
 
-class Technology
+use EtoA\Core\ObjectWithImage;
+
+class Technology implements ObjectWithImage
 {
     public int $id;
     public string $name;
@@ -45,11 +47,11 @@ class Technology
     {
         switch ($type) {
             case 'small':
-                return IMAGE_PATH."/technologies/technology".$this->id."_small.png";
+                return self::BASE_PATH . "/technologies/technology".$this->id."_small.png";
             case 'medium':
-                return IMAGE_PATH."/technologies/technology".$this->id."_middle.png";
+                return self::BASE_PATH . "/technologies/technology".$this->id."_middle.png";
             default:
-                return IMAGE_PATH."/technologies/technology".$this->id.".png";
+                return self::BASE_PATH . "/technologies/technology".$this->id.".png";
         }
     }
 }

@@ -46,7 +46,7 @@ echo "</tr>";
 $solarTypes = $solarTypeRepository->getSolarTypes($order, $sort);
 foreach ($solarTypes as $solarType) {
     echo "<tr><td style=\"width:40px;background:#000;vertical-align:middle;\">
-                <img src=\"" . IMAGE_PATH . "/stars/star" . $solarType->id . "_small.png" . "\" width=\"40\" height=\"40\" alt=\"Stern\"/></a></td>";
+                <img src=\"" . $solarType->getImagePath('small') . "\" width=\"40\" height=\"40\" alt=\"Stern\"/></a></td>";
 
     echo "<td " . tm($solarType->name, $solarType->comment) . "><b>" . $solarType->name . "</b></td>";
     echo "<td>" . StringUtils::formatPercentString($solarType->metal, true) . "</td>";

@@ -48,13 +48,6 @@ define('INSTALLER_DEFAULT_LOGINSERVER_URL', 'https://etoa.ch');
 // RSS Dir
 define('RSS_DIR', CACHE_ROOT . "/rss");
 
-//
-// Pfade
-//
-
-// Bilder
-define('IMAGE_PATH', RELATIVE_ROOT . "images/imagepacks/Discovery");
-
 
 /****************************/
 /* Allgemeine Einstellungen */

@@ -2,9 +2,10 @@
 
 namespace EtoA\Ship;
 
+use EtoA\Core\ObjectWithImage;
 use EtoA\Universe\Resources\BaseResources;
 
-class Ship
+class Ship implements ObjectWithImage
 {
     public int $id;
     public string $name;
@@ -133,11 +134,11 @@ class Ship
     {
         switch ($type) {
             case 'small':
-                return IMAGE_PATH."/ships/ship".$this->id."_small.png";
+                return self::BASE_PATH."/ships/ship".$this->id."_small.png";
             case 'medium':
-                return IMAGE_PATH."/ships/ship".$this->id."_middle.png";
+                return self::BASE_PATH."/ships/ship".$this->id."_middle.png";
             default:
-                return IMAGE_PATH."/ships/ship".$this->id.".png";
+                return self::BASE_PATH."/ships/ship".$this->id.".png";
         }
     }
 
