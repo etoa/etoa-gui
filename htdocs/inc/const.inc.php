@@ -34,14 +34,6 @@ define("DESIGN_STYLESHEET_FILE_NAME", "style.css");
 // Design main script file name
 define("DESIGN_SCRIPT_FILE_NAME", "scripts.js");
 
-/***********************************/
-/* Installer */
-/***********************************/
-
-// Default login server URL
-define('INSTALLER_DEFAULT_LOGINSERVER_URL', 'https://etoa.ch');
-
-
 /****************************/
 /* Allgemeine Einstellungen */
 /****************************/
