@@ -73,13 +73,6 @@ define("PROFILE_IMG_DIR", CACHE_ROOT . "/userprofiles");
 // Verzeichnis der Allianz-Bilder
 define("ALLIANCE_IMG_DIR", CACHE_ROOT . "/allianceprofiles");
 
-/****************/
-/* Sonstiges */
-/****************/
-
-// Suffix that an administrators mail address must have to be shown in admin contact list (empty string disables this check)
-define('CONTACT_REQUIRED_MAIL_SUFFIX', "@etoa.ch");
-
 /***********
  * Updates *
  ***********/

@@ -108,8 +108,7 @@ if (count($admins) > 0) {
                 <th>Foren-Profil</th>
             </tr>';
         foreach ($admins as $admin) {
-            $suffix = CONTACT_REQUIRED_MAIL_SUFFIX;
-            $showMailAddress = preg_match('/' . $suffix . '/i', $admin->email);
+            $showMailAddress = preg_match('/' . AdminUser::CONTACT_REQUIRED_EMAIL_SUFFIX . '/i', $admin->email);
 
             echo '<tr><td>' . $admin->nick . '</td>';
             if ($showMailAddress) {
