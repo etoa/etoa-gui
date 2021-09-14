@@ -40,9 +40,7 @@ $properties = isset($cu) ? $userPropertiesRepository->getOrCreateProperties($cu-
 
 $design = DESIGN_DIRECTORY . '/official/' . $config->get('default_css_style');
 if (isset($cu) && filled($properties->cssStyle)) {
-    if (is_dir(DESIGN_DIRECTORY . '/custom/' . $properties->cssStyle)) {
-        $design = DESIGN_DIRECTORY . '/custom/' . $properties->cssStyle;
-    } else if (is_dir(DESIGN_DIRECTORY . '/official/' . $properties->cssStyle)) {
+    if (is_dir(DESIGN_DIRECTORY . '/official/' . $properties->cssStyle)) {
         $design = DESIGN_DIRECTORY . '/official/' . $properties->cssStyle;
     }
 }

@@ -241,19 +241,19 @@ function get_designs()
 {
     $rootDir = RELATIVE_ROOT . DESIGN_DIRECTORY;
     $designs = array();
-    foreach (array('official', 'custom') as $rd) {
-        $baseDir = $rootDir . '/' . $rd;
-        if ($d = opendir($baseDir)) {
-            while ($f = readdir($d)) {
-                $dir = $baseDir . "/" . $f;
-                if (is_dir($dir) && !preg_match('/^\./', $f)) {
-                    $file = $dir . "/" . DESIGN_CONFIG_FILE_NAME;
-                    $design = parseDesignInfoFile($file);
-                    if ($design != null) {
-                        $design['dir'] = $dir;
-                        $design['custom'] = ($rd == 'custom');
-                        $designs[$f] = $design;
-                    }
+
+    $rd = 'official';
+    $baseDir = $rootDir . '/' . $rd;
+    if ($d = opendir($baseDir)) {
+        while ($f = readdir($d)) {
+            $dir = $baseDir . "/" . $f;
+            if (is_dir($dir) && !preg_match('/^\./', $f)) {
+                $file = $dir . "/" . DESIGN_CONFIG_FILE_NAME;
+                $design = parseDesignInfoFile($file);
+                if ($design != null) {
+                    $design['dir'] = $dir;
+                    $design['custom'] = false;
+                    $designs[$f] = $design;
                 }
             }
         }
