@@ -241,7 +241,7 @@ function show_tab_menu($varname, $data)
  */
 function get_designs()
 {
-    $rootDir = RELATIVE_ROOT . Design::DIRECTORY;
+    $rootDir = __DIR__ . '/../' . Design::DIRECTORY;
     $designs = array();
 
     $rd = 'official';
@@ -832,7 +832,7 @@ function getConfigFilePath($file)
 
 function writeConfigFile($file, $contents)
 {
-    file_put_contents(RELATIVE_ROOT . "config/" . $file, $contents);
+    file_put_contents(__DIR__ . '/../config/' . $file, $contents);
 }
 
 /**

@@ -6,7 +6,6 @@ use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Design\Design;
 use EtoA\User\UserPropertiesRepository;
 
-define('RELATIVE_ROOT', '');
 include_once __DIR__ . '/inc/bootstrap.inc.php';
 
 /** @var ConfigurationService $config */

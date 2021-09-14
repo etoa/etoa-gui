@@ -137,7 +137,7 @@ class SectorMapRenderer
 
             // Numbers on the left side
             if ($this->rulerEnabled) {
-                echo "<img id=\"counter_left_$ycoords\" alt=\"$ycoords\" src=\"" . RELATIVE_ROOT . self::MapImageDirectory . "/" . self::VerticalCoordinateNumberImagePrefix . "$ycoords.gif\" class=\"cell_number_vertical\"/>";
+                echo "<img id=\"counter_left_$ycoords\" alt=\"$ycoords\" src=\"/" . self::MapImageDirectory . "/" . self::VerticalCoordinateNumberImagePrefix . "$ycoords.gif\" class=\"cell_number_vertical\"/>";
             }
 
             for ($x = 0; $x < $this->numberOfCellsY; $x++) {
@@ -221,8 +221,8 @@ class SectorMapRenderer
                 // Mouseover
                 $mouseOver = '';
                 if ($this->rulerEnabled) {
-                    $mouseOver .= " onmouseover=\"$('#counter_left_$ycoords').attr('src','" . RELATIVE_ROOT . self::MapImageDirectory . "/" . self::VerticalCoordinateNumberHighlighImagePrefix . "$ycoords.gif');$('#counter_bottom_$xcoords').attr('src','" . RELATIVE_ROOT . self::MapImageDirectory . "/" . self::HorizontalCoordinateNumberHighlighImagePrefix . "$xcoords.gif');\"";
-                    $mouseOver .= " onmouseout=\"$('#counter_left_$ycoords').attr('src','" . RELATIVE_ROOT . self::MapImageDirectory . "/" . self::VerticalCoordinateNumberImagePrefix . "$ycoords.gif');$('#counter_bottom_$xcoords').attr('src','" . RELATIVE_ROOT . self::MapImageDirectory . "/" . self::HorizontalCoordinateNumberImagePrefix . "$xcoords.gif');\"";
+                    $mouseOver .= " onmouseover=\"$('#counter_left_$ycoords').attr('src','/" . self::MapImageDirectory . "/" . self::VerticalCoordinateNumberHighlighImagePrefix . "$ycoords.gif');$('#counter_bottom_$xcoords').attr('src','/" . self::MapImageDirectory . "/" . self::HorizontalCoordinateNumberHighlighImagePrefix . "$xcoords.gif');\"";
+                    $mouseOver .= " onmouseout=\"$('#counter_left_$ycoords').attr('src','/"  . self::MapImageDirectory . "/" . self::VerticalCoordinateNumberImagePrefix . "$ycoords.gif');$('#counter_bottom_$xcoords').attr('src','/" . self::MapImageDirectory . "/" . self::HorizontalCoordinateNumberImagePrefix . "$xcoords.gif');\"";
                 }
 
                 $class = count($classes) > 0 ? " class=\"" . implode(' ', $classes) . "\"" : '';
@@ -234,7 +234,7 @@ class SectorMapRenderer
                     echo "<a href=\"" . $url . "\" ";
                 }
                 echo " style=\"background:url('" . $img . "');\"$class$mouseOver>";
-                echo "<img src=\"" . RELATIVE_ROOT . "images/blank.gif\" alt=\"Raumzelle\" " . $title . " data-id=\"" . $cells[$xcoords][$ycoords]->cellId . "\" $overlayClass/></a>";
+                echo "<img src=\"/images/blank.gif\" alt=\"Raumzelle\" " . $title . " data-id=\"" . $cells[$xcoords][$ycoords]->cellId . "\" $overlayClass/></a>";
             }
             echo "<br/>";
         }
@@ -242,12 +242,12 @@ class SectorMapRenderer
         if ($this->rulerEnabled) {
 
             // Linke untere ecke
-            echo "<img alt=\"Blank\" src=\"" . RELATIVE_ROOT . "images/blank.gif\" class=\"cell_number_spacer\"/>";
+            echo "<img alt=\"Blank\" src=\"/images/blank.gif\" class=\"cell_number_spacer\"/>";
 
             // Numbers on the bottom side
             for ($x = 0; $x < $this->numberOfCellsY; $x++) {
                 $xcoords = $x + 1;
-                echo "<img id=\"counter_bottom_$xcoords\" alt=\"$xcoords\" src=\"" . RELATIVE_ROOT . self::MapImageDirectory . "/" . self::HorizontalCoordinateNumberImagePrefix . "$xcoords.gif\" class=\"cell_number_horizontal\"/>";
+                echo "<img id=\"counter_bottom_$xcoords\" alt=\"$xcoords\" src=\"/" . self::MapImageDirectory . "/" . self::HorizontalCoordinateNumberImagePrefix . "$xcoords.gif\" class=\"cell_number_horizontal\"/>";
             }
         }
 

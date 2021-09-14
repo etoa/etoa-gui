@@ -101,8 +101,8 @@ class UserBannerService
         string $race,
         string $text
     ) {
-        $font = realpath(RELATIVE_ROOT . $this->userBannerFont);
-        $backgroundImage = RELATIVE_ROOT . $this->userBannerBackgroundImage;
+        $font = realpath(__DIR__ . '/../../htdocs/' . $this->userBannerFont);
+        $backgroundImage = __DIR__ . '/../../htdocs/' . $this->userBannerBackgroundImage;
 
         $im = imagecreatefrompng($backgroundImage);
 

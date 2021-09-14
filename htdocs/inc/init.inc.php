@@ -3,11 +3,6 @@
 //Fehler ausgabe definiert
 ini_set('arg_separator.output',  '&amp;');
 
-// Path to the relative root of the game
-if (!defined('RELATIVE_ROOT')) {
-    define('RELATIVE_ROOT', '');
-}
-
 // Set timezone
 define('TIMEZONE', 'Europe/Zurich');
 date_default_timezone_set(TIMEZONE);

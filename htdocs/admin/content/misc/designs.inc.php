@@ -56,7 +56,7 @@ foreach ($designs as $k => $v) {
     }
 }
 
-$sampleInfoFile = RELATIVE_ROOT . Design::DIRECTORY . "/official/" . $config->get('default_css_style') . '/' . Design::CONFIG_FILE_NAME;
+$sampleInfoFile = __DIR__ . '/../../../' . Design::DIRECTORY . "/official/" . $config->get('default_css_style') . '/' . Design::CONFIG_FILE_NAME;
 
 echo $twig->render('admin/misc/designs.html.twig', [
     'successMessage' => $successMessage,
