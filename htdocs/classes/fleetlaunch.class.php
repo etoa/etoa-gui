@@ -29,6 +29,8 @@ use EtoA\Universe\Resources\ResourceNames;
  */
 class FleetLaunch
 {
+    public const FLEET_NOCONTROL_NUM = 1;
+
     //
     // Variable definitions
     //
@@ -205,7 +207,7 @@ class FleetLaunch
                 $this->fleetSlotsUsed = $fleetRepository->count(FleetSearch::create()->user($this->ownerId)->controlledByEntity($this->sourceEntity->id()));
 
                 $this->fleetControlLevel = $fleetControl->currentLevel;
-                $totalSlots = FLEET_NOCONTROL_NUM + $this->fleetControlLevel;
+                $totalSlots = self::FLEET_NOCONTROL_NUM + $this->fleetControlLevel;
 
                 /** @var SpecialistService $specialistService */
                 $specialistService = $app[SpecialistService::class];

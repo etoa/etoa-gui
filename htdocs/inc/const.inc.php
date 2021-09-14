@@ -118,9 +118,6 @@ define("SPY_ATTACK_SHOW_RESSOURCEN", 9);
 // ...die Supportflotten auf dem Planeten
 define("SPY_ATTACK_SHOW_SUPPORT", 11);
 
-// Anzahl Flotten die OHNE Flottenkontrolle fliegen können
-define("FLEET_NOCONTROL_NUM", 1);
-
 // Anzahl Rohstofftypen im Spiel
 define('NUM_RESOURCES', 5);
 
