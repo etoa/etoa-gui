@@ -23,22 +23,25 @@ class UserBannerService
 
     private string $userBannerBackgroundImage = "images/userbanner/userbanner1.png";
     private string $userBannerFont = "images/userbanner/calibri.ttf";
+    private string $cacheDir;
 
     public function __construct(
         ConfigurationService $config,
         UserRepository $userRepository,
         AllianceRepository $allianceRepository,
-        RaceDataRepository $raceDataRepository
+        RaceDataRepository $raceDataRepository,
+        string $cacheDir
     ) {
         $this->config = $config;
         $this->userRepository = $userRepository;
         $this->allianceRepository = $allianceRepository;
         $this->raceDataRepository = $raceDataRepository;
+        $this->cacheDir = $cacheDir;
     }
 
     public function createUserBanner(): void
     {
-        $dir = USERBANNER_DIR;
+        $dir = $this->cacheDir . '/userbanner';
         if (!is_dir($dir)) {
             mkdir($dir);
         }
@@ -88,7 +91,7 @@ class UserBannerService
 
     public function getUserBannerPath(int $userId): string
     {
-        return USERBANNER_DIR . '/' . md5('user' . $userId) . '.png';
+        return $this->cacheDir . '/userbanner/' . md5('user' . $userId) . '.png';
     }
 
     /** @return resource|GdImage */

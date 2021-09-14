@@ -59,6 +59,7 @@ class RankingServiceProvider implements ServiceProviderInterface
                 $pimple[ShipRepository::class],
                 $pimple[DefenseRepository::class],
                 $pimple[UserPropertiesRepository::class],
+                $pimple['app.cache_dir']
             );
         };
 
@@ -95,7 +96,8 @@ class RankingServiceProvider implements ServiceProviderInterface
                 $pimple[ConfigurationService::class],
                 $pimple[UserRepository::class],
                 $pimple[AllianceRepository::class],
-                $pimple[RaceDataRepository::class]
+                $pimple[RaceDataRepository::class],
+                $pimple['app.cache_dir']
             );
         };
 
@@ -105,7 +107,8 @@ class RankingServiceProvider implements ServiceProviderInterface
                 $pimple[RaceDataRepository::class],
                 $pimple[UserStatRepository::class],
                 $pimple[UserRepository::class],
-                $pimple[UserRatingRepository::class]
+                $pimple[UserRatingRepository::class],
+                $pimple['app.cache_dir']
             );
         };
     }

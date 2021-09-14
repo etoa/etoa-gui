@@ -5,11 +5,6 @@ define('APP_NAME', 'EtoA');
 // Timezone
 define('TIMEZONE', 'Europe/Zurich');
 
-// Cache directory
-if (!defined('CACHE_ROOT')) {
-    define('CACHE_ROOT', RELATIVE_ROOT . 'cache');
-}
-
 // Admin mode?
 if (!defined('ADMIN_MODE')) {
     define('ADMIN_MODE', false);
@@ -27,31 +22,18 @@ define('DEFAULT_PAGE', "overview");
 /****************/
 
 // Verzeichnis der Avatare
-define("BOARD_AVATAR_DIR", CACHE_ROOT . "/avatars");
+define("BOARD_AVATAR_DIR", RELATIVE_ROOT . 'cache' . "/avatars");
 
 //
 // Profilbild
 //
 
 // Verzeichnis der User-Profilbilder
-define("PROFILE_IMG_DIR", CACHE_ROOT . "/userprofiles");
+define("PROFILE_IMG_DIR", RELATIVE_ROOT . 'cache' . "/userprofiles");
 
 //
 // Allianzbild
 //
 
 // Verzeichnis der Allianz-Bilder
-define("ALLIANCE_IMG_DIR", CACHE_ROOT . "/allianceprofiles");
-
-/***********
- * Updates *
- ***********/
-
-define('USERSTATS_OUTFILE', CACHE_ROOT . "/out/userstats.png");
-define('XML_INFO_FILE', CACHE_ROOT . "/xml/info.xml");
-
-/***********
- * Userbanner *
- ***********/
-
-define('USERBANNER_DIR', CACHE_ROOT . '/userbanner');
+define("ALLIANCE_IMG_DIR", RELATIVE_ROOT . 'cache' . "/allianceprofiles");

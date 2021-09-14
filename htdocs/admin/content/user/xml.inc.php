@@ -10,7 +10,7 @@ $userToXml = $app[UserToXml::class];
 
 $twig->addGlobal("title", "XML-Import/Export");
 
-$path = UserToXml::getDataDirectory();
+$path = $userToXml->getDataDirectory();
 
 //
 // Details

@@ -24,6 +24,7 @@ use EtoA\Universe\Star\StarRepository;
 use EtoA\Universe\Wormhole\WormholeRepository;
 use EtoA\Universe\Wormhole\WormholeService;
 use EtoA\User\UserRepository;
+use EtoA\User\UserToXml;
 use Pimple\Container;
 use Pimple\ServiceProviderInterface;
 use Symfony\Component\Lock\LockFactory;
@@ -107,7 +108,8 @@ class UniverseServiceProvider implements ServiceProviderInterface
                 $pimple[UserRepository::class],
                 $pimple[PlanetRepository::class],
                 $pimple[DatabaseManagerRepository::class],
-                $pimple[LockFactory::class]
+                $pimple[LockFactory::class],
+                $pimple[UserToXml::class]
             );
         };
 

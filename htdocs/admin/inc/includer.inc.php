@@ -17,4 +17,4 @@ define('SESSION_NAME', "adminsession");
 
 define('URL_SEARCH_STRING', "page=$page&amp;sub=$sub&amp;tmp=1");
 
-define('ADMIN_FILESHARING_DIR', CACHE_ROOT . "/admin");
+define('ADMIN_FILESHARING_DIR', $app['app.cache_dir'] . "/admin");

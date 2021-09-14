@@ -34,6 +34,7 @@ class UserToXml
     private FleetRepository $fleetRepository;
     private DefenseRepository $defenseRepository;
     private DefenseDataRepository $defenseDataRepository;
+    private string $cacheDir;
 
     public function __construct(
         UserRepository $userRepository,
@@ -48,7 +49,8 @@ class UserToXml
         ShipDataRepository $shipDataRepository,
         FleetRepository $fleetRepository,
         DefenseRepository $defenseRepository,
-        DefenseDataRepository $defenseDataRepository
+        DefenseDataRepository $defenseDataRepository,
+        string $cacheDir
     ) {
         $this->userRepository = $userRepository;
         $this->allianceRepository = $allianceRepository;
@@ -63,11 +65,12 @@ class UserToXml
         $this->fleetRepository = $fleetRepository;
         $this->defenseRepository = $defenseRepository;
         $this->defenseDataRepository = $defenseDataRepository;
+        $this->cacheDir = $cacheDir;
     }
 
-    public static function getDataDirectory(): string
+    public function getDataDirectory(): string
     {
-        $dir = CACHE_ROOT . "/user_xml";
+        $dir = $this->cacheDir . "/user_xml";
         if (!is_dir($dir)) {
             mkdir($dir, 0777, true);
         }
@@ -78,7 +81,7 @@ class UserToXml
     public function toCacheFile(int $userId): string
     {
         $filename = $userId . "_" . date("Y-m-d_H-i") . ".xml";
-        $file = self::getDataDirectory() . "/" . $filename;
+        $file = $this->getDataDirectory() . "/" . $filename;
         $xml = $this->generate($userId);
         if (!filled($xml)) {
             throw new Exception("XML Export fehlgeschlagen. User " . $userId . " nicht gefunden!");

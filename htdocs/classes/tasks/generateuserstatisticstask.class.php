@@ -1,5 +1,6 @@
 <?PHP
 
+use EtoA\Ranking\GameStatsGenerator;
 use EtoA\User\UserOnlineStatsRepository;
 use EtoA\User\UserRepository;
 use EtoA\User\UserSessionRepository;
@@ -29,8 +30,8 @@ class GenerateUserStatisticsTask implements IPeriodicTask
         $userCount = $this->userRepository->count();
         $sessionCount = $this->userSessionRepository->count();
         $this->userOnlineStatsRepository->addEntry($userCount, $sessionCount);
-        $this->userStats->generateImage(USERSTATS_OUTFILE);
-        $this->userStats->generateXml(XML_INFO_FILE);
+        $this->userStats->generateImage(GameStatsGenerator::USER_STATS_FILE);
+        $this->userStats->generateXml(GameStatsGenerator::XML_INFO_FILE);
         return "User-Statistik: " . $sessionCount . " User online, " . $userCount . " User registriert";
     }
 
