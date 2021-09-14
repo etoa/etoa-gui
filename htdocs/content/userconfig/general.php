@@ -34,7 +34,7 @@ if (isset($_POST['data_submit']) && $_POST['data_submit'] != "" && checker_verif
         if (isset($_POST['profile_img_del']) && $_POST['profile_img_del'] == 1) {
             $user->profileImage = "";
         } elseif ($_FILES['user_profile_img_file']['tmp_name'] != "") {
-            $imup = new ImageUpload('user_profile_img_file', PROFILE_IMG_DIR, "user_" . $cu->id . "_" . time());
+            $imup = new ImageUpload('user_profile_img_file', $app['app.webroot_dir'] . ProfileImage::IMAGE_PATH, "user_" . $cu->id . "_" . time());
             $imup->setMaxSize(ProfileImage::IMAGE_MAX_SIZE);
             $imup->setMaxDim(ProfileImage::IMAGE_MAX_WIDTH, ProfileImage::IMAGE_MAX_HEIGHT);
             $imup->enableResizing(ProfileImage::IMAGE_WIDTH, ProfileImage::IMAGE_HEIGHT);
@@ -106,9 +106,10 @@ echo "<tr>
           <th width=\"35%\">User-Bild:</th>
           <td>";
 if ($user->profileImage != "") {
-    $im = PROFILE_IMG_DIR . '/' . $user->profileImage;
+    $imagePath = \EtoA\User\ProfileImage::IMAGE_PATH . $user->profileImage;
+    $im = $app['app.webroot_dir'] . $imagePath;
     if (is_file($im)) {
-        echo '<img src="' . $im . '" alt="Profil" /><br/>';
+        echo '<img src="' . $imagePath . '" alt="Profil" /><br/>';
         echo "<input type=\"checkbox\" value=\"1\" name=\"profile_img_del\"> Bild l&ouml;schen<br/>";
     }
 }

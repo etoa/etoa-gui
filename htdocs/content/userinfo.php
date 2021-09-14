@@ -40,11 +40,12 @@ if ($uid > 0) {
     if ($user->isValid) {
         tableStart("Profil von " . $user->nick);
         if ($user->profileImage != "") {
-            $im = PROFILE_IMG_DIR . "/" . $user->profileImage;
+            $imagePath = \EtoA\User\ProfileImage::IMAGE_PATH . $user->profileImage;
+            $im = $app['app.webroot_dir'] . $imagePath;
             if (is_file($im)) {
                 $ims = getimagesize($im);
                 echo "<tr><td class=\"tblblack\" colspan=\"2\" style=\"text-align:center;background:#000;\">
-                    <img src=\"" . $im . "\" style=\"width:" . $ims[0] . "px;height:" . $ims[1] . "px;\" alt=\"Profil\" /></td></tr>";
+                    <img src=\"" . $imagePath . "\" style=\"width:" . $ims[0] . "px;height:" . $ims[1] . "px;\" alt=\"Profil\" /></td></tr>";
             }
         }
         if ($user->profileText != "") {

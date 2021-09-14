@@ -145,4 +145,13 @@ class User
         $this->npc = (int) $data['npc'];
         $this->userChangedMainPlanet = (bool) $data['user_changed_main_planet'];
     }
+
+    public function getProfileImageUrl(): ?string
+    {
+        if ($this->profileImage == '') {
+            return null;
+        }
+
+        return ProfileImage::IMAGE_PATH . $this->profileImage;
+    }
 }

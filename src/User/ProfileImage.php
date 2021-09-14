@@ -4,6 +4,8 @@ namespace EtoA\User;
 
 class ProfileImage
 {
+    public const IMAGE_PATH = '/cache/userprofiles/';
+
     // Profilbild-Breite
     public const IMAGE_WIDTH = 640;
 

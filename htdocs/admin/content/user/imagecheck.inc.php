@@ -3,7 +3,7 @@
 use EtoA\User\UserRepository;
 use EtoA\User\UserSearch;
 
-$dir = PROFILE_IMG_DIR . "/";
+$dir = $app['app.webrrot_dir'] . \EtoA\User\ProfileImage::IMAGE_PATH;
 
 echo "<h1>User-Bilder pr&uuml;fen</h1>";
 
@@ -18,8 +18,8 @@ if (isset($_POST['validate_submit'])) {
         if ($v == 0) {
             $user = $userRepository->getUser($id);
             if ($user !== null) {
-                if (file_exists(PROFILE_IMG_DIR . "/" . $user->profileImage)) {
-                    unlink(PROFILE_IMG_DIR . "/" . $user->profileImage);
+                if (file_exists($app['app.webrrot_dir'] . $user->getProfileImageUrl())) {
+                    unlink($app['app.webrrot_dir'] . $user->getProfileImageUrl());
                 }
                 if ($userRepository->updateImgCheck($id, false, '')) {
                     echo "Bild entfernt!<br/><br/>";
