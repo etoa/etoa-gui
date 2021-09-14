@@ -131,10 +131,6 @@ define("BOARD_BULLET_DIR", "images/boardbullets");
 // Verzeichnis der Avatare
 define("BOARD_AVATAR_DIR", CACHE_ROOT . "/avatars");
 
-if (!defined('GD_VERSION')) {
-    define("GD_VERSION", 2);
-}
-
 //
 // Profilbild
 //

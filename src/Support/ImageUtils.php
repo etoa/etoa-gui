@@ -74,19 +74,15 @@ class ImageUtils
 
             if ($resize) {
                 // resize using appropriate function
-                if (GD_VERSION == 2) {
-                    $imageId = imagecreatetruecolor($newWidth, $newHeight);
+                $imageId = imagecreatetruecolor($newWidth, $newHeight);
 
-                    imagealphablending($imageId, false);
-                    imagesavealpha($imageId, true);
-                    $transparent = imagecolorallocatealpha($imageId, 255, 255, 255, 127);
-                    imagefilledrectangle($imageId, 0, 0, $newWidth, $newHeight, $transparent);
+                imagealphablending($imageId, false);
+                imagesavealpha($imageId, true);
+                $transparent = imagecolorallocatealpha($imageId, 255, 255, 255, 127);
+                imagefilledrectangle($imageId, 0, 0, $newWidth, $newHeight, $transparent);
 
-                    imagecopyresampled($imageId, $img, 0, 0, 0, 0, $newWidth, $newHeight, $width, $height);
-                } else {
-                    $imageId = imagecreate($newWidth, $newHeight);
-                    imagecopyresized($imageId, $img, 0, 0, 0, 0, $newWidth, $newHeight, $width, $height);
-                }
+                imagecopyresampled($imageId, $img, 0, 0, 0, 0, $newWidth, $newHeight, $width, $height);
+
                 $handle = $imageId;
                 // free original image
                 imagedestroy($img);
