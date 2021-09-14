@@ -101,4 +101,16 @@ class Building
     {
         return $this->bunkerFleetCount * (int) $this->storeFactor ** ($level - 1);
     }
+
+    public function getImagePath(string $type = "small"): string
+    {
+        switch ($type) {
+            case 'small':
+                return IMAGE_PATH."/buildings/building".$this->id."_small.png";
+            case 'medium':
+                return IMAGE_PATH."/buildings/building".$this->id."_middle.png";
+            default:
+                return IMAGE_PATH."/buildings/building".$this->id.".png";
+        }
+    }
 }

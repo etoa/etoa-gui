@@ -87,17 +87,17 @@ class Building
 
     function imgPathSmall()
     {
-        return IMAGE_PATH . "/" . IMAGE_BUILDING_DIR . "/building" . $this->id . "_small.png";
+        return IMAGE_PATH . "/buildings/building" . $this->id . "_small.png";
     }
 
     function imgPathMiddle()
     {
-        return IMAGE_PATH . "/" . IMAGE_BUILDING_DIR . "/building" . $this->id . "_middle.png";
+        return IMAGE_PATH . "/buildings/building" . $this->id . "_middle.png";
     }
 
     function imgPathBig()
     {
-        return IMAGE_PATH . "/" . IMAGE_BUILDING_DIR . "/building" . $this->id . ".png";
+        return IMAGE_PATH . "/buildings/building" . $this->id . ".png";
     }
 
     function imgSmall()

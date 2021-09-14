@@ -34,10 +34,6 @@ define("DESIGN_STYLESHEET_FILE_NAME", "style.css");
 // Design main script file name
 define("DESIGN_SCRIPT_FILE_NAME", "scripts.js");
 
-// Gebäude Ordner
-define("IMAGE_BUILDING_DIR", "buildings");
-
-
 /***********************************/
 /* Installer */
 /***********************************/
