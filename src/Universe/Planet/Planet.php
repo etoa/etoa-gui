@@ -8,6 +8,8 @@ use EtoA\Core\ObjectWithImage;
 
 class Planet implements ObjectWithImage
 {
+    public const COLONY_DELETE_THRESHOLD = 24 * 3600 * 5;
+
     public int $id;
     public int $userId;
     public bool $mainPlanet;

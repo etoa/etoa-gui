@@ -22,9 +22,6 @@ if (!defined('ADMIN_MODE')) {
 // Homepage
 define('DEFAULT_PAGE', "overview");
 
-// Minimale Sperrzeit für Kolonielöschung
-define("COLONY_DELETE_THRESHOLD", 24 * 3600 * 5);
-
 /****************/
 /* Allianzboard */
 /****************/

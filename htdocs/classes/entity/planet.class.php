@@ -469,7 +469,7 @@ class Planet extends Entity
 
     public function lastUserCheck()
     {
-        $t = $this->userChanged() + COLONY_DELETE_THRESHOLD;
+        $t = $this->userChanged() + \EtoA\Universe\Planet\Planet::COLONY_DELETE_THRESHOLD;
         if ($t > time()) {
             return $this->lastUserId;
         }
