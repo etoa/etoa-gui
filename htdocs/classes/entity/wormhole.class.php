@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Core\ObjectWithImage;
 use EtoA\Universe\Wormhole\WormholeRepository;
 
 /**
@@ -108,7 +109,7 @@ class Wormhole extends Entity
             $this->loadData();
         }
         $prefix = $this->persistent ? 'wormhole_persistent' : 'wormhole';
-        return IMAGE_PATH . "/wormholes/" . $prefix . "1_small.png";
+        return ObjectWithImage::BASE_PATH . "/wormholes/" . $prefix . "1_small.png";
     }
 
     /**

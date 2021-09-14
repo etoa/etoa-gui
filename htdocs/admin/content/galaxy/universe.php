@@ -1,5 +1,6 @@
 <?php
 
+use EtoA\Universe\GalaxyMap;
 use EtoA\Universe\UniverseGenerator;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Support\StringUtils;
@@ -344,7 +345,7 @@ function universeIndex(
             $sectorDimensions = $cellRepo->getSectorDimensions();
             $cellDimensions = $cellRepo->getCellDimensions();
 
-            tableStart("Informationen", GALAXY_MAP_WIDTH);
+            tableStart("Informationen", GalaxyMap::WIDTH);
             echo "<tr><th>Sektoren</th><td>" . $sectorDimensions['x'] . " x " . $sectorDimensions['y'] . "</td></tr>";
             echo "<tr><th>Zellen pro Sektor</th><td>" . $cellDimensions['x'] . " x " . $cellDimensions['y'] . "</td></tr>";
             echo "<tr><th>Sterne</th><td>" . StringUtils::formatNumber($starRepo->count()) . "</td></tr>";

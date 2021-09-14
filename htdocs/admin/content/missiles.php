@@ -2,6 +2,7 @@
 
 use EtoA\Admin\Forms\MissilesForm;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Core\ObjectWithImage;
 use EtoA\Missile\MissileDataRepository;
 use EtoA\Missile\MissileRepository;
 use EtoA\Support\StringUtils;
@@ -40,7 +41,7 @@ function missileRequirements(Environment $twig): void
 
     define("TITLE", "Raketemanforderungen");
     define("REQ_TBL", "missile_requirements");
-    define("ITEM_IMAGE_PATH", IMAGE_PATH . "/missiles/missile<DB_TABLE_ID>_small.png");
+    define("ITEM_IMAGE_PATH", ObjectWithImage::BASE_PATH . "/missiles/missile<DB_TABLE_ID>_small.png");
 
     /** @var MissileDataRepository $missileDataRepository */
     $missileDataRepository = $app[MissileDataRepository::class];

@@ -4,7 +4,9 @@ $app = new \Silex\Application([
     'debug' => $debug ?? isDebugEnabled(),
     'app.environment' => $environment ?? 'production',
     'app.root' => dirname(__DIR__),
+    'app.webroot_dir' => sprintf('%s/htdocs/', dirname(__DIR__)),
     'app.config_dir' => sprintf('%s/htdocs/config/', dirname(__DIR__)),
+    'app.cache_dir' => sprintf('%s/htdocs/cache', dirname(__DIR__)),
     'db.options.file' => 'db.conf',
 ]);
 if ((bool) $app['debug']) {

@@ -19,19 +19,22 @@ class UniverseResetService
     private PlanetRepository $planetRepo;
     private DatabaseManagerRepository $databaseManager;
     private LockFactory $lockFactory;
+    private UserToXml $userToXml;
 
     public function __construct(
         ConfigurationService $config,
         UserRepository $userRepo,
         PlanetRepository $planetRepo,
         DatabaseManagerRepository $databaseManager,
-        LockFactory $lockFactory
+        LockFactory $lockFactory,
+        UserToXml $userToXml
     ) {
         $this->config = $config;
         $this->userRepo = $userRepo;
         $this->planetRepo = $planetRepo;
         $this->databaseManager = $databaseManager;
         $this->lockFactory = $lockFactory;
+        $this->userToXml = $userToXml;
     }
 
     /**
@@ -149,7 +152,7 @@ class UniverseResetService
         $this->config->set('market_food_factor', 1);
 
         // Remove user XML backups
-        $userXmlPath = UserToXml::getDataDirectory();
+        $userXmlPath = $this->userToXml->getDataDirectory();
         foreach (new DirectoryIterator($userXmlPath) as $fileInfo) {
             if (!$fileInfo->isDot()) {
                 unlink($fileInfo->getPathname());

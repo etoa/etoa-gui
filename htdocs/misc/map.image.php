@@ -5,6 +5,7 @@ use EtoA\Universe\Cell\CellRepository;
 use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Entity\EntitySearch;
 use EtoA\Universe\Entity\EntityType;
+use EtoA\Universe\GalaxyMap;
 use EtoA\Universe\Star\StarRepository;
 use EtoA\User\UserRepository;
 use EtoA\User\UserUniverseDiscoveryService;
@@ -42,10 +43,10 @@ $cy_num = $config->param2Int('num_of_cells');
 $p_num_min = $config->param2Int('num_planets');
 $p_num_max = $config->param2Int('num_planets');
 
-$size = min(isset($_GET['size']) ? intval($_GET['size']) : GALAXY_MAP_WIDTH, 3000);
+$size = min(isset($_GET['size']) ? intval($_GET['size']) : GalaxyMap::WIDTH, 3000);
 
 $legend = isset($_GET['legend']);
-$legendHeight = $legend ? GALAXY_MAP_LEGEND_HEIGHT : 0;
+$legendHeight = $legend ? GalaxyMap::LEGEND_HEIGHT : 0;
 
 define('GALAXY_IMAGE_SCALE', $size /((($sx_num-1)*10)+$cx_num));
 
@@ -133,13 +134,13 @@ if (isset($_SESSION) || $admin)
             {
                 $x = ((($cell->sx - 1) * $cx_num + $cell->cx) * GALAXY_IMAGE_SCALE) - (GALAXY_IMAGE_SCALE / 2);
                 $y = $h - $legendHeight + GALAXY_IMAGE_SCALE - ((($cell->sy - 1) * $cy_num + $cell->cy) * GALAXY_IMAGE_SCALE) - (GALAXY_IMAGE_SCALE / 2);
-                imagefilledellipse($im, $x, $y, GALAXY_MAP_DOT_RADIUS * 2, GALAXY_MAP_DOT_RADIUS * 2, $col[$cell->count]);
+                imagefilledellipse($im, $x, $y, GalaxyMap::DOT_RADIUS * 2, GalaxyMap::DOT_RADIUS * 2, $col[$cell->count]);
             }
             if ($legend) {
                 imagestring($im,3,10,$h-$legendHeight+10,"Legende:    Viel    Mittel    Wenig",$colWhite);
-                imagefilledellipse ($im,80,$h-$legendHeight+10+GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,$col[$p_num_max]);
-                imagefilledellipse ($im,135,$h-$legendHeight+10+GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,$col[floor($p_num_max/2)]);
-                imagefilledellipse ($im,205,$h-$legendHeight+10+GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,$col[3]);
+                imagefilledellipse ($im,80,$h-$legendHeight+10+GalaxyMap::DOT_RADIUS*2,GalaxyMap::DOT_RADIUS*2,GalaxyMap::WIDTH*2,$col[$p_num_max]);
+                imagefilledellipse ($im,135,$h-$legendHeight+10+GalaxyMap::DOT_RADIUS*2,GalaxyMap::DOT_RADIUS*2,GalaxyMap::WIDTH*2,$col[floor($p_num_max/2)]);
+                imagefilledellipse ($im,205,$h-$legendHeight+10+GalaxyMap::DOT_RADIUS*2,GalaxyMap::DOT_RADIUS*2,GalaxyMap::WIDTH*2,$col[3]);
             }
         }
         elseif (isset($_GET['type']) && $_GET['type']=="own")
@@ -155,13 +156,13 @@ if (isset($_SESSION) || $admin)
             {
                 $x = ((($cell->sx - 1) * $cx_num + $cell->cx) * GALAXY_IMAGE_SCALE) - (GALAXY_IMAGE_SCALE / 2);
                 $y = $h - $legendHeight + GALAXY_IMAGE_SCALE - ((($cell->sy - 1) * $cy_num + $cell->cy) * GALAXY_IMAGE_SCALE) - (GALAXY_IMAGE_SCALE / 2);
-                imagefilledellipse($im, $x, $y, GALAXY_MAP_DOT_RADIUS * 2, GALAXY_MAP_DOT_RADIUS * 2, $col[$cell->count]);
+                imagefilledellipse($im, $x, $y, GalaxyMap::DOT_RADIUS * 2, GalaxyMap::DOT_RADIUS * 2, $col[$cell->count]);
             }
             if ($legend) {
                 imagestring($im,3,10,$h-$legendHeight+10,"Legende:    Viel    Mittel    Wenig",$colWhite);
-                imagefilledellipse ($im,80,$h-$legendHeight+10+GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,$col[$p_num_max]);
-                imagefilledellipse ($im,135,$h-$legendHeight+10+GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,$col[floor($p_num_max/2)]);
-                imagefilledellipse ($im,205,$h-$legendHeight+10+GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,$col[3]);
+                imagefilledellipse ($im,80,$h-$legendHeight+10+GalaxyMap::DOT_RADIUS*2,GalaxyMap::DOT_RADIUS*2,GalaxyMap::WIDTH*2,$col[$p_num_max]);
+                imagefilledellipse ($im,135,$h-$legendHeight+10+GalaxyMap::DOT_RADIUS*2,GalaxyMap::DOT_RADIUS*2,GalaxyMap::WIDTH*2,$col[floor($p_num_max/2)]);
+                imagefilledellipse ($im,205,$h-$legendHeight+10+GalaxyMap::DOT_RADIUS*2,GalaxyMap::DOT_RADIUS*2,GalaxyMap::WIDTH*2,$col[3]);
             }
         }
         elseif (isset($_GET['type']) && $_GET['type']=="populated")
@@ -176,13 +177,13 @@ if (isset($_SESSION) || $admin)
             {
                 $x = ((($cell->sx - 1) * $cx_num + $cell->cx) * GALAXY_IMAGE_SCALE) - (GALAXY_IMAGE_SCALE / 2);
                 $y = $h - $legendHeight + GALAXY_IMAGE_SCALE - ((($cell->sy - 1) * $cy_num + $cell->cy) * GALAXY_IMAGE_SCALE) - (GALAXY_IMAGE_SCALE / 2);
-                imagefilledellipse($im, $x, $y, GALAXY_MAP_DOT_RADIUS * 2, GALAXY_MAP_DOT_RADIUS * 2, $col[max(3, $cell->count)]);
+                imagefilledellipse($im, $x, $y, GalaxyMap::DOT_RADIUS * 2, GalaxyMap::DOT_RADIUS * 2, $col[max(3, $cell->count)]);
             }
             if ($legend) {
                 imagestring($im,3,10,$h-$legendHeight+10,"Legende:    Viel    Mittel    Wenig",$colWhite);
-                imagefilledellipse ($im,80,$h-$legendHeight+10+GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,$col[$p_num_max]);
-                imagefilledellipse ($im,135,$h-$legendHeight+10+GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,$col[floor($p_num_max/2)]);
-                imagefilledellipse ($im,205,$h-$legendHeight+10+GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,GALAXY_MAP_DOT_RADIUS*2,$col[3]);
+                imagefilledellipse ($im,80,$h-$legendHeight+10+GalaxyMap::DOT_RADIUS*2,GalaxyMap::DOT_RADIUS*2,GalaxyMap::WIDTH*2,$col[$p_num_max]);
+                imagefilledellipse ($im,135,$h-$legendHeight+10+GalaxyMap::DOT_RADIUS*2,GalaxyMap::DOT_RADIUS*2,GalaxyMap::WIDTH*2,$col[floor($p_num_max/2)]);
+                imagefilledellipse ($im,205,$h-$legendHeight+10+GalaxyMap::DOT_RADIUS*2,GalaxyMap::DOT_RADIUS*2,GalaxyMap::WIDTH*2,$col[3]);
             }
         }
         else

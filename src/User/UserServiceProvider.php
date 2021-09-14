@@ -179,6 +179,7 @@ class UserServiceProvider implements ServiceProviderInterface
                 $pimple[FleetRepository::class],
                 $pimple[DefenseRepository::class],
                 $pimple[DefenseDataRepository::class],
+                $pimple['app.cache_dir']
             );
         };
 

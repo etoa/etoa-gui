@@ -34,7 +34,7 @@ if ($sub == "offline") {
 } elseif ($sub == "stats") {
     require("home/stats.inc.php");
 } elseif ($sub === "gamestats") {
-    gameStatsView($gameStatsGenerator, $twig);
+    gameStatsView($gameStatsGenerator, $twig, $app['app.cache_dir']);
 } elseif ($sub === "changelog") {
     /** @var MarkdownConverterInterface */
     $markdown = $app[MarkdownConverterInterface::class];
@@ -121,11 +121,11 @@ function takeOffline(Request $request, ConfigurationService $config)
     echo "</form>";
 }
 
-function gameStatsView(GameStatsGenerator $gameStatsGenerator, Environment $twig)
+function gameStatsView(GameStatsGenerator $gameStatsGenerator, Environment $twig, string $cacheDir)
 {
     echo $twig->render('admin/overview/gamestats.html.twig', [
-        'userStats' => file_exists(USERSTATS_OUTFILE) ? USERSTATS_OUTFILE : null,
-        'xmlInfo' => file_exists(XML_INFO_FILE) ? XML_INFO_FILE : null,
+        'userStats' => file_exists($cacheDir . GameStatsGenerator::USER_STATS_FILE) ? GameStatsGenerator::USER_STATS_FILE_PUBLIC_PATH : null,
+        'xmlInfo' => file_exists($cacheDir . GameStatsGenerator::XML_INFO_FILE) ? GameStatsGenerator::XML_INFO_FILE_PUBLIC_PATH : null,
         'gameStats' => $gameStatsGenerator->readCached(),
     ]);
     exit();

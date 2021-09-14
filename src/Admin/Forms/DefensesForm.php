@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace EtoA\Admin\Forms;
 
+use EtoA\Core\ObjectWithImage;
 use EtoA\Ranking\RankingService;
 
 class DefensesForm extends AdvancedForm
@@ -40,7 +41,7 @@ class DefensesForm extends AdvancedForm
 
     protected function getImagePath(): ?string
     {
-        return IMAGE_PATH . "/defense/def<DB_TABLE_ID>_small.png";
+        return ObjectWithImage::BASE_PATH . "/defense/def<DB_TABLE_ID>_small.png";
     }
 
     protected function getSwitches(): array

@@ -1,5 +1,7 @@
 <?PHP
 
+use EtoA\Core\ObjectWithImage;
+
 /**
  * Class for empty space entities
  */
@@ -93,7 +95,7 @@ class EmptySpace extends Entity
     {
         $numImages = 10;
         $r = ($this->id % $numImages) + 1;
-        return IMAGE_PATH . "/space/space" . $r . "_small.png";
+        return ObjectWithImage::BASE_PATH . "/space/space" . $r . "_small.png";
     }
 
     /**

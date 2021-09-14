@@ -19,7 +19,11 @@ use Exception;
 
 class GameStatsGenerator
 {
-    private const GAME_STATS_FILE = CACHE_ROOT . "/out/gamestats.html";
+    private const GAME_STATS_FILE = "/out/gamestats.html";
+    public const USER_STATS_FILE = "/out/userstats.png";
+    public const USER_STATS_FILE_PUBLIC_PATH = "/cache/out/userstats.png";
+    public const XML_INFO_FILE = "/xml/info.xml";
+    public const XML_INFO_FILE_PUBLIC_PATH = "/cache/xml/info.xml";
 
     private PlanetTypeRepository $planetTypeRepository;
     private SolarTypeRepository $solarTypeRepository;
@@ -30,6 +34,7 @@ class GameStatsGenerator
     private ShipRepository $shipRepository;
     private DefenseRepository $defenseRepository;
     private UserPropertiesRepository $userPropertiesRepository;
+    private string $cacheDir;
 
     public function __construct(
         PlanetTypeRepository $planetTypeRepository,
@@ -40,7 +45,8 @@ class GameStatsGenerator
         TechnologyRepository $technologyRepository,
         ShipRepository $shipRepository,
         DefenseRepository $defenseRepository,
-        UserPropertiesRepository $userPropertiesRepository
+        UserPropertiesRepository $userPropertiesRepository,
+        string $cacheDir
     ) {
         $this->planetTypeRepository = $planetTypeRepository;
         $this->solarTypeRepository = $solarTypeRepository;
@@ -51,16 +57,17 @@ class GameStatsGenerator
         $this->shipRepository = $shipRepository;
         $this->defenseRepository = $defenseRepository;
         $this->userPropertiesRepository = $userPropertiesRepository;
+        $this->cacheDir = $cacheDir;
     }
 
     public function readCached(): ?string
     {
-        return is_file(self::GAME_STATS_FILE) ? file_get_contents(self::GAME_STATS_FILE) : null;
+        return is_file($this->cacheDir . self::GAME_STATS_FILE) ? file_get_contents($this->cacheDir . self::GAME_STATS_FILE) : null;
     }
 
     public function generateAndSave(): void
     {
-        $file = self::GAME_STATS_FILE;
+        $file = $this->cacheDir . self::GAME_STATS_FILE;
 
         $dir = dirname($file);
         if (!is_dir($dir)) {

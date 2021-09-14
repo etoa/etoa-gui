@@ -2,9 +2,10 @@
 
 namespace EtoA\Defense;
 
+use EtoA\Core\ObjectWithImage;
 use EtoA\Universe\Resources\BaseResources;
 
-class Defense
+class Defense implements ObjectWithImage
 {
     public int $id;
     public string $name;
@@ -67,11 +68,11 @@ class Defense
     {
         switch ($type) {
             case 'small':
-                return IMAGE_PATH."/defense/def".$this->id."_small.png";
+                return self::BASE_PATH."/defense/def".$this->id."_small.png";
             case 'medium':
-                return IMAGE_PATH."/defense/def".$this->id."_middle.png";
+                return self::BASE_PATH."/defense/def".$this->id."_middle.png";
             default:
-                return IMAGE_PATH."/defense/def".$this->id.".png";
+                return self::BASE_PATH."/defense/def".$this->id.".png";
         }
     }
 

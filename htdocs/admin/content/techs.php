@@ -3,6 +3,7 @@
 use EtoA\Admin\Forms\TechnologiesForm;
 use EtoA\Admin\Forms\TechnologyTypesForm;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Core\ObjectWithImage;
 use EtoA\Ranking\RankingService;
 use EtoA\Support\StringUtils;
 use EtoA\Technology\TechnologyDataRepository;
@@ -105,7 +106,7 @@ elseif ($sub == "req") {
     define("REQ_TBL", "tech_requirements");
     define("ITEM_ENABLE_FLD", "tech_show");
 
-    define("ITEM_IMAGE_PATH", IMAGE_PATH . "/technologies/technology<DB_TABLE_ID>_small.png");
+    define("ITEM_IMAGE_PATH", ObjectWithImage::BASE_PATH . "/technologies/technology<DB_TABLE_ID>_small.png");
 
     $objectNames = $technologyDataRepository->getTechnologyNames(true, TechnologySort::type());
     include("inc/requirements.inc.php");

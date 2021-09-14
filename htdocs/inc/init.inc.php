@@ -3,14 +3,14 @@
 //Fehler ausgabe definiert
 ini_set('arg_separator.output',  '&amp;');
 
-// Path to the relative root of the game
-if (!defined('RELATIVE_ROOT')) {
-    define('RELATIVE_ROOT', '');
-}
+// Set timezone
+define('TIMEZONE', 'Europe/Zurich');
+date_default_timezone_set(TIMEZONE);
 
 // Load constants
-require_once __DIR__ . '/const.inc.php';
-
+if (!defined('ADMIN_MODE')) {
+    define('ADMIN_MODE', false);
+}
 // Load functions
 require_once __DIR__ . '/functions.inc.php';
 
@@ -18,9 +18,6 @@ require_once __DIR__ . '/functions.inc.php';
 if (ADMIN_MODE) {
     require __DIR__ . '/../admin/inc/admin_functions.inc.php';
 }
-
-// Set timezone
-date_default_timezone_set(TIMEZONE);
 
 // Enable debug error reporting
 if (isDebugEnabled()) {

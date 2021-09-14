@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Core\ObjectWithImage;
 use EtoA\Support\StringUtils;
 use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Planet\PlanetRepository;
@@ -276,12 +277,12 @@ class Planet extends Entity
     function imagePath($opt = "")
     {
         if ($opt == "b") {
-            return IMAGE_PATH . "/planets/planet" . $this->image . ".png";
+            return ObjectWithImage::BASE_PATH . "/planets/planet" . $this->image . ".png";
         }
         if ($opt == "m") {
-            return IMAGE_PATH . "/planets/planet" . $this->image . "_middle.png";
+            return ObjectWithImage::BASE_PATH . "/planets/planet" . $this->image . "_middle.png";
         }
-        return IMAGE_PATH . "/planets/planet" . $this->image . "_small.png";
+        return ObjectWithImage::BASE_PATH . "/planets/planet" . $this->image . "_small.png";
     }
 
     function name()
@@ -468,7 +469,7 @@ class Planet extends Entity
 
     public function lastUserCheck()
     {
-        $t = $this->userChanged() + COLONY_DELETE_THRESHOLD;
+        $t = $this->userChanged() + \EtoA\Universe\Planet\Planet::COLONY_DELETE_THRESHOLD;
         if ($t > time()) {
             return $this->lastUserId;
         }

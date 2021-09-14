@@ -1,5 +1,7 @@
 <?PHP
 
+use EtoA\Core\ObjectWithImage;
+
 /**
  * Class for asteroidfield entity
  */
@@ -94,7 +96,7 @@ class AsteroidField extends Entity
     {
         $numImages = 5;
         $r = ($this->id % $numImages) + 1;
-        return IMAGE_PATH . "/asteroids/asteroids" . $r . "_small.png";
+        return ObjectWithImage::BASE_PATH . "/asteroids/asteroids" . $r . "_small.png";
     }
 
     /**

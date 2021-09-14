@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Universe\GalaxyMap;
 
 /** @var ConfigurationService $config */
 $config = $app[ConfigurationService::class];
@@ -22,14 +23,14 @@ echo '<tr><td id="galaxy_map_container"><img src="misc/map.image.php?legend" alt
 tableEnd();
 
 echo '<map name="Galaxy"><br />';
-$sec_x_size = GALAXY_MAP_WIDTH / $sx_num;
-$sec_y_size = GALAXY_MAP_WIDTH / $sy_num;
+$sec_x_size = GalaxyMap::WIDTH / $sx_num;
+$sec_y_size = GalaxyMap::WIDTH / $sy_num;
 $xcnt = 1;
 $ycnt = 1;
-for ($x = 0; $x < GALAXY_MAP_WIDTH; $x += $sec_x_size) {
+for ($x = 0; $x < GalaxyMap::WIDTH; $x += $sec_x_size) {
     $ycnt = 1;
-    for ($y = 0; $y < GALAXY_MAP_WIDTH; $y += $sec_y_size) {
-        echo '<area shape="rect" coords="' . $x . ',' . (GALAXY_MAP_WIDTH - $y) . ',' . ($x + $sec_x_size) . ',' . (GALAXY_MAP_WIDTH - $y - $sec_y_size) . '" href="?page=sector&sx=' . $xcnt . '&sy=' . $ycnt . '" alt="Sektor ' . $xcnt . ' / ' . $ycnt . '" ' . tm("Sektor " . $xcnt . " / " . $ycnt . "", "Klicken um Karte anzuzeigen") . '><br />';
+    for ($y = 0; $y < GalaxyMap::WIDTH; $y += $sec_y_size) {
+        echo '<area shape="rect" coords="' . $x . ',' . (GalaxyMap::WIDTH - $y) . ',' . ($x + $sec_x_size) . ',' . (GalaxyMap::WIDTH - $y - $sec_y_size) . '" href="?page=sector&sx=' . $xcnt . '&sy=' . $ycnt . '" alt="Sektor ' . $xcnt . ' / ' . $ycnt . '" ' . tm("Sektor " . $xcnt . " / " . $ycnt . "", "Klicken um Karte anzuzeigen") . '><br />';
         $ycnt++;
     }
     $xcnt++;

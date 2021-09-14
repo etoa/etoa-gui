@@ -1,6 +1,8 @@
 <?PHP
 
 use EtoA\Ship\ShipDataRepository;
+use EtoA\Technology\SpyActionLevel;
+use EtoA\Technology\SpyTechFleetLevel;
 
 echo "<h2>Spionagesystem</h2>";
 HelpUtil::breadCrumbs(array("Spionagesystem", "spy_info"));
@@ -17,22 +19,22 @@ iBoxEnd();
 
 tableStart("Infos &uuml;ber gegnerische Planeten");
 echo "<tr><td class=\"tbltitle\" >Stufe</td><td class=\"tbltitle\" width=\"90%\">Infos &uuml;ber...</td></tr>";
-echo "<tr><td class=\"tbldata\" valign=\"top\" ><b>" . SPY_ATTACK_SHOW_BUILDINGS . "</b></td><td class=\"tbldata\" width=\"90%\">... die Geb&auml;ude</td></tr>";
-echo "<tr><td class=\"tbldata\" valign=\"top\" ><b>" . SPY_ATTACK_SHOW_RESEARCH . "</b></td><td class=\"tbldata\" width=\"90%\">... die Forschung</td></tr>";
-echo "<tr><td class=\"tbldata\" valign=\"top\" ><b>" . SPY_ATTACK_SHOW_DEFENSE . "</b></td><td class=\"tbldata\" width=\"90%\">... die Verteidigung</td></tr>";
-echo "<tr><td class=\"tbldata\" valign=\"top\" ><b>" . SPY_ATTACK_SHOW_SHIPS . "</b></td><td class=\"tbldata\" width=\"90%\">... die Schiffe</td></tr>";
-echo "<tr><td class=\"tbldata\" valign=\"top\" ><b>" . SPY_ATTACK_SHOW_RESSOURCEN . "</b></td><td class=\"tbldata\" width=\"90%\">... die Ressourcen</td></tr>";
-echo "<tr><td class=\"tbldata\" valign=\"top\" ><b>" . SPY_ATTACK_SHOW_SUPPORT . "</b></td><td class=\"tbldata\" width=\"90%\">... die unterstüzenden Schiffe</td></tr>";
+echo "<tr><td class=\"tbldata\" valign=\"top\" ><b>" . SpyActionLevel::SHOW_BUILDINGS . "</b></td><td class=\"tbldata\" width=\"90%\">... die Geb&auml;ude</td></tr>";
+echo "<tr><td class=\"tbldata\" valign=\"top\" ><b>" . SpyActionLevel::SHOW_RESEARCH . "</b></td><td class=\"tbldata\" width=\"90%\">... die Forschung</td></tr>";
+echo "<tr><td class=\"tbldata\" valign=\"top\" ><b>" . SpyActionLevel::SHOW_DEFENSE . "</b></td><td class=\"tbldata\" width=\"90%\">... die Verteidigung</td></tr>";
+echo "<tr><td class=\"tbldata\" valign=\"top\" ><b>" . SpyActionLevel::SHOW_SHIPS . "</b></td><td class=\"tbldata\" width=\"90%\">... die Schiffe</td></tr>";
+echo "<tr><td class=\"tbldata\" valign=\"top\" ><b>" . SpyActionLevel::SHOW_RESSOURCES . "</b></td><td class=\"tbldata\" width=\"90%\">... die Ressourcen</td></tr>";
+echo "<tr><td class=\"tbldata\" valign=\"top\" ><b>" . SpyActionLevel::SHOW_SUPPORT . "</b></td><td class=\"tbldata\" width=\"90%\">... die unterstüzenden Schiffe</td></tr>";
 tableEnd();
 
 tableStart("Infos &uuml;ber gegnerische Flotten");
 echo "<tr><td class=\"tbltitle\" >Stufe</td><td class=\"tbltitle\" width=\"90%\">M&ouml;glichkeiten</td></tr>";
 echo "<tr><td class=\"tbldata\" valign=\"top\" ><b>0</b></td><td class=\"tbldata\" width=\"90%\">Es wird gar nichts angezeigt.</td></tr>";
-echo "<tr><td class=\"tbldata\" valign=\"top\" ><b>" . SPY_TECH_SHOW_ATTITUDE . "</b></td><td class=\"tbldata\" width=\"90%\">Die Gesinnung (friedlich, feindlich) der Fotte wird angezeigt.</td></tr>";
-echo "<tr><td class=\"tbldata\" valign=\"top\" ><b>" . SPY_TECH_SHOW_NUM . "</b></td><td class=\"tbldata\" width=\"90%\">Du siehst wieviele Schiffe in der Flotte sind.</td></tr>";
-echo "<tr><td class=\"tbldata\" valign=\"top\" ><b>" . SPY_TECH_SHOW_SHIPS . "</b></td><td class=\"tbldata\" width=\"90%\">Du siehst welche Schiffstypen in der Flotte sind.</td></tr>";
-echo "<tr><td class=\"tbldata\" valign=\"top\" ><b>" . SPY_TECH_SHOW_NUMSHIPS . "</b></td><td class=\"tbldata\" width=\"90%\">Du siehst, wieviele Schiffe von jedem Typ in der Flotte sind.</td></tr>";
-echo "<tr><td class=\"tbldata\" valign=\"top\" ><b>" . SPY_TECH_SHOW_ACTION . "</b></td><td class=\"tbldata\" width=\"90%\">Mit dieser Stufe kannst du auch die geplante Aktion (Angreifen, Spionieren etc) der Flotte sehen.</td></tr>";
+echo "<tr><td class=\"tbldata\" valign=\"top\" ><b>" . SpyTechFleetLevel::SHOW_ATTITUDE . "</b></td><td class=\"tbldata\" width=\"90%\">Die Gesinnung (friedlich, feindlich) der Fotte wird angezeigt.</td></tr>";
+echo "<tr><td class=\"tbldata\" valign=\"top\" ><b>" . SpyTechFleetLevel::SHOW_NUMBER . "</b></td><td class=\"tbldata\" width=\"90%\">Du siehst wieviele Schiffe in der Flotte sind.</td></tr>";
+echo "<tr><td class=\"tbldata\" valign=\"top\" ><b>" . SpyTechFleetLevel::SHOW_SHIPS . "</b></td><td class=\"tbldata\" width=\"90%\">Du siehst welche Schiffstypen in der Flotte sind.</td></tr>";
+echo "<tr><td class=\"tbldata\" valign=\"top\" ><b>" . SpyTechFleetLevel::SHOW_NUMBER_OF_SHIPS . "</b></td><td class=\"tbldata\" width=\"90%\">Du siehst, wieviele Schiffe von jedem Typ in der Flotte sind.</td></tr>";
+echo "<tr><td class=\"tbldata\" valign=\"top\" ><b>" . SpyTechFleetLevel::SHOW_ACTION . "</b></td><td class=\"tbldata\" width=\"90%\">Mit dieser Stufe kannst du auch die geplante Aktion (Angreifen, Spionieren etc) der Flotte sehen.</td></tr>";
 tableEnd();
 
 tableStart("Spionagesonden");

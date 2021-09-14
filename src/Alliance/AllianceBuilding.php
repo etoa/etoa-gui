@@ -2,9 +2,10 @@
 
 namespace EtoA\Alliance;
 
+use EtoA\Core\ObjectWithImage;
 use EtoA\Universe\Resources\BaseResources;
 
-class AllianceBuilding
+class AllianceBuilding implements ObjectWithImage
 {
     public int $id;
     public string $name;
@@ -43,7 +44,7 @@ class AllianceBuilding
 
     public function getImagePath(): string
     {
-        return IMAGE_PATH . "/" . IMAGE_BUILDING_DIR . "/building" . $this->id . "_middle.png";
+        return self::BASE_PATH . "/abuildings/building" . $this->id . "_middle.png";
     }
 
     public function getCosts(): BaseResources

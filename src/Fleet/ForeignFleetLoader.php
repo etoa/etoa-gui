@@ -3,6 +3,7 @@
 namespace EtoA\Fleet;
 
 use EtoA\Specialist\SpecialistService;
+use EtoA\Technology\SpyTechFleetLevel;
 use EtoA\Technology\TechnologyId;
 use EtoA\Technology\TechnologyRepository;
 
@@ -27,7 +28,7 @@ class ForeignFleetLoader
             $userSpyTechLevel += $specialist->spyLevel;
         }
 
-        if (SPY_TECH_SHOW_ATTITUDE > $userSpyTechLevel) {
+        if (SpyTechFleetLevel::SHOW_ATTITUDE > $userSpyTechLevel) {
             return new ForeignFleets;
         }
 

@@ -1,5 +1,6 @@
 <?PHP
 
+use EtoA\Core\AppName;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Log\LogFacility;
 use EtoA\Log\LogRepository;
@@ -37,7 +38,7 @@ function getRegisterParams(ConfigurationService $config, \EtoA\User\UserReposito
         'userEmail' => $_SESSION['REGISTER']['register_user_email'] ?? '',
         'userPassword' => $_SESSION['REGISTER']['register_user_password'] ?? '',
         'roundName' => $config->get('roundname'),
-        'appName' => APP_NAME,
+        'appName' => AppName::NAME,
         'nameMaxLength' => $config->getInt('name_length'),
         'nickMaxLength' => $config->param2Int('nick_length'),
         'rulesUrl' => ExternalUrl::RULES,

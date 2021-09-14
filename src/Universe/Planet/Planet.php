@@ -4,8 +4,12 @@ declare(strict_types=1);
 
 namespace EtoA\Universe\Planet;
 
-class Planet
+use EtoA\Core\ObjectWithImage;
+
+class Planet implements ObjectWithImage
 {
+    public const COLONY_DELETE_THRESHOLD = 24 * 3600 * 5;
+
     public int $id;
     public int $userId;
     public bool $mainPlanet;
@@ -142,5 +146,17 @@ class Planet
         $value = floor(($this->tempFrom + $this->tempTo) / 25);
 
         return $value / 100;
+    }
+
+    public function getImagePath(string $type = "small"): string
+    {
+        switch ($type) {
+            case 'small':
+                return self::BASE_PATH . "/planets/planet" . $this->image . "_small.png";
+            case 'medium':
+                return self::BASE_PATH . "/planets/planet" . $this->image . "_middle.png";
+            default:
+                return self::BASE_PATH . "/planets/planet" . $this->image . ".png";
+        }
     }
 }

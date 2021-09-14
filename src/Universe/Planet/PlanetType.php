@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace EtoA\Universe\Planet;
 
-class PlanetType
+use EtoA\Core\ObjectWithImage;
+
+class PlanetType implements ObjectWithImage
 {
     public int $id;
     public string $name;
@@ -39,5 +41,17 @@ class PlanetType
         $this->researchTime = (float) $data['type_f_researchtime'];
         $this->consider = (bool) $data['type_consider'];
         $this->collectGas = (bool) $data['type_consider'];
+    }
+
+    public function getImagePath(string $type = "small", int $imageNumber = 1): string
+    {
+        switch ($type) {
+            case 'small':
+                return self::BASE_PATH . "/planets/planet" . $this->id . '_' . $imageNumber . "_small.png";
+            case 'medium':
+                return self::BASE_PATH . "/planets/planet" . $this->id . '_' . $imageNumber . "_middle.png";
+            default:
+                return self::BASE_PATH . "/planets/planet" . $this->id . '_' . $imageNumber . ".png";
+        }
     }
 }

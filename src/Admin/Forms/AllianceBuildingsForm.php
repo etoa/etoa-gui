@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace EtoA\Admin\Forms;
 
+use EtoA\Core\ObjectWithImage;
+
 class AllianceBuildingsForm extends AdvancedForm
 {
     protected function getName(): string
@@ -28,7 +30,7 @@ class AllianceBuildingsForm extends AdvancedForm
 
     protected function getImagePath(): ?string
     {
-        return IMAGE_PATH . "/abuildings/building<DB_TABLE_ID>_small.png";
+        return ObjectWithImage::BASE_PATH . "/abuildings/building<DB_TABLE_ID>_small.png";
     }
 
     protected function getSwitches(): array

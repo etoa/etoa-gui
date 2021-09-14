@@ -91,13 +91,13 @@ include("image.inc.php");
 			//imageline($im,$graphtx,$graphby-($graphh/$drate*$i),$graphbx,$graphby-($graphh/$drate*$i),$colLLGrey);
 		}
 
+        $numberOfResources = count(ResourceNames::NAMES);
 		$j=0;
-		$lastx = array_fill(0,NUM_RESOURCES,0);
-		$lasty = array_fill(0,NUM_RESOURCES,0);
+		$lastx = array_fill(0,$numberOfResources,0);
+		$lasty = array_fill(0,$numberOfResources,0);
 		foreach ($grates as $rates)
 		{
-			for ($i=0;$i<NUM_RESOURCES;$i++)
-			{
+            foreach (array_keys(ResourceNames::NAMES) as $i) {
 				$x = $graphtx+($graphw/$nr*$j);
 				$y = $graphty+($graphh-($graphh/$drate*$rates[$i]));
 
@@ -119,11 +119,10 @@ include("image.inc.php");
 			$j++;
 		}
 
-		for ($i=0;$i<NUM_RESOURCES;$i++)
-		{
+        foreach (ResourceNames::NAMES as $i => $resourceName) {
 			imagestring($im,1,$lastx[$i]+5,$lasty[$i]-3, (string) round($rates[$i],2),$rCol[$i]);
 
-			imagestring($im,5,$graphtx+20+($graphw/NUM_RESOURCES*$i),$graphby+25,ResourceNames::NAMES[$i],$rCol[$i]);
+			imagestring($im,5,$graphtx+20+($graphw/$numberOfResources*$i),$graphby+25,$resourceName,$rCol[$i]);
 		}
 
 		// Timestampss

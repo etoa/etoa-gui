@@ -1,5 +1,7 @@
 <?PHP
 
+use EtoA\Core\ObjectWithImage;
+
 /**
  * Class for the market / trade planet
  */
@@ -92,7 +94,7 @@ class Market extends Entity
     function imagePath($opt = "")
     {
         $r = mt_rand(1, 10);
-        return IMAGE_PATH . "/space/space" . $r . "_small.png";
+        return ObjectWithImage::BASE_PATH . "/space/space" . $r . "_small.png";
     }
 
     /**

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace EtoA\Admin\Forms;
 
+use EtoA\Core\ObjectWithImage;
+
 class MissilesForm extends AdvancedForm
 {
     protected function getName(): string
@@ -36,7 +38,7 @@ class MissilesForm extends AdvancedForm
 
     protected function getImagePath(): ?string
     {
-        return IMAGE_PATH . "/missiles/missile<DB_TABLE_ID>_small.png";
+        return ObjectWithImage::BASE_PATH . "/missiles/missile<DB_TABLE_ID>_small.png";
     }
 
     protected function getFields(): array

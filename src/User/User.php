@@ -4,8 +4,13 @@ declare(strict_types=1);
 
 namespace EtoA\User;
 
+use EtoA\Admin\AllianceBoardAvatar;
+
 class User
 {
+    public const NAME_PATTERN = '/^.[^0-9\'\"\?\<\>\$\!\=\;\&]*$/';
+    public const NICK_PATTERN = '/^.[^\'\"\?\<\>\$\!\=\;\&]*$/';
+
     public int $id;
     public string $name;
     public string $nick;
@@ -141,5 +146,23 @@ class User
         $this->verificationKey = $data['verification_key'];
         $this->npc = (int) $data['npc'];
         $this->userChangedMainPlanet = (bool) $data['user_changed_main_planet'];
+    }
+
+    public function getProfileImageUrl(): ?string
+    {
+        if ($this->profileImage == '') {
+            return null;
+        }
+
+        return ProfileImage::IMAGE_PATH . $this->profileImage;
+    }
+
+    public function getAvatarUrl(): ?string
+    {
+        if ($this->avatar == '') {
+            return null;
+        }
+
+        return AllianceBoardAvatar::IMAGE_PATH . $this->avatar;
     }
 }

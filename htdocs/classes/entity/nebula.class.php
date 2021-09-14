@@ -1,5 +1,7 @@
 <?PHP
 
+use EtoA\Core\ObjectWithImage;
+
 /**
  * Class for nebula entity
  */
@@ -94,7 +96,7 @@ class Nebula extends Entity
     {
         $numImages = 9;
         $r = ($this->id % $numImages) + 1;
-        return IMAGE_PATH . "/nebulas/nebula" . $r . "_small.png";
+        return ObjectWithImage::BASE_PATH . "/nebulas/nebula" . $r . "_small.png";
     }
 
     /**

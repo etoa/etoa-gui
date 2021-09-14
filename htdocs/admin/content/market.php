@@ -346,8 +346,8 @@ if ($sub == "ress") {
     }
 
     echo "<table class=\"tb\" style=\"width:200px;\">";
-    for ($i = 0; $i < NUM_RESOURCES; $i++) {
-        echo "<tr><th>" . ResourceNames::NAMES[$i] . "</th><td>" . $runtimeDataStore->get('market_rate_' . $i, (string) 1) . "</td></tr>";
+    foreach (ResourceNames::NAMES as $index => $resourceName) {
+        echo "<tr><th>" . $resourceName . "</th><td>" . $runtimeDataStore->get('market_rate_' . $index, (string) 1) . "</td></tr>";
     }
     echo "</table>";
 

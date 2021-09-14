@@ -8,11 +8,6 @@ use EtoA\AbstractDbTestCase;
 use EtoA\Message\MessageCategoryId;
 use EtoA\Message\MessageRepository;
 
-// TODO define at a more suitable place, or find a way to make these definitions obsolete
-if (!defined('RELATIVE_ROOT')) {
-    define('RELATIVE_ROOT', '');
-}
-require_once __DIR__ . '/../../../htdocs/inc/const.inc.php';
 require_once __DIR__ . '/../../../htdocs/inc/functions.inc.php';
 
 class TicketServiceTest extends AbstractDbTestCase

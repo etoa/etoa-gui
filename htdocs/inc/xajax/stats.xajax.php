@@ -179,8 +179,8 @@ function statsShowBox($mode, $sort = "", $sortOrder = "")
     //
     elseif ($mode == "gamestats") {
         ob_start();
-        if (is_file(USERSTATS_OUTFILE)) {
-            echo '<p><img src="' . USERSTATS_OUTFILE . '" alt="Userstats" /></p>';
+        if (is_file($app['app.cache_dir'] . GameStatsGenerator::USER_STATS_FILE)) {
+            echo '<p><img src="' . GameStatsGenerator::USER_STATS_FILE_PUBLIC_PATH . '" alt="Userstats" /></p>';
         }
 
         /** @var GameStatsGenerator $gameStatsGenerator */

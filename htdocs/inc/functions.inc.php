@@ -2,7 +2,9 @@
 
 use Doctrine\Common\Collections\ArrayCollection;
 use EtoA\Admin\AllianceBoardAvatar;
+use EtoA\Core\AppName;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Design\Design;
 use EtoA\Fleet\ForeignFleetLoader;
 use EtoA\Log\AccessLogRepository;
 use EtoA\Race\RaceDataRepository;
@@ -24,7 +26,7 @@ function getGameIdentifier()
     /** @var ConfigurationService $config */
     $config = $app[ConfigurationService::class];
 
-    return APP_NAME . ' ' . getAppVersion() . ' ' . $config->get('roundname');
+    return AppName::NAME . ' ' . getAppVersion() . ' ' . $config->get('roundname');
 }
 
 function getAppVersion()
@@ -63,7 +65,7 @@ function checkEmail($email)
  */
 function checkValidName($name)
 {
-    return preg_match(REGEXP_NAME, $name);
+    return preg_match(\EtoA\User\User::NAME_PATTERN, $name);
 }
 
 /**
@@ -71,7 +73,7 @@ function checkValidName($name)
  */
 function checkValidNick($name)
 {
-    return preg_match(REGEXP_NICK, $name);
+    return preg_match(\EtoA\User\User::NICK_PATTERN, $name);
 }
 
 function tableStart($title = "", $width = 0, $layout = "", $id = "")
@@ -239,7 +241,7 @@ function show_tab_menu($varname, $data)
  */
 function get_designs()
 {
-    $rootDir = RELATIVE_ROOT . DESIGN_DIRECTORY;
+    $rootDir = __DIR__ . '/../' . Design::DIRECTORY;
     $designs = array();
 
     $rd = 'official';
@@ -248,7 +250,7 @@ function get_designs()
         while ($f = readdir($d)) {
             $dir = $baseDir . "/" . $f;
             if (is_dir($dir) && !preg_match('/^\./', $f)) {
-                $file = $dir . "/" . DESIGN_CONFIG_FILE_NAME;
+                $file = $dir . "/" . Design::CONFIG_FILE_NAME;
                 $design = parseDesignInfoFile($file);
                 if ($design != null) {
                     $design['dir'] = $dir;
@@ -432,7 +434,7 @@ function show_avatar($avatar = AllianceBoardAvatar::DEFAULT_IMAGE)
 {
     if ($avatar == "") $avatar = AllianceBoardAvatar::DEFAULT_IMAGE;
     echo "<div style=\"padding:8px;\">";
-    echo "<img id=\"avatar\" src=\"" . BOARD_AVATAR_DIR . "/" . $avatar . "\" alt=\"avatar\" style=\"width:64px;height:64px;\"/></div>";
+    echo "<img id=\"avatar\" src=\"" . AllianceBoardAvatar::IMAGE_PATH . $avatar . "\" alt=\"avatar\" style=\"width:64px;height:64px;\"/></div>";
 }
 
 /**
@@ -830,7 +832,7 @@ function getConfigFilePath($file)
 
 function writeConfigFile($file, $contents)
 {
-    file_put_contents(RELATIVE_ROOT . "config/" . $file, $contents);
+    file_put_contents(__DIR__ . '/../config/' . $file, $contents);
 }
 
 /**

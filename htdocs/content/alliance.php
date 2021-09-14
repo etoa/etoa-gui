@@ -1,5 +1,6 @@
 <?PHP
 
+use EtoA\Alliance\Alliance;
 use EtoA\Alliance\AllianceApplicationRepository;
 use EtoA\Alliance\AllianceDiplomacyLevel;
 use EtoA\Alliance\AllianceDiplomacyRepository;
@@ -293,12 +294,12 @@ elseif ($cu->allianceId == 0) {
                 $alliance_img_string = "";
                 $updatedAllianceImage = null;
                 if (isset($_POST['alliance_img_del']) && $_POST['alliance_img_del'] == 1) {
-                    if (file_exists(ALLIANCE_IMG_DIR . "/" . $alliance->image)) {
-                        @unlink(ALLIANCE_IMG_DIR . "/" . $alliance->image);
+                    if (file_exists($app['app.webroot_dir'] . $alliance->getImageUrl())) {
+                        @unlink($app['app.webroot_dir'] . $alliance->getImageUrl());
                     }
                     $updatedAllianceImage = '';
                 } elseif ($_FILES['alliance_img_file']['tmp_name'] != "") {
-                    $imup = new ImageUpload('alliance_img_file', ALLIANCE_IMG_DIR, "alliance_" . $cu->allianceId . "_" . time());
+                    $imup = new ImageUpload('alliance_img_file', $app['app.webroot_dir'] . Alliance::PROFILE_PICTURE_PATH, "alliance_" . $cu->allianceId . "_" . time());
                     $imup->setMaxSize(AllianceImage::IMAGE_MAX_SIZE);
                     $imup->setMaxDim(AllianceImage::IMAGE_MAX_WIDTH, AllianceImage::IMAGE_MAX_HEIGHT);
                     $imup->enableResizing(AllianceImage::IMAGE_WIDTH, AllianceImage::IMAGE_HEIGHT);
@@ -346,7 +347,7 @@ elseif ($cu->allianceId == 0) {
 
                 tableStart("[" . stripslashes($alliance->tag) . "] " . stripslashes($alliance->name));
                 if ($alliance->image != "") {
-                    $im = ALLIANCE_IMG_DIR . "/" . $alliance->image;
+                    $im = $app['app.webroot_dir'] . $alliance->getImageUrl();
                     if (file_exists($im)) {
                         $ims = getimagesize($im);
                         echo "<tr><td class=\"tblblack\" colspan=\"3\" style=\"text-align:center;background:#000\">

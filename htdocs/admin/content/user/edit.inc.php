@@ -141,8 +141,8 @@ if (isset($_POST['save'])) {
 
     // Handle  image
     if (isset($_POST['profile_img_del']) && $_POST['profile_img_del'] == 1) {
-        if (file_exists(PROFILE_IMG_DIR . "/" . $user->profileImage)) {
-            unlink(PROFILE_IMG_DIR . "/" . $user->profileImage);
+        if (file_exists($app['app.webroot_dir'] . $user->getProfileImageUrl())) {
+            unlink($app['app.webroot_dir'] . $user->getProfileImageUrl());
         }
 
         $user->profileImage = '';
@@ -150,8 +150,9 @@ if (isset($_POST['save'])) {
 
     // Handle avatar
     if (isset($_POST['avatar_img_del']) && $_POST['avatar_img_del'] == 1) {
-        if (file_exists(BOARD_AVATAR_DIR . "/" . $user->avatar)) {
-            unlink(BOARD_AVATAR_DIR . "/" . $user->avatar);
+        $path = $app['app.webroot_dir'] . $user->getAvatarUrl();
+        if (file_exists($path)) {
+            unlink($path);
         }
         $user->avatar = '';
     }
@@ -1059,7 +1060,7 @@ if ($user !== null) {
     if ($user->profileImage != "") {
         if ($user->profileImageCheck)
             echo "<input type=\"checkbox\" value=\"0\" name=\"user_profile_img_check\"> Bild-Verifikation bestätigen<br/>";
-        echo '<img src="' . PROFILE_IMG_DIR . '/' . $user->profileImage . '" alt="Profil" /><br/>';
+        echo '<img src="' . $user->getProfileImageUrl() . '" alt="Profil" /><br/>';
         echo "<input type=\"checkbox\" value=\"1\" name=\"profile_img_del\"> Bild l&ouml;schen<br/>";
     } else {
         echo "<i>Keines</i>";
@@ -1076,7 +1077,7 @@ if ($user !== null) {
                     <th>Avatarpfad:</th>
                     <td class=\"tbldata\">";
     if ($user->avatar != "") {
-        echo '<img src="' . BOARD_AVATAR_DIR . '/' . $user->avatar . '" alt="Profil" /><br/>';
+        echo '<img src="' . $user->getAvatarUrl() . '" alt="Profil" /><br/>';
         echo "<input type=\"checkbox\" value=\"1\" name=\"avatar_img_del\"> Bild l&ouml;schen<br/>";
     } else {
         echo "<i>Keines</i>";

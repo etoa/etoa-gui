@@ -75,7 +75,7 @@ if (isset($cp)) {
         if (!$planet->mainPlanet) {
             echo "<h2>:: Kolonie auf diesem Planeten aufheben ::</h2>";
 
-            $threshold = $planet->userChanged + COLONY_DELETE_THRESHOLD;
+            $threshold = $planet->userChanged + \EtoA\Universe\Planet\Planet::COLONY_DELETE_THRESHOLD;
             if ($threshold < time()) {
                 echo "<form action=\"?page=$page\" method=\"POST\">";
                 iBoxStart("Sicherheitsabfrage");
@@ -96,7 +96,7 @@ if (isset($cp)) {
     // Kolonie aufheben ausführen
     elseif ($request->request->get('submit_remove', '') != '') {
         if (!$planet->mainPlanet) {
-            $threshold = $planet->userChanged + COLONY_DELETE_THRESHOLD;
+            $threshold = $planet->userChanged + \EtoA\Universe\Planet\Planet::COLONY_DELETE_THRESHOLD;
             if ($threshold < time()) {
                 if (!$shipRepo->hasShipsOnEntity($planet->id)) {
                     if (!$fleetRepo->hasFleetsRelatedToEntity($planet->id)) {
@@ -133,7 +133,7 @@ if (isset($cp)) {
             if (!$cu->changedMainPlanet()) {
                 echo "<h2>:: Kolonie zum Hauptplaneten machen ::</h2>";
 
-                $threshold = $planet->userChanged + COLONY_DELETE_THRESHOLD;
+                $threshold = $planet->userChanged + \EtoA\Universe\Planet\Planet::COLONY_DELETE_THRESHOLD;
                 if ($threshold < time()) {
                     echo "<form action=\"?page=$page\" method=\"POST\">";
                     iBoxStart("Sicherheitsabfrage");
@@ -158,13 +158,12 @@ if (isset($cp)) {
     // Kolonie zum Hauptplaneten machen ausführen
     elseif ($request->request->get('submit_change_main', '') != '') {
         if (!$planet->mainPlanet) {
-            $threshold = $planet->userChanged + COLONY_DELETE_THRESHOLD;
+            $threshold = $planet->userChanged + \EtoA\Universe\Planet\Planet::COLONY_DELETE_THRESHOLD;
             if ($threshold < time()) {
                 if (!$cu->changedMainPlanet()) {
                     if ($planetRepo->setMain($planet->id, $cu->id)) {
                         $entity = $entityRepository->findIncludeCell($planet->id);
                         $userRepository->markMainPlanetChanged($cu->getId());
-                        $cu->changedMainPlanet = true;
 
                         /** @var UserService $userService */
                         $userService = $app[UserService::class];
@@ -246,7 +245,7 @@ if (isset($cp)) {
         iBoxStart("Übersicht");
         echo "<div style=\"position:relative;height:320px;padding:0px;background:#000 url('images/stars_middle.jpg');\">
         <div style=\"position:absolute;right:20px;top:20px;\">
-        <img src=\"" . $planetService->imagePath($planet, 'b') . "\" style=\"width:220px;height:220px;\" alt=\"Planet\" /></div>";
+        <img src=\"" . $planet->getImagePath('other') . "\" style=\"width:220px;height:220px;\" alt=\"Planet\" /></div>";
         echo "<div class=\"planetOverviewName\"><a href=\"javascript:;\" onclick=\"showTab('tabName')\">" . $planet->name . "</a></div>";
         echo "<div class=\"planetOverviewList\">
         <div class=\"planetOverviewItem\">Grösse</div> " . StringUtils::formatNumber($config->getInt('field_squarekm') * $planet->fields) . " km&sup2;<br style=\"clear:left;\"/>

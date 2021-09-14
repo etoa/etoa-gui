@@ -6,6 +6,8 @@ namespace EtoA\Admin;
 
 class AdminUser
 {
+    public const CONTACT_REQUIRED_EMAIL_SUFFIX = "@etoa.ch";
+
     public ?int $id = null;
     public ?string $passwordString;
     public bool $forcePasswordChange = false;

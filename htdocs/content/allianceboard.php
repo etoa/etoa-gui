@@ -45,6 +45,8 @@ $allianceService = $app[AllianceService::class];
 
 $request = Request::createFromGlobals();
 
+define("BOARD_BULLET_DIR", "images/boardbullets");
+
 echo "<h1>Allianzforum</h1>";
 
 // Prüfen ob User in Allianz ist
@@ -122,7 +124,7 @@ if ($cu->allianceId > 0) {
 
         // Change avatar function
         echo "<script type=\"text/javascript\">";
-        echo "function changeAvatar(elem) { document.getElementById('avatar').src='" . BOARD_AVATAR_DIR . "/'+elem.options[elem.selectedIndex].value;}";
+        echo "function changeAvatar(elem) { document.getElementById('avatar').src='" . AllianceBoardAvatar::IMAGE_PATH . "'+elem.options[elem.selectedIndex].value;}";
         echo "function changeBullet(elem) { document.getElementById('bullet').src='" . BOARD_BULLET_DIR . "/'+elem.options[elem.selectedIndex].value;}";
         echo "</script>";
 

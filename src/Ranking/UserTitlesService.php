@@ -23,19 +23,22 @@ class UserTitlesService
     private UserStatRepository $userStatRepository;
     private UserRepository $userRepository;
     private UserRatingRepository $userRatingRepository;
+    private string $cacheDir;
 
     public function __construct(
         ConfigurationService $config,
         RaceDataRepository $raceRepository,
         UserStatRepository $userStatRepository,
         UserRepository $userRepository,
-        UserRatingRepository $userRatingRepository
+        UserRatingRepository $userRatingRepository,
+        string $cacheDir
     ) {
         $this->config = $config;
         $this->raceRepository = $raceRepository;
         $this->userStatRepository = $userStatRepository;
         $this->userRepository = $userRepository;
         $this->userRatingRepository = $userRatingRepository;
+        $this->cacheDir = $cacheDir;
     }
 
     public function getTitles(bool $admin = false): string
@@ -206,7 +209,7 @@ class UserTitlesService
      */
     public function calcTitles(): void
     {
-        $dir = CACHE_ROOT . "/out";
+        $dir = $this->cacheDir . "/out";
         if (!is_dir($dir)) {
             mkdir($dir);
         }
@@ -217,11 +220,11 @@ class UserTitlesService
 
     public function getUserTitlesCacheFilePath(): string
     {
-        return CACHE_ROOT . "/out/usertitles.html";
+        return $this->cacheDir . "/out/usertitles.html";
     }
 
     public function getUserTitlesAdminCacheFilePath(): string
     {
-        return CACHE_ROOT . "/out/usertitles_a.html";
+        return $this->cacheDir . "/out/usertitles_a.html";
     }
 }

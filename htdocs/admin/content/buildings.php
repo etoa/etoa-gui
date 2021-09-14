@@ -7,6 +7,7 @@ use EtoA\Building\BuildingPointRepository;
 use EtoA\Building\BuildingRepository;
 use EtoA\Building\BuildingSort;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Core\ObjectWithImage;
 use EtoA\Ranking\RankingService;
 use EtoA\Support\StringUtils;
 use EtoA\Universe\Resources\ResourceNames;
@@ -209,7 +210,7 @@ function requirements(Environment $twig, Container $app)
     define('TYPES_TBL', "building_types");
     define('REQ_TBL', "building_requirements");
 
-    define("ITEM_IMAGE_PATH", IMAGE_PATH . "/buildings/building<DB_TABLE_ID>_small.png");
+    define("ITEM_IMAGE_PATH", ObjectWithImage::BASE_PATH . "/buildings/building<DB_TABLE_ID>_small.png");
 
     /** @var BuildingDataRepository $buildingRepository */
     $buildingRepository = $app[BuildingDataRepository::class];

@@ -10,7 +10,7 @@ if ($s->user_id) {
         // Check path
         $file = realpath($file);
         $allowedDirs = array(
-            realpath(CACHE_ROOT),
+            realpath($app['app.cache_dir']),
             realpath(ADMIN_FILESHARING_DIR),
         );
 

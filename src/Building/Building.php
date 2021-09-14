@@ -2,7 +2,9 @@
 
 namespace EtoA\Building;
 
-class Building
+use EtoA\Core\ObjectWithImage;
+
+class Building implements ObjectWithImage
 {
     public int $id;
     public string $name;
@@ -100,5 +102,17 @@ class Building
     public function calculateBunkerFleetCount(int $level): int
     {
         return $this->bunkerFleetCount * (int) $this->storeFactor ** ($level - 1);
+    }
+
+    public function getImagePath(string $type = "small"): string
+    {
+        switch ($type) {
+            case 'small':
+                return self::BASE_PATH."/buildings/building".$this->id."_small.png";
+            case 'medium':
+                return self::BASE_PATH."/buildings/building".$this->id."_middle.png";
+            default:
+                return self::BASE_PATH."/buildings/building".$this->id.".png";
+        }
     }
 }

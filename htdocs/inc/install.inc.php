@@ -16,6 +16,8 @@ if (!isset($app)) {
 /** @var Environment $twig */
 $twig = $app['twig'];
 
+$defaultLoginServerUrl = 'https://etoa.ch';
+
 $successMessage = null;
 $errorMessage = null;
 
@@ -170,7 +172,7 @@ if ($step === 2) {
 
     if (isset($_SERVER['HTTP_HOST']) && $_SERVER['HTTP_HOST']) {
         $default_round_url = $_SERVER['REQUEST_SCHEME'] . '://' . $_SERVER['HTTP_HOST'];
-        $default_referers = $default_round_url . "\n" . INSTALLER_DEFAULT_LOGINSERVER_URL;
+        $default_referers = $default_round_url . "\n" . $defaultLoginServerUrl;
     } else {
 
         /** @var ConfigurationService $config */
@@ -187,10 +189,10 @@ if ($step === 2) {
         'errorMessage' => $errorMessage,
         'round_name' => $_SESSION['INSTALL']['round_name'] ?? 'Runde X',
         'round_url' => $_SESSION['INSTALL']['round_url'] ?? $default_round_url,
-        'loginserver_url' => $_SESSION['INSTALL']['loginserver_url'] ?? INSTALLER_DEFAULT_LOGINSERVER_URL,
+        'loginserver_url' => $_SESSION['INSTALL']['loginserver_url'] ?? $defaultLoginServerUrl,
         'referers' => $_SESSION['INSTALL']['referers'] ?? $default_referers,
         'default_round_url' => $default_round_url,
-        'default_loginserver_url' => INSTALLER_DEFAULT_LOGINSERVER_URL,
+        'default_loginserver_url' => $defaultLoginServerUrl,
     ]);
     return;
 }
