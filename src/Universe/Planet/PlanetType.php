@@ -40,4 +40,16 @@ class PlanetType
         $this->consider = (bool) $data['type_consider'];
         $this->collectGas = (bool) $data['type_consider'];
     }
+
+    public function getImagePath(string $type = "small", int $imageNumber = 1): string
+    {
+        switch ($type) {
+            case 'small':
+                return IMAGE_PATH . "/planets/planet" . $this->id . '_' . $imageNumber . "_small.png";
+            case 'medium':
+                return IMAGE_PATH . "/planets/planet" . $this->id . '_' . $imageNumber . "_middle.png";
+            default:
+                return IMAGE_PATH . "/planets/planet" . $this->id . '_' . $imageNumber . ".png";
+        }
+    }
 }

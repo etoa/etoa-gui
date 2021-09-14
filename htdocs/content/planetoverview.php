@@ -246,7 +246,7 @@ if (isset($cp)) {
         iBoxStart("Übersicht");
         echo "<div style=\"position:relative;height:320px;padding:0px;background:#000 url('images/stars_middle.jpg');\">
         <div style=\"position:absolute;right:20px;top:20px;\">
-        <img src=\"" . $planetService->imagePath($planet, 'b') . "\" style=\"width:220px;height:220px;\" alt=\"Planet\" /></div>";
+        <img src=\"" . $planet->getImagePath('other') . "\" style=\"width:220px;height:220px;\" alt=\"Planet\" /></div>";
         echo "<div class=\"planetOverviewName\"><a href=\"javascript:;\" onclick=\"showTab('tabName')\">" . $planet->name . "</a></div>";
         echo "<div class=\"planetOverviewList\">
         <div class=\"planetOverviewItem\">Grösse</div> " . StringUtils::formatNumber($config->getInt('field_squarekm') * $planet->fields) . " km&sup2;<br style=\"clear:left;\"/>

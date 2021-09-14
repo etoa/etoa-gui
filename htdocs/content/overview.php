@@ -621,7 +621,7 @@ foreach ($userPlanets as $userPlanet) {
     $planet_info = "<b class=\"planet_name\">" . StringUtils::encodeDBStringToPlaintext($userPlanet->displayName()) . "</b><br>
             " . $building_name . " " . $building_level . "
             ";
-    $planet_image_path = "" . IMAGE_PATH . "/" . IMAGE_PLANET_DIR . "/planet" . $userPlanet->image . "_middle.gif";
+    $planet_image_path = $userPlanet->getImagePath('medium');
 
     // Planet bild mit link zum bauhof und der informationen übergabe beim mouseover
     $planet_link = "<a href=\"?page=buildings&change_entity=" . $userPlanet->id . "\"><img id=\"Planet\" src=\"" . $planet_image_path . "\" width=\"" . $pic_width . "\" height=\"" . $pic_height . "\" border=\"0\"

@@ -81,18 +81,6 @@ class PlanetService
         );
     }
 
-    public function imagePath(Planet $planet, string $opt = ""): string
-    {
-        if ($opt == "b") {
-            return IMAGE_PATH . "/planets/planet" . $planet->image . ".png";
-        }
-        if ($opt == "m") {
-            return IMAGE_PATH . "/planets/planet" . $planet->image . "_middle.png";
-        }
-
-        return IMAGE_PATH . "/planets/planet" . $planet->image . "_small.png";
-    }
-
     public function reset(int $id): void
     {
         if ($id == 0) {

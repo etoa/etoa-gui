@@ -51,11 +51,11 @@ foreach ($planetTypes as $planetType) {
     echo "<tr><td class=\"tbldata\" style=\"width:40px;background:#000;\">";
 
     $tt = new Tooltip();
-    $tt->addImage(IMAGE_PATH . "/" . IMAGE_PLANET_DIR . "/planet" . $planetType->id . "_" . $x . ".gif");
-    echo "<img src=\"" . IMAGE_PATH . "/" . IMAGE_PLANET_DIR . "/planet" . $planetType->id . "_" . $x . "_small.gif\" width=\"40\" height=\"40\" alt=\"planet\" border=\"0\" / " . $tt->toString() . "></td>";
+    $tt->addImage($planetType->getImagePath('other', $x));
+    echo "<img src=\"" . $planetType->getImagePath('small', $x) . "\" width=\"40\" height=\"40\" alt=\"planet\" border=\"0\" / " . $tt->toString() . "></td>";
 
     $tt = new Tooltip();
-    $tt->addIcon(IMAGE_PATH . "/" . IMAGE_PLANET_DIR . "/planet" . $planetType->id . "_" . $x . "_small.gif");
+    $tt->addIcon($planetType->getImagePath('small', $x));
     $tt->addTitle($planetType->name);
     if ($planetType->habitable)
         $tt->addGoodCond("Bewohnbar");

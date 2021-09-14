@@ -143,4 +143,16 @@ class Planet
 
         return $value / 100;
     }
+
+    public function getImagePath(string $type = "small"): string
+    {
+        switch ($type) {
+            case 'small':
+                return IMAGE_PATH . "/planets/planet" . $this->image . "_small.png";
+            case 'medium':
+                return IMAGE_PATH . "/planets/planet" . $this->image . "_middle.png";
+            default:
+                return IMAGE_PATH . "/planets/planet" . $this->image . ".png";
+        }
+    }
 }

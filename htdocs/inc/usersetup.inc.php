@@ -189,7 +189,7 @@ if ($mode == "itemsets" && isset($planet)) {
         <th>Temperatur:</td>
         <td>" . $planet->tempFrom . "&deg;C bis " . $planet->tempTo . "&deg;C";
     echo "</td></tr>";
-    echo "<tr><th>Ansicht:</th><td style=\"background:#000;text-align:center;\"><img src=\"" . $planetService->imagePath($planet, "m") . "\" style=\"border:none;\" alt=\"planet\" /></td></tr>
+    echo "<tr><th>Ansicht:</th><td style=\"background:#000;text-align:center;\"><img src=\"" . $planet->getImagePath('medium') . "\" style=\"border:none;\" alt=\"planet\" /></td></tr>
     </table>";
     echo "<table class='tb'>
     <tr>
