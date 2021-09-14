@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Design\Design;
 use EtoA\Support\FileUtils;
 use EtoA\User\UserPropertiesRepository;
 
@@ -9,96 +10,10 @@ $config = $app[ConfigurationService::class];
 
 $designs = get_designs();
 
-$customDesignDir = RELATIVE_ROOT . DESIGN_DIRECTORY . '/custom';
 $successMessage = null;
 $errorMessage = null;
-// Design upload
-if (isset($_POST['submit'])) {
-    if (isset($_FILES["design"])) {
-        // Check MIME type
-        if (in_array($_FILES["design"]['type'], array('application/zip', 'application/x-zip-compressed', 'application/x-zip'), true)) {
-            // Test if ZIP file can be read
-            $zip = new ZipArchive();
-            if ($zip->open($_FILES["design"]['tmp_name']) === true) {
-                // Iterate over files and detect design info file
-                $uploadedDesignDir = null;
-                $hasMainTemplateFile = false;
-                $hasMainStylesheetFile = false;
-                $hasMainScriptFile = false;
-                for ($i = 0; $i < $zip->numFiles; $i++) {
-                    $stat = $zip->statIndex($i);
-                    if (basename($stat['name']) == DESIGN_CONFIG_FILE_NAME) {
-                        $uploadedDesignDir = dirname($stat['name']);
-                    } else if (basename($stat['name']) == DESIGN_TEMPLATE_FILE_NAME) {
-                        $hasMainTemplateFile = true;
-                    } else if (basename($stat['name']) == DESIGN_STYLESHEET_FILE_NAME) {
-                        $hasMainStylesheetFile = true;
-                    } else if (basename($stat['name']) == DESIGN_SCRIPT_FILE_NAME) {
-                        $hasMainScriptFile = true;
-                    }
-                }
-                $zip->close();
-
-                // Check if design directory exits
-                if ($uploadedDesignDir != null) {
-                    // Test naming pattern of design directory
-                    if (preg_match('/^[a-z0-9_-]+$/i', $uploadedDesignDir)) {
-                        // Test for main template file
-                        if ($hasMainTemplateFile) {
-                            // Test for main stylesheet file
-                            if ($hasMainStylesheetFile) {
-                                // Test for main script file
-                                if ($hasMainScriptFile) {
-                                    // Move uploaded file
-                                    $target = $customDesignDir . '/' . $_FILES["design"]['name'];
-                                    if (move_uploaded_file($_FILES["design"]['tmp_name'], $target)) {
-                                        $zip = new ZipArchive();
-                                        if ($zip->open($target) === true) {
-                                            // Remove existing design, if it exists
-                                            $existingDesign = $customDesignDir . '/' . $uploadedDesignDir;
-                                            if (is_dir($existingDesign)) {
-                                                FileUtils::removeDirectory($existingDesign);
-                                            }
-
-                                            // Extract design
-                                            $zip->extractTo($customDesignDir);
-                                            $zip->close();
-
-                                            // Reload list of designs
-                                            $designs = get_designs();
-                                        }
-
-                                        // Remove uploaded design archive
-                                        unlink($target);
-                                        $successMessage = 'Design hochgeladen';
-                                    } else {
-                                        $errorMessage = 'Fehler beim Upload des Designs!';
-                                    }
-                                } else {
-                                    $errorMessage = 'Ungültiges Design, Script-Datei ' . DESIGN_SCRIPT_FILE_NAME . ' nicht vorhanden!';
-                                }
-                            } else {
-                                $errorMessage = 'Ungültiges Design, Stylesheet-Datei ' . DESIGN_STYLESHEET_FILE_NAME . ' nicht vorhanden!';
-                            }
-                        } else {
-                            $errorMessage = 'Ungültiges Design, Template-Datei ' . DESIGN_TEMPLATE_FILE_NAME . ' nicht vorhanden!';
-                        }
-                    } else {
-                        $errorMessage = 'Ungültiges Design, Verzeichnis-Name enthält ungültige Zeichen (nur a-z, 0-9 sowie _ und - sind erlaubt)!';
-                    }
-                } else {
-                    $errorMessage = 'Ungültiges Design, Info-Datei ' . DESIGN_CONFIG_FILE_NAME . ' nicht vorhanden!';
-                }
-            } else {
-                $errorMessage = 'Kann ZIP-Datei nicht öffnen!';
-            }
-        } else {
-            $errorMessage = 'Keine ZIP-Datei (' . $_FILES["design"]['type'] . ')!';
-        }
-    }
-}
 // Design download
-else if (isset($_GET['download'])) {
+if (isset($_GET['download'])) {
     $design = $_GET['download'];
     if (isset($designs[$design])) {
         $zipFile = tempnam('sys_get_temp_dir', $design);
@@ -141,7 +56,7 @@ foreach ($designs as $k => $v) {
     }
 }
 
-$sampleInfoFile = RELATIVE_ROOT . DESIGN_DIRECTORY . "/official/" . $config->get('default_css_style') . '/' . DESIGN_CONFIG_FILE_NAME;
+$sampleInfoFile = RELATIVE_ROOT . Design::DIRECTORY . "/official/" . $config->get('default_css_style') . '/' . Design::CONFIG_FILE_NAME;
 
 echo $twig->render('admin/misc/designs.html.twig', [
     'successMessage' => $successMessage,

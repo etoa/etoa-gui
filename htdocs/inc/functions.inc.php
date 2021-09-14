@@ -3,6 +3,7 @@
 use Doctrine\Common\Collections\ArrayCollection;
 use EtoA\Admin\AllianceBoardAvatar;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Design\Design;
 use EtoA\Fleet\ForeignFleetLoader;
 use EtoA\Log\AccessLogRepository;
 use EtoA\Race\RaceDataRepository;
@@ -239,7 +240,7 @@ function show_tab_menu($varname, $data)
  */
 function get_designs()
 {
-    $rootDir = RELATIVE_ROOT . DESIGN_DIRECTORY;
+    $rootDir = RELATIVE_ROOT . Design::DIRECTORY;
     $designs = array();
 
     $rd = 'official';
@@ -248,7 +249,7 @@ function get_designs()
         while ($f = readdir($d)) {
             $dir = $baseDir . "/" . $f;
             if (is_dir($dir) && !preg_match('/^\./', $f)) {
-                $file = $dir . "/" . DESIGN_CONFIG_FILE_NAME;
+                $file = $dir . "/" . Design::CONFIG_FILE_NAME;
                 $design = parseDesignInfoFile($file);
                 if ($design != null) {
                     $design['dir'] = $dir;

@@ -1,6 +1,7 @@
 <?PHP
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Design\Design;
 use EtoA\User\UserPropertiesRepository;
 
 $indexpage = [
@@ -38,10 +39,10 @@ $userPropertiesRepository = $app[UserPropertiesRepository::class];
 
 $properties = isset($cu) ? $userPropertiesRepository->getOrCreateProperties($cu->id) : null;
 
-$design = DESIGN_DIRECTORY . '/official/' . $config->get('default_css_style');
+$design = Design::DIRECTORY . '/official/' . $config->get('default_css_style');
 if (isset($cu) && filled($properties->cssStyle)) {
-    if (is_dir(DESIGN_DIRECTORY . '/official/' . $properties->cssStyle)) {
-        $design = DESIGN_DIRECTORY . '/official/' . $properties->cssStyle;
+    if (is_dir(Design::DIRECTORY . '/official/' . $properties->cssStyle)) {
+        $design = Design::DIRECTORY . '/official/' . $properties->cssStyle;
     }
 }
 define('CSS_STYLE', $design);

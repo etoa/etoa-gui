@@ -15,25 +15,6 @@ if (!defined('ADMIN_MODE')) {
     define('ADMIN_MODE', false);
 }
 
-/***********************************/
-/* Directory names                 */
-/***********************************/
-
-// CSS Style
-define("DESIGN_DIRECTORY", "designs");
-
-// Design configuration file name
-define("DESIGN_CONFIG_FILE_NAME", "design.xml");
-
-// Design main template file name
-define("DESIGN_TEMPLATE_FILE_NAME", "template.html");
-
-// Design main stylesheet file name
-define("DESIGN_STYLESHEET_FILE_NAME", "style.css");
-
-// Design main script file name
-define("DESIGN_SCRIPT_FILE_NAME", "scripts.js");
-
 /****************************/
 /* Allgemeine Einstellungen */
 /****************************/
