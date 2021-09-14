@@ -38,7 +38,7 @@ $errorMessage = null;
 
 ob_start();
 if ($loggedIn) {
-    if ($page && $page !== DEFAULT_PAGE) {
+    if ($page && $page !== 'overview') {
         $popup = true;
         require __DIR__ . '/inc/content.inc.php';
     }

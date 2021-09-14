@@ -107,7 +107,7 @@ if ($show) {
         return;
     }
 
-    if ($page && $loggedIn && $page !== DEFAULT_PAGE) {
+    if ($page && $loggedIn && $page !== 'overview') {
         ob_start();
         $popup = true;
         require('inc/content.inc.php');

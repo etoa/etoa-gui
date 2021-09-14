@@ -10,13 +10,6 @@ if (!defined('ADMIN_MODE')) {
     define('ADMIN_MODE', false);
 }
 
-/****************************/
-/* Allgemeine Einstellungen */
-/****************************/
-
-// Homepage
-define('DEFAULT_PAGE', "overview");
-
 /****************/
 /* Allianzboard */
 /****************/
