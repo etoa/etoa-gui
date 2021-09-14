@@ -5,6 +5,7 @@ namespace EtoA\Core\Twig;
 use EtoA\Admin\AdminRoleManager;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Support\BBCodeUtils;
+use EtoA\Support\ExternalUrl;
 use Pimple\Container;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
@@ -62,17 +63,17 @@ class TwigExtension extends AbstractExtension
     {
         switch ($id) {
             case 'forum':
-                return FORUM_URL;
+                return ExternalUrl::FORUM;
             case 'helpcenter':
-                return HELPCENTER_URL;
+                return ExternalUrl::HELP_CENTER;
             case 'rules':
-                return RULES_URL;
+                return ExternalUrl::RULES;
             case 'teamspeak':
-                return TEAMSPEAK_URL;
+                return ExternalUrl::TEAMSPEAK;
             case 'bugreport':
-                return DEVCENTER_PATH;
+                return ExternalUrl::DEV_CENTER;
             case 'chat':
-                return CHAT_URL;
+                return ExternalUrl::CHAT;
             case 'login':
                 return '/show.php?index=login';
             default:
@@ -84,15 +85,15 @@ class TwigExtension extends AbstractExtension
     {
         switch ($id) {
             case 'helpcenter':
-                return HELPCENTER_ONCLICK;
+                return ExternalUrl::HELP_CENTER_ON_CLICK;
             case 'rules':
-                return RULES_ONCLICK;
+                return ExternalUrl::RULES_ON_CLICK;
             case 'teamspeak':
-                return TEAMSPEAK_ONCLICK;
+                return ExternalUrl::TEAMSPEAK_ON_CLICK;
             case 'bugreport':
-                return DEVCENTER_ONCLICK;
+                return ExternalUrl::DEV_CENTER_ON_CLICK;
             case 'chat':
-                return CHAT_ONCLICK;
+                return ExternalUrl::CHAT_ON_CLICK;
             default:
                 throw new \InvalidArgumentException('Unknown in click ' . $id);
         }

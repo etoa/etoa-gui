@@ -28,7 +28,7 @@ class AllianceBuildingsForm extends AdvancedForm
 
     protected function getImagePath(): ?string
     {
-        return IMAGE_PATH . "/abuildings/building<DB_TABLE_ID>_small." . IMAGE_EXT;
+        return IMAGE_PATH . "/abuildings/building<DB_TABLE_ID>_small.png";
     }
 
     protected function getSwitches(): array

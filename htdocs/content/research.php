@@ -512,7 +512,7 @@ if (isset($cp)) {
                 //
                 tableStart(BBCodeUtils::toHTML($technology->name . " " . $b_level));
                 echo "<tr><td width=\"220\" rowspan=\"3\" style=\"background:#000;;vertical-align:middle;\">
-                " . helpImageLink("research&amp;id=" . $technology->id, IMAGE_PATH . "/" . IMAGE_TECHNOLOGY_DIR . "/technology" . $technology->id . "." . IMAGE_EXT, $technology->name, "width:220px;height:220px") . "
+                " . helpImageLink("research&amp;id=" . $technology->id, $technology->getImagePath('other'), $technology->name, "width:220px;height:220px") . "
                 </td>";
                 echo "<td valign=\"top\" colspan=\"2\">" . BBCodeUtils::toHTML($technology->shortComment) . "</td></tr>";
                 echo "<tr><th height=\"20\" width=\"50%\">Status:</th>";
@@ -798,7 +798,7 @@ if (isset($cp)) {
                                 if ($use_img_filter) {
                                     $filterStyleClass = "filter-unavailable";
                                 }
-                                $img = "" . IMAGE_PATH . "/" . IMAGE_TECHNOLOGY_DIR . "/technology" . $tech->id . "." . IMAGE_EXT . "";
+                                $img = $technology->getImagePath('other');
                             } elseif ($tech->show) {
                                 // Voraussetzungen nicht erfüllt
                                 if (!$requirements_passed) {
@@ -820,7 +820,7 @@ if (isset($cp)) {
                                     if ($use_img_filter) {
                                         $filterStyleClass = "filter-unavailable";
                                     }
-                                    $img = "" . IMAGE_PATH . "/" . IMAGE_TECHNOLOGY_DIR . "/technology" . $tech->id . "." . IMAGE_EXT . "";
+                                    $img = $technology->getImagePath('other');
                                 }
                                 // Ist im Bau
                                 elseif (isset($techlist[$tech->id]) && $techlist[$tech->id]->buildType === 3) {
@@ -830,7 +830,7 @@ if (isset($cp)) {
                                     if ($use_img_filter) {
                                         $filterStyleClass = "filter-building";
                                     }
-                                    $img = "" . IMAGE_PATH . "/" . IMAGE_TECHNOLOGY_DIR . "/technology" . $tech->id . "." . IMAGE_EXT . "";
+                                    $img = $technology->getImagePath('other');
                                 }
                                 // Untätig
                                 else {
@@ -844,11 +844,11 @@ if (isset($cp)) {
                                         if ($use_img_filter) {
                                             $filterStyleClass = "filter-noresources";
                                         }
-                                        $img = "" . IMAGE_PATH . "/" . IMAGE_TECHNOLOGY_DIR . "/technology" . $tech->id . "." . IMAGE_EXT . "";
+                                        $img = $technology->getImagePath('other');
                                     } else {
                                         $tmtext = "";
                                         $color = '#fff';
-                                        $img = "" . IMAGE_PATH . "/" . IMAGE_TECHNOLOGY_DIR . "/technology" . $tech->id . "." . IMAGE_EXT . "";
+                                        $img = $technology->getImagePath('other');
                                     }
 
                                     if ($b_level == 0) {
@@ -864,7 +864,7 @@ if (isset($cp)) {
 
                             // Display all buildings that are buildable or are already built
                             if ($tech->show || $b_level > 0) {
-                                $img = "" . IMAGE_PATH . "/" . IMAGE_TECHNOLOGY_DIR . "/technology" . $tech->id . "_middle." . IMAGE_EXT . "";
+                                $img = $technology->getImagePath('medium');
 
                                 if (!$requirements_passed) {
                                     $filterStyleClass = "filter-unavailable";

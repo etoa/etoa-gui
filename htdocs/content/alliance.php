@@ -4,6 +4,7 @@ use EtoA\Alliance\AllianceApplicationRepository;
 use EtoA\Alliance\AllianceDiplomacyLevel;
 use EtoA\Alliance\AllianceDiplomacyRepository;
 use EtoA\Alliance\AllianceHistoryRepository;
+use EtoA\Alliance\AllianceImage;
 use EtoA\Alliance\AlliancePollRepository;
 use EtoA\Alliance\AllianceRankRepository;
 use EtoA\Alliance\AllianceRepository;
@@ -298,9 +299,9 @@ elseif ($cu->allianceId == 0) {
                     $updatedAllianceImage = '';
                 } elseif ($_FILES['alliance_img_file']['tmp_name'] != "") {
                     $imup = new ImageUpload('alliance_img_file', ALLIANCE_IMG_DIR, "alliance_" . $cu->allianceId . "_" . time());
-                    $imup->setMaxSize(ALLIANCE_IMG_MAX_SIZE);
-                    $imup->setMaxDim(ALLIANCE_IMG_MAX_WIDTH, ALLIANCE_IMG_MAX_HEIGHT);
-                    $imup->enableResizing(ALLIANCE_IMG_WIDTH, ALLIANCE_IMG_HEIGHT);
+                    $imup->setMaxSize(AllianceImage::IMAGE_MAX_SIZE);
+                    $imup->setMaxDim(AllianceImage::IMAGE_MAX_WIDTH, AllianceImage::IMAGE_MAX_HEIGHT);
+                    $imup->enableResizing(AllianceImage::IMAGE_WIDTH, AllianceImage::IMAGE_HEIGHT);
 
                     if ($imup->process()) {
                         $updatedAllianceImage = $imup->getResultName();

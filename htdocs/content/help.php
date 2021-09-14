@@ -1,5 +1,6 @@
 <?PHP
 
+use EtoA\Support\ExternalUrl;
 use Symfony\Component\HttpFoundation\Request;
 
 /** @var Request $request */
@@ -12,8 +13,8 @@ $link = "page=" . $page;
 // Help page
 if ($request->query->has('site')) {
     $site = $request->query->get('site');
-    if (filled($site) && preg_match('/^[a-z\_]+$/', $site) && file_exists(RELATIVE_ROOT . "info/$site.php")) {
-        include(RELATIVE_ROOT . "info/$site.php");
+    if (filled($site) && preg_match('/^[a-z\_]+$/', $site) && file_exists(__DIR__ . "/../info/$site.php")) {
+        include __DIR__ . "/../info/$site.php";
     } else {
         error_msg("Hilfedatei nicht gefunden!");
     }
@@ -60,19 +61,19 @@ else {
         $links = [
             [
                 'label' => 'Häufig gestellte Fragen',
-                'onclick' => HELPCENTER_ONCLICK
+                'onclick' => ExternalUrl::HELP_CENTER_ON_CLICK,
             ],
             [
                 'label' => 'Regeln',
-                'onclick' => RULES_ONCLICK
+                'onclick' => ExternalUrl::RULES_ON_CLICK,
             ],
             [
                 'label' => 'Forum',
-                'url' => FORUM_URL
+                'url' => ExternalUrl::FORUM,
             ],
             [
                 'label' => 'Fehler melden',
-                'url' => DEVCENTER_PATH
+                'url' => ExternalUrl::DEV_CENTER,
             ]
         ];
         tableStart("Externe Resourcen");

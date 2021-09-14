@@ -2,8 +2,10 @@
 
 // Datenänderung übernehmen
 
+use EtoA\Admin\AllianceBoardAvatar;
 use EtoA\Support\Mail\MailSenderService;
 use EtoA\Support\StringUtils;
+use EtoA\User\ProfileImage;
 use EtoA\User\UserRepository;
 
 /** @var UserRepository $userRepository */
@@ -18,9 +20,9 @@ if (isset($_POST['data_submit']) && $_POST['data_submit'] != "" && checker_verif
             $user->avatar = "";
         } elseif ($_FILES['user_avatar_file']['tmp_name'] != "") {
             $imup = new ImageUpload('user_avatar_file', BOARD_AVATAR_DIR, "user_" . $cu->id . "_" . time());
-            $imup->setMaxSize(BOARD_AVATAR_MAX_SIZE);
-            $imup->setMaxDim(BOARD_AVATAR_MAX_WIDTH, BOARD_AVATAR_MAX_HEIGHT);
-            $imup->enableResizing(BOARD_AVATAR_WIDTH, BOARD_AVATAR_HEIGHT);
+            $imup->setMaxSize(AllianceBoardAvatar::AVATAR_MAX_SIZE);
+            $imup->setMaxDim(AllianceBoardAvatar::AVATAR_MAX_WIDTH, AllianceBoardAvatar::AVATAR_MAX_HEIGHT);
+            $imup->enableResizing(AllianceBoardAvatar::AVATAR_WIDTH, AllianceBoardAvatar::AVATAR_HEIGHT);
 
             if ($imup->process()) {
                 $user->avatar = $imup->getResultName();
@@ -33,9 +35,9 @@ if (isset($_POST['data_submit']) && $_POST['data_submit'] != "" && checker_verif
             $user->profileImage = "";
         } elseif ($_FILES['user_profile_img_file']['tmp_name'] != "") {
             $imup = new ImageUpload('user_profile_img_file', PROFILE_IMG_DIR, "user_" . $cu->id . "_" . time());
-            $imup->setMaxSize(PROFILE_IMG_MAX_SIZE);
-            $imup->setMaxDim(PROFILE_MAX_IMG_WIDTH, PROFILE_MAX_IMG_HEIGHT);
-            $imup->enableResizing(PROFILE_IMG_WIDTH, PROFILE_IMG_HEIGHT);
+            $imup->setMaxSize(ProfileImage::IMAGE_MAX_SIZE);
+            $imup->setMaxDim(ProfileImage::IMAGE_MAX_WIDTH, ProfileImage::IMAGE_MAX_HEIGHT);
+            $imup->enableResizing(ProfileImage::IMAGE_WIDTH, ProfileImage::IMAGE_HEIGHT);
 
             if ($imup->process()) {
                 $user->profileImage = $imup->getResultName();
@@ -111,9 +113,9 @@ if ($user->profileImage != "") {
     }
 }
 echo "Profilbild heraufladen/&auml;ndern: <input type=\"file\" name=\"user_profile_img_file\" /><br/>
-          <b>Regeln:</b> Max " . PROFILE_MAX_IMG_WIDTH . "*" . PROFILE_MAX_IMG_HEIGHT . " Pixel, Bilder grösser als
-          " . PROFILE_IMG_WIDTH . "*" . PROFILE_IMG_HEIGHT . " werden automatisch verkleinert.<br/>
-          Format: GIF, JPG oder PNG. Grösse: Max " . StringUtils::formatBytes(PROFILE_IMG_MAX_SIZE) . " </td>
+          <b>Regeln:</b> Max " . ProfileImage::IMAGE_MAX_WIDTH . "*" . ProfileImage::IMAGE_MAX_HEIGHT . " Pixel, Bilder grösser als
+          " . ProfileImage::IMAGE_WIDTH . "*" . ProfileImage::IMAGE_HEIGHT . " werden automatisch verkleinert.<br/>
+          Format: GIF, JPG oder PNG. Grösse: Max " . StringUtils::formatBytes(ProfileImage::IMAGE_MAX_SIZE) . " </td>
       </tr>";
 echo "<tr>
           <th width=\"35%\">Allianzforum-Signatur:</th>
@@ -122,16 +124,16 @@ echo "<tr>
 echo "<tr>
           <th width=\"35%\">Allianzforum-Avatar:</th>
           <td>";
-if ($user->avatar != "" && $user->avatar != BOARD_DEFAULT_IMAGE) {
+if ($user->avatar != "" && $user->avatar != AllianceBoardAvatar::DEFAULT_IMAGE) {
     if (is_file(BOARD_AVATAR_DIR . "/" . $user->avatar)) {
         show_avatar($user->avatar);
         echo "<input type=\"checkbox\" value=\"1\" name=\"avatar_del\"> Avatar l&ouml;schen<br/>";
     }
 }
 echo "Avatar heraufladen/&auml;ndern: <input type=\"file\" name=\"user_avatar_file\" /><br/>
-          <b>Regeln:</b> Max " . BOARD_AVATAR_MAX_WIDTH . "*" . BOARD_AVATAR_MAX_HEIGHT . " Pixel, Bilder grösser als
-          " . BOARD_AVATAR_WIDTH . "*" . BOARD_AVATAR_HEIGHT . " werden automatisch verkleinert.<br/>
-          Format: GIF, JPG oder PNG. Grösse: Max " . StringUtils::formatBytes(BOARD_AVATAR_MAX_SIZE) . " </td>
+          <b>Regeln:</b> Max " . AllianceBoardAvatar::AVATAR_MAX_WIDTH . "*" . AllianceBoardAvatar::AVATAR_MAX_HEIGHT . " Pixel, Bilder grösser als
+          " . AllianceBoardAvatar::AVATAR_WIDTH . "*" . AllianceBoardAvatar::AVATAR_HEIGHT . " werden automatisch verkleinert.<br/>
+          Format: GIF, JPG oder PNG. Grösse: Max " . StringUtils::formatBytes(AllianceBoardAvatar::AVATAR_MAX_SIZE) . " </td>
       </tr>";
 echo "<tr>
         <th width=\"35%\">Link zum öffentliches Foren-Profil:</th>

@@ -40,9 +40,7 @@ $properties = isset($cu) ? $userPropertiesRepository->getOrCreateProperties($cu-
 
 $design = DESIGN_DIRECTORY . '/official/' . $config->get('default_css_style');
 if (isset($cu) && filled($properties->cssStyle)) {
-    if (is_dir(DESIGN_DIRECTORY . '/custom/' . $properties->cssStyle)) {
-        $design = DESIGN_DIRECTORY . '/custom/' . $properties->cssStyle;
-    } else if (is_dir(DESIGN_DIRECTORY . '/official/' . $properties->cssStyle)) {
+    if (is_dir(DESIGN_DIRECTORY . '/official/' . $properties->cssStyle)) {
         $design = DESIGN_DIRECTORY . '/official/' . $properties->cssStyle;
     }
 }
@@ -57,7 +55,7 @@ if (file_exists(CSS_STYLE . '/external.css')) {
 $twig->addGlobal('gameTitle', getGameIdentifier() . (isset($indexpage[$index]) ? ' - ' . $indexpage[$index]['label'] : ''));
 $twig->addGlobal('templateDir', CSS_STYLE);
 $twig->addGlobal('additionalCss', $additionalCss);
-$twig->addGlobal('xajaxJS', $xajax->getJavascript(XAJAX_DIR));
+$twig->addGlobal('xajaxJS', $xajax->getJavascript());
 $twig->addGlobal('bodyTopStuff', getInitTT());
 
 //

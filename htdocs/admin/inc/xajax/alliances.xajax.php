@@ -106,10 +106,10 @@ function allianceNewsRemoveOld($ts)
 
     /** @var AllianceNewsRepository $allianceNewsRepository */
     $allianceNewsRepository = $app[AllianceNewsRepository::class];
-    $allianceNewsRepository->deleteOlderThan($t);
+    $deleted = $allianceNewsRepository->deleteOlderThan($t);
 
     $objResponse = new xajaxResponse();
-    $objResponse->alert(mysql_affected_rows() . " Beiträge wurden gelöscht!");
+    $objResponse->alert($deleted . " Beiträge wurden gelöscht!");
     $objResponse->script("xajax_allianceNewsLoad()");
     return $objResponse;
 }

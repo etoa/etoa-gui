@@ -13,6 +13,9 @@ use GdImage;
 
 class UserBannerService
 {
+    public const BANNER_WIDTH = 468;
+    public const BANNER_HEIGHT = 60;
+
     private ConfigurationService $config;
     private UserRepository $userRepository;
     private AllianceRepository $allianceRepository;

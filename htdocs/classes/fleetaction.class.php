@@ -180,7 +180,7 @@ abstract class FleetAction
     {
         if ($code != "" && ctype_alpha($code)) {
             $className = "fleetAction" . ucfirst($code);
-            $classFile = CLASS_ROOT . "/fleetaction/" . strtolower($className) . ".class.php";
+            $classFile = __DIR__ . "/fleetaction/" . strtolower($className) . ".class.php";
             if (file_exists($classFile)) {
                 include_once($classFile);
                 return new $className();

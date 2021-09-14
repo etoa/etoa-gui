@@ -46,7 +46,7 @@ if (!$cu->isSetup() && $page != "help" && $page != "contact") {
     require("inc/usersetup.inc.php");
 } else {
     // Show tipps
-    if (ENABLE_TIPS == 1 && $s->firstView) {
+    if ($s->firstView) {
         /** @var TipRepository $tipRepository */
         $tipRepository = $app[TipRepository::class];
         $tipText = $tipRepository->getRandomTipText();

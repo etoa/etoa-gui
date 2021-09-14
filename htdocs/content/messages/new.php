@@ -147,19 +147,19 @@ function sendMessageForm(
 <?php
     echo "<br><br>";
     // Smilies
-    echo "<a href=\"javascript:;\" onclick=\"addText(':-)', '', false, document.msgform);" . $previewFunction . "\"><img src=\"" . SMILIE_DIR . "/smile.gif\" style=\"border:none;\" alt=\"Smilie\" title=\"Smilie\"  /></a>&nbsp;
-            <a href=\"javascript:;\" onclick=\"addText(';-)', '', false, document.msgform);" . $previewFunction . "\"><img src=\"" . SMILIE_DIR . "/wink.gif\" style=\"border:none;\" alt=\"Smilie\" title=\"Smilie\"  /></a>&nbsp;
-            <a href=\"javascript:;\" onclick=\"addText(':-P', '', false, document.msgform);" . $previewFunction . "\"><img src=\"" . SMILIE_DIR . "/tongue.gif\" style=\"border:none;\" alt=\"Smilie\" title=\"Smilie\"  /></a>&nbsp;
-            <a href=\"javascript:;\" onclick=\"addText(':0', '', false, document.msgform);" . $previewFunction . "\"><img src=\"" . SMILIE_DIR . "/laugh.gif\" style=\"border:none;\" alt=\"Smilie\" title=\"Smilie\"  /></a>&nbsp;
-            <a href=\"javascript:;\" onclick=\"addText(':-D', '', false, document.msgform);" . $previewFunction . "\"><img src=\"" . SMILIE_DIR . "/biggrin.gif\" style=\"border:none;\" alt=\"Smilie\" title=\"Smilie\"  /></a>&nbsp;<br>
-            <a href=\"javascript:;\" onclick=\"addText(':-(', '', false, document.msgform);" . $previewFunction . "\"><img src=\"" . SMILIE_DIR . "/frown.gif\" style=\"border:none;\" alt=\"Smilie\" title=\"Smilie\"  /></a>&nbsp;
-            <a href=\"javascript:;\" onclick=\"addText('8-)', '', false, document.msgform);" . $previewFunction . "\"><img src=\"" . SMILIE_DIR . "/cool.gif\" style=\"border:none;\" alt=\"Smilie\" title=\"Smilie\"  /></a>&nbsp;
-            <a href=\"javascript:;\" onclick=\"addText(':angry:', '', false, document.msgform);" . $previewFunction . "\"><img src=\"" . SMILIE_DIR . "/angry.gif\" style=\"border:none;\" alt=\"Smilie\" title=\"Smilie\"  /></a>&nbsp;
-            <a href=\"javascript:;\" onclick=\"addText(':sad:', '', false, document.msgform);" . $previewFunction . "\"><img src=\"" . SMILIE_DIR . "/sad.gif\" style=\"border:none;\" alt=\"Smilie\" title=\"Smilie\"  /></a>&nbsp;
-            <a href=\"javascript:;\" onclick=\"addText(':pst:', '', false, document.msgform);" . $previewFunction . "\"><img src=\"" . SMILIE_DIR . "/pst.gif\" style=\"border:none;\" alt=\"Smilie\" title=\"Smilie\"  /></a>&nbsp;<br>
-            <a href=\"javascript:;\" onclick=\"addText(':holy:', '', false, document.msgform);" . $previewFunction . "\"><img src=\"" . SMILIE_DIR . "/holy.gif\" style=\"border:none;\" alt=\"Smilie\" title=\"Smilie\"  /></a>&nbsp;
-            <a href=\"javascript:;\" onclick=\"addText(':rolleyes:', '', false, document.msgform);" . $previewFunction . "\"><img src=\"" . SMILIE_DIR . "/rolleyes.gif\" style=\"border:none;\" alt=\"Smilie\" title=\"Smilie\"  /></a>&nbsp;
-            <a href=\"javascript:;\" onclick=\"addText(':anger:', '', false, document.msgform);" . $previewFunction . "\"><img src=\"" . SMILIE_DIR . "/anger.gif\" style=\"border:none;\" alt=\"Smilie\" title=\"Smilie\"  /></a>&nbsp;";
+    echo "<a href=\"javascript:;\" onclick=\"addText(':-)', '', false, document.msgform);" . $previewFunction . "\"><img src=\"/images/smilies/smile.gif\" style=\"border:none;\" alt=\"Smilie\" title=\"Smilie\"  /></a>&nbsp;
+            <a href=\"javascript:;\" onclick=\"addText(';-)', '', false, document.msgform);" . $previewFunction . "\"><img src=\"/images/smilies/wink.gif\" style=\"border:none;\" alt=\"Smilie\" title=\"Smilie\"  /></a>&nbsp;
+            <a href=\"javascript:;\" onclick=\"addText(':-P', '', false, document.msgform);" . $previewFunction . "\"><img src=\"/images/smilies/tongue.gif\" style=\"border:none;\" alt=\"Smilie\" title=\"Smilie\"  /></a>&nbsp;
+            <a href=\"javascript:;\" onclick=\"addText(':0', '', false, document.msgform);" . $previewFunction . "\"><img src=\"/images/smilies/laugh.gif\" style=\"border:none;\" alt=\"Smilie\" title=\"Smilie\"  /></a>&nbsp;
+            <a href=\"javascript:;\" onclick=\"addText(':-D', '', false, document.msgform);" . $previewFunction . "\"><img src=\"/images/smilies/biggrin.gif\" style=\"border:none;\" alt=\"Smilie\" title=\"Smilie\"  /></a>&nbsp;<br>
+            <a href=\"javascript:;\" onclick=\"addText(':-(', '', false, document.msgform);" . $previewFunction . "\"><img src=\"/images/smilies/frown.gif\" style=\"border:none;\" alt=\"Smilie\" title=\"Smilie\"  /></a>&nbsp;
+            <a href=\"javascript:;\" onclick=\"addText('8-)', '', false, document.msgform);" . $previewFunction . "\"><img src=\"/images/smilies/cool.gif\" style=\"border:none;\" alt=\"Smilie\" title=\"Smilie\"  /></a>&nbsp;
+            <a href=\"javascript:;\" onclick=\"addText(':angry:', '', false, document.msgform);" . $previewFunction . "\"><img src=\"/images/smilies/angry.gif\" style=\"border:none;\" alt=\"Smilie\" title=\"Smilie\"  /></a>&nbsp;
+            <a href=\"javascript:;\" onclick=\"addText(':sad:', '', false, document.msgform);" . $previewFunction . "\"><img src=\"/images/smilies/sad.gif\" style=\"border:none;\" alt=\"Smilie\" title=\"Smilie\"  /></a>&nbsp;
+            <a href=\"javascript:;\" onclick=\"addText(':pst:', '', false, document.msgform);" . $previewFunction . "\"><img src=\"/images/smilies/pst.gif\" style=\"border:none;\" alt=\"Smilie\" title=\"Smilie\"  /></a>&nbsp;<br>
+            <a href=\"javascript:;\" onclick=\"addText(':holy:', '', false, document.msgform);" . $previewFunction . "\"><img src=\"/images/smilies/holy.gif\" style=\"border:none;\" alt=\"Smilie\" title=\"Smilie\"  /></a>&nbsp;
+            <a href=\"javascript:;\" onclick=\"addText(':rolleyes:', '', false, document.msgform);" . $previewFunction . "\"><img src=\"/images/smilies/rolleyes.gif\" style=\"border:none;\" alt=\"Smilie\" title=\"Smilie\"  /></a>&nbsp;
+            <a href=\"javascript:;\" onclick=\"addText(':anger:', '', false, document.msgform);" . $previewFunction . "\"><img src=\"/images/smilies/anger.gif\" style=\"border:none;\" alt=\"Smilie\" title=\"Smilie\"  /></a>&nbsp;";
     echo "</td>";
     echo "</tr>";
     if ($previewNewMessage) {

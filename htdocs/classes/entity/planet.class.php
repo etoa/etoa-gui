@@ -276,12 +276,12 @@ class Planet extends Entity
     function imagePath($opt = "")
     {
         if ($opt == "b") {
-            return IMAGE_PATH . "/planets/planet" . $this->image . "." . IMAGE_EXT;
+            return IMAGE_PATH . "/planets/planet" . $this->image . ".png";
         }
         if ($opt == "m") {
-            return IMAGE_PATH . "/planets/planet" . $this->image . "_middle." . IMAGE_EXT;
+            return IMAGE_PATH . "/planets/planet" . $this->image . "_middle.png";
         }
-        return IMAGE_PATH . "/planets/planet" . $this->image . "_small." . IMAGE_EXT;
+        return IMAGE_PATH . "/planets/planet" . $this->image . "_small.png";
     }
 
     function name()

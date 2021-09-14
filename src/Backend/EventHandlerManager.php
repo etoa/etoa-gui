@@ -9,6 +9,8 @@ use Exception;
 
 class EventHandlerManager
 {
+    public const CONFIG_FILE_NAME = 'eventhandler.conf';
+
     private ConfigurationService $config;
 
     public function __construct(
@@ -78,7 +80,7 @@ class EventHandlerManager
     {
         $executable = $this->config->get('daemon_exe');
         if (!$executable) {
-            $executable = realpath(RELATIVE_ROOT . '../eventhandler/target/etoad');
+            $executable = realpath(__DIR__ . '/../../eventhandler/target/etoad');
         }
 
         return $executable;
@@ -91,6 +93,6 @@ class EventHandlerManager
 
     private function getConfigFile(): string
     {
-        return realpath(RELATIVE_ROOT . 'config/' . EVENTHANDLER_CONFIG_FILE_NAME);
+        return realpath(__DIR__ . '/../../htdocs/config/' . EventHandlerManager::CONFIG_FILE_NAME);
     }
 }

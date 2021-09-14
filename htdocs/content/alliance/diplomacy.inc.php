@@ -44,6 +44,7 @@
 <?PHP
 
 use EtoA\Alliance\AllianceDiplomacyLevel;
+use EtoA\Alliance\AllianceDiplomacyPoints;
 use EtoA\Alliance\AllianceDiplomacyRepository;
 use EtoA\Alliance\AllianceHistoryRepository;
 use EtoA\Alliance\AllianceRepository;
@@ -295,7 +296,7 @@ if ($userAlliancePermission->checkHasRights(AllianceRights::RELATIONS, $page)) {
             if ($allianceDiplomacyRepository->existsDiplomacyBetween($cu->allianceId(), $id)) {
                 error_msg("Deine Allianz steht schon in einer Beziehung (B&uuml;ndnis/Krieg) mit der ausgew&auml;hlten Allianz oder es ist bereits eine Bewerbung um ein B&uuml;ndnis vorhanden!");
             } else {
-                $allianceDiplomacyRepository->add($cu->allianceId(), $id, AllianceDiplomacyLevel::WAR, $_POST['alliance_bnd_text'], '', $cu->id, DIPLOMACY_POINTS_PER_WAR, $_POST['alliance_bnd_text_pub']);
+                $allianceDiplomacyRepository->add($cu->allianceId(), $id, AllianceDiplomacyLevel::WAR, $_POST['alliance_bnd_text'], '', $cu->id, AllianceDiplomacyPoints::POINTS_PER_WAR, $_POST['alliance_bnd_text_pub']);
 
                 success_msg("Du hast einer Allianz den Krieg erkl&auml;rt!");
 
@@ -386,7 +387,7 @@ if ($userAlliancePermission->checkHasRights(AllianceRights::RELATIONS, $page)) {
                 $allianceHistoryRepository->addEntry($diplomacy->alliance1Id, $text);
 
                 // Save pact
-                $allianceDiplomacyRepository->acceptBnd($id, DIPLOMACY_POINTS_PER_PACT);
+                $allianceDiplomacyRepository->acceptBnd($id, AllianceDiplomacyPoints::POINTS_PER_PACT);
                 success_msg("Bündniss angenommen! Bitte denke daran, einen öffentlichen Text zum Bündnis hinzuzufügen!");
             }
         }

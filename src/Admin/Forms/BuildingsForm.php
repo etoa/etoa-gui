@@ -40,7 +40,7 @@ class BuildingsForm extends AdvancedForm
 
     protected function getImagePath(): ?string
     {
-        return IMAGE_PATH . "/buildings/building<DB_TABLE_ID>_small." . IMAGE_EXT;
+        return IMAGE_PATH . "/buildings/building<DB_TABLE_ID>_small.png";
     }
 
     protected function getSwitches(): array

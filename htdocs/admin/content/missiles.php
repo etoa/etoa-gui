@@ -40,7 +40,7 @@ function missileRequirements(Environment $twig): void
 
     define("TITLE", "Raketemanforderungen");
     define("REQ_TBL", "missile_requirements");
-    define("ITEM_IMAGE_PATH", IMAGE_PATH . "/missiles/missile<DB_TABLE_ID>_small." . IMAGE_EXT);
+    define("ITEM_IMAGE_PATH", IMAGE_PATH . "/missiles/missile<DB_TABLE_ID>_small.png");
 
     /** @var MissileDataRepository $missileDataRepository */
     $missileDataRepository = $app[MissileDataRepository::class];

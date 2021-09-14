@@ -108,7 +108,7 @@ class Wormhole extends Entity
             $this->loadData();
         }
         $prefix = $this->persistent ? 'wormhole_persistent' : 'wormhole';
-        return IMAGE_PATH . "/wormholes/" . $prefix . "1_small." . IMAGE_EXT;
+        return IMAGE_PATH . "/wormholes/" . $prefix . "1_small.png";
     }
 
     /**

@@ -36,7 +36,7 @@ class WarPeaceUpdateTask implements IPeriodicTask
         $time = time();
 
         // Assign diplomacy points for pacts
-        $pacts = $this->allianceDiplomacyRepository->search(AllianceDiplomacySearch::create()->level(AllianceDiplomacyLevel::BND_CONFIRMED)->pendingPoints()->dateBefore($time - DIPLOMACY_POINTS_MIN_PACT_DURATION));
+        $pacts = $this->allianceDiplomacyRepository->search(AllianceDiplomacySearch::create()->level(AllianceDiplomacyLevel::BND_CONFIRMED)->pendingPoints()->dateBefore($time - \EtoA\Alliance\AllianceDiplomacyPoints::POINTS_MIN_PACT_DURATION));
         foreach ($pacts as $diplomacy) {
             $reason = "Bündnis " . $diplomacy->alliance1Id . " mit " . $diplomacy->alliance2Id;
             $this->userRatingService->addDiplomacyRating(

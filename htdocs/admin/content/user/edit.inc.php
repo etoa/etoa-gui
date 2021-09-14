@@ -12,6 +12,7 @@ use EtoA\Race\RaceDataRepository;
 use EtoA\Ranking\UserBannerService;
 use EtoA\Specialist\SpecialistDataRepository;
 use EtoA\Support\BBCodeUtils;
+use EtoA\Support\ExternalUrl;
 use EtoA\Support\StringUtils;
 use EtoA\User\UserCommentRepository;
 use EtoA\User\UserHolidayService;
@@ -1095,8 +1096,8 @@ if ($user !== null) {
         echo '
                 <img src="' . $name . '" alt="Banner"><br>
                 Generiert: ' . StringUtils::formatDate(filemtime($name)) . '<br/>
-                <textarea readonly="readonly" rows="2" cols="65">&lt;a href="' . USERBANNER_LINK_URL . '"&gt;&lt;img src="' . $config->get('roundurl') . '/' . $name . '" width="468" height="60" alt="EtoA Online-Game" border="0" /&gt;&lt;/a&gt;</textarea>
-                <textarea readonly="readonly" rows="2" cols="65">[url=' . USERBANNER_LINK_URL . '][img]' . $config->get('roundurl') . '/' . $name . '[/img][/url]</textarea>';
+                <textarea readonly="readonly" rows="2" cols="65">&lt;a href="' . ExternalUrl::USERBANNER_LINK . '"&gt;&lt;img src="' . $config->get('roundurl') . '/' . $name . '" width="468" height="60" alt="EtoA Online-Game" border="0" /&gt;&lt;/a&gt;</textarea>
+                <textarea readonly="readonly" rows="2" cols="65">[url=' . ExternalUrl::USERBANNER_LINK . '][img]' . $config->get('roundurl') . '/' . $name . '[/img][/url]</textarea>';
     }
     echo '</td></tr>';
     echo "</table>";

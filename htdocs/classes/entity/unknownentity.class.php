@@ -92,7 +92,7 @@ class UnknownEntity extends Entity
     function imagePath($opt = "")
     {
         $r = mt_rand(1, 10);
-        return IMAGE_PATH . "/space/space" . $r . "_small." . IMAGE_EXT;
+        return IMAGE_PATH . "/space/space" . $r . "_small.png";
     }
 
     /**

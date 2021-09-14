@@ -43,7 +43,7 @@ class AllianceTechnology
 
     public function getImagePath(): string
     {
-        return IMAGE_PATH . "/" . IMAGE_ALLIANCE_TECHNOLOGY_DIR . "/technology" . $this->id . "_middle." . IMAGE_EXT;
+        return IMAGE_PATH . "/atechnologies/technology" . $this->id . "_middle.png";
     }
 
     public function getCosts(): BaseResources

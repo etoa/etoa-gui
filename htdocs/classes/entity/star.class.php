@@ -158,9 +158,9 @@ class Star extends Entity
     function imagePath($opt = "")
     {
         if ($opt == "b") {
-            return IMAGE_PATH . "/stars/star" . $this->typeId . "." . IMAGE_EXT;
+            return IMAGE_PATH . "/stars/star" . $this->typeId . ".png";
         }
-        return IMAGE_PATH . "/stars/star" . $this->typeId . "_small." . IMAGE_EXT;
+        return IMAGE_PATH . "/stars/star" . $this->typeId . "_small.png";
     }
 
     /**

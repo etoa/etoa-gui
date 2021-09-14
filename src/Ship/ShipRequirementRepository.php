@@ -4,6 +4,7 @@ namespace EtoA\Ship;
 
 use Doctrine\DBAL\Connection;
 use EtoA\Requirement\AbstractRequirementRepository;
+use EtoA\Technology\TechnologyTypeId;
 
 class ShipRequirementRepository extends AbstractRequirementRepository
 {
@@ -25,7 +26,7 @@ class ShipRequirementRepository extends AbstractRequirementRepository
             ->andWhere('t.tech_type_id = :speedCat')
             ->setParameters([
                 'shipId' => $shipId,
-                'speedCat' => TECH_SPEED_CAT,
+                'speedCat' => TechnologyTypeId::SPEED,
             ])
             ->execute()
             ->fetchAllAssociative();

@@ -28,7 +28,7 @@ class AllianceTechnologiesForm extends AdvancedForm
 
     protected function getImagePath(): ?string
     {
-        return IMAGE_PATH . "/atechnologies/technology<DB_TABLE_ID>_small." . IMAGE_EXT;
+        return IMAGE_PATH . "/atechnologies/technology<DB_TABLE_ID>_small.png";
     }
 
     protected function getSwitches(): array

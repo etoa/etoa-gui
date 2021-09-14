@@ -38,7 +38,7 @@ if (!isset($app)) {
 }
 
 // Load default values
-require_once(RELATIVE_ROOT."inc/def.inc.php");
+require_once __DIR__ . "/../htdocs/inc/def.inc.php";
 
 $args = array_splice($_SERVER['argv'], 1);
 
@@ -65,9 +65,7 @@ if ($config->getBoolean('update_enabled'))
     $log.= "\nTotal: ".$tr->getTotalDuration().' sec';
 
     // Write log
-    if (LOG_UPDATES) {
-        $severity = LogSeverity::INFO;
-    } elseif ($tr->getTotalDuration() > LOG_UPDATES_THRESHOLD) {
+    if ($tr->getTotalDuration() > 10) {
         $severity = LogSeverity::WARNING;
     } else {
         $severity = LogSeverity::DEBUG;

@@ -6,6 +6,7 @@ use EtoA\Log\LogRepository;
 use EtoA\Log\LogSeverity;
 use EtoA\Market\MarketHandler;
 use EtoA\Market\MarketResourceRepository;
+use EtoA\Market\TradePoints;
 use EtoA\Message\MarketReportRepository;
 use EtoA\Ship\ShipDataRepository;
 use EtoA\Ship\ShipId;
@@ -86,13 +87,13 @@ if (isset($_POST['ressource_market_id'])) {
 
                 // Fleet Seller -> Buyer
                 $sellerFid = $fleetRepository->add($cu->getId(), $launchtime, (int) $buyerLandtime, $id, $cp->id, \EtoA\Fleet\FleetAction::MARKET, \EtoA\Fleet\FleetStatus::DEPARTURE, $sellResources);
-                $fleetRepository->addShipsToFleet($sellerFid, MARKET_SHIP_ID, $numSellerShip);
+                $fleetRepository->addShipsToFleet($sellerFid, ShipId::MARKET, $numSellerShip);
 
                 $numBuyerShip = ($tradeShip->capacity > 0) ? ceil(array_sum($buyarr) / $tradeShip->capacity) : 1;
 
                 // Fleet Buyer->Seller
                 $buyerFid = $fleetRepository->add($offer->userId, $launchtime, (int) $sellerLandtime, $cp->id, $sellerEntity->id, \EtoA\Fleet\FleetAction::MARKET, \EtoA\Fleet\FleetStatus::DEPARTURE, $buyResource);
-                $fleetRepository->addShipsToFleet($buyerFid, MARKET_SHIP_ID, $numBuyerShip);
+                $fleetRepository->addShipsToFleet($buyerFid, ShipId::MARKET, $numBuyerShip);
 
                 // Angebot löschen
                 $marketResourceRepository->delete($offer->id);
@@ -115,21 +116,21 @@ if (isset($_POST['ressource_market_id'])) {
 
                 $userRatingService->addTradeRating(
                     $cu->id,
-                    TRADE_POINTS_PER_TRADE,
+                    TradePoints::POINTS_PER_TRADE,
                     false,
                     'Handel #' . $offer->id . ' mit ' . $offer->userId
                 );
-                if (strlen($offer->text) > TRADE_POINTS_TRADETEXT_MIN_LENGTH) {
+                if (strlen($offer->text) > TradePoints::POINTS_TRADE_TEXT_MIN_LENGTH) {
                     $userRatingService->addTradeRating(
                         $offer->userId,
-                        TRADE_POINTS_PER_TRADE + TRADE_POINTS_PER_TRADETEXT,
+                        TradePoints::POINTS_PER_TRADE + TradePoints::POINTS_PER_TRADE_TEXT,
                         true,
                         'Handel #' . $offer->id . ' mit ' . $cu->id
                     );
                 } else {
                     $userRatingService->addTradeRating(
                         $offer->userId,
-                        TRADE_POINTS_PER_TRADE,
+                        TradePoints::POINTS_PER_TRADE,
                         true,
                         'Handel #' . $offer->id . ' mit ' . $cu->id
                     );

@@ -983,7 +983,7 @@ if ($allianceShipyardLevel > 0) {
             //Kostenfaktor Schiffe
             $cost_factor = pow($config->getFloat("alliance_shipcosts_factor"), $ship_count);
 
-            $path = IMAGE_PATH . "/" . IMAGE_SHIP_DIR . "/ship" . $ship->id . "_middle." . IMAGE_EXT;
+            $path = $ship->getImagePath('medium');
             tableStart($ship->name);
             echo "<tr>
                 <td style=\"width:120px;background:#000;vertical-align:middle;padding:0px;\">

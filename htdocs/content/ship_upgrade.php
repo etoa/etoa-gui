@@ -350,7 +350,7 @@ else {
             echo "
                         <tr>
                             <th style=\"width:220px;\">
-                                <a href=\"?page=ship_upgrade&amp;id=" . $ship->id . "\"><img src=\"" . IMAGE_PATH . "/" . IMAGE_SHIP_DIR . "/ship" . $ship->id . "." . IMAGE_EXT . "\" width=\"220\" height=\"220\" alt=\"Klicke hier um ins Upgrade Menu zu gelangen\" title=\"Klicke hier um ins Upgrade Menu zu gelangen\" border=\"0\"/></a></th>
+                                <a href=\"?page=ship_upgrade&amp;id=" . $ship->id . "\"><img src=\"" . $ship->getImagePath('other') . "\" width=\"220\" height=\"220\" alt=\"Klicke hier um ins Upgrade Menu zu gelangen\" title=\"Klicke hier um ins Upgrade Menu zu gelangen\" border=\"0\"/></a></th>
                             <td colspan=\"3\">" . BBCodeUtils::toHTML($ship->longComment) . "</td>
                         </tr>";
             echo "

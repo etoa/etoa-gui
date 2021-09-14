@@ -53,7 +53,7 @@ if ($request->query->has('id') && $request->query->getInt('id') > 0) {
         tableStart($building->name);
         echo "<tr>
             <th style=\"width:220px;background:#000;padding:0px;\" rowspan=\"2\">
-                <img src=\"" . IMAGE_PATH . "/" . IMAGE_BUILDING_DIR . "/building" . $building->id . "." . IMAGE_EXT . "\" style=\"width:220px;height:220px;background:#000;margin:0px;\" align=\"top\" alt=\"Bild " . $building->name . "\" />
+                <img src=\"" . IMAGE_PATH . "/" . IMAGE_BUILDING_DIR . "/building" . $building->id . ".png" . "\" style=\"width:220px;height:220px;background:#000;margin:0px;\" align=\"top\" alt=\"Bild " . $building->name . "\" />
             </th>
             <td colspan=\"2\">
                 <div align=\"justify\">" . BBCodeUtils::toHTML($building->longComment) . "</div>
@@ -476,7 +476,7 @@ else {
             echo "<tr>
                 <td style=\"width:40px;padding:0px;background:#000;vertical-align:middle;\">
                     <a href=\"?$link&amp;site=$site&id=" . $building->id . "\">
-                        <img src=\"" . IMAGE_PATH . "/" . IMAGE_BUILDING_DIR . "/building" . $building->id . "_small." . IMAGE_EXT . "\" align=\"top\" style=\"width:40px;height:40px;background:#000;margin:0px;\" alt=\"Bild " . $building->name . "\" border=\"0\"/></a></td>";
+                        <img src=\"" . IMAGE_PATH . "/" . IMAGE_BUILDING_DIR . "/building" . $building->id . "_small.png" . "\" align=\"top\" style=\"width:40px;height:40px;background:#000;margin:0px;\" alt=\"Bild " . $building->name . "\" border=\"0\"/></a></td>";
             echo "<td style=\"width:130px;\">
                 <a href=\"?$link&amp;site=$site&amp;id=" . $building->id . "\"><b>" . $building->name . "</a></a>
             </td>";

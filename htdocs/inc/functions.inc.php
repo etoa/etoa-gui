@@ -1,12 +1,14 @@
 <?PHP
 
 use Doctrine\Common\Collections\ArrayCollection;
+use EtoA\Admin\AllianceBoardAvatar;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Fleet\ForeignFleetLoader;
 use EtoA\Log\AccessLogRepository;
 use EtoA\Race\RaceDataRepository;
 use EtoA\Specialist\SpecialistService;
 use EtoA\Support\BBCodeUtils;
+use EtoA\Support\ExternalUrl;
 use EtoA\Support\StringUtils;
 use EtoA\User\UserPropertiesRepository;
 use EtoA\User\UserRepository;
@@ -188,10 +190,10 @@ function error_msg($text, $type = 0, $exit = 0, $addition = 0, $stacktrace = nul
     // Addition
     switch ($addition) {
         case 1:
-            echo BBCodeUtils::toHTML("\n\n[url " . FORUM_URL . "]Zum Forum[/url] | [email mail@etoa.ch]Mail an die Spielleitung[/email]");
+            echo BBCodeUtils::toHTML("\n\n[url " . ExternalUrl::FORUM . "]Zum Forum[/url] | [email mail@etoa.ch]Mail an die Spielleitung[/email]");
             break;
         case 2:
-            echo BBCodeUtils::toHTML("\n\n[url " . DEVCENTER_PATH . "]Fehler melden[/url]");
+            echo BBCodeUtils::toHTML("\n\n[url " . ExternalUrl::DEV_CENTER . "]Fehler melden[/url]");
             break;
         default:
             echo '';
@@ -200,7 +202,7 @@ function error_msg($text, $type = 0, $exit = 0, $addition = 0, $stacktrace = nul
     // Stacktrace
     if (isset($stacktrace)) {
         echo "<div style=\"text-align:left;border-top:1px solid #000;\">
-        <b>Stack-Trace:</b><br/>" . nl2br($stacktrace) . "<br/><a href=\"" . DEVCENTER_PATH . "\" target=\"_blank\">Fehler melden</a></div>";
+        <b>Stack-Trace:</b><br/>" . nl2br($stacktrace) . "<br/><a href=\"" . ExternalUrl::DEV_CENTER . "\" target=\"_blank\">Fehler melden</a></div>";
     }
     iBoxEnd();
     if ($exit > 0) {
@@ -239,19 +241,19 @@ function get_designs()
 {
     $rootDir = RELATIVE_ROOT . DESIGN_DIRECTORY;
     $designs = array();
-    foreach (array('official', 'custom') as $rd) {
-        $baseDir = $rootDir . '/' . $rd;
-        if ($d = opendir($baseDir)) {
-            while ($f = readdir($d)) {
-                $dir = $baseDir . "/" . $f;
-                if (is_dir($dir) && !preg_match('/^\./', $f)) {
-                    $file = $dir . "/" . DESIGN_CONFIG_FILE_NAME;
-                    $design = parseDesignInfoFile($file);
-                    if ($design != null) {
-                        $design['dir'] = $dir;
-                        $design['custom'] = ($rd == 'custom');
-                        $designs[$f] = $design;
-                    }
+
+    $rd = 'official';
+    $baseDir = $rootDir . '/' . $rd;
+    if ($d = opendir($baseDir)) {
+        while ($f = readdir($d)) {
+            $dir = $baseDir . "/" . $f;
+            if (is_dir($dir) && !preg_match('/^\./', $f)) {
+                $file = $dir . "/" . DESIGN_CONFIG_FILE_NAME;
+                $design = parseDesignInfoFile($file);
+                if ($design != null) {
+                    $design['dir'] = $dir;
+                    $design['custom'] = false;
+                    $designs[$f] = $design;
                 }
             }
         }
@@ -426,9 +428,9 @@ function tm($title, $text)
 /**
  * Zeigt ein Avatarbild an
  */
-function show_avatar($avatar = BOARD_DEFAULT_IMAGE)
+function show_avatar($avatar = AllianceBoardAvatar::DEFAULT_IMAGE)
 {
-    if ($avatar == "") $avatar = BOARD_DEFAULT_IMAGE;
+    if ($avatar == "") $avatar = AllianceBoardAvatar::DEFAULT_IMAGE;
     echo "<div style=\"padding:8px;\">";
     echo "<img id=\"avatar\" src=\"" . BOARD_AVATAR_DIR . "/" . $avatar . "\" alt=\"avatar\" style=\"width:64px;height:64px;\"/></div>";
 }
@@ -775,7 +777,7 @@ function tt($content)
 
 function icon($name)
 {
-    return "<img src=\"" . (defined('IMAGE_DIR') ? IMAGE_DIR : 'images') . "/icons/" . $name . ".png\" alt=\"$name\" />";
+    return "<img src=\"images/icons/" . $name . ".png\" alt=\"$name\" />";
 }
 
 function htmlSelect($name, array $data, $default = null)
@@ -881,7 +883,7 @@ function getLoginUrl($args = array())
  */
 function isDebugEnabled(): bool
 {
-    return file_exists(RELATIVE_ROOT . 'config/debug');
+    return file_exists(__DIR__ . '/../config/debug');
 }
 
 /**
@@ -915,7 +917,7 @@ function unix_command_exists(string $cmd): bool
 
 function getAbsPath(string $path): string
 {
-    return (substr($path, 0, 1) != "/" ? realpath(RELATIVE_ROOT) . '/' : '') . $path;
+    return (substr($path, 0, 1) != "/" ? realpath(__DIR__) . '/../../htdocs/' : '') . $path;
 }
 
 if (!function_exists('blank')) {

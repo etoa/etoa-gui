@@ -2,6 +2,7 @@
 
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Ranking\UserBannerService;
+use EtoA\Support\ExternalUrl;
 
 /** @var ConfigurationService $config */
 $config = $app[ConfigurationService::class];
@@ -19,8 +20,8 @@ $name = $userBannerService->getUserBannerPath($id);
 if (file_exists($name)) {
     echo '<div style="text-align: center;">
     <img src="' . $name . '" alt="Banner"><br><br>
-    HTML:<br/><textarea readonly="readonly" rows="2" cols="65">&lt;a href="' . USERBANNER_LINK_URL . '"&gt;&lt;img src="' . $config->get('roundurl') . '/' . $name . '" width="' . USERBANNER_WIDTH . '" height="' . USERBANNER_HEIGTH . '" alt="EtoA Online-Game" border="0" /&gt;&lt;/a&gt;</textarea><br/>
-    BBCode:<br/><textarea readonly="readonly" rows="1" cols="65">[url=' . USERBANNER_LINK_URL . '][img]' . $config->get('roundurl') . '/' . $name . '[/img][/url]</textarea>';
+    HTML:<br/><textarea readonly="readonly" rows="2" cols="65">&lt;a href="' . ExternalUrl::USERBANNER_LINK . '"&gt;&lt;img src="' . $config->get('roundurl') . '/' . $name . '" width="' . UserBannerService::BANNER_WIDTH . '" height="' . UserBannerService::BANNER_HEIGHT . '" alt="EtoA Online-Game" border="0" /&gt;&lt;/a&gt;</textarea><br/>
+    BBCode:<br/><textarea readonly="readonly" rows="1" cols="65">[url=' . ExternalUrl::USERBANNER_LINK . '][img]' . $config->get('roundurl') . '/' . $name . '[/img][/url]</textarea>';
 } else {
     echo "Momentan ist kein Banner verfügbar!";
 }
