@@ -39,7 +39,7 @@ class DatabaseMigrationService
     public function migrate(): int
     {
         if (!$this->schemaMigrationRepository->hasMigrationTable()) {
-            $this->databaseBackupService->loadFile($this->getDatabaseDirectory() . 'db/init_schema_migrations.sql');
+            $this->databaseBackupService->loadFile($this->getDatabaseDirectory() . 'init_schema_migrations.sql');
         }
 
         $files = glob($this->getDatabaseDirectory() .'migrations/*.sql');
