@@ -2,6 +2,7 @@
 
 use EtoA\Admin\Forms\AllianceBuildingsForm;
 use EtoA\Admin\Forms\AllianceTechnologiesForm;
+use EtoA\Alliance\Alliance;
 use EtoA\Alliance\AllianceDiplomacyRepository;
 use EtoA\Alliance\AllianceRankRepository;
 use EtoA\Alliance\AllianceRepository;
@@ -33,7 +34,7 @@ $request = Request::createFromGlobals();
 $config = $app[ConfigurationService::class];
 
 if ($sub == "imagecheck") {
-    imagecheck($request, $repository);
+    imagecheck($request, $repository, $app['app.webroot_dir']);
 } elseif ($sub == "buildingsdata") {
     AllianceBuildingsForm::render($app, $twig, $request);
 } elseif ($sub == "techdata") {
@@ -62,12 +63,12 @@ if ($sub == "imagecheck") {
     }
 }
 
-function imagecheck(Request $request, AllianceRepository $repository)
+function imagecheck(Request $request, AllianceRepository $repository, string $webroot)
 {
     global $page;
     global $sub;
 
-    $dir = ALLIANCE_IMG_DIR . "/";
+    $dir = $webroot . Alliance::PROFILE_PICTURE_PATH;
     echo "<h1>Allianz-Bilder prüfen</h1>";
 
     //
@@ -76,7 +77,7 @@ function imagecheck(Request $request, AllianceRepository $repository)
     if ($request->request->has('validate_submit')) {
         foreach ($request->request->all('validate') as $id => $v) {
             if ($v == 0) {
-                if (removeAlliancePicture($repository, $id)) {
+                if (removeAlliancePicture($repository, $id, $webroot)) {
                     echo "Bild entfernt!<br/><br/>";
                 }
             } else {
@@ -444,7 +445,7 @@ function drop(Request $request, AllianceRepository $repository)
         echo "<tr><td class=\"tbltitle\" valign=\"top\">Website</td>
 			<td class=\"tbldata\">" . $alliance->url . "</td></tr>";
         if ($alliance->image !== null) {
-            echo "<tr><td class=\"tbltitle\" valign=\"top\">Bild</td><td class=\"tbldata\"><img src=\"" . ALLIANCE_IMG_DIR . '/' . $alliance->image . "\" width=\"100%\" alt=\"" . $alliance->image . "\" /></td></tr>";
+            echo "<tr><td class=\"tbltitle\" valign=\"top\">Bild</td><td class=\"tbldata\"><img src=\"" . $alliance->getImageUrl() . "\" width=\"100%\" alt=\"" . $alliance->image . "\" /></td></tr>";
         }
         echo "<tr><td class=\"tbltitle\" valign=\"top\">Mitglieder</td><td class=\"tbldata\">";
         $usersInAlliance = $repository->findUsers($alliance->id);
@@ -514,12 +515,12 @@ function index(Request $request, AllianceRepository $repository, Environment $tw
     echo "<br/>Es sind " . StringUtils::formatNumber($repository->count()) . " Einträge in der Datenbank vorhanden.";
 }
 
-function removeAlliancePicture(AllianceRepository $repository, int $allianceId): bool
+function removeAlliancePicture(AllianceRepository $repository, int $allianceId, string $webroot): bool
 {
     $picture = $repository->getPicture($allianceId);
     if ($picture != null) {
-        if (file_exists(ALLIANCE_IMG_DIR . "/" . $picture)) {
-            unlink(ALLIANCE_IMG_DIR . "/" . $picture);
+        if (file_exists($webroot . Alliance::PROFILE_PICTURE_PATH . $picture)) {
+            unlink($webroot . Alliance::PROFILE_PICTURE_PATH . "/" . $picture);
         }
         return $repository->clearPicture($allianceId);
     }

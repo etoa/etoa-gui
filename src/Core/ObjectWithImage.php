@@ -6,5 +6,5 @@ interface ObjectWithImage
 {
     public const BASE_PATH = '/images/imagepacks/Discovery';
 
-    public function getImagePath(string $type): string;
+    public function getImagePath(): string;
 }

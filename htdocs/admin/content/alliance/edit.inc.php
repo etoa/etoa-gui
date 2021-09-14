@@ -1,5 +1,6 @@
 <?PHP
 
+use EtoA\Alliance\Alliance;
 use EtoA\Alliance\AllianceBuildingRepository;
 use EtoA\Alliance\AllianceDiplomacyLevel;
 use EtoA\Alliance\AllianceDiplomacyRepository;
@@ -42,7 +43,7 @@ if (!isset($id)) {
 }
 
 if ($request->request->has('info_save') && $request->request->get('info_save') != "") {
-    saveInfo($request, $repository, $id, $twig);
+    saveInfo($request, $repository, $id, $twig, $app['app.webroot_dir']);
 } elseif ($request->request->has('member_save') && $request->request->get('member_save') != "") {
     saveMembers($request, $repository, $allianceRankRepository, $twig);
 } elseif ($request->request->has('bnd_save') && $request->request->get('bnd_save') != "") {
@@ -56,14 +57,14 @@ if ($request->request->has('info_save') && $request->request->get('info_save') !
 }
 edit($repository, $buildingRepository, $technologyRepository, $historyRepository, $allianceDiplomacyRepository, $id, $twig);
 
-function saveInfo(Request $request, AllianceRepository $repository, int $id, Environment $twig)
+function saveInfo(Request $request, AllianceRepository $repository, int $id, Environment $twig, string $webroot)
 {
     //  Bild löschen wenn nötig
     if ($request->request->has('alliance_img_del')) {
         $picture = $repository->getPicture($id);
         if ($picture !== null) {
-            if (file_exists('../' . ALLIANCE_IMG_DIR . "/" . $picture)) {
-                unlink('../' . ALLIANCE_IMG_DIR . "/" . $picture);
+            if (file_exists($webroot . Alliance::PROFILE_PICTURE_PATH . $picture)) {
+                unlink($webroot . Alliance::PROFILE_PICTURE_PATH . $picture);
             }
             $repository->clearPicture($id);
         }
@@ -306,7 +307,7 @@ function infoTab(\EtoA\Alliance\Alliance $alliance, array $members): void
     echo "<tr><th>Bewerbungsvorlage</th><td><textarea cols=\"45\" rows=\"10\" name=\"alliance_application_template\">" . stripslashes($alliance->applicationTemplate) . "</textarea></td></tr>";
     echo "<tr><th>Bild</th><td>";
     if ($alliance->image != "") {
-        echo '<img src="' . ALLIANCE_IMG_DIR . '/' . $alliance->image . '" alt="Profil" /><br/>';
+        echo '<img src="' . $alliance->getImageUrl() . '" alt="Profil" /><br/>';
         echo "<input type=\"checkbox\" value=\"1\" name=\"alliance_img_del\"> Bild löschen<br/>";
     } else {
         echo "Keines";

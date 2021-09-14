@@ -6,6 +6,8 @@ use EtoA\Universe\Resources\BaseResources;
 
 class Alliance
 {
+    public const PROFILE_PICTURE_PATH = '/cache/allianceprofiles/';
+
     public int $id;
     public string $tag;
     public string $name;
@@ -82,7 +84,7 @@ class Alliance
             return null;
         }
 
-        return ALLIANCE_IMG_DIR . "/" . $this->image;
+        return self::PROFILE_PICTURE_PATH . $this->image;
     }
 
     public function getResources(): BaseResources

@@ -43,7 +43,7 @@ class Technology implements ObjectWithImage
         $this->stealable = (bool) $data['tech_stealable'];
     }
 
-    public function getImagePath(string $type): string
+    public function getImagePath(string $type = 'small'): string
     {
         switch ($type) {
             case 'small':

@@ -19,9 +19,3 @@ define("BOARD_AVATAR_DIR", RELATIVE_ROOT . 'cache' . "/avatars");
 // Verzeichnis der User-Profilbilder
 define("PROFILE_IMG_DIR", RELATIVE_ROOT . 'cache' . "/userprofiles");
 
-//
-// Allianzbild
-//
-
-// Verzeichnis der Allianz-Bilder
-define("ALLIANCE_IMG_DIR", RELATIVE_ROOT . 'cache' . "/allianceprofiles");
