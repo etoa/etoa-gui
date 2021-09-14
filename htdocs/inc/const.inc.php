@@ -29,9 +29,6 @@ define("COLONY_DELETE_THRESHOLD", 24 * 3600 * 5);
 /* Allianzboard */
 /****************/
 
-// Verzeichnis der Forenicons
-define("BOARD_BULLET_DIR", "images/boardbullets");
-
 // Verzeichnis der Avatare
 define("BOARD_AVATAR_DIR", CACHE_ROOT . "/avatars");
 

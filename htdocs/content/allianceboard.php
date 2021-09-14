@@ -45,6 +45,8 @@ $allianceService = $app[AllianceService::class];
 
 $request = Request::createFromGlobals();
 
+define("BOARD_BULLET_DIR", "images/boardbullets");
+
 echo "<h1>Allianzforum</h1>";
 
 // Prüfen ob User in Allianz ist
