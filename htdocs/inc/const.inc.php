@@ -50,42 +50,6 @@ define('GALAXY_MAP_WIDTH', 500);
 define('GALAXY_MAP_LEGEND_HEIGHT', 40);
 
 /****************/
-/* Technologien */
-/****************/
-
-//
-// Ab diesem Level Sieht man von gegnerischen flotten diese infos...
-//
-
-// ...Gesinnung des Gegners (friedlich/feindlich)
-define("SPY_TECH_SHOW_ATTITUDE", 1);
-// ...Anzahl der Schiffe
-define("SPY_TECH_SHOW_NUM", 3);
-// ...die verschiedenen Schiffe in der Flotte
-define("SPY_TECH_SHOW_SHIPS", 5);
-// ...die genaue Anzahl von jedem Schiffstyp
-define("SPY_TECH_SHOW_NUMSHIPS", 7);
-// ...Aktion (Angriff/Spionage etc.)
-define("SPY_TECH_SHOW_ACTION", 9);
-
-//
-// Ab diesem Level Sieht man beim Spionieren...
-//
-
-// ...die Gebäude des Gegners
-define("SPY_ATTACK_SHOW_BUILDINGS", 1);
-// ...die Forschung des Gegners
-define("SPY_ATTACK_SHOW_RESEARCH", 3);
-// ...die Schiffe des Gegners
-define("SPY_ATTACK_SHOW_SHIPS", 7);
-// ...die Defense des Gegners
-define("SPY_ATTACK_SHOW_DEFENSE", 5);
-// ...die Ressourcen des Gegners
-define("SPY_ATTACK_SHOW_RESSOURCEN", 9);
-// ...die Supportflotten auf dem Planeten
-define("SPY_ATTACK_SHOW_SUPPORT", 11);
-
-/****************/
 /* Allianzboard */
 /****************/
 

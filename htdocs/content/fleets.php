@@ -11,6 +11,7 @@ use EtoA\Fleet\FleetSearch;
 use EtoA\Fleet\FleetStatus;
 use EtoA\Fleet\ForeignFleetLoader;
 use EtoA\Ship\ShipDataRepository;
+use EtoA\Technology\SpyTechFleetLevel;
 use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Entity\EntitySearch;
 use EtoA\User\UserRepository;
@@ -260,7 +261,7 @@ else {
             // Is the attitude visible?
             /** @var \FleetAction $action */
             $action = \FleetAction::createFactory($foreignFleet->action);
-            if (SPY_TECH_SHOW_ATTITUDE <= $foreignFleets->userSpyLevel) {
+            if (SpyTechFleetLevel::SHOW_ATTITUDE <= $foreignFleets->userSpyLevel) {
                 $attitude = $action->attitude();
             } else {
                 $attitude = 4;
@@ -269,7 +270,7 @@ else {
             $attitudeString = FleetAction::$attitudeString[$attitude];
 
             // Is the number of ships visible?
-            if (SPY_TECH_SHOW_NUM <= $foreignFleets->userSpyLevel) {
+            if (SpyTechFleetLevel::SHOW_NUMBER <= $foreignFleets->userSpyLevel) {
                 $show_num = 1;
 
                 $shipsCount = $fleetRepository->countShipsInFleet($foreignFleet->id);
@@ -280,7 +281,7 @@ else {
             //Opfer sieht die einzelnen Schiffstypen in der Flotte
             $shipStr = array();
             $showShips = false;
-            if (SPY_TECH_SHOW_SHIPS <= $foreignFleets->userSpyLevel) {
+            if (SpyTechFleetLevel::SHOW_SHIPS <= $foreignFleets->userSpyLevel) {
                 $showShips = true; {
 
                     $ships = array();
@@ -307,7 +308,7 @@ else {
                         $str = "";
 
                         //Opfer sieht die genau Anzahl jedes Schifftypes in einer Flotte
-                        if (SPY_TECH_SHOW_NUMSHIPS <= $foreignFleets->userSpyLevel) {
+                        if (SpyTechFleetLevel::SHOW_NUMBER_OF_SHIPS <= $foreignFleets->userSpyLevel) {
                             $str = "" . $scnt . " ";
                         }
                         $str .= "" . $shipNames[$sid];
@@ -317,7 +318,7 @@ else {
             }
 
             // Show action
-            if (SPY_TECH_SHOW_ACTION <= $foreignFleets->userSpyLevel) {
+            if (SpyTechFleetLevel::SHOW_ACTION <= $foreignFleets->userSpyLevel) {
                 $shipAction = $action->displayName();
             } else {
                 $shipAction = $attitudeString;
