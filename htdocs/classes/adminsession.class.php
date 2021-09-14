@@ -3,6 +3,7 @@
 use EtoA\Admin\AdminSessionManager;
 use EtoA\Admin\AdminSessionRepository;
 use EtoA\Admin\AdminUserRepository;
+use EtoA\Core\AppName;
 use EtoA\Support\StringUtils;
 
 /**
@@ -40,7 +41,7 @@ class AdminSession extends Session
                     if ($user->tfaSecret != "") {
                         // Check if user supplied challenge
                         if (isset($data['login_challenge'])) {
-                            $tfa = new RobThree\Auth\TwoFactorAuth(APP_NAME);
+                            $tfa = new RobThree\Auth\TwoFactorAuth(AppName::NAME);
                             // Validate challenge. If false, return to challenge input
                             if (!$tfa->verifyCode($user->tfaSecret, $data['login_challenge'])) {
                                 $this->lastError = "Ungültiger Code!";

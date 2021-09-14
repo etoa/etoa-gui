@@ -1,10 +1,5 @@
 <?php
 
-define('APP_NAME', 'EtoA');
-
-// Timezone
-define('TIMEZONE', 'Europe/Zurich');
-
 // Admin mode?
 if (!defined('ADMIN_MODE')) {
     define('ADMIN_MODE', false);

@@ -1,5 +1,6 @@
 <?php
 
+use EtoA\Core\AppName;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Log\LogFacility;
 use EtoA\Log\LogRepository;
@@ -10,7 +11,7 @@ $config = $app[ConfigurationService::class];
 /** @var LogRepository $logRepository */
 $logRepository = $app[LogRepository::class];
 
-$tfa = new RobThree\Auth\TwoFactorAuth(APP_NAME);
+$tfa = new RobThree\Auth\TwoFactorAuth(AppName::NAME);
 $errorMessage = null;
 if (isset($_POST['tfa_activate'])) {
     if ($_POST['tfa_challenge'] && $tfa->verifyCode($_SESSION['tfa_activate_secret'], $_POST['tfa_challenge'])) {

@@ -2,6 +2,7 @@
 
 use Doctrine\Common\Collections\ArrayCollection;
 use EtoA\Admin\AllianceBoardAvatar;
+use EtoA\Core\AppName;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Design\Design;
 use EtoA\Fleet\ForeignFleetLoader;
@@ -25,7 +26,7 @@ function getGameIdentifier()
     /** @var ConfigurationService $config */
     $config = $app[ConfigurationService::class];
 
-    return APP_NAME . ' ' . getAppVersion() . ' ' . $config->get('roundname');
+    return AppName::NAME . ' ' . getAppVersion() . ' ' . $config->get('roundname');
 }
 
 function getAppVersion()

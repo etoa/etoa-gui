@@ -2,6 +2,7 @@
 
 use EtoA\Admin\AdminUser;
 use EtoA\Admin\AdminUserRepository;
+use EtoA\Core\AppName;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\HostCache\NetworkNameService;
 use EtoA\Support\BBCodeUtils;
@@ -62,7 +63,7 @@ if (count($admins) > 0) {
                     }
 
                     // Text
-                    $text = "Kontakt-Anfrage " . APP_NAME . " " . $config->get('roundname') . "\n----------------------\n\n";
+                    $text = "Kontakt-Anfrage " . AppName::NAME . " " . $config->get('roundname') . "\n----------------------\n\n";
                     if (isset($cu)) {
                         $text .= "Nick: " . $cu->nick . "\n";
                         $text .= "ID: " . $cu->id . "\n";

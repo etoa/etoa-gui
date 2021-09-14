@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace EtoA\Support\Mail;
 
+use EtoA\Core\AppName;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Support\ExternalUrl;
 use Swift_Mailer;
@@ -35,7 +36,7 @@ class MailSenderService
      */
     public function send(string $subject, string $text, $recipients, $replyTo = null): int
     {
-        $gameName = APP_NAME . ' ' . $this->config->get('roundname');
+        $gameName = AppName::NAME . ' ' . $this->config->get('roundname');
         $message = (new Swift_Message($gameName . ": " . $subject))
             ->setFrom([$this->config->get('mail_sender') => $gameName])
             ->setReplyTo($replyTo ?? [$this->config->get('mail_reply') => $gameName])
