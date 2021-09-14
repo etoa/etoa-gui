@@ -12,7 +12,7 @@ use EtoA\Message\MessageRepository;
 if (!defined('RELATIVE_ROOT')) {
     define('RELATIVE_ROOT', '');
 }
-require_once __DIR__ . '/../../../htdocs/inc/const.inc.php';
+
 require_once __DIR__ . '/../../../htdocs/inc/functions.inc.php';
 
 class TicketServiceTest extends AbstractDbTestCase

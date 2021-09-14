@@ -13,8 +13,9 @@ define('TIMEZONE', 'Europe/Zurich');
 date_default_timezone_set(TIMEZONE);
 
 // Load constants
-require_once __DIR__ . '/const.inc.php';
-
+if (!defined('ADMIN_MODE')) {
+    define('ADMIN_MODE', false);
+}
 // Load functions
 require_once __DIR__ . '/functions.inc.php';
 
