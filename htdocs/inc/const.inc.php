@@ -41,13 +41,6 @@ define("DESIGN_SCRIPT_FILE_NAME", "scripts.js");
 // Default login server URL
 define('INSTALLER_DEFAULT_LOGINSERVER_URL', 'https://etoa.ch');
 
-/***********************************/
-/* Directory- and file paths       */
-/***********************************/
-
-// RSS Dir
-define('RSS_DIR', CACHE_ROOT . "/rss");
-
 
 /****************************/
 /* Allgemeine Einstellungen */

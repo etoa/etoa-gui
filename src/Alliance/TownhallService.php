@@ -13,7 +13,7 @@ class TownhallService
     private AllianceNewsRepository $allianceNewsRepository;
 
     /** Townhall-RSS-File */
-    const RSS_TOWNHALL_FILE = RSS_DIR . "/townhall.rss";
+    private const RSS_TOWNHALL_FILE = __DIR__ . "/../../htdocs/cache/rss/townhall.rss";
 
     public function __construct(
         ConfigurationService $config,
