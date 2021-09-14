@@ -6,6 +6,9 @@ namespace EtoA\User;
 
 class User
 {
+    public const NAME_PATTERN = '/^.[^0-9\'\"\?\<\>\$\!\=\;\&]*$/';
+    public const NICK_PATTERN = '/^.[^\'\"\?\<\>\$\!\=\;\&]*$/';
+
     public int $id;
     public string $name;
     public string $nick;

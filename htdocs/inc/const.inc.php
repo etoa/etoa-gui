@@ -41,10 +41,6 @@ define("DESIGN_SCRIPT_FILE_NAME", "scripts.js");
 // Homepage
 define('DEFAULT_PAGE', "overview");
 
-// Regular expressions
-define('REGEXP_NAME', '/^.[^0-9\'\"\?\<\>\$\!\=\;\&]*$/');
-define('REGEXP_NICK', '/^.[^\'\"\?\<\>\$\!\=\;\&]*$/');
-
 // Minimale Sperrzeit für Kolonielöschung
 define("COLONY_DELETE_THRESHOLD", 24 * 3600 * 5);
 

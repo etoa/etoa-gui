@@ -63,7 +63,7 @@ function checkEmail($email)
  */
 function checkValidName($name)
 {
-    return preg_match(REGEXP_NAME, $name);
+    return preg_match(\EtoA\User\User::NAME_PATTERN, $name);
 }
 
 /**
@@ -71,7 +71,7 @@ function checkValidName($name)
  */
 function checkValidNick($name)
 {
-    return preg_match(REGEXP_NICK, $name);
+    return preg_match(\EtoA\User\User::NICK_PATTERN, $name);
 }
 
 function tableStart($title = "", $width = 0, $layout = "", $id = "")
