@@ -10,6 +10,7 @@ use EtoA\Text\TextRepository;
 use EtoA\UI\Tooltip;
 use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Entity\EntityType;
+use EtoA\Universe\GalaxyMap;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Universe\Planet\PlanetService;
 use EtoA\Universe\Planet\PlanetTypeRepository;
@@ -324,13 +325,13 @@ if ($mode == "itemsets" && isset($planet)) {
     echo "<img src=\"misc/map.image.php\" alt=\"Galaxiekarte\" id=\"img\" usemap=\"#Galaxy\" style=\"border:none;\"/>";
 
     echo "<map name=\"Galaxy\">\n";
-    $sec_x_size = GALAXY_MAP_WIDTH / $sx_num;
-    $sec_y_size = GALAXY_MAP_WIDTH / $sy_num;
+    $sec_x_size = GalaxyMap::WIDTH / $sx_num;
+    $sec_y_size = GalaxyMap::WIDTH / $sy_num;
     $xcnt = 1;
     $ycnt = 1;
-    for ($x = 0; $x < GALAXY_MAP_WIDTH; $x += $sec_x_size) {
+    for ($x = 0; $x < GalaxyMap::WIDTH; $x += $sec_x_size) {
         $ycnt = 1;
-        for ($y = 0; $y < GALAXY_MAP_WIDTH; $y += $sec_y_size) {
+        for ($y = 0; $y < GalaxyMap::WIDTH; $y += $sec_y_size) {
             $countStars = $entityRepository->countEntitiesOfCodeInSector($xcnt, $ycnt, EntityType::STAR);
             $countPlanets = $entityRepository->countEntitiesOfCodeInSector($xcnt, $ycnt, EntityType::PLANET);
             $countInhabitedPlanets = $planetRepo->countWithUserInSector($xcnt, $ycnt);
@@ -342,7 +343,7 @@ if ($mode == "itemsets" && isset($planet)) {
             $tt->addGoodCond("Bewohnte Planeten: " . $countInhabitedPlanets);
             $tt->addComment("Klickt hier um euren Heimatplaneten in Sektor <b>" . $xcnt . "/" . $ycnt . "</b> anzusiedeln!");
 
-            echo "<area shape=\"rect\" coords=\"$x," . (GALAXY_MAP_WIDTH - $y) . "," . ($x + $sec_x_size) . "," . (GALAXY_MAP_WIDTH - $y - $sec_y_size) . "\" href=\"?setup_sx=" . $xcnt . "&amp;setup_sy=" . $ycnt . "\" alt=\"Sektor $xcnt / $ycnt\" " . $tt->toString() . ">\n";
+            echo "<area shape=\"rect\" coords=\"$x," . (GalaxyMap::WIDTH - $y) . "," . ($x + $sec_x_size) . "," . (GalaxyMap::WIDTH - $y - $sec_y_size) . "\" href=\"?setup_sx=" . $xcnt . "&amp;setup_sy=" . $ycnt . "\" alt=\"Sektor $xcnt / $ycnt\" " . $tt->toString() . ">\n";
             $ycnt++;
         }
         $xcnt++;
