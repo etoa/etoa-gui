@@ -85,9 +85,6 @@ define("SPY_ATTACK_SHOW_RESSOURCEN", 9);
 // ...die Supportflotten auf dem Planeten
 define("SPY_ATTACK_SHOW_SUPPORT", 11);
 
-// Anzahl Rohstofftypen im Spiel
-define('NUM_RESOURCES', 5);
-
 /****************/
 /* Allianzboard */
 /****************/

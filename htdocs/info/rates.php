@@ -7,7 +7,7 @@ use EtoA\Universe\Resources\ResourceNames;
 $runtimeDataStore = $app[RuntimeDataStore::class];
 
 $currentRates = [];
-for ($i = 0; $i < NUM_RESOURCES; $i++) {
+foreach (array_keys(ResourceNames::NAMES) as $i) {
     $currentRates[$i] = $runtimeDataStore->get('market_rate_' . $i, (string) 1);
 }
 
@@ -22,14 +22,14 @@ echo "<table class=\"tb\">";
 
 echo "<tr>
         <th style=\"width:15%\"></th>";
-for ($i = 0; $i < NUM_RESOURCES; $i++) {
-    echo "		<th style=\"width:17%\">" . ResourceNames::NAMES[$i] . "</th>";
+foreach (ResourceNames::NAMES as $resourceName) {
+    echo "		<th style=\"width:17%\">" . $resourceName . "</th>";
 }
 echo "</tr>";
-for ($i = 0; $i < NUM_RESOURCES; $i++) {
+foreach (ResourceNames::NAMES as $i => $resourceName) {
     echo "<tr>
-            <th>" . ResourceNames::NAMES[$i] . "</th>";
-    for ($j = 0; $j < NUM_RESOURCES; $j++) {
+            <th>" . $resourceName . "</th>";
+    foreach (array_keys(ResourceNames::NAMES) as $j) {
         if ($i == $j)
             echo "<td>-</td>";
         else {
@@ -58,10 +58,10 @@ echo "<tr>
         <th>Rohstoff</th>
         <th>Absoluter Kurs</th>
     </tr>";
-for ($i = 0; $i < NUM_RESOURCES; $i++) {
+foreach (ResourceNames::NAMES as $i => $resourceName) {
     $r = $currentRates[$i];
     echo "<tr>
-            <th>" . ResourceNames::NAMES[$i] . "</th>
+            <th>" . $resourceName . "</th>
             <td" . HelpUtil::colorizeMarketRate($r) . ">" . $r . "</td>
         </tr>";
 }
