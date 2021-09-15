@@ -12,6 +12,8 @@ abstract class WebTestCase extends TestCase
 {
     use DbTestTrait;
 
+    private static ?Connection $staticConnection = null;
+
     protected Connection $connection;
     protected Application $app;
 
@@ -27,7 +29,7 @@ abstract class WebTestCase extends TestCase
 
         $app = $this->setupApplication();
         $app['etoa.quests.enabled'] = true;
-        $this->connection = $app['db'];
+        self::$staticConnection = $this->connection = $app['db'];
         $this->connection->connect();
 
         /** @var ConfigurationService */

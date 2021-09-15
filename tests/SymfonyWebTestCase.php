@@ -10,6 +10,10 @@ abstract class SymfonyWebTestCase extends \Symfony\Bundle\FrameworkBundle\Test\W
 
     protected static Connection $staticConnection;
 
+    /**
+     * @param array<mixed, mixed> $options
+     * @param array<mixed, mixed> $server
+     */
     protected static function createClient(array $options = [], array $server = [])
     {
         $client = parent::createClient($options, $server);

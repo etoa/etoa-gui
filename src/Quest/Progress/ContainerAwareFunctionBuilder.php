@@ -18,7 +18,6 @@ use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\User\UserRepository;
 use LittleCubicleGames\Quests\Progress\Functions\HandlerFunctionInterface;
 use LittleCubicleGames\Quests\Progress\ProgressFunctionBuilderInterface;
-use Pimple\Container;
 
 class ContainerAwareFunctionBuilder implements ProgressFunctionBuilderInterface
 {

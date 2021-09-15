@@ -127,7 +127,7 @@ class QuestServiceProvider extends ServiceProvider implements BootableProviderIn
         };
 
         $pimple[QuestResponseListener::class] = function (Container $pimple): QuestResponseListener {
-            return new QuestResponseListener($pimple[QuestPresenter::class], $pimple['etoa.quests.enabled']);
+            return new QuestResponseListener($pimple[QuestPresenter::class], $pimple[ConfigurationService::class]);
         };
     }
 

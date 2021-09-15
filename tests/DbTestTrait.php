@@ -71,5 +71,7 @@ trait DbTestTrait
         self::$staticConnection->executeQuery('DELETE FROM market_auction');
         self::$staticConnection->executeQuery('DELETE FROM market_ressource');
         self::$staticConnection->executeQuery('DELETE FROM market_ship');
+
+        parent::tearDown();
     }
 }
