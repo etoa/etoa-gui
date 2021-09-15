@@ -59,7 +59,7 @@ jobs:
         run: echo '{"host":"127.0.0.1:${{ job.services.mysql.ports[3306] }}","dbname":"etoa_test","user":"root","password":"root"}' > htdocs/config/db.conf
 
       - name: Set up DB
-        run: bin/db.php migrate
+        run: bin/console database:migrate
 
       - name: Set up DB config
         run: echo '{"host":"127.0.0.1:${{ job.services.mysql.ports[3306] }}","dbname":"etoa","user":"root","password":"root"}' > htdocs/config/db.conf
