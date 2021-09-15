@@ -174,6 +174,7 @@ class DatabaseBackupService
                     " -p" . $this->databaseManagerRepository->getPassword() .
                     " -h" . $this->databaseManagerRepository->getHost() .
                     " -P" . $this->databaseManagerRepository->getPort() .
+                    " -y " .
                     " --default-character-set=utf8 " . $this->databaseManagerRepository->getDatabaseName() .
                     " | gzip > " . $file;
             } else {
@@ -182,6 +183,7 @@ class DatabaseBackupService
                     " -p" . $this->databaseManagerRepository->getPassword() .
                     " -h" . $this->databaseManagerRepository->getHost() .
                     " -P" . $this->databaseManagerRepository->getPort() .
+                    " -y " .
                     " --default-character-set=utf8 " . $this->databaseManagerRepository->getDatabaseName() .
                     " -r " . $file;
             }

@@ -6,20 +6,18 @@ use EtoA\Admin\AdminRoleManager;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Support\BBCodeUtils;
 use EtoA\Support\ExternalUrl;
-use Pimple\Container;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
 class TwigExtension extends AbstractExtension
 {
     private float $startTime;
+    private ConfigurationService $config;
 
-    private Container $app;
-
-    public function __construct(Container $app)
+    public function __construct(ConfigurationService $config)
     {
         $this->startTime = microtime(true);
-        $this->app = $app;
+        $this->config = $config;
     }
 
     public function getFunctions()
@@ -106,10 +104,7 @@ class TwigExtension extends AbstractExtension
 
     public function getConfigValue(string $key): string
     {
-        /** @var ConfigurationService */
-        $config = $this->app[ConfigurationService::class];
-
-        return $config->get($key);
+        return $this->config->get($key);
     }
 
     /**

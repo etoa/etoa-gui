@@ -40,7 +40,7 @@ Q7="FLUSH PRIVILEGES;"
 SQL="${Q0}${Q1}${Q2}${Q3}${Q4}${Q5}${Q6}${Q7}"
 $MYSQL -uroot -e "$SQL"
 
-$PHP /var/www/etoa/bin/db.php migrate
+$PHP /var/www/etoa/bin/console database:migrate
 Q8="INSERT INTO config (config_name, config_value, config_param1, config_param2) VALUES ('loginurl','', '', '') ON DUPLICATE KEY UPDATE config_value='';"
 $MYSQL -uroot -D etoa -e "$Q8"
 

@@ -2,6 +2,7 @@
 
 namespace EtoA\Core;
 
+use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Core\Twig\TwigExtension;
 use Pimple\Container;
 use Twig\Environment;
@@ -48,7 +49,7 @@ class TwigServiceProvider extends \Silex\Provider\TwigServiceProvider
         });
 
         $app->extend('twig', function (Environment $twig, Container $app): Environment {
-            $twig->addExtension(new TwigExtension($app));
+            $twig->addExtension(new TwigExtension($app[ConfigurationService::class]));
 
             return $twig;
         });
