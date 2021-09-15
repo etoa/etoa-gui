@@ -1568,16 +1568,16 @@
         },
         {
             "name": "littlecubiclegames/quests",
-            "version": "1.3.1",
+            "version": "1.3.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/littlecubiclegames/quests.git",
-                "reference": "4d66c3da730155addf48f5738b5b55cf257874ca"
+                "reference": "379b1f2d1b77287a347d783ac202f5447630c3cc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/littlecubiclegames/quests/zipball/4d66c3da730155addf48f5738b5b55cf257874ca",
-                "reference": "4d66c3da730155addf48f5738b5b55cf257874ca",
+                "url": "https://api.github.com/repos/littlecubiclegames/quests/zipball/379b1f2d1b77287a347d783ac202f5447630c3cc",
+                "reference": "379b1f2d1b77287a347d783ac202f5447630c3cc",
                 "shasum": ""
             },
             "require": {
@@ -1615,9 +1615,9 @@
             "description": "Quest Component",
             "support": {
                 "issues": "https://github.com/littlecubiclegames/quests/issues",
-                "source": "https://github.com/littlecubiclegames/quests/tree/1.3.1"
+                "source": "https://github.com/littlecubiclegames/quests/tree/1.3.2"
             },
-            "time": "2021-08-21T15:38:05+00:00"
+            "time": "2021-09-15T19:42:57+00:00"
         },
         {
             "name": "monolog/monolog",
