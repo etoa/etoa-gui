@@ -10897,7 +10897,7 @@ return jQuery;
 /************************************************************************/
 /******/ 	// The module cache
 /******/ 	var __webpack_module_cache__ = {};
-/******/ 	
+/******/
 /******/ 	// The require function
 /******/ 	function __webpack_require__(moduleId) {
 /******/ 		// Check if module is in cache
@@ -10911,14 +10911,14 @@ return jQuery;
 /******/ 			// no module.loaded needed
 /******/ 			exports: {}
 /******/ 		};
-/******/ 	
+/******/
 /******/ 		// Execute the module function
 /******/ 		__webpack_modules__[moduleId].call(module.exports, module, module.exports, __webpack_require__);
-/******/ 	
+/******/
 /******/ 		// Return the exports of the module
 /******/ 		return module.exports;
 /******/ 	}
-/******/ 	
+/******/
 /************************************************************************/
 /******/ 	/* webpack/runtime/compat get default export */
 /******/ 	(() => {
@@ -10931,7 +10931,7 @@ return jQuery;
 /******/ 			return getter;
 /******/ 		};
 /******/ 	})();
-/******/ 	
+/******/
 /******/ 	/* webpack/runtime/define property getters */
 /******/ 	(() => {
 /******/ 		// define getter functions for harmony exports
@@ -10943,12 +10943,12 @@ return jQuery;
 /******/ 			}
 /******/ 		};
 /******/ 	})();
-/******/ 	
+/******/
 /******/ 	/* webpack/runtime/hasOwnProperty shorthand */
 /******/ 	(() => {
 /******/ 		__webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
 /******/ 	})();
-/******/ 	
+/******/
 /******/ 	/* webpack/runtime/make namespace object */
 /******/ 	(() => {
 /******/ 		// define __esModule on exports
@@ -10959,7 +10959,7 @@ return jQuery;
 /******/ 			Object.defineProperty(exports, '__esModule', { value: true });
 /******/ 		};
 /******/ 	})();
-/******/ 	
+/******/
 /************************************************************************/
 var __webpack_exports__ = {};
 // This entry need to be wrapped in an IIFE because it need to be in strict mode.
@@ -11036,7 +11036,7 @@ jquery__WEBPACK_IMPORTED_MODULE_0___default()(function () {
 // polls for new chat messages every second
 
 function poll(doLoop) {
-  ajaxRequest('chat_poll', {
+  ajaxResponderRequest('chat_poll', {
     "minId": minId,
     "chanId": chanId
   }, function (data) {
@@ -11106,7 +11106,7 @@ function banned(rtext) {
 
 
 function updateUserList() {
-  ajaxRequest('chat_userlist', null, function (data) {
+  ajaxResponderRequest('chat_userlist', null, function (data) {
     if (data.length == 0) {
       jquery__WEBPACK_IMPORTED_MODULE_0___default()('#usercount').html('Keine User online');
     } else {
@@ -11121,7 +11121,7 @@ function updateUserList() {
 }
 
 function fetchUserList() {
-  ajaxRequest('chat_userlist', null, function (data) {
+  ajaxResponderRequest('chat_userlist', null, function (data) {
     if (data.length == 0) {
       localMsg('Keine User online');
     } else {
@@ -11186,7 +11186,7 @@ function scrollDown() {
 
 
 function logoutFromChat() {
-  ajaxRequest('chat_logout', null, closeChat, closeChat);
+  ajaxResponderRequest('chat_logout', null, closeChat, closeChat);
 }
 /* actual chat send function */
 // sends a request to the server and handles the response.
@@ -11209,7 +11209,7 @@ function sendChat() {
     }
 
     msgHistoryIdx = -1;
-    ajaxRequest('chat_push', {
+    ajaxResponderRequest('chat_push', {
       "ctext": ctext
     }, function (data) {
       if (data.cmd) {
