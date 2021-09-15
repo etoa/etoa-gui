@@ -3,7 +3,6 @@
 namespace EtoA\Core;
 
 use EtoA\Core\Configuration\ConfigurationService;
-use EtoA\User\ChatUser;
 use Pimple\Container;
 use Pimple\ServiceProviderInterface;
 use Silex\Api\BootableProviderInterface;
@@ -24,23 +23,10 @@ class SessionServiceProvider implements ServiceProviderInterface, BootableProvid
             $config = $app[ConfigurationService::class];
 
             $session = \UserSession::getInstance($config);
-            if (strpos($request->attributes->get('_route'), 'api.chat') === 0) {
-                $currentUser = $this->validateChatUser($session);
-            } else {
-                $currentUser = $this->validateUser($session, $config);
-            }
+            $currentUser = $this->validateUser($session, $config);
 
             $request->attributes->set('currentUser', $currentUser);
         });
-    }
-
-    private function validateChatUser(\UserSession $session): ChatUser
-    {
-        if (!$session->chatValidate()) {
-            throw new AccessDeniedHttpException();
-        }
-
-        return new ChatUser($session->user_id, $session->user_nick);
     }
 
     private function validateUser(\UserSession $session, ConfigurationService $config): \User

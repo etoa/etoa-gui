@@ -1,19 +1,20 @@
 <?php declare(strict_types=1);
 
-namespace EtoA\Tutorial;
+namespace EtoA\Controller;
 
-use EtoA\WebTestCase;
+use EtoA\SymfonyWebTestCase;
 
-class TutorialControllerTest extends WebTestCase
+class TutorialControllerTest extends SymfonyWebTestCase
 {
     public function testClose(): void
     {
         $userId = 1;
         $tutorialId = 1;
 
+        $client = self::createClient();
+
         $this->loginUser($userId);
 
-        $client = $this->createClient();
         $client->request('PUT', sprintf('/api/tutorials/%s/close', $tutorialId));
 
         $this->assertSame(200, $client->getResponse()->getStatusCode(), $client->getResponse()->getContent());

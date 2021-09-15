@@ -3,63 +3,32 @@
 namespace EtoA;
 
 use Doctrine\DBAL\Connection;
-use EtoA\Core\Configuration\ConfigurationService;
-use PHPUnit\Framework\TestCase;
-use Silex\Application;
-use Symfony\Component\HttpKernel\HttpKernelBrowser;
 
-abstract class WebTestCase extends TestCase
+abstract class SymfonyWebTestCase extends \Symfony\Bundle\FrameworkBundle\Test\WebTestCase
 {
     use DbTestTrait;
 
-    private static ?Connection $staticConnection = null;
-
-    protected Connection $connection;
-    protected Application $app;
-
-    protected function setUp(): void
-    {
-        global $app; // Make Application available via $app because it is used by the session
-        $this->app = $app = $this->createApplication();
-    }
-
-    public function createApplication(): Application
-    {
-        include_once dirname(__DIR__) . '/htdocs/inc/functions.inc.php';
-
-        $app = $this->setupApplication();
-        $app['etoa.quests.enabled'] = true;
-        self::$staticConnection = $this->connection = $app['db'];
-        $this->connection->connect();
-
-        /** @var ConfigurationService */
-        $config = $app[ConfigurationService::class];
-
-        require_once __DIR__ . '/../htdocs/inc/bootstrap.inc.php';
-
-        $config->restoreDefaults();
-
-        return $app;
-    }
+    protected static Connection $staticConnection;
 
     /**
-     * @param array<string, mixed> $server
+     * @param array<mixed, mixed> $options
+     * @param array<mixed, mixed> $server
      */
-    public function createClient(array $server = []): HttpKernelBrowser
+    protected static function createClient(array $options = [], array $server = [])
     {
-        $_SERVER['REMOTE_ADDR'] = $server['REMOTE_ADDR'] = '127.0.0.1';
+        $client = parent::createClient($options, $server);
 
-        $this->app->boot();
-        $this->app->flush();
+        $_SERVER['REMOTE_ADDR'] = '127.0.0.1';
+        self::$staticConnection = $client->getContainer()->get(Connection::class);
 
-        return new HttpKernelBrowser($this->app, $server);
+        return $client;
     }
 
     public function loginUser(int $userId): void
     {
         $loginTime = time();
 
-        $this->connection
+        self::$staticConnection
             ->createQueryBuilder()
             ->insert('users')
             ->values([
@@ -96,7 +65,7 @@ abstract class WebTestCase extends TestCase
                 'empty' => '',
             ])->execute();
 
-        $this->connection
+        self::$staticConnection
             ->createQueryBuilder()
             ->insert('tutorial_user_progress')
             ->values([
@@ -114,7 +83,7 @@ abstract class WebTestCase extends TestCase
         $_SESSION['time_login'] = $loginTime;
         $_SESSION['time_action'] = $loginTime;
         $userAgent = $_SERVER['HTTP_USER_AGENT'] = 'testing';
-        $this->connection
+        self::$staticConnection
             ->createQueryBuilder()
             ->insert('user_sessions')
             ->values([

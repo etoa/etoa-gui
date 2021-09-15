@@ -86,10 +86,14 @@ class User implements \EtoA\User\UserInterface
     {
         $this->isValid = false;
 
-        global $app;
-        /** @var UserRepository $userRepository */
-        $userRepository = $app[UserRepository::class];
-        $user = $userRepository->getUser($id);
+        if ($id instanceof \EtoA\User\User) {
+            $user = $id;
+        } else {
+            global $app;
+            /** @var UserRepository $userRepository */
+            $userRepository = $app[UserRepository::class];
+            $user = $userRepository->getUser($id);
+        }
 
         if ($user !== null) {
             $this->id = $user->id;

@@ -2,6 +2,11 @@
 
 namespace EtoA\Quest\Progress;
 
+use EtoA\Building\BuildingRepository;
+use EtoA\Defense\DefenseRepository;
+use EtoA\Technology\TechnologyRepository;
+use EtoA\Universe\Planet\PlanetRepository;
+use EtoA\User\UserRepository;
 use EtoA\WebTestCase;
 use Symfony\Component\Finder\Finder;
 
@@ -14,7 +19,13 @@ class ContainerAwareFunctionBuilderTest extends WebTestCase
     {
         parent::setUp();
 
-        $this->builder = new ContainerAwareFunctionBuilder($this->app);
+        $this->builder = new ContainerAwareFunctionBuilder(
+            $this->app[BuildingRepository::class],
+            $this->app[TechnologyRepository::class],
+            $this->app[DefenseRepository::class],
+            $this->app[UserRepository::class],
+            $this->app[PlanetRepository::class]
+        );
     }
 
     /**

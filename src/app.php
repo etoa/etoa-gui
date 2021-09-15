@@ -76,7 +76,4 @@ $app->register(new \EtoA\UI\UIServiceProvider());
 $app->register(new \EtoA\Tip\TipServiceProvider());
 $app->register(new \EtoA\Backend\BackendServiceProvider());
 
-$app->mount('/', $questProvider);
-$app->mount('/', $tutorialProvider);
-
 return $app;

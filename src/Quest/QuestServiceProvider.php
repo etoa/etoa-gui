@@ -2,6 +2,7 @@
 
 namespace EtoA\Quest;
 
+use EtoA\Building\BuildingRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Defense\DefenseDataRepository;
 use EtoA\Defense\DefenseRepository;
@@ -19,35 +20,22 @@ use EtoA\Quest\Reward\MissileRewardCollector;
 use EtoA\Quest\Reward\ShipRewardCollector;
 use EtoA\Ship\ShipDataRepository;
 use EtoA\Ship\ShipRepository;
+use EtoA\Technology\TechnologyRepository;
 use EtoA\Tutorial\TutorialUserProgressRepository;
 use EtoA\Universe\Planet\PlanetRepository;
+use EtoA\User\UserRepository;
 use LittleCubicleGames\Quests\Progress\ProgressFunctionBuilder;
 use LittleCubicleGames\Quests\Progress\StateFunctionBuilder;
 use LittleCubicleGames\Quests\ServiceProvider;
 use LittleCubicleGames\Quests\Storage\QuestStorageInterface;
 use Pimple\Container;
 use Silex\Api\BootableProviderInterface;
-use Silex\Api\ControllerProviderInterface;
 use Silex\Application;
-use Silex\ControllerCollection;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\Component\HttpFoundation\Request;
 
-class QuestServiceProvider extends ServiceProvider implements ControllerProviderInterface, BootableProviderInterface
+class QuestServiceProvider extends ServiceProvider implements BootableProviderInterface
 {
-    public function connect(Application $app): ControllerCollection
-    {
-        /** @var ControllerCollection $controllers */
-        $controllers = $app['controllers_factory'];
-
-        $controllers
-            ->put('/api/quests/{questId}/advance/{transition}', 'etoa.quest.controller:advanceAction')
-            ->assert('questId', '\d+')
-            ->bind('api.quest.advance');
-
-        return $controllers;
-    }
-
     public function register(Container $pimple): void
     {
         parent::register($pimple);
@@ -65,10 +53,6 @@ class QuestServiceProvider extends ServiceProvider implements ControllerProvider
 
                 return false;
             }
-        };
-
-        $pimple['etoa.quest.controller'] = function (Container $pimple): QuestController {
-            return new QuestController($pimple['cubicle.quests.advancer'], $pimple[QuestPresenter::class], $pimple['cubicle.quests.storage']);
         };
 
         $pimple[QuestRepository::class] = function (Container $pimple): QuestRepository {
@@ -123,7 +107,13 @@ class QuestServiceProvider extends ServiceProvider implements ControllerProvider
             return new ProgressFunctionBuilder([
                 new StateFunctionBuilder(),
                 new FunctionBuilder(),
-                new ContainerAwareFunctionBuilder($pimple),
+                new ContainerAwareFunctionBuilder(
+                    $pimple[BuildingRepository::class],
+                    $pimple[TechnologyRepository::class],
+                    $pimple[DefenseRepository::class],
+                    $pimple[UserRepository::class],
+                    $pimple[PlanetRepository::class]
+                ),
             ]);
         };
 
@@ -137,7 +127,7 @@ class QuestServiceProvider extends ServiceProvider implements ControllerProvider
         };
 
         $pimple[QuestResponseListener::class] = function (Container $pimple): QuestResponseListener {
-            return new QuestResponseListener($pimple[QuestPresenter::class]);
+            return new QuestResponseListener($pimple[QuestPresenter::class], $pimple[ConfigurationService::class]);
         };
     }
 

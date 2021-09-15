@@ -2,6 +2,8 @@
 
 namespace EtoA\Core;
 
+use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\User\UserRepository;
 use Pimple\Container;
 use Pimple\ServiceProviderInterface;
 use Silex\Api\BootableProviderInterface;
@@ -12,8 +14,8 @@ class ParamConverterServiceProvider implements ServiceProviderInterface, Bootabl
 {
     public function register(Container $pimple): void
     {
-        $pimple[ParamConverterListener::class] = function (): ParamConverterListener {
-            return new ParamConverterListener();
+        $pimple[ParamConverterListener::class] = function (Container $pimple): ParamConverterListener {
+            return new ParamConverterListener($pimple[ConfigurationService::class], $pimple[UserRepository::class]);
         };
     }
 

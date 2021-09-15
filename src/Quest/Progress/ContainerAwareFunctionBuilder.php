@@ -18,15 +18,22 @@ use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\User\UserRepository;
 use LittleCubicleGames\Quests\Progress\Functions\HandlerFunctionInterface;
 use LittleCubicleGames\Quests\Progress\ProgressFunctionBuilderInterface;
-use Pimple\Container;
 
 class ContainerAwareFunctionBuilder implements ProgressFunctionBuilderInterface
 {
-    private Container $container;
+    private BuildingRepository $buildingRepository;
+    private TechnologyRepository $technologyRepository;
+    private DefenseRepository $defenseRepository;
+    private UserRepository $userRepository;
+    private PlanetRepository $planetRepository;
 
-    public function __construct(Container $container)
+    public function __construct(BuildingRepository $buildingRepository, TechnologyRepository $technologyRepository, DefenseRepository $defenseRepository, UserRepository $userRepository, PlanetRepository $planetRepository)
     {
-        $this->container = $container;
+        $this->buildingRepository = $buildingRepository;
+        $this->technologyRepository = $technologyRepository;
+        $this->defenseRepository = $defenseRepository;
+        $this->userRepository = $userRepository;
+        $this->planetRepository = $planetRepository;
     }
 
     /**
@@ -36,23 +43,23 @@ class ContainerAwareFunctionBuilder implements ProgressFunctionBuilderInterface
     {
         switch ($taskName) {
             case HaveBuildingLevel::NAME:
-                return new HaveBuildingLevel($attributes, $this->container[BuildingRepository::class]);
+                return new HaveBuildingLevel($attributes, $this->buildingRepository);
             case HaveTechnologyLevel::NAME:
-                return new HaveTechnologyLevel($attributes, $this->container[TechnologyRepository::class]);
+                return new HaveTechnologyLevel($attributes, $this->technologyRepository);
             case HaveDefense::NAME:
-                return new HaveDefense($attributes, $this->container[DefenseRepository::class]);
+                return new HaveDefense($attributes, $this->defenseRepository);
             case HaveGalaxyDiscovered::NAME:
-                return new HaveGalaxyDiscovered($this->container[UserRepository::class]);
+                return new HaveGalaxyDiscovered($this->userRepository);
             case HavePoints::NAME:
-                return new HavePoints($this->container[UserRepository::class]);
+                return new HavePoints($this->userRepository);
             case HavePlanetCount::NAME:
-                return new HavePlanetCount($this->container[PlanetRepository::class]);
+                return new HavePlanetCount($this->planetRepository);
             case HaveAlliance::NAME:
-                return new HaveAlliance($this->container[UserRepository::class]);
+                return new HaveAlliance($this->userRepository);
             case HaveSpecialist::NAME:
-                return new HaveSpecialist($this->container[UserRepository::class]);
+                return new HaveSpecialist($this->userRepository);
             case HaveSpecialistType::NAME:
-                return new HaveSpecialistType($attributes, $this->container[UserRepository::class]);
+                return new HaveSpecialistType($attributes, $this->userRepository);
         }
 
         return null;
