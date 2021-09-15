@@ -2,20 +2,33 @@
 
 namespace EtoA\Core;
 
+use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\User\UserRepository;
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
+use Symfony\Component\HttpKernel\KernelEvents;
 
-class ParamConverterListener
+class ParamConverterListener implements EventSubscriberInterface
 {
+    private ConfigurationService $configurationService;
+    private UserRepository $userRepository;
+
+    public function __construct(ConfigurationService $configurationService, UserRepository $userRepository)
+    {
+        $this->configurationService = $configurationService;
+        $this->userRepository = $userRepository;
+    }
+
     public function onKernelController(ControllerEvent $event): void
     {
         $controller = $event->getController();
-        $request = $event->getRequest();
-        if (is_array($controller)) {
-            $r = new \ReflectionMethod($controller[0], $controller[1]);
-        } else {
-            $r = new \ReflectionFunction($controller);
+        if (!is_array($controller)) {
+            return;
         }
 
+        $request = $event->getRequest();
+        $r = new \ReflectionMethod($controller[0], $controller[1]);
         // automatically apply conversion for non-configured objects
         foreach ($r->getParameters() as $param) {
             if (!$param->getClass() instanceof \ReflectionClass || $param->getClass()->isInstance($request)) {
@@ -25,6 +38,15 @@ class ParamConverterListener
             $class = $param->getClass()->getName();
             $name = $param->getName();
             if (TokenContext::class === $class) {
+                if (!$request->attributes->has('currentUser')) {
+                    $user = $this->userRepository->getUser(\UserSession::getInstance($this->configurationService)->user_id);
+                    if (!$user) {
+                        throw new AccessDeniedHttpException();
+                    }
+
+                    $request->attributes->set('currentUser', new \User($user));
+                }
+
                 $value = new TokenContext($request->attributes->get('currentUser'));
             } else {
                 continue;
@@ -32,5 +54,10 @@ class ParamConverterListener
 
             $request->attributes->set($name, $value);
         }
+    }
+
+    public static function getSubscribedEvents(): array
+    {
+        return [KernelEvents::CONTROLLER => 'onKernelController'];
     }
 }

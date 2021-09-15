@@ -1,11 +1,14 @@
 <?php declare(strict_types=1);
 
-namespace EtoA\Tutorial;
+namespace EtoA\Controller;
 
 use EtoA\Core\TokenContext;
+use EtoA\Tutorial\TutorialUserProgressRepository;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Routing\Annotation\Route;
 
-class TutorialController
+class TutorialController extends AbstractController
 {
     private TutorialUserProgressRepository $tutorialUserProgressRepository;
 
@@ -14,6 +17,9 @@ class TutorialController
         $this->tutorialUserProgressRepository = $tutorialUserProgressRepository;
     }
 
+    /**
+     * @Route("/api/tutorials/{tutorialId}/close", methods={"PUT"}, name="api.tutorial.close")
+     */
     public function closeAction(TokenContext $context, int $tutorialId): JsonResponse
     {
         $this->tutorialUserProgressRepository->closeTutorial($context->getCurrentUser()->getId(), $tutorialId);
