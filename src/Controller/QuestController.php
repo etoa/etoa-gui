@@ -1,14 +1,17 @@
 <?php declare(strict_types=1);
 
-namespace EtoA\Quest;
+namespace EtoA\Controller;
 
 use EtoA\Core\TokenContext;
+use EtoA\Quest\QuestPresenter;
 use LittleCubicleGames\Quests\QuestAdvancer;
 use LittleCubicleGames\Quests\Storage\QuestStorageInterface;
 use LittleCubicleGames\Quests\Workflow\QuestDefinitionInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\Routing\Annotation\Route;
 
-class QuestController
+class QuestController extends AbstractController
 {
     private QuestAdvancer $questAdvancer;
     private QuestPresenter $presenter;
@@ -21,6 +24,9 @@ class QuestController
         $this->questStorage = $questStorage;
     }
 
+    /**
+     * @Route("/api/quests/{questId}/advance/{transition}", methods={"PUT"}, name="api.quest.advance")
+     */
     public function advanceAction(TokenContext $context, int $questId, string $transition): JsonResponse
     {
         try {

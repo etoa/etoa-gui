@@ -39,8 +39,13 @@ class ParamConverterListener implements EventSubscriberInterface
             $name = $param->getName();
             if (TokenContext::class === $class) {
                 if (!$request->attributes->has('currentUser')) {
-                    $user = $this->userRepository->getUser(\UserSession::getInstance($this->configurationService)->user_id);
-                    if (!$user) {
+                    $userId = \UserSession::getInstance($this->configurationService)->user_id;
+                    if (!(bool) $userId) {
+                        throw new AccessDeniedHttpException();
+                    }
+
+                    $user = $this->userRepository->getUser($userId);
+                    if ($user === null) {
                         throw new AccessDeniedHttpException();
                     }
 

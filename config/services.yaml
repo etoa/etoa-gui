@@ -10,6 +10,16 @@ services:
     _defaults:
         autowire: true      # Automatically injects dependencies in your services.
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
+        bind:
+            bool $questsEnabled: false
+            $questsWorkflow: $questsStateMachine
+
+    _instanceof:
+        LittleCubicleGames\Quests\Log\QuestLoggerInterface:
+            tags: [ 'quests.logger' ]
+
+        LittleCubicleGames\Quests\Reward\Collect\CollectorInterface:
+            tags: [ 'quests.collector' ]
 
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
@@ -17,4 +27,58 @@ services:
         resource: '../src/'
         exclude:
             - '../src/Kernel.php'
-            - '../src/Quest/*'
+            - '../src/app.php'
+
+    LittleCubicleGames\Quests\:
+        resource: '../vendor/littlecubiclegames/quests/src/'
+        exclude:
+            - '../vendor/littlecubiclegames/quests/src/Command/ValidationCommand.php'
+            - '../vendor/littlecubiclegames/quests/src/Definition/*'
+
+    EtoA\Quest\QuestRepository:
+        class: EtoA\Quest\QuestRepository
+
+    LittleCubicleGames\Quests\Definition\Registry\RegistryInterface:
+        class: EtoA\Quest\DefaultRandomRegistry
+
+    LittleCubicleGames\Quests\Storage\QuestStorageInterface:
+        class: EtoA\Quest\QuestRepository
+
+    LittleCubicleGames\Quests\Initialization\QuestStarter:
+        arguments:
+            $autoStartNewQuests: true
+
+    LittleCubicleGames\Quests\Log\QuestLogListener:
+        arguments:
+            $questLogger: !tagged_iterator quests.logger
+
+    LittleCubicleGames\Quests\Reward\Collect\Provider:
+        arguments:
+            $collectors: !tagged_iterator quests.collector
+
+    LittleCubicleGames\Quests\Slot\StaticSlotLoader:
+        arguments:
+            $slots: [{'id': 'test', 'registry': 'test'}]
+
+    LittleCubicleGames\Quests\Definition\Slot\SlotBuilder:
+        class: LittleCubicleGames\Quests\Definition\Slot\SlotBuilder
+
+    LittleCubicleGames\Quests\Definition\Quest\QuestBuilder:
+        class: LittleCubicleGames\Quests\Definition\Quest\QuestBuilder
+
+    Doctrine\Common\Cache\Cache:
+        class: LittleCubicleGames\Quests\Helper\ArrayCache
+
+    LittleCubicleGames\Quests\Progress\ProgressFunctionBuilderInterface:
+        class: LittleCubicleGames\Quests\Progress\ProgressFunctionBuilder
+        arguments:
+            $builders:
+                - '@LittleCubicleGames\Quests\Progress\StateFunctionBuilder'
+                - '@EtoA\Quest\Progress\FunctionBuilder'
+                - '@EtoA\Quest\Progress\ContainerAwareFunctionBuilder'
+
+    LittleCubicleGames\Quests\Definition\Task\TaskBuilder:
+        class: LittleCubicleGames\Quests\Definition\Task\TaskBuilder
+
+    LittleCubicleGames\Quests\Definition\Reward\RewardBuilder:
+        class: LittleCubicleGames\Quests\Definition\Reward\RewardBuilder

@@ -1,0 +1,34 @@
+framework:
+    workflows:
+        quests:
+            type: 'state_machine' # or 'state_machine'
+            audit_trail:
+                enabled: true
+            marking_store:
+                type: 'method'
+                property: 'state'
+            supports:
+                - EtoA\Quest\Entity\Quest
+            initial_marking: available
+            places:
+                - available
+                - in_progress
+                - completed
+                - finished
+                - rejected
+            transitions:
+                start:
+                    from: available
+                    to: in_progress
+                complete:
+                    from: in_progress
+                    to: completed
+                collect_reward:
+                    from: completed
+                    to: finished
+                reject:
+                    from: available
+                    to: rejected
+                abort:
+                    from: in_progress
+                    to: rejected
