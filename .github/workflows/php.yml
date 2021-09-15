@@ -45,14 +45,14 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-composer-
 
+      - name: Set up Symfony DB config
+        run: echo 'DATABASE_URL="mysql://root:root@127.0.0.1:${{ job.services.mysql.ports[3306] }}/etoa?serverVersion=5.7"' > .env.test
+
       - name: Validate composer.json and composer.lock
         run: ./composer.phar validate
 
       - name: Install dependencies
         run: ./composer.phar install --prefer-dist --no-progress --no-suggest
-
-      - name: Set up Symfony DB config
-        run: echo 'DATABASE_URL="mysql://root:root@127.0.0.1:${{ job.services.mysql.ports[3306] }}/etoa?serverVersion=5.7"' > .env.local
 
       - name: Create DB
         run: ./bin/console doctrine:database:create --env=test
