@@ -36,10 +36,6 @@ jobs:
           ini-values: "memory_limit=-1, phar.readonly=0"
           php-version: "${{ matrix.php-version }}"
 
-      - name: Create DB
-        run: |
-          mysql --host 127.0.0.1 --port ${{ job.services.mysql.ports[3306] }} -uroot -proot -e "CREATE DATABASE etoa_test"
-          mysql --host 127.0.0.1 --port ${{ job.services.mysql.ports[3306] }} -uroot -proot -D etoa_test -e "SHOW TABLES;"
       - name: Composer Cache Directory
         id: composer-cache
         uses: actions/cache@v1
@@ -55,11 +51,14 @@ jobs:
       - name: Install dependencies
         run: ./composer.phar install --prefer-dist --no-progress --no-suggest
 
-      - name: Set up DB config
-        run: echo '{"host":"127.0.0.1:${{ job.services.mysql.ports[3306] }}","dbname":"etoa_test","user":"root","password":"root"}' > htdocs/config/db.conf
+      - name: Set up Symfony DB config
+        run: echo 'DATABASE_URL="mysql://root:root@127.0.0.1:${{ job.services.mysql.ports[3306] }}/etoa?serverVersion=5.7"' > .env.local
+
+      - name: Create DB
+        run: ./bin/console doctrine:database:create --env=test
 
       - name: Set up DB
-        run: bin/console database:migrate
+        run: bin/console database:migrate --env=test
 
       - name: Set up DB config
         run: echo '{"host":"127.0.0.1:${{ job.services.mysql.ports[3306] }}","dbname":"etoa","user":"root","password":"root"}' > htdocs/config/db.conf
