@@ -258,8 +258,6 @@ try {
         ];
     }
 
-    $gameMenu = new GameMenu('game-menu.conf');
-
     /** @var TextRepository $textRepo */
     $textRepo = $app[TextRepository::class];
     $infoText = $textRepo->find('info');
@@ -289,8 +287,6 @@ try {
         'userNick' => $cu->nick,
         'page' => $page,
         'mode' => $mode,
-        'topNav' => $gameMenu->getTopNav(),
-        'mainNav' => $gameMenu->getMainNav(),
         'renderTime' => $watch->stop('render')->getDuration() / 1000,
         'infoText' => $infoText->isEnabled() ? $infoText->content : null,
     ]);
