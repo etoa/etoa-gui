@@ -93,8 +93,9 @@ class RaceController extends AbstractController
             <th style=\"width:180px;\">" . BBCodeUtils::toHTML($ship->name) . "</th>
             <td>" . BBCodeUtils::toHTML($ship->shortComment) . "</td></tr>";
             }
-        } else
+        } else {
             echo "<tr><td colspan=\"3\">Keine Rassenschiffe vorhanden</td></tr>";
+        }
 
         tableEnd();
         tableStart('', 500);
@@ -106,8 +107,9 @@ class RaceController extends AbstractController
             <th style=\"width:180px;\">" . BBCodeUtils::toHTML($def->name) . "</th>
             <td>" . BBCodeUtils::toHTML($def->shortComment) . "</td></tr>";
             }
-        } else
+        } else {
             echo "<tr><td colspan=\"3\">Keine Rassenverteidigung vorhanden</td></tr>";
+        }
 
 
         tableEnd();
