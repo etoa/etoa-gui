@@ -1343,7 +1343,7 @@ function ajaxRequest(path, queryData, callbackFunction, errorFunction) {
 * TODO
 */
 function fleetBookmarkSearchShipList(val) {
-  ajaxResponderRequest('get_ship_list', { q: val }, function (data) {
+  ajaxRequest('/api/ships/search', { q: val }, function (data) {
     if (data.count > 0) {
       var items = [];
       $.each(data.entries, function (key, val) {
