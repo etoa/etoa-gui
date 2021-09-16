@@ -33,7 +33,7 @@ const closeTutorial = function () {
 }
 
 function showTutorialText(id, step) {
-  ajaxRequest('get_tutorial', { id: id, step: step }, function (data) {
+  ajaxRequest('/api/tutorials/' + id, { step: step }, function (data) {
     if (data.title && data.content) {
       $('#tutorialContainer').attr('data-tutorial', id);
       $('.tutorialTitleContent').html(data.title);

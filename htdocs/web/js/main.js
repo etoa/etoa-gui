@@ -1300,11 +1300,8 @@ function htmlEntities(str) {
   return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
 
-/**
- * Executes a simple ajax request which returns a data object
- */
-function ajaxRequest(actionName, queryData, callbackFunction, errorFunction) {
-  $.getJSON('responder.php?action=' + actionName, queryData, function (data) {
+function ajaxRequest(path, queryData, callbackFunction, errorFunction) {
+  $.getJSON(path, queryData, function (data) {
     var errorMsg;
     $.each(data, function (key, val) {
       if (key == "error") {
@@ -1322,27 +1319,10 @@ function ajaxRequest(actionName, queryData, callbackFunction, errorFunction) {
 }
 
 /**
- * Tests the ajaxRequest function
- */
-function ajaxRequestTest(testAction, testArgs) {
-  testAction = typeof testAction !== 'undefined' ? testAction : 'test';
-  testArgs = typeof testArgs !== 'undefined' ? testArgs : { tar: 'asd', zip: 'asd' };
-  ajaxRequest(testAction, testArgs, function (data) {
-    var items = [];
-    $.each(data, function (key, val) {
-      items.push('KEY ' + key + ' VALUE ' + val);
-    });
-    alert(items.join('\n'));
-  }, function (errMsg) {
-    alert("ERROR: " + errMsg);
-  });
-}
-
-/**
 * TODO
 */
 function fleetBookmarkSearchShipList(val) {
-  ajaxRequest('get_ship_list', { q: val }, function (data) {
+  ajaxRequest('/api/ships/search', { q: val }, function (data) {
     if (data.count > 0) {
       var items = [];
       $.each(data.entries, function (key, val) {
@@ -1358,7 +1338,7 @@ function fleetBookmarkSearchShipList(val) {
  */
 function fleetBookmarkAddShipToList(shipId, shipCount) {
 
-  ajaxRequest('get_ship_info', { ship: shipId }, function (data) {
+  ajaxRequest('/api/ships/search-info', { ship: shipId }, function (data) {
     if (data.id) {
       if ($('#ship_row_' + data.id).length == 0) {
 
@@ -1435,7 +1415,7 @@ function rdm() {
 }
 
 function getRaceInfo(id) {
-  ajaxRequest('get_race_infos', { id: id }, function (data) {
+  ajaxRequest('/api/races/info', { id: id }, function (data) {
     if (data.content) {
       $('#raceInfo').html(data.content);
       $('#submit_setup1').show();

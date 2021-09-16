@@ -77,7 +77,7 @@ $(function() {
 
 function poll(doLoop)
 {
-  ajaxRequest('chat_poll', {
+  ajaxRequest('/api/chat/poll', {
     "minId":minId,
     "chanId":chanId
   }, function(data) {
@@ -280,7 +280,7 @@ function scrollDown()
 
 function logoutFromChat()
 {
-  ajaxRequest('chat_logout', null, closeChat, closeChat);
+  ajaxRequest('/api/chat/logout', null, closeChat, closeChat);
 }
 
 /* actual chat send function */
@@ -306,7 +306,7 @@ function sendChat()
     }
     msgHistoryIdx = -1;
 
-    ajaxRequest('chat_push', {"ctext":ctext},
+    ajaxRequest('/api/chat/push', {"ctext":ctext},
       function(data) {
 
         if (data.cmd) {
