@@ -26,9 +26,6 @@ use EtoA\User\UserSessionRepository;
 //
 require_once __DIR__ . '/../vendor/autoload.php';
 
-// Render time measurement
-$watch = new \Symfony\Component\Stopwatch\Stopwatch();
-$watch->start('render');
 $request = \Symfony\Component\HttpFoundation\Request::createFromGlobals();
 
 // Funktionen und Config einlesen
@@ -221,19 +218,6 @@ try {
     $reportRepository = $app[ReportRepository::class];
     $newReports = $reportRepository->countUserUnread($cu->getId());
 
-    /** @var UserRepository $userRepository */
-    $userRepository = $app[UserRepository::class];
-    $userCount = $userRepository->count();
-
-    /** @var UserSessionRepository $userSessionRepository */
-    $userSessionRepository = $app[UserSessionRepository::class];
-    $usersOnline = $userSessionRepository->count();
-
-    // Count notes
-    /** @var NotepadRepository $notepadRepository */
-    $notepadRepository = $app[NotepadRepository::class];
-    $numNotes = $notepadRepository->count($cu->id);
-
     // Number of player's own fleets
     /** @var FleetRepository $fleetRepository */
     $fleetRepository = $app[FleetRepository::class];
@@ -280,14 +264,10 @@ try {
         'fleetAttack' => check_fleet_incomming($cu->id),
         'enableKeybinds' => $properties->enableKeybinds,
         'isAdmin' => $cu->admin,
-        'usersOnline' => $usersOnline,
-        'usersTotal' => $userCount,
-        'notes' => $numNotes,
         'userPoints' => StringUtils::formatNumber($cu->points),
         'userNick' => $cu->nick,
         'page' => $page,
         'mode' => $mode,
-        'renderTime' => $watch->stop('render')->getDuration() / 1000,
         'infoText' => $infoText->isEnabled() ? $infoText->content : null,
     ]);
     foreach ($globals as $key => $value) {
