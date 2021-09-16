@@ -77,8 +77,7 @@ if (isset($_GET['id'])) {
     } else
         echo "Technologiedaten nicht gefunden!";
     echo "<input type=\"button\" value=\"Technologie&uuml;bersicht\" onclick=\"document.location='?$link&amp;site=$site'\" /> &nbsp; ";
-    if (!$popup)
-        echo "<input type=\"button\" value=\"Technikbaum\" onclick=\"document.location='?page=techtree&mode=tech'\" /> &nbsp; ";
+    echo "<input type=\"button\" value=\"Technikbaum\" onclick=\"document.location='?page=techtree&mode=tech'\" /> &nbsp; ";
 }
 
 //�bersicht

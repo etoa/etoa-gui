@@ -420,10 +420,9 @@ if ($request->query->has('id') && $request->query->getInt('id') > 0) {
     }
 
     echo "<input type=\"button\" value=\"Geb&auml;ude&uuml;bersicht\" onclick=\"document.location='?$link&amp;site=$site'\" /> &nbsp; ";
-    if (!$popup) {
-        echo "<input type=\"button\" value=\"Technikbaum\" onclick=\"document.location='?page=techtree&mode=buildings'\" /> &nbsp; ";
-    }
-    if (isset($_SESSION['lastpage']) && $_SESSION['lastpage'] == "buildings" && !$popup) {
+    echo "<input type=\"button\" value=\"Technikbaum\" onclick=\"document.location='?page=techtree&mode=buildings'\" /> &nbsp; ";
+
+    if (isset($_SESSION['lastpage']) && $_SESSION['lastpage'] == "buildings") {
         echo "<input type=\"button\" value=\"Zur&uuml;ck zum Bauhof\" onclick=\"document.location='?page=buildings'\" /> &nbsp; ";
     }
 }

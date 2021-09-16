@@ -211,8 +211,6 @@ if (isset($_POST['save'])) {
     $properties->msgSignature = filled($_POST['msgsignature']) ? $_POST['msgsignature'] : null;
     $properties->msgCreationPreview = $_POST['msgcreation_preview'] == 1;
     $properties->msgPreview = $_POST['msg_preview'] == 1;
-    $properties->helpBox = $_POST['helpbox'] == 1;
-    $properties->noteBox = $_POST['notebox'] == 1;
     $properties->msgCopy = $_POST['msg_copy'] == 1;
     $properties->msgBlink = $_POST['msg_blink'] == 1;
     $properties->spyShipId = $_POST['spyship_id'];
@@ -1159,28 +1157,6 @@ if ($user !== null) {
             <input type=\"radio\" name=\"image_filter\" value=\"0\"";
     if (!$properties->imageFilter) echo " checked=\"checked\"";
     echo "/> Aus
-        </td>
-    </tr>
-        <tr>
-        <td class=\"tbltitle\">Separates Hilfefenster:</td>
-        <td class=\"tbldata\">
-        <input type=\"radio\" name=\"helpbox\" value=\"1\" ";
-    if ($properties->helpBox) echo " checked=\"checked\"";
-    echo "/> Aktiviert &nbsp;
-        <input type=\"radio\" name=\"helpbox\" value=\"0\" ";
-    if (!$properties->helpBox) echo " checked=\"checked\"";
-    echo "/> Deaktiviert
-        </td>
-    </tr>
-    <tr>
-        <td class=\"tbltitle\">Separater Notizbox:</td>
-        <td class=\"tbldata\">
-        <input type=\"radio\" name=\"notebox\" value=\"1\" ";
-    if ($properties->noteBox) echo " checked=\"checked\"";
-    echo "/> Aktiviert &nbsp;
-        <input type=\"radio\" name=\"notebox\" value=\"0\" ";
-    if (!$properties->noteBox) echo " checked=\"checked\"";
-    echo "/> Deaktiviert
         </td>
     </tr>
     <tr>

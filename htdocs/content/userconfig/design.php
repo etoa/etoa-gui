@@ -27,8 +27,6 @@ if (isset($_POST['data_submit_design']) && $_POST['data_submit_design'] != "") {
     $properties->planetCircleWidth = $_POST['planet_circle_width'];
     $properties->itemShow = $_POST['item_show'];
     $properties->imageFilter = $_POST['image_filter'] == 1;
-    $properties->helpBox = $_POST['helpbox'] == 1;
-    $properties->noteBox = $_POST['notebox'] == 1;
     $properties->showAdds = $_POST['show_adds'] == 1;
 
     $userPropertiesRepository->storeProperties($cu->id, $properties);
@@ -115,37 +113,6 @@ if (!$properties->imageFilter) echo " checked=\"checked\"";
 echo "/> Aus
                   </td>";
 echo "</tr>";
-
-//Hilfefenster (Aktiviert/Deaktiviert)
-echo "<tr>
-                    <th>Separates Hilfefenster:</th>
-                    <td>
-                  <input type=\"radio\" name=\"helpbox\" value=\"1\" ";
-if ($properties->helpBox) echo " checked=\"checked\"";
-echo "/> Aktiviert
-              </td>
-              <td width=\"48%\" colspan=\"3\">
-                  <input type=\"radio\" name=\"helpbox\" value=\"0\" ";
-if (!$properties->helpBox) echo " checked=\"checked\"";
-echo "/> Deaktiviert
-                </td>
-              </tr>";
-
-//Notizbox (Aktiviert/Deaktiviert)
-echo "<tr>
-                    <th>Separate Notizbox:</th>
-                    <td>
-                  <input type=\"radio\" name=\"notebox\" value=\"1\" ";
-if ($properties->noteBox) echo " checked=\"checked\"";
-echo "/> Aktiviert
-              </td>
-              <td width=\"48%\" colspan=\"3\">
-                  <input type=\"radio\" name=\"notebox\" value=\"0\" ";
-if (!$properties->noteBox) echo " checked=\"checked\"";
-echo "/> Deaktiviert
-                </td>
-              </tr>";
-
 
 // Werbebanner
 echo "<tr>

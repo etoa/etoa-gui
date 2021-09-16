@@ -17,8 +17,6 @@ class UserProperties
     public ?string $msgSignature;
     public bool $msgCreationPreview;
     public bool $msgPreview;
-    public bool $helpBox;
-    public bool $noteBox;
     public bool $msgCopy;
     public bool $msgBlink;
     public int $spyShipId;
@@ -49,8 +47,6 @@ class UserProperties
         $this->msgSignature = $arr['msgsignature'];
         $this->msgCreationPreview = (bool) $arr['msgcreation_preview'];
         $this->msgPreview = (bool) $arr['msg_preview'];
-        $this->helpBox = (bool) $arr['helpbox'];
-        $this->noteBox = (bool) $arr['notebox'];
         $this->msgCopy = (bool) $arr['msg_copy'];
         $this->msgBlink = (bool) $arr['msg_blink'];
         $this->spyShipId = (int) $arr['spyship_id'];

@@ -34,8 +34,9 @@ if ($uid > 0) {
     $user = new User($uid);
 
     // Besuchercounter
-    if ($user->id != $cu->id)
-        $user->visits++;
+    if ($user->id != $cu->id) {
+        $userRepository->addVisit($user->id);
+    }
 
     if ($user->isValid) {
         tableStart("Profil von " . $user->nick);
@@ -167,15 +168,15 @@ if ($uid > 0) {
                 iBoxEnd();
             }
         }
-        if (!$popup) {
-            echo "<input type=\"button\" value=\"Nachricht senden\" onclick=\"document.location='?page=messages&amp;mode=new&amp;message_user_to=" . intval($user->id) . "'\" /> &nbsp; ";
-            echo "<input type=\"button\" value=\"Statistiken anzeigen\" onclick=\"document.location='?page=stats&amp;mode=user&amp;userdetail=" . intval($user->id) . "'\" /> &nbsp; ";
-        }
+
+        echo "<input type=\"button\" value=\"Nachricht senden\" onclick=\"document.location='?page=messages&amp;mode=new&amp;message_user_to=" . intval($user->id) . "'\" /> &nbsp; ";
+        echo "<input type=\"button\" value=\"Statistiken anzeigen\" onclick=\"document.location='?page=stats&amp;mode=user&amp;userdetail=" . intval($user->id) . "'\" /> &nbsp; ";
     } else
         echo "<b>Fehler:</b> Dieser Spieler existiert nicht!<br/><br/>";
 } else {
     echo "<b>Fehler:</b> Keine ID angegeben!<br/><br/>";
 }
 
-if (isset($_GET['id']) && !$popup)
+if (isset($_GET['id'])) {
     echo "<input type=\"button\" onclick=\"history.back();;\" value=\"Zur&uuml;ck\" />";
+}

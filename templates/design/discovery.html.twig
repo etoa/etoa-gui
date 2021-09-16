@@ -292,11 +292,7 @@
 
         <map name="pb_info_Map">
             <area shape="circle" alt="" coords="28,31,18"
-                    {% if helpBox %}
-                        href="javascript:;" onclick="window.open('popup.php?page=help','help','status=no,width=800,height=600,scrollbars=yes,resizable=yes');"
-                    {% else %}
-                        href="?page=help"
-                    {% endif %}
+                  href="?page=help"
                   onmouseover="changeImages('pb_info', '{{ templateDir }}/images/pb_info-sp_pb_info_over.gif'); return true;"
                   onmouseout="changeImages('pb_info', '{{ templateDir }}/images/pb_info.gif'); return true;"
                   onmousedown="changeImages('pb_info', '{{ templateDir }}/images/pb_info-sp_pb_info_down.gif'); return true;"
@@ -346,11 +342,7 @@
         </map>
         <map name="pb_notes_Map">
             <area shape="circle" alt="" coords="23,32,18"
-                    {% if noteBox %}
-                        href="javascript:;" onclick="window.open('popup.php?page=notepad','notes','status=no,width=800,height=600,scrollbars=yes,resizable=yes');"
-                    {% else %}
-                        href="?page=notepad"
-                    {% endif %}
+                  href="?page=notepad"
                   onmouseover="changeImages('pb_notes', '{{ templateDir }}/images/pb_notes-sp_pb_notes_over.gif'); return true;"
                   onmouseout="changeImages('pb_notes', '{{ templateDir }}/images/pb_notes.gif'); return true;"
                   onmousedown="changeImages('pb_notes', '{{ templateDir }}/images/pb_notes-sp_pb_notes_down.gif'); return true;"

@@ -56,8 +56,7 @@ if (isset($_GET['userdetail']) && intval($_GET['userdetail']) > 0) {
 
         tableEnd();
 
-        if (!$popup)
-            echo "<input type=\"button\" value=\"Profil anzeigen\" onclick=\"document.location='?page=userinfo&id=" . $user->id . "'\" /> &nbsp; ";
+        echo "<input type=\"button\" value=\"Profil anzeigen\" onclick=\"document.location='?page=userinfo&id=" . $user->id . "'\" /> &nbsp; ";
     } else
         error_msg("Datensatz wurde nicht gefunden!");
 } elseif (isset($_GET['alliancedetail']) && intval($_GET['alliancedetail']) > 0) {

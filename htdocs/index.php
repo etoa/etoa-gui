@@ -293,8 +293,6 @@ try {
         'mainNav' => $gameMenu->getMainNav(),
         'renderTime' => $watch->stop('render')->getDuration() / 1000,
         'infoText' => $infoText->isEnabled() ? $infoText->content : null,
-        'helpBox' => $properties->helpBox,
-        'noteBox' => $properties->noteBox,
     ]);
     foreach ($globals as $key => $value) {
         $twig->addGlobal($key, $value);
