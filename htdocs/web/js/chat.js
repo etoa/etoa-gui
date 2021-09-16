@@ -11036,7 +11036,7 @@ jquery__WEBPACK_IMPORTED_MODULE_0___default()(function () {
 // polls for new chat messages every second
 
 function poll(doLoop) {
-  ajaxResponderRequest('chat_poll', {
+  ajaxRequest('/api/chat/poll', {
     "minId": minId,
     "chanId": chanId
   }, function (data) {

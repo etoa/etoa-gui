@@ -77,7 +77,7 @@ $(function() {
 
 function poll(doLoop)
 {
-  ajaxRequest('chat_poll', {
+  ajaxRequest('/api/chat/poll', {
     "minId":minId,
     "chanId":chanId
   }, function(data) {
