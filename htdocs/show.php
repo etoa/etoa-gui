@@ -95,7 +95,6 @@ if ($show) {
 
         $fileName = __DIR__ . '/' . $sub . $index . '.php';
         if (file_exists($fileName)) {
-            $popup = true;
             include $fileName;
             logAccess($index, 'public');
             return;
@@ -109,7 +108,6 @@ if ($show) {
 
     if ($page && $loggedIn && $page !== 'overview') {
         ob_start();
-        $popup = true;
         require('inc/content.inc.php');
         echo $twig->render('external/content.html.twig', [
             'content' => ob_get_clean(),

@@ -71,8 +71,6 @@ class UserPropertiesRepository extends AbstractRepository
             ->set('msgsignature', ':msgSignature')
             ->set('msgcreation_preview', ':msgCreationPreview')
             ->set('msg_preview', ':msgPreview')
-            ->set('helpbox', ':helpBox')
-            ->set('notebox', ':noteBox')
             ->set('msg_copy', ':msgCopy')
             ->set('msg_blink', ':msgBlink')
             ->set('spyship_id', ':spyShipId')
@@ -102,8 +100,6 @@ class UserPropertiesRepository extends AbstractRepository
                 'msgSignature' => $properties->msgSignature,
                 'msgCreationPreview' => $properties->msgCreationPreview,
                 'msgPreview' => $properties->msgPreview,
-                'helpBox' => $properties->helpBox,
-                'noteBox' => $properties->noteBox,
                 'msgCopy' => $properties->msgCopy,
                 'msgBlink' => $properties->msgBlink,
                 'spyShipId' => $properties->spyShipId,

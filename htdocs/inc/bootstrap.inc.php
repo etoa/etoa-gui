@@ -41,6 +41,3 @@ if (!isCLI() && (!defined('SKIP_XAJAX_INIT') || !SKIP_XAJAX_INIT)) {
         require_once dirname(__DIR__) . '/inc/xajax.inc.php';
     }
 }
-
-// Set popup identifiert to false
-$popup = false;

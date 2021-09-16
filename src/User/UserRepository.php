@@ -940,4 +940,14 @@ class UserRepository extends AbstractRepository
             'ip' => $ip,
         ]);
     }
+
+    public function addVisit(int $userId): void
+    {
+        $this->createQueryBuilder()
+            ->update('users')
+            ->set('user_visits', 'user_visits + 1')
+            ->where('user_id = :userId')
+            ->setParameter('userId', $userId)
+            ->execute();
+    }
 }
