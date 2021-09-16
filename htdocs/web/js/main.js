@@ -1359,7 +1359,7 @@ function fleetBookmarkSearchShipList(val) {
  */
 function fleetBookmarkAddShipToList(shipId, shipCount) {
 
-  ajaxResponderRequest('get_ship_info', { ship: shipId }, function (data) {
+  ajaxRequest('/api/ships/search-info', { ship: shipId }, function (data) {
     if (data.id) {
       if ($('#ship_row_' + data.id).length == 0) {
 

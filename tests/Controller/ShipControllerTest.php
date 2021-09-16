@@ -8,13 +8,22 @@ class ShipControllerTest extends SymfonyWebTestCase
 {
     public function testSearch(): void
     {
-        $userId = 1;
-
         $client = self::createClient();
 
-        $this->loginUser($userId);
+        $this->loginUser(1);
 
         $client->request('GET', '/api/ships/search?q=Algo');
+
+        $this->assertSame(200, $client->getResponse()->getStatusCode(), $client->getResponse()->getContent());
+    }
+
+    public function testSearchInfo(): void
+    {
+        $client = self::createClient();
+
+        $this->loginUser(1);
+
+        $client->request('GET', '/api/ships/search-info?ship=1');
 
         $this->assertSame(200, $client->getResponse()->getStatusCode(), $client->getResponse()->getContent());
     }
