@@ -28,6 +28,17 @@ class ChatControllerTest extends SymfonyWebTestCase
         $this->assertSame(200, $client->getResponse()->getStatusCode(), $client->getResponse()->getContent());
     }
 
+    public function testPush(): void
+    {
+        $client = self::createClient();
+
+        $this->loginUser(1);
+
+        $client->request('GET', '/api/chat/poll?ctext=test');
+
+        $this->assertSame(200, $client->getResponse()->getStatusCode(), $client->getResponse()->getContent());
+    }
+
     public function testLogout(): void
     {
         $client = self::createClient();

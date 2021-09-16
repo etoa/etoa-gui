@@ -11209,7 +11209,7 @@ function sendChat() {
     }
 
     msgHistoryIdx = -1;
-    ajaxResponderRequest('chat_push', {
+    ajaxRequest('/api/chat/push', {
       "ctext": ctext
     }, function (data) {
       if (data.cmd) {

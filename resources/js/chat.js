@@ -306,7 +306,7 @@ function sendChat()
     }
     msgHistoryIdx = -1;
 
-    ajaxRequest('chat_push', {"ctext":ctext},
+    ajaxRequest('/api/chat/push', {"ctext":ctext},
       function(data) {
 
         if (data.cmd) {
