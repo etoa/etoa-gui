@@ -72,8 +72,9 @@ class ShipController extends AbstractController
                     foreach ($actions as $i) {
                         if ($ac = \FleetAction::createFactory($i)) {
                             $acstr .= $ac;
-                            if ($x < $accnt - 1)
+                            if ($x < $accnt - 1) {
                                 $acstr .= ", ";
+                            }
                         }
                         $x++;
                     }

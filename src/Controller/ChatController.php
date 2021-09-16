@@ -71,9 +71,10 @@ class ChatController extends AbstractController
         if ($chatUser !== null) {
             if ($chatUser->kick !== null) {
                 $this->chatUserRepository->deleteUser($user->getId());
+
                 return new JsonResponse([
                     'cmd' => 'ki',
-                    'msg' => StringUtils::replaceAsciiControlCharsUnicode($chatUser->kick)
+                    'msg' => StringUtils::replaceAsciiControlCharsUnicode($chatUser->kick),
                 ]);
             }
         } else {
@@ -103,7 +104,7 @@ class ChatController extends AbstractController
                 'color' => $message->color,
                 'userId' => $message->userId,
                 'nick' => $message->nick,
-                'admin' => $message->admin
+                'admin' => $message->admin,
             ];
             $lastId = $message->id;
         }
@@ -128,12 +129,15 @@ class ChatController extends AbstractController
             } else {
                 $admin = 1; // Admin
             }
-        } elseif ($user->chatAdmin === 1)
-            $admin = 2; // Chatadmin
-        elseif ($user->chatAdmin === 2)
-            $admin = 4; // Leiter Team Community
-        elseif ($user->admin === 2)
-            $admin = 3; // Entwickler ohne Adminrechte
+        } elseif ($user->chatAdmin === 1) {
+            $admin = 2;
+        } // Chatadmin
+        elseif ($user->chatAdmin === 2) {
+            $admin = 4;
+        } // Leiter Team Community
+        elseif ($user->admin === 2) {
+            $admin = 3;
+        } // Entwickler ohne Adminrechte
 
         $ct = $request->query->get('ctext');
 
@@ -149,7 +153,7 @@ class ChatController extends AbstractController
                 if (!isset($words[0])) {
                     return new JsonResponse([
                         'cmd' => 'aa',
-                        'msg' => 'No user specified!'
+                        'msg' => 'No user specified!',
                     ]);
                 }
 
@@ -157,7 +161,7 @@ class ChatController extends AbstractController
                 if ($uid === null) {
                     return new JsonResponse([
                         'cmd' => 'aa',
-                        'msg' => 'A user with this nick does not exist!'
+                        'msg' => 'A user with this nick does not exist!',
                     ]);
                 }
 
@@ -170,7 +174,7 @@ class ChatController extends AbstractController
 
                 return new JsonResponse([
                     'cmd' => 'aa',
-                    'msg' => 'User is not online in chat!'
+                    'msg' => 'User is not online in chat!',
                 ]);
             }
 
@@ -179,7 +183,7 @@ class ChatController extends AbstractController
                 if (!isset($words[0])) {
                     return new JsonResponse([
                         'cmd' => 'aa',
-                        'msg' => 'No user specified!'
+                        'msg' => 'No user specified!',
                     ]);
                 }
 
@@ -187,7 +191,7 @@ class ChatController extends AbstractController
                 if ($uid === null) {
                     return new JsonResponse([
                         'cmd' => 'aa',
-                        'msg' => 'A user with this nick does not exist!'
+                        'msg' => 'A user with this nick does not exist!',
                     ]);
                 }
 
@@ -203,7 +207,7 @@ class ChatController extends AbstractController
                 if (!isset($words[0])) {
                     return new JsonResponse([
                         'cmd' => 'aa',
-                        'msg' => 'No user specified!'
+                        'msg' => 'No user specified!',
                     ]);
                 }
 
@@ -211,7 +215,7 @@ class ChatController extends AbstractController
                 if ($uid === null) {
                     return new JsonResponse([
                         'cmd' => 'aa',
-                        'msg' => 'A user with this nick does not exist!'
+                        'msg' => 'A user with this nick does not exist!',
                     ]);
                 }
 
@@ -219,13 +223,13 @@ class ChatController extends AbstractController
                 if ($deleted > 0) {
                     return new JsonResponse([
                         'cmd' => 'aa',
-                        'msg' => 'Unbanned ' . $words[0] . '!'
+                        'msg' => 'Unbanned ' . $words[0] . '!',
                     ]);
                 }
 
                 return new JsonResponse([
                     'cmd' => 'aa',
-                    'msg' => 'A user with that nick is not banned!'
+                    'msg' => 'A user with that nick is not banned!',
                 ]);
             }
 
@@ -234,7 +238,7 @@ class ChatController extends AbstractController
                 if (count($bans) === 0) {
                     return new JsonResponse([
                         'cmd' => 'aa',
-                        'msg' => 'Bannliste leer!'
+                        'msg' => 'Bannliste leer!',
                     ]);
                 }
 
@@ -243,20 +247,20 @@ class ChatController extends AbstractController
                     $list[] = [
                         'nick' => $ban->userNick,
                         'reason' => $ban->reason,
-                        'date' => StringUtils::formatDate($ban->timestamp)
+                        'date' => StringUtils::formatDate($ban->timestamp),
                     ];
                 }
 
                 return new JsonResponse([
                     'cmd' => 'bl',
-                    'list' => $list
+                    'list' => $list,
                 ]);
             }
 
             // Unknown command
             return new JsonResponse([
                 'cmd' => 'aa',
-                'msg' => 'Unknown command \'' . $command . '\'!'
+                'msg' => 'Unknown command \'' . $command . '\'!',
             ]);
         }
 
