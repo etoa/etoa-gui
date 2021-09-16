@@ -1300,27 +1300,6 @@ function htmlEntities(str) {
   return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
 
-/**
- * Executes a simple ajax request which returns a data object
- */
-function ajaxResponderRequest(actionName, queryData, callbackFunction, errorFunction) {
-  $.getJSON('responder.php?action=' + actionName, queryData, function (data) {
-    var errorMsg;
-    $.each(data, function (key, val) {
-      if (key == "error") {
-        errorMsg = val;
-      }
-    });
-    if (errorMsg) {
-      if (typeof errorFunction !== 'undefined') {
-        errorFunction(errorMsg);
-      }
-    } else {
-      callbackFunction(data);
-    }
-  });
-}
-
 function ajaxRequest(path, queryData, callbackFunction, errorFunction) {
   $.getJSON(path, queryData, function (data) {
     var errorMsg;
@@ -1436,7 +1415,7 @@ function rdm() {
 }
 
 function getRaceInfo(id) {
-  ajaxResponderRequest('get_race_infos', { id: id }, function (data) {
+  ajaxRequest('/api/races/info', { id: id }, function (data) {
     if (data.content) {
       $('#raceInfo').html(data.content);
       $('#submit_setup1').show();
