@@ -11186,7 +11186,7 @@ function scrollDown() {
 
 
 function logoutFromChat() {
-  ajaxResponderRequest('chat_logout', null, closeChat, closeChat);
+  ajaxRequest('/api/chat/logout', null, closeChat, closeChat);
 }
 /* actual chat send function */
 // sends a request to the server and handles the response.

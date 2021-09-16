@@ -280,7 +280,7 @@ function scrollDown()
 
 function logoutFromChat()
 {
-  ajaxRequest('chat_logout', null, closeChat, closeChat);
+  ajaxRequest('/api/chat/logout', null, closeChat, closeChat);
 }
 
 /* actual chat send function */
