@@ -11106,7 +11106,7 @@ function banned(rtext) {
 
 
 function updateUserList() {
-  ajaxResponderRequest('chat_userlist', null, function (data) {
+  ajaxRequest('/api/chat/users', null, function (data) {
     if (data.length == 0) {
       jquery__WEBPACK_IMPORTED_MODULE_0___default()('#usercount').html('Keine User online');
     } else {
@@ -11121,7 +11121,7 @@ function updateUserList() {
 }
 
 function fetchUserList() {
-  ajaxResponderRequest('chat_userlist', null, function (data) {
+  ajaxRequest('/api/chat/users', null, function (data) {
     if (data.length == 0) {
       localMsg('Keine User online');
     } else {

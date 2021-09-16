@@ -18,6 +18,21 @@ class ChatController extends AbstractController
     }
 
     /**
+     * @Route("/api/chat/users", methods={"GET"}, name="api.chat.users")
+     */
+    public function users(TokenContext $context): JsonResponse
+    {
+        $user = $context->getCurrentUser();
+
+        $users = [];
+        if ($this->chatManager->isUserOnline($user->getId())) {
+            $users = $this->chatManager->getUserOnlineList();
+        }
+
+        return new JsonResponse($users);
+    }
+
+    /**
      * @Route("/api/chat/logout", methods={"GET"}, name="api.chat.logout")
      */
     public function logout(TokenContext $context): JsonResponse
