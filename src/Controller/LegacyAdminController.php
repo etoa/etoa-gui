@@ -23,7 +23,9 @@ class LegacyAdminController extends AbstractController
 
         require_once __DIR__ . '/../../htdocs/admin/index.php';
 
-        return new Response(ob_get_clean());
+        return $this->render('admin/default.html.twig', [
+            'content' => ob_get_clean(),
+        ]);
     }
 
     /**

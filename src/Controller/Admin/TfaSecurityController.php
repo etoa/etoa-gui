@@ -11,6 +11,7 @@ use Scheb\TwoFactorBundle\Security\TwoFactor\Provider\Totp\TotpAuthenticatorInte
 use Scheb\TwoFactorBundle\Security\TwoFactor\QrCode\QrCodeGenerator;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 class TfaSecurityController extends AbstractController
@@ -27,7 +28,7 @@ class TfaSecurityController extends AbstractController
     /**
      * @Route("/admin/tfa/enable", name="admin.tfa.enable", methods={"GET", "POST"})
      */
-    public function enableTwoFactorAuthAction(Request $req, TotpAuthenticatorInterface $authenticator, QrCodeGenerator $qrCodeGenerator)
+    public function enableTwoFactorAuthAction(Request $req, TotpAuthenticatorInterface $authenticator, QrCodeGenerator $qrCodeGenerator): Response
     {
         $secret = $req->getSession()->get('tfa-secret', $authenticator->generateSecret());
 
@@ -59,7 +60,7 @@ class TfaSecurityController extends AbstractController
     /**
      * @Route("/admin/tfa/disable", name="admin.tfa.disable", methods={"GET", "POST"})
      */
-    public function disableTwoFactorAuthAction(Request $req, TotpAuthenticatorInterface $authenticator, QrCodeGenerator $qrCodeGenerator)
+    public function disableTwoFactorAuthAction(Request $req, TotpAuthenticatorInterface $authenticator): Response
     {
         /** @var CurrentAdmin $user */
         $user = $this->getUser();

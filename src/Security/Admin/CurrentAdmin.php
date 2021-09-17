@@ -4,7 +4,6 @@ namespace EtoA\Security\Admin;
 
 use EtoA\Admin\AdminUser;
 use Scheb\TwoFactorBundle\Model\Totp\TotpConfiguration;
-use Scheb\TwoFactorBundle\Model\Totp\TotpConfigurationInterface;
 use Scheb\TwoFactorBundle\Model\Totp\TwoFactorInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;

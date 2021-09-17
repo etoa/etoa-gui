@@ -2,7 +2,6 @@
 
 namespace EtoA\Security\Admin;
 
-use EtoA\Admin\AdminSessionRepository;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;

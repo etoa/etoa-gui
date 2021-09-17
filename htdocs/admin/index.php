@@ -16,8 +16,6 @@ use Twig\Environment;
 /** @var \EtoA\Admin\AdminUser $adminUser */
 /** @var Request $request */
 
-ob_start();
-
 require __DIR__ . '/inc/includer.inc.php';
 $app = require __DIR__ . '/../../src/app.php';
 
@@ -131,8 +129,6 @@ function adminView(
         require __DIR__ . '/inc/adminlist.inc.php';
     } elseif (isset($_GET['myprofile'])) {
         require __DIR__ . '/inc/myprofile.inc.php';
-    } elseif (isset($_GET['tfa'])) {
-        require __DIR__ . '/inc/tfa.inc.php';
     } else {
         // Check permissions
         $allow_inc = false;
@@ -174,8 +170,4 @@ function adminView(
             echo "<h1>Kein Zugriff</h1> Du hast keinen Zugriff auf diese Seite!";
         }
     }
-
-    echo $twig->render('admin/default.html.twig', [
-        'content' => ob_get_clean(),
-    ]);
 }
