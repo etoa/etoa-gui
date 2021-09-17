@@ -193,39 +193,42 @@
 										// Do the scan if chance >= 0
 										if ($chance >= 0)
 										{
-											$decryptlevel = ($cryptoCenterLevel-$op_jam) + (0.75*($self_spy + $self_computer - $op_stealth - $op_computer)) + mt_rand(0,2)-1;
-
-											// Decrypt level
-											// < 0 Only show that there are some fleets
-											//  0 <= 10 Show that there are x fleets
-											// 10 <= 14 Show that there are x fleets from y belonging to z, show hour
-											// 14 <= 18 Also show ship types, show mninutes with +- 15 mins
-											// 18 <= 22 Also show count of ships and time in minutes
-											// 22 <= 26 Also show count of every ship and exact time
-											// >26 Show action
+											$decryptlevel = ($cryptoCenterLevel-$op_jam) +
+												(0.75*($self_spy + $self_computer - $op_stealth - $op_computer)) +
+												mt_rand($cfg->value("crypto_rand_mod_min"),$cfg->value("crypto_rand_mod_max"));
 
 											$out="[b]Flottenscan vom Planeten ".$target->name()."[/b] (".$sx."/".$sy." : ".$cx."/".$cy." : ".$pp.")\n\n";
 
-											$out.="[b]Eintreffende Flotten[/b]\n\n";
-											$fres = dbquery("
-															SELECT
-																id
-															FROM
-																fleet
-															WHERE
-																entity_to=".$target->id()."");
-											if (mysql_num_rows($fres)>0)
+											if ($decryptlevel>=$cfg->value("crypto_number_of_fleets_level"))
 											{
-												if ($decryptlevel<0)
-												{
-													$out.="Es sind Flotten unterwegs\n";
-												}
-												else if ($decryptlevel<10)
+												$fres = dbquery("
+												SELECT
+													id
+												FROM
+													fleet
+												WHERE
+													entity_from=".$target->id()."
+													OR entity_to".$target->id()."");
+												$out.="Es sind ".mysql_num_rows($fres)." Flotten unterwegs\n";
+											}
+											else
+											{
+												$out.="Es sind Flotten unterwegs\n";
+											}
+
+											if($decryptlevel>=$cfg->value("crypto_fleets_incoming_level"))
+											{
+												$out.="[b]Eintreffende Flotten[/b]\n\n";
+												$fres = dbquery("
+																SELECT
+																	id
+																FROM
+																	fleet
+																WHERE
+																	entity_to=".$target->id()."");
+												if (mysql_num_rows($fres)>0)
 												{
 													$out.="Es sind ".mysql_num_rows($fres)." Flotten unterwegs\n";
-												}
-												else
-												{
 													while ($farr=mysql_fetch_row($fres))
 													{
 														$fd = new Fleet($farr[0]);
@@ -233,35 +236,42 @@
 														$owner = new User($fd->ownerId());
 
 														$out.='[b]Herkunft:[/b] '.$source.', [b]Besitzer:[/b] '.$owner;
-														$out.= "\n[b]Ankunft:[/b] ";
 
-														if ($decryptlevel<=14)
+														if ($decryptlevel>=$cfg->value("crypto_time_sec_level"))
 														{
-															$rand = random_int(0, 30*60*2);
-															$out.="Zwischen ".date("d.m.Y H:i",$fd->landTime() - $rand)." und ".date("d.m.Y H:i",$fd->landTime()+(2*30*60)-$rand)." Uhr";
-														}
-														elseif ($decryptlevel<=18)
-														{
-															$rand = random_int(0, 2*7*60);
-															$out.="Zwischen ".date("d.m.Y H:i",$fd->landTime()-$rand)." und ".date("d.m.Y H:i",$fd->landTime()+(2*7*60)-$rand)." Uhr";
-														}
-														elseif ($decryptlevel<=22)
-														{
-															$out.=date("d.m.Y H:i",$fd->landTime())." Uhr";
-														}
-														else
-														{
+															$out.= "\n[b]Ankunft:[/b] ";
 															$out.=date("d.m.Y H:i:s",$fd->landTime())." Uhr";
 														}
+														elseif ($decryptlevel>=$cfg->value("crypto_time_min_level"))
+														{
+															$out.= "\n[b]Ankunft:[/b] ";
+															$out.=date("d.m.Y H:i",$fd->landTime())." Uhr";
+														}
+														elseif ($decryptlevel>=$cfg->value("crypto_time_15_level"))
+														{
+															$rand = random_int(0, 2*7*60);
+															$out.= "\n[b]Ankunft:[/b] ";
+															$out.="Zwischen ".date("d.m.Y H:i",$fd->landTime()-$rand)." und ".date("d.m.Y H:i",$fd->landTime()+(2*7*60)-$rand)." Uhr";
+														}
+														elseif ($decryptlevel>=$cfg->value("crypto_time_30_level"))
+														{
+															$rand = random_int(0, 30*60*2);
+															$out.= "\n[b]Ankunft:[/b] ";
+															$out.="Zwischen ".date("d.m.Y H:i",$fd->landTime() - $rand)." und ".date("d.m.Y H:i",$fd->landTime()+(2*30*60)-$rand)." Uhr";
+														}
 
-														if ($decryptlevel>26)
+														if ($decryptlevel>=$cfg->value("crypto_action_level"))
 														{
 															$out.=", [b]Aktion:[/b] ".substr($fd->getAction(),25,-7)."\n";
 														}
 														else
+														{
 															$out.="\n";
+														}
 
-														if ($decryptlevel>=15)
+														if (($decryptlevel>=$cfg->value("crypto_ships_type_level")) ||
+															($decryptlevel>=$cfg->value("crypto_ships_count_all_level")) ||
+															($decryptlevel>=$cfg->value("crypto_ships_count_single_level")))
 														{
 															$sres = dbquery("
 																			SELECT
@@ -270,7 +280,7 @@
 																			FROM
 																				fleet_ships
 																			INNER JOIN
-				 																ships
+																				ships
 																			ON ship_id=fs_ship_id
 																				AND fs_fleet_id=".$farr[0].";");
 															if (mysql_num_rows($sres)>0)
@@ -278,17 +288,22 @@
 																$cntr=0;
 																while ($sarr=mysql_fetch_array($sres))
 																{
-																	if ($decryptlevel <=25 )
+																	if (($decryptlevel>=$cfg->value("crypto_ships_count_single_level")) &&
+																		($decryptlevel>=$cfg->value("crypto_ships_type_level")))
+																	{
+																		$out.="".$sarr['fs_ship_cnt']." ".$sarr['ship_name']."\n";
+																	}
+																	elseif ($decryptlevel>=$cfg->value("crypto_ships_count_single_level"))
+																	{
+																		$out.="".$sarr['fs_ship_cnt']."\n";
+																	}
+																	elseif ($decryptlevel>=$cfg->value("crypto_ships_type_level"))
 																	{
 																		$out.="".$sarr['ship_name']."\n";
 																	}
-																	else
-																	{
-																		$out.=$sarr['fs_ship_cnt']." ".$sarr['ship_name']."\n";
-																	}
 																	$cntr+=$sarr['fs_ship_cnt'];
 																}
-																if ($decryptlevel >20)
+																if ($decryptlevel>=$cfg->value("crypto_ships_count_all_level"))
 																{
 																	$out.=$cntr." Schiffe total\n";
 																}
@@ -297,33 +312,26 @@
 														$out.="\n";
 													}
 												}
-											}
-											else
-											{
-												$out.="Keine eintreffenden Flotten gefunden!\n\n";
-											}
-
-											$out.="[b]Wegfliegende Flotten[/b]\n\n";
-											$fres = dbquery("
-															SELECT
-																id
-															FROM
-																fleet
-															WHERE
-																entity_from=".$target->id()."
-																AND entity_to<>".$target->id()."");
-											if (mysql_num_rows($fres)>0)
-											{
-												if ($decryptlevel<0)
-												{
-													$out.="Es sind Flotten unterwegs\n";
-												}
-												else if ($decryptlevel<10)
-												{
-													$out.="Es sind ".mysql_num_rows($fres)." Flotten unterwegs\n";
-												}
 												else
 												{
+													$out.="Keine eintreffenden Flotten gefunden!\n\n";
+												}
+											}
+
+											if($decryptlevel>=$cfg->value("crypto_fleets_send_level"))
+											{
+												$out.="[b]Wegfliegende Flotten[/b]\n\n";
+												$fres = dbquery("
+																SELECT
+																	id
+																FROM
+																	fleet
+																WHERE
+																	entity_from=".$target->id()."
+																	AND entity_to<>".$target->id()."");
+												if (mysql_num_rows($fres)>0)
+												{
+													$out.="Es sind ".mysql_num_rows($fres)." Flotten unterwegs\n";
 													while ($farr=mysql_fetch_row($fres))
 													{
 														$fd = new Fleet($farr[0]);
@@ -331,50 +339,64 @@
 														$owner = new User($fd->ownerId());
 
 														$out.='[b]Ziel:[/b] '.$source.', [b]Besitzer:[/b] '.$owner;
-														$out.= "\n[b]Ankunft:[/b] ";
 
-														if ($decryptlevel<=15)
+														if ($decryptlevel>=$cfg->value("crypto_time_sec_level"))
 														{
-															$out.="Zwischen ".date("d.m.Y H:i",$fd->landTime()-(30*60))." und ".date("d.m.Y H:i",$fd->landTime()+(30*60))." Uhr";
-														}
-														elseif ($decryptlevel<=20)
-														{
-															$out.="Zwischen ".date("d.m.Y H:i",$fd->landTime()-(7*60))." und ".date("d.m.Y H:i",$fd->landTime()+(7*60))." Uhr";
-														}
-														elseif ($decryptlevel<=25)
-														{
-															$out.=date("d.m.Y H:i",$fd->landTime())." Uhr";
-														}
-														else
-														{
+															$out.= "\n[b]Ankunft:[/b] ";
 															$out.=date("d.m.Y H:i:s",$fd->landTime())." Uhr";
 														}
+														elseif ($decryptlevel>=$cfg->value("crypto_time_min_level"))
+														{
+															$out.= "\n[b]Ankunft:[/b] ";
+															$out.=date("d.m.Y H:i",$fd->landTime())." Uhr";
+														}
+														elseif ($decryptlevel>=$cfg->value("crypto_time_15_level"))
+														{
+															$rand = random_int(0, 2*7*60);
+															$out.= "\n[b]Ankunft:[/b] ";
+															$out.="Zwischen ".date("d.m.Y H:i",$fd->landTime()-$rand)." und ".date("d.m.Y H:i",$fd->landTime()+(2*7*60)-$rand)." Uhr";
+														}
+														elseif ($decryptlevel>=$cfg->value("crypto_time_30_level"))
+														{
+															$rand = random_int(0, 30*60*2);
+															$out.= "\n[b]Ankunft:[/b] ";
+															$out.="Zwischen ".date("d.m.Y H:i",$fd->landTime() - $rand)." und ".date("d.m.Y H:i",$fd->landTime()+(2*30*60)-$rand)." Uhr";
+														}
 
-														if ($decryptlevel>30)
+														if ($decryptlevel>=$cfg->value("crypto_action_level"))
 														{
 															$out.=", [b]Aktion:[/b] ".substr($fd->getAction(),25,-7)."\n";
 														}
 														else
+														{
 															$out.="\n";
+														}
 
-														if ($decryptlevel>=15)
+														if (($decryptlevel>=$cfg->value("crypto_ships_type_level")) || 
+															($decryptlevel>=$cfg->value("crypto_ships_count_all_level")) ||
+															($decryptlevel>=$cfg->value("crypto_ships_count_single_level")))
 														{
 															$cntr=0;
 															foreach ($fd->getShips() as $sid => $sdat)
 															{
 																$sids = $fd->getShipIds();
 																$cnt = $sids[$sid];
-																if ($decryptlevel <=25 )
-																{
-																	$out.="".$sdat."\n";
-																}
-																else
+																if (($decryptlevel>=$cfg->value("crypto_ships_count_single_level")) &&
+																($decryptlevel>=$cfg->value("crypto_ships_type_level")))
 																{
 																	$out.=$cnt." ".$sdat."\n";
 																}
+																elseif ($decryptlevel>=$cfg->value("crypto_ships_count_single_level"))
+																{
+																	$out.="".$cnt."\n";
+																}
+																elseif ($decryptlevel>=$cfg->value("crypto_ships_type_level"))
+																{
+																	$out.="".$sdat."\n";
+																}
 																$cntr+=$cnt;
 															}
-															if ($decryptlevel >20)
+															if ($decryptlevel>=$cfg->value("crypto_ships_count_all_level"))
 															{
 																$out.=$cntr." Schiffe total\n";
 															}
@@ -382,10 +404,10 @@
 														$out.="\n";
 													}
 												}
-											}
-											else
-											{
-												$out.='Keine abfliegenden Flotten gefunden!';
+												else
+												{
+													$out.='Keine abfliegenden Flotten gefunden!';
+												}
 											}
 
 											$out.="\n\nEntschlüsselchance: $decryptlevel";

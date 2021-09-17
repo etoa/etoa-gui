@@ -727,6 +727,49 @@ https://etoa.ch</v>
       <v comment="Kosten an Tritium pro Kryptoanalyse" type="text">10000</v>
     </item>
 
+    <item name="crypto_number_of_fleets_level" cat="23">
+      <v comment="Zeige Anzahl der Flotten" type="text">0</v>
+    </item>
+    <item name="crypto_fleets_incoming_level" cat="23">
+      <v comment="Zeige ankommende Flotten" type="text">2.5</v>
+    </item>
+    <item name="crypto_fleets_send_level" cat="23">
+      <v comment="Zeige gesendete Flotten" type="text">7.5</v>
+    </item>
+    <item name="crypto_time_30_level" cat="23">
+      <v comment="Zeige Ankunftszeit +-30 min" type="text">5</v>
+    </item>
+    <item name="crypto_time_15_level" cat="23">
+      <v comment="Zeige Ankunftszeit +-15 min" type="text">10</v>
+    </item>
+    <item name="crypto_time_min_level" cat="23">
+      <v comment="Zeige Ankunftszeit (min)" type="text">15</v>
+    </item>
+    <item name="crypto_time_sec_level" cat="23">
+      <v comment="Zeige Ankunftszeit (sec)" type="text">17.5</v>
+    </item>
+    <item name="crypto_ships_type_level" cat="23">
+      <v comment="Zeige Schiffstypen" type="text">12.5</v>
+    </item>
+    <item name="crypto_ships_count_all_level" cat="23">
+      <v comment="Zeige Schiffsanzahl (gesamt)" type="text">12.5</v>
+    </item>
+    <item name="crypto_ships_count_single_level" cat="23">
+      <v comment="Zeige Schiffsanzahl (einzeln)" type="text">12.5</v>
+    </item>
+    <item name="crypto_action_level" cat="23">
+      <v comment="Zeige Schiffsaktionen" type="text">20</v>
+    </item>
+    <item name="crypto_recources_level" cat="23">
+      <v comment="Zeige Ressourcen" type="text">22.5</v>
+    </item>
+    <item name="crypto_rand_mod_min" cat="23">
+      <v comment="Zufallsmodifikator (min)" type="text">-5</v>
+    </item>
+    <item name="crypto_rand_mod_max" cat="23">
+      <v comment="Zufallsmodifikator (max)" type="text">0</v>
+    </item>
+
     <item name="chat_recent_messages" cat="25">
       <v comment="Anzahl aktuelle Chat Nachrichten" type="text">200</v>
     </item>
