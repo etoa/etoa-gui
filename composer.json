@@ -30,7 +30,8 @@
         "twig/extra-bundle": "^3.0",
         "symfony/yaml": "^5.3",
         "symfony/security-bundle": "^5.3",
-        "doctrine/annotations": "^1.13"
+        "doctrine/annotations": "^1.13",
+        "symfony/translation": "^5.3"
     },
     "require-dev": {
         "ergebnis/composer-normalize": "^2.0",

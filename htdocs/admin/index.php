@@ -12,9 +12,9 @@ use EtoA\User\UserRepository;
 use EtoA\User\UserSessionRepository;
 use Twig\Environment;
 
-ob_start();
+/** @var \EtoA\Admin\AdminUser $adminUser */
 
-require_once __DIR__ . '/../../vendor/autoload.php';
+ob_start();
 
 require __DIR__ . '/inc/includer.inc.php';
 $app = require __DIR__ . '/../../src/app.php';
@@ -23,80 +23,54 @@ $twig->addGlobal('ajaxJs', $xajax->getJavascript());
 $twig->addGlobal('pageTitle', getGameIdentifier() . ' Administration');
 $twig->addGlobal('bodyTopStuff', getInitTT());
 
+/** @var AdminUserRepository $adminUserRepo */
+$adminUserRepo = $app[AdminUserRepository::class];
 
-// Login if requested
-if (isset($_POST['login_submit'])) {
-    if (!$s->login($_POST)) {
-        include __DIR__ . '/inc/admin_login.inc.php';
-        return;
-    }
+/** @var UserRepository $userRepo */
+$userRepo = $app[UserRepository::class];
 
-    if ($_SERVER['QUERY_STRING']) {
-        forward("?" . $_SERVER['QUERY_STRING']);
-    } else {
-        forward(".");
-    }
-}
+/** @var UserSessionRepository $userSessionRepo */
+$userSessionRepo = $app[UserSessionRepository::class];
 
-// Perform logout if requested
-if (isset($_GET['logout']) && $_GET['logout'] != null) {
-    $s->logout();
-    forward('.', "Logout");
-}
+/** @var AdminNotesRepository $notesRepo */
+$notesRepo = $app[AdminNotesRepository::class];
 
-// Validate session
-if (!$s->validate()) {
-    include __DIR__ . '/inc/admin_login.inc.php';
-} else {
-    /** @var AdminUserRepository $adminUserRepo */
-    $adminUserRepo = $app[AdminUserRepository::class];
+/** @var AdminRoleManager $roleManager */
+$roleManager = $app[AdminRoleManager::class];
 
-    /** @var UserRepository $userRepo */
-    $userRepo = $app[UserRepository::class];
+/** @var AdminSessionRepository $sessionRepository */
+$sessionRepository = $app[AdminSessionRepository::class];
 
-    /** @var UserSessionRepository $userSessionRepo */
-    $userSessionRepo = $app[UserSessionRepository::class];
+/** @var DatabaseManagerRepository $databaseManager */
+$databaseManager = $app[DatabaseManagerRepository::class];
 
-    /** @var AdminNotesRepository $notesRepo */
-    $notesRepo = $app[AdminNotesRepository::class];
+/** @var TicketRepository $ticketRepo */
+$ticketRepo = $app[TicketRepository::class];
 
-    /** @var AdminRoleManager $roleManager */
-    $roleManager = $app[AdminRoleManager::class];
+/** @var ConfigurationService $config */
+$config = $app[ConfigurationService::class];
 
-    /** @var AdminSessionRepository $sessionRepository */
-    $sessionRepository = $app[AdminSessionRepository::class];
+/** @var EventHandlerManager $eventHandlerManager */
+$eventHandlerManager = $app[EventHandlerManager::class];
 
-    /** @var DatabaseManagerRepository $databaseManager */
-    $databaseManager = $app[DatabaseManagerRepository::class];
-
-    /** @var TicketRepository $ticketRepo */
-    $ticketRepo = $app[TicketRepository::class];
-
-    /** @var ConfigurationService $config */
-    $config = $app[ConfigurationService::class];
-
-    /** @var EventHandlerManager $eventHandlerManager */
-    $eventHandlerManager = $app[EventHandlerManager::class];
-
-    adminView(
-        $s,
-        $adminUserRepo,
-        $userRepo,
-        $userSessionRepo,
-        $notesRepo,
-        $roleManager,
-        $sessionRepository,
-        $databaseManager,
-        $ticketRepo,
-        $config,
-        $eventHandlerManager,
-        $twig
-    );
-}
+adminView(
+    $adminUser,
+    $adminUserRepo,
+    $userRepo,
+    $userSessionRepo,
+    $notesRepo,
+    $roleManager,
+    $sessionRepository,
+    $databaseManager,
+    $ticketRepo,
+    $config,
+    $eventHandlerManager,
+    $twig
+);
 
 
 function adminView(
-    AdminSession $s,
+    \EtoA\Admin\AdminUser $adminUser,
     AdminUserRepository $adminUserRepo,
     UserRepository $userRepo,
     UserSessionRepository $userSessionRepo,
@@ -108,21 +82,21 @@ function adminView(
     ConfigurationService $config,
     EventHandlerManager $eventHandlerManager,
     Environment $twig
-) {
+)
+{
     global $page;
     global $sub;
     global $app;
     global $cu;
 
-    // Load admin user data
-    $cu = $adminUserRepo->find($s->user_id);
+    $cu = $adminUser;
 
     $searchQuery = $_POST['search_query'] ?? '';
     $navMenu = fetchJsonConfig("admin-menu.conf");
 
-    $numNotes = $notesRepo->countForAdmin($s->user_id);
+    $numNotes = $notesRepo->countForAdmin($adminUser->id);
 
-    $numTickets = $ticketRepo->countAssigned($s->user_id) + $ticketRepo->countNew();
+    $numTickets = $ticketRepo->countAssigned($adminUser->id) + $ticketRepo->countNew();
 
     $twig->addGlobal('searchQuery', $searchQuery);
     $twig->addGlobal('navMenu', $navMenu);
@@ -131,8 +105,8 @@ function adminView(
     $twig->addGlobal('numTickets', $numTickets);
     $twig->addGlobal('numTickets', $numTickets);
     $twig->addGlobal('numNotes', $numNotes);
-    $twig->addGlobal('currentUserNick', $cu->nick);
-    $twig->addGlobal('userRoles', $cu->roles);
+    $twig->addGlobal('currentUserNick', $adminUser->nick);
+    $twig->addGlobal('userRoles', $adminUser->roles);
     $twig->addGlobal('isUnix', isUnixOS());
 
     if (isUnixOS()) {
@@ -167,7 +141,7 @@ function adminView(
         foreach ($navMenu as $item) {
             if ($item['page'] == $page && $sub == "") {
                 $found = true;
-                if ($roleManager->checkAllowed($cu, $item['roles'])) {
+                if ($roleManager->checkAllowed($adminUser, $item['roles'])) {
                     $allow_inc = true;
                     break;
                 }
@@ -175,7 +149,7 @@ function adminView(
                 foreach ($item['children'] as $data) {
                     if ($item['page'] == $page && $data['sub'] == $sub) {
                         $found = true;
-                        if ($roleManager->checkAllowed($cu, $data['roles'])) {
+                        if ($roleManager->checkAllowed($adminUser, $data['roles'])) {
                             $allow_inc = true;
                             break;
                         }
@@ -185,7 +159,7 @@ function adminView(
         }
 
         if ($allow_inc || !$found) {
-            if (preg_match('^[a-z\_]+$^', $page)  && strlen($page) <= 50) {
+            if (preg_match('^[a-z\_]+$^', $page) && strlen($page) <= 50) {
                 $contentFile = __DIR__ . "/content/" . $page . ".php";
                 if (is_file($contentFile)) {
                     include $contentFile;
@@ -200,9 +174,6 @@ function adminView(
             echo "<h1>Kein Zugriff</h1> Du hast keinen Zugriff auf diese Seite!";
         }
     }
-
-    // Write all changes of $s to the session variable
-    $_SESSION[SESSION_NAME] = $s;
 
     echo $twig->render('admin/default.html.twig', [
         'content' => ob_get_clean(),

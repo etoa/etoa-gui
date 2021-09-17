@@ -19,8 +19,6 @@ $config = $app[ConfigurationService::class];
 
 // Init session
 if (ADMIN_MODE) {
-    $s = AdminSession::getInstance($config);
-} else {
     $s = UserSession::getInstance($config);
 }
 

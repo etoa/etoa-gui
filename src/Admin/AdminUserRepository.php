@@ -86,10 +86,8 @@ class AdminUserRepository extends AbstractRepository
             ->fetchAllKeyValue();
     }
 
-    public function setPassword(AdminUser $adminUser, string $password, bool $forceChange = false): void
+    public function setPassword(AdminUser $adminUser, string $newHashedPassword, bool $forceChange = false): void
     {
-        $pws = saltPasswort($password);
-
         $this->createQueryBuilder()
             ->update('admin_users')
             ->set('user_password', ':password')
@@ -97,12 +95,12 @@ class AdminUserRepository extends AbstractRepository
             ->where('user_id = :id')
             ->setParameters([
                 'id' => $adminUser->id,
-                'password' => $pws,
+                'password' => $newHashedPassword,
                 'pwchange' => $forceChange ? 1 : 0,
             ])
             ->execute();
 
-        $adminUser->passwordString = $pws;
+        $adminUser->passwordString = $newHashedPassword;
         $adminUser->forcePasswordChange = $forceChange;
     }
 

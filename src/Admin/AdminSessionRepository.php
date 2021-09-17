@@ -63,7 +63,7 @@ class AdminSessionRepository extends AbstractRepository
         return array_map(fn (array $row) => new AdminSession($row), $data);
     }
 
-    public function exists(string $id, int $userId, string $userAgent, int $timeLogin): bool
+    public function exists(string $id, int $userId, string $userAgent): bool
     {
         return (bool) $this->createQueryBuilder()
             ->select("COUNT(*)")
@@ -71,12 +71,10 @@ class AdminSessionRepository extends AbstractRepository
             ->where('id = :id')
             ->andWhere('user_id = :user_id')
             ->andWhere('user_agent = :user_agent')
-            ->andWhere('time_login = :time_login')
             ->setParameters([
                 'id' => $id,
                 'user_id' => $userId,
                 'user_agent' => $userAgent,
-                'time_login' => $timeLogin,
             ])
             ->execute()
             ->fetchOne();
@@ -103,15 +101,17 @@ class AdminSessionRepository extends AbstractRepository
             ->execute();
     }
 
-    public function update(string $id, int $time, string $ipAddress): void
+    public function update(string $id, int $userId, int $time, string $ipAddress): bool
     {
-        $this->createQueryBuilder()
+        return (bool) $this->createQueryBuilder()
             ->update('admin_user_sessions')
             ->set('time_action', ':time')
             ->set('ip_addr', ':ip_addr')
             ->where('id = :id')
+            ->andWhere('user_id = :userId')
             ->setParameters([
                 'id' => $id,
+                'userId' => $userId,
                 'time' => $time,
                 'ip_addr' => $ipAddress,
             ])

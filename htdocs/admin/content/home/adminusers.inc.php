@@ -197,7 +197,7 @@ function listUsers(
                 $password = generatePasswort();
                 echo "Das Passwort ist: $password<br/><br/>";
             }
-            $adminUserRepo->setPassword($admin, $password);
+            $adminUserRepo->setPassword($admin, saltPasswort($password));
         } else {
             echo "Nick nicht angegeben!<br/><br/>";
         }
@@ -208,7 +208,7 @@ function listUsers(
             $adminUser = $adminUserRepo->find($request->request->getInt('user_id'));
 
             if ($request->request->get('user_password') != "") {
-                $adminUserRepo->setPassword($adminUser, $request->request->get('user_password'));
+                $adminUserRepo->setPassword($adminUser, saltPasswort($request->request->get('user_password')));
                 $logRepository->add(LogFacility::ADMIN, LogSeverity::INFO, "Der Administrator " . $cu->nick . " ändert das Passwort des Administrators " . $adminUser->nick . "(" . $adminUser->id . ").");
             }
 
