@@ -186,9 +186,9 @@ function adminView(
 
         if ($allow_inc || !$found) {
             if (preg_match('^[a-z\_]+$^', $page)  && strlen($page) <= 50) {
-                $contentFile = "content/" . $page . ".php";
+                $contentFile = __DIR__ . "/content/" . $page . ".php";
                 if (is_file($contentFile)) {
-                    include($contentFile);
+                    include $contentFile;
                     logAccess($page, "admin", $sub);
                 } else {
                     echo "<h1>Fehler</h1> Die Seite $page wurde nicht gefunden!";

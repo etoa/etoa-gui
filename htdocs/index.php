@@ -74,6 +74,7 @@ if (!$s->validate()) {
 }
 
 // Load user data
+global $cu;
 $cu = new User($s->user_id);
 
 // Check if it is valid user
@@ -201,6 +202,7 @@ try {
                 $s->cpid = $cpid;
             }
 
+            global $cp;
             $cp = Planet::getById($cpid);
             $pm = new PlanetManager($planets);
         } else {
@@ -252,7 +254,7 @@ try {
     $globals = array_merge($currentPlanetData, [
         'design' => strtolower(str_replace('designs/official/', '', CSS_STYLE)),
         'gameTitle' => getGameIdentifier(),
-        'templateDir' => CSS_STYLE,
+        'templateDir' => '/' .CSS_STYLE,
         'xajaxJS' => $xajax->getJavascript(),
         'bodyTopStuff' => getInitTT(),
         'ownFleetCount' => $ownFleetCount,

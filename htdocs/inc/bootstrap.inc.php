@@ -6,6 +6,7 @@ require_once __DIR__ . '/../../vendor/autoload.php';
 require __DIR__ . '/init.inc.php';
 
 if (!isset($app)) {
+    global $app;
     $app = require __DIR__ . '/../../src/app.php';
     $app->boot();
 }
@@ -26,6 +27,7 @@ if (ADMIN_MODE) {
 $twig = $app['twig'];
 
 // Set default page / action variables
+global $page, $mode, $sub, $index, $info;
 $page = (isset($_GET['page']) && $_GET['page'] != "") ? $_GET['page'] : 'overview';
 $mode = (isset($_GET['mode']) && $_GET['mode'] != "") ? $_GET['mode'] : "";
 $sub = isset($_GET['sub']) ? $_GET['sub'] : null;

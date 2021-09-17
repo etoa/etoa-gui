@@ -73,7 +73,7 @@ class TwigExtension extends AbstractExtension
             case 'chat':
                 return ExternalUrl::CHAT;
             case 'login':
-                return '/show.php?index=login';
+                return '/show/?index=login';
             default:
                 throw new \InvalidArgumentException('Unknown url ' . $id);
         }

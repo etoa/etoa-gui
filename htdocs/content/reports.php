@@ -19,10 +19,11 @@ foreach (ReportTypes::TYPES as $k => $v) {
     $tabitems[$k] = $v;
 }
 $tabitems["archiv"] = "Archiv";
-show_tab_menu("type", $tabitems);
 
 // Detect report type
 $type = isset($_GET['type']) ? $_GET['type'] : 'all';
+
+show_tab_menu("type", $tabitems, $type);
 
 // Selektiere archivieren
 if (isset($_POST['submitarchivselection'])  && checker_verify()) {

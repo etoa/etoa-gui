@@ -48,7 +48,7 @@ if ($cp) {
             show_tab_menu("mode", array(
                 "launch" => "Flotten versenden",
                 "transship" => "Mobile Anlagen umladen",
-            ));
+            ), $mode);
             echo "<br/>";
         }
 

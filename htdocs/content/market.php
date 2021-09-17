@@ -151,7 +151,7 @@ if ($config->getBoolean('market_enabled')) {
                 "user_sell" => "Eigene Angebote",
                 "search" => "Angebotssuche",
             );
-            show_tab_menu("mode", $tabitems);
+            show_tab_menu("mode", $tabitems, $mode);
 
             echo "<br/>";
 

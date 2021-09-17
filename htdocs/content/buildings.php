@@ -481,7 +481,7 @@ if (isset($cp)) {
             "buildable" => "Baubare Gebäude",
             "resable" => "Ausbaubare Gebäude",
         );
-        show_tab_menu("mode", $tabitems);
+        show_tab_menu("mode", $tabitems, $mode);
         $mode = (isset($_GET['mode']) && ctype_alpha($_GET['mode'])) ? $_GET['mode'] : "all";
 
         /** @var BuildingTypeDataRepository $buildingTypeRepository */

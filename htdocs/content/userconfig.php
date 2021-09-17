@@ -31,7 +31,7 @@ $warnings = $userWarningRepository->getUserWarnings($cu->getId());
 if (count($warnings) > 0)
     $tabitems['warnings'] = "Verwarnungen";
 
-show_tab_menu("mode", $tabitems);
+show_tab_menu("mode", $tabitems, $mode);
 echo '<br/>';
 
 

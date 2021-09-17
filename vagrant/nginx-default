@@ -4,19 +4,15 @@ server {
 
     root /var/www/etoa/htdocs;
 
-    location /admin/ {
-        try_files $uri /admin/index.php$is_args$args;
-    }
-
-    location /api/ {
-        try_files $uri /api.php$is_args$args;
+    location ~ ^/(_profiler|_wdt|api|show|info|admin)/ {
+        try_files $uri /symfony.php$is_args$args;
     }
 
     location / {
-        try_files $uri /index.php$is_args$args;
+        try_files $uri /symfony.php$is_args$args;
     }
 
-    location ~ ^/(index|show|chat|chatframe|api|version|admin\/index|admin\/dl|misc\/(alliance_stats|map|market|powerproduction|progress|solsys|stats).image)\.php(/|$) {
+    location ~ \.php(/|$) {
         fastcgi_pass unix:/run/php/php7.4-fpm.sock;
         fastcgi_split_path_info ^(.+\.php)(/.*)$;
         fastcgi_buffers 16 16k;

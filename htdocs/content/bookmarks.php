@@ -55,7 +55,8 @@ show_tab_menu(
         "target" => "Zielfavoriten",
         "fleet" => "Flottenfavoriten",
         "new" => "Neuer Flottenfavorit"
-    )
+    ),
+    $mode
 );
 echo '<br/>';
 

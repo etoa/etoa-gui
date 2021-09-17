@@ -147,7 +147,7 @@ if (isset($cp)) {
         "ships" => "Schiffe",
         "defense" => "Verteidigung",
         "missiles" => "Raketen"
-    ));
+    ), $mode);
     echo "<br>";
 
     if ($mode != "" && $requirementsRepository !== null) {
