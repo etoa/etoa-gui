@@ -22,8 +22,6 @@ require __DIR__ . '/inc/includer.inc.php';
 $app = require __DIR__ . '/../../src/app.php';
 
 $twig->addGlobal('ajaxJs', $xajax->getJavascript());
-$twig->addGlobal('pageTitle', getGameIdentifier() . ' Administration');
-$twig->addGlobal('bodyTopStuff', getInitTT());
 
 /** @var AdminUserRepository $adminUserRepo */
 $adminUserRepo = $app[AdminUserRepository::class];

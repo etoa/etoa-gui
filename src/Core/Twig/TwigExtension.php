@@ -34,6 +34,7 @@ class TwigExtension extends AbstractExtension
             new TwigFunction('isAdminAllowed', [$this, 'isAdminAllowed']),
             new TwigFunction('renderTime', [$this, 'renderTime']),
             new TwigFunction('formatTimestamp', [$this, 'formatTimestamp']),
+            new TwigFunction('getGameIdentifier', [$this, 'getGameIdentifier']),
         ];
     }
 
@@ -127,5 +128,10 @@ class TwigExtension extends AbstractExtension
     public function formatTimestamp($timestamp): string
     {
         return (new \DateTime('@' . $timestamp))->format('d.m.Y, H:i:s');
+    }
+
+    public function getGameIdentifier(): string
+    {
+        return getGameIdentifier($this->config);
     }
 }
