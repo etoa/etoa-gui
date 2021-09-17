@@ -10,7 +10,7 @@
     {% endif %}
 
     {% if forcePasswordChange %}
-        {{ macros.messagebox('Dein Passwort wurde seit der letzten automatischen Generierung noch nicht geändert. Bitte mache das jetzt <a href=\"?myprofile=1\">hier</a>!', 'warning', 'Passwortwiederherstellung')}}
+        {{ macros.messagebox('Dein Passwort wurde seit der letzten automatischen Generierung noch nicht geändert. Bitte mache das jetzt <a href=\"/admin/profile/">hier</a>!', 'warning', 'Passwortwiederherstellung')}}
     {% endif %}
 
     {% if not hasTfa %}

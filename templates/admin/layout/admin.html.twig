@@ -12,7 +12,7 @@
                 <span id="servertime">{{ serverTime() }}</span> &nbsp;
                 Eingeloggt als&nbsp;
                 <ul id="headernav">
-                    <li><a href="?myprofile=1">{{ app.user.username|default('Username') }}</a></li>
+                    <li><a href="/admin/profile/">{{ app.user.username|default('Username') }}</a></li>
                     <li><a href="?adminlist=1">Adminliste</a></li>
                     {% if isAdminAllowed(userRoles, ['master', 'super-admin', 'game-admin', 'trial-game-admin']) %}
                         <li><a href="?page=tickets">{{ numTickets > 0 ? 'Tickets (' ~ numTickets ~ ')' : 'Tickets' }}</a></li>
@@ -39,7 +39,7 @@
                                         href="{{ item.path }}"
 {#                                        {% if item.route == app.request.get('_route') %}class="active"{% endif %}#}
                                     {% else %}
-                                        href="?page={{ item.page }}{% if item.sub|default(false) %}&amp;sub={{ item.sub }}{% endif %}"
+                                        href="/admin/?page={{ item.page }}{% if item.sub|default(false) %}&amp;sub={{ item.sub }}{% endif %}"
                                         {% if page == item.page %}class="active"{% endif %}
                                     {% endif %}
                                 >

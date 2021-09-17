@@ -127,8 +127,6 @@ function adminView(
     // Inhalt einbinden
     if (isset($_GET['adminlist'])) {
         require __DIR__ . '/inc/adminlist.inc.php';
-    } elseif (isset($_GET['myprofile'])) {
-        require __DIR__ . '/inc/myprofile.inc.php';
     } else {
         // Check permissions
         $allow_inc = false;
