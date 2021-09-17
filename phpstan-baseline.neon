@@ -131,6 +131,11 @@ parameters:
 			path: htdocs/inc/bootstrap.inc.php
 
 		-
+			message: "#^Negated boolean expression is always true\\.$#"
+			count: 1
+			path: htdocs/inc/bootstrap.inc.php
+
+		-
 			message: "#^Construct empty\\(\\) is not allowed\\. Use more strict comparison\\.$#"
 			count: 1
 			path: htdocs/inc/functions.inc.php

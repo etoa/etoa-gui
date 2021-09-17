@@ -47,13 +47,13 @@ class AdminAuthenticator extends AbstractAuthenticator implements Authentication
         $credentials = $this->getCredentials($request);
 
         return new Passport(
-            new UserBadge($credentials['username'], function($username): ?CurrentAdmin {
+            new UserBadge($credentials['username'], function ($username): ?CurrentAdmin {
                 return $this->userProvider->loadUserByIdentifier($username);
             }),
             new PasswordCredentials($credentials['password']),
             [
                 new CsrfTokenBadge('admin_authenticate', $credentials['csrf_token']),
-                new PasswordUpgradeBadge($credentials['password'], $this->userProvider)
+                new PasswordUpgradeBadge($credentials['password'], $this->userProvider),
             ]
         );
     }

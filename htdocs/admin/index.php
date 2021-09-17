@@ -10,9 +10,11 @@ use EtoA\Help\TicketSystem\TicketRepository;
 use EtoA\Support\DB\DatabaseManagerRepository;
 use EtoA\User\UserRepository;
 use EtoA\User\UserSessionRepository;
+use Symfony\Component\HttpFoundation\Request;
 use Twig\Environment;
 
 /** @var \EtoA\Admin\AdminUser $adminUser */
+/** @var Request $request */
 
 ob_start();
 
@@ -65,7 +67,8 @@ adminView(
     $ticketRepo,
     $config,
     $eventHandlerManager,
-    $twig
+    $twig,
+    $request
 );
 
 
@@ -81,7 +84,8 @@ function adminView(
     TicketRepository $ticketRepo,
     ConfigurationService $config,
     EventHandlerManager $eventHandlerManager,
-    Environment $twig
+    Environment $twig,
+    Request $request
 )
 {
     global $page;

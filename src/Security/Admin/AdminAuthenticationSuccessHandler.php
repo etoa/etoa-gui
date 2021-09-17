@@ -11,7 +11,7 @@ class AdminAuthenticationSuccessHandler extends DefaultAuthenticationSuccessHand
     {
         parent::__construct($httpUtils, [
             'default_target_path' => '/admin/',
-            'login_path' => '/admin/login'
+            'login_path' => '/admin/login',
         ]);
     }
 }

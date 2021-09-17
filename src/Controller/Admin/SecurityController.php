@@ -73,7 +73,7 @@ class SecurityController extends AbstractController
                 $buttonMsg = 'Zum Login';
                 $buttonTarget = '?';
 
-                $this->logRepository->add(LogFacility::ADMIN, LogSeverity::INFO,  "Der Administrator " . $user->nick . " (ID: " . $user->id . ") fordert per E-Mail (" . $user->email . ") von " . $_SERVER['REMOTE_ADDR'] . " aus ein neues Passwort an.");
+                $this->logRepository->add(LogFacility::ADMIN, LogSeverity::INFO, "Der Administrator " . $user->nick . " (ID: " . $user->id . ") fordert per E-Mail (" . $user->email . ") von " . $_SERVER['REMOTE_ADDR'] . " aus ein neues Passwort an.");
             } else {
                 $msgStyle = 'color_warn';
                 $statusMsg = 'Dieser Benutzer existiert nicht!';

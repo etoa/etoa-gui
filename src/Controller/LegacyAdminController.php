@@ -4,6 +4,7 @@ namespace EtoA\Controller;
 
 use EtoA\Security\Admin\CurrentAdmin;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -12,7 +13,7 @@ class LegacyAdminController extends AbstractController
     /**
      * @Route("/admin/", name="legacy.admin")
      */
-    public function index(): Response
+    public function index(Request $request): Response
     {
         ob_start();
 

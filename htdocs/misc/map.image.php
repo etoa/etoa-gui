@@ -64,7 +64,7 @@ $colBlue = imagecolorallocate($im,150,150,240);
 $colViolett = imagecolorallocate($im,200,0,200);
 $colRe = imagecolorallocate($im,200,0,200);
 
-$admin = isset($s) && $s instanceof AdminSession;
+$admin = !isset($s);
 
 if (isset($_SESSION) || $admin)
 {

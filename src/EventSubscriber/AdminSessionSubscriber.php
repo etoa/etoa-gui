@@ -33,7 +33,7 @@ class AdminSessionSubscriber implements EventSubscriberInterface
 
     public function onSuccessfulLogin(LoginSuccessEvent $event): void
     {
-        if ($event->getAuthenticatedToken() && $event->getAuthenticatedToken()->getUser() instanceof CurrentAdmin) {
+        if ($event->getAuthenticatedToken()->getUser() instanceof CurrentAdmin) {
             $time = time();
             $session = $event->getRequest()->getSession();
             /** @var CurrentAdmin $user */
@@ -54,7 +54,7 @@ class AdminSessionSubscriber implements EventSubscriberInterface
     public function onKernelRequest(RequestEvent $event): void
     {
         $token = $this->tokenStorage->getToken();
-        if ($token && $token->getUser() instanceof CurrentAdmin) {
+        if ($token !== null && $token->getUser() instanceof CurrentAdmin) {
             /** @var CurrentAdmin $user */
             $user = $token->getUser();
 
@@ -65,6 +65,7 @@ class AdminSessionSubscriber implements EventSubscriberInterface
             if ($lastAction + $this->config->getInt('admin_timeout') > $time) {
                 if ($this->adminSessionRepository->update($session->getId(), $user->getId(), $time, $event->getRequest()->getClientIp())) {
                     $session->set('lastAction', $time);
+
                     return;
                 }
             }
@@ -75,8 +76,8 @@ class AdminSessionSubscriber implements EventSubscriberInterface
 
     public function onLogout(LogoutEvent $event): void
     {
-        if ($event->getToken() && $event->getToken()->getUser() instanceof CurrentAdmin) {
-            $this->adminSessionManager->unregisterSession($event->getRequest()->getSession()->getId(), false);
+        if ($event->getToken() !== null && $event->getToken()->getUser() instanceof CurrentAdmin) {
+            $this->adminSessionManager->unregisterSession($event->getRequest()->getSession()->getId(), true);
         }
     }
 

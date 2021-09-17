@@ -2,7 +2,6 @@
 
 namespace EtoA\Security\Admin;
 
-use EtoA\Admin\AdminUser;
 use EtoA\Admin\AdminUserRepository;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\Exception\UserNotFoundException;
@@ -19,15 +18,19 @@ class AdminUserProvider implements UserProviderInterface, PasswordUpgraderInterf
         $this->adminUserRepository = $adminUserRepository;
     }
 
-    public function refreshUser(UserInterface $user): ?CurrentAdmin
+    public function refreshUser(UserInterface $user): CurrentAdmin
     {
         if (!$user instanceof CurrentAdmin) {
             throw new UnsupportedUserException(sprintf('Instances of "%s" are not supported.', get_debug_type($user)));
         }
 
         $data = $this->adminUserRepository->find($user->getId());
+        if ($data === null) {
+            $e = new UserNotFoundException('User with id '.$user->getId().' not found.');
+            $e->setUserIdentifier(json_encode($user->getId()));
+        }
 
-        return $data !== null ? new CurrentAdmin($data) : null;
+        return new CurrentAdmin($data);
     }
 
     public function supportsClass(string $class): bool
