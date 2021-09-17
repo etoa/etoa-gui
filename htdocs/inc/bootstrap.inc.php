@@ -18,7 +18,7 @@ require_once __DIR__ . '/def.inc.php';
 $config = $app[ConfigurationService::class];
 
 // Init session
-if (ADMIN_MODE) {
+if (!ADMIN_MODE) {
     $s = UserSession::getInstance($config);
 }
 

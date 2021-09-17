@@ -30,14 +30,6 @@ if (isset($_GET['sendpass'])) {
     } else {
         sendPasswordForm($twig);
     }
-} else if ($adminUserRepo->count() === 0) {
-    if (isset($_POST['newuser_submit']) && $_POST['user_email'] != "" && $_POST['user_nick'] != "" && $_POST['user_password'] != '') {
-        registerFirstUser($adminUserRepo, $twig);
-    } else {
-        registerFirstUserForm($twig);
-    }
-} else {
-    loginForm($s, $twig);
 }
 
 function sendPassword(
@@ -85,52 +77,4 @@ function sendPassword(
 function sendPasswordForm(Environment $twig): void
 {
     echo $twig->render('admin/login/request-password.html.twig', []);
-}
-
-function registerFirstUser(AdminUserRepository $adminUserRepo, Environment $twig): void
-{
-    $newAdmin = new AdminUser();
-    $newAdmin->email = $_POST['user_email'];
-    $newAdmin->nick = $_POST['user_nick'];
-    $newAdmin->name = $_POST['user_nick'];
-    $newAdmin->roles = ['master'];
-    $adminUserRepo->save($newAdmin);
-    $adminUserRepo->setPassword($newAdmin, $_POST['user_password']);
-
-    echo $twig->render('admin/login/login-status.html.twig', [
-        'title' => 'Admin-User erstellen',
-        'msgStyle' => 'color_ok',
-        'statusMsg' => 'Benutzer wurde erstellt!',
-        'buttonMsg' => 'Weiterfahren',
-        'buttonTarget' => '?',
-    ]);
-}
-
-function registerFirstUserForm(Environment $twig): void
-{
-    echo $twig->render('admin/login/login-newuser.html.twig', []);
-}
-
-function loginForm(AdminSession $s, Environment $twig): void
-{
-    $msg = null;
-    $msgStyle = null;
-    if ($s->lastError !== '' && $s->lastErrorCode !== 'nologin') {
-        $msg = $s->lastError;
-        $msgStyle = 'color_warn';
-    }
-
-    if ($s->lastErrorCode === 'tfa_challenge') {
-        echo $twig->render('admin/login/tfa-challenge.html.twig', [
-            'msg' => $msg,
-            'msgStyle' => $msgStyle,
-            'loginTarget' => '?' . $_SERVER['QUERY_STRING'],
-        ]);
-        return;
-    }
-
-    echo $twig->render('admin/login/login.html.twig', [
-        'msg' => $msg,
-        'msgStyle' => $msgStyle,
-    ]);
 }
