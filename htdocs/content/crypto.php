@@ -197,12 +197,12 @@
 
 											// Decrypt level
 											// < 0 Only show that there are some fleets
-											// 0 <= 10 Show that there are x fleets
-											// 10 <= 15 Show that there are x fleets from y belonging to z, show hour
-											// 15 <= 20 Also show ship types, show mninutes with +- 15 mins
-											// 20 <= 25 Also show count of ships and time in minutes
-											// 25 <= 30 Also show count of every ship and exact time
-											// >30 Show action
+											//  0 <= 10 Show that there are x fleets
+											// 10 <= 14 Show that there are x fleets from y belonging to z, show hour
+											// 14 <= 18 Also show ship types, show mninutes with +- 15 mins
+											// 18 <= 22 Also show count of ships and time in minutes
+											// 22 <= 26 Also show count of every ship and exact time
+											// >26 Show action
 
 											$out="[b]Flottenscan vom Planeten ".$target->name()."[/b] (".$sx."/".$sy." : ".$cx."/".$cy." : ".$pp.")\n\n";
 
@@ -235,17 +235,17 @@
 														$out.='[b]Herkunft:[/b] '.$source.', [b]Besitzer:[/b] '.$owner;
 														$out.= "\n[b]Ankunft:[/b] ";
 
-														if ($decryptlevel<=15)
+														if ($decryptlevel<=14)
 														{
 															$rand = random_int(0, 30*60*2);
 															$out.="Zwischen ".date("d.m.Y H:i",$fd->landTime() - $rand)." und ".date("d.m.Y H:i",$fd->landTime()+(2*30*60)-$rand)." Uhr";
 														}
-														elseif ($decryptlevel<=20)
+														elseif ($decryptlevel<=18)
 														{
 															$rand = random_int(0, 2*7*60);
 															$out.="Zwischen ".date("d.m.Y H:i",$fd->landTime()-$rand)." und ".date("d.m.Y H:i",$fd->landTime()+(2*7*60)-$rand)." Uhr";
 														}
-														elseif ($decryptlevel<=25)
+														elseif ($decryptlevel<=22)
 														{
 															$out.=date("d.m.Y H:i",$fd->landTime())." Uhr";
 														}
@@ -254,7 +254,7 @@
 															$out.=date("d.m.Y H:i:s",$fd->landTime())." Uhr";
 														}
 
-														if ($decryptlevel>30)
+														if ($decryptlevel>26)
 														{
 															$out.=", [b]Aktion:[/b] ".substr($fd->getAction(),25,-7)."\n";
 														}
