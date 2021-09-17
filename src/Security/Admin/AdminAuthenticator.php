@@ -22,15 +22,13 @@ use Symfony\Component\Security\Http\EntryPoint\AuthenticationEntryPointInterface
 class AdminAuthenticator extends AbstractAuthenticator implements AuthenticationEntryPointInterface
 {
     private AdminUserProvider $userProvider;
-    private AdminSessionRepository $adminSessionRepository;
     private AdminAuthenticationSuccessHandler $authenticationSuccessHandler;
     private AdminAuthenticationFailureHandler $authenticationFailureHandler;
     private UrlGeneratorInterface $urlGenerator;
 
-    public function __construct(AdminUserProvider $userProvider, AdminSessionRepository $adminSessionRepository, AdminAuthenticationSuccessHandler $authenticationSuccessHandler, AdminAuthenticationFailureHandler $authenticationFailureHandler, UrlGeneratorInterface $urlGenerator)
+    public function __construct(AdminUserProvider $userProvider, AdminAuthenticationSuccessHandler $authenticationSuccessHandler, AdminAuthenticationFailureHandler $authenticationFailureHandler, UrlGeneratorInterface $urlGenerator)
     {
         $this->userProvider = $userProvider;
-        $this->adminSessionRepository = $adminSessionRepository;
         $this->authenticationSuccessHandler = $authenticationSuccessHandler;
         $this->authenticationFailureHandler = $authenticationFailureHandler;
         $this->urlGenerator = $urlGenerator;

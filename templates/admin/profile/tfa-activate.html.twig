@@ -9,7 +9,7 @@
         {{ macros.messagebox(errMsg, 'error') }}
     {% endif %}
 
-    <form action="?tfa" method="post" class="blocklables label_width_200">
+    <form method="post" class="blocklables label_width_200">
         <fieldset><legend>Zwei-Faktor-Authentifizierung</legend>
             {% if tfaQrCode|default(false) %}
                 <p>Zwei-Faktor-Authentifizierung ist NICHT aktiv. Aktiviere dieses Sicherheitsfeature, um deinen Account besser zu schützen. Beim Login muss zusätzlich zum Passwort jedesmal ein zeitlich wechselnder Code eingegeben werden.</p>

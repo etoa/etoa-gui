@@ -107,9 +107,7 @@ function adminView(
     $twig->addGlobal('numTickets', $numTickets);
     $twig->addGlobal('numTickets', $numTickets);
     $twig->addGlobal('numNotes', $numNotes);
-    $twig->addGlobal('currentUserNick', $adminUser->nick);
     $twig->addGlobal('userRoles', $adminUser->roles);
-    $twig->addGlobal('isUnix', isUnixOS());
 
     if (isUnixOS()) {
         $eventHandlerPid = $eventHandlerManager->checkDaemonRunning();

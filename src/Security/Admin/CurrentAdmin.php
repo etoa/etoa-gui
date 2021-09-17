@@ -3,10 +3,13 @@
 namespace EtoA\Security\Admin;
 
 use EtoA\Admin\AdminUser;
+use Scheb\TwoFactorBundle\Model\Totp\TotpConfiguration;
+use Scheb\TwoFactorBundle\Model\Totp\TotpConfigurationInterface;
+use Scheb\TwoFactorBundle\Model\Totp\TwoFactorInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 
-class CurrentAdmin implements UserInterface, PasswordAuthenticatedUserInterface
+class CurrentAdmin implements UserInterface, PasswordAuthenticatedUserInterface, TwoFactorInterface
 {
     private AdminUser $adminUser;
 
@@ -55,5 +58,20 @@ class CurrentAdmin implements UserInterface, PasswordAuthenticatedUserInterface
     public function getData(): AdminUser
     {
         return $this->adminUser;
+    }
+
+    public function isTotpAuthenticationEnabled(): bool
+    {
+        return (bool) $this->adminUser->tfaSecret;
+    }
+
+    public function getTotpAuthenticationUsername(): string
+    {
+        return $this->adminUser->nick;
+    }
+
+    public function getTotpAuthenticationConfiguration(): TotpConfiguration
+    {
+        return new TotpConfiguration($this->adminUser->tfaSecret, TotpConfiguration::ALGORITHM_SHA1, 30, 6);
     }
 }

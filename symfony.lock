@@ -1,4 +1,13 @@
 {
+    "bacon/bacon-qr-code": {
+        "version": "2.0.4"
+    },
+    "beberlei/assert": {
+        "version": "v3.3.1"
+    },
+    "dasprid/enum": {
+        "version": "1.0.3"
+    },
     "doctrine/doctrine-bundle": {
         "version": "2.4",
         "recipe": {
@@ -18,14 +27,38 @@
     "doctrine/sql-formatter": {
         "version": "1.1.1"
     },
+    "endroid/qr-code": {
+        "version": "3.9.7"
+    },
     "friendsofphp/proxy-manager-lts": {
         "version": "v1.0.5"
+    },
+    "khanamiryan/qrcode-detector-decoder": {
+        "version": "1.0.5.2"
     },
     "laminas/laminas-code": {
         "version": "4.4.2"
     },
+    "lcobucci/clock": {
+        "version": "2.0.0"
+    },
+    "lcobucci/jwt": {
+        "version": "4.1.4"
+    },
+    "myclabs/php-enum": {
+        "version": "1.8.3"
+    },
+    "paragonie/constant_time_encoding": {
+        "version": "v2.4.0"
+    },
+    "scheb/2fa": {
+        "version": "v5.11.0"
+    },
     "silex/silex": {
         "version": "2.3.x-dev"
+    },
+    "spomky-labs/otphp": {
+        "version": "v10.0.1"
     },
     "symfony/cache": {
         "version": "v5.3.7"
@@ -221,6 +254,9 @@
     },
     "symfony/yaml": {
         "version": "v5.3.6"
+    },
+    "thecodingmachine/safe": {
+        "version": "v1.3.3"
     },
     "twig/extra-bundle": {
         "version": "v3.3.1"

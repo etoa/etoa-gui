@@ -35,6 +35,7 @@ class TwigExtension extends AbstractExtension
             new TwigFunction('renderTime', [$this, 'renderTime']),
             new TwigFunction('formatTimestamp', [$this, 'formatTimestamp']),
             new TwigFunction('getGameIdentifier', [$this, 'getGameIdentifier']),
+            new TwigFunction('isUnix', [$this, 'isUnix']),
         ];
     }
 
@@ -133,5 +134,10 @@ class TwigExtension extends AbstractExtension
     public function getGameIdentifier(): string
     {
         return getGameIdentifier($this->config);
+    }
+
+    public function isUnix(): bool
+    {
+        return isUnixOS();
     }
 }
