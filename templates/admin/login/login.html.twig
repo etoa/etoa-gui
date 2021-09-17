@@ -21,7 +21,7 @@
         </p>
         <p class="buttons">
             <input type="submit" name="login_submit" value="Login" /> &nbsp;
-            <input type="button" value="Passwort vergessen" onclick="document.location='?sendpass=1'" /> &nbsp;
+            <input type="button" value="Passwort vergessen" onclick="document.location='{{ path('admin.login.reset') }}'" /> &nbsp;
             <input type="button" value="Zum Spiel-Login" onclick="document.location='{{ etoaUrl('login') }}'" />
         </p>
 

@@ -4,7 +4,13 @@ namespace EtoA\Controller\Admin;
 
 use EtoA\Admin\AdminUser;
 use EtoA\Admin\AdminUserRepository;
+use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\HostCache\NetworkNameService;
+use EtoA\Log\LogFacility;
+use EtoA\Log\LogRepository;
+use EtoA\Log\LogSeverity;
 use EtoA\Security\Admin\CurrentAdmin;
+use EtoA\Support\Mail\MailSenderService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -15,10 +21,18 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 class SecurityController extends AbstractController
 {
     private AdminUserRepository $adminUserRepository;
+    private ConfigurationService $config;
+    private MailSenderService $mailer;
+    private LogRepository $logRepository;
+    private NetworkNameService $networkNameService;
 
-    public function __construct(AdminUserRepository $adminUserRepository)
+    public function __construct(AdminUserRepository $adminUserRepository, ConfigurationService $config, MailSenderService $mailer, LogRepository $logRepository, NetworkNameService $networkNameService)
     {
         $this->adminUserRepository = $adminUserRepository;
+        $this->config = $config;
+        $this->mailer = $mailer;
+        $this->logRepository = $logRepository;
+        $this->networkNameService = $networkNameService;
     }
 
     /**
@@ -34,6 +48,49 @@ class SecurityController extends AbstractController
             'error' => $authenticationUtils->getLastAuthenticationError(),
             'lastUsername' => $authenticationUtils->getLastUsername(),
         ]);
+    }
+
+    /**
+     * @Route("/admin/login/reset", methods={"GET", "POST"}, name="admin.login.reset")
+     */
+    public function resetPassword(Request $request, UserPasswordHasherInterface $passwordHasher): Response
+    {
+        if ($request->isMethod('POST')) {
+            $user = $this->adminUserRepository->findOneByNick($_POST['user_nick']);
+            if ($user !== null) {
+                // TODO: Use instead https://symfony.com/doc/current/security/reset_password.html
+
+                $pw = generatePasswort();
+                $this->adminUserRepository->setPassword($user, $passwordHasher->hashPassword(new CurrentAdmin($user), $pw), true);
+
+                $msg = "Hallo " . $user->nick . ".\n\nDu hast für die Administration der " . $this->config->get('roundname') . " von EtoA ein neues Passwort angefordert.\n\n";
+                $msg .= "Das neue Passwort lautet: $pw\n\n";
+                $msg .= "Diese Anfrage wurde am " . date("d.m.Y") . " um " . date("H:i") . " Uhr vom Computer " . $this->networkNameService->getHost($request->getClientIp()) . " aus in Auftrag gegeben.\nBitte denke daran, das Passwort nach dem ersten Login zu ändern!";
+                $this->mailer->send("Neues Administrationspasswort", $msg, $user->email);
+
+                $msgStyle = 'color_ok';
+                $statusMsg = 'Das Passwort wurde geändert und dir per Mail zugestellt!';
+                $buttonMsg = 'Zum Login';
+                $buttonTarget = '?';
+
+                $this->logRepository->add(LogFacility::ADMIN, LogSeverity::INFO,  "Der Administrator " . $user->nick . " (ID: " . $user->id . ") fordert per E-Mail (" . $user->email . ") von " . $_SERVER['REMOTE_ADDR'] . " aus ein neues Passwort an.");
+            } else {
+                $msgStyle = 'color_warn';
+                $statusMsg = 'Dieser Benutzer existiert nicht!';
+                $buttonMsg = 'Nochmals versuchen';
+                $buttonTarget = '?sendpass=1';
+            }
+
+            echo $this->render('admin/login/login-status.html.twig', [
+                'title' => 'Passwort senden',
+                'msgStyle' => $msgStyle,
+                'statusMsg' => $statusMsg,
+                'buttonMsg' => $buttonMsg,
+                'buttonTarget' => $buttonTarget,
+            ]);
+        }
+
+        return $this->render('admin/login/request-password.html.twig', []);
     }
 
     /**
