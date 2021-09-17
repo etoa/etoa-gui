@@ -34,7 +34,7 @@ if (configFileExists(\EtoA\Core\DoctrineServiceProvider::CONFIG_FILE)) {
         'currentStep' => 4,
         'successMessage' => 'Ihre Konfigurationsdatei existiert bereits!',
         'errorMessage' => $errorMessage,
-        'templateDir' => 'designs/official/Revolution',
+        'templateDir' => '/designs/official/Revolution',
     ]);
     return;
 }
@@ -125,7 +125,7 @@ password = ' . $dbCfg['password'] . '
     }
 
     echo $twig->render('install/step3.html.twig', [
-        'templateDir' => 'designs/official/Revolution',
+        'templateDir' => '/designs/official/Revolution',
         'currentStep' => $step,
         'successMessage' => 'Konfiguration gespeichert!',
         'errorMessage' => $errorMessage,
@@ -183,7 +183,7 @@ if ($step === 2) {
     }
 
     echo $twig->render('install/step2.html.twig', [
-        'templateDir' => 'designs/official/Revolution',
+        'templateDir' => '/designs/official/Revolution',
         'currentStep' => $step,
         'successMessage' => $successMessage,
         'errorMessage' => $errorMessage,
@@ -198,7 +198,7 @@ if ($step === 2) {
 }
 
 echo $twig->render('install/step1.html.twig', [
-    'templateDir' => 'designs/official/Revolution',
+    'templateDir' => '/designs/official/Revolution',
     'currentStep' => $step,
     'successMessage' => $successMessage,
     'errorMessage' => $errorMessage,

@@ -20,8 +20,7 @@ use League\CommonMark\MarkdownConverterInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Twig\Environment;
 
-/** @var Request */
-$request = Request::createFromGlobals();
+/** @var Request $request */
 
 /** @var ConfigurationService $config */
 $config = $app[ConfigurationService::class];
@@ -54,7 +53,7 @@ if ($sub == "offline") {
     $networkNameService = $app[NetworkNameService::class];
 
     if ($request->request->has('logshow') && $request->request->get('logshow') != "") {
-        adminSessionLogForUserView($request, $s, $sessionRepository, $adminUserRepo, $networkNameService);
+        adminSessionLogForUserView($request, $sessionRepository, $adminUserRepo, $networkNameService);
     } else {
         adminSessionLogView($request, $config, $cu, $sessionRepository, $sessionManager, $networkNameService);
     }
@@ -144,7 +143,6 @@ function changelogView(MarkdownConverterInterface $markdown, Environment $twig)
 
 function adminSessionLogForUserView(
     Request $request,
-    AdminSession $s,
     AdminSessionRepository $sessionRepository,
     AdminUserRepository $adminUserRepo,
     NetworkNameService $networkNameService
@@ -172,7 +170,7 @@ function adminSessionLogForUserView(
                 echo "<tr>
                         <td>" . date("d.m.Y, H:i", $arr->timeLogin) . "</td>";
                 echo "<td>";
-                if ($arr['time_action'] > 0)
+                if ($arr->timeAction > 0)
                     echo date("d.m.Y H:i", $arr->timeAction);
                 else
                     echo "-";
@@ -189,7 +187,7 @@ function adminSessionLogForUserView(
                 } else {
                     echo "-";
                 }
-                if ($arr->sessionId == $s->id) {
+                if ($arr->sessionId == $request->getSession()->getId()) {
                     echo " <span style=\"color:#0f0\">aktiv</span>";
                 }
                 echo "</td>";

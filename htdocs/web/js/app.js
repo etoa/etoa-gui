@@ -20026,7 +20026,6 @@ exports.Settings = Settings;
 exports.SystemZone = SystemZone;
 exports.VERSION = VERSION;
 exports.Zone = Zone;
-//# sourceMappingURL=luxon.js.map
 
 
 /***/ }),

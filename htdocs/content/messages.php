@@ -66,7 +66,7 @@ show_tab_menu("mode", [
     "sent" => "Gesendet",
     "deleted" => "Papierkorb",
     "ignore" => "Ignorierliste"
-]);
+], $mode);
 echo "<br/>";
 
 if ($mode == "new") {

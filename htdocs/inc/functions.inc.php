@@ -219,15 +219,15 @@ function error_msg($text, $type = 0, $exit = 0, $addition = 0, $stacktrace = nul
  * $varname: Name des Modusfeldes
  * $data: Array mit Menüdaten
  */
-function show_tab_menu($varname, $data)
+function show_tab_menu($varname, $data, $activeValue)
 {
-    global $page, $$varname;
+    global $page;
 
     echo "<div class=\"tabMenu\">";
     $cnt = 0;
     foreach ($data as $val => $text) {
         $cnt++;
-        if ($$varname == $val)
+        if ($activeValue == $val)
             echo "<a href=\"?page=$page&amp;" . $varname . "=$val\" class=\"tabEnabled" . ($cnt == count($data) ? ' tabLast' : '') . "\">$text</a>";
         else
             echo "<a href=\"?page=$page&amp;" . $varname . "=$val\"" . ($cnt == count($data) ? ' class="tabLast"' : '') . ">$text</a>";
@@ -605,7 +605,7 @@ function generateRandomString($length = 10)
  */
 function ticket_button($cat, $title = "Missbrauch", $uid = 0, $aid = 0)
 {
-    echo "<input type=\"button\" value=\"" . $title . "\" onclick=\"window.open('show.php?page=ticket&ext=1&cat=" . $cat . "&uid=" . $uid . "&$aid=" . $aid . "','abuse','width=700,height=470,status=no,scrollbars=yes')\" />";
+    echo "<input type=\"button\" value=\"" . $title . "\" onclick=\"window.open('show/?page=ticket&ext=1&cat=" . $cat . "&uid=" . $uid . "&$aid=" . $aid . "','abuse','width=700,height=470,status=no,scrollbars=yes')\" />";
 }
 
 /**
@@ -855,7 +855,7 @@ function getLoginUrl($args = array())
 
     $url = $config->get('loginurl');
     if (!$url) {
-        $url = "show.php?index=login";
+        $url = "/show/?index=login";
         if (sizeof($args) > 0 && isset($args['page'])) {
             unset($args['page']);
         }

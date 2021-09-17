@@ -44,7 +44,7 @@ function submitPassword(
             throw new \Exception('Das Passwort ist zu kurz! Es muss mindestens ' . $config->getInt('password_minlength') . ' Zeichen lang sein!');
         }
 
-        $adminUserRepo->setPassword($cu, $_POST['user_password']);
+        $adminUserRepo->setPassword($cu, saltPasswort($_POST['user_password']));
 
         $twig->addGlobal('successMessage', 'Das Passwort wurde geändert!');
 

@@ -86,7 +86,7 @@ if (!$cu->isSetup() && $page != "help" && $page != "contact") {
     // E-Mail verification
     if (!$cu->isVerified) {
         if (isset($_GET['resendverificationmail'])) {
-            $verificationUrl = $config->get('roundurl') . '/show.php?index=verifymail&key=' . $cu->verificationKey;
+            $verificationUrl = $config->get('roundurl') . '/show/?index=verifymail&key=' . $cu->verificationKey;
             $email_text = "Hallo " . $cu->nick . "\n\n";
             $email_text .= "Damit du alle Funktionen von Escape to Andromeda benutzen kannst muss deine E-Mail Adresse verifiziert werden. Bitte klicke auf den folgenden Link, um die Verifikation für die " . $config->get('roundname') . " abzuschliessen:\n\n";
             $email_text .= $verificationUrl . "\n\n";

@@ -40,7 +40,7 @@ if ($cp) {
         "bunker" => "Flottenbunker",
         "fleet" => "Schiffe einbunkern",
     );
-    show_tab_menu("mode", $tabitems);
+    show_tab_menu("mode", $tabitems, $mode);
 
     $mode = $request->query->get('mode', "res");
 

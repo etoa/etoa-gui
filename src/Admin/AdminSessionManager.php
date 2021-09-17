@@ -62,13 +62,9 @@ class AdminSessionManager
     public function unregisterSession(string $sid, bool $logoutPressed = true): void
     {
         $adminSession = $this->repository->find($sid);
-        if ($adminSession != null) {
+        if ($adminSession !== null) {
             $this->repository->addSessionLog($adminSession, $logoutPressed ? time() : 0);
             $this->repository->remove($sid);
-        }
-        if ($logoutPressed) {
-            session_regenerate_id(true);
-            session_destroy();
         }
     }
 

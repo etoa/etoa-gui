@@ -64,7 +64,7 @@ if (($_POST['register_submit'] ?? false) && $config->getBoolean('enable_register
         $verificationRequired = filled($newUser->verificationKey);
         $verificationUrl = null;
         if ($verificationRequired) {
-            $verificationUrl = $config->get('roundurl') . '/show.php?index=verifymail&key=' . $newUser->verificationKey;
+            $verificationUrl = $config->get('roundurl') . '/show/?index=verifymail&key=' . $newUser->verificationKey;
         }
 
         $email_text = "Hallo " . $newUser->nick . "\n\nDu hast dich erfolgreich beim Sci-Fi Browsergame Escape to Andromeda für die " . $config->get('roundname') . " registriert.\nHier nochmals deine Daten:\n\n";
