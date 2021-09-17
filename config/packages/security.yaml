@@ -25,6 +25,7 @@ security:
             entry_point: EtoA\Security\Admin\AdminAuthenticator
             logout:
                 path: /admin/logout
+                target: /admin/
 
         main:
             lazy: true
