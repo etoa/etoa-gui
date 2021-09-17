@@ -1,5 +1,7 @@
 {% extends 'admin/layout/base.html.twig' %}
 
+{% import 'admin/macros.html.twig' as macros %}
+
 {% block layoutContent %}
     <div id="layoutbox">
         <div id="header">
@@ -12,7 +14,7 @@
                 <ul id="headernav">
                     <li><a href="?myprofile=1">{{ app.user.username|default('Username') }}</a></li>
                     <li><a href="?adminlist=1">Adminliste</a></li>
-                    {% if isAdminAllowed(userRoles), ['master', 'super-admin', 'game-admin', 'trial-game-admin']) %}
+                    {% if isAdminAllowed(userRoles, ['master', 'super-admin', 'game-admin', 'trial-game-admin']) %}
                         <li><a href="?page=tickets">{{ numTickets > 0 ? 'Tickets (' ~ numTickets ~ ')' : 'Tickets' }}</a></li>
                     {% endif %}
                     <li><a href="?page=notepad">{{ numNotes > 0 ? 'Notizblock (' ~ numNotes ~ ')' : 'Notizblock' }}</li>
@@ -33,8 +35,13 @@
                         {% if isAdminAllowed(userRoles, item.roles) %}
                             <li>
                                 <a
-                                    href="?page={{ item.page }}{% if item.sub|default(false) %}&amp;sub={{ item.sub }}{% endif %}"
-                                    {% if page == item.page %}class="active"{% endif %}
+                                    {% if item.path|default(false) %}
+                                        href="{{ item.path }}"
+{#                                        {% if item.route == app.request.get('_route') %}class="active"{% endif %}#}
+                                    {% else %}
+                                        href="?page={{ item.page }}{% if item.sub|default(false) %}&amp;sub={{ item.sub }}{% endif %}"
+                                        {% if page == item.page %}class="active"{% endif %}
+                                    {% endif %}
                                 >
                                     {{ key }}
                                 </a>
@@ -58,7 +65,7 @@
                     <caption>Status</caption>
                     {% if isUnix() %}
                         <tr>
-                            <th><a href="?page=eventhandler">Eventhandler</a></th>
+                            <th><a href="/admin/eventhandler/">Eventhandler</a></th>
                             {% if eventHandlerPid|default(false) %}
                                 <td class="color_ok">PID {{ eventHandlerPid }}</td>
                             {% else %}
@@ -75,6 +82,12 @@
 
             </div>
             <div id="content">
+                {% for label, messages in app.flashes|default([]) %}
+                    {% for message in messages %}
+                        {{ macros.messagebox(message, label) }}
+                    {% endfor %}
+                {% endfor %}
+
                 {% block content %}{% endblock %}
             </div>
             <br class="clear" />
