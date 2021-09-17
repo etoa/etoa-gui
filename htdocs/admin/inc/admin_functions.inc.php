@@ -1100,7 +1100,7 @@ function createDownloadLink($file)
     if (!isset($_SESSION['filedownload'][$encodedName])) {
         $_SESSION['filedownload'][$encodedName] = uniqid('', true);
     }
-    return "dl.php?path=" . $encodedName . "&hash=" . sha1($encodedName . $_SESSION['filedownload'][$encodedName]);
+    return "/admin/dl/?path=" . $encodedName . "&hash=" . sha1($encodedName . $_SESSION['filedownload'][$encodedName]);
 }
 
 /**
