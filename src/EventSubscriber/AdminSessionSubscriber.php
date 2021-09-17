@@ -62,8 +62,10 @@ class AdminSessionSubscriber implements EventSubscriberInterface
 
             $time = time();
             $lastAction = $session->get('lastAction');
-            if ($lastAction + $this->config->getInt('admin_timeout') > $time) {
-                if ($this->adminSessionRepository->update($session->getId(), $user->getId(), $time, $event->getRequest()->getClientIp())) {
+            $timeout = $time - $this->config->getInt('admin_timeout');
+            if ($lastAction > $timeout) {
+                if ($this->adminSessionRepository->exists($session->getId(), $user->getId(), $event->getRequest()->headers->get('User-Agent'))) {
+                    $this->adminSessionRepository->update($session->getId(), $user->getId(), $time, $event->getRequest()->getClientIp());
                     $session->set('lastAction', $time);
 
                     return;
@@ -77,6 +79,7 @@ class AdminSessionSubscriber implements EventSubscriberInterface
     public function onLogout(LogoutEvent $event): void
     {
         if ($event->getToken() !== null && $event->getToken()->getUser() instanceof CurrentAdmin) {
+            $event->getRequest()->getSession()->remove('lastAction');
             $this->adminSessionManager->unregisterSession($event->getRequest()->getSession()->getId(), true);
         }
     }
