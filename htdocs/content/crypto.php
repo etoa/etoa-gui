@@ -208,12 +208,12 @@
 													fleet
 												WHERE
 													entity_from=".$target->id()."
-													OR entity_to".$target->id()."");
-												$out.="Es sind ".mysql_num_rows($fres)." Flotten unterwegs\n";
+													OR entity_to=".$target->id()."");
+												$out.="Es sind ".mysql_num_rows($fres)." Flotten unterwegs.\n\n";
 											}
 											else
 											{
-												$out.="Es sind Flotten unterwegs\n";
+												$out.="Es sind Flotten unterwegs.\n\n";
 											}
 
 											if($decryptlevel>=$cfg->value("crypto_fleets_incoming_level"))
@@ -228,7 +228,7 @@
 																	entity_to=".$target->id()."");
 												if (mysql_num_rows($fres)>0)
 												{
-													$out.="Es sind ".mysql_num_rows($fres)." Flotten unterwegs\n";
+													$out.="Es sind ".mysql_num_rows($fres)." Flotten unterwegs.\n\n";
 													while ($farr=mysql_fetch_row($fres))
 													{
 														$fd = new Fleet($farr[0]);
@@ -331,7 +331,7 @@
 																	AND entity_to<>".$target->id()."");
 												if (mysql_num_rows($fres)>0)
 												{
-													$out.="Es sind ".mysql_num_rows($fres)." Flotten unterwegs\n";
+													$out.="Es sind ".mysql_num_rows($fres)." Flotten unterwegs.\n\n";
 													while ($farr=mysql_fetch_row($fres))
 													{
 														$fd = new Fleet($farr[0]);
