@@ -310,7 +310,7 @@
 															}
 														}
 
-														if ($decryptlevel>=$cfg->value("crypto_recources_level"))
+														if ($decryptlevel>=$cfg->value("crypto_resources_level"))
 														{
 															$out.="[b]Ressourcen:[/b]";
 															$out.=" Titan: ".nf($fd->resMetal());
@@ -414,7 +414,7 @@
 															}
 														}
 
-														if ($decryptlevel>=$cfg->value("crypto_recources_level"))
+														if ($decryptlevel>=$cfg->value("crypto_resources_level"))
 														{
 															$out.="[b]Ressourcen:[/b]";
 															$out.=" Titan: ".nf($fd->resMetal());

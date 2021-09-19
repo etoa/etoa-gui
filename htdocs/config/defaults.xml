@@ -760,7 +760,7 @@ https://etoa.ch</v>
     <item name="crypto_action_level" cat="23">
       <v comment="Zeige Schiffsaktionen" type="text">20</v>
     </item>
-    <item name="crypto_recources_level" cat="23">
+    <item name="crypto_resources_level" cat="23">
       <v comment="Zeige Ressourcen" type="text">22.5</v>
     </item>
     <item name="crypto_rand_mod_min" cat="23">
