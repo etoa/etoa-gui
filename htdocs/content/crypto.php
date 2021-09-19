@@ -309,6 +309,18 @@
 																}
 															}
 														}
+
+														if ($decryptlevel>=$cfg->value("crypto_recources_level"))
+														{
+															$out.="[b]Ressourcen:[/b]";
+															$out.=" Titan: ".nf($fd->resMetal());
+															$out.=" Silizium: ".nf($fd->resCrystal());
+															$out.=" PVC: ".nf($fd->resPlastic());
+															$out.=" Tritium: ".nf($fd->resFuel());
+															$out.=" Nahrung: ".nf($fd->resFood());
+															$out.="\n";
+														}
+
 														$out.="\n";
 													}
 												}
@@ -401,16 +413,28 @@
 																$out.=$cntr." Schiffe total\n";
 															}
 														}
+
+														if ($decryptlevel>=$cfg->value("crypto_recources_level"))
+														{
+															$out.="[b]Ressourcen:[/b]";
+															$out.=" Titan: ".nf($fd->resMetal());
+															$out.=" Silizium: ".nf($fd->resCrystal());
+															$out.=" PVC: ".nf($fd->resPlastic());
+															$out.=" Tritium: ".nf($fd->resFuel());
+															$out.=" Nahrung: ".nf($fd->resFood());
+															$out.="\n";
+														}
+
 														$out.="\n";
 													}
 												}
 												else
 												{
-													$out.='Keine abfliegenden Flotten gefunden!';
+													$out.='Keine abfliegenden Flotten gefunden!\n';
 												}
 											}
 
-											$out.="\n\nEntschlüsselchance: $decryptlevel";
+											$out.="\nEntschlüsselchance: $decryptlevel";
 
 											// Subtract resources
 											$cp->changeRes(0,0,0,-CRYPTO_FUEL_COSTS_PER_SCAN,0);
