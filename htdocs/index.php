@@ -124,6 +124,13 @@ try {
         }
         echo button("Zur Startseite", getLoginUrl());
         iBoxEnd();
+
+        echo $twig->render('game/empty.html.twig', [
+            'templateDir' => 'designs/official/Discovery',
+            'content' => ob_get_clean(),
+        ]);
+
+        exit();
     }
 
     // Login ist gesperrt
@@ -133,6 +140,13 @@ try {
         echo "Der Login momentan geschlossen!<br/><br/>";
         echo button("Zur Startseite", getLoginUrl());
         iBoxEnd();
+
+        echo $twig->render('game/empty.html.twig', [
+            'templateDir' => 'designs/official/Discovery',
+            'content' => ob_get_clean(),
+        ]);
+
+        exit();
     }
 
     // Login ist erlaubt aber noch zeitlich zu frŸh
@@ -142,6 +156,13 @@ try {
         echo "Das Spiel startet am ".date("d.m.Y",$cfg->param1('enable_login'))." ab ".date("H:i",$cfg->param1('enable_login'))."!<br/><br/>";
         echo button("Zur Startseite", getLoginUrl());
         iBoxEnd();
+
+        echo $twig->render('game/empty.html.twig', [
+            'templateDir' => 'designs/official/Discovery',
+            'content' => ob_get_clean(),
+        ]);
+
+        exit();
     }
 
     // Zugriff von anderen als eigenem Server bzw Login-Server sperren
@@ -150,6 +171,13 @@ try {
         <h1>Falscher Referer</h1>
         Der Zugriff auf das Spiel ist nur anderen internen Seiten aus m&ouml;glich! Ein externes Verlinken direkt in das Game hinein ist nicht gestattet! Dein Referer: ".$_SERVER["HTTP_REFERER"]."<br/><br/>
         <a href=\"".getLoginUrl() ."\">Hauptseite</a></div>";
+
+        echo $twig->render('game/empty.html.twig', [
+            'templateDir' => 'designs/official/Discovery',
+            'content' => ob_get_clean(),
+        ]);
+
+        exit();
     }
 
     // Zugriff erlauben und Inhalt anzeigen
