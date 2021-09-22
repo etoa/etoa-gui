@@ -6,10 +6,6 @@
     <h1>Konfiguration</h1>
     <h2>Konfiguration auf Standardwerte zurücksetzen</h2>
 
-    {% if successMessage %}
-        {{ macros.messagebox(successMessage, 'success') }}
-    {% endif %}
-
     {% if changedValues|length > 0 %}
         <h3>Veränderte Werte</h3>
         <table class="tb">
@@ -35,7 +31,7 @@
     {% endif %}
 
     <h3>Zurücksetzen</h3>
-    <form action="?page={{ page }}&amp;sub={{ sub }}" method="post">
+    <form action="{{ path('admin.config.restore') }}" method="post">
         <p>Soll die Konfigurationstabelle wirklich auf ihre Standardwerte zurückgesetzt werden?</p>
         <p><input type="submit" name="restoresubmit" value="Ja, Einstellungen zurücksetzen" /></p>
     </form>
