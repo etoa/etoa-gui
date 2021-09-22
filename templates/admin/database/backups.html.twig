@@ -1,20 +1,10 @@
 {% extends 'admin/layout/admin.html.twig' %}
 
-{% import 'admin/macros.html.twig' as macros %}
-
 {% block content %}
     <h1>Datenbank</h1>
     <h2>Backups</h2>
 
-    {% if successMessage|default(false) %}
-        {{ macros.messagebox(successMessage, 'success') }}
-    {% endif %}
-
-    {% if errorMessage|default(false) %}
-        {{ macros.messagebox(errorMessage, 'error') }}
-    {% endif %}
-
-    <form id="bustn" action="?page={{ page }}&amp;sub={{ sub }}" method="post">
+    <form id="bustn" action="{{ path('admin.db.backup.settings') }}" method="post">
         <fieldset><legend>Backup-Einstellungen</legend>
             Speicherpfad: <input type="text" value="{{ configValue('backup_dir') }}" name="backup_dir" size="50"> (leerlassen für Standardpfad)
             <br>
@@ -29,7 +19,7 @@
 
     <p>Im Folgenden sind alle verfügbaren Backups aufgelistet. Backups werden automatisch durch einen periodischen Task erstellt.</p>
 
-    <form action="?page={{ page }}&amp;sub={{ sub }}" method="post">
+    <form action="{{ path('admin.db.backup') }}" method="post">
         <p>
             <input type="submit" value="Neues Backup erstellen" name="create" />
         </p>
@@ -51,7 +41,7 @@
                     <td>{{ backup.createdAt }}</td>
                     <td>{{ backup.size }}</td>
                     <td>
-                        <a href="?page={{ page }}&amp;sub=backup&amp;action=backuprestore&amp;date={{ backup.date }}" onclick="return confirm('Soll die Datenbank mit den im Backup {{ backup.date }} gespeicherten Daten überschrieben werden?');">Wiederherstellen</a> &nbsp;
+                        <a href="{{ path('admin.db.restore', {restorePoint: backup.date }) }}" onclick="return confirm('Soll die Datenbank mit den im Backup {{ backup.date }} gespeicherten Daten überschrieben werden?');">Wiederherstellen</a> &nbsp;
                         <a href="{{ backup.downloadLink }}">Download</a>
                 </td></tr>
             {% else %}

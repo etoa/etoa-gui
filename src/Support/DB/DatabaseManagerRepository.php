@@ -85,7 +85,7 @@ class DatabaseManagerRepository extends AbstractRepository
 
         $result = [];
         foreach ($data as $row) {
-            $result[strtolower($row['Variable_name'])] = $row['Value'];
+            $result[strtolower($row['Variable_name'])] = is_numeric($row['Value']) ? (int) $row['Value'] : $row['Value'];
         }
 
         return $result;

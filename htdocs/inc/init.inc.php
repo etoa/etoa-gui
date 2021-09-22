@@ -16,7 +16,7 @@ require_once __DIR__ . '/functions.inc.php';
 
 // Load specific admin functions
 if (ADMIN_MODE) {
-    require __DIR__ . '/../admin/inc/admin_functions.inc.php';
+    require_once __DIR__ . '/../admin/inc/admin_functions.inc.php';
 }
 
 // Enable debug error reporting
