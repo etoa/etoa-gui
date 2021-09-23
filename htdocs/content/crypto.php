@@ -188,14 +188,16 @@
 										}
 
 										// Calculate success chance
-										$chance = ($cryptoCenterLevel-$op_jam) + (0.3*($self_spy - $op_stealth)) + mt_rand(0,2)-1;
+										$chance = ($cryptoCenterLevel-$op_jam) +
+											(0.3*($self_spy - $op_stealth)) +
+											mt_rand($cfg->value("crypto_chance_rand_mod_min"),$cfg->value("crypto_chance_rand_mod_max"));
 
 										// Do the scan if chance >= 0
 										if ($chance >= 0)
 										{
 											$decryptlevel = ($cryptoCenterLevel-$op_jam) +
 												(0.75*($self_spy + $self_computer - $op_stealth - $op_computer)) +
-												mt_rand($cfg->value("crypto_rand_mod_min"),$cfg->value("crypto_rand_mod_max"));
+												mt_rand($cfg->value("crypto_level_rand_mod_min"),$cfg->value("crypto_level_rand_mod_max"));
 
 											$out="[b]Flottenscan vom Planeten ".$target->name()."[/b] (".$sx."/".$sy." : ".$cx."/".$cy." : ".$pp.")\n\n";
 

@@ -766,11 +766,17 @@ https://etoa.ch</v>
     <item name="crypto_resources_level" cat="23">
       <v comment="Zeige Ressourcen" type="text">22.5</v>
     </item>
-    <item name="crypto_rand_mod_min" cat="23">
-      <v comment="Zufallsmodifikator (min)" type="text">-5</v>
+    <item name="crypto_level_rand_mod_min" cat="23">
+      <v comment="Zufallsmodifikator Level (min)" type="text">-5</v>
     </item>
-    <item name="crypto_rand_mod_max" cat="23">
-      <v comment="Zufallsmodifikator (max)" type="text">0</v>
+    <item name="crypto_level_rand_mod_max" cat="23">
+      <v comment="Zufallsmodifikator Level (max)" type="text">0</v>
+    </item>
+    <item name="crypto_chance_rand_mod_min" cat="23">
+      <v comment="Zufallsmodifikator Chance (min)" type="text">-1</v>
+    </item>
+    <item name="crypto_chance_rand_mod_max" cat="23">
+      <v comment="Zufallsmodifikator Chance (max)" type="text">1</v>
     </item>
 
     <item name="chat_recent_messages" cat="25">
