@@ -39,27 +39,6 @@ if ($sub == "errorlog") {
     newCommonLog();
 }
 
-function errorlog(Environment $twig)
-{
-    global $page;
-    global $sub;
-
-    if (isset($_POST['purgelog_submit'])) {
-        file_put_contents(EException::LOG_FILE, '');
-        forward('?page=' . $page . '&sub=' . $sub);
-    }
-
-    $logFile = null;
-    if (is_file(EException::LOG_FILE)) {
-        $logFile = file_get_contents(EException::LOG_FILE);
-    }
-
-    echo $twig->render('admin/logs/errorlog.html.twig', [
-        'logFile' => $logFile,
-    ]);
-    exit();
-}
-
 function battleLog()
 {
     echo "Battle Log im aufbau!<br>";
