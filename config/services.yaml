@@ -13,6 +13,7 @@ services:
         bind:
             bool $questsEnabled: false
             $questsWorkflow: $questsStateMachine
+            string $cacheDir: '%kernel.project_dir%/htdocs/cache'
 
     _instanceof:
         LittleCubicleGames\Quests\Log\QuestLoggerInterface:
@@ -28,6 +29,9 @@ services:
         exclude:
             - '../src/Kernel.php'
             - '../src/app.php'
+
+    League\CommonMark\MarkdownConverterInterface:
+        class: League\CommonMark\GithubFlavoredMarkdownConverter
 
     LittleCubicleGames\Quests\:
         resource: '../vendor/littlecubiclegames/quests/src/'

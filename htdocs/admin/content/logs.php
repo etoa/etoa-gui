@@ -23,9 +23,7 @@ $twig->addGlobal('title', 'Logs');
 
 echo "<div id=\"logsinfo\"></div>"; //nur zu entwicklungszwecken!
 
-if ($sub == "errorlog") {
-    errorlog($twig);
-} elseif (isset($_GET['sub']) && $_GET['sub'] == "battlelogs") {
+if (isset($_GET['sub']) && $_GET['sub'] == "battlelogs") {
     battleLog();
 } elseif ($sub == "check_fights") {
     checkFights();
