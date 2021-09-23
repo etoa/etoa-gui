@@ -27,8 +27,6 @@ $request = Request::createFromGlobals();
 
 if ($sub == "map") {
     galaxyMap($config, $userRepository, $twig);
-} elseif ($sub == "exploration") {
-    exploration($twig);
 } elseif ($sub == "uni") {
     universe();
 } elseif ($sub == "galaxycheck") {
@@ -44,11 +42,6 @@ if ($sub == "map") {
 function galaxyMap(ConfigurationService $config, UserRepository $userRepository, Environment $twig)
 {
     require("galaxy/map.inc.php");
-}
-
-function exploration(Environment $twig)
-{
-    require("galaxy/exploration.inc.php");
 }
 
 function universe()
