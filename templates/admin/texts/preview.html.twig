@@ -13,8 +13,8 @@
     {% endif %}
     <p>
         {% if text|default(false) %}
-            <button type="button" onclick="document.location='?page={{ page }}&id={{ text.id }}'">Bearbeiten</button>&nbsp;
+            <button type="button" onclick="document.location='{{ path('admin.texts.edit', {id: text.id}) }}'">Bearbeiten</button>&nbsp;
         {% endif %}
-        <button type="button" onclick="document.location='?page={{ page }}'">Schliessen</button>
+        <button type="button" onclick="document.location='?{{ path('admin.texts') }}'">Schliessen</button>
     </p>
 {% endblock %}
