@@ -736,11 +736,14 @@ https://etoa.ch</v>
     <item name="crypto_fleets_send_level" cat="23">
       <v comment="Zeige gesendete Flotten" type="text">7.5</v>
     </item>
+    <item name="crypto_time_60_level" cat="23">
+      <v comment="Zeige Ankunftszeit in 60 min Intervall" type="text">5</v>
+    </item>
     <item name="crypto_time_30_level" cat="23">
-      <v comment="Zeige Ankunftszeit +-30 min" type="text">5</v>
+      <v comment="Zeige Ankunftszeit in 30 min Intervall" type="text">10</v>
     </item>
     <item name="crypto_time_15_level" cat="23">
-      <v comment="Zeige Ankunftszeit +-15 min" type="text">10</v>
+      <v comment="Zeige Ankunftszeit in 15 min Intervall" type="text">10</v>
     </item>
     <item name="crypto_time_min_level" cat="23">
       <v comment="Zeige Ankunftszeit (min)" type="text">15</v>

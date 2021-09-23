@@ -249,15 +249,21 @@
 														}
 														elseif ($decryptlevel>=$cfg->value("crypto_time_15_level"))
 														{
-															$rand = random_int(0, 2*7*60);
+															$rand = random_int(0, 15*60);
 															$out.= "\n[b]Ankunft:[/b] ";
-															$out.="Zwischen ".date("d.m.Y H:i",$fd->landTime()-$rand)." und ".date("d.m.Y H:i",$fd->landTime()+(2*7*60)-$rand)." Uhr";
+															$out.="Zwischen ".date("d.m.Y H:i",$fd->landTime()-$rand)." und ".date("d.m.Y H:i",$fd->landTime()+(15*60)-$rand)." Uhr";
 														}
 														elseif ($decryptlevel>=$cfg->value("crypto_time_30_level"))
 														{
-															$rand = random_int(0, 30*60*2);
+															$rand = random_int(0, 30*60);
 															$out.= "\n[b]Ankunft:[/b] ";
-															$out.="Zwischen ".date("d.m.Y H:i",$fd->landTime() - $rand)." und ".date("d.m.Y H:i",$fd->landTime()+(2*30*60)-$rand)." Uhr";
+															$out.="Zwischen ".date("d.m.Y H:i",$fd->landTime() - $rand)." und ".date("d.m.Y H:i",$fd->landTime()+(30*60)-$rand)." Uhr";
+														}
+														elseif ($decryptlevel>=$cfg->value("crypto_time_60_level"))
+														{
+															$rand = random_int(0, 60*60);
+															$out.= "\n[b]Ankunft:[/b] ";
+															$out.="Zwischen ".date("d.m.Y H:i",$fd->landTime() - $rand)." und ".date("d.m.Y H:i",$fd->landTime()+(60*60)-$rand)." Uhr";
 														}
 
 														if ($decryptlevel>=$cfg->value("crypto_action_level"))
@@ -364,15 +370,21 @@
 														}
 														elseif ($decryptlevel>=$cfg->value("crypto_time_15_level"))
 														{
-															$rand = random_int(0, 2*7*60);
+															$rand = random_int(0, 15*60);
 															$out.= "\n[b]Ankunft:[/b] ";
-															$out.="Zwischen ".date("d.m.Y H:i",$fd->landTime()-$rand)." und ".date("d.m.Y H:i",$fd->landTime()+(2*7*60)-$rand)." Uhr";
+															$out.="Zwischen ".date("d.m.Y H:i",$fd->landTime()-$rand)." und ".date("d.m.Y H:i",$fd->landTime()+(15*60)-$rand)." Uhr";
 														}
 														elseif ($decryptlevel>=$cfg->value("crypto_time_30_level"))
 														{
-															$rand = random_int(0, 30*60*2);
+															$rand = random_int(0, 30*60);
 															$out.= "\n[b]Ankunft:[/b] ";
-															$out.="Zwischen ".date("d.m.Y H:i",$fd->landTime() - $rand)." und ".date("d.m.Y H:i",$fd->landTime()+(2*30*60)-$rand)." Uhr";
+															$out.="Zwischen ".date("d.m.Y H:i",$fd->landTime() - $rand)." und ".date("d.m.Y H:i",$fd->landTime()+(30*60)-$rand)." Uhr";
+														}
+														elseif ($decryptlevel>=$cfg->value("crypto_time_60_level"))
+														{
+															$rand = random_int(0, 60*60);
+															$out.= "\n[b]Ankunft:[/b] ";
+															$out.="Zwischen ".date("d.m.Y H:i",$fd->landTime() - $rand)." und ".date("d.m.Y H:i",$fd->landTime()+(60*60)-$rand)." Uhr";
 														}
 
 														if ($decryptlevel>=$cfg->value("crypto_action_level"))
