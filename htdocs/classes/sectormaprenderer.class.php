@@ -113,15 +113,17 @@ class SectorMapRenderer
     /**
      * Renders the sector map
      */
-    function render($sx, $sy)
+    function render($sx, $sy, UserUniverseDiscoveryService $userUniverseDiscoveryService = null, EntityRepository $entityRepository = null)
     {
-        // TODO
-        global $app;
+        if ($userUniverseDiscoveryService === null) {
+            // TODO
+            global $app;
 
-        /** @var UserUniverseDiscoveryService $userUniverseDiscoveryService */
-        $userUniverseDiscoveryService = $app[UserUniverseDiscoveryService::class];
-        /** @var EntityRepository $entityRepository */
-        $entityRepository = $app[EntityRepository::class];
+            /** @var UserUniverseDiscoveryService $userUniverseDiscoveryService */
+            $userUniverseDiscoveryService = $app[UserUniverseDiscoveryService::class];
+            /** @var EntityRepository $entityRepository */
+            $entityRepository = $app[EntityRepository::class];
+        }
 
         ob_start();
 
@@ -164,22 +166,22 @@ class SectorMapRenderer
 
                 // Discovered cell or no user specified
                 if ($this->impersonatedUser == null || $userUniverseDiscoveryService->discovered($this->impersonatedUser, (($sx - 1) * $this->numberOfCellsX) + $xcoords, (($sy - 1) * $this->numberOfCellsY) + $ycoords)) {
-                    $ent = Entity::createFactory($cells[$xcoords][$ycoords]->code, $cells[$xcoords][$ycoords]->id);
+                    $entity = $entityRepository->searchEntityLabel(EntitySearch::create()->id($cells[$xcoords][$ycoords]->id));
 
                     if ($this->tooltipsEnabled) {
                         $tt = new Tooltip();
-                        $tt->addTitle($ent->entityCodeString());
+                        $tt->addTitle($entity->codeString());
                         $tt->addText("Position: $sx/$sy : $xcoords/$ycoords");
-                        if ($ent->entityCode() == 'w') {
-                            $tent = new Wormhole($ent->targetId());
+                        if ($entity instanceof \EtoA\Universe\Wormhole\Wormhole) {
+                            $tent = new Wormhole($entity->targetId);
                             $tt->addComment("Ziel: $tent</a>");
                         } else {
-                            $tt->addComment($ent->name());
+                            $tt->addComment($entity->displayName());
                         }
                     }
 
                     $url = isset($this->cellUrl) ? $this->cellUrl . $cells[$xcoords][$ycoords]->cellId : '#';
-                    $img = $ent->imagePath();
+                    $img = $entity->getImagePath();
                     unset($ent);
                 }
 

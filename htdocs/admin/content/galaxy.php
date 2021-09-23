@@ -25,9 +25,7 @@ $userRepository = $app[UserRepository::class];
 /** @var Request $request */
 $request = Request::createFromGlobals();
 
-if ($sub == "map") {
-    galaxyMap($config, $userRepository, $twig);
-} elseif ($sub == "uni") {
+if ($sub == "uni") {
     universe();
 } elseif ($sub == "galaxycheck") {
     galaxyCheck();
@@ -37,11 +35,6 @@ if ($sub == "map") {
     starTypes($app, $twig, $request);
 } else {
     entities($config);
-}
-
-function galaxyMap(ConfigurationService $config, UserRepository $userRepository, Environment $twig)
-{
-    require("galaxy/map.inc.php");
 }
 
 function universe()
