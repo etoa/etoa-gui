@@ -201,21 +201,29 @@
 
 											$out="[b]Flottenscan vom Planeten ".$target->name()."[/b] (".$sx."/".$sy." : ".$cx."/".$cy." : ".$pp.")\n\n";
 
+											// We show at least if there are fleets or not.
+											$fres = dbquery("
+											SELECT
+												id
+											FROM
+												fleet
+											WHERE
+												entity_from=".$target->id()."
+												OR entity_to=".$target->id()."");
 											if ($decryptlevel>=$cfg->value("crypto_number_of_fleets_level"))
 											{
-												$fres = dbquery("
-												SELECT
-													id
-												FROM
-													fleet
-												WHERE
-													entity_from=".$target->id()."
-													OR entity_to=".$target->id()."");
 												$out.="Es sind ".mysql_num_rows($fres)." Flotten unterwegs.\n\n";
 											}
 											else
 											{
-												$out.="Es sind Flotten unterwegs.\n\n";
+												if (mysql_num_rows($fres)>0)
+												{
+													$out.="Es sind Flotten unterwegs.\n\n";
+												}
+												else
+												{
+													$out.="Es sind keine Flotten unterwegs.\n\n";
+												}
 											}
 
 											if($decryptlevel>=$cfg->value("crypto_fleets_incoming_level"))
