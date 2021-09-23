@@ -172,17 +172,17 @@ class SectorMapRenderer
                         $tt = new Tooltip();
                         $tt->addTitle($entity->codeString());
                         $tt->addText("Position: $sx/$sy : $xcoords/$ycoords");
-                        if ($entity instanceof \EtoA\Universe\Wormhole\Wormhole) {
-                            $tent = new Wormhole($entity->targetId);
-                            $tt->addComment("Ziel: $tent</a>");
+                        if ($entity->code === \EtoA\Universe\Entity\EntityType::WORMHOLE && $entity->wormholeTarget !== null) {
+                            $tent = $entityRepository->searchEntityLabel(EntitySearch::create()->id($entity->wormholeTarget));
+                            $tt->addComment("Ziel: " . $tent->toString() ."</a>");
                         } else {
-                            $tt->addComment($entity->displayName());
+                            $tt->addComment((string) $entity->displayName());
                         }
                     }
 
                     $url = isset($this->cellUrl) ? $this->cellUrl . $cells[$xcoords][$ycoords]->cellId : '#';
                     $img = $entity->getImagePath();
-                    unset($ent);
+                    unset($entity);
                 }
 
                 // Undiscovered cell

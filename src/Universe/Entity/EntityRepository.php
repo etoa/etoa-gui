@@ -228,7 +228,7 @@ class EntityRepository extends AbstractRepository
         return $this->getEntityCoordinatesQueryBuilder($search, $sort, $limit)
             ->addSelect('planets.planet_name, planets.planet_user_main, planets.planet_type_id as planet_type, planets.planet_image as planet_image')
             ->addSelect('stars.name as star_name, stars.type_id as star_type')
-            ->addSelect('wormholes.persistent as wormhole_persistent')
+            ->addSelect('wormholes.persistent as wormhole_persistent, wormholes.target_id as wormhole_target')
             ->addSelect('users.user_nick, users.user_id')
             ->leftJoin('e', 'planets', 'planets', 'e.id = planets.id')
             ->leftJoin('planets', 'users', 'users', 'users.user_id = planets.planet_user_id')
