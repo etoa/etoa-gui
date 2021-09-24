@@ -25,7 +25,7 @@ class UpdateSittingDaysTask implements IPeriodicTask
         return "Sittertage aller User wurden aktualisiert";
     }
 
-    function getDescription()
+    public static function getDescription()
     {
         return "Sitter-Tage aktualisieren";
     }

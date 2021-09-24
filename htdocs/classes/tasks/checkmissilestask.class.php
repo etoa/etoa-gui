@@ -27,7 +27,7 @@ class CheckMissilesTask implements IPeriodicTask
         return "$cnt Raketen-Aktionen berechnet";
     }
 
-    function getDescription()
+    public static function getDescription()
     {
         return "Raketen-Aktionen berechnen";
     }

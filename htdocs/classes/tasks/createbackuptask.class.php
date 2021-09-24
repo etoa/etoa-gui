@@ -34,7 +34,7 @@ class CreateBackupTask implements IPeriodicTask
         }
     }
 
-    function getDescription()
+    public static function getDescription()
     {
         return "Backup erstellen";
     }

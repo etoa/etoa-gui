@@ -21,7 +21,7 @@ class RemoveInactiveChatUsersTask implements IPeriodicTask
         return "$nr inaktive Chat-User gelöscht";
     }
 
-    function getDescription()
+    public static function getDescription()
     {
         return "Inaktive Chat-User entfernen";
     }

@@ -21,7 +21,7 @@ class UpdateUserTitlesTask implements IPeriodicTask
         return "User Titel aktualisiert";
     }
 
-    function getDescription()
+    public static function getDescription()
     {
         return "Titel aktualisieren";
     }

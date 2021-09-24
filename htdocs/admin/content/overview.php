@@ -1,24 +1,17 @@
 <?PHP
 
-use EtoA\Admin\AdminRoleManager;
 use EtoA\Admin\AdminSessionManager;
 use EtoA\Admin\AdminSessionRepository;
 use EtoA\Admin\AdminUser;
 use EtoA\Admin\AdminUserRepository;
 use EtoA\Core\Configuration\ConfigurationService;
-use EtoA\Help\TicketSystem\TicketRepository;
 use EtoA\HostCache\NetworkNameService;
 use EtoA\Log\LogFacility;
 use EtoA\Log\LogRepository;
 use EtoA\Log\LogSeverity;
 use EtoA\Ranking\GameStatsGenerator;
-use EtoA\Support\DB\DatabaseManagerRepository;
 use EtoA\Support\StringUtils;
-use EtoA\Text\TextRepository;
-use EtoA\Universe\Cell\CellRepository;
-use League\CommonMark\MarkdownConverterInterface;
 use Symfony\Component\HttpFoundation\Request;
-use Twig\Environment;
 
 /** @var Request $request */
 
@@ -32,13 +25,6 @@ if ($sub == "offline") {
     takeOffline($request, $config);
 } elseif ($sub == "stats") {
     require("home/stats.inc.php");
-} elseif ($sub === "gamestats") {
-    gameStatsView($gameStatsGenerator, $twig, $app['app.cache_dir']);
-} elseif ($sub === "changelog") {
-    /** @var MarkdownConverterInterface */
-    $markdown = $app[MarkdownConverterInterface::class];
-
-    changelogView($markdown, $twig);
 } elseif ($sub == "adminlog") {
     /** @var AdminSessionRepository $sessionRepository */
     $sessionRepository = $app[AdminSessionRepository::class];
@@ -61,28 +47,8 @@ if ($sub == "offline") {
     require("home/adminusers.inc.php");
 } elseif ($sub == "observed") {
     require("home/observed.inc.php");
-} elseif ($sub == "sysinfo") {
-    /** @var DatabaseManagerRepository $databaseManager */
-    $databaseManager = $app[DatabaseManagerRepository::class];
-
-    systemInfoView($databaseManager, $twig);
 } else {
-    /** @var CellRepository $universeCellRepo */
-    $universeCellRepo = $app[CellRepository::class];
-
-    /** @var TicketRepository $ticketRepo */
-    $ticketRepo = $app[TicketRepository::class];
-
-    /** @var TextRepository $textRepo */
-    $textRepo = $app[TextRepository::class];
-
-    /** @var AdminRoleManager $roleManager */
-    $roleManager = $app[AdminRoleManager::class];
-
-    /** @var ConfigurationService $config */
-    $config = $app[ConfigurationService::class];
-
-    indexView($config, $cu, $universeCellRepo, $ticketRepo, $textRepo, $roleManager, $twig);
+    indexView();
 }
 
 function takeOffline(Request $request, ConfigurationService $config)
@@ -118,27 +84,6 @@ function takeOffline(Request $request, ConfigurationService $config)
         <input type=\"button\" value=\"Spiel offline nehmen\" onclick=\"document.location='?page=$page&amp;sub=$sub&amp;off=1'\" />";
     }
     echo "</form>";
-}
-
-function gameStatsView(GameStatsGenerator $gameStatsGenerator, Environment $twig, string $cacheDir)
-{
-    echo $twig->render('admin/overview/gamestats.html.twig', [
-        'userStats' => file_exists($cacheDir . GameStatsGenerator::USER_STATS_FILE) ? GameStatsGenerator::USER_STATS_FILE_PUBLIC_PATH : null,
-        'xmlInfo' => file_exists($cacheDir . GameStatsGenerator::XML_INFO_FILE) ? GameStatsGenerator::XML_INFO_FILE_PUBLIC_PATH : null,
-        'gameStats' => $gameStatsGenerator->readCached(),
-    ]);
-    exit();
-}
-
-function changelogView(MarkdownConverterInterface $markdown, Environment $twig)
-{
-    $changelogFile = "../../Changelog.md";
-    $changelogPublicFile = "../../Changelog_public.md";
-    echo $twig->render('admin/overview/changelog.html.twig', [
-        'changelog' => is_file($changelogFile) ? $markdown->convertToHtml(file_get_contents($changelogFile)) : null,
-        'changelogPublic' => is_file($changelogPublicFile) ? $markdown->convertToHtml(file_get_contents($changelogPublicFile)) : null,
-    ]);
-    exit();
 }
 
 function adminSessionLogForUserView(
@@ -306,77 +251,6 @@ function adminSessionLogView(
     }
 }
 
-function systemInfoView(DatabaseManagerRepository $databaseManager, Environment $twig)
-{
-    $unix = isUnixOS() ? posix_uname() : null;
-    echo $twig->render('admin/overview/sysinfo.html.twig', [
-        'phpVersion' => phpversion(),
-        'dbVersion' => $databaseManager->getDatabasePlatform(),
-        'webserverVersion' => $_SERVER['SERVER_SOFTWARE'],
-        'unixName' => isUnixOS() ? $unix['sysname'] . ' ' . $unix['release'] . ' ' . $unix['version'] : null,
-    ]);
-    exit();
-}
-
-function indexView(
-    ConfigurationService $config,
-    AdminUser $cu,
-    CellRepository $universeCellRepo,
-    TicketRepository $ticketRepo,
-    TextRepository $textRepo,
-    AdminRoleManager $roleManager,
-    Environment $twig
-) {
-    // Flottensperre aktiv
-    $fleetBanTitle = null;
-    $fleetBanText = null;
-    if ($config->getBoolean('flightban')) {
-        // Prüft, ob die Sperre schon abgelaufen ist
-        if ($config->param1Int('flightban_time') <= time() && $config->param2Int('flightban_time') >= time()) {
-            $flightban_time_status = "<span style=\"color:#0f0\">Aktiv</span> Es können keine Flüge gestartet werden!";
-        } elseif ($config->param1Int('flightban_time') > time() && $config->param2Int('flightban_time') > time()) {
-            $flightban_time_status = "Ausstehend";
-        } else {
-            $flightban_time_status = "<span style=\"color:#f90\">Abgelaufen</span>";
-        }
-
-        $fleetBanTitle = "Flottensperre aktiviert";
-        $fleetBanText = "Die Flottensperre wurde aktiviert.<br><br><b>Status:</b> " . $flightban_time_status . "<br><b>Zeit:</b> " . date("d.m.Y H:i", $config->param1Int('flightban_time')) . " - " . date("d.m.Y H:i", $config->param2Int('flightban_time')) . "<br><b>Grund:</b> " . $config->param1('flightban') . "<br><br>Zum deaktivieren: <a href=\"?page=fleets&amp;sub=fleetoptions\">Flottenoptionen</a>";
-    }
-
-    // Kampfsperre aktiv
-    if ($config->getBoolean('battleban')) {
-        // Prüft, ob die Sperre schon abgelaufen ist
-        if ($config->param1Int('battleban_time') <= time() && $config->param2Int('battleban_time') >= time()) {
-            $battleban_time_status = "<span style=\"color:#0f0\">Aktiv</span> Es können keine Angriffe geflogen werden!";
-        } elseif ($config->param1Int('battleban_time') > time() && $config->param2Int('battleban_time') > time()) {
-            $battleban_time_status = "Ausstehend";
-        } else {
-            $battleban_time_status = "<span style=\"color:#f90\">Abgelaufen</span>";
-        }
-
-        $fleetBanTitle = "Kampfsperre aktiviert";
-        $fleetBanText = "Die Kampfsperre wurde aktiviert.<br><br><b>Status:</b> " . $battleban_time_status . "<br><b>Zeit:</b> " . date("d.m.Y H:i", $config->param1Int('battleban_time')) . " - " . date("d.m.Y H:i", $config->param2Int('battleban_time')) . "<br><b>Grund:</b> " . $config->param1('battleban') . "<br><br>Zum deaktivieren: <a href=\"?page=fleets&amp;sub=fleetoptions\">Flottenoptionen</a>";
-    }
-
-    //
-    // Schnellsuche
-    //
-    $_SESSION['planets']['query'] = Null;
-    $_SESSION['admin']['user_query'] = "";
-    $_SESSION['admin']['queries']['alliances'] = "";
-
-    echo $twig->render('admin/overview/overview.html.twig', [
-        'welcomeMessage' => 'Hallo <b>' . $cu->nick . '</b>, willkommen im Administrationsmodus! Deine Rolle(n): <b>' . $roleManager->getRolesStr($cu) . '.</b>',
-        'hasTfa' => (bool) $cu->tfaSecret,
-        'didBigBangHappen' => $universeCellRepo->count() != 0,
-        'forcePasswordChange' => $cu->forcePasswordChange,
-        'numNewTickets' => $ticketRepo->countNew(),
-        'numOpenTickets' => $ticketRepo->countAssigned($cu->id),
-        'fleetBanText' => $fleetBanText,
-        'fleetBanTitle' => $fleetBanTitle,
-        'adminInfo' => $textRepo->getEnabledTextOrDefault('admininfo'),
-        'systemMessage' => $textRepo->getEnabledTextOrDefault('system_message'),
-    ]);
-    exit();
+function indexView() {
+    forward('/admin/overview');
 }

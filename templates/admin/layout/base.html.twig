@@ -2,7 +2,7 @@
 <html lang="de">
 <head>
     <meta charset="utf-8">
-    <title>{{ pageTitle|default('EtoA Admin') }}</title>
+    <title>{{ getGameIdentifier() }} Administration</title>
 
     <meta name="author" content="Nicolas Perrenoud" />
     <meta name="keywords" content="Escape to Andromeda, Browsergame, Strategie, Simulation, Andromeda, MMPOG, RPG" />
@@ -16,7 +16,11 @@
     {{ ajaxJs|default()|raw }}
 </head>
 <body {% if bodyClass|default('') %} class="{{ bodyClass }}"{% endif %}>
-    {{ bodyTopStuff|default()|raw }}
+
+  <div class="tooltip" id="tooltip" style="display:none;" onmouseup="hideTT();">
+    <div class="tttitle" id="tttitle"></div>
+    <div class="ttcontent" id="ttcontent"></div>
+  </div>
 
     {% block layoutContent %}{% endblock %}
 

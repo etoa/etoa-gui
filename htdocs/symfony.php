@@ -19,6 +19,7 @@ if ($_SERVER['APP_DEBUG']) {
 }
 
 require_once __DIR__ . '/../htdocs/inc/functions.inc.php';
+require_once __DIR__ . '/../htdocs/admin/inc/admin_functions.inc.php';
 
 $kernel = new Kernel($_SERVER['APP_ENV'], (bool) $_SERVER['APP_DEBUG']);
 $kernel->boot();

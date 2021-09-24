@@ -22,7 +22,7 @@ class AllianceShipPointsUpdateTask implements IPeriodicTask
         return "Allianz-Schiffsteile berechnet";
     }
 
-    function getDescription()
+    public static function getDescription()
     {
         return "Allianz-Schiffsteile berechnen";
     }

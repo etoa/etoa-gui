@@ -27,7 +27,7 @@ class AnalyzeTablesTask implements IPeriodicTask
         return "Tabellen analysiert";
     }
 
-    function getDescription()
+    public static function getDescription()
     {
         return "Tabellen analysieren";
     }

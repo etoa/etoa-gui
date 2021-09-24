@@ -104,6 +104,19 @@ class AdminUserRepository extends AbstractRepository
         $adminUser->forcePasswordChange = $forceChange;
     }
 
+    public function setTfaSecret(AdminUser $adminUser, string $secret): void
+    {
+        $this->createQueryBuilder()
+            ->update('admin_users')
+            ->set('tfa_secret', ':secret')
+            ->where('user_id = :id')
+            ->setParameters([
+                'id' => $adminUser->id,
+                'secret' => $secret,
+            ])
+            ->execute();
+    }
+
     public function save(AdminUser $adminUser): void
     {
         if ($adminUser->id != null) {

@@ -34,7 +34,7 @@ $roleManager = $app[AdminRoleManager::class];
 /** @var Request */
 $request = Request::createFromGlobals();
 
-$twig->addGlobal("title", "Support-Tickets");
+\EtoA\Admin\LegacyTemplateTitleHelper::$title = "Support-Tickets";
 
 if ($roleManager->checkAllowed($cu, ["master", "super-admin", "game-admin", "trial-game-admin"])) {
     ticketNavigation();
@@ -51,7 +51,7 @@ if ($roleManager->checkAllowed($cu, ["master", "super-admin", "game-admin", "tri
         activeTickets($request, $ticketService, $ticketRepo, $ticketMessageRepo, $adminUserRepo, $userRepo);
     }
 } else {
-    $twig->addGlobal("errorMessage", "Nicht erlaubt!");
+    \EtoA\Admin\LegacyTemplateTitleHelper::addFlash('error', "Nicht erlaubt!");
 }
 
 function ticketNavigation()

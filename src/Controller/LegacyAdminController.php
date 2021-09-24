@@ -2,6 +2,7 @@
 
 namespace EtoA\Controller;
 
+use EtoA\Admin\LegacyTemplateTitleHelper;
 use EtoA\Security\Admin\CurrentAdmin;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -23,7 +24,16 @@ class LegacyAdminController extends AbstractController
 
         require_once __DIR__ . '/../../htdocs/admin/index.php';
 
-        return new Response(ob_get_clean());
+        foreach (LegacyTemplateTitleHelper::$flashes as $message => $type) {
+            $this->addFlash($type, $message);
+        }
+
+        return $this->render('admin/default.html.twig', [
+            'title' => LegacyTemplateTitleHelper::$title,
+            'subtitle' => LegacyTemplateTitleHelper::$subTitle,
+            'content' => ob_get_clean(),
+            'ajaxJs' => $xajax->getJavascript(),
+        ]);
     }
 
     /**

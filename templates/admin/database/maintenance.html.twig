@@ -1,16 +1,10 @@
 {% extends 'admin/layout/admin.html.twig' %}
 
-{% import 'admin/macros.html.twig' as macros %}
-
 {% block content %}
     <h1>Datenbank</h1>
     <h2>{{ subTitle}}</h2>
 
-    {% if successMessage %}
-        {{ macros.messagebox(successMessage, 'success') }}
-    {% endif %}
-
-    <p><input type="button" value="Zur Übersicht" onclick="document.location='?page={{ page }}'"/></p>
+    <p><input type="button" value="Zur Übersicht" onclick="document.location='{{ path('admin.db') }}'"/></p>
 
     <table class="tb">
         <thead>
@@ -31,5 +25,5 @@
         </tbody>
     </table>
 
-    <p><input type="button" value="Zur Übersicht" onclick="document.location='?page={{ page }}'"/></p>
+    <p><input type="button" value="Zur Übersicht" onclick="document.location='{{ path('admin.db') }}'"/></p>
 {% endblock %}

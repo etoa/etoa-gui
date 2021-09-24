@@ -349,7 +349,7 @@ if ($user !== null) {
 
     </script>";
 
-    $twig->addGlobal('subtitle', "User bearbeiten: " . $user->nick);
+    \EtoA\Admin\LegacyTemplateTitleHelper::$subTitle = "User bearbeiten: " . $user->nick;
 
     echo "<form action=\"?page=$page&amp;sub=edit&amp;id=" . $user->id . "\" method=\"post\">
     <input type=\"hidden\" id=\"tabactive\" name=\"tabactive\" value=\"\" />";

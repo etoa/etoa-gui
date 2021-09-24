@@ -35,13 +35,13 @@ if ($sub == "prices") {
 } elseif ($sub == "points") {
     buildingPoints($request, $repository, $buildingPointRepository, $rankingService);
 } elseif ($sub == "type") {
-    editCategories($app, $twig, $request);
+    editCategories($app, $request);
 } elseif ($sub == "data") {
-    editData($app, $twig, $request);
+    editData($app, $request);
 } elseif ($sub == "req") {
-    requirements($twig, $app);
+    requirements($app);
 } else {
-    buildingList($request, $repository, $config, $twig);
+    buildingList($request, $repository, $config);
 }
 
 function priceCalculator(BuildingRepository $repository)
@@ -193,17 +193,17 @@ function buildingPoints(
     }
 }
 
-function editCategories(Container $app, Environment $twig, Request $request)
+function editCategories(Container $app, Request $request)
 {
-    BuildingTypesForm::render($app, $twig, $request);
+    BuildingTypesForm::render($app, $request);
 }
 
-function editData(Container $app, Environment $twig, Request $request)
+function editData(Container $app, Request $request)
 {
-    BuildingsForm::render($app, $twig, $request);
+    BuildingsForm::render($app, $request);
 }
 
-function requirements(Environment $twig, Container $app)
+function requirements(Container $app)
 {
     define('TITLE', "Gebäudeanforderungen");
     define('ITEMS_TBL', "buildings");
@@ -222,12 +222,11 @@ function buildingList(
     Request $request,
     BuildingRepository $repository,
     ConfigurationService $config,
-    Environment $twig
 ) {
     global $page;
     global $sub;
 
-    $twig->addGlobal('title', 'Gebäudeliste');
+    \EtoA\Admin\LegacyTemplateTitleHelper::$title = 'Gebäudeliste';
 
     $buildTypes = Building::getBuildTypes();
 

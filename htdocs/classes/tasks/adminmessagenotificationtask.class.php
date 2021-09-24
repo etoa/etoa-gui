@@ -56,7 +56,7 @@ class AdminMessageNotificationTask implements IPeriodicTask
         return "$count Admin-Mailbenachrichtigungen versendet";
     }
 
-    function getDescription()
+    public static function getDescription()
     {
         return "Admin-Mailbenachrichtigungen versenden";
     }

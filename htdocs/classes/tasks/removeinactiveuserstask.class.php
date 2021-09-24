@@ -24,7 +24,7 @@ class RemoveInactiveUsersTask implements IPeriodicTask
         return "$nr inaktive User gelöscht";
     }
 
-    function getDescription()
+    public static function getDescription()
     {
         return "Inaktive User löschen";
     }

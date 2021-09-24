@@ -1,0 +1,9 @@
+scheb_two_factor:
+    totp:
+        enabled: true
+        server_name: 'etoa.local'
+        issuer: EtoA Round X
+        window: 1
+        parameters:
+            image: 'https://my-service/img/logo.png'
+        template: admin/login/tfa-challenge.html.twig

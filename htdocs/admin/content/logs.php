@@ -19,13 +19,11 @@ global $app;
 /** @var ConfigurationService $config */
 $config = $app[ConfigurationService::class];
 
-$twig->addGlobal('title', 'Logs');
+\EtoA\Admin\LegacyTemplateTitleHelper::$title = 'Logs';
 
 echo "<div id=\"logsinfo\"></div>"; //nur zu entwicklungszwecken!
 
-if ($sub == "errorlog") {
-    errorlog($twig);
-} elseif (isset($_GET['sub']) && $_GET['sub'] == "battlelogs") {
+if (isset($_GET['sub']) && $_GET['sub'] == "battlelogs") {
     battleLog();
 } elseif ($sub == "check_fights") {
     checkFights();
@@ -37,27 +35,6 @@ if ($sub == "errorlog") {
     debrisLog();
 } else {
     newCommonLog();
-}
-
-function errorlog(Environment $twig)
-{
-    global $page;
-    global $sub;
-
-    if (isset($_POST['purgelog_submit'])) {
-        file_put_contents(EException::LOG_FILE, '');
-        forward('?page=' . $page . '&sub=' . $sub);
-    }
-
-    $logFile = null;
-    if (is_file(EException::LOG_FILE)) {
-        $logFile = file_get_contents(EException::LOG_FILE);
-    }
-
-    echo $twig->render('admin/logs/errorlog.html.twig', [
-        'logFile' => $logFile,
-    ]);
-    exit();
 }
 
 function battleLog()

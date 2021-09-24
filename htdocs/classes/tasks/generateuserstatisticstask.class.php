@@ -35,7 +35,7 @@ class GenerateUserStatisticsTask implements IPeriodicTask
         return "User-Statistik: " . $sessionCount . " User online, " . $userCount . " User registriert";
     }
 
-    function getDescription()
+    public static function getDescription()
     {
         return "User Statistik aktualisieren";
     }

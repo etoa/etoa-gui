@@ -43,21 +43,21 @@ if (!isset($id)) {
 }
 
 if ($request->request->has('info_save') && $request->request->get('info_save') != "") {
-    saveInfo($request, $repository, $id, $twig, $app['app.webroot_dir']);
+    saveInfo($request, $repository, $id, $app['app.webroot_dir']);
 } elseif ($request->request->has('member_save') && $request->request->get('member_save') != "") {
-    saveMembers($request, $repository, $allianceRankRepository, $twig);
+    saveMembers($request, $repository, $allianceRankRepository);
 } elseif ($request->request->has('bnd_save') && $request->request->get('bnd_save') != "") {
-    saveDiplomacy($request, $allianceDiplomacyRepository, $twig);
+    saveDiplomacy($request, $allianceDiplomacyRepository);
 } elseif ($request->request->has('res_save') && $request->request->get('res_save') != "") {
-    saveResources($request, $repository, $id, $twig);
+    saveResources($request, $repository, $id);
 } elseif ($request->request->has('buildings') && $request->request->get('buildings') != "") {
-    saveBuildings($request, $buildingRepository, $id, $twig);
+    saveBuildings($request, $buildingRepository, $id);
 } elseif ($request->request->has('techs') && $request->request->get('techs') != "") {
-    saveTechnologies($request, $technologyRepository, $id, $twig);
+    saveTechnologies($request, $technologyRepository, $id);
 }
-edit($repository, $buildingRepository, $technologyRepository, $historyRepository, $allianceDiplomacyRepository, $id, $twig);
+edit($repository, $buildingRepository, $technologyRepository, $historyRepository, $allianceDiplomacyRepository, $id);
 
-function saveInfo(Request $request, AllianceRepository $repository, int $id, Environment $twig, string $webroot)
+function saveInfo(Request $request, AllianceRepository $repository, int $id, string $webroot)
 {
     //  Bild löschen wenn nötig
     if ($request->request->has('alliance_img_del')) {
@@ -80,10 +80,10 @@ function saveInfo(Request $request, AllianceRepository $repository, int $id, Env
         $request->request->getInt('alliance_founder_id')
     );
 
-    $twig->addGlobal('successMessage', 'Allianzdaten aktualisiert!');
+    \EtoA\Admin\LegacyTemplateTitleHelper::addFlash('success', 'Allianzdaten aktualisiert!');
 }
 
-function saveMembers(Request $request, AllianceRepository $repository, AllianceRankRepository $allianceRankRepository, Environment $twig)
+function saveMembers(Request $request, AllianceRepository $repository, AllianceRankRepository $allianceRankRepository)
 {
     // Mitgliederänderungen
     if ($request->request->has('member_kick') && count($request->request->all('member_kick')) > 0) {
@@ -108,10 +108,10 @@ function saveMembers(Request $request, AllianceRepository $repository, AllianceR
         }
     }
 
-    $twig->addGlobal('successMessage', 'Mitglieder aktualisiert!');
+    \EtoA\Admin\LegacyTemplateTitleHelper::addFlash('success', 'Mitglieder aktualisiert!');
 }
 
-function saveDiplomacy(Request $request, AllianceDiplomacyRepository $repository, Environment $twig)
+function saveDiplomacy(Request $request, AllianceDiplomacyRepository $repository)
 {
     // Bündnisse / Kriege speichern
     if ($request->request->has('alliance_bnd_del') && count($request->request->all('alliance_bnd_del')) > 0) {
@@ -128,10 +128,11 @@ function saveDiplomacy(Request $request, AllianceDiplomacyRepository $repository
             );
         }
     }
-    $twig->addGlobal('successMessage', 'Diplomatie aktualisiert!');
+
+    \EtoA\Admin\LegacyTemplateTitleHelper::addFlash('success', 'Diplomatie aktualisiert!');
 }
 
-function saveResources(Request $request, AllianceRepository $repository, int $id, Environment $twig)
+function saveResources(Request $request, AllianceRepository $repository, int $id)
 {
     $repository->updateResources(
         $id,
@@ -151,14 +152,13 @@ function saveResources(Request $request, AllianceRepository $repository, int $id
         StringUtils::parseFormattedNumber($request->request->get('res_food_add')),
     );
 
-    $twig->addGlobal('successMessage', 'Ressourcen aktualisiert!');
+    \EtoA\Admin\LegacyTemplateTitleHelper::addFlash('success', 'Ressourcen aktualisiert!');
 }
 
 function saveBuildings(
     Request $request,
     AllianceBuildingRepository $buildingRepository,
-    int $id,
-    Environment $twig
+    int $id
 ) {
     if ($buildingRepository->existsInAlliance($id, $request->request->get('alliance_building_id'))) {
         $buildingRepository->updateForAlliance(
@@ -167,7 +167,7 @@ function saveBuildings(
             $request->request->getInt('level'),
             $request->request->getInt('amount')
         );
-        $twig->addGlobal('successMessage', 'Gebäudedatensatz erfolgreich bearbeitet!');
+        \EtoA\Admin\LegacyTemplateTitleHelper::addFlash('success', 'Gebäudedatensatz erfolgreich bearbeitet!');
     } else {
         $buildingRepository->addToAlliance(
             $id,
@@ -175,15 +175,14 @@ function saveBuildings(
             $request->request->getInt('level'),
             $request->request->getInt('amount')
         );
-        $twig->addGlobal('successMessage', 'Gebäudedatensatz erfolgreich eingefügt!');
+        \EtoA\Admin\LegacyTemplateTitleHelper::addFlash('success', 'Gebäudedatensatz erfolgreich eingefügt!');
     }
 }
 
 function saveTechnologies(
     Request $request,
     AllianceTechnologyRepository $technologyRepository,
-    int $id,
-    Environment $twig
+    int $id
 ): void {
     if ($technologyRepository->existsInAlliance($id, $request->request->getInt('alliance_tech_id'))) {
         $technologyRepository->updateForAlliance(
@@ -192,7 +191,7 @@ function saveTechnologies(
             $request->request->getInt('tech_level'),
             $request->request->getInt('tech_amount')
         );
-        $twig->addGlobal('successMessage', 'Technologiedatensatz erfolgreich bearbeitet!');
+        \EtoA\Admin\LegacyTemplateTitleHelper::addFlash('success', 'Technologiedatensatz erfolgreich bearbeitet!');
     } else {
         $technologyRepository->addToAlliance(
             $id,
@@ -200,7 +199,7 @@ function saveTechnologies(
             $request->request->getInt('tech_level'),
             $request->request->getInt('tech_amount')
         );
-        $twig->addGlobal('successMessage', 'Technologiedatensatz erfolgreich eingefügt!');
+        \EtoA\Admin\LegacyTemplateTitleHelper::addFlash('success', 'Technologiedatensatz erfolgreich eingefügt!');
     }
 }
 
@@ -210,8 +209,7 @@ function edit(
     AllianceTechnologyRepository $technologyRepository,
     AllianceHistoryRepository $historyRepository,
     AllianceDiplomacyRepository $allianceDiplomacyRepository,
-    int $id,
-    Environment $twig
+    int $id
 ): void {
     global $page, $app;
 
@@ -225,7 +223,7 @@ function edit(
         return;
     }
 
-    $twig->addGlobal('subtitle', "Allianz bearbeiten: " . $alliance->nameWithTag);
+    \EtoA\Admin\LegacyTemplateTitleHelper::$subTitle = "Allianz bearbeiten: " . $alliance->nameWithTag;
 
     $members = $repository->findUsers($id);
 

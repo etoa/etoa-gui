@@ -63,7 +63,6 @@ if ($sub == "fleetoptions") {
 } else {
     fleets(
         $request,
-        $twig,
         $userRepository,
         $shipDataRepository,
         $planetRepo,
@@ -269,7 +268,6 @@ function fleetOptions(Request $request, ConfigurationService $config): void
 
 function fleets(
     Request $request,
-    Environment $twig,
     UserRepository $userRepository,
     ShipDataRepository $shipDataRepository,
     PlanetRepository $planetRepo,
@@ -284,7 +282,7 @@ function fleets(
     global $page;
     global $sub;
 
-    $twig->addGlobal('title', "Flotten");
+    \EtoA\Admin\LegacyTemplateTitleHelper::$title = "Flotten";
 
     //
     // Flotte bearbeiten
@@ -412,8 +410,7 @@ function fleets(
             $entityRepository,
             $entityService,
             $userRepository,
-            $entityCoordinatesSelector,
-            $twig
+            $entityCoordinatesSelector
         );
     } else {
         echo '<div class="tabs">
@@ -437,8 +434,7 @@ function fleets(
                 $request,
                 $entityRepository,
                 $fleetRepository,
-                $entityCoordinatesSelector,
-                $twig
+                $entityCoordinatesSelector
             );
         }
 
@@ -456,8 +452,7 @@ function fleets(
                 $entityRepository,
                 $planetRepo,
                 $fleetRepository,
-                $entityCoordinatesSelector,
-                $twig
+                $entityCoordinatesSelector
             );
         }
 
@@ -715,8 +710,7 @@ function fleetSearchResults(
     EntityRepository $entityRepository,
     EntityService $entityService,
     UserRepository $userRepository,
-    EntityCoordinatesSelector $entityCoordinatesSelector,
-    Environment $twig
+    EntityCoordinatesSelector $entityCoordinatesSelector
 ): void {
     global $page;
     global $sub;
@@ -838,7 +832,7 @@ function fleetSearchResults(
         echo "<br/><input type=\"button\" value=\"Neue Suche\" onclick=\"document.location='?page=$page&amp;sub=$sub'\" /> ";
         echo "<input type=\"button\" value=\"Aktualisieren\" onclick=\"document.location='?page=$page&amp;sub=$sub&amp;action=searchresults'\" />";
     } else {
-        $twig->addGlobal("infoMessage", "Die Suche lieferte keine Resultate!");
+        \EtoA\Admin\LegacyTemplateTitleHelper::addFlash('info', "Die Suche lieferte keine Resultate!");
         echo "<p><input type=\"button\" value=\"Neue Suche\" onclick=\"document.location='?page=$page&amp;sub=$sub'\" /></p>";
         $_SESSION['fleetedit']['query'] = null;
     }
@@ -882,33 +876,32 @@ function createNewFleet(
     Request $request,
     EntityRepository $entityRepository,
     FleetRepository $fleetRepository,
-    EntityCoordinatesSelector $entityCoordinatesSelector,
-    Environment $twig
+    EntityCoordinatesSelector $entityCoordinatesSelector
 ): void {
     global $page;
     global $sub;
 
     $srcCoords = $entityCoordinatesSelector->parse('start', $request->request);
     if ($srcCoords === null) {
-        $twig->addGlobal('errorMessage', "Ungültige Startkoordinaten.");
+        \EtoA\Admin\LegacyTemplateTitleHelper::addFlash('error', "Ungültige Startkoordinaten.");
         return;
     }
 
     $srcEnt = $entityRepository->findByCoordinates($srcCoords);
     if ($srcEnt === null) {
-        $twig->addGlobal('errorMessage', "Startentität nicht vorhanden.");
+        \EtoA\Admin\LegacyTemplateTitleHelper::addFlash('error',"Startentität nicht vorhanden.");
         return;
     }
 
     $trgCoords = $entityCoordinatesSelector->parse('end', $request->request);
     if ($trgCoords === null) {
-        $twig->addGlobal('errorMessage', "Ungültige Zielkoordinaten.");
+        \EtoA\Admin\LegacyTemplateTitleHelper::addFlash('error', "Ungültige Zielkoordinaten.");
         return;
     }
 
     $trgEnt = $entityRepository->findByCoordinates($trgCoords);
     if ($trgEnt === null) {
-        $twig->addGlobal('errorMessage', "Zielentität nicht vorhanden.");
+        \EtoA\Admin\LegacyTemplateTitleHelper::addFlash('error', "Zielentität nicht vorhanden.");
         return;
     }
 
@@ -917,13 +910,13 @@ function createNewFleet(
 
     $shipId = $request->request->getInt('fs_ship_id_new');
     if ($shipId <= 0) {
-        $twig->addGlobal('errorMessage', "Kein Schiff angegeben.");
+        \EtoA\Admin\LegacyTemplateTitleHelper::addFlash("error", "Kein Schiff angegeben.");
         return;
     }
 
     $shipCount = $request->request->getInt('fs_ship_cnt_new');
     if ($shipCount <= 0) {
-        $twig->addGlobal('errorMessage', "Ungültige Anzahl Schiffe.");
+        \EtoA\Admin\LegacyTemplateTitleHelper::addFlash('error', "Ungültige Anzahl Schiffe.");
         return;
     }
 
@@ -944,7 +937,7 @@ function createNewFleet(
         $shipCount
     );
 
-    $twig->addGlobal('successMessage', "Neue Flotte erstellt! <a href=\"?page=$page&amp;sub=$sub&fleetedit=" . $fleetId . "\">Details</a>");
+    \EtoA\Admin\LegacyTemplateTitleHelper::addFlash('success', "Neue Flotte erstellt! <a href=\"?page=$page&amp;sub=$sub&fleetedit=" . $fleetId . "\">Details</a>");
 }
 
 function createNewFleetForm(
@@ -1009,31 +1002,30 @@ function sendNewFleet(
     EntityRepository $entityRepository,
     PlanetRepository $planetRepo,
     FleetRepository $fleetRepository,
-    EntityCoordinatesSelector $entityCoordinatesSelector,
-    Environment $twig
+    EntityCoordinatesSelector $entityCoordinatesSelector
 ): void {
 
     $srcCoords = $entityCoordinatesSelector->parse('start', $request->request);
     if ($srcCoords === null) {
-        $twig->addGlobal('errorMessage', "Ungültige Startkoordinaten.");
+        \EtoA\Admin\LegacyTemplateTitleHelper::addFlash('error', "Ungültige Startkoordinaten.");
         return;
     }
 
     $srcEnt = $entityRepository->findByCoordinates($srcCoords);
     if ($srcEnt === null) {
-        $twig->addGlobal('errorMessage', "Startentität nicht vorhanden");
+        \EtoA\Admin\LegacyTemplateTitleHelper::addFlash('error', "Startentität nicht vorhanden");
         return;
     }
 
     $shipId = $request->request->getInt('fs_ship_id_new');
     if ($shipId <= 0) {
-        $twig->addGlobal('errorMessage', "Kein Schiff angegeben.");
+        \EtoA\Admin\LegacyTemplateTitleHelper::addFlash('error', "Kein Schiff angegeben.");
         return;
     }
 
     $shipCount = $request->request->getInt('fs_ship_cnt_new');
     if ($shipCount <= 0) {
-        $twig->addGlobal('errorMessage', "Ungültige Anzahl Schiffe.");
+        \EtoA\Admin\LegacyTemplateTitleHelper::addFlash('error', "Ungültige Anzahl Schiffe.");
         return;
     }
 
@@ -1060,7 +1052,7 @@ function sendNewFleet(
         );
         $count++;
     }
-    $twig->addGlobal('successMessage', "$count Flotten erstellt!");
+    \EtoA\Admin\LegacyTemplateTitleHelper::addFlash('success', "$count Flotten erstellt!");
 }
 
 function sendNewFleetForm(

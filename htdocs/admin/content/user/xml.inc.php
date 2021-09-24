@@ -8,7 +8,7 @@ use EtoA\User\UserToXml;
 /** @var UserToXml $userToXml */
 $userToXml = $app[UserToXml::class];
 
-$twig->addGlobal("title", "XML-Import/Export");
+\EtoA\Admin\LegacyTemplateTitleHelper::$title = "XML-Import/Export";
 
 $path = $userToXml->getDataDirectory();
 
@@ -20,7 +20,7 @@ if (isset($_GET['file'])) {
     if (is_file($file)) {
         $xml = simplexml_load_file($file);
 
-        $twig->addGlobal("subtitle", "Details " . base64_decode($_GET['file'], true) . "");
+        \EtoA\Admin\LegacyTemplateTitleHelper::$subTitle = "Details " . base64_decode($_GET['file'], true) . "";
 
         echo "<fieldset><legend>Allgemeines</legend>";
         tableStart();
@@ -197,7 +197,7 @@ if (isset($_GET['file'])) {
 // Overview
 //
 else {
-    $twig->addGlobal("subtitle", "Export");
+    \EtoA\Admin\LegacyTemplateTitleHelper::$subTitle = "Export";
 
     if (isset($_POST['exportcache'])) {
         try {

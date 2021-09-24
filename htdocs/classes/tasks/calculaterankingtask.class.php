@@ -22,7 +22,7 @@ class CalculateRankingTask implements IPeriodicTask
         return "Die Punkte von " . $result->numberOfUsers . " Spielern wurden aktualisiert; ein Spieler hat durchschnittlich " . StringUtils::formatNumber($result->getAveragePoints()) . " Punkte";
     }
 
-    function getDescription()
+    public static function getDescription()
     {
         return "Punkte berechnen und Rangliste aktualisieren";
     }

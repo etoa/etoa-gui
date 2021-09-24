@@ -3,19 +3,33 @@
 {% import 'macros.html.twig' as macros %}
 
 {% block content %}
-    {% if msg|default(false) %}
-        <div class="loginmsg {{ msgStyle }}">{{ msg }}</div>
+  {% if authenticationError %}
+    <p>{{ authenticationError|trans(authenticationErrorData, 'SchebTwoFactorBundle') }}</p>
+  {% endif %}
+
+  <p>Zwei-Faktor-Authentifizierung ist aktiv. Bitte gib den Code aus der Authenticator-App in das Feld 'Challenge' ein:</p>
+
+  <form class="form" action="{{ checkPathUrl ? checkPathUrl: path(checkPathRoute) }}" method="post">
+    <p class="widget">
+      <input
+        id="_auth_code"
+        type="text"
+        name="{{ authCodeParameterName }}"
+        autocomplete="one-time-code"
+        autofocus
+        inputmode="numeric"
+        pattern="[0-9]*"
+      />
+    </p>
+
+    {% if displayTrustedOption %}
+      <p class="widget"><label for="_trusted"><input id="_trusted" type="checkbox" name="{{ trustedParameterName }}" /> {{ "trusted"|trans({}, 'SchebTwoFactorBundle') }}</label></p>
     {% endif %}
+    {% if isCsrfProtectionEnabled %}
+      <input type="hidden" name="{{ csrfParameterName }}" value="{{ csrf_token(csrfTokenId) }}">
+    {% endif %}
+    <p class="submit"><input type="submit" value="{{ "login"|trans({}, 'SchebTwoFactorBundle') }}" /></p>
+  </form>
 
-    <p>Zwei-Faktor-Authentifizierung ist aktiv. Bitte gib den Code aus der Authenticator-App in das Feld 'Challenge' ein:</p>
-
-    <form action="{{ loginTarget }}" method="post" class="login_form">
-        <p><label for="login_challenge">Challenge</label> <input type="text" name="login_challenge" id="login_challenge" maxlength="255" size="6" autocomplete="off" /></p>
-        <p class="buttons">
-            <input type="submit" name="login_submit" value="Login" /> &nbsp;
-            <input type="button" value="Abbrechen" onclick="document.location='?'" />
-        </p>
-    </form>
-    <script type="text/javascript">document.forms[0].elements[0].focus()</script>
-
+  <p class="cancel"><a href="{{ logoutPath }}">{{ "cancel"|trans({}, 'SchebTwoFactorBundle') }}</a></p>
 {% endblock %}

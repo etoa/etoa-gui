@@ -22,7 +22,7 @@ class RemoveOldBannsTask implements IPeriodicTask
         return "Abgelaufene Sperren gelöscht";
     }
 
-    function getDescription()
+    public static function getDescription()
     {
         return "Abgelaufene Sperren löschen";
     }

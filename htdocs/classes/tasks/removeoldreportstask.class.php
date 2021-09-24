@@ -11,7 +11,7 @@ class RemoveOldReportsTask implements IPeriodicTask
         return "Alte Berichte gelöscht";
     }
 
-    function getDescription()
+    public static function getDescription()
     {
         return "Alte Berichte löschen";
     }

@@ -28,7 +28,7 @@ class CleanupShiplistTask implements IPeriodicTask
         return "$nr alte Schiffseinträge gelöscht";
     }
 
-    function getDescription()
+    public static function getDescription()
     {
         return "Alte Schiffbaudatensätze löschen";
     }

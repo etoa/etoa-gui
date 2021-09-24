@@ -1,16 +1,10 @@
 {% extends 'admin/layout/admin.html.twig' %}
 
-{% import 'admin/macros.html.twig' as macros %}
-
 {% block content %}
     <h1>Konfiguration</h1>
     <h2>Grundkonfiguration</h2>
 
-    {% if successMessage %}
-        {{ macros.messagebox(successMessage, 'success') }}
-    {% endif %}
-
-    <form action="?page=config" method="post">
+    <form action="{{ path('admin.config') }}" method="post">
         <table class="tb" style="width:auto;">
             {% for item in items %}
             <tr>

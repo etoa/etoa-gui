@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace EtoA\Admin\Forms;
 
+use EtoA\Admin\LegacyTemplateTitleHelper;
 use MessageBox;
 use Pimple\Container;
 use Symfony\Component\HttpFoundation\Request;
-use Twig\Environment;
 
 abstract class AdvancedForm extends Form
 {
@@ -39,9 +39,9 @@ abstract class AdvancedForm extends Form
         return '';
     }
 
-    public static function render(Container $app, Environment $twig, Request $request): void
+    public static function render(Container $app, Request $request): void
     {
-        (new static($app, $twig))->router($request);
+        (new static($app))->router($request);
     }
 
     public function router(Request $request): void
@@ -80,8 +80,8 @@ abstract class AdvancedForm extends Form
 
     public function index(): void
     {
-        $this->twig->addGlobal("title", $this->getName());
-        $this->twig->addGlobal("subtitle", "Übersicht");
+        LegacyTemplateTitleHelper::$title = $this->getName();
+        LegacyTemplateTitleHelper::$subTitle = "Übersicht";
 
         echo "<form action=\"?" . URL_SEARCH_STRING . "\" method=\"post\">";
         echo "<input type=\"button\" value=\"Neuer Datensatz hinzufügen\" name=\"new\" onclick=\"document.location='?" . URL_SEARCH_STRING . "&amp;action=new'\" /><br/><br/>";
@@ -199,8 +199,8 @@ abstract class AdvancedForm extends Form
 
     public function create(): void
     {
-        $this->twig->addGlobal("title", $this->getName());
-        $this->twig->addGlobal("subtitle", "Neuer Datensatz");
+        LegacyTemplateTitleHelper::$title = $this->getName();
+        LegacyTemplateTitleHelper::$subTitle = "Neuer Datensatz";
 
         echo "<form action=\"?" . URL_SEARCH_STRING . "\" method=\"post\">";
         echo "<table>";
@@ -296,8 +296,8 @@ abstract class AdvancedForm extends Form
 
     public function edit(Request $request): void
     {
-        $this->twig->addGlobal("title", $this->getName());
-        $this->twig->addGlobal("subtitle", "Datensatz bearbeiten");
+        LegacyTemplateTitleHelper::$title = $this->getName();
+        LegacyTemplateTitleHelper::$subTitle = "Datensatz bearbeiten";
 
         $arr = $this->createQueryBuilder()
             ->select('*')
@@ -502,8 +502,8 @@ abstract class AdvancedForm extends Form
 
     public function confirmDelete(Request $request): void
     {
-        $this->twig->addGlobal("title", $this->getName());
-        $this->twig->addGlobal("subtitle", "Datensatz löschen");
+        LegacyTemplateTitleHelper::$title = $this->getName();
+        LegacyTemplateTitleHelper::$subTitle = "Datensatz löschen";
 
         $arr = $this->createQueryBuilder()
             ->select('*')

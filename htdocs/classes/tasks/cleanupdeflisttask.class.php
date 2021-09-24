@@ -28,7 +28,7 @@ class CleanupDeflistTask implements IPeriodicTask
         return "$nr alte Verteidigungseinträge gelöscht";
     }
 
-    function getDescription()
+    public static function getDescription()
     {
         return "Alte Verteidigungsbaudatensätze löschen";
     }

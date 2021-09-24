@@ -11,7 +11,7 @@ class RemoveOldLogsTask implements IPeriodicTask
         return "$nr alte Logs gelöscht";
     }
 
-    function getDescription()
+    public static function getDescription()
     {
         return "Alte Logs löschen";
     }

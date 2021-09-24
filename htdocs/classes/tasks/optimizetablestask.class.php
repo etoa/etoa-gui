@@ -27,7 +27,7 @@ class OptimizeTablesTask implements IPeriodicTask
         return "Tabellen optimiert";
     }
 
-    function getDescription()
+    public static function getDescription()
     {
         return "Tabellen optimieren";
     }

@@ -101,9 +101,9 @@ class AdminSessionRepository extends AbstractRepository
             ->execute();
     }
 
-    public function update(string $id, int $userId, int $time, string $ipAddress): bool
+    public function update(string $id, int $userId, int $time, string $ipAddress): void
     {
-        return (bool) $this->createQueryBuilder()
+        $this->createQueryBuilder()
             ->update('admin_user_sessions')
             ->set('time_action', ':time')
             ->set('ip_addr', ':ip_addr')

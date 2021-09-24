@@ -27,7 +27,7 @@ class SetHolydayModeUsersInactiveTask implements IPeriodicTask
         return null;
     }
 
-    function getDescription()
+    public static function getDescription()
     {
         return "Benutzer aus Urlaub inaktiv setzen";
     }

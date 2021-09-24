@@ -11,7 +11,7 @@
         <tr><th>Datenbank</th><td>{{ dbVersion }}</td></tr>
     </table>
 
-    {% if isUnix %}
+    {% if isUnix() %}
         <h2>Status</h2>
         <table>
             <tr><th>Systemlast</th><td>{{ sysLoad }} %</td></tr>

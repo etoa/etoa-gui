@@ -18,14 +18,14 @@ $roleManager = $app[AdminRoleManager::class];
 /** @var Request */
 $request = Request::createFromGlobals();
 
-$twig->addGlobal("title", "Admin-Management");
+\EtoA\Admin\LegacyTemplateTitleHelper::$title = "Admin-Management";
 
 if ($request->query->has('new')) {
     createUser($roleManager);
 } elseif ($request->query->has('edit') && $request->query->getInt('edit') > 0) {
     editUser($request, $adminUserRepo, $roleManager);
 } else {
-    listUsers($request, $adminUserRepo, $roleManager, $cu, $twig);
+    listUsers($request, $adminUserRepo, $roleManager, $cu);
 }
 
 function createUser(AdminRoleManager $roleManager)
@@ -164,8 +164,7 @@ function listUsers(
     Request $request,
     AdminUserRepository $adminUserRepo,
     AdminRoleManager $roleManager,
-    AdminUser $cu,
-    Environment $twig
+    AdminUser $cu
 ) {
     global $page;
     global $sub;
@@ -188,7 +187,7 @@ function listUsers(
             $admin->isContact = $request->request->getBoolean('is_contact');
             $adminUserRepo->save($admin);
 
-            $twig->addGlobal('successMessage', "Gespeichert!");
+            \EtoA\Admin\LegacyTemplateTitleHelper::addFlash('success', "Gespeichert!");
             $logRepository->add(LogFacility::ADMIN, LogSeverity::INFO, "Der Administrator " . $cu->nick . " erstellt einen neuen Administrator: " . $admin->nick . "(" . $admin->id . ").");
 
             if ($request->request->get('user_password') != "") {
@@ -225,7 +224,7 @@ function listUsers(
 
             $adminUserRepo->save($adminUser);
 
-            $twig->addGlobal('successMessage', "Gespeichert!");
+            \EtoA\Admin\LegacyTemplateTitleHelper::addFlash('success', "Gespeichert!");
             $logRepository->add(LogFacility::ADMIN, LogSeverity::INFO, "Der Administrator " . $cu->nick . " ändert die Daten des Administrators " . $adminUser->nick . " (ID: " . $adminUser->id . ").");
         } else {
             echo "Nick nicht angegeben!<br/><br/>";

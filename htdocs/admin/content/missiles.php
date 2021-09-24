@@ -23,19 +23,19 @@ $missileRepository = $app[MissileRepository::class];
 $request = Request::createFromGlobals();
 
 if ($sub == "data") {
-    editMissileData($app, $twig, $request);
+    editMissileData($app, $request);
 } elseif ($sub == "req") {
-    missileRequirements($twig);
+    missileRequirements();
 } else {
     missileOverview($config, $missileDataRepository, $missileRepository);
 }
 
-function editMissileData(Container $app, Environment $twig, Request $request): void
+function editMissileData(Container $app, Request $request): void
 {
-    MissilesForm::render($app, $twig, $request);
+    MissilesForm::render($app, $request);
 }
 
-function missileRequirements(Environment $twig): void
+function missileRequirements(): void
 {
     global $app;
 

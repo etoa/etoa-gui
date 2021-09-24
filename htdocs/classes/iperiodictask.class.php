@@ -2,5 +2,5 @@
 interface IPeriodicTask
 {
     function run();
-    function getDescription();
+    public static function getDescription();
 }

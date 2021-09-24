@@ -98,7 +98,7 @@ class WarPeaceUpdateTask implements IPeriodicTask
         return "$cnt diplomatische Beziehungen (Krieg / Frieden) aktualisiert";
     }
 
-    function getDescription()
+    public static function getDescription()
     {
         return "Krieg/Frieden Status aktualisieren";
     }

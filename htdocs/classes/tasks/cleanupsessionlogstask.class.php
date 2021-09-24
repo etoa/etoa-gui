@@ -26,7 +26,7 @@ class CleanupSessionLogsTask implements IPeriodicTask
         return "$userSessions alte Spieler Session-Logs gelöscht, $adminSessions alte Admin Session-Logs gelöscht";
     }
 
-    function getDescription()
+    public static function getDescription()
     {
         return "Alte Session-Logs löschen";
     }

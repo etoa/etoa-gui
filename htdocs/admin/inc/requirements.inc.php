@@ -5,7 +5,7 @@ use EtoA\Building\BuildingSort;
 use EtoA\Requirement\RequirementRepositoryProvider;
 use EtoA\Technology\TechnologyDataRepository;
 
-$twig->addGlobal("title", TITLE);
+\EtoA\Admin\LegacyTemplateTitleHelper::$title = TITLE;
 
 // Lade Gebäude- & Technologienamen
 /** @var BuildingDataRepository $buildingRepository */

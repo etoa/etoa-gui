@@ -18,13 +18,15 @@ use EtoA\User\UserRepository;
 /**
  * Returns a string containing the game name, version and round
  */
-function getGameIdentifier()
+function getGameIdentifier(ConfigurationService $config = null): string
 {
-    // TODO
-    global $app;
+    if (!isset($config)) {
+        // TODO
+        global $app;
 
-    /** @var ConfigurationService $config */
-    $config = $app[ConfigurationService::class];
+        /** @var ConfigurationService $config */
+        $config = $app[ConfigurationService::class];
+    }
 
     return AppName::NAME . ' ' . getAppVersion() . ' ' . $config->get('roundname');
 }

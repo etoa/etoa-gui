@@ -44,7 +44,7 @@ $request = Request::createFromGlobals();
 // Battlepoints
 //
 if ($sub == "battlepoints") {
-    $twig->addGlobal("title", "Schiff-Punkte");
+    \EtoA\Admin\LegacyTemplateTitleHelper::$title = "Schiff-Punkte";
 
     echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"POST\">";
     if (isset($_POST['recalc'])) {
@@ -68,7 +68,7 @@ if ($sub == "battlepoints") {
 // XP-Rechner
 //
 elseif ($sub == "xpcalc") {
-    $twig->addGlobal("title", "XP-Rechner");
+    \EtoA\Admin\LegacyTemplateTitleHelper::$title = "XP-Rechner";
 
     echo "Schiff wählen: <select onchange=\"document.location='?page=" . $page . "&sub=" . $sub . "&id='+this.options[this.selectedIndex].value\">";
     $specialShips = $shipDataRepository->getSpecialShips();
@@ -97,14 +97,14 @@ elseif ($sub == "xpcalc") {
 // Kategorien
 //
 elseif ($sub == "cat") {
-    ShipCategoriesForm::render($app, $twig, $request);
+    ShipCategoriesForm::render($app, $request);
 }
 
 //
 // Daten
 //
 elseif ($sub == "data") {
-    ShipsForm::render($app, $twig, $request);
+    ShipsForm::render($app, $request);
 }
 
 //
@@ -124,7 +124,7 @@ elseif ($sub == "req") {
 // Bauliste
 //
 elseif ($sub == "queue") {
-    $twig->addGlobal("title", "Schiff-Bauliste");
+    \EtoA\Admin\LegacyTemplateTitleHelper::$title = "Schiff-Bauliste";
 
     if (isset($_POST['shipqueue_search']) || isset($_GET['action']) && $_GET['action'] == "searchresults") {
         // Suchquery generieren
@@ -298,7 +298,7 @@ elseif ($sub == "queue") {
         $shipNames = $shipRepository->getShipNames(true);
 
         // Suchmaske
-        $twig->addGlobal("subtitle", "Suchmaske");
+        \EtoA\Admin\LegacyTemplateTitleHelper::$title = "Suchmaske";
         echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"post\">";
         echo "<table class=\"tbl\">";
         echo "<tr><td class=\"tbltitle\">Planet ID</td><td class=\"tbldata\"><input type=\"text\" name=\"planet_id\" value=\"\" size=\"20\" maxlength=\"250\" /></td>";
@@ -323,7 +323,7 @@ elseif ($sub == "queue") {
  * Schiffliste *
  **************/
 else {
-    $twig->addGlobal("title", "Schiffliste");
+    \EtoA\Admin\LegacyTemplateTitleHelper::$title = "Schiffliste";
 
     // Schiffe laden
     $shipNames = $shipDataRepository->getShipNames(true);

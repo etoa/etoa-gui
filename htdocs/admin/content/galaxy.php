@@ -25,30 +25,16 @@ $userRepository = $app[UserRepository::class];
 /** @var Request $request */
 $request = Request::createFromGlobals();
 
-if ($sub == "map") {
-    galaxyMap($config, $userRepository, $twig);
-} elseif ($sub == "exploration") {
-    exploration($twig);
-} elseif ($sub == "uni") {
+if ($sub == "uni") {
     universe();
 } elseif ($sub == "galaxycheck") {
     galaxyCheck();
 } elseif ($sub == "planet_types") {
-    planetTypes($app, $twig, $request);
+    planetTypes($app, $request);
 } elseif ($sub == "sol_types") {
-    starTypes($app, $twig, $request);
+    starTypes($app, $request);
 } else {
     entities($config);
-}
-
-function galaxyMap(ConfigurationService $config, UserRepository $userRepository, Environment $twig)
-{
-    require("galaxy/map.inc.php");
-}
-
-function exploration(Environment $twig)
-{
-    require("galaxy/exploration.inc.php");
 }
 
 function universe()
@@ -64,14 +50,14 @@ function galaxyCheck()
     require("galaxy/galaxycheck.php");
 }
 
-function planetTypes(Container $app, Environment $twig, Request $request)
+function planetTypes(Container $app, Request $request)
 {
-    PlanetTypesForm::render($app, $twig, $request);
+    PlanetTypesForm::render($app, $request);
 }
 
-function starTypes(Container $app, Environment $twig, Request $request)
+function starTypes(Container $app, Request $request)
 {
-    StarTypesForm::render($app, $twig, $request);
+    StarTypesForm::render($app, $request);
 }
 
 function entities(ConfigurationService $config)
