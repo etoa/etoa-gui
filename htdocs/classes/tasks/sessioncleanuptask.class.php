@@ -26,7 +26,7 @@ class SessionCleanupTask implements IPeriodicTask
         return "Session cleanup";
     }
 
-    function getDescription()
+    public static function getDescription()
     {
         return "Session Cleanup";
     }

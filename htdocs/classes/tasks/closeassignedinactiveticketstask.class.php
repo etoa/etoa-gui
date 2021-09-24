@@ -21,7 +21,7 @@ class CloseAssignedInactiveTicketsTask implements IPeriodicTask
         return "Inaktive Tickets geschlossen";
     }
 
-    function getDescription()
+    public static function getDescription()
     {
         return "Inaktive Tickets schliessen welche von einem Admin beantwortet wurden";
     }

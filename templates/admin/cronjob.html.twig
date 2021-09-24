@@ -5,19 +5,11 @@
 {% block content %}
     <h1>Periodische Tasks (Cronjob)</h1>
 
-    {% if successMessage %}
-        {{ macros.messagebox(successMessage, 'success') }}
-    {% endif %}
-
-    {% if errorMessage %}
-        {{ macros.messagebox(errorMessage, 'error') }}
-    {% endif %}
-
     {% if not configValue('update_enabled') == 1 %}
-        {{ macros.messagebox('Periodische Updates sind momentan deaktiviert! <a href="?page='~ page ~ '&activateupdate=1">Aktivieren</a>', 'info', 'Updates deaktiviert') }}
+        {{ macros.messagebox('Periodische Updates sind momentan deaktiviert! <a href="' ~ path('admin.cronjob.enable') ~ '">Aktivieren</a>', 'info', 'Updates deaktiviert') }}
     {% endif %}
 
-    {% if isUnix %}
+    {% if isUnix() %}
         {% if crontabCheck %}
             <h3>Cronjob</h3>
             {{ macros.messagebox('Cronjob ist korrekt eingerichtet!', 'success') }}
@@ -26,7 +18,7 @@
 
             <h3>Unix-Cronjob einrichten</h3>
             <p>
-                <input type="button" value="Automatisch einrichten" onclick="document.location='?page={{ page }}&enablecronjob'" />
+                <input type="button" value="Automatisch einrichten" onclick="document.location='{{ path('admin.cronjob.setup') }}'" />
             </p>
             <p>
                 <em>oder</em>
@@ -85,15 +77,15 @@
                         <td style="text-align:center;">{{ item.dayofmonth }}</td>
                         <td style="text-align:center;">{{ item.month }}</td>
                         <td style="text-align:center;">{{ item.dayofweek }}</td>
-                        <td style="text-align:center;">{% if item.current %}<img src="../web/images/icons/bullet_green.png">{% else %}<img src="../web/images/icons/bullet_black.png">{% endif %}</td>
-                        <td><input type="button" value="Ausführen" onclick="document.location='?page={{ page }}&runtask={{ key }}'" /></td>
+                        <td style="text-align:center;">{% if item.current %}<img src="/web/images/icons/bullet_green.png">{% else %}<img src="/web/images/icons/bullet_black.png">{% endif %}</td>
+                        <td><input type="button" value="Ausführen" onclick="document.location='/admin/?page=cronjob&runtask={{ key }}'" /></td>
                     </tr>
                 {% endfor %}
             </tbody>
         </table>
         <p>
-            <input type="button" value="Aktuelle Tasks ausführen" onclick="document.location='?page={{ page }}&run=current'" />
-            <input type="button" value="Alle Tasks ausführen" onclick="document.location='?page={{ page }}&run=all'" />
+            <input type="button" value="Aktuelle Tasks ausführen" onclick="document.location='/admin/?page=cronjob&run=current'" />
+            <input type="button" value="Alle Tasks ausführen" onclick="document.location='/admin/?page=cronjob&run=all'" />
         </p>
     {% endif %}
 {% endblock %}

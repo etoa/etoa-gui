@@ -22,7 +22,7 @@ class MarketrateUpdateTask implements IPeriodicTask
         return "Rohstoff-Raten im Markt aktualisiert";
     }
 
-    function getDescription()
+    public static function getDescription()
     {
         return "Markt-Ressourcen Verhältnisse aktualisieren";
     }

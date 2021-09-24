@@ -21,7 +21,7 @@ class RemoveOldUserPointLogsTask implements IPeriodicTask
         return "$nr alte Userpunkte-Logs gelöscht";
     }
 
-    function getDescription()
+    public static function getDescription()
     {
         return "Alte Benutzerpunkte-Logs löschen";
     }

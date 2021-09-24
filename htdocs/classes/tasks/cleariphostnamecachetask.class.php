@@ -22,7 +22,7 @@ class ClearIPHostnameCacheTask implements IPeriodicTask
         return "IP/Hostname Cache gelöscht";
     }
 
-    function getDescription()
+    public static function getDescription()
     {
         return "Alte IP/Hostnamen Mappings aus Cache löschen";
     }

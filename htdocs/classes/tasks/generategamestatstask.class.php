@@ -21,7 +21,7 @@ class GenerateGameStatsTask implements IPeriodicTask
         return "Spielstatistiken erstellt";
     }
 
-    function getDescription()
+    public static function getDescription()
     {
         return "Spielstatistiken generieren und speichern";
     }

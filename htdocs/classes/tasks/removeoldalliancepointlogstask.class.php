@@ -21,7 +21,7 @@ class RemoveOldAlliancePointLogsTask implements IPeriodicTask
         return "$nr alte Allianzpunkte-Logs gelöscht";
     }
 
-    function getDescription()
+    public static function getDescription()
     {
         return "Alte Allianzpunkte-Logs löschen";
     }

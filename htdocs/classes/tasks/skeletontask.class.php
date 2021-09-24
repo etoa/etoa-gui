@@ -10,7 +10,7 @@ class SkeletonTask implements IPeriodicTask
         return "Done";
     }
 
-    function getDescription()
+    public static function getDescription()
     {
         return "";
     }

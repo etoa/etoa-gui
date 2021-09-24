@@ -21,7 +21,7 @@ class RemoveOldChatMessagesTask implements IPeriodicTask
         return "$nr alte Chat Nachrichten gelöscht";
     }
 
-    function getDescription()
+    public static function getDescription()
     {
         return "Alte Chat-Nachrichten löschen";
     }

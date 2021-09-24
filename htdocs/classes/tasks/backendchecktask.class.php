@@ -42,7 +42,7 @@ class BackendCheckTask implements IPeriodicTask
         return "Backend Check: " . ($currentStatus ? 'gestartet' : 'gestoppt') . " (" . ($change ? 'geändert' : 'keine Änderung') . ")";
     }
 
-    function getDescription()
+    public static function getDescription()
     {
         return "Backend-Check";
     }

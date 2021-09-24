@@ -21,7 +21,7 @@ class CreateUserBannerTask implements IPeriodicTask
         return "User Banner erstellt";
     }
 
-    function getDescription()
+    public static function getDescription()
     {
         return "User Banner erstellen";
     }

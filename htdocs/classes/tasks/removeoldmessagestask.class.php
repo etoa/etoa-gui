@@ -21,7 +21,7 @@ class RemoveOldMessagesTask implements IPeriodicTask
         return "Alte Nachrichten gelöscht";
     }
 
-    function getDescription()
+    public static function getDescription()
     {
         return "Alte Nachrichten löschen";
     }

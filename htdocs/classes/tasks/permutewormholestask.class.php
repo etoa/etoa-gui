@@ -21,7 +21,7 @@ class PermuteWormholesTask implements IPeriodicTask
         return "Wurmlöcher vertauscht";
     }
 
-    function getDescription()
+    public static function getDescription()
     {
         return "Wurmlöcher vertauschen";
     }

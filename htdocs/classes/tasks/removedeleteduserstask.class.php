@@ -21,7 +21,7 @@ class RemoveDeletedUsersTask implements IPeriodicTask
         return "$nr als gelöscht markierte User endgültig gelöscht";
     }
 
-    function getDescription()
+    public static function getDescription()
     {
         return "Zum Löschen markierte User löschen";
     }
