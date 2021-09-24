@@ -24,7 +24,7 @@ class ConfigController extends AbstractController
     }
 
     /**
-     * @Route("/admin/config", name="admin.config")
+     * @Route("/admin/config/", name="admin.config")
      */
     public function common(Request $request): Response
     {
