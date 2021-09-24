@@ -19,7 +19,7 @@ global $app;
 /** @var ConfigurationService $config */
 $config = $app[ConfigurationService::class];
 
-$twig->addGlobal('title', 'Logs');
+\EtoA\Admin\LegacyTemplateTitleHelper::$title = 'Logs';
 
 echo "<div id=\"logsinfo\"></div>"; //nur zu entwicklungszwecken!
 

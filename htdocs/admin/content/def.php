@@ -68,7 +68,7 @@ if ($sub == "battlepoints") {
 //
 //
 elseif ($sub == "transforms") {
-    ObjectTransformsForm::render($app, $twig, $request);
+    ObjectTransformsForm::render($app, $request);
 }
 
 //
@@ -272,14 +272,14 @@ elseif ($sub == "queue") {
 // Bearbeiten
 //
 elseif ($sub == "data") {
-    DefensesForm::render($app, $twig, $request);
+    DefensesForm::render($app, $request);
 }
 
 //
 // Kategorien
 //
 elseif ($sub == "cat") {
-    DefenseCategoriesForm::render($app, $twig, $request);
+    DefenseCategoriesForm::render($app, $request);
 }
 
 //

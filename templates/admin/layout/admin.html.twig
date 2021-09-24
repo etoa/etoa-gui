@@ -12,12 +12,12 @@
                 <span id="servertime">{{ serverTime() }}</span> &nbsp;
                 Eingeloggt als&nbsp;
                 <ul id="headernav">
-                    <li><a href="/admin/profile/">{{ app.user.username|default('Username') }}</a></li>
-                    <li><a href="?adminlist=1">Adminliste</a></li>
+                    <li><a href="{{ path('admin.profile') }}">{{ app.user.username }}</a></li>
+                    <li><a href="/admin/?adminlist=1">Adminliste</a></li>
                     {% if isAdminAllowed(userRoles, ['master', 'super-admin', 'game-admin', 'trial-game-admin']) %}
                         <li><a href="?page=tickets">{{ numTickets > 0 ? 'Tickets (' ~ numTickets ~ ')' : 'Tickets' }}</a></li>
                     {% endif %}
-                    <li><a href="?page=notepad">{{ numNotes > 0 ? 'Notizblock (' ~ numNotes ~ ')' : 'Notizblock' }}</li>
+                    <li><a href="/admin/?page=notepad">{{ numNotes > 0 ? 'Notizblock (' ~ numNotes ~ ')' : 'Notizblock' }}</li>
                     <li><a href="{{ etoaUrl('login') }}" target="_blank">Spiel-Login</a></li>
                     <li><a href="/admin/logout">Logout</a></li>
                 </ul>
@@ -26,7 +26,7 @@
         <div id="main">
             <div id="sidebar">
                 <div id="quicksearch">
-                    <form action="?page=search" method="post">
+                    <form action="/admin/?page=search" method="post">
                         <input class="search" type="text" name="search_query" value="{{ searchQuery }}" autocomplete="off" placeholder="Suche" />
                     </form>
                 </div>
@@ -35,9 +35,10 @@
                         {% if isAdminAllowed(userRoles, item.roles) %}
                             <li>
                                 <a
-                                    {% if item.path|default(false) %}
-                                        href="{{ item.path }}"
-{#                                        {% if item.route == app.request.get('_route') %}class="active"{% endif %}#}
+                                    {% if item.route|default(false) %}
+                                        href="{{ path(item.route) }}"
+                                        {% if item.route == app.request.get('_route') %}class="active"{% endif %}
+                                        active
                                     {% else %}
                                         href="/admin/?page={{ item.page }}{% if item.sub|default(false) %}&amp;sub={{ item.sub }}{% endif %}"
                                         {% if page == item.page %}class="active"{% endif %}
@@ -45,12 +46,21 @@
                                 >
                                     {{ key }}
                                 </a>
-                                {% if item.page == page and item.children|default(false) and item.children|length %}
+                                {% if ((app.request.get('_route') == 'legacy.admin' and item.page == page) or item.route|default(false) == app.request.get('_route')) and item.children|default(false) and item.children|length %}
                                     <ul class="navsubmenu">
                                         {% for childKey,childItem in item.children %}
                                             {% if isAdminAllowed(userRoles, childItem.roles) %}
                                                 <li {% if childItem.bar|default(false) %}class="bar"{% endif %}>
-                                                    <a href="?page={{ item.page }}&amp;sub={{ childItem.sub }}"{% if page ==  item.page and sub|default('') == childItem.sub and sub|default(false) %} class="active"{% endif %}>{{ childKey}}</a>
+                                                    <a
+                                                        {% if childItem.route|default(false) %}
+                                                            href="{{ path(childItem.route) }}"
+                                                            {% if childItem.route == app.request.get('_route') %}class="active"{% endif %}
+                                                            active
+                                                        {% else %}
+                                                            href="/admin/?page={{ item.page }}&amp;sub={{ childItem.sub }}"
+                                                            {% if page ==  item.page and sub|default('') == childItem.sub and sub|default(false) %} class="active"{% endif %}
+                                                        {% endif %}
+                                                    >{{ childKey}}</a>
                                                 </li>
                                             {% endif %}
                                         {% endfor %}
@@ -65,19 +75,19 @@
                     <caption>Status</caption>
                     {% if isUnix() %}
                         <tr>
-                            <th><a href="/admin/eventhandler/">Eventhandler</a></th>
+                            <th><a href="{{ path('admin.eventhandler') }}">Eventhandler</a></th>
                             {% if eventHandlerPid|default(false) %}
                                 <td class="color_ok">PID {{ eventHandlerPid }}</td>
                             {% else %}
                                 <td class="color_error">offline</td>
                             {% endif %}
                         </tr>
-                        <tr><th><a href="?page=overview&amp;sub=sysinfo">Systemlast</a></th><td>{{ sysLoad }} %</td></tr>
+                        <tr><th><a href="{{ path('admin.overview.sysinfo') }}">Systemlast</a></th><td>{{ sysLoad }} %</td></tr>
                     {% endif %}
-                    <tr><th><a href="?page=db">Datenbank</a></th><td>{{ dbSizeInMB }} MB</td></tr>
-                    <tr><th><a href="?page=overview&amp;sub=stats">User registriert</a></th><td>{{ usersCount }} / {{ usersAllowed }}</td></tr>
-                    <tr><th><a href="?page=user&amp;sub=sessions">User online</a></th><td>{{ usersOnline }} / {{ usersCount }}</td></tr>
-                    <tr><th><a href="?page=overview&amp;sub=adminlog">Admins online</a></th><td>{{ adminsOnline }} / {{ adminsCount }}</td></tr>
+                    <tr><th><a href="/admin/?page=db">Datenbank</a></th><td>{{ dbSizeInMB }} MB</td></tr>
+                    <tr><th><a href="/admin/?page=overview&amp;sub=stats">User registriert</a></th><td>{{ usersCount }} / {{ usersAllowed }}</td></tr>
+                    <tr><th><a href="/admin/?page=user&amp;sub=sessions">User online</a></th><td>{{ usersOnline }} / {{ usersCount }}</td></tr>
+                    <tr><th><a href="/admin/?page=overview&amp;sub=adminlog">Admins online</a></th><td>{{ adminsOnline }} / {{ adminsCount }}</td></tr>
                 </table>
 
             </div>

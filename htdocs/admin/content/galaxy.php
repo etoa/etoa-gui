@@ -30,9 +30,9 @@ if ($sub == "uni") {
 } elseif ($sub == "galaxycheck") {
     galaxyCheck();
 } elseif ($sub == "planet_types") {
-    planetTypes($app, $twig, $request);
+    planetTypes($app, $request);
 } elseif ($sub == "sol_types") {
-    starTypes($app, $twig, $request);
+    starTypes($app, $request);
 } else {
     entities($config);
 }
@@ -50,14 +50,14 @@ function galaxyCheck()
     require("galaxy/galaxycheck.php");
 }
 
-function planetTypes(Container $app, Environment $twig, Request $request)
+function planetTypes(Container $app, Request $request)
 {
-    PlanetTypesForm::render($app, $twig, $request);
+    PlanetTypesForm::render($app, $request);
 }
 
-function starTypes(Container $app, Environment $twig, Request $request)
+function starTypes(Container $app, Request $request)
 {
-    StarTypesForm::render($app, $twig, $request);
+    StarTypesForm::render($app, $request);
 }
 
 function entities(ConfigurationService $config)

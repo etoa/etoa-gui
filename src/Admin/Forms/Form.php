@@ -7,17 +7,14 @@ namespace EtoA\Admin\Forms;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Query\QueryBuilder;
 use Pimple\Container;
-use Twig\Environment;
 
 abstract class Form
 {
     protected Container $app;
-    protected Environment $twig;
 
-    final public function __construct(Container $app, Environment $twig)
+    final public function __construct(Container $app)
     {
         $this->app = $app;
-        $this->twig = $twig;
     }
 
     protected function createQueryBuilder(): QueryBuilder

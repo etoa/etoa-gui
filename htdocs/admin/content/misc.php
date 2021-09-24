@@ -19,14 +19,14 @@ if ($sub == "defaultitems") {
 // Tipps
 //
 elseif ($sub == "tipps") {
-    TippsForm::render($app, $twig, $request);
+    TippsForm::render($app, $request);
 }
 
 //
 // Ticket-Cat
 //
 elseif ($sub == "ticketcat") {
-    TicketCategoriesForm::render($app, $twig, $request);
+    TicketCategoriesForm::render($app, $request);
 }
 
 else {

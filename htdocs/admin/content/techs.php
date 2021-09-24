@@ -88,14 +88,14 @@ if ($sub == "points") {
 // Kategorien
 //
 elseif ($sub == "type") {
-    TechnologyTypesForm::render($app, $twig, $request);
+    TechnologyTypesForm::render($app, $request);
 }
 
 //
 // Technologien
 //
 elseif ($sub == "data") {
-    TechnologiesForm::render($app, $twig, $request);
+    TechnologiesForm::render($app, $request);
 }
 //
 // Anforderungen
@@ -116,7 +116,7 @@ elseif ($sub == "req") {
 // Liste
 //
 else {
-    $twig->addGlobal('title', 'Forschungsliste');
+    \EtoA\Admin\LegacyTemplateTitleHelper::$title = 'Forschungsliste';
 
     $build_type = [];
     $build_type[0] = "Unt&auml;tig";

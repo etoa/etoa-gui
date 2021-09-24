@@ -1,21 +1,6 @@
 parameters:
 	ignoreErrors:
 		-
-			message: "#^If condition is always false\\.$#"
-			count: 1
-			path: bin/cronjob.php
-
-		-
-			message: "#^Only booleans are allowed in an if condition, string\\|null given\\.$#"
-			count: 1
-			path: htdocs/admin/content/cronjob.php
-
-		-
-			message: "#^Variable \\$iparr might not be defined\\.$#"
-			count: 6
-			path: htdocs/admin/content/user/multi.inc.php
-
-		-
 			message: "#^Empty array passed to foreach\\.$#"
 			count: 1
 			path: htdocs/admin/inc/admin_functions.inc.php
@@ -29,11 +14,6 @@ parameters:
 			message: "#^Variable \\$waveCnt might not be defined\\.$#"
 			count: 2
 			path: htdocs/admin/inc/admin_functions.inc.php
-
-		-
-			message: "#^Right side of && is always false\\.$#"
-			count: 1
-			path: htdocs/admin/inc/xajax_admin.inc.php
 
 		-
 			message: "#^Result of \\|\\| is always true\\.$#"
@@ -54,11 +34,6 @@ parameters:
 			message: "#^Variable \\$x might not be defined\\.$#"
 			count: 1
 			path: htdocs/classes/planetmanager.class.php
-
-		-
-			message: "#^Method Report\\:\\:find\\(\\) return type has no value type specified in iterable type array\\.$#"
-			count: 1
-			path: htdocs/classes/report.class.php
 
 		-
 			message: "#^Method Session\\:\\:getInstance\\(\\) should return static\\(Session\\) but returns Session\\.$#"
@@ -127,7 +102,7 @@ parameters:
 
 		-
 			message: "#^If condition is always false\\.$#"
-			count: 2
+			count: 1
 			path: htdocs/inc/bootstrap.inc.php
 
 		-
@@ -142,28 +117,13 @@ parameters:
 
 		-
 			message: "#^Dynamic call to static method XMLReader\\:\\:open\\(\\)\\.$#"
-			count: 2
-			path: htdocs/inc/functions.inc.php
-
-		-
-			message: "#^Ternary operator condition is always false\\.$#"
 			count: 1
-			path: htdocs/inc/functions.inc.php
-
-		-
-			message: "#^Variable variables are not allowed\\.$#"
-			count: 2
 			path: htdocs/inc/functions.inc.php
 
 		-
 			message: "#^If condition is always false\\.$#"
 			count: 2
 			path: htdocs/inc/init.inc.php
-
-		-
-			message: "#^Right side of && is always false\\.$#"
-			count: 1
-			path: htdocs/inc/xajax.inc.php
 
 		-
 			message: "#^If condition is always false\\.$#"
@@ -211,6 +171,11 @@ parameters:
 			path: src/Building/BuildingRepository.php
 
 		-
+			message: "#^Undefined variable\\: \\$xajax$#"
+			count: 1
+			path: src/Controller/LegacyAdminController.php
+
+		-
 			message: "#^Method EtoA\\\\Ranking\\\\UserBannerService\\:\\:createUserBannerImage\\(\\) never returns GdImage so it can be removed from the return typehint\\.$#"
 			count: 1
 			path: src/Ranking/UserBannerService.php
@@ -221,9 +186,9 @@ parameters:
 			path: src/Ranking/UserBannerService.php
 
 		-
-			message: "#^Method EtoA\\\\Ranking\\\\UserBannerService\\:\\:createUserBannerImage\\(\\) never returns resource so it can be removed from the return typehint\\.$#"
+			message: "#^Method EtoA\\\\Support\\\\ImageUtils\\:\\:imageCreateFromFile\\(\\) has no return typehint specified\\.$#"
 			count: 1
-			path: src/Ranking/UserBannerService.php
+			path: src/Support/ImageUtils.php
 
 		-
 			message: "#^Method EtoA\\\\UI\\\\EntityCoordinatesSelector\\:\\:parse\\(\\) has parameter \\$parameters with no value type specified in iterable type Symfony\\\\Component\\\\HttpFoundation\\\\ParameterBag\\.$#"
@@ -231,7 +196,6 @@ parameters:
 			path: src/UI/EntityCoordinatesSelector.php
 
 		-
-			message: "#^Method EtoA\\\\Support\\\\ImageUtils\\:\\:imageCreateFromFile\\(\\) has no return typehint specified\\.$#"
+			message: "#^Method EtoA\\\\Ranking\\\\UserBannerService\\:\\:createUserBannerImage\\(\\) never returns resource so it can be removed from the return typehint\\.$#"
 			count: 1
-			path: src/Support/ImageUtils.php
-
+			path: src/Ranking/UserBannerService.php

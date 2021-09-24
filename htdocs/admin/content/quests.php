@@ -7,7 +7,7 @@ use EtoA\Quest\QuestRepository;
 use EtoA\Support\StringUtils;
 use LittleCubicleGames\Quests\Workflow\QuestDefinition;
 
-$twig->addGlobal('title', 'Quests');
+\EtoA\Admin\LegacyTemplateTitleHelper::$title = 'Quests';
 
 $questDefinitions = $app['cubicle.quests.quests'];
 $questMap = [];

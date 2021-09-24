@@ -110,7 +110,7 @@ elseif ($sub == "create") {
 // Fehlerhafte Logins
 //
 elseif ($sub == "specialists") {
-    SpecialistsForm::render($app, $twig, $request);
+    SpecialistsForm::render($app, $request);
 }
 
 //
@@ -167,7 +167,7 @@ elseif ($sub == "userlog") {
 // Rassen
 //
 elseif ($sub == "race") {
-    RacesForm::render($app, $twig, $request);
+    RacesForm::render($app, $request);
 }
 
 //
@@ -204,10 +204,10 @@ elseif ($sub == "sitting") {
 //
 
 else {
-    $twig->addGlobal("title", 'Spieler');
+    \EtoA\Admin\LegacyTemplateTitleHelper::$title =  'Spieler';
 
     if ((isset($_GET['special']) || isset($_POST['user_search']) || isset($_SESSION['admin']['user_query'])) && isset($_GET['action']) && $_GET['action'] == "search") {
-        $twig->addGlobal("subtitle", 'Suchergebnisse');
+        \EtoA\Admin\LegacyTemplateTitleHelper::$subTitle = 'Suchergebnisse';
 
         $userSearch = UserSearch::create();
         if (isset($_GET['special'])) {
@@ -360,7 +360,8 @@ else {
             echo "<p><input type=\"button\" onclick=\"document.location='?page=$page'\" value=\"Neue Suche\" /> &nbsp; ";
             echo "<input type=\"button\" onclick=\"document.location='?page=$page&amp;action=search'\" value=\"Aktualisieren\" /></p>";
         } else {
-            $twig->addGlobal('infoMessage', "Die Suche lieferte keine Resultate!");
+            \EtoA\Admin\LegacyTemplateTitleHelper::addFlash('info', "Die Suche lieferte keine Resultate!");
+
             echo "<p><input type=\"button\" value=\"Zur&uuml;ck\" onclick=\"document.location='?page=$page'\" /></p>";
         }
     }
@@ -378,7 +379,7 @@ else {
     //
 
     else {
-        $twig->addGlobal("subtitle", 'Suchmaske');
+        \EtoA\Admin\LegacyTemplateTitleHelper::$subTitle = 'Suchmaske';
 
         $_SESSION['admin']['user_query'] = "";
         echo "<form action=\"?page=$page&amp;action=search\" method=\"post\">";

@@ -36,9 +36,9 @@ $config = $app[ConfigurationService::class];
 if ($sub == "imagecheck") {
     imagecheck($request, $repository, $app['app.webroot_dir']);
 } elseif ($sub == "buildingsdata") {
-    AllianceBuildingsForm::render($app, $twig, $request);
+    AllianceBuildingsForm::render($app, $request);
 } elseif ($sub == "techdata") {
-    AllianceTechnologiesForm::render($app, $twig, $request);
+    AllianceTechnologiesForm::render($app, $request);
 } elseif ($sub == "create") {
     create($request, $repository, $service);
 } elseif ($sub == "news") {
@@ -46,20 +46,20 @@ if ($sub == "imagecheck") {
 } elseif ($sub == "crap") {
     crap($request, $repository, $allianceRankRepository, $allianceDiplomacyRepository, $service);
 } else {
-    $twig->addGlobal('title', 'Allianzen');
+    \EtoA\Admin\LegacyTemplateTitleHelper::$title = 'Allianzen';
 
     if (
         $request->request->has('alliance_search')
         && $request->query->has('action')
         && $request->query->get('action') == "search"
     ) {
-        searchResults($request, $repository, $twig);
+        searchResults($request, $repository);
     } else if ($request->query->has('sub') && $request->query->get('sub') == "edit") {
         include("alliance/edit.inc.php");
     } elseif ($request->query->has('sub') && $request->query->get('sub') == "drop" && $request->query->has('alliance_id')) {
         drop($request, $repository);
     } else {
-        index($request, $repository, $twig, $service);
+        index($request, $repository, $service);
     }
 }
 
@@ -367,11 +367,11 @@ function crap(Request $request, AllianceRepository $repository, AllianceRankRepo
     }
 }
 
-function searchResults(Request $request, AllianceRepository $repository, Environment $twig)
+function searchResults(Request $request, AllianceRepository $repository)
 {
     global $page, $app;
 
-    $twig->addGlobal('subtitle', 'Suchergebnisse');
+    \EtoA\Admin\LegacyTemplateTitleHelper::$subTitle = 'Suchergebnisse';
 
     $alliances = $repository->findByFormData($request->request->all());
 
@@ -472,7 +472,7 @@ function drop(Request $request, AllianceRepository $repository)
     }
 }
 
-function index(Request $request, AllianceRepository $repository, Environment $twig, AllianceService $allianceService)
+function index(Request $request, AllianceRepository $repository, AllianceService $allianceService)
 {
     global $page;
 
@@ -487,7 +487,7 @@ function index(Request $request, AllianceRepository $repository, Environment $tw
     }
 
     // Suchmaske
-    $twig->addGlobal("subtitle", 'Suchmaske');
+    \EtoA\Admin\LegacyTemplateTitleHelper::$subTitle = 'Suchmaske';
 
     echo "<form action=\"?page=$page&amp;action=search\" method=\"post\">";
     echo "<table class=\"tbl\">";

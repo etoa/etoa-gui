@@ -3,7 +3,7 @@
 use EtoA\Support\DB\DatabaseManagerRepository;
 use EtoA\Support\StringUtils;
 
-$twig->addGlobal('title', 'Datenbank');
+\EtoA\Admin\LegacyTemplateTitleHelper::$title = 'Datenbank';
 
 //
 // Backups anzeigen

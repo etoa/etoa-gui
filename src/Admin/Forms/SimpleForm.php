@@ -4,21 +4,21 @@ declare(strict_types=1);
 
 namespace EtoA\Admin\Forms;
 
+use EtoA\Admin\LegacyTemplateTitleHelper;
 use MessageBox;
 use Pimple\Container;
 use Symfony\Component\HttpFoundation\Request;
-use Twig\Environment;
 
 abstract class SimpleForm extends Form
 {
-    public static function render(Container $app, Environment $twig, Request $request): void
+    public static function render(Container $app, Request $request): void
     {
-        (new static($app, $twig))->index($request);
+        (new static($app))->index($request);
     }
 
     public function index(Request $request): void
     {
-        $this->twig->addGlobal("title", $this->getName());
+        LegacyTemplateTitleHelper::$title = $this->getName();
 
         if ($request->request->has('apply_submit')) {
             $this->applyChanges($request);
