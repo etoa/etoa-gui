@@ -63,7 +63,7 @@ class AdminSessionSubscriber implements EventSubscriberInterface
             $time = time();
             $lastAction = $session->get('lastAction');
             $timeout = $time - $this->config->getInt('admin_timeout');
-            if ($lastAction > $timeout) {
+            if ($lastAction === null || $lastAction > $timeout) {
                 if ($this->adminSessionRepository->exists($session->getId(), $user->getId(), $event->getRequest()->headers->get('User-Agent'))) {
                     $this->adminSessionRepository->update($session->getId(), $user->getId(), $time, $event->getRequest()->getClientIp());
                     $session->set('lastAction', $time);

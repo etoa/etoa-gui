@@ -57,10 +57,15 @@ class GalaxyMapController extends AbstractController
 
         // Draw map
         $mapsectors = array();
-        for ($sy = $sy_num; $sy > 0; $sy--) {
-            for ($sx = 1; $sx <= $sx_num; $sx++) {
-                $mapsectors[$sy][$sx] = $sectorMap->render($sx, $sy, $this->userUniverseDiscoveryService, $this->entityRepository);
+
+        try {
+            for ($sy = $sy_num; $sy > 0; $sy--) {
+                for ($sx = 1; $sx <= $sx_num; $sx++) {
+                    $mapsectors[$sy][$sx] = $sectorMap->render($sx, $sy, $this->userUniverseDiscoveryService, $this->entityRepository);
+                }
             }
+        } catch (\RuntimeException $e) {
+            $this->addFlash('error', $e->getMessage());
         }
 
         return $this->render('admin/galaxy/map.html.twig', [

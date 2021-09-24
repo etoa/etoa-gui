@@ -18,6 +18,8 @@ trait DbTestTrait
 
     protected function tearDown(): void
     {
+        self::$staticConnection->executeQuery('TRUNCATE admin_users');
+        self::$staticConnection->executeQuery('TRUNCATE admin_user_sessions');
         self::$staticConnection->executeQuery('TRUNCATE alliances');
         self::$staticConnection->executeQuery('TRUNCATE alliance_applications');
         self::$staticConnection->executeQuery('TRUNCATE alliance_spends');

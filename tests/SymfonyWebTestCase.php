@@ -3,6 +3,11 @@
 namespace EtoA;
 
 use Doctrine\DBAL\Connection;
+use EtoA\Admin\AdminSessionRepository;
+use EtoA\Admin\AdminUser;
+use EtoA\Admin\AdminUserRepository;
+use EtoA\Security\Admin\CurrentAdmin;
+use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 
 abstract class SymfonyWebTestCase extends \Symfony\Bundle\FrameworkBundle\Test\WebTestCase
 {
@@ -99,5 +104,34 @@ abstract class SymfonyWebTestCase extends \Symfony\Bundle\FrameworkBundle\Test\W
                 'userAgent' => $userAgent,
                 'ip' => '',
             ])->execute();
+    }
+
+    /**
+     * @param string[] $roles
+     */
+    public function loginAdmin(KernelBrowser $client, array $roles = ['master']): void
+    {
+        $adminUser = new AdminUser();
+        $adminUser->nick = 'Admin';
+        $adminUser->name = 'Admin';
+        $adminUser->email = 'admin@example.org';
+        $adminUser->roles = $roles;
+        $adminUser->passwordString = '';
+
+        /** @var AdminUserRepository $adminUserRepository */
+        $adminUserRepository = self::getContainer()->get(AdminUserRepository::class);
+        $adminUserRepository->save($adminUser);
+        $adminUser = $adminUserRepository->find($adminUser->id);
+
+        $client->loginUser(new CurrentAdmin($adminUser), 'admin');
+
+        $sessionCookie = $client->getCookieJar()->get('MOCKSESSID');
+        if ($sessionCookie === null) {
+            throw new \RuntimeException('Session cookie not found.');
+        }
+
+        /** @var AdminSessionRepository $adminSessionRepository */
+        $adminSessionRepository = self::getContainer()->get(AdminSessionRepository::class);
+        $adminSessionRepository->create($sessionCookie->getValue(), $adminUser->id, '', 'Symfony BrowserKit', time());
     }
 }

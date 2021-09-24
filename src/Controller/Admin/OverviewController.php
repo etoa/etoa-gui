@@ -136,7 +136,7 @@ class OverviewController extends AbstractController
         return $this->render('admin/overview/sysinfo.html.twig', [
             'phpVersion' => phpversion(),
             'dbVersion' => $this->databaseManager->getDatabasePlatform(),
-            'webserverVersion' => $_SERVER['SERVER_SOFTWARE'],
+            'webserverVersion' => $_SERVER['SERVER_SOFTWARE'] ?? '',
             'unixName' => isUnixOS() ? $unix['sysname'] . ' ' . $unix['release'] . ' ' . $unix['version'] : null,
         ]);
     }

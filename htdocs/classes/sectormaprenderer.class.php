@@ -125,9 +125,13 @@ class SectorMapRenderer
             $entityRepository = $app[EntityRepository::class];
         }
 
+        $entities = $entityRepository->searchEntities(EntitySearch::create()->sx($sx)->sy($sy)->pos(0));
+        if (count($entities) === 0) {
+            throw new \RuntimeException('Das Universum wurde noch nicht erstellt');
+        }
+
         ob_start();
 
-        $entities = $entityRepository->searchEntities(EntitySearch::create()->sx($sx)->sy($sy)->pos(0));
         /** @var array<int, array<int, \EtoA\Universe\Entity\Entity>> $cells */
         $cells = [];
         foreach ($entities as $entity) {

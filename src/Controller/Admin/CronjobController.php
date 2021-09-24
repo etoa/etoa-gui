@@ -20,9 +20,9 @@ class CronjobController extends AbstractController
     }
 
     /**
-     * @Route("/admin/cronjob", name="admin.cronjob")
+     * @Route("/admin/cronjob/", name="admin.cronjob")
      */
-    public function run(): Response
+    public function view(): Response
     {
         // Cron configuration
         $cronjob = null;
