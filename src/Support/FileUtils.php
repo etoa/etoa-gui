@@ -45,8 +45,9 @@ class FileUtils
         // let's iterate
         foreach ($files as $name => $file) {
             $new_filename = substr($name, strlen(dirname($dir)) + 1);
-            if (is_file($file)) {
-                $zip->addFile($file, $new_filename);
+            $filePath = $file->getRealPath();
+            if (is_file($filePath)) {
+                $zip->addFile($filePath, $new_filename);
             }
         }
 

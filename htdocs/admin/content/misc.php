@@ -29,13 +29,6 @@ elseif ($sub == "ticketcat") {
     TicketCategoriesForm::render($app, $twig, $request);
 }
 
-//
-// Designs
-//
-elseif ($sub == "designs") {
-    include("misc/designs.inc.php");
-}
-
 else {
     echo "<h1>Diverses</h1>";
     echo "Wähle eine Unterseite aus dem Menü!";

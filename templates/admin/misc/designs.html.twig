@@ -5,14 +5,6 @@
 {% block content %}
     <h1>Designs</h1>
 
-    {% if successMessage %}
-        {{ macros.messagebox(successMessage, 'success') }}
-    {% endif %}
-
-    {% if errorMessage %}
-        {{ macros.messagebox(errorMessage, 'error') }}
-    {% endif %}
-
     <h2>Verfügbare Designs</h2>
 
     <table class="tbl" style="width:100%">
@@ -45,9 +37,9 @@
                 <td>{% if design.custom %}nein{% else %}ja{% endif %}</td>
                 <td>{% if design.default %}ja{% else %}nein{% endif %}</td>
                 <td style="width:130px">
-                    <a href="?page={{ page }}&sub={{ sub }}&download={{ key }}">Download</a>
+                    <a href="{{ path('admin.design.download', {design: key}) }}">Download</a>
                     {% if design.custom %}
-                        <a href="?page={{ page }}&sub={{ sub }}&remove={{ key }}" onclick="return confirm('Soll das Design \'{{ design.name }}\' wirklich entfernt werden?')">Entfernen</a>
+                        <a href="{{ path('admin.design.remove', {design: key}) }}" onclick="return confirm('Soll das Design \'{{ design.name }}\' wirklich entfernt werden?')">Entfernen</a>
                     {% endif %}
                 </td>
             </tr>
