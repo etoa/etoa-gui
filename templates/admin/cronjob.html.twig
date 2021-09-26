@@ -49,10 +49,6 @@
     {% if periodicTasks|length > 0 %}
         <h3>Tasks</h3>
 
-        {% if updateResults|default(false) %}
-            {{ macros.messagebox(updateResults, 'info') }}
-        {% endif %}
-
         <table style="width:100%">
             <thead>
             <tr>
@@ -78,14 +74,14 @@
                         <td style="text-align:center;">{{ item.month }}</td>
                         <td style="text-align:center;">{{ item.dayofweek }}</td>
                         <td style="text-align:center;">{% if item.current %}<img src="/web/images/icons/bullet_green.png">{% else %}<img src="/web/images/icons/bullet_black.png">{% endif %}</td>
-                        <td><input type="button" value="Ausführen" onclick="document.location='/admin/?page=cronjob&runtask={{ key }}'" /></td>
+                        <td><input type="button" value="Ausführen" onclick="document.location='{{ path('admin.cron.task.run', {taskName: key}) }}'" /></td>
                     </tr>
                 {% endfor %}
             </tbody>
         </table>
         <p>
-            <input type="button" value="Aktuelle Tasks ausführen" onclick="document.location='/admin/?page=cronjob&run=current'" />
-            <input type="button" value="Alle Tasks ausführen" onclick="document.location='/admin/?page=cronjob&run=all'" />
+            <input type="button" value="Aktuelle Tasks ausführen" onclick="document.location='{{ path('admin.cron.tasks.run') }}'" />
+            <input type="button" value="Alle Tasks ausführen" onclick="document.location='{{ path('admin.cron.tasks.run', {all: true}) }}'" />
         </p>
     {% endif %}
 {% endblock %}

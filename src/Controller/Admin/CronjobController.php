@@ -2,21 +2,28 @@
 
 namespace EtoA\Controller\Admin;
 
+use Cron\CronExpression;
 use EtoA\Core\Configuration\ConfigurationService;
-use EtoA\Support\BBCodeUtils;
-use PeriodicTaskRunner;
+use EtoA\PeriodicTask\EnvelopResultExtractor;
+use EtoA\PeriodicTask\PeriodicTaskCollection;
+use EtoA\PeriodicTask\Result\SuccessResult;
+use EtoA\PeriodicTask\Task\PeriodicTaskInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
 class CronjobController extends AbstractController
 {
     private ConfigurationService $config;
+    private PeriodicTaskCollection $taskCollection;
 
-    public function __construct(ConfigurationService $config)
+    public function __construct(ConfigurationService $config, PeriodicTaskCollection $taskCollection)
     {
         $this->config = $config;
+        $this->taskCollection = $taskCollection;
     }
 
     /**
@@ -28,7 +35,7 @@ class CronjobController extends AbstractController
         $cronjob = null;
         $crontabUser = null;
         if (isUnixOS()) {
-            $scriptname = dirname(__DIR__, 3) . "/bin/cronjob.php";
+            $scriptname = dirname(__DIR__, 3) . "/bin/console cron:run";
             $cronjob = '* * * * * ' . $scriptname;
             $crontabUser = trim(shell_exec('id'));
 
@@ -43,31 +50,31 @@ class CronjobController extends AbstractController
         }
 
         $periodictasks = [];
-        $time = time();
-        foreach (PeriodicTaskRunner::getScheduleFromConfig() as $tc) {
-            $klass = $tc['name'];
-            $reflect = new \ReflectionClass($klass);
-            if ($reflect->implementsInterface(\IPeriodicTask::class)) {
-                $elements = preg_split('/\s+/', $tc['schedule']);
-                $taskConfig = [
-                    'desc' => $klass::getDescription(),
-                    'min' => $elements[0],
-                    'hour' => $elements[1],
-                    'dayofmonth' => $elements[2],
-                    'month' => $elements[3],
-                    'dayofweek' => $elements[4],
-                    'current' => PeriodicTaskRunner::shouldRun($tc['schedule'], $time),
-                ];
-                $periodictasks[$tc['name']] = $taskConfig;
-            }
+        $time = new \DateTimeImmutable();
+        foreach ($this->taskCollection->getAllTasks() as $task) {
+            $reflection = new \ReflectionClass($task);
+            $cron = new CronExpression($task->getSchedule());
+            $elements = $cron->getParts();
+            $taskConfig = [
+                'desc' => $task->getDescription(),
+                'min' => $elements[0],
+                'hour' => $elements[1],
+                'dayofmonth' => $elements[2],
+                'month' => $elements[3],
+                'dayofweek' => $elements[4],
+                'current' => $cron->isDue($time),
+                'nextrun' => $cron->getNextRunDate($time),
+            ];
+            $periodictasks[$reflection->getShortName()] = $taskConfig;
         }
 
-        // Handle result message
-        $updateResults = null;
-        if (isset($_SESSION['update_results'])) {
-            $updateResults = BBCodeUtils::toHTML($_SESSION['update_results']);
-            unset($_SESSION['update_results']);
-        }
+        uasort($periodictasks, function (array $a, array $b): int {
+            if ($a['current'] === $b['current']) {
+                return $a['nextrun'] <=> $b['nextrun'];
+            }
+
+            return $b['current'] <=> $a['current'];
+        });
 
         return $this->render('admin/cronjob.html.twig', [
             'periodicTasks' => $periodictasks,
@@ -75,8 +82,50 @@ class CronjobController extends AbstractController
             'crontabUser' => $crontabUser,
             'crontab' => $crontab ?? null,
             'cronjob' => $cronjob,
-            'updateResults' => $updateResults,
         ]);
+    }
+
+    /**
+     * @Route("/admin/cronjob/tasks/run", name="admin.cron.tasks.run")
+     */
+    public function runTasks(Request $request, MessageBusInterface $messageBus): RedirectResponse
+    {
+        $tasks = $request->query->has('all') ? $this->taskCollection->getAllTasks() : $this->taskCollection->getScheduledTasks(time());
+        foreach ($tasks as $task) {
+            $taskName = (new \ReflectionClass($task))->getShortName();
+
+            $this->dispatchTask($messageBus, $task, $taskName);
+        }
+
+        return $this->redirectToRoute('admin.cronjob');
+    }
+
+    /**
+     * @Route("/admin/cronjob/tasks/{taskName}/run", name="admin.cron.task.run")
+     */
+    public function runTask(string $taskName, MessageBusInterface $messageBus): RedirectResponse
+    {
+        $task = $this->taskCollection->getTask($taskName);
+        if ($task === null) {
+            $this->addFlash('error', $taskName . ' existiert nicht.');
+
+            return $this->redirectToRoute('admin.cronjob');
+        }
+
+        $this->dispatchTask($messageBus, $task, $taskName);
+
+        return $this->redirectToRoute('admin.cronjob');
+    }
+
+    private function dispatchTask(MessageBusInterface $messageBus, PeriodicTaskInterface $task, string $taskName): void
+    {
+        try {
+            $result = EnvelopResultExtractor::extract($messageBus->dispatch($task));
+            $takLog = $taskName . ': ' . $result->getMessage();
+            $this->addFlash($result instanceof SuccessResult ? 'success' : 'info', $takLog);
+        } catch (\Throwable $e) {
+            $this->addFlash('error', $taskName . ": " . $e->getMessage());
+        }
     }
 
     /**
@@ -86,7 +135,7 @@ class CronjobController extends AbstractController
     {
         // Enable cronjob
         if (isUnixOS()) {
-            $scriptname = dirname(__DIR__, 3) . "/bin/cronjob.php";
+            $scriptname = dirname(__DIR__, 3) . "/bin/console cron:run";
             $cronjob = '* * * * * ' . $scriptname;
 
             // Get current crontab

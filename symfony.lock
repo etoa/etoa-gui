@@ -27,6 +27,9 @@
     "doctrine/sql-formatter": {
         "version": "1.1.1"
     },
+    "dragonmantank/cron-expression": {
+        "version": "v3.1.0"
+    },
     "endroid/qr-code": {
         "version": "3.9.7"
     },
@@ -60,6 +63,9 @@
     "spomky-labs/otphp": {
         "version": "v10.0.1"
     },
+    "symfony/amqp-messenger": {
+        "version": "v5.3.7"
+    },
     "symfony/cache": {
         "version": "v5.3.7"
     },
@@ -73,6 +79,9 @@
         "version": "v5.3.7"
     },
     "symfony/doctrine-bridge": {
+        "version": "v5.3.7"
+    },
+    "symfony/doctrine-messenger": {
         "version": "v5.3.7"
     },
     "symfony/dotenv": {
@@ -117,6 +126,18 @@
             "version": "1.0",
             "ref": "fadbfe33303a76e25cb63401050439aa9b1a9c7f"
         }
+    },
+    "symfony/messenger": {
+        "version": "4.3",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "master",
+            "version": "4.3",
+            "ref": "25e3c964d3aee480b3acc3114ffb7940c89edfed"
+        },
+        "files": [
+            "config/packages/messenger.yaml"
+        ]
     },
     "symfony/mime": {
         "version": "v5.3.7"
@@ -168,6 +189,9 @@
     },
     "symfony/proxy-manager-bridge": {
         "version": "v5.3.4"
+    },
+    "symfony/redis-messenger": {
+        "version": "v5.3.7"
     },
     "symfony/routing": {
         "version": "5.3",

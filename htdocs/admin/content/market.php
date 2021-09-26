@@ -1,8 +1,11 @@
 <?PHP
 
+use EtoA\Admin\LegacyTemplateTitleHelper;
 use EtoA\Market\MarketAuctionRepository;
 use EtoA\Market\MarketResourceRepository;
 use EtoA\Market\MarketShipRepository;
+use EtoA\PeriodicTask\EnvelopResultExtractor;
+use EtoA\PeriodicTask\Task\MarketRateUpdateTask;
 use EtoA\Ship\ShipDataRepository;
 use EtoA\Support\RuntimeDataStore;
 use EtoA\Support\StringUtils;
@@ -17,6 +20,7 @@ $marketResourceRepository = $app[MarketResourceRepository::class];
 /** @var MarketShipRepository $marketShipRepository */
 $marketShipRepository = $app[MarketShipRepository::class];
 
+/** @var \Symfony\Component\Messenger\MessageBusInterface $messageBus */
 define("USER_MESSAGE_CAT_ID", 1);
 define("SYS_MESSAGE_CAT_ID", 5);
 
@@ -341,8 +345,8 @@ if ($sub == "ress") {
 
     echo "<h2>Rohstoffkurse</h2>";
     if (isset($_GET['action']) && $_GET['action'] == "updaterates") {
-        $tr = new PeriodicTaskRunner($app);
-        success_msg($tr->runTask(MarketrateUpdateTask::class));
+        $result = EnvelopResultExtractor::extract($messageBus->dispatch(new MarketRateUpdateTask()));
+        LegacyTemplateTitleHelper::addFlash('success', $result->getMessage());
     }
 
     echo "<table class=\"tb\" style=\"width:200px;\">";

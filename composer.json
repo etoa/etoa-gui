@@ -33,7 +33,9 @@
         "symfony/translation": "^5.3",
         "scheb/2fa": "^5.11",
         "scheb/2fa-qr-code": "^5.11",
-        "symfony/mime": "^5.3"
+        "symfony/mime": "^5.3",
+        "symfony/messenger": "^5.3",
+        "dragonmantank/cron-expression": "^3.1"
     },
     "require-dev": {
         "ergebnis/composer-normalize": "^2.0",

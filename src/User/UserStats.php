@@ -4,19 +4,20 @@ declare(strict_types=1);
 
 namespace EtoA\User;
 
+use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Universe\Planet\PlanetRepository;
 
 class UserStats
 {
     private UserOnlineStatsRepository $userOnlineStatsRepository;
     private PlanetRepository $planetRepository;
+    private ConfigurationService $config;
 
-    public function __construct(
-        UserOnlineStatsRepository $userOnlineStatsRepository,
-        PlanetRepository $planetRepository
-    ) {
+    public function __construct(UserOnlineStatsRepository $userOnlineStatsRepository, PlanetRepository $planetRepository, ConfigurationService $config)
+    {
         $this->userOnlineStatsRepository = $userOnlineStatsRepository;
         $this->planetRepository = $planetRepository;
+        $this->config = $config;
     }
 
     public function generateImage(string $file): void
@@ -138,7 +139,7 @@ class UserStats
             // Renderzeit
             $render_time = explode(" ", microtime());
             $rtime = (int) $render_time[1] + (int) $render_time[0] - $render_starttime;
-            imagestring($im, 6, 10, 5, getGameIdentifier(), $colBlack);
+            imagestring($im, 6, 10, 5, getGameIdentifier($this->config), $colBlack);
             imagestring($im, 6, 10, 20, "Userstatistik der letzten 24 Stunden", $colBlack);
             imagestring($im, 2, 10, 40, "Erstellt: " . date("d.m.Y, H:i") . ", Renderzeit: " . round($rtime, 3) . " sec", $colBlack);
 

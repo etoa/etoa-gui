@@ -100,4 +100,20 @@ class UserRepositoryTest extends AbstractDbTestCase
 
         $this->assertFalse($this->repository->markVerifiedByVerificationKey('verification-key'));
     }
+
+    public function testAddSittingDays(): void
+    {
+        $userId = 10;
+
+        $this->createUser($userId, 0, 0, 0, '', 'verification-key');
+
+        $user = $this->repository->getUser($userId);
+        $sittingDays = $user->sittingDays;
+
+        $this->repository->addSittingDays(11);
+
+        $user = $this->repository->getUser($userId);
+
+        $this->assertSame(11, $user->sittingDays - $sittingDays);
+    }
 }

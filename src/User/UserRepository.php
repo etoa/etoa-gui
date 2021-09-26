@@ -483,21 +483,20 @@ class UserRepository extends AbstractRepository
             ->execute();
     }
 
-    public function removeOldBans(): void
+    public function removeOldBans(): int
     {
-        $this->getConnection()->executeQuery("
-            UPDATE
-                users
-            SET
-                user_blocked_from = 0,
-                user_blocked_to = 0,
-                user_ban_reason = '',
-                user_ban_admin_id = 0
-            WHERE
-                user_blocked_to < :blockedBefore';
-        ", [
-            'blockedBefore' => time(),
-        ]);
+        return (int) $this->createQueryBuilder()
+            ->update('users')
+            ->set('`user_blocked_from`', '0')
+            ->set('`user_blocked_to`', '0')
+            ->set('`user_ban_reason`', ':banReason')
+            ->set('`user_ban_admin_id`', '0')
+            ->where('`user_blocked_to` < :blockedBefore')
+            ->setParameters([
+                'blockedBefore' => time(),
+                'banReason' => '',
+            ])
+            ->execute();
     }
 
     public function updateImgCheck(int $userId, bool $check, string $image = null): bool
@@ -522,14 +521,11 @@ class UserRepository extends AbstractRepository
 
     public function addSittingDays(int $days): void
     {
-        $this->getConnection()->executeQuery("
-            UPDATE
-                users
-            SET
-                user_sitting_days = user_sitting_days + :days';
-        ", [
-            'days' => $days,
-        ]);
+        $this->createQueryBuilder()
+            ->update('users')
+            ->set('`user_sitting_days`', '`user_sitting_days` + :days')
+            ->setParameter('days', $days)
+            ->execute();
     }
 
     public function setSittingDays(int $userId, int $days): void
