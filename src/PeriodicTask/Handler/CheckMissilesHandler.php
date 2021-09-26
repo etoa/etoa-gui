@@ -2,20 +2,22 @@
 
 namespace EtoA\PeriodicTask\Handler;
 
+use EtoA\Missile\MissileBattleHandler;
 use EtoA\Missile\MissileFlightRepository;
 use EtoA\Missile\MissileFlightSearch;
 use EtoA\PeriodicTask\Result\SuccessResult;
 use EtoA\PeriodicTask\Task\CheckMissilesTask;
-use MissileBattleHandler;
 use Symfony\Component\Messenger\Handler\MessageHandlerInterface;
 
 class CheckMissilesHandler implements MessageHandlerInterface
 {
     private MissileFlightRepository $missileFlightRepository;
+    private MissileBattleHandler $missileBattleHandler;
 
-    public function __construct(MissileFlightRepository $missileFlightRepository)
+    public function __construct(MissileFlightRepository $missileFlightRepository, MissileBattleHandler $missileBattleHandler)
     {
         $this->missileFlightRepository = $missileFlightRepository;
+        $this->missileBattleHandler = $missileBattleHandler;
     }
 
     public function __invoke(CheckMissilesTask $task): SuccessResult
@@ -23,7 +25,7 @@ class CheckMissilesHandler implements MessageHandlerInterface
         $flights = $this->missileFlightRepository->getFlights(MissileFlightSearch::create()->landed());
         $cnt = count($flights);
         foreach ($flights as $flight) {
-            MissileBattleHandler::battle($flight);
+            $this->missileBattleHandler->battle($flight);
             $cnt++;
         }
 
