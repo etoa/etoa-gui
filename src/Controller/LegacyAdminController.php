@@ -7,6 +7,7 @@ use EtoA\Security\Admin\CurrentAdmin;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
 class LegacyAdminController extends AbstractController
@@ -14,7 +15,7 @@ class LegacyAdminController extends AbstractController
     /**
      * @Route("/admin/", name="legacy.admin")
      */
-    public function index(Request $request): Response
+    public function index(Request $request, MessageBusInterface $messageBus): Response
     {
         ob_start();
 

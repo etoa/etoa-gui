@@ -22,6 +22,9 @@ services:
         LittleCubicleGames\Quests\Reward\Collect\CollectorInterface:
             tags: [ 'quests.collector' ]
 
+        EtoA\PeriodicTask\Task\PeriodicTaskInterface:
+            tags: [ 'periodic.task' ]
+
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
     EtoA\:
@@ -29,6 +32,10 @@ services:
         exclude:
             - '../src/Kernel.php'
             - '../src/app.php'
+
+    EtoA\PeriodicTask\PeriodicTaskCollection:
+        arguments:
+            $tasks: !tagged_iterator periodic.task
 
     League\CommonMark\MarkdownConverterInterface:
         class: League\CommonMark\GithubFlavoredMarkdownConverter

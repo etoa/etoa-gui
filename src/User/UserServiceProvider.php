@@ -193,7 +193,8 @@ class UserServiceProvider implements ServiceProviderInterface
         $pimple[UserStats::class] = function (Container $pimple): UserStats {
             return new UserStats(
                 $pimple[UserOnlineStatsRepository::class],
-                $pimple[PlanetRepository::class]
+                $pimple[PlanetRepository::class],
+                $pimple[ConfigurationService::class]
             );
         };
 

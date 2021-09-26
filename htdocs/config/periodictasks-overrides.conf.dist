@@ -1,6 +1,0 @@
-[
-	{
-		"name":"CreateBackupTask",
-		"schedule":"47 0,6,12,18 * * *"
-	}
-]

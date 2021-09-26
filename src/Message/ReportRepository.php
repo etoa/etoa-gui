@@ -227,7 +227,7 @@ class ReportRepository extends AbstractRepository
         return (int) $this->createQueryBuilder()
             ->delete('reports')
             ->where('archived = 0')
-            ->andWhere('read = 1')
+            ->andWhere('`read` = 1')
             ->andWhere('timestamp < :timestamp')
             ->setParameter('timestamp', $beforeTimestamp)
             ->execute();
