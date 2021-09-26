@@ -66,7 +66,7 @@ class CronjobRunCommand extends Command
                 $envelope = $this->messageBus->dispatch($task);
                 $taskStopEvent = $stopwatch->stop($taskName);
                 $result = EnvelopResultExtractor::extract($envelope);
-                $takLog = $taskName . ': ' . $result->getMessage() . ' - ' . $taskStopEvent->__toString();
+                $takLog = str_replace('default/', '', $taskStopEvent->__toString()) . ': ' . $result->getMessage();
                 $log .= $takLog . "\n";
 
                 if ($io->isVerbose()) {
@@ -75,7 +75,7 @@ class CronjobRunCommand extends Command
             }
 
             $stopEvent = $stopwatch->stop('run');
-            $log .= $stopEvent->__toString();
+            $log .= str_replace('default/', '', $stopEvent->__toString());
 
             $severity = $stopEvent->getDuration() > 30000 ? LogSeverity::WARNING : LogSeverity::DEBUG;
 
