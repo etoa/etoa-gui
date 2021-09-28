@@ -53,7 +53,7 @@
 	int ListShip::getShipCnt(ShipData* data) {
 		Config &config = Config::instance();
 		if (data->isCivilShip()) {
-			this->rebuildCount = (int)(this->initCount - this->count)*config.nget("civil_ship_restore_percent",0);
+			this->rebuildCount = (int)round((this->initCount - this->count)*config.nget("civil_ship_restore_percent",0));
 		}
 		return (int)ceil((this->initCount - (this->count + this->rebuildCount))*config.nget("ship_wf_percent",0));    
 	}
