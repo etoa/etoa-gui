@@ -187,7 +187,7 @@
 		idConfig["SPY_ATTACK_SHOW_DEFENSE"] = 5;
 		idConfig["SPY_ATTACK_SHOW_SHIPS"] = 7;
 		idConfig["SPY_ATTACK_SHOW_RESSOURCEN"] = 9;
-		idConfig["SPY_ATTACK_SHOW_SUPPORT"] = 9;
+		idConfig["SPY_ATTACK_SHOW_SUPPORT"] = 11;
 
 		//->Flottenaktionen
 		actions["analyze"] = 1;
