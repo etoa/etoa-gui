@@ -3,7 +3,7 @@ if(false==class_exists('xajaxPlugin')||false==class_exists('xajaxPluginManager')
 require $sXajaxCore.'/xajaxPlugin.inc.php';if(false==class_exists('xajaxPluginManager'))
 require $sXajaxCore.'/xajaxPluginManager.inc.php';}
 class clsSwfUpload
-extends xajaxResponsePlugin{private $sCallName="SWFUpload";private $sDefer;private $sJavascriptURI;private $bInlineScript;private $SWFupload_FadeTimeOut=1500;private $sRequestedFunction=NULL;private $sXajaxPrefix="xajax_";public function clsSwfUpload(){$this->sDefer='';$this->sJavascriptURI='';$this->bInlineScript=false;}
+extends xajaxResponsePlugin{private $sCallName="SWFUpload";private $sDefer;private $sJavascriptURI;private $bInlineScript;private $SWFupload_FadeTimeOut=1500;private $sRequestedFunction=NULL;private $sXajaxPrefix="xajax_";public function __construct(){$this->sDefer='';$this->sJavascriptURI='';$this->bInlineScript=false;}
 function getName(){return get_class($this);}
 public function configure($sName,$mValue){switch($sName){case 'scriptDeferral':
 if(true===$mValue||false===$mValue){if($mValue)

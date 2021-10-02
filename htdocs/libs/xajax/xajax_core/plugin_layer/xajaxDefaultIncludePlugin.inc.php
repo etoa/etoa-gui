@@ -46,7 +46,7 @@ final class xajaxIncludeClientScriptPlugin extends xajaxRequestPlugin
 	private $nResponseQueueSize;
 	private $sDebugOutputID;
 
-	public function xajaxIncludeClientScriptPlugin()
+    public function __construct()
 	{
 		$this->sJsURI = '';
 		$this->aJsFiles = array();

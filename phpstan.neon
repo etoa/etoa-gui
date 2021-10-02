@@ -13,8 +13,6 @@ parameters:
         - tests
         - htdocs
 
-    reportUnmatchedIgnoredErrors: false
-
     excludePaths:
         - htdocs/libs
 

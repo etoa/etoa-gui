@@ -102,7 +102,7 @@ class xajaxCometFunction
 
 			$xajax->register(XAJAX_FUNCTION, $myUserFunction);
 	*/
-	function xajaxCometFunction($uf, $sInclude=NULL, $aConfiguration=array())
+	function __construct($uf, $sInclude=NULL, $aConfiguration=array())
 	{
 		$this->sAlias = '';
 		$this->uf =& $uf;
