@@ -175,12 +175,17 @@ if (isset($cp)) {
         $buildingNames = $buildingDataRepository->getBuildingNames();
         $technologyNames = $technologyDataRepository->getTechnologyNames();
 
-        // Lade Anforderungen
-        $b_req = array();
+        // Lade Anforderungen;
+        $buildingRequirements = [];
+        $technologyRequirements = [];
         $requirements = $requirementsRepository->getAll();
         foreach ($requirements->getForAllObjects() as $requirement) {
-            if ($requirement->requiredBuildingId > 0) $b_req[$requirement->objectId]['b'][$requirement->requiredBuildingId] = $requirement->requiredLevel;
-            if ($requirement->requiredTechnologyId > 0) $b_req[$requirement->objectId]['t'][$requirement->requiredTechnologyId] = $requirement->requiredLevel;
+            if ($requirement->requiredBuildingId > 0) {
+                $buildingRequirements[$requirement->objectId][$requirement->requiredBuildingId] = $requirement->requiredLevel;
+            }
+            if ($requirement->requiredTechnologyId > 0) {
+                $technologyRequirements[$requirement->objectId][$requirement->requiredTechnologyId] = $requirement->requiredLevel;
+            }
         }
 
         // Wenn Kategorien vorhanden sind (Gebäude, Forschungen)
@@ -202,16 +207,14 @@ if (isset($cp)) {
                         }
 
                         if ($show) {
-                            if (isset($b_req[$itemId]['b'])) {
-                                $b_cnt = count($b_req[$itemId]['b']);
-                            } else {
-                                $b_cnt = 0;
+                            $b_cnt = 0;
+                            if (isset($buildingRequirements[$itemId])) {
+                                $b_cnt = count($buildingRequirements[$itemId]);
                             }
 
-                            if (isset($b_req[$itemId]['t'])) {
-                                $t_cnt = count($b_req[$itemId]['t']);
-                            } else {
-                                $t_cnt = 0;
+                            $t_cnt = 0;
+                            if (isset($technologyRequirements[$itemId])) {
+                                $t_cnt = count($technologyRequirements[$itemId]);
                             }
 
                             if ($b_cnt + $t_cnt > 0) {
@@ -227,16 +230,16 @@ if (isset($cp)) {
                             }
 
                             $using_something = 0;
-                            if (isset($b_req[$itemId]['b'])) {
+                            if (isset($buildingRequirements[$itemId])) {
                                 $cnt = 0;
-                                foreach ($b_req[$itemId]['b'] as $b => $l) {
-                                    if ($cnt == 0 && count($b_req[$itemId]['b']) > 1) {
+                                foreach ($buildingRequirements[$itemId] as $b => $l) {
+                                    if ($cnt === 0 && count($buildingRequirements[$itemId]) > 1) {
                                         $bstyle = "border-bottom:none;";
                                     } elseif (
                                         ($cnt > 0
-                                            && $cnt < count($b_req[$itemId]['b']) - 1)
+                                            && $cnt < count($buildingRequirements[$itemId]) - 1)
                                         ||
-                                        isset($b_req[$itemId]['t'])
+                                        isset($technologyRequirements[$itemId])
                                     ) {
                                         $bstyle = "border-top:none;border-bottom:none;";
                                     } elseif ($cnt != 0) {
@@ -255,14 +258,14 @@ if (isset($cp)) {
                                 $using_something = 1;
                             }
 
-                            if (isset($b_req[$itemId]['t'])) {
+                            if (isset($technologyRequirements[$itemId])) {
                                 $cnt = 0;
-                                foreach ($b_req[$itemId]['t'] as $b => $l) {
-                                    if ($cnt == 0 && count($b_req[$itemId]['t']) > 1 && isset($b_req[$itemId]['b'])) {
+                                foreach ($technologyRequirements[$itemId] as $b => $l) {
+                                    if ($cnt === 0 && count($technologyRequirements[$itemId]) > 1 && isset($buildingRequirements[$itemId])) {
                                         $bstyle = "border-top:none;border-bottom:none;";
-                                    } elseif ($cnt == 0 && count($b_req[$itemId]['t']) > 1) {
+                                    } elseif ($cnt === 0 && count($technologyRequirements[$itemId]) > 1) {
                                         $bstyle = "border-bottom:none;";
-                                    } elseif (($cnt > 0 && $cnt < count($b_req[$itemId]['t']) - 1)) {
+                                    } elseif (($cnt > 0 && $cnt < count($technologyRequirements[$itemId]) - 1)) {
                                         $bstyle = "border-top:none;border-bottom:none;";
                                     } elseif ($cnt != 0) {
                                         $bstyle = "border-top:none;";
@@ -301,19 +304,19 @@ if (isset($cp)) {
             tableStart();
             if (count($itemNames) > 0) {
                 foreach ($itemNames as $itemId => $itemName) {
-                    if (count($b_req[$itemId]['b']) + count($b_req[$itemId]['t']) > 0) {
-                        echo "<tr><td width=\"200\" rowspan=\"" . (count($b_req[$itemId]['b']) + count($b_req[$itemId]['t'])) . "\"><b>" . $itemName . "</b> " . helpLink(HELP_URL . "&amp;id=" . $itemId) . "</td>";
+                    if (isset($buildingRequirements[$itemId]) || isset($technologyRequirements[$itemId])) {
+                        echo "<tr><td width=\"200\" rowspan=\"" . (count($buildingRequirements[$itemId] ?? []) + count($technologyRequirements[$itemId] ?? [])) . "\"><b>" . $itemName . "</b> " . helpLink(HELP_URL . "&amp;id=" . $itemId) . "</td>";
                     } else {
                         echo "<tr><td width=\"200\"><b>" . $itemName . "</b> " . helpLink(HELP_URL . "&amp;id=" . $itemId) . "</td>";
                     }
                     $using_something = 0;
 
-                    if (isset($b_req[$itemId]['b'])) {
+                    if (isset($buildingRequirements[$itemId])) {
                         $cnt = 0;
-                        foreach ($b_req[$itemId]['b'] as $b => $l) {
-                            if ($cnt == 0 && count($b_req[$itemId]['b']) > 1) {
+                        foreach ($buildingRequirements[$itemId] as $b => $l) {
+                            if ($cnt === 0 && count($buildingRequirements[$itemId]) > 1) {
                                 $bstyle = "border-bottom:none;";
-                            } elseif (($cnt > 0 && $cnt < count($b_req[$itemId]['b']) - 1) || isset($b_req[$itemId]['t'])) {
+                            } elseif (($cnt > 0 && $cnt < count($buildingRequirements[$itemId]) - 1) || isset($technologyRequirements[$itemId])) {
                                 $bstyle = "border-top:none;border-bottom:none;";
                             } elseif ($cnt != 0) {
                                 $bstyle = "border-top:none;";
@@ -331,14 +334,14 @@ if (isset($cp)) {
                         $using_something = 1;
                     }
 
-                    if (isset($b_req[$itemId]['t'])) {
+                    if (isset($technologyRequirements[$itemId])) {
                         $cnt = 0;
-                        foreach ($b_req[$itemId]['t'] as $b => $l) {
-                            if ($cnt == 0 && count($b_req[$itemId]['t']) > 1 && isset($b_req[$itemId]['b'])) {
+                        foreach ($technologyRequirements[$itemId] as $b => $l) {
+                            if ($cnt === 0 && count($technologyRequirements[$itemId]) > 1 && isset($buildingRequirements[$itemId])) {
                                 $bstyle = "border-top:none;border-bottom:none;";
-                            } elseif ($cnt == 0 && count($b_req[$itemId]['t']) > 1) {
+                            } elseif ($cnt === 0 && count($technologyRequirements[$itemId]) > 1) {
                                 $bstyle = "border-bottom:none;";
-                            } elseif (($cnt > 0 && $cnt < count($b_req[$itemId]['t']) - 1)) {
+                            } elseif (($cnt > 0 && $cnt < count($technologyRequirements[$itemId]) - 1)) {
                                 $bstyle = "border-top:none;border-bottom:none;";
                             } elseif ($cnt != 0) {
                                 $bstyle = "border-top:none;";
