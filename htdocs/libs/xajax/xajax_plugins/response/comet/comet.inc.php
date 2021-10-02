@@ -62,7 +62,7 @@ class clsCometStreaming extends xajaxResponsePlugin
 
 		Constructs and initializes an instance of the table updater class.
 	*/
-	function clsCometStreaming()
+	function __construct()
 	{
 		$this->sDefer = '';
 		$this->sJavascriptURI = '';

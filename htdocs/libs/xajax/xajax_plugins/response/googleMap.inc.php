@@ -1,5 +1,5 @@
 <?php
-class clsGoogleMap extends xajaxResponsePlugin{var $sJavascriptURI;var $bInlineScript;function clsGoogleMap(){$this->sJavascriptURI='';$this->bInlineScript=true;}
+class clsGoogleMap extends xajaxResponsePlugin{var $sJavascriptURI;var $bInlineScript;function __construct(){$this->sJavascriptURI='';$this->bInlineScript=true;}
 function configure($sName,$mValue){if('javascript URI'==$sName){$this->sJavascriptURI=$mValue;}else if('inlineScript'==$sName){if(true===$mValue||false===$mValue)
 $this->bInlineScript=$mValue;}
 }
