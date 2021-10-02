@@ -110,7 +110,7 @@ echo "<table id=\"sector_map_table\">";
 // Top row: Buttons to upper sectors
 echo "<tr>";
 echo "<td class=\"sector_map_neighbour_nav\" style=\"width:45px;height:45px;\">";
-if ($sx_tl !== 0 && $sy_tl !== 0 && $sx_tl !== $sx_num + 1 && $sy_tl !== $sy_num + 1) {
+if ($sx_tl !== 0 && $sx_tl !== $sx_num + 1 && $sy_tl !== $sy_num + 1) {
     $tt = new Tooltip();
     $tt->addTitle("Sektor $sx_tl/$sy_tl");
     $tt->addText("Sektor $sx_tl/$sy_tl anzeigen");
@@ -134,7 +134,7 @@ if ($sx_tc != 0 && $sy_tc != 0 && $sx_tc != $sx_num + 1 && $sy_tc != $sy_num + 1
 echo "</td>";
 
 echo "<td class=\"sector_map_neighbour_nav\" style=\"width:45px;height:45px;\">";
-if ($sx_tr !== 0 && $sy_tr !== 0 && $sx_tr !== $sx_num + 1 && $sy_tr !== $sy_num + 1) {
+if ($sx_tr !== $sx_num + 1 && $sy_tr !== $sy_num + 1) {
     $tt = new Tooltip();
     $tt->addTitle("Sektor $sx_tr/$sy_tr");
     $tt->addText("Sektor $sx_tr/$sy_tr anzeigen");
@@ -219,7 +219,7 @@ if ($sx_bc != 0 && $sy_bc == 0 && $sx_bc != $sx_num + 1 && $sy_bc == $sy_num + 1
 echo "</td>";
 
 echo "<td class=\"sector_map_neighbour_nav\" style=\"width:45px;height:45px;\">";
-if ($sx_br !== 0 && $sy_br !== 0 && $sx_br !== $sx_num + 1 && $sy_br !== $sy_num + 1) {
+if ($sy_br !== 0 && $sx_br !== $sx_num + 1 && $sy_br !== $sy_num + 1) {
     $tt = new Tooltip();
     $tt->addTitle("Sektor $sx_br/$sy_br");
     $tt->addText("Sektor $sx_br/$sy_br anzeigen");

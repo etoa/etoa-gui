@@ -86,7 +86,7 @@ if (isset($_GET['file'])) {
                 foreach ($xml->planets->planet as $p) {
                     echo "<tr>
                             <th class=\"tbltitle\" rowspan=\"7\" style=\"width:200px;\">" . $p['name'] . "<br/> (Id: " . $p['id'] . "";
-                    if ($p['id'] == 1) echo " HAUPTPLANET";
+                    if ((int) $p['id'] === 1) echo " HAUPTPLANET";
                     echo ")</th>
                             <td class=\"tbldata\">Typ:</td>
                             <td class=\"tbldata\">" . $p->type . " (Id: " . $p->type['id'] . ")</td>
