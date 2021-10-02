@@ -14,8 +14,8 @@ jobs:
     strategy:
       matrix:
         php-version:
-          - "7.4"
           - "8.0"
+          - "8.1"
 
     services:
       mysql:
@@ -70,7 +70,7 @@ jobs:
     strategy:
       matrix:
         php-version:
-          - "7.4"
+          - "8.0"
 
     name: PHP-CS-Fixer
     runs-on: ubuntu-latest
@@ -105,8 +105,8 @@ jobs:
     strategy:
       matrix:
         php-version:
-          - "7.4"
           - "8.0"
+          - "8.1"
 
     name: PHPStan
     runs-on: ubuntu-latest
