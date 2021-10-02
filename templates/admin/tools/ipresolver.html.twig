@@ -1,0 +1,16 @@
+{% extends 'admin/layout/admin.html.twig' %}
+
+{% block content %}
+    <h3>IP-Resolver</h3>
+
+    <form method="post">
+        <label>IP-Adresse: <input type="text" name="ip" value="{{ ip }}" /></label>
+        <label>oder Hostname: <input type="text" name="hostname" value="{{ host }}" /></label>
+        <input type="submit" name="resolve" value="Auflösen" /> &nbsp;
+    </form>
+
+    {% if ipInfoResult %}
+<pre>{{ ipInfoResult|raw }}</pre>
+        <p><a href="https://ipinfo.io/{{ ip }}" target="_blank">Details</a></p>
+    {% endif %}
+{% endblock %}
