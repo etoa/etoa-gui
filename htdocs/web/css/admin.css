@@ -1747,6 +1747,7 @@ pre.code {
 * Forms           *
 ******************/
 input[type=text],
+input[type=email],
 input[type=number],
 input[type=password],
 input[type=datetime-local],
@@ -1758,6 +1759,7 @@ textarea {
 }
 
 input[type=text],
+input[type=email],
 input[type=number],
 input[type=password],
 input[type=datetime-local],
@@ -1771,6 +1773,7 @@ textarea {
 }
 
 input[type=text]:focus,
+input[type=email]:focus,
 input[type=number]:focus,
 input[type=password]:focus,
 input[type=datetime-local]:focus,
@@ -2157,7 +2160,7 @@ body.login #main {
   content: ":";
 }
 
-.login_form input[type=text], .login_form input[type=password] {
+.login_form input[type=text], .login_form input[type=email], .login_form input[type=password] {
   padding: 2px;
   vertical-align: middle;
 }
