@@ -15,7 +15,6 @@ jobs:
       matrix:
         php-version:
           - "8.0"
-          - "8.1"
 
     services:
       mysql:
@@ -106,7 +105,6 @@ jobs:
       matrix:
         php-version:
           - "8.0"
-          - "8.1"
 
     name: PHPStan
     runs-on: ubuntu-latest
