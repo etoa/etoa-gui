@@ -11,21 +11,23 @@ sudo apt-get update && sudo apt-get upgrade
 echo "mysql-server mysql-server/root_password password " | debconf-set-selections
 echo "mysql-server mysql-server/root_password_again password " | debconf-set-selections
 
-# Install mysql, nginx, php7.4-fpm
-sudo apt-get install -q -y -f git mysql-server mysql-client nginx php7.4 php7.4-fpm php7.4-xdebug
+# Install mysql, nginx, php8.0-fpm
+sudo apt-get install -q -y -f git mysql-server mysql-client nginx php8.0 php8.0-fpm php8.0-xdebug
 
 # Install commonly used php packages
-sudo apt-get install -q -y -f php7.4-curl php7.4-cli php7.4-mysqli php7.4-gd php7.4-dom php7.4-zip php7.4-mbstring
+sudo apt-get install -q -y -f php8.0-curl php8.0-cli php8.0-mysqli php8.0-gd php8.0-dom php8.0-zip php8.0-mbstring php8.0-intl
 
 sudo apt-get upgrade libpcre3
 
 sudo rm /etc/nginx/sites-available/default
 sudo cp /var/www/etoa/vagrant/nginx-default /etc/nginx/sites-available/default
+sudo cp /var/www/etoa/vagrant/xdebug.ini /etc/php/8.0/mods-available/xdebug.ini
 cp /var/www/etoa/vagrant/db.conf /var/www/etoa/htdocs/config
 cp /var/www/etoa/vagrant/roundx.conf /vagrant/htdocs/config/eventhandler.conf
 
 sudo service nginx restart
-sudo service php7.4-fpm restart
+sudo service php8.0-fpm restart
+sudo chown -R www-data:www-data /var/lib/php/sessions
 
 MYSQL=`which mysql`
 PHP=`which php`
@@ -45,7 +47,7 @@ Q8="INSERT INTO config (config_name, config_value, config_param1, config_param2)
 $MYSQL -uroot -D etoa -e "$Q8"
 
 # Setup cronjob
-echo "* * * * * php /var/www/etoa/bin/cronjob.php" | crontab
+echo "* * * * * php /var/www/etoa/bin/console cron:run" | crontab
 
 # Install deps for eventhandler
 sudo apt-get install -q -y -f cmake libboost-all-dev libmysql++-dev g++
