@@ -27,6 +27,14 @@ class ToolController extends AbstractController
     }
 
     /**
+     * @Route("/admin/tools/", name="admin.tools.index")
+     */
+    public function index(): Response
+    {
+        return $this->render('admin/tools/index.html.twig');
+    }
+
+    /**
      * @Route("/admin/tools/accesslog/", name="admin.tools.accesslog")
      */
     public function accessLog(): Response

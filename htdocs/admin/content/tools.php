@@ -6,8 +6,6 @@ echo "<h1>Tools</h1>";
 
 if ($sub == "filesharing") {
     fileSharing();
-} else {
-    toolsIndex();
 }
 
 function fileSharing()
@@ -98,9 +96,4 @@ function fileSharing()
             echo "Verzeichnis $root kann nicht gefunden werden!";
         }
     }
-}
-
-function toolsIndex()
-{
-    echo "Wähle ein Tool aus dem Menü!";
 }
