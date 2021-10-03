@@ -1,76 +1,13 @@
 <?php
 
-use EtoA\Core\Configuration\ConfigurationService;
-use EtoA\HostCache\NetworkNameService;
-use EtoA\Log\AccessLogRepository;
 use EtoA\Support\StringUtils;
-
-/** @var ConfigurationService $config */
-$config = $app[ConfigurationService::class];
-
-/** @var AccessLogRepository $accessLogRepository */
-$accessLogRepository = $app[AccessLogRepository::class];
 
 echo "<h1>Tools</h1>";
 
-if ($sub == "accesslog") {
-    accessLog($config, $accessLogRepository);
-} elseif ($sub == "filesharing") {
+if ($sub == "filesharing") {
     fileSharing();
 } else {
     toolsIndex();
-}
-
-function accessLog(ConfigurationService $config, AccessLogRepository $accessLogRepository)
-{
-    global $page;
-    global $sub;
-
-    echo "<h2>Seitenzugriffe</h2>";
-
-    if (isset($_POST['submit_toggle'])) {
-        $config->set("accesslog", !$config->getBoolean('accesslog'));
-        success_msg("Einstellungen gespeichert");
-    }
-    if (isset($_POST['submit_truncate'])) {
-        $accessLogRepository->deleteAll();
-        success_msg("Aufzeichnungen gelöscht");
-    }
-
-    echo '<form id="accesslog" action="?page=' . $page . '&amp;sub=' . $sub. '" method="post">';
-    if ($config->getBoolean('accesslog')) {
-        echo "<p>Seitenzugriffe werden aufgezeichnet.
-        <input type=\"submit\" value=\"Deaktivieren\" name=\"submit_toggle\"  />";
-    } else {
-        echo "<p>Seitenzugriffe werden momentan NICHT aufgezeichnet.
-        <input type=\"submit\" value=\"Aktivieren\" name=\"submit_toggle\"  />";
-    }
-    echo " <input type=\"submit\" value=\"Aufzeichnungen löschen\" name=\"submit_truncate\"  /></p>";
-    echo '</form>';
-
-    $domains = array('ingame', 'public', 'admin');
-
-    foreach ($domains as $d) {
-        echo "<h3>" . ucfirst($d) . "</h3>";
-        echo "<table class=\"tb\" style=\"width:500px\"><tr>
-        <th>Ziel</th>
-        <th style=\"width:90px\">Zugriffe
-        <th style=\"width:200px\">Unterbereiche</th></tr>";
-        $counts = $accessLogRepository->getCountsForDomain($d);
-        foreach ($counts as $target => $targetCount) {
-            echo "<tr><td>" . $target . "</td>
-            <td>" . $targetCount . "</td>
-            <td style=\"padding:1px\"><table style=\"margin:0;width:100%;border:none;\">";
-            $subCounts = $accessLogRepository->getCountsForTarget($d, $target);
-            foreach ($subCounts as $subLabel => $count) {
-                echo "<tr><td>" . $subLabel . "</td>
-                <td style=\"width:60px\">" . $count . "</td></tr>";
-            }
-            echo "</table></td>
-            </tr>";
-        }
-        echo "</table>";
-    }
 }
 
 function fileSharing()

@@ -1,0 +1,54 @@
+{% extends 'admin/layout/admin.html.twig' %}
+
+{% block content %}
+    <h3>Seitenzugriffe</h3>
+
+    <form action="{{ path('admin.tools.accesslog.toggle') }}" method="post">
+        <p>
+            {% if accessLogEnabled %}
+                Seitenzugriffe werden aufgezeichnet.
+                <input type="submit" value="Deaktivieren" name="submit_toggle"  />
+            {% else %}
+                Seitenzugriffe werden momentan NICHT aufgezeichnet.
+                <input type="submit" value="Aktivieren" name="submit_toggle"  />
+            {% endif %}
+        </p>
+    </form>
+
+    {% for domain in domains %}
+        <h4>{{ domain|capitalize }}</h4>
+
+        <table class="tb" style="width:500px">
+            <tr>
+                <th>Ziel</th>
+                <th style="width:90px">Zugriffe
+                <th style="width:200px">Unterbereiche</th>
+            </tr>
+
+            {% for target,domainCounts in logs[domain] %}
+                <tr>
+                    <td>{{ target }}</td>
+                    <td>{{ domainCounts['count'] }}</td>
+                    <td style="padding:1px">
+                        <table style="margin:0;width:100%;border:none;">
+                            {% for subLabel,count in domainCounts['sub'] %}
+                                <tr>
+                                    <td>{{ subLabel }}</td>
+                                    <td style="width:60px">{{ count }}</td>
+                                </tr>
+                            {% endfor %}
+                        </table>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="3">Kein Einträge vorhanden</td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% endfor %}
+
+    <form action="{{ path('admin.tools.accesslog.truncate') }}" method="post">
+        <input type="submit" value="Aufzeichnungen löschen" name="submit_truncate"  />
+    </form>
+{% endblock %}

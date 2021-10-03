@@ -2,7 +2,9 @@
 
 namespace EtoA\Controller\Admin;
 
+use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\HostCache\NetworkNameService;
+use EtoA\Log\AccessLogRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -13,11 +15,63 @@ class ToolController extends AbstractController
 {
     private HttpClientInterface $client;
     private NetworkNameService$networkNameService;
+    private AccessLogRepository$accessLogRepository;
+    private ConfigurationService $config;
 
-    public function __construct(HttpClientInterface $client, NetworkNameService $networkNameService)
+    public function __construct(HttpClientInterface $client, NetworkNameService $networkNameService, AccessLogRepository $accessLogRepository, ConfigurationService $config)
     {
         $this->client = $client;
         $this->networkNameService = $networkNameService;
+        $this->accessLogRepository = $accessLogRepository;
+        $this->config = $config;
+    }
+
+    /**
+     * @Route("/admin/tools/accesslog/", name="admin.tools.accesslog")
+     */
+    public function accessLog(): Response
+    {
+        $logs = [];
+        $domains = ['ingame', 'public', 'admin'];
+        foreach ($domains as $domain) {
+            $logs[$domain] = [];
+            $counts = $this->accessLogRepository->getCountsForDomain($domain);
+            foreach ($counts as $target => $targetCount) {
+                $logs[$domain][$target]['count'] = $targetCount;
+                $subCounts = $this->accessLogRepository->getCountsForTarget($domain, $target);
+                foreach ($subCounts as $subLabel => $count) {
+                    $logs[$domain][$target]['sub'][$subLabel] = $count;
+                }
+            }
+        }
+
+        return $this->render('admin/tools/accesslog.html.twig', [
+            'logs' => $logs,
+            'domains' => $domains,
+            'accessLogEnabled' => $this->config->getBoolean('accesslog')
+        ]);
+    }
+
+    /**
+     * @Route("/admin/tools/accesslog/toggle", methods={"POST"}, name="admin.tools.accesslog.toggle")
+     */
+    public function toggleAccessLog(): Response
+    {
+        $this->config->set("accesslog", !$this->config->getBoolean('accesslog'));
+        $this->addFlash('success', "Einstellungen gespeichert");
+
+        return $this->redirectToRoute('admin.tools.accesslog');
+    }
+
+    /**
+     * @Route("/admin/tools/accesslog/truncate", methods={"POST"}, name="admin.tools.accesslog.truncate")
+     */
+    public function truncateAccessLog(): Response
+    {
+        $this->accessLogRepository->deleteAll();
+        $this->addFlash('success', "Aufzeichnungen gelöscht");
+
+        return $this->redirectToRoute('admin.tools.accesslog');
     }
 
     /**
