@@ -17,6 +17,17 @@ class ToolControllerTest extends SymfonyWebTestCase
         $this->assertSame(200, $client->getResponse()->getStatusCode(), $client->getResponse()->getContent());
     }
 
+    public function testFilesharing(): void
+    {
+        $client = self::createClient();
+
+        $this->loginAdmin($client);
+
+        $client->request('GET', '/admin/tools/filesharing');
+
+        $this->assertSame(200, $client->getResponse()->getStatusCode(), $client->getResponse()->getContent());
+    }
+
     public function testAccessLog(): void
     {
         $client = self::createClient();

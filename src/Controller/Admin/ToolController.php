@@ -5,7 +5,10 @@ namespace EtoA\Controller\Admin;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\HostCache\NetworkNameService;
 use EtoA\Log\AccessLogRepository;
+use EtoA\Support\StringUtils;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\Finder\Finder;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -17,13 +20,15 @@ class ToolController extends AbstractController
     private NetworkNameService$networkNameService;
     private AccessLogRepository$accessLogRepository;
     private ConfigurationService $config;
+    private string $adminFileSharingDir;
 
-    public function __construct(HttpClientInterface $client, NetworkNameService $networkNameService, AccessLogRepository $accessLogRepository, ConfigurationService $config)
+    public function __construct(HttpClientInterface $client, NetworkNameService $networkNameService, AccessLogRepository $accessLogRepository, ConfigurationService $config, string $adminFileSharingDir)
     {
         $this->client = $client;
         $this->networkNameService = $networkNameService;
         $this->accessLogRepository = $accessLogRepository;
         $this->config = $config;
+        $this->adminFileSharingDir = $adminFileSharingDir;
     }
 
     /**
@@ -32,6 +37,86 @@ class ToolController extends AbstractController
     public function index(): Response
     {
         return $this->render('admin/tools/index.html.twig');
+    }
+
+    /**
+     * @Route("/admin/tools/filesharing", name="admin.tools.filesharing")
+     */
+    public function filesharing(): Response
+    {
+        $files = [];
+        $finder = (new Finder())->files()->in($this->adminFileSharingDir);
+        foreach ($finder->getIterator() as $file) {
+            $files[] = [
+                'name' => $file->getBasename(),
+                'link' => "file=" . base64_encode($file->getPathname()) . "&h=" . md5($file->getPathname()),
+                'downloadLink' => createDownloadLink($file->getPathname()),
+                'size' => StringUtils::formatBytes($file->getSize()),
+                'time' => StringUtils::formatDate($file->getMTime()),
+            ];
+        }
+
+        return $this->render('admin/tools/filesharing.html.twig', [
+            'files' => $files,
+        ]);
+    }
+
+    /**
+     * @Route("/admin/tools/filesharing/upload", methods={"POST"}, name="admin.tools.filesharing.upload")
+     */
+    public function fileUpload(Request $request): Response
+    {
+        /** @var UploadedFile $file */
+        $file = $request->files->get('datei');
+
+        try {
+            $file->move($this->adminFileSharingDir, $file->getClientOriginalName());
+            $this->addFlash('success', sprintf('Die Datei %s wurde heraufgeladen!', $file->getClientOriginalName()));
+        } catch (\Throwable $e) {
+            $this->addFlash('error', 'Fehler beim Upload! ' . $e->getMessage());
+        }
+
+        return $this->redirectToRoute('admin.tools.filesharing');
+    }
+
+    /**
+     * @Route("/admin/tools/filesharing/rename", name="admin.tools.filesharing.rename")
+     */
+    public function fileRename(Request $request): Response
+    {
+        if ($request->isMethod('POST')) {
+            rename($this->adminFileSharingDir . "/" . $request->request->get('rename_old'), $this->adminFileSharingDir . "/" . $request->request->get('rename'));
+            $this->addFlash('success', "Datei wurde umbenannt!");
+
+            return $this->redirectToRoute('admin.tools.filesharing');
+        }
+
+        $f = base64_decode($request->query->get('file'), true);
+        if (md5($f) !== $request->query->get('h')) {
+            $this->addFlash('error', "Fehler im Dateinamen!");
+
+            return $this->redirectToRoute('admin.tools.filesharing');
+        }
+
+        return $this->render('admin/tools/filesharing-rename.html.twig', [
+            'name' => basename($f),
+        ]);
+    }
+
+    /**
+     * @Route("/admin/tools/filesharing/delete", name="admin.tools.filesharing.delete")
+     */
+    public function deleteFile(Request $request): Response
+    {
+        $f = base64_decode($request->query->get('file'), true);
+        if (md5($f) === $request->query->get('h')) {
+            @unlink($this->adminFileSharingDir . "/" . basename($f));
+            $this->addFlash('success', "Datei wurde gelöscht!");
+        } else {
+            $this->addFlash('error', "Fehler im Dateinamen!");
+        }
+
+        return $this->redirectToRoute('admin.tools.filesharing');
     }
 
     /**
@@ -56,7 +141,7 @@ class ToolController extends AbstractController
         return $this->render('admin/tools/accesslog.html.twig', [
             'logs' => $logs,
             'domains' => $domains,
-            'accessLogEnabled' => $this->config->getBoolean('accesslog')
+            'accessLogEnabled' => $this->config->getBoolean('accesslog'),
         ]);
     }
 

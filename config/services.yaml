@@ -14,6 +14,7 @@ services:
             bool $questsEnabled: false
             $questsWorkflow: $questsStateMachine
             string $cacheDir: '%kernel.project_dir%/htdocs/cache'
+            string $adminFileSharingDir: '%kernel.project_dir%/htdocs/cache/admin'
 
     _instanceof:
         LittleCubicleGames\Quests\Log\QuestLoggerInterface:
