@@ -17,7 +17,7 @@
                     {% if isAdminAllowed(userRoles, ['master', 'super-admin', 'game-admin', 'trial-game-admin']) %}
                         <li><a href="?page=tickets">{{ numTickets > 0 ? 'Tickets (' ~ numTickets ~ ')' : 'Tickets' }}</a></li>
                     {% endif %}
-                    <li><a href="/admin/?page=notepad">{{ numNotes > 0 ? 'Notizblock (' ~ numNotes ~ ')' : 'Notizblock' }}</li>
+                    <li><a href="{{ path('admin.notepad') }}">{{ numNotes > 0 ? 'Notizblock (' ~ numNotes ~ ')' : 'Notizblock' }}</li>
                     <li><a href="{{ etoaUrl('login') }}" target="_blank">Spiel-Login</a></li>
                     <li><a href="/admin/logout">Logout</a></li>
                 </ul>

@@ -1,0 +1,33 @@
+{% extends 'admin/layout/admin.html.twig' %}
+
+{% block content %}
+    <h1>Notizen</h1>
+
+    <table>
+        {% for note in notes %}
+            <tr>
+                <td width="120">
+                    <b>{{ BBCodeToHTML(note.title) }}</b>
+                    <br/>
+                    {{ note.date|date("d.m.Y H:i") }}
+                </td>
+                <td width="350">{{ BBCodeToHTML(note.text) }}</td>
+                <td>
+                    <a href="{{ path('admin.notepad.edit', {id: note.id}) }}">Bearbeiten</a><br>
+                    <a href="{{ path('admin.notepad.delete', {id: note.id}) }}" onclick="return confirm('Eintrag löschen?')">Löschen</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td>
+                    <p>Keine Notiz vorhanden</p>
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+
+    <form action="{{ path('admin.notepad.new') }}">
+        <br><input type="Submit" name="Neue Notiz" value="Neue Notiz" />
+    </form>
+
+{% endblock %}
