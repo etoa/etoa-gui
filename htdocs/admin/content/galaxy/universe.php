@@ -107,12 +107,12 @@ function createUniverse(Request $request, ConfigurationService $config): void
       <th>Karte:</th>
       <td>";
     echo "<input type=\"radio\" name=\"map_image\" value=\"\" checked=\"checked\" /> <img style=\"width:" . $xdim . "px;height:" . $ydim . "px;\" src=\"../images/galaxylayout_random.png\" /> Zufällig";
-    $dir = "../images/galaxylayouts";
+    $dir = realpath(__DIR__ ."/../../../images/galaxylayouts/");
     $d = opendir($dir);
     while ($f = readdir($d)) {
         if (is_file($dir . DIRECTORY_SEPARATOR . $f) && substr($f, strrpos($f, ".png")) == ".png" && $ims = getimagesize($dir . DIRECTORY_SEPARATOR . $f)) {
             if ($ims[0] == $xdim && $ims[1] == $ydim) {
-                echo "<div><input type=\"radio\" name=\"map_image\" value=\"$f\" /> <img src=\"" . $dir . "/" . $f . "\" alt=\"" . $dir . "/" . $f . "\" /> " . basename($f, ".png") . "	</div>";
+                echo "<div><input type=\"radio\" name=\"map_image\" value=\"$f\" /> <img src=\"/images/galaxylayouts/" . basename($f) . "\" alt=\"" . basename($f) . "\" /> " . basename($f, ".png") . "	</div>";
             }
         }
     }
