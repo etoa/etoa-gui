@@ -1,0 +1,73 @@
+{% extends 'admin/layout/admin.html.twig' %}
+
+
+{% block content %}
+    <h1>Quests</h1>
+
+    <form method="post">
+        <table class="tbl">
+            <tr>
+                <td class="tbltitle">Spieler ID</td>
+                <td class="tbldata">
+                    <input type="text" name="user_id" size="20" maxlength="250" />
+                </td>
+            </tr>
+            <tr>
+                <td class="tbltitle">Spieler Nick</td>
+                <td class="tbldata">
+                    <input type="text" name="user_nick" value="" size="20" maxlength="250" autocomplete="off" />
+                </td>
+            </tr>
+            <tr>
+                <td class="tbltitle">Quest</td>
+                <td class="tbldata">
+                    <select name="quest_id">
+                        <option value=""><i>---</i></option>';
+                        {% for quest in quests %}
+                            <option value={{ quest.id }}>{{ quest.title }}</option>';
+                        {% endfor %}
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td class="tbltitle">Status</td>
+                <td class="tbldata">
+                    <select name="quest_state">
+                        <option value=""><i>---</i></option>
+                        {% for state in questStates %}
+                            <option value="{{ state }}">{{ state }}</option>
+                        {% endfor %}
+                    </select>
+                </td>
+            </tr>
+        </table>
+        <br/>
+        <input type="submit" name="quest_search" value="Suche starten" />
+    </form>
+
+    {% if search %}
+        <table class="tbl">
+            <tr>
+                <td>ID</td>
+                <td class="tbltitle" valign="top">Spieler</td>
+                <td class="tbltitle" valign="top">Quest</td>
+                <td class="tbltitle" valign="top">Status</td>
+            </tr>
+            {% for data in userQuests %}
+                {% set style = data.state in [constant('LittleCubicleGames\\Quests\\Workflow\\QuestDefinition::STATE_AVAILABLE'), constant('LittleCubicleGames\\Quests\\Workflow\\QuestDefinition::STATE_IN_PROGRESS'), constant('LittleCubicleGames\\Quests\\Workflow\\QuestDefinition::STATE_COMPLETED')] ? ' style="color:#0f0"' : '' %}
+
+                <tr>
+                    <td>{{ data.id }}</td>
+                    <td class="tbldata" {{ style }} {{ userMTT(data.user_nick, data.user_points) }}>{{ data.user_nick|u.truncate(11, '...') }}</a></td>
+                    <td class="tbldata" {{ style }}>{{ questMap[data.quest_data_id] }}</a></td>
+                    <td class="tbldata" {{ style }}>{{ data.state }}</td>
+                    <td class="tbldata">{{ editButton(path('admin.quests.edit', {id: data.id}))|raw }}</td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="5">Die Suche lieferte keine Resultate!</td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% endif %}
+{% endblock %}

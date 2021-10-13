@@ -6,6 +6,7 @@ use EtoA\Admin\AdminRoleManager;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Support\BBCodeUtils;
 use EtoA\Support\ExternalUrl;
+use EtoA\Support\StringUtils;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
@@ -36,6 +37,8 @@ class TwigExtension extends AbstractExtension
             new TwigFunction('formatTimestamp', [$this, 'formatTimestamp']),
             new TwigFunction('getGameIdentifier', [$this, 'getGameIdentifier']),
             new TwigFunction('isUnix', [$this, 'isUnix']),
+            new TwigFunction('userMTT', [$this, 'userMTT']),
+            new TwigFunction('editButton', [$this, 'editButton']),
         ];
     }
 
@@ -139,5 +142,15 @@ class TwigExtension extends AbstractExtension
     public function isUnix(): bool
     {
         return isUnixOS();
+    }
+
+    public function userMTT(string $userNick, int $points): string
+    {
+        return mTT($userNick, StringUtils::formatNumber($points) . " Punkte");
+    }
+
+    public function editButton(?string $url, string $ocl = ""): string
+    {
+        return edit_button($url, $ocl);
     }
 }

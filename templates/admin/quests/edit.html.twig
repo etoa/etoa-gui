@@ -1,0 +1,42 @@
+{% extends 'admin/layout/admin.html.twig' %}
+
+{% block content %}
+    <h1>Quests</h1>
+
+    {% if quest %}
+        <form method="post">
+            <table class="tbl">
+                <tr>
+                    <td class="tbltitle" valign="top">ID</td>
+                    <td class="tbldata">{{ quest.id }}</td>
+                </tr>
+                <tr>
+                    <td class="tbltitle" valign="top">Spieler</td>
+                    <td class="tbldata">{{ quest.user_nick }}</td>
+                </tr>
+                <tr>
+                    <td class="tbltitle" valign="top">Quest</td>
+                    <td class="tbldata">{{ questMap[quest.quest_data_id] }}</td>
+                </tr>
+                <tr>
+                    <td class="tbltitle" valign="top">Status</td>
+                    <td class="tbldata">
+                        <select name="quest_state">
+                            {% for state in questStates %}
+                                <option value="{{ state }}" {% if state == quest.state%}selected="selected"{% endif %}>{{ state }}</option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                </tr>
+            </table>
+
+            <br/>
+            <input type="submit" name="save" value="Übernehmen" />&nbsp
+            <input type="submit" name="del" value="Löschen" />&nbsp;
+            <input type="button" onclick="document.location='{{ path('admin.quests.search') }}'" value="Neue Suche" />&nbsp;
+        </form>
+    {% else %}
+        <p>Dieser Datensatz wurde gelöscht!</p>
+        <input type="button" onclick="document.location='{{ path('admin.quests.search') }}'" value="Neue Suche" />
+    {% endif %}
+{% endblock %}
