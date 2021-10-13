@@ -31,6 +31,11 @@ sudo chown -R www-data:www-data /var/lib/php/sessions
 
 MYSQL=`which mysql`
 PHP=`which php`
+
+# Install PHP composer depenencies
+cd /var/www/etoa && php composer.phar install
+
+# Setup database
 Q0="SET GLOBAL sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));"
 Q1="CREATE DATABASE IF NOT EXISTS etoa;"
 Q2="GRANT USAGE ON *.* TO etoa@localhost IDENTIFIED BY 'etoa';"
@@ -54,4 +59,4 @@ echo "* * * * * php /var/www/etoa/bin/console cron:run" | crontab
 sudo apt-get install -q -y -f cmake libboost-all-dev libmysql++-dev g++
 
 # Build eventhandler
-cd /var/www/etoa && php composer.phar install && make eventhandler
+cd /var/www/etoa && make eventhandler
