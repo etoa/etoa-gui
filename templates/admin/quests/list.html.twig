@@ -1,0 +1,31 @@
+{% extends 'admin/layout/admin.html.twig' %}
+
+
+{% block content %}
+    <h1>Quests</h1>
+
+    <table width="100%" cellpadding="3" cellspacing="1" align="center">
+        <thead>
+            <tr>
+                <th valign="top" class="tbltitle">ID</th>
+                <th valign="top" class="tbltitle">Titel</th>
+                <th valign="top" class="tbltitle">Beschreibung</th>
+                <th valign="top" class="tbltitle">Bedingung</th>
+                <th valign="top" class="tbltitle">Tasks</th>
+                <th valign="top" class="tbltitle">Belohnung</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for quest in quests %}
+                <tr>
+                    <td class="tbldata">{{ quest.id }}</td>
+                    <td class="tbldata">{{ quest.title }}</td>
+                    <td class="tbldata">{{ quest.description }}</td>
+                    <td class="tbldata">{{ quest.trigger|default(false) ? quest.trigger.type ~ ' ' ~ quest.trigger.operator ~ ' ' ~ quest.trigger.value : '' }}</td>
+                    <td class="tbldata">{{ quest.task.type ~ ' ' ~ quest.task.operator ~ ' ' ~ quest.task.value }}</td>
+                    <td class="tbldata">{{ rewards[quest.id]|join("\n")|nl2br }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

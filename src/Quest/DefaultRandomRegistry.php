@@ -15,4 +15,12 @@ class DefaultRandomRegistry extends RandomRegistry
 
         parent::__construct($quests, $questBuilder, $triggerValidator, $cache, 'random');
     }
+
+    /**
+     * @return  array[]
+     */
+    public function getQuests(): array
+    {
+        return $this->quests;
+    }
 }

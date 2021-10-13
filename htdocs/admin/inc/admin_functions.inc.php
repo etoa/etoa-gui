@@ -36,9 +36,9 @@ use EtoA\User\UserRepository;
 function edit_button($url, $ocl = "")
 {
     if ($ocl != "")
-        return "<a href=\"$url\" onclick=\"$ocl\"><img src=\"../images/icons/edit.png\" alt=\"Bearbeiten\" style=\"width:16px;height:18px;border:none;\" title=\"Bearbeiten\" /></a>";
+        return "<a href=\"$url\" onclick=\"$ocl\"><img src=\"/images/icons/edit.png\" alt=\"Bearbeiten\" style=\"width:16px;height:18px;border:none;\" title=\"Bearbeiten\" /></a>";
     else
-        return "<a href=\"$url\"><img src=\"../images/icons/edit.png\" alt=\"Bearbeiten\" style=\"width:16px;height:18px;border:none;\" title=\"Bearbeiten\" /></a>";
+        return "<a href=\"$url\"><img src=\"/images/icons/edit.png\" alt=\"Bearbeiten\" style=\"width:16px;height:18px;border:none;\" title=\"Bearbeiten\" /></a>";
 }
 
 /**
