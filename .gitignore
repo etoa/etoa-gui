@@ -32,6 +32,8 @@ ubuntu-*-console.log
 
 /var/
 /vendor/
+/node_modules/
+.idea/
 .php_cs.cache
 .phpunit.result.cache
 nbproject/*
