@@ -59,10 +59,6 @@ div {
   opacity: 0.4;
 }
 
-#game-area {
-  overflow-x: auto;
-}
-
 @media screen and (min-width: 601px){
   .tbl caption, table.tb caption{
     font-size: 1.2rem;
@@ -79,6 +75,9 @@ div {
 }
 
 @media screen and (max-width: 600px) {
+  #game-area {
+    overflow-x: auto;
+  }
   .resBoxTable{
     table-layout: fixed;
     max-width: 100%;
