@@ -241,7 +241,7 @@ if ($cp)
 
 			echo "<div id=\"tabOverview\" style=\"".($sub=="" ? '' : 'display:none')."\">";
 
-			iBoxStart("Übersicht");
+			iBoxStart("Übersicht", "planetInfoBox");
 			echo "<div style=\"position:relative;height:320px;padding:0px;background:#000 url('images/stars_middle.jpg');\">
 			<div style=\"position:absolute;right:20px;top:20px;\">
 			<img src=\"".$cp->imagePath('b')."\" style=\"width:220px;height:220px;\" alt=\"Planet\" /></div>";

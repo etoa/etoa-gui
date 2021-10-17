@@ -1,0 +1,39 @@
+/* Blue */
+.tbl caption,
+table.tb caption,
+.infoboxtitle,
+.tabMenu a {
+    background: #225 url(../images/cellpic.gif);
+    background-size: 100% 100%;
+}
+
+/* Blue Hover */
+.tabMenu a:hover{
+    background: url(../images/cellpic2.png);
+}
+
+/* Dark Gray */
+table.tb th {
+    background: #000000 url(../images/cellpic4.gif);
+}
+
+/* Gray */
+table.tb td,
+.infoboxcontent {
+    background: #225 url(../images/cellpic3.gif);
+}
+
+/* Blue Tab */
+.tabMenu a,
+.tc {
+    background: #225 url(../images/tab1.png);
+    background-size: 100% 100%;
+}
+
+/* Blue Hover */
+.tabMenu a:hover,
+.tc:hover,
+.tabMenu .tabEnabled,
+.tc .tabEnabled {
+    background: url(../images/tab2.png);
+}

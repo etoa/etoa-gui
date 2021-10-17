@@ -149,7 +149,7 @@ if ($cp) {
 					<td>
 						" . $barr['building_name'] . " (" . $barr['buildlist_current_level'] . ")";
                 if ($barr['buildlist_prod_percent'] == 0) {
-                    echo "<br/><span style=\"color:red;font-size:8pt;\">Produktion ausgeschaltet!</span>";
+                    echo "<br/><span style=\"color:red;\" class='textSmall'>Produktion ausgeschaltet!</span>";
                 }
                 echo "</td>";
 
@@ -295,7 +295,7 @@ if ($cp) {
         }
         echo "<td style=\"color:#f00\">" . nf($pwrcnt) . "</td>";
         echo "<td rowspan=\"3\" style=\"color:#f00;vertical-align:middle;\">
-				<input type=\"submit\" name=\"submitpercent\" class=\"button\" style=\"font-size:8pt;\" value=\"Speichern\" />
+				<input type=\"submit\" name=\"submitpercent\" class=\"button textSmall\" value=\"Speichern\" />
 			</td>";
         echo "</tr>";
 

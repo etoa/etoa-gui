@@ -572,7 +572,7 @@ define('HELP_URL',"?page=help&site=buildings");
 
 				while ($tarr = mysql_fetch_array($tres))
 				{
-					tableStart($tarr['type_name'],TABLE_WIDTH);
+					tableStart($tarr['type_name'],TABLE_WIDTH,"","","compact");
 
 					//Einfache Ansicht
 					if ($cu->properties->itemShow!='full')
@@ -688,10 +688,10 @@ define('HELP_URL',"?page=help&site=buildings");
 						if ($cu->properties->itemShow!='full')
 						{
 					 		echo "<tr>
-			  		 				<td>
-							  			<a href=\"".HELP_URL."&amp;id=".$it->key()."\"><img class=\"".$filterStyleClass."\" src=\"".$img."\" width=\"40px\" height=\"40px\" border=\"0\" /></a>
+			  		 				<td class='buildingCellImage'>
+							  			<a href=\"".HELP_URL."&amp;id=".$it->key()."\"><img class=\"".$filterStyleClass." buildingImageSmall\" src=\"".$img."\" border=\"0\" /></a>
 									</td>
-									<th width=\"45%\">
+									<th class='buildingCellName' width=\"45%\">
 										<span style=\"font-weight:500\">".$it->current()->building."<br/>
 				  			      			Stufe:</span> ".nf($it->current()->level)."
 				  			      		</th>";
@@ -714,7 +714,7 @@ define('HELP_URL',"?page=help&site=buildings");
 							}
 							else
 							{
-								echo '<td>'.tf($it->current()->getBuildTime()).'</td>'.$waitArr['string'];
+								echo '<td class="buildingCellTime">'.tf($it->current()->getBuildTime()).'</td>'.$waitArr['string'];
 
 								//Maximale Anzahl erreicht oder anderes Gebäude im Bau
 								if ($tmtext!="" || $bl->isUnderConstruction())

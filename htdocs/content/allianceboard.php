@@ -342,7 +342,7 @@
 
 								echo ">".text2html($arr['post_text']);
 								if ($arr['post_changed']>0)
-									echo "<br/><br/><span style=\"font-size:8pt;\">Dieser Beitrag wurde zuletzt geändert am ".date("d.m.Y",$arr['post_changed'])." um ".date("H:i",$arr['post_changed'])." Uhr.</span>";
+									echo "<br/><br/><span class='textSmall'>Dieser Beitrag wurde zuletzt geändert am ".date("d.m.Y",$arr['post_changed'])." um ".date("H:i",$arr['post_changed'])." Uhr.</span>";
 								if ($user[$arr['post_user_id']]['signature']!="")
 									echo "<hr>".text2html($user[$arr['post_user_id']]['signature']);
 								echo "</td></tr>";

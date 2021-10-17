@@ -1,0 +1,37 @@
+/* Title */
+{
+    font-size: 3rem;
+}
+
+/* Very Large */
+{
+    font-size: 2rem;
+}
+
+/* Large */
+.infoboxtitle,
+h1 {
+    font-size: 1.5rem;
+}
+
+/* Regular */
+table.tb td,
+table.tb th,
+.tbl caption,
+table.tb caption,
+.tabMenu a,
+.tc a,
+.infoboxcontent,
+#planet_circle_inner_container {
+    font-size: 1.2rem;
+}
+
+/* Small */
+{
+    font-size: 1rem;
+}
+
+/* Tiny */
+{
+    font-size: 0.8rem;
+}

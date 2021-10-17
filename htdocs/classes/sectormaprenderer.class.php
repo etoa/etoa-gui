@@ -99,7 +99,7 @@ class SectorMapRenderer {
   function render($sx, $sy) {
 
     ob_start();
-
+    echo '<table class="galaxyTableSector">';
     $res = dbquery("
     SELECT 
       cx,
@@ -127,17 +127,23 @@ class SectorMapRenderer {
     {
       $ycoords = $this->numberOfCellsY - $y;
 
+      echo "<tr>";
+
       // Numbers on the left side
       if ($this->rulerEnabled) {
+        echo "<td class='galaxyCellNumber'>";
         echo "<img id=\"counter_left_$ycoords\" alt=\"$ycoords\" src=\"".RELATIVE_ROOT.self::MapImageDirectory."/".self::VerticalCoordinateNumberImagePrefix."$ycoords.gif\" class=\"cell_number_vertical\"/>";
+        echo "</td>";
       }
 
       for ($x=0; $x < $this->numberOfCellsY; $x++)
       {
         $xcoords = $x+1;
 
+        echo "<td class='galaxyCell'>";
+
         // Cell element classes
-        $classes = array();
+        $classes = array("cell");
         if ($xcoords == 1) {
           $classes[] = "sectorborder-left";
         }
@@ -231,27 +237,35 @@ class SectorMapRenderer {
 		} else {
 			echo "<a href=\"".$url."\" ";
 		}
-		echo " style=\"background:url('".$img."');\"$class$mouseOver>";
+		echo " style=\"background-image:url('".$img."');\"$class$mouseOver>";
         echo "<img src=\"".RELATIVE_ROOT."images/blank.gif\" alt=\"Raumzelle\" ".$title." data-id=\"".$cells[$xcoords][$ycoords]['cid']."\" $overlayClass/></a>";
 
+        echo "</td>";
       }
-      echo "<br/>";
+
+      echo "</tr>";
     }
 
     if ($this->rulerEnabled) {
-
+      echo "<tr>";
       // Linke untere ecke
+      echo "<td class='galaxyCellCorner'>";
       echo "<img alt=\"Blank\" src=\"".RELATIVE_ROOT."images/blank.gif\" class=\"cell_number_spacer\"/>";
+      echo "</td>";
 
       // Numbers on the bottom side
       for ($x=0; $x < $this->numberOfCellsY; $x++)
       {
         $xcoords = $x+1;
+        echo "<td class='galaxyCellNumber'>";
         echo "<img id=\"counter_bottom_$xcoords\" alt=\"$xcoords\" src=\"".RELATIVE_ROOT.self::MapImageDirectory."/".self::HorizontalCoordinateNumberImagePrefix."$xcoords.gif\" class=\"cell_number_horizontal\"/>";
+        echo "</td>";
       }
 
+      echo "</tr>";
     }
 
+    echo "</table>";
     return ob_get_clean();
   }
 

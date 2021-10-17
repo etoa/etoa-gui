@@ -589,6 +589,12 @@ table.tb td {
   min-width:550px;
 }
 
+#sector_map_table .sector_map_cell td {
+	background: none;
+	border: none;
+	padding: 0;
+}
+
 #sector_map_table .sector_map_neighbour_nav {
   text-align:center;
   vertical-align:middle;

@@ -1,8 +1,8 @@
 <?xml version='1.0' standalone='yes'?>
 <design version="1.1">
 	<name>Discovery</name>
-	<changed>22.06.2007</changed>
-	<version>1.6</version>
+	<changed>17.10.2021</changed>
+	<version>1.6.1</version>
 	<author>Greaser</author>
 	<email>greaser@etoa.ch</email>
 	<description>V2 Standard-Design</description>

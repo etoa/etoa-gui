@@ -926,16 +926,17 @@
 			$cnt = 0;
 			if (isset($cat))
 			{
+				$compactView = $cu->properties->itemShow!='full';
 				foreach ($cat as $cat_id => $cat_name)
 				{
-					tableStart($cat_name);
+					tableStart($cat_name, 0, "", "", "shipCategory ".($compactView ? "compact" : ""));
 					$ccnt = 0;
 
 					// Auflistung der Schiffe (auch diese, die noch nicht gebaut wurden)
 					if (isset($ships))
 					{
 						//Einfache Ansicht
-						if ($cu->properties->itemShow!='full')
+						if ($compactView)
 						{
 							echo '<tr>
 											<th colspan="2" class="tbltitle">Schiff</th>
@@ -1237,7 +1238,7 @@
  			      				}
 
 								// Volle Ansicht
-    			      			if($cu->properties->itemShow=='full')
+    			      			if(!$compactView)
     			      			{
     			      				if ($ccnt>0)
     			      				{
@@ -1247,11 +1248,11 @@
     			      				}
     			      	  		 	$s_img = IMAGE_PATH."/".IMAGE_SHIP_DIR."/ship".$data['ship_id']."_middle.".IMAGE_EXT;
 
-    			      	  		 	echo "<tr>
+    			      	  		 	echo "<tr class='shipRowName'>
     			      	  		 			<th colspan=\"5\" height=\"20\">".$data['ship_name']."</th>
     			      	  		 		</tr>
     			      	  		 		<tr>
-    			      	  		 			<td width=\"120\" height=\"120\" rowspan=\"3\">";
+    			      	  		 			<td class='shipCellImage' width=\"120\" height=\"120\" rowspan=\"3\">";
 
 								 	//Bei Spezialschiffen nur Bild ohne Link darstellen
 								 	if ($data['special_ship']==1)
@@ -1265,7 +1266,7 @@
 				    			   	  	<img src=\"".$s_img."\" width=\"120\" height=\"120\" border=\"0\" /></a>";
 								 	}
     			      	  		 	echo "</td>
-								 			<td colspan=\"4\" valign=\"top\">".$data['ship_shortcomment']."</td>
+								 			<td class='shipCellDescription' colspan=\"4\" valign=\"top\">".$data['ship_shortcomment']."</td>
     			      	  		 		</tr>
 								 		<tr>
 								 			<th  height=\"30\">Vorhanden:</th>
@@ -1325,20 +1326,20 @@
 									$s_img = IMAGE_PATH."/".IMAGE_SHIP_DIR."/ship".$data['ship_id']."_small.".IMAGE_EXT;
 
 									echo "<tr>
-  			      							<td>";
+  			      							<td class='shipCellImage'>";
 
 	  			      				//Spezialschiffe ohne Link darstellen
 				  			      	if ($data['special_ship']==1)
 									{
-				  			      		echo "<img src=\"$s_img\" width=\"40\" height=\"40\" border=\"0\" /></td>";
+				  			      		echo "<img class='shipImageSmall' src=\"$s_img\" border=\"0\" /></td>";
 				  			      	}
 				  			      	//Normale Schiffe mit Link zur Hilfe darstellen
 				  			      	else
 				  			      	{
-				  			      		echo "<a href=\"".HELP_URL."&amp;id=".$data[ITEM_ID_FLD]."\"><img src=\"".$s_img."\" width=\"40\" height=\"40\" border=\"0\" /></a></td>";
+				  			      		echo "<a href=\"".HELP_URL."&amp;id=".$data[ITEM_ID_FLD]."\"><img src=\"".$s_img."\" class='shipImageSmall' border=\"0\" /></a></td>";
 				  			      	}
 
-	  			      				echo "<th width=\"30%\">
+	  			      				echo "<th class='shipCellName' width=\"30%\">
 	  			      							<span style=\"font-weight:500\">".$data['ship_name']."<br/>
 	  			      							Gebaut:</span> ".nf($shiplist_count)."
 	  			      						</th>

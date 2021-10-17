@@ -133,7 +133,7 @@
   	}
   	
   	
-		tableStart("Schiffe");
+		tableStart("Schiffe", 0, "", "", "compact");
 		echo '<tr>
 						<th colspan=\'2\'>Schiff</th>
 						<th width=\'100\'>Im Orbit</th>
@@ -166,15 +166,15 @@
 			  {
 			  	$s_img = IMAGE_PATH."/".IMAGE_SHIP_DIR."/ship".$sarr['ship_id']."_small.".IMAGE_EXT;
 			  	echo '<tr>
-			  					<td style="background:#000" style="width:40px;height:40px;">';
+			  					<td class="shipCellImage" style="background:#000">';
 			  					
 			  					if($sarr['special_ship']==1)
 			  					{
-			  						echo '<a href="?page=ship_upgrade&amp;id='.$sarr['ship_id'].'" title="Zum Upgrademenu"><img src="'.$s_img.'" style="width:40px;height:40px;"/></a>';
+			  						echo '<a href="?page=ship_upgrade&amp;id='.$sarr['ship_id'].'" title="Zum Upgrademenu"><img class="shipImageSmall" src="'.$s_img.'"/></a>';
 			  					}
 			  					else
 			  					{
-			  						echo '<a href="'.HELP_URL.'" title="Info zu diesem Schiff anzeigen"><img src="'.$s_img.'" style="width:40px;height:40px;"/></a>';
+			  						echo '<a href="'.HELP_URL.'" title="Info zu diesem Schiff anzeigen"><img class="shipImageSmall" src="'.$s_img.'"/></a>';
 			  					}
 			  		echo '</td>
 			  					<td>

@@ -1,22 +1,15 @@
 select,
 input[type="text"],
+input[type="reset"],
 input[type="number"],
 input[type="submit"],
+input[type="password"],
 input[type="file"],
-input[type="button"] {
+input[type="button"],
+textarea {
     border-radius: 0;
-    border: 0.1rem solid white;
-}
-select,
- input[type="text"],
- input[type="number"],
- input[type="button"]{
-    padding: 0.1rem 0.25rem;
-}
-
-input[type="submit"]{
-    padding: 0.25rem;
-    font-size: 1.25rem;
+    border: 0.0625rem solid #bbb;
+    font-size: 1.2rem;
 }
 
 select {
@@ -24,11 +17,31 @@ select {
     -moz-appearance: none;
     -webkit-appearance: none;
     appearance: none;
-    padding-right: 1em;
+    padding: 0.2rem 1.4rem 0.2rem 0.2rem;
     background-color: black;
+    font-family: Verdana, sans-serif;
 }
 
 input[type="text"],
-input[type="number"] {
+input[type="number"],
+input[type="password"],
+textarea {
     background: black;
+    padding: 0.2rem;
+    font-family: Verdana, sans-serif;
+}
+
+input[type="submit"],
+input[type="reset"],
+input[type="button"] {
+    background: #222255 url('images/button1.jpg') 100% 100%;
+    padding: 0.2rem 0.6rem;
+    font-family: Zekton-Bold, sans-serif;
+}
+
+input:hover[type="submit"],
+input:hover[type="reset"],
+input:hover[type="button"]{
+    background: #222255 url('images/button2.jpg') 100% 100%;
+    cursor: pointer;
 }

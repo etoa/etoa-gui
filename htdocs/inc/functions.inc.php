@@ -777,7 +777,7 @@
 	}
 
 
-	function tableStart($title="",$width=0,$layout="", $id="")
+	function tableStart($title="",$width=0,$layout="", $id="", $class="")
 	{
 		if ($width>0)
 		{
@@ -801,15 +801,15 @@
 		}
 		if ($layout=="double")
 		{
-			echo "<table ".$id." style=\"".$w."\"><tr><td style=\"width:50%;vertical-align:top;\">";
+			echo "<table ".$id." style=\"".$w."\" class=\"$class\"><tr><td style=\"width:50%;vertical-align:top;\">";
 		}
 		elseif ($layout=="nondisplay")
 		{
-			echo "<table ".$id." class=\"tb\" style=\"display:none;".$w."\">";
+			echo "<table ".$id." class=\"tb $class\" style=\"display:none;".$w."\">";
 		}
 		else
 		{
-			echo "<table ".$id." class=\"tb\" style=\"".$w."\">";
+			echo "<table ".$id." class=\"tb $class\" style=\"".$w."\">";
 		}
 
 		if ($title!="")

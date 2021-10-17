@@ -57,6 +57,7 @@ class App {
     this.mountBuildOverview();
     this.mountShipyard();
     this.mountArmory();
+    this.mountSectorMap();
   }
 
 
@@ -126,7 +127,7 @@ class App {
 
     const startDate = new Date();
     const referenceTime = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDay(), hour, minute, second);
-    const offset = referenceTime.getTime() - startDate.getTime();
+    const offset = referenceTime.getTime() - startDate.getTime() - 3600000;
 
     const tickServertime = ()=>{
       if(!element){
@@ -252,7 +253,7 @@ class App {
       return;
     }
     const shipyard = [...forms].find((f) => f.innerHTML.indexOf("Schiff") >= 0);
-    const categories = shipyard.querySelectorAll("table");
+    const categories = shipyard.querySelectorAll(".shipCategory");
     let compactMode = false;
     for (let category of categories) {
       const rows = category.querySelectorAll("tr");
@@ -269,10 +270,8 @@ class App {
     const images = shipyard.querySelectorAll("img");
     for (let image of images) {
       image.classList.add(compactMode ? "shipImageSmall" : "shipImage");
-      if (compactMode) {
-        image.removeAttribute("width");
-        image.removeAttribute("height");
-      }
+      image.removeAttribute("width");
+      image.removeAttribute("height");
       if (image.parentNode.nodeName === "A") {
         const anchor = image.parentNode;
         const cell = anchor.parentNode;
@@ -298,7 +297,7 @@ class App {
     const armory = [...forms].find(
       (f) => f.innerHTML.indexOf("Geschütze") >= 0
     );
-    const categories = armory.querySelectorAll("table");
+    const categories = armory.querySelectorAll(".defenseCategory");
     let compactMode = false;
     for (let category of categories) {
       const rows = category.querySelectorAll("tr");
@@ -333,6 +332,10 @@ class App {
         cell.style.verticalAlign = "top";
       }
     }
+  }
+
+  mountSectorMap(){
+
   }
 
   toggleMainMenu() {
@@ -473,13 +476,15 @@ class App {
   }
 }
 
+const app = new App();
+app.updateScaling();
+
 document.addEventListener("DOMContentLoaded", () => {
   const appContainer = document.getElementById("app");
   if (appContainer == null) {
     console.log("App container not found.");
     return;
   }
-  const app = new App();
   app.mount(appContainer);
 });
 

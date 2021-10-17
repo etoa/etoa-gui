@@ -1,0 +1,67 @@
+/* Text Left */
+th,
+.resBoxTitleCell,
+* {
+    text-align: left;
+}
+
+/* Text Center */
+#contentwrap,
+h1,
+h2,
+.tbl caption,
+table.tb caption,
+.infoboxtitle,
+.infoboxtitle span,
+#dropdown,
+form,
+#contentwrap > div,
+form > div,
+#reqInfo > div,
+.techtreeItemContainer > div {
+    text-align: center;
+}
+
+/* Text Right */
+{
+    text-align: right
+;
+}
+
+/* Text Justify */
+{
+    text-align: justify
+;
+    word-break: break-word
+;
+    hyphens: auto
+;
+}
+
+/* Align Top */
+{
+    vertical-align: top
+;
+}
+
+/* Align Middle */
+.tbl caption,
+table.tb caption,
+.infoboxtitle,
+table.tb td,
+table.tb th,
+.infoboxcontent {
+    vertical-align: middle;
+}
+
+/* Align Baseline */
+{
+    vertical-align: baseline
+;
+}
+
+/* Align Bottom */
+{
+    vertical-align: bottom
+;
+}

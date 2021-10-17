@@ -16,7 +16,7 @@
 
 #game-area {
   margin-left: 26rem;
-  max-width: 70rem;
+  max-width: 75rem;
   margin-right: 10rem;
 }
 
@@ -116,12 +116,12 @@ section#nav-top {
   background-image: url("images/button_messages_unread.png");
 }
 
-#app.mouse #navigate-messages:hover {
+.mouse #navigate-messages:hover {
   background-image: url("images/button_messages_hover.png");
 }
 
-#navigate-messages:active {
-  background-image: url("images/button_messages_active.png") !important;
+#app a#navigate-messages:active {
+  background-image: url("images/button_messages_active.png");
 }
 
 #navigate-reports {
@@ -135,12 +135,12 @@ section#nav-top {
   background-image: url("images/button_reports_unread.png");
 }
 
-#app.mouse #navigate-reports:hover {
+.mouse #navigate-reports:hover {
   background-image: url("images/button_reports_hover.png");
 }
 
-#navigate-reports:active {
-  background-image: url("images/button_reports_active.png") !important;
+#app a#navigate-reports:active {
+  background-image: url("images/button_reports_active.png");
 }
 
 #navigate-notes {
@@ -262,5 +262,11 @@ section#nav-bottom {
     margin-left: 0;
     margin-right: 0;
     max-width: 100%;
+  }
+}
+
+@media screen and (max-width: 1280px){
+  #game-area {
+    margin-right: 0;
   }
 }
