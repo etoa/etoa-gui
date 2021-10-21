@@ -1,0 +1,17 @@
+/* Block */
+.tc a {
+    display: block;
+}
+
+/* Inline Block */
+.tabMenu,
+.tabMenu a,
+#pmenu,
+.tc {
+    display: inline-block;
+}
+
+/* Flex */
+{
+    display: flex;
+}

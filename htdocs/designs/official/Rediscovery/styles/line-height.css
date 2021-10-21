@@ -1,0 +1,17 @@
+/* No Line Height */
+{
+    line-height: 0;
+}
+/* Leading None */
+.tbl caption,
+table.tb caption,
+.infoboxtitle,
+table.tb th {
+    line-height: 1em;
+}
+
+/* Leading Normal */
+.infoboxcontent,
+table.tb td {
+    line-height: 1.33em;
+}

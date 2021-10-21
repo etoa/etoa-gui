@@ -1,0 +1,106 @@
+.techtreeItemContainer {
+    line-height: 0;
+}
+
+.techtreeItemContainer > * {
+    line-height: 1em;
+}
+
+.techtreeItem,
+.techtreeMainItem {
+    display: inline-block;
+    position: relative;
+    width: 11.25rem;
+    height: 11.25rem;
+}
+
+.techtreeItemName {
+    font-weight: normal;
+    position: absolute;
+    background: url("images/transheader1.png") top left;
+    background-size: 100% 100%;
+    padding: 0.1875rem 1.5rem 0.1875rem 0.1875rem;
+    font-size: 1rem;
+    float: left;
+    z-index: 10;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+}
+
+.techtreeItemLevel{
+    font-size: 1rem;
+    line-height: 3rem;
+    background-size: 100% 100%;
+    position: absolute;
+    pointer-events: none;
+    white-space: nowrap;
+}
+
+.techtreeItemContainer .techtreeItemLevel b {
+    font-size: 2rem;
+    font-weight: bold;
+    line-height: 2rem;
+}
+
+.techtreeParentBranches .techtreeItemLevel {
+    text-align: right;
+    background: url("images/transfooter1.png") no-repeat;
+    background-size: 100% 100%;
+    right: 0;
+    bottom: 0;
+    width: 5rem;
+    float: left;
+    padding: 0.1875rem 0.9375rem 0.1875rem 0.1875rem;
+    font-size: 0;
+    vertical-align: middle;
+}
+
+.techtreeParentBranches .techtreeItemLevel b{
+    vertical-align: middle;
+}
+
+.techtreeChildBranches .techtreeItem {
+    margin-top: 2.5rem;
+}
+
+.techtreeChildBranches .techtreeItemLevel {
+    background: url("images/transinput.png") no-repeat;
+    background-size: 100% 100%;
+    font-size: 1rem;
+    line-height: 1.5em;
+    position: absolute;
+    top: -0.0625rem;
+    left: 50%;
+    width: 75%;
+    height: 2.5rem;
+    padding-top: 0.2rem;
+    text-align: center;
+    transform: translate(-50%, -100%);
+    border-bottom: 0;
+}
+
+.techtreeChildBranches .techtreeItemLevel b{
+    line-height: 1em;
+}
+
+.relationLabel{
+    margin: 0.4rem auto 2.4rem auto;
+    text-align: center;
+    position: relative;
+    text-transform: capitalize;
+}
+
+.relationLabel::after {
+    content: "";
+    display: block;
+    position: absolute;
+    bottom: -0.4rem;
+    left: 50%;
+    transform: translate(-50%, 100%) scaleX(0.6);
+    border-width: 1rem;
+    border-style: solid;
+    border-color: white transparent transparent transparent;
+    width: 0;
+    height: 0;
+}

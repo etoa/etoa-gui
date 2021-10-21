@@ -1,0 +1,17 @@
+/* Full Width */
+.tc a {
+    width: 100%
+;
+}
+
+/* Auto Width */
+.tabMenu {
+    width: auto
+;
+}
+
+/* Flex */
+{
+    flex: 1 1
+;
+}

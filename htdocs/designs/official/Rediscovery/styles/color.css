@@ -1,0 +1,9 @@
+/* White */
+#game-area,
+#contentwrap,
+a,
+select,
+input,
+textarea {
+    color: white;
+}

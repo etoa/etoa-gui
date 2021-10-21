@@ -521,3 +521,21 @@ table.stacktrace td, table.stacktrace th{
 	height: 16px;
 	background: url('../../images/fleetmove.png');
 }
+
+/* Bauhof */
+.buildingImageSmall {
+	width: 40px;
+	height: 40px;
+}
+
+/* Schiffswerft */
+.shipImageSmall {
+	width: 40px;
+	height: 40px;
+}
+
+/* Verteidigungsanlagen */
+.defenseImageSmall {
+	width: 40px;
+	height: 40px;
+}

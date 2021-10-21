@@ -1,0 +1,40 @@
+/* Regular */
+#game-area,
+#contentwrap {
+    font-family: Verdana, sans-serif;
+}
+
+/* Title */
+h1,
+h2 {
+    font-family: Zekton-Bold, sans-serif;
+}
+
+h1::before {
+    content: ":: ";
+}
+
+h1::after {
+    content: " ::";
+}
+
+h2::before {
+    content: ": ";
+}
+
+h2::after {
+    content: " :";
+}
+
+/* Header */
+.tbl caption,
+table.tb caption,
+.infoboxtitle {
+    font-weight: bold;
+    font-family: Verdana, sans-serif;
+}
+
+/* Tab */
+a {
+    font-family: Verdana, sans-serif;
+}

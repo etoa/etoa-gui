@@ -55,13 +55,13 @@
         <script type="text/javascript" src="web/js/keybinds.js"></script>
     {% endif %}
     {% endif %}
+    {% if templateDir|default(false) %}
+        <script type="text/javascript" src="{{ templateDir }}/scripts.js"></script>
+    {% endif %}
 </head>
 <body>
 {{ bodyTopStuff|default('')|raw }}
 {% block layoutContent %}{% endblock %}
-{% if templateDir|default(false) %}
-    <script type="text/javascript" src="{{ templateDir }}/scripts.js"></script>
-{% endif %}
 {% for js in additionalJs|default([]) %}
     <script type="text/javascript" src="{{ js }}"></script>
 {% endfor %}

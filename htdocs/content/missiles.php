@@ -896,7 +896,7 @@
 		  			      				echo "<a href=\"".HELP_URL."&amp;id=".$mid."\"><img src=\"".$d_img."\" width=\"40\" height=\"40\" border=\"0\" /></a></td>";
 			      			echo "<th width=\"40%\">
 			      							".$arr['missile_name']."<br/>
-			      							<span style=\"font-weight:500;font-size:8pt;\">
+			      							<span class=\"textSmall\" style=\"font-weight:500;\">
 			      							<b>Vorhanden:</b> ".nf($missilelist[$mid])."</span></th>
 			      						<td width=\"10%\" ".$ress_style_metal.">".nf($arr['missile_costs_metal'])."</td>
 			      						<td width=\"10%\" ".$ress_style_crystal.">".nf($arr['missile_costs_crystal'])."</td>

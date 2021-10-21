@@ -472,7 +472,7 @@
 
 
 	/****************************
-	*  Schiffe in Auftrag geben *
+	*  Verteidigungen in Auftrag geben *
 	****************************/
 
 			if(count($_POST)>0 && isset($_POST['submit']) && checker_verify())
@@ -970,16 +970,17 @@
 			$cnt = 0;
 			if (isset($cat))
 			{
+				$compactView = $cu->properties->itemShow!='full';
 				foreach ($cat as $cat_id => $cat_name)
 				{
-					tableStart($cat_name);
+					tableStart($cat_name, 0, "", "", "defenseCategory ".($compactView ? "compact" : ""));
 					$ccnt = 0;
 
 					// Auflistung der Verteidigung (auch diese, die noch nicht gebaut wurden)
 					if (isset($defs))
 					{
 						//Einfache Ansicht
-						if ($cu->properties->itemShow!='full')
+						if ($compactView)
 						{
 							echo "<tr>
 											<th colspan=\"2\">Anlage</th>
@@ -1020,10 +1021,10 @@
 								}
 							}
 
-    			    		// Schiffdatensatz zeigen wenn die Voraussetzungen erfüllt sind und das Schiff in diese Kategorie gehört
+    			    		// Verteidigungsdatensatz zeigen wenn die Voraussetzungen erfüllt sind und die Verteidigung in diese Kategorie gehört
 							if ($build_def==1 && $data['cat_id']==$cat_id)
 							{
-								// Zählt die Anzahl Schiffe dieses Typs im ganzen Account...
+								// Zählt die Anzahl Verteidigungen dieses Typs im ganzen Account...
 								$def_count = 0;
 								// ... auf den Planeten
 								if(isset($deflist[$data['def_id']][$cp->id]))
@@ -1137,7 +1138,7 @@
 								$def_max_build=min($build_cnt_metal,$build_cnt_crystal,$build_cnt_plastic,$build_cnt_fuel,$build_cnt_food,$max_cnt,$build_cnt_fields);
 
 								//Tippbox Nachricht generieren
-								//X Schiffe baubar
+								//X Verteidigungen baubar
 								if($def_max_build>0)
 								{
 									$tm_cnt="Es k&ouml;nnen maximal ".nf($def_max_build)." Anlagen gebaut werden.";
@@ -1261,7 +1262,7 @@
 									$ress_style_food="";
 								}
 
-								// Speichert die Anzahl gebauter Schiffe in eine Variable
+								// Speichert die Anzahl gebauter Verteidigungen in eine Variable
 								if(isset($deflist[$data['def_id']][$cp->id]))
 								{
 									$deflist_count = $deflist[$data['def_id']][$cp->id];
@@ -1272,7 +1273,7 @@
 								}
 
 								// Volle Ansicht
- 			   			      	if($cu->properties->itemShow=='full')
+ 			   			      	if(!$compactView)
     					      	{
     					      		if ($ccnt>0)
     					      		{
@@ -1282,15 +1283,15 @@
     			      				}
     			     				$s_img = IMAGE_PATH."/".IMAGE_DEF_DIR."/def".$data['def_id']."_middle.".IMAGE_EXT;
 
-    			      	  			echo "<tr>
+    			      	  			echo "<tr class='defenseRowName'>
     			      	  					<th colspan=\"5\" height=\"20\">".$data['def_name']."</th>
     			      	  				</tr>
     			      	  				<tr>
-    			      	  					<td width=\"120\" height=\"120\" rowspan=\"3\">
+    			      	  					<td class='defenseCellImage' width=\"120\" height=\"120\" rowspan=\"3\">
 												<a href=\"".HELP_URL."&amp;id=".$data[ITEM_ID_FLD]."\" title=\"Info zu dieser Anlage anzeigen\">
 				    			      	  		<img src=\"".$s_img."\" width=\"120\" height=\"120\" border=\"0\" /></a>
     			      	  					</td>
-    			      	  					<td colspan=\"4\" valign=\"top\">".$data['def_shortcomment']."</td>
+    			      	  					<td class='defenseCellDescription' colspan=\"4\" valign=\"top\">".$data['def_shortcomment']."</td>
     			      	  				</tr>
     			      	  				<tr>
     			      	  					<th  height=\"30\">Vorhanden:</th>
@@ -1349,10 +1350,10 @@
 									$s_img = IMAGE_PATH."/".IMAGE_DEF_DIR."/def".$data['def_id']."_small.".IMAGE_EXT;
 
   			      					echo "<tr>
-  			      							<td>
+  			      							<td class='defenseCellImage'>
 				  			      				<a href=\"".HELP_URL."&amp;id=".$data[ITEM_ID_FLD]."\"><img src=\"".$s_img."\" width=\"40\" height=\"40\" border=\"0\" /></a>
 											</td>
-											<th width=\"30%\">
+											<th class='defenseCellName' width=\"30%\">
 	  			      							<span style=\"font-weight:500\">".$data['def_name']."<br/>
 	  			      							Gebaut:</span> ".nf($deflist_count)."
 	  			      						</th>

@@ -1,0 +1,79 @@
+* {
+    border-width: 0;
+}
+
+/* Border 1px */
+.boxLayout,
+th,
+td,
+.tabMenu,
+#pmenu,
+table,
+.techtreeItem,
+.techtreeMainItem {
+    border-width: 0.0625rem;
+}
+/* Border Top */
+.tbl caption,
+table.tb caption {
+    border-top-width: 0.0625rem;
+}
+
+/* Border Right */
+{
+    border-right-width: 0.0625rem;
+}
+
+/* Border Bottom */
+.boxLayout .infoboxtitle {
+    border-bottom-width: 0.0625rem;
+}
+
+/* Border Left */
+{
+    border-left-width: 0.0625rem;
+}
+
+/* Border Top/Bottom */
+{
+    border-top-width: 0.0625rem;
+    border-bottom-width: 0.0625rem;
+}
+
+/* Border Left/Right */
+.tbl caption,
+table.tb caption {
+    border-left-width: 0.0625rem;
+    border-right-width: 0.0625rem;
+}
+
+/* Default Light */
+.boxLayout,
+.boxLayout .infoboxtitle,
+.tbl caption,
+table.tb caption,
+th,
+td,
+.tabMenu,
+#pmenu,
+table,
+.techtreeItem,
+.techtreeMainItem {
+    border-color: #bbb;
+    border-style: solid;
+}
+
+/* Border Solid */
+{
+    border-style: solid;
+}
+
+/* Border Dashed */
+{
+    border-style: dashed;
+}
+
+/* Border Dot */
+{
+    border-style: dotted;
+}

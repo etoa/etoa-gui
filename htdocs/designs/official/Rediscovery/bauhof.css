@@ -7,15 +7,17 @@
   text-overflow: ellipsis;
   white-space: nowrap;
   overflow: hidden;
-  max-width: 7.5rem;
+  max-width: 11.25rem;
 }
 
 .buildOverviewObject,
 .buildOverviewObjectNone,
 .buildOverviewObject > div,
 .buildOverviewObjectTitle ~ a {
-  width: 7.5rem;
-  height: 7.5rem;
+  width: 11.25rem;
+  height: 11.25rem;
+  min-width: 11.25rem;
+  min-height: 11.25rem;
 }
 
 .buildOverviewObjectTitle ~ a img {
@@ -23,8 +25,88 @@
   height: 100%;
 }
 
+
+.buildOverviewObjectContainer {
+  width: 11.25rem;
+  height: 11.25rem;
+  text-align: center;
+  padding: 0;
+  margin-bottom: -0.0625rem;
+  border-right: 0.083rem solid;
+  border-bottom: 0.083rem solid;
+  float: left;
+  background-repeat: no-repeat;
+  position: relative;
+  overflow: hidden;
+}
+
+.buildOverviewObjectTitle {
+  font-weight: normal;
+  position: absolute;
+  background: url("images/transheader1.png") top right no-repeat;
+  margin-top: 0.0625rem;
+  padding: 0.1875rem 0.9375rem 0.1875rem 0.1875rem;
+  font-size: 1rem;
+  float: left;
+  z-index: 10;
+}
+
+.buildOverviewObjectSubTitle {
+  display: none;
+  float: left;
+}
+
+.buildOverviewLink {
+  display: block;
+  width: 11.25rem;
+  height: 11.25rem;
+  padding: 0;
+  margin: 0;
+  border: none;
+}
+
 .buildOverviewObjectLevel {
+  text-align: right;
+  font-size: 2rem;
+  line-height: 1.5em;
+  font-weight: bold;
+  background: url("images/transfooter1.png") no-repeat;
   background-size: 100% 100%;
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  width: 5rem;
+  padding: 0.1875rem;
+  padding-right: 0.3125rem;
+  float: left;
+}
+
+.buildOverviewObjectImage {
+  display: none;
+  float: left;
+}
+
+.buildOverviewObjectNone,
+.tb td.buildOverviewObjectNone {
+  border: none;
+}
+
+.compact .buildingCellImage {
+  padding: 0;
+  line-height: 0;
+}
+
+.compact .buildingImageSmall {
+  width: 4.5rem;
+  height: 4.5rem;
+}
+
+.compact .buildingCellName {
+  line-height: 1.33rem;
+}
+
+.compact .buildingCellTime {
+  white-space: nowrap;
 }
 
 @media screen and (min-width: 600px) {
@@ -34,8 +116,10 @@
   .buildOverviewObjectTitle ~ a {
     width: 11.25rem;
     height: 11.25rem;
+    min-width: 11.25rem;
+    min-height: 11.25rem;
   }
-  .buildOverviewObjectTitle{
+  .buildOverviewObjectTitle {
     max-width: 11.25rem;
   }
 }
