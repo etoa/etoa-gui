@@ -566,13 +566,15 @@ define('HELP_URL',"?page=help&site=buildings");
 			;");
 			if (mysql_num_rows($tres)>0)
 			{
+			    $compactView = $cu->properties->itemShow!='full';
+
 				// Jede Kategorie durchgehen
 				echo '<form action="?page='.$page.'" method="post"><div>';
 				echo $checker;
 
 				while ($tarr = mysql_fetch_array($tres))
 				{
-					tableStart($tarr['type_name'],TABLE_WIDTH,"","","compact");
+					tableStart($tarr['type_name'],TABLE_WIDTH,"","",$compactView ? "compact" : "");
 
 					//Einfache Ansicht
 					if ($cu->properties->itemShow!='full')

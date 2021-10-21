@@ -57,7 +57,6 @@ class App {
     this.mountBuildOverview();
     this.mountShipyard();
     this.mountArmory();
-    this.mountSectorMap();
   }
 
 
@@ -332,10 +331,6 @@ class App {
         cell.style.verticalAlign = "top";
       }
     }
-  }
-
-  mountSectorMap(){
-
   }
 
   toggleMainMenu() {
