@@ -1,49 +1,49 @@
 .resmetal,
 .tb .resmetal {
   background: url("../../../images/resources/metal_s.png") 0.0833rem 0.0833rem no-repeat;
-  padding: 0px 0.8333rem 0.0833rem 1.5833rem;
+  padding: 0.1rem 0.8333rem 0.1833rem 1.5833rem;
 }
 
 .rescrystal,
 .tb .rescrystal {
   background: url("../../../images/resources/crystal_s.png") 0.0833rem 0.0833rem no-repeat;
-  padding: 0px 0.8333rem 0.0833rem 1.5833rem;
+  padding: 0.1rem 0.8333rem 0.1833rem 1.5833rem;
 }
 
 .resplastic,
 .tb .resplastic {
   background: url("../../../images/resources/plastic_s.png") 0.0833rem 0.0833rem no-repeat;
-  padding: 0px 0.8333rem 0.0833rem 1.5833rem;
+  padding: 0.1rem 0.8333rem 0.1833rem 1.5833rem;
 }
 
 .resfuel,
 .tb .resfuel {
   background: url("../../../images/resources/fuel_s.png") 0.0833rem 0.0833rem no-repeat;
-  padding: 0px 0.8333rem 0.0833rem 1.5833rem;
+  padding: 0.1rem 0.8333rem 0.1833rem 1.5833rem;
 }
 
 .resfood,
 .tb .resfood {
   background: url("../../../images/resources/food_s.png") 0.0833rem 0.0833rem no-repeat;
-  padding: 0px 0.8333rem 0.0833rem 1.5833rem;
+  padding: 0.1rem 0.8333rem 0.1833rem 1.5833rem;
 }
 
 .respeople,
 .tb .respeople {
   background: url("../../../images/resources/people_s.png") 0.0833rem 0.0833rem no-repeat;
-  padding: 0px 0.8333rem 0.0833rem 1.5833rem;
+  padding: 0.1rem 0.8333rem 0.1833rem 1.5833rem;
 }
 
 .respower,
 .tb .respower {
   background: url("../../../images/resources/power_s.png") 0.0833rem 0.0833rem no-repeat;
-  padding: 0px 0.8333rem 0.0833rem 1.5833rem;
+  padding: 0.1rem 0.8333rem 0.1833rem 1.5833rem;
 }
 
 .respoweru,
 .tb .respoweru {
   background: url("../../../images/resources/poweru_s.png") 0.0833rem 0.0833rem no-repeat;
-  padding: 0px 0.8333rem 0.0833rem 1.5833rem;
+  padding: 0.1rem 0.8333rem 0.1833rem 1.5833rem;
 }
 
 .restime,
@@ -127,7 +127,7 @@ table th.resBoxTitleCell {
 }
 
 table th.resBoxTitleCell > div {
-  height: 1em;
+  height: 1.2em;
   text-overflow: ellipsis;
   overflow: hidden;
   line-height: 1em;
@@ -135,7 +135,7 @@ table th.resBoxTitleCell > div {
   padding-bottom: 0;
   padding-right: 0!important;
   font-size: 1rem;
-  margin: 0.333rem 0;
+  margin: 0.233rem 0;
 }
 
 /*
