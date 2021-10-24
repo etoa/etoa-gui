@@ -1,17 +1,15 @@
 /* Full Width */
-.tc a {
-    width: 100%
-;
+.tc a,
+table.tb {
+    width: 100%;
 }
 
 /* Auto Width */
 .tabMenu {
-    width: auto
-;
+    width: auto;
 }
 
 /* Flex */
 {
-    flex: 1 1
-;
+    flex: 1 1;
 }

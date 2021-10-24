@@ -270,3 +270,9 @@ section#nav-bottom {
     margin-right: 0;
   }
 }
+
+@media (min-width: 1450px) {
+  #game-area {
+    margin-left: 30rem;
+  }
+}

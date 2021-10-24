@@ -69,6 +69,11 @@ div {
   position: relative;
 }
 
+#contentwrap {
+  padding-bottom: env(safe-area-inset-bottom, 0);
+  margin-bottom: 2rem;
+}
+
 #app[data-interactable="false"]::after {
   content: "";
   position: absolute;
@@ -83,11 +88,15 @@ div {
 }
 
 
-@media screen and (min-width: 1024px) {
+@media (min-width:1450px) {
   body {
     background-image: url("images/background_large.jpg");
     background-position: 0 0;
     background-size: auto 100%;
+  }
+
+  #contentwrap {
+    min-width: 60rem;
   }
 }
 

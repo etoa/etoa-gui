@@ -5,6 +5,7 @@
 #sector_map_table {
     border: none;
     margin: 0 auto;
+    table-layout: fixed;
 }
 
 table.galaxyTableSector {
@@ -12,6 +13,7 @@ table.galaxyTableSector {
     border-collapse: collapse;
     max-width: 100%;
     margin: 0.625rem auto;
+    table-layout: fixed;
 }
 
 table.galaxyTableSector td {
@@ -41,8 +43,12 @@ table.galaxyTableSector .galaxyCellNumber {
     background: transparent;
 }
 
-table.galaxyTableSector .galaxyCellNumber img {
+table.galaxyTableSector .cell_number_horizontal {
     width: 100%;
+}
+
+#sector_map_table .cell_number_vertical {
+    height: 100%;
 }
 
 #galaxy_map_nav {
@@ -115,4 +121,28 @@ table.galaxyTableSector .galaxyCellNumber img {
 #sector_map_table .sector_map_cell a img.owned {
     background: url("../../../images/map/owncell.png");
     background-size: 100%;
+}
+
+@media (max-width: 700px) {
+    table.galaxyTableSector .galaxyCellNumber,
+    table.galaxyTableSector .galaxyCell {
+        width: 5rem;
+        height: 5rem;
+    }
+}
+
+@media (min-width: 701px) {
+    table.galaxyTableSector .galaxyCellNumber,
+    table.galaxyTableSector .galaxyCell {
+        width: 5rem;
+        height: 5rem;
+    }
+}
+
+@media (min-width: 1450px) {
+    table.galaxyTableSector .galaxyCellNumber,
+    table.galaxyTableSector .galaxyCell {
+        width: 4rem;
+        height: 4rem;
+    }
 }

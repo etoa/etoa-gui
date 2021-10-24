@@ -1,50 +1,54 @@
+:root {
+    --border-thin: 0.0625rem;
+}
+
 * {
     border-width: 0;
 }
 
 /* Border 1px */
 .boxLayout,
-th,
-td,
+table.tb th,
+table.tb td,
 .tabMenu,
 #pmenu,
-table,
+table.tb,
 .techtreeItem,
 .techtreeMainItem {
-    border-width: 0.0625rem;
+    border-width: var(--border-thin);
 }
 /* Border Top */
 .tbl caption,
 table.tb caption {
-    border-top-width: 0.0625rem;
+    border-top-width: var(--border-thin);
 }
 
 /* Border Right */
 {
-    border-right-width: 0.0625rem;
+    border-right-width: var(--border-thin);
 }
 
 /* Border Bottom */
 .boxLayout .infoboxtitle {
-    border-bottom-width: 0.0625rem;
+    border-bottom-width: var(--border-thin);
 }
 
 /* Border Left */
 {
-    border-left-width: 0.0625rem;
+    border-left-width: var(--border-thin);
 }
 
 /* Border Top/Bottom */
 {
-    border-top-width: 0.0625rem;
-    border-bottom-width: 0.0625rem;
+    border-top-width: var(--border-thin);
+    border-bottom-width: var(--border-thin);
 }
 
 /* Border Left/Right */
 .tbl caption,
 table.tb caption {
-    border-left-width: 0.0625rem;
-    border-right-width: 0.0625rem;
+    border-left-width: var(--border-thin);
+    border-right-width: var(--border-thin);
 }
 
 /* Default Light */
@@ -52,11 +56,11 @@ table.tb caption {
 .boxLayout .infoboxtitle,
 .tbl caption,
 table.tb caption,
-th,
-td,
+table.tb th,
+table.tb td,
 .tabMenu,
 #pmenu,
-table,
+table.tb,
 .techtreeItem,
 .techtreeMainItem {
     border-color: #bbb;
@@ -76,4 +80,10 @@ table,
 /* Border Dot */
 {
     border-style: dotted;
+}
+
+@media (max-width: 900px){
+    :root {
+        --border-thin: 0.125rem;
+    }
 }
