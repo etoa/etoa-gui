@@ -36,6 +36,7 @@
 @import url("planetinfo.css");
 @import url("stats.css");
 @import url("techtree.css");
+@import url("messages.css");
 
 html, body {
   margin: 0;

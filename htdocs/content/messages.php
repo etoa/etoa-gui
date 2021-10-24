@@ -589,10 +589,10 @@
 								echo "<tr style=\"display:;\">";
 							}
 
-							echo "				<td style=\"width:2%;\">
+							echo "				<td class='messageCellIcon' style=\"width:2%;\">
 	            					<img src=\"".$im_path."\" alt=\"Mail\" id=\"msgimg".$marr['message_id']."\" />
 	            				</td>
-	            			<td style=\"width:66%;\" ";
+	            			<td class='messageCellSubject' style=\"width:66%;\" ";
 							if ($msgpreview)
 							{
 								// subj has already been encoded above
@@ -620,9 +620,9 @@
 								}
 							}
 							echo "</td>";
-							echo "<td style=\"width:15%;\">".userPopUp($marr['message_user_from'],$marr['user_nick'],0,$strong)."</td>";
-							echo "<td style=\"width:15%;\">".date("d.m.Y H:i",$marr['message_timestamp'])."</td>";
-							echo "<td style=\"width:2%;text-align:center;padding:0px;vertical-align:middle;\">
+							echo "<td class='messageCellFrom' style=\"width:15%;\">".userPopUp($marr['message_user_from'],$marr['user_nick'],0,$strong)."</td>";
+							echo "<td class='messageCellDate' style=\"width:15%;\">".date("d.m.Y H:i",$marr['message_timestamp'])."</td>";
+							echo "<td class='messageCellAction' style=\"width:2%;text-align:center;padding:0px;vertical-align:middle;\">
 							<input id=\"delcb_".$arr['cat_id']."_".$dcnt."\" type=\"checkbox\" name=\"delmsg[".$marr['message_id']."]\" value=\"1\" title=\"Nachricht zum L&ouml;schen markieren\" /></td>";
 							echo "</tr>\n";
 							if ($msgpreview)
