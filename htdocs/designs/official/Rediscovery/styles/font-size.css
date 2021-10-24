@@ -23,7 +23,8 @@ table.tb caption,
 .tabMenu a,
 .tc a,
 .infoboxcontent,
-#planet_circle_inner_container {
+#planet_circle_inner_container,
+#tutorialContainer, #quest-app {
     font-size: 1.2rem;
 }
 
