@@ -31,7 +31,7 @@
 	
 	echo "<h1>Flotten</h1>";
 	
-	echo "<br/><input type=\"button\" onclick=\"document.location='?page=fleetstats'\" value=\"Schiffs&uuml;bersicht anzeigen\" /> &nbsp; ";
+	echo "<br/><input type=\"button\" onclick=\"document.location='?page=fleetstats'\" value=\"Schiffs&uuml;bersicht anzeigen\" title='Schiffsübersicht anzeigen (Kürzel: [ü])' /> &nbsp; ";
 	
 	//
 	// Alliance fleets

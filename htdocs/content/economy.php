@@ -347,7 +347,7 @@ if ($cp) {
 
     echo "<div>
 		<input type=\"button\" onclick=\"document.location='?page=specialists'\" value=\"Spezialisten\" /> &nbsp; ";
-    echo "<input type=\"button\" onclick=\"document.location='?page=planetstats'\" value=\"Ressourcen aller Planeten anzeigen\" /> &nbsp; 
+    echo "<input type=\"button\" onclick=\"document.location='?page=planetstats'\" value=\"Ressourcen aller Planeten anzeigen\" title='Ressourcen aller Planeten anzeigen (Kürzel: [P])' /> &nbsp; 
 		<input type=\"button\" onclick=\"document.location='?page=economy&action=update'\" value=\"Neu Berechnen\" />
 		</div>";
 
