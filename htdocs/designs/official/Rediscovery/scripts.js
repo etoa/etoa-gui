@@ -52,7 +52,6 @@ class App {
         window.addEventListener("scroll", () => this.onScroll());
         window.addEventListener("resize", () => this.onWindowResize());
         this.replacePixelSizes();
-        this.updateScaling();
         this.mountMainNavigation();
         this.mountMobileNavigation();
         this.mountResourceBar();
