@@ -1,0 +1,154 @@
+body {
+    background: #000 url('images/background_chat.jpg');
+    color: #fff;
+    font-family: Arial, sans-serif;
+    font-size: 0.8rem;
+    margin: 0;
+    padding: 0;
+}
+
+input, select {
+    border: 0.125rem solid #fff;
+    background: #111;
+    color: #fff;
+}
+
+#chatcontainer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 3.3rem;
+    word-wrap: break-word;
+}
+
+div.chatmsg, div.serverMessage {
+    font-size: 1em;
+}
+
+#chatitems {
+    border-radius: 0.15rem;
+    padding: 0.4rem;
+    margin-top: 0.125rem;
+    background: rgba(0, 0, 0, 0.3);
+    overflow: auto;
+    vertical-align: middle;
+    font-family: Verdana, Arial, sans-serif;
+}
+
+#chatitems img {
+    vertical-align: middle;
+    margin-right: 0.15rem;
+}
+
+#chatitems .systemMessage {
+    color: #777;
+}
+
+#chatitems .serverMessage {
+    color: #aaa;
+}
+
+#chatitems .adminMessage {
+    color: #ff8;
+    font-weight: bold;
+}
+
+#chatitems a {
+    color: #fff;
+}
+
+#userlist {
+    padding: 0.3rem 0.6rem;
+}
+
+#userlist a {
+    color: #fff;
+}
+
+#loading {
+    position: fixed;
+    left: 0px;
+    right: 0px;
+    bottom: 1.8rem;
+    height: 1rem;
+    background: black;
+    color: #fff;
+    overflow: hidden;
+    vertical-align: middle;
+}
+
+#loadingAnimation {
+    display: inline-block;
+    width: 1.25rem;
+}
+
+#loadingAnimation img {
+    vertical-align: middle;
+}
+
+#loading span {
+    vertical-align: middle;
+}
+
+#chatinput {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: #222;
+    height: 1.25rem;
+    padding: 0.3167rem;
+}
+
+#ctext {
+    width: 100%;
+    border-color: #999;
+}
+
+#ctext:focus {
+    border-color: #ccc;
+}
+
+#status {
+    float: right;
+    padding: 0 0.5em;
+    z-index: 10;
+    position: fixed;
+    right: 0;
+    /* should be #loading bottom +1px */
+    bottom: 2rem;
+    /* not transparent, so it hides oversized msgFail text below */
+}
+
+#unread {
+    color: lime;
+    padding-left: 0.3167rem;
+}
+
+#usercount {
+    color: #ccc;
+    cursor: pointer;
+}
+
+#usercount:hover {
+    color: #fff;
+}
+
+#logoutButton {
+    position: absolute;
+    top: 1px;
+    right: 1.2rem;
+    z-index: 100;
+    font-weight: bold;
+    cursor: pointer;
+    border: 0.125rem solid #333;
+    color: #aaa;
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 0.125rem;
+}
+
+#logoutButton:hover {
+    border: 0.125rem solid #555;
+    color: #ddd;
+}

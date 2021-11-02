@@ -174,10 +174,20 @@ class App {
         planetCircle.style.width = null;
         planetCircle.style.height = null;
 
+        let activePlanet = null;
+
         for (let image of planetCircle.querySelectorAll("img")) {
+            const currentPlanet = image.parentNode.parentNode;
             image.removeAttribute("width");
             image.removeAttribute("height");
             image.classList.add("planetImage");
+            image.addEventListener("mouseover", () => {
+                if (activePlanet != null) {
+                    activePlanet.classList.remove("activePlanet");
+                }
+                activePlanet = currentPlanet;
+                currentPlanet.classList.add("activePlanet");
+            });
         }
 
         const circleElements = [...planetCircle.childNodes].filter(
@@ -214,6 +224,8 @@ class App {
         const center = planetCircle.querySelector("table");
         const centerBody = center.querySelector("tbody");
         centerBody.querySelector("tr").remove();
+        center.removeAttribute("width");
+        center.style.width = "50%";
         center.style.top = "50%";
         center.style.left = "50%";
         center.style.position = "absolute";
@@ -436,16 +448,27 @@ class App {
         const properties = ["width", "height", "top", "left", "bottom", "right"];
         for (let element of elements) {
             for (let property of properties) {
+                let factor = 1;
+                if (property === "width" && element.nodeName.toLowerCase() === "col") {
+                    factor = 1.25;
+                }
                 const value = element.style[property];
                 if (value != null && value.endsWith("px")) {
-                    element.style[property] = this.convertPixelToRem(value);
+                    element.style[property] = this.convertPixelToRem(value, factor);
+                }
+                if (value != null && value.endsWith("pt")) {
+                    element.style[property] = this.convertPointToRem(value, factor);
                 }
             }
         }
     }
 
-    convertPixelToRem(value) {
-        return parseInt(value.substring(0, value.length - 2)) / 16 + "rem";
+    convertPixelToRem(value, factor = 1) {
+        return parseInt(value.substring(0, value.length - 2)) / 16 * factor + "rem";
+    }
+
+    convertPointToRem(value, factor = 1) {
+        return parseInt(value.substring(0, value.length - 2)) / 12 * factor + "rem";
     }
 
     onTouchStart() {
@@ -491,7 +514,7 @@ class App {
         const isMobile = currentWidth <= 414;
         const isDesktop = currentWidth >= 1450;
         const mobileFactor = isMobile ? 1.75 : isTablet ? 1.5 : 1;
-        const factor = isDesktop ? 1 / DPI_SCALE : Math.min(widthFactor, heightFactorAdjusted) * mobileFactor;
+        const factor = isDesktop ? 0.67 : Math.min(widthFactor, heightFactorAdjusted) * mobileFactor;
         document.documentElement.style.fontSize = factor * 16 + 'px';
         this.isMobile = isMobile;
         this.isTablet = isTablet;

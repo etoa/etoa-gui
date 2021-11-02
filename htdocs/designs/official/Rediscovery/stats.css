@@ -19,3 +19,16 @@
 #statsBox > p > img {
     max-width: 100%;
 }
+
+#statsHeaderContainer {
+    display: flex;
+    flex-direction: row;
+}
+
+#statsNav2 {
+    float: right;
+}
+
+#statsSearchContainer {
+    flex: 1 1;
+}

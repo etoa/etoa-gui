@@ -1,60 +1,60 @@
 .resmetal,
 .tb .resmetal {
-  background: url("../../../images/resources/metal_s.png") 0.0833rem 0.0833rem no-repeat;
+  background: url("../../../images/resources/metal_s.png") 0.0833rem 0 no-repeat;
   padding: 0.1rem 0.8333rem 0.1833rem 1.5833rem;
 }
 
 .rescrystal,
 .tb .rescrystal {
-  background: url("../../../images/resources/crystal_s.png") 0.0833rem 0.0833rem no-repeat;
+  background: url("../../../images/resources/crystal_s.png") 0.0833rem 0 no-repeat;
   padding: 0.1rem 0.8333rem 0.1833rem 1.5833rem;
 }
 
 .resplastic,
 .tb .resplastic {
-  background: url("../../../images/resources/plastic_s.png") 0.0833rem 0.0833rem no-repeat;
+  background: url("../../../images/resources/plastic_s.png") 0.0833rem 0 no-repeat;
   padding: 0.1rem 0.8333rem 0.1833rem 1.5833rem;
 }
 
 .resfuel,
 .tb .resfuel {
-  background: url("../../../images/resources/fuel_s.png") 0.0833rem 0.0833rem no-repeat;
+  background: url("../../../images/resources/fuel_s.png") 0.0833rem 0 no-repeat;
   padding: 0.1rem 0.8333rem 0.1833rem 1.5833rem;
 }
 
 .resfood,
 .tb .resfood {
-  background: url("../../../images/resources/food_s.png") 0.0833rem 0.0833rem no-repeat;
+  background: url("../../../images/resources/food_s.png") 0.0833rem 0 no-repeat;
   padding: 0.1rem 0.8333rem 0.1833rem 1.5833rem;
 }
 
 .respeople,
 .tb .respeople {
-  background: url("../../../images/resources/people_s.png") 0.0833rem 0.0833rem no-repeat;
+  background: url("../../../images/resources/people_s.png") 0.0833rem 0 no-repeat;
   padding: 0.1rem 0.8333rem 0.1833rem 1.5833rem;
 }
 
 .respower,
 .tb .respower {
-  background: url("../../../images/resources/power_s.png") 0.0833rem 0.0833rem no-repeat;
+  background: url("../../../images/resources/power_s.png") 0.0833rem 0 no-repeat;
   padding: 0.1rem 0.8333rem 0.1833rem 1.5833rem;
 }
 
 .respoweru,
 .tb .respoweru {
-  background: url("../../../images/resources/poweru_s.png") 0.0833rem 0.0833rem no-repeat;
+  background: url("../../../images/resources/poweru_s.png") 0.0833rem 0 no-repeat;
   padding: 0.1rem 0.8333rem 0.1833rem 1.5833rem;
 }
 
 .restime,
 .tb .restime {
-  background: url("../../../images/resources/time_s.png") 0.0833rem 0.0833rem no-repeat;
+  background: url("../../../images/resources/time_s.png") 0.0833rem 0 no-repeat;
   padding: 0px 0.8333rem 0.0833rem 1.5833rem;
 }
 
 .resfield,
 .tb .resfield {
-  background: url("../../../images/resources/field_s.png") 0.0833rem 0.0833rem no-repeat;
+  background: url("../../../images/resources/field_s.png") 0.0833rem 0 no-repeat;
   padding: 0px 0.8333rem 0.0833rem 1.5833rem;
 }
 
@@ -78,7 +78,7 @@
 .tb .restime,
 .resfield,
 .tb .resfield {
-  background-size: 1rem;
+  background-size: 1.2rem;
   image-rendering: crisp-edges;
 }
 

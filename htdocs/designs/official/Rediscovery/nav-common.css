@@ -2,6 +2,7 @@
   color: white;
   font-family: Courier, monospace;
   font-size: 1rem;
+  font-weight: bold;
 }
 
 #app .button-attack {
@@ -15,7 +16,7 @@
   text-align: center;
   font-family: Ethnocentric, sans-serif;
   font-size: 1.1rem;
-  color: rgba(255, 255, 255, 0.5);
+  color: rgba(255, 255, 255, 0.25);
 }
 
 #app.mouse .button-attack:hover {
