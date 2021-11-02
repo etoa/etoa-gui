@@ -475,7 +475,7 @@ class App {
     }
 
     convertPointToRem(value, factor = 1) {
-        return parseInt(value.substring(0, value.length - 2)) / 12 * factor + "rem";
+        return parseInt(value.substring(0, value.length - 2)) / 8 * factor + "rem";
     }
 
     onTouchStart() {
