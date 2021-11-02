@@ -871,9 +871,9 @@
 							$obj_t_passed = $data['queue_objtime']-$obj_t_remaining;
 							echo "<tr>
 									<th colspan=\"2\">Aktuell</th>
-									<th style=\"width:150px;\">Start</th>
-									<th style=\"width:150px;\">Ende</th>
-									<th style=\"width:80px;\" colspan=\"2\">Verbleibend</th>
+									<th>Start</th>
+									<th>Ende</th>
+									<th colspan=\"2\">Verbleibend</th>
 								</tr>";
 							echo "<tr>";
 							echo "<td colspan=\"2\">".$ships[$data['queue_ship_id']]['ship_name']."</td>";
@@ -883,11 +883,11 @@
 							</tr>";
 							echo "<tr>
 									<th style=\"width:40px;\">Anzahl</th>
-									<th>Bauauftrag</th>
-									<th style=\"width:150px;\">Start</th>
-									<th style=\"width:150px;\">Ende</th>
-									<th style=\"width:150px;\">Verbleibend</th>
-									<th style=\"width:80px;\">Aktionen</th>
+									<th style='width:100%'>Bauauftrag</th>
+									<th>Start</th>
+									<th>Ende</th>
+									<th>Verbleibend</th>
+									<th>Aktionen</th>
 								</tr>";
 							$first=false;
 						}
@@ -895,9 +895,9 @@
 						echo "<tr>";
 						echo "<td id=\"objcount\">".$data['queue_cnt']."</td>";
 						echo "<td>".$ships[$data['queue_ship_id']]['ship_name']."</td>";
-						echo "<td>".df($absolute_starttime,1)."</td>";
-						echo "<td>".df($absolute_starttime+$data['queue_endtime']-$data['queue_starttime'],1)."</td>";
-						echo "<td>".tf($data['queue_endtime']-time(),1)."</td>";
+						echo "<td style='white-space: nowrap;'>".df($absolute_starttime,1)."</td>";
+						echo "<td style='white-space: nowrap;'>".df($absolute_starttime+$data['queue_endtime']-$data['queue_starttime'],1)."</td>";
+						echo "<td style='white-space: nowrap;'>".tf($data['queue_endtime']-time(),1)."</td>";
 						echo "<td id=\"cancel\">";
 						if ($cancelable)
 						{

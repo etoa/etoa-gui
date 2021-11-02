@@ -15,7 +15,7 @@
 .navigation-top a {
   position: relative;
   font-family: "Zekton-BoldItalic", sans-serif;
-  text-shadow: rgba(0, 0, 0, 1) 0.1rem 0.1rem 0.3em;
+  text-shadow: rgba(0, 0, 0, 1) 0.1rem 0.1rem 1.5em;
   text-decoration: none;
 }
 

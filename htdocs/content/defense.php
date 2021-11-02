@@ -915,9 +915,9 @@
 							$obj_t_passed = $data['queue_objtime']-$obj_t_remaining;
 							echo "<tr>
 									<th colspan=\"2\">Aktuell</th>
-									<th style=\"width:150px;\">Start</th>
-									<th style=\"width:150px;\">Ende</th>
-									<th style=\"width:80px;\" colspan=\"2\">Verbleibend</th>
+									<th>Start</th>
+									<th>Ende</th>
+									<th colspan=\"2\">Verbleibend</th>
 								</tr>
 								<tr>
 								<td colspan=\"2\">".$defs[$data['queue_def_id']]['def_name']."</td>
@@ -928,10 +928,10 @@
 							<tr>
 								<th style=\"width:40px;\">Anzahl</th>
 								<th>Bauauftrag</th>
-								<th style=\"width:150px;\">Start</th>
-								<th style=\"width:150px;\">Ende</th>
-								<th style=\"width:150px;\">Verbleibend</th>
-								<th style=\"width:80px;\">Aktionen</th>
+								<th>Start</th>
+								<th>Ende</th>
+								<th>Verbleibend</th>
+								<th>Aktionen</th>
 							</tr>";
 							$first=false;
 						}
@@ -939,9 +939,9 @@
 						echo"<tr>
 								<td id=\"objcount\">".$data['queue_cnt']."</td>
 								<td>".$defs[$data['queue_def_id']]['def_name']."</td>
-								<td>".df($absolute_starttime,1)."</td>
-								<td>".df($absolute_starttime+$data['queue_endtime']-$data['queue_starttime'],1)."</td>
-								<td>".tf($data['queue_endtime']-time(),1)."</td>
+								<td style='white-space: nowrap;'>".df($absolute_starttime,1)."</td>
+								<td style='white-space: nowrap;'>".df($absolute_starttime+$data['queue_endtime']-$data['queue_starttime'],1)."</td>
+								<td style='white-space: nowrap;'>".tf($data['queue_endtime']-time(),1)."</td>
 								<td id=\"cancel\">";
 								if ($cancelable)
 								{

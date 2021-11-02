@@ -18,6 +18,8 @@ table.tb th {
 }
 
 /* Gray */
+.tabMenu,
+#pmenu,
 table.tb td,
 .infoboxcontent {
     background: #225 url(../images/cellpic3.gif);
@@ -39,7 +41,6 @@ table.tb td,
 }
 
 /* Black */
-.tabMenu,
-#pmenu {
+ {
     background: black;
 }

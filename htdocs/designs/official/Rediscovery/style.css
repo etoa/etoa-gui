@@ -1,42 +1,42 @@
-@import url("reset.css");
+@import url("reset.css?v=2021110200");
 
-@import url("../../../web/css/game.css");
+@import url("../../../web/css/game.css?v=2021110200");
 
-@import url("fonts.css");
-@import url("colors.css");
+@import url("fonts.css?v=2021110200");
+@import url("colors.css?v=2021110200");
 
-@import url("styles/background.css");
-@import url("styles/border.css");
-@import url("styles/color.css");
-@import url("styles/display.css");
-@import url("styles/font-family.css");
-@import url("styles/font-size.css");
-@import url("styles/height.css");
-@import url("styles/line-height.css");
-@import url("styles/list-style-type.css");
-@import url("styles/margin.css");
-@import url("styles/padding.css");
-@import url("styles/text-alignment.css");
-@import url("styles/text-decoration.css");
-@import url("styles/width.css");
+@import url("styles/background.css?v=2021110200");
+@import url("styles/border.css?v=2021110200");
+@import url("styles/color.css?v=2021110200");
+@import url("styles/display.css?v=2021110200");
+@import url("styles/font-family.css?v=2021110200");
+@import url("styles/font-size.css?v=2021110200");
+@import url("styles/height.css?v=2021110200");
+@import url("styles/line-height.css?v=2021110200");
+@import url("styles/list-style-type.css?v=2021110200");
+@import url("styles/margin.css?v=2021110200");
+@import url("styles/padding.css?v=2021110200");
+@import url("styles/text-alignment.css?v=2021110200");
+@import url("styles/text-decoration.css?v=2021110200");
+@import url("styles/width.css?v=2021110200");
 
-@import url("galaxie.css");
-@import url("tutorial.css");
-@import url("reloader.css");
-@import url("nav-common.css");
-@import url("nav-top.css?r=3");
-@import url("nav-main.css");
-@import url("nav-mobile.css");
-@import url("game.css");
-@import url("inputs.css");
-@import url("uebersicht.css");
-@import url("bauhof.css");
-@import url("schiffswerft.css");
-@import url("verteidigungsanlagen.css");
-@import url("planetinfo.css");
-@import url("stats.css");
-@import url("techtree.css");
-@import url("messages.css");
+@import url("galaxie.css?v=2021110200");
+@import url("tutorial.css?v=2021110200");
+@import url("reloader.css?v=2021110200");
+@import url("nav-common.css?v=2021110200");
+@import url("nav-top.css?v=2021110200");
+@import url("nav-main.css?v=2021110200");
+@import url("nav-mobile.css?v=2021110200");
+@import url("game.css?v=2021110200");
+@import url("inputs.css?v=2021110200");
+@import url("uebersicht.css?v=2021110200");
+@import url("bauhof.css?v=2021110200");
+@import url("schiffswerft.css?v=2021110200");
+@import url("verteidigungsanlagen.css?v=2021110200");
+@import url("planetinfo.css?v=2021110200");
+@import url("stats.css?v=2021110200");
+@import url("techtree.css?v=2021110200");
+@import url("messages.css?v=2021110200");
 
 html, body {
   margin: 0;
