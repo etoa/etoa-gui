@@ -14,6 +14,10 @@
     height: 11.25rem;
 }
 
+#reqInfo {
+    text-align: center;
+}
+
 .techtreeItemName {
     font-weight: normal;
     position: absolute;

@@ -4,6 +4,7 @@
 a,
 select,
 input,
-textarea {
+textarea,
+#tutorialContainer, #quest-app {
     color: white;
 }

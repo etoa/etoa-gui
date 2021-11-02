@@ -111,7 +111,7 @@
                 }
                 echo "</select>
                 <div id=\"designInfo\"></div>";
-                echo "<script type=\"text/javascript;\">xajax_designInfo(document.getElementById('designSelector').options[document.getElementById('designSelector').selectedIndex].value);</script>";
+                echo "<script type=\"text/javascript\">xajax_designInfo(document.getElementById('designSelector').options[document.getElementById('designSelector').selectedIndex].value);</script>";
     echo "</tr>";
 
     // Bildpacket wählen
@@ -130,7 +130,7 @@
                 }
                 echo "</select> <span id=\"imagePackExtension\"></span><br/>
                 <div id=\"imagePackInfo\"></div>";
-                echo "<script type=\"text/javascript;\">xajax_imagePackInfo(document.getElementById('image_select').options[document.getElementById('image_select').selectedIndex].value,'".$cu->properties->imageExt."','".$cu->properties->imageUrl."');</script>";
+                echo "<script type=\"text/javascript\">xajax_imagePackInfo(document.getElementById('image_select').options[document.getElementById('image_select').selectedIndex].value,'".$cu->properties->imageExt."','".$cu->properties->imageUrl."');</script>";
          echo "</td>";
     echo "</tr>";
 

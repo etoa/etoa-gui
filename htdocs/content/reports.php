@@ -202,12 +202,12 @@
 				$im_path = "images/pm_normal.gif";
 			}
 			echo "<tr>
-			<td style=\"width:16px\"><img src=\"".$im_path."\" alt=\"Mail\" id=\"repimg".$rid."\" /></td>
-			<td id=\"header".$rid."\"><a href=\"javascript:;\" onclick=\"toggleBox('report".$rid."');xajax_reportSetRead(".$rid.")\" >".$r->subject."</a></td>";
+			<td class='messageCellIcon' style=\"width:16px\"><img src=\"".$im_path."\" alt=\"Mail\" id=\"repimg".$rid."\" /></td>
+			<td class='messageCellSubject' id=\"header".$rid."\"><a href=\"javascript:;\" onclick=\"toggleBox('report".$rid."');xajax_reportSetRead(".$rid.")\" >".$r->subject."</a></td>";
 			if ($type == "all")
-				echo "<td><b>".$r->typeName()."</b></td>";
-			echo "<td>".df($r->timestamp)."</td>";
-			echo "<td id=\"del".$rid."\" style=\"width:2%;text-align:center;padding:0px;vertical-align:middle;\">
+				echo "<td class='messageCellCategory'><b>".$r->typeName()."</b></td>";
+			echo "<td class='messageCellDate'>".df($r->timestamp)."</td>";
+			echo "<td class='messageCellAction' id=\"del".$rid."\" style=\"width:2%;text-align:center;padding:0px;vertical-align:middle;\">
 							<input id=\"delreport[".$cnt."]\" type=\"checkbox\" name=\"delreport[".$rid."]\" value=\"1\" title=\"Report zum L&ouml;schen markieren\" /></td></tr>";
 			echo "<tr><td colspan=\"5\" style=\"padding:10px;display:none;\" id=\"report".$rid."\">";
 			echo $r;

@@ -1,6 +1,7 @@
 /* Regular */
 #game-area,
-#contentwrap {
+#contentwrap,
+#tutorialContainer, #quest-app {
     font-family: Verdana, sans-serif;
 }
 

@@ -37,3 +37,9 @@ table.tb td,
 .tc .tabEnabled {
     background: url(../images/tab2.png);
 }
+
+/* Black */
+.tabMenu,
+#pmenu {
+    background: black;
+}
