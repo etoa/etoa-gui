@@ -1,4 +1,5 @@
 select,
+input:not([type]),
 input[type="text"],
 input[type="reset"],
 input[type="number"],
@@ -22,6 +23,7 @@ select {
     font-family: Verdana, sans-serif;
 }
 
+input:not([type]),
 input[type="text"],
 input[type="number"],
 input[type="password"],
