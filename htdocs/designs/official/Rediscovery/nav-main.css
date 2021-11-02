@@ -199,10 +199,28 @@ section#nav-top {
   transform: rotate(-90deg);
 }
 
-#planet-dropdown{
+#planet-dropdown {
   position: absolute;
   top: 10.2rem;
   left: 1.5rem;
+}
+
+#planet-dropdown .click-mask {
+  content: "";
+  display: block;
+  background: transparent;
+  position: absolute;
+  margin: -2rem;
+  top: 0;
+  left: 0;
+  width: calc(100% + 8rem);
+  height: calc(100% + 4rem);
+  z-index: 0;
+}
+
+#planet-dropdown .button-blue {
+  position: relative;
+  z-index: 1;
 }
 
 #navigate-fleets-2 {
