@@ -128,15 +128,19 @@ class App {
         const minute = parseInt(timeParts[1]);
         const second = parseInt(timeParts[2]);
 
-        const startDate = new Date();
-        const referenceTime = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDay(), hour, minute, second);
-        const offset = referenceTime.getTime() - startDate.getTime() - 3600000;
+        const startTimestamp = Date.now();
+        const startDate = new Date(startTimestamp);
+        const referenceDate = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDay(), hour, minute, second);
+        if(referenceDate.getTime() > startTimestamp) {
+            referenceDate.setDate(referenceDate.getTime() - 24 * 3600);
+        }
+        const referenceTimestamp = referenceDate.getTime();
 
         const tickServertime = () => {
             if (!element) {
                 return;
             }
-            const now = new Date((new Date()).getTime() - offset);
+            const now = new Date(referenceTimestamp + Date.now() - startTimestamp);
             element.innerText = now.toLocaleTimeString('de-DE');
             setTimeout(() => {
                 tickServertime();
