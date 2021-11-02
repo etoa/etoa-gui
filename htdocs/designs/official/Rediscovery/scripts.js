@@ -449,7 +449,7 @@ class App {
 
     replacePixelSizes() {
         const elements = document.querySelectorAll("*[style]");
-        const properties = ["width", "height", "top", "left", "bottom", "right"];
+        const properties = ["width", "height", "top", "left", "bottom", "right", "font-size"];
         for (let element of elements) {
             for (let property of properties) {
                 let factor = 1;
