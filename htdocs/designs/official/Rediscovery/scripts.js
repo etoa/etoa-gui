@@ -131,7 +131,7 @@ class App {
         const startTimestamp = Date.now();
         const startDate = new Date(startTimestamp);
         const referenceDate = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDay(), hour, minute, second);
-        if(referenceDate.getTime() > startTimestamp) {
+        if (referenceDate.getTime() > startTimestamp) {
             referenceDate.setDate(referenceDate.getTime() - 24 * 3600);
         }
         const referenceTimestamp = referenceDate.getTime();
@@ -453,8 +453,11 @@ class App {
         for (let element of elements) {
             for (let property of properties) {
                 let factor = 1;
-                if (property === "width" && element.nodeName.toLowerCase() === "col") {
-                    factor = 1.25;
+                if (property === "width" &&
+                    (element.nodeName.toLowerCase() === "col" ||
+                        element.nodeName.toLowerCase() === "th")
+                ) {
+                    factor = 1.4;
                 }
                 const value = element.style[property];
                 if (value != null && value.endsWith("px")) {

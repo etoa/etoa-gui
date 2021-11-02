@@ -9,7 +9,6 @@
 }
 
 /* Large */
-.infoboxtitle,
 h1 {
     font-size: 1.5rem;
 }
@@ -22,6 +21,7 @@ table.tb th,
 table.tb caption,
 .tabMenu a,
 .tc a,
+.infoboxtitle,
 .infoboxcontent,
 #planet_circle_inner_container,
 #tutorialContainer, #quest-app {
