@@ -4,7 +4,7 @@
 }
 
 /* Very Large */
-{
+.planetOverviewName {
     font-size: 2rem;
 }
 
@@ -24,7 +24,9 @@ table.tb caption,
 .infoboxtitle,
 .infoboxcontent,
 #planet_circle_inner_container,
-#tutorialContainer, #quest-app {
+#tutorialContainer, #quest-app,
+.planetOverviewList,
+.planetOverviewItem {
     font-size: 1.2rem;
 }
 

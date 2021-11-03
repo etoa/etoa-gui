@@ -1,61 +1,61 @@
 .resmetal,
 .tb .resmetal {
-  background: url("../../../images/resources/metal_s.png") 0.0833rem 0 no-repeat;
-  padding: 0.1rem 0.8333rem 0.1833rem 1.5833rem;
+    background: url("../../../images/resources/metal_s.png") 0.0833rem 0 no-repeat;
+    padding: 0.1rem 0.8333rem 0.1833rem 1.5833rem;
 }
 
 .rescrystal,
 .tb .rescrystal {
-  background: url("../../../images/resources/crystal_s.png") 0.0833rem 0 no-repeat;
-  padding: 0.1rem 0.8333rem 0.1833rem 1.5833rem;
+    background: url("../../../images/resources/crystal_s.png") 0.0833rem 0 no-repeat;
+    padding: 0.1rem 0.8333rem 0.1833rem 1.5833rem;
 }
 
 .resplastic,
 .tb .resplastic {
-  background: url("../../../images/resources/plastic_s.png") 0.0833rem 0 no-repeat;
-  padding: 0.1rem 0.8333rem 0.1833rem 1.5833rem;
+    background: url("../../../images/resources/plastic_s.png") 0.0833rem 0 no-repeat;
+    padding: 0.1rem 0.8333rem 0.1833rem 1.5833rem;
 }
 
 .resfuel,
 .tb .resfuel {
-  background: url("../../../images/resources/fuel_s.png") 0.0833rem 0 no-repeat;
-  padding: 0.1rem 0.8333rem 0.1833rem 1.5833rem;
+    background: url("../../../images/resources/fuel_s.png") 0.0833rem 0 no-repeat;
+    padding: 0.1rem 0.8333rem 0.1833rem 1.5833rem;
 }
 
 .resfood,
 .tb .resfood {
-  background: url("../../../images/resources/food_s.png") 0.0833rem 0 no-repeat;
-  padding: 0.1rem 0.8333rem 0.1833rem 1.5833rem;
+    background: url("../../../images/resources/food_s.png") 0.0833rem 0 no-repeat;
+    padding: 0.1rem 0.8333rem 0.1833rem 1.5833rem;
 }
 
 .respeople,
 .tb .respeople {
-  background: url("../../../images/resources/people_s.png") 0.0833rem 0 no-repeat;
-  padding: 0.1rem 0.8333rem 0.1833rem 1.5833rem;
+    background: url("../../../images/resources/people_s.png") 0.0833rem 0 no-repeat;
+    padding: 0.1rem 0.8333rem 0.1833rem 1.5833rem;
 }
 
 .respower,
 .tb .respower {
-  background: url("../../../images/resources/power_s.png") 0.0833rem 0 no-repeat;
-  padding: 0.1rem 0.8333rem 0.1833rem 1.5833rem;
+    background: url("../../../images/resources/power_s.png") 0.0833rem 0 no-repeat;
+    padding: 0.1rem 0.8333rem 0.1833rem 1.5833rem;
 }
 
 .respoweru,
 .tb .respoweru {
-  background: url("../../../images/resources/poweru_s.png") 0.0833rem 0 no-repeat;
-  padding: 0.1rem 0.8333rem 0.1833rem 1.5833rem;
+    background: url("../../../images/resources/poweru_s.png") 0.0833rem 0 no-repeat;
+    padding: 0.1rem 0.8333rem 0.1833rem 1.5833rem;
 }
 
 .restime,
 .tb .restime {
-  background: url("../../../images/resources/time_s.png") 0.0833rem 0 no-repeat;
-  padding: 0px 0.8333rem 0.0833rem 1.5833rem;
+    background: url("../../../images/resources/time_s.png") 0.0833rem 0 no-repeat;
+    padding: 0px 0.8333rem 0.0833rem 1.5833rem;
 }
 
 .resfield,
 .tb .resfield {
-  background: url("../../../images/resources/field_s.png") 0.0833rem 0 no-repeat;
-  padding: 0px 0.8333rem 0.0833rem 1.5833rem;
+    background: url("../../../images/resources/field_s.png") 0.0833rem 0 no-repeat;
+    padding: 0px 0.8333rem 0.0833rem 1.5833rem;
 }
 
 .resmetal,
@@ -78,8 +78,8 @@
 .tb .restime,
 .resfield,
 .tb .resfield {
-  background-size: 1.2rem;
-  image-rendering: crisp-edges;
+    background-size: 1.2rem;
+    image-rendering: crisp-edges;
 }
 
 /*
@@ -87,13 +87,13 @@
 */
 
 .search {
-  background: #000 url("../../../web/images/search.png") 0.167rem 0.0833rem no-repeat;
-  padding-left: 1.67rem;
+    background: #000 url("../../../web/images/search.png") 0.167rem 0.0833rem no-repeat;
+    padding-left: 1.67rem;
 }
 
 .search:focus {
-  background: #222 url("../../../web/images/search.png") 0.167rem 0.0833rem no-repeat;
-  padding-left: 1.67rem;
+    background: #222 url("../../../web/images/search.png") 0.167rem 0.0833rem no-repeat;
+    padding-left: 1.67rem;
 }
 
 /*
@@ -102,7 +102,7 @@
 
 .bbtable td,
 .bbtable th {
-  padding: 0.167rem;
+    padding: 0.167rem;
 }
 
 /*
@@ -110,12 +110,12 @@
 */
 
 img.resIcon {
-  float: left;
-  margin-right: 0.4167rem;
+    float: left;
+    margin-right: 0.4167rem;
 }
 
 #resbox span {
-  padding-right: 0.4167rem;
+    padding-right: 0.4167rem;
 }
 
 /*
@@ -123,19 +123,19 @@ img.resIcon {
 */
 
 table th.resBoxTitleCell {
-  padding: 0 0.125rem;
+    padding: 0 0.125rem;
 }
 
 table th.resBoxTitleCell > div {
-  height: 1.2em;
-  text-overflow: ellipsis;
-  overflow: hidden;
-  line-height: 1em;
-  padding-top: 0;
-  padding-bottom: 0;
-  padding-right: 0!important;
-  font-size: 1rem;
-  margin: 0.233rem 0;
+    height: 1.2em;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    line-height: 1em;
+    padding-top: 0;
+    padding-bottom: 0;
+    padding-right: 0 !important;
+    font-size: 1rem;
+    margin: 0.233rem 0;
 }
 
 /*
@@ -143,17 +143,17 @@ table th.resBoxTitleCell > div {
 */
 
 .criticalErrorBox {
-  margin-top: 1.25rem;
-  margin-bottom: 1.25rem;
+    margin-top: 1.25rem;
+    margin-bottom: 1.25rem;
 }
 
 .criticalErrorBox h2 {
-  padding: 0.8333rem;
-  font-size: 1.25rem;
+    padding: 0.8333rem;
+    font-size: 1.25rem;
 }
 
 .criticalErrorBox div {
-  padding: 0.8333rem;
+    padding: 0.8333rem;
 }
 
 /*
@@ -161,13 +161,13 @@ table th.resBoxTitleCell > div {
 */
 
 .infoLog {
-  padding: 0.25rem 0px 0.4167rem 0px;
+    padding: 0.25rem 0px 0.4167rem 0px;
 }
 
 .infoLog span {
-  font-size: 7pt;
-  padding-left: 1.25rem;
-  padding-right: 0.4167rem;
+    font-size: 7pt;
+    padding-left: 1.25rem;
+    padding-right: 0.4167rem;
 }
 
 /*
@@ -175,28 +175,71 @@ table th.resBoxTitleCell > div {
 */
 
 #market_search_filter_category_selector {
-  margin-right: 1.67rem;
+    margin-right: 1.67rem;
 }
 
-#market_search_filter_container_res span {
-  padding-right: 0.25rem;
+#market_search_filter_container_res span,
+#market_search_filter_container_ship span,
+#market_search_filter_container_auction span {
+    padding-right: 0.25rem;
+    margin-top: 0.25rem;
+    padding-top: 0;
 }
 
-#market_search_filter_container_res label {
-  width: 6rem;
-  padding-left: 0.25rem;
+#market_search_filter_container_res label,
+#market_search_filter_container_ship label,
+#market_search_filter_container_auction label {
+    display: inline-block;
+    width: 7rem;
+    padding-left: 1.5em;
+    white-space: nowrap;
+    position: relative;
+    padding-top: 0;
+    margin-top: 0.25rem;
+    user-select: none;
+    vertical-align: top;
 }
 
-#market_search_filter_container_res label[for="filter_strict"] {
-  white-space: nowrap;
+#app.mouse #market_search_filter_container_res label:hover,
+#app.mouse #market_search_filter_container_ship label:hover,
+#app.mouse #market_search_filter_container_auction label:hover {
+    cursor: pointer;
+    text-decoration: underline;
 }
 
-#market_search_filter_container_res input[type="checkbox"] {
-  position: relative;
-  display: inline-block;
-  top: 0.25em;
-  width: 1em;
-  height: 1em;
+#market_search_filter_container_res label[for="market_search_filter_payable"],
+#market_search_filter_container_ship label[for="market_ship_search_filter_payable"],
+#market_search_filter_container_auction label[for="market_auction_search_filter_payable"] {
+    margin-right: 2rem;
+    white-space: break-spaces;
+}
+
+#market_search_filter_container_res input[type="checkbox"],
+#market_search_filter_container_ship input[type="checkbox"],
+#market_search_filter_container_auction input[type="checkbox"] {
+    display: none;
+}
+
+#market_search_filter_container_res label::before,
+#market_search_filter_container_ship label::before,
+#market_search_filter_container_auction label::before {
+    content: "";
+    display: block;
+    position: absolute;
+    top: 0.5em;
+    left: 0;
+    transform: translate(0, -40%);
+    border: 1px solid white;
+    border-radius: 0.125em;
+    width: 1em;
+    height: 1em;
+}
+
+#market_search_filter_container_res input:checked + label::before,
+#market_search_filter_container_ship input:checked + label::before,
+#market_search_filter_container_auction input:checked + label::before {
+    background: url("images/icon-checkmark.svg") center;
+    background-size: 80%;
 }
 
 /*
@@ -204,7 +247,7 @@ table th.resBoxTitleCell > div {
 */
 
 #chatPreview {
-  padding: 0.4167rem 1.67rem;
+    padding: 0.4167rem 1.67rem;
 }
 
 /*
@@ -212,11 +255,11 @@ table th.resBoxTitleCell > div {
 */
 
 #shiplist ul {
-  padding: 0 0.8333rem 0 0.8333rem;
+    padding: 0 0.8333rem 0 0.8333rem;
 }
 
 #shiplist a {
-  padding: 0.4167rem;
+    padding: 0.4167rem;
 }
 
 /*
@@ -224,19 +267,19 @@ table th.resBoxTitleCell > div {
 */
 
 .tooltip {
-  font-size: 9pt;
-  padding: 0.0833rem;
-  max-width: 33.333rem;
-  z-index: 1000;
+    font-size: 9pt;
+    padding: 0.0833rem;
+    max-width: 33.333rem;
+    z-index: 1000;
 }
 
 .tooltip .tttitle {
-  padding: 0.167rem;
-  margin-bottom: 0.167rem;
+    padding: 0.167rem;
+    margin-bottom: 0.167rem;
 }
 
 .tooltip .ttcontent {
-  padding: 0.333rem;
+    padding: 0.333rem;
 }
 
 /*
@@ -244,16 +287,16 @@ table th.resBoxTitleCell > div {
 */
 
 .citybox {
-  z-index: 10;
-  background: #223;
+    z-index: 10;
+    background: #223;
 }
 
 .citybox ul {
-  padding: 0 0.8333rem 0 0.8333rem;
+    padding: 0 0.8333rem 0 0.8333rem;
 }
 
 .citybox a {
-  padding: 0.4167rem;
+    padding: 0.4167rem;
 }
 
 /*
@@ -261,17 +304,17 @@ table th.resBoxTitleCell > div {
 */
 
 .exception-container {
-  margin: 0.8333rem;
+    margin: 0.8333rem;
 }
 
 .exception-message {
-  padding: 0.667rem;
-  margin: 1.67rem 0;
+    padding: 0.667rem;
+    margin: 1.67rem 0;
 }
 
 table.stacktrace td,
 table.stacktrace th {
-  padding: 0.25rem;
+    padding: 0.25rem;
 }
 
 /*
@@ -279,11 +322,24 @@ table.stacktrace th {
 */
 
 .fleetInfoContainer .infoboxcontent {
-  padding: 0.25rem !important;
+    padding: 0.25rem !important;
 }
 
 .fleetInfoProgress {
-  top: 0.75rem;
-  width: 1.33rem;
-  height: 1.33rem;
+    top: 0.75rem;
+    width: 1.33rem;
+    height: 1.33rem;
+    background-size: 100%;
+}
+
+/* Layout */
+.threeColumnList {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.threeColumnList > a {
+    width: 33%;
+    min-width: 16rem;
 }

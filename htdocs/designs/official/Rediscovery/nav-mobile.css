@@ -35,8 +35,9 @@
 
 #main-menu-toggle {
   position: absolute;
-  background-image: url("images/button_mobile_menu_toggle_normal.png");
-  background-size: 100%;
+  background-image: url("images/sprites-nav.png");
+  background-position: 0 51.7934%;
+  background-size: 141.463415%;
   top: 0.93rem;
   left: 1.416rem;
   width: 5.15rem;
@@ -44,17 +45,22 @@
 }
 
 #app.mouse #main-menu-toggle:hover {
-  background-image: url("images/button_mobile_menu_toggle_hover.png");
+  background-image: url("images/sprites-nav.png");
+  background-position: 0 45.624103%;
+  background-size: 141.463415%;
 }
 
 #main-menu-toggle:active {
-  background-image: url("images/button_mobile_menu_toggle_active.png") !important;
+  background-image: url("images/sprites-nav.png");
+  background-position: 0 39.454806%;
+  background-size: 141.463415%;
 }
 
 #top-menu-toggle {
   position: absolute;
-  background-image: url("images/button_mobile_menu_hamburger_normal.png");
-  background-size: 100%;
+  background-image: url("images/sprites-nav.png");
+  background-position: 0 33.285509%;
+  background-size: 141.463415%;
   top: 1.017rem;
   right: 1.5rem;
   width: 3.35rem;
@@ -62,11 +68,15 @@
 }
 
 #app.mouse #top-menu-toggle:hover {
-  background-image: url("images/button_mobile_menu_hamburger_hover.png");
+  background-image: url("images/sprites-nav.png");
+  background-position: 0 27.116212%;
+  background-size: 141.463415%;
 }
 
 #top-menu-toggle:active {
-  background-image: url("images/button_mobile_menu_hamburger_active.png") !important;
+  background-image: url("images/sprites-nav.png");
+  background-position: 0 20.946915%;
+  background-size: 141.463415%;
 }
 
 #mobile-planet-selection{
@@ -109,7 +119,6 @@
   box-sizing: border-box;
   background-image: url("images/nav_main_button_normal.png");
   background-repeat: no-repeat;
-  background-size: 100% 100%;
 }
 
 #mobile-planet-selection .current-planet::after{

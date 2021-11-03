@@ -108,3 +108,7 @@
     width: 0;
     height: 0;
 }
+
+.tabMenu + br + select {
+    margin-top: 2rem;
+}

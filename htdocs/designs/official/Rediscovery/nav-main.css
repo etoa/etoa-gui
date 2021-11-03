@@ -57,7 +57,9 @@ section#nav-top {
 #navigate-overview {
   top: 1.7rem;
   left: 1.7rem;
-  background-image: url("images/button_home_normal.png");
+  background-image: url("images/sprites-nav.png");
+  background-position: 0 14.777618%;
+  background-size: 141.463415%;
 }
 
 #navigate-messages,
@@ -66,7 +68,7 @@ section#nav-top {
   width: 2.6rem;
 }
 
-#app.mouse .button-round-blue:hover {
+.button-round-blue:hover {
   box-shadow: 0 0 0.5rem var(--color-glow-blue);
 }
 
@@ -78,83 +80,115 @@ section#nav-top {
   height: 3.35rem;
 }
 
-#app.mouse #navigate-overview:hover {
-  background-image: url("images/button_home_hover.png");
+#navigate-overview:hover {
+  background-image: url("images/sprites-nav.png");
+  background-position: 0 8.608321%;
+  background-size: 141.463415%;
 }
 
 #navigate-overview:active {
-  background-image: url("images/button_home_active.png") !important;
+  background-image: url("images/sprites-nav.png");
+  background-position: 0 2.439024%;
+  background-size: 141.463415%;
 }
 
 #navigate-help {
   top: 1.25rem;
   right: 1.35rem;
-  background-image: url("images/button_help_normal.png");
+  background-image: url("images/sprites-nav.png");
+  background-position: 0 64.606742%;
+  background-size: 223.076923%;
 }
 
-#app.mouse #navigate-help:hover {
-  background-image: url("images/button_help_hover.png");
+#navigate-help:hover {
+  background-image: url("images/sprites-nav.png");
+  background-position: 0 60.674157%;
+  background-size: 223.076923%;
 }
 
 #navigate-help:active {
-  background-image: url("images/button_help_active.png") !important;
+  background-image: url("images/sprites-nav.png");
+  background-position: 0 56.741573%;
+  background-size: 223.076923%;
 }
 
-#app.mouse #navigate-messages:hover,
-#app.mouse #navigate-reports:hover {
+#navigate-messages:hover,
+#navigate-reports:hover {
   box-shadow: none;
 }
 
 #navigate-messages {
   left: 1.5rem;
-  background-image: url("images/button_messages_normal.png");
+  background-image: url("images/sprites-nav.png");
+  background-position: 0 93.982808%;
+  background-size: 290%;
   border-top-right-radius: 0;
   border-bottom-right-radius: 0;
 }
 
 #navigate-messages.unread {
-  background-image: url("images/button_messages_unread.png");
+  background-image: url("images/sprites-nav.png");
+  background-position: 0 100%;
+  background-size: 290%;
 }
 
-.mouse #navigate-messages:hover {
-  background-image: url("images/button_messages_hover.png");
+#navigate-messages:hover {
+  background-image: url("images/sprites-nav.png");
+  background-position: 0 87.965616%;
+  background-size: 290%;
 }
 
-#app a#navigate-messages:active {
-  background-image: url("images/button_messages_active.png");
+a#navigate-messages:active {
+  background-image: url("images/sprites-nav.png");
+  background-position: 0 81.948424%;
+  background-size: 290%;
 }
 
 #navigate-reports {
   left: 4rem;
-  background-image: url("images/button_reports_normal.png");
+  background-image: url("images/sprites-nav2.png");
+  background-position: 0 76.025237%;
+  background-size: 500%;
   border-top-left-radius: 0;
   border-bottom-left-radius: 0;
 }
 
 #navigate-reports.unread {
-  background-image: url("images/button_reports_unread.png");
+  background-image: url("images/sprites-nav2.png");
+  background-position: 0 89.274448%;
+  background-size: 500%;
 }
 
-.mouse #navigate-reports:hover {
-  background-image: url("images/button_reports_hover.png");
+#navigate-reports:hover {
+  background-image: url("images/sprites-nav2.png");
+  background-position: 0 62.776025%;
+  background-size: 500%;
 }
 
-#app a#navigate-reports:active {
-  background-image: url("images/button_reports_active.png");
+a#navigate-reports:active {
+  background-image: url("images/sprites-nav2.png");
+  background-position: 0 49.526814%;
+  background-size: 500%;
 }
 
 #navigate-notes {
   bottom: 1.25rem;
   right: 3.55rem;
-  background-image: url("images/button_notes_normal.png");
+  background-image: url("images/sprites-nav.png");
+  background-position: 0 76.404494%;
+  background-size: 223.076923%;
 }
 
-#app.mouse #navigate-notes:hover {
-  background-image: url("images/button_notes_hover.png");
+#navigate-notes:hover {
+  background-image: url("images/sprites-nav.png");
+  background-position: 0 72.47191%;
+  background-size: 223.076923%;
 }
 
 #navigate-notes:active {
-  background-image: url("images/button_notes_active.png") !important;
+  background-image: url("images/sprites-nav.png");
+  background-position: 0 68.539326%;
+  background-size: 223.076923%;
 }
 
 #server-time-label {

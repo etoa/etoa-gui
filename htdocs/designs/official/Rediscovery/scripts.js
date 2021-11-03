@@ -483,7 +483,8 @@ class App {
                 let factor = 1;
                 if (property === "width" &&
                     (element.nodeName.toLowerCase() === "col" ||
-                        element.nodeName.toLowerCase() === "th")
+                        element.nodeName.toLowerCase() === "th" ||
+                        element.nodeName.toLowerCase() === "td")
                 ) {
                     factor = 1.4;
                 }

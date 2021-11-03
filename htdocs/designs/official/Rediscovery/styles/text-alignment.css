@@ -18,7 +18,9 @@ form,
 #contentwrap > div,
 form > div,
 #reqInfo > div,
-.techtreeItemContainer > div {
+.techtreeItemContainer > div,
+#havenContentAction,
+.fleetInfoAction > div {
     text-align: center;
 }
 
