@@ -8,7 +8,7 @@ table.tb caption,
 }
 
 /* Blue Hover */
-.tabMenu a:hover{
+.tabMenu a:hover {
     background: url(../images/cellpic2.png);
 }
 
@@ -36,11 +36,25 @@ table.tb td,
 .tabMenu a:hover,
 .tc:hover,
 .tabMenu .tabEnabled,
-.tc .tabEnabled {
+.tc .tabEnabled,
+.overviewInfoTextContainer .infoboxtitle:hover {
     background: url(../images/tab2.png);
 }
 
 /* Black */
- {
-    background: black;
+{
+    background: black
+;
+}
+
+/* Angle Down */
+:not([data-collapsed="true"]) .collapse-toggle {
+    background-size: 100%;
+    background: url("../images/icon-angleDown.svg") center;
+}
+
+/* Angle Left */
+[data-collapsed="true"] .collapse-toggle {
+    background-size: 100%;
+    background: url("../images/icon-angleLeft.svg") center;
 }

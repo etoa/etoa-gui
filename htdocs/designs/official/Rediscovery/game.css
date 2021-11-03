@@ -179,15 +179,24 @@ table th.resBoxTitleCell > div {
 }
 
 #market_search_filter_container_res span {
-  padding-top: 0.25rem;
   padding-right: 0.25rem;
-  width: 8.33rem;
 }
 
 #market_search_filter_container_res label {
-  width: 4.167rem;
-  padding-top: 0.25rem;
+  width: 6rem;
   padding-left: 0.25rem;
+}
+
+#market_search_filter_container_res label[for="filter_strict"] {
+  white-space: nowrap;
+}
+
+#market_search_filter_container_res input[type="checkbox"] {
+  position: relative;
+  display: inline-block;
+  top: 0.25em;
+  width: 1em;
+  height: 1em;
 }
 
 /*

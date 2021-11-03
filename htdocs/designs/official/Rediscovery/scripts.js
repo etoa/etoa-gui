@@ -55,6 +55,7 @@ class App {
         this.mountMainNavigation();
         this.mountMobileNavigation();
         this.mountResourceBar();
+        this.mountInfoBox();
         this.mountPlanetCircle();
         this.mountBuildOverview();
         this.mountShipyard();
@@ -159,6 +160,33 @@ class App {
         }
         const table = caption.parentNode;
         table.classList.add("resBoxTable");
+    }
+
+    /**
+     * Adds a collapse functionality to the main info box on the overview
+     */
+    mountInfoBox() {
+        const infoBox = document.querySelector(".overviewInfoTextContainer");
+        if (infoBox == null) {
+            return;
+        }
+
+        const title = infoBox.querySelector(".infoboxtitle");
+        const content = infoBox.querySelector(".infoboxcontent");
+        const collapseToggle = document.createElement("button");
+        collapseToggle.classList.add("collapse-toggle");
+        title.addEventListener("click", () => {
+            const collapse = infoBox.getAttribute("data-collapsed") !== "true";
+            infoBox.setAttribute("data-collapsed", collapse ? "true" : "false");
+            sessionStorage.setItem("overviewInfoToggle", collapse ? "true" : "false");
+            if (collapse) {
+                sessionStorage.setItem("overviewInfoText", content.innerHTML);
+            }
+        });
+        title.appendChild(collapseToggle);
+        if (sessionStorage.getItem("overviewInfoText") === content.innerHTML) {
+            infoBox.setAttribute("data-collapsed", sessionStorage.getItem("overviewInfoToggle") === "true" ? "true" : "false");
+        }
     }
 
     mountPlanetCircle() {

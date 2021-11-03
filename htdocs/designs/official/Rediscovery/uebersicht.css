@@ -1,3 +1,17 @@
+.overviewInfoTextContainer .infoboxtitle {
+    position: relative;
+    user-select: none;
+}
+.overviewInfoTextContainer .infoboxtitle:hover {
+    cursor: pointer;
+}
+.overviewInfoTextContainer[data-collapsed="true"] .infoboxcontent > * {
+    display: none;
+}
+.overviewInfoTextContainer .infoboxtitle .collapse-toggle {
+    margin-right: 1rem;
+    pointer-events: none;
+}
 .planetOverviewName {
     position: absolute;
     left: 1.25rem;

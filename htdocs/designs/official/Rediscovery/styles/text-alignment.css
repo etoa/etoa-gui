@@ -50,7 +50,8 @@ table.tb caption,
 .infoboxtitle,
 table.tb td,
 table.tb th,
-.infoboxcontent {
+.infoboxcontent,
+.collapse-toggle {
     vertical-align: middle;
 }
 

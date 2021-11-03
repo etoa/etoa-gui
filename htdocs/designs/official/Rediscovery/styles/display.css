@@ -1,5 +1,6 @@
 /* Block */
-.tc a {
+.tc a,
+.collapse-toggle {
     display: block;
 }
 
@@ -7,7 +8,7 @@
 .tabMenu,
 .tabMenu a,
 #pmenu,
-.tc {
+.tc{
     display: inline-block;
 }
 

@@ -11,5 +11,11 @@ table.tb {
 
 /* Flex */
 {
-    flex: 1 1;
+    flex: 1 1
+;
+}
+
+/* Same as font size */
+.collapse-toggle {
+    width: 1em;
 }
