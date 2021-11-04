@@ -183,7 +183,7 @@ if (isset($_GET['mode']) && $_GET['mode'] == "alliance" && $cu->allianceId > 0) 
 // Personal fleets
 //
 else {
-    echo "<input type=\"button\" onclick=\"document.location='?page=fleets&mode=alliance'\" value=\"Allianzflotten anzeigen\" /><br/><br/>";
+    echo "<input type=\"button\" onclick=\"document.location='?page=fleets&mode=alliance'\" value=\"Allianzflotten anzeigen\" title='Schiffsübersicht anzeigen (Kürzel: [ü])' /><br/><br/>";
 
     $ownFleets = $fleetRepository->search(FleetSearch::create()->user($cu->getId()));
     if (count($ownFleets) > 0) {

@@ -132,7 +132,7 @@ if ($cp) {
                 <td>
                     " . $building->name . " (" . $buildlist->currentLevel . ")";
             if ($buildlist->prodPercent == 0) {
-                echo "<br/><span style=\"color:red;font-size:8pt;\">Produktion ausgeschaltet!</span>";
+                echo "<br/><span style=\"color:red;\" class='textSmall'>Produktion ausgeschaltet!</span>";
             }
             echo "</td>";
 
@@ -277,7 +277,7 @@ if ($cp) {
         }
         echo "<td style=\"color:#f00\">" . StringUtils::formatNumber($pwrcnt) . "</td>";
         echo "<td rowspan=\"3\" style=\"color:#f00;vertical-align:middle;\">
-                <input type=\"submit\" name=\"submitpercent\" class=\"button\" style=\"font-size:8pt;\" value=\"Speichern\" />
+                <input type=\"submit\" name=\"submitpercent\" class=\"button textSmall\" value=\"Speichern\" />
             </td>";
         echo "</tr>";
 
@@ -324,7 +324,7 @@ if ($cp) {
 
     echo "<div>
         <input type=\"button\" onclick=\"document.location='?page=specialists'\" value=\"Spezialisten\" /> &nbsp; ";
-    echo "<input type=\"button\" onclick=\"document.location='?page=planetstats'\" value=\"Ressourcen aller Planeten anzeigen\" /> &nbsp;
+    echo "<input type=\"button\" onclick=\"document.location='?page=planetstats'\" value=\"Ressourcen aller Planeten anzeigen\" title='Ressourcen aller Planeten anzeigen (Kürzel: [P])' /> &nbsp;
         <input type=\"button\" onclick=\"document.location='?page=economy&action=update'\" value=\"Neu Berechnen\" />
         </div>";
 

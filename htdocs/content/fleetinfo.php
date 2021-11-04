@@ -227,32 +227,32 @@ if ($valid > 0) {
 
     $totalFlightTime = $fd->landTime() - $fd->launchTime();
 ?>
-    <script type="text/javascript;">
+    <script type="text/javascript">
         function moveFleet(t) {
-            var objectWidth = 40;
-            var progrssWidth = $('.fleetInfoWrap').width() - (2 * objectWidth);
+            const objectWidth = 40;
+            const progrssWidth = $('.fleetInfoWrap').width() - (2 * objectWidth);
             perc = <?= $totalFlightTime ?> > 0 ? ((t - <?= $fd->launchTime() ?>) / (<?= $totalFlightTime ?>)) : 1;
             perc = Math.min(1, perc);
             pxl = objectWidth + Math.round(perc * progrssWidth);
             $('#fleetProgress').css('left', pxl + 'px');
             $('#flightPercent').html(Math.round(perc * 100) + "%");
             setTimeout(function() {
-                moveFleet(t + 1);
-            }, 1000);
+                moveFleet(t + 0.05);
+            }, 50);
         }
-        $(function() {
-            moveFleet(<?= time() ?>);
+        document.addEventListener("DOMContentLoaded", () => {
+            moveFleet(<?=time()?>);
         });
     </script>
 <?PHP
 
     //Some adjustements for special actions
     if ($fd->getAction()->code() == "support" && $fd->status() == 3) {
-        echo "<script type=\"text/javascript;\">
+        echo "<script type=\"text/javascript\">
                 document.getElementById('targetLabel').innerHTML = 'Ende';
                 </script>";
     } elseif ($fd->getAction()->code() == "alliance" && $lead_id > 0 && $fd->status() == 0) {
-        echo "<script type=\"text/javascript;\">
+        echo "<script type=\"text/javascript\">
                 document.getElementById('allianceBox').style.display= '';
                 document.getElementById('allianceBox').innerHTML = '";
         tableStart("Allianzangriff", "50%");

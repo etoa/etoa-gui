@@ -649,9 +649,9 @@ if ($shipyard !== null && $shipyard->currentLevel > 0) {
                     $obj_t_passed = $data->objectTime - $obj_t_remaining;
                     echo "<tr>
                             <th colspan=\"2\">Aktuell</th>
-                            <th style=\"width:150px;\">Start</th>
-                            <th style=\"width:150px;\">Ende</th>
-                            <th style=\"width:80px;\" colspan=\"2\">Verbleibend</th>
+                            <th>Start</th>
+                            <th>Ende</th>
+                            <th colspan=\"2\">Verbleibend</th>
                         </tr>";
                     echo "<tr>";
                     echo "<td colspan=\"2\">" . $ships[$data->shipId]->name . "</td>";
@@ -662,10 +662,11 @@ if ($shipyard !== null && $shipyard->currentLevel > 0) {
                     echo "<tr>
                             <th style=\"width:40px;\">Anzahl</th>
                             <th>Bauauftrag</th>
-                            <th style=\"width:150px;\">Start</th>
-                            <th style=\"width:150px;\">Ende</th>
-                            <th style=\"width:150px;\">Verbleibend</th>
-                            <th style=\"width:80px;\">Aktionen</th>
+                            <th style='width:100%'>Bauauftrag</th>
+                            <th>Start</th>
+                            <th>Ende</th>
+                            <th>Verbleibend</th>
+                            <th>Aktionen</th>
                         </tr>";
                     $first = false;
                 }
@@ -673,9 +674,9 @@ if ($shipyard !== null && $shipyard->currentLevel > 0) {
                 echo "<tr>";
                 echo "<td id=\"objcount\">" . $data->count . "</td>";
                 echo "<td>" . $ships[$data->shipId]->name . "</td>";
-                echo "<td>" . StringUtils::formatDate($absolute_starttime) . "</td>";
-                echo "<td>" . StringUtils::formatDate($absolute_starttime + $data->endTime - $data->startTime) . "</td>";
-                echo "<td>" . StringUtils::formatTimespan($data->endTime - time()) . "</td>";
+                echo "<td style='white-space: nowrap;'>" . StringUtils::formatDate($absolute_starttime) . "</td>";
+                echo "<td style='white-space: nowrap;'>" . StringUtils::formatDate($absolute_starttime + $data->endTime - $data->startTime) . "</td>";
+                echo "<td style='white-space: nowrap;'>" . StringUtils::formatTimespan($data->endTime - time()) . "</td>";
                 echo "<td id=\"cancel\">";
                 if ($cancelable) {
                     echo "<a href=\"?page=$page&amp;cancel=" . $data->id . "\" onclick=\"return confirm('Soll dieser Auftrag wirklich abgebrochen werden?');\">Abbrechen</a>";
@@ -699,18 +700,19 @@ if ($shipyard !== null && $shipyard->currentLevel > 0) {
 
         $cnt = 0;
         if (count($shipCategories) > 0) {
+            $compactView = $properties->itemShow !== 'full';
             foreach ($shipCategories as $category) {
                 if (!isset($shipsByCategory[$category->id])) {
                     continue;
                 }
 
-                tableStart($category->name);
+                tableStart($category->name, 0, "", "", "shipCategory ".($compactView ? "compact" : ""));
                 $ccnt = 0;
 
                 // Auflistung der Schiffe (auch diese, die noch nicht gebaut wurden)
                 if (isset($shipsByCategory[$category->id]) && count($shipsByCategory[$category->id]) > 0) {
                     //Einfache Ansicht
-                    if ($properties->itemShow != 'full') {
+                    if ($compactView) {
                         echo '<tr>
                                         <th colspan="2" class="tbltitle">Schiff</th>
                                         <th class="tbltitle">Zeit</th>
@@ -941,7 +943,7 @@ if ($shipyard !== null && $shipyard->currentLevel > 0) {
                                 }
 
                                 // Volle Ansicht
-                                if ($properties->itemShow == 'full') {
+                                if (!$compactView) {
                                     if ($ccnt > 0) {
                                         echo "<tr>
                                                     <td colspan=\"5\" style=\"height:5px;\"></td>
@@ -949,11 +951,11 @@ if ($shipyard !== null && $shipyard->currentLevel > 0) {
                                     }
                                     $s_img = $shipData->getImagePath('medium');
 
-                                    echo "<tr>
+                                    echo "<tr class='shipRowName'>
                                         <th colspan=\"5\" height=\"20\">" . $shipData->name . "</th>
                                     </tr>
                                     <tr>
-                                        <td width=\"120\" height=\"120\" rowspan=\"3\">";
+                                        <td class='shipCellImage' width=\"120\" height=\"120\" rowspan=\"3\">";
 
                                     //Bei Spezialschiffen nur Bild ohne Link darstellen
                                     if ($shipData->special) {
@@ -965,7 +967,7 @@ if ($shipyard !== null && $shipyard->currentLevel > 0) {
                                     <img src=\"" . $s_img . "\" width=\"120\" height=\"120\" border=\"0\" /></a>";
                                     }
                                     echo "</td>
-                                        <td colspan=\"4\" valign=\"top\">" . $shipData->shortComment . "</td>
+                                        <td class='shipCellDescription' colspan=\"4\" valign=\"top\">" . $shipData->shortComment . "</td>
                                     </tr>
                                     <tr>
                                         <th  height=\"30\">Vorhanden:</th>
@@ -1020,18 +1022,18 @@ if ($shipyard !== null && $shipyard->currentLevel > 0) {
                                     $s_img = $shipData->getImagePath('small');
 
                                     echo "<tr>
-                                        <td>";
+                                        <td class='shipCellImage'>";
 
                                     //Spezialschiffe ohne Link darstellen
                                     if ($shipData->special) {
-                                        echo "<img src=\"$s_img\" width=\"40\" height=\"40\" border=\"0\" /></td>";
+                                        echo "<img class='shipImageSmall' src=\"$s_img\" border=\"0\" /></td>";
                                     }
                                     //Normale Schiffe mit Link zur Hilfe darstellen
                                     else {
-                                        echo "<a href=\"" . HELP_URL . "&amp;id=" . $shipData->id . "\"><img src=\"" . $s_img . "\" width=\"40\" height=\"40\" border=\"0\" /></a></td>";
+                                        echo "<a href=\"" . HELP_URL . "&amp;id=" . $shipData->id . "\"><img src=\"" . $s_img . "\" class='shipImageSmall' border=\"0\" /></a></td>";
                                     }
 
-                                    echo "<th width=\"30%\">
+                                    echo "<th class='shipCellName' width=\"30%\">
                                             <span style=\"font-weight:500\">" . $shipData->name . "<br/>
                                             Gebaut:</span> " . StringUtils::formatNumber($shiplist_count) . "
                                         </th>

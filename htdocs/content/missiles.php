@@ -570,7 +570,7 @@ if ($missileBuilding !== null && $missileBuilding->currentLevel > 0) {
                             echo "<a href=\"" . HELP_URL . "&amp;id=" . $missile->id . "\"><img src=\"" . $d_img . "\" width=\"40\" height=\"40\" border=\"0\" /></a></td>";
                             echo "<th width=\"40%\">
                                         " . $missile->name . "<br/>
-                                        <span style=\"font-weight:500;font-size:8pt;\">
+                                        <span class=\"textSmall\" style=\"font-weight:500;\">
                                         <b>Vorhanden:</b> " . StringUtils::formatNumber($missilelist[$missile->id]) . "</span></th>
                                     <td width=\"10%\" " . $ress_style_metal . ">" . StringUtils::formatNumber($missile->costsMetal) . "</td>
                                     <td width=\"10%\" " . $ress_style_crystal . ">" . StringUtils::formatNumber($missile->costsCrystal) . "</td>

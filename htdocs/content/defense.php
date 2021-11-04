@@ -337,7 +337,7 @@ if ($factoryBuilding !== null && $factoryBuilding->currentLevel > 0) {
 
 
         /****************************
-         *  Schiffe in Auftrag geben *
+         *  Verteidigungen in Auftrag geben *
          ****************************/
 
         if (count($_POST) > 0 && isset($_POST['submit']) && checker_verify()) {
@@ -653,9 +653,9 @@ if ($factoryBuilding !== null && $factoryBuilding->currentLevel > 0) {
                         $obj_t_passed = $queueItem->objectTime - $obj_t_remaining;
                         echo "<tr>
                                 <th colspan=\"2\">Aktuell</th>
-                                <th style=\"width:150px;\">Start</th>
-                                <th style=\"width:150px;\">Ende</th>
-                                <th style=\"width:80px;\" colspan=\"2\">Verbleibend</th>
+									<th>Start</th>
+									<th>Ende</th>
+									<th colspan=\"2\">Verbleibend</th>
                             </tr>
                             <tr>
                             <td colspan=\"2\">" . $defs[$queueItem->defenseId]->name . "</td>
@@ -666,10 +666,10 @@ if ($factoryBuilding !== null && $factoryBuilding->currentLevel > 0) {
                         <tr>
                             <th style=\"width:40px;\">Anzahl</th>
                             <th>Bauauftrag</th>
-                            <th style=\"width:150px;\">Start</th>
-                            <th style=\"width:150px;\">Ende</th>
-                            <th style=\"width:150px;\">Verbleibend</th>
-                            <th style=\"width:80px;\">Aktionen</th>
+								<th>Start</th>
+								<th>Ende</th>
+								<th>Verbleibend</th>
+								<th>Aktionen</th>
                         </tr>";
                         $first = false;
                     }
@@ -677,9 +677,9 @@ if ($factoryBuilding !== null && $factoryBuilding->currentLevel > 0) {
                     echo "<tr>
                             <td id=\"objcount\">" . $queueItem->count . "</td>
                             <td>" . $defs[$queueItem->defenseId]->name . "</td>
-                            <td>" . StringUtils::formatDate($absolute_starttime) . "</td>
-                            <td>" . StringUtils::formatDate($absolute_starttime + $queueItem->endTime - $queueItem->startTime) . "</td>
-                            <td>" . StringUtils::formatTimespan($queueItem->endTime - time()) . "</td>
+                            <td style='white-space: nowrap;'>" . StringUtils::formatDate($absolute_starttime) . "</td>
+                            <td style='white-space: nowrap;'>" . StringUtils::formatDate($absolute_starttime + $queueItem->endTime - $queueItem->startTime) . "</td>
+                            <td style='white-space: nowrap;'>" . StringUtils::formatTimespan($queueItem->endTime - time()) . "</td>
                             <td id=\"cancel\">";
                     if ($cancelable) {
                         echo "<a href=\"?page=$page&amp;cancel=" . $queueItem->id . "\" onclick=\"return confirm('Soll dieser Auftrag wirklich abgebrochen werden?');\">Abbrechen</a>";
@@ -702,14 +702,15 @@ if ($factoryBuilding !== null && $factoryBuilding->currentLevel > 0) {
 
         $cnt = 0;
         if (count($categories) > 0) {
+            $compactView = $properties->itemShow !== 'full';
             foreach ($categories as $category) {
-                tableStart($category->name);
+                tableStart($category->name, 0, "", "", "defenseCategory ".($compactView ? "compact" : ""));
                 $ccnt = 0;
 
                 // Auflistung der Verteidigung (auch diese, die noch nicht gebaut wurden)
                 if (isset($defenseByCategory[$category->id])) {
                     //Einfache Ansicht
-                    if ($properties->itemShow !== 'full') {
+                    if ($compactView) {
                         echo "<tr>
                                         <th colspan=\"2\">Anlage</th>
                                         <th>Zeit</th>
@@ -738,9 +739,9 @@ if ($factoryBuilding !== null && $factoryBuilding->currentLevel > 0) {
                             }
                         }
 
-                        // Schiffdatensatz zeigen wenn die Voraussetzungen erfüllt sind und das Schiff in diese Kategorie gehört
+                        // Verteidigungsdatensatz zeigen wenn die Voraussetzungen erfüllt sind und die Verteidigung in diese Kategorie gehört
                         if ($build_def == 1) {
-                            // Zählt die Anzahl Schiffe dieses Typs im ganzen Account...
+                            // Zählt die Anzahl Verteidigungen dieses Typs im ganzen Account...
                             $def_count = 0;
                             // ... auf den Planeten
                             if (isset($deflist[$defense->id])) {
@@ -829,7 +830,7 @@ if ($factoryBuilding !== null && $factoryBuilding->currentLevel > 0) {
                             $def_max_build = min($build_cnt_metal, $build_cnt_crystal, $build_cnt_plastic, $build_cnt_fuel, $build_cnt_food, $max_cnt, $build_cnt_fields);
 
                             //Tippbox Nachricht generieren
-                            //X Schiffe baubar
+                            //X Verteidigungen baubar
                             if ($def_max_build > 0) {
                                 $tm_cnt = "Es k&ouml;nnen maximal " . StringUtils::formatNumber($def_max_build) . " Anlagen gebaut werden.";
                             }
@@ -921,7 +922,7 @@ if ($factoryBuilding !== null && $factoryBuilding->currentLevel > 0) {
                                 $ress_style_food = "";
                             }
 
-                            // Speichert die Anzahl gebauter Schiffe in eine Variable
+                            // Speichert die Anzahl gebauter Verteidigungen in eine Variable
                             if (isset($deflist[$defense->id])) {
                                 $deflist_count = $deflist[$defense->id];
                             } else {
@@ -929,7 +930,7 @@ if ($factoryBuilding !== null && $factoryBuilding->currentLevel > 0) {
                             }
 
                             // Volle Ansicht
-                            if ($properties->itemShow == 'full') {
+                            if (!$compactView) {
                                 if ($ccnt > 0) {
                                     echo "<tr>
                                             <td colspan=\"5\" style=\"height:5px;\"></td>
@@ -937,15 +938,15 @@ if ($factoryBuilding !== null && $factoryBuilding->currentLevel > 0) {
                                 }
                                 $s_img = $defense->getImagePath('medium');
 
-                                echo "<tr>
+                                echo "<tr class='defenseRowName'>
                                         <th colspan=\"5\" height=\"20\">" . $defense->name . "</th>
                                     </tr>
                                     <tr>
-                                        <td width=\"120\" height=\"120\" rowspan=\"3\">
+                                        <td class='defenseCellImage' width=\"120\" height=\"120\" rowspan=\"3\">
                                             <a href=\"" . HELP_URL . "&amp;id=" . $defense->id . "\" title=\"Info zu dieser Anlage anzeigen\">
                                             <img src=\"" . $s_img . "\" width=\"120\" height=\"120\" border=\"0\" /></a>
                                         </td>
-                                        <td colspan=\"4\" valign=\"top\">" . $defense->shortComment . "</td>
+                                        <td class='defenseCellDescription' colspan=\"4\" valign=\"top\">" . $defense->shortComment . "</td>
                                     </tr>
                                     <tr>
                                         <th  height=\"30\">Vorhanden:</th>
@@ -999,10 +1000,10 @@ if ($factoryBuilding !== null && $factoryBuilding->currentLevel > 0) {
                                 $s_img = $defense->getImagePath('small');
 
                                 echo "<tr>
-                                        <td>
+                                        <td class='defenseCellImage'>
                                             <a href=\"" . HELP_URL . "&amp;id=" . $defense->id . "\"><img src=\"" . $s_img . "\" width=\"40\" height=\"40\" border=\"0\" /></a>
                                         </td>
-                                        <th width=\"30%\">
+                                        <th class='defenseCellName' width=\"30%\">
                                             <span style=\"font-weight:500\">" . $defense->name . "<br/>
                                             Gebaut:</span> " . StringUtils::formatNumber($deflist_count) . "
                                         </th>
