@@ -330,6 +330,8 @@ try {
         'infoText' => $infoText->enabled && !empty($infoText->content) ? $infoText->content : null,
         'helpBox' => $cu->properties->helpBox == 1,
         'noteBox' => $cu->properties->noteBox==1,
+        'viewportScale' => $_SESSION['viewportScale'] ?? 0,
+        'fontSize' => ($_SESSION['viewportScale'] ?? 1) * 16 . "px"
     ]));
 } catch (DBException $e) {
     ob_clean();
