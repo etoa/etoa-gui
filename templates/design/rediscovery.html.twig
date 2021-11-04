@@ -1,13 +1,10 @@
+{% extends 'layout/base.html.twig' %}
 {#
 -----------------------------------------------------------------------------------------------------------------------------------
 //--Beschreibung       :         Re:Discovery-Menuedesign Version
-//--Version            :         1.0
-//--Datum              :         21. August 2021
-//--Autor              :         Michael van Ingen & HeaX
-//--                             Ingame-Buttonstyle wie im Menue anpassen (button1, button2 ? )
-//--                             Preload nach dem Logon 1x Ausführen, damit er aus dem Body herausgenommen werden kann
 //---------------------------------------------------------------------------------------------------------------------------------
 #}
+{% block layoutContent %}
 <div id="app">
   {# --------------------------------- Mobile Reload Hinweis --------------------------------- #}
   <div class="mobile-reloader"></div>
@@ -164,3 +161,4 @@
   </div>
 
 </div>
+{% endblock %}
