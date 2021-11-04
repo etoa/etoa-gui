@@ -56,16 +56,6 @@ class FleetScanService
     private const FLEET_DIRECTION_ARRIVING = 'arriving';
     private const FLEET_DIRECTION_DEPARTING = 'departing';
 
-    private const DECRYPT_LEVEL_NUMBER_OF_FLEETS = 0;
-    private const DECRYPT_LEVEL_INDIVIDUAL_FLEETS = 10;
-    private const DECRYPT_LEVEL_INDIVIDUAL_SHIPS = 15;
-    private const DECRYPT_LEVEL_INDIVIDUAL_SHIPS_TOTAL = 20;
-    private const DECRYPT_LEVEL_INDIVIDUAL_SHIP_COUNT = 25;
-    private const DECRYPT_LEVEL_TIME_QUARTER_HOUR = 15;
-    private const DECRYPT_LEVEL_TIME_MINUTES = 20;
-    private const DECRYPT_LEVEL_TIME_SECONDS = 25;
-    private const DECRYPT_LEVEL_FLEET_ACTION = 30;
-
     public function __construct(
         ConfigurationService $config,
         UserRepository $userRepository,
@@ -176,10 +166,30 @@ class FleetScanService
 
         $decryptLevel = $this->calculateDecryptLevel($cryptoCenterLevel, $selfSpy, $selfComputer, $opJam, $opStealth, $opComputer);
 
+        $arrivingFleets = $this->getFleets($targetEntity, self::FLEET_DIRECTION_ARRIVING);
+        $departingFleets = $this->getFleets($targetEntity, self::FLEET_DIRECTION_DEPARTING);
+        $totalFleets = count($arrivingFleets) + count($departingFleets);
+
         $out = "[b]Flottenscan vom Planeten " . $targetPlanet->name . "[/b] (" . $targetEntity->coordinatesString() . ")\n\n";
-        $out .= $this->fleetReport($targetEntity, self::FLEET_DIRECTION_ARRIVING, $decryptLevel);
-        $out .= $this->fleetReport($targetEntity, self::FLEET_DIRECTION_DEPARTING, $decryptLevel);
-        $out .= "\n\nEntschlüsselchance: $decryptLevel";
+
+        if ($decryptLevel >= $this->config->getInt("crypto_number_of_fleets_level")) {
+            $out .= "Es sind " . $totalFleets . " Flotten unterwegs.\n\n";
+        } else {
+            if ($totalFleets > 0) {
+                $out .= "Es sind Flotten unterwegs.\n\n";
+            } else {
+                $out .= "Es sind keine Flotten unterwegs.\n\n";
+            }
+        }
+
+        if ($decryptLevel >= $this->config->getInt("crypto_fleets_incoming_level")) {
+            $out .= $this->fleetReport($arrivingFleets, self::FLEET_DIRECTION_ARRIVING, $decryptLevel);
+        }
+        if ($decryptLevel >= $this->config->getInt("crypto_fleets_send_level")) {
+            $out .= $this->fleetReport($departingFleets, self::FLEET_DIRECTION_DEPARTING, $decryptLevel);
+        }
+
+        $out .= "\nEntschlüsselchance: $decryptLevel";
 
         // Subtract resources
         $this->planetRepository->addResources($planet->id, 0, 0, 0, -$cryptoFuelCostsPerScan, 0);
@@ -252,24 +262,36 @@ class FleetScanService
 
         return $value;
     }
+
     private function calculateChance(int $cryptoCenterLevel, int $selfSpy, int $opJam, int $opStealth): float
     {
-        return ($cryptoCenterLevel - $opJam) + (0.3 * ($selfSpy - $opStealth)) + random_int(0, 2) - 1;
+        $minRandomChance = $this->config->getInt("crypto_chance_rand_mod_min");
+        $maxRandomChance = $this->config->getInt("crypto_chance_rand_mod_max");
+
+        $infrastructureChance = $cryptoCenterLevel - $opJam;
+        $researchChance = 0.3 * ($selfSpy - $opStealth);
+        $randomChance = mt_rand($minRandomChance, $maxRandomChance);
+
+        return $infrastructureChance + $researchChance + $randomChance;
     }
 
     private function calculateDecryptLevel(int $cryptoCenterLevel, int $selfSpy, int $selfComputer, int $opJam, int $opStealth, int $opComputer): float
     {
-        return ($cryptoCenterLevel - $opJam) + (0.75 * ($selfSpy + $selfComputer - $opStealth - $opComputer)) + random_int(0, 2) - 1;
+        $minRandomLevel = $this->config->getInt("crypto_level_rand_mod_min");
+        $maxRandomLevel = $this->config->getInt("crypto_level_rand_mod_max");
+
+        $infrastructureLevel = $cryptoCenterLevel - $opJam;
+        $researchLevel = 0.75 * ($selfSpy + $selfComputer - $opStealth - $opComputer);
+        $randomLevel = mt_rand($minRandomLevel, $maxRandomLevel);
+
+        return $infrastructureLevel + $researchLevel + $randomLevel;
     }
 
-    private function fleetReport(Entity $targetEntity, string $direction, float $decryptLevel): string
+    /**
+     * @return array<Fleet>
+     */
+    private function getFleets(Entity $targetEntity, string $direction): array
     {
-        $out = "";
-        if ($direction == self::FLEET_DIRECTION_ARRIVING) {
-            $out .= "[b]Eintreffende Flotten[/b]\n\n";
-        } elseif ($direction == self::FLEET_DIRECTION_DEPARTING) {
-            $out .= "[b]Wegfliegende Flotten[/b]\n\n";
-        }
         $params = new FleetSearchParameters();
         if ($direction == self::FLEET_DIRECTION_ARRIVING) {
             $params->entityTo = $targetEntity->id;
@@ -277,17 +299,28 @@ class FleetScanService
             $params->entityFrom = $targetEntity->id;
         }
 
-        $fleets = $this->fleetRepository->findByParameters($params);
+        return $this->fleetRepository->findByParameters($params);
+    }
+
+    /**
+     * @param Fleet[] $fleets
+     * @param string $direction
+     * @param float $decryptLevel
+     * @return string
+     */
+    private function fleetReport(array $fleets, string $direction, float $decryptLevel): string
+    {
+        $out = "";
+        if ($direction == self::FLEET_DIRECTION_ARRIVING) {
+            $out .= "[b]Eintreffende Flotten[/b]\n\n";
+        } elseif ($direction == self::FLEET_DIRECTION_DEPARTING) {
+            $out .= "[b]Wegfliegende Flotten[/b]\n\n";
+        }
+
         if (count($fleets) > 0) {
-            if ($decryptLevel >= self::DECRYPT_LEVEL_INDIVIDUAL_FLEETS) {
-                $out .= "Es sind " . count($fleets) . " Flotten unterwegs:\n\n";
-                foreach ($fleets as $fleet) {
-                    $out .= $this->individualFleetReport($fleet, self::FLEET_DIRECTION_ARRIVING, $decryptLevel);
-                }
-            } elseif ($decryptLevel >= self::DECRYPT_LEVEL_NUMBER_OF_FLEETS) {
-                $out .= "Es sind " . count($fleets) . " Flotten unterwegs\n\n";
-            } else {
-                $out .= "Es sind Flotten unterwegs\n\n";
+            $out .= "Es sind " . count($fleets) . " Flotten unterwegs:\n\n";
+            foreach ($fleets as $fleet) {
+                $out .= $this->individualFleetReport($fleet, $direction, $decryptLevel);
             }
         } else {
             if ($direction == self::FLEET_DIRECTION_ARRIVING) {
@@ -314,42 +347,64 @@ class FleetScanService
         }
 
         $out .= "\n[b]Ankunft:[/b] ";
-        if ($decryptLevel >= self::DECRYPT_LEVEL_TIME_SECONDS) {
+        if ($decryptLevel >= $this->config->getInt("crypto_time_sec_level")) {
             $out .= date("d.m.Y H:i:s", $fleet->landTime) . " Uhr";
-        } elseif ($decryptLevel >= self::DECRYPT_LEVEL_TIME_MINUTES) {
+        } elseif ($decryptLevel >= $this->config->getInt("crypto_time_min_level")) {
             $out .= date("d.m.Y H:i", $fleet->landTime) . " Uhr";
-        } elseif ($decryptLevel >= self::DECRYPT_LEVEL_TIME_QUARTER_HOUR) {
-            $rand = random_int(0, 2 * 7 * 60);
-            $out .= "Zwischen " . date("d.m.Y H:i", $fleet->landTime - $rand) . " und " . date("d.m.Y H:i", $fleet->landTime + (2 * 7 * 60) - $rand) . " Uhr";
-        } else {
-            $rand = random_int(0, 30 * 60 * 2);
-            $out .= "Zwischen " . date("d.m.Y H:i", $fleet->landTime - $rand) . " und " . date("d.m.Y H:i", $fleet->landTime + (2 * 30 * 60) - $rand) . " Uhr";
+        } elseif ($decryptLevel >= $this->config->getInt("crypto_time_15_level")) {
+            $rand = random_int(0, 15 * 60); // 15 times 60 seconds
+            $out .= "Zwischen " . date("d.m.Y H:i", $fleet->landTime - $rand) . " und " . date("d.m.Y H:i", $fleet->landTime + (15 * 60) - $rand) . " Uhr";
+        } elseif ($decryptLevel >= $this->config->getInt("crypto_time_30_level")) {
+            $rand = random_int(0, 30 * 60); // 30 times 60 seconds
+            $out .= "Zwischen " . date("d.m.Y H:i", $fleet->landTime - $rand) . " und " . date("d.m.Y H:i", $fleet->landTime + (30 * 60) - $rand) . " Uhr";
+        } elseif ($decryptLevel >= $this->config->getInt("crypto_time_60_level")) {
+            $rand = random_int(0, 60 * 60); // 60 times 60 seconds
+            $out .= "Zwischen " . date("d.m.Y H:i", $fleet->landTime - $rand) . " und " . date("d.m.Y H:i", $fleet->landTime + (60 * 60) - $rand) . " Uhr";
         }
 
-        if ($decryptLevel >= self::DECRYPT_LEVEL_FLEET_ACTION) {
+        if ($decryptLevel >= $this->config->getInt("crypto_action_level")) {
             $action = LegacyFleetAction::createFactory($fleet->action);
-            $out .= "\n[b]Aktion:[/b] " . substr((string) $action, 25, -7) . "\n";
+            $out .= "\n[b]Aktion:[/b] " . substr((string)$action, 25, -7) . "\n";
         } else {
             $out .= "\n";
         }
 
-        if ($decryptLevel >= self::DECRYPT_LEVEL_INDIVIDUAL_SHIPS) {
+        if ($decryptLevel >= $this->config->getInt("crypto_ships_type_level") ||
+            $decryptLevel >= $this->config->getInt("crypto_ships_count_all_level") ||
+            $decryptLevel >= $this->config->getInt("crypto_ships_count_single_level")
+        ) {
             $shipEntries = $this->fleetRepository->findAllShipsInFleet($fleet->id);
             $totalShips = 0;
             $shipNames = $this->shipDataRepository->getAllShips();
             foreach ($shipEntries as $shipEntry) {
                 $shipName = $shipNames[$shipEntry->id] ?? 'Unbekannt';
-                if ($decryptLevel >= self::DECRYPT_LEVEL_INDIVIDUAL_SHIP_COUNT) {
-                    $out .= $shipEntry->count . " " . $shipName . "\n";
-                } else {
-                    $out .= $shipName . "\n";
+
+                if (($decryptLevel >= $this->config->getInt("crypto_ships_count_single_level")) &&
+                    ($decryptLevel >= $this->config->getInt("crypto_ships_type_level"))) {
+                    $out .= "" . $shipEntry->count . " " . $shipName . "\n";
+                } elseif ($decryptLevel >= $this->config->getInt("crypto_ships_count_single_level")) {
+                    $out .= "" . $shipEntry->count . "\n";
+                } elseif ($decryptLevel >= $this->config->getInt("crypto_ships_type_level")) {
+                    $out .= "" . $shipName . "\n";
                 }
+
                 $totalShips += $shipEntry->count;
             }
-            if ($decryptLevel >= self::DECRYPT_LEVEL_INDIVIDUAL_SHIPS_TOTAL) {
+            if ($decryptLevel >= $this->config->getInt("crypto_ships_count_all_level")) {
                 $out .= $totalShips . " Schiffe total\n";
             }
         }
+
+        if ($decryptLevel >= $this->config->getInt("crypto_resources_level")) {
+            $out .= "[b]Ressourcen:[/b]";
+            $out .= " Titan: " . number_format($fleet->resMetal);
+            $out .= " Silizium: " . number_format($fleet->resCrystal);
+            $out .= " PVC: " . number_format($fleet->resPlastic);
+            $out .= " Tritium: " . number_format($fleet->resFuel);
+            $out .= " Nahrung: " . number_format($fleet->resFood);
+            $out .= "\n";
+        }
+
         $out .= "\n";
 
         return $out;
