@@ -422,7 +422,7 @@ class App {
         video.muted = true;
         video.poster = "/images/fleetbg.png";
         video.classList.add("fleetInfoBackground");
-        video.src = "/designs/official/ReDiscovery/images/bg-fleet.mp4";
+        video.src = "/designs/official/Reiscovery/images/bg-fleet.mp4";
 
         infoboxcontent.prepend(video);
     }
