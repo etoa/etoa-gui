@@ -121,20 +121,19 @@ class App {
     }
 
     mountServerTime(element) {
-        // const timeParts = element.innerText.split(":");
-        const timeParts = "23:00:00".split(":");
+        const timeParts = element.innerText.split(":");
         if (timeParts.length < 3) {
             console.warn("Failed to mount server time on element " + element);
             return;
         }
         const hour = parseInt(timeParts[0]);
-        const minute = parseInt(timeParts[1]);
-        const second = parseInt(timeParts[2]);
 
         const startTimestamp = new Date();
         const startDate = new Date(startTimestamp);
-        let fullYear = startDate.getFullYear();
-        let month = startDate.getMonth();
+        const fullYear = startDate.getFullYear();
+        const month = startDate.getMonth();
+        const minute = startDate.getMinutes();
+        const second = Math.round(startDate.getSeconds() + startDate.getMilliseconds() / 1000);
         let day = startDate.getDay();
         const referenceDate = new Date(fullYear, month, day, hour, minute, second);
         if (startTimestamp.getHours() < hour) {
@@ -503,6 +502,9 @@ class App {
         const elements = document.querySelectorAll("*[style]");
         const properties = ["width", "height", "top", "left", "bottom", "right", "font-size"];
         for (let element of elements) {
+            if(element.nodeName === "HTML") {
+                continue;
+            }
             for (let property of properties) {
                 let factor = 1;
                 if (property === "width" &&
