@@ -1,0 +1,148 @@
+/*
+* Galaxy and sector maps
+*/
+
+#sector_map_table {
+    border: none;
+    margin: 0 auto;
+    table-layout: fixed;
+}
+
+table.galaxyTableSector {
+    border-width: 0;
+    border-collapse: collapse;
+    max-width: 100%;
+    margin: 0.625rem auto;
+    table-layout: fixed;
+}
+
+table.galaxyTableSector td {
+    background: none;
+    padding: 0;
+    border: none;
+    line-height: 0;
+}
+
+table.galaxyTableSector td.galaxyCell {
+    border: 0.167rem dashed #555;
+}
+
+table.galaxyTableSector .galaxyCell .cell {
+    display: block;
+    width: 100%;
+    height: 100%;
+    background-size: 100%;
+}
+
+table.galaxyTableSector .galaxyCell > a > img {
+    width: 100%;
+    height: 100%;
+}
+
+table.galaxyTableSector .galaxyCellNumber {
+    background: transparent;
+}
+
+table.galaxyTableSector .cell_number_horizontal {
+    width: 100%;
+}
+
+#sector_map_table .cell_number_vertical {
+    height: 100%;
+}
+
+#galaxy_map_nav {
+    text-align: center;
+    vertical-align: middle;
+}
+
+#galaxy_map_container {
+    background: black url("../../../images/main_bg.jpg");
+    background-size: 100%;
+    text-align: center;
+    padding: 0;
+}
+
+#sector_map_nav {
+    text-align: center;
+    vertical-align: middle;
+}
+
+#sector_map_container {
+    background: black url("../../../images/main_bg.jpg");
+    background-size: 100%;
+    padding: 0;
+    margin: 0;
+}
+
+#sector_map_table .sector_map_neighbour_nav {
+    text-align: center;
+    vertical-align: middle;
+    border: none;
+    background: transparent;
+    padding: 0;
+    margin: 0;
+}
+
+#sector_map_table .sector_map_neighbour_nav img {
+    width: 4rem;
+    height: 4rem;
+}
+
+#sector_map_table .sector_map_cell {
+    padding: 0;
+    margin: 0;
+    line-height: 0;
+    background: transparent;
+    border: none;
+}
+
+#sector_map_table .sector_map_cell a {
+    border: none;
+    text-decoration: none;
+    display: inline-block;
+    margin: 0;
+    padding: 0;
+    line-height: 0;
+    vertical-align: top;
+}
+
+#sector_map_table .sector_map_cell a img.hovered,
+#sector_map_table .sector_map_cell a img:hover {
+    background: url("../../../images/map/hovercell.png");
+    background-size: 100%;
+}
+
+#sector_map_table .sector_map_cell a img.selected {
+    background: url("../../../images/map/selectedcell.png");
+    background-size: 100%;
+}
+
+#sector_map_table .sector_map_cell a img.owned {
+    background: url("../../../images/map/owncell.png");
+    background-size: 100%;
+}
+
+@media (max-width: 700px) {
+    table.galaxyTableSector .galaxyCellNumber,
+    table.galaxyTableSector .galaxyCell {
+        width: 5rem;
+        height: 5rem;
+    }
+}
+
+@media (min-width: 701px) {
+    table.galaxyTableSector .galaxyCellNumber,
+    table.galaxyTableSector .galaxyCell {
+        width: 5rem;
+        height: 5rem;
+    }
+}
+
+@media (min-width: 1450px) {
+    table.galaxyTableSector .galaxyCellNumber,
+    table.galaxyTableSector .galaxyCell {
+        width: 4rem;
+        height: 4rem;
+    }
+}

@@ -69,6 +69,10 @@ table {
   border: none;
 }
 
+.textSmall {
+	font-size: 8pt;
+}
+
 /* Wenn sich der cursor in einem text feld befindet... */
 /* Internet Explorer unterst�tzt diese funktion nicht!!!*/
 input:focus,
@@ -459,6 +463,12 @@ td.statsNav {
   line-height: 0;
   background: black;
   border: none;
+}
+
+#sector_map_table .sector_map_cell td {
+	background: none;
+	border: none;
+	padding: 0;
 }
 
 #sector_map_table .sector_map_cell img.cell_number_spacer {

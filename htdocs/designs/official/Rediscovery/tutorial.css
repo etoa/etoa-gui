@@ -1,0 +1,39 @@
+/*
+* Tutorial
+*/
+#tutorialContainer {
+  display: none;
+  margin-left: 30rem;
+}
+#tutorialContainer, #quest-app {
+  position: absolute;
+  right: 10px;
+  top: 60px;
+  z-index:500;
+}
+
+.tutorialBox {
+  width: 450px;
+  text-align: left;
+  border: 1px solid #fff;
+  background: url("images/cellpic3.gif") repeat scroll 0 0 #60606B;
+  box-shadow: 0px 0px 20px 3px #000;
+  margin-bottom: 5px;
+}
+
+.tutorialTitle {
+  font-weight:bold;
+  border-bottom: 1px solid #fff;
+  background: url("images/cellpic4.gif") repeat scroll 0 0 #2C2C31;
+  padding: 2px 5px;
+}
+
+.tutorialContent {
+  padding: 2px 5px;
+}
+
+.tutorialFooter {
+  border-top: 1px solid #fff;
+  background: url("images/cellpic4.gif") repeat scroll 0 0 #2C2C31;
+  padding: 2px 5px;
+}

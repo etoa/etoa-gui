@@ -33,6 +33,8 @@ ubuntu-*-console.log
 
 /var/
 /vendor/
+/node_modules/
+.idea/
 .php_cs.cache
 .php-cs-fixer.cache
 .phpunit.result.cache

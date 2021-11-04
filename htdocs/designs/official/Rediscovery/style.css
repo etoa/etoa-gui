@@ -1,0 +1,131 @@
+@import url("reset.css?v=2021110400");
+
+@import url("../../../web/css/game.css?v=2021110400");
+
+@import url("fonts.css?v=2021110400");
+@import url("colors.css?v=2021110400");
+
+@import url("styles/background.css?v=2021110400");
+@import url("styles/border.css?v=2021110400");
+@import url("styles/color.css?v=2021110400");
+@import url("styles/display.css?v=2021110400");
+@import url("styles/font-family.css?v=2021110400");
+@import url("styles/font-size.css?v=2021110400");
+@import url("styles/height.css?v=2021110400");
+@import url("styles/line-height.css?v=2021110400");
+@import url("styles/list-style-type.css?v=2021110400");
+@import url("styles/margin.css?v=2021110400");
+@import url("styles/padding.css?v=2021110400");
+@import url("styles/position.css?v=2021110400");
+@import url("styles/text-alignment.css?v=2021110400");
+@import url("styles/text-decoration.css?v=2021110400");
+@import url("styles/width.css?v=2021110400");
+
+@import url("galaxie.css?v=2021110400");
+@import url("tutorial.css?v=2021110400");
+@import url("reloader.css?v=2021110400");
+@import url("nav-common.css?v=2021110400");
+@import url("nav-top.css?v=2021110400");
+@import url("nav-main.css?v=2021110400");
+@import url("nav-mobile.css?v=2021110400");
+@import url("game.css?v=2021110400");
+@import url("inputs.css?v=2021110400");
+@import url("uebersicht.css?v=2021110400");
+@import url("bauhof.css?v=2021110400");
+@import url("schiffswerft.css?v=2021110400");
+@import url("verteidigungsanlagen.css?v=2021110400");
+@import url("planetinfo.css?v=2021110400");
+@import url("stats.css?v=2021110400");
+@import url("techtree.css?v=2021110400");
+@import url("messages.css?v=2021110400");
+@import url("planetinformationen.css?v=2021110400");
+
+html, body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: black;
+  background-image: url("images/background_medium.jpg");
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  font-size: 1em;
+}
+
+body > #contentwrap {
+  margin-left: 5vw;
+  margin-right: 5vw;
+}
+
+table {
+  border-spacing: 0;
+  border-collapse: collapse;
+}
+
+img {
+  border: none;
+}
+
+div {
+  box-sizing: border-box;
+}
+
+#app {
+  position: relative;
+}
+
+#contentwrap {
+  padding-bottom: env(safe-area-inset-bottom, 0);
+  margin-bottom: 2rem;
+}
+
+#app[data-interactable="false"]::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  min-height: 100vh;
+  z-index: 99;
+  background-color: black;
+  opacity: 0.4;
+}
+
+
+@media (min-width:1450px) {
+  body {
+    background-image: url("images/background_large.jpg");
+    background-position: 0 0;
+    background-size: auto 100%;
+  }
+
+  #contentwrap {
+    min-width: 60rem;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  body > #contentwrap {
+    margin-left: 1rem;
+    margin-right: 1rem;
+  }
+  #game-area {
+    overflow-x: auto;
+  }
+  .resBoxTable{
+    table-layout: fixed;
+    max-width: 100%;
+  }
+  .resBoxTable th{
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+  .resBoxTable td{
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+}

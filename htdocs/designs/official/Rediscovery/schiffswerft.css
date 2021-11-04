@@ -1,0 +1,30 @@
+.shipImage {
+    width: 14rem;
+    height: 14rem;
+}
+
+table.tb td.shipCellImage {
+    padding: 0;
+    line-height: 0;
+}
+
+table.tb td.shipCellDescription {
+    vertical-align: top;
+}
+
+.compact .shipCellImage,
+.shipImageSmall {
+    width: 4.5rem;
+    height: 4.5rem;
+    padding: 0;
+}
+
+.compact .shipCellImage > a {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.compact .shipCellName {
+    line-height: 1.33rem;
+}

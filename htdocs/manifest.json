@@ -1,0 +1,14 @@
+{
+	"name": "EtoA Escape to Andromeda",
+	"short_name": "EtoA",
+	"start_url": ".",
+	"display": "fullscreen",
+	"background-color": "black",
+	"description": "",
+  "icons": [
+    {
+      "src": "favicon.ico",
+      "sizes": "32x32"
+    }
+  ]
+}

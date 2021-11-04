@@ -1,0 +1,34 @@
+/* All Regular */
+table.tb td,
+table.tb th,
+.infoboxcontent {
+    padding: 0.25rem;
+}
+
+/* All Large */
+.tabMenu a,
+.tc a {
+    padding: 0.6rem 1rem;
+}
+
+/* All Large Vertical */
+.tbl caption,
+table.tb caption,
+.infoboxtitle {
+    padding-top: 0.6rem;
+    padding-bottom: 0.6rem;
+}
+
+/* All Large Horizontal */
+{
+    padding-left: 0.6rem
+;
+    padding-right: 0.6rem
+;
+}
+
+/* None */
+{
+    padding: 0
+;
+}

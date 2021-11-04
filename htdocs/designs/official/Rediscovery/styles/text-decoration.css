@@ -1,0 +1,14 @@
+/* Underline */
+a,
+a:link,
+a:visited {
+    text-decoration: underline;
+}
+
+/* None */
+a:hover,
+a:active,
+.tabMenu a,
+.tc a {
+    text-decoration: none;
+}

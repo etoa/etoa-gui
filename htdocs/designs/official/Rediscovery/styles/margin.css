@@ -1,0 +1,32 @@
+/* None */
+#pmenu,
+.infoboxcontent form {
+    margin: 0;
+}
+
+/* Layout Blocks */
+.tbl,
+table.tb,
+.tabMenu,
+.boxLayout,
+#dropdown,
+form {
+    margin: 2rem auto 2rem auto;
+}
+
+/* Layout Blocks */
+.tabMenu {
+    margin: 2rem auto 0 auto;
+}
+
+/* Main Action Button */
+#contentwrap > input:last-child {
+    margin-bottom: 2rem;
+}
+
+/* Title */
+
+h1 {
+    margin-top: 4rem;
+    margin-bottom: 1rem;
+}
