@@ -82,7 +82,7 @@ function tableStart($title = "", $width = 0, $layout = "", $id = "", $class="")
 {
     if (is_numeric($width) && $width > 0) {
         $w = "width:" . $width . "px;";
-    } elseif ($width != "") {
+    } elseif (!empty($width)) {
         $w = "width:" . $width . "";
     } else {
         global $cu;
