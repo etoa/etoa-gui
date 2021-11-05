@@ -119,6 +119,7 @@
   box-sizing: border-box;
   background-image: url("images/nav_main_button_normal.png");
   background-repeat: no-repeat;
+  background-size: 100% 100%;
 }
 
 #mobile-planet-selection .current-planet::after{

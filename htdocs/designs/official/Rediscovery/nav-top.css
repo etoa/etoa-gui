@@ -134,9 +134,8 @@
     line-height: 1.5rem;
     box-sizing: border-box;
     font-size: 1.5rem;
-    background-image: url("images/sprites-nav2.png");
-    background-size: 100%;
-    background-position: 0 0;
+    background-image: url("images/nav_main_button_normal.png");
+    background-size: 100% 100%;
     background-repeat: no-repeat;
     color: var(--color-text-lighter);
     font-family: Zekton-BoldItalic, sans-serif;
@@ -151,17 +150,15 @@
 
   .navigation-top a:hover {
     cursor: pointer;
-    background-image: url("images/sprites-nav2.png");
-    background-position: 0 0;
-    background-size: 100%;
+    background-image: url("images/nav_main_button_hover.png");
+    background-size: 100% 100%;
     color: white;
     text-shadow: rgba(255, 255, 255, 1) 0 0 0.3rem;
   }
 
   .navigation-top a:active {
-    background-image: url("images/sprites-nav2.png");
-    background-position: 0 0;
-    background-size: 100%;
+    background-image: url("images/nav_main_button_hover.png");
+    background-size: 100% 100%;
     filter: brightness(120%) !important;
   }
 }
