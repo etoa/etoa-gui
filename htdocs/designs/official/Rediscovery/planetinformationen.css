@@ -1,0 +1,22 @@
+.planetOverviewList {
+    position: absolute;
+    left: 1.25rem;
+    bottom: 1.25rem;
+}
+
+.planetOverviewName {
+    position: absolute;
+    left: 1.25rem;
+    top: 1.2rem;
+}
+
+.planetOverviewName a {
+    text-decoration: none;
+}
+
+.planetOverviewItem {
+    float: left;
+    width: 10rem;
+    font-weight: bold;
+    height: 1.0625rem;
+}

@@ -11,7 +11,7 @@
   height: 2rem;
   box-sizing: border-box;
   padding-top: 0.2rem;
-  background-image: url("images/button_red_rectangular.png");
+  background: url('images/sprites-nav.png') 0 0;
   background-size: 100%;
   text-align: center;
   font-family: Ethnocentric, sans-serif;
@@ -42,16 +42,16 @@
   position: absolute;
   width: 2rem;
   height: 2rem;
-  background-image: url("images/button_triangular_blue_normal.png");
-  background-size: 100%;
-  background-position: center;
+  background-image: url("images/sprites-nav2.png");
+  background-position: 0 100%;
+  background-size: 666.666667%;
 }
 
 .button-triangular:hover {
-  background-image: url("images/button_triangular_blue_hover.png");
+  background-image: url("images/sprites-nav2.png");
+  background-position: 0 95.02924%;
+  background-size: 666.666667%;
   filter: drop-shadow(0 0 0.4rem var(--color-glow-blue));
-  background-position: center;
-  background-size: 100%;
 }
 
 .button-triangular:active,
@@ -86,7 +86,6 @@
   height: 2.025rem;
   background-image: url("images/nav_main_button_normal.png");
   background-size: 100%;
-  background-position: center;
   background-repeat: no-repeat;
   box-sizing: border-box;
   padding: 0.22rem 1.2rem;

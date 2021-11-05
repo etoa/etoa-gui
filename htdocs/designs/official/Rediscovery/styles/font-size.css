@@ -4,12 +4,11 @@
 }
 
 /* Very Large */
-{
+.planetOverviewName {
     font-size: 2rem;
 }
 
 /* Large */
-.infoboxtitle,
 h1 {
     font-size: 1.5rem;
 }
@@ -22,9 +21,12 @@ table.tb th,
 table.tb caption,
 .tabMenu a,
 .tc a,
+.infoboxtitle,
 .infoboxcontent,
 #planet_circle_inner_container,
-#tutorialContainer, #quest-app {
+#tutorialContainer, #quest-app,
+.planetOverviewList,
+.planetOverviewItem {
     font-size: 1.2rem;
 }
 

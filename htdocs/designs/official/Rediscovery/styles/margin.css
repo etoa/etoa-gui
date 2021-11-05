@@ -1,5 +1,6 @@
 /* None */
-#pmenu {
+#pmenu,
+.infoboxcontent form {
     margin: 0;
 }
 
@@ -11,6 +12,11 @@ table.tb,
 #dropdown,
 form {
     margin: 2rem auto 2rem auto;
+}
+
+/* Layout Blocks */
+.tabMenu {
+    margin: 2rem auto 0 auto;
 }
 
 /* Main Action Button */

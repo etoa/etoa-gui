@@ -15,6 +15,8 @@
 	
 	if (isset($page))
 	{
+        require_once(RELATIVE_ROOT."inc/xajax/viewport.xajax.php");
+
 		if ($page=="haven")
 		{
 			require_once(RELATIVE_ROOT."inc/xajax/haven.xajax.php");

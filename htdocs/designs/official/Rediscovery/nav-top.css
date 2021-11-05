@@ -101,9 +101,9 @@
     left: -1.5rem;
     width: 11.67rem;
     height: 4.67rem;
-    background-image: url("images/button_skewed_hover.png");
-    background-size: 100%;
-    background-position: center;
+    background-image: url("images/sprites-nav2.png");
+    background-position: 0 14.195584%;
+    background-size: 122.699387%;
   }
 }
 
@@ -136,7 +136,6 @@
     font-size: 1.5rem;
     background-image: url("images/nav_main_button_normal.png");
     background-size: 100% 100%;
-    background-position: center;
     background-repeat: no-repeat;
     color: var(--color-text-lighter);
     font-family: Zekton-BoldItalic, sans-serif;

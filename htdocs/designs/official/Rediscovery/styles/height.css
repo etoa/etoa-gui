@@ -1,3 +1,8 @@
 .tc a {
     height: 100%;
 }
+
+/* Same as font size */
+.collapse-toggle {
+    height: 1em;
+}

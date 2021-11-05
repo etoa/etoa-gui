@@ -1,8 +1,8 @@
 <!doctype html>
-<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
-<!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8" lang="en"> <![endif]-->
-<!--[if IE 8]>    <html class="no-js lt-ie9" lang="en"> <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en" style="font-size: {{ fontSize }}" data-viewportScale="{{ viewportScale }}"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8" lang="en" style="font-size: {{ fontSize }}" data-viewportScale="{{ viewportScale }}"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js lt-ie9" lang="en" style="font-size: {{ fontSize }}" data-viewportScale="{{ viewportScale }}"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" style="font-size: {{ fontSize }}" data-viewportScale="{{ viewportScale }}"> <!--<![endif]-->
 <head>
   <meta charset="utf-8">
   <title>{{ gameTitle|default('EtoA') }}</title>
@@ -20,7 +20,7 @@
     <!-- CSS Stylesheets -->
     <link rel="stylesheet" type="text/css" href="web/css/vendor/jquery-ui.css" />
     {% if templateDir|default(false) %}
-        <link rel="stylesheet" type="text/css" href="{{ templateDir }}/style.css?v=2021110200" />
+        <link rel="stylesheet" type="text/css" href="{{ templateDir }}/style.css?v=2021110400" />
     {% endif %}
 
     {% for css in additionalCss|default([]) %}
@@ -56,7 +56,7 @@
     {% endif %}
     {% endif %}
     {% if templateDir|default(false) %}
-        <script type="text/javascript" src="{{ templateDir }}/scripts.js?v=2021110200"></script>
+        <script type="text/javascript" src="{{ templateDir }}/scripts.js?v=2021110400"></script>
     {% endif %}
 </head>
 <body>

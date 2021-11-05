@@ -18,7 +18,9 @@ form,
 #contentwrap > div,
 form > div,
 #reqInfo > div,
-.techtreeItemContainer > div {
+.techtreeItemContainer > div,
+#havenContentAction,
+.fleetInfoAction > div {
     text-align: center;
 }
 
@@ -50,7 +52,8 @@ table.tb caption,
 .infoboxtitle,
 table.tb td,
 table.tb th,
-.infoboxcontent {
+.infoboxcontent,
+.collapse-toggle {
     vertical-align: middle;
 }
 

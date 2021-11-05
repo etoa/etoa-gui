@@ -43,7 +43,8 @@
         href="?page=help"
         {% endif %}></a>
       <div id="planet-dropdown" class="planet-dropdown"
-           onmouseout="this.setAttribute('data-expanded', 'false');return true;">
+           onmouseleave="this.setAttribute('data-expanded', 'false');return true;">
+        <div class="click-mask" onclick="this.parentNode.setAttribute('data-expanded', 'false');return true;"></div>
         {% for planet in planetList %}
           <a href="{{ planet.url|raw }}"
              class="button-blue {% if planet.current %}active{% endif %}">{{ planet.label }}</a>
