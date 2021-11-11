@@ -13,25 +13,25 @@ $(document).ready(function() {
 			$("#c_aside").replaceWith("<iframe id='c_aside' src='chat.php'></iframe>");
 			document.getElementById("f_chat").style.display = "none";
 			document.getElementById("f_chat_on").style.display = "inline";	
-	}	
+	}
+	$("#f_chat").click(function(){
+		$("#c_aside").replaceWith("<iframe id='c_aside' src='chat.php'></iframe>");
+		document.getElementById("f_chat").style.display = "none";
+		document.getElementById("f_chat_on").style.display = "inline";
+		sessionStorage.chat = 1;
+		console.log (sessionStorage.chat);
+	});
+
+
+	$("#f_chat_on").click(function(){
+		sessionStorage.clear();
+		$("#aside").load('?page=overview #c_aside');
+		document.getElementById("f_chat_on").style.display = "none";
+		document.getElementById("f_chat").style.display = "inline";
+	});
 });
 
 
-$("#f_chat").click(function(){
-	$("#c_aside").replaceWith("<iframe id='c_aside' src='chat.php'></iframe>");
-	document.getElementById("f_chat").style.display = "none";
-	document.getElementById("f_chat_on").style.display = "inline";
-	sessionStorage.chat = 1;
-	console.log (sessionStorage.chat);
-});
-
-
-$("#f_chat_on").click(function(){
-	sessionStorage.clear();
-	$("#aside").load('?page=overview #c_aside');
-	document.getElementById("f_chat_on").style.display = "none";
-	document.getElementById("f_chat").style.display = "inline";
-});
 
 
 function js_planetlist(enable) {
