@@ -1,5 +1,7 @@
 CREATE INDEX reports_user_type_entity1_idx ON reports (user_id, type, entity1_id);
 CREATE INDEX reports_user_read_deleted_idx ON reports (user_id, `read`, `deleted`);
+CREATE INDEX reports_user_archived_type_idx ON reports (user_id, archived, type);
+CREATE INDEX reports_user_deleted_archived_idx ON reports (user_id, `deleted`, archived, timestamp);
 
 ALTER TABLE reports_other ADD PRIMARY KEY(id);
 ALTER TABLE reports_spy ADD PRIMARY KEY(id);
