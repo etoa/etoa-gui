@@ -140,7 +140,7 @@ class AdminUserRepository extends AbstractRepository
                     'name' => $adminUser->name,
                     'email' => $adminUser->email,
                     'tfa_secret' => $adminUser->tfaSecret,
-                    'board_url' => $adminUser->boardUrl,
+                    'board_url' => (string) $adminUser->boardUrl,
                     'user_theme' => $adminUser->userTheme,
                     'ticketmail' => $adminUser->ticketEmail ? 1 : 0,
                     'player_id' => $adminUser->playerId,
