@@ -38,6 +38,7 @@ class TwigExtension extends AbstractExtension
             new TwigFunction('getGameIdentifier', [$this, 'getGameIdentifier']),
             new TwigFunction('isUnix', [$this, 'isUnix']),
             new TwigFunction('userMTT', [$this, 'userMTT']),
+            new TwigFunction('cTT', [$this, 'cTT']),
             new TwigFunction('editButton', [$this, 'editButton']),
         ];
     }
@@ -131,7 +132,7 @@ class TwigExtension extends AbstractExtension
      */
     public function formatTimestamp($timestamp): string
     {
-        return (new \DateTime('@' . $timestamp))->format('d.m.Y, H:i:s');
+        return StringUtils::formatDate($timestamp);
     }
 
     public function getGameIdentifier(): string
@@ -147,6 +148,11 @@ class TwigExtension extends AbstractExtension
     public function userMTT(string $userNick, int $points): string
     {
         return mTT($userNick, StringUtils::formatNumber($points) . " Punkte");
+    }
+
+    public function cTT(string $title, string $content): string
+    {
+        return cTT($title, $content);
     }
 
     public function editButton(?string $url, string $ocl = ""): string

@@ -11,9 +11,9 @@ namespace EtoA\Help\TicketSystem;
  */
 class TicketStatus
 {
-    const NEW = "new";
-    const ASSIGNED = "assigned";
-    const CLOSED = "closed";
+    public const NEW = "new";
+    public const ASSIGNED = "assigned";
+    public const CLOSED = "closed";
 
     public static function label(string $status): string
     {

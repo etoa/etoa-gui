@@ -1,0 +1,41 @@
+{% extends 'admin/ticket/base.html.twig' %}
+
+{% block ticketContent %}
+    <h3>Ticket erstellen</h3>
+
+    {% if users|length > 0 %}
+        <form method="post">
+            <table>
+                <tr>
+                    <th>User:</th>
+                    <td>
+                        <select name="user_id">
+                            {% for userId,userNick in users %}
+                                <option value="{{ userId }}">{{ userNick }}</option>';
+                            {% endfor %}
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <th>Kategorie:</th>
+                    <td>
+                        <select name="cat_id">
+                            {% for categoryId,name in ticketCategories %}
+                                <option value="{{ categoryId }}">{{ name }}</option>';
+                            {% endfor %}
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <th>Problembeschreibung:</th>
+                    <td>
+                        <textarea name="message" rows="8" cols="60"></textarea>
+                    </td>
+                </tr>
+            </table>
+            <p>
+                <input type="submit" name="submit_new" value="Speichern" />
+            </p>
+        </form>
+    {% endif %}
+{% endblock %}

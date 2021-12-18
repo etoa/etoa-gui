@@ -19,6 +19,19 @@ class TicketMessageRepository extends AbstractRepository
             ->fetchOne();
     }
 
+    /**
+     * @return array<int, int>
+     */
+    public function countsByTicket(): array
+    {
+        return $this->createQueryBuilder()
+            ->select("ticket_id, COUNT(*)")
+            ->from('ticket_msg')
+            ->groupBy('ticket_id')
+            ->execute()
+            ->fetchAllKeyValue();
+    }
+
     public function find(int $id): ?TicketMessage
     {
         $data = $this->createQueryBuilder()
