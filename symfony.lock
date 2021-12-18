@@ -99,6 +99,9 @@
             ".env"
         ]
     },
+    "symfony/form": {
+        "version": "v5.4.0"
+    },
     "symfony/framework-bundle": {
         "version": "5.3",
         "recipe": {
@@ -180,6 +183,9 @@
             "phpunit.xml.dist",
             "tests/bootstrap.php"
         ]
+    },
+    "symfony/polyfill-intl-icu": {
+        "version": "v1.23.0"
     },
     "symfony/polyfill-php81": {
         "version": "v1.23.0"
@@ -263,6 +269,19 @@
         "files": [
             "config/packages/twig.yaml",
             "templates/base.html.twig"
+        ]
+    },
+    "symfony/validator": {
+        "version": "4.3",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "master",
+            "version": "4.3",
+            "ref": "3eb8df139ec05414489d55b97603c5f6ca0c44cb"
+        },
+        "files": [
+            "config/packages/test/validator.yaml",
+            "config/packages/validator.yaml"
         ]
     },
     "symfony/var-exporter": {

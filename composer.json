@@ -37,7 +37,9 @@
         "symfony/messenger": "^5.3",
         "dragonmantank/cron-expression": "^3.1",
         "symfony/http-client": "^5.3",
-        "twig/string-extra": "^3.3"
+        "twig/string-extra": "^3.3",
+        "symfony/form": "^5.3",
+        "symfony/validator": "^5.3"
     },
     "require-dev": {
         "ergebnis/composer-normalize": "^2.0",
