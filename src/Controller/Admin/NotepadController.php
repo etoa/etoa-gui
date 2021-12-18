@@ -2,7 +2,9 @@
 
 namespace EtoA\Controller\Admin;
 
+use EtoA\Admin\AdminNote;
 use EtoA\Admin\AdminNotesRepository;
+use EtoA\Form\Type\Admin\NotepadType;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -34,8 +36,11 @@ class NotepadController extends AbstractAdminController
     {
         $user = $this->getUser();
 
-        if ($request->isMethod('POST')) {
-            $this->adminNotesRepository->create($request->request->get('Titel'), $request->request->get('Text'), $user->getId());
+        $note = AdminNote::new($user->getId());
+        $form = $this->createForm(NotepadType::class, $note);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->adminNotesRepository->create($note);
 
             return $this->redirectToRoute('admin.notepad');
         }
@@ -55,13 +60,16 @@ class NotepadController extends AbstractAdminController
             $this->addFlash('error', 'Notiz nicht gefunden');
         }
 
-        if ($request->isMethod('POST')) {
-            $this->adminNotesRepository->update($id, $request->request->get('Titel'), $request->request->get('Text'));
+        $form = $this->createForm(NotepadType::class, $note);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->adminNotesRepository->update($note);
 
             return $this->redirectToRoute('admin.notepad');
         }
 
         return $this->render('admin/notepad/edit.html.twig', [
+            'form' => $form->createView(),
             'note' => $note,
         ]);
     }

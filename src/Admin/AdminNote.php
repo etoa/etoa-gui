@@ -18,4 +18,9 @@ class AdminNote
         $this->text = $data['text'];
         $this->date = (int) $data['date'];
     }
+
+    public static function new(int $adminId): AdminNote
+    {
+        return new AdminNote(['notes_id' => 0, 'admin_id' => $adminId, 'titel' => '', 'text' => '', 'date' => time()]);
+    }
 }

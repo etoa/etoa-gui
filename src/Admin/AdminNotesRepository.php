@@ -53,27 +53,28 @@ class AdminNotesRepository extends AbstractRepository
         return $data !== false ? new AdminNote($data) : null;
     }
 
-    public function create(string $titel, string $text, int $adminId): int
+    public function create(AdminNote $note): int
     {
         $this->createQueryBuilder()
             ->insert('admin_notes')
             ->values([
                 'titel' => ':titel',
                 'text' => ':text',
-                'date' => time(),
+                'date' => ':date',
                 'admin_id' => ':admin_id',
             ])
             ->setParameters([
-                'titel' => $titel,
-                'text' => $text,
-                'admin_id' => $adminId,
+                'titel' => $note->title,
+                'text' => $note->text,
+                'admin_id' => $note->adminId,
+                'date' => $note->date,
             ])
             ->execute();
 
         return (int) $this->getConnection()->lastInsertId();
     }
 
-    public function update(int $id, string $titel, string $text): bool
+    public function update(AdminNote $note): bool
     {
         $affected = $this->createQueryBuilder()
             ->update('admin_notes')
@@ -81,9 +82,9 @@ class AdminNotesRepository extends AbstractRepository
             ->set('text', ':text')
             ->where('notes_id = :id')
             ->setParameters([
-                'id' => $id,
-                'titel' => $titel,
-                'text' => $text,
+                'id' => $note->id,
+                'titel' => $note->title,
+                'text' => $note->text,
             ])
             ->execute();
 
