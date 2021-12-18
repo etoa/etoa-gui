@@ -3,20 +3,16 @@
 namespace EtoA\Controller\Admin;
 
 use EtoA\Admin\AdminNotesRepository;
-use EtoA\Security\Admin\CurrentAdmin;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class NotepadController extends AbstractController
+class NotepadController extends AbstractAdminController
 {
-    private AdminNotesRepository $adminNotesRepository;
-
-    public function __construct(AdminNotesRepository $adminNotesRepository)
-    {
-        $this->adminNotesRepository = $adminNotesRepository;
+    public function __construct(
+        private AdminNotesRepository $adminNotesRepository
+    ) {
     }
 
     /**
@@ -24,7 +20,6 @@ class NotepadController extends AbstractController
      */
     public function noteIndex(): Response
     {
-        /** @var CurrentAdmin $user */
         $user = $this->getUser();
 
         return $this->render('admin/notepad/index.html.twig', [
@@ -37,7 +32,6 @@ class NotepadController extends AbstractController
      */
     public function new(Request $request): Response
     {
-        /** @var CurrentAdmin $user */
         $user = $this->getUser();
 
         if ($request->isMethod('POST')) {
@@ -54,7 +48,6 @@ class NotepadController extends AbstractController
      */
     public function edit(Request $request, int $id): Response
     {
-        /** @var CurrentAdmin $user */
         $user = $this->getUser();
 
         $note = $this->adminNotesRepository->findForAdmin($id, $user->getId());
@@ -78,7 +71,6 @@ class NotepadController extends AbstractController
      */
     public function delete(int $id): RedirectResponse
     {
-        /** @var CurrentAdmin $user */
         $user = $this->getUser();
 
         $note = $this->adminNotesRepository->findForAdmin($id, $user->getId());

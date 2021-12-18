@@ -7,28 +7,21 @@ use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Log\LogFacility;
 use EtoA\Log\LogRepository;
 use EtoA\Log\LogSeverity;
-use EtoA\Security\Admin\CurrentAdmin;
 use EtoA\User\UserRepository;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
-class AdminProfileController extends AbstractController
+class AdminProfileController extends AbstractAdminController
 {
-    private UserRepository $userRepository;
-    private AdminUserRepository $adminUserRepository;
-    private LogRepository $logRepository;
-    private ConfigurationService $config;
-
-    public function __construct(UserRepository $userRepository, AdminUserRepository $adminUserRepository, LogRepository $logRepository, ConfigurationService $config)
-    {
-        $this->userRepository = $userRepository;
-        $this->adminUserRepository = $adminUserRepository;
-        $this->logRepository = $logRepository;
-        $this->config = $config;
+    public function __construct(
+        private UserRepository $userRepository,
+        private AdminUserRepository $adminUserRepository,
+        private LogRepository $logRepository,
+        private ConfigurationService $config
+    ) {
     }
 
     /**
@@ -36,11 +29,8 @@ class AdminProfileController extends AbstractController
      */
     public function index(): Response
     {
-        /** @var CurrentAdmin $adminUser */
-        $adminUser = $this->getUser();
-
         return $this->render('admin/profile/profile.html.twig', [
-            'user' => $adminUser->getData(),
+            'user' => $this->getUser()->getData(),
             'users' => $this->userRepository->searchUserNicknames(),
         ]);
     }
@@ -50,7 +40,6 @@ class AdminProfileController extends AbstractController
      */
     public function updateProfile(Request $request): RedirectResponse
     {
-        /** @var CurrentAdmin $adminUser */
         $adminUser = $this->getUser();
 
         $data = $adminUser->getData();
@@ -74,7 +63,6 @@ class AdminProfileController extends AbstractController
      */
     public function updatePassword(Request $request, UserPasswordHasherInterface $passwordHasher): RedirectResponse
     {
-        /** @var CurrentAdmin $adminUser */
         $adminUser = $this->getUser();
 
         if (!$passwordHasher->isPasswordValid($adminUser, $request->request->get('user_password_old'))) {

@@ -6,38 +6,26 @@ use EtoA\Admin\AdminRoleManager;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Help\TicketSystem\TicketRepository;
 use EtoA\Ranking\GameStatsGenerator;
-use EtoA\Security\Admin\CurrentAdmin;
 use EtoA\Support\DB\DatabaseManagerRepository;
 use EtoA\Text\TextRepository;
 use EtoA\Universe\Cell\CellRepository;
 use League\CommonMark\MarkdownConverterInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class OverviewController extends AbstractController
+class OverviewController extends AbstractAdminController
 {
-    private MarkdownConverterInterface $markdown;
-    private GameStatsGenerator $gameStatsGenerator;
-    private DatabaseManagerRepository $databaseManager;
-    private string $cacheDir;
-    private ConfigurationService $config;
-    private AdminRoleManager $roleManager;
-    private CellRepository $cellRepository;
-    private TicketRepository $ticketRepository;
-    private TextRepository $textRepository;
-
-    public function __construct(MarkdownConverterInterface $markdown, GameStatsGenerator $gameStatsGenerator, DatabaseManagerRepository $databaseManager, string $cacheDir, ConfigurationService $config, AdminRoleManager $roleManager, CellRepository $cellRepository, TicketRepository $ticketRepository, TextRepository $textRepository)
-    {
-        $this->markdown = $markdown;
-        $this->gameStatsGenerator = $gameStatsGenerator;
-        $this->databaseManager = $databaseManager;
-        $this->cacheDir = $cacheDir;
-        $this->config = $config;
-        $this->roleManager = $roleManager;
-        $this->cellRepository = $cellRepository;
-        $this->ticketRepository = $ticketRepository;
-        $this->textRepository = $textRepository;
+    public function __construct(
+        private MarkdownConverterInterface $markdown,
+        private GameStatsGenerator $gameStatsGenerator,
+        private DatabaseManagerRepository $databaseManager,
+        private string $cacheDir,
+        private ConfigurationService $config,
+        private AdminRoleManager $roleManager,
+        private CellRepository $cellRepository,
+        private TicketRepository $ticketRepository,
+        private TextRepository $textRepository
+    ) {
     }
 
     /**
@@ -83,7 +71,6 @@ class OverviewController extends AbstractController
         $_SESSION['admin']['user_query'] = "";
         $_SESSION['admin']['queries']['alliances'] = "";
 
-        /** @var CurrentAdmin $admin */
         $admin = $this->getUser();
 
         return $this->render('admin/overview/overview.html.twig', [

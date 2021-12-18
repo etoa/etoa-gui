@@ -3,19 +3,16 @@
 namespace EtoA\Controller\Admin;
 
 use EtoA\Text\TextRepository;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class TextController extends AbstractController
+class TextController extends AbstractAdminController
 {
-    private TextRepository $textRepository;
-
-    public function __construct(TextRepository $textRepository)
-    {
-        $this->textRepository = $textRepository;
+    public function __construct(
+        private TextRepository $textRepository
+    ) {
     }
 
     /**

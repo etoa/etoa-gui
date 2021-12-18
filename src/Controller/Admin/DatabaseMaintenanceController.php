@@ -7,20 +7,16 @@ use EtoA\Log\LogRepository;
 use EtoA\Log\LogSeverity;
 use EtoA\Support\DB\DatabaseManagerRepository;
 use EtoA\Support\StringUtils;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class DatabaseMaintenanceController extends AbstractController
+class DatabaseMaintenanceController extends AbstractAdminController
 {
-    private DatabaseManagerRepository $databaseManager;
-    private LogRepository $logRepository;
-
-    public function __construct(DatabaseManagerRepository $databaseManager, LogRepository $logRepository)
-    {
-        $this->databaseManager = $databaseManager;
-        $this->logRepository = $logRepository;
+    public function __construct(
+        private DatabaseManagerRepository $databaseManager,
+        private LogRepository $logRepository
+    ) {
     }
 
     /**

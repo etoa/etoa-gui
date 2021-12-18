@@ -8,24 +8,18 @@ use EtoA\Universe\Entity\EntityRepository;
 use EtoA\User\UserRepository;
 use EtoA\User\UserUniverseDiscoveryService;
 use SectorMapRenderer;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class GalaxyMapController extends AbstractController
+class GalaxyMapController extends AbstractAdminController
 {
-    private UserRepository $userRepository;
-    private ConfigurationService $config;
-    private UserUniverseDiscoveryService $userUniverseDiscoveryService;
-    private EntityRepository $entityRepository;
-
-    public function __construct(UserRepository $userRepository, ConfigurationService $config, UserUniverseDiscoveryService $userUniverseDiscoveryService, EntityRepository $entityRepository)
-    {
-        $this->userRepository = $userRepository;
-        $this->config = $config;
-        $this->userUniverseDiscoveryService = $userUniverseDiscoveryService;
-        $this->entityRepository = $entityRepository;
+    public function __construct(
+        private UserRepository $userRepository,
+        private ConfigurationService $config,
+        private UserUniverseDiscoveryService $userUniverseDiscoveryService,
+        private EntityRepository $entityRepository
+    ) {
     }
 
     /**

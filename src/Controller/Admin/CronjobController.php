@@ -8,22 +8,18 @@ use EtoA\PeriodicTask\EnvelopResultExtractor;
 use EtoA\PeriodicTask\PeriodicTaskCollection;
 use EtoA\PeriodicTask\Result\SuccessResult;
 use EtoA\PeriodicTask\Task\PeriodicTaskInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
-class CronjobController extends AbstractController
+class CronjobController extends AbstractAdminController
 {
-    private ConfigurationService $config;
-    private PeriodicTaskCollection $taskCollection;
-
-    public function __construct(ConfigurationService $config, PeriodicTaskCollection $taskCollection)
-    {
-        $this->config = $config;
-        $this->taskCollection = $taskCollection;
+    public function __construct(
+        private ConfigurationService $config,
+        private PeriodicTaskCollection $taskCollection
+    ) {
     }
 
     /**

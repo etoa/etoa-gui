@@ -6,7 +6,6 @@ use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\HostCache\NetworkNameService;
 use EtoA\Log\AccessLogRepository;
 use EtoA\Support\StringUtils;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
@@ -14,21 +13,15 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
-class ToolController extends AbstractController
+class ToolController extends AbstractAdminController
 {
-    private HttpClientInterface $client;
-    private NetworkNameService$networkNameService;
-    private AccessLogRepository$accessLogRepository;
-    private ConfigurationService $config;
-    private string $adminFileSharingDir;
-
-    public function __construct(HttpClientInterface $client, NetworkNameService $networkNameService, AccessLogRepository $accessLogRepository, ConfigurationService $config, string $adminFileSharingDir)
-    {
-        $this->client = $client;
-        $this->networkNameService = $networkNameService;
-        $this->accessLogRepository = $accessLogRepository;
-        $this->config = $config;
-        $this->adminFileSharingDir = $adminFileSharingDir;
+    public function __construct(
+        private HttpClientInterface $client,
+        private NetworkNameService $networkNameService,
+        private AccessLogRepository $accessLogRepository,
+        private ConfigurationService $config,
+        private string $adminFileSharingDir
+    ) {
     }
 
     /**

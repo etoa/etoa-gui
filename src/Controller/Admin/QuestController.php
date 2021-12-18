@@ -6,22 +6,17 @@ use EtoA\Quest\DefaultRandomRegistry;
 use EtoA\Quest\QuestPresenter;
 use EtoA\Quest\QuestRepository;
 use LittleCubicleGames\Quests\Workflow\QuestDefinition;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class QuestController extends AbstractController
+class QuestController extends AbstractAdminController
 {
-    private DefaultRandomRegistry $registry;
-    private QuestPresenter $presenter;
-    private QuestRepository $repository;
-
-    public function __construct(DefaultRandomRegistry $registry, QuestPresenter $presenter, QuestRepository $repository)
-    {
-        $this->registry = $registry;
-        $this->presenter = $presenter;
-        $this->repository = $repository;
+    public function __construct(
+        private DefaultRandomRegistry $registry,
+        private QuestPresenter $presenter,
+        private QuestRepository $repository
+    ) {
     }
 
     /**

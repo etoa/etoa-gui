@@ -5,21 +5,16 @@ namespace EtoA\Controller\Admin;
 use EtoA\Backend\BackendMessageRepository;
 use EtoA\Backend\EventHandlerManager;
 use EtoA\Core\Configuration\ConfigurationService;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class EventHandlerController extends AbstractController
+class EventHandlerController extends AbstractAdminController
 {
-    private EventHandlerManager $eventHandlerManager;
-    private BackendMessageRepository $backendMessageRepository;
-    private ConfigurationService $config;
-
-    public function __construct(EventHandlerManager $eventHandlerManager, BackendMessageRepository $backendMessageRepository, ConfigurationService $config)
-    {
-        $this->eventHandlerManager = $eventHandlerManager;
-        $this->backendMessageRepository = $backendMessageRepository;
-        $this->config = $config;
+    public function __construct(
+        private EventHandlerManager $eventHandlerManager,
+        private BackendMessageRepository $backendMessageRepository,
+        private ConfigurationService $config
+    ) {
     }
 
     /**

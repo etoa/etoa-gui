@@ -7,24 +7,18 @@ use EtoA\Log\LogRepository;
 use EtoA\Log\LogSeverity;
 use EtoA\Support\DB\DatabaseMigrationService;
 use EtoA\Support\DB\SchemaMigrationRepository;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Routing\Annotation\Route;
 
-class DatabaseMigrationController extends AbstractController
+class DatabaseMigrationController extends AbstractAdminController
 {
-    private DatabaseMigrationService $databaseMigrationService;
-    private SchemaMigrationRepository $schemaMigrationRepository;
-    private LockFactory $lockFactory;
-    private LogRepository $logRepository;
-
-    public function __construct(DatabaseMigrationService $databaseMigrationService, SchemaMigrationRepository $schemaMigrationRepository, LockFactory $lockFactory, LogRepository $logRepository)
-    {
-        $this->databaseMigrationService = $databaseMigrationService;
-        $this->schemaMigrationRepository = $schemaMigrationRepository;
-        $this->lockFactory = $lockFactory;
-        $this->logRepository = $logRepository;
+    public function __construct(
+        private DatabaseMigrationService $databaseMigrationService,
+        private SchemaMigrationRepository $schemaMigrationRepository,
+        private LockFactory $lockFactory,
+        private LogRepository $logRepository
+    ) {
     }
 
     /**
