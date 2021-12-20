@@ -3,12 +3,29 @@
 namespace EtoA\Controller\Admin;
 
 use EException;
+use EtoA\Form\Type\Admin\LogGeneralType;
+use EtoA\Log\LogRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 class LogController extends AbstractAdminController
 {
+    public function __construct(
+        private LogRepository $logRepository
+    ) {
+    }
+    /**
+     * @Route("/admin/logs/", name="admin.logs.general")
+     */
+    public function general(Request $request): Response
+    {
+        return $this->render('admin/logs/general.html.twig', [
+            'form' => $this->createForm(LogGeneralType::class, $request->query->all())->createView(),
+            'total' => $this->logRepository->count(),
+        ]);
+    }
+
     /**
      * @Route("/admin/logs/error", name="admin.logs.error")
      */

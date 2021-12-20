@@ -6,6 +6,17 @@ use EtoA\SymfonyWebTestCase;
 
 class LogControllerTest extends SymfonyWebTestCase
 {
+    public function testGeneral(): void
+    {
+        $client = self::createClient();
+
+        $this->loginAdmin($client);
+
+        $client->request('GET', '/admin/logs/');
+
+        $this->assertSame(200, $client->getResponse()->getStatusCode(), $client->getResponse()->getContent());
+    }
+
     public function testError(): void
     {
         $client = self::createClient();

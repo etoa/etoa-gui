@@ -274,6 +274,12 @@
             "templates/base.html.twig"
         ]
     },
+    "symfony/ux-live-component": {
+        "version": "v2.0.1"
+    },
+    "symfony/ux-twig-component": {
+        "version": "v2.0.1"
+    },
     "symfony/validator": {
         "version": "4.3",
         "recipe": {

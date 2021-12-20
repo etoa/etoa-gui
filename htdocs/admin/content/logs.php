@@ -332,54 +332,6 @@ function debrisLog()
 
 function newCommonLog()
 {
-    echo "<h2>Allgemeine Logs</h2>";
-
-?>
-    <script type="text/javascript">
-        function applyFilter(limit) {
-            xajax_applyLogFilter(xajax.getFormValues('filterform'), limit);
-        }
-
-        function resetFilter() {
-            document.getElementById('logcat').value = 0;
-            document.getElementById('logsev').value = 0;
-            document.getElementById('searchtext').value = '';
-            applyFilter(0);
-            document.getElementById('searchtext').focus();
-        }
-    </script>
-<?PHP
-
-    echo '<fieldset style="width:900px"><legend>Filter</legend>';
-    echo "<form action=\".\" method=\"post\" id=\"filterform\">";
-    echo "<label for=\"logsev\">Ab Schweregrad:</label>
-    <select id=\"logsev\" name=\"logsev\" onchange=\"applyFilter(0)\">";
-    foreach (LogSeverity::SEVERITIES as $k => $v) {
-        echo "<option value=\"" . $k . "\">" . $v . "</option>";
-    }
-    echo "</select> &nbsp; ";
-
-    echo "<label for=\"logcat\">Kategorie:</label>
-    <select id=\"logcat\" name=\"logcat\" onchange=\"applyFilter(0)\">
-    <option value=\"0\">(Alle)</option>";
-    foreach (LogFacility::FACILITIES as $k => $v) {
-        echo "<option value=\"" . $k . "\">" . $v . "</option>";
-    }
-    echo "</select> &nbsp; ";
-
-    echo " <label for=\"searchtext\">Suchtext:</label> <input type=\"text\" id=\"searchtext\" name=\"searchtext\" value=\"\" /> &nbsp;
-    <input type=\"submit\" value=\"Anwenden\" onclick=\"applyFilter(0);document.getElementById('searchtext').select();return false;\" /> &nbsp;
-    <input type=\"button\" value=\"Reset\" onclick=\"resetFilter();\" />";
-    echo "</form>";
-    echo '</fieldset>';
-
-    echo "<div id=\"log_contents\">";
-    showLogs();
-    echo "</div>";
-
-    global $app;
-    /** @var LogRepository $logRepository */
-    $logRepository = $app[LogRepository::class];
-    $tblcnt = $logRepository->count();
-    echo "<p>Es sind " . StringUtils::formatNumber($tblcnt) . " Eintr&auml;ge in der Datenbank vorhanden.</p>";
+    header('Location: /admin/logs/');
+    die();
 }

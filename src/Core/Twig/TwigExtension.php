@@ -4,6 +4,7 @@ namespace EtoA\Core\Twig;
 
 use EtoA\Admin\AdminRoleManager;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\HostCache\NetworkNameService;
 use EtoA\Support\BBCodeUtils;
 use EtoA\Support\ExternalUrl;
 use EtoA\Support\StringUtils;
@@ -13,12 +14,12 @@ use Twig\TwigFunction;
 class TwigExtension extends AbstractExtension
 {
     private float $startTime;
-    private ConfigurationService $config;
 
-    public function __construct(ConfigurationService $config)
-    {
+    public function __construct(
+        private ConfigurationService $config,
+        private NetworkNameService $networkNameService
+    ) {
         $this->startTime = microtime(true);
-        $this->config = $config;
     }
 
     public function getFunctions()
@@ -40,6 +41,8 @@ class TwigExtension extends AbstractExtension
             new TwigFunction('userMTT', [$this, 'userMTT']),
             new TwigFunction('cTT', [$this, 'cTT']),
             new TwigFunction('editButton', [$this, 'editButton']),
+            new TwigFunction('ipGetHost', [$this, 'ipGetHost']),
+            new TwigFunction('formatNumber', [$this, 'formatNumber']),
         ];
     }
 
@@ -158,5 +161,15 @@ class TwigExtension extends AbstractExtension
     public function editButton(?string $url, string $ocl = ""): string
     {
         return edit_button($url, $ocl);
+    }
+
+    public function ipGetHost(string $ip): string
+    {
+        return $this->networkNameService->getHost($ip);
+    }
+
+    public function formatNumber(float $number): string
+    {
+        return StringUtils::formatNumber($number);
     }
 }

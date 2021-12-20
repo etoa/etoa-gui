@@ -1,0 +1,23 @@
+<div data-controller="pagination" data-previous="{{ search.limit - search.perPage }}" data-next="{{ search.limit + search.perPage }}" data-last="{{ search.total - (search.total % search.perPage) }}">
+    <div style="float:left;">
+        <input data-pagination-target="limit" type="hidden" value="{{ search.limit }}" name="limit">
+
+        {% if search.limit > 0 %}
+            <input type="button" value="&lt;&lt;" data-action="click->pagination#first" />
+            <input type="button" value="&lt;" data-action="click->pagination#previous" />
+        {% else %}
+            <input type="button" value="&lt;&lt;" disabled="disabled" />
+            <input type="button" value="&lt;" disabled="disabled" />
+        {% endif %}
+        {% if search.limit < search.total - search.perPage %}
+            <input type="button" value="&gt;" data-action="click->pagination#next" />
+            <input type="button" value="&gt;&gt;" data-action="click->pagination#last" />
+        {% else %}
+            <input type="button" value="&gt;" disabled="disabled" />
+            <input type="button" value="&gt;&gt;" disabled="disabled" />
+        {% endif %}
+
+    </div><div style="float:right">
+        {{ min(search.limit + 1, search.total) }} - {{ search.limit + search.entries|length }} von {{ search.total }}
+    </div>
+</div>
