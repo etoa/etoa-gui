@@ -1,0 +1,104 @@
+{% extends 'admin/ticket/base.html.twig' %}
+
+{% block ticketContent %}
+    <h3>Ticket Details</h3>
+
+    <div id="ttuser" style="display:none;">
+        <a href="?page=user&sub=edit&id={{ ticket.userId }}">Daten anzeigen</a><br/>
+        <a href="?page=sendmessage&amp;id={{ ticket.userId }}">Nachricht senden</a><br/>
+    </div>
+
+    <form method="post">
+        <h3>Ticket {{ ticket.getIdString() }}</h3>
+        <table>
+            <tr>
+                <th style="width:150px">Kategorie:</th>
+                <td>{{ ticketCategories[ticket.catId] }}</td>
+            </tr>
+            <tr>
+                <th>Status:</th>
+                <td>{{ ticket.getStatusName() }}</td>
+            </tr>
+            <tr>
+                <th>User:</th>
+                <td><a href="javascript:;" {{ cTT(userNick, "ttuser") }}>{{ userNick }}</a></td>
+                        </tr>
+                        {% if ticket.adminId > 0 %}
+                        <tr>
+                        <th>Zugeteilter Admin:</th>
+                        <td>{{ adminNick }}</td>
+                        </tr>
+                        {% endif %}
+                        <tr>
+                        <th>Letzte Änderung:</th>
+                <td>{{ formatTimestamp(ticket.timestamp) }}</td>
+            </tr>
+            <tr>
+                <th>Admin-Kommentar:</th>
+                <td colspan="3">
+                    <textarea name="admin_comment" style="color:#00008B" rows="4" cols="60">{{ ticket.adminComment }}</textarea>
+                    <input type="submit" name="submit_admin_comment" value="Speichern" /> (wird auch beim Senden einer neuen Nachricht gespeichert)
+                </td>
+            </tr>
+        </table>
+
+        <h3>Nachrichten</h3>
+        <table>
+            <tr>
+                <th style="width:120px">Datum</th>
+                <th style="width:130px">Autor</th>
+                <th>Nachricht</th>
+            </tr>
+            {% for message in messages %}
+                <tr>
+                    <td>{{ formatTimestamp(message.timestamp) }}</td>
+                    <td>{{ messageAuthor[message.id] }}</td>
+                    <td>{{ BBCodeToHTML(message.message) }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+
+        {% if ticket.status == 'assigned' %}
+            <h3>Neue Nachricht</h3>
+            <table>
+                <tr>
+                    <th>Absender:</th>
+                    <td>{{ app.user.username }} (Admin)</td>
+                </tr>
+                <tr>
+                    <th>Nachricht:</th>
+                    <td><textarea name="message" rows="8" cols="60"></textarea></td>
+                </tr>
+            </table>
+
+            <p>
+                <input type="submit" name="submit_new_post" value="Senden" /> &nbsp;
+                <input type="checkbox" name="should_close" id="should_close" value="1" />
+                <label for="should_close">Ticket abschliessen als</label>
+                <select id="should_close" name="close_solution">
+                    {% for value,label in ticketSolutions  %}
+                        <option value="{{ value }}" {{ value == 'solved' ? 'selected=selected' : '' }}>{{ label }}</option>
+                    {% endfor %}
+                </select>
+            </p>
+        {% endif %}
+    </form>
+
+    <input type="button" value="Zur Übersicht" onclick="document.location='{{ path('admin.overview') }}'" />
+
+    {% if ticket.status == 'new' %}
+        <form action="{{ path('admin.ticket.assign', {id: ticket.id}) }}" method="POST">
+            <input type="submit" name="submit_assign" value="Ticket mir zuweisen" />
+        </form>
+    {% elseif ticket.status == 'closed' %}
+        <form action="{{ path('admin.ticket.reopen', {id: ticket.id}) }}" method="POST">
+            <input type="submit" name="submit_assign" value="Ticket wieder eröffnen" />
+        </form>
+    {% elseif ticket.status == 'assigned' %}
+        <form action="{{ path('admin.ticket.reopen', {id: ticket.id}) }}" method="POST">
+            <input type="submit" name="submit_assign" value="Zuweisung widerrufen" />
+        </form>
+    {% endif %}
+
+    <input type="button" value="Ticketdetails bearbeiten" onclick="document.location='{{ path('admin.ticket.edit', {id: ticket.id}) }}'" />
+{% endblock %}

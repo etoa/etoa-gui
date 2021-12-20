@@ -1,0 +1,37 @@
+{% extends 'admin/ticket/base.html.twig' %}
+
+{% block ticketContent %}
+    <h3>Bearbeitete Tickets</h3>
+
+    {% if closedTickets|length > 0 %}
+        <h4>Abgeschlossen</h4>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Status</th>
+                    <th>Kategorie</th>
+                    <th>User</th>
+                    <th>Admin</th>
+                    <th>Nachrichten</th>
+                    <th>Letzte Änderung</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for ticket in closedTickets %}
+                    <tr>
+                        <td><a href="{{ path('admin.ticket.details', {id: ticket.id}) }}">{{ ticket.idString }}</a></td>
+                        <td>{{ ticket.statusName }}</td>
+                        <td>{{ adminNicks[ticket.adminId] }}</td>
+                        <td>{{ userNicks[ticket.userId] }}</td>
+                        <td>{{ adminNicks[ticket.adminId] }}</td>
+                        <td>{{ messageCounts[ticket.id] }}</td>
+                        <td>{{ formatTimestamp(ticket.timestamp) }}</td>
+                    </tr>
+               {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p><i>Keine bearbeiteten Tickets vorhanden!</i></p>
+    {% endif %}
+{% endblock %}

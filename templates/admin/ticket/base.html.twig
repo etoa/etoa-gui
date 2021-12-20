@@ -1,0 +1,14 @@
+{% extends 'admin/layout/admin.html.twig' %}
+
+{% block content %}
+<h2>Support-Tickets</h2>
+
+    <div>
+        [ <a href="{{ path('admin.ticket.active') }}">Aktive Tickets</a> |
+        <a href="{{ path('admin.ticket.new') }}">Neues Ticket erstellen</a> |
+        <a href="{{ path('admin.ticket.closed') }}">Bearbeitete Tickets</a> ]
+    </div>
+
+    {% block ticketContent %}
+    {% endblock %}
+{% endblock %}

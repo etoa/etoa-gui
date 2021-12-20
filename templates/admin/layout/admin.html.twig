@@ -15,7 +15,7 @@
                     <li><a href="{{ path('admin.profile') }}">{{ app.user.username }}</a></li>
                     <li><a href="/admin/?adminlist=1">Adminliste</a></li>
                     {% if isAdminAllowed(userRoles, ['master', 'super-admin', 'game-admin', 'trial-game-admin']) %}
-                        <li><a href="?page=tickets">{{ numTickets > 0 ? 'Tickets (' ~ numTickets ~ ')' : 'Tickets' }}</a></li>
+                        <li><a href="{{ path('admin.ticket.active') }}">{{ numTickets > 0 ? 'Tickets (' ~ numTickets ~ ')' : 'Tickets' }}</a></li>
                     {% endif %}
                     <li><a href="{{ path('admin.notepad') }}">{{ numNotes > 0 ? 'Notizblock (' ~ numNotes ~ ')' : 'Notizblock' }}</li>
                     <li><a href="{{ etoaUrl('login') }}" target="_blank">Spiel-Login</a></li>

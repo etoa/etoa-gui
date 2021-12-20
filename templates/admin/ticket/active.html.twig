@@ -1,0 +1,73 @@
+{% extends 'admin/ticket/base.html.twig' %}
+
+{% block ticketContent %}
+    <h3>Aktive Tickets</h3>
+
+    {% if newTickets|length > 0 %}
+        <h4>Neu</h4>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Status</th>
+                    <th>Kategorie</th>
+                    <th>User</th>
+                    <th>Letzte Änderung</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for ticket in newTickets %}
+                    <div id="tt{{ ticket.id }}" style="display:none;">
+                        <a href="/admin/?page=user&sub=edit&id={{ ticket.userId }}">Daten anzeigen</a><br/>
+                        <a href="/admin/?page=sendmessage&amp;id={{ ticket.userId }}">Nachricht senden</a><br/>
+                    </div>
+                    <tr>
+                        <td>
+                            <a href="{{ path('admin.ticket.details', {id: ticket.id}) }}">{{ ticket.idString }}</a>
+                        </td>
+                        <td>{{ ticket.statusName }}</td>
+                        <td>{{ ticketCategories[ticket.catId] }}</td>
+                        <td>
+                            <a href="javascript:;" {{ cTT(userNicks[ticket.userId], "tt" ~ ticket.id)|raw }}>{{ userNicks[ticket.userId] }}</a>
+                        </td>
+                        <td>{{ formatTimestamp(ticket.timestamp) }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+
+    {% if assignedTickets|length > 0 %}
+        <h4>Zugeteilt</h4>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Status</th>
+                    <th>Kategorie</th>
+                    <th>User</th>
+                    <th>Nachrichten</th>
+                    <th>Letzte Änderung</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for ticket in assignedTickets %}
+                    <tr>
+                        <td>
+                            <a href="{{ path('admin.ticket.edit', {id: ticket.id}) }}">{{ ticket.idString }}</a>
+                        </td>
+                        <td>{{ ticket.statusName }}: <b>{{ adminNicks[ticket.adminId] }}</b></td>
+                        <td>{{ ticketCategories[ticket.catId] }}</td>
+                        <td>{{ userNicks[ticket.userId] }}</td>
+                        <td>{{ messageCounts[ticket.id]|default(0) }}</td>
+                        <td>{{ formatTimestamp(ticket.timestamp) }}</td>
+                    </tr>
+                {% endfor%}
+            </tbody>
+        </table>
+    {% endif %}
+
+    {% if newTickets|length == 0 and assignedTickets|length == 0 %}
+        <p><i>Keine aktiven Tickets vorhanden!</i></p>
+    {% endif %}
+{% endblock %}

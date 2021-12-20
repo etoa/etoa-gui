@@ -1,0 +1,66 @@
+{% extends 'admin/ticket/base.html.twig' %}
+
+{% block ticketContent %}
+    <h3>Ticket bearbeiten</h3>
+
+    <form method="post">
+        <h3>Ticket {{ ticket.getIdString() }}</h3>
+
+        <table>
+            <tr>
+                <th>Kategorie:</th>
+                <td colspan="3">
+                    <select name="cat_id">
+                        {% for value,label in ticketCategories  %}
+                            <option value="{{ value }}" {{ value == ticket.catId ? 'selected=selected' : '' }}>{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <th>User:</th>
+                <td>
+                    <a href=\"javascript:;\" {{ cTT(userNick, 'ttuser') }}>{{ userNick }}</a>
+                </td>
+                <th>Zugeteilter Admin:</th>
+                <td>
+                    <select name="admin_id">
+                        <option>(Niemand)</option>
+                        {% for value,label in adminNicks  %}
+                            <option value="{{ value }}" {{ value == ticket.adminId ? 'selected=selected' : '' }}>{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <th>Status:</th>
+                <td>
+                    <select name="status">
+                        {% for value,label in ticketStatus  %}
+                            <option value="{{ value }}" {{ value == ticket.status ? 'selected=selected' : '' }}>{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                </td>
+                <th>Lösung:</th>
+                <td>
+                    <select name="solution">
+                        {% for value,label in ticketSolutions  %}
+                            <option value="{{ value }}" {{ value == ticket.status ? 'selected=selected' : '' }}>{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <th>Admin-Kommentar:</th>
+                <td colspan="3">
+                    <textarea name="admin_comment" rows="5" cols="60">{{ ticket.adminComment }}</textarea>
+                </td>
+            </tr>
+        </table>
+
+        <p>
+            <input type="submit" name="submit" value="Änderungen übernehmen" /> &nbsp;
+            <input type="button"  value="Abbrechen" onclick="document.location='{{ path('admin.ticket.details', {id: ticket.id}) }}'" />
+        </p>
+    </form>
+{% endblock %}
