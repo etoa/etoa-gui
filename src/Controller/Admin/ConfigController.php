@@ -5,22 +5,17 @@ namespace EtoA\Controller\Admin;
 use EtoA\Backend\BackendMessageService;
 use EtoA\Core\Configuration\ConfigurationDefinitionsRepository;
 use EtoA\Core\Configuration\ConfigurationService;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class ConfigController extends AbstractController
+class ConfigController extends AbstractAdminController
 {
-    private ConfigurationDefinitionsRepository $definitions;
-    private ConfigurationService $config;
-    private BackendMessageService $backendMessageService;
-
-    public function __construct(ConfigurationDefinitionsRepository $definitions, ConfigurationService $config, BackendMessageService $backendMessageService)
-    {
-        $this->definitions = $definitions;
-        $this->config = $config;
-        $this->backendMessageService = $backendMessageService;
+    public function __construct(
+        private ConfigurationDefinitionsRepository $definitions,
+        private ConfigurationService $config,
+        private BackendMessageService $backendMessageService
+    ) {
     }
 
     /**

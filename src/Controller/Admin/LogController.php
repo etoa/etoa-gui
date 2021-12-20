@@ -3,12 +3,11 @@
 namespace EtoA\Controller\Admin;
 
 use EException;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class LogController extends AbstractController
+class LogController extends AbstractAdminController
 {
     /**
      * @Route("/admin/logs/error", name="admin.logs.error")

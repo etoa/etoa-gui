@@ -6,22 +6,18 @@ use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Design\Design;
 use EtoA\Support\FileUtils;
 use EtoA\User\UserPropertiesRepository;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\Routing\Annotation\Route;
 
-class DesignController extends AbstractController
+class DesignController extends AbstractAdminController
 {
-    private UserPropertiesRepository $userPropertiesRepository;
-    private ConfigurationService $config;
-
-    public function __construct(UserPropertiesRepository $userPropertiesRepository, ConfigurationService $config)
-    {
-        $this->userPropertiesRepository = $userPropertiesRepository;
-        $this->config = $config;
+    public function __construct(
+        private UserPropertiesRepository $userPropertiesRepository,
+        private ConfigurationService $config
+    ) {
     }
 
     /**

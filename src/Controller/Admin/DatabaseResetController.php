@@ -10,29 +10,21 @@ use EtoA\Support\DB\DatabaseBackupService;
 use EtoA\Support\DB\DatabaseManagerRepository;
 use EtoA\Support\DB\DatabaseMigrationService;
 use EtoA\Support\DB\SchemaMigrationRepository;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Routing\Annotation\Route;
 
-class DatabaseResetController extends AbstractController
+class DatabaseResetController extends AbstractAdminController
 {
-    private LockFactory $lockFactory;
-    private ConfigurationService $config;
-    private DatabaseManagerRepository $databaseManager;
-    private LogRepository $logRepository;
-    private DatabaseMigrationService $databaseMigrationService;
-    private DatabaseBackupService $databaseBackupService;
-
-    public function __construct(LockFactory $lockFactory, ConfigurationService $config, DatabaseManagerRepository $databaseManager, LogRepository $logRepository, DatabaseMigrationService $databaseMigrationService, DatabaseBackupService $databaseBackupService)
-    {
-        $this->lockFactory = $lockFactory;
-        $this->config = $config;
-        $this->databaseManager = $databaseManager;
-        $this->logRepository = $logRepository;
-        $this->databaseMigrationService = $databaseMigrationService;
-        $this->databaseBackupService = $databaseBackupService;
+    public function __construct(
+        private LockFactory $lockFactory,
+        private ConfigurationService $config,
+        private DatabaseManagerRepository $databaseManager,
+        private LogRepository $logRepository,
+        private DatabaseMigrationService $databaseMigrationService,
+        private DatabaseBackupService $databaseBackupService
+    ) {
     }
 
     /**

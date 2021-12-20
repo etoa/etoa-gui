@@ -5,22 +5,17 @@ namespace EtoA\Controller\Admin;
 use EtoA\Universe\Cell\CellRepository;
 use EtoA\User\UserRepository;
 use EtoA\User\UserUniverseDiscoveryService;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class ExplorationController extends AbstractController
+class ExplorationController extends AbstractAdminController
 {
-    private UserRepository $userRepository;
-    private CellRepository $cellRepository;
-    private UserUniverseDiscoveryService $userUniverseDiscoveryService;
-
-    public function __construct(UserRepository $userRepository, CellRepository $cellRepository, UserUniverseDiscoveryService $userUniverseDiscoveryService)
-    {
-        $this->userRepository = $userRepository;
-        $this->cellRepository = $cellRepository;
-        $this->userUniverseDiscoveryService = $userUniverseDiscoveryService;
+    public function __construct(
+        private UserRepository $userRepository,
+        private CellRepository $cellRepository,
+        private UserUniverseDiscoveryService $userUniverseDiscoveryService
+    ) {
     }
 
     /**

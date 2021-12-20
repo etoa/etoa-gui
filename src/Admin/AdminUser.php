@@ -16,7 +16,7 @@ class AdminUser
     public string $email = "";
     public string $tfaSecret = "";
     public int $playerId = 0;
-    public string $boardUrl = "";
+    public ?string $boardUrl = "";
     public string $userTheme = "";
     public bool $ticketEmail = false;
     public bool $locked = false;
@@ -43,10 +43,5 @@ class AdminUser
         $adminUser->isContact = (bool) $data['is_contact'];
 
         return $adminUser;
-    }
-
-    public function checkEqualPassword(string $newPassword): bool
-    {
-        return validatePasswort($newPassword, $this->passwordString);
     }
 }

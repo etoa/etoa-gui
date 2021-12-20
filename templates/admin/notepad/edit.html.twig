@@ -3,12 +3,5 @@
 {% block content %}
     <h1>Notizen</h1>
 
-    <form method="post">
-        <input type="hidden" name="pid" value="{{ note.id }}">
-        <input type="Text" name="Titel" value="{{ note.title }}" size="50"/>
-        <br><br>
-        <textarea name="Text" cols="80" rows="20">{{ note.text }}</textarea>
-        <br><br>
-        <input type="Submit" name="Ändern" value="Ändern" />
-    </form>
+    {{ form(form) }}
 {% endblock %}

@@ -6,15 +6,13 @@ use EtoA\Admin\AdminUserRepository;
 use EtoA\Log\LogFacility;
 use EtoA\Log\LogRepository;
 use EtoA\Log\LogSeverity;
-use EtoA\Security\Admin\CurrentAdmin;
 use Scheb\TwoFactorBundle\Security\TwoFactor\Provider\Totp\TotpAuthenticatorInterface;
 use Scheb\TwoFactorBundle\Security\TwoFactor\QrCode\QrCodeGenerator;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class TfaSecurityController extends AbstractController
+class TfaSecurityController extends AbstractAdminController
 {
     private AdminUserRepository $adminUserRepository;
     private LogRepository $logRepository;
@@ -32,7 +30,6 @@ class TfaSecurityController extends AbstractController
     {
         $secret = $req->getSession()->get('tfa-secret', $authenticator->generateSecret());
 
-        /** @var CurrentAdmin $user */
         $user = $this->getUser();
         $user->getData()->tfaSecret = $secret;
         $req->getSession()->set('tfa-secret', $secret);
@@ -62,7 +59,6 @@ class TfaSecurityController extends AbstractController
      */
     public function disableTwoFactorAuthAction(Request $req, TotpAuthenticatorInterface $authenticator): Response
     {
-        /** @var CurrentAdmin $user */
         $user = $this->getUser();
 
         if ($req->isMethod('POST')) {

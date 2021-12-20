@@ -3,70 +3,48 @@
 namespace EtoA\Controller\Admin;
 
 use EtoA\Admin\AdminUserRepository;
-use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Form\Type\Admin\ProfilePasswordType;
+use EtoA\Form\Type\Admin\ProfileType;
 use EtoA\Log\LogFacility;
 use EtoA\Log\LogRepository;
 use EtoA\Log\LogSeverity;
-use EtoA\Security\Admin\CurrentAdmin;
 use EtoA\User\UserRepository;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 
-class AdminProfileController extends AbstractController
+class AdminProfileController extends AbstractAdminController
 {
-    private UserRepository $userRepository;
-    private AdminUserRepository $adminUserRepository;
-    private LogRepository $logRepository;
-    private ConfigurationService $config;
-
-    public function __construct(UserRepository $userRepository, AdminUserRepository $adminUserRepository, LogRepository $logRepository, ConfigurationService $config)
-    {
-        $this->userRepository = $userRepository;
-        $this->adminUserRepository = $adminUserRepository;
-        $this->logRepository = $logRepository;
-        $this->config = $config;
+    public function __construct(
+        private UserRepository $userRepository,
+        private AdminUserRepository $adminUserRepository,
+        private LogRepository $logRepository
+    ) {
     }
 
     /**
-     * @Route("/admin/profile/", name="admin.profile", methods={"GET"})
+     * @Route("/admin/profile/", name="admin.profile")
      */
-    public function index(): Response
+    public function index(Request $request): Response
     {
-        /** @var CurrentAdmin $adminUser */
-        $adminUser = $this->getUser();
+        $userData = $this->getUser()->getData();
+        $profileForm = $this->createForm(ProfileType::class, $userData);
+        $profileForm->handleRequest($request);
+        if ($profileForm->isSubmitted() && $profileForm->isValid()) {
+            $this->adminUserRepository->save($userData);
+            $this->logRepository->add(LogFacility::ADMIN, LogSeverity::INFO, $userData->nick . " ändert seine Daten");
+
+            $this->addFlash('success', 'Die Daten wurden geändert!');
+        }
 
         return $this->render('admin/profile/profile.html.twig', [
-            'user' => $adminUser->getData(),
+            'profileForm' => $profileForm->createView(),
+            'passwordForm' => $this->createForm(ProfilePasswordType::class)->createView(),
+            'user' => $userData,
             'users' => $this->userRepository->searchUserNicknames(),
         ]);
-    }
-
-    /**
-     * @Route("/admin/profile/", name="admin.profile.update", methods={"POST"})
-     */
-    public function updateProfile(Request $request): RedirectResponse
-    {
-        /** @var CurrentAdmin $adminUser */
-        $adminUser = $this->getUser();
-
-        $data = $adminUser->getData();
-        $data->name = $request->request->get('user_name');
-        $data->email = $request->request->get('user_email');
-        $data->boardUrl = $request->request->get('user_board_url');
-        $data->userTheme = $request->request->get('user_theme', '');
-        $data->ticketEmail = $request->request->getBoolean('ticketmail');
-        $data->playerId = $request->request->getInt('player_id');
-
-        $this->adminUserRepository->save($data);
-        $this->logRepository->add(LogFacility::ADMIN, LogSeverity::INFO, $data->nick . " ändert seine Daten");
-
-        $this->addFlash('success', 'Die Daten wurden geändert!');
-
-        return $this->redirectToRoute('admin.profile');
     }
 
     /**
@@ -74,17 +52,24 @@ class AdminProfileController extends AbstractController
      */
     public function updatePassword(Request $request, UserPasswordHasherInterface $passwordHasher): RedirectResponse
     {
-        /** @var CurrentAdmin $adminUser */
         $adminUser = $this->getUser();
 
-        if (!$passwordHasher->isPasswordValid($adminUser, $request->request->get('user_password_old'))) {
+        $form = $this->createForm(ProfilePasswordType::class);
+        $form->handleRequest($request);
+        if (!$form->isSubmitted() || !$form->isValid()) {
+            foreach ($form->getErrors(true) as $error) {
+                $this->addFlash('error', $error->getMessage());
+            }
+
+            return $this->redirectToRoute('admin.profile');
+        }
+
+        $data = $form->getData();
+
+        if (!$passwordHasher->isPasswordValid($adminUser, $data['password'])) {
             $this->addFlash('error', 'Das alte Passwort stimmt nicht mit dem gespeicherten Wert überein!');
-        } elseif (!($request->request->get('user_password') === $request->request->get('user_password2') && $request->request->get('user_password_old') !== $request->request->get('user_password'))) {
-            $this->addFlash('error', 'Die Kennwortwiederholung stimmt nicht oder das alte und das neue Passwort sind gleich!');
-        } elseif (strlen($request->request->get('user_password')) < $this->config->getInt('password_minlength')) {
-            $this->addFlash('error', 'Das Passwort ist zu kurz! Es muss mindestens ' . $this->config->getInt('password_minlength') . ' Zeichen lang sein!');
         } else {
-            $this->adminUserRepository->setPassword($adminUser->getData(), $passwordHasher->hashPassword($adminUser, $request->request->get('user_password')));
+            $this->adminUserRepository->setPassword($adminUser->getData(), $passwordHasher->hashPassword($adminUser, $data['new_password']));
             $this->logRepository->add(LogFacility::ADMIN, LogSeverity::INFO, $adminUser->getId() . " ändert sein Passwort");
 
             $this->addFlash('success', 'Das Passwort wurde geändert!');
