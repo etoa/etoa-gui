@@ -39,7 +39,8 @@
         "symfony/http-client": "^5.3",
         "twig/string-extra": "^3.3",
         "symfony/form": "^5.3",
-        "symfony/validator": "^5.3"
+        "symfony/validator": "^5.3",
+        "symfony/webpack-encore-bundle": "^1.13"
     },
     "require-dev": {
         "ergebnis/composer-normalize": "^2.0",
