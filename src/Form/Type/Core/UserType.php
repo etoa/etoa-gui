@@ -6,7 +6,7 @@ use EtoA\User\UserRepository;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class PlayerType extends AbstractType
+class UserType extends AbstractType
 {
     public function __construct(
         private UserRepository $userRepository,
@@ -19,7 +19,7 @@ class PlayerType extends AbstractType
 
         $resolver->setDefaults([
             'required' => false,
-            'placeholder' => '(Niemand)',
+            'placeholder' => '',
             'choices' => array_flip($this->userRepository->searchUserNicknames()),
         ]);
     }

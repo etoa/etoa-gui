@@ -3,7 +3,9 @@
 namespace EtoA\Controller\Admin;
 
 use EException;
+use EtoA\Form\Type\Admin\LogDebrisType;
 use EtoA\Form\Type\Admin\LogGeneralType;
+use EtoA\Log\DebrisLogRepository;
 use EtoA\Log\LogRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -12,9 +14,11 @@ use Symfony\Component\Routing\Annotation\Route;
 class LogController extends AbstractAdminController
 {
     public function __construct(
-        private LogRepository $logRepository
+        private LogRepository $logRepository,
+        private DebrisLogRepository $debrisLogRepository
     ) {
     }
+
     /**
      * @Route("/admin/logs/", name="admin.logs.general")
      */
@@ -23,6 +27,19 @@ class LogController extends AbstractAdminController
         return $this->render('admin/logs/general.html.twig', [
             'form' => $this->createForm(LogGeneralType::class, $request->query->all())->createView(),
             'total' => $this->logRepository->count(),
+        ]);
+    }
+
+    /**
+     * @Route("/admin/logs/debris", name="admin.logs.debris")
+     */
+    public function debris(Request $request): Response
+    {
+        $data = array_merge($request->query->all(), ['date' => (new \DateTime())->format('Y-m-d\TH:i:s')]);
+
+        return $this->render('admin/logs/debris.html.twig', [
+            'form' => $this->createForm(LogDebrisType::class, $data)->createView(),
+            'total' => $this->debrisLogRepository->count(),
         ]);
     }
 

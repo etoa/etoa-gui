@@ -7,7 +7,6 @@ $xajax->register(XAJAX_FUNCTION,"showBattle");
 $xajax->register(XAJAX_FUNCTION,"applyGameLogFilter");
 $xajax->register(XAJAX_FUNCTION,"applyFleetLogFilter");
 $xajax->register(XAJAX_FUNCTION,"applyAttackAbuseLogFilter");
-$xajax->register(XAJAX_FUNCTION,"applyDebrisLogFilter");
 
 function applyGameLogFilter($args,$limit=0)
 {
@@ -39,16 +38,6 @@ function applyAttackAbuseLogFilter($args,$limit=0)
     showAttackAbuseLogs($args,$limit);
     $objResponse->assign("log_contents","innerHTML",ob_get_clean());
 
-    return $objResponse;
-}
-
-function applyDebrisLogFilter($args,$limit=0)
-{
-    $objResponse = new xajaxResponse();
-    require_once("inc/admin_functions.inc.php");
-    ob_start();
-    showDebrisLogs($args,$limit);
-    $objResponse->assign("log_contents","innerHTML",ob_get_clean());
     return $objResponse;
 }
 

@@ -288,46 +288,8 @@ function newFleetLogs()
 
 function debrisLog()
 {
-    echo "<h2>Trümmerfeld Logs</h2>";
-
-    ?>
-    <script type="text/javascript">
-        function applyFilter(limit) {
-            xajax_applyDebrisLogFilter(xajax.getFormValues('filterform'), limit);
-        }
-
-        function resetFilter() {
-            const dateTimeString = DateTime.fromISO('<?= date(DateTime::ISO8601) ?>')
-                .setZone('<?= date_default_timezone_get() ?>')
-                .toISO({ includeOffset: false, suppressMilliseconds: true })
-                .slice(0,16);
-            document.getElementById('searchtime').value = dateTimeString;
-            document.getElementById('searchuser').value = '';
-            document.getElementById('searchadmin').value = '';
-            applyFilter(0);
-        }
-    </script>
-<?PHP
-
-    echo '<fieldset style="width:950px"><legend>Filter</legend>';
-    echo "<form action=\".\" method=\"post\" id=\"filterform\">";
-
-    echo " <label for=\"searchuser\">User:</label> <input type=\"text\" id=\"searchuser\" name=\"searchuser\" value=\"\" autocomplete=\"off\" /> &nbsp; ";
-    echo " <label for=\"searchadmin\">Admin:</label> <input type=\"text\" id=\"searchadmin\" name=\"searchadmin\" value=\"\" autocomplete=\"off\" /> &nbsp; ";
-    // Todo: extend to any entity
-    echo "<br/><br/>";
-
-    echo " <label for=\"searchtime\">Zeit:</label> ";
-    echo '<input type="datetime-local" value="'.date("Y-m-d\TH:i", time()).'" name="searchtime" id="searchtime">';
-
-    echo " &nbsp; <input type=\"submit\" value=\"Anwenden\" onclick=\"applyFilter(0);return false;\" /> &nbsp;
-    <input type=\"button\" value=\"Reset\" onclick=\"resetFilter();\" />";
-    echo "</form>";
-    echo '</fieldset>';
-
-    echo "<div id=\"log_contents\">";
-    showDebrisLogs();
-    echo "</div>";
+    header('Location: /admin/logs/debris/');
+    die();
 }
 
 function newCommonLog()

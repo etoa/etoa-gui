@@ -1,0 +1,22 @@
+{% extends 'components/base_search.html.twig' %}
+
+{% block data %}
+    <tr>
+        <th style="width:140px;">Datum</th>
+        <th>Admin</th>
+        <th>User</th>
+        <th>Titan</th>
+        <th>Silizium</th>
+        <th>PVC</th>
+    </tr>
+    {% for log in search.entries %}
+        <tr>
+            <td>{{ formatTimestamp(log.timestamp) }}</td>
+            <td>{{ this.admins[log.adminId]|default('?') }}</td>
+            <td>{{ this.users[log.userId]|default('?') }}</td>
+            <td>{{ log.metal }}</td>
+            <td>{{ log.crystal }}</td>
+            <td>{{ log.plastic }}</td>
+        </tr>
+    {% endfor %}
+{% endblock %}
