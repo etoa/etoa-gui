@@ -2,7 +2,6 @@
 
 namespace EtoA\Components\Helper;
 
-use EtoA\Log\LogSeverity;
 use Symfony\UX\LiveComponent\Attribute\LiveAction;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
 
