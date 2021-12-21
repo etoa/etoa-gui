@@ -1,20 +1,20 @@
-<div data-controller="pagination" data-previous="{{ search.limit - search.perPage }}" data-next="{{ search.limit + search.perPage }}" data-last="{{ search.total - (search.total % search.perPage) }}">
+<div>
     <div style="float:left;">
-        <input data-pagination-target="limit" type="hidden" value="{{ search.limit }}" name="limit">
+        <input type="hidden" value="{{ search.limit }}" name="limit">
 
         {% if search.limit > 0 %}
-            <input type="button" value="&lt;&lt;" data-action="click->pagination#first" />
-            <input type="button" value="&lt;" data-action="click->pagination#previous" />
+            <button type="button" data-action="live#action" data-action-name="prevent|firstPage">&lt;&lt;</button>
+            <button type="button" data-action="live#action" data-action-name="prevent|previousPage">&lt;</button>
         {% else %}
-            <input type="button" value="&lt;&lt;" disabled="disabled" />
-            <input type="button" value="&lt;" disabled="disabled" />
+            <button type="button" disabled="disabled">&lt;&lt;</button>
+            <button type="button" disabled="disabled">&lt;</button>
         {% endif %}
         {% if search.limit < search.total - search.perPage %}
-            <input type="button" value="&gt;" data-action="click->pagination#next" />
-            <input type="button" value="&gt;&gt;" data-action="click->pagination#last" />
+            <button type="button" data-action="live#action" data-action-name="prevent|nextPage">&gt;</button>
+            <button type="button" data-action="live#action" data-action-name="prevent|lastPage">&gt;&gt;</button>
         {% else %}
-            <input type="button" value="&gt;" disabled="disabled" />
-            <input type="button" value="&gt;&gt;" disabled="disabled" />
+            <button type="button" disabled="disabled">&gt;</button>
+            <button type="button" disabled="disabled">&gt;&gt;</button>
         {% endif %}
 
     </div><div style="float:right">

@@ -2,6 +2,7 @@
 
 namespace EtoA\Components\Admin;
 
+use EtoA\Components\Helper\SearchComponentTrait;
 use EtoA\Components\Helper\SearchResult;
 use EtoA\Form\Type\Admin\LogGeneralType;
 use EtoA\Log\LogFacility;
@@ -11,42 +12,22 @@ use EtoA\Log\LogSeverity;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
-use Symfony\UX\LiveComponent\Attribute\LiveAction;
-use Symfony\UX\LiveComponent\Attribute\LiveProp;
 use Symfony\UX\LiveComponent\ComponentWithFormTrait;
-use Symfony\UX\LiveComponent\DefaultActionTrait;
 
 #[AsLiveComponent('log_general_search')]
 class LogGeneralSearchComponent extends AbstractController
 {
-    private const PER_PAGE = 100;
-
     use ComponentWithFormTrait;
-    use DefaultActionTrait;
+    use SearchComponentTrait;
 
     /** @var string[] */
     public array $facilities = LogFacility::FACILITIES;
     /** @var string[] */
     public array $severities = LogSeverity::SEVERITIES;
 
-    #[LiveProp]
-    public int $limit = 0;
-
     public function __construct(
         private LogRepository $logRepository
     ) {
-    }
-
-    #[LiveAction]
-    public function reset(): void
-    {
-        $this->limit = 0;
-        $this->formValues = [
-            'facility' => '',
-            'query' => '',
-            'severity' => LogSeverity::DEBUG,
-        ];
-        $this->instantiateForm();
     }
 
     public function getSearch(): SearchResult
@@ -66,17 +47,24 @@ class LogGeneralSearchComponent extends AbstractController
 
         $total = $this->logRepository->count($search);
 
-        $limit = max(0, $this->limit);
-        $limit = min($total, $limit);
-        $limit -= $limit % self::PER_PAGE;
+        $limit = $this->getLimit($total);
 
-        $logs = $this->logRepository->searchLogs($search, self::PER_PAGE, $limit);
+        $logs = $this->logRepository->searchLogs($search, $this->perPage, $limit);
 
-        return new SearchResult($logs, $limit, $total, self::PER_PAGE);
+        return new SearchResult($logs, $limit, $total, $this->perPage);
     }
 
     protected function instantiateForm(): FormInterface
     {
         return $this->createForm(LogGeneralType::class, $this->getFormValues());
+    }
+
+    private function resetFormValues(): void
+    {
+        $this->formValues = [
+            'facility' => '',
+            'query' => '',
+            'severity' => LogSeverity::DEBUG,
+        ];
     }
 }
