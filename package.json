@@ -39,5 +39,8 @@
         "watch-poll-mix": "mix watch -- --watch-options-poll=1000",
         "hot-mix": "mix watch --hot",
         "prod-mix": "mix --production"
+    },
+    "dependencies": {
+        "choices.js": "^9.1.0"
     }
 }

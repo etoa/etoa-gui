@@ -1,0 +1,37 @@
+.choices
+  display: inline-block
+  margin-left: 5px
+  margin-right: 10px
+  overflow: initial
+  min-width: 150px
+
+.choices__inner
+  min-height: inherit
+  padding: 2px
+  font-size: 12px
+  background-color: white
+  border-width: 1px
+  border-style: solid
+  border-color: #e2e3ea
+  border-bottom-color: #e3e9ef
+  border-top-color: #abadb3
+  margin-top: -1px
+
+.choices__placeholder
+  opacity: 1
+
+.choices__list--single
+  padding: 2px 16px 2px 4px
+
+.choices[data-type*=select-one] .choices__inner
+  padding: 2px
+
+.choices[data-type*=select-one] .choices__input
+  padding: 3px
+
+.choices__list--dropdown .choices__item
+  padding: 4px
+  font-size: 12px
+
+.choices__item.choices__item--selectable
+  padding-right: 10px

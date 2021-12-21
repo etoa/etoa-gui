@@ -4,7 +4,6 @@ namespace EtoA\Form\Type\Core;
 
 use EtoA\Log\LogFacility;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class LogFacilityType extends AbstractType
@@ -22,6 +21,6 @@ class LogFacilityType extends AbstractType
 
     public function getParent(): string
     {
-        return ChoiceType::class;
+        return SearchableChoiceType::class;
     }
 }

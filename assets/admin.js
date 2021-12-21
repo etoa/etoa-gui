@@ -5,7 +5,8 @@
  * (and its CSS file) in your base layout (base.html.twig).
  */
 
-// any CSS you import will output into a single css file (app.css in this case)
+// any CSS you import will output into a single css file (admin.css in this case)
+import 'choices.js/public/assets/styles/choices.css';
 import './styles/admin.sass';
 
 // start the Stimulus application

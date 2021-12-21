@@ -2,24 +2,28 @@
 
 namespace EtoA\Form\Type\Core;
 
-use EtoA\Log\LogSeverity;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class LogSeverityType extends AbstractType
+class SearchableChoiceType extends AbstractType
 {
     public function configureOptions(OptionsResolver $resolver): void
     {
         parent::configureOptions($resolver);
 
         $resolver->setDefaults([
-            'required' => true,
-            'choices' => array_flip(LogSeverity::SEVERITIES),
+            'row_attr' => [
+                'data-controller' => 'searchable-choice',
+            ],
+            'attr' => [
+                'data-searchable-choice-target' => 'input',
+            ],
         ]);
     }
 
     public function getParent(): string
     {
-        return SearchableChoiceType::class;
+        return ChoiceType::class;
     }
 }
