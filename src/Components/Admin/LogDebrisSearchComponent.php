@@ -6,6 +6,7 @@ use EtoA\Admin\AdminUserRepository;
 use EtoA\Components\Helper\SearchComponentTrait;
 use EtoA\Components\Helper\SearchResult;
 use EtoA\Form\Type\Admin\LogDebrisType;
+use EtoA\Form\Type\Core\LogDateTimeType;
 use EtoA\Log\DebrisLogRepository;
 use EtoA\Log\DebrisLogSearch;
 use EtoA\User\UserRepository;
@@ -73,7 +74,7 @@ class LogDebrisSearchComponent extends AbstractController
         $this->formValues = [
             'user' => 0,
             'admin' => 0,
-            'date' => (new \DateTime())->format('Y-m-d\TH:i:s'),
+            'date' => (new \DateTime())->format(LogDateTimeType::FORMAT),
         ];
     }
 }

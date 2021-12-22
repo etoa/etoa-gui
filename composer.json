@@ -77,5 +77,10 @@
         "auto-scripts": {
             "cache:clear": "symfony-cmd"
         }
+    },
+    "config": {
+        "allow-plugins": {
+            "composer/package-versions-deprecated": true
+        }
     }
 }

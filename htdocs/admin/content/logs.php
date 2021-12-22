@@ -44,59 +44,8 @@ function battleLog()
 
 function checkFights()
 {
-    echo "<h2>Angriffsverletzung</h2>";
-
-?>
-    <script type="text/javascript">
-        function applyFilter(limit) {
-            xajax_applyAttackAbuseLogFilter(xajax.getFormValues('filterform'), limit);
-        }
-
-        function resetFilter() {
-            const dateTimeString = DateTime.fromISO('<?= date(DateTime::ISO8601) ?>')
-                .setZone('<?= date_default_timezone_get() ?>')
-                .toISO({ includeOffset: false, suppressMilliseconds: true })
-                .slice(0,16);
-            document.getElementById('searchtime').value = dateTimeString;
-            document.getElementById('searchfuser').value = '';
-            document.getElementById('searcheuser').value = '';
-            applyFilter(0);
-        }
-    </script>
-    <?PHP
-
-    echo '<fieldset style="width:800px"><legend>Filter</legend>';
-    echo "<form action=\".\" method=\"post\" id=\"filterform\">";
-    echo "<label for=\"logsev\">Ab Schweregrad:</label>
-    <select id=\"logsev\" name=\"logsev\" onchange=\"applyFilter(0)\">";
-    foreach (LogSeverity::SEVERITIES as $k => $v) {
-        echo "<option value=\"" . $k . "\">" . $v . "</option>";
-    }
-    echo "</select> &nbsp; ";
-    echo "<label for=\"logcat\">Aktion:</label>
-    <select id=\"flaction\" name=\"flaction\" onchange=\"applyFilter(0)\">
-    <option value=\"\">(Egal)</option>";
-    foreach (FleetAction::getAll() as $k => $v) {
-        if ($v->attitude() == 3)
-            echo "<option value=\"" . $k . "\">" . $v . "</option>";
-    }
-    echo "</select> &nbsp; ";
-    echo " <label for=\"searchtime\">Zeit:</label> ";
-    echo '<input type="datetime-local" value="'.date("Y-m-d\TH:i", time()).'" name="searchtime" id="searchtime">';
-    echo "&nbsp; ";
-    echo "<br/><br/>";
-    echo " <label for=\"searchfuser\">Angreifer:</label> <input type=\"text\" id=\"searchfuser\" name=\"searchfuser\" value=\"\" autocomplete=\"off\" /> &nbsp; ";
-    echo " <label for=\"searcheuser\">Verteidiger:</label> <input type=\"text\" id=\"searcheuser\" name=\"searcheuser\" value=\"\" autocomplete=\"off\" /> &nbsp; ";
-
-
-    echo "<input type=\"submit\" value=\"Anwenden\" onclick=\"applyFilter(0);return false;\" /> &nbsp;
-    <input type=\"button\" value=\"Reset\" onclick=\"resetFilter();\" />";
-    echo "</form>";
-    echo '</fieldset>';
-
-    echo "<div id=\"log_contents\">";
-    showAttackAbuseLogs();
-    echo "</div>";
+    header('Location: /admin/attack-ban/');
+    die();
 }
 
 function newGamelogs()

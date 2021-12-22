@@ -3,8 +3,10 @@
 namespace EtoA\Controller\Admin;
 
 use EException;
+use EtoA\Form\Type\Admin\LogAttackBanType;
 use EtoA\Form\Type\Admin\LogDebrisType;
 use EtoA\Form\Type\Admin\LogGeneralType;
+use EtoA\Form\Type\Core\LogDateTimeType;
 use EtoA\Log\DebrisLogRepository;
 use EtoA\Log\LogRepository;
 use Symfony\Component\HttpFoundation\Request;
@@ -35,11 +37,23 @@ class LogController extends AbstractAdminController
      */
     public function debris(Request $request): Response
     {
-        $data = array_merge($request->query->all(), ['date' => (new \DateTime())->format('Y-m-d\TH:i:s')]);
+        $data = array_merge($request->query->all(), ['date' => (new \DateTime())->format(LogDateTimeType::FORMAT)]);
 
         return $this->render('admin/logs/debris.html.twig', [
             'form' => $this->createForm(LogDebrisType::class, $data)->createView(),
             'total' => $this->debrisLogRepository->count(),
+        ]);
+    }
+
+    /**
+     * @Route("/admin/logs/attack-ban", name="admin.logs.attack-ban")
+     */
+    public function attackBan(Request $request): Response
+    {
+        $data = array_merge($request->query->all(), ['date' => (new \DateTime())->format(LogDateTimeType::FORMAT)]);
+
+        return $this->render('admin/logs/attack_ban.html.twig', [
+            'form' => $this->createForm(LogAttackBanType::class, $data)->createView(),
         ]);
     }
 
