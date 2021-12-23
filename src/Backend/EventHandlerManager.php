@@ -41,7 +41,7 @@ class EventHandlerManager
     {
         $this->checkFiles();
 
-        $cmd = $this->getExecutable() . " " . $this->getInstanceName() . " -d -c " . $this->getConfigFile() . " -p " . $this->getPidFilePath();
+        $cmd = $this->getExecutable() . " " . $this->getInstanceName() . " -d -k -c " . $this->getConfigFile() . " -p " . $this->getPidFilePath();
         exec($cmd, $output);
 
         return $output;
