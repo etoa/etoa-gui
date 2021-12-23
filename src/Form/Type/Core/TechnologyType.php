@@ -2,14 +2,14 @@
 
 namespace EtoA\Form\Type\Core;
 
-use EtoA\User\UserRepository;
+use EtoA\Technology\TechnologyDataRepository;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class UserType extends AbstractType
+class TechnologyType extends AbstractType
 {
     public function __construct(
-        private UserRepository $userRepository,
+        private TechnologyDataRepository $technologyDataRepository,
     ) {
     }
 
@@ -19,8 +19,8 @@ class UserType extends AbstractType
 
         $resolver->setDefaults([
             'required' => false,
-            'placeholder' => '(Alle)',
-            'choices' => array_flip($this->userRepository->searchUserNicknames()),
+            'placeholder' => '',
+            'choices' => array_flip($this->technologyDataRepository->getTechnologyNames()),
         ]);
     }
 

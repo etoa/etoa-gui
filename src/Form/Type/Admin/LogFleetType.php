@@ -15,8 +15,12 @@ class LogFleetType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('severity', LogSeverityType::class)
-            ->add('facility', LogFleetFacilityType::class)
+            ->add('severity', LogSeverityType::class, [
+                'label' => 'Ab Schweregrad',
+            ])
+            ->add('facility', LogFleetFacilityType::class, [
+                'label' => 'Kategorie',
+            ])
             ->add('action', FleetActionType::class)
             ->add('status', FleetActionStatusType::class)
             ->add('fleetUser', UserType::class, [

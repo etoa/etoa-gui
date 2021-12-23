@@ -2,14 +2,14 @@
 
 namespace EtoA\Form\Type\Core;
 
-use EtoA\User\UserRepository;
+use EtoA\Defense\DefenseDataRepository;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class UserType extends AbstractType
+class DefenseType extends AbstractType
 {
     public function __construct(
-        private UserRepository $userRepository,
+        private DefenseDataRepository $defenseDataRepository,
     ) {
     }
 
@@ -20,7 +20,7 @@ class UserType extends AbstractType
         $resolver->setDefaults([
             'required' => false,
             'placeholder' => '(Alle)',
-            'choices' => array_flip($this->userRepository->searchUserNicknames()),
+            'choices' => array_flip($this->defenseDataRepository->getDefenseNames()),
         ]);
     }
 

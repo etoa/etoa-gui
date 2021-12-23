@@ -39,13 +39,24 @@ class LogControllerTest extends SymfonyWebTestCase
         $this->assertSame(200, $client->getResponse()->getStatusCode(), $client->getResponse()->getContent());
     }
 
-    public function tesFleets(): void
+    public function testFleets(): void
     {
         $client = self::createClient();
 
         $this->loginAdmin($client);
 
         $client->request('GET', '/admin/logs/fleets/');
+
+        $this->assertSame(200, $client->getResponse()->getStatusCode(), $client->getResponse()->getContent());
+    }
+
+    public function testGame(): void
+    {
+        $client = self::createClient();
+
+        $this->loginAdmin($client);
+
+        $client->request('GET', '/admin/logs/game/');
 
         $this->assertSame(200, $client->getResponse()->getStatusCode(), $client->getResponse()->getContent());
     }

@@ -14,11 +14,9 @@ class LogDebrisType extends AbstractType
     {
         $builder
             ->add('user', UserType::class, [
-                'label' => 'User:',
                 'placeholder' => '(Alle)',
             ])
             ->add('admin', AdminType::class, [
-                'label' => 'Admin:',
                 'placeholder' => '(Alle)',
             ])
             ->add('date', LogDateTimeType::class);

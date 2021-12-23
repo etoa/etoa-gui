@@ -2,14 +2,16 @@
 
 namespace EtoA\Form\Type\Core;
 
-use EtoA\User\UserRepository;
+use EtoA\Universe\Entity\EntityLabelSearch;
+use EtoA\Universe\Entity\EntityRepository;
+use EtoA\Universe\Entity\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class UserType extends AbstractType
+class PlanetType extends AbstractType
 {
     public function __construct(
-        private UserRepository $userRepository,
+        private EntityRepository $entityRepository,
     ) {
     }
 
@@ -17,10 +19,16 @@ class UserType extends AbstractType
     {
         parent::configureOptions($resolver);
 
+        $planets = $this->entityRepository->searchEntityLabels(EntityLabelSearch::create()->codeIn([EntityType::PLANET]));
+        $choices = [];
+        foreach ($planets as $planet) {
+            $choices[$planet->toString()] = $planet->id;
+        }
+
         $resolver->setDefaults([
             'required' => false,
             'placeholder' => '(Alle)',
-            'choices' => array_flip($this->userRepository->searchUserNicknames()),
+            'choices' => $choices,
         ]);
     }
 

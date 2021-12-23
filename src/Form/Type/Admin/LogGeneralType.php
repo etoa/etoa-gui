@@ -14,14 +14,14 @@ class LogGeneralType extends AbstractType
     {
         $builder
             ->add('severity', LogSeverityType::class, [
-                'label' => 'Ab Schweregrad:',
+                'label' => 'Ab Schweregrad',
             ])
             ->add('facility', LogFacilityType::class, [
-                'label' => 'Kategorie:',
+                'label' => 'Kategorie',
             ])
             ->add('query', TextType::class, [
                 'required' => false,
-                'label' => 'Suchtext:',
+                'label' => 'Suchtext',
             ]);
     }
 }
