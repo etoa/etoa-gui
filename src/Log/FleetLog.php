@@ -2,6 +2,8 @@
 
 namespace EtoA\Log;
 
+use EtoA\Universe\Resources\ResourceNames;
+
 class FleetLog
 {
     public int $id;
@@ -68,5 +70,51 @@ class FleetLog
         }
 
         return $ships;
+    }
+
+    /**
+     * @return iterable<int, array{0: int, 1: int}>
+     */
+    public function iterateFleetShips(): iterable
+    {
+        $shipIds = array_unique(array_merge(array_keys($this->fleetShipsStart), array_keys($this->fleetShipsEnd)));
+        foreach ($shipIds as $shipId) {
+            yield $shipId => [$this->fleetShipsStart[$shipId] ?? 0, $this->fleetShipsEnd[$shipId] ?? 0];
+        }
+    }
+
+    /**
+     * @return iterable<int, array{0: int, 1: int}>
+     */
+    public function iterateEntityShips(): iterable
+    {
+        $shipIds = array_unique(array_merge(array_keys($this->entityShipsStart), array_keys($this->entityShipsEnd)));
+        foreach ($shipIds as $shipId) {
+            yield $shipId => [$this->entityShipsStart[$shipId] ?? 0, $this->entityShipsEnd[$shipId] ?? 0];
+        }
+    }
+
+    /**
+     * @return iterable<string, array{0: int, 1: int}>
+     */
+    public function iterateFleetResources(): iterable
+    {
+        $startResources = explode(":", $this->fleetResStart);
+        $endResources = explode(":", $this->fleetResEnd);
+        foreach (ResourceNames::NAMES as $k => $v) {
+            yield $v => [(int) $startResources[$k], (int) $endResources[$k]];
+        }
+    }
+
+    /**
+     * @return iterable<string, array{0: int, 1: int}>
+     */
+    public function iterateEntityResources(): iterable
+    {
+        $startResources = explode(":", $this->entityResStart);
+        $endResources = explode(":", $this->entityResEnd);
+        foreach (ResourceNames::NAMES as $k => $v) {
+            yield $v => [(int) $startResources[$k], (int) $endResources[$k]];
+        }
     }
 }

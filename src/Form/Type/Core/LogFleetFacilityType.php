@@ -2,10 +2,11 @@
 
 namespace EtoA\Form\Type\Core;
 
+use EtoA\Log\FleetLogFacility;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class FleetActionType extends AbstractType
+class LogFleetFacilityType extends AbstractType
 {
     public function configureOptions(OptionsResolver $resolver): void
     {
@@ -14,9 +15,7 @@ class FleetActionType extends AbstractType
         $resolver->setDefaults([
             'required' => false,
             'placeholder' => '(Alle)',
-            'choices' => \FleetAction::getAll(),
-            'choice_value' => fn ($action) => is_string($action) ? $action : $action?->code(),
-            'choice_label' => fn (?\FleetAction $choice, $key, $value) => $choice?->name(),
+            'choices' => array_flip(FleetLogFacility::FACILITIES),
         ]);
     }
 

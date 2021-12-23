@@ -1,0 +1,99 @@
+{% extends 'components/base_search.html.twig' %}
+{% block data %}
+    <tr>
+        <th style="width:140px;">Datum</th>
+        <th>Schweregrad</th>
+        <th>Facility</th>
+        <th>Besitzer</th>
+        <th>Aktion</th>
+        <th>Start</th>
+        <th>Ziel</th>
+        <th>Startzeit</th>
+        <th>Landezeit</th>
+        <th>Flotte</th>
+    </tr>
+    {% for log in search.entries %}
+        <tbody data-controller="toggle">
+            <tr>
+                <td>{{ formatTimestamp(log.timestamp) }}</td>
+                <td>{{ this.severities[log.severity] }}</td>
+                <td>{{ this.facilities[log.facility] }}</td>
+
+                <td>{{ this.users[log.userId] }}</td>
+                <td>{{ this.fleetActions[log.action]|raw }} [{{ this.fleetStatusCode[log.status] }}]</td>
+                <td>{{ this.entities[log.entityFromId].toString() }} <br/> {{ this.entities[log.entityFromId].ownerNick|default('Niemand') }}</td>
+                <td>{{ this.entities[log.entityToId].toString() }} <br/> {{ this.entities[log.entityToId].ownerNick|default('Niemand') }}</td>
+                <td>{{ formatTimestamp(log.launchTime) }}</td>
+                <td>{{ formatTimestamp(log.landTime) }}</td>
+                <td><a href="#log-{{ log.id }}" data-action="click->toggle#onClick">Bericht</a></td>
+            </tr>
+            <tr id="log-{{ log.id }}" data-toggle-target="target" class="hide">
+                <td colspan="10">
+                    <table width="450px">
+                        <tr>
+                            <th>Schiffe in der Flotte</th>
+                            <th>Vor der Aktion</th>
+                            <th>Nach der Aktion</th>
+                        </tr>
+                        {% for shipId,ships in log.iterateFleetShips %}
+                            <tr>
+                                <td>{{ this.shipNames[shipId] }}</td>
+                                <td>{{ formatNumber(ships[0]) }}</td>
+                                <td>{{ formatNumber(ships[1]) }}</td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+
+                    <table width="450px">
+                        <tr>
+                            <th>Schiffe in dem Planeten</th>
+                            <th>Vor der Aktion</th>
+                            <th>Nach der Aktion</th>
+                        </tr>
+                        {% for shipId,ships in log.iterateEntityShips %}
+                            <tr>
+                                <td>{{ this.shipNames[shipId] }}</td>
+                                <td>{{ formatNumber(ships[0]) }}</td>
+                                <td>{{ formatNumber(ships[1]) }}</td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+
+                    <table width="450px">
+                        <tr>
+                            <th>Rohstoffe in der Flotte</th>
+                            <th>Vor der Aktion</th>
+                            <th>Nach der Aktion</th>
+                        </tr>
+                        {% for resName,res in log.iterateFleetResources %}
+                            <tr>
+                                <td>{{ resName }}</td>
+                                <td>{{ formatNumber(res[0]) }}</td>
+                                <td>{{ formatNumber(res[1]) }}</td>
+                            </tr>
+                        {% endfor %}
+                    </table>
+
+                    {% if log.entityResStart != "untouched" or log.entityResEnd != "untouched" %}
+                        <table width="450px">
+                            <tr>
+                                <th>Rohstoffe auf der Entity</th>
+                                <th>Vor der Aktion</th>
+                                <th>Nach der Aktion</th>
+                            </tr>
+                            {% for resName,res in log.iterateEntityResources %}
+                                <tr>
+                                    <td>{{ resName }}</td>
+                                    <td>{{ formatNumber(res[0]) }}</td>
+                                    <td>{{ formatNumber(res[1]) }}</td>
+                                </tr>
+                            {% endfor %}
+                        </table>
+                    {% endif %}
+
+                    {{ log.message }}
+                </td>
+            </tr>
+        </tbody>
+    {% endfor %}
+{% endblock %}

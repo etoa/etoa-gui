@@ -5,9 +5,11 @@ namespace EtoA\Controller\Admin;
 use EException;
 use EtoA\Form\Type\Admin\LogAttackBanType;
 use EtoA\Form\Type\Admin\LogDebrisType;
+use EtoA\Form\Type\Admin\LogFleetType;
 use EtoA\Form\Type\Admin\LogGeneralType;
 use EtoA\Form\Type\Core\LogDateTimeType;
 use EtoA\Log\DebrisLogRepository;
+use EtoA\Log\FleetLogRepository;
 use EtoA\Log\LogRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -17,7 +19,8 @@ class LogController extends AbstractAdminController
 {
     public function __construct(
         private LogRepository $logRepository,
-        private DebrisLogRepository $debrisLogRepository
+        private DebrisLogRepository $debrisLogRepository,
+        private FleetLogRepository $fleetLogRepository
     ) {
     }
 
@@ -54,6 +57,17 @@ class LogController extends AbstractAdminController
 
         return $this->render('admin/logs/attack_ban.html.twig', [
             'form' => $this->createForm(LogAttackBanType::class, $data)->createView(),
+        ]);
+    }
+
+    /**
+     * @Route("/admin/logs/fleets", name="admin.logs.fleets")
+     */
+    public function fleets(Request $request): Response
+    {
+        return $this->render('admin/logs/fleets.html.twig', [
+            'form' => $this->createForm(LogFleetType::class, $request->query->all())->createView(),
+            'total' => $this->fleetLogRepository->count(),
         ]);
     }
 

@@ -170,69 +170,8 @@ function newGamelogs()
 
 function newFleetLogs()
 {
-    echo "<h2>Flottenlogs</h2>";
-
-    ?>
-    <script type="text/javascript">
-        function applyFilter(limit) {
-            xajax_applyFleetLogFilter(xajax.getFormValues('filterform'), limit);
-        }
-
-        function resetFilter() {
-            document.getElementById('flaction').value = 0;
-            document.getElementById('logsev').value = 0;
-            document.getElementById('searchuser').value = '';
-            applyFilter(0);
-        }
-    </script>
-    <?PHP
-
-    echo '<fieldset style="width:800px"><legend>Filter</legend>';
-    echo "<form action=\".\" method=\"post\" id=\"filterform\">";
-    echo "<label for=\"logsev\">Ab Schweregrad:</label>
-    <select id=\"logsev\" name=\"logsev\" onchange=\"applyFilter(0)\">";
-    foreach (LogSeverity::SEVERITIES as $k => $v) {
-        echo "<option value=\"" . $k . "\">" . $v . "</option>";
-    }
-    echo "</select> &nbsp; ";
-
-    echo "<label for=\"logfac\">Facility:</label>
-    <select id=\"logfac\" name=\"logfac\" onchange=\"applyFilter(0)\">
-    <option value=\"\">(Alle)</option>";
-    foreach (FleetLogFacility::FACILITIES as $k => $v) {
-        echo "<option value=\"" . $k . "\">" . $v . "</option>";
-    }
-    echo "</select> &nbsp; ";
-
-    echo "<label for=\"logcat\">Aktion:</label>
-    <select id=\"flaction\" name=\"flaction\" onchange=\"applyFilter(0)\">
-    <option value=\"\">(Egal)</option>";
-    foreach (FleetAction::getAll() as $k => $v) {
-        echo "<option value=\"" . $k . "\">" . $v . "</option>";
-    }
-    echo "</select> &nbsp;
-    <select id=\"flstatus\" name=\"flstatus\" onchange=\"applyFilter(0)\">
-    <option value=\"\">(Egal)</option>";
-    foreach (FleetAction::$statusCode as $k => $v) {
-        echo "<option value=\"" . $k . "\">" . $v . "</option>";
-    }
-    echo "</select><br/><br/> ";
-
-    echo " <label for=\"searchuser\">Flottenuser:</label> <input type=\"text\" id=\"searchuser\" name=\"searchuser\" value=\"\" autocomplete=\"off\" /> &nbsp; ";
-
-    echo " <label for=\"searcheuser\">Entityuser:</label> <input type=\"text\" id=\"searcheuser\" name=\"searcheuser\" value=\"\" autocomplete=\"off\" /> &nbsp;<br/><br/>";
-
-    echo " <label for=\"start\">Start:</label> <input type=\"text\" id=\"start\" name=\"start\" value=\"\" autocomplete=\"off\" /> &nbsp; ";
-    echo " <label for=\"target\">Ziel:</label> <input type=\"text\" id=\"target\" name=\"target\" value=\"\" autocomplete=\"off\" /> &nbsp; ";
-
-    echo "<input type=\"submit\" value=\"Anwenden\" onclick=\"applyFilter(0);return false;\" /> &nbsp;
-    <input type=\"button\" value=\"Reset\" onclick=\"resetFilter();\" />";
-    echo "</form>";
-    echo '</fieldset>';
-
-    echo "<div id=\"log_contents\">";
-    showFleetLogs();
-    echo "</div>";
+    header('Location: /admin/logs/fleets/');
+    die();
 }
 
 function debrisLog()

@@ -282,8 +282,8 @@ class FleetLaunch
 
                     $this->ships[$sid] = array(
                         "count" => $cnt,
-                        "speed" => ($shipItem['ship_speed'] / FLEET_FACTOR_F) * $timefactor,
-                        "fuel_use" => $ship->speed * $cnt,
+                        "speed" => ($ship->speed / FLEET_FACTOR_F) * $timefactor,
+                        "fuel_use" => $ship->fuelUse * $cnt,
                         "fake" => strpos($ship->actions, "fakeattack"),
                         "name" => $ship->name,
                         "pilots" => $ship->pilots * $cnt,

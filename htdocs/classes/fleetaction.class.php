@@ -192,6 +192,11 @@ abstract class FleetAction
 
     static function getAll($sorted = false)
     {
+        // cleanup once reworked
+        if (!defined('INVADE_ACTIVE_USER')) {
+            define("INVADE_ACTIVE_USER", 0);
+        }
+
         $arr = array();
         foreach (self::$sublist as $i) {
             if ($tmp = self::createFactory($i)) {

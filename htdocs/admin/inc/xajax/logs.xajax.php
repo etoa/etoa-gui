@@ -1,11 +1,6 @@
 <?PHP
 
-use EtoA\User\UserRepository;
-
-$xajax->register(XAJAX_FUNCTION,"showBattle");
-
 $xajax->register(XAJAX_FUNCTION,"applyGameLogFilter");
-$xajax->register(XAJAX_FUNCTION,"applyFleetLogFilter");
 
 function applyGameLogFilter($args,$limit=0)
 {
@@ -16,36 +11,4 @@ function applyGameLogFilter($args,$limit=0)
     $objResponse->assign("log_contents","innerHTML",ob_get_clean());
 
     return $objResponse;
-}
-
-function applyFleetLogFilter($args,$limit=0)
-{
-    $objResponse = new xajaxResponse();
-    require_once("inc/admin_functions.inc.php");
-    ob_start();
-    showFleetLogs($args,$limit);
-    $objResponse->assign("log_contents","innerHTML",ob_get_clean());
-
-    return $objResponse;
-}
-
-function showBattle($battle,$id)
-{
-    ob_start();
-    $objResponse = new xajaxResponse();
-
-    if($battle!="")
-    {
-        $objResponse->assign("show_battle_".$id."","innerHTML", $battle);
-    }
-    else
-    {
-        $objResponse->assign("show_battle_".$id."","innerHTML", "");
-    }
-
-    $objResponse->assign("logsinfo","innerHTML",ob_get_contents());
-    ob_end_clean();
-
-    return $objResponse;
-
 }

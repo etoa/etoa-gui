@@ -5,7 +5,7 @@ namespace EtoA\Form\Type\Core;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class FleetActionType extends AbstractType
+class FleetActionStatusType extends AbstractType
 {
     public function configureOptions(OptionsResolver $resolver): void
     {
@@ -14,9 +14,8 @@ class FleetActionType extends AbstractType
         $resolver->setDefaults([
             'required' => false,
             'placeholder' => '(Alle)',
-            'choices' => \FleetAction::getAll(),
-            'choice_value' => fn ($action) => is_string($action) ? $action : $action?->code(),
-            'choice_label' => fn (?\FleetAction $choice, $key, $value) => $choice?->name(),
+            'label' => false,
+            'choices' => array_flip(\FleetAction::$statusCode),
         ]);
     }
 
