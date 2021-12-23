@@ -43,8 +43,6 @@ if ($sub == "stats") {
     }
 } elseif ($sub == "adminusers") {
     require("home/adminusers.inc.php");
-} elseif ($sub == "observed") {
-    require("home/observed.inc.php");
 } else {
     indexView();
 }
