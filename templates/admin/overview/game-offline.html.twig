@@ -1,0 +1,27 @@
+{% extends 'admin/layout/admin.html.twig' %}
+
+{% block content %}
+    <h1>Spiel offline nehmen</h1>
+
+    {{ form_start(form) }}
+        {% if isOffline %}
+            <span style="color:#f90;">Das Spiel ist offline!</span>
+            <br/><br/>
+
+            {% for row in form %}
+                {{ form_row(row) }}
+            {% endfor %}
+
+            <div>
+                <input type="submit" value="Änderungen speichern" name="save" />
+                <input type="submit" value="Spiel online stellen" name="online" />
+            </div>
+        {% else %}
+            <span style="color:#0f0;">Das Spiel ist online!</span>
+            <br/><br/>
+            <div>
+                <input type="submit" value="Spiel offline nehmen" name="offline" />
+            </div>
+        {% endif %}
+    {{ form_end(form) }}
+{% endblock %}

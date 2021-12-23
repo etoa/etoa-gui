@@ -21,9 +21,7 @@ $config = $app[ConfigurationService::class];
 /** @var GameStatsGenerator $gameStatsGenerator */
 $gameStatsGenerator = $app[GameStatsGenerator::class];
 
-if ($sub == "offline") {
-    takeOffline($request, $config);
-} elseif ($sub == "stats") {
+if ($sub == "stats") {
     require("home/stats.inc.php");
 } elseif ($sub == "adminlog") {
     /** @var AdminSessionRepository $sessionRepository */
@@ -49,41 +47,6 @@ if ($sub == "offline") {
     require("home/observed.inc.php");
 } else {
     indexView();
-}
-
-function takeOffline(Request $request, ConfigurationService $config)
-{
-    global $sub;
-    global $page;
-
-    echo "<h1>Spiel offline nehmen</h1>";
-
-    if ($request->query->has('off') && $request->query->getBoolean('off')) {
-        $config->set('offline', 1);
-    }
-    if ($request->query->has('on') && $request->query->getBoolean('on')) {
-        $config->set('offline', 0);
-    }
-
-    if ($request->request->has('save')) {
-        $config->set('offline_ips_allow', $request->request->get('offline_ips_allow'));
-        $config->set('offline_message', $request->request->get('offline_message'));
-    }
-
-    echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"post\">";
-    if ($config->getBoolean('offline')) {
-        echo "<span style=\"color:#f90;\">Das Spiel ist offline!</span><br/><br/>
-        Erlaubte IP Adressen  (deine ist " . $request->getClientIp() . "):<br/>
-        <textarea name=\"offline_ips_allow\" rows=\"6\" cols=\"60\">" . $config->get('offline_ips_allow') . "</textarea><br/>
-        Nachricht: <br/>
-        <textarea name=\"offline_message\" rows=\"6\" cols=\"60\">" . $config->get('offline_message') . "</textarea><br/><br/>
-        <input type=\"submit\" value=\"Änderungen speichern\" name=\"save\" /> &nbsp;
-        <input type=\"button\" value=\"Spiel online stellen\" onclick=\"document.location='?page=$page&amp;sub=$sub&amp;on=1'\" />";
-    } else {
-        echo "<span style=\"color:#0f0;\">Das Spiel ist online!</span><br/><br/>
-        <input type=\"button\" value=\"Spiel offline nehmen\" onclick=\"document.location='?page=$page&amp;sub=$sub&amp;off=1'\" />";
-    }
-    echo "</form>";
 }
 
 function adminSessionLogForUserView(
