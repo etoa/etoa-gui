@@ -17,7 +17,7 @@
                 <td>{{ formatTimestamp(log.timestamp) }}</td>
                 <td>{{ this.severities[log.severity] }}</td>
                 <td>{{ this.facilities[log.facility] }}</td>
-                <td>{{ this.users[log.userId] }}</td>
+                <td>{{ this.users[log.userId]|default('-') }}</td>
                 <td>{{ this.alliance[log.allianceId]|default('') }}</td>
                 <td>{{ this.entities[log.entityId]|default('-') }}</td>
                 <td>{{ this.objects[log.facility][log.objectId] }} {% if log.level > 0 %}log.level{% endif %}</td>

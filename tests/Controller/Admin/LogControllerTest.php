@@ -23,7 +23,7 @@ class LogControllerTest extends SymfonyWebTestCase
 
         $this->loginAdmin($client);
 
-        $client->request('GET', '/admin/logs/debris/');
+        $client->request('GET', '/admin/logs/debris');
 
         $this->assertSame(200, $client->getResponse()->getStatusCode(), $client->getResponse()->getContent());
     }
@@ -34,7 +34,7 @@ class LogControllerTest extends SymfonyWebTestCase
 
         $this->loginAdmin($client);
 
-        $client->request('GET', '/admin/logs/attack-ban/');
+        $client->request('GET', '/admin/logs/attack-ban');
 
         $this->assertSame(200, $client->getResponse()->getStatusCode(), $client->getResponse()->getContent());
     }
@@ -45,7 +45,7 @@ class LogControllerTest extends SymfonyWebTestCase
 
         $this->loginAdmin($client);
 
-        $client->request('GET', '/admin/logs/fleets/');
+        $client->request('GET', '/admin/logs/fleets');
 
         $this->assertSame(200, $client->getResponse()->getStatusCode(), $client->getResponse()->getContent());
     }
@@ -56,7 +56,7 @@ class LogControllerTest extends SymfonyWebTestCase
 
         $this->loginAdmin($client);
 
-        $client->request('GET', '/admin/logs/game/');
+        $client->request('GET', '/admin/logs/game');
 
         $this->assertSame(200, $client->getResponse()->getStatusCode(), $client->getResponse()->getContent());
     }
