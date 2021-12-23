@@ -1,0 +1,23 @@
+{% extends 'components/base_search.html.twig' %}
+{% block data %}
+    <tr>
+        <th style="width:140px;">Datum</th>
+        <th style="width:90px;">Schweregrad</th>
+        <th style="width:90px;">Bereich</th>
+        <th>Nachricht</th>
+    </tr>
+    {% for log in search.entries %}
+        <tr>
+            <td>{{ formatTimestamp(log.timestamp) }}</td>
+            <td>{{ this.severities[log.severity] }}</td>
+            <td>{{ this.facilities[log.facility] }}</td>
+            <td>
+                {{ BBCodeToHTML(log.message)|raw }}
+                {% if log.ip %}
+                    <br/><br/>
+                    <b>Host:</b> {{ log.ip }} ({{ ipGetHost(log.ip) }})
+                {% endif %}
+            </td>
+        </tr>
+    {% endfor %}
+{% endblock %}

@@ -1,0 +1,14 @@
+{% extends 'admin/layout/admin.html.twig' %}
+
+{% import 'admin/macros.html.twig' as macros %}
+
+{% block content %}
+    <h1>Logs</h1>
+    <h2>Flottenlogs</h2>
+
+    {{ component('log_fleets_search', {
+        form: form
+    }) }}
+
+    <p>Es sind {{ formatNumber(total) }} Einträge in der Datenbank vorhanden.</p>
+{% endblock %}

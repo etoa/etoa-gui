@@ -1,0 +1,21 @@
+{% extends 'components/base_search.html.twig' %}
+{% block data %}
+    <tr>
+        <th style="width:140px;">Datum</th>
+        <th>Angreifer</th>
+        <th>Verteidiger</th>
+        <th>Ziel</th>
+        <th>Aktion</th>
+        <th>Sperrgrund</th>
+    </tr>
+    {% for ban in search.entries %}
+        <tr>
+            <td>{{ formatTimestamp(ban.timestamp) }}</td>
+            <td>{{ this.users[ban.fleetUserId] }}</td>
+            <td>{{ this.users[ban.entityUserId] }}</td>
+            <td>{{ this.entities[ban.entityId].toString() }}</td>
+            <td>{{ this.fleetActions[ban.action]|raw }}</td>
+            <td>{{ ban.banReason|raw }}</td>
+        </tr>
+    {% endfor %}
+{% endblock %}

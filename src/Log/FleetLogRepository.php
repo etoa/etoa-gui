@@ -27,7 +27,7 @@ class FleetLogRepository extends AbstractRepository
     {
         return (int) $this->applySearchSortLimit($this->createQueryBuilder(), $search)
             ->select('COUNT(id)')
-            ->from('logs')
+            ->from('logs_fleet')
             ->execute()
             ->fetchOne();
     }

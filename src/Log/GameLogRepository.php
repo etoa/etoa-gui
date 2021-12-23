@@ -14,9 +14,6 @@ class GameLogRepository extends AbstractRepository
         $data = $this->applySearchSortLimit($this->createQueryBuilder(), $search, null, $limit, $offset)
             ->select('logs_game.*')
             ->from('logs_game')
-            ->innerJoin('logs_game', 'users', 'users', 'users.user_id = logs_game.user_id')
-            ->leftJoin('logs_game', 'alliances', 'alliances', 'alliances.alliance_id = logs_game.alliance_id')
-            ->leftJoin('logs_game', 'planets', 'planets', 'planets.id = logs_game.entity_id')
             ->orderBy('timestamp', 'DESC')
             ->execute()
             ->fetchAllAssociative();
@@ -79,9 +76,6 @@ class GameLogRepository extends AbstractRepository
         return (int) $this->applySearchSortLimit($this->createQueryBuilder(), $search)
             ->select('COUNT(*)')
             ->from('logs_game')
-            ->innerJoin('logs_game', 'users', 'users', 'users.user_id = logs_game.user_id')
-            ->leftJoin('logs_game', 'alliances', 'alliances', 'alliances.alliance_id = logs_game.alliance_id')
-            ->leftJoin('logs_game', 'planets', 'planets', 'planets.id = logs_game.entity_id')
             ->execute()
             ->fetchOne();
     }

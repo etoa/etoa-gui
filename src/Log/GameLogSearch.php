@@ -43,14 +43,6 @@ class GameLogSearch extends AbstractSearch
         return $this;
     }
 
-    public function userNickLike(string $nick): self
-    {
-        $this->parts[] = 'users.user_nick LIKE :userNickLike';
-        $this->parameters['userNickLike'] = '%' . $nick . '%';
-
-        return $this;
-    }
-
     public function allianceId(int $allianceId): self
     {
         $this->parts[] = 'alliance_id = :allianceId';
@@ -59,26 +51,10 @@ class GameLogSearch extends AbstractSearch
         return $this;
     }
 
-    public function allianceNameLike(string $allianceName): self
-    {
-        $this->parts[] = 'alliances.alliance_name LIKE :allianceNameLike';
-        $this->parameters['allianceNameLike'] = '%' . $allianceName . '%';
-
-        return $this;
-    }
-
     public function entityId(int $entityId): self
     {
         $this->parts[] = 'entity_id = :entityId';
         $this->parameters['entityId'] = $entityId;
-
-        return $this;
-    }
-
-    public function planetNameLike(string $planetName): self
-    {
-        $this->parts[] = 'planets.planet_name LIKE :planetNameLike';
-        $this->parameters['planetNameLike'] = '%' . $planetName . '%';
 
         return $this;
     }

@@ -1,0 +1,12 @@
+{% extends 'admin/layout/admin.html.twig' %}
+
+{% import 'admin/macros.html.twig' as macros %}
+
+{% block content %}
+    <h1>Logs</h1>
+    <h2>Angriffsverletzung</h2>
+
+    {{ component('log_attack_ban_search', {
+        form: form
+    }) }}
+{% endblock %}

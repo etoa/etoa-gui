@@ -1,34 +1,46 @@
 {
-  "private": true,
-  "name": "etoa-gui",
-  "description": "Escape to Andromeda Browsergame",
-  "scripts": {
-    "dev": "npm run development",
-    "development": "mix",
-    "watch": "mix watch",
-    "watch-poll": "mix watch -- --watch-options-poll=1000",
-    "hot": "mix watch --hot",
-    "prod": "npm run production",
-    "production": "mix --production"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/etoa/etoa-gui.git"
-  },
-  "license": "AGPL-3.0-or-later",
-  "bugs": {
-    "url": "https://github.com/etoa/etoa-gui/issues"
-  },
-  "homepage": "https://github.com/etoa/etoa-gui#readme",
-  "devDependencies": {
-    "jquery": "^3.6.0",
-    "jquery-mousewheel": "^3.1.13",
-    "jquery-ui-bundle": "^1.12.1-migrate",
-    "laravel-mix": "^6.0.27",
-    "luxon": "^2.0.2",
-    "npm": "^7.20.2",
-    "resolve-url-loader": "^4.0.0",
-    "sass": "^1.36.0",
-    "sass-loader": "^12.1.0"
-  }
+    "name": "etoa-gui",
+    "description": "Escape to Andromeda Browsergame",
+    "devDependencies": {
+        "@hotwired/stimulus": "^3.0.0",
+        "@symfony/stimulus-bridge": "^3.0.0",
+        "@symfony/ux-live-component": "file:vendor/symfony/ux-live-component/assets",
+        "@symfony/webpack-encore": "^1.7.0",
+        "core-js": "^3.20.1",
+        "jquery": "^3.6.0",
+        "jquery-mousewheel": "^3.1.13",
+        "jquery-ui-bundle": "^1.12.1-migrate",
+        "laravel-mix": "^6.0.27",
+        "luxon": "^2.0.2",
+        "npm": "^7.20.2",
+        "regenerator-runtime": "^0.13.2",
+        "resolve-url-loader": "^4.0.0",
+        "sass": "^1.45.1",
+        "sass-loader": "^12.1.0",
+        "webpack-notifier": "^1.6.0"
+    },
+    "private": true,
+    "license": "AGPL-3.0-or-later",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/etoa/etoa-gui.git"
+    },
+    "bugs": {
+        "url": "https://github.com/etoa/etoa-gui/issues"
+    },
+    "homepage": "https://github.com/etoa/etoa-gui#readme",
+    "scripts": {
+        "dev-server": "encore dev-server",
+        "dev": "encore dev",
+        "watch": "encore dev --watch",
+        "build": "encore production --progress",
+        "dev-mix": "mixt",
+        "watch-mix": "mix watch",
+        "watch-poll-mix": "mix watch -- --watch-options-poll=1000",
+        "hot-mix": "mix watch --hot",
+        "prod-mix": "mix --production"
+    },
+    "dependencies": {
+        "choices.js": "^9.1.0"
+    }
 }

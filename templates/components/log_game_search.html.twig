@@ -1,0 +1,36 @@
+{% extends 'components/base_search.html.twig' %}
+{% block data %}
+    <tr>
+        <th style="width:140px;">Datum</th>
+        <th>Schweregrad</th>
+        <th>Bereich</th>
+        <th>User</th>
+        <th>Allianz</th>
+        <th>Raumobjekt</th>
+        <th>Einheit</th>
+        <th>Status</th>
+        <th>Optionen</th>
+    </tr>
+    {% for log in search.entries %}
+        <tbody data-controller="toggle">
+            <tr>
+                <td>{{ formatTimestamp(log.timestamp) }}</td>
+                <td>{{ this.severities[log.severity] }}</td>
+                <td>{{ this.facilities[log.facility] }}</td>
+                <td>{{ this.users[log.userId]|default('-') }}</td>
+                <td>{{ this.alliance[log.allianceId]|default('') }}</td>
+                <td>{{ this.entities[log.entityId]|default('-') }}</td>
+                <td>{{ this.objects[log.facility][log.objectId] }} {% if log.level > 0 %}log.level{% endif %}</td>
+                <td>{{ this.status[log.facility][log.status]|default('-') }}</td>
+                <td><a href="#log-{{ log.id }}" data-action="click->toggle#onClick">Details</a></td>
+            </tr>
+            <tr id="log-{{ log.id }}" data-toggle-target="target" class="hide">
+                <td colspan="9">
+                    {{ BBCodeToHTML(log.message)|raw }}
+                    <br/><br/>
+                    IP: {{ log.ip }}
+                </td>
+            </tr>
+        </tbody>
+    {% endfor %}
+{% endblock %}

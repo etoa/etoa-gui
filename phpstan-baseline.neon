@@ -1,21 +1,6 @@
 parameters:
 	ignoreErrors:
 		-
-			message: "#^Empty array passed to foreach\\.$#"
-			count: 1
-			path: htdocs/admin/inc/admin_functions.inc.php
-
-		-
-			message: "#^Variable \\$lastWave might not be defined\\.$#"
-			count: 1
-			path: htdocs/admin/inc/admin_functions.inc.php
-
-		-
-			message: "#^Variable \\$waveCnt might not be defined\\.$#"
-			count: 2
-			path: htdocs/admin/inc/admin_functions.inc.php
-
-		-
 			message: "#^Result of \\|\\| is always true\\.$#"
 			count: 1
 			path: htdocs/classes/buildlistitem.class.php

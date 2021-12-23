@@ -2,31 +2,25 @@
 
 namespace EtoA\Form\Type\Core;
 
-use EtoA\User\UserRepository;
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class PlayerType extends AbstractType
+class FleetActionStatusType extends AbstractType
 {
-    public function __construct(
-        private UserRepository $userRepository,
-    ) {
-    }
-
     public function configureOptions(OptionsResolver $resolver): void
     {
         parent::configureOptions($resolver);
 
         $resolver->setDefaults([
             'required' => false,
-            'placeholder' => '(Niemand)',
-            'choices' => array_flip($this->userRepository->searchUserNicknames()),
+            'placeholder' => '(Alle)',
+            'label' => false,
+            'choices' => array_flip(\FleetAction::$statusCode),
         ]);
     }
 
     public function getParent(): string
     {
-        return ChoiceType::class;
+        return SearchableChoiceType::class;
     }
 }

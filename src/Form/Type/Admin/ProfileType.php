@@ -2,7 +2,7 @@
 
 namespace EtoA\Form\Type\Admin;
 
-use EtoA\Form\Type\Core\PlayerType;
+use EtoA\Form\Type\Core\UserType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
@@ -44,8 +44,9 @@ class ProfileType extends AbstractType
                     'Nein' => false,
                 ],
             ])
-            ->add('playerId', PlayerType::class, [
+            ->add('playerId', UserType::class, [
                 'label' => 'Spieler-Account',
+                'placeholder' => '(Niemand)',
             ])
             ->add('submit', SubmitType::class, [
                 'label' => 'Übernehmen',

@@ -19,6 +19,14 @@ class FleetLogSearch extends AbstractSearch
         return $this;
     }
 
+    public function status(int $status): self
+    {
+        $this->parts[] = 'status = :status';
+        $this->parameters['status'] = $status;
+
+        return $this;
+    }
+
     public function fleetUserId(int $fleetUserId): self
     {
         $this->parts[] = 'user_id = :fleetUserId';

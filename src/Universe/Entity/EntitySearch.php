@@ -19,6 +19,17 @@ class EntitySearch extends AbstractSearch
         return $this;
     }
 
+    /**
+     * @param list<int> $ids
+     */
+    public function ids(array $ids): self
+    {
+        $this->parts[] = 'e.id IN (:ids)';
+        $this->stringArrayParameters['ids'] = $ids;
+
+        return $this;
+    }
+
     public function cellId(int $cellId): self
     {
         $this->parts[] = 'c.id = :cellId';

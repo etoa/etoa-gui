@@ -66,6 +66,9 @@
     "symfony/amqp-messenger": {
         "version": "v5.3.7"
     },
+    "symfony/asset": {
+        "version": "v5.4.0"
+    },
     "symfony/cache": {
         "version": "v5.3.7"
     },
@@ -271,6 +274,12 @@
             "templates/base.html.twig"
         ]
     },
+    "symfony/ux-live-component": {
+        "version": "v2.0.1"
+    },
+    "symfony/ux-twig-component": {
+        "version": "v2.0.1"
+    },
     "symfony/validator": {
         "version": "4.3",
         "recipe": {
@@ -299,6 +308,28 @@
             "config/packages/dev/web_profiler.yaml",
             "config/packages/test/web_profiler.yaml",
             "config/routes/dev/web_profiler.yaml"
+        ]
+    },
+    "symfony/webpack-encore-bundle": {
+        "version": "1.9",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "master",
+            "version": "1.9",
+            "ref": "10e67e9dc87263a25007130ee59975a36ea624fe"
+        },
+        "files": [
+            "assets/app.js",
+            "assets/bootstrap.js",
+            "assets/controllers.json",
+            "assets/controllers/hello_controller.js",
+            "assets/styles/app.css",
+            "config/packages/assets.yaml",
+            "config/packages/prod/webpack_encore.yaml",
+            "config/packages/test/webpack_encore.yaml",
+            "config/packages/webpack_encore.yaml",
+            "package.json",
+            "webpack.config.js"
         ]
     },
     "symfony/yaml": {

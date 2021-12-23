@@ -1,0 +1,21 @@
+.search-container
+  position: relative
+
+  &.loading .search-overlay
+    position: absolute
+    width: 100%
+    height: 100%
+    top: 0
+    left: 0
+    background: black center no-repeat
+    opacity: .5
+    z-index: 100
+
+    .search-spinner
+      animation: rotation 2s infinite linear
+      background-image: url('../../../htdocs/images/ajax-loader.gif')
+      width: 66px
+      height: 66px
+      margin: 10px auto
+
+
