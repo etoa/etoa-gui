@@ -37,7 +37,8 @@ sudo chown -R www-data:www-data /var/lib/php/sessions
 MYSQL=`which mysql`
 PHP=`which php`
 
-cd /var/www/etoa && npm install && npm run build
+cd /var/www/etoa && npm install
+cd /var/www/etoa && npm run build
 
 # Install PHP composer depenencies
 cd /var/www/etoa && php composer.phar install
