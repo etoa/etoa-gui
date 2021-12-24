@@ -19,6 +19,11 @@ sudo apt-get install -q -y -f php8.0-curl php8.0-cli php8.0-mysqli php8.0-gd php
 
 sudo apt-get upgrade libpcre3
 
+sudo apt-get -y install curl dirmngr apt-transport-https lsb-release ca-certificates
+curl -fsSL https://deb.nodesource.com/setup_16.x | sudo -E bash -
+sudo apt-get install -y nodejs
+npm install -g npm@8.3.0
+
 sudo rm /etc/nginx/sites-available/default
 sudo cp /var/www/etoa/vagrant/nginx-default /etc/nginx/sites-available/default
 sudo cp /var/www/etoa/vagrant/xdebug.ini /etc/php/8.0/mods-available/xdebug.ini
@@ -31,6 +36,8 @@ sudo chown -R www-data:www-data /var/lib/php/sessions
 
 MYSQL=`which mysql`
 PHP=`which php`
+
+cd /var/www/etoa && npm install && npm run build
 
 # Install PHP composer depenencies
 cd /var/www/etoa && php composer.phar install
