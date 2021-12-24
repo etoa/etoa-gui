@@ -3,6 +3,7 @@
 namespace EtoA\Core\Twig;
 
 use EtoA\Admin\AdminRoleManager;
+use EtoA\Admin\AdminUser;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\HostCache\NetworkNameService;
 use EtoA\Support\BBCodeUtils;
@@ -34,6 +35,7 @@ class TwigExtension extends AbstractExtension
             new TwigFunction('BBCodeToHTML', [$this, 'BBCodeToHTML']),
             new TwigFunction('configValue', [$this, 'getConfigValue']),
             new TwigFunction('isAdminAllowed', [$this, 'isAdminAllowed']),
+            new TwigFunction('getAdminRoles', [$this, 'getAdminRoles']),
             new TwigFunction('renderTime', [$this, 'renderTime']),
             new TwigFunction('formatTimestamp', [$this, 'formatTimestamp']),
             new TwigFunction('getGameIdentifier', [$this, 'getGameIdentifier']),
@@ -41,6 +43,7 @@ class TwigExtension extends AbstractExtension
             new TwigFunction('userMTT', [$this, 'userMTT']),
             new TwigFunction('cTT', [$this, 'cTT']),
             new TwigFunction('editButton', [$this, 'editButton']),
+            new TwigFunction('delButton', [$this, 'delButton']),
             new TwigFunction('ipGetHost', [$this, 'ipGetHost']),
             new TwigFunction('formatNumber', [$this, 'formatNumber']),
         ];
@@ -125,6 +128,11 @@ class TwigExtension extends AbstractExtension
         return (new AdminRoleManager())->checkAllowedRoles($userRoles, $required);
     }
 
+    public function getAdminRoles(AdminUser $admin): string
+    {
+        return (new AdminRoleManager())->getRolesStr($admin);
+    }
+
     public function renderTime(): float
     {
         return round(microtime(true) - $this->startTime, 3);
@@ -161,6 +169,11 @@ class TwigExtension extends AbstractExtension
     public function editButton(?string $url, string $ocl = ""): string
     {
         return edit_button($url, $ocl);
+    }
+
+    public function delButton(?string $url, string $ocl = ""): string
+    {
+        return del_button($url, $ocl);
     }
 
     public function ipGetHost(string $ip): string

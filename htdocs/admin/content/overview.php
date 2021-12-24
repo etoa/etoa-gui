@@ -41,8 +41,6 @@ if ($sub == "stats") {
     } else {
         adminSessionLogView($request, $config, $cu, $sessionRepository, $sessionManager, $networkNameService);
     }
-} elseif ($sub == "adminusers") {
-    require("home/adminusers.inc.php");
 } else {
     indexView();
 }
