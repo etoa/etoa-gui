@@ -1,0 +1,52 @@
+{% extends 'admin/layout/admin.html.twig' %}
+
+{% import 'admin/macros.html.twig' as macros %}
+
+{% block content %}
+    <h1>Admin-Sessions</h1>
+    <h3>Aktive Sessions</h3>
+
+    <p>Das Timeout beträgt {{ formatTimespan(sessionTimeout) }}</p>
+
+    <table class="tb">
+        <tr>
+            <th>Status</th>
+            <th>Nick</th>
+            <th>Login</th>
+            <th>Aktivität</th>
+            <th>Dauer</th>
+            <th>IP</th>
+            <th>User Agent</th>
+            <th>Kicken</th>
+        </tr>
+        {% for session in sessions %}
+            {% set online = time - sessionTimeout < session.timeAction %}
+            <tr>
+                <td style="color:{% if online %}#0f0{% else %}red{% endif %};">{% if online %}Online{% else %}Timeout{% endif %}</td>
+                <td>{{ session.userNick }}</td>
+                <td>{{ formatTimestamp(session.timeLogin) }}</td>
+                <td>{{ formatTimestamp(session.timeAction) }}</td>
+                <td>{{ formatTimespan(session.timeAction - session.timeLogin) }}</td>
+                <td title="{{ ipGetHost(session.ipAddr)}}">{{ session.ipAddr }}</td>
+                <td title="{{ session.userAgent }}">{{ browser(session.userAgent).toString() }}</td>
+                <td><form action="{{ path('admin.admin-sessions.kick', {id: session.id}) }}" method="POST"><input type="submit" value="Kick"></form></td>
+            </tr>
+        {% else %}
+            <tr><td colspan="99999"><i>Keine Einträge vorhanden!</i></td></tr>
+        {% endfor %}
+    </table>
+
+    <h2>Session-Log</h2>
+
+    {% if sessionLogCount > 0 %}
+        {{ component('admin_session_log', {
+            form: sessionLogForm
+        }) }}
+
+        <h2>Logs löschen</h2>
+        <p>Es sind {{ formatNumber(sessionLogCount) }} Einträge in der Datenbank vorhanden.</p>
+        {{ form(deleteSessionForm, {action: path('admin.admin-sessions.delete')}) }}
+    {% else %}
+        <p><i>Keine Einträge vorhanden</i></p>
+    {% endif %}
+{% endblock %}

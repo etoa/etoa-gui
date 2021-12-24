@@ -11,6 +11,7 @@ use EtoA\Support\ExternalUrl;
 use EtoA\Support\StringUtils;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
+use WhichBrowser\Parser;
 
 class TwigExtension extends AbstractExtension
 {
@@ -38,6 +39,7 @@ class TwigExtension extends AbstractExtension
             new TwigFunction('getAdminRoles', [$this, 'getAdminRoles']),
             new TwigFunction('renderTime', [$this, 'renderTime']),
             new TwigFunction('formatTimestamp', [$this, 'formatTimestamp']),
+            new TwigFunction('formatTimespan', [$this, 'formatTimespan']),
             new TwigFunction('getGameIdentifier', [$this, 'getGameIdentifier']),
             new TwigFunction('isUnix', [$this, 'isUnix']),
             new TwigFunction('userMTT', [$this, 'userMTT']),
@@ -45,6 +47,7 @@ class TwigExtension extends AbstractExtension
             new TwigFunction('editButton', [$this, 'editButton']),
             new TwigFunction('delButton', [$this, 'delButton']),
             new TwigFunction('ipGetHost', [$this, 'ipGetHost']),
+            new TwigFunction('browser', [$this, 'browser']),
             new TwigFunction('formatNumber', [$this, 'formatNumber']),
         ];
     }
@@ -146,6 +149,11 @@ class TwigExtension extends AbstractExtension
         return StringUtils::formatDate($timestamp);
     }
 
+    public function formatTimespan(int $timespan): string
+    {
+        return StringUtils::formatTimespan($timespan);
+    }
+
     public function getGameIdentifier(): string
     {
         return getGameIdentifier($this->config);
@@ -184,5 +192,10 @@ class TwigExtension extends AbstractExtension
     public function formatNumber(float $number): string
     {
         return StringUtils::formatNumber($number);
+    }
+
+    public function browser(string $userAgent): Parser
+    {
+        return new Parser($userAgent);
     }
 }
