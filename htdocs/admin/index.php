@@ -54,9 +54,7 @@ $searchQuery = $_POST['search_query'] ?? '';
 $navMenu = fetchJsonConfig("admin-menu.conf");
 
 // Inhalt einbinden
-if (isset($_GET['adminlist'])) {
-    require __DIR__ . '/inc/adminlist.inc.php';
-} else {
+
     // Check permissions
     $allow_inc = false;
     $found = false;
@@ -96,4 +94,4 @@ if (isset($_GET['adminlist'])) {
     } else {
         echo "<h1>Kein Zugriff</h1> Du hast keinen Zugriff auf diese Seite!";
     }
-}
+

@@ -14,6 +14,7 @@
             <th>Zwei-Faktor-Authentifizierung</th>
             <th>Rollen</th>
             <th>Gesperrt</th>
+            <th>Foren-Profil</th>
             <th></th>
         </tr>
 
@@ -25,6 +26,7 @@
             <td>{{ admin.tfaSecret ? "Aktiv" : "Nicht aktiviert" }}</td>
             <td>{{ getAdminRoles(admin) }}</td>
             <td>{{ admin.locked ? "<span style=\"color:red\">Ja</span>" : "Nein" }}</td>
+            <td>{% if admin.boardUrl %}<a href="{{ admin.boardUrl}}" target="_blank">Profil</a>{% endif %}</td>
             <td style="width:40px;">
                 {{ editButton(path('admin.admin_management.edit', {id: admin.id}))|raw }}
                 {% if admin.id != app.user.id %}
