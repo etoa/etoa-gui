@@ -31,7 +31,7 @@ class AllianceNewsRepository extends AbstractRepository
         return (int) $this->getConnection()->lastInsertId();
     }
 
-    public function update(int $id, int $userId, int $allianceId, string $title, string $text, int $toAllianceId): void
+    public function update(AllianceNews $news): void
     {
         $this->createQueryBuilder()
             ->update('alliance_news')
@@ -42,12 +42,12 @@ class AllianceNewsRepository extends AbstractRepository
             ->set('alliance_news_alliance_to_id', ':toAllianceId')
             ->where('alliance_news_id = :id')
             ->setParameters([
-                'allianceId' => $allianceId,
-                'userId' => $userId,
-                'title' => $title,
-                'text' => $text,
-                'id' => $id,
-                'toAllianceId' => $toAllianceId,
+                'allianceId' => $news->authorAllianceId,
+                'userId' => $news->authorUserId,
+                'title' => $news->title,
+                'text' => $news->text,
+                'id' => $news->id,
+                'toAllianceId' => (int) $news->toAllianceId,
             ])
             ->execute();
     }

@@ -34,8 +34,6 @@ if ($sub == "buildingsdata") {
     AllianceBuildingsForm::render($app, $request);
 } elseif ($sub == "techdata") {
     AllianceTechnologiesForm::render($app, $request);
-} elseif ($sub == "news") {
-    news($config);
 } else {
     \EtoA\Admin\LegacyTemplateTitleHelper::$title = 'Allianzen';
 
@@ -52,49 +50,6 @@ if ($sub == "buildingsdata") {
     } else {
         index($request, $repository, $service);
     }
-}
-
-function news(ConfigurationService $config)
-{
-    global $page;
-    global $sub;
-
-    echo '<h1>Allianz-News</h1>';
-
-    echo 'News entfernen die älter als <select id="timespan">
-		<option value="604800">1 Woche</option>
-		<option value="1209600">2 Wochen</option>
-		<option value="2592000" selected="selected">1 Monat</option>
-		<option value="5184000">2 Monate</option>
-		<option value="7776000">3 Monate</option>
-		<option value="15552000">6 Monate</option>
-		</select> sind:
-		<input type="button" onclick="xajax_allianceNewsRemoveOld(document.getElementById(\'timespan\').options[document.getElementById(\'timespan\').selectedIndex].value)" value="Ausführen" /><br/><br/>';
-
-    $ban_timespan = [
-        21600 => '6 Stunden',
-        43200 => '12 Stunden',
-        64800 => '18 Stunden',
-        86400 => '1 Tag',
-        172800 => '2 Tage',
-        259200 => '3 Tage',
-        432000 => '5 Tage',
-        604800 => '1 Woche'
-    ];
-    $ban_text = $config->param1('townhall_ban') != '' ? stripslashes($config->param1('townhall_ban')) : 'Rathaus-Missbrauch';
-
-    echo 'Standardeinstellung für Sperre: <select id="ban_timespan">';
-    foreach ($ban_timespan as $k => $v) {
-        echo '<option value="' . $k . '"';
-        echo  $config->get('townhall_ban') == $k ? ' selected="selected"' : '';
-        echo '>' . $v . '</option>';
-    }
-    echo '</select> mit folgendem Text: <input type="text" id="ban_text" value="' . $ban_text . '" size="35" /> ';
-    echo '<input type="button" onclick="xajax_allianceNewsSetBanTime(document.getElementById(\'ban_timespan\').options[document.getElementById(\'ban_timespan\').selectedIndex].value,document.getElementById(\'ban_text\').value)" value="Speichern" /><br/><br/>';
-
-    echo '<form id="newsForm" action="?page=' . $page . '&amp;sub=' . $sub . '" method="post">';
-    echo '<div id="newsBox">Lade...</div></form>';
-    echo '<script type="text/javascript">xajax_allianceNewsLoad()</script>';
 }
 
 function searchResults(Request $request, AllianceRepository $repository)

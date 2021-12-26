@@ -22,7 +22,7 @@ class AllianceController extends AbstractAdminController
         private AllianceRankRepository $allianceRankRepository,
         private AllianceDiplomacyRepository $allianceDiplomacyRepository,
         private AllianceRepository $allianceRepository,
-        private AllianceImageStorage $allianceImageStorage
+        private AllianceImageStorage $allianceImageStorage,
     ) {
     }
 

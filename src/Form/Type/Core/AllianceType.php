@@ -20,7 +20,7 @@ class AllianceType extends AbstractType
         $resolver->setDefaults([
             'required' => false,
             'placeholder' => '(Alle)',
-            'choices' => array_flip($this->allianceRepository->getAllianceNames()),
+            'choices' => array_flip($this->allianceRepository->getAllianceNamesWithTags()),
         ]);
     }
 
