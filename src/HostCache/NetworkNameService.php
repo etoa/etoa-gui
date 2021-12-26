@@ -26,8 +26,12 @@ class NetworkNameService
      * the values are stored in a memory database table for faster lookups. This records
      * expire after one day.
      */
-    public function getHost(string $ip): string
+    public function getHost(?string $ip): string
     {
+        if ($ip === null) {
+            return '';
+        }
+
         if (isset($this->hostCache[$ip])) {
             return $this->hostCache[$ip];
         }
