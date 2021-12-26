@@ -19,7 +19,7 @@ sudo apt-get install -q -y -f php8.0-curl php8.0-cli php8.0-mysqli php8.0-gd php
 
 sudo apt-get upgrade libpcre3
 
-sudo apt-get -y install curl dirmngr apt-transport-https lsb-release ca-certificates
+sudo apt-get -y install curl dirmngr apt-transport-https lsb-release ca-certificates unzip
 curl -fsSL https://deb.nodesource.com/setup_16.x | sudo -E bash -
 sudo apt-get install -y nodejs
 npm install -g npm@8.3.0
@@ -37,11 +37,15 @@ sudo chown -R www-data:www-data /var/lib/php/sessions
 MYSQL=`which mysql`
 PHP=`which php`
 
-cd /var/www/etoa && npm install
-cd /var/www/etoa && npm run build
+# Setup dummy client files
+cd /var/www/etoa && mkdir htdocs/web/build && echo "{}" > htdocs/web/build/manifest.json && echo '{"entrypoints": {"admin": {}}}' > htdocs/web/build/entrypoints.json
 
-# Install PHP composer depenencies
-cd /var/www/etoa && php composer.phar install
+# Install PHP composer dependencies
+cd /var/www/etoa && export COMPOSER_ALLOW_SUPERUSER=1;php composer.phar install --no-interaction
+
+# Install node npm dependencies and trigger build (avoid symlinks for Windows, run in /vagrant to avoid weird npm errors)
+cd /vagrant && npm install --no-bin-links --no-audit
+cd /var/www/etoa && npm run build
 
 # Setup database
 Q0="SET GLOBAL sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));"
