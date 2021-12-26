@@ -50,9 +50,9 @@ function edit_button($url, $ocl = "")
 function copy_button($url, $ocl = "")
 {
     if ($ocl != "")
-        return "<a href=\"$url\" onclick=\"$ocl\"><img src=\"../images/icons/copy.png\" alt=\"Kopieren\" style=\"width:16px;height:18px;border:none;\" title=\"Kopieren\" /></a>";
+        return "<a href=\"$url\" onclick=\"$ocl\"><img src=\"/images/icons/copy.png\" alt=\"Kopieren\" style=\"width:16px;height:18px;border:none;\" title=\"Kopieren\" /></a>";
     else
-        return "<a href=\"$url\"><img src=\"../images/icons/copy.png\" alt=\"Kopieren\" style=\"width:16px;height:18px;border:none;\" title=\"Kopieren\" /></a>";
+        return "<a href=\"$url\"><img src=\"/images/icons/copy.png\" alt=\"Kopieren\" style=\"width:16px;height:18px;border:none;\" title=\"Kopieren\" /></a>";
 }
 
 /**
@@ -64,9 +64,9 @@ function copy_button($url, $ocl = "")
 function del_button($url, $ocl = "")
 {
     if ($ocl != "")
-        return "<a href=\"$url\" onclick=\"$ocl\"><img src=\"../images/icons/delete.png\" alt=\"Löschen\" style=\"width:16px;height:15px;border:none;\" title=\"Löschen\" /></a>";
+        return "<a href=\"$url\" onclick=\"$ocl\"><img src=\"/images/icons/delete.png\" alt=\"Löschen\" style=\"width:16px;height:15px;border:none;\" title=\"Löschen\" /></a>";
     else
-        return "<a href=\"$url\"><img src=\"../images/icons/delete.png\" alt=\"Löschen\" style=\"width:18px;height:15px;border:none;\" title=\"Löschen\" /></a>";
+        return "<a href=\"$url\"><img src=\"/images/icons/delete.png\" alt=\"Löschen\" style=\"width:18px;height:15px;border:none;\" title=\"Löschen\" /></a>";
 }
 
 function fieldComparisonSelectBox(string $name): string

@@ -1,0 +1,51 @@
+<div
+    {{ init_live_component(this) }}
+    data-action="change->live#update"
+>
+    {{ form(this.form) }}
+
+    {% if this.userId > 0 %}
+        <table class="tb">
+            <tr>
+                <th>Login</th>
+                <th>Aktivität</th>
+                <th>Logout</th>
+                <th>Dauer</th>
+                <th>IP</th>
+                <th>Browser</th>
+                <th>OS</th>
+            </tr>
+            {% for log in this.logs %}
+                <tr>
+                    <td>{{ formatTimestamp(log.timeLogin) }}</td>
+                    <td>
+                        {% if log.timeAction > 0 %}
+                            {{ formatTimestamp(log.timeAction) }}
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if log.timeLogout > 0 %}
+                            {{ formatTimestamp(log.timeLogout) }}
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if max(log.timeLogout, log.timeAction) > log.timeLogin %}
+                            {{ formatTimespan(max(log.timeLogout, log.timeAction) - log.timeLogin) }}
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                    <td title="{{ ipGetHost(log.ipAddr) }}">{{ log.ipAddr }}</td>
+                    <td title="{{ log.userAgent }}">{{ browser(log.userAgent).browser.toString() }}</td>
+                    <td title="{{ log.userAgent }}">{{ browser(log.userAgent).os.toString() }}</td>
+                </tr>
+            {% else %}
+                <tr><td colspan="9999"><i>Keine Einträge vorhanden</i></td></tr>
+            {% endfor %}
+        </table>
+    {% endif %}
+</div>

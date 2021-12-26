@@ -13,7 +13,7 @@
                 Eingeloggt als&nbsp;
                 <ul id="headernav">
                     <li><a href="{{ path('admin.profile') }}">{{ app.user.username }}</a></li>
-                    <li><a href="/admin/?adminlist=1">Adminliste</a></li>
+                    <li><a href="{{ path('admin.admin_management') }}">Adminliste</a></li>
                     {% if isAdminAllowed(userRoles, ['master', 'super-admin', 'game-admin', 'trial-game-admin']) %}
                         <li><a href="{{ path('admin.ticket.active') }}">{{ numTickets > 0 ? 'Tickets (' ~ numTickets ~ ')' : 'Tickets' }}</a></li>
                     {% endif %}

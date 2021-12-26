@@ -26,6 +26,8 @@ abstract class SymfonyWebTestCase extends \Symfony\Bundle\FrameworkBundle\Test\W
         $_SERVER['REMOTE_ADDR'] = '127.0.0.1';
         self::$staticConnection = $client->getContainer()->get(Connection::class);
 
+        require_once dirname(__DIR__) . '/htdocs/admin/inc/admin_functions.inc.php'; // @todo remove
+
         return $client;
     }
 
@@ -109,7 +111,7 @@ abstract class SymfonyWebTestCase extends \Symfony\Bundle\FrameworkBundle\Test\W
     /**
      * @param string[] $roles
      */
-    public function loginAdmin(KernelBrowser $client, array $roles = ['master']): void
+    public function loginAdmin(KernelBrowser $client, array $roles = ['master']): AdminUser
     {
         $adminUser = new AdminUser();
         $adminUser->nick = 'Admin';
@@ -133,5 +135,7 @@ abstract class SymfonyWebTestCase extends \Symfony\Bundle\FrameworkBundle\Test\W
         /** @var AdminSessionRepository $adminSessionRepository */
         $adminSessionRepository = self::getContainer()->get(AdminSessionRepository::class);
         $adminSessionRepository->create($sessionCookie->getValue(), $adminUser->id, '', 'Symfony BrowserKit', time());
+
+        return $adminUser;
     }
 }

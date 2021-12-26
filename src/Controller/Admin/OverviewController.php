@@ -4,12 +4,14 @@ namespace EtoA\Controller\Admin;
 
 use EtoA\Admin\AdminRoleManager;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Form\Type\Admin\GameOfflineType;
 use EtoA\Help\TicketSystem\TicketRepository;
 use EtoA\Ranking\GameStatsGenerator;
 use EtoA\Support\DB\DatabaseManagerRepository;
 use EtoA\Text\TextRepository;
 use EtoA\Universe\Cell\CellRepository;
 use League\CommonMark\MarkdownConverterInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -125,6 +127,33 @@ class OverviewController extends AbstractAdminController
             'dbVersion' => $this->databaseManager->getDatabasePlatform(),
             'webserverVersion' => $_SERVER['SERVER_SOFTWARE'] ?? '',
             'unixName' => isUnixOS() ? $unix['sysname'] . ' ' . $unix['release'] . ' ' . $unix['version'] : null,
+        ]);
+    }
+
+    /**
+     * @Route("/admin/overview/game-offline", name="admin.overview.game-offline")
+     */
+    public function gameOffline(Request $request): Response
+    {
+        if ($request->isMethod('POST')) {
+            if ($request->request->has('offline')) {
+                $this->config->set('offline', 1);
+            } elseif ($request->request->has('online')) {
+                $this->config->set('offline', 0);
+            } elseif ($request->request->has('save')) {
+                $this->config->set('offline_ips_allow', $request->request->get('offline_ips_allow'));
+                $this->config->set('offline_message', $request->request->get('offline_message'));
+            }
+        }
+
+        $form = $this->createForm(GameOfflineType::class, [
+            'offline_ips_allow' => $this->config->get('offline_ips_allow'),
+            'offline_message' => $this->config->get('offline_message'),
+        ], ['isOffline' => $this->config->getBoolean('offline')]);
+
+        return $this->render('admin/overview/game-offline.html.twig', [
+            'form' => $form->createView(),
+            'isOffline' => $this->config->getBoolean('offline'),
         ]);
     }
 }
