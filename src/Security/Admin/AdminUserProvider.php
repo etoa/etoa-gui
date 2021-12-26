@@ -28,6 +28,8 @@ class AdminUserProvider implements UserProviderInterface, PasswordUpgraderInterf
         if ($data === null) {
             $e = new UserNotFoundException('User with id '.$user->getId().' not found.');
             $e->setUserIdentifier(json_encode($user->getId()));
+
+            throw $e;
         }
 
         return new CurrentAdmin($data);
