@@ -2,7 +2,9 @@
 
 namespace EtoA\Controller\Admin;
 
+use EtoA\Alliance\Alliance;
 use EtoA\Alliance\AllianceDiplomacyRepository;
+use EtoA\Alliance\AllianceImageStorage;
 use EtoA\Alliance\AllianceRankRepository;
 use EtoA\Alliance\AllianceRepository;
 use EtoA\Alliance\AllianceService;
@@ -19,7 +21,8 @@ class AllianceController extends AbstractAdminController
         private AllianceService $allianceService,
         private AllianceRankRepository $allianceRankRepository,
         private AllianceDiplomacyRepository $allianceDiplomacyRepository,
-        private AllianceRepository $allianceRepository
+        private AllianceRepository $allianceRepository,
+        private AllianceImageStorage $allianceImageStorage
     ) {
     }
 
@@ -96,6 +99,63 @@ class AllianceController extends AbstractAdminController
             'alliancesWithoutFounder' => $this->allianceRepository->findAllWithoutFounder(),
             'alliancesWithoutUsers' => $this->allianceRepository->findAllWithoutUsers(),
             'usersWithInvalidAlliances' => $this->allianceRepository->findAllSoloUsers(),
+        ]);
+    }
+
+    #[Route('/admin/alliances/imagecheck', name: 'admin.alliances.imagecheck')]
+    #[IsGranted('ROLE_ADMIN_GAME-ADMIN')]
+    public function imageCheck(Request $request): Response
+    {
+        if ($request->request->has('validate_submit')) {
+            foreach ($request->request->all('validate') as $allianceId => $value) {
+                if ($value == 0) {
+                    $picture = $this->allianceRepository->getPicture($allianceId);
+                    if ($picture != '') {
+                        $this->allianceImageStorage->delete($picture);
+                        if ($this->allianceRepository->clearPicture($allianceId)) {
+                            $this->addFlash('success', 'Bild entfernt!');
+                        }
+                    }
+                } else {
+                    $this->allianceRepository->markPictureChecked($allianceId);
+                }
+            }
+        }
+
+        $alliances = $this->allianceRepository->findAllWithPictures();
+        $paths = [];
+        foreach ($alliances as $alliance) {
+            $paths[$alliance['alliance_id']] = $alliance['alliance_img'];
+        }
+
+        $files = $this->allianceImageStorage->getAllImages();
+        $orphaned = [];
+        foreach ($files as $file) {
+            if (!in_array($file, $paths, true)) {
+                $orphaned[] = $file;
+            }
+        }
+
+        if ($request->request->has('deleteOrphaned')) {
+            foreach ($orphaned as $image) {
+                $this->allianceImageStorage->delete($image);
+            }
+
+            $this->addFlash('success', 'Verwaiste Bilder gelöscht!');
+            $orphaned = [];
+        }
+
+        $uncheckedImages = [];
+        $alliancesWithUncheckedPictures = $this->allianceRepository->findAllWithUncheckedPictures();
+        foreach ($alliancesWithUncheckedPictures as $alliance) {
+            $uncheckedImages[$alliance['alliance_img']] = $this->allianceImageStorage->exists($alliance['alliance_img']);
+        }
+
+        return $this->render('admin/alliance/imagecheck.html.twig', [
+            'webroot' => Alliance::PROFILE_PICTURE_PATH,
+            'alliancesWithUncheckedPictures' => $alliancesWithUncheckedPictures,
+            'uncheckedImages' => $uncheckedImages,
+            'orphaned' => $orphaned,
         ]);
     }
 }

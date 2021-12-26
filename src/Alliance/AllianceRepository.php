@@ -285,7 +285,7 @@ class AllianceRepository extends AbstractRepository
             ->execute();
     }
 
-    public function update(int $id, string $tag, string $name, string $text, string $template, string $url, int $founder, string $updatedAllianceImage = null, bool $acceptsApplications = null, bool $acceptsBnd = null, bool $publicMemberList = null): bool
+    public function update(int $id, string $tag, string $name, string $text, ?string $template, string $url, int $founder, string $updatedAllianceImage = null, bool $acceptsApplications = null, bool $acceptsBnd = null, bool $publicMemberList = null): bool
     {
         $qb = $this->createQueryBuilder()
             ->update('alliances')
@@ -364,10 +364,14 @@ class AllianceRepository extends AbstractRepository
     {
         $affected = $this->createQueryBuilder()
             ->update('alliances')
-            ->set('alliance_img', '')
-            ->set('alliance_img_check', (string) 0)
+            ->set('alliance_img', ':image')
+            ->set('alliance_img_check', ':check')
             ->where('alliance_id = :allianceId')
-            ->setParameter('allianceId', $allianceId)
+            ->setParameters([
+                'allianceId' => $allianceId,
+                'check' => 0,
+                'image' => '',
+            ])
             ->execute();
 
         return (int) $affected > 0;
@@ -377,9 +381,12 @@ class AllianceRepository extends AbstractRepository
     {
         $affected = $this->createQueryBuilder()
             ->update('alliances')
-            ->set('alliance_img_check', (string) 0)
+            ->set('alliance_img_check', ':check')
             ->where('alliance_id = :allianceId')
-            ->setParameter('allianceId', $allianceId)
+            ->setParameters([
+                'allianceId' => $allianceId,
+                'check' => 0,
+            ])
             ->execute();
 
         return (int) $affected > 0;

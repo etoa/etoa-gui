@@ -2,18 +2,15 @@
 
 use EtoA\Admin\Forms\AllianceBuildingsForm;
 use EtoA\Admin\Forms\AllianceTechnologiesForm;
-use EtoA\Alliance\Alliance;
 use EtoA\Alliance\AllianceDiplomacyRepository;
 use EtoA\Alliance\AllianceRankRepository;
 use EtoA\Alliance\AllianceRepository;
 use EtoA\Alliance\AllianceService;
-use EtoA\Alliance\InvalidAllianceParametersException;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Support\BBCodeUtils;
 use EtoA\Support\StringUtils;
 use EtoA\User\UserRepository;
 use Symfony\Component\HttpFoundation\Request;
-use Twig\Environment;
 
 /** @var AllianceRepository $repository */
 $repository = $app[AllianceRepository::class];
@@ -33,9 +30,7 @@ $request = Request::createFromGlobals();
 /** @var ConfigurationService $config */
 $config = $app[ConfigurationService::class];
 
-if ($sub == "imagecheck") {
-    imagecheck($request, $repository, $app['app.webroot_dir']);
-} elseif ($sub == "buildingsdata") {
+if ($sub == "buildingsdata") {
     AllianceBuildingsForm::render($app, $request);
 } elseif ($sub == "techdata") {
     AllianceTechnologiesForm::render($app, $request);
@@ -56,112 +51,6 @@ if ($sub == "imagecheck") {
         drop($request, $repository);
     } else {
         index($request, $repository, $service);
-    }
-}
-
-function imagecheck(Request $request, AllianceRepository $repository, string $webroot)
-{
-    global $page;
-    global $sub;
-
-    $dir = $webroot . Alliance::PROFILE_PICTURE_PATH;
-    echo "<h1>Allianz-Bilder prüfen</h1>";
-
-    //
-    // Check submit
-    //
-    if ($request->request->has('validate_submit')) {
-        foreach ($request->request->all('validate') as $id => $v) {
-            if ($v == 0) {
-                if (removeAlliancePicture($repository, $id, $webroot)) {
-                    echo "Bild entfernt!<br/><br/>";
-                }
-            } else {
-                $repository->markPictureChecked($id);
-            }
-        }
-    }
-
-    //
-    // Check new images
-    //
-    echo "<h2>Noch nicht verifizierte Bilder</h2>";
-    echo "Diese Bilder gehören zu aktiven Allianzen. Bitte prüfe regelmässig, ob sie nicht gegen unsere Regeln verstossen!<br/>";
-    $alliances = $repository->findAllWithUncheckedPictures();
-    if (count($alliances) > 0) {
-        echo "Es sind " . count($alliances) . " Bilder gespeichert!<br/><br/>";
-        echo "<form action=\"\" method=\"post\">
-			<table class=\"tb\"><tr><th>User</th><th>Fehler</th><th>Aktionen</th></tr>";
-        foreach ($alliances as $alliance) {
-            echo "<tr><td>[" . $alliance['alliance_tag'] . "] " . $alliance['alliance_name'] . "</td><td>";
-            if (file_exists($dir . $alliance['alliance_img'])) {
-                echo '<img src="' . $dir . $alliance['alliance_img'] . '" alt="Profil" />';
-            } else {
-                echo '<span style=\"color:red\">Bild existiert nicht!</span>';
-            }
-            echo "</td><td>
-				<input type=\"radio\" name=\"validate[" . $alliance['alliance_id'] . "]\" value=\"1\" checked=\"checked\"> Bild ist in Ordnung<br/>
-				<input type=\"radio\" name=\"validate[" . $alliance['alliance_id'] . "]\" value=\"0\" > Bild verstösst gegen die Regeln. Lösche es!<br/>
-				</td></tr>";
-        }
-        echo "</table><br/>
-			<input type=\"submit\" name=\"validate_submit\" value=\"Speichern\" /></form>";
-    } else {
-        echo "<br/><i>Keine Bilder vorhanden!</i>";
-    }
-
-    //
-    // Orphans
-    //
-    $alliances = $repository->findAllWithPictures();
-    $nr = count($alliances);
-    $paths = array();
-    $nicks = array();
-    if ($nr > 0) {
-        foreach ($alliances as $alliance) {
-            $paths[$alliance['alliance_id']] = $alliance['alliance_img'];
-            $nicks[$alliance['alliance_id']] = $alliance['alliance_name'];
-        }
-    }
-    $files = array();
-    if (is_dir($dir)) {
-        $d = opendir($dir);
-        while ($f = readdir($d)) {
-            if (is_file($dir . $f)) {
-                array_push($files, $f);
-            }
-        }
-        closedir($d);
-    }
-
-    $overhead = array();
-    while (count($files) > 0) {
-        $k = array_pop($files);
-        if (!in_array($k, $paths, true))
-            array_push($overhead, $k);
-    }
-
-    if ($request->query->has('action') && $request->query->get('action') == "clearOverhead") {
-        while (count($overhead) > 0) {
-            unlink($dir . array_pop($overhead));
-        }
-        echo "Verwaiste Bilder gelöscht!<br/><bt/>";
-    }
-    $co = count($overhead);
-
-    echo "<h2>Verwaiste Bilder</h2>";
-    if ($co > 0) {
-        echo "Diese Bilder gehören zu Allianzen, die nicht mehr in unserer Datenbank vorhanden sind.<br/>
-				Es sind $co Bilder vorhanden. <a href=\"?page=$page&amp;sub=$sub&amp;action=clearOverhead\">Lösche alle verwaisten Bilder</a><br/><br/>";
-        echo "<table class=\"tb\">
-				<tr><th>Datei</th><th>Bild</th></tr>";
-        foreach ($overhead as $v) {
-            echo "<tr><td>" . $v . "</td>";
-            echo '<td><img src="' . $dir . $v . '" alt="Profil" /></td></tr>';
-        }
-        echo "</table><br/>";
-    } else {
-        echo "<i>Keine vorhanden!</i>";
     }
 }
 
@@ -354,16 +243,4 @@ function index(Request $request, AllianceRepository $repository, AllianceService
     echo "</table>";
     echo "<br/><input type=\"submit\" name=\"alliance_search\" value=\"Suche starten\" /> (wenn nichts eingegeben wird werden alle Datensätze angezeigt)</form>";
     echo "<br/>Es sind " . StringUtils::formatNumber($repository->count()) . " Einträge in der Datenbank vorhanden.";
-}
-
-function removeAlliancePicture(AllianceRepository $repository, int $allianceId, string $webroot): bool
-{
-    $picture = $repository->getPicture($allianceId);
-    if ($picture != null) {
-        if (file_exists($webroot . Alliance::PROFILE_PICTURE_PATH . $picture)) {
-            unlink($webroot . Alliance::PROFILE_PICTURE_PATH . "/" . $picture);
-        }
-        return $repository->clearPicture($allianceId);
-    }
-    return false;
 }
