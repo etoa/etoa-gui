@@ -39,8 +39,6 @@ if ($sub == "imagecheck") {
     AllianceBuildingsForm::render($app, $request);
 } elseif ($sub == "techdata") {
     AllianceTechnologiesForm::render($app, $request);
-} elseif ($sub == "create") {
-    create($request, $repository, $service);
 } elseif ($sub == "news") {
     news($config);
 } elseif ($sub == "crap") {
@@ -167,50 +165,6 @@ function imagecheck(Request $request, AllianceRepository $repository, string $we
     } else {
         echo "<i>Keine vorhanden!</i>";
     }
-}
-
-function create(
-    Request $request,
-    AllianceRepository $repository,
-    AllianceService $service
-): void {
-    global $page;
-    global $sub;
-
-    echo "<h1>Allianz erstellen</h1>";
-
-    if ($request->request->has('create')) {
-        $founderId = $request->request->getInt('alliance_founder_id');
-        try {
-            $alliance = $service->create(
-                $request->request->get('alliance_tag'),
-                $request->request->get('alliance_name'),
-                $founderId,
-            );
-            success_msg("Allianz " . $alliance->toString() . " wurde erstellt! [[page alliances sub=edit id=" . $alliance->id . "]Details[/page]]");
-        } catch (InvalidAllianceParametersException $ex) {
-            error_msg("Allianz konnte nicht erstellt werden!\n\n" . $ex->getMessage() . "");
-        }
-    }
-
-    echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"post\">";
-    echo '<table class="tbl">';
-    echo "<tr><th>Tag:</th><td>
-		<input type=\"text\" name=\"alliance_tag\" value=\"\" required />
-		</td></td>";
-    echo "<tr><th>Name:</th><td>
-		<input type=\"text\" name=\"alliance_name\" value=\"\" required />
-		</td></td>";
-    echo "<tr><th>Gründer:</th><td>
-		<select name=\"alliance_founder_id\" />";
-    foreach ($repository->listSoloUsers() as $key => $value) {
-        echo "<option value=\"" . $key . "\">" . $value . "</option>";
-    }
-    echo "</select>
-		</td></td>";
-    tableEnd();
-    echo "<p><input type=\"submit\" name=\"create\" value=\"Erstellen\" /></p>
-		</form>";
 }
 
 function news(ConfigurationService $config)
