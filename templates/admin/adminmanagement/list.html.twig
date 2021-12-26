@@ -28,9 +28,11 @@
             <td>{{ admin.locked ? "<span style=\"color:red\">Ja</span>" : "Nein" }}</td>
             <td>{% if admin.boardUrl %}<a href="{{ admin.boardUrl}}" target="_blank">Profil</a>{% endif %}</td>
             <td style="width:40px;">
-                {{ editButton(path('admin.admin_management.edit', {id: admin.id}))|raw }}
-                {% if admin.id != app.user.id %}
-                    {{ delButton(path('admin.admin_management.delete', {id: admin.id}), "return confirm('Soll der Benutzer wirklich gelöscht werden?')")|raw }}
+                {% if is_granted('ROLE_ADMIN_SUPER-ADMIN') %}
+                    {{ editButton(path('admin.admin_management.edit', {id: admin.id}))|raw }}
+                    {% if admin.id != app.user.id %}
+                        {{ delButton(path('admin.admin_management.delete', {id: admin.id}), "return confirm('Soll der Benutzer wirklich gelöscht werden?')")|raw }}
+                    {% endif %}
                 {% endif %}
             </td>
         </tr>
@@ -38,6 +40,8 @@
     </table>
     <br/>
 
-    <input type="button" onclick=\"document.location='?page=$page&amp;sub=$sub&amp;new=1'\" value="Neuer Benutzer" />
+    {% if is_granted('ROLE_ADMIN_SUPER-ADMIN') %}
+        <input type="button" onclick="document.location='{{ path('admin.admin_management.new') }}'" value="Neuer Benutzer" />
+    {% endif %}
 
 {% endblock %}

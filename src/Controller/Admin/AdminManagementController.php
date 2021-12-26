@@ -9,6 +9,7 @@ use EtoA\Log\LogFacility;
 use EtoA\Log\LogRepository;
 use EtoA\Log\LogSeverity;
 use EtoA\Security\Admin\CurrentAdmin;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -22,9 +23,7 @@ class AdminManagementController extends AbstractAdminController
     ) {
     }
 
-    /**
-     * @Route("/admin/admin-management/", name="admin.admin_management")
-     */
+    #[Route('/admin/admin-management/', name: 'admin.admin_management')]
     public function index(): Response
     {
         return $this->render('admin/adminmanagement/list.html.twig', [
@@ -32,9 +31,8 @@ class AdminManagementController extends AbstractAdminController
         ]);
     }
 
-    /**
-      * @Route("/admin/admin-management/new", name="admin.admin_management.new")
-     */
+    #[Route('/admin/admin-management/new', name: 'admin.admin_management.new')]
+    #[IsGranted('ROLE_ADMIN_SUPER-ADMIN')]
     public function new(Request $request): Response
     {
         $admin = new AdminUser();
@@ -54,9 +52,8 @@ class AdminManagementController extends AbstractAdminController
         ]);
     }
 
-    /**
-     * @Route("/admin/admin-management/{id}/edit", name="admin.admin_management.edit")
-     */
+    #[Route('/admin/admin-management/{id}/edit', name: 'admin.admin_management.edit')]
+    #[IsGranted('ROLE_ADMIN_SUPER-ADMIN')]
     public function edit(Request $request, int $id, UserPasswordHasherInterface $passwordHasher): Response
     {
         $admin = $this->adminUserRepository->find($id);
@@ -86,9 +83,8 @@ class AdminManagementController extends AbstractAdminController
         ]);
     }
 
-    /**
-     * @Route("/admin/admin-management/{id}/delete", name="admin.admin_management.delete")
-     */
+    #[Route('/admin/admin-management/{id}/delete', name: 'admin.admin_management.delete')]
+    #[IsGranted('ROLE_ADMIN_SUPER-ADMIN')]
     public function delete(int $id): Response
     {
         $admin = $this->adminUserRepository->find($id);
