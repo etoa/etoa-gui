@@ -2,7 +2,6 @@
 
 namespace EtoA\Form\Type\Admin;
 
-use EtoA\Form\Type\Core\UserType;
 use EtoA\Form\Type\Core\UserWithoutAllianceType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
@@ -25,5 +24,4 @@ class AllianceCreateType extends AbstractType
                 'label' => 'Erstellen',
             ]);
     }
-
 }

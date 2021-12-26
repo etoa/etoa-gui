@@ -3,7 +3,6 @@
 namespace EtoA\Form\Type\Core;
 
 use EtoA\Alliance\AllianceRepository;
-use EtoA\User\UserRepository;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 

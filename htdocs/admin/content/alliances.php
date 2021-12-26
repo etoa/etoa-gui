@@ -41,8 +41,6 @@ if ($sub == "imagecheck") {
     AllianceTechnologiesForm::render($app, $request);
 } elseif ($sub == "news") {
     news($config);
-} elseif ($sub == "crap") {
-    crap($request, $repository, $allianceRankRepository, $allianceDiplomacyRepository, $service);
 } else {
     \EtoA\Admin\LegacyTemplateTitleHelper::$title = 'Allianzen';
 
@@ -208,117 +206,6 @@ function news(ConfigurationService $config)
     echo '<form id="newsForm" action="?page=' . $page . '&amp;sub=' . $sub . '" method="post">';
     echo '<div id="newsBox">Lade...</div></form>';
     echo '<script type="text/javascript">xajax_allianceNewsLoad()</script>';
-}
-
-function crap(Request $request, AllianceRepository $repository, AllianceRankRepository $allianceRankRepository, AllianceDiplomacyRepository $allianceDiplomacyRepository, AllianceService $allianceService)
-{
-    global $page;
-    global $sub;
-
-    echo "<h1>Überflüssige Daten</h1>";
-
-    if ($request->query->has('action') && $request->query->get('action') == "cleanupRanks") {
-        if ($allianceRankRepository->deleteOrphanedRanks() > 0) {
-            echo "Fehlerhafte Daten gelöscht.";
-        }
-    } elseif ($request->query->has('action') && $request->query->get('action') == "cleanupDiplomacy") {
-        if ($allianceDiplomacyRepository->deleteOrphanedDiplomacies() > 0) {
-            echo "Fehlerhafte Daten gelöscht.";
-        }
-    } elseif ($request->query->has('action') && $request->query->get('action') == "cleanupEmptyAlliances") {
-        $alliances = $repository->findAllWithoutUsers();
-        $cnt = 0;
-        if (count($alliances) > 0) {
-            foreach ($alliances as $alliance) {
-                if ($repository->countUsers((int) $alliance['alliance_id']) == 0) {
-                    $alliance = $repository->getAlliance((int) $alliance['alliance_id']);
-                    if ($allianceService->delete($alliance)) {
-                        $cnt++;
-                    }
-                }
-            }
-        }
-        echo "$cnt leere Allianzen wurden gelöscht.<br/>";
-    }
-
-    // Ränge ohne Allianz
-    echo "<h2>Ränge ohne Allianz</h2>";
-    $ranksWithoutAlliance = $allianceRankRepository->countOrphanedRanks();
-    if ($ranksWithoutAlliance > 0) {
-        echo "$ranksWithoutAlliance Ränge ohne Allianz.
-			<a href=\"?page=$page&amp;sub=$sub&amp;action=cleanupRanks\">Löschen?</a>";
-    } else {
-        echo "Keine fehlerhaften Daten gefunden.";
-    }
-
-    // Bündnisse/Kriege ohne Allianz
-    echo "<h2>Bündnisse/Kriege ohne Allianz</h2>";
-    $bndWithoutAlliance = $allianceDiplomacyRepository->countOrphanedDiplomacies();
-    if ($bndWithoutAlliance > 0) {
-        echo "$bndWithoutAlliance Bündnisse/Kriege ohne Allianz.
-			<a href=\"?page=$page&amp;sub=$sub&amp;action=cleanupDiplomacy\">Löschen?</a>";
-    } else {
-        echo "Keine fehlerhaften Daten gefunden.";
-    }
-
-    // Allianzen ohne Gründer
-    echo "<h2>Allianzen ohne Gründer</h2>";
-    $alliancesWithoutFounder = $repository->findAllWithoutFounder();
-    if (count($alliancesWithoutFounder) > 0) {
-        echo "<table class=\"tbl\">";
-        echo "<tr><th class=\"tbltitle\">Tag</th>
-			<th class=\"tbltitle\">Name</th>
-			<th>&nbsp;</th></tr>";
-        foreach ($alliancesWithoutFounder as $alliance) {
-            echo "<tr><td class=\"tbldata\">" . $alliance['alliance_name'] . "</td>
-				<td class=\"tbldata\">" . $alliance['alliance_tag'] . "</td>
-				<td class=\"tbldata\"><a href=\"?page=$page&amp;sub=edit&amp;alliance_id=" . $alliance['alliance_id'] . "\">detail</a></td></tr>";
-        }
-        echo "</table><br/>";
-        echo count($alliancesWithoutFounder) . " Allianzen ohne Gründer.";
-    } else {
-        echo "Keine fehlerhaften Daten gefunden.";
-    }
-
-    // User mit fehlerhafter Allianz-Verknüpfung
-    echo "<h2>User mit fehlerhafter Allianz-Verknüpfung</h2>";
-    $usersWithInvalidAlliances = $repository->findAllSoloUsers();
-    if (count($usersWithInvalidAlliances) > 0) {
-        echo "<table class=\"tbl\">";
-        echo "<tr><th class=\"tbltitle\">Nick</th>
-			<th class=\"tbltitle\">E-Mail</th>
-			<th>&nbsp;</th></tr>";
-        foreach ($usersWithInvalidAlliances as $users) {
-            echo "<tr><td class=\"tbldata\">" . $users['user_nick'] . "</td>
-				<td class=\"tbldata\">" . $users['user_email'] . "</td>
-				<td class=\"tbldata\"><a href=\"?page=user&amp;sub=edit&amp;user_id=" . $users['user_id'] . "\">detail</a></td></tr>";
-        }
-        echo "</table><br/>";
-        echo count($usersWithInvalidAlliances) . " User mit fehlerhafter Verknüpfung.";
-    } else {
-        echo "Keine fehlerhaften Daten gefunden.";
-    }
-
-    // Leere Allianzen
-    echo "<h2>Leere Allianzen (Allianzen ohne User)</h2>";
-    $alliancesWithoutUsers = $repository->findAllWithoutUsers();
-    if (count($alliancesWithoutUsers) > 0) {
-        echo "<table class=\"tbl\">";
-        echo "<tr><th class=\"tbltitle\">Name</th>
-			<th class=\"tbltitle\">Tag</th><th>&nbsp;</th>
-			<th>&nbsp;</th></tr>";
-        foreach ($alliancesWithoutUsers as $alliance) {
-            echo "<tr><td class=\"tbldata\">" . $alliance['alliance_name'] . "</td>
-				<td class=\"tbldata\">" . $alliance['alliance_tag'] . "</td>
-				<td class=\"tbldata\"><a href=\"?page=$page&amp;sub=edit&amp;alliance_id=" . $alliance['alliance_id'] . "\">detail</a></td>
-				<td class=\"tbldata\"><a href=\"?page=$page&amp;sub=drop&amp;alliance_id=" . $alliance['alliance_id'] . "\">löschen</a></td></tr>";
-        }
-        echo "</table><br/>";
-        echo count($alliancesWithoutUsers) . " Allianzen sind leer.
-			<a href=\"?page=$page&amp;sub=$sub&amp;action=cleanupEmptyAlliances\">Löschen?</a>";
-    } else {
-        echo "Keine fehlerhaften Daten gefunden.";
-    }
 }
 
 function searchResults(Request $request, AllianceRepository $repository)
