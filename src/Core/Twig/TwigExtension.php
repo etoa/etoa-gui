@@ -184,7 +184,7 @@ class TwigExtension extends AbstractExtension
         return del_button($url, $ocl);
     }
 
-    public function ipGetHost(string $ip): string
+    public function ipGetHost(?string $ip): string
     {
         return $this->networkNameService->getHost($ip);
     }
