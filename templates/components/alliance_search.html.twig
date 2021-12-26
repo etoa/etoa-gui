@@ -1,0 +1,28 @@
+{% extends 'components/base_search.html.twig' %}
+
+{% block data %}
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+        <th>Gründer</th>
+        <th>Gründung</th>
+        <th>Rank</th>
+        <th>Punkte</th>
+        <th>Users</th>
+        <th>&nbsp;</th>
+    </tr>
+    {% for alliance in search.entries %}
+        <tr>
+            <td>{{ alliance.id }}</td>
+            <td><a href="#">{{ alliance.nameWithTag }}</a></td>
+            <td>{{ this.users[alliance.founderId]|default('Niemand') }}</td>
+            <td>{{ formatTimestamp(alliance.foundationTimestamp) }}</td>
+            <td>{{ alliance.currentRank }}</td>
+            <td>{{ alliance.points }}</td>
+            <td>{{ alliance.memberCount }}</td>
+            <td style="width:50px;">
+                {{ delButton(path('admin.alliances.delete', {id: alliance.id}))|raw }}
+            </td>
+        </tr>
+    {% endfor %}
+{% endblock %}

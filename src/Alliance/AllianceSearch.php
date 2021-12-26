@@ -19,10 +19,26 @@ class AllianceSearch extends AbstractSearch
         return $this;
     }
 
+    public function tagLike(string $search): self
+    {
+        $this->parts[] = 'alliance_tag LIKE :tag';
+        $this->parameters['tag'] = '%' . $search . '%';
+
+        return $this;
+    }
+
     public function nameLike(string $search): self
     {
         $this->parts[] = 'alliance_name LIKE :name';
         $this->parameters['name'] = '%' . $search . '%';
+
+        return $this;
+    }
+
+    public function textLike(string $search): self
+    {
+        $this->parts[] = 'alliance_text LIKE :text';
+        $this->parameters['text'] = '%' . $search . '%';
 
         return $this;
     }

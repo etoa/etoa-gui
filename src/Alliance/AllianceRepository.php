@@ -191,44 +191,6 @@ class AllianceRepository extends AbstractRepository
             ->execute();
     }
 
-    /**
-     * @param array<string, int|string|bool> $formData
-     * @return array<array{alliance_id: string, alliance_name: string, alliance_tag:string, alliance_foundation_date:string, alliance_founder_id: string, cnt:string}>
-     */
-    public function findByFormData(array $formData): array
-    {
-        $qry = $this->createQueryBuilder()
-            ->select(
-                'alliance_id',
-                'alliance_name',
-                'alliance_tag',
-                'alliance_foundation_date',
-                'alliance_founder_id',
-                'COUNT(u.user_id) AS cnt'
-            )
-            ->from('alliances', 'a')
-            ->leftJoin('a', 'users', 'u', 'u.user_alliance_id = a.alliance_id')
-            ->groupBy('alliance_id')
-            ->orderBy('alliance_tag');
-
-        if ($formData['alliance_id'] != "") {
-            $qry->andWhere('alliance_id = :alliance_id')
-                ->setParameter('alliance_id', $formData['alliance_id']);
-        }
-        if ($formData['alliance_tag'] != "") {
-            $qry = fieldComparisonQuery($qry, $formData, 'alliance_tag', 'alliance_tag');
-        }
-        if ($formData['alliance_name'] != "") {
-            $qry = fieldComparisonQuery($qry, $formData, 'alliance_name', 'alliance_name');
-        }
-        if ($formData['alliance_text'] != "") {
-            $qry = fieldComparisonQuery($qry, $formData, 'alliance_text', 'alliance_text');
-        }
-
-        return $qry->execute()
-            ->fetchAllAssociative();
-    }
-
     public function exists(string $tag, string $name, int $ignoreAllianceId = null): bool
     {
         $qb = $this->createQueryBuilder()
@@ -487,7 +449,7 @@ class AllianceRepository extends AbstractRepository
      */
     public function findUsers(int $allianceId): array
     {
-        return $this->createQueryBuilder()
+        $data = $this->createQueryBuilder()
             ->select(
                 'user_id',
                 'user_nick',
@@ -501,6 +463,13 @@ class AllianceRepository extends AbstractRepository
             ->setParameter('allianceId', $allianceId)
             ->execute()
             ->fetchAllAssociative();
+
+        $users = [];
+        foreach ($data as $row) {
+            $users[$row['user_id']] = $row;
+        }
+
+        return $users;
     }
 
     public function assignRankToUser(int $rankId, int $userId): void
