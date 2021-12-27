@@ -3,7 +3,11 @@
 namespace EtoA\Form\Type\Core;
 
 use EtoA\User\UserRepository;
+use EtoA\User\UserSearch;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\ChoiceList\ChoiceList;
+use Symfony\Component\Form\ChoiceList\Factory\Cache\ChoiceLoader;
+use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class UserType extends AbstractType
@@ -20,7 +24,17 @@ class UserType extends AbstractType
         $resolver->setDefaults([
             'required' => false,
             'placeholder' => '(Alle)',
-            'choices' => array_flip($this->userRepository->searchUserNicknames()),
+            'search' => null,
+            'choice_loader' => function (Options $options): ChoiceLoader {
+                return ChoiceList::lazy($this, function () use ($options): array {
+                    $search = $options->offsetGet('search');
+                    if (!$search instanceof UserSearch) {
+                        $search = UserSearch::create();
+                    }
+
+                    return array_flip($this->userRepository->searchUserNicknames($search));
+                });
+            },
         ]);
     }
 

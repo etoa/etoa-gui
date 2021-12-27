@@ -168,7 +168,7 @@ class AllianceTechnologyRepository extends AbstractRepository
 
         $result = [];
         foreach ($data as $row) {
-            $entry = new AllianceTechnologyListItem($row);
+            $entry = AllianceTechnologyListItem::createFromData($row);
             $result[$entry->technologyId] = $entry;
         }
 

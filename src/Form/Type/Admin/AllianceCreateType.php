@@ -2,7 +2,8 @@
 
 namespace EtoA\Form\Type\Admin;
 
-use EtoA\Form\Type\Core\UserWithoutAllianceType;
+use EtoA\Form\Type\Core\UserType;
+use EtoA\User\UserSearch;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -15,10 +16,11 @@ class AllianceCreateType extends AbstractType
         $builder
             ->add('tag', TextType::class)
             ->add('name', TextType::class)
-            ->add('founder', UserWithoutAllianceType::class, [
+            ->add('founder', UserType::class, [
                 'required' => true,
                 'placeholder' => false,
                 'label' => 'Gründer',
+                'search' => UserSearch::create()->allianceId(0),
             ])
             ->add('submit', SubmitType::class, [
                 'label' => 'Erstellen',

@@ -7,9 +7,6 @@ use EtoA\Alliance\AllianceRankRepository;
 use EtoA\Alliance\AllianceRepository;
 use EtoA\Alliance\AllianceService;
 use EtoA\Core\Configuration\ConfigurationService;
-use EtoA\Support\BBCodeUtils;
-use EtoA\Support\StringUtils;
-use EtoA\User\UserRepository;
 use Symfony\Component\HttpFoundation\Request;
 
 /** @var AllianceRepository $repository */

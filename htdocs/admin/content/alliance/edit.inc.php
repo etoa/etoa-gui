@@ -42,46 +42,14 @@ if (!isset($id)) {
     return;
 }
 
-if ($request->request->has('info_save') && $request->request->get('info_save') != "") {
-    saveInfo($request, $repository, $id, $app['app.webroot_dir']);
-} elseif ($request->request->has('member_save') && $request->request->get('member_save') != "") {
+if ($request->request->has('member_save') && $request->request->get('member_save') != "") {
     saveMembers($request, $repository, $allianceRankRepository);
 } elseif ($request->request->has('bnd_save') && $request->request->get('bnd_save') != "") {
     saveDiplomacy($request, $allianceDiplomacyRepository);
 } elseif ($request->request->has('res_save') && $request->request->get('res_save') != "") {
     saveResources($request, $repository, $id);
-} elseif ($request->request->has('buildings') && $request->request->get('buildings') != "") {
-    saveBuildings($request, $buildingRepository, $id);
-} elseif ($request->request->has('techs') && $request->request->get('techs') != "") {
-    saveTechnologies($request, $technologyRepository, $id);
 }
 edit($repository, $buildingRepository, $technologyRepository, $historyRepository, $allianceDiplomacyRepository, $id);
-
-function saveInfo(Request $request, AllianceRepository $repository, int $id, string $webroot)
-{
-    //  Bild löschen wenn nötig
-    if ($request->request->has('alliance_img_del')) {
-        $picture = $repository->getPicture($id);
-        if ($picture !== null) {
-            if (file_exists($webroot . Alliance::PROFILE_PICTURE_PATH . $picture)) {
-                unlink($webroot . Alliance::PROFILE_PICTURE_PATH . $picture);
-            }
-            $repository->clearPicture($id);
-        }
-    }
-
-    $repository->update(
-        $id,
-        $request->request->get('alliance_tag'),
-        $request->request->get('alliance_name'),
-        $request->request->get('alliance_text'),
-        $request->request->get('alliance_application_template'),
-        $request->request->get('alliance_url'),
-        $request->request->getInt('alliance_founder_id')
-    );
-
-    \EtoA\Admin\LegacyTemplateTitleHelper::addFlash('success', 'Allianzdaten aktualisiert!');
-}
 
 function saveMembers(Request $request, AllianceRepository $repository, AllianceRankRepository $allianceRankRepository)
 {
@@ -155,54 +123,6 @@ function saveResources(Request $request, AllianceRepository $repository, int $id
     \EtoA\Admin\LegacyTemplateTitleHelper::addFlash('success', 'Ressourcen aktualisiert!');
 }
 
-function saveBuildings(
-    Request $request,
-    AllianceBuildingRepository $buildingRepository,
-    int $id
-) {
-    if ($buildingRepository->existsInAlliance($id, $request->request->get('alliance_building_id'))) {
-        $buildingRepository->updateForAlliance(
-            $id,
-            $request->request->getInt('alliance_building_id'),
-            $request->request->getInt('level'),
-            $request->request->getInt('amount')
-        );
-        \EtoA\Admin\LegacyTemplateTitleHelper::addFlash('success', 'Gebäudedatensatz erfolgreich bearbeitet!');
-    } else {
-        $buildingRepository->addToAlliance(
-            $id,
-            $request->request->getInt('alliance_building_id'),
-            $request->request->getInt('level'),
-            $request->request->getInt('amount')
-        );
-        \EtoA\Admin\LegacyTemplateTitleHelper::addFlash('success', 'Gebäudedatensatz erfolgreich eingefügt!');
-    }
-}
-
-function saveTechnologies(
-    Request $request,
-    AllianceTechnologyRepository $technologyRepository,
-    int $id
-): void {
-    if ($technologyRepository->existsInAlliance($id, $request->request->getInt('alliance_tech_id'))) {
-        $technologyRepository->updateForAlliance(
-            $id,
-            $request->request->getInt('alliance_tech_id'),
-            $request->request->getInt('tech_level'),
-            $request->request->getInt('tech_amount')
-        );
-        \EtoA\Admin\LegacyTemplateTitleHelper::addFlash('success', 'Technologiedatensatz erfolgreich bearbeitet!');
-    } else {
-        $technologyRepository->addToAlliance(
-            $id,
-            $request->request->getInt('alliance_tech_id'),
-            $request->request->getInt('tech_level'),
-            $request->request->getInt('tech_amount')
-        );
-        \EtoA\Admin\LegacyTemplateTitleHelper::addFlash('success', 'Technologiedatensatz erfolgreich eingefügt!');
-    }
-}
-
 function edit(
     AllianceRepository $repository,
     AllianceBuildingRepository $buildingRepository,
@@ -244,8 +164,6 @@ function edit(
 	</ul>
 	<div id="tabs-1">';
 
-    infoTab($alliance, $members);
-
     echo '</div><div id="tabs-2">';
 
     membersTab($members, $ranks);
@@ -256,8 +174,6 @@ function edit(
 
     echo '</div><div id="tabs-4">';
 
-    historyTab($historyRepository, $id);
-
     echo '</div><div id="tabs-5">';
 
     resourcesTab($alliance);
@@ -266,53 +182,9 @@ function edit(
 
     depositsTab($alliance, $members);
 
-    echo '</div><div id="tabs-7">';
-
-    buildingsTab($buildingRepository, $id);
-
-    echo '</div><div id="tabs-8">';
-
-    technologiesTab($technologyRepository, $id);
-
-    echo '<br><input type="submit" name="techs">';
-
     echo '
 		</div>
 	</div>';
-}
-
-function infoTab(\EtoA\Alliance\Alliance $alliance, array $members): void
-{
-    tableStart();
-    echo "<tr><th>ID</th><td>" . $alliance->id . "</td></tr>";
-    echo "<tr><th>[Tag] Name</th><td>
-			[<input type=\"text\" name=\"alliance_tag\" value=\"" . $alliance->tag . "\" size=\"6\" maxlength=\"6\" required />]
-			<input type=\"text\" name=\"alliance_name\" value=\"" . $alliance->name . "\" size=\"30\" maxlength=\"25\" required />
-		</td></tr>";
-    echo "<tr><th>Gründer</th><td><select name=\"alliance_founder_id\">";
-    echo "<option value=\"0\">(niemand)</option>";
-    foreach ($members as $member) {
-        echo "<option value=\"" . $member['user_id'] . "\"";
-        if ($alliance->founderId == $member['user_id']) {
-            echo " selected=\"selected\"";
-        }
-        echo ">" . $member['user_nick'] . "</option>";
-    }
-    echo "</select></td></tr>";
-    echo "<tr><th>Text</th><td><textarea cols=\"45\" rows=\"10\" name=\"alliance_text\">" . stripslashes($alliance->text) . "</textarea></td></tr>";
-    echo "<tr><th>Gründung</th><td>" . date("Y-m-d H:i:s", $alliance->foundationTimestamp) . "</td></tr>";
-    echo "<tr><th>Website</th><td><input type=\"text\" name=\"alliance_url\" value=\"" . $alliance->url . "\" size=\"40\" maxlength=\"250\" /></td></tr>";
-    echo "<tr><th>Bewerbungsvorlage</th><td><textarea cols=\"45\" rows=\"10\" name=\"alliance_application_template\">" . stripslashes($alliance->applicationTemplate) . "</textarea></td></tr>";
-    echo "<tr><th>Bild</th><td>";
-    if ($alliance->image != "") {
-        echo '<img src="' . $alliance->getImageUrl() . '" alt="Profil" /><br/>';
-        echo "<input type=\"checkbox\" value=\"1\" name=\"alliance_img_del\"> Bild löschen<br/>";
-    } else {
-        echo "Keines";
-    }
-    echo "</td></tr>";
-    echo "</table>";
-    echo "<p><input type=\"submit\" name=\"info_save\" value=\"Übernehmen\" /></p>";
 }
 
 /**
@@ -414,23 +286,6 @@ function diplomacyTab(AllianceDiplomacyRepository $repository, int $id): void
     }
 }
 
-function historyTab(AllianceHistoryRepository $historyRepository, int $id): void
-{
-    tableStart();
-    echo "<tr>
-			<th style=\"width:120px;\">Datum / Zeit</th>
-			<th>Ereignis</th></tr>";
-    $entries = $historyRepository->findForAlliance($id);
-    if (count($entries) > 0) {
-        foreach ($entries as $entry) {
-            echo "<tr><td>" . date("d.m.Y H:i", $entry->timestamp) . "</td><td class=\"tbldata\">" . BBCodeUtils::toHTML($entry->text) . "</td></tr>";
-        }
-    } else {
-        echo "<tr><td colspan=\"3\" class=\"tbldata\"><i>Keine Daten vorhanden!</i></td></tr>";
-    }
-    tableEnd();
-}
-
 function resourcesTab(\EtoA\Alliance\Alliance $alliance): void
 {
     echo '<table class="tb">';
@@ -491,108 +346,4 @@ function depositsTab(\EtoA\Alliance\Alliance $alliance, array $members): void
     echo "</form>";
 
     echo "<div id=\"spends\">&nbsp;</div>";
-}
-
-function buildingsTab(AllianceBuildingRepository $buildingRepository, int $id): void
-{
-    $buildListItems = $buildingRepository->getBuildList($id);
-    $buildings = $buildingRepository->getNames();
-
-    tableStart();
-    echo "<tr>
-			<th>Gebäude</th>
-			<th>Stufe</th>
-			<th>Useranzahl</th>
-			<th>Status</th>
-		</tr>";
-    if (count($buildListItems) > 0) {
-        foreach ($buildListItems as $item) {
-            echo "<tr><td>" . $buildings[$item->id] . "</td>
-			<td>" . $item->level . "</td>
-			<td>" . $item->memberFor . "</td><td>";
-            if ($item->buildEndTime > time()) echo "Bauen";
-            elseif ($item->buildEndTime > 0) echo "Bau abgeschlossen";
-            else echo "Untätig";
-            echo "</td>";
-            echo "</tr>";
-        }
-    } else {
-        echo "<tr><td colspan=\"4\">Keine Gebäude vorhanden!</td></tr>";
-    }
-
-    tableEnd();
-
-    echo '<br><h2>Gebäude hinzufügen</h2>';
-
-    tableStart();
-
-    echo "<tr>
-			<th>Gebäude</th>
-			<th>Stufe</th>
-			<th>Useranzahl</th>
-		</tr>";
-    echo '<tr><td>';
-
-    if (count($buildings) > 0) {
-        echo '<select name="alliance_building_id">';
-        foreach ($buildings as $buildingId => $building) {
-            echo "<option value=\"" . $buildingId . "\">" . $building . "</option>";
-        }
-        echo "</select>";
-    }
-
-    echo '</td><td><input type="number" value=1 name="level"></td>
-	<td><input type="number" value="1" name="amount"></td></tr>';
-
-    tableEnd();
-
-    echo '<br><input type="submit" name="buildings">';
-}
-
-function technologiesTab(AllianceTechnologyRepository $technologyRepository, int $id)
-{
-    $techListItems = $technologyRepository->getTechnologyList($id);
-    $technologies = $technologyRepository->getNames();
-
-    tableStart();
-    echo "<tr>
-			<th>Technologie</th><th>Stufe</th><th>Useranzahl</th><th>Status</th>
-		</tr>";
-    if (count($techListItems) > 0) {
-        foreach ($techListItems as $item) {
-            echo "<tr><td>" . $technologies[$item->id] . "</td>
-			<td>" . $item->level . "</td>
-			<td>" . $item->memberFor . "</td><td>";
-            if ($item->buildEndTime > time()) echo "Forschen";
-            elseif ($item->buildEndTime > 0) echo "Forschen abgeschlossen";
-            else echo "Untätig";
-            echo "</td>";
-            echo "</tr>";
-        }
-    } else {
-        echo "<tr><td colspan=\"4\">Keine Technologien vorhanden!</td></tr>";
-    }
-    tableEnd();
-
-    echo '<br><h2>Technologien hinzufügen</h2>';
-
-    tableStart();
-
-    echo "<tr>
-			<th>Technologie</th><th>Stufe</th><th>Useranzahl</th>
-		</tr>";
-    echo '<tr><td>';
-
-    if (count($technologies) > 0) {
-        echo '<select name="alliance_tech_id">';
-        foreach ($technologies as $technologyId => $technology) {
-            echo "<option value=\"" . $technologyId . "\">" . $technology . "</option>";
-        }
-        echo "</select>";
-    }
-
-    echo '</td><td><input type="number" value="1" name="tech_level"></td>
-	<td><input type="number" value="1" name="tech_amount"></td></tr>';
-
-    tableEnd();
 }

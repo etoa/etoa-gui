@@ -14,7 +14,7 @@
     {% for alliance in search.entries %}
         <tr>
             <td>{{ alliance.id }}</td>
-            <td><a href="#">{{ alliance.nameWithTag }}</a></td>
+            <td><a href="{{ path('admin.alliances.edit', {id: alliance.id}) }}">{{ alliance.nameWithTag }}</a></td>
             <td>{{ this.users[alliance.founderId]|default('Niemand') }}</td>
             <td>{{ formatTimestamp(alliance.foundationTimestamp) }}</td>
             <td>{{ alliance.currentRank }}</td>

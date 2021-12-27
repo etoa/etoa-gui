@@ -12,15 +12,32 @@ class AllianceTechnologyListItem
     public int $buildEndTime;
     public int $memberFor;
 
-    public function __construct(array $data)
+    public static function createFromAlliance(AllianceWithMemberCount $alliance): AllianceTechnologyListItem
     {
-        $this->id = (int) $data['alliance_techlist_id'];
-        $this->allianceId = (int) $data['alliance_techlist_alliance_id'];
-        $this->technologyId = (int) $data['alliance_techlist_tech_id'];
-        $this->level = (int) $data['alliance_techlist_current_level'];
-        $this->buildStartTime = (int) $data['alliance_techlist_build_start_time'];
-        $this->buildEndTime = (int) $data['alliance_techlist_build_end_time'];
-        $this->memberFor = (int) $data['alliance_techlist_member_for'];
+        $item = new AllianceTechnologyListItem();
+        $item->id = 0;
+        $item->allianceId = $alliance->id;
+        $item->technologyId = 0;
+        $item->level = 0;
+        $item->buildStartTime = 0;
+        $item->buildEndTime = 0;
+        $item->memberFor = $alliance->memberCount;
+
+        return $item;
+    }
+
+    public static function createFromData(array $data): AllianceTechnologyListItem
+    {
+        $item = new AllianceTechnologyListItem();
+        $item->id = (int) $data['alliance_techlist_id'];
+        $item->allianceId = (int) $data['alliance_techlist_alliance_id'];
+        $item->technologyId = (int) $data['alliance_techlist_tech_id'];
+        $item->level = (int) $data['alliance_techlist_current_level'];
+        $item->buildStartTime = (int) $data['alliance_techlist_build_start_time'];
+        $item->buildEndTime = (int) $data['alliance_techlist_build_end_time'];
+        $item->memberFor = (int) $data['alliance_techlist_member_for'];
+
+        return $item;
     }
 
     public function isUnderConstruction(): bool

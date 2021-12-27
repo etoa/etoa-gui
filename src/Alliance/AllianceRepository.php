@@ -247,7 +247,7 @@ class AllianceRepository extends AbstractRepository
             ->execute();
     }
 
-    public function update(int $id, string $tag, string $name, string $text, ?string $template, string $url, int $founder, string $updatedAllianceImage = null, bool $acceptsApplications = null, bool $acceptsBnd = null, bool $publicMemberList = null): bool
+    public function update(int $id, string $tag, string $name, ?string $text, ?string $template, ?string $url, int $founder, string $updatedAllianceImage = null, bool $acceptsApplications = null, bool $acceptsBnd = null, bool $publicMemberList = null): bool
     {
         $qb = $this->createQueryBuilder()
             ->update('alliances')
