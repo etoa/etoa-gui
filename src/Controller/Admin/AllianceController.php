@@ -14,6 +14,7 @@ use EtoA\Form\Type\Admin\AllianceBuildingAddType;
 use EtoA\Form\Type\Admin\AllianceSearchType;
 use EtoA\Form\Type\Admin\AllianceTechnologyAddType;
 use EtoA\Form\Type\Admin\AllianceEditType;
+use EtoA\Support\StringUtils;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -92,6 +93,40 @@ class AllianceController extends AbstractAdminController
         return $this->render('admin/alliance/edit/history.html.twig', [
             'alliance' => $alliance,
             'history' => $this->allianceHistoryRepository->findForAlliance($alliance->id),
+        ]);
+    }
+
+    #[Route('/admin/alliances/{id}/resources', name: 'admin.alliances.resources')]
+    #[IsGranted('ROLE_ADMIN_TRIAL-ADMIN')]
+    public function resources(int $id, Request $request): Response
+    {
+        $alliance = $this->allianceRepository->getAlliance($id);
+
+        if ($request->isMethod('POST')) {
+            $this->allianceRepository->updateResources(
+                $id,
+                StringUtils::parseFormattedNumber($request->request->get('res_metal')),
+                StringUtils::parseFormattedNumber($request->request->get('res_crystal')),
+                StringUtils::parseFormattedNumber($request->request->get('res_plastic')),
+                StringUtils::parseFormattedNumber($request->request->get('res_fuel')),
+                StringUtils::parseFormattedNumber($request->request->get('res_food')),
+            );
+
+            $this->allianceRepository->addResources(
+                $id,
+                StringUtils::parseFormattedNumber($request->request->get('res_metal_add')),
+                StringUtils::parseFormattedNumber($request->request->get('res_crystal_add')),
+                StringUtils::parseFormattedNumber($request->request->get('res_plastic_add')),
+                StringUtils::parseFormattedNumber($request->request->get('res_fuel_add')),
+                StringUtils::parseFormattedNumber($request->request->get('res_food_add')),
+            );
+
+            $this->addFlash('success', 'Ressourcen aktualisiert!');
+            $alliance = $this->allianceRepository->getAlliance($id);
+        }
+
+        return $this->render('admin/alliance/edit/resources.html.twig', [
+            'alliance' => $alliance,
         ]);
     }
 

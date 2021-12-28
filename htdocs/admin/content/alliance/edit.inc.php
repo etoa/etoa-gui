@@ -46,8 +46,6 @@ if ($request->request->has('member_save') && $request->request->get('member_save
     saveMembers($request, $repository, $allianceRankRepository);
 } elseif ($request->request->has('bnd_save') && $request->request->get('bnd_save') != "") {
     saveDiplomacy($request, $allianceDiplomacyRepository);
-} elseif ($request->request->has('res_save') && $request->request->get('res_save') != "") {
-    saveResources($request, $repository, $id);
 }
 edit($repository, $buildingRepository, $technologyRepository, $historyRepository, $allianceDiplomacyRepository, $id);
 
@@ -100,29 +98,6 @@ function saveDiplomacy(Request $request, AllianceDiplomacyRepository $repository
     \EtoA\Admin\LegacyTemplateTitleHelper::addFlash('success', 'Diplomatie aktualisiert!');
 }
 
-function saveResources(Request $request, AllianceRepository $repository, int $id)
-{
-    $repository->updateResources(
-        $id,
-        StringUtils::parseFormattedNumber($request->request->get('res_metal')),
-        StringUtils::parseFormattedNumber($request->request->get('res_crystal')),
-        StringUtils::parseFormattedNumber($request->request->get('res_plastic')),
-        StringUtils::parseFormattedNumber($request->request->get('res_fuel')),
-        StringUtils::parseFormattedNumber($request->request->get('res_food')),
-    );
-
-    $repository->addResources(
-        $id,
-        StringUtils::parseFormattedNumber($request->request->get('res_metal_add')),
-        StringUtils::parseFormattedNumber($request->request->get('res_crystal_add')),
-        StringUtils::parseFormattedNumber($request->request->get('res_plastic_add')),
-        StringUtils::parseFormattedNumber($request->request->get('res_fuel_add')),
-        StringUtils::parseFormattedNumber($request->request->get('res_food_add')),
-    );
-
-    \EtoA\Admin\LegacyTemplateTitleHelper::addFlash('success', 'Ressourcen aktualisiert!');
-}
-
 function edit(
     AllianceRepository $repository,
     AllianceBuildingRepository $buildingRepository,
@@ -173,10 +148,6 @@ function edit(
     diplomacyTab($allianceDiplomacyRepository, $id);
 
     echo '</div><div id="tabs-4">';
-
-    echo '</div><div id="tabs-5">';
-
-    resourcesTab($alliance);
 
     echo '</div><div id="tabs-6">';
 
@@ -284,30 +255,6 @@ function diplomacyTab(AllianceDiplomacyRepository $repository, int $id): void
     } else {
         echo "<p><b>Keine Bündnisse/Kriege vorhanden!</b></p>";
     }
-}
-
-function resourcesTab(\EtoA\Alliance\Alliance $alliance): void
-{
-    echo '<table class="tb">';
-    echo "<tr>
-			<th class=\"resmetalcolor\">Titan</th>
-			<td>
-				<input type=\"text\" name=\"res_metal\" id=\"res_metal\" value=\"" . StringUtils::formatNumber($alliance->resMetal) . "\" size=\"12\" maxlength=\"20\" autocomplete=\"off\" onfocus=\"this.select()\" onclick=\"this.select()\" onkeyup=\"FormatNumber(this.id,this.value,'','','');\" onkeypress=\"return nurZahlen(event)\"/><br/>
-			+/-: <input type=\"text\" name=\"res_metal_add\" id=\"res_metal_add\" value=\"0\" size=\"8\" maxlength=\"20\" autocomplete=\"off\" onfocus=\"this.select()\" onclick=\"this.select()\" onkeyup=\"FormatNumber(this.id,this.value,'','','');\" onkeypress=\"return nurZahlen(event)\"/></td>";
-    echo "<th class=\"rescrystalcolor\">Silizium</th>
-			<td><input type=\"text\" name=\"res_crystal\" id=\"res_crystal\" value=\"" . StringUtils::formatNumber($alliance->resCrystal) . "\" size=\"12\" maxlength=\"20\" autocomplete=\"off\" onfocus=\"this.select()\" onclick=\"this.select()\" onkeyup=\"FormatNumber(this.id,this.value,'','','');\" onkeypress=\"return nurZahlen(event)\"/><br/>
-			+/-: <input type=\"text\" name=\"res_crystal_add\" id=\"res_crystal_add\" value=\"0\" size=\"8\" maxlength=\"20\" autocomplete=\"off\" onfocus=\"this.select()\" onclick=\"this.select()\" onkeyup=\"FormatNumber(this.id,this.value,'','','');\" onkeypress=\"return nurZahlen(event)\"/></td></tr>";
-    echo "<tr><th class=\"resplasticcolor\">PVC</th>
-			<td><input type=\"text\" name=\"res_plastic\" id=\"res_plastic\" value=\"" . StringUtils::formatNumber($alliance->resPlastic) . "\" size=\"12\" maxlength=\"20\" autocomplete=\"off\" onfocus=\"this.select()\" onclick=\"this.select()\" onkeyup=\"FormatNumber(this.id,this.value,'','','');\" onkeypress=\"return nurZahlen(event)\"/><br/>
-			+/-: <input type=\"text\" name=\"res_plastic_add\" id=\"res_plastic_add\" value=\"0\" size=\"8\" maxlength=\"20\" autocomplete=\"off\" onfocus=\"this.select()\" onclick=\"this.select()\" onkeyup=\"FormatNumber(this.id,this.value,'','','');\" onkeypress=\"return nurZahlen(event)\"/></td>";
-    echo "<th class=\"resfuelcolor\">Tritium</th>
-			<td><input type=\"text\" name=\"res_fuel\" id=\"res_fuel\" value=\"" . StringUtils::formatNumber($alliance->resFuel) . "\" size=\"12\" maxlength=\"20\" autocomplete=\"off\" onfocus=\"this.select()\" onclick=\"this.select()\" onkeyup=\"FormatNumber(this.id,this.value,'','','');\" onkeypress=\"return nurZahlen(event)\"/><br/>
-			+/-: <input type=\"text\" name=\"res_fuel_add\" id=\"res_fuel_add\" value=\"0\" size=\"8\" maxlength=\"20\" autocomplete=\"off\" onfocus=\"this.select()\" onclick=\"this.select()\" onkeyup=\"FormatNumber(this.id,this.value,'','','');\" onkeypress=\"return nurZahlen(event)\"/></td></tr>";
-    echo "<tr><th class=\"resfoodcolor\">Nahrung</th>
-			<td><input type=\"text\" name=\"res_food\" id=\"res_food\" value=\"" . StringUtils::formatNumber($alliance->resFood) . "\" size=\"12\" maxlength=\"20\" autocomplete=\"off\" onfocus=\"this.select()\" onclick=\"this.select()\" onkeyup=\"FormatNumber(this.id,this.value,'','','');\" onkeypress=\"return nurZahlen(event)\"/><br/>
-			+/-: <input type=\"text\" name=\"res_food_add\" id=\"res_food_add\" value=\"0\" size=\"8\" maxlength=\"20\" autocomplete=\"off\" onfocus=\"this.select()\" onclick=\"this.select()\" onkeyup=\"FormatNumber(this.id,this.value,'','','');\" onkeypress=\"return nurZahlen(event)\"/></td><td colspan=\"2\">";
-    tableEnd();
-    echo "<p><input type=\"submit\" name=\"res_save\" value=\"Übernehmen\" /></p>";
 }
 
 function depositsTab(\EtoA\Alliance\Alliance $alliance, array $members): void
