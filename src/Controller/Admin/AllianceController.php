@@ -4,6 +4,8 @@ namespace EtoA\Controller\Admin;
 
 use EtoA\Alliance\AllianceBuildingRepository;
 use EtoA\Alliance\AllianceBuildListItem;
+use EtoA\Alliance\AllianceDiplomacyLevel;
+use EtoA\Alliance\AllianceDiplomacyRepository;
 use EtoA\Alliance\AllianceHistoryRepository;
 use EtoA\Alliance\AllianceImageStorage;
 use EtoA\Alliance\AllianceRepository;
@@ -28,7 +30,8 @@ class AllianceController extends AbstractAdminController
         private AllianceHistoryRepository $allianceHistoryRepository,
         private AllianceTechnologyRepository $allianceTechnologyRepository,
         private AllianceBuildingRepository $allianceBuildingRepository,
-        private AllianceImageStorage $allianceImageStorage
+        private AllianceImageStorage $allianceImageStorage,
+        private AllianceDiplomacyRepository $allianceDiplomacyRepository
     ) {
     }
 
@@ -81,6 +84,37 @@ class AllianceController extends AbstractAdminController
         return $this->render('admin/alliance/edit/edit.html.twig', [
             'alliance' => $alliance,
             'form' => $form->createView(),
+        ]);
+    }
+
+    #[Route('/admin/alliances/{id}/diplomacy', name: 'admin.alliances.diplomacy')]
+    #[IsGranted('ROLE_ADMIN_TRIAL-ADMIN')]
+    public function diplomacy(int $id, Request $request): Response
+    {
+        $alliance = $this->allianceRepository->getAlliance($id);
+
+        if ($request->request->has('alliance_bnd_del') && count($request->request->all('alliance_bnd_del')) > 0) {
+            foreach (array_keys($request->request->all('alliance_bnd_del')) as $diplomacyId) {
+                $this->allianceDiplomacyRepository->deleteDiplomacy($diplomacyId);
+            }
+        }
+
+        if (count($request->request->all('alliance_bnd_level')) > 0) {
+            foreach (array_keys($request->request->all('alliance_bnd_level')) as $diplomacyId) {
+                $this->allianceDiplomacyRepository->updateDiplomacy(
+                    $diplomacyId,
+                    (int) $request->request->all('alliance_bnd_level')[$diplomacyId],
+                    $request->request->all('alliance_bnd_name')[$diplomacyId]
+                );
+            }
+        }
+
+        $this->addFlash('success', 'Diplomatie aktualisiert!');
+
+        return $this->render('admin/alliance/edit/diplomacy.html.twig', [
+            'alliance' => $alliance,
+            'diplomacies' => $this->allianceDiplomacyRepository->getDiplomacies($alliance->id),
+            'levels' => AllianceDiplomacyLevel::all(),
         ]);
     }
 

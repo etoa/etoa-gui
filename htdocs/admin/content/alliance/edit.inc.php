@@ -143,10 +143,6 @@ function edit(
 
     membersTab($members, $ranks);
 
-    echo '</div><div id="tabs-3">';
-
-    diplomacyTab($allianceDiplomacyRepository, $id);
-
     echo '</div><div id="tabs-4">';
 
     echo '</div><div id="tabs-6">';
@@ -218,43 +214,6 @@ function membersTab(array $members, array $ranks): void
     echo "</td></tr>";
     tableEnd();
     echo "<p><input type=\"submit\" name=\"member_save\" value=\"Übernehmen\" /></p>";
-}
-
-function diplomacyTab(AllianceDiplomacyRepository $repository, int $id): void
-{
-    $diplomacies = $repository->getDiplomacies($id);
-    if (count($diplomacies) > 0) {
-        echo "<table class=\"tb\">";
-        echo "<tr>
-			<th>Allianz</th>
-			<th>Bezeichnung</th>
-			<th>Status / Datum</th>
-			<th>Löschen</th></tr>";
-        foreach ($diplomacies as $diplomacy) {
-            echo "<tr>
-					<td><a href=\"?page=alliances&amp;action=edit&amp;id=" . $diplomacy->otherAllianceId . "\">" . $diplomacy->otherAllianceName . "</a></td>
-					<td><input type=\"text\" value=\"" . $diplomacy->name . "\" name=\"alliance_bnd_name[" . $diplomacy->id . "]\" /></td>";
-            echo "<td>
-				<select name=\"alliance_bnd_level[" . $diplomacy->id . "]\">";
-            echo "<option value=\"0\">Bündnisanfrage</option>";
-            echo "<option value=\"2\"";
-            if ($diplomacy->level === AllianceDiplomacyLevel::BND_CONFIRMED) echo " selected=\"selected\"";
-            echo ">Bündnis</option>";
-            echo "<option value=\"3\"";
-            if ($diplomacy->level === AllianceDiplomacyLevel::WAR) echo " selected=\"selected\"";
-            echo ">Krieg</option>";
-            echo "<option value=\"3\"";
-            if ($diplomacy->level === AllianceDiplomacyLevel::PEACE) echo " selected=\"selected\"";
-            echo ">Frieden</option>";
-            echo "</select>";
-            echo " &nbsp; " . StringUtils::formatDate($diplomacy->date) . "</td>";
-            echo "<td valign=\"top\"><input type=\"checkbox\" name=\"alliance_bnd_del[" . $diplomacy->id . "]\" value=\"1\" /></td></tr>";
-        }
-        echo "</table>";
-        echo "<p><input type=\"submit\" name=\"bnd_save\" value=\"Übernehmen\" /></p>";
-    } else {
-        echo "<p><b>Keine Bündnisse/Kriege vorhanden!</b></p>";
-    }
 }
 
 function depositsTab(\EtoA\Alliance\Alliance $alliance, array $members): void
