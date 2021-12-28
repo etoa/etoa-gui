@@ -14,6 +14,7 @@ use EtoA\Alliance\AllianceService;
 use EtoA\Alliance\AllianceTechnologyListItem;
 use EtoA\Alliance\AllianceTechnologyRepository;
 use EtoA\Form\Type\Admin\AllianceBuildingAddType;
+use EtoA\Form\Type\Admin\AllianceDepositSearchType;
 use EtoA\Form\Type\Admin\AllianceSearchType;
 use EtoA\Form\Type\Admin\AllianceTechnologyAddType;
 use EtoA\Form\Type\Admin\AllianceEditType;
@@ -206,6 +207,18 @@ class AllianceController extends AbstractAdminController
 
         return $this->render('admin/alliance/edit/resources.html.twig', [
             'alliance' => $alliance,
+        ]);
+    }
+
+    #[Route('/admin/alliances/{id}/deposit', name: 'admin.alliances.deposit')]
+    #[IsGranted('ROLE_ADMIN_TRIAL-ADMIN')]
+    public function deposit(int $id, Request $request): Response
+    {
+        $alliance = $this->allianceRepository->getAlliance($id);
+
+        return $this->render('admin/alliance/edit/deposit.html.twig', [
+            'alliance' => $alliance,
+            'form' => $this->createForm(AllianceDepositSearchType::class, $request->query->all(), ['allianceId' => $alliance->id])->createView(),
         ]);
     }
 

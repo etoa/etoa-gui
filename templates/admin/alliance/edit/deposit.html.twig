@@ -1,0 +1,8 @@
+{% extends 'admin/alliance/edit/edit-subnav.html.twig' %}
+
+{% block editContent %}
+    {{ component('admin_alliance_deposit_search', {
+        form: form,
+        allianceId: alliance.id
+    }) }}
+{% endblock %}
