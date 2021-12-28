@@ -1,0 +1,84 @@
+{% extends 'admin/alliance/edit/edit-subnav.html.twig' %}
+
+{% block editContent %}
+    <form method="post">
+        <table>
+            <tr>
+                <th>Mitglieder</th>
+                <td>
+
+                    <table class="tb">
+                        <tr>
+                            <th>Name</th>
+                            <th>Punkte</th>
+                            <th>Rang</th>
+                            <th>Mitgliedschaft beenden</th>
+                        </tr>
+                        {% for member in members %}
+                            <tr>
+                                <td id="uifo{{ member.user_id }}" style="display:none;">
+                                    <a href="?page=user&amp;sub=edit&amp;id={{ member.user_id }}">Daten</a>
+                                    <br/>
+                                    <a href="?page=sendmessage&amp;id={{ member.user_id }}">Nachricht senden</a>
+                                </td>
+                                <td>
+                                    <a href="?page=user&amp;sub=edit&amp;id={{ member.user_id }}" {{ cTT(member.user_nick, 'uifo', member.user_id) }}>{{ member.user_nick }}</a>
+                                </td>
+                                <td>{{ formatNumber(member.user_points) }} Punkte</td>
+                                <td>
+                                    <select name="member_rank[{{ member.user_id }}]">
+                                        <option value="0">-</option>
+                                        {% for rank in ranks %}
+                                            <option value="{{ rank.id }}"
+                                                {% if member.user_alliance_rank_id == rank.id %}
+                                                    selected="selected"
+                                                {% endif %}
+                                            >{{ rank.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </td>
+                                <td>
+                                    <input type="checkbox" name="member_kick[{{ member.user_id }}]" value="1" />
+                                </td>
+                            </tr>
+                        {% else %}
+                            <tr><td colspan="9999"><b>KEINE MITGLIEDER!</b></td> </tr>
+                        {% endfor %}
+                    </table>
+                </td>
+            </tr>
+            <tr>
+                <th>Ränge</th>
+                <td>
+                    <table class="tb">
+                        <tr>
+                            <th>Name</th>
+                            <th>Level</th>
+                            <th>Löschen</th>
+                        </tr>
+                        {% for rank in ranks %}
+                            <tr>
+                                <td>
+                                    <input type="text" size="35" name="rank_name[{{ rank.id }}]" value="{{ rank.name }}" />
+                                </td>
+                                <td>
+                                    <select name="rank_level[{{ rank.id }}]">
+                                        {% for x in range(0, 9) %}
+                                            <option value="{{ x }}" {% if rank.level == x %}selected="selected"{% endif %}>{{ x }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </td>";
+                                <td>
+                                    <input type="checkbox" name="rank_del[{{ rank.id }}]" value="1" />
+                                </td>
+                            </tr>
+                        {% else %}
+                            <tr><td colspan="9999"><b>Keine Ränge vorhanden!</b></td></tr>
+                        {% endfor %}
+                    </table>
+                </td>
+            </tr>
+        </table>
+        <p><input type="submit" name="member_save" value="Übernehmen" /></p>
+    </form>
+{% endblock %}

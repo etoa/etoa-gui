@@ -8,6 +8,7 @@ use EtoA\Alliance\AllianceDiplomacyLevel;
 use EtoA\Alliance\AllianceDiplomacyRepository;
 use EtoA\Alliance\AllianceHistoryRepository;
 use EtoA\Alliance\AllianceImageStorage;
+use EtoA\Alliance\AllianceRankRepository;
 use EtoA\Alliance\AllianceRepository;
 use EtoA\Alliance\AllianceService;
 use EtoA\Alliance\AllianceTechnologyListItem;
@@ -31,7 +32,8 @@ class AllianceController extends AbstractAdminController
         private AllianceTechnologyRepository $allianceTechnologyRepository,
         private AllianceBuildingRepository $allianceBuildingRepository,
         private AllianceImageStorage $allianceImageStorage,
-        private AllianceDiplomacyRepository $allianceDiplomacyRepository
+        private AllianceDiplomacyRepository $allianceDiplomacyRepository,
+        private AllianceRankRepository $allianceRankRepository
     ) {
     }
 
@@ -84,6 +86,49 @@ class AllianceController extends AbstractAdminController
         return $this->render('admin/alliance/edit/edit.html.twig', [
             'alliance' => $alliance,
             'form' => $form->createView(),
+        ]);
+    }
+
+    #[Route('/admin/alliances/{id}/members', name: 'admin.alliances.members')]
+    #[IsGranted('ROLE_ADMIN_TRIAL-ADMIN')]
+    public function members(int $id, Request $request): Response
+    {
+        $alliance = $this->allianceRepository->getAlliance($id);
+
+        if ($request->isMethod('POST')) {
+            // Change alliance memberships
+            if ($request->request->has('member_kick') && count($request->request->all('member_kick')) > 0) {
+                foreach (array_keys($request->request->all('member_kick')) as $userId) {
+                    $this->allianceRepository->removeUser($userId);
+                }
+            }
+
+            if (count($request->request->all('member_rank')) > 0) {
+                foreach ($request->request->all('member_rank') as $userId => $rankId) {
+                    $this->allianceRepository->assignRankToUser((int) $rankId, (int) $userId);
+                }
+            }
+
+            // Update rank changes
+            if ($request->request->has('rank_del') && count($request->request->all('rank_del')) > 0) {
+                foreach (array_keys($request->request->all('rank_del')) as $rankId) {
+                    $this->allianceRankRepository->removeRank($rankId);
+                }
+            }
+
+            if ($request->request->has('rank_name') && count($request->request->all('rank_name')) > 0) {
+                foreach ($request->request->all('rank_name') as $rankId => $name) {
+                    $this->allianceRankRepository->updateRank($rankId, $name, $request->request->all('rank_level')[$rankId]);
+                }
+            }
+
+            $this->addFlash('success', 'Mitglieder aktualisiert!');
+        }
+
+        return $this->render('admin/alliance/edit/members.html.twig', [
+            'alliance' => $alliance,
+            'members' => $this->allianceRepository->findUsers($id),
+            'ranks' => $this->allianceRankRepository->getRanks($id),
         ]);
     }
 
