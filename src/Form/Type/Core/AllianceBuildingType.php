@@ -2,26 +2,24 @@
 
 namespace EtoA\Form\Type\Core;
 
-use EtoA\Alliance\AllianceRepository;
+use EtoA\Alliance\AllianceBuildingRepository;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class AllianceType extends AbstractType
+class AllianceBuildingType extends AbstractType
 {
     public function __construct(
-        private AllianceRepository $allianceRepository,
+        private AllianceBuildingRepository $allianceBuildingRepository
     ) {
     }
 
     public function configureOptions(OptionsResolver $resolver): void
     {
-        parent::configureOptions($resolver);
-
-        $resolver->setDefaults([
-            'required' => false,
-            'placeholder' => '(Alle)',
-            'choices' => array_flip($this->allianceRepository->getAllianceNamesWithTags()),
-        ]);
+        $resolver
+            ->setDefaults([
+                'required' => true,
+                'choices' => array_flip($this->allianceBuildingRepository->getNames()),
+            ]);
     }
 
     public function getParent(): string

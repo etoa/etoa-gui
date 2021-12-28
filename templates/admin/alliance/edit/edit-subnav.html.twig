@@ -1,0 +1,23 @@
+{% extends 'admin/layout/admin.html.twig' %}
+
+{% block content %}
+    <h1>Allianzen</h1>
+    <h3>Allianz bearbeiten: {{ alliance.nameWithTag }}</h3>
+
+    <div>
+        <ul>
+            <li><a href="{{ path('admin.alliances.edit', {id: alliance.id}) }}">Info</a></li>
+            <li><a href="{{ path('admin.alliances.members', {id: alliance.id}) }}">Mitglieder</a></li>
+            <li><a href="{{ path('admin.alliances.diplomacy', {id: alliance.id}) }}">Diplomatie</a></li>
+            <li><a href="{{ path('admin.alliances.history', {id: alliance.id}) }}">Geschichte</a></li>
+            <li><a href="{{ path('admin.alliances.resources', {id: alliance.id}) }}">Rohstoffe</a></li>
+            <li><a href="{{ path('admin.alliances.deposit', {id: alliance.id}) }}">Einzahlungen</a></li>
+            <li><a href="{{ path('admin.alliances.buildings', {id: alliance.id}) }}">Gebäude</a></li>
+            <li><a href="{{ path('admin.alliances.technologies', {id: alliance.id}) }}">Technologien</a></li>
+        </ul>
+
+        <div>
+            {% block editContent %}{% endblock %}
+        </div>
+    </div>
+{% endblock %}

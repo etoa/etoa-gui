@@ -1,0 +1,33 @@
+{% extends 'admin/alliance/edit/edit-subnav.html.twig' %}
+
+{% block editContent %}
+    <table>
+        <tr>
+            <th>Gebäude</th>
+            <th>Stufe</th>
+            <th>Useranzahl</th>
+            <th>Status</th>
+        </tr>
+        {% for item in buildlist %}
+            <tr>
+                <td>{{ buildings[item.buildingId] }}</td>
+                <td>{{ item.level }}</td>
+                <td>{{ item.memberFor }}</td>
+                <td>
+                    {% if item.buildEndTime > date().timestamp %}
+                        Bauen
+                    {% elseif item.buildEndTime > 0 %}
+                        Bau abgeschlossen
+                    {% else %}
+                        Untätig
+                    {% endif %}
+                </td>
+            </tr>
+        {% else %}
+            <tr><td colspan="4">Keine Gebäude vorhanden!</td></tr>
+        {% endfor %}
+    </table>
+
+    <h2>Gebäude hinzufügen</h2>
+    {{ form(form) }}
+{% endblock %}

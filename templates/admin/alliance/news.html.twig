@@ -1,0 +1,72 @@
+{% extends 'admin/layout/admin.html.twig' %}
+
+{% block content %}
+    <h1>Allianzen</h1>
+    <h3>News (Rathaus)</h3>
+
+    {{ form(cleanupForm) }}
+
+    <hr/>
+
+    {{ form(defaultBanForm) }}
+
+    <table class="tb">
+        <tr>
+            <th>Datum</th>
+            <th>Absender</th>
+            <th>Empfänger</th>
+            <th>Titel / Text</th>
+            <th>Aktion</th>
+        </tr>
+        {% for news in newsEntries %}
+            <tr>
+                <td rowspan="2">{{ formatTimestamp(news.date) }}</td>
+                <td style="border-bottom:1px dotted #999;">
+                    <b>
+                        {% if news.authorAllianceTag != '' %}
+                            [{{ news.authorAllianceTag }}] {{ news.authorAllianceName }}
+                        {% else %}
+                            <span style="color:#999;">Allianz existiert nicht!</span>
+                        {% endif %}
+                    </b>
+                </td>
+                <td style="border-bottom:none;">
+                    <b>
+                        {% if news.toAllianceTag != '' %}
+                            [{{ news.toAllianceTag }}] {{ news.toAllianceName }}
+                        {% else %}
+                            <span style="color:#999;">Allianz existiert nicht!</span>
+                        {% endif %}
+                    </b>
+                </td>
+                <td style="border-bottom:1px dotted #999;">
+                    <b>{{ news.title }}</b>
+                </td>
+                <td rowspan="2">
+                    <a href="{{ path('admin.alliances.news.edit', {id: news.id}) }}"><img src="/images/edit.gif" alt="Edit" style="border:none;" /></a>
+                    <form class="inline-block" method="post" onsubmit="if (confirm('Beitrag löschen?'));" action="{{ path('admin.alliances.news.delete', {id: news.id}) }}" >
+                        <input type="hidden" name="newsId" value="{{ news.id }}">
+                        <input type="image" src="/images/delete.gif" alt="Beitrag löschen" style="border:none;" />
+                    </form>
+                    {% if news.authorUserId > 0 %}
+                        <form class="inline-block" method="post" onsubmit="if (confirm('Benutzer sperren?'));" action="{{ path('admin.alliances.news.ban', {id: news.id}) }}" >
+                            <input type="hidden" name="newsId" value="{{ news.id }}">
+                            <input type="image" src="/images/lock.png" alt="Benutzer sperren" style="border:none;" />
+                        </form>
+                    {% endif %}
+                </td>
+            </tr>
+            <tr>
+                <td style="border-top:none;">
+                    {% if news.authorUserNick %}
+                        {{ news.authorUserNick }}
+                    {% else %}
+                        <span style="color:#999;">Spieler existiert nicht!</span>
+                    {% endif %}
+                </td>
+                <td style="border-top:none;"></td>
+                <td style="border-top:none;">{{ news.text }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}

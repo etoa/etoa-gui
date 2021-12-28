@@ -167,7 +167,7 @@ class AllianceBuildingRepository extends AbstractRepository
 
         $result = [];
         foreach ($data as $row) {
-            $entry = new AllianceBuildListItem($row);
+            $entry = AllianceBuildListItem::createFromData($row);
             $result[$entry->buildingId] = $entry;
         }
 

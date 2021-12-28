@@ -1,0 +1,13 @@
+{% extends 'admin/layout/admin.html.twig' %}
+
+{% import 'admin/macros.html.twig' as macros %}
+
+{% block content %}
+    <h1>Allianzen</h1>
+
+    {{ component('alliance_search', {
+        form: form
+    }) }}
+
+    <p>Es sind {{ formatNumber(total) }} Einträge in der Datenbank vorhanden.</p>
+{% endblock %}

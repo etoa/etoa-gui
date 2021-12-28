@@ -13,7 +13,7 @@ class AllianceNews
     public ?string $authorAllianceName;
     public ?int $authorUserId;
     public ?string $authorUserNick;
-    public int $toAllianceId;
+    public ?int $toAllianceId;
     public ?string $toAllianceTag;
     public ?string $toAllianceName;
 

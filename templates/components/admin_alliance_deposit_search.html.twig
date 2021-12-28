@@ -1,0 +1,28 @@
+{% extends 'components/base_search.html.twig' %}
+
+{% block data %}
+    <tr>
+        <th>Datum</th>
+        <th>User</th>
+        <th class="resmetalcolor">Titan</th>
+        <th class="rescrystalcolor">Silizium</th>
+        <th class="resplasticcolor">PVC</th>
+        <th class="resfuelcolor">Tritium</th>
+        <th class="resfoodcolor">Nahrung</th>
+    </tr>
+    {% for entry in search.entries %}
+        <tr>
+            <td>{{ this.sum ? '-' : formatTimestamp(entry.time) }}</td>
+            <td>{{ entry.userId is defined ? this.users[entry.userId]|default('(Niemand)') : this.users[this.userId]|default('(Alle)') }}</td>
+            <td>{{ formatNumber(entry.metal) }}</td>
+            <td>{{ formatNumber(entry.crystal) }}</td>
+            <td>{{ formatNumber(entry.plastic) }}</td>
+            <td>{{ formatNumber(entry.fuel) }}</td>
+            <td>{{ formatNumber(entry.food) }}</td>
+        </tr>
+    {% else %}
+        <tr>
+            <td colspan="999"><b>Keine Einträge gefunden!</b></td>
+        </tr>
+    {% endfor %}
+{% endblock %}

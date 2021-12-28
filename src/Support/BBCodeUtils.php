@@ -13,9 +13,9 @@ class BBCodeUtils
      *
      * @param string $string Text to wrap BB-Codes into HTML
      */
-    public static function toHTML(string $string): string
+    public static function toHTML(?string $string): string
     {
-        $string = str_replace("	 ", "&nbsp;&nbsp;", $string);
+        $string = str_replace("	 ", "&nbsp;&nbsp;", (string) $string);
 
         $string = str_replace("\"", "&quot;", $string);
         $string = str_replace("<", "&lt;", $string);

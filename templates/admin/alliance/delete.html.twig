@@ -1,0 +1,71 @@
+{% extends 'admin/layout/admin.html.twig' %}
+
+{% block content %}
+    <h1>Allianzen</h1>
+    <p>Soll folgende Allianz gelöscht werden?</p>
+
+    <form method="post">
+        <table class="tbl">
+            <tr>
+                <td class="tbltitle" valign="top">ID</td>
+                <td class="tbldata">{{ alliance.id }}</td>
+            </tr>
+            <tr>
+                <td class="tbltitle" valign="top">Name</td>
+                <td class="tbldata">{{ alliance.name }}</td>
+            </tr>
+            <tr>
+                <td class="tbltitle" valign="top">Tag</td>
+                <td class="tbldata">{{ alliance.tag }}</td>
+            </tr>
+            <tr>
+                <td class="tbltitle" valign="top">Gründer</td>
+                <td class="tbldata">{{ allianceUsers[alliance.founderId]['user_nick']|default('Niemand') }}</td>
+            </tr>
+            <tr>
+                <td class="tbltitle" valign="top">Text</td>
+                <td class="tbldata">{{ BBCodeToHTML(alliance.text) }}</td>
+            </tr>
+            <tr>
+                <td class="tbltitle" valign="top">Gründung</td>
+                <td class="tbldata">{{ formatTimestamp(alliance.foundationTimestamp) }}</td>
+            </tr>
+            <tr>
+                <td class="tbltitle" valign="top">Website</td>
+                <td class="tbldata">{{ alliance.url }}</td>
+            </tr>
+            {% if alliance.image %}
+                <tr>
+                    <td class="tbltitle" valign="top">Bild</td>
+                    <td class="tbldata"><img src="{{ alliance.imageUrl }}" width="100%" alt="{{ alliance.image }}" /></td>
+                </tr>
+            {% endif %}
+            <tr>
+                <td class="tbltitle" valign="top">Mitglieder</td>
+                <td class="tbldata">
+                    <table style="width:100%">
+                    {% for user in allianceUsers %}
+                        <tr>
+                            <td>{{ user.user_nick }}</td>
+                            <td>{{ user.user_points }} Punkte</td>
+                            <td>
+                                [<a href="?page=user&amp;sub=edit&amp;user_id={{ user.user_id }}">details</a>]
+                                [<a href="?page=messages&amp;sub=sendmsg&amp;user_id={{ user.user_id }}">msg</a>]
+                            </td>
+                        </tr>
+
+                    {% else %}
+                        <tr><td><b>KEINE MITGLIEDER!</b></td></tr>
+                    {% endfor %}
+                    </table>
+                </td>
+            </tr>
+        </table>
+
+        <input type="hidden" name="alliance_id" value="{{ alliance.id }}" />
+        <br/>
+        <input type="submit" name="drop" value="Löschen" />&nbsp;
+        <input type="button" value="Zurück" onclick="history.back();" />
+        <input type="button" onclick="{{ path('admin.alliances') }}" value="Neue Suche" />
+    </form>
+{% endblock %}

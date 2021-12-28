@@ -112,7 +112,7 @@ class TwigExtension extends AbstractExtension
         }
     }
 
-    public function BBCodeToHTML(string $string): string
+    public function BBCodeToHTML(?string $string): string
     {
         return BBCodeUtils::toHTML($string);
     }

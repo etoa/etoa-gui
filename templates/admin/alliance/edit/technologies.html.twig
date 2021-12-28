@@ -1,0 +1,33 @@
+{% extends 'admin/alliance/edit/edit-subnav.html.twig' %}
+
+{% block editContent %}
+    <table>
+        <tr>
+            <th>Technologie</th>
+            <th>Stufe</th>
+            <th>Useranzahl</th>
+            <th>Status</th>
+        </tr>
+        {% for item in techlist %}
+            <tr>
+                <td>{{ technologies[item.technologyId] }}</td>
+                <td>{{ item.level }}</td>
+                <td>{{ item.memberFor }}</td>
+                <td>
+                    {% if item.buildEndTime > date().timestamp %}
+                        Forschen
+                    {% elseif item.buildEndTime > 0 %}
+                        Forschen abgeschlossen
+                    {% else %}
+                        Untätig
+                    {% endif %}
+                </td>
+            </tr>
+        {% else %}
+            <tr><td colspan="4">Keine Technologien vorhanden!</td></tr>
+        {% endfor %}
+    </table>
+
+    <h2>Technologien hinzufügen</h2>
+    {{ form(form) }}
+{% endblock %}
