@@ -1,0 +1,60 @@
+{% extends 'admin/layout/admin.html.twig' %}
+
+{% block content %}
+    <h1>TF Rechner</h1>
+
+    <div data-controller="tf-calculator" data-action="input->tf-calculator#input">
+        {{ form_start(form) }}
+
+        <h3>Gesamtressourcen</h3>
+        <table>
+            {% for key in ['metal', 'crystal', 'plastic'] %}
+                <tr>
+                    <th>
+                        {{ form_label(form[key]) }}
+                    </th>
+                    <td>
+                        {{ form_errors(form[key]) }}
+                        {{ form_widget(form[key]) }}
+                    </td>
+                </tr>
+            {% endfor %}
+        </table>
+
+        <div data-controller="collection">
+            <h3>Planeten</h3>
+            <table>
+                <tr>
+                    {% for element in form.planets[0] %}
+                        <th>{{ form_label(element) }}</th>
+                    {% endfor %}
+                    <th></th>
+                </tr>
+                <tbody data-collection-target="container" data-tf-calculator-target="planets">
+                {% for rows in form.planets %}
+                    <tr {% if loop.index == 1 %} data-collection-target="prototype"{% endif %}>
+                        {% for element in rows %}
+                            <td>
+                                {{ form_errors(element) }}
+                                {{ form_widget(element) }}
+                            </td>
+                        {% endfor %}
+                        <td>
+                            <div {% if loop.index in [1, 2] %}class="hide"{% endif %}>
+                                <button type="button" data-action="click->collection#removeEntry">Löschen</button>
+                            </div>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+
+            <p><button type="button" data-action="click->collection#addEntry">Planet Hinzufügen</button></p>
+        </div>
+
+
+        <br />
+        <p>{{ form_row(form.submit) }}</p>
+        {{ form_end(form) }}
+    </div>
+{% endblock %}
