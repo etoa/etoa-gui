@@ -17,6 +17,13 @@ class EntityLabelSearch extends EntitySearch
         return $this;
     }
 
+    public function planetUserIdNotNull(): self
+    {
+        $this->parts[] = 'planets.planet_user_id > 0';
+
+        return $this;
+    }
+
     public function planetUserMain(bool $main): self
     {
         $this->parts[] = 'planets.planet_user_main = :planetUserMain';

@@ -31,8 +31,4 @@ if (isset($sub) && $sub == "defaultitems") {
     require_once __DIR__ . "/xajax/defaultitems.xajax.php";
 }
 
-if (isset($page) && $page == "tfcalculator") {
-    require_once __DIR__ . "/xajax/tfcalculator.xajax.php";
-}
-
 $xajax->processRequest();
