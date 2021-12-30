@@ -1,0 +1,102 @@
+{% extends 'admin/layout/admin.html.twig' %}
+
+{% use 'admin/fleet/form.trait.html.twig' %}
+
+{% block content %}
+    <h1>Flottenoptionen</h1>
+
+    <form method="post">
+        <h2>Flottensperre</h2>
+        <table class="tbl">
+            <tr>
+                <td class="tbltitle" width="15%">Info</td>
+                <td class="tbldata" width="85%">Es können keine Flüge gestartet werden</td>
+            </tr>
+            <tr>
+                <td class="tbltitle" width="15%">Status</td>
+                <td class="tbldata" width="85%">{{ flightBanStatus|raw }}</td>
+            </tr>
+            <tr>
+                <td class="tbltitle">Von</td>
+                <td class="tbldata">
+                    <input type="datetime-local" name="flightban_time_from" required="required" step="1" value="{{ flightBanTimeFrom|date('Y-m-d\\TH:i:s') }}">
+                </td>
+            </tr>
+            <tr>
+                <td class="tbltitle">Bis</td>
+                <td class="tbldata">
+                    <input type="datetime-local" name="flightban_time_to" required="required" step="1" value="{{ flightBanTimeTo|date('Y-m-d\\TH:i:s') }}">
+                </td>
+            </tr>
+            <tr>
+                <td class="tbltitle">Grund</td>
+                <td class="tbldata">
+                    <textarea name="flightban_reason" cols="50" rows="3">{{ flightBanReason }}</textarea>
+                </td>
+            </tr>
+        </table>
+        <p>
+            {% if flightBanActive %}
+                <input type="submit" name="flightban_update" value="Aktualisieren" />
+                <input type="submit" name="flightban_deactivate" value="Deaktivieren" />
+            {% else %}
+                <input type="submit" name="flightban_activate" value="Aktivieren" />
+            {% endif %}
+        </p>
+        <br/>
+
+        <h2>Kampfsperre</h2>
+        <table class="tbl">
+            <tr>
+                <td class="tbltitle" width="15%">Info</td>
+                <td class="tbldata" width="85%">Es können keine Angriffe geflogen werden</td>
+            </tr>
+            <tr>
+                <td class="tbltitle" width="15%">Status</td>
+                <td class="tbldata" width="85%">{{ battleBanStatus|raw }}</td>
+            </tr>
+            <tr>
+                <td class="tbltitle">Von</td>
+                <td class="tbldata">
+                    <input type="datetime-local" name="battleban_time_from" required="required" step="1" value="{{ battleBanTimeFrom|date('Y-m-d\\TH:i:s') }}">
+                </td>
+            </tr>
+            <tr>
+                <td class="tbltitle">Bis</td>
+                <td class="tbldata">
+                    <input type="datetime-local" name="battleban_time_to" required="required" step="1" value="{{ battleBanTimeTo|date('Y-m-d\\TH:i:s') }}">
+                </td>
+            </tr>
+            <tr>
+                <td class="tbltitle">Grund</td>
+                <td class="tbldata">
+                    <textarea name="battleban_reason" cols="50" rows="3">{{ battleBanReason }}</textarea>
+                </td>
+            </tr>
+            <tr>
+                <td class="tbltitle" colspan="2"><div style="text-align:center;">Ankunftstext während Sperre</div></td>
+            </tr>
+            <tr>
+                <td class="tbltitle">Flotten</td>
+                <td class="tbldata">
+                    <textarea name="battleban_arrival_text_fleet" cols="50" rows="3">{{ battleBanFleetText }}</textarea>
+                </td>
+            </tr>
+            <tr>
+                <td class="tbltitle">Raketen</td>
+                <td class="tbldata">
+                    <textarea name="battleban_arrival_text_missiles" cols="50" rows="3">{{ battleBanMissileText }}</textarea>
+                </td>
+            </tr>
+        </table>
+        <p>
+            {% if battleBanActive %}
+                <input type="submit" name="battleban_update" value="Aktualisieren" />
+                <input type="submit" name="battleban_deactivate" value="Deaktivieren" />
+            {% else %}
+                <input type="submit" name="battleban_activate" value="Aktivieren" />
+            {% endif %}
+        </p>
+    </form>
+{% endblock %}
+

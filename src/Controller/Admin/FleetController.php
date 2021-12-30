@@ -2,6 +2,7 @@
 
 namespace EtoA\Controller\Admin;
 
+use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Fleet\Fleet;
 use EtoA\Fleet\FleetAction;
 use EtoA\Fleet\FleetRepository;
@@ -28,6 +29,7 @@ class FleetController extends AbstractAdminController
         private FleetRepository $fleetRepository,
         private FleetService $fleetService,
         private PlanetRepository $planetRepository,
+        private ConfigurationService $config
     ) {
     }
 
@@ -225,6 +227,105 @@ class FleetController extends AbstractAdminController
 
         return $this->render('admin/fleet/send-ships.html.twig', [
             'form' => $form->createView(),
+        ]);
+    }
+
+    #[Route('/admin/fleets/options', name: 'admin.fleets.options')]
+    #[IsGranted('ROLE_ADMIN_GAME-ADMIN')]
+    public function options(Request $request): Response
+    {
+        if ($request->request->has('flightban_deactivate')) {
+            $this->config->set('flightban', 0, '');
+            $this->addFlash('success', 'Flottensperre deaktiviert');
+        }
+
+        // Flottensperre aktivieren
+        if ($request->request->has('flightban_activate') || $request->request->has('flightban_update')) {
+            $flightBanFrom = strtotime($request->request->get('flightban_time_from'));
+            $flightBanTo = strtotime($request->request->get('flightban_time_to'));
+
+            if ($flightBanFrom < $flightBanTo) {
+                $this->config->set('flightban', 1, $request->request->get('flightban_reason'));
+                $this->config->set('flightban_time', '', $flightBanFrom, $flightBanTo);
+
+                $this->addFlash('success', 'Flottensperre aktualisiert!');
+            } else {
+                $this->addFlash('error', "Das Ende muss nach dem Start erfolgen!");
+            }
+        }
+
+        // Kampfsperre deaktivieren
+        if ($request->request->has('battleban_deactivate')) {
+            $this->config->set('battleban', 0, '');
+
+            $this->addFlash('success', 'Kampfsperre deaktiviert');
+        }
+
+        // Kampfsperre aktivieren
+        if ($request->request->has('battleban_activate') || $request->request->has('battleban_update')) {
+            $battleBanFrom = strtotime($request->request->get('battleban_time_from'));
+            $battleBanTo = strtotime($request->request->get('battleban_time_to'));
+
+            if ($battleBanFrom < $battleBanTo) {
+                $this->config->set('battleban', 1, $request->request->get('battleban_reason'));
+                $this->config->set('battleban_time', '', $battleBanFrom, $battleBanTo);
+                $this->config->set('battleban_arrival_text', '', $request->request->get('battleban_arrival_text_fleet'), $request->request->get('battleban_arrival_text_missiles'));
+
+                $this->addFlash('success', 'Kampfsperre aktualisiert');
+            } else {
+                $this->addFlash('error', "Das Ende muss nach dem Start erfolgen!");
+            }
+        }
+
+        if ($this->config->getBoolean('flightban')) {
+            if ($this->config->param1Int('flightban_time') <= time() && $this->config->param2Int('flightban_time') >= time()) {
+                $flightBanTimeStatus = "Sie wirkt zum jetzigen Zeitpunkt!";
+            } elseif ($this->config->param1Int('flightban_time') > time() && $this->config->param2Int('flightban_time') > time()) {
+                $flightBanTimeStatus = "Sie wirkt erst ab: " . date("d.m.Y H:i", $this->config->param1Int('flightban_time')) . "!";
+            } else {
+                $flightBanTimeStatus = "Sie ist nun aber abgelaufen!";
+            }
+
+            $flightBanStatus = "<div style=\"color:#f90\">Die Flottensperre ist aktiviert! " . $flightBanTimeStatus . "</div>";
+            $flightBanTimeFrom = $this->config->param1Int('flightban_time');
+            $flightBanTimeTo = $this->config->param2Int('flightban_time');
+        } else {
+            $flightBanStatus = "<div style=\"color:#0f0\">Die Flottensperre ist deaktiviert!</div>";
+            $flightBanTimeFrom = time();
+            $flightBanTimeTo = time() + 3600;
+        }
+
+        if ($this->config->getBoolean('battleban')) {
+            if ($this->config->param1Int('battleban_time') <= time() && $this->config->param2Int('battleban_time') >= time()) {
+                $battleban_time_status = "Sie wirkt zum jetzigen Zeitpunkt!";
+            } elseif ($this->config->param1Int('battleban_time') > time() && $this->config->param2Int('battleban_time') > time()) {
+                $battleban_time_status = "Sie wirkt erst ab: " . date("d.m.Y H:i", $this->config->param1Int('battleban_time')) . "!";
+            } else {
+                $battleban_time_status = "Sie ist nun aber abgelaufen!";
+            }
+
+            $battleBanStatus = "<div style=\"color:#f90\">Die Kampfsperre ist aktiviert! " . $battleban_time_status . "</div>";
+            $battleBanTimeFrom = $this->config->param1Int('battleban_time');
+            $battleBanTimeTo = $this->config->param2Int('battleban_time');
+        } else {
+            $battleBanStatus = "<div style=\"color:#0f0\">Die Kampfsperre ist deaktiviert!</div>";
+            $battleBanTimeFrom = time();
+            $battleBanTimeTo = time() + 3600;
+        }
+
+        return $this->render('admin/fleet/options.html.twig', [
+            'flightBanReason' => $this->config->param1('flightban'),
+            'flightBanActive' => $this->config->getBoolean('flightban'),
+            'flightBanStatus' => $flightBanStatus,
+            'flightBanTimeFrom' => $flightBanTimeFrom,
+            'flightBanTimeTo' => $flightBanTimeTo,
+            'battleBanReason' => $this->config->param1('battleban'),
+            'battleBanActive' => $this->config->getBoolean('battleban'),
+            'battleBanStatus' => $battleBanStatus,
+            'battleBanTimeFrom' => $battleBanTimeFrom,
+            'battleBanTimeTo' => $battleBanTimeTo,
+            'battleBanFleetText' => $this->config->param1('battleban_arrival_text'),
+            'battleBanMissileText' => $this->config->param2('battleban_arrival_text'),
         ]);
     }
 }

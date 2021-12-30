@@ -38,4 +38,15 @@ class FleetControllerTest extends SymfonyWebTestCase
 
         $this->assertSame(200, $client->getResponse()->getStatusCode(), $client->getResponse()->getContent());
     }
+
+    public function testOptions(): void
+    {
+        $client = self::createClient();
+
+        $this->loginAdmin($client);
+
+        $client->request('GET', '/admin/fleets/options');
+
+        $this->assertSame(200, $client->getResponse()->getStatusCode(), $client->getResponse()->getContent());
+    }
 }
