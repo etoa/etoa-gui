@@ -1,0 +1,20 @@
+{% extends 'admin/layout/admin.html.twig' %}
+
+{% use 'admin/fleet/form.trait.html.twig' %}
+
+{% block content %}
+    <h1>Flotten</h1>
+    <h3>Flotte bearbeiten</h3>
+
+    {{ block('form') }}
+{% endblock %}
+
+{% block actions %}
+    <input type="submit" value="Übernehmen" name="edit" />
+    {% if fleet.isStatusDeparture %}
+        <input type="submit" value="Flug abbrechen" name="cancel" />
+        <input type="submit" value="Flug zurückschicken" name="return" />
+    {% endif %}
+    <input type="submit" value="Flotte auf dem Ziel landen" name="land" />
+{% endblock %}
+

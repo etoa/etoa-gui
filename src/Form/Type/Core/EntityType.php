@@ -24,6 +24,7 @@ class EntityType extends AbstractType
         $resolver->setDefaults([
             'required' => false,
             'search' => null,
+            'with_code_string' => true,
             'placeholder' => '(Alle)',
             'choice_loader' => function (Options $options): ChoiceLoader {
                 return ChoiceList::lazy($this, function () use ($options): array {
@@ -35,12 +36,8 @@ class EntityType extends AbstractType
                     $entries = $this->entityRepository->searchEntityLabels($search);
                     $choices = [];
                     foreach ($entries as $entry) {
-                        $label = $entry->toString();
-                        if ($entry->ownerNick != '') {
-                            $label .= sprintf(' (%s)', $entry->ownerNick);
-                        }
-
-                        $choices[$label] = $entry->id;
+                        $labelPrefix = $options['with_code_string'] ? $entry->codeString() . ' ' : '';
+                        $choices[$labelPrefix . $entry->toStringWithOwner()] = $entry->id;
                     }
 
                     return $choices;

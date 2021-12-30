@@ -44,4 +44,9 @@ class AdminUser
 
         return $adminUser;
     }
+
+    public function setPlayerId(?int $playerId): void
+    {
+        $this->playerId = (int) $playerId;
+    }
 }

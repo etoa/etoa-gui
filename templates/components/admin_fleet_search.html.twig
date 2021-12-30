@@ -1,0 +1,29 @@
+{% extends 'components/base_search.html.twig' %}
+
+{% block data %}
+    <tr>
+        <th>Besitzer</th>
+        <th>Aktion</th>
+        <th>Status</th>
+        <th>Start</th>
+        <th>Ziel</th>
+        <th>Startzeit</th>
+        <th>Landezeit</th>
+        <th>Aktion</th>
+    </tr>
+    {% for fleet in search.entries %}
+        <tr>
+            <td>{{ this.users[fleet.userId] }}</td>
+            <td>{{ fleet.action }}</td>
+            <td>{{ fleet.status }}</td>
+            <td>{{ this.entities[fleet.entityFrom] }}</td>
+            <td>{{ this.entities[fleet.entityTo] }}</td>
+            <td>{{ formatTimestamp(fleet.launchTime) }}</td>
+            <td>{{ formatTimestamp(fleet.landTime) }}</td>
+            <td>
+                {{ editButton(path('admin.fleets.edit', {id: fleet.id}))|raw }}
+                {{ delButton(path('admin.fleets.delete', {id: fleet.id}))|raw }}
+            </td>
+        </tr>
+    {% endfor %}
+{% endblock %}

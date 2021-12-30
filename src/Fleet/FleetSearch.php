@@ -124,6 +124,14 @@ class FleetSearch extends AbstractSearch
         return $this;
     }
 
+    public function entityFrom(int $entityFrom): self
+    {
+        $this->parts[] = 'entity_from = :entityFrom';
+        $this->parameters['entityFrom'] = $entityFrom;
+
+        return $this;
+    }
+
     public function entityTo(int $entityTo): self
     {
         $this->parts[] = 'entity_to = :entityTo';

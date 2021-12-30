@@ -161,6 +161,26 @@ parameters:
 			path: src/Controller/LegacyAdminController.php
 
 		-
+			message: "#^Argument of an invalid type EtoA\\\\Fleet\\\\Fleet supplied for foreach, only iterables are supported\\.$#"
+			count: 1
+			path: src/Fleet/FleetWithShips.php
+
+		-
+			message: "#^EtoA\\\\Fleet\\\\FleetWithShips\\:\\:__construct\\(\\) does not call parent constructor from EtoA\\\\Fleet\\\\Fleet\\.$#"
+			count: 1
+			path: src/Fleet/FleetWithShips.php
+
+		-
+			message: "#^Variable property access on \\$this\\(EtoA\\\\Fleet\\\\FleetWithShips\\)\\.$#"
+			count: 1
+			path: src/Fleet/FleetWithShips.php
+
+		-
+			message: "#^Method EtoA\\\\Ranking\\\\UserBannerService\\:\\:createUserBannerImage\\(\\) never returns resource so it can be removed from the return typehint\\.$#"
+			count: 1
+			path: src/Ranking/UserBannerService.php
+
+		-
 			message: "#^Method EtoA\\\\Support\\\\ImageUtils\\:\\:imageCreateFromFile\\(\\) has no return typehint specified\\.$#"
 			count: 1
 			path: src/Support/ImageUtils.php
@@ -170,7 +190,3 @@ parameters:
 			count: 1
 			path: src/UI/EntityCoordinatesSelector.php
 
-		-
-			message: "#^Method EtoA\\\\Ranking\\\\UserBannerService\\:\\:createUserBannerImage\\(\\) never returns resource so it can be removed from the return typehint\\.$#"
-			count: 1
-			path: src/Ranking/UserBannerService.php

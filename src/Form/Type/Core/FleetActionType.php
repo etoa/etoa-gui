@@ -3,6 +3,9 @@
 namespace EtoA\Form\Type\Core;
 
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\ChoiceList\ChoiceList;
+use Symfony\Component\Form\ChoiceList\Factory\Cache\ChoiceLoader;
+use Symfony\Component\OptionsResolver\Options;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class FleetActionType extends AbstractType
@@ -14,9 +17,18 @@ class FleetActionType extends AbstractType
         $resolver->setDefaults([
             'required' => false,
             'placeholder' => '(Alle)',
-            'choices' => \FleetAction::getAll(),
-            'choice_value' => fn ($action) => is_string($action) ? $action : $action?->code(),
-            'choice_label' => fn (?\FleetAction $choice, $key, $value) => $choice?->name(),
+            'choice_loader' => function (Options $options): ChoiceLoader {
+                return ChoiceList::lazy($this, function (): array {
+                    $actions = \FleetAction::getAll();
+
+                    $choices = [];
+                    foreach ($actions as $action) {
+                        $choices[$action->name()] = $action->code();
+                    }
+
+                    return $choices;
+                });
+            },
         ]);
     }
 

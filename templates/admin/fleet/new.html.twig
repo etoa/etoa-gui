@@ -1,0 +1,15 @@
+{% extends 'admin/layout/admin.html.twig' %}
+
+{% use 'admin/fleet/form.trait.html.twig' %}
+
+{% block content %}
+    <h1>Flotten</h1>
+
+    <h3>Flotte erstellen</h3>
+
+    {{ block('form') }}
+{% endblock %}
+
+{% block actions %}
+    <input type="submit" value="Erstellen" name="save" />
+{% endblock %}

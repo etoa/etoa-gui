@@ -35,8 +35,7 @@
                     <tr {% if loop.index == 1 %} data-collection-target="prototype"{% endif %}>
                         {% for element in rows %}
                             <td>
-                                {{ form_errors(element) }}
-                                {{ form_widget(element) }}
+                                {{ form_row(element, {label: false}) }}
                             </td>
                         {% endfor %}
                         <td>
