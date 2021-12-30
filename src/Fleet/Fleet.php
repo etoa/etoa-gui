@@ -79,4 +79,47 @@ class Fleet
     {
         return max(0, $this->landTime - time());
     }
+
+    public function isStatusDeparture(): bool
+    {
+        return $this->status === FleetStatus::DEPARTURE;
+    }
+
+    public static function empty(): Fleet
+    {
+        return new Fleet([
+            'id' => 0,
+            'user_id' => 0,
+            'leader_id' => 0,
+            'entity_from' => 0,
+            'entity_to' => 0,
+            'next_id' => 0,
+            'launchtime' => time(),
+            'landtime' => time(),
+            'nextactiontime' => 0,
+            'action' => '',
+            'status' => 0,
+            'pilots' => 0,
+            'usage_fuel' => 0,
+            'usage_food' => 0,
+            'usage_power' => 0,
+            'support_usage_fuel' => 0,
+            'support_usage_food' => 0,
+            'res_metal' => 0,
+            'res_crystal' => 0,
+            'res_plastic' => 0,
+            'res_fuel' => 0,
+            'res_food' => 0,
+            'res_power' => 0,
+            'res_people' => 0,
+            'fetch_metal' => 0,
+            'fetch_crystal' => 0,
+            'fetch_plastic' => 0,
+            'fetch_fuel' => 0,
+            'fetch_food' => 0,
+            'fetch_power' => 0,
+            'fetch_people' => 0,
+            'flag' => 0,
+        ]);
+    }
 }

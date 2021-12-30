@@ -20,7 +20,10 @@
             <td>{{ this.entities[fleet.entityTo] }}</td>
             <td>{{ formatTimestamp(fleet.launchTime) }}</td>
             <td>{{ formatTimestamp(fleet.landTime) }}</td>
-            <td></td>
+            <td>
+                {{ editButton(path('admin.fleets.edit', {id: fleet.id}))|raw }}
+                {{ delButton(path('admin.fleets.delete', {id: fleet.id}))|raw }}
+            </td>
         </tr>
     {% endfor %}
 {% endblock %}

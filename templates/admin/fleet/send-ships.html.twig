@@ -1,0 +1,11 @@
+{% extends 'admin/layout/admin.html.twig' %}
+
+{% use 'admin/fleet/form.trait.html.twig' %}
+
+{% block content %}
+    <h1>Flotten</h1>
+
+    <h3>Schiffe senden</h3>
+
+    {{ form(form) }}
+{% endblock %}

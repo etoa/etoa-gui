@@ -1,0 +1,218 @@
+{% block form %}
+{{ form_start(form) }}
+
+<table class="tbl">
+    <tr>
+        <th class="tbltitle">{{ form_label(form.userId) }}</th>
+        <td class="tbldata">
+            {{ form_row(form.userId, {label: false}) }}
+        </td>
+    </tr>
+
+    <tr>
+        <th class="tbltitle">{{ form_label(form.launchTime) }}</th>
+        <td class="tbldata">
+            {{ form_errors(form.launchTime) }}
+            {{ form_widget(form.launchTime) }}
+        </td>
+    </tr>
+    <tr>
+        <th class="tbltitle">{{ form_label(form.landTime) }}</th>
+        <td class="tbldata">
+            {{ form_errors(form.landTime) }}
+            {{ form_widget(form.landTime) }}
+        </td>
+    </tr>
+    {% if fleet is defined %}
+        <tr>
+            <th class="tbltitle">Flugdauer</th>
+            <td class="tbldata">
+                {{ formatTimespan(fleet.landTime - fleet.launchTime) }}
+            </td>
+        </tr>
+    {% endif %}
+
+    <tr>
+        <th class="tbltitle">{{ form_label(form.entityFrom) }}</th>
+        <td class="tbldata">
+            {{ form_row(form.entityFrom, {label: false}) }}
+        </td>
+    </tr>
+    <tr>
+        <th class="tbltitle">{{ form_label(form.entityTo) }}</th>
+        <td class="tbldata">
+            {{ form_row(form.entityTo, {label: false}) }}
+        </td>
+    </tr>
+
+    <tr>
+        <th class="tbltitle">{{ form_label(form.action) }}</th>
+        <td class="tbldata">
+            <div class="inline-block">
+                {{ form_row(form.action, {label: false}) }}
+            </div>
+            <div class="inline-block">
+                {{ form_row(form.status) }}
+            </div>
+        </td>
+    </tr>
+
+    <tr><td style="background:#000;height:2px;" colspan="2"></td></tr>
+
+    <tr>
+        <th class="tbltitle">{{ form_label(form.pilots) }}</th>
+        <td class="tbldata">
+            {{ form_errors(form.pilots) }}
+            {{ form_widget(form.pilots) }}
+        </td>
+    </tr>
+    <tr>
+        <th class="tbltitle">{{ form_label(form.usageFuel) }}</th>
+        <td class="tbldata">
+            {{ form_errors(form.usageFuel) }}
+            {{ form_widget(form.usageFuel) }}
+        </td>
+    </tr>
+    <tr>
+        <th class="tbltitle">{{ form_label(form.usageFood) }}</th>
+        <td class="tbldata">
+            {{ form_errors(form.usageFood) }}
+            {{ form_widget(form.usageFood) }}
+        </td>
+    </tr>
+
+    <tr><td style="background:#000;height:2px;" colspan="2"></td></tr>
+
+    <tr>
+        <th class="tbltitle">{{ form_label(form.resMetal) }}</th>
+        <td class="tbldata">
+            {{ form_errors(form.resMetal) }}
+            {{ form_widget(form.resMetal) }}
+        </td>
+    </tr>
+    <tr>
+        <th class="tbltitle">{{ form_label(form.resCrystal) }}</th>
+        <td class="tbldata">
+            {{ form_errors(form.resCrystal) }}
+            {{ form_widget(form.resCrystal) }}
+        </td>
+    </tr>
+    <tr>
+        <th class="tbltitle">{{ form_label(form.resPlastic) }}</th>
+        <td class="tbldata">
+            {{ form_errors(form.resPlastic) }}
+            {{ form_widget(form.resPlastic) }}
+        </td>
+    </tr>
+    <tr>
+        <th class="tbltitle">{{ form_label(form.resFuel) }}</th>
+        <td class="tbldata">
+            {{ form_errors(form.resFuel) }}
+            {{ form_widget(form.resFuel) }}
+        </td>
+    </tr>
+    <tr>
+        <th class="tbltitle">{{ form_label(form.resFood) }}</th>
+        <td class="tbldata">
+            {{ form_errors(form.resFood) }}
+            {{ form_widget(form.resFood) }}
+        </td>
+    </tr>
+    <tr>
+        <th class="tbltitle">{{ form_label(form.resPower) }}</th>
+        <td class="tbldata">
+            {{ form_errors(form.resPower) }}
+            {{ form_widget(form.resPower) }}
+        </td>
+    </tr>
+    <tr>
+        <th class="tbltitle">{{ form_label(form.resPeople) }}</th>
+        <td class="tbldata">
+            {{ form_errors(form.resPeople) }}
+            {{ form_widget(form.resPeople) }}
+        </td>
+    </tr>
+
+    <tr><td style="background:#000;height:2px;" colspan="2"></td></tr>
+
+    <tr>
+        <th class="tbltitle">{{ form_label(form.fetchMetal) }}</th>
+        <td class="tbldata">
+            {{ form_errors(form.fetchMetal) }}
+            {{ form_widget(form.fetchMetal) }}
+        </td>
+    </tr>
+    <tr>
+        <th class="tbltitle">{{ form_label(form.fetchCrystal) }}</th>
+        <td class="tbldata">
+            {{ form_errors(form.fetchCrystal) }}
+            {{ form_widget(form.fetchCrystal) }}
+        </td>
+    </tr>
+    <tr>
+        <th class="tbltitle">{{ form_label(form.fetchPlastic) }}</th>
+        <td class="tbldata">
+            {{ form_errors(form.fetchPlastic) }}
+            {{ form_widget(form.fetchPlastic) }}
+        </td>
+    </tr>
+    <tr>
+        <th class="tbltitle">{{ form_label(form.fetchFuel) }}</th>
+        <td class="tbldata">
+            {{ form_errors(form.fetchFuel) }}
+            {{ form_widget(form.fetchFuel) }}
+        </td>
+    </tr>
+    <tr>
+        <th class="tbltitle">{{ form_label(form.fetchFood) }}</th>
+        <td class="tbldata">
+            {{ form_errors(form.fetchFood) }}
+            {{ form_widget(form.fetchFood) }}
+        </td>
+    </tr>
+    <tr>
+    <tr>
+        <th class="tbltitle">{{ form_label(form.fetchPower) }}</th>
+        <td class="tbldata">
+            {{ form_errors(form.fetchPower) }}
+            {{ form_widget(form.fetchPower) }}
+        </td>
+    </tr>
+    <tr>
+        <th class="tbltitle">{{ form_label(form.fetchPeople) }}</th>
+        <td class="tbldata">
+            {{ form_errors(form.fetchPeople) }}
+            {{ form_widget(form.fetchPeople) }}
+        </td>
+    </tr>
+
+    <tr><td style="background:#000;height:2px;" colspan="2"></td></tr>
+
+    <tr>
+        <th class="tbltitle">{{ form_label(form.ships) }}</th>
+        <td class="tbldata" data-controller="collection">
+            <div>{{ form_errors(form.ships) }}</div>
+            <div data-collection-target="container">
+                {% for rows in form.ships %}
+                    <div {% if loop.index == 1 %} data-collection-target="prototype"{% endif %}>
+                        {% for element in rows %}
+                            <div class="inline-block">
+                                {{ form_row(element) }}
+                            </div>
+                        {% endfor %}
+                        <div class="inline-block{% if loop.index  == 1 %} hide{% endif %}">
+                            <button type="button" data-action="click->collection#removeEntry">Löschen</button>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            <button type="button" data-action="click->collection#addEntry">Hinzufügen</button>
+        </td>
+    </tr>
+</table>
+<br/>
+
+{% block actions %}{% endblock %}
+
+{{ form_end(form) }}
+{% endblock %}
