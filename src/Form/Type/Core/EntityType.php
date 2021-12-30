@@ -35,12 +35,7 @@ class EntityType extends AbstractType
                     $entries = $this->entityRepository->searchEntityLabels($search);
                     $choices = [];
                     foreach ($entries as $entry) {
-                        $label = $entry->toString();
-                        if ($entry->ownerNick != '') {
-                            $label .= sprintf(' (%s)', $entry->ownerNick);
-                        }
-
-                        $choices[$label] = $entry->id;
+                        $choices[$entry->toStringWithOwner()] = $entry->id;
                     }
 
                     return $choices;

@@ -1,10 +1,9 @@
 {% extends 'admin/layout/admin.html.twig' %}
 
 {% block content %}
-    <h1>Logs</h1>
-    <h2>Spiellogs</h2>
+    <h1>Flotten</h1>
 
-    {{ component('log_game_search', {
+    {{ component('admin_fleet_search', {
         form: form
     }) }}
 

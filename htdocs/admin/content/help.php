@@ -117,5 +117,5 @@ if ($sub == "techtree") {
         echo "Tech-Bedingung Fehler bei Verteidigung " . $defenseNames[$defenseId] . " (" . $requiredObjId . ")<br/>";
     }
 } else {
-    require("../content/help.php");
+    require __DIR__ . "/../../content/help.php";
 }

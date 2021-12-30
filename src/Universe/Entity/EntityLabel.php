@@ -62,6 +62,16 @@ class EntityLabel extends Entity
         }
     }
 
+    public function toStringWithOwner(): string
+    {
+        $string = $this->toString();
+        if ($this->ownerNick != '') {
+            $string .= sprintf(' (%s)', $this->ownerNick);
+        }
+
+        return $string;
+    }
+
     public function getImagePath(): string
     {
         switch ($this->code) {
