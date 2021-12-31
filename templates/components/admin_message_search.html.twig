@@ -1,0 +1,24 @@
+{% extends 'components/base_search.html.twig' %}
+
+    {% block labeling %}
+        <p><b>Legende:</b> <span style="color:#0f0;">Ungelesen</span>, <span style="color:#f90;">Gelöscht</span>, <span style="font-style:italic;">Archiviert</span></p>
+    {% endblock %}
+
+{% block data %}
+    <tr>
+        <th>Datum</th>
+        <th>Sender</th>
+        <th>Empfänger</th>
+        <th>Betreff</th>
+        <th>Kategorie</th>
+        <th>Aktion</th>
+    </tr>
+    {% for message in search.entries %}
+        {{ component('admin_message_view', {
+            message: message,
+            userFrom: this.users[message.userFrom]|default('-'),
+            userTo: this.users[message.userTo]|default('-'),
+            category: this.categories[message.catId]|default('')
+        }) }}
+    {% endfor %}
+{% endblock %}

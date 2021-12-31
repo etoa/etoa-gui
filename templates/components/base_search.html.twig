@@ -15,6 +15,9 @@
     </fieldset>
     {{ form_end(this.form) }}
 
+    {% block labeling %}
+    {% endblock %}
+
     {% set search = this.search %}
     <div class="search-container" data-loading="addClass(loading)">
         <div class="search-overlay"><div class="search-spinner"></div></div>
