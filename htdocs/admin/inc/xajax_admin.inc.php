@@ -15,7 +15,7 @@ if (isset($page) && $page == "chat") {
     require_once __DIR__ . "/xajax/chat.xajax.php";
 }
 
-if (isset($page) && ($page == "user" || $page == "sendmessage")) {
+if (isset($page) && ($page == "user")) {
     require_once __DIR__ . "/xajax/user.xajax.php";
 }
 

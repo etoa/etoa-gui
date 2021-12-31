@@ -19,7 +19,7 @@
                 {% for ticket in newTickets %}
                     <div id="tt{{ ticket.id }}" style="display:none;">
                         <a href="/admin/?page=user&sub=edit&id={{ ticket.userId }}">Daten anzeigen</a><br/>
-                        <a href="/admin/?page=sendmessage&amp;id={{ ticket.userId }}">Nachricht senden</a><br/>
+                        <a href="{{ path('admin.messages.send', {userId: ticket.userId}) }}">Nachricht senden</a><br/>
                     </div>
                     <tr>
                         <td>
