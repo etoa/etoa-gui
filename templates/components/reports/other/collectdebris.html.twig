@@ -1,0 +1,10 @@
+{% import 'components/reports/macros.html.twig' as macros %}
+
+<strong>TRÜMMERSAMMLER-RAPPORT</strong>
+<br />
+<br />
+Eine Flotte vom Planeten {{ macros.entity(report.context.entities[report.entity2Id]) }} hat das Trümmerfeld bei {{ macros.entity(report.context.entities[report.entity1Id]) }} um {{ formatTimestamp(report.timestamp) }} erreicht und Trümmer gesammelt.<br /><br />
+<br />
+<strong>ROHSTOFFE</strong><br />
+{{ macros.resourceTable(report.data.resources, report.context.resourceNames) }}
+<br/>

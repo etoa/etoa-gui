@@ -1,0 +1,7 @@
+{% import 'components/reports/macros.html.twig' as macros %}
+
+<strong>TRÜMMERSAMMLER-RAPPORT</strong>
+<br />
+<br />
+Eine Flotte vom Planeten {{ macros.entity(report.context.entities[report.entity2Id]) }} hat das Trümmerfeld bei {{ macros.entity(report.context.entities[report.entity1Id]) }} {{ formatTimestamp(report.timestamp) }} erreicht.<br />
+Es wurden aber leider keine brauchbaren Trümmerteile mehr gefunden so dass die Flotte unverrichteter Dinge zurückkehren musste.

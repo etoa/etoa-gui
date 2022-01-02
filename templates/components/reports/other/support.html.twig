@@ -1,0 +1,8 @@
+{% import 'components/reports/macros.html.twig' as macros %}
+
+<strong>SUPPORTFLOTTE ANGEKOMMEN</strong>
+<br /><br />
+Eine Flotte hat ihr Ziel erreicht!<br /><br />
+{{ macros.startTargetTimeMission(report) }}
+<strong>Ende des Auftrages: </strong>{{ formatTimestamp(report.content) }}<br />
+<strong>Flottenbesitzer: </strong>{{ report.context.entities[report.opponentId] }}<br />

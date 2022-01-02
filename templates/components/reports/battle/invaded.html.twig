@@ -1,0 +1,5 @@
+{% import 'components/reports/macros.html.twig' as macros %}
+
+<strong>Planet:</strong> {{ macros.entity(report.context.entities[report.entity1Id]) }}<br />
+<strong>Besitzer:</strong> {{ macros.user(report.opponentId, report) }}<br /><br />
+Dieser Planet wurde von einer Flotte, welche vom Planeten {{ macros.entity(report.context.entities[report.entity2Id]) }} stammt, übernommen!<br />

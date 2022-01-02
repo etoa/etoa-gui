@@ -1,0 +1,14 @@
+{% import 'components/reports/macros.html.twig' as macros %}
+
+Die Flotte hat folgendes Ziel erreicht!<br /><br />
+{{ macros.startTargetTimeMission(report) }}
+<br />Die Flotte hat eine neue Kolonie errichtet! Dabei wurde ein Besiedlungsschiff verbraucht.<br />
+<br /><strong>SCHIFFE</strong><br />
+{% if report.data.ships %}
+    {{ macros.dataTable(report.data.ships, report.context.shipNames) }}
+{% else %}
+    <i>Nichts vorhanden!</i><br />
+{% endif %}
+
+<br /><strong>WAREN</strong><br />
+{{ macros.resourceTable(report.data.resources, report.context.resourceNames) }}

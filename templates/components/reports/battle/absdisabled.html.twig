@@ -1,0 +1,6 @@
+{% import 'components/reports/macros.html.twig' as macros %}
+
+Deine Flotte vom Planeten {{ macros.entity(report.context.entities[report.entity2Id]) }}
+wollte einen Allianzangriff auf den Planeten {{ macros.entity(report.context.entities[report.entity1Id]) }}
+durchführen. Da das Allianzkampfsystem momentan nicht aktiv ist,
+mussten deine Piloten leider umkehren.

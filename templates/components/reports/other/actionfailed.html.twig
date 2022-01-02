@@ -1,0 +1,3 @@
+{% import 'components/reports/macros.html.twig' as macros %}
+
+Eine Flotte vom Planeten {{ macros.entity(report.context.entities[report.entity2Id]) }} versuchte beim Ziel {{ macros.entity(report.context.entities[report.entity1Id]) }} die Aktion {{ report.context.fleetActions[report.data.actionCode] }} durchzuführen. Leider war kein Schiff mehr in der Flotte, welches die Aktion ausführen konnte, deshalb schlug der Versuch fehl und die Flotte machte sich auf den Rückweg!

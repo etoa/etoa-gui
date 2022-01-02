@@ -1,0 +1,7 @@
+{% import 'components/reports/macros.html.twig' as macros %}
+
+Deine Flotte vom Planeten {{ macros.entity(report.context.entities[report.entity2Id]) }}
+wollte sich einem Allianzangriff auf den Planeten {{ macros.entity(report.context.entities[report.entity1Id]) }}
+anschliessen. Die Flotte überstieg aber die Limitierung durch das
+intergalaktische Kriegsrecht auf {{ report.context.config.param1Int('alliance_fleets_max_players') }}
+Angreifer, weswegen die Piloten dem Kampf nur zuschauen konnten.

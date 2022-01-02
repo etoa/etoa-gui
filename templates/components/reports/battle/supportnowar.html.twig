@@ -1,0 +1,9 @@
+{% import 'components/reports/macros.html.twig' as macros %}
+
+Deine Flotte vom Planeten {{ macros.entity(report.context.entities[report.entity2Id]) }}
+ist zum Support auf den Planeten {{ macros.entity(report.context.entities[report.entity1Id]) }}
+stationiert, wo gerade ein Kampf stattgefunden hat.
+Da sich die Allianzen von Angreifer und Verteidiger aber
+nicht im Krieg befinden, war die Unterstützung gemäss
+intergalaktischem Kriegsrecht nicht möglich,
+weswegen deine Piloten dem Kampf nur zuschauen konnten.

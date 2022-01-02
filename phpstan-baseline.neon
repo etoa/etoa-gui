@@ -161,6 +161,11 @@ parameters:
 			path: src/Controller/LegacyAdminController.php
 
 		-
+			message: "#^Variable property access on object\\.$#"
+			count: 1
+			path: src/Core/Database/PropertyAssign.php
+
+		-
 			message: "#^Argument of an invalid type EtoA\\\\Fleet\\\\Fleet supplied for foreach, only iterables are supported\\.$#"
 			count: 1
 			path: src/Fleet/FleetWithShips.php

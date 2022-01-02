@@ -1,0 +1,6 @@
+{% import 'components/reports/macros.html.twig' as macros %}
+
+{% set data = report.getTransformedDataFromContent() %}
+
+Eine Flotte vom Planeten {{ macros.entity(report.context.entities[report.entity2Id]) }} hat das Gebäude {{ report.context.buildingNames[data[0]]}} des Planeten {{ macros.entity(report.context.entities[report.entity1Id]) }} von Stufe {{ data[2] }} auf Stufe {{ data[1] }} zurück gesetzt.
+

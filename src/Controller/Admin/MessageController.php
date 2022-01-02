@@ -4,8 +4,10 @@ namespace EtoA\Controller\Admin;
 
 use EtoA\Form\Type\Admin\MessageSearchType;
 use EtoA\Form\Type\Admin\MessageSendType;
+use EtoA\Form\Type\Admin\ReportSearchType;
 use EtoA\Message\AdminMessageRequest;
 use EtoA\Message\MessageRepository;
+use EtoA\Message\ReportRepository;
 use EtoA\Support\Mail\MailSenderService;
 use EtoA\User\UserRepository;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
@@ -18,7 +20,8 @@ class MessageController extends AbstractAdminController
     public function __construct(
         private MessageRepository $messageRepository,
         private UserRepository $userRepository,
-        private MailSenderService $mailSenderService
+        private MailSenderService $mailSenderService,
+        private ReportRepository $reportRepository
     ) {
     }
 
@@ -29,6 +32,16 @@ class MessageController extends AbstractAdminController
         return $this->render('admin/message/search.html.twig', [
             'form' => $this->createForm(MessageSearchType::class, $request->query->all())->createView(),
             'total' => $this->messageRepository->count(),
+        ]);
+    }
+
+    #[Route('/admin/messages/reports', name: 'admin.messages.reports')]
+    #[IsGranted('ROLE_ADMIN_GAME-ADMIN')]
+    public function reports(Request $request): Response
+    {
+        return $this->render('admin/message/reports.html.twig', [
+            'form' => $this->createForm(ReportSearchType::class, $request->query->all())->createView(),
+            'total' => $this->reportRepository->count(),
         ]);
     }
 

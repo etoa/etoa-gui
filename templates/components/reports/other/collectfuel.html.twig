@@ -1,0 +1,11 @@
+{% import 'components/reports/macros.html.twig' as macros %}
+
+<strong>GASSAUGER-RAPPORT</strong><br /><br />
+Eine Flotte vom Planeten {{ macros.entity(report.context.entities[report.entity2Id]) }} hat den Planeten {{ macros.entity(report.context.entities[report.entity1Id]) }} erkundet und Gas gesaugt.<br />
+<br /><strong>ROHSTOFFE</strong><br />
+{{ macros.resourceTable(report.data.resources, report.context.resourceNames) }}
+
+{% if report.data.ships %}{
+    <br />Aufgrund starker Wasserstoffexplosionen sind einige deiner Schiffe zerstört worden:<br />
+    {{ macros.dataTable(report.data.ships, report.context.shipNames) }}
+{% endif %}

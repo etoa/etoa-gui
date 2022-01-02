@@ -44,7 +44,7 @@
                             {% endif %}
 
                         </div><div style="float:right">
-                            {{ min(search.limit + 1, search.total) }} - {{ search.limit + search.entries|length }} von {{ search.total }}
+                            {{ formatNumber(min(search.limit + 1, search.total)) }} - {{ formatNumber(search.limit + search.entries|length) }} von {{ formatNumber(search.total) }}
                         </div>
                     </div>
                 </th>

@@ -1,0 +1,11 @@
+{% import 'components/reports/macros.html.twig' as macros %}
+
+<strong>WAREN ABGEHOLT</strong>
+<br />
+<br />
+Eine Flotte vom Planeten {{ macros.entity(report.context.entities[report.entity2Id]) }} hat das Ziel erreicht!<br /><br />
+<strong>Ziel: </strong>{{ macros.entity(report.context.entities[report.entity1Id]) }}<br />
+<strong>Zeit: </strong>{{ formatTimestamp(report.timestamp) }}<br />
+<br />Folgende Waren wurden abgeholt:<br />
+{{ macros.resourceTable(report.data.resources, report.context.resourceNames) }}
+<br/>

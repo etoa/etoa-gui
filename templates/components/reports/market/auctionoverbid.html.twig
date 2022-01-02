@@ -1,0 +1,8 @@
+{% import 'components/reports/macros.html.twig' as macros %}
+
+Du wurdest bei folgendem Angebot (#{{ report.data.recordId }}) von {{ macros.user(report.opponentId, report)}} überboten:<br/><br/>
+{% if report.data.timestamp2 %}
+    Die Auktion dauert noch bis am {{ formatTimestamp(report.data.timestamp2) }}<br />
+else
+Die Auktion ist nun zu Ende und wird nach {{ report.context.config.getInt('market_auction_delay_time')}} Stunden gelöscht.<br />
+<a href="?page=market&mode=auction&id={{ report.data.recordId }}">Hier</a> gehts zu der Auktion.

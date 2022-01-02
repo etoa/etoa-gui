@@ -1,0 +1,12 @@
+{% import 'components/reports/macros.html.twig' as macros %}
+
+Eine Flotte vom Handelsministerium hat folgendes Ziel erreicht!<br /><br />
+{{ macros.startTargetTimeMission(report) }}
+<br />Die gekauften Waren sind angekommen.<br />
+{% if report.data.ships %}
+    <br /><strong>SCHIFFE</strong><br />
+    {{ macros.dataTable(report.data.ships, report.context.shipNames) }}
+{% endif %}
+
+<br /><strong>WAREN</strong><br />
+{{ macros.resourceTable(report.data.resources, report.context.resourceNames) }}

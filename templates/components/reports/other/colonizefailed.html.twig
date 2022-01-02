@@ -1,0 +1,12 @@
+{% import 'components/reports/macros.html.twig' as macros %}
+
+Die Flotte hat folgendes Ziel erreicht!<br /><br />
+{{ macros.startTargetTimeMission(report) }}
+
+<br />Die Flotte kann den Planeten nicht kolonialisieren
+{% if report.content == 1 %}
+,  da er bereits von einem anderen Volk kolonialisiert wurde
+{% elseif report.content = 2 %}
+,  da die maximale Zahl an Planeten auf denen du regieren darfst, bereits erreicht worden ist
+{% endif %}
+!<br />

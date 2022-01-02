@@ -1,0 +1,11 @@
+{% import 'components/reports/macros.html.twig' as macros %}
+
+Du hast folgendes Angebot (#{{ report.data.recordId }}) von {{ macros.user(report.opponentId, report) }} gekauft:<br/><br/>
+{% if report.content %}
+    {{ report.content }}<br/><br/>
+{% endif %}
+
+{{ macros.marketResourceTable(report) }}
+Die Waren werden vom Marktplatz nach {{ macros.entity(report.context.entities[report.entity1Id]) }} geliefert."
+
+{{ macros.fleet2Landing(report) }}

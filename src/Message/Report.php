@@ -17,19 +17,34 @@ class Report
     public int $entity2Id;
     public int $opponentId;
 
-    public function __construct(array $data)
+    public static function createFromArray(array $data): Report
     {
-        $this->id = (int) $data['id'];
-        $this->timestamp = (int) $data['timestamp'];
-        $this->type = $data['type'];
-        $this->read = (bool) $data['read'];
-        $this->deleted = (bool) $data['deleted'];
-        $this->archived = (bool) $data['archived'];
-        $this->userId = (int) $data['user_id'];
-        $this->allianceId = (int) $data['alliance_id'];
-        $this->content = $data['content'];
-        $this->entity1Id = (int) $data['entity1_id'];
-        $this->entity2Id = (int) $data['entity2_id'];
-        $this->opponentId = (int) $data['opponent1_id'];
+        $report = new Report();
+        $report->id = (int) $data['id'];
+        $report->timestamp = (int) $data['timestamp'];
+        $report->type = $data['type'];
+        $report->read = (bool) $data['read'];
+        $report->deleted = (bool) $data['deleted'];
+        $report->archived = (bool) $data['archived'];
+        $report->userId = (int) $data['user_id'];
+        $report->allianceId = (int) $data['alliance_id'];
+        $report->content = $data['content'];
+        $report->entity1Id = (int) $data['entity1_id'];
+        $report->entity2Id = (int) $data['entity2_id'];
+        $report->opponentId = (int) $data['opponent1_id'];
+
+        return $report;
+    }
+
+    /**
+     * @return int[]
+     */
+    public function getTransformedDataFromContent(): array
+    {
+        if ($this->content !== null) {
+            return array_map(fn (string $value) => (int) $value, explode(':', $this->content));
+        }
+
+        return [];
     }
 }

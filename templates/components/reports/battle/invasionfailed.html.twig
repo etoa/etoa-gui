@@ -1,0 +1,9 @@
+{% import 'components/reports/macros.html.twig' as macros %}
+
+Eine Flotte vom Planeten {{ macros.entity(report.context.entities[report.entity2Id]) }} hat versucht den Planeten {{ macros.entity(report.context.entities[report.entity1Id]) }} zu übernehmen. Dieser Versuch schlug aber fehl und die Flotte machte sich auf den Rückweg!<br />
+{% if report.content == 1 %}
+    Hinweis: Du hast bereits die maximale Anzahl Planeten erreicht!
+{% elseif report.content == 2 %}
+    Hinweis: Dies ist ein Hauptplanet!
+{% endif %}
+<br />

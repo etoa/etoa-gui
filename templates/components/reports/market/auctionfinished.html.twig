@@ -1,0 +1,8 @@
+{% import 'components/reports/macros.html.twig' as macros %}
+
+Du hast folgendes Angebot (#{{ report.data.recordId }}) im {{ macros.marketLink(report.context.entities[report.entity1Id]) }}
+auf {{ macros.entity(report.context.entities[report.entity1Id]) }} an {{ macros.user(report.opponentId, report) }} versteigert:<br/><br/>
+
+{{ macros.marketResourceTable(report) }}
+
+Die Auktion wird nach {{ report.context.config.getInt('market_auction_delay_time')}} Stunden gelöscht und die Waren werden in wenigen Minuten versendet.<br /><br />

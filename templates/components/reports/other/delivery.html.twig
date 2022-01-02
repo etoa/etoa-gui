@@ -1,0 +1,10 @@
+{% import 'components/reports/macros.html.twig' as macros %}
+
+Eine Flotte von der Allianzbasis hat folgendes Ziel erreicht!<br /><br />
+{{ macros.startTargetTimeMission(report) }}
+<strong>SCHIFFE</strong><br />
+{% if report.data.ships %}
+    {{ macros.dataTable(report.data.ships, report.context.shipNames) }}
+{% else %}
+    <i>Nichts vorhanden!</i><br />
+{% endif %}

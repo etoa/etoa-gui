@@ -2,6 +2,7 @@
 
 namespace EtoA\Form\Type\Core;
 
+use EtoA\Fleet\FleetStatus;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -15,7 +16,7 @@ class FleetActionStatusType extends AbstractType
             'required' => false,
             'placeholder' => '(Alle)',
             'label' => false,
-            'choices' => array_flip(\FleetAction::$statusCode),
+            'choices' => array_flip(FleetStatus::all()),
         ]);
     }
 

@@ -19,6 +19,17 @@ class ShipSearch extends AbstractSearch
         return $this;
     }
 
+    /**
+     * @param int[] $ids
+     */
+    public function ids(array $ids): ShipSearch
+    {
+        $this->parts[] = "ship_id IN(:ids)";
+        $this->stringArrayParameters['ids'] = $ids;
+
+        return $this;
+    }
+
     public function nameLike(string $name): ShipSearch
     {
         $this->parts[] = "ship_name LIKE :nameLike";

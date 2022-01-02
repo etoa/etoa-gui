@@ -60,7 +60,7 @@ class MessageSearchComponent extends AbstractController
         }
 
         if (!is_array($this->getFormValues()['deleted']) && $this->getFormValues()['deleted'] !== '') {
-            $search->massmail((bool) $this->getFormValues()['deleted']);
+            $search->deleted((bool) $this->getFormValues()['deleted']);
         }
 
         if (!is_array($this->getFormValues()['archived']) && $this->getFormValues()['archived'] !== '') {

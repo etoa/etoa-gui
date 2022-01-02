@@ -1,0 +1,17 @@
+{% import 'components/reports/macros.html.twig' as macros %}
+
+<strong>KAMPFBERICHT</strong><br />
+vom Planeten {{ macros.entity(report.context.entities[report.entity1Id]) }}<br />
+<strong>Zeit:</strong> {{ formatTimestamp(report.timestamp) }}<br /><br />
+<table class="battleTable" width="100%">
+    <tr>
+        <td>
+            <strong>Angreifer:</strong>{{ macros.userList(report.data.users, report) }}
+        </td>
+        <td>
+            <strong>Verteidiger:</strong>{{ macros.userList(report.data.entityUsers, report) }}
+        </td>
+    </tr>
+</table>
+<br /><br />
+Der Kampf wurde abgebrochen, da momentan gerade eine Kampfsperre aktiv ist!
