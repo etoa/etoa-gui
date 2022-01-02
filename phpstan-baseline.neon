@@ -166,17 +166,7 @@ parameters:
 			path: src/Core/Database/PropertyAssign.php
 
 		-
-			message: "#^Argument of an invalid type EtoA\\\\Fleet\\\\Fleet supplied for foreach, only iterables are supported\\.$#"
-			count: 1
-			path: src/Fleet/FleetWithShips.php
-
-		-
 			message: "#^EtoA\\\\Fleet\\\\FleetWithShips\\:\\:__construct\\(\\) does not call parent constructor from EtoA\\\\Fleet\\\\Fleet\\.$#"
-			count: 1
-			path: src/Fleet/FleetWithShips.php
-
-		-
-			message: "#^Variable property access on \\$this\\(EtoA\\\\Fleet\\\\FleetWithShips\\)\\.$#"
 			count: 1
 			path: src/Fleet/FleetWithShips.php
 

@@ -2,6 +2,8 @@
 
 namespace EtoA\Fleet;
 
+use EtoA\Core\Database\PropertyAssign;
+
 class FleetWithShips extends Fleet
 {
     /** @var array{shipId: int, count: int}[] */
@@ -12,9 +14,7 @@ class FleetWithShips extends Fleet
      */
     public function __construct(Fleet $fleet, array $ships)
     {
-        foreach ($fleet as $property => $value) {
-            $this->{$property} = $value;
-        }
+        PropertyAssign::assign($fleet, $this);
 
         $this->ships = [];
         foreach ($ships as $key => $ship) {
