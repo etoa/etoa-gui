@@ -23,10 +23,6 @@ if (isset($page) && $page == "ships") {
     require_once __DIR__ . "/xajax/ships.xajax.php";
 }
 
-if (isset($page) && $page == "messages") {
-    require_once __DIR__ . "/xajax/messages.xajax.php";
-}
-
 if (isset($sub) && $sub == "defaultitems") {
     require_once __DIR__ . "/xajax/defaultitems.xajax.php";
 }
