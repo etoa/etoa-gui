@@ -1,0 +1,5 @@
+{% import 'components/reports/macros.html.twig' as macros %}
+
+Eine Flotte vom Planeten {{ macros.entity(report.context.entities[report.entity2Id]) }} hat das Ziel {{ macros.entity(report.context.entities[report.entity1Id]) }} um {{ formatTimestamp(report.timestamp) }} analysiert.<br /><br />
+<br /><strong>ROHSTOFFE:</strong><br />
+{{ macros.resourceTable(report.data.resources, report.context.resourceNames) }}

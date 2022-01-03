@@ -59,6 +59,8 @@ trait SearchComponentTrait
         $limit = min($total, $limit);
         $limit -= $limit % $this->perPage;
 
+        $this->limit = $limit;
+
         return $limit;
     }
 

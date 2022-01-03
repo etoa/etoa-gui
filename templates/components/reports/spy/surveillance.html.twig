@@ -1,0 +1,4 @@
+{% import 'components/reports/macros.html.twig' as macros %}
+
+Eine fremde Flotte vom Planeten {{ macros.entity(report.context.entities[report.entity2Id]) }} wurde in der Nähe deines Planeten {{ macros.entity(report.context.entities[report.entity1Id]) }} gesichtet!<br /><br />
+<strong>Spionageabwehr:</strong> {{ report.data.spyDefense }}%

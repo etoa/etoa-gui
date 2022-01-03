@@ -8,11 +8,29 @@ use EtoA\Core\AbstractRepository;
 
 class MessageRepository extends AbstractRepository
 {
-    public function count(): int
+    /**
+     * @return Message[]
+     */
+    public function search(MessageSearch $search, int $limit = null, int $offset = null): array
     {
-        return (int) $this->createQueryBuilder()
+        $data = $this->applySearchSortLimit($this->createQueryBuilder(), $search, null, $limit, $offset)
+            ->select('m.*', 'd.*')
+            ->from('messages', 'm')
+            ->innerJoin('m', 'message_data', 'd', 'd.id = m.message_id')
+            ->orderBy('m.message_read', 'ASC')
+            ->addOrderBy('m.message_timestamp', 'DESC')
+            ->execute()
+            ->fetchAllAssociative();
+
+        return array_map(fn (array $row) => Message::createFromArray($row), $data);
+    }
+
+    public function count(MessageSearch $search = null): int
+    {
+        return (int) $this->applySearchSortLimit($this->createQueryBuilder(), $search)
             ->select('COUNT(*)')
-            ->from('messages')
+            ->from('messages', 'm')
+            ->innerJoin('m', 'message_data', 'd', 'd.id = m.message_id')
             ->execute()
             ->fetchOne();
     }
@@ -385,7 +403,7 @@ class MessageRepository extends AbstractRepository
             ->where('message_id = :id')
             ->setParameters([
                 'id' => $id,
-                'deleted' => $deleted,
+                'deleted' => (int) $deleted,
             ]);
 
         if ($userToId !== null) {

@@ -1,0 +1,15 @@
+{% import 'components/reports/macros.html.twig' as macros %}
+
+<strong>Planet:</strong> {{ macros.entity(report.context.entities[report.entity1Id]) }}<br />
+<strong>Besitzer:</strong> {{ macros.user(report.opponentId, report) }}<br /><br />
+Dieser Planet wurde von einer Flotte, welche vom Planeten {{ macros.entity(report.context.entities[report.entity2Id]) }} stammt, übernommen!<br />
+Ein Invasionsschiff wurde bei der Übernahme aufgebraucht!<br /><br />
+<strong>SCHIFFE</strong><br />
+{% if report.data.ships %}
+    {{ macros.dataTable(report.data, report.context.shipNames) }}
+{% else %}
+    <i>Nichts vorhanden!</i><br />
+{% endif %}
+
+<br /><strong>WAREN</strong><br />
+{{ macros.resourceTable(report.data.resources, report.context.resourceNames) }}

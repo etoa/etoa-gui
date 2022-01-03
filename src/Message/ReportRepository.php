@@ -6,12 +6,16 @@ namespace EtoA\Message;
 
 use Doctrine\DBAL\Connection;
 use EtoA\Core\AbstractRepository;
+use EtoA\Message\ReportData\BattleReportData;
+use EtoA\Message\ReportData\MarketReportData;
+use EtoA\Message\ReportData\OtherReportData;
+use EtoA\Message\ReportData\SpyReportData;
 
 class ReportRepository extends AbstractRepository
 {
-    public function count(): int
+    public function count(ReportSearch $search = null): int
     {
-        return (int) $this->createQueryBuilder()
+        return (int) $this->applySearchSortLimit($this->createQueryBuilder(), $search)
             ->select('COUNT(*)')
             ->from('reports')
             ->execute()
@@ -65,7 +69,7 @@ class ReportRepository extends AbstractRepository
             ->execute()
             ->fetchAllAssociative();
 
-        return array_map(fn (array $row) => new Report($row), $data);
+        return array_map(fn (array $row) => Report::createFromArray($row), $data);
     }
 
     public function searchReport(ReportSearch $search): ?Report
@@ -78,18 +82,7 @@ class ReportRepository extends AbstractRepository
             ->execute()
             ->fetchAssociative();
 
-        return $data !== false ? new Report($data) : null;
-    }
-
-    public function countReports(ReportSearch $search): int
-    {
-        $qb = $this->createQueryBuilder()
-            ->select('COUNT(id)')
-            ->from('reports');
-
-        return (int) $this->applySearchSortLimit($qb, $search)
-            ->execute()
-            ->fetchOne();
+        return $data !== false ? Report::createFromArray($data) : null;
     }
 
     protected function addReport(string $type, int $userId, int $allianceId, ?string $content, int $entity1Id, int $entity2Id, int $opponentId): int
@@ -173,6 +166,19 @@ class ReportRepository extends AbstractRepository
             ->execute();
     }
 
+    public function setDeleted(int $id, bool $deleted): void
+    {
+        $this->createQueryBuilder()
+            ->update('reports')
+            ->set('deleted', ':deleted')
+            ->where('id = :id')
+            ->setParameters([
+                'id' => $id,
+                'deleted' => (int) $deleted,
+            ])
+            ->execute();
+    }
+
     /**
      * @param int[] $ids
      */
@@ -246,7 +252,7 @@ class ReportRepository extends AbstractRepository
     /**
      * @return ?array<string, mixed>
      */
-    public function getBattleData(int $id): ?array
+    public function getOneBattleData(int $id): ?array
     {
         $data = $this->getConnection()->fetchAssociative('SELECT * FROM reports_battle WHERE id = :id', ['id' => $id]);
 
@@ -254,9 +260,30 @@ class ReportRepository extends AbstractRepository
     }
 
     /**
+     * @param int[] $ids
+     * @return BattleReportData[]
+     */
+    public function getBattleData(array $ids): array
+    {
+        if (count($ids) === 0) {
+            return [];
+        }
+
+        $rows = $this->getConnection()->fetchAllAssociative('SELECT * FROM reports_battle WHERE id IN (:ids)', ['ids' => $ids], ['ids' => Connection::PARAM_INT_ARRAY]);
+
+        $map = [];
+        foreach ($rows as $row) {
+            $data = BattleReportData::createFromArray($row);
+            $map[$data->id] = $data;
+        }
+
+        return $map;
+    }
+
+    /**
      * @return ?array<string, mixed>
      */
-    public function getMarketData(int $id): ?array
+    public function getOneMarketData(int $id): ?array
     {
         $data = $this->getConnection()->fetchAssociative('SELECT * FROM reports_market WHERE id = :id', ['id' => $id]);
 
@@ -264,9 +291,30 @@ class ReportRepository extends AbstractRepository
     }
 
     /**
+     * @param int[] $ids
+     * @return MarketReportData[]
+     */
+    public function getMarketData(array $ids): array
+    {
+        if (count($ids) === 0) {
+            return [];
+        }
+
+        $rows = $this->getConnection()->fetchAllAssociative('SELECT * FROM reports_market WHERE id IN (:ids)', ['ids' => $ids], ['ids' => Connection::PARAM_INT_ARRAY]);
+
+        $map = [];
+        foreach ($rows as $row) {
+            $data = MarketReportData::createFromArray($row);
+            $map[$data->id] = $data;
+        }
+
+        return $map;
+    }
+
+    /**
      * @return ?array<string, mixed>
      */
-    public function getOtherData(int $id): ?array
+    public function getOneOtherData(int $id): ?array
     {
         $data = $this->getConnection()->fetchAssociative('SELECT * FROM reports_other WHERE id = :id', ['id' => $id]);
 
@@ -274,12 +322,54 @@ class ReportRepository extends AbstractRepository
     }
 
     /**
+     * @param int[] $ids
+     * @return OtherReportData[]
+     */
+    public function getOtherData(array $ids): array
+    {
+        if (count($ids) === 0) {
+            return [];
+        }
+
+        $rows = $this->getConnection()->fetchAllAssociative('SELECT * FROM reports_other WHERE id IN (:ids)', ['ids' => $ids], ['ids' => Connection::PARAM_INT_ARRAY]);
+
+        $map = [];
+        foreach ($rows as $row) {
+            $data = OtherReportData::createFromArray($row);
+            $map[$data->id] = $data;
+        }
+
+        return $map;
+    }
+
+    /**
      * @return ?array<string, mixed>
      */
-    public function getSpyData(int $id): ?array
+    public function getOneSpyData(int $id): ?array
     {
         $data = $this->getConnection()->fetchAssociative('SELECT * FROM reports_spy WHERE id = :id', ['id' => $id]);
 
         return $data !== false ? $data : null;
+    }
+
+    /**
+     * @param int[] $ids
+     * @return SpyReportData[]
+     */
+    public function getSpyData(array $ids): array
+    {
+        if (count($ids) === 0) {
+            return [];
+        }
+
+        $rows = $this->getConnection()->fetchAllAssociative('SELECT * FROM reports_spy WHERE id IN (:ids)', ['ids' => $ids], ['ids' => Connection::PARAM_INT_ARRAY]);
+
+        $map = [];
+        foreach ($rows as $row) {
+            $data = SpyReportData::createFromArray($row);
+            $map[$data->id] = $data;
+        }
+
+        return $map;
     }
 }

@@ -45,7 +45,7 @@ class SpyReport extends Report
         global $app;
         /** @var ReportRepository $reportRepository */
         $reportRepository = $app[ReportRepository::class];
-        $arr = $reportRepository->getBattleData($this->id);
+        $arr = $reportRepository->getOneSpyData($this->id);
         if ($arr !== null) {
             $this->subType = $arr['subtype'];
             $this->buildings = $arr['buildings'];

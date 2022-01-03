@@ -1,0 +1,11 @@
+{% import 'components/reports/macros.html.twig' as macros %}
+
+Eine Flotte vom Planeten {{ macros.entity(report.context.entities[report.entity2Id]) }} hat das Ziel {{ macros.entity(report.context.entities[report.entity1Id]) }} um {{ formatTimestamp(report.timestamp) }} erreicht und Rohstoffe gesammelt.<br />
+<br /><strong>ROHSTOFFE</strong><br />
+{{ macros.resourceTable(report.data.resources, report.context.resourceNames) }}
+<br/>
+{% if report.data.ships %}
+<br />Einige Schiffe deiner Flotte verirrten sich in einem Interstellarer Gasnebel und konnten nicht mehr gefunden werden:<br />
+{{ macros.dataTable(report.data.ships, report.context.shipNames) }}
+<br />
+{% endif %}

@@ -1,0 +1,4 @@
+{% import 'components/reports/macros.html.twig' as macros %}
+
+Auf deinem Planeten {{ macros.entity(report.context.entities[report.entity1Id]) }} wurde ein Spionageversuch vom Planeten {{ macros.entity(report.context.entities[report.entity2Id]) }} erfolgreich verhindert!<br /><br />
+<strong>Spionageabwehr:</strong> {{ report.data.spyDefense }}%

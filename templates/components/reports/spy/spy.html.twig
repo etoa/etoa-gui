@@ -1,0 +1,49 @@
+{% import 'components/reports/macros.html.twig' as macros %}
+
+<strong>Planet:</strong> {{ macros.entity(report.context.entities[report.entity1Id]) }}<br />
+<strong>Besitzer:</strong> {{ macros.user(report.opponentId, report) }}<br />
+
+{% if report.data.showBuildings %}
+    <br /><strong>GEBÄUDE:</strong><br />
+    {% if report.data.buildings %}
+        {{ macros.dataTable(report.data.buildings, report.context.buildingNames) }}
+    {% else %}
+        <i>Nichts vorhanden!</i><br />
+    {% endif %}
+{% endif %}
+
+{% if report.data.showTechnologies %}
+    <br /><strong>TECHNOLOGIEN:</strong><br />
+    {% if report.data.technologies %}
+        {{ macros.dataTable(report.data.technologies, report.context.technologyNames) }}
+    {% else %}
+        <i>Nichts vorhanden!</i><br />
+    {% endif %}
+{% endif %}
+
+{% if report.data.showShips %}
+    <br /><strong>SCHIFFE:</strong><br />
+    {% if report.data.ships %}
+        {{ macros.dataTable(report.data.ships, report.context.shipNames) }}
+    {% else %}
+        <i>Nichts vorhanden!</i><br />
+    {% endif %}
+{% endif %}
+
+
+{% if report.data.showDefense %}
+    <br /><strong>VERTEIDIGUNG:</strong><br />
+    {% if report.data.defense %}
+        {{ macros.dataTable(report.data.defense, report.context.defenseNames) }}
+    {% else %}
+        <i>Nichts vorhanden!</i><br />
+    {% endif %}
+{% endif %}
+
+{% if report.data.resources.sum > 0 %}
+    <br /><strong>ROHSTOFFE:</strong><br />
+    {{ macros.resourceTable(report.data.resources, report.context.resourceNames) }}
+{% endif %}
+
+<br /><strong>Spionageabwehr:</strong> {{ report.data.spyDefense }}%<br />
+<strong>Tarnung:</strong> {{ report.data.coverage }}%

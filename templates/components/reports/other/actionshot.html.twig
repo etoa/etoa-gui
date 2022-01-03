@@ -1,0 +1,3 @@
+{% import 'components/reports/macros.html.twig' as macros %}
+
+Eine Flotte vom Planeten {{ macros.entity(report.context.entities[report.entity2Id]) }} wurde beim Ziel {{ macros.entity(report.context.entities[report.entity1Id]) }} beim durchführen der Aktion {{ report.context.fleetActions[report.data.actionCode] }} abgeschossen.

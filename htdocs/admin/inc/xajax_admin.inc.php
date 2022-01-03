@@ -15,16 +15,12 @@ if (isset($page) && $page == "chat") {
     require_once __DIR__ . "/xajax/chat.xajax.php";
 }
 
-if (isset($page) && ($page == "user" || $page == "sendmessage")) {
+if (isset($page) && ($page == "user")) {
     require_once __DIR__ . "/xajax/user.xajax.php";
 }
 
 if (isset($page) && $page == "ships") {
     require_once __DIR__ . "/xajax/ships.xajax.php";
-}
-
-if (isset($page) && $page == "messages") {
-    require_once __DIR__ . "/xajax/messages.xajax.php";
 }
 
 if (isset($sub) && $sub == "defaultitems") {

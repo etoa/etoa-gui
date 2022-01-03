@@ -1,0 +1,10 @@
+{% import 'components/reports/macros.html.twig' as macros %}
+
+Du hast folgendes Angebot (#{{ report.data.recordId }}) im {{ macros.marketLink(report.context.entities[report.entity1Id]) }}
+auf {{ macros.entity(report.context.entities[report.entity1Id]) }} an {{ macros.user(report.opponentId, report) }} verkauft:<br/><br/>
+{{ formatNumber(report.data.shipCount) }} <b>{{ report.context.shipNames[report.data.shipId] }}</b> <br/><br/>
+zu einem Preis von: <br/><br/>
+{{ macros.resourceTable(report.data.buy, report.context.resourceNames) }}
+
+Die Waren werden vom Marktplatz nach {{ macros.entity(report.context.entities[report.entity1Id]) }} geliefert.
+{{ macros.fleet2Landing(report) }}

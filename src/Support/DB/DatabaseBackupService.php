@@ -72,13 +72,13 @@ class DatabaseBackupService
                 if (!isUnixOS()) {
                     throw new Exception("Das Laden von GZIP SQL Dateien wird nur auf UNIX Systemen unterstützt!");
                 }
-                $cmd = "gunzip < " . $file . ".gz | " . $mysql .
+                $cmd = "gunzip < " . $file . " | " . $mysql .
                     " -u" . $this->databaseManagerRepository->getUser() .
                     " -p" . $this->databaseManagerRepository->getPassword() .
                     " -h" . $this->databaseManagerRepository->getHost() .
                     " -P" . $this->databaseManagerRepository->getPort() .
-                    " --default-character-set=utf8
-                    " . $this->databaseManagerRepository->getDatabaseName();
+                    " --default-character-set=utf8 " .
+                    $this->databaseManagerRepository->getDatabaseName();
             } else {
                 $cmd = $mysql .
                     " -u" . $this->databaseManagerRepository->getUser() .

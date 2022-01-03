@@ -57,7 +57,7 @@ class OtherReport extends Report
         global $app;
         /** @var ReportRepository $reportRepository */
         $reportRepository = $app[ReportRepository::class];
-        $arr = $reportRepository->getBattleData($this->id);
+        $arr = $reportRepository->getOneOtherData($this->id);
         if ($arr !== null) {
             $this->subType = $arr['subtype'];
             $this->ships = $arr['ships'];

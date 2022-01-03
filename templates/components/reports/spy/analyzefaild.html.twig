@@ -1,0 +1,3 @@
+{% import 'components/reports/macros.html.twig' as macros %}
+
+Eine Flotte vom Planeten {{ macros.entity(report.context.entities[report.entity2Id]) }} versuchte das Ziel {{ macros.entity(report.context.entities[report.entity1Id]) }} um {{ formatTimestamp(report.timestamp) }} zu analysiert, kehrte jedoch erfolglos wieder zurück.<br />

@@ -1,0 +1,84 @@
+{% macro entity(entity) %}
+    {{ entity.toString() }}
+{% endmacro %}
+
+{% macro user(userId, report) %}
+    {{ report.context.userNicks[userId]|default('Niemand') }}
+{% endmacro %}
+
+{% macro userList(users, report) %}
+    {% for userId in users %}
+        {{ report.context.userNicks[userId]|default('Niemand') }}{% if not loop.last %},{% endif %}
+    {% endfor %}
+{% endmacro %}
+
+{% macro startTargetTimeMission(report) %}
+    {% import _self as macros %}
+    <strong>Ziel: </strong>{{ macros.entity(report.context.entities[report.entity1Id]) }}<br />
+    <strong>Start: </strong>
+    {% if report.type == 'other' and report.data.subtype == 'market' %}
+        Marktplatz
+    {% elseif report.type == 'other' and report.data.subtype == 'delivery' %}
+        Allianzbasis
+    {% else %}
+        {{ macros.entity(report.context.entities[report.entity2Id]) }}
+    {% endif %}
+    <br />
+    <strong>Zeit: </strong>{{ formatTimestamp(report.timestamp) }}<br />
+    <strong>Auftrag: </strong>{{ report.context.fleetActions[report.data.action] }} [{{ report.context.fleetStatus[report.data.status] }}]<br />
+{% endmacro %}
+
+{% macro resourceTable(resources, resourceNames) %}
+    <table>
+        {% for k, resource in resourceNames %}
+            <tr>
+                <td>{{ resource }}</td>
+                <td style="text-align:right;">{{ formatNumber(resources.get(k)) }} </td>
+            </tr>
+        {% endfor %}
+        <tr>
+            <td>Bewohner </td>
+            <td style="text-align:right;"> {{ formatNumber(resources.people) }}</td>
+        </tr>
+    </table>
+{% endmacro %}
+
+{% macro dataTable(entries, names) %}
+    <table>
+        {% for id, count in entries %}
+            <tr>
+                <td>{{ names[id] }}</td>
+                <td style="text-align:right;">{{ formatNumber(count) }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endmacro %}
+
+{% macro marketLink(entity) %}
+    <a href="?page=market&mode=user_sell&change_entity={{ entity.id }}">Marktplatz<a>
+{% endmacro %}
+
+{% macro marketResourceTable(report) %}
+    <table class="tb" style="width:auto;margin:5px;">
+        <tr>
+            <th style="width:100px;">Rohstoff:</th>
+            <th>Angebot:</th>
+            <th>Preis:</th>
+        </tr>
+        {% for k, resource in report.context.resourceNames %}
+            {% if report.data.sell.get(k) + report.data.buy.get(k) > 0 %}
+                <tr>
+                    <td>{{ resource }}</td>
+                    <td>{{ formatNumber(report.data.sell.get(k)) }}</td>
+                    <td>{{ formatNumber(report.data.buy.get(k)) }}</td>
+                </tr>
+            {% endif %}
+        {% endfor %}
+    </table>
+{% endmacro %}
+
+{% macro fleet2Landing(report) %}
+    {% if report.context.fleets[report.data.fleetId2] is defined %}
+        Landung: {{ formatTimestamp(report.context.fleets[report.data.fleetId2].landTime) }}
+    {% endif %}
+{% endmacro %}

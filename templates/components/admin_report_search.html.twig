@@ -1,0 +1,22 @@
+{% extends 'components/base_search.html.twig' %}
+
+    {% block labeling %}
+        <p><b>Legende:</b> <span style="color:#0f0;">Ungelesen</span>, <span style="color:#f90;">Gelöscht</span>, <span style="font-style:italic;">Archiviert</span></p>
+    {% endblock %}
+
+{% block data %}
+    <tr>
+        <th>Datum</th>
+        <th>Kategorie</th>
+        <th>Empfänger</th>
+        <th>Betreff</th>
+        <th>Aktion</th>
+    </tr>
+    {% for report in search.entries %}
+        {{ component('admin_report_view', {
+            report: report,
+            type: this.types[report.type],
+            userNick: this.users[report.userId]|default('-')
+        }) }}
+    {% endfor %}
+{% endblock %}

@@ -1,0 +1,7 @@
+{% import 'components/reports/macros.html.twig' as macros %}
+
+Du hast das Angebot #{{ report.data.recordId }} im {{ macros.marketLink(report.context.entities[report.entity1Id]) }}
+auf {{ macros.entity(report.context.entities[report.entity1Id]) }} abgebrochen!<br/><br/>
+{{ macros.marketResourceTable(report) }}
+
+Es wurden {{ (report.data.factor * 100)|round }}% der Rohstoffe zurückerstattet.

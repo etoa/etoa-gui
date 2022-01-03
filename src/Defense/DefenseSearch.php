@@ -11,6 +11,17 @@ class DefenseSearch extends AbstractSearch
         return new DefenseSearch();
     }
 
+    /**
+     * @param int[] $ids
+     */
+    public function ids(array $ids): self
+    {
+        $this->parts[] = 'def_id IN(:ids)';
+        $this->stringArrayParameters['ids'] = $ids;
+
+        return $this;
+    }
+
     public function buildable(): self
     {
         $this->parts[] = 'def_buildable = 1';

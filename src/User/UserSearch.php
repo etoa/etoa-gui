@@ -192,6 +192,17 @@ class UserSearch extends AbstractSearch
         return $this;
     }
 
+    /**
+     * @param int[] $ids
+     */
+    public function ids(array $ids): self
+    {
+        $this->parts[] = "user_id IN(:ids)";
+        $this->stringArrayParameters['ids'] = $ids;
+
+        return $this;
+    }
+
     public function notUser(int $userId): self
     {
         $this->parts[] = "user_id <> :notUserId";

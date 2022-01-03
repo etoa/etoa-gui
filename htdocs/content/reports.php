@@ -85,7 +85,7 @@ if ($type == "all") {
     $reports = Report::find($search, REPORT_LIMIT, $limit);
 }
 
-$totalReportsCount = $reportRepository->countReports($search);
+$totalReportsCount = $reportRepository->count($search);
 
 // Check if reports available
 if (count($reports) > 0) {
