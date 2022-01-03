@@ -78,16 +78,15 @@ class PlanetRepository extends AbstractRepository
     /**
      * @return Planet[]
      */
-    public function getPlanetsAssignedToUsers(): array
+    public function search(PlanetSearch $search): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->applySearchSortLimit($this->createQueryBuilder(), $search)
             ->select('*')
-            ->from('planets')
-            ->where('planet_user_id > 0')
+            ->from('planets', 'p')
             ->execute()
             ->fetchAllAssociative();
 
-        return array_map(fn ($row) => new Planet($row), $data);
+        return array_map(fn (array $row) => new Planet($row), $data);
     }
 
     /**
@@ -100,22 +99,6 @@ class PlanetRepository extends AbstractRepository
             ->from('planets')
             ->where('planet_user_main = 1')
             ->andWhere('planet_user_id > 0')
-            ->execute()
-            ->fetchAllAssociative();
-
-        return array_map(fn ($row) => new Planet($row), $data);
-    }
-
-    /**
-     * @return Planet[]
-     */
-    public function getMainPlanetsWithoutOwner(): array
-    {
-        $data = $this->createQueryBuilder()
-            ->select('*')
-            ->from('planets')
-            ->where('planet_user_main = 1')
-            ->andWhere('planet_user_id = 0')
             ->execute()
             ->fetchAllAssociative();
 

@@ -27,8 +27,6 @@ $request = Request::createFromGlobals();
 
 if ($sub == "uni") {
     universe();
-} elseif ($sub == "galaxycheck") {
-    galaxyCheck();
 } elseif ($sub == "planet_types") {
     planetTypes($app, $request);
 } elseif ($sub == "sol_types") {
@@ -43,11 +41,6 @@ function universe()
     global $page;
     global $sub;
     require("galaxy/universe.php");
-}
-
-function galaxyCheck()
-{
-    require("galaxy/galaxycheck.php");
 }
 
 function planetTypes(Container $app, Request $request)
