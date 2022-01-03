@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace EtoA\Galaxy\Event;
+namespace EtoA\Universe\Event;
 
 use Symfony\Contracts\EventDispatcher\Event;
 

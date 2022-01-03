@@ -2,7 +2,7 @@
 
 namespace EtoA\Quest\Progress\Functions;
 
-use EtoA\Galaxy\Event\StarRename;
+use EtoA\Universe\Event\StarRename;
 use LittleCubicleGames\Quests\Entity\TaskInterface;
 
 class RenameStarTest extends AbstractProgressFunctionTestCase
