@@ -45,7 +45,7 @@ class DatabaseResetController extends AbstractAdminController
             }
         }
 
-        return $this->render('admin/database/reset.html.twig');
+        return $this->render('admin/database/reset-full.html.twig');
     }
 
     private function truncate(): void

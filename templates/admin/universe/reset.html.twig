@@ -1,0 +1,16 @@
+{% extends 'admin/layout/admin.html.twig' %}
+
+{% block content %}
+    <h2>Universum zurücksetzen</h2>
+    <form method="post">
+        {% if planetWithUserCount %}
+            <p>
+                Es sind bereits Planeten im Besitz von Spielern. Du kannst das Universum zurücksetzen, jedoch werden
+                sämtliche Gebäude, Schiffe, Forschungen etc von den Spielern gelöscht.
+            </p>
+        {% else %}
+            <p>Es sind noch keine Planeten im Besitz von Spielern. Das Universum kann ohne Probleme gelöscht werden.</p>
+        {% endif %}
+        <input onclick="return confirm('Reset wirklich durchführen?')" type="submit" value="Universum zurücksetzen" />
+    </form>
+{% endblock %}

@@ -53,14 +53,6 @@ if ($request->request->has('submit_create_universe')) {
     createUniverse($request, $config);
 } elseif ($request->request->has('submit_expansion_universe')) {
     extendUniverse($config);
-} elseif ($request->request->has('submit_reset')) {
-    resetUniverse();
-} elseif ($request->request->has('submit_galaxy_reset')) {
-    postResetUniverse($universeResetService);
-} elseif ($request->request->has('submit_reset2')) {
-    postResetRound($universeResetService);
-} elseif ($request->request->has('submit_addstars')) {
-    addStars($request, $universeGenerator);
 } else {
     universeIndex(
         $request,
@@ -155,49 +147,6 @@ function extendUniverse(ConfigurationService $config): void
 
     echo "<input onclick=\"return confirm('Universum wirklich erweitern?')\" type=\"submit\" name=\"submit_expansion_universe2\" value=\"Erweitern\" >";
     echo "</form>";
-}
-
-function resetUniverse(): void
-{
-    global $page;
-    global $sub;
-
-    echo "<h2>Runde zurücksetzen</h2>";
-    echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"post\">";
-    echo "Runde wirklich zurücksetzen?<br/><br/>";
-    echo "<input onclick=\"return confirm('Reset wirklich durchführen?')\" type=\"submit\" name=\"submit_reset2\" value=\"Ja, die gesamte Runde zurücksetzen\" >";
-    echo "</form>";
-}
-
-function postResetUniverse(UniverseResetService $universeResetService): void
-{
-    global $page;
-    global $sub;
-
-    $universeResetService->reset(false);
-    echo "Das Universum wurde zurückgesetzt!<br/><br/>" . button("Weiter", "?page=$page&amp;sub=$sub");
-}
-
-function postResetRound(UniverseResetService $universeResetService): void
-{
-    global $page;
-    global $sub;
-
-    $universeResetService->reset();
-    echo "Die Runde wurde zurückgesetzt!<br/><br/>" . button("Weiter", "?page=$page&amp;sub=$sub");
-}
-
-function addStars(Request $request, UniverseGenerator $universeGenerator): void
-{
-    global $page;
-    global $sub;
-
-    $n = $request->request->getInt('number_of_stars');
-    if ($n < 0) {
-        $n = 0;
-    }
-    echo $universeGenerator->addStarSystems($n);
-    echo " Sternensysteme wurden hinzugefügt!<br/><br/>" . button("Weiter", "?page=$page&amp;sub=$sub");
 }
 
 function universeIndex(
@@ -337,47 +286,6 @@ function universeIndex(
           alignObjectsInSystemPercentage();
         </script>";
 
-            echo "<br/><input type=\"submit\" name=\"submit_create_universe\" value=\"Weiter\" >";
-            echo "</form><br/>";
-        } else {
-            echo "<h2>Übersicht</h2>";
-
-            $sectorDimensions = $cellRepo->getSectorDimensions();
-            $cellDimensions = $cellRepo->getCellDimensions();
-
-            tableStart("Informationen", GalaxyMap::WIDTH);
-            echo "<tr><th>Sektoren</th><td>" . $sectorDimensions['x'] . " x " . $sectorDimensions['y'] . "</td></tr>";
-            echo "<tr><th>Zellen pro Sektor</th><td>" . $cellDimensions['x'] . " x " . $cellDimensions['y'] . "</td></tr>";
-            echo "<tr><th>Sterne</th><td>" . StringUtils::formatNumber($starRepo->count()) . "</td></tr>";
-            echo "<tr><th>Planeten</th><td>" . StringUtils::formatNumber($planetRepo->count()) . "</td></tr>";
-            echo "<tr><th>Asteroidenfelder</th><td>" . StringUtils::formatNumber($asteroidRepo->count()) . "</td></tr>";
-            echo "<tr><th>Nebel</th><td>" . StringUtils::formatNumber($nebulaRepo->count()) . "</td></tr>";
-            echo "<tr><th>Wurmlöcher</th><td>" . StringUtils::formatNumber($wormholeRepo->count()) . "</td></tr>";
-            echo "<tr><th>Leerer Raum</th><td>" . StringUtils::formatNumber($emptySpaceRepo->count()) . "</td></tr>";
-            tableEnd();
-
-            echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"post\">";
-
-            echo "<h3>Sternensysteme hinzufügen</h3>";
-            echo "Hiermit können <input style=\"width:3em\" type=\"number\" name=\"number_of_stars\" value=\"0\" > Sternensysteme hinzugfügt werden.<br/><br/>";
-            echo "<input type=\"submit\" name=\"submit_addstars\" value=\"Ja, Sternensysteme hinzufügen\" ><br><br>";
-
-            echo "<h3>Universum löschen</h3>";
-            if ($planetRepo->countWithUser() == 0) {
-                echo "Es sind noch keine Planeten im Besitz von Spielern. Das Universum kann ohne Probleme gelöscht werden.<br/><br/>
-                    <input type=\"submit\" name=\"submit_galaxy_reset\" value=\"Universum zurücksetzen\" ><br/>";
-            } else {
-                echo "Es sind bereits Planeten im Besitz von Spielern. Du kannst das Universum zurücksetzen, jedoch werden
-                    sämtliche Gebäude, Schiffe, Forschungen etc von den Spielern gelöscht.<br/><br/>
-                    <input type=\"submit\" name=\"submit_galaxy_reset\" value=\"Universum zurücksetzen\" onclick=\"return confirm('Universum wirklich zurücksetzen? ALLE Einheiten der Spieler werden gelöscht, jedoch keine Spieleraccounts!')\"><br/>";
-            }
-
-            // Reset
-            echo "<h3>Runde komplett zurücksetzen</h3>";
-            echo "Hiermit kann die gesamte Runde zurückgesetzt werden (User, Allianzen, Planeten).<br/><br/>";
-            echo "<input type=\"submit\" name=\"submit_reset\" value=\"Ja, die gesamte Runde zurücksetzen\" ><br><br>";
-
-            echo "</form>";
         }
     }
 }
