@@ -48,9 +48,9 @@
 
     <h3>Universum löschen</h3>
     <p>Hiermit kann das Universum zurückgesetzt werden (Schiffe, Gebäude, Planeten). User und Allianzen bleiben jedoch bestehen.</p>
-    <button type="button" onclick="window.location={{ path('admin.universe.reset.universe') }}">Universum zurücksetzen</button>
+    <button type="button" onclick="window.location='{{ path('admin.universe.reset.universe') }}'">Universum zurücksetzen</button>
 
     <h3>Runde komplett zurücksetzen</h3>
     <p>Hiermit kann die gesamte Runde zurückgesetzt werden (User, Allianzen, Planeten).</p>
-    <button type="button" onclick="window.location={{ path('admin.universe.reset.full') }}">Ja, die gesamte Runde zurücksetzen</button>
+    <button type="button" onclick="window.location='{{ path('admin.universe.reset.full') }}'">Ja, die gesamte Runde zurücksetzen</button>
 {% endblock %}

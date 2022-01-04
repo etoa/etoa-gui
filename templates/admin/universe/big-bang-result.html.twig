@@ -1,0 +1,15 @@
+{% extends 'admin/layout/admin.html.twig' %}
+
+{% block content %}
+    <h1>Galaxie</h1>
+    <h2>Urknall - Schritt 3/3</h2>
+
+    {% for line in output %}
+        <p>{{ line|raw }}</p>
+    {% endfor %}
+
+    <img src="/misc/map.image.php?req_admin" alt="Galaxiekarte" usemap="#Galaxy" style="border:none;"/>
+    <p>
+        <input type="button" value="Weiter" onclick="document.location='{{ path('admin.universe.edit') }}'" />
+    </p>
+{% endblock %}

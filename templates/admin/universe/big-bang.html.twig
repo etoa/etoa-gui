@@ -1,0 +1,37 @@
+{% extends 'admin/layout/admin.html.twig' %}
+
+{% block content %}
+    <h1>Galaxie</h1>
+    <h2>Urknall - Schritt 2/3</h2>
+
+    <h4>Systfemanordnung</h4>
+    <form method="post">
+        <table>
+            <tr>
+                <th>Dimension:</th>
+                <td>{{ xDimensions }} x {{ yDimensions }} Zellen</td>
+            </tr>
+            <tr>
+                <th>Karte:</th>
+                <td>
+                    <input type="radio" name="map_image" value="" checked="checked" />
+                    <img style="width:{{ xDimensions }}px;height:{{ yDimensions }}px;" src="/images/galaxylayout_random.png" /> Zufällig
+                    {% for layout in layouts  %}
+                        <div>
+                            <input type="radio" name="map_image" value="{{ layout }}" />
+                            <img src="/images/galaxylayouts/{{ layout }}" alt="{{ layout }}" /> {{ layout }}
+                        </div>
+                    {% endfor %}
+                </td>
+            </tr>
+            <tr>
+                <th>Genauigkeit:</th>
+                <td><input type="number" name="map_precision" value="95" size="2" />%</td>
+            </tr>
+        </table>
+
+        <p>
+            <input onclick="return confirm('Universum wirklich erstellen?')" type="submit" name="create" value="Weiter" >
+        </p>
+    </form>
+{% endblock %}
