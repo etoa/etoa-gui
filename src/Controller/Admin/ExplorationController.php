@@ -19,7 +19,7 @@ class ExplorationController extends AbstractAdminController
     }
 
     /**
-     * @Route("/admin/galaxy/exploration/", name="admin.galaxy.exploration")
+     * @Route("/admin/universe/exploration/", name="admin.universe.exploration")
      */
     public function overview(): Response
     {
@@ -28,20 +28,20 @@ class ExplorationController extends AbstractAdminController
             $this->addFlash('error', 'Keine Benutzer vorhanden!');
         }
 
-        return $this->render('admin/galaxy/exploration.html.twig', [
+        return $this->render('admin/universe/exploration.html.twig', [
             'users' => $users,
             'user' => null,
         ]);
     }
 
     /**
-     * @Route("/admin/galaxy/exploration/user", name="admin.galaxy.exploration.user")
+     * @Route("/admin/universe/exploration/user", name="admin.universe.exploration.user")
      */
     public function user(Request $request): Response
     {
         $userId = $request->query->getInt('userId');
         if ($userId === 0) {
-            return $this->redirectToRoute('admin.galaxy.exploration');
+            return $this->redirectToRoute('admin.universe.exploration');
         }
 
         $user = $this->userRepository->getUser($userId);

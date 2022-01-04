@@ -12,7 +12,7 @@ class GalaxyMapControllerTest extends SymfonyWebTestCase
 
         $this->loginAdmin($client);
 
-        $client->request('GET', '/admin/galaxy/map');
+        $client->request('GET', '/admin/universe/map');
 
         $this->assertSame(200, $client->getResponse()->getStatusCode(), $client->getResponse()->getContent());
     }

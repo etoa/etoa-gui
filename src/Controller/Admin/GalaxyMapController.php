@@ -23,7 +23,7 @@ class GalaxyMapController extends AbstractAdminController
     }
 
     /**
-     * @Route("/admin/galaxy/map", name="admin.galaxy.map")
+     * @Route("/admin/universe/map", name="admin.galaxy.map")
      */
     public function view(Request $request): Response
     {
@@ -62,7 +62,7 @@ class GalaxyMapController extends AbstractAdminController
             $this->addFlash('error', $e->getMessage());
         }
 
-        return $this->render('admin/galaxy/map.html.twig', [
+        return $this->render('admin/universe/map.html.twig', [
             'mapSectors' => $mapsectors,
         ]);
     }
