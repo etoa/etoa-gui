@@ -1,0 +1,19 @@
+{% extends 'admin/layout/admin.html.twig' %}
+
+{% block content %}
+    <h1>Raumobjekte (Entitäten)</h1>
+    <h3>Raumobjekt {{ entity.toString() }} bearbeiten</h3>
+
+    <p>
+        {% if entity.id > 1 %}
+            {{ button("<< Vorheriges Objekt", path('admin.universe.entity', {id: entity.id - 1})) }}
+        {% endif %}
+        Objekt {{ entity.id }}
+
+        {{ button("Nächstes Objekt >>", path('admin.universe.entity', {id: entity.id + 1})) }}
+
+        {{ button("Alle Objekte dieser Zelle/dieses Systems anzeigen", path('admin.universe.entities', {cell: entity.cellId})) }}
+    </p>
+
+
+{% endblock %}

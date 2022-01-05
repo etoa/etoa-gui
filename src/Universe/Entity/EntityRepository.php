@@ -205,9 +205,9 @@ class EntityRepository extends AbstractRepository
     /**
      * @return EntityLabel[]
      */
-    public function searchEntityLabels(EntitySearch $search, EntityLabelSort $sort = null, int $limit = null): array
+    public function searchEntityLabels(EntitySearch $search, EntityLabelSort $sort = null, int $limit = null, int $offset = null): array
     {
-        $data = $this->entityLabelQuerBuilder($search, $sort, $limit)
+        $data = $this->entityLabelQuerBuilder($search, $sort, $limit, $offset)
             ->execute()
             ->fetchAllAssociative();
 
@@ -223,9 +223,9 @@ class EntityRepository extends AbstractRepository
         return $data !== false ? new EntityLabel($data) : null;
     }
 
-    private function entityLabelQuerBuilder(EntitySearch $search, EntityLabelSort $sort = null, int $limit = null): QueryBuilder
+    private function entityLabelQuerBuilder(EntitySearch $search, EntityLabelSort $sort = null, int $limit = null, int $offset = null): QueryBuilder
     {
-        return $this->getEntityCoordinatesQueryBuilder($search, $sort, $limit)
+        return $this->getEntityCoordinatesQueryBuilder($search, $sort, $limit, $offset)
             ->addSelect('planets.planet_name, planets.planet_user_main, planets.planet_type_id as planet_type, planets.planet_image as planet_image')
             ->addSelect('stars.name as star_name, stars.type_id as star_type')
             ->addSelect('wormholes.persistent as wormhole_persistent, wormholes.target_id as wormhole_target')
@@ -247,9 +247,9 @@ class EntityRepository extends AbstractRepository
             ->fetchOne();
     }
 
-    private function getEntityCoordinatesQueryBuilder(EntitySearch $search = null, AbstractSort $sort = null, int $limit = null): QueryBuilder
+    private function getEntityCoordinatesQueryBuilder(EntitySearch $search = null, AbstractSort $sort = null, int $limit = null, int $offset = null): QueryBuilder
     {
-        return $this->applySearchSortLimit($this->createQueryBuilder(), $search, $sort, $limit)
+        return $this->applySearchSortLimit($this->createQueryBuilder(), $search, $sort, $limit, $offset)
             ->select(
                 'e.id',
                 'c.id as cid',

@@ -70,16 +70,6 @@ $id = $request->query->getInt('id');
 if ($id > 0) {
     $entity = $entityRepo->findIncludeCell($id);
     if ($entity !== null) {
-        echo "<h2>Raumobjekt " . $entity->toString() . " bearbeiten</h2>";
-        if ($id > 1) {
-            echo button("&lt;&lt; Vorheriges Objekt", "?page=$page&amp;sub=$sub&id=" . ($id - 1) . "");
-        }
-        echo " &nbsp; Objekt " . $entity->id . " &nbsp; ";
-        echo button("Nächstes Objekt &gt;&gt;", "?page=$page&amp;sub=$sub&id=" . ($id + 1) . "") . "<br/><br/>
-        " . button("Alle Objekte dieser Zelle/dieses Systems anzeigen", "?page=$page" . searchQueryUrl("cell_s:=:" . $entity->sx . "_" . $entity->sy . ";cell_c:=:" . $entity->cx . "_" . $entity->cy)) . "
-        " . button("System dieses Objekts auf der Karte anzeigen", "?page=$page&amp;sub=map&amp;cell=" . $entity->cellId);
-        echo "<br/><br/>";
-
         if ($entity->code == EntityType::PLANET) {
             if ($request->request->has('save')) {
                 $planet = $planetRepo->find($id);

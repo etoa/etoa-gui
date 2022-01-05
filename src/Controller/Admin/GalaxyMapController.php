@@ -23,7 +23,7 @@ class GalaxyMapController extends AbstractAdminController
     }
 
     /**
-     * @Route("/admin/universe/map", name="admin.galaxy.map")
+     * @Route("/admin/universe/map", name="admin.universe.map")
      */
     public function view(Request $request): Response
     {

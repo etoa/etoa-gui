@@ -25,22 +25,12 @@ $userRepository = $app[UserRepository::class];
 /** @var Request $request */
 $request = Request::createFromGlobals();
 
-if ($sub == "uni") {
-    universe();
-} elseif ($sub == "planet_types") {
+if ($sub == "planet_types") {
     planetTypes($app, $request);
 } elseif ($sub == "sol_types") {
     starTypes($app, $request);
 } else {
     entities($config);
-}
-
-function universe()
-{
-    global $app;
-    global $page;
-    global $sub;
-    require("galaxy/universe.php");
 }
 
 function planetTypes(Container $app, Request $request)
