@@ -1,0 +1,105 @@
+{% extends 'admin/layout/admin.html.twig' %}
+
+{% block content %}
+    <h1>Galaxie</h1>
+    <h2>Urknall - Schritt 1/3</h2>
+
+    {{ form_start(form) }}
+    <h4>Galaxie</h4>
+    <table>
+        <tr>
+            <th>Sektoren</th>
+            <td>
+                <div class="inline-block">{{ form_row(form.numberOfSectors1) }}</div> x
+                <div class="inline-block">{{ form_row(form.numberOfSectors2) }}</div>
+            </td>
+        </tr>
+        <tr>
+            <th>Anzahl Zellen pro Sektor</th>
+            <td>
+                <div class="inline-block">{{ form_row(form.numberOfCells1) }}</div> x
+                <div class="inline-block">{{ form_row(form.numberOfCells2) }}</div>
+            </td>
+        </tr>
+    </table>
+
+    <h4>Verteilung der Systeme</h4>
+    <table data-controller="100-percent" data-action="input->100-percent#update">
+        <tr>
+            <th>Sternensysteme</th>
+            <td>
+                <div data-100-percent-target="field" class="inline-block">{{ form_row(form.starPercent) }}</div>%
+            </td>
+        </tr>
+        <tr>
+            <th>Asteroidenfelder</th>
+            <td>
+                <div data-100-percent-target="field" class="inline-block">{{ form_row(form.asteroidPercent) }}</div>%
+            </td>
+        </tr>
+        <tr>
+            <th>Nebelwolken</th>
+            <td>
+                <div data-100-percent-target="field" class="inline-block">{{ form_row(form.nebulaPercent) }}</div>%
+            </td>
+        </tr>
+        <tr>
+            <th>Wurmlöcher</th>
+            <td>
+                <div data-100-percent-target="field" class="inline-block">{{ form_row(form.wormholePercent) }}</div>%
+                davon <div class="inline-block">{{ form_row(form.wormholePersistentPercent) }}</div>%
+                persistent
+            </td>
+        </tr>
+        <tr>
+            <th>Leerer Raum</th>
+            <td>
+                <div data-100-percent-target="target" class="inline-block">{{ form_row(form.emptySpacePercent) }}</div>%
+            </td>
+        </tr>
+    </table>
+
+    <h4>Sternensystem</h4>
+    <table data-controller="100-percent" data-action="input->100-percent#update">
+        <tr>
+            <th>Objekte pro Sternensystem</th>
+            <td>
+                min <div class="inline-block">{{ form_row(form.numberOfPlanets1) }}</div>
+                max <div class="inline-block">{{ form_row(form.numberOfPlanets2) }}</div>
+            </td>
+        </tr>
+        <tr>
+            <th>Planeten</th>
+            <td>
+                <div data-100-percent-target="field" class="inline-block">{{ form_row(form.solarSystemPlanetPercent) }}</div>%
+            </td>
+        </tr>
+        <tr>
+            <th>Asteroidenfelder</th>
+            <td>
+                <div data-100-percent-target="field" class="inline-block">{{ form_row(form.solarSystemAsteroidPercent) }}</div>%
+            </td>
+        </tr>
+        <tr>
+            <th>Leerer Raum</th>
+            <td>
+                <div data-100-percent-target="target" class="inline-block">{{ form_row(form.solarSystemEmptySpacePercent) }}</div>%
+            </td>
+        </tr>
+    </table>
+
+    <h4>Planeten</h4>
+    <table>
+        <tr>
+            <th>Felder pro Planet</th>
+            <td>
+                min <div class="inline-block">{{ form_row(form.planetFields1) }}</div>
+                max <div class="inline-block">{{ form_row(form.planetFields2) }}</div>
+            </td>
+        </tr>
+    </table>
+
+    <p>{{ form_row(form.submit) }}</p>
+
+    {{ form_end(form) }}
+{% endblock %}

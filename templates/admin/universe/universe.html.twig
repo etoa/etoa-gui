@@ -1,0 +1,56 @@
+{% extends 'admin/layout/admin.html.twig' %}
+
+{% import 'admin/macros.html.twig' as macros %}
+
+{% block content %}
+    <h1>Galaxie</h1>
+
+    <h2>Übersicht</h2>
+
+    <h3>Informationen</h3>
+    <table>
+        <tr>
+            <th>Sektoren</th>
+            <td>{{ sectorDimensions.x }} x {{ sectorDimensions.y }}</td>
+        </tr>
+        <tr>
+            <th>Zellen pro Sektor</th>
+            <td>{{ cellDimensions.x }} x {{ cellDimensions.y }}</td>
+        </tr>
+        <tr>
+            <th>Sterne</th>
+            <td>{{ formatNumber(starCount) }}</td>
+        </tr>
+        <tr>
+            <th>Planeten</th>
+            <td>{{ formatNumber(planetCount) }}</td>
+        </tr>
+        <tr>
+            <th>Asteroidenfelder</th>
+            <td>{{ formatNumber(asteroidCount) }}</td>
+        </tr>
+        <tr>
+            <th>Nebel</th>
+            <td>{{ formatNumber(nebulaCount) }}</td>
+        </tr>
+        <tr>
+            <th>Wurmlöcher</th>
+            <td>{{ formatNumber(wormholeCount) }}</td>
+        </tr>
+        <tr>
+            <th>Leerer Raum</th>
+            <td>{{ formatNumber(emptySpaceCount) }}</td>
+        </tr>
+    </table>
+
+    <h3>Sternensysteme hinzufügen</h3>
+    {{ form(addStarsForm) }}
+
+    <h3>Universum löschen</h3>
+    <p>Hiermit kann das Universum zurückgesetzt werden (Schiffe, Gebäude, Planeten). User und Allianzen bleiben jedoch bestehen.</p>
+    <button type="button" onclick="window.location='{{ path('admin.universe.reset.universe') }}'">Universum zurücksetzen</button>
+
+    <h3>Runde komplett zurücksetzen</h3>
+    <p>Hiermit kann die gesamte Runde zurückgesetzt werden (User, Allianzen, Planeten).</p>
+    <button type="button" onclick="window.location='{{ path('admin.universe.reset.full') }}'">Ja, die gesamte Runde zurücksetzen</button>
+{% endblock %}

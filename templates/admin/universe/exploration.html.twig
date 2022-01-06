@@ -4,7 +4,7 @@
     <h1>Erkundung</h1>
     <p>
         <b>Erkundung anzeigen für:</b>
-        <select onchange="document.location='{{ path('admin.galaxy.exploration.user') }}?userId='+this.options[this.selectedIndex].value">
+        <select onchange="document.location='{{ path('admin.universe.exploration.user') }}?userId='+this.options[this.selectedIndex].value">
             <option value="0" style="font-style:italic;">(Benutzer wählen...)</option>
             {% for id,nick in users %}
                 <option value="{{ id }}"{% if user and user.id == id %} selected="selected"{% endif %}>{{ nick }}</option>

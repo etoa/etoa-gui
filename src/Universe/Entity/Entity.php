@@ -44,27 +44,8 @@ class Entity
 
     public function codeString(): string
     {
-        switch ($this->code) {
-            case EntityType::ALLIANCE_MARKET:
-                return 'Allianz';
-            case EntityType::ASTEROID:
-                return 'Asteroidenfeld';
-            case EntityType::EMPTY_SPACE:
-                return 'Leerer Raum';
-            case EntityType::MARKET:
-                return 'Marktplatz';
-            case EntityType::NEBULA:
-                return 'Interstellarer Gasnebel';
-            case EntityType::PLANET:
-                return 'Planet';
-            case EntityType::STAR:
-                return 'Stern';
-            case EntityType::WORMHOLE:
-                return 'Wurmloch';
-            case EntityType::UNEXPLORED:
-                return 'Unerforschte Raumzelle!';
-        }
+        $types = EntityType::all();
 
-        return 'Unbekannter Raum';
+        return $types[$this->code] ?? 'Unbekannter Raum';
     }
 }

@@ -1,0 +1,28 @@
+{% extends 'admin/layout/admin.html.twig' %}
+
+{% block content %}
+    <h1>Raumobjekte (Entitäten)</h1>
+    <h3>{{ entity.codeString() }} {{ entity.toString() }} bearbeiten</h3>
+
+    <p>
+        {% if entity.id > 1 %}
+            {{ button("<< Vorheriges Objekt", path('admin.universe.entity', {id: entity.id - 1}))|raw }}
+        {% endif %}
+        Objekt {{ entity.id }}
+
+        {{ button("Nächstes Objekt >>", path('admin.universe.entity', {id: entity.id + 1}))|raw }}
+
+        {{ button("Alle Objekte dieser Zelle/dieses Systems anzeigen", path('admin.universe.entities', {cell: entity.cellId}))|raw }}
+    </p>
+
+    {% if form %}
+        {{ form(form) }}
+    {% else %}
+        <p>Entity kann nicht bearbeitet werden!</p>
+    {% endif %}
+
+    {% if entity.code == 'p' %}
+        {{ button("Neu Berechnen", path('admin.universe.planet.calculate', {id: entity.id}))|raw }}
+    {% endif %}
+
+{% endblock %}

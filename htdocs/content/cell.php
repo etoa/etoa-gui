@@ -7,7 +7,6 @@ use EtoA\Alliance\AllianceRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Message\ReportRepository;
 use EtoA\Message\ReportSearch;
-use EtoA\Message\ReportSort;
 use EtoA\Support\BBCodeUtils;
 use EtoA\Support\StringUtils;
 use EtoA\Universe\Cell\CellRepository;
@@ -63,7 +62,7 @@ if (isset($_POST['starname_submit']) && $_POST['starname'] != "" && intval($_POS
     if ($starRepository->update($_POST['starname_id'], $_POST['starname'])) {
         success_msg("Der Stern wurde benannt!");
 
-        $app['dispatcher']->dispatch(new \EtoA\Galaxy\Event\StarRename(), \EtoA\Galaxy\Event\StarRename::RENAME_SUCCESS);
+        $app['dispatcher']->dispatch(new \EtoA\Universe\Event\StarRename(), \EtoA\Universe\Event\StarRename::RENAME_SUCCESS);
     } else {
         error_msg("Es gab ein Problem beim Setzen des Namens!");
     }

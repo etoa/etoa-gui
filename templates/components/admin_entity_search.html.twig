@@ -1,0 +1,46 @@
+{% extends 'components/base_search.html.twig' %}
+
+{% block data %}
+    <tr>
+        <th>ID</th>
+        <th>Koordinaten</th>
+        <th>Entitätstyp</th>
+        <th>Subtyp</th>
+        <th>Name</th>
+        <th>Besitzer</th>
+        <th>Aktion</th>
+    </tr>
+    {% for entity in search.entries %}
+        <tr>
+            <td>{{ entity.id }}</td>
+            <td>{{ entity.coordinatesString() }}</td>
+            <td class="entity-type-{{ entity.code }}">
+                {{ entity.codeString() }}
+                {% if entity.ownerMain %}
+                    (Hauptplanet)
+                {% elseif entity.wormholePersistent %}
+                    (persistent)
+                {% endif %}
+
+            </td>
+            <td>
+                {% if entity.code == 'p' %}
+                    {{ this.planetTypes[entity.typeId] }}
+                {% elseif entity.code == 's' %}
+                    {{ this.solarTypes[entity.typeId] }}
+                {% endif %}
+            </td>
+            <td>{{ entity.displayName() }}</td>
+            <td>{{ entity.ownerNick }}</td>
+            <td>
+                {% if entity.code != 'm' and entity.code != 'x' %}
+                    <a href="/admin?page=galaxy&sub=edit&id={{ entity.id }}">Bearbeiten</a>
+                {% endif %}
+            </td>
+        </tr>
+    {% else %}
+        <tr>
+            <td colspan="999"><b>Keine Einträge gefunden!</b></td>
+        </tr>
+    {% endfor %}
+{% endblock %}

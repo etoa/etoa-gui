@@ -15,4 +15,22 @@ class EntityType
     public const MARKET = 'm';
     public const ALLIANCE_MARKET = 'x';
     public const UNEXPLORED = 'u';
+
+    /**
+     * @return array<string, string>
+     */
+    public static function all(): array
+    {
+        return [
+            self::ALLIANCE_MARKET => 'Allianz',
+            self::ASTEROID => 'Asteroidenfeld',
+            self::EMPTY_SPACE => 'Leerer Raum',
+            self::MARKET => 'Marktplatz',
+            self::NEBULA => 'Interstellarer Gasnebel',
+            self::PLANET => 'Planet',
+            self::STAR => 'Stern',
+            self::WORMHOLE => 'Wurmloch',
+            self::UNEXPLORED => 'Unerforschte Raumzelle!',
+        ];
+    }
 }

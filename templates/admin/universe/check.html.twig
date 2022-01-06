@@ -1,0 +1,90 @@
+{% extends 'admin/layout/admin.html.twig' %}
+
+{% import 'admin/macros.html.twig' as macros %}
+
+{% block content %}
+    <h1>Galaxie</h1>
+
+    <h2>Integritätscheck</h2>
+
+    <h3>Prüfen ob zu allen Planeten mit einer User-Id auch ein User existiert...</h3>
+
+    {% if planetsWithInvalidUserId %}
+        <table class="tb">
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>User-Id</th>
+                <th>Aktionen</th>
+            </tr>
+
+            {% for planet in planetsWithInvalidUserId %}
+                <tr>
+                    <td>{{ planet.id }}</td>
+                    <td>{{ planet.name }}</td>
+                    <td>{{ planet.userId }}</td>
+                    <td><a href="/admin/?page=galaxy&sub=edit&amp;id={{ planet.id }}">Bearbeiten</a></td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        {{ macros.messagebox('Keine Fehler gefunden!', 'success') }}
+    {% endif %}
+
+    <h3>Prüfe auf Hauptplaneten ohne User...</h3>
+    {% if mainPlanetsWithoutUsers %}
+        <table class="tb">
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Aktionen</th>
+            </tr>
+
+            {% for planet in mainPlanetsWithoutUsers %}
+                <tr>
+                    <td>{{ planet.id }}</td>
+                    <td>{{ planet.name }}</td>
+                    <td><a href="/admin/?page=galaxy&sub=edit&amp;id={{ planet.id }}">Bearbeiten</a></td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        {{ macros.messagebox('Keine Fehler gefunden!', 'success') }}
+    {% endif %}
+
+    <h3>Prüfe auf User ohne Hauptplanet / mit zuviel Hauptplaneten...</h3>
+    {% if usersWithInvalidNumberOfMainPlanets.none|length > 0 or usersWithInvalidNumberOfMainPlanets.multiple|length > 0 %}
+        <table class="tb">
+            <tr>
+                <th>User</th>
+                <th>Anzahl Hauptplaneten</th>
+            </tr>
+
+            {% for userId, count in usersWithInvalidNumberOfMainPlanets.multiple %}
+                <tr>
+                    <td>{{ usersWithInvalidNumberOfMainPlanets.users[userId] }}</td>
+                    <td>{{ count }}</td>
+                </tr>
+            {% endfor %}
+
+            {% for userId in usersWithInvalidNumberOfMainPlanets.none %}
+                <tr>
+                    <td>{{ usersWithInvalidNumberOfMainPlanets.users[userId] }}</td>
+                    <td>0</td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        {{ macros.messagebox('Keine Fehler gefunden!', 'success') }}
+    {% endif %}
+
+    <h3>Entitäten werden auf Integrität geprüft...</h3>
+
+    {% if invalidEntities %}
+        {% for error in invalidEntities %}
+            <p>{{ error }}</p>
+        {% endfor %}
+    {% else %}
+        {{ macros.messagebox('Keine Fehler gefunden!', 'success') }}
+    {% endif %}
+{% endblock %}

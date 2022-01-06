@@ -1,0 +1,9 @@
+{% extends 'admin/layout/admin.html.twig' %}
+
+{% block content %}
+    <h2>Runde zurücksetzen</h2>
+    <form method="post">
+        <p>Runde wirklich zurücksetzen?</p>
+        <input onclick="return confirm('Reset wirklich durchführen?')" type="submit" value="Ja, die gesamte Runde zurücksetzen" />
+    </form>
+{% endblock %}

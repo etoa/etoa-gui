@@ -1,0 +1,10 @@
+{% extends 'admin/layout/admin.html.twig' %}
+
+{% block content %}
+    <h1>Raumobjekte (Entitäten)</h1>
+
+    {{ component('admin_entity_search', {
+        form: form
+    }) }}
+
+{% endblock %}

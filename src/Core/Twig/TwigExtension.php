@@ -46,6 +46,7 @@ class TwigExtension extends AbstractExtension
             new TwigFunction('cTT', [$this, 'cTT']),
             new TwigFunction('editButton', [$this, 'editButton']),
             new TwigFunction('delButton', [$this, 'delButton']),
+            new TwigFunction('button', [$this, 'button']),
             new TwigFunction('ipGetHost', [$this, 'ipGetHost']),
             new TwigFunction('browser', [$this, 'browser']),
             new TwigFunction('formatNumber', [$this, 'formatNumber']),
@@ -182,6 +183,11 @@ class TwigExtension extends AbstractExtension
     public function delButton(?string $url, string $ocl = ""): string
     {
         return del_button($url, $ocl);
+    }
+
+    public function button(string $label, string $target): string
+    {
+        return button($label, $target);
     }
 
     public function ipGetHost(?string $ip): string

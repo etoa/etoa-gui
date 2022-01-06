@@ -13,7 +13,7 @@ class EntityLabel extends Entity
     public bool $ownerMain;
     public ?int $typeId = null;
     public ?string $image = null;
-    private ?bool $wormholePersistent = null;
+    public ?bool $wormholePersistent = null;
     public ?int $wormholeTarget = null;
 
     public function __construct(array $data)

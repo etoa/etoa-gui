@@ -78,16 +78,15 @@ class PlanetRepository extends AbstractRepository
     /**
      * @return Planet[]
      */
-    public function getPlanetsAssignedToUsers(): array
+    public function search(PlanetSearch $search): array
     {
-        $data = $this->createQueryBuilder()
+        $data = $this->applySearchSortLimit($this->createQueryBuilder(), $search)
             ->select('*')
-            ->from('planets')
-            ->where('planet_user_id > 0')
+            ->from('planets', 'p')
             ->execute()
             ->fetchAllAssociative();
 
-        return array_map(fn ($row) => new Planet($row), $data);
+        return array_map(fn (array $row) => new Planet($row), $data);
     }
 
     /**
@@ -100,22 +99,6 @@ class PlanetRepository extends AbstractRepository
             ->from('planets')
             ->where('planet_user_main = 1')
             ->andWhere('planet_user_id > 0')
-            ->execute()
-            ->fetchAllAssociative();
-
-        return array_map(fn ($row) => new Planet($row), $data);
-    }
-
-    /**
-     * @return Planet[]
-     */
-    public function getMainPlanetsWithoutOwner(): array
-    {
-        $data = $this->createQueryBuilder()
-            ->select('*')
-            ->from('planets')
-            ->where('planet_user_main = 1')
-            ->andWhere('planet_user_id = 0')
             ->execute()
             ->fetchAllAssociative();
 
@@ -302,26 +285,8 @@ class PlanetRepository extends AbstractRepository
             ->execute();
     }
 
-    public function update(
-        int $id,
-        int $typeId,
-        string $name,
-        int $fields,
-        int $extraFields,
-        string $image,
-        int $tempFrom,
-        int $tempTo,
-        int $resMetal,
-        int $resCrystal,
-        int $resPlastic,
-        int $resFuel,
-        int $resFood,
-        int $wfMetal,
-        int $wfCrystal,
-        int $wfPlastic,
-        int $people,
-        ?string $description
-    ): bool {
+    public function update(Planet $planet): bool
+    {
         $affected = (int) $this->createQueryBuilder()
             ->update('planets')
             ->set('planet_type_id', ':type_id')
@@ -343,24 +308,24 @@ class PlanetRepository extends AbstractRepository
             ->set('planet_desc', ':description')
             ->where('id = :id')
             ->setParameters([
-                'id' => $id,
-                'type_id' => $typeId,
-                'name' => $name,
-                'fields' => $fields,
-                'extra_fields' => $extraFields,
-                'image' => $image,
-                'temp_from' => $tempFrom,
-                'temp_to' => $tempTo,
-                'res_metal' => $resMetal,
-                'res_crystal' => $resCrystal,
-                'res_plastic' => $resPlastic,
-                'res_fuel' => $resFuel,
-                'res_food' => $resFood,
-                'wf_metal' => $wfMetal,
-                'wf_crystal' => $wfCrystal,
-                'wf_plastic' => $wfPlastic,
-                'people' => $people,
-                'description' => $description !== null && strlen($description) > 0 ? $description : null,
+                'id' => $planet->id,
+                'type_id' => $planet->typeId,
+                'name' => $planet->name,
+                'fields' => $planet->fields,
+                'extra_fields' => $planet->fieldsExtra,
+                'image' => $planet->image,
+                'temp_from' => $planet->tempFrom,
+                'temp_to' => $planet->tempTo,
+                'res_metal' => $planet->resMetal,
+                'res_crystal' => $planet->resCrystal,
+                'res_plastic' => $planet->resPlastic,
+                'res_fuel' => $planet->resFuel,
+                'res_food' => $planet->resFood,
+                'wf_metal' => $planet->wfMetal,
+                'wf_crystal' => $planet->wfCrystal,
+                'wf_plastic' => $planet->wfPlastic,
+                'people' => $planet->people,
+                'description' => $planet->description !== null && strlen($planet->description) > 0 ? $planet->description : null,
             ])
             ->execute();
 

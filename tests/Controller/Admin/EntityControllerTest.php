@@ -4,15 +4,15 @@ namespace EtoA\Controller\Admin;
 
 use EtoA\SymfonyWebTestCase;
 
-class GalaxyMapControllerTest extends SymfonyWebTestCase
+class EntityControllerTest extends SymfonyWebTestCase
 {
-    public function testView(): void
+    public function testSearch(): void
     {
         $client = self::createClient();
 
         $this->loginAdmin($client);
 
-        $client->request('GET', '/admin/universe/map');
+        $client->request('GET', '/admin/universe/entities');
 
         $this->assertSame(200, $client->getResponse()->getStatusCode(), $client->getResponse()->getContent());
     }

@@ -21,4 +21,25 @@ class PlanetSearch extends AbstractSearch
 
         return $this;
     }
+
+    public function assignedToUser(): self
+    {
+        $this->parts[] = 'planet_user_id > 0';
+
+        return $this;
+    }
+
+    public function withoutUser(): self
+    {
+        $this->parts[] = 'planet_user_id = 0';
+
+        return $this;
+    }
+
+    public function mainPlanet(): self
+    {
+        $this->parts[] = 'planet_user_main = 1';
+
+        return $this;
+    }
 }
