@@ -25,76 +25,7 @@ define("SYS_MESSAGE_CAT_ID", 5);
 
 echo "<h1>Marktplatz</h1>";
 
-if ($sub == "ships") {
-    echo "<h2>Schiffe</h2>";
-    if (isset($_GET['ship_delete']) && $_GET['ship_delete'] != "") {
-        $marketShipRepository->delete((int) $_GET['ship_delete']);
-        echo MessageBox::ok("", "Angebot gel&ouml;scht");
-    }
-
-    $offers = $marketShipRepository->getAll();
-    if (count($offers) > 0) {
-        /** @var ShipDataRepository $shipRepository */
-        $shipRepository = $app[ShipDataRepository::class];
-        $shipNames = $shipRepository->getShipNames(true);
-
-        foreach ($offers as $offer) {
-            $username = get_user_nick($offer->userId);
-            echo "<form action=\"?page=$page&sub=$sub\" method=\"POST\">\n";
-            echo "<input type=\"hidden\" name=\"ship_market_id\" value=\"" . $offer->id . "\">";
-            echo "<table class=\"tb\">
-                        <tr>
-                            <th width=\"100\">
-                                Datum:
-                            </th>
-                            <td colspan=\"2\" width=\"200\">
-                                " . date("d.m.Y - H:i:s", $offer->date) . "
-                            </td>
-                            <th width=\"100\">
-                                Spieler:
-                            </th>
-                            <td width=\"100\">
-                                <a href=\"?page=user&amp;sub=edit&amp;user_id=" . $offer->userId . "\">" . $username . "</a>
-                            </td>
-                            <td rowspan=\"4\">
-                                <input type=\"button\" onclick=\"if (confirm('Soll dieses Angebot wirklich gel&ouml;scht werden?')) document.location='?page=$page&sub=$sub&ship_delete=" . $offer->id . "'\" value=\"L&ouml;schen\"/>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th width=\"100\">
-                                Schiffname:
-                            </th>
-                            <td colspan=\"2\" width=\"200\">
-                                " . $shipNames[$offer->shipId] . "
-                            </td>
-                            <th width=\"100\">
-                                Anzahl:
-                            </td>
-                            <td width=\"100\">
-                                " . $offer->count . "
-                            </td>
-                        </tr>
-                        <tr>";
-            foreach (ResourceNames::NAMES as $k => $v) {
-                echo "<th width=\"100\">
-                            " . $v . "
-                        </th>";
-            }
-            echo "</tr>
-                        <tr>";
-            foreach ([$offer->costs0, $offer->costs1, $offer->costs2, $offer->costs3, $offer->costs4] as $cost) {
-                echo "<td width=\"100\">
-                            " . StringUtils::formatNumber($cost) . "
-                        </td>";
-            }
-
-            echo "</tr>
-                    </table><br/>";
-        }
-    } else {
-        error_msg("Keine Angebote vorhanden", 1);
-    }
-} elseif ($sub == "auction") {
+if ($sub == "auction") {
     echo "<h2>Auktionen</h2>";
     if (isset($_GET['auction_delete']) && $_GET['auction_delete'] != "") {
         $marketAuctionRepository->deleteAuction((int) $_GET['auction_delete']);

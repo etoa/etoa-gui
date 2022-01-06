@@ -3,8 +3,10 @@
 namespace EtoA\Controller\Admin;
 
 use EtoA\Market\MarketResourceRepository;
+use EtoA\Market\MarketShipRepository;
 use EtoA\PeriodicTask\EnvelopResultExtractor;
 use EtoA\PeriodicTask\Task\MarketRateUpdateTask;
+use EtoA\Ship\ShipDataRepository;
 use EtoA\Support\RuntimeDataStore;
 use EtoA\Universe\Resources\ResourceNames;
 use EtoA\User\UserRepository;
@@ -21,6 +23,8 @@ class MarketController extends AbstractController
         private RuntimeDataStore $runtimeDataStore,
         private UserRepository $userRepository,
         private MarketResourceRepository $marketResourceRepository,
+        private MarketShipRepository $marketShipRepository,
+        private ShipDataRepository $shipDataRepository,
     ) {
     }
 
@@ -59,5 +63,25 @@ class MarketController extends AbstractController
         $this->addFlash('success', "Angebot gelöscht!");
 
         return $this->redirectToRoute('admin.market.resources');
+    }
+
+    #[Route('/admin/market/ships', name: 'admin.market.ships')]
+    public function ships(): Response
+    {
+        return $this->render('admin/market/ships.html.twig', [
+            'offers' => $this->marketShipRepository->getAll(),
+            'userNicknames' => $this->userRepository->searchUserNicknames(),
+            'resourceNames' => ResourceNames::NAMES,
+            'shipNames' => $this->shipDataRepository->searchShipNames(),
+        ]);
+    }
+
+    #[Route('/admin/market/ships/{id}', name: 'admin.market.ships.delete', methods: ['POST'])]
+    public function deleteShips(int $id): RedirectResponse
+    {
+        $this->marketShipRepository->delete($id);
+        $this->addFlash('success', "Angebot gelöscht!");
+
+        return $this->redirectToRoute('admin.market.ships');
     }
 }
