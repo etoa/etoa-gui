@@ -78,7 +78,7 @@ class StarRepository extends AbstractRepository
             ->execute();
     }
 
-    public function update(int $id, string $name, int $typeId = null): bool
+    public function update(int $id, ?string $name, int $typeId = null): bool
     {
         $qb = $this->createQueryBuilder()
             ->update('stars')
@@ -86,7 +86,7 @@ class StarRepository extends AbstractRepository
             ->where('id = :id')
             ->setParameters([
                 'id' => $id,
-                'name' => $name,
+                'name' => (string) $name,
             ]);
 
         if ($typeId !== null) {
