@@ -25,61 +25,7 @@ define("SYS_MESSAGE_CAT_ID", 5);
 
 echo "<h1>Marktplatz</h1>";
 
-if ($sub == "ress") {
-    echo "<h2>Rohstoffe</h2>";
-    if (isset($_GET['ressource_delete']) && $_GET['ressource_delete'] > 0) {
-        $marketResourceRepository->delete((int) $_GET['ressource_delete']);
-        echo MessageBox::ok("", "Angebot gel&ouml;scht!");
-    }
-
-    $offers = $marketResourceRepository->getAll();
-    if (count($offers) > 0) {
-        foreach ($offers as $offer) {
-            $username = get_user_nick($offer->userId);
-            echo "<table class=\"tb\">";
-            echo "<tr>
-                        <th width=\"100\">
-                            Datum:
-                        </th>
-                        <td colspan=\"2\" width=\"200\">
-                            " . date("d.m.Y - H:i:s", $offer->date) . "
-                        </td>
-                        <th width=\"100\">
-                            Spieler:
-                        </th>
-                        <td width=\"100\">
-                            <a href=\"?page=user&amp;sub=edit&amp;user_id=" . $offer->userId . "\">" . $username . "</a></td><td class=\"tbltitle\"><input type=\"button\" onclick=\"if (confirm('Soll dieses Angebot wirklich gel&ouml;scht werden?')) document.location='?page=$page&sub=$sub&ressource_delete=" . $offer->id . "'\" value=\"L&ouml;schen\"/>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th rowspan=\"6\">
-                            Angebot:
-                        </th>";
-            $first = true;
-            $sellResources = $offer->getSellResources();
-            $buyResources = $offer->getBuyResources();
-            foreach (ResourceNames::NAMES as $k => $v) {
-                if (!$first) echo "<tr>";
-                echo "	<td width=\"110\">" . $v . "</td>
-                                    <td width=\"100\">
-                                        " . StringUtils::formatNumber($sellResources->get($k)) . "
-                                    </td>";
-                if ($first) {
-                    echo "<th rowspan=\"5\">Preis:</th>";
-                    $first = false;
-                }
-                echo    "<td width=\"110\">" . $v . "</td>
-                                    <td width=\"100\">
-                                        " . StringUtils::formatNumber($buyResources->get($k)) . "
-                                    </td>
-                                </tr>";
-            }
-            echo "</table><br/>";
-        }
-    } else {
-        error_msg("Keine Angebote vorhanden", 1);
-    }
-} elseif ($sub == "ships") {
+if ($sub == "ships") {
     echo "<h2>Schiffe</h2>";
     if (isset($_GET['ship_delete']) && $_GET['ship_delete'] != "") {
         $marketShipRepository->delete((int) $_GET['ship_delete']);
