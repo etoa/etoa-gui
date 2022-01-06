@@ -1,0 +1,27 @@
+{% extends 'admin/layout/admin.html.twig' %}
+
+{% block content %}
+    <h1>Marktplatz</h1>
+
+    <p>Willkommen bei der Marktplatzverwaltung.</p>
+
+    <h2>Rohstoffkurse</h2>
+
+    <table class="tb" style="width:200px;">
+        {% for rate, name in marketRates %}
+            <tr>
+                <th>{{ name }}</th>
+                <td>{{ rate }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+
+    <p>Die Marktkurse werden periodisch neu berechnet.</p>
+    <p>
+        <input type="button" value="Kurse manuell aktualisieren" onclick="window.location='{{ path('admin.market', {updaterates: true}) }}'" />
+    </p>
+
+    <div>
+        <img src="/misc/market.image.php" alt="Kursverlauf"  />
+    </div>
+{% endblock %}

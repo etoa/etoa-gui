@@ -20,7 +20,6 @@ $marketResourceRepository = $app[MarketResourceRepository::class];
 /** @var MarketShipRepository $marketShipRepository */
 $marketShipRepository = $app[MarketShipRepository::class];
 
-/** @var \Symfony\Component\Messenger\MessageBusInterface $messageBus */
 define("USER_MESSAGE_CAT_ID", 1);
 define("SYS_MESSAGE_CAT_ID", 5);
 
@@ -335,30 +334,4 @@ if ($sub == "ress") {
     } else {
         error_msg("Keine Angebote vorhanden", 1);
     }
-} else {
-    echo '<div style="float:left;">';
-    echo "Willkommen bei der Marktplatzverwaltung. <br/><br/>";
-
-    echo '<input type="button" value="Schiffe" onclick="document.location=\'?page=' . $page . '&amp;sub=ships\'" /><br/><br/>';
-    echo '<input type="button" value="Rohstoffe" onclick="document.location=\'?page=' . $page . '&amp;sub=ress\'" /><br/><br/>';
-    echo '<input type="button" value="Auktionen" onclick="document.location=\'?page=' . $page . '&amp;sub=auction\'" /><br/><br/>';
-
-    echo "<h2>Rohstoffkurse</h2>";
-    if (isset($_GET['action']) && $_GET['action'] == "updaterates") {
-        $result = EnvelopResultExtractor::extract($messageBus->dispatch(new MarketRateUpdateTask()));
-        LegacyTemplateTitleHelper::addFlash('success', $result->getMessage());
-    }
-
-    echo "<table class=\"tb\" style=\"width:200px;\">";
-    foreach (ResourceNames::NAMES as $index => $resourceName) {
-        echo "<tr><th>" . $resourceName . "</th><td>" . $runtimeDataStore->get('market_rate_' . $index, (string) 1) . "</td></tr>";
-    }
-    echo "</table>";
-
-    echo '<p>Die Marktkurse werden periodisch neu berechnet.</p>';
-    echo '<input type="button" value="Kurse manuell aktualisieren" onclick="document.location=\'?page=' . $page . '&amp;action=updaterates\'" /><br/><br/>';
-
-    echo '</div>';
-
-    echo '<img src="../misc/market.image.php" alt="Kursverlauf" style="float:right;" />';
 }
