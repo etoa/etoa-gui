@@ -6,13 +6,24 @@ use EtoA\SymfonyWebTestCase;
 
 class UniverseControllerTest extends SymfonyWebTestCase
 {
-    public function testEdit(): void
+    public function testBigBangConfigure(): void
     {
         $client = self::createClient();
 
         $this->loginAdmin($client);
 
-        $client->request('GET', '/admin/universe/edit');
+        $client->request('GET', '/admin/universe/big-bang/configure');
+
+        $this->assertSame(200, $client->getResponse()->getStatusCode(), $client->getResponse()->getContent());
+    }
+
+    public function testBigBang(): void
+    {
+        $client = self::createClient();
+
+        $this->loginAdmin($client);
+
+        $client->request('GET', '/admin/universe/big-bang');
 
         $this->assertSame(200, $client->getResponse()->getStatusCode(), $client->getResponse()->getContent());
     }

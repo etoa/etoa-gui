@@ -12,7 +12,7 @@ class ExplorationControllerTest extends SymfonyWebTestCase
 
         $this->loginAdmin($client);
 
-        $client->request('GET', '/admin/galaxy/exploration/');
+        $client->request('GET', '/admin/universe/exploration/');
 
         $this->assertSame(200, $client->getResponse()->getStatusCode(), $client->getResponse()->getContent());
     }
