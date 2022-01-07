@@ -1,0 +1,57 @@
+{% extends 'admin/layout/admin.html.twig' %}
+
+{% block content %}
+    <h1>Marktplatz</h1>
+    <h2>Schiffe</h2>
+
+    {% for offer in offers %}
+        <table class="tb">
+            <tr>
+                <th width="100">
+                    Datum:
+                </th>
+                <td colspan="2" width="200">
+                    {{ formatTimestamp(offer.date) }}
+                </td>
+                <th width="100">
+                    Spieler:
+                </th>
+                <td width="100">
+                    <a href="?page=user&amp;sub=edit&amp;user_id={{ offer.userId }}">{{ userNicknames[offer.userId]|default('Niemand') }}</a>
+                </td>
+                <td rowspan="4" class="tbltitle">
+                    <form method="post" action="{{ path('admin.market.ships.delete', {id: offer.id}) }}">
+                        <input type="submit" onclick="return confirm('Soll dieses Angebot wirklich gelöscht werden?')" value="Löschen"/>
+                    </form>
+                </td>
+            </tr>
+            <tr>
+                <th width="100">
+                    Schiffname:
+                </th>
+                <td colspan="2" width="200">
+                    {{ shipNames[offer.shipId] }}
+                </td>
+                <th width="100">
+                    Anzahl:
+                </td>
+                <td width="100">
+                    {{ offer.count }}
+                </td>
+            </tr>
+            <tr>
+                {% for index, resourceName in resourceNames %}
+                    <th>{{ resourceName }}</th>
+                {% endfor %}
+            </tr>
+            <tr>
+                {% for index, resourceName in resourceNames %}
+                    <td>{{ formatNumber(offer.costs.get(index)) }}</td>
+                {% endfor %}
+            </tr>
+        </table>
+        <br />
+    {% else %}
+        <p>Keine Angebote vorhanden!</p>
+    {% endfor %}
+{% endblock %}

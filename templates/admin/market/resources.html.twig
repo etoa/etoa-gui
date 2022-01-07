@@ -1,0 +1,59 @@
+{% extends 'admin/layout/admin.html.twig' %}
+
+{% block content %}
+    <h1>Marktplatz</h1>
+    <h2>Rohstoffe</h2>
+
+    {% for offer in offers %}
+        <table class="tb">
+            <tr>
+                <th width="100">
+                    Datum:
+                </th>
+                <td colspan="2" width="200">
+                    {{ formatTimestamp(offer.date) }}
+                </td>
+                <th width="100">
+                    Spieler:
+                </th>
+                <td width="100">
+                    <a href="?page=user&amp;sub=edit&amp;user_id={{ offer.userId }}">{{ userNicknames[offer.userId]|default('Niemand') }}</a>
+                </td>
+                <td class="tbltitle">
+                    <form method="post" action="{{ path('admin.market.resources.delete', {id: offer.id}) }}">
+                        <input type="submit" onclick="return confirm('Soll dieses Angebot wirklich gelöscht werden?')" value="Löschen"/>
+                    </form>
+                </td>
+            </tr>
+            {% for index, resourceName in resourceNames %}
+                <tr>
+                    {% if loop.first %}
+                        <th rowspan="5">
+                            Angebot:
+                        </th>
+                    {% endif %}
+
+                    <td width="110">{{ resourceName }}</td>
+                    <td width="100">
+                        {{ formatNumber(offer.sellResources.get(index)) }}
+                    </td>
+
+                    {% if loop.first %}
+                        <th rowspan="5">
+                            Preis:
+                        </th>
+                    {% endif %}
+
+                    <td width="110">{{ resourceName }}</td>
+                    <td width="100">
+                        {{ formatNumber(offer.buyResources.get(index)) }}
+                    </td>
+                </tr>
+            {% endfor %}
+
+        </table>
+        <br />
+    {% else %}
+        <p>Keine Angebote vorhanden!</p>
+    {% endfor %}
+{% endblock %}
