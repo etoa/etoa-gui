@@ -1,0 +1,158 @@
+{% extends 'admin/layout/admin.html.twig' %}
+
+{% block content %}
+    <h1>Marktplatz</h1>
+    <h2>Auktionen</h2>
+
+    {% for auction in auctions %}
+        <table class="tb">
+            <tr>
+                <th>Anbieter</td>
+                <th>Auktion Start/Ende</td>
+                <th colspan="3">Angebot</td>
+                <th>Status</td>
+            </tr>
+            <tr>
+                <td rowspan="5">
+                    <a href="?page=user&amp;sub=edit&amp;user_id={{ auction.userId }}">{{ userNicknames[auction.userId]|default('Niemand') }}</a>
+                </td>
+                <td>
+                    Start {{ formatTimestamp(auction.dateStart) }}
+                </td>
+
+                {% if auction.shipId > 0 %}
+                    <td rowspan="5">
+                        {{ auction.shipCount }}
+                        <a href="?page=help&site=shipyard&id={{ auction.shipId }}">{{ shipNames[auction.shipId] }}</a>
+                    </td>
+                {% else %}
+                    <td rowspan="5">Keine Schiffe</td>
+                {% endif %}
+
+                <td>
+                    <b>{{ resourceNames[0] }}</b>:
+                </td>
+                <td>
+                    {{ formatNumber(auction.sell0) }}
+                </td>
+
+                <td class="tbldata" rowspan="5">
+                    {% if auction.currentBuyerId > 0 and auction.buyable == 0 %}
+                        Verkauft!<br/><br/>
+                    {% elseif auction.currentBuyerId > 0 %}
+                        Es wurde bereits geboten<br><br>
+                    {% endif %}
+
+                    <form method="post" action="{{ path('admin.market.auctions.delete', {id: auction.id}) }}">
+                        <input type="submit" onclick="return confirm('Soll dieses Angebot wirklich gelöscht werden?')" value="Löschen"/>
+                    </form>
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    {% if auction.dateEnd > now %}
+                        Ende {{ formatTimestamp(auction.dateEnd) }}
+                    {% else %}
+                        Auktion beendet
+                    {% endif %}
+                </td>
+
+                <td>
+                    <b>{{ resourceNames[1] }}</b>:
+                </td>
+                <td>
+                    {{ formatNumber(auction.sell1) }}
+                </td>
+            </tr>
+            <tr>
+                <td rowspan="3">
+                    Noch {{ formatTimespan(auction.dateEnd - now) }}
+                </td>
+                <td>
+                    <b>{{ resourceNames[2] }}</b>:
+                </td>
+                <td>
+                    {{ formatNumber(auction.sell2) }}
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <b>{{ resourceNames[3] }}</b>:
+                </td>
+                <td>
+                    {{ formatNumber(auction.sell3) }}
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <b>{{ resourceNames[4] }}</b>:
+                </td>
+                <td>
+                    {{ formatNumber(auction.sell4) }}
+                </td>
+            </tr>
+
+            {% if auction.currentBuyerId > 0 %}
+                <tr>
+                    <th colspan="6">
+                        Höchstgebot
+                    </th>
+                </tr>
+                <tr>
+                    <td rowspan="5">
+                        <a href="?page=user&amp;sub=edit&amp;user_id={{ auction.currentBuyerId }}">{{ userNicknames[auction.currentBuyerId]|default('Niemand') }}</a>
+                    </td>
+                    <td rowspan="5">
+                        Geboten {{ formatTimestamp(auction.currentBuyerDate) }}
+                    </td>
+                    <td>
+                        <b>{{ resourceNames[0] }}</b>:
+                    </td>
+                    <td colspan="2">
+                        {{ formatNumber(auction.buy0) }}
+                    </td>
+                    <td rowspan="5">
+                        &nbsp;
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <b>{{ resourceNames[1] }}</b>:
+                    </td>
+                    <td colspan="2">
+                        {{ formatNumber(auction.buy1) }}
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <b>{{ resourceNames[2] }}</b>:
+                    </td>
+                    <td colspan="2">
+                        {{ formatNumber(auction.buy2) }}
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <b>{{ resourceNames[3] }}</b>:
+                    </td>
+                    <td colspan="2">
+                        {{ formatNumber(auction.buy3) }}
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <b>{{ resourceNames[4] }}</b>:
+                    </td>
+                    <td colspan="2">
+                        {{ formatNumber(auction.buy4) }}
+                    </td>
+                </tr>
+            {% endif %}
+
+        </table>
+        <br />
+    {% else %}
+        <p>Keine Angebote vorhanden!</p>
+    {% endfor %}
+{% endblock %}

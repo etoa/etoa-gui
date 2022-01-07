@@ -2,6 +2,7 @@
 
 namespace EtoA\Controller\Admin;
 
+use EtoA\Market\MarketAuctionRepository;
 use EtoA\Market\MarketResourceRepository;
 use EtoA\Market\MarketShipRepository;
 use EtoA\PeriodicTask\EnvelopResultExtractor;
@@ -25,6 +26,7 @@ class MarketController extends AbstractController
         private MarketResourceRepository $marketResourceRepository,
         private MarketShipRepository $marketShipRepository,
         private ShipDataRepository $shipDataRepository,
+        private MarketAuctionRepository $marketAuctionRepository,
     ) {
     }
 
@@ -83,5 +85,26 @@ class MarketController extends AbstractController
         $this->addFlash('success', "Angebot gelöscht!");
 
         return $this->redirectToRoute('admin.market.ships');
+    }
+
+    #[Route('/admin/market/auctions', name: 'admin.market.auctions')]
+    public function auctions(): Response
+    {
+        return $this->render('admin/market/auctions.html.twig', [
+            'auctions' => $this->marketAuctionRepository->getAll(),
+            'userNicknames' => $this->userRepository->searchUserNicknames(),
+            'resourceNames' => ResourceNames::NAMES,
+            'shipNames' => $this->shipDataRepository->getShipNames(true),
+            'now' => time(),
+        ]);
+    }
+
+    #[Route('/admin/market/shipss/{id}', name: 'admin.market.auctions.delete', methods: ['POST'])]
+    public function deleteAuction(int $id): RedirectResponse
+    {
+        $this->marketAuctionRepository->deleteAuction($id);
+        $this->addFlash('success', "Angebot gelöscht!");
+
+        return $this->redirectToRoute('admin.market.auctions');
     }
 }
