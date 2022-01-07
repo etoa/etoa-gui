@@ -39,55 +39,7 @@ $userRepository = $app[UserRepository::class];
 /** @var Request */
 $request = Request::createFromGlobals();
 
-//
-// Forschungspunkte
-//
-if ($sub == "points") {
-    echo "<h1>Forschungspunkte</h1>";
-    echo "<h2>Forschungpsunkte neu berechnen</h2><form action=\"?page=$page&amp;sub=$sub\" method=\"POST\">";
-    if (isset($_POST['recalc']) && $_POST['recalc'] != "") {
-        $numTechnologies = $rankingService->calcTechPoints();
-        echo MessageBox::ok("", sprintf("Die Punkte von %s Technologien wurden aktualisiert!", $numTechnologies));
-    }
-    echo "Nach jeder &Auml;nderung an den Forschungen m&uuml;ssen die Forschungspunkte neu berechnet werden.<br/><br/> ";
-    echo "<input type=\"submit\" name=\"recalc\" value=\"Neu berechnen\" /></form>";
-
-    echo "<h2>Forschungspunkte</h2>";
-    $technologyNames = $technologyDataRepository->getTechnologyNames(true);
-    if (count($technologyNames) > 0) {
-        $techPoints = $technologyPointRepository->getAllMap();
-        echo "<table class=\"tb\">";
-        foreach ($technologyNames as $technologyId => $technologyName) {
-            echo "<tr><th>" . $technologyName . "</th><td style=\"width:70%\"><table class=\"tb\">";
-            if (isset($techPoints[$technologyId])) {
-                $cnt = 0;
-                foreach ($techPoints[$technologyId] as $level => $points) {
-                    if ($cnt == 0)
-                        echo "<tr>";
-                    echo "<th>" . $level . "</th><td style=\"text-align: right\" title=\"$points\">" . StringUtils::formatNumber($points) . "</td>";
-                    if ($cnt == "3") {
-                        echo "</tr>";
-                        $cnt = 0;
-                    } else
-                        $cnt++;
-                }
-                if ($cnt != 0) {
-                    for ($x = $cnt; $x < 4; $x++) {
-                        echo "<td colspan=\"2\"></td>";
-                    }
-                    echo "</tr>";
-                }
-            }
-            echo "</table></td></tr>";
-        }
-        echo "</table>";
-    }
-}
-
-//
-// Kategorien
-//
-elseif ($sub == "type") {
+if ($sub == "type") {
     TechnologyTypesForm::render($app, $request);
 }
 
