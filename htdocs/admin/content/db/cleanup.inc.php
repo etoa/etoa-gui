@@ -194,11 +194,6 @@ function runCleanup(
             $userMultiRepository = $app[UserMultiRepository::class];
             echo $userMultiRepository->deleteOrphaned($userIds) . " verwaiste Multieinträge wurden gelöscht!<br/>";
         }
-        if (isset($_POST['del_user_comments'])) {
-            /** @var UserCommentRepository $userCommentRepository */
-            $userCommentRepository = $app[UserCommentRepository::class];
-            echo $userCommentRepository->deleteOrphaned($userIds) . " verwaiste Adminkommentare wurden gelöscht!<br/>";
-        }
         if (isset($_POST['del_tickets'])) {
             $ticketIds = $ticketRepo->findOrphanedIds();
             $deletedTickets = $ticketService->removeByIds($ticketIds);
@@ -386,15 +381,11 @@ function cleanupOverView(
     /** @var UserMultiRepository $userMultiRepository */
     $userMultiRepository = $app[UserMultiRepository::class];
     $mcount = $userMultiRepository->getOrphanedCount($userIds);
-    /** @var UserCommentRepository $userCommentRepository */
-    $userCommentRepository = $app[UserCommentRepository::class];
-    $ccount = $userCommentRepository->getOrphanedCount($userIds);
 
     echo '<input type="checkbox" value="1" name="del_user_log" /> ' . StringUtils::formatNumber($lcount) . " verwaiste <strong>Userlogs</strong> gefunden<br/>";
     echo '<input type="checkbox" value="1" name="del_user_ratings" /> ' . StringUtils::formatNumber($rcount) . " verwaiste <strong>Ratings</strong> gefunden<br/>";
     echo '<input type="checkbox" value="1" name="del_user_properties" /> ' . StringUtils::formatNumber($pcount) . " verwaiste <strong>Properties</strong> gefunden<br/>";
     echo '<input type="checkbox" value="1" name="del_user_multi" /> ' . StringUtils::formatNumber($mcount) . " verwaiste <strong>Multieinträge</strong> gefunden<br/>";
-    echo '<input type="checkbox" value="1" name="del_user_comments" /> ' . StringUtils::formatNumber($ccount) . " verwaiste <strong>Adminkommentare</strong> gefunden<br/>";
     $numOrphanedTickets = count($ticketRepo->findOrphanedIds());
     echo '<input type="checkbox" value="1" name="del_tickets" /> ' . StringUtils::formatNumber($numOrphanedTickets) . " verwaiste <strong>Tickets</strong> gefunden<br/>";
     echo '</fieldset><br/>';

@@ -36,3 +36,6 @@ ALTER TABLE notepad_data ADD CONSTRAINT notepad_data_id FOREIGN KEY (id) REFEREN
 
 DELETE FROM notepad WHERE user_id NOT IN (SELECT user_id FROM users);
 ALTER TABLE notepad ADD CONSTRAINT notepad_user_id FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE;
+
+DELETE FROM user_comments WHERE comment_user_id NOT IN (SELECT user_id FROM users);
+ALTER TABLE user_comments ADD CONSTRAINT comment_user_id FOREIGN KEY (comment_user_id) REFERENCES users(user_id) ON DELETE CASCADE;
