@@ -42,3 +42,8 @@ ALTER TABLE user_comments ADD CONSTRAINT comment_user_id FOREIGN KEY (comment_us
 
 DELETE FROM alliance_ranks WHERE rank_alliance_id NOT IN (SELECT alliance_id FROM alliances);
 ALTER TABLE alliance_ranks ADD CONSTRAINT rank_alliance_id FOREIGN KEY (rank_alliance_id) REFERENCES alliances(alliance_id) ON DELETE CASCADE;
+
+DELETE FROM alliance_bnd WHERE alliance_bnd_alliance_id1 NOT IN (SELECT alliance_id FROM alliances);
+DELETE FROM alliance_bnd WHERE alliance_bnd_alliance_id2 NOT IN (SELECT alliance_id FROM alliances);
+ALTER TABLE alliance_bnd ADD CONSTRAINT alliance_bnd_alliance_id1 FOREIGN KEY (alliance_bnd_alliance_id1) REFERENCES alliances(alliance_id) ON DELETE CASCADE;
+ALTER TABLE alliance_bnd ADD CONSTRAINT alliance_bnd_alliance_id2 FOREIGN KEY (alliance_bnd_alliance_id2) REFERENCES alliances(alliance_id) ON DELETE CASCADE;
