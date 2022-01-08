@@ -73,22 +73,6 @@ class MissileRepository extends \EtoA\Core\AbstractRepository
     /**
      * @param int[] $availableUserIds
      */
-    public function getOrphanedCount(array $availableUserIds): int
-    {
-        $qb = $this->createQueryBuilder();
-
-        return (int) $qb
-            ->select('count(missilelist_id)')
-            ->from('missilelist')
-            ->where($qb->expr()->notIn('missilelist_user_id', ':userIds'))
-            ->setParameter('userIds', $availableUserIds, Connection::PARAM_INT_ARRAY)
-            ->execute()
-            ->fetchOne();
-    }
-
-    /**
-     * @param int[] $availableUserIds
-     */
     public function deleteOrphaned(array $availableUserIds): int
     {
         $qb = $this->createQueryBuilder();

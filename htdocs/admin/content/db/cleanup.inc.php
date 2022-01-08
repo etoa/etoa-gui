@@ -220,11 +220,6 @@ function runCleanup(
         if (isset($_POST['del_deflist'])) {
             echo $defenseRepository->deleteOrphaned($userIds) . " verwaiste Verteidigungen wurden gelöscht!<br/>";
         }
-        if (isset($_POST['del_missilelist'])) {
-            /** @var MissileRepository $missileRepository */
-            $missileRepository = $app[MissileRepository::class];
-            echo $missileRepository->deleteOrphaned($userIds) . " verwaiste Raketen wurden gelöscht!<br/>";
-        }
         if (isset($_POST['del_buildlist'])) {
             /** @var BuildingRepository $buildingRepository */
             $buildingRepository = $app[BuildingRepository::class];
@@ -446,9 +441,6 @@ function cleanupOverView(
     /** @var TechnologyRepository $technologyRepository */
     $technologyRepository = $app[TechnologyRepository::class];
     $tlcount = $technologyRepository->getOrphanedCount($userIds);
-    /** @var MissileRepository $missileRepository */
-    $missileRepository = $app[MissileRepository::class];
-    $mlcount = $missileRepository->getOrphanedCount($userIds);
     /** @var DefenseQueueRepository $defQueueRepository */
     $defQueueRepository = $app[DefenseQueueRepository::class];
     $dqcount = $defQueueRepository->getOrphanedCount($userIds);
@@ -471,7 +463,6 @@ function cleanupOverView(
     echo '<input type="checkbox" value="1" name="del_def_queue" /> ' . StringUtils::formatNumber($dqcount) . " verwaiste <strong>Defbauaufträge</strong> gefunden<br/>";
     echo '<input type="checkbox" value="1" name="del_buildlist" /> ' . StringUtils::formatNumber($blcount) . " verwaiste <strong>Gebäude</strong> gefunden<br/>";
     echo '<input type="checkbox" value="1" name="del_techlist" /> ' . StringUtils::formatNumber($tlcount) . " verwaiste <strong>Technologien</strong> gefunden<br/>";
-    echo '<input type="checkbox" value="1" name="del_missilelist" /> ' . StringUtils::formatNumber($mlcount) . " verwaiste <strong>Raketen</strong> gefunden<br/>";
     echo '</fieldset><br/>';
 
     /* Object lists */
