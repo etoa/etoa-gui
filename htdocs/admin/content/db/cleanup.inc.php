@@ -225,11 +225,6 @@ function runCleanup(
             $buildingRepository = $app[BuildingRepository::class];
             echo $buildingRepository->deleteOrphaned($userIds) . " verwaiste Gebäude wurden gelöscht!<br/>";
         }
-        if (isset($_POST['del_techlist'])) {
-            /** @var TechnologyRepository $technologyRepository */
-            $technologyRepository = $app[TechnologyRepository::class];
-            echo $technologyRepository->deleteOrphaned($userIds) . " verwaiste Technologien wurden gelöscht!<br/>";
-        }
         if (isset($_POST['del_def_queue'])) {
             /** @var DefenseQueueRepository $defQueueRepository */
             $defQueueRepository = $app[DefenseQueueRepository::class];
@@ -438,9 +433,6 @@ function cleanupOverView(
     /** @var BuildingRepository $buildingRepository */
     $buildingRepository = $app[BuildingRepository::class];
     $blcount = $buildingRepository->getOrphanedCount($userIds);
-    /** @var TechnologyRepository $technologyRepository */
-    $technologyRepository = $app[TechnologyRepository::class];
-    $tlcount = $technologyRepository->getOrphanedCount($userIds);
     /** @var DefenseQueueRepository $defQueueRepository */
     $defQueueRepository = $app[DefenseQueueRepository::class];
     $dqcount = $defQueueRepository->getOrphanedCount($userIds);
@@ -462,7 +454,6 @@ function cleanupOverView(
     echo '<input type="checkbox" value="1" name="del_deflist" /> ' . StringUtils::formatNumber($dlcount) . " verwaiste <strong>Defdatensätze</strong> gefunden<br/>";
     echo '<input type="checkbox" value="1" name="del_def_queue" /> ' . StringUtils::formatNumber($dqcount) . " verwaiste <strong>Defbauaufträge</strong> gefunden<br/>";
     echo '<input type="checkbox" value="1" name="del_buildlist" /> ' . StringUtils::formatNumber($blcount) . " verwaiste <strong>Gebäude</strong> gefunden<br/>";
-    echo '<input type="checkbox" value="1" name="del_techlist" /> ' . StringUtils::formatNumber($tlcount) . " verwaiste <strong>Technologien</strong> gefunden<br/>";
     echo '</fieldset><br/>';
 
     /* Object lists */

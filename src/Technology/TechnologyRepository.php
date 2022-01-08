@@ -240,36 +240,6 @@ class TechnologyRepository extends AbstractRepository
     }
 
     /**
-     * @param int[] $availableUserIds
-     */
-    public function getOrphanedCount(array $availableUserIds): int
-    {
-        $qb = $this->createQueryBuilder();
-
-        return (int) $qb
-            ->select('count(techlist_id)')
-            ->from('techlist')
-            ->where($qb->expr()->notIn('techlist_user_id', ':userIds'))
-            ->setParameter('userIds', $availableUserIds, Connection::PARAM_INT_ARRAY)
-            ->execute()
-            ->fetchOne();
-    }
-
-    /**
-     * @param int[] $availableUserIds
-     */
-    public function deleteOrphaned(array $availableUserIds): int
-    {
-        $qb = $this->createQueryBuilder();
-
-        return (int) $qb
-            ->delete('techlist')
-            ->where($qb->expr()->notIn('techlist_user_id', ':userIds'))
-            ->setParameter('userIds', $availableUserIds, Connection::PARAM_INT_ARRAY)
-            ->execute();
-    }
-
-    /**
      * @return array<int, array{name: string, max: int}>
      */
     public function getBestLevels(): array
