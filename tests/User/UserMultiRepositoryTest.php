@@ -44,9 +44,4 @@ class UserMultiRepositoryTest extends AbstractDbTestCase
 
         $this->assertNotEmpty($this->repository->getUserEntries(1, false));
     }
-
-    public function testGetOrphanedCount(): void
-    {
-        $this->assertSame(0, $this->repository->getOrphanedCount([1,2]));
-    }
 }

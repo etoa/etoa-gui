@@ -184,11 +184,6 @@ function runCleanup(
             $userPropertiesRepository = $app[UserPropertiesRepository::class];
             echo $userPropertiesRepository->deleteOrphaned($userIds) . " verwaiste Properties wurden gelöscht!<br/>";
         }
-        if (isset($_POST['del_user_multi'])) {
-            /** @var UserMultiRepository $userMultiRepository */
-            $userMultiRepository = $app[UserMultiRepository::class];
-            echo $userMultiRepository->deleteOrphaned($userIds) . " verwaiste Multieinträge wurden gelöscht!<br/>";
-        }
     }
 
     /* object lists */
@@ -365,13 +360,9 @@ function cleanupOverView(
     /** @var UserPropertiesRepository $userPropertiesRepository */
     $userPropertiesRepository = $app[UserPropertiesRepository::class];
     $pcount = $userPropertiesRepository->getOrphanedCount($userIds);
-    /** @var UserMultiRepository $userMultiRepository */
-    $userMultiRepository = $app[UserMultiRepository::class];
-    $mcount = $userMultiRepository->getOrphanedCount($userIds);
 
     echo '<input type="checkbox" value="1" name="del_user_ratings" /> ' . StringUtils::formatNumber($rcount) . " verwaiste <strong>Ratings</strong> gefunden<br/>";
     echo '<input type="checkbox" value="1" name="del_user_properties" /> ' . StringUtils::formatNumber($pcount) . " verwaiste <strong>Properties</strong> gefunden<br/>";
-    echo '<input type="checkbox" value="1" name="del_user_multi" /> ' . StringUtils::formatNumber($mcount) . " verwaiste <strong>Multieinträge</strong> gefunden<br/>";
     echo '</fieldset><br/>';
 
     /* Object lists */
