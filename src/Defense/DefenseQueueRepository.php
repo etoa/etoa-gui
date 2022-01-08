@@ -2,7 +2,6 @@
 
 namespace EtoA\Defense;
 
-use Doctrine\DBAL\Connection;
 use EtoA\Core\AbstractRepository;
 
 class DefenseQueueRepository extends AbstractRepository

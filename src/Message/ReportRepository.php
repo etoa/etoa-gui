@@ -198,36 +198,6 @@ class ReportRepository extends AbstractRepository
             ->execute();
     }
 
-    /**
-     * @param int[] $availableUserIds
-     */
-    public function getOrphanedCount(array $availableUserIds): int
-    {
-        $qb = $this->createQueryBuilder();
-
-        return (int) $qb
-            ->select('count(id)')
-            ->from('reports')
-            ->where($qb->expr()->notIn('user_id', ':userIds'))
-            ->setParameter('userIds', $availableUserIds, Connection::PARAM_INT_ARRAY)
-            ->execute()
-            ->fetchOne();
-    }
-
-    /**
-     * @param int[] $availableUserIds
-     */
-    public function deleteOrphaned(array $availableUserIds): int
-    {
-        $qb = $this->createQueryBuilder();
-
-        return (int) $qb
-            ->delete('reports')
-            ->where($qb->expr()->notIn('user_id', ':userIds'))
-            ->setParameter('userIds', $availableUserIds, Connection::PARAM_INT_ARRAY)
-            ->execute();
-    }
-
     public function removeUnarchivedread(int $beforeTimestamp): int
     {
         return (int) $this->createQueryBuilder()
