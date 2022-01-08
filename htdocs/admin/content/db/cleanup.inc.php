@@ -194,11 +194,6 @@ function runCleanup(
             $userMultiRepository = $app[UserMultiRepository::class];
             echo $userMultiRepository->deleteOrphaned($userIds) . " verwaiste Multieinträge wurden gelöscht!<br/>";
         }
-        if (isset($_POST['del_tickets'])) {
-            $ticketIds = $ticketRepo->findOrphanedIds();
-            $deletedTickets = $ticketService->removeByIds($ticketIds);
-            echo $deletedTickets . " verwaiste Tickets wurden gelöscht!<br/>";
-        }
     }
 
     /* object lists */
@@ -386,8 +381,6 @@ function cleanupOverView(
     echo '<input type="checkbox" value="1" name="del_user_ratings" /> ' . StringUtils::formatNumber($rcount) . " verwaiste <strong>Ratings</strong> gefunden<br/>";
     echo '<input type="checkbox" value="1" name="del_user_properties" /> ' . StringUtils::formatNumber($pcount) . " verwaiste <strong>Properties</strong> gefunden<br/>";
     echo '<input type="checkbox" value="1" name="del_user_multi" /> ' . StringUtils::formatNumber($mcount) . " verwaiste <strong>Multieinträge</strong> gefunden<br/>";
-    $numOrphanedTickets = count($ticketRepo->findOrphanedIds());
-    echo '<input type="checkbox" value="1" name="del_tickets" /> ' . StringUtils::formatNumber($numOrphanedTickets) . " verwaiste <strong>Tickets</strong> gefunden<br/>";
     echo '</fieldset><br/>';
 
     /* Object lists */

@@ -40,6 +40,9 @@ ALTER TABLE notepad ADD CONSTRAINT notepad_user_id FOREIGN KEY (user_id) REFEREN
 DELETE FROM user_comments WHERE comment_user_id NOT IN (SELECT user_id FROM users);
 ALTER TABLE user_comments ADD CONSTRAINT comment_user_id FOREIGN KEY (comment_user_id) REFERENCES users(user_id) ON DELETE CASCADE;
 
+DELETE FROM tickets WHERE user_id NOT IN (SELECT user_id FROM users);
+ALTER TABLE tickets ADD CONSTRAINT tickets_user_id FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE;
+
 DELETE FROM alliance_ranks WHERE rank_alliance_id NOT IN (SELECT alliance_id FROM alliances);
 ALTER TABLE alliance_ranks ADD CONSTRAINT rank_alliance_id FOREIGN KEY (rank_alliance_id) REFERENCES alliances(alliance_id) ON DELETE CASCADE;
 
