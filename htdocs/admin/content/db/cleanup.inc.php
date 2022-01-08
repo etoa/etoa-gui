@@ -204,11 +204,6 @@ function runCleanup(
             $deletedTickets = $ticketService->removeByIds($ticketIds);
             echo $deletedTickets . " verwaiste Tickets wurden gelöscht!<br/>";
         }
-        if (isset($_POST['del_notepad'])) {
-            /** @var NotepadRepository $notepadRepository */
-            $notepadRepository = $app[NotepadRepository::class];
-            echo $notepadRepository->deleteOrphaned($userIds) . " verwaiste Notizen wurden gelöscht!<br/>";
-        }
     }
 
     /* object lists */
@@ -394,9 +389,6 @@ function cleanupOverView(
     /** @var UserCommentRepository $userCommentRepository */
     $userCommentRepository = $app[UserCommentRepository::class];
     $ccount = $userCommentRepository->getOrphanedCount($userIds);
-    /** @var NotepadRepository $notepadRepository */
-    $notepadRepository = $app[NotepadRepository::class];
-    $ncount = $notepadRepository->getOrphanedCount($userIds);
 
     echo '<input type="checkbox" value="1" name="del_user_log" /> ' . StringUtils::formatNumber($lcount) . " verwaiste <strong>Userlogs</strong> gefunden<br/>";
     echo '<input type="checkbox" value="1" name="del_user_ratings" /> ' . StringUtils::formatNumber($rcount) . " verwaiste <strong>Ratings</strong> gefunden<br/>";
@@ -405,7 +397,6 @@ function cleanupOverView(
     echo '<input type="checkbox" value="1" name="del_user_comments" /> ' . StringUtils::formatNumber($ccount) . " verwaiste <strong>Adminkommentare</strong> gefunden<br/>";
     $numOrphanedTickets = count($ticketRepo->findOrphanedIds());
     echo '<input type="checkbox" value="1" name="del_tickets" /> ' . StringUtils::formatNumber($numOrphanedTickets) . " verwaiste <strong>Tickets</strong> gefunden<br/>";
-    echo '<input type="checkbox" value="1" name="del_notepad" /> ' . StringUtils::formatNumber($ncount) . " verwaiste <strong>Notizen</strong> gefunden<br/>";
     echo '</fieldset><br/>';
 
     /* Object lists */

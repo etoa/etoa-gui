@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace EtoA\Notepad;
 
-use Doctrine\DBAL\Connection;
 use EtoA\Core\AbstractRepository;
 
 class NotepadRepository extends AbstractRepository
@@ -151,7 +150,7 @@ class NotepadRepository extends AbstractRepository
 
     public function delete(int $noteId, int $userId): void
     {
-        $affected = $this->getConnection()
+        $this->getConnection()
             ->executeStatement(
                 "DELETE FROM notepad
                 WHERE id = :noteId
@@ -161,14 +160,6 @@ class NotepadRepository extends AbstractRepository
                     'userId' => $userId,
                 ]
             );
-        if ($affected > 0) {
-            $this->getConnection()
-                ->executeStatement(
-                    "DELETE FROM notepad_data
-                    WHERE id = :noteId;",
-                    ['noteId' => $noteId]
-                );
-        }
     }
 
     public function deleteAll(int $userId): void
@@ -176,35 +167,5 @@ class NotepadRepository extends AbstractRepository
         foreach ($this->findAll($userId) as $note) {
             $this->delete($note->id, $userId);
         }
-    }
-
-    /**
-     * @param int[] $availableUserIds
-     */
-    public function getOrphanedCount(array $availableUserIds): int
-    {
-        $qb = $this->createQueryBuilder();
-
-        return (int) $qb
-            ->select('count(id)')
-            ->from('notepad')
-            ->where($qb->expr()->notIn('user_id', ':userIds'))
-            ->setParameter('userIds', $availableUserIds, Connection::PARAM_INT_ARRAY)
-            ->execute()
-            ->fetchOne();
-    }
-
-    /**
-     * @param int[] $availableUserIds
-     */
-    public function deleteOrphaned(array $availableUserIds): int
-    {
-        $qb = $this->createQueryBuilder();
-
-        return (int) $qb
-            ->delete('notepad')
-            ->where($qb->expr()->notIn('user_id', ':userIds'))
-            ->setParameter('userIds', $availableUserIds, Connection::PARAM_INT_ARRAY)
-            ->execute();
     }
 }
