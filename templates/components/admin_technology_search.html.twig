@@ -1,0 +1,29 @@
+{% extends 'components/base_search.html.twig' %}
+
+{% block data %}
+    <tr>
+        <th>Spieler</th>
+        <th>Planet</th>
+        <th>Forschung</th>
+        <th>Level</th>
+        <th>Status</th>
+        <th>Aktion</th>
+    </tr>
+    {% for entry in search.entries %}
+        <tr>
+            <td>{{ this.userNicks[entry.userId] }}</td>
+            <td>{{ this.entities[entry.entityId] }}</td>
+            <td>{{ this.technologyNames[entry.technologyId] }}</td>
+            <td>{{ entry.currentLevel }}</td>
+            <td>
+                {{ this.buildTypes[entry.buildType] }}
+                {% if entry.buildType > 0 %}
+                    (Fertig in {{ formatTimespan(entry.endTime - date().timestamp) }})
+                {% endif %}
+            </td>
+            <td></td>
+        </tr>
+    {% else %}
+        <tr><td colspan="9999"><i>Keine Einträge vorhanden</i></td></tr>
+    {% endfor %}
+{% endblock %}

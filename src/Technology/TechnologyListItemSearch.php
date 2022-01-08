@@ -59,6 +59,14 @@ class TechnologyListItemSearch extends AbstractSearch
         return $this;
     }
 
+    public function buildType(int $buildType): self
+    {
+        $this->parts[] = 'techlist_build_type = :buildType';
+        $this->parameters['buildType'] = $buildType;
+
+        return $this;
+    }
+
     public function underConstruction(): self
     {
         $this->parts[] = 'techlist_build_type > 0';

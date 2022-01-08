@@ -74,125 +74,10 @@ else {
     $build_type[0] = "Unt&auml;tig";
     $build_type[3] = "Forschen";
 
-    if (isset($_POST['techlist_search']) || (isset($_GET['action']) && ($_GET['action'] == "search" || $_GET['action'] == "searchresults")) || isset($_POST['new'])) {
-        if (isset($_GET['query']) && $_GET['query'] != "") {
-            $qs = searchQueryDecode($_GET['query']);
-            foreach ($qs as $k => $v) {
-                $_POST[$k] = $v;
-            }
-            $_SESSION['search']['tech']['query'] = null;
-        }
-
-        $search = TechnologyListItemSearch::create();
-        // Forschung hinzufügen
-        if (isset($_POST['new'])) {
-            $updata = explode(":", $_POST['planet_id']);
-
-            $technologyNames = $technologyDataRepository->getTechnologyNames(true);
-            if (isset($_POST['all_techs'])) {
-                foreach (array_keys($technologyNames) as $technologyId) {
-                    $technologyRepository->addTechnology($technologyId, (int) $_POST['techlist_current_level'], (int) $updata[1], (int) $updata[0]);
-                }
-                echo "Technologien wurden aktualisiert!<br/>";
-            } else {
-                $technologyRepository->addTechnology((int) $_POST['tech_id'], (int) $_POST['techlist_current_level'], (int) $updata[1], (int) $updata[0]);
-                echo "Technologie wurde hinzugefügt!<br/>";
-            }
-
-            $search->userId((int) $updata[1]);
-            $_SESSION['search']['tech']['query'] = null;
-
-            // Hinzufügen
-            echo "<h2>Neue Technologien hinzuf&uuml;gen</h2>";
-            echo "<form action=\"?page=$page&amp;sub=$sub&amp;action=search\" method=\"post\">";
-            tableStart();
-            echo "<tr><th class=\"tbltitle\">Technologie:</th><td class=\"tbldata\"><select name=\"tech_id\">";
-            foreach ($technologyNames as $techId => $technologyName) {
-                echo "<option value=\"" . $techId . "\"";
-                if ($techId == $_POST['tech_id']) echo " selected=\"selected\"";
-                echo ">" . $technologyName . "</option>";
-            }
-            echo "</select></td></tr>";
-            if ($_POST['techlist_current_level'])
-                $v = $_POST['techlist_current_level'];
-            else
-                $v = 1;
-            echo "<tr><th class=\"tbltitle\">Stufe</th><td class=\"tbldata\"><input type=\"text\" name=\"techlist_current_level\" value=\"$v\" size=\"1\" maxlength=\"3\" /></td></tr>";
-            echo "<tr><th class=\"tbltitle\">f&uuml;r den Spieler</th><td class=\"tbldata\"> <select name=\"planet_id\"><";
-            $userNicks = $userRepository->searchUserNicknames();
-            $mainPlanets = $planetRepository->getMainPlanets();
-            foreach ($mainPlanets as $mainPlanet) {
-                echo "<option value=\"" . $mainPlanet->id . ":" . $mainPlanet->userId . "\"";
-                if ($updata[1] == $mainPlanet->userId) echo " selected=\"selected\"";
-                echo ">" . $userNicks[$mainPlanet->userId] . "</option>";
-            }
-            echo "</select></td></tr>";
-            tableEnd();
-            echo "<input type=\"submit\" name=\"new\" value=\"Hinzuf&uuml;gen\" /></form><br/>";
-            $_SESSION['search']['tech']['query'] = serialize($search);
-        }
-
-        // Suchquery generieren
-        elseif (!isset($_SESSION['search']['tech']['query'])) {
-            if ($_POST['planet_id'] != '') {
-                $search->entityId((int) $_POST['planet_id']);
-            }
-            if ($_POST['planet_name'] != '') {
-                $search->likePlanetName($_POST['planet_name']);
-            }
-            if ($_POST['user_id'] != '') {
-                $search->userId((int) $_POST['user_id']);
-            }
-            if ($_POST['user_nick'] != "") {
-                $search->likeUserNick($_POST['user_nick']);
-            }
-            if ($_POST['tech_id'] != '') {
-                $search->technologyId($_POST['tech_id']);
-
-            }
-            $_SESSION['search']['tech']['query'] = serialize($search);
-        } else
-            $sql = unserialize($_SESSION['search']['tech']['query'], ['allowed_classes' => [TechnologyListItemSearch::class]]);
-
-        $technologyListItems = $technologyRepository->adminSearchQueueItems($search);
-        if (count($technologyListItems) > 0) {
-            echo count($technologyListItems) . " Datens&auml;tze vorhanden<br/><br/>";
-            if (count($technologyListItems) > 20)
-                echo "<input type=\"button\" value=\"Neue Suche\" onclick=\"document.location='?page=$page&amp;sub=$sub'\" /><br/><br/>";
-
-            echo "<table class=\"tbl\">";
-            echo "<tr>";
-            echo "<td class=\"tbltitle\" valign=\"top\">Planet</td>";
-            echo "<td class=\"tbltitle\" valign=\"top\">Spieler</td>";
-            echo "<td class=\"tbltitle\" valign=\"top\">Forschung</td>";
-            echo "<td class=\"tbltitle\" valign=\"top\">Stufe</td>";
-            echo "<td class=\"tbltitle\" valign=\"top\">Status</td>";
-            echo "</tr>";
-            foreach ($technologyListItems as $item) {
-                if ($item->buildType == 3)
-                    $style = " style=\"color:#0f0\"";
-                else
-                    $style = "";
-                echo "<tr>";
-                echo "<td class=\"tbldata\"$style " . mTT($item->planetName, $item->entity->coordinatesString()) . ">" . StringUtils::cutString($item->planetName != '' ? $item->planetName : 'Unbenannt', 11) . "</a> [" . $item->entity->id . "]</a></td>";
-                echo "<td class=\"tbldata\"$style " . mTT($item->userNick, StringUtils::formatNumber($item->userPoints) . " Punkte") . ">" . StringUtils::cutString($item->userNick, 11) . "</a></td>";
-                echo "<td class=\"tbldata\"$style>" . $item->technologyName . "</a></td>";
-                echo "<td class=\"tbldata\"$style>" . StringUtils::formatNumber($item->currentLevel) . "</a></td>";
-                echo "<td class=\"tbldata\"$style>" . $build_type[$item->buildType] . "</a></td>";
-                echo "<td class=\"tbldata\">" . edit_button("?page=$page&sub=$sub&action=edit&techlist_id=" . $item->id) . "</td>";
-                echo "</tr>";
-            }
-            echo "</table>";
-            echo "<br/><input type=\"button\" value=\"Neue Suche\" onclick=\"document.location='?page=$page&amp;sub=$sub'\" />";
-        } else {
-            echo "Die Suche lieferte keine Resultate!<br/><br/><input type=\"button\" value=\"Zur&uuml;ck\" onclick=\"document.location='?page=$page&sub=$sub'\" />";
-        }
-    }
-
     //
     // Bearbeiten
     //
-    elseif (isset($_GET['action']) && $_GET['action'] == "edit") {
+    if (isset($_GET['action']) && $_GET['action'] == "edit") {
         if (isset($_POST['save'])) {
             $entry = $technologyRepository->getEntry($_GET['techlist_id']);
             if ($entry !== null) {
@@ -247,37 +132,13 @@ else {
     // Suchformular Technologien
     //
     else {
-        echo '<div class="tabs">
-            <ul>
-                <li><a href="#tabs-1">Suchmaske</a></li>
-                <li><a href="#tabs-2">Direkt hinzufügen</a></li>
-            </ul>
-            <div id="tabs-1">';
-
-        $_SESSION['search']['tech']['query'] = null;
 
         // Technologien laden
         /** @var TechnologyDataRepository $technologyDataRepository */
         $technologyDataRepository = $app[TechnologyDataRepository::class];
         $technologyNames = $technologyDataRepository->getTechnologyNames(true);
 
-        // Suchmaske
-        echo "<form action=\"?page=$page&amp;sub=$sub&amp;action=search\" method=\"post\">";
-        echo "<table class=\"tbl\">";
-        echo "<tr><td class=\"tbltitle\">Planet ID</td><td class=\"tbldata\"><input type=\"text\" name=\"planet_id\" value=\"\" size=\"20\" maxlength=\"250\" /></td></tr>";
-        echo "<tr><td class=\"tbltitle\">Planetname</td><td class=\"tbldata\"><input type=\"text\" name=\"planet_name\" value=\"\" size=\"20\" maxlength=\"250\" /> ";
-        echo "</td></tr>";
-        echo "<tr><td class=\"tbltitle\">Spieler ID</td><td class=\"tbldata\"><input type=\"text\" name=\"user_id\" value=\"\" size=\"20\" maxlength=\"250\" /></td></tr>";
-        echo "<tr><td class=\"tbltitle\">Spieler Nick</td><td class=\"tbldata\"><input type=\"text\" name=\"user_nick\" value=\"\" size=\"20\" maxlength=\"250\" autocomplete=\"off\" onkeyup=\"xajax_searchUser(this.value,'user_nick','citybox1');\" />&nbsp;";
-        echo "<br><div class=\"citybox\" id=\"citybox1\">&nbsp;</div></td></tr>";
-        echo "<tr><td class=\"tbltitle\">Forschung</td><td class=\"tbldata\"><select name=\"tech_id\"><option value=\"\"><i>---</i></option>";
-        foreach ($technologyNames as $techId => $technologyName)
-            echo "<option value=\"" . $techId . "\">" . $technologyName . "</option>";
-        echo "</select></td></tr>";
-        echo "</table>";
-        echo "<br/><input type=\"submit\" name=\"techlist_search\" value=\"Suche starten\" /></form>";
-
-        echo '</div><div id="tabs-2">';
+        echo '<div id="tabs-2">';
 
         // Hinzufügen
         echo "<form action=\"?page=$page&amp;sub=$sub&amp;action=search\" method=\"post\">";
