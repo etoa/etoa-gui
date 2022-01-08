@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace EtoA\User;
 
-use Doctrine\DBAL\Connection;
 use EtoA\Core\AbstractRepository;
 
 class UserPropertiesRepository extends AbstractRepository

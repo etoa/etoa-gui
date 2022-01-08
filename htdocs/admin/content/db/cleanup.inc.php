@@ -173,12 +173,6 @@ function runCleanup(
             $ustring = 0;
             $userIds = [];
         }
-
-        if (isset($_POST['del_user_ratings'])) {
-            /** @var UserRatingRepository $userRatingRepository */
-            $userRatingRepository = $app[UserRatingRepository::class];
-            echo $userRatingRepository->deleteOrphaned($userIds) . " verwaiste Ratings wurden gelöscht!<br/>";
-        }
     }
 
     /* object lists */
@@ -338,22 +332,6 @@ function cleanupOverView(
     $userSurveillanceRepository = $app[UserSurveillanceRepository::class];
     $tblcnt = $userSurveillanceRepository->getOrphanedUserIds();
     echo count($tblcnt) . " verwaiste Beobachtereinträge gefunden";
-    echo '</fieldset><br/>';
-
-    // Userdata
-    echo '<fieldset><legend><input type="checkbox" value="1" name="cl_userdata" /> Userdata von gelöschten Spielern</legend>';
-    /** @var UserRepository $userRepository */
-    $userRepository = $app[UserRepository::class];
-    $userIds = array_keys($userRepository->searchUserNicknames());
-    if (count($userIds) === 0) {
-        $userIds = [0];
-    }
-
-    /** @var UserRatingRepository $userRatingRepository */
-    $userRatingRepository = $app[UserRatingRepository::class];
-    $rcount = $userRatingRepository->getOrphanedCount($userIds);
-
-    echo '<input type="checkbox" value="1" name="del_user_ratings" /> ' . StringUtils::formatNumber($rcount) . " verwaiste <strong>Ratings</strong> gefunden<br/>";
     echo '</fieldset><br/>';
 
     /* Object lists */
