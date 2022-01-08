@@ -179,11 +179,6 @@ function runCleanup(
             $userRatingRepository = $app[UserRatingRepository::class];
             echo $userRatingRepository->deleteOrphaned($userIds) . " verwaiste Ratings wurden gelöscht!<br/>";
         }
-        if (isset($_POST['del_user_properties'])) {
-            /** @var UserPropertiesRepository $userPropertiesRepository */
-            $userPropertiesRepository = $app[UserPropertiesRepository::class];
-            echo $userPropertiesRepository->deleteOrphaned($userIds) . " verwaiste Properties wurden gelöscht!<br/>";
-        }
     }
 
     /* object lists */
@@ -357,12 +352,8 @@ function cleanupOverView(
     /** @var UserRatingRepository $userRatingRepository */
     $userRatingRepository = $app[UserRatingRepository::class];
     $rcount = $userRatingRepository->getOrphanedCount($userIds);
-    /** @var UserPropertiesRepository $userPropertiesRepository */
-    $userPropertiesRepository = $app[UserPropertiesRepository::class];
-    $pcount = $userPropertiesRepository->getOrphanedCount($userIds);
 
     echo '<input type="checkbox" value="1" name="del_user_ratings" /> ' . StringUtils::formatNumber($rcount) . " verwaiste <strong>Ratings</strong> gefunden<br/>";
-    echo '<input type="checkbox" value="1" name="del_user_properties" /> ' . StringUtils::formatNumber($pcount) . " verwaiste <strong>Properties</strong> gefunden<br/>";
     echo '</fieldset><br/>';
 
     /* Object lists */
