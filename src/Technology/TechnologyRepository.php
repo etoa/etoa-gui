@@ -199,9 +199,9 @@ class TechnologyRepository extends AbstractRepository
             ->fetchOne();
     }
 
-    public function count(): int
+    public function count(TechnologyListItemSearch $search = null): int
     {
-        return (int) $this->createQueryBuilder()
+        return (int) $this->applySearchSortLimit($this->createQueryBuilder(), $search)
             ->select('COUNT(techlist_id)')
             ->from('techlist')
             ->execute()
@@ -347,30 +347,16 @@ class TechnologyRepository extends AbstractRepository
     }
 
     /**
-     * @return AdminTechnologyListItem[]
+     * @return TechnologyListItem[]
      */
-    public function adminSearchQueueItems(TechnologyListItemSearch $search): array
+    public function search(TechnologyListItemSearch $search, int $limit = null, int $offset = null): array
     {
-        $data = $this->applySearchSortLimit($this->createQueryBuilder(), $search)
+        $data = $this->applySearchSortLimit($this->createQueryBuilder(), $search, null, $limit, $offset)
             ->select('techlist.*')
-            ->addSelect('tech_name')
-            ->addSelect('planet_name, planet_user_id')
-            ->addSelect('entities.id, entities.pos, entities.code, cells.sx, cells.sy, cells.cx, cells.cy, cells.id as cid')
-            ->addSelect('user_nick, user_points')
             ->from('techlist')
-            ->innerJoin('techlist', 'planets', 'planets', 'planets.id = techlist_entity_id')
-            ->innerJoin('planets', 'entities', 'entities', 'planets.id = entities.id')
-            ->innerJoin('planets', 'cells', 'cells', 'cells.id = entities.cell_id')
-            ->innerJoin('techlist', 'users', 'users', 'users.user_id = techlist_user_id')
-            ->innerJoin('techlist', 'technologies', 'technologies', 'technologies.tech_id = techlist_tech_id')
-            ->groupBy('techlist_id')
-            ->orderBy('techlist_entity_id')
-            ->addOrderBy('tech_type_id')
-            ->addOrderBy('tech_order')
-            ->addOrderBy('tech_name')
             ->execute()
             ->fetchAllAssociative();
 
-        return array_map(fn ($row) => new AdminTechnologyListItem($row), $data);
+        return array_map(fn ($row) => new TechnologyListItem($row), $data);
     }
 }

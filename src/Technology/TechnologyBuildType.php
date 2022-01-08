@@ -10,7 +10,7 @@ class TechnologyBuildType
     public static function all(): array
     {
         return [
-            0 => "Erforschung abgebrochen",
+            0 => "Untätig",
             3 => "Erforschung",
         ];
     }

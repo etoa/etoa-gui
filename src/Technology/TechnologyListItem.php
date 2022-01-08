@@ -28,4 +28,19 @@ class TechnologyListItem
         $this->endTime = (int) $data['techlist_build_end_time'];
         $this->prodPercent = (int) $data['techlist_prod_percent'];
     }
+
+    public static function empty(): TechnologyListItem
+    {
+        return new TechnologyListItem([
+            'techlist_id' => 0,
+            'techlist_user_id' => 0,
+            'techlist_tech_id' => 0,
+            'techlist_entity_id' => 0,
+            'techlist_current_level' => 0,
+            'techlist_build_type' => 0,
+            'techlist_build_start_time' => 0,
+            'techlist_build_end_time' => 0,
+            'techlist_prod_percent' => 0,
+        ]);
+    }
 }

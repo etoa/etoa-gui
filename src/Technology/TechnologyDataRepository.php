@@ -30,6 +30,17 @@ class TechnologyDataRepository extends AbstractRepository
             ->fetchAllKeyValue();
     }
 
+    public function getTechnologyName(int $technologyId): string
+    {
+        return (string) $this->createQueryBuilder()
+            ->select('t.tech_name')
+            ->from('technologies', 't')
+            ->where('t.tech_id = :techId')
+            ->setParameter('techId', $technologyId)
+            ->execute()
+            ->fetchOne();
+    }
+
     /**
      * @return Technology[]
      */

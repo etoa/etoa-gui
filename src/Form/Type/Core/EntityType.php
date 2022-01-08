@@ -4,6 +4,7 @@ namespace EtoA\Form\Type\Core;
 
 use EtoA\Universe\Entity\EntityLabelSearch;
 use EtoA\Universe\Entity\EntityRepository;
+use EtoA\Universe\Entity\EntitySearch;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\ChoiceList\ChoiceList;
 use Symfony\Component\Form\ChoiceList\Factory\Cache\ChoiceLoader;
@@ -29,7 +30,7 @@ class EntityType extends AbstractType
             'choice_loader' => function (Options $options): ChoiceLoader {
                 return ChoiceList::lazy($this, function () use ($options): array {
                     $search = $options->offsetGet('search');
-                    if (!$search instanceof EntityLabelSearch) {
+                    if (!$search instanceof EntitySearch) {
                         $search = EntityLabelSearch::create();
                     }
 
