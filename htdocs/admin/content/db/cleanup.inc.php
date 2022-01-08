@@ -174,11 +174,6 @@ function runCleanup(
             $userIds = [];
         }
 
-        if (isset($_POST['del_user_log'])) {
-            /** @var UserLogRepository $userLogRepository */
-            $userLogRepository = $app[UserLogRepository::class];
-            echo $userLogRepository->deleteOrphaned($userIds) . " verwaiste Userlogs wurden gelöscht!<br/>";
-        }
         if (isset($_POST['del_user_ratings'])) {
             /** @var UserRatingRepository $userRatingRepository */
             $userRatingRepository = $app[UserRatingRepository::class];
@@ -364,9 +359,6 @@ function cleanupOverView(
         $userIds = [0];
     }
 
-    /** @var UserLogRepository $userLogRepository */
-    $userLogRepository = $app[UserLogRepository::class];
-    $lcount = $userLogRepository->getOrphanedCount($userIds);
     /** @var UserRatingRepository $userRatingRepository */
     $userRatingRepository = $app[UserRatingRepository::class];
     $rcount = $userRatingRepository->getOrphanedCount($userIds);
@@ -377,7 +369,6 @@ function cleanupOverView(
     $userMultiRepository = $app[UserMultiRepository::class];
     $mcount = $userMultiRepository->getOrphanedCount($userIds);
 
-    echo '<input type="checkbox" value="1" name="del_user_log" /> ' . StringUtils::formatNumber($lcount) . " verwaiste <strong>Userlogs</strong> gefunden<br/>";
     echo '<input type="checkbox" value="1" name="del_user_ratings" /> ' . StringUtils::formatNumber($rcount) . " verwaiste <strong>Ratings</strong> gefunden<br/>";
     echo '<input type="checkbox" value="1" name="del_user_properties" /> ' . StringUtils::formatNumber($pcount) . " verwaiste <strong>Properties</strong> gefunden<br/>";
     echo '<input type="checkbox" value="1" name="del_user_multi" /> ' . StringUtils::formatNumber($mcount) . " verwaiste <strong>Multieinträge</strong> gefunden<br/>";
