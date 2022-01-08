@@ -214,9 +214,6 @@ function runCleanup(
             $notepadRepository = $app[NotepadRepository::class];
             echo $notepadRepository->deleteOrphaned($userIds) . " verwaiste Notizen wurden gelöscht!<br/>";
         }
-        if (isset($_POST['del_shiplist'])) {
-            echo $shipRepository->deleteOrphaned($userIds) . " verwaiste Schiffe wurden gelöscht!<br/>";
-        }
         if (isset($_POST['del_deflist'])) {
             echo $defenseRepository->deleteOrphaned($userIds) . " verwaiste Verteidigungen wurden gelöscht!<br/>";
         }
@@ -229,11 +226,6 @@ function runCleanup(
             /** @var DefenseQueueRepository $defQueueRepository */
             $defQueueRepository = $app[DefenseQueueRepository::class];
             echo $defQueueRepository->deleteOrphaned($userIds) . " verwaiste Bauaufträge (Def) wurden gelöscht!<br/>";
-        }
-        if (isset($_POST['del_ship_queue'])) {
-            /** @var ShipQueueRepository $shipQueueRepository */
-            $shipQueueRepository = $app[ShipQueueRepository::class];
-            echo $shipQueueRepository->deleteOrphaned($userIds) . " verwaiste Bauaufträge (Schiff) wurden gelöscht!<br/>";
         }
     }
 
@@ -424,9 +416,6 @@ function cleanupOverView(
     /** @var NotepadRepository $notepadRepository */
     $notepadRepository = $app[NotepadRepository::class];
     $ncount = $notepadRepository->getOrphanedCount($userIds);
-    /** @var ShipRepository $shipRepository */
-    $shipRepository = $app[ShipRepository::class];
-    $slcount = $shipRepository->getOrphanedCount($userIds);
     /** @var DefenseRepository $defenseRepository */
     $defenseRepository = $app[DefenseRepository::class];
     $dlcount = $defenseRepository->getOrphanedCount($userIds);
@@ -436,9 +425,6 @@ function cleanupOverView(
     /** @var DefenseQueueRepository $defQueueRepository */
     $defQueueRepository = $app[DefenseQueueRepository::class];
     $dqcount = $defQueueRepository->getOrphanedCount($userIds);
-    /** @var ShipQueueRepository $shipQueueRepository */
-    $shipQueueRepository = $app[ShipQueueRepository::class];
-    $sqcount = $shipQueueRepository->getOrphanedCount($userIds);
 
     echo '<input type="checkbox" value="1" name="del_user_log" /> ' . StringUtils::formatNumber($lcount) . " verwaiste <strong>Userlogs</strong> gefunden<br/>";
     echo '<input type="checkbox" value="1" name="del_user_ratings" /> ' . StringUtils::formatNumber($rcount) . " verwaiste <strong>Ratings</strong> gefunden<br/>";
@@ -449,8 +435,6 @@ function cleanupOverView(
     echo '<input type="checkbox" value="1" name="del_tickets" /> ' . StringUtils::formatNumber($numOrphanedTickets) . " verwaiste <strong>Tickets</strong> gefunden<br/>";
     echo '<input type="checkbox" value="1" name="del_reports" /> ' . StringUtils::formatNumber($recount) . " verwaiste <strong>Berichte</strong> gefunden<br/>";
     echo '<input type="checkbox" value="1" name="del_notepad" /> ' . StringUtils::formatNumber($ncount) . " verwaiste <strong>Notizen</strong> gefunden<br/>";
-    echo '<input type="checkbox" value="1" name="del_shiplist" /> ' . StringUtils::formatNumber($slcount) . " verwaiste <strong>Schiffdatensätze</strong> gefunden<br/>";
-    echo '<input type="checkbox" value="1" name="del_ship_queue" /> ' . StringUtils::formatNumber($sqcount) . " verwaiste <strong>Schiffbauaufträge</strong> gefunden<br/>";
     echo '<input type="checkbox" value="1" name="del_deflist" /> ' . StringUtils::formatNumber($dlcount) . " verwaiste <strong>Defdatensätze</strong> gefunden<br/>";
     echo '<input type="checkbox" value="1" name="del_def_queue" /> ' . StringUtils::formatNumber($dqcount) . " verwaiste <strong>Defbauaufträge</strong> gefunden<br/>";
     echo '<input type="checkbox" value="1" name="del_buildlist" /> ' . StringUtils::formatNumber($blcount) . " verwaiste <strong>Gebäude</strong> gefunden<br/>";

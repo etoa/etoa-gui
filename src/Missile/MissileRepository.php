@@ -2,8 +2,6 @@
 
 namespace EtoA\Missile;
 
-use Doctrine\DBAL\Connection;
-
 class MissileRepository extends \EtoA\Core\AbstractRepository
 {
     public function addMissile(int $missileId, int $amount, int $userId, int $entityId): void
