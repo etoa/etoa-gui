@@ -154,14 +154,6 @@ function runCleanup(
         echo $num . " gelöschte User wurden endgültig gelöscht!<br/>";
     }
 
-    //Observer
-    if ((isset($_POST['cl_surveillance']) && $_POST['cl_surveillance'] == 1) || $all) {
-        /** @var UserSurveillanceRepository $userSurveillanceRepository */
-        $userSurveillanceRepository = $app[UserSurveillanceRepository::class];
-        $num = $userSurveillanceRepository->deletedOrphanedEntries();
-        echo $num . " verwaiste Beobachtereinträge gelöscht<br/>";
-    }
-
     // Userdata
     if ((isset($_POST['cl_userdata']) && $_POST['cl_userdata'] == 1) || $all) {
         /** @var UserRepository $userRepository */
@@ -324,14 +316,6 @@ function cleanupOverView(
     $tblcnt = count($userRepository->findDeleted());
     echo StringUtils::formatNumber($tblcnt) . " als gelöscht markierte Benutzer endgültig löschen";
 
-    echo '</fieldset><br/>';
-
-    // Beobachter
-    echo '<fieldset><legend><input type="checkbox" value="1" name="cl_surveillance" /> Beobachter</legend>';
-    /** @var UserSurveillanceRepository $userSurveillanceRepository */
-    $userSurveillanceRepository = $app[UserSurveillanceRepository::class];
-    $tblcnt = $userSurveillanceRepository->getOrphanedUserIds();
-    echo count($tblcnt) . " verwaiste Beobachtereinträge gefunden";
     echo '</fieldset><br/>';
 
     /* Object lists */

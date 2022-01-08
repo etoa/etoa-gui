@@ -57,6 +57,9 @@ ALTER TABLE user_properties ADD CONSTRAINT user_properties_id FOREIGN KEY (id) R
 DELETE FROM user_ratings WHERE id NOT IN (SELECT user_id FROM users);
 ALTER TABLE user_ratings ADD CONSTRAINT user_ratings_id FOREIGN KEY (id) REFERENCES users(user_id) ON DELETE CASCADE;
 
+DELETE FROM user_surveillance WHERE user_id NOT IN (SELECT user_id FROM users);
+ALTER TABLE user_surveillance ADD CONSTRAINT user_surveillance_user_id FOREIGN KEY (user_id) REFERENCES users(user_id) ON DELETE CASCADE;
+
 DELETE FROM alliance_ranks WHERE rank_alliance_id NOT IN (SELECT alliance_id FROM alliances);
 ALTER TABLE alliance_ranks ADD CONSTRAINT rank_alliance_id FOREIGN KEY (rank_alliance_id) REFERENCES alliances(alliance_id) ON DELETE CASCADE;
 
