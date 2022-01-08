@@ -214,19 +214,6 @@ function runCleanup(
             $notepadRepository = $app[NotepadRepository::class];
             echo $notepadRepository->deleteOrphaned($userIds) . " verwaiste Notizen wurden gelöscht!<br/>";
         }
-        if (isset($_POST['del_deflist'])) {
-            echo $defenseRepository->deleteOrphaned($userIds) . " verwaiste Verteidigungen wurden gelöscht!<br/>";
-        }
-        if (isset($_POST['del_buildlist'])) {
-            /** @var BuildingRepository $buildingRepository */
-            $buildingRepository = $app[BuildingRepository::class];
-            echo $buildingRepository->deleteOrphaned($userIds) . " verwaiste Gebäude wurden gelöscht!<br/>";
-        }
-        if (isset($_POST['del_def_queue'])) {
-            /** @var DefenseQueueRepository $defQueueRepository */
-            $defQueueRepository = $app[DefenseQueueRepository::class];
-            echo $defQueueRepository->deleteOrphaned($userIds) . " verwaiste Bauaufträge (Def) wurden gelöscht!<br/>";
-        }
     }
 
     /* object lists */
@@ -416,15 +403,6 @@ function cleanupOverView(
     /** @var NotepadRepository $notepadRepository */
     $notepadRepository = $app[NotepadRepository::class];
     $ncount = $notepadRepository->getOrphanedCount($userIds);
-    /** @var DefenseRepository $defenseRepository */
-    $defenseRepository = $app[DefenseRepository::class];
-    $dlcount = $defenseRepository->getOrphanedCount($userIds);
-    /** @var BuildingRepository $buildingRepository */
-    $buildingRepository = $app[BuildingRepository::class];
-    $blcount = $buildingRepository->getOrphanedCount($userIds);
-    /** @var DefenseQueueRepository $defQueueRepository */
-    $defQueueRepository = $app[DefenseQueueRepository::class];
-    $dqcount = $defQueueRepository->getOrphanedCount($userIds);
 
     echo '<input type="checkbox" value="1" name="del_user_log" /> ' . StringUtils::formatNumber($lcount) . " verwaiste <strong>Userlogs</strong> gefunden<br/>";
     echo '<input type="checkbox" value="1" name="del_user_ratings" /> ' . StringUtils::formatNumber($rcount) . " verwaiste <strong>Ratings</strong> gefunden<br/>";
@@ -435,9 +413,6 @@ function cleanupOverView(
     echo '<input type="checkbox" value="1" name="del_tickets" /> ' . StringUtils::formatNumber($numOrphanedTickets) . " verwaiste <strong>Tickets</strong> gefunden<br/>";
     echo '<input type="checkbox" value="1" name="del_reports" /> ' . StringUtils::formatNumber($recount) . " verwaiste <strong>Berichte</strong> gefunden<br/>";
     echo '<input type="checkbox" value="1" name="del_notepad" /> ' . StringUtils::formatNumber($ncount) . " verwaiste <strong>Notizen</strong> gefunden<br/>";
-    echo '<input type="checkbox" value="1" name="del_deflist" /> ' . StringUtils::formatNumber($dlcount) . " verwaiste <strong>Defdatensätze</strong> gefunden<br/>";
-    echo '<input type="checkbox" value="1" name="del_def_queue" /> ' . StringUtils::formatNumber($dqcount) . " verwaiste <strong>Defbauaufträge</strong> gefunden<br/>";
-    echo '<input type="checkbox" value="1" name="del_buildlist" /> ' . StringUtils::formatNumber($blcount) . " verwaiste <strong>Gebäude</strong> gefunden<br/>";
     echo '</fieldset><br/>';
 
     /* Object lists */

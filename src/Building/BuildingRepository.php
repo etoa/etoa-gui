@@ -164,37 +164,6 @@ class BuildingRepository extends AbstractRepository
     }
 
     /**
-     * @param int[] $availableUserIds
-     */
-    public function getOrphanedCount(array $availableUserIds): int
-    {
-        $qb = $this->createQueryBuilder();
-
-        return (int) $qb
-            ->select('count(buildlist_id)')
-            ->from('buildlist')
-            ->where($qb->expr()->notIn('buildlist_user_id', ':userIds'))
-            ->setParameter('userIds', $availableUserIds, Connection::PARAM_INT_ARRAY)
-            ->execute()
-            ->fetchOne();
-    }
-
-
-    /**
-     * @param int[] $availableUserIds
-     */
-    public function deleteOrphaned(array $availableUserIds): int
-    {
-        $qb = $this->createQueryBuilder();
-
-        return (int) $qb
-            ->delete('buildlist')
-            ->where($qb->expr()->notIn('buildlist_user_id', ':userIds'))
-            ->setParameter('userIds', $availableUserIds, Connection::PARAM_INT_ARRAY)
-            ->execute();
-    }
-
-    /**
      * @return array<int, string>
      */
     public function buildingNames(): array

@@ -136,37 +136,6 @@ class DefenseQueueRepository extends AbstractRepository
             ->fetchOne();
     }
 
-    /**
-     * @param int[] $availableUserIds
-     */
-    public function getOrphanedCount(array $availableUserIds): int
-    {
-        $qb = $this->createQueryBuilder();
-
-        return (int) $qb
-            ->select('count(*)')
-            ->from('def_queue')
-            ->where($qb->expr()->notIn('queue_user_id', ':userIds'))
-            ->setParameter('userIds', $availableUserIds, Connection::PARAM_INT_ARRAY)
-            ->execute()
-            ->fetchOne();
-    }
-
-
-    /**
-     * @param int[] $availableUserIds
-     */
-    public function deleteOrphaned(array $availableUserIds): int
-    {
-        $qb = $this->createQueryBuilder();
-
-        return (int) $qb
-            ->delete('def_queue')
-            ->where($qb->expr()->notIn('queue_user_id', ':userIds'))
-            ->setParameter('userIds', $availableUserIds, Connection::PARAM_INT_ARRAY)
-            ->execute();
-    }
-
     public function freezeConstruction(int $userId): void
     {
         $this->createQueryBuilder()
