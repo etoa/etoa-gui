@@ -2,7 +2,6 @@
 
 namespace EtoA\User;
 
-use Doctrine\DBAL\Connection;
 use EtoA\Core\AbstractRepository;
 
 class UserCommentRepository extends AbstractRepository
