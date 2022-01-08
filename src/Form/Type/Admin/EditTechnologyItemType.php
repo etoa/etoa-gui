@@ -18,7 +18,7 @@ class EditTechnologyItemType extends AbstractType
             ])
             ->add('buildType', TechnologyBuildTypeType::class, [
                 'label' => 'Status',
-                'required' => 'required',
+                'required' => true,
                 'placeholder' => false,
             ])
             ->add('startTime', TimestampType::class, [
@@ -26,7 +26,6 @@ class EditTechnologyItemType extends AbstractType
             ])
             ->add('endTime', TimestampType::class, [
                 'label' => 'Ende',
-                'required' => false,
             ]);
     }
 }

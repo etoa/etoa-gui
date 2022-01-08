@@ -3,6 +3,8 @@
 {% block content %}
     <h1>Forschung</h1>
 
+    {{ button("Hinzufügen", path('admin.technology.add'))|raw }}
+
     {{ component('admin_technology_search', {
         form: form
     }) }}

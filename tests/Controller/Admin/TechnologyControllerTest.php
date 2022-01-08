@@ -17,6 +17,17 @@ class TechnologyControllerTest extends SymfonyWebTestCase
         $this->assertSame(200, $client->getResponse()->getStatusCode(), $client->getResponse()->getContent());
     }
 
+    public function testAdd(): void
+    {
+        $client = self::createClient();
+
+        $this->loginAdmin($client);
+
+        $client->request('GET', '/admin/technology/add');
+
+        $this->assertSame(200, $client->getResponse()->getStatusCode(), $client->getResponse()->getContent());
+    }
+
     public function testPoints(): void
     {
         $client = self::createClient();

@@ -2,10 +2,12 @@
 
 namespace EtoA\Controller\Admin;
 
+use EtoA\Form\Type\Admin\AddTechnologyItemType;
 use EtoA\Form\Type\Admin\EditTechnologyItemType;
 use EtoA\Form\Type\Admin\TechnologySearchType;
 use EtoA\Ranking\RankingService;
 use EtoA\Technology\TechnologyDataRepository;
+use EtoA\Technology\TechnologyListItem;
 use EtoA\Technology\TechnologyPointRepository;
 use EtoA\Technology\TechnologyRepository;
 use EtoA\Universe\Entity\EntityRepository;
@@ -36,6 +38,33 @@ class TechnologyController extends AbstractAdminController
         return $this->render('admin/technology/search.html.twig', [
             'form' => $this->createForm(TechnologySearchType::class, $request->request->all())->createView(),
             'total' => $this->technologyRepository->count(),
+        ]);
+    }
+
+    #[Route("/admin/technology/add", name: "admin.technology.add")]
+    #[IsGranted('ROLE_ADMIN_GAME-ADMIN')]
+    public function add(Request $request): Response
+    {
+        $item = TechnologyListItem::empty();
+        $form = $this->createForm(AddTechnologyItemType::class, $item);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            if ((bool) $form->get('all')->getData()) {
+                $techIds = array_keys($this->technologyDataRepository->getTechnologyNames(true));
+                foreach ($techIds as $techId) {
+                    $this->technologyRepository->addTechnology($techId, $item->currentLevel, $item->userId, $item->entityId);
+                }
+
+                $this->addFlash('success', count($techIds) . ' Forschungen hinzugefügt');
+            } else {
+                $this->technologyRepository->addTechnology($item->technologyId, $item->currentLevel, $item->userId, $item->entityId);
+
+                $this->addFlash('success', 'Forschung hinzugefügt');
+            }
+        }
+
+        return $this->render('admin/technology/add.html.twig', [
+            'form' => $form->createView(),
         ]);
     }
 
