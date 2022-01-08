@@ -75,63 +75,8 @@ else {
     $build_type[3] = "Forschen";
 
     //
-    // Bearbeiten
-    //
-    if (isset($_GET['action']) && $_GET['action'] == "edit") {
-        if (isset($_POST['save'])) {
-            $entry = $technologyRepository->getEntry($_GET['techlist_id']);
-            if ($entry !== null) {
-                $entry->currentLevel = (int) $_POST['techlist_current_level'];
-                $entry->buildType = (int) $_POST['techlist_build_type'];
-                $entry->startTime = $_POST['techlist_build_start_time'] ? (new \DateTime($_POST['techlist_build_start_time']))->getTimestamp() : 0;
-                $entry->endTime = $_POST['techlist_build_end_time'] ? (new \DateTime($_POST['techlist_build_end_time']))->getTimestamp() : 0;
-                $technologyRepository->save($entry);
-            }
-
-        } elseif (isset($_POST['del'])) {
-            $technologyRepository->removeEntry($_GET['techlist_id']);
-        }
-
-        $entry = $technologyRepository->getEntry($_GET['techlist_id']);
-        if ($entry !== null) {
-            $technologyNames = $technologyDataRepository->getTechnologyNames(true);
-            $userNick = $userRepository->getNick($entry->userId);
-            $planet = $planetRepository->find($entry->entityId);
-            echo "<form action=\"?page=$page&sub=$sub&action=edit&techlist_id=" . $entry->id . "\" method=\"post\">";
-            echo "<table class=\"tbl\">";
-            echo "<tr><td class=\"tbltitle\" valign=\"top\">ID</td><td class=\"tbldata\">" . $entry->id . "</td></tr>";
-            echo "<tr><td class=\"tbltitle\" valign=\"top\">Planet</td><td class=\"tbldata\">" . ($planet !== null ? $planet->name : '') . "</td></tr>";
-            echo "<tr><td class=\"tbltitle\" valign=\"top\">Spieler</td><td class=\"tbldata\">" . $userNick . "</td></tr>";
-            echo "<tr><td class=\"tbltitle\" valign=\"top\">Geb&auml;ude</td><td class=\"tbldata\">" . $technologyNames[$entry->id] . "</td></tr>";
-            echo "<tr><td class=\"tbltitle\" valign=\"top\">Level</td><td class=\"tbldata\"><input type=\"text\" name=\"techlist_current_level\" value=\"" . $entry->currentLevel . "\" size=\"2\" maxlength=\"3\" /></td></tr>";
-            echo "<tr><td class=\"tbltitle\" valign=\"top\">Baustatus</td><td class=\"tbldata\"><select name=\"techlist_build_type\">";
-            foreach ($build_type as $id => $val) {
-                echo "<option value=\"$id\"";
-                if ($entry->buildType == $id) echo " selected=\"selected\"";
-                echo ">$val</option>";
-            }
-            echo "</select></td></tr>";
-
-            if ($entry->startTime > 0) $bst = date($config->get('admin_dateformat'), $entry->startTime);
-            else $bst = "";
-            if ($entry->endTime > 0) $bet = date($config->get('admin_dateformat'), $entry->endTime);
-            else $bet = "";
-            echo "<tr><td class=\"tbltitle\" valign=\"top\">Baustart</td><td class=\"tbldata\"><input type=\"text\" name=\"techlist_build_start_time\" id=\"techlist_build_start_time\" value=\"$bst\" size=\"20\" maxlength=\"30\" /> <input type=\"button\" value=\"Jetzt\" onclick=\"document.getElementById('techlist_build_start_time').value='" . date("Y-m-d H:i:s") . "'\" /></td></tr>";
-            echo "<tr><td class=\"tbltitle\" valign=\"top\">Bauende</td><td class=\"tbldata\"><input type=\"text\" name=\"techlist_build_end_time\" value=\"$bet\" size=\"20\" maxlength=\"30\" /></td></tr>";
-            echo "</table>";
-            echo "<br/><input type=\"submit\" name=\"save\" value=\"&Uuml;bernehmen\" />&nbsp;";
-            echo "<input type=\"submit\" name=\"del\" value=\"L&ouml;schen\" />&nbsp;";
-            echo "<input type=\"button\" value=\"Zur&uuml;ck zu den Suchergebnissen\" onclick=\"document.location='?page=$page&sub=$sub&action=searchresults'\" />&nbsp;";
-            echo "<input type=\"button\" onclick=\"document.location='?page=$page&sub=$sub'\" value=\"Neue Suche\" />&nbsp;";
-            echo "</form>";
-        } else
-            echo "Dieser Datensatz wurde gel&ouml;scht!<br/><br/><input type=\"button\" value=\"Zur&uuml;ck zu den Suchergebnissen\" onclick=\"document.location='?page=$page&sub=$sub&action=searchresults'\" />;";
-    }
-
-    //
     // Suchformular Technologien
     //
-    else {
 
         // Technologien laden
         /** @var TechnologyDataRepository $technologyDataRepository */
@@ -164,5 +109,4 @@ else {
 
         $tblcnt = $technologyRepository->count();
         echo "<p>Es sind " . StringUtils::formatNumber($tblcnt) . " Eintr&auml;ge in der Datenbank vorhanden.</p>";
-    }
 }

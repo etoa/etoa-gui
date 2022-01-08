@@ -21,7 +21,9 @@
                     (Fertig in {{ formatTimespan(entry.endTime - date().timestamp) }})
                 {% endif %}
             </td>
-            <td></td>
+            <td>
+                <a href="{{ path('admin.technology.edit', {id: entry.id}) }}">Edit</a>
+            </td>
         </tr>
     {% else %}
         <tr><td colspan="9999"><i>Keine Einträge vorhanden</i></td></tr>
