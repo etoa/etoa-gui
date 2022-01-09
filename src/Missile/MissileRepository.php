@@ -49,9 +49,9 @@ class MissileRepository extends \EtoA\Core\AbstractRepository
         }
     }
 
-    public function count(): int
+    public function count(MissileListSearch $search = null): int
     {
-        return (int) $this->createQueryBuilder()
+        return (int) $this->applySearchSortLimit($this->createQueryBuilder(), $search)
             ->select("COUNT(missilelist_id)")
             ->from('missilelist')
             ->execute()
@@ -91,6 +91,31 @@ class MissileRepository extends \EtoA\Core\AbstractRepository
     /**
      * @return MissileListItem[]
      */
+    public function search(MissileListSearch $search, int $limit, int $offset): array
+    {
+        $data = $this->applySearchSortLimit($this->createQueryBuilder(), $search, null, $limit, $offset)
+            ->select('*')
+            ->from('missilelist')
+            ->execute()
+            ->fetchAllAssociative();
+
+        return array_map(fn ($row) => MissileListItem::createFromArray($row), $data);
+    }
+
+    public function searchOne(MissileListSearch $search): ?MissileListItem
+    {
+        $data = $this->applySearchSortLimit($this->createQueryBuilder(), $search)
+            ->select('*')
+            ->from('missilelist')
+            ->execute()
+            ->fetchAssociative();
+
+        return $data !== false ? MissileListItem::createFromArray($data) : null;
+    }
+
+    /**
+     * @return MissileListItem[]
+     */
     public function findForUser(int $userId, ?int $entityId = null): array
     {
         $qb = $this->createQueryBuilder()
@@ -109,7 +134,7 @@ class MissileRepository extends \EtoA\Core\AbstractRepository
             ->execute()
             ->fetchAllAssociative();
 
-        return array_map(fn ($row) => new MissileListItem($row), $data);
+        return array_map(fn ($row) => MissileListItem::createFromArray($row), $data);
     }
 
     public function setMissileCount(int $id, int $count): void
