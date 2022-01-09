@@ -171,6 +171,10 @@ class DatabaseCleanupController extends AbstractAdminController
         ]);
     }
 
+    /**
+     * @param list<int> $options
+     * @return array<int, bool>
+     */
     private function daysBuilder(array $options, int $configValue): array
     {
         $days = [];
