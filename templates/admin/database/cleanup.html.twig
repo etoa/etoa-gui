@@ -1,0 +1,97 @@
+{% extends 'admin/layout/admin.html.twig' %}
+
+{% block content %}
+    <h1>Datenbank</h1>
+    <h3>Clean-Up</h3>
+
+    {{ message|raw }}
+
+    <form method="post">
+        <fieldset>
+            <legend><input type="checkbox" value="1" name="cl_msg" /> Nachrichten</legend>
+            <input type="radio" name="only_deleted" value="0" /><b>Nachrichten löschen:</b>
+            Älter als <select name="message_day">
+            {% for day,selected in messageDays %}
+                <option value="{{ day }}" {% if selected %}selected="selected" {% endif %}>{{ day }} Tage</option>
+            {% endfor %}
+            </select> ({{ messageNotArchivedCount }} total).<br/>
+
+            <input type="radio" name="only_deleted_reports" value="1" checked="checked" /> <b>Nur 'gelöschte' Nachrichten löschen:</b>
+            Älter als <select name="message_deleted_day">
+                {% for day,selected in messageDeletedDays %}
+                    <option value="{{ day }}" {% if selected %}selected="selected" {% endif %}>{{ day }} Tage</option>
+                {% endfor %}
+            </select> ({{ formatNumber(messageDeletedCount) }} total).
+        </fieldset>
+        <br/>
+
+        <fieldset>
+            <legend><input type="checkbox" value="1" name="cl_report" /> Berichte</legend>
+            <input type="radio" name="only_deleted" value="0" />
+            <b>Berichte löschen:</b>
+            Älter als <select name="report_day">
+                {% for day,selected in reportsDays %}
+                    <option value="{{ day }}" {% if selected %}selected="selected" {% endif %}>{{ day }} Tage</option>
+                {% endfor %}
+            </select> ({{ formatNumber(reportNotArchivedCount) }} total).<br/>
+
+            <input type="radio" name="only_deleted" value="1" checked="checked" /> <b>Nur 'gelöschte' Berichte löschen:</b>
+            Älter als <select name="report_deleted_day">
+                {% for day,selected in reportsDeletedDays %}
+                    <option value="{{ day }}" {% if selected %}selected="selected" {% endif %}>{{ day }} Tage</option>
+                {% endfor %}
+            </select> ({{ formatNumber(reportDeletedCount) }} total).
+        </fieldset>
+        <br/>
+
+        <fieldset>
+            <legend><input type="checkbox" value="1" name="cl_log" /> Logs</legend>
+
+            <b>Logs löschen:</b>
+            Einträge löschen welche älter als <select name="log_day">
+                {% for day,selected in logDays %}
+                    <option value="{{ day }}" {% if selected %}selected="selected" {% endif %}>{{ day }} Tage</option>
+                {% endfor %}
+            </select> sind ({{ formatNumber(logCount) }} total).
+        </fieldset><br/>
+
+        <fieldset>
+            <legend><input type="checkbox" value="1" name="cl_sesslog" /> Session-Logs</legend>
+
+            <b>Session-Logs löschen:</b>
+            Einträge löschen die älter als <select name="sess_log_day">
+                {% for day,selected in logDays %}
+                    <option value="{{ day }}" {% if selected %}selected="selected" {% endif %}>{{ day }} Tage</option>
+                {% endfor %}
+            </select> sind ({{ formatNumber(sessionCount) }} total).
+        </fieldset><br/>
+
+        <fieldset>
+            <legend><input type="checkbox" value="1" name="cl_points" /> Punkteverlauf</legend>
+            <b>Punkteverläufe löschen:</b> Einträge löschen die älter als <select name="del_user_points">
+                {% for day,selected in logDays %}
+                    <option value="{{ day }}" {% if selected %}selected="selected" {% endif %}>{{ day }} Tage</option>
+                {% endfor %}
+            </select> sind (Total: {{ formatNumber(userPointsCount) }} User, {{ formatNumber(alliancePointsCount) }} Allianz).
+        </fieldset><br/>
+
+        <fieldset>
+            <legend><input type="checkbox" value="1" name="cl_inactive" /> User</legend>
+            {{ formatNumber(userInactiveCount) }} inaktive Benutzer löschen ({{ userInactiveConfig2 }} Tage seit der Registration ohne Login oder {{ userInactiveConfig1 }} Tage nicht mehr eingeloggt)<br/>
+            {{ formatNumber(userDeletedCount) }} als gelöscht markierte Benutzer endgültig löschen
+        </fieldset><br/>
+
+    <fieldset>
+        <legend><input type="checkbox" value="1" name="cl_objlist" /> Objektlisten</legend>
+        <b>Leere Schiffdatensätze:</b> {{ formatNumber(shipEmptyCount) }} vorhanden ({{ formatNumber(shipCount) }} total).<br/>
+        <b>Leere Verteidigungsdatensätze:</b> {{ formatNumber(defenseEmptyCount) }} vorhanden ({{ formatNumber(defenseCount) }} total).<br/>
+        <b>Leere Raketendatensäte:</b> {{ formatNumber(missileEmptyCount) }} vorhanden ({{ formatNumber(missileCount) }} total).<br/>
+        <b>Leere Gebäudedatensätze:</b> {{ formatNumber(buildingEmptyCount) }} vorhanden ({{ formatNumber(buildingCount) }} total).<br/>
+        <b>Leere Forschungsdatensätze:</b> {{ formatNumber(technologyEmptyCount) }} vorhanden ({{ formatNumber(technologyCount) }} total).<br/>
+    </fieldset><br/>
+
+    <input type="submit" name="submit_cleanup_selected" value="Selektiere ausführen" /> &nbsp;
+    <input type="submit" name="submit_cleanup_all" value="Alle ausführen" />
+
+    </form>
+{% endblock %}

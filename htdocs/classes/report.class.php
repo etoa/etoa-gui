@@ -122,42 +122,5 @@ abstract class Report
         return ReportTypes::TYPES[$this->type];
     }
 
-    /**
-     * Alte Nachrichten löschen
-     */
-    static function removeOld($threshold = 0, $onlyDeleted = 0)
-    {
-        // TODO
-        global $app;
-
-        /** @var ConfigurationService $config */
-        $config = $app[ConfigurationService::class];
-        /** @var ReportRepository $reportRepository */
-        $reportRepository = $app[ReportRepository::class];
-        /** @var LogRepository $logRepository */
-        $logRepository = $app[LogRepository::class];
-
-        $nr = 0;
-        if ($onlyDeleted == 0) {
-            // Normal old messages
-            $timestamp = $threshold > 0
-                ? time() - $threshold
-                : time() - (24 * 3600 * $config->getInt('reports_threshold_days'));
-
-            $nr = $reportRepository->removeUnarchivedread($timestamp);
-            $logRepository->add(LogFacility::SYSTEM, LogSeverity::INFO, "Unarchivierte Berichte die älter als " . date("d.m.Y H:i", $timestamp) . " sind wurden gelöscht!");
-        }
-
-        // Deleted
-        $timestamp = $threshold > 0
-            ? time() - $threshold
-            : time() - (24 * 3600 * $config->param1Int('reports_threshold_days'));
-
-        $nr += $reportRepository->removeDeleted($timestamp);
-        $logRepository->add(LogFacility::SYSTEM, LogSeverity::INFO, "Unarchivierte Berichte die älter als " . date("d.m.Y H:i", $timestamp) . " sind wurden gelöscht!");
-
-        return $nr;
-    }
-
     abstract public function __toString();
 }

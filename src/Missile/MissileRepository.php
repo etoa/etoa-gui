@@ -141,4 +141,12 @@ class MissileRepository extends \EtoA\Core\AbstractRepository
             ->setParameter('id', $id)
             ->execute();
     }
+
+    public function deleteEmpty(): int
+    {
+        return (int) $this->createQueryBuilder()
+            ->delete('missilelist')
+            ->where('missilelist_count=0')
+            ->execute();
+    }
 }
