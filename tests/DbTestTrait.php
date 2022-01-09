@@ -18,6 +18,7 @@ trait DbTestTrait
 
     protected function tearDown(): void
     {
+        self::$staticConnection->executeQuery('SET FOREIGN_KEY_CHECKS = 0');
         self::$staticConnection->executeQuery('TRUNCATE admin_users');
         self::$staticConnection->executeQuery('TRUNCATE admin_user_sessions');
         self::$staticConnection->executeQuery('TRUNCATE alliances');
@@ -73,6 +74,7 @@ trait DbTestTrait
         self::$staticConnection->executeQuery('DELETE FROM market_auction');
         self::$staticConnection->executeQuery('DELETE FROM market_ressource');
         self::$staticConnection->executeQuery('DELETE FROM market_ship');
+        self::$staticConnection->executeQuery('SET FOREIGN_KEY_CHECKS = 1');
 
         parent::tearDown();
     }

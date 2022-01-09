@@ -60,15 +60,7 @@ class AllianceMiscController extends AbstractAdminController
     public function crap(Request $request): Response
     {
         if ($request->isMethod('POST')) {
-            if ($request->request->has('cleanupRanks')) {
-                if ($this->allianceRankRepository->deleteOrphanedRanks() > 0) {
-                    $this->addFlash('success', "Fehlerhafte Daten gelöscht.");
-                }
-            } elseif ($request->request->has('cleanupDiplomacy')) {
-                if ($this->allianceDiplomacyRepository->deleteOrphanedDiplomacies() > 0) {
-                    $this->addFlash('success', "Fehlerhafte Daten gelöscht.");
-                }
-            } elseif ($request->query->has('cleanupEmptyAlliances')) {
+            if ($request->query->has('cleanupEmptyAlliances')) {
                 $alliances = $this->allianceRepository->findAllWithoutUsers();
                 $cnt = 0;
                 if (count($alliances) > 0) {
@@ -87,8 +79,6 @@ class AllianceMiscController extends AbstractAdminController
         }
 
         return $this->render('admin/alliance/crap.html.twig', [
-            'ranksWithoutAlliance' => $this->allianceRankRepository->countOrphanedRanks(),
-            'bndWithoutAlliance' => $this->allianceDiplomacyRepository->countOrphanedDiplomacies(),
             'alliancesWithoutFounder' => $this->allianceRepository->findAllWithoutFounder(),
             'alliancesWithoutUsers' => $this->allianceRepository->findAllWithoutUsers(),
             'usersWithInvalidAlliances' => $this->allianceRepository->findAllSoloUsers(),

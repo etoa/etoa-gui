@@ -142,26 +142,6 @@ class TicketRepositoryTest extends AbstractDbTestCase
         $this->assertEquals(0, $this->repository->countNew());
     }
 
-    public function testFindOrphanedIds(): void
-    {
-        // given
-        $ticketId = 1;
-        $userId = 2;
-        $catId = 3;
-
-        $this->createTicket(
-            $ticketId,
-            $userId,
-            $catId
-        );
-
-        // when
-        $ids = $this->repository->findOrphanedIds();
-
-        // then
-        $this->assertEquals([$ticketId], $ids);
-    }
-
     public function testRemoveByIds(): void
     {
         // given

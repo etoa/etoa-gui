@@ -25,10 +25,4 @@ class UserLogRepositoryTest extends AbstractDbTestCase
         $this->assertNotEmpty($this->repository->getUserLogs(1, 100, true));
         $this->assertEmpty($this->repository->getUserLogs(1, 100, false));
     }
-
-
-    public function testGetOrphanedCount(): void
-    {
-        $this->assertSame(0, $this->repository->getOrphanedCount([1,2]));
-    }
 }

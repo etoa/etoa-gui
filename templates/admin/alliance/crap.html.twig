@@ -5,20 +5,6 @@
     <h2>Überflüssige Daten</h2>
 
     <form method="post">
-        <h3>Ränge ohne Allianz</h3>
-        {% if ranksWithoutAlliance > 0%}
-            <p>{{ ranksWithoutAlliance }} Ränge ohne Allianz. <input type="submit" name="cleanupRanks" value="Löschen"></p>
-        {% else %}
-            <p>Keine fehlerhaften Daten gefunden.</p>
-        {% endif %}
-
-        <h3>Bündnisse/Kriege ohne Allianz</h3>
-        {% if bndWithoutAlliance > 0 %}
-            <p>{{ bndWithoutAlliance }} Bündnisse/Kriege ohne Allianz. <input type="submit" name="cleanupDiplomacy" value="Löschen"></p>
-        {% else %}
-            <p>Keine fehlerhaften Daten gefunden.</p>
-        {% endif %}
-
         <h3>Allianzen ohne Gründer</h3>
         {% if alliancesWithoutFounder|length > 0 %}
             <table class=\"tbl\">

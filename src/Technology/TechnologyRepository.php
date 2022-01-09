@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace EtoA\Technology;
 
-use Doctrine\DBAL\Connection;
 use EtoA\Core\AbstractRepository;
 
 class TechnologyRepository extends AbstractRepository
@@ -236,36 +235,6 @@ class TechnologyRepository extends AbstractRepository
             ->delete('techlist')
             ->where('techlist_id = :id')
             ->setParameter('id', $id)
-            ->execute();
-    }
-
-    /**
-     * @param int[] $availableUserIds
-     */
-    public function getOrphanedCount(array $availableUserIds): int
-    {
-        $qb = $this->createQueryBuilder();
-
-        return (int) $qb
-            ->select('count(techlist_id)')
-            ->from('techlist')
-            ->where($qb->expr()->notIn('techlist_user_id', ':userIds'))
-            ->setParameter('userIds', $availableUserIds, Connection::PARAM_INT_ARRAY)
-            ->execute()
-            ->fetchOne();
-    }
-
-    /**
-     * @param int[] $availableUserIds
-     */
-    public function deleteOrphaned(array $availableUserIds): int
-    {
-        $qb = $this->createQueryBuilder();
-
-        return (int) $qb
-            ->delete('techlist')
-            ->where($qb->expr()->notIn('techlist_user_id', ':userIds'))
-            ->setParameter('userIds', $availableUserIds, Connection::PARAM_INT_ARRAY)
             ->execute();
     }
 

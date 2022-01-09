@@ -2,7 +2,6 @@
 
 namespace EtoA\User;
 
-use Doctrine\DBAL\Connection;
 use EtoA\Core\AbstractRepository;
 
 class UserLogRepository extends AbstractRepository
@@ -54,36 +53,6 @@ class UserLogRepository extends AbstractRepository
             ->fetchAllAssociative();
 
         return array_map(fn (array $row) => new UserLog($row), $data);
-    }
-
-    /**
-     * @param int[] $availableUserIds
-     */
-    public function getOrphanedCount(array $availableUserIds): int
-    {
-        $qb = $this->createQueryBuilder();
-
-        return (int) $qb
-            ->select('count(id)')
-            ->from('user_log')
-            ->where($qb->expr()->notIn('user_id', ':userIds'))
-            ->setParameter('userIds', $availableUserIds, Connection::PARAM_INT_ARRAY)
-            ->execute()
-            ->fetchOne();
-    }
-
-    /**
-     * @param int[] $availableUserIds
-     */
-    public function deleteOrphaned(array $availableUserIds): int
-    {
-        $qb = $this->createQueryBuilder();
-
-        return (int) $qb
-            ->delete('user_log')
-            ->where($qb->expr()->notIn('user_id', ':userIds'))
-            ->setParameter('userIds', $availableUserIds, Connection::PARAM_INT_ARRAY)
-            ->execute();
     }
 
     public function deleteAll(): void

@@ -140,21 +140,6 @@ class TicketRepository extends AbstractRepository
     }
 
     /**
-     * @return array<int>
-     */
-    public function findOrphanedIds(): array
-    {
-        $data = $this->createQueryBuilder()
-            ->select('id')
-            ->from('tickets', 't')
-            ->where('!(t.user_id IN(SELECT u.user_id FROM users u))')
-            ->execute()
-            ->fetchFirstColumn();
-
-        return array_map(fn ($val) => (int) $val, $data);
-    }
-
-    /**
      * @param int[] $ticketIds
      */
     public function removeByIds(array $ticketIds): int

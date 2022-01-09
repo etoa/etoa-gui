@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace EtoA\User;
 
-use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Query\QueryBuilder;
 use EtoA\Core\AbstractRepository;
 
@@ -121,36 +120,6 @@ class UserRatingRepository extends AbstractRepository
             ->setParameters([
                 'id' => $id,
             ])
-            ->execute();
-    }
-
-    /**
-     * @param int[] $availableUserIds
-     */
-    public function getOrphanedCount(array $availableUserIds): int
-    {
-        $qb = $this->createQueryBuilder();
-
-        return (int) $qb
-            ->select('count(id)')
-            ->from('user_ratings')
-            ->where($qb->expr()->notIn('id', ':userIds'))
-            ->setParameter('userIds', $availableUserIds, Connection::PARAM_INT_ARRAY)
-            ->execute()
-            ->fetchOne();
-    }
-
-    /**
-     * @param int[] $availableUserIds
-     */
-    public function deleteOrphaned(array $availableUserIds): int
-    {
-        $qb = $this->createQueryBuilder();
-
-        return (int) $qb
-            ->delete('user_ratings')
-            ->where($qb->expr()->notIn('id', ':userIds'))
-            ->setParameter('userIds', $availableUserIds, Connection::PARAM_INT_ARRAY)
             ->execute();
     }
 

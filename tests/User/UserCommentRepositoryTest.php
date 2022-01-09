@@ -30,9 +30,4 @@ class UserCommentRepositoryTest extends AbstractDbTestCase
 
         $this->assertNotEmpty($this->repository->getComments(1));
     }
-
-    public function testGetOrphanedCount(): void
-    {
-        $this->assertSame(0, $this->repository->getOrphanedCount([1,2]));
-    }
 }
