@@ -6,9 +6,6 @@ use EtoA\Building\BuildingDataRepository;
 use EtoA\Building\BuildingRepository;
 use EtoA\Defense\DefenseDataRepository;
 use EtoA\Defense\DefenseRepository;
-use EtoA\Missile\MissileDataRepository;
-use EtoA\Missile\MissileRepository;
-use EtoA\Requirement\RequirementRepositoryProvider;
 use EtoA\Ship\ShipDataRepository;
 use EtoA\Ship\ShipRepository;
 use EtoA\Ship\ShipXpCalculator;
@@ -31,12 +28,6 @@ $xajax->register(XAJAX_FUNCTION, "editShipByListId");
 $xajax->register(XAJAX_FUNCTION, "editShipByShipId");
 $xajax->register(XAJAX_FUNCTION, "submitEditShip");
 $xajax->register(XAJAX_FUNCTION, "calcShipLevel");
-
-$xajax->register(XAJAX_FUNCTION, "showMissilesOnPlanet");
-$xajax->register(XAJAX_FUNCTION, "addMissileToPlanet");
-$xajax->register(XAJAX_FUNCTION, "removeMissileFromPlanet");
-$xajax->register(XAJAX_FUNCTION, "editMissile");
-$xajax->register(XAJAX_FUNCTION, "submitEditMissile");
 
 $xajax->register(XAJAX_FUNCTION, "showDefenseOnPlanet");
 $xajax->register(XAJAX_FUNCTION, "addDefenseToPlanet");
@@ -468,120 +459,6 @@ function submitEditShip($form, $listId)
     $objResponse->script("xajax_showShipsOnPlanet('" . $form['entity_id'] . "');");
     return $objResponse;
 }
-
-// Missiles
-
-function showMissilesOnPlanet($pid)
-{
-    global $app;
-
-    /** @var MissileDataRepository $missileDataRepository */
-    $missileDataRepository = $app[MissileDataRepository::class];
-    /** @var MissileRepository $missileRepository */
-    $missileRepository = $app[MissileRepository::class];
-
-    $objResponse = new xajaxResponse();
-
-    if ($pid != 0) {
-        [$entityId, $userId] = explode(":", $pid);
-        $missileList = $missileRepository->findForUser((int) $userId, (int) $entityId);
-        if (count($missileList) > 0) {
-            $missileNames = $missileDataRepository->getMissileNames(true);
-            $out = "<table class=\"tb\">";
-            foreach ($missileList as $entry) {
-                $out .= "<tr><td style=\"width:80px\" id=\"cnt_" . $entry->id . "\">" . $entry->count . "</td>
-                <th>" . $missileNames[$entry->missileId] . "</th>
-                <td style=\"width:150px\" id=\"actions_" . $entry->id . "\"><a href=\"javascript:;\" onclick=\"xajax_editMissile(xajax.getFormValues('selector')," . $entry->id . ")\">Bearbeiten</a>
-                <a href=\"javascript:;\" onclick=\"if (confirm('Sollen " . $entry->count . " " . $missileNames[$entry->missileId] . " von diesem Planeten gel&ouml;scht werden?')) {xajax_removeMissileFromPlanet(xajax.getFormValues('selector')," . $entry->id . ")}\">L&ouml;schen</td>
-                </tr>";
-            }
-            $out .= "</table>";
-        } else {
-            $out = "Keine Raketen vorhanden!";
-        }
-    } else {
-        $out = "Planet w&auml;hlen...";
-    }
-    $objResponse->assign("shipsOnPlanet", "innerHTML", $out);
-    return $objResponse;
-}
-
-function addMissileToPlanet($form)
-{
-    global $app;
-    /** @var MissileRepository $missileRepository */
-    $missileRepository = $app[MissileRepository::class];
-    $objResponse = new xajaxResponse();
-
-    [$entityId, $userId] = explode(":", $form['entity_id']);
-    if ($userId > 0) {
-        $missileRepository->addMissile((int) $form['ship_id'], (int) $form['shiplist_count'], (int) $userId, (int) $entityId);
-        $objResponse->script("xajax_showMissilesOnPlanet('" . $form['entity_id'] . "')");
-    } else {
-        $out = "Planet unbewohnt. Kann keine Schiffe hier bauen!";
-        $objResponse->assign("shipsOnPlanet", "innerHTML", $out);
-    }
-    return $objResponse;
-}
-
-function removeMissileFromPlanet($form, $listId)
-{
-    global $app;
-
-    /** @var MissileRepository $missileRepository */
-    $missileRepository = $app[MissileRepository::class];
-
-    $objResponse = new xajaxResponse();
-
-    $missileRepository->remove((int) $listId);
-    $objResponse->script("xajax_showMissilesOnPlanet('" . $form['entity_id'] . "');");
-
-    return $objResponse;
-}
-
-function editMissile($form, $listId)
-{
-    global $app;
-
-    /** @var MissileRepository $missileRepository */
-    $missileRepository = $app[MissileRepository::class];
-
-    $objResponse = new xajaxResponse();
-
-    [$entityId, $userId] = explode(":", $form['entity_id']);
-    $missileList = $missileRepository->findForUser((int) $userId, (int) $entityId);
-    if (count($missileList) > 0) {
-        foreach ($missileList as $entry) {
-            if ($entry->id == $listId) {
-                $out = "<input type=\"text\" size=\"9\" maxlength=\"12\" name=\"editcnt_" . $entry->id . "\" value=\"" . $entry->count . "\" />";
-                $objResponse->assign("cnt_" . $entry->id, "innerHTML", $out);
-                $out = "<a href=\"javaScript:;\" onclick=\"xajax_submitEditMissile(xajax.getFormValues('selector')," . $entry->id . ");\">Speichern</a> ";
-                $out .= "<a href=\"javaScript:;\" onclick=\"xajax_showMissilesOnPlanet('" . $form['entity_id'] . "');\">Abbrechen</a>";
-                $objResponse->assign("actions_" . $entry->id, "innerHTML", $out);
-            } else {
-                $objResponse->assign("actions_" . $entry->id, "innerHTML", "");
-            }
-        }
-    }
-
-    return $objResponse;
-}
-
-function submitEditMissile($form, $listId)
-{
-    global $app;
-
-    /** @var MissileRepository $missileRepository */
-    $missileRepository = $app[MissileRepository::class];
-
-    $objResponse = new xajaxResponse();
-
-    $missileRepository->setMissileCount((int) $listId, (int) $form['editcnt_' . $listId]);
-    $objResponse->script("xajax_showMissilesOnPlanet('" . $form['entity_id'] . "');");
-
-    return $objResponse;
-}
-
 
 // Defense
 
