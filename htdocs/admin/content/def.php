@@ -39,35 +39,11 @@ $planetRepository = $app[PlanetRepository::class];
 $rankingService = $app[RankingService::class];
 
 $request = Request::createFromGlobals();
-//
-// Battlepoints
-//
-if ($sub == "battlepoints") {
-    echo "<h1>Punkte</h1>";
-    echo "<h2>Punkte neu berechnen</h2><form action=\"?page=$page&amp;sub=$sub\" method=\"POST\">";
-    if (isset($_POST['recalc']) && $_POST['recalc'] != "") {
-        $numDefenses = $rankingService->calcDefensePoints();
-        echo MessageBox::ok("", "Die Punkte von $numDefenses Verteidigungsanlagen wurden aktualisiert!");
-    }
-    echo "Nach jeder direkter &Auml;nderung an den Verteidigungsanlagen via Datenbank m&uuml;ssen die Punkte neu berechnet werden: ";
-    echo "<br/><br/><input type=\"submit\" name=\"recalc\" value=\"Neu berechnen\" /></form>";
-    echo "<h2>Battlepoints</h2>";
-    $defenses = $defenseDataRepository->getAllDefenses();
-    usort($defenses, fn (Defense $a, Defense $b) => $b->points <=> $a->points);
-
-    if (count($defenses) > 0) {
-        echo "<table class=\"tb\">";
-        foreach ($defenses as $defense) {
-            echo "<tr><th>" . $defense->name . "</th><td style=\"width:70%; text-align: right\"  title=\"$defense->points\">" . StringUtils::formatNumber($defense->points) . "</td></tr>";
-        }
-        echo "</table>";
-    }
-}
 
 //
 //
 //
-elseif ($sub == "transforms") {
+if ($sub == "transforms") {
     ObjectTransformsForm::render($app, $request);
 }
 
