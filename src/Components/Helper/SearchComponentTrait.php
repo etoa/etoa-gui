@@ -79,14 +79,18 @@ trait SearchComponentTrait
      */
     private function getEntityLabels(array $entityIds): array
     {
-        $entityLabels = $this->entityRepository->searchEntityLabels(EntitySearch::create()->ids($entityIds));
+        if (isset($this->entityRepository)) {
+            $entityLabels = $this->entityRepository->searchEntityLabels(EntitySearch::create()->ids($entityIds));
 
-        $entities = [];
-        foreach ($entityLabels as $entity) {
-            $entities[$entity->id] = $entity->toString();
+            $entities = [];
+            foreach ($entityLabels as $entity) {
+                $entities[$entity->id] = $entity->toString();
+            }
+
+            return $entities;
         }
 
-        return $entities;
+        throw new \RuntimeException('EntityRepository must be set');
     }
 
     abstract public function getSearch(): SearchResult;

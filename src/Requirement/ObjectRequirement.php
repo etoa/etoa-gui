@@ -4,18 +4,48 @@ namespace EtoA\Requirement;
 
 class ObjectRequirement
 {
-    public int $id;
-    public int $objectId;
-    public int $requiredBuildingId;
-    public int $requiredTechnologyId;
-    public int $requiredLevel;
+    public int $id = 0;
+    public int $objectId = 0;
+    public int $requiredBuildingId = 0;
+    public int $requiredTechnologyId = 0;
+    public int $requiredLevel = 0;
 
-    public function __construct(array $data)
+    public static function createFromData(array $data): ObjectRequirement
     {
-        $this->id = (int) $data['id'];
-        $this->objectId = (int) $data['obj_id'];
-        $this->requiredBuildingId = (int) $data['req_building_id'];
-        $this->requiredTechnologyId = (int) $data['req_tech_id'];
-        $this->requiredLevel = (int) $data['req_level'];
+        $requirement = new ObjectRequirement();
+        $requirement->id = (int) $data['id'];
+        $requirement->objectId = (int) $data['obj_id'];
+        $requirement->requiredBuildingId = (int) $data['req_building_id'];
+        $requirement->requiredTechnologyId = (int) $data['req_tech_id'];
+        $requirement->requiredLevel = (int) $data['req_level'];
+
+        return $requirement;
+    }
+
+    public function requiredId(): string
+    {
+        if ($this->requiredBuildingId > 0) {
+            return 'b:' . $this->requiredBuildingId;
+        }
+
+        return 't:' . $this->requiredTechnologyId;
+    }
+
+    public function setRequiredId(string $id): void
+    {
+        [$type, $level] = explode(':', $id);
+        if ($type === 'b') {
+            $this->requiredBuildingId = (int) $level;
+        }
+
+        $this->requiredTechnologyId = (int) $level;
+    }
+
+    public function isEqual(ObjectRequirement $requirement): bool
+    {
+        return $this->objectId === $requirement->objectId &&
+            $this->requiredTechnologyId === $requirement->requiredTechnologyId &&
+            $this->requiredBuildingId === $requirement->requiredBuildingId &&
+            $this->requiredLevel === $requirement->requiredLevel;
     }
 }

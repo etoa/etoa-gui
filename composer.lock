@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4b8637094b6d669784d57bfb35597e9d",
+    "content-hash": "9b89baa8d375bf34787e44579cdf21a5",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -10516,6 +10516,58 @@
             "time": "2021-08-21T11:36:27+00:00"
         },
         {
+            "name": "phpstan/phpstan-webmozart-assert",
+            "version": "0.12.16",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/phpstan/phpstan-webmozart-assert.git",
+                "reference": "0422ea88dbefb3a0dd608e5d09c659ef46bf6378"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/phpstan/phpstan-webmozart-assert/zipball/0422ea88dbefb3a0dd608e5d09c659ef46bf6378",
+                "reference": "0422ea88dbefb3a0dd608e5d09c659ef46bf6378",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.1 || ^8.0",
+                "phpstan/phpstan": "^0.12.92"
+            },
+            "require-dev": {
+                "php-parallel-lint/php-parallel-lint": "^1.2",
+                "phpstan/phpstan-phpunit": "^0.12.6",
+                "phpstan/phpstan-strict-rules": "^0.12.1",
+                "phpunit/phpunit": "^9.5",
+                "webmozart/assert": "^1.9.1"
+            },
+            "type": "phpstan-extension",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "0.12-dev"
+                },
+                "phpstan": {
+                    "includes": [
+                        "extension.neon"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "PHPStan\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "description": "PHPStan webmozart/assert extension",
+            "support": {
+                "issues": "https://github.com/phpstan/phpstan-webmozart-assert/issues",
+                "source": "https://github.com/phpstan/phpstan-webmozart-assert/tree/0.12.16"
+            },
+            "time": "2021-08-24T12:22:14+00:00"
+        },
+        {
             "name": "phpunit/php-code-coverage",
             "version": "9.2.7",
             "source": {
@@ -12550,5 +12602,5 @@
         "php": "^8"
     },
     "platform-dev": [],
-    "plugin-api-version": "2.2.0"
+    "plugin-api-version": "2.3.0"
 }

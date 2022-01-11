@@ -72,4 +72,3 @@ class MissilesSearchComponent extends AbstractController
         return $this->createForm(MissileSearchType::class, $this->getFormValues());
     }
 }
-

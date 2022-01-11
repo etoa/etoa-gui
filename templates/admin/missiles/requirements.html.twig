@@ -1,0 +1,47 @@
+{% extends 'admin/layout/admin.html.twig' %}
+
+{% block content %}
+    <h1>Raketen</h1>
+    <h3>Anforderungen</h3>
+
+    {{ form_start(form) }}
+    {{ form_errors(form) }}
+    <table>
+        <tr>
+            <th colspan="2">Name</th>
+            <th>Voraussetzungen</th>
+        </tr>
+        {% for missile in missiles %}
+            <tr>
+                <td><img src="{{ missile.getImagePath() }}" /></td>
+                <td>{{ missile.name }}</td>
+                <td data-controller="collection">
+                    <div>{{ form_errors(form['object-' ~ missile.id]) }}</div>
+                    <table>
+                        <tbody data-collection-target="container">
+                            {% for rows in form['object-' ~ missile.id] %}
+                                <tr {% if loop.index == 1 %} data-collection-target="prototype" id="test"{% endif %}>
+                                    {% for element in rows %}
+                                        <td>
+                                            {{ form_row(element) }}
+                                        </td>
+                                    {% endfor %}
+                                    <td>
+                                        <button type="button" data-action="click->collection#removeEntry">Löschen</button>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    <p>
+                        <button type="button" data-action="click->collection#addEntry">Hinzufügen</button>
+                    </p>
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+    <p>
+        <input type="submit" value="Speichern">
+    </p>
+    {{ form_end(form) }}
+{% endblock %}

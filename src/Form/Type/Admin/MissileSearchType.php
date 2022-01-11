@@ -6,7 +6,6 @@ use EtoA\Form\Type\Core\EntityType;
 use EtoA\Form\Type\Core\MissileType;
 use EtoA\Form\Type\Core\UserType;
 use EtoA\Universe\Entity\EntityLabelSearch;
-use EtoA\Universe\Entity\EntitySearch;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 
