@@ -1,0 +1,21 @@
+{% extends 'components/base_search.html.twig' %}
+
+{% block data %}
+    <tr>
+        <th>Spieler</th>
+        <th>Planet</th>
+        <th>Rakete</th>
+        <th>Anzahl</th>
+        <th>Aktion</th>
+    </tr>
+    {% for item in search.entries %}
+        {{ component('admin_missile_view', {
+            item: item,
+            user: this.users[item.userId],
+            missile: this.missileNames[item.missileId],
+            entity: this.entities[item.entityId]
+        }) }}
+    {% else %}
+        <tr><td colspan="9999"><i>Keine Einträge vorhanden</i></td></tr>
+    {% endfor %}
+{% endblock %}

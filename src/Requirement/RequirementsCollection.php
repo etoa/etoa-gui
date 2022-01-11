@@ -5,7 +5,7 @@ namespace EtoA\Requirement;
 class RequirementsCollection
 {
     /** @var array<int, ObjectRequirement[]> */
-    private $requirements = [];
+    private array $requirements = [];
 
     /**
      * @param ObjectRequirement[] $requirements

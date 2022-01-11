@@ -10,12 +10,27 @@ class MissileListItem
     public int $missileId;
     public int $count;
 
-    public function __construct(array $data)
+    public static function createFromArray(array $data): MissileListItem
     {
-        $this->id = (int) $data['missilelist_id'];
-        $this->userId = (int) $data['missilelist_user_id'];
-        $this->entityId = (int) $data['missilelist_entity_id'];
-        $this->missileId = (int) $data['missilelist_missile_id'];
-        $this->count = (int) $data['missilelist_count'];
+        $item = new MissileListItem();
+        $item->id = (int) $data['missilelist_id'];
+        $item->userId = (int) $data['missilelist_user_id'];
+        $item->entityId = (int) $data['missilelist_entity_id'];
+        $item->missileId = (int) $data['missilelist_missile_id'];
+        $item->count = (int) $data['missilelist_count'];
+
+        return $item;
+    }
+
+    public static function empty(): MissileListItem
+    {
+        $item = new MissileListItem();
+        $item->id = 0;
+        $item->userId = 0;
+        $item->entityId = 0;
+        $item->missileId = 0;
+        $item->count = 0;
+
+        return $item;
     }
 }

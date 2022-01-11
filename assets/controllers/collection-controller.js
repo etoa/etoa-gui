@@ -22,8 +22,21 @@ export default class extends Controller {
         // Revert search choice fields in prototype
         for (let choiceList of entry.querySelectorAll('[data-controller=searchable-choice]')) {
             let elements = [];
-            for (let option of choiceList.querySelectorAll('[role=option]')) {
-                elements.push('<option value="' + option.getAttribute('data-value') + '">' + option.innerHTML + "</option>");
+            let optGroups = {};
+            let currentOptGroup = null;
+            for (let option of choiceList.querySelectorAll('[role=listbox] > div')) {
+                // Regular options re marked as role=option, optgroup are market as role=group and their items as role=treeitem
+                if (option.getAttribute('role') === 'option') {
+                    elements.push('<option value="' + option.getAttribute('data-value') + '">' + option.innerHTML + "</option>");
+                } else if (option.getAttribute('role') === 'group') {
+                    optGroups[currentOptGroup = option.textContent] = [];
+                } else if (option.getAttribute('role') === 'treeitem') {
+                    optGroups[currentOptGroup].push('<option value="' + option.getAttribute('data-value') + '">' + option.innerHTML + "</option>");
+                }
+            }
+
+            for (let optGroup in optGroups) {
+                elements.push('<optgroup label="' + optGroup + '">' + optGroups[optGroup].join('') + '</optgroup>');
             }
 
             if (elements.length) {

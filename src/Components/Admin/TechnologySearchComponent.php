@@ -11,7 +11,6 @@ use EtoA\Technology\TechnologyListItem;
 use EtoA\Technology\TechnologyListItemSearch;
 use EtoA\Technology\TechnologyRepository;
 use EtoA\Universe\Entity\EntityRepository;
-use EtoA\Universe\Entity\EntitySearch;
 use EtoA\User\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
@@ -69,12 +68,7 @@ class TechnologySearchComponent extends AbstractController
         if ($total > 0) {
             $this->userNicks = $this->userRepository->searchUserNicknames();
             $this->technologyNames = $this->technologyDataRepository->getTechnologyNames(true);
-            $entities = $this->entityRepository->searchEntityLabels(EntitySearch::create()->ids(
-                array_map(fn (TechnologyListItem $item) => $item->entityId, $entries)
-            ));
-            foreach ($entities as $entity) {
-                $this->entities[$entity->id] = $entity->toString();
-            }
+            $this->entities = $this->getEntityLabels(array_map(fn (TechnologyListItem $item) => $item->entityId, $entries));
         }
 
         return new SearchResult($entries, $limit, $total, $this->perPage);
@@ -83,13 +77,5 @@ class TechnologySearchComponent extends AbstractController
     protected function instantiateForm(): FormInterface
     {
         return $this->createForm(TechnologySearchType::class, $this->getFormValues());
-    }
-
-    private function resetFormValues(): void
-    {
-        $this->formValues = [];
-        foreach ($this->getFormInstance()->all() as $field) {
-            $this->formValues[$field->getName()] = '';
-        }
     }
 }

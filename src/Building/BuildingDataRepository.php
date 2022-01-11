@@ -87,6 +87,17 @@ class BuildingDataRepository extends AbstractRepository
             ->fetchAllKeyValue();
     }
 
+    public function getBuildingName(int $buildingId): string
+    {
+        return (string) $this->applySearchSortLimit($this->createQueryBuilder())
+            ->select('building_name')
+            ->from('buildings')
+            ->where('building_id = :buildingId')
+            ->setParameter('buildingId', $buildingId)
+            ->execute()
+            ->fetchOne();
+    }
+
     /**
      * @return array<int, string>
      */

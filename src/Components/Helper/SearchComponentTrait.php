@@ -2,6 +2,7 @@
 
 namespace EtoA\Components\Helper;
 
+use EtoA\Universe\Entity\EntitySearch;
 use Symfony\UX\LiveComponent\Attribute\LiveAction;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
 
@@ -64,6 +65,33 @@ trait SearchComponentTrait
         return $limit;
     }
 
-    abstract private function resetFormValues();
+    private function resetFormValues(): void
+    {
+        $this->formValues = [];
+        foreach ($this->getFormInstance()->all() as $field) {
+            $this->formValues[$field->getName()] = '';
+        }
+    }
+
+    /**
+     * @param int[] $entityIds
+     * @return array<int, string>
+     */
+    private function getEntityLabels(array $entityIds): array
+    {
+        if (isset($this->entityRepository)) {
+            $entityLabels = $this->entityRepository->searchEntityLabels(EntitySearch::create()->ids($entityIds));
+
+            $entities = [];
+            foreach ($entityLabels as $entity) {
+                $entities[$entity->id] = $entity->toString();
+            }
+
+            return $entities;
+        }
+
+        throw new \RuntimeException('EntityRepository must be set');
+    }
+
     abstract public function getSearch(): SearchResult;
 }

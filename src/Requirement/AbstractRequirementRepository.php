@@ -23,7 +23,7 @@ abstract class AbstractRequirementRepository extends AbstractRepository
             ->execute()
             ->fetchAllAssociative();
 
-        return new RequirementsCollection(array_map(fn (array $row) => new ObjectRequirement($row), $data));
+        return new RequirementsCollection(array_map(fn (array $row) => ObjectRequirement::createFromData($row), $data));
     }
 
     public function getRequirements(int $objectId): RequirementsCollection
@@ -37,7 +37,7 @@ abstract class AbstractRequirementRepository extends AbstractRepository
             ->execute()
             ->fetchAllAssociative();
 
-        return new RequirementsCollection(array_map(fn (array $row) => new ObjectRequirement($row), $data));
+        return new RequirementsCollection(array_map(fn (array $row) => ObjectRequirement::createFromData($row), $data));
     }
 
     /**
@@ -54,7 +54,7 @@ abstract class AbstractRequirementRepository extends AbstractRepository
             ->execute()
             ->fetchAllAssociative();
 
-        return array_map(fn (array $row) => new ObjectRequirement($row), $data);
+        return array_map(fn (array $row) => ObjectRequirement::createFromData($row), $data);
     }
 
     /**
@@ -71,7 +71,7 @@ abstract class AbstractRequirementRepository extends AbstractRepository
             ->execute()
             ->fetchAllAssociative();
 
-        return array_map(fn (array $row) => new ObjectRequirement($row), $data);
+        return array_map(fn (array $row) => ObjectRequirement::createFromData($row), $data);
     }
 
     /**
@@ -117,8 +117,8 @@ abstract class AbstractRequirementRepository extends AbstractRepository
         ', [
             'objId' => $objId,
             'level' => $level,
-            'techId' => $techId,
-            'buildingId' => $buildingId,
+            'techId' => $techId === 0 ? null : $techId,
+            'buildingId' => $buildingId === 0 ? null : $buildingId,
         ]);
     }
 
