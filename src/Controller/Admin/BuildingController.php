@@ -3,12 +3,17 @@
 namespace EtoA\Controller\Admin;
 
 use EtoA\Building\BuildingDataRepository;
+use EtoA\Building\BuildingListItem;
 use EtoA\Building\BuildingPointRepository;
+use EtoA\Building\BuildingRepository;
 use EtoA\Building\BuildingRequirementRepository;
+use EtoA\Form\Type\Admin\AddBuildingItemType;
+use EtoA\Form\Type\Admin\BuildingSearchType;
 use EtoA\Form\Type\Admin\ObjectRequirementListType;
 use EtoA\Ranking\RankingService;
 use EtoA\Requirement\ObjectRequirement;
 use EtoA\Requirement\RequirementsUpdater;
+use EtoA\Universe\Planet\PlanetRepository;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -22,7 +27,30 @@ class BuildingController extends AbstractAdminController
         private BuildingPointRepository $buildingPointRepository,
         private RankingService $rankingService,
         private BuildingRequirementRepository $buildingRequirementRepository,
+        private BuildingRepository $buildingRepository,
+        private PlanetRepository $planetRepository,
     ) {
+    }
+
+    #[Route('/admin/buildings/search', name: 'admin.buildings.search')]
+    #[IsGranted('ROLE_ADMIN_GAME-ADMIN')]
+    public function search(Request $request): Response
+    {
+        $addItem = BuildingListItem::empty();
+        $addForm = $this->createForm(AddBuildingItemType::class, $addItem);
+        $addForm->handleRequest($request);
+        if ($addForm->isSubmitted() && $addForm->isValid()) {
+            $userId = $this->planetRepository->getPlanetUserId($addItem->entityId);
+            $this->buildingRepository->addBuilding($addItem->buildingId, $addItem->currentLevel, $userId, $addItem->entityId);
+
+            $this->addFlash('success', 'Gebäude hinzugefügt');
+        }
+
+        return $this->render('admin/building/search.html.twig', [
+            'addForm' => $addForm->createView(),
+            'form' => $this->createForm(BuildingSearchType::class, $request->query->all())->createView(),
+            'total' => $this->buildingRepository->count(),
+        ]);
     }
 
     #[Route("/admin/buildings/points", name: "admin.buildings.points")]

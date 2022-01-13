@@ -10,6 +10,7 @@ class BuildingBuildType
     public static function all(): array
     {
         return [
+            0 => 'Untätig',
             1 => "Ausbau abgebrochen",
             2 => "Abriss abgebrochen",
             3 => "Ausbau",

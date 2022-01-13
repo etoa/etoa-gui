@@ -1,0 +1,57 @@
+<tbody
+    {{ init_live_component(this) }}
+    data-original-data="{}" {# Hack to prevent issue with symfony/ux #}
+    data-action="change->live#update"
+>
+{% if this.item %}
+    {% if this.isEdit %}
+        {{ form_start(this.form, {'attr': {'onkeydown' :"return event.key != 'Enter';"}}) }}
+    {% endif %}
+    <tr>
+        <td>{{ this.item.id }}</td>
+        <td>{{ this.user }}</td>
+        <td>{{ this.entity }}</td>
+        <td>{{ this.building }}</td>
+        <td>
+            {% if this.isEdit %}
+                {{ form_row(this.form.currentLevel) }}
+            {% else %}
+                {{ formatNumber(this.item.currentLevel) }}
+            {% endif %}
+        </td>
+        <td>
+            {% if this.isEdit %}
+                {{ form_row(this.form.buildType) }}
+            {% else %}
+                {{ this.buildTypes[this.item.buildType] }}
+            {% endif %}
+        </td>
+        <td>
+            {% if this.isEdit %}
+                {{ form_row(this.form.startTime) }}
+            {% else %}
+                {{ this.item.isUnderConstruction() ? formatTimestamp(this.item.startTime) : '-' }}
+            {% endif %}
+        </td>
+        <td>
+            {% if this.isEdit %}
+                {{ form_row(this.form.endTime) }}
+            {% else %}
+                {{ this.item.isUnderConstruction() ? formatTimestamp(this.item.endTime) : '-' }}
+            {% endif %}
+        </td>
+        <td>
+            {% if this.isEdit %}
+                <a href="#building-{{ this.item.id }}" data-action="live#action" data-action-name="prevent|submit">Speichern</a>
+                <a href="#building-{{ this.item.id }}" data-action="live#action" data-action-name="prevent|abortEdit">Abbrechen</a>
+            {% else %}
+                <a href="#building-{{ this.item.id }}" data-action="live#action" data-action-name="prevent|showEdit">Bearbeiten</a>
+                <a onclick="confirm('Sollen {{ this.building }} {{ this.item.currentLevel}} von diesem Planeten gelöscht werden?')" href="#building-{{ this.item.id }}" data-action="live#action" data-action-name="prevent|delete">Löschen</a>
+            {% endif %}
+        </td>
+    </tr>
+    {% if this.isEdit %}
+        {{ form_end(this.form) }}
+    {% endif %}
+{% endif %}
+</tbody>

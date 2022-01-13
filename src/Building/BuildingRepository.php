@@ -141,6 +141,15 @@ class BuildingRepository extends AbstractRepository
             ->fetchOne();
     }
 
+    public function count(BuildingListItemSearch $search = null): int
+    {
+        return (int) $this->applySearchSortLimit($this->createQueryBuilder(), $search)
+            ->select('COUNT(buildlist_id)')
+            ->from('buildlist')
+            ->execute()
+            ->fetchOne();
+    }
+
     public function countEmpty(): int
     {
         return (int) $this->createQueryBuilder()
@@ -339,6 +348,20 @@ class BuildingRepository extends AbstractRepository
     /**
      * @return BuildingListItem[]
      */
+    public function search(BuildingListItemSearch $search, int $limit = null, int $offset = null): array
+    {
+        $data = $this->applySearchSortLimit($this->createQueryBuilder(), $search, null, $limit, $offset)
+            ->select('*')
+            ->from('buildlist')
+            ->execute()
+            ->fetchAllAssociative();
+
+        return array_map(fn ($row) => BuildingListItem::createFromData($row), $data);
+    }
+
+    /**
+     * @return BuildingListItem[]
+     */
     public function findForUser(int $userId, int $entityId = null, int $endTimeAfter = null): array
     {
         $qb = $this->createQueryBuilder()
@@ -363,7 +386,22 @@ class BuildingRepository extends AbstractRepository
             ->execute()
             ->fetchAllAssociative();
 
-        return array_map(fn ($row) => new BuildingListItem($row), $data);
+        return array_map(fn ($row) => BuildingListItem::createFromData($row), $data);
+    }
+
+    public function getEntry(int $id): ?BuildingListItem
+    {
+        $data = $this->createQueryBuilder()
+            ->select('*')
+            ->from('buildlist')
+            ->where('buildlist_id = :id')
+            ->setParameters([
+                'id' => $id,
+            ])
+            ->execute()
+            ->fetchAssociative();
+
+        return $data !== false ? BuildingListItem::createFromData($data) : null;
     }
 
     public function getEntityBuilding(int $userId, int $entityId, int $buildingId): ?BuildingListItem
@@ -382,7 +420,7 @@ class BuildingRepository extends AbstractRepository
             ->execute()
             ->fetchAssociative();
 
-        return $data !== false ? new BuildingListItem($data) : null;
+        return $data !== false ? BuildingListItem::createFromData($data) : null;
     }
 
     /**
@@ -432,18 +470,18 @@ class BuildingRepository extends AbstractRepository
     {
         $this->createQueryBuilder()
             ->update('buildlist')
-            ->set('buildlist_user_id', 'userId')
-            ->set('buildlist_building_id', 'buildingId')
-            ->set('buildlist_entity_id', 'entityId')
-            ->set('buildlist_current_level', 'currentLevel')
-            ->set('buildlist_build_type', 'buildType')
-            ->set('buildlist_build_start_time', 'startTime')
-            ->set('buildlist_build_end_time', 'endTime')
-            ->set('buildlist_prod_percent', 'prodPercent')
-            ->set('buildlist_people_working', 'peopleWorking')
-            ->set('buildlist_people_working_status', 'peopleWorkingStatus')
-            ->set('buildlist_deactivated', 'deactivated')
-            ->set('buildlist_cooldown', 'cooldown')
+            ->set('buildlist_user_id', ':userId')
+            ->set('buildlist_building_id', ':buildingId')
+            ->set('buildlist_entity_id', ':entityId')
+            ->set('buildlist_current_level', ':currentLevel')
+            ->set('buildlist_build_type', ':buildType')
+            ->set('buildlist_build_start_time', ':startTime')
+            ->set('buildlist_build_end_time', ':endTime')
+            ->set('buildlist_prod_percent', ':prodPercent')
+            ->set('buildlist_people_working', ':peopleWorking')
+            ->set('buildlist_people_working_status', ':peopleWorkingStatus')
+            ->set('buildlist_deactivated', ':deactivated')
+            ->set('buildlist_cooldown', ':cooldown')
             ->where('buildlist_id = :id')
             ->setParameters([
                 'id' => $item->id,

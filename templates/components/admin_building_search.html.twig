@@ -1,0 +1,25 @@
+{% extends 'components/base_search.html.twig' %}
+
+{% block data %}
+    <tr>
+        <th>Id</th>
+        <th>Spieler</th>
+        <th>Planet</th>
+        <th>Gebäude</th>
+        <th>Stufe</th>
+        <th>Status</th>
+        <th>Start</th>
+        <th>Ende</th>
+        <th>Aktion</th>
+    </tr>
+    {% for item in search.entries %}
+        {{ component('admin_building_view', {
+            item: item,
+            user: this.users[item.userId],
+            building: this.buildingNames[item.buildingId],
+            entity: this.entities[item.entityId]
+        }) }}
+    {% else %}
+        <tr><td colspan="9999"><i>Keine Einträge vorhanden</i></td></tr>
+    {% endfor %}
+{% endblock %}
