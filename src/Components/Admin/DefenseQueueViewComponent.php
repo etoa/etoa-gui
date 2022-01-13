@@ -2,23 +2,20 @@
 
 namespace EtoA\Components\Admin;
 
+use EtoA\Components\Helper\AbstractEditComponent;
 use EtoA\Defense\DefenseQueueItem;
 use EtoA\Defense\DefenseQueueRepository;
 use EtoA\Defense\DefenseRepository;
 use EtoA\Form\Type\Admin\EditDefenseQueueType;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveAction;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
-use Symfony\UX\LiveComponent\ComponentWithFormTrait;
 
 #[AsLiveComponent('admin_defense_queue_view')]
-class DefenseQueueViewComponent extends AbstractController
+class DefenseQueueViewComponent extends AbstractEditComponent
 {
-    use ComponentWithFormTrait;
-    use ComponentWithFormTrait;
-
     #[LiveProp]
     public int $itemId;
     #[LiveProp]
@@ -27,11 +24,9 @@ class DefenseQueueViewComponent extends AbstractController
     public string $defense;
     #[LiveProp]
     public string $entity;
-    #[LiveProp]
-    public bool $isEdit = false;
     private ?DefenseQueueItem $item = null;
 
-    public function mount(DefenseQueueItem $item = null): void
+    public function mount(FormView $view = null, DefenseQueueItem $item = null): void
     {
         $this->item = $item;
         if ($item !== null) {
@@ -50,27 +45,6 @@ class DefenseQueueViewComponent extends AbstractController
     {
         $this->defenseQueueRepository->deleteQueueItem($this->itemId);
         $this->item = null;
-    }
-
-    #[LiveAction]
-    public function showEdit(): void
-    {
-        $this->isEdit = true;
-    }
-
-    #[LiveAction]
-    public function abortEdit(): void
-    {
-        $this->isEdit = false;
-    }
-
-    #[LiveAction]
-    public function submit(): void
-    {
-        $this->submitForm();
-
-        $this->defenseQueueRepository->saveQueueItem($this->item);
-        $this->isEdit = false;
     }
 
     #[LiveAction]
@@ -97,5 +71,10 @@ class DefenseQueueViewComponent extends AbstractController
     protected function instantiateForm(): FormInterface
     {
         return $this->createForm(EditDefenseQueueType::class, $this->getItem());
+    }
+
+    protected function storeItem(): void
+    {
+        $this->defenseQueueRepository->saveQueueItem($this->item);
     }
 }
