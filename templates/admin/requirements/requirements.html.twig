@@ -1,7 +1,7 @@
 {% extends 'admin/layout/admin.html.twig' %}
 
 {% block content %}
-    <h1>Raketen</h1>
+    <h1>{{ name }}</h1>
     <h3>Anforderungen</h3>
 
     {{ form_start(form) }}
@@ -11,15 +11,15 @@
             <th colspan="2">Name</th>
             <th>Voraussetzungen</th>
         </tr>
-        {% for missile in missiles %}
+        {% for object in objects %}
             <tr>
-                <td><img src="{{ missile.getImagePath() }}" /></td>
-                <td>{{ missile.name }}</td>
+                <td><img src="{{ object.getImagePath() }}" /></td>
+                <td>{{ object.name }}</td>
                 <td data-controller="collection">
-                    <div>{{ form_errors(form['object-' ~ missile.id]) }}</div>
+                    <div>{{ form_errors(form['object-' ~ object.id]) }}</div>
                     <table>
                         <tbody data-collection-target="container">
-                            {% for rows in form['object-' ~ missile.id] %}
+                            {% for rows in form['object-' ~ object.id] %}
                                 <tr {% if loop.index == 1 %} data-collection-target="prototype" id="test"{% endif %}>
                                     {% for element in rows %}
                                         <td>

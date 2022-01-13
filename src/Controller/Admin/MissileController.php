@@ -75,9 +75,10 @@ class MissileController extends AbstractAdminController
             $this->addFlash('success', 'Voraussetzungen aktualisiert');
         }
 
-        return $this->render('admin/missiles/requirements.html.twig', [
-            'missiles' => $missiles,
+        return $this->render('admin/requirements/requirements.html.twig', [
+            'objects' => $missiles,
             'form' => $form->createView(),
+            'name' => 'Raketen',
         ]);
     }
 }

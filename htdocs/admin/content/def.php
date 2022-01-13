@@ -60,17 +60,3 @@ elseif ($sub == "data") {
 elseif ($sub == "cat") {
     DefenseCategoriesForm::render($app, $request);
 }
-
-//
-// Voraussetzungen
-//
-elseif ($sub == "req") {
-    define("TITLE", "Verteidigungsanforderungen");
-    define("REQ_TBL", "def_requirements");
-    define("ITEM_IMAGE_PATH", ObjectWithImage::BASE_PATH . "/defense/def<DB_TABLE_ID>_small.png");
-
-    /** @var DefenseDataRepository $defenseDataRepository */
-    $defenseDataRepository = $app[DefenseDataRepository::class];
-    $objectNames = $defenseDataRepository->getDefenseNames(true, DefenseSort::category());
-    include("inc/requirements.inc.php");
-}

@@ -7,15 +7,20 @@ use EtoA\Defense\DefenseDataRepository;
 use EtoA\Defense\DefenseListItem;
 use EtoA\Defense\DefenseQueueRepository;
 use EtoA\Defense\DefenseRepository;
+use EtoA\Defense\DefenseRequirementRepository;
 use EtoA\Form\Type\Admin\AddDefenseListType;
 use EtoA\Form\Type\Admin\DefenseSearchType;
+use EtoA\Form\Type\Admin\ObjectRequirementListType;
 use EtoA\Ranking\RankingService;
+use EtoA\Requirement\ObjectRequirement;
+use EtoA\Requirement\RequirementsUpdater;
 use EtoA\Support\StringUtils;
 use EtoA\Universe\Planet\PlanetRepository;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use function DeepCopy\deep_copy;
 
 class DefenseController extends AbstractAdminController
 {
@@ -25,6 +30,7 @@ class DefenseController extends AbstractAdminController
         private DefenseQueueRepository $defenseQueueRepository,
         private DefenseRepository $defenseRepository,
         private PlanetRepository $planetRepository,
+        private DefenseRequirementRepository $defenseRequirementRepository,
     ) {
     }
 
@@ -73,6 +79,38 @@ class DefenseController extends AbstractAdminController
 
         return $this->render('admin/defense/points.html.twig', [
             'defenses' => $defenses,
+        ]);
+    }
+
+    #[Route('/admin/defense/requirements', name: 'admin.defense.requirements')]
+    #[IsGranted('ROLE_ADMIN_SUPER-ADMIN')]
+    public function requirements(Request $request): Response
+    {
+        $collection = $this->defenseRequirementRepository->getAll();
+        $defenses = $this->defenseDataRepository->getAllDefenses();
+        $requirements = [];
+        $names = [];
+        foreach ($defenses as $defense) {
+            $names[$defense->id] = $defense->name;
+            $requirements[$defense->id] = $collection->getAll($defense->id);
+        }
+
+        $requirementsCopy = deep_copy($requirements);
+
+        $form = $this->createForm(ObjectRequirementListType::class, $requirements, ['objectIds' => array_keys($defenses), 'objectNames' => $names]);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            /** @var ObjectRequirement[][] $updatedRequirements */
+            $updatedRequirements = $form->getData();
+            (new RequirementsUpdater($this->defenseRequirementRepository))->update($requirementsCopy, $updatedRequirements);
+
+            $this->addFlash('success', 'Voraussetzungen aktualisiert');
+        }
+
+        return $this->render('admin/requirements/requirements.html.twig', [
+            'objects' => $defenses,
+            'form' => $form->createView(),
+            'name' => 'Verteidigung',
         ]);
     }
 }
