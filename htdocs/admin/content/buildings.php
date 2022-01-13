@@ -36,8 +36,6 @@ if ($sub == "prices") {
     editCategories($app, $request);
 } elseif ($sub == "data") {
     editData($app, $request);
-} elseif ($sub == "req") {
-    requirements($app);
 } else {
     buildingList($request, $repository, $config);
 }
@@ -146,21 +144,6 @@ function editCategories(Container $app, Request $request)
 function editData(Container $app, Request $request)
 {
     BuildingsForm::render($app, $request);
-}
-
-function requirements(Container $app)
-{
-    define('TITLE', "Gebäudeanforderungen");
-    define('ITEMS_TBL', "buildings");
-    define('TYPES_TBL', "building_types");
-    define('REQ_TBL', "building_requirements");
-
-    define("ITEM_IMAGE_PATH", ObjectWithImage::BASE_PATH . "/buildings/building<DB_TABLE_ID>_small.png");
-
-    /** @var BuildingDataRepository $buildingRepository */
-    $buildingRepository = $app[BuildingDataRepository::class];
-    $objectNames = $buildingRepository->getBuildingNames(true, BuildingSort::type());
-    include("inc/requirements.inc.php");
 }
 
 function buildingList(
