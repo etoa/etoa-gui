@@ -32,8 +32,6 @@ $rankingService = $app[RankingService::class];
 
 if ($sub == "prices") {
     priceCalculator($repository);
-} elseif ($sub == "points") {
-    buildingPoints($request, $repository, $buildingPointRepository, $rankingService);
 } elseif ($sub == "type") {
     editCategories($app, $request);
 } elseif ($sub == "data") {
@@ -138,59 +136,6 @@ function priceCalculator(BuildingRepository $repository)
             <td id=\"t_food\">-</td>
         </tr>";
     echo "</table></form>";
-}
-
-function buildingPoints(
-    Request $request,
-    BuildingRepository $repository,
-    BuildingPointRepository $buildingPointRepository,
-    RankingService $rankingService
-) {
-    global $page;
-    global $sub;
-
-    echo "<h1>Gebäudepunkte</h1>";
-    echo "<h2>Gebäudepunkte neu berechnen</h2><form action=\"?page=$page&amp;sub=$sub\" method=\"POST\">";
-    if ($request->request->has('recalc') && $request->request->get('recalc') != "") {
-        $numBuildings = $rankingService->calcBuildingPoints();
-        echo MessageBox::ok("", sprintf("Die Geb&auml;udepunkte von %s Geb&auml;uden wurden aktualisiert!", $numBuildings));
-    }
-    echo "Nach jeder Änderung an den Gebäuden müssen die Gebäudepunkte neu berechnet werden.<br/><br/>
-        Diese Aktion kann eine Weile dauern! ";
-    echo "<input type=\"submit\" name=\"recalc\" value=\"Neu berechnen\" /></form>";
-
-    echo "<h2>Gebäudepunkte</h2>";
-    $buildingNames = $repository->buildingNames();
-    if (count($buildingNames) > 0) {
-        $buildingPoints = $buildingPointRepository->getAllMap();
-        echo "<table class=\"tb\">";
-        foreach ($buildingNames as $key => $value) {
-            echo "<tr><th>" . $value . "</th><td style=\"width:70%\"><table class=\"tb\">";
-            if (isset($buildingPoints[$key])) {
-                $cnt = 0;
-                foreach ($buildingPoints[$key] as $level => $points) {
-                    if ($cnt == 0) {
-                        echo "<tr>";
-                    }
-                    echo "<th>" . $level . "</th><td style=\"text-align: right\" title=\"$points\">" . StringUtils::formatNumber($points) . "</td>";
-                    if ($cnt == "3") {
-                        echo "</tr>";
-                        $cnt = 0;
-                    } else {
-                        $cnt++;
-                    }
-                }
-                if ($cnt != 0) {
-                    for ($x = $cnt; $x < 4; $x++) {
-                        echo "<td colspan=\"2\"></td>";
-                    }
-                    echo "</tr>";
-                }
-            }
-            echo "</table></td></tr>";
-        }
-        echo "</table>";
-    }
 }
 
 function editCategories(Container $app, Request $request)
