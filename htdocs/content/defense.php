@@ -471,7 +471,7 @@ if ($factoryBuilding !== null && $factoryBuilding->currentLevel > 0) {
                         $buildingRepository->markBuildingWorkingStatus($cu->getId(), $planet->id, BuildingId::DEFENSE, true);
 
                         // Queue Array aktualisieren
-                        $queue_data = new DefenseQueueItem([
+                        $queue_data = DefenseQueueItem::createFromData([
                             'queue_id' => $deflist_id,
                             'queue_def_id' => $def_id,
                             'queue_cnt' => $build_cnt,

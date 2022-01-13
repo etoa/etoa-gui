@@ -44,48 +44,22 @@ class DefenseQueueRepository extends AbstractRepository
             ->execute()
             ->fetchAssociative();
 
-        return $data !== false ? new DefenseQueueItem($data) : null;
+        return $data !== false ? DefenseQueueItem::createFromData($data) : null;
     }
 
     /**
      * @return DefenseQueueItem[]
      */
-    public function searchQueueItems(DefenseQueueSearch $search, int $limit = null): array
+    public function searchQueueItems(DefenseQueueSearch $search, int $limit = null, int $offset = null): array
     {
-        $data = $this->applySearchSortLimit($this->createQueryBuilder(), $search, null, $limit)
+        $data = $this->applySearchSortLimit($this->createQueryBuilder(), $search, null, $limit, $offset)
             ->select('*')
             ->from('def_queue')
             ->orderBy('queue_starttime', 'ASC')
             ->execute()
             ->fetchAllAssociative();
 
-        return array_map(fn ($row) => new DefenseQueueItem($row), $data);
-    }
-
-    /**
-     * @return AdminDefenseQueueItem[]
-     */
-    public function adminSearchQueueItems(DefenseQueueSearch $search): array
-    {
-        $data = $this->applySearchSortLimit($this->createQueryBuilder(), $search)
-            ->select('def_queue.*')
-            ->addSelect('def_name')
-            ->addSelect('planet_name, planet_user_id')
-            ->addSelect('entities.id, entities.pos, entities.code, cells.sx, cells.sy, cells.cx, cells.cy, cells.id as cid')
-            ->addSelect('user_nick, user_points')
-            ->from('def_queue')
-            ->innerJoin('def_queue', 'planets', 'planets', 'planets.id = queue_entity_id')
-            ->innerJoin('planets', 'entities', 'entities', 'planets.id = entities.id')
-            ->innerJoin('planets', 'cells', 'cells', 'cells.id = entities.cell_id')
-            ->innerJoin('def_queue', 'users', 'users', 'users.user_id = queue_user_id')
-            ->innerJoin('def_queue', 'defense', 'defense', 'defense.def_id = queue_def_id')
-            ->groupBy('queue_id')
-            ->orderBy('queue_entity_id')
-            ->addOrderBy('queue_endtime')
-            ->execute()
-            ->fetchAllAssociative();
-
-        return array_map(fn ($row) => new AdminDefenseQueueItem($row), $data);
+        return array_map(fn ($row) => DefenseQueueItem::createFromData($row), $data);
     }
 
     public function saveQueueItem(DefenseQueueItem $item): void
@@ -126,9 +100,9 @@ class DefenseQueueRepository extends AbstractRepository
             ->execute();
     }
 
-    public function count(): int
+    public function count(DefenseQueueSearch $search = null): int
     {
-        return (int) $this->createQueryBuilder()
+        return (int) $this->applySearchSortLimit($this->createQueryBuilder(), $search)
             ->select('COUNT(*)')
             ->from('def_queue')
             ->execute()
