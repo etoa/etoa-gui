@@ -1,0 +1,24 @@
+{% extends 'admin/layout/admin.html.twig' %}
+
+{% import 'admin/macros.html.twig' as macros %}
+
+{% block content %}
+    <h1>Verteidigungsanlange</h1>
+
+    <h3>Punkte</h3>
+
+    <p>Nach jeder Änderung an den Verteidigungsanlange müssen die Punkte neu berechnet werden.</p>
+
+    <form method="post">
+        <input type="submit" name="recalc" value="Neu berechnen" />
+    </form>
+
+    <table class="tb">
+        {% for defense in defenses %}
+            <tr>
+                <th>{{ defense.name }}</th>
+                <td style="text-align: right"  title="{{ defense.points }}">{{ formatNumber(defense.points) }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}

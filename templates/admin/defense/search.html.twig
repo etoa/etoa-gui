@@ -1,0 +1,13 @@
+{% extends 'admin/layout/admin.html.twig' %}
+
+{% block content %}
+    <h1>Verteidigungsanlange</h1>
+
+    {{ form(addForm) }}
+
+    {{ component('admin_defense_search', {
+        form: form
+    }) }}
+
+    <p>Es sind {{ formatNumber(total) }} Einträge in der Datenbank vorhanden.</p>
+{% endblock %}

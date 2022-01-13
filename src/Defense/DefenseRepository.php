@@ -30,7 +30,7 @@ class DefenseRepository extends AbstractRepository
             ->execute()
             ->fetchAllAssociative();
 
-        return array_map(fn ($row) => new DefenseListItem($row), $data);
+        return array_map(fn ($row) => DefenseListItem::createFromData($row), $data);
     }
 
     public function getItem(int $id): ?DefenseListItem
@@ -43,7 +43,7 @@ class DefenseRepository extends AbstractRepository
             ->execute()
             ->fetchAssociative();
 
-        return $data !== false ? new DefenseListItem($data) : null;
+        return $data !== false ? DefenseListItem::createFromData($data) : null;
     }
 
     public function addDefense(int $defenseId, int $amount, int $userId, int $entityId): void
@@ -247,9 +247,9 @@ class DefenseRepository extends AbstractRepository
             ->execute();
     }
 
-    public function count(): int
+    public function count(DefenseListSearch $search = null): int
     {
-        return (int) $this->createQueryBuilder()
+        return (int) $this->applySearchSortLimit($this->createQueryBuilder(), $search)
             ->select('COUNT(*)')
             ->from('deflist')
             ->execute()
@@ -319,29 +319,16 @@ class DefenseRepository extends AbstractRepository
     }
 
     /**
-     * @return AdminDefenseListItem[]
+     * @return DefenseListItem[]
      */
-    public function adminSearchQueueItems(DefenseListSearch $search): array
+    public function search(DefenseListSearch $search, int $limit = null, int $offset = null): array
     {
-        $data = $this->applySearchSortLimit($this->createQueryBuilder(), $search)
+        $data = $this->applySearchSortLimit($this->createQueryBuilder(), $search, null, $limit, $offset)
             ->select('deflist.*')
-            ->addSelect('def_name')
-            ->addSelect('planet_name, planet_user_id')
-            ->addSelect('entities.id, entities.pos, entities.code, cells.sx, cells.sy, cells.cx, cells.cy, cells.id as cid')
-            ->addSelect('user_nick, user_points')
             ->from('deflist')
-            ->innerJoin('deflist', 'planets', 'planets', 'planets.id = deflist_entity_id')
-            ->innerJoin('planets', 'entities', 'entities', 'planets.id = entities.id')
-            ->innerJoin('planets', 'cells', 'cells', 'cells.id = entities.cell_id')
-            ->innerJoin('deflist', 'users', 'users', 'users.user_id = deflist_user_id')
-            ->innerJoin('deflist', 'defense', 'defense', 'defense.def_id = deflist_def_id')
-            ->groupBy('deflist_id')
-            ->orderBy('deflist_entity_id')
-            ->addOrderBy('def_order')
-            ->addOrderBy('def_name')
             ->execute()
             ->fetchAllAssociative();
 
-        return array_map(fn ($row) => new AdminDefenseListItem($row), $data);
+        return array_map(fn ($row) => DefenseListItem::createFromData($row), $data);
     }
 }

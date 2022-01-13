@@ -1,0 +1,25 @@
+{% extends 'components/base_search.html.twig' %}
+
+{% block data %}
+    <tr>
+        <th>Id</th>
+        <th>Spieler</th>
+        <th>Planet</th>
+        <th>Verteidigung</th>
+        <th>Anzahl</th>
+        <th>Pro Einheit</th>
+        <th>Start</th>
+        <th>Ende</th>
+        <th>Aktion</th>
+    </tr>
+    {% for item in search.entries %}
+        {{ component('admin_defense_queue_view', {
+            item: item,
+            user: this.users[item.userId],
+            defense: this.defenseNames[item.defenseId],
+            entity: this.entities[item.entityId]
+        }) }}
+    {% else %}
+        <tr><td colspan="9999"><i>Keine Einträge vorhanden</i></td></tr>
+    {% endfor %}
+{% endblock %}

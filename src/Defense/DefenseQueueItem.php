@@ -17,17 +17,20 @@ class DefenseQueueItem
     public int $buildType;
     public int $userClickTime;
 
-    public function __construct(array $data)
+    public static function createFromData(array $data): DefenseQueueItem
     {
-        $this->id = (int) $data['queue_id'];
-        $this->userId = (int) $data['queue_user_id'];
-        $this->defenseId = (int) $data['queue_def_id'];
-        $this->entityId = (int) $data['queue_entity_id'];
-        $this->count = (int) $data['queue_cnt'];
-        $this->startTime = (int) $data['queue_starttime'];
-        $this->endTime = (int) $data['queue_endtime'];
-        $this->objectTime = (int) $data['queue_objtime'];
-        $this->buildType = (int) $data['queue_build_type'];
-        $this->userClickTime = (int) $data['queue_user_click_time'];
+        $item = new DefenseQueueItem();
+        $item->id = (int) $data['queue_id'];
+        $item->userId = (int) $data['queue_user_id'];
+        $item->defenseId = (int) $data['queue_def_id'];
+        $item->entityId = (int) $data['queue_entity_id'];
+        $item->count = (int) $data['queue_cnt'];
+        $item->startTime = (int) $data['queue_starttime'];
+        $item->endTime = (int) $data['queue_endtime'];
+        $item->objectTime = (int) $data['queue_objtime'];
+        $item->buildType = (int) $data['queue_build_type'];
+        $item->userClickTime = (int) $data['queue_user_click_time'];
+
+        return $item;
     }
 }
