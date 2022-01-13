@@ -9,7 +9,7 @@ use EtoA\Universe\Entity\EntityLabelSearch;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 
-class DefenseQueueSearchType extends AbstractType
+class DefenseSearchType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {

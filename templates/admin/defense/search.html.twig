@@ -3,9 +3,9 @@
 {% block content %}
     <h1>Verteidigungsanlange</h1>
 
-    <h3>Bauliste</h3>
+    {{ form(addForm) }}
 
-    {{ component('admin_defense_queue_search', {
+    {{ component('admin_defense_search', {
         form: form
     }) }}
 
