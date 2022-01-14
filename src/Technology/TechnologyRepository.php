@@ -29,7 +29,7 @@ class TechnologyRepository extends AbstractRepository
             ->execute()
             ->fetchAllAssociative();
 
-        return array_map(fn ($row) => new TechnologyListItem($row), $data);
+        return array_map(fn ($row) => TechnologyListItem::createFromData($row), $data);
     }
 
     public function getEntry(int $id): ?TechnologyListItem
@@ -42,7 +42,7 @@ class TechnologyRepository extends AbstractRepository
             ->execute()
             ->fetchAssociative();
 
-        return $data !== false ? new TechnologyListItem($data) : null;
+        return $data !== false ? TechnologyListItem::createFromData($data) : null;
     }
 
     public function searchEntry(TechnologyListItemSearch $search): ?TechnologyListItem
@@ -53,7 +53,7 @@ class TechnologyRepository extends AbstractRepository
             ->execute()
             ->fetchAssociative();
 
-        return $data !== false ? new TechnologyListItem($data) : null;
+        return $data !== false ? TechnologyListItem::createFromData($data) : null;
     }
 
     public function save(TechnologyListItem $item): void
@@ -326,6 +326,6 @@ class TechnologyRepository extends AbstractRepository
             ->execute()
             ->fetchAllAssociative();
 
-        return array_map(fn ($row) => new TechnologyListItem($row), $data);
+        return array_map(fn ($row) => TechnologyListItem::createFromData($row), $data);
     }
 }
