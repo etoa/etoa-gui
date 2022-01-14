@@ -2,29 +2,23 @@
 
 {% block data %}
     <tr>
+        <th>ID</th>
         <th>Spieler</th>
         <th>Planet</th>
         <th>Forschung</th>
         <th>Level</th>
         <th>Status</th>
+        <th>Start</th>
+        <th>End</th>
         <th>Aktion</th>
     </tr>
-    {% for entry in search.entries %}
-        <tr>
-            <td>{{ this.userNicks[entry.userId] }}</td>
-            <td>{{ this.entities[entry.entityId] }}</td>
-            <td>{{ this.technologyNames[entry.technologyId] }}</td>
-            <td>{{ entry.currentLevel }}</td>
-            <td>
-                {{ this.buildTypes[entry.buildType] }}
-                {% if entry.buildType > 0 %}
-                    (Fertig in {{ formatTimespan(entry.endTime - date().timestamp) }})
-                {% endif %}
-            </td>
-            <td>
-                <a href="{{ path('admin.technology.edit', {id: entry.id}) }}">Bearbeiten</a>
-            </td>
-        </tr>
+    {% for item in search.entries %}
+        {{ component('admin_technology_view', {
+            item: item,
+            user: this.userNicks[item.userId],
+            technology: this.technologyNames[item.technologyId],
+            entity: this.entities[item.entityId]
+        }) }}
     {% else %}
         <tr><td colspan="9999"><i>Keine Einträge vorhanden</i></td></tr>
     {% endfor %}
