@@ -4,12 +4,16 @@ namespace EtoA\Controller\Admin;
 
 use EtoA\Form\Type\Admin\AddTechnologyItemType;
 use EtoA\Form\Type\Admin\EditTechnologyItemType;
+use EtoA\Form\Type\Admin\ObjectRequirementListType;
 use EtoA\Form\Type\Admin\TechnologySearchType;
 use EtoA\Ranking\RankingService;
+use EtoA\Requirement\ObjectRequirement;
+use EtoA\Requirement\RequirementsUpdater;
 use EtoA\Technology\TechnologyDataRepository;
 use EtoA\Technology\TechnologyListItem;
 use EtoA\Technology\TechnologyPointRepository;
 use EtoA\Technology\TechnologyRepository;
+use EtoA\Technology\TechnologyRequirementRepository;
 use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Entity\EntitySearch;
 use EtoA\User\UserRepository;
@@ -18,6 +22,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use function DeepCopy\deep_copy;
 
 class TechnologyController extends AbstractAdminController
 {
@@ -28,6 +33,7 @@ class TechnologyController extends AbstractAdminController
         private RankingService $rankingService,
         private EntityRepository $entityRepository,
         private UserRepository $userRepository,
+        private TechnologyRequirementRepository $technologyRequirementRepository,
     ) {
     }
 
@@ -119,6 +125,38 @@ class TechnologyController extends AbstractAdminController
         return $this->render('admin/technology/points.html.twig', [
             'technologyNames' => $this->technologyDataRepository->getTechnologyNames(true),
             'pointsMap' => $this->technologyPointRepository->getAllMap(),
+        ]);
+    }
+
+    #[Route('/admin/technology/requirements', name: 'admin.technology.requirements')]
+    #[IsGranted('ROLE_ADMIN_SUPER-ADMIN')]
+    public function requirements(Request $request): Response
+    {
+        $collection = $this->technologyRequirementRepository->getAll();
+        $technologies = $this->technologyDataRepository->getTechnologies();
+        $requirements = [];
+        $names = [];
+        foreach ($technologies as $technology) {
+            $names[$technology->id] = $technology->name;
+            $requirements[$technology->id] = $collection->getAll($technology->id);
+        }
+
+        $requirementsCopy = deep_copy($requirements);
+
+        $form = $this->createForm(ObjectRequirementListType::class, $requirements, ['objectIds' => array_keys($names), 'objectNames' => $names]);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            /** @var ObjectRequirement[][] $updatedRequirements */
+            $updatedRequirements = $form->getData();
+            (new RequirementsUpdater($this->technologyRequirementRepository))->update($requirementsCopy, $updatedRequirements);
+
+            $this->addFlash('success', 'Voraussetzungen aktualisiert');
+        }
+
+        return $this->render('admin/requirements/requirements.html.twig', [
+            'objects' => $technologies,
+            'form' => $form->createView(),
+            'name' => 'Forschung',
         ]);
     }
 }
