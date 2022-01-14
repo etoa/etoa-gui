@@ -13,6 +13,7 @@ use EtoA\Technology\TechnologyListItem;
 use EtoA\Technology\TechnologyPointRepository;
 use EtoA\Technology\TechnologyRepository;
 use EtoA\Technology\TechnologyRequirementRepository;
+use EtoA\Universe\Planet\PlanetRepository;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -27,6 +28,7 @@ class TechnologyController extends AbstractAdminController
         private TechnologyPointRepository $technologyPointRepository,
         private RankingService $rankingService,
         private TechnologyRequirementRepository $technologyRequirementRepository,
+        private PlanetRepository $planetRepository,
     ) {
     }
 
@@ -34,7 +36,27 @@ class TechnologyController extends AbstractAdminController
     #[IsGranted('ROLE_ADMIN_GAME-ADMIN')]
     public function search(Request $request): Response
     {
+        $addItem = TechnologyListItem::empty();
+        $addForm = $this->createForm(AddTechnologyItemType::class, $addItem);
+        $addForm->handleRequest($request);
+        if ($addForm->isSubmitted() && $addForm->isValid()) {
+            $userId = $this->planetRepository->getPlanetUserId($addItem->entityId);
+            if ((bool) $addForm->get('all')->getData()) {
+                $techIds = array_keys($this->technologyDataRepository->getTechnologyNames(true));
+                foreach ($techIds as $techId) {
+                    $this->technologyRepository->addTechnology($techId, $addItem->currentLevel, $userId, $addItem->entityId);
+                }
+
+                $this->addFlash('success', count($techIds) . ' Forschungen hinzugefügt');
+            } else {
+                $this->technologyRepository->addTechnology($addItem->technologyId, $addItem->currentLevel, $userId, $addItem->entityId);
+
+                $this->addFlash('success', 'Forschung hinzugefügt');
+            }
+        }
+
         return $this->render('admin/technology/search.html.twig', [
+            'addForm' => $addForm->createView(),
             'form' => $this->createForm(TechnologySearchType::class, $request->request->all())->createView(),
             'total' => $this->technologyRepository->count(),
         ]);

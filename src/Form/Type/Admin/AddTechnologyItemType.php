@@ -4,8 +4,7 @@ namespace EtoA\Form\Type\Admin;
 
 use EtoA\Form\Type\Core\EntityType;
 use EtoA\Form\Type\Core\TechnologyType;
-use EtoA\Form\Type\Core\UserType;
-use EtoA\Universe\Entity\EntitySearch;
+use EtoA\Universe\Entity\EntityLabelSearch;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
@@ -27,16 +26,11 @@ class AddTechnologyItemType extends AbstractType
                 'required' => false,
                 'mapped' => false,
             ])
-            ->add('userId', UserType::class, [
-                'label' => 'Spieler',
-                'placeholder' => false,
-                'required' => true,
-            ])
             ->add('entityId', EntityType::class, [
                 'label' => 'Entity',
                 'placeholder' => false,
                 'required' => true,
-                'search' => EntitySearch::create()->codeIn([\EtoA\Universe\Entity\EntityType::PLANET]),
+                'search' => EntityLabelSearch::create()->codeIn([\EtoA\Universe\Entity\EntityType::PLANET])->planetUserIdNotNull(),
             ])
             ->add('currentLevel', IntegerType::class, [
                 'label' => 'Level',
