@@ -2,31 +2,33 @@
 
 namespace EtoA\Components\Admin;
 
+use EtoA\Building\BuildingBuildType;
+use EtoA\Building\BuildingListItem;
+use EtoA\Building\BuildingRepository;
 use EtoA\Components\Helper\AbstractEditComponent;
-use EtoA\Form\Type\Admin\EditMissileListType;
-use EtoA\Missile\MissileListItem;
-use EtoA\Missile\MissileListSearch;
-use EtoA\Missile\MissileRepository;
+use EtoA\Form\Type\Admin\EditBuildingType;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\Form\FormView;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveAction;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
 
-#[AsLiveComponent('admin_missile_view')]
-class MissileViewComponent extends AbstractEditComponent
+#[AsLiveComponent('admin_building_view')]
+class BuildingViewComponent extends AbstractEditComponent
 {
     #[LiveProp]
     public int $itemId;
     #[LiveProp]
     public string $user;
     #[LiveProp]
-    public string $missile;
+    public string $building;
     #[LiveProp]
     public string $entity;
-    private ?MissileListItem $item = null;
+    private ?BuildingListItem $item = null;
+    /** @var array<int, string> */
+    public array $buildTypes;
 
-    public function mount(FormView $view = null, MissileListItem $item = null): void
+    public function mount(FormView $view = null, BuildingListItem $item = null): void
     {
         $this->item = $item;
         if ($item !== null) {
@@ -35,21 +37,22 @@ class MissileViewComponent extends AbstractEditComponent
     }
 
     public function __construct(
-        private MissileRepository $missileRepository
+        private BuildingRepository $buildingRepository,
     ) {
+        $this->buildTypes = BuildingBuildType::all();
     }
 
     #[LiveAction]
     public function delete(): void
     {
-        $this->missileRepository->remove($this->itemId);
+        $this->buildingRepository->removeEntry($this->itemId);
         $this->item = null;
     }
 
-    public function getItem(): ?MissileListItem
+    public function getItem(): ?BuildingListItem
     {
         if ($this->item === null) {
-            $this->item = $this->missileRepository->searchOne(MissileListSearch::create()->id($this->itemId));
+            $this->item = $this->buildingRepository->getEntry($this->itemId);
         }
 
         return $this->item;
@@ -57,11 +60,11 @@ class MissileViewComponent extends AbstractEditComponent
 
     protected function instantiateForm(): FormInterface
     {
-        return $this->createForm(EditMissileListType::class, $this->getItem());
+        return $this->createForm(EditBuildingType::class, $this->getItem());
     }
 
     protected function storeItem(): void
     {
-        $this->missileRepository->setMissileCount($this->itemId, $this->item->count);
+        $this->buildingRepository->save($this->item);
     }
 }

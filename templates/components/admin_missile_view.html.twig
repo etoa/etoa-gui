@@ -21,10 +21,11 @@
         <td>
             {% if this.isEdit %}
                 <a href="#missile-{{ this.item.id }}" data-action="live#action" data-action-name="prevent|submit">Speichern</a>
+                <a href="#missile-{{ this.item.id }}" data-action="live#action" data-action-name="prevent|abortEdit">Abbrechen</a>
             {% else %}
                 <a href="#missile-{{ this.item.id }}" data-action="live#action" data-action-name="prevent|showEdit">Bearbeiten</a>
+                <a onclick="confirm('Sollen {{ this.item.count}} {{ this.missile }} von diesem Planeten gelöscht werden?')" href="#missile-{{ this.item.id }}" data-action="live#action" data-action-name="prevent|delete">Löschen</a>
             {% endif %}
-            <a onclick="confirm('Sollen {{ this.item.count}} {{ this.missile }} von diesem Planeten gelöscht werden?')" href="#missile-{{ this.item.id }}" data-action="live#action" data-action-name="prevent|delete">Löschen</a>
         </td>
     </tr>
     {% if this.isEdit %}

@@ -1,0 +1,35 @@
+{% extends 'admin/layout/admin.html.twig' %}
+
+{% import 'admin/macros.html.twig' as macros %}
+
+{% block content %}
+    <h1>Gebäude</h1>
+
+    <h3>Gebäudepunkt</h3>
+
+    <p>Nach jeder Änderung an den Gebäude müssen die Gebäudepunkt neu berechnet werden.</p>
+
+    <form method="post">
+        <input type="submit" name="recalc" value="Neu berechnen" />
+    </form>
+
+    {% for id, name in buildingNames %}
+        <h2>{{ name }}</h2>
+
+        <table class="tb">
+            {% if pointsMap[id] is defined %}
+                <tr>
+                {% for level, points in pointsMap[id] %}
+                    <th>{{ level }}</th>
+                    <td style="text-align: right" title="{{ points }}">{{ formatNumber(points) }}</td>
+
+                    {% if loop.index is divisible by(4) and not loop.last %}
+                        </tr>
+                        <tr>
+                    {% endif %}
+                {% endfor %}
+                </tr>
+            {% endif %}
+        </table>
+    {% endfor %}
+{% endblock %}
