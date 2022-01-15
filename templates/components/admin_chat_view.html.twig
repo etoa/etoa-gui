@@ -1,0 +1,55 @@
+<div
+    {{ init_live_component(this) }}
+    data-poll="delay(2500)|default"
+>
+    <fieldset style="width:70%;float:left;height:500px;">
+        <legend>Live-Chat</legend>
+        <div id="chatitems" style="height:100%;overflow:auto;background:#222;padding:3px">
+            {% for message in this.messages %}
+                {% if message.userId == 0 %}
+                    <span style="color:#aaa">
+                    <{{ message.timestamp|date('H:i') }}> {{ message.text}}
+                </span><br/>
+                {% else %}
+                    <span style="color:{{ message.color|default('#fff') }}">
+                     {% if message.admin %}
+                         <img src="/images/star_y.gif\" />
+                     {% endif %}
+                    <<a style="color:{{ message.color|default('#fff') }}" href="/?page=user&amp;sub=edit&amp;id={{ message.userId }}">{{ message.nick }}</a> | {{ message.timestamp|date('H:i') }}> {{ message.text }}
+                </span><br/>
+                {% endif %}
+            {% endfor %}
+        </div>
+    </fieldset>
+    <fieldset style="width:25%;float:right;height:300px;">
+        <legend>Users online</legend>
+        <div id="chatuserlist" style="display:block;">
+            {% for user in this.users %}
+                <a href="/admin/?page=user&sub=edit&amp;id={{ user.id }}">
+                    {{ user.nick }}</a> {{ user.timestamp|date('H:i:s') }}
+                <a href="{{ path('admin.chat.kick', {id: user.id}) }}">Kick</a>
+                <a href="{{ path('admin.chat.ban', {id: user.id}) }}">Ban</a>
+                <a href="{{ path('admin.chat.delete', {id: user.id}) }}">Del</a>
+                <br/>
+            {% else %}
+                Keine User online!<br/>
+            {% endfor %}
+        </div>
+    </fieldset>
+
+    <fieldset style="width:25%;float:right;height:163px;margin-top:20px">
+        <legend>Gebannte User</legend>
+        <div id="bannedchatuserlist" style="display:block;">
+            <ul>
+                {% for ban in this.bans %}
+                    <li>
+                        <a href="/admin/?page=user&amp;sub=edit&amp;id={{ ban.userId }}">{{ ban.userNick }}</a>
+                        {{ ban.reason }} ({{ ban.timestamp|date('H:i:s') }})
+                        <a href="{{ path('admin.chat.unban', {id: ban.userId}) }}">Unbannen</a></li>
+                {% else %}
+                    <li>Keine User gebannt!</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </fieldset>
+</div>

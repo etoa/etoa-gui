@@ -1,0 +1,12 @@
+{% extends 'admin/layout/admin.html.twig' %}
+
+{% block content %}
+    <h1>InGame-Chat</h1>
+    <h2>Log</h2>
+
+    {{ component('admin_chat_log_search', {
+        form: form
+    }) }}
+
+    <p>Es sind {{ formatNumber(total) }} Einträge in der Datenbank vorhanden.</p>
+{% endblock %}

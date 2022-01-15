@@ -22,6 +22,30 @@ class ChatLogRepository extends AbstractRepository
         return array_map(fn (array $row) => new ChatLog($row), $data);
     }
 
+    public function count(ChatLogSearch $search = null): int
+    {
+        return (int) $this->applySearchSortLimit($this->createQueryBuilder(), $search)
+            ->select('COUNT(*)')
+            ->from('chat_log')
+            ->execute()
+            ->fetchOne();
+    }
+
+    /**
+     * @return ChatLog[]
+     */
+    public function search(ChatLogSearch $search = null, int $limit = null, int $offset = null): array
+    {
+        $data = $this->applySearchSortLimit($this->createQueryBuilder(), $search, null, $limit, $offset)
+            ->select('*')
+            ->from('chat_log')
+            ->orderBy('id', 'DESC')
+            ->execute()
+            ->fetchAllAssociative();
+
+        return array_map(fn (array $row) => new ChatLog($row), $data);
+    }
+
     public function addLog(int $userId, string $nick, string $text, string $color, int $admin, string $channel = ''): void
     {
         $this->createQueryBuilder()
