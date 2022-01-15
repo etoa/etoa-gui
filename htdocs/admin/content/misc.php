@@ -11,14 +11,10 @@ use Symfony\Component\HttpFoundation\Request;
 /** @var Request $request */
 $request = Request::createFromGlobals();
 
-if ($sub == "defaultitems") {
-    include("config/defaultitems.inc.php");
-}
-
 //
 // Tipps
 //
-elseif ($sub == "tipps") {
+if ($sub == "tipps") {
     TippsForm::render($app, $request);
 }
 

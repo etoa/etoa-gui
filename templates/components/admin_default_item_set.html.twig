@@ -1,0 +1,89 @@
+<div
+    {{ init_live_component(this) }}
+    data-original-data="{}" {# Hack to prevent issue with symfony/ux #}
+    data-action="change->live#update"
+>
+    <div style="display: flex;justify-content: space-between;align-items: flex-start;">
+        {% for category, items in this.items %}
+            {% if category == 'b' %}
+                <table>
+                    <tr>
+                        <th>Gebäude</th>
+                        <th>Stufe</th>
+                        <th>Aktion</th>
+                    </tr>
+                    {% for item in items %}
+                        {{ component('admin_default_item', {
+                            item: item,
+                            name: this.buildings[item.objectId]
+                        }) }}
+                    {% endfor %}
+                </table>
+            {% elseif category == 't' %}
+                <table>
+                    <tr>
+                        <th>Technologie</th>
+                        <th>Stufe</th>
+                        <th>Aktion</th>
+                    </tr>
+                    {% for item in items %}
+                        {{ component('admin_default_item', {
+                            item: item,
+                            name: this.technologies[item.objectId]
+                        }) }}
+                    {% endfor %}
+                </table>
+            {% elseif category == 's' %}
+                <table>
+                    <tr>
+                        <th>Schiffe</th>
+                        <th>Anzahl</th>
+                        <th>Aktion</th>
+                    </tr>
+                    {% for item in items %}
+                        {{ component('admin_default_item', {
+                            item: item,
+                            name: this.ships[item.objectId]
+                        }) }}
+                    {% endfor %}
+                </table>
+            {% elseif category == 'd' %}
+                <table>
+                    <tr>
+                        <th>Verteidigung</th>
+                        <th>Anzahl</th>
+                        <th>Aktion</th>
+                    </tr>
+                    {% for item in items %}
+                        {{ component('admin_default_item', {
+                            item: item,
+                            name: this.defense[item.objectId]
+                        }) }}
+                    {% endfor %}
+                </table>
+            {% elseif category == 'm' %}
+                <table>
+                    <tr>
+                        <th>Raketen</th>
+                        <th>Anzahl</th>
+                        <th>Aktion</th>
+                    </tr>
+                    {% for item in items %}
+                        {{ component('admin_default_item', {
+                            item: item,
+                            name: this.missiles[item.objectId]
+                        }) }}
+                    {% endfor %}
+                </table>
+            {% endif %}
+        {% else %}
+            <p>Keine Objekte definiert!</p>
+        {% endfor %}
+    </div>
+
+    {% if this.error %}
+        <p>{{ this.error }}</p>
+    {% endif %}
+    {{ form(this.form) }}
+    <input type="submit" value="Hinzufügen" data-action="live#action" data-action-name="prevent|submit">
+</div>
