@@ -1,0 +1,31 @@
+{% extends 'admin/layout/admin.html.twig' %}
+
+{% block content %}
+    <h1>Start-Objekte</h1>
+
+    <p>
+        Hier definierte Objekte werden einem Spieler beim ersten Login auf dem Hauptplanet erstellt.
+        Existieren mehrere aktive Sets, erhält der Spieler eine Auswahl. Existiert kein Set oder sind alle
+        Sets inaktiv, erhält der Spieler keine Objekte. Klicke auf einen Objektnamen um die Anzahl zu ändern.
+    </p>
+
+    <h3>Neues Set erstellen</h3>
+    {{ form(addForm) }}
+
+    {% for set in itemSets %}
+        <fieldset>
+            <legend>
+                {% if set.active %}
+                    <span style="color:#0f0;">{{ set.name }}</span> (<a href="{{ path('admin.default-items.toggle', {id: set.id}) }}">Deaktivieren</a>)
+                {% else %}
+                    <span style="color:#999;">{{ set.name }}</span> (<a href="{{ path('admin.default-items.toggle', {id: set.id}) }}">Aktivieren</a>)
+                {% endif %}
+                [<a href="{{ path('admin.default-items.delete', {id: set.id}) }}" onclick="return confirm('Gesamtes Set wirklich löschen?');">Löschen</a>]
+            </legend>
+
+            {{ component('admin_default_item_set', {
+                setId: set.id
+            }) }}
+        </fieldset>
+    {% endfor %}
+{% endblock %}

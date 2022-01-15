@@ -27,6 +27,19 @@ class DefaultItemRepository extends AbstractRepository
         return array_map(fn (array $row) => new DefaultItemSet($row), $data);
     }
 
+    public function getItem(int $itemId): ?DefaultItem
+    {
+        $data = $this->createQueryBuilder()
+            ->select('*')
+            ->from('default_items')
+            ->where('item_id = :id')
+            ->setParameter('id', $itemId)
+            ->execute()
+           ->fetchAssociative();
+
+        return $data !== false ? DefaultItem::createFromData($data) : null;
+    }
+
     public function createSet(string $name): void
     {
         $this->createQueryBuilder()
@@ -81,7 +94,7 @@ class DefaultItemRepository extends AbstractRepository
 
         $result = [];
         foreach ($data as $row) {
-            $result[$row['item_cat']][] = new DefaultItem($row);
+            $result[$row['item_cat']][] = DefaultItem::createFromData($row);
         }
 
         return $result;

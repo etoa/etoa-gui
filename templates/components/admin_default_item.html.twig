@@ -1,0 +1,33 @@
+<tbody
+    {{ init_live_component(this) }}
+    data-original-data="{}" {# Hack to prevent issue with symfony/ux #}
+    data-action="change->live#update"
+>
+{% if this.item %}
+    {% if this.isEdit %}
+        {{ form_start(this.form, {'attr': {'onkeydown' :"return event.key != 'Enter';"}}) }}
+    {% endif %}
+    <tr>
+        <td>{{ this.name }}</td>
+        <td>
+            {% if this.isEdit %}
+                {{ form_row(this.form.count) }}
+            {% else %}
+                {{ this.item.count }}
+            {% endif %}
+        </td>
+        <td>
+            {% if this.isEdit %}
+                <a href="#item-{{ this.item.id }}" data-action="live#action" data-action-name="prevent|submit">Speichern</a>
+                <a href="#item-{{ this.item.id }}" data-action="live#action" data-action-name="prevent|abortEdit">Speichern</a>
+            {% else %}
+                <a href="#item-{{ this.item.id }}" data-action="live#action" data-action-name="prevent|showEdit">Bearbeiten</a>
+                <a href="#item-{{ this.item.id }}" data-action="live#action" data-action-name="prevent|delete">Löschen</a>
+            {% endif %}
+        </td>
+    </tr>
+    {% if this.isEdit %}
+        {{ form_end(this.form) }}
+    {% endif %}
+{% endif %}
+</tbody>
