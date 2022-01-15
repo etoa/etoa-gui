@@ -1,0 +1,20 @@
+{% extends 'components/base_search.html.twig' %}
+
+{% block data %}
+    <tr>
+        <th>Datum</th>
+        <th>Spieler</th>
+        <th>Nachricht</th>
+    </tr>
+    {% for item in search.entries %}
+        <tbody>
+            <tr>
+                <td style="min-width: 150px">{{ formatTimestamp(item.timestamp) }}</td>
+                <td>{{ item.nick }}</td>
+                <td>{{ item.text }}</td>
+            </tr>
+        </tbody>
+    {% else %}
+        <tr><td colspan="9999"><i>Keine Einträge vorhanden</i></td></tr>
+    {% endfor %}
+{% endblock %}
