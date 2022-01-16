@@ -1,0 +1,25 @@
+{% extends 'components/base_search.html.twig' %}
+
+{% block data %}
+    <tr>
+        <th>Id</th>
+        <th>Spieler</th>
+        <th>Planet</th>
+        <th>Schiff</th>
+        <th>Anzahl</th>
+        <th>Pro Einheit</th>
+        <th>Start</th>
+        <th>Ende</th>
+        <th>Aktion</th>
+    </tr>
+    {% for item in search.entries %}
+        {{ component('admin_ship_queue_view', {
+            item: item,
+            user: this.users[item.userId],
+            ship: this.shipNames[item.shipId],
+            entity: this.entities[item.entityId]
+        }) }}
+    {% else %}
+        <tr><td colspan="9999"><i>Keine Einträge vorhanden</i></td></tr>
+    {% endfor %}
+{% endblock %}

@@ -261,7 +261,7 @@ class ShipRepository extends AbstractRepository
             ->execute()
             ->fetchAllAssociative();
 
-        return array_map(fn ($row) => new ShipQueueItem($row), $data);
+        return array_map(fn ($row) => ShipQueueItem::createFromData($row), $data);
     }
 
     public function saveQueueItem(ShipQueueItem $item): void

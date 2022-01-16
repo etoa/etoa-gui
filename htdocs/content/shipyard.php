@@ -478,7 +478,7 @@ if ($shipyard !== null && $shipyard->currentLevel > 0) {
                         $buildingRepository->markBuildingWorkingStatus($cu->getId(), $planet->id, BuildingId::SHIPYARD, true);
 
                         // Queue Array aktualisieren
-                        $queue[$shiplist_id] = new ShipQueueItem([
+                        $queue[$shiplist_id] = ShipQueueItem::createFromData([
                             'queue_id' => $shiplist_id,
                             'queue_ship_id' => $ship_id,
                             'queue_cnt' => $build_cnt,

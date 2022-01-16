@@ -3,12 +3,14 @@
 namespace EtoA\Controller\Admin;
 
 use EtoA\Form\Type\Admin\ObjectRequirementListType;
+use EtoA\Form\Type\Admin\ShipSearchType;
 use EtoA\Form\Type\Admin\ShipXpCalculatorType;
 use EtoA\Ranking\RankingService;
 use EtoA\Requirement\ObjectRequirement;
 use EtoA\Requirement\RequirementsUpdater;
 use EtoA\Ship\Ship;
 use EtoA\Ship\ShipDataRepository;
+use EtoA\Ship\ShipQueueRepository;
 use EtoA\Ship\ShipRequirementRepository;
 use EtoA\Ship\ShipSearch;
 use EtoA\Ship\ShipXpCalculator;
@@ -24,7 +26,18 @@ class ShipController extends AbstractAdminController
         private ShipDataRepository $shipDataRepository,
         private ShipRequirementRepository $shipRequirementRepository,
         private RankingService $rankingService,
+        private ShipQueueRepository $shipQueueRepository,
     ) {
+    }
+
+    #[Route("/admin/ships/queue", name: "admin.ships.queue")]
+    #[IsGranted('ROLE_ADMIN_GAME-ADMIN')]
+    public function queue(Request $request): Response
+    {
+        return $this->render('admin/ships/queue.html.twig', [
+            'form' => $this->createForm(ShipSearchType::class, $request->query->all())->createView(),
+            'total' => $this->shipQueueRepository->count(),
+        ]);
     }
 
     #[Route("/admin/ships/xp-calculator", name: "admin.ships.xp-calculator")]

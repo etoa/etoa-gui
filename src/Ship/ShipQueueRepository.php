@@ -42,7 +42,7 @@ class ShipQueueRepository extends AbstractRepository
             ->execute()
             ->fetchAssociative();
 
-        return $data !== false ? new ShipQueueItem($data) : null;
+        return $data !== false ? ShipQueueItem::createFromData($data) : null;
     }
 
     /**
@@ -69,42 +69,16 @@ class ShipQueueRepository extends AbstractRepository
     /**
      * @return ShipQueueItem[]
      */
-    public function searchQueueItems(ShipQueueSearch $search, int $limit = null): array
+    public function searchQueueItems(ShipQueueSearch $search, int $limit = null, int $offset = null): array
     {
-        $data = $this->applySearchSortLimit($this->createQueryBuilder(), $search, null, $limit)
+        $data = $this->applySearchSortLimit($this->createQueryBuilder(), $search, null, $limit, $offset)
             ->select('*')
             ->from('ship_queue')
             ->orderBy('queue_starttime', 'ASC')
             ->execute()
             ->fetchAllAssociative();
 
-        return array_map(fn ($row) => new ShipQueueItem($row), $data);
-    }
-
-    /**
-     * @return AdminShipQueueItem[]
-     */
-    public function adminSearchQueueItems(ShipQueueSearch $search): array
-    {
-        $data = $this->applySearchSortLimit($this->createQueryBuilder(), $search)
-            ->select('ship_queue.*')
-            ->addSelect('ship_name')
-            ->addSelect('planet_name, planet_user_id')
-            ->addSelect('entities.id, entities.pos, entities.code, cells.sx, cells.sy, cells.cx, cells.cy, cells.id as cid')
-            ->addSelect('user_nick, user_points')
-            ->from('ship_queue')
-            ->innerJoin('ship_queue', 'planets', 'planets', 'planets.id = queue_entity_id')
-            ->innerJoin('planets', 'entities', 'entities', 'planets.id = entities.id')
-            ->innerJoin('planets', 'cells', 'cells', 'cells.id = entities.cell_id')
-            ->innerJoin('ship_queue', 'users', 'users', 'users.user_id = queue_user_id')
-            ->innerJoin('ship_queue', 'ships', 'ships', 'ships.ship_id = queue_ship_id')
-            ->groupBy('queue_id')
-            ->orderBy('queue_entity_id')
-            ->addOrderBy('queue_endtime')
-            ->execute()
-            ->fetchAllAssociative();
-
-        return array_map(fn ($row) => new AdminShipQueueItem($row), $data);
+        return array_map(fn ($row) => ShipQueueItem::createFromData($row), $data);
     }
 
     public function saveQueueItem(ShipQueueItem $item): void
@@ -143,9 +117,9 @@ class ShipQueueRepository extends AbstractRepository
             ->execute();
     }
 
-    public function count(): int
+    public function count(ShipQueueSearch $search = null): int
     {
-        return (int) $this->createQueryBuilder()
+        return (int) $this->applySearchSortLimit($this->createQueryBuilder(), $search)
             ->select('COUNT(*)')
             ->from('ship_queue')
             ->execute()
