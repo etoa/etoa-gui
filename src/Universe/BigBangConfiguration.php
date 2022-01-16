@@ -60,6 +60,6 @@ class BigBangConfiguration
         $config->set("num_planets", "", $this->numberOfPlanets1, $this->numberOfPlanets2);
         $config->set("solsys_percent_planet", $this->solarSystemPlanetPercent);
         $config->set("solsys_percent_asteroids", $this->solarSystemAsteroidPercent);
-        $config->set("planet_fields", "", $this->planetFields1, $this->planetFields1);
+        $config->set("planet_fields", "", $this->planetFields1, $this->planetFields2);
     }
 }
