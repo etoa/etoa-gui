@@ -49,7 +49,7 @@ class UniverseController extends AbstractAdminController
         $addStarsForm = $this->createForm(AddStarsType::class);
         $addStarsForm->handleRequest($request);
         if ($addStarsForm->isSubmitted() && $addStarsForm->isValid()) {
-            $n = max(0, $request->request->getInt('number_of_stars'));
+            $n = max(0, $addStarsForm->getData()['count']);
             $this->universeGenerator->addStarSystems($n);
             $this->addFlash('success', $n . ' Sternensysteme wurden hinzugefügt!');
         }
