@@ -3,8 +3,10 @@
 namespace EtoA\Controller\Admin;
 
 use EtoA\Form\Type\Admin\ObjectRequirementListType;
+use EtoA\Ranking\RankingService;
 use EtoA\Requirement\ObjectRequirement;
 use EtoA\Requirement\RequirementsUpdater;
+use EtoA\Ship\Ship;
 use EtoA\Ship\ShipDataRepository;
 use EtoA\Ship\ShipRequirementRepository;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
@@ -17,8 +19,26 @@ class ShipController extends AbstractAdminController
 {
     public function __construct(
         private ShipDataRepository $shipDataRepository,
-        private ShipRequirementRepository $shipRequirementRepository
+        private ShipRequirementRepository $shipRequirementRepository,
+        private RankingService $rankingService,
     ) {
+    }
+
+    #[Route("/admin/ships/points", name: "admin.ships.points")]
+    #[IsGranted('ROLE_ADMIN_SUPER-ADMIN')]
+    public function points(Request $request): Response
+    {
+        if ($request->isMethod('POST')) {
+            $num = $this->rankingService->calcShipPoints();
+            $this->addFlash('success', sprintf("Die Punkte von %s Schiffen wurden aktualisiert!", $num));
+        }
+
+        $ships = $this->shipDataRepository->getAllShips(true);
+        usort($ships, fn (Ship $a, Ship $b) => $b->points <=> $a->points);
+
+        return $this->render('admin/ships/points.html.twig', [
+            'ships' => $ships,
+        ]);
     }
 
     #[Route('/admin/ships/requirements', name: 'admin.ships.requirements')]

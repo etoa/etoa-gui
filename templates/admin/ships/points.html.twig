@@ -1,0 +1,24 @@
+{% extends 'admin/layout/admin.html.twig' %}
+
+{% import 'admin/macros.html.twig' as macros %}
+
+{% block content %}
+    <h1>Schiffe</h1>
+
+    <h3>Punkte</h3>
+
+    <p>Nach jeder Änderung an den Schiffe müssen die Punkte neu berechnet werden.</p>
+
+    <form method="post">
+        <input type="submit" name="recalc" value="Neu berechnen" />
+    </form>
+
+    <table class="tb">
+        {% for ship in ships %}
+            <tr>
+                <th>{{ ship.name }}</th>
+                <td style="text-align: right"  title="{{ ship.points }}">{{ formatNumber(ship.points) }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}

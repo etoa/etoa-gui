@@ -41,33 +41,9 @@ $rankingService = $app[RankingService::class];
 $request = Request::createFromGlobals();
 
 //
-// Battlepoints
-//
-if ($sub == "battlepoints") {
-    \EtoA\Admin\LegacyTemplateTitleHelper::$title = "Schiff-Punkte";
-
-    echo "<form action=\"?page=$page&amp;sub=$sub\" method=\"POST\">";
-    if (isset($_POST['recalc'])) {
-        $numShips = $rankingService->calcShipPoints();
-        echo MessageBox::ok("", "Die Punkte von $numShips Schiffen wurden aktualisiert!");
-    }
-    echo "<p>Nach jeder direkter &Auml;nderung an den Schiffen via Datenbank m&uuml;ssen die Punkte neu berechnet werden!</p>
-        <p><input type=\"submit\" name=\"recalc\" value=\"Neu berechnen\" /></p>
-        </form>";
-
-    $ships = $shipDataRepository->getAllShips(true, 'ship_points');
-    echo "<table class=\"tb\">";
-    foreach ($ships as $ship) {
-        echo "<tr><th>" . $ship->name . "</th><td style=\"width:70%; text-align: right\" title=\"$ship->points\">" . StringUtils::formatNumber($ship->points) . "</td></tr>";
-    }
-    echo "</table>";
-}
-
-
-//
 // XP-Rechner
 //
-elseif ($sub == "xpcalc") {
+if ($sub == "xpcalc") {
     \EtoA\Admin\LegacyTemplateTitleHelper::$title = "XP-Rechner";
 
     echo "Schiff wählen: <select onchange=\"document.location='?page=" . $page . "&sub=" . $sub . "&id='+this.options[this.selectedIndex].value\">";
