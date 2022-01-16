@@ -3,12 +3,15 @@
 namespace EtoA\Controller\Admin;
 
 use EtoA\Form\Type\Admin\ObjectRequirementListType;
+use EtoA\Form\Type\Admin\ShipXpCalculatorType;
 use EtoA\Ranking\RankingService;
 use EtoA\Requirement\ObjectRequirement;
 use EtoA\Requirement\RequirementsUpdater;
 use EtoA\Ship\Ship;
 use EtoA\Ship\ShipDataRepository;
 use EtoA\Ship\ShipRequirementRepository;
+use EtoA\Ship\ShipSearch;
+use EtoA\Ship\ShipXpCalculator;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -22,6 +25,29 @@ class ShipController extends AbstractAdminController
         private ShipRequirementRepository $shipRequirementRepository,
         private RankingService $rankingService,
     ) {
+    }
+
+    #[Route("/admin/ships/xp-calculator", name: "admin.ships.xp-calculator")]
+    #[IsGranted('ROLE_ADMIN_SUPER-ADMIN')]
+    public function xpCalculator(Request $request): Response
+    {
+        $shipSearch = ShipSearch::create()->special(true);
+        $form = $this->createForm(ShipXpCalculatorType::class);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid() && isset($form->getData()['ship'])) {
+            $shipSearch->id($form->getData()['ship']);
+        }
+
+        $ship = $this->shipDataRepository->searchShip($shipSearch);
+        $levels = [];
+        for ($level = 1; $level <= 30; $level++) {
+            $levels[$level] = ShipXpCalculator::xpByLevel($ship->specialNeedExp, $ship->specialExpFactor, $level);
+        }
+
+        return $this->render('admin/ships/xp-calculator.html.twig', [
+            'levels' => $levels,
+            'form' => $form->createView(),
+        ]);
     }
 
     #[Route("/admin/ships/points", name: "admin.ships.points")]

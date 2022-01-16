@@ -41,38 +41,9 @@ $rankingService = $app[RankingService::class];
 $request = Request::createFromGlobals();
 
 //
-// XP-Rechner
-//
-if ($sub == "xpcalc") {
-    \EtoA\Admin\LegacyTemplateTitleHelper::$title = "XP-Rechner";
-
-    echo "Schiff wählen: <select onchange=\"document.location='?page=" . $page . "&sub=" . $sub . "&id='+this.options[this.selectedIndex].value\">";
-    $specialShips = $shipDataRepository->getSpecialShips();
-    $ship_xp = 0;
-    $ship_xp_multiplier = 0;
-    foreach ($specialShips as $ship) {
-        echo "<option value=\"" . $ship->id . "\"";
-        if ((isset($_GET['id']) && $_GET['id'] == $ship->id) || (!isset($_GET['id']) && $ship_xp === 0)) {
-            echo " selected=\"selected\"";
-            $ship_xp = $ship->specialNeedExp;
-            $ship_xp_multiplier = $ship->specialExpFactor;
-        }
-        echo ">" . $ship->name . "</option>";
-    }
-    echo "</select><br/><br/>";
-
-    echo "<table class=\"tb\"><tr><th>Level</th><th>Experience</th></tr>";
-    for ($level = 1; $level <= 30; $level++) {
-        echo "<tr><td>$level</td><td>" . StringUtils::formatNumber(ShipXpCalculator::xpByLevel($ship_xp, $ship_xp_multiplier, $level)) . "</td></tr>";
-    }
-    echo "</table>";
-}
-
-
-//
 // Kategorien
 //
-elseif ($sub == "cat") {
+if ($sub == "cat") {
     ShipCategoriesForm::render($app, $request);
 }
 
