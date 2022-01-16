@@ -1,31 +1,6 @@
 <?PHP
 
 use Doctrine\DBAL\Query\QueryBuilder;
-use EtoA\Admin\AdminUserRepository;
-use EtoA\Alliance\AllianceRepository;
-use EtoA\Building\BuildingDataRepository;
-use EtoA\Defense\DefenseDataRepository;
-use EtoA\HostCache\NetworkNameService;
-use EtoA\Log\BattleLogRepository;
-use EtoA\Log\BattleLogSearch;
-use EtoA\Log\DebrisLogRepository;
-use EtoA\Log\DebrisLogSearch;
-use EtoA\Log\FleetLogFacility;
-use EtoA\Log\FleetLogRepository;
-use EtoA\Log\FleetLogSearch;
-use EtoA\Log\GameLogFacility;
-use EtoA\Log\GameLogRepository;
-use EtoA\Log\GameLogSearch;
-use EtoA\Log\LogFacility;
-use EtoA\Log\LogRepository;
-use EtoA\Log\LogSearch;
-use EtoA\Log\LogSeverity;
-use EtoA\Ship\ShipDataRepository;
-use EtoA\Support\BBCodeUtils;
-use EtoA\Support\StringUtils;
-use EtoA\Technology\TechnologyDataRepository;
-use EtoA\Universe\Resources\ResourceNames;
-use EtoA\User\UserRepository;
 
 /**
  * Displays a clickable edit button
@@ -294,32 +269,6 @@ function searchFieldOptionsName($operator = '')
             return "grösser gleich";
         default:
             return "gleich";
-    }
-}
-
-function drawTechTreeForSingleItem(string $type, \EtoA\Requirement\RequirementsCollection $requirements, int $objectId, array $technologyNames, array $buildingNames)
-{
-    $objectRequirements = $requirements->getAll($objectId);
-    if (count($objectRequirements) > 0) {
-        foreach ($objectRequirements as $requirement) {
-            if ($requirement->requiredBuildingId > 0) {
-                $name = $buildingNames[$requirement->requiredBuildingId];
-                $pn = "b:" . $requirement->requiredBuildingId;
-            } elseif ($requirement->requiredTechnologyId > 0) {
-                $name = $technologyNames[$requirement->requiredTechnologyId];
-                $pn = "t:" . $requirement->requiredTechnologyId;
-            } else {
-                $name = "INVALID";
-                $pn = '';
-            }
-
-            echo "<a href=\"javascript:;\" onclick=\"var nlvl = prompt('Level für " . $name . " ändern:','" . $requirement->requiredLevel . "'); if (nlvl != '' && nlvl != null) xajax_addToTechTree('" . $type . "'," . $objectId . ",'" . $pn . "',nlvl);\">";
-            echo $name . " <b>" . $requirement->requiredLevel . "</b></a>";
-            echo " &nbsp; <a href=\"javascript:;\" onclick=\"if (confirm('Anforderung löschen?')) xajax_removeFromTechTree('" . $type . "'," . $objectId . "," . $requirement->id . ")\">" . icon("delete") . "</a>";
-            echo "<br/>";
-        }
-    } else {
-        echo "<i>Keine Anforderungen</i>";
     }
 }
 

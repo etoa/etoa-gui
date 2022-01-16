@@ -108,19 +108,6 @@ elseif ($sub == "data") {
 }
 
 //
-// Schiffsanforderungen
-//
-elseif ($sub == "req") {
-    //Definistion für die normalen Schiffe
-    define("TITLE", "Schiffanforderungen");
-    define("REQ_TBL", "ship_requirements");
-    define("ITEM_IMAGE_PATH", ObjectWithImage::BASE_PATH . "/ships/ship<DB_TABLE_ID>_small.png");
-
-    $objectNames = $shipDataRepository->getShipNames(true, ShipSort::category());
-    include("inc/requirements.inc.php");
-}
-
-//
 // Bauliste
 //
 elseif ($sub == "queue") {
