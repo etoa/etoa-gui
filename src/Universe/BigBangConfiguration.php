@@ -52,7 +52,7 @@ class BigBangConfiguration
     {
         $config->set("num_of_sectors", "", $this->numberOfSectors1, $this->numberOfSectors2);
         $config->set("num_of_cells", "", $this->numberOfCells1, $this->numberOfCells2);
-        $config->set("space_percent_solsys", $this->emptySpacePercent);
+        $config->set("space_percent_solsys", $this->starPercent);
         $config->set("space_percent_asteroids", $this->asteroidPercent);
         $config->set("space_percent_nebulas", $this->nebulaPercent);
         $config->set("space_percent_wormholes", $this->wormholePercent);
