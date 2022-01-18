@@ -1,0 +1,25 @@
+{% extends 'admin/layout/admin.html.twig' %}
+
+{% import 'admin/macros.html.twig' as macros %}
+
+{% block content %}
+    <h1>Schiffe</h1>
+
+    <h3>XP-Rechner</h3>
+
+    {{ form(form) }}
+
+    <table>
+        <tr>
+            <th>Level</th>
+            <th>Experience</th>
+        </tr>
+
+        {% for level, exp in levels %}
+            <tr>
+                <td>{{ level }}</td>
+                <td>{{ formatNumber(exp) }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}

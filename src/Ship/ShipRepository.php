@@ -70,7 +70,21 @@ class ShipRepository extends AbstractRepository
             ->execute()
             ->fetchAllAssociative();
 
-        return array_map(fn ($row) => new ShipListItem($row), $data);
+        return array_map(fn ($row) => ShipListItem::createFromData($row), $data);
+    }
+
+    /**
+     * @return ShipListItem[]
+     */
+    public function search(ShipListSearch $search, int $limit = null, int $offset = null): array
+    {
+        $data = $this->applySearchSortLimit($this->createQueryBuilder(), $search, null, $limit, $offset)
+            ->select('*')
+            ->from('shiplist')
+            ->execute()
+            ->fetchAllAssociative();
+
+        return array_map(fn ($row) => ShipListItem::createFromData($row), $data);
     }
 
     public function find(int $id): ?ShipListItem
@@ -83,7 +97,7 @@ class ShipRepository extends AbstractRepository
             ->execute()
             ->fetchAssociative();
 
-        return $data !== false ? new ShipListItem($data) : null;
+        return $data !== false ? ShipListItem::createFromData($data) : null;
     }
 
     /**
@@ -261,7 +275,7 @@ class ShipRepository extends AbstractRepository
             ->execute()
             ->fetchAllAssociative();
 
-        return array_map(fn ($row) => new ShipQueueItem($row), $data);
+        return array_map(fn ($row) => ShipQueueItem::createFromData($row), $data);
     }
 
     public function saveQueueItem(ShipQueueItem $item): void
@@ -439,9 +453,9 @@ class ShipRepository extends AbstractRepository
         return $delable;
     }
 
-    public function count(): int
+    public function count(ShipListSearch $search = null): int
     {
-        return (int) $this->createQueryBuilder()
+        return (int) $this->applySearchSortLimit($this->createQueryBuilder(), $search)
             ->select('COUNT(shiplist_id)')
             ->from('shiplist')
             ->execute()

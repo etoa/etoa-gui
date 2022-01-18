@@ -293,4 +293,16 @@ class ShipDataRepository extends AbstractRepository
 
         return $result;
     }
+
+    public function searchShip(ShipSearch $search = null): ?Ship
+    {
+        $data = $this->applySearchSortLimit($this->createQueryBuilder(), $search)
+            ->select('*')
+            ->from('ships')
+            ->setMaxResults(1)
+            ->execute()
+            ->fetchAssociative();
+
+        return $data !== false ? new Ship($data) : null;
+    }
 }
