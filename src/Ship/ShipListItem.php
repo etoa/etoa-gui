@@ -31,31 +31,49 @@ class ShipListItem
     public int $specialShipBonusDeactivate;
     public int $specialShipBonusReadiness;
 
-    public function __construct(array $data)
+    public static function createFromData(array $data): ShipListItem
     {
-        $this->id = (int) $data['shiplist_id'];
-        $this->userId = (int) $data['shiplist_user_id'];
-        $this->shipId = (int) $data['shiplist_ship_id'];
-        $this->entityId = (int) $data['shiplist_entity_id'];
-        $this->botId = (int) $data['shiplist_bot_id'];
-        $this->count = (int) $data['shiplist_count'];
-        $this->bunkered = (int) $data['shiplist_bunkered'];
-        $this->specialShip = (bool) $data['shiplist_special_ship'];
-        $this->specialShipLevel = (int) $data['shiplist_special_ship_level'];
-        $this->specialShipExp = (int) $data['shiplist_special_ship_exp'];
-        $this->specialShipBonusWeapon = (int) $data['shiplist_special_ship_bonus_weapon'];
-        $this->specialShipBonusStructure = (int) $data['shiplist_special_ship_bonus_structure'];
-        $this->specialShipBonusShield = (int) $data['shiplist_special_ship_bonus_shield'];
-        $this->specialShipBonusHeal = (int) $data['shiplist_special_ship_bonus_heal'];
-        $this->specialShipBonusCapacity = (int) $data['shiplist_special_ship_bonus_capacity'];
-        $this->specialShipBonusSpeed = (int) $data['shiplist_special_ship_bonus_speed'];
-        $this->specialShipBonusPilots = (int) $data['shiplist_special_ship_bonus_pilots'];
-        $this->specialShipBonusTarn = (int) $data['shiplist_special_ship_bonus_tarn'];
-        $this->specialShipBonusAnthrax = (int) $data['shiplist_special_ship_bonus_antrax'];
-        $this->specialShipBonusForSteal = (int) $data['shiplist_special_ship_bonus_forsteal'];
-        $this->specialShipBonusBuildDestroy = (int) $data['shiplist_special_ship_bonus_build_destroy'];
-        $this->specialShipBonusAnthraxFood = (int) $data['shiplist_special_ship_bonus_antrax_food'];
-        $this->specialShipBonusDeactivate = (int) $data['shiplist_special_ship_bonus_deactivade'];
-        $this->specialShipBonusReadiness = (int) $data['shiplist_special_ship_bonus_readiness'];
+        $item = new ShipListItem();
+        $item->id = (int) $data['shiplist_id'];
+        $item->userId = (int) $data['shiplist_user_id'];
+        $item->shipId = (int) $data['shiplist_ship_id'];
+        $item->entityId = (int) $data['shiplist_entity_id'];
+        $item->botId = (int) $data['shiplist_bot_id'];
+        $item->count = (int) $data['shiplist_count'];
+        $item->bunkered = (int) $data['shiplist_bunkered'];
+        $item->specialShip = (bool) $data['shiplist_special_ship'];
+        $item->specialShipLevel = (int) $data['shiplist_special_ship_level'];
+        $item->specialShipExp = (int) $data['shiplist_special_ship_exp'];
+        $item->specialShipBonusWeapon = (int) $data['shiplist_special_ship_bonus_weapon'];
+        $item->specialShipBonusStructure = (int) $data['shiplist_special_ship_bonus_structure'];
+        $item->specialShipBonusShield = (int) $data['shiplist_special_ship_bonus_shield'];
+        $item->specialShipBonusHeal = (int) $data['shiplist_special_ship_bonus_heal'];
+        $item->specialShipBonusCapacity = (int) $data['shiplist_special_ship_bonus_capacity'];
+        $item->specialShipBonusSpeed = (int) $data['shiplist_special_ship_bonus_speed'];
+        $item->specialShipBonusPilots = (int) $data['shiplist_special_ship_bonus_pilots'];
+        $item->specialShipBonusTarn = (int) $data['shiplist_special_ship_bonus_tarn'];
+        $item->specialShipBonusAnthrax = (int) $data['shiplist_special_ship_bonus_antrax'];
+        $item->specialShipBonusForSteal = (int) $data['shiplist_special_ship_bonus_forsteal'];
+        $item->specialShipBonusBuildDestroy = (int) $data['shiplist_special_ship_bonus_build_destroy'];
+        $item->specialShipBonusAnthraxFood = (int) $data['shiplist_special_ship_bonus_antrax_food'];
+        $item->specialShipBonusDeactivate = (int) $data['shiplist_special_ship_bonus_deactivade'];
+        $item->specialShipBonusReadiness = (int) $data['shiplist_special_ship_bonus_readiness'];
+
+        return $item;
+    }
+
+    public static function empty(): ShipListItem
+    {
+        $item = new ShipListItem();
+        $item->id = 0;
+        $item->userId = 0;
+        $item->shipId = 0;
+        $item->entityId = 0;
+        $item->botId = 0;
+        $item->count = 0;
+        $item->bunkered = 0;
+        $item->specialShip = false;
+
+        return $item;
     }
 }

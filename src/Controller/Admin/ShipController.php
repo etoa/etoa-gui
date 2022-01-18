@@ -2,6 +2,7 @@
 
 namespace EtoA\Controller\Admin;
 
+use EtoA\Form\Type\Admin\AddShipListType;
 use EtoA\Form\Type\Admin\ObjectRequirementListType;
 use EtoA\Form\Type\Admin\ShipSearchType;
 use EtoA\Form\Type\Admin\ShipXpCalculatorType;
@@ -10,10 +11,14 @@ use EtoA\Requirement\ObjectRequirement;
 use EtoA\Requirement\RequirementsUpdater;
 use EtoA\Ship\Ship;
 use EtoA\Ship\ShipDataRepository;
+use EtoA\Ship\ShipListItem;
 use EtoA\Ship\ShipQueueRepository;
+use EtoA\Ship\ShipRepository;
 use EtoA\Ship\ShipRequirementRepository;
 use EtoA\Ship\ShipSearch;
 use EtoA\Ship\ShipXpCalculator;
+use EtoA\Support\StringUtils;
+use EtoA\Universe\Planet\PlanetRepository;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -27,7 +32,30 @@ class ShipController extends AbstractAdminController
         private ShipRequirementRepository $shipRequirementRepository,
         private RankingService $rankingService,
         private ShipQueueRepository $shipQueueRepository,
+        private PlanetRepository $planetRepository,
+        private ShipRepository $shipRepository,
     ) {
+    }
+
+    #[Route("/admin/ships/search", name: "admin.ships.search")]
+    #[IsGranted('ROLE_ADMIN_GAME-ADMIN')]
+    public function search(Request $request): Response
+    {
+        $addItem = ShipListItem::empty();
+        $addForm = $this->createForm(AddShipListType::class, $addItem);
+        $addForm->handleRequest($request);
+        if ($addForm->isSubmitted() && $addForm->isValid()) {
+            $userId = $this->planetRepository->getPlanetUserId($addItem->entityId);
+            $this->shipRepository->addShip($addItem->shipId, $addItem->count, $userId, $addItem->entityId);
+
+            $this->addFlash('success', sprintf('%s Schiffe hinzugefügt', StringUtils::formatNumber($addItem->count)));
+        }
+
+        return $this->render('admin/ships/search.html.twig', [
+            'addForm' => $addForm->createView(),
+            'form' => $this->createForm(ShipSearchType::class, $request->query->all())->createView(),
+            'total' => $this->shipRepository->count(),
+        ]);
     }
 
     #[Route("/admin/ships/queue", name: "admin.ships.queue")]

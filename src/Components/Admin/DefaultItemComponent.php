@@ -59,4 +59,9 @@ class DefaultItemComponent extends AbstractEditComponent
     {
         return $this->createForm(EditDefaultItemType::class, $this->getItem());
     }
+
+    protected function resetItem(): void
+    {
+        $this->item = null;
+    }
 }

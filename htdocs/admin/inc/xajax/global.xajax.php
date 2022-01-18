@@ -177,6 +177,9 @@ function showShipsOnPlanet($form)
                 $out .= "<tr><td style=\"width:80px\" id=\"cnt_" . $item->id . "\">" . $item->count . "</td>
                 <td style=\"width:80px\" id=\"bunkered_" . $item->id . "\">" . $item->count . "</td>
                 <td>" . $ship->name . "</td>
+
+
+
                 <td>" . ($itemPoints) . "</td>
                 <td id=\"special_" . $item->id . "\">";
                 if ($ship->specialNeedExp > 0) {
