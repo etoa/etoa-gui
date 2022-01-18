@@ -14,8 +14,4 @@ if (isset($page) && ($page == "user")) {
     require_once __DIR__ . "/xajax/user.xajax.php";
 }
 
-if (isset($page) && $page == "ships") {
-    require_once __DIR__ . "/xajax/ships.xajax.php";
-}
-
 $xajax->processRequest();
