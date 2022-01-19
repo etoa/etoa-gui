@@ -21,4 +21,9 @@ class MissileBuy extends Event
     {
         return $this->count;
     }
+
+    public function getMissileId(): int
+    {
+        return $this->missileId;
+    }
 }

@@ -70,7 +70,7 @@ class QuestRepository extends AbstractRepository implements QuestStorageInterfac
     }
 
     /**
-     * @param array[] $questData
+     * @param mixed[] $questData
      */
     private function buildQuest(int $questId, array $questData): Quest
     {
@@ -150,7 +150,7 @@ class QuestRepository extends AbstractRepository implements QuestStorageInterfac
     }
 
     /**
-     * @return array<array>
+     * @return mixed[]
      */
     public function searchQuests(?int $questId, ?int $userId, ?string $questState, ?string $userNick): array
     {

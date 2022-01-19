@@ -5,6 +5,7 @@ namespace EtoA\Core;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\User\UserRepository;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\KernelEvents;
@@ -31,11 +32,11 @@ class ParamConverterListener implements EventSubscriberInterface
         $r = new \ReflectionMethod($controller[0], $controller[1]);
         // automatically apply conversion for non-configured objects
         foreach ($r->getParameters() as $param) {
-            if (!$param->getClass() instanceof \ReflectionClass || $param->getClass()->isInstance($request)) {
+            if (!$param->getType() instanceof \ReflectionNamedType || $param->getType()->getName() === Request::class) {
                 continue;
             }
 
-            $class = $param->getClass()->getName();
+            $class = $param->getType()->getName();
             $name = $param->getName();
             if (TokenContext::class === $class) {
                 if (!$request->attributes->has('currentUser')) {

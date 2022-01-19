@@ -133,8 +133,6 @@ class UserServiceProvider implements ServiceProviderInterface
                 $pimple[PlanetRepository::class],
                 $pimple[BuildingRepository::class],
                 $pimple[TechnologyRepository::class],
-                $pimple[ShipQueueRepository::class],
-                $pimple[DefenseQueueRepository::class],
                 $pimple[MailSenderService::class],
                 $pimple[PlanetService::class],
                 $pimple[UserSittingRepository::class],
@@ -157,7 +155,6 @@ class UserServiceProvider implements ServiceProviderInterface
                 $pimple[UserPointsRepository::class],
                 $pimple[UserCommentRepository::class],
                 $pimple[UserSurveillanceRepository::class],
-                $pimple[BackendMessageService::class],
                 $pimple[UserLogRepository::class],
                 $pimple[UserToXml::class],
                 $pimple[LogRepository::class]

@@ -507,7 +507,7 @@ function showAuctionDetail($id)
         </tr>";
 
         if ($auction->text != "")
-            echo "<tr><td colspan=\"5\">" . (isset($auction->text) ? stripslashes($auction->text) : 'Keine Beschreibung vorhanden') . "</td></tr>";
+            echo "<tr><td colspan=\"5\">" . ($auction->text != '' ? stripslashes($auction->text) : 'Keine Beschreibung vorhanden') . "</td></tr>";
         tableEnd();
 
         // Angebots/Preis Maske

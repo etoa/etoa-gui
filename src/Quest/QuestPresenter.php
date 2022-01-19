@@ -19,7 +19,7 @@ class QuestPresenter
     private ShipDataRepository $shipDataRepository;
     private DefenseDataRepository $defenseDataRepository;
 
-    /** @var array[] */
+    /** @var array{transition: string, name: string}[] */
     private array $transitions = [
         QuestDefinitionInterface::STATE_AVAILABLE => [
             'transition' => QuestDefinitionInterface::TRANSITION_START,
@@ -69,7 +69,7 @@ class QuestPresenter
 
     /**
      * @param array<int, int> $progressMap
-     * @param array{operator: string, children: array, value: int, id: int} $taskData
+     * @param array{operator: string, children: mixed[], value: int, id: int} $taskData
      * @return array<mixed>
      */
     private function buildProgress(array $progressMap, array $taskData): array
@@ -104,7 +104,7 @@ class QuestPresenter
     }
 
     /**
-     * @param array{rewards: array} $data
+     * @param array{rewards?: mixed[]} $data
      * @return string[]
      */
     public function buildRewards(array $data): array

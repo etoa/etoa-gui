@@ -10,7 +10,6 @@ class BuildList implements IteratorAggregate
     private $ownerId;
 
     private $entity;
-    private $owner;
 
     /** @var BuildListItem[] */
     private $items = null;

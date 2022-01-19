@@ -6,8 +6,6 @@ use EtoA\Core\AbstractRepository;
 
 class DefenseDataRepository extends AbstractRepository
 {
-    private const DEFENSE_NAMES = 'defense.names';
-
     /**
      * @return array<int, string>
      */

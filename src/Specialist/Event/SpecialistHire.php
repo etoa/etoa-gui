@@ -14,4 +14,9 @@ class SpecialistHire extends Event
     {
         $this->specialistId = $specialistId;
     }
+
+    public function getSpecialistId(): int
+    {
+        return $this->specialistId;
+    }
 }

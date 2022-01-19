@@ -42,8 +42,6 @@ class UserService
     private PlanetRepository $planetRepository;
     private BuildingRepository $buildingRepository;
     private TechnologyRepository $technologyRepository;
-    private ShipQueueRepository $shipQueueRepository;
-    private DefenseQueueRepository $defenseQueueRepository;
     private MailSenderService $mailSenderService;
     private PlanetService $planetService;
     private UserSittingRepository $userSittingRepository;
@@ -66,7 +64,6 @@ class UserService
     private UserPointsRepository $userPointsRepository;
     private UserCommentRepository $userCommentRepository;
     private UserSurveillanceRepository $userSurveillanceRepository;
-    private BackendMessageService $backendMessageService;
     private UserLogRepository $userLogRepository;
     private UserToXml $userToXml;
     private LogRepository $logRepository;
@@ -79,8 +76,6 @@ class UserService
         PlanetRepository $planetRepository,
         BuildingRepository $buildingRepository,
         TechnologyRepository $technologyRepository,
-        ShipQueueRepository $shipQueueRepository,
-        DefenseQueueRepository $defenseQueueRepository,
         MailSenderService $mailSenderService,
         PlanetService $planetService,
         UserSittingRepository $userSittingRepository,
@@ -103,7 +98,6 @@ class UserService
         UserPointsRepository $userPointsRepository,
         UserCommentRepository $userCommentRepository,
         UserSurveillanceRepository $userSurveillanceRepository,
-        BackendMessageService $backendMessageService,
         UserLogRepository $userLogRepository,
         UserToXml $userToXml,
         LogRepository $logRepository
@@ -115,8 +109,6 @@ class UserService
         $this->planetRepository = $planetRepository;
         $this->buildingRepository = $buildingRepository;
         $this->technologyRepository = $technologyRepository;
-        $this->shipQueueRepository = $shipQueueRepository;
-        $this->defenseQueueRepository = $defenseQueueRepository;
         $this->mailSenderService = $mailSenderService;
         $this->planetService = $planetService;
         $this->userSittingRepository = $userSittingRepository;
@@ -139,7 +131,6 @@ class UserService
         $this->userPointsRepository = $userPointsRepository;
         $this->userCommentRepository = $userCommentRepository;
         $this->userSurveillanceRepository = $userSurveillanceRepository;
-        $this->backendMessageService = $backendMessageService;
         $this->userLogRepository = $userLogRepository;
         $this->userToXml = $userToXml;
         $this->logRepository = $logRepository;

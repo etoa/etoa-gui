@@ -8,7 +8,6 @@ class ImageUpload
     private $field;
     private $targetDir;
     private $targetName;
-    private $type;
 
     private $maxSize;
     private $maxDim;
@@ -16,16 +15,11 @@ class ImageUpload
 
     private $resultName;
 
-    public function __construct($field, $targetDir, $targetName, $type = "")
+    public function __construct($field, $targetDir, $targetName)
     {
         $this->field = $field;
         $this->targetDir = $targetDir;
         $this->targetName = $targetName;
-        if (in_array($type, ['ping', 'jpg', 'gif'], true))
-            $this->type = $type;
-        else
-            $this->type = "png";
-
         $this->maxSize = 4194304;
     }
 

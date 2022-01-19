@@ -391,7 +391,7 @@ class BattleReport extends Report
                 $rnd = 1;
                 $shieldStructure = $initShieldStructure = (int) $this->shield + (int) $this->structure;
                 $entityShieldStructure = $entityInitShieldStructure = (int) $this->entityShield + (int) $this->entityStructure;
-                for ($rnd = 1; $rnd <= 5; $rnd++) {
+                for (; $rnd <= 5; $rnd++) {
                     $shieldStructure = max(0, $shieldStructure - $this->entityWeapon[$rnd]);
                     $entityShieldStructure = max(0, $entityShieldStructure - $this->weapon[$rnd]);
 

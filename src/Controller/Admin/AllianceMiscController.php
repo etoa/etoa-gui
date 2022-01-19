@@ -19,8 +19,6 @@ class AllianceMiscController extends AbstractAdminController
 {
     public function __construct(
         private AllianceService $allianceService,
-        private AllianceRankRepository $allianceRankRepository,
-        private AllianceDiplomacyRepository $allianceDiplomacyRepository,
         private AllianceRepository $allianceRepository,
         private AllianceImageStorage $allianceImageStorage,
     ) {

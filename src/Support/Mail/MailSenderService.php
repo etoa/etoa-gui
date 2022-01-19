@@ -43,7 +43,7 @@ class MailSenderService
             ->setTo($recipients)
             ->setBody($text . $this->getSignature());
 
-        return $this->mailer->send($message) ?? 0;
+        return $this->mailer->send($message);
     }
 
     private function getMailTransport(): Swift_Transport

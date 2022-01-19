@@ -7,14 +7,6 @@ use EtoA\PeriodicTask\Task\PeriodicTaskInterface;
 
 class PeriodicTaskCollection
 {
-    private const CRON_ALIASES = [
-        '@hourly' => '0 * * * *',
-        '@daily' => '0 0 * * *',
-        '@weekly' => '0 0 * * 0',
-        '@monthly' => '0 0 1 * *',
-        '@yearly' => '0 0 1 1 *',
-    ];
-
     /** @var iterable<PeriodicTaskInterface> */
     private iterable $tasks;
 

@@ -15,7 +15,7 @@ abstract class Session
     //
 
     /**
-     * @var Session Singleton innstance container
+     * @var ?Session Singleton innstance container
      */
     protected static $instance;
 

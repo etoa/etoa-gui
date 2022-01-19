@@ -412,7 +412,7 @@ class RankingService
                 $tpoints += $technologyPoints[$technologyId][$level];
             }
 
-            $apoints = $tpoints + $bpoints + $usedAllianceShipPoints[$allianceId] ?? 0;
+            $apoints = $tpoints + $bpoints + ($usedAllianceShipPoints[$allianceId] ?? 0);
             $points = $apoints + $upoints;
 
             $stats = AllianceStats::createFromData(

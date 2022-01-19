@@ -14,4 +14,9 @@ class SpecialistDischarge extends Event
     {
         $this->specialistId = $specialistId;
     }
+
+    public function getSpecialistId(): int
+    {
+        return $this->specialistId;
+    }
 }

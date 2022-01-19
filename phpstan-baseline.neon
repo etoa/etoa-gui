@@ -36,7 +36,7 @@ parameters:
 			path: htdocs/classes/usersession.class.php
 
 		-
-			message: "#^Comparison operation \"\\=\\=\" between 0\\|0\\.0\\|''\\|'0'\\|array\\(\\)\\|false\\|null and 0 results in an error\\.$#"
+			message: "#^Comparison operation \"\\=\\=\" between 0\\|0\\.0\\|''\\|'0'\\|array\\{\\}\\|false\\|null and 0 results in an error\\.$#"
 			count: 1
 			path: htdocs/content/buildings.php
 
@@ -71,6 +71,41 @@ parameters:
 			path: htdocs/content/market/new.php
 
 		-
+			message: "#^Comparison operation \"\\>\" between int\\<211, max\\> and 210 is always true\\.$#"
+			count: 1
+			path: htdocs/content/overview.php
+
+		-
+			message: "#^Comparison operation \"\\>\" between int\\<226, max\\> and 225 is always true\\.$#"
+			count: 1
+			path: htdocs/content/overview.php
+
+		-
+			message: "#^Comparison operation \"\\>\" between int\\<24, max\\> and 0 is always true\\.$#"
+			count: 2
+			path: htdocs/content/overview.php
+
+		-
+			message: "#^Comparison operation \"\\>\" between int\\<46, max\\> and 45 is always true\\.$#"
+			count: 1
+			path: htdocs/content/overview.php
+
+		-
+			message: "#^Comparison operation \"\\>\\=\" between int\\<135, max\\> and 135 is always true\\.$#"
+			count: 1
+			path: htdocs/content/overview.php
+
+		-
+			message: "#^Comparison operation \"\\>\\=\" between int\\<160, max\\> and 160 is always true\\.$#"
+			count: 1
+			path: htdocs/content/overview.php
+
+		-
+			message: "#^Comparison operation \"\\>\\=\" between int\\<180, max\\> and 180 is always true\\.$#"
+			count: 1
+			path: htdocs/content/overview.php
+
+		-
 			message: "#^Variable \\$color might not be defined\\.$#"
 			count: 1
 			path: htdocs/content/research.php
@@ -84,6 +119,11 @@ parameters:
 			message: "#^Variable \\$tmtext might not be defined\\.$#"
 			count: 1
 			path: htdocs/content/research.php
+
+		-
+			message: "#^If condition is always true\\.$#"
+			count: 1
+			path: htdocs/content/userconfig/general.php
 
 		-
 			message: "#^If condition is always false\\.$#"
@@ -109,6 +149,16 @@ parameters:
 			message: "#^If condition is always false\\.$#"
 			count: 2
 			path: htdocs/inc/init.inc.php
+
+		-
+			message: "#^If condition is always false\\.$#"
+			count: 1
+			path: htdocs/inc/install.inc.php
+
+		-
+			message: "#^Negated boolean expression is always true\\.$#"
+			count: 1
+			path: htdocs/inc/install.inc.php
 
 		-
 			message: "#^If condition is always false\\.$#"
@@ -171,12 +221,12 @@ parameters:
 			path: src/Fleet/FleetWithShips.php
 
 		-
-			message: "#^Method EtoA\\\\Ranking\\\\UserBannerService\\:\\:createUserBannerImage\\(\\) never returns resource so it can be removed from the return typehint\\.$#"
+			message: "#^Method EtoA\\\\Ranking\\\\UserBannerService\\:\\:createUserBannerImage\\(\\) never returns resource so it can be removed from the return type\\.$#"
 			count: 1
 			path: src/Ranking/UserBannerService.php
 
 		-
-			message: "#^Method EtoA\\\\Support\\\\ImageUtils\\:\\:imageCreateFromFile\\(\\) has no return typehint specified\\.$#"
+			message: "#^Method EtoA\\\\Support\\\\ImageUtils\\:\\:imageCreateFromFile\\(\\) has no return type specified\\.$#"
 			count: 1
 			path: src/Support/ImageUtils.php
 
@@ -184,4 +234,14 @@ parameters:
 			message: "#^Method EtoA\\\\UI\\\\EntityCoordinatesSelector\\:\\:parse\\(\\) has parameter \\$parameters with no value type specified in iterable type Symfony\\\\Component\\\\HttpFoundation\\\\ParameterBag\\.$#"
 			count: 1
 			path: src/UI/EntityCoordinatesSelector.php
+
+		-
+			message: "#^Parameter \\#1 \\$options \\(array\\<int\\|string, mixed\\>\\) of method EtoA\\\\SymfonyWebTestCase\\:\\:createClient\\(\\) should be contravariant with parameter \\$options \\(array\\) of method Symfony\\\\Bundle\\\\FrameworkBundle\\\\Test\\\\WebTestCase\\:\\:createClient\\(\\)$#"
+			count: 1
+			path: tests/SymfonyWebTestCase.php
+
+		-
+			message: "#^Parameter \\#2 \\$server \\(array\\<int\\|string, mixed\\>\\) of method EtoA\\\\SymfonyWebTestCase\\:\\:createClient\\(\\) should be contravariant with parameter \\$server \\(array\\) of method Symfony\\\\Bundle\\\\FrameworkBundle\\\\Test\\\\WebTestCase\\:\\:createClient\\(\\)$#"
+			count: 1
+			path: tests/SymfonyWebTestCase.php
 
