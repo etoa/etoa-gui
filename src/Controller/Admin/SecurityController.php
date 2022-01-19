@@ -104,11 +104,11 @@ class SecurityController extends AbstractController
 
         if ($request->isMethod('POST')) {
             $newAdmin = new AdminUser();
-            $newAdmin->email = $request->request->get('user_email');
-            $newAdmin->name = $newAdmin->nick = $request->request->get('user_nick');
+            $newAdmin->email = (string) $request->request->get('user_email');
+            $newAdmin->name = $newAdmin->nick = (string) $request->request->get('user_nick');
             $newAdmin->roles = ['master'];
             $this->adminUserRepository->save($newAdmin);
-            $this->adminUserRepository->setPassword($newAdmin, $passwordHasher->hashPassword(new CurrentAdmin($newAdmin), $request->request->get('user_password')));
+            $this->adminUserRepository->setPassword($newAdmin, $passwordHasher->hashPassword(new CurrentAdmin($newAdmin), (string) $request->request->get('user_password')));
 
             return $this->render('admin/login/login-status.html.twig', [
                 'title' => 'Admin-User erstellen',

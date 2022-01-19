@@ -244,7 +244,7 @@ class TechnologyRepository extends AbstractRepository
     public function getBestLevels(): array
     {
         $data = $this->getConnection()
-            ->executeQuery(
+            ->fetchAllAssociative(
                 "SELECT
                     technologies.tech_name as name,
                     MAX(techlist.techlist_current_level) as max
@@ -267,8 +267,7 @@ class TechnologyRepository extends AbstractRepository
                     technologies.tech_id
                 ORDER BY
                     max DESC;"
-            )
-            ->fetchAllAssociative();
+            );
 
         return array_map(fn ($arr) => [
             'name' => (string) $arr['name'],

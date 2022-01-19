@@ -81,7 +81,7 @@ class SolarTypeRepository extends AbstractRepository
     public function getNumberOfNamedSystemsByType(): array
     {
         $data = $this->getConnection()
-            ->executeQuery(
+            ->fetchAllAssociative(
                 "SELECT
                     t.sol_type_name as name,
                     COUNT(id) as cnt
@@ -96,8 +96,7 @@ class SolarTypeRepository extends AbstractRepository
                     s.type_id
                 ORDER BY
                     cnt DESC;"
-            )
-            ->fetchAllAssociative();
+            );
 
         return array_map(fn ($arr) => [
             'name' => (string) $arr['name'],

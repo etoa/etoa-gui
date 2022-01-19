@@ -35,8 +35,7 @@ class UserPointsRepository extends AbstractRepository
                 point_ship_points,
                 point_tech_points,
                 point_building_points
-            ) VALUES ' . $insertRow, $parameters)
-        ->execute();
+            ) VALUES ' . $insertRow, $parameters);
     }
 
     /**

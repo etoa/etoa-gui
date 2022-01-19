@@ -272,7 +272,7 @@ class DefenseRepository extends AbstractRepository
     public function getOverallCount(): array
     {
         $data = $this->getConnection()
-            ->executeQuery(
+            ->fetchAllAssociative(
                 "SELECT
                     defense.def_name as name,
                     SUM(deflist.deflist_count) as cnt,
@@ -296,8 +296,7 @@ class DefenseRepository extends AbstractRepository
                     defense.def_id
                 ORDER BY
                     cnt DESC;"
-            )
-            ->fetchAllAssociative();
+            );
 
         return array_map(fn ($arr) => [
             'name' => (string) $arr['name'],

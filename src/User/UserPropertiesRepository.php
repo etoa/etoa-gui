@@ -125,7 +125,7 @@ class UserPropertiesRepository extends AbstractRepository
     public function getDesignStats(int $limit): array
     {
         $data = $this->getConnection()
-            ->executeQuery(
+            ->fetchAllKeyValue(
                 "SELECT
                     css_style,
                     COUNT(id) cnt
@@ -136,8 +136,7 @@ class UserPropertiesRepository extends AbstractRepository
                 ORDER BY
                     cnt DESC
                 LIMIT $limit;"
-            )
-            ->fetchAllKeyValue();
+            );
 
         return array_map(fn ($value) => (int) $value, $data);
     }

@@ -745,7 +745,7 @@ class PlanetRepository extends AbstractRepository
     private function getMaxResourcesOfAPlayer(string $field): int
     {
         return (int) $this->getConnection()
-            ->executeQuery(
+            ->fetchOne(
                 "SELECT
                     SUM(" . $field . ") AS sum
                 FROM
@@ -762,8 +762,7 @@ class PlanetRepository extends AbstractRepository
                 ORDER BY
                     sum DESC
                 LIMIT 1;"
-            )
-            ->fetchOne();
+            );
     }
 
     /**
@@ -812,7 +811,7 @@ class PlanetRepository extends AbstractRepository
     private function getMaxResources(string $field): array
     {
         return $this->getConnection()
-            ->executeQuery(
+            ->fetchAssociative(
                 "SELECT
                     SUM(" . $field . ") AS sum,
                     AVG(" . $field . ") AS avg,
@@ -827,8 +826,7 @@ class PlanetRepository extends AbstractRepository
                     AND user_hmode_from = 0
                     AND user_hmode_to = 0
                     AND " . $field . " > 0"
-            )
-            ->fetchAssociative();
+            );
     }
 
     /**
@@ -877,7 +875,7 @@ class PlanetRepository extends AbstractRepository
     private function getMaxResourcesOnAPlanet(string $field): ?array
     {
         $data = $this->getConnection()
-            ->executeQuery(
+            ->fetchAssociative(
                 "SELECT
                     " . $field . " AS res,
                     type_name AS type
@@ -899,8 +897,7 @@ class PlanetRepository extends AbstractRepository
                 ORDER BY
                     res DESC
                 LIMIT 1;"
-            )
-            ->fetchAssociative();
+            );
 
         return $data !== false ? $data : null;
     }

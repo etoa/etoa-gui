@@ -78,7 +78,7 @@ class RaceDataRepository extends AbstractRepository
     public function getNumberOfRacesByType(): array
     {
         $data = $this->getConnection()
-            ->executeQuery(
+            ->fetchAllAssociative(
                 "SELECT
                     races.race_name as name,
                     COUNT(users.user_race_id) as cnt
@@ -95,8 +95,7 @@ class RaceDataRepository extends AbstractRepository
                     races.race_id
                 ORDER BY
                     cnt DESC;"
-            )
-            ->fetchAllAssociative();
+            );
 
         return array_map(fn ($arr) => [
             'name' => (string) $arr['name'],
