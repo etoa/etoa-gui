@@ -1,3 +1,6 @@
+# Workaround until all services are used in the the Symfony app
+# otherwise the services aren't in the container and cannot be used for tests
+
 services:
     _defaults:
         public: true

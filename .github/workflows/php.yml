@@ -142,6 +142,9 @@ jobs:
       - name: Set up DB config
         run: echo '{"host":"127.0.0.1:${{ job.services.mysql.ports[3306] }}","dbname":"etoa_test","user":"root","password":"root"}' > htdocs/config/db.conf
 
+      - name: Setup container
+        run: ./bin/console debug:container --quiet
+
       - name: Run PHPStan
         run: vendor/bin/phpstan analyse --no-progress
 

@@ -231,11 +231,6 @@ parameters:
 			path: src/Support/ImageUtils.php
 
 		-
-			message: "#^Method EtoA\\\\UI\\\\EntityCoordinatesSelector\\:\\:parse\\(\\) has parameter \\$parameters with no value type specified in iterable type Symfony\\\\Component\\\\HttpFoundation\\\\ParameterBag\\.$#"
-			count: 1
-			path: src/UI/EntityCoordinatesSelector.php
-
-		-
 			message: "#^Parameter \\#1 \\$options \\(array\\<int\\|string, mixed\\>\\) of method EtoA\\\\SymfonyWebTestCase\\:\\:createClient\\(\\) should be contravariant with parameter \\$options \\(array\\) of method Symfony\\\\Bundle\\\\FrameworkBundle\\\\Test\\\\WebTestCase\\:\\:createClient\\(\\)$#"
 			count: 1
 			path: tests/SymfonyWebTestCase.php

@@ -27,7 +27,7 @@ class TutorialController extends AbstractController
      */
     public function showAction(Request $request, TokenContext $context, int $tutorialId): JsonResponse
     {
-        if ($request->query->get('step')) {
+        if ($request->query->has('step')) {
             $currentStep = $request->query->getInt('step');
         } else {
             $currentStep = $this->tutorialManager->getUserProgress($context->getCurrentUser()->getId(), $tutorialId);
