@@ -14,7 +14,7 @@ class AllianceMiscControllerTest extends SymfonyWebTestCase
 
         $client->request('GET', '/admin/alliances/new');
 
-        $this->assertSame(200, $client->getResponse()->getStatusCode(), $client->getResponse()->getContent());
+        $this->assertStatusCode(200, $client->getResponse());
     }
 
     public function testCrap(): void
@@ -25,7 +25,7 @@ class AllianceMiscControllerTest extends SymfonyWebTestCase
 
         $client->request('GET', '/admin/alliances/crap');
 
-        $this->assertSame(200, $client->getResponse()->getStatusCode(), $client->getResponse()->getContent());
+        $this->assertStatusCode(200, $client->getResponse());
     }
 
     public function testImagecheck(): void
@@ -36,6 +36,6 @@ class AllianceMiscControllerTest extends SymfonyWebTestCase
 
         $client->request('GET', '/admin/alliances/imagecheck');
 
-        $this->assertSame(200, $client->getResponse()->getStatusCode(), $client->getResponse()->getContent());
+        $this->assertStatusCode(200, $client->getResponse());
     }
 }

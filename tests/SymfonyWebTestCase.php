@@ -8,12 +8,12 @@ use EtoA\Admin\AdminUser;
 use EtoA\Admin\AdminUserRepository;
 use EtoA\Security\Admin\CurrentAdmin;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
+use Symfony\Component\HttpFoundation\Response;
+use Webmozart\Assert\Assert;
 
 abstract class SymfonyWebTestCase extends \Symfony\Bundle\FrameworkBundle\Test\WebTestCase
 {
     use DbTestTrait;
-
-    protected static Connection $staticConnection;
 
     /**
      * @param array<int|string, mixed> $options
@@ -24,7 +24,6 @@ abstract class SymfonyWebTestCase extends \Symfony\Bundle\FrameworkBundle\Test\W
         $client = parent::createClient($options, $server);
 
         $_SERVER['REMOTE_ADDR'] = '127.0.0.1';
-        self::$staticConnection = $client->getContainer()->get(Connection::class);
 
         require_once dirname(__DIR__) . '/htdocs/admin/inc/admin_functions.inc.php'; // @todo remove
 
@@ -35,7 +34,7 @@ abstract class SymfonyWebTestCase extends \Symfony\Bundle\FrameworkBundle\Test\W
     {
         $loginTime = time();
 
-        self::$staticConnection
+        $this->getConnection()
             ->createQueryBuilder()
             ->insert('users')
             ->values([
@@ -72,7 +71,7 @@ abstract class SymfonyWebTestCase extends \Symfony\Bundle\FrameworkBundle\Test\W
                 'empty' => '',
             ])->execute();
 
-        self::$staticConnection
+        $this->getConnection()
             ->createQueryBuilder()
             ->insert('tutorial_user_progress')
             ->values([
@@ -90,7 +89,7 @@ abstract class SymfonyWebTestCase extends \Symfony\Bundle\FrameworkBundle\Test\W
         $_SESSION['time_login'] = $loginTime;
         $_SESSION['time_action'] = $loginTime;
         $userAgent = $_SERVER['HTTP_USER_AGENT'] = 'testing';
-        self::$staticConnection
+        $this->getConnection()
             ->createQueryBuilder()
             ->insert('user_sessions')
             ->values([
@@ -120,10 +119,12 @@ abstract class SymfonyWebTestCase extends \Symfony\Bundle\FrameworkBundle\Test\W
         $adminUser->roles = $roles;
         $adminUser->passwordString = '';
 
-        /** @var AdminUserRepository $adminUserRepository */
         $adminUserRepository = self::getContainer()->get(AdminUserRepository::class);
         $adminUserRepository->save($adminUser);
+        Assert::notNull($adminUser->id);
         $adminUser = $adminUserRepository->find($adminUser->id);
+        Assert::notNull($adminUser);
+        Assert::notNull($adminUser->id);
 
         $client->loginUser(new CurrentAdmin($adminUser), 'admin');
 
@@ -132,10 +133,69 @@ abstract class SymfonyWebTestCase extends \Symfony\Bundle\FrameworkBundle\Test\W
             throw new \RuntimeException('Session cookie not found.');
         }
 
-        /** @var AdminSessionRepository $adminSessionRepository */
         $adminSessionRepository = self::getContainer()->get(AdminSessionRepository::class);
         $adminSessionRepository->create($sessionCookie->getValue(), $adminUser->id, '', 'Symfony BrowserKit', time());
 
         return $adminUser;
+    }
+
+    protected function getConnection(): Connection
+    {
+        return self::getContainer()->get(Connection::class);
+    }
+
+    protected function createUser(int $userId, int $specialistId = 0, int $allianceId = 0, int $points = 0, string $discoverMask = '', string $verificationKey = ''): void
+    {
+        $this->getConnection()
+            ->createQueryBuilder()
+            ->insert('users')
+            ->values([
+                'user_id' => ':userId',
+                'user_setup' => ':setup',
+                'user_name' => ':name',
+                'user_nick' => ':nick',
+                'user_password' => ':password',
+                'user_password_temp' => ':password',
+                'user_session_key' => ':session',
+                'user_email' => ':email',
+                'user_email_fix' => ':email',
+                'user_ip' => ':empty',
+                'user_hostname' => ':empty',
+                'user_ban_reason' => ':empty',
+                'user_profile_text' => ':empty',
+                'user_avatar' => ':empty',
+                'user_signature' => ':empty',
+                'user_client' => ':empty',
+                'user_profile_board_url' => ':empty',
+                'user_profile_img' => ':empty',
+                'user_observe' => ':empty',
+                'discoverymask' => ':discoverymask',
+                'dual_email' => ':empty',
+                'dual_name' => ':empty',
+                'user_specialist_id' => ':specialistId',
+                'user_alliance_id' => ':allianceId',
+                'user_points' => ':points',
+                'verification_key' => ':verificationKey',
+            ])->setParameters([
+                'userId' => $userId,
+                'setup' => 1,
+                'name' => 'User Name',
+                'nick' => 'Nickname',
+                'password' => 'password',
+                'session' => 'session',
+                'email' => 'test@etoa.net',
+                'empty' => '',
+                'specialistId' => $specialistId,
+                'allianceId' => $allianceId,
+                'points' => $points,
+                'discoverymask' => $discoverMask,
+                'verificationKey' => $verificationKey,
+            ])->execute();
+    }
+
+    protected function assertStatusCode(int $statusCode, Response $response): void
+    {
+        $this->assertNotFalse($response->getContent());
+        $this->assertSame($statusCode, $response->getStatusCode());
     }
 }

@@ -2,16 +2,16 @@
 
 namespace EtoA\Alliance\Board;
 
-use EtoA\AbstractDbTestCase;
+use EtoA\SymfonyWebTestCase;
 
-class AllianceBoardCategoryRankRepositoryTest extends AbstractDbTestCase
+class AllianceBoardCategoryRankRepositoryTest extends SymfonyWebTestCase
 {
     private AllianceBoardCategoryRankRepository $repository;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->repository = $this->app[AllianceBoardCategoryRankRepository::class];
+        $this->repository = self::getContainer()->get(AllianceBoardCategoryRankRepository::class);
     }
 
     public function testGetRanksForCategories(): void

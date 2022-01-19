@@ -77,14 +77,14 @@ class ConfigController extends AbstractAdminController
 
         // Current category
         $currentCategory = current(array_keys($categories));
-        if ($request->query->has('category') && isset($categories[$request->query->get('category')])) {
-            $currentCategory = $request->query->get('category');
+        if ($request->query->has('category') && isset($categories[$request->query->getInt('category')])) {
+            $currentCategory = $request->query->getInt('category');
         }
 
         // Save values
         if ($request->isMethod('POST')) {
             foreach ($categories as $ck => $cv) {
-                if ($currentCategory == $ck) {
+                if ($currentCategory === $ck) {
                     foreach ($this->definitions->itemInCategory($ck) as $i) {
                         $name = (string) $i['name'];
                         $v = isset($i->v) ? $this->getFormValue((string)$i->v['type'], $name, "v", $request->request->all()) : "";

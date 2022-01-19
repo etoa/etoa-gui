@@ -2,9 +2,9 @@
 
 namespace EtoA\Missile;
 
-use EtoA\AbstractDbTestCase;
+use EtoA\SymfonyWebTestCase;
 
-class MissileRepositoryTest extends AbstractDbTestCase
+class MissileRepositoryTest extends SymfonyWebTestCase
 {
     private MissileRepository $repository;
 
@@ -12,7 +12,7 @@ class MissileRepositoryTest extends AbstractDbTestCase
     {
         parent::setUp();
 
-        $this->repository = $this->app[MissileRepository::class];
+        $this->repository = self::getContainer()->get(MissileRepository::class);
     }
 
     public function testAddMissile(): void
@@ -24,7 +24,7 @@ class MissileRepositoryTest extends AbstractDbTestCase
         $this->repository->addMissile($missileId, 1, $userId, $entityId);
         $this->repository->addMissile($missileId, 29, $userId, $entityId);
 
-        $missiles = $this->connection->createQueryBuilder()->select('d.*')->from('missilelist', 'd')->execute()->fetchAllAssociative();
+        $missiles = $this->getConnection()->fetchAllAssociative('SELECT * FROM missilelist');
 
         $this->assertCount(1, $missiles);
         $missile = $missiles[0];

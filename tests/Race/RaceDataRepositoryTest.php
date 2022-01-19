@@ -2,9 +2,9 @@
 
 namespace EtoA\Race;
 
-use EtoA\AbstractDbTestCase;
+use EtoA\SymfonyWebTestCase;
 
-class RaceDataRepositoryTest extends AbstractDbTestCase
+class RaceDataRepositoryTest extends SymfonyWebTestCase
 {
     private RaceDataRepository $raceDataRepository;
 
@@ -12,7 +12,7 @@ class RaceDataRepositoryTest extends AbstractDbTestCase
     {
         parent::setUp();
 
-        $this->raceDataRepository = $this->app[RaceDataRepository::class];
+        $this->raceDataRepository = self::getContainer()->get(RaceDataRepository::class);
     }
 
     public function testGetRaceNames(): void
@@ -33,6 +33,7 @@ class RaceDataRepositoryTest extends AbstractDbTestCase
     {
         $race = $this->raceDataRepository->getRace(1);
 
+        $this->assertNotNull($race);
         $this->assertSame(1, $race->id);
     }
 

@@ -2,9 +2,9 @@
 
 namespace EtoA\User;
 
-use EtoA\AbstractDbTestCase;
+use EtoA\SymfonyWebTestCase;
 
-class UserSittingRepositoryTest extends AbstractDbTestCase
+class UserSittingRepositoryTest extends SymfonyWebTestCase
 {
     private UserSittingRepository $repository;
 
@@ -12,7 +12,7 @@ class UserSittingRepositoryTest extends AbstractDbTestCase
     {
         parent::setUp();
 
-        $this->repository = $this->app[UserSittingRepository::class];
+        $this->repository = self::getContainer()->get(UserSittingRepository::class);
     }
 
     public function testGetActiveSittingEntries(): void

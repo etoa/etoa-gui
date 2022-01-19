@@ -14,7 +14,7 @@ class ToolControllerTest extends SymfonyWebTestCase
 
         $client->request('GET', '/admin/tools/');
 
-        $this->assertSame(200, $client->getResponse()->getStatusCode(), $client->getResponse()->getContent());
+        $this->assertStatusCode(200, $client->getResponse());
     }
 
     public function testFilesharing(): void
@@ -25,7 +25,7 @@ class ToolControllerTest extends SymfonyWebTestCase
 
         $client->request('GET', '/admin/tools/filesharing');
 
-        $this->assertSame(200, $client->getResponse()->getStatusCode(), $client->getResponse()->getContent());
+        $this->assertStatusCode(200, $client->getResponse());
     }
 
     public function testAccessLog(): void
@@ -36,7 +36,7 @@ class ToolControllerTest extends SymfonyWebTestCase
 
         $client->request('GET', '/admin/tools/accesslog/');
 
-        $this->assertSame(200, $client->getResponse()->getStatusCode(), $client->getResponse()->getContent());
+        $this->assertStatusCode(200, $client->getResponse());
     }
 
     public function testIpResolver(): void
@@ -47,6 +47,6 @@ class ToolControllerTest extends SymfonyWebTestCase
 
         $client->request('GET', '/admin/tools/ip-resolver');
 
-        $this->assertSame(200, $client->getResponse()->getStatusCode(), $client->getResponse()->getContent());
+        $this->assertStatusCode(200, $client->getResponse());
     }
 }

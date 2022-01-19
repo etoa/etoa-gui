@@ -2,10 +2,10 @@
 
 namespace EtoA\Bookmark;
 
-use EtoA\AbstractDbTestCase;
+use EtoA\SymfonyWebTestCase;
 use EtoA\Universe\Entity\EntityRepository;
 
-class BookmarkRepositoryTest extends AbstractDbTestCase
+class BookmarkRepositoryTest extends SymfonyWebTestCase
 {
     private BookmarkRepository $repository;
     private EntityRepository $entityRepository;
@@ -14,8 +14,8 @@ class BookmarkRepositoryTest extends AbstractDbTestCase
     {
         parent::setUp();
 
-        $this->repository = $this->app[BookmarkRepository::class];
-        $this->entityRepository = $this->app[EntityRepository::class];
+        $this->repository = self::getContainer()->get(BookmarkRepository::class);
+        $this->entityRepository = self::getContainer()->get(EntityRepository::class);
     }
 
     public function testHasEntityBookmark(): void

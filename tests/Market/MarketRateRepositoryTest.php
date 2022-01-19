@@ -2,9 +2,9 @@
 
 namespace EtoA\Market;
 
-use EtoA\AbstractDbTestCase;
+use EtoA\SymfonyWebTestCase;
 
-class MarketRateRepositoryTest extends AbstractDbTestCase
+class MarketRateRepositoryTest extends SymfonyWebTestCase
 {
     private MarketRateRepository $repository;
 
@@ -12,12 +12,12 @@ class MarketRateRepositoryTest extends AbstractDbTestCase
     {
         parent::setUp();
 
-        $this->repository = $this->app[MarketRateRepository::class];
+        $this->repository = self::getContainer()->get(MarketRateRepository::class);
     }
 
     public function testGetRates(): void
     {
-        $this->connection->executeQuery('INSERT INTO market_rates (id) VALUES (1)');
+        $this->getConnection()->executeQuery('INSERT INTO market_rates (id) VALUES (1)');
 
         $rates = $this->repository->getRates(1);
 

@@ -17,7 +17,7 @@ class TutorialControllerTest extends SymfonyWebTestCase
 
         $client->request('GET', sprintf('/api/tutorials/%s', $tutorialId));
 
-        $this->assertSame(200, $client->getResponse()->getStatusCode(), $client->getResponse()->getContent());
+        $this->assertStatusCode(200, $client->getResponse());
     }
 
     public function testClose(): void
@@ -31,6 +31,6 @@ class TutorialControllerTest extends SymfonyWebTestCase
 
         $client->request('PUT', sprintf('/api/tutorials/%s/close', $tutorialId));
 
-        $this->assertSame(200, $client->getResponse()->getStatusCode(), $client->getResponse()->getContent());
+        $this->assertStatusCode(200, $client->getResponse());
     }
 }

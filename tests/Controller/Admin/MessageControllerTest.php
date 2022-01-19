@@ -14,7 +14,7 @@ class MessageControllerTest extends SymfonyWebTestCase
 
         $client->request('GET', '/admin/messages/');
 
-        $this->assertSame(200, $client->getResponse()->getStatusCode(), $client->getResponse()->getContent());
+        $this->assertStatusCode(200, $client->getResponse());
     }
 
     public function testSend(): void
@@ -25,7 +25,7 @@ class MessageControllerTest extends SymfonyWebTestCase
 
         $client->request('GET', '/admin/messages/send');
 
-        $this->assertSame(200, $client->getResponse()->getStatusCode(), $client->getResponse()->getContent());
+        $this->assertStatusCode(200, $client->getResponse());
     }
 
     public function testReports(): void
@@ -36,6 +36,6 @@ class MessageControllerTest extends SymfonyWebTestCase
 
         $client->request('GET', '/admin/messages/reports');
 
-        $this->assertSame(200, $client->getResponse()->getStatusCode(), $client->getResponse()->getContent());
+        $this->assertStatusCode(200, $client->getResponse());
     }
 }

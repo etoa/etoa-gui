@@ -2,16 +2,16 @@
 
 namespace EtoA\Alliance;
 
-use EtoA\AbstractDbTestCase;
+use EtoA\SymfonyWebTestCase;
 
-class AllianceDiplomacyRepositoryTest extends AbstractDbTestCase
+class AllianceDiplomacyRepositoryTest extends SymfonyWebTestCase
 {
     private AllianceDiplomacyRepository $repository;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->repository = $this->app[AllianceDiplomacyRepository::class];
+        $this->repository = self::getContainer()->get(AllianceDiplomacyRepository::class);
     }
 
     public function testGetDiplomacies(): void

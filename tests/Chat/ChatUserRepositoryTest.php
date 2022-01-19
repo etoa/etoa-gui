@@ -2,9 +2,9 @@
 
 namespace EtoA\Chat;
 
-use EtoA\AbstractDbTestCase;
+use EtoA\SymfonyWebTestCase;
 
-class ChatUserRepositoryTest extends AbstractDbTestCase
+class ChatUserRepositoryTest extends SymfonyWebTestCase
 {
     private ChatUserRepository $repository;
 
@@ -12,7 +12,7 @@ class ChatUserRepositoryTest extends AbstractDbTestCase
     {
         parent::setUp();
 
-        $this->repository = $this->app[ChatUserRepository::class];
+        $this->repository = self::getContainer()->get(ChatUserRepository::class);
     }
 
     public function testGetChatUser(): void

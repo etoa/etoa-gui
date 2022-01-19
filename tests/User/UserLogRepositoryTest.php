@@ -2,9 +2,9 @@
 
 namespace EtoA\User;
 
-use EtoA\AbstractDbTestCase;
+use EtoA\SymfonyWebTestCase;
 
-class UserLogRepositoryTest extends AbstractDbTestCase
+class UserLogRepositoryTest extends SymfonyWebTestCase
 {
     private UserLogRepository $repository;
 
@@ -12,7 +12,7 @@ class UserLogRepositoryTest extends AbstractDbTestCase
     {
         parent::setUp();
 
-        $this->repository = $this->app[UserLogRepository::class];
+        $this->repository = self::getContainer()->get(UserLogRepository::class);
 
         $this->repository->deleteAll();
     }

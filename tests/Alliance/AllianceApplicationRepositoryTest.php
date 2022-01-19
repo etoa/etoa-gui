@@ -2,16 +2,16 @@
 
 namespace EtoA\Alliance;
 
-use EtoA\AbstractDbTestCase;
+use EtoA\SymfonyWebTestCase;
 
-class AllianceApplicationRepositoryTest extends AbstractDbTestCase
+class AllianceApplicationRepositoryTest extends SymfonyWebTestCase
 {
     private AllianceApplicationRepository $repository;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->repository = $this->app[AllianceApplicationRepository::class];
+        $this->repository = self::getContainer()->get(AllianceApplicationRepository::class);
     }
 
     public function testCountApplications(): void

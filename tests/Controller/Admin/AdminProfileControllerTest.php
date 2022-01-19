@@ -14,6 +14,6 @@ class AdminProfileControllerTest extends SymfonyWebTestCase
 
         $client->request('GET', '/admin/profile/');
 
-        $this->assertSame(200, $client->getResponse()->getStatusCode(), $client->getResponse()->getContent());
+        $this->assertStatusCode(200, $client->getResponse());
     }
 }

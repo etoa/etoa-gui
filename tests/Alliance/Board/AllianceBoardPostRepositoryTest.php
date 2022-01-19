@@ -2,16 +2,16 @@
 
 namespace EtoA\Alliance\Board;
 
-use EtoA\AbstractDbTestCase;
+use EtoA\SymfonyWebTestCase;
 
-class AllianceBoardPostRepositoryTest extends AbstractDbTestCase
+class AllianceBoardPostRepositoryTest extends SymfonyWebTestCase
 {
     private AllianceBoardPostRepository $repository;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->repository = $this->app[AllianceBoardPostRepository::class];
+        $this->repository = self::getContainer()->get(AllianceBoardPostRepository::class);
     }
 
     public function testGetPosts(): void

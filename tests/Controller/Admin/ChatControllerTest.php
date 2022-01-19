@@ -14,7 +14,7 @@ class ChatControllerTest extends SymfonyWebTestCase
 
         $client->request('GET', '/admin/chat/');
 
-        $this->assertSame(200, $client->getResponse()->getStatusCode(), $client->getResponse()->getContent());
+        $this->assertStatusCode(200, $client->getResponse());
     }
 
     public function testLog(): void
@@ -25,6 +25,6 @@ class ChatControllerTest extends SymfonyWebTestCase
 
         $client->request('GET', '/admin/chat/log');
 
-        $this->assertSame(200, $client->getResponse()->getStatusCode(), $client->getResponse()->getContent());
+        $this->assertStatusCode(200, $client->getResponse());
     }
 }

@@ -14,7 +14,7 @@ class AdminManagementControllerTest extends SymfonyWebTestCase
 
         $client->request('GET', '/admin/admin-management/');
 
-        $this->assertSame(200, $client->getResponse()->getStatusCode(), $client->getResponse()->getContent());
+        $this->assertStatusCode(200, $client->getResponse());
     }
 
     public function testNew(): void
@@ -25,7 +25,7 @@ class AdminManagementControllerTest extends SymfonyWebTestCase
 
         $client->request('GET', '/admin/admin-management/new');
 
-        $this->assertSame(200, $client->getResponse()->getStatusCode(), $client->getResponse()->getContent());
+        $this->assertStatusCode(200, $client->getResponse());
     }
 
     public function testEdit(): void
@@ -36,6 +36,6 @@ class AdminManagementControllerTest extends SymfonyWebTestCase
 
         $client->request('GET', sprintf('/admin/admin-management/%s/edit', $admin->id));
 
-        $this->assertSame(200, $client->getResponse()->getStatusCode(), $client->getResponse()->getContent());
+        $this->assertStatusCode(200, $client->getResponse());
     }
 }

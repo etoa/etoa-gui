@@ -2,15 +2,15 @@
 
 namespace EtoA\Alliance\Base;
 
-use EtoA\AbstractDbTestCase;
 use EtoA\Alliance\AllianceBuildingId;
 use EtoA\Alliance\AllianceBuildingRepository;
 use EtoA\Alliance\AllianceRepository;
 use EtoA\Alliance\AllianceTechnologyId;
 use EtoA\Alliance\AllianceTechnologyRepository;
+use EtoA\SymfonyWebTestCase;
 use EtoA\User\UserRepository;
 
-class AllianceBaseTest extends AbstractDbTestCase
+class AllianceBaseTest extends SymfonyWebTestCase
 {
     private AllianceBase $base;
     private AllianceRepository $allianceRepository;
@@ -22,11 +22,11 @@ class AllianceBaseTest extends AbstractDbTestCase
     {
         parent::setUp();
 
-        $this->base = $this->app[AllianceBase::class];
-        $this->allianceRepository = $this->app[AllianceRepository::class];
-        $this->allianceTechnologyRepository = $this->app[AllianceTechnologyRepository::class];
-        $this->allianceBuildingRepository = $this->app[AllianceBuildingRepository::class];
-        $this->userRepository = $this->app[UserRepository::class];
+        $this->base = self::getContainer()->get(AllianceBase::class);
+        $this->allianceRepository = self::getContainer()->get(AllianceRepository::class);
+        $this->allianceTechnologyRepository = self::getContainer()->get(AllianceTechnologyRepository::class);
+        $this->allianceBuildingRepository = self::getContainer()->get(AllianceBuildingRepository::class);
+        $this->userRepository = self::getContainer()->get(UserRepository::class);
     }
 
     public function testGetTechnologyBuildStatus(): void
@@ -35,6 +35,8 @@ class AllianceBaseTest extends AbstractDbTestCase
         $this->createUser(1, 0, $allianceId);
 
         $alliance = $this->allianceRepository->getAlliance($allianceId);
+        $this->assertNotNull($alliance);
+
         $technologies = $this->allianceTechnologyRepository->findAll();
 
         $status = $this->base->getTechnologyBuildStatus($alliance, $technologies[AllianceTechnologyId::SPY], null, AllianceItemRequirementStatus::createForTechnologies($technologies, []));
@@ -62,6 +64,9 @@ class AllianceBaseTest extends AbstractDbTestCase
         $alliance = $this->allianceRepository->getAlliance($allianceId);
         $technologies = $this->allianceTechnologyRepository->findAll();
 
+        $this->assertNotNull($user);
+        $this->assertNotNull($alliance);
+
         $alliance->resMetal = 100000;
         $alliance->resCrystal = 100000;
         $alliance->resPlastic = 100000;
@@ -71,6 +76,8 @@ class AllianceBaseTest extends AbstractDbTestCase
         $costs = $this->base->buildTechnology($user, $alliance, $technologies[AllianceTechnologyId::TARN], null, AllianceItemRequirementStatus::createForTechnologies($technologies, []));
 
         $alliance = $this->allianceRepository->getAlliance($allianceId);
+
+        $this->assertNotNull($alliance);
         $this->assertSame($costs->metal, -$alliance->resMetal);
         $this->assertSame($costs->crystal, -$alliance->resCrystal);
         $this->assertSame($costs->plastic, -$alliance->resPlastic);
@@ -87,6 +94,8 @@ class AllianceBaseTest extends AbstractDbTestCase
 
         $alliance = $this->allianceRepository->getAlliance($allianceId);
         $buildings = $this->allianceBuildingRepository->findAll();
+
+        $this->assertNotNull($alliance);
 
         $status = $this->base->getBuildingBuildStatus($alliance, $buildings[AllianceBuildingId::FLEET_CONTROL], null, AllianceItemRequirementStatus::createForBuildings($buildings, []));
         $this->assertSame(AllianceItemBuildStatus::STATUS_MISSING_REQUIREMENTS, $status->status);
@@ -111,6 +120,10 @@ class AllianceBaseTest extends AbstractDbTestCase
 
         $user = $this->userRepository->getUser(1);
         $alliance = $this->allianceRepository->getAlliance($allianceId);
+
+        $this->assertNotNull($user);
+        $this->assertNotNull($alliance);
+
         $buildings = $this->allianceBuildingRepository->findAll();
 
         $alliance->resMetal = 100000;
@@ -122,6 +135,8 @@ class AllianceBaseTest extends AbstractDbTestCase
         $costs = $this->base->buildBuilding($user, $alliance, $buildings[AllianceBuildingId::MAIN], null, AllianceItemRequirementStatus::createForBuildings($buildings, []));
 
         $alliance = $this->allianceRepository->getAlliance($allianceId);
+        $this->assertNotNull($alliance);
+
         $this->assertSame($costs->metal, -$alliance->resMetal);
         $this->assertSame($costs->crystal, -$alliance->resCrystal);
         $this->assertSame($costs->plastic, -$alliance->resPlastic);

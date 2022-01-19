@@ -2,9 +2,9 @@
 
 namespace EtoA\Missile;
 
-use EtoA\AbstractDbTestCase;
+use EtoA\SymfonyWebTestCase;
 
-class MissileFlightRepositoryTest extends AbstractDbTestCase
+class MissileFlightRepositoryTest extends SymfonyWebTestCase
 {
     private MissileFlightRepository $repository;
 
@@ -12,7 +12,7 @@ class MissileFlightRepositoryTest extends AbstractDbTestCase
     {
         parent::setUp();
 
-        $this->repository = $this->app[MissileFlightRepository::class];
+        $this->repository = self::getContainer()->get(MissileFlightRepository::class);
     }
 
     public function testStartFlight(): void
@@ -25,7 +25,7 @@ class MissileFlightRepositoryTest extends AbstractDbTestCase
     public function testGetFlights(): void
     {
         $this->repository->startFlight(3, 2, 10, [1 => 1]);
-        $this->connection->executeQuery('INSERT INTO planets (id) VALUES (2)');
+        $this->getConnection()->executeQuery('INSERT INTO planets (id) VALUES (2)');
 
         $flights = $this->repository->getFlights(MissileFlightSearch::create()->entityFrom(3));
 

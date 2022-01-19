@@ -14,6 +14,6 @@ class ExplorationControllerTest extends SymfonyWebTestCase
 
         $client->request('GET', '/admin/universe/exploration/');
 
-        $this->assertSame(200, $client->getResponse()->getStatusCode(), $client->getResponse()->getContent());
+        $this->assertStatusCode(200, $client->getResponse());
     }
 }

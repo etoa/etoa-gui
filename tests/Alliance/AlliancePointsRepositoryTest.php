@@ -2,21 +2,21 @@
 
 namespace EtoA\Alliance;
 
-use EtoA\AbstractDbTestCase;
+use EtoA\SymfonyWebTestCase;
 
-class AlliancePointsRepositoryTest extends AbstractDbTestCase
+class AlliancePointsRepositoryTest extends SymfonyWebTestCase
 {
     private AlliancePointsRepository $repository;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->repository = $this->app[AlliancePointsRepository::class];
+        $this->repository = self::getContainer()->get(AlliancePointsRepository::class);
     }
 
     public function testGetPoints(): void
     {
-        $this->connection->executeQuery('INSERT INTO alliance_points (point_alliance_id, point_points) VALUE (1, 100)');
+        $this->getConnection()->executeQuery('INSERT INTO alliance_points (point_alliance_id, point_points) VALUE (1, 100)');
 
         $entries = $this->repository->getPoints(1, 1);
 

@@ -2,9 +2,9 @@
 
 namespace EtoA\User;
 
-use EtoA\AbstractDbTestCase;
+use EtoA\SymfonyWebTestCase;
 
-class UserOnlineStatsRepositoryTest extends AbstractDbTestCase
+class UserOnlineStatsRepositoryTest extends SymfonyWebTestCase
 {
     private UserOnlineStatsRepository $repository;
 
@@ -12,7 +12,7 @@ class UserOnlineStatsRepositoryTest extends AbstractDbTestCase
     {
         parent::setUp();
 
-        $this->repository = $this->app[UserOnlineStatsRepository::class];
+        $this->repository = self::getContainer()->get(UserOnlineStatsRepository::class);
     }
 
     public function testGetEntries(): void

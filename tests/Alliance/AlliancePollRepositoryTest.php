@@ -2,16 +2,16 @@
 
 namespace EtoA\Alliance;
 
-use EtoA\AbstractDbTestCase;
+use EtoA\SymfonyWebTestCase;
 
-class AlliancePollRepositoryTest extends AbstractDbTestCase
+class AlliancePollRepositoryTest extends SymfonyWebTestCase
 {
     private AlliancePollRepository $repository;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->repository = $this->app[AlliancePollRepository::class];
+        $this->repository = self::getContainer()->get(AlliancePollRepository::class);
     }
 
     public function testGetPolls(): void

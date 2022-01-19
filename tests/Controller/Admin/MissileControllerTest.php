@@ -14,7 +14,7 @@ class MissileControllerTest extends SymfonyWebTestCase
 
         $client->request('GET', '/admin/missiles/');
 
-        $this->assertSame(200, $client->getResponse()->getStatusCode(), $client->getResponse()->getContent());
+        $this->assertStatusCode(200, $client->getResponse());
     }
 
     public function testRequirements(): void
@@ -25,6 +25,6 @@ class MissileControllerTest extends SymfonyWebTestCase
 
         $client->request('GET', '/admin/missiles/requirements');
 
-        $this->assertSame(200, $client->getResponse()->getStatusCode(), $client->getResponse()->getContent());
+        $this->assertStatusCode(200, $client->getResponse());
     }
 }

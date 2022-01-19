@@ -2,9 +2,9 @@
 
 namespace EtoA\User;
 
-use EtoA\AbstractDbTestCase;
+use EtoA\SymfonyWebTestCase;
 
-class UserRepositoryTest extends AbstractDbTestCase
+class UserRepositoryTest extends SymfonyWebTestCase
 {
     private UserRepository $repository;
 
@@ -12,7 +12,7 @@ class UserRepositoryTest extends AbstractDbTestCase
     {
         parent::setUp();
 
-        $this->repository = $this->app[UserRepository::class];
+        $this->repository = self::getContainer()->get(UserRepository::class);
     }
 
     public function testGetDiscoverMask(): void
@@ -108,11 +108,13 @@ class UserRepositoryTest extends AbstractDbTestCase
         $this->createUser($userId, 0, 0, 0, '', 'verification-key');
 
         $user = $this->repository->getUser($userId);
+        $this->assertInstanceOf(User::class, $user);
         $sittingDays = $user->sittingDays;
 
         $this->repository->addSittingDays(11);
 
         $user = $this->repository->getUser($userId);
+        $this->assertInstanceOf(User::class, $user);
 
         $this->assertSame(11, $user->sittingDays - $sittingDays);
     }

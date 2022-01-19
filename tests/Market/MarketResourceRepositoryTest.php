@@ -2,10 +2,10 @@
 
 namespace EtoA\Market;
 
-use EtoA\AbstractDbTestCase;
+use EtoA\SymfonyWebTestCase;
 use EtoA\Universe\Resources\BaseResources;
 
-class MarketResourceRepositoryTest extends AbstractDbTestCase
+class MarketResourceRepositoryTest extends SymfonyWebTestCase
 {
     private MarketResourceRepository $repository;
 
@@ -13,7 +13,7 @@ class MarketResourceRepositoryTest extends AbstractDbTestCase
     {
         parent::setUp();
 
-        $this->repository = $this->app[MarketResourceRepository::class];
+        $this->repository = self::getContainer()->get(MarketResourceRepository::class);
     }
 
     public function testGetAll(): void

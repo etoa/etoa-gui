@@ -2,9 +2,9 @@
 
 namespace EtoA\Chat;
 
-use EtoA\AbstractDbTestCase;
+use EtoA\SymfonyWebTestCase;
 
-class ChatBanRepositoryTest extends AbstractDbTestCase
+class ChatBanRepositoryTest extends SymfonyWebTestCase
 {
     private ChatBanRepository $repository;
 
@@ -12,7 +12,7 @@ class ChatBanRepositoryTest extends AbstractDbTestCase
     {
         parent::setUp();
 
-        $this->repository = $this->app[ChatBanRepository::class];
+        $this->repository = self::getContainer()->get(ChatBanRepository::class);
     }
 
     public function testGetUserBan(): void

@@ -2,9 +2,9 @@
 
 namespace EtoA\Ship;
 
-use EtoA\AbstractDbTestCase;
+use EtoA\SymfonyWebTestCase;
 
-class ShipRequirementRepositoryTest extends AbstractDbTestCase
+class ShipRequirementRepositoryTest extends SymfonyWebTestCase
 {
     private ShipRequirementRepository $repository;
 
@@ -12,7 +12,7 @@ class ShipRequirementRepositoryTest extends AbstractDbTestCase
     {
         parent::setUp();
 
-        $this->repository = $this->app[ShipRequirementRepository::class];
+        $this->repository = self::getContainer()->get(ShipRequirementRepository::class);
     }
 
     public function testGetRequiredSpeedTechnologies(): void

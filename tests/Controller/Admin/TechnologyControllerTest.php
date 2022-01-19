@@ -14,7 +14,7 @@ class TechnologyControllerTest extends SymfonyWebTestCase
 
         $client->request('GET', '/admin/technology/');
 
-        $this->assertSame(200, $client->getResponse()->getStatusCode(), $client->getResponse()->getContent());
+        $this->assertStatusCode(200, $client->getResponse());
     }
 
     public function testPoints(): void
@@ -25,7 +25,7 @@ class TechnologyControllerTest extends SymfonyWebTestCase
 
         $client->request('GET', '/admin/technology/points');
 
-        $this->assertSame(200, $client->getResponse()->getStatusCode(), $client->getResponse()->getContent());
+        $this->assertStatusCode(200, $client->getResponse());
     }
 
     public function testRequirements(): void
@@ -36,6 +36,6 @@ class TechnologyControllerTest extends SymfonyWebTestCase
 
         $client->request('GET', '/admin/technology/requirements');
 
-        $this->assertSame(200, $client->getResponse()->getStatusCode(), $client->getResponse()->getContent());
+        $this->assertStatusCode(200, $client->getResponse());
     }
 }

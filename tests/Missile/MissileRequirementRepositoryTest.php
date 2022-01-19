@@ -2,9 +2,9 @@
 
 namespace EtoA\Missile;
 
-use EtoA\AbstractDbTestCase;
+use EtoA\SymfonyWebTestCase;
 
-class MissileRequirementRepositoryTest extends AbstractDbTestCase
+class MissileRequirementRepositoryTest extends SymfonyWebTestCase
 {
     private MissileRequirementRepository $repository;
 
@@ -12,7 +12,7 @@ class MissileRequirementRepositoryTest extends AbstractDbTestCase
     {
         parent::setUp();
 
-        $this->repository = $this->app[MissileRequirementRepository::class];
+        $this->repository = self::getContainer()->get(MissileRequirementRepository::class);
     }
 
     public function testGetAll(): void

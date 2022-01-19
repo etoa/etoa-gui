@@ -2,10 +2,10 @@
 
 namespace EtoA\Fleet;
 
-use EtoA\AbstractDbTestCase;
+use EtoA\SymfonyWebTestCase;
 use EtoA\Universe\Resources\BaseResources;
 
-class FleetRepositoryTest extends AbstractDbTestCase
+class FleetRepositoryTest extends SymfonyWebTestCase
 {
     private FleetRepository $repository;
 
@@ -13,7 +13,7 @@ class FleetRepositoryTest extends AbstractDbTestCase
     {
         parent::setUp();
 
-        $this->repository = $this->app[FleetRepository::class];
+        $this->repository = self::getContainer()->get(FleetRepository::class);
     }
 
     public function testCountShipsInFleet(): void

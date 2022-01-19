@@ -2,9 +2,9 @@
 
 namespace EtoA\Building;
 
-use EtoA\AbstractDbTestCase;
+use EtoA\SymfonyWebTestCase;
 
-class BuildingPointRepositoryTest extends AbstractDbTestCase
+class BuildingPointRepositoryTest extends SymfonyWebTestCase
 {
     private BuildingPointRepository $repository;
 
@@ -12,7 +12,7 @@ class BuildingPointRepositoryTest extends AbstractDbTestCase
     {
         parent::setUp();
 
-        $this->repository = $this->app[BuildingPointRepository::class];
+        $this->repository = self::getContainer()->get(BuildingPointRepository::class);
     }
 
     public function testGetAllMap(): void

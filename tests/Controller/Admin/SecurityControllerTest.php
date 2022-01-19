@@ -12,7 +12,7 @@ class SecurityControllerTest extends SymfonyWebTestCase
 
         $client->request('GET', '/admin/login/setup');
 
-        $this->assertSame(200, $client->getResponse()->getStatusCode(), $client->getResponse()->getContent());
+        $this->assertStatusCode(200, $client->getResponse());
     }
 
     public function testReset(): void
@@ -21,6 +21,6 @@ class SecurityControllerTest extends SymfonyWebTestCase
 
         $client->request('GET', '/admin/login/reset');
 
-        $this->assertSame(200, $client->getResponse()->getStatusCode(), $client->getResponse()->getContent());
+        $this->assertStatusCode(200, $client->getResponse());
     }
 }

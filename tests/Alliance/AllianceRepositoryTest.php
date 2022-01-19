@@ -2,9 +2,9 @@
 
 namespace EtoA\Alliance;
 
-use EtoA\AbstractDbTestCase;
+use EtoA\SymfonyWebTestCase;
 
-class AllianceRepositoryTest extends AbstractDbTestCase
+class AllianceRepositoryTest extends SymfonyWebTestCase
 {
     private AllianceRepository $repository;
 
@@ -12,12 +12,12 @@ class AllianceRepositoryTest extends AbstractDbTestCase
     {
         parent::setUp();
 
-        $this->repository = $this->app[AllianceRepository::class];
+        $this->repository = self::getContainer()->get(AllianceRepository::class);
     }
 
     public function testGetAlliance(): void
     {
-        $this->connection->executeQuery("INSERT INTO alliances (alliance_id, alliance_name, alliance_tag) VALUES (42, 'Alliance', 'tag')");
+        $this->getConnection()->executeQuery("INSERT INTO alliances (alliance_id, alliance_name, alliance_tag) VALUES (42, 'Alliance', 'tag')");
 
         $alliance = $this->repository->getAlliance(42);
 
@@ -26,7 +26,7 @@ class AllianceRepositoryTest extends AbstractDbTestCase
 
     public function testGetAllianceNames(): void
     {
-        $this->connection->executeQuery("INSERT INTO alliances (alliance_id, alliance_name, alliance_tag) VALUES (12, 'Alliance', 'tag')");
+        $this->getConnection()->executeQuery("INSERT INTO alliances (alliance_id, alliance_name, alliance_tag) VALUES (12, 'Alliance', 'tag')");
 
         $allianceNames = $this->repository->getAllianceNames();
 
@@ -35,7 +35,7 @@ class AllianceRepositoryTest extends AbstractDbTestCase
 
     public function testGetAllianceTags(): void
     {
-        $this->connection->executeQuery("INSERT INTO alliances (alliance_id, alliance_name, alliance_tag) VALUES (12, 'Alliance', 'tag')");
+        $this->getConnection()->executeQuery("INSERT INTO alliances (alliance_id, alliance_name, alliance_tag) VALUES (12, 'Alliance', 'tag')");
 
         $allianceTags = $this->repository->getAllianceTags();
 
@@ -44,7 +44,7 @@ class AllianceRepositoryTest extends AbstractDbTestCase
 
     public function testGetAllianceNamesWithTags(): void
     {
-        $this->connection->executeQuery("INSERT INTO alliances (alliance_id, alliance_name, alliance_tag) VALUES (13, 'Alliance', 'tag')");
+        $this->getConnection()->executeQuery("INSERT INTO alliances (alliance_id, alliance_name, alliance_tag) VALUES (13, 'Alliance', 'tag')");
 
         $allianceNames = $this->repository->getAllianceNamesWithTags();
 

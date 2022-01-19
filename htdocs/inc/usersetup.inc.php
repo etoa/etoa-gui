@@ -121,8 +121,8 @@ if (isset($s->itemset_key) && $request->request->has(md5($s->itemset_key)) && $r
         $request->query->getInt('setup_sx'),
         $request->query->getInt('setup_sy'),
         $config->getInt('user_min_fields'),
-        $request->query->get('filter_p'),
-        $request->query->get('filter_s')
+        $request->query->has('filter_p') ? $request->query->getInt('filter_p') : null,
+        $request->query->has('filter_s') ? $request->query->getInt('filter_s') : null
     );
     if ($pid !== null) {
         $mode = "checkplanet";

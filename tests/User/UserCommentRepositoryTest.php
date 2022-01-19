@@ -2,9 +2,9 @@
 
 namespace EtoA\User;
 
-use EtoA\AbstractDbTestCase;
+use EtoA\SymfonyWebTestCase;
 
-class UserCommentRepositoryTest extends AbstractDbTestCase
+class UserCommentRepositoryTest extends SymfonyWebTestCase
 {
     private UserCommentRepository $repository;
 
@@ -12,7 +12,7 @@ class UserCommentRepositoryTest extends AbstractDbTestCase
     {
         parent::setUp();
 
-        $this->repository = $this->app[UserCommentRepository::class];
+        $this->repository = self::getContainer()->get(UserCommentRepository::class);
     }
 
     public function testGetCommentInformation(): void

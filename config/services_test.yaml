@@ -1,0 +1,44 @@
+# Workaround until all services are used in the the Symfony app
+# otherwise the services aren't in the container and cannot be used for tests
+
+services:
+    _defaults:
+        public: true
+        autowire: true
+        autoconfigure: true
+
+    EtoA\Alliance\AllianceWingService:
+        class: EtoA\Alliance\AllianceWingService
+
+    EtoA\Alliance\Base\AllianceBase:
+        class: EtoA\Alliance\Base\AllianceBase
+
+    EtoA\User\UserLoginFailureRepository:
+        class: EtoA\User\UserLoginFailureRepository
+
+    EtoA\Universe\Entity\EntityService:
+        class: EtoA\Universe\Entity\EntityService
+
+    EtoA\Tip\TipRepository:
+        class: EtoA\Tip\TipRepository
+
+    EtoA\Specialist\SpecialistDataRepository:
+        class: EtoA\Specialist\SpecialistDataRepository
+
+    EtoA\Ship\ShipCategoryRepository:
+        class: EtoA\Ship\ShipCategoryRepository
+
+    EtoA\Fleet\FleetScanService:
+        class: EtoA\Fleet\FleetScanService
+
+    EtoA\Defense\DefenseCategoryRepository:
+        class: EtoA\Defense\DefenseCategoryRepository
+
+    EtoA\Alliance\Board\AllianceBoardCategoryRankRepository:
+        class: EtoA\Alliance\Board\AllianceBoardCategoryRankRepository
+
+    EtoA\Alliance\Board\AllianceBoardPostRepository:
+        class: EtoA\Alliance\Board\AllianceBoardPostRepository
+
+    EtoA\Building\BuildingTypeDataRepository:
+        class: EtoA\Building\BuildingTypeDataRepository

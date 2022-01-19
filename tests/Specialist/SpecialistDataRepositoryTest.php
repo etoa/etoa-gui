@@ -2,9 +2,9 @@
 
 namespace EtoA\Specialist;
 
-use EtoA\AbstractDbTestCase;
+use EtoA\SymfonyWebTestCase;
 
-class SpecialistDataRepositoryTest extends AbstractDbTestCase
+class SpecialistDataRepositoryTest extends SymfonyWebTestCase
 {
     private SpecialistDataRepository $specialistDataRepository;
 
@@ -12,7 +12,7 @@ class SpecialistDataRepositoryTest extends AbstractDbTestCase
     {
         parent::setUp();
 
-        $this->specialistDataRepository = $this->app[SpecialistDataRepository::class];
+        $this->specialistDataRepository = self::getContainer()->get(SpecialistDataRepository::class);
     }
 
     public function testGetSpecialistNames(): void
@@ -26,6 +26,7 @@ class SpecialistDataRepositoryTest extends AbstractDbTestCase
     {
         $specialist = $this->specialistDataRepository->getSpecialist(1);
 
+        $this->assertNotNull($specialist);
         $this->assertSame(1, $specialist->id);
     }
 

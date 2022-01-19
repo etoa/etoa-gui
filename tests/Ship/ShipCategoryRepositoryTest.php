@@ -2,9 +2,9 @@
 
 namespace EtoA\Ship;
 
-use EtoA\AbstractDbTestCase;
+use EtoA\SymfonyWebTestCase;
 
-class ShipCategoryRepositoryTest extends AbstractDbTestCase
+class ShipCategoryRepositoryTest extends SymfonyWebTestCase
 {
     private ShipCategoryRepository $repository;
 
@@ -12,7 +12,7 @@ class ShipCategoryRepositoryTest extends AbstractDbTestCase
     {
         parent::setUp();
 
-        $this->repository = $this->app[ShipCategoryRepository::class];
+        $this->repository = self::getContainer()->get(ShipCategoryRepository::class);
     }
 
     public function testGetAllCategories(): void

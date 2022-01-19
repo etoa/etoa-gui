@@ -14,7 +14,7 @@ class OverviewControllerTest extends SymfonyWebTestCase
 
         $client->request('GET', '/admin/overview/');
 
-        $this->assertSame(200, $client->getResponse()->getStatusCode(), $client->getResponse()->getContent());
+        $this->assertStatusCode(200, $client->getResponse());
     }
 
     public function testChangelog(): void
@@ -25,7 +25,7 @@ class OverviewControllerTest extends SymfonyWebTestCase
 
         $client->request('GET', '/admin/overview/changelog');
 
-        $this->assertSame(200, $client->getResponse()->getStatusCode(), $client->getResponse()->getContent());
+        $this->assertStatusCode(200, $client->getResponse());
     }
 
     public function testGamestats(): void
@@ -36,7 +36,7 @@ class OverviewControllerTest extends SymfonyWebTestCase
 
         $client->request('GET', '/admin/overview/gamestats');
 
-        $this->assertSame(200, $client->getResponse()->getStatusCode(), $client->getResponse()->getContent());
+        $this->assertStatusCode(200, $client->getResponse());
     }
 
     public function testSystemInfo(): void
@@ -47,6 +47,6 @@ class OverviewControllerTest extends SymfonyWebTestCase
 
         $client->request('GET', '/admin/overview/sysinfo');
 
-        $this->assertSame(200, $client->getResponse()->getStatusCode(), $client->getResponse()->getContent());
+        $this->assertStatusCode(200, $client->getResponse());
     }
 }

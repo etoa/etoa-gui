@@ -2,9 +2,9 @@
 
 namespace EtoA\Defense;
 
-use EtoA\AbstractDbTestCase;
+use EtoA\SymfonyWebTestCase;
 
-class DefenseCategoryRepositoryTest extends AbstractDbTestCase
+class DefenseCategoryRepositoryTest extends SymfonyWebTestCase
 {
     private DefenseCategoryRepository $repository;
 
@@ -12,7 +12,7 @@ class DefenseCategoryRepositoryTest extends AbstractDbTestCase
     {
         parent::setUp();
 
-        $this->repository = $this->app[DefenseCategoryRepository::class];
+        $this->repository = self::getContainer()->get(DefenseCategoryRepository::class);
     }
 
     public function testGetAllCategories(): void

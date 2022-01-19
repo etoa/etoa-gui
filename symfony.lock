@@ -54,6 +54,9 @@
     "paragonie/constant_time_encoding": {
         "version": "v2.4.0"
     },
+    "phpstan/phpstan-symfony": {
+        "version": "1.1.2"
+    },
     "scheb/2fa": {
         "version": "v5.11.0"
     },

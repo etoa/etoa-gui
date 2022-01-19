@@ -2,9 +2,9 @@
 
 namespace EtoA\Technology;
 
-use EtoA\AbstractDbTestCase;
+use EtoA\SymfonyWebTestCase;
 
-class TechnologyDataRepositoryTest extends AbstractDbTestCase
+class TechnologyDataRepositoryTest extends SymfonyWebTestCase
 {
     private TechnologyDataRepository $repository;
 
@@ -12,7 +12,7 @@ class TechnologyDataRepositoryTest extends AbstractDbTestCase
     {
         parent::setUp();
 
-        $this->repository = $this->app[TechnologyDataRepository::class];
+        $this->repository = self::getContainer()->get(TechnologyDataRepository::class);
     }
 
     public function testGetTechnologyNames(): void

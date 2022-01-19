@@ -14,7 +14,7 @@ class MarketControllerTest extends SymfonyWebTestCase
 
         $client->request('GET', '/admin/market/');
 
-        $this->assertSame(200, $client->getResponse()->getStatusCode(), $client->getResponse()->getContent());
+        $this->assertStatusCode(200, $client->getResponse());
     }
 
     public function testResources(): void
@@ -25,7 +25,7 @@ class MarketControllerTest extends SymfonyWebTestCase
 
         $client->request('GET', '/admin/market/resources');
 
-        $this->assertSame(200, $client->getResponse()->getStatusCode(), $client->getResponse()->getContent());
+        $this->assertStatusCode(200, $client->getResponse());
     }
 
     public function testShips(): void
@@ -36,7 +36,7 @@ class MarketControllerTest extends SymfonyWebTestCase
 
         $client->request('GET', '/admin/market/ships');
 
-        $this->assertSame(200, $client->getResponse()->getStatusCode(), $client->getResponse()->getContent());
+        $this->assertStatusCode(200, $client->getResponse());
     }
 
     public function testAuctions(): void
@@ -47,6 +47,6 @@ class MarketControllerTest extends SymfonyWebTestCase
 
         $client->request('GET', '/admin/market/auctions');
 
-        $this->assertSame(200, $client->getResponse()->getStatusCode(), $client->getResponse()->getContent());
+        $this->assertStatusCode(200, $client->getResponse());
     }
 }

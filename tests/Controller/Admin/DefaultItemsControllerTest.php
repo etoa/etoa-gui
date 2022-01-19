@@ -14,6 +14,6 @@ class DefaultItemsControllerTest extends SymfonyWebTestCase
 
         $client->request('GET', '/admin/default-items/');
 
-        $this->assertSame(200, $client->getResponse()->getStatusCode(), $client->getResponse()->getContent());
+        $this->assertStatusCode(200, $client->getResponse());
     }
 }

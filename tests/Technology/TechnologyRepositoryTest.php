@@ -2,9 +2,9 @@
 
 namespace EtoA\Technology;
 
-use EtoA\AbstractDbTestCase;
+use EtoA\SymfonyWebTestCase;
 
-class TechnologyRepositoryTest extends AbstractDbTestCase
+class TechnologyRepositoryTest extends SymfonyWebTestCase
 {
     private TechnologyRepository $repository;
 
@@ -12,7 +12,7 @@ class TechnologyRepositoryTest extends AbstractDbTestCase
     {
         parent::setUp();
 
-        $this->repository = $this->app[TechnologyRepository::class];
+        $this->repository = self::getContainer()->get(TechnologyRepository::class);
     }
 
     public function testGetUserLevelNoTechnology(): void

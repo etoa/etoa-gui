@@ -2,34 +2,24 @@
 
 namespace EtoA\Quest\Progress;
 
-use EtoA\Building\BuildingRepository;
-use EtoA\Defense\DefenseRepository;
-use EtoA\Technology\TechnologyRepository;
-use EtoA\Universe\Planet\PlanetRepository;
-use EtoA\User\UserRepository;
-use EtoA\WebTestCase;
+use EtoA\SymfonyWebTestCase;
+use LittleCubicleGames\Quests\Progress\Functions\InitProgressHandlerFunctionInterface;
 use Symfony\Component\Finder\Finder;
 
-class ContainerAwareFunctionBuilderTest extends WebTestCase
+class ContainerAwareFunctionBuilderTest extends SymfonyWebTestCase
 {
-    /** @var ContainerAwareFunctionBuilder */
-    private $builder;
+    private ContainerAwareFunctionBuilder $builder;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->builder = new ContainerAwareFunctionBuilder(
-            $this->app[BuildingRepository::class],
-            $this->app[TechnologyRepository::class],
-            $this->app[DefenseRepository::class],
-            $this->app[UserRepository::class],
-            $this->app[PlanetRepository::class]
-        );
+        $this->builder = self::getContainer()->get(ContainerAwareFunctionBuilder::class);
     }
 
     /**
      * @dataProvider initFunctionNameProvider
+     * @param class-string<InitProgressHandlerFunctionInterface> $className
      */
     public function testBuild(string $name, string $className): void
     {

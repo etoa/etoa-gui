@@ -2,10 +2,10 @@
 
 namespace EtoA\Alliance;
 
-use EtoA\AbstractDbTestCase;
+use EtoA\SymfonyWebTestCase;
 use EtoA\Universe\Resources\BaseResources;
 
-class AllianceSpendRepositoryTest extends AbstractDbTestCase
+class AllianceSpendRepositoryTest extends SymfonyWebTestCase
 {
     private AllianceSpendRepository $repository;
 
@@ -13,7 +13,7 @@ class AllianceSpendRepositoryTest extends AbstractDbTestCase
     {
         parent::setUp();
 
-        $this->repository = $this->app[AllianceSpendRepository::class];
+        $this->repository = self::getContainer()->get(AllianceSpendRepository::class);
     }
 
     public function testGetTotalSpent(): void

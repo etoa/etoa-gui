@@ -2,9 +2,9 @@
 
 namespace EtoA\User;
 
-use EtoA\AbstractDbTestCase;
+use EtoA\SymfonyWebTestCase;
 
-class UserHolidayServiceTest extends AbstractDbTestCase
+class UserHolidayServiceTest extends SymfonyWebTestCase
 {
     private UserHolidayService $service;
     private UserRepository $userRepository;
@@ -13,8 +13,8 @@ class UserHolidayServiceTest extends AbstractDbTestCase
     {
         parent::setUp();
 
-        $this->service = $this->app[UserHolidayService::class];
-        $this->userRepository = $this->app[UserRepository::class];
+        $this->service = self::getContainer()->get(UserHolidayService::class);
+        $this->userRepository = self::getContainer()->get(UserRepository::class);
     }
 
     public function testActivateHolidayMode(): void
@@ -27,6 +27,7 @@ class UserHolidayServiceTest extends AbstractDbTestCase
         $this->createUser(1);
         $user = $this->userRepository->getUser(1);
 
+        $this->assertInstanceOf(User::class, $user);
         $this->assertFalse($this->service->deactivateHolidayMode($user));
 
         $user->hmodFrom = time() - 3600;

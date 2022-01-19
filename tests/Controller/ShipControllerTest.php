@@ -14,7 +14,7 @@ class ShipControllerTest extends SymfonyWebTestCase
 
         $client->request('GET', '/api/ships/search?q=Algo');
 
-        $this->assertSame(200, $client->getResponse()->getStatusCode(), $client->getResponse()->getContent());
+        $this->assertStatusCode(200, $client->getResponse());
     }
 
     public function testSearchInfo(): void
@@ -25,6 +25,6 @@ class ShipControllerTest extends SymfonyWebTestCase
 
         $client->request('GET', '/api/ships/search-info?ship=1');
 
-        $this->assertSame(200, $client->getResponse()->getStatusCode(), $client->getResponse()->getContent());
+        $this->assertStatusCode(200, $client->getResponse());
     }
 }

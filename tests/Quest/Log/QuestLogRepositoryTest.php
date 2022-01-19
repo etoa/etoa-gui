@@ -2,12 +2,11 @@
 
 namespace EtoA\Quest\Log;
 
-use Doctrine\DBAL\Query\QueryBuilder;
-use EtoA\AbstractDbTestCase;
 use EtoA\Quest\Entity\Quest;
+use EtoA\SymfonyWebTestCase;
 use LittleCubicleGames\Quests\Workflow\QuestDefinitionInterface;
 
-class QuestLogRepositoryTest extends AbstractDbTestCase
+class QuestLogRepositoryTest extends SymfonyWebTestCase
 {
     private QuestLogRepository $repository;
 
@@ -15,7 +14,7 @@ class QuestLogRepositoryTest extends AbstractDbTestCase
     {
         parent::setUp();
 
-        $this->repository = $this->app[QuestLogRepository::class];
+        $this->repository = self::getContainer()->get(QuestLogRepository::class);
     }
 
     public function testLog(): void
@@ -23,11 +22,7 @@ class QuestLogRepositoryTest extends AbstractDbTestCase
         $quest = new Quest(1, 2, 3, 'merchant', QuestDefinitionInterface::STATE_IN_PROGRESS, []);
         $this->repository->log($quest, QuestDefinitionInterface::STATE_AVAILABLE, QuestDefinitionInterface::TRANSITION_START);
 
-        $result = (new QueryBuilder($this->connection))
-            ->select('l.*')
-            ->from('quest_log', 'l')
-            ->execute()
-            ->fetchAllAssociative();
+        $result = $this->getConnection()->fetchAllAssociative('SELECT * FROM quest_log');
 
         $this->assertCount(1, $result);
         $this->assertSame(1, (int)$result[0]['quest_id']);

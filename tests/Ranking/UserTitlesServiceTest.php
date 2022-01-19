@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace EtoA\Ranking;
 
+use EtoA\SymfonyWebTestCase;
 use EtoA\User\UserService;
-use EtoA\WebTestCase;
 
-class UserTitlesServiceTest extends WebTestCase
+class UserTitlesServiceTest extends SymfonyWebTestCase
 {
     private UserTitlesService $service;
     private UserService $userService;
@@ -16,8 +16,8 @@ class UserTitlesServiceTest extends WebTestCase
     {
         parent::setUp();
 
-        $this->service = $this->app[UserTitlesService::class];
-        $this->userService = $this->app[UserService::class];
+        $this->service = self::getContainer()->get(UserTitlesService::class);
+        $this->userService = self::getContainer()->get(UserService::class);
     }
 
     public function testGetTitles_noUsers(): void

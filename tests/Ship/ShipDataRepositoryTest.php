@@ -2,9 +2,9 @@
 
 namespace EtoA\Ship;
 
-use EtoA\AbstractDbTestCase;
+use EtoA\SymfonyWebTestCase;
 
-class ShipDataRepositoryTest extends AbstractDbTestCase
+class ShipDataRepositoryTest extends SymfonyWebTestCase
 {
     private ShipDataRepository $repository;
 
@@ -12,7 +12,7 @@ class ShipDataRepositoryTest extends AbstractDbTestCase
     {
         parent::setUp();
 
-        $this->repository = $this->app[ShipDataRepository::class];
+        $this->repository = self::getContainer()->get(ShipDataRepository::class);
     }
 
     public function testGetShipNames(): void

@@ -2,10 +2,10 @@
 
 namespace EtoA\Bookmark;
 
-use EtoA\AbstractDbTestCase;
+use EtoA\SymfonyWebTestCase;
 use EtoA\Universe\Resources\BaseResources;
 
-class FleetBookmarkRepositoryTest extends AbstractDbTestCase
+class FleetBookmarkRepositoryTest extends SymfonyWebTestCase
 {
     private FleetBookmarkRepository $repository;
 
@@ -13,7 +13,7 @@ class FleetBookmarkRepositoryTest extends AbstractDbTestCase
     {
         parent::setUp();
 
-        $this->repository = $this->app[FleetBookmarkRepository::class];
+        $this->repository = self::getContainer()->get(FleetBookmarkRepository::class);
     }
 
     public function testGet(): void

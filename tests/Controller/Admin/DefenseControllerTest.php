@@ -14,7 +14,7 @@ class DefenseControllerTest extends SymfonyWebTestCase
 
         $client->request('GET', '/admin/defense/search');
 
-        $this->assertSame(200, $client->getResponse()->getStatusCode(), $client->getResponse()->getContent());
+        $this->assertStatusCode(200, $client->getResponse());
     }
 
     public function testQueue(): void
@@ -25,7 +25,7 @@ class DefenseControllerTest extends SymfonyWebTestCase
 
         $client->request('GET', '/admin/defense/queue');
 
-        $this->assertSame(200, $client->getResponse()->getStatusCode(), $client->getResponse()->getContent());
+        $this->assertStatusCode(200, $client->getResponse());
     }
 
     public function testPoints(): void
@@ -36,7 +36,7 @@ class DefenseControllerTest extends SymfonyWebTestCase
 
         $client->request('GET', '/admin/defense/points');
 
-        $this->assertSame(200, $client->getResponse()->getStatusCode(), $client->getResponse()->getContent());
+        $this->assertStatusCode(200, $client->getResponse());
     }
 
     public function testRequirements(): void
@@ -47,6 +47,6 @@ class DefenseControllerTest extends SymfonyWebTestCase
 
         $client->request('GET', '/admin/defense/requirements');
 
-        $this->assertSame(200, $client->getResponse()->getStatusCode(), $client->getResponse()->getContent());
+        $this->assertStatusCode(200, $client->getResponse());
     }
 }

@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace EtoA\Universe\Star;
 
-use EtoA\AbstractDbTestCase;
+use EtoA\SymfonyWebTestCase;
 
-class SolarTypeRepositoryTest extends AbstractDbTestCase
+class SolarTypeRepositoryTest extends SymfonyWebTestCase
 {
     private SolarTypeRepository $repository;
 
@@ -14,7 +14,7 @@ class SolarTypeRepositoryTest extends AbstractDbTestCase
     {
         parent::setUp();
 
-        $this->repository = $this->app[SolarTypeRepository::class];
+        $this->repository = self::getContainer()->get(SolarTypeRepository::class);
     }
 
     public function testGetSolarTypeNames(): void
