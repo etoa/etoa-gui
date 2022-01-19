@@ -11,7 +11,7 @@ use Symfony\Component\Workflow\Event\Event;
 class QuestResponseListener implements EventSubscriberInterface
 {
     private QuestPresenter $presenter;
-    /** @var array[] */
+    /** @var mixed[] */
     private array $quests = [];
     private ConfigurationService $config;
 
@@ -22,7 +22,7 @@ class QuestResponseListener implements EventSubscriberInterface
     }
 
     /**
-     * @return array[]
+     * @return mixed[]
      */
     public function getQuests(): array
     {

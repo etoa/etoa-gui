@@ -21,4 +21,9 @@ class DefenseRecycle extends Event
     {
         return $this->count;
     }
+
+    public function getDefenseId(): int
+    {
+        return $this->defenseId;
+    }
 }

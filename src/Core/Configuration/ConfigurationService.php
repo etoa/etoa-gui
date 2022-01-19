@@ -177,9 +177,9 @@ class ConfigurationService
         $cnt = 0;
         foreach ($xml->items->item as $itemDefinition) {
             $item = new ConfigItem(
-                (string) $itemDefinition->v ?? '',
-                (string) $itemDefinition->p1 ?? '',
-                (string) $itemDefinition->p2 ?? ''
+                (string) ($itemDefinition->v ?? ''),
+                (string) ($itemDefinition->p1 ?? ''),
+                (string) ($itemDefinition->p2 ?? '')
             );
             $this->repository->save((string) $itemDefinition['name'], $item);
             $cnt++;

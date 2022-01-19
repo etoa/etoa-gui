@@ -30,14 +30,14 @@ parameters:
         - '#Method EtoA\\[a-z\\]+::__construct\(\) has parameter \$(data|arr) with no value type specified in iterable type array#i'
         - '#Method EtoA\\[a-z\\]+::createFrom[a-z]+\(\) has parameter \$(data|arr|row) with no value type specified in iterable type array#i'
 
-        # Ignore typehint errors in htdocs
-        - '#Function [a-z0-9_]+\(\) has no return typehint specified#i'
-        - '#Function [a-z0-9_]+\(\) has parameter \$[a-z0-9_]+ with no typehint specified#i'
+        # Ignore type errors in htdocs
+        - '#Function [a-z0-9_]+\(\) has no return type specified#i'
+        - '#Function [a-z0-9_]+\(\) has parameter \$[a-z0-9_]+ with no type specified#i'
         - '#Function [a-z0-9]+\(\) return type has no value type specified in iterable type array#i'
         - '#Function [a-z0-9_]+\(\) has parameter \$[a-z0-9_]+ with no value type specified in iterable type array#i'
-        - '#Method [a-z0-9_]+::[a-z0-9_]+\(\) has no return typehint specified#i'
-        - '#Method [a-z0-9_]+::[a-z0-9_]+\(\) has parameter \$[a-z0-9_]+ with no typehint specified#i'
-        - '#Property [a-z0-9_]+::\$[a-z0-9_]+ has no typehint specified#i'
+        - '#Method [a-z0-9_]+::[a-z0-9_]+\(\) has no return type specified#i'
+        - '#Method [a-z0-9_]+::[a-z0-9_]+\(\) has parameter \$[a-z0-9_]+ with no type specified#i'
+        - '#Property [a-z0-9_]+::\$[a-z0-9_]+ has no type specified#i'
         - '#Method [a-z0-9_]+::[a-z0-9_]+\(\) has parameter \$[a-z0-9_]+ with no value type specified in iterable type array#i'
         - '#Class [a-z0-9_]+ implements generic interface IteratorAggregate but does not specify its types: TKey, TValue#i'
         - '#Method [a-z0-9_]+::get[a-z]*Iterator\(\) return#i'
@@ -55,3 +55,6 @@ parameters:
         - '#Call to method (script|addScript|assign|addAssign|append|alert|addScriptCall|getXML)\(\) on an unknown class xajaxResponse#'
         - '#Call to method (configure|processRequest)\(\) on an unknown class xajax#'
         - '#Instantiated class (xajax|xajaxResponse) not found#'
+
+        - '#Form::getFields\(\) return type has no value type specified in iterable type array#'
+        - '#Call to deprecated method getUsername\(\) of class EtoA\\Security\\Admin\\CurrentAdmin#'

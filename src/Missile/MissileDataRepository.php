@@ -6,8 +6,6 @@ use EtoA\Core\AbstractRepository;
 
 class MissileDataRepository extends AbstractRepository
 {
-    private const MISSILES_NAMES = 'missiles.names';
-
     /**
      * @return array<int, string>
      */

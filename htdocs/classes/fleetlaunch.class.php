@@ -66,7 +66,6 @@ class FleetLaunch
     var $distance1;
 
     private $action;
-    private $resources;
     private $error;
     public $sBonusSpeed;
     public $wormholeEnable;

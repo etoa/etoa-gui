@@ -55,7 +55,7 @@ if ($aid > 0 && count($_SESSION) > 0) {
             // Bar colors
             $b_col = [];
             for ($x = 0; $x < B_W; $x++) {
-                $b_col[$x] = imagecolorallocate($im, 34 / B_W * $x, 34 / B_W * $x, 85 / B_W * $x);
+                $b_col[$x] = imagecolorallocate($im, (int) (34 / B_W * $x), (int) (34 / B_W * $x), (int) (85 / B_W * $x));
             }
             // Shadow colors
             $s_col = [];

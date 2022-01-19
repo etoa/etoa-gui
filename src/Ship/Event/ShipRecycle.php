@@ -21,4 +21,9 @@ class ShipRecycle extends Event
     {
         return $this->count;
     }
+
+    public function getShipId(): int
+    {
+        return $this->shipId;
+    }
 }

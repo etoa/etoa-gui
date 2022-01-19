@@ -17,7 +17,7 @@ class DefaultRandomRegistry extends RandomRegistry
     }
 
     /**
-     * @return  array[]
+     * @return  mixed[]
      */
     public function getQuests(): array
     {

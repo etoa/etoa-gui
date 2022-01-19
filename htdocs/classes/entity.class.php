@@ -1,6 +1,5 @@
 <?PHP
 
-use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Entity\EntityType;
 
@@ -13,18 +12,12 @@ abstract class Entity
 {
     protected $isVisible;
 
-    private ConfigurationService $config;
-
     /**
      * Private constructor
      * Prevents usage as object
      */
     private function __construct()
     {
-        // TODO
-        global $app;
-
-        $this->config = $app[ConfigurationService::class];
     }
 
     //

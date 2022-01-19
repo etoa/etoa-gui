@@ -54,7 +54,7 @@ abstract class Form
     abstract protected function getFields(): array;
 
     /**
-     * @param array{name:string,text:string,type:string,def_val?:string,size?:int,max_len?:int,rows?:int,cols?:int,items?:array,show_overview?:bool,link_in_overview?:bool,show_hide?:array<string>,hide_show?:array<string>,line?:bool,column_end?:bool} $field
+     * @param array{name:string,text:string,type:string,def_val?:string,size?:int,max_len?:int,rows?:int,cols?:int,items?:mixed[],show_overview?:bool,link_in_overview?:bool,show_hide?:array<string>,hide_show?:array<string>,line?:bool,column_end?:bool} $field
      */
     protected function createInput(array $field, string $name, string $value): string
     {
@@ -162,7 +162,7 @@ abstract class Form
     }
 
     /**
-     * @param array{name:string,text:string,type:string,def_val?:string,size?:int,max_len?:int,rows?:int,cols?:int,items?:array,show_overview?:bool,link_in_overview?:bool,show_hide?:array<string>,hide_show?:array<string>,line?:bool,column_end?:bool} $field
+     * @param array{name:string,text:string,type:string,def_val?:string,size?:int,max_len?:int,rows?:int,cols?:int,items?:mixed[],show_overview?:bool,link_in_overview?:bool,show_hide?:array<string>,hide_show?:array<string>,line?:bool,column_end?:bool} $field
      * @param array<string,string> $arr
      */
     protected function showFieldValue(array $field, array $arr): string

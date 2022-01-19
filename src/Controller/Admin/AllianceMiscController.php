@@ -3,9 +3,7 @@
 namespace EtoA\Controller\Admin;
 
 use EtoA\Alliance\Alliance;
-use EtoA\Alliance\AllianceDiplomacyRepository;
 use EtoA\Alliance\AllianceImageStorage;
-use EtoA\Alliance\AllianceRankRepository;
 use EtoA\Alliance\AllianceRepository;
 use EtoA\Alliance\AllianceService;
 use EtoA\Alliance\InvalidAllianceParametersException;
@@ -19,8 +17,6 @@ class AllianceMiscController extends AbstractAdminController
 {
     public function __construct(
         private AllianceService $allianceService,
-        private AllianceRankRepository $allianceRankRepository,
-        private AllianceDiplomacyRepository $allianceDiplomacyRepository,
         private AllianceRepository $allianceRepository,
         private AllianceImageStorage $allianceImageStorage,
     ) {

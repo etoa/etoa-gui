@@ -6,13 +6,11 @@ namespace EtoA\User;
 
 use EtoA\Alliance\AllianceApplicationRepository;
 use EtoA\Alliance\AllianceRepository;
-use EtoA\Backend\BackendMessageService;
 use EtoA\Bookmark\BookmarkRepository;
 use EtoA\Bookmark\FleetBookmarkRepository;
 use EtoA\BuddyList\BuddyListRepository;
 use EtoA\Building\BuildingRepository;
 use EtoA\Core\Configuration\ConfigurationService;
-use EtoA\Defense\DefenseQueueRepository;
 use EtoA\Defense\DefenseRepository;
 use EtoA\Fleet\FleetRepository;
 use EtoA\Fleet\FleetSearchParameters;
@@ -25,7 +23,6 @@ use EtoA\Market\MarketResourceRepository;
 use EtoA\Market\MarketShipRepository;
 use EtoA\Missile\MissileRepository;
 use EtoA\Notepad\NotepadRepository;
-use EtoA\Ship\ShipQueueRepository;
 use EtoA\Ship\ShipRepository;
 use EtoA\Support\Mail\MailSenderService;
 use EtoA\Technology\TechnologyRepository;
@@ -42,8 +39,6 @@ class UserService
     private PlanetRepository $planetRepository;
     private BuildingRepository $buildingRepository;
     private TechnologyRepository $technologyRepository;
-    private ShipQueueRepository $shipQueueRepository;
-    private DefenseQueueRepository $defenseQueueRepository;
     private MailSenderService $mailSenderService;
     private PlanetService $planetService;
     private UserSittingRepository $userSittingRepository;
@@ -66,7 +61,6 @@ class UserService
     private UserPointsRepository $userPointsRepository;
     private UserCommentRepository $userCommentRepository;
     private UserSurveillanceRepository $userSurveillanceRepository;
-    private BackendMessageService $backendMessageService;
     private UserLogRepository $userLogRepository;
     private UserToXml $userToXml;
     private LogRepository $logRepository;
@@ -79,8 +73,6 @@ class UserService
         PlanetRepository $planetRepository,
         BuildingRepository $buildingRepository,
         TechnologyRepository $technologyRepository,
-        ShipQueueRepository $shipQueueRepository,
-        DefenseQueueRepository $defenseQueueRepository,
         MailSenderService $mailSenderService,
         PlanetService $planetService,
         UserSittingRepository $userSittingRepository,
@@ -103,7 +95,6 @@ class UserService
         UserPointsRepository $userPointsRepository,
         UserCommentRepository $userCommentRepository,
         UserSurveillanceRepository $userSurveillanceRepository,
-        BackendMessageService $backendMessageService,
         UserLogRepository $userLogRepository,
         UserToXml $userToXml,
         LogRepository $logRepository
@@ -115,8 +106,6 @@ class UserService
         $this->planetRepository = $planetRepository;
         $this->buildingRepository = $buildingRepository;
         $this->technologyRepository = $technologyRepository;
-        $this->shipQueueRepository = $shipQueueRepository;
-        $this->defenseQueueRepository = $defenseQueueRepository;
         $this->mailSenderService = $mailSenderService;
         $this->planetService = $planetService;
         $this->userSittingRepository = $userSittingRepository;
@@ -139,7 +128,6 @@ class UserService
         $this->userPointsRepository = $userPointsRepository;
         $this->userCommentRepository = $userCommentRepository;
         $this->userSurveillanceRepository = $userSurveillanceRepository;
-        $this->backendMessageService = $backendMessageService;
         $this->userLogRepository = $userLogRepository;
         $this->userToXml = $userToXml;
         $this->logRepository = $logRepository;

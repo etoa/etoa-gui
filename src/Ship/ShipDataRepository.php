@@ -7,8 +7,6 @@ use EtoA\Core\AbstractRepository;
 
 class ShipDataRepository extends AbstractRepository
 {
-    private const SHIPS_NAMES = 'ships.names';
-
     /**
      * @return array<int, string>
      */

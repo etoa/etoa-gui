@@ -28,7 +28,7 @@ class FleetSearchComponent extends AbstractController
     /** @var array<int, string> */
     public array $fleetStatusCode;
     /** @var array<string, string> */
-    private array $fleetActions;
+    public array $fleetActions;
 
     public function __construct(
         private FleetRepository $fleetRepository,
