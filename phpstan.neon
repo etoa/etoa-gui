@@ -6,9 +6,10 @@ includes:
     - vendor/phpstan/phpstan-deprecation-rules/rules.neon
     - vendor/phpstan/phpstan-webmozart-assert/extension.neon
     - vendor/phpstan/phpstan-symfony/extension.neon
+    - vendor/phpstan/phpstan-doctrine/extension.neon
 
 parameters:
-    level: 6
+    level: max
     paths:
         - bin
         - src
@@ -60,5 +61,9 @@ parameters:
         - '#Form::getFields\(\) return type has no value type specified in iterable type array#'
         - '#Call to deprecated method getUsername\(\) of class EtoA\\Security\\Admin\\CurrentAdmin#'
 
+        - '#Cannot cast mixed to (int|string|bool|float)#'
+        - '#Parameter \#[0-9]+ \$[a-z]+ of class EtoA\\[a-z\\]+ constructor expects [a-z\\]+\, mixed given#i'
+        - '#Cannot call method (fetchAllKeyValue|fetchAssociative|fetchAllAssociative)\(\) on Doctrine\\DBAL\\ForwardCompatibility\\DriverStatement\|int#'
+        - '#Cannot cast Doctrine\\DBAL\\ForwardCompatibility\\DriverStatement\|int to int#'
     symfony:
         containerXmlPath: var/cache/dev/EtoA_KernelDevDebugContainer.xml
