@@ -23,8 +23,12 @@ class QuestControllerTest extends SymfonyWebTestCase
 
         $client->request('PUT', sprintf('/api/quests/%s/advance/%s', $quest->getId(), QuestDefinitionInterface::TRANSITION_START));
 
-        $this->assertSame(200, $client->getResponse()->getStatusCode(), $client->getResponse()->getContent());
+        $this->assertStatusCode(200, $client->getResponse());
+        $this->assertNotFalse($client->getResponse()->getContent());
         $data = json_decode($client->getResponse()->getContent(), true);
+
+        $this->assertIsArray($data);
+        $this->assertArrayHasKey('quest', $data);
         $this->assertSame(QuestDefinitionInterface::STATE_IN_PROGRESS, $data['quest']['state']);
     }
 }

@@ -2,9 +2,9 @@
 
 namespace EtoA\Alliance;
 
-use EtoA\AbstractDbTestCase;
+use EtoA\SymfonyWebTestCase;
 
-class AllianceMemberCostsTest extends AbstractDbTestCase
+class AllianceMemberCostsTest extends SymfonyWebTestCase
 {
     private AllianceMemberCosts $allianceMemberCosts;
     private AllianceRepository $allianceRepository;
@@ -15,10 +15,10 @@ class AllianceMemberCostsTest extends AbstractDbTestCase
     {
         parent::setUp();
 
-        $this->allianceMemberCosts = $this->app[AllianceMemberCosts::class];
-        $this->allianceRepository = $this->app[AllianceRepository::class];
-        $this->allianceBuildingRepository = $this->app[AllianceBuildingRepository::class];
-        $this->allianceTechnologyRepository = $this->app[AllianceTechnologyRepository::class];
+        $this->allianceMemberCosts = self::getContainer()->get(AllianceMemberCosts::class);
+        $this->allianceRepository = self::getContainer()->get(AllianceRepository::class);
+        $this->allianceBuildingRepository = self::getContainer()->get(AllianceBuildingRepository::class);
+        $this->allianceTechnologyRepository = self::getContainer()->get(AllianceTechnologyRepository::class);
     }
 
     public function testCalculate(): void
@@ -44,6 +44,7 @@ class AllianceMemberCostsTest extends AbstractDbTestCase
 
         $alliance = $this->allianceRepository->getAlliance($allianceId);
 
+        $this->assertNotNull($alliance);
         $this->assertSame($costs->metal, -$alliance->resMetal);
         $this->assertSame($costs->crystal, -$alliance->resCrystal);
         $this->assertSame($costs->plastic, -$alliance->resPlastic);

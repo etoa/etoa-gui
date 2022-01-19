@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace EtoA\Help\TicketSystem;
 
-use EtoA\AbstractDbTestCase;
+use EtoA\SymfonyWebTestCase;
 
-class TicketRepositoryTest extends AbstractDbTestCase
+class TicketRepositoryTest extends SymfonyWebTestCase
 {
     private TicketRepository $repository;
 
@@ -14,7 +14,7 @@ class TicketRepositoryTest extends AbstractDbTestCase
     {
         parent::setUp();
 
-        $this->repository = $this->app[TicketRepository::class];
+        $this->repository = self::getContainer()->get(TicketRepository::class);
     }
 
     private function createTicket(
@@ -27,7 +27,7 @@ class TicketRepositoryTest extends AbstractDbTestCase
         string $adminComment = '',
         ?int $timestamp = null
     ): int {
-        $this->connection->createQueryBuilder()
+        $this->getConnection()->createQueryBuilder()
             ->insert('tickets')
             ->values([
                 'id' => ':id',
@@ -49,7 +49,7 @@ class TicketRepositoryTest extends AbstractDbTestCase
                 'timestamp' => $timestamp ?? time(),
             ])->execute();
 
-        return (int) $this->connection->lastInsertId();
+        return (int) $this->getConnection()->lastInsertId();
     }
 
     public function testFind_existing(): void
@@ -79,6 +79,7 @@ class TicketRepositoryTest extends AbstractDbTestCase
         $ticket = $this->repository->find($id);
 
         // then
+        $this->assertNotNull($ticket);
         $this->assertEquals($id, $ticket->id);
         $this->assertEquals($userId, $ticket->userId);
         $this->assertEquals($catId, $ticket->catId);

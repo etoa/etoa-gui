@@ -2,9 +2,9 @@
 
 namespace EtoA\Ship;
 
-use EtoA\AbstractDbTestCase;
+use EtoA\SymfonyWebTestCase;
 
-class ShipRepositoryTest extends AbstractDbTestCase
+class ShipRepositoryTest extends SymfonyWebTestCase
 {
     private ShipRepository $repository;
 
@@ -12,7 +12,7 @@ class ShipRepositoryTest extends AbstractDbTestCase
     {
         parent::setUp();
 
-        $this->repository = $this->app[ShipRepository::class];
+        $this->repository = self::getContainer()->get(ShipRepository::class);
     }
 
     public function testGetNumberOfShips(): void
@@ -34,7 +34,7 @@ class ShipRepositoryTest extends AbstractDbTestCase
         $this->repository->addShip($shipId, 1, $userId, $entityId);
         $this->repository->addShip($shipId, 29, $userId, $entityId);
 
-        $ships = $this->connection->createQueryBuilder()->select('s.*')->from('shiplist', 's')->execute()->fetchAllAssociative();
+        $ships = $this->getConnection()->fetchAllAssociative('SELECT * FROM shiplist');
 
         $this->assertCount(1, $ships);
         $ship = $ships[0];

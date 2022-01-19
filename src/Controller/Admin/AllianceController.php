@@ -13,6 +13,7 @@ use EtoA\Alliance\AllianceRepository;
 use EtoA\Alliance\AllianceService;
 use EtoA\Alliance\AllianceTechnologyListItem;
 use EtoA\Alliance\AllianceTechnologyRepository;
+use EtoA\Alliance\AllianceWingService;
 use EtoA\Form\Type\Admin\AllianceBuildingAddType;
 use EtoA\Form\Type\Admin\AllianceDepositSearchType;
 use EtoA\Form\Type\Admin\AllianceSearchType;
@@ -34,7 +35,7 @@ class AllianceController extends AbstractAdminController
         private AllianceBuildingRepository $allianceBuildingRepository,
         private AllianceImageStorage $allianceImageStorage,
         private AllianceDiplomacyRepository $allianceDiplomacyRepository,
-        private AllianceRankRepository $allianceRankRepository
+        private AllianceRankRepository $allianceRankRepository,
     ) {
     }
 

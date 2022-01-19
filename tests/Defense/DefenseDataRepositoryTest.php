@@ -2,9 +2,9 @@
 
 namespace EtoA\Defense;
 
-use EtoA\AbstractDbTestCase;
+use EtoA\SymfonyWebTestCase;
 
-class DefenseDataRepositoryTest extends AbstractDbTestCase
+class DefenseDataRepositoryTest extends SymfonyWebTestCase
 {
     private DefenseDataRepository $repository;
 
@@ -12,7 +12,7 @@ class DefenseDataRepositoryTest extends AbstractDbTestCase
     {
         parent::setUp();
 
-        $this->repository = $this->app[DefenseDataRepository::class];
+        $this->repository = self::getContainer()->get(DefenseDataRepository::class);
     }
 
     public function testGetDefenseNames(): void

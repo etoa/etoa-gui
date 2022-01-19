@@ -2,9 +2,9 @@
 
 namespace EtoA\Defense;
 
-use EtoA\AbstractDbTestCase;
+use EtoA\SymfonyWebTestCase;
 
-class DefenseQueueRepositoryTest extends AbstractDbTestCase
+class DefenseQueueRepositoryTest extends SymfonyWebTestCase
 {
     private DefenseQueueRepository $repository;
 
@@ -12,7 +12,7 @@ class DefenseQueueRepositoryTest extends AbstractDbTestCase
     {
         parent::setUp();
 
-        $this->repository = $this->app[DefenseQueueRepository::class];
+        $this->repository = self::getContainer()->get(DefenseQueueRepository::class);
     }
 
     public function testAdd(): void
@@ -28,10 +28,14 @@ class DefenseQueueRepositoryTest extends AbstractDbTestCase
 
         $item = $this->repository->getQueueItem($id);
 
+        $this->assertNotNull($item);
+
         $item->count = 99;
         $this->repository->saveQueueItem($item);
 
-        $this->assertSame(99, $this->repository->getQueueItem($id)->count);
+        $item = $this->repository->getQueueItem($id);
+        $this->assertNotNull($item);
+        $this->assertSame(99, $item->count);
     }
 
     public function testFindQueueItemsForUser(): void

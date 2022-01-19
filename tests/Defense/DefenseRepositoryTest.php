@@ -2,9 +2,9 @@
 
 namespace EtoA\Defense;
 
-use EtoA\AbstractDbTestCase;
+use EtoA\SymfonyWebTestCase;
 
-class DefenseRepositoryTest extends AbstractDbTestCase
+class DefenseRepositoryTest extends SymfonyWebTestCase
 {
     private DefenseRepository $repository;
 
@@ -12,7 +12,7 @@ class DefenseRepositoryTest extends AbstractDbTestCase
     {
         parent::setUp();
 
-        $this->repository = $this->app[DefenseRepository::class];
+        $this->repository = self::getContainer()->get(DefenseRepository::class);
     }
 
     public function testAddDefense(): void
@@ -24,7 +24,7 @@ class DefenseRepositoryTest extends AbstractDbTestCase
         $this->repository->addDefense($defenseId, 1, $userId, $entityId);
         $this->repository->addDefense($defenseId, 29, $userId, $entityId);
 
-        $defenses = $this->connection->createQueryBuilder()->select('d.*')->from('deflist', 'd')->execute()->fetchAllAssociative();
+        $defenses = $this->getConnection()->fetchAllAssociative('SELECT * FROM deflist');
 
         $this->assertCount(1, $defenses);
         $defense = $defenses[0];
@@ -101,10 +101,10 @@ class DefenseRepositoryTest extends AbstractDbTestCase
 
         $this->repository->addDefense($defenseId, 0, $userId, $entityId);
 
-        $id = (int) $this->connection->fetchOne('SELECT deflist_id FROM deflist');
+        $id = (int) $this->getConnection()->fetchOne('SELECT deflist_id FROM deflist');
 
         $this->repository->removeEntry($id);
 
-        $this->assertFalse($this->connection->fetchOne('SELECT deflist_id FROM deflist'));
+        $this->assertFalse($this->getConnection()->fetchOne('SELECT deflist_id FROM deflist'));
     }
 }

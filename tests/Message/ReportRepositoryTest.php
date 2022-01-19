@@ -2,9 +2,9 @@
 
 namespace EtoA\Message;
 
-use EtoA\AbstractDbTestCase;
+use EtoA\SymfonyWebTestCase;
 
-class ReportRepositoryTest extends AbstractDbTestCase
+class ReportRepositoryTest extends SymfonyWebTestCase
 {
     private ReportRepository $repository;
 
@@ -12,7 +12,7 @@ class ReportRepositoryTest extends AbstractDbTestCase
     {
         parent::setUp();
 
-        $this->repository = $this->app[ReportRepository::class];
+        $this->repository = self::getContainer()->get(ReportRepository::class);
     }
 
     public function testRemoveUnarchivedread(): void

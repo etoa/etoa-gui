@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace EtoA\Ranking;
 
-use EtoA\WebTestCase;
+use EtoA\SymfonyWebTestCase;
 
-class GameStatsGeneratorTest extends WebTestCase
+class GameStatsGeneratorTest extends SymfonyWebTestCase
 {
     private GameStatsGenerator $generator;
 
@@ -14,7 +14,7 @@ class GameStatsGeneratorTest extends WebTestCase
     {
         parent::setUp();
 
-        $this->generator = $this->app[GameStatsGenerator::class];
+        $this->generator = self::getContainer()->get(GameStatsGenerator::class);
     }
 
     public function testSmokeTest(): void

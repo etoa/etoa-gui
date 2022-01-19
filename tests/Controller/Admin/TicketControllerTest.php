@@ -14,7 +14,7 @@ class TicketControllerTest extends SymfonyWebTestCase
 
         $client->request('GET', '/admin/tickets/');
 
-        $this->assertSame(200, $client->getResponse()->getStatusCode(), $client->getResponse()->getContent());
+        $this->assertStatusCode(200, $client->getResponse());
     }
 
     public function testClosed(): void
@@ -25,7 +25,7 @@ class TicketControllerTest extends SymfonyWebTestCase
 
         $client->request('GET', '/admin/tickets/closed');
 
-        $this->assertSame(200, $client->getResponse()->getStatusCode(), $client->getResponse()->getContent());
+        $this->assertStatusCode(200, $client->getResponse());
     }
 
     public function testNew(): void
@@ -36,6 +36,6 @@ class TicketControllerTest extends SymfonyWebTestCase
 
         $client->request('GET', '/admin/tickets/new');
 
-        $this->assertSame(200, $client->getResponse()->getStatusCode(), $client->getResponse()->getContent());
+        $this->assertStatusCode(200, $client->getResponse());
     }
 }

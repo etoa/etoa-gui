@@ -2,9 +2,9 @@
 
 namespace EtoA\BuddyList;
 
-use EtoA\AbstractDbTestCase;
+use EtoA\SymfonyWebTestCase;
 
-class BuddyListRepositoryTest extends AbstractDbTestCase
+class BuddyListRepositoryTest extends SymfonyWebTestCase
 {
     private BuddyListRepository $repository;
 
@@ -12,7 +12,7 @@ class BuddyListRepositoryTest extends AbstractDbTestCase
     {
         parent::setUp();
 
-        $this->repository = $this->app[BuddyListRepository::class];
+        $this->repository = self::getContainer()->get(BuddyListRepository::class);
     }
 
     public function testAcceptBuddyRequest(): void

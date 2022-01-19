@@ -14,7 +14,7 @@ class BuildingControllerTest extends SymfonyWebTestCase
 
         $client->request('GET', '/admin/buildings/search');
 
-        $this->assertSame(200, $client->getResponse()->getStatusCode(), $client->getResponse()->getContent());
+        $this->assertStatusCode(200, $client->getResponse());
     }
 
     public function testPoints(): void
@@ -25,7 +25,7 @@ class BuildingControllerTest extends SymfonyWebTestCase
 
         $client->request('GET', '/admin/buildings/points');
 
-        $this->assertSame(200, $client->getResponse()->getStatusCode(), $client->getResponse()->getContent());
+        $this->assertStatusCode(200, $client->getResponse());
     }
 
     public function testRequirements(): void
@@ -36,6 +36,6 @@ class BuildingControllerTest extends SymfonyWebTestCase
 
         $client->request('GET', '/admin/buildings/requirements');
 
-        $this->assertSame(200, $client->getResponse()->getStatusCode(), $client->getResponse()->getContent());
+        $this->assertStatusCode(200, $client->getResponse());
     }
 }

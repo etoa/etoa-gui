@@ -2,9 +2,9 @@
 
 namespace EtoA\Alliance;
 
-use EtoA\AbstractDbTestCase;
+use EtoA\SymfonyWebTestCase;
 
-class AllianceShipPointsServiceTest extends AbstractDbTestCase
+class AllianceShipPointsServiceTest extends SymfonyWebTestCase
 {
     private AllianceShipPointsService $service;
     private AllianceService $allianceService;
@@ -14,9 +14,9 @@ class AllianceShipPointsServiceTest extends AbstractDbTestCase
     {
         parent::setUp();
 
-        $this->service = $this->app[AllianceShipPointsService::class];
-        $this->allianceService = $this->app[AllianceService::class];
-        $this->allianceBuildingRepository = $this->app[AllianceBuildingRepository::class];
+        $this->service = self::getContainer()->get(AllianceShipPointsService::class);
+        $this->allianceService = self::getContainer()->get(AllianceService::class);
+        $this->allianceBuildingRepository = self::getContainer()->get(AllianceBuildingRepository::class);
     }
 
     public function testUpdate(): void

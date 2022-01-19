@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace EtoA\Ranking;
 
+use EtoA\SymfonyWebTestCase;
 use EtoA\User\UserService;
-use EtoA\WebTestCase;
 
-class RankingServiceTest extends WebTestCase
+class RankingServiceTest extends SymfonyWebTestCase
 {
     private RankingService $service;
     private UserService $userService;
@@ -16,8 +16,8 @@ class RankingServiceTest extends WebTestCase
     {
         parent::setUp();
 
-        $this->service = $this->app[RankingService::class];
-        $this->userService = $this->app[UserService::class];
+        $this->service = self::getContainer()->get(RankingService::class);
+        $this->userService = self::getContainer()->get(UserService::class);
     }
 
     public function testCalc_noUsers(): void

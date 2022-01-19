@@ -14,6 +14,6 @@ class AllianceNewsControllerTest extends SymfonyWebTestCase
 
         $client->request('GET', '/admin/alliances/news');
 
-        $this->assertSame(200, $client->getResponse()->getStatusCode(), $client->getResponse()->getContent());
+        $this->assertStatusCode(200, $client->getResponse());
     }
 }

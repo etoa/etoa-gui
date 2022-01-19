@@ -2,9 +2,9 @@
 
 namespace EtoA\DefaultItem;
 
-use EtoA\AbstractDbTestCase;
+use EtoA\SymfonyWebTestCase;
 
-class DefaultItemRepositoryTest extends AbstractDbTestCase
+class DefaultItemRepositoryTest extends SymfonyWebTestCase
 {
     private DefaultItemRepository $repository;
 
@@ -12,7 +12,7 @@ class DefaultItemRepositoryTest extends AbstractDbTestCase
     {
         parent::setUp();
 
-        $this->repository = $this->app[DefaultItemRepository::class];
+        $this->repository = self::getContainer()->get(DefaultItemRepository::class);
     }
 
     public function testGetSets(): void

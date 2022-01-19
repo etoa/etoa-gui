@@ -2,18 +2,17 @@
 
 namespace EtoA\Missile;
 
-use EtoA\AbstractDbTestCase;
+use EtoA\SymfonyWebTestCase;
 
-class MissileDataRepositoryTest extends AbstractDbTestCase
+class MissileDataRepositoryTest extends SymfonyWebTestCase
 {
-    /** @var MissileDataRepository */
-    private $repository;
+    private MissileDataRepository $repository;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->repository = $this->app[MissileDataRepository::class];
+        $this->repository = self::getContainer()->get(MissileDataRepository::class);
     }
 
     public function testGetMissileNames(): void

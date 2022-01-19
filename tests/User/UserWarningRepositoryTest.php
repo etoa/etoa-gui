@@ -2,9 +2,9 @@
 
 namespace EtoA\User;
 
-use EtoA\AbstractDbTestCase;
+use EtoA\SymfonyWebTestCase;
 
-class UserWarningRepositoryTest extends AbstractDbTestCase
+class UserWarningRepositoryTest extends SymfonyWebTestCase
 {
     private UserWarningRepository $repository;
 
@@ -12,7 +12,7 @@ class UserWarningRepositoryTest extends AbstractDbTestCase
     {
         parent::setUp();
 
-        $this->repository = $this->app[UserWarningRepository::class];
+        $this->repository = self::getContainer()->get(UserWarningRepository::class);
     }
 
     public function testGetUserWarnings(): void

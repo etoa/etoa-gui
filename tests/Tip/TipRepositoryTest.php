@@ -2,9 +2,9 @@
 
 namespace EtoA\Tip;
 
-use EtoA\AbstractDbTestCase;
+use EtoA\SymfonyWebTestCase;
 
-class TipRepositoryTest extends AbstractDbTestCase
+class TipRepositoryTest extends SymfonyWebTestCase
 {
     private TipRepository $repository;
 
@@ -12,7 +12,7 @@ class TipRepositoryTest extends AbstractDbTestCase
     {
         parent::setUp();
 
-        $this->repository = $this->app[TipRepository::class];
+        $this->repository = self::getContainer()->get(TipRepository::class);
     }
 
     public function testGetRandomTipText(): void

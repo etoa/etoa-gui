@@ -2,16 +2,16 @@
 
 namespace EtoA\Alliance;
 
-use EtoA\AbstractDbTestCase;
+use EtoA\SymfonyWebTestCase;
 
-class AllianceNewsRepositoryTest extends AbstractDbTestCase
+class AllianceNewsRepositoryTest extends SymfonyWebTestCase
 {
     private AllianceNewsRepository $repository;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->repository = $this->app[AllianceNewsRepository::class];
+        $this->repository = self::getContainer()->get(AllianceNewsRepository::class);
     }
 
     public function testGetNewsEntries(): void

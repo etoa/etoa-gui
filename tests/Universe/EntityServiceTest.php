@@ -2,10 +2,10 @@
 
 namespace EtoA\Universe;
 
-use EtoA\AbstractDbTestCase;
+use EtoA\SymfonyWebTestCase;
 use EtoA\Universe\Entity\EntityService;
 
-class EntityServiceTest extends AbstractDbTestCase
+class EntityServiceTest extends SymfonyWebTestCase
 {
     private EntityService $service;
 
@@ -13,7 +13,7 @@ class EntityServiceTest extends AbstractDbTestCase
     {
         parent::setUp();
 
-        $this->service = $this->app[EntityService::class];
+        $this->service = self::getContainer()->get(EntityService::class);
     }
 
     public function testDistanceNull(): void

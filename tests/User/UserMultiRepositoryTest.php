@@ -2,9 +2,9 @@
 
 namespace EtoA\User;
 
-use EtoA\AbstractDbTestCase;
+use EtoA\SymfonyWebTestCase;
 
-class UserMultiRepositoryTest extends AbstractDbTestCase
+class UserMultiRepositoryTest extends SymfonyWebTestCase
 {
     private UserMultiRepository $repository;
 
@@ -12,7 +12,7 @@ class UserMultiRepositoryTest extends AbstractDbTestCase
     {
         parent::setUp();
 
-        $this->repository = $this->app[UserMultiRepository::class];
+        $this->repository = self::getContainer()->get(UserMultiRepository::class);
     }
 
     public function testGetUserEntries(): void

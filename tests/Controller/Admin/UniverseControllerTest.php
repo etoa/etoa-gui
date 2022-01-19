@@ -14,7 +14,7 @@ class UniverseControllerTest extends SymfonyWebTestCase
 
         $client->request('GET', '/admin/universe/big-bang/configure');
 
-        $this->assertSame(200, $client->getResponse()->getStatusCode(), $client->getResponse()->getContent());
+        $this->assertStatusCode(200, $client->getResponse());
     }
 
     public function testBigBang(): void
@@ -25,7 +25,7 @@ class UniverseControllerTest extends SymfonyWebTestCase
 
         $client->request('GET', '/admin/universe/big-bang');
 
-        $this->assertSame(200, $client->getResponse()->getStatusCode(), $client->getResponse()->getContent());
+        $this->assertStatusCode(200, $client->getResponse());
     }
 
     public function testCheck(): void
@@ -36,7 +36,7 @@ class UniverseControllerTest extends SymfonyWebTestCase
 
         $client->request('GET', '/admin/universe/check');
 
-        $this->assertSame(200, $client->getResponse()->getStatusCode(), $client->getResponse()->getContent());
+        $this->assertStatusCode(200, $client->getResponse());
     }
 
     public function testResetRound(): void
@@ -47,7 +47,7 @@ class UniverseControllerTest extends SymfonyWebTestCase
 
         $client->request('GET', '/admin/universe/reset/full');
 
-        $this->assertSame(200, $client->getResponse()->getStatusCode(), $client->getResponse()->getContent());
+        $this->assertStatusCode(200, $client->getResponse());
     }
 
     public function testResetUniverse(): void
@@ -58,6 +58,6 @@ class UniverseControllerTest extends SymfonyWebTestCase
 
         $client->request('GET', '/admin/universe/reset/universe');
 
-        $this->assertSame(200, $client->getResponse()->getStatusCode(), $client->getResponse()->getContent());
+        $this->assertStatusCode(200, $client->getResponse());
     }
 }

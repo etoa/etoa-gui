@@ -2,10 +2,10 @@
 
 namespace EtoA\Alliance;
 
+use EtoA\SymfonyWebTestCase;
 use EtoA\User\UserRepository;
-use EtoA\WebTestCase;
 
-class AllianceServiceTest extends WebTestCase
+class AllianceServiceTest extends SymfonyWebTestCase
 {
     private AllianceService $service;
     private AllianceRepository $repository;
@@ -15,9 +15,9 @@ class AllianceServiceTest extends WebTestCase
     {
         parent::setUp();
 
-        $this->service = $this->app[AllianceService::class];
-        $this->repository = $this->app[AllianceRepository::class];
-        $this->userRepository = $this->app[UserRepository::class];
+        $this->service = self::getContainer()->get(AllianceService::class);
+        $this->repository = self::getContainer()->get(AllianceRepository::class);
+        $this->userRepository = self::getContainer()->get(UserRepository::class);
     }
 
     public function testCreate(): void
@@ -50,6 +50,7 @@ class AllianceServiceTest extends WebTestCase
 
         $alliance = $this->service->create($tag, $name, $founderId);
 
+        $this->assertNotNull($otherUser);
         $this->assertTrue($this->service->addMember($alliance, $otherUser));
     }
 
@@ -65,9 +66,12 @@ class AllianceServiceTest extends WebTestCase
 
         $alliance = $this->service->create($tag, $name, $founderId);
 
+        $this->assertNotNull($otherUser);
         $this->assertTrue($this->service->addMember($alliance, $otherUser));
 
         $otherUser = $this->userRepository->getUser($otherUserId);
+
+        $this->assertNotNull($otherUser);
         $this->assertTrue($this->service->kickMember($alliance, $otherUser));
     }
 
@@ -81,6 +85,8 @@ class AllianceServiceTest extends WebTestCase
 
         $alliance = $this->service->create($tag, $name, $founderId);
         $founder = $this->userRepository->getUser($founderId);
+
+        $this->assertNotNull($founder);
         $founder->allianceId = $alliance->id;
 
         $this->assertTrue($this->service->changeFounder($alliance, $founder));

@@ -3,10 +3,10 @@
 namespace EtoA\User;
 
 use EtoA\Support\Mail\MailSenderService;
-use EtoA\WebTestCase;
+use EtoA\SymfonyWebTestCase;
 use Swift_Mailer;
 
-class UserServiceTest extends WebTestCase
+class UserServiceTest extends SymfonyWebTestCase
 {
     private UserService $service;
     private UserRepository $repository;
@@ -17,9 +17,9 @@ class UserServiceTest extends WebTestCase
     {
         parent::setUp();
 
-        $this->service = $this->app[UserService::class];
-        $this->repository = $this->app[UserRepository::class];
-        $this->mailSenderService = $this->app[MailSenderService::class];
+        $this->service = self::getContainer()->get(UserService::class);
+        $this->repository = self::getContainer()->get(UserRepository::class);
+        $this->mailSenderService = self::getContainer()->get(MailSenderService::class);
 
         $this->mailer = $this->createMock(\Swift_Mailer::class);
         $this->mailSenderService->setMailer($this->mailer);
@@ -64,6 +64,8 @@ class UserServiceTest extends WebTestCase
 
         // then
         $user = $this->repository->getUser($user->id);
+
+        $this->assertInstanceOf(User::class, $user);
         $this->assertTrue(validatePasswort($newPassword, $user->password));
     }
 
@@ -98,6 +100,8 @@ class UserServiceTest extends WebTestCase
         // then
         $this->assertTrue($result);
         $user = $this->repository->getUser($user->id);
+
+        $this->assertInstanceOf(User::class, $user);
         $this->assertGreaterThan(time(), $user->deleted);
     }
 }

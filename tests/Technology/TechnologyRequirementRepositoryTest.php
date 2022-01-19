@@ -2,9 +2,9 @@
 
 namespace EtoA\Technology;
 
-use EtoA\AbstractDbTestCase;
+use EtoA\SymfonyWebTestCase;
 
-class TechnologyRequirementRepositoryTest extends AbstractDbTestCase
+class TechnologyRequirementRepositoryTest extends SymfonyWebTestCase
 {
     private TechnologyRequirementRepository $repository;
 
@@ -12,7 +12,7 @@ class TechnologyRequirementRepositoryTest extends AbstractDbTestCase
     {
         parent::setUp();
 
-        $this->repository = $this->app[TechnologyRequirementRepository::class];
+        $this->repository = self::getContainer()->get(TechnologyRequirementRepository::class);
     }
 
     public function testGetAll(): void

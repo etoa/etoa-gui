@@ -14,7 +14,7 @@ class ShipControllerTest extends SymfonyWebTestCase
 
         $client->request('GET', '/admin/ships/search');
 
-        $this->assertSame(200, $client->getResponse()->getStatusCode(), $client->getResponse()->getContent());
+        $this->assertStatusCode(200, $client->getResponse());
     }
 
     public function testQueue(): void
@@ -25,7 +25,7 @@ class ShipControllerTest extends SymfonyWebTestCase
 
         $client->request('GET', '/admin/ships/queue');
 
-        $this->assertSame(200, $client->getResponse()->getStatusCode(), $client->getResponse()->getContent());
+        $this->assertStatusCode(200, $client->getResponse());
     }
 
     public function testPoints(): void
@@ -36,7 +36,7 @@ class ShipControllerTest extends SymfonyWebTestCase
 
         $client->request('GET', '/admin/ships/points');
 
-        $this->assertSame(200, $client->getResponse()->getStatusCode(), $client->getResponse()->getContent());
+        $this->assertStatusCode(200, $client->getResponse());
     }
 
     public function testRequirements(): void
@@ -47,7 +47,7 @@ class ShipControllerTest extends SymfonyWebTestCase
 
         $client->request('GET', '/admin/ships/requirements');
 
-        $this->assertSame(200, $client->getResponse()->getStatusCode(), $client->getResponse()->getContent());
+        $this->assertStatusCode(200, $client->getResponse());
     }
 
     public function testXpCalculator(): void
@@ -58,6 +58,6 @@ class ShipControllerTest extends SymfonyWebTestCase
 
         $client->request('GET', '/admin/ships/xp-calculator');
 
-        $this->assertSame(200, $client->getResponse()->getStatusCode(), $client->getResponse()->getContent());
+        $this->assertStatusCode(200, $client->getResponse());
     }
 }

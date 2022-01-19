@@ -14,7 +14,7 @@ class ChatControllerTest extends SymfonyWebTestCase
 
         $client->request('GET', '/api/chat/users');
 
-        $this->assertSame(200, $client->getResponse()->getStatusCode(), $client->getResponse()->getContent());
+        $this->assertStatusCode(200, $client->getResponse());
     }
 
     public function testPoll(): void
@@ -25,7 +25,7 @@ class ChatControllerTest extends SymfonyWebTestCase
 
         $client->request('GET', '/api/chat/poll');
 
-        $this->assertSame(200, $client->getResponse()->getStatusCode(), $client->getResponse()->getContent());
+        $this->assertStatusCode(200, $client->getResponse());
     }
 
     public function testPush(): void
@@ -36,7 +36,7 @@ class ChatControllerTest extends SymfonyWebTestCase
 
         $client->request('GET', '/api/chat/poll?ctext=test');
 
-        $this->assertSame(200, $client->getResponse()->getStatusCode(), $client->getResponse()->getContent());
+        $this->assertStatusCode(200, $client->getResponse());
     }
 
     public function testLogout(): void
@@ -47,6 +47,6 @@ class ChatControllerTest extends SymfonyWebTestCase
 
         $client->request('GET', '/api/chat/logout');
 
-        $this->assertSame(200, $client->getResponse()->getStatusCode(), $client->getResponse()->getContent());
+        $this->assertStatusCode(200, $client->getResponse());
     }
 }

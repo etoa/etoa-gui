@@ -14,7 +14,7 @@ class ConfigControllerTest extends SymfonyWebTestCase
 
         $client->request('GET', '/admin/config/');
 
-        $this->assertSame(200, $client->getResponse()->getStatusCode(), $client->getResponse()->getContent());
+        $this->assertStatusCode(200, $client->getResponse());
     }
 
     public function testEditor(): void
@@ -25,7 +25,7 @@ class ConfigControllerTest extends SymfonyWebTestCase
 
         $client->request('GET', '/admin/config/editor');
 
-        $this->assertSame(200, $client->getResponse()->getStatusCode(), $client->getResponse()->getContent());
+        $this->assertStatusCode(200, $client->getResponse());
     }
 
     public function testCheck(): void
@@ -36,6 +36,6 @@ class ConfigControllerTest extends SymfonyWebTestCase
 
         $client->request('GET', '/admin/config/check');
 
-        $this->assertSame(200, $client->getResponse()->getStatusCode(), $client->getResponse()->getContent());
+        $this->assertStatusCode(200, $client->getResponse());
     }
 }

@@ -14,7 +14,7 @@ class QuestControllerTest extends SymfonyWebTestCase
 
         $client->request('GET', '/admin/quests/');
 
-        $this->assertSame(200, $client->getResponse()->getStatusCode(), $client->getResponse()->getContent());
+        $this->assertStatusCode(200, $client->getResponse());
     }
 
     public function testList(): void
@@ -25,6 +25,6 @@ class QuestControllerTest extends SymfonyWebTestCase
 
         $client->request('GET', '/admin/quests/list');
 
-        $this->assertSame(200, $client->getResponse()->getStatusCode(), $client->getResponse()->getContent());
+        $this->assertStatusCode(200, $client->getResponse());
     }
 }

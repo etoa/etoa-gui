@@ -7,15 +7,15 @@ namespace EtoA\Fleet;
 use EtoA\Alliance\AllianceBuildingId;
 use EtoA\Alliance\AllianceBuildingRepository;
 use EtoA\Alliance\AllianceRepository;
+use EtoA\SymfonyWebTestCase;
 use EtoA\Universe\Cell\CellRepository;
 use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Entity\EntityType;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Universe\Resources\BaseResources;
 use EtoA\User\UserRepository;
-use EtoA\WebTestCase;
 
-class FleetScanServiceTest extends WebTestCase
+class FleetScanServiceTest extends SymfonyWebTestCase
 {
     private FleetScanService $service;
     private UserRepository $userRepository;
@@ -30,14 +30,14 @@ class FleetScanServiceTest extends WebTestCase
     {
         parent::setUp();
 
-        $this->service = $this->app[FleetScanService::class];
-        $this->userRepository = $this->app[UserRepository::class];
-        $this->allianceRepository = $this->app[AllianceRepository::class];
-        $this->allianceBuildingRepository = $this->app[AllianceBuildingRepository::class];
-        $this->planetRepository = $this->app[PlanetRepository::class];
-        $this->cellRepository = $this->app[CellRepository::class];
-        $this->entityRepository = $this->app[EntityRepository::class];
-        $this->fleetRepository = $this->app[FleetRepository::class];
+        $this->service = self::getContainer()->get(FleetScanService::class);
+        $this->userRepository = self::getContainer()->get(UserRepository::class);
+        $this->allianceRepository = self::getContainer()->get(AllianceRepository::class);
+        $this->allianceBuildingRepository = self::getContainer()->get(AllianceBuildingRepository::class);
+        $this->planetRepository = self::getContainer()->get(PlanetRepository::class);
+        $this->cellRepository = self::getContainer()->get(CellRepository::class);
+        $this->entityRepository = self::getContainer()->get(EntityRepository::class);
+        $this->fleetRepository = self::getContainer()->get(FleetRepository::class);
     }
 
     public function testScanFleets_withNoFleets(): void
@@ -63,6 +63,10 @@ class FleetScanServiceTest extends WebTestCase
         $user1 = $this->userRepository->getUser($userId1);
         $planet1 = $this->planetRepository->find($entityId1);
         $entity2 = $this->entityRepository->findIncludeCell($entityId2);
+
+        $this->assertNotNull($user1);
+        $this->assertNotNull($planet1);
+        $this->assertNotNull($entity2);
 
         // when
         $out = $this->service->scanFleets($user1, $planet1, 1, $entity2);
@@ -96,6 +100,10 @@ class FleetScanServiceTest extends WebTestCase
         $user1 = $this->userRepository->getUser($userId1);
         $planet1 = $this->planetRepository->find($entityId1);
         $entity2 = $this->entityRepository->findIncludeCell($entityId2);
+
+        $this->assertNotNull($user1);
+        $this->assertNotNull($planet1);
+        $this->assertNotNull($entity2);
 
         $this->fleetRepository->add($userId1, time(), time() + 60, $entityId1, $entityId2, FleetAction::SPY, FleetStatus::DEPARTURE, new BaseResources());
 

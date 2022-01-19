@@ -2,16 +2,16 @@
 
 namespace EtoA\Alliance;
 
-use EtoA\AbstractDbTestCase;
+use EtoA\SymfonyWebTestCase;
 
-class AllianceRankRepositoryTest extends AbstractDbTestCase
+class AllianceRankRepositoryTest extends SymfonyWebTestCase
 {
     private AllianceRankRepository $repository;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->repository = $this->app[AllianceRankRepository::class];
+        $this->repository = self::getContainer()->get(AllianceRankRepository::class);
     }
 
     public function testGetRanks(): void
@@ -31,6 +31,7 @@ class AllianceRankRepositoryTest extends AbstractDbTestCase
 
         $rank = $this->repository->getRank($rankId, 1);
 
+        $this->assertNotNull($rank);
         $this->assertSame('Name', $rank->name);
     }
 

@@ -2,13 +2,13 @@
 
 namespace EtoA\Quest\Progress;
 
+use LittleCubicleGames\Quests\Progress\Functions\EventHandlerFunctionInterface;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Finder\Finder;
 
 class FunctionBuilderTest extends TestCase
 {
-    /** @var FunctionBuilder */
-    private $builder;
+    private FunctionBuilder $builder;
 
     protected function setUp(): void
     {
@@ -19,6 +19,7 @@ class FunctionBuilderTest extends TestCase
 
     /**
      * @dataProvider functionNameProvider
+     * @param class-string<EventHandlerFunctionInterface> $className
      */
     public function testBuild(string $name, string $className): void
     {

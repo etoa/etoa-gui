@@ -2,9 +2,9 @@
 
 namespace EtoA\User;
 
-use EtoA\AbstractDbTestCase;
+use EtoA\SymfonyWebTestCase;
 
-class UserLoginFailureRepositoryTest extends AbstractDbTestCase
+class UserLoginFailureRepositoryTest extends SymfonyWebTestCase
 {
     private UserLoginFailureRepository $repository;
 
@@ -12,7 +12,7 @@ class UserLoginFailureRepositoryTest extends AbstractDbTestCase
     {
         parent::setUp();
 
-        $this->repository = $this->app[UserLoginFailureRepository::class];
+        $this->repository = self::getContainer()->get(UserLoginFailureRepository::class);
     }
 
     public function testGetUserLoginFailures(): void

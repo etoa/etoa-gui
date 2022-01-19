@@ -2,9 +2,9 @@
 
 namespace EtoA\Alliance;
 
-use EtoA\AbstractDbTestCase;
+use EtoA\SymfonyWebTestCase;
 
-class AllianceWingServiceTest extends AbstractDbTestCase
+class AllianceWingServiceTest extends SymfonyWebTestCase
 {
     private AllianceWingService $wingService;
     private AllianceService $allianceService;
@@ -14,9 +14,9 @@ class AllianceWingServiceTest extends AbstractDbTestCase
     {
         parent::setUp();
 
-        $this->wingService = $this->app[AllianceWingService::class];
-        $this->allianceService = $this->app[AllianceService::class];
-        $this->allianceRepository = $this->app[AllianceRepository::class];
+        $this->wingService = self::getContainer()->get(AllianceWingService::class);
+        $this->allianceService = self::getContainer()->get(AllianceService::class);
+        $this->allianceRepository = self::getContainer()->get(AllianceRepository::class);
     }
 
     public function testAcceptWingRequest(): void
@@ -34,10 +34,12 @@ class AllianceWingServiceTest extends AbstractDbTestCase
 
         $wing = $this->allianceRepository->getAlliance($wing->id);
 
+        $this->assertNotNull($wing);
         $this->assertTrue($this->wingService->acceptWingRequest($alliance, $wing));
 
         $wing = $this->allianceRepository->getAlliance($wing->id);
 
+        $this->assertNotNull($wing);
         $this->assertTrue($this->wingService->removeWing($alliance, $wing));
     }
 
@@ -56,6 +58,7 @@ class AllianceWingServiceTest extends AbstractDbTestCase
 
         $wing = $this->allianceRepository->getAlliance($wing->id);
 
+        $this->assertNotNull($wing);
         $this->assertTrue($this->wingService->cancelWingRequest($alliance, $wing));
     }
 
@@ -74,6 +77,7 @@ class AllianceWingServiceTest extends AbstractDbTestCase
 
         $wing = $this->allianceRepository->getAlliance($wing->id);
 
+        $this->assertNotNull($wing);
         $this->assertTrue($this->wingService->declineWingRequest($alliance, $wing));
     }
 }

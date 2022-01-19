@@ -2,18 +2,17 @@
 
 namespace EtoA\Tutorial;
 
-use EtoA\AbstractDbTestCase;
+use EtoA\SymfonyWebTestCase;
 
-class TutorialUserProgressRepositoryTest extends AbstractDbTestCase
+class TutorialUserProgressRepositoryTest extends SymfonyWebTestCase
 {
-    /** @var TutorialUserProgressRepository */
-    private $repository;
+    private TutorialUserProgressRepository $repository;
 
     protected function setUp(): void
     {
         parent::setUp();
 
-        $this->repository = $this->app[TutorialUserProgressRepository::class];
+        $this->repository = self::getContainer()->get(TutorialUserProgressRepository::class);
     }
 
     public function testHasReadTutorialNoProgress(): void
@@ -26,7 +25,7 @@ class TutorialUserProgressRepositoryTest extends AbstractDbTestCase
      */
     public function testHasReadTutorial(bool $closed): void
     {
-        $this->connection
+        $this->getConnection()
             ->createQueryBuilder()
             ->insert('tutorial_user_progress')
             ->values([
@@ -50,7 +49,7 @@ class TutorialUserProgressRepositoryTest extends AbstractDbTestCase
     {
         $userId = 1;
         $tutorialId = 1;
-        $this->connection
+        $this->getConnection()
             ->createQueryBuilder()
             ->insert('tutorial_user_progress')
             ->values([

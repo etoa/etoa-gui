@@ -2,21 +2,21 @@
 
 namespace EtoA\User;
 
-use EtoA\AbstractDbTestCase;
+use EtoA\SymfonyWebTestCase;
 
-class UserPointsRepositoryTest extends AbstractDbTestCase
+class UserPointsRepositoryTest extends SymfonyWebTestCase
 {
     private UserPointsRepository $repository;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->repository = $this->app[UserPointsRepository::class];
+        $this->repository = self::getContainer()->get(UserPointsRepository::class);
     }
 
     public function testGetPoints(): void
     {
-        $this->connection->executeQuery('INSERT INTO user_points (point_user_id, point_points) VALUE (1, 100)');
+        $this->getConnection()->executeQuery('INSERT INTO user_points (point_user_id, point_points) VALUE (1, 100)');
 
         $entries = $this->repository->getPoints(1, 1);
 

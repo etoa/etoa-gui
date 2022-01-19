@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace EtoA\Help\TicketSystem;
 
-use EtoA\AbstractDbTestCase;
 use EtoA\Message\MessageCategoryId;
 use EtoA\Message\MessageRepository;
+use EtoA\SymfonyWebTestCase;
 
 require_once __DIR__ . '/../../../htdocs/inc/functions.inc.php';
 
-class TicketServiceTest extends AbstractDbTestCase
+class TicketServiceTest extends SymfonyWebTestCase
 {
     private TicketRepository $repository;
     private TicketService $service;
@@ -20,9 +20,9 @@ class TicketServiceTest extends AbstractDbTestCase
     {
         parent::setUp();
 
-        $this->repository = $this->app[TicketRepository::class];
-        $this->service = $this->app[TicketService::class];
-        $this->userMessageRepository = $this->app[MessageRepository::class];
+        $this->repository = self::getContainer()->get(TicketRepository::class);
+        $this->service = self::getContainer()->get(TicketService::class);
+        $this->userMessageRepository = self::getContainer()->get(MessageRepository::class);
     }
 
     public function testCreate(): void
@@ -262,7 +262,7 @@ class TicketServiceTest extends AbstractDbTestCase
         $this->service->assign($ticket, $adminId);
         $this->service->addMessage($ticket, $newMessage, 0, $adminId);
 
-        $this->connection->createQueryBuilder()
+        $this->getConnection()->createQueryBuilder()
             ->update('ticket_msg')
             ->set('timestamp', 'timestamp - (73 * 3600)')
             ->where('ticket_id = :ticket_id')
@@ -275,6 +275,7 @@ class TicketServiceTest extends AbstractDbTestCase
         // then
         $ticket = $this->repository->find($ticket->id);
 
+        $this->assertNotNull($ticket);
         $this->assertEquals(TicketStatus::CLOSED, $ticket->status);
         $this->assertEquals(TicketSolution::SOLVED, $ticket->solution);
     }
@@ -292,7 +293,7 @@ class TicketServiceTest extends AbstractDbTestCase
         $this->service->assign($ticket, $adminId);
         $this->service->addMessage($ticket, $newMessage, 0, $adminId);
 
-        $this->connection->createQueryBuilder()
+        $this->getConnection()->createQueryBuilder()
             ->update('ticket_msg')
             ->set('timestamp', 'timestamp - (71 * 3600)')
             ->where('ticket_id = :ticket_id')
@@ -305,6 +306,7 @@ class TicketServiceTest extends AbstractDbTestCase
         // then
         $ticket = $this->repository->find($ticket->id);
 
+        $this->assertNotNull($ticket);
         $this->assertEquals(TicketStatus::ASSIGNED, $ticket->status);
         $this->assertEquals(TicketSolution::OPEN, $ticket->solution);
     }

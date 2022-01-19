@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace EtoA\Help\TicketSystem;
 
-use EtoA\AbstractDbTestCase;
+use PHPUnit\Framework\TestCase;
 
-class TicketTest extends AbstractDbTestCase
+class TicketTest extends TestCase
 {
     public function testGetIdString(): void
     {

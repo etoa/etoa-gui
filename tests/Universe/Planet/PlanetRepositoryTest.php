@@ -2,10 +2,10 @@
 
 namespace EtoA\Universe\Planet;
 
-use EtoA\AbstractDbTestCase;
+use EtoA\SymfonyWebTestCase;
 use EtoA\Universe\Resources\BaseResources;
 
-class PlanetRepositoryTest extends AbstractDbTestCase
+class PlanetRepositoryTest extends SymfonyWebTestCase
 {
     private PlanetRepository $repository;
 
@@ -13,7 +13,7 @@ class PlanetRepositoryTest extends AbstractDbTestCase
     {
         parent::setUp();
 
-        $this->repository = $this->app[PlanetRepository::class];
+        $this->repository = self::getContainer()->get(PlanetRepository::class);
     }
 
     public function testGetUserMainId(): void
@@ -61,15 +61,20 @@ class PlanetRepositoryTest extends AbstractDbTestCase
 
         $this->repository->addResources(1, 1, 0, 0, 0, 0);
 
-        $this->assertSame(1.0, $this->repository->getPlanetResources(1)->getSum());
+        $planetResources = $this->repository->getPlanetResources(1);
+        $this->assertNotNull($planetResources);
+        $this->assertSame(1.0, $planetResources->getSum());
 
         $this->assertTrue($this->repository->removeResources(1, $resources));
-        $this->assertSame(0.0, $this->repository->getPlanetResources(1)->getSum());
+
+        $planetResources = $this->repository->getPlanetResources(1);
+        $this->assertNotNull($planetResources);
+        $this->assertSame(0.0, $planetResources->getSum());
     }
 
     private function setupPlanet(int $planetId, int $userId, bool $isMain): void
     {
-        $this->connection->createQueryBuilder()->insert('planets')->values([
+        $this->getConnection()->createQueryBuilder()->insert('planets')->values([
             'id' => ':id',
             'planet_user_id' => ':userId',
             'planet_user_main' => ':isMain',

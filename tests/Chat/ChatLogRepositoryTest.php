@@ -2,9 +2,9 @@
 
 namespace EtoA\Chat;
 
-use EtoA\AbstractDbTestCase;
+use EtoA\SymfonyWebTestCase;
 
-class ChatLogRepositoryTest extends AbstractDbTestCase
+class ChatLogRepositoryTest extends SymfonyWebTestCase
 {
     private ChatLogRepository $repository;
 
@@ -12,7 +12,7 @@ class ChatLogRepositoryTest extends AbstractDbTestCase
     {
         parent::setUp();
 
-        $this->repository = $this->app[ChatLogRepository::class];
+        $this->repository = self::getContainer()->get(ChatLogRepository::class);
     }
 
     public function testGetChatLogs(): void

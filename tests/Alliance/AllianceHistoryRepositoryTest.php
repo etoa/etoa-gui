@@ -2,16 +2,16 @@
 
 namespace EtoA\Alliance;
 
-use EtoA\AbstractDbTestCase;
+use EtoA\SymfonyWebTestCase;
 
-class AllianceHistoryRepositoryTest extends AbstractDbTestCase
+class AllianceHistoryRepositoryTest extends SymfonyWebTestCase
 {
     private AllianceHistoryRepository $repository;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->repository = $this->app[AllianceHistoryRepository::class];
+        $this->repository = self::getContainer()->get(AllianceHistoryRepository::class);
     }
 
     public function testAddEntry(): void
@@ -26,12 +26,7 @@ class AllianceHistoryRepositoryTest extends AbstractDbTestCase
         // then
         $this->assertGreaterThan(0, $id);
 
-        $entry = $this->connection->createQueryBuilder()
-            ->select('*')
-            ->from('alliance_history')
-            ->where('history_id = ' . $id)
-            ->execute()
-            ->fetchAssociative();
+        $entry = $this->getConnection()->fetchAssociative('SELECT * FROM alliance_history WHERE history_id = :id', ['id' => $id]);
 
         $this->assertNotFalse($entry);
         $this->assertEquals($allianceId, $entry['history_alliance_id']);

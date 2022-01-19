@@ -2,13 +2,13 @@
 
 namespace EtoA\Quest;
 
-use EtoA\AbstractDbTestCase;
 use EtoA\Quest\Entity\Quest;
 use EtoA\Quest\Entity\Task;
+use EtoA\SymfonyWebTestCase;
 use LittleCubicleGames\Quests\Storage\QuestNotFoundException;
 use LittleCubicleGames\Quests\Workflow\QuestDefinitionInterface;
 
-class QuestRepositoryTest extends AbstractDbTestCase
+class QuestRepositoryTest extends SymfonyWebTestCase
 {
     private QuestRepository $repository;
 
@@ -16,7 +16,7 @@ class QuestRepositoryTest extends AbstractDbTestCase
     {
         parent::setUp();
 
-        $this->repository = $this->app[QuestRepository::class];
+        $this->repository = self::getContainer()->get(QuestRepository::class);
     }
 
     public function testSave(): void

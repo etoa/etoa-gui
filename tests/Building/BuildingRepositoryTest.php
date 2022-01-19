@@ -2,9 +2,9 @@
 
 namespace EtoA\Building;
 
-use EtoA\AbstractDbTestCase;
+use EtoA\SymfonyWebTestCase;
 
-class BuildingRepositoryTest extends AbstractDbTestCase
+class BuildingRepositoryTest extends SymfonyWebTestCase
 {
     private BuildingRepository $repository;
 
@@ -12,7 +12,7 @@ class BuildingRepositoryTest extends AbstractDbTestCase
     {
         parent::setUp();
 
-        $this->repository = $this->app[BuildingRepository::class];
+        $this->repository = self::getContainer()->get(BuildingRepository::class);
     }
 
     public function testGetUserHighestLevelNoBuilding(): void

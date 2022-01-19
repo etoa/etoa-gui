@@ -14,7 +14,7 @@ class FleetControllerTest extends SymfonyWebTestCase
 
         $client->request('GET', '/admin/fleets/');
 
-        $this->assertSame(200, $client->getResponse()->getStatusCode(), $client->getResponse()->getContent());
+        $this->assertStatusCode(200, $client->getResponse());
     }
 
     public function testNew(): void
@@ -25,7 +25,7 @@ class FleetControllerTest extends SymfonyWebTestCase
 
         $client->request('GET', '/admin/fleets/new');
 
-        $this->assertSame(200, $client->getResponse()->getStatusCode(), $client->getResponse()->getContent());
+        $this->assertStatusCode(200, $client->getResponse());
     }
 
     public function testSendShips(): void
@@ -36,7 +36,7 @@ class FleetControllerTest extends SymfonyWebTestCase
 
         $client->request('GET', '/admin/fleets/send-ships');
 
-        $this->assertSame(200, $client->getResponse()->getStatusCode(), $client->getResponse()->getContent());
+        $this->assertStatusCode(200, $client->getResponse());
     }
 
     public function testOptions(): void
@@ -47,6 +47,6 @@ class FleetControllerTest extends SymfonyWebTestCase
 
         $client->request('GET', '/admin/fleets/options');
 
-        $this->assertSame(200, $client->getResponse()->getStatusCode(), $client->getResponse()->getContent());
+        $this->assertStatusCode(200, $client->getResponse());
     }
 }

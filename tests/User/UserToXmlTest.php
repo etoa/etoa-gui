@@ -2,9 +2,9 @@
 
 namespace EtoA\User;
 
-use EtoA\WebTestCase;
+use EtoA\SymfonyWebTestCase;
 
-class UserToXmlTest extends WebTestCase
+class UserToXmlTest extends SymfonyWebTestCase
 {
     private UserToXml $userToXml;
     private UserService $service;
@@ -13,8 +13,8 @@ class UserToXmlTest extends WebTestCase
     {
         parent::setUp();
 
-        $this->userToXml = $this->app[UserToXml::class];
-        $this->service = $this->app[UserService::class];
+        $this->userToXml = self::getContainer()->get(UserToXml::class);
+        $this->service = self::getContainer()->get(UserService::class);
     }
 
     public function testGenerate(): void

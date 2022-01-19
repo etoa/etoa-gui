@@ -2,9 +2,9 @@
 
 namespace EtoA\Universe\Planet;
 
-use EtoA\AbstractDbTestCase;
+use EtoA\SymfonyWebTestCase;
 
-class PlanetTypeRepositoryTest extends AbstractDbTestCase
+class PlanetTypeRepositoryTest extends SymfonyWebTestCase
 {
     private PlanetTypeRepository $repository;
 
@@ -12,7 +12,7 @@ class PlanetTypeRepositoryTest extends AbstractDbTestCase
     {
         parent::setUp();
 
-        $this->repository = $this->app[PlanetTypeRepository::class];
+        $this->repository = self::getContainer()->get(PlanetTypeRepository::class);
     }
 
     public function testGetPlanetTypeNames(): void

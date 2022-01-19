@@ -2,9 +2,9 @@
 
 namespace EtoA\Building;
 
-use EtoA\AbstractDbTestCase;
+use EtoA\SymfonyWebTestCase;
 
-class BuildingDataRepositoryTest extends AbstractDbTestCase
+class BuildingDataRepositoryTest extends SymfonyWebTestCase
 {
     private BuildingDataRepository $repository;
 
@@ -12,7 +12,7 @@ class BuildingDataRepositoryTest extends AbstractDbTestCase
     {
         parent::setUp();
 
-        $this->repository = $this->app[BuildingDataRepository::class];
+        $this->repository = self::getContainer()->get(BuildingDataRepository::class);
     }
 
     public function testGetBuildingNames(): void

@@ -2,9 +2,9 @@
 
 namespace EtoA\Technology;
 
-use EtoA\AbstractDbTestCase;
+use EtoA\SymfonyWebTestCase;
 
-class TechnologyPointRepositoryTest extends AbstractDbTestCase
+class TechnologyPointRepositoryTest extends SymfonyWebTestCase
 {
     private TechnologyPointRepository $repository;
 
@@ -12,7 +12,7 @@ class TechnologyPointRepositoryTest extends AbstractDbTestCase
     {
         parent::setUp();
 
-        $this->repository = $this->app[TechnologyPointRepository::class];
+        $this->repository = self::getContainer()->get(TechnologyPointRepository::class);
     }
 
     public function testGetAllMap(): void
