@@ -23,6 +23,10 @@ class UserServiceTest extends WebTestCase
 
         $this->mailer = $this->createMock(\Swift_Mailer::class);
         $this->mailSenderService->setMailer($this->mailer);
+
+        $this->mailer
+            ->method('send')
+            ->willReturn(1);
     }
 
     public function testRegister(): void

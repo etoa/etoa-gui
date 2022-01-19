@@ -3,9 +3,7 @@
 namespace EtoA\Controller\Admin;
 
 use EtoA\Alliance\Alliance;
-use EtoA\Alliance\AllianceDiplomacyRepository;
 use EtoA\Alliance\AllianceImageStorage;
-use EtoA\Alliance\AllianceRankRepository;
 use EtoA\Alliance\AllianceRepository;
 use EtoA\Alliance\AllianceService;
 use EtoA\Alliance\InvalidAllianceParametersException;
