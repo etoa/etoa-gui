@@ -5,6 +5,7 @@ includes:
     - vendor/phpstan/phpstan-strict-rules/rules.neon
     - vendor/phpstan/phpstan-deprecation-rules/rules.neon
     - vendor/phpstan/phpstan-webmozart-assert/extension.neon
+    - vendor/phpstan/phpstan-symfony/extension.neon
 
 parameters:
     level: 6
@@ -58,3 +59,6 @@ parameters:
 
         - '#Form::getFields\(\) return type has no value type specified in iterable type array#'
         - '#Call to deprecated method getUsername\(\) of class EtoA\\Security\\Admin\\CurrentAdmin#'
+
+    symfony:
+        containerXmlPath: var/cache/dev/EtoA_KernelDevDebugContainer.xml
