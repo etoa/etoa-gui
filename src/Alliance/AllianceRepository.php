@@ -397,7 +397,7 @@ class AllianceRepository extends AbstractRepository
     public function findAllWithoutFounder(): array
     {
         return $this->getConnection()
-            ->executeQuery(
+            ->fetchAllAssociative(
                 "SELECT
                     alliance_id,
                     alliance_name,
@@ -408,8 +408,7 @@ class AllianceRepository extends AbstractRepository
                     FROM users u
                     WHERE a.alliance_founder_id = u.user_id
                 );"
-            )
-            ->fetchAllAssociative();
+            );
     }
 
     /**
@@ -418,7 +417,7 @@ class AllianceRepository extends AbstractRepository
     public function findAllWithoutUsers(): array
     {
         return $this->getConnection()
-            ->executeQuery(
+            ->fetchAllAssociative(
                 "SELECT
                     alliance_id,
                     alliance_name,
@@ -429,8 +428,7 @@ class AllianceRepository extends AbstractRepository
                     FROM users u
                     WHERE a.alliance_id = u.user_alliance_id
                 );"
-            )
-            ->fetchAllAssociative();
+            );
     }
 
     public function countUsers(int $allianceId): int
@@ -516,7 +514,7 @@ class AllianceRepository extends AbstractRepository
     public function findAllSoloUsers(): array
     {
         return $this->getConnection()
-            ->executeQuery(
+            ->fetchAllAssociative(
                 "SELECT
                     user_id,
                     user_nick,
@@ -529,8 +527,7 @@ class AllianceRepository extends AbstractRepository
                         FROM alliances a
                         WHERE a.alliance_id = u.user_alliance_id
                     );"
-            )
-            ->fetchAllAssociative();
+            );
     }
 
     public function updateResources(

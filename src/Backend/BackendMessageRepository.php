@@ -24,10 +24,9 @@ class BackendMessageRepository extends AbstractRepository
     public function getMessageQueueSize(): int
     {
         return (int) $this->getConnection()
-            ->executeQuery(
+            ->fetchOne(
                 "SELECT COUNT(id)
                 FROM backend_message_queue;"
-            )
-            ->fetchOne();
+            );
     }
 }

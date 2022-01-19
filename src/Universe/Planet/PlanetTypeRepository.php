@@ -105,7 +105,7 @@ class PlanetTypeRepository extends AbstractRepository
     public function getNumberOfOwnedPlanetsByType(): array
     {
         $data = $this->getConnection()
-            ->executeQuery(
+            ->fetchAllAssociative(
                 "SELECT
                     planet_types.type_name as name,
                     COUNT(planets.planet_type_id) as cnt
@@ -128,8 +128,7 @@ class PlanetTypeRepository extends AbstractRepository
                     planet_types.type_id
                 ORDER BY
                     cnt DESC;"
-            )
-            ->fetchAllAssociative();
+            );
 
         return array_map(fn ($arr) => [
             'name' => (string) $arr['name'],

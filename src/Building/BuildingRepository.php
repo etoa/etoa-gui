@@ -574,7 +574,7 @@ class BuildingRepository extends AbstractRepository
     public function getOverallCount(): array
     {
         $data = $this->getConnection()
-            ->executeQuery(
+            ->fetchAllAssociative(
                 "SELECT
                     buildings.building_name as name,
                     SUM(buildlist.buildlist_current_level) as cnt
@@ -597,8 +597,7 @@ class BuildingRepository extends AbstractRepository
                     buildings.building_id
                 ORDER BY
                     cnt DESC;"
-            )
-            ->fetchAllAssociative();
+            );
 
         return array_map(fn ($arr) => [
             'name' => (string) $arr['name'],
@@ -612,7 +611,7 @@ class BuildingRepository extends AbstractRepository
     public function getBestLevels(): array
     {
         $data = $this->getConnection()
-            ->executeQuery(
+            ->fetchAllAssociative(
                 "SELECT
                     buildings.building_name as name,
                     MAX(buildlist.buildlist_current_level) as max
@@ -635,8 +634,7 @@ class BuildingRepository extends AbstractRepository
                     buildings.building_id
                 ORDER BY
                     max DESC;"
-            )
-            ->fetchAllAssociative();
+            );
 
         return array_map(fn ($arr) => [
             'name' => (string) $arr['name'],

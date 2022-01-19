@@ -480,7 +480,7 @@ class ShipRepository extends AbstractRepository
     public function getOverallCount(): array
     {
         $data = $this->getConnection()
-            ->executeQuery(
+            ->fetchAllAssociative(
                 "SELECT
                     ships.ship_name as name,
                     SUM(shiplist.shiplist_count+shiplist.shiplist_bunkered) as cnt,
@@ -505,8 +505,7 @@ class ShipRepository extends AbstractRepository
                     ships.ship_id
                 ORDER BY
                     cnt DESC;"
-            )
-            ->fetchAllAssociative();
+            );
 
         return array_map(fn ($arr) => [
             'name' => (string) $arr['name'],
@@ -521,7 +520,7 @@ class ShipRepository extends AbstractRepository
     public function getSpecialShipStats(): array
     {
         $data = $this->getConnection()
-            ->executeQuery(
+            ->fetchAllAssociative(
                 "SELECT
                     ships.ship_name as name,
                     MAX(shiplist.shiplist_special_ship_level) as level,
@@ -546,8 +545,7 @@ class ShipRepository extends AbstractRepository
                     ships.ship_id
                 ORDER BY
                     exp DESC;"
-            )
-            ->fetchAllAssociative();
+            );
 
         return array_map(fn ($arr) => [
             'name' => (string) $arr['name'],

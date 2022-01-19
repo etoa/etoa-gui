@@ -11,18 +11,17 @@ class NotepadRepository extends AbstractRepository
     public function count(int $userId): int
     {
         return (int) $this->getConnection()
-            ->executeQuery(
+            ->fetchOne(
                 "SELECT COUNT(id)
                 FROM notepad
                 WHERE user_id = :userId;",
                 ['userId' => $userId]
-            )
-            ->fetchOne();
+            );
     }
 
     public function find(int $noteId, int $userId): ?Note
     {
-        $data = $this->getConnection()->executeQuery(
+        $data = $this->getConnection()->fetchAssociative(
             "SELECT
                 n.id,
                 n.timestamp,
@@ -39,7 +38,7 @@ class NotepadRepository extends AbstractRepository
                 'noteId' => $noteId,
                 'userId' => $userId,
             ]
-        )->fetchAssociative();
+        );
 
         return $data !== false ? new Note($data) : null;
     }
@@ -49,7 +48,7 @@ class NotepadRepository extends AbstractRepository
      */
     public function findAll(int $userId): array
     {
-        $data = $this->getConnection()->executeQuery(
+        $data = $this->getConnection()->fetchAllAssociative(
             "SELECT
                 n.id,
                 n.timestamp,
@@ -66,7 +65,7 @@ class NotepadRepository extends AbstractRepository
             [
                 'userId' => $userId,
             ]
-        )->fetchAllAssociative();
+        );
 
         return array_map(fn (array $arr) => new Note($arr), $data);
     }
