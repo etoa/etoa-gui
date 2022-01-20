@@ -1,0 +1,11 @@
+{% extends 'admin/layout/admin.html.twig' %}
+
+{% block content %}
+    <h1>Titel Rangliste</h1>
+
+    {% if stats %}
+        {{ stats|raw }}
+    {% else %}
+        {{ macros.messagebox('Die Liste wurde noch nicht erstellt! Bitte das nächste Statistikupdate abwarten', 'error') }}
+    {% endif %}
+{% endblock %}

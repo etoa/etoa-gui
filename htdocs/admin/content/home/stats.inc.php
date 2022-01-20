@@ -67,21 +67,11 @@ if ($mode == "titles") {
 
 echo "</table><br/>";
 
-if ($mode == "titles") {
-    /** @var UserTitlesService $userTitlesService */
-    $userTitlesService = $app[UserTitlesService::class];
-    if (!file_exists($userTitlesService->getUserTitlesAdminCacheFilePath())) {
-        echo "<b>Fehler! Die Liste wurde noch nicht erstellt! Bitte das nächste Statistikupdate abwarten.<br/><br/>";
-    } else {
-       include($userTitlesService->getUserTitlesAdminCacheFilePath());
-    }
-}
-
 //
 // Allianzen
 //
 
-elseif ($mode == "alliances") {
+if ($mode == "alliances") {
     echo "<table class=\"tb\">";
     echo "<tr><th colspan=\"7\" style=\"text-align:center\">Allianzrangliste</th></tr>";
     echo "<tr>";

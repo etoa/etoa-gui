@@ -6,13 +6,24 @@ use EtoA\SymfonyWebTestCase;
 
 class StatsControllerTest extends SymfonyWebTestCase
 {
-    public function testSearch(): void
+    public function testUsers(): void
     {
         $client = self::createClient();
 
         $this->loginAdmin($client);
 
         $client->request('GET', '/admin/stats/users');
+
+        $this->assertStatusCode(200, $client->getResponse());
+    }
+
+    public function testTitles(): void
+    {
+        $client = self::createClient();
+
+        $this->loginAdmin($client);
+
+        $client->request('GET', '/admin/stats/titles');
 
         $this->assertStatusCode(200, $client->getResponse());
     }

@@ -2,6 +2,7 @@
 
 namespace EtoA\Controller\Admin;
 
+use EtoA\Ranking\UserTitlesService;
 use EtoA\User\UserStat;
 use EtoA\User\UserStatRepository;
 use EtoA\User\UserStatSearch;
@@ -13,6 +14,7 @@ class StatsController extends AbstractAdminController
 {
     public function __construct(
         private UserStatRepository $userStatsRepository,
+        private UserTitlesService $userTitlesService,
     ) {
     }
 
@@ -68,6 +70,19 @@ class StatsController extends AbstractAdminController
             'technologyStats' => $technologyStats,
             'buildingStats' => $buildingStats,
             'expStats' => $expStats,
+        ]);
+    }
+
+    #[Route("/admin/stats/titles", name: 'admin.stats.titles')]
+    public function titles(): Response
+    {
+        $stats = null;
+        if (file_exists($this->userTitlesService->getUserTitlesAdminCacheFilePath())) {
+            $stats = file_get_contents($this->userTitlesService->getUserTitlesAdminCacheFilePath());
+        }
+
+        return $this->render('admin/stats/titles.html.twig', [
+            'stats' => $stats,
         ]);
     }
 }
