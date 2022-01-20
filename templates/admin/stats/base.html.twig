@@ -1,0 +1,54 @@
+{% extends 'admin/layout/admin.html.twig' %}
+
+{% block content %}
+    <h1>Rangliste</h1>
+
+
+    <table class="tbl">
+        <tr>
+            <td class="statsTab">
+                <a href="{{ path('admin.stats.users') }}" class="tabDefault">Spieler</a>
+            </td>
+            <td class="statsTab">
+                <a href="{{ path('admin.stats.battles') }}" class="tabDefault">Kampf</a>
+            </td>
+            <td class="statsTab">
+                <a href="{{ path('admin.stats.trade') }}" class="tabDefault">Handle</a>
+            </td>
+            <td class="statsTab">
+                <a href="{{ path('admin.stats.diplomacy') }}" class="tabDefault">Diplomatie</a>
+            </td>
+            <td class="statsTab">
+                <a href="{{ path('admin.stats.alliances') }}" class="tabDefault">Allianzen</a>
+            </td>
+            <td class="statsTab">
+                <a href="{{ path('admin.stats.titles') }}" class="tabDefault">Titel</a>
+            </td>
+        </tr>
+    </table>
+
+    {% block statsContent %}{% endblock %}
+
+    <div style="text-align:center;padding:10px;">
+        Die Aktualisierung der Punkte erfolgt
+        {% set h = configValue('points_update') / 3600 %}
+        {% if h > 1 %}
+            alle {{ h}} Stunden!
+        {% elseif h == 1 %}
+            jede Stunde!
+        {% else %}
+            alle {{ configValue('points_update') / 60 }} Minuten!
+        {% endif %}
+        <br />
+
+        {% set statsUpdate = runtimeValue('statsupdate') %}
+        {% if statsUpdate %}
+            <p>Letzte Aktualisierung: <b>{{ formatTimestamp(statsUpdate + 0) }} Uhr</b></p>
+        {% endif %}
+
+        <b>Legende:</b>
+        <span class="userLockedColor">Gesperrt</span>,
+        <span class="userHolidayColor">Urlaubsmodus</span>,
+        <span class="userInactiveColor">Inaktiv ({{ configValue('user_inactive_days') }} Tage)</span>
+    </div>
+{% endblock %}

@@ -2,6 +2,8 @@
 
 namespace EtoA\Controller\Admin;
 
+use EtoA\Alliance\AllianceStatsRepository;
+use EtoA\Alliance\AllianceStatsSort;
 use EtoA\Ranking\UserTitlesService;
 use EtoA\User\UserRating;
 use EtoA\User\UserRatingRepository;
@@ -18,6 +20,7 @@ class StatsController extends AbstractAdminController
         private UserStatRepository $userStatsRepository,
         private UserTitlesService $userTitlesService,
         private UserRatingRepository $userRatingRepository,
+        private AllianceStatsRepository $allianceStatsRepository,
     ) {
     }
 
@@ -73,6 +76,26 @@ class StatsController extends AbstractAdminController
             'technologyStats' => $technologyStats,
             'buildingStats' => $buildingStats,
             'expStats' => $expStats,
+        ]);
+    }
+
+    #[Route("/admin/stats/alliances", name: 'admin.stats.alliances')]
+    public function alliances(Request $request): Response
+    {
+        $sorts = [
+            'points' => 'points',
+            'average' => 'uavg',
+            'user' => 'cnt',
+            'buildings' => 'bpoints',
+            'tech' => 'tpoints',
+            'ships' => 'spoints',
+            'base' => 'apoints',
+        ];
+        $sort = isset($sorts[$request->query->getAlnum('sort')]) ? $request->query->getAlnum('sort') : 'points';
+        $order = $request->query->get('order') === 'ASC' ? 'ASC' : 'DESC';
+
+        return $this->render('admin/stats/alliance.html.twig', [
+            'allianceStats' => $this->allianceStatsRepository->getStats(AllianceStatsSort::create()->withSort($sorts[$sort], $order)),
         ]);
     }
 

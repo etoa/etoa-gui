@@ -8,6 +8,7 @@ use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\HostCache\NetworkNameService;
 use EtoA\Support\BBCodeUtils;
 use EtoA\Support\ExternalUrl;
+use EtoA\Support\RuntimeDataStore;
 use EtoA\Support\StringUtils;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
@@ -19,7 +20,8 @@ class TwigExtension extends AbstractExtension
 
     public function __construct(
         private ConfigurationService $config,
-        private NetworkNameService $networkNameService
+        private NetworkNameService $networkNameService,
+        private RuntimeDataStore $runtimeDataStore,
     ) {
         $this->startTime = microtime(true);
     }
@@ -35,6 +37,7 @@ class TwigExtension extends AbstractExtension
             new TwigFunction('onClick', [$this, 'getOnClick']),
             new TwigFunction('BBCodeToHTML', [$this, 'BBCodeToHTML']),
             new TwigFunction('configValue', [$this, 'getConfigValue']),
+            new TwigFunction('runtimeValue', [$this, 'getRuntimeValue']),
             new TwigFunction('isAdminAllowed', [$this, 'isAdminAllowed']),
             new TwigFunction('getAdminRoles', [$this, 'getAdminRoles']),
             new TwigFunction('renderTime', [$this, 'renderTime']),
@@ -121,6 +124,11 @@ class TwigExtension extends AbstractExtension
     public function getConfigValue(string $key): string
     {
         return $this->config->get($key);
+    }
+
+    public function getRuntimeValue(string $key): string
+    {
+        return (string) $this->runtimeDataStore->get($key);
     }
 
     /**

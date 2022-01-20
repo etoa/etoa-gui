@@ -1,7 +1,7 @@
-{% extends 'admin/layout/admin.html.twig' %}
+{% extends 'admin/stats/base.html.twig' %}
 
-{% block content %}
-    <h1>Titel Rangliste</h1>
+{% block statsContent %}
+    <h2>Titel</h2>
 
     {% if stats %}
         {{ stats|raw }}
