@@ -96,6 +96,16 @@ class StatsController extends AbstractAdminController
         ]);
     }
 
+    #[Route("/admin/stats/diplomacy", name: 'admin.stats.diplomacy')]
+    public function diplomacy(): Response
+    {
+        $ratings = $this->userRatingRepository->getDiplomacyRating();
+
+        return $this->render('admin/stats/diplomacy.html.twig', [
+            'ratings' => array_filter($ratings, fn (UserRating $rating) => $rating->rating > 0),
+        ]);
+    }
+
     #[Route("/admin/stats/titles", name: 'admin.stats.titles')]
     public function titles(): Response
     {
