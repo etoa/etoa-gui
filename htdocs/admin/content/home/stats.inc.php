@@ -29,36 +29,6 @@ $mode = isset($_GET['mode']) && $_GET['mode'] != "" ? $_GET['mode'] : "user";
 // Menü
 echo "<br/><table class=\"tbl\">";
 
-if ($mode == "user") {
-    echo "<tr><td class=\"statsTab\" ><a href=\"?page=$page&amp;sub=$sub&amp;mode=user\" class=\"tabEnabled\">Spieler</a></td>";
-} else {
-    echo "<tr><td class=\"statsTab\" ><a href=\"?page=$page&amp;sub=$sub&amp;mode=user\" class=\"tabDefault\">Spieler</a></td>";
-}
-
-if ($mode == "ships") {
-    echo "<td class=\"statsTab\" ><a href=\"?page=$page&amp;sub=$sub&amp;mode=ships\" class=\"tabEnabled\">Flotten</a></td>";
-} else {
-    echo "<td class=\"statsTab\" ><a href=\"?page=$page&amp;sub=$sub&amp;mode=ships\" class=\"tabDefault\">Flotten</a></td>";
-}
-
-if ($mode == "tech") {
-    echo "<td class=\"statsTab\" ><a href=\"?page=$page&amp;sub=$sub&amp;mode=tech\" class=\"tabEnabled\">Technologien</a></td>";
-} else {
-    echo "<td class=\"statsTab\" ><a href=\"?page=$page&amp;sub=$sub&amp;mode=tech\" class=\"tabDefault\">Technologien</a></td>";
-}
-
-if ($mode == "buildings") {
-    echo "<td class=\"statsTab\" ><a href=\"?page=$page&amp;sub=$sub&amp;mode=buildings\" class=\"tabEnabled\">Geb&auml;ude</a></td>";
-} else {
-    echo "<td class=\"statsTab\" ><a href=\"?page=$page&amp;sub=$sub&amp;mode=buildings\" class=\"tabDefault\">Geb&auml;ude</a></td>";
-}
-
-if ($mode == "exp") {
-    echo "<td class=\"statsTab\" ><a href=\"?page=$page&amp;sub=$sub&amp;mode=exp\" class=\"tabEnabled\">Exp</a></td>";
-} else {
-    echo "<td class=\"statsTab\" ><a href=\"?page=$page&amp;sub=$sub&amp;mode=exp\" class=\"tabDefault\">Exp</a></td>";
-}
-
 if ($mode == "battle") {
     echo "<td class=\"statsTab\" ><a href=\"?page=$page&amp;sub=$sub&amp;mode=battle\" class=\"tabEnabled\">Kampf</a></td>";
 } else {
@@ -366,94 +336,6 @@ elseif ($mode == "diplomacy" || $mode == "battle" || $mode == "trade") {
         }
         echo "</table><br/>";
     }
-}
-
-//
-// Calculated points
-//
-else {
-    echo "<form action=\"?page=$page&amp;sub=$sub&amp;mode=$mode\" method=\"post\">";
-    echo "<table class=\"tbl\">";
-    echo "<tr><td class=\"tbldata\" colspan=\"5\">";
-    echo "Suche nach Spieler: <input type=\"text\" class=\"search\" name=\"user_nick\" value=\"" . (isset($_POST['user_nick']) ? $_POST['user_nick'] : '') . "\" size=\"20\" />
-        <input type=\"submit\" name=\"search\" value=\"Suchen\" />";
-    if (isset($_POST['user_nick'])) {
-        echo " &nbsp; <input type=\"button\" onclick=\"document.location='?page=$page&amp;sub=$sub&amp;mode=$mode'\" value=\"Reset\" />";
-    }
-    echo "</td></tr></table></form><br/>";
-
-    $limit = 0;
-
-    // Punktetabelle
-    if ($mode == "ships") {
-        $search = UserStatSearch::ships();
-        $title = "Schiffspunkte";
-    } elseif ($mode == "tech") {
-        $search = UserStatSearch::technologies();
-        $title = "Technologiepunkte";
-    } elseif ($mode == "buildings") {
-        $search = UserStatSearch::buildings();
-        $title = "Gebäudepunkte";
-    } elseif ($mode == "exp") {
-        $search = UserStatSearch::exp();
-        $title = "Erfahrungspunkte";
-    } else {
-        $search = UserStatSearch::points();
-        $title = "Gesamtpunkte";
-    }
-    if (isset($_POST['search']) && $_POST['search'] != "" && $_POST['user_nick'] != "") {
-        $search->nick($_POST['user_nick']);
-    }
-
-    $stats = $userStatsRepository->searchStats($search);
-
-    echo "<table class=\"tb\">";
-    if (count($stats) > 0) {
-        echo "<tr><th colspan=\"7\" style=\"text-align:center;\">" . $title . "</th></tr>";
-        echo "<tr>
-                <th style=\"width:50px;\">#</th>
-                <th style=\"\">Nick</th>
-                <th style=\"\">Rasse</th>
-                <th style=\"\">Sektor</th>
-                <th style=\"\">Allianz</th>
-                <th style=\"\">Punkte</th>
-                <th style=\"width:60px;\">Details</th>
-            </tr>";
-        foreach ($stats as $stat) {
-            if ($stat->blocked) {
-                $addstyle = " style=\"color:#ffaaaa;\"";
-            } elseif ($stat->hmod) {
-                $addstyle = " style=\"color:#aaffaa;\"";
-            } elseif ($stat->inactive) {
-                $addstyle = " style=\"color:#aaaaaa;\"";
-            } else {
-                $addstyle = "";
-            }
-            echo "<tr>";
-
-            echo "<td $addstyle  align=\"right\">" . StringUtils::formatNumber($stat->rank) . "";
-            if ($stat->shift === 2)
-                echo "<img src=\"../images/stats/stat_down.gif\" alt=\"down\" width=\"9\" height=\"12\" />";
-            elseif ($stat->shift === 1)
-                echo "<img src=\"../images/stats/stat_up.gif\" alt=\"up\" width=\"9\" height=\"11\" />";
-            else
-                echo "<img src=\"../images/stats/stat_same.gif\" alt=\"same\" width=\"21\" height=\"9\" />";
-            echo "</td>";
-            echo "<td $addstyle >" . $stat->nick . "</td>";
-            echo "<td $addstyle >" . $stat->raceName . "</td>";
-            echo "<td  $addstyle >" . $stat->sx . "/" . $stat->sy . "</td>";
-            echo "<td  $addstyle >" . $stat->allianceTag . "</td>";
-            echo "<td $addstyle >" . StringUtils::formatNumber($stat->points) . "</td>";
-            echo "<td $addstyle >
-                " . edit_button("?page=user&amp;sub=edit&amp;id=" . $stat->id . "") . "
-                </td>";
-            echo "</tr>";
-        }
-    } else
-        echo "<tr><td align=\"center\" ><i>Es wurde keine User gefunden!</i></tr>";
-    echo "</table><br/>";
-
-    echo "<script type=\"text/javascript\">document.forms[1].elements[0].select();</script>";
 }
 
 //

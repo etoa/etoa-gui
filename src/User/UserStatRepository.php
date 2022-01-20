@@ -75,6 +75,7 @@ class UserStatRepository extends AbstractRepository
                 rankshift_exp
             ) VALUES ' . $insertRow, $parameters);
     }
+
     public function count(): int
     {
         return (int) $this->createQueryBuilder()
