@@ -86,6 +86,16 @@ class StatsController extends AbstractAdminController
         ]);
     }
 
+    #[Route("/admin/stats/trade", name: 'admin.stats.trade')]
+    public function trade(): Response
+    {
+        $ratings = $this->userRatingRepository->getTradeRating();
+
+        return $this->render('admin/stats/trade.html.twig', [
+            'ratings' => array_filter($ratings, fn (UserRating $rating) => $rating->rating > 0),
+        ]);
+    }
+
     #[Route("/admin/stats/titles", name: 'admin.stats.titles')]
     public function titles(): Response
     {

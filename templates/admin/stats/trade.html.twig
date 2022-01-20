@@ -1,0 +1,33 @@
+{% extends 'admin/layout/admin.html.twig' %}
+
+{% block content %}
+    <h1>Spieler Handelswertung</h1>
+
+    <table class="full-width">
+        <tr>
+            <th>#</th>
+            <th>Nick</th>
+            <th>Rasse</th>
+            <th>Allianz</th>
+            <th>Einkäufe</th>
+            <th>Verkäufe</th>
+            <th>Bewertung</th>
+        </tr>
+
+        {% for rating in ratings %}
+            <tr>
+                <td>{{ loop.index }}</td>
+                <td>{{ rating.userNick }}</td>
+                <td>{{ rating.raceName }}</td>
+                <td>{{ rating.allianceTag }}</td>
+                <td>{{ formatNumber(rating.tradesBuy) }}</td>
+                <td>{{ formatNumber(rating.tradesSell) }}</td>
+                <td>{{ formatNumber(rating.rating) }}</td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="99"><p>Keine Spieler gefunden</p></td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}

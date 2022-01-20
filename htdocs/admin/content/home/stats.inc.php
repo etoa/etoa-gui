@@ -247,44 +247,6 @@ elseif ($mode == "diplomacy" || $mode == "battle" || $mode == "trade") {
             echo "<tr><td align=\"center\" colspan=\"8\"><i>Es wurde keine User gefunden!</i></tr>";
         }
         echo "</table><br/>";
-    } elseif ($mode == "trade") {
-        $ratings = $userRatingRepository->getTradeRating();
-        echo "<table class=\"tb\">";
-        echo "<tr><th colspan=\"9\" style=\"text-align:center\">Handelswertung</th></tr>";
-        $cnt = 1;
-        if (count($ratings) > 0) {
-            echo "<tr>
-                        <th style=\"width:50px;\">#</th>
-                        <th style=\"\">Nick</th>
-                        <th style=\"\">Rasse</th>
-                        <th style=\"\">Allianz</th>
-                        <th style=\"\">Einkäufe</th>
-                        <th style=\"\">Verkäufe</th>
-                        <th style=\"\">Bewertung</th>
-                        <th style=\"width:60px;\">Details</th>
-                    </tr>";
-            foreach ($ratings as $rating) {
-                if ($rating->rating > 0) {
-                    echo "<tr>";
-                    echo "<td>" . $cnt . "</td>";
-                    echo "<td>" . $rating->userNick . "</td>";
-                    echo "<td>" . $rating->raceName . "</td>";
-                    echo "<td >" . $rating->allianceTag . "</td>";
-                    echo "<td>" . StringUtils::formatNumber($rating->tradesBuy) . "</td>";
-                    echo "<td>" . StringUtils::formatNumber($rating->tradesSell) . "</td>";
-                    echo "<td>" . StringUtils::formatNumber($rating->rating) . "</td>";
-                    echo "<td>
-                            " . edit_button("?page=user&amp;sub=edit&amp;id=" . $rating->userId . "") . "
-                            </td>";
-                    echo "</tr>";
-                    $cnt++;
-                }
-            }
-        }
-        if ($cnt == 1) {
-            echo "<tr><td align=\"center\" colspan=\"8\"><i>Es wurde keine User gefunden!</i></tr>";
-        }
-        echo "</table><br/>";
     }
 }
 
