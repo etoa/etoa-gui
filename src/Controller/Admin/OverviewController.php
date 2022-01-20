@@ -11,6 +11,7 @@ use EtoA\Support\DB\DatabaseManagerRepository;
 use EtoA\Text\TextRepository;
 use EtoA\Universe\Cell\CellRepository;
 use League\CommonMark\MarkdownConverterInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -30,9 +31,8 @@ class OverviewController extends AbstractAdminController
     ) {
     }
 
-    /**
-     * @Route("/admin/overview/", name="admin.overview")
-     */
+    #[Route("/admin/overview/", name: "admin.overview")]
+    #[IsGranted('ROLE_ADMIN_SUPER-ADMIN')]
     public function index(): Response
     {
         $fleetBanTitle = null;
@@ -89,9 +89,8 @@ class OverviewController extends AbstractAdminController
         ]);
     }
 
-    /**
-     * @Route("/admin/overview/changelog", name="admin.overview.changelog")
-     */
+    #[Route("/admin/overview/changelog", name: "admin.overview.changelog")]
+    #[IsGranted('ROLE_ADMIN_TRIAL-ADMIN')]
     public function changelog(): Response
     {
         $changelogFile = __DIR__ . "/../../../Changelog.md";
@@ -103,9 +102,8 @@ class OverviewController extends AbstractAdminController
         ]);
     }
 
-    /**
-     * @Route("/admin/overview/gamestats", name="admin.overview.gamestats")
-     */
+    #[Route("/admin/overview/gamestats", name: "admin.overview.gamestats")]
+    #[IsGranted('ROLE_ADMIN_TRIAL-ADMIN')]
     public function gameStats(): Response
     {
         return $this->render('admin/overview/gamestats.html.twig', [
@@ -115,9 +113,8 @@ class OverviewController extends AbstractAdminController
         ]);
     }
 
-    /**
-     * @Route("/admin/overview/sysinfo", name="admin.overview.sysinfo")
-     */
+    #[Route("/admin/overview/sysinfo", name: "admin.overview.sysinfo")]
+    #[IsGranted('ROLE_ADMIN_SUPER-ADMIN')]
     public function systemInfo(): Response
     {
         $unix = isUnixOS() ? posix_uname() : null;
@@ -130,9 +127,8 @@ class OverviewController extends AbstractAdminController
         ]);
     }
 
-    /**
-     * @Route("/admin/overview/game-offline", name="admin.overview.game-offline")
-     */
+    #[Route("/admin/overview/game-offline", name: "admin.overview.game-offline")]
+    #[IsGranted('ROLE_ADMIN_GAME-ADMIN')]
     public function gameOffline(Request $request): Response
     {
         if ($request->isMethod('POST')) {

@@ -7,6 +7,7 @@ use EtoA\Log\LogRepository;
 use EtoA\Log\LogSeverity;
 use EtoA\Support\DB\DatabaseManagerRepository;
 use EtoA\Support\StringUtils;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -19,9 +20,8 @@ class DatabaseMaintenanceController extends AbstractAdminController
     ) {
     }
 
-    /**
-     * @Route("/admin/db/", name="admin.db")
-     */
+    #[Route("/admin/db/", name: "admin.db")]
+    #[IsGranted('ROLE_ADMIN_GAME-ADMIN')]
     public function overview(Request $request): Response
     {
         $st = $this->databaseManager->getGlobalStatus();
@@ -120,9 +120,8 @@ class DatabaseMaintenanceController extends AbstractAdminController
         ]);
     }
 
-    /**
-     * @Route("/admin/db/optimize", name="admin.db.optimize")
-     */
+    #[Route("/admin/db/optimize", name: "admin.db.optimize")]
+    #[IsGranted('ROLE_ADMIN_GAME-ADMIN')]
     public function optimize(): Response
     {
         $result = $this->databaseManager->optimizeTables();
@@ -136,9 +135,8 @@ class DatabaseMaintenanceController extends AbstractAdminController
         ]);
     }
 
-    /**
-     * @Route("/admin/db/analyze", name="admin.db.analyze")
-     */
+    #[Route("/admin/db/analyze", name: "admin.db.analyze")]
+    #[IsGranted('ROLE_ADMIN_GAME-ADMIN')]
     public function analyze(): Response
     {
         $result = $this->databaseManager->analyzeTables();
@@ -154,9 +152,8 @@ class DatabaseMaintenanceController extends AbstractAdminController
         ]);
     }
 
-    /**
-     * @Route("/admin/db/check", name="admin.db.check")
-     */
+    #[Route("/admin/db/check", name: "admin.db.check")]
+    #[IsGranted('ROLE_ADMIN_GAME-ADMIN')]
     public function check(): Response
     {
         $result = $this->databaseManager->checkTables();
@@ -172,9 +169,8 @@ class DatabaseMaintenanceController extends AbstractAdminController
         ]);
     }
 
-    /**
-     * @Route("/admin/db/repair", name="admin.db.repair")
-     */
+    #[Route("/admin/db/repair", name: "admin.db.repair")]
+    #[IsGranted('ROLE_ADMIN_GAME-ADMIN')]
     public function repair(): Response
     {
         $result = $this->databaseManager->repairTables();

@@ -6,6 +6,7 @@ use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\HostCache\NetworkNameService;
 use EtoA\Log\AccessLogRepository;
 use EtoA\Support\StringUtils;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
@@ -24,17 +25,15 @@ class ToolController extends AbstractAdminController
     ) {
     }
 
-    /**
-     * @Route("/admin/tools/", name="admin.tools.index")
-     */
+    #[Route("/admin/tools/", name: "admin.tools.index")]
+    #[IsGranted('ROLE_ADMIN_GAME-ADMIN')]
     public function index(): Response
     {
         return $this->render('admin/tools/index.html.twig');
     }
 
-    /**
-     * @Route("/admin/tools/filesharing", name="admin.tools.filesharing")
-     */
+    #[Route("/admin/tools/filesharing", name: "admin.tools.filesharing")]
+    #[IsGranted('ROLE_ADMIN_GAME-ADMIN')]
     public function filesharing(): Response
     {
         $files = [];
@@ -54,9 +53,8 @@ class ToolController extends AbstractAdminController
         ]);
     }
 
-    /**
-     * @Route("/admin/tools/filesharing/upload", methods={"POST"}, name="admin.tools.filesharing.upload")
-     */
+    #[Route("/admin/tools/filesharing/upload", name: "admin.tools.filesharing.upload", methods: ['POST'])]
+    #[IsGranted('ROLE_ADMIN_GAME-ADMIN')]
     public function fileUpload(Request $request): Response
     {
         /** @var UploadedFile $file */
@@ -72,9 +70,8 @@ class ToolController extends AbstractAdminController
         return $this->redirectToRoute('admin.tools.filesharing');
     }
 
-    /**
-     * @Route("/admin/tools/filesharing/rename", name="admin.tools.filesharing.rename")
-     */
+    #[Route("/admin/tools/filesharing/rename", name: "admin.tools.filesharing.rename")]
+    #[IsGranted('ROLE_ADMIN_GAME-ADMIN')]
     public function fileRename(Request $request): Response
     {
         if ($request->isMethod('POST')) {
@@ -96,9 +93,8 @@ class ToolController extends AbstractAdminController
         ]);
     }
 
-    /**
-     * @Route("/admin/tools/filesharing/delete", name="admin.tools.filesharing.delete")
-     */
+    #[Route("/admin/tools/filesharing/delete", name: "admin.tools.filesharing.delete")]
+    #[IsGranted('ROLE_ADMIN_GAME-ADMIN')]
     public function deleteFile(Request $request): Response
     {
         $f = base64_decode($request->query->get('file'), true);
@@ -112,9 +108,8 @@ class ToolController extends AbstractAdminController
         return $this->redirectToRoute('admin.tools.filesharing');
     }
 
-    /**
-     * @Route("/admin/tools/accesslog/", name="admin.tools.accesslog")
-     */
+    #[Route("/admin/tools/accesslog/", name: "admin.tools.accesslog")]
+    #[IsGranted('ROLE_ADMIN_MASTER')]
     public function accessLog(): Response
     {
         $logs = [];
@@ -138,9 +133,8 @@ class ToolController extends AbstractAdminController
         ]);
     }
 
-    /**
-     * @Route("/admin/tools/accesslog/toggle", methods={"POST"}, name="admin.tools.accesslog.toggle")
-     */
+    #[Route("/admin/tools/accesslog/toggle", name: "admin.tools.accesslog.toggle", methods: ['POST'])]
+    #[IsGranted('ROLE_ADMIN_MASTER')]
     public function toggleAccessLog(): Response
     {
         $this->config->set("accesslog", !$this->config->getBoolean('accesslog'));
@@ -149,9 +143,8 @@ class ToolController extends AbstractAdminController
         return $this->redirectToRoute('admin.tools.accesslog');
     }
 
-    /**
-     * @Route("/admin/tools/accesslog/truncate", methods={"POST"}, name="admin.tools.accesslog.truncate")
-     */
+    #[Route("/admin/tools/accesslog/truncate", name: "admin.tools.accesslog.truncate", methods: ['POST'])]
+    #[IsGranted('ROLE_ADMIN_MASTER')]
     public function truncateAccessLog(): Response
     {
         $this->accessLogRepository->deleteAll();
@@ -160,9 +153,8 @@ class ToolController extends AbstractAdminController
         return $this->redirectToRoute('admin.tools.accesslog');
     }
 
-    /**
-     * @Route("/admin/tools/ip-resolver", name="admin.tools.ipresolver")
-     */
+    #[Route("/admin/tools/ip-resolver", name: "admin.tools.ipresolver")]
+    #[IsGranted('ROLE_ADMIN_MASTER')]
     public function ipResolver(Request $request): Response
     {
         $ip = null;

@@ -8,6 +8,7 @@ use EtoA\Universe\Entity\EntityRepository;
 use EtoA\User\UserRepository;
 use EtoA\User\UserUniverseDiscoveryService;
 use SectorMapRenderer;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -22,9 +23,8 @@ class GalaxyMapController extends AbstractAdminController
     ) {
     }
 
-    /**
-     * @Route("/admin/universe/map", name="admin.universe.map")
-     */
+    #[Route("/admin/universe/map", name: "admin.universe.map")]
+    #[IsGranted('ROLE_ADMIN_GAME-ADMIN')]
     public function view(Request $request): Response
     {
         $sx_num = $this->config->param1Int('num_of_sectors');

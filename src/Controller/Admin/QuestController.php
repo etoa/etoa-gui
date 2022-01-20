@@ -6,6 +6,7 @@ use EtoA\Quest\DefaultRandomRegistry;
 use EtoA\Quest\QuestPresenter;
 use EtoA\Quest\QuestRepository;
 use LittleCubicleGames\Quests\Workflow\QuestDefinition;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -19,9 +20,8 @@ class QuestController extends AbstractAdminController
     ) {
     }
 
-    /**
-     * @Route("/admin/quests/", name="admin.quests.search")
-     */
+    #[Route("/admin/quests/", name: "admin.quests.search")]
+    #[IsGranted('ROLE_ADMIN_GAME-ADMIN')]
     public function search(Request $request): Response
     {
         $userQuests = [];
@@ -51,9 +51,8 @@ class QuestController extends AbstractAdminController
         ]);
     }
 
-    /**
-     * @Route("/admin/quests/edit/{id}", name="admin.quests.edit")
-     */
+    #[Route("/admin/quests/edit/{id}", name: "admin.quests.edit")]
+    #[IsGranted('ROLE_ADMIN_GAME-ADMIN')]
     public function edit(Request $request, int $id): Response
     {
         if ($request->isMethod('POST')) {
@@ -78,9 +77,8 @@ class QuestController extends AbstractAdminController
         ]);
     }
 
-    /**
-     * @Route("/admin/quests/list", name="admin.quests.list")
-     */
+    #[Route("/admin/quests/list", name: "admin.quests.list")]
+    #[IsGranted('ROLE_ADMIN_GAME-ADMIN')]
     public function list(): Response
     {
         $quests = $this->registry->getQuests();

@@ -10,6 +10,7 @@ use EtoA\Support\DB\DatabaseBackupService;
 use EtoA\Support\DB\DatabaseManagerRepository;
 use EtoA\Support\DB\DatabaseMigrationService;
 use EtoA\Support\DB\SchemaMigrationRepository;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Lock\LockFactory;
@@ -27,9 +28,8 @@ class DatabaseResetController extends AbstractAdminController
     ) {
     }
 
-    /**
-     * @Route("/admin/db/reset", name="admin.db.reset")
-     */
+    #[Route("/admin/db/reset", name: "admin.db.reset")]
+    #[IsGranted('ROLE_ADMIN_SUPER-ADMIN')]
     public function reset(Request $request): Response
     {
         if ($request->isMethod('POST')) {
