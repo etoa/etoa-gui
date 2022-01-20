@@ -8,6 +8,7 @@ use EtoA\PeriodicTask\EnvelopResultExtractor;
 use EtoA\PeriodicTask\PeriodicTaskCollection;
 use EtoA\PeriodicTask\Result\SuccessResult;
 use EtoA\PeriodicTask\Task\PeriodicTaskInterface;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -22,9 +23,8 @@ class CronjobController extends AbstractAdminController
     ) {
     }
 
-    /**
-     * @Route("/admin/cronjob/", name="admin.cronjob")
-     */
+    #[Route("/admin/cronjob/", name: "admin.cronjob")]
+    #[IsGranted('ROLE_ADMIN_GAME-ADMIN')]
     public function view(): Response
     {
         // Cron configuration
@@ -81,9 +81,8 @@ class CronjobController extends AbstractAdminController
         ]);
     }
 
-    /**
-     * @Route("/admin/cronjob/tasks/run", name="admin.cron.tasks.run")
-     */
+    #[Route("/admin/cronjob/tasks/run", name: "admin.cron.tasks.run")]
+    #[IsGranted('ROLE_ADMIN_GAME-ADMIN')]
     public function runTasks(Request $request, MessageBusInterface $messageBus): RedirectResponse
     {
         $tasks = $request->query->has('all') ? $this->taskCollection->getAllTasks() : $this->taskCollection->getScheduledTasks(time());
@@ -96,9 +95,8 @@ class CronjobController extends AbstractAdminController
         return $this->redirectToRoute('admin.cronjob');
     }
 
-    /**
-     * @Route("/admin/cronjob/tasks/{taskName}/run", name="admin.cron.task.run")
-     */
+    #[Route("/admin/cronjob/tasks/{taskName}/run", name: "admin.cron.task.run")]
+    #[IsGranted('ROLE_ADMIN_GAME-ADMIN')]
     public function runTask(string $taskName, MessageBusInterface $messageBus): RedirectResponse
     {
         $task = $this->taskCollection->getTask($taskName);
@@ -124,9 +122,8 @@ class CronjobController extends AbstractAdminController
         }
     }
 
-    /**
-     * @Route("/admin/cronjob/setup", name="admin.cronjob.setup")
-     */
+    #[Route("/admin/cronjob/setup", name: "admin.cronjob.setup")]
+    #[IsGranted('ROLE_ADMIN_GAME-ADMIN')]
     public function setup(): RedirectResponse
     {
         // Enable cronjob
@@ -148,9 +145,8 @@ class CronjobController extends AbstractAdminController
         return $this->redirectToRoute('admin.cronjob');
     }
 
-    /**
-     * @Route("/admin/cronjob/enable", name="admin.cronjob.enable")
-     */
+    #[Route("/admin/cronjob/enable", name: "admin.cronjob.enable")]
+    #[IsGranted('ROLE_ADMIN_GAME-ADMIN')]
     public function enable(): RedirectResponse
     {
         $this->config->set("update_enabled", 1);

@@ -5,6 +5,7 @@ namespace EtoA\Controller\Admin;
 use EtoA\Universe\Cell\CellRepository;
 use EtoA\User\UserRepository;
 use EtoA\User\UserUniverseDiscoveryService;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -18,9 +19,8 @@ class ExplorationController extends AbstractAdminController
     ) {
     }
 
-    /**
-     * @Route("/admin/universe/exploration/", name="admin.universe.exploration")
-     */
+    #[Route("/admin/universe/exploration/", name: "admin.universe.exploration")]
+    #[IsGranted('ROLE_ADMIN_GAME-ADMIN')]
     public function overview(): Response
     {
         $users = $this->userRepository->searchUserNicknames();
@@ -34,9 +34,8 @@ class ExplorationController extends AbstractAdminController
         ]);
     }
 
-    /**
-     * @Route("/admin/universe/exploration/user", name="admin.universe.exploration.user")
-     */
+    #[Route("/admin/universe/exploration/user", name: "admin.universe.exploration.user")]
+    #[IsGranted('ROLE_ADMIN_GAME-ADMIN')]
     public function user(Request $request): Response
     {
         $userId = $request->query->getInt('userId');

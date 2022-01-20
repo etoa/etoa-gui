@@ -24,9 +24,7 @@ class AdminProfileController extends AbstractAdminController
     ) {
     }
 
-    /**
-     * @Route("/admin/profile/", name="admin.profile")
-     */
+    #[Route("/admin/profile/", name: 'admin.profile')]
     public function index(Request $request): Response
     {
         $userData = $this->getUser()->getData();
@@ -47,9 +45,7 @@ class AdminProfileController extends AbstractAdminController
         ]);
     }
 
-    /**
-     * @Route("/admin/profile/password", name="admin.profile.password", methods={"POST"})
-     */
+    #[Route("/admin/profile/password", name: 'admin.profile.password', methods: ['POST'])]
     public function updatePassword(Request $request, UserPasswordHasherInterface $passwordHasher): RedirectResponse
     {
         $adminUser = $this->getUser();

@@ -5,6 +5,7 @@ namespace EtoA\Controller\Admin;
 use EtoA\Backend\BackendMessageRepository;
 use EtoA\Backend\EventHandlerManager;
 use EtoA\Core\Configuration\ConfigurationService;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
@@ -17,9 +18,8 @@ class EventHandlerController extends AbstractAdminController
     ) {
     }
 
-    /**
-     * @Route("/admin/eventhandler/start", name="admin.eventhandler.start")
-     */
+    #[Route("/admin/eventhandler/start", name: "admin.eventhandler.start")]
+    #[IsGranted('ROLE_ADMIN_GAME-ADMIN')]
     public function start(): Response
     {
         try {
@@ -33,9 +33,8 @@ class EventHandlerController extends AbstractAdminController
         return $this->redirectToRoute('admin.eventhandler');
     }
 
-    /**
-     * @Route("/admin/eventhandler/stop", name="admin.eventhandler.stop")
-     */
+    #[Route("/admin/eventhandler/stop", name: "admin.eventhandler.stop")]
+    #[IsGranted('ROLE_ADMIN_GAME-ADMIN')]
     public function stop(): Response
     {
         try {
@@ -48,9 +47,8 @@ class EventHandlerController extends AbstractAdminController
         return $this->redirectToRoute('admin.eventhandler');
     }
 
-    /**
-     * @Route("/admin/eventhandler/", name="admin.eventhandler")
-     */
+    #[Route("/admin/eventhandler/", name: "admin.eventhandler")]
+    #[IsGranted('ROLE_ADMIN_GAME-ADMIN')]
     public function view(): Response
     {
         $eventHandlerPid = null;

@@ -3,6 +3,7 @@
 namespace EtoA\Controller\Admin;
 
 use EtoA\Text\TextRepository;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -15,9 +16,8 @@ class TextController extends AbstractAdminController
     ) {
     }
 
-    /**
-     * @Route("/admin/texts/", name="admin.texts")
-     */
+    #[Route("/admin/texts/", name: "admin.texts")]
+    #[IsGranted('ROLE_ADMIN_GAME-ADMIN')]
     public function overview(): Response
     {
         $texts = [];
@@ -30,9 +30,8 @@ class TextController extends AbstractAdminController
         ]);
     }
 
-    /**
-     * @Route("/admin/texts/{id}/edit", name="admin.texts.edit")
-     */
+    #[Route("/admin/texts/{id}/edit", name: "admin.texts.edit")]
+    #[IsGranted('ROLE_ADMIN_GAME-ADMIN')]
     public function edit(Request $request, string $id): Response
     {
         if ($this->textRepository->isValidTextId($id)) {
@@ -58,9 +57,8 @@ class TextController extends AbstractAdminController
         ]);
     }
 
-    /**
-     * @Route("/admin/texts/{id}/preview", name="admin.texts.preview")
-     */
+    #[Route("/admin/texts/{id}/preview", name: "admin.texts.preview")]
+    #[IsGranted('ROLE_ADMIN_GAME-ADMIN')]
     public function preview(string $id): Response
     {
         if ($this->textRepository->isValidTextId($id)) {
@@ -75,9 +73,8 @@ class TextController extends AbstractAdminController
         ]);
     }
 
-    /**
-     * @Route("/admin/texts/{id}/enable", name="admin.texts.enable")
-     */
+    #[Route("/admin/texts/{id}/enable", name: "admin.texts.enable")]
+    #[IsGranted('ROLE_ADMIN_GAME-ADMIN')]
     public function enable(string $id): RedirectResponse
     {
         if ($this->textRepository->isValidTextId($id)) {
@@ -89,9 +86,8 @@ class TextController extends AbstractAdminController
         return $this->redirectToRoute('admin.texts');
     }
 
-    /**
-     * @Route("/admin/texts/{id}/disable", name="admin.texts.disable")
-     */
+    #[Route("/admin/texts/{id}/disable", name: "admin.texts.disable")]
+    #[IsGranted('ROLE_ADMIN_GAME-ADMIN')]
     public function disable(string $id): RedirectResponse
     {
         if ($this->textRepository->isValidTextId($id)) {

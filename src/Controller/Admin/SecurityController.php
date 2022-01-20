@@ -35,9 +35,7 @@ class SecurityController extends AbstractController
         $this->networkNameService = $networkNameService;
     }
 
-    /**
-     * @Route("/admin/login", methods={"GET"}, name="admin.login")
-     */
+    #[Route("/admin/login", name: "admin.login", methods: ['GET'])]
     public function login(AuthenticationUtils $authenticationUtils): Response
     {
         if ($this->adminUserRepository->count() === 0) {
@@ -50,9 +48,7 @@ class SecurityController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/admin/login/reset", methods={"GET", "POST"}, name="admin.login.reset")
-     */
+    #[Route("/admin/login/reset", name: "admin.login.reset", methods: ['GET', 'POST'])]
     public function resetPassword(Request $request, UserPasswordHasherInterface $passwordHasher): Response
     {
         if ($request->isMethod('POST')) {
@@ -93,9 +89,7 @@ class SecurityController extends AbstractController
         return $this->render('admin/login/request-password.html.twig', []);
     }
 
-    /**
-     * @Route("/admin/login/setup", methods={"GET", "POST"}, name="admin.login.setup")
-     */
+    #[Route("/admin/login/setup", name: "admin.login.setup", methods: ['GET', 'POST'])]
     public function setupFirstUser(Request $request, UserPasswordHasherInterface $passwordHasher): Response
     {
         if ($this->adminUserRepository->count() !== 0) {
@@ -122,17 +116,13 @@ class SecurityController extends AbstractController
         return $this->render('admin/login/login-newuser.html.twig', []);
     }
 
-    /**
-     * @Route("/admin/login/check", methods={"POST"}, name="admin.login.check")
-     */
+    #[Route("/admin/login/check", name: "admin.login.check", methods: ['POST'])]
     public function loginCheck(): void
     {
         // Dummy method. Request handled by symfony security
     }
 
-    /**
-     * @Route("/admin/logout", name="admin.logout")
-     */
+    #[Route("/admin/logout", name: "admin.logout")]
     public function logout(): void
     {
         // Dummy method. Request handled by symfony security

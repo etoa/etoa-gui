@@ -7,6 +7,7 @@ use EtoA\Log\LogRepository;
 use EtoA\Log\LogSeverity;
 use EtoA\Support\DB\DatabaseMigrationService;
 use EtoA\Support\DB\SchemaMigrationRepository;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Routing\Annotation\Route;
@@ -21,9 +22,8 @@ class DatabaseMigrationController extends AbstractAdminController
     ) {
     }
 
-    /**
-     * @Route("/admin/db/migration", name="admin.db.migration")
-     */
+    #[Route("/admin/db/migration", name: "admin.db.migration")]
+    #[IsGranted('ROLE_ADMIN_SUPER-ADMIN')]
     public function overview(): Response
     {
         return $this->render('admin/database/migrations.html.twig', [
@@ -32,9 +32,8 @@ class DatabaseMigrationController extends AbstractAdminController
         ]);
     }
 
-    /**
-     * @Route("/admin/db/migration/migrate", methods={"POST"}, name="admin.db.migrate")
-     */
+    #[Route("/admin/db/migration/migrate", name: "admin.db.migrate", methods: ['POST'])]
+    #[IsGranted('ROLE_ADMIN_SUPER-ADMIN')]
     public function migrate(): Response
     {
         $lock = $this->lockFactory->createLock('db');

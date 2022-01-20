@@ -8,6 +8,7 @@ use EtoA\Log\LogRepository;
 use EtoA\Log\LogSeverity;
 use EtoA\Support\DB\DatabaseBackupService;
 use EtoA\Support\StringUtils;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -24,9 +25,8 @@ class DatabaseBackupController extends AbstractAdminController
     ) {
     }
 
-    /**
-     * @Route("/admin/db/backups", name="admin.db.backups")
-     */
+    #[Route("/admin/db/backups", name: "admin.db.backups")]
+    #[IsGranted('ROLE_ADMIN_SUPER-ADMIN')]
     public function backups(): Response
     {
         $dir = $this->databaseBackupService->getBackupDir();
@@ -53,9 +53,8 @@ class DatabaseBackupController extends AbstractAdminController
         ]);
     }
 
-    /**
-     * @Route("/admin/db/backup/settings", methods={"POST"}, name="admin.db.backup.settings")
-     */
+    #[Route("/admin/db/backups/settings", name: "admin.db.backup.settings", methods: ['POST'])]
+    #[IsGranted('ROLE_ADMIN_SUPER-ADMIN')]
     public function backupSettings(Request $request): RedirectResponse
     {
         $this->config->set("backup_dir", $request->request->get('backup_dir'));
@@ -66,9 +65,9 @@ class DatabaseBackupController extends AbstractAdminController
 
         return $this->redirectToRoute('admin.db.backups');
     }
-    /**
-     * @Route("/admin/db/backup", methods={"POST"}, name="admin.db.backup")
-     */
+
+    #[Route("/admin/db/backup", name: "admin.db.backup", methods: ['POST'])]
+    #[IsGranted('ROLE_ADMIN_SUPER-ADMIN')]
     public function create(): RedirectResponse
     {
         $lock = $this->lockFactory->createLock('db');
@@ -99,9 +98,8 @@ class DatabaseBackupController extends AbstractAdminController
         return $this->redirectToRoute('admin.db.backups');
     }
 
-    /**
-     * @Route("/admin/db/restore/{restorePoint}", name="admin.db.restore")
-     */
+    #[Route("/admin/db/restore/{restorePoint}", name: "admin.db.restore", methods: ['POST'])]
+    #[IsGranted('ROLE_ADMIN_SUPER-ADMIN')]
     public function restore(string $restorePoint): RedirectResponse
     {
         $dir = $this->databaseBackupService->getBackupDir();

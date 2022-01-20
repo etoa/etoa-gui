@@ -6,6 +6,7 @@ use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Design\Design;
 use EtoA\Support\FileUtils;
 use EtoA\User\UserPropertiesRepository;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
@@ -20,9 +21,8 @@ class DesignController extends AbstractAdminController
     ) {
     }
 
-    /**
-     * @Route("/admin/designs/", name="admin.design")
-     */
+    #[Route("/admin/designs/", name: "admin.design")]
+    #[IsGranted('ROLE_ADMIN_MASTER')]
     public function view(): Response
     {
         $designs = get_designs();
@@ -104,9 +104,8 @@ class DesignController extends AbstractAdminController
         ]);
     }
 
-    /**
-     * @Route("/admin/designs/download/{design}", name="admin.design.download")
-     */
+    #[Route("/admin/designs/download/{design}", name: "admin.design.download")]
+    #[IsGranted('ROLE_ADMIN_MASTER')]
     public function download(string $design): Response
     {
         $designs = get_designs();
@@ -128,9 +127,8 @@ class DesignController extends AbstractAdminController
         return $this->redirectToRoute('admin.design');
     }
 
-    /**
-     * @Route("/admin/designs/remove/{design}", name="admin.design.remove")
-     */
+    #[Route("/admin/designs/remove/{design}", name: "admin.design.remove")]
+    #[IsGranted('ROLE_ADMIN_MASTER')]
     public function remove(string $design): RedirectResponse
     {
         $designs = get_designs();

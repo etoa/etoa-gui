@@ -23,9 +23,7 @@ class TfaSecurityController extends AbstractAdminController
         $this->logRepository = $logRepository;
     }
 
-    /**
-     * @Route("/admin/tfa/enable", name="admin.tfa.enable", methods={"GET", "POST"})
-     */
+    #[Route("/admin/tfa/enable", name: "admin.tfa.enable")]
     public function enableTwoFactorAuthAction(Request $req, TotpAuthenticatorInterface $authenticator, QrCodeGenerator $qrCodeGenerator): Response
     {
         $secret = $req->getSession()->get('tfa-secret', $authenticator->generateSecret());
@@ -54,9 +52,7 @@ class TfaSecurityController extends AbstractAdminController
         ]);
     }
 
-    /**
-     * @Route("/admin/tfa/disable", name="admin.tfa.disable", methods={"GET", "POST"})
-     */
+    #[Route("/admin/tfa/disable", name: "admin.tfa.disable")]
     public function disableTwoFactorAuthAction(Request $req, TotpAuthenticatorInterface $authenticator): Response
     {
         $user = $this->getUser();

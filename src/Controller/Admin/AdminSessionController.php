@@ -10,6 +10,7 @@ use EtoA\Form\Type\Admin\DeleteAdminSessionLogType;
 use EtoA\Log\LogFacility;
 use EtoA\Log\LogRepository;
 use EtoA\Log\LogSeverity;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -25,9 +26,8 @@ class AdminSessionController extends AbstractAdminController
     ) {
     }
 
-    /**
-     * @Route("/admin/admin-sessions/", name="admin.admin-sessions")
-     */
+    #[Route("/admin/admin-sessions/", name: "admin.admin-sessions")]
+    #[IsGranted('ROLE_ADMIN_SUPER-ADMIN')]
     public function list(): Response
     {
         return $this->render('admin/admin-session/list.html.twig', [
@@ -40,9 +40,8 @@ class AdminSessionController extends AbstractAdminController
         ]);
     }
 
-    /**
-     * @Route("/admin/admin-sessions/{id}/kick", name="admin.admin-sessions.kick", methods={"POST"})
-     */
+    #[Route("/admin/admin-sessions/{id}/kick", name: "admin.admin-sessions.kick", methods: ["POST"])]
+    #[IsGranted('ROLE_ADMIN_SUPER-ADMIN')]
     public function kick(Request $request, string $id): RedirectResponse
     {
         if ($id === $request->getSession()->getId()) {
@@ -55,9 +54,8 @@ class AdminSessionController extends AbstractAdminController
         return $this->redirectToRoute('admin.admin-sessions');
     }
 
-    /**
-     * @Route("/admin/admin-sessions/delete", name="admin.admin-sessions.delete", methods={"POST"})
-     */
+    #[Route("/admin/admin-sessions/{id}/delete", name: "admin.admin-sessions.delete", methods: ["POST"])]
+    #[IsGranted('ROLE_ADMIN_SUPER-ADMIN')]
     public function deleteEntries(Request $request): RedirectResponse
     {
         $form = $this->createForm(DeleteAdminSessionLogType::class);

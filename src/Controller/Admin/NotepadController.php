@@ -17,9 +17,7 @@ class NotepadController extends AbstractAdminController
     ) {
     }
 
-    /**
-     * @Route("/admin/notepad", name="admin.notepad")
-     */
+    #[Route("/admin/notepad", name: "admin.notepad")]
     public function noteIndex(): Response
     {
         $user = $this->getUser();
@@ -29,9 +27,7 @@ class NotepadController extends AbstractAdminController
         ]);
     }
 
-    /**
-     * @Route("/admin/notepad/new", name="admin.notepad.new")
-     */
+    #[Route("/admin/notepad/new", name: "admin.notepad.new")]
     public function new(Request $request): Response
     {
         $user = $this->getUser();
@@ -48,9 +44,7 @@ class NotepadController extends AbstractAdminController
         return $this->render('admin/notepad/new.html.twig');
     }
 
-    /**
-     * @Route("/admin/notepad/{id}/edit", name="admin.notepad.edit")
-     */
+    #[Route("/admin/notepad/{id}/edit", name: "admin.notepad.edit")]
     public function edit(Request $request, int $id): Response
     {
         $user = $this->getUser();
@@ -74,9 +68,7 @@ class NotepadController extends AbstractAdminController
         ]);
     }
 
-    /**
-     * @Route("/admin/notepad/{id}/delete", name="admin.notepad.delete")
-     */
+    #[Route("/admin/notepad/{id}/delete", name: "admin.notepad.delete")]
     public function delete(int $id): RedirectResponse
     {
         $user = $this->getUser();

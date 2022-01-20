@@ -5,6 +5,7 @@ namespace EtoA\Controller\Admin;
 use EtoA\Backend\BackendMessageService;
 use EtoA\Core\Configuration\ConfigurationDefinitionsRepository;
 use EtoA\Core\Configuration\ConfigurationService;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -18,9 +19,8 @@ class ConfigController extends AbstractAdminController
     ) {
     }
 
-    /**
-     * @Route("/admin/config/", name="admin.config")
-     */
+    #[Route("/admin/config/", name: "admin.config")]
+    #[IsGranted('ROLE_ADMIN_SUPER-ADMIN')]
     public function common(Request $request): Response
     {
         $successMessage = null;
@@ -66,9 +66,8 @@ class ConfigController extends AbstractAdminController
         ]);
     }
 
-    /**
-     * @Route("/admin/config/editor", name="admin.config.editor")
-     */
+    #[Route("/admin/config/editor", name: "admin.config.editor")]
+    #[IsGranted('ROLE_ADMIN_MASTER')]
     public function editor(Request $request): Response
     {
         $activeTab = null;
@@ -150,9 +149,9 @@ class ConfigController extends AbstractAdminController
             'configData' => $configData,
         ]);
     }
-    /**
-     * @Route("/admin/config/check", name="admin.config.check")
-     */
+
+    #[Route("/admin/config/check", name: "admin.config.check")]
+    #[IsGranted('ROLE_ADMIN_MASTER')]
     public function check(): Response
     {
         $cnt = 0;
@@ -194,9 +193,8 @@ class ConfigController extends AbstractAdminController
         ]);
     }
 
-    /**
-     * @Route("/admin/config/restore", name="admin.config.restore")
-     */
+    #[Route("/admin/config/restore", name: "admin.config.restore")]
+    #[IsGranted('ROLE_ADMIN_MASTER')]
     public function restore(Request $request): Response
     {
         if ($request->isMethod('POST')) {

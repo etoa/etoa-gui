@@ -27,9 +27,7 @@ class TicketController extends AbstractController
     ) {
     }
 
-    /**
-     * @Route("/admin/tickets/", name="admin.ticket.active")
-     */
+    #[Route("/admin/tickets/", name: "admin.ticket.active")]
     public function active(): Response
     {
         return $this->render('admin/ticket/active.html.twig', [
@@ -42,9 +40,7 @@ class TicketController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/admin/tickets/closed", name="admin.ticket.closed")
-     */
+    #[Route("/admin/tickets/closed", name: "admin.ticket.closed")]
     public function closed(): Response
     {
         return $this->render('admin/ticket/closed.html.twig', [
@@ -55,9 +51,7 @@ class TicketController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/admin/tickets/new", name="admin.ticket.new")
-     */
+    #[Route("/admin/tickets/new", name: "admin.ticket.new")]
     public function new(Request $request): Response
     {
         if ($request->isMethod('POST')) {
@@ -78,10 +72,7 @@ class TicketController extends AbstractController
         ]);
     }
 
-
-    /**
-     * @Route("/admin/tickets/{id}/details", name="admin.ticket.details")
-     */
+    #[Route("/admin/tickets/{id}/details", name: "admin.ticket.details")]
     public function details(Request $request, int $id): Response
     {
         /** @var CurrentAdmin $adminUser */
@@ -127,9 +118,7 @@ class TicketController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/admin/tickets/{id}/edit", name="admin.ticket.edit")
-     */
+    #[Route("/admin/tickets/{id}/edit", name: "admin.ticket.edit")]
     public function edit(Request $request, int $id): Response
     {
         /** @var CurrentAdmin $adminUser */
@@ -167,9 +156,7 @@ class TicketController extends AbstractController
         ]);
     }
 
-    /**
-     * @Route("/admin/tickets/{id}/assign", name="admin.ticket.assign", methods={"POST"})
-     */
+    #[Route("/admin/tickets/{id}/assign", name: "admin.ticket.assign", methods: ['POST'])]
     public function assign(int $id): RedirectResponse
     {
         /** @var CurrentAdmin $adminUser */
@@ -183,9 +170,7 @@ class TicketController extends AbstractController
         return $this->redirectToRoute('admin.ticket.details', ['id' => $id]);
     }
 
-    /**
-     * @Route("/admin/tickets/{id}/reopen", name="admin.ticket.reopen", methods={"POST"})
-     */
+    #[Route("/admin/tickets/{id}/reopen", name: "admin.ticket.reopen", methods: ['POST'])]
     public function reopen(int $id): RedirectResponse
     {
         /** @var CurrentAdmin $adminUser */

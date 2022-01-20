@@ -13,6 +13,7 @@ use EtoA\Log\DebrisLogRepository;
 use EtoA\Log\FleetLogRepository;
 use EtoA\Log\GameLogRepository;
 use EtoA\Log\LogRepository;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -27,9 +28,8 @@ class LogController extends AbstractAdminController
     ) {
     }
 
-    /**
-     * @Route("/admin/logs/", name="admin.logs.general")
-     */
+    #[Route("/admin/logs/", name: "admin.logs.general")]
+    #[IsGranted('ROLE_ADMIN_TRIAL-ADMIN')]
     public function general(Request $request): Response
     {
         return $this->render('admin/logs/general.html.twig', [
@@ -38,9 +38,8 @@ class LogController extends AbstractAdminController
         ]);
     }
 
-    /**
-     * @Route("/admin/logs/debris", name="admin.logs.debris")
-     */
+    #[Route("/admin/logs/debris", name: "admin.logs.debris")]
+    #[IsGranted('ROLE_ADMIN_TRIAL-ADMIN')]
     public function debris(Request $request): Response
     {
         $data = array_merge($request->query->all(), ['date' => (new \DateTime())->format(LogDateTimeType::FORMAT)]);
@@ -51,9 +50,8 @@ class LogController extends AbstractAdminController
         ]);
     }
 
-    /**
-     * @Route("/admin/logs/attack-ban", name="admin.logs.attack-ban")
-     */
+    #[Route("/admin/logs/attack-ban", name: "admin.logs.attack-ban")]
+    #[IsGranted('ROLE_ADMIN_TRIAL-ADMIN')]
     public function attackBan(Request $request): Response
     {
         $data = array_merge($request->query->all(), ['date' => (new \DateTime())->format(LogDateTimeType::FORMAT)]);
@@ -63,9 +61,8 @@ class LogController extends AbstractAdminController
         ]);
     }
 
-    /**
-     * @Route("/admin/logs/fleets", name="admin.logs.fleets")
-     */
+    #[Route("/admin/logs/fleets", name: "admin.logs.fleets")]
+    #[IsGranted('ROLE_ADMIN_TRIAL-ADMIN')]
     public function fleets(Request $request): Response
     {
         return $this->render('admin/logs/fleets.html.twig', [
@@ -74,9 +71,8 @@ class LogController extends AbstractAdminController
         ]);
     }
 
-    /**
-     * @Route("/admin/logs/game", name="admin.logs.game")
-     */
+    #[Route("/admin/logs/game", name: "admin.logs.game")]
+    #[IsGranted('ROLE_ADMIN_TRIAL-ADMIN')]
     public function game(Request $request): Response
     {
         return $this->render('admin/logs/game.html.twig', [
@@ -85,9 +81,8 @@ class LogController extends AbstractAdminController
         ]);
     }
 
-    /**
-     * @Route("/admin/logs/error", name="admin.logs.error")
-     */
+    #[Route("/admin/logs/error", name: "admin.logs.error")]
+    #[IsGranted('ROLE_ADMIN_SUPER-ADMIN')]
     public function error(Request $request): Response
     {
         if ($request->request->has('purgelog_submit')) {
