@@ -3,6 +3,8 @@
 namespace EtoA\Controller\Admin;
 
 use EtoA\Ranking\UserTitlesService;
+use EtoA\User\UserRating;
+use EtoA\User\UserRatingRepository;
 use EtoA\User\UserStat;
 use EtoA\User\UserStatRepository;
 use EtoA\User\UserStatSearch;
@@ -15,6 +17,7 @@ class StatsController extends AbstractAdminController
     public function __construct(
         private UserStatRepository $userStatsRepository,
         private UserTitlesService $userTitlesService,
+        private UserRatingRepository $userRatingRepository,
     ) {
     }
 
@@ -70,6 +73,16 @@ class StatsController extends AbstractAdminController
             'technologyStats' => $technologyStats,
             'buildingStats' => $buildingStats,
             'expStats' => $expStats,
+        ]);
+    }
+
+    #[Route("/admin/stats/battles", name: 'admin.stats.battles')]
+    public function battles(): Response
+    {
+        $ratings = $this->userRatingRepository->getBattleRating();
+
+        return $this->render('admin/stats/battles.html.twig', [
+            'ratings' => array_filter($ratings, fn (UserRating $rating) => $rating->rating > 0),
         ]);
     }
 

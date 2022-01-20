@@ -17,6 +17,17 @@ class StatsControllerTest extends SymfonyWebTestCase
         $this->assertStatusCode(200, $client->getResponse());
     }
 
+    public function testBattles(): void
+    {
+        $client = self::createClient();
+
+        $this->loginAdmin($client);
+
+        $client->request('GET', '/admin/stats/battles');
+
+        $this->assertStatusCode(200, $client->getResponse());
+    }
+
     public function testTitles(): void
     {
         $client = self::createClient();
