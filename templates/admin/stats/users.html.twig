@@ -1,0 +1,77 @@
+{% extends 'admin/stats/base.html.twig' %}
+
+{% block statsContent %}
+    <h2>Spieler</h2>
+
+    <table class="full-width">
+        <tr>
+            <th>#</th>
+            <th>Nick</th>
+            <th>Rasse</th>
+            <th>Sektor</th>
+            <th>Allianz</th>
+            <th>
+                Punkte
+                <a href="{{ path('admin.stats.users', {sort: 'points', order: 'DESC'}) }}" title="Absteigend sortieren"><img src="/images/s_desc.png" alt="Absteigend sortieren" /></a>
+                <a href="{{ path('admin.stats.users', {sort: 'points', order: 'ASC'}) }}" title="Aufsteigend sortieren"><img src="/images/s_asc.png" alt="Aufsteigend sortieren" /></a>
+            </th>
+            <th>
+                Schiffe
+                <a href="{{ path('admin.stats.users', {sort: 'ships', order: 'DESC'}) }}" title="Absteigend sortieren"><img src="/images/s_desc.png" alt="Absteigend sortieren" /></a>
+                <a href="{{ path('admin.stats.users', {sort: 'ships', order: 'ASC'}) }}" title="Aufsteigend sortieren"><img src="/images/s_asc.png" alt="Aufsteigend sortieren" /></a>
+            </th>
+            <th>
+                Technologie
+                <a href="{{ path('admin.stats.users', {sort: 'tech', order: 'DESC'}) }}" title="Absteigend sortieren"><img src="/images/s_desc.png" alt="Absteigend sortieren" /></a>
+                <a href="{{ path('admin.stats.users', {sort: 'tech', order: 'ASC'}) }}" title="Aufsteigend sortieren"><img src="/images/s_asc.png" alt="Aufsteigend sortieren" /></a>
+            </th>
+            <th>
+                Gebäude
+                <a href="{{ path('admin.stats.users', {sort: 'buildings', order: 'DESC'}) }}" title="Absteigend sortieren"><img src="/images/s_desc.png" alt="Absteigend sortieren" /></a>
+                <a href="{{ path('admin.stats.users', {sort: 'buildings', order: 'ASC'}) }}" title="Aufsteigend sortieren"><img src="/images/s_asc.png" alt="Aufsteigend sortieren" /></a>
+            </th>
+            <th>
+                Exp
+                <a href="{{ path('admin.stats.users', {sort: 'exp', order: 'DESC'}) }}" title="Absteigend sortieren"><img src="/images/s_desc.png" alt="Absteigend sortieren" /></a>
+                <a href="{{ path('admin.stats.users', {sort: 'exp', order: 'ASC'}) }}" title="Aufsteigend sortieren"><img src="/images/s_asc.png" alt="Aufsteigend sortieren" /></a>
+            </th>
+        </tr>
+
+        {% for userId,shift in userOrder %}
+            {% if pointsStats[userId].blocked %}
+                {% set addStyle = ' style="color:#ffaaaa;"' %}
+            {% elseif pointsStats[userId].hmod %}
+                {% set addStyle = ' style="color:#aaffaa;"' %}
+            {% elseif pointsStats[userId].inactive %}
+                {% set addStyle = ' style="color:#aaaaaa;"' %}
+            {% else %}
+                {% set addStyle = '' %}
+            {% endif %}
+            <tr {{ addStyle|raw }}>
+                <td>
+                    {{ loop.index }}
+                    {% if shift == 2 %}
+                        <img src="/images/stats/stat_down.gif" alt="down" width="9" height="12" />
+                    {% elseif shift == 1 %}
+                        <img src="/images/stats/stat_up.gif" alt="up" width="9" height="11" />
+                    {% else %}
+                        <img src="/images/stats/stat_same.gif" alt="same" width="21" height="9" />
+                    {% endif %}
+                </td>
+                <td>{{ pointsStats[userId].nick }}</td>
+                <td>{{ pointsStats[userId].raceName }}</td>
+                <td>{{ pointsStats[userId].sx }}/{{ pointsStats[userId].sy }}</td>
+                <td>{{ pointsStats[userId].allianceTag }}</td>
+                <td>{{ formatNumber(pointsStats[userId].points) }}</td>
+                <td>{{ formatNumber(shipsStats[userId].points) }}</td>
+                <td>{{ formatNumber(technologyStats[userId].points) }}</td>
+                <td>{{ formatNumber(buildingStats[userId].points) }}</td>
+                <td>{{ formatNumber(expStats[userId].points) }}</td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="99"><p>Keine Spieler gefunden</p></td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}

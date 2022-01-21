@@ -5,6 +5,7 @@ namespace EtoA\Core;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Core\Twig\TwigExtension;
 use EtoA\HostCache\NetworkNameService;
+use EtoA\Support\RuntimeDataStore;
 use Pimple\Container;
 use Twig\Environment;
 use Twig\Loader\ArrayLoader;
@@ -50,7 +51,7 @@ class TwigServiceProvider extends \Silex\Provider\TwigServiceProvider
         });
 
         $app->extend('twig', function (Environment $twig, Container $app): Environment {
-            $twig->addExtension(new TwigExtension($app[ConfigurationService::class], $app[NetworkNameService::class]));
+            $twig->addExtension(new TwigExtension($app[ConfigurationService::class], $app[NetworkNameService::class], $app[RuntimeDataStore::class]));
 
             return $twig;
         });

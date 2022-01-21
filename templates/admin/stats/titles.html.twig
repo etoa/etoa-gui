@@ -1,0 +1,13 @@
+{% extends 'admin/stats/base.html.twig' %}
+
+{% import 'admin/macros.html.twig' as macros %}
+
+{% block statsContent %}
+    <h2>Titel</h2>
+
+    {% if stats %}
+        {{ stats|raw }}
+    {% else %}
+        {{ macros.messagebox('Die Liste wurde noch nicht erstellt! Bitte das nächste Statistikupdate abwarten', 'error') }}
+    {% endif %}
+{% endblock %}

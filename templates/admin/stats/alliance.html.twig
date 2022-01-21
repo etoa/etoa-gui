@@ -1,0 +1,73 @@
+{% extends 'admin/stats/base.html.twig' %}
+
+{% block statsContent %}
+    <h2>Allianzen</h2>
+
+    <table class="full-width">
+        <tr>
+            <th>#</th>
+            <th>Tag</th>
+            <th>Name</th>
+            <th>
+                Punkte
+                <a href="{{ path('admin.stats.alliances', {sort: 'points', order: 'DESC'}) }}" title="Absteigend sortieren"><img src="/images/s_desc.png" alt="Absteigend sortieren" /></a>
+                <a href="{{ path('admin.stats.alliances', {sort: 'points', order: 'ASC'}) }}" title="Aufsteigend sortieren"><img src="/images/s_asc.png" alt="Aufsteigend sortieren" /></a>
+            </th>
+            <th>
+                User-Schnitt
+                <a href="{{ path('admin.stats.alliances', {sort: 'average', order: 'DESC'}) }}" title="Absteigend sortieren"><img src="/images/s_desc.png" alt="Absteigend sortieren" /></a>
+                <a href="{{ path('admin.stats.alliances', {sort: 'average', order: 'ASC'}) }}" title="Aufsteigend sortieren"><img src="/images/s_asc.png" alt="Aufsteigend sortieren" /></a>
+            </th>
+            <th>
+                User
+                <a href="{{ path('admin.stats.alliances', {sort: 'user', order: 'DESC'}) }}" title="Absteigend sortieren"><img src="/images/s_desc.png" alt="Absteigend sortieren" /></a>
+                <a href="{{ path('admin.stats.alliances', {sort: 'user', order: 'ASC'}) }}" title="Aufsteigend sortieren"><img src="/images/s_asc.png" alt="Aufsteigend sortieren" /></a>
+            </th>
+            <th>
+                Gebäude
+                <a href="{{ path('admin.stats.alliances', {sort: 'buildings', order: 'DESC'}) }}" title="Absteigend sortieren"><img src="/images/s_desc.png" alt="Absteigend sortieren" /></a>
+                <a href="{{ path('admin.stats.alliances', {sort: 'buildings', order: 'ASC'}) }}" title="Aufsteigend sortieren"><img src="/images/s_asc.png" alt="Aufsteigend sortieren" /></a>
+            </th>
+            <th>
+                Forschung
+                <a href="{{ path('admin.stats.alliances', {sort: 'tech', order: 'DESC'}) }}" title="Absteigend sortieren"><img src="/images/s_desc.png" alt="Absteigend sortieren" /></a>
+                <a href="{{ path('admin.stats.alliances', {sort: 'tech', order: 'ASC'}) }}" title="Aufsteigend sortieren"><img src="/images/s_asc.png" alt="Aufsteigend sortieren" /></a>
+            </th>
+            <th>
+                Schiffe
+                <a href="{{ path('admin.stats.alliances', {sort: 'ships', order: 'DESC'}) }}" title="Absteigend sortieren"><img src="/images/s_desc.png" alt="Absteigend sortieren" /></a>
+                <a href="{{ path('admin.stats.alliances', {sort: 'ships', order: 'ASC'}) }}" title="Aufsteigend sortieren"><img src="/images/s_asc.png" alt="Aufsteigend sortieren" /></a>
+            </th>
+            <th>
+                Allianzbasis
+                <a href="{{ path('admin.stats.alliances', {sort: 'base', order: 'DESC'}) }}" title="Absteigend sortieren"><img src="/images/s_desc.png" alt="Absteigend sortieren" /></a>
+                <a href="{{ path('admin.stats.alliances', {sort: 'base', order: 'ASC'}) }}" title="Aufsteigend sortieren"><img src="/images/s_asc.png" alt="Aufsteigend sortieren" /></a>
+            </th>
+        </tr>
+
+        {% for stats in allianceStats %}
+            <tr>
+                <td>
+                    {{ loop.index }}
+                </td>
+                <td>
+                    <a href="{{ path('admin.alliances.edit', {id: stats.allianceId}) }}">{{ stats.allianceTag }}</a>
+                </td>
+                <td>
+                    <a href="{{ path('admin.alliances.edit', {id: stats.allianceId}) }}">{{ stats.allianceName }}</a>
+                </td>
+                <td>{{ formatNumber(stats.points) }}</td>
+                <td>{{ formatNumber(stats.userAverage) }}</td>
+                <td>{{ formatNumber(stats.count) }}</td>
+                <td>{{ formatNumber(stats.buildingPoints) }}</td>
+                <td>{{ formatNumber(stats.technologyPoints) }}</td>
+                <td>{{ formatNumber(stats.shipPoints) }}</td>
+                <td>{{ formatNumber(stats.alliancePoints) }}</td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="99"><p>Keine Allianzen gefunden</p></td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}
