@@ -25,11 +25,11 @@
         </div>
         <div id="main">
             <div id="sidebar">
-                <div id="quicksearch">
-                    <form action="/admin/?page=search" method="post">
-                        <input class="search" type="text" name="search_query" value="{{ searchQuery }}" autocomplete="off" placeholder="Suche" />
-                    </form>
+                <div id="quicksearch" data-controller="quick-search">
+                    <select data-quick-search-target="input">
+                    </select>
                 </div>
+
                 <ul class="navmenu">
                     {% for key,item in navMenu %}
                         {% if isAdminAllowed(userRoles, item.roles) %}

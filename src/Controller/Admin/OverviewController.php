@@ -3,6 +3,8 @@
 namespace EtoA\Controller\Admin;
 
 use EtoA\Admin\AdminRoleManager;
+use EtoA\Alliance\AllianceRepository;
+use EtoA\Alliance\AllianceSearch;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Form\Type\Admin\GameOfflineType;
 use EtoA\Help\TicketSystem\TicketRepository;
@@ -10,8 +12,14 @@ use EtoA\Ranking\GameStatsGenerator;
 use EtoA\Support\DB\DatabaseManagerRepository;
 use EtoA\Text\TextRepository;
 use EtoA\Universe\Cell\CellRepository;
+use EtoA\Universe\Entity\EntityLabel;
+use EtoA\Universe\Entity\EntityLabelSearch;
+use EtoA\Universe\Entity\EntityRepository;
+use EtoA\User\UserRepository;
+use EtoA\User\UserSearch;
 use League\CommonMark\MarkdownConverterInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -27,7 +35,10 @@ class OverviewController extends AbstractAdminController
         private AdminRoleManager $roleManager,
         private CellRepository $cellRepository,
         private TicketRepository $ticketRepository,
-        private TextRepository $textRepository
+        private TextRepository $textRepository,
+        private UserRepository $userRepository,
+        private AllianceRepository $allianceRepository,
+        private EntityRepository $entityRepository,
     ) {
     }
 
@@ -151,5 +162,47 @@ class OverviewController extends AbstractAdminController
             'form' => $form->createView(),
             'isOffline' => $this->config->getBoolean('offline'),
         ]);
+    }
+
+    #[Route('/admin/overview/search', 'admin.overview.search')]
+    public function search(Request $request): JsonResponse
+    {
+        $users = $this->userRepository->searchUserNicknames(UserSearch::create()->nickOrEmailOrDualLike($request->query->getAlnum('query')), 30);
+        $alliances = $this->allianceRepository->getAllianceNamesWithTags(AllianceSearch::create()->nameOrTagLike($request->query->getAlnum('query')), 30);
+        $entities = $this->entityRepository->searchEntityLabels(EntityLabelSearch::create()->likePlanetName($request->query->getAlnum('query')), null, 30);
+        $choices = [
+            $this->choiceGroup($users, 1, 'Spieler', 'admin.alliances.edit'),
+            $this->choiceGroup($alliances, 2, 'Allianzen', 'admin.alliances.edit'),
+            $this->choiceGroup(array_map(fn (EntityLabel $label) => $label->toString(), $entities), 3, 'Planeten', 'admin.universe.entity'),
+        ];
+
+        return new JsonResponse($choices);
+    }
+
+    /**
+     * @param array<int, string> $options
+     * @return array<string, mixed>
+     */
+    private function choiceGroup(array $options, int $id, string $label, string $route): array
+    {
+        if (count($options) === 0) {
+            return [];
+        }
+
+        $choices = [
+            'label' => $label,
+            'id' => $id,
+            'disabled' => false,
+            'choices' => [],
+        ];
+        foreach ($options as $optionId => $optionValue) {
+            $choices['choices'][] = [
+                'label' => $optionValue,
+                'value' => $optionId,
+                'customProperties' => ['link' => $this->generateUrl($route, ['id' => $optionId])],
+            ];
+        }
+
+        return $choices;
     }
 }
