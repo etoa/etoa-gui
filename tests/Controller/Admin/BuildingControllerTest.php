@@ -38,4 +38,15 @@ class BuildingControllerTest extends SymfonyWebTestCase
 
         $this->assertStatusCode(200, $client->getResponse());
     }
+
+    public function testCostCalculator(): void
+    {
+        $client = self::createClient();
+
+        $this->loginAdmin($client);
+
+        $client->request('GET', '/admin/buildings/cost-calculator');
+
+        $this->assertStatusCode(200, $client->getResponse());
+    }
 }

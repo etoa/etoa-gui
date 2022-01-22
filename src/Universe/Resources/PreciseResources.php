@@ -10,6 +10,7 @@ class PreciseResources
     public float $fuel = 0;
     public float $food = 0;
     public float $people = 0;
+    public float $time = 0;
 
     public function set(int $index, float $value): void
     {
@@ -62,7 +63,7 @@ class PreciseResources
         $resources->food = $this->food * $factor;
         $resources->people = $this->people * $factor;
 
-        return $this;
+        return $resources;
     }
 
     /**

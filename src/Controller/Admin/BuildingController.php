@@ -99,4 +99,11 @@ class BuildingController extends AbstractAdminController
             'name' => 'Gebäude',
         ]);
     }
+
+    #[Route('/admin/buildings/cost-calculator', name: 'admin.buildings.cost-calculator')]
+    #[IsGranted('ROLE_ADMIN_GAME-ADMIN')]
+    public function costCalculator(): Response
+    {
+        return $this->render('admin/building/cost-calculator.html.twig');
+    }
 }

@@ -3,6 +3,7 @@
 namespace EtoA\Building;
 
 use EtoA\Core\ObjectWithImage;
+use EtoA\Universe\Resources\BaseResources;
 
 class Building implements ObjectWithImage
 {
@@ -114,5 +115,17 @@ class Building implements ObjectWithImage
             default:
                 return self::BASE_PATH."/buildings/building".$this->id.".png";
         }
+    }
+
+    public function getCosts(): BaseResources
+    {
+        $costs = new BaseResources();
+        $costs->metal = $this->costsMetal;
+        $costs->crystal = $this->costsCrystal;
+        $costs->plastic = $this->costsPlastic;
+        $costs->fuel = $this->costsFuel;
+        $costs->food = $this->costsFood;
+
+        return $costs;
     }
 }

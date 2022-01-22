@@ -1,0 +1,29 @@
+<div
+    {{ init_live_component(this) }}
+    data-action="change->live#update input->live#update"
+>
+    <h2>(Aus)baukosten (von Stufe x-1 auf Stufe x)</h2>
+    {{ form_start(this.form) }}
+    <table>
+        <tr>
+            <th>Gebäude</th>
+            <th>Stufe</th>
+            <th>Zeit</th>
+            <th>Titan</th>
+            <th>Silizium</th>
+            <th>PVC</th>
+            <th>Tritium</th>
+            <th>Nahrung</th>
+        </tr>
+        <tr>
+            <td>{{ form_row(this.form.itemId) }}</td>
+            <td>{{ form_row(this.form.level) }}</td>
+            <td>{{ formatTimespan(this.costs.time) }}</td>
+            <td>{{ formatNumber(this.costs.metal) }}</td>
+            <td>{{ formatNumber(this.costs.crystal) }}</td>
+            <td>{{ formatNumber(this.costs.plastic) }}</td>
+            <td>{{ formatNumber(this.costs.fuel) }}</td>
+            <td>{{ formatNumber(this.costs.food) }}</td>
+        </tr>
+    </table>
+</div>
