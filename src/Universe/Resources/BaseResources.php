@@ -16,6 +16,7 @@ class BaseResources
     public int $fuel = 0;
     public int $food = 0;
     public int $people = 0;
+    public int $time = 0;
 
     public function get(int $index): int
     {

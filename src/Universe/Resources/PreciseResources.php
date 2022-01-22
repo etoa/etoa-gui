@@ -10,6 +10,7 @@ class PreciseResources
     public float $fuel = 0;
     public float $food = 0;
     public float $people = 0;
+    public float $time = 0;
 
     public function set(int $index, float $value): void
     {
@@ -62,13 +63,23 @@ class PreciseResources
         $resources->food = $this->food * $factor;
         $resources->people = $this->people * $factor;
 
-        return $this;
+        return $resources;
     }
 
-    /**
-     * @param PreciseResources|BaseResources $available
-     */
-    public function missing($available): PreciseResources
+    public function add(BaseResources|PreciseResources $add): PreciseResources
+    {
+        $resources = new PreciseResources();
+        $resources->metal = $this->metal + $add->metal;
+        $resources->crystal = $this->crystal + $add->crystal;
+        $resources->plastic = $this->plastic + $add->plastic;
+        $resources->fuel = $this->fuel + $add->fuel;
+        $resources->food = $this->food + $add->food;
+        $resources->people = $this->people + $add->people;
+
+        return $resources;
+    }
+
+    public function missing(PreciseResources|BaseResources $available): PreciseResources
     {
         $resources = new PreciseResources();
         $resources->metal = max(0, $this->metal - $available->metal);

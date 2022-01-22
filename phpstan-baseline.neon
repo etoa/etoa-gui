@@ -346,56 +346,6 @@ parameters:
 			path: htdocs/admin/inc/admin_functions.inc.php
 
 		-
-			message: "#^Offset 'crystal' does not exist on array\\{metal\\: float, crystal\\?\\: float, plastic\\?\\: float, fuel\\?\\: float, food\\?\\: float\\}\\.$#"
-			count: 2
-			path: htdocs/admin/inc/xajax/global.xajax.php
-
-		-
-			message: "#^Offset 'crystal' does not exist on array\\{\\}\\|array\\{metal\\: float, crystal\\: float, plastic\\: float, fuel\\: float, food\\: float\\}\\.$#"
-			count: 3
-			path: htdocs/admin/inc/xajax/global.xajax.php
-
-		-
-			message: "#^Offset 'food' does not exist on array\\{metal\\: float, crystal\\: float, plastic\\: float, fuel\\: float, food\\?\\: float\\}\\.$#"
-			count: 2
-			path: htdocs/admin/inc/xajax/global.xajax.php
-
-		-
-			message: "#^Offset 'food' does not exist on array\\{\\}\\|array\\{metal\\: float, crystal\\: float, plastic\\: float, fuel\\: float, food\\: float\\}\\.$#"
-			count: 3
-			path: htdocs/admin/inc/xajax/global.xajax.php
-
-		-
-			message: "#^Offset 'fuel' does not exist on array\\{metal\\: float, crystal\\: float, plastic\\: float, fuel\\?\\: float, food\\?\\: float\\}\\.$#"
-			count: 2
-			path: htdocs/admin/inc/xajax/global.xajax.php
-
-		-
-			message: "#^Offset 'fuel' does not exist on array\\{\\}\\|array\\{metal\\: float, crystal\\: float, plastic\\: float, fuel\\: float, food\\: float\\}\\.$#"
-			count: 3
-			path: htdocs/admin/inc/xajax/global.xajax.php
-
-		-
-			message: "#^Offset 'metal' does not exist on array\\{\\}\\|array\\{metal\\: float, crystal\\: float, plastic\\: float, fuel\\: float, food\\: float\\}\\.$#"
-			count: 5
-			path: htdocs/admin/inc/xajax/global.xajax.php
-
-		-
-			message: "#^Offset 'plastic' does not exist on array\\{metal\\: float, crystal\\: float, plastic\\?\\: float, fuel\\?\\: float, food\\?\\: float\\}\\.$#"
-			count: 2
-			path: htdocs/admin/inc/xajax/global.xajax.php
-
-		-
-			message: "#^Offset 'plastic' does not exist on array\\{\\}\\|array\\{metal\\: float, crystal\\: float, plastic\\: float, fuel\\: float, food\\: float\\}\\.$#"
-			count: 3
-			path: htdocs/admin/inc/xajax/global.xajax.php
-
-		-
-			message: "#^Parameter \\#1 \\$building of function calcBuildingCosts expects EtoA\\\\Building\\\\Building, EtoA\\\\Building\\\\Building\\|null given\\.$#"
-			count: 2
-			path: htdocs/admin/inc/xajax/global.xajax.php
-
-		-
 			message: "#^Parameter \\#1 \\$userId of method EtoA\\\\Admin\\\\AdminUserRepository\\:\\:getNick\\(\\) expects int, int\\|null given\\.$#"
 			count: 1
 			path: htdocs/admin/inc/xajax/user.xajax.php

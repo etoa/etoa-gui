@@ -1,0 +1,11 @@
+{% extends 'admin/layout/admin.html.twig' %}
+
+{% block content %}
+    <h1>Gebäude</h1>
+
+    <h3>Preisrechner</h3>
+
+    {{ component('admin_building_cost') }}
+
+    {{ component('admin_building_cost_calculator') }}
+{% endblock %}
