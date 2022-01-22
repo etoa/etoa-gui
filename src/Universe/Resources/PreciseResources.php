@@ -66,10 +66,20 @@ class PreciseResources
         return $resources;
     }
 
-    /**
-     * @param PreciseResources|BaseResources $available
-     */
-    public function missing($available): PreciseResources
+    public function add(BaseResources|PreciseResources $add): PreciseResources
+    {
+        $resources = new PreciseResources();
+        $resources->metal = $this->metal + $add->metal;
+        $resources->crystal = $this->crystal + $add->crystal;
+        $resources->plastic = $this->plastic + $add->plastic;
+        $resources->fuel = $this->fuel + $add->fuel;
+        $resources->food = $this->food + $add->food;
+        $resources->people = $this->people + $add->people;
+
+        return $resources;
+    }
+
+    public function missing(PreciseResources|BaseResources $available): PreciseResources
     {
         $resources = new PreciseResources();
         $resources->metal = max(0, $this->metal - $available->metal);
