@@ -15,7 +15,7 @@ class BuildingCostCalculator
     public function calculate(Building $building, int $level, BuildingCostContext $context): PreciseResources
     {
         $costs = PreciseResources::createFromBase($building->getCosts())
-            ->multiply($building->buildCostsFactor ** $level);
+            ->multiply($building->buildCostsFactor ** ($level - 1));
 
         if ($context->specialist !== null) {
             $costs = $costs->multiply($context->specialist->costsBuildings);

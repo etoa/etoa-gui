@@ -48,7 +48,11 @@ class AdminBuildingCostCalculatorComponent extends AbstractController
         $context = BuildingCostContext::admin();
         foreach ($this->buildings as $building) {
             if (($this->levels[$building->id] ?? 0) > 0) {
-                $this->buildingCosts[$building->id] = $this->buildingCostCalculator->calculate($building, $this->levels[$building->id], $context);
+                $level = $this->levels[$building->id];
+                while ($level > 0) {
+                    $this->buildingCosts[$building->id] = $this->buildingCosts[$building->id]->add($this->buildingCostCalculator->calculate($building, $level, $context));
+                    $level--;
+                }
                 $this->totalCosts = $this->totalCosts->add($this->buildingCosts[$building->id]);
             } else {
                 $this->buildingCosts[$building->id] = new PreciseResources();
