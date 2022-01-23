@@ -55,7 +55,7 @@ class RequirementRepositoryProvider
             case 'b':
                 return $this->buildingRequirementRepository;
             case 'm':
-                return $this->buildingRequirementRepository;
+                return $this->missileRequirementRepository;
             default:
                 throw new \InvalidArgumentException('No requirement repository available for :' . $category);
         }

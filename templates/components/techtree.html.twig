@@ -1,0 +1,43 @@
+<div
+    {{ init_live_component(this) }}
+    data-action="change->live#update"
+>
+    {{ form(this.form) }}
+
+    <div style="width:650px;text-align:center;;margin-left:10px;padding:10px;background:#fff;color:#000;border:1px solid #000">
+        {% set object = this.object %}
+
+        {% if this.requiredObjects|length > 0 %}
+            <div class="techtreeItemContainer">
+                {% for item in this.requiredObjects %}
+                    <div class="techtreeItem" style="background:url('{{ item.item.getImagePath('medium') }}');">
+                        <div class="techtreeItemLevel">Lvl <b>{{ item.level }}</b></div>
+                        <a href="javascript:;" onclick="" style="height:100%;display:block;"></a>
+                        <div class="techtreeItemName">{{ item.item.name }}</div>
+                    </div>
+                {% endfor %}
+                <br style="clear:both;" />
+            </div>
+
+            <div style="margin:0 auto;">wird benötigt für</div>
+        {% endif %}
+
+        <div class="techtreeMainItem" style="background:url('{{ object.getImagePath('medium') }}');">
+            <div class="techtreeItemName">{{ object.name }}</div>
+        </div>
+
+        {% if this.allowedObjects|length > 0 %}
+            <div style="margin:10px auto;">ermöglicht</div>
+            <div class="techtreeItemContainer">
+                {% for item in this.allowedObjects %}
+                    <div class="techtreeItem" style="background:url('{{ item.item.getImagePath('medium') }}');">
+                        <div class="techtreeItemLevel">Lvl <b>{{ item.level }}</b></div>
+                        <a href="javascript:;" onclick="" style="height:100%;display:block;"></a>
+                        <div class="techtreeItemName">{{ item.item.name }}</div>
+                    </div>
+                {% endfor %}
+                <br style="clear:both;" />
+            </div>
+        {% endif %}
+    </div>
+</div>

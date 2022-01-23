@@ -6764,11 +6764,6 @@ parameters:
 			path: src/Ranking/UserTitlesService.php
 
 		-
-			message: "#^Method EtoA\\\\Requirement\\\\AbstractRequirementRepository\\:\\:getDuplicateRequirements\\(\\) should return array\\<int, int\\> but returns array\\<int\\|string, int\\>\\.$#"
-			count: 1
-			path: src/Requirement/AbstractRequirementRepository.php
-
-		-
 			message: "#^Method EtoA\\\\Security\\\\Admin\\\\AdminAuthenticator\\:\\:getCredentials\\(\\) should return array\\{csrf_token\\: string, username\\: string, password\\: string\\} but returns array\\{csrf_token\\: bool\\|float\\|int\\|string\\|null, username\\: string, password\\: bool\\|float\\|int\\|string\\|null\\}\\.$#"
 			count: 1
 			path: src/Security/Admin/AdminAuthenticator.php
