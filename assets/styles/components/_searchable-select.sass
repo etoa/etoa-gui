@@ -35,3 +35,14 @@
 
 .choices__item.choices__item--selectable
   padding-right: 10px
+
+#quicksearch
+  .choices[data-type*=select-one]::after
+    display: none
+
+  .choices__list
+    width: 150%
+
+    &.is-active
+      .choices__item[aria-selected=true]
+        display: none

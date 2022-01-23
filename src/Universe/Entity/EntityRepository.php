@@ -211,7 +211,13 @@ class EntityRepository extends AbstractRepository
             ->execute()
             ->fetchAllAssociative();
 
-        return array_map(fn (array $row) => new EntityLabel($row), $data);
+        $entities = [];
+        foreach ($data as $row) {
+            $entity = new EntityLabel($row);
+            $entities[$entity->id] = $entity;
+        }
+
+        return $entities;
     }
 
     public function searchEntityLabel(EntitySearch $search, EntityLabelSort $sort = null): ?EntityLabel
