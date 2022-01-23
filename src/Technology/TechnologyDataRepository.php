@@ -55,7 +55,13 @@ class TechnologyDataRepository extends AbstractRepository
             ->execute()
             ->fetchAllAssociative();
 
-        return array_map(fn (array $row) => new Technology($row), $data);
+        $technologies = [];
+        foreach ($data as $row) {
+            $technology = new Technology($row);
+            $technologies[$technology->id] = $technology;
+        }
+
+        return $technologies;
     }
 
     public function getTechnology(int $techId): ?Technology
