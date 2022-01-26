@@ -5,6 +5,7 @@ namespace EtoA\Controller\Admin;
 use EtoA\Form\Type\Admin\UserLoginFailureType;
 use EtoA\Form\Type\Admin\UserSearchType;
 use EtoA\User\UserLoginFailureRepository;
+use EtoA\User\UserPointsRepository;
 use EtoA\User\UserRepository;
 use EtoA\User\UserSittingRepository;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
@@ -18,6 +19,7 @@ class UserController extends AbstractAdminController
         private UserRepository $userRepository,
         private UserSittingRepository $userSittingRepository,
         private UserLoginFailureRepository $loginFailureRepository,
+        private UserPointsRepository $userPointsRepository,
     ) {
     }
 
@@ -47,6 +49,31 @@ class UserController extends AbstractAdminController
         return $this->render('admin/user/login-failures.html.twig', [
             'form' => $this->createForm(UserLoginFailureType::class, $request->query->all())->createView(),
             'total' => $this->loginFailureRepository->count(),
+        ]);
+    }
+
+    #[Route('/admin/users/points', name: 'admin.users.points')]
+    #[IsGranted('ROLE_ADMIN_TRIAL-ADMIN')]
+    public function points(Request $request): Response
+    {
+        $users = $this->userRepository->searchUserNicknames();
+        if (count($users) === 0) {
+            $this->addFlash('error', 'Keine Benutzer vorhanden!');
+        }
+
+        $user = null;
+        $points = [];
+        if ($request->query->getInt('userId') > 0) {
+            $user = $this->userRepository->getUser($request->query->getInt('userId'));
+            if ($user !== null) {
+                $points = $this->userPointsRepository->getPoints($user->id);
+            }
+        }
+
+        return $this->render('admin/user/points.html.twig', [
+            'users' => $users,
+            'user' => $user,
+            'points' => $points,
         ]);
     }
 }

@@ -163,13 +163,6 @@ elseif ($sub == "requests") {
 }
 
 //
-// Punkteverlauf
-//
-elseif ($sub == "point") {
-    require("user/point.inc.php");
-}
-
-//
 // Multisuche
 //
 elseif ($sub == "multi") {
