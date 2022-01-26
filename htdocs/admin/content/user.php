@@ -128,14 +128,6 @@ elseif ($sub == "observed") {
 }
 
 //
-// Tickets
-//
-elseif ($sub == "tickets") {
-    require("user/tickets.inc.php");
-}
-
-
-//
 // Verwarnungen
 //
 elseif ($sub == "warnings") {
