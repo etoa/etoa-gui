@@ -1,0 +1,20 @@
+{% extends 'components/base_search.html.twig' %}
+
+{% block data %}
+    <tr>
+        <th>Zeit</th>
+        <th>User</th>
+        <th>IP-Adresse</th>
+        <th>Host</th>
+        <th>Client</th>
+    </tr>
+    {% for entry in search.entries %}
+        <tr>
+            <td>{{ formatTimestamp(entry.time) }}</td>
+            <td>{{ entry.userNick }}</td>
+            <td>{{ entry.ip }}</td>
+            <td>{{ entry.host }}</td>
+            <td>{{ entry.client }}</td>
+        </tr>
+    {% endfor %}
+{% endblock %}

@@ -114,13 +114,6 @@ elseif ($sub == "specialists") {
 }
 
 //
-// Fehlerhafte Logins
-//
-elseif ($sub == "loginfailures") {
-    require("user/loginfailures.inc.php");
-}
-
-//
 // Beobachter
 //
 elseif ($sub == "observed") {
