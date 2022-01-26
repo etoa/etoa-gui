@@ -22,7 +22,7 @@ class UserSearch extends AbstractSearch
     public function nickLike(string $name): self
     {
         $this->parts[] = "user_nick LIKE :nickLike";
-        $this->parameters['nickLike'] = $name . '%';
+        $this->parameters['nickLike'] = '%' .$name . '%';
 
         return $this;
     }

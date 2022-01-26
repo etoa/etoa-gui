@@ -9,7 +9,9 @@ use EtoA\Building\BuildingRepository;
 use EtoA\Components\Helper\SearchComponentTrait;
 use EtoA\Components\Helper\SearchResult;
 use EtoA\Form\Type\Admin\BuildingSearchType;
+use EtoA\Universe\Entity\EntityLabel;
 use EtoA\Universe\Entity\EntityRepository;
+use EtoA\Universe\Entity\EntitySearch;
 use EtoA\User\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
@@ -65,7 +67,8 @@ class BuildingSearchComponent extends AbstractController
         if ($total > 0) {
             $this->users = $this->userRepository->searchUserNicknames();
             $this->buildingNames = $this->buildingDataRepository->getBuildingNames(true);
-            $this->entities = $this->getEntityLabels(array_map(fn (BuildingListItem $item) => $item->entityId, $entries));
+            $entityIds = array_map(fn (BuildingListItem $item) => $item->entityId, $entries);
+            $this->entities = array_map(fn (EntityLabel $label) => $label->toString(), $this->entityRepository->searchEntityLabels(EntitySearch::create()->ids($entityIds)));
         }
 
         return new SearchResult($entries, $limit, $total, $this->perPage);

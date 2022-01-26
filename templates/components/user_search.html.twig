@@ -1,0 +1,56 @@
+{% extends 'components/base_search.html.twig' %}
+
+{% block data %}
+    <tr>
+        <th>ID</th>
+        <th>Nick</th>
+        <th>Status</th>
+        <th>Name</th>
+        <th>E-Mail</th>
+        <th>Dual</th>
+        <th>Punkte</th>
+        <th>Allianz</th>
+        <th>Rasse</th>
+        <th>&nbsp;</th>
+    </tr>
+    {% for user in search.entries %}
+        <tr>
+            <td>{{ user.id }}</td>
+            <td>{{ user.nick }}</td>
+            <td>{{ user.name }}</td>
+            {% if user.blockedFrom < this.time and user.blockedTo > this.time  %}
+                <td class="userLockedColor">Gesperrt</td>
+            {% elseif user.hmodFrom < this.time and user.hmodTo > this.time  %}
+                <td class="userHolidayColor">Urlaub</td>
+            {% elseif user.deleted %}
+                <td class="userDeletedColor">Löschauftrag</td>
+            {% elseif user.admin %}
+                <td class="adminColor">Admin</td>
+            {% elseif user.ghost %}
+                <td class="userGhostColor">Geist</td>
+            {% else %}
+                <td>Spieler</td>
+            {% endif %}
+
+            <td title="{{ user.email }}">{{ user.email|u.truncate(15, '...') }}</td>
+
+            {% if user.dualName or user.dualName %}
+                <td title="{{ user.dualName }} ({{ user.dualEmail }})">{{ user.dualName|u.truncate(15, '...') }}</td>
+            {% else %}
+                <td></td>
+            {% endif %}
+
+            <td>{{ formatNumber(user.points) }}</td>
+
+            {% if user.allianceId > 0 %}
+                <td title="{{ this.alliances[user.allianceId] }}">{{ this.alliances[user.allianceId]|u.truncate(15, '...') }}</td>
+            {% else %}
+                <td>-</td>
+            {% endif %}
+            <td>{{ user.raceId > 0 ? this.races[user.raceId] : '-' }}</td>
+            <td>
+                {{ editButton('/admin/?page=user&sub=edit&id=' ~ user.id)|raw }}
+            </td>
+        </tr>
+    {% endfor %}
+{% endblock %}

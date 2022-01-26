@@ -10,7 +10,9 @@ use EtoA\Technology\TechnologyDataRepository;
 use EtoA\Technology\TechnologyListItem;
 use EtoA\Technology\TechnologyListItemSearch;
 use EtoA\Technology\TechnologyRepository;
+use EtoA\Universe\Entity\EntityLabel;
 use EtoA\Universe\Entity\EntityRepository;
+use EtoA\Universe\Entity\EntitySearch;
 use EtoA\User\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
@@ -68,7 +70,8 @@ class TechnologySearchComponent extends AbstractController
         if ($total > 0) {
             $this->userNicks = $this->userRepository->searchUserNicknames();
             $this->technologyNames = $this->technologyDataRepository->getTechnologyNames(true);
-            $this->entities = $this->getEntityLabels(array_map(fn (TechnologyListItem $item) => $item->entityId, $entries));
+            $entityIds = array_map(fn (TechnologyListItem $item) => $item->entityId, $entries);
+            $this->entities = array_map(fn (EntityLabel $label) => $label->toString(), $this->entityRepository->searchEntityLabels(EntitySearch::create()->ids($entityIds)));
         }
 
         return new SearchResult($entries, $limit, $total, $this->perPage);

@@ -4941,24 +4941,9 @@ parameters:
 			path: src/Command/DatabaseRestoreCommand.php
 
 		-
-			message: "#^Method EtoA\\\\Components\\\\Admin\\\\AdminAllianceDepositSearchComponent\\:\\:getEntityLabels\\(\\) should return array\\<int, string\\> but returns array\\<int\\|string, mixed\\>\\.$#"
-			count: 1
-			path: src/Components/Admin/AdminAllianceDepositSearchComponent.php
-
-		-
-			message: "#^Method EtoA\\\\Components\\\\Admin\\\\AllianceSearchComponent\\:\\:getEntityLabels\\(\\) should return array\\<int, string\\> but returns array\\<int\\|string, mixed\\>\\.$#"
-			count: 1
-			path: src/Components/Admin/AllianceSearchComponent.php
-
-		-
 			message: "#^Parameter \\#1 \\$item of method EtoA\\\\Building\\\\BuildingRepository\\:\\:save\\(\\) expects EtoA\\\\Building\\\\BuildingListItem, EtoA\\\\Building\\\\BuildingListItem\\|null given\\.$#"
 			count: 1
 			path: src/Components/Admin/BuildingViewComponent.php
-
-		-
-			message: "#^Method EtoA\\\\Components\\\\Admin\\\\ChatLogSearchComponent\\:\\:getEntityLabels\\(\\) should return array\\<int, string\\> but returns array\\<int\\|string, mixed\\>\\.$#"
-			count: 1
-			path: src/Components/Admin/ChatLogSearchComponent.php
 
 		-
 			message: "#^Cannot access property \\$count on EtoA\\\\DefaultItem\\\\DefaultItem\\|null\\.$#"
@@ -4981,21 +4966,6 @@ parameters:
 			path: src/Components/Admin/DefenseViewComponent.php
 
 		-
-			message: "#^Method EtoA\\\\Components\\\\Admin\\\\LogDebrisSearchComponent\\:\\:getEntityLabels\\(\\) should return array\\<int, string\\> but returns array\\<int\\|string, mixed\\>\\.$#"
-			count: 1
-			path: src/Components/Admin/LogDebrisSearchComponent.php
-
-		-
-			message: "#^Method EtoA\\\\Components\\\\Admin\\\\LogGeneralSearchComponent\\:\\:getEntityLabels\\(\\) should return array\\<int, string\\> but returns array\\<int\\|string, mixed\\>\\.$#"
-			count: 1
-			path: src/Components/Admin/LogGeneralSearchComponent.php
-
-		-
-			message: "#^Method EtoA\\\\Components\\\\Admin\\\\MessageSearchComponent\\:\\:getEntityLabels\\(\\) should return array\\<int, string\\> but returns array\\<int\\|string, mixed\\>\\.$#"
-			count: 1
-			path: src/Components/Admin/MessageSearchComponent.php
-
-		-
 			message: "#^Method EtoA\\\\Components\\\\Admin\\\\MessageViewComponent\\:\\:getMessage\\(\\) should return EtoA\\\\Message\\\\Message but returns EtoA\\\\Message\\\\Message\\|null\\.$#"
 			count: 1
 			path: src/Components/Admin/MessageViewComponent.php
@@ -5004,11 +4974,6 @@ parameters:
 			message: "#^Cannot access property \\$count on EtoA\\\\Missile\\\\MissileListItem\\|null\\.$#"
 			count: 1
 			path: src/Components/Admin/MissileViewComponent.php
-
-		-
-			message: "#^Method EtoA\\\\Components\\\\Admin\\\\ReportSearchComponent\\:\\:getEntityLabels\\(\\) should return array\\<int, string\\> but returns array\\<int\\|string, mixed\\>\\.$#"
-			count: 1
-			path: src/Components/Admin/ReportSearchComponent.php
 
 		-
 			message: "#^Cannot access property \\$id on EtoA\\\\Message\\\\Report\\|null\\.$#"

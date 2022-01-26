@@ -16,9 +16,9 @@ class YesNoMaybeType extends AbstractType
             'choices' => [
                 'Ja' => 1,
                 'Nein' => 0,
-                'Egal' => '',
+                'Egal' => null,
             ],
-            'data' => '',
+            'data' => null,
         ]);
     }
 
