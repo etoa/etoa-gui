@@ -182,10 +182,3 @@ elseif ($sub == "point") {
 elseif ($sub == "multi") {
     require("user/multi.inc.php");
 }
-
-//
-// Sittings
-//
-elseif ($sub == "sitting") {
-    require("user/sitting.inc.php");
-}

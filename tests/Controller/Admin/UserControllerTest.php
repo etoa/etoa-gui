@@ -16,4 +16,15 @@ class UserControllerTest extends SymfonyWebTestCase
 
         $this->assertStatusCode(200, $client->getResponse());
     }
+
+    public function testSitting(): void
+    {
+        $client = self::createClient();
+
+        $this->loginAdmin($client);
+
+        $client->request('GET', '/admin/users/sitting');
+
+        $this->assertStatusCode(200, $client->getResponse());
+    }
 }

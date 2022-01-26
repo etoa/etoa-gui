@@ -1,0 +1,25 @@
+{% extends 'admin/layout/admin.html.twig' %}
+
+{% block content %}
+    <h1>Spieler</h1>
+    <h2>Sitting: Laufende Sitteraccounts</h2>
+
+    <table>
+        <tr>
+            <th>User</th>
+            <th>Sitter</th>
+            <th>Von</th>
+            <th>Bis</th>
+        </tr>
+        {% for entry in entries %}
+            <tr>
+                <td>{{ entry.userNick }}</td>
+                <td>{{ entry.sitterNick }}</td>
+                <td>{{ formatTimestamp(entry.dateFrom) }}</td>
+                <td>{{ formatTimestamp(entry.dateTo) }}</td>
+            </tr>
+        {% else %}
+            <tr><td colspan="999">Keine Datensätze vorhanden!</td></tr>
+        {% endfor %}
+    </table>
+{% endblock %}
