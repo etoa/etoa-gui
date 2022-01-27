@@ -4,9 +4,11 @@ namespace EtoA\Controller\Admin;
 
 use EtoA\Form\Type\Admin\UserLoginFailureType;
 use EtoA\Form\Type\Admin\UserSearchType;
+use EtoA\Form\Type\Admin\UserSessionLogType;
 use EtoA\User\UserLoginFailureRepository;
 use EtoA\User\UserPointsRepository;
 use EtoA\User\UserRepository;
+use EtoA\User\UserSessionRepository;
 use EtoA\User\UserSittingRepository;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\HttpFoundation\Request;
@@ -20,6 +22,7 @@ class UserController extends AbstractAdminController
         private UserSittingRepository $userSittingRepository,
         private UserLoginFailureRepository $loginFailureRepository,
         private UserPointsRepository $userPointsRepository,
+        private UserSessionRepository $userSessionRepository,
     ) {
     }
 
@@ -49,6 +52,16 @@ class UserController extends AbstractAdminController
         return $this->render('admin/user/login-failures.html.twig', [
             'form' => $this->createForm(UserLoginFailureType::class, $request->query->all())->createView(),
             'total' => $this->loginFailureRepository->count(),
+        ]);
+    }
+
+    #[Route('/admin/users/session-log', name: 'admin.users.session-log')]
+    #[IsGranted('ROLE_ADMIN_GAME-ADMIN')]
+    public function sessionLog(Request $request): Response
+    {
+        return $this->render('admin/user/session-log.html.twig', [
+            'form' => $this->createForm(UserSessionLogType::class, $request->query->all())->createView(),
+            'total' => $this->userSessionRepository->countLogs(),
         ]);
     }
 

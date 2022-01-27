@@ -1,0 +1,30 @@
+{% extends 'components/base_search.html.twig' %}
+
+{% block data %}
+    <tr>
+        <th>Spieler</th>
+        <th>Login</th>
+        <th>Letzte Aktivität</th>
+        <th>Logout</th>
+        <th>IP</th>
+        <th>Client</th>
+        <th>Session-Dauer</th>
+    </tr>
+    {% for entry in search.entries %}
+        <tr>
+            <td>{{ this.users[entry.userId]|default('-') }}</td>
+            <td>{{ formatTimestamp(entry.timeLogin) }}</td>
+            <td>{{ entry.timeAction ? formatTimestamp(entry.timeAction) : '-' }}</td>
+            <td>{{ entry.timeLogout ? formatTimestamp(entry.timeLogout) : '-' }}</td>
+            <td>{{ entry.ipAddr }}</td>
+            <td>{{ browser(entry.userAgent).browser.toString() }}</td>
+            <td>
+                {% if max(entry.timeLogout, entry.timeAction) - entry.timeLogin > 0 %}
+                    {{ formatTimespan(max(entry.timeLogout, entry.timeAction) - entry.timeLogin) }}
+                {% else %}
+                    -
+                {% endif %}
+            </td>
+        </tr>
+    {% endfor %}
+{% endblock %}

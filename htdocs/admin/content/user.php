@@ -142,13 +142,6 @@ elseif ($sub == "userbanner") {
 }
 
 //
-// Session-Log
-//
-elseif ($sub == "userlog") {
-    require("user/userlog.inc.php");
-}
-
-//
 // Rassen
 //
 elseif ($sub == "race") {
