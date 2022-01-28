@@ -5131,11 +5131,6 @@ parameters:
 			path: src/Controller/Admin/AdminManagementController.php
 
 		-
-			message: "#^Call to an undefined method Symfony\\\\Component\\\\Form\\\\FormError\\|Symfony\\\\Component\\\\Form\\\\FormErrorIterator\\:\\:getMessage\\(\\)\\.$#"
-			count: 1
-			path: src/Controller/Admin/AdminProfileController.php
-
-		-
 			message: "#^Cannot access offset 'new_password' on mixed\\.$#"
 			count: 1
 			path: src/Controller/Admin/AdminProfileController.php

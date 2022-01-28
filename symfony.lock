@@ -33,6 +33,9 @@
     "endroid/qr-code": {
         "version": "4.4.7"
     },
+    "ergebnis/json-schema-validator": {
+        "version": "2.0.0"
+    },
     "friendsofphp/proxy-manager-lts": {
         "version": "v1.0.5"
     },
