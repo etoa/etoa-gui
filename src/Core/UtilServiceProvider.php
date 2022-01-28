@@ -3,7 +3,7 @@
 namespace EtoA\Core;
 
 use League\CommonMark\CommonMarkConverter;
-use League\CommonMark\MarkdownConverterInterface;
+use League\CommonMark\ConverterInterface;
 use Pimple\Container;
 use Pimple\ServiceProviderInterface;
 
@@ -11,7 +11,7 @@ class UtilServiceProvider implements ServiceProviderInterface
 {
     public function register(Container $pimple): void
     {
-        $pimple[MarkdownConverterInterface::class] = function (): MarkdownConverterInterface {
+        $pimple[ConverterInterface::class] = function (): ConverterInterface {
             return new CommonMarkConverter();
         };
     }

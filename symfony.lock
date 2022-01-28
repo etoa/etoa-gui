@@ -8,6 +8,9 @@
     "dasprid/enum": {
         "version": "1.0.3"
     },
+    "dflydev/dot-access-data": {
+        "version": "v3.0.1"
+    },
     "doctrine/doctrine-bundle": {
         "version": "2.4",
         "recipe": {
@@ -47,6 +50,15 @@
     },
     "lcobucci/jwt": {
         "version": "4.1.4"
+    },
+    "league/config": {
+        "version": "v1.1.1"
+    },
+    "nette/schema": {
+        "version": "v1.2.2"
+    },
+    "nette/utils": {
+        "version": "v3.2.7"
     },
     "paragonie/constant_time_encoding": {
         "version": "v2.4.0"

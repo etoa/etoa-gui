@@ -5631,7 +5631,7 @@ parameters:
 			path: src/Controller/Admin/OverviewController.php
 
 		-
-			message: "#^Parameter \\#1 \\$markdown of method League\\\\CommonMark\\\\MarkdownConverterInterface\\:\\:convertToHtml\\(\\) expects string, string\\|false given\\.$#"
+			message: "#^Parameter \\#1 \\$input of method League\\\\CommonMark\\\\ConverterInterface\\:\\:convert\\(\\) expects string, string\\|false given\\.$#"
 			count: 2
 			path: src/Controller/Admin/OverviewController.php
 
