@@ -5,6 +5,9 @@
     "beberlei/assert": {
         "version": "v3.3.1"
     },
+    "composer/pcre": {
+        "version": "1.0.1"
+    },
     "dasprid/enum": {
         "version": "1.0.3"
     },
@@ -210,6 +213,9 @@
             "phpunit.xml.dist",
             "tests/bootstrap.php"
         ]
+    },
+    "symfony/polyfill-iconv": {
+        "version": "v1.24.0"
     },
     "symfony/polyfill-intl-icu": {
         "version": "v1.23.0"
