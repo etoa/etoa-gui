@@ -38,7 +38,7 @@ services:
         arguments:
             $tasks: !tagged_iterator periodic.task
 
-    League\CommonMark\MarkdownConverterInterface:
+    League\CommonMark\ConverterInterface:
         class: League\CommonMark\GithubFlavoredMarkdownConverter
 
     LittleCubicleGames\Quests\:

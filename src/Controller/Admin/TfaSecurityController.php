@@ -2,12 +2,13 @@
 
 namespace EtoA\Controller\Admin;
 
+use Endroid\QrCode\QrCode;
+use Endroid\QrCode\Writer\SvgWriter;
 use EtoA\Admin\AdminUserRepository;
 use EtoA\Log\LogFacility;
 use EtoA\Log\LogRepository;
 use EtoA\Log\LogSeverity;
 use Scheb\TwoFactorBundle\Security\TwoFactor\Provider\Totp\TotpAuthenticatorInterface;
-use Scheb\TwoFactorBundle\Security\TwoFactor\QrCode\QrCodeGenerator;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -24,7 +25,7 @@ class TfaSecurityController extends AbstractAdminController
     }
 
     #[Route("/admin/tfa/enable", name: "admin.tfa.enable")]
-    public function enableTwoFactorAuthAction(Request $req, TotpAuthenticatorInterface $authenticator, QrCodeGenerator $qrCodeGenerator): Response
+    public function enableTwoFactorAuthAction(Request $req, TotpAuthenticatorInterface $authenticator): Response
     {
         $secret = $req->getSession()->get('tfa-secret', $authenticator->generateSecret());
 
@@ -38,17 +39,17 @@ class TfaSecurityController extends AbstractAdminController
                 $req->getSession()->remove('tfa-secret');
 
                 $this->logRepository->add(LogFacility::ADMIN, LogSeverity::INFO, $user->getUsername() . ' aktiviert Zwei-Faktor-Authentifizierung');
-                $this->addFlash('success', 'Two-factor authentication has been enabled.');
+                $this->addFlash('success', 'Zwei-Faktor-Authentifizierung wurde aktiviert.');
 
                 return $this->redirect('/admin/?myprofile');
             }
         }
 
-        $qrCode = $qrCodeGenerator->getTotpQrCode($user);
+        $qrCode = new QrCode($authenticator->getQRContent($user));
 
         return $this->render('admin/profile/tfa-activate.html.twig', [
             'secret' => $secret,
-            'tfaQrCode' => $qrCode->writeDataUri(),
+            'tfaQrCode' => (new SvgWriter())->write($qrCode)->getDataUri(),
         ]);
     }
 
@@ -58,11 +59,11 @@ class TfaSecurityController extends AbstractAdminController
         $user = $this->getUser();
 
         if ($req->isMethod('POST')) {
-            if ($authenticator->checkCode($user, $req->request->get('code'))) {
+            if ($authenticator->checkCode($user, $req->request->get('tfa_challenge'))) {
                 $this->adminUserRepository->setTfaSecret($user->getData(), '');
 
                 $this->logRepository->add(LogFacility::ADMIN, LogSeverity::INFO, $user->getUsername() . ' deaktiviert Zwei-Faktor-Authentifizierung');
-                $this->addFlash('success', 'Two-factor authentication has been enabled.');
+                $this->addFlash('success', 'Zwei-Faktor-Authentifizierung wurde deaktiviert.');
 
                 return $this->redirect('/admin/?myprofile');
             }

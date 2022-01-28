@@ -14,6 +14,7 @@
     <server name="SHELL_VERBOSITY" value="-1"/>
     <server name="KERNEL_CLASS" value="EtoA\Kernel"/>
     <server name="REMOTE_ADDR" value="127.0.0.1"/>
+    <server name="SYMFONY_DEPRECATIONS_HELPER" value="=max[self]=0" />
   </php>
 
   <testsuites>

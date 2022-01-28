@@ -17,6 +17,10 @@ class SmokeTest extends TestCase
                 $app->offsetGet($serviceId);
             }
         }
+
+        // Drop monolog and symfony error handlers
+        restore_error_handler();
+        restore_error_handler();
     }
 
     public function tearDown(): void

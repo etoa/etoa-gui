@@ -59,11 +59,11 @@ parameters:
         - '#Instantiated class (xajax|xajaxResponse) not found#'
 
         - '#Form::getFields\(\) return type has no value type specified in iterable type array#'
-        - '#Call to deprecated method getUsername\(\) of class EtoA\\Security\\Admin\\CurrentAdmin#'
 
         - '#Cannot cast mixed to (int|string|bool|float)#'
         - '#Parameter \#[0-9]+ \$[a-z]+ of class EtoA\\[a-z\\]+ constructor expects [a-z\\]+\, mixed given#i'
-        - '#Cannot call method (fetchAllKeyValue|fetchAssociative|fetchAllAssociative)\(\) on Doctrine\\DBAL\\ForwardCompatibility\\DriverStatement\|int#'
-        - '#Cannot cast Doctrine\\DBAL\\ForwardCompatibility\\DriverStatement\|int to int#'
+        - '#Cannot call method (fetchAllKeyValue|fetchAssociative|fetchAllAssociative|fetchOne)\(\) on Doctrine\\DBAL\\ForwardCompatibility\\Result\|int#'
+        - '#Cannot cast Doctrine\\DBAL\\ForwardCompatibility\\Result\|int to int#'
+        - '#should return int but returns Doctrine\\DBAL\\ForwardCompatibility\\Result\|int#'
     symfony:
         containerXmlPath: var/cache/dev/EtoA_KernelDevDebugContainer.xml

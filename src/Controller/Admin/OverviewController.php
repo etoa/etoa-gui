@@ -17,7 +17,7 @@ use EtoA\Universe\Entity\EntityLabelSearch;
 use EtoA\Universe\Entity\EntityRepository;
 use EtoA\User\UserRepository;
 use EtoA\User\UserSearch;
-use League\CommonMark\MarkdownConverterInterface;
+use League\CommonMark\ConverterInterface;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -27,7 +27,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class OverviewController extends AbstractAdminController
 {
     public function __construct(
-        private MarkdownConverterInterface $markdown,
+        private ConverterInterface $markdown,
         private GameStatsGenerator $gameStatsGenerator,
         private DatabaseManagerRepository $databaseManager,
         private string $cacheDir,
@@ -108,8 +108,8 @@ class OverviewController extends AbstractAdminController
         $changelogPublicFile = __DIR__ . "/../../../Changelog_public.md";
 
         return $this->render('admin/overview/changelog.html.twig', [
-            'changelog' => is_file($changelogFile) ? $this->markdown->convertToHtml(file_get_contents($changelogFile)) : null,
-            'changelogPublic' => is_file($changelogPublicFile) ? $this->markdown->convertToHtml(file_get_contents($changelogPublicFile)) : null,
+            'changelog' => is_file($changelogFile) ? $this->markdown->convert(file_get_contents($changelogFile)) : null,
+            'changelogPublic' => is_file($changelogPublicFile) ? $this->markdown->convert(file_get_contents($changelogPublicFile)) : null,
         ]);
     }
 
