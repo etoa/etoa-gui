@@ -31,13 +31,10 @@
         "version": "v3.1.0"
     },
     "endroid/qr-code": {
-        "version": "3.9.7"
+        "version": "4.4.7"
     },
     "friendsofphp/proxy-manager-lts": {
         "version": "v1.0.5"
-    },
-    "khanamiryan/qrcode-detector-decoder": {
-        "version": "1.0.5.2"
     },
     "laminas/laminas-code": {
         "version": "4.4.2"
@@ -47,9 +44,6 @@
     },
     "lcobucci/jwt": {
         "version": "4.1.4"
-    },
-    "myclabs/php-enum": {
-        "version": "1.8.3"
     },
     "paragonie/constant_time_encoding": {
         "version": "v2.4.0"

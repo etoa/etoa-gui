@@ -35,7 +35,7 @@ class CurrentAdmin implements UserInterface, PasswordAuthenticatedUserInterface,
         return $this->adminUser->passwordString;
     }
 
-    public function getSalt()
+    public function getSalt(): ?string
     {
         return null;
     }

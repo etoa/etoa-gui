@@ -31,8 +31,7 @@
         "symfony/security-bundle": "^5.3",
         "doctrine/annotations": "^1.13",
         "symfony/translation": "^5.3",
-        "scheb/2fa": "^5.11",
-        "scheb/2fa-qr-code": "^5.11",
+        "scheb/2fa": "^6.0",
         "symfony/mime": "^5.3",
         "symfony/messenger": "^5.3",
         "dragonmantank/cron-expression": "^3.1",
@@ -43,7 +42,8 @@
         "symfony/webpack-encore-bundle": "^1.13",
         "symfony/ux-live-component": "^2.0",
         "sensio/framework-extra-bundle": "^6.2",
-        "phpstan/phpstan-symfony": "^1.1"
+        "phpstan/phpstan-symfony": "^1.1",
+        "endroid/qr-code": "^4.4"
     },
     "require-dev": {
         "ergebnis/composer-normalize": "^2.0",

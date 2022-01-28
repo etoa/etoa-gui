@@ -4586,11 +4586,6 @@ parameters:
 			path: htdocs/show.php
 
 		-
-			message: "#^Method EtoA\\\\Admin\\\\AdminSessionRepository\\:\\:removeSessionLogs\\(\\) should return int but returns Doctrine\\\\DBAL\\\\ForwardCompatibility\\\\DriverStatement\\|int\\.$#"
-			count: 1
-			path: src/Admin/AdminSessionRepository.php
-
-		-
 			message: "#^Method EtoA\\\\Admin\\\\AdminUserRepository\\:\\:findAllAsList\\(\\) should return array\\<int, string\\> but returns array\\<int\\|string, mixed\\>\\.$#"
 			count: 1
 			path: src/Admin/AdminUserRepository.php
@@ -4711,11 +4706,6 @@ parameters:
 			path: src/Alliance/AllianceBuildingRepository.php
 
 		-
-			message: "#^Cannot call method fetchOne\\(\\) on Doctrine\\\\DBAL\\\\ForwardCompatibility\\\\DriverStatement\\|int\\.$#"
-			count: 2
-			path: src/Alliance/AllianceDiplomacyRepository.php
-
-		-
 			message: "#^Parameter \\#1 \\$dir_handle of function closedir expects resource\\|null, resource\\|false given\\.$#"
 			count: 1
 			path: src/Alliance/AllianceImageStorage.php
@@ -4729,11 +4719,6 @@ parameters:
 			message: "#^Method EtoA\\\\Alliance\\\\AlliancePollRepository\\:\\:getUserVotes\\(\\) should return array\\<int, int\\> but returns array\\<int\\|string, int\\>\\.$#"
 			count: 1
 			path: src/Alliance/AlliancePollRepository.php
-
-		-
-			message: "#^Cannot call method fetchOne\\(\\) on Doctrine\\\\DBAL\\\\ForwardCompatibility\\\\DriverStatement\\|int\\.$#"
-			count: 1
-			path: src/Alliance/AllianceRepository.php
 
 		-
 			message: "#^Method EtoA\\\\Alliance\\\\AllianceRepository\\:\\:findAllSoloUsers\\(\\) should return array\\<array\\{user_id\\: string, user_nick\\: string, user_email\\: string\\}\\> but returns array\\<int, array\\<string, mixed\\>\\>\\.$#"
@@ -6774,11 +6759,6 @@ parameters:
 			path: src/Security/Admin/AdminAuthenticator.php
 
 		-
-			message: "#^Method EtoA\\\\Security\\\\Admin\\\\AdminUserProvider\\:\\:loadUserByUsername\\(\\) should return Symfony\\\\Component\\\\Security\\\\Core\\\\User\\\\UserInterface but returns EtoA\\\\Security\\\\Admin\\\\CurrentAdmin\\|null\\.$#"
-			count: 1
-			path: src/Security/Admin/AdminUserProvider.php
-
-		-
 			message: "#^Parameter \\#1 \\$identifier of method Symfony\\\\Component\\\\Security\\\\Core\\\\Exception\\\\UserNotFoundException\\:\\:setUserIdentifier\\(\\) expects string, string\\|false given\\.$#"
 			count: 1
 			path: src/Security/Admin/AdminUserProvider.php
@@ -7190,11 +7170,6 @@ parameters:
 
 		-
 			message: "#^Cannot access offset 'plastic' on array\\<string, mixed\\>\\|false\\.$#"
-			count: 1
-			path: src/Universe/Planet/PlanetRepository.php
-
-		-
-			message: "#^Cannot call method fetchOne\\(\\) on Doctrine\\\\DBAL\\\\ForwardCompatibility\\\\DriverStatement\\|int\\.$#"
 			count: 1
 			path: src/Universe/Planet/PlanetRepository.php
 

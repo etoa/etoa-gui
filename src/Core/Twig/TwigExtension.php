@@ -26,7 +26,10 @@ class TwigExtension extends AbstractExtension
         $this->startTime = microtime(true);
     }
 
-    public function getFunctions()
+    /**
+     * @return list<TwigFunction>
+     */
+    public function getFunctions(): array
     {
         return [
             new TwigFunction('serverDate', [$this, 'getServerDate']),
