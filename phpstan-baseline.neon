@@ -7044,7 +7044,7 @@ parameters:
 			path: src/Support/Mail/MailSenderService.php
 
 		-
-			message: "#^Parameter \\#3 \\$security of class Swift_SmtpTransport constructor expects string\\|null, bool\\|float\\|int\\|string\\|null given\\.$#"
+			message: "#^Parameter \\#3 \\$encryption of class Swift_SmtpTransport constructor expects string\\|null, bool\\|float\\|int\\|string\\|null given\\.$#"
 			count: 1
 			path: src/Support/Mail/MailSenderService.php
 
