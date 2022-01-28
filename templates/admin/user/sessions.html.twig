@@ -1,0 +1,40 @@
+{% extends 'admin/layout/admin.html.twig' %}
+
+{% block content %}
+    <h1>Spieler</h1>
+    <h2>Sessions</h2>
+
+    <p>Es sind {{ sessions|length }} Sessions aktiv. Das User-Timeout beträgt {{ formatTimespan(timeout) }}</p>
+
+    <form method="post" action="{{ path('admin.users.sessions.kick-all') }}">
+        <input type="submit" value="Alle User kicken">
+    </form>
+
+    <table class="tb">
+        <tr>
+            <th>Status</th>
+            <th>Nick</th>
+            <th>Login</th>
+            <th>Aktivität</th>
+            <th>Dauer</th>
+            <th>IP</th>
+            <th>User Agent</th>
+            <th>Kicken</th>
+        </tr>
+        {% for session in sessions %}
+            {% set online = time - timeout < session.timeAction %}
+            <tr>
+                <td style="color:{% if online %}#0f0{% else %}red{% endif %};">{% if online %}Online{% else %}Timeout{% endif %}</td>
+                <td>{{ userNicks[session.userId] }}</td>
+                <td>{{ formatTimestamp(session.timeLogin) }}</td>
+                <td>{{ formatTimestamp(session.timeAction) }}</td>
+                <td>{{ formatTimespan(session.timeAction - session.timeLogin) }}</td>
+                <td title="{{ ipGetHost(session.ipAddr)}}">{{ session.ipAddr }}</td>
+                <td title="{{ session.userAgent }}">{{ browser(session.userAgent).toString() }}</td>
+                <td><form action="{{ path('admin.users.sessions.kick', {id: session.id}) }}" method="POST"><input type="submit" value="Kick"></form></td>
+            </tr>
+        {% else %}
+            <tr><td colspan="99999"><i>Keine Einträge vorhanden!</i></td></tr>
+        {% endfor %}
+    </table>
+{% endblock %}

@@ -4,7 +4,7 @@ namespace EtoA\Controller\Admin;
 
 use EtoA\SymfonyWebTestCase;
 
-class UserControllerTest extends SymfonyWebTestCase
+class UsersControllerTest extends SymfonyWebTestCase
 {
     public function testList(): void
     {
@@ -35,17 +35,6 @@ class UserControllerTest extends SymfonyWebTestCase
         $this->loginAdmin($client);
 
         $client->request('GET', '/admin/users/login-failures');
-
-        $this->assertStatusCode(200, $client->getResponse());
-    }
-
-    public function testSessionLog(): void
-    {
-        $client = self::createClient();
-
-        $this->loginAdmin($client);
-
-        $client->request('GET', '/admin/users/session-log');
 
         $this->assertStatusCode(200, $client->getResponse());
     }
