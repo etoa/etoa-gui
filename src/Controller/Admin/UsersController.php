@@ -4,6 +4,7 @@ namespace EtoA\Controller\Admin;
 
 use EtoA\Form\Type\Admin\UserLoginFailureType;
 use EtoA\Form\Type\Admin\UserSearchType;
+use EtoA\Ranking\UserBannerService;
 use EtoA\User\UserLoginFailureRepository;
 use EtoA\User\UserPointsRepository;
 use EtoA\User\UserRepository;
@@ -20,6 +21,7 @@ class UsersController extends AbstractAdminController
         private UserSittingRepository $userSittingRepository,
         private UserLoginFailureRepository $loginFailureRepository,
         private UserPointsRepository $userPointsRepository,
+        private UserBannerService $userBannerService,
     ) {
     }
 
@@ -74,6 +76,23 @@ class UsersController extends AbstractAdminController
             'users' => $users,
             'user' => $user,
             'points' => $points,
+        ]);
+    }
+
+    #[Route('/admin/users/banners', name: 'admin.users.banners')]
+    #[IsGranted('ROLE_ADMIN_GAME-ADMIN')]
+    public function banners(Request $request): Response
+    {
+        $banners = [];
+        $userNicks = $this->userRepository->searchUserNicknames();
+        foreach ($userNicks as $userId => $userNick) {
+            $banners[$userNick] = $this->userBannerService->getUserBanner($userId);
+        }
+
+        return $this->render('admin/user/banners.html.twig', [
+            'banners' => $banners,
+            'width' => UserBannerService::BANNER_WIDTH,
+            'height' => UserBannerService::BANNER_HEIGHT,
         ]);
     }
 }

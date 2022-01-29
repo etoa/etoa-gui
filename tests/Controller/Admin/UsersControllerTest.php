@@ -49,4 +49,15 @@ class UsersControllerTest extends SymfonyWebTestCase
 
         $this->assertStatusCode(200, $client->getResponse());
     }
+
+    public function testBanners(): void
+    {
+        $client = self::createClient();
+
+        $this->loginAdmin($client);
+
+        $client->request('GET', '/admin/users/banners');
+
+        $this->assertStatusCode(200, $client->getResponse());
+    }
 }

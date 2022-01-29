@@ -89,6 +89,16 @@ class UserBannerService
         closedir($dh);
     }
 
+    public function getUserBanner(int $userId): ?UserBanner
+    {
+        $localPath = $this->getUserBannerPath($userId);
+        if (!file_exists($localPath)) {
+            return null;
+        }
+
+        return new UserBanner($userId, $localPath, str_replace($this->cacheDir, '/cache', $localPath));
+    }
+
     public function getUserBannerPath(int $userId): string
     {
         return $this->cacheDir . '/userbanner/' . md5('user' . $userId) . '.png';

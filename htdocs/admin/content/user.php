@@ -68,13 +68,6 @@ elseif ($sub == "imagecheck") {
 }
 
 //
-// User banner
-//
-elseif ($sub == "userbanner") {
-    require("user/userbanner.inc.php");
-}
-
-//
 // Rassen
 //
 elseif ($sub == "race") {
