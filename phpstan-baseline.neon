@@ -1,26 +1,6 @@
 parameters:
 	ignoreErrors:
 		-
-			message: "#^Parameter \\#1 \\$name of method EtoA\\\\User\\\\UserService\\:\\:register\\(\\) expects string, bool\\|float\\|int\\|string\\|null given\\.$#"
-			count: 1
-			path: htdocs/admin/content/user.php
-
-		-
-			message: "#^Parameter \\#2 \\$email of method EtoA\\\\User\\\\UserService\\:\\:register\\(\\) expects string, bool\\|float\\|int\\|string\\|null given\\.$#"
-			count: 1
-			path: htdocs/admin/content/user.php
-
-		-
-			message: "#^Parameter \\#3 \\$nick of method EtoA\\\\User\\\\UserService\\:\\:register\\(\\) expects string, bool\\|float\\|int\\|string\\|null given\\.$#"
-			count: 1
-			path: htdocs/admin/content/user.php
-
-		-
-			message: "#^Parameter \\#4 \\$password of method EtoA\\\\User\\\\UserService\\:\\:register\\(\\) expects string, bool\\|float\\|int\\|string\\|null given\\.$#"
-			count: 1
-			path: htdocs/admin/content/user.php
-
-		-
 			message: "#^Cannot access property \\$admin on EtoA\\\\User\\\\User\\|null\\.$#"
 			count: 1
 			path: htdocs/admin/content/user/edit.inc.php

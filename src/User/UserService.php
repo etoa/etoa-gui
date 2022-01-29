@@ -138,7 +138,7 @@ class UserService
         string $email,
         string $nick,
         string $password,
-        int $race = 0,
+        ?int $race = 0,
         bool $ghost = false,
         bool $forceVerified = false
     ): User {
@@ -181,7 +181,7 @@ class UserService
         }
 
         // Add new record
-        $userId = $this->userRepository->create($nick, $name, $email, $password, $race, $ghost);
+        $userId = $this->userRepository->create($nick, $name, $email, $password, (int) $race, $ghost);
         $this->userRepository->setSittingDays($userId, $this->config->getInt('user_sitting_days'));
         $this->userRatingRepository->addBlank($userId);
         $this->userPropertiesRepository->addBlank($userId);
