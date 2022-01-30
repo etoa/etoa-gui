@@ -61,13 +61,6 @@ elseif ($sub == "warnings") {
 }
 
 //
-// Bilder prüfen
-//
-elseif ($sub == "imagecheck") {
-    require("user/imagecheck.inc.php");
-}
-
-//
 // Rassen
 //
 elseif ($sub == "race") {

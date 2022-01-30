@@ -60,4 +60,15 @@ class UsersControllerTest extends SymfonyWebTestCase
 
         $this->assertStatusCode(200, $client->getResponse());
     }
+
+    public function testImageCheck(): void
+    {
+        $client = self::createClient();
+
+        $this->loginAdmin($client);
+
+        $client->request('GET', '/admin/users/imagecheck');
+
+        $this->assertStatusCode(200, $client->getResponse());
+    }
 }

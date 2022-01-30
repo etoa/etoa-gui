@@ -5,11 +5,14 @@ namespace EtoA\Controller\Admin;
 use EtoA\Form\Type\Admin\UserLoginFailureType;
 use EtoA\Form\Type\Admin\UserSearchType;
 use EtoA\Ranking\UserBannerService;
+use EtoA\User\ProfileImage;
 use EtoA\User\UserLoginFailureRepository;
 use EtoA\User\UserPointsRepository;
 use EtoA\User\UserRepository;
+use EtoA\User\UserSearch;
 use EtoA\User\UserSittingRepository;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -22,6 +25,7 @@ class UsersController extends AbstractAdminController
         private UserLoginFailureRepository $loginFailureRepository,
         private UserPointsRepository $userPointsRepository,
         private UserBannerService $userBannerService,
+        private string $webRooDir,
     ) {
     }
 
@@ -93,6 +97,66 @@ class UsersController extends AbstractAdminController
             'banners' => $banners,
             'width' => UserBannerService::BANNER_WIDTH,
             'height' => UserBannerService::BANNER_HEIGHT,
+        ]);
+    }
+
+    #[Route('/admin/users/imagecheck', name: 'admin.users.imagecheck')]
+    #[IsGranted('ROLE_ADMIN_GAME-ADMIN')]
+    public function imageCheck(Request $request): Response
+    {
+        $path = ProfileImage::IMAGE_PATH;
+        $storedImagePath = $this->webRooDir . $path;
+        if ($request->request->has('validate_submit')) {
+            foreach ($request->request->all('validate') as $userId => $validate) {
+                if ($validate == 0) {
+                    $user = $this->userRepository->getUser($userId);
+                    if ($user !== null) {
+                        if (file_exists($storedImagePath . $user->getProfileImageUrl())) {
+                            unlink($storedImagePath . $user->getProfileImageUrl());
+                        }
+                        if ($this->userRepository->updateImgCheck($userId, false, '')) {
+                            $this->addFlash('success', 'Bild entfernt!');
+                        }
+                    }
+                } else {
+                    $this->userRepository->updateImgCheck($userId, false);
+                }
+            }
+        }
+
+        $usersWithImage = $this->userRepository->searchUsers(UserSearch::create()->confirmedImageCheck());
+        $userImageExists = [];
+        $usedPaths = [];
+        foreach ($usersWithImage as $user) {
+            $usedPaths[] = $user->profileImage;
+            $userImageExists[$user->id] = file_exists($path . $user->profileImage);
+        }
+
+        $unused = [];
+        if (is_dir($storedImagePath)) {
+            $finder = Finder::create()->files()->in([$storedImagePath]);
+            foreach ($finder as $file) {
+                $url = str_replace($this->webRooDir, '', (string) $file->getRealPath());
+                if (!in_array($url, $usedPaths, true)) {
+                    $unused[$url] = $file;
+                }
+            }
+        }
+
+        if ($request->request->has('clearoverhead')) {
+            foreach ($unused as $file) {
+                unlink((string) $file->getRealPath());
+            }
+
+            $unused = [];
+            $this->addFlash('success', 'Verwaiste Bilder gelöscht!');
+        }
+
+        return $this->render('admin/user/image-check.html.twig', [
+            'usersWithImage' => $usersWithImage,
+            'userImageExists' => $userImageExists,
+            'imagePath' => $path,
+            'unused' => $unused,
         ]);
     }
 }

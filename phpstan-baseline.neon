@@ -201,16 +201,6 @@ parameters:
 			path: htdocs/admin/content/user/edit.inc.php
 
 		-
-			message: "#^Parameter \\#1 \\$dir_handle of function closedir expects resource\\|null, resource\\|false given\\.$#"
-			count: 1
-			path: htdocs/admin/content/user/imagecheck.inc.php
-
-		-
-			message: "#^Parameter \\#1 \\$dir_handle of function readdir expects resource\\|null, resource\\|false given\\.$#"
-			count: 1
-			path: htdocs/admin/content/user/imagecheck.inc.php
-
-		-
 			message: "#^Access to an undefined property EtoA\\\\User\\\\UserSession\\|EtoA\\\\User\\\\UserSessionLog\\:\\:\\$timeLogout\\.$#"
 			count: 1
 			path: htdocs/admin/content/user/observed.inc.php
