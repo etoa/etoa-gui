@@ -1306,12 +1306,12 @@ parameters:
 			path: htdocs/content/allianceboard.php
 
 		-
-			message: "#^Parameter \\#2 \\$text of method EtoA\\\\Alliance\\\\Board\\\\AllianceBoardPostRepository\\:\\:addPost\\(\\) expects string, bool\\|float\\|int\\|string\\|null given\\.$#"
+			message: "#^Parameter \\#2 \\$text of method EtoA\\\\Alliance\\\\Board\\\\AllianceBoardPostRepository\\:\\:addPost\\(\\) expects string, bool\\|float\\|int\\|string given\\.$#"
 			count: 1
 			path: htdocs/content/allianceboard.php
 
 		-
-			message: "#^Parameter \\#2 \\$text of method EtoA\\\\Alliance\\\\Board\\\\AllianceBoardPostRepository\\:\\:updatePost\\(\\) expects string, bool\\|float\\|int\\|string\\|null given\\.$#"
+			message: "#^Parameter \\#2 \\$text of method EtoA\\\\Alliance\\\\Board\\\\AllianceBoardPostRepository\\:\\:updatePost\\(\\) expects string, bool\\|float\\|int\\|string given\\.$#"
 			count: 2
 			path: htdocs/content/allianceboard.php
 
@@ -2071,11 +2071,6 @@ parameters:
 			path: htdocs/content/help.php
 
 		-
-			message: "#^Parameter \\#2 \\$subject of function preg_match expects string, string\\|null given\\.$#"
-			count: 1
-			path: htdocs/content/help.php
-
-		-
 			message: "#^Cannot access property \\$id on EtoA\\\\Universe\\\\Planet\\\\Planet\\|null\\.$#"
 			count: 2
 			path: htdocs/content/market.php
@@ -2161,22 +2156,17 @@ parameters:
 			path: htdocs/content/market/ship_sell.php
 
 		-
-			message: "#^Parameter \\#1 \\$string of function base64_decode expects string, string\\|null given\\.$#"
-			count: 1
-			path: htdocs/content/messages/new.php
-
-		-
-			message: "#^Parameter \\#1 \\$string of function htmlentities expects string, bool\\|float\\|int\\|string\\|null given\\.$#"
+			message: "#^Parameter \\#1 \\$string of function htmlentities expects string, bool\\|float\\|int\\|string given\\.$#"
 			count: 5
 			path: htdocs/content/messages/new.php
 
 		-
-			message: "#^Parameter \\#1 \\$string of function rawurldecode expects string, bool\\|float\\|int\\|string\\|null given\\.$#"
-			count: 2
+			message: "#^Parameter \\#1 \\$string of function rawurldecode expects string, bool\\|float\\|int\\|string given\\.$#"
+			count: 1
 			path: htdocs/content/messages/new.php
 
 		-
-			message: "#^Parameter \\#1 \\$string of function stripslashes expects string, string\\|null given\\.$#"
+			message: "#^Parameter \\#1 \\$string of function rawurldecode expects string, bool\\|float\\|int\\|string\\|null given\\.$#"
 			count: 1
 			path: htdocs/content/messages/new.php
 
@@ -4171,16 +4161,6 @@ parameters:
 			path: htdocs/misc/map.image.php
 
 		-
-			message: "#^Result of \\|\\| is always true\\.$#"
-			count: 1
-			path: htdocs/misc/map.image.php
-
-		-
-			message: "#^Variable \\$s in isset\\(\\) always exists and is not nullable\\.$#"
-			count: 1
-			path: htdocs/misc/map.image.php
-
-		-
 			message: "#^Parameter \\#1 \\$dst_image of function imagecopyresized expects GdImage, GdImage\\|false given\\.$#"
 			count: 1
 			path: htdocs/misc/market.image.php
@@ -4584,6 +4564,11 @@ parameters:
 			message: "#^Only booleans are allowed in a negated boolean, int\\|false given\\.$#"
 			count: 1
 			path: htdocs/show.php
+
+		-
+			message: "#^Method EtoA\\\\Admin\\\\AdminSessionRepository\\:\\:findByTimeout\\(\\) should return array\\<string\\> but returns array\\<int, mixed\\>\\.$#"
+			count: 1
+			path: src/Admin/AdminSessionRepository.php
 
 		-
 			message: "#^Method EtoA\\\\Admin\\\\AdminUserRepository\\:\\:findAllAsList\\(\\) should return array\\<int, string\\> but returns array\\<int\\|string, mixed\\>\\.$#"
@@ -6459,16 +6444,6 @@ parameters:
 			path: src/Market/MarketHandler.php
 
 		-
-			message: "#^Property EtoA\\\\Message\\\\AdminMessageRequest\\:\\:\\$subject \\(string\\) does not accept string\\|null\\.$#"
-			count: 1
-			path: src/Message/AdminMessageRequest.php
-
-		-
-			message: "#^Property EtoA\\\\Message\\\\AdminMessageRequest\\:\\:\\$text \\(string\\) does not accept string\\|null\\.$#"
-			count: 1
-			path: src/Message/AdminMessageRequest.php
-
-		-
 			message: "#^Method EtoA\\\\Message\\\\MessageCategoryRepository\\:\\:getName\\(\\) should return string\\|null but returns mixed\\.$#"
 			count: 1
 			path: src/Message/MessageCategoryRepository.php
@@ -7360,6 +7335,11 @@ parameters:
 
 		-
 			message: "#^Method EtoA\\\\User\\\\UserSessionRepository\\:\\:getLatestUserIps\\(\\) should return array\\<string\\> but returns array\\<int, mixed\\>\\.$#"
+			count: 1
+			path: src/User/UserSessionRepository.php
+
+		-
+			message: "#^Method EtoA\\\\User\\\\UserSessionRepository\\:\\:getUserSessionIds\\(\\) should return array\\<string\\> but returns array\\<int, mixed\\>\\.$#"
 			count: 1
 			path: src/User/UserSessionRepository.php
 
