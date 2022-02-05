@@ -1,0 +1,160 @@
+{% extends 'admin/layout/admin.html.twig' %}
+
+{% block content %}
+    <h1>Spieler</h1>
+    <h2>XML-Import/Export Details</h2>
+
+    <fieldset><legend>Allgemeines</legend>
+    <table>
+            <tr>
+                <th class="tbltitle" style="width:150px;">Erstellt am:</th>
+                <td class="tbldata">{{ xml.export.attributes.date }}</td>
+            </tr>
+            <tr>
+                <th class="tbltitle">ID:</th>
+                <td class="tbldata">{{ xml.account.id }}</td>
+            </tr>
+    <tr>
+        <th class="tbltitle">Nick:</th>
+        <td class="tbldata">{{ xml.account.nick }}</td>
+    </tr>
+    <tr>
+        <th class="tbltitle">Name:</th>
+        <td class="tbldata">{{ xml.account.name }}</td>
+    </tr>
+    <tr>
+        <th class="tbltitle">E-Mail:</th>
+        <td class="tbldata">{{ xml.account.email }}</td>
+    </tr>
+    <tr>
+        <th class="tbltitle">Punkte:</th>
+        <td class="tbldata">{{ xml.account.points }}</td>
+    </tr>
+    <tr>
+        <th class="tbltitle">Rank:</th>
+        <td class="tbldata">{{ xml.account.rank }}</td>
+    </tr>
+    <tr>
+        <th class="tbltitle">Online:</th>
+        <td class="tbldata">{{ xml.account.online }}</td>
+    </tr>
+    <tr>
+        <th class="tbltitle">IP:</th>
+        <td class="tbldata">{{ xml.account.ip }}</td>
+    </tr>
+    <tr>
+        <th class="tbltitle">Host:</th>
+        <td class="tbldata">{{ xml.account.host }}</td>
+    </tr>
+    <tr>
+        <th class="tbltitle">Allianz:</th>
+        <td class="tbldata">[{{ xml.account.alliance.attributes.tag }}] {{ xml.account.alliance}} (Id: {{ xml.account.alliance.attributes.id }})</td>
+    </tr>
+    <tr>
+        <th class="tbltitle">Rasse:</th>
+        <td class="tbldata">{{ xml.account.race }} (Id: {{ xml.account.race.attributes.id }})</td>
+    </tr>
+    </table>
+    </fieldset>
+
+    <fieldset><legend>Planeten</legend>
+    <table>
+        {% if xml.planets.planet is defined %}
+            {% for planet in xml.planets.planet %}
+                <tr>
+                    <th class="tbltitle" rowspan="7" style="width:200px;">
+                        {{ planet.attributes.name }}<br/> (Id: {{ planet.attributes.id }}
+                        {% if planet.attributes.main == 1 %}HAUPTPLANET{% endif %}
+                        )
+                    </th>
+                    <td class="tbldata">Typ:</td>
+                    <td class="tbldata">{{ planet.type }} (Id: {{ planet.type.attributes.id }})</td>
+                </tr>
+                <tr>
+                    <td class="tbldata">Titan:</td>
+                    <td class="tbldata">{{ formatNumber(planet.metal.__toString()) }}</td>
+                </tr>
+                <tr>
+                    <td class="tbldata">Silizium:</td>
+                    <td class="tbldata">{{ formatNumber(planet.crystal.__toString()) }}</td>
+                </tr>
+                <tr>
+                    <td class="tbldata">PVC:</td>
+                    <td class="tbldata">{{ formatNumber(planet.plastic.__toString()) }}</td>
+                </tr>
+                <tr>
+                    <td class="tbldata">Tritium:</td>
+                    <td class="tbldata">{{ formatNumber(planet.fuel.__toString()) }}</td>
+                </tr>
+                <tr>
+                    <td class="tbldata">Nahrung:</td>
+                    <td class="tbldata">{{ formatNumber(planet.food.__toString()) }}</td>
+                </tr>
+                <tr>
+                    <td class="tbldata">Bewohner:</td>
+                    <td class="tbldata">{{ formatNumber(planet.people.__toString()) }}</td>
+                </tr>
+            {% endfor %}
+        {% endif %}
+    </table>
+    </fieldset>
+
+    <fieldset><legend>Gebäude</legend>
+        <table>
+            {% if xml.buildings.building is defined %}
+                {% for building in xml.buildings.building %}
+                    <tr>
+                        <th class="tbltitle" style="width:200px;">{{ building }}</th>
+                        <td class="tbldata">Stufe: {{ building.attributes.level }}</td>
+                        <td class="tbldata">Planet: {{ building.attributes.planet }}</td>
+                        <td class="tbldata">Objekt-Id: {{ building.attributes.id }}</td>
+                    </tr>
+                {% endfor %}
+            {% endif %}
+        </table>
+    </fieldset>
+
+    <fieldset><legend>Technologien</legend>
+        <table>
+            {% if xml.technologies.technology is defined %}
+                {% for technology in xml.technologies.technology %}
+                    <tr>
+                        <th class="tbltitle" style="width:200px;">{{ technology }}</th>
+                        <td class="tbldata">Stufe: {{ technology.attributes.level }}</td>
+                        <td class="tbldata">Objekt-Id: {{ technology.attributes.id }}</td>
+                    </tr>
+                {% endfor %}
+            {% endif %}
+        </table>
+    </fieldset>
+
+    <fieldset><legend>Schiffe</legend>
+        <table>
+            {% if xml.ships.ship is defined %}
+                {% for ship in xml.ships.ship %}
+                    <tr>
+                        <th class="tbltitle" style="width:200px;">{{ ship }}</th>
+                        <td class="tbldata">Anzahl: {{ ship.attributes.count }}</td>
+                        <td class="tbldata">Planet: {{ ship.attributes.planet }}</td>
+                        <td class="tbldata">Objekt-Id: {{ ship.attributes.id }}</td>
+                    </tr>
+                {% endfor %}
+            {% endif %}
+        </table>
+    </fieldset>
+
+    <fieldset><legend>Verteidigung</legend>
+        <table>
+            {% if xml.defenses.defense is defined %}
+                {% for defense in xml.defenses.defense %}
+                    <tr>
+                        <th class="tbltitle" style="width:200px;">{{ defense }}</th>
+                        <td class="tbldata">Anzahl: {{ defense.attributes.count }}</td>
+                        <td class="tbldata">Planet: {{ defense.attributes.planet }}</td>
+                        <td class="tbldata">Objekt-Id: {{ defense.attributes.id }}</td>
+                    </tr>
+                {% endfor %}
+            {% endif %}
+        </table>
+    </fieldset>
+{% endblock %}

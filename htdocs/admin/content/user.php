@@ -28,14 +28,10 @@ $logRepository = $app[LogRepository::class];
 /** @var Request */
 $request = Request::createFromGlobals();
 
-if ($sub == "xml") {
-    require("user/xml.inc.php");
-}
-
 //
 // Ip-Search
 //
-elseif ($sub == "ipsearch") {
+if ($sub == "ipsearch") {
     require("user/ipsearch.inc.php");
 }
 
