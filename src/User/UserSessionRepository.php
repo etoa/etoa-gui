@@ -101,13 +101,13 @@ class UserSessionRepository extends AbstractRepository
         return $data !== false ? new UserSession($data) : null;
     }
 
-    public function findLog(string $id): ?UserSessionLog
+    public function findLog(string $sessionId): ?UserSessionLog
     {
         $data = $this->createQueryBuilder()
             ->select("*")
             ->from('user_sessionlog')
-            ->where('id = :id')
-            ->setParameter('id', $id)
+            ->where('session_id = :id')
+            ->setParameter('id', $sessionId)
             ->execute()
             ->fetchAssociative();
 

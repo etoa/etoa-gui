@@ -201,36 +201,6 @@ parameters:
 			path: htdocs/admin/content/user/edit.inc.php
 
 		-
-			message: "#^Access to an undefined property EtoA\\\\User\\\\UserSession\\|EtoA\\\\User\\\\UserSessionLog\\:\\:\\$timeLogout\\.$#"
-			count: 1
-			path: htdocs/admin/content/user/observed.inc.php
-
-		-
-			message: "#^Cannot access property \\$id on EtoA\\\\User\\\\User\\|null\\.$#"
-			count: 2
-			path: htdocs/admin/content/user/observed.inc.php
-
-		-
-			message: "#^Cannot access property \\$nick on EtoA\\\\User\\\\User\\|null\\.$#"
-			count: 1
-			path: htdocs/admin/content/user/observed.inc.php
-
-		-
-			message: "#^Cannot access property \\$observe on EtoA\\\\User\\\\User\\|null\\.$#"
-			count: 1
-			path: htdocs/admin/content/user/observed.inc.php
-
-		-
-			message: "#^Parameter \\#1 \\$session of method EtoA\\\\User\\\\UserSurveillanceSearch\\:\\:session\\(\\) expects string, int\\|string given\\.$#"
-			count: 1
-			path: htdocs/admin/content/user/observed.inc.php
-
-		-
-			message: "#^Parameter \\#1 \\$string of function stripslashes expects string, string\\|null given\\.$#"
-			count: 2
-			path: htdocs/admin/content/user/observed.inc.php
-
-		-
 			message: "#^Parameter \\#1 \\$filename of function filesize expects string, string\\|false given\\.$#"
 			count: 1
 			path: htdocs/admin/dl.php

@@ -1,0 +1,9 @@
+{% extends 'admin/layout/admin.html.twig' %}
+
+{% block content %}
+    <h1>Spieler</h1>
+    <h2>Beobachtungsliste</h2>
+    <h3>Beobachtungsgrund für <a href="{{ path('admin.users.edit', {id: user.id}) }}">{{ user.nick }}</a></h3>
+
+    {{ form(form) }}
+{% endblock %}

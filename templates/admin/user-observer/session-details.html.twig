@@ -1,0 +1,45 @@
+{% extends 'admin/layout/admin.html.twig' %}
+
+{% block content %}
+    <h1>Spieler</h1>
+    <h2>Beobachtungsliste</h2>
+    <h3>Erweiterte Beobachtung von <a href="{{ path('admin.users.edit', {id: user.id}) }}">{{ user.nick }}</a></h3>
+
+    <h3>
+        Session
+        {% if session and session.timeLogin > 0 %}
+            von {{ formatTimestamp(session.timeLogin) }}
+        {% endif %}
+        {% if session and session.timeAction > 0 %}
+            bis {{ formatTimestamp(session.timeAction) }}
+        {% endif %}
+
+        {{ sessionId }}
+    </h3>
+
+    {% if session %}
+        <p><b>IP:</b> {{ session.ipAddr }}<p>
+        <p><b>Host:</b> {{ ipGetHost(session.ipAddr) }}</p>
+        <p><b>Client:</b> {{ browser(session.userAgent).toString() }}</p>
+    {% endif %}
+
+    <table>
+        <tr>
+            <th>Zeit</th>
+            <th>Seite</th>
+            <th>Request (GET)</th>
+            <th>Query String</th>
+            <th>Formular (POST)</th>
+        </tr>
+        {% for entry in entries %}
+            <tr>
+                <td>{{ formatTimestamp(entry.timestamp) }}</td>
+                <td>{{ entry.page }}</td>
+                <td>{{ BBCodeToHTML(entry.request|u.wordwrap(60))|raw }}</td>
+                <td>{{ BBCodeToHTML(entry.requestRaw|u.wordwrap(60))|raw }}</td>
+                <td>{{ BBCodeToHTML(entry.post|u.wordwrap(60))|raw }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+
+{% endblock %}
