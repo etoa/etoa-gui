@@ -4,12 +4,16 @@ namespace EtoA\Controller\Admin;
 
 use EtoA\Form\Type\Admin\UserLoginFailureType;
 use EtoA\Form\Type\Admin\UserSearchType;
+use EtoA\HostCache\NetworkNameService;
 use EtoA\Ranking\UserBannerService;
 use EtoA\User\ProfileImage;
 use EtoA\User\UserLoginFailureRepository;
+use EtoA\User\UserMultiRepository;
 use EtoA\User\UserPointsRepository;
 use EtoA\User\UserRepository;
 use EtoA\User\UserSearch;
+use EtoA\User\UserSessionRepository;
+use EtoA\User\UserSessionSearch;
 use EtoA\User\UserSittingRepository;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
 use Symfony\Component\Finder\Finder;
@@ -25,6 +29,10 @@ class UsersController extends AbstractAdminController
         private UserLoginFailureRepository $loginFailureRepository,
         private UserPointsRepository $userPointsRepository,
         private UserBannerService $userBannerService,
+        private UserSessionRepository $userSessionRepository,
+        private UserMultiRepository $userMultiRepository,
+        private UserLoginFailureRepository $userLoginFailureRepository,
+        private NetworkNameService $networkNameService,
         private string $webRooDir,
     ) {
     }
@@ -157,6 +165,76 @@ class UsersController extends AbstractAdminController
             'userImageExists' => $userImageExists,
             'imagePath' => $path,
             'unused' => $unused,
+        ]);
+    }
+
+    #[Route('/admin/users/multis', name: 'admin.users.multis')]
+    #[IsGranted('ROLE_ADMIN_TRIAL-ADMIN')]
+    public function multis(): Response
+    {
+        $ips = [];
+        foreach ($this->userSessionRepository->getLatestUserIps() as $ip) {
+            $ips[$ip] = isset($ips[$ip]) ? $ips[$ip] + 1 : 1;
+        }
+
+        $ips = array_keys(array_filter($ips, fn ($count) => $count > 1));
+
+        $ipUsers = [];
+        $userIds = [];
+        foreach ($ips as $ip) {
+            $users = $this->userRepository->getUsersWithIp($ip);
+            $ipUsers[$ip] = $users;
+            foreach ($users as $user) {
+                $userIds[] = (int) $user['user_id'];
+            }
+        }
+
+        $multiEntries = $this->userMultiRepository->getUsersEntries($userIds);
+        $sittingEntries = $this->userSittingRepository->getActiveUsersEntry($userIds);
+
+        return $this->render('admin/user/multi.html.twig', [
+            'ipUsers' => array_filter($ipUsers),
+            'multiEntries' => $multiEntries,
+            'sittingEntries' => $sittingEntries,
+            'time' => time(),
+        ]);
+    }
+
+    #[Route('/admin/users/ips', name: 'admin.users.ips')]
+    #[IsGranted('ROLE_ADMIN_TRIAL-ADMIN')]
+    public function ipSearch(Request $request): Response
+    {
+        $ip = $request->query->get('ip');
+        if (!is_string($ip) && (bool) ($host = $request->query->get('host'))) {
+            $ip = $this->networkNameService->getAddr((string) $host);
+        }
+
+        if (!is_string($ip)) {
+            return $this->render('admin/user/ip-search-form.html.twig');
+        }
+
+        $sessions = $this->userSessionRepository->getSessions(UserSessionSearch::create()->ip($ip));
+        $sessionLogs = $this->userSessionRepository->getSessionLogs(UserSessionSearch::create()->ip($ip));
+
+        $userIds = [];
+        foreach ($sessions as $session) {
+            $userIds[] = $session->userId;
+        }
+        foreach ($sessionLogs as $log) {
+            $userIds[] = $log->userId;
+        }
+        $userIds = array_unique($userIds);
+
+        $multiEntries = $this->userMultiRepository->getUsersEntries($userIds);
+        $sittingEntries = $this->userSittingRepository->getActiveUsersEntry($userIds);
+
+        return $this->render('admin/user/ip-search.html.twig', [
+            'users' => $this->userRepository->searchUserNicknames(),
+            'sessions' => $sessions,
+            'sessionLogs' => $sessionLogs,
+            'loginFailures' => $this->userLoginFailureRepository->getIpLoginFailures($ip),
+            'multiEntries' => $multiEntries,
+            'sittingEntries' => $sittingEntries,
         ]);
     }
 }

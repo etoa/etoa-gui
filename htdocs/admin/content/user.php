@@ -29,16 +29,9 @@ $logRepository = $app[LogRepository::class];
 $request = Request::createFromGlobals();
 
 //
-// Ip-Search
-//
-if ($sub == "ipsearch") {
-    require("user/ipsearch.inc.php");
-}
-
-//
 // Fehlerhafte Logins
 //
-elseif ($sub == "specialists") {
+if ($sub == "specialists") {
     SpecialistsForm::render($app, $request);
 }
 
@@ -68,11 +61,4 @@ elseif ($sub == "race") {
 //
 elseif ($sub == "requests") {
     require("user/requests.inc.php");
-}
-
-//
-// Multisuche
-//
-elseif ($sub == "multi") {
-    require("user/multi.inc.php");
 }

@@ -16,7 +16,7 @@
             <td>{{ formatTimestamp(entry.timeLogin) }}</td>
             <td>{{ entry.timeAction ? formatTimestamp(entry.timeAction) : '-' }}</td>
             <td>{{ entry.timeLogout ? formatTimestamp(entry.timeLogout) : '-' }}</td>
-            <td>{{ entry.ipAddr }}</td>
+            <td><a href="{{ path('admin.users.ips', {ip: entry.ipAddr}) }}">{{ entry.ipAddr }}</a></td>
             <td>{{ browser(entry.userAgent).browser.toString() }}</td>
             <td>
                 {% if max(entry.timeLogout, entry.timeAction) - entry.timeLogin > 0 %}

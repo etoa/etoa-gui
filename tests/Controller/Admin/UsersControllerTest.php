@@ -71,4 +71,37 @@ class UsersControllerTest extends SymfonyWebTestCase
 
         $this->assertStatusCode(200, $client->getResponse());
     }
+
+    public function testMultis(): void
+    {
+        $client = self::createClient();
+
+        $this->loginAdmin($client);
+
+        $client->request('GET', '/admin/users/multis');
+
+        $this->assertStatusCode(200, $client->getResponse());
+    }
+
+    public function testIps(): void
+    {
+        $client = self::createClient();
+
+        $this->loginAdmin($client);
+
+        $client->request('GET', '/admin/users/ips');
+
+        $this->assertStatusCode(200, $client->getResponse());
+    }
+
+    public function testIpsSearch(): void
+    {
+        $client = self::createClient();
+
+        $this->loginAdmin($client);
+
+        $client->request('GET', '/admin/users/ips?ip=129.0.0.1');
+
+        $this->assertStatusCode(200, $client->getResponse());
+    }
 }

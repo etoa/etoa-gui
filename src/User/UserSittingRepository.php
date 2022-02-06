@@ -2,6 +2,7 @@
 
 namespace EtoA\User;
 
+use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Query\QueryBuilder;
 use EtoA\Core\AbstractRepository;
 
@@ -54,6 +55,29 @@ class UserSittingRepository extends AbstractRepository
             ->fetchAssociative();
 
         return $data !== false ? new UserSitting($data) : null;
+    }
+
+    /**
+     * @param int[] $userIds
+     * @return array<int, UserSitting>
+     */
+    public function getActiveUsersEntry(array $userIds): array
+    {
+        $data = $this->createSitterQueryBuilder()
+            ->where('s.user_id IN (:userIds)')
+            ->andWhere('s.date_from < :time')
+            ->andWhere('s.date_to > :time')
+            ->setParameter('time', time())
+            ->setParameter('userIds', $userIds, Connection::PARAM_INT_ARRAY)
+            ->execute()
+            ->fetchAllAssociative();
+
+        $entries = [];
+        foreach ($data as $row) {
+            $entries[(int) $row['user_id']] = new UserSitting($data);
+        }
+
+        return $entries;
     }
 
     /**

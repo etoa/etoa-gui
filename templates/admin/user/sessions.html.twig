@@ -29,7 +29,7 @@
                 <td>{{ formatTimestamp(session.timeLogin) }}</td>
                 <td>{{ formatTimestamp(session.timeAction) }}</td>
                 <td>{{ formatTimespan(session.timeAction - session.timeLogin) }}</td>
-                <td title="{{ ipGetHost(session.ipAddr)}}">{{ session.ipAddr }}</td>
+                <td title="{{ ipGetHost(session.ipAddr)}}"><a href="{{ path('admin.users.ips', {ip: session.ipAddr}) }}">{{ session.ipAddr }}</a></td>
                 <td title="{{ session.userAgent }}">{{ browser(session.userAgent).toString() }}</td>
                 <td><form action="{{ path('admin.users.sessions.kick', {id: session.id}) }}" method="POST"><input type="submit" value="Kick"></form></td>
             </tr>
