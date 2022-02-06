@@ -16,7 +16,7 @@ class UserSurveillance
     public function __construct(array $data)
     {
         $this->id = (int) $data['id'];
-        $this->timestamp = (int) $data['timetstamp'];
+        $this->timestamp = (int) $data['timestamp'];
         $this->userId = (int) $data['user_id'];
         $this->page = $data['page'];
         $this->request = $data['request'];

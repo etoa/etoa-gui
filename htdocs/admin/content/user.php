@@ -36,13 +36,6 @@ if ($sub == "specialists") {
 }
 
 //
-// Beobachter
-//
-elseif ($sub == "observed") {
-    require("user/observed.inc.php");
-}
-
-//
 // Verwarnungen
 //
 elseif ($sub == "warnings") {
@@ -54,13 +47,6 @@ elseif ($sub == "warnings") {
 //
 elseif ($sub == "race") {
     RacesForm::render($app, $request);
-}
-
-//
-// Änderungsanträge
-//
-elseif ($sub == "requests") {
-    require("user/requests.inc.php");
 }
 
 elseif ($sub == "edit") {

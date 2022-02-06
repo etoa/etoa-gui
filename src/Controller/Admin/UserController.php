@@ -48,7 +48,7 @@ class UserController extends AbstractController
         ]);
     }
 
-    #[Route('/admin/users/{id}}', name: 'admin.users.edit')]
+    #[Route('/admin/users/{id}/edit', name: 'admin.users.edit')]
     #[IsGranted('ROLE_ADMIN_TRIAL-ADMIN')]
     public function edit(int $id): RedirectResponse
     {
