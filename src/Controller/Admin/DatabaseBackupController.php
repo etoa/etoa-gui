@@ -98,7 +98,7 @@ class DatabaseBackupController extends AbstractAdminController
         return $this->redirectToRoute('admin.db.backups');
     }
 
-    #[Route("/admin/db/restore/{restorePoint}", name: "admin.db.restore", methods: ['POST'])]
+    #[Route("/admin/db/restore/{restorePoint}", name: "admin.db.restore", methods: ['GET', 'POST'])]
     #[IsGranted('ROLE_ADMIN_SUPER-ADMIN')]
     public function restore(string $restorePoint): RedirectResponse
     {
