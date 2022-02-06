@@ -9,7 +9,9 @@ use EtoA\Ship\ShipDataRepository;
 use EtoA\Ship\ShipQueueItem;
 use EtoA\Ship\ShipQueueRepository;
 use EtoA\Ship\ShipQueueSearch;
+use EtoA\Universe\Entity\EntityLabel;
 use EtoA\Universe\Entity\EntityRepository;
+use EtoA\Universe\Entity\EntitySearch;
 use EtoA\User\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
@@ -61,7 +63,8 @@ class ShipQueueSearchComponent extends AbstractController
         if ($total > 0) {
             $this->users = $this->userRepository->searchUserNicknames();
             $this->shipNames = $this->shipDataRepository->getShipNames(true);
-            $this->entities = $this->getEntityLabels(array_map(fn (ShipQueueItem $item) => $item->entityId, $entries));
+            $entityIds = array_map(fn (ShipQueueItem $item) => $item->entityId, $entries);
+            $this->entities = array_map(fn (EntityLabel $label) => $label->toString(), $this->entityRepository->searchEntityLabels(EntitySearch::create()->ids($entityIds)));
         }
 
         return new SearchResult($entries, $limit, $total, $this->perPage);

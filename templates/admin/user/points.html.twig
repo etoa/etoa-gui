@@ -1,0 +1,46 @@
+{% extends 'admin/layout/admin.html.twig' %}
+
+{% block content %}
+    <h1>Spieler</h1>
+    <h2>Punktespeicherung</h2>
+
+    <p>
+        <b>Punkteentwicklung anzeigen für:</b>
+        <select onchange="document.location='{{ path('admin.users.points') }}?userId='+this.options[this.selectedIndex].value">
+            <option value="0" style="font-style:italic;">(Benutzer wählen...)</option>
+            {% for id,nick in users %}
+                <option value="{{ id }}"{% if user and user.id == id %} selected="selected"{% endif %}>{{ nick }}</option>
+            {% endfor %}
+        </select>
+    </p>
+
+    {% if user %}
+        <h2>Punktedetails für <a href="?page=user&action=edit&id={{ user.id }}">{{ user.nick }}</a></h2>
+        <p><b>Punkte aktuell:</b> {{ formatNumber(user.points) }}, <b>Rang aktuell:</b> {{ user.rank }}</p>
+        <img src="/misc/stats.image.php?user={{ user.id }}" alt="Diagramm" /><br/><br/>
+
+        <table>
+            <tr>
+                <th>Datum</th>
+                <th>Punkte</th>
+                <th>Flotte</th>
+                <th>Forschung</th>
+                <th>Gebäude</th>
+            </tr>
+
+            {% for entry in points %}
+                <tr>
+                    <td>{{ formatTimestamp(entry.timestamp) }}</td>
+                    <td>{{ formatNumber(entry.points) }}</td>
+                    <td>{{ formatNumber(entry.shipPoints) }}</td>
+                    <td>{{ formatNumber(entry.techPoints) }}</td>
+                    <td>{{ formatNumber(entry.buildingPoints) }}</td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="99"><i>Keine Punktedaten vorhanden!</i></td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% endif %}
+{% endblock %}

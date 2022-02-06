@@ -4,7 +4,7 @@
     <h3>Ticket Details</h3>
 
     <div id="ttuser" style="display:none;">
-        <a href="?page=user&sub=edit&id={{ ticket.userId }}">Daten anzeigen</a><br/>
+        <a href="{{ path('admin.users.edit', {id: ticket.userId}) }}">Daten anzeigen</a><br/>
         <a href="{{ path('admin.messages.send', {userId: ticket.userId}) }}">Nachricht senden</a><br/>
     </div>
 

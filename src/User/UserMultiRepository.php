@@ -2,6 +2,7 @@
 
 namespace EtoA\User;
 
+use Doctrine\DBAL\Connection;
 use EtoA\Core\AbstractRepository;
 
 class UserMultiRepository extends AbstractRepository
@@ -146,6 +147,34 @@ class UserMultiRepository extends AbstractRepository
             ->fetchAllAssociative();
 
         return array_map(fn (array $row) => new UserMulti($row), $data);
+    }
+
+    /**
+     * @param int[] $userIds
+     * @return array<int, UserMulti[]>
+     */
+    public function getUsersEntries(array $userIds): array
+    {
+        if (count($userIds) === 0) {
+            return [];
+        }
+
+        $data = $this->createQueryBuilder()
+            ->select('m.*, u.user_nick as multi_nick')
+            ->from('user_multi', 'm')
+            ->leftJoin('m', 'users', 'u', 'u.user_id = m.multi_id')
+            ->where('m.user_id IN (:userIds)')
+            ->setParameter('userIds', $userIds, Connection::PARAM_INT_ARRAY)
+            ->orderBy('m.id', 'DESC')
+            ->execute()
+            ->fetchAllAssociative();
+
+        $entries = [];
+        foreach ($data as $row) {
+            $entries[(int) $row['user_id']][] = new UserMulti($row);
+        }
+
+        return $entries;
     }
 
     public function getUserEntry(int $userId, int $id): ?UserMulti

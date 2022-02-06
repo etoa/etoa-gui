@@ -7,18 +7,18 @@
     <form method="post">
         <h3>Allianzen ohne Gründer</h3>
         {% if alliancesWithoutFounder|length > 0 %}
-            <table class=\"tbl\">
+            <table class="tbl">
             <tr>
-                <th class=\"tbltitle\">Tag</th>
-                <th class=\"tbltitle\">Name</th>
+                <th class="tbltitle">Tag</th>
+                <th class="tbltitle">Name</th>
                 <th>&nbsp;</th>
             </tr>
             {% for alliance in alliancesWithoutFounder %}
                 <tr>
-                    <td class=\"tbldata\">{{ alliance.alliance_name }}</td>
-                    <td class=\"tbldata\">{{ alliance.alliance_tag }}</td>
-                    <td class=\"tbldata\">
-                        <a href=\"?page=$page&amp;sub=edit&amp;alliance_id={{ alliance.alliance_id }}">detail</a></td>
+                    <td class="tbldata">{{ alliance.alliance_name }}</td>
+                    <td class="tbldata">{{ alliance.alliance_tag }}</td>
+                    <td class="tbldata">
+                        <a href="?page=$page&amp;sub=edit&amp;alliance_id={{ alliance.alliance_id }}">detail</a></td>
                 </tr>
             {% endfor %}
             </table>
@@ -29,17 +29,17 @@
 
         <h2>User mit fehlerhafter Allianz-Verknüpfung</h2>
         {% if usersWithInvalidAlliances|length > 0 %}
-            <table class=\"tbl\">
+            <table class="tbl">
                 <tr>
-                    <th class=\"tbltitle\">Nick</th>
-                    <th class=\"tbltitle\">E-Mail</th>
+                    <th class="tbltitle">Nick</th>
+                    <th class="tbltitle">E-Mail</th>
                     <th>&nbsp;</th>
                 </tr>
                 {% for user in usersWithInvalidAlliances %}
                     <tr>
-                        <td class=\"tbldata\">{{ user.user_nick }}</td>
-                        <td class=\"tbldata\">{{ user.user_email }}</td>
-                        <td class=\"tbldata\"><a href=\"?page=user&amp;sub=edit&amp;user_id={{ user.user_id }}">detail</a></td></tr>
+                        <td class="tbldata">{{ user.user_nick }}</td>
+                        <td class="tbldata">{{ user.user_email }}</td>
+                        <td class="tbldata"><a href="{{ path('admin.users.edit', {id: user.user_id}) }}">detail</a></td></tr>
                 {% endfor %}
             </table>
             <p>{{ usersWithInvalidAlliances|length }} User mit fehlerhafter Verknüpfung.</p>
@@ -49,19 +49,19 @@
 
         <h3>Leere Allianzen (Allianzen ohne User)</h3>
         {% if alliancesWithoutUsers|length > 0 %}
-            <table class=\"tbl\">
+            <table class="tbl">
                 <tr>
-                    <th class=\"tbltitle\">Name</th>
-                    <th class=\"tbltitle\">Tag</th>
+                    <th class="tbltitle">Name</th>
+                    <th class="tbltitle">Tag</th>
                     <th>&nbsp;</th>
                     <th>&nbsp;</th>
                 </tr>
                 {% for alliance in alliancesWithoutUsers %}
                     <tr>
-                        <td class=\"tbldata\">{{ alliance.alliance_id }}</td>
-                        <td class=\"tbldata\">{{ aliance.alliance_tag }}</td>
-                        <td class=\"tbldata\"><a href=\"?page=$page&amp;sub=edit&amp;alliance_id={{ alliance.alliance_id }}">detail</a></td>
-                        <td class=\"tbldata\"><a href=\"?page=$page&amp;sub=drop&amp;alliance_id={{ alliance.alliance_id }}">löschen</a></td>
+                        <td class="tbldata">{{ alliance.alliance_id }}</td>
+                        <td class="tbldata">{{ aliance.alliance_tag }}</td>
+                        <td class="tbldata"><a href="?page=$page&amp;sub=edit&amp;alliance_id={{ alliance.alliance_id }}">detail</a></td>
+                        <td class="tbldata"><a href="?page=$page&amp;sub=drop&amp;alliance_id={{ alliance.alliance_id }}">löschen</a></td>
                     </tr>
                 {% endfor %}
             </table>

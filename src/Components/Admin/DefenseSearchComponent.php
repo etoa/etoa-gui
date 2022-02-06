@@ -9,7 +9,9 @@ use EtoA\Defense\DefenseListItem;
 use EtoA\Defense\DefenseListSearch;
 use EtoA\Defense\DefenseRepository;
 use EtoA\Form\Type\Admin\DefenseSearchType;
+use EtoA\Universe\Entity\EntityLabel;
 use EtoA\Universe\Entity\EntityRepository;
+use EtoA\Universe\Entity\EntitySearch;
 use EtoA\User\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
@@ -61,7 +63,8 @@ class DefenseSearchComponent extends AbstractController
         if ($total > 0) {
             $this->users = $this->userRepository->searchUserNicknames();
             $this->defenseNames = $this->defenseDataRepository->getDefenseNames(true);
-            $this->entities = $this->getEntityLabels(array_map(fn (DefenseListItem $item) => $item->entityId, $entries));
+            $entityIds = array_map(fn (DefenseListItem $item) => $item->entityId, $entries);
+            $this->entities = array_map(fn (EntityLabel $label) => $label->toString(), $this->entityRepository->searchEntityLabels(EntitySearch::create()->ids($entityIds)));
         }
 
         return new SearchResult($entries, $limit, $total, $this->perPage);

@@ -10,11 +10,11 @@
     {% endif %}
 
     {% if forcePasswordChange %}
-        {{ macros.messagebox('Dein Passwort wurde seit der letzten automatischen Generierung noch nicht geändert. Bitte mache das jetzt <a href=\"/admin/profile/">hier</a>!', 'warning', 'Passwortwiederherstellung')}}
+        {{ macros.messagebox('Dein Passwort wurde seit der letzten automatischen Generierung noch nicht geändert. Bitte mache das jetzt <a href="' ~ path('admin.profile') ~ '">hier</a>!', 'warning', 'Passwortwiederherstellung')}}
     {% endif %}
 
     {% if not hasTfa %}
-        {{ macros.messagebox('Aktiviere <a href=\"?tfa\">Zwei-Faktor-Authentifizierung</a> um Sicherheit deines Account zu verbessern!"', 'info', 'Zwei-Faktor-Authentifizierung')}}
+        {{ macros.messagebox('Aktiviere <a href="' ~ path('admin.profile') ~ '">Zwei-Faktor-Authentifizierung</a> um Sicherheit deines Account zu verbessern!', 'info', 'Zwei-Faktor-Authentifizierung')}}
     {% endif %}
 
     {% if adminInfo %}
@@ -22,7 +22,7 @@
     {% endif %}
 
     {% if systemMessage %}
-        {{ macros.messagebox(BBCodeToHTML(systemMessage) ~ '<br/><a href=\"?page=texts&amp;id=system_message\">Bearbeiten/Deaktivieren</a>', 'info', 'Systemnachricht aktiv!')}}
+        {{ macros.messagebox(BBCodeToHTML(systemMessage) ~ '<br/><a href="' ~ path('admin.texts.edit', {id: 'system_message'}) ~ '">Bearbeiten/Deaktivieren</a>', 'info', 'Systemnachricht aktiv!')}}
     {% endif %}
 
     {% if configValue('offline') == 1 %}
@@ -52,7 +52,7 @@
     {% if not didBigBangHappen %}
         {{ macros.messagebox('Das Universum wurde noch nicht erschaffen!', 'warning', 'Universum existiert noch nicht!')}}
         <p>
-            <input type="button" value="Weiter zum Urknall" onclick="document.location='/admin/?page=galaxy&sub=uni'" />
+            <input type="button" value="Weiter zum Urknall" onclick="document.location='{{ path('admin.universe.edit') }}'" />
         </p>
     {% endif %}
 {% endblock %}

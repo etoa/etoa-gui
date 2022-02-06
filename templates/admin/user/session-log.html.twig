@@ -1,0 +1,12 @@
+{% extends 'admin/layout/admin.html.twig' %}
+
+{% block content %}
+    <h1>Spieler</h1>
+    <h2>Sessionlogs</h2>
+
+    {{ component('user_session_log', {
+        form: form
+    }) }}
+
+    <p>Es sind {{ formatNumber(total) }} Einträge in der Datenbank vorhanden.</p>
+{% endblock %}

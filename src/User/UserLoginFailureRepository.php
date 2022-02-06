@@ -147,4 +147,30 @@ class UserLoginFailureRepository extends AbstractRepository
 
         return array_map(fn (array $row) => new UserLoginFailure($row), $data);
     }
+
+    public function count(UserLoginFailureSearch $search = null): int
+    {
+        return (int) $this->applySearchSortLimit($this->createQueryBuilder(), $search)
+            ->select('COUNT(*)')
+            ->from('login_failures', 'l')
+            ->execute()
+            ->fetchOne();
+    }
+
+    /**
+     * @return UserLoginFailure[]
+     */
+    public function search(UserLoginFailureSearch $search = null, int $limit = null, int $offset = null): array
+    {
+        $data = $this->applySearchSortLimit($this->createQueryBuilder(), $search, null, $limit, $offset)
+            ->select('l.*')
+            ->addSelect('u.user_nick')
+            ->from('login_failures', 'l')
+            ->leftJoin('l', 'users', 'u', 'u.user_id = l.failure_user_id')
+            ->orderBy('l.failure_time', 'DESC')
+            ->execute()
+            ->fetchAllAssociative();
+
+        return array_map(fn (array $row) => new UserLoginFailure($row), $data);
+    }
 }

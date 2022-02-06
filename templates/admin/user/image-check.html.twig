@@ -1,0 +1,65 @@
+{% extends 'admin/layout/admin.html.twig' %}
+
+{% block content %}
+    <h1>Spieler</h1>
+
+    <h3>Noch nicht verifizierte Bilder</h3>
+    <p>Diese Bilder gehören zu aktiven Spielern. Bitte prüfe regelmässig, ob sie nicht gegen unsere Regeln verstossen!</p>
+    {% if usersWithImage %}
+        <p>Es sind {{ usersWithImage|length }} Bilder gespeichert!</p>
+        <form method="post">
+            <table class="tb">
+                <tr>
+                    <th>User</th>
+                    <th>Fehler</th>
+                    <th>Aktionen</th>
+                </tr>
+                {% for user in usersWithImage %}
+                    <tr>
+                        <td>{{ user.nick }}</td>
+                        <td>
+                            {% if userImageExists[user.id] %}
+                                <img src="{{ imagePath ~ user.profileImage }}" alt="Profil" />
+                            {% else %}
+                                <span style="color:red">Bild existiert nicht!</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <input type="radio" name="validate[{{ user.id }}]" value="1" checked="checked"> Bild ist in Ordnung<br/>
+                            <input type="radio" name="validate[{{ user.id }}]" value="0" > Bild verstösst gegen die Regeln. Lösche es!<br/>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </table>
+            <br/>
+            <input type="submit" name="validate_submit" value="Speichern" />
+        </form>
+    {% else %}
+        <p><i>Keine Bilder vorhanden!</i></p>
+    {% endif %}
+
+    <h3>Verwaiste Bilder</h3>
+    {% if unused %}
+        <p>Diese Bilder gehören zu Spielern, die nicht mehr in unserer Datenbank vorhanden sind.</p>
+        <p>
+            Es sind {{ unused|length }} Bilder vorhanden.
+            <form method="post">
+                <input type="submit" value="Lösche alle verwaisten Bilder" name="clearoverhead" />
+            </form>
+        </p>
+        <table class="tb">
+            <tr>
+                <th>Datei</th>
+                <th>Bild</th>
+            </tr>
+            {% for path,file in unused %}
+                <tr>
+                    <td>{{ file.getFilename() }}</td>
+                    <td><img src="{{ path }}" alt="Profil" /></td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <p><i>Keine vorhanden!</i></p>
+    {% endif %}
+{% endblock %}

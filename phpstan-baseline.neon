@@ -1,51 +1,6 @@
 parameters:
 	ignoreErrors:
 		-
-			message: "#^Cannot access property \\$id on EtoA\\\\User\\\\User\\|null\\.$#"
-			count: 2
-			path: htdocs/admin/content/user.php
-
-		-
-			message: "#^Parameter \\#1 \\$hostname of method EtoA\\\\User\\\\UserSearch\\:\\:hostname\\(\\) expects string, string\\|false given\\.$#"
-			count: 1
-			path: htdocs/admin/content/user.php
-
-		-
-			message: "#^Parameter \\#1 \\$ip of method EtoA\\\\User\\\\UserSearch\\:\\:ip\\(\\) expects string, string\\|false given\\.$#"
-			count: 1
-			path: htdocs/admin/content/user.php
-
-		-
-			message: "#^Parameter \\#1 \\$name of method EtoA\\\\User\\\\UserSearch\\:\\:nickLike\\(\\) expects string, string\\|false given\\.$#"
-			count: 1
-			path: htdocs/admin/content/user.php
-
-		-
-			message: "#^Parameter \\#1 \\$name of method EtoA\\\\User\\\\UserService\\:\\:register\\(\\) expects string, bool\\|float\\|int\\|string\\|null given\\.$#"
-			count: 1
-			path: htdocs/admin/content/user.php
-
-		-
-			message: "#^Parameter \\#1 \\$search of method EtoA\\\\User\\\\UserRepository\\:\\:searchUsers\\(\\) expects EtoA\\\\User\\\\UserSearch\\|null, mixed given\\.$#"
-			count: 1
-			path: htdocs/admin/content/user.php
-
-		-
-			message: "#^Parameter \\#2 \\$email of method EtoA\\\\User\\\\UserService\\:\\:register\\(\\) expects string, bool\\|float\\|int\\|string\\|null given\\.$#"
-			count: 1
-			path: htdocs/admin/content/user.php
-
-		-
-			message: "#^Parameter \\#3 \\$nick of method EtoA\\\\User\\\\UserService\\:\\:register\\(\\) expects string, bool\\|float\\|int\\|string\\|null given\\.$#"
-			count: 1
-			path: htdocs/admin/content/user.php
-
-		-
-			message: "#^Parameter \\#4 \\$password of method EtoA\\\\User\\\\UserService\\:\\:register\\(\\) expects string, bool\\|float\\|int\\|string\\|null given\\.$#"
-			count: 1
-			path: htdocs/admin/content/user.php
-
-		-
 			message: "#^Cannot access property \\$admin on EtoA\\\\User\\\\User\\|null\\.$#"
 			count: 1
 			path: htdocs/admin/content/user/edit.inc.php
@@ -246,16 +201,6 @@ parameters:
 			path: htdocs/admin/content/user/edit.inc.php
 
 		-
-			message: "#^Parameter \\#1 \\$dir_handle of function closedir expects resource\\|null, resource\\|false given\\.$#"
-			count: 1
-			path: htdocs/admin/content/user/imagecheck.inc.php
-
-		-
-			message: "#^Parameter \\#1 \\$dir_handle of function readdir expects resource\\|null, resource\\|false given\\.$#"
-			count: 1
-			path: htdocs/admin/content/user/imagecheck.inc.php
-
-		-
 			message: "#^Access to an undefined property EtoA\\\\User\\\\UserSession\\|EtoA\\\\User\\\\UserSessionLog\\:\\:\\$timeLogout\\.$#"
 			count: 1
 			path: htdocs/admin/content/user/observed.inc.php
@@ -284,31 +229,6 @@ parameters:
 			message: "#^Parameter \\#1 \\$string of function stripslashes expects string, string\\|null given\\.$#"
 			count: 2
 			path: htdocs/admin/content/user/observed.inc.php
-
-		-
-			message: "#^Cannot access property \\$account on SimpleXMLElement\\|false\\.$#"
-			count: 1
-			path: htdocs/admin/content/user/xml.inc.php
-
-		-
-			message: "#^Cannot access property \\$export on SimpleXMLElement\\|false\\.$#"
-			count: 1
-			path: htdocs/admin/content/user/xml.inc.php
-
-		-
-			message: "#^Only booleans are allowed in &&, string\\|false given on the right side\\.$#"
-			count: 1
-			path: htdocs/admin/content/user/xml.inc.php
-
-		-
-			message: "#^Parameter \\#1 \\$dir_handle of function closedir expects resource\\|null, resource\\|false given\\.$#"
-			count: 1
-			path: htdocs/admin/content/user/xml.inc.php
-
-		-
-			message: "#^Parameter \\#1 \\$dir_handle of function readdir expects resource\\|null, resource\\|false given\\.$#"
-			count: 1
-			path: htdocs/admin/content/user/xml.inc.php
 
 		-
 			message: "#^Parameter \\#1 \\$filename of function filesize expects string, string\\|false given\\.$#"
@@ -354,11 +274,6 @@ parameters:
 			message: "#^Only booleans are allowed in &&, int\\|false given on the left side\\.$#"
 			count: 1
 			path: htdocs/admin/index.php
-
-		-
-			message: "#^Parameter \\#1 \\$directory of function chdir expects string, string\\|false given\\.$#"
-			count: 1
-			path: htdocs/admin/misc/user_xml.php
 
 		-
 			message: "#^Method BattleReport\\:\\:__toString\\(\\) should return string but returns string\\|false\\.$#"
@@ -4941,24 +4856,9 @@ parameters:
 			path: src/Command/DatabaseRestoreCommand.php
 
 		-
-			message: "#^Method EtoA\\\\Components\\\\Admin\\\\AdminAllianceDepositSearchComponent\\:\\:getEntityLabels\\(\\) should return array\\<int, string\\> but returns array\\<int\\|string, mixed\\>\\.$#"
-			count: 1
-			path: src/Components/Admin/AdminAllianceDepositSearchComponent.php
-
-		-
-			message: "#^Method EtoA\\\\Components\\\\Admin\\\\AllianceSearchComponent\\:\\:getEntityLabels\\(\\) should return array\\<int, string\\> but returns array\\<int\\|string, mixed\\>\\.$#"
-			count: 1
-			path: src/Components/Admin/AllianceSearchComponent.php
-
-		-
 			message: "#^Parameter \\#1 \\$item of method EtoA\\\\Building\\\\BuildingRepository\\:\\:save\\(\\) expects EtoA\\\\Building\\\\BuildingListItem, EtoA\\\\Building\\\\BuildingListItem\\|null given\\.$#"
 			count: 1
 			path: src/Components/Admin/BuildingViewComponent.php
-
-		-
-			message: "#^Method EtoA\\\\Components\\\\Admin\\\\ChatLogSearchComponent\\:\\:getEntityLabels\\(\\) should return array\\<int, string\\> but returns array\\<int\\|string, mixed\\>\\.$#"
-			count: 1
-			path: src/Components/Admin/ChatLogSearchComponent.php
 
 		-
 			message: "#^Cannot access property \\$count on EtoA\\\\DefaultItem\\\\DefaultItem\\|null\\.$#"
@@ -4981,21 +4881,6 @@ parameters:
 			path: src/Components/Admin/DefenseViewComponent.php
 
 		-
-			message: "#^Method EtoA\\\\Components\\\\Admin\\\\LogDebrisSearchComponent\\:\\:getEntityLabels\\(\\) should return array\\<int, string\\> but returns array\\<int\\|string, mixed\\>\\.$#"
-			count: 1
-			path: src/Components/Admin/LogDebrisSearchComponent.php
-
-		-
-			message: "#^Method EtoA\\\\Components\\\\Admin\\\\LogGeneralSearchComponent\\:\\:getEntityLabels\\(\\) should return array\\<int, string\\> but returns array\\<int\\|string, mixed\\>\\.$#"
-			count: 1
-			path: src/Components/Admin/LogGeneralSearchComponent.php
-
-		-
-			message: "#^Method EtoA\\\\Components\\\\Admin\\\\MessageSearchComponent\\:\\:getEntityLabels\\(\\) should return array\\<int, string\\> but returns array\\<int\\|string, mixed\\>\\.$#"
-			count: 1
-			path: src/Components/Admin/MessageSearchComponent.php
-
-		-
 			message: "#^Method EtoA\\\\Components\\\\Admin\\\\MessageViewComponent\\:\\:getMessage\\(\\) should return EtoA\\\\Message\\\\Message but returns EtoA\\\\Message\\\\Message\\|null\\.$#"
 			count: 1
 			path: src/Components/Admin/MessageViewComponent.php
@@ -5004,11 +4889,6 @@ parameters:
 			message: "#^Cannot access property \\$count on EtoA\\\\Missile\\\\MissileListItem\\|null\\.$#"
 			count: 1
 			path: src/Components/Admin/MissileViewComponent.php
-
-		-
-			message: "#^Method EtoA\\\\Components\\\\Admin\\\\ReportSearchComponent\\:\\:getEntityLabels\\(\\) should return array\\<int, string\\> but returns array\\<int\\|string, mixed\\>\\.$#"
-			count: 1
-			path: src/Components/Admin/ReportSearchComponent.php
 
 		-
 			message: "#^Cannot access property \\$id on EtoA\\\\Message\\\\Report\\|null\\.$#"

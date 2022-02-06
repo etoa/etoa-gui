@@ -276,11 +276,11 @@ class UserSessionRepository extends AbstractRepository
             ->execute();
     }
 
-    public function countLogs(): int
+    public function countLogs(UserSessionSearch $search = null): int
     {
-        return (int) $this->createQueryBuilder()
+        return (int) $this->applySearchSortLimit($this->createQueryBuilder(), $search)
             ->select('COUNT(*)')
-            ->from('user_sessionlog')
+            ->from('user_sessionlog', 's')
             ->execute()
             ->fetchOne();
     }
@@ -288,12 +288,11 @@ class UserSessionRepository extends AbstractRepository
     /**
      * @return UserSessionLog[]
      */
-    public function getSessionLogs(UserSessionSearch $search, int $limit = null): array
+    public function getSessionLogs(UserSessionSearch $search, int $limit = null, int $offset = null): array
     {
-        $rows = $this->applySearchSortLimit($this->createQueryBuilder(), $search, null, $limit)
+        $rows = $this->applySearchSortLimit($this->createQueryBuilder(), $search, null, $limit, $offset)
             ->select('*')
             ->from('user_sessionlog', 's')
-            ->innerJoin('s', 'users', 'users', 'users.user_id = s.user_id')
             ->orderBy('s.time_action', 'DESC')
             ->execute()
             ->fetchAllAssociative();

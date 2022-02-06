@@ -15,6 +15,7 @@ services:
             $questsWorkflow: $questsStateMachine
             string $cacheDir: '%kernel.project_dir%/htdocs/cache'
             string $adminFileSharingDir: '%kernel.project_dir%/htdocs/cache/admin'
+            string $webRooDir: '%kernel.project_dir%/htdocs'
 
     _instanceof:
         LittleCubicleGames\Quests\Log\QuestLoggerInterface:

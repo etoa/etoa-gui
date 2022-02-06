@@ -19,14 +19,6 @@ class UserSessionSearch extends AbstractSearch
         return $this;
     }
 
-    public function userNickLike(string $userNick): self
-    {
-        $this->parts[] = 'users.user_nick LIKE :userNick';
-        $this->parameters['userNick'] = '%' . $userNick . '%';
-
-        return $this;
-    }
-
     public function ip(string $ip): self
     {
         $this->parts[] = 's.ip_addr = :ip';
@@ -35,18 +27,18 @@ class UserSessionSearch extends AbstractSearch
         return $this;
     }
 
-    public function userAgentLike(string $userAgent): self
+    public function ipLike(string $ip): self
     {
-        $this->parts[] = 's.user_agent LIKE :userAgent';
-        $this->parameters['userAgent'] = '%' . $userAgent . '%';
+        $this->parts[] = 's.ip_addr LIKE :ipLike';
+        $this->parameters['ipLike'] = '%' . $ip . '%';
 
         return $this;
     }
 
-    public function minDuration(int $seconds): self
+    public function userAgentLike(string $userAgent): self
     {
-        $this->parts[] = '(s.time_action - s.time_login)> :minDuration';
-        $this->parameters['minDuration'] = $seconds;
+        $this->parts[] = 's.user_agent LIKE :userAgent';
+        $this->parameters['userAgent'] = '%' . $userAgent . '%';
 
         return $this;
     }

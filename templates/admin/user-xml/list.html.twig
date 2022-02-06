@@ -1,0 +1,54 @@
+{% extends 'admin/layout/admin.html.twig' %}
+
+{% block content %}
+    <h1>Spieler</h1>
+    <h2>XML-Import/Export</h2>
+
+    <p>
+        Bei jeder Löschung eines Spielers werden automatisch seine Daten
+        in ein XML-File geschrieben und dieses in einem Ordner abgelegt. Wenn du manuell von
+        einem User ein Backup erstellen willst, kannst du das hier tun:
+    </p>
+
+    <form method="post">
+        <p>
+            Spieler wählen:
+            <select name="export_user_id">
+                {% for userId,nick in userNicks %}
+                    <option value="{{ userId }}">{{ nick }}</option>
+                {% endfor %}
+
+            </select>
+
+            <input type="submit" name="exportcache" value="Exportieren" />
+            <input type="submit" name="exportdl" value="Herunterladen" />
+        </p>
+    </form>
+
+    <table class="tb">
+        <tr>
+            <th>Datei (Userid_Datum_Zeit)</th>
+            <th>Spieler</th>
+            <th>Datum</th>
+            <th>Optionen</th>
+        </tr>
+
+        {% for file in xmlFiles %}
+            <tr>
+                <td>{{ file.basename }}</td>
+                <td>{{ file.xml.account.nick }}</td>
+                <td>{{ file.xml.export.attributes.date }}</td>
+                <td>
+                    <a href="{{ path('admin.users.xml.details', {file: file.base64}) }}">Details</a> &nbsp;
+                    <a href="{{ path('admin.users.xml.download', {file: file.base64}) }}">Download</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="9999">
+                    <i>Noch keine Dateien vorhanden!</i>
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}

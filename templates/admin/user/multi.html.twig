@@ -1,0 +1,88 @@
+{% extends 'admin/layout/admin.html.twig' %}
+
+{% block content %}
+    <h1>Spieler</h1>
+    <h3>Multi-Erkennung - Zusammenfassung</h3>
+
+    <p>Multi-Merkmale:</p>
+
+    <ul>
+        <li>Gleiche IP (durch dieses Tool prüfen)</li>
+        <li>Ähnliche Onlinezeit (mit Session-Log prüffen)</li>
+        <li>evtl. dieselbe Allianz</li>
+        <li>Ähnliche Mailadresse</li>
+        <li>Ähnliche Fantasienamen</li>
+    </ul>
+
+    <table class="full-width">
+        <tr>
+            <th class="tbltitle">IP-Adresse</th>
+            <th class="tbltitle">Nick</th>
+            <th class="tbltitle">Realer Name</th>
+            <th class="tbltitle">Zuletzt online</th>
+            <th class="tbltitle">Eingetragene Multis</th>
+            <th class="tbltitle">Gesittet von</th>
+        </tr>
+
+        {% for ip,users in ipUsers %}
+            <tr>
+                <td rowspan="{{ users|length }}" valign="top" class="tbldata">
+                    <a href="{{ path('admin.users.ips', {ip: ip}) }}">
+                        {{ ip }}
+                    </a>
+                </td>
+                {% for user in users %}
+                    {% if user.admin %}
+                        {% set uCol = 'class="adminColor"' %}
+                    {% elseif user.user_ghost %}
+                        {% set uCol = 'class="userGhostColor"' %}
+                    {% elseif user.user_blocked_from < time and user.user_blocked_to > time %}
+                        {% set uCol = 'class="userLockedColor"' %}
+                    {% elseif user.user_hmode_from > 0 %}
+                        {% set uCol = 'class="userHolidayColor"' %}
+                    {% elseif user.user_deleted > 0 %}
+                        {% set uCol = 'class="userDeletedColor"' %}
+                    {% else %}
+                        {% set uCol = '' %}
+                    {% endif %}
+
+                    {% if not loop.first %}<tr>{% endif %}
+
+                    <td {{ uCol }}>
+                        <a href="{{ path('admin.users.edit', {id: user.user_id}) }}">{{ user.user_nick }}</a>
+                    </td>
+                    <td {{ uCol }} title="{{ user.user_email }}">{{ user.user_name }}</td>
+                    <td {{ uCol }}
+                        {% if user.time_action %}
+                            style="color:#0f0;">online
+                        {% elseif user.time_log %}
+                            >{{ formatTimestamp(user.time_log + 0) }}
+                        {% else %}
+                            >Noch nicht eingeloggt!
+                        {% endif %}
+                    </td>
+
+                    <td {{ uCol }}>
+                        {% for multi in multiEntries[user.user_id]|default([]) %}
+                            <span title="{{ multi.reason }}">
+                                <a href="{{ path('admin.users.edit', {id: multi.multiUserId}) }}">{{ multi.multiUserNick }}</a>
+                            </span>{% if not loop.last %}, {% endif %}
+                        {% else %}
+                            -
+                        {% endfor %}
+                    </td>
+
+                    <td {{ uCol }}>
+                        {% if sittingEntries[user.user_id] is defined %}
+                            {{ sittingEntries[user.user_id].sitterNick }}
+                        {% else %}
+                            -
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+        {% endfor %}
+    </table>
+
+    <p>Total {{ ipUsers|length }} IP-Adressen mit Spielern entdeckt.</p>
+{% endblock %}
