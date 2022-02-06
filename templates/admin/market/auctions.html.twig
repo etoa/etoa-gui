@@ -14,7 +14,7 @@
             </tr>
             <tr>
                 <td rowspan="5">
-                    <a href="?page=user&amp;sub=edit&amp;user_id={{ auction.userId }}">{{ userNicknames[auction.userId]|default('Niemand') }}</a>
+                    <a href="{{ path('admin.users.edit', {id: auction.userId}) }}">{{ userNicknames[auction.userId]|default('Niemand') }}</a>
                 </td>
                 <td>
                     Start {{ formatTimestamp(auction.dateStart) }}
@@ -101,7 +101,7 @@
                 </tr>
                 <tr>
                     <td rowspan="5">
-                        <a href="?page=user&amp;sub=edit&amp;user_id={{ auction.currentBuyerId }}">{{ userNicknames[auction.currentBuyerId]|default('Niemand') }}</a>
+                        <a href="{{ path('admin.users.edit', {id: auction.currentBuyerId}) }}">{{ userNicknames[auction.currentBuyerId]|default('Niemand') }}</a>
                     </td>
                     <td rowspan="5">
                         Geboten {{ formatTimestamp(auction.currentBuyerDate) }}

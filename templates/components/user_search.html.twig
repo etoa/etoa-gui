@@ -49,7 +49,7 @@
             {% endif %}
             <td>{{ user.raceId > 0 ? this.races[user.raceId] : '-' }}</td>
             <td>
-                {{ editButton('/admin/?page=user&sub=edit&id=' ~ user.id)|raw }}
+                {{ editButton(path('admin.users.edit', {id: user.id}))|raw }}
             </td>
         </tr>
     {% endfor %}

@@ -17,12 +17,12 @@
                         {% for member in members %}
                             <tr>
                                 <td id="uifo{{ member.user_id }}" style="display:none;">
-                                    <a href="?page=user&amp;sub=edit&amp;id={{ member.user_id }}">Daten</a>
+                                    <a href="{{ path('admin.users.edit', {id: member.user_id}) }}">Daten</a>
                                     <br/>
                                     <a href="{{ path('admin.messages.send', {userId: member.user_id}) }}">Nachricht senden</a>
                                 </td>
                                 <td>
-                                    <a href="?page=user&amp;sub=edit&amp;id={{ member.user_id }}" {{ cTT(member.user_nick, 'uifo', member.user_id) }}>{{ member.user_nick }}</a>
+                                    <a href="{{ path('admin.users.edit', {id: member.user_id}) }}" {{ cTT(member.user_nick, 'uifo', member.user_id) }}>{{ member.user_nick }}</a>
                                 </td>
                                 <td>{{ formatNumber(member.user_points) }} Punkte</td>
                                 <td>

@@ -17,7 +17,7 @@
                     Spieler:
                 </th>
                 <td width="100">
-                    <a href="?page=user&amp;sub=edit&amp;user_id={{ offer.userId }}">{{ userNicknames[offer.userId]|default('Niemand') }}</a>
+                    <a href="{{ path('admin.users.edit', {id: offer.userId}) }}">{{ userNicknames[offer.userId]|default('Niemand') }}</a>
                 </td>
                 <td class="tbltitle">
                     <form method="post" action="{{ path('admin.market.resources.delete', {id: offer.id}) }}">

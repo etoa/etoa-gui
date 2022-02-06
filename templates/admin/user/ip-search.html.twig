@@ -23,7 +23,7 @@
                 <td>
                     {% for multi in multiEntries[session.userId]|default([]) %}
                     <span title="{{ multi.reason }}">
-                        <a href="?page=user&sub=edit&id={{ multi.multiUserId }}">{{ multi.multiUserNick }}</a>
+                        <a href="{{ path('admin.users.edit', {id: multi.multiUserId}) }}">{{ multi.multiUserNick }}</a>
                         </span>{% if not loop.last %}, {% endif %}
                     {% else %}
                         -
@@ -61,7 +61,7 @@
                 <td>
                     {% for multi in multiEntries[log.userId]|default([]) %}
                     <span title="{{ multi.reason }}">
-                        <a href="?page=user&sub=edit&id={{ multi.multiUserId }}">{{ multi.multiUserNick }}</a>
+                        <a href="{{ path('admin.users.edit', {id: multi.multiUserId}) }}">{{ multi.multiUserNick }}</a>
                         </span>{% if not loop.last %}, {% endif %}
                     {% else %}
                         -
@@ -101,7 +101,7 @@
                 <td>
                     {% for multi in multiEntries[failure.userId]|default([]) %}
                     <span title="{{ multi.reason }}">
-                        <a href="?page=user&sub=edit&id={{ multi.multiUserId }}">{{ multi.multiUserNick }}</a>
+                        <a href="{{ path('admin.users.edit', {id: multi.multiUserId}) }}">{{ multi.multiUserNick }}</a>
                         </span>{% if not loop.last %}, {% endif %}
                     {% else %}
                         -

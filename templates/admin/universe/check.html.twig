@@ -23,7 +23,7 @@
                     <td>{{ planet.id }}</td>
                     <td>{{ planet.name }}</td>
                     <td>{{ planet.userId }}</td>
-                    <td><a href="/admin/?page=galaxy&sub=edit&amp;id={{ planet.id }}">Bearbeiten</a></td>
+                    <td><a href="{{ path('admin.universe.entity', {id: planet.id}) }}">Bearbeiten</a></td>
                 </tr>
             {% endfor %}
         </table>
@@ -44,7 +44,7 @@
                 <tr>
                     <td>{{ planet.id }}</td>
                     <td>{{ planet.name }}</td>
-                    <td><a href="/admin/?page=galaxy&sub=edit&amp;id={{ planet.id }}">Bearbeiten</a></td>
+                    <td><a href="{{ path('admin.universe.entity', {id: planet.id}) }}">Bearbeiten</a></td>
                 </tr>
             {% endfor %}
         </table>

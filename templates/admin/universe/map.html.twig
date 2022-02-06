@@ -51,7 +51,7 @@
                     $(event.currentTarget).removeClass('hovered');
                 })
                 .dblclick(function(event){
-                    document.location='/admin/?page=galaxy&cell_id='+$(event.currentTarget).attr('data-id');
+                    document.location='/admin/universe/entities?cell='+$(event.currentTarget).attr('data-id');
                 });
 
             initMap = function() {

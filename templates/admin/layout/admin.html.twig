@@ -84,10 +84,10 @@
                         </tr>
                         <tr><th><a href="{{ path('admin.overview.sysinfo') }}">Systemlast</a></th><td>{{ sysLoad }} %</td></tr>
                     {% endif %}
-                    <tr><th><a href="/admin/?page=db">Datenbank</a></th><td>{{ dbSizeInMB }} MB</td></tr>
-                    <tr><th><a href="/admin/?page=overview&amp;sub=stats">User registriert</a></th><td>{{ usersCount }} / {{ usersAllowed }}</td></tr>
-                    <tr><th><a href="/admin/?page=user&amp;sub=sessions">User online</a></th><td>{{ usersOnline }} / {{ usersCount }}</td></tr>
-                    <tr><th><a href="/admin/?page=overview&amp;sub=adminlog">Admins online</a></th><td>{{ adminsOnline }} / {{ adminsCount }}</td></tr>
+                    <tr><th><a href="{{ path('admin.db') }}">Datenbank</a></th><td>{{ dbSizeInMB }} MB</td></tr>
+                    <tr><th><a href="{{ path('admin.stats.users') }}">User registriert</a></th><td>{{ usersCount }} / {{ usersAllowed }}</td></tr>
+                    <tr><th><a href="{{ path('admin.users.sessions') }}">User online</a></th><td>{{ usersOnline }} / {{ usersCount }}</td></tr>
+                    <tr><th><a href="{{ path('admin.admin-sessions') }}">Admins online</a></th><td>{{ adminsOnline }} / {{ adminsCount }}</td></tr>
                 </table>
 
             </div>

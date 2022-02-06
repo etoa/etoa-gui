@@ -62,3 +62,7 @@ elseif ($sub == "race") {
 elseif ($sub == "requests") {
     require("user/requests.inc.php");
 }
+
+elseif ($sub == "edit") {
+    require("user/edit.inc.php");
+}
