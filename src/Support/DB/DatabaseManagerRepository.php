@@ -109,7 +109,7 @@ class DatabaseManagerRepository extends AbstractRepository
 
     public function getCreateTableStatement(string $table): string
     {
-        return $this->getConnection()->fetchNumeric('SHOW CREATE TABLE :table', ['table' => $table])[1];
+        return $this->getConnection()->fetchNumeric('SHOW CREATE TABLE ' . $table)[1];
     }
 
     /**
@@ -117,7 +117,7 @@ class DatabaseManagerRepository extends AbstractRepository
      */
     public function selectAllFromTable(string $table): array
     {
-        return $this->getConnection()->fetchAllAssociative('SELECT * FROM :table', ['table' => $table]);
+        return $this->getConnection()->fetchAllAssociative('SELECT * FROM ' . $table);
     }
 
     public function executeQuery(string $query): void

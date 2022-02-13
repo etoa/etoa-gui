@@ -52,7 +52,7 @@ class GameLogRepository extends AbstractRepository
             'severity' => $severity,
             'timestamp' => time(),
             'message' => $message,
-            'ip' => $_SERVER['REMOTE_ADDR'],
+            'ip' => (string) $_SERVER['REMOTE_ADDR'],
             'userId' => $userId,
             'allianceId' => $allianceId,
             'entityId' => $entityId,

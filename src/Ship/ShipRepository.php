@@ -153,7 +153,7 @@ class ShipRepository extends AbstractRepository
         $amount = min($available, $amount);
 
         $this->createQueryBuilder()
-            ->update('shiplist')
+            ->update('shiplist1')
             ->set('shiplist_count', 'shiplist_count - :amount')
             ->where('shiplist_ship_id = :shipId')
             ->andWhere('shiplist_user_id = :userId')

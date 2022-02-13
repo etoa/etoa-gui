@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "4e8ef091d1e984bc83c7d1557b6bd9bb",
+    "content-hash": "eb25d2ca40bcadb816da98b17875143d",
     "packages": [
         {
             "name": "bacon/bacon-qr-code",
@@ -12521,6 +12521,60 @@
                 }
             ],
             "time": "2020-09-28T06:39:44+00:00"
+        },
+        {
+            "name": "staabm/phpstan-dba",
+            "version": "0.2.18",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/staabm/phpstan-dba.git",
+                "reference": "d60db80086fad4589f1de74b28e762b9426a7693"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/staabm/phpstan-dba/zipball/d60db80086fad4589f1de74b28e762b9426a7693",
+                "reference": "d60db80086fad4589f1de74b28e762b9426a7693",
+                "shasum": ""
+            },
+            "require": {
+                "composer-runtime-api": "^2.0",
+                "composer/semver": "^3.2",
+                "ext-mysqli": "*",
+                "php": "^8.0",
+                "phpstan/phpstan": "^1.2"
+            },
+            "require-dev": {
+                "doctrine/dbal": "^3.2",
+                "ext-pdo": "*",
+                "friendsofphp/php-cs-fixer": "3.4.0",
+                "phpstan/phpstan-php-parser": "^1.1",
+                "phpstan/phpstan-phpunit": "^1.0",
+                "phpstan/phpstan-strict-rules": "^1.1",
+                "phpunit/phpunit": "^9",
+                "symplify/phpstan-extensions": "^10.0"
+            },
+            "type": "phpstan-extension",
+            "extra": {
+                "phpstan": {
+                    "includes": [
+                        "config/dba.neon"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "staabm\\PHPStanDba\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "support": {
+                "issues": "https://github.com/staabm/phpstan-dba/issues",
+                "source": "https://github.com/staabm/phpstan-dba/tree/0.2.18"
+            },
+            "time": "2022-02-12T20:52:14+00:00"
         },
         {
             "name": "symfony/browser-kit",
