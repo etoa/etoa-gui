@@ -39,7 +39,7 @@ class LogRepository extends AbstractRepository
             'facility' => $facility,
             'severity' => $severity,
             'timestamp' => time(),
-            'ip' => (isset($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : ''),
+            'ip' => (string) ($_SERVER['REMOTE_ADDR'] ?? ''),
             'message' => $message,
         ]);
     }

@@ -25,20 +25,17 @@ htdocs/tmp/*.pid
 eventhandler/**/Makefile
 *CMakeFiles*
 CMakeCache.txt
-/.idea
-*.kdev4
 
 .vagrant
 ubuntu-*-console.log
 
-/var/
-/vendor/
 .php_cs.cache
 .php-cs-fixer.cache
-.phpunit.result.cache
-nbproject/*
+.phpstan*.cache
 
-node_modules/
+nbproject/*
+.idea
+*.kdev4
 
 ###> symfony/framework-bundle ###
 /.env.local

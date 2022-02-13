@@ -112,6 +112,15 @@ jobs:
         php-version:
           - "8.0"
 
+    services:
+      mysql:
+        image: mysql:5.7
+        env:
+          MYSQL_ROOT_PASSWORD: root
+        ports:
+          - 3306
+        options: --health-cmd="mysqladmin ping" --health-interval=10s --health-timeout=5s --health-retries=3
+
     name: PHPStan
     runs-on: ubuntu-latest
     steps:
@@ -135,6 +144,8 @@ jobs:
           key: "php-${{ matrix.php-version }}-phpstan-${{ hashFiles('**/composer.lock') }}"
           restore-keys: "php-${{ matrix.php-version }}-phpstan"
 
+      - name: Set up Symfony DB config
+        run: echo 'DATABASE_URL="mysql://root:root@127.0.0.1:${{ job.services.mysql.ports[3306] }}/etoa?serverVersion=5.7"' > .env.test
 
       - name: Install dependencies
         run: ./composer.phar install --prefer-dist --no-progress --no-suggest
@@ -145,8 +156,19 @@ jobs:
       - name: Setup container
         run: ./bin/console debug:container --quiet
 
+      - name: Create DB
+        run: ./bin/console doctrine:database:create --env=test
+
+      - name: Set up DB
+        run: bin/console database:migrate --env=test
+
+      - name: Set up Symfony DB config
+        run: echo 'DATABASE_URL="mysql://root:root@127.0.0.1:${{ job.services.mysql.ports[3306] }}/etoa_test?serverVersion=5.7"' > .env.test
+
       - name: Run PHPStan
         run: vendor/bin/phpstan analyse --no-progress
+        env:
+          APP_ENV: test
 
   frontend-assets:
 

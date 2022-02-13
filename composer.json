@@ -60,7 +60,8 @@
         "symfony/web-profiler-bundle": "^5.4",
         "symfony/phpunit-bridge": "^5.4",
         "phpstan/phpstan-doctrine": "^1.1",
-        "phpstan/phpstan-symfony": "^1.1"
+        "phpstan/phpstan-symfony": "^1.1",
+        "staabm/phpstan-dba": "^0.2.18"
     },
     "autoload": {
         "psr-4": {
