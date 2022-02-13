@@ -15,11 +15,12 @@ class UserWarningRepositoryTest extends SymfonyWebTestCase
         $this->repository = self::getContainer()->get(UserWarningRepository::class);
     }
 
-    public function testGetUserWarnings(): void
+    public function testSearch(): void
     {
+        $this->createUser(1);
         $this->repository->addEntry(1, 'test', 1);
 
-        $this->assertNotEmpty($this->repository->getUserWarnings(1));
+        $this->assertNotEmpty($this->repository->search(UserWarningSearch::create()->userId(1)));
     }
 
     public function testGetCountAndLatestWarning(): void

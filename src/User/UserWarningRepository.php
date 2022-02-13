@@ -26,14 +26,13 @@ class UserWarningRepository extends AbstractRepository
     /**
      * @return UserWarning[]
      */
-    public function getUserWarnings(int $userId): array
+    public function search(UserWarningSearch $search = null): array
     {
-        $data = $this->createQueryBuilder()
-            ->select('w.*, a.user_nick as admin_user_nick')
+        $data = $this->applySearchSortLimit($this->createQueryBuilder(), $search)
+            ->select('w.*, a.user_nick as admin_user_nick, u.user_nick')
             ->from('user_warnings', 'w')
             ->leftJoin('w', 'admin_users', 'a', 'a.user_id = w.warning_admin_id')
-            ->where('w.warning_user_id = :userId')
-            ->setParameter('userId', $userId)
+            ->innerJoin('w', 'users', 'u', 'u.user_id = w.warning_user_id')
             ->orderBy('w.warning_date', 'DESC')
             ->execute()
             ->fetchAllAssociative();
@@ -44,9 +43,10 @@ class UserWarningRepository extends AbstractRepository
     public function getWarning(int $id): ?UserWarning
     {
         $data = $this->createQueryBuilder()
-            ->select('w.*, a.user_nick as admin_user_nick')
+            ->select('w.*, a.user_nick as admin_user_nick, u.user_nick')
             ->from('user_warnings', 'w')
             ->leftJoin('w', 'admin_users', 'a', 'a.user_id = w.warning_admin_id')
+            ->innerJoin('w', 'users', 'u', 'u.user_id = w.warning_user_id')
             ->where('w.warning_id = :id')
             ->setParameter('id', $id)
             ->execute()

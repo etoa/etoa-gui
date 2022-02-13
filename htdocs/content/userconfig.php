@@ -27,7 +27,7 @@ $tabitems = array(
     "misc" => "Sonstiges"
 );
 
-$warnings = $userWarningRepository->getUserWarnings($cu->getId());
+$warnings = $userWarningRepository->search(\EtoA\User\UserWarningSearch::create()->userId($cu->getId()));
 if (count($warnings) > 0)
     $tabitems['warnings'] = "Verwarnungen";
 

@@ -6,6 +6,7 @@ class UserWarning
 {
     public int $id;
     public int $userId;
+    public string $userNick;
     public int $date;
     public string $text;
     public int $adminId;
@@ -15,6 +16,7 @@ class UserWarning
     {
         $this->id = (int) $data['warning_id'];
         $this->userId = (int) $data['warning_user_id'];
+        $this->userNick = $data['user_nick'];
         $this->date = (int) $data['warning_date'];
         $this->text = $data['warning_text'];
         $this->adminId = (int) $data['warning_admin_id'];

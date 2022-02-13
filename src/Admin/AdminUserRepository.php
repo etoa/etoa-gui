@@ -80,7 +80,7 @@ class AdminUserRepository extends AbstractRepository
     {
         $qb = $this->createQueryBuilder()
             ->select('user_id, user_nick')
-            ->from('users')
+            ->from('admin_users')
             ->orderBy('user_nick');
 
         return $this->applySearchSortLimit($qb, null, null, null)
