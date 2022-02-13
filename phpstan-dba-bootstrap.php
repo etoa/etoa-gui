@@ -16,12 +16,13 @@ $config = new RuntimeConfiguration();
 $config->debugMode(true);
 
 $databaseParts = parse_url($_SERVER['DATABASE_URL']);
+
 QueryReflection::setupReflector(
     new RecordingQueryReflector(
         ReflectionCache::create(
             $cacheFile
         ),
-        new \staabm\PHPStanDba\QueryReflection\PdoQueryReflector(new \PDO(sprintf('mysql:dbname=%s;host=%s', 'etoa', $databaseParts['host']), $databaseParts['user'], $databaseParts['pass']))
+        new \staabm\PHPStanDba\QueryReflection\PdoQueryReflector(new \PDO(sprintf('mysql:dbname=%s;host=%s', trim($databaseParts['path'], '/'), $databaseParts['host']), $databaseParts['user'], $databaseParts['pass']))
     ),
     $config
 );
