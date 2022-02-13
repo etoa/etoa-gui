@@ -16,7 +16,7 @@ $config = new RuntimeConfiguration();
 $config->debugMode(true);
 
 $databaseParts = parse_url($_SERVER['DATABASE_URL']);
-print_r($databaseParts);
+
 QueryReflection::setupReflector(
     new RecordingQueryReflector(
         ReflectionCache::create(

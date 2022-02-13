@@ -36,13 +36,6 @@ if ($sub == "specialists") {
 }
 
 //
-// Verwarnungen
-//
-elseif ($sub == "warnings") {
-    require("user/warnings.inc.php");
-}
-
-//
 // Rassen
 //
 elseif ($sub == "race") {
