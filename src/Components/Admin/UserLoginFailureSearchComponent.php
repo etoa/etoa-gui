@@ -11,12 +11,10 @@ use EtoA\User\UserLoginFailureSearch;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
-use Symfony\UX\LiveComponent\ComponentWithFormTrait;
 
 #[AsLiveComponent('user_login_failures')]
 class UserLoginFailureSearchComponent extends AbstractController
 {
-    use ComponentWithFormTrait;
     use SearchComponentTrait;
 
     private UserLoginFailureRequest $request;

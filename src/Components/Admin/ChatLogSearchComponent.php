@@ -10,12 +10,10 @@ use EtoA\Form\Type\Admin\ChatLogSearchType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
-use Symfony\UX\LiveComponent\ComponentWithFormTrait;
 
 #[AsLiveComponent('admin_chat_log_search')]
 class ChatLogSearchComponent extends AbstractController
 {
-    use ComponentWithFormTrait;
     use SearchComponentTrait;
 
     public function __construct(

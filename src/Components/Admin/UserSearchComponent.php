@@ -13,12 +13,10 @@ use EtoA\User\UserSearch;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
-use Symfony\UX\LiveComponent\ComponentWithFormTrait;
 
 #[AsLiveComponent('user_search')]
 class UserSearchComponent extends AbstractController
 {
-    use ComponentWithFormTrait;
     use SearchComponentTrait;
 
     /** @var string[] */

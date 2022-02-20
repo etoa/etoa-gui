@@ -17,12 +17,10 @@ use EtoA\User\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
-use Symfony\UX\LiveComponent\ComponentWithFormTrait;
 
 #[AsLiveComponent('log_fleets_search')]
 class LogFleetsSearchComponent extends AbstractController
 {
-    use ComponentWithFormTrait;
     use SearchComponentTrait;
 
     /** @var string[] */

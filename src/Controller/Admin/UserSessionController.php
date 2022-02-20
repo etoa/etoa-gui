@@ -65,7 +65,7 @@ class UserSessionController extends AbstractController
     public function sessionLog(Request $request): Response
     {
         return $this->render('admin/user/session-log.html.twig', [
-            'form' => $this->createForm(UserSessionLogType::class, $request->query->all())->createView(),
+            'form' => $this->createForm(UserSessionLogType::class, $request->query->all()),
             'total' => $this->userSessionRepository->countLogs(),
         ]);
     }

@@ -13,12 +13,10 @@ use EtoA\User\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
-use Symfony\UX\LiveComponent\ComponentWithFormTrait;
 
 #[AsLiveComponent('admin_fleet_search')]
 class FleetSearchComponent extends AbstractController
 {
-    use ComponentWithFormTrait;
     use SearchComponentTrait;
 
     /** @var array<int, string> */
