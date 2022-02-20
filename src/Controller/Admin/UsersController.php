@@ -42,7 +42,7 @@ class UsersController extends AbstractAdminController
     public function list(Request $request): Response
     {
         return $this->render('admin/user/list.html.twig', [
-            'form' => $this->createForm(UserSearchType::class, $request->query->all())->createView(),
+            'form' => $this->createForm(UserSearchType::class, $request->query->all()),
             'total' => $this->userRepository->count(),
         ]);
     }
@@ -61,7 +61,7 @@ class UsersController extends AbstractAdminController
     public function loginFailures(Request $request): Response
     {
         return $this->render('admin/user/login-failures.html.twig', [
-            'form' => $this->createForm(UserLoginFailureType::class, $request->query->all())->createView(),
+            'form' => $this->createForm(UserLoginFailureType::class, $request->query->all()),
             'total' => $this->loginFailureRepository->count(),
         ]);
     }

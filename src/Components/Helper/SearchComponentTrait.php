@@ -2,15 +2,53 @@
 
 namespace EtoA\Components\Helper;
 
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
+use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Symfony\UX\LiveComponent\Attribute\LiveAction;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
+use Symfony\UX\LiveComponent\ComponentWithFormTrait;
 
 trait SearchComponentTrait
 {
+    use ComponentWithFormTrait;
+
     private int $perPage = 100;
 
     #[LiveProp(writable: true)]
     public int $limit = 0;
+
+    public function mount(FormView|FormInterface $form = null): void
+    {
+        if ($form instanceof FormInterface) {
+            $this->setForm($form->createView());
+
+            // @phpstan-ignore-next-line
+            if (property_exists($this, 'request')) {
+                $propertyAccessor = new PropertyAccessor();
+                $children = $form->all();
+                $data = $form->getData();
+                if (is_array($data)) {
+                    foreach ($data as $key => $value) {
+                        if ($value !== null) {
+                            // @phpstan-ignore-next-line
+                            foreach ($children[$key]->getConfig()->getViewTransformers() as $transformer) {
+                                $value = $transformer->reverseTransform($value);
+                            }
+                            $propertyAccessor->setValue($this->request, (string) $key, $value);
+                        }
+                    }
+                }
+            }
+        } elseif ($form instanceof FormView) {
+            // @phpstan-ignore-next-line
+            if (property_exists($this, 'request')) {
+                throw new \RuntimeException('Pass instance of FormInstance instead of FormView');
+            }
+
+            $this->setForm($form);
+        }
+    }
 
     /**
      * New search terms need to reset the current pagination progress
