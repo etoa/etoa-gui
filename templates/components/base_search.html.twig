@@ -2,18 +2,20 @@
     {{ init_live_component(this) }}
     data-action="change->live#update"
 >
-    {{ form_start(this.form, {'attr': {'onkeydown' :"return event.key != 'Enter';"}}) }}
-    <fieldset>
-        <legend>Filter</legend>
-        {% for element in this.form %}
-            <div class="inline-block">
-                {{ form_row(element) }}
-            </div>
-        {% endfor %}
+    <div data-controller="search-url">
+        {{ form_start(this.form, {'attr': {'onkeydown' :"return event.key != 'Enter';"}}) }}
+        <fieldset>
+            <legend>Filter</legend>
+            {% for element in this.form %}
+                <div class="inline-block">
+                    {{ form_row(element) }}
+                </div>
+            {% endfor %}
 
-        <button type="button" data-action="live#action" data-action-name="prevent|reset">Reset</button>
-    </fieldset>
-    {{ form_end(this.form) }}
+            <button type="button" data-action="live#action" data-action-name="prevent|reset">Reset</button>
+        </fieldset>
+        {{ form_end(this.form) }}
+    </div>
 
     {% block labeling %}
     {% endblock %}
