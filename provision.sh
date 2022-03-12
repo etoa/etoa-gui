@@ -15,14 +15,14 @@ echo "mysql-server mysql-server/root_password_again password " | debconf-set-sel
 sudo apt-get install -q -y -f git mysql-server mysql-client nginx php8.0 php8.0-fpm php8.0-xdebug
 
 # Install commonly used php packages
-sudo apt-get install -q -y -f php8.0-curl php8.0-cli php8.0-mysqli php8.0-gd php8.0-dom php8.0-zip php8.0-mbstring php8.0-intl
+sudo apt-get install -q -y -f php8.0-curl php8.0-cli php8.0-mysqli php8.0-gd php8.0-dom php8.0-zip php8.0-mbstring php8.0-intl php8.0-redis
 
 sudo apt-get upgrade libpcre3
 
 sudo apt-get -y install curl dirmngr apt-transport-https lsb-release ca-certificates unzip
 curl -fsSL https://deb.nodesource.com/setup_16.x | sudo -E bash -
 sudo apt-get install -y nodejs
-npm install -g npm@8.3.0
+npm install --global yarn
 
 sudo rm /etc/nginx/sites-available/default
 sudo cp /var/www/etoa/vagrant/nginx-default /etc/nginx/sites-available/default
@@ -43,9 +43,9 @@ cd /var/www/etoa && mkdir htdocs/web/build && echo "{}" > htdocs/web/build/manif
 # Install PHP composer dependencies
 cd /var/www/etoa && export COMPOSER_ALLOW_SUPERUSER=1;php composer.phar install --no-interaction
 
-# Install node npm dependencies and trigger build (avoid symlinks for Windows, run in /vagrant to avoid weird npm errors)
-cd /vagrant && npm install --no-bin-links --no-audit
-cd /var/www/etoa && npm run build
+# Install node dependencies and trigger build
+cd /vagrant && yarn install --frozen-lockfile
+cd /var/www/etoa && yarn run build
 
 # Setup database
 Q0="SET GLOBAL sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));"

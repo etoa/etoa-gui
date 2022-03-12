@@ -33,7 +33,7 @@
         "dev-server": "encore dev-server",
         "dev": "encore dev",
         "watch": "encore dev --watch",
-        "build": "encore production --progress",
+        "build": "encore production",
         "dev-mix": "mixt",
         "watch-mix": "mix watch",
         "watch-poll-mix": "mix watch -- --watch-options-poll=1000",

@@ -188,6 +188,6 @@ jobs:
       - name: Install dependencies
         run: ./composer.phar install --prefer-dist --no-progress --no-suggest --no-plugins --no-dev --ignore-platform-reqs
 
-      - run: npm ci
-      - run: npm run prod-mix
-      - run: npm run build
+      - run: yarn install --frozen-lockfile
+      - run: yarn run prod-mix
+      - run: yarn run build
