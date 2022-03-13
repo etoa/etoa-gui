@@ -399,7 +399,7 @@ class RankingService
             $bpoints = 0;
             $tpoints = 0;
             if ($alliance['upoints'] > 0 && $this->config->param2Int('points_update') > 0) {
-                $upoints = floor($alliance['upoints'] / $this->config->param2Int('points_update'));
+                $upoints = floor((int) $alliance['upoints'] / $this->config->param2Int('points_update'));
             }
 
             $buildingLevels = $this->allianceBuildingRepository->getLevels($allianceId);

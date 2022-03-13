@@ -18,7 +18,7 @@ class StringUtils
      */
     public static function splitBySpaces(string $text): array
     {
-        if (preg_match_all('/"(?:\\\\.|[^\\\\"])*"|\S+/', $text, $matches)) {
+        if ((bool) preg_match_all('/"(?:\\\\.|[^\\\\"])*"|\S+/', $text, $matches)) {
             $rtn = array();
             for ($x = 0; $x < count($matches[0]); $x++) {
                 $rtn[$x] = preg_replace(array('/^"/', '/"$/', '/\\\"/'), array('', '', '"'), $matches[0][$x]);

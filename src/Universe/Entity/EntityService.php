@@ -72,7 +72,7 @@ class EntityService
     public function distanceByCoords(EntityCoordinates $start, EntityCoordinates $end): float
     {
         // Länge vom Solsys in AE
-        $cellLengthAE = $this->config->get('cell_length');
+        $cellLengthAE = $this->config->getInt('cell_length');
         // Max. Planeten im Solsys
         $maxNumEntitiesPerSystem = $this->config->param2Int('num_planets');
 

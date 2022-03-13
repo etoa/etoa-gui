@@ -7,6 +7,7 @@ namespace EtoA\Support;
 use Exception;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
+use Webmozart\Assert\Assert;
 use ZipArchive;
 
 class FileUtils
@@ -44,7 +45,8 @@ class FileUtils
 
         // let's iterate
         foreach ($files as $name => $file) {
-            $new_filename = substr($name, strlen(dirname($dir)) + 1);
+            Assert::isInstanceOf($file, \SplFileInfo::class);
+            $new_filename = substr((string) $name, strlen(dirname($dir)) + 1);
             $filePath = $file->getRealPath();
             if (is_file($filePath)) {
                 $zip->addFile($filePath, $new_filename);
