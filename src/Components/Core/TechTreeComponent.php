@@ -57,7 +57,7 @@ class TechTreeComponent extends AbstractController
 
     public function getObject(): Missile|Ship|Defense|Technology|Building
     {
-        $id = $this->getFormValues()['id'];
+        $id = $this->formValues['id'] ?? '';
         [$cat, $id] = explode(':', $id);
         $id = (int) $id;
         $repository = $this->requirementRepositoryProvider->getRepositoryForCategory($cat);

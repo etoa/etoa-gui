@@ -4,6 +4,7 @@ namespace EtoA\Components\Admin;
 
 use EtoA\Components\Helper\SearchComponentTrait;
 use EtoA\Components\Helper\SearchResult;
+use EtoA\Form\Request\Admin\ReportSearchRequest;
 use EtoA\Form\Type\Admin\ReportSearchType;
 use EtoA\Message\ReportAggregator;
 use EtoA\Message\ReportRepository;
@@ -23,45 +24,46 @@ class ReportSearchComponent extends AbstractController
     public array $types;
     /** @var array<int, string> */
     public array $users;
+    private ReportSearchRequest $request;
 
     public function __construct(
         private ReportRepository $reportRepository,
         private UserRepository $userRepository,
         private ReportAggregator $reportAggregator
     ) {
+        $this->request = new ReportSearchRequest();
     }
 
     public function getSearch(): SearchResult
     {
         $search = ReportSearch::create();
-        if ($this->getFormValues()['type'] !== '') {
-            $search->type($this->getFormValues()['type']);
+        if ($this->request->type !== null) {
+            $search->type($this->request->type);
         }
 
-        if ($this->getFormValues()['userId'] !== '') {
-            $search->userId((int) $this->getFormValues()['userId']);
+        if ($this->request->userId !== null) {
+            $search->userId($this->request->userId);
         }
 
-        if ($this->getFormValues()['opponentId'] !== '') {
-            $search->opponentId((int) $this->getFormValues()['opponentId']);
+        if ($this->request->opponentId !== null) {
+            $search->opponentId($this->request->opponentId);
         }
 
-        if ($this->getFormValues()['entityId'] !== '') {
-            $search->entityId((int) $this->getFormValues()['entityId']);
+        if ($this->request->entityId !== null) {
+            $search->entityId($this->request->entityId);
         }
 
-        if (!is_array($this->getFormValues()['read']) && $this->getFormValues()['read'] !== '') {
-            $search->read((bool) $this->getFormValues()['read']);
+        if ($this->request->read !== null) {
+            $search->read($this->request->read);
         }
 
-        if (!is_array($this->getFormValues()['deleted']) && $this->getFormValues()['deleted'] !== '') {
-            $search->deleted((bool) $this->getFormValues()['deleted']);
+        if ($this->request->deleted !== null) {
+            $search->deleted($this->request->deleted);
         }
 
-        if (!is_array($this->getFormValues()['archived']) && $this->getFormValues()['archived'] !== '') {
-            $search->archived((bool) $this->getFormValues()['archived']);
+        if ($this->request->archived !== null) {
+            $search->archived($this->request->archived);
         }
-
 
         $total = $this->reportRepository->count($search);
 
@@ -80,14 +82,11 @@ class ReportSearchComponent extends AbstractController
 
     protected function instantiateForm(): FormInterface
     {
-        return $this->createForm(ReportSearchType::class, $this->getFormValues());
+        return $this->createForm(ReportSearchType::class, $this->request);
     }
 
-    private function resetFormValues(): void
+    private function resetFormRequest(): void
     {
-        $this->formValues = [];
-        foreach ($this->getFormInstance()->all() as $field) {
-            $this->formValues[$field->getName()] = '';
-        }
+        $this->request = new ReportSearchRequest();
     }
 }

@@ -7,8 +7,8 @@ use EtoA\Components\Helper\SearchResult;
 use EtoA\Fleet\Attack\Ban;
 use EtoA\Fleet\Attack\BanFinder;
 use EtoA\Fleet\LegacyFleetAction;
+use EtoA\Form\Request\Admin\LogAttackBanSearchRequest;
 use EtoA\Form\Type\Admin\LogAttackBanType;
-use EtoA\Form\Type\Core\LogDateTimeType;
 use EtoA\Log\BattleLogRepository;
 use EtoA\Log\BattleLogSearch;
 use EtoA\Universe\Entity\EntityLabel;
@@ -30,6 +30,7 @@ class LogAttackBanSearchComponent extends AbstractController
     public array $entities = [];
     /** @var \FleetAction[] */
     public array $fleetActions = [];
+    private LogAttackBanSearchRequest $request;
 
     public function __construct(
         private BattleLogRepository $battleLogRepository,
@@ -38,25 +39,26 @@ class LogAttackBanSearchComponent extends AbstractController
         private EntityRepository $entityRepository
     ) {
         $this->perPage = 99999;
+        $this->request = new LogAttackBanSearchRequest();
     }
 
     public function getSearch(): SearchResult
     {
         $search = BattleLogSearch::create();
-        if ($this->getFormValues()['date'] !== '') {
-            $landtime = strtotime($this->getFormValues()['date']);
+        if ($this->request->date !== null) {
+            $landtime = (int) strtotime($this->request->date);
             $search->attackingBetween($landtime, $landtime - 3600 * 24);
         }
 
-        if ($this->getFormValues()['action'] !== '') {
-            $search->action($this->getFormValues()['action']);
+        if ($this->request->action !== null) {
+            $search->action($this->request->action);
         }
 
-        if ($this->getFormValues()['attacker'] !== '') {
-            $search->fleetUserId((int) $this->getFormValues()['attacker']);
+        if ($this->request->attacker !== null) {
+            $search->fleetUserId($this->request->attacker);
         }
-        if ($this->getFormValues()['defender'] !== '') {
-            $search->entityUserId((int) $this->getFormValues()['defender']);
+        if ($this->request->defender !== null) {
+            $search->entityUserId($this->request->defender);
         }
 
         $logs = $this->battleLogRepository->searchLogs($search);
@@ -84,16 +86,11 @@ class LogAttackBanSearchComponent extends AbstractController
 
     protected function instantiateForm(): FormInterface
     {
-        return $this->createForm(LogAttackBanType::class, $this->getFormValues());
+        return $this->createForm(LogAttackBanType::class, $this->request);
     }
 
-    private function resetFormValues(): void
+    private function resetFormRequest(): void
     {
-        $this->formValues = [
-            'attacker' => null,
-            'defender' => null,
-            'action' => null,
-            'date' => (new \DateTime())->format(LogDateTimeType::FORMAT),
-        ];
+        $this->request = new LogAttackBanSearchRequest();
     }
 }

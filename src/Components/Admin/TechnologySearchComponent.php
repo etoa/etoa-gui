@@ -4,6 +4,7 @@ namespace EtoA\Components\Admin;
 
 use EtoA\Components\Helper\SearchComponentTrait;
 use EtoA\Components\Helper\SearchResult;
+use EtoA\Form\Request\Admin\TechnologySearchRequest;
 use EtoA\Form\Type\Admin\TechnologySearchType;
 use EtoA\Technology\TechnologyBuildType;
 use EtoA\Technology\TechnologyDataRepository;
@@ -23,6 +24,8 @@ class TechnologySearchComponent extends AbstractController
 {
     use SearchComponentTrait;
 
+    private TechnologySearchRequest $request;
+
     /** @var array<int, string> */
     public array $buildTypes;
     /** @var array<int, string> */
@@ -39,25 +42,26 @@ class TechnologySearchComponent extends AbstractController
         private EntityRepository $entityRepository,
     ) {
         $this->buildTypes = TechnologyBuildType::all();
+        $this->request = new TechnologySearchRequest();
     }
 
     public function getSearch(): SearchResult
     {
         $search = TechnologyListItemSearch::create();
-        if ($this->getFormValues()['userId'] !== '') {
-            $search->userId((int) $this->getFormValues()['userId']);
+        if ($this->request->userId > 0) {
+            $search->userId($this->request->userId);
         }
 
-        if ($this->getFormValues()['techId'] !== '') {
-            $search->technologyId((int) $this->getFormValues()['techId']);
+        if ($this->request->techId > 0) {
+            $search->technologyId($this->request->techId);
         }
 
-        if ($this->getFormValues()['entityId'] !== '') {
-            $search->entityId((int) $this->getFormValues()['entityId']);
+        if ($this->request->entityId > 0) {
+            $search->entityId($this->request->entityId);
         }
 
-        if ($this->getFormValues()['buildType'] !== '') {
-            $search->buildType((int) $this->getFormValues()['buildType']);
+        if ($this->request->buildType > 0) {
+            $search->buildType($this->request->buildType);
         }
 
         $total = $this->technologyRepository->count($search);
@@ -77,6 +81,11 @@ class TechnologySearchComponent extends AbstractController
 
     protected function instantiateForm(): FormInterface
     {
-        return $this->createForm(TechnologySearchType::class, $this->getFormValues());
+        return $this->createForm(TechnologySearchType::class, $this->request);
+    }
+
+    private function resetFormRequest(): void
+    {
+        $this->request = new TechnologySearchRequest();
     }
 }

@@ -8,7 +8,7 @@
     {% set style = '' %}
 {% endif %}
 <tbody
-    {{ init_live_component(this) }}
+    {{ attributes }}
     data-original-data="{}" {# Hack to prevent issue with symfony/ux #}
 >
 <tr

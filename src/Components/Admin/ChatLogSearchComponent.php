@@ -6,6 +6,7 @@ use EtoA\Chat\ChatLogRepository;
 use EtoA\Chat\ChatLogSearch;
 use EtoA\Components\Helper\SearchComponentTrait;
 use EtoA\Components\Helper\SearchResult;
+use EtoA\Form\Request\Admin\ChatLogSearchRequest;
 use EtoA\Form\Type\Admin\ChatLogSearchType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
@@ -16,21 +17,24 @@ class ChatLogSearchComponent extends AbstractController
 {
     use SearchComponentTrait;
 
+    private ChatLogSearchRequest $request;
+
     public function __construct(
         private ChatLogRepository $chatLogRepository,
     ) {
         $this->perPage = 250;
+        $this->request = new ChatLogSearchRequest();
     }
 
     public function getSearch(): SearchResult
     {
         $search = ChatLogSearch::create();
-        if ($this->getFormValues()['userId'] !== '') {
-            $search->userId((int) $this->getFormValues()['userId']);
+        if ($this->request->userId !== null) {
+            $search->userId($this->request->userId);
         }
 
-        if ($this->getFormValues()['text'] !== '') {
-            $search->textLike($this->getFormValues()['text']);
+        if ($this->request->text !== null) {
+            $search->textLike($this->request->text);
         }
 
         $total = $this->chatLogRepository->count($search);
@@ -44,6 +48,11 @@ class ChatLogSearchComponent extends AbstractController
 
     protected function instantiateForm(): FormInterface
     {
-        return $this->createForm(ChatLogSearchType::class, $this->getFormValues());
+        return $this->createForm(ChatLogSearchType::class, $this->request);
+    }
+
+    private function resetFormRequest(): void
+    {
+        $this->request = new ChatLogSearchRequest();
     }
 }

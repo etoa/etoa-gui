@@ -6,6 +6,7 @@ use EtoA\Components\Helper\SearchComponentTrait;
 use EtoA\Components\Helper\SearchResult;
 use EtoA\Fleet\FleetRepository;
 use EtoA\Fleet\FleetSearch;
+use EtoA\Form\Request\Admin\FleetSearchRequest;
 use EtoA\Form\Type\Admin\FleetSearchType;
 use EtoA\Universe\Entity\EntityLabelSearch;
 use EtoA\Universe\Entity\EntityRepository;
@@ -27,35 +28,37 @@ class FleetSearchComponent extends AbstractController
     public array $fleetStatusCode;
     /** @var array<string, string> */
     public array $fleetActions;
+    private FleetSearchRequest $request;
 
     public function __construct(
         private FleetRepository $fleetRepository,
         private UserRepository $userRepository,
         private EntityRepository $entityRepository
     ) {
+        $this->request = new FleetSearchRequest();
     }
 
     public function getSearch(): SearchResult
     {
         $search = FleetSearch::create();
-        if ($this->getFormValues()['entityFrom'] !== '') {
-            $search->entityFrom((int) $this->getFormValues()['entityFrom']);
+        if ($this->request->entityFrom !== null) {
+            $search->entityFrom($this->request->entityFrom);
         }
 
-        if ($this->getFormValues()['entityTo'] !== '') {
-            $search->entityTo((int) $this->getFormValues()['entityTo']);
+        if ($this->request->entityTo !== null) {
+            $search->entityTo($this->request->entityTo);
         }
 
-        if ($this->getFormValues()['action'] !== '') {
-            $search->actionIn([$this->getFormValues()['action']]);
+        if ($this->request->action !== null) {
+            $search->actionIn([$this->request->action]);
         }
 
-        if ($this->getFormValues()['status'] !== '') {
-            $search->status((int) $this->getFormValues()['status']);
+        if ($this->request->status !== null) {
+            $search->status($this->request->status);
         }
 
-        if ($this->getFormValues()['user'] !== '') {
-            $search->user((int) $this->getFormValues()['user']);
+        if ($this->request->user !== null) {
+            $search->user($this->request->user);
         }
 
         $fleets = $this->fleetRepository->search($search);
@@ -80,17 +83,11 @@ class FleetSearchComponent extends AbstractController
 
     protected function instantiateForm(): FormInterface
     {
-        return $this->createForm(FleetSearchType::class, $this->getFormValues());
+        return $this->createForm(FleetSearchType::class, $this->request);
     }
 
-    private function resetFormValues(): void
+    private function resetFormRequest(): void
     {
-        $this->formValues = [
-            'entityTo' => '',
-            'entityFrom' => '',
-            'user' => '',
-            'status' => '',
-            'action' => '',
-        ];
+        $this->request = new FleetSearchRequest();
     }
 }

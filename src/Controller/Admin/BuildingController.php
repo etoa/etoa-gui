@@ -48,7 +48,7 @@ class BuildingController extends AbstractAdminController
 
         return $this->render('admin/building/search.html.twig', [
             'addForm' => $addForm->createView(),
-            'form' => $this->createForm(BuildingSearchType::class, $request->query->all())->createView(),
+            'form' => $this->createForm(BuildingSearchType::class, $request->query->all()),
             'total' => $this->buildingRepository->count(),
         ]);
     }

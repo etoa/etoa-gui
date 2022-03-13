@@ -50,7 +50,7 @@ class DefenseController extends AbstractAdminController
 
         return $this->render('admin/defense/search.html.twig', [
             'addForm' => $addForm->createView(),
-            'form' => $this->createForm(DefenseSearchType::class, $request->query->all())->createView(),
+            'form' => $this->createForm(DefenseSearchType::class, $request->query->all()),
             'total' => $this->defenseRepository->count(),
         ]);
     }
@@ -60,7 +60,7 @@ class DefenseController extends AbstractAdminController
     public function queue(Request $request): Response
     {
         return $this->render('admin/defense/queue.html.twig', [
-            'form' => $this->createForm(DefenseSearchType::class, $request->query->all())->createView(),
+            'form' => $this->createForm(DefenseSearchType::class, $request->query->all()),
             'total' => $this->defenseQueueRepository->count(),
         ]);
     }

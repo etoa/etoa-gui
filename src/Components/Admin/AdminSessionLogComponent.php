@@ -4,11 +4,11 @@ namespace EtoA\Components\Admin;
 
 use EtoA\Admin\AdminSessionLog;
 use EtoA\Admin\AdminSessionRepository;
+use EtoA\Form\Request\Admin\AdminSessionLogRequest;
 use EtoA\Form\Type\Admin\AdminSessionLogType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormInterface;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
-use Symfony\UX\LiveComponent\Attribute\LiveProp;
 use Symfony\UX\LiveComponent\ComponentWithFormTrait;
 use Symfony\UX\LiveComponent\DefaultActionTrait;
 
@@ -18,20 +18,12 @@ class AdminSessionLogComponent extends AbstractController
     use ComponentWithFormTrait;
     use DefaultActionTrait;
 
+    public AdminSessionLogRequest $request;
+
     public function __construct(
         private AdminSessionRepository $sessionRepository
     ) {
-    }
-
-    #[LiveProp()]
-    public ?int $userId = null;
-
-    public function __invoke(): void
-    {
-        $this->userId = null;
-        if ($this->getFormValues()['user'] !== '') {
-            $this->userId = (int) $this->getFormValues()['user'];
-        }
+        $this->request = new AdminSessionLogRequest();
     }
 
     /**
@@ -40,8 +32,8 @@ class AdminSessionLogComponent extends AbstractController
     public function getLogs(): array
     {
         $logs = [];
-        if ($this->userId !== null) {
-            $logs = $this->sessionRepository->findSessionLogsByUser($this->userId);
+        if ($this->request->user !== null) {
+            $logs = $this->sessionRepository->findSessionLogsByUser($this->request->user);
         }
 
         return $logs;
@@ -49,6 +41,6 @@ class AdminSessionLogComponent extends AbstractController
 
     protected function instantiateForm(): FormInterface
     {
-        return $this->createForm(AdminSessionLogType::class, $this->getFormValues());
+        return $this->createForm(AdminSessionLogType::class, $this->request);
     }
 }

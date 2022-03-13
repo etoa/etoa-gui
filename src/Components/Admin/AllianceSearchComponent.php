@@ -6,6 +6,7 @@ use EtoA\Alliance\AllianceRepository;
 use EtoA\Alliance\AllianceSearch;
 use EtoA\Components\Helper\SearchComponentTrait;
 use EtoA\Components\Helper\SearchResult;
+use EtoA\Form\Request\Admin\AllianceSearchRequest;
 use EtoA\Form\Type\Admin\AllianceSearchType;
 use EtoA\User\UserRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -19,27 +20,29 @@ class AllianceSearchComponent extends AbstractController
 
     /** @var string[] */
     public array $users = [];
+    private AllianceSearchRequest $request;
 
     public function __construct(
         private UserRepository $userRepository,
         private AllianceRepository $allianceRepository
     ) {
         $this->perPage = 99999;
+        $this->request = new AllianceSearchRequest();
     }
 
     public function getSearch(): SearchResult
     {
         $search = AllianceSearch::create();
-        if ($this->getFormValues()['name'] !== '') {
-            $search->nameLike($this->getFormValues()['name']);
+        if ($this->request->name !== null) {
+            $search->nameLike($this->request->name);
         }
 
-        if ($this->getFormValues()['tag'] !== '') {
-            $search->nameLike($this->getFormValues()['tag']);
+        if ($this->request->tag !== null) {
+            $search->nameLike($this->request->tag);
         }
 
-        if ($this->getFormValues()['text'] !== '') {
-            $search->nameLike($this->getFormValues()['text']);
+        if ($this->request->text !== null) {
+            $search->nameLike($this->request->text);
         }
 
         $alliances = $this->allianceRepository->searchAlliances($search);
@@ -52,15 +55,11 @@ class AllianceSearchComponent extends AbstractController
 
     protected function instantiateForm(): FormInterface
     {
-        return $this->createForm(AllianceSearchType::class, $this->getFormValues());
+        return $this->createForm(AllianceSearchType::class, $this->request);
     }
 
-    private function resetFormValues(): void
+    private function resetFormRequest(): void
     {
-        $this->formValues = [
-            'text' => '',
-            'tag' => '',
-            'name' => '',
-        ];
+        $this->request = new AllianceSearchRequest();
     }
 }

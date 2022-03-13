@@ -9,6 +9,7 @@ use EtoA\Components\Helper\SearchComponentTrait;
 use EtoA\Components\Helper\SearchResult;
 use EtoA\Defense\DefenseBuildType;
 use EtoA\Defense\DefenseDataRepository;
+use EtoA\Form\Request\Admin\LogGameSearchRequest;
 use EtoA\Form\Type\Admin\LogGameType;
 use EtoA\Log\GameLog;
 use EtoA\Log\GameLogFacility;
@@ -45,6 +46,7 @@ class LogGameSearchComponent extends AbstractController
     public array $objects;
     /** @var string[][] */
     public array $status;
+    private LogGameSearchRequest $request;
 
     public function __construct(
         private GameLogRepository $logRepository,
@@ -56,37 +58,38 @@ class LogGameSearchComponent extends AbstractController
         private TechnologyDataRepository $technologyDataRepository,
         private EntityRepository $entityRepository
     ) {
+        $this->request = new LogGameSearchRequest();
     }
 
     public function getSearch(): SearchResult
     {
         $search = GameLogSearch::create();
-        if ($this->getFormValues()['user'] !== '') {
-            $search->userId((int) $this->getFormValues()['user']);
+        if ($this->request->user !== null) {
+            $search->userId($this->request->user);
         }
 
-        if ($this->getFormValues()['alliance'] !== '') {
-            $search->allianceId((int) $this->getFormValues()['alliance']);
+        if ($this->request->alliance !== null) {
+            $search->allianceId($this->request->alliance);
         }
 
-        if ($this->getFormValues()['entity'] !== '') {
-            $search->entityId((int) $this->getFormValues()['entity']);
+        if ($this->request->entity !== null) {
+            $search->entityId($this->request->entity);
         }
 
-        if ($this->getFormValues()['facility'] !== '') {
-            $search->facility((int) $this->getFormValues()['facility']);
+        if ($this->request->facility !== null) {
+            $search->facility($this->request->facility);
         }
 
-        if ($this->getFormValues()['query'] !== '') {
-            $search->messageLike($this->getFormValues()['query']);
+        if ($this->request->query !== null) {
+            $search->messageLike($this->request->query);
         }
 
-        if ($this->getFormValues()['severity'] > LogSeverity::DEBUG) {
-            $search->severity((int) $this->getFormValues()['severity']);
+        if ($this->request->severity > LogSeverity::DEBUG) {
+            $search->severity($this->request->severity);
         }
 
-        if (isset($this->getFormValues()['object']) && $this->getFormValues()['object'] > 0) {
-            $search->objectId((int) $this->getFormValues()['object']);
+        if ($this->request->object > 0) {
+            $search->objectId($this->request->object);
         }
 
         $total = $this->logRepository->count($search);
@@ -124,15 +127,11 @@ class LogGameSearchComponent extends AbstractController
 
     protected function instantiateForm(): FormInterface
     {
-        return $this->createForm(LogGameType::class, $this->getFormValues());
+        return $this->createForm(LogGameType::class, $this->request);
     }
 
-    private function resetFormValues(): void
+    private function resetFormRequest(): void
     {
-        $this->formValues = [
-            'facility' => '',
-            'query' => '',
-            'severity' => LogSeverity::DEBUG,
-        ];
+        $this->request = new LogGameSearchRequest();
     }
 }

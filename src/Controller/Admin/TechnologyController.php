@@ -57,7 +57,7 @@ class TechnologyController extends AbstractAdminController
 
         return $this->render('admin/technology/search.html.twig', [
             'addForm' => $addForm->createView(),
-            'form' => $this->createForm(TechnologySearchType::class, $request->request->all())->createView(),
+            'form' => $this->createForm(TechnologySearchType::class, $request->request->all()),
             'total' => $this->technologyRepository->count(),
         ]);
     }

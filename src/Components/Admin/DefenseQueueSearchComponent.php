@@ -8,6 +8,7 @@ use EtoA\Defense\DefenseDataRepository;
 use EtoA\Defense\DefenseQueueItem;
 use EtoA\Defense\DefenseQueueRepository;
 use EtoA\Defense\DefenseQueueSearch;
+use EtoA\Form\Request\Admin\DefenseQueueSearchRequest;
 use EtoA\Form\Type\Admin\DefenseSearchType;
 use EtoA\Universe\Entity\EntityLabel;
 use EtoA\Universe\Entity\EntityRepository;
@@ -28,6 +29,7 @@ class DefenseQueueSearchComponent extends AbstractController
     public array $defenseNames;
     /** @var array<int, string> */
     public array $entities;
+    private DefenseQueueSearchRequest $request;
 
     public function __construct(
         private DefenseQueueRepository $defenseQueueRepository,
@@ -35,21 +37,22 @@ class DefenseQueueSearchComponent extends AbstractController
         private UserRepository $userRepository,
         private EntityRepository $entityRepository,
     ) {
+        $this->request = new DefenseQueueSearchRequest();
     }
 
     public function getSearch(): SearchResult
     {
         $search = DefenseQueueSearch::create();
-        if ($this->getFormValues()['userId'] !== '') {
-            $search->userId((int) $this->getFormValues()['userId']);
+        if ($this->request->userId !== null) {
+            $search->userId($this->request->userId);
         }
 
-        if ($this->getFormValues()['entityId'] !== '') {
-            $search->entityId((int) $this->getFormValues()['entityId']);
+        if ($this->request->entityId !== null) {
+            $search->entityId($this->request->entityId);
         }
 
-        if ($this->getFormValues()['defenseId'] !== '') {
-            $search->defenseId((int) $this->getFormValues()['defenseId']);
+        if ($this->request->defenseId !== null) {
+            $search->defenseId($this->request->defenseId);
         }
 
         $total = $this->defenseQueueRepository->count($search);
@@ -70,6 +73,11 @@ class DefenseQueueSearchComponent extends AbstractController
 
     protected function instantiateForm(): FormInterface
     {
-        return $this->createForm(DefenseSearchType::class, $this->getFormValues());
+        return $this->createForm(DefenseSearchType::class, $this->request);
+    }
+
+    private function resetFormRequest(): void
+    {
+        $this->request = new DefenseQueueSearchRequest();
     }
 }

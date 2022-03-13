@@ -33,7 +33,7 @@ class LogController extends AbstractAdminController
     public function general(Request $request): Response
     {
         return $this->render('admin/logs/general.html.twig', [
-            'form' => $this->createForm(LogGeneralType::class, $request->query->all())->createView(),
+            'form' => $this->createForm(LogGeneralType::class, $request->query->all()),
             'total' => $this->logRepository->count(),
         ]);
     }
@@ -45,7 +45,7 @@ class LogController extends AbstractAdminController
         $data = array_merge($request->query->all(), ['date' => (new \DateTime())->format(LogDateTimeType::FORMAT)]);
 
         return $this->render('admin/logs/debris.html.twig', [
-            'form' => $this->createForm(LogDebrisType::class, $data)->createView(),
+            'form' => $this->createForm(LogDebrisType::class, $data),
             'total' => $this->debrisLogRepository->count(),
         ]);
     }
@@ -57,7 +57,7 @@ class LogController extends AbstractAdminController
         $data = array_merge($request->query->all(), ['date' => (new \DateTime())->format(LogDateTimeType::FORMAT)]);
 
         return $this->render('admin/logs/attack_ban.html.twig', [
-            'form' => $this->createForm(LogAttackBanType::class, $data)->createView(),
+            'form' => $this->createForm(LogAttackBanType::class, $data),
         ]);
     }
 
@@ -66,7 +66,7 @@ class LogController extends AbstractAdminController
     public function fleets(Request $request): Response
     {
         return $this->render('admin/logs/fleets.html.twig', [
-            'form' => $this->createForm(LogFleetType::class, $request->query->all())->createView(),
+            'form' => $this->createForm(LogFleetType::class, $request->query->all()),
             'total' => $this->fleetLogRepository->count(),
         ]);
     }
@@ -76,7 +76,7 @@ class LogController extends AbstractAdminController
     public function game(Request $request): Response
     {
         return $this->render('admin/logs/game.html.twig', [
-            'form' => $this->createForm(LogGameType::class, $request->query->all())->createView(),
+            'form' => $this->createForm(LogGameType::class, $request->query->all()),
             'total' => $this->gameLogRepository->count(),
         ]);
     }

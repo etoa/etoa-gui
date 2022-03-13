@@ -5,8 +5,8 @@ namespace EtoA\Components\Admin;
 use EtoA\Admin\AdminUserRepository;
 use EtoA\Components\Helper\SearchComponentTrait;
 use EtoA\Components\Helper\SearchResult;
+use EtoA\Form\Request\Admin\LogDebrisSearchRequest;
 use EtoA\Form\Type\Admin\LogDebrisType;
-use EtoA\Form\Type\Core\LogDateTimeType;
 use EtoA\Log\DebrisLogRepository;
 use EtoA\Log\DebrisLogSearch;
 use EtoA\User\UserRepository;
@@ -23,6 +23,7 @@ class LogDebrisSearchComponent extends AbstractController
     public array $admins;
     /** @var string[] */
     public array $users;
+    private LogDebrisSearchRequest $request;
 
     public function __construct(
         private DebrisLogRepository $debrisLogRepository,
@@ -30,22 +31,23 @@ class LogDebrisSearchComponent extends AbstractController
         private AdminUserRepository $adminUserRepository
     ) {
         $this->perPage = 50;
+        $this->request = new LogDebrisSearchRequest();
     }
 
     public function getSearch(): SearchResult
     {
         $search = DebrisLogSearch::create();
 
-        if ($this->getFormValues()['date'] !== '') {
-            $search->timeBefore(strtotime($this->getFormValues()['date']));
+        if ($this->request->date !== null) {
+            $search->timeBefore((int) strtotime($this->request->date));
         }
 
-        if ($this->getFormValues()['user'] !== '') {
-            $search->userId((int) $this->getFormValues()['user']);
+        if ($this->request->user !== null) {
+            $search->userId($this->request->user);
         }
 
-        if ($this->getFormValues()['admin'] !== '') {
-            $search->adminId((int) $this->getFormValues()['admin']);
+        if ($this->request->admin !== null) {
+            $search->adminId($this->request->admin);
         }
 
         $total = $this->debrisLogRepository->count($search);
@@ -64,15 +66,11 @@ class LogDebrisSearchComponent extends AbstractController
 
     protected function instantiateForm(): FormInterface
     {
-        return $this->createForm(LogDebrisType::class, $this->getFormValues());
+        return $this->createForm(LogDebrisType::class, $this->request);
     }
 
-    private function resetFormValues(): void
+    private function resetFormRequest(): void
     {
-        $this->formValues = [
-            'user' => 0,
-            'admin' => 0,
-            'date' => (new \DateTime())->format(LogDateTimeType::FORMAT),
-        ];
+        $this->request = new LogDebrisSearchRequest();
     }
 }

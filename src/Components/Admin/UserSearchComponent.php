@@ -97,9 +97,8 @@ class UserSearchComponent extends AbstractController
         return $this->createForm(UserSearchType::class, $this->request);
     }
 
-    private function resetFormValues(): void
+    private function resetFormRequest(): void
     {
-        $this->formValues = null;
         $this->request = new UserSearchRequest();
     }
 }

@@ -4,6 +4,7 @@ namespace EtoA\Components\Admin;
 
 use EtoA\Components\Helper\SearchComponentTrait;
 use EtoA\Components\Helper\SearchResult;
+use EtoA\Form\Request\Admin\ShipSearchRequest;
 use EtoA\Form\Type\Admin\ShipSearchType;
 use EtoA\Ship\ShipDataRepository;
 use EtoA\Ship\ShipListItem;
@@ -28,6 +29,7 @@ class ShipSearchComponent extends AbstractController
     public array $shipNames;
     /** @var array<int, string> */
     public array $entities;
+    private ShipSearchRequest $request;
 
     public function __construct(
         private ShipRepository $shipRepository,
@@ -35,21 +37,22 @@ class ShipSearchComponent extends AbstractController
         private UserRepository $userRepository,
         private EntityRepository $entityRepository,
     ) {
+        $this->request = new ShipSearchRequest();
     }
 
     public function getSearch(): SearchResult
     {
         $search = ShipListSearch::create()->hasShips();
-        if ($this->getFormValues()['userId'] !== '') {
-            $search->userId((int) $this->getFormValues()['userId']);
+        if ($this->request->userId !== null) {
+            $search->userId($this->request->userId);
         }
 
-        if ($this->getFormValues()['entityId'] !== '') {
-            $search->entityId((int) $this->getFormValues()['entityId']);
+        if ($this->request->entityId !== null) {
+            $search->entityId($this->request->entityId);
         }
 
-        if ($this->getFormValues()['shipId'] !== '') {
-            $search->shipId((int) $this->getFormValues()['shipId']);
+        if ($this->request->shipId !== null) {
+            $search->shipId($this->request->shipId);
         }
 
         $total = $this->shipRepository->count($search);
@@ -70,6 +73,11 @@ class ShipSearchComponent extends AbstractController
 
     protected function instantiateForm(): FormInterface
     {
-        return $this->createForm(ShipSearchType::class, $this->getFormValues());
+        return $this->createForm(ShipSearchType::class, $this->request);
+    }
+
+    private function resetFormRequest(): void
+    {
+        $this->request = new ShipSearchRequest();
     }
 }

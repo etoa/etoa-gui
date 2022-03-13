@@ -30,7 +30,7 @@ class MessageController extends AbstractAdminController
     public function search(Request $request): Response
     {
         return $this->render('admin/message/search.html.twig', [
-            'form' => $this->createForm(MessageSearchType::class, $request->query->all())->createView(),
+            'form' => $this->createForm(MessageSearchType::class, $request->query->all()),
             'total' => $this->messageRepository->count(),
         ]);
     }
@@ -40,7 +40,7 @@ class MessageController extends AbstractAdminController
     public function reports(Request $request): Response
     {
         return $this->render('admin/message/reports.html.twig', [
-            'form' => $this->createForm(ReportSearchType::class, $request->query->all())->createView(),
+            'form' => $this->createForm(ReportSearchType::class, $request->query->all()),
             'total' => $this->reportRepository->count(),
         ]);
     }

@@ -37,7 +37,7 @@ class ReportSearch extends AbstractSearch
 
     public function read(bool $read): self
     {
-        $this->parts[] = 'read = :read';
+        $this->parts[] = '`read` = :read';
         $this->parameters['read'] = (int) $read;
 
         return $this;
