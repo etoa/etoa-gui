@@ -741,11 +741,6 @@ parameters:
 			path: htdocs/classes/report.class.php
 
 		-
-			message: "#^Binary operation \"\\.\" between '\\<a href\\=\"javascript…' and non\\-empty\\-array\\|non\\-empty\\-string results in an error\\.$#"
-			count: 1
-			path: htdocs/classes/sectormaprenderer.class.php
-
-		-
 			message: "#^Cannot access property \\$code on EtoA\\\\Universe\\\\Entity\\\\EntityLabel\\|null\\.$#"
 			count: 1
 			path: htdocs/classes/sectormaprenderer.class.php
@@ -1206,6 +1201,11 @@ parameters:
 			path: htdocs/content/allianceboard.php
 
 		-
+			message: "#^Right side of && is always true\\.$#"
+			count: 1
+			path: htdocs/content/allianceboard.php
+
+		-
 			message: "#^Cannot access property \\$cx on EtoA\\\\Universe\\\\Entity\\\\Entity\\|null\\.$#"
 			count: 1
 			path: htdocs/content/bookmarks.php
@@ -1236,6 +1236,11 @@ parameters:
 			path: htdocs/content/bookmarks.php
 
 		-
+			message: "#^If condition is always true\\.$#"
+			count: 1
+			path: htdocs/content/bookmarks.php
+
+		-
 			message: "#^Parameter \\#1 \\$user of method EtoA\\\\User\\\\UserUniverseDiscoveryService\\:\\:discovered\\(\\) expects EtoA\\\\User\\\\User, EtoA\\\\User\\\\User\\|null given\\.$#"
 			count: 2
 			path: htdocs/content/bookmarks.php
@@ -1246,8 +1251,28 @@ parameters:
 			path: htdocs/content/buddylist.php
 
 		-
+			message: "#^Cannot access property \\$buildType on mixed\\.$#"
+			count: 4
+			path: htdocs/content/buildings.php
+
+		-
+			message: "#^Cannot access property \\$building on mixed\\.$#"
+			count: 10
+			path: htdocs/content/buildings.php
+
+		-
+			message: "#^Cannot access property \\$endTime on mixed\\.$#"
+			count: 4
+			path: htdocs/content/buildings.php
+
+		-
 			message: "#^Cannot access property \\$id on EtoA\\\\Universe\\\\Planet\\\\Planet\\|null\\.$#"
 			count: 4
+			path: htdocs/content/buildings.php
+
+		-
+			message: "#^Cannot access property \\$level on mixed\\.$#"
+			count: 8
 			path: htdocs/content/buildings.php
 
 		-
@@ -1257,6 +1282,31 @@ parameters:
 
 		-
 			message: "#^Cannot access property \\$people on EtoA\\\\Universe\\\\Planet\\\\Planet\\|null\\.$#"
+			count: 1
+			path: htdocs/content/buildings.php
+
+		-
+			message: "#^Cannot access property \\$startTime on mixed\\.$#"
+			count: 1
+			path: htdocs/content/buildings.php
+
+		-
+			message: "#^Cannot call method getBuildTime\\(\\) on mixed\\.$#"
+			count: 1
+			path: htdocs/content/buildings.php
+
+		-
+			message: "#^Cannot call method isMaxLevel\\(\\) on mixed\\.$#"
+			count: 2
+			path: htdocs/content/buildings.php
+
+		-
+			message: "#^Cannot call method waitingTimeString\\(\\) on mixed\\.$#"
+			count: 1
+			path: htdocs/content/buildings.php
+
+		-
+			message: "#^If condition is always true\\.$#"
 			count: 1
 			path: htdocs/content/buildings.php
 
@@ -2161,6 +2211,11 @@ parameters:
 			path: htdocs/content/missiles.php
 
 		-
+			message: "#^If condition is always false\\.$#"
+			count: 1
+			path: htdocs/content/missiles.php
+
+		-
 			message: "#^Parameter \\#1 \\$planet of method EtoA\\\\UI\\\\ResourceBoxDrawer\\:\\:getHTML\\(\\) expects EtoA\\\\Universe\\\\Planet\\\\Planet, EtoA\\\\Universe\\\\Planet\\\\Planet\\|null given\\.$#"
 			count: 2
 			path: htdocs/content/missiles.php
@@ -2601,8 +2656,28 @@ parameters:
 			path: htdocs/content/research.php
 
 		-
+			message: "#^Left side of && is always true\\.$#"
+			count: 3
+			path: htdocs/content/sector.php
+
+		-
 			message: "#^Parameter \\#1 \\$user of method SectorMapRenderer\\:\\:setImpersonatedUser\\(\\) expects EtoA\\\\User\\\\User, EtoA\\\\User\\\\User\\|null given\\.$#"
 			count: 1
+			path: htdocs/content/sector.php
+
+		-
+			message: "#^Result of && is always false\\.$#"
+			count: 1
+			path: htdocs/content/sector.php
+
+		-
+			message: "#^Right side of && is always false\\.$#"
+			count: 1
+			path: htdocs/content/sector.php
+
+		-
+			message: "#^Right side of && is always true\\.$#"
+			count: 3
 			path: htdocs/content/sector.php
 
 		-
@@ -3682,6 +3757,11 @@ parameters:
 
 		-
 			message: "#^Cannot access property \\$timeToStart on EtoA\\\\Ship\\\\Ship\\|null\\.$#"
+			count: 1
+			path: htdocs/inc/xajax/market.xajax.php
+
+		-
+			message: "#^Ternary operator condition is always true\\.$#"
 			count: 1
 			path: htdocs/inc/xajax/market.xajax.php
 
@@ -5182,11 +5262,6 @@ parameters:
 
 		-
 			message: "#^Binary operation \"/\" between int\\|string and 60 results in an error\\.$#"
-			count: 1
-			path: src/Controller/Admin/DatabaseMaintenanceController.php
-
-		-
-			message: "#^Binary operation \"/\" between int\\|string and int\\<1, max\\>\\|string results in an error\\.$#"
 			count: 1
 			path: src/Controller/Admin/DatabaseMaintenanceController.php
 
@@ -6894,11 +6969,6 @@ parameters:
 			path: src/Support/StringUtils.php
 
 		-
-			message: "#^Only booleans are allowed in an if condition, int\\|false given\\.$#"
-			count: 1
-			path: src/Support/StringUtils.php
-
-		-
 			message: "#^Parameter \\#3 \\$subject of function preg_replace expects array\\|string, string\\|null given\\.$#"
 			count: 6
 			path: src/Support/StringUtils.php
@@ -6937,11 +7007,6 @@ parameters:
 			message: "#^Method EtoA\\\\Universe\\\\Entity\\\\EntityRepository\\:\\:getEntityCodes\\(\\) should return array\\<int, string\\> but returns array\\<int\\|string, mixed\\>\\.$#"
 			count: 1
 			path: src/Universe/Entity/EntityRepository.php
-
-		-
-			message: "#^Binary operation \"/\" between bool\\|float\\|int\\|string and 4 results in an error\\.$#"
-			count: 1
-			path: src/Universe/Entity/EntityService.php
 
 		-
 			message: "#^Cannot access property \\$name on EtoA\\\\Universe\\\\Planet\\\\Planet\\|null\\.$#"
@@ -7291,21 +7356,6 @@ parameters:
 		-
 			message: "#^Parameter \\#1 \\$string of function strlen expects string, string\\|null given\\.$#"
 			count: 3
-			path: src/User/UserUniverseDiscoveryService.php
-
-		-
-			message: "#^Parameter \\#2 \\$mask of method EtoA\\\\User\\\\UserRepository\\:\\:saveDiscoveryMask\\(\\) expects string, string\\|null given\\.$#"
-			count: 2
-			path: src/User/UserUniverseDiscoveryService.php
-
-		-
-			message: "#^Property EtoA\\\\User\\\\User\\:\\:\\$discoveryMask \\(string\\|null\\) does not accept array\\<int, string\\>\\|string\\.$#"
-			count: 1
-			path: src/User/UserUniverseDiscoveryService.php
-
-		-
-			message: "#^Property EtoA\\\\User\\\\User\\:\\:\\$discoveryMask \\(string\\|null\\) does not accept array\\<int\\<0, max\\>, string\\>\\|string\\.$#"
-			count: 1
 			path: src/User/UserUniverseDiscoveryService.php
 
 		-

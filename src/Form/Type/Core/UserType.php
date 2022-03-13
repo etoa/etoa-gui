@@ -34,7 +34,7 @@ class UserType extends AbstractType
                     }
 
                     $choices = array_flip($this->userRepository->searchUserNicknames($search));
-                    if ($options['with_system']) {
+                    if ((bool) $options['with_system']) {
                         $choices['System'] = 0;
                     }
 

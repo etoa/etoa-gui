@@ -27,7 +27,7 @@ class PlanetTypeType extends AbstractType
             'show_all' => false,
             'choice_loader' => function (Options $options): ChoiceLoader {
                 return ChoiceList::lazy($this, function () use ($options): array {
-                    return array_flip($this->planetTypeRepository->getPlanetTypeNames($options['show_all']));
+                    return array_flip($this->planetTypeRepository->getPlanetTypeNames((bool) $options['show_all']));
                 });
             },
         ]);

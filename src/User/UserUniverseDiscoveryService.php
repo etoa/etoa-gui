@@ -80,16 +80,19 @@ class UserUniverseDiscoveryService
 
         [$absX, $absY] = $cell->getAbsoluteCoordinates($cx_num, $cy_num);
 
+        $discoveryMask = [];
         for ($x = $absX - $radius; $x <= $absX + $radius; $x++) {
             for ($y = $absY - $radius; $y <= $absY + $radius; $y++) {
                 if ($x > 0 && $y > 0 && $x <= $sx_num * $cx_num && $y <= $sy_num * $cy_num) {
                     $pos = $x + ($cy_num * $sy_num) * ($y - 1) - 1;
                     if ($pos >= 0 && $pos <= $sx_num * $sy_num * $cx_num * $cy_num) {
-                        $user->discoveryMask[$pos] = '1';
+                        $discoveryMask[$pos] = '1';
                     }
                 }
             }
         }
+
+        $user->discoveryMask = implode('', $discoveryMask);
 
         $this->userRepository->saveDiscoveryMask($user->id, $user->discoveryMask);
     }
@@ -103,12 +106,15 @@ class UserUniverseDiscoveryService
         $sy_num = $this->config->param2Int('num_of_sectors');
         $cy_num = $this->config->param2Int('num_of_cells');
 
+        $discoveryMask = [];
         for ($x = 1; $x <= $sx_num * $cx_num; $x++) {
             for ($y = 1; $y <= $sy_num * $cy_num; $y++) {
                 $pos = $x + ($cy_num * $sy_num) * ($y - 1) - 1;
-                $user->discoveryMask[$pos] = $discovered ? '1' : '0';
+                $discoveryMask[$pos] = $discovered ? '1' : '0';
             }
         }
+
+        $user->discoveryMask = implode('', $discoveryMask);
 
         $this->userRepository->saveDiscoveryMask($user->id, $user->discoveryMask);
     }
