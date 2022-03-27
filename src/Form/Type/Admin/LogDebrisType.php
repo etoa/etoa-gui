@@ -3,7 +3,7 @@
 namespace EtoA\Form\Type\Admin;
 
 use EtoA\Form\Type\Core\AdminType;
-use EtoA\Form\Type\Core\LogDateTimeType;
+use EtoA\Form\Type\Core\TimestampType;
 use EtoA\Form\Type\Core\UserType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -19,6 +19,6 @@ class LogDebrisType extends AbstractType
             ->add('admin', AdminType::class, [
                 'placeholder' => '(Alle)',
             ])
-            ->add('date', LogDateTimeType::class);
+            ->add('date', TimestampType::class);
     }
 }

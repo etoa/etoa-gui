@@ -45,7 +45,7 @@ class MissileController extends AbstractAdminController
 
         return $this->render('admin/missiles/search.html.twig', [
             'addForm' => $addForm->createView(),
-            'form' => $this->createForm(MissileSearchType::class, $request->query->all())->createView(),
+            'form' => $this->createForm(MissileSearchType::class, $request->query->all()),
             'total' => $this->missileRepository->count(),
         ]);
     }

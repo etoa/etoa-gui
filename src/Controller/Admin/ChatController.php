@@ -104,7 +104,7 @@ class ChatController extends AbstractAdminController
     public function log(Request $request): Response
     {
         return $this->render('admin/chat/log.html.twig', [
-            'form' => $this->createForm(ChatLogSearchType::class, $request->query->all())->createView(),
+            'form' => $this->createForm(ChatLogSearchType::class, $request->query->all()),
             'total' => $this->chatLogRepository->count(),
         ]);
     }

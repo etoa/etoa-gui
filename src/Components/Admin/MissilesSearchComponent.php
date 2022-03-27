@@ -4,6 +4,7 @@ namespace EtoA\Components\Admin;
 
 use EtoA\Components\Helper\SearchComponentTrait;
 use EtoA\Components\Helper\SearchResult;
+use EtoA\Form\Request\Admin\MissilesSearchRequest;
 use EtoA\Form\Type\Admin\MissileSearchType;
 use EtoA\Missile\MissileDataRepository;
 use EtoA\Missile\MissileListItem;
@@ -28,6 +29,7 @@ class MissilesSearchComponent extends AbstractController
     public array $missileNames;
     /** @var array<int, string> */
     public array $entities;
+    private MissilesSearchRequest $request;
 
     public function __construct(
         private MissileRepository $missileRepository,
@@ -35,21 +37,22 @@ class MissilesSearchComponent extends AbstractController
         private UserRepository $userRepository,
         private EntityRepository $entityRepository,
     ) {
+        $this->request = new MissilesSearchRequest();
     }
 
     public function getSearch(): SearchResult
     {
         $search = MissileListSearch::create()->hasMissiles();
-        if ($this->getFormValues()['userId'] !== '') {
-            $search->userId((int) $this->getFormValues()['userId']);
+        if ($this->request->userId !== null) {
+            $search->userId($this->request->userId);
         }
 
-        if ($this->getFormValues()['entityId'] !== '') {
-            $search->entityId((int) $this->getFormValues()['entityId']);
+        if ($this->request->entityId !== null) {
+            $search->entityId($this->request->entityId);
         }
 
-        if ($this->getFormValues()['missileId'] !== '') {
-            $search->missileId((int) $this->getFormValues()['missileId']);
+        if ($this->request->missileId !== null) {
+            $search->missileId($this->request->missileId);
         }
 
         $total = $this->missileRepository->count($search);
@@ -70,6 +73,11 @@ class MissilesSearchComponent extends AbstractController
 
     protected function instantiateForm(): FormInterface
     {
-        return $this->createForm(MissileSearchType::class, $this->getFormValues());
+        return $this->createForm(MissileSearchType::class, $this->request);
+    }
+
+    private function resetFormRequest(): void
+    {
+        $this->request = new MissilesSearchRequest();
     }
 }

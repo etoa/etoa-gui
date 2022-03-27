@@ -48,11 +48,13 @@ abstract class AbstractEditComponent extends AbstractController
     private function resetFormValues(): void
     {
         $accessor = new PropertyAccessor();
-        $values = $this->getFormValues();
+        $values = $this->formValues;
         $item = $this->getItem();
-        foreach ($values as $key => $value) {
-            if (property_exists($item, $key)) {
-                $this->formValues[$key] = $accessor->getValue($item, $key);
+        if (is_array($values)) {
+            foreach ($values as $key => $value) {
+                if (property_exists($item, $key)) {
+                    $this->formValues[$key] = $accessor->getValue($item, $key);
+                }
             }
         }
     }

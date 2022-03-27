@@ -53,7 +53,7 @@ class ShipController extends AbstractAdminController
 
         return $this->render('admin/ships/search.html.twig', [
             'addForm' => $addForm->createView(),
-            'form' => $this->createForm(ShipSearchType::class, $request->query->all())->createView(),
+            'form' => $this->createForm(ShipSearchType::class, $request->query->all()),
             'total' => $this->shipRepository->count(),
         ]);
     }
@@ -63,7 +63,7 @@ class ShipController extends AbstractAdminController
     public function queue(Request $request): Response
     {
         return $this->render('admin/ships/queue.html.twig', [
-            'form' => $this->createForm(ShipSearchType::class, $request->query->all())->createView(),
+            'form' => $this->createForm(ShipSearchType::class, $request->query->all()),
             'total' => $this->shipQueueRepository->count(),
         ]);
     }

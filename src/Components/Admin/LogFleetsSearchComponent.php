@@ -4,6 +4,7 @@ namespace EtoA\Components\Admin;
 
 use EtoA\Components\Helper\SearchComponentTrait;
 use EtoA\Components\Helper\SearchResult;
+use EtoA\Form\Request\Admin\LogFleetsSearchRequest;
 use EtoA\Form\Type\Admin\LogFleetType;
 use EtoA\Log\FleetLogFacility;
 use EtoA\Log\FleetLogRepository;
@@ -37,6 +38,7 @@ class LogFleetsSearchComponent extends AbstractController
     public array $entities;
     /** @var string[]  */
     public array $shipNames;
+    private LogFleetsSearchRequest $request;
 
     public function __construct(
         private FleetLogRepository $logRepository,
@@ -44,33 +46,34 @@ class LogFleetsSearchComponent extends AbstractController
         private EntityRepository $entityRepository,
         private ShipDataRepository $shipDataRepository
     ) {
+        $this->request = new LogFleetsSearchRequest();
     }
 
     public function getSearch(): SearchResult
     {
         $search = FleetLogSearch::create();
-        if ($this->getFormValues()['facility'] !== '') {
-            $search->facility((int) $this->getFormValues()['facility']);
+        if ($this->request->facility !== null) {
+            $search->facility($this->request->facility);
         }
 
-        if ($this->getFormValues()['severity'] > LogSeverity::DEBUG) {
-            $search->severity((int) $this->getFormValues()['severity']);
+        if ($this->request->severity > LogSeverity::DEBUG) {
+            $search->severity($this->request->severity);
         }
 
-        if ($this->getFormValues()['action'] != "") {
-            $search->action($this->getFormValues()['action']);
+        if ($this->request->action !== null) {
+            $search->action($this->request->action);
         }
 
-        if ($this->getFormValues()['status'] != "") {
-            $search->status((int) $this->getFormValues()['status']);
+        if ($this->request->status !== null) {
+            $search->status($this->request->status);
         }
 
-        if ($this->getFormValues()['fleetUser'] !== '') {
-            $search->fleetUserId((int) $this->getFormValues()['fleetUser']);
+        if ($this->request->fleetUser !== null) {
+            $search->fleetUserId($this->request->fleetUser);
         }
 
-        if ($this->getFormValues()['entityUser'] !== '') {
-            $search->entityUserId((int) $this->getFormValues()['entityUser']);
+        if ($this->request->entityUser !== null) {
+            $search->entityUserId($this->request->entityUser);
         }
 
         $total = $this->logRepository->count($search);
@@ -101,17 +104,11 @@ class LogFleetsSearchComponent extends AbstractController
 
     protected function instantiateForm(): FormInterface
     {
-        return $this->createForm(LogFleetType::class, $this->getFormValues());
+        return $this->createForm(LogFleetType::class, $this->request);
     }
 
-    private function resetFormValues(): void
+    private function resetFormRequest(): void
     {
-        $this->formValues = [
-            'facility' => '',
-            'action' => '',
-            'severity' => LogSeverity::DEBUG,
-            'fleetUser' => '',
-            'entityUser' => '',
-        ];
+        $this->request = new LogFleetsSearchRequest();
     }
 }

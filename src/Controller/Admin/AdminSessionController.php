@@ -54,7 +54,7 @@ class AdminSessionController extends AbstractAdminController
         return $this->redirectToRoute('admin.admin-sessions');
     }
 
-    #[Route("/admin/admin-sessions/{id}/delete", name: "admin.admin-sessions.delete", methods: ["POST"])]
+    #[Route("/admin/admin-sessions/delete", name: "admin.admin-sessions.delete", methods: ["POST"])]
     #[IsGranted('ROLE_ADMIN_SUPER-ADMIN')]
     public function deleteEntries(Request $request): RedirectResponse
     {

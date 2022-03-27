@@ -59,9 +59,8 @@ class UserSessionLogComponent extends AbstractController
         return $this->createForm(UserSessionLogType::class, $this->request);
     }
 
-    private function resetFormValues(): void
+    private function resetFormRequest(): void
     {
-        $this->formValues = null;
         $this->request = new UserSessionLogRequest();
     }
 }

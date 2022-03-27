@@ -2,12 +2,13 @@
 
 namespace EtoA\Components\Helper;
 
+use Symfony\Component\Form\Exception\TransformationFailedException;
 use Symfony\Component\Form\FormInterface;
-use Symfony\Component\Form\FormView;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Symfony\UX\LiveComponent\Attribute\LiveAction;
 use Symfony\UX\LiveComponent\Attribute\LiveProp;
 use Symfony\UX\LiveComponent\ComponentWithFormTrait;
+use Symfony\UX\TwigComponent\Attribute\PostMount;
 
 trait SearchComponentTrait
 {
@@ -18,36 +19,41 @@ trait SearchComponentTrait
     #[LiveProp(writable: true)]
     public int $limit = 0;
 
-    public function mount(FormView|FormInterface $form = null): void
+    /**
+     * @param array<string, mixed> $data
+     * @return array<string, mixed>
+     */
+    #[PostMount(priority: 255)]
+    public function initializeSearchForm(array $data): array
     {
-        if ($form instanceof FormInterface) {
-            $this->setForm($form->createView());
+        if (isset($data['form']) && $data['form'] instanceof FormInterface) {
+            $form = $data['form'];
+            $data['form'] = $form->createView();
 
             // @phpstan-ignore-next-line
             if (property_exists($this, 'request')) {
                 $propertyAccessor = new PropertyAccessor();
                 $children = $form->all();
-                $data = $form->getData();
-                if (is_array($data)) {
-                    foreach ($data as $key => $value) {
+                $formData = $form->getData();
+                if (is_array($formData)) {
+                    foreach ($formData as $key => $value) {
                         if ($value !== null) {
                             // @phpstan-ignore-next-line
                             foreach ($children[$key]->getConfig()->getViewTransformers() as $transformer) {
-                                $value = $transformer->reverseTransform($value);
+                                try {
+                                    $value = $transformer->reverseTransform($value);
+                                } catch (TransformationFailedException $e) {
+                                    // DateTimeType transformation is not possible/necessary
+                                }
                             }
                             $propertyAccessor->setValue($this->request, (string) $key, $value);
                         }
                     }
                 }
             }
-        } elseif ($form instanceof FormView) {
-            // @phpstan-ignore-next-line
-            if (property_exists($this, 'request')) {
-                throw new \RuntimeException('Pass instance of FormInstance instead of FormView');
-            }
-
-            $this->setForm($form);
         }
+
+        return $data;
     }
 
     /**
@@ -87,7 +93,8 @@ trait SearchComponentTrait
     public function reset(): void
     {
         $this->limit = 0;
-        $this->resetFormValues();
+        $this->formValues = [];
+        $this->resetFormRequest();
         $this->instantiateForm();
     }
 
@@ -100,14 +107,6 @@ trait SearchComponentTrait
         $this->limit = $limit;
 
         return $limit;
-    }
-
-    private function resetFormValues(): void
-    {
-        $this->formValues = [];
-        foreach ($this->getFormInstance()->all() as $field) {
-            $this->formValues[$field->getName()] = '';
-        }
     }
 
     abstract public function getSearch(): SearchResult;

@@ -51,7 +51,7 @@ class EntityController extends AbstractAdminController
     public function search(Request $request): Response
     {
         return $this->render('admin/universe/entities.html.twig', [
-            'form' => $this->createForm(EntitySearchType::class, $request->query->all())->createView(),
+            'form' => $this->createForm(EntitySearchType::class, $request->query->all()),
         ]);
     }
 

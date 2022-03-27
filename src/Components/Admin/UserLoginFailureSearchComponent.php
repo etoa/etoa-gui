@@ -59,9 +59,8 @@ class UserLoginFailureSearchComponent extends AbstractController
         return $this->createForm(UserLoginFailureType::class, $this->request);
     }
 
-    private function resetFormValues(): void
+    private function resetFormRequest(): void
     {
-        $this->formValues = null;
         $this->request = new UserLoginFailureRequest();
     }
 }

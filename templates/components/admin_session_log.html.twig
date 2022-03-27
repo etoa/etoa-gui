@@ -1,10 +1,10 @@
 <div
-    {{ init_live_component(this) }}
+    {{ attributes }}
     data-action="change->live#update"
 >
     {{ form(this.form) }}
 
-    {% if this.userId > 0 %}
+    {% if this.request.user > 0 %}
         <table class="tb">
             <tr>
                 <th>Login</th>

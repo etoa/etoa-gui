@@ -4,6 +4,7 @@ namespace EtoA\Components\Admin;
 
 use EtoA\Components\Helper\SearchComponentTrait;
 use EtoA\Components\Helper\SearchResult;
+use EtoA\Form\Request\Admin\EntitySearchRequest;
 use EtoA\Form\Type\Admin\EntitySearchType;
 use EtoA\Universe\Entity\EntityLabelSearch;
 use EtoA\Universe\Entity\EntityRepository;
@@ -22,43 +23,45 @@ class EntitySearchComponent extends AbstractController
     public array $solarTypes;
     /** @var array<int, string> */
     public array $planetTypes;
+    private EntitySearchRequest $request;
 
     public function __construct(
         private EntityRepository $entityRepository,
         private PlanetTypeRepository $planetTypeRepository,
         private SolarTypeRepository $solarTypeRepository
     ) {
+        $this->request = new EntitySearchRequest();
     }
 
     public function getSearch(): SearchResult
     {
         $search = EntityLabelSearch::create();
-        if ($this->getFormValues()['name'] !== '') {
-            $search->likePlanetName($this->getFormValues()['name']);
+        if ($this->request->name !== null) {
+            $search->likePlanetName($this->request->name);
         }
 
-        if ($this->getFormValues()['entity'] !== '') {
-            $search->id((int) $this->getFormValues()['entity']);
+        if ($this->request->entity !== null) {
+            $search->id($this->request->entity);
         }
 
-        if ($this->getFormValues()['cell'] !== '') {
-            $search->cellId((int) $this->getFormValues()['cell']);
+        if ($this->request->cell !== null) {
+            $search->cellId($this->request->cell);
         }
 
-        if ($this->getFormValues()['user'] !== '') {
-            $search->planetUserId((int) $this->getFormValues()['user']);
+        if ($this->request->user !== null) {
+            $search->planetUserId($this->request->user);
         }
 
-        if ($this->getFormValues()['code'] !== '') {
-            $search->codeIn([$this->getFormValues()['code']]);
+        if ($this->request->code !== null) {
+            $search->codeIn([$this->request->code]);
         }
 
-        if (!is_array($this->getFormValues()['isMainPlanet']) && $this->getFormValues()['isMainPlanet'] !== '') {
-            $search->planetUserMain((bool) $this->getFormValues()['isMainPlanet']);
+        if ($this->request->isMainPlanet !== null) {
+            $search->planetUserMain($this->request->isMainPlanet);
         }
 
-        if (!is_array($this->getFormValues()['planetDebris']) && $this->getFormValues()['planetDebris'] !== '') {
-            $search->planetDebris((bool) $this->getFormValues()['planetDebris']);
+        if ($this->request->planetDebris !== null) {
+            $search->planetDebris($this->request->planetDebris);
         }
 
         $total = $this->entityRepository->countEntityLabels($search);
@@ -77,14 +80,11 @@ class EntitySearchComponent extends AbstractController
 
     protected function instantiateForm(): FormInterface
     {
-        return $this->createForm(EntitySearchType::class, $this->getFormValues());
+        return $this->createForm(EntitySearchType::class, $this->request);
     }
 
-    private function resetFormValues(): void
+    private function resetFormRequest(): void
     {
-        $this->formValues = [];
-        foreach ($this->getFormInstance()->all() as $field) {
-            $this->formValues[$field->getName()] = '';
-        }
+        $this->request = new EntitySearchRequest();
     }
 }

@@ -40,10 +40,10 @@ class AllianceController extends AbstractAdminController
 
     #[Route('/admin/alliances/', name: 'admin.alliances')]
     #[IsGranted('ROLE_ADMIN_TRIAL-ADMIN')]
-    public function list(): Response
+    public function list(Request $request): Response
     {
         return $this->render('admin/alliance/list.html.twig', [
-            'form' => $this->createForm(AllianceSearchType::class)->createView(),
+            'form' => $this->createForm(AllianceSearchType::class, $request->query->all()),
             'total' => $this->allianceRepository->count(),
         ]);
     }
@@ -218,7 +218,7 @@ class AllianceController extends AbstractAdminController
 
         return $this->render('admin/alliance/edit/deposit.html.twig', [
             'alliance' => $alliance,
-            'form' => $this->createForm(AllianceDepositSearchType::class, $request->query->all(), ['allianceId' => $alliance->id])->createView(),
+            'form' => $this->createForm(AllianceDepositSearchType::class, $request->query->all(), ['allianceId' => $alliance->id]),
         ]);
     }
 

@@ -4,6 +4,7 @@ namespace EtoA\Components\Admin;
 
 use EtoA\Components\Helper\SearchComponentTrait;
 use EtoA\Components\Helper\SearchResult;
+use EtoA\Form\Request\Admin\MessageSearchRequest;
 use EtoA\Form\Type\Admin\MessageSearchType;
 use EtoA\Message\MessageCategoryRepository;
 use EtoA\Message\MessageRepository;
@@ -22,51 +23,53 @@ class MessageSearchComponent extends AbstractController
     public array $users;
     /** @var array<int, string> */
     public array $categories;
+    private MessageSearchRequest $request;
 
     public function __construct(
         private MessageRepository $messageRepository,
         private MessageCategoryRepository $messageCategoryRepository,
         private UserRepository $userRepository
     ) {
+        $this->request = new MessageSearchRequest();
     }
 
     public function getSearch(): SearchResult
     {
         $search = MessageSearch::create();
-        if ($this->getFormValues()['sender'] !== '') {
-            $search->fromUser((int) $this->getFormValues()['sender']);
+        if ($this->request->sender !== null) {
+            $search->fromUser($this->request->sender);
         }
 
-        if ($this->getFormValues()['recipient'] !== '') {
-            $search->toUser((int) $this->getFormValues()['recipient']);
+        if ($this->request->recipient !== null) {
+            $search->toUser($this->request->recipient);
         }
 
-        if ($this->getFormValues()['subject'] !== '') {
-            $search->subjectLike($this->getFormValues()['subject']);
+        if ($this->request->subject !== null) {
+            $search->subjectLike($this->request->subject);
         }
 
-        if ($this->getFormValues()['text'] !== '') {
-            $search->textLike($this->getFormValues()['text']);
+        if ($this->request->text !== null) {
+            $search->textLike($this->request->text);
         }
 
-        if ($this->getFormValues()['category'] !== '') {
-            $search->category((int) $this->getFormValues()['category']);
+        if ($this->request->category !== null) {
+            $search->category($this->request->category);
         }
 
-        if (!is_array($this->getFormValues()['read']) && $this->getFormValues()['read'] !== '') {
-            $search->read((bool) $this->getFormValues()['read']);
+        if ($this->request->read !== null) {
+            $search->read($this->request->read);
         }
 
-        if (!is_array($this->getFormValues()['deleted']) && $this->getFormValues()['deleted'] !== '') {
-            $search->deleted((bool) $this->getFormValues()['deleted']);
+        if ($this->request->deleted !== null) {
+            $search->deleted($this->request->deleted);
         }
 
-        if (!is_array($this->getFormValues()['archived']) && $this->getFormValues()['archived'] !== '') {
-            $search->archived((bool) $this->getFormValues()['archived']);
+        if ($this->request->archived !== null) {
+            $search->archived($this->request->archived);
         }
 
-        if (!is_array($this->getFormValues()['massmail']) && $this->getFormValues()['massmail'] !== '') {
-            $search->massmail((bool) $this->getFormValues()['massmail']);
+        if ($this->request->massmail !== null) {
+            $search->massmail($this->request->massmail);
         }
 
         $total = $this->messageRepository->count($search);
@@ -86,14 +89,11 @@ class MessageSearchComponent extends AbstractController
 
     protected function instantiateForm(): FormInterface
     {
-        return $this->createForm(MessageSearchType::class, $this->getFormValues());
+        return $this->createForm(MessageSearchType::class, $this->request);
     }
 
-    private function resetFormValues(): void
+    private function resetFormRequest(): void
     {
-        $this->formValues = [];
-        foreach ($this->getFormInstance()->all() as $field) {
-            $this->formValues[$field->getName()] = '';
-        }
+        $this->request = new MessageSearchRequest();
     }
 }

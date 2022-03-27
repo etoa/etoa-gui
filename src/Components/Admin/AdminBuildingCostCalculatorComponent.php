@@ -43,7 +43,7 @@ class AdminBuildingCostCalculatorComponent extends AbstractController
     {
         $this->submitForm();
 
-        $this->levels = array_map(fn ($value) => (int) $value, $this->getFormValues());
+        $this->levels = array_map(fn ($value) => (int) $value, $this->formValues ?? []);
 
         $context = BuildingCostContext::admin();
         foreach ($this->buildings as $building) {

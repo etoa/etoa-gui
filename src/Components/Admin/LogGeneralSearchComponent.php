@@ -4,6 +4,7 @@ namespace EtoA\Components\Admin;
 
 use EtoA\Components\Helper\SearchComponentTrait;
 use EtoA\Components\Helper\SearchResult;
+use EtoA\Form\Request\Admin\LogGeneralSearchRequest;
 use EtoA\Form\Type\Admin\LogGeneralType;
 use EtoA\Log\LogFacility;
 use EtoA\Log\LogRepository;
@@ -22,25 +23,27 @@ class LogGeneralSearchComponent extends AbstractController
     public array $facilities = LogFacility::FACILITIES;
     /** @var string[] */
     public array $severities = LogSeverity::SEVERITIES;
+    private LogGeneralSearchRequest $request;
 
     public function __construct(
         private LogRepository $logRepository
     ) {
+        $this->request = new LogGeneralSearchRequest();
     }
 
     public function getSearch(): SearchResult
     {
         $search = LogSearch::create();
-        if ($this->getFormValues()['facility'] !== '') {
-            $search->facility((int) $this->getFormValues()['facility']);
+        if ($this->request->facility !== null) {
+            $search->facility($this->request->facility);
         }
 
-        if ($this->getFormValues()['query'] !== '') {
-            $search->messageLike($this->getFormValues()['query']);
+        if ($this->request->query !== null) {
+            $search->messageLike($this->request->query);
         }
 
-        if ($this->getFormValues()['severity'] > LogSeverity::DEBUG) {
-            $search->severity((int) $this->getFormValues()['severity']);
+        if ($this->request->severity > LogSeverity::DEBUG) {
+            $search->severity($this->request->severity);
         }
 
         $total = $this->logRepository->count($search);
@@ -54,15 +57,11 @@ class LogGeneralSearchComponent extends AbstractController
 
     protected function instantiateForm(): FormInterface
     {
-        return $this->createForm(LogGeneralType::class, $this->getFormValues());
+        return $this->createForm(LogGeneralType::class, $this->request);
     }
 
-    private function resetFormValues(): void
+    private function resetFormRequest(): void
     {
-        $this->formValues = [
-            'facility' => '',
-            'query' => '',
-            'severity' => LogSeverity::DEBUG,
-        ];
+        $this->request = new LogGeneralSearchRequest();
     }
 }
