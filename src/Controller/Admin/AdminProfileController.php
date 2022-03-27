@@ -55,7 +55,7 @@ class AdminProfileController extends AbstractAdminController
         $form->handleRequest($request);
         if (!$form->isSubmitted() || !$form->isValid()) {
             foreach ($form->getErrors(true) as $error) {
-                if ($form instanceof FormError) {
+                if ($error instanceof FormError) {
                     $this->addFlash('error', $error->getMessage());
                 }
             }
