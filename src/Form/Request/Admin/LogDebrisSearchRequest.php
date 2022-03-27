@@ -4,7 +4,7 @@ namespace EtoA\Form\Request\Admin;
 
 class LogDebrisSearchRequest
 {
-    public ?string $date = null;
+    public ?int $date = null;
     public ?int $user = null;
     public ?int $admin = null;
 }

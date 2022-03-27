@@ -2,6 +2,7 @@
 
 namespace EtoA\Components\Helper;
 
+use Symfony\Component\Form\Exception\TransformationFailedException;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\PropertyAccess\PropertyAccessor;
 use Symfony\UX\LiveComponent\Attribute\LiveAction;
@@ -39,7 +40,11 @@ trait SearchComponentTrait
                         if ($value !== null) {
                             // @phpstan-ignore-next-line
                             foreach ($children[$key]->getConfig()->getViewTransformers() as $transformer) {
-                                $value = $transformer->reverseTransform($value);
+                                try {
+                                    $value = $transformer->reverseTransform($value);
+                                } catch (TransformationFailedException $e) {
+                                    // DateTimeType transformation is not possible/necessary
+                                }
                             }
                             $propertyAccessor->setValue($this->request, (string) $key, $value);
                         }

@@ -46,7 +46,7 @@ class LogAttackBanSearchComponent extends AbstractController
     {
         $search = BattleLogSearch::create();
         if ($this->request->date !== null) {
-            $landtime = (int) strtotime($this->request->date);
+            $landtime = $this->request->date;
             $search->attackingBetween($landtime, $landtime - 3600 * 24);
         }
 

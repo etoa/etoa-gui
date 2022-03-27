@@ -8,7 +8,6 @@ use EtoA\Form\Type\Admin\LogDebrisType;
 use EtoA\Form\Type\Admin\LogFleetType;
 use EtoA\Form\Type\Admin\LogGameType;
 use EtoA\Form\Type\Admin\LogGeneralType;
-use EtoA\Form\Type\Core\LogDateTimeType;
 use EtoA\Log\DebrisLogRepository;
 use EtoA\Log\FleetLogRepository;
 use EtoA\Log\GameLogRepository;
@@ -42,7 +41,7 @@ class LogController extends AbstractAdminController
     #[IsGranted('ROLE_ADMIN_TRIAL-ADMIN')]
     public function debris(Request $request): Response
     {
-        $data = array_merge($request->query->all(), ['date' => (new \DateTime())->format(LogDateTimeType::FORMAT)]);
+        $data = array_merge($request->query->all(), ['date' => (new \DateTime())->getTimestamp()]);
 
         return $this->render('admin/logs/debris.html.twig', [
             'form' => $this->createForm(LogDebrisType::class, $data),
@@ -54,7 +53,7 @@ class LogController extends AbstractAdminController
     #[IsGranted('ROLE_ADMIN_TRIAL-ADMIN')]
     public function attackBan(Request $request): Response
     {
-        $data = array_merge($request->query->all(), ['date' => (new \DateTime())->format(LogDateTimeType::FORMAT)]);
+        $data = array_merge($request->query->all(), ['date' => (new \DateTime())->getTimestamp()]);
 
         return $this->render('admin/logs/attack_ban.html.twig', [
             'form' => $this->createForm(LogAttackBanType::class, $data),

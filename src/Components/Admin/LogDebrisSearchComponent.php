@@ -39,7 +39,7 @@ class LogDebrisSearchComponent extends AbstractController
         $search = DebrisLogSearch::create();
 
         if ($this->request->date !== null) {
-            $search->timeBefore((int) strtotime($this->request->date));
+            $search->timeBefore($this->request->date);
         }
 
         if ($this->request->user !== null) {
