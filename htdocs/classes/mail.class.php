@@ -55,6 +55,8 @@ Forum: ".FORUM_URL;
 
         try {
             (new Swift_Mailer($this->transport))->send($message);
+
+            return true;
         } catch (\Throwable $e) {
             error_msg("Mail wurde nicht gesendet!\n\n".$message->toString() . $e->getMessage());
         }
