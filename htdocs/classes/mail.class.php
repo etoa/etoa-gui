@@ -5,9 +5,20 @@ class Mail
 	private $body;
 	/** @var string */
 	private $headers;
+    /** @var Swift_Transport_EsmtpTransport */
+    private $transport;
 
 	public function __construct($subject,$text,$useTemplate=1)
 	{
+        if (file_exists(__DIR__ . '/../config/mail.json')) {
+            $config = json_decode(file_get_contents(__DIR__ . '/../config/mail.json'), true);
+            $this->transport = (new Swift_SmtpTransport($config['host'], $config['port'], $config['encryption']))
+                ->setUsername($config['username'])
+                ->setPassword($config['password']);
+        } else {
+            $this->transport = new Swift_SendmailTransport();
+        }
+
 		$this->subject = APP_NAME.' '.Config::getInstance()->roundname->v.": ".$subject;
 		if ($useTemplate)
 		{
@@ -23,29 +34,32 @@ Forum: ".FORUM_URL;
 		{
 			$this->body = $text;
 		}
-		$this->headers = "From: ".APP_NAME.' '.Config::getInstance()->roundname->v."<".Config::getInstance()->mail_sender->v.">\n";
-		$this->headers.= "Content-Type: text/plain; charset=UTF-8\n";
-		$this->headers.= "MIME-Version: 1.0\n";
-		$this->headers.= "Content-Transfer-Encoding: 8bit\n";
-		$this->headers.= "X-Mailer: PHP\n";
 	}
 
 	function send($rcpt,$replyTo="")
 	{
 		$replyTo = trim($replyTo);
-		if ($replyTo!="")
-		{
-			$headers = $this->headers."Reply-to: ".$replyTo."\n";
+		if ($replyTo!="") {
+            $replyTo = [$replyTo];
 		}
 		else
 		{
-			$headers = $this->headers."Reply-to: ".APP_NAME.' '.Config::getInstance()->roundname->v."<".Config::getInstance()->mail_reply->v.">\n";
-		}
-		if (mail($rcpt, $this->subject, $this->body, $headers)) {
-			return true;
+            $replyTo = [Config::getInstance()->mail_reply->v => APP_NAME.' '.Config::getInstance()->roundname->v];
 		}
 
-		error_msg("Mail wurde nicht gesendet!\n\nTo: $rcpt\nSubject:".$this->subject."\n\nHeader:\n\n$headers\n\nBody:\n\n".$this->body);
+        $message = (new Swift_Message($this->subject))
+            ->setFrom([Config::getInstance()->mail_sender->v => APP_NAME.' '.Config::getInstance()->roundname->v])
+            ->setReplyTo($replyTo)
+            ->setTo($rcpt)
+            ->setBody($this->body);
+
+        try {
+            (new Swift_Mailer($this->transport))->send($message);
+        } catch (\Throwable $e) {
+            error_msg("Mail wurde nicht gesendet!\n\n".$message->toString() . $e->getMessage());
+        }
+
+
 		return false;
 	}
 }

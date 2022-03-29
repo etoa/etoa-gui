@@ -12,7 +12,8 @@
         "symfony/stopwatch": "~4.2.12",
         "symfony/http-kernel": "~4.2.12",
         "symfony/http-foundation": "~4.2.12",
-        "twig/twig": "^2.12"
+        "twig/twig": "^2.12",
+        "swiftmailer/swiftmailer": "^6.3"
     },
     "require-dev": {
         "ergebnis/composer-normalize": "^2.0",
@@ -38,5 +39,14 @@
         }
     },
     "minimum-stability": "dev",
-    "prefer-stable": true
+    "prefer-stable": true,
+    "config": {
+        "allow-plugins": {
+            "ergebnis/composer-normalize": true,
+            "symfony/flex": true
+        },
+        "platform": {
+            "php": "7.2.5"
+        }
+    }
 }
