@@ -58,7 +58,7 @@ Q4="CREATE DATABASE IF NOT EXISTS etoa_test;"
 #Q5="GRANT USAGE ON *.* TO etoa_test@localhost IDENTIFIED BY 'etoa';"
 Q6="GRANT ALL PRIVILEGES ON etoa_test.* TO etoa@localhost;"
 Q7="FLUSH PRIVILEGES;"
-*SQL="${Q0}${Q1}${Q2}${Q3}${Q4}${Q5}${Q6}${Q7}"
+#SQL="${Q0}${Q1}${Q2}${Q3}${Q4}${Q5}${Q6}${Q7}"
 SQL="${Q0}${Q1}${Q2}${Q3}${Q4}${Q6}${Q7}"
 $MYSQL -uroot -e "$SQL"
 
