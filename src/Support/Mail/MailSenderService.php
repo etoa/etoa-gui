@@ -38,7 +38,7 @@ class MailSenderService
     {
         // do not try to send mail for local test instance
         $url = $this->config->get('loginurl');
-        if(is_string($url) && strlen($url)===0) {
+        if (is_string($url) && strlen($url) === 0) {
             return 0;
         }
         $gameName = AppName::NAME . ' ' . $this->config->get('roundname');
