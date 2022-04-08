@@ -67,6 +67,9 @@ $PHP /var/www/etoa/bin/console database:migrate --env=test
 Q8="INSERT INTO config (config_name, config_value, config_param1, config_param2) VALUES ('loginurl','', '', '') ON DUPLICATE KEY UPDATE config_value='';"
 $MYSQL -uroot -D etoa -e "$Q8"
 
+# Allow world write access to tmp directory
+sudo chmod 777 /var/www/etoa/htdocs/tmp
+
 # Setup cronjob
 echo "* * * * * php /var/www/etoa/bin/console cron:run" | crontab
 
