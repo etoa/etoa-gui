@@ -35,7 +35,7 @@ class BackendCheckHandler implements MessageHandlerInterface
         $change = $currentStatus != $lastStatus;
         if ($change) {
             $infoText = $this->textRepo->find('backend_offline_message');
-            $mailText = $currentStatus == 0 ? "Funktioniert wieder" : $infoText->content;
+            $mailText = !$currentStatus ? "Funktioniert wieder" : $infoText->content;
             $sendTo = explode(";", $this->config->get('backend_offline_mail'));
             $this->mailSenderService->send("EtoA-Backend", $mailText, $sendTo);
         }
