@@ -51,13 +51,15 @@ cd /var/www/etoa && yarn run build
 # Setup database
 Q0="SET GLOBAL sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));"
 Q1="CREATE DATABASE IF NOT EXISTS etoa;"
-Q2="GRANT USAGE ON *.* TO etoa@localhost IDENTIFIED BY 'etoa';"
+Q2="CREATE USER 'etoa'@'localhost' IDENTIFIED BY 'etoa';"
+#Q2="GRANT USAGE ON *.* TO etoa@localhost IDENTIFIED BY 'etoa';"
 Q3="GRANT ALL PRIVILEGES ON etoa.* TO etoa@localhost;"
 Q4="CREATE DATABASE IF NOT EXISTS etoa_test;"
-Q5="GRANT USAGE ON *.* TO etoa_test@localhost IDENTIFIED BY 'etoa';"
+#Q5="GRANT USAGE ON *.* TO etoa_test@localhost IDENTIFIED BY 'etoa';"
 Q6="GRANT ALL PRIVILEGES ON etoa_test.* TO etoa@localhost;"
 Q7="FLUSH PRIVILEGES;"
-SQL="${Q0}${Q1}${Q2}${Q3}${Q4}${Q5}${Q6}${Q7}"
+*SQL="${Q0}${Q1}${Q2}${Q3}${Q4}${Q5}${Q6}${Q7}"
+SQL="${Q0}${Q1}${Q2}${Q3}${Q4}${Q6}${Q7}"
 $MYSQL -uroot -e "$SQL"
 
 $PHP /var/www/etoa/bin/console database:migrate
