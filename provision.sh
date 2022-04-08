@@ -43,7 +43,7 @@ MYSQL=`which mysql`
 PHP=`which php`
 
 # Setup dummy client files
-cd /var/www/etoa && mkdir htdocs/web/build && echo "{}" > htdocs/web/build/manifest.json && echo '{"entrypoints": {"admin": {}}}' > htdocs/web/build/entrypoints.json
+cd /var/www/etoa && mkdir -p htdocs/web/build && echo "{}" > htdocs/web/build/manifest.json && echo '{"entrypoints": {"admin": {}}}' > htdocs/web/build/entrypoints.json
 
 # trigger yarn build
 cd /var/www/etoa && yarn run build
