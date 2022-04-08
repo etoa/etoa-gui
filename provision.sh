@@ -12,7 +12,7 @@ echo "mysql-server mysql-server/root_password password " | debconf-set-selection
 echo "mysql-server mysql-server/root_password_again password " | debconf-set-selections
 
 # Install mysql, nginx, php8.0-fpm
-sudo apt-get install -q -y -f git mysql-server mysql-client nginx php8.0 php8.0-fpm php8.0-xdebug
+sudo apt-get install -q -y -f --no-install-recommends git mysql-server mysql-client nginx php8.0 php8.0-fpm php8.0-xdebug
 
 # Install commonly used php packages
 sudo apt-get install -q -y -f php8.0-curl php8.0-cli php8.0-mysql php8.0-gd php8.0-zip php8.0-mbstring php8.0-intl php8.0-redis php8.0-xml
