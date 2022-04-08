@@ -5,7 +5,7 @@ export DEBIAN_FRONTEND=noninteractive
 sudo add-apt-repository ppa:ondrej/php
 echo 'debconf debconf/frontend select Noninteractive' | debconf-set-selections
 
-sudo apt-get update && sudo apt-get upgrade
+sudo apt-get update -q && sudo apt-get upgrade -q
 
 # Force a blank root password for mysql
 echo "mysql-server mysql-server/root_password password " | debconf-set-selections
@@ -17,11 +17,11 @@ sudo apt-get install -q -y -f --no-install-recommends git mysql-server mysql-cli
 # Install commonly used php packages
 sudo apt-get install -q -y -f php8.0-curl php8.0-cli php8.0-mysql php8.0-gd php8.0-zip php8.0-mbstring php8.0-intl php8.0-redis php8.0-xml
 
-sudo apt-get upgrade libpcre3
+sudo apt-get upgrade -q libpcre3
 
-sudo apt-get -y install curl dirmngr apt-transport-https lsb-release ca-certificates unzip
+sudo apt-get -y -q install curl dirmngr apt-transport-https lsb-release ca-certificates unzip
 curl -fsSL https://deb.nodesource.com/setup_16.x | sudo -E bash -
-sudo apt-get install -y nodejs
+sudo apt-get install -y -q nodejs
 npm install --global yarn
 
 sudo rm /etc/nginx/sites-available/default
