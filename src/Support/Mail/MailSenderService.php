@@ -36,6 +36,11 @@ class MailSenderService
      */
     public function send(string $subject, string $text, $recipients, $replyTo = null): int
     {
+        // do not try to send mail for local test instance
+        if(empty($this->config->get('loginurl')))
+        {
+            return 0;
+        }
         $gameName = AppName::NAME . ' ' . $this->config->get('roundname');
         $message = (new Swift_Message($gameName . ": " . $subject))
             ->setFrom([$this->config->get('mail_sender') => $gameName])
