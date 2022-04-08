@@ -28,7 +28,7 @@ sudo rm /etc/nginx/sites-available/default
 sudo cp /var/www/etoa/vagrant/nginx-default /etc/nginx/sites-available/default
 sudo cp /var/www/etoa/vagrant/xdebug.ini /etc/php/8.0/mods-available/xdebug.ini
 cp /var/www/etoa/vagrant/db.conf /var/www/etoa/htdocs/config
-cp /var/www/etoa/vagrant/roundx.conf /vagrant/htdocs/config/eventhandler.conf
+cp /var/www/etoa/vagrant/roundx.conf /var/www/etoa/htdocs/config/eventhandler.conf
 
 sudo service nginx restart
 sudo service php8.0-fpm restart
@@ -44,7 +44,7 @@ cd /var/www/etoa && mkdir htdocs/web/build && echo "{}" > htdocs/web/build/manif
 cd /var/www/etoa && export COMPOSER_ALLOW_SUPERUSER=1;php composer.phar install --no-interaction
 
 # Install node dependencies and trigger build
-cd /vagrant && yarn install --frozen-lockfile
+cd /var/www/etoa && yarn install --frozen-lockfile
 cd /var/www/etoa && yarn run build
 
 # Setup database
