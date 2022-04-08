@@ -19,10 +19,15 @@ sudo apt-get install -q -y -f php8.0-curl php8.0-cli php8.0-mysql php8.0-gd php8
 
 sudo apt-get upgrade -q libpcre3
 
+# install nodejs and yarn
 sudo apt-get -y -q install curl dirmngr apt-transport-https lsb-release ca-certificates unzip
 curl -fsSL https://deb.nodesource.com/setup_16.x | sudo -E bash -
 sudo apt-get install -y -q nodejs
 npm install --global yarn
+cd /var/www/etoa && yarn install --frozen-lockfile
+
+# Install PHP composer dependencies
+cd /var/www/etoa && export COMPOSER_ALLOW_SUPERUSER=1;php composer.phar install --no-interaction
 
 sudo rm /etc/nginx/sites-available/default
 sudo cp /var/www/etoa/vagrant/nginx-default /etc/nginx/sites-available/default
@@ -40,11 +45,7 @@ PHP=`which php`
 # Setup dummy client files
 cd /var/www/etoa && mkdir htdocs/web/build && echo "{}" > htdocs/web/build/manifest.json && echo '{"entrypoints": {"admin": {}}}' > htdocs/web/build/entrypoints.json
 
-# Install PHP composer dependencies
-cd /var/www/etoa && export COMPOSER_ALLOW_SUPERUSER=1;php composer.phar install --no-interaction
-
-# Install node dependencies and trigger build
-cd /var/www/etoa && yarn install --frozen-lockfile
+# trigger yarn build
 cd /var/www/etoa && yarn run build
 
 # Setup database
