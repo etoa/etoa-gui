@@ -34,7 +34,7 @@
             <td>{{ entity.ownerNick }}</td>
             <td>
                 {% if entity.code != 'm' and entity.code != 'x' %}
-                    <a href="/admin?page=galaxy&sub=edit&id={{ entity.id }}">Bearbeiten</a>
+                    <a href="{{ path('admin.universe.entity', {id: entity.id}) }}">Bearbeiten</a>
                 {% endif %}
             </td>
         </tr>
