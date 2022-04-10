@@ -270,7 +270,7 @@ class BuildListItem
         if ($this->id > 0) {
             $buildingRepository->updateBuildingListEntry($this->id, $this->level, $this->buildType, $this->startTime, $this->endTime);
         } else {
-            $buildingRepository->addBuilding($this->id, $this->level, $this->ownerId, $this->entityId, $this->buildType, $this->startTime, $this->endTime);
+            $buildingRepository->addBuilding($this->buildingId, $this->level, $this->ownerId, $this->entityId, $this->buildType, $this->startTime, $this->endTime);
         }
 
         $buildingRepository->markBuildingWorkingStatus($cu->getId(), (int) $cp->id, BuildingId::BUILDING, true);
