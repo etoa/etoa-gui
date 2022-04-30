@@ -1,0 +1,10 @@
+/* White */
+#game-area,
+#contentwrap,
+a,
+select,
+input,
+textarea,
+#tutorialContainer, #quest-app {
+    color: white;
+}

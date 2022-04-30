@@ -1,0 +1,18 @@
+/* Block */
+.tc a,
+.collapse-toggle {
+    display: block;
+}
+
+/* Inline Block */
+.tabMenu,
+.tabMenu a,
+#pmenu,
+.tc{
+    display: inline-block;
+}
+
+/* Flex */
+{
+    display: flex;
+}

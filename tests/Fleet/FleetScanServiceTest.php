@@ -73,8 +73,8 @@ class FleetScanServiceTest extends SymfonyWebTestCase
 
         // then
         $this->assertStringContainsString('[b]Flottenscan vom Planeten [/b] (1/1 : 2/2 : 4)', $out);
-        $this->assertStringContainsString('Keine eintreffenden Flotten gefunden!', $out);
-        $this->assertStringContainsString('Keine abfliegenden Flotten gefunden!', $out);
+        $this->assertStringContainsString('Es sind keine Flotten unterwegs.', $out);
+        $this->assertStringContainsString('Es sind keine Flotten unterwegs.', $out);
     }
 
     public function testScanFleets_withOneIncomingFleet(): void

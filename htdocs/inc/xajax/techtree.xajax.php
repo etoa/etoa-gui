@@ -56,7 +56,7 @@ function reqInfo($id, $cat = 'b')
     }
 
     if (count($items) > 0) {
-        echo "<div class=\"techtreeItemContainer\">";
+        echo "<div class=\"techtreeItemContainer techtreeParentBranches\">";
         foreach ($items as $i) {
             echo "<div class=\"techtreeItem\" style=\"background:url('" . $i[3] . "');\">
             <div class=\"techtreeItemLevel\">Lvl <b>" . $i[2] . "</b></div>
@@ -67,7 +67,7 @@ function reqInfo($id, $cat = 'b')
         echo "<br style=\"clear:both;\"";
         echo "</div>";
 
-        echo "<div style=\"margin:0px auto;\">wird benötigt für</div>";
+        echo "<div class='relationLabel childBranchesLabel'>wird benötigt für</div>";
     }
 
     //
@@ -156,9 +156,9 @@ function reqInfo($id, $cat = 'b')
         }
 
         if (count($items) > 0) {
-            echo "<div style=\"margin:10px auto;\">ermöglicht</div>";
+            echo "<div class='relationLabel childBranchesLabel'>ermöglicht</div>";
 
-            echo "<div class=\"techtreeItemContainer\">";
+            echo "<div class=\"techtreeItemContainer techtreeChildBranches\">";
             $cnt = 0;
             foreach ($items as $i) {
                 echo "<div class=\"techtreeItem\" style=\"background:url('" . $i[3] . "');\">

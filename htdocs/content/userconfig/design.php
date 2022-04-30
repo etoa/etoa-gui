@@ -66,7 +66,7 @@ foreach ($designs as $k => $v) {
 }
 echo "</select>
                 <div id=\"designInfo\"></div>";
-echo "<script type=\"text/javascript;\">xajax_designInfo(document.getElementById('designSelector').options[document.getElementById('designSelector').selectedIndex].value);</script>";
+echo "<script type=\"text/javascript\">xajax_designInfo(document.getElementById('designSelector').options[document.getElementById('designSelector').selectedIndex].value);</script>";
 echo "</tr>";
 
 //Planetkreisgrösse

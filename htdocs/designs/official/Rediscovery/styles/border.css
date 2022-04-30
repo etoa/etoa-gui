@@ -1,0 +1,89 @@
+:root {
+    --border-thin: 0.0625rem;
+}
+
+* {
+    border-width: 0;
+}
+
+/* Border 1px */
+.boxLayout,
+table.tb th,
+table.tb td,
+.tabMenu,
+#pmenu,
+table.tb,
+.techtreeItem,
+.techtreeMainItem {
+    border-width: var(--border-thin);
+}
+/* Border Top */
+.tbl caption,
+table.tb caption {
+    border-top-width: var(--border-thin);
+}
+
+/* Border Right */
+{
+    border-right-width: var(--border-thin);
+}
+
+/* Border Bottom */
+.boxLayout .infoboxtitle {
+    border-bottom-width: var(--border-thin);
+}
+
+/* Border Left */
+{
+    border-left-width: var(--border-thin);
+}
+
+/* Border Top/Bottom */
+{
+    border-top-width: var(--border-thin);
+    border-bottom-width: var(--border-thin);
+}
+
+/* Border Left/Right */
+.tbl caption,
+table.tb caption {
+    border-left-width: var(--border-thin);
+    border-right-width: var(--border-thin);
+}
+
+/* Default Light */
+.boxLayout,
+.boxLayout .infoboxtitle,
+.tbl caption,
+table.tb caption,
+table.tb th,
+table.tb td,
+.tabMenu,
+#pmenu,
+table.tb,
+.techtreeItem,
+.techtreeMainItem {
+    border-color: #ddd;
+    border-style: solid;
+}
+
+/* Border Solid */
+{
+    border-style: solid;
+}
+
+/* Border Dashed */
+{
+    border-style: dashed;
+}
+
+/* Border Dot */
+{
+    border-style: dotted;
+}
+
+@media (max-width: 900px){
+    :root {
+        --border-thin: 0.125rem;
+    }
+}

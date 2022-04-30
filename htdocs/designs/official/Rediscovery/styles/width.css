@@ -1,0 +1,21 @@
+/* Full Width */
+.tc a,
+table.tb {
+    width: 100%;
+}
+
+/* Auto Width */
+.tabMenu {
+    width: auto;
+}
+
+/* Flex */
+{
+    flex: 1 1
+;
+}
+
+/* Same as font size */
+.collapse-toggle {
+    width: 1em;
+}

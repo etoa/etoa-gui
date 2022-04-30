@@ -1,0 +1,18 @@
+.defenseImage {
+  width: 14rem;
+  height: 14rem;
+}
+.defenseImageSmall {
+  width: 4.5rem;
+  height: 4.5rem;
+}
+table.tb td.defenseCellImage {
+  padding: 0;
+  line-height: 0;
+}
+table.tb td.defenseCellDescription {
+  vertical-align: top;
+}
+.compact .defenseCellName {
+  line-height: 1.33rem;
+}

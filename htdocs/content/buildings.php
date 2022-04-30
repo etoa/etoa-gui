@@ -488,6 +488,8 @@ if (isset($cp)) {
         $buildingTypeRepository = $app[BuildingTypeDataRepository::class];
         $buildingTypeNames = $buildingTypeRepository->getTypeNames();
         if (count($buildingTypeNames) > 0) {
+            $compactView = $properties->itemShow != 'full';
+
             $buildingLevels = $buildingRepository->getBuildingLevels($planet->id);
             // Jede Kategorie durchgehen
             echo '<form action="?page=' . $page . '" method="post"><div>';
@@ -502,7 +504,7 @@ if (isset($cp)) {
             $technologyNames = $technologyRepository->getTechnologyNames(true);
 
             foreach ($buildingTypeNames as $typeId => $typeName) {
-                tableStart($typeName, TABLE_WIDTH);
+                tableStart($typeName, TABLE_WIDTH, "", "", $compactView ? "compact" : "");
 
                 //Einfache Ansicht
                 if ($properties->itemShow != 'full') {
@@ -596,10 +598,10 @@ if (isset($cp)) {
                     //Einfache Ansicht
                     if ($properties->itemShow != 'full') {
                         echo "<tr>
-                                    <td>
-                                        <a href=\"" . HELP_URL . "&amp;id=" . $it->key() . "\"><img class=\"" . $filterStyleClass . "\" src=\"" . $img . "\" width=\"40px\" height=\"40px\" border=\"0\" /></a>
+                                    <td class='buildingCellImage'>
+                                        <a href=\"" . HELP_URL . "&amp;id=" . $it->key() . "\"><img class=\"" . $filterStyleClass ." buildingImageSmall\" src=\"" . $img . "\" border=\"0\" /></a>
                                 </td>
-                                <th width=\"45%\">
+                                <th class='buildingCellName' width=\"45%\">
                                     <span style=\"font-weight:500\">" . $it->current()->building . "<br/>
                                             Stufe:</span> " . StringUtils::formatNumber($it->current()->level) . "
                                         </th>";
@@ -617,7 +619,7 @@ if (isset($cp)) {
                             countDown("buildtime", $it->current()->endTime, "buildcancel");
                             jsProgressBar("progressbar", $it->current()->startTime, $it->current()->endTime);
                         } else {
-                            echo '<td>' . StringUtils::formatTimespan($it->current()->getBuildTime()) . '</td>' . $waitArr['string'];
+                            echo '<td class="buildingCellTime">' . StringUtils::formatTimespan($it->current()->getBuildTime()) . '</td>' . $waitArr['string'];
 
                             //Maximale Anzahl erreicht oder anderes Gebäude im Bau
                             if ($tmtext != "" || $bl->isUnderConstruction()) {

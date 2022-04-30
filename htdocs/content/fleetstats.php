@@ -56,7 +56,7 @@ if (count($shiplist) > 0) {
 
     // Speichert alle Schiffe des Users, die sich im All befinden
     $fleet_data = $fleetRepository->getUserFleetShipCounts($cu->getId());
-    tableStart("Schiffe");
+    tableStart("Schiffe", 0, "", "", "compact");
     echo '<tr>
                         <th colspan=\'2\'>Schiff</th>
                         <th width=\'100\'>Im Orbit</th>
@@ -78,12 +78,12 @@ if (count($shiplist) > 0) {
             ) {
                 $s_img = $ship->getImagePath('small');
                 echo '<tr>
-                                  <td style="background:#000" style="width:40px;height:40px;">';
+                                  <td class="shipCellImage" style="background:#000">';
 
                 if ($ship->special) {
-                    echo '<a href="?page=ship_upgrade&amp;id=' . $ship->id . '" title="Zum Upgrademenu"><img src="' . $s_img . '" style="width:40px;height:40px;"/></a>';
+                    echo '<a href="?page=ship_upgrade&amp;id=' . $ship->id . '" title="Zum Upgrademenu"><img src="' . $s_img . '" class="shipImageSmall"/></a>';
                 } else {
-                    echo '<a href="' . HELP_URL . '" title="Info zu diesem Schiff anzeigen"><img src="' . $s_img . '" style="width:40px;height:40px;"/></a>';
+                    echo '<a href="' . HELP_URL . '" title="Info zu diesem Schiff anzeigen"><img src="' . $s_img . '" class="shipImageSmall"/></a>';
                 }
                 echo '</td>
                                   <td>

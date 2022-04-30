@@ -276,7 +276,7 @@ if ($cu->allianceId > 0) {
 
                             echo ">" . BBCodeUtils::toHTML($post->text);
                             if ($post->changed !== null)
-                                echo "<br/><br/><span style=\"font-size:8pt;\">Dieser Beitrag wurde zuletzt geändert am " . date("d.m.Y", $post->changed) . " um " . date("H:i", $post->changed) . " Uhr.</span>";
+                                echo "<br/><br/><span class='textSmall'>Dieser Beitrag wurde zuletzt geändert am " . date("d.m.Y", $post->changed) . " um " . date("H:i", $post->changed) . " Uhr.</span>";
                             if ($allianceUsers[$post->userId]->signature != "")
                                 echo "<hr>" . BBCodeUtils::toHTML($allianceUsers[$post->userId]->signature);
                             echo "</td></tr>";

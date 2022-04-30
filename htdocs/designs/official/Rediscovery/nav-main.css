@@ -1,0 +1,332 @@
+.navigation-main {
+  position: absolute;
+  top: 5rem;
+  left: 0.5rem;
+  background-image: url("images/nav_main.png");
+  background-size: 100%;
+  width: 24.75rem;
+  height: 72rem;
+  transition: transform 0.1s ease-in-out;
+  z-index: 100;
+}
+
+.navigation-main a {
+  text-decoration: none;
+}
+
+#game-area {
+  margin-left: 26rem;
+  max-width: 75rem;
+  margin-right: 10rem;
+}
+
+.navigation-main section {
+  position: absolute;
+  box-sizing: border-box;
+}
+
+.navigation-main section .section-label {
+  display: block;
+  font-family: "Ethnocentric-Light", sans-serif;
+  color: var(--color-text-light);
+  text-shadow: rgba(0, 0, 0, 1) 0 0 0.3em;
+  margin-bottom: 0.05rem;
+  font-size: 1rem;
+}
+
+section#nav-top {
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 12.7rem;
+}
+
+.button-round-blue {
+  border-radius: 50%;
+}
+
+#navigate-overview,
+#navigate-messages,
+#navigate-reports {
+  position: absolute;
+  background-size: 100%;
+  width: 5.15rem;
+  height: 5.15rem;
+}
+
+#navigate-overview {
+  top: 1.7rem;
+  left: 1.7rem;
+  background-image: url("images/sprites-nav.png");
+  background-position: 0 14.777618%;
+  background-size: 141.463415%;
+}
+
+#navigate-messages,
+#navigate-reports {
+  bottom: 1.6rem;
+  width: 2.6rem;
+}
+
+.button-round-blue:hover {
+  box-shadow: 0 0 0.5rem var(--color-glow-blue);
+}
+
+#navigate-help,
+#navigate-notes {
+  position: absolute;
+  background-size: 100%;
+  width: 3.35rem;
+  height: 3.35rem;
+}
+
+#navigate-overview:hover {
+  background-image: url("images/sprites-nav.png");
+  background-position: 0 8.608321%;
+  background-size: 141.463415%;
+}
+
+#navigate-overview:active {
+  background-image: url("images/sprites-nav.png");
+  background-position: 0 2.439024%;
+  background-size: 141.463415%;
+}
+
+#navigate-help {
+  top: 1.25rem;
+  right: 1.35rem;
+  background-image: url("images/sprites-nav.png");
+  background-position: 0 64.606742%;
+  background-size: 223.076923%;
+}
+
+#navigate-help:hover {
+  background-image: url("images/sprites-nav.png");
+  background-position: 0 60.674157%;
+  background-size: 223.076923%;
+}
+
+#navigate-help:active {
+  background-image: url("images/sprites-nav.png");
+  background-position: 0 56.741573%;
+  background-size: 223.076923%;
+}
+
+#navigate-messages:hover,
+#navigate-reports:hover {
+  box-shadow: none;
+}
+
+#navigate-messages {
+  left: 1.5rem;
+  background-image: url("images/sprites-nav.png");
+  background-position: 0 93.982808%;
+  background-size: 290%;
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+#navigate-messages.unread {
+  background-image: url("images/sprites-nav.png");
+  background-position: 0 100%;
+  background-size: 290%;
+}
+
+#navigate-messages:hover {
+  background-image: url("images/sprites-nav.png");
+  background-position: 0 87.965616%;
+  background-size: 290%;
+}
+
+a#navigate-messages:active {
+  background-image: url("images/sprites-nav.png");
+  background-position: 0 81.948424%;
+  background-size: 290%;
+}
+
+#navigate-reports {
+  left: 4rem;
+  background-image: url("images/sprites-nav2.png");
+  background-position: 0 76.025237%;
+  background-size: 500%;
+  border-top-left-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+#navigate-reports.unread {
+  background-image: url("images/sprites-nav2.png");
+  background-position: 0 89.274448%;
+  background-size: 500%;
+}
+
+#navigate-reports:hover {
+  background-image: url("images/sprites-nav2.png");
+  background-position: 0 62.776025%;
+  background-size: 500%;
+}
+
+a#navigate-reports:active {
+  background-image: url("images/sprites-nav2.png");
+  background-position: 0 49.526814%;
+  background-size: 500%;
+}
+
+#navigate-notes {
+  bottom: 1.25rem;
+  right: 3.55rem;
+  background-image: url("images/sprites-nav.png");
+  background-position: 0 76.404494%;
+  background-size: 223.076923%;
+}
+
+#navigate-notes:hover {
+  background-image: url("images/sprites-nav.png");
+  background-position: 0 72.47191%;
+  background-size: 223.076923%;
+}
+
+#navigate-notes:active {
+  background-image: url("images/sprites-nav.png");
+  background-position: 0 68.539326%;
+  background-size: 223.076923%;
+}
+
+#server-time-label {
+  position: absolute;
+  right: 12.9rem;
+  top: 3.6rem;
+  text-align: right;
+  font-family: Zekton-CondensedItalic, sans-serif;
+  font-size: 1rem;
+  color: var(--color-text-light);
+  text-shadow: rgba(0, 0, 0, 1) 0 0 0.2rem;
+}
+
+#server-time {
+  position: absolute;
+  left: 13.25rem;
+  top: 3.78rem;
+}
+
+#current-planet-name {
+  position: absolute;
+  left: 2.7rem;
+  top: 8.235rem;
+  max-width: 19rem;
+  font-size: 1.2rem;
+  line-height: 1.2rem;
+}
+
+.navigation-main .button-triangular{
+  top: 10.6rem;
+}
+
+#change-planet-previous {
+  left: 1.76rem;
+}
+
+#change-planet-hext {
+  left: 4.5rem;
+  transform: rotate(180deg);
+}
+
+#toggle-planet-dropdown {
+  left: 20.6rem;
+  transform: rotate(-90deg);
+}
+
+#planet-dropdown {
+  position: absolute;
+  top: 10.2rem;
+  left: 1.5rem;
+}
+
+#planet-dropdown .click-mask {
+  content: "";
+  display: block;
+  background: transparent;
+  position: absolute;
+  margin: -2rem;
+  top: 0;
+  left: 0;
+  width: calc(100% + 8rem);
+  height: calc(100% + 4rem);
+  z-index: 0;
+}
+
+#planet-dropdown .button-blue {
+  position: relative;
+  z-index: 1;
+}
+
+#navigate-fleets-2 {
+  position: absolute;
+  top: 3.40rem;
+  left: 8.7rem;
+}
+
+section#nav-common,
+section#nav-planet,
+section#nav-production,
+section#nav-other {
+  left: 3.37rem;
+  width: 15.75rem;
+}
+
+section#nav-common {
+  top: 12.78rem;
+  height: 11.745rem;
+  padding-top: 0.45rem;
+}
+
+section#nav-planet {
+  top: 24.615rem;
+  height: 18.36rem;
+  padding-top: 0.855rem;
+}
+
+section#nav-production {
+  top: 43.02rem;
+  height: 13.95rem;
+  padding-top: 0.54rem;
+}
+
+section#nav-other {
+  top: 56.925rem;
+  height: 4.14em;
+  padding-top: 0.675rem;
+}
+
+section#nav-bottom {
+  top: 61.11rem;
+  left: 0;
+  height: 7.875rem;
+  width: 100%;
+}
+
+@media screen and (max-width: 600px) {
+  .navigation-main{
+    top: 0;
+  }
+  .navigation-main:not([data-expanded="true"]) {
+    transform: translateX(-110%);
+  }
+
+  #game-area {
+    margin-left: 0;
+    margin-right: 0;
+    max-width: 100%;
+  }
+}
+
+@media screen and (max-width: 1280px){
+  #game-area {
+    margin-right: 0;
+  }
+}
+
+@media (min-width: 1450px) {
+  #game-area {
+    margin-left: 30rem;
+  }
+}

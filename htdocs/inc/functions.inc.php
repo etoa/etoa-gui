@@ -78,11 +78,11 @@ function checkValidNick($name)
     return preg_match(\EtoA\User\User::NICK_PATTERN, $name);
 }
 
-function tableStart($title = "", $width = 0, $layout = "", $id = "")
+function tableStart($title = "", $width = 0, $layout = "", $id = "", $class="")
 {
     if (is_numeric($width) && $width > 0) {
         $w = "width:" . $width . "px;";
-    } elseif ($width != "") {
+    } elseif (!empty($width)) {
         $w = "width:" . $width . "";
     } else {
         global $cu;
@@ -102,11 +102,11 @@ function tableStart($title = "", $width = 0, $layout = "", $id = "")
         $id = "id=\"" . $id . "\"";
     }
     if ($layout == "double") {
-        echo "<table " . $id . " style=\"" . $w . "\"><tr><td style=\"width:50%;vertical-align:top;\">";
+        echo "<table " . $id . " style=\"" . $w . "\" class=\"$class\"><tr><td style=\"width:50%;vertical-align:top;\">";
     } elseif ($layout == "nondisplay") {
-        echo "<table " . $id . " class=\"tb\" style=\"display:none;" . $w . "\">";
+        echo "<table " . $id . " class=\"tb $class\" style=\"display:none;" . $w . "\">";
     } else {
-        echo "<table " . $id . " class=\"tb\" style=\"" . $w . "\">";
+        echo "<table " . $id . " class=\"tb $class\" style=\"" . $w . "\">";
     }
 
     if ($title != "") {

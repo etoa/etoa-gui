@@ -1,0 +1,60 @@
+/* Blue */
+.tbl caption,
+table.tb caption,
+.infoboxtitle,
+.tabMenu a {
+    background: #225 url(../images/cellpic.gif);
+    background-size: 100% 100%;
+}
+
+/* Blue Hover */
+.tabMenu a:hover {
+    background: url(../images/cellpic2.png);
+}
+
+/* Dark Gray */
+table.tb th {
+    background: #000000 url(../images/cellpic4.gif);
+}
+
+/* Gray */
+.tabMenu,
+#pmenu,
+table.tb td,
+.infoboxcontent {
+    background: #225 url(../images/cellpic3.gif);
+}
+
+/* Blue Tab */
+.tabMenu a,
+.tc {
+    background: #225 url(../images/tab1.png);
+    background-size: 100% 100%;
+}
+
+/* Blue Hover */
+.tabMenu a:hover,
+.tc:hover,
+.tabMenu .tabEnabled,
+.tc .tabEnabled,
+.overviewInfoTextContainer .infoboxtitle:hover {
+    background: url(../images/tab2.png);
+}
+
+/* Black */
+{
+    background: black
+;
+}
+
+/* Angle Down */
+:not([data-collapsed="true"]) .collapse-toggle {
+    background-size: 100%;
+    background: url("../images/icon-angleDown.svg") center;
+}
+
+/* Angle Left */
+[data-collapsed="true"] .collapse-toggle {
+    background-size: 100%;
+    background: url("../images/icon-angleLeft.svg") center;
+}

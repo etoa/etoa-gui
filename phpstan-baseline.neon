@@ -781,6 +781,16 @@ parameters:
 			path: htdocs/classes/sectormaprenderer.class.php
 
 		-
+			message: "#^Comparison operation \"\\>\" between 1\\|2\\|3 and 0 is always true\\.$#"
+			count: 1
+			path: htdocs/classes/sectormaprenderer.class.php
+
+		-
+			message: "#^Else branch is unreachable because ternary operator condition is always true\\.$#"
+			count: 1
+			path: htdocs/classes/sectormaprenderer.class.php
+
+		-
 			message: "#^Method Session\\:\\:getInstance\\(\\) should return static\\(Session\\) but returns Session\\.$#"
 			count: 1
 			path: htdocs/classes/session.class.php
@@ -3112,7 +3122,7 @@ parameters:
 
 		-
 			message: "#^Construct empty\\(\\) is not allowed\\. Use more strict comparison\\.$#"
-			count: 1
+			count: 2
 			path: htdocs/inc/functions.inc.php
 
 		-
@@ -6199,19 +6209,6 @@ parameters:
 			message: "#^Method EtoA\\\\Fleet\\\\FleetRepository\\:\\:getUserFleetShipCounts\\(\\) should return array\\<int, int\\> but returns array\\<int\\|string, int\\>\\.$#"
 			count: 1
 			path: src/Fleet/FleetRepository.php
-
-		-
-			message: """
-				#^Binary operation "\\." between 'Unbekannt'\\|EtoA\\\\Ship\\\\Ship and '
-				' results in an error\\.$#
-			"""
-			count: 1
-			path: src/Fleet/FleetScanService.php
-
-		-
-			message: "#^Binary operation \"\\.\" between non\\-empty\\-string and 'Unbekannt'\\|EtoA\\\\Ship\\\\Ship results in an error\\.$#"
-			count: 1
-			path: src/Fleet/FleetScanService.php
 
 		-
 			message: "#^Cannot access property \\$name on EtoA\\\\Universe\\\\Planet\\\\Planet\\|null\\.$#"

@@ -338,10 +338,10 @@ function listMessagesOverview(
                     echo "<tr style=\"display:;\">";
                 }
 
-                echo "<td style=\"width:2%;\">
+                echo "<td class='messageCellIcon' style=\"width:2%;\">
                         <img src=\"" . $im_path . "\" alt=\"Mail\" id=\"msgimg" . $message->id . "\" />
                     </td>
-                <td style=\"width:66%;\" ";
+                <td class='messageCellSubject' style=\"width:66%;\" ";
                 if ($previewMessages) {
                     // subj has already been encoded above
                     echo tm($subj, htmlentities(substr(BBCodeUtils::stripBBCode($message->text), 0, 500), ENT_QUOTES, 'UTF-8'));
@@ -361,9 +361,9 @@ function listMessagesOverview(
                     }
                 }
                 echo "</td>";
-                echo "<td style=\"width:15%;\">" . userPopUp($message->userFrom, $userRepository->getNick($message->userFrom), 0, $strong) . "</td>";
-                echo "<td style=\"width:15%;\">" . date("d.m.Y H:i", $message->timestamp) . "</td>";
-                echo "<td style=\"width:2%;text-align:center;padding:0px;vertical-align:middle;\">
+                echo "<td class='messageCellFrom' style=\"width:15%;\">" . userPopUp($message->userFrom, $userRepository->getNick($message->userFrom), 0, $strong) . "</td>";
+                echo "<td class='messageCellDate' style=\"width:15%;\">" . date("d.m.Y H:i", $message->timestamp) . "</td>";
+                echo "<td class='messageCellAction' style=\"width:2%;text-align:center;padding:0px;vertical-align:middle;\">
                 <input id=\"delcb_" . $category->id . "_" . $dcnt . "\" type=\"checkbox\" name=\"delmsg[" . $message->id . "]\" value=\"1\" title=\"Nachricht zum Löschen markieren\" /></td>";
                 echo "</tr>\n";
                 if ($previewMessages) {
