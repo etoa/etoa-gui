@@ -7,60 +7,65 @@ namespace EtoA\Support\Mail;
 use EtoA\Core\AppName;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Support\ExternalUrl;
-use Swift_Mailer;
-use Swift_Message;
-use Swift_SendmailTransport;
-use Swift_SmtpTransport;
-use Swift_Transport;
+use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Address;
+use Symfony\Component\Mime\Email;
 
 class MailSenderService
 {
-    private ConfigurationService $config;
-
-    private Swift_Mailer $mailer;
-
-    public function __construct(ConfigurationService $config)
-    {
-        $this->config = $config;
-        $this->mailer = new Swift_Mailer($this->getMailTransport());
-    }
-
-    public function setMailer(Swift_Mailer $mailer): void
-    {
-        $this->mailer = $mailer;
+    public function __construct(
+        private ConfigurationService $config,
+        private MailerInterface $mailer,
+    ) {
     }
 
     /**
      * @param string|string[]|array<string,string> $recipients
      * @param null|string|string[]|array<string,string> $replyTo
      */
-    public function send(string $subject, string $text, $recipients, $replyTo = null): int
+    public function send(string $subject, string $text, $recipients, $replyTo = null): void
     {
         $gameName = AppName::NAME . ' ' . $this->config->get('roundname');
-        $message = (new Swift_Message($gameName . ": " . $subject))
-            ->setFrom([$this->config->get('mail_sender') => $gameName])
-            ->setReplyTo($replyTo ?? [$this->config->get('mail_reply') => $gameName])
-            ->setTo($recipients)
-            ->setBody($text . $this->getSignature());
 
-        return $this->mailer->send($message);
-    }
+        $message = (new Email())
+            ->from(new Address((string) $this->config->get('mail_sender'), $gameName))
+            ->replyTo($this->convertAddressArrays($replyTo, new Address((string) $this->config->get('mail_reply'), $gameName))[0])
+            ->subject($gameName . ": " . $subject)
+            ->text($text . $this->getSignature());
 
-    private function getMailTransport(): Swift_Transport
-    {
-        $host = $this->config->get('smtp_host');
-        $port = $this->config->getInt('smtp_port');
-        $username = $this->config->get('smtp_username');
-        $password = $this->config->get('smtp_password');
-        $security = $this->config->get('smtp_security');
-
-        if (filled($host)) {
-            return (new Swift_SmtpTransport($host, $port, filled($security) ? $security : null))
-                ->setUsername(filled($username) ? $username : null)
-                ->setPassword(filled($password) ? $password : null);
+        if (is_array($recipients) && count($recipients) > 1) {
+            $message = $message->bcc(...$this->convertAddressArrays($recipients));
+        } else {
+            $message = $message->to(...$this->convertAddressArrays($recipients));
         }
 
-        return new Swift_SendmailTransport();
+        $this->mailer->send($message);
+    }
+
+    /**
+     * @param null|string|string[]|array<string,string> $emails
+     * @return Address[]
+     */
+    private function convertAddressArrays($emails, Address $default = null): array
+    {
+        if ($emails === null && $default !== null) {
+            return [$default];
+        }
+
+        if (is_array($emails)) {
+            $addresses = [];
+            foreach ($emails as $email => $name) {
+                $addresses[] = new Address($email, $name);
+            }
+
+            return $addresses;
+        }
+
+        if ($emails !== null) {
+            return [new Address($emails)];
+        }
+
+        throw new \InvalidArgumentException('Unknown email recipient');
     }
 
     private function getSignature(): string

@@ -326,9 +326,6 @@
     "staabm/phpstan-dba": {
         "version": "0.2.18"
     },
-    "swiftmailer/swiftmailer": {
-        "version": "v6.3.0"
-    },
     "symfony/amqp-messenger": {
         "version": "v5.3.7"
     },
@@ -450,6 +447,18 @@
             "config/packages/lock.yaml"
         ]
     },
+    "symfony/mailer": {
+        "version": "6.0",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "main",
+            "version": "4.3",
+            "ref": "97a61eabb351d7f6cb7702039bcfe07fe9d7e03c"
+        },
+        "files": [
+            "config/packages/mailer.yaml"
+        ]
+    },
     "symfony/maker-bundle": {
         "version": "1.0",
         "recipe": {
@@ -515,9 +524,6 @@
     },
     "symfony/polyfill-ctype": {
         "version": "v1.25.0"
-    },
-    "symfony/polyfill-iconv": {
-        "version": "v1.24.0"
     },
     "symfony/polyfill-intl-grapheme": {
         "version": "v1.25.0"

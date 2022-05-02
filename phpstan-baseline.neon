@@ -6926,26 +6926,6 @@ parameters:
 			path: src/Support/ImageUtils.php
 
 		-
-			message: "#^Parameter \\#1 \\$host of class Swift_SmtpTransport constructor expects string, bool\\|float\\|int\\|string given\\.$#"
-			count: 1
-			path: src/Support/Mail/MailSenderService.php
-
-		-
-			message: "#^Parameter \\#1 \\$password of method Swift_SmtpTransport\\:\\:setPassword\\(\\) expects string, bool\\|float\\|int\\|string\\|null given\\.$#"
-			count: 1
-			path: src/Support/Mail/MailSenderService.php
-
-		-
-			message: "#^Parameter \\#1 \\$username of method Swift_SmtpTransport\\:\\:setUsername\\(\\) expects string, bool\\|float\\|int\\|string\\|null given\\.$#"
-			count: 1
-			path: src/Support/Mail/MailSenderService.php
-
-		-
-			message: "#^Parameter \\#3 \\$encryption of class Swift_SmtpTransport constructor expects string\\|null, bool\\|float\\|int\\|string\\|null given\\.$#"
-			count: 1
-			path: src/Support/Mail/MailSenderService.php
-
-		-
 			message: "#^Method EtoA\\\\Support\\\\RuntimeDataStore\\:\\:get\\(\\) should return string\\|null but returns mixed\\.$#"
 			count: 1
 			path: src/Support/RuntimeDataStore.php
