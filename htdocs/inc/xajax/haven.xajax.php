@@ -1129,8 +1129,8 @@ function havenShowLaunch($form)
             }
 
             //check for alliance+time to join
-            if (($duration < $maxTime) || $form['fleet_action'] != "alliance" || $maxTime < 0) {
-                if ($fid = $fleet->launch()) {
+            if (($duration < $maxTime) || $form['fleet_action'] != "alliance" || $maxTime < 0)
+                {if ($fid = $fleet->launch()) {
                     ob_start();
                     $ac = FleetAction::createFactory($form['fleet_action']);
 

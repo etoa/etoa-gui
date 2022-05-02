@@ -55,6 +55,22 @@ function get_user_nick($id)
 }
 
 /**
+ * Format number (round up)
+ */
+function nf_up($number,$colorize=0)	// Number format
+{
+    $n = number_format(ceil($number),0,",","`");
+    if ($colorize==1)
+    {
+        if ($number>0)
+            return "<span style=\"color:#0f0\">".$n."</span>";
+        if ($number<0)
+            return "<span style=\"color:#f00\">".$n."</span>";
+    }
+    return $n;
+}
+
+/**
  * Checks for a valid mail address
  */
 function checkEmail($email)
@@ -975,3 +991,13 @@ function intOrNull(?string $value): ?int
 {
     return $value !== null ? (int) $value : null;
 }
+
+	/**
+	 * Remove BBCode
+	 */
+	function stripBBCode($text_to_search)
+	{
+		$pattern = '|[[\\/\\!]*?[^\\[\\]]*?]|si';
+		$replace = '';
+		return preg_replace($pattern, $replace, $text_to_search);
+	}

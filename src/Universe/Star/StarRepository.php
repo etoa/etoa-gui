@@ -86,7 +86,7 @@ class StarRepository extends AbstractRepository
             ->where('id = :id')
             ->setParameters([
                 'id' => $id,
-                'name' => (string) $name,
+                'name' => stripBBCode((string) $name),
             ]);
 
         if ($typeId !== null) {

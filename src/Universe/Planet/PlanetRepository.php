@@ -522,7 +522,7 @@ class PlanetRepository extends AbstractRepository
             ->where('id = :id')
             ->setParameters([
                 'id' => $id,
-                'name' => $name,
+                'name' => stripBBCode($name),
                 'comment' => $comment,
             ])
             ->execute();

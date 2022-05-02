@@ -61,6 +61,7 @@ class App {
         this.mountShipyard();
         this.mountArmory();
         this.mountSectorMap();
+        this.mountFleet();
         this.resolutionPostProcessors.forEach(p => p());
     }
 
@@ -126,14 +127,17 @@ class App {
             return;
         }
         const hour = parseInt(timeParts[0]);
-        const minute = parseInt(timeParts[1]);
-        const second = parseInt(timeParts[2]);
 
-        const startTimestamp = Date.now();
+        const startTimestamp = new Date();
         const startDate = new Date(startTimestamp);
-        const referenceDate = new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDay(), hour, minute, second);
-        if (referenceDate.getTime() > startTimestamp) {
-            referenceDate.setDate(referenceDate.getTime() - 24 * 3600);
+        const fullYear = startDate.getFullYear();
+        const month = startDate.getMonth();
+        const minute = startDate.getMinutes();
+        const second = Math.round(startDate.getSeconds() + startDate.getMilliseconds() / 1000);
+        let day = startDate.getDay();
+        const referenceDate = new Date(fullYear, month, day, hour, minute, second);
+        if (startTimestamp.getHours() < hour) {
+            referenceDate.setTime(referenceDate.getTime() - 24 * 3600000);
         }
         const referenceTimestamp = referenceDate.getTime();
 
@@ -404,6 +408,25 @@ class App {
         sectorMap.offsetTop;
     }
 
+    mountFleet() {
+        const fleetInfoContainer = document.querySelector(".fleetInfoContainer");
+        if (fleetInfoContainer == null) {
+            return;
+        }
+
+        const infoboxcontent = fleetInfoContainer.querySelector(".infoboxcontent");
+
+        const video = document.createElement("video");
+        video.loop = true;
+        video.autoplay = true;
+        video.muted = true;
+        video.poster = "/images/fleetbg.png";
+        video.classList.add("fleetInfoBackground");
+        video.src = "/designs/official/Rediscovery/images/bg-fleet.mp4";
+
+        infoboxcontent.prepend(video);
+    }
+
     toggleMainMenu() {
         this.toggleMenu(this.mainMenu);
     }
@@ -479,6 +502,9 @@ class App {
         const elements = document.querySelectorAll("*[style]");
         const properties = ["width", "height", "top", "left", "bottom", "right", "font-size"];
         for (let element of elements) {
+            if(element.nodeName === "HTML") {
+                continue;
+            }
             for (let property of properties) {
                 let factor = 1;
                 if (property === "width" &&
@@ -554,6 +580,7 @@ class App {
         document.documentElement.style.fontSize = factor * 16 + 'px';
         this.isMobile = isMobile;
         this.isTablet = isTablet;
+        this.viewportScale = factor;
 
         if (this.resolutionPostProcessors != null) {
             this.resolutionPostProcessors.forEach(p => p());
@@ -561,8 +588,14 @@ class App {
     }
 }
 
+const viewportScalePrecalculated = parseFloat(document.documentElement.getAttribute("data-viewportScale")) > 0;
+
 const app = new App();
 app.updateScaling();
+
+if(!viewportScalePrecalculated) {
+    xajax_viewportScale(app.viewportScale);
+}
 
 document.addEventListener("DOMContentLoaded", () => {
     const appContainer = document.getElementById("app");

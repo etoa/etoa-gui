@@ -271,6 +271,8 @@ try {
         'page' => $page,
         'mode' => $mode,
         'infoText' => $infoText->isEnabled() ? $infoText->content : null,
+        'viewportScale' => $_SESSION['viewportScale'] ?? 0,
+        'fontSize' => ($_SESSION['viewportScale'] ?? 1) * 16 . "px"
     ]);
     foreach ($globals as $key => $value) {
         $twig->addGlobal($key, $value);

@@ -14,7 +14,7 @@ $(document).ready(function () {
     document.getElementById("f_chat").style.display = "none";
     document.getElementById("f_chat_on").style.display = "inline";
   }
-});
+
 
 
 $("#f_chat").click(function () {
@@ -30,8 +30,10 @@ $("#f_chat_on").click(function () {
   sessionStorage.clear();
   $("#aside").load('?page=overview #c_aside');
   document.getElementById("f_chat_on").style.display = "none";
-  document.getElementById("f_chat").style.display = "inline";
+  document.getElementById("f_chat").style.display = "inline";});
 });
+
+
 
 
 function js_planetlist(enable) {

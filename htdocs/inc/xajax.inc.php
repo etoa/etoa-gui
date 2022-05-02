@@ -9,6 +9,7 @@ $xajax->configure('debug', false);
 require_once __DIR__  . "/xajax/global.xajax.php";
 
 if (isset($page)) {
+    require_once __DIR__ ."/xajax/viewport.xajax.php";
     if ($page == "haven") {
         require_once __DIR__ . "/xajax/haven.xajax.php";
     } elseif ($page == "stats") {

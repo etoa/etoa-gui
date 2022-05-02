@@ -16,6 +16,7 @@ Version 3.6.3 (unreleased)
 * Allow ships requiring 0 pilots to start even if there are 0 people available
 * Quest text updates
 * Fix template rendering of quests
+* It is now possible to send more than 999 missiles
 
 Version 3.6.2
 -------------
