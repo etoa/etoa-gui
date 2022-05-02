@@ -1,0 +1,50 @@
+[
+    {
+        "cat_id": "1",
+        "cat_name": "Kriegsschiff",
+        "cat_order": "2",
+        "cat_color": "#0080FF"
+    },
+    {
+        "cat_id": "2",
+        "cat_name": "Ziviles Schiff",
+        "cat_order": "1",
+        "cat_color": "#00FF00"
+    },
+    {
+        "cat_id": "3",
+        "cat_name": "Episches Schiff",
+        "cat_order": "5",
+        "cat_color": "#B048F8"
+    },
+    {
+        "cat_id": "4",
+        "cat_name": "Rassenspezifisches Schiff",
+        "cat_order": "4",
+        "cat_color": "#f00"
+    },
+    {
+        "cat_id": "5",
+        "cat_name": "NPC-Schiff",
+        "cat_order": "7",
+        "cat_color": "#F07902"
+    },
+    {
+        "cat_id": "6",
+        "cat_name": "Allianzschiff",
+        "cat_order": "6",
+        "cat_color": "#ffffff"
+    },
+    {
+        "cat_id": "7",
+        "cat_name": "Ziviles Rassenschiff",
+        "cat_order": "3",
+        "cat_color": "#ffffff"
+    },
+    {
+        "cat_id": "8",
+        "cat_name": "Sammlerschiff",
+        "cat_order": "1",
+        "cat_color": "#ffffff"
+    }
+]

@@ -1,0 +1,58 @@
+[
+    {
+        "id": "1",
+        "def_id": "14",
+        "ship_id": "79",
+        "costs_metal": "0",
+        "costs_crystal": "0",
+        "costs_plastic": "0",
+        "costs_fuel": "0",
+        "costs_food": "0",
+        "costs_power": "0",
+        "costs_factor_sd": "0.0",
+        "costs_factor_ds": "1.0",
+        "num_def": "1"
+    },
+    {
+        "id": "2",
+        "def_id": "15",
+        "ship_id": "81",
+        "costs_metal": "0",
+        "costs_crystal": "0",
+        "costs_plastic": "0",
+        "costs_fuel": "0",
+        "costs_food": "0",
+        "costs_power": "0",
+        "costs_factor_sd": "0.0",
+        "costs_factor_ds": "1.0",
+        "num_def": "1"
+    },
+    {
+        "id": "3",
+        "def_id": "16",
+        "ship_id": "80",
+        "costs_metal": "0",
+        "costs_crystal": "0",
+        "costs_plastic": "0",
+        "costs_fuel": "0",
+        "costs_food": "0",
+        "costs_power": "0",
+        "costs_factor_sd": "0.0",
+        "costs_factor_ds": "1.0",
+        "num_def": "1"
+    },
+    {
+        "id": "4",
+        "def_id": "17",
+        "ship_id": "82",
+        "costs_metal": "0",
+        "costs_crystal": "0",
+        "costs_plastic": "0",
+        "costs_fuel": "0",
+        "costs_food": "0",
+        "costs_power": "0",
+        "costs_factor_sd": "0.0",
+        "costs_factor_ds": "1.0",
+        "num_def": "1"
+    }
+]

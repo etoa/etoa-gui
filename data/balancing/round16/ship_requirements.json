@@ -1,0 +1,1934 @@
+[
+    {
+        "id": "1",
+        "obj_id": "1",
+        "req_building_id": "9",
+        "req_tech_id": "0",
+        "req_level": "2"
+    },
+    {
+        "id": "2",
+        "obj_id": "1",
+        "req_building_id": "11",
+        "req_tech_id": "0",
+        "req_level": "1"
+    },
+    {
+        "id": "3",
+        "obj_id": "2",
+        "req_building_id": "9",
+        "req_tech_id": "0",
+        "req_level": "2"
+    },
+    {
+        "id": "4",
+        "obj_id": "3",
+        "req_building_id": "9",
+        "req_tech_id": "0",
+        "req_level": "1"
+    },
+    {
+        "id": "5",
+        "obj_id": "4",
+        "req_building_id": "9",
+        "req_tech_id": "0",
+        "req_level": "5"
+    },
+    {
+        "id": "6",
+        "obj_id": "4",
+        "req_building_id": "11",
+        "req_tech_id": "0",
+        "req_level": "2"
+    },
+    {
+        "id": "7",
+        "obj_id": "6",
+        "req_building_id": "9",
+        "req_tech_id": "0",
+        "req_level": "7"
+    },
+    {
+        "id": "8",
+        "obj_id": "6",
+        "req_building_id": "11",
+        "req_tech_id": "0",
+        "req_level": "7"
+    },
+    {
+        "id": "9",
+        "obj_id": "7",
+        "req_building_id": "9",
+        "req_tech_id": "0",
+        "req_level": "8"
+    },
+    {
+        "id": "10",
+        "obj_id": "7",
+        "req_building_id": "11",
+        "req_tech_id": "0",
+        "req_level": "5"
+    },
+    {
+        "id": "11",
+        "obj_id": "8",
+        "req_building_id": "9",
+        "req_tech_id": "0",
+        "req_level": "10"
+    },
+    {
+        "id": "12",
+        "obj_id": "8",
+        "req_building_id": "11",
+        "req_tech_id": "0",
+        "req_level": "8"
+    },
+    {
+        "id": "13",
+        "obj_id": "8",
+        "req_building_id": "8",
+        "req_tech_id": "0",
+        "req_level": "7"
+    },
+    {
+        "id": "14",
+        "obj_id": "1",
+        "req_building_id": "0",
+        "req_tech_id": "4",
+        "req_level": "4"
+    },
+    {
+        "id": "15",
+        "obj_id": "2",
+        "req_building_id": "0",
+        "req_tech_id": "4",
+        "req_level": "1"
+    },
+    {
+        "id": "16",
+        "obj_id": "3",
+        "req_building_id": "0",
+        "req_tech_id": "7",
+        "req_level": "1"
+    },
+    {
+        "id": "17",
+        "obj_id": "3",
+        "req_building_id": "0",
+        "req_tech_id": "4",
+        "req_level": "1"
+    },
+    {
+        "id": "18",
+        "obj_id": "4",
+        "req_building_id": "0",
+        "req_tech_id": "5",
+        "req_level": "3"
+    },
+    {
+        "id": "19",
+        "obj_id": "7",
+        "req_building_id": "0",
+        "req_tech_id": "5",
+        "req_level": "5"
+    },
+    {
+        "id": "20",
+        "obj_id": "6",
+        "req_building_id": "0",
+        "req_tech_id": "6",
+        "req_level": "4"
+    },
+    {
+        "id": "22",
+        "obj_id": "9",
+        "req_building_id": "0",
+        "req_tech_id": "4",
+        "req_level": "2"
+    },
+    {
+        "id": "393",
+        "obj_id": "31",
+        "req_building_id": "0",
+        "req_tech_id": "16",
+        "req_level": "7"
+    },
+    {
+        "id": "388",
+        "obj_id": "10",
+        "req_building_id": "0",
+        "req_tech_id": "4",
+        "req_level": "1"
+    },
+    {
+        "id": "25",
+        "obj_id": "11",
+        "req_building_id": "0",
+        "req_tech_id": "6",
+        "req_level": "11"
+    },
+    {
+        "id": "26",
+        "obj_id": "11",
+        "req_building_id": "9",
+        "req_tech_id": "0",
+        "req_level": "9"
+    },
+    {
+        "id": "27",
+        "obj_id": "11",
+        "req_building_id": "11",
+        "req_tech_id": "0",
+        "req_level": "10"
+    },
+    {
+        "id": "387",
+        "obj_id": "10",
+        "req_building_id": "9",
+        "req_tech_id": "0",
+        "req_level": "3"
+    },
+    {
+        "id": "386",
+        "obj_id": "12",
+        "req_building_id": "9",
+        "req_tech_id": "0",
+        "req_level": "6"
+    },
+    {
+        "id": "33",
+        "obj_id": "12",
+        "req_building_id": "0",
+        "req_tech_id": "3",
+        "req_level": "6"
+    },
+    {
+        "id": "34",
+        "obj_id": "12",
+        "req_building_id": "0",
+        "req_tech_id": "10",
+        "req_level": "5"
+    },
+    {
+        "id": "35",
+        "obj_id": "13",
+        "req_building_id": "9",
+        "req_tech_id": "0",
+        "req_level": "12"
+    },
+    {
+        "id": "36",
+        "obj_id": "13",
+        "req_building_id": "11",
+        "req_tech_id": "0",
+        "req_level": "10"
+    },
+    {
+        "id": "38",
+        "obj_id": "13",
+        "req_building_id": "0",
+        "req_tech_id": "6",
+        "req_level": "13"
+    },
+    {
+        "id": "42",
+        "obj_id": "14",
+        "req_building_id": "9",
+        "req_tech_id": "0",
+        "req_level": "4"
+    },
+    {
+        "id": "43",
+        "obj_id": "14",
+        "req_building_id": "11",
+        "req_tech_id": "0",
+        "req_level": "4"
+    },
+    {
+        "id": "307",
+        "obj_id": "14",
+        "req_building_id": "0",
+        "req_tech_id": "5",
+        "req_level": "5"
+    },
+    {
+        "id": "47",
+        "obj_id": "15",
+        "req_building_id": "9",
+        "req_tech_id": "0",
+        "req_level": "4"
+    },
+    {
+        "id": "46",
+        "obj_id": "15",
+        "req_building_id": "0",
+        "req_tech_id": "5",
+        "req_level": "7"
+    },
+    {
+        "id": "49",
+        "obj_id": "15",
+        "req_building_id": "0",
+        "req_tech_id": "8",
+        "req_level": "12"
+    },
+    {
+        "id": "50",
+        "obj_id": "15",
+        "req_building_id": "0",
+        "req_tech_id": "3",
+        "req_level": "9"
+    },
+    {
+        "id": "51",
+        "obj_id": "8",
+        "req_building_id": "0",
+        "req_tech_id": "5",
+        "req_level": "8"
+    },
+    {
+        "id": "52",
+        "obj_id": "12",
+        "req_building_id": "0",
+        "req_tech_id": "4",
+        "req_level": "7"
+    },
+    {
+        "id": "53",
+        "obj_id": "42",
+        "req_building_id": "9",
+        "req_tech_id": "0",
+        "req_level": "10"
+    },
+    {
+        "id": "54",
+        "obj_id": "42",
+        "req_building_id": "0",
+        "req_tech_id": "16",
+        "req_level": "7"
+    },
+    {
+        "id": "55",
+        "obj_id": "42",
+        "req_building_id": "0",
+        "req_tech_id": "11",
+        "req_level": "11"
+    },
+    {
+        "id": "194",
+        "obj_id": "43",
+        "req_building_id": "9",
+        "req_tech_id": "0",
+        "req_level": "3"
+    },
+    {
+        "id": "57",
+        "obj_id": "43",
+        "req_building_id": "0",
+        "req_tech_id": "20",
+        "req_level": "5"
+    },
+    {
+        "id": "58",
+        "obj_id": "42",
+        "req_building_id": "0",
+        "req_tech_id": "6",
+        "req_level": "6"
+    },
+    {
+        "id": "60",
+        "obj_id": "43",
+        "req_building_id": "0",
+        "req_tech_id": "16",
+        "req_level": "2"
+    },
+    {
+        "id": "403",
+        "obj_id": "44",
+        "req_building_id": "0",
+        "req_tech_id": "4",
+        "req_level": "5"
+    },
+    {
+        "id": "399",
+        "obj_id": "44",
+        "req_building_id": "0",
+        "req_tech_id": "16",
+        "req_level": "1"
+    },
+    {
+        "id": "64",
+        "obj_id": "40",
+        "req_building_id": "9",
+        "req_tech_id": "0",
+        "req_level": "5"
+    },
+    {
+        "id": "330",
+        "obj_id": "91",
+        "req_building_id": "0",
+        "req_tech_id": "16",
+        "req_level": "4"
+    },
+    {
+        "id": "66",
+        "obj_id": "40",
+        "req_building_id": "0",
+        "req_tech_id": "11",
+        "req_level": "10"
+    },
+    {
+        "id": "67",
+        "obj_id": "40",
+        "req_building_id": "0",
+        "req_tech_id": "5",
+        "req_level": "6"
+    },
+    {
+        "id": "68",
+        "obj_id": "41",
+        "req_building_id": "9",
+        "req_tech_id": "0",
+        "req_level": "3"
+    },
+    {
+        "id": "329",
+        "obj_id": "91",
+        "req_building_id": "9",
+        "req_tech_id": "0",
+        "req_level": "6"
+    },
+    {
+        "id": "70",
+        "obj_id": "41",
+        "req_building_id": "0",
+        "req_tech_id": "20",
+        "req_level": "5"
+    },
+    {
+        "id": "71",
+        "obj_id": "45",
+        "req_building_id": "9",
+        "req_tech_id": "0",
+        "req_level": "7"
+    },
+    {
+        "id": "72",
+        "obj_id": "45",
+        "req_building_id": "0",
+        "req_tech_id": "20",
+        "req_level": "7"
+    },
+    {
+        "id": "73",
+        "obj_id": "45",
+        "req_building_id": "0",
+        "req_tech_id": "16",
+        "req_level": "6"
+    },
+    {
+        "id": "397",
+        "obj_id": "36",
+        "req_building_id": "0",
+        "req_tech_id": "19",
+        "req_level": "10"
+    },
+    {
+        "id": "396",
+        "obj_id": "36",
+        "req_building_id": "0",
+        "req_tech_id": "20",
+        "req_level": "6"
+    },
+    {
+        "id": "395",
+        "obj_id": "36",
+        "req_building_id": "0",
+        "req_tech_id": "16",
+        "req_level": "6"
+    },
+    {
+        "id": "394",
+        "obj_id": "36",
+        "req_building_id": "9",
+        "req_tech_id": "0",
+        "req_level": "7"
+    },
+    {
+        "id": "78",
+        "obj_id": "37",
+        "req_building_id": "9",
+        "req_tech_id": "0",
+        "req_level": "3"
+    },
+    {
+        "id": "79",
+        "obj_id": "37",
+        "req_building_id": "0",
+        "req_tech_id": "16",
+        "req_level": "2"
+    },
+    {
+        "id": "80",
+        "obj_id": "37",
+        "req_building_id": "0",
+        "req_tech_id": "20",
+        "req_level": "5"
+    },
+    {
+        "id": "81",
+        "obj_id": "38",
+        "req_building_id": "9",
+        "req_tech_id": "0",
+        "req_level": "5"
+    },
+    {
+        "id": "82",
+        "obj_id": "38",
+        "req_building_id": "0",
+        "req_tech_id": "16",
+        "req_level": "4"
+    },
+    {
+        "id": "83",
+        "obj_id": "38",
+        "req_building_id": "0",
+        "req_tech_id": "6",
+        "req_level": "5"
+    },
+    {
+        "id": "84",
+        "obj_id": "33",
+        "req_building_id": "9",
+        "req_tech_id": "0",
+        "req_level": "3"
+    },
+    {
+        "id": "85",
+        "obj_id": "33",
+        "req_building_id": "0",
+        "req_tech_id": "16",
+        "req_level": "2"
+    },
+    {
+        "id": "86",
+        "obj_id": "33",
+        "req_building_id": "0",
+        "req_tech_id": "20",
+        "req_level": "5"
+    },
+    {
+        "id": "87",
+        "obj_id": "34",
+        "req_building_id": "9",
+        "req_tech_id": "0",
+        "req_level": "5"
+    },
+    {
+        "id": "88",
+        "obj_id": "34",
+        "req_building_id": "0",
+        "req_tech_id": "16",
+        "req_level": "4"
+    },
+    {
+        "id": "89",
+        "obj_id": "34",
+        "req_building_id": "0",
+        "req_tech_id": "5",
+        "req_level": "10"
+    },
+    {
+        "id": "90",
+        "obj_id": "34",
+        "req_building_id": "0",
+        "req_tech_id": "8",
+        "req_level": "13"
+    },
+    {
+        "id": "91",
+        "obj_id": "32",
+        "req_building_id": "9",
+        "req_tech_id": "0",
+        "req_level": "7"
+    },
+    {
+        "id": "92",
+        "obj_id": "32",
+        "req_building_id": "0",
+        "req_tech_id": "16",
+        "req_level": "6"
+    },
+    {
+        "id": "93",
+        "obj_id": "32",
+        "req_building_id": "0",
+        "req_tech_id": "20",
+        "req_level": "6"
+    },
+    {
+        "id": "94",
+        "obj_id": "32",
+        "req_building_id": "0",
+        "req_tech_id": "17",
+        "req_level": "3"
+    },
+    {
+        "id": "95",
+        "obj_id": "30",
+        "req_building_id": "9",
+        "req_tech_id": "0",
+        "req_level": "5"
+    },
+    {
+        "id": "96",
+        "obj_id": "30",
+        "req_building_id": "0",
+        "req_tech_id": "16",
+        "req_level": "6"
+    },
+    {
+        "id": "97",
+        "obj_id": "30",
+        "req_building_id": "0",
+        "req_tech_id": "10",
+        "req_level": "12"
+    },
+    {
+        "id": "98",
+        "obj_id": "30",
+        "req_building_id": "0",
+        "req_tech_id": "5",
+        "req_level": "6"
+    },
+    {
+        "id": "99",
+        "obj_id": "29",
+        "req_building_id": "9",
+        "req_tech_id": "0",
+        "req_level": "3"
+    },
+    {
+        "id": "100",
+        "obj_id": "29",
+        "req_building_id": "0",
+        "req_tech_id": "16",
+        "req_level": "2"
+    },
+    {
+        "id": "101",
+        "obj_id": "29",
+        "req_building_id": "0",
+        "req_tech_id": "20",
+        "req_level": "5"
+    },
+    {
+        "id": "392",
+        "obj_id": "31",
+        "req_building_id": "0",
+        "req_tech_id": "12",
+        "req_level": "6"
+    },
+    {
+        "id": "391",
+        "obj_id": "31",
+        "req_building_id": "0",
+        "req_tech_id": "14",
+        "req_level": "5"
+    },
+    {
+        "id": "390",
+        "obj_id": "31",
+        "req_building_id": "0",
+        "req_tech_id": "3",
+        "req_level": "5"
+    },
+    {
+        "id": "389",
+        "obj_id": "31",
+        "req_building_id": "9",
+        "req_tech_id": "0",
+        "req_level": "6"
+    },
+    {
+        "id": "106",
+        "obj_id": "28",
+        "req_building_id": "9",
+        "req_tech_id": "0",
+        "req_level": "5"
+    },
+    {
+        "id": "107",
+        "obj_id": "28",
+        "req_building_id": "0",
+        "req_tech_id": "16",
+        "req_level": "4"
+    },
+    {
+        "id": "309",
+        "obj_id": "28",
+        "req_building_id": "0",
+        "req_tech_id": "20",
+        "req_level": "7"
+    },
+    {
+        "id": "109",
+        "obj_id": "28",
+        "req_building_id": "11",
+        "req_tech_id": "0",
+        "req_level": "6"
+    },
+    {
+        "id": "335",
+        "obj_id": "27",
+        "req_building_id": "0",
+        "req_tech_id": "9",
+        "req_level": "5"
+    },
+    {
+        "id": "334",
+        "obj_id": "27",
+        "req_building_id": "9",
+        "req_tech_id": "0",
+        "req_level": "5"
+    },
+    {
+        "id": "333",
+        "obj_id": "27",
+        "req_building_id": "0",
+        "req_tech_id": "14",
+        "req_level": "4"
+    },
+    {
+        "id": "113",
+        "obj_id": "26",
+        "req_building_id": "9",
+        "req_tech_id": "0",
+        "req_level": "8"
+    },
+    {
+        "id": "114",
+        "obj_id": "26",
+        "req_building_id": "0",
+        "req_tech_id": "16",
+        "req_level": "10"
+    },
+    {
+        "id": "344",
+        "obj_id": "95",
+        "req_building_id": "0",
+        "req_tech_id": "5",
+        "req_level": "7"
+    },
+    {
+        "id": "345",
+        "obj_id": "95",
+        "req_building_id": "9",
+        "req_tech_id": "0",
+        "req_level": "5"
+    },
+    {
+        "id": "117",
+        "obj_id": "23",
+        "req_building_id": "9",
+        "req_tech_id": "0",
+        "req_level": "7"
+    },
+    {
+        "id": "118",
+        "obj_id": "23",
+        "req_building_id": "0",
+        "req_tech_id": "16",
+        "req_level": "6"
+    },
+    {
+        "id": "120",
+        "obj_id": "23",
+        "req_building_id": "0",
+        "req_tech_id": "7",
+        "req_level": "15"
+    },
+    {
+        "id": "121",
+        "obj_id": "25",
+        "req_building_id": "9",
+        "req_tech_id": "0",
+        "req_level": "3"
+    },
+    {
+        "id": "122",
+        "obj_id": "25",
+        "req_building_id": "11",
+        "req_tech_id": "0",
+        "req_level": "7"
+    },
+    {
+        "id": "123",
+        "obj_id": "25",
+        "req_building_id": "0",
+        "req_tech_id": "20",
+        "req_level": "5"
+    },
+    {
+        "id": "124",
+        "obj_id": "25",
+        "req_building_id": "0",
+        "req_tech_id": "16",
+        "req_level": "2"
+    },
+    {
+        "id": "125",
+        "obj_id": "24",
+        "req_building_id": "9",
+        "req_tech_id": "0",
+        "req_level": "8"
+    },
+    {
+        "id": "126",
+        "obj_id": "24",
+        "req_building_id": "0",
+        "req_tech_id": "16",
+        "req_level": "6"
+    },
+    {
+        "id": "127",
+        "obj_id": "24",
+        "req_building_id": "0",
+        "req_tech_id": "5",
+        "req_level": "9"
+    },
+    {
+        "id": "336",
+        "obj_id": "27",
+        "req_building_id": "0",
+        "req_tech_id": "16",
+        "req_level": "4"
+    },
+    {
+        "id": "129",
+        "obj_id": "20",
+        "req_building_id": "9",
+        "req_tech_id": "0",
+        "req_level": "7"
+    },
+    {
+        "id": "130",
+        "obj_id": "20",
+        "req_building_id": "0",
+        "req_tech_id": "16",
+        "req_level": "6"
+    },
+    {
+        "id": "131",
+        "obj_id": "20",
+        "req_building_id": "0",
+        "req_tech_id": "6",
+        "req_level": "6"
+    },
+    {
+        "id": "306",
+        "obj_id": "20",
+        "req_building_id": "0",
+        "req_tech_id": "15",
+        "req_level": "4"
+    },
+    {
+        "id": "133",
+        "obj_id": "21",
+        "req_building_id": "9",
+        "req_tech_id": "0",
+        "req_level": "3"
+    },
+    {
+        "id": "134",
+        "obj_id": "21",
+        "req_building_id": "0",
+        "req_tech_id": "16",
+        "req_level": "2"
+    },
+    {
+        "id": "135",
+        "obj_id": "21",
+        "req_building_id": "0",
+        "req_tech_id": "20",
+        "req_level": "5"
+    },
+    {
+        "id": "136",
+        "obj_id": "22",
+        "req_building_id": "9",
+        "req_tech_id": "0",
+        "req_level": "7"
+    },
+    {
+        "id": "137",
+        "obj_id": "22",
+        "req_building_id": "0",
+        "req_tech_id": "6",
+        "req_level": "7"
+    },
+    {
+        "id": "138",
+        "obj_id": "22",
+        "req_building_id": "0",
+        "req_tech_id": "10",
+        "req_level": "7"
+    },
+    {
+        "id": "139",
+        "obj_id": "22",
+        "req_building_id": "0",
+        "req_tech_id": "16",
+        "req_level": "6"
+    },
+    {
+        "id": "140",
+        "obj_id": "19",
+        "req_building_id": "9",
+        "req_tech_id": "0",
+        "req_level": "3"
+    },
+    {
+        "id": "402",
+        "obj_id": "91",
+        "req_building_id": "0",
+        "req_tech_id": "20",
+        "req_level": "4"
+    },
+    {
+        "id": "142",
+        "obj_id": "19",
+        "req_building_id": "0",
+        "req_tech_id": "20",
+        "req_level": "5"
+    },
+    {
+        "id": "143",
+        "obj_id": "18",
+        "req_building_id": "9",
+        "req_tech_id": "0",
+        "req_level": "5"
+    },
+    {
+        "id": "144",
+        "obj_id": "18",
+        "req_building_id": "0",
+        "req_tech_id": "16",
+        "req_level": "4"
+    },
+    {
+        "id": "145",
+        "obj_id": "18",
+        "req_building_id": "0",
+        "req_tech_id": "10",
+        "req_level": "7"
+    },
+    {
+        "id": "146",
+        "obj_id": "18",
+        "req_building_id": "0",
+        "req_tech_id": "5",
+        "req_level": "7"
+    },
+    {
+        "id": "147",
+        "obj_id": "17",
+        "req_building_id": "9",
+        "req_tech_id": "0",
+        "req_level": "7"
+    },
+    {
+        "id": "148",
+        "obj_id": "17",
+        "req_building_id": "0",
+        "req_tech_id": "16",
+        "req_level": "6"
+    },
+    {
+        "id": "149",
+        "obj_id": "17",
+        "req_building_id": "0",
+        "req_tech_id": "6",
+        "req_level": "6"
+    },
+    {
+        "id": "151",
+        "obj_id": "46",
+        "req_building_id": "9",
+        "req_tech_id": "0",
+        "req_level": "6"
+    },
+    {
+        "id": "152",
+        "obj_id": "46",
+        "req_building_id": "0",
+        "req_tech_id": "12",
+        "req_level": "3"
+    },
+    {
+        "id": "153",
+        "obj_id": "46",
+        "req_building_id": "0",
+        "req_tech_id": "4",
+        "req_level": "6"
+    },
+    {
+        "id": "384",
+        "obj_id": "47",
+        "req_building_id": "0",
+        "req_tech_id": "21",
+        "req_level": "5"
+    },
+    {
+        "id": "385",
+        "obj_id": "47",
+        "req_building_id": "0",
+        "req_tech_id": "3",
+        "req_level": "6"
+    },
+    {
+        "id": "382",
+        "obj_id": "47",
+        "req_building_id": "9",
+        "req_tech_id": "0",
+        "req_level": "4"
+    },
+    {
+        "id": "383",
+        "obj_id": "47",
+        "req_building_id": "11",
+        "req_tech_id": "0",
+        "req_level": "5"
+    },
+    {
+        "id": "163",
+        "obj_id": "50",
+        "req_building_id": "9",
+        "req_tech_id": "0",
+        "req_level": "6"
+    },
+    {
+        "id": "165",
+        "obj_id": "50",
+        "req_building_id": "0",
+        "req_tech_id": "12",
+        "req_level": "6"
+    },
+    {
+        "id": "166",
+        "obj_id": "50",
+        "req_building_id": "0",
+        "req_tech_id": "3",
+        "req_level": "5"
+    },
+    {
+        "id": "167",
+        "obj_id": "9",
+        "req_building_id": "11",
+        "req_tech_id": "0",
+        "req_level": "1"
+    },
+    {
+        "id": "169",
+        "obj_id": "51",
+        "req_building_id": "9",
+        "req_tech_id": "0",
+        "req_level": "1"
+    },
+    {
+        "id": "170",
+        "obj_id": "51",
+        "req_building_id": "0",
+        "req_tech_id": "4",
+        "req_level": "3"
+    },
+    {
+        "id": "171",
+        "obj_id": "51",
+        "req_building_id": "0",
+        "req_tech_id": "14",
+        "req_level": "9"
+    },
+    {
+        "id": "172",
+        "obj_id": "51",
+        "req_building_id": "0",
+        "req_tech_id": "7",
+        "req_level": "8"
+    },
+    {
+        "id": "173",
+        "obj_id": "51",
+        "req_building_id": "0",
+        "req_tech_id": "11",
+        "req_level": "5"
+    },
+    {
+        "id": "174",
+        "obj_id": "52",
+        "req_building_id": "9",
+        "req_tech_id": "0",
+        "req_level": "6"
+    },
+    {
+        "id": "381",
+        "obj_id": "52",
+        "req_building_id": "0",
+        "req_tech_id": "6",
+        "req_level": "5"
+    },
+    {
+        "id": "176",
+        "obj_id": "52",
+        "req_building_id": "0",
+        "req_tech_id": "3",
+        "req_level": "4"
+    },
+    {
+        "id": "178",
+        "obj_id": "22",
+        "req_building_id": "11",
+        "req_tech_id": "0",
+        "req_level": "5"
+    },
+    {
+        "id": "398",
+        "obj_id": "44",
+        "req_building_id": "9",
+        "req_tech_id": "0",
+        "req_level": "3"
+    },
+    {
+        "id": "180",
+        "obj_id": "37",
+        "req_building_id": "0",
+        "req_tech_id": "21",
+        "req_level": "3"
+    },
+    {
+        "id": "182",
+        "obj_id": "53",
+        "req_building_id": "11",
+        "req_tech_id": "0",
+        "req_level": "8"
+    },
+    {
+        "id": "184",
+        "obj_id": "53",
+        "req_building_id": "0",
+        "req_tech_id": "14",
+        "req_level": "10"
+    },
+    {
+        "id": "185",
+        "obj_id": "53",
+        "req_building_id": "0",
+        "req_tech_id": "21",
+        "req_level": "8"
+    },
+    {
+        "id": "186",
+        "obj_id": "53",
+        "req_building_id": "9",
+        "req_tech_id": "0",
+        "req_level": "10"
+    },
+    {
+        "id": "187",
+        "obj_id": "53",
+        "req_building_id": "0",
+        "req_tech_id": "9",
+        "req_level": "4"
+    },
+    {
+        "id": "188",
+        "obj_id": "13",
+        "req_building_id": "0",
+        "req_tech_id": "10",
+        "req_level": "7"
+    },
+    {
+        "id": "189",
+        "obj_id": "13",
+        "req_building_id": "0",
+        "req_tech_id": "9",
+        "req_level": "6"
+    },
+    {
+        "id": "190",
+        "obj_id": "13",
+        "req_building_id": "0",
+        "req_tech_id": "8",
+        "req_level": "7"
+    },
+    {
+        "id": "191",
+        "obj_id": "6",
+        "req_building_id": "0",
+        "req_tech_id": "9",
+        "req_level": "6"
+    },
+    {
+        "id": "193",
+        "obj_id": "2",
+        "req_building_id": "0",
+        "req_tech_id": "5",
+        "req_level": "1"
+    },
+    {
+        "id": "195",
+        "obj_id": "57",
+        "req_building_id": "9",
+        "req_tech_id": "0",
+        "req_level": "5"
+    },
+    {
+        "id": "196",
+        "obj_id": "57",
+        "req_building_id": "0",
+        "req_tech_id": "4",
+        "req_level": "3"
+    },
+    {
+        "id": "197",
+        "obj_id": "58",
+        "req_building_id": "8",
+        "req_tech_id": "0",
+        "req_level": "4"
+    },
+    {
+        "id": "348",
+        "obj_id": "60",
+        "req_building_id": "0",
+        "req_tech_id": "15",
+        "req_level": "4"
+    },
+    {
+        "id": "351",
+        "obj_id": "60",
+        "req_building_id": "0",
+        "req_tech_id": "20",
+        "req_level": "7"
+    },
+    {
+        "id": "349",
+        "obj_id": "60",
+        "req_building_id": "0",
+        "req_tech_id": "18",
+        "req_level": "5"
+    },
+    {
+        "id": "356",
+        "obj_id": "61",
+        "req_building_id": "0",
+        "req_tech_id": "20",
+        "req_level": "7"
+    },
+    {
+        "id": "350",
+        "obj_id": "60",
+        "req_building_id": "9",
+        "req_tech_id": "0",
+        "req_level": "9"
+    },
+    {
+        "id": "357",
+        "obj_id": "61",
+        "req_building_id": "0",
+        "req_tech_id": "5",
+        "req_level": "10"
+    },
+    {
+        "id": "358",
+        "obj_id": "61",
+        "req_building_id": "0",
+        "req_tech_id": "16",
+        "req_level": "8"
+    },
+    {
+        "id": "355",
+        "obj_id": "61",
+        "req_building_id": "9",
+        "req_tech_id": "0",
+        "req_level": "9"
+    },
+    {
+        "id": "354",
+        "obj_id": "61",
+        "req_building_id": "0",
+        "req_tech_id": "19",
+        "req_level": "4"
+    },
+    {
+        "id": "360",
+        "obj_id": "62",
+        "req_building_id": "9",
+        "req_tech_id": "0",
+        "req_level": "9"
+    },
+    {
+        "id": "362",
+        "obj_id": "62",
+        "req_building_id": "0",
+        "req_tech_id": "5",
+        "req_level": "10"
+    },
+    {
+        "id": "361",
+        "obj_id": "62",
+        "req_building_id": "0",
+        "req_tech_id": "20",
+        "req_level": "7"
+    },
+    {
+        "id": "363",
+        "obj_id": "62",
+        "req_building_id": "0",
+        "req_tech_id": "16",
+        "req_level": "8"
+    },
+    {
+        "id": "359",
+        "obj_id": "62",
+        "req_building_id": "0",
+        "req_tech_id": "7",
+        "req_level": "14"
+    },
+    {
+        "id": "214",
+        "obj_id": "63",
+        "req_building_id": "9",
+        "req_tech_id": "0",
+        "req_level": "9"
+    },
+    {
+        "id": "215",
+        "obj_id": "63",
+        "req_building_id": "0",
+        "req_tech_id": "5",
+        "req_level": "10"
+    },
+    {
+        "id": "216",
+        "obj_id": "63",
+        "req_building_id": "0",
+        "req_tech_id": "16",
+        "req_level": "8"
+    },
+    {
+        "id": "364",
+        "obj_id": "63",
+        "req_building_id": "0",
+        "req_tech_id": "20",
+        "req_level": "7"
+    },
+    {
+        "id": "218",
+        "obj_id": "63",
+        "req_building_id": "0",
+        "req_tech_id": "10",
+        "req_level": "10"
+    },
+    {
+        "id": "220",
+        "obj_id": "57",
+        "req_building_id": "11",
+        "req_tech_id": "0",
+        "req_level": "4"
+    },
+    {
+        "id": "221",
+        "obj_id": "59",
+        "req_building_id": "0",
+        "req_tech_id": "11",
+        "req_level": "12"
+    },
+    {
+        "id": "222",
+        "obj_id": "59",
+        "req_building_id": "9",
+        "req_tech_id": "0",
+        "req_level": "9"
+    },
+    {
+        "id": "365",
+        "obj_id": "59",
+        "req_building_id": "0",
+        "req_tech_id": "20",
+        "req_level": "7"
+    },
+    {
+        "id": "224",
+        "obj_id": "59",
+        "req_building_id": "0",
+        "req_tech_id": "16",
+        "req_level": "8"
+    },
+    {
+        "id": "225",
+        "obj_id": "64",
+        "req_building_id": "0",
+        "req_tech_id": "20",
+        "req_level": "7"
+    },
+    {
+        "id": "367",
+        "obj_id": "64",
+        "req_building_id": "0",
+        "req_tech_id": "5",
+        "req_level": "10"
+    },
+    {
+        "id": "227",
+        "obj_id": "64",
+        "req_building_id": "9",
+        "req_tech_id": "0",
+        "req_level": "9"
+    },
+    {
+        "id": "228",
+        "obj_id": "64",
+        "req_building_id": "0",
+        "req_tech_id": "16",
+        "req_level": "8"
+    },
+    {
+        "id": "229",
+        "obj_id": "65",
+        "req_building_id": "0",
+        "req_tech_id": "17",
+        "req_level": "5"
+    },
+    {
+        "id": "369",
+        "obj_id": "65",
+        "req_building_id": "0",
+        "req_tech_id": "5",
+        "req_level": "10"
+    },
+    {
+        "id": "231",
+        "obj_id": "65",
+        "req_building_id": "0",
+        "req_tech_id": "20",
+        "req_level": "7"
+    },
+    {
+        "id": "232",
+        "obj_id": "65",
+        "req_building_id": "0",
+        "req_tech_id": "16",
+        "req_level": "8"
+    },
+    {
+        "id": "233",
+        "obj_id": "65",
+        "req_building_id": "9",
+        "req_tech_id": "0",
+        "req_level": "9"
+    },
+    {
+        "id": "308",
+        "obj_id": "14",
+        "req_building_id": "0",
+        "req_tech_id": "4",
+        "req_level": "5"
+    },
+    {
+        "id": "373",
+        "obj_id": "66",
+        "req_building_id": "0",
+        "req_tech_id": "5",
+        "req_level": "10"
+    },
+    {
+        "id": "236",
+        "obj_id": "66",
+        "req_building_id": "0",
+        "req_tech_id": "20",
+        "req_level": "7"
+    },
+    {
+        "id": "237",
+        "obj_id": "66",
+        "req_building_id": "0",
+        "req_tech_id": "16",
+        "req_level": "8"
+    },
+    {
+        "id": "238",
+        "obj_id": "66",
+        "req_building_id": "9",
+        "req_tech_id": "0",
+        "req_level": "9"
+    },
+    {
+        "id": "376",
+        "obj_id": "67",
+        "req_building_id": "0",
+        "req_tech_id": "25",
+        "req_level": "15"
+    },
+    {
+        "id": "380",
+        "obj_id": "66",
+        "req_building_id": "0",
+        "req_tech_id": "9",
+        "req_level": "10"
+    },
+    {
+        "id": "378",
+        "obj_id": "67",
+        "req_building_id": "0",
+        "req_tech_id": "20",
+        "req_level": "7"
+    },
+    {
+        "id": "242",
+        "obj_id": "67",
+        "req_building_id": "9",
+        "req_tech_id": "0",
+        "req_level": "9"
+    },
+    {
+        "id": "377",
+        "obj_id": "67",
+        "req_building_id": "0",
+        "req_tech_id": "16",
+        "req_level": "8"
+    },
+    {
+        "id": "244",
+        "obj_id": "68",
+        "req_building_id": "0",
+        "req_tech_id": "3",
+        "req_level": "2"
+    },
+    {
+        "id": "245",
+        "obj_id": "68",
+        "req_building_id": "0",
+        "req_tech_id": "5",
+        "req_level": "2"
+    },
+    {
+        "id": "408",
+        "obj_id": "69",
+        "req_building_id": "9",
+        "req_tech_id": "0",
+        "req_level": "5"
+    },
+    {
+        "id": "247",
+        "obj_id": "69",
+        "req_building_id": "11",
+        "req_tech_id": "0",
+        "req_level": "6"
+    },
+    {
+        "id": "248",
+        "obj_id": "69",
+        "req_building_id": "0",
+        "req_tech_id": "5",
+        "req_level": "5"
+    },
+    {
+        "id": "249",
+        "obj_id": "69",
+        "req_building_id": "0",
+        "req_tech_id": "9",
+        "req_level": "4"
+    },
+    {
+        "id": "250",
+        "obj_id": "69",
+        "req_building_id": "0",
+        "req_tech_id": "25",
+        "req_level": "2"
+    },
+    {
+        "id": "251",
+        "obj_id": "70",
+        "req_building_id": "0",
+        "req_tech_id": "20",
+        "req_level": "5"
+    },
+    {
+        "id": "252",
+        "obj_id": "70",
+        "req_building_id": "9",
+        "req_tech_id": "0",
+        "req_level": "3"
+    },
+    {
+        "id": "253",
+        "obj_id": "70",
+        "req_building_id": "0",
+        "req_tech_id": "16",
+        "req_level": "2"
+    },
+    {
+        "id": "372",
+        "obj_id": "72",
+        "req_building_id": "0",
+        "req_tech_id": "5",
+        "req_level": "10"
+    },
+    {
+        "id": "275",
+        "obj_id": "71",
+        "req_building_id": "9",
+        "req_tech_id": "0",
+        "req_level": "1"
+    },
+    {
+        "id": "371",
+        "obj_id": "72",
+        "req_building_id": "0",
+        "req_tech_id": "20",
+        "req_level": "7"
+    },
+    {
+        "id": "370",
+        "obj_id": "72",
+        "req_building_id": "0",
+        "req_tech_id": "12",
+        "req_level": "5"
+    },
+    {
+        "id": "279",
+        "obj_id": "72",
+        "req_building_id": "0",
+        "req_tech_id": "16",
+        "req_level": "8"
+    },
+    {
+        "id": "268",
+        "obj_id": "72",
+        "req_building_id": "9",
+        "req_tech_id": "0",
+        "req_level": "9"
+    },
+    {
+        "id": "274",
+        "obj_id": "71",
+        "req_building_id": "0",
+        "req_tech_id": "4",
+        "req_level": "1"
+    },
+    {
+        "id": "280",
+        "obj_id": "68",
+        "req_building_id": "9",
+        "req_tech_id": "0",
+        "req_level": "1"
+    },
+    {
+        "id": "281",
+        "obj_id": "9",
+        "req_building_id": "9",
+        "req_tech_id": "0",
+        "req_level": "1"
+    },
+    {
+        "id": "282",
+        "obj_id": "79",
+        "req_building_id": "0",
+        "req_tech_id": "5",
+        "req_level": "4"
+    },
+    {
+        "id": "286",
+        "obj_id": "82",
+        "req_building_id": "0",
+        "req_tech_id": "5",
+        "req_level": "5"
+    },
+    {
+        "id": "287",
+        "obj_id": "81",
+        "req_building_id": "0",
+        "req_tech_id": "5",
+        "req_level": "2"
+    },
+    {
+        "id": "288",
+        "obj_id": "80",
+        "req_building_id": "0",
+        "req_tech_id": "5",
+        "req_level": "1"
+    },
+    {
+        "id": "289",
+        "obj_id": "83",
+        "req_building_id": "24",
+        "req_tech_id": "0",
+        "req_level": "3"
+    },
+    {
+        "id": "290",
+        "obj_id": "83",
+        "req_building_id": "0",
+        "req_tech_id": "11",
+        "req_level": "15"
+    },
+    {
+        "id": "291",
+        "obj_id": "83",
+        "req_building_id": "0",
+        "req_tech_id": "20",
+        "req_level": "7"
+    },
+    {
+        "id": "292",
+        "obj_id": "83",
+        "req_building_id": "0",
+        "req_tech_id": "25",
+        "req_level": "3"
+    },
+    {
+        "id": "304",
+        "obj_id": "1",
+        "req_building_id": "0",
+        "req_tech_id": "5",
+        "req_level": "1"
+    },
+    {
+        "id": "305",
+        "obj_id": "70",
+        "req_building_id": "0",
+        "req_tech_id": "21",
+        "req_level": "3"
+    },
+    {
+        "id": "311",
+        "obj_id": "80",
+        "req_building_id": "9",
+        "req_tech_id": "0",
+        "req_level": "1"
+    },
+    {
+        "id": "312",
+        "obj_id": "80",
+        "req_building_id": "0",
+        "req_tech_id": "12",
+        "req_level": "3"
+    },
+    {
+        "id": "315",
+        "obj_id": "81",
+        "req_building_id": "9",
+        "req_tech_id": "0",
+        "req_level": "3"
+    },
+    {
+        "id": "316",
+        "obj_id": "81",
+        "req_building_id": "0",
+        "req_tech_id": "12",
+        "req_level": "4"
+    },
+    {
+        "id": "317",
+        "obj_id": "82",
+        "req_building_id": "9",
+        "req_tech_id": "0",
+        "req_level": "8"
+    },
+    {
+        "id": "318",
+        "obj_id": "82",
+        "req_building_id": "0",
+        "req_tech_id": "19",
+        "req_level": "9"
+    },
+    {
+        "id": "321",
+        "obj_id": "82",
+        "req_building_id": "0",
+        "req_tech_id": "16",
+        "req_level": "4"
+    },
+    {
+        "id": "322",
+        "obj_id": "82",
+        "req_building_id": "0",
+        "req_tech_id": "25",
+        "req_level": "3"
+    },
+    {
+        "id": "323",
+        "obj_id": "82",
+        "req_building_id": "0",
+        "req_tech_id": "12",
+        "req_level": "8"
+    },
+    {
+        "id": "324",
+        "obj_id": "79",
+        "req_building_id": "9",
+        "req_tech_id": "0",
+        "req_level": "6"
+    },
+    {
+        "id": "325",
+        "obj_id": "79",
+        "req_building_id": "0",
+        "req_tech_id": "3",
+        "req_level": "5"
+    },
+    {
+        "id": "327",
+        "obj_id": "79",
+        "req_building_id": "0",
+        "req_tech_id": "12",
+        "req_level": "6"
+    },
+    {
+        "id": "331",
+        "obj_id": "24",
+        "req_building_id": "0",
+        "req_tech_id": "3",
+        "req_level": "15"
+    },
+    {
+        "id": "332",
+        "obj_id": "24",
+        "req_building_id": "0",
+        "req_tech_id": "21",
+        "req_level": "8"
+    },
+    {
+        "id": "337",
+        "obj_id": "94",
+        "req_building_id": "0",
+        "req_tech_id": "6",
+        "req_level": "8"
+    },
+    {
+        "id": "338",
+        "obj_id": "94",
+        "req_building_id": "9",
+        "req_tech_id": "0",
+        "req_level": "9"
+    },
+    {
+        "id": "339",
+        "obj_id": "94",
+        "req_building_id": "0",
+        "req_tech_id": "9",
+        "req_level": "10"
+    },
+    {
+        "id": "340",
+        "obj_id": "94",
+        "req_building_id": "0",
+        "req_tech_id": "16",
+        "req_level": "9"
+    },
+    {
+        "id": "341",
+        "obj_id": "26",
+        "req_building_id": "0",
+        "req_tech_id": "21",
+        "req_level": "10"
+    },
+    {
+        "id": "342",
+        "obj_id": "26",
+        "req_building_id": "0",
+        "req_tech_id": "20",
+        "req_level": "9"
+    },
+    {
+        "id": "343",
+        "obj_id": "26",
+        "req_building_id": "11",
+        "req_tech_id": "0",
+        "req_level": "9"
+    },
+    {
+        "id": "346",
+        "obj_id": "95",
+        "req_building_id": "0",
+        "req_tech_id": "16",
+        "req_level": "2"
+    },
+    {
+        "id": "347",
+        "obj_id": "95",
+        "req_building_id": "0",
+        "req_tech_id": "10",
+        "req_level": "8"
+    },
+    {
+        "id": "352",
+        "obj_id": "60",
+        "req_building_id": "0",
+        "req_tech_id": "5",
+        "req_level": "10"
+    },
+    {
+        "id": "353",
+        "obj_id": "60",
+        "req_building_id": "0",
+        "req_tech_id": "16",
+        "req_level": "8"
+    },
+    {
+        "id": "366",
+        "obj_id": "59",
+        "req_building_id": "0",
+        "req_tech_id": "5",
+        "req_level": "10"
+    },
+    {
+        "id": "368",
+        "obj_id": "64",
+        "req_building_id": "0",
+        "req_tech_id": "8",
+        "req_level": "10"
+    },
+    {
+        "id": "379",
+        "obj_id": "67",
+        "req_building_id": "0",
+        "req_tech_id": "5",
+        "req_level": "10"
+    },
+    {
+        "id": "404",
+        "obj_id": "44",
+        "req_building_id": "0",
+        "req_tech_id": "5",
+        "req_level": "5"
+    },
+    {
+        "id": "405",
+        "obj_id": "97",
+        "req_building_id": "9",
+        "req_tech_id": "0",
+        "req_level": "3"
+    },
+    {
+        "id": "406",
+        "obj_id": "97",
+        "req_building_id": "0",
+        "req_tech_id": "16",
+        "req_level": "2"
+    },
+    {
+        "id": "407",
+        "obj_id": "97",
+        "req_building_id": "0",
+        "req_tech_id": "20",
+        "req_level": "2"
+    },
+    {
+        "id": "409",
+        "obj_id": "79",
+        "req_building_id": "0",
+        "req_tech_id": "8",
+        "req_level": "5"
+    }
+]

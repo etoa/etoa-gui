@@ -1,0 +1,121 @@
+[
+    {
+        "text_id": "1",
+        "text_tutorial_id": "1",
+        "text_title": "Willkommen",
+        "text_content": "Willkommen, werter neuer Imperator in den Galaxien Andromedas!\r\n\r\nDer Grundgedanke des Spieles (wie bei fast allen Aufbau-Browsergames) liegt darin, durch Rohstoffe Geb\u00e4ude und Schiffe zu bauen. Bei EtoA jedoch sind die M\u00f6glichkeiten ungleich gr\u00f6\u00dfer und vielf\u00e4ltiger. Dieses Tutorial soll euch ein wenig Entscheidungshilfe geben, erfolgreich den Wirren des Universums zu trotzen.\r\n\r\nDie Gliederung ist wie folgt:\r\n\r\n- Einf\u00fchrung in die Rohstoffe\r\n- Einf\u00fchrung in grunds\u00e4tzliche Spielweisen\r\n- Entscheidungshilfe zu den Rassen\r\n- Entscheidungshilfe zu den Planeten\r\n- Grunds\u00e4tzliches zum Aufbau deines Startplaneten\r\n\r\n",
+        "text_step": "0"
+    },
+    {
+        "text_id": "2",
+        "text_tutorial_id": "1",
+        "text_title": "Die Rohstoffe (1\/2)",
+        "text_content": "Es gibt in EtoA f\u00fcnf verschiedene Arten von Rohstoffen:\r\n\r\n[list][*][b]Titan[\/b], Grundstoff zum Bau von fast Allem. Wird mit fortschreitendem Spiel zum Massenprodukt.[*][b]Silizium[\/b], f\u00fcr Forschung und Schiffe. Zu Beginn eher rar, wird aber im weiteren Verlauf auch zum Massenprodukt.[*][b]PVC[\/b], Man meint man hat genug, aber wenn man es dann braucht (vor allem f\u00fcr den Schiffsbau) hat man immer zu wenig.[*][b]Tritium[\/b], als Treibstoff \u00fcberlebensnotwendig. Aber auch zur Forschung wichtig. Ist selten reichlich vorhanden, auch im sp\u00e4teren Spiel keine Massenware. Gut zum Handeln.[*][b]Nahrung[\/b], wichtig zum schnelleren Bauen von Minen, Schiffen, Forschung und nat\u00fcrlich zum Verschicken von Schiffen. Denn ohne Nahrung wird kein Pilot ein Schiff besteigen.[\/list]\r\nDiese Rohstoffe k\u00f6nnen grunds\u00e4tzlich auf jedem Planeten produziert werden. Durch geschickte Wahl des Sternensystems und des Planeten kann die Produktion einiger Rohstoffe stark erh\u00f6ht werden, allerdings meist zu Lasten eines anderen Rohstoffes. Genaueres liefert die Hilfe.",
+        "text_step": "1"
+    },
+    {
+        "text_id": "3",
+        "text_tutorial_id": "1",
+        "text_title": "Die Rohstoffe (2\/2)",
+        "text_content": "Mit den passenden Schiffen kann man Rohstoffe auch im Weltall sammeln, grunds\u00e4tzlich kann jede Rasse sammeln gehen. Einige Rassen haben jedoch Spezialschiffe, welche daf\u00fcr besser geeignet sind. Auch hier hilft die Hilfe.\r\nSammeln kann man\r\n[list][*][b]Asteroiden[\/b] (Titan, Silizium, PVC)[*][b]Sternennebel[\/b] (Silizium)[*][b]Gasplaneten[\/b] (Tritium)[*][b]Tr\u00fcmmerfelder[\/b] durch K\u00e4mpfe (Titan, Silizium, PVC)[\/list]",
+        "text_step": "2"
+    },
+    {
+        "text_id": "4",
+        "text_tutorial_id": "1",
+        "text_title": "Die grunds\u00e4tzlichen Spielweisen",
+        "text_content": "Das ganze Sammeln ist nat\u00fcrlich zeitaufwendig und reicht auf keinen Fall aus um einen Account ausbauen zu k\u00f6nnen. Dies bringt uns zum n\u00e4chsten Teil des Tutorials:\r\n\r\nEs gibt drei grunds\u00e4tzliche Spielweisen: der Miner, der Fleeter und der H\u00e4ndler.\r\n\r\nNat\u00fcrlich kann man (und wird man wohl) einen Mix spielen, je nachdem wieviel Zeit man hat oder wo die eigenen Ziele liegen.",
+        "text_step": "3"
+    },
+    {
+        "text_id": "18",
+        "text_tutorial_id": "1",
+        "text_title": "Sterne und Planeten (2\/2)",
+        "text_content": "Grunds\u00e4tzlich zu empfehlen ist ein gelber Stern, da er folgende Boni mitbringt:\r\n\r\n+35% Titan\r\n+30% Silizium\r\n+10% PVC\r\n\r\nDazu nehmen wir evtl. einen Eisplaneten:\r\n\r\n+10% Titan\r\n+30% Silizium\r\n+25% PVC\r\n+30% Tritium\r\n\r\nDie Kombination Gelb\/Eis ergibt somit:\r\n\r\n+45% Titan\r\n+60% Silizium\r\n+35% PVC\r\n+30% Tritium\r\n\r\nDamit l\u00e4\u00dft sich zu Beginn ganz gut leben. Nicht verschweigen darf man jedoch den Malus von -25% auf Nahrung und die um 10% erh\u00f6hte Bauzeit. Zu Beginn sind diese Werte vernachl\u00e4ssigbar, im Laufe des Spieles kann das ganz anders aussehen.\r\nFerner kann man durch die Wahl der Rasse die Werte ebenfalls noch ver\u00e4ndern. Nimmt man zb den Cardassianer mit +60% Nahrung bekommt man einen Bonus von +35% Nahrung bei obiger Kombo. Allerdings auch 10% weniger an Titan\/Silizium. Und man hat die Mali\/Boni der Rasse dann bei jedem Planeten.\r\n",
+        "text_step": "9"
+    },
+    {
+        "text_id": "5",
+        "text_tutorial_id": "1",
+        "text_title": "Die Wahl der Rasse",
+        "text_content": "Sofern ihr euch jetzt in einem der Profile wiedergefunden habt, solltet ihr euch der Rassenwahl zuwenden.\r\n\r\nEs gibt in EtoA zehn verschiedene Rassen, alle haben einen Bonus oder Malus auf die Produktion bestimmter Rohstoffe. Eine Tabelle findest du in der Hilfe unter Rassen. Alternativ gibt es hier: [url=https:\/\/forum.etoa.ch\/index.php?page=Thread&postID=109262#post109262]im Forum[\/url] einen Rechner, der dich dabei unterst\u00fctzen kann. Ferner hat jede Rasse spezielle Schiffe, welche nur von dieser Rasse gebaut werden k\u00f6nnen. Auch hier bitte die Hilfe aufrufen.\r\n\r\nEine kleine Entscheidungshilfe mit Beispiel:\r\n\r\nLiegt einem eher die Spielweise des H\u00e4ndlers, sollte man eine Rasse w\u00e4hlen, die einen Bonus auf einen eher seltenen Rohstoff hat oder die Schiffe besitzt, mit denen man effektiver im Weltall sammeln gehen kann. (Bsp. Vorgone, Terraner)\r\nIst man eher der Fleeter, sollte man eine Rasse w\u00e4hlen, die schnelle\/g\u00fcnstige oder Schiffe mit Spezialfunktionen bauen kann. (Bsp. Minbari, Cardassianer)\r\nAls Miner ist evtl. die Rasse Serrakin interessant, da sie effektive Verteidigungsanlagen bauen kann. Oder man sucht eine Rasse mit hohem Silizium\/Titan Bonus.\r\nNat\u00fcrlich gibt es f\u00fcr jeden Zweck auch andere Rassen, hier sollte jeder schauen welche Rasse ihm am besten liegt, um seine Spielweise am ehesten zu unterst\u00fctzen (Grunds\u00e4tzlich ist es am Anfang aber eh ein Ausprobieren und nach Bauchgef\u00fchl spielen). Durch geschicktes Kombinieren der Rasse und der Planeten kann man sogar gute Rohstoff-Boni + besondere Schiffe bekommen. Zwar wird man nie ein Top-Fleeter mit Top-Boni sein, aber man kann auf jeden Fall n\u00e4her herankommen.",
+        "text_step": "7"
+    },
+    {
+        "text_id": "6",
+        "text_tutorial_id": "1",
+        "text_title": "Sterne und Planeten (1\/2)",
+        "text_content": "Das bringt uns zum n\u00e4chsten Punkt f\u00fcr einen erfolgreichen Einstieg: Die Sterne und Planeten\r\n\r\nIn EtoA gibt es 7 Arten von Sternen und 6 Arten von Planeten. Ein Sternensystem kann verschiedene Planeten beinhalten. Dabei wird jeder Planet den Einfl\u00fcssen des Sternes ausgesetzt, dh. Die Boni\/Mali des Sternes werden in die Berechnung der Boni\/Mali der Planeten im Sternensystem mit einbezogen.\r\nJedes Imperium kann aus max. 15 Planeten bestehen. Jeder Planet geh\u00f6rt dir alleine. Welche Kombination du dir im weiteren Verlauf aussuchst und besiedelst h\u00e4ngt von deiner Spielweise ab. So kann man zb. die Kolonien nahe beieinander legen (kurze Flugzeit f\u00fcr Ressourcen-Transport), oder man nimmt nur eine Kombo und muss dann vll. weiter fliegen weil es diese nicht \u00fcberall gibt.\r\n\r\nViel entscheidender ist die Wahl der Startkombination, auch wenn sie vielleicht nicht die Optimale f\u00fcr die weitere Spielweise ist. Ausgleichen kann man sie ja durch die Kolonien.\r\nGerade als Neuling solltest du eine Kombination ausw\u00e4hlen, die es dir erm\u00f6glicht, z\u00fcgig deinen Planeten ausbauen zu k\u00f6nnen. Boni auf Titan und Silizium sind zu Beginn sehr wichtig. Aber auch Tritium sollte nicht vergessen werden, denn ohne Treibstoff fliegt auch kein Besiedlungsschiff.\r\nEher nebens\u00e4chlich sind zu Beginn Bau- bzw. Forschungs-Zeit Boni. Eine Tabelle findest du in der Hilfe. ",
+        "text_step": "8"
+    },
+    {
+        "text_id": "7",
+        "text_tutorial_id": "1",
+        "text_title": "Deine Entscheidung!",
+        "text_content": "Hier nochmals eine Zusammenfassung der wichtigen Fragen:\r\n[list][*]Wieviel Zeit will\/kann ich aufbringen[*]Welche Spielweise liegt mir am ehesten[*]Welche Rasse w\u00e4hle ich daf\u00fcr (Schiffe, Ressourcen)[*]Welche Stern\/Planeten-Kombination unterst\u00fctzt meine Spielweise und kann evtl. Nachteile meiner Rasse ausgleichen.[\/list]\r\nNeulingen ist angeraten, den Startplaneten so zu w\u00e4hlen das kein Malus bei Titan oder Silizium vorhanden ist. Bei der Wahl der Kolonien kann das wieder anders aussehen.\r\n\r\nViel Erfolg, mein Imperator, m\u00f6ge dein Reich gro\u00df und m\u00e4chtig werden und lange bestehen !\r\n\r\nDein EtoA-Team.",
+        "text_step": "10"
+    },
+    {
+        "text_id": "8",
+        "text_tutorial_id": "2",
+        "text_title": "Auf gehts!",
+        "text_content": "Du hast deine Kombo gefunden? Dann geht es hier weiter mit einer kleinen Anleitung zu einem erfolgreichen Start.\r\n\r\nWICHTIG: Solltest du aus Versehen die falsche Kombination ausgew\u00e4hlt haben und hast du noch nichts darauf gebaut melde es einem Administrator. Er kann dir vll aus dieser misslichen Lage heraus helfen. Das ist auf jeden Fall besser als mit einer Kombination weiter zu spielen die schlechte Startm\u00f6glichkeiten hat.\r\n",
+        "text_step": "0"
+    },
+    {
+        "text_id": "9",
+        "text_tutorial_id": "2",
+        "text_title": "Ressourcen",
+        "text_content": "Grundstoffe sind [b]Titan[\/b](Tit) und [b]Silizium[\/b](Sil). Weiterf\u00fchrend kommt [b]PVC[\/b] dazu, am Ende ben\u00f6tigt man [b]Tritium[\/b](Trit). [b]Nahrung[\/b](Nah) dient der Bauzeitverk\u00fcrzung und wird zum Fliegen ben\u00f6tigt. Nebenbei ben\u00f6tigt jede Mine auch [b]Energie[\/b]. Man muss also auch diese Sparte mit ausbauen.\r\n\r\nJede Ressource baut auf die andere auf. Ohne Tit\/Sili kein pvc. Ohne pvc kein Trit. Ohne Trit keine Besiedlungsschiffe.\r\nDaher ist es gerade zu Beginn sehr wichtig mit den Ressourcen sparsam umzugehen und sie sinnvoll zu verbauen.",
+        "text_step": "1"
+    },
+    {
+        "text_id": "10",
+        "text_tutorial_id": "2",
+        "text_title": "Die Baureihenfolge",
+        "text_content": "Hier scheiden sich die Geister. Jeder Spieler wird eine andere Vorgehensweise haben die ihn am ehesten zu seinem Ziel f\u00fchrt, welches er sich zum Ziel gesetzt hat. (Profil) Auch die Boni sind ein bedeutender Faktor. Daher folgt hier eine allgemeing\u00fcltige Vorgehensweise.\r\n\r\nZu Beginn habt ihr einen Grundstock an allen Ressourcen die es euch erm\u00f6glichen soweit bauen zu k\u00f6nnen, dass ihr Tit\/Sil\/PVC selbstst\u00e4ndig produzieren k\u00f6nnt.\r\n[list][*]Zuerst Titan- und Silizium-Minen ausbauen. Wobei hier zuerst Titan, danach Sili. Sie sollten immer 2 Stufen Unterschied haben. Bsp: Titan 5, Sili 3[*]Bei 5\/3 solltet ihr an die Grenze eurer Energie gesto\u00dfen sein. Daher mu\u00df jetzt ein Windkraftwerk gebaut werden. Baut dieses aber immer erst wenn die Energie nahe bei 0 ist. Das gilt auch f\u00fcr die weiteren Stufen.[*]Nach dem Kraftwerk sollte die PVC-Produktion um 1-2 Stufen erh\u00f6ht werden, je nachdem wieviel tit\/sil \u00fcber ist. Ohne PVC gibt es keine Kraftwerke. Ohne Kraftwerke keine Energie. Ohne Energie wird die Produktion s\u00e4mtlicher Ressourcen gedrosselt.[*]Sobald ihr Wind auf Stufe 5 habt k\u00f6nnt ihr mit dem Bau von Tritium-Anlagen beginnen. Dies sollte auch direkt geschehen denn ohne Trit keine Forschung, ohne Forschung keine Antriebe, ohne Antriebe kein Besiedlungsschiff. Oder aber es dauert ewig, weil ihr zu sp\u00e4t mit dem Ausbau von Trit begonnen habt.[*]Bew\u00e4hrt hat sich auch, fr\u00fch die Nahrung auf Stufe 2 oder 3 zu bringen, wenn man Ress \u00fcber hat. Man braucht sie zwar nicht zu Beginn, aber sp\u00e4ter kann man vll schneller forschen um sein Besiedlungsschiff zu bauen.[*]Sollte eure Bev\u00f6lkerung keinen Platz mehr zum Wachsen haben, baut das Wohnmodul aus. Hier reichen aber 2 Stufen locker aus.[*]Sinnlos ist das Bauen von Speichern. Zu Beginn werdet ihr immer zuwenig als zuviel Ressourcen haben.[\/list]\r\nNun sollte eure Rohstoffproduktion auf soliden F\u00fc\u00dfen stehen.",
+        "text_step": "2"
+    },
+    {
+        "text_id": "11",
+        "text_tutorial_id": "2",
+        "text_title": "Verteidigung",
+        "text_content": "Leider gibt es auch in EtoA Spieler, die nach euren Ressourcen trachten. Daher ist es wichtig, nach ca. 48-60h eine Verteidigungsanlage auf eurem Planeten aufgestellt zu haben. Dazu ben\u00f6tigt ihr eine [b]Waffenfabrik[\/b] und eine [b]Spica Flakkanone[\/b]. Beides muss in der Ressourcenplanung und somit beim Ausbau bedacht werden.",
+        "text_step": "3"
+    },
+    {
+        "text_id": "12",
+        "text_tutorial_id": "2",
+        "text_title": "Schiffe",
+        "text_content": "Sobald die Voraussetzungen f\u00fcr den Bau von Schiffen da sind, baut euch einen [b]AURIGA Explorer[\/b], mit dem ihr die Sternenkarte aufdecken k\u00f6nnt. So findet ihr die passenden Kombos f\u00fcr euer TAURUS Besiedlungsschiff, das Ziel eurer Bem\u00fchungen.\r\nAllerdings braucht es daf\u00fcr eine Schiffswerft, eine Flottenkontrolle und einen Ionenantrieb welcher in einem Forschungslabor erforscht werden muss.\r\n\r\nUm dies alles sinnvoll zu erreichen und auch um z\u00fcgig [b]TAURUS[\/b] bauen zu k\u00f6nnen hat sich folgender Ausbau bew\u00e4hrt:\r\n\r\nTitan 11(+1)\r\nSilizium 11(+1)\r\nPVC 10(+1)\r\nTritium 8(+1)\r\n\r\nJe nach Rasse\/Stern\/Planeten-Kombo kann das nat\u00fcrlich anders aussehen. So wird einem Rigelianer Sil 9 reichen, braucht aber tit 12 oder 13.",
+        "text_step": "4"
+    },
+    {
+        "text_id": "13",
+        "text_tutorial_id": "2",
+        "text_title": "Abschluss",
+        "text_content": "Die richtige Kombo ist gefunden? Das 1. TAURUS ist unterwegs? Hoffentlich habt ihr nicht vergessen Tit\/Sili zum Bau von Minen sowie soviel PVC mitzuschicken damit ihr Wind 3 bauen k\u00f6nnt. Denn ohne Wind 3 keine PVC-Fabrik, ohne PVC kein Kraftwerke, ohne Kraftwerk keine Ressourcen.....ihr kennt das ja.\r\n\r\nPVC ist dabei? Dann alles Gute und viel Gl\u00fcck beim Vergr\u00f6\u00dfern deines Einflussbereiches, werter Imperator.\r\n\r\nDein EtoA- Team",
+        "text_step": "5"
+    },
+    {
+        "text_id": "15",
+        "text_tutorial_id": "1",
+        "text_title": "Der Miner",
+        "text_content": "Der [b]Miner[\/b] spielt sein Spiel gem\u00fctlich und lebt fast ausschlie\u00dflich von seiner eigenen Ressourcen-Produktion. Nebenbei wird er auch im Weltall Ressourcen sammeln gehen. Dabei werden die Ressourcen meist in gr\u00f6\u00dfere Minen investiert. Nur ein kleiner Teil ihrer Ressourcen wandert in Schiffe oder Verteidigung. Vor dem Miner braucht man sich grunds\u00e4tzlich nicht zu f\u00fcrchten, jedoch sollte man nicht denken, es seien leichte Opfer, denn sie haben oft Freunde unter den 24\/7 Spielern (st\u00e4ndig online); welche ihnen gerne helfen. Oder sie haben sich einer Allianz angeschlossen, die sie besch\u00fctzen kann.\r\n\r\n[i]Zeitaufwand: Gering\/Mittel[\/i]",
+        "text_step": "4"
+    },
+    {
+        "text_id": "16",
+        "text_tutorial_id": "1",
+        "text_title": "Der Fleeter",
+        "text_content": "Der [b]Fleeter[\/b] geh\u00f6rt zu den aggressiven Spielern in EtoA. Er deckt seinen zus\u00e4tzlichen Bedarf an Ressourcen durch Raiden (Stehlen von Ressourcen) oder aber durch K\u00e4mpfe mit anderen Spielern. Daf\u00fcr wandert ein Gro\u00dfteil seiner Produktion in Schiffe. Der Vorteil ist dabei die abschreckende Wirkung einer gro\u00dfen Flotte. (Der Nachteil ist, wenn die Flotte mal zerst\u00f6rt werden sollte, ist es f\u00fcr ihn wesentlich schwieriger, wieder an neue Flotte zu kommen, da seine Eigen-Produktion an Ressourcen nicht ausreicht). Das Einzige, das gegen den Fleeter hilft, ist Ressourcen und Schiffe in Sicherheit zu bringen (Saven: d.h. seine Schiffe beispielsweise \u00fcber Nacht auf Flug zu schicken) oder ihm mittels einer Verteidigung, welche ihm ordentliche Verluste beibringt, die Lust zu nehmen. Sollte man \u00f6fters von dem gleichen Fleeter geraidet werden, kann es durchaus helfen, eine freundliche Anfrage zu schicken. Meist wird darauf positiv reagiert.\r\n\r\n[i]Zeitaufwand: Hoch[\/i]",
+        "text_step": "5"
+    },
+    {
+        "text_id": "17",
+        "text_tutorial_id": "1",
+        "text_title": "Der H\u00e4ndler",
+        "text_content": "Der [b]H\u00e4ndler[\/b] hat sich auf das Handeln von Waren und Schiffen spezialisiert. Er baut seine Markpl\u00e4tze hoch aus, um immer genug gro\u00dfe oder kleine Angebote in den Marktplatz stellen zu k\u00f6nnen. Er ist meistens ein ruhiger Geselle, der sein Ressourcen-Extra mit dem Verkauf von Waren realisiert. Hier ist die Wahl der Rasse ein entscheidender Faktor. Nahrung oder Tritium oder PVC sind gern genommene Rohstoffe, auch einige Schiffe lassen sich gut verkaufen, sei es, sie sind schnell oder haben eine Spezialfunktion. Mehr dazu findet ihr in der Hilfe.\r\n\r\n[i]Zeitaufwand Mittel[\/i]",
+        "text_step": "6"
+    }
+]

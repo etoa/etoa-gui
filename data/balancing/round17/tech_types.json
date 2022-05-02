@@ -1,0 +1,26 @@
+[
+    {
+        "type_id": "1",
+        "type_name": "Antriebstechniken",
+        "type_order": "1",
+        "type_color": "#ffffff"
+    },
+    {
+        "type_id": "2",
+        "type_name": "Kriegstechnologien",
+        "type_order": "2",
+        "type_color": "#ffffff"
+    },
+    {
+        "type_id": "4",
+        "type_name": "Allgemeine Technologien",
+        "type_order": "0",
+        "type_color": "#ffffff"
+    },
+    {
+        "type_id": "3",
+        "type_name": "Hi - Technologien",
+        "type_order": "3",
+        "type_color": "#ffffff"
+    }
+]

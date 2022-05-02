@@ -1,0 +1,12 @@
+[
+    {
+        "set_id": "5",
+        "set_name": "Standard",
+        "set_active": "1"
+    },
+    {
+        "set_id": "7",
+        "set_name": "All Objects",
+        "set_active": "0"
+    }
+]
