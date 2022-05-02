@@ -19,7 +19,6 @@
         "league/commonmark": "^2.0",
         "symfony/error-handler": "^5.4",
         "whichbrowser/parser": "^2.1",
-        "swiftmailer/swiftmailer": "^6.0",
         "symfony/lock": "^5.4",
         "symfony/flex": "^2.0",
         "symfony/monolog-bundle": "^3.7",
@@ -42,7 +41,8 @@
         "symfony/webpack-encore-bundle": "^1.13",
         "symfony/ux-live-component": "^2.0",
         "sensio/framework-extra-bundle": "^6.2",
-        "endroid/qr-code": "^4.4"
+        "endroid/qr-code": "^4.4",
+        "symfony/mailer": "^6.0"
     },
     "require-dev": {
         "ergebnis/composer-normalize": "^2.0",

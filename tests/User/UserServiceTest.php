@@ -2,16 +2,12 @@
 
 namespace EtoA\User;
 
-use EtoA\Support\Mail\MailSenderService;
 use EtoA\SymfonyWebTestCase;
-use Swift_Mailer;
 
 class UserServiceTest extends SymfonyWebTestCase
 {
     private UserService $service;
     private UserRepository $repository;
-    private MailSenderService $mailSenderService;
-    private Swift_Mailer $mailer;
 
     protected function setUp(): void
     {
@@ -19,14 +15,6 @@ class UserServiceTest extends SymfonyWebTestCase
 
         $this->service = self::getContainer()->get(UserService::class);
         $this->repository = self::getContainer()->get(UserRepository::class);
-        $this->mailSenderService = self::getContainer()->get(MailSenderService::class);
-
-        $this->mailer = $this->createMock(\Swift_Mailer::class);
-        $this->mailSenderService->setMailer($this->mailer);
-
-        $this->mailer
-            ->method('send')
-            ->willReturn(1);
     }
 
     public function testRegister(): void
