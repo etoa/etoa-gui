@@ -47,6 +47,7 @@ class RequirementRepositoryProvider
     {
         switch ($category) {
             case 's':
+            case 'sa':
                 return $this->shipRequirementRepository;
             case 'd':
                 return $this->defenseRequirementRepository;

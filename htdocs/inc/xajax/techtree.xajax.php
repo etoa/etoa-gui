@@ -1,5 +1,6 @@
 <?PHP
 
+use EtoA\Alliance\AllianceBuildingId;
 use EtoA\Building\BuildingRequirementRepository;
 use EtoA\Core\ObjectWithImage;
 use EtoA\Defense\DefenseRequirementRepository;
@@ -27,7 +28,7 @@ function reqInfo($id, $cat = 'b')
 
     /** @var \EtoA\Ship\ShipDataRepository $shipRepository */
     $shipRepository = $app[\EtoA\Ship\ShipDataRepository::class];
-    $shipNames = $shipRepository->getShipNames();
+    $shipNames = $shipRepository->getShipNames(true);
 
     /** @var \EtoA\Defense\DefenseDataRepository $defenseRepository */
     $defenseRepository = $app[\EtoA\Defense\DefenseDataRepository::class];
@@ -39,7 +40,7 @@ function reqInfo($id, $cat = 'b')
 
     /** @var \EtoA\Alliance\AllianceBuildingRepository $allianceBuildingRepository */
     $allianceBuildingRepository = $app[\EtoA\Alliance\AllianceBuildingRepository::class];
-    $allianceBuildingNames = $allianceBuildingRepository->getNames();
+    $allianceBuildings = $allianceBuildingRepository->findAll();
     //
     // Required objects
     //
@@ -59,12 +60,11 @@ function reqInfo($id, $cat = 'b')
     }
 
     // Alliance ships are not in requirements tables. The required level of the alliance shipyard is given directly in the ship details.
-    if ($cat == "sa")
-    {
-        $ship = $shipRepository->getShip($id);
-        if ($ship && $ship->allianceShipyardLevel > 0) {
-            $allianceBuildingId_shipyard = ALLIANCE_SHIPYARD_ID;
-            $items[] = array($allianceBuildingId_shipyard, $allianceBuildingNames[ALLIANCE_SHIPYARD_ID], $ship->allianceShipyardLevel, IMAGE_PATH."/abuildings/building".$allianceBuildingId_shipyard."_middle.".IMAGE_EXT, "");
+    if ($cat === "sa") {
+        $ship = $shipRepository->getShip($id, false);
+        if ($ship !== null && $ship->allianceShipyardLevel > 0 && isset($allianceBuildings[AllianceBuildingId::SHIPYARD])) {
+            $allianceShipyard = $allianceBuildings[AllianceBuildingId::SHIPYARD];
+            $items[] = [$allianceShipyard->id, $allianceShipyard->name, $ship->allianceShipyardLevel, $allianceShipyard->getImagePath(), "return false;"];
         }
     }
 
@@ -93,7 +93,7 @@ function reqInfo($id, $cat = 'b')
     } elseif ($cat == 't') {
         $img = ObjectWithImage::BASE_PATH . "/technologies/technology" . $id . "_middle.png";
         $name = $technologyNames[$id];
-    } elseif ($cat == 's') {
+    } elseif ($cat == 's' || $cat === 'sa') {
         $img = ObjectWithImage::BASE_PATH . "/ships/ship" . $id . "_middle.png";
         $name = $shipNames[$id];
     } elseif ($cat == 'd') {
@@ -123,6 +123,7 @@ function reqInfo($id, $cat = 'b')
     $technologyRequirementRepository = $app[TechnologyRequirementRepository::class];
     /** @var MissileRequirementRepository $missileRequirementRepository */
     $missileRequirementRepository = $app[MissileRequirementRepository::class];
+
     if ($cat == 'b' || $cat == 't') {
         if ($cat == 'b') {
             $buildingRequirements = $buildingRequirementRepository->getRequiredByBuilding($id);
@@ -136,6 +137,12 @@ function reqInfo($id, $cat = 'b')
             $shipRequirements = $shipRequirementRepository->getRequiredByTechnology($id);
             $technologyRequirements = $technologyRequirementRepository->getRequiredByTechnology($id);
             $missileRequirements = $missileRequirementRepository->getRequiredByTechnology($id);
+        } elseif ($cat === 'sa') {
+            $buildingRequirements = [];
+            $defenseRequirements = [];
+            $shipRequirements = [];
+            $technologyRequirements = [];
+            $missileRequirements = [];
         } else {
             throw new \InvalidArgumentException('Unknown category:' . $cat);
         }

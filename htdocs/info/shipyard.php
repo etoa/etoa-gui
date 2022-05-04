@@ -69,7 +69,7 @@ $raceNames = $raceRepository->getRaceNames();
 if (isset($_GET['id'])) {
     $sid = (int) $_GET['id'];
 
-    $ship = $shipDataRepository->getShip($sid);
+    $ship = $shipDataRepository->getShip($sid, false);
     if ($ship !== null) {
         $shipCategory = $shipCategoryRepository->getCategory($ship->catId);
         HelpUtil::breadCrumbs(array("Schiffe", "shipyard"), array($ship->name, $ship->id), 1);
@@ -229,7 +229,8 @@ if (isset($_GET['id'])) {
         echo "<div id=\"reqInfo\" style=\"width:100%;\">
             <br/><div class=\"loadingMsg\">Bitte warten...</div>
             </div>";
-        $shipCategoryAbbr = $arr['ship_alliance_shipyard_level'] > 0 ? "sa" : "s";echo '<script type="text/javascript">xajax_reqInfo(' . $ship->id . ',"'. $shipCategoryAbbr.'")</script>';
+        $shipCategoryAbbr = $ship->allianceShipyardLevel > 0 ? "sa" : "s";
+        echo '<script type="text/javascript">xajax_reqInfo(' . $ship->id . ',"'. $shipCategoryAbbr.'")</script>';
         echo "</td></tr>";
 
         tableEnd();
@@ -238,9 +239,9 @@ if (isset($_GET['id'])) {
 
     echo "<input type=\"button\" value=\"Schiff&uuml;bersicht\" onclick=\"document.location='?$link&site=$site'\" /> &nbsp; ";
     echo "<input type=\"button\" value=\"Technikbaum\" onclick=\"document.location='?page=techtree&mode=ships'\" /> &nbsp; ";
-    if ($_SESSION['lastpage'] == "haven")
+    if (($_SESSION['lastpage'] ?? null) === "haven")
         echo "<input type=\"button\" value=\"Zur&uuml;ck zum Hafen\" onclick=\"document.location='?page=haven'\" /> &nbsp; ";
-    if ($_SESSION['lastpage'] == "shipyard")
+    if (($_SESSION['lastpage'] ?? null) === "shipyard")
         echo "<input type=\"button\" value=\"Zur&uuml;ck zur Raumschiffwerft\" onclick=\"document.location='?page=shipyard'\" /> &nbsp; ";
 }
 
