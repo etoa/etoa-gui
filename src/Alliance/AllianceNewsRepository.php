@@ -26,7 +26,7 @@ class AllianceNewsRepository extends AbstractRepository
                 'now' => time(),
                 'toAllianceId' => $toAllianceId,
             ])
-            ->execute();
+            ->executeQuery();
 
         return (int) $this->getConnection()->lastInsertId();
     }
@@ -49,7 +49,7 @@ class AllianceNewsRepository extends AbstractRepository
                 'id' => $news->id,
                 'toAllianceId' => (int) $news->toAllianceId,
             ])
-            ->execute();
+            ->executeQuery();
     }
 
     /**
@@ -79,7 +79,6 @@ class AllianceNewsRepository extends AbstractRepository
         }
 
         $data = $qb
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn (array $row) => new AllianceNews($row), $data);
@@ -93,7 +92,6 @@ class AllianceNewsRepository extends AbstractRepository
         $data = $this->createQueryBuilder()
             ->select('alliance_news_id')
             ->from('alliance_news')
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn (array $row) => (int) $row['alliance_news_id'], $data);
@@ -112,7 +110,6 @@ class AllianceNewsRepository extends AbstractRepository
             ->leftJoin('n', 'alliances', 'ta', 'n.alliance_news_alliance_id=ta.alliance_id')
             ->where('alliance_news_id = :id')
             ->setParameter('id', $id)
-            ->execute()
             ->fetchAssociative();
 
         return $data !== false ? new AllianceNews($data) : null;
@@ -129,7 +126,6 @@ class AllianceNewsRepository extends AbstractRepository
                 'timestamp' => $timestamp,
                 'allianceId' => $allianceId,
             ])
-            ->execute()
             ->fetchOne();
     }
 
@@ -139,16 +135,17 @@ class AllianceNewsRepository extends AbstractRepository
             ->delete('alliance_news')
             ->where('alliance_news_alliance_id = :allianceId')
             ->setParameter('allianceId', $allianceId)
-            ->execute();
+            ->executeQuery();
     }
 
     public function deleteOlderThan(int $timestamp): int
     {
-        return (int) $this->createQueryBuilder()
+        return $this->createQueryBuilder()
             ->delete('alliance_news')
             ->where('alliance_news_date < :timestamp')
             ->setParameter('timestamp', $timestamp)
-            ->execute();
+            ->executeQuery()
+            ->rowCount();
     }
 
     public function deleteEntry(int $newsId): void
@@ -157,6 +154,6 @@ class AllianceNewsRepository extends AbstractRepository
             ->delete('alliance_news')
             ->where('alliance_news_id = :id')
             ->setParameter('id', $newsId)
-            ->execute();
+            ->executeQuery();
     }
 }

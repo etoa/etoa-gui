@@ -21,7 +21,6 @@ class MissileDataRepository extends AbstractRepository
 
         return $qb
             ->orderBy($orderById ? 'missile_id' : 'missile_name')
-            ->execute()
             ->fetchAllKeyValue();
     }
 
@@ -33,7 +32,6 @@ class MissileDataRepository extends AbstractRepository
             ->where('missile_show=1')
             ->andWhere('missile_id = :missileId')
             ->setParameter('missileId', $missileId)
-            ->execute()
             ->fetchAssociative();
 
         return $data !== false ? new Missile($data) : null;
@@ -48,7 +46,6 @@ class MissileDataRepository extends AbstractRepository
             ->select('*')
             ->from('missiles')
             ->where('missile_show=1')
-            ->execute()
             ->fetchAllAssociative();
 
         $result = [];

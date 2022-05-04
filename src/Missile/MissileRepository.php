@@ -16,7 +16,7 @@ class MissileRepository extends \EtoA\Core\AbstractRepository
                 'userId' => $userId,
                 'entityId' => $entityId,
                 'missileId' => $missileId,
-            ])->execute()->fetchOne();
+            ])->fetchOne();
 
         if ($hasMissiles) {
             $this->createQueryBuilder()
@@ -30,7 +30,7 @@ class MissileRepository extends \EtoA\Core\AbstractRepository
                     'missileId' => $missileId,
                     'userId' => $userId,
                     'entityId' => $entityId,
-                ])->execute();
+                ])->executeQuery();
         } else {
             $this->createQueryBuilder()
                 ->insert('missilelist')
@@ -45,7 +45,7 @@ class MissileRepository extends \EtoA\Core\AbstractRepository
                     'missileId' => $missileId,
                     'userId' => $userId,
                     'entityId' => $entityId,
-                ])->execute();
+                ])->executeQuery();
         }
     }
 
@@ -54,7 +54,6 @@ class MissileRepository extends \EtoA\Core\AbstractRepository
         return (int) $this->applySearchSortLimit($this->createQueryBuilder(), $search)
             ->select("COUNT(missilelist_id)")
             ->from('missilelist')
-            ->execute()
             ->fetchOne();
     }
 
@@ -64,7 +63,6 @@ class MissileRepository extends \EtoA\Core\AbstractRepository
             ->select("COUNT(missilelist_id)")
             ->from('missilelist')
             ->where('missilelist_count = 0')
-            ->execute()
             ->fetchOne();
     }
 
@@ -82,7 +80,6 @@ class MissileRepository extends \EtoA\Core\AbstractRepository
                 'userId' => $userId,
                 'entityId' => $entityId,
             ])
-            ->execute()
             ->fetchAllKeyValue();
 
         return array_map(fn ($value) => (int) $value, $data);
@@ -96,7 +93,6 @@ class MissileRepository extends \EtoA\Core\AbstractRepository
         $data = $this->applySearchSortLimit($this->createQueryBuilder(), $search, null, $limit, $offset)
             ->select('*')
             ->from('missilelist')
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn ($row) => MissileListItem::createFromArray($row), $data);
@@ -107,7 +103,6 @@ class MissileRepository extends \EtoA\Core\AbstractRepository
         $data = $this->applySearchSortLimit($this->createQueryBuilder(), $search)
             ->select('*')
             ->from('missilelist')
-            ->execute()
             ->fetchAssociative();
 
         return $data !== false ? MissileListItem::createFromArray($data) : null;
@@ -131,7 +126,6 @@ class MissileRepository extends \EtoA\Core\AbstractRepository
         }
 
         $data = $qb
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn ($row) => MissileListItem::createFromArray($row), $data);
@@ -146,7 +140,7 @@ class MissileRepository extends \EtoA\Core\AbstractRepository
             ->setParameters([
                 'count' => $count,
                 'id' => $id,
-            ])->execute();
+            ])->executeQuery();
     }
 
     public function removeForUser(int $userId): void
@@ -155,7 +149,7 @@ class MissileRepository extends \EtoA\Core\AbstractRepository
             ->delete('missilelist')
             ->where('missilelist_user_id = :userId')
             ->setParameter('userId', $userId)
-            ->execute();
+            ->executeQuery();
     }
 
     public function remove(int $id): void
@@ -164,14 +158,15 @@ class MissileRepository extends \EtoA\Core\AbstractRepository
             ->delete('missilelist')
             ->where('missilelist_id = :id')
             ->setParameter('id', $id)
-            ->execute();
+            ->executeQuery();
     }
 
     public function deleteEmpty(): int
     {
-        return (int) $this->createQueryBuilder()
+        return $this->createQueryBuilder()
             ->delete('missilelist')
             ->where('missilelist_count=0')
-            ->execute();
+            ->executeQuery()
+            ->rowCount();
     }
 }

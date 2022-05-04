@@ -14,7 +14,6 @@ class ChatBanRepository extends AbstractRepository
             ->innerJoin('b', 'users', 'u', 'u.user_id=b.user_id')
             ->where('b.user_id = :userId')
             ->setParameter('userId', $userId)
-            ->execute()
             ->fetchAssociative();
 
         return $data !== false ? new ChatBan($data) : null;
@@ -29,7 +28,6 @@ class ChatBanRepository extends AbstractRepository
             ->select('b.*', 'u.user_nick')
             ->from('chat_banns', 'b')
             ->innerJoin('b', 'users', 'u', 'u.user_id=b.user_id')
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn (array $row) => new ChatBan($row), $data);

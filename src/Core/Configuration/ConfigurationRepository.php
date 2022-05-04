@@ -21,7 +21,6 @@ class ConfigurationRepository extends AbstractRepository
                     'config_param2'
                 )
                 ->from('config')
-                ->execute()
                 ->fetchAllAssociativeIndexed();
 
         return array_map(fn ($arr) => new ConfigItem(
@@ -70,7 +69,7 @@ class ConfigurationRepository extends AbstractRepository
             ->delete('config')
             ->where('config_name = :name')
             ->setParameter('name', $name)
-            ->execute();
+            ->executeQuery();
     }
 
     public function truncate(): void

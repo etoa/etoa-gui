@@ -15,7 +15,6 @@ class BuddyListRepository extends AbstractRepository
             ->where('b.bl_allow = 1')
             ->andWhere('bl_user_id = :userId')
             ->setParameter('userId', $userId)
-            ->execute()
             ->fetchOne();
     }
 
@@ -27,7 +26,6 @@ class BuddyListRepository extends AbstractRepository
             ->where('bl_allow = 0')
             ->andWhere('bl_buddy_id = :userId')
             ->setParameter('userId', $userId)
-            ->execute()
             ->fetchOne();
     }
 
@@ -71,7 +69,6 @@ class BuddyListRepository extends AbstractRepository
                 'userId' => $userId,
                 'buddyId' => $buddyId,
             ])
-            ->execute()
             ->fetchAssociative();
 
         return $data !== false ? new Buddy($data) : null;
@@ -91,7 +88,6 @@ class BuddyListRepository extends AbstractRepository
             ->andWhere('b.bl_buddy_id = :userId')
             ->orderBy('u.user_nick', 'ASC')
             ->setParameter('userId', $userId)
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn (array $row) => new PendingBuddyRequest($row), $data);
@@ -111,7 +107,7 @@ class BuddyListRepository extends AbstractRepository
                 'buddyId' => $buddyId,
                 'allow' => 0,
             ])
-            ->execute();
+            ->executeQuery();
     }
 
     public function acceptBuddyRequest(int $userId, int $buddyId): bool
@@ -127,7 +123,8 @@ class BuddyListRepository extends AbstractRepository
                 'buddyId' => $buddyId,
                 'userId' => $userId,
             ])
-            ->execute();
+            ->executeQuery()
+            ->rowCount();
 
         if (!$existed) {
             return false;
@@ -144,7 +141,7 @@ class BuddyListRepository extends AbstractRepository
                     'userId' => $userId,
                     'buddyId' => $buddyId,
                 ])
-                ->execute();
+                ->executeQuery();
 
             return true;
         }
@@ -161,7 +158,7 @@ class BuddyListRepository extends AbstractRepository
                 'userId' => $userId,
                 'buddyId' => $buddyId,
             ])
-            ->execute();
+            ->executeQuery();
 
         return true;
     }
@@ -177,7 +174,8 @@ class BuddyListRepository extends AbstractRepository
                 'buddyId' => $buddyId,
                 'userId' => $userId,
             ])
-            ->execute();
+            ->executeQuery()
+            ->rowCount();
     }
 
     public function updateComment(int $userId, int $buddyId, string $comment): void
@@ -192,7 +190,7 @@ class BuddyListRepository extends AbstractRepository
                 'buddyId' => $buddyId,
                 'comment' => $comment,
             ])
-            ->execute();
+            ->executeQuery();
     }
 
     public function buddyListEntryExist(int $userId, int $buddyId): bool
@@ -206,7 +204,6 @@ class BuddyListRepository extends AbstractRepository
                 'userId' => $userId,
                 'buddyId' => $buddyId,
             ])
-            ->execute()
             ->fetchOne();
     }
 
@@ -220,7 +217,8 @@ class BuddyListRepository extends AbstractRepository
                 'userId' => $userId,
                 'buddyId' => $buddyId,
             ])
-            ->execute();
+            ->executeQuery()
+            ->rowCount();
 
         return (bool) $counts;
     }
@@ -232,6 +230,6 @@ class BuddyListRepository extends AbstractRepository
             ->where('bl_user_id = :userId')
             ->orWhere('bl_buddy_id = :userId')
             ->setParameter('userId', $userId)
-            ->execute();
+            ->executeQuery();
     }
 }

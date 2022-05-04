@@ -22,7 +22,7 @@ class AllianceHistoryRepository extends AbstractRepository
                 'text' => $text,
                 'timestamp' => time(),
             ])
-            ->execute();
+            ->executeQuery();
 
         return (int) $this->getConnection()->lastInsertId();
     }
@@ -39,7 +39,6 @@ class AllianceHistoryRepository extends AbstractRepository
             ->orderBy('history_timestamp', 'DESC')
             ->setParameter('allianceId', $allianceId)
             ->setMaxResults($limit)
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn (array $row) => new AllianceHistoryEntry($row), $data);
@@ -51,6 +50,6 @@ class AllianceHistoryRepository extends AbstractRepository
             ->delete('alliance_history')
             ->where('history_alliance_id = :allianceId')
             ->setParameter('allianceId', $allianceId)
-            ->execute();
+            ->executeQuery();
     }
 }

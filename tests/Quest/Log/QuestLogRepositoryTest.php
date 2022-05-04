@@ -25,9 +25,9 @@ class QuestLogRepositoryTest extends SymfonyWebTestCase
         $result = $this->getConnection()->fetchAllAssociative('SELECT * FROM quest_log');
 
         $this->assertCount(1, $result);
-        $this->assertSame(1, (int)$result[0]['quest_id']);
-        $this->assertSame(2, (int)$result[0]['quest_data_id']);
-        $this->assertSame(3, (int)$result[0]['user_id']);
+        $this->assertSame(1, (int) $result[0]['quest_id']);
+        $this->assertSame(2, (int) $result[0]['quest_data_id']);
+        $this->assertSame(3, (int) $result[0]['user_id']);
         $this->assertSame('merchant', $result[0]['slot_id']);
         $this->assertSame(QuestDefinitionInterface::TRANSITION_START, $result[0]['transition']);
         $this->assertSame(QuestDefinitionInterface::STATE_AVAILABLE, $result[0]['previous_state']);

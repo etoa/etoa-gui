@@ -26,7 +26,6 @@ class TechnologyDataRepository extends AbstractRepository
         }
 
         return $qb
-            ->execute()
             ->fetchAllKeyValue();
     }
 
@@ -37,7 +36,6 @@ class TechnologyDataRepository extends AbstractRepository
             ->from('technologies', 't')
             ->where('t.tech_id = :techId')
             ->setParameter('techId', $technologyId)
-            ->execute()
             ->fetchOne();
     }
 
@@ -52,7 +50,6 @@ class TechnologyDataRepository extends AbstractRepository
             ->where('tech_show = 1')
             ->orderBy('tech_order')
             ->addOrderBy('tech_name')
-            ->execute()
             ->fetchAllAssociative();
 
         $technologies = [];
@@ -72,7 +69,6 @@ class TechnologyDataRepository extends AbstractRepository
             ->where('tech_show = 1')
             ->andWhere('tech_id = :techId')
             ->setParameter('techId', $techId)
-            ->execute()
             ->fetchAssociative();
 
         return $data !== false ? new Technology($data) : null;
@@ -89,7 +85,6 @@ class TechnologyDataRepository extends AbstractRepository
             ->where('tech_show = 1')
             ->andWhere('tech_type_id = :typeId')
             ->setParameter('typeId', $typeId)
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn (array $row) => new Technology($row), $data);

@@ -47,7 +47,7 @@ class MarketResourceRepository extends AbstractRepository
                 'buy2' => $buy->plastic,
                 'buy3' => $buy->fuel,
                 'buy4' => $buy->food,
-            ])->execute();
+            ])->executeQuery();
 
         return (int) $this->getConnection()->lastInsertId();
     }
@@ -61,7 +61,6 @@ class MarketResourceRepository extends AbstractRepository
             ->select('*')
             ->from('market_ressource')
             ->orderBy('datum', 'ASC')
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn (array $row) => new MarketResource($row), $data);
@@ -104,7 +103,6 @@ class MarketResourceRepository extends AbstractRepository
         }
 
         $data = $qb
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn (array $row) => new MarketResource($row), $data);
@@ -122,7 +120,6 @@ class MarketResourceRepository extends AbstractRepository
                 'userId' => $userId,
                 'allianceId' => $allianceId,
             ])
-            ->execute()
             ->fetchOne();
     }
 
@@ -140,7 +137,7 @@ class MarketResourceRepository extends AbstractRepository
                 'id' => $id,
                 'userId' => $userId,
                 'allianceId' => $allianceId,
-            ])->execute()
+            ])
             ->fetchAssociative();
 
         return $data !== false ? new MarketResource($data) : null;
@@ -159,7 +156,7 @@ class MarketResourceRepository extends AbstractRepository
             ->orderBy('datum', 'ASC')
             ->setParameters([
                 'userId' => $userId,
-            ])->execute()
+            ])
             ->fetchAllAssociative();
 
         return array_map(fn (array $row) => new MarketResource($row), $data);
@@ -175,7 +172,7 @@ class MarketResourceRepository extends AbstractRepository
             ->setParameters([
                 'id' => $id,
                 'userId' => $userId,
-            ])->execute()
+            ])
             ->fetchAssociative();
 
         return $data !== false ? new MarketResource($data) : null;
@@ -187,7 +184,7 @@ class MarketResourceRepository extends AbstractRepository
             ->delete('market_ressource')
             ->where('user_id = :userId')
             ->setParameter('userId', $userId)
-            ->execute();
+            ->executeQuery();
     }
 
     public function delete(int $offerId) : void
@@ -196,6 +193,6 @@ class MarketResourceRepository extends AbstractRepository
             ->delete('market_ressource')
             ->where('id = :id')
             ->setParameter('id', $offerId)
-            ->execute();
+            ->executeQuery();
     }
 }

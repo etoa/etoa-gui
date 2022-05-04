@@ -16,7 +16,6 @@ class UserCommentRepository extends AbstractRepository
             ->from('user_comments')
             ->where('comment_user_id = :userId')
             ->setParameter('userId', $userId)
-            ->execute()
             ->fetchAssociative();
 
         return array_map(fn ($value) => (int) $value, $data);
@@ -35,7 +34,6 @@ class UserCommentRepository extends AbstractRepository
             ->where('comment_user_id = :userId')
             ->setParameter('userId', $userId)
             ->orderBy('comment_timestamp', 'DESC')
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn (array $row) => new UserComment($row), $data);
@@ -57,7 +55,7 @@ class UserCommentRepository extends AbstractRepository
                 'adminUserId' => $adminUserId,
                 'text' => $text,
             ])
-            ->execute();
+            ->executeQuery();
     }
 
     public function deleteComment(int $commentId): void
@@ -66,7 +64,7 @@ class UserCommentRepository extends AbstractRepository
             ->delete('user_comments')
             ->where('comment_id = :id')
             ->setParameter('id', $commentId)
-            ->execute();
+            ->executeQuery();
     }
 
     public function removeForUser(int $userId) : void
@@ -75,6 +73,6 @@ class UserCommentRepository extends AbstractRepository
             ->delete('user_comments')
             ->where('comment_user_id = :userId')
             ->setParameter('userId', $userId)
-            ->execute();
+            ->executeQuery();
     }
 }

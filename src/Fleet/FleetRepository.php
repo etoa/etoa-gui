@@ -18,7 +18,6 @@ class FleetRepository extends AbstractRepository
         return (int) $this->applySearchSortLimit($this->createQueryBuilder(), $search)
             ->select("COUNT(id)")
             ->from('fleet')
-            ->execute()
             ->fetchOne();
     }
 
@@ -30,7 +29,6 @@ class FleetRepository extends AbstractRepository
         return array_map(fn (array $row) => (int) $row['user_id'], $this->applySearchSortLimit($this->createQueryBuilder(), $search)
             ->select("DISTINCT user_id")
             ->from('fleet')
-            ->execute()
             ->fetchAllAssociative());
     }
 
@@ -42,7 +40,6 @@ class FleetRepository extends AbstractRepository
         return array_map(fn (array $row) => (int) $row['entity_to'], $this->applySearchSortLimit($this->createQueryBuilder(), $search)
             ->select("DISTINCT entity_to")
             ->from('fleet')
-            ->execute()
             ->fetchAllAssociative());
     }
 
@@ -53,7 +50,6 @@ class FleetRepository extends AbstractRepository
             ->from('fleet')
             ->where('leader_id = :leaderId')
             ->setParameter('leaderId', $leaderId)
-            ->execute()
             ->fetchOne();
     }
 
@@ -64,7 +60,6 @@ class FleetRepository extends AbstractRepository
             ->from('fleet_ships')
             ->where('fs_fleet_id = :fleetId')
             ->setParameter('fleetId', $fleetId)
-            ->execute()
             ->fetchOne();
     }
 
@@ -79,7 +74,6 @@ class FleetRepository extends AbstractRepository
             ->where('fs_fleet_id = :fleetId')
             ->andWhere('fs_ship_cnt > 0')
             ->setParameter('fleetId', $fleetId)
-            ->execute()
             ->fetchAllKeyValue());
     }
 
@@ -96,7 +90,6 @@ class FleetRepository extends AbstractRepository
             ->andWhere('fs_ship_cnt > 0')
             ->groupBy('fs_ship_id')
             ->setParameter('leaderId', $leaderId)
-            ->execute()
             ->fetchAllKeyValue());
     }
 
@@ -108,7 +101,6 @@ class FleetRepository extends AbstractRepository
             ->where('entity_to = :entityId')
             ->orWhere('entity_from  = :entityId')
             ->setParameter('entityId', $entityId)
-            ->execute()
             ->fetchOne();
 
         return $count > 0;
@@ -123,7 +115,6 @@ class FleetRepository extends AbstractRepository
             ->setParameters([
                 'id' => $id,
             ])
-            ->execute()
             ->fetchAssociative();
 
         return $data !== false ? new Fleet($data) : null;
@@ -141,7 +132,6 @@ class FleetRepository extends AbstractRepository
             ->where('f.user_id = :userId')
             ->setParameter('userId', $userId, )
             ->groupBy('fs.fs_ship_id')
-            ->execute()
             ->fetchAllKeyValue();
 
         return array_map(fn ($value) => (int) $value, $data);
@@ -188,7 +178,6 @@ class FleetRepository extends AbstractRepository
         }
 
         $data = $qry->orderBy('landtime', 'ASC')
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn ($arr) => new Fleet($arr), $data);
@@ -260,7 +249,7 @@ class FleetRepository extends AbstractRepository
                 'nextId' => $nextId,
                 'nextActionTime' => $nextActionTime,
             ])
-            ->execute();
+            ->executeQuery();
 
         return (int) $this->getConnection()->lastInsertId();
     }
@@ -315,7 +304,8 @@ class FleetRepository extends AbstractRepository
         }
 
         return (bool) $qb
-            ->execute();
+            ->executeQuery()
+            ->rowCount();
     }
 
     public function markAsLeader(int $id, int $allianceId): void
@@ -329,7 +319,7 @@ class FleetRepository extends AbstractRepository
                 'id' => $id,
                 'allianceId' => $allianceId,
             ])
-            ->execute();
+            ->executeQuery();
     }
 
     public function promoteNewAllianceFleetLeader(int $newLeader, int $existingLeader, int $landTime): void
@@ -344,7 +334,7 @@ class FleetRepository extends AbstractRepository
                 'landTime' => $landTime,
                 'id' => $newLeader,
             ])
-            ->execute();
+            ->executeQuery();
 
         $this->createQueryBuilder()
             ->update('fleet')
@@ -354,7 +344,7 @@ class FleetRepository extends AbstractRepository
                 'existingLeaderId' => $existingLeader,
                 'newLeaderId' => $newLeader,
             ])
-            ->execute();
+            ->executeQuery();
     }
 
     public function removeSupportRes(int $fleetId): void
@@ -367,7 +357,7 @@ class FleetRepository extends AbstractRepository
             ->setParameters([
                 'id' => $fleetId,
             ])
-            ->execute();
+            ->executeQuery();
     }
 
     public function save(Fleet $fleet): void
@@ -428,7 +418,7 @@ class FleetRepository extends AbstractRepository
                 'fetchPower' => $fleet->fetchPower,
                 'fetchPeople' => $fleet->fetchPeople,
             ])
-            ->execute();
+            ->executeQuery();
     }
 
     public function remove(int $id): void
@@ -437,7 +427,7 @@ class FleetRepository extends AbstractRepository
             ->delete('fleet')
             ->where('id = :id')
             ->setParameter('id', $id)
-            ->execute();
+            ->executeQuery();
     }
 
     /**
@@ -454,7 +444,6 @@ class FleetRepository extends AbstractRepository
                 'fleetId' => $fleetId,
                 'faked' => $faked,
             ])
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn ($arr) => new FleetShip($arr), $data);
@@ -473,7 +462,6 @@ class FleetRepository extends AbstractRepository
             ->setParameters([
                 'leaderId' => $leaderId,
             ])
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn ($arr) => new FleetShip($arr), $data);
@@ -490,7 +478,6 @@ class FleetRepository extends AbstractRepository
                 'fleetId' => $fleetId,
                 'shipId' => $shipId,
             ])
-            ->execute()
             ->fetchAssociative();
 
         return $data !== false ? new FleetShip($data) : null;
@@ -543,7 +530,7 @@ class FleetRepository extends AbstractRepository
                 'bonusAntraxFood' => $item->specialShipBonusAnthraxFood,
                 'bonusDeactivade' => $item->specialShipBonusDeactivate,
             ])
-            ->execute();
+            ->executeQuery();
     }
 
     public function addShipsToFleet(int $fleetId, int $shipId, int $count, int $fakeId = 0): void
@@ -560,7 +547,7 @@ class FleetRepository extends AbstractRepository
                     'shipId' => $shipId,
                     'count' => $count,
                 ])
-                ->execute();
+                ->executeQuery();
 
             return;
         }
@@ -579,7 +566,7 @@ class FleetRepository extends AbstractRepository
                 'count' => $count,
                 'fakeId' => $fakeId,
             ])
-            ->execute();
+            ->executeQuery();
     }
 
     public function updateShipsInFleet(int $fleetId, int $shipId, int $count): void
@@ -594,7 +581,7 @@ class FleetRepository extends AbstractRepository
                 'shipId' => $shipId,
                 'count' => $count,
             ])
-            ->execute();
+            ->executeQuery();
     }
 
     public function removeShipsFromFleet(int $fleetId, int $shipId): void
@@ -607,7 +594,7 @@ class FleetRepository extends AbstractRepository
                 'fleetId' => $fleetId,
                 'shipId' => $shipId,
             ])
-            ->execute();
+            ->executeQuery();
     }
 
     public function removeAllShipsFromFleet(int $fleetId): void
@@ -616,7 +603,7 @@ class FleetRepository extends AbstractRepository
             ->delete('fleet_ships')
             ->where('fs_fleet_id = :fleetId')
             ->setParameter('fleetId', $fleetId)
-            ->execute();
+            ->executeQuery();
     }
 
     public function getSpecialShipExperienceSumForUser(int $userId): int
@@ -627,7 +614,6 @@ class FleetRepository extends AbstractRepository
             ->innerJoin('fs', 'fleet', 'f', 'f.id = fs.fs_fleet_id AND f.user_id = :userId')
             ->andWhere('fs_ship_cnt = 1')
             ->setParameter('userId', $userId)
-            ->execute()
             ->fetchOne();
     }
 
@@ -642,7 +628,6 @@ class FleetRepository extends AbstractRepository
                 'SUM(res_food) as food'
             )
             ->from('fleet')
-            ->execute()
             ->fetchAssociative();
 
         $res = new BaseResources();
@@ -661,7 +646,6 @@ class FleetRepository extends AbstractRepository
             ->select('1')
             ->from('fleet')
             ->setMaxResults(1)
-            ->execute()
             ->fetchOne();
     }
 
@@ -675,7 +659,6 @@ class FleetRepository extends AbstractRepository
         $data = $this->applySearchSortLimit($this->createQueryBuilder(), $search, $sort)
             ->select('fleet.*')
             ->from('fleet')
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn (array $row) => new Fleet($row), $data);
@@ -690,7 +673,6 @@ class FleetRepository extends AbstractRepository
             ->where('fs.fs_fleet_id = :fleetId')
             ->andWhere('s.special_ship = 1')
             ->setParameter('fleetId', $fleetId)
-            ->execute()
             ->fetchAllAssociative();
 
         $value = 0;

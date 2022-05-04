@@ -16,7 +16,6 @@ class MissileFlightRepository extends AbstractRepository
             ->from('missile_flights', 'f')
             ->innerJoin('f', 'planets', 'p', 'p.id = f.flight_entity_to')
             ->orderBy('flight_landtime', 'ASC')
-            ->execute()
             ->fetchAllAssociative();
 
         $objects = [];
@@ -27,7 +26,6 @@ class MissileFlightRepository extends AbstractRepository
                 ->select('f.obj_flight_id, f.obj_missile_id, f.obj_cnt')
                 ->from('missile_flights_obj', 'f')
                 ->where($qb->expr()->in('obj_flight_id', $ids))
-                ->execute()
                 ->fetchAllAssociative();
 
             foreach ($rows as $row) {
@@ -55,7 +53,7 @@ class MissileFlightRepository extends AbstractRepository
                 'fromEntity' => $fromEntity,
                 'toEntity' => $toEntity,
                 'duration' => $duration,
-            ])->execute();
+            ])->executeQuery();
 
         $flightId = (int) $this->getConnection()->lastInsertId();
         foreach ($missiles as $missileId => $count) {
@@ -70,7 +68,7 @@ class MissileFlightRepository extends AbstractRepository
                     'flightId' => $flightId,
                     'missileId' => $missileId,
                     'count' => $count,
-                ])->execute();
+                ])->executeQuery();
         }
 
         return $flightId;
@@ -86,7 +84,8 @@ class MissileFlightRepository extends AbstractRepository
                 'flightId' => $flightId,
                 'fromEntity' => $fromEntity,
             ])
-            ->execute();
+            ->executeQuery()
+            ->rowCount();
 
         if (!$deleted) {
             return false;
@@ -98,7 +97,7 @@ class MissileFlightRepository extends AbstractRepository
             ->setParameters([
                 'flightId' => $flightId,
             ])
-            ->execute();
+            ->executeQuery();
 
         return true;
     }

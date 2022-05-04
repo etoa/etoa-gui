@@ -33,6 +33,6 @@ class QuestLogRepository extends AbstractRepository implements QuestLoggerInterf
                 'previousState' => $previousState,
                 'transition' => $transitionName,
                 'date' => time(),
-            ])->execute();
+            ])->executeQuery();
     }
 }

@@ -26,7 +26,6 @@ class TechnologyRepository extends AbstractRepository
         }
 
         $data = $qb
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn ($row) => TechnologyListItem::createFromData($row), $data);
@@ -39,7 +38,6 @@ class TechnologyRepository extends AbstractRepository
             ->from('techlist')
             ->where('techlist_id = :id')
             ->setParameter('id', $id)
-            ->execute()
             ->fetchAssociative();
 
         return $data !== false ? TechnologyListItem::createFromData($data) : null;
@@ -50,7 +48,6 @@ class TechnologyRepository extends AbstractRepository
         $data = $this->applySearchSortLimit($this->createQueryBuilder(), $search, null, 1)
             ->select('*')
             ->from('techlist')
-            ->execute()
             ->fetchAssociative();
 
         return $data !== false ? TechnologyListItem::createFromData($data) : null;
@@ -80,7 +77,7 @@ class TechnologyRepository extends AbstractRepository
                 'endTime' => $item->endTime,
                 'prodPercent' => $item->prodPercent,
             ])
-            ->execute();
+            ->executeQuery();
     }
 
     /**
@@ -94,7 +91,7 @@ class TechnologyRepository extends AbstractRepository
             ->where('techlist_user_id = :userId')
             ->setParameters([
                 'userId' => $userId,
-            ])->execute()
+            ])
             ->fetchAllKeyValue();
 
         return array_map(fn ($value) => (int) $value, $data);
@@ -110,7 +107,7 @@ class TechnologyRepository extends AbstractRepository
             ->setParameters([
                 'technologyId' => $technologyId,
                 'userId' => $userId,
-            ])->execute()
+            ])
             ->fetchOne();
     }
 
@@ -161,7 +158,7 @@ class TechnologyRepository extends AbstractRepository
             'status' => $status,
             'startTime' => $startTime,
             'endTime' => $endTime,
-        ]);
+        ])->rowCount();
     }
 
     public function countResearchInProgress(int $userId, int $entityId): bool
@@ -178,7 +175,6 @@ class TechnologyRepository extends AbstractRepository
                 'entityId' => $entityId,
                 'techId' => TechnologyId::GEN,
             ])
-            ->execute()
             ->fetchOne();
     }
 
@@ -194,7 +190,6 @@ class TechnologyRepository extends AbstractRepository
                 'userId' => $userId,
                 'techId' => $technologyId,
             ])
-            ->execute()
             ->fetchOne();
     }
 
@@ -203,7 +198,6 @@ class TechnologyRepository extends AbstractRepository
         return (int) $this->applySearchSortLimit($this->createQueryBuilder(), $search)
             ->select('COUNT(techlist_id)')
             ->from('techlist')
-            ->execute()
             ->fetchOne();
     }
 
@@ -215,18 +209,18 @@ class TechnologyRepository extends AbstractRepository
             ->where('techlist_current_level=0')
             ->andWhere('techlist_build_start_time=0')
             ->andWhere('techlist_build_end_time=0')
-            ->execute()
             ->fetchOne();
     }
 
     public function deleteEmpty(): int
     {
-        return (int) $this->createQueryBuilder()
+        return $this->createQueryBuilder()
             ->delete('techlist')
             ->where('techlist_current_level=0')
             ->andWhere('techlist_build_start_time=0')
             ->andWhere('techlist_build_end_time=0')
-            ->execute();
+            ->executeQuery()
+            ->rowCount();
     }
 
     public function removeEntry(int $id): void
@@ -235,7 +229,7 @@ class TechnologyRepository extends AbstractRepository
             ->delete('techlist')
             ->where('techlist_id = :id')
             ->setParameter('id', $id)
-            ->execute();
+            ->executeQuery();
     }
 
     /**
@@ -270,7 +264,7 @@ class TechnologyRepository extends AbstractRepository
             );
 
         return array_map(fn ($arr) => [
-            'name' => (string) $arr['name'],
+            'name' => $arr['name'],
             'max' => (int) $arr['max'],
         ], $data);
     }
@@ -281,7 +275,7 @@ class TechnologyRepository extends AbstractRepository
             ->delete('techlist')
             ->where('techlist_user_id = :userId')
             ->setParameter('userId', $userId)
-            ->execute();
+            ->executeQuery();
     }
 
     public function freezeConstruction(int $userId): void
@@ -295,7 +289,7 @@ class TechnologyRepository extends AbstractRepository
                 'userId' => $userId,
                 'type' => 1,
             ])
-            ->execute();
+            ->executeQuery();
     }
 
     public function unfreezeConstruction(int $userId, int $duration): void
@@ -311,7 +305,7 @@ class TechnologyRepository extends AbstractRepository
                 'userId' => $userId,
                 'duration' => $duration,
             ])
-            ->execute();
+            ->executeQuery();
     }
 
     /**
@@ -322,7 +316,6 @@ class TechnologyRepository extends AbstractRepository
         $data = $this->applySearchSortLimit($this->createQueryBuilder(), $search, null, $limit, $offset)
             ->select('techlist.*')
             ->from('techlist')
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn ($row) => TechnologyListItem::createFromData($row), $data);

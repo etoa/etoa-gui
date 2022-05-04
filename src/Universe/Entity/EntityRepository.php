@@ -24,7 +24,6 @@ class EntityRepository extends AbstractRepository
                 'sy' => $sy,
                 'code' => $code,
             ])
-            ->execute()
             ->fetchOne();
     }
 
@@ -38,7 +37,6 @@ class EntityRepository extends AbstractRepository
             ->setParameters([
                 'code' => $code,
             ])
-            ->execute()
             ->fetchOne();
 
         return $id !== false ? (int) $id : null;
@@ -49,7 +47,6 @@ class EntityRepository extends AbstractRepository
         $data = $this->getEntityCoordinatesQueryBuilder()
             ->where('e.id = :id')
             ->setParameters(['id' => $id])
-            ->execute()
             ->fetchAssociative();
 
         return $data !== false ? new Entity($data) : null;
@@ -71,7 +68,6 @@ class EntityRepository extends AbstractRepository
             ->orderBy('RAND()')
             ->setParameters(array_values($codes))
             ->setMaxResults($limit)
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn (array $arr) => new Entity($arr), $data);
@@ -84,7 +80,6 @@ class EntityRepository extends AbstractRepository
             ->setParameters([
                 'id' => $id,
             ])
-            ->execute()
             ->fetchAssociative();
 
         return $data !== false ? new Entity($data) : null;
@@ -99,7 +94,6 @@ class EntityRepository extends AbstractRepository
                 'cellId' => $cellId,
                 'position' => $position,
             ])
-            ->execute()
             ->fetchAssociative();
 
         return $data !== false ? new Entity($data) : null;
@@ -120,7 +114,6 @@ class EntityRepository extends AbstractRepository
                 'cy' => $coordinates->cy,
                 'pos' => $coordinates->pos,
             ])
-            ->execute()
             ->fetchAssociative();
 
         return $data !== false ? new Entity($data) : null;
@@ -132,7 +125,6 @@ class EntityRepository extends AbstractRepository
     public function searchEntities(EntitySearch $search, EntitySort $sort = null): array
     {
         $data = $this->getEntityCoordinatesQueryBuilder($search, $sort)
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn (array $row) => new Entity($row), $data);
@@ -145,7 +137,6 @@ class EntityRepository extends AbstractRepository
             ->from('entities')
             ->where('code = :code')
             ->setParameter('code', EntityType::ALLIANCE_MARKET)
-            ->execute()
             ->fetchOne();
     }
 
@@ -163,7 +154,7 @@ class EntityRepository extends AbstractRepository
                 'code' => $code,
                 'pos' => $pos,
             ])
-            ->execute();
+            ->executeQuery();
 
         return (int) $this->getConnection()->lastInsertId();
     }
@@ -178,7 +169,7 @@ class EntityRepository extends AbstractRepository
                 'id' => $id,
                 'code' => $code,
             ])
-            ->execute();
+            ->executeQuery();
     }
 
     /**
@@ -189,7 +180,6 @@ class EntityRepository extends AbstractRepository
         return $this->createQueryBuilder()
             ->select('id, code')
             ->from('entities')
-            ->execute()
             ->fetchAllKeyValue();
     }
 
@@ -198,7 +188,6 @@ class EntityRepository extends AbstractRepository
         return (int) $this->createQueryBuilder()
             ->select('MAX(id)')
             ->from('entities')
-            ->execute()
             ->fetchOne();
     }
 
@@ -208,7 +197,6 @@ class EntityRepository extends AbstractRepository
     public function searchEntityLabels(EntitySearch $search, EntityLabelSort $sort = null, int $limit = null, int $offset = null): array
     {
         $data = $this->entityLabelQuerBuilder($search, $sort, $limit, $offset)
-            ->execute()
             ->fetchAllAssociative();
 
         $entities = [];
@@ -223,7 +211,6 @@ class EntityRepository extends AbstractRepository
     public function searchEntityLabel(EntitySearch $search, EntityLabelSort $sort = null): ?EntityLabel
     {
         $data = $this->entityLabelQuerBuilder($search, $sort, 1)
-            ->execute()
             ->fetchAssociative();
 
         return $data !== false ? new EntityLabel($data) : null;
@@ -249,7 +236,6 @@ class EntityRepository extends AbstractRepository
             ->leftJoin('e', 'planets', 'planets', 'e.id = planets.id')
             ->leftJoin('planets', 'users', 'users', 'users.user_id = planets.planet_user_id')
             ->leftJoin('e', 'stars', 'stars', 'e.id = stars.id')
-            ->execute()
             ->fetchOne();
     }
 

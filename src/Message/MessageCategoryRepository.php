@@ -17,7 +17,6 @@ class MessageCategoryRepository extends AbstractRepository
             ->select('cat_id', 'cat_name')
             ->from('message_cat')
             ->orderBy('cat_order')
-            ->execute()
             ->fetchAllKeyValue();
     }
 
@@ -30,7 +29,6 @@ class MessageCategoryRepository extends AbstractRepository
             ->select('cat_id', 'cat_name', 'cat_desc', 'cat_sender')
             ->from('message_cat')
             ->orderBy('cat_order')
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn ($row) => MessageCategory::createFromArray($row), $data);
@@ -43,7 +41,6 @@ class MessageCategoryRepository extends AbstractRepository
             ->from('message_cat')
             ->where('cat_id = :cat_id')
             ->setParameter('cat_id', $catId)
-            ->execute()
             ->fetchOne();
 
         return $data !== false ? $data : null;
@@ -56,7 +53,7 @@ class MessageCategoryRepository extends AbstractRepository
             ->from('message_cat')
             ->where('cat_id = :cat_id')
             ->setParameter('cat_id', $catId)
-            ->execute()
+            ->executeQuery()
             ->fetchOne();
 
         return $data !== false ? $data : null;

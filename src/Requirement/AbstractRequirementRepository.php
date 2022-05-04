@@ -20,7 +20,6 @@ abstract class AbstractRequirementRepository extends AbstractRepository
         $data = $this->createQueryBuilder()
             ->select('*')
             ->from($this->table)
-            ->execute()
             ->fetchAllAssociative();
 
         return new RequirementsCollection(array_map(fn (array $row) => ObjectRequirement::createFromData($row), $data));
@@ -34,7 +33,6 @@ abstract class AbstractRequirementRepository extends AbstractRepository
             ->where('obj_id = :objectId')
             ->orderBy('req_level')
             ->setParameter('objectId', $objectId)
-            ->execute()
             ->fetchAllAssociative();
 
         return new RequirementsCollection(array_map(fn (array $row) => ObjectRequirement::createFromData($row), $data));
@@ -51,7 +49,6 @@ abstract class AbstractRequirementRepository extends AbstractRepository
             ->where('req_building_id = :buildingId')
             ->orderBy('req_level')
             ->setParameter('buildingId', $buildingId)
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn (array $row) => ObjectRequirement::createFromData($row), $data);
@@ -68,7 +65,6 @@ abstract class AbstractRequirementRepository extends AbstractRepository
             ->where('req_tech_id = :technologyId')
             ->orderBy('req_level')
             ->setParameter('technologyId', $technologyId)
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn (array $row) => ObjectRequirement::createFromData($row), $data);
@@ -94,6 +90,6 @@ abstract class AbstractRequirementRepository extends AbstractRepository
             ->delete($this->table)
             ->where('id = :id')
             ->setParameter('id', $id)
-            ->execute();
+            ->executeQuery();
     }
 }

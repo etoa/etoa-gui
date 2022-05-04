@@ -15,7 +15,6 @@ class BattleLogRepository extends AbstractRepository
             ->select('*')
             ->from('logs_battle')
             ->orderBy('timestamp', 'DESC')
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn (array $row) => new BattleLog($row), $data);
@@ -23,10 +22,11 @@ class BattleLogRepository extends AbstractRepository
 
     public function cleanup(int $threshold): int
     {
-        return (int) $this->createQueryBuilder()
+        return $this->createQueryBuilder()
             ->delete('logs_battle')
             ->where('timestamp < :threshold')
             ->setParameter('threshold', $threshold)
-            ->execute();
+            ->executeQuery()
+            ->rowCount();
     }
 }

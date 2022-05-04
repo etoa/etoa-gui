@@ -29,7 +29,6 @@ class DefenseDataRepository extends AbstractRepository
             ->select('def_id', 'def_name')
             ->addSelect()
             ->from('defense')
-            ->execute()
             ->fetchAllKeyValue();
     }
 
@@ -41,7 +40,6 @@ class DefenseDataRepository extends AbstractRepository
         $data = $this->createQueryBuilder()
             ->select('def_id', 'def_points')
             ->from('defense')
-            ->execute()
             ->fetchAllKeyValue();
 
         return array_map(fn ($value) => (float) $value, $data);
@@ -57,7 +55,7 @@ class DefenseDataRepository extends AbstractRepository
                 'defenseId' => $defenseId,
                 'points' => $points,
             ])
-            ->execute();
+            ->executeQuery();
     }
 
     public function getDefense(int $defenseId): ?Defense
@@ -68,7 +66,6 @@ class DefenseDataRepository extends AbstractRepository
             ->where('def_show = 1')
             ->andWhere('def_id = :defenseId')
             ->setParameter('defenseId', $defenseId)
-            ->execute()
             ->fetchAssociative();
 
         return $data !== false ? new Defense($data) : null;
@@ -87,7 +84,6 @@ class DefenseDataRepository extends AbstractRepository
             ->andWhere('def_show = 1')
             ->setParameter('raceId', $raceId)
             ->orderBy('def_order')
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn ($row) => new Defense($row), $data);
@@ -106,7 +102,6 @@ class DefenseDataRepository extends AbstractRepository
             ->andWhere('def_show = 1')
             ->setParameter('categoryId', $categoryId)
             ->orderBy('def_order')
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn ($row) => new Defense($row), $data);
@@ -121,7 +116,6 @@ class DefenseDataRepository extends AbstractRepository
             ->select('*')
             ->from('defense')
             ->orderBy('def_order')
-            ->execute()
             ->fetchAllAssociative();
 
         $result = [];
@@ -141,7 +135,6 @@ class DefenseDataRepository extends AbstractRepository
         $data = $this->applySearchSortLimit($this->createQueryBuilder(), $search, $sort, $limit)
             ->select('*')
             ->from('defense')
-            ->execute()
             ->fetchAllAssociative();
 
         $results = [];

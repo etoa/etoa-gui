@@ -90,7 +90,6 @@ abstract class AdvancedForm extends Form
             ->select('*')
             ->from($this->getTable())
             ->orderBy($this->getOverviewOrderField(), $this->getOverviewOrder())
-            ->execute()
             ->fetchAllAssociative();
 
         if (count($rows) > 0) {
@@ -253,7 +252,7 @@ abstract class AdvancedForm extends Form
             ->insert($this->getTable())
             ->values($values)
             ->setParameters($params)
-            ->execute();
+            ->executeQuery();
     }
 
     public function copy(Request $request): void
@@ -270,7 +269,6 @@ abstract class AdvancedForm extends Form
             ->from($table)
             ->where($id_field . ' = :' . $id_field)
             ->setParameter($id_field, $id)
-            ->execute()
             ->fetchAssociative();
 
         if ($arr === false) {
@@ -289,7 +287,7 @@ abstract class AdvancedForm extends Form
             ->insert($table)
             ->values($values)
             ->setParameters($params)
-            ->execute();
+            ->executeQuery();
 
         return true;
     }
@@ -304,7 +302,6 @@ abstract class AdvancedForm extends Form
             ->from($this->getTable())
             ->where($this->getTableId() . " = :id")
             ->setParameter('id', $request->query->get('id'))
-            ->execute()
             ->fetchAssociative();
 
         if ($arr !== false) {
@@ -392,22 +389,24 @@ abstract class AdvancedForm extends Form
             }
         }
 
-        $affected = (int) $qb->setParameters($params)
-            ->execute();
+        $affected = $qb->setParameters($params)
+            ->executeQuery()
+            ->rowCount();
 
         return $affected > 0;
     }
 
     public function switch(Request $request): void
     {
-        $affected = (int) $this->createQueryBuilder()
+        $affected = $this->createQueryBuilder()
             ->update($this->getTable())
             ->set($request->query->get('switch'), "(" . $request->query->get('switch') . " + 1) % 2")
             ->where($this->getTableId() . ' = :id')
             ->setParameters([
                 'id' => $request->query->get('id'),
             ])
-            ->execute();
+            ->executeQuery()
+            ->rowCount();
 
         if ($affected > 0) {
             echo MessageBox::ok("", "Aktion ausgeführt!");
@@ -422,7 +421,6 @@ abstract class AdvancedForm extends Form
             ->where($this->getTableSortParent() . " = :parentId")
             ->orderBy($this->getTableSort())
             ->setParameter('parentId', $request->query->get('parentId'))
-            ->execute()
             ->fetchFirstColumn();
 
         $cnt = 0;
@@ -433,7 +431,7 @@ abstract class AdvancedForm extends Form
                 ->set($this->getTableSort(), (string) $cnt)
                 ->where($this->getTableId() . " = :id")
                 ->setParameter('id', $id)
-                ->execute();
+                ->executeQuery();
 
             if ($request->query->get('moveUp') == $id) {
                 $sorter = $cnt;
@@ -447,14 +445,14 @@ abstract class AdvancedForm extends Form
             ->where($this->getTableSortParent() . " = :parentId")
             ->andWhere($this->getTableSort() . " = " . ($sorter - 1))
             ->setParameter('parentId', $request->query->get('parentId'))
-            ->execute();
+            ->executeQuery();
 
         $this->createQueryBuilder()
             ->update($this->getTable())
             ->set($this->getTableSort(), (string) ($sorter - 1))
             ->where($this->getTableId() . " = :sortUp")
             ->setParameter('sortUp', $request->query->get('moveUp'))
-            ->execute();
+            ->executeQuery();
     }
 
     public function moveDown(Request $request): void
@@ -465,7 +463,6 @@ abstract class AdvancedForm extends Form
             ->where($this->getTableSortParent() . " = :parentId")
             ->orderBy($this->getTableSort())
             ->setParameter('parentId', $request->query->get('parentId'))
-            ->execute()
             ->fetchFirstColumn();
 
         $cnt = 0;
@@ -476,7 +473,7 @@ abstract class AdvancedForm extends Form
                 ->set($this->getTableSort(), (string) $cnt)
                 ->where($this->getTableId() . " = :id")
                 ->setParameter('id', $id)
-                ->execute();
+                ->executeQuery();
 
             if ($request->query->get('moveDown') == $id) {
                 $sorter = $cnt;
@@ -490,14 +487,14 @@ abstract class AdvancedForm extends Form
             ->where($this->getTableSortParent() . " = :parentId")
             ->andWhere($this->getTableSort() . " = " . ($sorter + 1))
             ->setParameter('parentId', $request->query->get('parentId'))
-            ->execute();
+            ->executeQuery();
 
         $this->createQueryBuilder()
             ->update($this->getTable())
             ->set($this->getTableSort(), (string) ($sorter + 1))
             ->where($this->getTableId() . " = :sortUp")
             ->setParameter('sortUp', $request->query->get('moveDown'))
-            ->execute();
+            ->executeQuery();
     }
 
     public function confirmDelete(Request $request): void
@@ -510,7 +507,6 @@ abstract class AdvancedForm extends Form
             ->from($this->getTable())
             ->where($this->getTableId() . " = :id")
             ->setParameter('id', $request->query->get('id'))
-            ->execute()
             ->fetchAssociative();
 
         if ($arr !== false) {
@@ -537,11 +533,12 @@ abstract class AdvancedForm extends Form
 
     public function delete(Request $request): void
     {
-        $affected = (int) $this->createQueryBuilder()
+        $affected = $this->createQueryBuilder()
             ->delete($this->getTable())
             ->where($this->getTableId() . ' = :id')
             ->setParameter('id', $request->request->get($this->getTableId()))
-            ->execute();
+            ->executeQuery()
+            ->rowCount();
 
         if ($affected > 0) {
             echo MessageBox::ok("", "Datensatz wurde gelöscht!");
@@ -565,7 +562,6 @@ abstract class AdvancedForm extends Form
             ->select($value_field, $text_field)
             ->from($table)
             ->orderBy($order)
-            ->execute()
             ->fetchAllAssociative();
 
         foreach ($rows as $arr) {

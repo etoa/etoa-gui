@@ -20,7 +20,6 @@ class AllianceBoardCategoryRepository extends AbstractRepository
             ->where('t.topic_cat_id IN (:categoryIds)')
             ->groupBy('t.topic_cat_id')
             ->setParameter('categoryIds', $categoryIds, Connection::PARAM_INT_ARRAY)
-            ->execute()
             ->fetchAllKeyValue();
 
         $counts = [];
@@ -43,7 +42,6 @@ class AllianceBoardCategoryRepository extends AbstractRepository
             ->where('t.topic_cat_id IN (:categoryIds)')
             ->groupBy('t.topic_cat_id')
             ->setParameter('categoryIds', $categoryIds, Connection::PARAM_INT_ARRAY)
-            ->execute()
             ->fetchAllKeyValue();
 
         $counts = [];
@@ -66,7 +64,6 @@ class AllianceBoardCategoryRepository extends AbstractRepository
             ->setParameter('allianceId', $allianceId)
             ->orderBy('cat_order')
             ->addOrderBy('cat_name')
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn (array $row) => new Category($row), $data);
@@ -82,7 +79,6 @@ class AllianceBoardCategoryRepository extends AbstractRepository
             ->from('allianceboard_cat')
             ->where('cat_alliance_id = :allianceId')
             ->setParameter('allianceId', $allianceId)
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn (array $row) => (int) $row['cat_id'], $data);
@@ -99,7 +95,6 @@ class AllianceBoardCategoryRepository extends AbstractRepository
                 'catId' => $categoryId,
                 'allianceId' => $allianceId,
             ])
-            ->execute()
             ->fetchAssociative();
 
         return $data !== false ? new Category($data) : null;
@@ -123,7 +118,7 @@ class AllianceBoardCategoryRepository extends AbstractRepository
                 'bullet' => $bullet,
                 'allianceId' => $allianceId,
             ])
-            ->execute();
+            ->executeQuery();
 
         return (int) $this->getConnection()->lastInsertId();
     }
@@ -146,52 +141,50 @@ class AllianceBoardCategoryRepository extends AbstractRepository
                 'id' => $categoryId,
                 'allianceId' => $allianceId,
             ])
-            ->execute();
+            ->executeQuery();
     }
 
     public function deleteAllCategories(int $allianceId): void
     {
-        $categoryIds = array_column($this->createQueryBuilder()
+        $categoryIds = $this->createQueryBuilder()
             ->select('cat_id')
             ->from('allianceboard_cat')
             ->where('cat_alliance_id = :allianceId')
             ->setParameters([
                 'allianceId' => $allianceId,
             ])
-            ->execute()
-            ->fetchAllAssociative(), 'cat_id');
+            ->fetchFirstColumn();
 
         if (count($categoryIds) === 0) {
             return;
         }
 
-        $topicIds = array_column($this->createQueryBuilder()
+        $topicIds = $this->createQueryBuilder()
             ->select('topic_id')
             ->from('allianceboard_topics')
             ->where('topic_cat_id IN (:categoryIds)')
             ->setParameter('categoryIds', $categoryIds, Connection::PARAM_INT_ARRAY)
-            ->execute()
-            ->fetchAllAssociative(), 'topic_id');
+            ->fetchFirstColumn();
 
         if (count($topicIds) > 0) {
             $this->createQueryBuilder()
                 ->delete('allianceboard_posts')
                 ->where('post_topic_id IN (:topicId)')
                 ->setParameter('topicId', $topicIds, Connection::PARAM_INT_ARRAY)
-                ->execute();
+                ->executeQuery();
 
             $this->createQueryBuilder()
                 ->delete('allianceboard_topics')
                 ->where('topic_id IN (:topicId)')
                 ->setParameter('topicId', $topicIds, Connection::PARAM_INT_ARRAY)
-                ->execute();
+                ->executeQuery();
         }
 
         $this->createQueryBuilder()
             ->delete('allianceboard_catranks')
             ->where('cr_cat_id IN (:categoryIds)')
             ->setParameter('categoryIds', $categoryIds, Connection::PARAM_INT_ARRAY)
-            ->execute();
+            ->executeQuery();
 
         $this->createQueryBuilder()
             ->delete('allianceboard_cat')
@@ -199,31 +192,30 @@ class AllianceBoardCategoryRepository extends AbstractRepository
             ->setParameters([
                 'allianceId' => $allianceId,
             ])
-            ->execute();
+            ->executeQuery();
     }
 
     public function deleteCategory(int $categoryId, int $allianceId): void
     {
-        $topicIds = array_column($this->createQueryBuilder()
+        $topicIds = $this->createQueryBuilder()
             ->select('topic_id')
             ->from('allianceboard_topics')
             ->where('topic_cat_id = :categoryId')
             ->setParameter('categoryId', $categoryId)
-            ->execute()
-            ->fetchAllAssociative(), 'topic_id');
+            ->fetchFirstColumn();
 
         if (count($topicIds) > 0) {
             $this->createQueryBuilder()
                 ->delete('allianceboard_posts')
                 ->where('post_topic_id IN (:topicId)')
                 ->setParameter('topicId', $topicIds, Connection::PARAM_INT_ARRAY)
-                ->execute();
+                ->executeQuery();
 
             $this->createQueryBuilder()
                 ->delete('allianceboard_topics')
                 ->where('topic_id IN (:topicId)')
                 ->setParameter('topicId', $topicIds, Connection::PARAM_INT_ARRAY)
-                ->execute();
+                ->executeQuery();
         }
 
         $this->createQueryBuilder()
@@ -234,6 +226,6 @@ class AllianceBoardCategoryRepository extends AbstractRepository
                 'catId' => $categoryId,
                 'allianceId' => $allianceId,
             ])
-            ->execute();
+            ->executeQuery();
     }
 }

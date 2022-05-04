@@ -22,7 +22,6 @@ class BuildingDataRepository extends AbstractRepository
         $data = $this->applySearchSortLimit($this->createQueryBuilder(), $search, $sort)
             ->select('*')
             ->from('buildings')
-            ->execute()
             ->fetchAllAssociative();
 
         $buildings = [];
@@ -42,7 +41,6 @@ class BuildingDataRepository extends AbstractRepository
             ->andWhere('b.building_id = :building_id')
             ->andWhere('b.building_show=1')
             ->setParameter('building_id', $buildingId)
-            ->execute()
             ->fetchAssociative();
 
         return $data !== false ? new Building($data) : null;
@@ -61,7 +59,6 @@ class BuildingDataRepository extends AbstractRepository
             ->setParameter('type', $type)
             ->orderBy('b.building_order')
             ->addOrderBy('b.building_name')
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn ($row) => new Building($row), $data);
@@ -83,7 +80,6 @@ class BuildingDataRepository extends AbstractRepository
         }
 
         return $qb
-            ->execute()
             ->fetchAllKeyValue();
     }
 
@@ -94,7 +90,6 @@ class BuildingDataRepository extends AbstractRepository
             ->from('buildings')
             ->where('building_id = :buildingId')
             ->setParameter('buildingId', $buildingId)
-            ->execute()
             ->fetchOne();
     }
 
@@ -110,7 +105,6 @@ class BuildingDataRepository extends AbstractRepository
             ->where('building_people_place > 0')
             ->orderBy('building_order')
             ->addOrderBy('building_name')
-            ->execute()
             ->fetchAllKeyValue();
     }
 }

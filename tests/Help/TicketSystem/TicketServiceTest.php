@@ -267,7 +267,7 @@ class TicketServiceTest extends SymfonyWebTestCase
             ->set('timestamp', 'timestamp - (73 * 3600)')
             ->where('ticket_id = :ticket_id')
             ->setParameter('ticket_id', $ticket->id)
-            ->execute();
+            ->executeQuery();
 
         // when
         $this->service->closeAssignedInactive();
@@ -298,7 +298,7 @@ class TicketServiceTest extends SymfonyWebTestCase
             ->set('timestamp', 'timestamp - (71 * 3600)')
             ->where('ticket_id = :ticket_id')
             ->setParameter('ticket_id', $ticket->id)
-            ->execute();
+            ->executeQuery();
 
         // when
         $this->service->closeAssignedInactive();

@@ -25,7 +25,7 @@ class UserSittingRepository extends AbstractRepository
                 'password' => $password,
                 'dateFrom' => $dateFrom,
                 'dateTo' => $dateTo,
-            ])->execute();
+            ])->executeQuery();
     }
 
     /**
@@ -37,7 +37,6 @@ class UserSittingRepository extends AbstractRepository
             ->where('s.date_from < :time')
             ->andWhere('s.date_to > :time')
             ->setParameter('time', time())
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn (array $row) => new UserSitting($row), $data);
@@ -51,7 +50,6 @@ class UserSittingRepository extends AbstractRepository
             ->andWhere('s.date_to > :time')
             ->setParameter('time', time())
             ->setParameter('userId', $userId)
-            ->execute()
             ->fetchAssociative();
 
         return $data !== false ? new UserSitting($data) : null;
@@ -69,7 +67,6 @@ class UserSittingRepository extends AbstractRepository
             ->andWhere('s.date_to > :time')
             ->setParameter('time', time())
             ->setParameter('userIds', $userIds, Connection::PARAM_INT_ARRAY)
-            ->execute()
             ->fetchAllAssociative();
 
         $entries = [];
@@ -88,7 +85,6 @@ class UserSittingRepository extends AbstractRepository
         $data = $this->createSitterQueryBuilder()
             ->where('s.user_id = :userId')
             ->setParameter('userId', $userId)
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn (array $row) => new UserSitting($row), $data);
@@ -102,7 +98,6 @@ class UserSittingRepository extends AbstractRepository
         $data = $this->createSitterQueryBuilder()
             ->where('s.sitter_id = :userId')
             ->setParameter('userId', $userId)
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn (array $row) => new UserSitting($row), $data);
@@ -119,7 +114,6 @@ class UserSittingRepository extends AbstractRepository
                 'userId' => $userId,
                 'password' => $password,
             ])
-            ->execute()
             ->fetchOne();
     }
 
@@ -135,7 +129,6 @@ class UserSittingRepository extends AbstractRepository
                 'from' => $from,
                 'to' => $to,
             ])
-            ->execute()
             ->fetchOne();
     }
 
@@ -148,7 +141,6 @@ class UserSittingRepository extends AbstractRepository
             ->setParameters([
                 'userId' => $userId,
             ])
-            ->execute()
             ->fetchOne();
     }
 
@@ -169,7 +161,7 @@ class UserSittingRepository extends AbstractRepository
             ->set('date_to', 'UNIX_TIMESTAMP()')
             ->where('id = :id')
             ->setParameter('id', $id)
-            ->execute();
+            ->executeQuery();
     }
 
     public function cancelUserEntry(int $id, int $userId): bool
@@ -186,7 +178,8 @@ class UserSittingRepository extends AbstractRepository
                 'userId' => $userId,
                 'time' => time(),
             ])
-            ->execute();
+            ->executeQuery()
+            ->rowCount();
     }
 
     public function deleteFutureUserEntry(int $id, int $userId): bool
@@ -201,7 +194,8 @@ class UserSittingRepository extends AbstractRepository
                 'userId' => $userId,
                 'time' => time(),
             ])
-            ->execute();
+            ->executeQuery()
+            ->rowCount();
     }
 
     public function deleteAllUserEntries(int $userId): void
@@ -210,6 +204,6 @@ class UserSittingRepository extends AbstractRepository
             ->delete('user_sitting')
             ->where('user_id = :userId')
             ->setParameter('userId', $userId)
-            ->execute();
+            ->executeQuery();
     }
 }

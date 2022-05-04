@@ -15,7 +15,6 @@ class AdminNotesRepository extends AbstractRepository
             ->from('admin_notes')
             ->where('admin_id = :adminId')
             ->setParameter('adminId', $adminId)
-            ->execute()
             ->fetchOne();
     }
 
@@ -30,7 +29,6 @@ class AdminNotesRepository extends AbstractRepository
             ->where('admin_id = :adminId')
             ->setParameter('adminId', $adminId)
             ->orderBy('date', 'DESC')
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn (array $row) => new AdminNote($row), $data);
@@ -47,7 +45,6 @@ class AdminNotesRepository extends AbstractRepository
                 'id' => $id,
                 'admin_id' => $adminId,
             ])
-            ->execute()
             ->fetchAssociative();
 
         return $data !== false ? new AdminNote($data) : null;
@@ -69,14 +66,14 @@ class AdminNotesRepository extends AbstractRepository
                 'admin_id' => $note->adminId,
                 'date' => $note->date,
             ])
-            ->execute();
+            ->executeQuery();
 
         return (int) $this->getConnection()->lastInsertId();
     }
 
     public function update(AdminNote $note): bool
     {
-        $affected = $this->createQueryBuilder()
+        return (bool) $this->createQueryBuilder()
             ->update('admin_notes')
             ->set('titel', ':titel')
             ->set('text', ':text')
@@ -86,19 +83,17 @@ class AdminNotesRepository extends AbstractRepository
                 'titel' => $note->title,
                 'text' => $note->text,
             ])
-            ->execute();
-
-        return (int) $affected > 0;
+            ->executeQuery()
+            ->rowCount();
     }
 
     public function remove(int $id): bool
     {
-        $affected = $this->createQueryBuilder()
+        return (bool) $this->createQueryBuilder()
             ->delete('admin_notes')
             ->where('notes_id = :id')
             ->setParameter('id', $id)
-            ->execute();
-
-        return (int) $affected > 0;
+            ->executeQuery()
+            ->rowCount();
     }
 }

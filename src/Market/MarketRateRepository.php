@@ -17,7 +17,6 @@ class MarketRateRepository extends AbstractRepository
             ->orderBy('id', 'DESC')
             ->setMaxResults($amount)
             ->setFirstResult($offset)
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn ($row) => MarketRate::createFromArray($row), $data);
@@ -70,7 +69,7 @@ class MarketRateRepository extends AbstractRepository
                     'rate4' => $rate->rate->food,
                     'rate5' => $rate->rate->people,
                 ])
-                ->execute();
+                ->executeQuery();
 
             return;
         }
@@ -119,7 +118,7 @@ class MarketRateRepository extends AbstractRepository
                 'rate4' => $rate->rate->food,
                 'rate5' => $rate->rate->people,
             ])
-            ->execute();
+            ->executeQuery();
 
         $rate->id = (int) $this->getConnection()->lastInsertId();
     }
@@ -132,6 +131,6 @@ class MarketRateRepository extends AbstractRepository
         ->setParameters([
             'id' => $id,
         ])
-        ->execute();
+        ->executeQuery();
     }
 }

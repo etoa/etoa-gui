@@ -121,11 +121,11 @@ class RankingService
         $ranks = $this->userStatRepository->getUserRanks();
         $oldranks = array();
         foreach ($ranks as $userRanks) {
-            $oldranks[$userRanks['id']][0] = $userRanks['rank'];
-            $oldranks[$userRanks['id']][1] = $userRanks['rank_ships'];
-            $oldranks[$userRanks['id']][2] = $userRanks['rank_tech'];
-            $oldranks[$userRanks['id']][3] = $userRanks['rank_buildings'];
-            $oldranks[$userRanks['id']][4] = $userRanks['rank_exp'];
+            $oldranks[(int) $userRanks['id']][0] = (int) $userRanks['rank'];
+            $oldranks[(int) $userRanks['id']][1] = (int) $userRanks['rank_ships'];
+            $oldranks[(int) $userRanks['id']][2] = (int) $userRanks['rank_tech'];
+            $oldranks[(int) $userRanks['id']][3] = (int) $userRanks['rank_buildings'];
+            $oldranks[(int) $userRanks['id']][4] = (int) $userRanks['rank_exp'];
         }
 
         $user_rank_highest = [];

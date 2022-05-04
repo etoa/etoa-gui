@@ -16,7 +16,6 @@ class CellRepository extends AbstractRepository
         $data = $this->createQueryBuilder()
             ->select("id")
             ->from('cells')
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn (array $row) => (int) $row['id'], $data);
@@ -27,7 +26,6 @@ class CellRepository extends AbstractRepository
         return (int) $this->createQueryBuilder()
             ->select("COUNT(id)")
             ->from('cells')
-            ->execute()
             ->fetchOne();
     }
 
@@ -39,7 +37,6 @@ class CellRepository extends AbstractRepository
         $data = $this->createQueryBuilder()
             ->select('MAX(sx)', 'MAX(sy)')
             ->from('cells')
-            ->execute()
             ->fetchNumeric();
 
         return $data !== false
@@ -60,7 +57,6 @@ class CellRepository extends AbstractRepository
         $data = $this->createQueryBuilder()
             ->select('MAX(cx)', 'MAX(cy)')
             ->from('cells')
-            ->execute()
             ->fetchNumeric();
 
         return $data !== false
@@ -87,7 +83,6 @@ class CellRepository extends AbstractRepository
                 "cy"
             )
             ->from('cells')
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn (array $arr) => new Cell($arr), $data);
@@ -109,7 +104,7 @@ class CellRepository extends AbstractRepository
                 'cx' => $cx,
                 'cy' => $cy,
             ])
-            ->execute();
+            ->executeQuery();
 
         return (int) $this->getConnection()->lastInsertId();
     }
@@ -151,7 +146,6 @@ class CellRepository extends AbstractRepository
             ->innerJoin('c', 'entities', 'e', 'e.cell_id = c.id')
             ->innerJoin('e', 'planets', 'p', 'p.id = e.id AND p.planet_user_id > 0')
             ->groupBy('e.cell_id')
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn (array $arr) => new CellPopulation($arr), $data);
@@ -168,7 +162,6 @@ class CellRepository extends AbstractRepository
             ->innerJoin('c', 'entities', 'e', 'e.cell_id = c.id')
             ->innerJoin('e', 'planets', 'p', 'p.id = e.id AND p.planet_user_id = :user')
             ->setParameter('user', $userId)
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn (array $row) => (int) $row['id'], $data);
@@ -192,7 +185,6 @@ class CellRepository extends AbstractRepository
             ->innerJoin('e', 'planets', 'p', 'p.id = e.id AND p.planet_user_id = :user')
             ->groupBy('e.cell_id')
             ->setParameter('user', $userId)
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn (array $arr) => new CellPopulation($arr), $data);
@@ -218,7 +210,6 @@ class CellRepository extends AbstractRepository
             ->innerJoin('a', 'users', 'u', 'a.user_alliance_id=u.user_alliance_id AND u.user_alliance_id > 0 AND u.user_id = :user')
             ->groupBy('e.cell_id')
             ->setParameter('user', $userId)
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn (array $arr) => new CellPopulation($arr), $data);
@@ -239,7 +230,6 @@ class CellRepository extends AbstractRepository
                 'cx' => $cx,
                 'cy' => $cy,
             ])
-            ->execute()
             ->fetchAssociative();
 
         return $data !== false ? new Cell($data) : null;

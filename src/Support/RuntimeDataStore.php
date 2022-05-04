@@ -15,7 +15,6 @@ class RuntimeDataStore extends AbstractRepository
             ->from('runtime_data')
             ->where('data_key = :key')
             ->setParameter('key', $key)
-            ->execute()
             ->fetchOne();
 
         return $value !== false ? $value : $default;

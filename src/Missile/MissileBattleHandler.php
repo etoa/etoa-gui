@@ -212,7 +212,7 @@ class MissileBattleHandler
                             if ($toBeDeactivated !== null) {
                                 $msg_a .= "Das Gebäude " . $toBeDeactivated['building_name'] . " wurde für " . StringUtils::formatTimespan($attackingMissile->deactivate) . " deaktiviert!\n";
                                 $msg_d .= "Euer Gebäude " . $toBeDeactivated['building_name'] . " wurde für " . StringUtils::formatTimespan($attackingMissile->deactivate) . " deaktiviert!\n";
-                                $this->buildingRepository->deactivateBuilding($toBeDeactivated['buildlist_id'], $time + $attackingMissile->deactivate);
+                                $this->buildingRepository->deactivateBuilding((int) $toBeDeactivated['buildlist_id'], $time + $attackingMissile->deactivate);
                             }
                         }
                     }

@@ -27,7 +27,7 @@ class ShipQueueRepository extends AbstractRepository
                 'startTime' => $startTime,
                 'endTime' => $endTime,
                 'objTime' => $objectTime,
-            ])->execute();
+            ])->executeQuery();
 
         return (int) $this->getConnection()->lastInsertId();
     }
@@ -39,7 +39,6 @@ class ShipQueueRepository extends AbstractRepository
             ->from('ship_queue')
             ->where('queue_id = :id')
             ->setParameter('id', $id)
-            ->execute()
             ->fetchAssociative();
 
         return $data !== false ? ShipQueueItem::createFromData($data) : null;
@@ -60,7 +59,6 @@ class ShipQueueRepository extends AbstractRepository
                 'now' => time(),
             ])
             ->groupBy('queue_ship_id')
-            ->execute()
             ->fetchAllKeyValue();
 
         return array_map(fn ($value) => (int) $value, $data);
@@ -75,7 +73,6 @@ class ShipQueueRepository extends AbstractRepository
             ->select('*')
             ->from('ship_queue')
             ->orderBy('queue_starttime', 'ASC')
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn ($row) => ShipQueueItem::createFromData($row), $data);
@@ -105,7 +102,7 @@ class ShipQueueRepository extends AbstractRepository
                 'objectTime' => $item->objectTime,
                 'buildType' => $item->buildType,
             ])
-            ->execute();
+            ->executeQuery();
     }
 
     public function deleteQueueItem(int $id): void
@@ -114,7 +111,7 @@ class ShipQueueRepository extends AbstractRepository
             ->delete('ship_queue')
             ->where('queue_id = :id')
             ->setParameter('id', $id)
-            ->execute();
+            ->executeQuery();
     }
 
     public function count(ShipQueueSearch $search = null): int
@@ -122,7 +119,6 @@ class ShipQueueRepository extends AbstractRepository
         return (int) $this->applySearchSortLimit($this->createQueryBuilder(), $search)
             ->select('COUNT(*)')
             ->from('ship_queue')
-            ->execute()
             ->fetchOne();
     }
 
@@ -136,7 +132,7 @@ class ShipQueueRepository extends AbstractRepository
                 'userId' => $userId,
                 'type' => 1,
             ])
-            ->execute();
+            ->executeQuery();
     }
 
     public function unfreezeConstruction(int $userId, int $duration): void
@@ -152,6 +148,6 @@ class ShipQueueRepository extends AbstractRepository
                 'type' => 0,
                 'duration' => $duration,
             ])
-            ->execute();
+            ->executeQuery();
     }
 }

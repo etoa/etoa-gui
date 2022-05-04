@@ -22,7 +22,6 @@ class BuildingRepository extends AbstractRepository
             ->setParameters([
                 'entityId' => $entityId,
             ])
-            ->execute()
             ->fetchAllKeyValue();
 
         return array_map(fn ($value) => (int) $value, $data);
@@ -44,7 +43,6 @@ class BuildingRepository extends AbstractRepository
             ->setParameters([
                 'entityId' => $entityId,
             ])
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn (array $row) => new BuildingWorkplace($row), $data);
@@ -66,7 +64,6 @@ class BuildingRepository extends AbstractRepository
             ->setParameters([
                 'entityId' => $entityId,
             ])
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn (array $row) => new BuildingPeopleStorage($row), $data);
@@ -85,7 +82,6 @@ class BuildingRepository extends AbstractRepository
                 'buildingId' => $buildingId,
                 'entityId' => $entityId,
             ])
-            ->execute()
             ->fetchOne();
     }
 
@@ -100,7 +96,6 @@ class BuildingRepository extends AbstractRepository
                 'userId' => $userId,
                 'buildingId' => $buildingId,
             ])
-            ->execute()
             ->fetchOne();
     }
 
@@ -111,7 +106,6 @@ class BuildingRepository extends AbstractRepository
             ->from('buildlist')
             ->where('buildlist_building_id = :buildingId')
             ->setParameter('buildingId', $buildingId)
-            ->execute()
             ->fetchOne();
     }
 
@@ -120,7 +114,6 @@ class BuildingRepository extends AbstractRepository
         return (int) $this->createQueryBuilder()
             ->select('COUNT(buildlist_id)')
             ->from('buildlist')
-            ->execute()
             ->fetchOne();
     }
 
@@ -137,7 +130,6 @@ class BuildingRepository extends AbstractRepository
                 'userId' => $userId,
                 'entityId' => $entityId,
             ])
-            ->execute()
             ->fetchOne();
     }
 
@@ -146,7 +138,6 @@ class BuildingRepository extends AbstractRepository
         return (int) $this->applySearchSortLimit($this->createQueryBuilder(), $search)
             ->select('COUNT(buildlist_id)')
             ->from('buildlist')
-            ->execute()
             ->fetchOne();
     }
 
@@ -158,18 +149,18 @@ class BuildingRepository extends AbstractRepository
             ->where('buildlist_current_level=0')
             ->andWhere('buildlist_build_start_time=0')
             ->andWhere('buildlist_build_end_time=0')
-            ->execute()
             ->fetchOne();
     }
 
     public function deleteEmpty(): int
     {
-        return (int) $this->createQueryBuilder()
+        return $this->createQueryBuilder()
             ->delete('buildlist')
             ->where('buildlist_current_level=0')
             ->andWhere('buildlist_build_start_time=0')
             ->andWhere('buildlist_build_end_time=0')
-            ->execute();
+            ->executeQuery()
+            ->rowCount();
     }
 
     /**
@@ -183,7 +174,6 @@ class BuildingRepository extends AbstractRepository
             ->orderBy('building_type_id')
             ->addOrderBy('building_order')
             ->addOrderBy('building_name')
-            ->execute()
             ->fetchAllKeyValue();
     }
 
@@ -205,7 +195,6 @@ class BuildingRepository extends AbstractRepository
             ->innerJoin('bl', 'users', 'u', 'bl.buildlist_user_id = u.user_id')
             ->innerJoin('bl', 'buildings', 'b', 'bl.buildlist_building_id = b.building_id AND bl.buildlist_id = :id')
             ->setParameter('id', $id)
-            ->execute()
             ->fetchAssociative();
 
         return $data !== false ? $data : null;
@@ -227,9 +216,10 @@ class BuildingRepository extends AbstractRepository
                 'end' => $end,
                 'id' => $id,
             ])
-            ->execute();
+            ->executeQuery()
+            ->rowCount();
 
-        return (int) $affected > 0;
+        return $affected > 0;
     }
 
     public function updateUserForEntity(int $newUserId, int $entityId): void
@@ -242,7 +232,7 @@ class BuildingRepository extends AbstractRepository
                 'newUserId' => $newUserId,
                 'entityId' => $entityId,
             ])
-            ->execute();
+            ->executeQuery();
     }
 
     public function removeForEntity(int $entityId): void
@@ -251,7 +241,7 @@ class BuildingRepository extends AbstractRepository
             ->delete('building_queue')
             ->where('entity_id = :entityId')
             ->setParameter('entityId', $entityId)
-            ->execute();
+            ->executeQuery();
 
         $this->createQueryBuilder()
             ->delete('buildlist')
@@ -259,7 +249,7 @@ class BuildingRepository extends AbstractRepository
             ->setParameters([
                 'entityId' => $entityId,
             ])
-            ->execute();
+            ->executeQuery();
     }
 
     public function deleteBuildingListEntry(int $id): bool
@@ -268,9 +258,10 @@ class BuildingRepository extends AbstractRepository
             ->delete('buildlist')
             ->where('buildlist_id = :id')
             ->setParameter('id', $id)
-            ->execute();
+            ->executeQuery()
+            ->rowCount();
 
-        return (int) $affected > 0;
+        return $affected > 0;
     }
 
     /**
@@ -310,7 +301,7 @@ class BuildingRepository extends AbstractRepository
                 ->setParameter('building', $formData['building_id']);
         }
 
-        return $qry->execute()
+        return $qry
             ->fetchAllAssociative();
     }
 
@@ -353,7 +344,6 @@ class BuildingRepository extends AbstractRepository
         $data = $this->applySearchSortLimit($this->createQueryBuilder(), $search, null, $limit, $offset)
             ->select('*')
             ->from('buildlist')
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn ($row) => BuildingListItem::createFromData($row), $data);
@@ -383,7 +373,6 @@ class BuildingRepository extends AbstractRepository
         }
 
         $data = $qb
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn ($row) => BuildingListItem::createFromData($row), $data);
@@ -398,7 +387,6 @@ class BuildingRepository extends AbstractRepository
             ->setParameters([
                 'id' => $id,
             ])
-            ->execute()
             ->fetchAssociative();
 
         return $data !== false ? BuildingListItem::createFromData($data) : null;
@@ -417,14 +405,13 @@ class BuildingRepository extends AbstractRepository
                 'entityId' => $entityId,
                 'buildingId' => $buildingId,
             ])
-            ->execute()
             ->fetchAssociative();
 
         return $data !== false ? BuildingListItem::createFromData($data) : null;
     }
 
     /**
-     * @return ?array{building_name: string, buildlist_id: int}
+     * @return ?array{building_name: string, buildlist_id: string}
      */
     public function getDeactivatableBuilding(int $entityId): ?array
     {
@@ -463,7 +450,7 @@ class BuildingRepository extends AbstractRepository
                 'id' => $id,
                 'deactivated' => $deactivateTime,
             ])
-            ->execute();
+            ->executeQuery();
     }
 
     public function save(BuildingListItem $item): void
@@ -498,7 +485,7 @@ class BuildingRepository extends AbstractRepository
                 'deactivated' => $item->deactivated,
                 'cooldown' => $item->cooldown,
             ])
-            ->execute();
+            ->executeQuery();
     }
 
     public function getPeopleWorking(int $entityId, bool $onlyWorkingStatus = false): PeopleWorking
@@ -514,7 +501,6 @@ class BuildingRepository extends AbstractRepository
         }
 
         $data = $qb
-            ->execute()
             ->fetchAllKeyValue();
 
         return new PeopleWorking($data);
@@ -534,7 +520,7 @@ class BuildingRepository extends AbstractRepository
                 'buildingId' => $buildingId,
                 'percent' => $percent,
             ])
-            ->execute();
+            ->executeQuery();
     }
 
     public function setPeopleWorking(int $entityId, int $buildingId, int $people): void
@@ -549,7 +535,7 @@ class BuildingRepository extends AbstractRepository
                 'buildingId' => $buildingId,
                 'peopleWorking' => $people,
             ])
-            ->execute();
+            ->executeQuery();
     }
 
     public function markBuildingWorkingStatus(int $userId, int $entityId, int $buildingId, bool $working): bool
@@ -565,7 +551,9 @@ class BuildingRepository extends AbstractRepository
                 'entityId' => $entityId,
                 'userId' => $userId,
                 'status' => (int) $working,
-            ])->execute();
+            ])
+            ->executeQuery()
+            ->rowCount();
     }
 
     /**
@@ -600,7 +588,7 @@ class BuildingRepository extends AbstractRepository
             );
 
         return array_map(fn ($arr) => [
-            'name' => (string) $arr['name'],
+            'name' => $arr['name'],
             'cnt' => (int) $arr['cnt'],
         ], $data);
     }
@@ -637,7 +625,7 @@ class BuildingRepository extends AbstractRepository
             );
 
         return array_map(fn ($arr) => [
-            'name' => (string) $arr['name'],
+            'name' => $arr['name'],
             'max' => (int) $arr['max'],
         ], $data);
     }
@@ -648,7 +636,7 @@ class BuildingRepository extends AbstractRepository
             ->delete('buildlist')
             ->where('buildlist_user_id = :userId')
             ->setParameter('userId', $userId)
-            ->execute();
+            ->executeQuery();
     }
 
     public function removeEntry(int $id): void
@@ -657,7 +645,7 @@ class BuildingRepository extends AbstractRepository
             ->delete('buildlist')
             ->where('buildlist_id = :id')
             ->setParameter('id', $id)
-            ->execute();
+            ->executeQuery();
     }
 
     public function freezeConstruction(int $userId): void
@@ -670,7 +658,7 @@ class BuildingRepository extends AbstractRepository
             ->setParameters([
                 'userId' => $userId,
             ])
-            ->execute();
+            ->executeQuery();
     }
 
     public function unfreezeConstruction(int $userId, int $duration): void
@@ -686,7 +674,7 @@ class BuildingRepository extends AbstractRepository
                 'userId' => $userId,
                 'duration' => $duration,
             ])
-            ->execute();
+            ->executeQuery();
     }
 
     /**

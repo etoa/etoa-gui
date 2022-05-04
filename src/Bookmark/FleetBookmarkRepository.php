@@ -22,7 +22,6 @@ class FleetBookmarkRepository extends AbstractRepository
                 'userId' => $userId,
             ])
             ->orderBy('name')
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn (array $row) => new FleetBookmark($row), $data);
@@ -39,7 +38,6 @@ class FleetBookmarkRepository extends AbstractRepository
                 'id' => $id,
                 'userId' => $userId,
             ])
-            ->execute()
             ->fetchAssociative();
 
         return $data !== false ? new FleetBookmark($data) : null;
@@ -69,7 +67,7 @@ class FleetBookmarkRepository extends AbstractRepository
                 'action' => $action,
                 'speed' => $speed,
             ])
-            ->execute();
+            ->executeQuery();
 
         return (int) $this->getConnection()->lastInsertId();
     }
@@ -98,7 +96,7 @@ class FleetBookmarkRepository extends AbstractRepository
                 'action' => $action,
                 'speed' => $speed,
             ])
-            ->execute();
+            ->executeQuery();
     }
 
     public function remove(int $id, int $userId): bool
@@ -111,7 +109,8 @@ class FleetBookmarkRepository extends AbstractRepository
                 'userId' => $userId,
                 'id' => $id,
             ])
-            ->execute();
+            ->executeQuery()
+            ->rowCount();
     }
 
     public function removeForUser(int $userId) : void
@@ -120,6 +119,6 @@ class FleetBookmarkRepository extends AbstractRepository
             ->delete('fleet_bookmarks')
             ->where('user_id = :userId')
             ->setParameter('userId', $userId)
-            ->execute();
+            ->executeQuery();
     }
 }

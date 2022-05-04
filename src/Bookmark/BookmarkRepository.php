@@ -35,7 +35,6 @@ class BookmarkRepository extends AbstractRepository
         }
 
         $data = $qb
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn ($arr) => new Bookmark($arr), $data);
@@ -74,7 +73,6 @@ class BookmarkRepository extends AbstractRepository
             ->setParameter('userId', $userId)
             ->orderBy('bookmarks.comment')
             ->addOrderBy('bookmarks.entity_id')
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn (array $row) => new BookmarkEntity($row), $data);
@@ -93,7 +91,6 @@ class BookmarkRepository extends AbstractRepository
                 'id' => $id,
                 'userId' => $userId,
             ])
-            ->execute()
             ->fetchAssociative();
 
         return $data !== false ? new Bookmark($data) : null;
@@ -110,7 +107,6 @@ class BookmarkRepository extends AbstractRepository
                 'userId' => $userId,
                 'entityId' => $entity,
             ])
-            ->execute()
             ->fetchOne();
     }
 
@@ -128,7 +124,7 @@ class BookmarkRepository extends AbstractRepository
                 'entityId' => $entityId,
                 'comment' => $comment,
             ])
-            ->execute();
+            ->executeQuery();
 
         return (int) $this->getConnection()->lastInsertId();
     }
@@ -145,7 +141,8 @@ class BookmarkRepository extends AbstractRepository
                 'userId' => $userId,
                 'comment' => $comment,
             ])
-            ->execute();
+            ->executeQuery()
+            ->rowCount();
     }
 
     public function remove(int $id, int $userId): bool
@@ -158,7 +155,8 @@ class BookmarkRepository extends AbstractRepository
                 'userId' => $userId,
                 'id' => $id,
             ])
-            ->execute();
+            ->executeQuery()
+            ->rowCount();
     }
 
     public function removeForUser(int $userId) : void
@@ -167,6 +165,6 @@ class BookmarkRepository extends AbstractRepository
             ->delete('bookmarks')
             ->where('user_id = :userId')
             ->setParameter('userId', $userId)
-            ->execute();
+            ->executeQuery();
     }
 }

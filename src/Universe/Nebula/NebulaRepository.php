@@ -16,7 +16,6 @@ class NebulaRepository extends AbstractRepository
         $data = $this->createQueryBuilder()
             ->select("id")
             ->from('nebulas')
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn (array $row) => (int) $row['id'], $data);
@@ -27,7 +26,6 @@ class NebulaRepository extends AbstractRepository
         return (int) $this->createQueryBuilder()
             ->select("COUNT(id)")
             ->from('nebulas')
-            ->execute()
             ->fetchOne();
     }
 
@@ -40,7 +38,6 @@ class NebulaRepository extends AbstractRepository
             ->setParameters([
                 'id' => $id,
             ])
-            ->execute()
             ->fetchAssociative();
 
         return $data !== false ? new Nebula($data) : null;
@@ -58,7 +55,7 @@ class NebulaRepository extends AbstractRepository
                 'id' => $id,
                 'res_crystal' => $resCrystal,
             ])
-            ->execute();
+            ->executeQuery();
     }
 
     public function update(
@@ -70,7 +67,7 @@ class NebulaRepository extends AbstractRepository
         int $resFood,
         int $resPower
     ): bool {
-        $affected = (int) $this->createQueryBuilder()
+        $affected = $this->createQueryBuilder()
             ->update('nebulas')
             ->set('res_metal', ':res_metal')
             ->set('res_crystal', ':res_crystal')
@@ -88,7 +85,8 @@ class NebulaRepository extends AbstractRepository
                 'res_food' => $resFood,
                 'res_power' => $resPower,
             ])
-            ->execute();
+            ->executeQuery()
+            ->rowCount();
 
         return $affected > 0;
     }
@@ -102,7 +100,7 @@ class NebulaRepository extends AbstractRepository
         int $resFood,
         int $resPower
     ): bool {
-        $affected = (int) $this->createQueryBuilder()
+        $affected = $this->createQueryBuilder()
             ->update('nebulas')
             ->set('res_metal', 'res_metal + :res_metal')
             ->set('res_crystal', 'res_crystal + :res_crystal')
@@ -120,7 +118,8 @@ class NebulaRepository extends AbstractRepository
                 'res_food' => $resFood,
                 'res_power' => $resPower,
             ])
-            ->execute();
+            ->executeQuery()
+            ->rowCount();
 
         return $affected > 0;
     }
@@ -131,6 +130,6 @@ class NebulaRepository extends AbstractRepository
             ->delete('nebulas')
             ->where('id = :id')
             ->setParameter('id', $id)
-            ->execute();
+            ->executeQuery();
     }
 }

@@ -20,7 +20,7 @@ class UserOnlineStatsRepository extends AbstractRepository
                 'sessionCount' => $sessionCount,
                 'userCount' => $userCount,
             ])
-            ->execute();
+            ->executeQuery();
     }
 
     /**
@@ -33,7 +33,6 @@ class UserOnlineStatsRepository extends AbstractRepository
             ->from('user_onlinestats')
             ->setMaxResults($limit)
             ->orderBy('stats_timestamp', 'DESC')
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn (array $row) => new UserOnlineStats($row), $data);

@@ -81,16 +81,15 @@ class UserStatRepository extends AbstractRepository
         return (int) $this->createQueryBuilder()
             ->select('COUNT(id)')
             ->from('user_stats')
-            ->execute()
             ->fetchOne();
     }
 
     /**
-     * @return array{id: int, rank: int, rank_ships: int, rank_tech: int, rank_buildings: int, rank_exp: int}[]
+     * @return array{id: string, rank: string, rank_ships: string, rank_tech: string, rank_buildings: string, rank_exp: string}[]
      */
     public function getUserRanks(): array
     {
-        $data = $this->getConnection()->fetchAllAssociative("
+        return $this->getConnection()->fetchAllAssociative("
             SELECT
                 id,
                 rank,
@@ -101,8 +100,6 @@ class UserStatRepository extends AbstractRepository
             FROM
                 user_stats;
         ");
-
-        return array_map(fn (array $row) => array_map(fn ($value) => (int) $value, $row), $data);
     }
 
     /**
@@ -128,7 +125,6 @@ class UserStatRepository extends AbstractRepository
         }
 
         $data = $this->applySearchSortLimit($qb, $search, $sort, $limit, $offset)
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn (array $row) => new UserStat($row), $data);

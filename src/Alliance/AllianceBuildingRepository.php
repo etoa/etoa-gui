@@ -24,7 +24,6 @@ class AllianceBuildingRepository extends AbstractRepository
         $data = $this->createQueryBuilder()
             ->select("*")
             ->from('alliance_buildings')
-            ->execute()
             ->fetchAllAssociative();
 
         $result = [];
@@ -47,7 +46,6 @@ class AllianceBuildingRepository extends AbstractRepository
                 'alliance' => $allianceId,
                 'buildingId' => $buildingId,
             ])
-            ->execute()
             ->fetchAllAssociative();
 
         return count($test) > 0;
@@ -64,7 +62,6 @@ class AllianceBuildingRepository extends AbstractRepository
                 'alliance' => $allianceId,
                 'buildingId' => $buildingId,
             ])
-            ->execute()
             ->fetchOne();
     }
 
@@ -81,7 +78,6 @@ class AllianceBuildingRepository extends AbstractRepository
             ->setParameters([
                 'alliance' => $allianceId,
             ])
-            ->execute()
             ->fetchAllKeyValue();
     }
 
@@ -96,7 +92,6 @@ class AllianceBuildingRepository extends AbstractRepository
                 'allianceId' => $allianceId,
                 'buildingId' => $buildingId,
             ])
-            ->execute()
             ->fetchOne();
     }
 
@@ -112,7 +107,7 @@ class AllianceBuildingRepository extends AbstractRepository
                 'buildingId' => $buildingId,
                 'cooldownEnd' => $cooldownEnd,
             ])
-            ->execute();
+            ->executeQuery();
     }
 
     public function getUserCooldown(int $userId, int $buildingId): int
@@ -126,7 +121,6 @@ class AllianceBuildingRepository extends AbstractRepository
                 'userId' => $userId,
                 'buildingId' => $buildingId,
             ])
-            ->execute()
             ->fetchOne();
     }
 
@@ -162,7 +156,6 @@ class AllianceBuildingRepository extends AbstractRepository
             ->from('alliance_buildlist')
             ->where('alliance_buildlist_alliance_id = :allianceId')
             ->setParameter('allianceId', $allianceId)
-            ->execute()
             ->fetchAllAssociative();
 
         $result = [];
@@ -186,7 +179,6 @@ class AllianceBuildingRepository extends AbstractRepository
             ->where('alliance_buildlist_alliance_id = :allianceId')
             ->andWhere('alliance_buildlist_build_end_time > 0')
             ->setParameter('allianceId', $allianceId)
-            ->execute()
             ->fetchAssociative();
 
         return $data !== false ? ['name' => $data['alliance_building_name'], 'endTime' => (int) $data['alliance_buildlist_build_end_time']] : null;
@@ -213,7 +205,7 @@ class AllianceBuildingRepository extends AbstractRepository
                 'startTime' => $startTime,
                 'endTime' => $endTime,
             ])
-            ->execute();
+            ->executeQuery();
     }
 
     public function updateMembersForAlliance(int $allianceId, int $amount): void
@@ -227,7 +219,7 @@ class AllianceBuildingRepository extends AbstractRepository
                 'amount' => $amount,
                 'alliance' => $allianceId,
             ])
-            ->execute();
+            ->executeQuery();
     }
 
     public function updateForAlliance(int $allianceId, int $buildingId, int $level, int $amount, int $startTime = 0, int $endTime = 0): void
@@ -248,7 +240,7 @@ class AllianceBuildingRepository extends AbstractRepository
                 'startTime' => $startTime,
                 'endTime' => $endTime,
             ])
-            ->execute();
+            ->executeQuery();
     }
 
     public function removeForAlliance(int $allianceId): void
@@ -257,7 +249,7 @@ class AllianceBuildingRepository extends AbstractRepository
             ->delete('alliance_buildlist')
             ->where('alliance_buildlist_alliance_id = :allianceId')
             ->setParameter('allianceId', $allianceId)
-            ->execute();
+            ->executeQuery();
     }
 
 
@@ -279,7 +271,6 @@ class AllianceBuildingRepository extends AbstractRepository
             ->andWhere('alliance_res_food >= 0')
             ->andWhere('alliance_buildlist_current_level > 0')
             ->setParameter('buildingId', AllianceBuildingId::SHIPYARD)
-            ->execute()
             ->fetchAllKeyValue();
 
         return array_map(fn ($value) => (int) $value, $data);

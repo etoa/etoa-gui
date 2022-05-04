@@ -34,7 +34,6 @@ abstract class SimpleForm extends Form
             ->select('*')
             ->from($this->getTable())
             ->orderBy($this->getOverviewOrderField(), $this->getOverviewOrder())
-            ->execute()
             ->fetchAllAssociative();
 
         if (count($rows) > 0) {
@@ -82,7 +81,7 @@ abstract class SimpleForm extends Form
             ->insert($this->getTable())
             ->values($values)
             ->setParameters($params)
-            ->execute();
+            ->executeQuery();
 
         echo MessageBox::ok("", "Neuer leerer Datensatz wurde hinzugefügt!");
     }
@@ -93,7 +92,7 @@ abstract class SimpleForm extends Form
         foreach ($request->request->all() as $key => $val) {
             if ($key != "apply_submit" && $key != "del") {
                 foreach ($val as $k => $vl) {
-                    $affected += (int) $this->createQueryBuilder()
+                    $affected += $this->createQueryBuilder()
                         ->update($this->getTable())
                         ->set($key, ':val')
                         ->where($this->getTableId() . " = :id")
@@ -101,7 +100,8 @@ abstract class SimpleForm extends Form
                             'id' => $k,
                             'val' => $vl,
                         ])
-                        ->execute();
+                        ->executeQuery()
+                        ->rowCount();
                 }
             }
         }
@@ -121,7 +121,7 @@ abstract class SimpleForm extends Form
                         ->delete($this->getTable())
                         ->where($this->getTableId() . " = :id")
                         ->setParameter('id', $id)
-                        ->execute();
+                        ->executeQuery();
                 }
                 $deleted = true;
             }

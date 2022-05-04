@@ -46,7 +46,7 @@ class MarketAuctionRepository extends AbstractRepository
                 'currency3' => $currency->fuel,
                 'currency4' => $currency->food,
                 'buyable' => 1,
-            ])->execute();
+            ])->executeQuery();
 
         return (int) $this->getConnection()->lastInsertId();
     }
@@ -87,7 +87,7 @@ class MarketAuctionRepository extends AbstractRepository
 
         $qb
             ->setParameters($parameters)
-            ->execute();
+            ->executeQuery();
     }
 
     /**
@@ -99,7 +99,6 @@ class MarketAuctionRepository extends AbstractRepository
             ->select('*')
             ->from('market_auction')
             ->orderBy('date_end', 'ASC')
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn (array $row) => new MarketAuction($row), $data);
@@ -117,7 +116,6 @@ class MarketAuctionRepository extends AbstractRepository
             ->andWhere('user_id <> :userId')
             ->orderBy('date_end', 'ASC')
             ->setParameter('userId', $userId)
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn (array $row) => new MarketAuction($row), $data);
@@ -133,7 +131,7 @@ class MarketAuctionRepository extends AbstractRepository
             ->setParameters([
                 'id' => $id,
                 'userId' => $userId,
-            ])->execute()
+            ])
             ->fetchAssociative();
 
         return $data !== false ? new MarketAuction($data) : null;
@@ -151,7 +149,7 @@ class MarketAuctionRepository extends AbstractRepository
             ->orderBy('date_end', 'ASC')
             ->setParameters([
                 'userId' => $userId,
-            ])->execute()
+            ])
             ->fetchAllAssociative();
 
         return array_map(fn (array $row) => new MarketAuction($row), $data);
@@ -167,7 +165,7 @@ class MarketAuctionRepository extends AbstractRepository
             ->setParameters([
                 'id' => $id,
                 'userId' => $userId,
-            ])->execute()
+            ])
             ->fetchAssociative();
 
         return $data !== false ? new MarketAuction($data) : null;
@@ -179,7 +177,7 @@ class MarketAuctionRepository extends AbstractRepository
             ->delete('market_auction')
             ->where('user_id = :userId')
             ->setParameter('userId', $userId)
-            ->execute();
+            ->executeQuery();
     }
 
     public function deleteAuction(int $auctionId) : void
@@ -188,6 +186,6 @@ class MarketAuctionRepository extends AbstractRepository
             ->delete('market_auction')
             ->where('id = :id')
             ->setParameter('id', $auctionId)
-            ->execute();
+            ->executeQuery();
     }
 }

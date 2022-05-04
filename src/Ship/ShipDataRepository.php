@@ -28,7 +28,6 @@ class ShipDataRepository extends AbstractRepository
             ->from('ships');
 
         return $this->applySearchSortLimit($qb, $search, $orderBy ?? ShipSort::name(), $limit)
-            ->execute()
             ->fetchAllKeyValue();
     }
 
@@ -40,7 +39,6 @@ class ShipDataRepository extends AbstractRepository
         $data = $this->createQueryBuilder()
             ->select('ship_id', 'ship_points')
             ->from('ships')
-            ->execute()
             ->fetchAllKeyValue();
 
         return array_map(fn ($value) => (float) $value, $data);
@@ -56,7 +54,7 @@ class ShipDataRepository extends AbstractRepository
                 'shipId' => $shipId,
                 'points' => $points,
             ])
-            ->execute();
+            ->executeQuery();
     }
 
     /**
@@ -81,7 +79,6 @@ class ShipDataRepository extends AbstractRepository
 
         $data = $qb
             ->addOrderBy('ship_name')
-            ->execute()
             ->fetchAllAssociative();
 
         $result = [];
@@ -104,7 +101,6 @@ class ShipDataRepository extends AbstractRepository
             ->from('ships')
             ->andWhere('special_ship = 1')
             ->orderBy('ship_name')
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn ($row) => new Ship($row), $data);
@@ -121,7 +117,6 @@ class ShipDataRepository extends AbstractRepository
             ->from('ships')
             ->andWhere('ship_fakeable = 1')
             ->orderBy('ship_name')
-            ->execute()
             ->fetchAllKeyValue();
     }
 
@@ -132,7 +127,6 @@ class ShipDataRepository extends AbstractRepository
     {
         $data = $this->shipActionQueryBuilder($action)
             ->select('*')
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn ($row) => new Ship($row), $data);
@@ -145,7 +139,6 @@ class ShipDataRepository extends AbstractRepository
     {
         return $this->shipActionQueryBuilder($action)
             ->select('ship_id, ship_name')
-            ->execute()
             ->fetchAllKeyValue();
     }
 
@@ -176,7 +169,6 @@ class ShipDataRepository extends AbstractRepository
             ->from('ships')
             ->where('ship_prod_power > 0')
             ->orderBy('ship_order')
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn ($row) => new Ship($row), $data);
@@ -193,7 +185,6 @@ class ShipDataRepository extends AbstractRepository
             ->from('ships')
             ->where('ship_alliance_shipyard_level > 0')
             ->orderBy('ship_alliance_shipyard_level')
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn ($row) => new Ship($row), $data);
@@ -212,7 +203,6 @@ class ShipDataRepository extends AbstractRepository
         }
 
         $data = $qb
-            ->execute()
             ->fetchAssociative();
 
         return $data !== false ? new Ship($data) : null;
@@ -230,7 +220,6 @@ class ShipDataRepository extends AbstractRepository
             ->andWhere('ship_show=1')
             ->setParameter('category', $shipCategory)
             ->orderBy($order, $sort)
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn ($row) => new Ship($row), $data);
@@ -250,7 +239,6 @@ class ShipDataRepository extends AbstractRepository
             ->andWhere('special_ship = 0')
             ->setParameter('raceId', $raceId)
             ->orderBy('ship_order')
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn ($row) => new Ship($row), $data);
@@ -266,7 +254,6 @@ class ShipDataRepository extends AbstractRepository
             ->setParameters([
                 'defenseId' => $defenseId,
             ])
-            ->execute()
             ->fetchAssociative();
 
         return $data !== false ? new Ship($data) : null;
@@ -280,7 +267,6 @@ class ShipDataRepository extends AbstractRepository
         $data = $this->applySearchSortLimit($this->createQueryBuilder(), $search, $sort, $limit)
             ->select('*')
             ->from('ships')
-            ->execute()
             ->fetchAllAssociative();
 
         $result = [];
@@ -298,7 +284,6 @@ class ShipDataRepository extends AbstractRepository
             ->select('*')
             ->from('ships')
             ->setMaxResults(1)
-            ->execute()
             ->fetchAssociative();
 
         return $data !== false ? new Ship($data) : null;

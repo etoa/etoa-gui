@@ -21,7 +21,6 @@ class TutorialManager extends AbstractRepository
             ->from('tutorial_texts')
             ->where('text_id = :id')
             ->setParameter('id', $id)
-            ->execute()
             ->fetchAssociative();
 
         if ($data !== false) {
@@ -37,7 +36,6 @@ class TutorialManager extends AbstractRepository
                     'tutorialId' => $text->tutorialId,
                     'step' => $text->step,
                 ])
-                ->execute()
                 ->fetchOne();
             if ($prevStep !== false) {
                 $text->prev = (int) $prevStep;
@@ -53,7 +51,6 @@ class TutorialManager extends AbstractRepository
                     'tutorialId' => $text->tutorialId,
                     'step' => $text->step,
                 ])
-                ->execute()
                 ->fetchOne();
             if ($nextStep !== false) {
                 $text->next = (int) $nextStep;
@@ -77,7 +74,6 @@ class TutorialManager extends AbstractRepository
                 'tutorialId' => $tutorialId,
                 'step' => $step,
             ])
-            ->execute()
             ->fetchOne();
 
         if ($id !== false) {
@@ -120,7 +116,6 @@ class TutorialManager extends AbstractRepository
                 'userId' => $userId,
                 'tutorialId' => $tutorialId,
             ])
-            ->execute()
             ->fetchOne();
 
         if ($data !== null) {
@@ -141,7 +136,6 @@ class TutorialManager extends AbstractRepository
                 'userId' => $userId,
                 'tutorialId' => $tutorialId,
             ])
-            ->execute()
             ->fetchOne();
 
         if ($data !== false) {
@@ -162,7 +156,7 @@ class TutorialManager extends AbstractRepository
                 'userId' => $userId,
                 'tutorialId' => $tutorialId,
             ])
-            ->execute();
+            ->executeQuery();
     }
 
     public function reopenAllTutorials(int $userId): void
@@ -174,6 +168,6 @@ class TutorialManager extends AbstractRepository
             ->setParameters([
                 'userId' => $userId,
             ])
-            ->execute();
+            ->executeQuery();
     }
 }

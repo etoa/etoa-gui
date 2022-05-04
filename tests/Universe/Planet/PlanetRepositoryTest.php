@@ -86,6 +86,6 @@ class PlanetRepositoryTest extends SymfonyWebTestCase
             'isMain' => (int) $isMain,
             'name' => 'Planet',
             'desc' => 'Description',
-        ])->execute();
+        ])->executeQuery();
     }
 }

@@ -16,7 +16,7 @@ class UserPropertiesRepository extends AbstractRepository
             ->setParameters([
                 'id' => $id,
             ])
-            ->execute();
+            ->executeQuery();
 
         $this->createQueryBuilder()
             ->insert('user_properties')
@@ -26,7 +26,7 @@ class UserPropertiesRepository extends AbstractRepository
             ->setParameters([
                 'id' => $id,
             ])
-            ->execute();
+            ->executeQuery();
     }
 
     public function getOrCreateProperties(int $userId): UserProperties
@@ -48,7 +48,6 @@ class UserPropertiesRepository extends AbstractRepository
             ->from('user_properties')
             ->where('id = :userId')
             ->setParameter('userId', $userId)
-            ->execute()
             ->fetchAssociative();
 
         return $data !== false ? new UserProperties($data) : null;
@@ -116,7 +115,7 @@ class UserPropertiesRepository extends AbstractRepository
                 'chatColor' => $properties->chatColor,
                 'enableKeybinds' => (int) $properties->enableKeybinds,
             ])
-            ->execute();
+            ->executeQuery();
     }
 
     /**
@@ -147,6 +146,6 @@ class UserPropertiesRepository extends AbstractRepository
             ->delete('user_properties')
             ->where('id = :userId')
             ->setParameter('userId', $userId)
-            ->execute();
+            ->executeQuery();
     }
 }

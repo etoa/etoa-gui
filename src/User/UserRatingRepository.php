@@ -15,7 +15,6 @@ class UserRatingRepository extends AbstractRepository
             ->select('COUNT(id)')
             ->from('user_ratings', 'r')
             ->innerJoin('r', 'users', 'u', 'u.user_id = r.id')
-            ->execute()
             ->fetchOne();
     }
 
@@ -27,7 +26,6 @@ class UserRatingRepository extends AbstractRepository
         $data = $this->createSpecialRatingQueryBuilder($search, $sort, $limit, $offset)
             ->addSelect('r.diplomacy_rating')
             ->orderBy('diplomacy_rating', 'DESC')
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn (array $row) => new UserDiplomacyRating($row), $data);
@@ -41,7 +39,6 @@ class UserRatingRepository extends AbstractRepository
         $data = $this->createSpecialRatingQueryBuilder($search, $sort, $limit, $offset)
             ->addSelect('r.battle_rating, r.battles_lost, r.battles_won, r.battles_fought, r.elorating')
             ->orderBy('battle_rating', 'DESC')
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn (array $row) => new UserBattleRating($row), $data);
@@ -55,7 +52,6 @@ class UserRatingRepository extends AbstractRepository
         $data = $this->createSpecialRatingQueryBuilder($search, $sort, $limit, $offset)
             ->addSelect('r.trade_rating, r.trades_buy, r.trades_sell')
             ->orderBy('trade_rating', 'DESC')
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn (array $row) => new UserTradeRating($row), $data);
@@ -86,7 +82,7 @@ class UserRatingRepository extends AbstractRepository
         } else {
             $qry->set('trades_buy', 'trades_buy + 1');
         }
-        $qry->execute();
+        $qry->executeQuery();
     }
 
     public function addDiplomacyRating(int $userId, int $rating): void
@@ -99,7 +95,7 @@ class UserRatingRepository extends AbstractRepository
                 'rating' => $rating,
                 'userId' => $userId,
             ])
-            ->execute();
+            ->executeQuery();
     }
 
     public function addBlank(int $id): void
@@ -110,7 +106,7 @@ class UserRatingRepository extends AbstractRepository
             ->setParameters([
                 'id' => $id,
             ])
-            ->execute();
+            ->executeQuery();
 
         $this->createQueryBuilder()
             ->insert('user_ratings')
@@ -120,7 +116,7 @@ class UserRatingRepository extends AbstractRepository
             ->setParameters([
                 'id' => $id,
             ])
-            ->execute();
+            ->executeQuery();
     }
 
     public function removeForUser(int $userId) : void
@@ -129,6 +125,6 @@ class UserRatingRepository extends AbstractRepository
             ->delete('user_ratings')
             ->where('id = :userId')
             ->setParameter('userId', $userId)
-            ->execute();
+            ->executeQuery();
     }
 }

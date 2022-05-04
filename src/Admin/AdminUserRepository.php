@@ -13,7 +13,6 @@ class AdminUserRepository extends AbstractRepository
         return (int) $this->createQueryBuilder()
             ->select("COUNT(*)")
             ->from('admin_users')
-            ->execute()
             ->fetchOne();
     }
 
@@ -26,7 +25,6 @@ class AdminUserRepository extends AbstractRepository
             ->select('player_id')
             ->from('admin_users')
             ->where('player_id <> 0')
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn ($value) => (int) $value, $data);
@@ -39,7 +37,6 @@ class AdminUserRepository extends AbstractRepository
             ->from('admin_users')
             ->where('user_id = :id')
             ->setParameter('id', $id)
-            ->execute()
             ->fetchAssociative();
 
         return $data !== false ? AdminUser::createFromArray($data) : null;
@@ -52,7 +49,6 @@ class AdminUserRepository extends AbstractRepository
             ->from('admin_users')
             ->where('LCASE(user_nick) = LCASE(:nick)')
             ->setParameter('nick', $nick)
-            ->execute()
             ->fetchAssociative();
 
         return $data !== false ? AdminUser::createFromArray($data) : null;
@@ -67,7 +63,6 @@ class AdminUserRepository extends AbstractRepository
             ->select("*")
             ->from('admin_users')
             ->orderBy('user_nick')
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn (array $arr) => AdminUser::createFromArray($arr), $data);
@@ -84,7 +79,6 @@ class AdminUserRepository extends AbstractRepository
             ->orderBy('user_nick');
 
         return $this->applySearchSortLimit($qb, null, null, null)
-            ->execute()
             ->fetchAllKeyValue();
     }
 
@@ -97,7 +91,6 @@ class AdminUserRepository extends AbstractRepository
             ->select("user_id", 'user_nick')
             ->from('admin_users')
             ->orderBy('user_nick')
-            ->execute()
             ->fetchAllKeyValue();
     }
 
@@ -113,7 +106,7 @@ class AdminUserRepository extends AbstractRepository
                 'password' => $newHashedPassword,
                 'pwchange' => $forceChange ? 1 : 0,
             ])
-            ->execute();
+            ->executeQuery();
 
         $adminUser->passwordString = $newHashedPassword;
         $adminUser->forcePasswordChange = $forceChange;
@@ -129,7 +122,7 @@ class AdminUserRepository extends AbstractRepository
                 'id' => $adminUser->id,
                 'secret' => $secret,
             ])
-            ->execute();
+            ->executeQuery();
     }
 
     public function save(AdminUser $adminUser): void
@@ -163,7 +156,7 @@ class AdminUserRepository extends AbstractRepository
                     'is_contact' => $adminUser->isContact ? 1 : 0,
                     'roles' => implode(',', $adminUser->roles),
                 ])
-                ->execute();
+                ->executeQuery();
         } else {
             $password = saltPasswort(generatePasswort());
             $this->createQueryBuilder()
@@ -196,7 +189,7 @@ class AdminUserRepository extends AbstractRepository
                     'roles' => implode(',', $adminUser->roles),
                     'password' => $password,
                 ])
-                ->execute();
+                ->executeQuery();
             $adminUser->id = (int) $this->getConnection()->lastInsertId();
         }
     }
@@ -207,10 +200,10 @@ class AdminUserRepository extends AbstractRepository
             ->delete('admin_users')
             ->where('user_id = :id')
             ->setParameter('id', $adminUser->id)
-            ->execute();
+            ->executeQuery();
         $adminUser->id = null;
 
-        return (int) $affected > 0;
+        return $affected->rowCount() > 0;
     }
 
     public function getNick(int $userId): ?string
@@ -225,7 +218,6 @@ class AdminUserRepository extends AbstractRepository
             ->from('admin_users')
             ->where('user_id = :userId')
             ->setParameter('userId', $userId)
-            ->execute()
             ->fetchOne();
 
         return $data !== false ? $data : null;

@@ -50,7 +50,7 @@ class MarketReportRepository extends ReportRepository
                 'factor' => $factor,
                 'timestamp2' => $timestamp2,
             ])
-            ->execute();
+            ->executeQuery();
     }
 
     public function addShipReport(int $marketId, int $userId, int $entityId, int $opponentId, int $shipId, int $shipCount, string $subType, BaseResources $costs, float $factor = 1.0, string $content = null, int $timestamp2 = 0, int $entity2Id = 0, int $fleet1Id = 0, int $fleet2Id = 0): void
@@ -93,7 +93,7 @@ class MarketReportRepository extends ReportRepository
                 'fleet1Id' => $fleet1Id,
                 'fleet2Id' => $fleet2Id,
             ])
-            ->execute();
+            ->executeQuery();
     }
 
     public function addResourceReport(int $marketId, int $userId, int $entityId, int $opponentId, BaseResources $sellResources, string $subType, BaseResources $costs, float $factor = 1.0, string $content = null, int $timestamp2 = 0, int $entity2Id = 0, int $fleet1Id = 0, int $fleet2Id = 0): void
@@ -144,6 +144,6 @@ class MarketReportRepository extends ReportRepository
                 'fleet1Id' => $fleet1Id,
                 'fleet2Id' => $fleet2Id,
             ])
-            ->execute();
+            ->executeQuery();
     }
 }

@@ -15,7 +15,6 @@ class AllianceRightRepository extends AbstractRepository
             ->select('*')
             ->from('alliance_rights')
             ->orderBy('right_id', 'ASC')
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn (array $row) => new AllianceRight($row), $data);

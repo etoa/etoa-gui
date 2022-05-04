@@ -40,7 +40,6 @@ class UserRepository extends AbstractRepository
             ->from('users')
             ->where('user_id = :userId')
             ->setParameter('userId', $userId)
-            ->execute()
             ->fetchOne();
 
         return $data !== false ? $data : null;
@@ -51,7 +50,6 @@ class UserRepository extends AbstractRepository
         return (int) $this->createQueryBuilder()
             ->select("COUNT(*)")
             ->from('users')
-            ->execute()
             ->fetchOne();
     }
 
@@ -79,7 +77,7 @@ class UserRepository extends AbstractRepository
         }
 
         $qb
-            ->execute();
+            ->executeQuery();
     }
 
     public function resetAllianceId(int $allianceId): void
@@ -93,7 +91,7 @@ class UserRepository extends AbstractRepository
                 'zero' => 0,
                 'allianceId' => $allianceId,
             ])
-            ->execute();
+            ->executeQuery();
     }
 
     public function hasUserRankId(int $allianceId, int $userId, int $rankId): bool
@@ -110,7 +108,6 @@ class UserRepository extends AbstractRepository
                 'rankId' => $rankId,
             ])
             ->setMaxResults(1)
-            ->execute()
             ->fetchOne();
     }
 
@@ -124,7 +121,7 @@ class UserRepository extends AbstractRepository
                 'id' => $userId,
                 'time' => $time ?? time(),
             ])
-            ->execute();
+            ->executeQuery();
     }
 
     public function addSpecialistTime(int $userId, int $time): void
@@ -138,7 +135,7 @@ class UserRepository extends AbstractRepository
                 'id' => $userId,
                 'time' => $time,
             ])
-            ->execute();
+            ->executeQuery();
     }
 
     public function setSpecialist(int $userId, int $specialistId, int $time): void
@@ -153,7 +150,7 @@ class UserRepository extends AbstractRepository
                 'specialistId' => $specialistId,
                 'time' => $time,
             ])
-            ->execute();
+            ->executeQuery();
     }
 
     /**
@@ -168,7 +165,6 @@ class UserRepository extends AbstractRepository
             ->setParameters([
                 'now' => time(),
             ])
-            ->execute()
             ->fetchAllKeyValue();
 
         return array_map(fn ($value) => (int) $value, $data);
@@ -185,7 +181,7 @@ class UserRepository extends AbstractRepository
             ->setParameters([
                 'id' => $userId,
             ])
-            ->execute();
+            ->executeQuery();
     }
 
     public function disableHolidayMode(int $userId): void
@@ -199,16 +195,17 @@ class UserRepository extends AbstractRepository
             ->setParameters([
                 'id' => $userId,
             ])
-            ->execute();
+            ->executeQuery();
     }
 
     public function removePointsByTimestamp(int $timestamp): int
     {
-        return (int) $this->createQueryBuilder()
+        return $this->createQueryBuilder()
             ->delete('user_points')
             ->where("point_timestamp < :timestamp")
             ->setParameter('timestamp', $timestamp)
-            ->execute();
+            ->executeQuery()
+            ->rowCount();
     }
 
     public function getUserIdByNick(string $nick): ?int
@@ -218,7 +215,6 @@ class UserRepository extends AbstractRepository
             ->from('users')
             ->where('user_nick = :nick')
             ->setParameter('nick', $nick)
-            ->execute()
             ->fetchOne();
 
         return $result !== false ? (int) $result : null;
@@ -233,7 +229,8 @@ class UserRepository extends AbstractRepository
             ->setParameter('key', $verificationKey)
             ->setParameter('updatedKey', '')
             ->setMaxResults(1)
-            ->execute();
+            ->executeQuery()
+            ->rowCount();
     }
 
     public function saveDiscoveryMask(int $userId, string $mask): void
@@ -246,7 +243,7 @@ class UserRepository extends AbstractRepository
                 'userId' => $userId,
                 'mask' => $mask,
             ])
-            ->execute();
+            ->executeQuery();
     }
     public function resetDiscoveryMask(): void
     {
@@ -254,7 +251,7 @@ class UserRepository extends AbstractRepository
             ->update('users')
             ->set('discoverymask', "''")
             ->set('user_setup', (string) 0)
-            ->execute();
+            ->executeQuery();
     }
 
     public function setSetupFinished(int $userId): void
@@ -266,7 +263,7 @@ class UserRepository extends AbstractRepository
             ->setParameters([
                 'userId' => $userId,
             ])
-            ->execute();
+            ->executeQuery();
     }
 
     /**
@@ -283,7 +280,6 @@ class UserRepository extends AbstractRepository
             ->select('*')
             ->from('users')
             ->setMaxResults(1)
-            ->execute()
             ->fetchAssociative();
 
         return $data !== false ? new User($data) : null;
@@ -365,7 +361,6 @@ class UserRepository extends AbstractRepository
                 'registerTime' => $registerTime,
                 'onlineTime' => $onlineTime,
             ])
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn ($row) => new User($row), $data);
@@ -390,7 +385,6 @@ class UserRepository extends AbstractRepository
                 'logoutTimeFrom' => $logoutTimeFrom,
                 'logoutTimeTo' => $logoutTimeTo,
             ])
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn ($row) => new User($row), $data);
@@ -413,7 +407,6 @@ class UserRepository extends AbstractRepository
                 'time' => time(),
                 'threshold' => $threshold,
             ])
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn ($row) => new User($row), $data);
@@ -432,7 +425,6 @@ class UserRepository extends AbstractRepository
             ->setParameters([
                 'time' => time(),
             ])
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn ($row) => new User($row), $data);
@@ -448,7 +440,7 @@ class UserRepository extends AbstractRepository
                 'userId' => $userId,
                 'timestamp' => $timestamp,
             ])
-            ->execute();
+            ->executeQuery();
     }
 
     /**
@@ -460,7 +452,6 @@ class UserRepository extends AbstractRepository
             ->select('user_email', 'user_nick')
             ->from('users')
             ->orderBy('user_nick')
-            ->execute()
             ->fetchAllKeyValue();
     }
 
@@ -480,12 +471,12 @@ class UserRepository extends AbstractRepository
                 'adminId' => $adminId,
                 'userId' => $userId,
             ])
-            ->execute();
+            ->executeQuery();
     }
 
     public function removeOldBans(): int
     {
-        return (int) $this->createQueryBuilder()
+        return $this->createQueryBuilder()
             ->update('users')
             ->set('`user_blocked_from`', '0')
             ->set('`user_blocked_to`', '0')
@@ -496,7 +487,8 @@ class UserRepository extends AbstractRepository
                 'blockedBefore' => time(),
                 'banReason' => '',
             ])
-            ->execute();
+            ->executeQuery()
+            ->rowCount();
     }
 
     public function updateImgCheck(int $userId, bool $check, string $image = null): bool
@@ -516,7 +508,7 @@ class UserRepository extends AbstractRepository
                 ->setParameter('image', $image);
         }
 
-        return (bool) $qb->execute();
+        return (bool) $qb->executeQuery()->rowCount();
     }
 
     public function addSittingDays(int $days): void
@@ -525,7 +517,7 @@ class UserRepository extends AbstractRepository
             ->update('users')
             ->set('`user_sitting_days`', '`user_sitting_days` + :days')
             ->setParameter('days', $days)
-            ->execute();
+            ->executeQuery();
     }
 
     public function setSittingDays(int $userId, int $days): void
@@ -538,7 +530,7 @@ class UserRepository extends AbstractRepository
                 'userId' => $userId,
                 'days' => $days,
             ])
-            ->execute();
+            ->executeQuery();
     }
 
     public function setVerified(int $userId, bool $verified): void
@@ -551,7 +543,7 @@ class UserRepository extends AbstractRepository
                 'userId' => $userId,
                 'verificationKey' => $verified ? '' : generateRandomString(64),
             ])
-            ->execute();
+            ->executeQuery();
     }
 
     /**
@@ -563,7 +555,6 @@ class UserRepository extends AbstractRepository
             ->select('user_alliance_id, SUM(user_alliace_shippoints_used)')
             ->from('users')
             ->groupBy('user_alliance_id')
-            ->execute()
             ->fetchAllKeyValue();
     }
 
@@ -578,7 +569,7 @@ class UserRepository extends AbstractRepository
                 'userId' => $userId,
                 'costs' => $shipCost,
             ])
-            ->execute();
+            ->executeQuery();
     }
 
     public function addAllianceShipPoints(int $allianceId, int $points): void
@@ -591,16 +582,17 @@ class UserRepository extends AbstractRepository
                 'allianceId' => $allianceId,
                 'points' => $points,
             ])
-            ->execute();
+            ->executeQuery();
     }
 
     public function remove(int $id): bool
     {
-        $affected = (int) $this->createQueryBuilder()
+        $affected = $this->createQueryBuilder()
             ->delete('users')
             ->where('user_id = :id')
             ->setParameter('id', $id)
-            ->execute();
+            ->executeQuery()
+            ->rowCount();
 
         return $affected > 0;
     }
@@ -611,7 +603,6 @@ class UserRepository extends AbstractRepository
             ->select("1")
             ->from('users')
             ->setMaxResults(1)
-            ->execute()
             ->fetchOne();
     }
 
@@ -638,7 +629,7 @@ class UserRepository extends AbstractRepository
                 'password' => saltPasswort($password),
                 'ghost' => $ghost ? 1 : 0,
             ])
-            ->execute();
+            ->executeQuery();
 
         return (int) $this->getConnection()->lastInsertId();
     }
@@ -654,7 +645,7 @@ class UserRepository extends AbstractRepository
                 'userId' => $userId,
                 'password' => $saltedPassword,
             ])
-            ->execute();
+            ->executeQuery();
 
         return $saltedPassword;
     }
@@ -668,7 +659,7 @@ class UserRepository extends AbstractRepository
             ->setParameters([
                 'userId' => $userId,
             ])
-            ->execute();
+            ->executeQuery();
     }
 
     public function updateObserve(int $userId, ?string $observe): void
@@ -681,7 +672,7 @@ class UserRepository extends AbstractRepository
                 'userId' => $userId,
                 'observe' => $observe,
             ])
-            ->execute();
+            ->executeQuery();
     }
 
     public function markMainPlanetChanged(int $userId): void
@@ -693,7 +684,7 @@ class UserRepository extends AbstractRepository
             ->setParameters([
                 'userId' => $userId,
             ])
-            ->execute();
+            ->executeQuery();
     }
 
     public function save(User $user): void
@@ -772,7 +763,7 @@ class UserRepository extends AbstractRepository
                 'hmodFrom' => $user->hmodFrom,
                 'hmodTo' => $user->hmodTo,
             ])
-            ->execute();
+            ->executeQuery();
     }
 
     /**
@@ -786,7 +777,6 @@ class UserRepository extends AbstractRepository
             ->orderBy('user_nick');
 
         return $this->applySearchSortLimit($qb, $search, null, $limit)
-            ->execute()
             ->fetchAllKeyValue();
     }
 
@@ -808,7 +798,6 @@ class UserRepository extends AbstractRepository
         }
 
         $data = $this->applySearchSortLimit($qb, $search, $sort, $limit)
-            ->execute()
             ->fetchAllAssociative();
 
         $users = [];
@@ -834,7 +823,6 @@ class UserRepository extends AbstractRepository
             ->andWhere('u.user_blocked_to > :time')
             ->orderBy('u.user_blocked_from', 'DESC')
             ->setParameter('time', time())
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn (array $row) => new Pillory($row), $data);
@@ -854,7 +842,7 @@ class UserRepository extends AbstractRepository
                 'points' => $userStatistic->points,
                 'highestRank' => $highestRank,
             ])
-            ->execute();
+            ->executeQuery();
     }
 
     public function updateUserBoost(int $userId, float $productionBoost, float $buildingBoost): void
@@ -869,7 +857,7 @@ class UserRepository extends AbstractRepository
                 'production' => $productionBoost,
                 'building' => $buildingBoost,
             ])
-            ->execute();
+            ->executeQuery();
     }
 
     public function resetBoost(): void
@@ -881,11 +869,11 @@ class UserRepository extends AbstractRepository
             ->setParameters([
                 'zero' => 0,
             ])
-            ->execute();
+            ->executeQuery();
     }
 
     /**
-     * @return array{user_blocked_from: string, user_blocked_to: string, user_hmode_from: string, user_deleted: string, user_deleted: string, admin: string, user_ghost: string, user_alliance_id: string, user_id: string, user_points: string, user_nick: string, time_log: string, time_action: string, user_name: string, user_email: string, user_email_fix: string, user_multi_delets: string}[]
+     * @return array{user_blocked_from: string, user_blocked_to: string, user_hmode_from: string, user_deleted: string, admin: string, user_ghost: string, user_alliance_id: string, user_id: string, user_points: string, user_nick: string, time_log: string, time_action: string|null, user_name: string, user_email: string, user_email_fix: string, user_multi_delets: string}[]
      */
     public function getUsersWithIp(string $ip): array
     {
@@ -944,6 +932,6 @@ class UserRepository extends AbstractRepository
             ->set('user_visits', 'user_visits + 1')
             ->where('user_id = :userId')
             ->setParameter('userId', $userId)
-            ->execute();
+            ->executeQuery();
     }
 }

@@ -36,7 +36,6 @@ class AllianceRepository extends AbstractRepository
         return (int) $this->createQueryBuilder()
             ->select("COUNT(*)")
             ->from('alliances')
-            ->execute()
             ->fetchOne();
     }
 
@@ -49,7 +48,6 @@ class AllianceRepository extends AbstractRepository
             ->select("alliance_id, alliance_name")
             ->from('alliances')
             ->orderBy('alliance_name')
-            ->execute()
             ->fetchAllKeyValue();
     }
 
@@ -66,7 +64,6 @@ class AllianceRepository extends AbstractRepository
             ->groupBy('a.alliance_id')
             ->orderBy('a.alliance_name')
             ->addOrderBy('a.alliance_tag')
-            ->execute()
             ->fetchAllAssociative();
 
         $result = [];
@@ -87,7 +84,6 @@ class AllianceRepository extends AbstractRepository
             ->select("alliance_id, alliance_tag")
             ->from('alliances')
             ->orderBy('alliance_name')
-            ->execute()
             ->fetchAllKeyValue();
     }
 
@@ -101,7 +97,6 @@ class AllianceRepository extends AbstractRepository
             ->from('alliances')
             ->orderBy('alliance_name')
             ->addOrderBy('alliance_tag')
-            ->execute()
             ->fetchAllAssociative();
 
         $result = [];
@@ -122,7 +117,6 @@ class AllianceRepository extends AbstractRepository
             ->from('alliances')
             ->orderBy('alliance_name')
             ->addOrderBy('alliance_tag')
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn (array $row) => new Alliance($row), $data);
@@ -142,7 +136,6 @@ class AllianceRepository extends AbstractRepository
             ->groupBy('a.alliance_id')
             ->orderBy('a.alliance_name')
             ->addOrderBy('a.alliance_tag')
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn (array $row) => new AllianceWithMemberCount($row), $data);
@@ -162,7 +155,6 @@ class AllianceRepository extends AbstractRepository
             ->where('a.alliance_id = :id')
             ->setParameter('id', $allianceId)
             ->groupBy('a.alliance_id')
-            ->execute()
             ->fetchAssociative();
 
         return $data !== false ? new AllianceWithMemberCount($data) : null;
@@ -175,7 +167,6 @@ class AllianceRepository extends AbstractRepository
             ->from('alliances')
             ->where('alliance_id = :id')
             ->setParameter('id', $allianceId)
-            ->execute()
             ->fetchOne();
     }
     public function setFounderId(int $allianceId, int $founder): void
@@ -188,7 +179,7 @@ class AllianceRepository extends AbstractRepository
                 'id' => $allianceId,
                 'founder' => $founder,
             ])
-            ->execute();
+            ->executeQuery();
     }
 
     public function exists(string $tag, string $name, int $ignoreAllianceId = null): bool
@@ -205,12 +196,11 @@ class AllianceRepository extends AbstractRepository
         if ($ignoreAllianceId !== null) {
             $qb
                 ->andWhere('alliance_id <> :allianceId')
-                ->setParameter(':allianceId', $ignoreAllianceId);
+                ->setParameter('allianceId', $ignoreAllianceId);
         }
 
         return (bool) $qb
             ->setMaxResults(1)
-            ->execute()
             ->fetchOne();
     }
 
@@ -229,7 +219,7 @@ class AllianceRepository extends AbstractRepository
                 'name' => $name,
                 'tag' => $tag,
                 'founder' => $founderId,
-            ])->execute();
+            ])->executeQuery();
 
         return (int) $this->getConnection()->lastInsertId();
     }
@@ -244,7 +234,7 @@ class AllianceRepository extends AbstractRepository
                 'template' => $template,
                 'allianceId' => $allianceId,
             ])
-            ->execute();
+            ->executeQuery();
     }
 
     public function update(int $id, string $tag, string $name, ?string $text, ?string $template, ?string $url, int $founder, string $updatedAllianceImage = null, bool $acceptsApplications = null, bool $acceptsBnd = null, bool $publicMemberList = null): bool
@@ -295,18 +285,20 @@ class AllianceRepository extends AbstractRepository
         }
 
         $affected = $qb
-            ->execute();
+            ->executeQuery()
+            ->rowCount();
 
-        return (int) $affected > 0;
+        return $affected > 0;
     }
 
     public function remove(int $id): bool
     {
-        $affected = (int) $this->createQueryBuilder()
+        $affected = $this->createQueryBuilder()
             ->delete('alliances')
             ->where('alliance_id = :id')
             ->setParameter('id', $id)
-            ->execute();
+            ->executeQuery()
+            ->rowCount();
 
         return $affected > 0;
     }
@@ -318,7 +310,6 @@ class AllianceRepository extends AbstractRepository
             ->from('alliances')
             ->where('alliance_id = :allianceId')
             ->setParameter('allianceId', $allianceId)
-            ->execute()
             ->fetchOne();
     }
 
@@ -334,9 +325,10 @@ class AllianceRepository extends AbstractRepository
                 'check' => 0,
                 'image' => '',
             ])
-            ->execute();
+            ->executeQuery()
+            ->rowCount();
 
-        return (int) $affected > 0;
+        return $affected > 0;
     }
 
     public function markPictureChecked(int $allianceId): bool
@@ -349,9 +341,10 @@ class AllianceRepository extends AbstractRepository
                 'allianceId' => $allianceId,
                 'check' => 0,
             ])
-            ->execute();
+            ->executeQuery()
+            ->rowCount();
 
-        return (int) $affected > 0;
+        return $affected > 0;
     }
 
     /**
@@ -369,7 +362,6 @@ class AllianceRepository extends AbstractRepository
             ->from('alliances')
             ->where('alliance_img_check = 1')
             ->andWhere("alliance_img != ''")
-            ->execute()
             ->fetchAllAssociative();
     }
 
@@ -387,7 +379,6 @@ class AllianceRepository extends AbstractRepository
             )
             ->from('alliances')
             ->where("alliance_img != ''")
-            ->execute()
             ->fetchAllAssociative();
     }
 
@@ -438,7 +429,6 @@ class AllianceRepository extends AbstractRepository
             ->from('users')
             ->where('user_alliance_id = :id')
             ->setParameter('id', $allianceId)
-            ->execute()
             ->fetchOne();
     }
 
@@ -459,7 +449,6 @@ class AllianceRepository extends AbstractRepository
             ->orderBy('user_points', 'DESC')
             ->addOrderBy('user_nick')
             ->setParameter('allianceId', $allianceId)
-            ->execute()
             ->fetchAllAssociative();
 
         $users = [];
@@ -480,7 +469,7 @@ class AllianceRepository extends AbstractRepository
                 'rank' => $rankId,
                 'user' => $userId,
             ])
-            ->execute();
+            ->executeQuery();
     }
 
     public function removeUser(int $userId): void
@@ -491,7 +480,7 @@ class AllianceRepository extends AbstractRepository
             ->set('user_alliance_rank_id', (string) 0)
             ->where('user_id = :userId')
             ->setParameter('userId', $userId)
-            ->execute();
+            ->executeQuery();
     }
 
     /**
@@ -504,7 +493,6 @@ class AllianceRepository extends AbstractRepository
             ->from('users')
             ->where('user_alliance_id = 0')
             ->orderBy('user_nick')
-            ->execute()
             ->fetchAllKeyValue();
     }
 
@@ -554,7 +542,7 @@ class AllianceRepository extends AbstractRepository
                 'fuel' => $fuel,
                 'food' => $food,
             ])
-            ->execute();
+            ->executeQuery();
     }
 
     public function addResources(
@@ -590,7 +578,7 @@ class AllianceRepository extends AbstractRepository
         }
 
         $qb
-            ->execute();
+            ->executeQuery();
     }
 
     /**
@@ -605,7 +593,6 @@ class AllianceRepository extends AbstractRepository
             ->innerJoin('a', 'user_stats', 'u', 'u.alliance_id = a.alliance_id')
             ->groupBy('a.alliance_id')
             ->orderBy('SUM(u.points)', 'DESC')
-            ->execute()
             ->fetchAllAssociative();
     }
 
@@ -623,16 +610,17 @@ class AllianceRepository extends AbstractRepository
                 'rank' => $rank,
                 'lastRank' => $lastRank,
             ])
-            ->execute();
+            ->executeQuery();
     }
 
     public function removePointsByTimestamp(int $timestamp): int
     {
-        return (int) $this->createQueryBuilder()
+        return $this->createQueryBuilder()
             ->delete('alliance_points')
             ->where("point_timestamp < :timestamp")
             ->setParameter('timestamp', $timestamp)
-            ->execute();
+            ->executeQuery()
+            ->rowCount();
     }
 
     public function resetMother(int $allianceId): void
@@ -646,7 +634,7 @@ class AllianceRepository extends AbstractRepository
                 'zero' => 0,
                 'allianceId' => $allianceId,
             ])
-            ->execute();
+            ->executeQuery();
     }
 
     public function setMotherOrRequest(int $allianceId, int $motherId, int $motherRequestId): void
@@ -661,7 +649,7 @@ class AllianceRepository extends AbstractRepository
                 'motherId' => $motherId,
                 'motherRequestId' => $motherRequestId,
             ])
-            ->execute();
+            ->executeQuery();
     }
 
     public function addVisit(int $allianceId, bool $external = false): void
@@ -673,6 +661,6 @@ class AllianceRepository extends AbstractRepository
             ->set($property, $property . ' + 1')
             ->where('alliance_id = :allianceId')
             ->setParameter('allianceId', $allianceId)
-            ->execute();
+            ->executeQuery();
     }
 }
