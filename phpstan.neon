@@ -64,8 +64,6 @@ parameters:
 
         - '#Cannot cast mixed to (int|string|bool|float)#'
         - '#Parameter \#[0-9]+ \$[a-z]+ of class EtoA\\[a-z\\]+ constructor expects [a-z\\]+\, mixed given#i'
-        - '#Cannot call method (fetchAllKeyValue|fetchAssociative|fetchAllAssociative|fetchOne)\(\) on Doctrine\\DBAL\\ForwardCompatibility\\Result\|int#'
-        - '#Cannot cast Doctrine\\DBAL\\ForwardCompatibility\\Result\|int to int#'
-        - '#should return int but returns Doctrine\\DBAL\\ForwardCompatibility\\Result\|int#'
+
     symfony:
         containerXmlPath: var/cache/dev/EtoA_KernelDevDebugContainer.xml

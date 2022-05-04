@@ -38,7 +38,7 @@ class AlliancePollRepository extends AbstractRepository
                 'answer7' => $answer7,
                 'answer8' => $answer8,
             ])
-            ->execute();
+            ->executeQuery();
 
         return (int) $this->getConnection()->lastInsertId();
     }
@@ -62,7 +62,6 @@ class AlliancePollRepository extends AbstractRepository
         }
 
         $data = $qb
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn (array $row) => new AlliancePoll($row), $data);
@@ -79,7 +78,6 @@ class AlliancePollRepository extends AbstractRepository
                 'id' => $pollId,
                 'allianceId' => $allianceId,
             ])
-            ->execute()
             ->fetchAssociative();
 
         return $data !== false ? new AlliancePoll($data) : null;
@@ -99,7 +97,6 @@ class AlliancePollRepository extends AbstractRepository
                 'userId' => $userId,
                 'allianceId' => $allianceId,
             ])
-            ->execute()
             ->fetchAllKeyValue();
 
         return array_map(fn ($value) => (int) $value, $rows);
@@ -107,7 +104,7 @@ class AlliancePollRepository extends AbstractRepository
 
     public function updateActive(int $pollId, int $allianceId, bool $active): int
     {
-        return (int) $this->createQueryBuilder()
+        return $this->createQueryBuilder()
             ->update('alliance_polls')
             ->set('poll_active', ':active')
             ->where('poll_id = :id')
@@ -117,12 +114,13 @@ class AlliancePollRepository extends AbstractRepository
                 'allianceId' => $allianceId,
                 'active' => (int) $active,
             ])
-            ->execute();
+            ->executeQuery()
+            ->rowCount();
     }
 
     public function updatePoll(int $pollId, int $allianceId, string $title, string $question, string $answer1, string $answer2, string $answer3, string $answer4, string $answer5, string $answer6, string $answer7, string $answer8): int
     {
-        return (int) $this->createQueryBuilder()
+        return $this->createQueryBuilder()
             ->update('alliance_polls')
             ->set('poll_title', ':title')
             ->set('poll_question', ':question')
@@ -150,7 +148,8 @@ class AlliancePollRepository extends AbstractRepository
                 'answer7' => $answer7,
                 'answer8' => $answer8,
             ])
-            ->execute();
+            ->executeQuery()
+            ->rowCount();
     }
 
     public function addVote(int $pollId, int $allianceId, int $userId, int $answerId): bool
@@ -170,7 +169,8 @@ class AlliancePollRepository extends AbstractRepository
                 'id' => $pollId,
                 'allianceId' => $allianceId,
             ])
-            ->execute();
+            ->executeQuery()
+            ->rowCount();
 
         if ($voted) {
             $this->createQueryBuilder()
@@ -187,7 +187,7 @@ class AlliancePollRepository extends AbstractRepository
                     'userId' => $userId,
                     'vote' => $answerId,
                 ])
-                ->execute();
+                ->executeQuery();
         }
 
         return $voted;
@@ -203,7 +203,8 @@ class AlliancePollRepository extends AbstractRepository
                 'id' => $pollId,
                 'allianceId' => $allianceId,
             ])
-            ->execute();
+            ->executeQuery()
+            ->rowCount();
 
         if ($deleted) {
             $this->createQueryBuilder()
@@ -214,7 +215,7 @@ class AlliancePollRepository extends AbstractRepository
                     'id' => $pollId,
                     'allianceId' => $allianceId,
                 ])
-                ->execute();
+                ->executeQuery();
         }
 
         return $deleted;
@@ -226,12 +227,12 @@ class AlliancePollRepository extends AbstractRepository
             ->delete('alliance_polls')
             ->where('poll_alliance_id = :allianceId')
             ->setParameter('allianceId', $allianceId)
-            ->execute();
+            ->executeQuery();
 
         $this->createQueryBuilder()
             ->delete('alliance_poll_votes')
             ->where('vote_alliance_id = :allianceId')
             ->setParameter('allianceId', $allianceId)
-            ->execute();
+            ->executeQuery();
     }
 }

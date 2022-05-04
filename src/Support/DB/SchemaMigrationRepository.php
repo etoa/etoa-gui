@@ -21,7 +21,6 @@ class SchemaMigrationRepository extends AbstractRepository
                 'db' => $this->getConnection()->getDatabase(),
                 'table' => self::SCHEMA_MIGRATIONS_TABLE,
             ])
-            ->execute()
             ->fetchAssociative();
 
         return $data !== false;
@@ -36,7 +35,6 @@ class SchemaMigrationRepository extends AbstractRepository
             ->select("version", "date")
             ->from(self::SCHEMA_MIGRATIONS_TABLE)
             ->orderBy('version')
-            ->execute()
             ->fetchAllAssociative();
     }
 
@@ -47,7 +45,6 @@ class SchemaMigrationRepository extends AbstractRepository
             ->from(self::SCHEMA_MIGRATIONS_TABLE)
             ->where('version = :version')
             ->setParameter('version', $version)
-            ->execute()
             ->fetchOne();
 
         return $date !== false ? $date : null;
@@ -62,6 +59,6 @@ class SchemaMigrationRepository extends AbstractRepository
                 'date' => 'CURRENT_TIMESTAMP',
             ])
             ->setParameter('version', $version)
-            ->execute();
+            ->executeQuery();
     }
 }

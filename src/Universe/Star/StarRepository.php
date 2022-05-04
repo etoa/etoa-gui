@@ -16,7 +16,6 @@ class StarRepository extends AbstractRepository
         $data = $this->createQueryBuilder()
             ->select("id")
             ->from('stars')
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn (array $row) => (int) $row['id'], $data);
@@ -27,7 +26,6 @@ class StarRepository extends AbstractRepository
         return (int) $this->createQueryBuilder()
             ->select("COUNT(id)")
             ->from('stars')
-            ->execute()
             ->fetchOne();
     }
 
@@ -40,7 +38,6 @@ class StarRepository extends AbstractRepository
             ->setParameters([
                 'id' => $id,
             ])
-            ->execute()
             ->fetchAssociative();
 
         return $data !== false ? new Star($data) : null;
@@ -57,7 +54,6 @@ class StarRepository extends AbstractRepository
             ->setParameters([
                 'cellId' => $cellId,
             ])
-            ->execute()
             ->fetchAssociative();
 
         return $data !== false ? new Star($data) : null;
@@ -75,7 +71,7 @@ class StarRepository extends AbstractRepository
                 'id' => $id,
                 'type_id' => $typeId,
             ])
-            ->execute();
+            ->executeQuery();
     }
 
     public function update(int $id, ?string $name, int $typeId = null): bool
@@ -96,7 +92,8 @@ class StarRepository extends AbstractRepository
         }
 
         return (bool) $qb
-            ->execute();
+            ->executeQuery()
+            ->rowCount();
     }
 
     public function remove(int $id): void
@@ -105,6 +102,6 @@ class StarRepository extends AbstractRepository
             ->delete('stars')
             ->where('id = :id')
             ->setParameter('id', $id)
-            ->execute();
+            ->executeQuery();
     }
 }

@@ -15,7 +15,6 @@ class TechnologyPointRepository extends AbstractRepository
             ->select('*')
             ->from('tech_points')
             ->orderBy('bp_level', 'ASC')
-            ->execute()
             ->fetchAllAssociative();
 
         $points = array_map(fn (array $row) => new TechnologyPoint($row), $data);
@@ -33,7 +32,6 @@ class TechnologyPointRepository extends AbstractRepository
         return (bool) $this->createQueryBuilder()
             ->select('1')
             ->from('tech_points')
-            ->execute()
             ->fetchOne();
     }
 
@@ -41,7 +39,7 @@ class TechnologyPointRepository extends AbstractRepository
     {
         $this->createQueryBuilder()
             ->delete('tech_points')
-            ->execute();
+            ->executeQuery();
     }
 
     /**

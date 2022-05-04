@@ -17,7 +17,6 @@ class AllianceStatsRepository extends AbstractRepository
 
         $data = $this->applySearchSortLimit($qb, null, $sort)
             ->addOrderBy('alliance_name', 'ASC')
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn (array $row) => AllianceStats::createFromDbRow($row), $data);
@@ -56,7 +55,7 @@ class AllianceStatsRepository extends AbstractRepository
                 'count' => $stats->count,
                 'currentRank' => $stats->currentRank,
                 'lastRank' => $stats->lastRank,
-            ])->execute();
+            ])->executeQuery();
     }
 
     public function deleteAll(): void

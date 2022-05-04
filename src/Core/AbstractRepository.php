@@ -34,7 +34,6 @@ abstract class AbstractRepository
         $data = $this->createQueryBuilder()
             ->select($idField)
             ->from($table)
-            ->execute()
             ->fetchFirstColumn();
 
         return array_map(fn ($val) => (int) $val, $data);
@@ -49,7 +48,6 @@ abstract class AbstractRepository
             ->select($idField, $nameField)
             ->from($table)
             ->orderBy($orderById ? $idField : $nameField)
-            ->execute()
             ->fetchAllKeyValue();
     }
 

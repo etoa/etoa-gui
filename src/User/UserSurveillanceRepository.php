@@ -16,7 +16,6 @@ class UserSurveillanceRepository extends AbstractRepository
             ->select('*')
             ->from('user_surveillance')
             ->orderBy('timestamp', 'DESC')
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn (array $row) => new UserSurveillance($row), $data);
@@ -31,7 +30,6 @@ class UserSurveillanceRepository extends AbstractRepository
             ->select('session, COUNT(id)')
             ->from('user_surveillance')
             ->groupBy('session')
-            ->execute()
             ->fetchAllKeyValue();
 
         return array_map(fn ($value) => (int) $value, $data);
@@ -47,7 +45,6 @@ class UserSurveillanceRepository extends AbstractRepository
             ->from('user_surveillance')
             ->groupBy('session')
             ->orderBy('MAX(timestamp)', 'DESC')
-            ->execute()
             ->fetchAllAssociative();
 
         $result = [];
@@ -66,7 +63,6 @@ class UserSurveillanceRepository extends AbstractRepository
         return (int) $this->applySearchSortLimit($this->createQueryBuilder(), $search)
             ->select('COUNT(*)')
             ->from('user_surveillance')
-            ->execute()
             ->fetchOne();
     }
 
@@ -86,7 +82,6 @@ class UserSurveillanceRepository extends AbstractRepository
             ->where('user_id IN (:userIds)')
             ->setParameter('userIds', $userIds, Connection::PARAM_INT_ARRAY)
             ->groupBy('user_id')
-            ->execute()
             ->fetchAllKeyValue();
 
         $counts = [];
@@ -138,7 +133,6 @@ class UserSurveillanceRepository extends AbstractRepository
             ->innerJoin('s', 'users', 'u', 's.user_id=u.user_id')
             ->where('u.user_observe IS NULL')
             ->groupBy('s.user_id')
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn (array $row) => (int) $row['user_id'], $data);
@@ -150,6 +144,6 @@ class UserSurveillanceRepository extends AbstractRepository
             ->delete('user_surveillance')
             ->where('user_id = :userId')
             ->setParameter('userId', $userId)
-            ->execute();
+            ->executeQuery();
     }
 }

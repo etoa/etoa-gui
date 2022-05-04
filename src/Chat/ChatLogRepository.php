@@ -16,7 +16,6 @@ class ChatLogRepository extends AbstractRepository
             ->from('chat_log')
             ->orderBy($order, $sort)
             ->setMaxResults(10000)
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn (array $row) => new ChatLog($row), $data);
@@ -27,7 +26,6 @@ class ChatLogRepository extends AbstractRepository
         return (int) $this->applySearchSortLimit($this->createQueryBuilder(), $search)
             ->select('COUNT(*)')
             ->from('chat_log')
-            ->execute()
             ->fetchOne();
     }
 
@@ -40,7 +38,6 @@ class ChatLogRepository extends AbstractRepository
             ->select('*')
             ->from('chat_log')
             ->orderBy('id', 'DESC')
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn (array $row) => new ChatLog($row), $data);
@@ -68,6 +65,6 @@ class ChatLogRepository extends AbstractRepository
                 'admin' => $admin,
                 'channel' => $channel,
             ])
-            ->execute();
+            ->executeQuery();
     }
 }

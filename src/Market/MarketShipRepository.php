@@ -40,7 +40,7 @@ class MarketShipRepository extends AbstractRepository
                 'costs4' => $costs->food,
                 'shipId' => $shipId,
                 'shipCount' => $shipCount,
-            ])->execute();
+            ])->executeQuery();
 
         return (int) $this->getConnection()->lastInsertId();
     }
@@ -54,7 +54,6 @@ class MarketShipRepository extends AbstractRepository
             ->select('*')
             ->from('market_ship')
             ->orderBy('datum', 'ASC')
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn (array $row) => new MarketShip($row), $data);
@@ -75,7 +74,6 @@ class MarketShipRepository extends AbstractRepository
                 'userId' => $userId,
                 'allianceId' => $allianceId,
             ])
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn (array $row) => new MarketShip($row), $data);
@@ -95,7 +93,7 @@ class MarketShipRepository extends AbstractRepository
                 'id' => $id,
                 'userId' => $userId,
                 'allianceId' => $allianceId,
-            ])->execute()
+            ])
             ->fetchAssociative();
 
         return $data !== false ? new MarketShip($data) : null;
@@ -114,7 +112,7 @@ class MarketShipRepository extends AbstractRepository
             ->orderBy('datum', 'ASC')
             ->setParameters([
                 'userId' => $userId,
-            ])->execute()
+            ])
             ->fetchAllAssociative();
 
         return array_map(fn (array $row) => new MarketShip($row), $data);
@@ -130,7 +128,7 @@ class MarketShipRepository extends AbstractRepository
             ->setParameters([
                 'id' => $id,
                 'userId' => $userId,
-            ])->execute()
+            ])
             ->fetchAssociative();
 
         return $data !== false ? new MarketShip($data) : null;
@@ -142,7 +140,7 @@ class MarketShipRepository extends AbstractRepository
             ->delete('market_ship')
             ->where('user_id = :userId')
             ->setParameter('userId', $userId)
-            ->execute();
+            ->executeQuery();
     }
 
     public function delete(int $offerId) : void
@@ -151,6 +149,6 @@ class MarketShipRepository extends AbstractRepository
             ->delete('market_ship')
             ->where('id = :id')
             ->setParameter('id', $offerId)
-            ->execute();
+            ->executeQuery();
     }
 }

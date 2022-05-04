@@ -15,7 +15,6 @@ class GameLogRepository extends AbstractRepository
             ->select('logs_game.*')
             ->from('logs_game')
             ->orderBy('timestamp', 'DESC')
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn (array $row) => new GameLog($row), $data);
@@ -64,11 +63,12 @@ class GameLogRepository extends AbstractRepository
 
     public function cleanup(int $threshold): int
     {
-        return (int) $this->createQueryBuilder()
+        return $this->createQueryBuilder()
             ->delete('logs_game')
             ->where('timestamp < :threshold')
             ->setParameter('threshold', $threshold)
-            ->execute();
+            ->executeQuery()
+            ->rowCount();
     }
 
     public function count(GameLogSearch $search = null): int
@@ -76,7 +76,6 @@ class GameLogRepository extends AbstractRepository
         return (int) $this->applySearchSortLimit($this->createQueryBuilder(), $search)
             ->select('COUNT(*)')
             ->from('logs_game')
-            ->execute()
             ->fetchOne();
     }
 }

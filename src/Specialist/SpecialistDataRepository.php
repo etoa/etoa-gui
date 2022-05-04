@@ -16,7 +16,6 @@ class SpecialistDataRepository extends AbstractRepository
             ->from('specialists', 's')
             ->andWhere('s.specialist_enabled = 1')
             ->orderBy('s.specialist_name')
-            ->execute()
             ->fetchAllKeyValue();
     }
 
@@ -28,7 +27,6 @@ class SpecialistDataRepository extends AbstractRepository
             ->where('s.specialist_enabled = 1')
             ->andWhere('s.specialist_id = :id')
             ->setParameter('id', $specialistId)
-            ->execute()
             ->fetchAssociative();
 
         return $data !== false ? new Specialist($data) : null;
@@ -44,7 +42,6 @@ class SpecialistDataRepository extends AbstractRepository
             ->from('specialists', 's')
             ->where('s.specialist_enabled = 1')
             ->orderBy('s.specialist_name')
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn (array $row) => new Specialist($row), $data);

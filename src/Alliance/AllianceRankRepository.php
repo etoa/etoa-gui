@@ -15,7 +15,7 @@ class AllianceRankRepository extends AbstractRepository
                 'rank_alliance_id' => ':allianceId',
             ])
             ->setParameter('allianceId', $allianceId)
-            ->execute();
+            ->executeQuery();
 
         return (int) $this->getConnection()->lastInsertId();
     }
@@ -32,7 +32,7 @@ class AllianceRankRepository extends AbstractRepository
                 'rightId' => $rightId,
                 'rankId' => $rankId,
             ])
-            ->execute();
+            ->executeQuery();
     }
 
     /**
@@ -50,7 +50,6 @@ class AllianceRankRepository extends AbstractRepository
             ->where('rank_alliance_id = :allianceId')
             ->orderBy('rank_level', 'DESC')
             ->setParameter('allianceId', $allianceId)
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn (array $row) => new AllianceRank($row), $data);
@@ -67,7 +66,6 @@ class AllianceRankRepository extends AbstractRepository
                 'allianceId' => $allianceId,
                 'rankId' => $rankId,
             ])
-            ->execute()
             ->fetchAssociative();
 
         return $data !== false ? new AllianceRank($data) : null;
@@ -85,7 +83,6 @@ class AllianceRankRepository extends AbstractRepository
             ->setParameters([
                 'rankId' => $rankId,
             ])
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn (array $row) => (int) $row['rr_right_id'], $data);
@@ -106,7 +103,6 @@ class AllianceRankRepository extends AbstractRepository
                 'rankId' => $rankId,
                 'action' => $action,
             ])
-            ->execute()
             ->fetchOne();
     }
 
@@ -125,7 +121,6 @@ class AllianceRankRepository extends AbstractRepository
                 'allianceId' => $allianceId,
                 'rankId' => $rankId,
             ])
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn (array $row) => (int) $row['rr_right_id'], $data);
@@ -143,7 +138,7 @@ class AllianceRankRepository extends AbstractRepository
                 'name' => $name,
                 'level' => $level,
             ])
-            ->execute();
+            ->executeQuery();
     }
 
     public function removeRank(int $rankId): void
@@ -152,7 +147,7 @@ class AllianceRankRepository extends AbstractRepository
             ->delete('alliance_ranks')
             ->where('rank_id = :rankId')
             ->setParameter('rankId', $rankId)
-            ->execute();
+            ->executeQuery();
 
         $this->deleteRights($rankId);
     }
@@ -163,7 +158,7 @@ class AllianceRankRepository extends AbstractRepository
             ->delete('alliance_rankrights')
             ->where('rr_rank_id = :rankId')
             ->setParameter('rankId', $rankId)
-            ->execute();
+            ->executeQuery();
     }
 
     public function deleteAllianceRanks(int $allianceId): void
@@ -173,19 +168,18 @@ class AllianceRankRepository extends AbstractRepository
             ->from('alliance_ranks')
             ->where('rank_alliance_id = :allianceId')
             ->setParameter('allianceId', $allianceId)
-            ->execute()
             ->fetchAllAssociative(), 'rank_id');
 
         $this->createQueryBuilder()
             ->delete('alliance_rankrights')
             ->where('rr_rank_id IN (:rankIds)')
             ->setParameter('rankIds', $rankIds, Connection::PARAM_INT_ARRAY)
-            ->execute();
+            ->executeQuery();
 
         $this->createQueryBuilder()
             ->delete('alliance_ranks')
             ->where('rank_alliance_id = :allianceId')
             ->setParameter('allianceId', $allianceId)
-            ->execute();
+            ->executeQuery();
     }
 }

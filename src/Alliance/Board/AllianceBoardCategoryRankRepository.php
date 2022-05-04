@@ -21,7 +21,6 @@ class AllianceBoardCategoryRankRepository extends AbstractRepository
                 'allianceId' => $allianceId,
                 'rankId' => $rankId,
             ])
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn (array $row) => (int) $row['cr_cat_id'], $data);
@@ -37,7 +36,6 @@ class AllianceBoardCategoryRankRepository extends AbstractRepository
             ->from('allianceboard_catranks')
             ->where('cr_cat_id = :categoryId')
             ->setParameter('categoryId', $categoryId)
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn (array $row) => (int) $row['cr_rank_id'], $data);
@@ -53,7 +51,6 @@ class AllianceBoardCategoryRankRepository extends AbstractRepository
             ->from('allianceboard_catranks')
             ->where('cr_bnd_id = :bndId')
             ->setParameter('bndId', $bndId)
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn (array $row) => (int) $row['cr_rank_id'], $data);
@@ -80,7 +77,7 @@ class AllianceBoardCategoryRankRepository extends AbstractRepository
         }
 
         $qb
-            ->execute();
+            ->executeQuery();
 
         $count = count($rankIds);
         if ($count === 0) {

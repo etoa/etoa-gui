@@ -17,7 +17,6 @@ class FleetLogRepository extends AbstractRepository
             ->select('*')
             ->from('logs_fleet')
             ->orderBy('timestamp', 'DESC')
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn (array $row) => new FleetLog($row), $data);
@@ -28,7 +27,6 @@ class FleetLogRepository extends AbstractRepository
         return (int) $this->applySearchSortLimit($this->createQueryBuilder(), $search)
             ->select('COUNT(id)')
             ->from('logs_fleet')
-            ->execute()
             ->fetchOne();
     }
 
@@ -171,10 +169,11 @@ class FleetLogRepository extends AbstractRepository
 
     public function cleanup(int $threshold): int
     {
-        return (int) $this->createQueryBuilder()
+        return $this->createQueryBuilder()
             ->delete('logs_fleet')
             ->where('timestamp < :threshold')
             ->setParameter('threshold', $threshold)
-            ->execute();
+            ->executeQuery()
+            ->rowCount();
     }
 }

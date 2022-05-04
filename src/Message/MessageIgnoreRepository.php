@@ -19,7 +19,6 @@ class MessageIgnoreRepository extends AbstractRepository
                 'sender' => $senderId,
                 'recipient' => $recipientId,
             ])
-            ->execute()
             ->fetchOne();
 
         return $data > 0;
@@ -37,7 +36,6 @@ class MessageIgnoreRepository extends AbstractRepository
             ->setParameters([
                 'ownerId' => $ownerId,
             ])
-            ->execute()
             ->fetchFirstColumn();
 
         return array_map(fn ($id) => (int) $id, $data);
@@ -55,7 +53,6 @@ class MessageIgnoreRepository extends AbstractRepository
             ->setParameters([
                 'targetId' => $targetId,
             ])
-            ->execute()
             ->fetchFirstColumn();
 
         return array_map(fn ($id) => (int) $id, $data);
@@ -73,7 +70,7 @@ class MessageIgnoreRepository extends AbstractRepository
                 'ownerId' => $ownerId,
                 'targetId' => $targetId,
             ])
-            ->execute();
+            ->executeQuery();
     }
 
     public function remove(int $ownerId, int $targetId): void
@@ -86,6 +83,6 @@ class MessageIgnoreRepository extends AbstractRepository
                 'ownerId' => $ownerId,
                 'targetId' => $targetId,
             ])
-            ->execute();
+            ->executeQuery();
     }
 }

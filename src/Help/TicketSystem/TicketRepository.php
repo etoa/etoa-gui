@@ -15,7 +15,6 @@ class TicketRepository extends AbstractRepository
             ->from('tickets')
             ->where("status = :status")
             ->setParameter('status', TicketStatus::NEW)
-            ->execute()
             ->fetchOne();
     }
 
@@ -32,7 +31,6 @@ class TicketRepository extends AbstractRepository
             ->andWhere('admin_id = :admin_id')
             ->setParameter('admin_id', $adminId)
             ->setParameter('status', TicketStatus::ASSIGNED)
-            ->execute()
             ->fetchOne();
     }
 
@@ -43,7 +41,6 @@ class TicketRepository extends AbstractRepository
             ->from('tickets')
             ->where('id = :id')
             ->setParameter('id', $id)
-            ->execute()
             ->fetchAssociative();
 
         return $data ? Ticket::createFromArray($data) : null;
@@ -64,7 +61,7 @@ class TicketRepository extends AbstractRepository
             $qry->andWhere($key . ' = :' . $key)
                 ->setParameter($key, $val);
         }
-        $data = $qry->execute()
+        $data = $qry
             ->fetchAllAssociative();
 
         return array_map(fn (array $arr) => Ticket::createFromArray($arr), $data);
@@ -93,9 +90,10 @@ class TicketRepository extends AbstractRepository
                     'admin_comment' => $ticket->adminComment,
                     'timestamp' => $ticket->timestamp,
                 ])
-                ->execute();
+                ->executeQuery()
+                ->rowCount();
 
-            return (int) $affected > 0;
+            return $affected > 0;
         }
         $this->createQueryBuilder()
             ->insert('tickets')
@@ -117,7 +115,7 @@ class TicketRepository extends AbstractRepository
                 'admin_comment' => $ticket->adminComment,
                 'timestamp' => $ticket->timestamp,
             ])
-            ->execute();
+            ->executeQuery();
         $ticket->id = (int) $this->getConnection()->lastInsertId();
 
         return true;
@@ -133,7 +131,6 @@ class TicketRepository extends AbstractRepository
             ->from('tickets')
             ->where("status = :status")
             ->setParameter('status', TicketStatus::ASSIGNED)
-            ->execute()
             ->fetchFirstColumn();
 
         return array_map(fn ($val) => (int) $val, $data);
@@ -155,7 +152,7 @@ class TicketRepository extends AbstractRepository
             $qry->setParameter($k, $id);
         }
 
-        return (int) $qry->execute();
+        return $qry->executeQuery()->rowCount();
     }
 
     public function removeForUser(int $userId) : void
@@ -164,7 +161,7 @@ class TicketRepository extends AbstractRepository
             ->delete('tickets')
             ->where('user_id = :userId')
             ->setParameter('userId', $userId)
-            ->execute();
+            ->executeQuery();
     }
 
     /**
@@ -177,7 +174,6 @@ class TicketRepository extends AbstractRepository
             ->from('ticket_cat')
             ->orderBy('sort')
             ->addOrderBy('name')
-            ->execute()
             ->fetchAllKeyValue();
     }
 
@@ -188,7 +184,6 @@ class TicketRepository extends AbstractRepository
             ->from('ticket_cat')
             ->where('id = :id')
             ->setParameter('id', $catId)
-            ->execute()
             ->fetchOne();
 
         return $data !== false ? $data : null;

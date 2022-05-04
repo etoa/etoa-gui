@@ -22,7 +22,6 @@ class TutorialUserProgressRepository extends AbstractRepository
                 'userId' => $userId,
                 'tutorialId' => $tutorialId,
             ])
-            ->execute()
             ->fetchOne();
     }
 
@@ -38,6 +37,6 @@ class TutorialUserProgressRepository extends AbstractRepository
                 'userId' => $userId,
                 'tutorialId' => $tutorial,
             ])
-            ->execute();
+            ->executeQuery();
     }
 }

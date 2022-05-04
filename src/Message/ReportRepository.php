@@ -18,7 +18,6 @@ class ReportRepository extends AbstractRepository
         return (int) $this->applySearchSortLimit($this->createQueryBuilder(), $search)
             ->select('COUNT(*)')
             ->from('reports')
-            ->execute()
             ->fetchOne();
     }
 
@@ -28,7 +27,6 @@ class ReportRepository extends AbstractRepository
             ->select('COUNT(*)')
             ->from('reports')
             ->where('archived = 0')
-            ->execute()
             ->fetchOne();
     }
 
@@ -38,7 +36,6 @@ class ReportRepository extends AbstractRepository
             ->select('COUNT(*)')
             ->from('reports')
             ->where('deleted = 1')
-            ->execute()
             ->fetchOne();
     }
 
@@ -51,7 +48,6 @@ class ReportRepository extends AbstractRepository
             ->andWhere('`read` = 0')
             ->andWhere('`deleted` = 0')
             ->setParameter('userId', $userId)
-            ->execute()
             ->fetchOne();
     }
 
@@ -66,7 +62,6 @@ class ReportRepository extends AbstractRepository
             ->orderBy('timestamp', 'DESC');
 
         $data = $this->applySearchSortLimit($qb, $search, null, $limit, $first)
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn (array $row) => Report::createFromArray($row), $data);
@@ -79,7 +74,6 @@ class ReportRepository extends AbstractRepository
             ->from('reports')
             ->orderBy('timestamp', 'DESC')
             ->setMaxResults(1)
-            ->execute()
             ->fetchAssociative();
 
         return $data !== false ? Report::createFromArray($data) : null;
@@ -109,7 +103,7 @@ class ReportRepository extends AbstractRepository
                 'entity2Id' => $entity2Id,
                 'opponentId' => $opponentId,
             ])
-            ->execute();
+            ->executeQuery();
 
         return (int) $this->getConnection()->lastInsertId();
     }
@@ -130,7 +124,7 @@ class ReportRepository extends AbstractRepository
             ->andWhere('id IN (:ids)')
             ->setParameter('userId', $userId)
             ->setParameter('ids', $ids, Connection::PARAM_INT_ARRAY)
-            ->execute();
+            ->executeQuery();
     }
 
     /**
@@ -163,7 +157,7 @@ class ReportRepository extends AbstractRepository
         }
 
         $qb
-            ->execute();
+            ->executeQuery();
     }
 
     public function setDeleted(int $id, bool $deleted): void
@@ -176,7 +170,7 @@ class ReportRepository extends AbstractRepository
                 'id' => $id,
                 'deleted' => (int) $deleted,
             ])
-            ->execute();
+            ->executeQuery();
     }
 
     /**
@@ -195,28 +189,30 @@ class ReportRepository extends AbstractRepository
             ->andWhere('id IN (:ids)')
             ->setParameter('userId', $userId)
             ->setParameter('ids', $ids, Connection::PARAM_INT_ARRAY)
-            ->execute();
+            ->executeQuery();
     }
 
     public function removeUnarchivedread(int $beforeTimestamp): int
     {
-        return (int) $this->createQueryBuilder()
+        return $this->createQueryBuilder()
             ->delete('reports')
             ->where('archived = 0')
             ->andWhere('`read` = 1')
             ->andWhere('timestamp < :timestamp')
             ->setParameter('timestamp', $beforeTimestamp)
-            ->execute();
+            ->executeQuery()
+            ->rowCount();
     }
 
     public function removeDeleted(int $beforeTimestamp): int
     {
-        return (int) $this->createQueryBuilder()
+        return $this->createQueryBuilder()
             ->delete('reports')
             ->where('deleted = 1')
             ->andWhere('timestamp < :timestamp')
             ->setParameter('timestamp', $beforeTimestamp)
-            ->execute();
+            ->executeQuery()
+            ->rowCount();
     }
 
     /**

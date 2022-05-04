@@ -15,7 +15,6 @@ class TicketMessageRepository extends AbstractRepository
             ->from('ticket_msg')
             ->where('ticket_id = :ticket_id')
             ->setParameter('ticket_id', $ticketId)
-            ->execute()
             ->fetchOne();
     }
 
@@ -28,7 +27,6 @@ class TicketMessageRepository extends AbstractRepository
             ->select("ticket_id, COUNT(*)")
             ->from('ticket_msg')
             ->groupBy('ticket_id')
-            ->execute()
             ->fetchAllKeyValue();
     }
 
@@ -39,7 +37,6 @@ class TicketMessageRepository extends AbstractRepository
             ->from('ticket_msg')
             ->where('id = :id')
             ->setParameter('id', $id)
-            ->execute()
             ->fetchAssociative();
 
         return $data ? TicketMessage::createFromArray($data) : null;
@@ -56,7 +53,6 @@ class TicketMessageRepository extends AbstractRepository
             ->where('ticket_id = :ticket_id')
             ->orderBy('timestamp', 'ASC')
             ->setParameter('ticket_id', $ticketId)
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn (array $arr) => TicketMessage::createFromArray($arr), $data);
@@ -71,7 +67,6 @@ class TicketMessageRepository extends AbstractRepository
             ->orderBy('timestamp', 'DESC')
             ->addOrderBy('id', 'DESC')
             ->setParameter('ticket_id', $ticketId)
-            ->execute()
             ->fetchAssociative();
 
         return $data ? TicketMessage::createFromArray($data) : null;
@@ -99,7 +94,7 @@ class TicketMessageRepository extends AbstractRepository
                 'timestamp' => $message->timestamp,
                 'message' => $message->message,
             ])
-            ->execute();
+            ->executeQuery();
 
         $message->id = (int) $this->getConnection()->lastInsertId();
     }
@@ -119,6 +114,6 @@ class TicketMessageRepository extends AbstractRepository
         foreach ($ticketIds as $k => $id) {
             $qry->setParameter($k, $id);
         }
-        $qry->execute();
+        $qry->executeQuery();
     }
 }

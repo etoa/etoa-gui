@@ -16,7 +16,6 @@ class WormholeRepository extends AbstractRepository
         $data = $this->createQueryBuilder()
             ->select("id")
             ->from('wormholes')
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn (array $row) => (int) $row['id'], $data);
@@ -27,7 +26,6 @@ class WormholeRepository extends AbstractRepository
         return (int) $this->createQueryBuilder()
             ->select("COUNT(id)")
             ->from('wormholes')
-            ->execute()
             ->fetchOne();
     }
 
@@ -36,7 +34,6 @@ class WormholeRepository extends AbstractRepository
         $id = $this->createQueryBuilder()
             ->select("id")
             ->from('wormholes')
-            ->execute()
             ->fetchOne();
 
         return $id !== false ? (int) $id : null;
@@ -51,7 +48,6 @@ class WormholeRepository extends AbstractRepository
             ->setParameters([
                 'id' => $id,
             ])
-            ->execute()
             ->fetchAssociative();
 
         return $data !== false ? new Wormhole($data) : null;
@@ -65,7 +61,6 @@ class WormholeRepository extends AbstractRepository
         $data = $this->createQueryBuilder()
             ->select("*")
             ->from('wormholes')
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn ($row) => new Wormhole($row), $data);
@@ -87,7 +82,6 @@ class WormholeRepository extends AbstractRepository
             ->setParameters([
                 'changed' => $changedBefore,
             ])
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn ($row) => new Wormhole($row), $data);
@@ -109,7 +103,7 @@ class WormholeRepository extends AbstractRepository
                 'persistent' => (int) $persistent,
                 'targetId' => $targetId,
             ])
-            ->execute();
+            ->executeQuery();
     }
 
     public function updateTarget(int $id, int $targetId): void
@@ -122,7 +116,7 @@ class WormholeRepository extends AbstractRepository
                 'id' => $id,
                 'target_id' => $targetId,
             ])
-            ->execute();
+            ->executeQuery();
     }
 
     public function setPersistent(int $id, bool $persistent): void
@@ -135,7 +129,7 @@ class WormholeRepository extends AbstractRepository
                 'id' => $id,
                 'persistent' => (int) $persistent,
             ])
-            ->execute();
+            ->executeQuery();
     }
 
     public function remove(int $id): void
@@ -144,6 +138,6 @@ class WormholeRepository extends AbstractRepository
             ->delete('wormholes')
             ->where('id = :id')
             ->setParameter('id', $id)
-            ->execute();
+            ->executeQuery();
     }
 }

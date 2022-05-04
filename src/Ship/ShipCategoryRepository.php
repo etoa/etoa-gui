@@ -15,7 +15,6 @@ class ShipCategoryRepository extends AbstractRepository
             ->select('*')
             ->from('ship_cat')
             ->orderBy('cat_order')
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn ($row) => new ShipCategory($row), $data);
@@ -30,7 +29,6 @@ class ShipCategoryRepository extends AbstractRepository
             ->select('cat_id, cat_name')
             ->from('ship_cat')
             ->orderBy('cat_order')
-            ->execute()
             ->fetchAllKeyValue();
     }
 
@@ -41,7 +39,6 @@ class ShipCategoryRepository extends AbstractRepository
             ->from('ship_cat')
             ->where('cat_id = :id')
             ->setParameter('id', $categoryId)
-            ->execute()
             ->fetchAssociative();
 
         return $data !== false ? new ShipCategory($data) : null;

@@ -18,7 +18,6 @@ class HostCacheRepository extends AbstractRepository
                 'time' => time() - 86400,
             ])
             ->setMaxResults(1)
-            ->execute()
             ->fetchOne();
 
         return $data !== false ? $data : null;
@@ -36,7 +35,6 @@ class HostCacheRepository extends AbstractRepository
                 'time' => time() - 86400,
             ])
             ->setMaxResults(1)
-            ->execute()
             ->fetchOne();
 
         return $data !== false ? $data : null;

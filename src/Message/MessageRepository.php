@@ -19,7 +19,6 @@ class MessageRepository extends AbstractRepository
             ->innerJoin('m', 'message_data', 'd', 'd.id = m.message_id')
             ->orderBy('m.message_read', 'ASC')
             ->addOrderBy('m.message_timestamp', 'DESC')
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn (array $row) => Message::createFromArray($row), $data);
@@ -31,7 +30,6 @@ class MessageRepository extends AbstractRepository
             ->select('COUNT(*)')
             ->from('messages', 'm')
             ->innerJoin('m', 'message_data', 'd', 'd.id = m.message_id')
-            ->execute()
             ->fetchOne();
     }
 
@@ -41,7 +39,6 @@ class MessageRepository extends AbstractRepository
             ->select('COUNT(*)')
             ->from('messages')
             ->where('message_archived = 0')
-            ->execute()
             ->fetchOne();
     }
 
@@ -51,7 +48,6 @@ class MessageRepository extends AbstractRepository
             ->select('COUNT(*)')
             ->from('messages')
             ->where('message_deleted = 1')
-            ->execute()
             ->fetchOne();
     }
 
@@ -66,7 +62,6 @@ class MessageRepository extends AbstractRepository
             ->setParameters([
                 'userId' => $userId,
             ])
-            ->execute()
             ->fetchOne();
     }
 
@@ -82,7 +77,6 @@ class MessageRepository extends AbstractRepository
             ->setParameters([
                 'userId' => $userId,
             ])
-            ->execute()
             ->fetchOne();
     }
 
@@ -97,7 +91,6 @@ class MessageRepository extends AbstractRepository
             ->setParameters([
                 'userId' => $userId,
             ])
-            ->execute()
             ->fetchOne();
     }
 
@@ -114,7 +107,6 @@ class MessageRepository extends AbstractRepository
             ->setParameters([
                 'timestamp' => $timestamp,
             ])
-            ->execute()
             ->fetchFirstColumn();
 
         return array_map(fn ($id) => (int) $id, $data);
@@ -134,7 +126,6 @@ class MessageRepository extends AbstractRepository
             ->setParameters([
                 'timestamp' => $timestamp,
             ])
-            ->execute()
             ->fetchFirstColumn();
 
         return array_map(fn ($id) => (int) $id, $data);
@@ -168,7 +159,7 @@ class MessageRepository extends AbstractRepository
                     'userId' => $userId,
                     'catId' => $catId,
                 ])
-                ->execute();
+                ->executeQuery();
 
             $id = (int) $this->getConnection()->lastInsertId();
 
@@ -183,7 +174,7 @@ class MessageRepository extends AbstractRepository
                     'subject' => $subject,
                     'text' => $text,
                 ])
-                ->execute();
+                ->executeQuery();
             $this->getConnection()->commit();
 
             return $id;
@@ -218,7 +209,7 @@ class MessageRepository extends AbstractRepository
                     'receiverId' => $receiverId,
                     'catId' => $catId != 0 ? $catId : MessageCategoryId::USER,
                 ])
-                ->execute();
+                ->executeQuery();
 
             $id = (int) $this->getConnection()->lastInsertId();
 
@@ -235,7 +226,7 @@ class MessageRepository extends AbstractRepository
                     'text' => $text,
                     'fleet_id' => $fleetId,
                 ])
-                ->execute();
+                ->executeQuery();
 
             $this->getConnection()->commit();
         } catch (\Exception $ex) {
@@ -253,7 +244,7 @@ class MessageRepository extends AbstractRepository
             ->innerJoin('m', 'message_data', 'd', 'd.id = m.message_id')
             ->where('message_id = :message_id')
             ->setParameter('message_id', $id)
-            ->execute()
+            ->executeQuery()
             ->fetchAssociative();
 
         return $data !== false ? Message::createFromArray($data) : null;
@@ -350,7 +341,7 @@ class MessageRepository extends AbstractRepository
                 ->setParameter('mailed', $params['mailed']);
         }
 
-        $data = $qry->execute()
+        $data = $qry
             ->fetchAllAssociative();
 
         return array_map(fn ($arr) => Message::createFromArray($arr), $data);
@@ -368,7 +359,6 @@ class MessageRepository extends AbstractRepository
             ->where('message_user_to = :userId')
             ->orderBy('message_timestamp', 'ASC')
             ->setParameter('userId', $userId)
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn ($arr) => Message::createFromArray($arr), $data);
@@ -390,7 +380,7 @@ class MessageRepository extends AbstractRepository
                 ->setParameter('userToId', $userToId);
         }
 
-        $affected = (int) $qry->execute();
+        $affected = $qry->executeQuery()->rowCount();
 
         return $affected > 0;
     }
@@ -416,7 +406,7 @@ class MessageRepository extends AbstractRepository
                 ->setParameter('isArchived', $isArchived);
         }
 
-        $affected = (int) $qry->execute();
+        $affected = $qry->executeQuery()->rowCount();
 
         return $affected > 0;
     }
@@ -442,14 +432,14 @@ class MessageRepository extends AbstractRepository
                 ->setParameter('isArchived', $isArchived);
         }
 
-        $affected = (int) $qry->execute();
+        $affected = $qry->executeQuery()->rowCount();
 
         return $affected > 0;
     }
 
     public function setRead(int $id, bool $read = true): bool
     {
-        $affected = (int) $this->createQueryBuilder()
+        $affected = $this->createQueryBuilder()
             ->update('messages')
             ->set('message_read', ':read')
             ->where('message_id = :id')
@@ -457,14 +447,15 @@ class MessageRepository extends AbstractRepository
                 'id' => $id,
                 'read' => $read,
             ])
-            ->execute();
+            ->executeQuery()
+            ->rowCount();
 
         return $affected > 0;
     }
 
     public function setMailed(int $userTo, bool $mailed = true): bool
     {
-        $affected = (int) $this->createQueryBuilder()
+        $affected = $this->createQueryBuilder()
             ->update('messages')
             ->set('message_mailed', ':mailed')
             ->where('message_user_to = :userTo')
@@ -472,7 +463,8 @@ class MessageRepository extends AbstractRepository
                 'userTo' => $userTo,
                 'mailed' => $mailed,
             ])
-            ->execute();
+            ->executeQuery()
+            ->rowCount();
 
         return $affected > 0;
     }
@@ -483,13 +475,13 @@ class MessageRepository extends AbstractRepository
             ->delete('messages')
             ->where('message_id = :id')
             ->setParameter('id', $id)
-            ->execute();
+            ->executeQuery();
 
         $this->createQueryBuilder()
             ->delete('message_data')
             ->where('id = :id')
             ->setParameter('id', $id)
-            ->execute();
+            ->executeQuery();
     }
 
     /**
@@ -501,17 +493,18 @@ class MessageRepository extends AbstractRepository
             return 0;
         }
 
-        $affected = (int) $this->createQueryBuilder()
+        $affected = $this->createQueryBuilder()
             ->delete('messages')
             ->where('message_id IN (' . implode(',', array_fill(0, count($ids), '?')) . ')')
             ->setParameters($ids)
-            ->execute();
+            ->executeQuery()
+            ->rowCount();
 
         $this->createQueryBuilder()
             ->delete('message_data')
             ->where('id IN (' . implode(',', array_fill(0, count($ids), '?')) . ')')
             ->setParameters($ids)
-            ->execute();
+            ->executeQuery();
 
         return $affected;
     }

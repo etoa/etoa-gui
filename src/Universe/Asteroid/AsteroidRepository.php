@@ -16,7 +16,6 @@ class AsteroidRepository extends AbstractRepository
         $data = $this->createQueryBuilder()
             ->select("id")
             ->from('asteroids')
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn (array $row) => (int) $row['id'], $data);
@@ -27,7 +26,6 @@ class AsteroidRepository extends AbstractRepository
         return (int) $this->createQueryBuilder()
             ->select("COUNT(id)")
             ->from('asteroids')
-            ->execute()
             ->fetchOne();
     }
 
@@ -40,7 +38,6 @@ class AsteroidRepository extends AbstractRepository
             ->setParameters([
                 'id' => $id,
             ])
-            ->execute()
             ->fetchAssociative();
 
         return $data !== false ? new Asteroid($data) : null;
@@ -62,7 +59,7 @@ class AsteroidRepository extends AbstractRepository
                 'res_crystal' => $resCrystal,
                 'res_plastic' => $resPlastic,
             ])
-            ->execute();
+            ->executeQuery();
     }
 
     public function update(
@@ -74,7 +71,7 @@ class AsteroidRepository extends AbstractRepository
         int $resFood,
         int $resPower
     ): bool {
-        $affected = (int) $this->createQueryBuilder()
+        $affected = $this->createQueryBuilder()
             ->update('asteroids')
             ->set('res_metal', ':res_metal')
             ->set('res_crystal', ':res_crystal')
@@ -92,7 +89,8 @@ class AsteroidRepository extends AbstractRepository
                 'res_food' => $resFood,
                 'res_power' => $resPower,
             ])
-            ->execute();
+            ->executeQuery()
+            ->rowCount();
 
         return $affected > 0;
     }
@@ -106,7 +104,7 @@ class AsteroidRepository extends AbstractRepository
         int $resFood,
         int $resPower
     ): bool {
-        $affected = (int) $this->createQueryBuilder()
+        $affected = $this->createQueryBuilder()
             ->update('asteroids')
             ->set('res_metal', 'res_metal + :res_metal')
             ->set('res_crystal', 'res_crystal + :res_crystal')
@@ -124,7 +122,8 @@ class AsteroidRepository extends AbstractRepository
                 'res_food' => $resFood,
                 'res_power' => $resPower,
             ])
-            ->execute();
+            ->executeQuery()
+            ->rowCount();
 
         return $affected > 0;
     }
@@ -135,6 +134,6 @@ class AsteroidRepository extends AbstractRepository
             ->delete('asteroids')
             ->where('id = :id')
             ->setParameter('id', $id)
-            ->execute();
+            ->executeQuery();
     }
 }

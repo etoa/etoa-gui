@@ -24,7 +24,7 @@ class AccessLogRepository extends AbstractRepository
                 'sub' => $sub,
                 'domain' => $domain,
             ])
-            ->execute();
+            ->executeQuery();
     }
 
     /**
@@ -39,7 +39,6 @@ class AccessLogRepository extends AbstractRepository
             ->groupBy('target')
             ->orderBy('cnt', 'DESC')
             ->setParameter('domain', $domain)
-            ->execute()
             ->fetchAllKeyValue();
 
         return array_map(fn ($value) => (int) $value, $data);
@@ -61,7 +60,6 @@ class AccessLogRepository extends AbstractRepository
                 'domain' => $domain,
                 'target' => $target,
             ])
-            ->execute()
             ->fetchAllKeyValue();
 
         return array_map(fn ($value) => (int) $value, $data);
@@ -71,6 +69,6 @@ class AccessLogRepository extends AbstractRepository
     {
         $this->createQueryBuilder()
             ->delete('accesslog')
-            ->execute();
+            ->executeQuery();
     }
 }

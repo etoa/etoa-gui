@@ -31,7 +31,7 @@ class AllianceSpendRepository extends AbstractRepository
                 'fuel' => $resources->fuel,
                 'food' => $resources->food,
             ])
-            ->execute();
+            ->executeQuery();
     }
 
     public function getTotalSpent(int $allianceId, int $userId = null): BaseResources
@@ -49,7 +49,6 @@ class AllianceSpendRepository extends AbstractRepository
         }
 
         $data = $qb
-            ->execute()
             ->fetchAssociative();
 
         $resources = new BaseResources();
@@ -87,7 +86,6 @@ class AllianceSpendRepository extends AbstractRepository
         }
 
         $data = $qb
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn (array $row) => new AllianceSpend($row), $data);
@@ -99,6 +97,6 @@ class AllianceSpendRepository extends AbstractRepository
             ->delete('alliance_spends')
             ->where('alliance_spend_alliance_id = :allianceId')
             ->setParameter('allianceId', $allianceId)
-            ->execute();
+            ->executeQuery();
     }
 }

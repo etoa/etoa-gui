@@ -11,7 +11,6 @@ class ShipTransformRepository extends AbstractRepository
     {
         $defense = (bool) $this->defenseQueryBuilder($userId, $entityId)
             ->select('1')
-            ->execute()
             ->fetchOne();
 
         if ($defense) {
@@ -20,7 +19,6 @@ class ShipTransformRepository extends AbstractRepository
 
         return (bool) $this->shipQueryBuilder($userId, $entityId)
             ->select('1')
-            ->execute()
             ->fetchOne();
     }
 
@@ -32,7 +30,6 @@ class ShipTransformRepository extends AbstractRepository
         $data = $this->shipQueryBuilder($userId, $entityId)
             ->select('ship_id, def_id, num_def')
             ->addSelect('l.shiplist_count as count')
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn (array $row) => ShipTransform::createFromShip($row), $data);
@@ -46,7 +43,6 @@ class ShipTransformRepository extends AbstractRepository
         $data = $this->defenseQueryBuilder($userId, $entityId)
             ->select('ship_id, def_id, num_def')
             ->addSelect('l.deflist_count as count')
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn (array $row) => ShipTransform::createFromDefense($row), $data);
@@ -59,7 +55,6 @@ class ShipTransformRepository extends AbstractRepository
             ->addSelect('l.shiplist_count as count')
             ->andWhere('l.shiplist_ship_id = :shipId')
             ->setParameter('shipId', $shipId)
-            ->execute()
             ->fetchAssociative();
 
         return $data !== false ? ShipTransform::createFromShip($data) : null;
@@ -72,7 +67,6 @@ class ShipTransformRepository extends AbstractRepository
             ->addSelect('l.deflist_count as count')
             ->andWhere('l.deflist_def_id = :defenseId')
             ->setParameter('defenseId', $defenseId)
-            ->execute()
             ->fetchAssociative();
 
         return $data !== false ? ShipTransform::createFromDefense($data) : null;

@@ -26,7 +26,7 @@ class UserLogRepository extends AbstractRepository
                 'host' => $host,
                 'public' => (int) $public,
             ])
-            ->execute();
+            ->executeQuery();
     }
 
     /**
@@ -49,7 +49,6 @@ class UserLogRepository extends AbstractRepository
         }
 
         $data = $qb
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn (array $row) => new UserLog($row), $data);
@@ -59,6 +58,6 @@ class UserLogRepository extends AbstractRepository
     {
         $this->createQueryBuilder()
             ->delete('user_log')
-            ->execute();
+            ->executeQuery();
     }
 }

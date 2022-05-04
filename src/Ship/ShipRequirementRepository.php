@@ -28,7 +28,6 @@ class ShipRequirementRepository extends AbstractRequirementRepository
                 'shipId' => $shipId,
                 'speedCat' => TechnologyTypeId::SPEED,
             ])
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn ($row) => ShipRequiredTechnology::createFromTech($row), $data);
@@ -48,7 +47,6 @@ class ShipRequirementRepository extends AbstractRequirementRepository
             ->setParameters([
                 'techId' => $techId,
             ])
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn ($row) => ShipRequiredTechnology::createFromShip($row), $data);

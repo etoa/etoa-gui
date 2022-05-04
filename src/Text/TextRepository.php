@@ -48,7 +48,6 @@ class TextRepository extends AbstractRepository
             ->from('texts')
             ->where('text_id = :id')
             ->setParameter('id', $id)
-            ->execute()
             ->fetchAssociative();
         if ($data) {
             $t = new Text($id, $data['text_content']);
@@ -97,7 +96,7 @@ class TextRepository extends AbstractRepository
             ->setParameters([
                 'id' => $id,
             ])
-            ->execute();
+            ->executeQuery();
     }
 
     public function disableText(string $id): void
@@ -109,7 +108,7 @@ class TextRepository extends AbstractRepository
             ->setParameters([
                 'id' => $id,
             ])
-            ->execute();
+            ->executeQuery();
     }
 
     public function reset(string $id): void
@@ -120,7 +119,7 @@ class TextRepository extends AbstractRepository
             ->setParameters([
                 'id' => $id,
             ])
-            ->execute();
+            ->executeQuery();
     }
 
     public function getEnabledTextOrDefault(string $key, string $default = ''): string

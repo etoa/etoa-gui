@@ -26,7 +26,7 @@ class QuestRepository extends AbstractRepository implements QuestStorageInterfac
             ->setParameters([
                 'userId' => $userId,
                 'questId' => $questId,
-            ])->execute()->fetchAllAssociative();
+            ])->fetchAllAssociative();
 
         if (count($result) === 0) {
             throw new QuestNotFoundException();
@@ -55,7 +55,7 @@ class QuestRepository extends AbstractRepository implements QuestStorageInterfac
                 'userId' => $userId,
             ])
             ->orderBy('q.id')
-            ->execute()->fetchAllAssociative();
+            ->fetchAllAssociative();
 
         $result = [];
         foreach ($rows as $row) {
@@ -98,7 +98,7 @@ class QuestRepository extends AbstractRepository implements QuestStorageInterfac
                 ->setParameters([
                     'id' => $quest->getId(),
                     'state' => $quest->getState(),
-                ])->execute();
+                ])->executeQuery();
 
             foreach ($quest->getTasks() as $task) {
                 $this->createQueryBuilder()
@@ -107,7 +107,7 @@ class QuestRepository extends AbstractRepository implements QuestStorageInterfac
                     ->where('id = :id')
                     ->setParameters([
                         'id' => $task->getId(),
-                    ])->execute();
+                    ])->executeQuery();
             }
         } catch (\RuntimeException $e) {
             $qb = $this->createQueryBuilder();
@@ -123,7 +123,7 @@ class QuestRepository extends AbstractRepository implements QuestStorageInterfac
                     'state' => $quest->getState(),
                     'slotId' => $quest->getSlotId(),
                     'questId' => $quest->getQuestId(),
-                ])->execute();
+                ])->executeQuery();
 
             $questId = (int)$qb->getConnection()->lastInsertId();
             $quest->setId($questId);
@@ -140,7 +140,7 @@ class QuestRepository extends AbstractRepository implements QuestStorageInterfac
                         'taskId' => $task->getTaskId(),
                         'questId' => $questId,
                         'progress' => $task->getProgress(),
-                    ])->execute();
+                    ])->executeQuery();
 
                 $task->setId((int)$qb->getConnection()->lastInsertId());
             }
@@ -190,7 +190,7 @@ class QuestRepository extends AbstractRepository implements QuestStorageInterfac
         return $qb
             ->setParameters($parameters)
             ->orderBy('q.id')
-            ->execute()->fetchAllAssociative();
+            ->fetchAllAssociative();
     }
 
     /**
@@ -207,7 +207,7 @@ class QuestRepository extends AbstractRepository implements QuestStorageInterfac
             ->innerJoin('q', 'users', 'u', 'u.user_id=q.user_id')
             ->where('q.id = :questId')
             ->setParameter('questId', $questId)
-            ->execute()->fetchAllAssociative();
+            ->fetchAllAssociative();
 
         if (count($result) === 0) {
             return null;
@@ -230,7 +230,7 @@ class QuestRepository extends AbstractRepository implements QuestStorageInterfac
                 'questId' => $questId,
                 'state' => $questState,
             ])
-            ->execute();
+            ->executeQuery();
     }
 
     public function deleteQuest(int $questId): void
@@ -239,12 +239,12 @@ class QuestRepository extends AbstractRepository implements QuestStorageInterfac
             ->delete('quest_tasks')
             ->where('quest_id = :questId')
             ->setParameter('questId', $questId)
-            ->execute();
+            ->executeQuery();
 
         $this->createQueryBuilder()
             ->delete('quests')
             ->where('id = :questId')
             ->setParameter('questId', $questId)
-            ->execute();
+            ->executeQuery();
     }
 }

@@ -19,7 +19,6 @@ class UserMultiRepository extends AbstractRepository
                 'userId' => $userId,
                 'multiId' => $multiId,
             ])
-            ->execute()
             ->fetchOne();
 
         if ($exists) {
@@ -37,7 +36,7 @@ class UserMultiRepository extends AbstractRepository
                     'now' => time(),
                     'reason' => $reason,
                 ])
-                ->execute();
+                ->executeQuery();
         } else {
             $this->createQueryBuilder()
                 ->insert('user_multi')
@@ -53,7 +52,7 @@ class UserMultiRepository extends AbstractRepository
                     'now' => time(),
                     'reason' => $reason,
                 ])
-                ->execute();
+                ->executeQuery();
         }
     }
 
@@ -69,7 +68,7 @@ class UserMultiRepository extends AbstractRepository
                 'userId' => $userId,
                 'now' => time(),
             ])
-            ->execute();
+            ->executeQuery();
     }
 
     public function updateEntry(int $id, int $userId, int $multiId, string $reason): void
@@ -88,7 +87,7 @@ class UserMultiRepository extends AbstractRepository
                 'reason' => $reason,
                 'now' => time(),
             ])
-            ->execute();
+            ->executeQuery();
     }
 
     public function deactivateEntry(int $id): void
@@ -103,7 +102,7 @@ class UserMultiRepository extends AbstractRepository
                 'active' => 0,
                 'now' => time(),
             ])
-            ->execute();
+            ->executeQuery();
     }
 
     public function deactivate(int $userId, int $multiId): void
@@ -120,7 +119,7 @@ class UserMultiRepository extends AbstractRepository
                 'active' => 0,
                 'now' => time(),
             ])
-            ->execute();
+            ->executeQuery();
     }
 
     /**
@@ -143,7 +142,6 @@ class UserMultiRepository extends AbstractRepository
         $data = $qb
             ->setParameter('userId', $userId, )
             ->orderBy('m.id', 'DESC')
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn (array $row) => new UserMulti($row), $data);
@@ -166,7 +164,6 @@ class UserMultiRepository extends AbstractRepository
             ->where('m.user_id IN (:userIds)')
             ->setParameter('userIds', $userIds, Connection::PARAM_INT_ARRAY)
             ->orderBy('m.id', 'DESC')
-            ->execute()
             ->fetchAllAssociative();
 
         $entries = [];
@@ -187,7 +184,6 @@ class UserMultiRepository extends AbstractRepository
             ->andWhere('m.id = :id')
             ->setParameter('userId', $userId, )
             ->setParameter('id', $id, )
-            ->execute()
             ->fetchAssociative();
 
         return $data !== false ? new UserMulti($data) : null;
@@ -204,7 +200,6 @@ class UserMultiRepository extends AbstractRepository
                 'userId' => $userId,
                 'otherUserId' => $otherUserId,
             ])
-            ->execute()
             ->fetchOne();
     }
 
@@ -212,22 +207,24 @@ class UserMultiRepository extends AbstractRepository
     {
         $qb = $this->createQueryBuilder();
 
-        return (int) $qb
+        return $qb
             ->delete('user_multi')
             ->where('user_id = :userId')
             ->orWhere('multi_id = :userId')
             ->setParameter('userId', $userId)
-            ->execute();
+            ->executeQuery()
+            ->rowCount();
     }
 
     public function deleteEntry(int $id): int
     {
         $qb = $this->createQueryBuilder();
 
-        return (int) $qb
+        return $qb
             ->delete('user_multi')
             ->where('id = :id')
             ->setParameter('id', $id)
-            ->execute();
+            ->executeQuery()
+            ->rowCount();
     }
 }

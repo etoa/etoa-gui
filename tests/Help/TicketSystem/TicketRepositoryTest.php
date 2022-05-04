@@ -47,7 +47,7 @@ class TicketRepositoryTest extends SymfonyWebTestCase
                 'solution' => $solution,
                 'adminComment' => $adminComment,
                 'timestamp' => $timestamp ?? time(),
-            ])->execute();
+            ])->executeQuery();
 
         return (int) $this->getConnection()->lastInsertId();
     }

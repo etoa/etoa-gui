@@ -33,7 +33,6 @@ class AlliancePointsRepository extends AbstractRepository
         }
 
         $data = $qb
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn (array $row) => new AlliancePoints($row), $data);
@@ -74,7 +73,7 @@ class AlliancePointsRepository extends AbstractRepository
                 'count' => $stats->count,
                 'currentRank' => $stats->currentRank,
                 'lastRank' => $stats->lastRank,
-            ])->execute();
+            ])->executeQuery();
     }
 
     public function count(): int
@@ -82,7 +81,6 @@ class AlliancePointsRepository extends AbstractRepository
         return (int) $this->createQueryBuilder()
             ->select('COUNT(*)')
             ->from('alliance_points')
-            ->execute()
             ->fetchOne();
     }
 
@@ -92,6 +90,6 @@ class AlliancePointsRepository extends AbstractRepository
             ->delete('alliance_points')
             ->where('point_alliance_id = :allianceId')
             ->setParameter('allianceId', $allianceId)
-            ->execute();
+            ->executeQuery();
     }
 }

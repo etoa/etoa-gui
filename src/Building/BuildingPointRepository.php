@@ -15,7 +15,6 @@ class BuildingPointRepository extends AbstractRepository
             ->select('*')
             ->from('building_points')
             ->orderBy('bp_level', 'ASC')
-            ->execute()
             ->fetchAllAssociative();
 
         $points = array_map(fn (array $row) => new BuildingPoint($row), $data);
@@ -33,7 +32,6 @@ class BuildingPointRepository extends AbstractRepository
         return (bool) $this->createQueryBuilder()
             ->select('1')
             ->from('building_points')
-            ->execute()
             ->fetchOne();
     }
 
@@ -41,7 +39,7 @@ class BuildingPointRepository extends AbstractRepository
     {
         $this->createQueryBuilder()
             ->delete('building_points')
-            ->execute();
+            ->executeQuery();
     }
 
     /**

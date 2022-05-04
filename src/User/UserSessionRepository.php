@@ -18,7 +18,6 @@ class UserSessionRepository extends AbstractRepository
             ->from('user_sessionlog', 's')
             ->groupBy('s.ip_addr')
             ->orderBy('s.cnt', 'DESC')
-            ->execute()
             ->fetchAllKeyValue();
 
         return array_map(fn ($value) => (int) $value, $data);
@@ -34,7 +33,6 @@ class UserSessionRepository extends AbstractRepository
             ->from('user_session', 's')
             ->groupBy('s.user_id')
             ->orderBy('s.cnt', 'DESC')
-            ->execute()
             ->fetchAllKeyValue();
 
         return array_map(fn ($value) => (int) $value, $data);
@@ -50,7 +48,6 @@ class UserSessionRepository extends AbstractRepository
             ->from('user_sessionlog', 's')
             ->groupBy('s.user_id')
             ->orderBy('s.cnt', 'DESC')
-            ->execute()
             ->fetchAllKeyValue();
 
         return array_map(fn ($value) => (int) $value, $data);
@@ -61,7 +58,6 @@ class UserSessionRepository extends AbstractRepository
         return (int) $this->createQueryBuilder()
             ->select('COUNT(*)')
             ->from('user_sessions')
-            ->execute()
             ->fetchOne();
     }
 
@@ -70,11 +66,10 @@ class UserSessionRepository extends AbstractRepository
      */
     public function getUserSessionIds(): array
     {
-        return array_column($this->createQueryBuilder()
+        return $this->createQueryBuilder()
             ->select('id')
             ->from('user_sessions')
-            ->execute()
-            ->fetchAllAssociative(), 'id');
+            ->fetchFirstColumn();
     }
 
     public function countActiveSessions(int $timeout): int
@@ -84,7 +79,6 @@ class UserSessionRepository extends AbstractRepository
             ->from('user_sessions')
             ->where('time_action > :timeout')
             ->setParameter('timeout', time() - $timeout)
-            ->execute()
             ->fetchOne();
     }
 
@@ -95,7 +89,6 @@ class UserSessionRepository extends AbstractRepository
             ->from('user_sessions')
             ->where('id = :id')
             ->setParameter('id', $id)
-            ->execute()
             ->fetchAssociative();
 
         return $data !== false ? new UserSession($data) : null;
@@ -108,7 +101,6 @@ class UserSessionRepository extends AbstractRepository
             ->from('user_sessionlog')
             ->where('session_id = :id')
             ->setParameter('id', $sessionId)
-            ->execute()
             ->fetchAssociative();
 
         return $data !== false ? new UserSessionLog($data) : null;
@@ -130,7 +122,6 @@ class UserSessionRepository extends AbstractRepository
                 'userAgent' => $userAgent,
                 'timeLogin' => $timeLogin,
             ])
-            ->execute()
             ->fetchAssociative();
 
         return $data !== false ? new UserSession($data) : null;
@@ -145,7 +136,6 @@ class UserSessionRepository extends AbstractRepository
             ->select('*')
             ->from('user_sessions', 's')
             ->orderBy('s.time_action', 'DESC')
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn (array $row) => new UserSession($row), $data);
@@ -162,7 +152,6 @@ class UserSessionRepository extends AbstractRepository
             ->where('user_id = :userId')
             ->setParameter('userId', $userId)
             ->orderBy('time_action', 'DESC')
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn (array $row) => new UserSession($row), $data);
@@ -178,7 +167,6 @@ class UserSessionRepository extends AbstractRepository
             ->from('user_sessions')
             ->where('time_action + :timeout = ' . time())
             ->setParameter('timeout', $timeout)
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn (array $row) => new UserSession($row), $data);
@@ -203,7 +191,7 @@ class UserSessionRepository extends AbstractRepository
                 'userAgent' => $userAgent,
                 'timeLogin' => $timeLogin,
             ])
-            ->execute();
+            ->executeQuery();
     }
 
     public function update(string $id, int $timeAction, int $botCount, int $lastSpan, string $ipAddress): void
@@ -222,7 +210,7 @@ class UserSessionRepository extends AbstractRepository
                 'lastSpan' => $lastSpan,
                 'ipAddress' => $ipAddress,
             ])
-            ->execute();
+            ->executeQuery();
     }
 
     public function remove(string $id): void
@@ -231,7 +219,7 @@ class UserSessionRepository extends AbstractRepository
             ->delete('user_sessions')
             ->where('id = :id')
             ->setParameter('id', $id)
-            ->execute();
+            ->executeQuery();
     }
 
     public function removeForUser(int $userId): void
@@ -240,7 +228,7 @@ class UserSessionRepository extends AbstractRepository
             ->delete('user_sessions')
             ->where('user_id = :userId')
             ->setParameter('userId', $userId)
-            ->execute();
+            ->executeQuery();
     }
 
     public function addSessionLog(UserSession $userSession, ?int $logoutTime): void
@@ -264,16 +252,17 @@ class UserSessionRepository extends AbstractRepository
                 'time_login' => $userSession->timeLogin,
                 'time_action' => $userSession->timeAction,
             ])
-            ->execute();
+            ->executeQuery();
     }
 
     public function removeSessionLogs(int $timestamp): int
     {
-        return (int) $this->createQueryBuilder()
+        return $this->createQueryBuilder()
             ->delete('user_sessionlog')
             ->where('time_action < :timestamp')
             ->setParameter('timestamp', $timestamp)
-            ->execute();
+            ->executeQuery()
+            ->rowCount();
     }
 
     public function countLogs(UserSessionSearch $search = null): int
@@ -281,7 +270,6 @@ class UserSessionRepository extends AbstractRepository
         return (int) $this->applySearchSortLimit($this->createQueryBuilder(), $search)
             ->select('COUNT(*)')
             ->from('user_sessionlog', 's')
-            ->execute()
             ->fetchOne();
     }
 
@@ -294,7 +282,6 @@ class UserSessionRepository extends AbstractRepository
             ->select('*')
             ->from('user_sessionlog', 's')
             ->orderBy('s.time_action', 'DESC')
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn (array $row) => new UserSessionLog($row), $rows);

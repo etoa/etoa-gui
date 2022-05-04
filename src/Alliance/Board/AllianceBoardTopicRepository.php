@@ -19,7 +19,6 @@ class AllianceBoardTopicRepository extends AbstractRepository
             ->where('p.post_topic_id IN (:topicIds)')
             ->groupBy('p.post_topic_id')
             ->setParameter('topicIds', $topicIds, Connection::PARAM_INT_ARRAY)
-            ->execute()
             ->fetchAllKeyValue();
 
         $counts = [];
@@ -41,7 +40,6 @@ class AllianceBoardTopicRepository extends AbstractRepository
             ->from('allianceboard_topics')
             ->where('topic_bnd_id IN (:bndIds)')
             ->setParameter('bndIds', $bndIds, Connection::PARAM_INT_ARRAY)
-            ->execute()
             ->fetchAllAssociative();
 
         $counts = [];
@@ -64,7 +62,6 @@ class AllianceBoardTopicRepository extends AbstractRepository
             ->innerJoin('t', 'allianceboard_posts', 'p', 'p.post_topic_id = t.topic_id')
             ->where('t.topic_bnd_id IN (:bndIds)')
             ->setParameter('bndIds', $bndIds, Connection::PARAM_INT_ARRAY)
-            ->execute()
             ->fetchAllAssociative();
 
         $counts = [];
@@ -87,7 +84,6 @@ class AllianceBoardTopicRepository extends AbstractRepository
             ->orderBy('topic_top', 'DESC')
             ->addOrderBy('topic_timestamp', 'DESC')
             ->addOrderBy('topic_subject', 'ASC')
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn (array $row) => new Topic($row), $data);
@@ -106,7 +102,6 @@ class AllianceBoardTopicRepository extends AbstractRepository
             ->orderBy('topic_top', 'DESC')
             ->addOrderBy('topic_timestamp', 'DESC')
             ->addOrderBy('topic_subject', 'ASC')
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn (array $row) => new Topic($row), $data);
@@ -128,7 +123,6 @@ class AllianceBoardTopicRepository extends AbstractRepository
         }
 
         $data = $qb
-            ->execute()
             ->fetchAssociative();
 
         return $data !== false ? new Topic($data) : null;
@@ -154,7 +148,6 @@ class AllianceBoardTopicRepository extends AbstractRepository
         }
 
         $data = $qb
-            ->execute()
             ->fetchAssociative();
 
         return $data !== false ? new TopicWithLatestPost($data) : null;
@@ -180,7 +173,6 @@ class AllianceBoardTopicRepository extends AbstractRepository
         }
 
         $data = $qb
-            ->execute()
             ->fetchAssociative();
 
         return $data !== false ? new TopicWithLatestPost($data) : null;
@@ -206,7 +198,7 @@ class AllianceBoardTopicRepository extends AbstractRepository
                 'userNick' => $userNick,
                 'now' => time(),
             ])
-            ->execute();
+            ->executeQuery();
 
         return (int) $this->getConnection()->lastInsertId();
     }
@@ -230,7 +222,7 @@ class AllianceBoardTopicRepository extends AbstractRepository
                 'categoryId' => $categoryId,
                 'bndId' => $bndId,
             ])
-            ->execute();
+            ->executeQuery();
     }
 
     public function updateTopicTimestamp(int $topicId): void
@@ -243,7 +235,7 @@ class AllianceBoardTopicRepository extends AbstractRepository
                 'topicId' => $topicId,
                 'now' => time(),
             ])
-            ->execute();
+            ->executeQuery();
     }
 
     public function increaseTopicCount(int $topicId): void
@@ -255,7 +247,7 @@ class AllianceBoardTopicRepository extends AbstractRepository
             ->setParameters([
                 'topicId' => $topicId,
             ])
-            ->execute();
+            ->executeQuery();
     }
 
     public function deleteTopic(int $topicId): void
@@ -264,13 +256,13 @@ class AllianceBoardTopicRepository extends AbstractRepository
             ->delete('allianceboard_posts')
             ->where('post_topic_id = :topicId')
             ->setParameter('topicId', $topicId)
-            ->execute();
+            ->executeQuery();
 
         $this->createQueryBuilder()
             ->delete('allianceboard_topics')
             ->where('topic_id = :topicId')
             ->setParameter('topicId', $topicId)
-            ->execute();
+            ->executeQuery();
     }
 
     public function deleteBndTopic(int $bndId): void
@@ -280,7 +272,6 @@ class AllianceBoardTopicRepository extends AbstractRepository
             ->from('allianceboard_topics')
             ->where('topic_bnd_id = :bndId')
             ->setParameter('bndId', $bndId)
-            ->execute()
             ->fetchAllAssociative(), 'topic_id');
 
         if (count($topicIds) > 0) {
@@ -288,13 +279,13 @@ class AllianceBoardTopicRepository extends AbstractRepository
                 ->delete('allianceboard_posts')
                 ->where('post_topic_id IN (:topicId)')
                 ->setParameter('topicId', $topicIds, Connection::PARAM_INT_ARRAY)
-                ->execute();
+                ->executeQuery();
         }
 
         $this->createQueryBuilder()
             ->delete('allianceboard_topics')
             ->where('topic_bnd_id = :bndId')
             ->setParameter('bndId', $bndId)
-            ->execute();
+            ->executeQuery();
     }
 }

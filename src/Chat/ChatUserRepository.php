@@ -15,7 +15,6 @@ class ChatUserRepository extends AbstractRepository
             ->select('*')
             ->from('chat_users')
             ->orderBy('nick')
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn (array $row) => new ChatUser($row), $data);
@@ -31,7 +30,6 @@ class ChatUserRepository extends AbstractRepository
             ->from('chat_users')
             ->where('timestamp < UNIX_TIMESTAMP() - :timeout')
             ->setParameter('timeout', $timeout)
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn (array $row) => new ChatUser($row), $data);
@@ -44,7 +42,6 @@ class ChatUserRepository extends AbstractRepository
             ->from('chat_users')
             ->where('user_id = :userId')
             ->setParameter('userId', $userId)
-            ->execute()
             ->fetchAssociative();
 
         return $data !== false ? new ChatUser($data) : null;

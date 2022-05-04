@@ -19,7 +19,6 @@ class AllianceBoardPostRepository extends AbstractRepository
                 'userId' => $userId,
                 'allianceId' => $allianceId,
             ])
-            ->execute()
             ->fetchOne();
 
         $bndPosts = (int) $this->createQueryBuilder()
@@ -33,7 +32,6 @@ class AllianceBoardPostRepository extends AbstractRepository
                 'userId' => $userId,
                 'allianceId' => $allianceId,
             ])
-            ->execute()
             ->fetchOne();
 
         return $posts + $bndPosts;
@@ -57,7 +55,7 @@ class AllianceBoardPostRepository extends AbstractRepository
                 'text' => $text,
                 'timestamp' => time(),
             ])
-            ->execute();
+            ->executeQuery();
 
         return (int) $this->getConnection()->lastInsertId();
     }
@@ -82,7 +80,7 @@ class AllianceBoardPostRepository extends AbstractRepository
                 ->setParameter('authorId', $authorId);
         }
 
-        $qb->execute();
+        $qb->executeQuery();
     }
     /**
      * @return Post[]
@@ -101,7 +99,6 @@ class AllianceBoardPostRepository extends AbstractRepository
         }
 
         $data = $qb
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn (array $row) => new Post($row), $data);
@@ -114,7 +111,6 @@ class AllianceBoardPostRepository extends AbstractRepository
             ->from('allianceboard_posts')
             ->where('post_id = :postId')
             ->setParameter('postId', $postId)
-            ->execute()
             ->fetchAssociative();
 
         return $data !== false ? new Post($data) : null;
@@ -133,6 +129,6 @@ class AllianceBoardPostRepository extends AbstractRepository
                 ->setParameter('authorId', $authorId);
         }
 
-        $qb->execute();
+        $qb->executeQuery();
     }
 }

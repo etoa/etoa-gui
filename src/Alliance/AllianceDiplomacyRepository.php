@@ -32,7 +32,7 @@ class AllianceDiplomacyRepository extends AbstractRepository
                 'points' => $points,
                 'publicText' => $publicText,
             ])
-            ->execute();
+            ->executeQuery();
 
         return (int) $this->getConnection()->lastInsertId();
     }
@@ -50,7 +50,6 @@ class AllianceDiplomacyRepository extends AbstractRepository
             ->leftJoin('b', 'alliances', 'a1', 'alliance_bnd_alliance_id1 = a1.alliance_id')
             ->leftJoin('b', 'alliances', 'a2', 'alliance_bnd_alliance_id2 = a2.alliance_id')
             ->orderBy('b.alliance_bnd_date', 'DESC')
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn (array $row) => new AllianceDiplomacy($row, 0), $data);
@@ -80,7 +79,6 @@ class AllianceDiplomacyRepository extends AbstractRepository
         }
 
         $data = $qb
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn (array $row) => new AllianceDiplomacy($row, $allianceId), $data);
@@ -109,7 +107,6 @@ class AllianceDiplomacyRepository extends AbstractRepository
         }
 
         $data = $qb
-            ->execute()
             ->fetchAssociative();
 
         return $data !== false ? new AllianceDiplomacy($data, $id) : null;
@@ -139,7 +136,6 @@ class AllianceDiplomacyRepository extends AbstractRepository
         }
 
         return (bool) $qb
-            ->execute()
             ->fetchOne();
     }
 
@@ -169,7 +165,7 @@ class AllianceDiplomacyRepository extends AbstractRepository
         }
 
         $qb
-            ->execute();
+            ->executeQuery();
     }
 
     public function acceptBnd(int $id, int $points): void
@@ -184,7 +180,7 @@ class AllianceDiplomacyRepository extends AbstractRepository
                 'points' => $points,
                 'level' => AllianceDiplomacyLevel::BND_CONFIRMED,
             ])
-            ->execute();
+            ->executeQuery();
     }
 
     public function updatePublicText(int $id, int $allianceId, int $level, string $publicText): void
@@ -201,7 +197,7 @@ class AllianceDiplomacyRepository extends AbstractRepository
                 'level' => $level,
                 'publicText' => $publicText,
             ])
-            ->execute();
+            ->executeQuery();
     }
 
     public function wasWarDeclaredAgainstSince(int $allianceId, int $since): bool
@@ -217,7 +213,6 @@ class AllianceDiplomacyRepository extends AbstractRepository
                 'war' => AllianceDiplomacyLevel::WAR,
                 'since' => $since,
             ])
-            ->execute()
             ->fetchOne();
     }
 
@@ -240,7 +235,6 @@ class AllianceDiplomacyRepository extends AbstractRepository
         }
 
         return (bool) $qb
-            ->execute()
             ->fetchOne();
     }
 
@@ -255,7 +249,6 @@ class AllianceDiplomacyRepository extends AbstractRepository
                 'allianceId' => $allianceId,
                 'level' => AllianceDiplomacyLevel::BND_REQUEST,
             ])
-            ->execute()
             ->fetchOne();
     }
 
@@ -265,7 +258,7 @@ class AllianceDiplomacyRepository extends AbstractRepository
             ->delete('alliance_bnd')
             ->where('alliance_bnd_id = :id')
             ->setParameter('id', $id)
-            ->execute();
+            ->executeQuery();
     }
 
     public function deleteAllianceDiplomacies(int $allianceId): void
@@ -274,6 +267,6 @@ class AllianceDiplomacyRepository extends AbstractRepository
             ->delete('alliance_bnd')
             ->where('alliance_bnd_alliance_id1 = :allianceId OR alliance_bnd_alliance_id2 = :allianceId')
             ->setParameter('allianceId', $allianceId)
-            ->execute();
+            ->executeQuery();
     }
 }

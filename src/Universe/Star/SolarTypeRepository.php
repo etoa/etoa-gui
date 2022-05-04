@@ -25,7 +25,6 @@ class SolarTypeRepository extends AbstractRepository
 
         return $qb
             ->orderBy($orderById ? 'sol_type_id' : 'sol_type_name')
-            ->execute()
             ->fetchAllKeyValue();
     }
 
@@ -39,7 +38,6 @@ class SolarTypeRepository extends AbstractRepository
             ->from('sol_types', 's')
             ->andWhere('s.sol_type_consider = 1')
             ->orderBy('s.' . $order, $sort)
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn ($row) => new SolarType($row), $data);
@@ -54,7 +52,6 @@ class SolarTypeRepository extends AbstractRepository
             ->setParameters([
                 'id' => $id,
             ])
-            ->execute()
             ->fetchAssociative();
 
         return $data !== false ? new SolarType($data) : null;
@@ -69,18 +66,17 @@ class SolarTypeRepository extends AbstractRepository
             ->setParameters([
                 'id' => $id,
             ])
-            ->execute()
             ->fetchOne();
 
         return $data !== false ? $data : null;
     }
 
     /**
-     * @return array<int, array{name: string, cnt: int}>
+     * @return array<int, array{name: string, cnt: string}>
      */
     public function getNumberOfNamedSystemsByType(): array
     {
-        $data = $this->getConnection()
+        return $this->getConnection()
             ->fetchAllAssociative(
                 "SELECT
                     t.sol_type_name as name,
@@ -97,10 +93,5 @@ class SolarTypeRepository extends AbstractRepository
                 ORDER BY
                     cnt DESC;"
             );
-
-        return array_map(fn ($arr) => [
-            'name' => (string) $arr['name'],
-            'cnt' => (int) $arr['cnt'],
-        ], $data);
     }
 }

@@ -16,7 +16,6 @@ class EmptySpaceRepository extends AbstractRepository
         $data = $this->createQueryBuilder()
             ->select("id")
             ->from('space')
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn (array $row) => (int) $row['id'], $data);
@@ -27,7 +26,6 @@ class EmptySpaceRepository extends AbstractRepository
         return (int) $this->createQueryBuilder()
             ->select("COUNT(id)")
             ->from('space')
-            ->execute()
             ->fetchOne();
     }
 
@@ -40,7 +38,6 @@ class EmptySpaceRepository extends AbstractRepository
             ->setParameters([
                 'id' => $id,
             ])
-            ->execute()
             ->fetchAssociative();
 
         return $data !== false ? new EmptySpace($data) : null;
@@ -58,7 +55,7 @@ class EmptySpaceRepository extends AbstractRepository
                 'id' => $id,
                 'lastvisited' => $lastVisited,
             ])
-            ->execute();
+            ->executeQuery();
     }
 
     public function remove(int $id): void
@@ -67,6 +64,6 @@ class EmptySpaceRepository extends AbstractRepository
             ->delete('space')
             ->where('id = :id')
             ->setParameter('id', $id)
-            ->execute();
+            ->executeQuery();
     }
 }

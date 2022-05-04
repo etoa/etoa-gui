@@ -68,7 +68,6 @@ class UserPointsRepository extends AbstractRepository
         }
 
         $data = $qb
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn (array $row) => new UserPoints($row), $data);
@@ -79,7 +78,6 @@ class UserPointsRepository extends AbstractRepository
         return (int) $this->createQueryBuilder()
             ->select('COUNT(*)')
             ->from('user_points')
-            ->execute()
             ->fetchOne();
     }
 
@@ -89,6 +87,6 @@ class UserPointsRepository extends AbstractRepository
             ->delete('user_points')
             ->where('point_user_id = :userId')
             ->setParameter('userId', $userId)
-            ->execute();
+            ->executeQuery();
     }
 }

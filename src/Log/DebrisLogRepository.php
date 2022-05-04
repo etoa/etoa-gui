@@ -15,7 +15,6 @@ class DebrisLogRepository extends AbstractRepository
             ->select('*')
             ->from('logs_debris')
             ->orderBy('time', 'DESC')
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn (array $row) => new DebrisLog($row), $data);
@@ -26,7 +25,6 @@ class DebrisLogRepository extends AbstractRepository
         return (int) $this->applySearchSortLimit($this->createQueryBuilder(), $search)
             ->select('COUNT(id)')
             ->from('logs_debris')
-            ->execute()
             ->fetchOne();
     }
 
@@ -50,6 +48,6 @@ class DebrisLogRepository extends AbstractRepository
                 'crystal' => $crystal,
                 'plastic' => $plastic,
             ])
-            ->execute();
+            ->executeQuery();
     }
 }

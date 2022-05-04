@@ -27,7 +27,6 @@ class PlanetTypeRepository extends AbstractRepository
 
         return $qb
             ->orderBy('p.type_name')
-            ->execute()
             ->fetchAllKeyValue();
     }
 
@@ -41,7 +40,6 @@ class PlanetTypeRepository extends AbstractRepository
             ->from('planet_types', 'p')
             ->andWhere('p.type_consider = 1')
             ->orderBy('p.' . $order, $sort)
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn ($row) => new PlanetType($row), $data);
@@ -56,7 +54,6 @@ class PlanetTypeRepository extends AbstractRepository
             ->setParameters([
                 'id' => $id,
             ])
-            ->execute()
             ->fetchAssociative();
 
         return $data !== false ? new PlanetType($data) : null;
@@ -78,7 +75,6 @@ class PlanetTypeRepository extends AbstractRepository
             ->setParameters([
                 'id' => $id,
             ])
-            ->execute()
             ->fetchOne();
 
         return $data !== false ? $data : null;
@@ -93,18 +89,17 @@ class PlanetTypeRepository extends AbstractRepository
             ->setParameters([
                 'id' => $id,
             ])
-            ->execute()
             ->fetchAssociative();
 
         return $data !== false ? new PlanetType($data) : null;
     }
 
     /**
-     * @return array<int, array{name: string, cnt: int}>
+     * @return array<int, array{name: string, cnt: string}>
      */
     public function getNumberOfOwnedPlanetsByType(): array
     {
-        $data = $this->getConnection()
+        return $this->getConnection()
             ->fetchAllAssociative(
                 "SELECT
                     planet_types.type_name as name,
@@ -129,10 +124,5 @@ class PlanetTypeRepository extends AbstractRepository
                 ORDER BY
                     cnt DESC;"
             );
-
-        return array_map(fn ($arr) => [
-            'name' => (string) $arr['name'],
-            'cnt' => (int) $arr['cnt'],
-        ], $data);
     }
 }

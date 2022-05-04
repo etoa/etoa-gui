@@ -13,7 +13,6 @@ class AllianceApplicationRepository extends AbstractRepository
             ->from('alliance_applications')
             ->where('alliance_id = :allianceId')
             ->setParameter('allianceId', $allianceId)
-            ->execute()
             ->fetchOne();
     }
 
@@ -24,7 +23,6 @@ class AllianceApplicationRepository extends AbstractRepository
             ->from('alliance_applications')
             ->where('user_id = :userId')
             ->setParameter('userId', $userId)
-            ->execute()
             ->fetchAssociative();
 
         return $data !== false ? new UserAllianceApplication($data) : null;
@@ -41,7 +39,6 @@ class AllianceApplicationRepository extends AbstractRepository
             ->innerJoin('a', 'users', 'u', 'a.user_id = u.user_id')
             ->where('a.alliance_id = :allianceId')
             ->setParameter('allianceId', $allianceId)
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn (array $row) => new AllianceApplication($row), $data);
@@ -63,7 +60,7 @@ class AllianceApplicationRepository extends AbstractRepository
                 'application' => $application,
                 'now' => time(),
             ])
-            ->execute();
+            ->executeQuery();
     }
 
     public function deleteApplication(int $userId, int $allianceId): bool
@@ -76,18 +73,20 @@ class AllianceApplicationRepository extends AbstractRepository
                 'allianceId' => $allianceId,
                 'userId' => $userId,
             ])
-            ->execute();
+            ->executeQuery()
+            ->rowCount();
     }
 
     public function deleteAllianceApplication(int $allianceId): int
     {
-        return (int) $this->createQueryBuilder()
+        return $this->createQueryBuilder()
             ->delete('alliance_applications')
             ->where('alliance_id = :allianceId')
             ->setParameters([
                 'allianceId' => $allianceId,
             ])
-            ->execute();
+            ->executeQuery()
+            ->rowCount();
     }
 
     public function deleteUserApplication(int $userId): bool
@@ -98,6 +97,7 @@ class AllianceApplicationRepository extends AbstractRepository
             ->setParameters([
                 'userId' => $userId,
             ])
-            ->execute();
+            ->executeQuery()
+            ->rowCount();
     }
 }

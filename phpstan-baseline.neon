@@ -4681,27 +4681,12 @@ parameters:
 			path: src/Alliance/AlliancePollRepository.php
 
 		-
-			message: "#^Method EtoA\\\\Alliance\\\\AllianceRepository\\:\\:findAllSoloUsers\\(\\) should return array\\<array\\{user_id\\: string, user_nick\\: string, user_email\\: string\\}\\> but returns array\\<int, array\\<string, mixed\\>\\>\\.$#"
-			count: 1
-			path: src/Alliance/AllianceRepository.php
-
-		-
 			message: "#^Method EtoA\\\\Alliance\\\\AllianceRepository\\:\\:findAllWithPictures\\(\\) should return array\\<array\\{alliance_id\\: string, alliance_tag\\: string, alliance_name\\: string, alliance_img\\: string\\}\\> but returns array\\<int, array\\<string, mixed\\>\\>\\.$#"
 			count: 1
 			path: src/Alliance/AllianceRepository.php
 
 		-
 			message: "#^Method EtoA\\\\Alliance\\\\AllianceRepository\\:\\:findAllWithUncheckedPictures\\(\\) should return array\\<array\\{alliance_id\\: string, alliance_tag\\: string, alliance_name\\: string, alliance_img\\: string\\}\\> but returns array\\<int, array\\<string, mixed\\>\\>\\.$#"
-			count: 1
-			path: src/Alliance/AllianceRepository.php
-
-		-
-			message: "#^Method EtoA\\\\Alliance\\\\AllianceRepository\\:\\:findAllWithoutFounder\\(\\) should return array\\<array\\{alliance_id\\: string, alliance_name\\: string, alliance_tag\\: string\\}\\> but returns array\\<int, array\\<string, mixed\\>\\>\\.$#"
-			count: 1
-			path: src/Alliance/AllianceRepository.php
-
-		-
-			message: "#^Method EtoA\\\\Alliance\\\\AllianceRepository\\:\\:findAllWithoutUsers\\(\\) should return array\\<array\\{alliance_id\\: string, alliance_name\\: string, alliance_tag\\: string\\}\\> but returns array\\<int, array\\<string, mixed\\>\\>\\.$#"
 			count: 1
 			path: src/Alliance/AllianceRepository.php
 
@@ -4872,11 +4857,6 @@ parameters:
 
 		-
 			message: "#^Method EtoA\\\\Building\\\\BuildingRepository\\:\\:getBuildingLevels\\(\\) should return array\\<int, int\\> but returns array\\<int\\|string, int\\>\\.$#"
-			count: 1
-			path: src/Building/BuildingRepository.php
-
-		-
-			message: "#^Method EtoA\\\\Building\\\\BuildingRepository\\:\\:getDeactivatableBuilding\\(\\) should return array\\{building_name\\: string, buildlist_id\\: int\\}\\|null but returns array\\<string, mixed\\>\\|null\\.$#"
 			count: 1
 			path: src/Building/BuildingRepository.php
 
@@ -6076,6 +6056,15 @@ parameters:
 			path: src/Core/ParamConverterServiceProvider.php
 
 		-
+			message: """
+				#^Class EtoA\\\\Core\\\\SqlLogger implements deprecated interface Doctrine\\\\DBAL\\\\Logging\\\\SQLLogger\\:
+				Use \\{@see \\\\Doctrine\\\\DBAL\\\\Logging\\\\Middleware\\} or implement
+				           \\{@see \\\\Doctrine\\\\DBAL\\\\Driver\\\\Middleware\\} instead\\.$#
+			"""
+			count: 1
+			path: src/Core/SqlLogger.php
+
+		-
 			message: "#^Method EtoA\\\\Core\\\\SqlLogger\\:\\:normalizeParams\\(\\) should return array\\<string, int\\|string\\> but returns array\\<string, array\\<int\\|string\\>\\|int\\|string\\>\\.$#"
 			count: 1
 			path: src/Core/SqlLogger.php
@@ -6821,16 +6810,6 @@ parameters:
 			path: src/Support/DB/DatabaseManagerRepository.php
 
 		-
-			message: "#^Method EtoA\\\\Support\\\\DB\\\\DatabaseManagerRepository\\:\\:getPassword\\(\\) should return string but returns mixed\\.$#"
-			count: 1
-			path: src/Support/DB/DatabaseManagerRepository.php
-
-		-
-			message: "#^Method EtoA\\\\Support\\\\DB\\\\DatabaseManagerRepository\\:\\:getPort\\(\\) should return int but returns mixed\\.$#"
-			count: 1
-			path: src/Support/DB/DatabaseManagerRepository.php
-
-		-
 			message: "#^Method EtoA\\\\Support\\\\DB\\\\DatabaseManagerRepository\\:\\:getTableStatus\\(\\) should return array\\<array\\{Name\\: string, Rows\\: string, Data_length\\: string, Index_length\\: string, Engine\\: string\\}\\> but returns array\\<int, array\\<string, mixed\\>\\>\\.$#"
 			count: 1
 			path: src/Support/DB/DatabaseManagerRepository.php
@@ -6841,7 +6820,22 @@ parameters:
 			path: src/Support/DB/DatabaseManagerRepository.php
 
 		-
-			message: "#^Method EtoA\\\\Support\\\\DB\\\\DatabaseManagerRepository\\:\\:getUser\\(\\) should return string but returns mixed\\.$#"
+			message: "#^Offset 'host' does not exist on array\\{charset\\?\\: string, dbname\\?\\: string, defaultTableOptions\\?\\: array\\<string, mixed\\>, default_dbname\\?\\: string, driver\\?\\: 'ibm_db2'\\|'mysqli'\\|'oci8'\\|'pdo_mysql'\\|'pdo_oci'\\|'pdo_pgsql'\\|'pdo_sqlite'\\|'pdo_sqlsrv'\\|'sqlsrv', driverClass\\?\\: class\\-string\\<Doctrine\\\\DBAL\\\\Driver\\>, driverOptions\\?\\: array, host\\?\\: string, \\.\\.\\.\\}\\.$#"
+			count: 2
+			path: src/Support/DB/DatabaseManagerRepository.php
+
+		-
+			message: "#^Offset 'password' does not exist on array\\{charset\\?\\: string, dbname\\?\\: string, defaultTableOptions\\?\\: array\\<string, mixed\\>, default_dbname\\?\\: string, driver\\?\\: 'ibm_db2'\\|'mysqli'\\|'oci8'\\|'pdo_mysql'\\|'pdo_oci'\\|'pdo_pgsql'\\|'pdo_sqlite'\\|'pdo_sqlsrv'\\|'sqlsrv', driverClass\\?\\: class\\-string\\<Doctrine\\\\DBAL\\\\Driver\\>, driverOptions\\?\\: array, host\\?\\: string, \\.\\.\\.\\}\\.$#"
+			count: 1
+			path: src/Support/DB/DatabaseManagerRepository.php
+
+		-
+			message: "#^Offset 'user' does not exist on array\\{charset\\?\\: string, dbname\\?\\: string, defaultTableOptions\\?\\: array\\<string, mixed\\>, default_dbname\\?\\: string, driver\\?\\: 'ibm_db2'\\|'mysqli'\\|'oci8'\\|'pdo_mysql'\\|'pdo_oci'\\|'pdo_pgsql'\\|'pdo_sqlite'\\|'pdo_sqlsrv'\\|'sqlsrv', driverClass\\?\\: class\\-string\\<Doctrine\\\\DBAL\\\\Driver\\>, driverOptions\\?\\: array, host\\?\\: string, \\.\\.\\.\\}\\.$#"
+			count: 1
+			path: src/Support/DB/DatabaseManagerRepository.php
+
+		-
+			message: "#^Only booleans are allowed in a ternary operator condition, Doctrine\\\\DBAL\\\\Platforms\\\\AbstractPlatform given\\.$#"
 			count: 1
 			path: src/Support/DB/DatabaseManagerRepository.php
 
@@ -6851,8 +6845,8 @@ parameters:
 			path: src/Support/DB/DatabaseManagerRepository.php
 
 		-
-			message: "#^Parameter \\#2 \\$string of function explode expects string, mixed given\\.$#"
-			count: 2
+			message: "#^Ternary operator condition is always true\\.$#"
+			count: 1
 			path: src/Support/DB/DatabaseManagerRepository.php
 
 		-
@@ -6969,11 +6963,6 @@ parameters:
 			message: "#^Only booleans are allowed in an if condition, array\\<string, mixed\\>\\|false given\\.$#"
 			count: 1
 			path: src/Text/TextRepository.php
-
-		-
-			message: "#^Method EtoA\\\\Tip\\\\TipRepository\\:\\:getRandomTipText\\(\\) should return string\\|null but returns mixed\\.$#"
-			count: 1
-			path: src/Tip/TipRepository.php
 
 		-
 			message: "#^Only booleans are allowed in a ternary operator condition, bool\\|null given\\.$#"
@@ -7176,11 +7165,6 @@ parameters:
 			path: src/User/UserRepository.php
 
 		-
-			message: "#^Method EtoA\\\\User\\\\UserRepository\\:\\:getUsersWithIp\\(\\) should return array\\<array\\{user_blocked_from\\: string, user_blocked_to\\: string, user_hmode_from\\: string, user_deleted\\: string, admin\\: string, user_ghost\\: string, user_alliance_id\\: string, user_id\\: string, \\.\\.\\.\\}\\> but returns array\\<int, array\\<string, mixed\\>\\>\\.$#"
-			count: 1
-			path: src/User/UserRepository.php
-
-		-
 			message: "#^Method EtoA\\\\User\\\\UserRepository\\:\\:searchUserNicknames\\(\\) should return array\\<int, string\\> but returns array\\<int\\|string, mixed\\>\\.$#"
 			count: 1
 			path: src/User/UserRepository.php
@@ -7226,11 +7210,6 @@ parameters:
 			path: src/User/UserSessionRepository.php
 
 		-
-			message: "#^Method EtoA\\\\User\\\\UserSessionRepository\\:\\:getLatestUserIps\\(\\) should return array\\<string\\> but returns array\\<int, mixed\\>\\.$#"
-			count: 1
-			path: src/User/UserSessionRepository.php
-
-		-
 			message: "#^Method EtoA\\\\User\\\\UserSessionRepository\\:\\:getUserSessionIds\\(\\) should return array\\<string\\> but returns array\\<int, mixed\\>\\.$#"
 			count: 1
 			path: src/User/UserSessionRepository.php
@@ -7244,11 +7223,6 @@ parameters:
 			message: "#^Method EtoA\\\\User\\\\UserSessionRepository\\:\\:logCountPerUserId\\(\\) should return array\\<int, int\\> but returns array\\<int\\|string, int\\>\\.$#"
 			count: 1
 			path: src/User/UserSessionRepository.php
-
-		-
-			message: "#^Method EtoA\\\\User\\\\UserStatRepository\\:\\:getUserRanks\\(\\) should return array\\<array\\{id\\: int, rank\\: int, rank_ships\\: int, rank_tech\\: int, rank_buildings\\: int, rank_exp\\: int\\}\\> but returns array\\<int, array\\<string, int\\>\\>\\.$#"
-			count: 1
-			path: src/User/UserStatRepository.php
 
 		-
 			message: "#^Parameter \\#1 \\$dst_image of function imagecopyresized expects GdImage, GdImage\\|false given\\.$#"

@@ -17,7 +17,6 @@ class UserWarningRepository extends AbstractRepository
             ->innerJoin('w', 'users', 'u', 'u.user_id = w.warning_user_id')
             ->orderBy('u.user_nick')
             ->groupBy('w.warning_user_id')
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn (array $row) => ['userId' => (int) $row['user_id'], 'nick' => $row['user_nick'], 'count' => (int) $row['cnt']], $data);
@@ -34,7 +33,6 @@ class UserWarningRepository extends AbstractRepository
             ->leftJoin('w', 'admin_users', 'a', 'a.user_id = w.warning_admin_id')
             ->innerJoin('w', 'users', 'u', 'u.user_id = w.warning_user_id')
             ->orderBy('w.warning_date', 'DESC')
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn (array $row) => new UserWarning($row), $data);
@@ -49,7 +47,6 @@ class UserWarningRepository extends AbstractRepository
             ->innerJoin('w', 'users', 'u', 'u.user_id = w.warning_user_id')
             ->where('w.warning_id = :id')
             ->setParameter('id', $id)
-            ->execute()
             ->fetchAssociative();
 
         return $data !== false ? new UserWarning($data) : null;
@@ -65,7 +62,6 @@ class UserWarningRepository extends AbstractRepository
             ->from('user_warnings')
             ->where('warning_user_id = :userId')
             ->setParameter('userId', $userId)
-            ->execute()
             ->fetchAssociative();
 
         return array_map(fn ($value) => (int) $value, $data);
@@ -77,7 +73,7 @@ class UserWarningRepository extends AbstractRepository
             ->delete('user_warnings')
             ->where('warning_user_id = :userId')
             ->setParameter('userId', $userId)
-            ->execute();
+            ->executeQuery();
     }
 
     public function addEntry(int $userId, string $text, int $adminId): void
@@ -96,7 +92,7 @@ class UserWarningRepository extends AbstractRepository
                 'text' => $text,
                 'adminId' => $adminId,
             ])
-            ->execute();
+            ->executeQuery();
     }
 
     public function updateEntry(int $id, string $text, int $adminId): void
@@ -111,7 +107,7 @@ class UserWarningRepository extends AbstractRepository
                 'text' => $text,
                 'adminId' => $adminId,
             ])
-            ->execute();
+            ->executeQuery();
     }
 
     public function deleteEntry(int $id): void
@@ -120,6 +116,6 @@ class UserWarningRepository extends AbstractRepository
             ->delete('user_warnings')
             ->where('warning_id = :id')
             ->setParameter('id', $id)
-            ->execute();
+            ->executeQuery();
     }
 }

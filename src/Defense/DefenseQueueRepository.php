@@ -29,7 +29,7 @@ class DefenseQueueRepository extends AbstractRepository
                 'endTime' => $endTime,
                 'objTime' => $objectTime,
                 'userClickTime' => time(),
-            ])->execute();
+            ])->executeQuery();
 
         return (int) $this->getConnection()->lastInsertId();
     }
@@ -41,7 +41,6 @@ class DefenseQueueRepository extends AbstractRepository
             ->from('def_queue')
             ->where('queue_id = :id')
             ->setParameter('id', $id)
-            ->execute()
             ->fetchAssociative();
 
         return $data !== false ? DefenseQueueItem::createFromData($data) : null;
@@ -56,7 +55,6 @@ class DefenseQueueRepository extends AbstractRepository
             ->select('*')
             ->from('def_queue')
             ->orderBy('queue_starttime', 'ASC')
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn ($row) => DefenseQueueItem::createFromData($row), $data);
@@ -88,7 +86,7 @@ class DefenseQueueRepository extends AbstractRepository
                 'buildType' => $item->buildType,
                 'userClickTime' => $item->userClickTime,
             ])
-            ->execute();
+            ->executeQuery();
     }
 
     public function deleteQueueItem(int $id): void
@@ -97,7 +95,7 @@ class DefenseQueueRepository extends AbstractRepository
             ->delete('def_queue')
             ->where('queue_id = :id')
             ->setParameter('id', $id)
-            ->execute();
+            ->executeQuery();
     }
 
     public function count(DefenseQueueSearch $search = null): int
@@ -105,7 +103,6 @@ class DefenseQueueRepository extends AbstractRepository
         return (int) $this->applySearchSortLimit($this->createQueryBuilder(), $search)
             ->select('COUNT(*)')
             ->from('def_queue')
-            ->execute()
             ->fetchOne();
     }
 
@@ -119,7 +116,7 @@ class DefenseQueueRepository extends AbstractRepository
                 'userId' => $userId,
                 'type' => 1,
             ])
-            ->execute();
+            ->executeQuery();
     }
 
     public function unfreezeConstruction(int $userId, int $duration): void
@@ -135,6 +132,6 @@ class DefenseQueueRepository extends AbstractRepository
                 'type' => 0,
                 'duration' => $duration,
             ])
-            ->execute();
+            ->executeQuery();
     }
 }

@@ -21,7 +21,6 @@ class DefaultItemRepository extends AbstractRepository
         }
 
         $data = $qb
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn (array $row) => new DefaultItemSet($row), $data);
@@ -34,7 +33,6 @@ class DefaultItemRepository extends AbstractRepository
             ->from('default_items')
             ->where('item_id = :id')
             ->setParameter('id', $itemId)
-            ->execute()
            ->fetchAssociative();
 
         return $data !== false ? DefaultItem::createFromData($data) : null;
@@ -49,7 +47,7 @@ class DefaultItemRepository extends AbstractRepository
                 'set_active' => 0,
             ])
             ->setParameter('name', $name)
-            ->execute();
+            ->executeQuery();
     }
 
     public function toggleSetActive(int $setId): void
@@ -59,7 +57,7 @@ class DefaultItemRepository extends AbstractRepository
             ->set('set_active', '!set_active')
             ->where('set_id = :id')
             ->setParameter('id', $setId)
-            ->execute();
+            ->executeQuery();
     }
 
     public function deleteSet(int $setId): void
@@ -68,13 +66,13 @@ class DefaultItemRepository extends AbstractRepository
             ->delete('default_items')
             ->where('item_set_id = :id')
             ->setParameter('id', $setId)
-            ->execute();
+            ->executeQuery();
 
         $this->createQueryBuilder()
             ->delete('default_item_sets')
             ->where('set_id = :id')
             ->setParameter('id', $setId)
-            ->execute();
+            ->executeQuery();
     }
 
     /**
@@ -89,7 +87,6 @@ class DefaultItemRepository extends AbstractRepository
             ->setParameters([
                 'id' => $setId,
             ])
-            ->execute()
             ->fetchAllAssociative();
 
         $result = [];
@@ -113,7 +110,6 @@ class DefaultItemRepository extends AbstractRepository
                 'cat' => $cat,
                 'objectId' => $objectId,
             ])
-            ->execute()
             ->fetchOne();
 
         if ($exists) {
@@ -134,7 +130,8 @@ class DefaultItemRepository extends AbstractRepository
                 'objectId' => $objectId,
                 'count' => $count,
             ])
-            ->execute();
+            ->executeQuery()
+            ->rowCount();
     }
 
     public function getItemCount(int $itemId): int
@@ -146,7 +143,6 @@ class DefaultItemRepository extends AbstractRepository
             ->setParameters([
                 'id' => $itemId,
             ])
-            ->execute()
             ->fetchOne();
     }
 
@@ -160,7 +156,7 @@ class DefaultItemRepository extends AbstractRepository
                 'id' => $itemId,
                 'count' => $count,
             ])
-            ->execute();
+            ->executeQuery();
     }
 
     public function removeItem(int $itemId): void
@@ -169,6 +165,6 @@ class DefaultItemRepository extends AbstractRepository
             ->delete('default_items')
             ->where('item_id = :id')
             ->setParameter('id', $itemId)
-            ->execute();
+            ->executeQuery();
     }
 }

@@ -24,7 +24,6 @@ class AllianceTechnologyRepository extends AbstractRepository
         $data = $this->createQueryBuilder()
             ->select("*")
             ->from('alliance_technologies')
-            ->execute()
             ->fetchAllAssociative();
 
         $result = [];
@@ -47,7 +46,6 @@ class AllianceTechnologyRepository extends AbstractRepository
                 'alliance' => $allianceId,
                 'technologyId' => $technologyId,
             ])
-            ->execute()
             ->fetchAllAssociative();
 
         return count($test) > 0;
@@ -64,7 +62,6 @@ class AllianceTechnologyRepository extends AbstractRepository
                 'alliance' => $allianceId,
                 'technologyId' => $technologyId,
             ])
-            ->execute()
             ->fetchOne();
     }
 
@@ -81,7 +78,6 @@ class AllianceTechnologyRepository extends AbstractRepository
             ->setParameters([
                 'alliance' => $allianceId,
             ])
-            ->execute()
             ->fetchAllKeyValue();
     }
 
@@ -105,7 +101,7 @@ class AllianceTechnologyRepository extends AbstractRepository
                 'startTime' => $startTime,
                 'endTime' => $endTime,
             ])
-            ->execute();
+            ->executeQuery();
     }
 
     public function updateMembersForAlliance(int $allianceId, int $amount): void
@@ -119,7 +115,7 @@ class AllianceTechnologyRepository extends AbstractRepository
                 'amount' => $amount,
                 'alliance' => $allianceId,
             ])
-            ->execute();
+            ->executeQuery();
     }
 
     public function updateForAlliance(int $allianceId, int $technologyId, int $level, int $amount, int $startTime = 0, int $endTime = 0): void
@@ -140,7 +136,7 @@ class AllianceTechnologyRepository extends AbstractRepository
                 'startTime' => $startTime,
                 'endTime' => $endTime,
             ])
-            ->execute();
+            ->executeQuery();
     }
 
     public function removeForAlliance(int $allianceId): void
@@ -149,7 +145,7 @@ class AllianceTechnologyRepository extends AbstractRepository
             ->delete('alliance_techlist')
             ->where('alliance_techlist_alliance_id = :allianceId')
             ->setParameter('allianceId', $allianceId)
-            ->execute();
+            ->executeQuery();
     }
 
 
@@ -163,7 +159,6 @@ class AllianceTechnologyRepository extends AbstractRepository
             ->from('alliance_techlist')
             ->where('alliance_techlist_alliance_id = :allianceId')
             ->setParameter('allianceId', $allianceId)
-            ->execute()
             ->fetchAllAssociative();
 
         $result = [];
@@ -187,7 +182,6 @@ class AllianceTechnologyRepository extends AbstractRepository
             ->where('alliance_techlist_alliance_id = :allianceId')
             ->andWhere('alliance_techlist_build_end_time > 0')
             ->setParameter('allianceId', $allianceId)
-            ->execute()
             ->fetchAssociative();
 
         return $data !== false ? ['name' => $data['alliance_tech_name'], 'endTime' => (int) $data['alliance_techlist_build_end_time']] : null;

@@ -15,7 +15,6 @@ class LogRepository extends AbstractRepository
             ->select('*')
             ->from('logs')
             ->orderBy('timestamp', 'DESC')
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn (array $row) => new Log($row), $data);
@@ -49,16 +48,16 @@ class LogRepository extends AbstractRepository
         return (int) $this->applySearchSortLimit($this->createQueryBuilder(), $search)
             ->select('COUNT(id)')
             ->from('logs')
-            ->execute()
             ->fetchOne();
     }
 
     public function cleanup(int $threshold): int
     {
-        return (int) $this->createQueryBuilder()
+        return $this->createQueryBuilder()
             ->delete('logs')
             ->where('timestamp < :threshold')
             ->setParameter('threshold', $threshold)
-            ->execute();
+            ->executeQuery()
+            ->rowCount();
     }
 }

@@ -21,7 +21,7 @@ class ChatRepository extends AbstractRepository
                 'channelId' => $channelId,
             ])
             ->orderBy('timestamp', 'ASC')
-            ->execute()
+            ->executeQuery()
             ->fetchAllAssociative();
 
         return array_map(fn (array $row) => new ChatMessage($row), $data);
@@ -38,7 +38,7 @@ class ChatRepository extends AbstractRepository
             ->setParameters([
                 'time' => time(),
                 'text' => $message,
-            ])->execute();
+            ])->executeQuery();
     }
 
     public function addMessage(int $userId, string $nick, string $message, string $color, int $admin): void
@@ -60,7 +60,7 @@ class ChatRepository extends AbstractRepository
                 'nick' => $nick,
                 'color' => $color,
                 'admin' => $admin,
-            ])->execute();
+            ])->executeQuery();
     }
 
     public function cleanupMessage(int $keep): int
@@ -71,7 +71,6 @@ class ChatRepository extends AbstractRepository
             ->orderBy('id', 'DESC')
             ->setMaxResults(1)
             ->setFirstResult($keep)
-            ->execute()
             ->fetchOne();
 
         return $this->getConnection()->executeQuery('

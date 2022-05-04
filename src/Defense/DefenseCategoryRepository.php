@@ -15,7 +15,6 @@ class DefenseCategoryRepository extends AbstractRepository
             ->select('*')
             ->from('def_cat')
             ->orderBy('cat_order')
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn ($row) => new DefenseCategory($row), $data);
@@ -30,7 +29,6 @@ class DefenseCategoryRepository extends AbstractRepository
             ->select('cat_id, cat_name')
             ->from('def_cat')
             ->orderBy('cat_order')
-            ->execute()
             ->fetchAllKeyValue();
     }
 }

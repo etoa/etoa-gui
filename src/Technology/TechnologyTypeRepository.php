@@ -16,7 +16,6 @@ class TechnologyTypeRepository extends AbstractRepository
             ->from('tech_types')
             ->orderBy('type_order')
             ->addOrderBy('type_name')
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn (array $row) => new TechnologyType($row), $data);
@@ -32,7 +31,6 @@ class TechnologyTypeRepository extends AbstractRepository
             ->from('tech_types')
             ->orderBy('type_order')
             ->addOrderBy('type_name')
-            ->execute()
             ->fetchAllKeyValue();
     }
 }

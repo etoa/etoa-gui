@@ -16,7 +16,6 @@ class ShipRepository extends AbstractRepository
             ->from('shiplist')
             ->where('shiplist_ship_id = :shipId')
             ->setParameter('shipId', $shipId)
-            ->execute()
             ->fetchOne();
     }
 
@@ -35,7 +34,6 @@ class ShipRepository extends AbstractRepository
                 'userId' => $userId,
                 'entityId' => $entityId,
             ])
-            ->execute()
             ->fetchAllKeyValue();
 
         return array_map(fn ($value) => (int) $value, $data);
@@ -67,7 +65,6 @@ class ShipRepository extends AbstractRepository
         }
 
         $data = $qb
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn ($row) => ShipListItem::createFromData($row), $data);
@@ -81,7 +78,6 @@ class ShipRepository extends AbstractRepository
         $data = $this->applySearchSortLimit($this->createQueryBuilder(), $search, null, $limit, $offset)
             ->select('*')
             ->from('shiplist')
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn ($row) => ShipListItem::createFromData($row), $data);
@@ -94,7 +90,6 @@ class ShipRepository extends AbstractRepository
             ->from('shiplist')
             ->where('shiplist_id = :id')
             ->setParameter('id', $id)
-            ->execute()
             ->fetchAssociative();
 
         return $data !== false ? ShipListItem::createFromData($data) : null;
@@ -111,7 +106,6 @@ class ShipRepository extends AbstractRepository
             ->where('shiplist_user_id = :userId')
             ->setParameter('userId', $userId)
             ->groupBy('shiplist_ship_id')
-            ->execute()
             ->fetchAllAssociative();
 
         $result = [];
@@ -148,7 +142,7 @@ class ShipRepository extends AbstractRepository
                 'userId' => $userId,
                 'entityId' => $entityId,
                 'shipId' => $shipId,
-            ])->execute()->fetchOne();
+            ])->fetchOne();
 
         $amount = min($available, $amount);
 
@@ -164,7 +158,7 @@ class ShipRepository extends AbstractRepository
                 'shipId' => $shipId,
                 'amount' => $amount,
             ])
-            ->execute();
+            ->executeQuery();
 
         return $amount;
     }
@@ -197,13 +191,13 @@ class ShipRepository extends AbstractRepository
             ->delete('ship_queue')
             ->where('queue_entity_id = :entityId')
             ->setParameter('entityId', $entityId)
-            ->execute();
+            ->executeQuery();
 
         $this->createQueryBuilder()
             ->delete('shiplist')
             ->where('shiplist_entity_id = :entityId')
             ->setParameter('entityId', $entityId)
-            ->execute();
+            ->executeQuery();
     }
 
     public function removeForUser(int $userId): void
@@ -212,13 +206,13 @@ class ShipRepository extends AbstractRepository
             ->delete('ship_queue')
             ->where('queue_user_id = :userId')
             ->setParameter('userId', $userId)
-            ->execute();
+            ->executeQuery();
 
         $this->createQueryBuilder()
             ->delete('shiplist')
             ->where('shiplist_user_id = :userId')
             ->setParameter('userId', $userId)
-            ->execute();
+            ->executeQuery();
     }
 
     public function removeEntry(int $id): void
@@ -227,7 +221,7 @@ class ShipRepository extends AbstractRepository
             ->delete('shiplist')
             ->where('shiplist_id = :id')
             ->setParameter('id', $id)
-            ->execute();
+            ->executeQuery();
     }
 
     public function hasShipsOnEntity(int $entityId): bool
@@ -238,7 +232,6 @@ class ShipRepository extends AbstractRepository
             ->where('shiplist_entity_id = :entityId')
             ->andWhere('shiplist_count  > 0')
             ->setParameter('entityId', $entityId)
-            ->execute()
             ->fetchOne();
 
         return $count > 0;
@@ -257,7 +250,6 @@ class ShipRepository extends AbstractRepository
                 'userId' => $userId,
                 'entityId' => $entityId,
             ])
-            ->execute()
             ->fetchOne();
     }
 
@@ -272,7 +264,6 @@ class ShipRepository extends AbstractRepository
             ->where('queue_user_id = :userId')
             ->setParameter('userId', $userId)
             ->orderBy('queue_starttime', 'ASC')
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn ($row) => ShipQueueItem::createFromData($row), $data);
@@ -302,7 +293,7 @@ class ShipRepository extends AbstractRepository
                 'objectTime' => $item->objectTime,
                 'buildType' => $item->buildType,
             ])
-            ->execute();
+            ->executeQuery();
     }
 
     public function saveItem(ShipListItem $item): void
@@ -359,7 +350,7 @@ class ShipRepository extends AbstractRepository
                 'specialDeactivate' => $item->specialShipBonusDeactivate,
                 'specialReadiness' => $item->specialShipBonusReadiness,
             ])
-            ->execute();
+            ->executeQuery();
     }
 
     public function bunker(int $userId, int $entityId, int $shipId, int $count): int
@@ -374,7 +365,7 @@ class ShipRepository extends AbstractRepository
                 'userId' => $userId,
                 'entityId' => $entityId,
                 'shipId' => $shipId,
-            ])->execute()->fetchAssociative();
+            ])->fetchAssociative();
 
         if ($info === false) {
             return 0;
@@ -392,7 +383,7 @@ class ShipRepository extends AbstractRepository
                 'change' => $delable,
                 'id' => $info['shiplist_id'],
                 'shipId' => $shipId,
-            ])->execute();
+            ])->executeQuery();
 
         return $delable;
     }
@@ -412,7 +403,6 @@ class ShipRepository extends AbstractRepository
                 'entityId' => $entityId,
                 'userId' => $userId,
             ])
-            ->execute()
             ->fetchAllKeyValue();
 
         return array_map(fn ($value) => (int) $value, $data);
@@ -430,7 +420,7 @@ class ShipRepository extends AbstractRepository
                 'userId' => $userId,
                 'entityId' => $entityId,
                 'shipId' => $shipId,
-            ])->execute()->fetchAssociative();
+            ])->fetchAssociative();
 
         if ($info === false) {
             return 0;
@@ -448,7 +438,7 @@ class ShipRepository extends AbstractRepository
                 'change' => $delable,
                 'id' => $info['shiplist_id'],
                 'shipId' => $shipId,
-            ])->execute();
+            ])->executeQuery();
 
         return $delable;
     }
@@ -458,7 +448,6 @@ class ShipRepository extends AbstractRepository
         return (int) $this->applySearchSortLimit($this->createQueryBuilder(), $search)
             ->select('COUNT(shiplist_id)')
             ->from('shiplist')
-            ->execute()
             ->fetchOne();
     }
 
@@ -470,7 +459,6 @@ class ShipRepository extends AbstractRepository
             ->where('shiplist_count = 0')
             ->andWhere('shiplist_bunkered = 0')
             ->andWhere('shiplist_special_ship = 0')
-            ->execute()
             ->fetchOne();
     }
 
@@ -508,7 +496,7 @@ class ShipRepository extends AbstractRepository
             );
 
         return array_map(fn ($arr) => [
-            'name' => (string) $arr['name'],
+            'name' => $arr['name'],
             'cnt' => (int) $arr['cnt'],
             'max' => (int) $arr['max'],
         ], $data);
@@ -548,7 +536,7 @@ class ShipRepository extends AbstractRepository
             );
 
         return array_map(fn ($arr) => [
-            'name' => (string) $arr['name'],
+            'name' => $arr['name'],
             'level' => (int) $arr['level'],
             'exp' => (int) $arr['exp'],
         ], $data);
@@ -562,14 +550,13 @@ class ShipRepository extends AbstractRepository
             ->where('shiplist_user_id = :userId')
             ->andWhere('shiplist_count = 1')
             ->setParameter('userId', $userId)
-            ->execute()
             ->fetchOne();
     }
 
     public function cleanUp(): int
     {
         return $this->getConnection()
-            ->executeStatement(
+            ->executeQuery(
                 "DELETE FROM
                     `shiplist`
                 WHERE
@@ -577,6 +564,7 @@ class ShipRepository extends AbstractRepository
                     AND `shiplist_bunkered`='0'
                     AND `shiplist_special_ship`='0'
                     ;"
-            );
+            )
+            ->rowCount();
     }
 }

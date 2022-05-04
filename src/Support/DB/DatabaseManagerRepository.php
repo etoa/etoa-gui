@@ -16,18 +16,17 @@ class DatabaseManagerRepository extends AbstractRepository
             ->where('table_schema = :database')
             ->groupBy('table_schema')
             ->setParameter('database', $this->getDatabaseName())
-            ->execute()
             ->fetchOne();
     }
 
     public function getDatabasePlatform(): string
     {
-        return $this->getConnection()->getDatabasePlatform()->getName();
+        return $this->getConnection()->getDatabasePlatform() ? get_class($this->getConnection()->getDatabasePlatform()) : '';
     }
 
     public function getDatabaseName(): string
     {
-        return $this->getConnection()->getDatabase();
+        return (string) $this->getConnection()->getDatabase();
     }
 
     public function getUser(): string

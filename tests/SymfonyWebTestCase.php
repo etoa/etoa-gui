@@ -69,7 +69,7 @@ abstract class SymfonyWebTestCase extends \Symfony\Bundle\FrameworkBundle\Test\W
                 'session' => 'session',
                 'email' => 'test@etoa.net',
                 'empty' => '',
-            ])->execute();
+            ])->executeQuery();
 
         $this->getConnection()
             ->createQueryBuilder()
@@ -82,7 +82,7 @@ abstract class SymfonyWebTestCase extends \Symfony\Bundle\FrameworkBundle\Test\W
                 'userId' => $userId,
                 'tutorialId' => 2,
                 'closed' => 1,
-            ])->execute();
+            ])->executeQuery();
 
         $_SESSION = [];
         $_SESSION['user_id'] = 1;
@@ -104,7 +104,7 @@ abstract class SymfonyWebTestCase extends \Symfony\Bundle\FrameworkBundle\Test\W
                 'loginTime' => $loginTime,
                 'userAgent' => $userAgent,
                 'ip' => '',
-            ])->execute();
+            ])->executeQuery();
     }
 
     /**
@@ -190,7 +190,7 @@ abstract class SymfonyWebTestCase extends \Symfony\Bundle\FrameworkBundle\Test\W
                 'points' => $points,
                 'discoverymask' => $discoverMask,
                 'verificationKey' => $verificationKey,
-            ])->execute();
+            ])->executeQuery();
     }
 
     protected function assertStatusCode(int $statusCode, Response $response): void

@@ -22,7 +22,7 @@ class UserLoginFailureRepository extends AbstractRepository
                 'userId' => $userId,
                 'client' => $client,
             ])
-            ->execute();
+            ->executeQuery();
     }
 
     /**
@@ -44,7 +44,6 @@ class UserLoginFailureRepository extends AbstractRepository
         }
 
         $data = $qb
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn (array $row) => new UserLoginFailure($row), $data);
@@ -63,7 +62,6 @@ class UserLoginFailureRepository extends AbstractRepository
             ->where('l.failure_ip = :ip')
             ->setParameter('ip', $ip)
             ->orderBy('l.failure_time', 'DESC')
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn (array $row) => new UserLoginFailure($row), $data);
@@ -80,7 +78,6 @@ class UserLoginFailureRepository extends AbstractRepository
                 'userId' => $userId,
                 'since' => $since,
             ])
-            ->execute()
             ->fetchOne();
     }
 
@@ -97,7 +94,6 @@ class UserLoginFailureRepository extends AbstractRepository
             ->setParameter('ip', $ip)
             ->groupBy('failure_user_id')
             ->orderBy('count', 'DESC')
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn (array $row) => [
@@ -120,7 +116,6 @@ class UserLoginFailureRepository extends AbstractRepository
             ->setParameter('userId', $userId)
             ->groupBy('failure_ip, failure_host')
             ->orderBy('count', 'DESC')
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn (array $row) => [
@@ -142,7 +137,6 @@ class UserLoginFailureRepository extends AbstractRepository
             ->leftJoin('l', 'users', 'u', 'u.user_id = l.failure_user_id')
             ->orderBy('l.' . $sort, $order)
             ->setMaxResults(300)
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn (array $row) => new UserLoginFailure($row), $data);
@@ -153,7 +147,6 @@ class UserLoginFailureRepository extends AbstractRepository
         return (int) $this->applySearchSortLimit($this->createQueryBuilder(), $search)
             ->select('COUNT(*)')
             ->from('login_failures', 'l')
-            ->execute()
             ->fetchOne();
     }
 
@@ -168,7 +161,6 @@ class UserLoginFailureRepository extends AbstractRepository
             ->from('login_failures', 'l')
             ->leftJoin('l', 'users', 'u', 'u.user_id = l.failure_user_id')
             ->orderBy('l.failure_time', 'DESC')
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn (array $row) => new UserLoginFailure($row), $data);

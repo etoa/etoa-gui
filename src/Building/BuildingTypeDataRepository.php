@@ -16,7 +16,6 @@ class BuildingTypeDataRepository extends AbstractRepository
             ->from('building_types')
             ->orderBy('type_order')
             ->addOrderBy('type_name')
-            ->execute()
             ->fetchAllKeyValue();
     }
 }

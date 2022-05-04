@@ -22,7 +22,6 @@ class RaceDataRepository extends AbstractRepository
         }
 
         return $qry->orderBy($orderById ? 'race_id' : 'race_name')
-            ->execute()
             ->fetchAllKeyValue();
     }
 
@@ -38,7 +37,6 @@ class RaceDataRepository extends AbstractRepository
             ->from('races', 'r')
             ->andWhere('r.race_active = 1')
             ->orderBy('r.race_name')
-            ->execute()
             ->fetchAllKeyValue();
     }
 
@@ -50,7 +48,6 @@ class RaceDataRepository extends AbstractRepository
             ->where('r.race_id = :id')
             ->andWhere('r.race_active = 1')
             ->setParameter('id', $raceId)
-            ->execute()
             ->fetchAssociative();
 
         return $data !== false ? new Race($data) : null;
@@ -66,18 +63,17 @@ class RaceDataRepository extends AbstractRepository
             ->from('races', 'r')
             ->where('r.race_active = 1')
             ->orderBy('r.' . $order, $sort)
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn (array $row) => new Race($row), $data);
     }
 
     /**
-     * @return array<int, array{name: string, cnt: int}>
+     * @return array<int, array{name: string, cnt: string}>
      */
     public function getNumberOfRacesByType(): array
     {
-        $data = $this->getConnection()
+        return $this->getConnection()
             ->fetchAllAssociative(
                 "SELECT
                     races.race_name as name,
@@ -96,11 +92,6 @@ class RaceDataRepository extends AbstractRepository
                 ORDER BY
                     cnt DESC;"
             );
-
-        return array_map(fn ($arr) => [
-            'name' => (string) $arr['name'],
-            'cnt' => (int) $arr['cnt'],
-        ], $data);
     }
 
     public function getNumberOfUsersWithRace(int $raceId): int
@@ -110,7 +101,6 @@ class RaceDataRepository extends AbstractRepository
             ->from('users')
             ->where(' user_race_id = :raceId')
             ->setParameter('raceId', $raceId)
-            ->execute()
             ->fetchOne();
     }
 }

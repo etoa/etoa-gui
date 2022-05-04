@@ -27,7 +27,6 @@ class DefenseRepository extends AbstractRepository
         }
 
         $data = $qb
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn ($row) => DefenseListItem::createFromData($row), $data);
@@ -40,7 +39,6 @@ class DefenseRepository extends AbstractRepository
             ->from('deflist')
             ->where('deflist_id = :id')
             ->setParameter('id', $id)
-            ->execute()
             ->fetchAssociative();
 
         return $data !== false ? DefenseListItem::createFromData($data) : null;
@@ -65,7 +63,7 @@ class DefenseRepository extends AbstractRepository
             ->setParameters([
                 'count' => $count,
                 'id' => $id,
-            ])->execute();
+            ])->executeQuery();
     }
 
     public function removeEntry(int $id): void
@@ -75,7 +73,7 @@ class DefenseRepository extends AbstractRepository
             ->where('deflist_id = :id')
             ->setParameters([
                 'id' => $id,
-            ])->execute();
+            ])->executeQuery();
     }
 
     public function removeDefense(int $defenseId, int $amount, int $userId, int $entityId): int
@@ -94,7 +92,7 @@ class DefenseRepository extends AbstractRepository
                 'userId' => $userId,
                 'entityId' => $entityId,
                 'defenseId' => $defenseId,
-            ])->execute()->fetchOne();
+            ])->fetchOne();
 
         $amount = min($available, $amount);
 
@@ -110,7 +108,8 @@ class DefenseRepository extends AbstractRepository
                 'defenseId' => $defenseId,
                 'amount' => $amount,
             ])
-            ->execute();
+            ->executeQuery()
+            ->rowCount();
 
         return $amount;
     }
@@ -157,7 +156,6 @@ class DefenseRepository extends AbstractRepository
                 'userId' => $userId,
                 'entityId' => $entityId,
             ])
-            ->execute()
             ->fetchAllKeyValue();
 
         return array_map(fn ($value) => (int) $value, $data);
@@ -173,7 +171,7 @@ class DefenseRepository extends AbstractRepository
             ->setParameters([
                 'userId' => $userId,
                 'defenseId' => $defenseId,
-            ])->execute()
+            ])
             ->fetchOne();
     }
 
@@ -190,7 +188,6 @@ class DefenseRepository extends AbstractRepository
                 'userId' => $userId,
                 'entityId' => $entityId,
             ])
-            ->execute()
             ->fetchOne();
     }
 
@@ -205,7 +202,6 @@ class DefenseRepository extends AbstractRepository
             ->setParameters([
                 'entityId' => $entityId,
             ])
-            ->execute()
             ->fetchOne();
     }
 
@@ -215,13 +211,13 @@ class DefenseRepository extends AbstractRepository
             ->delete('def_queue')
             ->where('queue_entity_id = :entityId')
             ->setParameter('entityId', $entityId)
-            ->execute();
+            ->executeQuery();
 
         $this->createQueryBuilder()
             ->delete('deflist')
             ->where('deflist_entity_id = :entityId')
             ->setParameter('entityId', $entityId)
-            ->execute();
+            ->executeQuery();
     }
 
     public function removeForUser(int $userId): void
@@ -230,13 +226,13 @@ class DefenseRepository extends AbstractRepository
             ->delete('def_queue')
             ->where('queue_user_id = :userId')
             ->setParameter('userId', $userId)
-            ->execute();
+            ->executeQuery();
 
         $this->createQueryBuilder()
             ->delete('deflist')
             ->where('deflist_user_id = :userId')
             ->setParameter('userId', $userId)
-            ->execute();
+            ->executeQuery();
     }
 
     public function cleanupEmpty(): void
@@ -244,7 +240,7 @@ class DefenseRepository extends AbstractRepository
         $this->createQueryBuilder()
             ->delete('deflist')
             ->where('deflist_count = 0')
-            ->execute();
+            ->executeQuery();
     }
 
     public function count(DefenseListSearch $search = null): int
@@ -252,7 +248,6 @@ class DefenseRepository extends AbstractRepository
         return (int) $this->applySearchSortLimit($this->createQueryBuilder(), $search)
             ->select('COUNT(*)')
             ->from('deflist')
-            ->execute()
             ->fetchOne();
     }
 
@@ -262,7 +257,6 @@ class DefenseRepository extends AbstractRepository
             ->select('COUNT(deflist_id)')
             ->from('deflist')
             ->where('deflist_count = 0')
-            ->execute()
             ->fetchOne();
     }
 
@@ -299,7 +293,7 @@ class DefenseRepository extends AbstractRepository
             );
 
         return array_map(fn ($arr) => [
-            'name' => (string) $arr['name'],
+            'name' => $arr['name'],
             'cnt' => (int) $arr['cnt'],
             'max' => (int) $arr['max'],
         ], $data);
@@ -308,13 +302,13 @@ class DefenseRepository extends AbstractRepository
     public function cleanUp(): int
     {
         return $this->getConnection()
-            ->executeStatement(
+            ->executeQuery(
                 "DELETE FROM
                     `deflist`
                 WHERE
                     `deflist_count`='0'
                 ;"
-            );
+            )->rowCount();
     }
 
     /**
@@ -325,7 +319,6 @@ class DefenseRepository extends AbstractRepository
         $data = $this->applySearchSortLimit($this->createQueryBuilder(), $search, null, $limit, $offset)
             ->select('deflist.*')
             ->from('deflist')
-            ->execute()
             ->fetchAllAssociative();
 
         return array_map(fn ($row) => DefenseListItem::createFromData($row), $data);

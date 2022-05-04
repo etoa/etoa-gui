@@ -32,7 +32,7 @@ class TutorialUserProgressRepositoryTest extends SymfonyWebTestCase
                 'tup_user_id' => 1,
                 'tup_tutorial_id' => 1,
                 'tup_closed' => (int)$closed,
-            ])->execute();
+            ])->executeQuery();
 
         $this->assertSame($closed, $this->repository->hasReadTutorial(1, 1));
     }
@@ -56,7 +56,7 @@ class TutorialUserProgressRepositoryTest extends SymfonyWebTestCase
                 'tup_user_id' => $userId,
                 'tup_tutorial_id' => $tutorialId,
                 'tup_closed' => 0,
-            ])->execute();
+            ])->executeQuery();
 
         $this->repository->closeTutorial($userId, $tutorialId);
 
