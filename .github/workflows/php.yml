@@ -37,7 +37,7 @@ jobs:
 
       - name: Composer Cache Directory
         id: composer-cache
-        uses: actions/cache@v1
+        uses: actions/cache@v3
         with:
           path: ~/.composer
           key: ${{ runner.os }}-composer-${{ hashFiles('**/composer.lock') }}
@@ -94,7 +94,7 @@ jobs:
         run: "echo \"::set-output name=directory::$(composer config cache-dir)\""
 
       - name: "Cache dependencies installed with composer"
-        uses: "actions/cache@v2"
+        uses: actions/cache@v3
         with:
           path: "${{ steps.determine-composer-cache-directory.outputs.directory }}"
           key: "php-${{ matrix.php-version }}-phpcsfixer-${{ hashFiles('**/composer.lock') }}"
@@ -138,7 +138,7 @@ jobs:
         run: "echo \"::set-output name=directory::$(composer config cache-dir)\""
 
       - name: "Cache dependencies installed with composer"
-        uses: "actions/cache@v2"
+        uses: actions/cache@v3
         with:
           path: "${{ steps.determine-composer-cache-directory.outputs.directory }}"
           key: "php-${{ matrix.php-version }}-phpstan-${{ hashFiles('**/composer.lock') }}"
