@@ -229,7 +229,7 @@ if (isset($_GET['id'])) {
         echo "<div id=\"reqInfo\" style=\"width:100%;\">
             <br/><div class=\"loadingMsg\">Bitte warten...</div>
             </div>";
-        echo '<script type="text/javascript">xajax_reqInfo(' . $ship->id . ',"s")</script>';
+        $shipCategoryAbbr = $arr['ship_alliance_shipyard_level'] > 0 ? "sa" : "s";echo '<script type="text/javascript">xajax_reqInfo(' . $ship->id . ',"'. $shipCategoryAbbr.'")</script>';
         echo "</td></tr>";
 
         tableEnd();

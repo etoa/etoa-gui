@@ -37,6 +37,9 @@ function reqInfo($id, $cat = 'b')
     $missileRepository = $app[\EtoA\Missile\MissileDataRepository::class];
     $missileNames = $missileRepository->getMissileNames();
 
+    /** @var \EtoA\Alliance\AllianceBuildingRepository $allianceBuildingRepository */
+    $allianceBuildingRepository = $app[\EtoA\Alliance\AllianceBuildingRepository::class];
+    $allianceBuildingNames = $allianceBuildingRepository->getNames();
     //
     // Required objects
     //
@@ -53,6 +56,16 @@ function reqInfo($id, $cat = 'b')
 
     foreach ($requirements->getTechnologyRequirements($id) as $requirement) {
         $items[] = array($requirement->requiredTechnologyId, $technologyNames[$requirement->requiredTechnologyId], $requirement->requiredLevel, ObjectWithImage::BASE_PATH . "/technologies/technology" . $requirement->requiredTechnologyId . "_middle.png", "xajax_reqInfo(" . $requirement->requiredTechnologyId . ",'b')");
+    }
+
+    // Alliance ships are not in requirements tables. The required level of the alliance shipyard is given directly in the ship details.
+    if ($cat == "sa")
+    {
+        $ship = $shipRepository->getShip($id);
+        if ($ship && $ship->allianceShipyardLevel > 0) {
+            $allianceBuildingId_shipyard = ALLIANCE_SHIPYARD_ID;
+            $items[] = array($allianceBuildingId_shipyard, $allianceBuildingNames[ALLIANCE_SHIPYARD_ID], $ship->allianceShipyardLevel, IMAGE_PATH."/abuildings/building".$allianceBuildingId_shipyard."_middle.".IMAGE_EXT, "");
+        }
     }
 
     if (count($items) > 0) {
