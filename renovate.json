@@ -1,7 +1,7 @@
 {
     "extends": [
         "config:base",
-        ":label(renovate)",
+        ":label(renovate)"
     ],
     "rangeStrategy": "replace",
     "enabledManagers": ["composer", "dockerfile", "docker-compose", "github-actions"]
