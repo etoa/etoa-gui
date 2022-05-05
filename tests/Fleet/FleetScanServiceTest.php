@@ -7,6 +7,7 @@ namespace EtoA\Fleet;
 use EtoA\Alliance\AllianceBuildingId;
 use EtoA\Alliance\AllianceBuildingRepository;
 use EtoA\Alliance\AllianceRepository;
+use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\SymfonyWebTestCase;
 use EtoA\Universe\Cell\CellRepository;
 use EtoA\Universe\Entity\EntityRepository;
@@ -25,6 +26,7 @@ class FleetScanServiceTest extends SymfonyWebTestCase
     private CellRepository $cellRepository;
     private EntityRepository $entityRepository;
     private FleetRepository $fleetRepository;
+    private ConfigurationService $config;
 
     protected function setUp(): void
     {
@@ -38,6 +40,7 @@ class FleetScanServiceTest extends SymfonyWebTestCase
         $this->cellRepository = self::getContainer()->get(CellRepository::class);
         $this->entityRepository = self::getContainer()->get(EntityRepository::class);
         $this->fleetRepository = self::getContainer()->get(FleetRepository::class);
+        $this->config = self::getContainer()->get(ConfigurationService::class);
     }
 
     public function testScanFleets_withNoFleets(): void
@@ -68,13 +71,15 @@ class FleetScanServiceTest extends SymfonyWebTestCase
         $this->assertNotNull($planet1);
         $this->assertNotNull($entity2);
 
+        $this->config->set('crypto_number_of_fleets_level', -5);
+
         // when
         $out = $this->service->scanFleets($user1, $planet1, 1, $entity2);
 
         // then
         $this->assertStringContainsString('[b]Flottenscan vom Planeten [/b] (1/1 : 2/2 : 4)', $out);
-        $this->assertStringContainsString('Es sind keine Flotten unterwegs.', $out);
-        $this->assertStringContainsString('Es sind keine Flotten unterwegs.', $out);
+        $this->assertStringContainsString('Es sind 0 Flotten unterwegs.', $out);
+        $this->assertStringContainsString('Es sind 0 Flotten unterwegs.', $out);
     }
 
     public function testScanFleets_withOneIncomingFleet(): void
