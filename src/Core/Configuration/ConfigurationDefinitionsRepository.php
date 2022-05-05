@@ -33,7 +33,7 @@ class ConfigurationDefinitionsRepository
     {
         $this->ensureXmlDefinitionsLoaded();
         $arr = $this->xmlData->xpath("/config/items/item[@name='" . $key . "']");
-        if ($arr !== false && count($arr) > 0) {
+        if (is_countable($arr) && count($arr) > 0) {
             $itemDefinition = $arr[0];
 
             return new ConfigItem(

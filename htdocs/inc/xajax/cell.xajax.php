@@ -78,6 +78,7 @@ function launchSypProbe($tid)
 // $_SESSION['currentEntity']=serialize($cp);
 function launchAnalyzeProbe($tid)
 {
+    /** @var Planet $cp */
     $cp = unserialize($_SESSION['currentEntity']);
 
     $objResponse = new xajaxResponse();
@@ -145,6 +146,7 @@ function launchAnalyzeProbe($tid)
 // $_SESSION['currentEntity']=serialize($cp);
 function launchExplorerProbe($tcid)
 {
+    /** @var Planet $cp */
     $cp = unserialize($_SESSION['currentEntity']);
 
     $objResponse = new xajaxResponse();

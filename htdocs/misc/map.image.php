@@ -79,9 +79,9 @@ if (isset($_SESSION) || $admin)
         {
             $user = $userRepository->getUser($request->query->getInt('user'));
         }
-        else if (!$admin && isset($s))
+        else if (!$admin)
         {
-            $user = $userRepository->getUser(intval($s['user_id']));
+            $user = $userRepository->getUser((int) $s['user_id']);
         }
 
         $starImageSrc = imagecreatefrompng(IMG_DIR."/stars/star4_small.png");

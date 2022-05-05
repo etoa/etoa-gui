@@ -58,7 +58,7 @@ class BuildList implements IteratorAggregate
      * @param int $catId
      * @param string $mode {all | buildable | resable}
      *
-     * @return ArrayIterator	with key() building_id and current() buildlistitem
+     * @return ArrayIterator<int, BuildListItem>	with key() building_id and current() buildlistitem
      *
      * @access public
      */
