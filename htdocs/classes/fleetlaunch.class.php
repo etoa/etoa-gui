@@ -34,7 +34,7 @@ class FleetLaunch
     //
     // Variable definitions
     //
-    public ?Planet $sourceEntity = null;
+    public Planet $sourceEntity;
     public ?Entity $targetEntity = null;
     public $owner;
     public ?Entity $wormholeEntryEntity = null;
@@ -81,7 +81,7 @@ class FleetLaunch
      *
      * >> Step 1 <<
      */
-    public function __construct($sourceEnt, $ownerEnt)
+    public function __construct(Planet $sourceEnt, $ownerEnt)
     {
         // TODO
         global $app;

@@ -324,6 +324,7 @@ function havenShowTarget($form)
     $response = new xajaxResponse();
 
     // Get fleet object
+    /** @var FleetLaunch $fleet */
     $fleet = unserialize($_SESSION['haven']['fleetObj']);
     ob_start();
 
@@ -500,13 +501,13 @@ function havenShowTarget($form)
             echo "<option value=\"0\"";
             echo ">Wählen...</option>";
 
-            $userPlanets = $planetRepository->getUserPlanetsWithCoordinates($fleet->ownerid());
+            $userPlanets = $planetRepository->getUserPlanetsWithCoordinates($fleet->ownerId());
             foreach ($userPlanets as $userPlanet) {
                 echo "<option value=\"" . $userPlanet->id . "\"";
                 echo ">Eigener Planet: " . $userPlanet->toString() . "</option>\n";
             }
 
-            $bookmarkedEntities = $bookmarkRepository->getBookmarkedEntities($fleet->ownerid());
+            $bookmarkedEntities = $bookmarkRepository->getBookmarkedEntities($fleet->ownerId());
             if (count($bookmarkedEntities) > 0) {
                 echo "<option value=\"0\"";
                 echo ">-------------------------------</option>\n";
@@ -625,6 +626,7 @@ function havenShowWormhole($form)
     // Do some checks
     if (count($form) > 0) {
         // Get fleet object
+        /** @var FleetLaunch $fleet */
         $fleet = unserialize($_SESSION['haven']['fleetObj']);
 
         if ($fleet->wormholeEntryEntity == null) {
@@ -771,13 +773,13 @@ function havenShowWormhole($form)
                     echo "<option value=\"0\"";
                     echo ">Wählen...</option>";
 
-                    $userPlanets = $planetRepository->getUserPlanetsWithCoordinates($fleet->ownerid());
+                    $userPlanets = $planetRepository->getUserPlanetsWithCoordinates($fleet->ownerId());
                     foreach ($userPlanets as $userPlanet) {
                         echo "<option value=\"" . $userPlanet->id . "\"";
                         echo ">Eigener Planet: " . $userPlanet->toString() . "</option>\n";
                     }
 
-                    $bookmarkedEntities = $bookmarkRepository->getBookmarkedEntities($fleet->ownerid());
+                    $bookmarkedEntities = $bookmarkRepository->getBookmarkedEntities($fleet->ownerId());
                     if (count($bookmarkedEntities) > 0) {
                         echo "<option value=\"0\"";
                         echo ">-------------------------------</option>\n";
@@ -899,6 +901,7 @@ function havenShowAction($form)
     // Do some checks
     if (count($form) > 0) {
         // Get fleet object
+        /** @var FleetLaunch $fleet */
         $fleet = unserialize($_SESSION['haven']['fleetObj']);
 
         $owner = $userRepository->getUser(intval($fleet->owner->id));
@@ -1488,6 +1491,7 @@ function havenCheckRes($id, $val)
     $response = new xajaxResponse();
     $val = max(0, intval(StringUtils::parseFormattedNumber($val)));
 
+    /** @var FleetLaunch $fleet */
     $fleet = unserialize($_SESSION['haven']['fleetObj']);
 
     $erg = $fleet->loadResource($id, $val);
@@ -1512,6 +1516,7 @@ function havenSetResAll()
     $sum = 0;
     $loadPerc = 0;
 
+    /** @var FleetLaunch $fleet */
     $fleet = unserialize($_SESSION['haven']['fleetObj']);
 
     for ($id = 1; $id < 6; $id++) {
@@ -1561,6 +1566,7 @@ function havenSetFetchAll()
     $sum = 0;
     $loadPerc = 0;
 
+    /** @var FleetLaunch $fleet */
     $fleet = unserialize($_SESSION['haven']['fleetObj']);
 
     for ($id = 1; $id < 6; $id++) {
@@ -1569,7 +1575,7 @@ function havenSetFetchAll()
     }
 
     for ($id = 1; $id < 6; $id++) {
-        $val = floor($fleet->getTotalCapacity($id));
+        $val = floor($fleet->getTotalCapacity());
         $response->assign('fres' . $id, 'value', StringUtils::formatNumber($val));
     }
     $response->assign('resfree', 'innerHTML', StringUtils::formatNumber($fleet->getCapacity()) . " / " . StringUtils::formatNumber($fleet->getTotalCapacity()));
@@ -1591,6 +1597,7 @@ function havenCheckPeople($val)
     $response = new xajaxResponse();
     $val = max(0, intval(StringUtils::parseFormattedNumber($val)));
 
+    /** @var FleetLaunch $fleet */
     $fleet = unserialize($_SESSION['haven']['fleetObj']);
 
     $erg = $fleet->loadPeople($val);
@@ -1613,6 +1620,7 @@ function havenCheckAction($code)
     $userRepository = $app[UserRepository::class];
 
     $response = new xajaxResponse();
+    /** @var FleetLaunch $fleet */
     $fleet = unserialize($_SESSION['haven']['fleetObj']);
     ob_start();
     $fleet->resetSupport();
@@ -1819,6 +1827,7 @@ function havenCheckSupport($form)
 {
 
     $response = new xajaxResponse();
+    /** @var FleetLaunch $fleet */
     $fleet = unserialize($_SESSION['haven']['fleetObj']);
     ob_start();
 

@@ -9,7 +9,6 @@ use EtoA\Log\LogFacility;
 use EtoA\Log\LogRepository;
 use EtoA\Log\LogSeverity;
 use EtoA\User\UserRepository;
-use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -55,9 +54,7 @@ class AdminProfileController extends AbstractAdminController
         $form->handleRequest($request);
         if (!$form->isSubmitted() || !$form->isValid()) {
             foreach ($form->getErrors(true) as $error) {
-                if ($error instanceof FormError) {
-                    $this->addFlash('error', $error->getMessage());
-                }
+                $this->addFlash('error', $error->getMessage());
             }
 
             return $this->redirectToRoute('admin.profile');

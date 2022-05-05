@@ -239,7 +239,7 @@ class SectorMapRenderer
                     $mouseOver .= " onmouseout=\"$('#counter_left_$ycoords').attr('src','/"  . self::MapImageDirectory . "/" . self::VerticalCoordinateNumberImagePrefix . "$ycoords.gif');$('#counter_bottom_$xcoords').attr('src','/" . self::MapImageDirectory . "/" . self::HorizontalCoordinateNumberImagePrefix . "$xcoords.gif');\"";
                 }
 
-                $class = count($classes) > 0 ? " class=\"" . implode(' ', $classes) . "\"" : '';
+                $class = " class=\"" . implode(' ', $classes);
                 $overlayClass = count($overlayClasses) > 0 ? " class=\"" . implode(' ', $overlayClasses) . "\"" : '';
 
                 if ($js != null) {

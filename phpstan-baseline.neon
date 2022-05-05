@@ -531,11 +531,6 @@ parameters:
 			path: htdocs/classes/fleetlaunch.class.php
 
 		-
-			message: "#^Cannot access property \\$id on Planet\\|null\\.$#"
-			count: 1
-			path: htdocs/classes/fleetlaunch.class.php
-
-		-
 			message: "#^Cannot access property \\$name on EtoA\\\\Race\\\\Race\\|null\\.$#"
 			count: 1
 			path: htdocs/classes/fleetlaunch.class.php
@@ -548,11 +543,6 @@ parameters:
 		-
 			message: "#^Cannot access property \\$owner on Entity\\|null\\.$#"
 			count: 1
-			path: htdocs/classes/fleetlaunch.class.php
-
-		-
-			message: "#^Cannot access property \\$owner on Planet\\|null\\.$#"
-			count: 2
 			path: htdocs/classes/fleetlaunch.class.php
 
 		-
@@ -616,43 +606,13 @@ parameters:
 			path: htdocs/classes/fleetlaunch.class.php
 
 		-
-			message: "#^Cannot call method getEntityCoordinates\\(\\) on Planet\\|null\\.$#"
-			count: 2
-			path: htdocs/classes/fleetlaunch.class.php
-
-		-
-			message: "#^Cannot call method getRes\\(\\) on Planet\\|null\\.$#"
-			count: 14
-			path: htdocs/classes/fleetlaunch.class.php
-
-		-
-			message: "#^Cannot call method getResourceLog\\(\\) on Planet\\|null\\.$#"
-			count: 1
-			path: htdocs/classes/fleetlaunch.class.php
-
-		-
 			message: "#^Cannot call method id\\(\\) on Entity\\|null\\.$#"
 			count: 5
 			path: htdocs/classes/fleetlaunch.class.php
 
 		-
-			message: "#^Cannot call method id\\(\\) on Planet\\|null\\.$#"
-			count: 11
-			path: htdocs/classes/fleetlaunch.class.php
-
-		-
-			message: "#^Cannot call method lastUserCheck\\(\\) on Planet\\|null\\.$#"
-			count: 1
-			path: htdocs/classes/fleetlaunch.class.php
-
-		-
 			message: "#^Cannot call method ownerAlliance\\(\\) on Entity\\|null\\.$#"
 			count: 3
-			path: htdocs/classes/fleetlaunch.class.php
-
-		-
-			message: "#^Cannot call method ownerAlliance\\(\\) on Planet\\|null\\.$#"
-			count: 8
 			path: htdocs/classes/fleetlaunch.class.php
 
 		-
@@ -663,31 +623,6 @@ parameters:
 		-
 			message: "#^Cannot call method ownerId\\(\\) on Entity\\|null\\.$#"
 			count: 8
-			path: htdocs/classes/fleetlaunch.class.php
-
-		-
-			message: "#^Cannot call method ownerId\\(\\) on Planet\\|null\\.$#"
-			count: 4
-			path: htdocs/classes/fleetlaunch.class.php
-
-		-
-			message: "#^Cannot call method people\\(\\) on Planet\\|null\\.$#"
-			count: 1
-			path: htdocs/classes/fleetlaunch.class.php
-
-		-
-			message: "#^Cannot call method reloadRes\\(\\) on Planet\\|null\\.$#"
-			count: 3
-			path: htdocs/classes/fleetlaunch.class.php
-
-		-
-			message: "#^Cannot call method resFood\\(\\) on Planet\\|null\\.$#"
-			count: 2
-			path: htdocs/classes/fleetlaunch.class.php
-
-		-
-			message: "#^Cannot call method resFuel\\(\\) on Planet\\|null\\.$#"
-			count: 2
 			path: htdocs/classes/fleetlaunch.class.php
 
 		-
@@ -777,16 +712,6 @@ parameters:
 
 		-
 			message: "#^Cannot call method toString\\(\\) on EtoA\\\\Universe\\\\Entity\\\\EntityLabel\\|null\\.$#"
-			count: 1
-			path: htdocs/classes/sectormaprenderer.class.php
-
-		-
-			message: "#^Comparison operation \"\\>\" between 1\\|2\\|3 and 0 is always true\\.$#"
-			count: 1
-			path: htdocs/classes/sectormaprenderer.class.php
-
-		-
-			message: "#^Else branch is unreachable because ternary operator condition is always true\\.$#"
 			count: 1
 			path: htdocs/classes/sectormaprenderer.class.php
 
@@ -1261,28 +1186,8 @@ parameters:
 			path: htdocs/content/buddylist.php
 
 		-
-			message: "#^Cannot access property \\$buildType on mixed\\.$#"
-			count: 4
-			path: htdocs/content/buildings.php
-
-		-
-			message: "#^Cannot access property \\$building on mixed\\.$#"
-			count: 10
-			path: htdocs/content/buildings.php
-
-		-
-			message: "#^Cannot access property \\$endTime on mixed\\.$#"
-			count: 4
-			path: htdocs/content/buildings.php
-
-		-
 			message: "#^Cannot access property \\$id on EtoA\\\\Universe\\\\Planet\\\\Planet\\|null\\.$#"
 			count: 4
-			path: htdocs/content/buildings.php
-
-		-
-			message: "#^Cannot access property \\$level on mixed\\.$#"
-			count: 8
 			path: htdocs/content/buildings.php
 
 		-
@@ -1292,26 +1197,6 @@ parameters:
 
 		-
 			message: "#^Cannot access property \\$people on EtoA\\\\Universe\\\\Planet\\\\Planet\\|null\\.$#"
-			count: 1
-			path: htdocs/content/buildings.php
-
-		-
-			message: "#^Cannot access property \\$startTime on mixed\\.$#"
-			count: 1
-			path: htdocs/content/buildings.php
-
-		-
-			message: "#^Cannot call method getBuildTime\\(\\) on mixed\\.$#"
-			count: 1
-			path: htdocs/content/buildings.php
-
-		-
-			message: "#^Cannot call method isMaxLevel\\(\\) on mixed\\.$#"
-			count: 2
-			path: htdocs/content/buildings.php
-
-		-
-			message: "#^Cannot call method waitingTimeString\\(\\) on mixed\\.$#"
 			count: 1
 			path: htdocs/content/buildings.php
 
@@ -3441,11 +3326,6 @@ parameters:
 			path: htdocs/inc/xajax/cell.xajax.php
 
 		-
-			message: "#^Cannot call method owner\\(\\) on mixed\\.$#"
-			count: 4
-			path: htdocs/inc/xajax/cell.xajax.php
-
-		-
 			message: "#^Cannot access property \\$name on EtoA\\\\Universe\\\\Planet\\\\Planet\\|null\\.$#"
 			count: 4
 			path: htdocs/inc/xajax/global.xajax.php
@@ -3466,258 +3346,23 @@ parameters:
 			path: htdocs/inc/xajax/global.xajax.php
 
 		-
-			message: "#^Cannot access property \\$capacityPeopleLoaded on mixed\\.$#"
-			count: 1
-			path: htdocs/inc/xajax/haven.xajax.php
-
-		-
-			message: "#^Cannot access property \\$owner on mixed\\.$#"
-			count: 4
-			path: htdocs/inc/xajax/haven.xajax.php
-
-		-
-			message: "#^Cannot access property \\$sBonusPilots on mixed\\.$#"
-			count: 4
-			path: htdocs/inc/xajax/haven.xajax.php
-
-		-
-			message: "#^Cannot access property \\$sBonusSpeed on mixed\\.$#"
-			count: 7
-			path: htdocs/inc/xajax/haven.xajax.php
-
-		-
-			message: "#^Cannot access property \\$shipActions on mixed\\.$#"
-			count: 2
-			path: htdocs/inc/xajax/haven.xajax.php
-
-		-
-			message: "#^Cannot access property \\$sourceEntity on mixed\\.$#"
-			count: 29
-			path: htdocs/inc/xajax/haven.xajax.php
-
-		-
 			message: "#^Cannot access property \\$tag on EtoA\\\\Alliance\\\\AllianceWithMemberCount\\|null\\.$#"
 			count: 3
 			path: htdocs/inc/xajax/haven.xajax.php
 
 		-
-			message: "#^Cannot access property \\$targetEntity on mixed\\.$#"
-			count: 4
-			path: htdocs/inc/xajax/haven.xajax.php
-
-		-
-			message: "#^Cannot access property \\$wormholeEntryEntity on mixed\\.$#"
-			count: 7
-			path: htdocs/inc/xajax/haven.xajax.php
-
-		-
-			message: "#^Cannot access property \\$wormholeExitEntity on mixed\\.$#"
-			count: 9
-			path: htdocs/inc/xajax/haven.xajax.php
-
-		-
-			message: "#^Cannot call method addShip\\(\\) on mixed\\.$#"
-			count: 1
-			path: htdocs/inc/xajax/haven.xajax.php
-
-		-
-			message: "#^Cannot call method checkTarget\\(\\) on mixed\\.$#"
-			count: 1
-			path: htdocs/inc/xajax/haven.xajax.php
-
-		-
-			message: "#^Cannot call method cx\\(\\) on Planet\\|null\\.$#"
-			count: 1
-			path: htdocs/inc/xajax/haven.xajax.php
-
-		-
-			message: "#^Cannot call method cy\\(\\) on Planet\\|null\\.$#"
-			count: 1
-			path: htdocs/inc/xajax/haven.xajax.php
-
-		-
-			message: "#^Cannot call method error\\(\\) on mixed\\.$#"
-			count: 5
-			path: htdocs/inc/xajax/haven.xajax.php
-
-		-
-			message: "#^Cannot call method fixShips\\(\\) on mixed\\.$#"
-			count: 1
-			path: htdocs/inc/xajax/haven.xajax.php
-
-		-
-			message: "#^Cannot call method getAllowedActions\\(\\) on mixed\\.$#"
-			count: 1
-			path: htdocs/inc/xajax/haven.xajax.php
-
-		-
-			message: "#^Cannot call method getCapacity\\(\\) on mixed\\.$#"
-			count: 8
-			path: htdocs/inc/xajax/haven.xajax.php
-
-		-
-			message: "#^Cannot call method getCosts\\(\\) on mixed\\.$#"
-			count: 4
-			path: htdocs/inc/xajax/haven.xajax.php
-
-		-
-			message: "#^Cannot call method getCostsFood\\(\\) on mixed\\.$#"
-			count: 4
-			path: htdocs/inc/xajax/haven.xajax.php
-
-		-
-			message: "#^Cannot call method getCostsLaunchLand\\(\\) on mixed\\.$#"
+			message: "#^Cannot call method entityCodeString\\(\\) on Entity\\|null\\.$#"
 			count: 3
 			path: htdocs/inc/xajax/haven.xajax.php
 
 		-
-			message: "#^Cannot call method getCostsPerHundredAE\\(\\) on mixed\\.$#"
+			message: "#^Cannot call method imagePath\\(\\) on Entity\\|null\\.$#"
 			count: 3
 			path: htdocs/inc/xajax/haven.xajax.php
 
 		-
-			message: "#^Cannot call method getDistance\\(\\) on mixed\\.$#"
-			count: 2
-			path: htdocs/inc/xajax/haven.xajax.php
-
-		-
-			message: "#^Cannot call method getDuration\\(\\) on mixed\\.$#"
-			count: 2
-			path: htdocs/inc/xajax/haven.xajax.php
-
-		-
-			message: "#^Cannot call method getLeader\\(\\) on mixed\\.$#"
-			count: 2
-			path: htdocs/inc/xajax/haven.xajax.php
-
-		-
-			message: "#^Cannot call method getLoadedRes\\(\\) on mixed\\.$#"
-			count: 5
-			path: htdocs/inc/xajax/haven.xajax.php
-
-		-
-			message: "#^Cannot call method getPeopleCapacity\\(\\) on mixed\\.$#"
-			count: 5
-			path: htdocs/inc/xajax/haven.xajax.php
-
-		-
-			message: "#^Cannot call method getPilots\\(\\) on mixed\\.$#"
+			message: "#^Cannot call method owner\\(\\) on Entity\\|null\\.$#"
 			count: 3
-			path: htdocs/inc/xajax/haven.xajax.php
-
-		-
-			message: "#^Cannot call method getShipCount\\(\\) on mixed\\.$#"
-			count: 1
-			path: htdocs/inc/xajax/haven.xajax.php
-
-		-
-			message: "#^Cannot call method getShips\\(\\) on mixed\\.$#"
-			count: 1
-			path: htdocs/inc/xajax/haven.xajax.php
-
-		-
-			message: "#^Cannot call method getSpeed\\(\\) on mixed\\.$#"
-			count: 4
-			path: htdocs/inc/xajax/haven.xajax.php
-
-		-
-			message: "#^Cannot call method getSpeedPercent\\(\\) on mixed\\.$#"
-			count: 3
-			path: htdocs/inc/xajax/haven.xajax.php
-
-		-
-			message: "#^Cannot call method getSupportFood\\(\\) on mixed\\.$#"
-			count: 2
-			path: htdocs/inc/xajax/haven.xajax.php
-
-		-
-			message: "#^Cannot call method getSupportFuel\\(\\) on mixed\\.$#"
-			count: 1
-			path: htdocs/inc/xajax/haven.xajax.php
-
-		-
-			message: "#^Cannot call method getSupportMaxTime\\(\\) on mixed\\.$#"
-			count: 1
-			path: htdocs/inc/xajax/haven.xajax.php
-
-		-
-			message: "#^Cannot call method getTimeLaunchLand\\(\\) on mixed\\.$#"
-			count: 3
-			path: htdocs/inc/xajax/haven.xajax.php
-
-		-
-			message: "#^Cannot call method getTotalCapacity\\(\\) on mixed\\.$#"
-			count: 18
-			path: htdocs/inc/xajax/haven.xajax.php
-
-		-
-			message: "#^Cannot call method getTotalPeopleCapacity\\(\\) on mixed\\.$#"
-			count: 8
-			path: htdocs/inc/xajax/haven.xajax.php
-
-		-
-			message: "#^Cannot call method id\\(\\) on Planet\\|null\\.$#"
-			count: 1
-			path: htdocs/inc/xajax/haven.xajax.php
-
-		-
-			message: "#^Cannot call method loadPeople\\(\\) on mixed\\.$#"
-			count: 2
-			path: htdocs/inc/xajax/haven.xajax.php
-
-		-
-			message: "#^Cannot call method loadResource\\(\\) on mixed\\.$#"
-			count: 4
-			path: htdocs/inc/xajax/haven.xajax.php
-
-		-
-			message: "#^Cannot call method ownerAlliance\\(\\) on Planet\\|null\\.$#"
-			count: 1
-			path: htdocs/inc/xajax/haven.xajax.php
-
-		-
-			message: "#^Cannot call method ownerid\\(\\) on mixed\\.$#"
-			count: 4
-			path: htdocs/inc/xajax/haven.xajax.php
-
-		-
-			message: "#^Cannot call method pos\\(\\) on Planet\\|null\\.$#"
-			count: 1
-			path: htdocs/inc/xajax/haven.xajax.php
-
-		-
-			message: "#^Cannot call method resetShips\\(\\) on mixed\\.$#"
-			count: 1
-			path: htdocs/inc/xajax/haven.xajax.php
-
-		-
-			message: "#^Cannot call method resetSupport\\(\\) on mixed\\.$#"
-			count: 1
-			path: htdocs/inc/xajax/haven.xajax.php
-
-		-
-			message: "#^Cannot call method setSupportTime\\(\\) on mixed\\.$#"
-			count: 2
-			path: htdocs/inc/xajax/haven.xajax.php
-
-		-
-			message: "#^Cannot call method setTarget\\(\\) on mixed\\.$#"
-			count: 1
-			path: htdocs/inc/xajax/haven.xajax.php
-
-		-
-			message: "#^Cannot call method setWormhole\\(\\) on mixed\\.$#"
-			count: 1
-			path: htdocs/inc/xajax/haven.xajax.php
-
-		-
-			message: "#^Cannot call method sx\\(\\) on Planet\\|null\\.$#"
-			count: 1
-			path: htdocs/inc/xajax/haven.xajax.php
-
-		-
-			message: "#^Cannot call method sy\\(\\) on Planet\\|null\\.$#"
-			count: 1
 			path: htdocs/inc/xajax/haven.xajax.php
 
 		-
@@ -5931,7 +5576,7 @@ parameters:
 			path: src/Core/Configuration/ConfigurationDefinitionsRepository.php
 
 		-
-			message: "#^Method EtoA\\\\Core\\\\Configuration\\\\ConfigurationDefinitionsRepository\\:\\:itemInCategory\\(\\) should return array\\<SimpleXMLElement\\> but returns array\\<SimpleXMLElement\\>\\|false\\.$#"
+			message: "#^Method EtoA\\\\Core\\\\Configuration\\\\ConfigurationDefinitionsRepository\\:\\:itemInCategory\\(\\) should return array\\<SimpleXMLElement\\> but returns array\\<SimpleXMLElement\\>\\|false\\|null\\.$#"
 			count: 1
 			path: src/Core/Configuration/ConfigurationDefinitionsRepository.php
 
@@ -6177,11 +5822,6 @@ parameters:
 		-
 			message: "#^Cannot access offset 'plastic' on array\\<string, mixed\\>\\|false\\.$#"
 			count: 1
-			path: src/Fleet/FleetRepository.php
-
-		-
-			message: "#^Cannot access property \\$parameters on EtoA\\\\Core\\\\Database\\\\AbstractSearch\\|null\\.$#"
-			count: 2
 			path: src/Fleet/FleetRepository.php
 
 		-
@@ -7133,11 +6773,6 @@ parameters:
 			message: "#^Method EtoA\\\\User\\\\UserPropertiesRepository\\:\\:getOrCreateProperties\\(\\) should return EtoA\\\\User\\\\UserProperties but returns EtoA\\\\User\\\\UserProperties\\|null\\.$#"
 			count: 1
 			path: src/User/UserPropertiesRepository.php
-
-		-
-			message: "#^Cannot access property \\$parameters on EtoA\\\\User\\\\UserSearch\\|null\\.$#"
-			count: 1
-			path: src/User/UserRepository.php
 
 		-
 			message: "#^Method EtoA\\\\User\\\\UserRepository\\:\\:countUsersWithSpecialists\\(\\) should return array\\<int, int\\> but returns array\\<int\\|string, int\\>\\.$#"

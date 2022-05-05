@@ -326,6 +326,9 @@
     "staabm/phpstan-dba": {
         "version": "0.2.18"
     },
+    "stella-maris/clock": {
+        "version": "0.1.4"
+    },
     "symfony/amqp-messenger": {
         "version": "v5.3.7"
     },
