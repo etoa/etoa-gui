@@ -19,15 +19,17 @@ sudo apt-get install -q -y -f php8.0-curl php8.0-cli php8.0-mysql php8.0-gd php8
 
 sudo apt-get upgrade -q libpcre3
 
-# install nodejs and yarn
+# install nodejs and yarn npm pkg
 sudo apt-get -y -q install curl dirmngr apt-transport-https lsb-release ca-certificates unzip
 curl -fsSL https://deb.nodesource.com/setup_16.x | sudo -E bash -
 sudo apt-get install -y -q nodejs
 npm install --global yarn
-cd /var/www/etoa && yarn install --frozen-lockfile
 
 # Install PHP composer dependencies
 cd /var/www/etoa && export COMPOSER_ALLOW_SUPERUSER=1;php composer.phar install --no-interaction
+
+# install yarn dependencies
+cd /var/www/etoa && yarn install --frozen-lockfile
 
 sudo rm /etc/nginx/sites-available/default
 sudo cp /var/www/etoa/vagrant/nginx-default /etc/nginx/sites-available/default
