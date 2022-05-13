@@ -25,6 +25,9 @@ curl -fsSL https://deb.nodesource.com/setup_16.x | sudo -E bash -
 sudo apt-get install -y -q nodejs
 npm install --global yarn
 
+# Setup dummy client files
+cd /var/www/etoa && mkdir -p htdocs/web/build && echo "{}" > htdocs/web/build/manifest.json && echo '{"entrypoints": {"admin": {}}}' > htdocs/web/build/entrypoints.json
+
 # Install PHP composer dependencies
 cd /var/www/etoa && export COMPOSER_ALLOW_SUPERUSER=1;php composer.phar install --no-interaction
 
@@ -43,9 +46,6 @@ sudo chown -R www-data:www-data /var/lib/php/sessions
 
 MYSQL=`which mysql`
 PHP=`which php`
-
-# Setup dummy client files
-cd /var/www/etoa && mkdir -p htdocs/web/build && echo "{}" > htdocs/web/build/manifest.json && echo '{"entrypoints": {"admin": {}}}' > htdocs/web/build/entrypoints.json
 
 # trigger yarn build
 cd /var/www/etoa && yarn run build
