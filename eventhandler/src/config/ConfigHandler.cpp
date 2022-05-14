@@ -5,20 +5,19 @@
 
 	std::string Config::get(std::string name, int value)
 	{
-		std::vector<std::string> temp (3);
 		// return empty string as default value if no such key exists
-		if(0 == sConfig.count(name))
+		if(0 == aConfig.count(name))
 		{
 			return("");
 		}
-		temp = cConfig.at(sConfig[name]);
-		return(temp[value]);
+		// .at() for array index to get out-of-bounds checks
+		return(aConfig[name].at(value));
 	}
 
 	double Config::nget(std::string name, int value)
 	{
 		std::string temp = get(name, value);
-		double var = atof(temp.data());
+		double var = atof(temp.c_str());
 		return(var);
 	}
 
@@ -75,9 +74,8 @@
 
 	void Config::reloadConfig()
 	{
-		this->sConfig.clear();
+		this->aConfig.clear();
 		this->idConfig.clear();
-		this->cConfig.clear();
 		this->actions.clear();
 		this->actionName.clear();
 
@@ -109,15 +107,16 @@
 			unsigned int resSize = res.size();
 			if (resSize>0) {
 				mysqlpp::Row row;
-				cConfig.reserve(resSize);
 				for (mysqlpp::Row::size_type i = 0; i<resSize; i++) {
 					row = res.at(i);
-					sConfig[std::string(row["config_name"]) ] =  (int)i;
-					std::vector<std::string> temp (3);
-					temp[1]=std::string(row["config_param1"]);
-					temp[2]=std::string(row["config_param2"]);
-					temp[0]=std::string(row["config_value"]);
-					cConfig.push_back(temp);
+					aConfig.emplace(
+						aConfigType::key_type(row["config_name"]),
+						aConfigType::mapped_type({
+							std::string(row["config_value"]),
+							std::string(row["config_param1"]),
+							std::string(row["config_param2"])
+						})
+					);
 					counter = i;
 				}
 			}
@@ -141,12 +140,14 @@
 			if (mSize > 0) {
 				counter++;
 				mysqlpp::Row mRow = mRes.at(0);
-				sConfig["market_entity"] = counter;
-				std::vector<std::string> temp (3);
-				temp[1]=std::string("0");
-				temp[2]=std::string("0");
-				temp[0]=std::string(mRow["id"]);
-				cConfig.push_back(temp);
+				aConfig.emplace(
+					aConfigType::key_type("market_entity"),
+					aConfigType::mapped_type({
+						std::string(mRow["id"]),
+						std::string("0"),
+						std::string("0")
+					})
+				);
 			}
 		}
 
@@ -324,7 +325,13 @@
 		for ( it=capaContainer.begin() ; it != capaContainer.end(); it++ )
 			maxCapa = std::max((*it).second,maxCapa);
 
-		cConfig[sConfig["gasplanet"]][1] = etoa::toString(maxCapa / hoursToRefill);
-		cConfig[sConfig["gasplanet"]][2] = etoa::toString(maxCapa/this->nget("planet_fields",2));
+		aConfig.emplace(
+			aConfigType::key_type("gasplanet"),
+			aConfigType::mapped_type({
+				std::string(),
+				etoa::toString(maxCapa / hoursToRefill),
+				etoa::toString(maxCapa/this->nget("planet_fields",2))
+			})
+		);
 	}
 
