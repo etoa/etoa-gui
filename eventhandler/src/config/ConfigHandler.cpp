@@ -6,6 +6,11 @@
 	std::string Config::get(std::string name, int value)
 	{
 		std::vector<std::string> temp (3);
+		// return empty string as default value if no such key exists
+		if(0 == sConfig.count(name))
+		{
+			return("");
+		}
 		temp = cConfig.at(sConfig[name]);
 		return(temp[value]);
 	}
