@@ -2371,11 +2371,6 @@ parameters:
 			path: htdocs/content/population.php
 
 		-
-			message: "#^Parameter \\#2 \\$buildingId of method EtoA\\\\Building\\\\BuildingRepository\\:\\:setPeopleWorking\\(\\) expects int, int\\|string given\\.$#"
-			count: 1
-			path: htdocs/content/population.php
-
-		-
 			message: "#^Cannot access property \\$id on EtoA\\\\Universe\\\\Planet\\\\Planet\\|null\\.$#"
 			count: 10
 			path: htdocs/content/recycle.php
@@ -2967,6 +2962,11 @@ parameters:
 
 		-
 			message: "#^Negated boolean expression is always true\\.$#"
+			count: 1
+			path: htdocs/inc/bootstrap.inc.php
+
+		-
+			message: "#^Negated boolean expression is always false\\.$#"
 			count: 1
 			path: htdocs/inc/bootstrap.inc.php
 
