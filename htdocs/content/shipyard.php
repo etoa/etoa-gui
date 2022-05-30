@@ -710,7 +710,7 @@ if ($shipyard !== null && $shipyard->currentLevel > 0) {
                 $ccnt = 0;
 
                 // Auflistung der Schiffe (auch diese, die noch nicht gebaut wurden)
-                if (isset($shipsByCategory[$category->id]) && count($shipsByCategory[$category->id]) > 0) {
+                if (count($shipsByCategory[$category->id]) > 0) {
                     //Einfache Ansicht
                     if ($compactView) {
                         echo '<tr>
