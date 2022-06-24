@@ -15,7 +15,7 @@ $cacheFile = __DIR__.'/.phpstan-dba.cache';
 
 $config = new RuntimeConfiguration();
 $config->debugMode(true);
-$config->stringifyTypes(true); // TODO remove when upgrading to PHP 8.1
+$config->stringifyTypes(PHP_VERSION_ID <= 80100); // TODO remove when upgrading to PHP 8.1
 
 $dsn = parse_url($_SERVER['DATABASE_URL']);
 
