@@ -10,10 +10,13 @@ use EtoA\Chat\ChatUser;
 use EtoA\Chat\ChatUserRepository;
 use Symfony\UX\LiveComponent\Attribute\AsLiveComponent;
 use Symfony\UX\LiveComponent\Attribute\LiveAction;
+use Symfony\UX\LiveComponent\DefaultActionTrait;
 
 #[AsLiveComponent('admin_chat_view')]
 class ChatViewComponent
 {
+    use DefaultActionTrait;
+
     public function __construct(
         private ChatBanRepository $chatBanRepository,
         private ChatUserRepository $chatUserRepository,
