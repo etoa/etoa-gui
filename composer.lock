@@ -2724,12 +2724,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/Roave/SecurityAdvisories.git",
-                "reference": "7a8c86df136ffe6bd7bc4655d15629a87e5bd022"
+                "reference": "bc4d989050885c9c2138e0da74519efaad597076"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/7a8c86df136ffe6bd7bc4655d15629a87e5bd022",
-                "reference": "7a8c86df136ffe6bd7bc4655d15629a87e5bd022",
+                "url": "https://api.github.com/repos/Roave/SecurityAdvisories/zipball/bc4d989050885c9c2138e0da74519efaad597076",
+                "reference": "bc4d989050885c9c2138e0da74519efaad597076",
                 "shasum": ""
             },
             "conflict": {
@@ -2808,7 +2808,7 @@
                 "doctrine/mongodb-odm-bundle": ">=2,<3.0.1",
                 "doctrine/orm": ">=2,<2.4.8|>=2.5,<2.5.1|>=2.8.3,<2.8.4",
                 "dolibarr/dolibarr": "<16|= 12.0.5|>= 3.3.beta1, < 13.0.2",
-                "dompdf/dompdf": "<1.2.1",
+                "dompdf/dompdf": "<2",
                 "drupal/core": ">=7,<7.88|>=8,<9.2.13|>=9.3,<9.3.6",
                 "drupal/drupal": ">=7,<7.80|>=8,<8.9.16|>=9,<9.1.12|>=9.2,<9.2.4",
                 "dweeves/magmi": "<=0.7.24",
@@ -2861,7 +2861,7 @@
                 "fuel/core": "<1.8.1",
                 "gaoming13/wechat-php-sdk": "<=1.10.2",
                 "genix/cms": "<=1.1.11",
-                "getgrav/grav": "<1.7.33",
+                "getgrav/grav": "<1.7.34",
                 "getkirby/cms": "<3.5.8",
                 "getkirby/panel": "<2.5.14",
                 "gilacms/gila": "<=1.11.4",
@@ -3221,7 +3221,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2022-06-29T23:04:12+00:00"
+            "time": "2022-07-06T08:13:54+00:00"
         },
         {
             "name": "scheb/2fa",
@@ -8440,16 +8440,16 @@
         },
         {
             "name": "symfony/ux-live-component",
-            "version": "v2.2.0",
+            "version": "v2.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/ux-live-component.git",
-                "reference": "9ed191e29ed599059929469a24dd74ee7ca548e0"
+                "reference": "aa46264137acac3dab4a7596b6a22f82ed34aa97"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/ux-live-component/zipball/9ed191e29ed599059929469a24dd74ee7ca548e0",
-                "reference": "9ed191e29ed599059929469a24dd74ee7ca548e0",
+                "url": "https://api.github.com/repos/symfony/ux-live-component/zipball/aa46264137acac3dab4a7596b6a22f82ed34aa97",
+                "reference": "aa46264137acac3dab4a7596b6a22f82ed34aa97",
                 "shasum": ""
             },
             "require": {
@@ -8505,7 +8505,7 @@
                 "twig"
             ],
             "support": {
-                "source": "https://github.com/symfony/ux-live-component/tree/v2.2.0"
+                "source": "https://github.com/symfony/ux-live-component/tree/v2.3.0"
             },
             "funding": [
                 {
@@ -8521,20 +8521,20 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2022-06-14T19:28:41+00:00"
+            "time": "2022-07-08T14:54:39+00:00"
         },
         {
             "name": "symfony/ux-twig-component",
-            "version": "v2.2.0",
+            "version": "v2.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/ux-twig-component.git",
-                "reference": "9a6575f0902bc364ddfc605eda0c9720500b2527"
+                "reference": "877a1b479b6083472bbec6a9e7267f2cac11b5dd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/ux-twig-component/zipball/9a6575f0902bc364ddfc605eda0c9720500b2527",
-                "reference": "9a6575f0902bc364ddfc605eda0c9720500b2527",
+                "url": "https://api.github.com/repos/symfony/ux-twig-component/zipball/877a1b479b6083472bbec6a9e7267f2cac11b5dd",
+                "reference": "877a1b479b6083472bbec6a9e7267f2cac11b5dd",
                 "shasum": ""
             },
             "require": {
@@ -8582,7 +8582,7 @@
                 "twig"
             ],
             "support": {
-                "source": "https://github.com/symfony/ux-twig-component/tree/v2.2.0"
+                "source": "https://github.com/symfony/ux-twig-component/tree/v2.3.0"
             },
             "funding": [
                 {
@@ -8598,7 +8598,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2022-05-31T14:16:19+00:00"
+            "time": "2022-06-17T07:08:52+00:00"
         },
         {
             "name": "symfony/validator",
@@ -8875,16 +8875,16 @@
         },
         {
             "name": "symfony/webpack-encore-bundle",
-            "version": "v1.14.1",
+            "version": "v1.15.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/webpack-encore-bundle.git",
-                "reference": "6b18be99bf2a5a402b80a2c00043fe0b365fe836"
+                "reference": "1fc386364200ca43108ff1871d86435b840ea67c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/webpack-encore-bundle/zipball/6b18be99bf2a5a402b80a2c00043fe0b365fe836",
-                "reference": "6b18be99bf2a5a402b80a2c00043fe0b365fe836",
+                "url": "https://api.github.com/repos/symfony/webpack-encore-bundle/zipball/1fc386364200ca43108ff1871d86435b840ea67c",
+                "reference": "1fc386364200ca43108ff1871d86435b840ea67c",
                 "shasum": ""
             },
             "require": {
@@ -8892,7 +8892,9 @@
                 "symfony/asset": "^4.4 || ^5.0 || ^6.0",
                 "symfony/config": "^4.4 || ^5.0 || ^6.0",
                 "symfony/dependency-injection": "^4.4 || ^5.0 || ^6.0",
+                "symfony/deprecation-contracts": "^2.1 || ^3.0",
                 "symfony/http-kernel": "^4.4 || ^5.0 || ^6.0",
+                "symfony/polyfill-php80": "^1.25.0",
                 "symfony/service-contracts": "^1.0 || ^2.0 || ^3.0"
             },
             "require-dev": {
@@ -8926,7 +8928,7 @@
             "description": "Integration with your Symfony app & Webpack Encore!",
             "support": {
                 "issues": "https://github.com/symfony/webpack-encore-bundle/issues",
-                "source": "https://github.com/symfony/webpack-encore-bundle/tree/v1.14.1"
+                "source": "https://github.com/symfony/webpack-encore-bundle/tree/v1.15.0"
             },
             "funding": [
                 {
@@ -8942,7 +8944,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2022-05-03T17:55:32+00:00"
+            "time": "2022-07-06T13:36:43+00:00"
         },
         {
             "name": "symfony/workflow",
@@ -9810,16 +9812,16 @@
         },
         {
             "name": "ergebnis/composer-normalize",
-            "version": "2.28.2",
+            "version": "2.28.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/ergebnis/composer-normalize.git",
-                "reference": "8fa1ffdd2e65f2deca0de3af3ac7670cb8fa795b"
+                "reference": "ec75a2bf751f6fec165e9ea0262655b8ca397e5c"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/ergebnis/composer-normalize/zipball/8fa1ffdd2e65f2deca0de3af3ac7670cb8fa795b",
-                "reference": "8fa1ffdd2e65f2deca0de3af3ac7670cb8fa795b",
+                "url": "https://api.github.com/repos/ergebnis/composer-normalize/zipball/ec75a2bf751f6fec165e9ea0262655b8ca397e5c",
+                "reference": "ec75a2bf751f6fec165e9ea0262655b8ca397e5c",
                 "shasum": ""
             },
             "require": {
@@ -9831,7 +9833,7 @@
                 "php": "^7.4 || ^8.0"
             },
             "require-dev": {
-                "composer/composer": "^2.3.8",
+                "composer/composer": "^2.3.9",
                 "ergebnis/license": "^1.2.0",
                 "ergebnis/php-cs-fixer-config": "^4.4.0",
                 "fakerphp/faker": "^1.19.0",
@@ -9875,7 +9877,7 @@
                 "issues": "https://github.com/ergebnis/composer-normalize/issues",
                 "source": "https://github.com/ergebnis/composer-normalize"
             },
-            "time": "2022-07-03T10:17:05+00:00"
+            "time": "2022-07-05T16:09:10+00:00"
         },
         {
             "name": "ergebnis/json-normalizer",
@@ -11620,16 +11622,16 @@
         },
         {
             "name": "rector/rector",
-            "version": "0.13.7",
+            "version": "0.13.8",
             "source": {
                 "type": "git",
                 "url": "https://github.com/rectorphp/rector.git",
-                "reference": "3574bf6399ae3951e31f3a9481e22ddb2f2f08b2"
+                "reference": "6e01478f8239bfe28e003fad98d402589fa6861e"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/rectorphp/rector/zipball/3574bf6399ae3951e31f3a9481e22ddb2f2f08b2",
-                "reference": "3574bf6399ae3951e31f3a9481e22ddb2f2f08b2",
+                "url": "https://api.github.com/repos/rectorphp/rector/zipball/6e01478f8239bfe28e003fad98d402589fa6861e",
+                "reference": "6e01478f8239bfe28e003fad98d402589fa6861e",
                 "shasum": ""
             },
             "require": {
@@ -11668,7 +11670,7 @@
             "description": "Instant Upgrade and Automated Refactoring of any PHP code",
             "support": {
                 "issues": "https://github.com/rectorphp/rector/issues",
-                "source": "https://github.com/rectorphp/rector/tree/0.13.7"
+                "source": "https://github.com/rectorphp/rector/tree/0.13.8"
             },
             "funding": [
                 {
@@ -11676,7 +11678,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2022-06-29T12:00:57+00:00"
+            "time": "2022-07-07T09:46:05+00:00"
         },
         {
             "name": "sebastian/cli-parser",
