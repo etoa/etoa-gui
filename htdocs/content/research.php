@@ -798,7 +798,7 @@ if (isset($cp)) {
                                 if ($use_img_filter) {
                                     $filterStyleClass = "filter-unavailable";
                                 }
-                                $img = $technology->getImagePath('other');
+                                $img = $tech->getImagePath('other');
                             } elseif ($tech->show) {
                                 // Voraussetzungen nicht erfüllt
                                 if (!$requirements_passed) {
@@ -820,7 +820,7 @@ if (isset($cp)) {
                                     if ($use_img_filter) {
                                         $filterStyleClass = "filter-unavailable";
                                     }
-                                    $img = $technology->getImagePath('other');
+                                    $img = $tech->getImagePath('other');
                                 }
                                 // Ist im Bau
                                 elseif (isset($techlist[$tech->id]) && $techlist[$tech->id]->buildType === 3) {
@@ -830,7 +830,7 @@ if (isset($cp)) {
                                     if ($use_img_filter) {
                                         $filterStyleClass = "filter-building";
                                     }
-                                    $img = $technology->getImagePath('other');
+                                    $img = $tech->getImagePath('other');
                                 }
                                 // Untätig
                                 else {
@@ -844,11 +844,11 @@ if (isset($cp)) {
                                         if ($use_img_filter) {
                                             $filterStyleClass = "filter-noresources";
                                         }
-                                        $img = $technology->getImagePath('other');
+                                        $img = $tech->getImagePath('other');
                                     } else {
                                         $tmtext = "";
                                         $color = '#fff';
-                                        $img = $technology->getImagePath('other');
+                                        $img = $tech->getImagePath('other');
                                     }
 
                                     if ($b_level == 0) {
@@ -864,7 +864,7 @@ if (isset($cp)) {
 
                             // Display all buildings that are buildable or are already built
                             if ($tech->show || $b_level > 0) {
-                                $img = $technology->getImagePath('medium');
+                                $img = $tech->getImagePath('medium');
 
                                 if (!$requirements_passed) {
                                     $filterStyleClass = "filter-unavailable";
