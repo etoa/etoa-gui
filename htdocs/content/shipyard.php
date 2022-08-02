@@ -284,7 +284,7 @@ if ($shipyard !== null && $shipyard->currentLevel > 0) {
         if (isset($_POST['submit_people_form'])) {
             $toBeAssignedPeople = StringUtils::parseFormattedNumber($_POST['peopleWorking']);
             $free = $cp->people - $peopleWorking->total + $peopleWorking->getById(BuildingId::SHIPYARD);
-            if (count($queue) === 0 && $free > $toBeAssignedPeople && !$shipyard->isUnderConstruction()) {
+            if (count($queue) === 0 && $free >= $toBeAssignedPeople && !$shipyard->isUnderConstruction()) {
                 $buildingRepository->setPeopleWorking($planet->id, BuildingId::SHIPYARD, $toBeAssignedPeople);
                 //success_msg("Arbeiter zugeteilt!");
             } else
