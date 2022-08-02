@@ -184,13 +184,13 @@ if ($config->getBoolean('crypto_enable')) {
             countDown("cdcd", $userCooldown);
         }
     } else {
-        echo "<h1>Kryptocenter" . ($planet->name ? " des Planeten " . $planet->name : "") . "</h1>";
+        echo "<h1>Kryptocenter" . (!empty($planet->name) ? " des Planeten " . $planet->name : "") . "</h1>";
         echo $resourceBoxDrawer->getHTML($planet);
 
         info_msg("Das Kryptocenter wurde noch nicht gebaut!");
     }
 } else {
-    echo "<h1>Kryptocenter" . ($planet->name ? " des Planeten " . $planet->name : "") . "</h1>";
+    echo "<h1>Kryptocenter" . (!empty($planet->name) ? " des Planeten " . $planet->name : "") . "</h1>";
     echo $resourceBoxDrawer->getHTML($planet);
 
     info_msg("Aufgrund eines intergalaktischen Moratoriums der Völkerföderation der Galaxie Andromeda

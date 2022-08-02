@@ -94,7 +94,7 @@ if ($factoryBuilding !== null && $factoryBuilding->currentLevel > 0) {
     $peopleWorking = $buildingRepository->getPeopleWorking($planet->id);
 
     // Titel
-    echo "<h1>Waffenfabrik (Stufe " . $factoryBuilding->currentLevel . ")" . ($planet->name ? " des Planeten " . $planet->name : "") . "</h1>";
+    echo "<h1>Waffenfabrik (Stufe " . $factoryBuilding->currentLevel . ")" . (!empty($planet->name) ? " des Planeten " . $planet->name : "") . "</h1>";
 
     // Ressourcen anzeigen
     echo $resourceBoxDrawer->getHTML($planet);
@@ -1055,7 +1055,7 @@ if ($factoryBuilding !== null && $factoryBuilding->currentLevel > 0) {
     }
 } else {
     // Titel
-    echo "<h1>Waffenfabrik" . ($planet->name ? " des Planeten " . $planet->name : "") . "</h1>";
+    echo "<h1>Waffenfabrik" . (!empty($planet->name) ? " des Planeten " . $planet->name : "") . "</h1>";
 
     // Ressourcen anzeigen
     echo $resourceBoxDrawer->getHTML($planet);
