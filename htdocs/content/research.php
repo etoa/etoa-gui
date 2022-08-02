@@ -67,7 +67,7 @@ if (isset($cp)) {
         $minBuildTimeFactor = (0.1 - (GEN_TECH_LEVEL / 100));
 
         // Überschrift
-        echo "<h1>Forschungslabor (Stufe " . $researchBuilding->currentLevel . ") des Planeten " . $planet->name . "</h1>";
+        echo "<h1>Forschungslabor (Stufe " . $researchBuilding->currentLevel . ")" . ($planet->name ? " des Planeten " . $planet->name : "") . "</h1>";
         echo $resourceBoxDrawer->getHTML($planet);
 
         // Forschungsliste laden && Gentech level definieren
@@ -922,7 +922,7 @@ if (isset($cp)) {
             }
         }
     } else {
-        echo "<h1>Forschungslabor des Planeten " . $planet->name . "</h1>";
+        echo "<h1>Forschungslabor" . ($planet->name ? " des Planeten " . $planet->name : "") . "</h1>";
         echo $resourceBoxDrawer->getHTML($planet);
         info_msg("Das Forschungslabor wurde noch nicht gebaut!");
     }
