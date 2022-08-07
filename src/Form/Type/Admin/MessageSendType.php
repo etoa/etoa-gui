@@ -62,6 +62,6 @@ class MessageSendType extends AbstractType
             ])
             ->add('text', TextareaType::class)
             ->add('send', SubmitType::class)
-            ;
+        ;
     }
 }
