@@ -96,7 +96,7 @@ if (isset($cp)) {
             $peopleWorking = $buildingRepository->getPeopleWorking($planet->id);
             $toBeAssignedPeople = StringUtils::parseFormattedNumber($_POST['peopleWorking']);
             $free = $cp->people - $peopleWorking->total + $peopleWorking->getById(BuildingId::PEOPLE);
-            if (!$building_gen && $free > $toBeAssignedPeople) {
+            if (!$building_gen && $free >= $toBeAssignedPeople) {
                 $buildingRepository->setPeopleWorking($planet->id, BuildingId::PEOPLE, $toBeAssignedPeople);
                 success_msg("Arbeiter zugeteilt!");
                 $new_people_set = true;
@@ -109,7 +109,7 @@ if (isset($cp)) {
             $peopleWorking = $buildingRepository->getPeopleWorking($planet->id);
             $toBeAssignedPeople = StringUtils::parseFormattedNumber($_POST['peopleWorking']);
             $free = $cp->people - $peopleWorking->total + $peopleWorking->getById(BuildingId::TECHNOLOGY);
-            if (!$building_something && $free > $toBeAssignedPeople) {
+            if (!$building_something && $free >= $toBeAssignedPeople) {
                 $buildingRepository->setPeopleWorking($planet->id, BuildingId::TECHNOLOGY, $toBeAssignedPeople);
                 success_msg("Arbeiter zugeteilt!");
                 $new_people_set = true;
