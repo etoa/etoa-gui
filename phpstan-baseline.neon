@@ -2511,11 +2511,6 @@ parameters:
 			path: htdocs/content/research.php
 
 		-
-			message: "#^Cannot call method getImagePath\\(\\) on EtoA\\\\Technology\\\\Technology\\|null\\.$#"
-			count: 6
-			path: htdocs/content/research.php
-
-		-
 			message: "#^Only booleans are allowed in an if condition, string\\|false given\\.$#"
 			count: 1
 			path: htdocs/content/research.php
