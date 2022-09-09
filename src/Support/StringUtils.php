@@ -405,7 +405,7 @@ class StringUtils
         return ctype_alpha(str_replace('_', '', str_replace('.', '', $str)));
     }
     
-    public static function empty_strict(string $str): bool
+    public static function empty_strict(?string $str): bool
     {
         return $str === null || $str === '';
     }
