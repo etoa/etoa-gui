@@ -54,7 +54,7 @@ if ($properties->imageFilter) {
 if (isset($cp)) {
     $planet = $planetRepo->find($cp->id);
 
-    echo "<h1>Bauhof" . (!empty($planet->name) ? " des Planeten " . $planet->name : "") . "</h1>";
+    echo "<h1>Bauhof" . (!StringUtils::empty_strict($planet->name) ? " des Planeten " . $planet->name : "") . "</h1>";
 
     echo $resourceBoxDrawer->getHTML($planet);
 

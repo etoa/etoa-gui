@@ -1085,7 +1085,7 @@ if ($shipyard !== null && $shipyard->currentLevel > 0) {
     }
 } else {
     // Titel
-    echo "<h1>Raumschiffswerft" . (!empty($planet->name) ? " des Planeten " . $planet->name : "") . "</h1>";
+    echo "<h1>Raumschiffswerft" . (!StringUtils::empty_strict($planet->name) ? " des Planeten " . $planet->name : "") . "</h1>";
 
     // Ressourcen anzeigen
     echo $resourceBoxDrawer->getHTML($planet);

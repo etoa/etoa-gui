@@ -72,7 +72,7 @@ if ($cp) {
         }
     }
 
-    echo "<h1>Wirtschaft" . (!empty($planet->name) ? " des Planeten " . $planet->name : "") . "</h1>";
+    echo "<h1>Wirtschaft" . (!StringUtils::empty_strict($planet->name) ? " des Planeten " . $planet->name : "") . "</h1>";
     echo $resourceBoxDrawer->getHTML($planet);
 
     if (isset($_GET['action']) && $_GET['action'] == "update") {

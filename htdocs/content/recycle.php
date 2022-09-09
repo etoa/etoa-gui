@@ -44,7 +44,7 @@ define("RECYC_MAX_PAYBACK", $config->getFloat('recyc_max_payback'));
 
 $planet = $planetRepo->find($cp->id);
 
-echo "<h1>Recyclingstation" . (!empty($planet->name) ? " des Planeten " . $planet->name : "") . "</h1>";
+echo "<h1>Recyclingstation" . (!StringUtils::empty_strict($planet->name) ? " des Planeten " . $planet->name : "") . "</h1>";
 echo $resourceBoxDrawer->getHTML($planet);
 
 //Recycling Level laden

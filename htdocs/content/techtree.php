@@ -137,7 +137,7 @@ if ($mode == "tech") {
 if (isset($cp)) {
 
     // Daten anzeigen
-    echo "<h1>Technikbaum" . (!empty($cp->name()) ? " des Planeten " . $cp->name() : "") . "</h1>";
+    echo "<h1>Technikbaum" . (!StringUtils::empty_strict($cp->name()) ? " des Planeten " . $cp->name() : "") . "</h1>";
 
     // Tab-Navigation anzeigen
     show_tab_menu("mode", array(

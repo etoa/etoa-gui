@@ -71,7 +71,7 @@ if ($missileBuilding !== null && $missileBuilding->currentLevel > 0) {
     $max_flights = $missileBuilding->currentLevel * MISSILE_SILO_FLIGHTS_PER_LEVEL;
 
     // Titel
-    echo "<h1>Raketensilo (Stufe " . $missileBuilding->currentLevel . ")" . (!empty($planet->name) ? " des Planeten " . $planet->name : "") . "</h1>";
+    echo "<h1>Raketensilo (Stufe " . $missileBuilding->currentLevel . ")" . (!StringUtils::empty_strict($planet->name) ? " des Planeten " . $planet->name : "") . "</h1>";
 
     // Ressourcen anzeigen
     echo $resourceBoxDrawer->getHTML($planet);
@@ -733,7 +733,7 @@ if ($missileBuilding !== null && $missileBuilding->currentLevel > 0) {
     }
 } else {
     // Titel
-    echo "<h1>Raketensilo" . (!empty($planet->name) ? " des Planeten " . $planet->name : "") . "</h1>";
+    echo "<h1>Raketensilo" . (!StringUtils::empty_strict($planet->name) ? " des Planeten " . $planet->name : "") . "</h1>";
 
     // Ressourcen anzeigen
     echo $resourceBoxDrawer->getHTML($planet);

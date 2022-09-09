@@ -33,7 +33,7 @@ $shipDataRepository = $app[ShipDataRepository::class];
 if ($cp) {
     $planet = $planetRepo->find($cp->id);
 
-    echo "<h1>Raumschiffhafen" . (!empty($planet->name) ? " des Planeten " . $planet->name : "") . "</h1>";
+    echo "<h1>Raumschiffhafen" . (!StringUtils::empty_strict($planet->name) ? " des Planeten " . $planet->name : "") . "</h1>";
     echo $resourceBoxDrawer->getHTML($planet);
 
     if (!$cu->isVerified) {
