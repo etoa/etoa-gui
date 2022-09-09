@@ -53,6 +53,10 @@ if ($properties->imageFilter) {
 
 if (isset($cp)) {
     $planet = $planetRepo->find($cp->id);
+    if(null === $planet)
+    {
+        return;
+    }
 
     echo "<h1>Bauhof" . (!StringUtils::empty_strict($planet->name) ? " des Planeten " . $planet->name : "") . "</h1>";
 
