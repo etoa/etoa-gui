@@ -24,6 +24,7 @@ use EtoA\Technology\TechnologyDataRepository;
 use EtoA\Technology\TechnologyRepository;
 use EtoA\Technology\TechnologyRequirementRepository;
 use EtoA\Technology\TechnologyTypeRepository;
+use EtoA\Support\StringUtils;
 
 /** @var BuildingDataRepository $buildRepository */
 $buildRepository = $app[BuildingDataRepository::class];
