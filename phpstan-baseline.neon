@@ -1376,52 +1376,7 @@ parameters:
 			path: htdocs/content/crypto.php
 
 		-
-			message: "#^Cannot access property \\$prodFuel on EtoA\\\\Universe\\\\Planet\\\\Planet\\|null\\.$#"
-			count: 2
-			path: htdocs/content/defense.php
-
-		-
-			message: "#^Cannot access property \\$prodMetal on EtoA\\\\Universe\\\\Planet\\\\Planet\\|null\\.$#"
-			count: 2
-			path: htdocs/content/defense.php
-
-		-
-			message: "#^Cannot access property \\$prodPlastic on EtoA\\\\Universe\\\\Planet\\\\Planet\\|null\\.$#"
-			count: 2
-			path: htdocs/content/defense.php
-
-		-
-			message: "#^Cannot access property \\$resCrystal on EtoA\\\\Universe\\\\Planet\\\\Planet\\|null\\.$#"
-			count: 7
-			path: htdocs/content/defense.php
-
-		-
-			message: "#^Cannot access property \\$resFood on EtoA\\\\Universe\\\\Planet\\\\Planet\\|null\\.$#"
-			count: 8
-			path: htdocs/content/defense.php
-
-		-
-			message: "#^Cannot access property \\$resFuel on EtoA\\\\Universe\\\\Planet\\\\Planet\\|null\\.$#"
-			count: 7
-			path: htdocs/content/defense.php
-
-		-
-			message: "#^Cannot access property \\$resMetal on EtoA\\\\Universe\\\\Planet\\\\Planet\\|null\\.$#"
-			count: 7
-			path: htdocs/content/defense.php
-
-		-
-			message: "#^Cannot access property \\$resPlastic on EtoA\\\\Universe\\\\Planet\\\\Planet\\|null\\.$#"
-			count: 7
-			path: htdocs/content/defense.php
-
-		-
 			message: "#^Parameter \\#1 \\$num of function floor expects float\\|int, float\\|false given\\.$#"
-			count: 2
-			path: htdocs/content/defense.php
-
-		-
-			message: "#^Parameter \\#1 \\$planet of method EtoA\\\\UI\\\\ResourceBoxDrawer\\:\\:getHTML\\(\\) expects EtoA\\\\Universe\\\\Planet\\\\Planet, EtoA\\\\Universe\\\\Planet\\\\Planet\\|null given\\.$#"
 			count: 2
 			path: htdocs/content/defense.php
 
@@ -1471,11 +1426,6 @@ parameters:
 			path: htdocs/content/economy.php
 
 		-
-			message: "#^Cannot access property \\$id on EtoA\\\\Universe\\\\Planet\\\\Planet\\|null\\.$#"
-			count: 6
-			path: htdocs/content/economy.php
-
-		-
 			message: "#^Cannot access property \\$metal on EtoA\\\\Race\\\\Race\\|null\\.$#"
 			count: 3
 			path: htdocs/content/economy.php
@@ -1487,11 +1437,6 @@ parameters:
 
 		-
 			message: "#^Cannot access property \\$name on EtoA\\\\Race\\\\Race\\|null\\.$#"
-			count: 1
-			path: htdocs/content/economy.php
-
-		-
-			message: "#^Cannot access property \\$name on EtoA\\\\Universe\\\\Planet\\\\Planet\\|null\\.$#"
 			count: 1
 			path: htdocs/content/economy.php
 
@@ -1511,87 +1456,12 @@ parameters:
 			path: htdocs/content/economy.php
 
 		-
-			message: "#^Cannot access property \\$prodPower on EtoA\\\\Universe\\\\Planet\\\\Planet\\|null\\.$#"
-			count: 5
-			path: htdocs/content/economy.php
-
-		-
-			message: "#^Cannot access property \\$resCrystal on EtoA\\\\Universe\\\\Planet\\\\Planet\\|null\\.$#"
-			count: 1
-			path: htdocs/content/economy.php
-
-		-
-			message: "#^Cannot access property \\$resFood on EtoA\\\\Universe\\\\Planet\\\\Planet\\|null\\.$#"
-			count: 1
-			path: htdocs/content/economy.php
-
-		-
-			message: "#^Cannot access property \\$resFuel on EtoA\\\\Universe\\\\Planet\\\\Planet\\|null\\.$#"
-			count: 1
-			path: htdocs/content/economy.php
-
-		-
-			message: "#^Cannot access property \\$resMetal on EtoA\\\\Universe\\\\Planet\\\\Planet\\|null\\.$#"
-			count: 1
-			path: htdocs/content/economy.php
-
-		-
-			message: "#^Cannot access property \\$resPlastic on EtoA\\\\Universe\\\\Planet\\\\Planet\\|null\\.$#"
-			count: 1
-			path: htdocs/content/economy.php
-
-		-
 			message: "#^Cannot access property \\$researchTime on EtoA\\\\Race\\\\Race\\|null\\.$#"
 			count: 2
 			path: htdocs/content/economy.php
 
 		-
-			message: "#^Cannot access property \\$storeCrystal on EtoA\\\\Universe\\\\Planet\\\\Planet\\|null\\.$#"
-			count: 2
-			path: htdocs/content/economy.php
-
-		-
-			message: "#^Cannot access property \\$storeFood on EtoA\\\\Universe\\\\Planet\\\\Planet\\|null\\.$#"
-			count: 2
-			path: htdocs/content/economy.php
-
-		-
-			message: "#^Cannot access property \\$storeFuel on EtoA\\\\Universe\\\\Planet\\\\Planet\\|null\\.$#"
-			count: 2
-			path: htdocs/content/economy.php
-
-		-
-			message: "#^Cannot access property \\$storeMetal on EtoA\\\\Universe\\\\Planet\\\\Planet\\|null\\.$#"
-			count: 2
-			path: htdocs/content/economy.php
-
-		-
-			message: "#^Cannot access property \\$storePlastic on EtoA\\\\Universe\\\\Planet\\\\Planet\\|null\\.$#"
-			count: 2
-			path: htdocs/content/economy.php
-
-		-
 			message: "#^Cannot call method calculateBunkerResources\\(\\) on EtoA\\\\Building\\\\Building\\|null\\.$#"
-			count: 1
-			path: htdocs/content/economy.php
-
-		-
-			message: "#^Cannot call method fuelProductionBonus\\(\\) on EtoA\\\\Universe\\\\Planet\\\\Planet\\|null\\.$#"
-			count: 1
-			path: htdocs/content/economy.php
-
-		-
-			message: "#^Cannot call method getFuelProductionBonusFactor\\(\\) on EtoA\\\\Universe\\\\Planet\\\\Planet\\|null\\.$#"
-			count: 1
-			path: htdocs/content/economy.php
-
-		-
-			message: "#^Cannot call method solarPowerBonus\\(\\) on EtoA\\\\Universe\\\\Planet\\\\Planet\\|null\\.$#"
-			count: 1
-			path: htdocs/content/economy.php
-
-		-
-			message: "#^Parameter \\#1 \\$planet of method EtoA\\\\UI\\\\ResourceBoxDrawer\\:\\:getHTML\\(\\) expects EtoA\\\\Universe\\\\Planet\\\\Planet, EtoA\\\\Universe\\\\Planet\\\\Planet\\|null given\\.$#"
 			count: 1
 			path: htdocs/content/economy.php
 
@@ -1766,21 +1636,6 @@ parameters:
 			path: htdocs/content/fleets.php
 
 		-
-			message: "#^Cannot access property \\$id on EtoA\\\\Universe\\\\Planet\\\\Planet\\|null\\.$#"
-			count: 9
-			path: htdocs/content/haven.php
-
-		-
-			message: "#^Cannot access property \\$name on EtoA\\\\Universe\\\\Planet\\\\Planet\\|null\\.$#"
-			count: 1
-			path: htdocs/content/haven.php
-
-		-
-			message: "#^Parameter \\#1 \\$planet of method EtoA\\\\UI\\\\ResourceBoxDrawer\\:\\:getHTML\\(\\) expects EtoA\\\\Universe\\\\Planet\\\\Planet, EtoA\\\\Universe\\\\Planet\\\\Planet\\|null given\\.$#"
-			count: 1
-			path: htdocs/content/haven.php
-
-		-
 			message: "#^Parameter \\#1 \\$string of static method EtoA\\\\Support\\\\BBCodeUtils\\:\\:toHTML\\(\\) expects string\\|null, bool\\|float\\|int\\|string given\\.$#"
 			count: 1
 			path: htdocs/content/haven.php
@@ -1799,21 +1654,6 @@ parameters:
 			message: "#^Only booleans are allowed in &&, int\\|false given on the right side\\.$#"
 			count: 1
 			path: htdocs/content/help.php
-
-		-
-			message: "#^Cannot access property \\$id on EtoA\\\\Universe\\\\Planet\\\\Planet\\|null\\.$#"
-			count: 2
-			path: htdocs/content/market.php
-
-		-
-			message: "#^Cannot access property \\$name on EtoA\\\\Universe\\\\Planet\\\\Planet\\|null\\.$#"
-			count: 1
-			path: htdocs/content/market.php
-
-		-
-			message: "#^Parameter \\#1 \\$planet of method EtoA\\\\UI\\\\ResourceBoxDrawer\\:\\:getHTML\\(\\) expects EtoA\\\\Universe\\\\Planet\\\\Planet, EtoA\\\\Universe\\\\Planet\\\\Planet\\|null given\\.$#"
-			count: 3
-			path: htdocs/content/market.php
 
 		-
 			message: "#^Variable \\$cstr might not be defined\\.$#"
@@ -1921,73 +1761,8 @@ parameters:
 			path: htdocs/content/missiles.php
 
 		-
-			message: "#^Cannot access property \\$id on EtoA\\\\Universe\\\\Planet\\\\Planet\\|null\\.$#"
-			count: 11
-			path: htdocs/content/missiles.php
-
-		-
-			message: "#^Cannot access property \\$name on EtoA\\\\Universe\\\\Planet\\\\Planet\\|null\\.$#"
-			count: 2
-			path: htdocs/content/missiles.php
-
-		-
 			message: "#^Cannot access property \\$pos on EtoA\\\\Universe\\\\Entity\\\\Entity\\|null\\.$#"
 			count: 2
-			path: htdocs/content/missiles.php
-
-		-
-			message: "#^Cannot access property \\$prodCrystal on EtoA\\\\Universe\\\\Planet\\\\Planet\\|null\\.$#"
-			count: 2
-			path: htdocs/content/missiles.php
-
-		-
-			message: "#^Cannot access property \\$prodFood on EtoA\\\\Universe\\\\Planet\\\\Planet\\|null\\.$#"
-			count: 2
-			path: htdocs/content/missiles.php
-
-		-
-			message: "#^Cannot access property \\$prodFuel on EtoA\\\\Universe\\\\Planet\\\\Planet\\|null\\.$#"
-			count: 2
-			path: htdocs/content/missiles.php
-
-		-
-			message: "#^Cannot access property \\$prodMetal on EtoA\\\\Universe\\\\Planet\\\\Planet\\|null\\.$#"
-			count: 2
-			path: htdocs/content/missiles.php
-
-		-
-			message: "#^Cannot access property \\$prodPlastic on EtoA\\\\Universe\\\\Planet\\\\Planet\\|null\\.$#"
-			count: 2
-			path: htdocs/content/missiles.php
-
-		-
-			message: "#^Cannot access property \\$prodPower on EtoA\\\\Universe\\\\Planet\\\\Planet\\|null\\.$#"
-			count: 2
-			path: htdocs/content/missiles.php
-
-		-
-			message: "#^Cannot access property \\$resCrystal on EtoA\\\\Universe\\\\Planet\\\\Planet\\|null\\.$#"
-			count: 4
-			path: htdocs/content/missiles.php
-
-		-
-			message: "#^Cannot access property \\$resFood on EtoA\\\\Universe\\\\Planet\\\\Planet\\|null\\.$#"
-			count: 4
-			path: htdocs/content/missiles.php
-
-		-
-			message: "#^Cannot access property \\$resFuel on EtoA\\\\Universe\\\\Planet\\\\Planet\\|null\\.$#"
-			count: 4
-			path: htdocs/content/missiles.php
-
-		-
-			message: "#^Cannot access property \\$resMetal on EtoA\\\\Universe\\\\Planet\\\\Planet\\|null\\.$#"
-			count: 4
-			path: htdocs/content/missiles.php
-
-		-
-			message: "#^Cannot access property \\$resPlastic on EtoA\\\\Universe\\\\Planet\\\\Planet\\|null\\.$#"
-			count: 4
 			path: htdocs/content/missiles.php
 
 		-
@@ -2001,18 +1776,8 @@ parameters:
 			path: htdocs/content/missiles.php
 
 		-
-			message: "#^Cannot access property \\$usePower on EtoA\\\\Universe\\\\Planet\\\\Planet\\|null\\.$#"
-			count: 1
-			path: htdocs/content/missiles.php
-
-		-
 			message: "#^If condition is always false\\.$#"
 			count: 1
-			path: htdocs/content/missiles.php
-
-		-
-			message: "#^Parameter \\#1 \\$planet of method EtoA\\\\UI\\\\ResourceBoxDrawer\\:\\:getHTML\\(\\) expects EtoA\\\\Universe\\\\Planet\\\\Planet, EtoA\\\\Universe\\\\Planet\\\\Planet\\|null given\\.$#"
-			count: 2
 			path: htdocs/content/missiles.php
 
 		-
@@ -2231,27 +1996,7 @@ parameters:
 			path: htdocs/content/planetstats.php
 
 		-
-			message: "#^Cannot access property \\$id on EtoA\\\\Universe\\\\Planet\\\\Planet\\|null\\.$#"
-			count: 12
-			path: htdocs/content/population.php
-
-		-
 			message: "#^Cannot access property \\$name on EtoA\\\\Race\\\\Race\\|null\\.$#"
-			count: 1
-			path: htdocs/content/population.php
-
-		-
-			message: "#^Cannot access property \\$name on EtoA\\\\Universe\\\\Planet\\\\Planet\\|null\\.$#"
-			count: 1
-			path: htdocs/content/population.php
-
-		-
-			message: "#^Cannot access property \\$people on EtoA\\\\Universe\\\\Planet\\\\Planet\\|null\\.$#"
-			count: 6
-			path: htdocs/content/population.php
-
-		-
-			message: "#^Cannot access property \\$peoplePlace on EtoA\\\\Universe\\\\Planet\\\\Planet\\|null\\.$#"
 			count: 1
 			path: htdocs/content/population.php
 
@@ -2266,52 +2011,7 @@ parameters:
 			path: htdocs/content/population.php
 
 		-
-			message: "#^Parameter \\#1 \\$planet of method EtoA\\\\UI\\\\ResourceBoxDrawer\\:\\:getHTML\\(\\) expects EtoA\\\\Universe\\\\Planet\\\\Planet, EtoA\\\\Universe\\\\Planet\\\\Planet\\|null given\\.$#"
-			count: 1
-			path: htdocs/content/population.php
-
-		-
-			message: "#^Cannot access property \\$id on EtoA\\\\Universe\\\\Planet\\\\Planet\\|null\\.$#"
-			count: 10
-			path: htdocs/content/recycle.php
-
-		-
-			message: "#^Cannot access property \\$name on EtoA\\\\Universe\\\\Planet\\\\Planet\\|null\\.$#"
-			count: 3
-			path: htdocs/content/recycle.php
-
-		-
-			message: "#^Cannot access property \\$resCrystal on EtoA\\\\Universe\\\\Planet\\\\Planet\\|null\\.$#"
-			count: 2
-			path: htdocs/content/recycle.php
-
-		-
-			message: "#^Cannot access property \\$resFood on EtoA\\\\Universe\\\\Planet\\\\Planet\\|null\\.$#"
-			count: 2
-			path: htdocs/content/recycle.php
-
-		-
-			message: "#^Cannot access property \\$resFuel on EtoA\\\\Universe\\\\Planet\\\\Planet\\|null\\.$#"
-			count: 2
-			path: htdocs/content/recycle.php
-
-		-
-			message: "#^Cannot access property \\$resMetal on EtoA\\\\Universe\\\\Planet\\\\Planet\\|null\\.$#"
-			count: 2
-			path: htdocs/content/recycle.php
-
-		-
-			message: "#^Cannot access property \\$resPlastic on EtoA\\\\Universe\\\\Planet\\\\Planet\\|null\\.$#"
-			count: 2
-			path: htdocs/content/recycle.php
-
-		-
 			message: "#^Parameter \\#1 \\$defenseId of class EtoA\\\\Defense\\\\Event\\\\DefenseRecycle constructor expects int, int\\|string given\\.$#"
-			count: 1
-			path: htdocs/content/recycle.php
-
-		-
-			message: "#^Parameter \\#1 \\$planet of method EtoA\\\\UI\\\\ResourceBoxDrawer\\:\\:getHTML\\(\\) expects EtoA\\\\Universe\\\\Planet\\\\Planet, EtoA\\\\Universe\\\\Planet\\\\Planet\\|null given\\.$#"
 			count: 1
 			path: htdocs/content/recycle.php
 
@@ -2341,71 +2041,6 @@ parameters:
 			path: htdocs/content/recycle.php
 
 		-
-			message: "#^Cannot access property \\$id on EtoA\\\\Universe\\\\Planet\\\\Planet\\|null\\.$#"
-			count: 16
-			path: htdocs/content/research.php
-
-		-
-			message: "#^Cannot access property \\$name on EtoA\\\\Universe\\\\Planet\\\\Planet\\|null\\.$#"
-			count: 2
-			path: htdocs/content/research.php
-
-		-
-			message: "#^Cannot access property \\$people on EtoA\\\\Universe\\\\Planet\\\\Planet\\|null\\.$#"
-			count: 2
-			path: htdocs/content/research.php
-
-		-
-			message: "#^Cannot access property \\$prodCrystal on EtoA\\\\Universe\\\\Planet\\\\Planet\\|null\\.$#"
-			count: 2
-			path: htdocs/content/research.php
-
-		-
-			message: "#^Cannot access property \\$prodFood on EtoA\\\\Universe\\\\Planet\\\\Planet\\|null\\.$#"
-			count: 2
-			path: htdocs/content/research.php
-
-		-
-			message: "#^Cannot access property \\$prodFuel on EtoA\\\\Universe\\\\Planet\\\\Planet\\|null\\.$#"
-			count: 2
-			path: htdocs/content/research.php
-
-		-
-			message: "#^Cannot access property \\$prodMetal on EtoA\\\\Universe\\\\Planet\\\\Planet\\|null\\.$#"
-			count: 2
-			path: htdocs/content/research.php
-
-		-
-			message: "#^Cannot access property \\$prodPlastic on EtoA\\\\Universe\\\\Planet\\\\Planet\\|null\\.$#"
-			count: 2
-			path: htdocs/content/research.php
-
-		-
-			message: "#^Cannot access property \\$resCrystal on EtoA\\\\Universe\\\\Planet\\\\Planet\\|null\\.$#"
-			count: 8
-			path: htdocs/content/research.php
-
-		-
-			message: "#^Cannot access property \\$resFood on EtoA\\\\Universe\\\\Planet\\\\Planet\\|null\\.$#"
-			count: 9
-			path: htdocs/content/research.php
-
-		-
-			message: "#^Cannot access property \\$resFuel on EtoA\\\\Universe\\\\Planet\\\\Planet\\|null\\.$#"
-			count: 8
-			path: htdocs/content/research.php
-
-		-
-			message: "#^Cannot access property \\$resMetal on EtoA\\\\Universe\\\\Planet\\\\Planet\\|null\\.$#"
-			count: 8
-			path: htdocs/content/research.php
-
-		-
-			message: "#^Cannot access property \\$resPlastic on EtoA\\\\Universe\\\\Planet\\\\Planet\\|null\\.$#"
-			count: 8
-			path: htdocs/content/research.php
-
-		-
 			message: "#^Cannot access property \\$researchTime on EtoA\\\\Race\\\\Race\\|null\\.$#"
 			count: 2
 			path: htdocs/content/research.php
@@ -2418,11 +2053,6 @@ parameters:
 		-
 			message: "#^Only booleans are allowed in an if condition, string\\|false given\\.$#"
 			count: 1
-			path: htdocs/content/research.php
-
-		-
-			message: "#^Parameter \\#1 \\$planet of method EtoA\\\\UI\\\\ResourceBoxDrawer\\:\\:getHTML\\(\\) expects EtoA\\\\Universe\\\\Planet\\\\Planet, EtoA\\\\Universe\\\\Planet\\\\Planet\\|null given\\.$#"
-			count: 2
 			path: htdocs/content/research.php
 
 		-
@@ -2566,76 +2196,6 @@ parameters:
 			path: htdocs/content/ship_upgrade.php
 
 		-
-			message: "#^Cannot access property \\$id on EtoA\\\\Universe\\\\Planet\\\\Planet\\|null\\.$#"
-			count: 16
-			path: htdocs/content/shipyard.php
-
-		-
-			message: "#^Cannot access property \\$mainPlanet on EtoA\\\\Universe\\\\Planet\\\\Planet\\|null\\.$#"
-			count: 1
-			path: htdocs/content/shipyard.php
-
-		-
-			message: "#^Cannot access property \\$name on EtoA\\\\Universe\\\\Planet\\\\Planet\\|null\\.$#"
-			count: 2
-			path: htdocs/content/shipyard.php
-
-		-
-			message: "#^Cannot access property \\$people on EtoA\\\\Universe\\\\Planet\\\\Planet\\|null\\.$#"
-			count: 1
-			path: htdocs/content/shipyard.php
-
-		-
-			message: "#^Cannot access property \\$prodCrystal on EtoA\\\\Universe\\\\Planet\\\\Planet\\|null\\.$#"
-			count: 2
-			path: htdocs/content/shipyard.php
-
-		-
-			message: "#^Cannot access property \\$prodFood on EtoA\\\\Universe\\\\Planet\\\\Planet\\|null\\.$#"
-			count: 2
-			path: htdocs/content/shipyard.php
-
-		-
-			message: "#^Cannot access property \\$prodFuel on EtoA\\\\Universe\\\\Planet\\\\Planet\\|null\\.$#"
-			count: 2
-			path: htdocs/content/shipyard.php
-
-		-
-			message: "#^Cannot access property \\$prodMetal on EtoA\\\\Universe\\\\Planet\\\\Planet\\|null\\.$#"
-			count: 2
-			path: htdocs/content/shipyard.php
-
-		-
-			message: "#^Cannot access property \\$prodPlastic on EtoA\\\\Universe\\\\Planet\\\\Planet\\|null\\.$#"
-			count: 2
-			path: htdocs/content/shipyard.php
-
-		-
-			message: "#^Cannot access property \\$resCrystal on EtoA\\\\Universe\\\\Planet\\\\Planet\\|null\\.$#"
-			count: 7
-			path: htdocs/content/shipyard.php
-
-		-
-			message: "#^Cannot access property \\$resFood on EtoA\\\\Universe\\\\Planet\\\\Planet\\|null\\.$#"
-			count: 8
-			path: htdocs/content/shipyard.php
-
-		-
-			message: "#^Cannot access property \\$resFuel on EtoA\\\\Universe\\\\Planet\\\\Planet\\|null\\.$#"
-			count: 7
-			path: htdocs/content/shipyard.php
-
-		-
-			message: "#^Cannot access property \\$resMetal on EtoA\\\\Universe\\\\Planet\\\\Planet\\|null\\.$#"
-			count: 7
-			path: htdocs/content/shipyard.php
-
-		-
-			message: "#^Cannot access property \\$resPlastic on EtoA\\\\Universe\\\\Planet\\\\Planet\\|null\\.$#"
-			count: 7
-			path: htdocs/content/shipyard.php
-
-		-
 			message: "#^Offset 'crystal' does not exist on array\\{\\}\\|array\\{metal\\: mixed, crystal\\: mixed, plastic\\: mixed, fuel\\: mixed, food\\: mixed\\}\\.$#"
 			count: 1
 			path: htdocs/content/shipyard.php
@@ -2667,11 +2227,6 @@ parameters:
 
 		-
 			message: "#^Parameter \\#1 \\$num of function floor expects float\\|int, float\\|false given\\.$#"
-			count: 2
-			path: htdocs/content/shipyard.php
-
-		-
-			message: "#^Parameter \\#1 \\$planet of method EtoA\\\\UI\\\\ResourceBoxDrawer\\:\\:getHTML\\(\\) expects EtoA\\\\Universe\\\\Planet\\\\Planet, EtoA\\\\Universe\\\\Planet\\\\Planet\\|null given\\.$#"
 			count: 2
 			path: htdocs/content/shipyard.php
 
