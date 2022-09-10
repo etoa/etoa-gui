@@ -52,6 +52,11 @@ $allianceService = $app[AllianceService::class];
 $request = Request::createFromGlobals();
 
 $planet = $planetRepository->find($cp->id);
+if(null === $planet)
+{
+    return;
+}
+
 $currentUser = $userRepository->getUser($cu->id);
 
 // Gebäude Level und Arbeiter laden

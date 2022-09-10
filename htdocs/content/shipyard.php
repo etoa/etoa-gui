@@ -85,6 +85,10 @@ define("SHIPQUEUE_CANCEL_FACTOR", $config->getFloat('shipqueue_cancel_factor'));
 define("SHIPQUEUE_CANCEL_END", $config->getFloat('shipqueue_cancel_end'));
 
 $planet = $planetRepo->find($cp->id);
+if(null === $planet)
+{
+    return;
+}
 
 /** @var TechnologyRepository $technologyRepository */
 $technologyRepository = $app[TechnologyRepository::class];

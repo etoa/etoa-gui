@@ -53,6 +53,10 @@ $allianceBuildingRepository = $app[AllianceBuildingRepository::class];
  ********/
 
 $planet = $planetRepo->find($cp->id);
+if(null === $planet)
+{
+    return;
+}
 
 if ($config->getBoolean('market_enabled')) {
     $mode = isset($_GET['mode']) ? $_GET['mode'] : "";

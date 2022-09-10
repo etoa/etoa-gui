@@ -57,7 +57,12 @@ define("MISSILE_SILO_MISSILES_ALGO_BASE", $config->getFloat('missile_silo_missil
 define("MISSILE_SILO_FLIGHTS_PER_LEVEL", $config->getInt('missile_silo_flights_per_level'));
 
 $planet = $planetRepo->find($cp->id);
+if(null === $planet)
+{
+    return;
+}
 
+// TODO: needed?
 echo "<form action=\"?page=$page\" method=\"post\">";
 
 // Gebäude Level und Arbeiter laden

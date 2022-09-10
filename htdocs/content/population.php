@@ -35,6 +35,10 @@ $technologyRequirementRepository = $app[TechnologyRequirementRepository::class];
 
 if ($cp) {
     $planet = $planetRepo->find($cp->id);
+    if(null === $planet)
+    {
+        return;
+    }
 
     echo "<h1>Bevölkerungsübersicht" . (!StringUtils::empty_strict($planet->name) ? " des Planeten " . $planet->name : "") . "</h1>";
     echo '<div id="population_info"></div>'; // Nur zu testzwecken

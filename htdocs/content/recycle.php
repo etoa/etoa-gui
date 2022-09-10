@@ -43,6 +43,10 @@ define('HELP_URL_SHIP', "?page=help&site=shipyard");
 define("RECYC_MAX_PAYBACK", $config->getFloat('recyc_max_payback'));
 
 $planet = $planetRepo->find($cp->id);
+if(null === $planet)
+{
+    return;
+}
 
 echo "<h1>Recyclingstation" . (!StringUtils::empty_strict($planet->name) ? " des Planeten " . $planet->name : "") . "</h1>";
 echo $resourceBoxDrawer->getHTML($planet);

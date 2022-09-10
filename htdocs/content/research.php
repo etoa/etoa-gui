@@ -60,6 +60,10 @@ if ($properties->imageFilter) {
 
 if (isset($cp)) {
     $planet = $planetRepo->find($cp->id);
+    if(null === $planet)
+    {
+        return;
+    }
 
     $researchBuilding = $buildingRepository->getEntityBuilding($cu->getId(), $planet->id, BuildingId::TECHNOLOGY);
     if ($researchBuilding !== null && $researchBuilding->currentLevel > 0) {

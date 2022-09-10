@@ -80,6 +80,10 @@ define("DEFQUEUE_CANCEL_FACTOR", $config->getFloat('defqueue_cancel_factor'));
 define("DEFQUEUE_CANCEL_END", $config->getFloat('defqueue_cancel_end'));
 
 $planet = $planetRepo->find($cp->id);
+if(null === $planet)
+{
+    return;
+}
 
 // BEGIN SKRIPT //
 

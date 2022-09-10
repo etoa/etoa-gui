@@ -47,6 +47,10 @@ $raceRespository = $app[RaceDataRepository::class];
 if ($cp) {
 
     $planet = $planetRepo->find($cp->id);
+    if(null === $planet)
+    {
+        return;
+    }
     $race = $raceRespository->getRace($cu->raceId);
 
     /** @var SpecialistService $specialistService */
