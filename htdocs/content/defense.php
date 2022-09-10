@@ -80,6 +80,10 @@ define("DEFQUEUE_CANCEL_FACTOR", $config->getFloat('defqueue_cancel_factor'));
 define("DEFQUEUE_CANCEL_END", $config->getFloat('defqueue_cancel_end'));
 
 $planet = $planetRepo->find($cp->id);
+if(null === $planet)
+{
+    return;
+}
 
 // BEGIN SKRIPT //
 
@@ -94,7 +98,7 @@ if ($factoryBuilding !== null && $factoryBuilding->currentLevel > 0) {
     $peopleWorking = $buildingRepository->getPeopleWorking($planet->id);
 
     // Titel
-    echo "<h1>Waffenfabrik (Stufe " . $factoryBuilding->currentLevel . ") des Planeten " . $planet->name . "</h1>";
+    echo "<h1>Waffenfabrik (Stufe " . $factoryBuilding->currentLevel . ")" . (!StringUtils::empty_strict($planet->name) ? " des Planeten " . $planet->name : "") . "</h1>";
 
     // Ressourcen anzeigen
     echo $resourceBoxDrawer->getHTML($planet);
@@ -1055,7 +1059,7 @@ if ($factoryBuilding !== null && $factoryBuilding->currentLevel > 0) {
     }
 } else {
     // Titel
-    echo "<h1>Waffenfabrik des Planeten " . $planet->name . "</h1>";
+    echo "<h1>Waffenfabrik" . (!StringUtils::empty_strict($planet->name) ? " des Planeten " . $planet->name : "") . "</h1>";
 
     // Ressourcen anzeigen
     echo $resourceBoxDrawer->getHTML($planet);

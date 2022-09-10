@@ -7,6 +7,7 @@ use EtoA\Ship\ShipDataRepository;
 use EtoA\Ship\ShipRepository;
 use EtoA\Ship\ShipTransformRepository;
 use EtoA\Support\BBCodeUtils;
+use EtoA\Support\StringUtils;
 use EtoA\UI\ResourceBoxDrawer;
 use EtoA\Universe\Planet\PlanetRepository;
 
@@ -32,8 +33,12 @@ $shipDataRepository = $app[ShipDataRepository::class];
 
 if ($cp) {
     $planet = $planetRepo->find($cp->id);
+    if(null === $planet)
+    {
+        return;
+    }
 
-    echo '<h1>Raumschiffhafen des Planeten ' . $planet->name . '</h1>';
+    echo "<h1>Raumschiffhafen" . (!StringUtils::empty_strict($planet->name) ? " des Planeten " . $planet->name : "") . "</h1>";
     echo $resourceBoxDrawer->getHTML($planet);
 
     if (!$cu->isVerified) {

@@ -60,6 +60,10 @@ if ($properties->imageFilter) {
 
 if (isset($cp)) {
     $planet = $planetRepo->find($cp->id);
+    if(null === $planet)
+    {
+        return;
+    }
 
     $researchBuilding = $buildingRepository->getEntityBuilding($cu->getId(), $planet->id, BuildingId::TECHNOLOGY);
     if ($researchBuilding !== null && $researchBuilding->currentLevel > 0) {
@@ -67,7 +71,7 @@ if (isset($cp)) {
         $minBuildTimeFactor = (0.1 - (GEN_TECH_LEVEL / 100));
 
         // Überschrift
-        echo "<h1>Forschungslabor (Stufe " . $researchBuilding->currentLevel . ") des Planeten " . $planet->name . "</h1>";
+        echo "<h1>Forschungslabor (Stufe " . $researchBuilding->currentLevel . ")" . (!StringUtils::empty_strict($planet->name) ? " des Planeten " . $planet->name : "") . "</h1>";
         echo $resourceBoxDrawer->getHTML($planet);
 
         // Forschungsliste laden && Gentech level definieren
@@ -922,7 +926,7 @@ if (isset($cp)) {
             }
         }
     } else {
-        echo "<h1>Forschungslabor des Planeten " . $planet->name . "</h1>";
+        echo "<h1>Forschungslabor" . (!StringUtils::empty_strict($planet->name) ? " des Planeten " . $planet->name : "") . "</h1>";
         echo $resourceBoxDrawer->getHTML($planet);
         info_msg("Das Forschungslabor wurde noch nicht gebaut!");
     }

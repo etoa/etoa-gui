@@ -30,8 +30,12 @@ $request = Request::createFromGlobals();
 
 if ($cp) {
     $planet = $planetRepo->find($cp->id);
+    if(null === $planet)
+    {
+        return;
+    }
 
-    echo "<h1>Bunker des Planeten " . $planet->name . "</h1>";
+    echo "<h1>Bunker" . (!StringUtils::empty_strict($planet->name) ? " des Planeten " . $planet->name : "") . "</h1>";
 
     echo $resourceBoxDrawer->getHTML($planet);
 

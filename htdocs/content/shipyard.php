@@ -85,6 +85,10 @@ define("SHIPQUEUE_CANCEL_FACTOR", $config->getFloat('shipqueue_cancel_factor'));
 define("SHIPQUEUE_CANCEL_END", $config->getFloat('shipqueue_cancel_end'));
 
 $planet = $planetRepo->find($cp->id);
+if(null === $planet)
+{
+    return;
+}
 
 /** @var TechnologyRepository $technologyRepository */
 $technologyRepository = $app[TechnologyRepository::class];
@@ -1085,7 +1089,7 @@ if ($shipyard !== null && $shipyard->currentLevel > 0) {
     }
 } else {
     // Titel
-    echo "<h1>Raumschiffswerft des Planeten " . $planet->name . "</h1>";
+    echo "<h1>Raumschiffswerft" . (!StringUtils::empty_strict($planet->name) ? " des Planeten " . $planet->name : "") . "</h1>";
 
     // Ressourcen anzeigen
     echo $resourceBoxDrawer->getHTML($planet);

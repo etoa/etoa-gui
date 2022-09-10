@@ -52,6 +52,11 @@ $allianceService = $app[AllianceService::class];
 $request = Request::createFromGlobals();
 
 $planet = $planetRepository->find($cp->id);
+if(null === $planet)
+{
+    return;
+}
+
 $currentUser = $userRepository->getUser($cu->id);
 
 // Gebäude Level und Arbeiter laden
@@ -184,13 +189,13 @@ if ($config->getBoolean('crypto_enable')) {
             countDown("cdcd", $userCooldown);
         }
     } else {
-        echo "<h1>Kryptocenter des Planeten " . $planet->name . "</h1>";
+        echo "<h1>Kryptocenter" . (!StringUtils::empty_strict($planet->name) ? " des Planeten " . $planet->name : "") . "</h1>";
         echo $resourceBoxDrawer->getHTML($planet);
 
         info_msg("Das Kryptocenter wurde noch nicht gebaut!");
     }
 } else {
-    echo "<h1>Kryptocenter des Planeten " . $planet->name . "</h1>";
+    echo "<h1>Kryptocenter" . (!StringUtils::empty_strict($planet->name) ? " des Planeten " . $planet->name : "") . "</h1>";
     echo $resourceBoxDrawer->getHTML($planet);
 
     info_msg("Aufgrund eines intergalaktischen Moratoriums der Völkerföderation der Galaxie Andromeda

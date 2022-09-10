@@ -24,6 +24,7 @@ use EtoA\Technology\TechnologyDataRepository;
 use EtoA\Technology\TechnologyRepository;
 use EtoA\Technology\TechnologyRequirementRepository;
 use EtoA\Technology\TechnologyTypeRepository;
+use EtoA\Support\StringUtils;
 
 /** @var BuildingDataRepository $buildRepository */
 $buildRepository = $app[BuildingDataRepository::class];
@@ -137,7 +138,7 @@ if ($mode == "tech") {
 if (isset($cp)) {
 
     // Daten anzeigen
-    echo "<h1>Technikbaum des Planeten " . $cp->name() . "</h1>";
+    echo "<h1>Technikbaum" . (!StringUtils::empty_strict($cp->name()) ? " des Planeten " . $cp->name() : "") . "</h1>";
 
     // Tab-Navigation anzeigen
     show_tab_menu("mode", array(

@@ -53,6 +53,10 @@ $allianceBuildingRepository = $app[AllianceBuildingRepository::class];
  ********/
 
 $planet = $planetRepo->find($cp->id);
+if(null === $planet)
+{
+    return;
+}
 
 if ($config->getBoolean('market_enabled')) {
     $mode = isset($_GET['mode']) ? $_GET['mode'] : "";
@@ -72,7 +76,7 @@ if ($config->getBoolean('market_enabled')) {
         define("MARKET_TAX", max(1, MARKET_SELL_TAX * ($specialist !== null ? $specialist->tradeBonus : 1)));
 
         // Show title
-        echo '<h1>Marktplatz (Stufe ' . $market->currentLevel . ') des Planeten ' . $planet->name . '</h1>';
+        echo "<h1>Marktplatz (Stufe " . $market->currentLevel . ")" . (!StringUtils::empty_strict($planet->name) ? " des Planeten " . $planet->name : "") . "</h1>";
         echo $resourceBoxDrawer->getHTML($planet);
 
         if (!$market->isDeactivated()) {
