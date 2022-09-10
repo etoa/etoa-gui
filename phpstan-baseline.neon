@@ -1186,32 +1186,12 @@ parameters:
 			path: htdocs/content/buddylist.php
 
 		-
-			message: "#^Cannot access property \\$id on EtoA\\\\Universe\\\\Planet\\\\Planet\\|null\\.$#"
-			count: 4
-			path: htdocs/content/buildings.php
-
-		-
-			message: "#^Cannot access property \\$name on EtoA\\\\Universe\\\\Planet\\\\Planet\\|null\\.$#"
-			count: 1
-			path: htdocs/content/buildings.php
-
-		-
-			message: "#^Cannot access property \\$people on EtoA\\\\Universe\\\\Planet\\\\Planet\\|null\\.$#"
-			count: 1
-			path: htdocs/content/buildings.php
-
-		-
 			message: "#^If condition is always true\\.$#"
 			count: 1
 			path: htdocs/content/buildings.php
 
 		-
 			message: "#^Only booleans are allowed in an if condition, string\\|false given\\.$#"
-			count: 1
-			path: htdocs/content/buildings.php
-
-		-
-			message: "#^Parameter \\#1 \\$planet of method EtoA\\\\UI\\\\ResourceBoxDrawer\\:\\:getHTML\\(\\) expects EtoA\\\\Universe\\\\Planet\\\\Planet, EtoA\\\\Universe\\\\Planet\\\\Planet\\|null given\\.$#"
 			count: 1
 			path: htdocs/content/buildings.php
 
@@ -1251,16 +1231,6 @@ parameters:
 			path: htdocs/content/bunker.php
 
 		-
-			message: "#^Cannot access property \\$id on EtoA\\\\Universe\\\\Planet\\\\Planet\\|null\\.$#"
-			count: 8
-			path: htdocs/content/bunker.php
-
-		-
-			message: "#^Cannot access property \\$name on EtoA\\\\Universe\\\\Planet\\\\Planet\\|null\\.$#"
-			count: 1
-			path: htdocs/content/bunker.php
-
-		-
 			message: "#^Cannot call method calculateBunkerFleetCount\\(\\) on EtoA\\\\Building\\\\Building\\|null\\.$#"
 			count: 3
 			path: htdocs/content/bunker.php
@@ -1273,11 +1243,6 @@ parameters:
 		-
 			message: "#^Cannot call method calculateBunkerResources\\(\\) on EtoA\\\\Building\\\\Building\\|null\\.$#"
 			count: 3
-			path: htdocs/content/bunker.php
-
-		-
-			message: "#^Parameter \\#1 \\$planet of method EtoA\\\\UI\\\\ResourceBoxDrawer\\:\\:getHTML\\(\\) expects EtoA\\\\Universe\\\\Planet\\\\Planet, EtoA\\\\Universe\\\\Planet\\\\Planet\\|null given\\.$#"
-			count: 1
 			path: htdocs/content/bunker.php
 
 		-
@@ -1366,18 +1331,8 @@ parameters:
 			path: htdocs/content/crypto.php
 
 		-
-			message: "#^Cannot access property \\$id on EtoA\\\\Universe\\\\Planet\\\\Planet\\|null\\.$#"
-			count: 1
-			path: htdocs/content/crypto.php
-
-		-
 			message: "#^Cannot access property \\$id on EtoA\\\\User\\\\User\\|null\\.$#"
 			count: 4
-			path: htdocs/content/crypto.php
-
-		-
-			message: "#^Cannot access property \\$name on EtoA\\\\Universe\\\\Planet\\\\Planet\\|null\\.$#"
-			count: 2
 			path: htdocs/content/crypto.php
 
 		-
@@ -1388,11 +1343,6 @@ parameters:
 		-
 			message: "#^Cannot access property \\$pos on EtoA\\\\Universe\\\\Entity\\\\Entity\\|null\\.$#"
 			count: 1
-			path: htdocs/content/crypto.php
-
-		-
-			message: "#^Cannot access property \\$resFuel on EtoA\\\\Universe\\\\Planet\\\\Planet\\|null\\.$#"
-			count: 2
 			path: htdocs/content/crypto.php
 
 		-
