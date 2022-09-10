@@ -1371,59 +1371,9 @@ parameters:
 			path: htdocs/content/crypto.php
 
 		-
-			message: "#^Parameter \\#1 \\$planet of method EtoA\\\\UI\\\\ResourceBoxDrawer\\:\\:getHTML\\(\\) expects EtoA\\\\Universe\\\\Planet\\\\Planet, EtoA\\\\Universe\\\\Planet\\\\Planet\\|null given\\.$#"
-			count: 3
-			path: htdocs/content/crypto.php
-
-		-
-			message: "#^Parameter \\#2 \\$planet of method EtoA\\\\Fleet\\\\FleetScanService\\:\\:scanFleets\\(\\) expects EtoA\\\\Universe\\\\Planet\\\\Planet, EtoA\\\\Universe\\\\Planet\\\\Planet\\|null given\\.$#"
-			count: 1
-			path: htdocs/content/crypto.php
-
-		-
 			message: "#^Parameter \\#2 \\$user of method EtoA\\\\Alliance\\\\AllianceService\\:\\:getUserAlliancePermissions\\(\\) expects EtoA\\\\User\\\\User, EtoA\\\\User\\\\User\\|null given\\.$#"
 			count: 1
 			path: htdocs/content/crypto.php
-
-		-
-			message: "#^Cannot access property \\$fields on EtoA\\\\Universe\\\\Planet\\\\Planet\\|null\\.$#"
-			count: 1
-			path: htdocs/content/defense.php
-
-		-
-			message: "#^Cannot access property \\$fieldsExtra on EtoA\\\\Universe\\\\Planet\\\\Planet\\|null\\.$#"
-			count: 1
-			path: htdocs/content/defense.php
-
-		-
-			message: "#^Cannot access property \\$fieldsUsed on EtoA\\\\Universe\\\\Planet\\\\Planet\\|null\\.$#"
-			count: 1
-			path: htdocs/content/defense.php
-
-		-
-			message: "#^Cannot access property \\$id on EtoA\\\\Universe\\\\Planet\\\\Planet\\|null\\.$#"
-			count: 15
-			path: htdocs/content/defense.php
-
-		-
-			message: "#^Cannot access property \\$name on EtoA\\\\Universe\\\\Planet\\\\Planet\\|null\\.$#"
-			count: 2
-			path: htdocs/content/defense.php
-
-		-
-			message: "#^Cannot access property \\$people on EtoA\\\\Universe\\\\Planet\\\\Planet\\|null\\.$#"
-			count: 1
-			path: htdocs/content/defense.php
-
-		-
-			message: "#^Cannot access property \\$prodCrystal on EtoA\\\\Universe\\\\Planet\\\\Planet\\|null\\.$#"
-			count: 2
-			path: htdocs/content/defense.php
-
-		-
-			message: "#^Cannot access property \\$prodFood on EtoA\\\\Universe\\\\Planet\\\\Planet\\|null\\.$#"
-			count: 2
-			path: htdocs/content/defense.php
 
 		-
 			message: "#^Cannot access property \\$prodFuel on EtoA\\\\Universe\\\\Planet\\\\Planet\\|null\\.$#"
