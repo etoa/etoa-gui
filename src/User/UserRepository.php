@@ -154,6 +154,7 @@ class UserRepository extends AbstractRepository
     }
 
     /**
+     * associative array: for each specialist (id), get number of users which have this specialist active (count)
      * @return array<int, int>
      */
     public function countUsersWithSpecialists(): array
@@ -162,6 +163,7 @@ class UserRepository extends AbstractRepository
             ->select('user_specialist_id, COUNT(user_id)')
             ->from('users')
             ->where('user_specialist_time > :now')
+            ->groupBy('user_specialist_id')
             ->setParameters([
                 'now' => time(),
             ])
