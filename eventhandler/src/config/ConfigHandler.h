@@ -89,19 +89,17 @@
 		void calcCollectFuelValues();
 
 		/**
-		* Id <-> config_name Realtionscontainer
-		**/
-		std::map<std::string, int> sConfig;
-
-		/**
 		* Mapcontainer mit vorgespeicheten Werten. Müssen manuel eingefügt werden
 		**/
 		std::map<std::string, double> idConfig;
 
+		typedef std::map<std::string, std::array<std::string, 3> > aConfigType;
 		/**
-		* Mapcontainer mit den gespeicherten Configwerten
+		* Assoziatives Array config_name -> (v,p1,p2)
+		* Key ist ein std::string
+		* Value ist ein "3-tuple of homogenous values", also ein fixed-size array von std::string der Länge 3.
 		**/
-		std::vector<std::vector<std::string> > cConfig;
+		aConfigType aConfig;
 
 		/**
 		* Mapcontainer mit fleetactions
