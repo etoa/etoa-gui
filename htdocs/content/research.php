@@ -811,7 +811,7 @@ if (isset($cp)) {
                                     }
 
                                     foreach ($requirements->getTechnologyRequirements($tech->id) as $treq) {
-                                        $tmtext .= "<div style=\"color:" . (check_technology_requirement($breq, $techlist) ? '#0f0' : '#f30') . "\">" . $technologyNames[$treq->requiredTechnologyId] . " Stufe " . $treq->requiredLevel . "</div>";
+                                        $tmtext .= "<div style=\"color:" . (check_technology_requirement($treq, $techlist) ? '#0f0' : '#f30') . "\">" . $technologyNames[$treq->requiredTechnologyId] . " Stufe " . $treq->requiredLevel . "</div>";
                                     }
 
                                     $color = '#999';
