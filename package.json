@@ -11,7 +11,7 @@
         "jquery-mousewheel": "^3.1.13",
         "jquery-ui-bundle": "^1.12.1-migrate",
         "laravel-mix": "^6.0.27",
-        "luxon": "^2.0.2",
+        "luxon": "^2.5.2",
         "npm": "^8.11.0",
         "regenerator-runtime": "^0.13.2",
         "resolve-url-loader": "^4.0.0",
