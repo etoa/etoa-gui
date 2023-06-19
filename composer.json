@@ -9,7 +9,7 @@
         "php": "^8",
         "doctrine/dbal": "^3.0",
         "littlecubiclegames/quests": "^1.3",
-        "monolog/monolog": "^2.3",
+        "monolog/monolog": "^3.0",
         "pimple/pimple": "^3.0",
         "silex/silex": "dev-t/symfony-53",
         "symfony/stopwatch": "^5.4",
