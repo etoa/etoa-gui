@@ -16,7 +16,7 @@ doctrine:
             App:
                 is_bundle: false
                 dir: '%kernel.project_dir%/src/Entity'
-                prefix: 'App\Entity'
+                prefix: 'EtoA\Entity'
                 alias: App
 
 when@test:

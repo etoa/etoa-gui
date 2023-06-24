@@ -1,6 +1,6 @@
 <?php
-// src/Controller/LuckyController.php
-namespace App\Controller;
+
+namespace EtoA\Controller;
 
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;

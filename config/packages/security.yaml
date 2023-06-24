@@ -5,10 +5,23 @@ security:
     # https://symfony.com/doc/current/security.html#loading-the-user-the-user-provider
     providers:
         users_in_memory: { memory: null }
+        admin: { id: EtoA\Security\Admin\AdminUserProvider }
     firewalls:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
+        admin:
+            pattern: ^/admin
+            provider: admin
+            custom_authenticators:
+                - EtoA\Security\Admin\AdminAuthenticator
+            entry_point: EtoA\Security\Admin\AdminAuthenticator
+            logout:
+                path: /admin/logout
+                target: /admin/
+            two_factor:
+                auth_form_path: admin_2fa_login
+                check_path: admin_2fa_login_check
         main:
             lazy: true
             provider: users_in_memory
@@ -24,6 +37,19 @@ security:
     access_control:
         # - { path: ^/admin, roles: ROLE_ADMIN }
         # - { path: ^/profile, roles: ROLE_USER }
+            # allow unauthenticated admin users to access the login form
+        - { path: ^/admin/login/tfa, role: IS_AUTHENTICATED_2FA_IN_PROGRESS }
+        - { path: ^/admin/login, roles: PUBLIC_ACCESS }
+        # but require authentication for all other admin routes
+        - { path: ^/admin, roles: ROLE_ADMIN }
+
+    role_hierarchy:
+        ROLE_ADMIN: ROLE_USER
+        ROLE_ADMIN_MASTER: [ROLE_ADMIN_SUPER-ADMIN, ROLE_ALLOWED_TO_SWITCH, ROLE_ADMIN]
+        ROLE_ADMIN_SUPER-ADMIN: ROLE_ADMIN_GAME-ADMIN
+        ROLE_ADMIN_GAME-ADMIN: ROLE_ADMIN_TRIAL-ADMIN
+        ROLE_ADMIN_TRIAL-ADMIN: ROLE_ADMIN
+        ROLE_ADMIN_CHAT-ADMIN: ROLE_ADMIN
 
 when@test:
     security:

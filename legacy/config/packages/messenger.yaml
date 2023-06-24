@@ -12,4 +12,4 @@ framework:
         routing:
             EtoA\PeriodicTask\Task\PeriodicTaskInterface: sync
             # Route your messages to the transports
-            # 'App\Message\YourMessage': async
+            # 'EtoA\Message\YourMessage': async

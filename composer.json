@@ -10,8 +10,11 @@
         "doctrine/doctrine-bundle": "^2.10",
         "doctrine/doctrine-migrations-bundle": "^3.2",
         "doctrine/orm": "^2.15",
+        "league/commonmark": "^2.4",
         "phpdocumentor/reflection-docblock": "^5.3",
         "phpstan/phpdoc-parser": "^1.22",
+        "scheb/2fa-bundle": "^6.8",
+        "scheb/2fa-totp": "^6.8",
         "symfony/asset": "6.3.*",
         "symfony/console": "6.3.*",
         "symfony/doctrine-messenger": "6.3.*",
@@ -22,6 +25,7 @@
         "symfony/framework-bundle": "6.3.*",
         "symfony/http-client": "6.3.*",
         "symfony/intl": "6.3.*",
+        "symfony/lock": "6.3.*",
         "symfony/mailer": "6.3.*",
         "symfony/mime": "6.3.*",
         "symfony/monolog-bundle": "^3.8",
@@ -35,6 +39,7 @@
         "symfony/string": "6.3.*",
         "symfony/translation": "6.3.*",
         "symfony/twig-bundle": "6.3.*",
+        "symfony/ux-live-component": "^2.9",
         "symfony/validator": "6.3.*",
         "symfony/web-link": "6.3.*",
         "symfony/yaml": "6.3.*",
@@ -51,12 +56,12 @@
     },
     "autoload": {
         "psr-4": {
-            "App\\": "src/"
+            "EtoA\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "App\\Tests\\": "tests/"
+            "EtoA\\Tests\\": "tests/"
         }
     },
     "replace": {
