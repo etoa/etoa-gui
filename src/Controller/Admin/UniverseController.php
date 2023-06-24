@@ -89,12 +89,12 @@ class UniverseController extends AbstractAdminController
 
     #[Route("/admin/universe/big-bang", name: "admin.universe.big-bang")]
     #[IsGranted('ROLE_ADMIN_MASTER')]
-    public function bigBang(Request $request): Response
+    public function bigBang(Request $request, string $projectDir): Response
     {
         $xDimensions = $this->config->param1Int('num_of_sectors') * $this->config->param1Int('num_of_cells');
         $yDimensions = $this->config->param2Int('num_of_sectors') * $this->config->param2Int('num_of_cells');
         $layouts = [];
-        $dir = realpath(__DIR__ ."/../../../assets/images/galaxylayouts/");
+        $dir = $projectDir . "/assets/images/galaxylayouts/";
         $d = opendir($dir);
         while ($file = readdir($d)) {
             if (is_file($dir . DIRECTORY_SEPARATOR . $file) && substr($file, strrpos($file, ".png")) == ".png" && $ims = getimagesize($dir . DIRECTORY_SEPARATOR . $file)) {
