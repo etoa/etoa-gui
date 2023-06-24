@@ -1,3 +1,2 @@
 <?PHP
-define('APP_VERSION', '3.6.2');
-?>
+require "../src/version.php";

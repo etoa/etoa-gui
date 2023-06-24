@@ -8,6 +8,7 @@ use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\HostCache\NetworkNameService;
 use EtoA\Support\BBCodeUtils;
 use EtoA\Support\ExternalUrl;
+use EtoA\Support\GameVersionService;
 use EtoA\Support\RuntimeDataStore;
 use EtoA\Support\StringUtils;
 use Twig\Extension\AbstractExtension;
@@ -22,6 +23,7 @@ class TwigExtension extends AbstractExtension
         private ConfigurationService $config,
         private NetworkNameService $networkNameService,
         private RuntimeDataStore $runtimeDataStore,
+        private GameVersionService $gameVersion,
     ) {
         $this->startTime = microtime(true);
     }
@@ -168,7 +170,7 @@ class TwigExtension extends AbstractExtension
 
     public function getGameIdentifier(): string
     {
-        return getGameIdentifier($this->config);
+        return $this->gameVersion->getGameIdentifier();
     }
 
     public function isUnix(): bool
