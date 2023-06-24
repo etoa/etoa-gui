@@ -11,3 +11,8 @@ import './styles/admin.sass';
 
 // start the Stimulus application
 import './bootstrap';
+
+// require jQuery normally
+import $ from 'jquery';
+// create global $ and jQuery variables
+global.$ = global.jQuery = $;

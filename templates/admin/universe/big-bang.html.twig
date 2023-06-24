@@ -15,11 +15,11 @@
                 <th>Karte:</th>
                 <td>
                     <input type="radio" name="map_image" value="" checked="checked" />
-                    <img style="width:{{ xDimensions }}px;height:{{ yDimensions }}px;" src="/images/galaxylayout_random.png" /> Zufällig
+                    <img style="width:{{ xDimensions }}px;height:{{ yDimensions }}px;" src="{{ asset('build/images/galaxylayout_random.png') }}" /> Zufällig
                     {% for layout in layouts  %}
                         <div>
                             <input type="radio" name="map_image" value="{{ layout }}" />
-                            <img src="/images/galaxylayouts/{{ layout }}" alt="{{ layout }}" /> {{ layout }}
+                            <img src="{{ asset('build/images/galaxylayouts/') ~ layout }}" alt="{{ layout }}" /> {{ layout }}
                         </div>
                     {% endfor %}
                 </td>

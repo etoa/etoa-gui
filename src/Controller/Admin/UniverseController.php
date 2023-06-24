@@ -94,7 +94,7 @@ class UniverseController extends AbstractAdminController
         $xDimensions = $this->config->param1Int('num_of_sectors') * $this->config->param1Int('num_of_cells');
         $yDimensions = $this->config->param2Int('num_of_sectors') * $this->config->param2Int('num_of_cells');
         $layouts = [];
-        $dir = realpath(__DIR__ ."/../../../htdocs/images/galaxylayouts/");
+        $dir = realpath(__DIR__ ."/../../../assets/images/galaxylayouts/");
         $d = opendir($dir);
         while ($file = readdir($d)) {
             if (is_file($dir . DIRECTORY_SEPARATOR . $file) && substr($file, strrpos($file, ".png")) == ".png" && $ims = getimagesize($dir . DIRECTORY_SEPARATOR . $file)) {

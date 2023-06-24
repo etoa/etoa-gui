@@ -14,6 +14,16 @@ Encore
     // only needed for CDN's or subdirectory deploy
     //.setManifestKeyPrefix('build/')
 
+    .copyFiles({
+        from: './assets/images',
+        to: 'images/[path][name].[ext]',
+    })
+
+    .copyFiles({
+        from: './assets/js',
+        to: 'js/[path][name].[ext]',
+    })
+
     /*
      * ENTRY CONFIG
      *
@@ -71,7 +81,7 @@ Encore
     .enableIntegrityHashes(Encore.isProduction())
 
     // uncomment if you're having problems with a jQuery plugin
-    //.autoProvidejQuery()
+    .autoProvidejQuery()
 ;
 
 module.exports = Encore.getWebpackConfig();
