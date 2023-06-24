@@ -6,7 +6,7 @@ use EtoA\Quest\DefaultRandomRegistry;
 use EtoA\Quest\QuestPresenter;
 use EtoA\Quest\QuestRepository;
 use LittleCubicleGames\Quests\Workflow\QuestDefinition;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;

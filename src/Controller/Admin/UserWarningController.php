@@ -7,7 +7,7 @@ use EtoA\Form\Type\Admin\AddUserWarningType;
 use EtoA\Form\Type\Admin\EditUserWarningType;
 use EtoA\Message\MessageRepository;
 use EtoA\User\UserWarningRepository;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;

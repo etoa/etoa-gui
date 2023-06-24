@@ -3,3 +3,13 @@ controllers:
         path: ../src/Controller/
         namespace: EtoA\Controller
     type: attribute
+
+admin.index:
+    path: /admin
+    controller: Symfony\Bundle\FrameworkBundle\Controller\RedirectController
+    defaults:
+        route: 'admin.overview'
+        permanent: true
+        keepQueryParams: true
+        keepRequestMethod: true
+        ignoreAttributes: true

@@ -8,7 +8,7 @@ use EtoA\PeriodicTask\EnvelopResultExtractor;
 use EtoA\PeriodicTask\PeriodicTaskCollection;
 use EtoA\PeriodicTask\Result\SuccessResult;
 use EtoA\PeriodicTask\Task\PeriodicTaskInterface;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;

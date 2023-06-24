@@ -5,7 +5,7 @@ namespace EtoA\Controller\Admin;
 use EtoA\Backend\BackendMessageService;
 use EtoA\Core\Configuration\ConfigurationDefinitionsRepository;
 use EtoA\Core\Configuration\ConfigurationService;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;

@@ -4,7 +4,7 @@ namespace EtoA\Controller\Admin;
 
 use EtoA\User\UserRepository;
 use EtoA\User\UserToXml;
-use Sensio\Bundle\FrameworkExtraBundle\Configuration\IsGranted;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
