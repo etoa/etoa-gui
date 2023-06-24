@@ -6,8 +6,9 @@ import '@symfony/ux-live-component/styles/live.css';
 export const app = startStimulusApp(require.context(
     '@symfony/stimulus-bridge/lazy-controller-loader!./controllers',
     true,
-    /\.(j|t)sx?$/
+    /\.[jt]sx?$/
 ));
+
 
 // register any custom, 3rd party controllers here
 // app.register('some_controller_name', SomeImportedController);
