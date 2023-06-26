@@ -104,7 +104,7 @@ function userPointsTable($uid, $target, $length = 100, $start = -1, $end = -1)
     $limitarr = array(10, 20, 30, 50, 100, 200);
 
     echo "<div id=\"pointGraphDetail\" style=\"text-align:center;margin-bottom:6px;\">
-    <img src=\"../misc/stats.image.php?user=" . $uid . "&amp;limit=" . $length . "&amp;start=" . $start . "&amp;end=" . $end . "\" alt=\"Diagramm\" />
+    <img src=\"../admin/images/stats/" . $uid . "&amp;limit=" . $length . "&amp;start=" . $start . "&amp;end=" . $end . "\" alt=\"Diagramm\" />
     <br/>";
     echo "Zeige maximal <select id=\"pointsLimit\" onchange=\"xajax_userPointsTable($uid,'$target',
     document.getElementById('pointsLimit').options[document.getElementById('pointsLimit').selectedIndex].value,

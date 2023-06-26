@@ -17,7 +17,7 @@
     {% if user %}
         <h2>Punktedetails für <a href="?page=user&action=edit&id={{ user.id }}">{{ user.nick }}</a></h2>
         <p><b>Punkte aktuell:</b> {{ formatNumber(user.points) }}, <b>Rang aktuell:</b> {{ user.rank }}</p>
-        <img src="/misc/stats.image.php?user={{ user.id }}" alt="Diagramm" /><br/><br/>
+        <img src="{{ path('admin.images.stats', {user: user.id}) }}" alt="Diagramm" /><br/><br/>
 
         <table>
             <tr>

@@ -80,7 +80,7 @@ class ExplorationController extends AbstractAdminController
             $this->addFlash('success', 'Alles erkundet!');
         }
 
-        return $this->render('admin/galaxy/exploration.html.twig', [
+        return $this->render('admin/universe/exploration.html.twig', [
             'users' => $this->userRepository->searchUserNicknames(),
             'user' => $user,
             'discoveredPercent' => $this->userUniverseDiscoveryService->getDiscoveredPercent($user),

@@ -6,6 +6,7 @@
     "require": {
         "php": ">=8.1",
         "ext-ctype": "*",
+        "ext-gd": "*",
         "ext-iconv": "*",
         "doctrine/doctrine-bundle": "^2.10",
         "doctrine/doctrine-migrations-bundle": "^3.2",
@@ -46,6 +47,7 @@
         "symfony/webpack-encore-bundle": "^2.0",
         "symfony/yaml": "6.3.*",
         "twig/extra-bundle": "^2.12|^3.0",
+        "twig/string-extra": "^3.6",
         "twig/twig": "^2.12|^3.0",
         "whichbrowser/parser": "^2.1"
     },
@@ -59,7 +61,8 @@
     },
     "autoload": {
         "files": [
-            "htdocs/inc/functions.inc.php"
+            "htdocs/inc/functions.inc.php",
+            "htdocs/admin/inc/admin_functions.inc.php"
         ],
         "psr-4": {
             "EtoA\\": "src/"

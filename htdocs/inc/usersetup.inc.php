@@ -317,12 +317,12 @@ if ($mode == "itemsets" && isset($planet)) {
     echo "<h2>Heimatsektor auswählen</h2>";
     echo "Wählt einen Sektor aus, in dem sich euer Heimatplanet befinden soll:<br/><br/>";
 
-    echo "Anzeigen: <select onchange=\"document.getElementById('img').src='misc/map.image.php'+this.options[this.selectedIndex].value;\">
+    echo "Anzeigen: <select onchange=\"document.getElementById('img').src='images/map'+this.options[this.selectedIndex].value;\">
     <option value=\"?t=" . time() . "\">Normale Galaxieansicht</option>
     <option value=\"?type=populated&t=" . time() . "\">Bevölkerte Systeme</option>
 
     </select><br/><br/>";
-    echo "<img src=\"misc/map.image.php\" alt=\"Galaxiekarte\" id=\"img\" usemap=\"#Galaxy\" style=\"border:none;\"/>";
+    echo "<img src=\"images/map\" alt=\"Galaxiekarte\" id=\"img\" usemap=\"#Galaxy\" style=\"border:none;\"/>";
 
     echo "<map name=\"Galaxy\">\n";
     $sec_x_size = GalaxyMap::WIDTH / $sx_num;

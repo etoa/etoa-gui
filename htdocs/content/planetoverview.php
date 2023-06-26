@@ -299,7 +299,7 @@ if (isset($cp)) {
         tableStart("Felderbelegung");
         echo "<tr>
         <tr><td colspan=\"2\">
-        <img src=\"misc/progress.image.php?r=1&w=650&p=" . round($planet->fieldsUsed / $planet->fields * 100) . "\" alt=\"progress\" style=\"width:100%;\"/>
+        <img src=\"images/progress/" . round($planet->fieldsUsed / $planet->fields * 100) . "?r=1&w=650\" alt=\"progress\" style=\"width:100%;\"/>
         <br/>Benutzt: " . $planet->fieldsUsed . ", Total: " . StringUtils::formatNumber($planet->fields) . " = " . StringUtils::formatNumber($cp->fieldsBase) . " Basisfelder + " . StringUtils::formatNumber($planet->fieldsExtra) . " zusätzliche Felder<br/></td></tr>
         <tr><td style=\"width:50%;vertical-align:top;padding:5px;\">";
         tableStart("Gebäude", '100%');

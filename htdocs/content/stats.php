@@ -38,7 +38,7 @@ if (isset($_GET['userdetail']) && intval($_GET['userdetail']) > 0) {
                 <b>Punkte aktuell:</b> " . StringUtils::formatNumber($user->points) . ", <b>Rang aktuell:</b> " . $user->rank . "
             </td></tr>";
         echo "<tr><td colspan=\"6\" style=\"text-align:center;\">
-                <img src=\"misc/stats.image.php?user=" . $user->id . "\" alt=\"Diagramm\" />
+                <img src=\"images/stats/" . $user->id . "\" alt=\"Diagramm\" />
             </td></tr>";
 
         /** @var UserPointsRepository $userPointsRepository */
@@ -66,7 +66,7 @@ if (isset($_GET['userdetail']) && intval($_GET['userdetail']) > 0) {
     if ($alliance !== null) {
         echo "<h2>Punktedetails f&uuml;r [" . BBCodeUtils::toHTML($alliance->tag) . "] " . BBCodeUtils::toHTML($alliance->name) . "</h2>";
         echo "<b>Punkte aktuell:</b> " . StringUtils::formatNumber($alliance->points) . ", <b>Rang aktuell:</b> " . $alliance->currentRank . "<br/><br/>";
-        echo "<img src=\"misc/alliance_stats.image.php?alliance=" . $alliance->id . "\" alt=\"Diagramm\" /><br/><br/>";
+        echo "<img src=\"images/alliance/stats/" . $alliance->id . "\" alt=\"Diagramm\" /><br/><br/>";
         $pointEntries = $alliancePointsRepository->getPoints($alliance->id, 48);
         if (count($pointEntries) > 0) {
             tableStart('', '400');

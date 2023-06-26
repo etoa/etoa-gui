@@ -76,7 +76,7 @@ function statsShowBox($mode, $sort = "", $sortOrder = "")
                 if ($stats->allianceTag == $_SESSION['alliance_tag'])
                     $addstyle = " class=\"userAllianceMemberColor\"";
                 echo "<tr>";
-                echo  "<td $addstyle " . tm("Punkteverlauf", "<div><img src=\"misc/alliance_stats.image.php?alliance=" . $stats->allianceId . "\" alt=\"Diagramm\" style=\"width:600px;height:400px;background:#335 url(images/loading335.gif) no-repeat 300px 200px;\" /></div>") . ">
+                echo  "<td $addstyle " . tm("Punkteverlauf", "<div><img src=\"images/alliance/stats/" . $stats->allianceId . "\" alt=\"Diagramm\" style=\"width:600px;height:400px;background:#335 url(images/loading335.gif) no-repeat 300px 200px;\" /></div>") . ">
                 " . StringUtils::formatNumber($cnt) . " ";
                 if ($stats->currentRank == $stats->lastRank)
                     echo  "<img src=\"images/stats/stat_same.gif\" alt=\"same\" width=\"21\" height=\"9\" />";
@@ -481,7 +481,7 @@ function statsShowTable($mode, $limit = 0, $userstring = "", $absolute = 0, $ord
 
                     $out .= "<td $addstyle  align=\"right\" ";
                     if ($mode == "user")
-                        $out .= tm("Punkteverlauf", "<div><img src=\"misc/stats.image.php?user=" . $entry->id . "\" alt=\"Diagramm\" style=\"width:600px;height:400px;background:#335 url(images/loading335.gif) no-repeat 300px 200px;\" /></div>");
+                        $out .= tm("Punkteverlauf", "<div><img src=\"images/stats/" . $entry->id . "\" alt=\"Diagramm\" style=\"width:600px;height:400px;background:#335 url(images/loading335.gif) no-repeat 300px 200px;\" /></div>");
                     $out .= ">" . StringUtils::formatNumber($entry->rank) . " ";
                     if ($entry->shift === 2)
                         $out .= "<img src=\"images/stats/stat_down.gif\" alt=\"down\" width=\"9\" height=\"12\" />";

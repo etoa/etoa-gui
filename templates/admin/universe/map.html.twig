@@ -14,10 +14,10 @@
         <div id="image">
             Anzeigen:
             <select onchange="$('#img').attr('src', this.options[this.selectedIndex].value);">
-                <option value="/misc/map.image.php?legend&amp;req_admin&amp;t={{ 'now'|date('U') }}">Normale Galaxieansicht</option>
-                <option value="/misc/map.image.php?legend&amp;req_admin&amp;type=populated&t={{ 'now'|date('U') }}">Bev&ouml;lkerte Systeme</option>
+                <option value="{{ path('admin.images.map') }}?legend&t={{ 'now'|date('U') }}">Normale Galaxieansicht</option>
+                <option value="{{ path('admin.images.map') }}?legend&type=populated&t={{ 'now'|date('U') }}">Bev&ouml;lkerte Systeme</option>
             </select><br/><br/>
-            <img src="/misc/map.image.php?legend&amp;req_admin" alt="Galaxiekarte" id="img" usemap="#Galaxy" style="border:none\"/>
+            <img src="{{ path('admin.images.map') }}?legend" alt="Galaxiekarte" id="img" usemap="#Galaxy" style="border:none\"/>
         </div>
 
         <div id="interactive">

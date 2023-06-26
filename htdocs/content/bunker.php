@@ -154,8 +154,8 @@ if ($cp) {
             }
             echo "\">Alle wählen</a>";
             echo "</td></tr>
-            <tr><th colspan=\"2\">Verfügbar:</th><td><img src=\"misc/progress.image.php?r=1&w=100&p=" . round($structure / $fleetBunker->calculateBunkerFleetSpace($fleetBunkerLevel) * 100) . "\" alt=\"progress\" /></td>
-            <td><img src=\"misc/progress.image.php?r=1&w=100&p=" . round($count / $fleetBunker->calculateBunkerFleetCount($fleetBunkerLevel) * 100) . "\" alt=\"progress\" /></td><td></td></tr>";
+            <tr><th colspan=\"2\">Verfügbar:</th><td><img src=\"images/progress/" . round($structure / $fleetBunker->calculateBunkerFleetSpace($fleetBunkerLevel) * 100) . "?r=1&w=100\" alt=\"progress\" /></td>
+            <td><img src=\"images/progress/" . round($count / $fleetBunker->calculateBunkerFleetCount($fleetBunkerLevel) * 100) . "?r=1&w=100\" alt=\"progress\" /></td><td></td></tr>";
             tableEnd();
             echo "<input type=\"submit\" name=\"submit_bunker_fleet\" value=\"Ausbunkern\" />";
             echo "</form>";
@@ -324,7 +324,7 @@ if ($cp) {
                 <td><input type=\"text\" id=\"bunker_food\" name=\"bunker_food\" value=\"" . StringUtils::formatNumber($planet->bunkerFood) . "\" size=\"8\" maxlength=\"20\" onKeyUp=\"FormatNumber(this.id,this.value, '', '', '');\"/></td></tr>
             <tr><th style=\"width:150px\">Benutzt:</th>
             <td>" . StringUtils::formatNumber($bunkered) . "/" . StringUtils::formatNumber($resBunker->calculateBunkerResources($resBunkerLevel)) . "</td></tr>
-            <tr><th>Verfügbar:</th><td><img src=\"misc/progress.image.php?r=1&w=100&p=" . round($bunkered / $resBunker->calculateBunkerResources($resBunkerLevel) * 100) . "\" alt=\"progress\" /></td></tr>";
+            <tr><th>Verfügbar:</th><td><img src=\"images/progress/" . round($bunkered / $resBunker->calculateBunkerResources($resBunkerLevel) * 100) . "?r=1&w=100\" alt=\"progress\" /></td></tr>";
             tableEnd();
             echo "<input type=\"submit\" name=\"submit_bunker_res\" value=\"Speichern\" />";
             echo "</form>";

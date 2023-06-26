@@ -67,5 +67,5 @@ foreach (ResourceNames::NAMES as $i => $resourceName) {
 }
 echo "</table><br/>";
 
-echo '<img src="misc/market.image.php" alt="Kursverlauf" />
+echo '<img src="images/market" alt="Kursverlauf" />
             </div><br/>';

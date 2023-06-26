@@ -16,7 +16,7 @@ echo "<h2>Energie</h2>";
 
 tableStart("Energieproduktion");
 echo "<tr><td colspan=\"6\">
-<img src=\"misc/powerproduction.image.php\" alt=\"Graph\" />
+<img src=\"/images/powerProduction\" alt=\"Graph\" />
 </td></tr>";
 
 /** @var BuildingRepository $buildingRepository */

@@ -409,7 +409,7 @@ if ($user !== null) {
                     <td class=\"tbldata\">
                         " . StringUtils::formatNumber($user->points) . "
                         [<a href=\"javascript:;\" onclick=\"toggleBox('pointGraph')\">Verlauf anzeigen</a>]
-                        <div id=\"pointGraph\" style=\"display:none;\"><img src=\"../misc/stats.image.php?user=" . $user->id . "\" alt=\"Diagramm\" /></div>
+                        <div id=\"pointGraph\" style=\"display:none;\"><img src=\"../admin/images/stats/" . $user->id . "\" alt=\"Diagramm\" /></div>
                     </td>
                 </tr>
                 <tr>

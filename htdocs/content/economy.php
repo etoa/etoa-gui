@@ -162,7 +162,7 @@ if ($cp) {
                 $prodIncludingBoni['plastic'] += $bareBuildingProduction['plastic'] * $boni;
             }
             if ($bareBuildingProduction['fuel'] != "") {
-                $boni = $cp->typeFuel - 1 + $race->fuel - 1 + $cp->starFuel - 1 + ($specialist !== null ? $specialist->prodFuel : 1) - 1  + $planet->getFuelProductionBonusFactor() * -1;
+                $boni = $cp->typeFuel - 1 + $race->fuel - 1 + $cp->starFuel - 1 + ($specialist !== null ? $specialist->prodFuel : 1) - 1 + $planet->getFuelProductionBonusFactor() * -1;
                 $prodIncludingBoni['fuel'] += $bareBuildingProduction['fuel'] * $boni;
             }
             if ($bareBuildingProduction['food'] != "") {
@@ -219,7 +219,7 @@ if ($cp) {
                     echo ">" . $perc . " %</option>\n";
                 }
                 echo "</select>";
-                echo "&nbsp; <img src=\"misc/progress.image.php?w=50&p=" . ($buildlist->prodPercent * 100) . "\" alt=\"progress\" />";
+                echo "&nbsp; <img src=\"images/progress/" . ($buildlist->prodPercent * 100) . "?w=50\" alt=\"progress\" />";
             } elseif ($building->id == BuildingId::MISSILE || $building->id == BuildingId::CRYPTO) {
                 echo "<select name=\"buildlist_prod_percent[" . $building->id . "]\">\n";
                 echo "<option value=\"1\"";
@@ -229,7 +229,7 @@ if ($cp) {
                 if ($buildlist->prodPercent == 0) echo " selected=\"selected\"";
                 echo ">0 %</option>\n";
                 echo "</select>";
-                echo "&nbsp; <img src=\"misc/progress.image.php?w=50&p=" . ($buildlist->prodPercent * 100) . "\" alt=\"progress\" />";
+                echo "&nbsp; <img src=\"images/progress/" . ($buildlist->prodPercent * 100) . "?w=50\" alt=\"progress\" />";
             } else {
                 echo "&nbsp;";
             }
@@ -414,7 +414,7 @@ if ($cp) {
         echo "<tr><th>Benutzt</td><td";
         echo ">" . StringUtils::formatNumber($powerUsed) . "</td><td>" . round($powerUsed / $powerProduced * 100, 2) . "%</th>
             <td>
-            <img src=\"misc/progress.image.php?r=1&w=100&p=" . round($powerUsed / $powerProduced * 100, 2) . "\" alt=\"progress\" />
+            <img src=\"images/progress/" . round($powerUsed / $powerProduced * 100, 2) . "?r=1&w=100\" alt=\"progress\" />
             </td>
             </tr>";
         if ($powerFree < 0)
@@ -427,7 +427,7 @@ if ($cp) {
             <td $style>
             " . round($powerFree / $powerProduced * 100, 2) . "%</td>
             <td>
-            <img src=\"misc/progress.image.php?w=100&p=" . round($powerFree / $powerProduced * 100, 2) . "\" alt=\"progress\" />
+            <img src=\"images/progress/" . round($powerFree / $powerProduced * 100, 2) . "?w=100\" alt=\"progress\" />
             </td></tr>";
     }
     tableEnd();
@@ -482,11 +482,11 @@ if ($cp) {
         $percent_plastic_storage = $planet->storePlastic > 0 ? round($planet->resPlastic / $planet->storePlastic * 100) : 0;
         $percent_fuel_storage = $planet->storeFuel > 0 ? round($planet->resFuel / $planet->storeFuel * 100) : 0;
         $percent_food_storage = $planet->storeFood > 0 ? round($planet->resFood / $planet->storeFood * 100) : 0;
-        echo "<td><img src=\"misc/progress.image.php?r=1&w=100&p=" . $percent_metal_storage . "\" alt=\"progress\" /></td>";
-        echo "<td><img src=\"misc/progress.image.php?r=1&w=100&p=" . $percent_crystal_storage . "\" alt=\"progress\" /></td>";
-        echo "<td><img src=\"misc/progress.image.php?r=1&w=100&p=" . $percent_plastic_storage . "\" alt=\"progress\" /></td>";
-        echo "<td><img src=\"misc/progress.image.php?r=1&w=100&p=" . $percent_fuel_storage . "\" alt=\"progress\" /></td>";
-        echo "<td><img src=\"misc/progress.image.php?r=1&w=100&p=" . $percent_food_storage . "\" alt=\"progress\" /></td>";
+        echo "<td><img src=\"images/progress/" . $percent_metal_storage . "?r=1&w=100\" alt=\"progress\" /></td>";
+        echo "<td><img src=\"images/progress/" . $percent_crystal_storage . "?r=1&w=100\" alt=\"progress\" /></td>";
+        echo "<td><img src=\"images/progress/" . $percent_plastic_storage . "?r=1&w=100\" alt=\"progress\" /></td>";
+        echo "<td><img src=\"images/progress/" . $percent_fuel_storage . "?r=1&w=100\" alt=\"progress\" /></td>";
+        echo "<td><img src=\"images/progress/" . $percent_food_storage . "?r=1&w=100\" alt=\"progress\" /></td>";
         echo "</tr>";
 
 
