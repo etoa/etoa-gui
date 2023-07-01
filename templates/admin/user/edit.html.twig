@@ -1,0 +1,416 @@
+{% extends 'admin/layout/admin.html.twig' %}
+
+{% block content %}
+    <script type="text/javascript">
+        function loadSpecialist(st) {
+            const elem = document.getElementById('user_specialist_id');
+            xajax_showTimeBox('spt', 'user_specialist_time', st, elem.options[elem.selectedIndex].value);
+        }
+
+        function loadAllianceRanks(val) {
+            const elem = document.getElementById('user_alliance_id');
+            xajax_allianceRankSelector('ars', 'user_alliance_rank_id', val, elem.options[elem.selectedIndex].value);
+        }
+
+        function toggleText(elemId, switchId) {
+            if (document.getElementById(switchId).innerHTML === 'Anzeigen') {
+                document.getElementById(elemId).style.display = '';
+                document.getElementById(switchId).innerHTML = 'Verbergen';
+            } else {
+                document.getElementById(elemId).style.display = 'none';
+                document.getElementById(switchId).innerHTML = 'Anzeigen';
+            }
+        }
+    </script>
+
+    <h1>Spieler</h1>
+    <h3>User bearbeiten: {{ user.nick }}</h3>
+
+    <form action="{{ path('admin.users.edit', {id: user.id}) }}" method="post">
+        <input type="hidden" id="tabactive" name="tabactive" value=""/>
+        <div class="tabs" id="user_edit_tabs">
+            <ul>
+                <li><a href="#tabs-1">Info</a></li>
+                <li><a href="#tabs-2">Account</a></li>
+                <li><a href="#tabs-3">Daten</a></li>
+                <li><a href="#tabs-4">Sitting</a></li>
+                <li><a href="#tabs-5">Profil</a></li>
+                <li><a href="#tabs-6">Design</a></li>
+                <li><a href="#tabs-7">Nachrichten</a></li>
+                <li><a href="#tabs-8">Loginfehler</a></li>
+                <li><a href="#tabs-9">Punkte</a></li>
+                <li><a href="#tabs-10">Tickets</a></li>
+                <li><a href="#tabs-11">Kommentare</a></li>
+                <li><a href="#tabs-12">Log</a></li>
+                <li><a href="#tabs-13">Wirtschaft</a></li>
+            </ul>
+
+            {# Allgemeines #}
+            <div id="tabs-1">
+                <table class="tbl">
+                    <tr>
+                        <td class="tbltitle" style="width:180px;">ID:</td>
+                        <td class="tbldata">{{ user.ip }}</td>
+                    </tr>
+                    <tr>
+                        <td class="tbltitle">Registrierdatum:</td>
+                        <td class="tbldata">{{ user.registered|formatTimestamp }}</td>
+                    </tr>
+                    <tr>
+                        <td class="tbltitle">Zuletzt online:</td>
+                        {% if user.timeAction != null %}
+                            <td class="tbldata" style="color:#0f0;">online</td>
+                        {% elseif user.timeLog > 0 %}
+                            <td class="tbldata">{{ user.timeLog|formatTimestamp }}</td>
+                        {% else %}
+                            <td class="tbldata">Noch nicht eingeloggt!</td>
+                        {% endif %}
+                    </tr>
+                    <tr>
+                        <td class="tbltitle">IP/Host:</td>
+                        <td class="tbldata">
+                            <a href="{{ path('admin.users.ips') }}?ip={{ user.ipAddr }}">{{ user.ipAddr }}</a>
+                            <a href="{{ path('admin.users.ips') }}?host={{ host }}">{{ host }}</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="tbltitle">Agent:</td>
+                        <td class="tbldata">{{ agent }}</td>
+                    </tr>
+                    <tr>
+                        <td class="tbltitle">Punkte:</td>
+                        <td class="tbldata">
+                            {{ user.points|formatNumber }}
+                            [<a href="javascript:" onclick="toggleBox('pointGraph')">Verlauf anzeigen</a>]
+                            <div id="pointGraph" style="display:none;">
+                                <img src="{{ path('admin/images/stats', {user: user.id}) }}" alt="Diagramm"/>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="tbltitle">Rang:</td>
+                        <td class="tbldata">
+                            {{ user.rank|formatNumber }} (aktuell),
+                            {{ user.rankHighest|formatNumber }} (max)
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="tbltitle">Rohstoffe von...</td>
+                        <td class="tbldata">
+                            Raids: {{ user.resFromRaid|formatNumber }} t<br/>
+                            Asteroiden: {{ user.resFromAsteroid|formatNumber }} t<br/>
+                            Nebelfelder: {{ user.resFromNebula|formatNumber }} t<br/>
+                            Trümmerfelder: {{ user.resFromTf }} t
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="tbltitle">Infos:</td>
+                        <td class="tbldata">";
+                            {% if user.observe != '' %}
+                                <div>
+                                    Benutzer steht unter <b>Beobachtung</b>: {{ user.observe }} &nbsp;
+                                    [<a href="{{ path('admin.users.observer.details', {id: user.id}) }}">Ändern</a>]
+                                </div>
+                            {% endif %}
+                            {% if user.deleted != 0 %}
+                                <div class="userDeletedColor">Dieser Account ist zur Löschung
+                                    am {{ user.deleted|formatTimestamp }} vorgemerkt
+                                </div>
+                            {% endif %}
+                            {% if user.hmodFrom > 0 %}
+                                <div class="userHolidayColor">Dieser Account ist im Urlaubsmodus
+                                    seit {{ user.hmodFrom|formatTimestamp }} bis
+                                    mindestens {{ user.hmodTo|formatTimestamp }}
+                                </div>
+                            {% endif %}
+                            {% if isBlocked %}
+                                <div class="userLockedColor">
+                                    Dieser Account ist im gesperrt von {{ user.blockedFrom|formatTimestamp }}
+                                    bis {{ user.blockedTo|formatTimestamp }}.
+                                    {% if user.banReason != '' %}Grund: {{ user.banReason }}{% endif %}
+                                </div>
+                            {% endif %}
+                            {% if user.admin != 0 %}
+                                <div class="adminColor">Dies ist ein Admin-Account!</div>
+                            {% endif %}
+                            {% if user.ghost %}
+                                <div class="userGhostColor">
+                                    Dies ist ein Geist-Account. Er wird nicht in der Statistik angezeigt!
+                                </div>
+                            {% endif %}
+                            {% if user.chatAdmin != 0 %}
+                                <div>Dieser User ist ein Chat-Admin.</div>
+                            {% endif %}
+                            {% if user.verificationKey != '' %}
+                                <div>
+                                    Die E-Mail Adresse ist noch nicht bestätigt
+                                    [<a href="{{ path('admin.users.set_verified', {id: user.id}) }}">Freischalten</a>].
+                                </div>
+                            {% endif %}
+
+                            {# Kommentare #}
+                            {% if comments.count > 0 %}
+                                <div>
+                                    <b>{{ comments.count }}Kommentare</b> vorhanden, neuster Kommentar
+                                    von {{ comments.latest|formatTimestamp }}
+                                    [<a href="javascript:" onclick="$('.tabs').tabs('select', 10);">Zeigen</a>]
+                                </div>
+                            {% endif %}
+
+                            {# Tickets #}
+                            {% if numberOfNewTickets + numberOfAssignedTickets > 0 %}
+                            <div>
+                                <b>{{ numberOfNewTickets }} neue Tickets</b> und <b> {{ numberOfAssignedTickets }}
+                                    zugewiesene Tickets</b> vorhanden.
+                                [<a href="javascript:" onclick="$('.tabs').tabs('select', 9);">Zeigen</a>]
+                            </div>
+                            {% endif %}hh b
+
+                            {# Verwarnungen #}
+                            {% if warning.count > 0 %}
+                                <div>
+                                    <b>{{ warning.count }} Verwarnungen</b> vorhanden, neuste
+                                    von {{ warning.max|formatTimestamp }}.
+                                    [<a href="{{ path('admin.users.warnings') }}">Zeigen</a>]
+                                </div>
+                            {% endif %}
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
+            {# Account #}
+            <div id="tabs-2">
+                <table class="tbl">
+                    <tr>
+                        <td class="tbltitle"><label for="user_nick">Nick:</label></td>
+                        <td class="tbldata">
+                            <input type="text" name="user_nick" id="user_nick" value="{{ user.nick }}" size="35"
+                                   maxlength="250"/>
+                        </td>
+                        <td>Eine Nickänderung ist grundsätzlich nicht erlaubt</td>
+                    </tr>
+                    <tr>
+                        <td class="tbltitle"><label for="user_email">E-Mail:</label></td>
+                        <td class="tbldata">
+                            <input type="email" name="user_email" id="user_email" value="{{ user.email }}" size="35"
+                                   maxlength="250"/>
+                        </td>
+                        <td>Rundmails gehen an diese Adresse</td>
+                    </tr>
+                    <tr>
+                        <td class="tbltitle"><label for="user_name">Name:</label></td>
+                        <td class="tbldata">
+                            <input type="text" name="user_name" id="user_name" value="{{ user.name }}" size="35"
+                                   maxlength="250"/>
+                        </td>
+                        <td>Bei Accountübergabe anpassen</td>
+                    </tr>
+                    <tr>
+                        <td class="tbltitle"><label for="user_email_fix">E-Mail fix:</label></td>
+                        <td class="tbldata">
+                            <input type="email" name="user_email_fix" id="user_email_fix"
+                                   value={{ user.emailFix }} size="35" maxlength="250"/>
+                        </td>
+                        <td>Bei Accountübergabe anpassen</td>
+                    </tr>
+                    <tr>
+                        <td class="tbltitle"><label for="dual_name"></label>Name Dual:</td>
+                        <td class="tbldata">
+                            <input type="text" name="dual_name" id="dual_name" value="{{ user.dualName }}" size="35"
+                                   maxlength="250"/>
+                        </td>
+                        <td>Bei Dualänderung anpassen</td>
+                    </tr>
+                    <tr>
+                        <td class="tbltitle"><label for="dual_email">E-Mail Dual:</label></td>
+                        <td class="tbldata">
+                            <input type="email" name="dual_email" id="dual_email" value="{{ user.dualEmail }}" size="35"
+                                   maxlength="250"/>
+                        </td>
+                        <td>Bei Dualänderung anpassen</td>
+                    </tr>
+                    <tr>
+                        <td class="tbltitle"><label for="user_password">Passwort:</label></td>
+                        <td class="tbldata">
+                            <input type="text" name="user_password" id="user_password" value="" size="35"
+                                   maxlength="250"/>
+                        </td>
+                        <td>Leerlassen um altes Passwort beizubehalten</td>
+                    </tr>
+                    <tr>
+                        <td class="tbltitle"><label for="user_password_temp">Temporäres Passwort:</label></td>
+                        <td class="tbldata">
+                            <input type="text" name="user_password_temp" id="user_password_temp"
+                                   value="{{ user.passwordTemp }}" size="30" maxlength="30"/>
+                        </td>
+                        <td>Nur dieses wird verwendet, falls ausgefüllt</td>
+                    </tr>
+                    <tr>
+                        <td class="tbltitle">Geist:</td>
+                        <td class="tbldata">
+                            <input type="radio" name="user_ghost" id="user_ghost1"
+                                   value="1" {% if user.ghost %} checked="checked" {% endif %} />
+                            <label for="user_ghost1">Ja</label>
+                            <input type="radio" name="user_ghost" id="user_ghost0"
+                                   value="0" {% if not user.ghost %} checked="checked" {% endif %}/>
+                            <label for="user_ghost0">Nein</label>
+                        </td>
+                        <td>Legt fest ob der Spieler in der Rangliste ausgeblendet wird</td>
+                    </tr>
+                    <tr>
+                        <td class="tbltitle">Chat-Admin:</td>
+                        <td class="tbldata">
+                            <input type="radio" name="user_chatadmin" id="user_chatadmin1"
+                                   value="1" {% if user.chatAdmin == 1 %} checked="checked" {% endif %} />
+                            <label for="user_chatadmin1">Ja</label>
+                            <input type="radio" name="user_chatadmin" id="user_chatadmin0"
+                                   value="0" {% if user.chatAdmin == 0 %} checked="checked" {% endif %} />
+                            <label for="user_chatadmin0">Nein</label><br/>
+                            <input type="radio" name="user_chatadmin" id="user_chatadmin2"
+                                   value="2" {% if user.chatAdmin == 2 %} checked="checked" {% endif %} />
+                            <label for="user_chatadmin2">Leiter Team Community</label><br/>
+                            <input type="radio" name="user_chatadmin" id="user_chatadmin3"
+                                   value="3" {% if user.chatAdmin == 3 %} checked="checked" {% endif %} />
+                            <label for="user_chatadmin3">Entwickler mit Adminrechten</label>
+                        </td>
+                        <td>Der Spieler hat Adminrechte im Chat und einen silbernen Stern für Chatadmin,
+                            einen grünen Stern für Leiter Team Community bzw. einen cyanfarbenen Stern für
+                            Entwickler mit Adminrechten (Entwickler mit Adminrechten funktioniert nur, wenn unten
+                            'Admin' auf 'Ja' gestellt wird).
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="tbltitle">Admin:</td>
+                        <td class="tbldata">
+                            <input type="radio" name="admin" id="admin1" value="1"
+                                    {% if user.admin == 1 %} checked="checked" {% endif %} />
+                            <label for="admin1">Ja</label>
+                            <input type="radio" name="admin" id="admin0" value="0"
+                                    {% if user.admin == 0 %} checked="checked" {% endif %} />
+                            <label for="admin0">Nein</label>
+                            <input type="radio" name="admin" id="admin2" value="2"
+                                    {% if user.admin == 2 %} checked="checked" {% endif %} />
+                            <label for="admin2"> Entwickler ohne Adminrechte</label>
+                        </td>
+                        <td>
+                            Admin: Der Spieler wird in der Raumkarte als Game-Admin markiert.<br/>
+                            Entwickler: Der Spieler bekommt einen nutzlosen roten Stern im Chat, keine Markierung
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="tbltitle">NPC:</td>
+                        <td class="tbldata">
+                            <input type="radio" name="npc" id="npc1"
+                                   value="1" {% if user.npc == 1 %} checked="checked" {% endif %} />
+                            <label for="npc1">Ja</label>
+                            <input type="radio" name="npc" id="npc0"
+                                   value="0" {% if user.npc == 0 %} checked="checked" {% endif %} />
+                            <label for="npc0">Nein</label>
+                        </td>
+                        <td>Spieler wird als NPC markiert</td>
+                    </tr>
+                    <tr>
+                        <td class="tbltitle" valign="top">Sperren</td>
+                        <td class="tbldata">
+                            <input type="radio" name="ban_enable" id="ban_enable0" value="0"
+                                   onclick="$('#ban_options').hide();" {% if user.blockedFrom == 0 %} checked="checked" {% endif %} />
+                            <label for="ban_enable0">Nein</label>
+                            <input type="radio" name="ban_enable" id="ban_enable1" value="1"
+                                   onclick="$('#ban_options').show();" {% if user.blockedFrom > 0 %} checked="checked" {% endif %} />
+                            <label for="ban_enable1">Ja</label>
+                            {% if isNoLongerBlocked %}<i><b>Diese Sperre ist abgelaufen!</b></i>{% endif %}
+                            <table id="ban_options">
+                                <tr>
+                                    <td class="tbltitle" valign="top">Von</td>
+                                    <td class="tbldata">
+                                        showDatepicker("user_blocked_from", $user->blockedFrom > 0 ? $user->blockedFrom
+                                        : time(), true);
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="tbltitle" valign="top">Bis</td>
+                                    <td class="tbldata">
+                                        showDatepicker("user_blocked_to", $user->blockedFrom > 0 ? $user->blockedTo :
+                                        time() + $userBlockedDefaultTime, true);
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="tbltitle" valign="top"><label for="user_ban_admin_id">Admin</label></td>
+                                    <td class="tbldata">
+                                        <select name="user_ban_admin_id" id="user_ban_admin_id">
+                                            <option value="0">(niemand)</option>
+                                            {% for adminUserId, adminUserNick in adminUserNicks %}
+                                                <option value="{{ adminUserId }}" {% if user.banAdminId == adminUserId %}
+                                                    selected="selected" {% endif %}>
+                                                    {{ adminUserNick }}
+                                                </option>
+                                            {% endfor %}
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="tbltitle" valign="top"><label for="user_ban_reason">Grund</label></td>
+                                    <td class="tbldata">
+                                        <textarea name="user_ban_reason" id="user_ban_reason" cols="45"
+                                                  rows="2">{{ user.banReason }}</textarea>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                        <td>Der Benutzer kann sich nicht einloggen und erscheint auf dem Pranger</td>
+                    </tr>
+                    <tr>
+                        <td class="tbltitle" valign="top">U-Mod</td>
+                        <td class="tbldata">
+                            <input type="radio" name="umod_enable" id="umod_enable0" value="0"
+                                   onclick="$('#umod_options').hide();" checked="checked"/>
+                            <label
+                                    for="umod_enable0">Nein</label>
+                            <input type="radio" name="umod_enable" id="umod_enable1" value="1"
+                                   onclick="$('#umod_options').show();"
+                                   if ($user->hmodFrom > 0) {
+                            echo " checked="checked"";
+                            }
+                            echo "/>
+                            <label for="umod_enable1">Ja</label> ";
+                            if ($user->hmodFrom > 0 && $user->hmodTo < time()) {
+                            echo "<i><b>Dieser Urlaubsmodus ist abgelaufen!</b></i>";
+                            }
+                            echo "
+                            <table id="umod_options">
+                                <tr>
+                                    <td class="tbltitle" valign="top">Von</td>
+                                    <td class="tbldata">";
+                                        showDatepicker("user_hmode_from", $user->hmodFrom > 0 ? $user->hmodFrom :
+                                        time(), true);
+                                        echo "
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="tbltitle" valign="top">Bis</td>
+                                    <td class="tbldata">";
+                                        $userHolidayModeDefaultTime = 3600 * 24 * $config->get('user_umod_min_length');
+                                        showDatepicker("user_hmode_to", $user->hmodTo > 0 ? $user->hmodTo : time() +
+                                        $userHolidayModeDefaultTime, true);
+                                        echo "
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                        <td>Der Benutzer kann nichts mehr bauen, wird aber auch nicht angegriffen</td>
+                    </tr>
+                    ";
+
+
+                    echo "
+                </table>
+                ";
+
+                echo '
+            </div>
+            '
+        </div>
+    </form>
+{% endblock %}
+

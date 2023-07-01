@@ -98,29 +98,32 @@ function searchQueryUrl($str)
 /**
  * Shows a datepicker
  */
-function showDatepicker($element_name, $def_val, $time = false, $seconds = false)
+function showDatepicker(string $element_name, int $def_val, bool $time = false, bool $seconds = false): void
 {
-    echo "<input type=\"text\" name=\"" . $element_name . "\" value=\"" . date('d.m.Y', $def_val) . "\" class=\"datepicker\" size=\"10\" />";
+    $dt = new DateTime();
+    $dt->setTimestamp($def_val);
     if ($time) {
         if ($seconds) {
-            echo ":<input type=\"text\" name=\"" . $element_name . "_time\" value=\"" . date('H:i:s', $def_val) . "\" size=\"7\" />";
+            echo '<input type="datetime-local" step="1" name="' . $element_name . '" value="' . $dt->format('c') . '" />';
         } else {
-            echo ":<input type=\"text\" name=\"" . $element_name . "_time\" value=\"" . date('H:i', $def_val) . "\" size=\"5\" />";
+            echo '<input type="datetime-local" name="' . $element_name . '" value="' . $dt->format('c') . '" />';
         }
+    } else {
+        echo '<input type="date" name="' . $element_name . '" value="' . $dt->format('Y-m-d') . '" />';
     }
 }
 
 /**
  * Parse value submitted by datepicker field
  */
-function parseDatePicker($element_name, $data)
+function parseDatePicker(string $value): int
 {
-
-    $str = $data[$element_name];
-    if (isset($data[$element_name . "_time"])) {
-        $str .= " " . $data[$element_name . "_time"];
+    try {
+        $dt = new DateTime($value);
+        return $dt->getTimestamp();
+    } catch (Exception) {
+        return 0;
     }
-    return strtotime($str);
 }
 
 /**
