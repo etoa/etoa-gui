@@ -4,28 +4,31 @@ namespace EtoA\Controller\Admin;
 
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Design\Design;
+use EtoA\Design\DesignsService;
 use EtoA\Support\FileUtils;
 use EtoA\User\UserPropertiesRepository;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class DesignController extends AbstractAdminController
 {
     public function __construct(
-        private UserPropertiesRepository $userPropertiesRepository,
-        private ConfigurationService $config
-    ) {
+        private readonly UserPropertiesRepository $userPropertiesRepository,
+        private readonly ConfigurationService     $config,
+        private readonly DesignsService           $designsService,
+    )
+    {
     }
 
     #[Route("/admin/designs/", name: "admin.design")]
     #[IsGranted('ROLE_ADMIN_MASTER')]
     public function view(): Response
     {
-        $designs = get_designs();
+        $designs = $this->designsService->getDesigns();
 
         $designCounts = $this->userPropertiesRepository->getDesignStats(99);
 
@@ -108,7 +111,7 @@ class DesignController extends AbstractAdminController
     #[IsGranted('ROLE_ADMIN_MASTER')]
     public function download(string $design): Response
     {
-        $designs = get_designs();
+        $designs = $this->designsService->getDesigns();
         if (isset($designs[$design])) {
             $zipFile = tempnam(sys_get_temp_dir(), $design) . '.zip';
             $dir = $designs[$design]['dir'];
@@ -131,7 +134,7 @@ class DesignController extends AbstractAdminController
     #[IsGranted('ROLE_ADMIN_MASTER')]
     public function remove(string $design): RedirectResponse
     {
-        $designs = get_designs();
+        $designs = $this->designsService->getDesigns();
         if (isset($designs[$design]) && $designs[$design]['custom']) {
             $dir = $designs[$design]['dir'];
             FileUtils::removeDirectory($dir);

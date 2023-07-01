@@ -1,12 +1,15 @@
 <?PHP
 
-use EtoA\Support\StringUtils;
+use EtoA\Design\DesignsService;
 use EtoA\User\UserPropertiesRepository;
 
-$designs = get_designs();
+/** @var DesignsService $designsService */
+$designsService = $app[DesignsService::class];
 
 /** @var UserPropertiesRepository $userPropertiesRepository */
 $userPropertiesRepository = $app[UserPropertiesRepository::class];
+
+$designs = $designsService->getDesigns();
 
 $properties = $userPropertiesRepository->getOrCreateProperties($cu->id);
 

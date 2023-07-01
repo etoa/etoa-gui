@@ -5,6 +5,7 @@ namespace EtoA\Controller\Admin;
 use EtoA\Admin\AdminUserRepository;
 use EtoA\Alliance\AllianceRepository;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Design\DesignsService;
 use EtoA\Form\Request\Admin\UserCreateRequest;
 use EtoA\Form\Type\Admin\UserCreateType;
 use EtoA\Help\TicketSystem\TicketRepository;
@@ -13,8 +14,10 @@ use EtoA\Log\LogFacility;
 use EtoA\Log\LogRepository;
 use EtoA\Log\LogSeverity;
 use EtoA\Race\RaceDataRepository;
+use EtoA\Ranking\UserBannerService;
 use EtoA\Ship\ShipDataRepository;
 use EtoA\Specialist\SpecialistDataRepository;
+use EtoA\Support\ExternalUrl;
 use EtoA\User\UserCommentRepository;
 use EtoA\User\UserHolidayService;
 use EtoA\User\UserMultiRepository;
@@ -52,6 +55,8 @@ class UserController extends AbstractController
         private readonly SpecialistDataRepository $specialistRepository,
         private readonly AllianceRepository       $allianceRepository,
         private readonly ShipDataRepository       $shipDateRepository,
+        private readonly UserBannerService        $userBannerService,
+        private readonly DesignsService           $designsService,
         private readonly string                   $projectDir,
     )
     {
@@ -102,6 +107,11 @@ class UserController extends AbstractController
             "status" => "assigned",
         ]);
 
+        $bannerPath = $this->userBannerService->getUserBannerPath($id);
+
+        $designs = $this->designsService->getDesigns();
+        $planetCircleOptions = range(450, 700, 50);
+
         return $this->render('admin/user/edit.html.twig', [
             'user' => $user,
             'properties' => $this->userPropertiesRepository->getOrCreateProperties($user->id),
@@ -123,6 +133,16 @@ class UserController extends AbstractController
             'allianceNamesWithTags' => $this->allianceRepository->getAllianceNamesWithTags(),
             'spyShipNames' => $this->shipDateRepository->getShipNamesWithAction('spy'),
             'analyzeShipNames' => $this->shipDateRepository->getShipNamesWithAction('analyze'),
+            'multiEntries' => $this->userMultiRepository->getUserEntries($user->id, true),
+            'deletedMultiEntries' => $this->userMultiRepository->getUserEntries($user->id, false),
+            'sittedEntries' => $this->userSittingRepository->getWhereUser($user->id),
+            'sittingEntries' => $this->userSittingRepository->getWhereSitter($user->id),
+            'bannerPath' => file_exists($bannerPath) ? $bannerPath : null,
+            'bannerTime' => file_exists($bannerPath) ? filemtime($bannerPath) : 0,
+            'userBannerWebsiteLink' => ExternalUrl::USERBANNER_LINK,
+            'userBannerLink' => $this->config->get('roundurl') . '/' . $bannerPath,
+            'designNames' => array_map(fn($design) => $design['name'], $designs),
+            'planetCircleOptions' => array_combine($planetCircleOptions, $planetCircleOptions),
         ]);
     }
 
