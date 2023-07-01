@@ -50,18 +50,18 @@
                 <table class="tbl">
                     <tr>
                         <td class="tbltitle" style="width:180px;">ID:</td>
-                        <td class="tbldata">{{ user.ip }}</td>
+                        <td class="tbldata">{{ user.id }}</td>
                     </tr>
                     <tr>
                         <td class="tbltitle">Registrierdatum:</td>
-                        <td class="tbldata">{{ user.registered|formatTimestamp }}</td>
+                        <td class="tbldata">{{ formatTimestamp(user.registered) }}</td>
                     </tr>
                     <tr>
                         <td class="tbltitle">Zuletzt online:</td>
                         {% if user.timeAction != null %}
                             <td class="tbldata" style="color:#0f0;">online</td>
                         {% elseif user.timeLog > 0 %}
-                            <td class="tbldata">{{ user.timeLog|formatTimestamp }}</td>
+                            <td class="tbldata">{{ formatTimestamp(user.timeLog) }}</td>
                         {% else %}
                             <td class="tbldata">Noch nicht eingeloggt!</td>
                         {% endif %}
@@ -80,32 +80,32 @@
                     <tr>
                         <td class="tbltitle">Punkte:</td>
                         <td class="tbldata">
-                            {{ user.points|formatNumber }}
+                            {{ formatNumber(user.points) }}
                             [<a href="javascript:" onclick="toggleBox('pointGraph')">Verlauf anzeigen</a>]
                             <div id="pointGraph" style="display:none;">
-                                <img src="{{ path('admin/images/stats', {user: user.id}) }}" alt="Diagramm"/>
+                                <img src="{{ path('admin.images.stats', {user: user.id}) }}" alt="Diagramm"/>
                             </div>
                         </td>
                     </tr>
                     <tr>
                         <td class="tbltitle">Rang:</td>
                         <td class="tbldata">
-                            {{ user.rank|formatNumber }} (aktuell),
-                            {{ user.rankHighest|formatNumber }} (max)
+                            {{ formatNumber(user.rank) }} (aktuell),
+                            {{ formatNumber(user.rankHighest) }} (max)
                         </td>
                     </tr>
                     <tr>
                         <td class="tbltitle">Rohstoffe von...</td>
                         <td class="tbldata">
-                            Raids: {{ user.resFromRaid|formatNumber }} t<br/>
-                            Asteroiden: {{ user.resFromAsteroid|formatNumber }} t<br/>
-                            Nebelfelder: {{ user.resFromNebula|formatNumber }} t<br/>
+                            Raids: {{ formatNumber(user.resFromRaid) }} t<br/>
+                            Asteroiden: {{ formatNumber(user.resFromAsteroid) }} t<br/>
+                            Nebelfelder: {{ formatNumber(user.resFromNebula) }} t<br/>
                             Trümmerfelder: {{ user.resFromTf }} t
                         </td>
                     </tr>
                     <tr>
                         <td class="tbltitle">Infos:</td>
-                        <td class="tbldata">";
+                        <td class="tbldata">
                             {% if user.observe != '' %}
                                 <div>
                                     Benutzer steht unter <b>Beobachtung</b>: {{ user.observe }} &nbsp;
@@ -114,19 +114,19 @@
                             {% endif %}
                             {% if user.deleted != 0 %}
                                 <div class="userDeletedColor">Dieser Account ist zur Löschung
-                                    am {{ user.deleted|formatTimestamp }} vorgemerkt
+                                    am {{ formatTimestamp(user.deleted) }} vorgemerkt
                                 </div>
                             {% endif %}
                             {% if user.hmodFrom > 0 %}
                                 <div class="userHolidayColor">Dieser Account ist im Urlaubsmodus
-                                    seit {{ user.hmodFrom|formatTimestamp }} bis
-                                    mindestens {{ user.hmodTo|formatTimestamp }}
+                                    seit {{ formatTimestamp(user.hmodFrom) }} bis
+                                    mindestens {{ formatTimestamp(user.hmodTo) }}
                                 </div>
                             {% endif %}
                             {% if isBlocked %}
                                 <div class="userLockedColor">
-                                    Dieser Account ist im gesperrt von {{ user.blockedFrom|formatTimestamp }}
-                                    bis {{ user.blockedTo|formatTimestamp }}.
+                                    Dieser Account ist im gesperrt von {{ formatTimestamp(user.blockedFrom) }}
+                                    bis {{ formatTimestamp(user.blockedTo) }}.
                                     {% if user.banReason != '' %}Grund: {{ user.banReason }}{% endif %}
                                 </div>
                             {% endif %}
@@ -152,25 +152,25 @@
                             {% if comments.count > 0 %}
                                 <div>
                                     <b>{{ comments.count }}Kommentare</b> vorhanden, neuster Kommentar
-                                    von {{ comments.latest|formatTimestamp }}
+                                    von {{ formatTimestamp(comments.latest) }}
                                     [<a href="javascript:" onclick="$('.tabs').tabs('select', 10);">Zeigen</a>]
                                 </div>
                             {% endif %}
 
                             {# Tickets #}
                             {% if numberOfNewTickets + numberOfAssignedTickets > 0 %}
-                            <div>
-                                <b>{{ numberOfNewTickets }} neue Tickets</b> und <b> {{ numberOfAssignedTickets }}
-                                    zugewiesene Tickets</b> vorhanden.
-                                [<a href="javascript:" onclick="$('.tabs').tabs('select', 9);">Zeigen</a>]
-                            </div>
-                            {% endif %}hh b
+                                <div>
+                                    <b>{{ numberOfNewTickets }} neue Tickets</b> und <b> {{ numberOfAssignedTickets }}
+                                        zugewiesene Tickets</b> vorhanden.
+                                    [<a href="javascript:" onclick="$('.tabs').tabs('select', 9);">Zeigen</a>]
+                                </div>
+                            {% endif %}
 
                             {# Verwarnungen #}
                             {% if warning.count > 0 %}
                                 <div>
                                     <b>{{ warning.count }} Verwarnungen</b> vorhanden, neuste
-                                    von {{ warning.max|formatTimestamp }}.
+                                    von {{ formatTimestamp(warning.max) }}.
                                     [<a href="{{ path('admin.users.warnings') }}">Zeigen</a>]
                                 </div>
                             {% endif %}
@@ -215,7 +215,7 @@
                         <td>Bei Accountübergabe anpassen</td>
                     </tr>
                     <tr>
-                        <td class="tbltitle"><label for="dual_name"></label>Name Dual:</td>
+                        <td class="tbltitle"><label for="dual_name">Name Dual:</label></td>
                         <td class="tbldata">
                             <input type="text" name="dual_name" id="dual_name" value="{{ user.dualName }}" size="35"
                                    maxlength="250"/>
@@ -249,30 +249,16 @@
                     <tr>
                         <td class="tbltitle">Geist:</td>
                         <td class="tbldata">
-                            <input type="radio" name="user_ghost" id="user_ghost1"
-                                   value="1" {% if user.ghost %} checked="checked" {% endif %} />
-                            <label for="user_ghost1">Ja</label>
-                            <input type="radio" name="user_ghost" id="user_ghost0"
-                                   value="0" {% if not user.ghost %} checked="checked" {% endif %}/>
-                            <label for="user_ghost0">Nein</label>
+                            {% set ghostOptions = { 1: 'Ja', 0: 'Nein' } %}
+                            {{ component('forms:radio_button_list', { name: 'user_ghost', options: ghostOptions, value: user.ghost ? 1 : 0 }) }}
                         </td>
                         <td>Legt fest ob der Spieler in der Rangliste ausgeblendet wird</td>
                     </tr>
                     <tr>
                         <td class="tbltitle">Chat-Admin:</td>
                         <td class="tbldata">
-                            <input type="radio" name="user_chatadmin" id="user_chatadmin1"
-                                   value="1" {% if user.chatAdmin == 1 %} checked="checked" {% endif %} />
-                            <label for="user_chatadmin1">Ja</label>
-                            <input type="radio" name="user_chatadmin" id="user_chatadmin0"
-                                   value="0" {% if user.chatAdmin == 0 %} checked="checked" {% endif %} />
-                            <label for="user_chatadmin0">Nein</label><br/>
-                            <input type="radio" name="user_chatadmin" id="user_chatadmin2"
-                                   value="2" {% if user.chatAdmin == 2 %} checked="checked" {% endif %} />
-                            <label for="user_chatadmin2">Leiter Team Community</label><br/>
-                            <input type="radio" name="user_chatadmin" id="user_chatadmin3"
-                                   value="3" {% if user.chatAdmin == 3 %} checked="checked" {% endif %} />
-                            <label for="user_chatadmin3">Entwickler mit Adminrechten</label>
+                            {% set chatAdmin = { 1: 'Ja', 0: 'Nein', 2: 'Leiter Team Community', 3: 'Entwickler mit Adminrechten' } %}
+                            {{ component('forms:radio_button_list', { name: 'user_chatadmin', options: chatAdmin, value: user.chatAdmin }) }}
                         </td>
                         <td>Der Spieler hat Adminrechte im Chat und einen silbernen Stern für Chatadmin,
                             einen grünen Stern für Leiter Team Community bzw. einen cyanfarbenen Stern für
@@ -283,15 +269,8 @@
                     <tr>
                         <td class="tbltitle">Admin:</td>
                         <td class="tbldata">
-                            <input type="radio" name="admin" id="admin1" value="1"
-                                    {% if user.admin == 1 %} checked="checked" {% endif %} />
-                            <label for="admin1">Ja</label>
-                            <input type="radio" name="admin" id="admin0" value="0"
-                                    {% if user.admin == 0 %} checked="checked" {% endif %} />
-                            <label for="admin0">Nein</label>
-                            <input type="radio" name="admin" id="admin2" value="2"
-                                    {% if user.admin == 2 %} checked="checked" {% endif %} />
-                            <label for="admin2"> Entwickler ohne Adminrechte</label>
+                            {% set adminOptions = { 1: 'Ja', 0: 'Nein', 2: 'Entwickler ohne Adminrechte' } %}
+                            {{ component('forms:radio_button_list', { name: 'admin', options: adminOptions, value: user.admin }) }}
                         </td>
                         <td>
                             Admin: Der Spieler wird in der Raumkarte als Game-Admin markiert.<br/>
@@ -301,56 +280,40 @@
                     <tr>
                         <td class="tbltitle">NPC:</td>
                         <td class="tbldata">
-                            <input type="radio" name="npc" id="npc1"
-                                   value="1" {% if user.npc == 1 %} checked="checked" {% endif %} />
-                            <label for="npc1">Ja</label>
-                            <input type="radio" name="npc" id="npc0"
-                                   value="0" {% if user.npc == 0 %} checked="checked" {% endif %} />
-                            <label for="npc0">Nein</label>
+                            {% set npcOptions = { 1: 'Ja', 0: 'Nein' } %}
+                            {{ component('forms:radio_button_list', { name: 'npc', options: npcOptions, value: user.npc }) }}
                         </td>
                         <td>Spieler wird als NPC markiert</td>
                     </tr>
                     <tr>
-                        <td class="tbltitle" valign="top">Sperren</td>
+                        <td class="tbltitle">Sperren</td>
                         <td class="tbldata">
-                            <input type="radio" name="ban_enable" id="ban_enable0" value="0"
-                                   onclick="$('#ban_options').hide();" {% if user.blockedFrom == 0 %} checked="checked" {% endif %} />
-                            <label for="ban_enable0">Nein</label>
-                            <input type="radio" name="ban_enable" id="ban_enable1" value="1"
-                                   onclick="$('#ban_options').show();" {% if user.blockedFrom > 0 %} checked="checked" {% endif %} />
-                            <label for="ban_enable1">Ja</label>
+                            {% set banOptions = { 0: 'Nein', 1: 'Ja' } %}
+                            {{ component('forms:radio_button_list', { name: 'ban_enable', options: banOptions, value: user.blockedFrom > 0 ? 1 : 0 }) }}
+                            {#                            onclick="$('#ban_options').hide();" #}
+                            {#                            onclick="$('#ban_options').show();" #}
                             {% if isNoLongerBlocked %}<i><b>Diese Sperre ist abgelaufen!</b></i>{% endif %}
                             <table id="ban_options">
                                 <tr>
-                                    <td class="tbltitle" valign="top">Von</td>
+                                    <td class="tbltitle"><label for="user_blocked_from">Von</label></td>
                                     <td class="tbldata">
-                                        showDatepicker("user_blocked_from", $user->blockedFrom > 0 ? $user->blockedFrom
-                                        : time(), true);
+                                        {{ component('forms:date_time_input', { name: 'user_blocked_from', value: user.blockedFrom > 0 ? user.blockedFrom : date().timestamp }) }}
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td class="tbltitle" valign="top">Bis</td>
+                                    <td class="tbltitle"><label for="user_blocked_to">Bis</label></td>
                                     <td class="tbldata">
-                                        showDatepicker("user_blocked_to", $user->blockedFrom > 0 ? $user->blockedTo :
-                                        time() + $userBlockedDefaultTime, true);
+                                        {{ component('forms:date_time_input', { name: 'user_blocked_to', value: user.blockedFrom > 0 ? user.blockedTo : userBlockedDefaultTime }) }}
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td class="tbltitle" valign="top"><label for="user_ban_admin_id">Admin</label></td>
+                                    <td class="tbltitle"><label for="user_ban_admin_id">Admin</label></td>
                                     <td class="tbldata">
-                                        <select name="user_ban_admin_id" id="user_ban_admin_id">
-                                            <option value="0">(niemand)</option>
-                                            {% for adminUserId, adminUserNick in adminUserNicks %}
-                                                <option value="{{ adminUserId }}" {% if user.banAdminId == adminUserId %}
-                                                    selected="selected" {% endif %}>
-                                                    {{ adminUserNick }}
-                                                </option>
-                                            {% endfor %}
-                                        </select>
+                                        {{ component('forms:select_input', { name: 'user_ban_admin_id', options: adminUserNicks, value: user.banAdminId, emptyValue: 0, emptyLabel: '(niemand)' }) }}
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td class="tbltitle" valign="top"><label for="user_ban_reason">Grund</label></td>
+                                    <td class="tbltitle"><label for="user_ban_reason">Grund</label></td>
                                     <td class="tbldata">
                                         <textarea name="user_ban_reason" id="user_ban_reason" cols="45"
                                                   rows="2">{{ user.banReason }}</textarea>
@@ -361,55 +324,126 @@
                         <td>Der Benutzer kann sich nicht einloggen und erscheint auf dem Pranger</td>
                     </tr>
                     <tr>
-                        <td class="tbltitle" valign="top">U-Mod</td>
+                        <td class="tbltitle">U-Mod</td>
                         <td class="tbldata">
-                            <input type="radio" name="umod_enable" id="umod_enable0" value="0"
-                                   onclick="$('#umod_options').hide();" checked="checked"/>
-                            <label
-                                    for="umod_enable0">Nein</label>
-                            <input type="radio" name="umod_enable" id="umod_enable1" value="1"
-                                   onclick="$('#umod_options').show();"
-                                   if ($user->hmodFrom > 0) {
-                            echo " checked="checked"";
-                            }
-                            echo "/>
-                            <label for="umod_enable1">Ja</label> ";
-                            if ($user->hmodFrom > 0 && $user->hmodTo < time()) {
-                            echo "<i><b>Dieser Urlaubsmodus ist abgelaufen!</b></i>";
-                            }
-                            echo "
+                            {% set umodOptions = { 0: 'Nein', 1: 'Ja' } %}
+                            {{ component('forms:radio_button_list', { name: 'umod_enable', options: umodOptions, value: user.hmodFrom > 0 ? 1 : 0 }) }}
+                            {#                                   onclick="$('#umod_options').hide();" #}
+                            {#                                   onclick="$('#umod_options').show();" #}
+                            {% if holidayModeExpired %}<i><b>Dieser Urlaubsmodus ist abgelaufen!</b></i>{% endif %}
                             <table id="umod_options">
                                 <tr>
-                                    <td class="tbltitle" valign="top">Von</td>
-                                    <td class="tbldata">";
-                                        showDatepicker("user_hmode_from", $user->hmodFrom > 0 ? $user->hmodFrom :
-                                        time(), true);
-                                        echo "
+                                    <td class="tbltitle"><label for="user_hmode_from">Von</label></td>
+                                    <td class="tbldata">
+                                        {{ component('forms:date_time_input', { name: 'user_hmode_from', value: user.hmodFrom > 0 ? user.hmodFrom : date().timestamp }) }}
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td class="tbltitle" valign="top">Bis</td>
-                                    <td class="tbldata">";
-                                        $userHolidayModeDefaultTime = 3600 * 24 * $config->get('user_umod_min_length');
-                                        showDatepicker("user_hmode_to", $user->hmodTo > 0 ? $user->hmodTo : time() +
-                                        $userHolidayModeDefaultTime, true);
-                                        echo "
+                                    <td class="tbltitle"><label for="user_hmode_to">Bis</label></td>
+                                    <td class="tbldata">
+                                        {{ component('forms:date_time_input', { name: 'user_hmode_to', value: user.hmodTo > 0 ? user.hmodTo : userHolidayModeDefaultTime }) }}
                                     </td>
                                 </tr>
                             </table>
                         </td>
                         <td>Der Benutzer kann nichts mehr bauen, wird aber auch nicht angegriffen</td>
                     </tr>
-                    ";
-
-
-                    echo "
                 </table>
-                ";
-
-                echo '
             </div>
-            '
+
+            {# Game-Daten #}
+            <div id="tabs-3">
+                <table class="tbl">
+                    <tr>
+                        <td class="tbltitle"><label for="user_race_id">Rasse:</label></td>
+                        <td class="tbldata">
+                            {{ component('forms:select_input', { name: 'user_race_id', options: raceNames, value: user.raceId, emptyValue: 0, emptyLabel: '(Keine)' }) }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="tbltitle"><label for="user_specialist_id">Spezialist:</label></td>
+                        <td class="tbldata">
+                            {{ component('forms:select_input', { name: 'user_specialist_id', options: specialistNames, value: user.specialistId, emptyValue: 0, emptyLabel: '(Keiner)' }) }}
+                            {#  TODO onchange="loadSpecialist({{ $st }}" #}
+                            Bis:nbsp; <span id="spt">-</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="tbltitle"><label for="user_alliance_id">Allianz:</label></td>
+                        <td class="tbldata">
+                            {{ component('forms:select_input', { name: 'user_alliance_id', options: allianceNamesWithTags, value: user.allianceId, emptyValue: 0, emptyLabel: '(Keine)' }) }}
+                            {# TODO onchange="loadAllianceRanks({{ user.allianceRankId }});" #}
+                            Rang: <span id="ars">-</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="tbltitle"><label for="spyship_count">Spionagesonden für Direktscan:</label></td>
+                        <td class="tbldata">
+                            {% if spyShipNames is not empty %}
+                                <input type="text" name="spyship_count" id="spyship_count" maxlength="5" size="5"
+                                       value="{{ properties.spyShipCount }}">
+                                {{ component('forms:select_input', { name: 'spyship_id', options: spyShipNames, value: properties.spyShipId, emptyValue: 0, emptyLabel: '(keines)' }) }}
+                            {% else %}
+                                Momentan steht kein Schiff zur Auswahl!
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="tbltitle"><label for="analyzeship_count">Analysatoren für Quickanalyse:</label></td>
+                        <td class="tbldata">
+                            {% if analyzeShipNames is not empty %}
+                                <input type="text" name="analyzeship_count" id="analyzeship_count" maxlength="5"
+                                       size="5" value="{{ properties.analyzeShipCount }}">
+                                {{ component('forms:select_input', { name: 'analyzeship_id', options: analyzeShipNames, value: properties.analyzeShipId, emptyValue: 0, emptyLabel: '(keines)' }) }}
+                            {% else %}
+                                Momentan steht kein Schiff zur Auswahl!
+                            {% endif %}
+                    </tr>
+                    <tr>
+                        <td class="tbltitle"><label for="user_alliace_shippoints">Verfügbare Allianzschiffteile</label>
+                        </td>
+                        <td class="tbldata">
+                            <input type="text" name="user_alliace_shippoints" id="user_alliace_shippoints"
+                                   value="{{ user.allianceShipPoints }}" size="10" maxlength="10"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="tbltitle"><label for="user_alliace_shippoints_used">Verbaute
+                                Allianzschiffteile</label></td>
+                        <td class="tbldata">
+                            <input type="text" name="user_alliace_shippoints_used" id="user_alliace_shippoints_used"
+                                   value="{{ user.allianceShipPointsUsed }}" size="10" maxlength="10"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="tbltitle"><label for="user_multi_delets">Gelöschte Multis</label></td>
+                        <td class="tbldata">
+                            <input type="text" name="user_multi_delets" id="user_multi_delets"
+                                   value="{{ user.multiDelets }}" size="3"
+                                   maxlength="3"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="tbltitle"><label for="user_sitting_days">Sittertage</label></td>
+                        <td class="tbldata">
+                            <input type="text" name="user_sitting_days" id="user_sitting_days"
+                                   value="{{ user.sittingDays }}" size="3" maxlength="3"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="tbltitle">Hauptplanet geändert</td>
+                        <td class="tbldata">
+                            {% set ghostOptions = { 1: 'Ja', 0: 'Nein' } %}
+                            {{ component('forms:radio_button_list', { name: 'user_changed_main_planet', options: ghostOptions, value: user.userChangedMainPlanet ? 1 : 0 }) }}
+                        </td>
+                    </tr>
+                </table>
+                <script type="text/javascript">
+                    {# TODO loadSpecialist({{ $st }}); #}
+                    loadAllianceRanks({{ user.allianceRankId }});
+                </script>
+            </div>
+
         </div>
     </form>
 {% endblock %}

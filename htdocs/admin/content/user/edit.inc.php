@@ -1,13 +1,10 @@
 <?php
 
 use EtoA\Admin\AdminUserRepository;
-use EtoA\Alliance\AllianceRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Help\TicketSystem\TicketRepository;
 use EtoA\HostCache\NetworkNameService;
-use EtoA\Race\RaceDataRepository;
 use EtoA\Ranking\UserBannerService;
-use EtoA\Specialist\SpecialistDataRepository;
 use EtoA\Support\BBCodeUtils;
 use EtoA\Support\ExternalUrl;
 use EtoA\Support\StringUtils;
@@ -98,150 +95,7 @@ $user = $userRepository->getUserAdminView($id);
 if ($user !== null) {
 
 
-    echo '<div id="tabs-3">';
-
-
-    /**
-     * Game-Daten
-     */
-
-    /** @var RaceDataRepository $raceRepository */
-    $raceRepository = $app[RaceDataRepository::class];
-
-    $raceNames = $raceRepository->getRaceNames();
-
-    /** @var SpecialistDataRepository $specialistRepository */
-    $specialistRepository = $app[SpecialistDataRepository::class];
-
-    $specialistNames = $specialistRepository->getSpecialistNames();
-
-    echo "<table class=\"tbl\">";
-    echo "<tr>
-                    <td class=\"tbltitle\">Rasse:</td>
-                    <td class=\"tbldata\">
-                        <select name=\"user_race_id\">
-                        <option value=\"0\">(Keine)</option>";
-    foreach ($raceNames as $raceId => $raceName) {
-        echo "<option value=\"" . $raceId . "\"";
-        if ($user->raceId === $raceId) echo " selected=\"selected\"";
-        echo ">" . $raceName . "</option>\n";
-    }
-    echo "</select>
-                    </td>
-                </tr>
-                <tr>
-                    <td class=\"tbltitle\" class=\"tbltitle\">Spezialist:</td>
-                    <td class=\"tbldata\">
-                        <select name=\"user_specialist_id\" id=\"user_specialist_id\" onchange=\"loadSpecialist(" . $st . ");\">
-                        <option value=\"0\">(Keiner)</option>";
-    foreach ($specialistNames as $specialistId => $specialistName) {
-        echo '<option value="' . $specialistId . '"';
-        if ($user->specialistId === $specialistId) {
-            echo ' selected="selected"';
-        }
-        echo '>' . $specialistName . '</option>';
-    }
-    echo "</select> &nbsp; Bis:&nbsp; <span id=\"spt\">-</span>
-                    </td>
-                </tr>
-                <tr>
-                    <td class=\"tbltitle\">Allianz:</td>
-                    <td class=\"tbldata\">
-                        <select id=\"user_alliance_id\" name=\"user_alliance_id\" onchange=\"loadAllianceRanks(" . $user->allianceRankId . ");\">";
-    /** @var AllianceRepository $allianceRepository */
-    $allianceRepository = $app[AllianceRepository::class];
-    $allianceNamesWithTags = $allianceRepository->getAllianceNamesWithTags();
-    echo "<option value=\"0\">(Keine)</option>";
-    foreach ($allianceNamesWithTags as $allianceId => $allianceNamesWithTag) {
-        echo "<option value=\"$allianceId\"";
-        if ($allianceId === $user->allianceId) echo " selected=\"selected\"";
-        echo ">" . $allianceNamesWithTag . "</option>";
-    }
-    echo "</select> Rang: <span id=\"ars\">-</span></td>
-                </tr>";
-    echo "<tr>
-            <td class=\"tbltitle\">Spionagesonden für Direktscan:</td>
-            <td class=\"tbldata\">
-            <input type=\"text\" name=\"spyship_count\" maxlength=\"5\" size=\"5\" value=\"" . $properties->spyShipCount . "\"> &nbsp; ";
-    $shipNames = $shipDateRepository->getShipNamesWithAction('spy');
-    if (count($shipNames) > 0) {
-        echo '<select name="spyship_id"><option value="0">(keines)</option>';
-        foreach ($shipNames as $shipId => $shipName) {
-            echo '<option value="' . $shipId . '"';
-            if ($properties->spyShipId == $shipId)
-                echo ' selected="selected"';
-            echo '>' . $shipName . '</option>';
-        }
-    } else {
-        echo "Momentan steht kein Schiff zur Auswahl!";
-    }
-    echo "</td>
-                </tr>";
-    echo "<tr>
-            <td class=\"tbltitle\">Analysatoren für Quickanalyse:</td>
-            <td class=\"tbldata\">
-            <input type=\"text\" name=\"analyzeship_count\" maxlength=\"5\" size=\"5\" value=\"" . $properties->analyzeShipCount . "\"> &nbsp; ";
-    $shipNames = $shipDateRepository->getShipNamesWithAction('analyze');
-    if (count($shipNames) > 0) {
-        echo '<select name="analyzeship_id"><option value="0">(keines)</option>';
-        foreach ($shipNames as $shipId => $shipName) {
-            echo '<option value="' . $shipId . '"';
-            if ($properties->analyzeShipId == $shipId)
-                echo ' selected="selected"';
-            echo '>' . $shipName . '</option>';
-        }
-    } else {
-        echo "Momentan steht kein Schiff zur Auswahl!";
-    }
-    echo "</td>
-                </tr>
-                <tr>
-                    <td class=\"tbltitle\" valign=\"top\">Verfügbare Allianzschiffteile</td>
-                    <td class=\"tbldata\">
-                        <input type=\"text\" name=\"user_alliace_shippoints\" value=\"" . $user->allianceShipPoints . "\" size=\"10\" maxlength=\"10\" />
-                    </td>
-                </tr>
-                <tr>
-                    <td class=\"tbltitle\" valign=\"top\">Verbaute Allianzschiffteile</td>
-                    <td class=\"tbldata\">
-                        <input type=\"text\" name=\"user_alliace_shippoints_used\" value=\"" . $user->allianceShipPointsUsed . "\" size=\"10\" maxlength=\"10\" />
-                    </td>
-                </tr>";
-
-    // Multis & Sitting
-    echo "<tr>
-            <td class=\"tbltitle\" valign=\"top\">Gel&ouml;schte Multis</td>
-            <td class=\"tbldata\">
-                <input type=\"text\" name=\"user_multi_delets\" value=\"" . $user->multiDelets . "\" size=\"3\" maxlength=\"3\" />
-            </td>
-            </tr>
-            <tr>
-            <td class=\"tbltitle\" valign=\"top\">Sittertage</td>
-            <td class=\"tbldata\">
-                <input type=\"text\" name=\"user_sitting_days\" value=\"" . $user->sittingDays . "\" size=\"3\" maxlength=\"3\" />
-            </td>
-            </tr>";
-
-    // Hauptplanet geändert
-    echo "</td>
-            </tr>
-            <tr>
-                <td class=\"tbltitle\" valign=\"top\">Hauptplanet geändert</td>
-                <td class=\"tbldata\">
-                    <label><input type=\"radio\" name=\"user_changed_main_planet\" value=\"1\" " . ($user->userChangedMainPlanet ? "checked" : "") . " />&nbsp;Ja</label>&nbsp;
-                    <label><input type=\"radio\" name=\"user_changed_main_planet\" value=\"0\" " . (!$user->userChangedMainPlanet ? "checked" : "") . " />&nbsp;Nein</label>
-                </td>
-            </tr>";
-
-    // Tabelle Ende
-
-    echo "</table>";
-    echo "
-        <script type=\"text/javascript\">
-        loadSpecialist(" . $st . ");loadAllianceRanks(" . $user->allianceRankId . ");
-        </script>";
-
-    echo '</div><div id="tabs-4">';
+    echo '<div id="tabs-4">';
 
     /**
      * Sitting & Multi

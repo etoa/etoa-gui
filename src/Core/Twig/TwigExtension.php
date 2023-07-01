@@ -21,10 +21,11 @@ class TwigExtension extends AbstractExtension
 
     public function __construct(
         private ConfigurationService $config,
-        private NetworkNameService $networkNameService,
-        private RuntimeDataStore $runtimeDataStore,
-        private GameVersionService $gameVersion,
-    ) {
+        private NetworkNameService   $networkNameService,
+        private RuntimeDataStore     $runtimeDataStore,
+        private GameVersionService   $gameVersion,
+    )
+    {
         $this->startTime = microtime(true);
     }
 
@@ -48,6 +49,7 @@ class TwigExtension extends AbstractExtension
             new TwigFunction('renderTime', [$this, 'renderTime']),
             new TwigFunction('formatTimestamp', [$this, 'formatTimestamp']),
             new TwigFunction('formatTimespan', [$this, 'formatTimespan']),
+            new TwigFunction('iso8601date', [$this, 'iso8601date']),
             new TwigFunction('getGameIdentifier', [$this, 'getGameIdentifier']),
             new TwigFunction('isUnix', [$this, 'isUnix']),
             new TwigFunction('userMTT', [$this, 'userMTT']),
@@ -133,7 +135,7 @@ class TwigExtension extends AbstractExtension
 
     public function getRuntimeValue(string $key): string
     {
-        return (string) $this->runtimeDataStore->get($key);
+        return (string)$this->runtimeDataStore->get($key);
     }
 
     /**
@@ -166,6 +168,14 @@ class TwigExtension extends AbstractExtension
     public function formatTimespan(int $timespan): string
     {
         return StringUtils::formatTimespan($timespan);
+    }
+
+    public function iso8601date(int $timestamp, bool $seconds = false): string
+    {
+        if ($timestamp == 0) {
+            return '';
+        }
+        return date('Y-m-d\TH:i' . ($seconds ? ':s' : ''), $timestamp);
     }
 
     public function getGameIdentifier(): string

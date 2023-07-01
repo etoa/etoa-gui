@@ -98,18 +98,12 @@ function searchQueryUrl($str)
 /**
  * Shows a datepicker
  */
-function showDatepicker(string $element_name, int $def_val, bool $time = false, bool $seconds = false): void
+function showDatepicker(string $element_name, int $timestamp, bool $time = false, bool $seconds = false): void
 {
-    $dt = new DateTime();
-    $dt->setTimestamp($def_val);
     if ($time) {
-        if ($seconds) {
-            echo '<input type="datetime-local" step="1" name="' . $element_name . '" value="' . $dt->format('c') . '" />';
-        } else {
-            echo '<input type="datetime-local" name="' . $element_name . '" value="' . $dt->format('c') . '" />';
-        }
+        echo '<input type="datetime-local" name="' . $element_name . '" value="' . date('Y-m-d\TH:i' . ($seconds ? ':s' : ''), $timestamp) . '" />';
     } else {
-        echo '<input type="date" name="' . $element_name . '" value="' . $dt->format('Y-m-d') . '" />';
+        echo '<input type="date" name="' . $element_name . '" value="' . date('Y-m-d', $timestamp) . '" />';
     }
 }
 

@@ -3,6 +3,7 @@
 namespace EtoA\Controller\Admin;
 
 use EtoA\Admin\AdminUserRepository;
+use EtoA\Alliance\AllianceRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Form\Request\Admin\UserCreateRequest;
 use EtoA\Form\Type\Admin\UserCreateType;
@@ -11,6 +12,9 @@ use EtoA\HostCache\NetworkNameService;
 use EtoA\Log\LogFacility;
 use EtoA\Log\LogRepository;
 use EtoA\Log\LogSeverity;
+use EtoA\Race\RaceDataRepository;
+use EtoA\Ship\ShipDataRepository;
+use EtoA\Specialist\SpecialistDataRepository;
 use EtoA\User\UserCommentRepository;
 use EtoA\User\UserHolidayService;
 use EtoA\User\UserMultiRepository;
@@ -44,6 +48,10 @@ class UserController extends AbstractController
         private readonly NetworkNameService       $networkNameService,
         private readonly UserCommentRepository    $userCommentRepository,
         private readonly TicketRepository         $ticketRepo,
+        private readonly RaceDataRepository       $raceRepository,
+        private readonly SpecialistDataRepository $specialistRepository,
+        private readonly AllianceRepository       $allianceRepository,
+        private readonly ShipDataRepository       $shipDateRepository,
         private readonly string                   $projectDir,
     )
     {
@@ -102,12 +110,19 @@ class UserController extends AbstractController
             'host' => $this->networkNameService->getHost($user->ipAddr),
             'isBlocked' => $user->blockedFrom > 0 && $user->blockedTo > time(),
             'isNoLongerBlocked' => $user->blockedFrom > 0 && $user->blockedTo < time(),
-            'userBlockedDefaultTime' => 3600 * 24 * $this->config->getInt('user_ban_min_length'),
+            'userBlockedDefaultTime' => time() + (3600 * 24 * $this->config->getInt('user_ban_min_length')),
             'comments' => $this->userCommentRepository->getCommentInformation($user->id),
             'numberOfNewTickets' => count($newTickets),
             'numberOfAssignedTickets' => count($assignedTickets),
             'warning' => $this->userWarningRepository->getCountAndLatestWarning($user->id),
             'adminUserNicks' => $this->adminUserRepo->findAllAsList(),
+            'holidayModeExpired' => $user->hmodFrom > 0 && $user->hmodTo < time(),
+            'userHolidayModeDefaultTime' => time() + (3600 * 24 * $this->config->getInt('user_umod_min_length')),
+            'raceNames' => $this->raceRepository->getRaceNames(),
+            'specialistNames' => $this->specialistRepository->getSpecialistNames(),
+            'allianceNamesWithTags' => $this->allianceRepository->getAllianceNamesWithTags(),
+            'spyShipNames' => $this->shipDateRepository->getShipNamesWithAction('spy'),
+            'analyzeShipNames' => $this->shipDateRepository->getShipNamesWithAction('analyze'),
         ]);
     }
 

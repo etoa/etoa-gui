@@ -1,0 +1,8 @@
+<select name="{{ name }}" id="{{ name }}">
+    {% if emptyValue is not null %}
+        <option value=">{{ emptyValue }}">{{ emptyLabel }}</option>
+    {% endif %}
+    {% for val, label in options %}
+        <option value="{{ val }}" {% if value == val %} selected="selected" {% endif %}>{{ label }}</option>
+    {% endfor %}
+</select>
