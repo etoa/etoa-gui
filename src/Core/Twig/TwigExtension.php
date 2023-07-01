@@ -60,6 +60,7 @@ class TwigExtension extends AbstractExtension
             new TwigFunction('ipGetHost', [$this, 'ipGetHost']),
             new TwigFunction('browser', [$this, 'browser']),
             new TwigFunction('formatNumber', [$this, 'formatNumber']),
+            new TwigFunction('base64', [$this, 'base64']),
         ];
     }
 
@@ -226,5 +227,10 @@ class TwigExtension extends AbstractExtension
     public function browser(string $userAgent): Parser
     {
         return new Parser($userAgent);
+    }
+
+    public function base64(string $value): string
+    {
+        return base64_encode($value);
     }
 }

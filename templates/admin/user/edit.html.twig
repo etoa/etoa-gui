@@ -24,7 +24,9 @@
     </script>
 
     <h1>Spieler</h1>
-    <h3>User bearbeiten: {{ user.nick }}</h3>
+
+    <a href="{{ path('admin.users') }}">Spielersuche</a> &raquo;
+    <a href="{{ path('admin.users.edit', {id: user.id}) }}">{{ user.nick }}</a>
 
     <form action="{{ path('admin.users.edit', {id: user.id}) }}" method="post">
         <input type="hidden" id="tabactive" name="tabactive" value=""/>
@@ -48,8 +50,15 @@
             {# Allgemeines #}
             <div id="tabs-1">
                 <table class="tbl">
+                    <colgroup>
+                        <col style="width:180px;"/>
+                    </colgroup>
                     <tr>
-                        <td class="tbltitle" style="width:180px;">ID:</td>
+                        <td class="tbltitle">Nickname:</td>
+                        <td class="tbldata">{{ user.nick }}</td>
+                    </tr>
+                    <tr>
+                        <td class="tbltitle">ID:</td>
                         <td class="tbldata">{{ user.id }}</td>
                     </tr>
                     <tr>
@@ -937,23 +946,13 @@
         </p>
         <hr/>
         <p>
-            echo button("Planeten", "?page=galaxy&sq=" . searchQueryUrl("user_id:=:" . $user->id)) . " &nbsp;
-            echo button("Gebäude", "?page=buildings&sq=" . searchQueryUrl("user_nick:=:" . $user->nick)) . " &nbsp;
-            <input type="button" value="Forschungen" onclick="document.location='?page=techs&action=search&query="
-                   . searchQuery(array("user_id" => $user->id)) . "'" /> &nbsp;
-            echo button("Schiffe", "?page=ships&sq=" . searchQueryUrl("user_nick:=:" . $user->nick)) . " &nbsp;
-            echo button("Verteidigung", "?page=def&sq=" . searchQueryUrl("user_nick:=:" . $user->nick)) . " &nbsp;
-            echo button("Raketen", "?page=missiles&sq=" . searchQueryUrl("user_nick:=:" . $user->nick)) . " &nbsp;
-            <input type="button" value="IP-Adressen &amp; Hosts"
-                   onclick="document.location='{{ path('admin.users.ips') }}?user={{ user.id }}'"/>
-        </p>
-        <hr/>
-        <p>
-            <input type="button" value="Spielerdaten neu laden"
-                   onclick="document.location='{{ path('admin.users.edit', {id: user.id}) }}'"/> &nbsp;
-            <input type="button" value="Zur&uuml;ck zu den Suchergebnissen"
-                   onclick="document.location='?page=$page&action=search'"/> &nbsp;
-            <input type="button" onclick="document.location='?page=$page'" value="Neue Suche"/>
+            <a href="{{ path('admin.universe.entities') }}?user={{ user.id }}" class="button">Planeten</a> &nbsp;
+            <a href="{{ path('admin.buildings.search') }}?userId={{ user.id }}" class="button">Gebäude</a> &nbsp;
+            <a href="{{ path('admin.technology') }}?userId={{ user.id }}" class="button">Forschungen</a> &nbsp;
+            <a href="{{ path('admin.ships.search') }}?userId={{ user.id }}" class="button">Schiffe</a> &nbsp;
+            <a href="{{ path('admin.defense.search') }}?userId={{ user.id }}" class="button">Verteidigung</a> &nbsp;
+            <a href="{{ path('admin.missiles') }}?userId={{ user.id }}" class="button">Raketen</a> &nbsp;
+            <a href="{{ path('admin.users.ips') }}?user={{ user.id }}" class="button">IP-Adressen</a> &nbsp;
         </p>
 
     </form>

@@ -90,11 +90,6 @@ function searchQuery($data)
     return base64_encode($str);
 }
 
-function searchQueryUrl($str)
-{
-    return "&amp;sq=" . base64_encode($str);
-}
-
 /**
  * Shows a datepicker
  */
