@@ -8,6 +8,7 @@ use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Design\DesignsService;
 use EtoA\Form\Request\Admin\UserCreateRequest;
 use EtoA\Form\Type\Admin\UserCreateType;
+use EtoA\Help\TicketSystem\Ticket;
 use EtoA\Help\TicketSystem\TicketRepository;
 use EtoA\HostCache\NetworkNameService;
 use EtoA\Log\LogFacility;
@@ -20,8 +21,11 @@ use EtoA\Specialist\SpecialistDataRepository;
 use EtoA\Support\ExternalUrl;
 use EtoA\User\UserCommentRepository;
 use EtoA\User\UserHolidayService;
+use EtoA\User\UserLoginFailureRepository;
 use EtoA\User\UserMultiRepository;
 use EtoA\User\UserPropertiesRepository;
+use EtoA\User\UserRatingRepository;
+use EtoA\User\UserRatingSearch;
 use EtoA\User\UserRepository;
 use EtoA\User\UserService;
 use EtoA\User\UserSittingRepository;
@@ -38,26 +42,28 @@ use WhichBrowser\Parser as BrowserParser;
 class UserController extends AbstractController
 {
     public function __construct(
-        private readonly ConfigurationService     $config,
-        private readonly UserService              $userService,
-        private readonly LogRepository            $logRepository,
-        private readonly UserRepository           $userRepository,
-        private readonly UserPropertiesRepository $userPropertiesRepository,
-        private readonly UserMultiRepository      $userMultiRepository,
-        private readonly UserSittingRepository    $userSittingRepository,
-        private readonly UserHolidayService       $userHolidayService,
-        private readonly UserWarningRepository    $userWarningRepository,
-        private readonly AdminUserRepository      $adminUserRepo,
-        private readonly NetworkNameService       $networkNameService,
-        private readonly UserCommentRepository    $userCommentRepository,
-        private readonly TicketRepository         $ticketRepo,
-        private readonly RaceDataRepository       $raceRepository,
-        private readonly SpecialistDataRepository $specialistRepository,
-        private readonly AllianceRepository       $allianceRepository,
-        private readonly ShipDataRepository       $shipDateRepository,
-        private readonly UserBannerService        $userBannerService,
-        private readonly DesignsService           $designsService,
-        private readonly string                   $projectDir,
+        private readonly ConfigurationService       $config,
+        private readonly UserService                $userService,
+        private readonly LogRepository              $logRepository,
+        private readonly UserRepository             $userRepository,
+        private readonly UserPropertiesRepository   $userPropertiesRepository,
+        private readonly UserMultiRepository        $userMultiRepository,
+        private readonly UserSittingRepository      $userSittingRepository,
+        private readonly UserHolidayService         $userHolidayService,
+        private readonly UserWarningRepository      $userWarningRepository,
+        private readonly AdminUserRepository        $adminUserRepo,
+        private readonly NetworkNameService         $networkNameService,
+        private readonly UserCommentRepository      $userCommentRepository,
+        private readonly TicketRepository           $ticketRepo,
+        private readonly RaceDataRepository         $raceRepository,
+        private readonly SpecialistDataRepository   $specialistRepository,
+        private readonly AllianceRepository         $allianceRepository,
+        private readonly ShipDataRepository         $shipDateRepository,
+        private readonly UserBannerService          $userBannerService,
+        private readonly DesignsService             $designsService,
+        private readonly UserLoginFailureRepository $userLoginFailureRepository,
+        private readonly UserRatingRepository       $userRatingRepository,
+        private readonly string                     $projectDir,
     )
     {
     }
@@ -112,6 +118,12 @@ class UserController extends AbstractController
         $designs = $this->designsService->getDesigns();
         $planetCircleOptions = range(450, 700, 50);
 
+        $userLoginFailures = $this->userLoginFailureRepository->getUserLoginFailures($user->id);
+
+        $ratingSearch = UserRatingSearch::create()->id($id);
+
+        $tickets = $this->ticketRepo->findBy(['user_id' => $id]);
+
         return $this->render('admin/user/edit.html.twig', [
             'user' => $user,
             'properties' => $this->userPropertiesRepository->getOrCreateProperties($user->id),
@@ -143,6 +155,19 @@ class UserController extends AbstractController
             'userBannerLink' => $this->config->get('roundurl') . '/' . $bannerPath,
             'designNames' => array_map(fn($design) => $design['name'], $designs),
             'planetCircleOptions' => array_combine($planetCircleOptions, $planetCircleOptions),
+            'failures' => $userLoginFailures,
+            'failureHosts' => array_map(fn($failure) => $this->networkNameService->getHost($failure->ip), $userLoginFailures),
+            'battleRating' => $this->userRatingRepository->getBattleRating($ratingSearch)[0] ?? null,
+            'tradeRating' => $this->userRatingRepository->getTradeRating($ratingSearch)[0] ?? null,
+            'diplomacyRating' => $this->userRatingRepository->getDiplomacyRating($ratingSearch)[0] ?? null,
+            'tickets' => array_map(fn(Ticket $ticket) => [
+                'id' => $ticket->id,
+                'idString' => $ticket->getIdString(),
+                'statusName' => $ticket->getStatusName(),
+                'categoryName' => $this->ticketRepo->getCategoryName($ticket->catId),
+                'adminName' => ($ticket->adminId > 0 ? $this->adminUserRepo->getNick($ticket->adminId) : null),
+                'timestamp' => $ticket->timestamp,
+            ], $tickets),
         ]);
     }
 

@@ -1,0 +1,12 @@
+<table style="{{ layout == "nondisplay" ? 'display:none;' : '' }}{{ this.calculatedWidth }}"
+       class="{{ layout != "double" ? 'tb ': '' }}{{ class }}" {{ attributes }}>
+    {% if layout == 'double' %} #}
+        <colgroup>
+            <col style="width:50%;vertical-align:top;"/>
+        </colgroup>
+    {% endif %}
+    {% if title is defined %}
+        <caption>{{ title }}</caption>
+    {% endif %}
+    {% block table_content %}{% endblock %}
+</table>

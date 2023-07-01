@@ -662,7 +662,7 @@
 
             {# Design #}
             <div id="tabs-6">
-                <table class="tbl" style="width:1000px">
+                <table class="tbl" style="width:100%">
                     <tr>
                         <td class="tbltitle"><label for="css_style">Design:</label></td>
                         <td class="tbldata">
@@ -705,6 +705,169 @@
                         </td>
                     </tr>
                 </table>
+            </div>
+
+            {# Messages #}
+            <div id="tabs-7">
+                <table class="tbl">
+                    <tr>
+                        <td class="tbltitle"><label for="msgsignature">Nachrichten-Signatur:</label></td>
+                        <td class="tbldata">
+                            <textarea name="msgsignature" id="msgsignature" cols="60"
+                                      rows="8">{{ properties.msgSignature }}</textarea>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="tbltitle">Nachrichtenvorschau (Neue/Archiv):</td>
+                        <td class="tbldata">
+                            {{ component('forms:radio_button_list', { name: 'msg_preview', options: { 1: 'Aktiviert', 0: 'Deaktiviert' }, value: properties.msgPreview }) }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="tbltitle">Nachrichtenvorschau (Erstellen):</td>
+                        <td class="tbldata">
+                            {{ component('forms:radio_button_list', { name: 'msgcreation_preview', options: { 1: 'Aktiviert', 0: 'Deaktiviert' }, value: properties.msgCreationPreview }) }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="tbltitle">Blinkendes Nachrichtensymbol:</td>
+                        <td class="tbldata">
+                            {{ component('forms:radio_button_list', { name: 'msg_blink', options: { 1: 'Aktiviert', 0: 'Deaktiviert' }, value: properties.msgBlink }) }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="tbltitle">Text bei Antwort/Weiterleiten kopieren:</td>
+                        <td class="tbldata">
+                            {{ component('forms:radio_button_list', { name: 'msg_copy', options: { 1: 'Aktiviert', 0: 'Deaktiviert' }, value: properties.msgCopy }) }}
+                    </tr>
+
+                    <tr>
+                        <td class="tbltitle">Nachricht bei Transport-/Spionagerückkehr:</td>
+                        <td class="tbldata">
+                            {{ component('forms:radio_button_list', { name: 'fleet_rtn_msg', options: { 1: 'Aktiviert', 0: 'Deaktiviert' }, value: properties.fleetRtnMsg }) }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2" class="tabSeparator"></td>
+                    </tr>
+                    <tr>
+                        <td class="tbltitle">Nachricht senden:</td>
+                        <td class="tbldata">
+                            <label for="urgendmsgsubject">Titel:</label>
+                            <input type="text" id="urgendmsgsubject" maxlength="200" size="50"/>
+                            <input type="button"
+                                   onclick="xajax_sendUrgendMsg({{ user.id }}, document.getElementById('urgendmsgsubject').value,document.getElementById('urgentmsg').value)"
+                                   value="Senden"/><br/>
+                            <label for="urgentmsg">Text:</label> <textarea id="urgentmsg" cols="60" rows="4"></textarea>
+                        </td>
+                    </tr>
+                </table>
+                <br/>
+
+                <h2>Letzte 5 Nachrichten</h2>
+                <input type="button"
+                       onclick="showLoader('lastmsgbox');xajax_showLast5Messages({{ user.id }}, 'lastmsgbox');"
+                       value="Neu laden"/><br><br>
+                <div id="lastmsgbox">Lade...</div>
+            </div>
+
+            {# Loginfailures #}
+            <div id="tabs-8">
+                <table class="tbl">
+                    {% if failures|length > 0 %}
+                        <tr>
+                            <th class="tbltitle">Zeit</th>
+                            <th class="tbltitle">IP-Adresse</th>
+                            <th class="tbltitle">Hostname</th>
+                            <th class="tbltitle">Client</th>
+                        </tr>
+                        {% for failure in failures %}
+                            <tr>
+                                <td class="tbldata">" . StringUtils::formatDate($failure->time) . "</td>
+                                <td class="tbldata">
+                                    <a href="{{ path('admin.users.ips') }}?host={{ failure.ip }}">{{ failure.ip }}</a>
+                                </td>
+                                <td class="tbldata">
+                                    <a href="{{ path('admin.users.ips') }}?host={{ failureHosts[loop.index0] }}">{{ failureHosts[loop.index0] }}</a>
+                                </td>
+                                <td class="tbldata">" . $failure->client . "</td>
+                            </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td class="tbldata">Keine fehlgeschlagenen Logins</td>
+                        </tr>
+                    {% endif %}
+                </table>
+            </div>
+
+            {# Points #}
+            <div id="tabs-9">
+                {% component table with { title: 'Bewertung' } %}
+                    {% block table_content %}
+                        {% if battleRating is not null %}
+                            <tr>
+                                <td>Kampfpunkte</td>
+                                <td>{{ battleRating.rating }}</td>
+                            </tr>
+                            <tr>
+                                <td>Kämpfe gewonnen / verloren / total</td>
+                                <td>
+                                    {{ battleRating.battlesWon }} / {{ battleRating.battlesLost }}
+                                    / {{ battleRating.battlesFought }}
+                                </td>
+                            </tr>
+                        {% endif %}
+                        {% if tradeRating is not null %}
+                            <tr>
+                                <td>Handelspunkte</td>
+                                <td>{{ tradeRating.rating }}</td>
+                            </tr>
+                            <tr>
+                                <td>Handel Einkauf / Verkauf</td>
+                                <td>{{ tradeRating.tradesBuy }} / {{ tradeRating.tradesSell }}</td>
+                            </tr>
+                        {% endif %}
+                        {% if diplomacyRating is not null %}
+                            <tr>
+                                <td>Diplomatiepunkte</td>
+                                <td>{{ diplomacyRating.rating }}</td>
+                            </tr>
+                        {% endif %}
+                    {% endblock %}
+                {% endcomponent %}
+            </div>
+
+            {# Tickets #}
+            <div id="tabs-10">
+                <div id="ticketsBox">
+                    {% if tickets|length > 0 %}
+                        {% component table with { title: 'Tickets', width: '100%' } %}
+                            {% block table_content %}
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Status</th>
+                                    <th>Kategorie</th>
+                                    <th>Zugeteilter Admin</th>
+                                    <th>Letzte Änderung</th>
+                                </tr>
+                                {% for ticket in tickets %}
+                                    <tr>
+                                        <td>
+                                            <a href="{{ path('admin.ticket.details', { id: ticket.id }) }}">{{ ticket.idString }}</a>
+                                        </td>
+                                        <td>{{ ticket.statusName }}</td>
+                                        <td>{{ ticket.categoryName }}</td>
+                                        <td>{{ ticket.adminName|default('-') }}</td>
+                                        <td>{{ formatTimestamp(ticket.timestamp) }}</td>
+                                    </tr>
+                                {% endfor %}
+                            {% endblock %}
+                        {% endcomponent %}
+                    {% else %}
+                        <p>Dieser User hat keine Tickets</p>
+                    {% endif %}
+                </div>
             </div>
 
         </div>
