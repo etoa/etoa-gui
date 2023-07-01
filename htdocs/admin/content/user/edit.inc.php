@@ -387,26 +387,4 @@ if ($user !== null) {
 
     echo "</form>";
 
-    if ($user->blockedFrom === 0)
-        echo "<script>$(function() { $('#ban_options').hide(); });</script>";
-    if ($user->blockedFrom == 0)
-        echo "<script>$(function() { $('#umod_options').hide(); });</script>";
-
-    echo '<script>
-        $(function() {
-            $( "#user_edit_tabs" ).bind( "tabsshow", function(event, ui) {
-                if (ui.index == 6) {
-                    xajax_showLast5Messages(' . $id . ',"lastmsgbox");
-                } else if (ui.index == 8) {
-                    xajax_userPointsTable(' . $id . ',"pointsBox");
-                } else if (ui.index == 9) {
-                    xajax_userTickets(' . $id . ',"ticketsBox");
-                } else if (ui.index == 10) {
-                    xajax_userComments(' . $id . ',"commentsBox");
-                } else if (ui.index == 11) {
-                    xajax_userLogs(' . $id . ',"logsBox");
-                }
-            });
-        });
-    </script>';
 }

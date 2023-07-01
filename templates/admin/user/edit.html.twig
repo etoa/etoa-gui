@@ -284,9 +284,7 @@
                     <tr>
                         <td class="tbltitle">Sperren</td>
                         <td class="tbldata">
-                            {{ component('forms:radio_button_list', { name: 'ban_enable', options: { 0: 'Nein', 1: 'Ja' }, value: user.blockedFrom > 0 ? 1 : 0 }) }}
-                            {# TODO onclick="$('#ban_options').hide();" #}
-                            {# TODO onclick="$('#ban_options').show();" #}
+                            {{ component('forms:radio_button_list', { name: 'ban_enable', options: { 0: 'Nein', 1: 'Ja' }, value: user.blockedFrom > 0 ? 1 : 0, onclick: "this.value == 1 ? $('#ban_options').show() : $('#ban_options').hide() " }) }}
                             {% if isNoLongerBlocked %}<i><b>Diese Sperre ist abgelaufen!</b></i>{% endif %}
                             <table id="ban_options">
                                 <tr>
@@ -321,9 +319,7 @@
                     <tr>
                         <td class="tbltitle">U-Mod</td>
                         <td class="tbldata">
-                            {{ component('forms:radio_button_list', { name: 'umod_enable', options: { 0: 'Nein', 1: 'Ja' }, value: user.hmodFrom > 0 ? 1 : 0 }) }}
-                            {# TODO onclick="$('#umod_options').hide();" #}
-                            {# TODO onclick="$('#umod_options').show();" #}
+                            {{ component('forms:radio_button_list', { name: 'umod_enable', options: { 0: 'Nein', 1: 'Ja' }, value: user.hmodFrom > 0 ? 1 : 0, onclick: "this.value == 1 ? $('#umod_options').show() : $('#umod_options').hide()" }) }}
                             {% if holidayModeExpired %}<i><b>Dieser Urlaubsmodus ist abgelaufen!</b></i>{% endif %}
                             <table id="umod_options">
                                 <tr>
@@ -357,16 +353,14 @@
                     <tr>
                         <td class="tbltitle"><label for="user_specialist_id">Spezialist:</label></td>
                         <td class="tbldata">
-                            {{ component('forms:select_input', { name: 'user_specialist_id', options: specialistNames, value: user.specialistId, emptyValue: 0, emptyLabel: '(Keiner)' }) }}
-                            {# TODO onchange="loadSpecialist({{ $st }}" #}
+                            {{ component('forms:select_input', { name: 'user_specialist_id', options: specialistNames, value: user.specialistId, emptyValue: 0, emptyLabel: '(Keiner)', onchange: 'loadSpecialist(' ~ specialistTime ~ ')' }) }}
                             Bis: &nbsp; <span id="spt">-</span>
                         </td>
                     </tr>
                     <tr>
                         <td class="tbltitle"><label for="user_alliance_id">Allianz:</label></td>
                         <td class="tbldata">
-                            {{ component('forms:select_input', { name: 'user_alliance_id', options: allianceNamesWithTags, value: user.allianceId, emptyValue: 0, emptyLabel: '(Keine)' }) }}
-                            {# TODO onchange="loadAllianceRanks({{ user.allianceRankId }});" #}
+                            {{ component('forms:select_input', { name: 'user_alliance_id', options: allianceNamesWithTags, value: user.allianceId, emptyValue: 0, emptyLabel: '(Keine)', onchange: 'loadAllianceRanks(' ~ user.allianceRankId ~ ')' }) }}
                             Rang: <span id="ars">-</span>
                         </td>
                     </tr>
@@ -432,7 +426,7 @@
                     </tr>
                 </table>
                 <script type="text/javascript">
-                    {# TODO loadSpecialist({{ $st }}); #}
+                    loadSpecialist({{ specialistTime }});
                     loadAllianceRanks({{ user.allianceRankId }});
                 </script>
             </div>
@@ -715,5 +709,31 @@
 
         </div>
     </form>
+
+    <script>
+        $(function () {
+            {% if user.blockedFrom == 0 %}
+            $('#ban_options').hide();
+            {% endif %}
+
+            {% if user.hmodFrom == 0 %}
+            $('#umod_options').hide();
+            {% endif %}
+
+            $("#user_edit_tabs").bind("tabsshow", function (event, ui) {
+                if (ui.index == 6) {
+                    xajax_showLast5Messages(' . $id . ', "lastmsgbox");
+                } else if (ui.index == 8) {
+                    xajax_userPointsTable(' . $id . ', "pointsBox");
+                } else if (ui.index == 9) {
+                    xajax_userTickets(' . $id . ', "ticketsBox");
+                } else if (ui.index == 10) {
+                    xajax_userComments(' . $id . ', "commentsBox");
+                } else if (ui.index == 11) {
+                    xajax_userLogs(' . $id . ', "logsBox");
+                }
+            });
+        });
+    </script>
 {% endblock %}
 

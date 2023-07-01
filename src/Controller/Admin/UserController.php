@@ -115,7 +115,7 @@ class UserController extends AbstractController
         return $this->render('admin/user/edit.html.twig', [
             'user' => $user,
             'properties' => $this->userPropertiesRepository->getOrCreateProperties($user->id),
-            'st' => $user->specialistTime > 0 ? $user->specialistTime : time(),
+            'specialistTime' => $user->specialistTime > 0 ? $user->specialistTime : time(),
             'agent' => (new BrowserParser($user->userAgent))->toString(),
             'host' => $this->networkNameService->getHost($user->ipAddr),
             'isBlocked' => $user->blockedFrom > 0 && $user->blockedTo > time(),
