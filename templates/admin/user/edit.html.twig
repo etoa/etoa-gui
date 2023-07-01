@@ -149,10 +149,10 @@
                             {% endif %}
 
                             {# Kommentare #}
-                            {% if comments.count > 0 %}
+                            {% if commentInfo.count > 0 %}
                                 <div>
-                                    <b>{{ comments.count }}Kommentare</b> vorhanden, neuster Kommentar
-                                    von {{ formatTimestamp(comments.latest) }}
+                                    <b>{{ commentInfo.count }}Kommentare</b> vorhanden, neuster Kommentar
+                                    von {{ formatTimestamp(commentInfo.latest) }}
                                     [<a href="javascript:" onclick="$('.tabs').tabs('select', 10);">Zeigen</a>]
                                 </div>
                             {% endif %}
@@ -870,7 +870,92 @@
                 </div>
             </div>
 
+            {# Kommentare #}
+            <div id="tabs-11">
+                <div id="commentsBox">
+                    <h2><label for="new_comment_text">Neuer Kommentar:</label></h2>
+                    <textarea rows="4" cols="70" id="new_comment_text"></textarea><br/><br/>
+                    <input type="button"
+                           onclick="xajax_addUserComment('{{ user.id }}', 'commentsBox', document.getElementById('new_comment_text').value);"
+                           value="Speichern"/>
+                    <h2>Gespeicherte Kommentare</h2>
+                    <table class="tb">
+                        {% if comments|length > 0 %}
+                            <tr>
+                                <th>Text</th>
+                                <th>Verfasst</th>
+                                <th>Aktionen</th>
+                            </tr>
+                            {% for comment in comments %}
+                                <tr>
+                                    <td class="tbldata">" . BBCodeUtils::toHTML($comment->text) . "</td>
+                                    <td class="tbldata" style="width:200px;">" .
+                                        StringUtils::formatDate($comment->timestamp) . " von " . $comment->adminNick . "
+                                    </td>
+                                    <td class="tbldata" style="width:50px;">
+                                        <a href="javascript:"
+                                           onclick="if (confirm('Wirklich löschen?')) {xajax_delUserComment('{{ user.id }}', 'commentsBox', {{ comment.id }}) }">Löschen</a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td class="tbldata">Keine Kommentare</td>
+                            </tr>
+                        {% endif %}
+                    </table>
+                </div>
+            </div>
+
+            {# Log #}
+            <div id="tabs-12">
+                <div id="logsBox">
+                    <div style="text-align:center;"></div>
+                </div>
+            </div>
+
+            {# Wirtschaft #}
+            <div id="tabs-13">
+                <div id="tabEconomy">
+                    Das Laden aller Wirtschaftsdaten kann einige Sekunden dauern!<br/><br/>
+                    <input type="button" value="Wirtschaftsdaten laden"
+                           onclick="showLoader('tabEconomy');xajax_loadEconomy({{ user.id }},'tabEconomy');"/>
+                </div>
+            </div>
+
         </div>
+
+        <p>
+            <input type="submit" name="save" value="&Auml;nderungen &uuml;bernehmen" class="positive"/> &nbsp;
+            {% if user.deleted != 0 %}
+                <input type="submit" name="canceldelete" value="Löschantrag aufheben" class="userDeletedColor"/> &nbsp;
+            {% else %}
+                <input type="submit" name="requestdelete" value="Löschantrag erteilen" class="userDeletedColor"/>&nbsp;
+            {% endif %}
+            <input type="submit" name="delete_user" value="User l&ouml;schen" class="remove"
+                   onclick="return confirm('Soll dieser User endgültig gelöscht werden?');">
+        </p>
+        <hr/>
+        <p>
+            echo button("Planeten", "?page=galaxy&sq=" . searchQueryUrl("user_id:=:" . $user->id)) . " &nbsp;
+            echo button("Gebäude", "?page=buildings&sq=" . searchQueryUrl("user_nick:=:" . $user->nick)) . " &nbsp;
+            <input type="button" value="Forschungen" onclick="document.location='?page=techs&action=search&query="
+                   . searchQuery(array("user_id" => $user->id)) . "'" /> &nbsp;
+            echo button("Schiffe", "?page=ships&sq=" . searchQueryUrl("user_nick:=:" . $user->nick)) . " &nbsp;
+            echo button("Verteidigung", "?page=def&sq=" . searchQueryUrl("user_nick:=:" . $user->nick)) . " &nbsp;
+            echo button("Raketen", "?page=missiles&sq=" . searchQueryUrl("user_nick:=:" . $user->nick)) . " &nbsp;
+            <input type="button" value="IP-Adressen &amp; Hosts"
+                   onclick="document.location='{{ path('admin.users.ips') }}?user={{ user.id }}'"/>
+        </p>
+        <hr/>
+        <p>
+            <input type="button" value="Spielerdaten neu laden"
+                   onclick="document.location='{{ path('admin.users.edit', {id: user.id}) }}'"/> &nbsp;
+            <input type="button" value="Zur&uuml;ck zu den Suchergebnissen"
+                   onclick="document.location='?page=$page&action=search'"/> &nbsp;
+            <input type="button" onclick="document.location='?page=$page'" value="Neue Suche"/>
+        </p>
+
     </form>
 
     <script>
