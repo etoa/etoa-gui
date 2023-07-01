@@ -1,4 +1,4 @@
-<select name="{{ name }}" id="{{ name }}">
+<select name="{{ name }}" id="{{ name }}" {{ attributes }}>
     {% if emptyValue is not null %}
         <option value="{{ emptyValue }}">{{ emptyLabel }}</option>
     {% endif %}

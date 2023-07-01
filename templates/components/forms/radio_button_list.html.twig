@@ -1,5 +1,5 @@
 {% for val, label in options %}
     <input type="radio" name="{{ name }}" id="{{ name }}_{{ loop.index }}"
-           value="{{ val }}" {% if value == val %} checked="checked" {% endif %} />
+           value="{{ val }}" {% if value == val %} checked="checked" {% endif %} {{ attributes }} />
     <label for="{{ name }}_{{ loop.index }}">{{ label }}</label><br>
 {% endfor %}
