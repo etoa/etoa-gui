@@ -3,14 +3,11 @@
 use EtoA\Admin\AdminUserRepository;
 use EtoA\Alliance\AllianceRankRepository;
 use EtoA\Help\TicketSystem\TicketRepository;
-use EtoA\Message\MessageCategoryId;
-use EtoA\Message\MessageRepository;
 use EtoA\Support\BBCodeUtils;
 use EtoA\Support\StringUtils;
 use EtoA\User\UserCommentRepository;
 use EtoA\User\UserLogRepository;
 use EtoA\User\UserPointsRepository;
-use EtoA\User\UserRepository;
 use EtoA\User\UserService;
 
 $xajax->register(XAJAX_FUNCTION, "showTimeBox");
@@ -22,8 +19,6 @@ $xajax->register(XAJAX_FUNCTION, "userLogs");
 $xajax->register(XAJAX_FUNCTION, "addUserLog");
 $xajax->register(XAJAX_FUNCTION, "userTickets");
 $xajax->register(XAJAX_FUNCTION, "userComments");
-$xajax->register(XAJAX_FUNCTION, "sendUrgendMsg");
-$xajax->register(XAJAX_FUNCTION, "showLast5Messages");
 
 function showTimeBox($parent, $name, $value, $show = 1)
 {
@@ -195,82 +190,6 @@ function userTickets($uid, $target)
         }
     } else {
         echo "<tr><td class=\"tbldata\">Keine Tickets</td></tr>";
-    }
-    echo "</table>";
-
-    $out = ob_get_contents();
-    ob_end_clean();
-    $or->assign($target, "innerHTML", $out);
-    return $or;
-}
-
-
-function sendUrgendMsg($uid, $subject, $text)
-{
-    global $app;
-
-    $or = new xajaxResponse();
-    if ($text != "" && $subject != "") {
-        /** @var \EtoA\Message\MessageRepository $messageRepository */
-        $messageRepository = $app[\EtoA\Message\MessageRepository::class];
-        $messageRepository->createSystemMessage((int)$uid, MessageCategoryId::USER, $subject, $text);
-
-        $or->alert("Nachricht gesendet!");
-        $or->assign('urgendmsgsubject', "value", "");
-        $or->assign('urgentmsg', "value", "");
-        $or->script("showLoader('lastmsgbox');xajax_showLast5Messages(" . $uid . ",'lastmsgbox');");
-    } else {
-        $or->alert("Titel oder Text fehlt!");
-    }
-    return $or;
-}
-
-function showLast5Messages($uid, $target, $limit = 5)
-{
-    $or = new xajaxResponse();
-
-    // TODO
-    global $app;
-
-    /** @var MessageRepository $messageRepository */
-    $messageRepository = $app[MessageRepository::class];
-
-    /** @var UserRepository $userRepo */
-    $userRepo = $app[UserRepository::class];
-
-    ob_start();
-    echo "<table class=\"tb\">";
-
-    $messages = $messageRepository->findBy([
-        'user_to_id' => $uid,
-    ], $limit);
-    if (count($messages) > 0) {
-        echo "<tr>
-            <th>Datum</th>
-            <th>Sender</th>
-            <th>Titel</th>
-            <th>Text</th>
-            <th>Gelesen</th>
-            <th>Optionen</th>
-        </tr>";
-        foreach ($messages as $message) {
-            echo "<tr>
-                <td class=\"tbldata\">" . StringUtils::formatDate($message->timestamp) . "</td>
-                <td class=\"tbldata\">";
-            if ($message->userFrom > 0) {
-                echo "<a href=\"?page=user&sub=edit&user_id=" . $message->userFrom . "\">" . $userRepo->getNick($message->userFrom) . "</a>";
-            } else {
-                echo "System";
-            }
-            echo "</td>
-                <td class=\"tbldata\">" . $message->subject . "</td>
-                <td class=\"tbldata\">" . BBCodeUtils::toHTML($message->text) . "</td>
-                <td class=\"tbldata\">" . ($message->read ? "Ja" : "Nein") . "</td>
-                <td class=\"tbldata\">[<a href=\"?page=messages&sub=edit&message_id=" . $message->id . "\">Details</a>]</td>
-            </tr>";
-        }
-    } else {
-        echo "<tr><td class=\"tbldata\">Keine Nachrichten vorhanden!</td></tr>";
     }
     echo "</table>";
 

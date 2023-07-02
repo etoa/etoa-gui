@@ -19,7 +19,7 @@
                     <td><a href="javascript:" onclick="toggleBox('details{{ log.id }}')">Details</a></td>
                 </tr>
                 <tr id="details{{ log.id }}" style="display:none;">
-                    <td colspan="9">{{ BBCodeToHTML(log.message) }}
+                    <td colspan="9">{{ BBCodeToHTML(log.message)|raw }}
                         <br/><br/>IP: {{ log.ip }}
                     </td>
                 </tr>

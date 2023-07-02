@@ -24,7 +24,7 @@
             </tr>
             <tr>
                 <td class="tbltitle" valign="top">Text</td>
-                <td class="tbldata">{{ BBCodeToHTML(alliance.text) }}</td>
+                <td class="tbldata">{{ BBCodeToHTML(alliance.text)|raw }}</td>
             </tr>
             <tr>
                 <td class="tbltitle" valign="top">Gründung</td>
@@ -37,35 +37,38 @@
             {% if alliance.image %}
                 <tr>
                     <td class="tbltitle" valign="top">Bild</td>
-                    <td class="tbldata"><img src="{{ alliance.imageUrl }}" width="100%" alt="{{ alliance.image }}" /></td>
+                    <td class="tbldata"><img src="{{ alliance.imageUrl }}" width="100%" alt="{{ alliance.image }}"/>
+                    </td>
                 </tr>
             {% endif %}
             <tr>
                 <td class="tbltitle" valign="top">Mitglieder</td>
                 <td class="tbldata">
                     <table style="width:100%">
-                    {% for user in allianceUsers %}
-                        <tr>
-                            <td>{{ user.user_nick }}</td>
-                            <td>{{ user.user_points }} Punkte</td>
-                            <td>
-                                [<a href="{{ path('admin.users.edit', {id: user.user_id}) }}">details</a>]
-                                [<a href="?page=messages&amp;sub=sendmsg&amp;user_id={{ user.user_id }}">msg</a>]
-                            </td>
-                        </tr>
+                        {% for user in allianceUsers %}
+                            <tr>
+                                <td>{{ user.user_nick }}</td>
+                                <td>{{ user.user_points }} Punkte</td>
+                                <td>
+                                    [<a href="{{ path('admin.users.edit', {id: user.user_id}) }}">details</a>]
+                                    [<a href="?page=messages&amp;sub=sendmsg&amp;user_id={{ user.user_id }}">msg</a>]
+                                </td>
+                            </tr>
 
-                    {% else %}
-                        <tr><td><b>KEINE MITGLIEDER!</b></td></tr>
-                    {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td><b>KEINE MITGLIEDER!</b></td>
+                            </tr>
+                        {% endfor %}
                     </table>
                 </td>
             </tr>
         </table>
 
-        <input type="hidden" name="alliance_id" value="{{ alliance.id }}" />
+        <input type="hidden" name="alliance_id" value="{{ alliance.id }}"/>
         <br/>
-        <input type="submit" name="drop" value="Löschen" />&nbsp;
-        <input type="button" value="Zurück" onclick="history.back();" />
-        <input type="button" onclick="{{ path('admin.alliances') }}" value="Neue Suche" />
+        <input type="submit" name="drop" value="Löschen"/>&nbsp;
+        <input type="button" value="Zurück" onclick="history.back();"/>
+        <input type="button" onclick="{{ path('admin.alliances') }}" value="Neue Suche"/>
     </form>
 {% endblock %}

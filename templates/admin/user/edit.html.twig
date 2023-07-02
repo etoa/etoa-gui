@@ -755,28 +755,7 @@
                             {{ component('forms:radio_button_list', { name: 'fleet_rtn_msg', options: { 1: 'Aktiviert', 0: 'Deaktiviert' }, value: properties.fleetRtnMsg }) }}
                         </td>
                     </tr>
-                    <tr>
-                        <td colspan="2" class="tabSeparator"></td>
-                    </tr>
-                    <tr>
-                        <td class="tbltitle">Nachricht senden:</td>
-                        <td class="tbldata">
-                            <label for="urgendmsgsubject">Titel:</label>
-                            <input type="text" id="urgendmsgsubject" maxlength="200" size="50"/>
-                            <input type="button"
-                                   onclick="xajax_sendUrgendMsg({{ user.id }}, document.getElementById('urgendmsgsubject').value,document.getElementById('urgentmsg').value)"
-                                   value="Senden"/><br/>
-                            <label for="urgentmsg">Text:</label> <textarea id="urgentmsg" cols="60" rows="4"></textarea>
-                        </td>
-                    </tr>
                 </table>
-                <br/>
-
-                <h2>Letzte 5 Nachrichten</h2>
-                <input type="button"
-                       onclick="showLoader('lastmsgbox');xajax_showLast5Messages({{ user.id }}, 'lastmsgbox');"
-                       value="Neu laden"/><br><br>
-                <div id="lastmsgbox">Lade...</div>
             </div>
 
             {# Loginfailures #}
@@ -936,7 +915,8 @@
         </p>
         <hr/>
         <p>
-            <a href="{{ path('admin.users.economy', {id: user.id}) }}" class="button">Wirtschaft</a>
+            <a href="{{ path('admin.users.economy', {id: user.id}) }}" class="button">Wirtschaft</a> &nbsp;
+            <a href="{{ path('admin.users.messages', {id: user.id}) }}" class="button">Nachrichten</a>
         </p>
         <hr/>
         <p>
@@ -962,9 +942,7 @@
             {% endif %}
 
             $("#user_edit_tabs").bind("tabsshow", function (event, ui) {
-                if (ui.index == 6) {
-                    xajax_showLast5Messages(' . $id . ', "lastmsgbox");
-                } else if (ui.index == 8) {
+                if (ui.index == 8) {
                     xajax_userPointsTable(' . $id . ', "pointsBox");
                 } else if (ui.index == 9) {
                     xajax_userTickets(' . $id . ', "ticketsBox");

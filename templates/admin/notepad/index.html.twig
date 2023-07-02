@@ -7,14 +7,15 @@
         {% for note in notes %}
             <tr>
                 <td width="120">
-                    <b>{{ BBCodeToHTML(note.title) }}</b>
+                    <b>{{ BBCodeToHTML(note.title)|raw }}</b>
                     <br/>
                     {{ note.date|date("d.m.Y H:i") }}
                 </td>
-                <td width="350">{{ BBCodeToHTML(note.text) }}</td>
+                <td width="350">{{ BBCodeToHTML(note.text)|raw }}</td>
                 <td>
                     <a href="{{ path('admin.notepad.edit', {id: note.id}) }}">Bearbeiten</a><br>
-                    <a href="{{ path('admin.notepad.delete', {id: note.id}) }}" onclick="return confirm('Eintrag löschen?')">Löschen</a>
+                    <a href="{{ path('admin.notepad.delete', {id: note.id}) }}"
+                       onclick="return confirm('Eintrag löschen?')">Löschen</a>
                 </td>
             </tr>
         {% else %}
@@ -27,7 +28,7 @@
     </table>
 
     <form action="{{ path('admin.notepad.new') }}">
-        <br><input type="Submit" name="Neue Notiz" value="Neue Notiz" />
+        <br><input type="Submit" name="Neue Notiz" value="Neue Notiz"/>
     </form>
 
 {% endblock %}

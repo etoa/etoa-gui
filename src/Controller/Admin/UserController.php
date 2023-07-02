@@ -20,6 +20,8 @@ use EtoA\Log\GameLogSearch;
 use EtoA\Log\LogFacility;
 use EtoA\Log\LogRepository;
 use EtoA\Log\LogSeverity;
+use EtoA\Message\MessageCategoryId;
+use EtoA\Message\MessageRepository;
 use EtoA\Race\RaceDataRepository;
 use EtoA\Ranking\UserBannerService;
 use EtoA\Ship\ShipDataRepository;
@@ -77,6 +79,7 @@ class UserController extends AbstractController
         private readonly TechnologyDataRepository   $techRepository,
         private readonly ShipDataRepository         $shipRepository,
         private readonly DefenseDataRepository      $defenseRepository,
+        private readonly MessageRepository          $messageRepository,
         private readonly string                     $projectDir,
     )
     {
@@ -111,10 +114,8 @@ class UserController extends AbstractController
     public function edit(int $id): Response
     {
         $user = $this->userRepository->getUserAdminView($id);
-
         if ($user === null) {
             $this->addFlash('error', 'Datensatz nicht vorhanden!');
-
             return $this->redirectToRoute('admin.users');
         }
 
@@ -436,11 +437,9 @@ class UserController extends AbstractController
     #[IsGranted('ROLE_ADMIN_TRIAL-ADMIN')]
     public function economy(int $id): Response
     {
-        $user = $this->userRepository->getUserAdminView($id);
-
+        $user = $this->userRepository->getUser($id);
         if ($user === null) {
             $this->addFlash('error', 'Datensatz nicht vorhanden!');
-
             return $this->redirectToRoute('admin.users');
         }
 
@@ -665,5 +664,45 @@ class UserController extends AbstractController
                 },
             ], $defLogs),
         ]);
+    }
+
+    #[Route('/admin/users/{id}/messages', name: 'admin.users.messages', methods: ['GET'])]
+    #[IsGranted('ROLE_ADMIN_TRIAL-ADMIN')]
+    public function messages(int $id, Request $request): Response
+    {
+        $user = $this->userRepository->getUser($id);
+        if ($user === null) {
+            $this->addFlash('error', 'Datensatz nicht vorhanden!');
+            return $this->redirectToRoute('admin.users');
+        }
+
+        $limit = $request->query->getInt('limit', 5);
+
+        return $this->render('admin/user/messages.html.twig', [
+            'user' => $user,
+            'messages' => $this->messageRepository->findBy(['user_to_id' => $id,], $limit),
+            'limit' => $limit,
+        ]);
+    }
+
+    #[Route('/admin/users/{id}/messages', name: 'admin.users.messages.send', methods: ['POST'])]
+    #[IsGranted('ROLE_ADMIN_TRIAL-ADMIN')]
+    public function sendMessage(int $id, Request $request): Response
+    {
+        $user = $this->userRepository->getUser($id);
+        if ($user === null) {
+            $this->addFlash('error', 'Datensatz nicht vorhanden!');
+            return $this->redirectToRoute('admin.users');
+        }
+
+        if (blank($request->get('subject')) || blank($request->get('message'))) {
+            $this->addFlash('error', 'Titel oder Text fehlt!');
+            return $this->redirectToRoute('admin.users.messages', ['id' => $id]);
+        }
+
+        $this->messageRepository->createSystemMessage($id, MessageCategoryId::USER, $request->get('subject'), $request->get('message'));
+
+        $this->addFlash('success', 'Spieler erstellt');
+        return $this->redirectToRoute('admin.users.messages', ['id' => $id]);
     }
 }

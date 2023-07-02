@@ -1,0 +1,63 @@
+{% extends 'admin/layout/admin.html.twig' %}
+
+{% block content %}
+    <h1>Spieler</h1>
+
+    <a href="{{ path('admin.users') }}">Spielersuche</a> &raquo;
+    <a href="{{ path('admin.users.edit', {id: user.id}) }}">{{ user.nick }}</a> &raquo;
+    <a href="{{ path('admin.users.messages', {id: user.id}) }}">Nachrichten</a>
+
+    <h2>Nachrichten des Spielers {{ user.nick }}</h2>
+
+    <fieldset>
+        <legend>Nachricht senden</legend>
+        <form action="{{ path('admin.users.messages.send', { id: user.id}) }}" method="POST">
+            <p>
+                <label for="subject">Titel:</label><br>
+                <input type="text" name="subject" id="subject" maxlength="200" size="50"/>
+            </p>
+            <p>
+                <label for="message">Text:</label><br>
+                <textarea name="message" id="message" cols="60" rows="4"></textarea>
+            </p>
+            <input type="submit" value="Senden"/>
+        </form>
+    </fieldset>
+
+    <h3>Letzte {{ limit }} Nachrichten</h3>
+    <table class="tb">
+        {% if messages|length > 0 %}
+            <tr>
+                <th>Datum</th>
+                <th>Sender</th>
+                <th>Titel</th>
+                <th>Text</th>
+                <th>Gelesen</th>
+                <th>Optionen</th>
+            </tr>
+            {% for message in messages %}
+                <tr>
+                    <td class="tbldata">{{ formatTimestamp(message.timestamp) }}</td>
+                    <td class="tbldata">
+                        {% if message.userFrom > 0 %}
+                            {{ component('admin_user_info_link', {id: message.userFrom}) }}
+                        {% else %}
+                            System
+                        {% endif %}
+                    </td>
+                    <td class="tbldata">{{ message.subject }}</td>
+                    <td class="tbldata">{{ BBCodeToHTML(message.text)|raw }}</td>
+                    <td class="tbldata">{{ message.read ? "Ja" : "Nein" }}</td>
+                    <td class="tbldata">[<a href="{{ path('admin.messages') }}#message-{{ message.id }}">Details</a>]
+                    </td>
+                </tr>
+            {% endfor %}
+        {% else %}
+            <tr>
+                <td class="tbldata">Keine Nachrichten vorhanden!</td>
+            </tr>
+        {% endif %}
+    </table>
+
+{% endblock %}
+
