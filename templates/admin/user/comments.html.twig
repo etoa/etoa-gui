@@ -10,7 +10,7 @@
     <h2>Kommentare zum Spieler {{ user.nick }}</h2>
 
     <form action="{{ path('admin.users.comments.add', { id: user.id}) }}" method="POST">
-        <h3><label for="text">Neuer Kommentar:</label></h3>
+        <h3><label for="text">Neuer Kommentar</label></h3>
         <textarea rows="4" cols="70" id="text" name="text"></textarea><br/><br/>
         <input type="submit" value="Speichern"/>
     </form>

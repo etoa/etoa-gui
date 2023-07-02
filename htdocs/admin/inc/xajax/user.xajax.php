@@ -3,17 +3,12 @@
 use EtoA\Admin\AdminUserRepository;
 use EtoA\Alliance\AllianceRankRepository;
 use EtoA\Help\TicketSystem\TicketRepository;
-use EtoA\Support\BBCodeUtils;
 use EtoA\Support\StringUtils;
-use EtoA\User\UserLogRepository;
 use EtoA\User\UserPointsRepository;
-use EtoA\User\UserService;
 
 $xajax->register(XAJAX_FUNCTION, "showTimeBox");
 $xajax->register(XAJAX_FUNCTION, "allianceRankSelector");
 $xajax->register(XAJAX_FUNCTION, "userPointsTable");
-$xajax->register(XAJAX_FUNCTION, "userLogs");
-$xajax->register(XAJAX_FUNCTION, "addUserLog");
 $xajax->register(XAJAX_FUNCTION, "userTickets");
 
 function showTimeBox($parent, $name, $value, $show = 1)
@@ -192,54 +187,5 @@ function userTickets($uid, $target)
     $out = ob_get_contents();
     ob_end_clean();
     $or->assign($target, "innerHTML", $out);
-    return $or;
-}
-
-function userLogs($uid, $target)
-{
-    global $app;
-
-    /** @var UserLogRepository $userLogRepository */
-    $userLogRepository = $app[UserLogRepository::class];
-
-    $or = new xajaxResponse();
-    ob_start();
-    tableStart("", '100%');
-    echo "<tr><th>Nachricht</th><th>Datum</th><th>IP</th></tr>";
-    $logs = $userLogRepository->getUserLogs($uid, 100);
-    foreach ($logs as $log) {
-        echo "<tr><td>" . BBCodeUtils::toHTML($log->message) . "</td>
-                        <td>" . StringUtils::formatDate($log->timestamp) . "</td>
-                        <td><a href=\"?page=user&amp;sub=ipsearch&amp;ip=" . $log->host . "\">" . $log->host . "</a></td></tr>";
-    }
-    tableEnd();
-
-    echo "<h2>Neuer Log:</h2><textarea rows=\"4\" cols=\"70\" id=\"new_log\"></textarea><br/><br/>";
-
-    echo "<input type=\"button\" onclick=\"xajax_addUserLog('$uid','$target',document.getElementById('new_log').value);\" value=\"Speichern\" />";
-
-
-    $out = ob_get_contents();
-    ob_end_clean();
-    $or->assign($target, "innerHTML", $out);
-    return $or;
-}
-
-function addUserLog($uid, $target, $text)
-{
-    // TODO
-    global $app;
-
-    /** @var UserService $userService */
-    $userService = $app[UserService::class];
-
-    $or = new xajaxResponse();
-    if ($text != "") {
-        $or->script("showLoader('$target');");
-        $userService->addToUserLog($uid, "settings", $text, true);
-        $or->script("xajax_userLogs('$uid','$target')");
-    } else {
-        $or->alert("Fehler! Kein Text!");
-    }
     return $or;
 }

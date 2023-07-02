@@ -32,6 +32,7 @@ use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\User\UserCommentRepository;
 use EtoA\User\UserHolidayService;
 use EtoA\User\UserLoginFailureRepository;
+use EtoA\User\UserLogRepository;
 use EtoA\User\UserMultiRepository;
 use EtoA\User\UserPropertiesRepository;
 use EtoA\User\UserRatingRepository;
@@ -79,6 +80,7 @@ class UserController extends AbstractAdminController
         private readonly ShipDataRepository         $shipRepository,
         private readonly DefenseDataRepository      $defenseRepository,
         private readonly MessageRepository          $messageRepository,
+        private readonly UserLogRepository          $userLogRepository,
         private readonly string                     $projectDir,
     )
     {
@@ -756,4 +758,44 @@ class UserController extends AbstractAdminController
         $this->addFlash('success', 'Kommentar gelöscht');
         return $this->redirectToRoute('admin.users.comments', ['id' => $id]);
     }
+
+    #[Route('/admin/users/{id}/logs', name: 'admin.users.logs', methods: ['GET'])]
+    #[IsGranted('ROLE_ADMIN_TRIAL-ADMIN')]
+    public function logs(int $id, Request $request): Response
+    {
+        $user = $this->userRepository->getUser($id);
+        if ($user === null) {
+            $this->addFlash('error', 'Benutzer nicht vorhanden!');
+            return $this->redirectToRoute('admin.users');
+        }
+
+        $limit = $request->query->getInt('limit', 100);
+
+        return $this->render('admin/user/logs.html.twig', [
+            'user' => $user,
+            'logs' => $this->userLogRepository->getUserLogs($id, $limit),
+        ]);
+    }
+
+    #[Route('/admin/users/{id}/logs', name: 'admin.users.logs.add', methods: ['POST'])]
+    #[IsGranted('ROLE_ADMIN_TRIAL-ADMIN')]
+    public function addLog(int $id, Request $request): Response
+    {
+        $user = $this->userRepository->getUser($id);
+        if ($user === null) {
+            $this->addFlash('error', 'Benutzer nicht vorhanden!');
+            return $this->redirectToRoute('admin.users');
+        }
+
+        if (blank($request->get('text'))) {
+            $this->addFlash('error', 'Text fehlt!');
+            return $this->redirectToRoute('admin.users.logs', ['id' => $id]);
+        }
+
+        $this->userService->addToUserLog($id, "settings", $request->get('text'));
+
+        $this->addFlash('success', 'Log hinzugefügt');
+        return $this->redirectToRoute('admin.users.logs', ['id' => $id]);
+    }
+
 }

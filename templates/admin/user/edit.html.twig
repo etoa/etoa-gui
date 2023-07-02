@@ -42,7 +42,6 @@
                 <li><a href="#tabs-8">Loginfehler</a></li>
                 <li><a href="#tabs-9">Punkte</a></li>
                 <li><a href="#tabs-10">Tickets</a></li>
-                <li><a href="#tabs-12">Log</a></li>
             </ul>
 
             {# Allgemeines #}
@@ -856,13 +855,6 @@
                 </div>
             </div>
 
-            {# Log #}
-            <div id="tabs-12">
-                <div id="logsBox">
-                    <div style="text-align:center;"></div>
-                </div>
-            </div>
-
         </div>
 
         <p>
@@ -879,7 +871,8 @@
         <p>
             <a href="{{ path('admin.users.economy', {id: user.id}) }}" class="button">Wirtschaft</a> &nbsp;
             <a href="{{ path('admin.users.messages', {id: user.id}) }}" class="button">Nachrichten</a> &nbsp;
-            <a href="{{ path('admin.users.comments', {id: user.id}) }}" class="button">Kommentare</a>
+            <a href="{{ path('admin.users.comments', {id: user.id}) }}" class="button">Kommentare</a> &nbsp;
+            <a href="{{ path('admin.users.logs', {id: user.id}) }}" class="button">Logs</a>
         </p>
         <hr/>
         <p>
@@ -909,8 +902,6 @@
                     xajax_userPointsTable(' . $id . ', "pointsBox");
                 } else if (ui.index == 9) {
                     xajax_userTickets(' . $id . ', "ticketsBox");
-                } else if (ui.index == 11) {
-                    xajax_userLogs(' . $id . ', "logsBox");
                 }
             });
         });

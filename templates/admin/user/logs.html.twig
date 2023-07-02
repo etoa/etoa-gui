@@ -1,0 +1,41 @@
+{% extends 'admin/layout/admin.html.twig' %}
+
+{% block content %}
+    <h1>Spieler</h1>
+
+    <a href="{{ path('admin.users') }}">Spielersuche</a> &raquo;
+    <a href="{{ path('admin.users.edit', {id: user.id}) }}">{{ user.nick }}</a> &raquo;
+    <a href="{{ path('admin.users.comments', {id: user.id}) }}">Logs</a>
+
+    <h2>Logs des Spielers {{ user.nick }}</h2>
+
+    <h3><label for="text">Neuer Logeintrag</label></h3>
+    <form action="{{ path('admin.users.logs.add', { id: user.id}) }}" method="POST">
+        <p>
+            <textarea rows="4" cols="70" name="text" id="text"></textarea>
+        </p>
+        <input type="submit" value="Speichern"/>
+    </form>
+
+    <h3>Letzte Logeinträge</h3>
+    {% component table with { title: '', width: '100%' } %}
+        {% block table_content %}
+            <tr>
+                <th>Nachricht</th>
+                <th>Datum</th>
+                <th>IP</th>
+            </tr>
+            {% for log in logs %}
+                <tr>
+                    <td>{{ BBCodeToHTML(log.message)|raw }}</td>
+                    <td>{{ formatTimestamp(log.timestamp) }}</td>
+                    <td>
+                        <a href="{{ path('admin.users.ips') }}?ip={{ log.host }}">{{ log.host }}</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        {% endblock %}
+    {% endcomponent %}
+
+{% endblock %}
+
