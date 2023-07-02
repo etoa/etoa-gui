@@ -5,7 +5,6 @@ use EtoA\Alliance\AllianceRankRepository;
 use EtoA\Help\TicketSystem\TicketRepository;
 use EtoA\Support\BBCodeUtils;
 use EtoA\Support\StringUtils;
-use EtoA\User\UserCommentRepository;
 use EtoA\User\UserLogRepository;
 use EtoA\User\UserPointsRepository;
 use EtoA\User\UserService;
@@ -13,12 +12,9 @@ use EtoA\User\UserService;
 $xajax->register(XAJAX_FUNCTION, "showTimeBox");
 $xajax->register(XAJAX_FUNCTION, "allianceRankSelector");
 $xajax->register(XAJAX_FUNCTION, "userPointsTable");
-$xajax->register(XAJAX_FUNCTION, "addUserComment");
-$xajax->register(XAJAX_FUNCTION, "delUserComment");
 $xajax->register(XAJAX_FUNCTION, "userLogs");
 $xajax->register(XAJAX_FUNCTION, "addUserLog");
 $xajax->register(XAJAX_FUNCTION, "userTickets");
-$xajax->register(XAJAX_FUNCTION, "userComments");
 
 function showTimeBox($parent, $name, $value, $show = 1)
 {
@@ -198,81 +194,6 @@ function userTickets($uid, $target)
     $or->assign($target, "innerHTML", $out);
     return $or;
 }
-
-function userComments($uid, $target)
-{
-    global $app;
-
-    /** @var UserCommentRepository $userCommentRepository */
-    $userCommentRepository = $app[UserCommentRepository::class];
-
-    $or = new xajaxResponse();
-    ob_start();
-    echo "<h2>Neuer Kommentar:</h2><textarea rows=\"4\" cols=\"70\" id=\"new_comment_text\"></textarea><br/><br/>";
-    echo "<input type=\"button\" onclick=\"xajax_addUserComment('$uid','$target',document.getElementById('new_comment_text').value);\" value=\"Speichern\" />";
-    echo "<h2>Gespeicherte Kommentare</h2><table class=\"tb\">";
-
-    $comments = $userCommentRepository->getComments($uid);
-    if (count($comments) > 0) {
-        echo "<tr>
-            <th>Text</th>
-            <th>Verfasst</th>
-            <th>Aktionen</th>
-        </tr>";
-        foreach ($comments as $comment) {
-            echo "<tr>
-                <td class=\"tbldata\" >" . BBCodeUtils::toHTML($comment->text) . "</td>
-                <td class=\"tbldata\" style=\"width:200px;\">" . StringUtils::formatDate($comment->timestamp) . " von " . $comment->adminNick . "</td>
-                <td class=\"tbldata\" style=\"width:50px;\"><a href=\"javascript:;\" onclick=\"if (confirm('Wirklich löschen?')) {xajax_delUserComment('" . $uid . "','" . $target . "'," . $comment->id . ")}\">Löschen</a></td>
-            </tr>";
-        }
-    } else {
-        echo "<tr><td class=\"tbldata\">Keine Kommentare</td></tr>";
-    }
-    echo "</table></div>";
-
-    $out = ob_get_contents();
-    ob_end_clean();
-    $or->assign($target, "innerHTML", $out);
-    return $or;
-}
-
-function addUserComment($uid, $target, $text)
-{
-    global $app;
-
-    /** @var UserCommentRepository $userCommentRepository */
-    $userCommentRepository = $app[UserCommentRepository::class];
-
-    $or = new xajaxResponse();
-    if ($text != "") {
-        $or->script("showLoader('$target');");
-        $userCommentRepository->addComment($uid, $_SESSION['user_id'], $text);
-        $or->script("xajax_userComments('$uid','$target')");
-    } else {
-        $or->alert("Fehler! Kein Text!");
-    }
-    return $or;
-}
-
-function delUserComment($uid, $target, $id)
-{
-    global $app;
-
-    /** @var UserCommentRepository $userCommentRepository */
-    $userCommentRepository = $app[UserCommentRepository::class];
-
-    $or = new xajaxResponse();
-    if ($id > 0) {
-        $or->script("showLoader('$target');");
-        $userCommentRepository->deleteComment($id);
-        $or->script("xajax_userComments('$uid','$target')");
-    } else {
-        $or->alert("Fehler! Falsche ID!");
-    }
-    return $or;
-}
-
 
 function userLogs($uid, $target)
 {

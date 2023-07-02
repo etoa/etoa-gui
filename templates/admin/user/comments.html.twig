@@ -1,0 +1,48 @@
+{% extends 'admin/layout/admin.html.twig' %}
+
+{% block content %}
+    <h1>Spieler</h1>
+
+    <a href="{{ path('admin.users') }}">Spielersuche</a> &raquo;
+    <a href="{{ path('admin.users.edit', {id: user.id}) }}">{{ user.nick }}</a> &raquo;
+    <a href="{{ path('admin.users.comments', {id: user.id}) }}">Kommentare</a>
+
+    <h2>Kommentare zum Spieler {{ user.nick }}</h2>
+
+    <form action="{{ path('admin.users.comments.add', { id: user.id}) }}" method="POST">
+        <h3><label for="text">Neuer Kommentar:</label></h3>
+        <textarea rows="4" cols="70" id="text" name="text"></textarea><br/><br/>
+        <input type="submit" value="Speichern"/>
+    </form>
+
+    <h3>Gespeicherte Kommentare</h3>
+    <table class="tb">
+        {% if comments|length > 0 %}
+            <tr>
+                <th>Text</th>
+                <th>Verfasst</th>
+                <th>Aktionen</th>
+            </tr>
+            {% for comment in comments %}
+                <tr>
+                    <td class="tbldata">{{ BBCodeToHTML(comment.text)|raw }}</td>
+                    <td class="tbldata" style="width:200px;">
+                        {{ formatTimestamp(comment.timestamp) }} von {{ comment.adminNick }}
+                    </td>
+                    <td class="tbldata" style="width:50px;">
+                        <form action="{{ path('admin.users.comments.delete', { id: user.id, comment: comment.id }) }}"
+                              method="post">
+                            <button type="submit" onclick="return confirm('Wirklich löschen?')">Löschen</button>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+        {% else %}
+            <tr>
+                <td class="tbldata">Keine Kommentare</td>
+            </tr>
+        {% endif %}
+    </table>
+
+{% endblock %}
+

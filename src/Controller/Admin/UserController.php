@@ -41,7 +41,6 @@ use EtoA\User\UserService;
 use EtoA\User\UserSittingRepository;
 use EtoA\User\UserWarningRepository;
 use Exception;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -49,7 +48,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use WhichBrowser\Parser as BrowserParser;
 
-class UserController extends AbstractController
+class UserController extends AbstractAdminController
 {
     public function __construct(
         private readonly ConfigurationService       $config,
@@ -115,7 +114,7 @@ class UserController extends AbstractController
     {
         $user = $this->userRepository->getUserAdminView($id);
         if ($user === null) {
-            $this->addFlash('error', 'Datensatz nicht vorhanden!');
+            $this->addFlash('error', 'Benutzer nicht vorhanden!');
             return $this->redirectToRoute('admin.users');
         }
 
@@ -149,7 +148,6 @@ class UserController extends AbstractController
             'isNoLongerBlocked' => $user->blockedFrom > 0 && $user->blockedTo < time(),
             'userBlockedDefaultTime' => time() + (3600 * 24 * $this->config->getInt('user_ban_min_length')),
             'commentInfo' => $this->userCommentRepository->getCommentInformation($user->id),
-            'comments' => $this->userCommentRepository->getComments($id),
             'numberOfNewTickets' => count($newTickets),
             'numberOfAssignedTickets' => count($assignedTickets),
             'warning' => $this->userWarningRepository->getCountAndLatestWarning($user->id),
@@ -439,7 +437,7 @@ class UserController extends AbstractController
     {
         $user = $this->userRepository->getUser($id);
         if ($user === null) {
-            $this->addFlash('error', 'Datensatz nicht vorhanden!');
+            $this->addFlash('error', 'Benutzer nicht vorhanden!');
             return $this->redirectToRoute('admin.users');
         }
 
@@ -672,7 +670,7 @@ class UserController extends AbstractController
     {
         $user = $this->userRepository->getUser($id);
         if ($user === null) {
-            $this->addFlash('error', 'Datensatz nicht vorhanden!');
+            $this->addFlash('error', 'Benutzer nicht vorhanden!');
             return $this->redirectToRoute('admin.users');
         }
 
@@ -691,7 +689,7 @@ class UserController extends AbstractController
     {
         $user = $this->userRepository->getUser($id);
         if ($user === null) {
-            $this->addFlash('error', 'Datensatz nicht vorhanden!');
+            $this->addFlash('error', 'Benutzer nicht vorhanden!');
             return $this->redirectToRoute('admin.users');
         }
 
@@ -702,7 +700,60 @@ class UserController extends AbstractController
 
         $this->messageRepository->createSystemMessage($id, MessageCategoryId::USER, $request->get('subject'), $request->get('message'));
 
-        $this->addFlash('success', 'Spieler erstellt');
+        $this->addFlash('success', 'Nachricht gesendet');
         return $this->redirectToRoute('admin.users.messages', ['id' => $id]);
+    }
+
+    #[Route('/admin/users/{id}/comments', name: 'admin.users.comments', methods: ['GET'])]
+    #[IsGranted('ROLE_ADMIN_TRIAL-ADMIN')]
+    public function comments(int $id): Response
+    {
+        $user = $this->userRepository->getUser($id);
+        if ($user === null) {
+            $this->addFlash('error', 'Benutzer nicht vorhanden!');
+            return $this->redirectToRoute('admin.users');
+        }
+
+        return $this->render('admin/user/comments.html.twig', [
+            'user' => $user,
+            'comments' => $this->userCommentRepository->getComments($id),
+        ]);
+    }
+
+    #[Route('/admin/users/{id}/comments', name: 'admin.users.comments.add', methods: ['POST'])]
+    #[IsGranted('ROLE_ADMIN_TRIAL-ADMIN')]
+    public function addComment(int $id, Request $request): Response
+    {
+        $user = $this->userRepository->getUser($id);
+        if ($user === null) {
+            $this->addFlash('error', 'Benutzer nicht vorhanden!');
+            return $this->redirectToRoute('admin.users');
+        }
+
+        if (blank($request->get('text'))) {
+            $this->addFlash('error', 'Text fehlt!');
+            return $this->redirectToRoute('admin.users.comments', ['id' => $id]);
+        }
+
+        $this->userCommentRepository->addComment($id, $this->getUser()->getId(), $request->get('text'));
+
+        $this->addFlash('success', 'Kommentar hinzugefügt');
+        return $this->redirectToRoute('admin.users.comments', ['id' => $id]);
+    }
+
+    #[Route('/admin/users/{id}/comments/{comment}/delete', name: 'admin.users.comments.delete', methods: ['POST'])]
+    #[IsGranted('ROLE_ADMIN_TRIAL-ADMIN')]
+    public function deleteComment(int $id, int $comment): Response
+    {
+        $user = $this->userRepository->getUser($id);
+        if ($user === null) {
+            $this->addFlash('error', 'Benutzer nicht vorhanden!');
+            return $this->redirectToRoute('admin.users');
+        }
+
+        $this->userCommentRepository->deleteComment($comment);
+
+        $this->addFlash('success', 'Kommentar gelöscht');
+        return $this->redirectToRoute('admin.users.comments', ['id' => $id]);
     }
 }

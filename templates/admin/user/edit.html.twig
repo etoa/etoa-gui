@@ -42,7 +42,6 @@
                 <li><a href="#tabs-8">Loginfehler</a></li>
                 <li><a href="#tabs-9">Punkte</a></li>
                 <li><a href="#tabs-10">Tickets</a></li>
-                <li><a href="#tabs-11">Kommentare</a></li>
                 <li><a href="#tabs-12">Log</a></li>
             </ul>
 
@@ -159,9 +158,9 @@
                             {# Kommentare #}
                             {% if commentInfo.count > 0 %}
                                 <div>
-                                    <b>{{ commentInfo.count }}Kommentare</b> vorhanden, neuster Kommentar
+                                    <b>{{ commentInfo.count }} Kommentare</b> vorhanden, neuster Kommentar
                                     von {{ formatTimestamp(commentInfo.latest) }}
-                                    [<a href="javascript:" onclick="$('.tabs').tabs('select', 10);">Zeigen</a>]
+                                    [<a href="{{ path('admin.users.comments', {id: user.id}) }}">Zeigen</a>]
                                 </div>
                             {% endif %}
 
@@ -857,43 +856,6 @@
                 </div>
             </div>
 
-            {# Kommentare #}
-            <div id="tabs-11">
-                <div id="commentsBox">
-                    <h2><label for="new_comment_text">Neuer Kommentar:</label></h2>
-                    <textarea rows="4" cols="70" id="new_comment_text"></textarea><br/><br/>
-                    <input type="button"
-                           onclick="xajax_addUserComment('{{ user.id }}', 'commentsBox', document.getElementById('new_comment_text').value);"
-                           value="Speichern"/>
-                    <h2>Gespeicherte Kommentare</h2>
-                    <table class="tb">
-                        {% if comments|length > 0 %}
-                            <tr>
-                                <th>Text</th>
-                                <th>Verfasst</th>
-                                <th>Aktionen</th>
-                            </tr>
-                            {% for comment in comments %}
-                                <tr>
-                                    <td class="tbldata">" . BBCodeUtils::toHTML($comment->text) . "</td>
-                                    <td class="tbldata" style="width:200px;">" .
-                                        StringUtils::formatDate($comment->timestamp) . " von " . $comment->adminNick . "
-                                    </td>
-                                    <td class="tbldata" style="width:50px;">
-                                        <a href="javascript:"
-                                           onclick="if (confirm('Wirklich löschen?')) {xajax_delUserComment('{{ user.id }}', 'commentsBox', {{ comment.id }}) }">Löschen</a>
-                                    </td>
-                                </tr>
-                            {% endfor %}
-                        {% else %}
-                            <tr>
-                                <td class="tbldata">Keine Kommentare</td>
-                            </tr>
-                        {% endif %}
-                    </table>
-                </div>
-            </div>
-
             {# Log #}
             <div id="tabs-12">
                 <div id="logsBox">
@@ -916,7 +878,8 @@
         <hr/>
         <p>
             <a href="{{ path('admin.users.economy', {id: user.id}) }}" class="button">Wirtschaft</a> &nbsp;
-            <a href="{{ path('admin.users.messages', {id: user.id}) }}" class="button">Nachrichten</a>
+            <a href="{{ path('admin.users.messages', {id: user.id}) }}" class="button">Nachrichten</a> &nbsp;
+            <a href="{{ path('admin.users.comments', {id: user.id}) }}" class="button">Kommentare</a>
         </p>
         <hr/>
         <p>
@@ -946,8 +909,6 @@
                     xajax_userPointsTable(' . $id . ', "pointsBox");
                 } else if (ui.index == 9) {
                     xajax_userTickets(' . $id . ', "ticketsBox");
-                } else if (ui.index == 10) {
-                    xajax_userComments(' . $id . ', "commentsBox");
                 } else if (ui.index == 11) {
                     xajax_userLogs(' . $id . ', "logsBox");
                 }
