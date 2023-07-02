@@ -138,8 +138,6 @@ class UserController extends AbstractAdminController
 
         $ratingSearch = UserRatingSearch::create()->id($id);
 
-        $tickets = $this->ticketRepo->findBy(['user_id' => $id]);
-
         return $this->render('admin/user/edit.html.twig', [
             'user' => $user,
             'properties' => $this->userPropertiesRepository->getOrCreateProperties($user->id),
@@ -176,14 +174,6 @@ class UserController extends AbstractAdminController
             'battleRating' => $this->userRatingRepository->getBattleRating($ratingSearch)[0] ?? null,
             'tradeRating' => $this->userRatingRepository->getTradeRating($ratingSearch)[0] ?? null,
             'diplomacyRating' => $this->userRatingRepository->getDiplomacyRating($ratingSearch)[0] ?? null,
-            'tickets' => array_map(fn(Ticket $ticket) => [
-                'id' => $ticket->id,
-                'idString' => $ticket->getIdString(),
-                'statusName' => $ticket->getStatusName(),
-                'categoryName' => $this->ticketRepo->getCategoryName($ticket->catId),
-                'adminName' => ($ticket->adminId > 0 ? $this->adminUserRepo->getNick($ticket->adminId) : null),
-                'timestamp' => $ticket->timestamp,
-            ], $tickets),
         ]);
     }
 
@@ -796,6 +786,31 @@ class UserController extends AbstractAdminController
 
         $this->addFlash('success', 'Log hinzugefügt');
         return $this->redirectToRoute('admin.users.logs', ['id' => $id]);
+    }
+
+    #[Route('/admin/users/{id}/tickets', name: 'admin.users.tickets', methods: ['GET'])]
+    #[IsGranted('ROLE_ADMIN_TRIAL-ADMIN')]
+    public function tickets(int $id, Request $request): Response
+    {
+        $user = $this->userRepository->getUser($id);
+        if ($user === null) {
+            $this->addFlash('error', 'Benutzer nicht vorhanden!');
+            return $this->redirectToRoute('admin.users');
+        }
+
+        $tickets = $this->ticketRepo->findBy(['user_id' => $id]);
+
+        return $this->render('admin/user/tickets.html.twig', [
+            'user' => $user,
+            'tickets' => array_map(fn(Ticket $ticket) => [
+                'id' => $ticket->id,
+                'idString' => $ticket->getIdString(),
+                'statusName' => $ticket->getStatusName(),
+                'categoryName' => $this->ticketRepo->getCategoryName($ticket->catId),
+                'adminName' => ($ticket->adminId > 0 ? $this->adminUserRepo->getNick($ticket->adminId) : null),
+                'timestamp' => $ticket->timestamp,
+            ], $tickets),
+        ]);
     }
 
 }

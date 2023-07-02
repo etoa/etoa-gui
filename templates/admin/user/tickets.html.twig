@@ -1,0 +1,38 @@
+{% extends 'admin/layout/admin.html.twig' %}
+
+{% block content %}
+    <h1>Spieler</h1>
+
+    <a href="{{ path('admin.users') }}">Spielersuche</a> &raquo;
+    <a href="{{ path('admin.users.edit', {id: user.id}) }}">{{ user.nick }}</a> &raquo;
+    <a href="{{ path('admin.users.tickets', {id: user.id}) }}">Tickets</a>
+
+    <h2>Tickets des Spielers {{ user.nick }}</h2>
+
+    {% if tickets|length > 0 %}
+        <table class="tb" style="width: 100%">
+            <tr>
+                <th>ID</th>
+                <th>Status</th>
+                <th>Kategorie</th>
+                <th>Zugeteilter Admin</th>
+                <th>Letzte Änderung</th>
+            </tr>
+            {% for ticket in tickets %}
+                <tr>
+                    <td>
+                        <a href="{{ path('admin.ticket.details', { id: ticket.id }) }}">{{ ticket.idString }}</a>
+                    </td>
+                    <td>{{ ticket.statusName }}</td>
+                    <td>{{ ticket.categoryName }}</td>
+                    <td>{{ ticket.adminName|default('-') }}</td>
+                    <td>{{ formatTimestamp(ticket.timestamp) }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        <p>Dieser User hat keine Tickets</p>
+    {% endif %}
+
+{% endblock %}
+

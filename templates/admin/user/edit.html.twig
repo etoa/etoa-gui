@@ -41,7 +41,6 @@
                 <li><a href="#tabs-7">Nachrichten</a></li>
                 <li><a href="#tabs-8">Loginfehler</a></li>
                 <li><a href="#tabs-9">Punkte</a></li>
-                <li><a href="#tabs-10">Tickets</a></li>
             </ul>
 
             {# Allgemeines #}
@@ -168,7 +167,7 @@
                                 <div>
                                     <b>{{ numberOfNewTickets }} neue Tickets</b> und <b> {{ numberOfAssignedTickets }}
                                         zugewiesene Tickets</b> vorhanden.
-                                    [<a href="javascript:" onclick="$('.tabs').tabs('select', 9);">Zeigen</a>]
+                                    [<a href="{{ path('admin.users.tickets', {id: user.id}) }}">Zeigen</a>]
                                 </div>
                             {% endif %}
 
@@ -823,38 +822,6 @@
                 {% endcomponent %}
             </div>
 
-            {# Tickets #}
-            <div id="tabs-10">
-                <div id="ticketsBox">
-                    {% if tickets|length > 0 %}
-                        {% component table with { title: 'Tickets', width: '100%' } %}
-                            {% block table_content %}
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Status</th>
-                                    <th>Kategorie</th>
-                                    <th>Zugeteilter Admin</th>
-                                    <th>Letzte Änderung</th>
-                                </tr>
-                                {% for ticket in tickets %}
-                                    <tr>
-                                        <td>
-                                            <a href="{{ path('admin.ticket.details', { id: ticket.id }) }}">{{ ticket.idString }}</a>
-                                        </td>
-                                        <td>{{ ticket.statusName }}</td>
-                                        <td>{{ ticket.categoryName }}</td>
-                                        <td>{{ ticket.adminName|default('-') }}</td>
-                                        <td>{{ formatTimestamp(ticket.timestamp) }}</td>
-                                    </tr>
-                                {% endfor %}
-                            {% endblock %}
-                        {% endcomponent %}
-                    {% else %}
-                        <p>Dieser User hat keine Tickets</p>
-                    {% endif %}
-                </div>
-            </div>
-
         </div>
 
         <p>
@@ -872,7 +839,8 @@
             <a href="{{ path('admin.users.economy', {id: user.id}) }}" class="button">Wirtschaft</a> &nbsp;
             <a href="{{ path('admin.users.messages', {id: user.id}) }}" class="button">Nachrichten</a> &nbsp;
             <a href="{{ path('admin.users.comments', {id: user.id}) }}" class="button">Kommentare</a> &nbsp;
-            <a href="{{ path('admin.users.logs', {id: user.id}) }}" class="button">Logs</a>
+            <a href="{{ path('admin.users.logs', {id: user.id}) }}" class="button">Logs</a> &nbsp;
+            <a href="{{ path('admin.users.tickets', {id: user.id}) }}" class="button">Tickets</a>
         </p>
         <hr/>
         <p>
@@ -900,8 +868,6 @@
             $("#user_edit_tabs").bind("tabsshow", function (event, ui) {
                 if (ui.index == 8) {
                     xajax_userPointsTable(' . $id . ', "pointsBox");
-                } else if (ui.index == 9) {
-                    xajax_userTickets(' . $id . ', "ticketsBox");
                 }
             });
         });

@@ -1,15 +1,12 @@
 <?PHP
 
-use EtoA\Admin\AdminUserRepository;
 use EtoA\Alliance\AllianceRankRepository;
-use EtoA\Help\TicketSystem\TicketRepository;
 use EtoA\Support\StringUtils;
 use EtoA\User\UserPointsRepository;
 
 $xajax->register(XAJAX_FUNCTION, "showTimeBox");
 $xajax->register(XAJAX_FUNCTION, "allianceRankSelector");
 $xajax->register(XAJAX_FUNCTION, "userPointsTable");
-$xajax->register(XAJAX_FUNCTION, "userTickets");
 
 function showTimeBox($parent, $name, $value, $show = 1)
 {
@@ -146,46 +143,3 @@ function userPointsTable($uid, $target, $length = 100, $start = -1, $end = -1)
     return $or;
 }
 
-function userTickets($uid, $target)
-{
-    global $app;
-
-    /** @var AdminUserRepository $adminUserRepo */
-    $adminUserRepo = $app[AdminUserRepository::class];
-
-    /** @var TicketRepository $ticketRepo */
-    $ticketRepo = $app[TicketRepository::class];
-
-    $or = new xajaxResponse();
-    ob_start();
-    echo "<table class=\"tb\">";
-
-    $tickets = $ticketRepo->findBy(["user_id" => $uid]);
-    if (count($tickets) > 0) {
-        echo "<tr>
-            <th>ID</th>
-            <th>Datum</th>
-            <th>Kategorie</th>
-            <th>Status</th>
-            <th>Admin</th>
-        </tr>";
-        foreach ($tickets as $ticket) {
-            $adminNick = $adminUserRepo->getNick($ticket->adminId);
-            echo "<tr>
-                <td><a href=\"?page=tickets&id=" . $ticket->id . "\">" . $ticket->getIdString() . "</a></td>
-                <td class=\"tbldata\">" . StringUtils::formatDate($ticket->timestamp) . "</td>
-                <td class=\"tbldata\">" . $ticketRepo->getCategoryName($ticket->catId) . "</td>
-                <td class=\"tbldata\">" . $ticket->getStatusName() . "</td>
-                <td class=\"tbldata\">" . $adminNick . "</td>
-            </tr>";
-        }
-    } else {
-        echo "<tr><td class=\"tbldata\">Keine Tickets</td></tr>";
-    }
-    echo "</table>";
-
-    $out = ob_get_contents();
-    ob_end_clean();
-    $or->assign($target, "innerHTML", $out);
-    return $or;
-}
