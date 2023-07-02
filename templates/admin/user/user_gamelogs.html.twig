@@ -1,0 +1,31 @@
+{% if logs|length > 0 %}
+    {% component table %}
+        {% block table_content %}
+            <tr>
+                <th style="width:140px;">Datum</th>
+                <th style="">Schweregrad</th>
+                <th>Raumobjekt</th>
+                <th>Einheit</th>
+                <th>Status</th>
+                <th>Optionen</th>
+            </tr>
+            {% for log in logs %}
+                <tr>
+                    <td>{{ formatTimestamp(log.timestamp) }}</td>
+                    <td>{{ log.severity }}</td>
+                    <td>{{ log.te }}</td>
+                    <td>{{ log.ob }}</td>
+                    <td>{{ log.obStatus }}</td>
+                    <td><a href="javascript:" onclick="toggleBox('details{{ log.id }}')">Details</a></td>
+                </tr>
+                <tr id="details{{ log.id }}" style="display:none;">
+                    <td colspan="9">{{ BBCodeToHTML(log.message) }}
+                        <br/><br/>IP: {{ log.ip }}
+                    </td>
+                </tr>
+            {% endfor %}
+        {% endblock %}
+    {% endcomponent %}
+{% else %}
+    Es sind keine Logs vorhanden!
+{% endif %}

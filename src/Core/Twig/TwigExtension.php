@@ -61,6 +61,7 @@ class TwigExtension extends AbstractExtension
             new TwigFunction('browser', [$this, 'browser']),
             new TwigFunction('formatNumber', [$this, 'formatNumber']),
             new TwigFunction('base64', [$this, 'base64']),
+            new TwigFunction('tm', [$this, 'tm']),
         ];
     }
 
@@ -198,6 +199,12 @@ class TwigExtension extends AbstractExtension
     {
         return cTT($title, $content);
     }
+
+    public function tm(string $title, string $text): string
+    {
+        return mTT($title, $text);
+    }
+
 
     public function editButton(?string $url, string $ocl = ""): string
     {

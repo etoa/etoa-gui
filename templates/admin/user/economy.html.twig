@@ -1,0 +1,135 @@
+{% extends 'admin/layout/admin.html.twig' %}
+
+{% block content %}
+    <h1>Spieler</h1>
+
+    <a href="{{ path('admin.users') }}">Spielersuche</a> &raquo;
+    <a href="{{ path('admin.users.edit', {id: user.id}) }}">{{ user.nick }}</a> &raquo;
+    <a href="{{ path('admin.users.economy', {id: user.id}) }}">Wirtschaft</a>
+
+    <h2>Wirtschaft des Spielers {{ user.nick }}</h2>
+    
+    <fieldset>
+        <legend>Rohstoff- und Produktionsübersicht</legend>
+
+        {% if userPlanets|length > 0 %}
+
+            <h2>Rohstoffe und Bewohner</h2>
+            <table class="tbl">
+                <tr>
+                    <td class="tbltitle">Name:</td>
+                    <td class="tbltitle">{{ resourceNames.metal }}</td>
+                    <td class="tbltitle">{{ resourceNames.crystal }}</td>
+                    <td class="tbltitle">{{ resourceNames.plastic }}</td>
+                    <td class="tbltitle">{{ resourceNames.fuel }}</td>
+                    <td class="tbltitle">{{ resourceNames.food }}</td>
+                    <td class="tbltitle">Bewohner</td>
+                </tr>
+                {% for planet in userPlanets %}
+                    <tr>
+                        <td class="tbldata">
+                            <a href="{{ path('admin.universe.entity', { id: planet.id }) }}">{{ planet.toString }}</a>
+                        </td>
+                        {% for x in range(0,5) %}
+                            <td
+                                    {% if max_res[x] == val_res[planet.id][x] %} class="tbldata3" {% elseif min_res[x] == val_res[planet.id][x] %} class="tbldata2" {% else %} class="tbldata" {% endif %}
+                                    {% if val_res[planet.id][x] < val_store[planet.id][x] and val_time[planet.id][x] != 0 %}
+                                        {{ tm("Speicher", "Speicher voll in " ~  formatTimespan(val_time[planet.id][x])) }}
+                                        {% if val_time[planet.id][x] < 43200 %} style="font-style:italic;" {% endif %}
+                                    {% else %}
+                                        {{ tm("Speicher", "Speicher voll!") }}
+                                        style="font-weight:bold;"
+                                    {% endif %}
+                            >{{ formatNumber(val_res[planet.id][x]) }}</td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+                <tr>
+                    <td colspan="6"></td>
+                </tr>
+                <tr>
+                    <td class="tbltitle">Total</td>
+                    {% for x in range(0,5) %}
+                        <td class="tbltitle">{{ formatNumber(tot_res[x]) }}</td>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    <th class="tbltitle">Durchschnitt</th>
+                    {% for x in range(0,5) %}
+                        <td class="tbltitle">{{ formatNumber(tot_res[x] / userPlanets|length) }}</td>
+                    {% endfor %}
+                </tr>
+            </table>
+
+            <p>Legende: Minimum, Maximum,
+                <span style="font-style:italic">Speicher bald voll</span>,
+                <span class="tbldata" style="font-weight:bold">Speicher voll</span>
+            </p>
+
+            <h2>Produktion</h2>
+            <table class="tbl">
+                <tr>
+                    <th class="tbltitle">Name:</th>
+                    <td class="tbltitle">{{ resourceNames.metal }}</td>
+                    <td class="tbltitle">{{ resourceNames.crystal }}</td>
+                    <td class="tbltitle">{{ resourceNames.plastic }}</td>
+                    <td class="tbltitle">{{ resourceNames.fuel }}</td>
+                    <td class="tbltitle">{{ resourceNames.food }}</td>
+                    <td class="tbltitle">Energie</td>
+                </tr>
+                {% for planet in userPlanets %}
+                    <tr>
+                        <td class="tbldata">
+                            <a href="{{ path('admin.universe.entity', { id: planet.id }) }}">{{ planet.toString }}</a>
+                        </td>
+                        {% for x in range(0,5) %}
+                            <td
+                                    {% if max_prod[x] == val_prod[planet.id][x] %}
+                                        class="tbldata3"
+                                    {% elseif min_prod[x] == val_prod[planet.id][x] %}
+                                        class="tbldata2"
+                                    {% else %}
+                                        class="tbldata"
+                                    {% endif %}
+                            >{{ formatNumber(val_prod[planet.id][x]) }}
+                            </td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+                <tr>
+                    <td colspan="6"></td>
+                </tr>
+                <tr>
+                    <th class="tbltitle">Total</th>
+                    {% for x in range(0,5) %}
+                        <td class="tbltitle">{{ formatNumber(tot_prod[x]) }}</td>
+                    {% endfor %}
+                </tr>
+                <tr>
+                    <th class="tbltitle">Durchschnitt</th>
+                    {% for x in range(0,5) %}
+                        <td class="tbltitle">{{ formatNumber(tot_prod[x] / userPlanets|length) }}</td>
+                    {% endfor %}
+                </tr>
+            </table>
+        {% else %}
+            Der User hat noch keinen Planeten!
+        {% endif %}
+    </fieldset>
+
+    <fieldset>
+        <legend>Die fünf letzten Aufträge</legend>
+        <h2>Bauaufträge</h2>
+        {% include 'admin/user/user_gamelogs.html.twig' with { 'logs': buildLogs } %}
+
+        <h2>Forschungsaufträge</h2>
+        {% include 'admin/user/user_gamelogs.html.twig' with { 'logs': techLogs } %}
+
+        <h2>Schiffsaufträge</h2>
+        {% include 'admin/user/user_gamelogs.html.twig' with { 'logs': shipLogs } %}
+
+        <h2>Verteidigungsaufträge</h2>
+        {% include 'admin/user/user_gamelogs.html.twig' with { 'logs': defLogs } %}
+    </fieldset>
+{% endblock %}
+

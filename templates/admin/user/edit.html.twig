@@ -44,7 +44,6 @@
                 <li><a href="#tabs-10">Tickets</a></li>
                 <li><a href="#tabs-11">Kommentare</a></li>
                 <li><a href="#tabs-12">Log</a></li>
-                <li><a href="#tabs-13">Wirtschaft</a></li>
             </ul>
 
             {# Allgemeines #}
@@ -923,15 +922,6 @@
                 </div>
             </div>
 
-            {# Wirtschaft #}
-            <div id="tabs-13">
-                <div id="tabEconomy">
-                    Das Laden aller Wirtschaftsdaten kann einige Sekunden dauern!<br/><br/>
-                    <input type="button" value="Wirtschaftsdaten laden"
-                           onclick="showLoader('tabEconomy');xajax_loadEconomy({{ user.id }},'tabEconomy');"/>
-                </div>
-            </div>
-
         </div>
 
         <p>
@@ -943,6 +933,10 @@
             {% endif %}
             <input type="submit" name="delete_user" value="User l&ouml;schen" class="remove"
                    onclick="return confirm('Soll dieser User endgültig gelöscht werden?');">
+        </p>
+        <hr/>
+        <p>
+            <a href="{{ path('admin.users.economy', {id: user.id}) }}" class="button">Wirtschaft</a>
         </p>
         <hr/>
         <p>

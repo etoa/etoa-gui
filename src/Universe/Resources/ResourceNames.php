@@ -20,4 +20,30 @@ class ResourceNames
         self::FUEL,
         self::FOOD,
     ];
+
+    public function getMetal(): string
+    {
+        return self::METAL;
+    }
+
+    public function getCrystal(): string
+    {
+        return self::CRYSTAL;
+    }
+
+    public function getPlastic(): string
+    {
+        return self::PLASTIC;
+    }
+
+    public function getFuel(): string
+    {
+        return self::FUEL;
+    }
+
+    public function getFood(): string
+    {
+        return self::FOOD;
+    }
+
 }

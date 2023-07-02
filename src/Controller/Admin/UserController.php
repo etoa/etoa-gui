@@ -2,15 +2,21 @@
 
 namespace EtoA\Controller\Admin;
 
+use Entity;
 use EtoA\Admin\AdminUserRepository;
 use EtoA\Alliance\AllianceRepository;
+use EtoA\Building\BuildingDataRepository;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Defense\DefenseDataRepository;
 use EtoA\Design\DesignsService;
 use EtoA\Form\Request\Admin\UserCreateRequest;
 use EtoA\Form\Type\Admin\UserCreateType;
 use EtoA\Help\TicketSystem\Ticket;
 use EtoA\Help\TicketSystem\TicketRepository;
 use EtoA\HostCache\NetworkNameService;
+use EtoA\Log\GameLogFacility;
+use EtoA\Log\GameLogRepository;
+use EtoA\Log\GameLogSearch;
 use EtoA\Log\LogFacility;
 use EtoA\Log\LogRepository;
 use EtoA\Log\LogSeverity;
@@ -19,6 +25,8 @@ use EtoA\Ranking\UserBannerService;
 use EtoA\Ship\ShipDataRepository;
 use EtoA\Specialist\SpecialistDataRepository;
 use EtoA\Support\ExternalUrl;
+use EtoA\Technology\TechnologyDataRepository;
+use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\User\UserCommentRepository;
 use EtoA\User\UserHolidayService;
 use EtoA\User\UserLoginFailureRepository;
@@ -63,6 +71,12 @@ class UserController extends AbstractController
         private readonly DesignsService             $designsService,
         private readonly UserLoginFailureRepository $userLoginFailureRepository,
         private readonly UserRatingRepository       $userRatingRepository,
+        private readonly PlanetRepository           $planetRepository,
+        private readonly GameLogRepository          $gameLogRepository,
+        private readonly BuildingDataRepository     $buildingRepository,
+        private readonly TechnologyDataRepository   $techRepository,
+        private readonly ShipDataRepository         $shipRepository,
+        private readonly DefenseDataRepository      $defenseRepository,
         private readonly string                     $projectDir,
     )
     {
@@ -415,5 +429,241 @@ class UserController extends AbstractController
         $this->addFlash('success', "Account freigeschaltet!");
 
         return $this->redirectToRoute('admin.users.edit', ['id' => $id]);
+    }
+
+
+    #[Route('/admin/users/{id}/economy', name: 'admin.users.economy')]
+    #[IsGranted('ROLE_ADMIN_TRIAL-ADMIN')]
+    public function economy(int $id): Response
+    {
+        $user = $this->userRepository->getUserAdminView($id);
+
+        if ($user === null) {
+            $this->addFlash('error', 'Datensatz nicht vorhanden!');
+
+            return $this->redirectToRoute('admin.users');
+        }
+
+        // Sucht alle Planet IDs des Users
+        $userPlanets = $this->planetRepository->getUserPlanetsWithCoordinates($id);
+
+        // Rohstoffe/Bewohner und Speicher
+
+        if (count($userPlanets) > 0) {
+            $max_res = array(0, 0, 0, 0, 0, 0);
+            $min_res = array(9999999999, 9999999999, 9999999999, 9999999999, 9999999999, 9999999999);
+            $tot_res = array(0, 0, 0, 0, 0, 0);
+
+            $max_prod = array(0, 0, 0, 0, 0, 0);
+            $min_prod = array(9999999999, 9999999999, 9999999999, 9999999999, 9999999999, 9999999999);
+            $tot_prod = array(0, 0, 0, 0, 0, 0);
+            $val_res = [];
+            $val_prod = [];
+            $val_store = [];
+            $val_time = [];
+            foreach ($userPlanets as $planet) {
+                //Speichert die aktuellen Rohstoffe in ein Array
+                $val_res[$planet->id][0] = floor($planet->resMetal);
+                $val_res[$planet->id][1] = floor($planet->resCrystal);
+                $val_res[$planet->id][2] = floor($planet->resPlastic);
+                $val_res[$planet->id][3] = floor($planet->resFuel);
+                $val_res[$planet->id][4] = floor($planet->resFood);
+                $val_res[$planet->id][5] = floor($planet->people);
+
+                for ($x = 0; $x < 6; $x++) {
+                    $max_res[$x] = max($max_res[$x], $val_res[$planet->id][$x]);
+                    $min_res[$x] = min($min_res[$x], $val_res[$planet->id][$x]);
+                    $tot_res[$x] += $val_res[$planet->id][$x];
+                }
+
+                //Speichert die aktuellen Rohstoffproduktionen in ein Array
+                $val_prod[$planet->id][0] = floor($planet->prodMetal);
+                $val_prod[$planet->id][1] = floor($planet->prodCrystal);
+                $val_prod[$planet->id][2] = floor($planet->prodPlastic);
+                $val_prod[$planet->id][3] = floor($planet->prodFuel);
+                $val_prod[$planet->id][4] = floor($planet->prodFood);
+                $val_prod[$planet->id][5] = floor($planet->prodPeople);
+
+                for ($x = 0; $x < 6; $x++) {
+                    $max_prod[$x] = max($max_prod[$x], $val_prod[$planet->id][$x]);
+                    $min_prod[$x] = min($min_prod[$x], $val_prod[$planet->id][$x]);
+                    $tot_prod[$x] += $val_prod[$planet->id][$x];
+                }
+
+                //Speichert die aktuellen Speicher in ein Array
+                $val_store[$planet->id][0] = floor($planet->storeMetal);
+                $val_store[$planet->id][1] = floor($planet->storeCrystal);
+                $val_store[$planet->id][2] = floor($planet->storePlastic);
+                $val_store[$planet->id][3] = floor($planet->storeFuel);
+                $val_store[$planet->id][4] = floor($planet->storeFood);
+                $val_store[$planet->id][5] = floor($planet->peoplePlace);
+
+                //Berechnet die dauer bis die Speicher voll sind (zuerst prüfen ob Division By Zero!)
+
+                //Titan
+                if ($planet->prodMetal > 0) {
+                    if ($planet->storeMetal - $planet->resMetal > 0) {
+                        $val_time[$planet->id][0] = ceil(($planet->storeMetal - $planet->resMetal) / $planet->prodMetal * 3600);
+                    } else {
+                        $val_time[$planet->id][0] = 0;
+                    }
+                } else {
+                    $val_time[$planet->id][0] = 0;
+                }
+
+                //Silizium
+                if ($planet->prodCrystal > 0) {
+                    if ($planet->storeCrystal - $planet->resCrystal > 0) {
+                        $val_time[$planet->id][1] = ceil(($planet->storeCrystal - $planet->resCrystal) / $planet->prodCrystal * 3600);
+                    } else {
+                        $val_time[$planet->id][1] = 0;
+                    }
+                } else {
+                    $val_time[$planet->id][1] = 0;
+                }
+
+                //PVC
+                if ($planet->prodPlastic > 0) {
+                    if ($planet->storePlastic - $planet->resPlastic > 0) {
+                        $val_time[$planet->id][2] = ceil(($planet->storePlastic - $planet->resPlastic) / $planet->prodPlastic * 3600);
+                    } else {
+                        $val_time[$planet->id][2] = 0;
+                    }
+                } else {
+                    $val_time[$planet->id][2] = 0;
+                }
+
+                //Tritium
+                if ($planet->prodFuel > 0) {
+                    if ($planet->storeFuel - $planet->resFuel > 0) {
+                        $val_time[$planet->id][3] = ceil(($planet->storeFuel - $planet->resFuel) / $planet->prodFuel * 3600);
+                    } else {
+                        $val_time[$planet->id][3] = 0;
+                    }
+                } else {
+                    $val_time[$planet->id][3] = 0;
+                }
+
+                //Nahrung
+                if ($planet->prodFood > 0) {
+                    if ($planet->storeFood - $planet->resFood > 0) {
+                        $val_time[$planet->id][4] = ceil(($planet->storeFood - $planet->resFood) / $planet->prodFood * 3600);
+                    } else {
+                        $val_time[$planet->id][4] = 0;
+                    }
+                } else {
+                    $val_time[$planet->id][4] = 0;
+                }
+
+                //Bewohner
+                if ($planet->prodPeople > 0) {
+                    if ($planet->peoplePlace - $planet->people > 0) {
+                        $val_time[$planet->id][5] = ceil(($planet->peoplePlace - $planet->people) / $planet->prodPeople * 3600);
+                    } else {
+                        $val_time[$planet->id][5] = 0;
+                    }
+                } else {
+                    $val_time[$planet->id][5] = 0;
+                }
+            }
+        }
+
+        // Rohstoffproduktion inkl. Energie
+        // Ersetzt Bewohnerwerte durch Energiewerte
+        $max_prod[5] = 0;
+        $min_prod[5] = 9999999999;
+        $tot_prod[5] = 0;
+        foreach ($userPlanets as $planet) {
+            // TODO
+            //Speichert die aktuellen Energieproduktionen in ein Array (Bewohnerproduktion [5] wird überschrieben)
+            $val_prod[$planet->id][5] = floor($planet->prodPower);
+
+            // Gibt Min. / Max. aus
+            $max_prod[5] = max($max_prod[5], $val_prod[$planet->id][5]);
+            $min_prod[5] = min($min_prod[5], $val_prod[$planet->id][5]);
+            $tot_prod[5] += $val_prod[$planet->id][5];
+        }
+
+        $buildLogs = $this->gameLogRepository->searchLogs(GameLogSearch::create()->userId($id)->facility(GameLogFacility::BUILD), 5);
+        $buildingNames = $this->buildingRepository->getBuildingNames(true);
+        $techLogs = $this->gameLogRepository->searchLogs(GameLogSearch::create()->userId($id)->facility(GameLogFacility::TECH), 5);
+        $technologyNames = $this->techRepository->getTechnologyNames(true);
+        $shipLogs = $this->gameLogRepository->searchLogs(GameLogSearch::create()->userId($id)->facility(GameLogFacility::SHIP), 5);
+        $shipNames = $this->shipRepository->getShipNames(true);
+        $defLogs = $this->gameLogRepository->searchLogs(GameLogSearch::create()->userId($id)->facility(GameLogFacility::DEF), 5);
+        $defenseNames = $this->defenseRepository->getDefenseNames(true);
+
+        return $this->render('admin/user/economy.html.twig', [
+            'user' => $user,
+            'userPlanets' => $userPlanets,
+            'val_res' => $val_res,
+            'max_res' => $max_res,
+            'min_res' => $min_res,
+            'val_store' => $val_store,
+            'val_time' => $val_time,
+            'tot_res' => $tot_res,
+            'val_prod' => $val_prod,
+            'max_prod' => $max_prod,
+            'min_prod' => $min_prod,
+            'tot_prod' => $tot_prod,
+            'buildLogs' => array_map(fn($log) => [
+                'id' => $log->id,
+                'timestamp' => $log->timestamp,
+                'message' => $log->message,
+                'severity' => LogSeverity::SEVERITIES[$log->severity],
+                'ip' => $log->ip,
+                'te' => ($log->entityId > 0) ? Entity::createFactoryById($log->entityId) : "-",
+                'ob' => $buildingNames[$log->objectId] . " " . ($log->level > 0 ? $log->level : ''),
+                'obStatus' => match ($log->status) {
+                    1 => "Ausbau abgebrochen",
+                    2 => "Abriss abgebrochen",
+                    3 => "Ausbau",
+                    4 => "Abriss",
+                    default => '-',
+                },
+            ], $buildLogs),
+            'techLogs' => array_map(fn($log) => [
+                'id' => $log->id,
+                'timestamp' => $log->timestamp,
+                'message' => $log->message,
+                'severity' => LogSeverity::SEVERITIES[$log->severity],
+                'ip' => $log->ip,
+                'te' => ($log->entityId > 0) ? Entity::createFactoryById($log->entityId) : "-",
+                'ob' => $technologyNames[$log->objectId] . " " . ($log->level > 0 ? $log->level : ''),
+                'obStatus' => match ($log->status) {
+                    3 => "Erforschung",
+                    0 => "Erforschung abgebrochen",
+                    default => '-',
+                },
+            ], $techLogs),
+            'shipLogs' => array_map(fn($log) => [
+                'id' => $log->id,
+                'timestamp' => $log->timestamp,
+                'message' => $log->message,
+                'severity' => LogSeverity::SEVERITIES[$log->severity],
+                'ip' => $log->ip,
+                'te' => ($log->entityId > 0) ? Entity::createFactoryById($log->entityId) : "-",
+                'ob' => $shipNames[$log->objectId] . " " . ($log->level > 0 ? $log->level : ''),
+                'obStatus' => match ($log->status) {
+                    1 => "Bau",
+                    0 => "Bau abgebrochen",
+                    default => '-',
+                },
+            ], $shipLogs),
+            'defLogs' => array_map(fn($log) => [
+                'id' => $log->id,
+                'timestamp' => $log->timestamp,
+                'message' => $log->message,
+                'severity' => LogSeverity::SEVERITIES[$log->severity],
+                'ip' => $log->ip,
+                'te' => ($log->entityId > 0) ? Entity::createFactoryById($log->entityId) : "-",
+                'ob' => $defenseNames[$log->objectId] . " " . ($log->level > 0 ? $log->level : ''),
+                'obStatus' => match ($log->status) {
+                    1 => "Bau",
+                    0 => "Bau abgebrochen",
+                    default => '-',
+                },
+            ], $defLogs),
+        ]);
     }
 }
