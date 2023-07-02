@@ -4,24 +4,8 @@ use EtoA\Alliance\AllianceRankRepository;
 use EtoA\Support\StringUtils;
 use EtoA\User\UserPointsRepository;
 
-$xajax->register(XAJAX_FUNCTION, "showTimeBox");
 $xajax->register(XAJAX_FUNCTION, "allianceRankSelector");
 $xajax->register(XAJAX_FUNCTION, "userPointsTable");
-
-function showTimeBox($parent, $name, $value, $show = 1)
-{
-    $or = new xajaxResponse();
-    ob_start();
-    if ($show > 0) {
-        echo '<input type="datetime-local" value="' . date("Y-m-d\TH:i:s", intval($value)) . '" step="1" name="' . $name . '">';
-    } else {
-        echo "-";
-    }
-    $out = ob_get_contents();
-    ob_end_clean();
-    $or->assign($parent, "innerHTML", $out);
-    return $or;
-}
 
 function allianceRankSelector($parent, $name, $value = 0, $aid = 0)
 {

@@ -141,7 +141,6 @@ class UserController extends AbstractAdminController
         return $this->render('admin/user/edit.html.twig', [
             'user' => $user,
             'properties' => $this->userPropertiesRepository->getOrCreateProperties($user->id),
-            'specialistTime' => $user->specialistTime > 0 ? $user->specialistTime : time(),
             'agent' => (new BrowserParser($user->userAgent))->toString(),
             'host' => $this->networkNameService->getHost($user->ipAddr),
             'isBlocked' => $user->blockedFrom > 0 && $user->blockedTo > time(),
@@ -790,7 +789,7 @@ class UserController extends AbstractAdminController
 
     #[Route('/admin/users/{id}/tickets', name: 'admin.users.tickets', methods: ['GET'])]
     #[IsGranted('ROLE_ADMIN_TRIAL-ADMIN')]
-    public function tickets(int $id, Request $request): Response
+    public function tickets(int $id): Response
     {
         $user = $this->userRepository->getUser($id);
         if ($user === null) {

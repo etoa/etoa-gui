@@ -2,11 +2,6 @@
 
 {% block content %}
     <script type="text/javascript">
-        function loadSpecialist(st) {
-            const elem = document.getElementById('user_specialist_id');
-            xajax_showTimeBox('spt', 'user_specialist_time', st, elem.options[elem.selectedIndex].value);
-        }
-
         function loadAllianceRanks(val) {
             const elem = document.getElementById('user_alliance_id');
             xajax_allianceRankSelector('ars', 'user_alliance_rank_id', val, elem.options[elem.selectedIndex].value);
@@ -289,7 +284,7 @@
                     <tr>
                         <td class="tbltitle">Sperren</td>
                         <td class="tbldata">
-                            {{ component('forms:radio_button_list', { name: 'ban_enable', options: { 0: 'Nein', 1: 'Ja' }, value: user.blockedFrom > 0 ? 1 : 0, onclick: "this.value == 1 ? $('#ban_options').show() : $('#ban_options').hide() " }) }}
+                            {{ component('forms:radio_button_list', { name: 'ban_enable', options: { 0: 'Nein', 1: 'Ja' }, value: user.blockedFrom > 0 ? 1 : 0, onclick: "this.value == 1 ? $('#ban_options').show() : $('#ban_options').hide()" }) }}
                             {% if isNoLongerBlocked %}<i><b>Diese Sperre ist abgelaufen!</b></i>{% endif %}
                             <table id="ban_options">
                                 <tr>
@@ -358,8 +353,10 @@
                     <tr>
                         <td class="tbltitle"><label for="user_specialist_id">Spezialist:</label></td>
                         <td class="tbldata">
-                            {{ component('forms:select_input', { name: 'user_specialist_id', options: specialistNames, value: user.specialistId, emptyValue: 0, emptyLabel: '(Keiner)', onchange: 'loadSpecialist(' ~ specialistTime ~ ')' }) }}
-                            Bis: &nbsp; <span id="spt">-</span>
+                            {{ component('forms:select_input', { name: 'user_specialist_id', options: specialistNames, value: user.specialistId, emptyValue: 0, emptyLabel: '(Keiner)', onchange: "this.value > 0 ? $('#spt').show() : $('#spt').hide()" }) }}
+                            <span id="spt">
+                                Bis: {{ component('forms:date_time_input', { name: 'user_specialist_time', value: user.specialistTime > 0 ? user.specialistTime : date().timestamp }) }}
+                            </span>
                         </td>
                     </tr>
                     <tr>
@@ -431,7 +428,6 @@
                     </tr>
                 </table>
                 <script type="text/javascript">
-                    loadSpecialist({{ specialistTime }});
                     loadAllianceRanks({{ user.allianceRankId }});
                 </script>
             </div>
@@ -863,6 +859,10 @@
 
             {% if user.hmodFrom == 0 %}
             $('#umod_options').hide();
+            {% endif %}
+
+            {% if user.specialistId == 0 %}
+            $('#spt').hide();
             {% endif %}
 
             $("#user_edit_tabs").bind("tabsshow", function (event, ui) {
