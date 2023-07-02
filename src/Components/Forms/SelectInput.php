@@ -16,4 +16,14 @@ class SelectInput
     public ?string $emptyValue = null;
 
     public string $emptyLabel = '---';
+
+    public bool $keysAsLabel = false;
+
+    public function getOptionsList(): array
+    {
+        if ($this->keysAsLabel) {
+            return array_combine($this->options, $this->options);
+        }
+        return $this->options;
+    }
 }

@@ -34,6 +34,7 @@ use EtoA\User\UserHolidayService;
 use EtoA\User\UserLoginFailureRepository;
 use EtoA\User\UserLogRepository;
 use EtoA\User\UserMultiRepository;
+use EtoA\User\UserPointsRepository;
 use EtoA\User\UserPropertiesRepository;
 use EtoA\User\UserRatingRepository;
 use EtoA\User\UserRatingSearch;
@@ -81,6 +82,7 @@ class UserController extends AbstractAdminController
         private readonly DefenseDataRepository      $defenseRepository,
         private readonly MessageRepository          $messageRepository,
         private readonly UserLogRepository          $userLogRepository,
+        private readonly UserPointsRepository       $userPointsRepository,
         private readonly string                     $projectDir,
     )
     {
@@ -167,7 +169,7 @@ class UserController extends AbstractAdminController
             'userBannerWebsiteLink' => ExternalUrl::USERBANNER_LINK,
             'userBannerLink' => $this->config->get('roundurl') . '/' . $bannerPath,
             'designNames' => array_map(fn($design) => $design['name'], $designs),
-            'planetCircleOptions' => array_combine($planetCircleOptions, $planetCircleOptions),
+            'planetCircleOptions' => $planetCircleOptions,
             'failures' => $userLoginFailures,
             'failureHosts' => array_map(fn($failure) => $this->networkNameService->getHost($failure->ip), $userLoginFailures),
             'battleRating' => $this->userRatingRepository->getBattleRating($ratingSearch)[0] ?? null,
@@ -809,6 +811,35 @@ class UserController extends AbstractAdminController
                 'adminName' => ($ticket->adminId > 0 ? $this->adminUserRepo->getNick($ticket->adminId) : null),
                 'timestamp' => $ticket->timestamp,
             ], $tickets),
+        ]);
+    }
+
+    #[Route('/admin/users/{id}/points', name: 'admin.users.pointProgression', methods: ['GET'])]
+    #[IsGranted('ROLE_ADMIN_TRIAL-ADMIN')]
+    public function pointProgression(int $id, Request $request): Response
+    {
+        $user = $this->userRepository->getUser($id);
+        if ($user === null) {
+            $this->addFlash('error', 'Benutzer nicht vorhanden!');
+            return $this->redirectToRoute('admin.users');
+        }
+
+        $limit = $request->query->getInt('limit', 100);
+        $limitOptions = array(10, 20, 30, 50, 100, 200);
+
+        $t = time();
+        $startVal = $request->query->get('start');
+        $start = $startVal !== null ? (is_numeric($startVal) ? intval($startVal) : strtotime($startVal)) : $t - 172800;
+        $endVal = $request->query->get('end');
+        $end = $endVal !== null ? (is_numeric($endVal) ? intval($endVal) : strtotime($endVal)) : $t;
+
+        return $this->render('admin/user/pointProgression.html.twig', [
+            'user' => $user,
+            'userPoints' => $this->userPointsRepository->getPoints($id, $limit, $start, $end),
+            'limit' => $limit,
+            'start' => $start,
+            'end' => $end,
+            'limitOptions' => $limitOptions,
         ]);
     }
 

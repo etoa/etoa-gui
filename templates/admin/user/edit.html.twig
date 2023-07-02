@@ -678,7 +678,7 @@
                     <tr>
                         <td class="tbltitle">Planetenkreisgrösse:</td>
                         <td class="tbldata" colspan="4">
-                            {{ component('forms:select_input', { name: 'planet_circle_width', options: planetCircleOptions, value: properties.cssStyle }) }}
+                            {{ component('forms:select_input', { name: 'planet_circle_width', options: planetCircleOptions, value: properties.planetCircleWidth, keysAsLabel: true }) }}
                         </td>
                     </tr>
                     <tr>
@@ -835,6 +835,7 @@
             <a href="{{ path('admin.users.economy', {id: user.id}) }}" class="button">Wirtschaft</a> &nbsp;
             <a href="{{ path('admin.users.messages', {id: user.id}) }}" class="button">Nachrichten</a> &nbsp;
             <a href="{{ path('admin.users.comments', {id: user.id}) }}" class="button">Kommentare</a> &nbsp;
+            <a href="{{ path('admin.users.pointProgression', {id: user.id}) }}" class="button">Punkteverlauf</a> &nbsp;
             <a href="{{ path('admin.users.logs', {id: user.id}) }}" class="button">Logs</a> &nbsp;
             <a href="{{ path('admin.users.tickets', {id: user.id}) }}" class="button">Tickets</a>
         </p>
@@ -864,12 +865,6 @@
             {% if user.specialistId == 0 %}
             $('#spt').hide();
             {% endif %}
-
-            $("#user_edit_tabs").bind("tabsshow", function (event, ui) {
-                if (ui.index == 8) {
-                    xajax_userPointsTable(' . $id . ', "pointsBox");
-                }
-            });
         });
     </script>
 {% endblock %}

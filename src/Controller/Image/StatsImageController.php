@@ -3,6 +3,7 @@
 namespace EtoA\Controller\Image;
 
 use EtoA\Image\StatsImageGenerator;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
@@ -17,15 +18,25 @@ class StatsImageController extends AbstractImageController
 
     #[Route('/images/stats/{user}', name: 'images.stats')]
     #[IsGranted('IS_AUTHENTICATED_REMEMBERED')]
-    public function mapImage(int $user): Response
+    public function mapImage(int $user, Request $request): Response
     {
-        return self::createImageResponse(fn() => $this->generator->create($user));
+        return $this->create($request, $user);
     }
 
     #[Route('/admin/images/stats/{user}', name: 'admin.images.stats')]
     #[IsGranted('ROLE_ADMIN_GAME-ADMIN')]
-    public function adminMapImage(int $user): Response
+    public function adminMapImage(int $user, Request $request): Response
     {
-        return self::createImageResponse(fn() => $this->generator->create($user));
+        return $this->create($request, $user);
+    }
+
+    private function create(Request $request, int $user): Response
+    {
+        $startVal = $request->query->get('start');
+        $start = $startVal !== null ? (is_numeric($startVal) ? intval($startVal) : strtotime($startVal)) : null;
+        $endVal = $request->query->get('end');
+        $end = $endVal !== null ? (is_numeric($endVal) ? intval($endVal) : strtotime($endVal)) : null;
+
+        return self::createImageResponse(fn() => $this->generator->create($user, start: $start, end: $end));
     }
 }

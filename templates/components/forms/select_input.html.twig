@@ -2,7 +2,7 @@
     {% if emptyValue is not null %}
         <option value="{{ emptyValue }}">{{ emptyLabel }}</option>
     {% endif %}
-    {% for val, label in options %}
+    {% for val, label in this.optionsList %}
         <option value="{{ val }}" {% if value == val %} selected="selected" {% endif %}>{{ label }}</option>
     {% endfor %}
 </select>

@@ -24,7 +24,7 @@ class StatsImageGenerator
     {
     }
 
-    public function create(int $userId, int $width = 600): void
+    public function create(int $userId, int $width = 600, ?int $start = null, ?int $end = null): void
     {
         $height = $width / 3 * 2;
         $im = imagecreate($width, $height);
@@ -44,9 +44,6 @@ class StatsImageGenerator
         if ($userId > 0) {
             $user = $this->userRepository->getUser($userId);
             if ($user !== null) {
-                $start = (int)($_GET['start'] ?? 0) > 0 ? (int)$_GET['start'] : null;
-                $end = (int)($_GET['end'] ?? 0) > 0 ? (int)$_GET['end'] : null;
-
                 $pointsEntries = $this->userPointsRepository->getPoints($userId, self::DETAIL_LIMIT * 6, $start, $end);
 
                 if (count($pointsEntries) > 0) {
