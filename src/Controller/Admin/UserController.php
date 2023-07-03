@@ -363,7 +363,7 @@ class UserController extends AbstractAdminController
         return $this->redirectToRoute('admin.users.view', ['id' => $id]);
     }
 
-    #[Route('/admin/users/{id}/setVerified', name: 'admin.users.set_verified', methods: ['GET', 'POST'])]
+    #[Route('/admin/users/{id}/setVerified', name: 'admin.users.set_verified', methods: ['POST'])]
     #[IsGranted('ROLE_ADMIN_TRIAL-ADMIN')]
     public function setVerified(int $id): Response
     {

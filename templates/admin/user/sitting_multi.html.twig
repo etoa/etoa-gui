@@ -33,7 +33,7 @@
                     </td>
                     <td>
                         <form action="{{ path('admin.users.deleteMulti', {id: user.id, multi: multi.multiUserId }) }}"
-                              method="post">
+                              method="post" class="form-inline">
                             <button type="submit" class="button">Löschen</button>
                         </form>
                     </td>
@@ -112,7 +112,7 @@
                     {% if sittedEntry.dateTo > date().timestamp %}
                         <td>
                             <form action="{{ path('admin.users.deleteSitting', {id: user.id, sitter: sittedEntry.id }) }}"
-                                  method="post">
+                                  method="post" class="form-inline">
                                 <button type="submit" class="button">Löschen</button>
                             </form>
                         </td>

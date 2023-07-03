@@ -19,7 +19,11 @@ class UserCreateType extends AbstractType
             ->add('name', TextType::class)
             ->add('email', EmailType::class)
             ->add('nick', TextType::class)
-            ->add('password', PasswordType::class)
+            ->add('password', PasswordType::class, [
+                'attr' => [
+                    'autocomplete' => 'new-password',
+                ],
+            ])
             ->add('raceId', RaceType::class, [
                 'placeholder' => 'Keine',
                 'label' => 'Rasse',
@@ -32,7 +36,6 @@ class UserCreateType extends AbstractType
                     'Nein' => false,
                 ],
             ])
-            ->add('submit', SubmitType::class)
-        ;
+            ->add('submit', SubmitType::class);
     }
 }

@@ -31,7 +31,7 @@
                     </td>
                     <td class="tbldata" style="width:50px;">
                         <form action="{{ path('admin.users.comments.delete', { id: user.id, comment: comment.id }) }}"
-                              method="post">
+                              method="post" class="form-inline">
                             <button type="submit" onclick="return confirm('Wirklich löschen?')">Löschen</button>
                         </form>
                     </td>

@@ -180,11 +180,13 @@
                     <tr>
                         <th>Verifikation</th>
                         <td>
-                            Die E-Mail-Adresse ist noch nicht bestätigt.
+                            Die E-Mail-Adresse {{ user.email }} ist noch nicht bestätigt.
                         </td>
                         <td>
-                            <a href="{{ path('admin.users.set_verified', {id: user.id}) }}"
-                               class="button">Freischalten</a>
+                            <form action="{{ path('admin.users.set_verified', {id: user.id}) }}" method="post"
+                                  class="form-inline">
+                                <button type="submit" class="button">Freischalten</button>
+                            </form>
                         </td>
                     </tr>
                 {% endif %}
