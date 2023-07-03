@@ -17,12 +17,13 @@
                         {% for member in members %}
                             <tr>
                                 <td id="uifo{{ member.user_id }}" style="display:none;">
-                                    <a href="{{ path('admin.users.edit', {id: member.user_id}) }}">Daten</a>
+                                    <a href="{{ path('admin.users.view', {id: member.user_id}) }}">Daten</a>
                                     <br/>
-                                    <a href="{{ path('admin.messages.send', {userId: member.user_id}) }}">Nachricht senden</a>
+                                    <a href="{{ path('admin.messages.send', {userId: member.user_id}) }}">Nachricht
+                                        senden</a>
                                 </td>
                                 <td>
-                                    <a href="{{ path('admin.users.edit', {id: member.user_id}) }}" {{ cTT(member.user_nick, 'uifo', member.user_id) }}>{{ member.user_nick }}</a>
+                                    <a href="{{ path('admin.users.view', {id: member.user_id}) }}" {{ cTT(member.user_nick, 'uifo', member.user_id) }}>{{ member.user_nick }}</a>
                                 </td>
                                 <td>{{ formatNumber(member.user_points) }} Punkte</td>
                                 <td>
@@ -30,19 +31,21 @@
                                         <option value="0">-</option>
                                         {% for rank in ranks %}
                                             <option value="{{ rank.id }}"
-                                                {% if member.user_alliance_rank_id == rank.id %}
-                                                    selected="selected"
-                                                {% endif %}
+                                                    {% if member.user_alliance_rank_id == rank.id %}
+                                                        selected="selected"
+                                                    {% endif %}
                                             >{{ rank.name }}</option>
                                         {% endfor %}
                                     </select>
                                 </td>
                                 <td>
-                                    <input type="checkbox" name="member_kick[{{ member.user_id }}]" value="1" />
+                                    <input type="checkbox" name="member_kick[{{ member.user_id }}]" value="1"/>
                                 </td>
                             </tr>
                         {% else %}
-                            <tr><td colspan="9999"><b>KEINE MITGLIEDER!</b></td> </tr>
+                            <tr>
+                                <td colspan="9999"><b>KEINE MITGLIEDER!</b></td>
+                            </tr>
                         {% endfor %}
                     </table>
                 </td>
@@ -59,26 +62,31 @@
                         {% for rank in ranks %}
                             <tr>
                                 <td>
-                                    <input type="text" size="35" name="rank_name[{{ rank.id }}]" value="{{ rank.name }}" />
+                                    <input type="text" size="35" name="rank_name[{{ rank.id }}]"
+                                           value="{{ rank.name }}"/>
                                 </td>
                                 <td>
                                     <select name="rank_level[{{ rank.id }}]">
                                         {% for x in range(0, 9) %}
-                                            <option value="{{ x }}" {% if rank.level == x %}selected="selected"{% endif %}>{{ x }}</option>
+                                            <option value="{{ x }}"
+                                                    {% if rank.level == x %}selected="selected"{% endif %}>{{ x }}</option>
                                         {% endfor %}
                                     </select>
-                                </td>";
+                                </td>
+                                ";
                                 <td>
-                                    <input type="checkbox" name="rank_del[{{ rank.id }}]" value="1" />
+                                    <input type="checkbox" name="rank_del[{{ rank.id }}]" value="1"/>
                                 </td>
                             </tr>
                         {% else %}
-                            <tr><td colspan="9999"><b>Keine Ränge vorhanden!</b></td></tr>
+                            <tr>
+                                <td colspan="9999"><b>Keine Ränge vorhanden!</b></td>
+                            </tr>
                         {% endfor %}
                     </table>
                 </td>
             </tr>
         </table>
-        <p><input type="submit" name="member_save" value="Übernehmen" /></p>
+        <p><input type="submit" name="member_save" value="Übernehmen"/></p>
     </form>
 {% endblock %}

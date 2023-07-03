@@ -1,6 +1,6 @@
 <div
-    {{ attributes }}
-    data-poll="delay(2500)|default"
+        {{ attributes }}
+        data-poll="delay(2500)|default"
 >
     <fieldset style="width:70%;float:left;height:500px;">
         <legend>Live-Chat</legend>
@@ -8,14 +8,15 @@
             {% for message in this.messages %}
                 {% if message.userId == 0 %}
                     <span style="color:#aaa">
-                    <{{ message.timestamp|date('H:i') }}> {{ message.text}}
+                    <{{ message.timestamp|date('H:i') }}> {{ message.text }}
                 </span><br/>
                 {% else %}
                     <span style="color:{{ message.color|default('#fff') }}">
                      {% if message.admin %}
-                         <img src="/images/star_y.gif\" />
+                         <img src="/images/star_y.gif\"/>
                      {% endif %}
-                    <<a style="color:{{ message.color|default('#fff') }}" href="{{ path('admin.users.edit', {id: message.userId}) }}">{{ message.nick }}</a> | {{ message.timestamp|date('H:i') }}> {{ message.text }}
+                    <<a style="color:{{ message.color|default('#fff') }}"
+                        href="{{ path('admin.users.view', {id: message.userId}) }}">{{ message.nick }}</a> | {{ message.timestamp|date('H:i') }}> {{ message.text }}
                 </span><br/>
                 {% endif %}
             {% endfor %}
@@ -25,7 +26,7 @@
         <legend>Users online</legend>
         <div id="chatuserlist" style="display:block;">
             {% for user in this.users %}
-                <a href="{{ path('admin.users.edit', {id: user.id}) }}">
+                <a href="{{ path('admin.users.view', {id: user.id}) }}">
                     {{ user.nick }}</a> {{ user.timestamp|date('H:i:s') }}
                 <a href="{{ path('admin.chat.kick', {id: user.id}) }}">Kick</a>
                 <a href="{{ path('admin.chat.ban', {id: user.id}) }}">Ban</a>
@@ -43,7 +44,7 @@
             <ul>
                 {% for ban in this.bans %}
                     <li>
-                        <a href="{{ path('admin.users.edit', {id: ban.userId}) }}">{{ ban.userNick }}</a>
+                        <a href="{{ path('admin.users.view', {id: ban.userId}) }}">{{ ban.userNick }}</a>
                         {{ ban.reason }} ({{ ban.timestamp|date('H:i:s') }})
                         <a href="{{ path('admin.chat.unban', {id: ban.userId}) }}">Unbannen</a></li>
                 {% else %}

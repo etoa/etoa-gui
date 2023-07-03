@@ -17,11 +17,12 @@
                     Spieler:
                 </th>
                 <td width="100">
-                    <a href="{{ path('admin.users.edit', {id: offer.userId}) }}">{{ userNicknames[offer.userId]|default('Niemand') }}</a>
+                    <a href="{{ path('admin.users.view', {id: offer.userId}) }}">{{ userNicknames[offer.userId]|default('Niemand') }}</a>
                 </td>
                 <td class="tbltitle">
                     <form method="post" action="{{ path('admin.market.resources.delete', {id: offer.id}) }}">
-                        <input type="submit" onclick="return confirm('Soll dieses Angebot wirklich gelöscht werden?')" value="Löschen"/>
+                        <input type="submit" onclick="return confirm('Soll dieses Angebot wirklich gelöscht werden?')"
+                               value="Löschen"/>
                     </form>
                 </td>
             </tr>
@@ -52,7 +53,7 @@
             {% endfor %}
 
         </table>
-        <br />
+        <br/>
     {% else %}
         <p>Keine Angebote vorhanden!</p>
     {% endfor %}

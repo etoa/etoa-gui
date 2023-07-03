@@ -4,7 +4,7 @@
     <h1>Spieler</h1>
 
     <a href="{{ path('admin.users') }}">Spielersuche</a> &raquo;
-    <a href="{{ path('admin.users.edit', {id: user.id}) }}">{{ user.nick }}</a> &raquo;
+    <a href="{{ path('admin.users.view', {id: user.id}) }}">{{ user.nick }}</a> &raquo;
     <a href="{{ path('admin.users.comments', {id: user.id}) }}">Kommentare</a>
 
     <h2>Kommentare zum Spieler {{ user.nick }}</h2>
@@ -16,8 +16,8 @@
     </form>
 
     <h3>Gespeicherte Kommentare</h3>
-    <table class="tb">
-        {% if comments|length > 0 %}
+    {% if comments|length > 0 %}
+        <table class="tb">
             <tr>
                 <th>Text</th>
                 <th>Verfasst</th>
@@ -37,12 +37,10 @@
                     </td>
                 </tr>
             {% endfor %}
-        {% else %}
-            <tr>
-                <td class="tbldata">Keine Kommentare</td>
-            </tr>
-        {% endif %}
-    </table>
+        </table>
+    {% else %}
+        {{ component('admin_message_box', { type: 'info', message: 'Keine Kommentare vorhanden!' }) }}
+    {% endif %}
 
 {% endblock %}
 

@@ -18,9 +18,11 @@
             <tr>
                 <td>{{ formatTimestamp(userWarnings[0].date) }}</td>
                 <td>
-                    <a href="{{ path('admin.users.edit', {id: userWarnings[0].userId}) }}">{{ userWarnings[0].userNick }}</a>
+                    <a href="{{ path('admin.users.view', {id: userWarnings[0].userId}) }}">{{ userWarnings[0].userNick }}</a>
                 </td>
-                <td><a href="#" onclick="toggleBox('w{{ userWarnings[0].userId }}')">{{ formatNumber(userWarnings|length) }} Verwarnungen</a></td>
+                <td><a href="#"
+                       onclick="toggleBox('w{{ userWarnings[0].userId }}')">{{ formatNumber(userWarnings|length) }}
+                        Verwarnungen</a></td>
             </tr>
             <tr>
                 <td colspan="99" id="w{{ userWarnings[0].userId }}" style="display:none;">
@@ -38,7 +40,8 @@
                                 <td>{{ warning.adminNick }}</td>
                                 <td>
                                     <a href="{{ path('admin.users.warnings.edit', {id: warning.id}) }}">Bearbeiten</a>
-                                    <a href="{{ path('admin.users.warnings.delete', {id: warning.id}) }}" onclick="return confirm('Verwarnung löschen?')">Löschen</a>
+                                    <a href="{{ path('admin.users.warnings.delete', {id: warning.id}) }}"
+                                       onclick="return confirm('Verwarnung löschen?')">Löschen</a>
                                 </td>
                             </tr>
                         {% endfor %}
@@ -46,7 +49,9 @@
                 </td>
             </tr>
         {% else %}
-            <tr><td colspan="99"><i>Keine gefunden!</i></td></tr>
+            <tr>
+                <td colspan="99"><i>Keine gefunden!</i></td>
+            </tr>
         {% endfor %}
     </table>
 

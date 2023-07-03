@@ -14,7 +14,7 @@
             </tr>
             <tr>
                 <td rowspan="5">
-                    <a href="{{ path('admin.users.edit', {id: auction.userId}) }}">{{ userNicknames[auction.userId]|default('Niemand') }}</a>
+                    <a href="{{ path('admin.users.view', {id: auction.userId}) }}">{{ userNicknames[auction.userId]|default('Niemand') }}</a>
                 </td>
                 <td>
                     Start {{ formatTimestamp(auction.dateStart) }}
@@ -44,7 +44,8 @@
                     {% endif %}
 
                     <form method="post" action="{{ path('admin.market.auctions.delete', {id: auction.id}) }}">
-                        <input type="submit" onclick="return confirm('Soll dieses Angebot wirklich gelöscht werden?')" value="Löschen"/>
+                        <input type="submit" onclick="return confirm('Soll dieses Angebot wirklich gelöscht werden?')"
+                               value="Löschen"/>
                     </form>
                 </td>
             </tr>
@@ -101,7 +102,7 @@
                 </tr>
                 <tr>
                     <td rowspan="5">
-                        <a href="{{ path('admin.users.edit', {id: auction.currentBuyerId}) }}">{{ userNicknames[auction.currentBuyerId]|default('Niemand') }}</a>
+                        <a href="{{ path('admin.users.view', {id: auction.currentBuyerId}) }}">{{ userNicknames[auction.currentBuyerId]|default('Niemand') }}</a>
                     </td>
                     <td rowspan="5">
                         Geboten {{ formatTimestamp(auction.currentBuyerDate) }}
@@ -151,7 +152,7 @@
             {% endif %}
 
         </table>
-        <br />
+        <br/>
     {% else %}
         <p>Keine Angebote vorhanden!</p>
     {% endfor %}

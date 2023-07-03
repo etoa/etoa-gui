@@ -1,0 +1,38 @@
+{% extends 'admin/layout/admin.html.twig' %}
+
+{% block content %}
+
+    <h1>Spieler</h1>
+
+    <a href="{{ path('admin.users') }}">Spielersuche</a> &raquo;
+    <a href="{{ path('admin.users.view', {id: user.id}) }}">{{ user.nick }}</a> &raquo;
+    <a href="{{ path('admin.users.user_login_failures', {id: user.id}) }}">Loginfehler</a>
+
+    <h2>Loginfehler des Spielers {{ user.nick }}</h2>
+
+    {% if failures|length > 0 %}
+        <table class="tbl">
+            <tr>
+                <th class="tbltitle">Zeit</th>
+                <th class="tbltitle">IP-Adresse</th>
+                <th class="tbltitle">Hostname</th>
+                <th class="tbltitle">Client</th>
+            </tr>
+            {% for failure in failures %}
+                <tr>
+                    <td class="tbldata">" . StringUtils::formatDate($failure->time) . "</td>
+                    <td class="tbldata">
+                        <a href="{{ path('admin.users.ips') }}?host={{ failure.ip }}">{{ failure.ip }}</a>
+                    </td>
+                    <td class="tbldata">
+                        <a href="{{ path('admin.users.ips') }}?host={{ failureHosts[loop.index0] }}">{{ failureHosts[loop.index0] }}</a>
+                    </td>
+                    <td class="tbldata">" . $failure->client . "</td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% else %}
+        {{ component('admin_message_box', { type: 'info', message: 'Keine fehlgeschlagenen Logins' }) }}
+    {% endif %}
+
+{% endblock %}

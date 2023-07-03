@@ -4,8 +4,8 @@
     <tr>
         <th>ID</th>
         <th>Nick</th>
-        <th>Status</th>
         <th>Name</th>
+        <th>Status</th>
         <th>E-Mail</th>
         <th>Dual</th>
         <th>Punkte</th>
@@ -18,9 +18,9 @@
             <td>{{ user.id }}</td>
             <td>{{ user.nick }}</td>
             <td>{{ user.name }}</td>
-            {% if user.blockedFrom < this.time and user.blockedTo > this.time  %}
+            {% if user.blockedFrom < this.time and user.blockedTo > this.time %}
                 <td class="userLockedColor">Gesperrt</td>
-            {% elseif user.hmodFrom < this.time and user.hmodTo > this.time  %}
+            {% elseif user.hmodFrom < this.time and user.hmodTo > this.time %}
                 <td class="userHolidayColor">Urlaub</td>
             {% elseif user.deleted %}
                 <td class="userDeletedColor">Löschauftrag</td>
@@ -49,7 +49,8 @@
             {% endif %}
             <td>{{ user.raceId > 0 ? this.races[user.raceId] : '-' }}</td>
             <td>
-                {{ editButton(path('admin.users.edit', {id: user.id}))|raw }}
+                <a href="{{ path('admin.users.view', {id: user.id}) }}">Info</a>
+                <a href="{{ path('admin.users.edit', {id: user.id}) }}">Bearbeiten</a>
             </td>
         </tr>
     {% endfor %}

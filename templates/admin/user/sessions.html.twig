@@ -25,16 +25,24 @@
             {% set online = time - timeout < session.timeAction %}
             <tr>
                 <td style="color:{% if online %}#0f0{% else %}red{% endif %};">{% if online %}Online{% else %}Timeout{% endif %}</td>
-                <td><a href="{{ path('admin.users.edit', {id: session.userId}) }}">{{ userNicks[session.userId] }}</a></td>
+                <td>
+                    <a href="{{ path('admin.users.view', {id: session.userId}) }}">{{ userNicks[session.userId] }}</a>
+                </td>
                 <td>{{ formatTimestamp(session.timeLogin) }}</td>
                 <td>{{ formatTimestamp(session.timeAction) }}</td>
                 <td>{{ formatTimespan(session.timeAction - session.timeLogin) }}</td>
-                <td title="{{ ipGetHost(session.ipAddr)}}"><a href="{{ path('admin.users.ips', {ip: session.ipAddr}) }}">{{ session.ipAddr }}</a></td>
+                <td title="{{ ipGetHost(session.ipAddr) }}"><a
+                            href="{{ path('admin.users.ips', {ip: session.ipAddr}) }}">{{ session.ipAddr }}</a></td>
                 <td title="{{ session.userAgent }}">{{ browser(session.userAgent).toString() }}</td>
-                <td><form action="{{ path('admin.users.sessions.kick', {id: session.id}) }}" method="POST"><input type="submit" value="Kick"></form></td>
+                <td>
+                    <form action="{{ path('admin.users.sessions.kick', {id: session.id}) }}" method="POST"><input
+                                type="submit" value="Kick"></form>
+                </td>
             </tr>
         {% else %}
-            <tr><td colspan="99999"><i>Keine Einträge vorhanden!</i></td></tr>
+            <tr>
+                <td colspan="99999"><i>Keine Einträge vorhanden!</i></td>
+            </tr>
         {% endfor %}
     </table>
 {% endblock %}

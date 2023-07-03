@@ -6,270 +6,102 @@
             const elem = document.getElementById('user_alliance_id');
             xajax_allianceRankSelector('ars', 'user_alliance_rank_id', val, elem.options[elem.selectedIndex].value);
         }
-
-        function toggleText(elemId, switchId) {
-            if (document.getElementById(switchId).innerHTML === 'Anzeigen') {
-                document.getElementById(elemId).style.display = '';
-                document.getElementById(switchId).innerHTML = 'Verbergen';
-            } else {
-                document.getElementById(elemId).style.display = 'none';
-                document.getElementById(switchId).innerHTML = 'Anzeigen';
-            }
-        }
     </script>
 
     <h1>Spieler</h1>
 
     <a href="{{ path('admin.users') }}">Spielersuche</a> &raquo;
-    <a href="{{ path('admin.users.edit', {id: user.id}) }}">{{ user.nick }}</a>
+    <a href="{{ path('admin.users.view', {id: user.id}) }}">{{ user.nick }}</a> &raquo;
+    <a href="{{ path('admin.users.edit', {id: user.id}) }}">Spieler bearbeiten</a>
 
     <form action="{{ path('admin.users.edit', {id: user.id}) }}" method="post">
         <input type="hidden" id="tabactive" name="tabactive" value=""/>
         <div class="tabs" id="user_edit_tabs">
             <ul>
-                <li><a href="#tabs-1">Info</a></li>
                 <li><a href="#tabs-2">Account</a></li>
                 <li><a href="#tabs-3">Daten</a></li>
                 <li><a href="#tabs-5">Profil</a></li>
                 <li><a href="#tabs-6">Design</a></li>
                 <li><a href="#tabs-7">Nachrichten</a></li>
-                <li><a href="#tabs-8">Loginfehler</a></li>
-                <li><a href="#tabs-9">Punkte</a></li>
             </ul>
-
-            {# Allgemeines #}
-            <div id="tabs-1">
-                <table class="tbl">
-                    <colgroup>
-                        <col style="width:180px;"/>
-                    </colgroup>
-                    <tr>
-                        <td class="tbltitle">Nickname:</td>
-                        <td class="tbldata">{{ user.nick }}</td>
-                    </tr>
-                    <tr>
-                        <td class="tbltitle">ID:</td>
-                        <td class="tbldata">{{ user.id }}</td>
-                    </tr>
-                    <tr>
-                        <td class="tbltitle">Registrierdatum:</td>
-                        <td class="tbldata">{{ formatTimestamp(user.registered) }}</td>
-                    </tr>
-                    <tr>
-                        <td class="tbltitle">Zuletzt online:</td>
-                        {% if user.timeAction != null %}
-                            <td class="tbldata" style="color:#0f0;">online</td>
-                        {% elseif user.timeLog > 0 %}
-                            <td class="tbldata">{{ formatTimestamp(user.timeLog) }}</td>
-                        {% else %}
-                            <td class="tbldata">Noch nicht eingeloggt!</td>
-                        {% endif %}
-                    </tr>
-                    <tr>
-                        <td class="tbltitle">IP/Host:</td>
-                        <td class="tbldata">
-                            <a href="{{ path('admin.users.ips') }}?ip={{ user.ipAddr }}">{{ user.ipAddr }}</a>
-                            <a href="{{ path('admin.users.ips') }}?host={{ host }}">{{ host }}</a>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="tbltitle">Agent:</td>
-                        <td class="tbldata">{{ agent }}</td>
-                    </tr>
-                    <tr>
-                        <td class="tbltitle">Punkte:</td>
-                        <td class="tbldata">
-                            {{ formatNumber(user.points) }}
-                            [<a href="javascript:" onclick="toggleBox('pointGraph')">Verlauf anzeigen</a>]
-                            <div id="pointGraph" style="display:none;">
-                                <img src="{{ path('admin.images.stats', {user: user.id}) }}" alt="Diagramm"/>
-                            </div>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="tbltitle">Rang:</td>
-                        <td class="tbldata">
-                            {{ formatNumber(user.rank) }} (aktuell),
-                            {{ formatNumber(user.rankHighest) }} (max)
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="tbltitle">Rohstoffe von...</td>
-                        <td class="tbldata">
-                            Raids: {{ formatNumber(user.resFromRaid) }} t<br/>
-                            Asteroiden: {{ formatNumber(user.resFromAsteroid) }} t<br/>
-                            Nebelfelder: {{ formatNumber(user.resFromNebula) }} t<br/>
-                            Trümmerfelder: {{ user.resFromTf }} t
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="tbltitle">Infos:</td>
-                        <td class="tbldata">
-                            {% if user.observe != '' %}
-                                <div>
-                                    Benutzer steht unter <b>Beobachtung</b>: {{ user.observe }} &nbsp;
-                                    [<a href="{{ path('admin.users.observer.details', {id: user.id}) }}">Ändern</a>]
-                                </div>
-                            {% endif %}
-                            {% if user.deleted != 0 %}
-                                <div class="userDeletedColor">Dieser Account ist zur Löschung
-                                    am {{ formatTimestamp(user.deleted) }} vorgemerkt
-                                </div>
-                            {% endif %}
-                            {% if user.hmodFrom > 0 %}
-                                <div class="userHolidayColor">Dieser Account ist im Urlaubsmodus
-                                    seit {{ formatTimestamp(user.hmodFrom) }} bis
-                                    mindestens {{ formatTimestamp(user.hmodTo) }}
-                                </div>
-                            {% endif %}
-                            {% if isBlocked %}
-                                <div class="userLockedColor">
-                                    Dieser Account ist im gesperrt von {{ formatTimestamp(user.blockedFrom) }}
-                                    bis {{ formatTimestamp(user.blockedTo) }}.
-                                    {% if user.banReason != '' %}Grund: {{ user.banReason }}{% endif %}
-                                </div>
-                            {% endif %}
-                            {% if user.admin != 0 %}
-                                <div class="adminColor">Dies ist ein Admin-Account!</div>
-                            {% endif %}
-                            {% if user.ghost %}
-                                <div class="userGhostColor">
-                                    Dies ist ein Geist-Account. Er wird nicht in der Statistik angezeigt!
-                                </div>
-                            {% endif %}
-                            {% if user.chatAdmin != 0 %}
-                                <div>Dieser User ist ein Chat-Admin.</div>
-                            {% endif %}
-                            {% if user.verificationKey != '' %}
-                                <div>
-                                    Die E-Mail Adresse ist noch nicht bestätigt
-                                    [<a href="{{ path('admin.users.set_verified', {id: user.id}) }}">Freischalten</a>].
-                                </div>
-                            {% endif %}
-
-                            {# Kommentare #}
-                            {% if commentInfo.count > 0 %}
-                                <div>
-                                    <b>{{ commentInfo.count }} Kommentare</b> vorhanden, neuster Kommentar
-                                    von {{ formatTimestamp(commentInfo.latest) }}
-                                    [<a href="{{ path('admin.users.comments', {id: user.id}) }}">Zeigen</a>]
-                                </div>
-                            {% endif %}
-
-                            {# Tickets #}
-                            {% if numberOfNewTickets + numberOfAssignedTickets > 0 %}
-                                <div>
-                                    <b>{{ numberOfNewTickets }} neue Tickets</b> und <b> {{ numberOfAssignedTickets }}
-                                        zugewiesene Tickets</b> vorhanden.
-                                    [<a href="{{ path('admin.users.tickets', {id: user.id}) }}">Zeigen</a>]
-                                </div>
-                            {% endif %}
-
-                            {# Verwarnungen #}
-                            {% if warning.count > 0 %}
-                                <div>
-                                    <b>{{ warning.count }} Verwarnungen</b> vorhanden, neuste
-                                    von {{ formatTimestamp(warning.max) }}.
-                                    [<a href="{{ path('admin.users.warnings') }}">Zeigen</a>]
-                                </div>
-                            {% endif %}
-
-                            {% if activeMultisCount > 0 %}
-                                <div>
-                                    <a href="{{ path('admin.users.sitting_multi', {id: user.id}) }}">
-                                        {{ activeMultis }} Multis registriert
-                                    </a>
-                                </div>
-                            {% endif %}
-                            {% if activeSitting is not null %}
-                                <div>
-                                    <a href="{{ path('admin.users.sitting_multi', {id: user.id}) }}">
-                                        Wird gesitted von {{ activeSitting.sitterNick }}
-                                    </a>
-                                </div>
-                            {% endif %}
-                        </td>
-                    </tr>
-                </table>
-            </div>
 
             {# Account #}
             <div id="tabs-2">
                 <table class="tbl">
                     <tr>
-                        <td class="tbltitle"><label for="user_nick">Nick:</label></td>
-                        <td class="tbldata">
+                        <th><label for="user_nick">Nick</label></th>
+                        <td>
                             <input type="text" name="user_nick" id="user_nick" value="{{ user.nick }}" size="35"
                                    maxlength="250"/>
                         </td>
                         <td>Eine Nickänderung ist grundsätzlich nicht erlaubt</td>
                     </tr>
                     <tr>
-                        <td class="tbltitle"><label for="user_email">E-Mail:</label></td>
-                        <td class="tbldata">
+                        <th><label for="user_email">E-Mail</label></th>
+                        <td>
                             <input type="email" name="user_email" id="user_email" value="{{ user.email }}" size="35"
                                    maxlength="250"/>
                         </td>
                         <td>Rundmails gehen an diese Adresse</td>
                     </tr>
                     <tr>
-                        <td class="tbltitle"><label for="user_name">Name:</label></td>
-                        <td class="tbldata">
+                        <th><label for="user_name">Name</label></th>
+                        <td>
                             <input type="text" name="user_name" id="user_name" value="{{ user.name }}" size="35"
                                    maxlength="250"/>
                         </td>
                         <td>Bei Accountübergabe anpassen</td>
                     </tr>
                     <tr>
-                        <td class="tbltitle"><label for="user_email_fix">E-Mail fix:</label></td>
-                        <td class="tbldata">
+                        <th><label for="user_email_fix">E-Mail fix</label></th>
+                        <td>
                             <input type="email" name="user_email_fix" id="user_email_fix"
-                                   value={{ user.emailFix }} size="35" maxlength="250"/>
+                                   value="{{ user.emailFix }}" size="35" maxlength="250"/>
                         </td>
                         <td>Bei Accountübergabe anpassen</td>
                     </tr>
                     <tr>
-                        <td class="tbltitle"><label for="dual_name">Name Dual:</label></td>
-                        <td class="tbldata">
+                        <th><label for="dual_name">Name Dual</label></th>
+                        <td>
                             <input type="text" name="dual_name" id="dual_name" value="{{ user.dualName }}" size="35"
                                    maxlength="250"/>
                         </td>
                         <td>Bei Dualänderung anpassen</td>
                     </tr>
                     <tr>
-                        <td class="tbltitle"><label for="dual_email">E-Mail Dual:</label></td>
-                        <td class="tbldata">
+                        <th><label for="dual_email">E-Mail Dual</label></th>
+                        <td>
                             <input type="email" name="dual_email" id="dual_email" value="{{ user.dualEmail }}" size="35"
                                    maxlength="250"/>
                         </td>
                         <td>Bei Dualänderung anpassen</td>
                     </tr>
                     <tr>
-                        <td class="tbltitle"><label for="user_password">Passwort:</label></td>
-                        <td class="tbldata">
+                        <th><label for="user_password">Passwort</label></th>
+                        <td>
                             <input type="text" name="user_password" id="user_password" value="" size="35"
                                    maxlength="250"/>
                         </td>
                         <td>Leerlassen um altes Passwort beizubehalten</td>
                     </tr>
                     <tr>
-                        <td class="tbltitle"><label for="user_password_temp">Temporäres Passwort:</label></td>
-                        <td class="tbldata">
+                        <th><label for="user_password_temp">Temporäres Passwort</label></th>
+                        <td>
                             <input type="text" name="user_password_temp" id="user_password_temp"
                                    value="{{ user.passwordTemp }}" size="30" maxlength="30"/>
                         </td>
                         <td>Nur dieses wird verwendet, falls ausgefüllt</td>
                     </tr>
                     <tr>
-                        <td class="tbltitle">Geist:</td>
-                        <td class="tbldata">
+                        <th>Geist</th>
+                        <td>
                             {{ component('forms:radio_button_list', { name: 'user_ghost', options: { 1: 'Ja', 0: 'Nein' }, value: user.ghost ? 1 : 0 }) }}
                         </td>
                         <td>Legt fest ob der Spieler in der Rangliste ausgeblendet wird</td>
                     </tr>
                     <tr>
-                        <td class="tbltitle">Chat-Admin:</td>
-                        <td class="tbldata">
+                        <th>Chat-Admin</th>
+                        <td>
                             {{ component('forms:radio_button_list', { name: 'user_chatadmin', options: { 1: 'Ja', 0: 'Nein', 2: 'Leiter Team Community', 3: 'Entwickler mit Adminrechten' }, value: user.chatAdmin }) }}
                         </td>
                         <td>Der Spieler hat Adminrechte im Chat und einen silbernen Stern für Chatadmin,
@@ -279,8 +111,8 @@
                         </td>
                     </tr>
                     <tr>
-                        <td class="tbltitle">Admin:</td>
-                        <td class="tbldata">
+                        <th>Admin</th>
+                        <td>
                             {{ component('forms:radio_button_list', { name: 'admin', options: { 1: 'Ja', 0: 'Nein', 2: 'Entwickler ohne Adminrechte' }, value: user.admin }) }}
                         </td>
                         <td>
@@ -289,39 +121,39 @@
                         </td>
                     </tr>
                     <tr>
-                        <td class="tbltitle">NPC:</td>
-                        <td class="tbldata">
+                        <th>NPC</th>
+                        <td>
                             {{ component('forms:radio_button_list', { name: 'npc', options: { 1: 'Ja', 0: 'Nein' }, value: user.npc }) }}
                         </td>
                         <td>Spieler wird als NPC markiert</td>
                     </tr>
                     <tr>
-                        <td class="tbltitle">Sperren</td>
-                        <td class="tbldata">
+                        <th>Sperren</th>
+                        <td>
                             {{ component('forms:radio_button_list', { name: 'ban_enable', options: { 0: 'Nein', 1: 'Ja' }, value: user.blockedFrom > 0 ? 1 : 0, onclick: "this.value == 1 ? $('#ban_options').show() : $('#ban_options').hide()" }) }}
                             {% if isNoLongerBlocked %}<i><b>Diese Sperre ist abgelaufen!</b></i>{% endif %}
                             <table id="ban_options">
                                 <tr>
-                                    <td class="tbltitle"><label for="user_blocked_from">Von</label></td>
-                                    <td class="tbldata">
+                                    <td><label for="user_blocked_from">Von</label></td>
+                                    <td>
                                         {{ component('forms:date_time_input', { name: 'user_blocked_from', value: user.blockedFrom > 0 ? user.blockedFrom : date().timestamp }) }}
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td class="tbltitle"><label for="user_blocked_to">Bis</label></td>
-                                    <td class="tbldata">
+                                    <td><label for="user_blocked_to">Bis</label></td>
+                                    <td>
                                         {{ component('forms:date_time_input', { name: 'user_blocked_to', value: user.blockedFrom > 0 ? user.blockedTo : userBlockedDefaultTime }) }}
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td class="tbltitle"><label for="user_ban_admin_id">Admin</label></td>
-                                    <td class="tbldata">
+                                    <td><label for="user_ban_admin_id">Admin</label></td>
+                                    <td>
                                         {{ component('forms:select_input', { name: 'user_ban_admin_id', options: adminUserNicks, value: user.banAdminId, emptyValue: 0, emptyLabel: '(niemand)' }) }}
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td class="tbltitle"><label for="user_ban_reason">Grund</label></td>
-                                    <td class="tbldata">
+                                    <td><label for="user_ban_reason">Grund</label></td>
+                                    <td>
                                         <textarea name="user_ban_reason" id="user_ban_reason" cols="45"
                                                   rows="2">{{ user.banReason }}</textarea>
                                     </td>
@@ -331,20 +163,20 @@
                         <td>Der Benutzer kann sich nicht einloggen und erscheint auf dem Pranger</td>
                     </tr>
                     <tr>
-                        <td class="tbltitle">U-Mod</td>
-                        <td class="tbldata">
+                        <th>U-Mod</th>
+                        <td>
                             {{ component('forms:radio_button_list', { name: 'umod_enable', options: { 0: 'Nein', 1: 'Ja' }, value: user.hmodFrom > 0 ? 1 : 0, onclick: "this.value == 1 ? $('#umod_options').show() : $('#umod_options').hide()" }) }}
                             {% if holidayModeExpired %}<i><b>Dieser Urlaubsmodus ist abgelaufen!</b></i>{% endif %}
                             <table id="umod_options">
                                 <tr>
-                                    <td class="tbltitle"><label for="user_hmode_from">Von</label></td>
-                                    <td class="tbldata">
+                                    <td><label for="user_hmode_from">Von</label></td>
+                                    <td>
                                         {{ component('forms:date_time_input', { name: 'user_hmode_from', value: user.hmodFrom > 0 ? user.hmodFrom : date().timestamp }) }}
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td class="tbltitle"><label for="user_hmode_to">Bis</label></td>
-                                    <td class="tbldata">
+                                    <td><label for="user_hmode_to">Bis</label></td>
+                                    <td>
                                         {{ component('forms:date_time_input', { name: 'user_hmode_to', value: user.hmodTo > 0 ? user.hmodTo : userHolidayModeDefaultTime }) }}
                                     </td>
                                 </tr>
@@ -359,14 +191,14 @@
             <div id="tabs-3">
                 <table class="tbl">
                     <tr>
-                        <td class="tbltitle"><label for="user_race_id">Rasse:</label></td>
-                        <td class="tbldata">
+                        <th><label for="user_race_id">Rasse</label></th>
+                        <td>
                             {{ component('forms:select_input', { name: 'user_race_id', options: raceNames, value: user.raceId, emptyValue: 0, emptyLabel: '(Keine)' }) }}
                         </td>
                     </tr>
                     <tr>
-                        <td class="tbltitle"><label for="user_specialist_id">Spezialist:</label></td>
-                        <td class="tbldata">
+                        <th><label for="user_specialist_id">Spezialist</label></th>
+                        <td>
                             {{ component('forms:select_input', { name: 'user_specialist_id', options: specialistNames, value: user.specialistId, emptyValue: 0, emptyLabel: '(Keiner)', onchange: "this.value > 0 ? $('#spt').show() : $('#spt').hide()" }) }}
                             <span id="spt">
                                 Bis: {{ component('forms:date_time_input', { name: 'user_specialist_time', value: user.specialistTime > 0 ? user.specialistTime : date().timestamp }) }}
@@ -374,15 +206,15 @@
                         </td>
                     </tr>
                     <tr>
-                        <td class="tbltitle"><label for="user_alliance_id">Allianz:</label></td>
-                        <td class="tbldata">
+                        <th><label for="user_alliance_id">Allianz</label></th>
+                        <td>
                             {{ component('forms:select_input', { name: 'user_alliance_id', options: allianceNamesWithTags, value: user.allianceId, emptyValue: 0, emptyLabel: '(Keine)', onchange: 'loadAllianceRanks(' ~ user.allianceRankId ~ ')' }) }}
                             Rang: <span id="ars">-</span>
                         </td>
                     </tr>
                     <tr>
-                        <td class="tbltitle"><label for="spyship_count">Spionagesonden für Direktscan:</label></td>
-                        <td class="tbldata">
+                        <th><label for="spyship_count">Spionagesonden für Direktscan</label></th>
+                        <td>
                             {% if spyShipNames is not empty %}
                                 <input type="text" name="spyship_count" id="spyship_count" maxlength="5" size="5"
                                        value="{{ properties.spyShipCount }}">
@@ -393,8 +225,8 @@
                         </td>
                     </tr>
                     <tr>
-                        <td class="tbltitle"><label for="analyzeship_count">Analysatoren für Quickanalyse:</label></td>
-                        <td class="tbldata">
+                        <th><label for="analyzeship_count">Analysatoren für Quickanalyse</label></th>
+                        <td>
                             {% if analyzeShipNames is not empty %}
                                 <input type="text" name="analyzeship_count" id="analyzeship_count" maxlength="5"
                                        size="5" value="{{ properties.analyzeShipCount }}">
@@ -404,39 +236,38 @@
                             {% endif %}
                     </tr>
                     <tr>
-                        <td class="tbltitle"><label for="user_alliace_shippoints">Verfügbare Allianzschiffteile</label>
-                        </td>
-                        <td class="tbldata">
+                        <th><label for="user_alliace_shippoints">Verfügbare Allianzschiffteile</label>
+                        </th>
+                        <td>
                             <input type="text" name="user_alliace_shippoints" id="user_alliace_shippoints"
                                    value="{{ user.allianceShipPoints }}" size="10" maxlength="10"/>
                         </td>
                     </tr>
                     <tr>
-                        <td class="tbltitle"><label for="user_alliace_shippoints_used">Verbaute
-                                Allianzschiffteile</label></td>
-                        <td class="tbldata">
+                        <th><label for="user_alliace_shippoints_used">Verbaute Allianzschiffteile</label></th>
+                        <td>
                             <input type="text" name="user_alliace_shippoints_used" id="user_alliace_shippoints_used"
                                    value="{{ user.allianceShipPointsUsed }}" size="10" maxlength="10"/>
                         </td>
                     </tr>
                     <tr>
-                        <td class="tbltitle"><label for="user_multi_delets">Gelöschte Multis</label></td>
-                        <td class="tbldata">
+                        <th><label for="user_multi_delets">Gelöschte Multis</label></th>
+                        <td>
                             <input type="text" name="user_multi_delets" id="user_multi_delets"
                                    value="{{ user.multiDelets }}" size="3"
                                    maxlength="3"/>
                         </td>
                     </tr>
                     <tr>
-                        <td class="tbltitle"><label for="user_sitting_days">Sittertage</label></td>
-                        <td class="tbldata">
+                        <th><label for="user_sitting_days">Sittertage</label></th>
+                        <td>
                             <input type="text" name="user_sitting_days" id="user_sitting_days"
                                    value="{{ user.sittingDays }}" size="3" maxlength="3"/>
                         </td>
                     </tr>
                     <tr>
-                        <td class="tbltitle">Hauptplanet geändert</td>
-                        <td class="tbldata">
+                        <th>Hauptplanet geändert</th>
+                        <td>
                             {{ component('forms:radio_button_list', { name: 'user_changed_main_planet', options: { 1: 'Ja', 0: 'Nein' }, value: user.userChangedMainPlanet ? 1 : 0 }) }}
                         </td>
                     </tr>
@@ -450,15 +281,15 @@
             <div id="tabs-5">
                 <table class="tbl">
                     <tr>
-                        <th><label for="user_profile_text">Profil-Text:</label></th>
-                        <td class="tbldata">
+                        <th><label for="user_profile_text">Profil-Text</label></th>
+                        <td>
                             <textarea name="user_profile_text" id="user_profile_text" cols="60"
                                       rows="8">{{ user.profileText }}</textarea>
                         </td>
                     </tr>
                     <tr>
-                        <th>Profil-Bild:</th>
-                        <td class="tbldata">
+                        <th>Profil-Bild</th>
+                        <td>
                             {% if user.profileImage %}
                                 {% if user.profileImageCheck %}
                                     <input type="checkbox" value="0" name="user_profile_img_check"
@@ -474,15 +305,15 @@
                         </td>
                     </tr>
                     <tr>
-                        <th><label for="user_signature">Board-Signatur:</label></th>
-                        <td class="tbldata">
+                        <th><label for="user_signature">Board-Signatur</label></th>
+                        <td>
                             <textarea name="user_signature" id="user_signature" cols="60"
                                       rows="8">{{ user.signature }}</textarea>
                         </td>
                     </tr>
                     <tr>
-                        <th>Avatarpfad:</th>
-                        <td class="tbldata">
+                        <th>Avatarpfad</th>
+                        <td>
                             {% if user.avatar %}
                                 <img src="{{ user.getAvatarUrl }}" alt="Profil"/><br/>
                                 <input type="checkbox" value="1" name="avatar_img_del" id="avatar_img_del">
@@ -493,23 +324,10 @@
                         </td>
                     </tr>
                     <tr>
-                        <th><label for="user_profile_board_url">Öffentliches Foren-Profil:</label></th>
-                        <td class="tbldata">
-                            <input type="text" name="user_profile_board_url" id="user_profile_board_url" maxlength="200"
-                                   size="50" value="{{ user.profileBoardUrl }}">
-                        </td>
-                    </tr>
-                    <tr>
-                        <th>Banner:</th>
+                        <th><label for="user_profile_board_url">Öffentliches Foren-Profil</label></th>
                         <td>
-                            {% if bannerPath %}
-                                <img src="{{ bannerPath }}" alt="Banner"><br>
-                                Generiert: {{ formatTimestamp(bannerTime) }}<br/>
-                                <textarea readonly="readonly" rows="3" cols="80">&lt;a href="{{ userBannerWebsiteLink }}"&gt;&lt;img src="{{ userBannerLink }}" width="468" height="60" alt="EtoA Online-Game" border="0" /&gt;&lt;/a&gt;</textarea>
-                                <br>
-                                <textarea readonly="readonly" rows="3"
-                                          cols="80">[url={{ userBannerWebsiteLink }}][img]{{ userBannerLink }}[/img][/url]</textarea>
-                            {% endif %}
+                            <input type="url" name="user_profile_board_url" id="user_profile_board_url" maxlength="200"
+                                   size="50" value="{{ user.profileBoardUrl }}">
                         </td>
                     </tr>
                 </table>
@@ -517,10 +335,10 @@
 
             {# Design #}
             <div id="tabs-6">
-                <table class="tbl" style="width:100%">
+                <table class="tbl">
                     <tr>
-                        <td class="tbltitle"><label for="css_style">Design:</label></td>
-                        <td class="tbldata">
+                        <th><label for="css_style">Design</label></th>
+                        <td>
                             <input type="text" name="css_style" id="css_style" size="45" maxlength="250"
                                    value="{{ properties.cssStyle }}">
                             &nbsp; <input type="button" onclick="document.getElementById('css_style').value =
@@ -530,32 +348,32 @@
                         </td>
                     </tr>
                     <tr>
-                        <td class="tbltitle">Planetenkreisgrösse:</td>
+                        <th>Planetenkreisgrösse</th>
                         <td class="tbldata" colspan="4">
                             {{ component('forms:select_input', { name: 'planet_circle_width', options: planetCircleOptions, value: properties.planetCircleWidth, keysAsLabel: true }) }}
                         </td>
                     </tr>
                     <tr>
-                        <td class="tbltitle">Schiff/Def Ansicht:</td>
-                        <td class="tbldata">
+                        <th>Schiff/Def Ansicht</th>
+                        <td>
                             {{ component('forms:radio_button_list', { name: 'item_show', options: { 'full': 'Volle Ansicht', 'small': 'Einfache Ansicht' }, value: properties.itemShow }) }}
                         </td>
                     </tr>
                     <tr>
-                        <td class="tbltitle">Bildfilter:</td>
-                        <td class="tbldata">
+                        <th>Bildfilter</th>
+                        <td>
                             {{ component('forms:radio_button_list', { name: 'image_filter', options: { 1: 'An', 0: 'Aus' }, value: properties.imageFilter }) }}
                         </td>
                     </tr>
                     <tr>
-                        <td class="tbltitle">Vertausche Buttons in Hafen-Schiffsauswahl:</td>
-                        <td class="tbldata">
+                        <th>Vertausche Buttons in Hafen-Schiffsauswahl</th>
+                        <td>
                             {{ component('forms:radio_button_list', { name: 'havenships_buttons', options: { 1: 'Aktiviert', 0: 'Deaktiviert' }, value: properties.havenShipsButtons }) }}
                         </td>
                     </tr>
                     <tr>
-                        <td class="tbltitle">Werbung anzeigen:</td>
-                        <td class="tbldata">
+                        <th>Werbung anzeigen</th>
+                        <td>
                             {{ component('forms:radio_button_list', { name: 'show_adds', options: { 1: 'Aktiviert', 0: 'Deaktiviert' }, value: properties.showAdds }) }}
                         </td>
                     </tr>
@@ -566,116 +384,49 @@
             <div id="tabs-7">
                 <table class="tbl">
                     <tr>
-                        <td class="tbltitle"><label for="msgsignature">Nachrichten-Signatur:</label></td>
-                        <td class="tbldata">
+                        <th><label for="msgsignature">Nachrichten-Signatur</label></th>
+                        <td>
                             <textarea name="msgsignature" id="msgsignature" cols="60"
                                       rows="8">{{ properties.msgSignature }}</textarea>
                         </td>
                     </tr>
                     <tr>
-                        <td class="tbltitle">Nachrichtenvorschau (Neue/Archiv):</td>
-                        <td class="tbldata">
+                        <th>Nachrichtenvorschau (Neue/Archiv)</th>
+                        <td>
                             {{ component('forms:radio_button_list', { name: 'msg_preview', options: { 1: 'Aktiviert', 0: 'Deaktiviert' }, value: properties.msgPreview }) }}
                         </td>
                     </tr>
                     <tr>
-                        <td class="tbltitle">Nachrichtenvorschau (Erstellen):</td>
-                        <td class="tbldata">
+                        <th>Nachrichtenvorschau (Erstellen)</th>
+                        <td>
                             {{ component('forms:radio_button_list', { name: 'msgcreation_preview', options: { 1: 'Aktiviert', 0: 'Deaktiviert' }, value: properties.msgCreationPreview }) }}
                         </td>
                     </tr>
                     <tr>
-                        <td class="tbltitle">Blinkendes Nachrichtensymbol:</td>
-                        <td class="tbldata">
+                        <th>Blinkendes Nachrichtensymbol</th>
+                        <td>
                             {{ component('forms:radio_button_list', { name: 'msg_blink', options: { 1: 'Aktiviert', 0: 'Deaktiviert' }, value: properties.msgBlink }) }}
                         </td>
                     </tr>
                     <tr>
-                        <td class="tbltitle">Text bei Antwort/Weiterleiten kopieren:</td>
-                        <td class="tbldata">
+                        <th>Text bei Antwort/Weiterleiten kopieren</th>
+                        <td>
                             {{ component('forms:radio_button_list', { name: 'msg_copy', options: { 1: 'Aktiviert', 0: 'Deaktiviert' }, value: properties.msgCopy }) }}
                     </tr>
 
                     <tr>
-                        <td class="tbltitle">Nachricht bei Transport-/Spionagerückkehr:</td>
-                        <td class="tbldata">
+                        <th>Nachricht bei Transport-/Spionagerückkehr</th>
+                        <td>
                             {{ component('forms:radio_button_list', { name: 'fleet_rtn_msg', options: { 1: 'Aktiviert', 0: 'Deaktiviert' }, value: properties.fleetRtnMsg }) }}
                         </td>
                     </tr>
                 </table>
             </div>
 
-            {# Loginfailures #}
-            <div id="tabs-8">
-                <table class="tbl">
-                    {% if failures|length > 0 %}
-                        <tr>
-                            <th class="tbltitle">Zeit</th>
-                            <th class="tbltitle">IP-Adresse</th>
-                            <th class="tbltitle">Hostname</th>
-                            <th class="tbltitle">Client</th>
-                        </tr>
-                        {% for failure in failures %}
-                            <tr>
-                                <td class="tbldata">" . StringUtils::formatDate($failure->time) . "</td>
-                                <td class="tbldata">
-                                    <a href="{{ path('admin.users.ips') }}?host={{ failure.ip }}">{{ failure.ip }}</a>
-                                </td>
-                                <td class="tbldata">
-                                    <a href="{{ path('admin.users.ips') }}?host={{ failureHosts[loop.index0] }}">{{ failureHosts[loop.index0] }}</a>
-                                </td>
-                                <td class="tbldata">" . $failure->client . "</td>
-                            </tr>
-                        {% endfor %}
-                    {% else %}
-                        <tr>
-                            <td class="tbldata">Keine fehlgeschlagenen Logins</td>
-                        </tr>
-                    {% endif %}
-                </table>
-            </div>
-
-            {# Points #}
-            <div id="tabs-9">
-                {% component table with { title: 'Bewertung' } %}
-                    {% block table_content %}
-                        {% if battleRating is not null %}
-                            <tr>
-                                <td>Kampfpunkte</td>
-                                <td>{{ battleRating.rating }}</td>
-                            </tr>
-                            <tr>
-                                <td>Kämpfe gewonnen / verloren / total</td>
-                                <td>
-                                    {{ battleRating.battlesWon }} / {{ battleRating.battlesLost }}
-                                    / {{ battleRating.battlesFought }}
-                                </td>
-                            </tr>
-                        {% endif %}
-                        {% if tradeRating is not null %}
-                            <tr>
-                                <td>Handelspunkte</td>
-                                <td>{{ tradeRating.rating }}</td>
-                            </tr>
-                            <tr>
-                                <td>Handel Einkauf / Verkauf</td>
-                                <td>{{ tradeRating.tradesBuy }} / {{ tradeRating.tradesSell }}</td>
-                            </tr>
-                        {% endif %}
-                        {% if diplomacyRating is not null %}
-                            <tr>
-                                <td>Diplomatiepunkte</td>
-                                <td>{{ diplomacyRating.rating }}</td>
-                            </tr>
-                        {% endif %}
-                    {% endblock %}
-                {% endcomponent %}
-            </div>
-
         </div>
 
         <p>
-            <input type="submit" name="save" value="&Auml;nderungen &uuml;bernehmen" class="positive"/> &nbsp;
+            <input type="submit" name="save" value="Änderungen &uuml;bernehmen" class="positive"/> &nbsp;
             {% if user.deleted != 0 %}
                 <input type="submit" name="canceldelete" value="Löschantrag aufheben" class="userDeletedColor"/> &nbsp;
             {% else %}
@@ -683,26 +434,6 @@
             {% endif %}
             <input type="submit" name="delete_user" value="User l&ouml;schen" class="remove"
                    onclick="return confirm('Soll dieser User endgültig gelöscht werden?');">
-        </p>
-        <hr/>
-        <p>
-            <a href="{{ path('admin.users.economy', {id: user.id}) }}" class="button">Wirtschaft</a> &nbsp;
-            <a href="{{ path('admin.users.messages', {id: user.id}) }}" class="button">Nachrichten</a> &nbsp;
-            <a href="{{ path('admin.users.comments', {id: user.id}) }}" class="button">Kommentare</a> &nbsp;
-            <a href="{{ path('admin.users.pointProgression', {id: user.id}) }}" class="button">Punkteverlauf</a> &nbsp;
-            <a href="{{ path('admin.users.logs', {id: user.id}) }}" class="button">Logs</a> &nbsp;
-            <a href="{{ path('admin.users.tickets', {id: user.id}) }}" class="button">Tickets</a> &nbsp;
-            <a href="{{ path('admin.users.sitting_multi', {id: user.id}) }}" class="button">Sitting & Multis</a>
-        </p>
-        <hr/>
-        <p>
-            <a href="{{ path('admin.universe.entities') }}?user={{ user.id }}" class="button">Planeten</a> &nbsp;
-            <a href="{{ path('admin.buildings.search') }}?userId={{ user.id }}" class="button">Gebäude</a> &nbsp;
-            <a href="{{ path('admin.technology') }}?userId={{ user.id }}" class="button">Forschungen</a> &nbsp;
-            <a href="{{ path('admin.ships.search') }}?userId={{ user.id }}" class="button">Schiffe</a> &nbsp;
-            <a href="{{ path('admin.defense.search') }}?userId={{ user.id }}" class="button">Verteidigung</a> &nbsp;
-            <a href="{{ path('admin.missiles') }}?userId={{ user.id }}" class="button">Raketen</a> &nbsp;
-            <a href="{{ path('admin.users.ips') }}?user={{ user.id }}" class="button">IP-Adressen</a> &nbsp;
         </p>
 
     </form>

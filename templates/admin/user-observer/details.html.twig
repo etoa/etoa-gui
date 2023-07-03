@@ -3,7 +3,7 @@
 {% block content %}
     <h1>Spieler</h1>
     <h2>Beobachtungsliste</h2>
-    <h3>Erweiterte Beobachtung von <a href="{{ path('admin.users.edit', {id: user.id}) }}">{{ user.nick }}</a></h3>
+    <h3>Erweiterte Beobachtung von <a href="{{ path('admin.users.view', {id: user.id}) }}">{{ user.nick }}</a></h3>
 
     <table class="full-width">
         <tr>
@@ -52,7 +52,8 @@
                         {{ browser(sessions[sessionId].userAgent).toString }}
                     {% endif %}
                 </td>
-                <td><a href="{{ path('admin.users.observer.details.session', {id: user.id, sessionId: sessionId}) }}">Details</a></td>
+                <td><a href="{{ path('admin.users.observer.details.session', {id: user.id, sessionId: sessionId}) }}">Details</a>
+                </td>
             </tr>
         {% endfor %}
     </table>

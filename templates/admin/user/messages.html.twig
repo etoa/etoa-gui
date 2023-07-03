@@ -4,7 +4,7 @@
     <h1>Spieler</h1>
 
     <a href="{{ path('admin.users') }}">Spielersuche</a> &raquo;
-    <a href="{{ path('admin.users.edit', {id: user.id}) }}">{{ user.nick }}</a> &raquo;
+    <a href="{{ path('admin.users.view', {id: user.id}) }}">{{ user.nick }}</a> &raquo;
     <a href="{{ path('admin.users.messages', {id: user.id}) }}">Nachrichten</a>
 
     <h2>Nachrichten des Spielers {{ user.nick }}</h2>
@@ -25,8 +25,8 @@
     </fieldset>
 
     <h3>Letzte {{ limit }} Nachrichten</h3>
-    <table class="tb">
-        {% if messages|length > 0 %}
+    {% if messages|length > 0 %}
+        <table class="tb">
             <tr>
                 <th>Datum</th>
                 <th>Sender</th>
@@ -52,12 +52,10 @@
                     </td>
                 </tr>
             {% endfor %}
-        {% else %}
-            <tr>
-                <td class="tbldata">Keine Nachrichten vorhanden!</td>
-            </tr>
-        {% endif %}
-    </table>
+        </table>
+    {% else %}
+        {{ component('admin_message_box', { type: 'info', message: 'Keine Nachrichten vorhanden!' }) }}
+    {% endif %}
 
 {% endblock %}
 

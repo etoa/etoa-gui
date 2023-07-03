@@ -32,11 +32,13 @@ class StatsImageController extends AbstractImageController
 
     private function create(Request $request, int $user): Response
     {
+        $width = $request->query->getInt('width', 600);
+        
         $startVal = $request->query->get('start');
         $start = $startVal !== null ? (is_numeric($startVal) ? intval($startVal) : strtotime($startVal)) : null;
         $endVal = $request->query->get('end');
         $end = $endVal !== null ? (is_numeric($endVal) ? intval($endVal) : strtotime($endVal)) : null;
 
-        return self::createImageResponse(fn() => $this->generator->create($user, start: $start, end: $end));
+        return self::createImageResponse(fn() => $this->generator->create($user, width: $width, start: $start, end: $end));
     }
 }

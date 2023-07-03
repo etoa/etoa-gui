@@ -101,7 +101,7 @@ class UserController extends AbstractAdminController
                 $this->logRepository->add(LogFacility::USER, LogSeverity::INFO, "Der Benutzer " . $user->nick . " (" . $user->name . ", " . $user->email . ") wurde registriert!");
                 $this->addFlash('success', 'Spieler erstellt');
 
-                return $this->redirectToRoute('admin.users.edit', ['id' => $user->id]);
+                return $this->redirectToRoute('admin.users.view', ['id' => $user->id]);
             } catch (Exception $e) {
                 $form->addError(new FormError($e->getMessage()));
             }
@@ -112,9 +112,9 @@ class UserController extends AbstractAdminController
         ]);
     }
 
-    #[Route('/admin/users/{id}/edit', name: 'admin.users.edit')]
+    #[Route('/admin/users/{id}', name: 'admin.users.view')]
     #[IsGranted('ROLE_ADMIN_TRIAL-ADMIN')]
-    public function edit(int $id): Response
+    public function view(int $id): Response
     {
         $user = $this->userRepository->getUserAdminView($id);
         if ($user === null) {
@@ -133,27 +133,50 @@ class UserController extends AbstractAdminController
 
         $bannerPath = $this->userBannerService->getUserBannerPath($id);
 
-        $designs = $this->designsService->getDesigns();
-        $planetCircleOptions = range(450, 700, 50);
-
-        $userLoginFailures = $this->userLoginFailureRepository->getUserLoginFailures($user->id);
-
         $ratingSearch = UserRatingSearch::create()->id($id);
 
-        return $this->render('admin/user/edit.html.twig', [
+        return $this->render('admin/user/view.html.twig', [
             'user' => $user,
-            'properties' => $this->userPropertiesRepository->getOrCreateProperties($user->id),
             'agent' => (new BrowserParser($user->userAgent))->toString(),
             'host' => $this->networkNameService->getHost($user->ipAddr),
             'isBlocked' => $user->blockedFrom > 0 && $user->blockedTo > time(),
-            'isNoLongerBlocked' => $user->blockedFrom > 0 && $user->blockedTo < time(),
-            'userBlockedDefaultTime' => time() + (3600 * 24 * $this->config->getInt('user_ban_min_length')),
             'commentInfo' => $this->userCommentRepository->getCommentInformation($user->id),
             'activeMultisCount' => count($this->userMultiRepository->getUserEntries($user->id, true)),
             'activeSitting' => $this->userSittingRepository->getActiveUserEntry($user->id),
             'numberOfNewTickets' => count($newTickets),
             'numberOfAssignedTickets' => count($assignedTickets),
             'warning' => $this->userWarningRepository->getCountAndLatestWarning($user->id),
+            'raceNames' => $this->raceRepository->getRaceNames(),
+            'specialistNames' => $this->specialistRepository->getSpecialistNames(),
+            'allianceNamesWithTags' => $this->allianceRepository->getAllianceNamesWithTags(),
+            'bannerPath' => file_exists($bannerPath) ? $bannerPath : null,
+            'bannerTime' => file_exists($bannerPath) ? filemtime($bannerPath) : 0,
+            'userBannerWebsiteLink' => ExternalUrl::USERBANNER_LINK,
+            'userBannerLink' => $this->config->get('roundurl') . '/' . $bannerPath,
+            'battleRating' => $this->userRatingRepository->getBattleRating($ratingSearch)[0] ?? null,
+            'tradeRating' => $this->userRatingRepository->getTradeRating($ratingSearch)[0] ?? null,
+            'diplomacyRating' => $this->userRatingRepository->getDiplomacyRating($ratingSearch)[0] ?? null,
+        ]);
+    }
+
+    #[Route('/admin/users/{id}/edit', name: 'admin.users.edit', methods: ['GET'])]
+    #[IsGranted('ROLE_ADMIN_TRIAL-ADMIN')]
+    public function edit(int $id): Response
+    {
+        $user = $this->userRepository->getUserAdminView($id);
+        if ($user === null) {
+            $this->addFlash('error', 'Benutzer nicht vorhanden!');
+            return $this->redirectToRoute('admin.users');
+        }
+
+        $designs = $this->designsService->getDesigns();
+        $planetCircleOptions = range(450, 700, 50);
+
+        return $this->render('admin/user/edit.html.twig', [
+            'user' => $user,
+            'properties' => $this->userPropertiesRepository->getOrCreateProperties($user->id),
+            'isNoLongerBlocked' => $user->blockedFrom > 0 && $user->blockedTo < time(),
+            'userBlockedDefaultTime' => time() + (3600 * 24 * $this->config->getInt('user_ban_min_length')),
             'adminUserNicks' => $this->adminUserRepo->findAllAsList(),
             'holidayModeExpired' => $user->hmodFrom > 0 && $user->hmodTo < time(),
             'userHolidayModeDefaultTime' => time() + (3600 * 24 * $this->config->getInt('user_umod_min_length')),
@@ -162,17 +185,8 @@ class UserController extends AbstractAdminController
             'allianceNamesWithTags' => $this->allianceRepository->getAllianceNamesWithTags(),
             'spyShipNames' => $this->shipDateRepository->getShipNamesWithAction('spy'),
             'analyzeShipNames' => $this->shipDateRepository->getShipNamesWithAction('analyze'),
-            'bannerPath' => file_exists($bannerPath) ? $bannerPath : null,
-            'bannerTime' => file_exists($bannerPath) ? filemtime($bannerPath) : 0,
-            'userBannerWebsiteLink' => ExternalUrl::USERBANNER_LINK,
-            'userBannerLink' => $this->config->get('roundurl') . '/' . $bannerPath,
             'designNames' => array_map(fn($design) => $design['name'], $designs),
             'planetCircleOptions' => $planetCircleOptions,
-            'failures' => $userLoginFailures,
-            'failureHosts' => array_map(fn($failure) => $this->networkNameService->getHost($failure->ip), $userLoginFailures),
-            'battleRating' => $this->userRatingRepository->getBattleRating($ratingSearch)[0] ?? null,
-            'tradeRating' => $this->userRatingRepository->getTradeRating($ratingSearch)[0] ?? null,
-            'diplomacyRating' => $this->userRatingRepository->getDiplomacyRating($ratingSearch)[0] ?? null,
         ]);
     }
 
@@ -311,7 +325,7 @@ class UserController extends AbstractAdminController
 
         $this->addFlash('success', "Änderungen wurden übernommen!");
 
-        return $this->redirectToRoute('admin.users.edit', ['id' => $id]);
+        return $this->redirectToRoute('admin.users.view', ['id' => $id]);
     }
 
     #[Route('/admin/users/{id}/delete', name: 'admin.users.delete', methods: ['POST'])]
@@ -336,7 +350,7 @@ class UserController extends AbstractAdminController
         $this->userRepository->markDeleted($id, $t);
         $this->addFlash('success', "Löschantrag gespeichert!");
 
-        return $this->redirectToRoute('admin.users.edit', ['id' => $id]);
+        return $this->redirectToRoute('admin.users.view', ['id' => $id]);
     }
 
     #[Route('/admin/users/{id}/cancelDelete', name: 'admin.users.cancel_delete', methods: ['POST'])]
@@ -346,7 +360,7 @@ class UserController extends AbstractAdminController
         $this->userRepository->markDeleted($id, 0);
         $this->addFlash('success', "Löschantrag aufgehoben!");
 
-        return $this->redirectToRoute('admin.users.edit', ['id' => $id]);
+        return $this->redirectToRoute('admin.users.view', ['id' => $id]);
     }
 
     #[Route('/admin/users/{id}/setVerified', name: 'admin.users.set_verified', methods: ['GET', 'POST'])]
@@ -356,7 +370,7 @@ class UserController extends AbstractAdminController
         $this->userRepository->setVerified($id, true);
         $this->addFlash('success', "Account freigeschaltet!");
 
-        return $this->redirectToRoute('admin.users.edit', ['id' => $id]);
+        return $this->redirectToRoute('admin.users.view', ['id' => $id]);
     }
 
 
@@ -522,16 +536,16 @@ class UserController extends AbstractAdminController
         return $this->render('admin/user/economy.html.twig', [
             'user' => $user,
             'userPlanets' => $userPlanets,
-            'val_res' => $val_res,
-            'max_res' => $max_res,
-            'min_res' => $min_res,
-            'val_store' => $val_store,
-            'val_time' => $val_time,
-            'tot_res' => $tot_res,
-            'val_prod' => $val_prod,
-            'max_prod' => $max_prod,
-            'min_prod' => $min_prod,
-            'tot_prod' => $tot_prod,
+            'val_res' => $val_res ?? [],
+            'max_res' => $max_res ?? [],
+            'min_res' => $min_res ?? [],
+            'val_store' => $val_store ?? [],
+            'val_time' => $val_time ?? [],
+            'tot_res' => $tot_res ?? [],
+            'val_prod' => $val_prod ?? [],
+            'max_prod' => $max_prod ?? [],
+            'min_prod' => $min_prod ?? [],
+            'tot_prod' => $tot_prod ?? [],
             'buildLogs' => array_map(fn($log) => [
                 'id' => $log->id,
                 'timestamp' => $log->timestamp,
@@ -776,6 +790,25 @@ class UserController extends AbstractAdminController
             'start' => $start,
             'end' => $end,
             'limitOptions' => $limitOptions,
+        ]);
+    }
+
+    #[Route('/admin/users/{id}/loginFailures', name: 'admin.users.user_login_failures', methods: ['GET'])]
+    #[IsGranted('ROLE_ADMIN_TRIAL-ADMIN')]
+    public function loginFailures(int $id, Request $request): Response
+    {
+        $user = $this->userRepository->getUser($id);
+        if ($user === null) {
+            $this->addFlash('error', 'Benutzer nicht vorhanden!');
+            return $this->redirectToRoute('admin.users');
+        }
+
+        $userLoginFailures = $this->userLoginFailureRepository->getUserLoginFailures($user->id);
+
+        return $this->render('admin/user/user_login_failures.html.twig', [
+            'user' => $user,
+            'failures' => $userLoginFailures,
+            'failureHosts' => array_map(fn($failure) => $this->networkNameService->getHost($failure->ip), $userLoginFailures),
         ]);
     }
 

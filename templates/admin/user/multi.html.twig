@@ -26,61 +26,61 @@
 
         {% for ip,users in ipUsers %}
             <tr>
-                <td rowspan="{{ users|length }}" valign="top" class="tbldata">
-                    <a href="{{ path('admin.users.ips', {ip: ip}) }}">
-                        {{ ip }}
-                    </a>
+            <td rowspan="{{ users|length }}" valign="top" class="tbldata">
+                <a href="{{ path('admin.users.ips', {ip: ip}) }}">
+                    {{ ip }}
+                </a>
+            </td>
+            {% for user in users %}
+                {% if user.admin %}
+                    {% set uCol = 'class="adminColor"' %}
+                {% elseif user.user_ghost %}
+                    {% set uCol = 'class="userGhostColor"' %}
+                {% elseif user.user_blocked_from < time and user.user_blocked_to > time %}
+                    {% set uCol = 'class="userLockedColor"' %}
+                {% elseif user.user_hmode_from > 0 %}
+                    {% set uCol = 'class="userHolidayColor"' %}
+                {% elseif user.user_deleted > 0 %}
+                    {% set uCol = 'class="userDeletedColor"' %}
+                {% else %}
+                    {% set uCol = '' %}
+                {% endif %}
+
+                {% if not loop.first %}<tr>{% endif %}
+
+                <td {{ uCol }}>
+                    <a href="{{ path('admin.users.view', {id: user.user_id}) }}">{{ user.user_nick }}</a>
                 </td>
-                {% for user in users %}
-                    {% if user.admin %}
-                        {% set uCol = 'class="adminColor"' %}
-                    {% elseif user.user_ghost %}
-                        {% set uCol = 'class="userGhostColor"' %}
-                    {% elseif user.user_blocked_from < time and user.user_blocked_to > time %}
-                        {% set uCol = 'class="userLockedColor"' %}
-                    {% elseif user.user_hmode_from > 0 %}
-                        {% set uCol = 'class="userHolidayColor"' %}
-                    {% elseif user.user_deleted > 0 %}
-                        {% set uCol = 'class="userDeletedColor"' %}
-                    {% else %}
-                        {% set uCol = '' %}
-                    {% endif %}
-
-                    {% if not loop.first %}<tr>{% endif %}
-
-                    <td {{ uCol }}>
-                        <a href="{{ path('admin.users.edit', {id: user.user_id}) }}">{{ user.user_nick }}</a>
-                    </td>
-                    <td {{ uCol }} title="{{ user.user_email }}">{{ user.user_name }}</td>
-                    <td {{ uCol }}
+                <td {{ uCol }} title="{{ user.user_email }}">{{ user.user_name }}</td>
+                <td {{ uCol }}
                         {% if user.time_action %}
-                            style="color:#0f0;">online
-                        {% elseif user.time_log %}
-                            >{{ formatTimestamp(user.time_log + 0) }}
-                        {% else %}
-                            >Noch nicht eingeloggt!
-                        {% endif %}
-                    </td>
+                        style="color:#0f0;">online
+                    {% elseif user.time_log %}
+                        >{{ formatTimestamp(user.time_log + 0) }}
+                    {% else %}
+                        >Noch nicht eingeloggt!
+                    {% endif %}
+                </td>
 
-                    <td {{ uCol }}>
-                        {% for multi in multiEntries[user.user_id]|default([]) %}
-                            <span title="{{ multi.reason }}">
-                                <a href="{{ path('admin.users.edit', {id: multi.multiUserId}) }}">{{ multi.multiUserNick }}</a>
-                            </span>{% if not loop.last %}, {% endif %}
-                        {% else %}
-                            -
-                        {% endfor %}
-                    </td>
+                <td {{ uCol }}>
+                    {% for multi in multiEntries[user.user_id]|default([]) %}
+                    <span title="{{ multi.reason }}">
+                        <a href="{{ path('admin.users.view', {id: multi.multiUserId}) }}">{{ multi.multiUserNick }}</a>
+                        </span>{% if not loop.last %}, {% endif %}
+                    {% else %}
+                        -
+                    {% endfor %}
+                </td>
 
-                    <td {{ uCol }}>
-                        {% if sittingEntries[user.user_id] is defined %}
-                            {{ sittingEntries[user.user_id].sitterNick }}
-                        {% else %}
-                            -
-                        {% endif %}
-                    </td>
+                <td {{ uCol }}>
+                    {% if sittingEntries[user.user_id] is defined %}
+                        {{ sittingEntries[user.user_id].sitterNick }}
+                    {% else %}
+                        -
+                    {% endif %}
+                </td>
                 </tr>
-                {% endfor %}
+            {% endfor %}
         {% endfor %}
     </table>
 

@@ -16,14 +16,16 @@
         </tr>
         {% for session in sessions %}
             <tr>
-                <td><a href="?page=$page&amp;sub=$sub&amp;user={{ session.userId }}">{{ users[session.userId]|default('-') }}</a></td>
+                <td>
+                    <a href="?page=$page&amp;sub=$sub&amp;user={{ session.userId }}">{{ users[session.userId]|default('-') }}</a>
+                </td>
                 <td>{{ formatTimestamp(session.timeAction) }}</td>
                 <td>{{ session.ipAddr }} / {{ ipGetHost(session.ipAddr) }}</td>
                 <td title="{{ session.userAgent }}">{{ browser(session.userAgent).toString() }}</td>
                 <td>
                     {% for multi in multiEntries[session.userId]|default([]) %}
                     <span title="{{ multi.reason }}">
-                        <a href="{{ path('admin.users.edit', {id: multi.multiUserId}) }}">{{ multi.multiUserNick }}</a>
+                        <a href="{{ path('admin.users.view', {id: multi.multiUserId}) }}">{{ multi.multiUserNick }}</a>
                         </span>{% if not loop.last %}, {% endif %}
                     {% else %}
                         -
@@ -38,7 +40,9 @@
                 </td>
             </tr>
         {% else %}
-            <tr><td colspan="999"><i>Nichts gefunden</i></td></tr>
+            <tr>
+                <td colspan="999"><i>Nichts gefunden</i></td>
+            </tr>
         {% endfor %}
     </table>
 
@@ -54,14 +58,16 @@
         </tr>
         {% for log in sessionLogs %}
             <tr>
-                <td><a href="?page=$page&amp;sub=$sub&amp;user={{ log.userId }}">{{ users[log.userId]|default('-') }}</a></td>
+                <td>
+                    <a href="?page=$page&amp;sub=$sub&amp;user={{ log.userId }}">{{ users[log.userId]|default('-') }}</a>
+                </td>
                 <td>{{ formatTimestamp(log.timeAction) }}</td>
                 <td>{{ log.ipAddr }} / {{ ipGetHost(log.ipAddr) }}</td>
                 <td title="{{ log.userAgent }}">{{ browser(log.userAgent).toString() }}</td>
                 <td>
                     {% for multi in multiEntries[log.userId]|default([]) %}
                     <span title="{{ multi.reason }}">
-                        <a href="{{ path('admin.users.edit', {id: multi.multiUserId}) }}">{{ multi.multiUserNick }}</a>
+                        <a href="{{ path('admin.users.view', {id: multi.multiUserId}) }}">{{ multi.multiUserNick }}</a>
                         </span>{% if not loop.last %}, {% endif %}
                     {% else %}
                         -
@@ -76,7 +82,9 @@
                 </td>
             </tr>
         {% else %}
-            <tr><td colspan="999"><i>Nichts gefunden</i></td></tr>
+            <tr>
+                <td colspan="999"><i>Nichts gefunden</i></td>
+            </tr>
         {% endfor %}
     </table>
 
@@ -101,7 +109,7 @@
                 <td>
                     {% for multi in multiEntries[failure.userId]|default([]) %}
                     <span title="{{ multi.reason }}">
-                        <a href="{{ path('admin.users.edit', {id: multi.multiUserId}) }}">{{ multi.multiUserNick }}</a>
+                        <a href="{{ path('admin.users.view', {id: multi.multiUserId}) }}">{{ multi.multiUserNick }}</a>
                         </span>{% if not loop.last %}, {% endif %}
                     {% else %}
                         -
@@ -116,7 +124,9 @@
                 </td>
             </tr>
         {% else %}
-            <tr><td colspan="999"><i>Keine fehlgeschlagenen Logins</i></td></tr>
+            <tr>
+                <td colspan="999"><i>Keine fehlgeschlagenen Logins</i></td>
+            </tr>
         {% endfor %}
     </table>
 

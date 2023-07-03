@@ -18,7 +18,7 @@
         </tr>
         {% for user in users %}
             <tr>
-                <td><a href="{{ path('admin.users.edit', {id: user.id}) }}">{{ user.nick }}</a></td>
+                <td><a href="{{ path('admin.users.view', {id: user.id}) }}">{{ user.nick }}</a></td>
                 <td>{{ formatNumber(user.points) }}</td>
                 <td>{{ user.observe }}</td>
                 {% if user.timeAction > 0 %}
@@ -37,7 +37,9 @@
                 </td>
             </tr>
         {% else %}
-            <tr><td colspan="99"><i>Keine gefunden!</i></td></tr>
+            <tr>
+                <td colspan="99"><i>Keine gefunden!</i></td>
+            </tr>
         {% endfor %}
     </table>
 

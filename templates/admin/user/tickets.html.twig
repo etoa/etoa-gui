@@ -4,7 +4,7 @@
     <h1>Spieler</h1>
 
     <a href="{{ path('admin.users') }}">Spielersuche</a> &raquo;
-    <a href="{{ path('admin.users.edit', {id: user.id}) }}">{{ user.nick }}</a> &raquo;
+    <a href="{{ path('admin.users.view', {id: user.id}) }}">{{ user.nick }}</a> &raquo;
     <a href="{{ path('admin.users.tickets', {id: user.id}) }}">Tickets</a>
 
     <h2>Tickets des Spielers {{ user.nick }}</h2>
@@ -31,7 +31,7 @@
             {% endfor %}
         </table>
     {% else %}
-        <p>Dieser User hat keine Tickets</p>
+        {{ component('admin_message_box', { type: 'info', message: 'Dieser User hat keine Tickets' }) }}
     {% endif %}
 
 {% endblock %}

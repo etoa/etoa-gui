@@ -4,11 +4,11 @@
     <h1>Spieler</h1>
 
     <a href="{{ path('admin.users') }}">Spielersuche</a> &raquo;
-    <a href="{{ path('admin.users.edit', {id: user.id}) }}">{{ user.nick }}</a> &raquo;
+    <a href="{{ path('admin.users.view', {id: user.id}) }}">{{ user.nick }}</a> &raquo;
     <a href="{{ path('admin.users.economy', {id: user.id}) }}">Wirtschaft</a>
 
     <h2>Wirtschaft des Spielers {{ user.nick }}</h2>
-    
+
     <fieldset>
         <legend>Rohstoff- und Produktionsübersicht</legend>
 

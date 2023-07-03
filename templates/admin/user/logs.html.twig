@@ -4,7 +4,7 @@
     <h1>Spieler</h1>
 
     <a href="{{ path('admin.users') }}">Spielersuche</a> &raquo;
-    <a href="{{ path('admin.users.edit', {id: user.id}) }}">{{ user.nick }}</a> &raquo;
+    <a href="{{ path('admin.users.view', {id: user.id}) }}">{{ user.nick }}</a> &raquo;
     <a href="{{ path('admin.users.comments', {id: user.id}) }}">Logs</a>
 
     <h2>Logs des Spielers {{ user.nick }}</h2>
@@ -18,24 +18,29 @@
     </form>
 
     <h3>Letzte Logeinträge</h3>
-    {% component table with { title: '', width: '100%' } %}
-        {% block table_content %}
-            <tr>
-                <th>Nachricht</th>
-                <th>Datum</th>
-                <th>IP</th>
-            </tr>
-            {% for log in logs %}
+    {% if logs|length > 0 %}
+        {% component table with { title: '', width: '100%' } %}
+            {% block table_content %}
                 <tr>
-                    <td>{{ BBCodeToHTML(log.message)|raw }}</td>
-                    <td>{{ formatTimestamp(log.timestamp) }}</td>
-                    <td>
-                        <a href="{{ path('admin.users.ips') }}?ip={{ log.host }}">{{ log.host }}</a>
-                    </td>
+                    <th>Nachricht</th>
+                    <th>Datum</th>
+                    <th>IP</th>
                 </tr>
-            {% endfor %}
-        {% endblock %}
-    {% endcomponent %}
+                {% for log in logs %}
+                    <tr>
+                        <td>{{ BBCodeToHTML(log.message)|raw }}</td>
+                        <td>{{ formatTimestamp(log.timestamp) }}</td>
+                        <td>
+                            <a href="{{ path('admin.users.ips') }}?ip={{ log.host }}">{{ log.host }}</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            {% endblock %}
+        {% endcomponent %}
+    {% else %}
+        {{ component('admin_message_box', { type: 'info', message: 'Keine Logs vorhanden!' }) }}
+    {% endif %}
+
 
 {% endblock %}
 
