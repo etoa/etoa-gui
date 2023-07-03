@@ -7,8 +7,6 @@
     <a href="{{ path('admin.users') }}">Spielersuche</a> &raquo;
     <a href="{{ path('admin.users.view', {id: user.id}) }}">{{ user.nick }}</a>
 
-    <H2>{{ user.nick }}</H2>
-
     <div style="display: flex; flex-direction: row; gap: 20px">
         <div>
             <h3>Basisdaten</h3>
@@ -19,6 +17,10 @@
                 <tr>
                     <th>ID</th>
                     <td colspan="2">{{ user.id }}</td>
+                </tr>
+                <tr>
+                    <th>Nick</th>
+                    <td colspan="2">{{ user.nick }}</td>
                 </tr>
                 <tr>
                     <th>Name</th>
@@ -96,12 +98,17 @@
                 {% if user.deleted != 0 %}
                     <tr>
                         <th>Löschantrag</th>
-                        <td>
-                            <div class="userDeletedColor">Dieser Account ist zur Löschung
-                                am {{ formatTimestamp(user.deleted) }} vorgemerkt
-                            </div>
+                        <td class="userDeletedColor">
+                            Dieser Account ist zur Löschung am {{ formatTimestamp(user.deleted) }} vorgemerkt
                         </td>
-                        <td></td>
+                        <td>
+                            {% if user.deleted != 0 %}
+                                <form action="{{ path('admin.users.cancel_delete', {id: user.id}) }}" method="post"
+                                      class="form-inline">
+                                    <input type="submit" value="Aufheben"/>
+                                </form> &nbsp;
+                            {% endif %}
+                        </td>
                     </tr>
                 {% endif %}
                 {% if user.hmodFrom > 0 %}
@@ -332,20 +339,8 @@
         </div>
     </div>
 
-
-
     <p>
-        <a href="{{ path('admin.users.edit', {id: user.id}) }}" class="button">Bearbeiten</a> &nbsp;
-        {% if user.deleted != 0 %}
-            <input type="submit" name="canceldelete" value="Löschantrag aufheben" class="userDeletedColor"/> &nbsp;
-        {% else %}
-            <input type="submit" name="requestdelete" value="Löschantrag erteilen" class="userDeletedColor"/>&nbsp;
-        {% endif %}
-        <input type="submit" name="delete_user" value="User löschen" class="remove"
-               onclick="return confirm('Soll dieser User endgültig gelöscht werden?');">
-    </p>
-    <hr/>
-    <p>
+        <a href="{{ path('admin.users.edit', {id: user.id}) }}" class="button">Spieler bearbeiten</a> &nbsp;
         <a href="{{ path('admin.users.economy', {id: user.id}) }}" class="button">Wirtschaft</a> &nbsp;
         <a href="{{ path('admin.users.messages', {id: user.id}) }}" class="button">Nachrichten</a> &nbsp;
         <a href="{{ path('admin.users.comments', {id: user.id}) }}" class="button">Kommentare</a> &nbsp;
