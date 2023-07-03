@@ -149,6 +149,8 @@ class UserController extends AbstractAdminController
             'isNoLongerBlocked' => $user->blockedFrom > 0 && $user->blockedTo < time(),
             'userBlockedDefaultTime' => time() + (3600 * 24 * $this->config->getInt('user_ban_min_length')),
             'commentInfo' => $this->userCommentRepository->getCommentInformation($user->id),
+            'activeMultisCount' => count($this->userMultiRepository->getUserEntries($user->id, true)),
+            'activeSitting' => $this->userSittingRepository->getActiveUserEntry($user->id),
             'numberOfNewTickets' => count($newTickets),
             'numberOfAssignedTickets' => count($assignedTickets),
             'warning' => $this->userWarningRepository->getCountAndLatestWarning($user->id),
@@ -160,10 +162,6 @@ class UserController extends AbstractAdminController
             'allianceNamesWithTags' => $this->allianceRepository->getAllianceNamesWithTags(),
             'spyShipNames' => $this->shipDateRepository->getShipNamesWithAction('spy'),
             'analyzeShipNames' => $this->shipDateRepository->getShipNamesWithAction('analyze'),
-            'multiEntries' => $this->userMultiRepository->getUserEntries($user->id, true),
-            'deletedMultiEntries' => $this->userMultiRepository->getUserEntries($user->id, false),
-            'sittedEntries' => $this->userSittingRepository->getWhereUser($user->id),
-            'sittingEntries' => $this->userSittingRepository->getWhereSitter($user->id),
             'bannerPath' => file_exists($bannerPath) ? $bannerPath : null,
             'bannerTime' => file_exists($bannerPath) ? filemtime($bannerPath) : 0,
             'userBannerWebsiteLink' => ExternalUrl::USERBANNER_LINK,
@@ -215,20 +213,6 @@ class UserController extends AbstractAdminController
         }
         if ($request->request->has('user_profile_img_check')) {
             $user->profileImageCheck = false;
-        }
-
-        // new Multi
-        if (filled($request->request->get('new_multi')) && filled($request->request->get('multi_reason'))) {
-            $newMultiUserId = $this->userRepository->getUserIdByNick($request->request->get('new_multi'));
-            if ($newMultiUserId === null) {
-                $this->addFlash('error', "Dieser User existiert nicht!");
-            } // Prüfe ob der eigene Nick eingetragen ist
-            elseif ($newMultiUserId == $id) {
-                $this->addFlash('error', "Man kann nicht den selben Nick im Sitting eintragen!");
-            } else {
-                $this->userMultiRepository->addOrUpdateEntry($id, $newMultiUserId, $request->request->get('multi_reason'));
-                $this->addFlash('success', "Neuer User angelegt!");
-            }
         }
 
         // Handle specialist decision
@@ -324,54 +308,6 @@ class UserController extends AbstractAdminController
         $properties->fleetRtnMsg = $request->request->getInt('fleet_rtn_msg') == 1;
 
         $this->userPropertiesRepository->storeProperties($id, $properties);
-
-        if ($request->request->has('del_multi')) {
-            // Multi löschen
-            foreach ($request->request->all('del_multi') as $m_id => $data) {
-                $m_id = intval($m_id);
-                if ($request->request->all('del_multi')[$m_id] == 1) {
-                    $this->userMultiRepository->deactivate($id, (int)$$request->request->all('multi_nick')[$m_id]);
-                    $this->userRepository->increaseMultiDeletes($id);
-                    $this->addFlash('success', "Eintrag gelöscht!");
-                }
-            }
-        }
-
-        // Sitting löschen
-        if ($request->request->has('del_sitting')) {
-            foreach ($request->request->all('del_sitting') as $s_id => $data) {
-                $s_id = intval($s_id);
-                if ($request->request->all('del_sitting')[$s_id] == 1) {
-                    $this->userSittingRepository->cancelEntry($s_id);
-                    $this->addFlash('success', "Eintrag gelöscht!");
-                }
-            }
-        }
-
-        //new sitting
-        if (filled($request->request->get('sitter_nick'))) {
-            if ($request->request->get('sitter_password1') == $request->request->get('sitter_password2') && filled($request->request->get('sitter_password1'))) {
-                $sitting_from = parseDatePicker($request->request->get('sitting_time_from'));
-                $sitting_to = parseDatePicker($request->request->get('sitting_time_to'));
-                $diff = ceil(($sitting_to - $sitting_from) / 86400);
-                $pw = saltPasswort($request->request->get('sitter_password1'));
-                $sitterId = $this->userRepository->getUserIdByNick($request->request->get('sitter_nick'));
-
-                if ($diff > 0) {
-                    if ($sitterId !== null) {
-                        if ($diff <= $request->request->getInt('user_sitting_days')) {
-                            $this->userSittingRepository->addEntry($id, $sitterId, $pw, $sitting_from, $sitting_to);
-                        } else {
-                            $this->addFlash('error', "So viele Tage sind nicht mehr vorhanden!!");
-                        }
-                    } else {
-                        $this->addFlash('error', "Dieser Sitternick existiert nicht!");
-                    }
-                } else {
-                    $this->addFlash('error', "Enddatum muss größer als Startdatum sein!");
-                }
-            }
-        }
 
         $this->addFlash('success', "Änderungen wurden übernommen!");
 
@@ -843,4 +779,138 @@ class UserController extends AbstractAdminController
         ]);
     }
 
+    #[Route('/admin/users/{id}/sitting_multi', name: 'admin.users.sitting_multi')]
+    #[IsGranted('ROLE_ADMIN_TRIAL-ADMIN')]
+    public function sittingMulti(int $id): Response
+    {
+        $user = $this->userRepository->getUser($id);
+        if ($user === null) {
+            $this->addFlash('error', 'Benutzer nicht vorhanden!');
+            return $this->redirectToRoute('admin.users');
+        }
+
+        return $this->render('admin/user/sitting_multi.html.twig', [
+            'user' => $user,
+            'multiEntries' => $this->userMultiRepository->getUserEntries($user->id, true),
+            'deletedMultiEntries' => $this->userMultiRepository->getUserEntries($user->id, false),
+            'sittedEntries' => $this->userSittingRepository->getWhereUser($user->id),
+            'sittingEntries' => $this->userSittingRepository->getWhereSitter($user->id),
+        ]);
+    }
+
+    #[Route('/admin/users/{id}/addMulti', name: 'admin.users.addMulti', methods: ['POST'])]
+    #[IsGranted('ROLE_ADMIN_TRIAL-ADMIN')]
+    public function addMulti(int $id, Request $request): Response
+    {
+        $user = $this->userRepository->getUser($id);
+        if ($user === null) {
+            $this->addFlash('error', 'Benutzer nicht vorhanden!');
+            return $this->redirectToRoute('admin.users');
+        }
+
+        if (!filled($request->request->get('new_multi')) || !filled($request->request->get('multi_reason'))) {
+            $this->addFlash('error', 'Multi Name oder Beziehung fehlt!');
+            return $this->redirectToRoute('admin.users.sitting_multi', ['id' => $id]);
+        }
+
+        $newMultiUserId = $this->userRepository->getUserIdByNick($request->request->get('new_multi'));
+        if ($newMultiUserId === null) {
+            $this->addFlash('error', "Dieser User existiert nicht!");
+            return $this->redirectToRoute('admin.users.sitting_multi', ['id' => $id]);
+        }
+
+        // Prüfe ob der eigene Nick eingetragen ist
+        if ($newMultiUserId == $id) {
+            $this->addFlash('error', "Man kann nicht den selben Nick als Multi eintragen!");
+            return $this->redirectToRoute('admin.users.sitting_multi', ['id' => $id]);
+        }
+
+        $this->userMultiRepository->addOrUpdateEntry($id, $newMultiUserId, $request->request->get('multi_reason'));
+        $this->addFlash('success', "Neuer Multi User angelegt!");
+
+        return $this->redirectToRoute('admin.users.sitting_multi', ['id' => $id]);
+    }
+
+    #[Route('/admin/users/{id}/deleteMulti/{multi}', name: 'admin.users.deleteMulti', methods: ['POST'])]
+    #[IsGranted('ROLE_ADMIN_TRIAL-ADMIN')]
+    public function deleteMulti(int $id, int $multi): Response
+    {
+        $user = $this->userRepository->getUser($id);
+        if ($user === null) {
+            $this->addFlash('error', 'Benutzer nicht vorhanden!');
+            return $this->redirectToRoute('admin.users');
+        }
+
+        $this->userMultiRepository->deactivate($id, $multi);
+        $this->userRepository->increaseMultiDeletes($id);
+        $this->addFlash('success', "Eintrag gelöscht!");
+
+        return $this->redirectToRoute('admin.users.sitting_multi', ['id' => $id]);
+    }
+
+    #[Route('/admin/users/{id}/addSitting', name: 'admin.users.addSitting', methods: ['POST'])]
+    #[IsGranted('ROLE_ADMIN_TRIAL-ADMIN')]
+    public function addSitting(int $id, Request $request): Response
+    {
+        $user = $this->userRepository->getUser($id);
+        if ($user === null) {
+            $this->addFlash('error', 'Benutzer nicht vorhanden!');
+            return $this->redirectToRoute('admin.users');
+        }
+
+        if (!filled($request->request->get('sitter_nick')) || !filled($request->request->get('sitter_password1'))) {
+            $this->addFlash('error', 'Sitter Name oder Passwort fehlt!');
+            return $this->redirectToRoute('admin.users.sitting_multi', ['id' => $id]);
+        }
+
+        if ($request->request->get('sitter_password1') != $request->request->get('sitter_password2')) {
+            $this->addFlash('error', 'Sitter Passwörter stimmen nicht überein!');
+            return $this->redirectToRoute('admin.users.sitting_multi', ['id' => $id]);
+        }
+
+        $sitting_from = parseDatePicker($request->request->get('sitting_time_from'));
+        $sitting_to = parseDatePicker($request->request->get('sitting_time_to'));
+        $diff = ceil(($sitting_to - $sitting_from) / 86400);
+        $pw = saltPasswort($request->request->get('sitter_password1'));
+        $sitterId = $this->userRepository->getUserIdByNick($request->request->get('sitter_nick'));
+
+        if ($sitterId == $id) {
+            $this->addFlash('error', "Man kann nicht den selben Nick im Sitting eintragen!");
+            return $this->redirectToRoute('admin.users.sitting_multi', ['id' => $id]);
+        }
+
+        if ($diff <= 0) {
+            $this->addFlash('error', "Enddatum muss größer als Startdatum sein!");
+            return $this->redirectToRoute('admin.users.sitting_multi', ['id' => $id]);
+        }
+        if ($sitterId === null) {
+            $this->addFlash('error', "Dieser Sitternick existiert nicht!");
+            return $this->redirectToRoute('admin.users.sitting_multi', ['id' => $id]);
+        }
+
+        if ($diff > $user->sittingDays) {
+            $this->addFlash('error', "So viele Tage sind nicht mehr vorhanden!!");
+            return $this->redirectToRoute('admin.users.sitting_multi', ['id' => $id]);
+        }
+
+        $this->userSittingRepository->addEntry($id, $sitterId, $pw, $sitting_from, $sitting_to);
+        $this->addFlash('success', "Sitting eingerichtet!");
+        return $this->redirectToRoute('admin.users.sitting_multi', ['id' => $id]);
+    }
+
+    #[Route('/admin/users/{id}/deleteSitting/{sitter}', name: 'admin.users.deleteSitting', methods: ['POST'])]
+    #[IsGranted('ROLE_ADMIN_TRIAL-ADMIN')]
+    public function deleteSitting(int $id, int $sitter): Response
+    {
+        $user = $this->userRepository->getUser($id);
+        if ($user === null) {
+            $this->addFlash('error', 'Benutzer nicht vorhanden!');
+            return $this->redirectToRoute('admin.users');
+        }
+
+        $this->userSittingRepository->cancelEntry($sitter);
+        $this->addFlash('success', "Eintrag gelöscht!");
+
+        return $this->redirectToRoute('admin.users.sitting_multi', ['id' => $id]);
+    }
 }

@@ -39,7 +39,7 @@ class UserSittingRepository extends AbstractRepository
             ->setParameter('time', time())
             ->fetchAllAssociative();
 
-        return array_map(fn (array $row) => new UserSitting($row), $data);
+        return array_map(fn(array $row) => new UserSitting($row), $data);
     }
 
     public function getActiveUserEntry(int $userId): ?UserSitting
@@ -71,7 +71,7 @@ class UserSittingRepository extends AbstractRepository
 
         $entries = [];
         foreach ($data as $row) {
-            $entries[(int) $row['user_id']] = new UserSitting($data);
+            $entries[(int)$row['user_id']] = new UserSitting($data);
         }
 
         return $entries;
@@ -87,7 +87,7 @@ class UserSittingRepository extends AbstractRepository
             ->setParameter('userId', $userId)
             ->fetchAllAssociative();
 
-        return array_map(fn (array $row) => new UserSitting($row), $data);
+        return array_map(fn(array $row) => new UserSitting($row), $data);
     }
 
     /**
@@ -100,12 +100,12 @@ class UserSittingRepository extends AbstractRepository
             ->setParameter('userId', $userId)
             ->fetchAllAssociative();
 
-        return array_map(fn (array $row) => new UserSitting($row), $data);
+        return array_map(fn(array $row) => new UserSitting($row), $data);
     }
 
     public function existsEntry(int $userId, string $password): bool
     {
-        return (bool) $this->createQueryBuilder()
+        return (bool)$this->createQueryBuilder()
             ->select('1')
             ->from('user_sitting')
             ->where('user_id = :userId')
@@ -119,7 +119,7 @@ class UserSittingRepository extends AbstractRepository
 
     public function hasSittingEntryForTimeSpan(int $userId, int $from, int $to): bool
     {
-        return (bool) $this->createQueryBuilder()
+        return (bool)$this->createQueryBuilder()
             ->select('1')
             ->from('user_sitting')
             ->where('user_id = :userId')
@@ -134,7 +134,7 @@ class UserSittingRepository extends AbstractRepository
 
     public function getUsedSittingTime(int $userId): int
     {
-        return (int) $this->createQueryBuilder()
+        return (int)$this->createQueryBuilder()
             ->select('SUM(CEIL((date_to - date_from) / 86400))')
             ->from('user_sitting')
             ->where('user_id = :userId')
@@ -150,7 +150,7 @@ class UserSittingRepository extends AbstractRepository
             ->select('s.*', 'u.user_nick as user_nick', 'us.user_nick as sitter_nick')
             ->from('user_sitting', 's')
             ->leftJoin('s', 'users', 'u', 'u.user_id = s.user_id')
-            ->leftJoin('s', 'users', 'us', 'us.user_id = s.user_id')
+            ->leftJoin('s', 'users', 'us', 'us.user_id = s.sitter_id')
             ->orderBy('s.date_from', 'DESC');
     }
 
@@ -166,7 +166,7 @@ class UserSittingRepository extends AbstractRepository
 
     public function cancelUserEntry(int $id, int $userId): bool
     {
-        return (bool) $this->createQueryBuilder()
+        return (bool)$this->createQueryBuilder()
             ->update('user_sitting')
             ->set('date_to', 'UNIX_TIMESTAMP()')
             ->where('id = :id')
@@ -184,7 +184,7 @@ class UserSittingRepository extends AbstractRepository
 
     public function deleteFutureUserEntry(int $id, int $userId): bool
     {
-        return (bool) $this->createQueryBuilder()
+        return (bool)$this->createQueryBuilder()
             ->delete('user_sitting')
             ->where('id = :id')
             ->andWhere('userId = :userId')

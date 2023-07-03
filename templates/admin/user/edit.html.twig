@@ -30,7 +30,6 @@
                 <li><a href="#tabs-1">Info</a></li>
                 <li><a href="#tabs-2">Account</a></li>
                 <li><a href="#tabs-3">Daten</a></li>
-                <li><a href="#tabs-4">Sitting</a></li>
                 <li><a href="#tabs-5">Profil</a></li>
                 <li><a href="#tabs-6">Design</a></li>
                 <li><a href="#tabs-7">Nachrichten</a></li>
@@ -172,6 +171,21 @@
                                     <b>{{ warning.count }} Verwarnungen</b> vorhanden, neuste
                                     von {{ formatTimestamp(warning.max) }}.
                                     [<a href="{{ path('admin.users.warnings') }}">Zeigen</a>]
+                                </div>
+                            {% endif %}
+
+                            {% if activeMultisCount > 0 %}
+                                <div>
+                                    <a href="{{ path('admin.users.sitting_multi', {id: user.id}) }}">
+                                        {{ activeMultis }} Multis registriert
+                                    </a>
+                                </div>
+                            {% endif %}
+                            {% if activeSitting is not null %}
+                                <div>
+                                    <a href="{{ path('admin.users.sitting_multi', {id: user.id}) }}">
+                                        Wird gesitted von {{ activeSitting.sitterNick }}
+                                    </a>
                                 </div>
                             {% endif %}
                         </td>
@@ -432,166 +446,6 @@
                 </script>
             </div>
 
-            {# Sitting & Multi #}
-            <div id="tabs-4">
-                <table class="tbl">
-                    <tr>
-                        <th rowspan="{{ multiEntries|length + 1 }}">Eingetragene Multis</th>
-                        <th>Name</th>
-                        <th>Begründung</th>
-                        <th>Eingetragen</th>
-                        <th>Löschen</th>
-                    </tr>
-                    {% for multi in multiEntries %}
-                        <tr>
-                            <td>
-                                <a href="{{ path('admin.users.edit', { id: multi.multiUserId }) }}">{{ multi.multiUserNick }}</a>
-                                <input type="hidden" name="multi_nick[{{ multi.multiUserId }}]"
-                                       value="{{ multi.multiUserId }}" readonly="readonly">
-                            </td>
-                            <td>
-                                {{ multi.reason }}
-                            </td>
-                            <td>
-                                {{ multi.timestamp > 0 ? formatTimestamp(multi.timestamp) : '-' }}
-                            </td>
-                            <td>
-                                <input type="checkbox" name="del_multi[{{ multi.multiUserId }}]" value="1">
-                            </td>
-                        </tr>
-                    {% endfor %}
-                    <tr>
-                        <th rowspan="{{ deletedMultiEntries|length + 1 }}">Gelöschte Multis</th>
-                        <th>Name</th>
-                        <th>Begründung</th>
-                        <th>Gelöscht</th>
-                        <th></th>
-                    </tr>
-                    {% for multi in deletedMultiEntries %}
-                        <tr>
-                            <td>
-                                <a href="{{ path('admin.users.edit', { id: multi.multiUserId }) }}">{{ multi.multiUserNick }}</a>
-                            </td>
-                            <td>
-                                {{ multi.reason }}
-                            </td>
-                            <td>
-                                {{ multi.timestamp > 0 ? formatTimestamp(multi.timestamp) : '-' }}
-                            </td>
-                        </tr>
-                    {% endfor %}
-                </table>
-
-                <table class="tbl">
-                    <tr>
-                        <th rowspan="{{ sittedEntries|length + 1 }}">Wurde gesittet</th>
-                        <th>Sitter</th>
-                        <th>Start</th>
-                        <th>Ende</th>
-                        <th>Abbrechen</th>
-                    </tr>
-                    {% set used_days = 0 %}
-                    {% for sittedEntry in sittedEntries %}
-                        {% set used_days = used_days + ((sittedEntry.dateTo - sittedEntry.dateFrom) / 86400) %}
-                        <tr>
-                            <td>
-                                <a href="{{ path('admin.users.edit', { id: sittedEntry.sitterId }) }}">{{ sittedEntry.sitterNick }}</a>
-                            </td>
-                            <td>
-                                {{ formatTimestamp(sittedEntry.dateFrom) }}
-                            </td>
-                            <td>
-                                {{ formatTimestamp(sittedEntry.dateTo) }}
-                            </td>
-                            {% if sittedEntry.dateTo > date().timestamp %}
-                                <td>
-                                    <input type="checkbox" name="del_sitting[{{ sittedEntry.id }}]" value="1">
-                                </td>
-                            {% else %}
-                                <td></td>
-                            {% endif %}
-                        </tr>
-                    {% endfor %}
-                    <tr>
-                        <th rowspan="{{ sittingEntries|length + 1 }}">Hat gesittet</th>
-                        <th>Gesitteter User</th>
-                        <th>Start</th>
-                        <th>Ende</th>
-                        <th></th>
-                    </tr>
-                    {% for sittingEntry in sittingEntries %}
-                        <tr>
-                            <td>
-                                <a href="{{ path('admin.users.edit', { id: sittingEntry.sitterId }) }}">{{ sittingEntry.sitterNick }}</a>
-                            </td>
-                            <td>
-                                {{ formatTimestamp(sittingEntry.dateTo) }}
-                            </td>
-                            <td>
-                                {{ formatTimestamp(sittingEntry.dateTo) }}
-                            </td>
-                        </tr>
-                    {% endfor %}
-                </table>
-
-                <h2>Multi einrichten</h2>
-                <table class="tbl">
-                    <tr>
-                        <td><label for="new_multi">User</label></td>
-                        <td>
-                            <input type="text" name="new_multi" id="new_multi" maxlength="20" size="20"
-                                   autocomplete="off" placeholder="Usernick">
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><label for="multi_reason">Beziehung</label></td>
-                        <td>
-                            <input type="text" name="multi_reason" id="multi_reason" maxlength="20" size="20">
-                        </td>
-                    </tr>
-                </table>
-
-                <h2>Sitting einrichten</h2>
-                <table class="tbl">
-                    <tr>
-                        <td>Übrige Tage</td>
-                        <td>
-                            {{ (user.sittingDays - used_days)|round(0, 'floor') }}
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><label for="sitter_nick">Sitter</label></td>
-                        <td>
-                            <input type="text" maxlength="20" size="20" name="sitter_nick" id="sitter_nick">
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><label for="sitter_password1">Passwort</label></td>
-                        <td>
-                            <input type="text" maxlength="20" size="20" name="sitter_password1" id="sitter_password1">
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><label for="sitter_password2">Passwort wiederholen</label></td>
-                        <td>
-                            <input type="text" maxlength="20" size="20" name="sitter_password2" id="sitter_password2">
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><label for="sitting_time_from">Von</label></td>
-                        <td>
-                            {{ component('forms:date_time_input', { name: 'sitting_time_from', value: date().timestamp }) }}
-                        </td>
-                    </tr>
-                    <tr>
-                        <td><label for="sitting_time_to">Bis</label></td>
-                        <td>
-                            {{ component('forms:date_time_input', { name: 'sitting_time_to', value: date().timestamp }) }}
-                        </td>
-                    </tr>
-                </table>
-            </div>
-
             {# Profil #}
             <div id="tabs-5">
                 <table class="tbl">
@@ -837,7 +691,8 @@
             <a href="{{ path('admin.users.comments', {id: user.id}) }}" class="button">Kommentare</a> &nbsp;
             <a href="{{ path('admin.users.pointProgression', {id: user.id}) }}" class="button">Punkteverlauf</a> &nbsp;
             <a href="{{ path('admin.users.logs', {id: user.id}) }}" class="button">Logs</a> &nbsp;
-            <a href="{{ path('admin.users.tickets', {id: user.id}) }}" class="button">Tickets</a>
+            <a href="{{ path('admin.users.tickets', {id: user.id}) }}" class="button">Tickets</a> &nbsp;
+            <a href="{{ path('admin.users.sitting_multi', {id: user.id}) }}" class="button">Sitting & Multis</a>
         </p>
         <hr/>
         <p>
