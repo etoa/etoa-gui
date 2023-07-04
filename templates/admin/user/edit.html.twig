@@ -27,7 +27,10 @@
 
             {# Account #}
             <div id="tabs-2">
-                <table class="tbl">
+                <table class="table">
+                    <colgroup>
+                        <col style="width: 200px">
+                    </colgroup>
                     <tr>
                         <th><label for="user_nick">Nick</label></th>
                         <td>
@@ -189,7 +192,10 @@
 
             {# Game-Daten #}
             <div id="tabs-3">
-                <table class="tbl">
+                <table class="table">
+                    <colgroup>
+                        <col style="width: 200px">
+                    </colgroup>
                     <tr>
                         <th><label for="user_race_id">Rasse</label></th>
                         <td>
@@ -279,7 +285,10 @@
 
             {# Profil #}
             <div id="tabs-5">
-                <table class="tbl">
+                <table class="table">
+                    <colgroup>
+                        <col style="width: 200px">
+                    </colgroup>
                     <tr>
                         <th><label for="user_profile_text">Profil-Text</label></th>
                         <td>
@@ -335,7 +344,10 @@
 
             {# Design #}
             <div id="tabs-6">
-                <table class="tbl">
+                <table class="table">
+                    <colgroup>
+                        <col style="width: 200px">
+                    </colgroup>
                     <tr>
                         <th><label for="css_style">Design</label></th>
                         <td>
@@ -349,7 +361,7 @@
                     </tr>
                     <tr>
                         <th>Planetenkreisgrösse</th>
-                        <td class="tbldata" colspan="4">
+                        <td>
                             {{ component('forms:select_input', { name: 'planet_circle_width', options: planetCircleOptions, value: properties.planetCircleWidth, keysAsLabel: true }) }}
                         </td>
                     </tr>
@@ -382,7 +394,10 @@
 
             {# Messages #}
             <div id="tabs-7">
-                <table class="tbl">
+                <table class="table">
+                    <colgroup>
+                        <col style="width: 200px">
+                    </colgroup>
                     <tr>
                         <th><label for="msgsignature">Nachrichten-Signatur</label></th>
                         <td>

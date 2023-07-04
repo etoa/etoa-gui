@@ -14,19 +14,21 @@
         <li>Ähnliche Fantasienamen</li>
     </ul>
 
-    <table class="full-width">
+    <table class="table">
+        <thead>
         <tr>
-            <th class="tbltitle">IP-Adresse</th>
-            <th class="tbltitle">Nick</th>
-            <th class="tbltitle">Realer Name</th>
-            <th class="tbltitle">Zuletzt online</th>
-            <th class="tbltitle">Eingetragene Multis</th>
-            <th class="tbltitle">Gesittet von</th>
+            <th>IP-Adresse</th>
+            <th>Nick</th>
+            <th>Realer Name</th>
+            <th>Zuletzt online</th>
+            <th>Eingetragene Multis</th>
+            <th>Gesittet von</th>
         </tr>
-
+        </thead>
+        <tbody>
         {% for ip,users in ipUsers %}
             <tr>
-            <td rowspan="{{ users|length }}" valign="top" class="tbldata">
+            <td rowspan="{{ users|length }}">
                 <a href="{{ path('admin.users.ips', {ip: ip}) }}">
                     {{ ip }}
                 </a>
@@ -82,6 +84,7 @@
                 </tr>
             {% endfor %}
         {% endfor %}
+        </tbody>
     </table>
 
     <p>Total {{ ipUsers|length }} IP-Adressen mit Spielern entdeckt.</p>

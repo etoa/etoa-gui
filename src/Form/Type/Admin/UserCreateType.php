@@ -36,6 +36,8 @@ class UserCreateType extends AbstractType
                     'Nein' => false,
                 ],
             ])
-            ->add('submit', SubmitType::class);
+            ->add('submit', SubmitType::class, [
+                'label' => 'Erstellen',
+            ]);
     }
 }
