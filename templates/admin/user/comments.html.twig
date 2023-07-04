@@ -9,27 +9,37 @@
 
     <h2>Kommentare zum Spieler {{ user.nick }}</h2>
 
-    <form action="{{ path('admin.users.comments.add', { id: user.id}) }}" method="POST">
-        <h3><label for="text">Neuer Kommentar</label></h3>
-        <textarea rows="4" cols="70" id="text" name="text"></textarea><br/><br/>
-        <input type="submit" value="Speichern"/>
-    </form>
+    <div class="card">
+        <form action="{{ path('admin.users.comments.add', { id: user.id}) }}" method="POST">
+            <h3><label for="text">Neuer Kommentar</label></h3>
+            <textarea rows="4" cols="70" id="text" name="text"></textarea><br/><br/>
+            <input type="submit" value="Speichern"/>
+        </form>
+    </div>
 
     <h3>Gespeicherte Kommentare</h3>
     {% if comments|length > 0 %}
-        <table class="tb">
+        <table class="table">
+            <colgroup>
+                <col/>
+                <col style="width:250px;"/>
+                <col style="width:50px;"/>
+            </colgroup>
+            <thead>
             <tr>
                 <th>Text</th>
                 <th>Verfasst</th>
                 <th>Aktionen</th>
             </tr>
+            </thead>
+            <tbody>
             {% for comment in comments %}
                 <tr>
-                    <td class="tbldata">{{ BBCodeToHTML(comment.text)|raw }}</td>
-                    <td class="tbldata" style="width:200px;">
+                    <td>{{ BBCodeToHTML(comment.text)|raw }}</td>
+                    <td>
                         {{ formatTimestamp(comment.timestamp) }} von {{ comment.adminNick }}
                     </td>
-                    <td class="tbldata" style="width:50px;">
+                    <td>
                         <form action="{{ path('admin.users.comments.delete', { id: user.id, comment: comment.id }) }}"
                               method="post" class="form-inline">
                             <button type="submit" onclick="return confirm('Wirklich löschen?')">Löschen</button>
@@ -37,6 +47,7 @@
                     </td>
                 </tr>
             {% endfor %}
+            </tbody>
         </table>
     {% else %}
         {{ component('admin_message_box', { type: 'info', message: 'Keine Kommentare vorhanden!' }) }}

@@ -8,12 +8,9 @@
     <a href="{{ path('admin.users.view', {id: user.id}) }}">{{ user.nick }}</a>
 
     <div style="display: flex; flex-direction: row; gap: 20px">
-        <div>
+        <div style="flex: 1">
             <h3>Basisdaten</h3>
-            <table class="tbl" style="width:500px">
-                <colgroup>
-                    <col style="width:190px;"/>
-                </colgroup>
+            <table class="table">
                 <tr>
                     <th>ID</th>
                     <td colspan="2">{{ user.id }}</td>
@@ -270,12 +267,9 @@
             </table>
         </div>
 
-        <div>
+        <div style="flex: 1">
             <h3>Statistik</h3>
-            <table class="tbl" style="width:500px">
-                <colgroup>
-                    <col style="width:190px;"/>
-                </colgroup>
+            <table class="table">
                 <tr>
                     <th>Punkte</th>
                     <td>

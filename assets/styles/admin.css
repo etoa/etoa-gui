@@ -766,11 +766,47 @@ tbody th {
     padding: 1px 3px;
 }
 
-tbody tr:nth-child(odd) {
+tbody tr:nth-child(odd),
+.table tbody tr:nth-child(odd) {
     background: #e8e8e8;
 }
 
-tbody tr:nth-child(even) {
+tbody tr:nth-child(even),
+.table tbody tr:nth-child(even) {
+    background: #f1f1f1;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+    border: 1px solid #bbbbbb;
+    margin-bottom: 10px;
+}
+
+.table th, .table td {
+    border: 1px solid #bbbbbb;
+    padding: 3px 5px;
+}
+
+.table th {
+    text-align: left;
+}
+
+.table thead {
+    border-bottom: 2px solid #aaaaaa;
+}
+
+.table tfoot {
+    border-top: 2px solid #aaaaaa;
+}
+
+/*
+ Card
+ */
+
+.card {
+    border: 1px solid #bbbbbb;
+    padding: 5px 15px;
     background: #f1f1f1;
 }
 

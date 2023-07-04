@@ -23,7 +23,8 @@
     </form>
 
     {% if userPoints|length > 0 %}
-        <table class="tb">
+        <table class="table">
+            <thead>
             <tr>
                 <th>Datum</th>
                 <th>Zeit</th>
@@ -32,16 +33,19 @@
                 <th>Forschung</th>
                 <th>Flotte</th>
             </tr>
+            </thead>
+            <tbody>
             {% for points in userPoints %}
                 <tr>
-                    <td class="tbldata">{{ points.timestamp|date("d.m.Y") }}</td>
-                    <td class="tbldata">{{ points.timestamp|date("H:i") }}</td>
-                    <td class="tbldata">{{ formatNumber(points.points) }}</td>
-                    <td class="tbldata">{{ formatNumber(points.buildingPoints) }}</td>
-                    <td class="tbldata">{{ formatNumber(points.techPoints) }}</td>
-                    <td class="tbldata">{{ formatNumber(points.shipPoints) }}</td>
+                    <td>{{ points.timestamp|date("d.m.Y") }}</td>
+                    <td>{{ points.timestamp|date("H:i") }}</td>
+                    <td>{{ formatNumber(points.points) }}</td>
+                    <td>{{ formatNumber(points.buildingPoints) }}</td>
+                    <td>{{ formatNumber(points.techPoints) }}</td>
+                    <td>{{ formatNumber(points.shipPoints) }}</td>
                 </tr>
             {% endfor %}
+            </tbody>
         </table>
     {% else %}
         {{ component('admin_message_box', { type: 'info', message: 'Keine Punkte vorhanden!' }) }}

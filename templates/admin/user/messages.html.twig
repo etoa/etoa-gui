@@ -9,8 +9,8 @@
 
     <h2>Nachrichten des Spielers {{ user.nick }}</h2>
 
-    <fieldset>
-        <legend>Nachricht senden</legend>
+    <h3>Nachricht senden</h3>
+    <div class="card">
         <form action="{{ path('admin.users.messages.send', { id: user.id}) }}" method="POST">
             <p>
                 <label for="subject">Titel:</label><br>
@@ -22,11 +22,12 @@
             </p>
             <input type="submit" value="Senden"/>
         </form>
-    </fieldset>
+    </div>
 
     <h3>Letzte {{ limit }} Nachrichten</h3>
     {% if messages|length > 0 %}
-        <table class="tb">
+        <table class="table">
+            <thead>
             <tr>
                 <th>Datum</th>
                 <th>Sender</th>
@@ -35,23 +36,26 @@
                 <th>Gelesen</th>
                 <th>Optionen</th>
             </tr>
+            </thead>
+            <tbody>
             {% for message in messages %}
                 <tr>
-                    <td class="tbldata">{{ formatTimestamp(message.timestamp) }}</td>
-                    <td class="tbldata">
+                    <td>{{ formatTimestamp(message.timestamp) }}</td>
+                    <td>
                         {% if message.userFrom > 0 %}
                             {{ component('admin_user_info_link', {id: message.userFrom}) }}
                         {% else %}
                             System
                         {% endif %}
                     </td>
-                    <td class="tbldata">{{ message.subject }}</td>
-                    <td class="tbldata">{{ BBCodeToHTML(message.text)|raw }}</td>
-                    <td class="tbldata">{{ message.read ? "Ja" : "Nein" }}</td>
-                    <td class="tbldata">[<a href="{{ path('admin.messages') }}#message-{{ message.id }}">Details</a>]
+                    <td>{{ message.subject }}</td>
+                    <td>{{ BBCodeToHTML(message.text)|raw }}</td>
+                    <td>{{ message.read ? "Ja" : "Nein" }}</td>
+                    <td><a href="{{ path('admin.messages') }}#message-{{ message.id }}">Details</a>
                     </td>
                 </tr>
             {% endfor %}
+            </tbody>
         </table>
     {% else %}
         {{ component('admin_message_box', { type: 'info', message: 'Keine Nachrichten vorhanden!' }) }}

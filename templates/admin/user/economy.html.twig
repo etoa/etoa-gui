@@ -9,25 +9,35 @@
 
     <h2>Wirtschaft des Spielers {{ user.nick }}</h2>
 
-    <fieldset>
-        <legend>Rohstoff- und Produktionsübersicht</legend>
-
+    <h3>Rohstoff- und Produktionsübersicht</h3>
+    <div>
         {% if userPlanets|length > 0 %}
-
-            <h2>Rohstoffe und Bewohner</h2>
-            <table class="tbl">
+            <h4>Rohstoffe und Bewohner</h4>
+            <table class="table">
+                <colgroup>
+                    <col/>
+                    <col style="width: 150px"/>
+                    <col style="width: 150px"/>
+                    <col style="width: 150px"/>
+                    <col style="width: 150px"/>
+                    <col style="width: 150px"/>
+                    <col style="width: 150px"/>
+                </colgroup>
+                <thead>
                 <tr>
-                    <td class="tbltitle">Name:</td>
-                    <td class="tbltitle">{{ resourceNames.metal }}</td>
-                    <td class="tbltitle">{{ resourceNames.crystal }}</td>
-                    <td class="tbltitle">{{ resourceNames.plastic }}</td>
-                    <td class="tbltitle">{{ resourceNames.fuel }}</td>
-                    <td class="tbltitle">{{ resourceNames.food }}</td>
-                    <td class="tbltitle">Bewohner</td>
+                    <th>Name:</th>
+                    <th>{{ resourceNames.metal }}</th>
+                    <th>{{ resourceNames.crystal }}</th>
+                    <th>{{ resourceNames.plastic }}</th>
+                    <th>{{ resourceNames.fuel }}</th>
+                    <th>{{ resourceNames.food }}</th>
+                    <th>Bewohner</th>
                 </tr>
+                </thead>
+                <tbody>
                 {% for planet in userPlanets %}
                     <tr>
-                        <td class="tbldata">
+                        <td>
                             <a href="{{ path('admin.universe.entity', { id: planet.id }) }}">{{ planet.toString }}</a>
                         </td>
                         {% for x in range(0,5) %}
@@ -44,42 +54,54 @@
                         {% endfor %}
                     </tr>
                 {% endfor %}
+                </tbody>
+                <tfoot>
                 <tr>
-                    <td colspan="6"></td>
-                </tr>
-                <tr>
-                    <td class="tbltitle">Total</td>
+                    <th>Total</th>
                     {% for x in range(0,5) %}
-                        <td class="tbltitle">{{ formatNumber(tot_res[x]) }}</td>
+                        <th>{{ formatNumber(tot_res[x]) }}</th>
                     {% endfor %}
                 </tr>
                 <tr>
-                    <th class="tbltitle">Durchschnitt</th>
+                    <th>Durchschnitt</th>
                     {% for x in range(0,5) %}
-                        <td class="tbltitle">{{ formatNumber(tot_res[x] / userPlanets|length) }}</td>
+                        <th>{{ formatNumber(tot_res[x] / userPlanets|length) }}</th>
                     {% endfor %}
                 </tr>
+                </tfoot>
             </table>
 
             <p>Legende: Minimum, Maximum,
                 <span style="font-style:italic">Speicher bald voll</span>,
-                <span class="tbldata" style="font-weight:bold">Speicher voll</span>
+                <span style="font-weight:bold">Speicher voll</span>
             </p>
 
-            <h2>Produktion</h2>
-            <table class="tbl">
+            <h4>Produktion</h4>
+            <table class="table">
+                <colgroup>
+                    <col/>
+                    <col style="width: 150px"/>
+                    <col style="width: 150px"/>
+                    <col style="width: 150px"/>
+                    <col style="width: 150px"/>
+                    <col style="width: 150px"/>
+                    <col style="width: 150px"/>
+                </colgroup>
+                <thead>
                 <tr>
-                    <th class="tbltitle">Name:</th>
-                    <td class="tbltitle">{{ resourceNames.metal }}</td>
-                    <td class="tbltitle">{{ resourceNames.crystal }}</td>
-                    <td class="tbltitle">{{ resourceNames.plastic }}</td>
-                    <td class="tbltitle">{{ resourceNames.fuel }}</td>
-                    <td class="tbltitle">{{ resourceNames.food }}</td>
-                    <td class="tbltitle">Energie</td>
+                    <th>Name:</th>
+                    <th>{{ resourceNames.metal }}</th>
+                    <th>{{ resourceNames.crystal }}</th>
+                    <th>{{ resourceNames.plastic }}</th>
+                    <th>{{ resourceNames.fuel }}</th>
+                    <th>{{ resourceNames.food }}</th>
+                    <th>Energie</th>
                 </tr>
+                </thead>
+                <tbody>
                 {% for planet in userPlanets %}
                     <tr>
-                        <td class="tbldata">
+                        <td>
                             <a href="{{ path('admin.universe.entity', { id: planet.id }) }}">{{ planet.toString }}</a>
                         </td>
                         {% for x in range(0,5) %}
@@ -96,40 +118,40 @@
                         {% endfor %}
                     </tr>
                 {% endfor %}
+                </tbody>
+                <tfoot>
                 <tr>
-                    <td colspan="6"></td>
-                </tr>
-                <tr>
-                    <th class="tbltitle">Total</th>
+                    <th>Total</th>
                     {% for x in range(0,5) %}
-                        <td class="tbltitle">{{ formatNumber(tot_prod[x]) }}</td>
+                        <th>{{ formatNumber(tot_prod[x]) }}</th>
                     {% endfor %}
                 </tr>
                 <tr>
-                    <th class="tbltitle">Durchschnitt</th>
+                    <th>Durchschnitt</th>
                     {% for x in range(0,5) %}
-                        <td class="tbltitle">{{ formatNumber(tot_prod[x] / userPlanets|length) }}</td>
+                        <th>{{ formatNumber(tot_prod[x] / userPlanets|length) }}</th>
                     {% endfor %}
                 </tr>
+                </tfoot>
             </table>
         {% else %}
             Der User hat noch keinen Planeten!
         {% endif %}
-    </fieldset>
+    </div>
 
-    <fieldset>
-        <legend>Die fünf letzten Aufträge</legend>
-        <h2>Bauaufträge</h2>
+    <h3>Die fünf letzten Aufträge</h3>
+    <div>
+        <h4>Bauaufträge</h4>
         {% include 'admin/user/user_gamelogs.html.twig' with { 'logs': buildLogs } %}
 
-        <h2>Forschungsaufträge</h2>
+        <h4>Forschungsaufträge</h4>
         {% include 'admin/user/user_gamelogs.html.twig' with { 'logs': techLogs } %}
 
-        <h2>Schiffsaufträge</h2>
+        <h4>Schiffsaufträge</h4>
         {% include 'admin/user/user_gamelogs.html.twig' with { 'logs': shipLogs } %}
 
-        <h2>Verteidigungsaufträge</h2>
+        <h4>Verteidigungsaufträge</h4>
         {% include 'admin/user/user_gamelogs.html.twig' with { 'logs': defLogs } %}
-    </fieldset>
+    </div>
 {% endblock %}
 
