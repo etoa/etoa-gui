@@ -239,7 +239,7 @@
                             {{ activeMultisCount }} Multis registriert
                         </td>
                         <td>
-                            <a href="{{ path('admin.users.sitting_multi', {id: user.id}) }}" class="button">Zeigen</a>
+                            <a href="{{ path('admin.users.user_multi', {id: user.id}) }}" class="button">Zeigen</a>
                         </td>
                     </tr>
                 {% endif %}
@@ -249,7 +249,7 @@
                         <td>
                             Wird gesitted von {{ activeSitting.sitterNick }}
                         </td>
-                        <td><a href="{{ path('admin.users.sitting_multi', {id: user.id}) }}" class="button">Zeigen</a>
+                        <td><a href="{{ path('admin.users.user_sitting', {id: user.id}) }}" class="button">Zeigen</a>
                         </td>
                     </tr>
                 {% endif %}
@@ -346,7 +346,8 @@
         <a href="{{ path('admin.users.logs', {id: user.id}) }}" class="button">Logs</a> &nbsp;
         <a href="{{ path('admin.users.tickets', {id: user.id}) }}" class="button">Tickets</a> &nbsp;
         <a href="{{ path('admin.users.user_login_failures', {id: user.id}) }}" class="button">Loginfehler</a> &nbsp;
-        <a href="{{ path('admin.users.sitting_multi', {id: user.id}) }}" class="button">Sitting & Multis</a>
+        <a href="{{ path('admin.users.user_sitting', {id: user.id}) }}" class="button">Sitting</a> &nbsp;
+        <a href="{{ path('admin.users.user_multi', {id: user.id}) }}" class="button">Multis</a>
     </p>
     <hr/>
     <p>

@@ -2,99 +2,13 @@
 
 {% block content %}
 
-    <h1>Sitting & Multis des Spielers {{ user.nick }}</h1>
+    <h1>Sitting des Spielers {{ user.nick }}</h1>
 
     {{ component('breadcrumbs', { items: [
         { label: 'Spielersuche', url: path('admin.users') },
         { label: user.nick, url: path('admin.users.view', {id: user.id}) },
-        { label: 'Sitting & Multis', url: path('admin.users.sitting_multi', {id: user.id}) },
+        { label: 'Sitting', url: path('admin.users.user_sitting', {id: user.id}) },
     ]}) }}
-
-    {% if multiEntries|length > 0 %}
-        <h2>Eingetragene Multis</h2>
-        <table class="table">
-            <thead>
-            <tr>
-                <th>Name</th>
-                <th>Begründung</th>
-                <th>Eingetragen</th>
-                <th>Löschen</th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for multi in multiEntries %}
-                <tr>
-                    <td>
-                        <a href="{{ path('admin.users.view', { id: multi.multiUserId }) }}">{{ multi.multiUserNick }}</a>
-                        <input type="hidden" name="multi_nick[{{ multi.multiUserId }}]"
-                               value="{{ multi.multiUserId }}" readonly="readonly">
-                    </td>
-                    <td>
-                        {{ multi.reason }}
-                    </td>
-                    <td>
-                        {{ multi.timestamp > 0 ? formatTimestamp(multi.timestamp) : '-' }}
-                    </td>
-                    <td>
-                        <form action="{{ path('admin.users.deleteMulti', {id: user.id, multi: multi.multiUserId }) }}"
-                              method="post" class="form-inline">
-                            <button type="submit" class="button">Löschen</button>
-                        </form>
-                    </td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-    {% endif %}
-
-    {% if deletedMultiEntries|length > 0 %}
-        <h2>Gelöschte Multis</h2>
-        <table class="table">
-            <thead>
-            <tr>
-                <th>Name</th>
-                <th>Begründung</th>
-                <th>Gelöscht</th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for multi in deletedMultiEntries %}
-                <tr>
-                    <td>
-                        <a href="{{ path('admin.users.view', { id: multi.multiUserId }) }}">{{ multi.multiUserNick }}</a>
-                    </td>
-                    <td>
-                        {{ multi.reason }}
-                    </td>
-                    <td>
-                        {{ multi.timestamp > 0 ? formatTimestamp(multi.timestamp) : '-' }}
-                    </td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-    {% endif %}
-
-    <h2>Multi einrichten</h2>
-    <form action="{{ path('admin.users.addMulti', {id: user.id}) }}" method="post">
-        <table class="tbl">
-            <tr>
-                <td><label for="new_multi">User</label></td>
-                <td>
-                    <input type="text" name="new_multi" id="new_multi" maxlength="20" size="20"
-                           autocomplete="off" placeholder="Usernick">
-                </td>
-            </tr>
-            <tr>
-                <td><label for="multi_reason">Beziehung</label></td>
-                <td>
-                    <input type="text" name="multi_reason" id="multi_reason" maxlength="20" size="20">
-                </td>
-            </tr>
-        </table>
-        <br>
-        <button type="submit">Speichern</button>
-    </form>
 
     {% set used_days = 0 %}
     {% if sittedEntries|length > 0 %}
@@ -151,7 +65,7 @@
             {% for sittingEntry in sittingEntries %}
                 <tr>
                     <td>
-                        <a href="{{ path('admin.users.view', { id: sittingEntry.sitterId }) }}">{{ sittingEntry.sitterNick }}</a>
+                        <a href="{{ path('admin.users.view', { id: sittingEntry.userId }) }}">{{ sittingEntry.userNick }}</a>
                     </td>
                     <td>
                         {{ formatTimestamp(sittingEntry.dateTo) }}

@@ -812,9 +812,9 @@ class UserController extends AbstractAdminController
         ]);
     }
 
-    #[Route('/admin/users/{id}/sitting_multi', name: 'admin.users.sitting_multi')]
+    #[Route('/admin/users/{id}/multi', name: 'admin.users.user_multi')]
     #[IsGranted('ROLE_ADMIN_TRIAL-ADMIN')]
-    public function sittingMulti(int $id): Response
+    public function multi(int $id): Response
     {
         $user = $this->userRepository->getUser($id);
         if ($user === null) {
@@ -822,12 +822,10 @@ class UserController extends AbstractAdminController
             return $this->redirectToRoute('admin.users');
         }
 
-        return $this->render('admin/user/sitting_multi.html.twig', [
+        return $this->render('admin/user/user_multi.html.twig', [
             'user' => $user,
             'multiEntries' => $this->userMultiRepository->getUserEntries($user->id, true),
             'deletedMultiEntries' => $this->userMultiRepository->getUserEntries($user->id, false),
-            'sittedEntries' => $this->userSittingRepository->getWhereUser($user->id),
-            'sittingEntries' => $this->userSittingRepository->getWhereSitter($user->id),
         ]);
     }
 
@@ -843,25 +841,25 @@ class UserController extends AbstractAdminController
 
         if (!filled($request->request->get('new_multi')) || !filled($request->request->get('multi_reason'))) {
             $this->addFlash('error', 'Multi Name oder Beziehung fehlt!');
-            return $this->redirectToRoute('admin.users.sitting_multi', ['id' => $id]);
+            return $this->redirectToRoute('admin.users.user_multi', ['id' => $id]);
         }
 
         $newMultiUserId = $this->userRepository->getUserIdByNick($request->request->get('new_multi'));
         if ($newMultiUserId === null) {
             $this->addFlash('error', "Dieser User existiert nicht!");
-            return $this->redirectToRoute('admin.users.sitting_multi', ['id' => $id]);
+            return $this->redirectToRoute('admin.users.user_multi', ['id' => $id]);
         }
 
         // Prüfe ob der eigene Nick eingetragen ist
         if ($newMultiUserId == $id) {
             $this->addFlash('error', "Man kann nicht den selben Nick als Multi eintragen!");
-            return $this->redirectToRoute('admin.users.sitting_multi', ['id' => $id]);
+            return $this->redirectToRoute('admin.users.user_multi', ['id' => $id]);
         }
 
         $this->userMultiRepository->addOrUpdateEntry($id, $newMultiUserId, $request->request->get('multi_reason'));
         $this->addFlash('success', "Neuer Multi User angelegt!");
 
-        return $this->redirectToRoute('admin.users.sitting_multi', ['id' => $id]);
+        return $this->redirectToRoute('admin.users.user_multi', ['id' => $id]);
     }
 
     #[Route('/admin/users/{id}/deleteMulti/{multi}', name: 'admin.users.deleteMulti', methods: ['POST'])]
@@ -878,7 +876,24 @@ class UserController extends AbstractAdminController
         $this->userRepository->increaseMultiDeletes($id);
         $this->addFlash('success', "Eintrag gelöscht!");
 
-        return $this->redirectToRoute('admin.users.sitting_multi', ['id' => $id]);
+        return $this->redirectToRoute('admin.users.user_multi', ['id' => $id]);
+    }
+
+    #[Route('/admin/users/{id}/sitting', name: 'admin.users.user_sitting')]
+    #[IsGranted('ROLE_ADMIN_TRIAL-ADMIN')]
+    public function sitting(int $id): Response
+    {
+        $user = $this->userRepository->getUser($id);
+        if ($user === null) {
+            $this->addFlash('error', 'Benutzer nicht vorhanden!');
+            return $this->redirectToRoute('admin.users');
+        }
+
+        return $this->render('admin/user/user_sitting.html.twig', [
+            'user' => $user,
+            'sittedEntries' => $this->userSittingRepository->getWhereUser($user->id),
+            'sittingEntries' => $this->userSittingRepository->getWhereSitter($user->id),
+        ]);
     }
 
     #[Route('/admin/users/{id}/addSitting', name: 'admin.users.addSitting', methods: ['POST'])]
@@ -893,12 +908,12 @@ class UserController extends AbstractAdminController
 
         if (!filled($request->request->get('sitter_nick')) || !filled($request->request->get('sitter_password1'))) {
             $this->addFlash('error', 'Sitter Name oder Passwort fehlt!');
-            return $this->redirectToRoute('admin.users.sitting_multi', ['id' => $id]);
+            return $this->redirectToRoute('admin.users.user_sitting', ['id' => $id]);
         }
 
         if ($request->request->get('sitter_password1') != $request->request->get('sitter_password2')) {
             $this->addFlash('error', 'Sitter Passwörter stimmen nicht überein!');
-            return $this->redirectToRoute('admin.users.sitting_multi', ['id' => $id]);
+            return $this->redirectToRoute('admin.users.user_sitting', ['id' => $id]);
         }
 
         $sitting_from = parseDatePicker($request->request->get('sitting_time_from'));
@@ -909,26 +924,26 @@ class UserController extends AbstractAdminController
 
         if ($sitterId == $id) {
             $this->addFlash('error', "Man kann nicht den selben Nick im Sitting eintragen!");
-            return $this->redirectToRoute('admin.users.sitting_multi', ['id' => $id]);
+            return $this->redirectToRoute('admin.users.user_sitting', ['id' => $id]);
         }
 
         if ($diff <= 0) {
             $this->addFlash('error', "Enddatum muss größer als Startdatum sein!");
-            return $this->redirectToRoute('admin.users.sitting_multi', ['id' => $id]);
+            return $this->redirectToRoute('admin.users.user_sitting', ['id' => $id]);
         }
         if ($sitterId === null) {
             $this->addFlash('error', "Dieser Sitternick existiert nicht!");
-            return $this->redirectToRoute('admin.users.sitting_multi', ['id' => $id]);
+            return $this->redirectToRoute('admin.users.user_sitting', ['id' => $id]);
         }
 
         if ($diff > $user->sittingDays) {
             $this->addFlash('error', "So viele Tage sind nicht mehr vorhanden!!");
-            return $this->redirectToRoute('admin.users.sitting_multi', ['id' => $id]);
+            return $this->redirectToRoute('admin.users.user_sitting', ['id' => $id]);
         }
 
         $this->userSittingRepository->addEntry($id, $sitterId, $pw, $sitting_from, $sitting_to);
         $this->addFlash('success', "Sitting eingerichtet!");
-        return $this->redirectToRoute('admin.users.sitting_multi', ['id' => $id]);
+        return $this->redirectToRoute('admin.users.user_sitting', ['id' => $id]);
     }
 
     #[Route('/admin/users/{id}/deleteSitting/{sitter}', name: 'admin.users.deleteSitting', methods: ['POST'])]
@@ -944,6 +959,6 @@ class UserController extends AbstractAdminController
         $this->userSittingRepository->cancelEntry($sitter);
         $this->addFlash('success', "Eintrag gelöscht!");
 
-        return $this->redirectToRoute('admin.users.sitting_multi', ['id' => $id]);
+        return $this->redirectToRoute('admin.users.user_sitting', ['id' => $id]);
     }
 }
