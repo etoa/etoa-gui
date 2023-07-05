@@ -5,6 +5,7 @@ namespace EtoA\Controller\Admin;
 use EtoA\Admin\AdminUser;
 use EtoA\Admin\AdminUserRepository;
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Form\Type\Admin\FirstAdminUserType;
 use EtoA\HostCache\NetworkNameService;
 use EtoA\Log\LogFacility;
 use EtoA\Log\LogRepository;
@@ -96,24 +97,24 @@ class SecurityController extends AbstractController
             return $this->redirectToRoute('admin.login');
         }
 
-        if ($request->isMethod('POST')) {
-            $newAdmin = new AdminUser();
-            $newAdmin->email = (string) $request->request->get('user_email');
-            $newAdmin->name = $newAdmin->nick = (string) $request->request->get('user_nick');
+        $newAdmin = new AdminUser();
+        $form = $this->createForm(FirstAdminUserType::class, $newAdmin);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $newAdmin->nick = $newAdmin->name;
             $newAdmin->roles = ['master'];
             $this->adminUserRepository->save($newAdmin);
-            $this->adminUserRepository->setPassword($newAdmin, $passwordHasher->hashPassword(new CurrentAdmin($newAdmin), (string) $request->request->get('user_password')));
+            
+            $hashPassword = $passwordHasher->hashPassword(new CurrentAdmin($newAdmin), $newAdmin->passwordString);
+            $this->adminUserRepository->setPassword($newAdmin, $hashPassword);
 
-            return $this->render('admin/login/login-status.html.twig', [
-                'title' => 'Admin-User erstellen',
-                'msgStyle' => 'color_ok',
-                'statusMsg' => 'Benutzer wurde erstellt!',
-                'buttonMsg' => 'Weiterfahren',
-                'buttonTarget' => '/admin/',
-            ]);
+            $this->addFlash('success', 'User erstellt');
+            return $this->redirectToRoute('admin.index');
         }
 
-        return $this->render('admin/login/login-newuser.html.twig', []);
+        return $this->render('admin/login/login-newuser.html.twig', [
+            'form' => $form->createView(),
+        ]);
     }
 
     #[Route("/admin/login/check", name: "admin.login.check", methods: ['POST'])]

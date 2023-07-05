@@ -1344,6 +1344,7 @@ div.messagebox div {
     background-position: 10px center;
     font-size: 10pt;
     border-radius: 5px;
+    text-align: left;
 }
 
 .messagebox .messagetitle {

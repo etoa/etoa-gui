@@ -5,11 +5,16 @@
 {% block layoutContent %}
     <div id="layoutbox">
         <div id="header">
-            <a href=".."><img id="logo" src="{{ asset('build/images/logo.png') }}" alt="Logo" /></a>
-            <div id="slogan">Administration {{ configValue('roundname')}}</div>
+            <a href=".."><img id="logo" src="{{ asset('build/images/logo.png') }}" alt="Logo"/></a>
+            <div id="slogan">Administration {{ configValue('roundname') }}</div>
         </div>
         <div id="main">
             <div id="content">
+                {% for type, messages in app.flashes|default([]) %}
+                    {% for message in messages %}
+                        {{ component('admin_message_box', { type: type, message: message }) }}
+                    {% endfor %}
+                {% endfor %}
                 {% block content %}{% endblock %}
             </div>
         </div>

@@ -9,5 +9,7 @@ class MessageBoxComponent
 {
     public string $type = 'info';
 
+    public ?string $title = null;
+
     public string $message;
 }

@@ -1,5 +1,8 @@
 <div class="messagebox">
     <div class="{{ type }}">
-        {{ message }}
+        {% if title %}
+            <p class="messagetitle">{{ title }}</p>
+        {% endif %}
+        {{ message|raw }}
     </div>
 </div>
