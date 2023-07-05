@@ -1,23 +1,27 @@
 {% extends 'admin/layout/admin.html.twig' %}
 
 {% block content %}
-    <h1>Spieler</h1>
 
-    <a href="{{ path('admin.users') }}">Spielersuche</a> &raquo;
-    <a href="{{ path('admin.users.view', {id: user.id}) }}">{{ user.nick }}</a> &raquo;
-    <a href="{{ path('admin.users.sitting_multi', {id: user.id}) }}">Sitting & Multis</a>
+    <h1>Sitting & Multis des Spielers {{ user.nick }}</h1>
 
-    <h2>Sitting & Multis des Spielers {{ user.nick }}</h2>
+    {{ component('breadcrumbs', { items: [
+        { label: 'Spielersuche', url: path('admin.users') },
+        { label: user.nick, url: path('admin.users.view', {id: user.id}) },
+        { label: 'Sitting & Multis', url: path('admin.users.sitting_multi', {id: user.id}) },
+    ]}) }}
 
     {% if multiEntries|length > 0 %}
-        <h3>Eingetragene Multis</h3>
-        <table class="tbl">
+        <h2>Eingetragene Multis</h2>
+        <table class="table">
+            <thead>
             <tr>
                 <th>Name</th>
                 <th>Begründung</th>
                 <th>Eingetragen</th>
                 <th>Löschen</th>
             </tr>
+            </thead>
+            <tbody>
             {% for multi in multiEntries %}
                 <tr>
                     <td>
@@ -39,17 +43,21 @@
                     </td>
                 </tr>
             {% endfor %}
+            </tbody>
         </table>
     {% endif %}
 
     {% if deletedMultiEntries|length > 0 %}
-        <h3>Gelöschte Multis</h3>
-        <table class="tbl">
+        <h2>Gelöschte Multis</h2>
+        <table class="table">
+            <thead>
             <tr>
                 <th>Name</th>
                 <th>Begründung</th>
                 <th>Gelöscht</th>
             </tr>
+            </thead>
+            <tbody>
             {% for multi in deletedMultiEntries %}
                 <tr>
                     <td>
@@ -63,10 +71,11 @@
                     </td>
                 </tr>
             {% endfor %}
+            </tbody>
         </table>
     {% endif %}
 
-    <h3>Multi einrichten</h3>
+    <h2>Multi einrichten</h2>
     <form action="{{ path('admin.users.addMulti', {id: user.id}) }}" method="post">
         <table class="tbl">
             <tr>
@@ -89,14 +98,17 @@
 
     {% set used_days = 0 %}
     {% if sittedEntries|length > 0 %}
-        <h3>Wurde gesittet</h3>
-        <table class="tbl">
+        <h2>Wurde gesittet</h2>
+        <table class="table">
+            <thead>
             <tr>
                 <th>Sitter</th>
                 <th>Start</th>
                 <th>Ende</th>
                 <th>Abbrechen</th>
             </tr>
+            </thead>
+            <tbody>
             {% for sittedEntry in sittedEntries %}
                 {% set used_days = used_days + ((sittedEntry.dateTo - sittedEntry.dateFrom) / 86400) %}
                 <tr>
@@ -121,17 +133,21 @@
                     {% endif %}
                 </tr>
             {% endfor %}
+            </tbody>
         </table>
     {% endif %}
 
     {% if sittingEntries|length > 0 %}
-        <h3>Hat gesittet</h3>
-        <table class="tbl">
+        <h2>Hat gesittet</h2>
+        <table class="table">
+            <thead>
             <tr>
                 <th>Gesitteter User</th>
                 <th>Start</th>
                 <th>Ende</th>
             </tr>
+            </thead>
+            <tbody>
             {% for sittingEntry in sittingEntries %}
                 <tr>
                     <td>
@@ -145,10 +161,11 @@
                     </td>
                 </tr>
             {% endfor %}
+            </tbody>
         </table>
     {% endif %}
 
-    <h3>Sitting einrichten</h3>
+    <h2>Sitting einrichten</h2>
     <form action="{{ path('admin.users.addSitting', {id: user.id}) }}" method="post">
         <table class="tbl">
             <tr>

@@ -4,12 +4,14 @@
 
     <h1>Spieler</h1>
 
-    <a href="{{ path('admin.users') }}">Spielersuche</a> &raquo;
-    <a href="{{ path('admin.users.view', {id: user.id}) }}">{{ user.nick }}</a>
+    {{ component('breadcrumbs', { items: [
+        { label: 'Spielersuche', url: path('admin.users') },
+        { label: user.nick, url: path('admin.users.view', {id: user.id}) },
+    ]}) }}
 
     <div style="display: flex; flex-direction: row; gap: 20px">
         <div style="flex: 1">
-            <h3>Basisdaten</h3>
+            <h2>Basisdaten</h2>
             <table class="table">
                 <tr>
                     <th>ID</th>
@@ -268,7 +270,7 @@
         </div>
 
         <div style="flex: 1">
-            <h3>Statistik</h3>
+            <h2>Statistik</h2>
             <table class="table">
                 <tr>
                     <th>Punkte</th>

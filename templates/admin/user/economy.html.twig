@@ -1,18 +1,19 @@
 {% extends 'admin/layout/admin.html.twig' %}
 
 {% block content %}
-    <h1>Spieler</h1>
 
-    <a href="{{ path('admin.users') }}">Spielersuche</a> &raquo;
-    <a href="{{ path('admin.users.view', {id: user.id}) }}">{{ user.nick }}</a> &raquo;
-    <a href="{{ path('admin.users.economy', {id: user.id}) }}">Wirtschaft</a>
+    <h1>Wirtschaft des Spielers {{ user.nick }}</h1>
 
-    <h2>Wirtschaft des Spielers {{ user.nick }}</h2>
+    {{ component('breadcrumbs', { items: [
+        { label: 'Spielersuche', url: path('admin.users') },
+        { label: user.nick, url: path('admin.users.view', {id: user.id}) },
+        { label: 'Wirtschaft', url: path('admin.users.economy', {id: user.id}) },
+    ]}) }}
 
-    <h3>Rohstoff- und Produktionsübersicht</h3>
+    <h2>Rohstoff- und Produktionsübersicht</h2>
     <div>
         {% if userPlanets|length > 0 %}
-            <h4>Rohstoffe und Bewohner</h4>
+            <h3>Rohstoffe und Bewohner</h3>
             <table class="table">
                 <colgroup>
                     <col/>
@@ -76,7 +77,7 @@
                 <span style="font-weight:bold">Speicher voll</span>
             </p>
 
-            <h4>Produktion</h4>
+            <h3>Produktion</h3>
             <table class="table">
                 <colgroup>
                     <col/>
@@ -139,18 +140,18 @@
         {% endif %}
     </div>
 
-    <h3>Die fünf letzten Aufträge</h3>
+    <h2>Die fünf letzten Aufträge</h2>
     <div>
-        <h4>Bauaufträge</h4>
+        <h3>Bauaufträge</h3>
         {% include 'admin/user/user_gamelogs.html.twig' with { 'logs': buildLogs } %}
 
-        <h4>Forschungsaufträge</h4>
+        <h3>Forschungsaufträge</h3>
         {% include 'admin/user/user_gamelogs.html.twig' with { 'logs': techLogs } %}
 
-        <h4>Schiffsaufträge</h4>
+        <h3>Schiffsaufträge</h3>
         {% include 'admin/user/user_gamelogs.html.twig' with { 'logs': shipLogs } %}
 
-        <h4>Verteidigungsaufträge</h4>
+        <h3>Verteidigungsaufträge</h3>
         {% include 'admin/user/user_gamelogs.html.twig' with { 'logs': defLogs } %}
     </div>
 {% endblock %}

@@ -1,0 +1,5 @@
+<div class="breadcrumbs">
+    {% for item in items %}
+        <a href="{{ item.url }}">{{ item.label }}</a>{% if not loop.last %} &raquo; {% endif %}
+    {% endfor %}
+</div>

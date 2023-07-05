@@ -1,30 +1,37 @@
 {% extends 'admin/layout/admin.html.twig' %}
 
 {% block content %}
-    <h1>Spieler</h1>
 
-    <a href="{{ path('admin.users') }}">Spielersuche</a> &raquo;
-    <a href="{{ path('admin.users.view', {id: user.id}) }}">{{ user.nick }}</a> &raquo;
-    <a href="{{ path('admin.users.comments', {id: user.id}) }}">Logs</a>
+    <h1>Logs des Spielers {{ user.nick }}</h1>
 
-    <h2>Logs des Spielers {{ user.nick }}</h2>
+    {{ component('breadcrumbs', { items: [
+        { label: 'Spielersuche', url: path('admin.users') },
+        { label: user.nick, url: path('admin.users.view', {id: user.id}) },
+        { label: 'Logs', url: path('admin.users.logs', {id: user.id}) },
+    ]}) }}
 
-    <h3><label for="text">Neuer Logeintrag</label></h3>
-    <form action="{{ path('admin.users.logs.add', { id: user.id}) }}" method="POST">
-        <p>
-            <textarea rows="4" cols="70" name="text" id="text"></textarea>
-        </p>
-        <input type="submit" value="Speichern"/>
-    </form>
+    <h2>Neuer Logeintrag</h2>
+    <div class="card">
+        <form action="{{ path('admin.users.logs.add', { id: user.id}) }}" method="POST">
+            <p>
+                <label for="text">Inhalt</label><br>
+                <textarea rows="4" cols="70" name="text" id="text"></textarea>
+            </p>
+            <input type="submit" value="Speichern"/>
+        </form>
+    </div>
 
     <h3>Letzte Logeinträge</h3>
     {% if logs|length > 0 %}
         <table class="table">
+            <thead>
             <tr>
                 <th>Nachricht</th>
                 <th>Datum</th>
                 <th>IP</th>
             </tr>
+            </thead>
+            <tbody>
             {% for log in logs %}
                 <tr>
                     <td>{{ BBCodeToHTML(log.message)|raw }}</td>
@@ -34,6 +41,7 @@
                     </td>
                 </tr>
             {% endfor %}
+            </tbody>
         </table>
     {% else %}
         {{ component('admin_message_box', { type: 'info', message: 'Keine Logs vorhanden!' }) }}

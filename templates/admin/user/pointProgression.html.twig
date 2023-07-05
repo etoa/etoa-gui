@@ -1,16 +1,18 @@
 {% extends 'admin/layout/admin.html.twig' %}
 
 {% block content %}
-    <h1>Spieler</h1>
 
-    <a href="{{ path('admin.users') }}">Spielersuche</a> &raquo;
-    <a href="{{ path('admin.users.view', {id: user.id}) }}">{{ user.nick }}</a> &raquo;
-    <a href="{{ path('admin.users.pointProgression', {id: user.id}) }}">Punkteverlauf</a>
+    <h1>Punkteverlauf des Spielers {{ user.nick }}</h1>
 
-    <h2>Punkteverlauf des Spielers {{ user.nick }}</h2>
+    {{ component('breadcrumbs', { items: [
+        { label: 'Spielersuche', url: path('admin.users') },
+        { label: user.nick, url: path('admin.users.view', {id: user.id}) },
+        { label: 'Punkteverlauf', url: path('admin.users.pointProgression', {id: user.id}) },
+    ]}) }}
+
     <p>
         <img src="{{ path('admin.images.stats', { user: user.id }) }}?limit={{ limit }}&start={{ start }}&end={{ end }}"
-             alt="Diagramm"/>
+             width="600" height="400" alt="Diagramm"/>
     </p>
     <form action="{{ path('admin.users.pointProgression', {id: user.id}) }}" method="GET" id="rangeForm">
         <p>

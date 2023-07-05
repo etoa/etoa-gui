@@ -1,18 +1,21 @@
 {% extends 'admin/layout/admin.html.twig' %}
 
 {% block content %}
+
+    <h1>Spieler bearbeiten</h1>
+
+    {{ component('breadcrumbs', { items: [
+        { label: 'Spielersuche', url: path('admin.users') },
+        { label: user.nick, url: path('admin.users.view', {id: user.id}) },
+        { label: 'Spieler bearbeiten', url: path('admin.users.edit', {id: user.id}) },
+    ]}) }}
+
     <script type="text/javascript">
         function loadAllianceRanks(val) {
             const elem = document.getElementById('user_alliance_id');
             xajax_allianceRankSelector('ars', 'user_alliance_rank_id', val, elem.options[elem.selectedIndex].value);
         }
     </script>
-
-    <h1>Spieler</h1>
-
-    <a href="{{ path('admin.users') }}">Spielersuche</a> &raquo;
-    <a href="{{ path('admin.users.view', {id: user.id}) }}">{{ user.nick }}</a> &raquo;
-    <a href="{{ path('admin.users.edit', {id: user.id}) }}">Spieler bearbeiten</a>
 
     <form action="{{ path('admin.users.edit', {id: user.id}) }}" method="post">
         <input type="hidden" id="tabactive" name="tabactive" value=""/>

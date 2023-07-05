@@ -2,13 +2,13 @@
 
 {% block content %}
 
-    <h1>Spieler</h1>
+    <h1>Loginfehler des Spielers {{ user.nick }}</h1>
 
-    <a href="{{ path('admin.users') }}">Spielersuche</a> &raquo;
-    <a href="{{ path('admin.users.view', {id: user.id}) }}">{{ user.nick }}</a> &raquo;
-    <a href="{{ path('admin.users.user_login_failures', {id: user.id}) }}">Loginfehler</a>
-
-    <h2>Loginfehler des Spielers {{ user.nick }}</h2>
+    {{ component('breadcrumbs', { items: [
+        { label: 'Spielersuche', url: path('admin.users') },
+        { label: user.nick, url: path('admin.users.view', {id: user.id}) },
+        { label: 'Loginfehler', url: path('admin.users.user_login_failures', {id: user.id}) },
+    ]}) }}
 
     {% if failures|length > 0 %}
         <table class="table">
@@ -23,14 +23,14 @@
             <tbody>
             {% for failure in failures %}
                 <tr>
-                    <td>" . StringUtils::formatDate($failure->time) . "</td>
+                    <td>{{ formatTimestamp(failure.time) }}</td>
                     <td>
                         <a href="{{ path('admin.users.ips') }}?host={{ failure.ip }}">{{ failure.ip }}</a>
                     </td>
                     <td>
                         <a href="{{ path('admin.users.ips') }}?host={{ failureHosts[loop.index0] }}">{{ failureHosts[loop.index0] }}</a>
                     </td>
-                    <td>" . $failure->client . "</td>
+                    <td>{{ failure.client }}</td>
                 </tr>
             {% endfor %}
             </tbody>

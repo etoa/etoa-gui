@@ -1,15 +1,16 @@
 {% extends 'admin/layout/admin.html.twig' %}
 
 {% block content %}
-    <h1>Spieler</h1>
 
-    <a href="{{ path('admin.users') }}">Spielersuche</a> &raquo;
-    <a href="{{ path('admin.users.view', {id: user.id}) }}">{{ user.nick }}</a> &raquo;
-    <a href="{{ path('admin.users.messages', {id: user.id}) }}">Nachrichten</a>
+    <h1>Nachrichten des Spielers {{ user.nick }}</h1>
 
-    <h2>Nachrichten des Spielers {{ user.nick }}</h2>
+    {{ component('breadcrumbs', { items: [
+        { label: 'Spielersuche', url: path('admin.users') },
+        { label: user.nick, url: path('admin.users.view', {id: user.id}) },
+        { label: 'Nachrichten', url: path('admin.users.messages', {id: user.id}) },
+    ]}) }}
 
-    <h3>Nachricht senden</h3>
+    <h2>Nachricht senden</h2>
     <div class="card">
         <form action="{{ path('admin.users.messages.send', { id: user.id}) }}" method="POST">
             <p>
@@ -24,7 +25,7 @@
         </form>
     </div>
 
-    <h3>Letzte {{ limit }} Nachrichten</h3>
+    <h2>Letzte {{ limit }} Nachrichten</h2>
     {% if messages|length > 0 %}
         <table class="table">
             <thead>

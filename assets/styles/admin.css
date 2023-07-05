@@ -808,6 +808,7 @@ tbody tr:nth-child(even),
     border: 1px solid #bbbbbb;
     padding: 5px 15px;
     background: #f1f1f1;
+    border-radius: 5px;
 }
 
 /******************
@@ -1648,4 +1649,11 @@ input.userDeletedColor {
 .alien,
 .tb .alien {
     color: #000;
+}
+
+/**
+* Breadcrumbs
+ */
+.breadcrumbs {
+    margin-bottom: 10px;
 }

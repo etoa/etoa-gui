@@ -1,23 +1,25 @@
 {% extends 'admin/layout/admin.html.twig' %}
 
 {% block content %}
-    <h1>Spieler</h1>
 
-    <a href="{{ path('admin.users') }}">Spielersuche</a> &raquo;
-    <a href="{{ path('admin.users.view', {id: user.id}) }}">{{ user.nick }}</a> &raquo;
-    <a href="{{ path('admin.users.comments', {id: user.id}) }}">Kommentare</a>
+    <h1>Kommentare zum Spieler {{ user.nick }}</h1>
 
-    <h2>Kommentare zum Spieler {{ user.nick }}</h2>
+    {{ component('breadcrumbs', { items: [
+        { label: 'Spielersuche', url: path('admin.users') },
+        { label: user.nick, url: path('admin.users.view', {id: user.id}) },
+        { label: 'Kommentare', url: path('admin.users.comments', {id: user.id}) },
+    ]}) }}
 
+    <h2>Neuer Kommentar</h2>
     <div class="card">
         <form action="{{ path('admin.users.comments.add', { id: user.id}) }}" method="POST">
-            <h3><label for="text">Neuer Kommentar</label></h3>
+            <label for="text">Kommentar</label><br>
             <textarea rows="4" cols="70" id="text" name="text"></textarea><br/><br/>
             <input type="submit" value="Speichern"/>
         </form>
     </div>
 
-    <h3>Gespeicherte Kommentare</h3>
+    <h2>Gespeicherte Kommentare</h2>
     {% if comments|length > 0 %}
         <table class="table">
             <colgroup>

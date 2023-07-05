@@ -1,16 +1,18 @@
 {% extends 'admin/layout/admin.html.twig' %}
 
 {% block content %}
-    <h1>Spieler</h1>
 
-    <a href="{{ path('admin.users') }}">Spielersuche</a> &raquo;
-    <a href="{{ path('admin.users.view', {id: user.id}) }}">{{ user.nick }}</a> &raquo;
-    <a href="{{ path('admin.users.tickets', {id: user.id}) }}">Tickets</a>
+    <h1>Tickets des Spielers {{ user.nick }}</h1>
 
-    <h2>Tickets des Spielers {{ user.nick }}</h2>
+    {{ component('breadcrumbs', { items: [
+        { label: 'Spielersuche', url: path('admin.users') },
+        { label: user.nick, url: path('admin.users.view', {id: user.id}) },
+        { label: 'Tickets', url: path('admin.users.tickets', {id: user.id}) },
+    ]}) }}
 
     {% if tickets|length > 0 %}
-        <table class="tb" style="width: 100%">
+        <table class="table">
+            <thead>
             <tr>
                 <th>ID</th>
                 <th>Status</th>
@@ -18,6 +20,8 @@
                 <th>Zugeteilter Admin</th>
                 <th>Letzte Änderung</th>
             </tr>
+            </thead>
+            <tbody>
             {% for ticket in tickets %}
                 <tr>
                     <td>
@@ -29,6 +33,7 @@
                     <td>{{ formatTimestamp(ticket.timestamp) }}</td>
                 </tr>
             {% endfor %}
+            </tbody>
         </table>
     {% else %}
         {{ component('admin_message_box', { type: 'info', message: 'Dieser User hat keine Tickets' }) }}
