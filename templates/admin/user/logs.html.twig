@@ -12,13 +12,7 @@
 
     <h2>Neuer Logeintrag</h2>
     <div class="card">
-        <form action="{{ path('admin.users.logs.add', { id: user.id}) }}" method="POST">
-            <p>
-                <label for="text">Inhalt</label><br>
-                <textarea rows="4" cols="70" name="text" id="text"></textarea>
-            </p>
-            <input type="submit" value="Speichern"/>
-        </form>
+        {{ form(form) }}
     </div>
 
     <h3>Letzte Logeinträge</h3>

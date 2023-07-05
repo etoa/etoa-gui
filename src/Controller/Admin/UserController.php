@@ -10,6 +10,8 @@ use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Defense\DefenseDataRepository;
 use EtoA\Design\DesignsService;
 use EtoA\Form\Request\Admin\UserCreateRequest;
+use EtoA\Form\Request\Admin\UserLogEntryRequest;
+use EtoA\Form\Type\Admin\ManualUserLogEntryType;
 use EtoA\Form\Type\Admin\UserCreateType;
 use EtoA\Help\TicketSystem\Ticket;
 use EtoA\Help\TicketSystem\TicketRepository;
@@ -108,7 +110,7 @@ class UserController extends AbstractAdminController
         }
 
         return $this->render('admin/user/new.html.twig', [
-            'form' => $form,
+            'form' => $form->createView(),
         ]);
     }
 
@@ -700,7 +702,7 @@ class UserController extends AbstractAdminController
         return $this->redirectToRoute('admin.users.comments', ['id' => $id]);
     }
 
-    #[Route('/admin/users/{id}/logs', name: 'admin.users.logs', methods: ['GET'])]
+    #[Route('/admin/users/{id}/logs', name: 'admin.users.logs')]
     #[IsGranted('ROLE_ADMIN_TRIAL-ADMIN')]
     public function logs(int $id, Request $request): Response
     {
@@ -710,33 +712,22 @@ class UserController extends AbstractAdminController
             return $this->redirectToRoute('admin.users');
         }
 
+        $userLogEntryRequest = new UserLogEntryRequest();
+        $form = $this->createForm(ManualUserLogEntryType::class, $userLogEntryRequest);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->userService->addToUserLog($id, "settings", $userLogEntryRequest->message);
+            $this->addFlash('success', 'Log hinzugefügt');
+            return $this->redirectToRoute('admin.users.logs', ['id' => $id]);
+        }
+
         $limit = $request->query->getInt('limit', 100);
 
         return $this->render('admin/user/logs.html.twig', [
             'user' => $user,
             'logs' => $this->userLogRepository->getUserLogs($id, $limit),
+            'form' => $form->createView(),
         ]);
-    }
-
-    #[Route('/admin/users/{id}/logs', name: 'admin.users.logs.add', methods: ['POST'])]
-    #[IsGranted('ROLE_ADMIN_TRIAL-ADMIN')]
-    public function addLog(int $id, Request $request): Response
-    {
-        $user = $this->userRepository->getUser($id);
-        if ($user === null) {
-            $this->addFlash('error', 'Benutzer nicht vorhanden!');
-            return $this->redirectToRoute('admin.users');
-        }
-
-        if (blank($request->get('text'))) {
-            $this->addFlash('error', 'Text fehlt!');
-            return $this->redirectToRoute('admin.users.logs', ['id' => $id]);
-        }
-
-        $this->userService->addToUserLog($id, "settings", $request->get('text'));
-
-        $this->addFlash('success', 'Log hinzugefügt');
-        return $this->redirectToRoute('admin.users.logs', ['id' => $id]);
     }
 
     #[Route('/admin/users/{id}/tickets', name: 'admin.users.tickets', methods: ['GET'])]
