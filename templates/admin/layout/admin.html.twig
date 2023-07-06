@@ -3,92 +3,87 @@
 {% import 'admin/macros.html.twig' as macros %}
 
 {% block layoutContent %}
-    <div id="layoutbox">
-        <div id="header">
-            <a href="."><img id="logo" src="{{ asset('build/images/logo.png') }}" alt="Logo"/></a>
-            <div id="slogan">Administration {{ configValue('roundname') }}</div>
-            <div id="headerbar">
-                <b>Zeit:</b>
-                <span id="servertime">{{ serverTime() }}</span> &nbsp;
-                Eingeloggt als&nbsp;
-                <ul id="headernav">
-                    <li><a href="{{ path('admin.profile') }}">{{ app.user.username }}</a></li>
-                    <li><a href="{{ path('admin.admin_management') }}">Adminliste</a></li>
-                    {% if isAdminAllowed(userRoles, ['master', 'super-admin', 'game-admin', 'trial-game-admin']) %}
+    <header class="app-header">
+        <div class="branding">
+            <a href="{{ path('admin.index') }}"><img class="logo" src="{{ asset('build/images/logo.png') }}"
+                                                     alt="Logo"/></a>
+            <div class="slogan">Administration {{ configValue('roundname') }}</div>
+        </div>
+        <nav class="header-nav">
+            <b>Zeit:</b>
+            <span id="servertime">{{ serverTime() }}</span> &nbsp;
+            Admin&nbsp;
+            <ul id="headernav">
+                <li><a href="{{ path('admin.profile') }}">{{ app.user.username }}</a></li>
+                {% if isAdminAllowed(userRoles, ['master', 'super-admin', 'game-admin', 'trial-game-admin']) %}
+                    <li>
+                        <a href="{{ path('admin.ticket.active') }}">{{ numTickets > 0 ? 'Tickets (' ~ numTickets ~ ')' : 'Tickets' }}</a>
+                    </li>
+                {% endif %}
+                <li>
+                    <a href="{{ path('admin.notepad') }}">{{ numNotes > 0 ? 'Notizblock (' ~ numNotes ~ ')' : 'Notizblock' }}
+                </li>
+                <li><a href="{{ etoaUrl('login') }}" target="_blank">Spiel-Login</a></li>
+                <li><a href="/admin/logout">Logout</a></li>
+            </ul>
+        </nav>
+    </header>
+    <section class="app-main">
+        <aside class="app-sidebar">
+            <div class="quick-search" id="quicksearch" data-controller="quick-search">
+                <select data-quick-search-target="input"></select>
+            </div>
+            <ul class="navmenu">
+                {% for key,item in navMenu %}
+                    {% if isAdminAllowed(userRoles, item.roles) %}
                         <li>
-                            <a href="{{ path('admin.ticket.active') }}">{{ numTickets > 0 ? 'Tickets (' ~ numTickets ~ ')' : 'Tickets' }}</a>
+                            <a
+                                    {% if item.route|default(false) %}
+                                        href="{{ path(item.route) }}"
+                                        {% if item.route == app.request.get('_route') %}class="active"{% endif %}
+                                        active
+                                    {% else %}
+                                        href="/admin/?page={{ item.page }}{% if item.sub|default(false) %}&amp;sub={{ item.sub }}{% endif %}"
+                                        {% if page == item.page %}class="active"{% endif %}
+                                    {% endif %}
+                            >
+                                {{ key }}
+                            </a>
+                            {% if ((app.request.get('_route') == 'legacy.admin' and item.page == page) or item.route|default(false) == app.request.get('_route')) and item.children|default(false) and item.children|length %}
+                                <ul class="navsubmenu">
+                                    {% for childKey,childItem in item.children %}
+                                        {% if isAdminAllowed(userRoles, childItem.roles) %}
+                                            <li {% if childItem.bar|default(false) %}class="bar"{% endif %}>
+                                                <a
+                                                        {% if childItem.route|default(false) %}
+                                                            href="{{ path(childItem.route) }}"
+                                                            {% if childItem.route == app.request.get('_route') %}class="active"{% endif %}
+                                                            active
+                                                        {% else %}
+                                                            href="/admin/?page={{ item.page }}&amp;sub={{ childItem.sub }}"
+                                                            {% if page ==  item.page and sub|default('') == childItem.sub and sub|default(false) %} class="active"{% endif %}
+                                                        {% endif %}
+                                                >{{ childKey }}</a>
+                                            </li>
+                                        {% endif %}
+                                    {% endfor %}
+                                </ul>
+                            {% endif %}
                         </li>
                     {% endif %}
-                    <li>
-                        <a href="{{ path('admin.notepad') }}">{{ numNotes > 0 ? 'Notizblock (' ~ numNotes ~ ')' : 'Notizblock' }}
-                    </li>
-                    <li><a href="{{ etoaUrl('login') }}" target="_blank">Spiel-Login</a></li>
-                    <li><a href="/admin/logout">Logout</a></li>
-                </ul>
-            </div>
-        </div>
-        <div id="main">
-            <div id="sidebar">
-                <div id="quicksearch" data-controller="quick-search">
-                    <select data-quick-search-target="input">
-                    </select>
-                </div>
-
-                <ul class="navmenu">
-                    {% for key,item in navMenu %}
-                        {% if isAdminAllowed(userRoles, item.roles) %}
-                            <li>
-                                <a
-                                        {% if item.route|default(false) %}
-                                            href="{{ path(item.route) }}"
-                                            {% if item.route == app.request.get('_route') %}class="active"{% endif %}
-                                            active
-                                        {% else %}
-                                            href="/admin/?page={{ item.page }}{% if item.sub|default(false) %}&amp;sub={{ item.sub }}{% endif %}"
-                                            {% if page == item.page %}class="active"{% endif %}
-                                        {% endif %}
-                                >
-                                    {{ key }}
-                                </a>
-                                {% if ((app.request.get('_route') == 'legacy.admin' and item.page == page) or item.route|default(false) == app.request.get('_route')) and item.children|default(false) and item.children|length %}
-                                    <ul class="navsubmenu">
-                                        {% for childKey,childItem in item.children %}
-                                            {% if isAdminAllowed(userRoles, childItem.roles) %}
-                                                <li {% if childItem.bar|default(false) %}class="bar"{% endif %}>
-                                                    <a
-                                                            {% if childItem.route|default(false) %}
-                                                                href="{{ path(childItem.route) }}"
-                                                                {% if childItem.route == app.request.get('_route') %}class="active"{% endif %}
-                                                                active
-                                                            {% else %}
-                                                                href="/admin/?page={{ item.page }}&amp;sub={{ childItem.sub }}"
-                                                                {% if page ==  item.page and sub|default('') == childItem.sub and sub|default(false) %} class="active"{% endif %}
-                                                            {% endif %}
-                                                    >{{ childKey }}</a>
-                                                </li>
-                                            {% endif %}
-                                        {% endfor %}
-                                    </ul>
-                                {% endif %}
-                            </li>
-                        {% endif %}
-                    {% endfor %}
-                </ul>
-
-            </div>
-            <div id="content">
-                {% for label, messages in app.flashes|default([]) %}
-                    {% for message in messages %}
-                        {{ macros.messagebox(message, label) }}
-                    {% endfor %}
                 {% endfor %}
-
-                {% block content %}{% endblock %}
-            </div>
-            <br class="clear"/>
-        </div>
-        <div id="footer">
-            &copy; {{ serverDate().format('Y') }} by etoa.ch | generiert in {{ renderTime() }} sec
-        </div>
-    </div>
+            </ul>
+        </aside>
+        <main class="app-content">
+            {% for label, messages in app.flashes|default([]) %}
+                {% for message in messages %}
+                    {{ macros.messagebox(message, label) }}
+                {% endfor %}
+            {% endfor %}
+            {% block content %}{% endblock %}
+        </main>
+    </section>
+    <footer class="app-footer">
+        &copy; {{ serverDate().format('Y') }} by etoa.ch | generiert in {{ renderTime() }} sec
+    </footer>
 {% endblock %}

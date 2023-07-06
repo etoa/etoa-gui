@@ -1,22 +1,25 @@
 {% extends 'admin/layout/base.html.twig' %}
 
-{% set bodyClass = 'login' %}
+{% set htmlClass = 'h-100' %}
+{% set bodyClass = 'h-100' %}
 
 {% block layoutContent %}
-    <div id="layoutbox">
-        <div id="header">
-            <a href=".."><img id="logo" src="{{ asset('build/images/logo.png') }}" alt="Logo"/></a>
-            <div id="slogan">Administration {{ configValue('roundname') }}</div>
-        </div>
-        <div id="main">
-            <div id="content">
-                {% for type, messages in app.flashes|default([]) %}
-                    {% for message in messages %}
-                        {{ component('admin_message_box', { type: type, message: message }) }}
+    <div class="app-login">
+        <div class="login-container">
+            <header class="branding">
+                <a href=".."><img class="logo" src="{{ asset('build/images/logo.png') }}" alt="Logo"/></a>
+                <div class="slogan">Administration {{ configValue('roundname') }}</div>
+            </header>
+            <main class="main">
+                <div id="content">
+                    {% for type, messages in app.flashes|default([]) %}
+                        {% for message in messages %}
+                            {{ component('admin_message_box', { type: type, message: message }) }}
+                        {% endfor %}
                     {% endfor %}
-                {% endfor %}
-                {% block content %}{% endblock %}
-            </div>
+                    {% block content %}{% endblock %}
+                </div>
+            </main>
         </div>
     </div>
 {% endblock %}

@@ -38,316 +38,12 @@
     }
 }
 
-/*
-  * Description: Reset css value to meaningfull default values, so all browsers have the same starting conditions
-  */
-/* Reset all elements */
-* {
-    padding: 0px;
-    margin: 0px;
-    border: none;
-}
-
-/* Apply default styles from http://www.w3.org/TR/CSS2/sample.html */
-html,
-address,
-blockquote,
-body,
-dd,
-div,
-dl,
-dt,
-fieldset,
-form,
-frame,
-frameset,
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
-noframes,
-ol,
-p,
-ul,
-center,
-dir,
-hr,
-menu,
-pre {
-    display: block;
-}
-
-li {
-    display: list-item;
-}
-
-head {
-    display: none;
-}
-
-table {
-    display: table;
-}
-
-tr {
-    display: table-row;
-}
-
-thead {
-    display: table-header-group;
-}
-
-tbody {
-    display: table-row-group;
-}
-
-tfoot {
-    display: table-footer-group;
-}
-
-col {
-    display: table-column;
-}
-
-colgroup {
-    display: table-column-group;
-}
-
-td,
-th {
-    display: table-cell;
-}
-
-caption {
-    display: table-caption;
-}
-
-th {
-    font-weight: bolder;
-    text-align: center;
-}
-
-caption {
-    text-align: center;
-}
-
-body {
-    margin: 8px;
-}
-
-h1 {
-    font-size: 2em;
-    margin: 0.67em 0;
-}
-
-h2 {
-    font-size: 1.5em;
-    margin: 0.75em 0;
-}
-
-h3 {
-    font-size: 1.17em;
-    margin: 0.83em 0;
-}
-
-h4,
-p,
-blockquote,
-ul,
-fieldset,
-form,
-ol,
-dl,
-dir,
-menu {
-    margin: 1.12em 0;
-}
-
-h5 {
-    font-size: 0.83em;
-    margin: 1.5em 0;
-}
-
-h6 {
-    font-size: 0.75em;
-    margin: 1.67em 0;
-}
-
-h1,
-h2,
-h3,
-h4,
-h5,
-h6,
-b,
-strong {
-    font-weight: bolder;
-}
-
-blockquote {
-    margin-left: 40px;
-    margin-right: 40px;
-}
-
-i,
-cite,
-em,
-var,
-address {
-    font-style: italic;
-}
-
-pre,
-tt,
-code,
-kbd,
-samp {
-    font-family: monospace;
-}
-
-pre {
-    white-space: pre;
-}
-
-button,
-textarea,
-input,
-select {
-    display: inline-block;
-}
-
-big {
-    font-size: 1.17em;
-}
-
-small,
-sub,
-sup {
-    font-size: 0.83em;
-}
-
-sub {
-    vertical-align: sub;
-}
-
-sup {
-    vertical-align: super;
-}
-
-table {
-    border-spacing: 2px;
-}
-
-thead,
-tbody,
-tfoot {
-    vertical-align: middle;
-}
-
-td,
-th,
-tr {
-    vertical-align: inherit;
-}
-
-s,
-strike,
-del {
-    text-decoration: line-through;
-}
-
-hr {
-    border: 1px inset;
-}
-
-ol,
-ul,
-dir,
-menu,
-dd {
-    margin-left: 40px;
-}
-
-ol {
-    list-style-type: decimal;
-}
-
-ol ul,
-ul ol,
-ul ul,
-ol ol {
-    margin-top: 0;
-    margin-bottom: 0;
-}
-
-u,
-ins {
-    text-decoration: underline;
-}
-
-br:before {
-    content: "\a";
-    white-space: pre-line;
-}
-
-center {
-    text-align: center;
-}
-
-:link,
-:visited {
-    text-decoration: underline;
-}
-
-/* Begin bidirectionality settings (do not change) */
-BDO[DIR="ltr"] {
-    direction: ltr;
-    unicode-bidi: bidi-override;
-}
-
-BDO[DIR="rtl"] {
-    direction: rtl;
-    unicode-bidi: bidi-override;
-}
-
-*[DIR="ltr"] {
-    direction: ltr;
-    unicode-bidi: embed;
-}
-
-*[DIR="rtl"] {
-    direction: rtl;
-    unicode-bidi: embed;
-}
-
-@media print {
-    h1 {
-        page-break-before: always;
-    }
-
-    h1,
-    h2,
-    h3,
-    h4,
-    h5,
-    h6 {
-        page-break-after: avoid;
-    }
-
-    ul,
-    ol,
-    dl {
-        page-break-before: avoid;
-    }
-}
-
 /******************
   * Layout          *
   ******************/
+
 body {
-    margin: 0px;
+    margin: 0;
     color: black;
     font-family: verdana, sans-serif, Arial;
     font-size: 10pt;
@@ -355,83 +51,62 @@ body {
     text-align: left;
 }
 
-#layoutbox {
-    margin: 0px auto 20px;
-    padding: 0;
-    display: block;
-    width: 95%;
-    min-width: 950px;
-}
-
-#header {
+.app-header {
     margin: 0;
     padding: 0;
-    width: 100%;
     height: 130px;
     background: url("../images/admin/header.png") no-repeat center top;
-    position: relative;
     color: white;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 }
 
-#logo {
-    position: absolute;
-    top: 30px;
-    left: 10px;
-    cursor: pointer;
+.app-header .branding {
+    display: flex;
+    align-items: center;
+    gap: 20px;
 }
 
-#slogan {
-    position: absolute;
-    top: 45px;
-    left: 310px;
+.app-header .branding .slogan {
     font-size: 24pt;
     font-family: "Droid Sans", Verdana, sans-serif;
     text-shadow: #2565b0 2px 2px 3px, #2565b0 -2px 2px 3px, #2565b0 -2px -2px 3px,
     #2565b0 2px -2px 3px;
 }
 
-#headerbar {
-    position: absolute;
-    top: 5px;
-    right: 5px;
+.header-nav {
     font-size: 9pt;
-}
-
-#main {
-    background-color: #f8f8f8;
-    border-radius: 20px;
-    box-shadow: #aaa 0px 0px 10px;
-    padding-right: 10px;
-    position: relative;
-    min-height: 600px;
-}
-
-#sidebar {
-    position: absolute;
-    top: 25px;
-    left: 0px;
-    width: 170px;
-    font-size: 0.9em;
-    margin-bottom: 25px;
-    padding: 10px 20px 10px 10px;
-    background: #ddd;
-    border-radius: 0 20px 20px 0;
-}
-
-#content {
-    margin: 0;
-    padding: 0;
-    padding-left: 220px;
+    height: 100%;
+    padding-top: 10px;
     padding-right: 20px;
-    padding-bottom: 20px;
-    padding-top: 19px;
-    margin-left: 10px;
+    box-sizing: border-box;
+}
+
+.app-main {
+    background: white;
+    display: flex;
+}
+
+.app-sidebar {
+    padding: 20px 10px;
+    background: #dddddd;
     font-size: 0.9em;
 }
 
-#footer {
+.app-sidebar .quick-search {
+    margin-bottom: 10px;
+}
+
+.app-content {
+    flex: 1;
+    padding: 10px 25px;
+    background-color: #f8f8f8;
+}
+
+.app-footer {
     color: #bbb;
-    padding: 12px 0 0 0;
+    padding: 12px 0 12px 0;
     background: none;
     font-size: 8pt;
     text-align: center;
@@ -453,7 +128,7 @@ a:hover {
 }
 
 h1 {
-    margin: 6px 0px 10px 0px;
+    margin: 6px 0 10px 0;
     text-align: left;
     font-size: 20pt;
     font-weight: normal;
@@ -600,7 +275,7 @@ button:hover,
         background-image: url("../images/icons/tick.png"),
         linear-gradient(to bottom, #ffffff 0%, #cccccc 100%);
         background-repeat: no-repeat;
-        background-position: 6px 5px, 0px 0px;
+        background-position: 6px 5px, 0 0;
         padding-left: 25px;
     }
 
@@ -618,7 +293,7 @@ button:hover,
         background-image: url("../images/icons/cross.png"),
         linear-gradient(to bottom, #ffffff 0%, #cccccc 100%);
         background-repeat: no-repeat;
-        background-position: 6px 5px, 0px 0px;
+        background-position: 6px 5px, 0 0;
         padding-left: 25px;
     }
 
@@ -636,7 +311,7 @@ button:hover,
         background-image: url("../images/icons/add.png"),
         linear-gradient(to bottom, #ffffff 0%, #cccccc 100%);
         background-repeat: no-repeat;
-        background-position: 6px 5px, 0px 0px;
+        background-position: 6px 5px, 0 0;
         padding-left: 25px;
     }
 
@@ -654,7 +329,7 @@ button:hover,
         background-image: url("../images/icons/delete.png"),
         linear-gradient(to bottom, #ffffff 0%, #cccccc 100%);
         background-repeat: no-repeat;
-        background-position: 6px 5px, 0px 0px;
+        background-position: 6px 5px, 0 0;
         padding-left: 25px;
     }
 
@@ -838,7 +513,7 @@ tbody tr:nth-child(even),
 .navmenu li {
     width: 180px;
     padding: 2px 2px 2px 8px;
-    margin: 0px auto;
+    margin: 0 auto;
 }
 
 .navmenu li a {
@@ -855,8 +530,8 @@ tbody tr:nth-child(even),
 
 .navsubmenu li {
     width: 150px;
-    padding: 0px 0px 1px 2px;
-    margin: 0px 0px 0px 15px;
+    padding: 0 0 1px 2px;
+    margin: 0 0 0 15px;
 }
 
 .navsubmenu li.bar {
@@ -943,24 +618,45 @@ tbody tr:nth-child(even),
 /******************
   * Login          *
   ******************/
-body.login {
-    height: auto;
+.h-100 {
+    height: 100%;
 }
 
-body.login #layoutbox {
-    width: 900px;
-    min-width: 0px;
-    margin: 0px auto;
+.app-login {
+    height: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.login-container {
+    padding: 0;
+    display: block;
+    margin: 0 auto;
     text-align: center;
 }
 
-body.login #content {
-    padding-left: 20px;
+.login-container .branding {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    padding: 20px;
 }
 
-body.login #main {
-    min-height: 0;
-    padding: 50px 50px;
+.login-container .branding .slogan {
+    font-size: 24pt;
+    font-family: "Droid Sans", Verdana, sans-serif;
+    text-shadow: #2565b0 2px 2px 3px, #2565b0 -2px 2px 3px, #2565b0 -2px -2px 3px,
+    #2565b0 2px -2px 3px;
+    color: white;
+}
+
+.login-container .main {
+    background: #ffffff;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 100px;
+    box-shadow: #2565b0 0 0 10px;
 }
 
 .login_form {
@@ -983,7 +679,7 @@ body.login #main {
 .login_form input[type="text"],
 .login_form input[type="email"],
 .login_form input[type="password"] {
-    padding: 2px;
+    padding: 5px;
     vertical-align: middle;
 }
 
@@ -992,7 +688,7 @@ body.login #main {
 }
 
 .loginmsg {
-    margin: 10px 0px 20px 0px;
+    margin: 10px 0 20px 0;
 }
 
 /******************
@@ -1017,7 +713,7 @@ body.login #main {
     border-top: none;
     border-bottom: none;
     background: #ddd;
-    padding: 0px;
+    padding: 0;
     display: none;
 }
 
@@ -1054,7 +750,7 @@ body.login #main {
     border-top: none;
     border-bottom: none;
     background: #ddd;
-    padding: 0px;
+    padding: 0;
     display: none;
 }
 
@@ -1201,7 +897,7 @@ body.login #main {
 
 /* Techtree */
 .techtreeItemContainer {
-    margin: 0px auto 10px auto;
+    margin: 0 auto 10px auto;
     display: table;
     text-align: center;
     max-width: 580px;
@@ -1226,7 +922,7 @@ body.login #main {
 
 .techtreeItemLevel {
     position: absolute;
-    top: 0px;
+    top: 0;
     background: url("../designs/official/Discovery/images/transheader1.png") top right;
     color: #fff;
     padding: 3px 15px 3px 3px;
@@ -1234,7 +930,7 @@ body.login #main {
 
 .techtreeItemName {
     position: absolute;
-    bottom: 0px;
+    bottom: 0;
     font-size: 8pt;
     padding: 5px;
     background: url("../designs/official/Discovery/images/trans1.png");
@@ -1318,13 +1014,13 @@ body.login #main {
   * Message boxes
   */
 div.messagebox {
-    padding: 0px;
-    margin: 0px;
+    padding: 0;
+    margin: 0;
 }
 
 div.messagebox div {
     position: relative;
-    margin: 10px 0px 20px 0px;
+    margin: 10px 0 20px 0;
     padding: 15px 10px 15px 55px;
     border: 1px solid;
     background-repeat: no-repeat;
@@ -1500,69 +1196,69 @@ p.notice {
 .resmetal,
 .tb .resmetal {
     background: url("../images/resources/metal_s.png") 1px 1px no-repeat;
-    padding: 0px 10px 1px 19px;
+    padding: 0 10px 1px 19px;
     color: #cfc8c2;
 }
 
 .rescrystal,
 .tb .rescrystal {
     background: url("../images/resources/crystal_s.png") 1px 1px no-repeat;
-    padding: 0px 10px 1px 19px;
+    padding: 0 10px 1px 19px;
     color: #c2e2ef;
 }
 
 .resplastic,
 .tb .resplastic {
     background: url("../images/resources/plastic_s.png") 1px 1px no-repeat;
-    padding: 0px 10px 1px 19px;
+    padding: 0 10px 1px 19px;
     color: #e5d1ef;
 }
 
 .resfuel,
 .tb .resfuel {
     background: url("../images/resources/fuel_s.png") 1px 1px no-repeat;
-    padding: 0px 10px 1px 19px;
+    padding: 0 10px 1px 19px;
     color: #a4c1ef;
 }
 
 .resfood,
 .tb .resfood {
     background: url("../images/resources/food_s.png") 1px 1px no-repeat;
-    padding: 0px 10px 1px 19px;
+    padding: 0 10px 1px 19px;
     color: #c2ecc2;
 }
 
 .respeople,
 .tb .respeople {
     background: url("../images/resources/people_s.png") 1px 1px no-repeat;
-    padding: 0px 10px 1px 19px;
+    padding: 0 10px 1px 19px;
     color: #ecc8b2;
 }
 
 .respower,
 .tb .respower {
     background: url("../images/resources/power_s.png") 1px 1px no-repeat;
-    padding: 0px 10px 1px 19px;
+    padding: 0 10px 1px 19px;
     color: #efecc2;
 }
 
 .respoweru,
 .tb .respoweru {
     background: url("../images/resources/poweru_s.png") 1px 1px no-repeat;
-    padding: 0px 10px 1px 19px;
+    padding: 0 10px 1px 19px;
     color: #ecb2b2;
 }
 
 .restime,
 .tb .restime {
     background: url("../images/resources/time_s.png") 1px 1px no-repeat;
-    padding: 0px 10px 1px 19px;
+    padding: 0 10px 1px 19px;
 }
 
 .resfield,
 .tb .resfield {
     background: url("../images/resources/field_s.png") 1px 1px no-repeat;
-    padding: 0px 10px 1px 19px;
+    padding: 0 10px 1px 19px;
 }
 
 .resfullcolor,
