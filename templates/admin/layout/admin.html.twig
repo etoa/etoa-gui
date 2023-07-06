@@ -5,8 +5,8 @@
 {% block layoutContent %}
     <div id="layoutbox">
         <div id="header">
-            <a href="."><img id="logo" src="{{ asset('build/images/logo.png') }}" alt="Logo" /></a>
-            <div id="slogan">Administration {{ configValue('roundname')}}</div>
+            <a href="."><img id="logo" src="{{ asset('build/images/logo.png') }}" alt="Logo"/></a>
+            <div id="slogan">Administration {{ configValue('roundname') }}</div>
             <div id="headerbar">
                 <b>Zeit:</b>
                 <span id="servertime">{{ serverTime() }}</span> &nbsp;
@@ -15,9 +15,13 @@
                     <li><a href="{{ path('admin.profile') }}">{{ app.user.username }}</a></li>
                     <li><a href="{{ path('admin.admin_management') }}">Adminliste</a></li>
                     {% if isAdminAllowed(userRoles, ['master', 'super-admin', 'game-admin', 'trial-game-admin']) %}
-                        <li><a href="{{ path('admin.ticket.active') }}">{{ numTickets > 0 ? 'Tickets (' ~ numTickets ~ ')' : 'Tickets' }}</a></li>
+                        <li>
+                            <a href="{{ path('admin.ticket.active') }}">{{ numTickets > 0 ? 'Tickets (' ~ numTickets ~ ')' : 'Tickets' }}</a>
+                        </li>
                     {% endif %}
-                    <li><a href="{{ path('admin.notepad') }}">{{ numNotes > 0 ? 'Notizblock (' ~ numNotes ~ ')' : 'Notizblock' }}</li>
+                    <li>
+                        <a href="{{ path('admin.notepad') }}">{{ numNotes > 0 ? 'Notizblock (' ~ numNotes ~ ')' : 'Notizblock' }}
+                    </li>
                     <li><a href="{{ etoaUrl('login') }}" target="_blank">Spiel-Login</a></li>
                     <li><a href="/admin/logout">Logout</a></li>
                 </ul>
@@ -35,14 +39,14 @@
                         {% if isAdminAllowed(userRoles, item.roles) %}
                             <li>
                                 <a
-                                    {% if item.route|default(false) %}
-                                        href="{{ path(item.route) }}"
-                                        {% if item.route == app.request.get('_route') %}class="active"{% endif %}
-                                        active
-                                    {% else %}
-                                        href="/admin/?page={{ item.page }}{% if item.sub|default(false) %}&amp;sub={{ item.sub }}{% endif %}"
-                                        {% if page == item.page %}class="active"{% endif %}
-                                    {% endif %}
+                                        {% if item.route|default(false) %}
+                                            href="{{ path(item.route) }}"
+                                            {% if item.route == app.request.get('_route') %}class="active"{% endif %}
+                                            active
+                                        {% else %}
+                                            href="/admin/?page={{ item.page }}{% if item.sub|default(false) %}&amp;sub={{ item.sub }}{% endif %}"
+                                            {% if page == item.page %}class="active"{% endif %}
+                                        {% endif %}
                                 >
                                     {{ key }}
                                 </a>
@@ -52,15 +56,15 @@
                                             {% if isAdminAllowed(userRoles, childItem.roles) %}
                                                 <li {% if childItem.bar|default(false) %}class="bar"{% endif %}>
                                                     <a
-                                                        {% if childItem.route|default(false) %}
-                                                            href="{{ path(childItem.route) }}"
-                                                            {% if childItem.route == app.request.get('_route') %}class="active"{% endif %}
-                                                            active
-                                                        {% else %}
-                                                            href="/admin/?page={{ item.page }}&amp;sub={{ childItem.sub }}"
-                                                            {% if page ==  item.page and sub|default('') == childItem.sub and sub|default(false) %} class="active"{% endif %}
-                                                        {% endif %}
-                                                    >{{ childKey}}</a>
+                                                            {% if childItem.route|default(false) %}
+                                                                href="{{ path(childItem.route) }}"
+                                                                {% if childItem.route == app.request.get('_route') %}class="active"{% endif %}
+                                                                active
+                                                            {% else %}
+                                                                href="/admin/?page={{ item.page }}&amp;sub={{ childItem.sub }}"
+                                                                {% if page ==  item.page and sub|default('') == childItem.sub and sub|default(false) %} class="active"{% endif %}
+                                                            {% endif %}
+                                                    >{{ childKey }}</a>
                                                 </li>
                                             {% endif %}
                                         {% endfor %}
@@ -70,25 +74,6 @@
                         {% endif %}
                     {% endfor %}
                 </ul>
-
-                <table class="side_widget_table">
-                    <caption>Status</caption>
-                    {% if isUnix() %}
-                        <tr>
-                            <th><a href="{{ path('admin.eventhandler') }}">Eventhandler</a></th>
-                            {% if eventHandlerPid|default(false) %}
-                                <td class="color_ok">PID {{ eventHandlerPid }}</td>
-                            {% else %}
-                                <td class="color_error">offline</td>
-                            {% endif %}
-                        </tr>
-                        <tr><th><a href="{{ path('admin.overview.sysinfo') }}">Systemlast</a></th><td>{{ sysLoad }} %</td></tr>
-                    {% endif %}
-                    <tr><th><a href="{{ path('admin.db') }}">Datenbank</a></th><td>{{ dbSizeInMB }} MB</td></tr>
-                    <tr><th><a href="{{ path('admin.stats.users') }}">User registriert</a></th><td>{{ usersCount }} / {{ usersAllowed }}</td></tr>
-                    <tr><th><a href="{{ path('admin.users.sessions') }}">User online</a></th><td>{{ usersOnline }} / {{ usersCount }}</td></tr>
-                    <tr><th><a href="{{ path('admin.admin-sessions') }}">Admins online</a></th><td>{{ adminsOnline }} / {{ adminsCount }}</td></tr>
-                </table>
 
             </div>
             <div id="content">
@@ -100,7 +85,7 @@
 
                 {% block content %}{% endblock %}
             </div>
-            <br class="clear" />
+            <br class="clear"/>
         </div>
         <div id="footer">
             &copy; {{ serverDate().format('Y') }} by etoa.ch | generiert in {{ renderTime() }} sec

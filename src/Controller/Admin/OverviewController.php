@@ -3,8 +3,11 @@
 namespace EtoA\Controller\Admin;
 
 use EtoA\Admin\AdminRoleManager;
+use EtoA\Admin\AdminSessionRepository;
+use EtoA\Admin\AdminUserRepository;
 use EtoA\Alliance\AllianceRepository;
 use EtoA\Alliance\AllianceSearch;
+use EtoA\Backend\EventHandlerManager;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Form\Type\Admin\GameOfflineType;
 use EtoA\Help\TicketSystem\TicketRepository;
@@ -17,29 +20,35 @@ use EtoA\Universe\Entity\EntityLabelSearch;
 use EtoA\Universe\Entity\EntityRepository;
 use EtoA\User\UserRepository;
 use EtoA\User\UserSearch;
+use EtoA\User\UserSessionRepository;
 use League\CommonMark\ConverterInterface;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class OverviewController extends AbstractAdminController
 {
     public function __construct(
-        private ConverterInterface $markdown,
-        private GameStatsGenerator $gameStatsGenerator,
-        private DatabaseManagerRepository $databaseManager,
-        private string $cacheDir,
-        private ConfigurationService $config,
-        private AdminRoleManager $roleManager,
-        private CellRepository $cellRepository,
-        private TicketRepository $ticketRepository,
-        private TextRepository $textRepository,
-        private UserRepository $userRepository,
-        private AllianceRepository $allianceRepository,
-        private EntityRepository $entityRepository,
-    ) {
+        private readonly ConverterInterface        $markdown,
+        private readonly GameStatsGenerator        $gameStatsGenerator,
+        private readonly DatabaseManagerRepository $databaseManager,
+        private readonly string                    $cacheDir,
+        private readonly ConfigurationService      $config,
+        private readonly AdminRoleManager          $roleManager,
+        private readonly CellRepository            $cellRepository,
+        private readonly TicketRepository          $ticketRepository,
+        private readonly TextRepository            $textRepository,
+        private readonly UserRepository            $userRepository,
+        private readonly AllianceRepository        $allianceRepository,
+        private readonly EntityRepository          $entityRepository,
+        private readonly UserSessionRepository     $userSessionRepository,
+        private readonly AdminSessionRepository    $adminSessionRepository,
+        private readonly AdminUserRepository       $adminUserRepository,
+        private readonly EventHandlerManager       $eventHandlerManager,
+    )
+    {
     }
 
     #[Route("/admin/overview/", name: "admin.overview")]
@@ -86,9 +95,16 @@ class OverviewController extends AbstractAdminController
 
         $admin = $this->getUser();
 
+        if (isUnixOS()) {
+            $eventHandlerPid = $this->eventHandlerManager->checkDaemonRunning();
+            exec("cat /proc/cpuinfo | grep processor | wc -l", $out);
+            $load = sys_getloadavg();
+            $systemLoad = round($load[2] / intval($out[0]) * 100, 2);
+        }
+
         return $this->render('admin/overview/overview.html.twig', [
             'welcomeMessage' => 'Hallo <b>' . $admin->getUsername() . '</b>, willkommen im Administrationsmodus! Deine Rolle(n): <b>' . $this->roleManager->getRolesStr($admin->getData()) . '.</b>',
-            'hasTfa' => (bool) $admin->getData()->tfaSecret,
+            'hasTfa' => (bool)$admin->getData()->tfaSecret,
             'didBigBangHappen' => $this->cellRepository->count() !== 0,
             'forcePasswordChange' => $admin->getData()->forcePasswordChange,
             'numNewTickets' => $this->ticketRepository->countNew(),
@@ -97,6 +113,14 @@ class OverviewController extends AbstractAdminController
             'fleetBanTitle' => $fleetBanTitle,
             'adminInfo' => $this->textRepository->getEnabledTextOrDefault('admininfo'),
             'systemMessage' => $this->textRepository->getEnabledTextOrDefault('system_message'),
+            'dbSizeInMB' => $this->databaseManager->getDatabaseSize(),
+            'usersOnline' => $this->userSessionRepository->countActiveSessions($this->config->getInt('user_timeout')),
+            'usersCount' => $this->userRepository->count(),
+            'usersAllowed' => $this->config->getInt('enable_register'),
+            'adminsOnline' => $this->adminSessionRepository->countActiveSessions($this->config->getInt('admin_timeout')),
+            'adminsCount' => $this->adminUserRepository->count(),
+            'sysLoad' => $systemLoad ?? null,
+            'eventHandlerPid' => $eventHandlerPid ?? null,
         ]);
     }
 
@@ -173,7 +197,7 @@ class OverviewController extends AbstractAdminController
         $choices = [
             $this->choiceGroup($users, 1, 'Spieler', 'admin.alliances.edit'),
             $this->choiceGroup($alliances, 2, 'Allianzen', 'admin.alliances.edit'),
-            $this->choiceGroup(array_map(fn (EntityLabel $label) => $label->toString(), $entities), 3, 'Planeten', 'admin.universe.entity'),
+            $this->choiceGroup(array_map(fn(EntityLabel $label) => $label->toString(), $entities), 3, 'Planeten', 'admin.universe.entity'),
         ];
 
         return new JsonResponse($choices);

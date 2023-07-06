@@ -9,6 +9,7 @@
     "ext-gd": "*",
     "ext-iconv": "*",
     "ext-xmlreader": "*",
+    "ext-posix": "*",
     "doctrine/doctrine-bundle": "^2.10",
     "doctrine/doctrine-migrations-bundle": "^3.2",
     "doctrine/orm": "^2.15",

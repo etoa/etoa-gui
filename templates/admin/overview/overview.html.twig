@@ -10,49 +10,87 @@
     {% endif %}
 
     {% if forcePasswordChange %}
-        {{ macros.messagebox('Dein Passwort wurde seit der letzten automatischen Generierung noch nicht geändert. Bitte mache das jetzt <a href="' ~ path('admin.profile') ~ '">hier</a>!', 'warning', 'Passwortwiederherstellung')}}
+        {{ macros.messagebox('Dein Passwort wurde seit der letzten automatischen Generierung noch nicht geändert. Bitte mache das jetzt <a href="' ~ path('admin.profile') ~ '">hier</a>!', 'warning', 'Passwortwiederherstellung') }}
     {% endif %}
 
     {% if not hasTfa %}
-        {{ macros.messagebox('Aktiviere <a href="' ~ path('admin.profile') ~ '">Zwei-Faktor-Authentifizierung</a> um Sicherheit deines Account zu verbessern!', 'info', 'Zwei-Faktor-Authentifizierung')}}
+        {{ macros.messagebox('Aktiviere <a href="' ~ path('admin.profile') ~ '">Zwei-Faktor-Authentifizierung</a> um Sicherheit deines Account zu verbessern!', 'info', 'Zwei-Faktor-Authentifizierung') }}
     {% endif %}
 
     {% if adminInfo %}
-        {{ macros.messagebox(BBCodeToHTML(adminInfo), 'info', 'Admin-News')}}
+        {{ macros.messagebox(BBCodeToHTML(adminInfo), 'info', 'Admin-News') }}
     {% endif %}
 
     {% if systemMessage %}
-        {{ macros.messagebox(BBCodeToHTML(systemMessage) ~ '<br/><a href="' ~ path('admin.texts.edit', {id: 'system_message'}) ~ '">Bearbeiten/Deaktivieren</a>', 'info', 'Systemnachricht aktiv!')}}
+        {{ macros.messagebox(BBCodeToHTML(systemMessage) ~ '<br/><a href="' ~ path('admin.texts.edit', {id: 'system_message'}) ~ '">Bearbeiten/Deaktivieren</a>', 'info', 'Systemnachricht aktiv!') }}
     {% endif %}
 
     {% if configValue('offline') == 1 %}
-        {{ macros.messagebox(BBCodeToHTML(configValue('offline_message')) ~ '<br/><a href=\"' ~ path('admin.overview.game-offline') ~ '\">&Auml;ndern</a>', 'warning', 'Spiel offline')}}
+        {{ macros.messagebox(BBCodeToHTML(configValue('offline_message')) ~ '<br/><a href=\"' ~ path('admin.overview.game-offline') ~ '\">&Auml;ndern</a>', 'warning', 'Spiel offline') }}
     {% endif %}
 
     {% if configValue('register_key') %}
-        {{ macros.messagebox('Die öffentlichen Seiten (Anmeldung, Statistiken etc) sind durch den Schlüssel "' ~ configValue("register_key") ~ '" geschützt!', 'info')}}
+        {{ macros.messagebox('Die öffentlichen Seiten (Anmeldung, Statistiken etc) sind durch den Schlüssel "' ~ configValue("register_key") ~ '" geschützt!', 'info') }}
     {% endif %}
 
     {% if not configValue('update_enabled') == 1 %}
-        {{ macros.messagebox('Periodische Updates sind momentan deaktiviert! <a href=\"?page=cronjob&activateupdate=1\">Aktivieren</a>', 'info', 'Updates deaktiviert')}}
+        {{ macros.messagebox('Periodische Updates sind momentan deaktiviert! <a href=\"?page=cronjob&activateupdate=1\">Aktivieren</a>', 'info', 'Updates deaktiviert') }}
     {% endif %}
 
     {% if isAdminAllowed(userRoles, 'master,super-admin,game-admin,trial-game-admin') %}
-        <fieldset class="overview_widget"><legend>Ticket-System</legend>
+        <fieldset class="overview_widget">
+            <legend>Ticket-System</legend>
             <a href="{{ path('admin.ticket.active') }}">{{ numTickets ~ ' neue Tickets' }}</a> vorhanden
             <br/>
             <a href="{{ path('admin.ticket.active') }}">{{ numOpenTickets ~ ' offene Tickets' }}</a> vorhanden
         </fieldset>
     {% endif %}
 
+    <fieldset class="overview_widget">
+        <legend>Status</legend>
+        <table class="table mb-0">
+            {% if isUnix() %}
+                <tr>
+                    <th><a href="{{ path('admin.eventhandler') }}">Eventhandler</a></th>
+                    {% if eventHandlerPid|default(false) %}
+                        <td class="color_ok">PID {{ eventHandlerPid }}</td>
+                    {% else %}
+                        <td class="color_error">offline</td>
+                    {% endif %}
+                </tr>
+                <tr>
+                    <th><a href="{{ path('admin.overview.sysinfo') }}">Systemlast</a></th>
+                    <td>{{ sysLoad }} %</td>
+                </tr>
+            {% endif %}
+            <tr>
+                <th><a href="{{ path('admin.db') }}">Datenbank</a></th>
+                <td>{{ dbSizeInMB }} MB</td>
+            </tr>
+            <tr>
+                <th><a href="{{ path('admin.stats.users') }}">User registriert</a></th>
+                <td>{{ usersCount }} / {{ usersAllowed }}</td>
+            </tr>
+            <tr>
+                <th><a href="{{ path('admin.users.sessions') }}">User online</a></th>
+                <td>{{ usersOnline }} / {{ usersCount }}</td>
+            </tr>
+            <tr>
+                <th><a href="{{ path('admin.admin-sessions') }}">Admins online</a></th>
+                <td>{{ adminsOnline }} / {{ adminsCount }}</td>
+            </tr>
+        </table>
+    </fieldset>
+
     {% if fleetBanTitle %}
-        {{ macros.messagebox(fleetBanText, 'info', fleetBanTitle)}}
+        {{ macros.messagebox(fleetBanText, 'info', fleetBanTitle) }}
     {% endif %}
 
     {% if not didBigBangHappen %}
-        {{ macros.messagebox('Das Universum wurde noch nicht erschaffen!', 'warning', 'Universum existiert noch nicht!')}}
+        {{ macros.messagebox('Das Universum wurde noch nicht erschaffen!', 'warning', 'Universum existiert noch nicht!') }}
         <p>
-            <input type="button" value="Weiter zum Urknall" onclick="document.location='{{ path('admin.universe.edit') }}'" />
+            <input type="button" value="Weiter zum Urknall"
+                   onclick="document.location='{{ path('admin.universe.edit') }}'"/>
         </p>
     {% endif %}
 {% endblock %}

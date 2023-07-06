@@ -811,6 +811,14 @@ tbody tr:nth-child(even),
     border-radius: 5px;
 }
 
+/**
+* Margin and padding
+ */
+
+.mb-0 {
+    margin-bottom: 0;
+}
+
 /******************
   * Navigation      *
   ******************/
@@ -913,27 +921,6 @@ tbody tr:nth-child(even),
   ******************/
 #sidebar input[type="text"].search {
     width: 130px;
-}
-
-.side_widget_table {
-    font-size: 8pt;
-    width: 100%;
-    margin: 20px 5px;
-}
-
-.side_widget_table caption {
-    font-weight: bold;
-    text-align: left;
-    font-size: 9pt;
-    padding: 3px 1px;
-}
-
-.side_widget_table th {
-    font-weight: normal;
-}
-
-.side_widget_table tbody tr {
-    background: #f1f1f1;
 }
 
 /******************
