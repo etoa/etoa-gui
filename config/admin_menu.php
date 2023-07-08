@@ -141,11 +141,11 @@ return [
                 "bar" => true
             ],
             "Rassen" => [
-                "route" => "admin.races",
+                "route" => "admin.races.data",
                 "roles" => "master,super-admin"
             ],
             "Spezialisten" => [
-                "route" => "admin.specialists",
+                "route" => "admin.specialists.data",
                 "roles" => "master,super-admin"
             ]
         ]
@@ -185,11 +185,11 @@ return [
                 "path" => "/admin/alliances/imagecheck"
             ],
             "Gebäude bearbeiten" => [
-                "route" => "admin.alliances.building_data",
+                "route" => "admin.alliances.buildings.data",
                 "roles" => "master,super-admin"
             ],
             "Technologien bearbeiten" => [
-                "route" => "admin.alliances.technology_data",
+                "route" => "admin.alliances.technologies.data",
                 "roles" => "master,super-admin"
             ]
         ]
@@ -232,7 +232,7 @@ return [
                 "route" => "admin.buildings.cost-calculator"
             ],
             "Gebäude bearbeiten" => [
-                "route" => "admin.buildings",
+                "route" => "admin.buildings.data",
                 "roles" => "master,super-admin"
             ],
             "Kategorien" => [
@@ -260,7 +260,7 @@ return [
         "route" => "admin.technology",
         "children" => [
             "Technologien bearbeiten" => [
-                "route" => "admin.technologies",
+                "route" => "admin.technologies.data",
                 "roles" => "master,super-admin"
             ],
             "Kategorien" => [
@@ -295,7 +295,7 @@ return [
                 "bar" => true
             ],
             "Schiffe bearbeiten" => [
-                "route" => "admin.ships",
+                "route" => "admin.ships.data",
                 "roles" => "master,super-admin"
             ],
             "Voraussetzungen" => [
@@ -335,7 +335,7 @@ return [
                 "route" => "admin.defense.queue"
             ],
             "Verteidigung bearbeiten" => [
-                "route" => "admin.defense",
+                "route" => "admin.defense.data",
                 "roles" => "master,super-admin,game-admin"
             ],
             "Voraussetzungen" => [
@@ -355,7 +355,7 @@ return [
                 "route" => "admin.defense.points"
             ],
             "Transformationen" => [
-                "sub" => "transforms",
+                "route" => "admin.defense.transforms",
                 "roles" => "master,super-admin"
             ]
         ]
@@ -367,7 +367,7 @@ return [
         "route" => "admin.missiles",
         "children" => [
             "Raketen bearbeiten" => [
-                "sub" => "data",
+                "route" => "admin.missiles.data",
                 "roles" => "master,super-admin,game-admin"
             ],
             "Voraussetzungen" => [
@@ -410,11 +410,11 @@ return [
                 "route" => "admin.universe.edit"
             ],
             "Planetentypen" => [
-                "sub" => "planet_types",
+                "route" => "admin.universe.planets.data",
                 "roles" => "master,super-admin"
             ],
             "Sonnentypen" => [
-                "sub" => "sol_types",
+                "route" => "admin.universe.stars.data",
                 "roles" => "master,super-admin"
             ]
         ]
@@ -538,7 +538,7 @@ return [
         ]
     ],
     "Tutorials" => [
-        "page" => "tutorials",
+        "route" => "admin.tutorials",
         "roles" => "master,super-admin,game-admin",
         "children" => [
         ]
@@ -618,7 +618,7 @@ return [
                 "path" => "/admin/default-items"
             ],
             "Tipps" => [
-                "sub" => "tipps",
+                "route" => "admin.tipps",
                 "roles" => "master,super-admin"
             ],
             "Ticket-Kategorien" => [

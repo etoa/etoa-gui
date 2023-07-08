@@ -1,13 +1,22 @@
-<?php
+<?php declare(strict_types=1);
 
-declare(strict_types=1);
-
-namespace EtoA\Admin\Forms;
+namespace EtoA\Controller\Admin;
 
 use EtoA\Core\ObjectWithImage;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-class MissilesForm extends AdvancedForm
+class MissilesController extends AdvancedGameDataCrudController
 {
+    #[Route('/admin/missiles/data', name: 'admin.missiles.data')]
+    #[IsGranted('ROLE_ADMIN_TRIAL-ADMIN')]
+    public function __invoke(Request $request): Response
+    {
+        return $this->handleRequest($request);
+    }
+
     public function getName(): string
     {
         return "Raketen";

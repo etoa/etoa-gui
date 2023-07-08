@@ -21,7 +21,7 @@ class TechnologiesController extends AdvancedGameDataCrudController
         parent::__construct($connection, $projectDir);
     }
 
-    #[Route('/admin/technologies', name: 'admin.technologies')]
+    #[Route('/admin/technologies/data', name: 'admin.technologies.data')]
     #[IsGranted('ROLE_ADMIN_TRIAL-ADMIN')]
     public function __invoke(Request $request): Response
     {

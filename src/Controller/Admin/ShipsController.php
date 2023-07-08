@@ -22,7 +22,7 @@ class ShipsController extends AdvancedGameDataCrudController
         parent::__construct($connection, $projectDir);
     }
 
-    #[Route('/admin/ships', name: 'admin.ships')]
+    #[Route('/admin/ships/data', name: 'admin.ships.data')]
     #[IsGranted('ROLE_ADMIN_TRIAL-ADMIN')]
     public function __invoke(Request $request): Response
     {

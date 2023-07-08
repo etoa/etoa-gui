@@ -1,35 +1,45 @@
-<?php
+<?php declare(strict_types=1);
 
-declare(strict_types=1);
+namespace EtoA\Controller\Admin;
 
-namespace EtoA\Admin\Forms;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-class StarTypesForm extends AdvancedForm
+class PlanetTypesController extends AdvancedGameDataCrudController
 {
+    #[Route('/admin/universe/planets/data', name: 'admin.universe.planets.data')]
+    #[IsGranted('ROLE_ADMIN_TRIAL-ADMIN')]
+    public function __invoke(Request $request): Response
+    {
+        return $this->handleRequest($request);
+    }
+
     public function getName(): string
     {
-        return "Sonnentypen";
+        return "Planetentypen";
     }
 
     protected function getTable(): string
     {
-        return "sol_types";
+        return "planet_types";
     }
 
     protected function getTableId(): string
     {
-        return "sol_type_id";
+        return "type_id";
     }
 
     protected function getOverviewOrderField(): string
     {
-        return "sol_type_name";
+        return "type_name";
     }
 
     protected function getSwitches(): array
     {
         return [
-            "Standardtyp" => 'sol_type_consider',
+            "Standardtyp" => 'type_consider',
         ];
     }
 
@@ -37,7 +47,7 @@ class StarTypesForm extends AdvancedForm
     {
         return [
             [
-                "name" => "sol_type_name",
+                "name" => "type_name",
                 "text" => "Kategoriename",
                 "type" => "text",
                 "size" => 30,
@@ -45,62 +55,72 @@ class StarTypesForm extends AdvancedForm
                 "show_overview" => true,
                 "link_in_overview" => true,
             ], [
-                "name" => "sol_type_comment",
+                "name" => "type_comment",
                 "text" => "Kommentar",
                 "type" => "textarea",
                 "rows" => 5,
                 "cols" => 25,
                 "show_overview" => true,
             ], [
-                "name" => "sol_type_f_metal",
+                "name" => "type_habitable",
+                "text" => "Bewohnbar",
+                "type" => "radio",
+                "def_val" => "1",
+                "items" => [
+                    "Ja" => 1,
+                    "Nein" => 0,
+                ],
+                "show_overview" => true,
+            ], [
+                "name" => "type_f_metal",
                 "text" => "Metallfaktor",
                 "type" => "decimal",
                 "def_val" => "1.00",
                 "show_overview" => false,
             ], [
-                "name" => "sol_type_f_crystal",
+                "name" => "type_f_crystal",
                 "text" => "Kristallfaktor",
                 "type" => "decimal",
                 "def_val" => "1.00",
                 "show_overview" => false,
             ], [
-                "name" => "sol_type_f_plastic",
+                "name" => "type_f_plastic",
                 "text" => "Plastikfaktor",
                 "type" => "decimal",
                 "def_val" => "1.00",
                 "show_overview" => false,
             ], [
-                "name" => "sol_type_f_fuel",
+                "name" => "type_f_fuel",
                 "text" => "Treibstofffaktor",
                 "type" => "decimal",
                 "def_val" => "1.00",
                 "show_overview" => false,
             ], [
-                "name" => "sol_type_f_food",
+                "name" => "type_f_food",
                 "text" => "Nahrungsfaktor",
                 "type" => "decimal",
                 "def_val" => "1.00",
                 "show_overview" => false,
             ], [
-                "name" => "sol_type_f_power",
+                "name" => "type_f_power",
                 "text" => "Stromfaktor",
                 "type" => "decimal",
                 "def_val" => "1.00",
                 "show_overview" => false,
             ], [
-                "name" => "sol_type_f_population",
+                "name" => "type_f_population",
                 "text" => "Bevölkerungsfaktor",
                 "type" => "decimal",
                 "def_val" => "1.00",
                 "show_overview" => false,
             ], [
-                "name" => "sol_type_f_researchtime",
+                "name" => "type_f_researchtime",
                 "text" => "Forschungszeitfaktor",
                 "type" => "decimal",
                 "def_val" => "1.00",
                 "show_overview" => false,
             ], [
-                "name" => "sol_type_f_buildtime",
+                "name" => "type_f_buildtime",
                 "text" => "Bauzeitfaktor",
                 "type" => "decimal",
                 "def_val" => "1.00",

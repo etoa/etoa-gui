@@ -21,7 +21,7 @@ class DefensesController extends AdvancedGameDataCrudController
         parent::__construct($connection, $projectDir);
     }
 
-    #[Route('/admin/races', name: 'admin.defense')]
+    #[Route('/admin/defense/data', name: 'admin.defense.data')]
     #[IsGranted('ROLE_ADMIN_TRIAL-ADMIN')]
     public function __invoke(Request $request): Response
     {

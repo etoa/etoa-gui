@@ -9,7 +9,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class SpecialistsController extends AdvancedGameDataCrudController
 {
-    #[Route('/admin/specialists', name: 'admin.specialists')]
+    #[Route('/admin/specialists/data', name: 'admin.specialists.data')]
     #[IsGranted('ROLE_ADMIN_TRIAL-ADMIN')]
     public function __invoke(Request $request): Response
     {

@@ -10,7 +10,7 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class AllianceTechnologiesController extends AdvancedGameDataCrudController
 {
-    #[Route('/admin/alliances/technologies', name: 'admin.alliances.technology_data')]
+    #[Route('/admin/alliances/technologies/data', name: 'admin.alliances.technologies.data')]
     #[IsGranted('ROLE_ADMIN_TRIAL-ADMIN')]
     public function __invoke(Request $request): Response
     {

@@ -169,13 +169,13 @@ abstract class AdvancedGameDataCrudController extends GameDataCrudController
                     echo '<td style="width:40px;">';
 
                     if ($cnt < count($rows) - 1) {
-                        echo '<a href="?moveDown=' . $arr[$this->getTableId()] . "&amp;parentId=" . $arr[$this->getTableSortParent()] . "\"><img src=\"../images/down.gif\" alt=\"down\" /></a> ";
+                        echo '<a href="?moveDown=' . $arr[$this->getTableId()] . "&amp;parentId=" . $arr[$this->getTableSortParent()] . "\"><img src=\"/build/images/down.gif\" alt=\"down\" /></a> ";
                     } else {
                         echo '<img src="/build/images/blank.gif" alt="blank" style="width:16px;" /> ';
                     }
 
                     if ($cnt != 0 && $parId == $arr[$this->getTableSortParent()]) {
-                        echo '<a href="?moveUp=' . $arr[$this->getTableId()] . "&amp;parentId=" . $arr[$this->getTableSortParent()] . "\"><img src=\"../images/up.gif\" alt=\"up\" /></a> ";
+                        echo '<a href="?moveUp=' . $arr[$this->getTableId()] . "&amp;parentId=" . $arr[$this->getTableSortParent()] . "\"><img src=\"/build/images/up.gif\" alt=\"up\" /></a> ";
                     } else {
                         echo '<img src="/build/images/blank.gif" alt="blank" style="width:16px;" /> ';
                     }

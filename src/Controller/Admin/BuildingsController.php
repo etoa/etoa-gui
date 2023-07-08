@@ -21,7 +21,7 @@ class BuildingsController extends AdvancedGameDataCrudController
         parent::__construct($connection, $projectDir);
     }
 
-    #[Route('/admin/buildings', name: 'admin.buildings')]
+    #[Route('/admin/buildings/data', name: 'admin.buildings.data')]
     #[IsGranted('ROLE_ADMIN_TRIAL-ADMIN')]
     public function __invoke(Request $request): Response
     {
