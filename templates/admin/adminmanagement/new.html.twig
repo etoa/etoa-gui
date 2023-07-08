@@ -3,8 +3,12 @@
 {% import 'admin/macros.html.twig' as macros %}
 
 {% block content %}
-    <h1>Admin-Management</h1>
-    <h3>Neu</h3>
+    <h1>Administrator hinzufügen</h1>
+
+    {{ component('breadcrumbs', { items: [
+        { label: 'Admin-Management', url: path('admin.admin_management') },
+        { label: 'Neuer Administrator', url: path('admin.admin_management.new') },
+    ]}) }}
 
     {{ form(form) }}
 {% endblock %}

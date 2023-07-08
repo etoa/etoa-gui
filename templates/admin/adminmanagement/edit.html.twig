@@ -3,8 +3,12 @@
 {% import 'admin/macros.html.twig' as macros %}
 
 {% block content %}
-    <h1>Admin-Management</h1>
-    <h3>Bearbeiten</h3>
+    <h1>Administrator bearbeiten</h1>
+
+    {{ component('breadcrumbs', { items: [
+        { label: 'Admin-Management', url: path('admin.admin_management') },
+        { label: admin.nick, url: path('admin.admin_management.edit', { id: admin.id }) },
+    ]}) }}
 
     {{ form(form) }}
 {% endblock %}

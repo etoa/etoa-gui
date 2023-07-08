@@ -9,18 +9,19 @@ use EtoA\Log\LogFacility;
 use EtoA\Log\LogRepository;
 use EtoA\Log\LogSeverity;
 use EtoA\Security\Admin\CurrentAdmin;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class AdminManagementController extends AbstractAdminController
 {
     public function __construct(
         private AdminUserRepository $adminUserRepository,
-        private LogRepository $logRepository,
-    ) {
+        private LogRepository       $logRepository,
+    )
+    {
     }
 
     #[Route('/admin/admin-management/', name: 'admin.admin_management')]
@@ -60,12 +61,12 @@ class AdminManagementController extends AbstractAdminController
         $form = $this->createForm(AdminUserType::class, $admin);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            if ((bool) $admin->passwordString) {
+            if ((bool)$admin->passwordString) {
                 $this->adminUserRepository->setPassword($admin, $passwordHasher->hashPassword(new CurrentAdmin($admin), $admin->passwordString));
                 $this->logRepository->add(LogFacility::ADMIN, LogSeverity::INFO, "Der Administrator " . $this->getUser()->getUsername() . " ändert das Passwort des Administrators " . $admin->nick . "(" . $admin->id . ").");
             }
 
-            if ($form->has('tfa_remove') && (bool) $form->get('tfa_remove')->getData()) {
+            if ($form->has('tfa_remove') && (bool)$form->get('tfa_remove')->getData()) {
                 $admin->tfaSecret = "";
                 $this->logRepository->add(LogFacility::ADMIN, LogSeverity::INFO, "Der Administrator " . $this->getUser()->getUsername() . " deaktiviert die Zwei-Faktor-Authentifizierung des Administrators " . $admin->nick . "(" . $admin->id . ").");
             }
@@ -80,6 +81,7 @@ class AdminManagementController extends AbstractAdminController
 
         return $this->render('admin/adminmanagement/edit.html.twig', [
             'form' => $form->createView(),
+            'admin' => $admin,
         ]);
     }
 

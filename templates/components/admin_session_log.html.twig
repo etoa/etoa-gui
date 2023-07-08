@@ -1,11 +1,11 @@
 <div
-    {{ attributes }}
-    data-action="change->live#update"
+        {{ attributes }}
+        data-action="change->live#update"
 >
     {{ form(this.form) }}
 
     {% if this.request.user > 0 %}
-        <table class="tb">
+        <table class="table">
             <tr>
                 <th>Login</th>
                 <th>Aktivität</th>
@@ -44,7 +44,9 @@
                     <td title="{{ log.userAgent }}">{{ browser(log.userAgent).os.toString() }}</td>
                 </tr>
             {% else %}
-                <tr><td colspan="9999"><i>Keine Einträge vorhanden</i></td></tr>
+                <tr>
+                    <td colspan="9999"><i>Keine Einträge vorhanden</i></td>
+                </tr>
             {% endfor %}
         </table>
     {% endif %}
