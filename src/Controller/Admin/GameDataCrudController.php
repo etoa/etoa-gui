@@ -19,7 +19,7 @@ abstract class GameDataCrudController extends AbstractAdminController
         return $this->connection->createQueryBuilder();
     }
 
-    abstract public function getName(): string;
+    abstract protected function getName(): string;
 
     abstract protected function getTable(): string;
 

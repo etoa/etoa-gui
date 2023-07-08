@@ -141,11 +141,11 @@ return [
                 "bar" => true
             ],
             "Rassen" => [
-                "sub" => "race",
+                "route" => "admin.races",
                 "roles" => "master,super-admin"
             ],
             "Spezialisten" => [
-                "sub" => "specialists",
+                "route" => "admin.specialists",
                 "roles" => "master,super-admin"
             ]
         ]
@@ -232,7 +232,7 @@ return [
                 "route" => "admin.buildings.cost-calculator"
             ],
             "Gebäude bearbeiten" => [
-                "sub" => "data",
+                "route" => "admin.buildings",
                 "roles" => "master,super-admin"
             ],
             "Kategorien" => [
@@ -260,7 +260,7 @@ return [
         "route" => "admin.technology",
         "children" => [
             "Technologien bearbeiten" => [
-                "sub" => "data",
+                "route" => "admin.technologies",
                 "roles" => "master,super-admin"
             ],
             "Kategorien" => [
@@ -295,7 +295,7 @@ return [
                 "bar" => true
             ],
             "Schiffe bearbeiten" => [
-                "sub" => "data",
+                "route" => "admin.ships",
                 "roles" => "master,super-admin"
             ],
             "Voraussetzungen" => [
@@ -335,7 +335,7 @@ return [
                 "route" => "admin.defense.queue"
             ],
             "Verteidigung bearbeiten" => [
-                "sub" => "data",
+                "route" => "admin.defense",
                 "roles" => "master,super-admin,game-admin"
             ],
             "Voraussetzungen" => [

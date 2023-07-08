@@ -12,12 +12,12 @@ class AllianceBuildingsController extends AdvancedGameDataCrudController
 {
     #[Route('/admin/alliances/buildings', name: 'admin.alliances.building_data')]
     #[IsGranted('ROLE_ADMIN_TRIAL-ADMIN')]
-    public function buildings(Request $request): Response
+    public function __invoke(Request $request): Response
     {
-        return $this->renderContent($request);
+        return $this->handleRequest($request);
     }
 
-    public function getName(): string
+    protected function getName(): string
     {
         return "Allianzgebäude";
     }

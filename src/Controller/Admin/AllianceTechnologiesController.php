@@ -12,12 +12,12 @@ class AllianceTechnologiesController extends AdvancedGameDataCrudController
 {
     #[Route('/admin/alliances/technologies', name: 'admin.alliances.technology_data')]
     #[IsGranted('ROLE_ADMIN_TRIAL-ADMIN')]
-    public function technologies(Request $request): Response
+    public function __invoke(Request $request): Response
     {
-        return $this->renderContent($request);
+        return $this->handleRequest($request);
     }
 
-    public function getName(): string
+    protected function getName(): string
     {
         return "Allianztechnologien";
     }

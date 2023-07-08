@@ -7,12 +7,12 @@ use Symfony\Component\HttpFoundation\Response;
 
 abstract class AdvancedGameDataCrudController extends GameDataCrudController
 {
-    protected function renderContent(Request $request): Response
+    protected function handleRequest(Request $request): Response
     {
         ob_start();
         if ($request->query->get('action') == "new") {
             $this->create();
-            $subtitle = 'Datensatz Eintrag';
+            $subtitle = 'Datensatz hinzufügen';
         } elseif ($request->request->has('new')) {
             $this->store($request);
             $this->index();
