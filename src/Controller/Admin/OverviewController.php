@@ -126,10 +126,10 @@ class OverviewController extends AbstractAdminController
 
     #[Route("/admin/overview/changelog", name: "admin.overview.changelog")]
     #[IsGranted('ROLE_ADMIN_TRIAL-ADMIN')]
-    public function changelog(): Response
+    public function changelog(string $projectDir): Response
     {
-        $changelogFile = __DIR__ . "/../../../Changelog.md";
-        $changelogPublicFile = __DIR__ . "/../../../Changelog_public.md";
+        $changelogFile = $projectDir . "/Changelog.md";
+        $changelogPublicFile = $projectDir . "/Changelog_public.md";
 
         return $this->render('admin/overview/changelog.html.twig', [
             'changelog' => is_file($changelogFile) ? $this->markdown->convert(file_get_contents($changelogFile)) : null,
@@ -172,8 +172,8 @@ class OverviewController extends AbstractAdminController
             } elseif ($request->request->has('online')) {
                 $this->config->set('offline', 0);
             } elseif ($request->request->has('save')) {
-                $this->config->set('offline_ips_allow', $request->request->get('offline_ips_allow'));
-                $this->config->set('offline_message', $request->request->get('offline_message'));
+                $this->config->set('offline_ips_allow', $request->request->get('offline_ips_allow', ''));
+                $this->config->set('offline_message', $request->request->get('offline_message', ''));
             }
         }
 

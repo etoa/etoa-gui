@@ -5,9 +5,9 @@
 
     <h2>Spieler</h2>
     {% if userStats %}
-        <p><img src="{{ userStats }}" alt="Userstats" /></p>
+        <p><img src="{{ userStats }}" alt="Userstats"/></p>
     {% else %}
-        <p>User Statistik nicht vorhanden!</p>
+        <twig:alert type="warning">User Statistik nicht vorhanden!</twig:alert>
     {% endif %}
 
     {% if xmlInfo %}
@@ -17,6 +17,6 @@
     {% if gameStats %}
         {{ gameStats|raw }}
     {% else %}
-        <p>Spielstatistiken nicht vorhanden!</p>
+        <twig:alert type="warning">Spielstatistiken nicht vorhanden!</twig:alert>
     {% endif %}
 {% endblock %}
