@@ -25,10 +25,6 @@ return [
                 "route" => "admin.overview.gamestats",
                 "roles" => "master,super-admin,game-admin,trial-game-admin",
             ],
-            "System-Information" => [
-                "route" => "admin.overview.sysinfo",
-                "roles" => "master,super-admin"
-            ]
         ]
     ],
     "Administratoren" => [

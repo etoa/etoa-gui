@@ -97,9 +97,6 @@ class OverviewController extends AbstractAdminController
 
         if (isUnixOS()) {
             $eventHandlerPid = $this->eventHandlerManager->checkDaemonRunning();
-            exec("cat /proc/cpuinfo | grep processor | wc -l", $out);
-            $load = sys_getloadavg();
-            $systemLoad = round($load[2] / intval($out[0]) * 100, 2);
         }
 
         return $this->render('admin/overview/overview.html.twig', [
@@ -119,7 +116,6 @@ class OverviewController extends AbstractAdminController
             'usersAllowed' => $this->config->getInt('enable_register'),
             'adminsOnline' => $this->adminSessionRepository->countActiveSessions($this->config->getInt('admin_timeout')),
             'adminsCount' => $this->adminUserRepository->count(),
-            'sysLoad' => $systemLoad ?? null,
             'eventHandlerPid' => $eventHandlerPid ?? null,
         ]);
     }
@@ -145,20 +141,6 @@ class OverviewController extends AbstractAdminController
             'userStats' => file_exists($this->cacheDir . GameStatsGenerator::USER_STATS_FILE) ? GameStatsGenerator::USER_STATS_FILE_PUBLIC_PATH : null,
             'xmlInfo' => file_exists($this->cacheDir . GameStatsGenerator::XML_INFO_FILE) ? GameStatsGenerator::XML_INFO_FILE_PUBLIC_PATH : null,
             'gameStats' => $this->gameStatsGenerator->readCached(),
-        ]);
-    }
-
-    #[Route("/admin/overview/sysinfo", name: "admin.overview.sysinfo")]
-    #[IsGranted('ROLE_ADMIN_SUPER-ADMIN')]
-    public function systemInfo(): Response
-    {
-        $unix = isUnixOS() ? posix_uname() : null;
-
-        return $this->render('admin/overview/sysinfo.html.twig', [
-            'phpVersion' => phpversion(),
-            'dbVersion' => $this->databaseManager->getDatabasePlatform(),
-            'webserverVersion' => $_SERVER['SERVER_SOFTWARE'] ?? '',
-            'unixName' => isUnixOS() ? $unix['sysname'] . ' ' . $unix['release'] . ' ' . $unix['version'] : null,
         ]);
     }
 

@@ -58,10 +58,6 @@
                         <td class="color_error">offline</td>
                     {% endif %}
                 </tr>
-                <tr>
-                    <th><a href="{{ path('admin.overview.sysinfo') }}">Systemlast</a></th>
-                    <td>{{ sysLoad }} %</td>
-                </tr>
             {% endif %}
             <tr>
                 <th><a href="{{ path('admin.db') }}">Datenbank</a></th>
@@ -81,6 +77,10 @@
             </tr>
         </table>
     </fieldset>
+
+    {% if isAdminAllowed(userRoles, 'master,super-admin,game-admin,trial-game-admin') %}
+        {{ component('admin:widgets:systemInfo') }}
+    {% endif %}
 
     {% if fleetBanTitle %}
         {{ macros.messagebox(fleetBanText, 'info', fleetBanTitle) }}

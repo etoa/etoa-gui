@@ -1,0 +1,13 @@
+<fieldset class="overview_widget">
+    <legend>System-Informationen</legend>
+    <table class="table mb-0">
+        {% for elem in data %}
+            {% if elem.value %}
+                <tr>
+                    <th>{{ elem.label }}</th>
+                    <td>{{ elem.value }}</td>
+                </tr>
+            {% endif %}
+        {% endfor %}
+    </table>
+</fieldset>
