@@ -75,9 +75,9 @@
             </ul>
         </aside>
         <main class="app-content">
-            {% for label, messages in app.flashes|default([]) %}
+            {% for type, messages in app.flashes|default([]) %}
                 {% for message in messages %}
-                    {{ macros.messagebox(message, label) }}
+                    <twig:alert :type="type">{{ message }}</twig:alert>
                 {% endfor %}
             {% endfor %}
             {% block content %}{% endblock %}

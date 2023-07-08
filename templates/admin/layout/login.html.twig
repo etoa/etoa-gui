@@ -14,7 +14,7 @@
                 <div id="content">
                     {% for type, messages in app.flashes|default([]) %}
                         {% for message in messages %}
-                            <twig:alert :type=type>{{ message }}</twig:alert>
+                            <twig:alert :type="type">{{ message }}</twig:alert>
                         {% endfor %}
                     {% endfor %}
                     {% block content %}{% endblock %}
