@@ -1,15 +1,21 @@
-<?php
+<?php declare(strict_types=1);
 
-declare(strict_types=1);
-
-namespace EtoA\Admin\Forms;
+namespace EtoA\Controller\Admin;
 
 use EtoA\Admin\LegacyTemplateTitleHelper;
-use MessageBox;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
-abstract class AdvancedForm extends Form
+abstract class AdvancedGameDataCrudController extends GameDataCrudController
 {
+    protected function renderContent(Request $request): Response
+    {
+        return $this->render('admin/default.html.twig', [
+            'title' => $this->getName(),
+            'content' => $this->router($request),
+        ]);
+    }
+
     protected function getTableSort(): ?string
     {
         return null;
@@ -76,7 +82,6 @@ abstract class AdvancedForm extends Form
 
     public function index(): void
     {
-        LegacyTemplateTitleHelper::$title = $this->getName();
         LegacyTemplateTitleHelper::$subTitle = "Übersicht";
 
         echo '<form action="?" method="post">';
@@ -195,7 +200,6 @@ abstract class AdvancedForm extends Form
 
     public function create(): void
     {
-        LegacyTemplateTitleHelper::$title = $this->getName();
         LegacyTemplateTitleHelper::$subTitle = "Neuer Datensatz";
 
         echo "<form action=\"?\" method=\"post\">";
@@ -291,7 +295,6 @@ abstract class AdvancedForm extends Form
 
     public function edit(Request $request): void
     {
-        LegacyTemplateTitleHelper::$title = $this->getName();
         LegacyTemplateTitleHelper::$subTitle = "Datensatz bearbeiten";
 
         $arr = $this->createQueryBuilder()
@@ -496,7 +499,6 @@ abstract class AdvancedForm extends Form
 
     public function confirmDelete(Request $request): void
     {
-        LegacyTemplateTitleHelper::$title = $this->getName();
         LegacyTemplateTitleHelper::$subTitle = "Datensatz löschen";
 
         $arr = $this->createQueryBuilder()
@@ -567,4 +569,5 @@ abstract class AdvancedForm extends Form
 
         return $r_array;
     }
+
 }
