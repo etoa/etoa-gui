@@ -35,42 +35,19 @@
             </div>
             <ul class="navmenu">
                 {% for key,item in navMenu %}
-                    {% if isAdminAllowed(userRoles, item.roles) %}
-                        <li>
-                            <a
-                                    {% if item.route|default(false) %}
-                                        href="{{ path(item.route) }}"
-                                        {% if item.route == app.request.get('_route') %}class="active"{% endif %}
-                                        active
-                                    {% else %}
-                                        href="/admin/?page={{ item.page }}{% if item.sub|default(false) %}&amp;sub={{ item.sub }}{% endif %}"
-                                        {% if page == item.page %}class="active"{% endif %}
-                                    {% endif %}
-                            >
-                                {{ key }}
-                            </a>
-                            {% if ((app.request.get('_route') == 'legacy.admin' and item.page == page) or item.route|default(false) == app.request.get('_route')) and item.children|default(false) and item.children|length %}
-                                <ul class="navsubmenu">
-                                    {% for childKey,childItem in item.children %}
-                                        {% if isAdminAllowed(userRoles, childItem.roles) %}
-                                            <li {% if childItem.bar|default(false) %}class="bar"{% endif %}>
-                                                <a
-                                                        {% if childItem.route|default(false) %}
-                                                            href="{{ path(childItem.route) }}"
-                                                            {% if childItem.route == app.request.get('_route') %}class="active"{% endif %}
-                                                            active
-                                                        {% else %}
-                                                            href="/admin/?page={{ item.page }}&amp;sub={{ childItem.sub }}"
-                                                            {% if page ==  item.page and sub|default('') == childItem.sub and sub|default(false) %} class="active"{% endif %}
-                                                        {% endif %}
-                                                >{{ childKey }}</a>
-                                            </li>
-                                        {% endif %}
-                                    {% endfor %}
-                                </ul>
-                            {% endif %}
-                        </li>
-                    {% endif %}
+                    <li>
+                        <a href="{{ item.href }}" {% if item.active %}class="active"{% endif %}>{{ key }}</a>
+                        {% if item.children|length > 0 %}
+                            <ul class="navsubmenu">
+                                {% for childKey,childItem in item.children %}
+                                    <li {% if childItem.bar|default(false) %}class="bar"{% endif %}>
+                                        <a href="{{ childItem.href }}"
+                                           {% if childItem.active %}class="active"{% endif %}>{{ childKey }}</a>
+                                    </li>
+                                {% endfor %}
+                            </ul>
+                        {% endif %}
+                    </li>
                 {% endfor %}
             </ul>
         </aside>
