@@ -50,7 +50,7 @@
             </tbody>
         </table>
     {% else %}
-        {{ component('admin_message_box', { type: 'info', message: 'Keine Punkte vorhanden!' }) }}
+        <twig:alert type="info">Keine Punkte vorhanden!</twig:alert>
     {% endif %}
 
 {% endblock %}

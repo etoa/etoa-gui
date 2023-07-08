@@ -59,7 +59,7 @@
             </tbody>
         </table>
     {% else %}
-        {{ component('admin_message_box', { type: 'info', message: 'Keine Nachrichten vorhanden!' }) }}
+        <twig:alert type="info">Keine Nachrichten vorhanden!</twig:alert>
     {% endif %}
 
 {% endblock %}

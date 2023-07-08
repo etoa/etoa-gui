@@ -29,5 +29,5 @@
         </tbody>
     </table>}
 {% else %}
-    {{ component('admin_message_box', { type: 'info', message: 'Es sind keine Logs vorhanden!' }) }}
+    <twig:alert type="info">Es sind keine Logs vorhanden!</twig:alert>
 {% endif %}

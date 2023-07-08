@@ -14,7 +14,7 @@
                 <div id="content">
                     {% for type, messages in app.flashes|default([]) %}
                         {% for message in messages %}
-                            {{ component('admin_message_box', { type: type, message: message }) }}
+                            <twig:alert :type=type>{{ message }}</twig:alert>
                         {% endfor %}
                     {% endfor %}
                     {% block content %}{% endblock %}

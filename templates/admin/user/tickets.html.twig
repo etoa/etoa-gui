@@ -36,7 +36,7 @@
             </tbody>
         </table>
     {% else %}
-        {{ component('admin_message_box', { type: 'info', message: 'Dieser User hat keine Tickets' }) }}
+        <twig:alert type="info">Dieser User hat keine Tickets!</twig:alert>
     {% endif %}
 
 {% endblock %}

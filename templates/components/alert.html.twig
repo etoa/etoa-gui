@@ -3,6 +3,6 @@
         {% if title %}
             <p class="messagetitle">{{ title }}</p>
         {% endif %}
-        {{ message|raw }}
+        {% block content %}{% endblock %}
     </div>
 </div>

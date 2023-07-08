@@ -36,7 +36,7 @@
             </tbody>
         </table>
     {% else %}
-        {{ component('admin_message_box', { type: 'info', message: 'Keine fehlgeschlagenen Logins' }) }}
+        <twig:alert type="info">Keine fehlgeschlagenen Logins!</twig:alert>
     {% endif %}
 
 {% endblock %}

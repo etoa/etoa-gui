@@ -1,15 +1,13 @@
 <?php
 
-namespace EtoA\Components\Admin;
+namespace EtoA\Components;
 
 use Symfony\UX\TwigComponent\Attribute\AsTwigComponent;
 
-#[AsTwigComponent('admin_message_box')]
-class MessageBoxComponent
+#[AsTwigComponent('alert')]
+class AlertComponent
 {
     public string $type = 'info';
 
     public ?string $title = null;
-
-    public string $message;
 }
