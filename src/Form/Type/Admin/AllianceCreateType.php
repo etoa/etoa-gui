@@ -14,7 +14,11 @@ class AllianceCreateType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('tag', TextType::class)
+            ->add('tag', TextType::class, [
+                'attr' => [
+                    'autofocus' => true,
+                ],
+            ])
             ->add('name', TextType::class)
             ->add('founder', UserType::class, [
                 'required' => true,
