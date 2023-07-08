@@ -2,7 +2,6 @@
 
 namespace EtoA\Controller\Admin;
 
-use EtoA\Admin\LegacyTemplateTitleHelper;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -10,9 +9,47 @@ abstract class AdvancedGameDataCrudController extends GameDataCrudController
 {
     protected function renderContent(Request $request): Response
     {
+        ob_start();
+        if ($request->query->get('action') == "new") {
+            $this->create();
+            $subtitle = 'Datensatz Eintrag';
+        } elseif ($request->request->has('new')) {
+            $this->store($request);
+            $this->index();
+        } elseif ($request->query->get('action') == "copy") {
+            $this->copy($request);
+            $this->index();
+        } elseif ($request->query->get('action') == "edit") {
+            $this->edit($request);
+            $subtitle = 'Datensatz bearbeiten';
+        } elseif ($request->request->has('edit')) {
+            $this->update($request);
+            $this->index();
+        } elseif ($request->query->has('switch') && $request->query->getInt('id') > 0 && count($this->getSwitches()) > 0) {
+            $this->switch($request);
+            $this->index();
+        } elseif ($request->query->has('moveUp') && $request->query->has('parentId')) {
+            $this->moveUp($request);
+            $this->index();
+        } elseif ($request->query->has('moveDown') && $request->query->has('parentId')) {
+            $this->moveDown($request);
+            $this->index();
+        } elseif ($request->query->get('action') == "del") {
+            $this->confirmDelete($request);
+            $subtitle = 'Datensatz löschen';
+        } elseif ($request->request->has('del')) {
+            $this->delete($request);
+            $this->index();
+        } else {
+            $this->index();
+            $subtitle = "Übersicht";
+        }
+        $content = ob_get_clean();
+
         return $this->render('admin/default.html.twig', [
             'title' => $this->getName(),
-            'content' => $this->router($request),
+            'subtitle' => $subtitle ?? null,
+            'content' => $content,
         ]);
     }
 
@@ -44,46 +81,8 @@ abstract class AdvancedGameDataCrudController extends GameDataCrudController
         return '';
     }
 
-    public function router(Request $request): string
-    {
-        ob_start();
-        if ($request->query->get('action') == "new") {
-            $this->create();
-        } elseif ($request->request->has('new')) {
-            $this->store($request);
-            $this->index();
-        } elseif ($request->query->get('action') == "copy") {
-            $this->copy($request);
-            $this->index();
-        } elseif ($request->query->get('action') == "edit") {
-            $this->edit($request);
-        } elseif ($request->request->has('edit')) {
-            $this->update($request);
-            $this->index();
-        } elseif ($request->query->has('switch') && $request->query->getInt('id') > 0 && count($this->getSwitches()) > 0) {
-            $this->switch($request);
-            $this->index();
-        } elseif ($request->query->has('moveUp') && $request->query->has('parentId')) {
-            $this->moveUp($request);
-            $this->index();
-        } elseif ($request->query->has('moveDown') && $request->query->has('parentId')) {
-            $this->moveDown($request);
-            $this->index();
-        } elseif ($request->query->get('action') == "del") {
-            $this->confirmDelete($request);
-        } elseif ($request->request->has('del')) {
-            $this->delete($request);
-            $this->index();
-        } else {
-            $this->index();
-        }
-        return ob_get_clean();
-    }
-
     public function index(): void
     {
-        LegacyTemplateTitleHelper::$subTitle = "Übersicht";
-
         echo '<form action="?" method="post">';
         echo '<input type="button" value="Neuer Datensatz hinzufügen" name="new" onclick="document.location=\'?&amp;action=new\'" /><br/><br/>';
 
@@ -200,8 +199,6 @@ abstract class AdvancedGameDataCrudController extends GameDataCrudController
 
     public function create(): void
     {
-        LegacyTemplateTitleHelper::$subTitle = "Neuer Datensatz";
-
         echo "<form action=\"?\" method=\"post\">";
         echo "<table>";
         foreach ($this->getFields() as $field) {
@@ -212,8 +209,8 @@ abstract class AdvancedGameDataCrudController extends GameDataCrudController
             $name = $field['name'];
             $value = $field['def_val'] ?? '';
             echo "<tr>
-                <th width=\"200\">" . $field['text'] . ":</th>
-                <td class=\"tbldata\" width=\"200\">" . $this->createInput($field, $name, strval($value)) . "</td>
+                <th>" . $field['text'] . ":</th>
+                <td width=\"200\">" . $this->createInput($field, $name, strval($value)) . "</td>
             </tr>";
         }
         echo "</table><br/>";
@@ -226,7 +223,7 @@ abstract class AdvancedGameDataCrudController extends GameDataCrudController
     {
         $this->insertRecord($request);
         $hookResult = $this->runPostInsertUpdateHook();
-        echo MessageBox::ok("", "Neuer Datensatz gespeichert!" . (filled($hookResult) ? ' ' . $hookResult : ''));
+        $this->addFlash('success', "Neuer Datensatz gespeichert!" . (filled($hookResult) ? ' ' . $hookResult : ''));
     }
 
     private function insertRecord(Request $request): void
@@ -259,7 +256,7 @@ abstract class AdvancedGameDataCrudController extends GameDataCrudController
     public function copy(Request $request): void
     {
         if ($this->duplicateRecord($this->getTable(), $this->getTableId(), $request->query->getInt('id'))) {
-            echo MessageBox::ok("", "Datensatz kopiert!");
+            $this->addFlash('success', "Datensatz kopiert!");
         }
     }
 
@@ -295,8 +292,6 @@ abstract class AdvancedGameDataCrudController extends GameDataCrudController
 
     public function edit(Request $request): void
     {
-        LegacyTemplateTitleHelper::$subTitle = "Datensatz bearbeiten";
-
         $arr = $this->createQueryBuilder()
             ->select('*')
             ->from($this->getTable())
@@ -332,8 +327,8 @@ abstract class AdvancedGameDataCrudController extends GameDataCrudController
                 if (in_array($field['name'], $hiddenRows, true)) {
                     echo " style=\"display:none;\"";
                 }
-                echo ">\n<th width=\"200\">" . $field['text'] . ":</th>\n";
-                echo "<td class=\"tbldata\" width=\"200\">\n";
+                echo ">\n<th>" . $field['text'] . ":</th>\n";
+                echo "<td>\n";
                 $name = $field['name'];
                 $value = $arr[$field['name']];
                 echo $this->createInput($field, $name, strval($value));
@@ -351,7 +346,7 @@ abstract class AdvancedGameDataCrudController extends GameDataCrudController
             echo "<input type=\"button\" value=\"Abbrechen\" onclick=\"document.location='?'\" />";
             echo "</form>";
         } else {
-            echo MessageBox::error("", "Datensatz nicht vorhanden.");
+            $this->addFlash('error', "Datensatz nicht vorhanden.");
             echo "<input type=\"button\" value=\"Übersicht\" onclick=\"document.location='?'\" />";
         }
     }
@@ -360,7 +355,7 @@ abstract class AdvancedGameDataCrudController extends GameDataCrudController
     {
         if ($this->updateRecord($request)) {
             $hookResult = $this->runPostInsertUpdateHook();
-            echo MessageBox::ok("", "Datensatz geändert!" . (filled($hookResult) ? ' ' . $hookResult : ''));
+            $this->addFlash('success', "Datensatz geändert!" . (filled($hookResult) ? ' ' . $hookResult : ''));
         }
     }
 
@@ -409,7 +404,7 @@ abstract class AdvancedGameDataCrudController extends GameDataCrudController
             ->rowCount();
 
         if ($affected > 0) {
-            echo MessageBox::ok("", "Aktion ausgeführt!");
+            $this->addFlash('success', "Aktion ausgeführt!");
         }
     }
 
@@ -499,8 +494,6 @@ abstract class AdvancedGameDataCrudController extends GameDataCrudController
 
     public function confirmDelete(Request $request): void
     {
-        LegacyTemplateTitleHelper::$subTitle = "Datensatz löschen";
-
         $arr = $this->createQueryBuilder()
             ->select('*')
             ->from($this->getTable())
@@ -515,8 +508,8 @@ abstract class AdvancedGameDataCrudController extends GameDataCrudController
             echo "<table>";
             foreach ($this->getFields() as $field) {
                 echo "<tr>
-                <th width=\"200\">" . $field['text'] . ":</th>
-                <td class=\"tbldata\" width=\"200\">" . $this->showFieldValue($field, $arr) . "</td>
+                <th>" . $field['text'] . ":</th>
+                <td>" . $this->showFieldValue($field, $arr) . "</td>
             </tr>";
             }
 
@@ -525,7 +518,7 @@ abstract class AdvancedGameDataCrudController extends GameDataCrudController
             echo "<input type=\"button\" value=\"Abbrechen\" onclick=\"document.location='?'\" />";
             echo "</form>";
         } else {
-            echo MessageBox::error("", "Datensatz nicht vorhanden.");
+            $this->addFlash('error', "Datensatz nicht vorhanden.");
             echo "<input type=\"button\" value=\"Übersicht\" onclick=\"document.location='?'\" />";
         }
     }
@@ -540,7 +533,7 @@ abstract class AdvancedGameDataCrudController extends GameDataCrudController
             ->rowCount();
 
         if ($affected > 0) {
-            echo MessageBox::ok("", "Datensatz wurde gelöscht!");
+            $this->addFlash('success', "Datensatz wurde gelöscht!");
         }
     }
 
