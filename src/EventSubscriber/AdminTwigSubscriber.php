@@ -19,6 +19,7 @@ class AdminTwigSubscriber implements EventSubscriberInterface
         private readonly Environment           $twig,
         private readonly AdminNotesRepository  $notesRepository,
         private readonly TicketRepository      $ticketRepository,
+        private readonly string                $projectDir,
     )
     {
     }
@@ -34,7 +35,7 @@ class AdminTwigSubscriber implements EventSubscriberInterface
         $adminUser = $token->getUser();
         $request = $event->getRequest();
 
-        $this->twig->addGlobal('navMenu', fetchJsonConfig("admin-menu.conf"));
+        $this->twig->addGlobal('navMenu', require($this->projectDir . '/config/admin_menu.php'));
         $this->twig->addGlobal('userRoles', $adminUser->getData()->roles);
         $this->twig->addGlobal('searchQuery', $request->request->get('search_query'));
         $this->twig->addGlobal('page', $request->query->get('page', 'overview'));
