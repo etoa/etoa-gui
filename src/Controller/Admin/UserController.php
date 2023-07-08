@@ -185,7 +185,6 @@ class UserController extends AbstractAdminController
             'userHolidayModeDefaultTime' => time() + (3600 * 24 * $this->config->getInt('user_umod_min_length')),
             'raceNames' => $this->raceRepository->getRaceNames(),
             'specialistNames' => $this->specialistRepository->getSpecialistNames(),
-            'allianceNamesWithTags' => $this->allianceRepository->getAllianceNamesWithTags(),
             'spyShipNames' => $this->shipDateRepository->getShipNamesWithAction('spy'),
             'analyzeShipNames' => $this->shipDateRepository->getShipNamesWithAction('analyze'),
             'designNames' => array_map(fn($design) => $design['name'], $designs),
@@ -227,6 +226,8 @@ class UserController extends AbstractAdminController
 
         if ($request->request->has('user_alliance_rank_id')) {
             $user->allianceRankId = $request->request->getInt('user_alliance_rank_id');
+        } else {
+            $user->allianceRankId = 0;
         }
         if ($request->request->has('user_profile_img_check')) {
             $user->profileImageCheck = false;
@@ -787,7 +788,7 @@ class UserController extends AbstractAdminController
 
     #[Route('/admin/users/{id}/loginFailures', name: 'admin.users.user_login_failures', methods: ['GET'])]
     #[IsGranted('ROLE_ADMIN_TRIAL-ADMIN')]
-    public function loginFailures(int $id, Request $request): Response
+    public function loginFailures(int $id): Response
     {
         $user = $this->userRepository->getUser($id);
         if ($user === null) {

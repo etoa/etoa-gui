@@ -8,10 +8,6 @@ $xajax->configure('debug', false);
 
 require_once __DIR__ . "/xajax/global.xajax.php";
 
-require_once __DIR__ ."/../../inc/xajax/techtree.xajax.php";
-
-if (isset($page) && ($page == "user")) {
-    require_once __DIR__ . "/xajax/user.xajax.php";
-}
+require_once __DIR__ . "/../../inc/xajax/techtree.xajax.php";
 
 $xajax->processRequest();

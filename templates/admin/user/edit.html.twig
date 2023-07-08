@@ -10,13 +10,6 @@
         { label: 'Spieler bearbeiten', url: path('admin.users.edit', {id: user.id}) },
     ]}) }}
 
-    <script type="text/javascript">
-        function loadAllianceRanks(val) {
-            const elem = document.getElementById('user_alliance_id');
-            xajax_allianceRankSelector('ars', 'user_alliance_rank_id', val, elem.options[elem.selectedIndex].value);
-        }
-    </script>
-
     <form action="{{ path('admin.users.edit', {id: user.id}) }}" method="post">
         <input type="hidden" id="tabactive" name="tabactive" value=""/>
         <div class="tabs" id="user_edit_tabs">
@@ -232,10 +225,7 @@
                     <tr>
                         <th><label for="user_alliance_id">Allianz</label></th>
                         <td>
-                            <twig:forms:select_input name="user_alliance_id" :options="allianceNamesWithTags"
-                                                     :value="user.allianceId" :emptyValue="0" emptyLabel="(Keine)"
-                                                     onchange="loadAllianceRanks({{ user.allianceRankId }})"/>
-                            Rang: <span id="ars">-</span>
+                            {{ component('admin_user_alliance_selector', { name: 'user_alliance_id', rankName: 'user_alliance_rank_id', userAllianceId: user.allianceId, userAllianceRankId: user.allianceRankId }) }}
                         </td>
                     </tr>
                     <tr>
@@ -302,9 +292,6 @@
                         </td>
                     </tr>
                 </table>
-                <script type="text/javascript">
-                    loadAllianceRanks({{ user.allianceRankId }});
-                </script>
             </div>
 
             {# Profil #}

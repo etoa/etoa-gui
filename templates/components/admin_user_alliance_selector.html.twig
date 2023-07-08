@@ -1,0 +1,13 @@
+<div {{ attributes }}>
+    <twig:forms:select_input :name="name" :options="computed.getAllianceNamesWithTags" :emptyValue="0"
+                             emptyLabel="(Keine)" data-model="userAllianceId"/>
+    {% if userAllianceId > 0 %}
+        Rang:
+        {% if this.getRanks|length > 0 %}
+            <twig:forms:select_input :name="rankName" :options="this.getRanks" :emptyValue="0" emptyLabel="(Kein Rang)"
+                                     data-model="userAllianceRankId"/>
+        {% else %}
+            -
+        {% endif %}
+    {% endif %}
+</div>
