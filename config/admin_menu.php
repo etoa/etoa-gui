@@ -228,7 +228,6 @@ return [
         "children" => [
             "Preisrechner" => [
                 "roles" => "master,super-admin,game-admin",
-                "path" => "/admin/buildings/cost-calculator",
                 "route" => "admin.buildings.cost-calculator"
             ],
             "Gebäude bearbeiten" => [
@@ -236,20 +235,16 @@ return [
                 "roles" => "master,super-admin"
             ],
             "Kategorien" => [
-                "sub" => "type",
+                "route" => "admin.buildings.types",
                 "roles" => "master,super-admin"
             ],
             "Voraussetzungen" => [
-                "sub" => "req",
+                "route" => "admin.buildings.requirements",
                 "roles" => "master,super-admin",
-                "path" => "/admin/buildings/requirements",
-                "route" => "admin.buildings.requirements"
             ],
             "Gebäudepunkte" => [
-                "sub" => "points",
+                "route" => "admin.buildings.points",
                 "roles" => "master,super-admin",
-                "path" => "/admin/buildings/points",
-                "route" => "admin.buildings.points"
             ]
         ]
     ],
@@ -264,20 +259,16 @@ return [
                 "roles" => "master,super-admin"
             ],
             "Kategorien" => [
-                "sub" => "type",
+                "route" => "admin.technologies.types",
                 "roles" => "master,super-admin"
             ],
             "Voraussetzungen" => [
-                "sub" => "req",
+                "route" => "admin.technology.requirements",
                 "roles" => "master,super-admin",
-                "path" => "/admin/technology/requirements",
-                "route" => "admin.technology.requirements"
             ],
             "Forschungspunkte" => [
-                "sub" => "points",
+                "route" => "admin.technology.points",
                 "roles" => "master,super-admin",
-                "path" => "/admin/technology/points",
-                "route" => "admin.technology.points"
             ]
         ]
     ],
@@ -305,7 +296,7 @@ return [
                 "route" => "admin.ships.requirements"
             ],
             "Kategorien" => [
-                "sub" => "cat",
+                "route" => "admin.ships.types",
                 "roles" => "master,super-admin"
             ],
             "Punkte" => [
@@ -345,7 +336,7 @@ return [
                 "route" => "admin.defense.requirements"
             ],
             "Kategorien" => [
-                "sub" => "cat",
+                "route" => "admin.defense.types",
                 "roles" => "master,super-admin"
             ],
             "Punkte" => [
@@ -622,7 +613,7 @@ return [
                 "roles" => "master,super-admin"
             ],
             "Ticket-Kategorien" => [
-                "sub" => "ticketcat",
+                "route" => "admin.ticket.categories",
                 "roles" => "master,super-admin"
             ]
         ]

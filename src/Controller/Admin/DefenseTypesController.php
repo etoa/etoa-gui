@@ -1,11 +1,21 @@
-<?php
+<?php declare(strict_types=1);
 
-declare(strict_types=1);
+namespace EtoA\Controller\Admin;
 
-namespace EtoA\Admin\Forms;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
-class DefenseCategoriesForm extends SimpleForm
+class DefenseTypesController extends SimpleGameDataCrudController
 {
+    #[Route('/admin/defense/types', name: 'admin.defense.types')]
+    #[IsGranted('ROLE_ADMIN_TRIAL-ADMIN')]
+    public function __invoke(Request $request): Response
+    {
+        return $this->handleRequest($request);
+    }
+
     public function getName(): string
     {
         return "Verteidigungs-Kategorien";

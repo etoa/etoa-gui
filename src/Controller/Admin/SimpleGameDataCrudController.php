@@ -1,25 +1,26 @@
-<?php
+<?php declare(strict_types=1);
 
-declare(strict_types=1);
+namespace EtoA\Controller\Admin;
 
-namespace EtoA\Admin\Forms;
-
-use EtoA\Admin\LegacyTemplateTitleHelper;
-use MessageBox;
-use Pimple\Container;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
-abstract class SimpleForm extends Form
+abstract class SimpleGameDataCrudController extends GameDataCrudController
 {
-    public static function render(Container $app, Request $request): void
+    protected function handleRequest(Request $request): Response
     {
-        (new static($app))->index($request);
+        ob_start();
+        $this->index($request);
+        $content = ob_get_clean();
+
+        return $this->render('admin/default.html.twig', [
+            'title' => $this->getName(),
+            'content' => $content,
+        ]);
     }
 
     public function index(Request $request): void
     {
-        LegacyTemplateTitleHelper::$title = $this->getName();
-
         if ($request->request->has('apply_submit')) {
             $this->applyChanges($request);
             $this->applyDeletions($request);
@@ -29,7 +30,7 @@ abstract class SimpleForm extends Form
             $this->createRecord();
         }
 
-        echo "<form action=\"?" . URL_SEARCH_STRING . "\" method=\"post\">";
+        echo '<form action="?" method="post">';
         $rows = $this->createQueryBuilder()
             ->select('*')
             ->from($this->getTable())
@@ -37,33 +38,33 @@ abstract class SimpleForm extends Form
             ->fetchAllAssociative();
 
         if (count($rows) > 0) {
-            echo "<table>\n";
+            echo '<table class="table">';
             echo "<tr>";
             foreach ($this->getFields() as $k => $field) {
-                echo "<th class=\"tbltitle\">" . $field['text'] . "</th>";
+                echo "<th>" . $field['text'] . "</th>";
             }
-            echo "<th class=\"tbltitle\">Löschen</th>";
+            echo "<th>Löschen</th>";
             echo "</tr>\n";
             foreach ($rows as $arr) {
                 echo "<tr>";
                 foreach ($this->getFields() as $key => $field) {
-                    echo "<td class=\"tbldata\">";
+                    echo "<td>";
                     $name = $field['name'] . "[" . $arr[$this->getTableId()] . "]";
                     $value = $arr[$field['name']];
-                    echo $this->createInput($field, $name, $value);
+                    echo $this->createInput($field, $name, strval($value));
                     echo "</td>";
                 }
-                echo "<td class=\"tbldata\">
+                echo "<td>
                     <input type=\"checkbox\" name=\"del[" . $arr[$this->getTableId()] . "]\" value=\"1\" />
                 </td>";
                 echo "</tr>\n";
             }
             echo "</table><br/>\n";
-            echo "<input type=\"submit\" name=\"apply_submit\" value=\"Übernehmen\" />&nbsp;";
-            echo "<input type=\"submit\" name=\"new_submit\" value=\"Neuer Datensatz\" />&nbsp;";
+            echo '<input type="submit" name="apply_submit" value="Übernehmen" />&nbsp;';
+            echo '<input type="submit" name="new_submit" value="Neuer Datensatz" />&nbsp;';
         } else {
-            echo "<p align=\"center\"><i>Es existieren keine Datensätze!</i></p>";
-            echo "<p align=\"center\"><input type=\"submit\" name=\"new_submit\" value=\"Neuer Datensatz\" />&nbsp;</p>";
+            echo '<p><i>Es existieren keine Datensätze!</i></p>';
+            echo '<p><input type="submit" name="new_submit" value="Neuer Datensatz" />&nbsp;</p>';
         }
         echo "</form>";
     }
@@ -83,7 +84,7 @@ abstract class SimpleForm extends Form
             ->setParameters($params)
             ->executeQuery();
 
-        echo MessageBox::ok("", "Neuer leerer Datensatz wurde hinzugefügt!");
+        $this->addFlash('success', "Neuer leerer Datensatz wurde hinzugefügt!");
     }
 
     private function applyChanges(Request $request): void
@@ -107,7 +108,7 @@ abstract class SimpleForm extends Form
         }
 
         if ($affected > 0) {
-            echo MessageBox::ok("", "Änderungen wurden übernommen!");
+            $this->addFlash('success', "Änderungen wurden übernommen!");
         }
     }
 
@@ -128,7 +129,7 @@ abstract class SimpleForm extends Form
         }
 
         if ($deleted) {
-            echo MessageBox::ok("", "Bestimmte Daten wurden gelöscht!");
+            $this->addFlash('success', "Bestimmte Daten wurden gelöscht!");
         }
     }
 }
