@@ -20,19 +20,21 @@
 
             </select>
 
-            <input type="submit" name="exportcache" value="Exportieren" />
-            <input type="submit" name="exportdl" value="Herunterladen" />
+            <input type="submit" name="exportcache" value="Exportieren"/>
+            <input type="submit" name="exportdl" value="Herunterladen"/>
         </p>
     </form>
 
-    <table class="tb">
+    <table class="table">
+        <thead>
         <tr>
             <th>Datei (Userid_Datum_Zeit)</th>
             <th>Spieler</th>
             <th>Datum</th>
             <th>Optionen</th>
         </tr>
-
+        </thead>
+        <tbody>
         {% for file in xmlFiles %}
             <tr>
                 <td>{{ file.basename }}</td>
@@ -50,5 +52,6 @@
                 </td>
             </tr>
         {% endfor %}
+        </tbody>
     </table>
 {% endblock %}

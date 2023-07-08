@@ -60,74 +60,52 @@ return [
         "route" => "admin.users",
         "children" => [
             "Spieler erstellen" => [
-                "sub" => "create",
+                "route" => "admin.users.new",
                 "roles" => "master,super-admin,game-admin,trial-game-admin",
-                "path" => "/admin/users/new",
-                "route" => "admin.users.new"
             ],
             "Sessions" => [
-                "sub" => "sessions",
+                "route" => "admin.users.sessions",
                 "roles" => "master,super-admin,game-admin,trial-game-admin",
-                "path" => "/admin/users/sessions",
-                "route" => "admin.users.sessions"
             ],
             "Multi-Kontrolle" => [
-                "sub" => "multi",
-                "roles" => "master,super-admin,game-admin,trial-game-admin",
                 "route" => "admin.users.multis",
-                "path" => "/admin/users/multis"
+                "roles" => "master,super-admin,game-admin,trial-game-admin",
             ],
             "IP-Suche" => [
-                "sub" => "ipsearch",
-                "roles" => "master,super-admin,game-admin,trial-game-admin",
                 "route" => "admin.users.ips",
-                "path" => "/admin/users/ips"
+                "roles" => "master,super-admin,game-admin,trial-game-admin",
             ],
             "Sitting" => [
-                "sub" => "sitting",
+                "route" => "admin.users.sitting",
                 "roles" => "master,super-admin,game-admin,trial-game-admin",
-                "path" => "/admin/users/sitting",
-                "route" => "admin.users.sitting"
             ],
             "Punkteverlauf" => [
-                "sub" => "point",
+                "route" => "admin.users.points",
                 "roles" => "master,super-admin,game-admin,trial-game-admin",
-                "path" => "/admin/users/points",
-                "route" => "admin.users.points"
             ],
             "Sessionlogs" => [
-                "sub" => "userlog",
+                "route" => "admin.users.session-log",
                 "roles" => "master,super-admin,game-admin",
-                "path" => "/admin/users/session-log",
-                "route" => "admin.users.session-log"
             ],
             "Profilbilder prüfen" => [
-                "sub" => "imagecheck",
+                "route" => "admin.users.imagecheck",
                 "roles" => "master,super-admin,game-admin"
             ],
             "Spieler-Banner" => [
-                "sub" => "userbanner",
+                "route" => "admin.users.banners",
                 "roles" => "master,super-admin,game-admin",
-                "path" => "/admin/users/banners",
-                "route" => "admin.users.banners"
             ],
             "Fehlerhafte Logins" => [
-                "sub" => "loginfailures",
+                "route" => "admin.users.login-failures",
                 "roles" => "master,super-admin,game-admin",
-                "path" => "/admin/users/login-failures",
-                "route" => "admin.users.login-failures"
             ],
             "Beobachter" => [
-                "sub" => "observed",
+                "route" => "admin.users.observer",
                 "roles" => "master,super-admin,game-admin",
-                "path" => "/admin/users/observer",
-                "route" => "admin.users.observer"
             ],
             "Verwarnungen" => [
-                "sub" => "warnings",
+                "route" => "admin.users.warnings",
                 "roles" => "master,super-admin,game-admin",
-                "path" => "/admin/users/warnings",
-                "route" => "admin.users.warnings"
             ],
             "XML-Export/Import" => [
                 "sub" => "xml",

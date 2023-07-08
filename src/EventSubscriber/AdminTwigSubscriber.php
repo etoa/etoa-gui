@@ -73,7 +73,7 @@ class AdminTwigSubscriber implements EventSubscriberInterface
 
             $activeChild = false;
             if (count($item['children'] ?? []) > 0) {
-                foreach ($item['children'] as $childKey => &$childItem) {
+                foreach ($item['children'] as $childKey => $childItem) {
                     $processedItem = $this->handleNavItem($childItem, $userRoles, $currentRouteName, $page, $item['page'] ?? null);
                     if ($processedItem == null) {
                         unset($navTree[$key]['children'][$childKey]);
@@ -92,7 +92,7 @@ class AdminTwigSubscriber implements EventSubscriberInterface
         return $navTree;
     }
 
-    private function handleNavItem(array $item, array $userRoles, ?string $currentRouteName, ?string $currentPage, ?string $parentPage = null)
+    private function handleNavItem(array $item, array $userRoles, ?string $currentRouteName, ?string $currentPage, ?string $parentPage = null): ?array
     {
         // Remove nav tree element if roles don't match i.e. user is not authorized for this page
         if (!$this->adminRoleManager->checkAllowedRoles($userRoles, $item['roles'])) {

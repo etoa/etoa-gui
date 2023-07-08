@@ -23,7 +23,7 @@ class UsersXmlController extends AbstractController
     {
     }
 
-    #[Route('/admin/users/xml', name: 'admin.users.xml')]
+    #[Route('/admin/users/xml', name: 'admin.users.xml', priority: 10)]
     #[IsGranted('ROLE_ADMIN_GAME-ADMIN')]
     public function list(Request $request): Response
     {

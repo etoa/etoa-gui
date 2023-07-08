@@ -3,7 +3,8 @@
 {% block statsContent %}
     <h2>Handelswertung</h2>
 
-    <table class="full-width">
+    <table class="table">
+        <thead>
         <tr>
             <th>#</th>
             <th>Nick</th>
@@ -13,7 +14,8 @@
             <th>Verkäufe</th>
             <th>Bewertung</th>
         </tr>
-
+        </thead>
+        <tbody>
         {% for rating in ratings %}
             <tr>
                 <td>{{ loop.index }}</td>
@@ -29,5 +31,6 @@
                 <td colspan="99"><p>Keine Spieler gefunden</p></td>
             </tr>
         {% endfor %}
+        </tbody>
     </table>
 {% endblock %}

@@ -48,7 +48,7 @@ class UsersController extends AbstractAdminController
         ]);
     }
 
-    #[Route('/admin/users/sitting', name: 'admin.users.sitting')]
+    #[Route('/admin/users/sitting', name: 'admin.users.sitting', priority: 10)]
     #[IsGranted('ROLE_ADMIN_TRIAL-ADMIN')]
     public function sitting(): Response
     {
@@ -57,7 +57,7 @@ class UsersController extends AbstractAdminController
         ]);
     }
 
-    #[Route('/admin/users/login-failures', name: 'admin.users.login-failures')]
+    #[Route('/admin/users/login-failures', name: 'admin.users.login-failures', priority: 10)]
     #[IsGranted('ROLE_ADMIN_GAME-ADMIN')]
     public function loginFailures(Request $request): Response
     {
@@ -67,7 +67,7 @@ class UsersController extends AbstractAdminController
         ]);
     }
 
-    #[Route('/admin/users/points', name: 'admin.users.points')]
+    #[Route('/admin/users/points', name: 'admin.users.points', priority: 10)]
     #[IsGranted('ROLE_ADMIN_TRIAL-ADMIN')]
     public function points(Request $request): Response
     {
@@ -92,7 +92,7 @@ class UsersController extends AbstractAdminController
         ]);
     }
 
-    #[Route('/admin/users/banners', name: 'admin.users.banners')]
+    #[Route('/admin/users/banners', name: 'admin.users.banners', priority: 10)]
     #[IsGranted('ROLE_ADMIN_GAME-ADMIN')]
     public function banners(Request $request): Response
     {
@@ -109,7 +109,7 @@ class UsersController extends AbstractAdminController
         ]);
     }
 
-    #[Route('/admin/users/imagecheck', name: 'admin.users.imagecheck')]
+    #[Route('/admin/users/imagecheck', name: 'admin.users.imagecheck', priority: 10)]
     #[IsGranted('ROLE_ADMIN_GAME-ADMIN')]
     public function imageCheck(Request $request): Response
     {
@@ -169,7 +169,7 @@ class UsersController extends AbstractAdminController
         ]);
     }
 
-    #[Route('/admin/users/multis', name: 'admin.users.multis')]
+    #[Route('/admin/users/multis', name: 'admin.users.multis', priority: 10)]
     #[IsGranted('ROLE_ADMIN_TRIAL-ADMIN')]
     public function multis(): Response
     {
@@ -201,12 +201,12 @@ class UsersController extends AbstractAdminController
         ]);
     }
 
-    #[Route('/admin/users/ips', name: 'admin.users.ips')]
+    #[Route('/admin/users/ips', name: 'admin.users.ips', priority: 10)]
     #[IsGranted('ROLE_ADMIN_TRIAL-ADMIN')]
     public function ipSearch(Request $request): Response
     {
         $ip = $request->query->get('ip');
-        if (!is_string($ip) && (bool)($host = $request->query->get('host'))) {
+        if (!is_string($ip) && ($host = $request->query->get('host'))) {
             $ip = $this->networkNameService->getAddr((string)$host);
         }
 
@@ -230,6 +230,7 @@ class UsersController extends AbstractAdminController
         $sittingEntries = $this->userSittingRepository->getActiveUsersEntry($userIds);
 
         return $this->render('admin/user/ip-search.html.twig', [
+            'ip' => $ip,
             'users' => $this->userRepository->searchUserNicknames(),
             'sessions' => $sessions,
             'sessionLogs' => $sessionLogs,

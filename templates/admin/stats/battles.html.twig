@@ -3,7 +3,8 @@
 {% block statsContent %}
     <h2>Kampfwertung</h2>
 
-    <table class="full-width">
+    <table class="table">
+        <thead>
         <tr>
             <th>#</th>
             <th>Nick</th>
@@ -14,7 +15,8 @@
             <th>Kämpfe Total</th>
             <th>Bewertung</th>
         </tr>
-
+        </thead>
+        <tbody>
         {% for rating in ratings %}
             <tr>
                 <td>{{ loop.index }}</td>
@@ -31,5 +33,6 @@
                 <td colspan="99"><p>Keine Spieler gefunden</p></td>
             </tr>
         {% endfor %}
+        </tbody>
     </table>
 {% endblock %}

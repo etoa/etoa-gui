@@ -25,7 +25,7 @@ class UserSessionController extends AbstractController
     {
     }
 
-    #[Route('/admin/users/sessions', name: 'admin.users.sessions')]
+    #[Route('/admin/users/sessions', name: 'admin.users.sessions', priority: 10)]
     #[IsGranted('ROLE_ADMIN_TRIAL-ADMIN')]
     public function sessions(): Response
     {
@@ -61,7 +61,7 @@ class UserSessionController extends AbstractController
         return $this->redirectToRoute('admin.users.sessions');
     }
 
-    #[Route('/admin/users/session-log', name: 'admin.users.session-log')]
+    #[Route('/admin/users/session-log', name: 'admin.users.session-log', priority: 10)]
     #[IsGranted('ROLE_ADMIN_GAME-ADMIN')]
     public function sessionLog(Request $request): Response
     {

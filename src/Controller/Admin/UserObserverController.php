@@ -27,7 +27,7 @@ class UserObserverController extends AbstractAdminController
     {
     }
 
-    #[Route('/admin/users/observer', name: 'admin.users.observer')]
+    #[Route('/admin/users/observer', name: 'admin.users.observer', priority: 10)]
     #[IsGranted('ROLE_ADMIN_GAME-ADMIN')]
     public function list(Request $request): Response
     {

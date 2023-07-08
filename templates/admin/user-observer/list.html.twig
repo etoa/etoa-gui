@@ -7,7 +7,8 @@
     {{ form(form) }}
 
     <p>Folgende User stehen unter Beobachtung:</p>
-    <table class="full-width">
+    <table class="table">
+        <thead>
         <tr>
             <th>Nick</th>
             <th>Punkte</th>
@@ -16,6 +17,8 @@
             <th>Details</th>
             <th>Optionen</th>
         </tr>
+        </thead>
+        <tbody>
         {% for user in users %}
             <tr>
                 <td><a href="{{ path('admin.users.view', {id: user.id}) }}">{{ user.nick }}</a></td>
@@ -41,6 +44,7 @@
                 <td colspan="99"><i>Keine gefunden!</i></td>
             </tr>
         {% endfor %}
+        </tbody>
     </table>
 
 {% endblock %}

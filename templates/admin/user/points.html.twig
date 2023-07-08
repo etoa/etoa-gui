@@ -15,11 +15,12 @@
     </p>
 
     {% if user %}
-        <h2>Punktedetails für <a href="?page=user&action=edit&id={{ user.id }}">{{ user.nick }}</a></h2>
+        <h2>Punktedetails für <a href="{{ path('admin.users.view', { id: user.id }) }}">{{ user.nick }}</a></h2>
         <p><b>Punkte aktuell:</b> {{ formatNumber(user.points) }}, <b>Rang aktuell:</b> {{ user.rank }}</p>
-        <img src="{{ path('admin.images.stats', {user: user.id}) }}" alt="Diagramm" /><br/><br/>
+        <img src="{{ path('admin.images.stats', {user: user.id}) }}" alt="Diagramm"/><br/><br/>
 
-        <table>
+        <table class="table">
+            <thead>
             <tr>
                 <th>Datum</th>
                 <th>Punkte</th>
@@ -27,7 +28,8 @@
                 <th>Forschung</th>
                 <th>Gebäude</th>
             </tr>
-
+            </thead>
+            <tbody>
             {% for entry in points %}
                 <tr>
                     <td>{{ formatTimestamp(entry.timestamp) }}</td>
@@ -41,6 +43,7 @@
                     <td colspan="99"><i>Keine Punktedaten vorhanden!</i></td>
                 </tr>
             {% endfor %}
+            </tbody>
         </table>
     {% endif %}
 {% endblock %}

@@ -5,7 +5,8 @@
     <h2>Beobachtungsliste</h2>
     <h3>Erweiterte Beobachtung von <a href="{{ path('admin.users.view', {id: user.id}) }}">{{ user.nick }}</a></h3>
 
-    <table class="full-width">
+    <table class="table">
+        <thead>
         <tr>
             <th>Login</th>
             <th>Letzte Aktivität</th>
@@ -15,7 +16,8 @@
             <th>Client</th>
             <th>Optionen</th>
         </tr>
-
+        </thead>
+        <tbody>
         {% for sessionId,minMax in sessionTimestamps %}
             {% if sessions[sessionId] is defined %}
                 {% set duration = max(sessions[sessionId].timeLogout|default(0), sessions[sessionId].timeAction) - sessions[sessionId].timeLogin %}
@@ -56,5 +58,6 @@
                 </td>
             </tr>
         {% endfor %}
+        </tbody>
     </table>
 {% endblock %}

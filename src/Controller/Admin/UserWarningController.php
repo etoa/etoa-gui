@@ -22,7 +22,7 @@ class UserWarningController extends AbstractAdminController
     {
     }
 
-    #[Route('/admin/users/warnings', name: 'admin.users.warnings')]
+    #[Route('/admin/users/warnings', name: 'admin.users.warnings', priority: 10)]
     #[IsGranted('ROLE_ADMIN_GAME-ADMIN')]
     public function show(Request $request): Response
     {

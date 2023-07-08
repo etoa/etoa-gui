@@ -7,13 +7,14 @@
     {{ form(form) }}
 
     <h3>Bestehende Verwarnungen</h3>
-    <table class="full-width">
+    <table class="table">
+        <thead>
         <tr>
             <th>Neuste Verwarnung</th>
             <th>Nick</th>
             <th>Verwarnungen</th>
         </tr>
-
+        </thead>
         {% for userWarnings in warnings %}
             <tr>
                 <td>{{ formatTimestamp(userWarnings[0].date) }}</td>

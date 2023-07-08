@@ -1,20 +1,26 @@
 {% extends 'admin/layout/admin.html.twig' %}
 
 {% block content %}
-    <h1>Spieler</h1>
-    <h2>IP Suche</h2>
+    <h1>Spieler IP-Adressen</h1>
+
+    {{ component('breadcrumbs', { items: [
+        { label: 'IP Suche', url: path('admin.users.ips') },
+    ]}) }}
+
+    <h2>Adresse oder Hostname suchen</h2>
 
     <form>
         <table class="tb">
             <tr>
                 <th>IP:</th>
-                <td><input type="text" name="ip" value="" /></td>
+                <td><input type="text" name="ip" value=""/></td>
             </tr>
             <tr>
                 <th>Host:</th>
-                <td><input type="text" name="host" value="" /></td>
+                <td><input type="text" name="host" value=""/></td>
             </tr>
-        </table><br/>
-        <input type="submit" name="search" value="Suchen" />
+        </table>
+        <br/>
+        <input type="submit" name="search" value="Suchen"/>
     </form>
 {% endblock %}

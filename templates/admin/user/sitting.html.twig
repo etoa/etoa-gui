@@ -4,22 +4,28 @@
     <h1>Spieler</h1>
     <h2>Sitting: Laufende Sitteraccounts</h2>
 
-    <table>
-        <tr>
-            <th>User</th>
-            <th>Sitter</th>
-            <th>Von</th>
-            <th>Bis</th>
-        </tr>
-        {% for entry in entries %}
+    {% if entries is not empty %}
+        <table class="table">
+            <thead>
             <tr>
-                <td>{{ entry.userNick }}</td>
-                <td>{{ entry.sitterNick }}</td>
-                <td>{{ formatTimestamp(entry.dateFrom) }}</td>
-                <td>{{ formatTimestamp(entry.dateTo) }}</td>
+                <th>User</th>
+                <th>Sitter</th>
+                <th>Von</th>
+                <th>Bis</th>
             </tr>
-        {% else %}
-            <tr><td colspan="999">Keine Datensätze vorhanden!</td></tr>
-        {% endfor %}
-    </table>
+            </thead>
+            <tbody>
+            {% for entry in entries %}
+                <tr>
+                    <td>{{ entry.userNick }}</td>
+                    <td>{{ entry.sitterNick }}</td>
+                    <td>{{ formatTimestamp(entry.dateFrom) }}</td>
+                    <td>{{ formatTimestamp(entry.dateTo) }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <twig:alert>Keine Datensätze vorhanden!</twig:alert>
+    {% endif %}
 {% endblock %}
