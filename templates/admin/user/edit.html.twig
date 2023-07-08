@@ -142,19 +142,25 @@
                                 <tr>
                                     <td><label for="user_blocked_from">Von</label></td>
                                     <td>
-                                        {{ component('forms:date_time_input', { name: 'user_blocked_from', value: user.blockedFrom > 0 ? user.blockedFrom : date().timestamp }) }}
+                                        <twig:forms:date_time_input name="user_blocked_from"
+                                                                    :value="user.blockedFrom > 0 ? user.blockedFrom : date().timestamp"
+                                                                    :min="iso8601date(date().timestamp)"/>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td><label for="user_blocked_to">Bis</label></td>
                                     <td>
-                                        {{ component('forms:date_time_input', { name: 'user_blocked_to', value: user.blockedFrom > 0 ? user.blockedTo : userBlockedDefaultTime }) }}
+                                        <twig:forms:date_time_input name="user_blocked_to"
+                                                                    :value="user.blockedFrom > 0 ? user.blockedTo : userBlockedDefaultTime"
+                                                                    :min="iso8601date(date().timestamp)"/>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td><label for="user_ban_admin_id">Admin</label></td>
                                     <td>
-                                        {{ component('forms:select_input', { name: 'user_ban_admin_id', options: adminUserNicks, value: user.banAdminId, emptyValue: 0, emptyLabel: '(niemand)' }) }}
+                                        <twig:forms:select_input name="user_ban_admin_id" :options="adminUserNicks"
+                                                                 :value="user.banAdminId" :emptyValue="0"
+                                                                 emptyLabel="(niemand)"/>
                                     </td>
                                 </tr>
                                 <tr>
@@ -177,13 +183,17 @@
                                 <tr>
                                     <td><label for="user_hmode_from">Von</label></td>
                                     <td>
-                                        {{ component('forms:date_time_input', { name: 'user_hmode_from', value: user.hmodFrom > 0 ? user.hmodFrom : date().timestamp }) }}
+                                        <twig:forms:date_time_input name="user_hmode_from"
+                                                                    :value="user.hmodFrom > 0 ? user.hmodFrom : date().timestamp"
+                                                                    :min="iso8601date(date().timestamp)"/>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td><label for="user_hmode_to">Bis</label></td>
                                     <td>
-                                        {{ component('forms:date_time_input', { name: 'user_hmode_to', value: user.hmodTo > 0 ? user.hmodTo : userHolidayModeDefaultTime }) }}
+                                        <twig:forms:date_time_input name="user_hmode_to"
+                                                                    :value="user.hmodTo > 0 ? user.hmodTo : userHolidayModeDefaultTime"
+                                                                    :min="iso8601date(date().timestamp)"/>
                                     </td>
                                 </tr>
                             </table>
@@ -202,22 +212,29 @@
                     <tr>
                         <th><label for="user_race_id">Rasse</label></th>
                         <td>
-                            {{ component('forms:select_input', { name: 'user_race_id', options: raceNames, value: user.raceId, emptyValue: 0, emptyLabel: '(Keine)' }) }}
+                            <twig:forms:select_input name="user_race_id" :options="raceNames" :value="user.raceId"
+                                                     :emptyValue="0" emptyLabel="(Keine)"/>
                         </td>
                     </tr>
                     <tr>
                         <th><label for="user_specialist_id">Spezialist</label></th>
                         <td>
-                            {{ component('forms:select_input', { name: 'user_specialist_id', options: specialistNames, value: user.specialistId, emptyValue: 0, emptyLabel: '(Keiner)', onchange: "this.value > 0 ? $('#spt').show() : $('#spt').hide()" }) }}
+                            <twig:forms:select_input name="user_specialist_id" :options="specialistNames"
+                                                     :value="user.specialistId" :emptyValue="0" emptyLabel="(Keiner)"
+                                                     onchange="let spt=$('#spt'); this.value > 0 ? spt.show() : spt.hide()"/>
                             <span id="spt">
-                                Bis: {{ component('forms:date_time_input', { name: 'user_specialist_time', value: user.specialistTime > 0 ? user.specialistTime : date().timestamp }) }}
+                                Bis: <twig:forms:date_time_input name="user_specialist_time"
+                                                                 :value="user.specialistTime > 0 ? user.specialistTime : date().timestamp"
+                                                                 :min="iso8601date(date().timestamp)"/>
                             </span>
                         </td>
                     </tr>
                     <tr>
                         <th><label for="user_alliance_id">Allianz</label></th>
                         <td>
-                            {{ component('forms:select_input', { name: 'user_alliance_id', options: allianceNamesWithTags, value: user.allianceId, emptyValue: 0, emptyLabel: '(Keine)', onchange: 'loadAllianceRanks(' ~ user.allianceRankId ~ ')' }) }}
+                            <twig:forms:select_input name="user_alliance_id" :options="allianceNamesWithTags"
+                                                     :value="user.allianceId" :emptyValue="0" emptyLabel="(Keine)"
+                                                     onchange="loadAllianceRanks({{ user.allianceRankId }})"/>
                             Rang: <span id="ars">-</span>
                         </td>
                     </tr>
@@ -227,7 +244,9 @@
                             {% if spyShipNames is not empty %}
                                 <input type="text" name="spyship_count" id="spyship_count" maxlength="5" size="5"
                                        value="{{ properties.spyShipCount }}">
-                                {{ component('forms:select_input', { name: 'spyship_id', options: spyShipNames, value: properties.spyShipId, emptyValue: 0, emptyLabel: '(keines)' }) }}
+                                <twig:forms:select_input name="spyship_id" :options="spyShipNames"
+                                                         :value="properties.spyShipId" :emptyValue="0"
+                                                         emptyLabel="(keines)"/>
                             {% else %}
                                 Momentan steht kein Schiff zur Auswahl!
                             {% endif %}
@@ -239,7 +258,9 @@
                             {% if analyzeShipNames is not empty %}
                                 <input type="text" name="analyzeship_count" id="analyzeship_count" maxlength="5"
                                        size="5" value="{{ properties.analyzeShipCount }}">
-                                {{ component('forms:select_input', { name: 'analyzeship_id', options: analyzeShipNames, value: properties.analyzeShipId, emptyValue: 0, emptyLabel: '(keines)' }) }}
+                                <twig:forms:select_input name="analyzeship_id" :options="analyzeShipNames"
+                                                         :value="properties.analyzeShipId" :emptyValue="0"
+                                                         emptyLabel="(keines)"/>
                             {% else %}
                                 Momentan steht kein Schiff zur Auswahl!
                             {% endif %}
@@ -359,13 +380,16 @@
                             &nbsp; <input type="button" onclick="document.getElementById('css_style').value =
                             document.getElementById('designSelector').options[document.getElementById('designSelector').selectedIndex].value"
                                           value="&lt;&lt;"/> &nbsp;
-                            {{ component('forms:select_input', { name: 'designSelector', options: designNames, value: properties.cssStyle, emptyValue: '', emptyLabel: '(Bitte wählen)' }) }}
+                            <twig:forms:select_input name="designSelector" :options="designNames"
+                                                     :value="properties.cssStyle" :emptyValue="''"
+                                                     emptyLabel="(Bitte wählen)"/>
                         </td>
                     </tr>
                     <tr>
                         <th>Planetenkreisgrösse</th>
                         <td>
-                            {{ component('forms:select_input', { name: 'planet_circle_width', options: planetCircleOptions, value: properties.planetCircleWidth, keysAsLabel: true }) }}
+                            <twig:forms:select_input name="planet_circle_width" :options="planetCircleOptions"
+                                                     :value="properties.planetCircleWidth" :keysAsLabel="true"/>
                         </td>
                     </tr>
                     <tr>

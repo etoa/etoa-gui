@@ -17,10 +17,15 @@
     <form action="{{ path('admin.users.pointProgression', {id: user.id}) }}" method="GET" id="rangeForm">
         <p>
             Zeige maximal
-            {{ component('forms:select_input', { name: 'limit', options: limitOptions, value: limit, keysAsLabel: true, onchange: "document.querySelector('#rangeForm').submit()" }) }}
-            Datensätze
-            von {{ component('forms:date_time_input', { name: 'start', value: start, max: iso8601date(end), onchange: "document.querySelector('#rangeForm').submit()" }) }}
-            bis{{ component('forms:date_time_input', { name: 'end', value: end, min: iso8601date(start), max: iso8601date(date().timestamp), onchange: "document.querySelector('#rangeForm').submit()" }) }}
+            <twig:forms:select_input name="limit" :options="limitOptions" :value="limit" :keysAsLabel="true"
+                                     onchange="document.querySelector('#rangeForm').submit()"/>
+            Datensätze von
+            <twig:forms:date_time_input name="start" :value="start" :max="iso8601date(end)"
+                                        onchange="document.querySelector('#rangeForm').submit()"/>
+            bis
+            <twig:forms:date_time_input name="end" :value="end" :min="iso8601date(start)"
+                                        :max="iso8601date(date().timestamp)"
+                                        onchange="document.querySelector('#rangeForm').submit()"/>
         </p>
     </form>
 

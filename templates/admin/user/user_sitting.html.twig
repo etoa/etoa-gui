@@ -10,7 +10,6 @@
         { label: 'Sitting', url: path('admin.users.user_sitting', {id: user.id}) },
     ]}) }}
 
-    {% set used_days = 0 %}
     {% if sittedEntries|length > 0 %}
         <h2>Wurde gesittet</h2>
         <table class="table">
@@ -24,7 +23,6 @@
             </thead>
             <tbody>
             {% for sittedEntry in sittedEntries %}
-                {% set used_days = used_days + ((sittedEntry.dateTo - sittedEntry.dateFrom) / 86400) %}
                 <tr>
                     <td>
                         <a href="{{ path('admin.users.view', { id: sittedEntry.sitterId }) }}">{{ sittedEntry.sitterNick }}</a>
@@ -85,7 +83,7 @@
             <tr>
                 <td>Übrige Tage</td>
                 <td>
-                    {{ (user.sittingDays - used_days)|round(0, 'floor') }}
+                    {{ availableDays }}
                 </td>
             </tr>
             <tr>
@@ -109,13 +107,15 @@
             <tr>
                 <td><label for="sitting_time_from">Von</label></td>
                 <td>
-                    {{ component('forms:date_time_input', { name: 'sitting_time_from', value: date().timestamp, min: iso8601date(date().timestamp) }) }}
+                    <twig:forms:date_time_input name="sitting_time_from" :value="date().timestamp"
+                                                :min="iso8601date(date().timestamp)"/>
                 </td>
             </tr>
             <tr>
                 <td><label for="sitting_time_to">Bis</label></td>
                 <td>
-                    {{ component('forms:date_time_input', { name: 'sitting_time_to', value: date().timestamp, min: iso8601date(date().timestamp) }) }}
+                    <twig:forms:date_time_input name="sitting_time_to" :value="date().timestamp"
+                                                :min="iso8601date(date().timestamp)"/>
                 </td>
             </tr>
         </table>

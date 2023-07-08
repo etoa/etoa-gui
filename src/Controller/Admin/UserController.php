@@ -42,6 +42,7 @@ use EtoA\User\UserRatingRepository;
 use EtoA\User\UserRatingSearch;
 use EtoA\User\UserRepository;
 use EtoA\User\UserService;
+use EtoA\User\UserSitting;
 use EtoA\User\UserSittingRepository;
 use EtoA\User\UserWarningRepository;
 use Exception;
@@ -880,10 +881,14 @@ class UserController extends AbstractAdminController
             return $this->redirectToRoute('admin.users');
         }
 
+        $userSittings = $this->userSittingRepository->getWhereUser($user->id);
+        $used_days = array_reduce($userSittings, fn($carry, UserSitting $entry) => $carry + (($entry->dateTo - $entry->dateFrom) / 86400), 0);
+
         return $this->render('admin/user/user_sitting.html.twig', [
             'user' => $user,
-            'sittedEntries' => $this->userSittingRepository->getWhereUser($user->id),
+            'sittedEntries' => $userSittings,
             'sittingEntries' => $this->userSittingRepository->getWhereSitter($user->id),
+            'availableDays' => floor($user->sittingDays - $used_days),
         ]);
     }
 
