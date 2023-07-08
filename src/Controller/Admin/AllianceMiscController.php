@@ -8,18 +8,19 @@ use EtoA\Alliance\AllianceRepository;
 use EtoA\Alliance\AllianceService;
 use EtoA\Alliance\InvalidAllianceParametersException;
 use EtoA\Form\Type\Admin\AllianceCreateType;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class AllianceMiscController extends AbstractAdminController
 {
     public function __construct(
-        private AllianceService $allianceService,
-        private AllianceRepository $allianceRepository,
-        private AllianceImageStorage $allianceImageStorage,
-    ) {
+        private readonly AllianceService      $allianceService,
+        private readonly AllianceRepository   $allianceRepository,
+        private readonly AllianceImageStorage $allianceImageStorage,
+    )
+    {
     }
 
     #[Route('/admin/alliances/new', name: 'admin.alliances.new')]
@@ -61,8 +62,8 @@ class AllianceMiscController extends AbstractAdminController
                 $cnt = 0;
                 if (count($alliances) > 0) {
                     foreach ($alliances as $alliance) {
-                        if ($this->allianceRepository->countUsers((int) $alliance['alliance_id']) === 0) {
-                            $alliance = $this->allianceRepository->getAlliance((int) $alliance['alliance_id']);
+                        if ($this->allianceRepository->countUsers((int)$alliance['alliance_id']) === 0) {
+                            $alliance = $this->allianceRepository->getAlliance((int)$alliance['alliance_id']);
                             if ($this->allianceService->delete($alliance)) {
                                 $cnt++;
                             }

@@ -7,18 +7,19 @@ use EtoA\Form\Type\Admin\AddUserWarningType;
 use EtoA\Form\Type\Admin\EditUserWarningType;
 use EtoA\Message\MessageRepository;
 use EtoA\User\UserWarningRepository;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class UserWarningController extends AbstractAdminController
 {
     public function __construct(
-        private UserWarningRepository $userWarningRepository,
-        private MessageRepository $messageRepository,
-    ) {
+        private readonly UserWarningRepository $userWarningRepository,
+        private readonly MessageRepository     $messageRepository,
+    )
+    {
     }
 
     #[Route('/admin/users/warnings', name: 'admin.users.warnings')]

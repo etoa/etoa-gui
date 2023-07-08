@@ -8,19 +8,20 @@ use EtoA\PeriodicTask\EnvelopResultExtractor;
 use EtoA\PeriodicTask\PeriodicTaskCollection;
 use EtoA\PeriodicTask\Result\SuccessResult;
 use EtoA\PeriodicTask\Task\PeriodicTaskInterface;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Messenger\MessageBusInterface;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class CronjobController extends AbstractAdminController
 {
     public function __construct(
-        private ConfigurationService $config,
-        private PeriodicTaskCollection $taskCollection
-    ) {
+        private readonly ConfigurationService   $config,
+        private readonly PeriodicTaskCollection $taskCollection
+    )
+    {
     }
 
     #[Route("/admin/cronjob/", name: "admin.cronjob")]
@@ -136,7 +137,7 @@ class CronjobController extends AbstractAdminController
             exec("crontab -l", $crontab);
             if (!in_array($cronjob, $crontab, true)) {
                 $out = shell_exec('(crontab -l 2>/dev/null; echo "' . $cronjob . '") | crontab -');
-                if ((bool) $out) {
+                if ((bool)$out) {
                     $this->addFlash('error', 'Cronjob konnte nicht aktiviert werden: ' . $out);
                 }
             }

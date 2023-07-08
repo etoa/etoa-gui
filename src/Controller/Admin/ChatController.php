@@ -8,21 +8,22 @@ use EtoA\Chat\ChatManager;
 use EtoA\Chat\ChatUserRepository;
 use EtoA\Form\Type\Admin\ChatLogSearchType;
 use EtoA\User\UserRepository;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class ChatController extends AbstractAdminController
 {
     public function __construct(
-        private ChatLogRepository $chatLogRepository,
-        private ChatUserRepository $chatUserRepository,
-        private ChatBanRepository $chatBanRepository,
-        private ChatManager $chatManager,
-        private UserRepository $userRepository,
-    ) {
+        private readonly ChatLogRepository  $chatLogRepository,
+        private readonly ChatUserRepository $chatUserRepository,
+        private readonly ChatBanRepository  $chatBanRepository,
+        private readonly ChatManager        $chatManager,
+        private readonly UserRepository     $userRepository,
+    )
+    {
     }
 
     #[Route('/admin/chat/', name: 'admin.chat')]
@@ -93,7 +94,7 @@ class ChatController extends AbstractAdminController
         } else {
             $this->chatBanRepository->deleteBan($user->id);
 
-            $this->addFlash('success', "Ban für " . $user->nick ." wurde gelöscht!");
+            $this->addFlash('success', "Ban für " . $user->nick . " wurde gelöscht!");
         }
 
         return $this->redirectToRoute('admin.chat');

@@ -14,22 +14,23 @@ use EtoA\Ranking\RankingService;
 use EtoA\Requirement\ObjectRequirement;
 use EtoA\Requirement\RequirementsUpdater;
 use EtoA\Universe\Planet\PlanetRepository;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use function DeepCopy\deep_copy;
 
 class BuildingController extends AbstractAdminController
 {
     public function __construct(
-        private BuildingDataRepository $buildingDataRepository,
-        private BuildingPointRepository $buildingPointRepository,
-        private RankingService $rankingService,
-        private BuildingRequirementRepository $buildingRequirementRepository,
-        private BuildingRepository $buildingRepository,
-        private PlanetRepository $planetRepository,
-    ) {
+        private readonly BuildingDataRepository        $buildingDataRepository,
+        private readonly BuildingPointRepository       $buildingPointRepository,
+        private readonly RankingService                $rankingService,
+        private readonly BuildingRequirementRepository $buildingRequirementRepository,
+        private readonly BuildingRepository            $buildingRepository,
+        private readonly PlanetRepository              $planetRepository,
+    )
+    {
     }
 
     #[Route('/admin/buildings/search', name: 'admin.buildings.search')]

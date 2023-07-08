@@ -16,14 +16,11 @@ class DatabaseRepairCommand extends Command
     protected static $defaultName = 'database:repair';
     protected static $defaultDescription = 'Repair all database tables';
 
-    private LogRepository $logRepository;
-    private DatabaseManagerRepository $databaseManagerRepository;
-
-    public function __construct(LogRepository $logRepository, DatabaseManagerRepository $databaseManagerRepository)
+    public function __construct(
+        private readonly LogRepository             $logRepository,
+        private readonly DatabaseManagerRepository $databaseManagerRepository,
+    )
     {
-        $this->logRepository = $logRepository;
-        $this->databaseManagerRepository = $databaseManagerRepository;
-
         parent::__construct();
     }
 

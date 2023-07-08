@@ -6,23 +6,24 @@ use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\HostCache\NetworkNameService;
 use EtoA\Log\AccessLogRepository;
 use EtoA\Support\StringUtils;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 class ToolController extends AbstractAdminController
 {
     public function __construct(
-        private HttpClientInterface $client,
-        private NetworkNameService $networkNameService,
-        private AccessLogRepository $accessLogRepository,
-        private ConfigurationService $config,
-        private string $adminFileSharingDir
-    ) {
+        private readonly HttpClientInterface  $client,
+        private readonly NetworkNameService   $networkNameService,
+        private readonly AccessLogRepository  $accessLogRepository,
+        private readonly ConfigurationService $config,
+        private readonly string               $adminFileSharingDir
+    )
+    {
     }
 
     #[Route("/admin/tools/", name: "admin.tools.index")]

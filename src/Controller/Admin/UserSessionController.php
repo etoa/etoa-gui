@@ -7,21 +7,22 @@ use EtoA\Form\Type\Admin\UserSessionLogType;
 use EtoA\User\UserRepository;
 use EtoA\User\UserSessionManager;
 use EtoA\User\UserSessionRepository;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class UserSessionController extends AbstractController
 {
     public function __construct(
-        private UserSessionRepository $userSessionRepository,
-        private UserRepository $userRepository,
-        private ConfigurationService $config,
-        private UserSessionManager $userSessionManager,
-    ) {
+        private readonly UserSessionRepository $userSessionRepository,
+        private readonly UserRepository        $userRepository,
+        private readonly ConfigurationService  $config,
+        private readonly UserSessionManager    $userSessionManager,
+    )
+    {
     }
 
     #[Route('/admin/users/sessions', name: 'admin.users.sessions')]

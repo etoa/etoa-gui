@@ -15,26 +15,27 @@ use EtoA\User\UserSearch;
 use EtoA\User\UserSessionRepository;
 use EtoA\User\UserSessionSearch;
 use EtoA\User\UserSittingRepository;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class UsersController extends AbstractAdminController
 {
     public function __construct(
-        private UserRepository $userRepository,
-        private UserSittingRepository $userSittingRepository,
-        private UserLoginFailureRepository $loginFailureRepository,
-        private UserPointsRepository $userPointsRepository,
-        private UserBannerService $userBannerService,
-        private UserSessionRepository $userSessionRepository,
-        private UserMultiRepository $userMultiRepository,
-        private UserLoginFailureRepository $userLoginFailureRepository,
-        private NetworkNameService $networkNameService,
-        private string $webRooDir,
-    ) {
+        private readonly UserRepository             $userRepository,
+        private readonly UserSittingRepository      $userSittingRepository,
+        private readonly UserLoginFailureRepository $loginFailureRepository,
+        private readonly UserPointsRepository       $userPointsRepository,
+        private readonly UserBannerService          $userBannerService,
+        private readonly UserSessionRepository      $userSessionRepository,
+        private readonly UserMultiRepository        $userMultiRepository,
+        private readonly UserLoginFailureRepository $userLoginFailureRepository,
+        private readonly NetworkNameService         $networkNameService,
+        private readonly string                     $webRooDir,
+    )
+    {
     }
 
     #[Route('/admin/users/', name: 'admin.users')]
@@ -144,7 +145,7 @@ class UsersController extends AbstractAdminController
         if (is_dir($storedImagePath)) {
             $finder = Finder::create()->files()->in([$storedImagePath]);
             foreach ($finder as $file) {
-                $url = str_replace($this->webRooDir, '', (string) $file->getRealPath());
+                $url = str_replace($this->webRooDir, '', (string)$file->getRealPath());
                 if (!in_array($url, $usedPaths, true)) {
                     $unused[$url] = $file;
                 }
@@ -153,7 +154,7 @@ class UsersController extends AbstractAdminController
 
         if ($request->request->has('clearoverhead')) {
             foreach ($unused as $file) {
-                unlink((string) $file->getRealPath());
+                unlink((string)$file->getRealPath());
             }
 
             $unused = [];
@@ -177,7 +178,7 @@ class UsersController extends AbstractAdminController
             $ips[$ip] = isset($ips[$ip]) ? $ips[$ip] + 1 : 1;
         }
 
-        $ips = array_keys(array_filter($ips, fn ($count) => $count > 1));
+        $ips = array_keys(array_filter($ips, fn($count) => $count > 1));
 
         $ipUsers = [];
         $userIds = [];
@@ -185,7 +186,7 @@ class UsersController extends AbstractAdminController
             $users = $this->userRepository->getUsersWithIp($ip);
             $ipUsers[$ip] = $users;
             foreach ($users as $user) {
-                $userIds[] = (int) $user['user_id'];
+                $userIds[] = (int)$user['user_id'];
             }
         }
 
@@ -205,8 +206,8 @@ class UsersController extends AbstractAdminController
     public function ipSearch(Request $request): Response
     {
         $ip = $request->query->get('ip');
-        if (!is_string($ip) && (bool) ($host = $request->query->get('host'))) {
-            $ip = $this->networkNameService->getAddr((string) $host);
+        if (!is_string($ip) && (bool)($host = $request->query->get('host'))) {
+            $ip = $this->networkNameService->getAddr((string)$host);
         }
 
         if (!is_string($ip)) {

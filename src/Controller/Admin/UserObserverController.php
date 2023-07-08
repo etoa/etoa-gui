@@ -12,18 +12,19 @@ use EtoA\User\UserSessionRepository;
 use EtoA\User\UserSessionSearch;
 use EtoA\User\UserSurveillanceRepository;
 use EtoA\User\UserSurveillanceSearch;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class UserObserverController extends AbstractAdminController
 {
     public function __construct(
-        private UserRepository $userRepository,
-        private UserSurveillanceRepository $userSurveillanceRepository,
-        private UserSessionRepository $userSessionRepository,
-    ) {
+        private readonly UserRepository             $userRepository,
+        private readonly UserSurveillanceRepository $userSurveillanceRepository,
+        private readonly UserSessionRepository      $userSessionRepository,
+    )
+    {
     }
 
     #[Route('/admin/users/observer', name: 'admin.users.observer')]
@@ -34,13 +35,13 @@ class UserObserverController extends AbstractAdminController
         $form = $this->createForm(UserObserveType::class, $formRequest);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->userRepository->updateObserve((int) $formRequest->userId, $formRequest->reason);
+            $this->userRepository->updateObserve((int)$formRequest->userId, $formRequest->reason);
 
             $this->addFlash('success', 'Spieler unter beobachtung gestellt');
         }
 
         $users = $this->userRepository->searchAdminView(UserSearch::create()->observed());
-        $userIds = array_map(fn (User $user) => $user->id, $users);
+        $userIds = array_map(fn(User $user) => $user->id, $users);
         $entryCounts = $this->userSurveillanceRepository->counts($userIds);
 
         return $this->render('admin/user-observer/list.html.twig', [

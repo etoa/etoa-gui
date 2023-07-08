@@ -3,17 +3,15 @@
 namespace EtoA\Core;
 
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Exception;
 use Doctrine\DBAL\Query\QueryBuilder;
 use EtoA\Core\Database\AbstractSearch;
 use EtoA\Core\Database\AbstractSort;
 
 abstract class AbstractRepository
 {
-    private Connection $connection;
-
-    public function __construct(Connection $connection)
+    public function __construct(private readonly Connection $connection)
     {
-        $this->connection = $connection;
     }
 
     protected function createQueryBuilder(): QueryBuilder
@@ -28,6 +26,7 @@ abstract class AbstractRepository
 
     /**
      * @return int[]
+     * @throws Exception
      */
     protected function fetchIds(string $table, string $idField): array
     {
@@ -36,11 +35,12 @@ abstract class AbstractRepository
             ->from($table)
             ->fetchFirstColumn();
 
-        return array_map(fn ($val) => (int) $val, $data);
+        return array_map(fn($val) => (int)$val, $data);
     }
 
     /**
      * @return array<int, string>
+     * @throws Exception
      */
     protected function fetchIdsWithNames(string $table, string $idField, string $nameField, bool $orderById = false): array
     {

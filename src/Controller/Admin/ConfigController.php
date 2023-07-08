@@ -5,18 +5,19 @@ namespace EtoA\Controller\Admin;
 use EtoA\Backend\BackendMessageService;
 use EtoA\Core\Configuration\ConfigurationDefinitionsRepository;
 use EtoA\Core\Configuration\ConfigurationService;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class ConfigController extends AbstractAdminController
 {
     public function __construct(
-        private ConfigurationDefinitionsRepository $definitions,
-        private ConfigurationService $config,
-        private BackendMessageService $backendMessageService
-    ) {
+        private readonly ConfigurationDefinitionsRepository $definitions,
+        private readonly ConfigurationService               $config,
+        private readonly BackendMessageService              $backendMessageService
+    )
+    {
     }
 
     #[Route("/admin/config/", name: "admin.config")]
@@ -85,7 +86,7 @@ class ConfigController extends AbstractAdminController
             foreach ($categories as $ck => $cv) {
                 if ($currentCategory === $ck) {
                     foreach ($this->definitions->itemInCategory($ck) as $i) {
-                        $name = (string) $i['name'];
+                        $name = (string)$i['name'];
                         $v = isset($i->v) ? $this->getFormValue((string)$i->v['type'], $name, "v", $request->request->all()) : "";
                         $p1 = isset($i->p1) ? $this->getFormValue((string)$i->p1['type'], $name, "p1", $request->request->all()) : "";
                         $p2 = isset($i->p2) ? $this->getFormValue((string)$i->p2['type'], $name, "p2", $request->request->all()) : "";
@@ -107,15 +108,15 @@ class ConfigController extends AbstractAdminController
 
             if ($currentCategory == $ck) {
                 foreach ($this->definitions->itemInCategory($ck) as $i) {
-                    $name = (string) $i['name'];
+                    $name = (string)$i['name'];
                     if (isset($i->v)) {
                         $items[] = [
                             'label' => $i->v['comment'],
                             'name' => $i['name'],
                             'type' => 'v',
                             'field' => $this->displayField($this->config, (string)$i->v['type'], $name, "v"),
-                            'default' => (string) $i->v,
-                            'changed' => (string) $i->v != $this->config->get($name),
+                            'default' => (string)$i->v,
+                            'changed' => (string)$i->v != $this->config->get($name),
                         ];
                     }
                     if (isset($i->p1)) {
@@ -124,8 +125,8 @@ class ConfigController extends AbstractAdminController
                             'name' => $i['name'],
                             'type' => 'p1',
                             'field' => $this->displayField($this->config, (string)$i->p1['type'], $name, "p1"),
-                            'default' => (string) $i->p1,
-                            'changed' => (string) $i->p1 != $this->config->param1($name),
+                            'default' => (string)$i->p1,
+                            'changed' => (string)$i->p1 != $this->config->param1($name),
                         ];
                     }
                     if (isset($i->p2)) {
@@ -134,8 +135,8 @@ class ConfigController extends AbstractAdminController
                             'name' => $i['name'],
                             'type' => 'p2',
                             'field' => $this->displayField($this->config, (string)$i->p2['type'], $name, "p2"),
-                            'default' => (string) $i->p2,
-                            'changed' => (string) $i->p2 != $this->config->param2($name),
+                            'default' => (string)$i->p2,
+                            'changed' => (string)$i->p2 != $this->config->param2($name),
                         ];
                     }
                 }
@@ -158,7 +159,7 @@ class ConfigController extends AbstractAdminController
         $message = '';
         $xml = $this->definitions->getXmlDefinitions();
         foreach ($xml->items->item as $i) {
-            if (!$this->config->has((string) $i['name'])) {
+            if (!$this->config->has((string)$i['name'])) {
                 $message .= $i['name'] . ' existiert in der Standardkonfiguration, aber nicht in der Datenbank! ';
                 $this->config->set((string)$i['name'], (string)$i->v, (string)$i->p1, (string)$i->p2);
                 $message .= '<b>Behoben</b><br/>';
@@ -210,7 +211,7 @@ class ConfigController extends AbstractAdminController
         $items = [];
         foreach ($this->definitions->categories() as $ck => $cv) {
             foreach ($this->definitions->itemInCategory($ck) as $i) {
-                $name = (string) $i['name'];
+                $name = (string)$i['name'];
                 if (isset($i->v)) {
                     if ((string)$i->v != $this->config->get($name)) {
                         $items[] = [
@@ -302,7 +303,7 @@ class ConfigController extends AbstractAdminController
                 echo "<select name=\"config_" . $field . "_d[" . $confname . "]\" class=\"inputfield-$type\">";
                 for ($x = 1; $x < 32; $x++) {
                     echo "<option value=\"$x\"";
-                    if (date("d", (int) $confValue) == $x) {
+                    if (date("d", (int)$confValue) == $x) {
                         echo " selected=\"selected\"";
                     }
                     echo ">";
@@ -315,7 +316,7 @@ class ConfigController extends AbstractAdminController
                 echo "<select name=\"config_" . $field . "_m[" . $confname . "]\" class=\"inputfield-$type\">";
                 for ($x = 1; $x < 32; $x++) {
                     echo "<option value=\"$x\"";
-                    if (date("m", (int) $confValue) == $x) {
+                    if (date("m", (int)$confValue) == $x) {
                         echo " selected=\"selected\"";
                     }
                     echo ">";
@@ -326,9 +327,9 @@ class ConfigController extends AbstractAdminController
                 }
                 echo "</select>.";
                 echo "<select name=\"config_" . $field . "_y[" . $confname . "]\" class=\"inputfield-$type\">";
-                for ($x = (int) date("Y") - 50; $x < (int) date("Y") + 50; $x++) {
+                for ($x = (int)date("Y") - 50; $x < (int)date("Y") + 50; $x++) {
                     echo "<option value=\"$x\"";
-                    if (date("Y", (int) $confValue) == $x) {
+                    if (date("Y", (int)$confValue) == $x) {
                         echo " selected=\"selected\"";
                     }
                     echo ">$x</option>";
@@ -337,7 +338,7 @@ class ConfigController extends AbstractAdminController
                 echo "<select name=\"config_" . $field . "_h[" . $confname . "]\" class=\"inputfield-$type\">";
                 for ($x = 0; $x < 25; $x++) {
                     echo "<option value=\"$x\"";
-                    if (date("H", (int) $confValue) == $x) {
+                    if (date("H", (int)$confValue) == $x) {
                         echo " selected=\"selected\"";
                     }
                     echo ">";
@@ -350,7 +351,7 @@ class ConfigController extends AbstractAdminController
                 echo "<select name=\"config_" . $field . "_i[" . $confname . "]\" class=\"inputfield-$type\">";
                 for ($x = 0; $x < 60; $x++) {
                     echo "<option value=\"$x\"";
-                    if (date("i", (int) $confValue) == $x) {
+                    if (date("i", (int)$confValue) == $x) {
                         echo " selected=\"selected\"";
                     }
                     echo ">";
@@ -363,7 +364,7 @@ class ConfigController extends AbstractAdminController
                 echo "<select name=\"config_" . $field . "_s[" . $confname . "]\" class=\"inputfield-$type\">";
                 for ($x = 0; $x < 60; $x++) {
                     echo "<option value=\"$x\"";
-                    if (date("s", (int) $confValue) == $x) {
+                    if (date("s", (int)$confValue) == $x) {
                         echo " selected=\"selected\"";
                     }
                     echo ">";
@@ -387,12 +388,12 @@ class ConfigController extends AbstractAdminController
         switch ($type) {
             case "timedate":
                 return mktime(
-                    (int) $postarray['config_' . $field . '_h'][$confname],
-                    (int) $postarray['config_' . $field . '_i'][$confname],
-                    (int) $postarray['config_' . $field . '_s'][$confname],
-                    (int) $postarray['config_' . $field . '_m'][$confname],
-                    (int) $postarray['config_' . $field . '_d'][$confname],
-                    (int) $postarray['config_' . $field . '_y'][$confname]
+                    (int)$postarray['config_' . $field . '_h'][$confname],
+                    (int)$postarray['config_' . $field . '_i'][$confname],
+                    (int)$postarray['config_' . $field . '_s'][$confname],
+                    (int)$postarray['config_' . $field . '_m'][$confname],
+                    (int)$postarray['config_' . $field . '_d'][$confname],
+                    (int)$postarray['config_' . $field . '_y'][$confname]
                 );
             default:
                 return $postarray['config_' . $field][$confname];

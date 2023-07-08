@@ -19,15 +19,13 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class RaceController extends AbstractController
 {
-    private RaceDataRepository $raceRepository;
-    private ShipDataRepository $shipRepository;
-    private DefenseDataRepository $defenseRepository;
 
-    public function __construct(RaceDataRepository $raceRepository, ShipDataRepository $shipRepository, DefenseDataRepository $defenseRepository)
+    public function __construct(
+        private readonly RaceDataRepository    $raceRepository,
+        private readonly ShipDataRepository    $shipRepository,
+        private readonly DefenseDataRepository $defenseRepository,
+    )
     {
-        $this->raceRepository = $raceRepository;
-        $this->shipRepository = $shipRepository;
-        $this->defenseRepository = $defenseRepository;
     }
 
     /**
@@ -85,7 +83,7 @@ class RaceController extends AbstractController
         tableEnd();
         tableStart('', 500);
 
-        echo  "<tr><th colspan=\"3\">Spezielle Schiffe:</th></tr>";
+        echo "<tr><th colspan=\"3\">Spezielle Schiffe:</th></tr>";
         $ships = $this->shipRepository->searchShips(ShipSearch::create()->buildable()->raceId($race->id)->special(false));
         if (count($ships) > 0) {
             foreach ($ships as $ship) {
@@ -99,7 +97,7 @@ class RaceController extends AbstractController
 
         tableEnd();
         tableStart('', 500);
-        echo  "<tr><th colspan=\"3\">Spezielle Verteidigung:</th></tr>";
+        echo "<tr><th colspan=\"3\">Spezielle Verteidigung:</th></tr>";
         $defense = $this->defenseRepository->searchDefense(DefenseSearch::create()->raceId($race->id)->buildable());
         if (count($defense) > 0) {
             foreach ($defense as $def) {

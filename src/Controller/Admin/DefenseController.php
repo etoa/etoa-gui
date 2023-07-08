@@ -16,22 +16,23 @@ use EtoA\Requirement\ObjectRequirement;
 use EtoA\Requirement\RequirementsUpdater;
 use EtoA\Support\StringUtils;
 use EtoA\Universe\Planet\PlanetRepository;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use function DeepCopy\deep_copy;
 
 class DefenseController extends AbstractAdminController
 {
     public function __construct(
-        private RankingService $rankingService,
-        private DefenseDataRepository $defenseDataRepository,
-        private DefenseQueueRepository $defenseQueueRepository,
-        private DefenseRepository $defenseRepository,
-        private PlanetRepository $planetRepository,
-        private DefenseRequirementRepository $defenseRequirementRepository,
-    ) {
+        private readonly RankingService               $rankingService,
+        private readonly DefenseDataRepository        $defenseDataRepository,
+        private readonly DefenseQueueRepository       $defenseQueueRepository,
+        private readonly DefenseRepository            $defenseRepository,
+        private readonly PlanetRepository             $planetRepository,
+        private readonly DefenseRequirementRepository $defenseRequirementRepository,
+    )
+    {
     }
 
     #[Route("/admin/defense/search", name: "admin.defense.search")]
@@ -75,7 +76,7 @@ class DefenseController extends AbstractAdminController
         }
 
         $defenses = $this->defenseDataRepository->getAllDefenses();
-        usort($defenses, fn (Defense $a, Defense $b) => $b->points <=> $a->points);
+        usort($defenses, fn(Defense $a, Defense $b) => $b->points <=> $a->points);
 
         return $this->render('admin/defense/points.html.twig', [
             'defenses' => $defenses,

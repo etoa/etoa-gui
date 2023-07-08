@@ -3,8 +3,8 @@
 namespace EtoA\Controller\Admin;
 
 use EtoA\Form\Type\Admin\AddMissileListType;
-use EtoA\Form\Type\Admin\ObjectRequirementListType;
 use EtoA\Form\Type\Admin\MissileSearchType;
+use EtoA\Form\Type\Admin\ObjectRequirementListType;
 use EtoA\Missile\MissileDataRepository;
 use EtoA\Missile\MissileListItem;
 use EtoA\Missile\MissileRepository;
@@ -13,20 +13,21 @@ use EtoA\Requirement\ObjectRequirement;
 use EtoA\Requirement\RequirementsUpdater;
 use EtoA\Support\StringUtils;
 use EtoA\Universe\Planet\PlanetRepository;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use function DeepCopy\deep_copy;
 
 class MissileController extends AbstractAdminController
 {
     public function __construct(
-        private MissileRepository $missileRepository,
-        private PlanetRepository $planetRepository,
-        private MissileDataRepository $missileDataRepository,
-        private MissileRequirementRepository $missileRequirementRepository,
-    ) {
+        private readonly MissileRepository            $missileRepository,
+        private readonly PlanetRepository             $planetRepository,
+        private readonly MissileDataRepository        $missileDataRepository,
+        private readonly MissileRequirementRepository $missileRequirementRepository,
+    )
+    {
     }
 
     #[Route('/admin/missiles/', name: 'admin.missiles')]

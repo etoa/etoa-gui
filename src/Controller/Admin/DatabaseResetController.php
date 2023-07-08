@@ -10,22 +10,23 @@ use EtoA\Support\DB\DatabaseBackupService;
 use EtoA\Support\DB\DatabaseManagerRepository;
 use EtoA\Support\DB\DatabaseMigrationService;
 use EtoA\Support\DB\SchemaMigrationRepository;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class DatabaseResetController extends AbstractAdminController
 {
     public function __construct(
-        private LockFactory $lockFactory,
-        private ConfigurationService $config,
-        private DatabaseManagerRepository $databaseManager,
-        private LogRepository $logRepository,
-        private DatabaseMigrationService $databaseMigrationService,
-        private DatabaseBackupService $databaseBackupService
-    ) {
+        private readonly LockFactory               $lockFactory,
+        private readonly ConfigurationService      $config,
+        private readonly DatabaseManagerRepository $databaseManager,
+        private readonly LogRepository             $logRepository,
+        private readonly DatabaseMigrationService  $databaseMigrationService,
+        private readonly DatabaseBackupService     $databaseBackupService
+    )
+    {
     }
 
     #[Route("/admin/db/reset", name: "admin.db.reset")]

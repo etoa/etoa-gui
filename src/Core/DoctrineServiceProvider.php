@@ -13,6 +13,7 @@ use Pimple\ServiceProviderInterface;
 class DoctrineServiceProvider implements ServiceProviderInterface
 {
     public const CONFIG_FILE = 'db.conf';
+
     public function register(Container $pimple): void
     {
         $pimple['db.default_options'] = [
@@ -39,7 +40,7 @@ class DoctrineServiceProvider implements ServiceProviderInterface
 
         $pimple['db'] = function (Container $pimple): Connection {
             if (!isset($pimple['db.options'])) {
-                $config = json_decode(file_get_contents($pimple['app.config_dir'].$pimple['db.options.file']), true);
+                $config = json_decode(file_get_contents($pimple['app.config_dir'] . $pimple['db.options.file']), true);
                 if (json_last_error() != JSON_ERROR_NONE) {
                     throw new \InvalidArgumentException(sprintf(
                         'Failed to parse config file %s (JSON error %s)!',

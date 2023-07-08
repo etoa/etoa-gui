@@ -7,19 +7,20 @@ use EtoA\Log\LogRepository;
 use EtoA\Log\LogSeverity;
 use EtoA\Support\DB\DatabaseMigrationService;
 use EtoA\Support\DB\SchemaMigrationRepository;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class DatabaseMigrationController extends AbstractAdminController
 {
     public function __construct(
-        private DatabaseMigrationService $databaseMigrationService,
-        private SchemaMigrationRepository $schemaMigrationRepository,
-        private LockFactory $lockFactory,
-        private LogRepository $logRepository
-    ) {
+        private readonly DatabaseMigrationService  $databaseMigrationService,
+        private readonly SchemaMigrationRepository $schemaMigrationRepository,
+        private readonly LockFactory               $lockFactory,
+        private readonly LogRepository             $logRepository
+    )
+    {
     }
 
     #[Route("/admin/db/migration", name: "admin.db.migration")]
@@ -50,7 +51,7 @@ class DatabaseMigrationController extends AbstractAdminController
             }
         } catch (\Exception $e) {
             // Write log
-            $this->logRepository->add(LogFacility::SYSTEM, LogSeverity::ERROR, "[b]Datenbank-Migration fehlgeschlagen[/b]\nFehler: ".$e->getMessage());
+            $this->logRepository->add(LogFacility::SYSTEM, LogSeverity::ERROR, "[b]Datenbank-Migration fehlgeschlagen[/b]\nFehler: " . $e->getMessage());
 
             // Show message
             $this->addFlash('error', 'Beim Ausführen des Migration-Befehls trat ein Fehler auf: ' . $e->getMessage());

@@ -10,19 +10,20 @@ use EtoA\Message\MessageRepository;
 use EtoA\Message\ReportRepository;
 use EtoA\Support\Mail\MailSenderService;
 use EtoA\User\UserRepository;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class MessageController extends AbstractAdminController
 {
     public function __construct(
-        private MessageRepository $messageRepository,
-        private UserRepository $userRepository,
-        private MailSenderService $mailSenderService,
-        private ReportRepository $reportRepository
-    ) {
+        private readonly MessageRepository $messageRepository,
+        private readonly UserRepository    $userRepository,
+        private readonly MailSenderService $mailSenderService,
+        private readonly ReportRepository  $reportRepository
+    )
+    {
     }
 
     #[Route('/admin/messages/', name: 'admin.messages')]

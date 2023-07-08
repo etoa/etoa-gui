@@ -5,17 +5,18 @@ namespace EtoA\Controller\Admin;
 use EtoA\Backend\BackendMessageRepository;
 use EtoA\Backend\EventHandlerManager;
 use EtoA\Core\Configuration\ConfigurationService;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class EventHandlerController extends AbstractAdminController
 {
     public function __construct(
-        private EventHandlerManager $eventHandlerManager,
-        private BackendMessageRepository $backendMessageRepository,
-        private ConfigurationService $config
-    ) {
+        private readonly EventHandlerManager      $eventHandlerManager,
+        private readonly BackendMessageRepository $backendMessageRepository,
+        private readonly ConfigurationService     $config
+    )
+    {
     }
 
     #[Route("/admin/eventhandler/start", name: "admin.eventhandler.start")]

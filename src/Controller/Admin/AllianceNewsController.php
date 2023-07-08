@@ -8,18 +8,19 @@ use EtoA\Form\Type\Admin\AllianceNewsCleanupType;
 use EtoA\Form\Type\Admin\AllianceNewsDefaultBanType;
 use EtoA\Form\Type\Admin\AllianceNewsEditType;
 use EtoA\User\UserRepository;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class AllianceNewsController extends AbstractAdminController
 {
     public function __construct(
-        private AllianceNewsRepository $allianceNewsRepository,
-        private UserRepository $userRepository,
-        private ConfigurationService $config
-    ) {
+        private readonly AllianceNewsRepository $allianceNewsRepository,
+        private readonly UserRepository         $userRepository,
+        private readonly ConfigurationService   $config
+    )
+    {
     }
 
     #[Route('/admin/alliances/news', name: 'admin.alliances.news')]

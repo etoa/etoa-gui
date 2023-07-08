@@ -15,27 +15,28 @@ use EtoA\Alliance\AllianceTechnologyListItem;
 use EtoA\Alliance\AllianceTechnologyRepository;
 use EtoA\Form\Type\Admin\AllianceBuildingAddType;
 use EtoA\Form\Type\Admin\AllianceDepositSearchType;
+use EtoA\Form\Type\Admin\AllianceEditType;
 use EtoA\Form\Type\Admin\AllianceSearchType;
 use EtoA\Form\Type\Admin\AllianceTechnologyAddType;
-use EtoA\Form\Type\Admin\AllianceEditType;
 use EtoA\Support\StringUtils;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class AllianceController extends AbstractAdminController
 {
     public function __construct(
-        private AllianceRepository $allianceRepository,
-        private AllianceService $allianceService,
-        private AllianceHistoryRepository $allianceHistoryRepository,
-        private AllianceTechnologyRepository $allianceTechnologyRepository,
-        private AllianceBuildingRepository $allianceBuildingRepository,
-        private AllianceImageStorage $allianceImageStorage,
-        private AllianceDiplomacyRepository $allianceDiplomacyRepository,
-        private AllianceRankRepository $allianceRankRepository,
-    ) {
+        private readonly AllianceRepository           $allianceRepository,
+        private readonly AllianceService              $allianceService,
+        private readonly AllianceHistoryRepository    $allianceHistoryRepository,
+        private readonly AllianceTechnologyRepository $allianceTechnologyRepository,
+        private readonly AllianceBuildingRepository   $allianceBuildingRepository,
+        private readonly AllianceImageStorage         $allianceImageStorage,
+        private readonly AllianceDiplomacyRepository  $allianceDiplomacyRepository,
+        private readonly AllianceRankRepository       $allianceRankRepository,
+    )
+    {
     }
 
     #[Route('/admin/alliances/', name: 'admin.alliances')]
@@ -62,8 +63,8 @@ class AllianceController extends AbstractAdminController
         $form = $this->createForm(AllianceEditType::class, $alliance);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            if ($form->has('deleteImage') && (bool) $form->get('deleteImage')->getData()) {
-                if ((bool) $alliance->image) {
+            if ($form->has('deleteImage') && (bool)$form->get('deleteImage')->getData()) {
+                if ((bool)$alliance->image) {
                     $this->allianceImageStorage->delete($alliance->image);
                     $this->allianceRepository->clearPicture($alliance->id);
 
@@ -106,7 +107,7 @@ class AllianceController extends AbstractAdminController
 
             if (count($request->request->all('member_rank')) > 0) {
                 foreach ($request->request->all('member_rank') as $userId => $rankId) {
-                    $this->allianceRepository->assignRankToUser((int) $rankId, (int) $userId);
+                    $this->allianceRepository->assignRankToUser((int)$rankId, (int)$userId);
                 }
             }
 
@@ -149,7 +150,7 @@ class AllianceController extends AbstractAdminController
             foreach (array_keys($request->request->all('alliance_bnd_level')) as $diplomacyId) {
                 $this->allianceDiplomacyRepository->updateDiplomacy(
                     $diplomacyId,
-                    (int) $request->request->all('alliance_bnd_level')[$diplomacyId],
+                    (int)$request->request->all('alliance_bnd_level')[$diplomacyId],
                     $request->request->all('alliance_bnd_name')[$diplomacyId]
                 );
             }

@@ -13,12 +13,10 @@ class DatabaseCheckCommand extends Command
     protected static $defaultName = 'database:check';
     protected static $defaultDescription = 'Check all database tables';
 
-    private DatabaseManagerRepository $databaseManagerRepository;
-
-    public function __construct(DatabaseManagerRepository $databaseManagerRepository)
+    public function __construct(
+        private readonly DatabaseManagerRepository $databaseManagerRepository,
+    )
     {
-        $this->databaseManagerRepository = $databaseManagerRepository;
-
         parent::__construct();
     }
 

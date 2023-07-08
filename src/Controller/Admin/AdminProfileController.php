@@ -18,10 +18,11 @@ use Symfony\Component\Routing\Annotation\Route;
 class AdminProfileController extends AbstractAdminController
 {
     public function __construct(
-        private UserRepository $userRepository,
-        private AdminUserRepository $adminUserRepository,
-        private LogRepository $logRepository
-    ) {
+        private readonly UserRepository      $userRepository,
+        private readonly AdminUserRepository $adminUserRepository,
+        private readonly LogRepository       $logRepository
+    )
+    {
     }
 
     #[Route("/admin/profile/", name: 'admin.profile')]

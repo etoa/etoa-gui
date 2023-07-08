@@ -8,19 +8,20 @@ use EtoA\Universe\Entity\EntityRepository;
 use EtoA\User\UserRepository;
 use EtoA\User\UserUniverseDiscoveryService;
 use SectorMapRenderer;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class GalaxyMapController extends AbstractAdminController
 {
     public function __construct(
-        private UserRepository $userRepository,
-        private ConfigurationService $config,
-        private UserUniverseDiscoveryService $userUniverseDiscoveryService,
-        private EntityRepository $entityRepository
-    ) {
+        private readonly UserRepository               $userRepository,
+        private readonly ConfigurationService         $config,
+        private readonly UserUniverseDiscoveryService $userUniverseDiscoveryService,
+        private readonly EntityRepository             $entityRepository
+    )
+    {
     }
 
     #[Route("/admin/universe/map", name: "admin.universe.map")]

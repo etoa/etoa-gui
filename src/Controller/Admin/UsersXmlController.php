@@ -4,7 +4,6 @@ namespace EtoA\Controller\Admin;
 
 use EtoA\User\UserRepository;
 use EtoA\User\UserToXml;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpFoundation\BinaryFileResponse;
@@ -13,13 +12,15 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class UsersXmlController extends AbstractController
 {
     public function __construct(
-        private UserRepository $userRepository,
-        private UserToXml $userToXml,
-    ) {
+        private readonly UserRepository $userRepository,
+        private readonly UserToXml      $userToXml,
+    )
+    {
     }
 
     #[Route('/admin/users/xml', name: 'admin.users.xml')]
@@ -50,7 +51,7 @@ class UsersXmlController extends AbstractController
         foreach ($files as $file) {
             $xmlFiles[] = [
                 'basename' => $file->getBasename(),
-                'xml' => simplexml_load_file((string) $file->getRealPath()),
+                'xml' => simplexml_load_file((string)$file->getRealPath()),
                 'base64' => base64_encode($file->getBasename()),
             ];
         }

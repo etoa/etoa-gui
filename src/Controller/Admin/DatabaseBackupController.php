@@ -8,21 +8,22 @@ use EtoA\Log\LogRepository;
 use EtoA\Log\LogSeverity;
 use EtoA\Support\DB\DatabaseBackupService;
 use EtoA\Support\StringUtils;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Lock\LockFactory;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class DatabaseBackupController extends AbstractAdminController
 {
     public function __construct(
-        private LockFactory $lockFactory,
-        private DatabaseBackupService $databaseBackupService,
-        private ConfigurationService $config,
-        private LogRepository $logRepository
-    ) {
+        private readonly LockFactory           $lockFactory,
+        private readonly DatabaseBackupService $databaseBackupService,
+        private readonly ConfigurationService  $config,
+        private readonly LogRepository         $logRepository
+    )
+    {
     }
 
     #[Route("/admin/db/backups", name: "admin.db.backups")]

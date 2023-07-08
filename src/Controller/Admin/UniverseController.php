@@ -16,26 +16,27 @@ use EtoA\Universe\Star\StarRepository;
 use EtoA\Universe\UniverseGenerator;
 use EtoA\Universe\UniverseResetService;
 use EtoA\Universe\Wormhole\WormholeRepository;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class UniverseController extends AbstractAdminController
 {
     public function __construct(
-        private UniverseGenerator $universeGenerator,
-        private UniverseResetService $universeResetService,
-        private GalaxyChecker $galaxyChecker,
-        private CellRepository $cellRepository,
-        private StarRepository $starRepository,
-        private PlanetRepository $planetRepository,
-        private AsteroidRepository $asteroidRepository,
-        private NebulaRepository $nebulaRepository,
-        private WormholeRepository $wormholeRepository,
-        private EmptySpaceRepository $emptySpaceRepository,
-        private ConfigurationService $config,
-    ) {
+        private readonly UniverseGenerator    $universeGenerator,
+        private readonly UniverseResetService $universeResetService,
+        private readonly GalaxyChecker        $galaxyChecker,
+        private readonly CellRepository       $cellRepository,
+        private readonly StarRepository       $starRepository,
+        private readonly PlanetRepository     $planetRepository,
+        private readonly AsteroidRepository   $asteroidRepository,
+        private readonly NebulaRepository     $nebulaRepository,
+        private readonly WormholeRepository   $wormholeRepository,
+        private readonly EmptySpaceRepository $emptySpaceRepository,
+        private readonly ConfigurationService $config,
+    )
+    {
     }
 
     #[Route("/admin/universe/edit", name: "admin.universe.edit")]

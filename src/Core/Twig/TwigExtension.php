@@ -20,10 +20,10 @@ class TwigExtension extends AbstractExtension
     private float $startTime;
 
     public function __construct(
-        private ConfigurationService $config,
-        private NetworkNameService   $networkNameService,
-        private RuntimeDataStore     $runtimeDataStore,
-        private GameVersionService   $gameVersion,
+        private readonly ConfigurationService $config,
+        private readonly NetworkNameService   $networkNameService,
+        private readonly RuntimeDataStore     $runtimeDataStore,
+        private readonly GameVersionService   $gameVersion,
     )
     {
         $this->startTime = microtime(true);

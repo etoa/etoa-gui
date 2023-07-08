@@ -16,21 +16,22 @@ use EtoA\Form\Type\Admin\FleetType;
 use EtoA\Form\Type\Admin\SendShipsType;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Universe\Resources\BaseResources;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class FleetController extends AbstractAdminController
 {
     public function __construct(
-        private FleetRepository $fleetRepository,
-        private FleetService $fleetService,
-        private PlanetRepository $planetRepository,
-        private ConfigurationService $config
-    ) {
+        private readonly FleetRepository      $fleetRepository,
+        private readonly FleetService         $fleetService,
+        private readonly PlanetRepository     $planetRepository,
+        private readonly ConfigurationService $config
+    )
+    {
     }
 
     #[Route('/admin/fleets/', name: 'admin.fleets')]
@@ -146,7 +147,7 @@ class FleetController extends AbstractAdminController
         $form = $this->createForm(FleetType::class, $fleet);
         $form->handleRequest($request);
         if ($request->request->has('edit')) {
-            $shipIds = array_map(fn (array $row) => $row['shipId'], $fleet->ships);
+            $shipIds = array_map(fn(array $row) => $row['shipId'], $fleet->ships);
             if (count($shipIds) !== count(array_unique($shipIds))) {
                 $form->get('ships')->addError(new FormError('Nur ein Eintrag pro Shiff möglich'));
             }

@@ -13,8 +13,9 @@ use Symfony\Component\Routing\Annotation\Route;
 class NotepadController extends AbstractAdminController
 {
     public function __construct(
-        private AdminNotesRepository $adminNotesRepository
-    ) {
+        private readonly AdminNotesRepository $adminNotesRepository
+    )
+    {
     }
 
     #[Route("/admin/notepad", name: "admin.notepad")]

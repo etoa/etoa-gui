@@ -21,13 +21,14 @@ use Symfony\Component\Routing\Annotation\Route;
 class MarketController extends AbstractController
 {
     public function __construct(
-        private RuntimeDataStore $runtimeDataStore,
-        private UserRepository $userRepository,
-        private MarketResourceRepository $marketResourceRepository,
-        private MarketShipRepository $marketShipRepository,
-        private ShipDataRepository $shipDataRepository,
-        private MarketAuctionRepository $marketAuctionRepository,
-    ) {
+        private readonly RuntimeDataStore         $runtimeDataStore,
+        private readonly UserRepository           $userRepository,
+        private readonly MarketResourceRepository $marketResourceRepository,
+        private readonly MarketShipRepository     $marketShipRepository,
+        private readonly ShipDataRepository       $shipDataRepository,
+        private readonly MarketAuctionRepository  $marketAuctionRepository,
+    )
+    {
     }
 
     #[Route('/admin/market/', name: 'admin.market')]

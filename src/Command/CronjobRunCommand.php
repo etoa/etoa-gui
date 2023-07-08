@@ -21,20 +21,14 @@ class CronjobRunCommand extends Command
     protected static $defaultName = 'cronjob:run';
     protected static $defaultDescription = 'Run tasks based on cronjob schedule';
 
-    private PeriodicTaskCollection $collection;
-    private ConfigurationService $config;
-    private LockFactory $lockFactory;
-    private MessageBusInterface $messageBus;
-    private LogRepository $logRepository;
-
-    public function __construct(PeriodicTaskCollection $collection, ConfigurationService $config, LockFactory $lockFactory, MessageBusInterface $messageBus, LogRepository $logRepository)
+    public function __construct(
+        private readonly PeriodicTaskCollection $collection,
+        private readonly ConfigurationService   $config,
+        private readonly LockFactory            $lockFactory,
+        private readonly MessageBusInterface    $messageBus,
+        private readonly LogRepository          $logRepository,
+    )
     {
-        $this->collection = $collection;
-        $this->config = $config;
-        $this->lockFactory = $lockFactory;
-        $this->messageBus = $messageBus;
-        $this->logRepository = $logRepository;
-
         parent::__construct();
     }
 
@@ -79,7 +73,7 @@ class CronjobRunCommand extends Command
 
             $severity = $stopEvent->getDuration() > 30000 ? LogSeverity::WARNING : LogSeverity::DEBUG;
 
-            $text = "Periodische Tasks (".date("d.m.Y H:i:s", $now)."):\n\n".$log;
+            $text = "Periodische Tasks (" . date("d.m.Y H:i:s", $now) . "):\n\n" . $log;
             $this->logRepository->add(LogFacility::UPDATES, $severity, $text);
 
             return Command::SUCCESS;

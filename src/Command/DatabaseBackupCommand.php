@@ -18,18 +18,13 @@ class DatabaseBackupCommand extends Command
     protected static $defaultName = 'database:backup';
     protected static $defaultDescription = 'Backup database';
 
-    private LogRepository $logRepository;
-    private LockFactory $lockFactory;
-    private ConfigurationService $config;
-    private DatabaseBackupService $databaseBackupService;
-
-    public function __construct(LogRepository $logRepository, LockFactory $lockFactory, ConfigurationService $config, DatabaseBackupService $databaseBackupService)
+    public function __construct(
+        private readonly LogRepository         $logRepository,
+        private readonly LockFactory           $lockFactory,
+        private readonly ConfigurationService  $config,
+        private readonly DatabaseBackupService $databaseBackupService,
+    )
     {
-        $this->logRepository = $logRepository;
-        $this->lockFactory = $lockFactory;
-        $this->config = $config;
-        $this->databaseBackupService = $databaseBackupService;
-
         parent::__construct();
     }
 
@@ -47,7 +42,7 @@ class DatabaseBackupCommand extends Command
         try {
             $log = $this->databaseBackupService->backupDB($dir, $gzip);
 
-            $this->logRepository->add(LogFacility::SYSTEM, LogSeverity::INFO, "[b]Datenbank-Backup Skript[/b]\n".$log);
+            $this->logRepository->add(LogFacility::SYSTEM, LogSeverity::INFO, "[b]Datenbank-Backup Skript[/b]\n" . $log);
 
             if ($io->isVerbose()) {
                 $io->writeln($log);
@@ -55,7 +50,7 @@ class DatabaseBackupCommand extends Command
 
             return Command::SUCCESS;
         } catch (\Exception $e) {
-            $this->logRepository->add(LogFacility::SYSTEM, LogSeverity::ERROR, "[b]Datenbank-Backup Skript[/b]\nDie Datenbank konnte nicht in das Verzeichnis [b]".$dir."[/b] gesichert werden: ".$e->getMessage());
+            $this->logRepository->add(LogFacility::SYSTEM, LogSeverity::ERROR, "[b]Datenbank-Backup Skript[/b]\nDie Datenbank konnte nicht in das Verzeichnis [b]" . $dir . "[/b] gesichert werden: " . $e->getMessage());
 
             throw $e;
         } finally {

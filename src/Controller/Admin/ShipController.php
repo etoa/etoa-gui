@@ -19,22 +19,23 @@ use EtoA\Ship\ShipSearch;
 use EtoA\Ship\ShipXpCalculator;
 use EtoA\Support\StringUtils;
 use EtoA\Universe\Planet\PlanetRepository;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use function DeepCopy\deep_copy;
 
 class ShipController extends AbstractAdminController
 {
     public function __construct(
-        private ShipDataRepository $shipDataRepository,
-        private ShipRequirementRepository $shipRequirementRepository,
-        private RankingService $rankingService,
-        private ShipQueueRepository $shipQueueRepository,
-        private PlanetRepository $planetRepository,
-        private ShipRepository $shipRepository,
-    ) {
+        private readonly ShipDataRepository        $shipDataRepository,
+        private readonly ShipRequirementRepository $shipRequirementRepository,
+        private readonly RankingService            $rankingService,
+        private readonly ShipQueueRepository       $shipQueueRepository,
+        private readonly PlanetRepository          $planetRepository,
+        private readonly ShipRepository            $shipRepository,
+    )
+    {
     }
 
     #[Route("/admin/ships/search", name: "admin.ships.search")]
@@ -101,7 +102,7 @@ class ShipController extends AbstractAdminController
         }
 
         $ships = $this->shipDataRepository->getAllShips(true);
-        usort($ships, fn (Ship $a, Ship $b) => $b->points <=> $a->points);
+        usort($ships, fn(Ship $a, Ship $b) => $b->points <=> $a->points);
 
         return $this->render('admin/ships/points.html.twig', [
             'ships' => $ships,

@@ -9,18 +9,19 @@ use EtoA\Universe\Entity\EntityLabelSearch;
 use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Entity\EntityType;
 use EtoA\Universe\Resources\BaseResources;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class TfCalculatorController extends AbstractAdminController
 {
     public function __construct(
-        private EntityRepository $entityRepository,
-        private MarketResourceRepository $marketResourceRepository,
-        private DebrisLogRepository $debrisLogRepository
-    ) {
+        private readonly EntityRepository         $entityRepository,
+        private readonly MarketResourceRepository $marketResourceRepository,
+        private readonly DebrisLogRepository      $debrisLogRepository
+    )
+    {
     }
 
     #[Route('/admin/tf-calculator', name: 'admin.tf-calculator')]
@@ -32,11 +33,11 @@ class TfCalculatorController extends AbstractAdminController
         if ($form->isSubmitted() && $form->isValid()) {
             $market = $this->entityRepository->searchEntityLabel(EntityLabelSearch::create()->codeIn([EntityType::MARKET]));
             foreach ($form->getData()['planets'] as $planetData) {
-                $entity = $this->entityRepository->searchEntityLabel(EntityLabelSearch::create()->id((int) $planetData['planet']));
+                $entity = $this->entityRepository->searchEntityLabel(EntityLabelSearch::create()->id((int)$planetData['planet']));
                 $resource = new BaseResources();
-                $resource->metal = (int) $planetData['metal'];
-                $resource->crystal = (int) $planetData['crystal'];
-                $resource->plastic = (int) $planetData['plastic'];
+                $resource->metal = (int)$planetData['metal'];
+                $resource->crystal = (int)$planetData['crystal'];
+                $resource->plastic = (int)$planetData['plastic'];
 
                 $this->marketResourceRepository->add(0, $market->id, $entity->ownerId, 0, 'Trümmerfeld', new BaseResources(), $resource);
                 $this->debrisLogRepository->add($this->getUser()->getId(), $entity->ownerId, $resource->metal, $resource->crystal, $resource->plastic);

@@ -17,21 +17,16 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class ChatController extends AbstractController
 {
-    private ChatManager $chatManager;
-    private ChatBanRepository $chatBanRepository;
-    private ChatUserRepository $chatUserRepository;
-    private ChatRepository $chatRepository;
-    private UserRepository $userRepository;
-    private ChatLogRepository $chatLogRepository;
 
-    public function __construct(ChatManager $chatManager, ChatBanRepository $chatBanRepository, ChatUserRepository $chatUserRepository, ChatRepository $chatRepository, UserRepository $userRepository, ChatLogRepository $chatLogRepository)
+    public function __construct(
+        private readonly ChatManager        $chatManager,
+        private readonly ChatBanRepository  $chatBanRepository,
+        private readonly ChatUserRepository $chatUserRepository,
+        private readonly ChatRepository     $chatRepository,
+        private readonly UserRepository     $userRepository,
+        private readonly ChatLogRepository  $chatLogRepository,
+    )
     {
-        $this->chatManager = $chatManager;
-        $this->chatBanRepository = $chatBanRepository;
-        $this->chatUserRepository = $chatUserRepository;
-        $this->chatRepository = $chatRepository;
-        $this->userRepository = $userRepository;
-        $this->chatLogRepository = $chatLogRepository;
     }
 
     /**

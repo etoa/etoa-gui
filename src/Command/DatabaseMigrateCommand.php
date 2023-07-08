@@ -17,18 +17,13 @@ class DatabaseMigrateCommand extends Command
     protected static $defaultName = 'database:migrate';
     protected static $defaultDescription = 'Apply all database migrations';
 
-    private DatabaseMigrationService $databaseMigrationService;
-    private DatabaseManagerRepository $databaseManagerRepository;
-    private LockFactory $lockFactory;
-    private ConfigurationService $config;
-
-    public function __construct(DatabaseMigrationService $databaseMigrationService, DatabaseManagerRepository $databaseManagerRepository, LockFactory $lockFactory, ConfigurationService $config)
+    public function __construct(
+        private readonly DatabaseMigrationService  $databaseMigrationService,
+        private readonly DatabaseManagerRepository $databaseManagerRepository,
+        private readonly LockFactory               $lockFactory,
+        private readonly ConfigurationService      $config
+    )
     {
-        $this->databaseMigrationService = $databaseMigrationService;
-        $this->databaseManagerRepository = $databaseManagerRepository;
-        $this->lockFactory = $lockFactory;
-        $this->config = $config;
-
         parent::__construct();
     }
 
@@ -46,7 +41,7 @@ class DatabaseMigrateCommand extends Command
         try {
             $lock->acquire(true);
 
-            if ((bool) $input->getOption('reset')) {
+            if ((bool)$input->getOption('reset')) {
                 $io->writeln("Dropping all tables:");
                 $this->databaseManagerRepository->dropAllTables();
             }
@@ -58,7 +53,7 @@ class DatabaseMigrateCommand extends Command
             }
 
             // Load config defaults
-            if ((bool) $input->getOption('reset')) {
+            if ((bool)$input->getOption('reset')) {
                 $this->config->restoreDefaults();
                 $this->config->reload();
             }

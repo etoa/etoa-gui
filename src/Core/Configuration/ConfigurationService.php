@@ -11,14 +11,11 @@ class ConfigurationService
     /** @var array<string,ConfigItem> */
     private ?array $_items = null;
 
-    private ConfigurationRepository $repository;
-
-    private ConfigurationDefinitionsRepository $definitions;
-
-    public function __construct(ConfigurationRepository $repository, ConfigurationDefinitionsRepository $definitions)
+    public function __construct(
+        private readonly ConfigurationRepository            $repository,
+        private readonly ConfigurationDefinitionsRepository $definitions,
+    )
     {
-        $this->repository = $repository;
-        $this->definitions = $definitions;
     }
 
     private function ensureLoaded(bool $reload = false): void
@@ -81,17 +78,17 @@ class ConfigurationService
 
     public function getInt(string $key): int
     {
-        return (int) $this->get($key);
+        return (int)$this->get($key);
     }
 
     public function getFloat(string $key): float
     {
-        return (float) $this->get($key);
+        return (float)$this->get($key);
     }
 
     public function getBoolean(string $key): bool
     {
-        return (bool) $this->get($key);
+        return (bool)$this->get($key);
     }
 
     /**
@@ -113,17 +110,17 @@ class ConfigurationService
 
     public function param1Int(string $key): int
     {
-        return (int) $this->param1($key);
+        return (int)$this->param1($key);
     }
 
     public function param1Float(string $key): float
     {
-        return (float) $this->param1($key);
+        return (float)$this->param1($key);
     }
 
     public function param1Boolean(string $key): bool
     {
-        return (bool) $this->param1($key);
+        return (bool)$this->param1($key);
     }
 
     /**
@@ -145,17 +142,17 @@ class ConfigurationService
 
     public function param2Int(string $key): int
     {
-        return (int) $this->param2($key);
+        return (int)$this->param2($key);
     }
 
     public function param2Boolean(string $key): bool
     {
-        return (bool) $this->param2($key);
+        return (bool)$this->param2($key);
     }
 
     public function param2Float(string $key): float
     {
-        return (float) $this->param2($key);
+        return (float)$this->param2($key);
     }
 
     public function has(string $name): bool
@@ -177,11 +174,11 @@ class ConfigurationService
         $cnt = 0;
         foreach ($xml->items->item as $itemDefinition) {
             $item = new ConfigItem(
-                (string) ($itemDefinition->v ?? ''),
-                (string) ($itemDefinition->p1 ?? ''),
-                (string) ($itemDefinition->p2 ?? '')
+                (string)($itemDefinition->v ?? ''),
+                (string)($itemDefinition->p1 ?? ''),
+                (string)($itemDefinition->p2 ?? '')
             );
-            $this->repository->save((string) $itemDefinition['name'], $item);
+            $this->repository->save((string)$itemDefinition['name'], $item);
             $cnt++;
         }
 

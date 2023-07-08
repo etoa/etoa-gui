@@ -5,18 +5,19 @@ namespace EtoA\Controller\Admin;
 use EtoA\Universe\Cell\CellRepository;
 use EtoA\User\UserRepository;
 use EtoA\User\UserUniverseDiscoveryService;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class ExplorationController extends AbstractAdminController
 {
     public function __construct(
-        private UserRepository $userRepository,
-        private CellRepository $cellRepository,
-        private UserUniverseDiscoveryService $userUniverseDiscoveryService
-    ) {
+        private readonly UserRepository               $userRepository,
+        private readonly CellRepository               $cellRepository,
+        private readonly UserUniverseDiscoveryService $userUniverseDiscoveryService
+    )
+    {
     }
 
     #[Route("/admin/universe/exploration/", name: "admin.universe.exploration")]
@@ -66,15 +67,11 @@ class ExplorationController extends AbstractAdminController
             } else {
                 $this->addFlash('error', 'Ungültige Koordinate!');
             }
-        }
-
-        // Reset discovered coordinates
+        } // Reset discovered coordinates
         elseif ($request->request->has('discover_reset')) {
             $this->userUniverseDiscoveryService->setDiscoveredAll($user, false);
             $this->addFlash('success', 'Erkundung zurückgesetzt!');
-        }
-
-        // Discover all coordinates
+        } // Discover all coordinates
         elseif ($request->request->has('discover_all')) {
             $this->userUniverseDiscoveryService->setDiscoveredAll($user, true);
             $this->addFlash('success', 'Alles erkundet!');

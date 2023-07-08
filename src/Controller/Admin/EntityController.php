@@ -24,26 +24,27 @@ use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Universe\Planet\PlanetService;
 use EtoA\Universe\Star\StarRepository;
 use EtoA\Universe\Wormhole\WormholeRepository;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class EntityController extends AbstractAdminController
 {
     public function __construct(
-        private EntityRepository $entityRepository,
-        private StarRepository $starRepository,
-        private EmptySpaceRepository $emptySpaceRepository,
-        private WormholeRepository $wormholeRepository,
-        private AsteroidRepository $asteroidRepository,
-        private NebulaRepository $nebulaRepository,
-        private PlanetRepository $planetRepository,
-        private PlanetService $planetService,
-        private LogRepository $logRepository,
-        private BackendMessageService $backendMessageService
-    ) {
+        private readonly EntityRepository      $entityRepository,
+        private readonly StarRepository        $starRepository,
+        private readonly EmptySpaceRepository  $emptySpaceRepository,
+        private readonly WormholeRepository    $wormholeRepository,
+        private readonly AsteroidRepository    $asteroidRepository,
+        private readonly NebulaRepository      $nebulaRepository,
+        private readonly PlanetRepository      $planetRepository,
+        private readonly PlanetService         $planetService,
+        private readonly LogRepository         $logRepository,
+        private readonly BackendMessageService $backendMessageService
+    )
+    {
     }
 
     #[Route('/admin/universe/entities', name: 'admin.universe.entities')]
@@ -192,7 +193,7 @@ class EntityController extends AbstractAdminController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $this->planetRepository->update($planet);
-            if ((bool) $form->get('resetUserChanged')->getData()) {
+            if ((bool)$form->get('resetUserChanged')->getData()) {
                 $this->planetRepository->resetUserChanged($planet->id);
             }
 

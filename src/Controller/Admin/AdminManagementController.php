@@ -18,8 +18,8 @@ use Symfony\Component\Security\Http\Attribute\IsGranted;
 class AdminManagementController extends AbstractAdminController
 {
     public function __construct(
-        private AdminUserRepository $adminUserRepository,
-        private LogRepository       $logRepository,
+        private readonly AdminUserRepository $adminUserRepository,
+        private readonly LogRepository       $logRepository,
     )
     {
     }

@@ -10,20 +10,21 @@ use EtoA\Form\Type\Admin\DeleteAdminSessionLogType;
 use EtoA\Log\LogFacility;
 use EtoA\Log\LogRepository;
 use EtoA\Log\LogSeverity;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class AdminSessionController extends AbstractAdminController
 {
     public function __construct(
-        private AdminSessionManager $sessionManager,
-        private LogRepository $logRepository,
-        private ConfigurationService $config,
-        private AdminSessionRepository $sessionRepository
-    ) {
+        private readonly AdminSessionManager    $sessionManager,
+        private readonly LogRepository          $logRepository,
+        private readonly ConfigurationService   $config,
+        private readonly AdminSessionRepository $sessionRepository
+    )
+    {
     }
 
     #[Route("/admin/admin-sessions/", name: "admin.admin-sessions")]
@@ -61,7 +62,7 @@ class AdminSessionController extends AbstractAdminController
         $form = $this->createForm(DeleteAdminSessionLogType::class);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $nr = $this->sessionManager->cleanupLogs((int) $form->getData()['timespan']);
+            $nr = $this->sessionManager->cleanupLogs((int)$form->getData()['timespan']);
 
             $this->addFlash('success', $nr . " Einträge wurden gelöscht!");
         }

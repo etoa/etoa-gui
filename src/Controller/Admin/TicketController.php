@@ -19,12 +19,13 @@ use Symfony\Component\Routing\Annotation\Route;
 class TicketController extends AbstractController
 {
     public function __construct(
-        private UserRepository $userRepository,
-        private TicketRepository $ticketRepository,
-        private TicketService $ticketService,
-        private AdminUserRepository $adminUserRepository,
-        private TicketMessageRepository $ticketMessageRepository
-    ) {
+        private readonly UserRepository          $userRepository,
+        private readonly TicketRepository        $ticketRepository,
+        private readonly TicketService           $ticketService,
+        private readonly AdminUserRepository     $adminUserRepository,
+        private readonly TicketMessageRepository $ticketMessageRepository
+    )
+    {
     }
 
     #[Route("/admin/tickets/", name: "admin.ticket.active")]

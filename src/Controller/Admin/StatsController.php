@@ -17,11 +17,12 @@ use Symfony\Component\Routing\Annotation\Route;
 class StatsController extends AbstractAdminController
 {
     public function __construct(
-        private UserStatRepository $userStatsRepository,
-        private UserTitlesService $userTitlesService,
-        private UserRatingRepository $userRatingRepository,
-        private AllianceStatsRepository $allianceStatsRepository,
-    ) {
+        private readonly UserStatRepository      $userStatsRepository,
+        private readonly UserTitlesService       $userTitlesService,
+        private readonly UserRatingRepository    $userRatingRepository,
+        private readonly AllianceStatsRepository $allianceStatsRepository,
+    )
+    {
     }
 
     #[Route("/admin/stats/users", name: 'admin.stats.users')]
@@ -105,7 +106,7 @@ class StatsController extends AbstractAdminController
         $ratings = $this->userRatingRepository->getBattleRating();
 
         return $this->render('admin/stats/battles.html.twig', [
-            'ratings' => array_filter($ratings, fn (UserRating $rating) => $rating->rating > 0),
+            'ratings' => array_filter($ratings, fn(UserRating $rating) => $rating->rating > 0),
         ]);
     }
 
@@ -115,7 +116,7 @@ class StatsController extends AbstractAdminController
         $ratings = $this->userRatingRepository->getTradeRating();
 
         return $this->render('admin/stats/trade.html.twig', [
-            'ratings' => array_filter($ratings, fn (UserRating $rating) => $rating->rating > 0),
+            'ratings' => array_filter($ratings, fn(UserRating $rating) => $rating->rating > 0),
         ]);
     }
 
@@ -125,7 +126,7 @@ class StatsController extends AbstractAdminController
         $ratings = $this->userRatingRepository->getDiplomacyRating();
 
         return $this->render('admin/stats/diplomacy.html.twig', [
-            'ratings' => array_filter($ratings, fn (UserRating $rating) => $rating->rating > 0),
+            'ratings' => array_filter($ratings, fn(UserRating $rating) => $rating->rating > 0),
         ]);
     }
 

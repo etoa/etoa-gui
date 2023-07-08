@@ -12,19 +12,20 @@ use EtoA\Log\DebrisLogRepository;
 use EtoA\Log\FleetLogRepository;
 use EtoA\Log\GameLogRepository;
 use EtoA\Log\LogRepository;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class LogController extends AbstractAdminController
 {
     public function __construct(
-        private LogRepository $logRepository,
-        private DebrisLogRepository $debrisLogRepository,
-        private FleetLogRepository $fleetLogRepository,
-        private GameLogRepository $gameLogRepository
-    ) {
+        private readonly LogRepository       $logRepository,
+        private readonly DebrisLogRepository $debrisLogRepository,
+        private readonly FleetLogRepository  $fleetLogRepository,
+        private readonly GameLogRepository   $gameLogRepository
+    )
+    {
     }
 
     #[Route("/admin/logs/", name: "admin.logs.general")]

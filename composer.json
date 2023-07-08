@@ -9,13 +9,15 @@
     "ext-gd": "*",
     "ext-iconv": "*",
     "ext-xmlreader": "*",
-    "ext-posix": "*",
     "doctrine/doctrine-bundle": "^2.10",
     "doctrine/doctrine-migrations-bundle": "^3.2",
     "doctrine/orm": "^2.15",
+    "dragonmantank/cron-expression": "^3.3",
+    "endroid/qr-code": "^4.8",
     "league/commonmark": "^2.4",
     "phpdocumentor/reflection-docblock": "^5.3",
     "phpstan/phpdoc-parser": "^1.22",
+    "pimple/pimple": "^3.5",
     "scheb/2fa-bundle": "^6.8",
     "scheb/2fa-totp": "^6.8",
     "symfony/asset": "6.3.*",
@@ -51,7 +53,8 @@
     "twig/extra-bundle": "^2.12|^3.0",
     "twig/string-extra": "^3.6",
     "twig/twig": "^2.12|^3.0",
-    "whichbrowser/parser": "^2.1"
+    "whichbrowser/parser": "^2.1",
+    "ext-simplexml": "*"
   },
   "config": {
     "allow-plugins": {

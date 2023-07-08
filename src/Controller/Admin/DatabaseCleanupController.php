@@ -24,35 +24,36 @@ use EtoA\User\UserRepository;
 use EtoA\User\UserService;
 use EtoA\User\UserSessionManager;
 use EtoA\User\UserSessionRepository;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
 class DatabaseCleanupController extends AbstractAdminController
 {
     public function __construct(
-        private MessageRepository $messageRepository,
-        private ReportRepository $reportRepository,
-        private LogRepository $logRepository,
-        private UserPointsRepository $userPointsRepository,
-        private AlliancePointsRepository $alliancePointsRepository,
-        private UserService $userService,
-        private UserRepository $userRepository,
-        private ShipRepository $shipRepository,
-        private DefenseRepository $defenseRepository,
-        private BuildingRepository $buildingRepository,
-        private TechnologyRepository $technologyRepository,
-        private MissileRepository $missileRepository,
-        private ConfigurationService $config,
-        private UserSessionRepository $userSessionRepository,
-        private PointsService $pointsService,
-        private MessageService $messageService,
-        private UserSessionManager $userSessionManager,
-        private AdminSessionManager $adminSessionManager,
-        private LogCleanup $logCleanup,
-        private ReportCleanup $reportCleanup,
-    ) {
+        private readonly MessageRepository        $messageRepository,
+        private readonly ReportRepository         $reportRepository,
+        private readonly LogRepository            $logRepository,
+        private readonly UserPointsRepository     $userPointsRepository,
+        private readonly AlliancePointsRepository $alliancePointsRepository,
+        private readonly UserService              $userService,
+        private readonly UserRepository           $userRepository,
+        private readonly ShipRepository           $shipRepository,
+        private readonly DefenseRepository        $defenseRepository,
+        private readonly BuildingRepository       $buildingRepository,
+        private readonly TechnologyRepository     $technologyRepository,
+        private readonly MissileRepository        $missileRepository,
+        private readonly ConfigurationService     $config,
+        private readonly UserSessionRepository    $userSessionRepository,
+        private readonly PointsService            $pointsService,
+        private readonly MessageService           $messageService,
+        private readonly UserSessionManager       $userSessionManager,
+        private readonly AdminSessionManager      $adminSessionManager,
+        private readonly LogCleanup               $logCleanup,
+        private readonly ReportCleanup            $reportCleanup,
+    )
+    {
     }
 
     #[Route('/admin/db/cleanup', name: 'admin.db.cleanup')]

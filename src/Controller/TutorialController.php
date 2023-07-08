@@ -13,13 +13,12 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class TutorialController extends AbstractController
 {
-    private TutorialUserProgressRepository $tutorialUserProgressRepository;
-    private TutorialManager $tutorialManager;
 
-    public function __construct(TutorialUserProgressRepository $tutorialUserProgressRepository, TutorialManager $tutorialManager)
+    public function __construct(
+        private readonly TutorialUserProgressRepository $tutorialUserProgressRepository,
+        private readonly TutorialManager                $tutorialManager,
+    )
     {
-        $this->tutorialUserProgressRepository = $tutorialUserProgressRepository;
-        $this->tutorialManager = $tutorialManager;
     }
 
     /**

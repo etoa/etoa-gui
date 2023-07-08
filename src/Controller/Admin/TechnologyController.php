@@ -14,22 +14,23 @@ use EtoA\Technology\TechnologyPointRepository;
 use EtoA\Technology\TechnologyRepository;
 use EtoA\Technology\TechnologyRequirementRepository;
 use EtoA\Universe\Planet\PlanetRepository;
-use Symfony\Component\Security\Http\Attribute\IsGranted;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use function DeepCopy\deep_copy;
 
 class TechnologyController extends AbstractAdminController
 {
     public function __construct(
-        private TechnologyRepository $technologyRepository,
-        private TechnologyDataRepository $technologyDataRepository,
-        private TechnologyPointRepository $technologyPointRepository,
-        private RankingService $rankingService,
-        private TechnologyRequirementRepository $technologyRequirementRepository,
-        private PlanetRepository $planetRepository,
-    ) {
+        private readonly TechnologyRepository            $technologyRepository,
+        private readonly TechnologyDataRepository        $technologyDataRepository,
+        private readonly TechnologyPointRepository       $technologyPointRepository,
+        private readonly RankingService                  $rankingService,
+        private readonly TechnologyRequirementRepository $technologyRequirementRepository,
+        private readonly PlanetRepository                $planetRepository,
+    )
+    {
     }
 
     #[Route("/admin/technology/", name: "admin.technology")]
@@ -41,7 +42,7 @@ class TechnologyController extends AbstractAdminController
         $addForm->handleRequest($request);
         if ($addForm->isSubmitted() && $addForm->isValid()) {
             $userId = $this->planetRepository->getPlanetUserId($addItem->entityId);
-            if ((bool) $addForm->get('all')->getData()) {
+            if ((bool)$addForm->get('all')->getData()) {
                 $techIds = array_keys($this->technologyDataRepository->getTechnologyNames(true));
                 foreach ($techIds as $techId) {
                     $this->technologyRepository->addTechnology($techId, $addItem->currentLevel, $userId, $addItem->entityId);
@@ -70,7 +71,7 @@ class TechnologyController extends AbstractAdminController
         $form = $this->createForm(AddTechnologyItemType::class, $item);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            if ((bool) $form->get('all')->getData()) {
+            if ((bool)$form->get('all')->getData()) {
                 $techIds = array_keys($this->technologyDataRepository->getTechnologyNames(true));
                 foreach ($techIds as $techId) {
                     $this->technologyRepository->addTechnology($techId, $item->currentLevel, $item->userId, $item->entityId);

@@ -13,11 +13,9 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class ShipController extends AbstractController
 {
-    private ShipDataRepository $shipDataRepository;
 
-    public function __construct(ShipDataRepository $shipDataRepository)
+    public function __construct(private readonly ShipDataRepository $shipDataRepository)
     {
-        $this->shipDataRepository = $shipDataRepository;
     }
 
     /**

@@ -18,16 +18,12 @@ class DatabaseRestoreCommand extends Command
     protected static $defaultName = 'database:restore';
     protected static $defaultDescription = 'Restore database from backup';
 
-    private LogRepository $logRepository;
-    private DatabaseBackupService $databaseBackupService;
-    private LockFactory $lockFactory;
-
-    public function __construct(LogRepository $logRepository, DatabaseBackupService $databaseBackupService, LockFactory $lockFactory)
+    public function __construct(
+        private readonly LogRepository         $logRepository,
+        private readonly DatabaseBackupService $databaseBackupService,
+        private readonly LockFactory           $lockFactory,
+    )
     {
-        $this->logRepository = $logRepository;
-        $this->databaseBackupService = $databaseBackupService;
-        $this->lockFactory = $lockFactory;
-
         parent::__construct();
     }
 
@@ -42,7 +38,7 @@ class DatabaseRestoreCommand extends Command
 
         $dir = $this->databaseBackupService->getBackupDir();
 
-        if (!(bool) $input->getArgument('restore_point')) {
+        if (!(bool)$input->getArgument('restore_point')) {
             $io->writeln("Available restore points:");
             $dates = $this->databaseBackupService->getBackupImages($dir);
             foreach ($dates as $f) {
@@ -60,7 +56,7 @@ class DatabaseRestoreCommand extends Command
         try {
             $log = $this->databaseBackupService->restoreDB($dir, $restorePoint);
 
-            $this->logRepository->add(LogFacility::SYSTEM, LogSeverity::INFO, "[b]Datenbank-Restore Skript[/b]\n".$log);
+            $this->logRepository->add(LogFacility::SYSTEM, LogSeverity::INFO, "[b]Datenbank-Restore Skript[/b]\n" . $log);
 
             if ($io->isVerbose()) {
                 $io->writeln($log);
@@ -68,7 +64,7 @@ class DatabaseRestoreCommand extends Command
 
             return Command::SUCCESS;
         } catch (\Exception $e) {
-            $this->logRepository->add(LogFacility::SYSTEM, LogSeverity::ERROR, "[b]Datenbank-Restore Skript[/b]\nDie Datenbank konnte nicht vom Backup [b]".$restorePoint."[/b] aus dem Verzeichnis [b]".$dir."[/b] wiederhergestellt werden: ".$e->getMessage());
+            $this->logRepository->add(LogFacility::SYSTEM, LogSeverity::ERROR, "[b]Datenbank-Restore Skript[/b]\nDie Datenbank konnte nicht vom Backup [b]" . $restorePoint . "[/b] aus dem Verzeichnis [b]" . $dir . "[/b] wiederhergestellt werden: " . $e->getMessage());
 
             throw $e;
         } finally {
