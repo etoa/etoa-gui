@@ -1,3 +1,0 @@
-<?PHP
-
-forward('/admin/overview');

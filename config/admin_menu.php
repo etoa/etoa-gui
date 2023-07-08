@@ -593,7 +593,7 @@ return [
         ]
     ],
     "Diverses" => [
-        "page" => "misc",
+        "route" => "admin.misc.index",
         "roles" => "master",
         "children" => [
             "Designs" => [
