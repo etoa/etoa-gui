@@ -14,42 +14,35 @@ return [
                 "route" => "admin.stats.users"
             ],
             "Offline nehmen" => [
-                "sub" => "offline",
+                "route" => "admin.overview.game-offline",
                 "roles" => "master,super-admin,game-admin",
-                "path" => "/admin/overview/game-offline",
-                "route" => "admin.overview.game-offline"
             ],
             "Changelog" => [
-                "sub" => "changelog",
-                "path" => "/admin/overview/changelog",
                 "route" => "admin.overview.changelog",
                 "roles" => "master,super-admin,game-admin,trial-game-admin"
             ],
             "Spielstatistiken" => [
-                "sub" => "gamestats",
-                "path" => "/admin/overview/gamestats",
                 "route" => "admin.overview.gamestats",
                 "roles" => "master,super-admin,game-admin,trial-game-admin",
-                "bar" => true
-            ],
-            "Admin-Management" => [
-                "sub" => "adminusers",
-                "roles" => "master,super-admin",
-                "path" => "/admin/admin-management/",
-                "route" => "admin.admin_management"
-            ],
-            "Admin-Sessions" => [
-                "sub" => "adminlog",
-                "roles" => "master,super-admin",
-                "path" => "/admin/admin-sessions/",
-                "route" => "admin.admin-sessions"
             ],
             "System-Information" => [
-                "sub" => "sysinfo",
-                "path" => "/admin/overview/sysinfo",
                 "route" => "admin.overview.sysinfo",
                 "roles" => "master,super-admin"
             ]
+        ]
+    ],
+    "Administratoren" => [
+        "route" => "admin.admin_management",
+        "roles" => "master,super-admin,game-admin,trial-game-admin,chat-admin",
+        "children" => [
+            "Admin-Management" => [
+                "route" => "admin.admin_management",
+                "roles" => "master,super-admin",
+            ],
+            "Admin-Sessions" => [
+                "route" => "admin.admin-sessions",
+                "roles" => "master,super-admin",
+            ],
         ]
     ],
     "In-Game Hilfe" => [
