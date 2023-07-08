@@ -185,11 +185,11 @@ return [
                 "path" => "/admin/alliances/imagecheck"
             ],
             "Gebäude bearbeiten" => [
-                "sub" => "buildingsdata",
+                "route" => "admin.alliances.building_data",
                 "roles" => "master,super-admin"
             ],
             "Technologien bearbeiten" => [
-                "sub" => "techdata",
+                "route" => "admin.alliances.technology_data",
                 "roles" => "master,super-admin"
             ]
         ]

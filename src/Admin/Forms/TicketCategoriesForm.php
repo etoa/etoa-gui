@@ -6,7 +6,7 @@ namespace EtoA\Admin\Forms;
 
 class TicketCategoriesForm extends SimpleForm
 {
-    protected function getName(): string
+    public function getName(): string
     {
         return "Ticket-Kategorien";
     }

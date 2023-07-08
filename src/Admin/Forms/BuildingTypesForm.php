@@ -6,7 +6,7 @@ namespace EtoA\Admin\Forms;
 
 class BuildingTypesForm extends SimpleForm
 {
-    protected function getName(): string
+    public function getName(): string
     {
         return "Gebäudekategorien";
     }

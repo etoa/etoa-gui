@@ -6,7 +6,7 @@ namespace EtoA\Admin\Forms;
 
 class TutorialsForm extends AdvancedForm
 {
-    protected function getName(): string
+    public function getName(): string
     {
         return "Tutorial Texte";
     }

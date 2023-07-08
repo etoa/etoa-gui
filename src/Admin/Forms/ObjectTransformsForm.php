@@ -6,7 +6,7 @@ namespace EtoA\Admin\Forms;
 
 class ObjectTransformsForm extends AdvancedForm
 {
-    protected function getName(): string
+    public function getName(): string
     {
         return "Objekt-Transformationen";
     }

@@ -10,7 +10,7 @@ use FleetAction;
 
 class ShipsForm extends AdvancedForm
 {
-    protected function getName(): string
+    public function getName(): string
     {
         return "Schiffe";
     }

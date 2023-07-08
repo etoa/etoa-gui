@@ -6,7 +6,7 @@ namespace EtoA\Admin\Forms;
 
 class TippsForm extends AdvancedForm
 {
-    protected function getName(): string
+    public function getName(): string
     {
         return "Tipps";
     }

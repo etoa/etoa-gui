@@ -6,28 +6,27 @@ namespace EtoA\Admin\Forms;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Query\QueryBuilder;
-use Pimple\Container;
 
 abstract class Form
 {
-    protected Container $app;
-
-    final public function __construct(Container $app)
+    public function __construct(
+        private readonly Connection $connection,
+        protected readonly string   $projectDir,
+    )
     {
-        $this->app = $app;
     }
 
     protected function createQueryBuilder(): QueryBuilder
     {
-        /** @var Connection $connection */
-        $connection = $this->app['db'];
-
-        return $connection->createQueryBuilder();
+        return $this->connection->createQueryBuilder();
     }
 
-    abstract protected function getName(): string;
+    abstract public function getName(): string;
+
     abstract protected function getTable(): string;
+
     abstract protected function getTableId(): string;
+
     abstract protected function getOverviewOrderField(): string;
 
     protected function getOverviewOrder(): string
@@ -38,15 +37,15 @@ abstract class Form
     /**
      * Parameters:
      *
-     * name	                DB Field Name
-     * text	                Field Description
+     * name                    DB Field Name
+     * text                    Field Description
      * type                 Field Type: text, textarea, radio, select, numeric, decimal, color, comma_list
      * def_val              Default Value
      * size                 Field length (text)
      * max_len              Max Text length (text)
      * rows                 Rows (textarea)
      * cols                 Cols (textarea)
-     * items (Array)	    Checkbox-/Radio-/Select-Elements (label => value)
+     * items (Array)        Checkbox-/Radio-/Select-Elements (label => value)
      * show_overview        Set true to show on overview page
      *
      * @return array<array{name:string,text:string,type:string,def_val?:string,size?:int,max_len?:int,rows?:int,cols?:int,items?:array,show_overview?:bool,link_in_overview?:bool,show_hide?:array<string>,hide_show?:array<string>,line?:bool,column_end?:bool}>
@@ -203,7 +202,7 @@ abstract class Form
 
                 return implode(', ', $labels);
             default:
-                return $arr[$field['name']];
+                return strval($arr[$field['name']]);
         }
     }
 }

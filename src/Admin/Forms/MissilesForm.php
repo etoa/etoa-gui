@@ -8,7 +8,7 @@ use EtoA\Core\ObjectWithImage;
 
 class MissilesForm extends AdvancedForm
 {
-    protected function getName(): string
+    public function getName(): string
     {
         return "Raketen";
     }

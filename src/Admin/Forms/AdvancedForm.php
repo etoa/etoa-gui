@@ -6,7 +6,6 @@ namespace EtoA\Admin\Forms;
 
 use EtoA\Admin\LegacyTemplateTitleHelper;
 use MessageBox;
-use Pimple\Container;
 use Symfony\Component\HttpFoundation\Request;
 
 abstract class AdvancedForm extends Form
@@ -39,13 +38,9 @@ abstract class AdvancedForm extends Form
         return '';
     }
 
-    public static function render(Container $app, Request $request): void
+    public function router(Request $request): string
     {
-        (new static($app))->router($request);
-    }
-
-    public function router(Request $request): void
-    {
+        ob_start();
         if ($request->query->get('action') == "new") {
             $this->create();
         } elseif ($request->request->has('new')) {
@@ -76,6 +71,7 @@ abstract class AdvancedForm extends Form
         } else {
             $this->index();
         }
+        return ob_get_clean();
     }
 
     public function index(): void
@@ -83,8 +79,8 @@ abstract class AdvancedForm extends Form
         LegacyTemplateTitleHelper::$title = $this->getName();
         LegacyTemplateTitleHelper::$subTitle = "Übersicht";
 
-        echo "<form action=\"?" . URL_SEARCH_STRING . "\" method=\"post\">";
-        echo "<input type=\"button\" value=\"Neuer Datensatz hinzufügen\" name=\"new\" onclick=\"document.location='?" . URL_SEARCH_STRING . "&amp;action=new'\" /><br/><br/>";
+        echo '<form action="?" method="post">';
+        echo '<input type="button" value="Neuer Datensatz hinzufügen" name="new" onclick="document.location=\'?&amp;action=new\'" /><br/><br/>';
 
         $rows = $this->createQueryBuilder()
             ->select('*')
@@ -93,55 +89,56 @@ abstract class AdvancedForm extends Form
             ->fetchAllAssociative();
 
         if (count($rows) > 0) {
-            echo "<table width=\"100%\" cellpadding=\"3\" cellspacing=\"1\" align=\"center\"><tr>";
+            echo '<table class="table"><thead><tr>';
             if ($this->getImagePath() !== null) {
-                echo "<th valign=\"top\" class=\"tbltitle\">Bild</a>";
+                echo "<th>Bild</a>";
             }
             foreach ($this->getFields() as $k => $field) {
                 if ($field['show_overview'] ?? false) {
-                    echo "<th valign=\"top\" class=\"tbltitle\">" . $field['text'] . "</a>";
+                    echo "<th>" . $field['text'] . "</a>";
                 }
             }
             if (count($this->getSwitches()) > 0) {
                 foreach ($this->getSwitches() as $k => $v) {
-                    echo "<th valign=\"top\" class=\"tbltitle\">";
+                    echo "<th>";
                     echo "$k";
                     echo "</th>";
                 }
             }
             if ($this->getTableSort() !== null && $this->getTableSortParent() !== null) {
-                echo "<th valign=\"top\" class=\"tbltitle\">";
+                echo "<th>";
                 echo "Sort";
                 echo "</th>";
             }
 
-            echo "<th valign=\"top\" width=\"70\" colspan=\"2\">&nbsp;</td></tr>";
+            echo '<th colspan="2">&nbsp;</td></tr></thead><tbody>';
             $cnt = 0;
             $parId = null;
             foreach ($rows as $arr) {
                 echo "<tr>";
                 if ($this->getImagePath() !== null) {
-                    $path = preg_replace('/<DB_TABLE_ID>/', $arr[$this->getTableId()], $this->getImagePath());
+                    $imagePath = preg_replace('/<DB_TABLE_ID>/', strval($arr[$this->getTableId()]), $this->getImagePath());
+                    $path = $this->projectDir . '/assets' . $imagePath;
                     if (is_file($path)) {
                         $imageSize = getimagesize($path);
-                        echo "<td class=\"tbldata\" style=\"background:#000;width:" . $imageSize[0] . "px;\">
-                            <a href=\"?" . URL_SEARCH_STRING . "&amp;action=edit&amp;id=" . $arr[$this->getTableId()] . "\">
-                            <img src=\"" . $path . "\" align=\"top\"/>
-                            </a></td>";
+                        echo '<td style="background:#000;width:' . $imageSize[0] . 'px;">
+                            <a href="?action=edit&amp;id=' . $arr[$this->getTableId()] . '">
+                            <img src="/build/' . $imagePath . '"/>
+                            </a></td>';
                     } else {
-                        echo "<td class=\"tbldata\" style=\"background:#000;width:40px;\">
-                            <a href=\"?" . URL_SEARCH_STRING . "&amp;action=edit&amp;id=" . $arr[$this->getTableId()] . "\">
-                            <img src=\"../images/blank.gif\" style=\"width:40px;height:40px;\" align=\"top\"/>
-                            </a></td>";
+                        echo '<td style="background:#000;width:40px;">
+                            <a href="action=edit&amp;id=' . $arr[$this->getTableId()] . '">
+                            <img src="/build/images/blank.gif" style="width:40px;height:40px;"/>
+                            </a></td>';
                     }
                 }
 
                 foreach ($this->getFields() as $field) {
                     if ($field['show_overview'] ?? false) {
                         $isLink = $field['link_in_overview'] ?? false;
-                        echo "<td class=\"tbldata\">";
+                        echo '<td>';
                         if ($isLink) {
-                            echo "<a href=\"?" . URL_SEARCH_STRING . "&amp;action=edit&amp;id=" . $arr[$this->getTableId()] . "\">";
+                            echo '<a href="?action=edit&amp;id=' . $arr[$this->getTableId()] . "\">";
                         }
                         echo $this->showFieldValue($field, $arr);
                         if ($isLink) {
@@ -153,30 +150,30 @@ abstract class AdvancedForm extends Form
 
                 if (count($this->getSwitches()) > 0) {
                     foreach ($this->getSwitches() as $k => $v) {
-                        echo "<td valign=\"top\" class=\"tbldata\">
-                    <a href=\"?" . URL_SEARCH_STRING . "&amp;switch=" . $v . "&amp;id=" . $arr[$this->getTableId()] . "\">";
+                        echo '<td>
+                    <a href="?switch=' . $v . "&amp;id=" . $arr[$this->getTableId()] . "\">";
                         if ($arr[$v] == 1) {
-                            echo "<img src=\"../images/true.gif\" alt=\"true\" />";
+                            echo '<img src="/build/images/true.gif" alt="true" />';
                         } else {
-                            echo "<img src=\"../images/false.gif\" alt=\"true\" />";
+                            echo '<img src="/build/false.gif" alt="true" />';
                         }
                         echo "</td>";
                     }
                 }
 
                 if ($this->getTableSort() !== null && $this->getTableSortParent() !== null) {
-                    echo "<td valign=\"top\" class=\"tbldata\" style=\"width:40px;\">";
+                    echo '<td style="width:40px;">';
 
                     if ($cnt < count($rows) - 1) {
-                        echo "<a href=\"?" . URL_SEARCH_STRING . "&amp;moveDown=" . $arr[$this->getTableId()] . "&amp;parentId=" . $arr[$this->getTableSortParent()] . "\"><img src=\"../images/down.gif\" alt=\"down\" /></a> ";
+                        echo '<a href="?moveDown=' . $arr[$this->getTableId()] . "&amp;parentId=" . $arr[$this->getTableSortParent()] . "\"><img src=\"../images/down.gif\" alt=\"down\" /></a> ";
                     } else {
-                        echo "<img src=\"../images/blank.gif\" alt=\"blank\" style=\"width:16px;\" /> ";
+                        echo '<img src="/build/images/blank.gif" alt="blank" style="width:16px;" /> ';
                     }
 
                     if ($cnt != 0 && $parId == $arr[$this->getTableSortParent()]) {
-                        echo "<a href=\"?" . URL_SEARCH_STRING . "&amp;moveUp=" . $arr[$this->getTableId()] . "&amp;parentId=" . $arr[$this->getTableSortParent()] . "\"><img src=\"../images/up.gif\" alt=\"up\" /></a> ";
+                        echo '<a href="?moveUp=' . $arr[$this->getTableId()] . "&amp;parentId=" . $arr[$this->getTableSortParent()] . "\"><img src=\"../images/up.gif\" alt=\"up\" /></a> ";
                     } else {
-                        echo "<img src=\"../images/blank.gif\" alt=\"blank\" style=\"width:16px;\" /> ";
+                        echo '<img src="/build/images/blank.gif" alt="blank" style="width:16px;" /> ';
                     }
 
                     echo "</td>";
@@ -184,16 +181,16 @@ abstract class AdvancedForm extends Form
                     $parId = $arr[$this->getTableSortParent()];
                 }
 
-                echo "<td valign=\"top\" class=\"tbldata\" style=\"width:50px\">
-            " . edit_button("?" . URL_SEARCH_STRING . "&amp;action=edit&amp;id=" . $arr[$this->getTableId()]) . "
-            " . copy_button("?" . URL_SEARCH_STRING . "&amp;action=copy&amp;id=" . $arr[$this->getTableId()]) . "
-            " . del_button("?" . URL_SEARCH_STRING . "&amp;action=del&amp;id=" . $arr[$this->getTableId()]) . "
-            </td>";
-                echo "</tr>\n";
+                echo '<td style="width:70px">
+                    <a href="?action=edit&id=' . $arr[$this->getTableId()] . '"><img src="/build/images/admin/icons/edit.png" alt="Bearbeiten" style="width:16px;height:18px;border:none;" title="Bearbeiten" /></a>
+                    <a href="?action=copy&id=' . $arr[$this->getTableId()] . '"><img src="/build/images/admin/icons/copy.png" alt="Kopieren" style="width:16px;height:18px;border:none;" title="Kopieren" /></a>
+                    <a href="?action=del&id=' . $arr[$this->getTableId()] . '"><img src="/build/images/admin/icons/delete.png" alt="Löschen" style="width:18px;height:15px;border:none;" title="Löschen" /></a>
+                </td>
+                </tr>';
                 $cnt++;
             }
         }
-        echo "</table></form>";
+        echo "</tbody></table></form>";
     }
 
     public function create(): void
@@ -201,7 +198,7 @@ abstract class AdvancedForm extends Form
         LegacyTemplateTitleHelper::$title = $this->getName();
         LegacyTemplateTitleHelper::$subTitle = "Neuer Datensatz";
 
-        echo "<form action=\"?" . URL_SEARCH_STRING . "\" method=\"post\">";
+        echo "<form action=\"?\" method=\"post\">";
         echo "<table>";
         foreach ($this->getFields() as $field) {
             if ($field['type'] == "readonly") {
@@ -211,13 +208,13 @@ abstract class AdvancedForm extends Form
             $name = $field['name'];
             $value = $field['def_val'] ?? '';
             echo "<tr>
-                <th class=\"tbltitle\" width=\"200\">" . $field['text'] . ":</th>
-                <td class=\"tbldata\" width=\"200\">" . $this->createInput($field, $name, $value) . "</td>
+                <th width=\"200\">" . $field['text'] . ":</th>
+                <td class=\"tbldata\" width=\"200\">" . $this->createInput($field, $name, strval($value)) . "</td>
             </tr>";
         }
         echo "</table><br/>";
         echo "<input type=\"submit\" value=\"Neuen Datensatz speichern\" name=\"new\" />&nbsp;";
-        echo "<input type=\"button\" value=\"Abbrechen\" onclick=\"document.location='?" . URL_SEARCH_STRING . "'\" />";
+        echo "<input type=\"button\" value=\"Abbrechen\" onclick=\"document.location='?'\" />";
         echo "</form>";
     }
 
@@ -305,9 +302,9 @@ abstract class AdvancedForm extends Form
             ->fetchAssociative();
 
         if ($arr !== false) {
-            echo "<form action=\"?" . URL_SEARCH_STRING . "\" method=\"post\">";
+            echo "<form action=\"?\" method=\"post\">";
             echo "<input type=\"submit\" value=\"Übernehmen\" name=\"edit\" />&nbsp;";
-            echo "<input type=\"button\" value=\"Abbrechen\" onclick=\"document.location='?" . URL_SEARCH_STRING . "'\" /><br/><br/>";
+            echo "<input type=\"button\" value=\"Abbrechen\" onclick=\"document.location='?'\" /><br/><br/>";
             echo "<input type=\"hidden\" name=\"" . $this->getTableId() . "\" value=\"" . $request->query->get('id') . "\" />";
             echo "<table>";
 
@@ -332,11 +329,11 @@ abstract class AdvancedForm extends Form
                 if (in_array($field['name'], $hiddenRows, true)) {
                     echo " style=\"display:none;\"";
                 }
-                echo ">\n<th class=\"tbltitle\" width=\"200\">" . $field['text'] . ":</th>\n";
+                echo ">\n<th width=\"200\">" . $field['text'] . ":</th>\n";
                 echo "<td class=\"tbldata\" width=\"200\">\n";
                 $name = $field['name'];
                 $value = $arr[$field['name']];
-                echo $this->createInput($field, $name, $value);
+                echo $this->createInput($field, $name, strval($value));
                 echo "</td>\n</tr>\n";
                 if ($field['line'] ?? false) {
                     echo "<tr><td style=\"height:4px;background:#000\" colspan=\"2\"></td></tr>";
@@ -348,11 +345,11 @@ abstract class AdvancedForm extends Form
             echo "</table></td></tr>";
             echo "</table><br/>";
             echo "<input type=\"submit\" value=\"Übernehmen\" name=\"edit\" />&nbsp;";
-            echo "<input type=\"button\" value=\"Abbrechen\" onclick=\"document.location='?" . URL_SEARCH_STRING . "'\" />";
+            echo "<input type=\"button\" value=\"Abbrechen\" onclick=\"document.location='?'\" />";
             echo "</form>";
         } else {
             echo MessageBox::error("", "Datensatz nicht vorhanden.");
-            echo "<input type=\"button\" value=\"Übersicht\" onclick=\"document.location='?" . URL_SEARCH_STRING . "'\" />";
+            echo "<input type=\"button\" value=\"Übersicht\" onclick=\"document.location='?'\" />";
         }
     }
 
@@ -428,7 +425,7 @@ abstract class AdvancedForm extends Form
         foreach ($ids as $id) {
             $this->createQueryBuilder()
                 ->update($this->getTable())
-                ->set($this->getTableSort(), (string) $cnt)
+                ->set($this->getTableSort(), (string)$cnt)
                 ->where($this->getTableId() . " = :id")
                 ->setParameter('id', $id)
                 ->executeQuery();
@@ -441,7 +438,7 @@ abstract class AdvancedForm extends Form
 
         $this->createQueryBuilder()
             ->update($this->getTable())
-            ->set($this->getTableSort(), (string) $sorter)
+            ->set($this->getTableSort(), (string)$sorter)
             ->where($this->getTableSortParent() . " = :parentId")
             ->andWhere($this->getTableSort() . " = " . ($sorter - 1))
             ->setParameter('parentId', $request->query->get('parentId'))
@@ -449,7 +446,7 @@ abstract class AdvancedForm extends Form
 
         $this->createQueryBuilder()
             ->update($this->getTable())
-            ->set($this->getTableSort(), (string) ($sorter - 1))
+            ->set($this->getTableSort(), (string)($sorter - 1))
             ->where($this->getTableId() . " = :sortUp")
             ->setParameter('sortUp', $request->query->get('moveUp'))
             ->executeQuery();
@@ -470,7 +467,7 @@ abstract class AdvancedForm extends Form
         foreach ($ids as $id) {
             $this->createQueryBuilder()
                 ->update($this->getTable())
-                ->set($this->getTableSort(), (string) $cnt)
+                ->set($this->getTableSort(), (string)$cnt)
                 ->where($this->getTableId() . " = :id")
                 ->setParameter('id', $id)
                 ->executeQuery();
@@ -483,7 +480,7 @@ abstract class AdvancedForm extends Form
 
         $this->createQueryBuilder()
             ->update($this->getTable())
-            ->set($this->getTableSort(), (string) $sorter)
+            ->set($this->getTableSort(), (string)$sorter)
             ->where($this->getTableSortParent() . " = :parentId")
             ->andWhere($this->getTableSort() . " = " . ($sorter + 1))
             ->setParameter('parentId', $request->query->get('parentId'))
@@ -491,7 +488,7 @@ abstract class AdvancedForm extends Form
 
         $this->createQueryBuilder()
             ->update($this->getTable())
-            ->set($this->getTableSort(), (string) ($sorter + 1))
+            ->set($this->getTableSort(), (string)($sorter + 1))
             ->where($this->getTableId() . " = :sortUp")
             ->setParameter('sortUp', $request->query->get('moveDown'))
             ->executeQuery();
@@ -511,23 +508,23 @@ abstract class AdvancedForm extends Form
 
         if ($arr !== false) {
             echo "<p>Bitte bestätige das Löschen des folgenden Datensatzes:</p>";
-            echo "<form action=\"?" . URL_SEARCH_STRING . "\" method=\"post\">";
+            echo "<form action=\"?\" method=\"post\">";
             echo "<input type=\"hidden\" name=\"" . $this->getTableId() . "\" value=\"" . $request->query->get('id') . "\" />";
             echo "<table>";
             foreach ($this->getFields() as $field) {
                 echo "<tr>
-                <th class=\"tbltitle\" width=\"200\">" . $field['text'] . ":</th>
+                <th width=\"200\">" . $field['text'] . ":</th>
                 <td class=\"tbldata\" width=\"200\">" . $this->showFieldValue($field, $arr) . "</td>
             </tr>";
             }
 
             echo "</table><br/>";
             echo "<input type=\"submit\" value=\"Löschen\" name=\"del\" />&nbsp;";
-            echo "<input type=\"button\" value=\"Abbrechen\" onclick=\"document.location='?" . URL_SEARCH_STRING . "'\" />";
+            echo "<input type=\"button\" value=\"Abbrechen\" onclick=\"document.location='?'\" />";
             echo "</form>";
         } else {
             echo MessageBox::error("", "Datensatz nicht vorhanden.");
-            echo "<input type=\"button\" value=\"Übersicht\" onclick=\"document.location='?" . URL_SEARCH_STRING . "'\" />";
+            echo "<input type=\"button\" value=\"Übersicht\" onclick=\"document.location='?'\" />";
         }
     }
 

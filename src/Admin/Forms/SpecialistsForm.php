@@ -6,7 +6,7 @@ namespace EtoA\Admin\Forms;
 
 class SpecialistsForm extends AdvancedForm
 {
-    protected function getName(): string
+    public function getName(): string
     {
         return "Spezialisten";
     }

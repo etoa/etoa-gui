@@ -42,7 +42,6 @@ class AdminTwigSubscriber implements EventSubscriberInterface
 
         $this->twig->addGlobal('navMenu', $this->createNavMenu($adminUser, $request));
         $this->twig->addGlobal('userRoles', $adminUser->getData()->roles);
-        $this->twig->addGlobal('searchQuery', $request->request->get('search_query'));
         $this->twig->addGlobal('page', $request->query->get('page', 'overview'));
         $this->twig->addGlobal('sub', $request->query->get('sub'));
         $this->twig->addGlobal('numTickets', $this->ticketRepository->countAssigned($adminUser->getId()) + $this->ticketRepository->countNew());

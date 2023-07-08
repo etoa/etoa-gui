@@ -6,7 +6,7 @@ namespace EtoA\Admin\Forms;
 
 class ShipCategoriesForm extends SimpleForm
 {
-    protected function getName(): string
+    public function getName(): string
     {
         return "Schiff-Kategorien";
     }

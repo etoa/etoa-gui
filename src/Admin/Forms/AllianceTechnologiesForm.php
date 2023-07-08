@@ -8,7 +8,7 @@ use EtoA\Core\ObjectWithImage;
 
 class AllianceTechnologiesForm extends AdvancedForm
 {
-    protected function getName(): string
+    public function getName(): string
     {
         return "Allianztechnologien";
     }

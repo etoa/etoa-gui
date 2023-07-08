@@ -9,7 +9,7 @@ use EtoA\Ranking\RankingService;
 
 class DefensesForm extends AdvancedForm
 {
-    protected function getName(): string
+    public function getName(): string
     {
         return "Verteidigung";
     }

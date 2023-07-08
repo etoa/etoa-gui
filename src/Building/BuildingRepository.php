@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace EtoA\Building;
 
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Query\QueryBuilder;
 use EtoA\Core\AbstractRepository;
 
 class BuildingRepository extends AbstractRepository
@@ -24,7 +25,7 @@ class BuildingRepository extends AbstractRepository
             ])
             ->fetchAllKeyValue();
 
-        return array_map(fn ($value) => (int) $value, $data);
+        return array_map(fn($value) => (int)$value, $data);
     }
 
     /**
@@ -45,7 +46,7 @@ class BuildingRepository extends AbstractRepository
             ])
             ->fetchAllAssociative();
 
-        return array_map(fn (array $row) => new BuildingWorkplace($row), $data);
+        return array_map(fn(array $row) => new BuildingWorkplace($row), $data);
     }
 
     /**
@@ -66,12 +67,12 @@ class BuildingRepository extends AbstractRepository
             ])
             ->fetchAllAssociative();
 
-        return array_map(fn (array $row) => new BuildingPeopleStorage($row), $data);
+        return array_map(fn(array $row) => new BuildingPeopleStorage($row), $data);
     }
 
     public function getBuildingLevel(int $userId, int $buildingId, int $entityId): int
     {
-        return (int) $this->createQueryBuilder()
+        return (int)$this->createQueryBuilder()
             ->select('buildlist_current_level')
             ->from('buildlist')
             ->where('buildlist_building_id = :buildingId')
@@ -87,7 +88,7 @@ class BuildingRepository extends AbstractRepository
 
     public function getHighestBuildingLevel(int $userId, int $buildingId): int
     {
-        return (int) $this->createQueryBuilder()
+        return (int)$this->createQueryBuilder()
             ->select('MAX(buildlist_current_level)')
             ->from('buildlist')
             ->where('buildlist_building_id = :buildingId')
@@ -101,7 +102,7 @@ class BuildingRepository extends AbstractRepository
 
     public function getNumberOfBuildings(int $buildingId): int
     {
-        return (int) $this->createQueryBuilder()
+        return (int)$this->createQueryBuilder()
             ->select('COUNT(buildlist_id)')
             ->from('buildlist')
             ->where('buildlist_building_id = :buildingId')
@@ -111,7 +112,7 @@ class BuildingRepository extends AbstractRepository
 
     public function numBuildingListEntries(): int
     {
-        return (int) $this->createQueryBuilder()
+        return (int)$this->createQueryBuilder()
             ->select('COUNT(buildlist_id)')
             ->from('buildlist')
             ->fetchOne();
@@ -135,7 +136,7 @@ class BuildingRepository extends AbstractRepository
 
     public function count(BuildingListItemSearch $search = null): int
     {
-        return (int) $this->applySearchSortLimit($this->createQueryBuilder(), $search)
+        return (int)$this->applySearchSortLimit($this->createQueryBuilder(), $search)
             ->select('COUNT(buildlist_id)')
             ->from('buildlist')
             ->fetchOne();
@@ -143,7 +144,7 @@ class BuildingRepository extends AbstractRepository
 
     public function countEmpty(): int
     {
-        return (int) $this->createQueryBuilder()
+        return (int)$this->createQueryBuilder()
             ->select('COUNT(buildlist_id)')
             ->from('buildlist')
             ->where('buildlist_current_level=0')
@@ -287,14 +288,14 @@ class BuildingRepository extends AbstractRepository
                 ->setParameter('id', $formData['entity_id']);
         }
         if ($formData['planet_name'] != "") {
-            $qry = fieldComparisonQuery($qry, $formData, 'planet_name', 'planet_name');
+            $qry = $this->fieldComparisonQuery($qry, $formData, 'planet_name', 'planet_name');
         }
         if ($formData['user_id'] != "") {
             $qry->andWhere('user_id = :userid')
                 ->setParameter('userid', $formData['user_id']);
         }
         if ($formData['user_nick'] != "") {
-            $qry = fieldComparisonQuery($qry, $formData, 'user_nick', 'user_nick');
+            $qry = $this->fieldComparisonQuery($qry, $formData, 'user_nick', 'user_nick');
         }
         if ($formData['building_id'] != "") {
             $qry->andWhere('building_id = :building')
@@ -303,6 +304,38 @@ class BuildingRepository extends AbstractRepository
 
         return $qry
             ->fetchAllAssociative();
+    }
+
+    private function fieldComparisonQuery(QueryBuilder $qry, array $formData, string $column, string $formKey): QueryBuilder
+    {
+        $value = $formData[$formKey];
+        switch ($formData['comparisonMode'][$formKey]) {
+            case 'like_wildcard':
+                $comparator = 'LIKE';
+                $value = "%$value%";
+                break;
+            case 'like':
+                $comparator = 'LIKE';
+                break;
+            case 'not_like_wildcard':
+                $comparator = 'NOT LIKE';
+                $value = "%$value%";
+                break;
+            case 'not_like':
+                $comparator = 'NOT LIKE';
+                break;
+            case 'lt':
+                $comparator = '<';
+                break;
+            case 'gt':
+                $comparator = '>';
+                break;
+            default:
+                $comparator = '=';
+        }
+        $qry->andWhere("$column $comparator :$column")
+            ->setParameter($column, $value);
+        return $qry;
     }
 
     public function addBuilding(int $buildingId, int $level, int $userId, int $entityId, int $buildType = 0, int $startTime = 0, int $endTime = 0): void
@@ -346,7 +379,7 @@ class BuildingRepository extends AbstractRepository
             ->from('buildlist')
             ->fetchAllAssociative();
 
-        return array_map(fn ($row) => BuildingListItem::createFromData($row), $data);
+        return array_map(fn($row) => BuildingListItem::createFromData($row), $data);
     }
 
     /**
@@ -375,7 +408,7 @@ class BuildingRepository extends AbstractRepository
         $data = $qb
             ->fetchAllAssociative();
 
-        return array_map(fn ($row) => BuildingListItem::createFromData($row), $data);
+        return array_map(fn($row) => BuildingListItem::createFromData($row), $data);
     }
 
     public function getEntry(int $id): ?BuildingListItem
@@ -540,7 +573,7 @@ class BuildingRepository extends AbstractRepository
 
     public function markBuildingWorkingStatus(int $userId, int $entityId, int $buildingId, bool $working): bool
     {
-        return (bool) $this->createQueryBuilder()
+        return (bool)$this->createQueryBuilder()
             ->update('buildlist')
             ->set('buildlist_people_working_status', ':status')
             ->where('buildlist_building_id = :buildingId')
@@ -550,7 +583,7 @@ class BuildingRepository extends AbstractRepository
                 'buildingId' => $buildingId,
                 'entityId' => $entityId,
                 'userId' => $userId,
-                'status' => (int) $working,
+                'status' => (int)$working,
             ])
             ->executeQuery()
             ->rowCount();
@@ -587,9 +620,9 @@ class BuildingRepository extends AbstractRepository
                     cnt DESC;"
             );
 
-        return array_map(fn ($arr) => [
+        return array_map(fn($arr) => [
             'name' => $arr['name'],
-            'cnt' => (int) $arr['cnt'],
+            'cnt' => (int)$arr['cnt'],
         ], $data);
     }
 
@@ -624,9 +657,9 @@ class BuildingRepository extends AbstractRepository
                     max DESC;"
             );
 
-        return array_map(fn ($arr) => [
+        return array_map(fn($arr) => [
             'name' => $arr['name'],
-            'max' => (int) $arr['max'],
+            'max' => (int)$arr['max'],
         ], $data);
     }
 
