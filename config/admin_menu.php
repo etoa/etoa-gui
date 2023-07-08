@@ -34,6 +34,10 @@ return [
             "Admin-Management" => [
                 "route" => "admin.admin_management",
                 "roles" => "master,super-admin",
+                "additional_routes" => [
+                    'admin.admin_management.new',
+                    'admin.admin_management.edit',
+                ],
             ],
             "Admin-Sessions" => [
                 "route" => "admin.admin-sessions",
@@ -58,6 +62,19 @@ return [
         "roles" => "master,super-admin,game-admin,trial-game-admin",
         "path" => "/admin/users/",
         "route" => "admin.users",
+        "additional_routes" => [
+            'admin.users.view',
+            'admin.users.edit',
+            'admin.users.economy',
+            'admin.users.messages',
+            'admin.users.comments',
+            'admin.users.logs',
+            'admin.users.tickets',
+            'admin.users.pointProgression',
+            'admin.users.user_login_failures',
+            'admin.users.user_multi',
+            'admin.users.user_sitting',
+        ],
         "children" => [
             "Spieler erstellen" => [
                 "route" => "admin.users.new",
@@ -102,16 +119,25 @@ return [
             "Beobachter" => [
                 "route" => "admin.users.observer",
                 "roles" => "master,super-admin,game-admin",
+                "additional_routes" => [
+                    'admin.users.observer.details',
+                    'admin.users.observer.details.session',
+                    'admin.users.observer.edit',
+                ]
             ],
             "Verwarnungen" => [
                 "route" => "admin.users.warnings",
                 "roles" => "master,super-admin,game-admin",
+                "additional_routes" => [
+                    'admin.users.warnings.edit',
+                ],
             ],
             "XML-Export/Import" => [
-                "sub" => "xml",
-                "roles" => "master,super-admin,game-admin",
                 "route" => "admin.users.xml",
-                "path" => "/admin/users/xml",
+                "roles" => "master,super-admin,game-admin",
+                "additional_routes" => [
+                    'admin.users.xml.details',
+                ],
                 "bar" => true
             ],
             "Rassen" => [
@@ -129,6 +155,9 @@ return [
         "roles" => "master,super-admin,game-admin,trial-game-admin",
         "route" => "admin.alliances",
         "path" => "/admin/alliances/",
+        "additional_routes" => [
+            'admin.alliances.edit',
+        ],
         "children" => [
             "Allianz erstellen" => [
                 "sub" => "create",

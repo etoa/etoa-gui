@@ -102,7 +102,7 @@ class AdminTwigSubscriber implements EventSubscriberInterface
         // Mark item as active if it matches route name
         if (isset($item['route'])) {
             $item['href'] = $this->router->generate($item['route']);
-            $item['active'] = $currentRouteName == $item['route'];
+            $item['active'] = $currentRouteName == $item['route'] || in_array($currentRouteName, $item['additional_routes'] ?? []);
         } else {
             $item['href'] = '/admin/?page=' . ($item['page'] ?? $parentPage) . (isset($item['sub']) ? '&sub=' . $item['sub'] : '');
             $item['active'] = $currentPage == ($item['page'] ?? $parentPage);
