@@ -19,77 +19,73 @@ if ($request->query->has('site')) {
         error_msg("Hilfedatei nicht gefunden!");
     }
     return_btn();
-}
-
-// Overview
+} // Overview
 else {
     echo '<h2>&Uuml;bersicht</h2>';
 
     echo 'Hier findest du Informationen zu verschiedenen Objekten des Spiels:<br/><br/>';
 
-    if (!ADMIN_MODE) {
-        // Internal pages
-        $links = [
-            [
-                'label' => 'Supportticket eröffnen',
-                'url' => '?page=ticket'
-            ],
-            [
-                'label' => 'Admin via Mail kontaktieren',
-                'url' => '?page=contact'
-            ],
-            [
-                'label' => 'Changelog',
-                'url' => '?page=changelog'
-            ],
-            [
-                'label' => 'Credits',
-                'url' => '?page=credits'
-            ]
-        ];
-        tableStart("Resourcen");
-        echo '<tr>';
-        foreach ($links as $l) {
-            echo '<td style="text-align:center;width:' . floor(100 / count($links)) . '%">';
-            echo '<a href="' . $l['url'] . '">' . $l['label'] . '</a>';
-            echo '</td>';
-        }
-        echo '</tr>';
-        tableEnd();
-
-        // External resources
-        $links = [
-            [
-                'label' => 'Häufig gestellte Fragen',
-                'onclick' => ExternalUrl::HELP_CENTER_ON_CLICK,
-            ],
-            [
-                'label' => 'Regeln',
-                'onclick' => ExternalUrl::RULES_ON_CLICK,
-            ],
-            [
-                'label' => 'Forum',
-                'url' => ExternalUrl::FORUM,
-            ],
-            [
-                'label' => 'Fehler melden',
-                'url' => ExternalUrl::DEV_CENTER,
-            ]
-        ];
-        tableStart("Externe Resourcen");
-        echo '<tr>';
-        foreach ($links as $l) {
-            echo '<td style="text-align:center;width:' . floor(100 / count($links)) . '%">';
-            if (isset($l['onclick'])) {
-                echo '<a href="javascript:;" onclick="' . $l['onclick'] . '">' . $l['label'] . '</a>';
-            } else {
-                echo '<a href="' . $l['url'] . '" target="_blank">' . $l['label'] . '</a>';
-            }
-            echo '</td>';
-        }
-        echo '</tr>';
-        tableEnd();
+    // Internal pages
+    $links = [
+        [
+            'label' => 'Supportticket eröffnen',
+            'url' => '?page=ticket'
+        ],
+        [
+            'label' => 'Admin via Mail kontaktieren',
+            'url' => '?page=contact'
+        ],
+        [
+            'label' => 'Changelog',
+            'url' => '?page=changelog'
+        ],
+        [
+            'label' => 'Credits',
+            'url' => '?page=credits'
+        ]
+    ];
+    tableStart("Resourcen");
+    echo '<tr>';
+    foreach ($links as $l) {
+        echo '<td style="text-align:center;width:' . floor(100 / count($links)) . '%">';
+        echo '<a href="' . $l['url'] . '">' . $l['label'] . '</a>';
+        echo '</td>';
     }
+    echo '</tr>';
+    tableEnd();
+
+    // External resources
+    $links = [
+        [
+            'label' => 'Häufig gestellte Fragen',
+            'onclick' => ExternalUrl::HELP_CENTER_ON_CLICK,
+        ],
+        [
+            'label' => 'Regeln',
+            'onclick' => ExternalUrl::RULES_ON_CLICK,
+        ],
+        [
+            'label' => 'Forum',
+            'url' => ExternalUrl::FORUM,
+        ],
+        [
+            'label' => 'Fehler melden',
+            'url' => ExternalUrl::DEV_CENTER,
+        ]
+    ];
+    tableStart("Externe Resourcen");
+    echo '<tr>';
+    foreach ($links as $l) {
+        echo '<td style="text-align:center;width:' . floor(100 / count($links)) . '%">';
+        if (isset($l['onclick'])) {
+            echo '<a href="javascript:;" onclick="' . $l['onclick'] . '">' . $l['label'] . '</a>';
+        } else {
+            echo '<a href="' . $l['url'] . '" target="_blank">' . $l['label'] . '</a>';
+        }
+        echo '</td>';
+    }
+    echo '</tr>';
+    tableEnd();
 
     $helpNav = [
         "Datenbank" => [

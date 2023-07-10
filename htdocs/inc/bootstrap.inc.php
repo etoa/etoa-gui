@@ -18,9 +18,7 @@ require_once __DIR__ . '/def.inc.php';
 $config = $app[ConfigurationService::class];
 
 // Init session
-if (!ADMIN_MODE) {
-    $s = UserSession::getInstance($config);
-}
+$s = UserSession::getInstance($config);
 
 $twig = $app['twig'];
 
@@ -35,9 +33,5 @@ $mode = isset($_GET['mode']) ? $_GET['mode'] : null;
 
 // Initialize XAJAX and load functions
 if (!isCLI() && (!defined('SKIP_XAJAX_INIT') || !SKIP_XAJAX_INIT)) {
-    if (ADMIN_MODE) {
-        require_once dirname(__DIR__) . '/admin/inc/xajax_admin.inc.php';
-    } else {
-        require_once dirname(__DIR__) . '/inc/xajax.inc.php';
-    }
+    require_once dirname(__DIR__) . '/inc/xajax.inc.php';
 }

@@ -41,16 +41,6 @@ return [
             ],
         ]
     ],
-    "In-Game Hilfe" => [
-        "page" => "help",
-        "roles" => "master,super-admin,game-admin,trial-game-admin",
-        "children" => [
-            "Technikbaum" => [
-                "route" => "admin.help.techtree",
-                "roles" => "master,super-admin,game-admin",
-            ]
-        ]
-    ],
     "Spieler" => [
         "route" => "admin.users",
         "roles" => "master,super-admin,game-admin,trial-game-admin",
@@ -508,6 +498,10 @@ return [
             "TF-Rechner" => [
                 "route" => "admin.tf-calculator",
                 "roles" => "master,super-admin,game-admin,trial-game-admin",
+            ],
+            "Technikbaum" => [
+                "route" => "admin.help.techtree",
+                "roles" => "master,super-admin,game-admin",
             ],
             "Datei-Austausch" => [
                 "route" => "admin.tools.filesharing",
