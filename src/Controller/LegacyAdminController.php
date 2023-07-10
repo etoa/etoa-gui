@@ -36,20 +36,4 @@ class LegacyAdminController extends AbstractController
             'ajaxJs' => $xajax->getJavascript(),
         ]);
     }
-
-    /**
-     * @Route("/admin/dl/", name="legacy.admin.dl")
-     */
-    public function dl(): Response
-    {
-        ob_start();
-
-        /** @var CurrentAdmin $tokenUser */
-        $tokenUser = $this->getUser();
-        $adminUser = $tokenUser->getData();
-
-        require_once __DIR__ . '/../../htdocs/admin/dl.php';
-
-        return new Response(ob_get_clean());
-    }
 }
