@@ -26,7 +26,7 @@ class DesignController extends AbstractAdminController
 
     #[Route("/admin/designs/", name: "admin.design")]
     #[IsGranted('ROLE_ADMIN_MASTER')]
-    public function view(): Response
+    public function view(string $projectDir): Response
     {
         $designs = $this->designsService->getDesigns();
 
@@ -41,7 +41,7 @@ class DesignController extends AbstractAdminController
             }
         }
 
-        $sampleInfoFile = __DIR__ . '/../../../htdocs/' . Design::DIRECTORY . "/official/" . $this->config->get('default_css_style') . '/' . Design::CONFIG_FILE_NAME;
+        $sampleInfoFile = $projectDir . '/assets/' . Design::DIRECTORY . "/official/" . $this->config->get('default_css_style') . '/' . Design::CONFIG_FILE_NAME;
 
         return $this->render('admin/misc/designs.html.twig', [
             'designs' => $designs,

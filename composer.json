@@ -9,6 +9,8 @@
     "ext-gd": "*",
     "ext-iconv": "*",
     "ext-xmlreader": "*",
+    "ext-simplexml": "*",
+    "ext-zip": "*",
     "doctrine/doctrine-bundle": "^2.10",
     "doctrine/doctrine-migrations-bundle": "^3.2",
     "doctrine/orm": "^2.15",
@@ -53,8 +55,7 @@
     "twig/extra-bundle": "^2.12|^3.0",
     "twig/string-extra": "^3.6",
     "twig/twig": "^2.12|^3.0",
-    "whichbrowser/parser": "^2.1",
-    "ext-simplexml": "*"
+    "whichbrowser/parser": "^2.1"
   },
   "config": {
     "allow-plugins": {

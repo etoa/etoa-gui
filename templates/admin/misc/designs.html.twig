@@ -7,7 +7,7 @@
 
     <h2>Verfügbare Designs</h2>
 
-    <table class="tbl" style="width:100%">
+    <table class="table">
         <thead>
         <tr>
             <th>Name</th>
@@ -39,7 +39,8 @@
                 <td style="width:130px">
                     <a href="{{ path('admin.design.download', {design: key}) }}">Download</a>
                     {% if design.custom %}
-                        <a href="{{ path('admin.design.remove', {design: key}) }}" onclick="return confirm('Soll das Design \'{{ design.name }}\' wirklich entfernt werden?')">Entfernen</a>
+                        <a href="{{ path('admin.design.remove', {design: key}) }}"
+                           onclick="return confirm('Soll das Design \'{{ design.name }}\' wirklich entfernt werden?')">Entfernen</a>
                     {% endif %}
                 </td>
             </tr>
@@ -48,13 +49,13 @@
     </table>
 
     {{ macros.messagebox("Design hochladen zur Zeit nicht möglich", 'error') }}
-{#    <form action="?page={{ page }}}&sub={{ sub }}" method="post" enctype="multipart/form-data">#}
-{#        <fieldset>#}
-{#            <legend>Design hochladen</legend>#}
-{#            Design-Datei (ZIP): <input type="file" name="design"/>#}
-{#            <input type="submit" name="submit" value="Design hochladen">#}
-{#        </fieldset>#}
-{#    </form>#}
+    {#    <form action="?page={{ page }}}&sub={{ sub }}" method="post" enctype="multipart/form-data"> #}
+    {#        <fieldset> #}
+    {#            <legend>Design hochladen</legend> #}
+    {#            Design-Datei (ZIP): <input type="file" name="design"/> #}
+    {#            <input type="submit" name="submit" value="Design hochladen"> #}
+    {#        </fieldset> #}
+    {#    </form> #}
 
     <h2>Dokumentation</h2>
     <h3>Aufbau eines Designs</h3>
@@ -69,8 +70,11 @@ Ordner/                 Ordnername ist gleich dem Namen des Designs
  |- style.css           Stylesheet
  '- template.html       Haupt-Template
 </pre>
-    <p>Im Template kann die Syntax der <a href="http://www.smarty.net" target="_blank">Smarty-Templatesprache</a> verwendet werden.</p>
-    <p>Der Quellcode der optionalen Stilesheets kann von den Originalen kopiert werden: <a href="../web/css/chat.css" target="_blank">chat.css</a> und <a href="../web/css/external.css" target="_blank">external.css</a>.</p>
+    <p>Im Template kann die Syntax der <a href="http://www.smarty.net" target="_blank">Smarty-Templatesprache</a>
+        verwendet werden.</p>
+    <p>Der Quellcode der optionalen Stilesheets kann von den Originalen kopiert werden: <a href="../web/css/chat.css"
+                                                                                           target="_blank">chat.css</a>
+        und <a href="../web/css/external.css" target="_blank">external.css</a>.</p>
 
     <h3>Design-Info Datei</h3>
     <p>Beispiel einer <code>design.xml</code> Datei:</p>
@@ -83,7 +87,7 @@ Ordner/                 Ordnername ist gleich dem Namen des Designs
     </ul>
 
     <h3>Smarty-Variabeln</h3>
-    <table class="tbl" style="width:100%">
+    <table class="table">
         <thead>
         <tr>
             <th>Name</th>
@@ -101,8 +105,9 @@ Ordner/                 Ordnername ist gleich dem Namen des Designs
     </table>
 
     <h3>Allgemeine zusätzliche CSS Dateien</h3>
-    <p>Folgende CSS Dateien könne im style.css importiert werden (der Inhalt dieser Dateien kann alternativ auch in das Design reinkopiert und verändert werden):</p>
-    <table class="tbl" style="width:100%">
+    <p>Folgende CSS Dateien könne im style.css importiert werden (der Inhalt dieser Dateien kann alternativ auch in das
+        Design reinkopiert und verändert werden):</p>
+    <table class="table">
         <thead>
         <tr>
             <th>Name</th>
