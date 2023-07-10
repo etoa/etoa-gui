@@ -7,16 +7,18 @@
     <form id="bustn" action="{{ path('admin.db.backup.settings') }}" method="post">
         <fieldset>
             <legend>Backup-Einstellungen</legend>
-            Speicherpfad: <input type="text" value="{{ configValue('backup_dir') }}" name="backup_dir" size="50">
+            <label for="backup_dir">Speicherpfad:</label>
+            <input type="text" value="{{ configValue('backup_dir') }}" name="backup_dir" id="backup_dir" size="50">
             (leerlassen für Standardpfad)
             <br>
-            Aufbewahrungsdauer: <input type="text" value="{{ configValue('backup_retention_time') }}"
-                                       name="backup_retention_time" size="2"> Tage &nbsp; &nbsp;
+            <label for="backup_retention_time">Aufbewahrungsdauer:</label>
+            <input type="text" value="{{ configValue('backup_retention_time') }}" name="backup_retention_time"
+                   id="backup_retention_time" size="2"> Tage<br>
             GZIP benutzen:
-            <input type="radio" name="backup_use_gzip" value="1"
-                   {% if configValue('backup_use_gzip') == '1' %}checked="checked"{% endif %}> Ja
-            <input type="radio" name="backup_use_gzip" value="0"
-                   {% if configValue('backup_use_gzip') == '0' %}checked="checked"{% endif %}> Nein
+            <label><input type="radio" name="backup_use_gzip" value="1"
+                          {% if configValue('backup_use_gzip') == '1' %}checked="checked"{% endif %}> Ja</label>
+            <label><input type="radio" name="backup_use_gzip" value="0"
+                          {% if configValue('backup_use_gzip') == '0' %}checked="checked"{% endif %}> Nein</label>
             <br>
             <input type="submit" value="Speichern" name="submit_changes">
         </fieldset>
