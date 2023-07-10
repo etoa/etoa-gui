@@ -2,6 +2,7 @@
 
 namespace EtoA\Controller\Admin;
 
+use DateTime;
 use Entity;
 use EtoA\Admin\AdminUserRepository;
 use EtoA\Alliance\AllianceRepository;
@@ -271,8 +272,8 @@ class UserController extends AbstractAdminController
 
         // Handle ban
         if ($request->request->getInt('ban_enable') == 1) {
-            $ban_from = parseDatePicker($request->request->get('user_blocked_from'));
-            $ban_to = parseDatePicker($request->request->get('user_blocked_to'));
+            $ban_from = $this->parseDatePicker($request->request->get('user_blocked_from'));
+            $ban_to = $this->parseDatePicker($request->request->get('user_blocked_to'));
 
             $user->blockedFrom = $ban_from;
             $user->blockedTo = $ban_to;
@@ -292,8 +293,8 @@ class UserController extends AbstractAdminController
         // Handle holiday mode
         if ($request->request->getInt('umod_enable') == 1) {
             $this->userHolidayService->activateHolidayMode($id, true);
-            $user->hmodFrom = parseDatePicker($request->request->get('user_hmode_from'));
-            $user->hmodTo = parseDatePicker($request->request->get('user_hmode_to'));
+            $user->hmodFrom = $this->parseDatePicker($request->request->get('user_hmode_from'));
+            $user->hmodTo = $this->parseDatePicker($request->request->get('user_hmode_to'));
         } else {
             $this->userHolidayService->deactivateHolidayMode($user, true);
             $user->hmodFrom = 0;
@@ -913,8 +914,8 @@ class UserController extends AbstractAdminController
             return $this->redirectToRoute('admin.users.user_sitting', ['id' => $id]);
         }
 
-        $sitting_from = parseDatePicker($request->request->get('sitting_time_from'));
-        $sitting_to = parseDatePicker($request->request->get('sitting_time_to'));
+        $sitting_from = $this->parseDatePicker($request->request->get('sitting_time_from'));
+        $sitting_to = $this->parseDatePicker($request->request->get('sitting_time_to'));
         $diff = ceil(($sitting_to - $sitting_from) / 86400);
         $pw = saltPasswort($request->request->get('sitter_password1'));
         $sitterId = $this->userRepository->getUserIdByNick($request->request->get('sitter_nick'));
@@ -957,5 +958,18 @@ class UserController extends AbstractAdminController
         $this->addFlash('success', "Eintrag gelöscht!");
 
         return $this->redirectToRoute('admin.users.user_sitting', ['id' => $id]);
+    }
+
+    /**
+     * Parse value submitted by datepicker field
+     */
+    private function parseDatePicker(string $value): int
+    {
+        try {
+            $dt = new DateTime($value);
+            return $dt->getTimestamp();
+        } catch (Exception) {
+            return 0;
+        }
     }
 }
