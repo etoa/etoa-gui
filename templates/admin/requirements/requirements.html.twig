@@ -13,24 +13,26 @@
         </tr>
         {% for object in objects %}
             <tr>
-                <td><img src="{{ object.getImagePath() }}" /></td>
+                <td>
+                    <img src="/build/{{ object.getImagePath() }}"/>
+                </td>
                 <td>{{ object.name }}</td>
                 <td data-controller="collection">
                     <div>{{ form_errors(form['object-' ~ object.id]) }}</div>
                     <table>
                         <tbody data-collection-target="container">
-                            {% for rows in form['object-' ~ object.id] %}
-                                <tr {% if loop.index == 1 %} data-collection-target="prototype" id="test"{% endif %}>
-                                    {% for element in rows %}
-                                        <td>
-                                            {{ form_row(element) }}
-                                        </td>
-                                    {% endfor %}
+                        {% for rows in form['object-' ~ object.id] %}
+                            <tr {% if loop.index == 1 %} data-collection-target="prototype" id="test"{% endif %}>
+                                {% for element in rows %}
                                     <td>
-                                        <button type="button" data-action="click->collection#removeEntry">Löschen</button>
+                                        {{ form_row(element) }}
                                     </td>
-                                </tr>
-                            {% endfor %}
+                                {% endfor %}
+                                <td>
+                                    <button type="button" data-action="click->collection#removeEntry">Löschen</button>
+                                </td>
+                            </tr>
+                        {% endfor %}
                         </tbody>
                     </table>
                     <p>
