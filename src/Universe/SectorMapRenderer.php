@@ -1,5 +1,8 @@
 <?PHP
 
+namespace EtoA\Universe;
+
+use Cell;
 use EtoA\Core\ObjectWithImage;
 use EtoA\UI\Tooltip;
 use EtoA\Universe\Entity\EntityRepository;
@@ -9,7 +12,7 @@ use EtoA\User\UserUniverseDiscoveryService;
 
 /**
  * Draws a map of a galaxy sector
-*/
+ */
 class SectorMapRenderer
 {
     const MapImageDirectory = "images/map";
@@ -186,18 +189,16 @@ class SectorMapRenderer
                         $tt->addText("Position: $sx/$sy : $xcoords/$ycoords");
                         if ($entity->code === \EtoA\Universe\Entity\EntityType::WORMHOLE && $entity->wormholeTarget !== null) {
                             $tent = $entityRepository->searchEntityLabel(EntitySearch::create()->id($entity->wormholeTarget));
-                            $tt->addComment("Ziel: " . $tent->toString() ."</a>");
+                            $tt->addComment("Ziel: " . $tent->toString() . "</a>");
                         } else {
-                            $tt->addComment((string) $entity->displayName());
+                            $tt->addComment((string)$entity->displayName());
                         }
                     }
 
                     $url = isset($this->cellUrl) ? $this->cellUrl . $cells[$xcoords][$ycoords]->cellId : '#';
                     $img = $entity->getImagePath();
                     unset($entity);
-                }
-
-                // Undiscovered cell
+                } // Undiscovered cell
                 else {
                     $fogCode = 0;
                     // Bottom
@@ -224,7 +225,7 @@ class SectorMapRenderer
 
                     $url = isset($this->undiscoveredCellUrl) ? $this->undiscoveredCellUrl . $cells[$xcoords][$ycoords]->cellId : '#';
                     if (isset($this->undiscoveredCellJavaScript)) {
-                        $js = preg_replace('/##ID##/', (string) $cells[$xcoords][$ycoords]->cellId, $this->undiscoveredCellJavaScript);
+                        $js = preg_replace('/##ID##/', (string)$cells[$xcoords][$ycoords]->cellId, $this->undiscoveredCellJavaScript);
                     }
                     $img = ObjectWithImage::BASE_PATH . "/unexplored/" . $fogImg . ".png";
                 }
@@ -236,7 +237,7 @@ class SectorMapRenderer
                 $mouseOver = '';
                 if ($this->rulerEnabled) {
                     $mouseOver .= " onmouseover=\"$('#counter_left_$ycoords').attr('src','/" . self::MapImageDirectory . "/" . self::VerticalCoordinateNumberHighlighImagePrefix . "$ycoords.gif');$('#counter_bottom_$xcoords').attr('src','/" . self::MapImageDirectory . "/" . self::HorizontalCoordinateNumberHighlighImagePrefix . "$xcoords.gif');\"";
-                    $mouseOver .= " onmouseout=\"$('#counter_left_$ycoords').attr('src','/"  . self::MapImageDirectory . "/" . self::VerticalCoordinateNumberImagePrefix . "$ycoords.gif');$('#counter_bottom_$xcoords').attr('src','/" . self::MapImageDirectory . "/" . self::HorizontalCoordinateNumberImagePrefix . "$xcoords.gif');\"";
+                    $mouseOver .= " onmouseout=\"$('#counter_left_$ycoords').attr('src','/" . self::MapImageDirectory . "/" . self::VerticalCoordinateNumberImagePrefix . "$ycoords.gif');$('#counter_bottom_$xcoords').attr('src','/" . self::MapImageDirectory . "/" . self::HorizontalCoordinateNumberImagePrefix . "$xcoords.gif');\"";
                 }
 
                 $class = " class=\"" . implode(' ', $classes);

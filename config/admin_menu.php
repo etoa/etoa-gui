@@ -2,16 +2,12 @@
 
 return [
     "Allgemeines" => [
-        "page" => "overview",
-        "path" => "/admin/overview/",
         "route" => "admin.overview",
         "roles" => "master,super-admin,game-admin,trial-game-admin,chat-admin",
         "children" => [
             "Rangliste" => [
-                "sub" => "stats",
+                "route" => "admin.stats.users",
                 "roles" => "master,super-admin,game-admin,trial-game-admin",
-                "path" => "/admin/stats/users",
-                "route" => "admin.stats.users"
             ],
             "Offline nehmen" => [
                 "route" => "admin.overview.game-offline",
@@ -50,18 +46,14 @@ return [
         "roles" => "master,super-admin,game-admin,trial-game-admin",
         "children" => [
             "Technikbaum" => [
-                "sub" => "techtree",
+                "route" => "admin.help.techtree",
                 "roles" => "master,super-admin,game-admin",
-                "path" => "/admin/help/techtree",
-                "route" => "admin.help.techtree"
             ]
         ]
     ],
     "Spieler" => [
-        "page" => "user",
-        "roles" => "master,super-admin,game-admin,trial-game-admin",
-        "path" => "/admin/users/",
         "route" => "admin.users",
+        "roles" => "master,super-admin,game-admin,trial-game-admin",
         "additional_routes" => [
             'admin.users.view',
             'admin.users.edit',
@@ -151,38 +143,28 @@ return [
         ]
     ],
     "Allianzen" => [
-        "page" => "alliances",
-        "roles" => "master,super-admin,game-admin,trial-game-admin",
         "route" => "admin.alliances",
-        "path" => "/admin/alliances/",
+        "roles" => "master,super-admin,game-admin,trial-game-admin",
         "additional_routes" => [
             'admin.alliances.edit',
         ],
         "children" => [
             "Allianz erstellen" => [
-                "sub" => "create",
-                "roles" => "master,super-admin,game-admin,trial-game-admin",
                 "route" => "admin.alliances.new",
-                "path" => "/admin/alliances/new"
+                "roles" => "master,super-admin,game-admin,trial-game-admin",
             ],
             "Allianz-News (Rathaus)" => [
-                "sub" => "news",
-                "roles" => "master,super-admin,game-admin,trial-game-admin",
                 "route" => "admin.alliances.news",
-                "path" => "/admin/alliances/news"
+                "roles" => "master,super-admin,game-admin,trial-game-admin",
             ],
             "Fehlerhafte Daten" => [
-                "sub" => "crap",
-                "roles" => "master,super-admin,game-admin",
                 "route" => "admin.alliances.crap",
-                "path" => "/admin/alliances/crap"
+                "roles" => "master,super-admin,game-admin",
             ],
             "Bilder prüfen" => [
-                "sub" => "imagecheck",
+                "route" => "admin.alliances.imagecheck",
                 "roles" => "master,super-admin,game-admin",
                 "bar" => true,
-                "route" => "admin.alliances.imagecheck",
-                "path" => "/admin/alliances/imagecheck"
             ],
             "Gebäude bearbeiten" => [
                 "route" => "admin.alliances.buildings.data",
@@ -195,36 +177,26 @@ return [
         ]
     ],
     "Flotten" => [
-        "page" => "fleets",
-        "roles" => "master,super-admin,game-admin",
-        "path" => "/admin/fleets",
         "route" => "admin.fleets",
+        "roles" => "master,super-admin,game-admin",
         "children" => [
             "Flotte erstellen" => [
-                "path" => "/admin/fleets/new",
                 "route" => "admin.fleets.new",
                 "roles" => "master,super-admin,game-admin",
-                "sub" => "one"
             ],
             "Schiffe senden" => [
-                "path" => "/admin/fleets/send-ships",
                 "route" => "admin.fleets.send-ships",
                 "roles" => "master,super-admin,game-admin",
-                "sub" => "one"
             ],
             "Flottenoptionen" => [
-                "sub" => "fleetoptions",
-                "path" => "/admin/fleets/options",
                 "route" => "admin.fleets.options",
                 "roles" => "master,super-admin,game-admin"
             ]
         ]
     ],
     "Gebäude" => [
-        "page" => "buildings",
-        "roles" => "master,super-admin,game-admin",
-        "path" => "/admin/buildings/search",
         "route" => "admin.buildings.search",
+        "roles" => "master,super-admin,game-admin",
         "children" => [
             "Preisrechner" => [
                 "roles" => "master,super-admin,game-admin",
@@ -249,10 +221,8 @@ return [
         ]
     ],
     "Forschung" => [
-        "page" => "techs",
-        "roles" => "master,super-admin,game-admin",
-        "path" => "/admin/technology/",
         "route" => "admin.technology",
+        "roles" => "master,super-admin,game-admin",
         "children" => [
             "Technologien bearbeiten" => [
                 "route" => "admin.technologies.data",
@@ -273,15 +243,15 @@ return [
         ]
     ],
     "Schiffe" => [
-        "page" => "ships",
+        "route" => "admin.ships.search",
         "roles" => "master,super-admin,game-admin",
         "children" => [
             "Bauliste" => [
-                "sub" => "queue",
+                "route" => "admin.ships.queue",
                 "roles" => "master,super-admin,game-admin"
             ],
             "XP-Rechner" => [
-                "sub" => "xpcalc",
+                "route" => "admin.ships.xp-calculator",
                 "roles" => "master,super-admin,game-admin",
                 "bar" => true
             ],
@@ -290,60 +260,42 @@ return [
                 "roles" => "master,super-admin"
             ],
             "Voraussetzungen" => [
-                "sub" => "req",
+                "route" => "admin.ships.requirements",
                 "roles" => "master,super-admin",
-                "path" => "/admin/ships/requirements",
-                "route" => "admin.ships.requirements"
             ],
             "Kategorien" => [
                 "route" => "admin.ships.types",
                 "roles" => "master,super-admin"
             ],
             "Punkte" => [
-                "sub" => "battlepoints",
+                "route" => "admin.ships.points",
                 "roles" => "master,super-admin",
-                "path" => "/admin/ships/points",
-                "route" => "admin.ships.points"
             ]
         ]
     ],
-    "TF-Rechner" => [
-        "page" => "tfcalculator",
-        "roles" => "master,super-admin,game-admin,trial-game-admin",
-        "path" => "/admin/tf-calculator",
-        "route" => "admin.tf-calculator"
-    ],
     "Verteidigung" => [
-        "page" => "def",
         "roles" => "master,super-admin,game-admin",
-        "path" => "/admin/defense/search",
         "route" => "admin.defense.search",
         "children" => [
             "Bauliste" => [
-                "sub" => "queue",
+                "route" => "admin.defense.queue",
                 "roles" => "master,super-admin,game-admin",
-                "path" => "/admin/defense/queue",
-                "route" => "admin.defense.queue"
             ],
             "Verteidigung bearbeiten" => [
                 "route" => "admin.defense.data",
                 "roles" => "master,super-admin,game-admin"
             ],
             "Voraussetzungen" => [
-                "sub" => "req",
+                "route" => "admin.defense.requirements",
                 "roles" => "master,super-admin",
-                "path" => "/admin/defense/requirements",
-                "route" => "admin.defense.requirements"
             ],
             "Kategorien" => [
                 "route" => "admin.defense.types",
                 "roles" => "master,super-admin"
             ],
             "Punkte" => [
-                "sub" => "battlepoints",
+                "route" => "admin.defense.points",
                 "roles" => "master,super-admin",
-                "path" => "/admin/defense/points",
-                "route" => "admin.defense.points"
             ],
             "Transformationen" => [
                 "route" => "admin.defense.transforms",
@@ -352,53 +304,39 @@ return [
         ]
     ],
     "Raketen" => [
-        "page" => "missiles",
-        "roles" => "master,super-admin,game-admin",
-        "path" => "/admin/missiles/",
         "route" => "admin.missiles",
+        "roles" => "master,super-admin,game-admin",
         "children" => [
             "Raketen bearbeiten" => [
                 "route" => "admin.missiles.data",
                 "roles" => "master,super-admin,game-admin"
             ],
             "Voraussetzungen" => [
-                "sub" => "req",
+                "route" => "admin.missiles.requirements",
                 "roles" => "master,super-admin",
-                "path" => "/admin/missiles/requirements",
-                "route" => "admin.missiles.requirements"
             ]
         ]
     ],
     "Galaxie" => [
-        "page" => "galaxy",
-        "roles" => "master,super-admin,game-admin",
-        "path" => "/admin/universe/entities",
         "route" => "admin.universe.entities",
+        "roles" => "master,super-admin,game-admin",
         "children" => [
             "Karte" => [
-                "sub" => "map",
-                "path" => "/admin/universe/map",
                 "route" => "admin.universe.map",
                 "roles" => "master,super-admin,game-admin"
             ],
             "Integrität prüfen" => [
-                "sub" => "galaxycheck",
+                "route" => "admin.universe.check",
                 "roles" => "master,super-admin,game-admin",
-                "path" => "/admin/univese/check",
-                "route" => "admin.universe.check"
             ],
             "Erkundung" => [
-                "sub" => "exploration",
-                "path" => "/admin/universe/exploration",
                 "route" => "admin.universe.exploration",
                 "roles" => "master,super-admin,game-admin",
                 "bar" => true
             ],
             "Universum" => [
-                "sub" => "uni",
+                "route" => "admin.universe.edit",
                 "roles" => "master",
-                "path" => "/admin/univese/edit",
-                "route" => "admin.universe.edit"
             ],
             "Planetentypen" => [
                 "route" => "admin.universe.planets.data",
@@ -411,151 +349,103 @@ return [
         ]
     ],
     "Nachrichten" => [
-        "page" => "messages",
-        "roles" => "master,super-admin,game-admin",
-        "path" => "/admin/messages/",
         "route" => "admin.messages",
+        "roles" => "master,super-admin,game-admin",
         "children" => [
             "Nachricht senden" => [
-                "sub" => "sendmsg",
+                "route" => "admin.messages.send",
                 "roles" => "master,super-admin,game-admin,trial-game-admin",
-                "path" => "/admin/messages/send",
-                "route" => "admin.messages.send"
             ],
             "Berichte verwalten" => [
-                "sub" => "reports",
+                "route" => "admin.messages.reports",
                 "roles" => "master,super-admin,game-admin",
-                "path" => "/admin/messages/reports",
-                "route" => "admin.messages.reports"
             ]
         ]
     ],
     "Chat" => [
-        "page" => "chat",
-        "roles" => "master,super-admin,game-admin,trial-game-admin,chat-admin",
-        "path" => "/admin/chat/",
         "route" => "admin.chat",
+        "roles" => "master,super-admin,game-admin,trial-game-admin,chat-admin",
         "children" => [
             "Log" => [
-                "sub" => "log",
+                "route" => "admin.chat.log",
                 "roles" => "master,super-admin,game-admin,chat-admin",
-                "path" => "/admin/chat/log",
-                "route" => "admin.chat.log"
             ]
         ]
     ],
     "Marktplatz" => [
-        "page" => "market",
-        "roles" => "master,super-admin,game-admin,trial-game-admin",
-        "path" => "/admin/market",
         "route" => "admin.market",
+        "roles" => "master,super-admin,game-admin,trial-game-admin",
         "children" => [
             "Schiffe" => [
-                "sub" => "ships",
+                "route" => "admin.market.ships",
                 "roles" => "master,super-admin,game-admin",
-                "path" => "/admin/market/ships",
-                "route" => "admin.market.ships"
             ],
             "Rohstoffe" => [
-                "sub" => "ress",
+                "route" => "admin.market.resources",
                 "roles" => "master,super-admin,game-admin",
-                "path" => "/admin/market/resources",
-                "route" => "admin.market.resources"
             ],
             "Auktionen" => [
-                "sub" => "auction",
+                "route" => "admin.market.auctions",
                 "roles" => "master,super-admin,game-admin",
-                "path" => "/admin/market/auctions",
-                "route" => "admin.market.auctions"
             ]
         ]
     ],
     "Logs" => [
-        "page" => "logs",
-        "roles" => "master,super-admin,game-admin,trial-game-admin",
-        "path" => "/admin/logs",
         "route" => "admin.logs.general",
+        "roles" => "master,super-admin,game-admin,trial-game-admin",
         "children" => [
             "Spiel" => [
-                "sub" => "gamelogs",
+                "route" => "admin.logs.game",
                 "roles" => "master,super-admin,game-admin,trial-game-admin",
-                "path" => "/admin/logs/game",
-                "route" => "admin.logs.game"
             ],
             "Flotten" => [
-                "sub" => "fleetlogs",
+                "route" => "admin.logs.fleets",
                 "roles" => "master,super-admin,game-admin,trial-game-admin",
-                "path" => "/admin/logs/fleets",
-                "route" => "admin.logs.fleets"
             ],
             "Angriffsverletzung" => [
-                "sub" => "check_fights",
+                "route" => "admin.logs.attack-ban",
                 "roles" => "master,super-admin,game-admin,trial-game-admin",
-                "path" => "/admin/logs/attack-ban",
-                "route" => "admin.logs.attack-ban"
             ],
             "Fehler-Log" => [
-                "sub" => "errorlog",
-                "path" => "/admin/logs/error",
                 "route" => "admin.logs.error",
-                "roles" => "master,super-admin"
+                "roles" => "master,super-admin",
             ],
             "Trümmerfeld-Log" => [
-                "sub" => "debrislog",
+                "route" => "admin.logs.debris",
                 "roles" => "master,super-admin,game-admin,trial-game-admin",
-                "path" => "/admin/logs/debris",
-                "route" => "admin.logs.debris"
             ]
         ]
     ],
     "Eventhandler" => [
-        "page" => "eventhandler",
-        "path" => "/admin/eventhandler",
         "route" => "admin.eventhandler",
         "roles" => "master,super-admin,game-admin"
     ],
     "Periodische Tasks" => [
-        "page" => "cronjob",
-        "path" => "/admin/cronjob/",
         "route" => "admin.cronjob",
         "roles" => "master,super-admin,game-admin"
     ],
     "Texte" => [
-        "page" => "texts",
-        "path" => "/admin/texts",
         "route" => "admin.texts",
         "roles" => "master,super-admin,game-admin",
-        "children" => [
-        ]
     ],
     "Tutorials" => [
         "route" => "admin.tutorials",
         "roles" => "master,super-admin,game-admin",
-        "children" => [
-        ]
     ],
     "Konfiguration" => [
-        "page" => "config",
         "route" => "admin.config",
-        "path" => "/admin/config",
         "roles" => "master,super-admin",
         "children" => [
             "Erweiterte Konfiguration" => [
-                "sub" => "editor",
                 "route" => "admin.config.editor",
-                "path" => "/admin/config/editor",
                 "roles" => "master"
             ],
             "Integritätsprüfung" => [
-                "sub" => "check",
                 "route" => "admin.config.check",
-                "path" => "/admin/config/check",
                 "roles" => "master"
             ],
             "Zurücksetzen" => [
-                "sub" => "restoredefaults",
                 "route" => "admin.config.restore",
-                "path" => "/admin/config/restore",
                 "roles" => "master"
             ]
         ]
@@ -594,16 +484,12 @@ return [
         "roles" => "master",
         "children" => [
             "Designs" => [
-                "sub" => "designs",
-                "path" => "/admin/designs/",
                 "route" => "admin.design",
                 "roles" => "master"
             ],
             "Start-Items" => [
-                "sub" => "defaultitems",
-                "roles" => "master",
                 "route" => "admin.default-items",
-                "path" => "/admin/default-items"
+                "roles" => "master",
             ],
             "Tipps" => [
                 "route" => "admin.tipps",
@@ -616,23 +502,23 @@ return [
         ]
     ],
     "Tools" => [
-        "page" => "tools",
         "route" => "admin.tools.index",
         "roles" => "master,super-admin,game-admin",
         "children" => [
+            "TF-Rechner" => [
+                "route" => "admin.tf-calculator",
+                "roles" => "master,super-admin,game-admin,trial-game-admin",
+            ],
             "Datei-Austausch" => [
                 "route" => "admin.tools.filesharing",
-                "sub" => "filesharing",
                 "roles" => "master,super-admin,game-admin"
             ],
             "Seitenzugriffe" => [
                 "route" => "admin.tools.accesslog",
-                "sub" => "accesslog",
                 "roles" => "master"
             ],
             "IP-Resolver" => [
                 "route" => "admin.tools.ipresolver",
-                "sub" => "ipresolver",
                 "roles" => "master"
             ]
         ]

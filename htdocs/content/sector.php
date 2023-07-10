@@ -3,6 +3,7 @@
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\UI\Tooltip;
 use EtoA\Universe\Cell\CellRepository;
+use EtoA\Universe\SectorMapRenderer;
 use EtoA\User\UserRepository;
 
 /** @var ConfigurationService $config */
@@ -18,23 +19,19 @@ $_SESSION['currentEntity'] = serialize($cp);
 // Wenn Planet aktiv, Koordinaten aus der DB lesen
 if (isset($_GET['sector'])) {
     list($sx, $sy) = explode(",", $_GET['sector']);
-}
-// Coordinates from POST request
+} // Coordinates from POST request
 elseif (isset($_POST['sx']) && intval($_POST['sx']) > 0 && isset($_POST['sy']) && intval($_POST['sy']) > 0) {
-    $sx    = $_POST['sx'];
-    $sy    = $_POST['sy'];
-}
-// Coordinates from GET request
+    $sx = $_POST['sx'];
+    $sy = $_POST['sy'];
+} // Coordinates from GET request
 elseif (isset($_GET['sx']) && intval($_GET['sx']) > 0 && isset($_GET['sy']) && intval($_GET['sy']) > 0) {
-    $sx    = $_GET['sx'];
-    $sy    = $_GET['sy'];
-}
-// Current Planet
+    $sx = $_GET['sx'];
+    $sy = $_GET['sy'];
+} // Current Planet
 elseif ($cp) {
     $sx = $cp->sx;
     $sy = $cp->sy;
-}
-// Default coordinates (galactic center)
+} // Default coordinates (galactic center)
 else {
     $sx = $config->param1Int('map_init_sector');
     $sy = $config->param2Int('map_init_sector');

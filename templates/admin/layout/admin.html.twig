@@ -37,7 +37,7 @@
                 {% for key,item in navMenu %}
                     <li>
                         <a href="{{ item.href }}" {% if item.active %}class="active"{% endif %}>{{ key }}</a>
-                        {% if item.children|length > 0 %}
+                        {% if item.children is defined and item.children is not empty %}
                             <ul class="navsubmenu">
                                 {% for childKey,childItem in item.children %}
                                     <li {% if childItem.bar|default(false) %}class="bar"{% endif %}>
