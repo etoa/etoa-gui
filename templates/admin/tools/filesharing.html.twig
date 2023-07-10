@@ -1,35 +1,49 @@
 {% extends 'admin/layout/admin.html.twig' %}
 
 {% block content %}
-    <h3>Filesharing</h3>
+    <h1>Filesharing</h1>
 
-    <table class="tb">
+    {{ component('breadcrumbs', { items: [
+        { label: 'Liste der Dateien', url: path('admin.tools.filesharing') },
+    ]}) }}
+
+    <table class="table">
+        <thead>
         <tr>
             <th>Datei</th>
             <th>Grösse</th>
             <th>Datum</th>
             <th style="width:150px;">Optionen</th>
         </tr>
-
+        </thead>
+        <tbody>
         {% for file in files %}
             <tr>
-                <td><a href="{{ file.downloadLink }}">{{ file.name }}</a></td>
+                <td>
+                    <a href="{{ path('admin.tools.filesharing.download', { path: base64(file.name) }) }}">{{ file.name }}</a>
+                </td>
                 <td>{{ file.size }}</td>
                 <td>{{ file.time }}</td>
                 <td>
-                    <a href="{{ path('admin.tools.filesharing.rename') }}?{{ file.link }}">Umbenennen</a>
-                    <a href="{{ path('admin.tools.filesharing.delete') }}?{{ file.link }}" onclick="return confirm('Soll diese Datei wirklich gelöscht werden?')">Löschen</a>
+                    <a href="{{ path('admin.tools.filesharing.rename', { path: base64(file.name) }) }}">Umbenennen</a>
+                    <a href="{{ path('admin.tools.filesharing.delete', { path: base64(file.name) }) }}"
+                       onclick="return confirm('Soll diese Datei wirklich gelöscht werden?')">Löschen</a>
                 </td>
             </tr>
         {% else %}
-            <tr><td colspan="4"><i>Keine Dateien vorhanden!</i></td></tr>
+            <tr>
+                <td colspan="4"><i>Keine Dateien vorhanden!</i></td>
+            </tr>
         {% endfor %}
+        </tbody>
     </table>
 
-    <h2>Upload</h2>
     <form method="post" action="{{ path('admin.tools.filesharing.upload') }}" enctype="multipart/form-data">
-        <input type="hidden" name="MAX_FILE_SIZE" value="10000000" />
-        <input type="file" name="datei" size="40" maxlength="10000000" />
-        <input type="submit" name="submit" value="Datei heraufladen" />
+        <fieldset>
+            <legend>Upload</legend>
+            <input type="hidden" name="MAX_FILE_SIZE" value="10000000"/>
+            <input type="file" name="datei" size="40" maxlength="10000000"/>
+            <input type="submit" name="submit" value="Datei heraufladen"/>
+        </fieldset>
     </form>
 {% endblock %}

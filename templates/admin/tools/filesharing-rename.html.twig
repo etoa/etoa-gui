@@ -1,13 +1,21 @@
 {% extends 'admin/layout/admin.html.twig' %}
 
 {% block content %}
-    <h3>Filesharing</h3>
+    <h1>Filesharing</h1>
 
-    <h4>Umbenennen</h4>
-    <form action="{{ path('admin.tools.filesharing.rename') }}" method="post">
-        Dateiname:
-        <input type="text" name="rename" value="{{ name }}" />
-        <input type="hidden" name="rename_old" value="{{ name }}" />
-        &nbsp; <input type="submit" name="rename_submit" value="Umbenennen" /> &nbsp;
+    {{ component('breadcrumbs', { items: [
+        { label: 'Liste der Dateien', url: path('admin.tools.filesharing') },
+        { label: 'Datei Umbenennen', url: path('admin.tools.filesharing.rename', { path: base64(name) }) },
+    ]}) }}
+
+    <form action="{{ path('admin.tools.filesharing.rename', { path: base64(name) }) }}" method="post">
+        <fieldset>
+            <legend>Datei umbenennen</legend>
+            <p>
+                <label for="rename">Dateiname:</label>
+                <input type="text" name="rename" id="rename" value="{{ name }}" autofocus size="100"/>
+            </p>
+            <input type="submit" name="rename_submit" value="Umbenennen"/>
+        </fieldset>
     </form>
 {% endblock %}

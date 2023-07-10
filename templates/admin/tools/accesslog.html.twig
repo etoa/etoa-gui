@@ -4,27 +4,30 @@
     <h3>Seitenzugriffe</h3>
 
     <form action="{{ path('admin.tools.accesslog.toggle') }}" method="post">
-        <p>
-            {% if accessLogEnabled %}
+        {% if accessLogEnabled %}
+            <twig:alert type="warning">
                 Seitenzugriffe werden aufgezeichnet.
-                <input type="submit" value="Deaktivieren" name="submit_toggle"  />
-            {% else %}
+                <input type="submit" value="Deaktivieren" name="submit_toggle"/>
+            </twig:alert>
+        {% else %}
+            <twig:alert type="info">
                 Seitenzugriffe werden momentan NICHT aufgezeichnet.
-                <input type="submit" value="Aktivieren" name="submit_toggle"  />
-            {% endif %}
-        </p>
+                <input type="submit" value="Aktivieren" name="submit_toggle"/>
+            </twig:alert>
+        {% endif %}
     </form>
 
     {% for domain in domains %}
         <h4>{{ domain|capitalize }}</h4>
 
-        <table class="tb" style="width:500px">
+        <table class="table">
+            <thead>
             <tr>
                 <th>Ziel</th>
                 <th style="width:90px">Zugriffe
                 <th style="width:200px">Unterbereiche</th>
             </tr>
-
+            </thead>
             {% for target,domainCounts in logs[domain] %}
                 <tr>
                     <td>{{ target }}</td>
@@ -49,6 +52,6 @@
     {% endfor %}
 
     <form action="{{ path('admin.tools.accesslog.truncate') }}" method="post">
-        <input type="submit" value="Aufzeichnungen löschen" name="submit_truncate"  />
+        <input type="submit" value="Aufzeichnungen löschen" name="submit_truncate"/>
     </form>
 {% endblock %}

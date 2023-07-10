@@ -562,33 +562,30 @@ return [
     ],
     "Datenbank" => [
         "route" => "admin.db",
-        "path" => "/admin/db",
-        "page" => "db",
         "roles" => "master,super-admin,game-admin",
+        'additional_routes' => [
+            'admin.db.restore',
+            'admin.db.optimize',
+            'admin.db.analyze',
+            'admin.db.repair',
+            'admin.db.check',
+        ],
         "children" => [
             "Backups" => [
                 "route" => "admin.db.backups",
-                "path" => "/admin/db/backups",
-                "sub" => "backup",
                 "roles" => "master,super-admin"
             ],
             "Clean-Up" => [
-                "sub" => "cleanup",
-                "roles" => "master,super-admin",
                 "route" => "admin.db.cleanup",
-                "path" => "/admin/db/cleanup"
+                "roles" => "master,super-admin",
             ],
             "Schema-Migrationen" => [
                 "route" => "admin.db.migration",
-                "path" => "/admin/db/migration",
-                "sub" => "migrations",
-                "roles" => "master,super-admin"
+                "roles" => "master,super-admin",
             ],
             "Reset" => [
                 "route" => "admin.db.reset",
-                "path" => "/admin/db/reset",
-                "sub" => "reset",
-                "roles" => "master,super-admin"
+                "roles" => "master,super-admin",
             ]
         ]
     ],

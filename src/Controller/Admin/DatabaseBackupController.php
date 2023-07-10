@@ -43,7 +43,6 @@ class DatabaseBackupController extends AbstractAdminController
                     'date' => substr($f, strpos($f, '-') + 1, 16),
                     'createdAt' => StringUtils::formatDate(filectime($dir . '/' . $f)),
                     'size' => StringUtils::formatBytes(filesize($dir . '/' . $f)),
-                    'downloadLink' => createDownloadLink($dir . '/' . $f),
                 ];
             }
         }
@@ -52,6 +51,14 @@ class DatabaseBackupController extends AbstractAdminController
             'backupDir' => $backupDir,
             'backups' => $backups,
         ]);
+    }
+
+    #[Route("/admin/db/backups/download/{path}", name: "admin.db.backups.download")]
+    #[IsGranted('ROLE_ADMIN_GAME-ADMIN')]
+    public function download(string $path): Response
+    {
+        $dir = realpath($this->databaseBackupService->getBackupDir());
+        return $this->decodePath($dir, $path, fn($file) => $this->createFileDownloadResponse($file), 'admin.db.backups');
     }
 
     #[Route("/admin/db/backups/settings", name: "admin.db.backup.settings", methods: ['POST'])]
