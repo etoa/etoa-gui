@@ -2,6 +2,7 @@
 
 namespace EtoA\Form\Type\Core;
 
+use EtoA\Fleet\FleetAction;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\ChoiceList\ChoiceList;
 use Symfony\Component\Form\ChoiceList\Factory\Cache\ChoiceLoader;
@@ -19,7 +20,7 @@ class FleetActionType extends AbstractType
             'placeholder' => '(Alle)',
             'choice_loader' => function (Options $options): ChoiceLoader {
                 return ChoiceList::lazy($this, function (): array {
-                    $actions = \FleetAction::getAll();
+                    $actions = FleetAction::getAll();
 
                     $choices = [];
                     foreach ($actions as $action) {

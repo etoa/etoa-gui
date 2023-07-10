@@ -4,6 +4,34 @@ declare(strict_types=1);
 
 namespace EtoA\Fleet;
 
+use EtoA\Fleet\Action\FleetActionAlliance;
+use EtoA\Fleet\Action\FleetActionAnalyze;
+use EtoA\Fleet\Action\FleetActionAntrax;
+use EtoA\Fleet\Action\FleetActionAttack;
+use EtoA\Fleet\Action\FleetActionBombard;
+use EtoA\Fleet\Action\FleetActionCollectCrystal;
+use EtoA\Fleet\Action\FleetActionCollectDebris;
+use EtoA\Fleet\Action\FleetActionCollectFuel;
+use EtoA\Fleet\Action\FleetActionCollectMetal;
+use EtoA\Fleet\Action\FleetActionColonize;
+use EtoA\Fleet\Action\FleetActionCreateDebris;
+use EtoA\Fleet\Action\FleetActionDelivery;
+use EtoA\Fleet\Action\FleetActionEmp;
+use EtoA\Fleet\Action\FleetActionExplore;
+use EtoA\Fleet\Action\FleetActionFakeattack;
+use EtoA\Fleet\Action\FleetActionFetch;
+use EtoA\Fleet\Action\FleetActionFlight;
+use EtoA\Fleet\Action\FleetActionGasAttack;
+use EtoA\Fleet\Action\FleetActionInvade;
+use EtoA\Fleet\Action\FleetActionMarket;
+use EtoA\Fleet\Action\FleetActionPosition;
+use EtoA\Fleet\Action\FleetActionSpy;
+use EtoA\Fleet\Action\FleetActionSpyattack;
+use EtoA\Fleet\Action\FleetActionStealthattack;
+use EtoA\Fleet\Action\FleetActionSupport;
+use EtoA\Fleet\Action\FleetActionTransport;
+use function Symfony\Component\VarDumper\Caster\AmqpCaster;
+
 abstract class FleetAction
 {
     public const ALLIANCE = 'alliance';
@@ -209,7 +237,35 @@ abstract class FleetAction
     static function createFactory($code)
     {
         if ($code != "" && ctype_alpha($code)) {
-            $className = 'EtoA\Fleet\Action\FleetAction' . ucfirst($code);
+            $className = match ($code) {
+                "transport" => FleetActionTransport::class,
+                "fetch" => FleetActionFetch::class,
+                "collectdebris" => FleetActionCollectDebris::class,
+                "position" => FleetActionPosition::class,
+                "attack" => FleetActionAttack::class,
+                "spy" => FleetActionSpy::class,
+                "invade" => FleetActionInvade::class,
+                "spyattack" => FleetActionSpyattack::class,
+                "stealthattack" => FleetActionStealthattack::class,
+                "fakeattack" => FleetActionFakeattack::class,
+                "bombard" => FleetActionBombard::class,
+                "emp" => FleetActionEmp::class,
+                "antrax" => FleetActionAntrax::class,
+                "gasattack" => FleetActionGasAttack::class,
+                "createdebris" => FleetActionCreateDebris::class,
+                "colonize" => FleetActionColonize::class,
+                "collectmetal" => FleetActionCollectMetal::class,
+                "collectcrystal" => FleetActionCollectCrystal::class,
+                "collectfuel" => FleetActionCollectFuel::class,
+                "analyze" => FleetActionAnalyze::class,
+                "explore" => FleetActionExplore::class,
+                "market" => FleetActionMarket::class,
+                "flight" => FleetActionFlight::class,
+                "support" => FleetActionSupport::class,
+                "alliance" => FleetActionAlliance::class,
+                "delivery" => FleetActionDelivery::class,
+                default => 'EtoA\Fleet\Action\FleetAction' . ucfirst($code),
+            };
             try {
                 return new $className();
             } catch (\Exception $e) {
