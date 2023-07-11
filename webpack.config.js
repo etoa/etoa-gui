@@ -24,6 +24,16 @@ Encore
         to: 'js/[path][name].[ext]',
     })
 
+    .copyFiles({
+        from: './assets/css',
+        to: 'css/[path][name].[ext]',
+    })
+
+    .copyFiles({
+        from: './assets/designs',
+        to: 'designs/[path][name].[ext]',
+    })
+
     /*
      * ENTRY CONFIG
      *

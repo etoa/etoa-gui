@@ -4,20 +4,17 @@ declare(strict_types=1);
 
 namespace EtoA\User;
 
-use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Support\GameVersionService;
 use EtoA\Universe\Planet\PlanetRepository;
 
 class UserStats
 {
-    private UserOnlineStatsRepository $userOnlineStatsRepository;
-    private PlanetRepository $planetRepository;
-    private ConfigurationService $config;
-
-    public function __construct(UserOnlineStatsRepository $userOnlineStatsRepository, PlanetRepository $planetRepository, ConfigurationService $config)
+    public function __construct(
+        private readonly UserOnlineStatsRepository $userOnlineStatsRepository,
+        private readonly PlanetRepository          $planetRepository,
+        private readonly GameVersionService        $versionService,
+    )
     {
-        $this->userOnlineStatsRepository = $userOnlineStatsRepository;
-        $this->planetRepository = $planetRepository;
-        $this->config = $config;
     }
 
     public function generateImage(string $file): void
@@ -34,7 +31,7 @@ class UserStats
 
         $im = imagecreate($w, $h);
         $imh = imagecreatefromjpeg(__DIR__ . '/../../htdocs/images/logo_trans.jpg');
-        imagecopyresized($im, $imh, (int) (($w - imagesx($imh)) / 2), (int) (($h - imagesy($imh)) / 2), 0, 0, imagesx($imh), imagesy($imh), imagesx($imh), imagesy($imh));
+        imagecopyresized($im, $imh, (int)(($w - imagesx($imh)) / 2), (int)(($h - imagesy($imh)) / 2), 0, 0, imagesx($imh), imagesy($imh), imagesx($imh), imagesy($imh));
 
         $colWhite = imagecolorallocate($im, 255, 255, 255);
         $colBlack = imagecolorallocate($im, 0, 0, 0);
@@ -46,11 +43,11 @@ class UserStats
         imagerectangle($im, 0, 0, $w - 1, $h - 1, $colBlack);
         imagerectangle($im, $borderLeftRight, $borderTop, $w - $borderLeftRight, $h - $borderBottom, $colBlack);
 
-        $time = time() - (int) date("s");
+        $time = time() - (int)date("s");
 
         // Renderzeit-Start festlegen
         $render_time = explode(" ", microtime());
-        $render_starttime = (int) $render_time[1] + (int) $render_time[0];
+        $render_starttime = (int)$render_time[1] + (int)$render_time[0];
 
         $data = array();
         $max = 0;
@@ -92,8 +89,8 @@ class UserStats
             // Horizontale Linien und Gr?ssen
             if ($max > 0) {
                 for ($i = 0; $i <= ceil($max / 100); $i++) {
-                    $y = (int) ($h - $borderBottom - ($graphHeight / ($max / 100) * $i));
-                    imagestring($im, 2, $yLegend, (int) ($y - (imagefontheight(2) / 2)), (string) ($i * 100), $colBlack);
+                    $y = (int)($h - $borderBottom - ($graphHeight / ($max / 100) * $i));
+                    imagestring($im, 2, $yLegend, (int)($y - (imagefontheight(2) / 2)), (string)($i * 100), $colBlack);
                     if ($i != 0) {
                         imageline($im, $borderLeftRight + 1, $y, $w - $borderLeftRight - 1, $y, $colGrey);
                     }
@@ -110,7 +107,7 @@ class UserStats
 
             $ic = 0;
             foreach ($data as $i => $d) {
-                $x = (int) ($borderLeftRight + ($ic * $step));
+                $x = (int)($borderLeftRight + ($ic * $step));
                 // Vertikale Stundenlinien
                 if (date("i", $i) == "00") {
                     if (date("H", $i) == "00") {
@@ -118,7 +115,7 @@ class UserStats
                     } else {
                         imageline($im, $x, $borderTop + 1, $x, $h - $borderBottom - 1, $colGrey);
                     }
-                    imagestring($im, 2, $x - (int) ((imagefontheight(2) / 2)), $h - $bottomLegend, date("H", $i), $colBlack);
+                    imagestring($im, 2, $x - (int)((imagefontheight(2) / 2)), $h - $bottomLegend, date("H", $i), $colBlack);
                 }
                 $t = date("dmyHi", $i);
                 if ($max > 0) {
@@ -128,8 +125,8 @@ class UserStats
                     $yo = $h - $borderBottom;
                     $yr = $h - $borderBottom;
                 }
-                imageline($im, $lastx, (int) $lastyo, $x, (int) $yo, $colGreen);
-                imageline($im, $lastx, (int) $lastyr, $x, (int) $yr, $colBlue);
+                imageline($im, $lastx, (int)$lastyo, $x, (int)$yo, $colGreen);
+                imageline($im, $lastx, (int)$lastyr, $x, (int)$yr, $colBlue);
                 $lastyo = $yo;
                 $lastyr = $yr;
                 $lastx = $x;
@@ -138,22 +135,22 @@ class UserStats
 
             // Renderzeit
             $render_time = explode(" ", microtime());
-            $rtime = (int) $render_time[1] + (int) $render_time[0] - $render_starttime;
-            imagestring($im, 6, 10, 5, getGameIdentifier($this->config), $colBlack);
+            $rtime = (int)$render_time[1] + (int)$render_time[0] - $render_starttime;
+            imagestring($im, 6, 10, 5, $this->versionService->getGameIdentifier(), $colBlack);
             imagestring($im, 6, 10, 20, "Userstatistik der letzten 24 Stunden", $colBlack);
             imagestring($im, 2, 10, 40, "Erstellt: " . date("d.m.Y, H:i") . ", Renderzeit: " . round($rtime, 3) . " sec", $colBlack);
 
             imagestring($im, 3, 110, $h - 40, "Max    Durchschnitt   Aktuell", $colBlack);
             imagestring($im, 3, 50, $h - 25, "Online", $colGreen);
-            imagestring($im, 2, 110, $h - 25, (string) $maxo, $colBlack);
-            imagestring($im, 2, 160, $h - 25, (string) $avgo, $colBlack);
-            imagestring($im, 2, 265, $h - 25, (string) $acto, $colBlack);
+            imagestring($im, 2, 110, $h - 25, (string)$maxo, $colBlack);
+            imagestring($im, 2, 160, $h - 25, (string)$avgo, $colBlack);
+            imagestring($im, 2, 265, $h - 25, (string)$acto, $colBlack);
 
             imagestring($im, 3, 450, $h - 40, "Max    Durchschnitt   Aktuell", $colBlack);
             imagestring($im, 3, 350, $h - 25, "Registriert", $colBlue);
-            imagestring($im, 2, 450, $h - 25, (string) $maxr, $colBlack);
-            imagestring($im, 2, 500, $h - 25, (string) $avgr, $colBlack);
-            imagestring($im, 2, 605, $h - 25, (string) $actr, $colBlack);
+            imagestring($im, 2, 450, $h - 25, (string)$maxr, $colBlack);
+            imagestring($im, 2, 500, $h - 25, (string)$avgr, $colBlack);
+            imagestring($im, 2, 605, $h - 25, (string)$actr, $colBlack);
 
             $dir = dirname($file);
             if (!is_dir($dir)) {

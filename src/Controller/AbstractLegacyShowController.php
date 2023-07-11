@@ -34,11 +34,7 @@ abstract class AbstractLegacyShowController extends AbstractLegacyController
         $this->bootstrap();
 
         // Set default page / action variables
-        $page = (isset($_GET['page']) && $_GET['page'] != "") ? $_GET['page'] : 'overview';
-        $mode = (isset($_GET['mode']) && $_GET['mode'] != "") ? $_GET['mode'] : "";
-        $sub = $_GET['sub'] ?? null;
         $index = $_GET['index'] ?? null;
-        $info = $_GET['info'] ?? null;
         $mode = $_GET['mode'] ?? null;
 
         $loggedIn = false;
@@ -102,26 +98,7 @@ abstract class AbstractLegacyShowController extends AbstractLegacyController
         }
 
         if ($show) {
-            if ($index) {
-                $index = $index === 'stats' ? 'ladder' : $index;
-                if (!preg_match('^[a-z_]+$^', $index) || strlen($index) > 50) {
-                    echo $this->twig->render('external/invalid-page.html.twig', []);
-                } else {
-                    $callback();
-                }
-            } else {
-                if ($page && $loggedIn && $page !== 'overview') {
-                    ob_start();
-                    require('inc/content.inc.php');
-                    echo $this->twig->render('external/content.html.twig', [
-                        'content' => ob_get_clean(),
-                    ]);
-                } else {
-                    echo $this->twig->render('external/index.html.twig', [
-                        'indexPages' => $this->indexpage,
-                    ]);
-                }
-            }
+            $callback();
         } else {
             echo $this->twig->render('external/key-required.html.twig', [
                 'page' => $_GET['index'],

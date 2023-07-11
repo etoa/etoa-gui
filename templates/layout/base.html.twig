@@ -6,50 +6,46 @@
 
     <!-- Meta Info -->
     <meta name="description" content="">
-    <meta name="author" content="EtoA Gaming" />
-    <meta name="robots" content="nofollow" />
-    <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
-    <link rel="manifest" href="manifest.json"/>
-    <link rel="apple-touch-icon" href="favicon.ico">
+    <meta name="author" content="EtoA Gaming"/>
+    <meta name="robots" content="nofollow"/>
+    <link rel="shortcut icon" type="image/x-icon" href="{{ asset('build/images/favicon.ico') }}"/>
+    <link rel="apple-touch-icon" href="{{ asset('build/images/favicon.ico') }}">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
     <!-- CSS Stylesheets -->
     {% if templateDir|default(false) %}
-        <link rel="stylesheet" type="text/css" href="{{ templateDir }}/style.css?v=2021110400" />
+        <link rel="stylesheet" type="text/css" href="{{ asset('build' ~ templateDir ~ '/style.css' ) }}"/>
     {% endif %}
 
     {% for css in additionalCss|default([]) %}
-        <link rel="stylesheet" type="text/css" href="{{ css }}" />
+        <link rel="stylesheet" type="text/css" href="{{ css }}"/>
     {% endfor %}
 
     <!-- XAJAX -->
     {{ xajaxJS|default('')|raw }}
-    <script type="text/javascript" src="/web/js/app.js"></script>
-    <script type="text/javascript" src="/web/js/main.js"></script>
+    <script type="text/javascript" src="{{ asset('build/app.js') }}"></script>
+    <script type="text/javascript" src="{{ asset('build/js/main.js') }}"></script>
     {% if page|default(false) %}
         <script type="text/javascript">
-            window.prevEntityUrl="?page={{ page }}&mode={{ mode }}&change_entity={{ prevPlanetId }}";
-            window.nextEntityUrl="?page={{ page }}&mode={{ mode }}&change_entity={{ nextPlanetId }}";
+            window.prevEntityUrl = "?page={{ page }}&mode={{ mode }}&change_entity={{ prevPlanetId }}";
+            window.nextEntityUrl = "?page={{ page }}&mode={{ mode }}&change_entity={{ nextPlanetId }}";
         </script>
 
     {% if enableKeybinds %}
-        <script type="text/javascript" src="/web/js/keybinds.js"></script>
+        <script type="text/javascript" src="{{ asset('build/js/keybinds.js') }}"></script>
     {% endif %}
     {% endif %}
     {% if templateDir|default(false) %}
-        <script type="text/javascript" src="{{ templateDir }}/scripts.js?v=2021110400"></script>
+        <script type="text/javascript" src="{{ asset('build' ~ templateDir ~ '/scripts.js' ) }}"></script>
     {% endif %}
 </head>
 <body>
 {{ bodyTopStuff|default('')|raw }}
 {% block layoutContent %}{% endblock %}
-{% for js in additionalJs|default([]) %}
-    <script type="text/javascript" src="{{ js }}"></script>
-{% endfor %}
-<script src="/web/js/tooltip.js" type="text/javascript" ></script>
+<script src="{{ asset('build/js/tooltip.js') }}" type="text/javascript"></script>
 <script type="text/javascript">
-    $(function(){
-        time({{ serverTimeUnix() }},'servertime',1);
+    $(function () {
+        time({{ serverTimeUnix() }}, 'servertime', 1);
     });
 </script>
 </body>

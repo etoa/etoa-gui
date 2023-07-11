@@ -10,7 +10,7 @@ use EtoA\Core\Configuration\ConfigurationService;
 class GameVersionService
 {
     public function __construct(
-        private ConfigurationService $config,
+        private readonly ConfigurationService $config,
     ) {
     }
 
@@ -19,7 +19,7 @@ class GameVersionService
         return AppName::NAME . ' ' . $this->getAppVersion() . ' ' . $this->config->get('roundname');
     }
 
-    function getAppVersion()
+    function getAppVersion(): string
     {
         require_once __DIR__ . '/../version.php';
         return APP_VERSION;
