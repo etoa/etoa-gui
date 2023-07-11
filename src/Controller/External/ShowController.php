@@ -16,6 +16,15 @@ class ShowController extends AbstractLegacyShowController
         if ($index == 'login') {
             return $this->redirectToRoute('external.login');
         }
+        if ($index == 'register') {
+            return $this->redirectToRoute('external.register');
+        }
+        if ($index == 'pwforgot') {
+            return $this->redirectToRoute('external.request-password');
+        }
+        if ($index == 'contact') {
+            return $this->redirectToRoute('external.contact');
+        }
         return $this->handle(function () use ($index) {
             echo $this->twig->render('external/404.html.twig', [
                 'page' => $index,
