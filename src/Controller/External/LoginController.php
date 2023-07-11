@@ -8,6 +8,8 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class LoginController extends AbstractLegacyShowController
 {
+    protected ?string $pageTitle = 'Einloggen';
+
     #[Route('/login', name: 'external.login')]
     public function index(): Response
     {

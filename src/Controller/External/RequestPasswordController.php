@@ -10,6 +10,8 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class RequestPasswordController extends AbstractLegacyShowController
 {
+    protected ?string $pageTitle = 'Neues Passwort';
+
     #[Route('/request-password', name: 'external.request-password')]
     public function index(
         UserService $userService,

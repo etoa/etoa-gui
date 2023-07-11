@@ -8,24 +8,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 abstract class AbstractLegacyShowController extends AbstractLegacyController
 {
-    private array $indexpage = [
-        'login' => [
-            'url' => '?index=login',
-            'label' => 'Einloggen'
-        ],
-        'register' => [
-            'url' => '?index=register',
-            'label' => 'Registrieren'
-        ],
-        'pwforgot' => [
-            'url' => '?index=pwforgot',
-            'label' => 'Passwort'
-        ],
-        'contact' => [
-            'url' => '?index=contact',
-            'label' => 'Kontakt'
-        ]
-    ];
+    protected ?string $pageTitle = null;
 
     protected function handle(callable $callback): Response
     {
@@ -57,7 +40,7 @@ abstract class AbstractLegacyShowController extends AbstractLegacyController
 //        $xajax = require_once $projectDir . '/src/xajax/xajax.inc.php';
 //        $twig->addGlobal('xajaxJS', $xajax->getJavascript());
         $globals = [
-            'gameTitle' => $this->versionService->getGameIdentifier() . (isset($this->indexpage[$index]) ? ' - ' . $this->indexpage[$index]['label'] : ''),
+            'gameTitle' => $this->versionService->getGameIdentifier() . ($this->pageTitle !== null ? ' - ' . $this->pageTitle : ''),
             'templateDir' => '/' . CSS_STYLE,
             'bodyTopStuff' => getInitTT(),
             'prevPlanetId' => null,

@@ -16,6 +16,8 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class ContactController extends AbstractLegacyShowController
 {
+    protected ?string $pageTitle = 'Kontakt';
+
     #[Route('/contact-support', name: 'external.contact')]
     public function index(
         TextRepository       $textRepo,

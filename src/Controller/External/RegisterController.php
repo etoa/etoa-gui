@@ -19,6 +19,8 @@ use Symfony\Component\Routing\Annotation\Route;
 
 class RegisterController extends AbstractLegacyShowController
 {
+    protected ?string $pageTitle = 'Registrieren';
+
     #[Route('/register', name: 'external.register')]
     public function index(
         UserRepository    $userRepository,
