@@ -1,0 +1,25 @@
+<?php
+
+namespace EtoA\Controller\External;
+
+use EtoA\Controller\AbstractLegacyShowController;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
+
+class ShowController extends AbstractLegacyShowController
+{
+    #[Route('/show', name: 'legacy.show')]
+    public function index(Request $request): Response
+    {
+        $index = $request->query->get('index');
+        if ($index == 'login') {
+            return $this->redirectToRoute('external.login');
+        }
+        return $this->handle(function () use ($index) {
+            echo $this->twig->render('external/404.html.twig', [
+                'page' => $index,
+            ]);
+        });
+    }
+}
