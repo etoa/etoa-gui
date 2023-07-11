@@ -1,6 +1,7 @@
 <?php
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Legacy\User;
 use EtoA\Message\MessageIgnoreRepository;
 use EtoA\Message\MessageRepository;
 use EtoA\Support\StringUtils;
@@ -51,12 +52,13 @@ if (!$cu->isVerified) {
 }
 
 function sendMessageForm(
-    Request $request,
-    User $cu,
-    MessageRepository $messageRepository,
-    UserRepository $userRepository,
+    Request                  $request,
+    User                     $cu,
+    MessageRepository        $messageRepository,
+    UserRepository           $userRepository,
     UserPropertiesRepository $userPropertiesRepository
-): void {
+): void
+{
     global $page;
     global $mode;
 
@@ -106,8 +108,9 @@ function sendMessageForm(
         <input type=\"button\" onclick=\"namedlink(this.form,'url');" . $previewFunction . "\" value=\"Link\">
         <input type=\"button\" onclick=\"namedlink(this.form,'email');" . $previewFunction . "\" value=\"E-Mail\">
         <input type=\"button\" onclick=\"bbcode(this.form,'img','http://');" . $previewFunction . "\" value=\"Bild\"> <br/><br/>";
-?>
-    <select id="sizeselect" onchange="fontformat(this.form,this.options[this.selectedIndex].value,'size');" onclick="<?= $previewFunction ?>">
+    ?>
+    <select id="sizeselect" onchange="fontformat(this.form,this.options[this.selectedIndex].value,'size');"
+            onclick="<?= $previewFunction ?>">
         <option value="0">Grösse</option>
         <option value="7">winzig</option>
         <option value="10">klein</option>
@@ -115,7 +118,8 @@ function sendMessageForm(
         <option value="16">groß</option>
         <option value="20">riesig</option>
     </select>
-    <select id="colorselect" onchange="fontformat(this.form,this.options[this.selectedIndex].value,'color');" onclick="<?= $previewFunction ?>">
+    <select id="colorselect" onchange="fontformat(this.form,this.options[this.selectedIndex].value,'color');"
+            onclick="<?= $previewFunction ?>">
         <option value="0">Farbe</option>
         <option value="skyblue" style="color: skyblue;">sky blue</option>
         <option value="royalblue" style="color: royalblue;">royal blue</option>
@@ -144,7 +148,7 @@ function sendMessageForm(
         <option value="teal" style="color: teal;">teal</option>
         <option value="silver" style="color: silver;">silver</option>
     </select>
-<?php
+    <?php
     echo "<br><br>";
     // Smilies
     echo "<a href=\"javascript:;\" onclick=\"addText(':-)', '', false, document.msgform);" . $previewFunction . "\"><img src=\"/images/smilies/smile.gif\" style=\"border:none;\" alt=\"Smilie\" title=\"Smilie\"  /></a>&nbsp;
@@ -223,10 +227,11 @@ function getInitialSubject(Request $request)
 }
 
 function getInitialMessageText(
-    Request $request,
+    Request           $request,
     MessageRepository $messageRepository,
-    User $cu
-): string {
+    User              $cu
+): string
+{
     if ($request->request->has('message_text')) {
         if ($request->request->has('message_sender')) {
             return "\n\n[b]Nachricht von " . $request->request->get('message_sender') . ":[/b]\n\n" . htmlentities($request->request->get('message_text'), ENT_QUOTES, 'UTF-8');
@@ -252,14 +257,15 @@ function getInitialMessageText(
 }
 
 function submitSendMessage(
-    Request $request,
-    UserRepository $userRepository,
-    MessageRepository $messageRepository,
+    Request                 $request,
+    UserRepository          $userRepository,
+    MessageRepository       $messageRepository,
     MessageIgnoreRepository $messageIgnoreRepository,
-    ConfigurationService $config,
-    User $cu,
-    $dispatcher
-): void {
+    ConfigurationService    $config,
+    User                    $cu,
+                            $dispatcher
+): void
+{
 
     iBoxStart("Nachrichtenversand");
 
@@ -284,16 +290,17 @@ function submitSendMessage(
 }
 
 function sendMessage(
-    UserRepository $userRepository,
-    MessageRepository $messageRepository,
+    UserRepository          $userRepository,
+    MessageRepository       $messageRepository,
     MessageIgnoreRepository $messageIgnoreRepository,
-    ConfigurationService $config,
-    int $senderId,
-    string $recipientName,
-    string $subject,
-    string $text,
-    $dispatcher
-): string {
+    ConfigurationService    $config,
+    int                     $senderId,
+    string                  $recipientName,
+    string                  $subject,
+    string                  $text,
+                            $dispatcher
+): string
+{
 
     $recipientUserId = $userRepository->getUserIdByNick($recipientName);
     if ($recipientUserId === null) {

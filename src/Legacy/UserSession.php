@@ -1,5 +1,8 @@
 <?php
 
+namespace EtoA\Legacy;
+
+use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Log\LogFacility;
 use EtoA\Log\LogRepository;
 use EtoA\Log\LogSeverity;
@@ -14,28 +17,152 @@ use EtoA\User\UserSittingRepository;
  * Provides session and authentication management
  * for player area.
  */
-class UserSession extends Session
+class UserSession
 {
-    function login($data)
+    /**
+     * @var string Message of the last error
+     */
+    private string $lastError;
+
+    /**
+     * @var string Short string (one word/abreviation) that characterizes the last error
+     */
+    private string $lastErrorCode;
+
+    /**
+     * @var bool True if this is the first run (page) of the session, that means if the user hast just logged in
+     */
+    private bool $firstView = false;
+
+    private int $bot_count;
+
+    private int $last_span;
+
+    private int $time_action;
+
+    private int $time_login;
+
+    private string $passwordField;
+
+    private bool $cLogin;
+
+    private string $cRemoteAddr;
+
+    private string $cUserAgent;
+
+    private int $userId;
+
+    private string $userNick;
+
+    private bool $sittingActive;
+
+    private bool $falseSitter;
+
+    private int $sittingUntil;
+
+    /**
+     * The constructor defines the session hash function to be used
+     * and names and initiates the session
+     */
+    public function __construct(
+        private readonly ConfigurationService       $config,
+        private readonly UserSessionManager         $sessionManager,
+        private readonly UserSessionRepository      $userSessionRepository,
+        private readonly UserSittingRepository      $userSittingRepository,
+        private readonly UserLoginFailureRepository $userLoginFailureRepository,
+        private readonly UserRepository             $userRepository,
+        private readonly LogRepository              $logRepository,
+    )
     {
-        // TODO
-        global $app;
+        // Use SHA1 hash
+        ini_set('session.hash_function', '1');
 
-        /** @var UserSessionManager $sessionManager */
-        $sessionManager = $app[UserSessionManager::class];
+        // Set session name based on class and game round file system path.
+        $name = md5(get_class($this) . __DIR__);
+        @session_name($name);
+        @session_start();    // Start the session
+    }
 
-        /** @var UserSittingRepository $userSittingRepository */
-        $userSittingRepository = $app[UserSittingRepository::class];
+    public function getLastError(): string
+    {
+        return ($this->lastError != null) ? $this->lastError : "";
+    }
 
-        /** @var UserLoginFailureRepository $userLoginFailureRepository */
-        $userLoginFailureRepository = $app[UserLoginFailureRepository::class];
+    public function getLastErrorCode(): string
+    {
+        return ($this->lastErrorCode != null) ? $this->lastErrorCode : "general";
+    }
 
-        /** @var UserRepository $userRepository */
-        $userRepository = $app[UserRepository::class];
-        /** @var LogRepository $logRepository */
-        $logRepository = $app[LogRepository::class];
+    public function isFirstView(): bool
+    {
+        return $this->firstView;
+    }
 
-        $sessionManager->cleanup();
+    public function getId(): false|string
+    {
+        return session_id();
+    }
+
+    public function getUserId(): int
+    {
+        return $this->userId;
+    }
+
+    public function getUserNick(): string
+    {
+        return $this->userNick;
+    }
+
+    /**
+     * Getter that returns session variables or some class properties
+     *
+     * @param string $field
+     * @return mixed Requested variable or null if field was not found
+     */
+    function __get(string $field): mixed
+    {
+        if (isset($_SESSION[$field])) {
+            return $_SESSION[$field];
+        }
+        return null;
+    }
+
+    /**
+     * Checks if a session property exists
+     *
+     * @param string $field Property name
+     * @return bool True if property exists
+     */
+    function __isset(string $field): bool
+    {
+        return isset($_SESSION[$field]);
+    }
+
+    /**
+     * Sets a session property
+     *
+     * @param string $field Property name
+     * @param mixed $value Property value
+     * @return bool True if setting was successfull
+     */
+    function __set(string $field, mixed $value): void
+    {
+        $_SESSION[$field] = $value;
+    }
+
+    /**
+     * Unsets a session property
+     *
+     * @param string $field Property name
+     */
+    function __unset(string $field): void
+    {
+        unset($_SESSION[$field]);
+    }
+
+    public function login(array $data): bool
+    {
+        $this->sessionManager->cleanup();
 
         $loginTimeDifferenceThreshold = 3600;
 
@@ -69,14 +196,14 @@ class UserSession extends Session
 
                             if ($loginNick != "" && $loginPassword != "") // Add here regex check for nickname
                             {
-                                $user = $userRepository->getUserByNick($loginNick);
+                                $user = $this->userRepository->getUserByNick($loginNick);
                                 if ($user !== null) {
                                     $t = time();
 
                                     // check sitter
                                     $this->sittingActive = false;
                                     $this->falseSitter = false;
-                                    $sittingEntry = $userSittingRepository->getActiveUserEntry($user->id);
+                                    $sittingEntry = $this->userSittingRepository->getActiveUserEntry($user->id);
                                     if ($sittingEntry !== null) {
                                         if (validatePasswort($loginPassword, $sittingEntry->password)) {
                                             $this->sittingActive = true;
@@ -92,7 +219,7 @@ class UserSession extends Session
                                         $seed = $user->registered;
                                         $salt = "yheaP;BXf;UokIAJ4dhaOL"; // Round 9
                                         if ($user->password == md5($pw . $seed . $salt) . md5($salt . $seed . $pw)) {
-                                            $user->password = $userRepository->updatePassword($user->id, $pw);
+                                            $user->password = $this->userRepository->updatePassword($user->id, $pw);
                                         }
                                     }
 
@@ -103,8 +230,8 @@ class UserSession extends Session
                                     ) {
                                         session_regenerate_id(true);
 
-                                        $this->user_id = $user->id;
-                                        $this->user_nick = $user->nick;
+                                        $this->userId = $user->id;
+                                        $this->userNick = $user->nick;
                                         $this->time_login = $t;
                                         $this->time_action = $t;
                                         $this->registerSession();
@@ -122,7 +249,7 @@ class UserSession extends Session
                                         return true;
                                     } else {
                                         $this->lastError = "Benutzer nicht vorhanden oder Passwort falsch!";
-                                        $userLoginFailureRepository->add($user->id, $t, $_SERVER['REMOTE_ADDR'], $_SERVER['HTTP_USER_AGENT']);
+                                        $this->userLoginFailureRepository->add($user->id, $t, $_SERVER['REMOTE_ADDR'], $_SERVER['HTTP_USER_AGENT']);
                                         $this->lastErrorCode = "pass";
                                     }
                                 } else {
@@ -169,7 +296,7 @@ class UserSession extends Session
                 $text .= "GET: " . var_export($_GET, true) . "\n";
             $text .= "Agent: " . $_SERVER['HTTP_USER_AGENT'] . "\n";
             $text .= "Referer: " . $_SERVER['HTTP_REFERER'] . "\n";
-            $logRepository->add(LogFacility::ILLEGALACTION, LogSeverity::WARNING, $text);
+            $this->logRepository->add(LogFacility::ILLEGALACTION, LogSeverity::WARNING, $text);
         }
 
         return false;
@@ -180,22 +307,10 @@ class UserSession extends Session
      *
      * @return bool, True if session is valid
      */
-    function validate($destroy = 1)
+    function validate(bool $destroy = true): bool
     {
-        // TODO
-        global $app;
-
-        /** @var UserSessionRepository $userSessionRepository */
-        $userSessionRepository = $app[UserSessionRepository::class];
-
-        /** @var UserSittingRepository $userSittingRepository */
-        $userSittingRepository = $app[UserSittingRepository::class];
-
-        /** @var UserSessionManager $sessionManager */
-        $sessionManager = $app[UserSessionManager::class];
-
         if (isset($this->time_login)) {
-            $userSession = $userSessionRepository->findByParameters(session_id(), $this->user_id, $_SERVER['HTTP_USER_AGENT'], $this->time_login);
+            $userSession = $this->userSessionRepository->findByParameters(session_id(), $this->userId, $_SERVER['HTTP_USER_AGENT'], $this->time_login);
             if ($userSession !== null) {
                 $t = time();
 
@@ -212,7 +327,7 @@ class UserSession extends Session
 
                     if ($this->sittingActive) {
                         if (time() < $this->sittingUntil) {
-                            $activeSitting = $userSittingRepository->getActiveUserEntry($this->user_id);
+                            $activeSitting = $this->userSittingRepository->getActiveUserEntry($this->userId);
                             if ($activeSitting !== null) {
                                 $allows = true;
                             }
@@ -221,7 +336,7 @@ class UserSession extends Session
                         $allows = true;
                     if ($allows) {
                         if (!$bot) {
-                            $userSessionRepository->update(session_id(), $t, $this->bot_count, $this->last_span, $_SERVER['REMOTE_ADDR']);
+                            $this->userSessionRepository->update(session_id(), $t, $this->bot_count, $this->last_span, $_SERVER['REMOTE_ADDR']);
 
                             $this->time_action = $t;
                             return true;
@@ -245,7 +360,7 @@ class UserSession extends Session
             $this->cLogin = false;
 
             // destroy user session
-            $sessionManager->unregisterSession();
+            $this->sessionManager->unregisterSession();
         }
         return false;
     }
@@ -254,47 +369,34 @@ class UserSession extends Session
      * only for session validation in chat, do not use
      * for real validation
      */
-    function chatValidate()
+    function chatValidate(): bool
     {
         if (
-            $this->cLogin == true &&
+            $this->cLogin &&
             $this->cRemoteAddr == $_SERVER['REMOTE_ADDR'] &&
             $this->cUserAgent == $_SERVER['HTTP_USER_AGENT'] &&
             isset($_SESSION['user_id']) &&
-            $this->user_id > 0 &&
-            $_SESSION['user_id'] == $this->user_id
+            $this->userId > 0 &&
+            $_SESSION['user_id'] == $this->userId
         ) {
             return true;
         }
         return false;
     }
 
-    function registerSession()
+    function registerSession(): void
     {
-        // TODO
-        global $app;
-
-        /** @var UserSessionRepository $userSessionRepository */
-        $userSessionRepository = $app[UserSessionRepository::class];
-
-        $userSessionRepository->remove(session_id());
-        $userSessionRepository->removeForUser($this->user_id);
-
-        $userSessionRepository->add(session_id(), $this->user_id, $_SERVER['REMOTE_ADDR'], $_SERVER['HTTP_USER_AGENT'], $this->time_login);
+        $this->userSessionRepository->remove(session_id());
+        $this->userSessionRepository->removeForUser($this->userId);
+        $this->userSessionRepository->add(session_id(), $this->userId, $_SERVER['REMOTE_ADDR'], $_SERVER['HTTP_USER_AGENT'], $this->time_login);
     }
 
-    function logout()
+    function logout(): void
     {
-        // TODO
-        global $app;
-
-        /** @var UserSessionManager $sessionManager */
-        $sessionManager = $app[UserSessionManager::class];
-
         // chat logout
         $this->cLogin = false;
 
         // destroy session
-        $sessionManager->unregisterSession();
+        $this->sessionManager->unregisterSession();
     }
 }

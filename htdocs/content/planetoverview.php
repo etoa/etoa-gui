@@ -6,6 +6,7 @@ use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Defense\DefenseDataRepository;
 use EtoA\Defense\DefenseRepository;
 use EtoA\Fleet\FleetRepository;
+use EtoA\Legacy\User;
 use EtoA\Ship\ShipDataRepository;
 use EtoA\Ship\ShipRepository;
 use EtoA\Support\BBCodeUtils;
@@ -91,9 +92,7 @@ if (isset($cp)) {
         } else {
             error_msg("Dies ist ein Hauptplanet! Hauptplaneten können nicht aufgegeben werden!");
         }
-    }
-
-    // Kolonie aufheben ausführen
+    } // Kolonie aufheben ausführen
     elseif ($request->request->get('submit_remove', '') != '') {
         if (!$planet->mainPlanet) {
             $threshold = $planet->userChanged + \EtoA\Universe\Planet\Planet::COLONY_DELETE_THRESHOLD;
@@ -153,9 +152,7 @@ if (isset($cp)) {
         } else {
             error_msg("Dies ist bereits dein Hauptplanet!");
         }
-    }
-
-    // Kolonie zum Hauptplaneten machen ausführen
+    } // Kolonie zum Hauptplaneten machen ausführen
     elseif ($request->request->get('submit_change_main', '') != '') {
         if (!$planet->mainPlanet) {
             $threshold = $planet->userChanged + \EtoA\Universe\Planet\Planet::COLONY_DELETE_THRESHOLD;
@@ -546,7 +543,6 @@ if (isset($cp)) {
         tableEnd();
 
         echo "</div>";
-
 
 
         if (!$planet->mainPlanet) {

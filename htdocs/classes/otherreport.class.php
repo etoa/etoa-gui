@@ -5,6 +5,7 @@
  */
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Legacy\User;
 use EtoA\Message\ReportRepository;
 use EtoA\Ship\ShipDataRepository;
 use EtoA\Support\StringUtils;
@@ -118,8 +119,8 @@ class OtherReport extends Report
                         if ($ship != '') {
                             $data = explode(':', $ship);
                             echo '<tr>
-                                    <td>' . $shipNames[(int) $data[0]] . ' </td>
-                                    <td style="text-align:right;"> ' . StringUtils::formatNumber((int) $data[1]) . '</td>
+                                    <td>' . $shipNames[(int)$data[0]] . ' </td>
+                                    <td style="text-align:right;"> ' . StringUtils::formatNumber((int)$data[1]) . '</td>
                                 </tr>';
                         }
                     }
@@ -164,8 +165,8 @@ class OtherReport extends Report
                         if ($ship != '') {
                             $data = explode(':', $ship);
                             echo '<tr>
-                                    <td>' . $shipNames[(int) $data[0]] . ' </td>
-                                    <td style="text-align:right;"> ' . StringUtils::formatNumber((int) $data[1]) . '</td>
+                                    <td>' . $shipNames[(int)$data[0]] . ' </td>
+                                    <td style="text-align:right;"> ' . StringUtils::formatNumber((int)$data[1]) . '</td>
                                 </tr>';
                         }
                     }
@@ -191,8 +192,8 @@ class OtherReport extends Report
                         if ($ship != '') {
                             $data = explode(':', $ship);
                             echo '<tr>
-                                    <td>' . $shipNames[(int) $data[0]] . ' </td>
-                                    <td style="text-align:right;"> ' . StringUtils::formatNumber((int) $data[1]) . '</td>
+                                    <td>' . $shipNames[(int)$data[0]] . ' </td>
+                                    <td style="text-align:right;"> ' . StringUtils::formatNumber((int)$data[1]) . '</td>
                                 </tr>';
                         }
                     }
@@ -216,8 +217,8 @@ class OtherReport extends Report
                         if ($ship != '') {
                             $data = explode(':', $ship);
                             echo '<tr>
-                                    <td>' . $shipNames[(int) $data[0]] . ' </td>
-                                    <td style="text-align:right;"> ' . StringUtils::formatNumber((int) $data[1]) . '</td>
+                                    <td>' . $shipNames[(int)$data[0]] . ' </td>
+                                    <td style="text-align:right;"> ' . StringUtils::formatNumber((int)$data[1]) . '</td>
                                 </tr>';
                         }
                     }
@@ -277,8 +278,8 @@ class OtherReport extends Report
                         if ($ship != '') {
                             $data = explode(':', $ship);
                             echo '<tr>
-                                    <td>' . $shipNames[(int) $data[0]] . ' </td>
-                                    <td style="text-align:right;"> ' . StringUtils::formatNumber((int) $data[1]) . '</td>
+                                    <td>' . $shipNames[(int)$data[0]] . ' </td>
+                                    <td style="text-align:right;"> ' . StringUtils::formatNumber((int)$data[1]) . '</td>
                                 </tr>';
                         }
                     }
@@ -303,8 +304,8 @@ class OtherReport extends Report
                         if ($ship != '') {
                             $data = explode(':', $ship);
                             echo '<tr>
-                                    <td>' . $shipNames[(int) $data[0]] . ' </td>
-                                    <td style="text-align:right;"> ' . StringUtils::formatNumber((int) $data[1]) . '</td>
+                                    <td>' . $shipNames[(int)$data[0]] . ' </td>
+                                    <td style="text-align:right;"> ' . StringUtils::formatNumber((int)$data[1]) . '</td>
                                 </tr>';
                         }
                     }
@@ -348,8 +349,8 @@ class OtherReport extends Report
                         if ($ship != '') {
                             $data = explode(':', $ship);
                             echo '<tr>
-                                    <td>' . $shipNames[(int) $data[0]] . ' </td>
-                                    <td style="text-align:right;"> ' . StringUtils::formatNumber((int) $data[1]) . '</td>
+                                    <td>' . $shipNames[(int)$data[0]] . ' </td>
+                                    <td style="text-align:right;"> ' . StringUtils::formatNumber((int)$data[1]) . '</td>
                                 </tr>';
                         }
                     }

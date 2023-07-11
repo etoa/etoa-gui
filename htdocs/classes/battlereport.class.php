@@ -3,6 +3,7 @@
 use EtoA\Building\BuildingDataRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Defense\DefenseDataRepository;
+use EtoA\Legacy\User;
 use EtoA\Message\ReportRepository;
 use EtoA\Ship\ShipDataRepository;
 use EtoA\Support\StringUtils;
@@ -118,7 +119,7 @@ class BattleReport extends Report
         switch ($this->subType) {
             case 'battle':
                 $users = array_map(function (string $userId): int {
-                    return (int) $userId;
+                    return (int)$userId;
                 }, explode(',', $this->user));
                 $subject = "Kampfbericht (";
                 switch ($this->result) {
@@ -169,7 +170,7 @@ class BattleReport extends Report
                 /** @var BuildingDataRepository $buildingRepository */
                 $buildingRepository = $app[BuildingDataRepository::class];
                 $buildingNames = $buildingRepository->getBuildingNames(true);
-                $building = $buildingNames[(int) $data[0]];
+                $building = $buildingNames[(int)$data[0]];
                 echo 'Eine Flotte vom Planeten ' . $ent2->detailLink() . ' hat das Gebäude ' . $building . ' des Planeten ' . $ent1->detailLink() . ' von Stufe ' . $data[2] . ' auf Stufe ' . $data[1] . ' zur&uuml;ck gesetzt.';
                 break;
             case 'bombardfailed':
@@ -180,7 +181,7 @@ class BattleReport extends Report
                 /** @var BuildingDataRepository $buildingRepository */
                 $buildingRepository = $app[BuildingDataRepository::class];
                 $buildingNames = $buildingRepository->getBuildingNames(true);
-                $building = $buildingNames[(int) $data[0]];
+                $building = $buildingNames[(int)$data[0]];
                 echo 'Eine Flotte vom Planeten ' . $ent2->detailLink() . ' hat das Gebäude ' . $building . ' des Planeten ' . $ent1->detailLink() . ' für ' . $data[1] . ' h deaktiviert.';
                 break;
             case 'empfailed':
@@ -208,8 +209,8 @@ class BattleReport extends Report
                         if ($ship != '') {
                             $data = explode(':', $ship);
                             echo '<tr>
-                                    <td>' . $shipNames[(int) $data[0]] . ' </td>
-                                    <td style="text-align:right;"> ' . StringUtils::formatNumber((int) $data[1]) . '</td>
+                                    <td>' . $shipNames[(int)$data[0]] . ' </td>
+                                    <td style="text-align:right;"> ' . StringUtils::formatNumber((int)$data[1]) . '</td>
                                 </tr>';
                         }
                     }
@@ -250,7 +251,7 @@ class BattleReport extends Report
                 $technologyRepository = $app[TechnologyDataRepository::class];
                 $techNames = $technologyRepository->getTechnologyNames(true);
                 $data = explode(':', $this->content);
-                $tech = $techNames[(int) $data[0]];
+                $tech = $techNames[(int)$data[0]];
                 echo 'Eine Flotte vom Planeten ' . $ent2->detailLink() . ' hat erfolgreich einen Spionageangriff durchgeführt und erfuhr so die Geheimnisse der Forschung ' . $tech . ' bis zum Level ' . $data[1] . '.';
                 break;
             case 'spyattackfailed':
@@ -276,7 +277,7 @@ class BattleReport extends Report
                         }
                     }
                 }
-                echo        '</td>
+                echo '</td>
                             <td>
                                 <strong>Verteidiger:</strong> ';
                 if ($this->entityUser != '') {
@@ -291,7 +292,7 @@ class BattleReport extends Report
                         }
                     }
                 }
-                echo         '<br /><br /></td>
+                echo '<br /><br /></td>
                         </tr>
                         <tr>
                             <td>
@@ -303,15 +304,15 @@ class BattleReport extends Report
                         if ($ship != '') {
                             $data = explode(':', $ship);
                             echo '<tr>
-                                                    <td>' . $shipNames[(int) $data[0]] . ' </td>
-                                                    <td style="text-align:right;"> ' . StringUtils::formatNumber((int) $data[1]) . '</td>
+                                                    <td>' . $shipNames[(int)$data[0]] . ' </td>
+                                                    <td style="text-align:right;"> ' . StringUtils::formatNumber((int)$data[1]) . '</td>
                                                 </tr>';
                         }
                     }
                     echo '</table>';
                 } else
                     echo '<i>Nichts vorhanden!</i>';
-                echo        '</td>
+                echo '</td>
                             <td>
                                 <strong>VERTEIDIGENDE FLOTTE</strong><br />';
                 if (!($this->entityShips == '' || $this->entityShips == '0')) {
@@ -321,15 +322,15 @@ class BattleReport extends Report
                         if ($ship != '') {
                             $data = explode(':', $ship);
                             echo '<tr>
-                                                    <td>' . $shipNames[(int) $data[0]] . ' </td>
-                                                    <td style="text-align:right;"> ' . StringUtils::formatNumber((int) $data[1]) . '</td>
+                                                    <td>' . $shipNames[(int)$data[0]] . ' </td>
+                                                    <td style="text-align:right;"> ' . StringUtils::formatNumber((int)$data[1]) . '</td>
                                                 </tr>';
                         }
                     }
                     echo '</table>';
                 } else
                     echo '<i>Nichts vorhanden!</i>';
-                echo        '<br /></td>
+                echo '<br /></td>
                         </tr>
                         <tr>
                             <td>
@@ -346,15 +347,15 @@ class BattleReport extends Report
                         if ($defense != '') {
                             $data = explode(':', $defense);
                             echo '<tr>
-                                                    <td>' . $defenseNames[(int) $data[0]] . ' </td>
-                                                    <td style="text-align:right;"> ' . StringUtils::formatNumber((int) $data[1]) . '</td>
+                                                    <td>' . $defenseNames[(int)$data[0]] . ' </td>
+                                                    <td style="text-align:right;"> ' . StringUtils::formatNumber((int)$data[1]) . '</td>
                                                 </tr>';
                         }
                     }
                     echo '</table>';
                 } else
                     echo '<i>Nichts vorhanden!</i>';
-                echo        '<br /></td>
+                echo '<br /></td>
                         </tr>
                         <tr>
                             <td>
@@ -389,8 +390,8 @@ class BattleReport extends Report
                         <tr>
                             <td colspan="2">';
                 $rnd = 1;
-                $shieldStructure = $initShieldStructure = (int) $this->shield + (int) $this->structure;
-                $entityShieldStructure = $entityInitShieldStructure = (int) $this->entityShield + (int) $this->entityStructure;
+                $shieldStructure = $initShieldStructure = (int)$this->shield + (int)$this->structure;
+                $entityShieldStructure = $entityInitShieldStructure = (int)$this->entityShield + (int)$this->entityStructure;
                 for (; $rnd <= 5; $rnd++) {
                     $shieldStructure = max(0, $shieldStructure - $this->entityWeapon[$rnd]);
                     $entityShieldStructure = max(0, $entityShieldStructure - $this->weapon[$rnd]);
@@ -471,15 +472,15 @@ class BattleReport extends Report
                         if ($ship != '') {
                             $data = explode(':', $ship);
                             echo '<tr>
-                                                    <td>' . $shipNames[(int) $data[0]] . ' </td>
-                                                    <td style="text-align:right;"> ' . StringUtils::formatNumber((int) $data[1]) . '</td>
+                                                    <td>' . $shipNames[(int)$data[0]] . ' </td>
+                                                    <td style="text-align:right;"> ' . StringUtils::formatNumber((int)$data[1]) . '</td>
                                                 </tr>';
                         }
                     }
                     echo '</table>';
                 } else
                     echo '<i>Nichts vorhanden!</i>';
-                echo        '</td>
+                echo '</td>
                             <td>
                                 <strong>VERTEIDIGENDE FLOTTE</strong><br />';
                 if (!($this->entityShipsEnd == '' || $this->entityShipsEnd == '0')) {
@@ -489,21 +490,21 @@ class BattleReport extends Report
                         if ($ship != '') {
                             $data = explode(':', $ship);
                             echo '<tr>
-                                                    <td>' . $shipNames[(int) $data[0]] . ' </td>';
+                                                    <td>' . $shipNames[(int)$data[0]] . ' </td>';
                             if ($data[2] > 0) {
-                                echo '<td style="text-align:right;"> ' . StringUtils::formatNumber((int) $data[1]) . '</td>';
-                                echo '<td>(+' . StringUtils::formatNumber((int) $data[2]) . ')</td>';
+                                echo '<td style="text-align:right;"> ' . StringUtils::formatNumber((int)$data[1]) . '</td>';
+                                echo '<td>(+' . StringUtils::formatNumber((int)$data[2]) . ')</td>';
                             } else {
-                                echo '<td style="text-align:right;"> ' . StringUtils::formatNumber((int) $data[1]) . '</td>';
+                                echo '<td style="text-align:right;"> ' . StringUtils::formatNumber((int)$data[1]) . '</td>';
                             }
-                            echo    '</tr>';
+                            echo '</tr>';
                         }
                     }
                     echo '<tr><td colspan="3">' . $this->restoreCivilShips . '% der zivilen Schiffe werden wiederhergestellt!</td></tr>';
                     echo '</table>';
                 } else
                     echo '<i>Nichts vorhanden!</i>';
-                echo        '<br /></td>
+                echo '<br /></td>
                         </tr>';
                 if ($this->exp >= 0 || $this->entityExp >= 0) {
                     echo '<tr>
@@ -531,21 +532,21 @@ class BattleReport extends Report
                         if ($defense != '') {
                             $data = explode(':', $defense);
                             echo '<tr>
-                                                    <td>' . $defenseNames[(int) $data[0]] . ' </td>';
+                                                    <td>' . $defenseNames[(int)$data[0]] . ' </td>';
                             if ($data[2] > 0) {
-                                echo '<td style="text-align:right;"> ' . StringUtils::formatNumber((int) $data[1]) . '</td>';
-                                echo '<td>(+' . StringUtils::formatNumber((int) $data[2]) . ')</td>';
+                                echo '<td style="text-align:right;"> ' . StringUtils::formatNumber((int)$data[1]) . '</td>';
+                                echo '<td>(+' . StringUtils::formatNumber((int)$data[2]) . ')</td>';
                             } else {
-                                echo '<td style="text-align:right;"> ' . StringUtils::formatNumber((int) $data[1]) . '</td>';
+                                echo '<td style="text-align:right;"> ' . StringUtils::formatNumber((int)$data[1]) . '</td>';
                             }
-                            echo    '</tr>';
+                            echo '</tr>';
                         }
                     }
                     echo '<tr><td colspan="3">' . $this->restore . '% der Verteidigungsanlagen werden repariert!</td></tr>';
                     echo '</table>';
                 } else
                     echo '<i>Nichts vorhanden!</i>';
-                echo        '<br /></td>
+                echo '<br /></td>
                         </tr>
                     </table>';
                 break;
@@ -569,7 +570,7 @@ class BattleReport extends Report
                         }
                     }
                 }
-                echo        '</td>
+                echo '</td>
                         <td>
                             <strong>Verteidiger:</strong> ';
                 if ($this->entityUser != '') {
@@ -584,7 +585,7 @@ class BattleReport extends Report
                         }
                     }
                 }
-                echo         '<br /><br /></td>
+                echo '<br /><br /></td>
                     </tr>
                 </table>';
                 echo 'Der Kampf wurde abgebrochen da Angreifer und Verteidiger demselben Imperium angeh&ouml;ren oder der Verteidiger nicht mehr existiert!';
@@ -609,7 +610,7 @@ class BattleReport extends Report
                         }
                     }
                 }
-                echo        '</td>
+                echo '</td>
                         <td>
                             <strong>Verteidiger:</strong> ';
                 if ($this->entityUser != '') {
@@ -624,7 +625,7 @@ class BattleReport extends Report
                         }
                     }
                 }
-                echo         '<br /><br /></td>
+                echo '<br /><br /></td>
                     </tr>
                 </table>';
                 echo 'Der Kampf wurde abgebrochen, da momentan gerade eine Kampfsperre aktiv ist!';

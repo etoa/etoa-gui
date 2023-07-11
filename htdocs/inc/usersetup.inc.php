@@ -2,6 +2,7 @@
 
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\DefaultItem\DefaultItemRepository;
+use EtoA\Legacy\UserSession;
 use EtoA\Message\MessageCategoryId;
 use EtoA\Race\RaceDataRepository;
 use EtoA\Support\BBCodeUtils;
@@ -35,7 +36,7 @@ $planetRepo = $app[PlanetRepository::class];
 /** @var PlanetService $planetService */
 $planetService = $app[PlanetService::class];
 
-/** @var SolarTypeRepository  $solarTypeRepository */
+/** @var SolarTypeRepository $solarTypeRepository */
 $solarTypeRepository = $app[SolarTypeRepository::class];
 
 /** @var PlanetTypeRepository $planetTypeRepository */
@@ -157,7 +158,7 @@ if ($mode == "itemsets" && isset($planet)) {
     foreach ($sets as $set) {
         echo "<option value=\"" . $set->id . "\">" . $set->name . "</option>";
     }
-    echo "</select> <input type=\"submit\" value=\"Weiter\" name=\"" . md5((string) $k) . "\" /></form>";
+    echo "</select> <input type=\"submit\" value=\"Weiter\" name=\"" . md5((string)$k) . "\" /></form>";
     iBoxEnd();
 } elseif ($mode == "checkplanet" && isset($pid)) {
     echo "<form action=\"?\" method=\"post\">";

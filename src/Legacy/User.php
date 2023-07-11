@@ -1,10 +1,13 @@
 <?PHP
 
+namespace EtoA\Legacy;
+
+use EException;
 use EtoA\Alliance\AllianceDiplomacyRepository;
-use EtoA\Support\Mail\MailSenderService;
 use EtoA\User\UserRepository;
 use EtoA\User\UserSessionRepository;
 use EtoA\User\UserSessionSearch;
+use Planet;
 
 /**
  * Provides methods for accessing user information
@@ -259,7 +262,7 @@ class User implements \EtoA\User\UserInterface
 
     final public function allianceId(): int
     {
-        return (int) $this->allianceId;
+        return (int)$this->allianceId;
     }
 
     public function isInactiv()

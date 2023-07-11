@@ -19,16 +19,17 @@ class ResourceBoxDrawer
     private UserPropertiesRepository $userPropertiesRepository;
 
     public function __construct(
-        ConfigurationService $config,
+        ConfigurationService     $config,
         UserPropertiesRepository $userPropertiesRepository
-    ) {
+    )
+    {
         $this->config = $config;
         $this->userPropertiesRepository = $userPropertiesRepository;
     }
 
     public function getHTML(Planet $planet): string
     {
-        $userId = (int) \UserSession::getInstance($this->config)->user_id;
+        $userId = (int)\EtoA\Legacy\UserSession::getInstance($this->config)->user_id;
         $properties = $this->userPropertiesRepository->getOrCreateProperties($userId);
 
         return $properties->smallResBox ? $this->getHTMLSmall($planet) : $this->getHTMLNormal($planet);

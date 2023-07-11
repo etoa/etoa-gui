@@ -1,6 +1,5 @@
 <?PHP
 
-use Doctrine\Common\Collections\ArrayCollection;
 use EtoA\Admin\AllianceBoardAvatar;
 use EtoA\Core\AppName;
 use EtoA\Core\Configuration\ConfigurationService;
@@ -57,15 +56,14 @@ function get_user_nick($id)
 /**
  * Format number (round up)
  */
-function nf_up($number,$colorize=0)	// Number format
+function nf_up($number, $colorize = 0)    // Number format
 {
-    $n = number_format(ceil($number),0,",","`");
-    if ($colorize==1)
-    {
-        if ($number>0)
-            return "<span style=\"color:#0f0\">".$n."</span>";
-        if ($number<0)
-            return "<span style=\"color:#f00\">".$n."</span>";
+    $n = number_format(ceil($number), 0, ",", "`");
+    if ($colorize == 1) {
+        if ($number > 0)
+            return "<span style=\"color:#0f0\">" . $n . "</span>";
+        if ($number < 0)
+            return "<span style=\"color:#f00\">" . $n . "</span>";
     }
     return $n;
 }
@@ -94,7 +92,7 @@ function checkValidNick($name)
     return preg_match(\EtoA\User\User::NICK_PATTERN, $name);
 }
 
-function tableStart($title = "", $width = 0, $layout = "", $id = "", $class="")
+function tableStart($title = "", $width = 0, $layout = "", $id = "", $class = "")
 {
     if (is_numeric($width) && $width > 0) {
         $w = "width:" . $width . "px;";
@@ -340,9 +338,9 @@ function parseDesignInfoFile($file)
  * Gibt Anzahl feindliche Flotten zurück unter beachtung von Tarn- und Spionagetechnik
  * Sind keine Flotten unterwegs -> return 0
  *
- * @author MrCage
  * @param int $user_id User ID
  *
+ * @author MrCage
  */
 function check_fleet_incomming($user_id): int
 {
@@ -462,7 +460,7 @@ function timerStart()
 {
     // Renderzeit-Start festlegen
     $render_time = explode(" ", microtime());
-    return (float) $render_time[1] + (float)$render_time[0];
+    return (float)$render_time[1] + (float)$render_time[0];
 }
 
 /**
@@ -472,7 +470,7 @@ function timerStop($starttime)
 {
     // Renderzeit
     $render_time = explode(" ", microtime());
-    $rtime = (float) $render_time[1] + (float) $render_time[0] - $starttime;
+    $rtime = (float)$render_time[1] + (float)$render_time[0] - $starttime;
     return round($rtime, 3);
 }
 
@@ -586,7 +584,7 @@ function validatePasswort($input, $passwordAndSalt)
  */
 function generateSalt()
 {
-    return sha1(uniqid((string) mt_rand(), true));
+    return sha1(uniqid((string)mt_rand(), true));
 }
 
 /**
@@ -594,7 +592,7 @@ function generateSalt()
  */
 function generatePasswort()
 {
-    return substr(sha1((string) mt_rand()), 0, 8);
+    return substr(sha1((string)mt_rand()), 0, 8);
 }
 
 /**
@@ -641,38 +639,38 @@ function intpow($base, $exponent)
 
 function countDown($elem, $targettime, $elementToSetEmpty = "")
 {
-?>
+    ?>
     <script type="text/javascript">
         if (document.getElementById('<?PHP echo $elem; ?>') != null) {
             cnt["<?PHP echo $elem; ?>"] = 0;
             setCountdown('<?PHP echo $elem; ?>', <?PHP echo time(); ?>, <?PHP echo $targettime; ?>, '<?PHP echo $elementToSetEmpty; ?>');
         }
     </script>
-<?PHP
+    <?PHP
 }
 
 function jsProgressBar($elem, $startTime, $endTime)
 {
-?>
+    ?>
     <script>
-        $(function() {
+        $(function () {
             updateProgressBar('#<?PHP echo $elem; ?>', <?PHP echo floor($startTime); ?>, <?PHP echo ceil($endTime); ?>, <?PHP echo time(); ?>);
         });
     </script>
-<?PHP
+    <?PHP
 }
 
 function jsSlider($elem, $value = 100, $target = '"#value"')
 {
-?>
+    ?>
     <script type="text/javascript">
-        $(function() {
+        $(function () {
             $("#slider").slider({
                 value: <?PHP echo $value ?>,
                 min: 1,
                 max: 100,
                 step: 1,
-                slide: function(event, ui) {
+                slide: function (event, ui) {
                     $(<?PHP echo $target; ?>).val(ui.value + ' %');
                 }
             });
@@ -680,7 +678,7 @@ function jsSlider($elem, $value = 100, $target = '"#value"')
         });
     </script>
 
-<?PHP
+    <?PHP
 }
 
 /**
@@ -726,7 +724,7 @@ function userPopUp($userId, $userNick, $msg = 1, $strong = 0)
         " . popUp("Punkteverlauf", "page=stats&mode=user&userdetail=" . $userId) . "<br/>";
         if ($userId != $_SESSION['user_id']) {
             if ($msg == 1)
-                $out .=  "<a href=\"?page=messages&mode=new&message_user_to=" . $userId . "\">Nachricht senden</a><br/>";
+                $out .= "<a href=\"?page=messages&mode=new&message_user_to=" . $userId . "\">Nachricht senden</a><br/>";
             $out .= "<a href=\"?page=buddylist&add_id=" . $userId . "\">Als Freund hinzufügen</a>";
         }
         $out .= "</div>";
@@ -822,7 +820,7 @@ function logAccess($target, $domain = "", $sub = "")
 
     if ($config->getBoolean('accesslog')) {
         if (!isset($_SESSION['accesslog_sid'])) {
-            $_SESSION['accesslog_sid'] = uniqid((string) mt_rand(), true);
+            $_SESSION['accesslog_sid'] = uniqid((string)mt_rand(), true);
         }
 
         $accessLogRepository->add($target, $_SESSION['accesslog_sid'], $sub ?? '', $domain);
@@ -863,34 +861,6 @@ function fetchJsonConfig($file)
     return $data;
 }
 
-function getLoginUrl($args = array())
-{
-    // TODO
-    global $app;
-
-    /** @var ConfigurationService $config */
-    $config = $app[ConfigurationService::class];
-
-    $url = $config->get('loginurl');
-    if (!$url) {
-        $url = "/show/?index=login";
-        if (sizeof($args) > 0 && isset($args['page'])) {
-            unset($args['page']);
-        }
-    }
-    if (count($args) > 0) {
-        foreach ($args as $k => $v) {
-            if (!stristr($url, '?')) {
-                $url .= "?";
-            } else {
-                $url .= "&";
-            }
-            $url .= $k . "=" . $v;
-        }
-    }
-    return $url;
-}
-
 /**
  * Returns true if the debug mode is enabled
  * by checking the existence of the file config/debug
@@ -924,7 +894,7 @@ function isWindowsOS(): bool
 function unix_command_exists(string $cmd): bool
 {
     if (isUnixOS()) {
-        return (bool) shell_exec("which $cmd 2>/dev/null");
+        return (bool)shell_exec("which $cmd 2>/dev/null");
     }
     return false;
 }
@@ -938,7 +908,7 @@ if (!function_exists('blank')) {
     /**
      * Determine if the given value is "blank".
      *
-     * @param  mixed  $value
+     * @param mixed $value
      * @return bool
      * @see https://github.com/illuminate/support/blob/master/helpers.php
      */
@@ -968,7 +938,7 @@ if (!function_exists('filled')) {
     /**
      * Determine if a value is "filled".
      *
-     * @param  mixed  $value
+     * @param mixed $value
      * @return bool
      * @see https://github.com/illuminate/support/blob/master/helpers.php
      */
@@ -989,15 +959,22 @@ function flatten(array $array): array
 
 function intOrNull(?string $value): ?int
 {
-    return $value !== null ? (int) $value : null;
+    return $value !== null ? (int)$value : null;
 }
 
-	/**
-	 * Remove BBCode
-	 */
-	function stripBBCode($text_to_search)
-	{
-		$pattern = '|[[\\/\\!]*?[^\\[\\]]*?]|si';
-		$replace = '';
-		return preg_replace($pattern, $replace, $text_to_search);
-	}
+/**
+ * Remove BBCode
+ */
+function stripBBCode($text_to_search)
+{
+    $pattern = '|[[\\/\\!]*?[^\\[\\]]*?]|si';
+    $replace = '';
+    return preg_replace($pattern, $replace, $text_to_search);
+}
+
+if (!function_exists('get_magic_quotes_gpc')) {
+    function get_magic_quotes_gpc()
+    {
+        return false;
+    }
+}

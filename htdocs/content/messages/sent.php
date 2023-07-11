@@ -1,5 +1,6 @@
 <?php
 
+use EtoA\Legacy\User;
 use EtoA\Message\MessageRepository;
 use EtoA\Support\BBCodeUtils;
 use EtoA\User\UserRepository;
@@ -21,11 +22,12 @@ if ($request->query->getInt('msg_id') > 0) {
 }
 
 function viewSentMessage(
-    User $cu,
+    User              $cu,
     MessageRepository $messageRepository,
-    UserRepository $userRepository,
-    int $id
-): void {
+    UserRepository    $userRepository,
+    int               $id
+): void
+{
     $messages = $messageRepository->findBy([
         'id' => $id,
         'user_from_id' => $cu->id,
@@ -52,10 +54,11 @@ function viewSentMessage(
 }
 
 function listSentMessages(
-    User $cu,
+    User              $cu,
     MessageRepository $messageRepository,
-    UserRepository $userRepository
-): void {
+    UserRepository    $userRepository
+): void
+{
     global $page;
     global $mode;
 

@@ -8,8 +8,8 @@
     "ext-ctype": "*",
     "ext-gd": "*",
     "ext-iconv": "*",
-    "ext-xmlreader": "*",
     "ext-simplexml": "*",
+    "ext-xmlreader": "*",
     "ext-zip": "*",
     "doctrine/doctrine-bundle": "^2.10",
     "doctrine/doctrine-migrations-bundle": "^3.2",
@@ -55,7 +55,8 @@
     "twig/extra-bundle": "^2.12|^3.0",
     "twig/string-extra": "^3.6",
     "twig/twig": "^2.12|^3.0",
-    "whichbrowser/parser": "^2.1"
+    "whichbrowser/parser": "^2.1",
+    "xajax/xajax": "dev-master"
   },
   "config": {
     "allow-plugins": {

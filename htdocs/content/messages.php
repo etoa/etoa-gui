@@ -1,6 +1,7 @@
 <?php
 
 use EtoA\Core\Configuration\ConfigurationService;
+use EtoA\Legacy\User;
 use EtoA\Message\MessageCategory;
 use EtoA\Message\MessageCategoryRepository;
 use EtoA\Message\MessageRepository;
@@ -33,25 +34,25 @@ $mode = $request->query->get('mode', '') != '' && ctype_alpha($request->query->g
     : 'inbox';
 
 ?>
-<script type="text/javascript">
-    function selectNewMessages() {
-        if (document.getElementById("select_new_messages").innerHTML == "Nur neue Nachrichten anzeigen") {
-            document.getElementById("select_new_messages").innerHTML = "Alle Nachrichten anzeigen";
+    <script type="text/javascript">
+        function selectNewMessages() {
+            if (document.getElementById("select_new_messages").innerHTML == "Nur neue Nachrichten anzeigen") {
+                document.getElementById("select_new_messages").innerHTML = "Alle Nachrichten anzeigen";
 
-            // Geht jede einzelne Nachricht durch
-            for (x = 0; x <= document.getElementById("msg_cnt").value; x++) {
-                document.getElementById('msg_id_' + x).style.display = 'none';
-            }
-        } else {
-            document.getElementById("select_new_messages").innerHTML = "Nur neue Nachrichten anzeigen";
+                // Geht jede einzelne Nachricht durch
+                for (x = 0; x <= document.getElementById("msg_cnt").value; x++) {
+                    document.getElementById('msg_id_' + x).style.display = 'none';
+                }
+            } else {
+                document.getElementById("select_new_messages").innerHTML = "Nur neue Nachrichten anzeigen";
 
-            // Geht jede einzelne Nachricht durch
-            for (x = 0; x <= document.getElementById("msg_cnt").value; x++) {
-                document.getElementById('msg_id_' + x).style.display = '';
+                // Geht jede einzelne Nachricht durch
+                for (x = 0; x <= document.getElementById("msg_cnt").value; x++) {
+                    document.getElementById('msg_id_' + x).style.display = '';
+                }
             }
         }
-    }
-</script>
+    </script>
 <?php
 
 echo '<h1>Nachrichten</h1>';
@@ -84,13 +85,14 @@ if ($mode == "new") {
 }
 
 function viewSingleMessage(
-    Request $request,
-    MessageRepository $messageRepository,
+    Request                   $request,
+    MessageRepository         $messageRepository,
     MessageCategoryRepository $messageCategoryRepository,
-    UserRepository $userRepository,
-    User $cu,
-    UserPropertiesRepository $userPropertiesRepository
-): void {
+    UserRepository            $userRepository,
+    User                      $cu,
+    UserPropertiesRepository  $userPropertiesRepository
+): void
+{
     global $page;
     global $mode;
 
@@ -171,14 +173,15 @@ function viewSingleMessage(
 }
 
 function listMessagesOverview(
-    Request $request,
-    MessageRepository $messageRepository,
+    Request                   $request,
+    MessageRepository         $messageRepository,
     MessageCategoryRepository $messageCategoryRepository,
-    UserRepository $userRepository,
-    User $cu,
-    UserPropertiesRepository $userPropertiesRepository,
-    ConfigurationService $config
-): void {
+    UserRepository            $userRepository,
+    User                      $cu,
+    UserPropertiesRepository  $userPropertiesRepository,
+    ConfigurationService      $config
+): void
+{
     global $page;
     global $mode;
 
@@ -201,31 +204,27 @@ function listMessagesOverview(
     }
 
     // Selektiere löschen
-    if ($request->request->has('submitdeleteselection')  && checker_verify()) {
+    if ($request->request->has('submitdeleteselection') && checker_verify()) {
         if (count($request->request->all('delmsg')) > 0) {
             foreach (array_keys($request->request->all('delmsg')) as $id) {
-                $messageRepository->setDeleted((int) $id, true, $cu->id, $mode == "archiv");
+                $messageRepository->setDeleted((int)$id, true, $cu->id, $mode == "archiv");
             }
             success_msg("Nachricht(en) wurden gelöscht!");
         }
-    }
-
-    // Alle Nachrichten löschen
+    } // Alle Nachrichten löschen
     elseif ($request->request->has('submitdeleteall') && checker_verify()) {
         $messageRepository->setDeletedForUser($cu->id, true, null, $mode == "archiv");
         success_msg("Alle Nachrichten wurden gelöscht!");
-    }
-
-    // Systemnachrichten löschen
+    } // Systemnachrichten löschen
     elseif ($request->request->has('submitdeletesys') && checker_verify()) {
         $messageRepository->setDeletedForUser($cu->id, true, 0, $mode == "archiv");
         success_msg("Alle Systemnachrichten wurden gelöscht!");
-    } elseif ($request->request->has('submitarchiving')  && checker_verify()) {
+    } elseif ($request->request->has('submitarchiving') && checker_verify()) {
         if (count($request->request->all('delmsg')) > 0) {
             $archiveSpace = $config->param1Int('msg_max_store') - $request->request->getInt('archived_msg_cnt');
             if (count($request->request->all('delmsg')) <= $archiveSpace) {
                 foreach (array_keys($request->request->all('delmsg')) as $id) {
-                    $messageRepository->setArchived((int) $id, true, $cu->id);
+                    $messageRepository->setArchived((int)$id, true, $cu->id);
                 }
                 success_msg("Nachricht(en) wurden archiviert!");
             } else {
@@ -370,7 +369,7 @@ function listMessagesOverview(
                     echo "<tr style=\"display:none;\" id=\"msgtext" . $message->id . "\"><td colspan=\"5\" class=\"tbldata\">";
                     echo BBCodeUtils::toHTML(addslashes($message->text));
                     echo "<br/><br/>";
-                    $msgadd = "&amp;message_text=" . base64_encode((string) $message->id) . "&amp;message_sender=" . base64_encode($sender);
+                    $msgadd = "&amp;message_text=" . base64_encode((string)$message->id) . "&amp;message_sender=" . base64_encode($sender);
                     if (substr($message->subject, 0, 3) == "Fw:") {
                         $subject = base64_encode($message->subject);
                     } else {

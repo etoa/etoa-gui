@@ -2,6 +2,7 @@
 
 use EtoA\Building\BuildingId;
 use EtoA\Building\BuildingRepository;
+use EtoA\Legacy\User;
 use EtoA\Market\MarketAuctionRepository;
 use EtoA\Market\MarketResourceRepository;
 use EtoA\Market\MarketShipRepository;
@@ -46,7 +47,7 @@ if (isset($_POST['ship_cancel'])) {
             $marketLevel = $buildingRepository->getBuildingLevel($cu->getId(), BuildingId::MARKET, $offer->entityId);
             $return_factor = floor((1 - 1 / ($marketLevel + 1)) * 100) / 100;
             $costs = $offer->getCosts();
-            $returnCount = (int) floor($offer->count * $return_factor);
+            $returnCount = (int)floor($offer->count * $return_factor);
             if ($returnCount > 0) {
                 $shipRepository->addShip($offer->shipId, $returnCount, $offer->userId, $offer->entityId);
             }
@@ -304,8 +305,7 @@ else {
             // Gibt Nachricht aus, wenn die Auktion beendet ist, aber noch kein Löschtermin festgelegt ist
             if ($rest_time <= 0) {
                 $rest_time = "Auktion beendet!";
-            }
-            // und sonst Zeit bis zum Ende anzeigen
+            } // und sonst Zeit bis zum Ende anzeigen
             else {
                 $rest_time = StringUtils::formatTimespan($rest_time);
             }

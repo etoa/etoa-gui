@@ -1,5 +1,6 @@
 <?php
 
+use EtoA\Legacy\User;
 use EtoA\Log\LogFacility;
 use EtoA\Log\LogRepository;
 use EtoA\Log\LogSeverity;
@@ -49,7 +50,7 @@ if ($auction !== null && $auction->dateEnd > time()) {
         $sellResources = $auction->getSellResources();
         $currentBuyResources = $auction->getBuyResources();
         foreach (ResourceNames::NAMES as $rk => $rn) {
-            $rate = (float) $runtimeDataStore->get('market_rate_' . $rk, (string) 1);
+            $rate = (float)$runtimeDataStore->get('market_rate_' . $rk, (string)1);
 
             // Errechnet Rohstoffwert vom Angebot
             $sell_price += $sellResources->get($rk) * $rate;

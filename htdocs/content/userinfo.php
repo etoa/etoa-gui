@@ -2,6 +2,7 @@
 
 use EtoA\Alliance\AllianceRankRepository;
 use EtoA\Alliance\AllianceRepository;
+use EtoA\Legacy\User;
 use EtoA\Race\RaceDataRepository;
 use EtoA\Support\BBCodeUtils;
 use EtoA\Support\StringUtils;
@@ -71,7 +72,7 @@ if ($uid > 0) {
                 }
             }
 
-            echo "<a href=\"?page=alliance&amp;id=" . $user->allianceId . "\">" . $alliance->nameWithTag     . "</a></td></tr>";
+            echo "<a href=\"?page=alliance&amp;id=" . $user->allianceId . "\">" . $alliance->nameWithTag . "</a></td></tr>";
         }
         if ($user->visits > 0) {
             echo "<tr><th style=\"width:120px;\">Besucherz&auml;hler:</th><td>" . StringUtils::formatNumber($user->visits) . " Besucher</td></tr>";

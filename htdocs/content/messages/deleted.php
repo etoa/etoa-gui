@@ -1,5 +1,6 @@
 <?PHP
 
+use EtoA\Legacy\User;
 use EtoA\Message\MessageCategoryRepository;
 use EtoA\Message\MessageRepository;
 use EtoA\Support\BBCodeUtils;
@@ -25,11 +26,12 @@ if ($request->query->getInt('msg_id') > 0) {
 }
 
 function viewDeletedMessage(
-    User $cu,
+    User              $cu,
     MessageRepository $messageRepository,
-    UserRepository $userRepository,
-    int $id
-): void {
+    UserRepository    $userRepository,
+    int               $id
+): void
+{
     $messages = $messageRepository->findBy([
         'id' => $id,
         'user_to_id' => $cu->id,
@@ -58,12 +60,13 @@ function viewDeletedMessage(
 }
 
 function listDeletedMessages(
-    Request $request,
-    User $cu,
-    MessageRepository $messageRepository,
+    Request                   $request,
+    User                      $cu,
+    MessageRepository         $messageRepository,
     MessageCategoryRepository $messageCategoryRepository,
-    UserRepository $userRepository
-): void {
+    UserRepository            $userRepository
+): void
+{
     global $page;
     global $mode;
 

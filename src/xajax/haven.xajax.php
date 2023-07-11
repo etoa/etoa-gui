@@ -15,10 +15,9 @@ use EtoA\Ship\ShipDataRepository;
 use EtoA\Ship\ShipRepository;
 use EtoA\Ship\ShipRequirementRepository;
 use EtoA\Ship\ShipSort;
-use EtoA\Support\StringUtils;
 use EtoA\Specialist\SpecialistService;
 use EtoA\Support\BBCodeUtils;
-use EtoA\Technology\TechnologyDataRepository;
+use EtoA\Support\StringUtils;
 use EtoA\Technology\TechnologyRepository;
 use EtoA\Universe\Entity\EntityCoordinates;
 use EtoA\Universe\Entity\EntityRepository;
@@ -583,7 +582,6 @@ function havenShowTarget($form)
             $response->script("xajax_havenTargetInfo(xajax.getFormValues('targetForm'))");
 
 
-
             ob_end_clean();
         } else {
             $response->alert($fleet->error());
@@ -864,8 +862,8 @@ function havenShowWormhole($form)
                 LogFacility::ILLEGALACTION,
                 LogSeverity::INFO,
                 'Der User ' . $_SESSION['user_nick'] . ' versuchte, ein zweites Wurmloch zu &ouml;ffnen' . "\n"
-                    . 'Bereits gesetztes Wurmloch: ' . $fleet->wormholeEntryEntity . ' mit Austrittspunkt ' . $fleet->wormholeExitEntity . "\n"
-                    . 'Zweites Wumloch: ' . $form['man_sx'] . ' / ' . $form['man_sy'] . ' : ' . $form['man_cx'] . ' / ' . $form['man_cy'] . ' : ' . $form['man_p'] . '.'
+                . 'Bereits gesetztes Wurmloch: ' . $fleet->wormholeEntryEntity . ' mit Austrittspunkt ' . $fleet->wormholeExitEntity . "\n"
+                . 'Zweites Wumloch: ' . $form['man_sx'] . ' / ' . $form['man_sy'] . ' : ' . $form['man_cx'] . ' / ' . $form['man_cy'] . ' : ' . $form['man_p'] . '.'
             );
             $response->alert("Wurmloch wurde bereits gesetzt!");
         }
@@ -1127,13 +1125,13 @@ function havenShowLaunch($form)
             $duration *= 3600;    // Convert to seconds
             $duration = ceil($duration);
             $maxTime = 0;
-            if (count($fleet->aFleets) > 0)  {
+            if (count($fleet->aFleets) > 0) {
                 $maxTime = $fleet->aFleets[0]->landTime - time() - $fleet->getTimeLaunchLand() - $fleet->duration1;
             }
 
             //check for alliance+time to join
-            if (($duration < $maxTime) || $form['fleet_action'] != "alliance" || $maxTime < 0)
-                {if ($fid = $fleet->launch()) {
+            if (($duration < $maxTime) || $form['fleet_action'] != "alliance" || $maxTime < 0) {
+                if ($fid = $fleet->launch()) {
                     ob_start();
                     $ac = FleetAction::createFactory($form['fleet_action']);
 
@@ -1150,8 +1148,8 @@ function havenShowLaunch($form)
                         $text = "[b]Angriffsdaten:[/b][table][tr][td]Flottenkennzeichen:[/td][td]" . $fleetOwnerAlliance->tag . "-" . $fid . "[/td][/tr][tr][td]Flottenleader:[/td][td]" . $fleet->owner->nick . "[/td][/tr][tr][td]Zielplanet:[/td][td]" . $fleet->targetEntity . "[/td][/tr][tr][td]Ankunftszeit:[/td][td]" . date("d.m.y, H:i:s", $fleet->landTime) . "[/td][/tr][/table]" . $form['message_text'];
                         foreach ($form['msgUser'] as $uid) {
                             $messageRepository->sendFromUserToUser(
-                                (int) $fleet->ownerId(),
-                                (int) $uid,
+                                (int)$fleet->ownerId(),
+                                (int)$uid,
                                 $subject,
                                 $text,
                                 6,
@@ -1290,7 +1288,7 @@ function havenTargetInfo($form)
 
             echo "<br/>&nbsp;&nbsp; " . $ent . " (" . $ent->entityCodeString() . ", Besitzer: " . $ent->owner() . ")";
             $response->assign('distance', 'innerHTML', StringUtils::formatNumber($fleet->getDistance()) . " AE");
-            $response->assign('duration', 'innerHTML', StringUtils::formatTimespan($fleet->getDuration()) . "");
+            $response->assign('duration', 'innerHTML', StringUtils::formatTimespan($fleet->getDuration()) . "haven.xajax.php");
             $response->assign('speed', 'innerHTML', $speedString);
             $response->assign('costae', 'innerHTML', StringUtils::formatNumber($fleet->getCostsPerHundredAE()) . " t " . ResourceNames::FUEL . "");
             $response->assign('costs', 'innerHTML', StringUtils::formatNumber($fleet->getCosts()) . " t " . ResourceNames::FUEL . "");
@@ -1434,7 +1432,7 @@ function havenBookmark($form)
 
     echo "<br/>&nbsp;&nbsp; " . $ent . " (" . $ent->entityCodeString() . ", Besitzer: " . $ent->owner() . ")";
     $response->assign('distance', 'innerHTML', StringUtils::formatNumber($fleet->getDistance()) . " AE");
-    $response->assign('duration', 'innerHTML', StringUtils::formatTimespan($fleet->getDuration()) . "");
+    $response->assign('duration', 'innerHTML', StringUtils::formatTimespan($fleet->getDuration()) . "haven.xajax.php");
     $response->assign('speed', 'innerHTML', $speedString);
     $response->assign('costae', 'innerHTML', StringUtils::formatNumber($fleet->getCostsPerHundredAE()) . " t " . ResourceNames::FUEL . "");
     $response->assign('costs', 'innerHTML', StringUtils::formatNumber($fleet->getCosts()) . " t " . ResourceNames::FUEL . "");
@@ -1793,7 +1791,7 @@ function havenAllianceAttack($id)
                         $maxTime = $fleetObj->landTime - time() - $fleet->getTimeLaunchLand() - $fleet->duration1 - 120;
 
                         if ($duration < $maxTime) {
-                            $percentageSpeed =  ceil(100 * $duration / $maxTime);
+                            $percentageSpeed = ceil(100 * $duration / $maxTime);
                             $fleet->setSpeedPercent($percentageSpeed);
                             $fleet->setLeader($id);
                             $comment = "Unterstützung des Allianzangriffes mit  Ankunft: " . date("d.m.y, H:i:s", $fleetObj->landTime);
@@ -1812,7 +1810,7 @@ function havenAllianceAttack($id)
     $response->assign('duration_percent', 'innerHTML', ob_get_contents());
     $response->assign('speed', 'innerHTML', StringUtils::formatNumber($fleet->getSpeed()) . " AE/h");
     $response->assign('costae', 'innerHTML', StringUtils::formatNumber($fleet->getCostsPerHundredAE()) . " t " . ResourceNames::FUEL . "");
-    $response->assign('duration', 'innerHTML', StringUtils::formatTimespan($fleet->getDuration()) . "");
+    $response->assign('duration', 'innerHTML', StringUtils::formatTimespan($fleet->getDuration()) . "haven.xajax.php");
     $response->assign('costs', 'innerHTML', StringUtils::formatNumber($fleet->getCosts()) . " t " . ResourceNames::FUEL . "");
     $response->assign('food', 'innerHTML', StringUtils::formatNumber($fleet->getCostsFood()) . " t " . ResourceNames::FOOD . "");
     $response->assign('comment', 'innerHTML', $comment);

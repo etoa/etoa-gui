@@ -22,14 +22,14 @@ class SessionServiceProvider implements ServiceProviderInterface, BootableProvid
             /** @var ConfigurationService */
             $config = $app[ConfigurationService::class];
 
-            $session = \UserSession::getInstance($config);
+            $session = \EtoA\Legacy\UserSession::getInstance($config);
             $currentUser = $this->validateUser($session, $config);
 
             $request->attributes->set('currentUser', $currentUser);
         });
     }
 
-    private function validateUser(\UserSession $session, ConfigurationService $config): \User
+    private function validateUser(\EtoA\Legacy\UserSession $session, ConfigurationService $config): \EtoA\Legacy\User
     {
         if (!$session->validate(0)) {
             throw new AccessDeniedHttpException();
@@ -39,7 +39,7 @@ class SessionServiceProvider implements ServiceProviderInterface, BootableProvid
         if (isset($cu)) {
             $currentUser = $cu;
         } else {
-            $currentUser = new \User(\UserSession::getInstance($config)->user_id);
+            $currentUser = new \EtoA\Legacy\User(\EtoA\Legacy\UserSession::getInstance($config)->user_id);
         }
 
         if (!$currentUser->isValid) {

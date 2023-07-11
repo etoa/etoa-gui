@@ -1,5 +1,9 @@
 <?PHP
 
+namespace EtoA\Legacy;
+
+use Planet;
+
 class PlanetManager
 {
     private $items;

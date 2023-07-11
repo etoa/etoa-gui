@@ -5,6 +5,7 @@
  */
 
 use EtoA\Fleet\FleetRepository;
+use EtoA\Legacy\User;
 use EtoA\Message\ReportRepository;
 use EtoA\Ship\ShipDataRepository;
 use EtoA\Support\StringUtils;

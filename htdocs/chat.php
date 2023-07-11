@@ -4,6 +4,7 @@
 use EtoA\Chat\ChatBanRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Design\Design;
+use EtoA\Legacy\User;
 use EtoA\User\UserPropertiesRepository;
 
 include_once __DIR__ . '/inc/bootstrap.inc.php';
@@ -24,7 +25,7 @@ $properties = null;
 if (isset($_SESSION['user_id'])) {
     $login = true;
 
-    $chatBan = $chatBanRepository->getUserBan((int) $_SESSION['user_id']);
+    $chatBan = $chatBanRepository->getUserBan((int)$_SESSION['user_id']);
     if ($chatBan !== null) {
         $errorMessage = 'Du wurdest vom Chat gebannt!<br/><br/><b>Grund:</b> ' . $chatBan->reason;
     } else {

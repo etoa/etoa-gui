@@ -133,7 +133,7 @@ class QuestServiceProvider extends ServiceProvider implements BootableProviderIn
 
     public function subscribe(Container $app, EventDispatcherInterface $dispatcher): void
     {
-        if ((bool) $app['etoa.quests.enabled']) {
+        if ((bool)$app['etoa.quests.enabled']) {
             parent::subscribe($app, $dispatcher);
 
             $dispatcher->addSubscriber($app[QuestResponseListener::class]);
@@ -144,7 +144,7 @@ class QuestServiceProvider extends ServiceProvider implements BootableProviderIn
     {
         $app->before(function (Request $request, Application $app): void {
             $currentUser = $request->attributes->get('currentUser');
-            if ($currentUser instanceof \User && $currentUser->isSetup() && $app[TutorialUserProgressRepository::class]->hasFinishedTutorial($currentUser->getId())) {
+            if ($currentUser instanceof \EtoA\Legacy\User && $currentUser->isSetup() && $app[TutorialUserProgressRepository::class]->hasFinishedTutorial($currentUser->getId())) {
                 $app['cubicle.quests.initializer']->initialize($currentUser->getId());
             }
         });

@@ -40,8 +40,8 @@ class ParamConverterListener implements EventSubscriberInterface
             $name = $param->getName();
             if (TokenContext::class === $class) {
                 if (!$request->attributes->has('currentUser')) {
-                    $userId = \UserSession::getInstance($this->configurationService)->user_id;
-                    if (!(bool) $userId) {
+                    $userId = \EtoA\Legacy\UserSession::getInstance($this->configurationService)->user_id;
+                    if (!(bool)$userId) {
                         throw new AccessDeniedHttpException();
                     }
 
@@ -50,7 +50,7 @@ class ParamConverterListener implements EventSubscriberInterface
                         throw new AccessDeniedHttpException();
                     }
 
-                    $request->attributes->set('currentUser', new \User($user));
+                    $request->attributes->set('currentUser', new \EtoA\Legacy\User($user));
                 }
 
                 $value = new TokenContext($request->attributes->get('currentUser'));

@@ -1,7 +1,7 @@
 <?PHP
 
-use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Core\ObjectWithImage;
+use EtoA\Legacy\User;
 use EtoA\Support\StringUtils;
 use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Planet\PlanetRepository;
@@ -274,6 +274,7 @@ class Planet extends Entity
     {
         return $this->typeName;
     }
+
     function imagePath($opt = "")
     {
         if ($opt == "b") {
@@ -337,26 +338,32 @@ class Planet extends Entity
     {
         return $this->resMetal;
     }
+
     function resCrystal()
     {
         return $this->resCrystal;
     }
+
     function resPlastic()
     {
         return $this->resPlastic;
     }
+
     function resFuel()
     {
         return $this->resFuel;
     }
+
     function resFood()
     {
         return $this->resFood;
     }
+
     function usePower()
     {
         return $this->usePower;
     }
+
     function people()
     {
         return $this->people;
@@ -366,14 +373,17 @@ class Planet extends Entity
     {
         return $this->owner->points;
     }
+
     function ownerHoliday()
     {
         return $this->owner->holiday;
     }
+
     function ownerLocked()
     {
         return $this->owner->locked;
     }
+
     function ownerAlliance()
     {
         return $this->owner->allianceId;

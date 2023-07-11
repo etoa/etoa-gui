@@ -1,13 +1,14 @@
 <?PHP
 
+use EtoA\Legacy\User;
 use EtoA\Market\MarketAuctionRepository;
 use EtoA\Market\MarketResource;
 use EtoA\Market\MarketResourceRepository as MarketResourceRepositoryAlias;
 use EtoA\Market\MarketShipRepository;
 use EtoA\Ship\ShipDataRepository;
 use EtoA\Ship\ShipId;
-use EtoA\Support\StringUtils;
 use EtoA\Specialist\SpecialistService;
+use EtoA\Support\StringUtils;
 use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Entity\EntityService;
 use EtoA\Universe\Planet\PlanetRepository;
@@ -67,7 +68,7 @@ function marketSearch($form, $order = "distance", $orderDirection = 0)
             $te = Entity::createFactoryById($_SESSION['cpid']);
         }
 
-        $offers = $marketResourceRepository->getBuyableOffers((int) $_SESSION['user_id'], (int) $_SESSION['alliance_id'], $sellFilter, $buyFilter);
+        $offers = $marketResourceRepository->getBuyableOffers((int)$_SESSION['user_id'], (int)$_SESSION['alliance_id'], $sellFilter, $buyFilter);
 
         $nr = count($offers);
         /** @var array<array{offer: MarketResource, sell_total: int, buy_total: int, used_res: int, distance: float, duration: float}> $data */
@@ -120,16 +121,16 @@ function marketSearch($form, $order = "distance", $orderDirection = 0)
                 $sort = [];
                 foreach ($data as $key => $row) {
                     if ($order == "sell")
-                        $sort[$key]  = $row['sell_total'];
+                        $sort[$key] = $row['sell_total'];
                     elseif ($order == "buy")
-                        $sort[$key]  = $row['buy_total'];
+                        $sort[$key] = $row['buy_total'];
                     else
-                        $sort[$key]  = $row['distance'];
+                        $sort[$key] = $row['distance'];
                 }
                 array_multisort($sort, $sortOrder, $data);
             }
 
-            $carr = $marketResourceRepository->countBuyableOffers((int) $_SESSION['user_id'], (int) $_SESSION['alliance_id']);
+            $carr = $marketResourceRepository->countBuyableOffers((int)$_SESSION['user_id'], (int)$_SESSION['alliance_id']);
             echo "<form action=\"?page=market&amp;mode=ressource\" method=\"post\" id=\"ress_buy_selector\">\n";
             checker_init();
             tableStart();
@@ -240,7 +241,7 @@ function marketSearch($form, $order = "distance", $orderDirection = 0)
 
         /** @var MarketShipRepository $marketShipRepository */
         $marketShipRepository = $app[MarketShipRepository::class];
-        $offers = $marketShipRepository->getBuyableOffers((int) $_SESSION['user_id'], (int) $_SESSION['alliance_id']);
+        $offers = $marketShipRepository->getBuyableOffers((int)$_SESSION['user_id'], (int)$_SESSION['alliance_id']);
         $cnt = 0;
         if (count($offers) > 0) {
             /** @var ShipDataRepository $shipRepository */
@@ -333,7 +334,6 @@ function marketSearch($form, $order = "distance", $orderDirection = 0)
     // </editor-fold>
 
 
-
     // Auctions
     // <editor-fold>
     elseif ($form['search_cat'] == "auctions") {
@@ -347,7 +347,7 @@ function marketSearch($form, $order = "distance", $orderDirection = 0)
 
         /** @var MarketAuctionRepository $marketAuctionRepository */
         $marketAuctionRepository = $app[MarketAuctionRepository::class];
-        $auctions = $marketAuctionRepository->getBuyableAuctions((int) $_SESSION['user_id']);
+        $auctions = $marketAuctionRepository->getBuyableAuctions((int)$_SESSION['user_id']);
 
         if (count($auctions) > 0) {
             tableStart("Offene Auktionen");
@@ -370,8 +370,7 @@ function marketSearch($form, $order = "distance", $orderDirection = 0)
                 // Gibt Nachricht aus, wenn die Auktion beendet ist, aber noch kein Löschtermin festgelegt ist
                 if ($rest_time <= 0) {
                     $rest_time = "Auktion beendet!";
-                }
-                // und sonst Zeit bis zum Ende anzeigen
+                } // und sonst Zeit bis zum Ende anzeigen
                 else {
                     $rest_time = StringUtils::formatTimespan($rest_time);
                 }
@@ -434,7 +433,7 @@ function showAuctionDetail($id)
     $entityService = $app[EntityService::class];
     /** @var MarketAuctionRepository $marketAuctionRepository */
     $marketAuctionRepository = $app[MarketAuctionRepository::class];
-    $auction = $marketAuctionRepository->getNonUserAuction((int) $id, (int) $_SESSION['user_id']);
+    $auction = $marketAuctionRepository->getNonUserAuction((int)$id, (int)$_SESSION['user_id']);
 
     if ($auction !== null) {
         //restliche zeit bis zum ende
@@ -443,8 +442,7 @@ function showAuctionDetail($id)
         // Gibt Nachricht aus, wenn die Auktion beendet ist, aber noch kein Löschtermin festgelegt ist
         if ($rest_time <= 0) {
             $rest_time_str = "Auktion beendet!";
-        }
-        // und sonst Zeit bis zum Ende anzeigen
+        } // und sonst Zeit bis zum Ende anzeigen
         else {
             $rest_time_str = StringUtils::formatTimespan($rest_time);
         }
@@ -452,8 +450,8 @@ function showAuctionDetail($id)
         $seller = new User($auction->userId);
         $bidder = new User($auction->currentBuyerId);
         $sellerEntity = $entityRepository->getEntity($auction->entityId);
-        $ownEntity = $entityRepository->getEntity((int) $_SESSION['cpid']);
-        $planet = $planetRepository->find((int) $_SESSION['cpid']);
+        $ownEntity = $entityRepository->getEntity((int)$_SESSION['cpid']);
+        $planet = $planetRepository->find((int)$_SESSION['cpid']);
 
 
         echo "<form action=\"?page=market&amp;mode=auction\" method=\"post\" name=\"auctionShowFormular\" id=\"auction_show_selector\">";
@@ -486,7 +484,6 @@ function showAuctionDetail($id)
 
         tableStart("Auktionsdetails");
         echo "<tr>";
-
 
 
         echo "
@@ -615,14 +612,14 @@ function calcMarketRessPrice($val, $last_update = 0)
     if ($val['ress_sell_metal'] == 0) {
         // MaxBetrag
         // Errechnet Grundbetrag (Noch ohne Abzüge eingegebenen Preisen)
-        $ress_buy_metal_max =    $val['ress_sell_metal'] / MARKET_METAL_FACTOR * MARKET_METAL_FACTOR * RESS_PRICE_FACTOR_MAX
+        $ress_buy_metal_max = $val['ress_sell_metal'] / MARKET_METAL_FACTOR * MARKET_METAL_FACTOR * RESS_PRICE_FACTOR_MAX
             + $val['ress_sell_crystal'] / MARKET_METAL_FACTOR * MARKET_CRYSTAL_FACTOR * RESS_PRICE_FACTOR_MAX
             + $val['ress_sell_plastic'] / MARKET_METAL_FACTOR * MARKET_PLASTIC_FACTOR * RESS_PRICE_FACTOR_MAX
             + $val['ress_sell_fuel'] / MARKET_METAL_FACTOR * MARKET_FUEL_FACTOR * RESS_PRICE_FACTOR_MAX
             + $val['ress_sell_food'] / MARKET_METAL_FACTOR * MARKET_FOOD_FACTOR * RESS_PRICE_FACTOR_MAX;
         // Errechnet Grundbetrag abzüglich bereits eingebener Preise
-        $ress_buy_metal_max =  $ress_buy_metal_max
-            -    $val['ress_buy_metal'] * MARKET_METAL_FACTOR / MARKET_METAL_FACTOR
+        $ress_buy_metal_max = $ress_buy_metal_max
+            - $val['ress_buy_metal'] * MARKET_METAL_FACTOR / MARKET_METAL_FACTOR
             - $val['ress_buy_crystal'] * MARKET_CRYSTAL_FACTOR / MARKET_METAL_FACTOR
             - $val['ress_buy_plastic'] * MARKET_PLASTIC_FACTOR / MARKET_METAL_FACTOR
             - $val['ress_buy_fuel'] * MARKET_FUEL_FACTOR / MARKET_METAL_FACTOR
@@ -632,14 +629,14 @@ function calcMarketRessPrice($val, $last_update = 0)
 
         // MinBetrag
         // Errechnet Grundbetrag (Noch ohne Abzüge eingegebenen Preisen)
-        $ress_buy_metal_min =    $val['ress_sell_metal'] / MARKET_METAL_FACTOR * MARKET_METAL_FACTOR * RESS_PRICE_FACTOR_MIN
+        $ress_buy_metal_min = $val['ress_sell_metal'] / MARKET_METAL_FACTOR * MARKET_METAL_FACTOR * RESS_PRICE_FACTOR_MIN
             + $val['ress_sell_crystal'] / MARKET_METAL_FACTOR * MARKET_CRYSTAL_FACTOR * RESS_PRICE_FACTOR_MIN
             + $val['ress_sell_plastic'] / MARKET_METAL_FACTOR * MARKET_PLASTIC_FACTOR * RESS_PRICE_FACTOR_MIN
             + $val['ress_sell_fuel'] / MARKET_METAL_FACTOR * MARKET_FUEL_FACTOR * RESS_PRICE_FACTOR_MIN
             + $val['ress_sell_food'] / MARKET_METAL_FACTOR * MARKET_FOOD_FACTOR * RESS_PRICE_FACTOR_MIN;
         // Errechnet Grundbetrag abzüglich bereits eingebener Preise
-        $ress_buy_metal_min =  $ress_buy_metal_min
-            -    $val['ress_buy_metal'] * MARKET_METAL_FACTOR / MARKET_METAL_FACTOR
+        $ress_buy_metal_min = $ress_buy_metal_min
+            - $val['ress_buy_metal'] * MARKET_METAL_FACTOR / MARKET_METAL_FACTOR
             - $val['ress_buy_crystal'] * MARKET_CRYSTAL_FACTOR / MARKET_METAL_FACTOR
             - $val['ress_buy_plastic'] * MARKET_PLASTIC_FACTOR / MARKET_METAL_FACTOR
             - $val['ress_buy_fuel'] * MARKET_FUEL_FACTOR / MARKET_METAL_FACTOR
@@ -674,14 +671,14 @@ function calcMarketRessPrice($val, $last_update = 0)
     if ($val['ress_sell_crystal'] == 0) {
         // MaxBetrag
         // Errechnet Grundbetrag (Noch ohne Abzüge eingegebenen Preisen)
-        $ress_buy_crystal_max =    $val['ress_sell_metal'] / MARKET_CRYSTAL_FACTOR * MARKET_METAL_FACTOR * RESS_PRICE_FACTOR_MAX
+        $ress_buy_crystal_max = $val['ress_sell_metal'] / MARKET_CRYSTAL_FACTOR * MARKET_METAL_FACTOR * RESS_PRICE_FACTOR_MAX
             + $val['ress_sell_crystal'] / MARKET_CRYSTAL_FACTOR * MARKET_CRYSTAL_FACTOR * RESS_PRICE_FACTOR_MAX
             + $val['ress_sell_plastic'] / MARKET_CRYSTAL_FACTOR * MARKET_PLASTIC_FACTOR * RESS_PRICE_FACTOR_MAX
             + $val['ress_sell_fuel'] / MARKET_CRYSTAL_FACTOR * MARKET_FUEL_FACTOR * RESS_PRICE_FACTOR_MAX
             + $val['ress_sell_food'] / MARKET_CRYSTAL_FACTOR * MARKET_FOOD_FACTOR * RESS_PRICE_FACTOR_MAX;
         // Errechnet Grundbetrag abzüglich bereits eingebener Preise
-        $ress_buy_crystal_max =  $ress_buy_crystal_max
-            -    $val['ress_buy_metal'] * MARKET_METAL_FACTOR / MARKET_CRYSTAL_FACTOR
+        $ress_buy_crystal_max = $ress_buy_crystal_max
+            - $val['ress_buy_metal'] * MARKET_METAL_FACTOR / MARKET_CRYSTAL_FACTOR
             - $val['ress_buy_crystal'] * MARKET_CRYSTAL_FACTOR / MARKET_CRYSTAL_FACTOR
             - $val['ress_buy_plastic'] * MARKET_PLASTIC_FACTOR / MARKET_CRYSTAL_FACTOR
             - $val['ress_buy_fuel'] * MARKET_FUEL_FACTOR / MARKET_CRYSTAL_FACTOR
@@ -691,14 +688,14 @@ function calcMarketRessPrice($val, $last_update = 0)
 
         // MinBetrag
         // Errechnet Grundbetrag (Noch ohne Abzüge eingegebenen Preisen)
-        $ress_buy_crystal_min =    $val['ress_sell_metal'] / MARKET_CRYSTAL_FACTOR * MARKET_METAL_FACTOR * RESS_PRICE_FACTOR_MIN
+        $ress_buy_crystal_min = $val['ress_sell_metal'] / MARKET_CRYSTAL_FACTOR * MARKET_METAL_FACTOR * RESS_PRICE_FACTOR_MIN
             + $val['ress_sell_crystal'] / MARKET_CRYSTAL_FACTOR * MARKET_CRYSTAL_FACTOR * RESS_PRICE_FACTOR_MIN
             + $val['ress_sell_plastic'] / MARKET_CRYSTAL_FACTOR * MARKET_PLASTIC_FACTOR * RESS_PRICE_FACTOR_MIN
             + $val['ress_sell_fuel'] / MARKET_CRYSTAL_FACTOR * MARKET_FUEL_FACTOR * RESS_PRICE_FACTOR_MIN
             + $val['ress_sell_food'] / MARKET_CRYSTAL_FACTOR * MARKET_FOOD_FACTOR * RESS_PRICE_FACTOR_MIN;
         // Errechnet Grundbetrag abzüglich bereits eingebener Preise
-        $ress_buy_crystal_min =  $ress_buy_crystal_min
-            -    $val['ress_buy_metal'] * MARKET_METAL_FACTOR / MARKET_CRYSTAL_FACTOR
+        $ress_buy_crystal_min = $ress_buy_crystal_min
+            - $val['ress_buy_metal'] * MARKET_METAL_FACTOR / MARKET_CRYSTAL_FACTOR
             - $val['ress_buy_crystal'] * MARKET_CRYSTAL_FACTOR / MARKET_CRYSTAL_FACTOR
             - $val['ress_buy_plastic'] * MARKET_PLASTIC_FACTOR / MARKET_CRYSTAL_FACTOR
             - $val['ress_buy_fuel'] * MARKET_FUEL_FACTOR / MARKET_CRYSTAL_FACTOR
@@ -727,21 +724,20 @@ function calcMarketRessPrice($val, $last_update = 0)
     }
 
 
-
     //
     // PVC
     //
     if ($val['ress_sell_plastic'] == 0) {
         // MaxBetrag
         // Errechnet Grundbetrag (Noch ohne Abzüge eingegebenen Preisen)
-        $ress_buy_plastic_max =    $val['ress_sell_metal'] / MARKET_PLASTIC_FACTOR * MARKET_METAL_FACTOR * RESS_PRICE_FACTOR_MAX
+        $ress_buy_plastic_max = $val['ress_sell_metal'] / MARKET_PLASTIC_FACTOR * MARKET_METAL_FACTOR * RESS_PRICE_FACTOR_MAX
             + $val['ress_sell_crystal'] / MARKET_PLASTIC_FACTOR * MARKET_CRYSTAL_FACTOR * RESS_PRICE_FACTOR_MAX
             + $val['ress_sell_plastic'] / MARKET_PLASTIC_FACTOR * MARKET_PLASTIC_FACTOR * RESS_PRICE_FACTOR_MAX
             + $val['ress_sell_fuel'] / MARKET_PLASTIC_FACTOR * MARKET_FUEL_FACTOR * RESS_PRICE_FACTOR_MAX
             + $val['ress_sell_food'] / MARKET_PLASTIC_FACTOR * MARKET_FOOD_FACTOR * RESS_PRICE_FACTOR_MAX;
         // Errechnet Grundbetrag abzüglich bereits eingebener Preise
-        $ress_buy_plastic_max =  $ress_buy_plastic_max
-            -    $val['ress_buy_metal'] * MARKET_METAL_FACTOR / MARKET_PLASTIC_FACTOR
+        $ress_buy_plastic_max = $ress_buy_plastic_max
+            - $val['ress_buy_metal'] * MARKET_METAL_FACTOR / MARKET_PLASTIC_FACTOR
             - $val['ress_buy_crystal'] * MARKET_CRYSTAL_FACTOR / MARKET_PLASTIC_FACTOR
             - $val['ress_buy_plastic'] * MARKET_PLASTIC_FACTOR / MARKET_PLASTIC_FACTOR
             - $val['ress_buy_fuel'] * MARKET_FUEL_FACTOR / MARKET_PLASTIC_FACTOR
@@ -751,14 +747,14 @@ function calcMarketRessPrice($val, $last_update = 0)
 
         // MinBetrag
         // Errechnet Grundbetrag (Noch ohne Abzüge eingegebenen Preisen)
-        $ress_buy_plastic_min =    $val['ress_sell_metal'] / MARKET_PLASTIC_FACTOR * MARKET_METAL_FACTOR * RESS_PRICE_FACTOR_MIN
+        $ress_buy_plastic_min = $val['ress_sell_metal'] / MARKET_PLASTIC_FACTOR * MARKET_METAL_FACTOR * RESS_PRICE_FACTOR_MIN
             + $val['ress_sell_crystal'] / MARKET_PLASTIC_FACTOR * MARKET_CRYSTAL_FACTOR * RESS_PRICE_FACTOR_MIN
             + $val['ress_sell_plastic'] / MARKET_PLASTIC_FACTOR * MARKET_PLASTIC_FACTOR * RESS_PRICE_FACTOR_MIN
             + $val['ress_sell_fuel'] / MARKET_PLASTIC_FACTOR * MARKET_FUEL_FACTOR * RESS_PRICE_FACTOR_MIN
             + $val['ress_sell_food'] / MARKET_PLASTIC_FACTOR * MARKET_FOOD_FACTOR * RESS_PRICE_FACTOR_MIN;
         // Errechnet Grundbetrag abzüglich bereits eingebener Preise
-        $ress_buy_plastic_min =  $ress_buy_plastic_min
-            -    $val['ress_buy_metal'] * MARKET_METAL_FACTOR / MARKET_PLASTIC_FACTOR
+        $ress_buy_plastic_min = $ress_buy_plastic_min
+            - $val['ress_buy_metal'] * MARKET_METAL_FACTOR / MARKET_PLASTIC_FACTOR
             - $val['ress_buy_crystal'] * MARKET_CRYSTAL_FACTOR / MARKET_PLASTIC_FACTOR
             - $val['ress_buy_plastic'] * MARKET_PLASTIC_FACTOR / MARKET_PLASTIC_FACTOR
             - $val['ress_buy_fuel'] * MARKET_FUEL_FACTOR / MARKET_PLASTIC_FACTOR
@@ -787,21 +783,20 @@ function calcMarketRessPrice($val, $last_update = 0)
     }
 
 
-
     //
     // Tritium
     //
     if ($val['ress_sell_fuel'] == 0) {
         // MaxBetrag
         // Errechnet Grundbetrag (Noch ohne Abzüge eingegebenen Preisen)
-        $ress_buy_fuel_max =    $val['ress_sell_metal'] / MARKET_FUEL_FACTOR * MARKET_METAL_FACTOR * RESS_PRICE_FACTOR_MAX
+        $ress_buy_fuel_max = $val['ress_sell_metal'] / MARKET_FUEL_FACTOR * MARKET_METAL_FACTOR * RESS_PRICE_FACTOR_MAX
             + $val['ress_sell_crystal'] / MARKET_FUEL_FACTOR * MARKET_CRYSTAL_FACTOR * RESS_PRICE_FACTOR_MAX
             + $val['ress_sell_plastic'] / MARKET_FUEL_FACTOR * MARKET_PLASTIC_FACTOR * RESS_PRICE_FACTOR_MAX
             + $val['ress_sell_fuel'] / MARKET_FUEL_FACTOR * MARKET_FUEL_FACTOR * RESS_PRICE_FACTOR_MAX
             + $val['ress_sell_food'] / MARKET_FUEL_FACTOR * MARKET_FOOD_FACTOR * RESS_PRICE_FACTOR_MAX;
         // Errechnet Grundbetrag abzüglich bereits eingebener Preise
-        $ress_buy_fuel_max =  $ress_buy_fuel_max
-            -    $val['ress_buy_metal'] * MARKET_METAL_FACTOR / MARKET_FUEL_FACTOR
+        $ress_buy_fuel_max = $ress_buy_fuel_max
+            - $val['ress_buy_metal'] * MARKET_METAL_FACTOR / MARKET_FUEL_FACTOR
             - $val['ress_buy_crystal'] * MARKET_CRYSTAL_FACTOR / MARKET_FUEL_FACTOR
             - $val['ress_buy_plastic'] * MARKET_PLASTIC_FACTOR / MARKET_FUEL_FACTOR
             - $val['ress_buy_fuel'] * MARKET_FUEL_FACTOR / MARKET_FUEL_FACTOR
@@ -811,14 +806,14 @@ function calcMarketRessPrice($val, $last_update = 0)
 
         // MinBetrag
         // Errechnet Grundbetrag (Noch ohne Abzüge eingegebenen Preisen)
-        $ress_buy_fuel_min =    $val['ress_sell_metal'] / MARKET_FUEL_FACTOR * MARKET_METAL_FACTOR * RESS_PRICE_FACTOR_MIN
+        $ress_buy_fuel_min = $val['ress_sell_metal'] / MARKET_FUEL_FACTOR * MARKET_METAL_FACTOR * RESS_PRICE_FACTOR_MIN
             + $val['ress_sell_crystal'] / MARKET_FUEL_FACTOR * MARKET_CRYSTAL_FACTOR * RESS_PRICE_FACTOR_MIN
             + $val['ress_sell_plastic'] / MARKET_FUEL_FACTOR * MARKET_PLASTIC_FACTOR * RESS_PRICE_FACTOR_MIN
             + $val['ress_sell_fuel'] / MARKET_FUEL_FACTOR * MARKET_FUEL_FACTOR * RESS_PRICE_FACTOR_MIN
             + $val['ress_sell_food'] / MARKET_FUEL_FACTOR * MARKET_FOOD_FACTOR * RESS_PRICE_FACTOR_MIN;
         // Errechnet Grundbetrag abzüglich bereits eingebener Preise
-        $ress_buy_fuel_min =  $ress_buy_fuel_min
-            -    $val['ress_buy_metal'] * MARKET_METAL_FACTOR / MARKET_FUEL_FACTOR
+        $ress_buy_fuel_min = $ress_buy_fuel_min
+            - $val['ress_buy_metal'] * MARKET_METAL_FACTOR / MARKET_FUEL_FACTOR
             - $val['ress_buy_crystal'] * MARKET_CRYSTAL_FACTOR / MARKET_FUEL_FACTOR
             - $val['ress_buy_plastic'] * MARKET_PLASTIC_FACTOR / MARKET_FUEL_FACTOR
             - $val['ress_buy_fuel'] * MARKET_FUEL_FACTOR / MARKET_FUEL_FACTOR
@@ -847,21 +842,20 @@ function calcMarketRessPrice($val, $last_update = 0)
     }
 
 
-
     //
     // Nahrung
     //
     if ($val['ress_sell_food'] == 0) {
         // MaxBetrag
         // Errechnet Grundbetrag (Noch ohne Abzüge eingegebenen Preisen)
-        $ress_buy_food_max =    $val['ress_sell_metal'] / MARKET_FOOD_FACTOR * MARKET_METAL_FACTOR * RESS_PRICE_FACTOR_MAX
+        $ress_buy_food_max = $val['ress_sell_metal'] / MARKET_FOOD_FACTOR * MARKET_METAL_FACTOR * RESS_PRICE_FACTOR_MAX
             + $val['ress_sell_crystal'] / MARKET_FOOD_FACTOR * MARKET_CRYSTAL_FACTOR * RESS_PRICE_FACTOR_MAX
             + $val['ress_sell_plastic'] / MARKET_FOOD_FACTOR * MARKET_PLASTIC_FACTOR * RESS_PRICE_FACTOR_MAX
             + $val['ress_sell_fuel'] / MARKET_FOOD_FACTOR * MARKET_FUEL_FACTOR * RESS_PRICE_FACTOR_MAX
             + $val['ress_sell_food'] / MARKET_FOOD_FACTOR * MARKET_FOOD_FACTOR * RESS_PRICE_FACTOR_MAX;
         // Errechnet Grundbetrag abzüglich bereits eingebener Preise
-        $ress_buy_food_max =  $ress_buy_food_max
-            -    $val['ress_buy_metal'] * MARKET_METAL_FACTOR / MARKET_FOOD_FACTOR
+        $ress_buy_food_max = $ress_buy_food_max
+            - $val['ress_buy_metal'] * MARKET_METAL_FACTOR / MARKET_FOOD_FACTOR
             - $val['ress_buy_crystal'] * MARKET_CRYSTAL_FACTOR / MARKET_FOOD_FACTOR
             - $val['ress_buy_plastic'] * MARKET_PLASTIC_FACTOR / MARKET_FOOD_FACTOR
             - $val['ress_buy_fuel'] * MARKET_FUEL_FACTOR / MARKET_FOOD_FACTOR
@@ -872,14 +866,14 @@ function calcMarketRessPrice($val, $last_update = 0)
 
         // MinBetrag
         // Errechnet Grundbetrag (Noch ohne Abzüge eingegebenen Preisen)
-        $ress_buy_food_min =    $val['ress_sell_metal'] / MARKET_FOOD_FACTOR * MARKET_METAL_FACTOR * RESS_PRICE_FACTOR_MIN
+        $ress_buy_food_min = $val['ress_sell_metal'] / MARKET_FOOD_FACTOR * MARKET_METAL_FACTOR * RESS_PRICE_FACTOR_MIN
             + $val['ress_sell_crystal'] / MARKET_FOOD_FACTOR * MARKET_CRYSTAL_FACTOR * RESS_PRICE_FACTOR_MIN
             + $val['ress_sell_plastic'] / MARKET_FOOD_FACTOR * MARKET_PLASTIC_FACTOR * RESS_PRICE_FACTOR_MIN
             + $val['ress_sell_fuel'] / MARKET_FOOD_FACTOR * MARKET_FUEL_FACTOR * RESS_PRICE_FACTOR_MIN
             + $val['ress_sell_food'] / MARKET_FOOD_FACTOR * MARKET_FOOD_FACTOR * RESS_PRICE_FACTOR_MIN;
         // Errechnet Grundbetrag abzüglich bereits eingebener Preise
-        $ress_buy_food_min =  $ress_buy_food_min
-            -    $val['ress_buy_metal'] * MARKET_METAL_FACTOR / MARKET_FOOD_FACTOR
+        $ress_buy_food_min = $ress_buy_food_min
+            - $val['ress_buy_metal'] * MARKET_METAL_FACTOR / MARKET_FOOD_FACTOR
             - $val['ress_buy_crystal'] * MARKET_CRYSTAL_FACTOR / MARKET_FOOD_FACTOR
             - $val['ress_buy_plastic'] * MARKET_PLASTIC_FACTOR / MARKET_FOOD_FACTOR
             - $val['ress_buy_fuel'] * MARKET_FUEL_FACTOR / MARKET_FOOD_FACTOR
@@ -924,8 +918,7 @@ function calcMarketRessPrice($val, $last_update = 0)
 
         $objResponse->assign("ressource_sell_submit", "disabled", true);
         $objResponse->assign("ressource_sell_submit", "style.color", '#f00');
-    }
-    // Alle Rohstoffe angegeben (und somit kein Preis festgelegt)
+    } // Alle Rohstoffe angegeben (und somit kein Preis festgelegt)
     elseif (
         $val['ress_sell_metal'] > 0
         && $val['ress_sell_crystal'] > 0
@@ -937,8 +930,7 @@ function calcMarketRessPrice($val, $last_update = 0)
 
         $objResponse->assign("ressource_sell_submit", "disabled", true);
         $objResponse->assign("ressource_sell_submit", "style.color", '#f00');
-    }
-    // Zu hohe Preise
+    } // Zu hohe Preise
     elseif (($log_ress_buy_metal_max ?? 0) < 0
         || ($log_ress_buy_crystal_max ?? 0) < 0
         || ($log_ress_buy_plastic_max ?? 0) < 0
@@ -949,8 +941,7 @@ function calcMarketRessPrice($val, $last_update = 0)
 
         $objResponse->assign("ressource_sell_submit", "disabled", true);
         $objResponse->assign("ressource_sell_submit", "style.color", '#f00');
-    }
-    // Zu niedrige Preise
+    } // Zu niedrige Preise
     elseif (($log_ress_buy_metal_min ?? 0) > 0
         || ($log_ress_buy_crystal_min ?? 0) > 0
         || ($log_ress_buy_plastic_min ?? 0) > 0
@@ -961,8 +952,7 @@ function calcMarketRessPrice($val, $last_update = 0)
 
         $objResponse->assign("ressource_sell_submit", "disabled", true);
         $objResponse->assign("ressource_sell_submit", "style.color", '#f00');
-    }
-    // Zu wenig Rohstoffe auf dem Planeten
+    } // Zu wenig Rohstoffe auf dem Planeten
     elseif (
         $val['ress_sell_metal'] * MARKET_SELL_TAX > $val['res_metal']
         || $val['ress_sell_crystal'] * MARKET_SELL_TAX > $val['res_crystal']
@@ -974,15 +964,13 @@ function calcMarketRessPrice($val, $last_update = 0)
 
         $objResponse->assign("ressource_sell_submit", "disabled", true);
         $objResponse->assign("ressource_sell_submit", "style.color", '#f00');
-    }
-    // Unerlaubte Zeichen im Werbetext
+    } // Unerlaubte Zeichen im Werbetext
     elseif (StringUtils::checkIllegalSigns($val['ressource_text']) != "") {
         $out_check_message = "<div style=\"color:red;font-weight:bold;\">Unerlaubte Zeichen im Werbetext (" . StringUtils::checkIllegalSigns("><$") . ")!</div>";
 
         $objResponse->assign("ressource_sell_submit", "disabled", true);
         $objResponse->assign("ressource_sell_submit", "style.color", '#f00');
-    }
-    // Angebot ist OK
+    } // Angebot ist OK
     else {
         // Rechnet gesamt Verkaufsgebühren
         $sell_tax = $val['ress_sell_metal'] * (MARKET_SELL_TAX - 1)
@@ -1033,9 +1021,6 @@ function calcMarketRessPrice($val, $last_update = 0)
 }
 
 
-
-
-
 /************************************************/
 /* Markt: Rohstoff Kauf Check/Kalkulator        */
 /* Berechnet die Kosten der Angebote beim Kauf  */
@@ -1077,8 +1062,7 @@ function calcMarketRessBuy($val)
 
         $objResponse->assign("ressource_submit", "disabled", true);
         $objResponse->assign("ressource_submit", "style.color", '#f00');
-    }
-    // Prüft, ob genug Rohstoffe vorhanden sind
+    } // Prüft, ob genug Rohstoffe vorhanden sind
     elseif (
         $val['res_metal'] < $ress_metal_total_costs
         || $val['res_crystal'] < $ress_crystal_total_costs
@@ -1090,8 +1074,7 @@ function calcMarketRessBuy($val)
 
         $objResponse->assign("ressource_submit", "disabled", true);
         $objResponse->assign("ressource_submit", "style.color", '#f00');
-    }
-    // Angebot ist OK
+    } // Angebot ist OK
     else {
         $out_ress_buy_check_message = "<div style=\"color:#0f0;font-weight:bold;\">OK!<br>";
         if ($cnt == 1) {
@@ -1106,7 +1089,6 @@ function calcMarketRessBuy($val)
     }
 
 
-
     $objResponse->assign("ressource_check_message", "innerHTML", $out_ress_buy_check_message);
 
 
@@ -1115,8 +1097,6 @@ function calcMarketRessBuy($val)
 
     return $objResponse;
 }
-
-
 
 
 /********************************************/
@@ -1171,7 +1151,6 @@ function calcMarketShipPrice($val, $new_ship = 0, $last_update = 0)
     }
 
 
-
     //
     // Errechnet und formatiert Preise
     //
@@ -1182,14 +1161,14 @@ function calcMarketShipPrice($val, $new_ship = 0, $last_update = 0)
 
     // MaxBetrag
     // Errechnet Grundbetrag (Noch ohne Abzüge eingegebenen Preisen)
-    $ship_buy_metal_max =    $ship_costs_metal_total / MARKET_METAL_FACTOR * MARKET_METAL_FACTOR * SHIP_PRICE_FACTOR_MAX
+    $ship_buy_metal_max = $ship_costs_metal_total / MARKET_METAL_FACTOR * MARKET_METAL_FACTOR * SHIP_PRICE_FACTOR_MAX
         + $ship_costs_crystal_total / MARKET_METAL_FACTOR * MARKET_CRYSTAL_FACTOR * SHIP_PRICE_FACTOR_MAX
         + $ship_costs_plastic_total / MARKET_METAL_FACTOR * MARKET_PLASTIC_FACTOR * SHIP_PRICE_FACTOR_MAX
         + $ship_costs_fuel_total / MARKET_METAL_FACTOR * MARKET_FUEL_FACTOR * SHIP_PRICE_FACTOR_MAX
         + $ship_costs_food_total / MARKET_METAL_FACTOR * MARKET_FOOD_FACTOR * SHIP_PRICE_FACTOR_MAX;
     // Errechnet Grundbetrag abzüglich bereits eingebener Preise
     $ship_buy_metal_max = $ship_buy_metal_max
-        -    $val['ship_buy_metal'] * MARKET_METAL_FACTOR / MARKET_METAL_FACTOR
+        - $val['ship_buy_metal'] * MARKET_METAL_FACTOR / MARKET_METAL_FACTOR
         - $val['ship_buy_crystal'] * MARKET_CRYSTAL_FACTOR / MARKET_METAL_FACTOR
         - $val['ship_buy_plastic'] * MARKET_PLASTIC_FACTOR / MARKET_METAL_FACTOR
         - $val['ship_buy_fuel'] * MARKET_FUEL_FACTOR / MARKET_METAL_FACTOR
@@ -1200,14 +1179,14 @@ function calcMarketShipPrice($val, $new_ship = 0, $last_update = 0)
 
     // MinBetrag
     // Errechnet Grundbetrag (Noch ohne Abzüge eingegebenen Preisen)
-    $ship_buy_metal_ship_min =    $ship_costs_metal_total / MARKET_METAL_FACTOR * MARKET_METAL_FACTOR * SHIP_PRICE_FACTOR_MIN
+    $ship_buy_metal_ship_min = $ship_costs_metal_total / MARKET_METAL_FACTOR * MARKET_METAL_FACTOR * SHIP_PRICE_FACTOR_MIN
         + $ship_costs_crystal_total / MARKET_METAL_FACTOR * MARKET_CRYSTAL_FACTOR * SHIP_PRICE_FACTOR_MIN
         + $ship_costs_plastic_total / MARKET_METAL_FACTOR * MARKET_PLASTIC_FACTOR * SHIP_PRICE_FACTOR_MIN
         + $ship_costs_fuel_total / MARKET_METAL_FACTOR * MARKET_FUEL_FACTOR * SHIP_PRICE_FACTOR_MIN
         + $ship_costs_food_total / MARKET_METAL_FACTOR * MARKET_FOOD_FACTOR * SHIP_PRICE_FACTOR_MIN;
     // Errechnet Grundbetrag abzüglich bereits eingebener Preise
     $ship_buy_metal_ship_min = $ship_buy_metal_ship_min
-        -    $val['ship_buy_metal'] * MARKET_METAL_FACTOR / MARKET_METAL_FACTOR
+        - $val['ship_buy_metal'] * MARKET_METAL_FACTOR / MARKET_METAL_FACTOR
         - $val['ship_buy_crystal'] * MARKET_CRYSTAL_FACTOR / MARKET_METAL_FACTOR
         - $val['ship_buy_plastic'] * MARKET_PLASTIC_FACTOR / MARKET_METAL_FACTOR
         - $val['ship_buy_fuel'] * MARKET_FUEL_FACTOR / MARKET_METAL_FACTOR
@@ -1227,23 +1206,20 @@ function calcMarketShipPrice($val, $new_ship = 0, $last_update = 0)
     $out_ship_min_max_metal = "<a href=\"javascript:;\" onclick=\"document.getElementById('ship_buy_metal').value=" . ($val['ship_buy_metal'] + $ship_buy_metal_ship_min) . ";xajax_calcMarketShipPrice(xajax.getFormValues('ship_selector'));xajax_formatNumbers('ship_buy_metal','" . ($val['ship_buy_metal'] + $ship_buy_metal_ship_min) . "',1,'');\">+" . StringUtils::formatNumber($ship_buy_metal_ship_min) . "</a> / <a href=\"javascript:;\" onclick=\"document.getElementById('ship_buy_metal').value=" . ($val['ship_buy_metal'] + $ship_buy_metal_max) . ";xajax_calcMarketShipPrice(xajax.getFormValues('ship_selector'));xajax_formatNumbers('ship_buy_metal','" . ($val['ship_buy_metal'] + $ship_buy_metal_max) . "',1,'');\">+" . StringUtils::formatNumber($ship_buy_metal_max) . "</a>";
 
 
-
-
-
     //
     // Silizium
     //
 
     // MaxBetrag
     // Errechnet Grundbetrag (Noch ohne Abzüge eingegebenen Preisen)
-    $ship_buy_crystal_max =    $ship_costs_metal_total / MARKET_CRYSTAL_FACTOR * MARKET_METAL_FACTOR * SHIP_PRICE_FACTOR_MAX
+    $ship_buy_crystal_max = $ship_costs_metal_total / MARKET_CRYSTAL_FACTOR * MARKET_METAL_FACTOR * SHIP_PRICE_FACTOR_MAX
         + $ship_costs_crystal_total / MARKET_CRYSTAL_FACTOR * MARKET_CRYSTAL_FACTOR * SHIP_PRICE_FACTOR_MAX
         + $ship_costs_plastic_total / MARKET_CRYSTAL_FACTOR * MARKET_PLASTIC_FACTOR * SHIP_PRICE_FACTOR_MAX
         + $ship_costs_fuel_total / MARKET_CRYSTAL_FACTOR * MARKET_FUEL_FACTOR * SHIP_PRICE_FACTOR_MAX
         + $ship_costs_food_total / MARKET_CRYSTAL_FACTOR * MARKET_FOOD_FACTOR * SHIP_PRICE_FACTOR_MAX;
     // Errechnet Grundbetrag abzüglich bereits eingebener Preise
     $ship_buy_crystal_max = $ship_buy_crystal_max
-        -    $val['ship_buy_metal'] * MARKET_METAL_FACTOR / MARKET_CRYSTAL_FACTOR
+        - $val['ship_buy_metal'] * MARKET_METAL_FACTOR / MARKET_CRYSTAL_FACTOR
         - $val['ship_buy_crystal'] * MARKET_CRYSTAL_FACTOR / MARKET_CRYSTAL_FACTOR
         - $val['ship_buy_plastic'] * MARKET_PLASTIC_FACTOR / MARKET_CRYSTAL_FACTOR
         - $val['ship_buy_fuel'] * MARKET_FUEL_FACTOR / MARKET_CRYSTAL_FACTOR
@@ -1254,14 +1230,14 @@ function calcMarketShipPrice($val, $new_ship = 0, $last_update = 0)
 
     // MinBetrag
     // Errechnet Grundbetrag (Noch ohne Abzüge eingegebenen Preisen)
-    $ship_buy_crystal_min =    $ship_costs_metal_total / MARKET_CRYSTAL_FACTOR * MARKET_METAL_FACTOR * SHIP_PRICE_FACTOR_MIN
+    $ship_buy_crystal_min = $ship_costs_metal_total / MARKET_CRYSTAL_FACTOR * MARKET_METAL_FACTOR * SHIP_PRICE_FACTOR_MIN
         + $ship_costs_crystal_total / MARKET_CRYSTAL_FACTOR * MARKET_CRYSTAL_FACTOR * SHIP_PRICE_FACTOR_MIN
         + $ship_costs_plastic_total / MARKET_CRYSTAL_FACTOR * MARKET_PLASTIC_FACTOR * SHIP_PRICE_FACTOR_MIN
         + $ship_costs_fuel_total / MARKET_CRYSTAL_FACTOR * MARKET_FUEL_FACTOR * SHIP_PRICE_FACTOR_MIN
         + $ship_costs_food_total / MARKET_CRYSTAL_FACTOR * MARKET_FOOD_FACTOR * SHIP_PRICE_FACTOR_MIN;
     // Errechnet Grundbetrag abzüglich bereits eingebener Preise
     $ship_buy_crystal_min = $ship_buy_crystal_min
-        -    $val['ship_buy_metal'] * MARKET_METAL_FACTOR / MARKET_CRYSTAL_FACTOR
+        - $val['ship_buy_metal'] * MARKET_METAL_FACTOR / MARKET_CRYSTAL_FACTOR
         - $val['ship_buy_crystal'] * MARKET_CRYSTAL_FACTOR / MARKET_CRYSTAL_FACTOR
         - $val['ship_buy_plastic'] * MARKET_PLASTIC_FACTOR / MARKET_CRYSTAL_FACTOR
         - $val['ship_buy_fuel'] * MARKET_FUEL_FACTOR / MARKET_CRYSTAL_FACTOR
@@ -1281,21 +1257,20 @@ function calcMarketShipPrice($val, $new_ship = 0, $last_update = 0)
     $out_ship_min_max_crystal = "<a href=\"javascript:;\" onclick=\"document.getElementById('ship_buy_crystal').value=" . ($val['ship_buy_crystal'] + $ship_buy_crystal_min) . ";xajax_calcMarketShipPrice(xajax.getFormValues('ship_selector'));xajax_formatNumbers('ship_buy_crystal','" . ($val['ship_buy_crystal'] + $ship_buy_crystal_min) . "',1,'');\">+" . StringUtils::formatNumber($ship_buy_crystal_min) . "</a> / <a href=\"javascript:;\" onclick=\"document.getElementById('ship_buy_crystal').value=" . ($val['ship_buy_crystal'] + $ship_buy_crystal_max) . ";xajax_calcMarketShipPrice(xajax.getFormValues('ship_selector'));xajax_formatNumbers('ship_buy_crystal','" . ($val['ship_buy_crystal'] + $ship_buy_crystal_max) . "',1,'');\">+" . StringUtils::formatNumber($ship_buy_crystal_max) . "</a>";
 
 
-
     //
     // PVC
     //
 
     // MaxBetrag
     // Errechnet Grundbetrag (Noch ohne Abzüge eingegebenen Preisen)
-    $ship_buy_plastic_max =    $ship_costs_metal_total / MARKET_PLASTIC_FACTOR * MARKET_METAL_FACTOR * SHIP_PRICE_FACTOR_MAX
+    $ship_buy_plastic_max = $ship_costs_metal_total / MARKET_PLASTIC_FACTOR * MARKET_METAL_FACTOR * SHIP_PRICE_FACTOR_MAX
         + $ship_costs_crystal_total / MARKET_PLASTIC_FACTOR * MARKET_CRYSTAL_FACTOR * SHIP_PRICE_FACTOR_MAX
         + $ship_costs_plastic_total / MARKET_PLASTIC_FACTOR * MARKET_PLASTIC_FACTOR * SHIP_PRICE_FACTOR_MAX
         + $ship_costs_fuel_total / MARKET_PLASTIC_FACTOR * MARKET_FUEL_FACTOR * SHIP_PRICE_FACTOR_MAX
         + $ship_costs_food_total / MARKET_PLASTIC_FACTOR * MARKET_FOOD_FACTOR * SHIP_PRICE_FACTOR_MAX;
     // Errechnet Grundbetrag abzüglich bereits eingebener Preise
     $ship_buy_plastic_max = $ship_buy_plastic_max
-        -    $val['ship_buy_metal'] * MARKET_METAL_FACTOR / MARKET_PLASTIC_FACTOR
+        - $val['ship_buy_metal'] * MARKET_METAL_FACTOR / MARKET_PLASTIC_FACTOR
         - $val['ship_buy_crystal'] * MARKET_CRYSTAL_FACTOR / MARKET_PLASTIC_FACTOR
         - $val['ship_buy_plastic'] * MARKET_PLASTIC_FACTOR / MARKET_PLASTIC_FACTOR
         - $val['ship_buy_fuel'] * MARKET_FUEL_FACTOR / MARKET_PLASTIC_FACTOR
@@ -1306,14 +1281,14 @@ function calcMarketShipPrice($val, $new_ship = 0, $last_update = 0)
 
     // MinBetrag
     // Errechnet Grundbetrag (Noch ohne Abzüge eingegebenen Preisen)
-    $ship_buy_plastic_min =    $ship_costs_metal_total / MARKET_PLASTIC_FACTOR * MARKET_METAL_FACTOR * SHIP_PRICE_FACTOR_MIN
+    $ship_buy_plastic_min = $ship_costs_metal_total / MARKET_PLASTIC_FACTOR * MARKET_METAL_FACTOR * SHIP_PRICE_FACTOR_MIN
         + $ship_costs_crystal_total / MARKET_PLASTIC_FACTOR * MARKET_CRYSTAL_FACTOR * SHIP_PRICE_FACTOR_MIN
         + $ship_costs_plastic_total / MARKET_PLASTIC_FACTOR * MARKET_PLASTIC_FACTOR * SHIP_PRICE_FACTOR_MIN
         + $ship_costs_fuel_total / MARKET_PLASTIC_FACTOR * MARKET_FUEL_FACTOR * SHIP_PRICE_FACTOR_MIN
         + $ship_costs_food_total / MARKET_PLASTIC_FACTOR * MARKET_FOOD_FACTOR * SHIP_PRICE_FACTOR_MIN;
     // Errechnet Grundbetrag abzüglich bereits eingebener Preise
     $ship_buy_plastic_min = $ship_buy_plastic_min
-        -    $val['ship_buy_metal'] * MARKET_METAL_FACTOR / MARKET_PLASTIC_FACTOR
+        - $val['ship_buy_metal'] * MARKET_METAL_FACTOR / MARKET_PLASTIC_FACTOR
         - $val['ship_buy_crystal'] * MARKET_CRYSTAL_FACTOR / MARKET_PLASTIC_FACTOR
         - $val['ship_buy_plastic'] * MARKET_PLASTIC_FACTOR / MARKET_PLASTIC_FACTOR
         - $val['ship_buy_fuel'] * MARKET_FUEL_FACTOR / MARKET_PLASTIC_FACTOR
@@ -1333,23 +1308,20 @@ function calcMarketShipPrice($val, $new_ship = 0, $last_update = 0)
     $out_ship_min_max_plastic = "<a href=\"javascript:;\" onclick=\"document.getElementById('ship_buy_plastic').value=" . ($val['ship_buy_plastic'] + $ship_buy_plastic_min) . ";xajax_calcMarketShipPrice(xajax.getFormValues('ship_selector'));xajax_formatNumbers('ship_buy_plastic','" . ($val['ship_buy_plastic'] + $ship_buy_plastic_min) . "',1,'');\">+" . StringUtils::formatNumber($ship_buy_plastic_min) . "</a> / <a href=\"javascript:;\" onclick=\"document.getElementById('ship_buy_plastic').value=" . ($val['ship_buy_plastic'] + $ship_buy_plastic_max) . ";xajax_calcMarketShipPrice(xajax.getFormValues('ship_selector'));xajax_formatNumbers('ship_buy_plastic','" . ($val['ship_buy_plastic'] + $ship_buy_plastic_max) . "',1,'');\">+" . StringUtils::formatNumber($ship_buy_plastic_max) . "</a>";
 
 
-
-
-
     //
     // Tritium
     //
 
     // MaxBetrag
     // Errechnet Grundbetrag (Noch ohne Abzüge eingegebenen Preisen)
-    $ship_buy_fuel_max =    $ship_costs_metal_total / MARKET_FUEL_FACTOR * MARKET_METAL_FACTOR * SHIP_PRICE_FACTOR_MAX
+    $ship_buy_fuel_max = $ship_costs_metal_total / MARKET_FUEL_FACTOR * MARKET_METAL_FACTOR * SHIP_PRICE_FACTOR_MAX
         + $ship_costs_crystal_total / MARKET_FUEL_FACTOR * MARKET_CRYSTAL_FACTOR * SHIP_PRICE_FACTOR_MAX
         + $ship_costs_plastic_total / MARKET_FUEL_FACTOR * MARKET_PLASTIC_FACTOR * SHIP_PRICE_FACTOR_MAX
         + $ship_costs_fuel_total / MARKET_FUEL_FACTOR * MARKET_FUEL_FACTOR * SHIP_PRICE_FACTOR_MAX
         + $ship_costs_food_total / MARKET_FUEL_FACTOR * MARKET_FOOD_FACTOR * SHIP_PRICE_FACTOR_MAX;
     // Errechnet Grundbetrag abzüglich bereits eingebener Preise
     $ship_buy_fuel_max = $ship_buy_fuel_max
-        -    $val['ship_buy_metal'] * MARKET_METAL_FACTOR / MARKET_FUEL_FACTOR
+        - $val['ship_buy_metal'] * MARKET_METAL_FACTOR / MARKET_FUEL_FACTOR
         - $val['ship_buy_crystal'] * MARKET_CRYSTAL_FACTOR / MARKET_FUEL_FACTOR
         - $val['ship_buy_plastic'] * MARKET_PLASTIC_FACTOR / MARKET_FUEL_FACTOR
         - $val['ship_buy_fuel'] * MARKET_FUEL_FACTOR / MARKET_FUEL_FACTOR
@@ -1360,14 +1332,14 @@ function calcMarketShipPrice($val, $new_ship = 0, $last_update = 0)
 
     // MinBetrag
     // Errechnet Grundbetrag (Noch ohne Abzüge eingegebenen Preisen)
-    $ship_buy_fuel_min =    $ship_costs_metal_total / MARKET_FUEL_FACTOR * MARKET_METAL_FACTOR * SHIP_PRICE_FACTOR_MIN
+    $ship_buy_fuel_min = $ship_costs_metal_total / MARKET_FUEL_FACTOR * MARKET_METAL_FACTOR * SHIP_PRICE_FACTOR_MIN
         + $ship_costs_crystal_total / MARKET_FUEL_FACTOR * MARKET_CRYSTAL_FACTOR * SHIP_PRICE_FACTOR_MIN
         + $ship_costs_plastic_total / MARKET_FUEL_FACTOR * MARKET_PLASTIC_FACTOR * SHIP_PRICE_FACTOR_MIN
         + $ship_costs_fuel_total / MARKET_FUEL_FACTOR * MARKET_FUEL_FACTOR * SHIP_PRICE_FACTOR_MIN
         + $ship_costs_food_total / MARKET_FUEL_FACTOR * MARKET_FOOD_FACTOR * SHIP_PRICE_FACTOR_MIN;
     // Errechnet Grundbetrag abzüglich bereits eingebener Preise
     $ship_buy_fuel_min = $ship_buy_fuel_min
-        -    $val['ship_buy_metal'] * MARKET_METAL_FACTOR / MARKET_FUEL_FACTOR
+        - $val['ship_buy_metal'] * MARKET_METAL_FACTOR / MARKET_FUEL_FACTOR
         - $val['ship_buy_crystal'] * MARKET_CRYSTAL_FACTOR / MARKET_FUEL_FACTOR
         - $val['ship_buy_plastic'] * MARKET_PLASTIC_FACTOR / MARKET_FUEL_FACTOR
         - $val['ship_buy_fuel'] * MARKET_FUEL_FACTOR / MARKET_FUEL_FACTOR
@@ -1387,21 +1359,20 @@ function calcMarketShipPrice($val, $new_ship = 0, $last_update = 0)
     $out_ship_min_max_fuel = "<a href=\"javascript:;\" onclick=\"document.getElementById('ship_buy_fuel').value=" . ($val['ship_buy_fuel'] + $ship_buy_fuel_min) . ";xajax_calcMarketShipPrice(xajax.getFormValues('ship_selector'));xajax_formatNumbers('ship_buy_fuel','" . ($val['ship_buy_fuel'] + $ship_buy_fuel_min) . "',1,'');\">+" . StringUtils::formatNumber($ship_buy_fuel_min) . "</a> / <a href=\"javascript:;\" onclick=\"document.getElementById('ship_buy_fuel').value=" . ($val['ship_buy_fuel'] + $ship_buy_fuel_max) . ";xajax_calcMarketShipPrice(xajax.getFormValues('ship_selector'));xajax_formatNumbers('ship_buy_fuel','" . ($val['ship_buy_fuel'] + $ship_buy_fuel_max) . "',1,'');\">+" . StringUtils::formatNumber($ship_buy_fuel_max) . "</a>";
 
 
-
     //
     // Nahrung
     //
 
     // MaxBetrag
     // Errechnet Grundbetrag (Noch ohne Abzüge eingegebenen Preisen)
-    $ship_buy_food_max =    $ship_costs_metal_total / MARKET_FOOD_FACTOR * MARKET_METAL_FACTOR * SHIP_PRICE_FACTOR_MAX
+    $ship_buy_food_max = $ship_costs_metal_total / MARKET_FOOD_FACTOR * MARKET_METAL_FACTOR * SHIP_PRICE_FACTOR_MAX
         + $ship_costs_crystal_total / MARKET_FOOD_FACTOR * MARKET_CRYSTAL_FACTOR * SHIP_PRICE_FACTOR_MAX
         + $ship_costs_plastic_total / MARKET_FOOD_FACTOR * MARKET_PLASTIC_FACTOR * SHIP_PRICE_FACTOR_MAX
         + $ship_costs_fuel_total / MARKET_FOOD_FACTOR * MARKET_FUEL_FACTOR * SHIP_PRICE_FACTOR_MAX
         + $ship_costs_food_total / MARKET_FOOD_FACTOR * MARKET_FOOD_FACTOR * SHIP_PRICE_FACTOR_MAX;
     // Errechnet Grundbetrag abzüglich bereits eingebener Preise
     $ship_buy_food_max = $ship_buy_food_max
-        -    $val['ship_buy_metal'] * MARKET_METAL_FACTOR / MARKET_FOOD_FACTOR
+        - $val['ship_buy_metal'] * MARKET_METAL_FACTOR / MARKET_FOOD_FACTOR
         - $val['ship_buy_crystal'] * MARKET_CRYSTAL_FACTOR / MARKET_FOOD_FACTOR
         - $val['ship_buy_plastic'] * MARKET_PLASTIC_FACTOR / MARKET_FOOD_FACTOR
         - $val['ship_buy_fuel'] * MARKET_FUEL_FACTOR / MARKET_FOOD_FACTOR
@@ -1412,14 +1383,14 @@ function calcMarketShipPrice($val, $new_ship = 0, $last_update = 0)
 
     // MinBetrag
     // Errechnet Grundbetrag (Noch ohne Abzüge eingegebenen Preisen)
-    $ship_buy_food_min =    $ship_costs_metal_total / MARKET_FOOD_FACTOR * MARKET_METAL_FACTOR * SHIP_PRICE_FACTOR_MIN
+    $ship_buy_food_min = $ship_costs_metal_total / MARKET_FOOD_FACTOR * MARKET_METAL_FACTOR * SHIP_PRICE_FACTOR_MIN
         + $ship_costs_crystal_total / MARKET_FOOD_FACTOR * MARKET_CRYSTAL_FACTOR * SHIP_PRICE_FACTOR_MIN
         + $ship_costs_plastic_total / MARKET_FOOD_FACTOR * MARKET_PLASTIC_FACTOR * SHIP_PRICE_FACTOR_MIN
         + $ship_costs_fuel_total / MARKET_FOOD_FACTOR * MARKET_FUEL_FACTOR * SHIP_PRICE_FACTOR_MIN
         + $ship_costs_food_total / MARKET_FOOD_FACTOR * MARKET_FOOD_FACTOR * SHIP_PRICE_FACTOR_MIN;
     // Errechnet Grundbetrag abzüglich bereits eingebener Preise
     $ship_buy_food_min = $ship_buy_food_min
-        -    $val['ship_buy_metal'] * MARKET_METAL_FACTOR / MARKET_FOOD_FACTOR
+        - $val['ship_buy_metal'] * MARKET_METAL_FACTOR / MARKET_FOOD_FACTOR
         - $val['ship_buy_crystal'] * MARKET_CRYSTAL_FACTOR / MARKET_FOOD_FACTOR
         - $val['ship_buy_plastic'] * MARKET_PLASTIC_FACTOR / MARKET_FOOD_FACTOR
         - $val['ship_buy_fuel'] * MARKET_FUEL_FACTOR / MARKET_FOOD_FACTOR
@@ -1449,8 +1420,7 @@ function calcMarketShipPrice($val, $new_ship = 0, $last_update = 0)
 
         $objResponse->assign("ship_sell_submit", "disabled", true);
         $objResponse->assign("ship_sell_submit", "style.color", '#f00');
-    }
-    // Zu hohe Preise
+    } // Zu hohe Preise
     elseif (
         $log_ship_buy_metal_max < 0
         || $log_ship_buy_crystal_max < 0
@@ -1462,8 +1432,7 @@ function calcMarketShipPrice($val, $new_ship = 0, $last_update = 0)
 
         $objResponse->assign("ship_sell_submit", "disabled", true);
         $objResponse->assign("ship_sell_submit", "style.color", '#f00');
-    }
-    // Zu niedrige Preise
+    } // Zu niedrige Preise
     elseif (
         $log_ship_buy_metal_ship_min > 0
         || $log_ship_buy_crystal_ship_min > 0
@@ -1475,15 +1444,13 @@ function calcMarketShipPrice($val, $new_ship = 0, $last_update = 0)
 
         $objResponse->assign("ship_sell_submit", "disabled", true);
         $objResponse->assign("ship_sell_submit", "style.color", '#f00');
-    }
-    // Unerlaubte Zeichen im Werbetext
+    } // Unerlaubte Zeichen im Werbetext
     elseif (StringUtils::checkIllegalSigns($val['ship_text']) != "") {
         $out_ship_check_message = "<div style=\"color:red;font-weight:bold;\">Unerlaubte Zeichen im Werbetext (" . StringUtils::checkIllegalSigns("><$") . ")!</div>";
 
         $objResponse->assign("ship_sell_submit", "disabled", true);
         $objResponse->assign("ship_sell_submit", "style.color", '#f00');
-    }
-    // Angebot ist OK
+    } // Angebot ist OK
     else {
         $out_ship_check_message = "<div style=\"color:#0f0;font-weight:bold;\">OK!</div>";
         $objResponse->assign("ship_sell_submit", "disabled", false);
@@ -1495,7 +1462,6 @@ function calcMarketShipPrice($val, $new_ship = 0, $last_update = 0)
 
     // Bestätigt, dass XAJAX das Formular vor dem Absenden nochmal kontrolliert hat
     $objResponse->assign("ship_last_update", "value", $last_update);
-
 
 
     // XAJAX ändert Daten
@@ -1521,7 +1487,6 @@ function calcMarketShipPrice($val, $new_ship = 0, $last_update = 0)
 
     return $objResponse;
 }
-
 
 
 /************************************************/
@@ -1555,7 +1520,6 @@ function calcMarketShipBuy($val)
     }
 
 
-
     //
     // Endprüfung ob alles OK ist
     //
@@ -1566,8 +1530,7 @@ function calcMarketShipBuy($val)
 
         $objResponse->assign("ship_submit", "disabled", true);
         $objResponse->assign("ship_submit", "style.color", '#f00');
-    }
-    // Prüft, ob genug Rohstoffe vorhanden sind
+    } // Prüft, ob genug Rohstoffe vorhanden sind
     elseif (
         ($val['res_metal'] ?? 0) < $ship_metal_total_costs
         || ($val['res_crystal'] ?? 0) < $ship_crystal_total_costs
@@ -1579,8 +1542,7 @@ function calcMarketShipBuy($val)
 
         $objResponse->assign("ship_submit", "disabled", true);
         $objResponse->assign("ship_submit", "style.color", '#f00');
-    }
-    // Angebot ist OK
+    } // Angebot ist OK
     else {
         $out_ship_buy_check_message = "<div style=\"color:#0f0;font-weight:bold;\">OK!<br>";
         if ($cnt == 1) {
@@ -1605,8 +1567,6 @@ function calcMarketShipBuy($val)
 }
 
 
-
-
 /***************************************/
 /* Markt: Auktion Endzeit Kalkulator   */
 /* Berechnet die Dauer der Auktion     */
@@ -1628,9 +1588,6 @@ function calcMarketAuctionTime($val)
 
     return $objResponse;
 }
-
-
-
 
 
 /***************************************/
@@ -1710,8 +1667,7 @@ function checkMarketAuctionFormular($val, $last_update = 0)
 
         $objResponse->assign("auction_sell_submit", "disabled", true);
         $objResponse->assign("auction_sell_submit", "style.color", '#f00');
-    }
-    // Keinen Preis angegeben
+    } // Keinen Preis angegeben
     elseif (
         $val['auction_buy_metal'] == 0
         && $val['auction_buy_crystal'] == 0
@@ -1723,8 +1679,7 @@ function checkMarketAuctionFormular($val, $last_update = 0)
 
         $objResponse->assign("auction_sell_submit", "disabled", true);
         $objResponse->assign("auction_sell_submit", "style.color", '#f00');
-    }
-    // Zu wenig Rohstoffe auf dem Planeten
+    } // Zu wenig Rohstoffe auf dem Planeten
     elseif (
         floor($val['auction_sell_metal'] * MARKET_SELL_TAX) > $val['res_metal']
         || floor($val['auction_sell_crystal'] * MARKET_SELL_TAX) > $val['res_crystal']
@@ -1736,15 +1691,13 @@ function checkMarketAuctionFormular($val, $last_update = 0)
 
         $objResponse->assign("auction_sell_submit", "disabled", true);
         $objResponse->assign("auction_sell_submit", "style.color", '#f00');
-    }
-    // Unerlaubte Zeichen im Werbetext
+    } // Unerlaubte Zeichen im Werbetext
     elseif (StringUtils::checkIllegalSigns($val['auction_text']) != "") {
         $out_auction_check_message = "<div style=\"color:red;font-weight:bold;\">Unerlaubte Zeichen im Werbetext (" . StringUtils::checkIllegalSigns("><$") . ")!</div>";
 
         $objResponse->assign("auction_sell_submit", "disabled", true);
         $objResponse->assign("auction_sell_submit", "style.color", '#f00');
-    }
-    // Angebot ist OK
+    } // Angebot ist OK
     else {
         // Rechnet gesamt Verkaufsgebühren
         $sell_tax = $val['auction_sell_metal'] * (MARKET_SELL_TAX - 1)
@@ -1781,8 +1734,6 @@ function checkMarketAuctionFormular($val, $last_update = 0)
 }
 
 
-
-
 /************************************************************/
 /* Markt: Auktionen Dauer Kalkulator                        */
 /* Berechnet div. Preise und Prüft Angebot beim bieten      */
@@ -1804,13 +1755,13 @@ function calcMarketAuctionPrice($val, $last_update = 0)
 
     etoa_dump($val);
     // Errechnet Rohstoffwert vom Höchstbietenden
-    $buy_price =     $val['buy_0'] * MARKET_METAL_FACTOR
+    $buy_price = $val['buy_0'] * MARKET_METAL_FACTOR
         + $val['buy_1'] * MARKET_CRYSTAL_FACTOR
         + $val['buy_2'] * MARKET_PLASTIC_FACTOR
         + $val['buy_3'] * MARKET_FUEL_FACTOR
         + $val['buy_4'] * MARKET_FOOD_FACTOR;
     // Errechnet Roshtoffwert vom eingegebenen Gebot
-    $new_buy_price =     $val['new_buy_0'] * MARKET_METAL_FACTOR
+    $new_buy_price = $val['new_buy_0'] * MARKET_METAL_FACTOR
         + $val['new_buy_1'] * MARKET_CRYSTAL_FACTOR
         + $val['new_buy_2'] * MARKET_PLASTIC_FACTOR
         + $val['new_buy_3'] * MARKET_FUEL_FACTOR
@@ -1860,7 +1811,7 @@ function calcMarketAuctionPrice($val, $last_update = 0)
             + $val['sell_3'] / $factor[$rid] * $factor[3] * AUCTION_PRICE_FACTOR_MIN
             + $val['sell_4'] / $factor[$rid] * $factor[4] * AUCTION_PRICE_FACTOR_MIN;
         // Errechnet Grundbetrag abzüglich bereits eingebener Preise
-        $buyMin[$rid] =    $buyMin[$rid]
+        $buyMin[$rid] = $buyMin[$rid]
             - $val['new_buy_0'] * $factor[0] / $factor[$rid]
             - $val['new_buy_1'] * $factor[1] / $factor[$rid]
             - $val['new_buy_2'] * $factor[2] / $factor[$rid]
@@ -1904,8 +1855,7 @@ function calcMarketAuctionPrice($val, $last_update = 0)
 
         $objResponse->assign("submit_auction_bid", "disabled", true);
         $objResponse->assign("submit_auction_bid", "style.color", '#f00');
-    }
-    // Zu hohe Preise
+    } // Zu hohe Preise
     elseif (
         $logBuyMax[0] < 0
         || $logBuyMax[1] < 0
@@ -1917,8 +1867,7 @@ function calcMarketAuctionPrice($val, $last_update = 0)
 
         $objResponse->assign("submit_auction_bid", "disabled", true);
         $objResponse->assign("submit_auction_bid", "style.color", '#f00');
-    }
-    // Zu niedrige Preise
+    } // Zu niedrige Preise
     elseif (
         $logBuyMin[0] > 0
         || $logBuyMin[1] > 0
@@ -1930,8 +1879,7 @@ function calcMarketAuctionPrice($val, $last_update = 0)
 
         $objResponse->assign("submit_auction_bid", "disabled", true);
         $objResponse->assign("submit_auction_bid", "style.color", '#f00');
-    }
-    // Zu wenig Rohstoffe auf dem Planeten
+    } // Zu wenig Rohstoffe auf dem Planeten
     elseif (
         $val['new_buy_0'] > $val['res_0']
         || $val['new_buy_1'] > $val['res_1']
@@ -1943,22 +1891,19 @@ function calcMarketAuctionPrice($val, $last_update = 0)
 
         $objResponse->assign("submit_auction_bid", "disabled", true);
         $objResponse->assign("submit_auction_bid", "style.color", '#f00');
-    }
-    // Gebot ist tiefer als das vom Höchstbietenden
+    } // Gebot ist tiefer als das vom Höchstbietenden
     elseif ($buy_price * (1 + AUCTION_OVERBID) >= $new_buy_price) {
         $out_auction_check_message = "<div style=\"color:red;font-weight:bold;\">Das Gebot muss mindestens " . AUCTION_OVERBID . "% höher sein als das Gebot des Höchstbietenden!</div>";
 
         $objResponse->assign("submit_auction_bid", "disabled", true);
         $objResponse->assign("submit_auction_bid", "style.color", '#f00');
-    }
-    // Zeit ist abgelaufen
+    } // Zeit ist abgelaufen
     elseif ($val['auction_rest_time'] <= 0) {
         $out_auction_check_message = "<div style=\"color:red;font-weight:bold;\">Auktion ist beendet!</div>";
 
         $objResponse->assign("submit_auction_bid", "disabled", true);
         $objResponse->assign("submit_auction_bid", "style.color", '#f00');
-    }
-    // Angebot ist OK
+    } // Angebot ist OK
     else {
         $out_auction_check_message = "<div style=\"color:#0f0;font-weight:bold;\">OK!</div>";
         $objResponse->assign("submit_auction_bid", "disabled", false);

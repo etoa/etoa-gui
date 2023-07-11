@@ -30,7 +30,7 @@ class QuestInitializerSubscriber implements EventSubscriberInterface
 
         $request = $event->getRequest();
         $currentUser = $request->attributes->get('currentUser');
-        if ($currentUser instanceof \User && $currentUser->isSetup() && $this->tutorialUserProgressRepository->hasFinishedTutorial($currentUser->getId())) {
+        if ($currentUser instanceof \EtoA\Legacy\User && $currentUser->isSetup() && $this->tutorialUserProgressRepository->hasFinishedTutorial($currentUser->getId())) {
             $this->questInitializer->initialize($currentUser->getId());
         }
     }

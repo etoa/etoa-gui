@@ -2,6 +2,7 @@
 
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Design\Design;
+use EtoA\Legacy\User;
 use EtoA\User\UserPropertiesRepository;
 
 $indexpage = [
@@ -31,7 +32,7 @@ $config = $app[ConfigurationService::class];
 $loggedIn = false;
 if ($s->validate(0)) {
     $cu = new User($s->user_id);
-    $loggedIn = (bool) $cu->isValid;
+    $loggedIn = (bool)$cu->isValid;
 }
 
 /** @var UserPropertiesRepository $userPropertiesRepository */

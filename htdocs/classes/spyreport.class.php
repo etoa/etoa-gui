@@ -6,6 +6,7 @@
 
 use EtoA\Building\BuildingDataRepository;
 use EtoA\Defense\DefenseDataRepository;
+use EtoA\Legacy\User;
 use EtoA\Message\ReportRepository;
 use EtoA\Ship\ShipDataRepository;
 use EtoA\Support\StringUtils;
@@ -111,7 +112,7 @@ class SpyReport extends Report
                             if ($building != '') {
                                 $data = explode(':', $building);
                                 echo '<tr>
-                                        <td>' . $buildingNames[(int) $data[0]] . ' </td>
+                                        <td>' . $buildingNames[(int)$data[0]] . ' </td>
                                         <td style="text-align:right;"> ' . $data[1] . '</td>
                                     </tr>';
                             }
@@ -133,7 +134,7 @@ class SpyReport extends Report
                             if ($tech != '') {
                                 $data = explode(':', $tech);
                                 echo '<tr>
-                                        <td>' . $technologyNames[(int) $data[0]] . ' </td>
+                                        <td>' . $technologyNames[(int)$data[0]] . ' </td>
                                         <td style="text-align:right;"> ' . $data[1] . '</td>
                                     </tr>';
                             }
@@ -156,8 +157,8 @@ class SpyReport extends Report
                             if ($ship != '') {
                                 $data = explode(':', $ship);
                                 echo '<tr>
-                                        <td>' . $shipNames[(int) $data[0]] . ' </td>
-                                        <td style="text-align:right;"> ' . StringUtils::formatNumber((int) $data[1]) . '</td>
+                                        <td>' . $shipNames[(int)$data[0]] . ' </td>
+                                        <td style="text-align:right;"> ' . StringUtils::formatNumber((int)$data[1]) . '</td>
                                     </tr>';
                             }
                         }
@@ -178,8 +179,8 @@ class SpyReport extends Report
                             if ($defense != '') {
                                 $data = explode(':', $defense);
                                 echo '<tr>
-                                        <td>' . $defenseNames[(int) $data[0]] . ' </td>
-                                        <td style="text-align:right;"> ' . StringUtils::formatNumber((int) $data[1]) . '</td>
+                                        <td>' . $defenseNames[(int)$data[0]] . ' </td>
+                                        <td style="text-align:right;"> ' . StringUtils::formatNumber((int)$data[1]) . '</td>
                                     </tr>';
                             }
                         }
