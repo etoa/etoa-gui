@@ -21,19 +21,14 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 class SecurityController extends AbstractController
 {
-    private AdminUserRepository $adminUserRepository;
-    private ConfigurationService $config;
-    private MailSenderService $mailer;
-    private LogRepository $logRepository;
-    private NetworkNameService $networkNameService;
-
-    public function __construct(AdminUserRepository $adminUserRepository, ConfigurationService $config, MailSenderService $mailer, LogRepository $logRepository, NetworkNameService $networkNameService)
+    public function __construct(
+        private readonly AdminUserRepository  $adminUserRepository,
+        private readonly ConfigurationService $config,
+        private readonly MailSenderService    $mailer,
+        private readonly LogRepository        $logRepository,
+        private readonly NetworkNameService   $networkNameService
+    )
     {
-        $this->adminUserRepository = $adminUserRepository;
-        $this->config = $config;
-        $this->mailer = $mailer;
-        $this->logRepository = $logRepository;
-        $this->networkNameService = $networkNameService;
     }
 
     #[Route("/admin/login", name: "admin.login", methods: ['GET'])]
@@ -104,7 +99,7 @@ class SecurityController extends AbstractController
             $newAdmin->nick = $newAdmin->name;
             $newAdmin->roles = ['master'];
             $this->adminUserRepository->save($newAdmin);
-            
+
             $hashPassword = $passwordHasher->hashPassword(new CurrentAdmin($newAdmin), $newAdmin->passwordString);
             $this->adminUserRepository->setPassword($newAdmin, $hashPassword);
 
