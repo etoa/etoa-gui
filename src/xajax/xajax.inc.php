@@ -1,7 +1,7 @@
 <?PHP
 
 $xajax = new xajax();
-$xajax->configure("javascript URI", "../libs/xajax");
+$xajax->configure("javascript URI", "/xajax");
 $xajax->configure('debug', false);
 
 require_once "global.xajax.php";

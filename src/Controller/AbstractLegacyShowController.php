@@ -13,15 +13,15 @@ abstract class AbstractLegacyShowController extends AbstractLegacyController
     {
         $this->bootstrap();
 
-//        $xajax = require_once $this->projectDir . '/src/xajax/xajax.inc.php';
-//        $this->twig->addGlobal('xajaxJS', $xajax->getJavascript());
+        $xajax = require_once $this->projectDir . '/src/xajax/xajax.inc.php';
         $globals = [
             'gameTitle' => $this->versionService->getGameIdentifier() . ($this->pageTitle !== null ? ' - ' . $this->pageTitle : ''),
             'templateDir' => '/' . Design::DIRECTORY . '/official/' . $this->config->get('default_css_style'),
             'bodyTopStuff' => getInitTT(),
+            'xajaxJS' => $xajax->getJavascript(),
             'enableKeybinds' => false,
-            'viewportScale' => $_SESSION['viewportScale'] ?? 0,
-            'fontSize' => ($_SESSION['viewportScale'] ?? 1) * 16 . "px",
+            'viewportScale' => 0,
+            'fontSize' => 16 . "px",
         ];
         foreach ($globals as $key => $value) {
             $this->twig->addGlobal($key, $value);

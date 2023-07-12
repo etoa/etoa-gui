@@ -55,8 +55,7 @@
     "twig/extra-bundle": "^2.12|^3.0",
     "twig/string-extra": "^3.6",
     "twig/twig": "^2.12|^3.0",
-    "whichbrowser/parser": "^2.1",
-    "xajax/xajax": "dev-master"
+    "whichbrowser/parser": "^2.1"
   },
   "config": {
     "allow-plugins": {
@@ -72,7 +71,10 @@
     ],
     "psr-4": {
       "EtoA\\": "src/"
-    }
+    },
+    "classmap": [
+      "public/xajax/*"
+    ]
   },
   "autoload-dev": {
     "psr-4": {

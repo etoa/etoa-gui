@@ -38,7 +38,7 @@ abstract class AbstractLegacyController extends AbstractController
     {
     }
 
-    public function bootstrap(): void
+    protected function bootstrap(): void
     {
         // Fehler ausgabe definiert
         ini_set('arg_separator.output', '&amp;');
