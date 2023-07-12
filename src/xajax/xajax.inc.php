@@ -31,8 +31,8 @@ if (isset($page)) {
     }
 }
 
-if (isset($index)) {
-    if ($index == "register") {
+if (isset($routeName)) {
+    if ($routeName == "external.register") {
         require_once "register.xajax.php";
     }
 }

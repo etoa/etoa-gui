@@ -15,6 +15,7 @@ use EtoA\Text\TextRepository;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\User\UserPropertiesRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Twig\Environment;
 
 abstract class AbstractLegacyController extends AbstractController
@@ -33,7 +34,8 @@ abstract class AbstractLegacyController extends AbstractController
         protected readonly UtilityMethodProvider    $utilities,
         protected readonly GameVersionService       $versionService,
         protected readonly Environment              $twig,
-        protected readonly string                   $projectDir
+        protected readonly string                   $projectDir,
+        protected readonly RequestStack             $requestStack,
     )
     {
     }

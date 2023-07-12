@@ -21,9 +21,12 @@
         <link rel="stylesheet" type="text/css" href="{{ css }}"/>
     {% endfor %}
 
+    {{ encore_entry_link_tags('app') }}
+
+    {{ encore_entry_script_tags('app') }}
+
     <!-- XAJAX -->
     {{ xajaxJS|default('')|raw }}
-    <script type="text/javascript" src="{{ asset('build/app.js') }}"></script>
     <script type="text/javascript" src="{{ asset('build/js/main.js') }}"></script>
     {% if page|default(false) %}
         <script type="text/javascript">

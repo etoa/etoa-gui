@@ -13,6 +13,7 @@ abstract class AbstractLegacyShowController extends AbstractLegacyController
     {
         $this->bootstrap();
 
+        $routeName = $this->requestStack->getCurrentRequest()->attributes->get('_route');
         $xajax = require_once $this->projectDir . '/src/xajax/xajax.inc.php';
         $globals = [
             'gameTitle' => $this->versionService->getGameIdentifier() . ($this->pageTitle !== null ? ' - ' . $this->pageTitle : ''),
