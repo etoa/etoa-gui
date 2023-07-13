@@ -1,7 +1,5 @@
 {% extends 'layout/external.html.twig' %}
 
-{% import 'macros.html.twig' as macros %}
-
 {% block content %}
     <form action="{{ path('external.login') }}" method="post" class="styled-form styled-form-medium">
         <p>Willkommen in der {{ roundName }}. Bitte melde dich mit deinen Logindaten an:</p>

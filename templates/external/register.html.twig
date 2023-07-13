@@ -3,16 +3,21 @@
 {% extends 'layout/external.html.twig' %}
 
 {% block content %}
-
     {% if registrationNotEnabled %}
-        <p>Die Registration ist momentan ausgeschaltet! Schau bitte ein anderes Mal vorbei!</p>
+        <twig:alert type="info" title="Registration deaktiviert">
+            Die Registration ist momentan ausgeschaltet! Schau bitte ein anderes Mal vorbei!
+        </twig:alert>
     {% elseif registrationLater %}
-        <p>Du kannst dich erst am {{ registerLater|format('d.m.Y') }} ab {{ registerLater|format('H:i') }}
-            registrieren.</p>
-        <p>Schau doch dann nochmal vorbei oder registriere dich in einer anderen Runde!</p>
+        <twig:alert type="info" title="Runde noch nicht aktiv">
+            Du kannst dich erst am {{ registrationLater|format('d.m.Y') }} ab {{ registrationLater|format('H:i') }}
+            registrieren.<br>
+            Schau doch dann nochmal vorbei oder registriere dich in einer anderen Runde!
+        </twig:alert>
     {% elseif registrationFull %}
-        <p>Das Spiel ist mit {{ maxPlayerCount }} registrierten Mitspielern momentan ausgelastet.</p>
-        <p>Schau bitte ein anderes Mal vorbei oder registriere dich in einer anderen Runde!</p>
+        <twig:alert type="info" title="Runde ist voll">
+            Das Spiel ist mit {{ maxPlayerCount }} registrierten Mitspielern momentan ausgelastet.<br>
+            Schau bitte ein anderes Mal vorbei oder registriere dich in einer anderen Runde!
+        </twig:alert>
     {% else %}
         <p>Melde dich hier für die {{ roundName }} von {{ appName }} an. Wenn du Hilfe benötigst, kannst du <a
                     href="{{ path('external.contact') }}">hier</a> einen Game-Admin kontaktieren.</p>
