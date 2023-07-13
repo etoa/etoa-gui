@@ -13,7 +13,8 @@ abstract class AbstractLegacyShowController extends AbstractLegacyController
     {
         $this->bootstrap();
 
-        $routeName = $this->requestStack->getCurrentRequest()->attributes->get('_route');
+        $request = $this->requestStack->getCurrentRequest();
+        $routeName = $request->attributes->get('_route');
         $xajax = require_once $this->projectDir . '/src/xajax/xajax.inc.php';
         $globals = [
             'gameTitle' => $this->versionService->getGameIdentifier() . ($this->pageTitle !== null ? ' - ' . $this->pageTitle : ''),
@@ -30,19 +31,16 @@ abstract class AbstractLegacyShowController extends AbstractLegacyController
 
         // Handle case if outgame key is set
         if ($this->config->filled('register_key')) {
-            $invalidKey = false;
-            if (isset($_POST['reg_key_auth_submit'])) {
-                if ($_POST['reg_key_auth_value'] === $this->config->get('register_key')) {
+            if ($request->request->has('reg_key_auth_submit')) {
+                if ($request->request->get('reg_key_auth_value') === $this->config->get('register_key')) {
                     $this->userSession->reg_key_auth = $this->config->get('register_key');
                 } else {
-                    $invalidKey = true;
+                    $this->addFlash('error', 'Falscher Schlüssel!');
                 }
             }
-
             if ($this->userSession->reg_key_auth !== $this->config->get('register_key')) {
                 return $this->render('external/key-required.html.twig', [
-                    'page' => $_GET['index'],
-                    'invalidKey' => $invalidKey,
+                    'currentUrl' => $this->generateUrl($routeName),
                 ]);
             }
         }
