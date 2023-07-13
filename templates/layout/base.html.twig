@@ -17,13 +17,8 @@
         <link rel="stylesheet" type="text/css" href="{{ asset('build' ~ templateDir ~ '/style.css' ) }}"/>
     {% endif %}
 
-    {% for css in additionalCss|default([]) %}
-        <link rel="stylesheet" type="text/css" href="{{ css }}"/>
-    {% endfor %}
-
-    {{ encore_entry_link_tags('app') }}
-
-    {{ encore_entry_script_tags('app') }}
+    {{ encore_entry_link_tags(encoreEntry|default('app')) }}
+    {{ encore_entry_script_tags(encoreEntry|default('app')) }}
 
     <!-- XAJAX -->
     {{ xajaxJS|default('')|raw }}

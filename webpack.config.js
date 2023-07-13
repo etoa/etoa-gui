@@ -25,11 +25,6 @@ Encore
     })
 
     .copyFiles({
-        from: './assets/css',
-        to: 'css/[path][name].[ext]',
-    })
-
-    .copyFiles({
         from: './assets/designs',
         to: 'designs/[path][name].[ext]',
     })
@@ -42,6 +37,7 @@ Encore
      */
     .addEntry('app', './assets/app.js')
     .addEntry('admin', './assets/admin.js')
+    .addEntry('external', './assets/external.js')
 
     // When enabled, Webpack "splits" your files into smaller pieces for greater optimization.
     .splitEntryChunks()
