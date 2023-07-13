@@ -141,7 +141,7 @@ class ContactController extends AbstractLegacyShowController
                 echo "<i>Keine Kontaktpersonen vorhanden!</i>";
             }
 
-            echo $this->twig->render('external/contact.html.twig', [
+            return $this->render('external/contact.html.twig', [
                 'contactContent' => ob_get_clean(),
             ]);
         });

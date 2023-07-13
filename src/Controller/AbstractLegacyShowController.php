@@ -47,10 +47,6 @@ abstract class AbstractLegacyShowController extends AbstractLegacyController
             }
         }
 
-        ob_start();
-
-        $callback();
-
-        return new Response(ob_get_clean());
+        return $callback();
     }
 }

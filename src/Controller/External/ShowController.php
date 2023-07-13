@@ -26,7 +26,7 @@ class ShowController extends AbstractLegacyShowController
             return $this->redirectToRoute('external.contact');
         }
         return $this->handle(function () use ($index) {
-            echo $this->twig->render('external/404.html.twig', [
+            return $this->render('external/404.html.twig', [
                 'page' => $index,
             ]);
         });
