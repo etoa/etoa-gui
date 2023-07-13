@@ -11,6 +11,7 @@ use EtoA\HostCache\NetworkNameService;
 use EtoA\Support\BBCodeUtils;
 use EtoA\Support\Mail\MailSenderService;
 use EtoA\Text\TextRepository;
+use Exception;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -24,8 +25,6 @@ class ContactController extends AbstractLegacyShowController
         TextRepository       $textRepo,
         AdminUserRepository  $adminUserRepo,
         ConfigurationService $config,
-        MailSenderService    $mailSenderService,
-        NetworkNameService   $networkNameService,
     ): Response
     {
         $admins = array_filter($adminUserRepo->findAll(), fn(AdminUser $admin) => $admin->isContact);
@@ -34,8 +33,6 @@ class ContactController extends AbstractLegacyShowController
             $textRepo,
             $adminUserRepo,
             $config,
-            $mailSenderService,
-            $networkNameService,
             $admins,
         ) {
             ob_start();
@@ -85,7 +82,6 @@ class ContactController extends AbstractLegacyShowController
 
     #[Route('/contact-support/{adminId}', name: 'external.contact.message')]
     public function showMessageForm(
-        TextRepository       $textRepo,
         AdminUserRepository  $adminUserRepo,
         ConfigurationService $config,
         MailSenderService    $mailSenderService,
@@ -95,7 +91,6 @@ class ContactController extends AbstractLegacyShowController
     ): Response
     {
         return $this->handle(function () use (
-            $textRepo,
             $adminUserRepo,
             $config,
             $mailSenderService,
@@ -131,10 +126,14 @@ class ContactController extends AbstractLegacyShowController
                     $text .= $mail_text;
 
                     // Send mail
-                    $mailSenderService->send($subject, $text, $recipient, $sender);
-                    $this->addFlash('success', 'Vielen Dank! Deine Nachricht wurde gesendet!');
+                    try {
+                        $mailSenderService->send($subject, $text, $recipient, $sender);
+                        $this->addFlash('success', 'Vielen Dank! Deine Nachricht wurde gesendet!');
 
-                    return $this->redirectToRoute('external.contact');
+                        return $this->redirectToRoute('external.contact');
+                    } catch (Exception $ex) {
+                        $this->addFlash('error', $ex->getMessage());
+                    }
                 } else {
                     $this->addFlash('error', "Titel oder Text fehlt!");
                 }
