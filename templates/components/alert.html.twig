@@ -1,8 +1,10 @@
 <div class="messagebox">
     <div class="{{ type }}">
         {% if title %}
-            <p class="messagetitle">{{ title }}</p>
+            <div class="messagetitle">{{ title }}</div>
         {% endif %}
-        {% block content %}{% endblock %}
+        <div>
+            {% block content %}{% endblock %}
+        </div>
     </div>
 </div>

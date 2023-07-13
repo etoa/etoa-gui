@@ -4,6 +4,20 @@
 
 {% block layoutContent %}
     <div id="outGameContent">
+        {% for type, messages in app.flashes|default([]) %}
+            {% for message in messages %}
+                {% if type == 'error' %}
+                    {% set alert_title='Fehler' %}
+                {% elseif type == 'warning' %}
+                    {% set alert_title='Warnung' %}
+                {% elseif type == 'info' %}
+                    {% set alert_title='Information' %}
+                {% elseif type == 'success' %}
+                    {% set alert_title='Erfolg' %}
+                {% endif %}
+                <twig:alert :type="type" :title="alert_title|default(null)">{{ message }}</twig:alert>
+            {% endfor %}
+        {% endfor %}
         {% block content %}{% endblock %}
     </div>
 {% endblock %}
