@@ -1,10 +1,13 @@
-<div class="messagebox">
-    <div class="{{ type }}">
+<div class="alert alert-{{ type }}">
+    <div>
         {% if title %}
-            <div class="messagetitle">{{ title }}</div>
+            <div class="alert-title">{{ title }}</div>
         {% endif %}
-        <div>
-            {% block content %}{% endblock %}
-        </div>
+        <div class="alert-content">{% block content %}{% endblock %}</div>
     </div>
+    {% if actionLabel and actionUrl %}
+        <div class="alert-action-wrapper">
+            <a href="{{ actionUrl }}" class="alert-action">{{ actionLabel }}</a>
+        </div>
+    {% endif %}
 </div>

@@ -63,3 +63,52 @@ table.tb th {
 .styled-form-medium .form-text {
     padding-left: 125px;
 }
+
+/**
+* Alerts
+ */
+
+.alert {
+    border: 1px solid #111;
+    color: #dae9ff;
+    margin: 15px 0;
+}
+
+.alert .alert-content {
+    background: rgba(24, 35, 59, 0.9);
+    padding: 4px 6px;
+}
+
+.alert .alert-title {
+    font-weight: bold;
+    background: rgba(24, 35, 59, 0.5);
+    border-bottom: 1px solid #111;
+    padding: 4px 6px;
+}
+
+.alert .alert-action-wrapper {
+    background: rgba(24, 35, 59, 0.5);
+    border-top: 1px solid #111;
+    padding: 4px 6px;
+    text-align: right;
+}
+
+.alert.alert-success .alert-title {
+    color: #0f0;
+}
+
+.alert.alert-info .alert-title {
+    color: #0ff;
+}
+
+.alert.alert-warning .alert-title {
+    color: #ffdd00;
+}
+
+.alert.alert-validation .alert-title {
+    color: #ff9900;
+}
+
+.alert.alert-error .alert-title {
+    color: #f00;
+}

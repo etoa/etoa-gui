@@ -1011,15 +1011,10 @@ tbody tr:nth-child(even),
 }
 
 /*
-  * Message boxes
+  * Alerts (Message boxes)
   */
-div.messagebox {
-    padding: 0;
-    margin: 0;
-}
 
-div.messagebox div {
-    position: relative;
+.alert {
     margin: 10px 0 20px 0;
     padding: 15px 10px 15px 55px;
     border: 1px solid;
@@ -1028,74 +1023,110 @@ div.messagebox div {
     font-size: 10pt;
     border-radius: 5px;
     text-align: left;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
-.messagebox .messagetitle {
+.alert div {
+    display: block;
+}
+
+.alert .alert-title {
     font-size: 11pt;
     color: black;
     font-family: Verdana, sans-serif;
-    margin: 0;
-    margin-bottom: 10px;
+    margin: 0 0 10px;
     padding: 0;
 }
 
-div.messagebox div.success {
+.alert .alert-action {
+    text-decoration: none;
+    font-weight: normal;
+    border: 1px solid;
+    display: inline-block;
+    border-radius: 5px;
+    padding: 10px;
+}
+
+.alert.alert-success {
     color: #4f8a10;
     background-color: #dff2bf;
     background-image: url("../images/messagebox/success.png");
 }
 
-div.messagebox div.info {
+.alert.alert-success .alert-action {
+    border-color: #4f8a10;
+    color: #4f8a10;
+}
+
+.alert.alert-success .alert-action:hover {
+    color: #dff2bf;
+    background-color: #4f8a10;
+}
+
+.alert.alert-info {
     color: #00529b;
     background-color: #bde5f8;
     background-image: url("../images/messagebox/info.png");
 }
 
-div.messagebox div.validation {
+.alert.alert-info .alert-action {
+    border-color: #00529b;
+    color: #00529b;
+}
+
+.alert.alert-info .alert-action:hover {
+    color: #bde5f8;
+    background-color: #00529b;
+}
+
+.alert.alert-validation {
     color: #d63301;
     background-color: #ffccba;
     background-image: url("../images/messagebox/validation.png");
 }
 
-div.messagebox div.warning {
+.alert.alert-validation .alert-action {
+    border-color: #d63301;
+    color: #d63301;
+}
+
+.alert.alert-validation .alert-action:hover {
+    color: #ffccba;
+    background-color: #d63301;
+}
+
+.alert.alert-warning {
     color: #9f6000;
     background-color: #feefb3;
     background-image: url("../images/messagebox/warning.png");
 }
 
-div.messagebox div.error {
+.alert.alert-warning .alert-action {
+    border-color: #9f6000;
+    color: #9f6000;
+}
+
+.alert.alert-warning .alert-action:hover {
+    color: #feefb3;
+    background-color: #9f6000;
+}
+
+.alert.alert-error {
     color: #d8000c;
     background-color: #ffbaba;
     background-image: url("../images/messagebox/error.png");
 }
 
-p.error {
-    color: black;
-    background-color: #fee;
-    border: 3px solid #e32;
-    font-family: sans-serif;
-    font-size: 130%;
-    line-height: 140%;
-    padding: 0.8em;
-    margin: 1em 0;
+.alert.alert-error .alert-action {
+    border-color: #d8000c;
+    color: #d8000c;
 }
 
-p.error em {
-    color: #e32;
-    font-weight: normal;
-    line-height: 140%;
-}
-
-p.notice {
-    border: 3px solid #ffcc00;
-    background: #ffc;
-    color: #000;
-    display: block;
-    font-family: Courier, monospace;
-    font-size: 120%;
-    line-height: 140%;
-    padding: 0.8em;
-    margin: 1em 0;
+.alert.alert-error .alert-action:hover {
+    color: #ffbaba;
+    background-color: #d8000c;
 }
 
 /*

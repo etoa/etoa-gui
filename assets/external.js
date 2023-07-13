@@ -7,7 +7,6 @@ import './bootstrap.js';
  */
 // any CSS you import will output into a single css file (app.css in this case)
 import './styles/external.css';
-import './styles/messagebox.css';
 
 // require jQuery normally
 import $ from 'jquery';
