@@ -11,6 +11,7 @@ use EtoA\Support\ExternalUrl;
 use EtoA\Support\GameVersionService;
 use EtoA\Support\RuntimeDataStore;
 use EtoA\Support\StringUtils;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 use WhichBrowser\Parser;
@@ -20,10 +21,11 @@ class TwigExtension extends AbstractExtension
     private float $startTime;
 
     public function __construct(
-        private readonly ConfigurationService $config,
-        private readonly NetworkNameService   $networkNameService,
-        private readonly RuntimeDataStore     $runtimeDataStore,
-        private readonly GameVersionService   $gameVersion,
+        private readonly ConfigurationService  $config,
+        private readonly NetworkNameService    $networkNameService,
+        private readonly RuntimeDataStore      $runtimeDataStore,
+        private readonly GameVersionService    $gameVersion,
+        private readonly UrlGeneratorInterface $router,
     )
     {
         $this->startTime = microtime(true);
@@ -101,7 +103,7 @@ class TwigExtension extends AbstractExtension
             case 'chat':
                 return ExternalUrl::CHAT;
             case 'login':
-                return '/show/?index=login';
+                return $this->router->generate('external.login');
             default:
                 throw new \InvalidArgumentException('Unknown url ' . $id);
         }

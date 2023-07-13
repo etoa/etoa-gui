@@ -3,11 +3,13 @@
 namespace EtoA\Legacy;
 
 use EtoA\Core\Configuration\ConfigurationService;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 
 class UtilityMethodProvider
 {
     public function __construct(
-        private readonly ConfigurationService $config,
+        private readonly ConfigurationService  $config,
+        private readonly UrlGeneratorInterface $router,
     )
     {
     }
@@ -17,7 +19,7 @@ class UtilityMethodProvider
     {
         $url = $this->config->get('loginurl');
         if (!$url) {
-            $url = "/show/?index=login";
+            $url = $this->router->generate('external.login');
             if (sizeof($args) > 0 && isset($args['page'])) {
                 unset($args['page']);
             }
