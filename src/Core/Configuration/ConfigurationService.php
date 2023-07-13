@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace EtoA\Core\Configuration;
 
 use Exception;
+use RuntimeException;
 
 class ConfigurationService
 {
@@ -59,10 +60,7 @@ class ConfigurationService
         return $this->_items;
     }
 
-    /**
-     * @return int|bool|string|float
-     */
-    public function get(string $key)
+    public function get(string $key): int|bool|string|float
     {
         $this->ensureLoaded();
         if (isset($this->_items[$key])) {
@@ -73,7 +71,7 @@ class ConfigurationService
             return $elem->value;
         }
 
-        throw new Exception('Invalid configuration key ' . $key);
+        throw new RuntimeException('Invalid configuration key ' . $key);
     }
 
     public function getInt(string $key): int

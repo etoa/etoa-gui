@@ -1,9 +1,8 @@
+{% set title='Passwort vergessen?' %}
+
 {% extends 'layout/external.html.twig' %}
 
-{% import 'macros.html.twig' as macros %}
-
 {% block content %}
-    <h1>Passwort vergessen?</h1>
     <form action="{{ path('external.request-password') }}" method="post" class="styled-form styled-form-medium">
         {{ checker|raw }}
         <p>Hier kannst du ein neues Passwort für deinen Account in der {{ roundName }} per E-Mail anfordern, wenn du

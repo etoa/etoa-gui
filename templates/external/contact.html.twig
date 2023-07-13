@@ -1,7 +1,8 @@
+{% set title='Kontakt' %}
+
 {% extends 'layout/external.html.twig' %}
 
 {% block content %}
-    <h1>Kontakt</h1>
     {{ contactContent|raw }}
     <p class="center"><a href="{{ path('external.login') }}">Zurück zum Login</a></p>
 {% endblock %}

@@ -3,12 +3,6 @@
 {% import 'macros.html.twig' as macros %}
 
 {% block content %}
-    <h1>Game-Login</h1>
-
-    {% if errorMessage %}
-        {{ macros.errorMessage(errorMessage) }}
-    {% endif %}
-
     <form action="{{ path('external.login') }}" method="post" class="styled-form styled-form-medium">
         <p>Willkommen in der {{ roundName }}. Bitte melde dich mit deinen Logindaten an:</p>
         <p>

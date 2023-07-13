@@ -1,13 +1,8 @@
+{% set title='Account registrieren' %}
+
 {% extends 'layout/external.html.twig' %}
 
-{% import 'macros.html.twig' as macros %}
-
 {% block content %}
-    <h1>Account registrieren</h1>
-
-    {% if errorMessage|default(false) %}
-        {{ macros.errorMessage(errorMessage) }}
-    {% endif %}
 
     {% if registrationNotEnabled %}
         <p>Die Registration ist momentan ausgeschaltet! Schau bitte ein anderes Mal vorbei!</p>

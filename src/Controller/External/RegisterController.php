@@ -82,13 +82,13 @@ class RegisterController extends AbstractLegacyShowController
                         'successMessage' => $successMessage,
                     ]);
                 } catch (Exception $e) {
-                    return $this->render('external/register.html.twig', array_merge($this->getRegisterParams($this->config, $userRepository), [
-                        'errorMessage' => 'Die Registration hat leider nicht geklappt: ' . $e->getMessage(),
-                    ]));
+                    $this->addFlash('error', 'Die Registration hat leider nicht geklappt: ' . $e->getMessage());
                 }
             }
 
-            return $this->render('external/register.html.twig', $this->getRegisterParams($this->config, $userRepository));
+            return $this->render('external/register.html.twig',
+                $this->getRegisterParams($this->config, $userRepository)
+            );
         });
     }
 
