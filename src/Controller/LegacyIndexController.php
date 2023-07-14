@@ -88,15 +88,6 @@ class LegacyIndexController extends AbstractController
         //
         $s = $this->userSession;
 
-        // Login if requested
-        if (isset($_POST['login'])) {
-            if (!$s->login($_POST)) {
-                forward($this->utilities->getLoginUrl(['page' => 'err', 'err' => $s->getLastErrorCode()]), 'Loginfehler', $s->getLastError());
-            }
-
-            forward('.');
-        }
-
         // Check for modified etoa tool by pain
         if ($_GET['ttool'] ?? false) {
             file_put_contents('cache/log/paintool.log',

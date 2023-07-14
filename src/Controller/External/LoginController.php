@@ -20,6 +20,16 @@ class LoginController extends AbstractLegacyShowController
         }
 
         return $this->handle(function () use ($loginUrl, $request) {
+
+            // Login if requested
+            if (isset($_POST['login'])) {
+                if (!$this->userSession->login($_POST)) {
+                    $this->addFlash('error', $this->userSession->getLastError());
+                    return $this->redirectToRoute('external.login');
+                }
+                return $this->redirect('/'); // TODO
+            }
+
             $time = time();
             $loginToken = sha1($_SERVER['REMOTE_ADDR'] . $_SERVER['HTTP_USER_AGENT'] . $time) . dechex($time);
             $nickField = sha1('nick' . $loginToken . $time);
@@ -57,7 +67,7 @@ class LoginController extends AbstractLegacyShowController
             "wrongloginkey" => "Falscher Login-Schlüssel! Ein Login ist nur von der offiziellen EtoA-Startseite aus möglich!",
             "nologinkey" => "Kein Login-Schlüssel! Ein Login ist nur von der offiziellen EtoA-Startseite aus möglich!",
             "general" => "Ein allgemeiner Fehler ist aufgetreten. Bitte den Entwickler kontaktieren!",
-            default => "Unbekannter Fehler (<b>" . $err . "</b>). Bitte den Entwickler kontaktieren!",
+            default => "Unbekannter Fehler (" . $err . "). Bitte den Entwickler kontaktieren!",
         };
     }
 }
