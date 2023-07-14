@@ -5,9 +5,9 @@ use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Quest\QuestResponseListener;
 use EtoA\Support\BBCodeUtils;
 use EtoA\Support\Mail\MailSenderService;
-use EtoA\Text\TextRepository;
 use EtoA\Support\RuntimeDataStore;
 use EtoA\Support\StringUtils;
+use EtoA\Text\TextRepository;
 use EtoA\Tip\TipRepository;
 use EtoA\Tutorial\TutorialManager;
 use EtoA\User\UserPropertiesRepository;
@@ -86,6 +86,7 @@ if (!$cu->isSetup() && $page != "help" && $page != "contact") {
     // E-Mail verification
     if (!$cu->isVerified) {
         if (isset($_GET['resendverificationmail'])) {
+            // TODO fix url
             $verificationUrl = $config->get('roundurl') . '/show/?index=verifymail&key=' . $cu->verificationKey;
             $email_text = "Hallo " . $cu->nick . "\n\n";
             $email_text .= "Damit du alle Funktionen von Escape to Andromeda benutzen kannst muss deine E-Mail Adresse verifiziert werden. Bitte klicke auf den folgenden Link, um die Verifikation für die " . $config->get('roundname') . " abzuschliessen:\n\n";
@@ -111,9 +112,7 @@ if (!$cu->isSetup() && $page != "help" && $page != "contact") {
         echo 'Die Löschung erfolgt frühestens um <b>' . StringUtils::formatDate($cu->deleted) . '</b>!<br/><br/>
         <input type="button" onclick="document.location=\'?page=userconfig&mode=misc\'" value="Löschung aufheben" />
         <input type="button" onclick="document.location=\'?page=contact\'" value="Admin kontaktieren" /> ';
-    }
-
-    // Auf Sperrung prüfen
+    } // Auf Sperrung prüfen
     elseif (
         $cu->blocked_from > 0 &&
         $cu->blocked_from < $time &&
@@ -130,15 +129,13 @@ if (!$cu->isSetup() && $page != "help" && $page != "contact") {
 
         /** @var AdminUserRepository $adminUserRepository */
         $adminUserRepository = $app[AdminUserRepository::class];
-        $adminUser = $adminUserRepository->find((int) $cu->ban_admin_id);
+        $adminUser = $adminUserRepository->find((int)$cu->ban_admin_id);
         if ($adminUser !== null) {
             echo '<b>Gesperrt von:</b> ' . $adminUser->nick . ', <a href="mailto:' . $adminUser->email . '">' . $adminUser->email . '</a><br/>';
         }
         echo '<br/>Solltest du Fragen zu dieser Sperrung haben oder dich ungerecht behandelt fühlen,<br/>
         dann <a href="?page=contact">melde</a> dich bei einem Game-Administrator.';
-    }
-
-    // Aus Urlaub prüfen
+    } // Aus Urlaub prüfen
     elseif (
         $cu->hmode_from > 0 &&
         $page != 'userconfig' &&
@@ -164,9 +161,7 @@ if (!$cu->isSetup() && $page != "help" && $page != "contact") {
         echo '<h1>Sitting ist aktiv</h1>
         Dein Account wird gesitted bis <b>' . StringUtils::formatDate($s->sittingUntil) . '</b><br/><br/>';
         echo button("Einstellungen", "?page=userconfig&mode=sitting");
-    }
-
-    // Seite anzeigen
+    } // Seite anzeigen
     else {
         // 1984
         if ($cu->monitored) {
@@ -205,7 +200,7 @@ if (!$cu->isSetup() && $page != "help" && $page != "contact") {
             forward("?page=$page");
         }
 
-        if (preg_match('/^[a-z\_]+$/', $page)  && strlen($page) <= 50) {
+        if (preg_match('/^[a-z\_]+$/', $page) && strlen($page) <= 50) {
             // DEBUG
             $query_counter = 0;
             $queries = array();
