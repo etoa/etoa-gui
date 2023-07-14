@@ -1,7 +1,6 @@
 <?PHP
 
 use EtoA\Admin\AllianceBoardAvatar;
-use EtoA\Core\AppName;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Design\Design;
 use EtoA\Fleet\ForeignFleetLoader;
@@ -399,11 +398,8 @@ function checker_get_link_key()
  */
 function return_btn()
 {
-    global $page, $index;
-    if ($index != "")
-        echo "<input type=\"button\" onclick=\"document.location='?index=$index'\" value=\"Zur&uuml;ck\" />";
-    else
-        echo "<input type=\"button\" onclick=\"document.location='?page=$page'\" value=\"Zur&uuml;ck\" />";
+    global $page;
+    echo "<input type=\"button\" onclick=\"document.location='?page=$page'\" value=\"Zur&uuml;ck\" />";
 }
 
 function button($label, $target)

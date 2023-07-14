@@ -68,11 +68,10 @@ class LegacyIndexController extends AbstractController
         $this->loadDefaultValues();
 
         // Set default page / action variables
-        global $page, $mode, $sub, $index, $info;
+        global $page, $mode, $sub, $info;
         $page = (isset($_GET['page']) && $_GET['page'] != "") ? $_GET['page'] : 'overview';
         $mode = (isset($_GET['mode']) && $_GET['mode'] != "") ? $_GET['mode'] : "";
         $sub = $_GET['sub'] ?? null;
-        $index = $_GET['index'] ?? null;
         $info = $_GET['info'] ?? null;
         $mode = $_GET['mode'] ?? null;
 

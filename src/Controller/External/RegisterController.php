@@ -2,7 +2,6 @@
 
 namespace EtoA\Controller\External;
 
-use DateTime;
 use EtoA\Controller\AbstractLegacyShowController;
 use EtoA\Core\AppName;
 use EtoA\Core\Configuration\ConfigurationService;
@@ -58,10 +57,11 @@ class RegisterController extends AbstractLegacyShowController
                     );
 
                     $verificationRequired = filled($newUser->verificationKey);
-                    $verificationUrl = null;
-                    if ($verificationRequired) {
-                        $verificationUrl = $this->config->get('roundurl') . '/show/?index=verifymail&key=' . $newUser->verificationKey;
-                    }
+                    $verificationUrl = $verificationRequired
+                        ? $this->config->get('roundurl') . $this->generateUrl('external.verify-email', [
+                            'key' => $newUser->verificationKey
+                        ])
+                        : null;
 
                     $emailText = $this->twig->render('email/register.txt.twig', [
                         'newUser' => $newUser,
@@ -94,12 +94,13 @@ class RegisterController extends AbstractLegacyShowController
         // Load user count
         $userCount = $userRepository->count();
 
+        $registrationLater = ($config->getBoolean('enable_register') && $config->param1Int('enable_register') > time())
+            ? $config->param1Int('enable_register')
+            : null;
         return [
             'maxPlayerCount' => $userCount,
             'registrationNotEnabled' => !$config->getBoolean('enable_register'),
-            'registrationLater' => ($config->getBoolean('enable_register') && $config->param1Int('enable_register') > time())
-                ? new DateTime('@' . $config->param1Int('enable_register'))
-                : null,
+            'registrationLater' => $registrationLater,
             'registrationFull' => $config->param2Int('enable_register') <= $userCount,
             'userName' => $_SESSION['REGISTER']['register_user_name'] ?? '',
             'userNick' => $_SESSION['REGISTER']['register_user_nick'] ?? '',

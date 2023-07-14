@@ -9,7 +9,7 @@
         </twig:alert>
     {% elseif registrationLater %}
         <twig:alert type="info" title="Runde noch nicht aktiv">
-            Du kannst dich erst am {{ registrationLater|format('d.m.Y') }} ab {{ registrationLater|format('H:i') }}
+            Du kannst dich erst am {{ formatTimestamp(registrationLater) }} ab {{ registrationLater|format('H:i') }}
             registrieren.<br>
             Schau doch dann nochmal vorbei oder registriere dich in einer anderen Runde!
         </twig:alert>
@@ -25,7 +25,7 @@
         <form action="{{ path('external.register') }}" method="post">
             <table class="tb">
                 <tr>
-                    <th style="width:150px;">Vollst&auml;ndiger Name:</th>
+                    <th style="width:150px;"><label for="register_user_name">Vollst&auml;ndiger Name:</label></th>
                     <td style="width:170px;">
                         <input type="text" id="register_user_name" name="register_user_name"
                                maxlength="{{ nameMaxLength }}" size="{{ nameMaxLength }}" value="{{ userName }}"
@@ -40,7 +40,7 @@
                 </tr>
 
                 <tr>
-                    <th>E-Mail:</th>
+                    <th><label for="register_user_email">E-Mail:</label></th>
                     <td>
                         <input type="text" id="register_user_email" name="register_user_email" maxlength="50" size="30"
                                value="{{ userEmail }}" autocomplete="off"/>
@@ -54,7 +54,7 @@
                 </tr>
 
                 <tr>
-                    <th>Benutzername:</th>
+                    <th><label for="register_user_nick">Benutzername:</label></th>
                     <td>
                         <input type="text" id="register_user_nick" name="register_user_nick"
                                maxlength="{{ nickMaxLength }}" size="{{ nickMaxLength }}" value="{{ userNick }}"
@@ -68,7 +68,7 @@
                 </tr>
 
                 <tr>
-                    <th>Passwort:</th>
+                    <th><label for="register_user_password">Passwort:</label></th>
                     <td>
                         <input type="password" id="register_user_password" name="register_user_password" size="20"
                                value="{{ userPassword }}" autocomplete="new-password"/>
@@ -85,9 +85,8 @@
                         <br/>
                         <input type="checkbox" name="agbread" id="agbread" value="1"/>
                         <label for="agbread">
-                            Ich akzeptiere die <a href="javascript:;"
-                                                  onclick="window.open('{{ rulesUrl }}');">Regeln</a>
-                            sowie die <a href="javascript:;" onclick="window.open('{{ privacyUrl }}');">Datenschutzerklärung</a>
+                            Ich akzeptiere die <a href="{{ rulesUrl }}" target="_blank">Regeln</a>
+                            sowie die <a href="{{ privacyUrl }}" target="_blank">Datenschutzerklärung</a>
                         </label>
                         <br/>
                         <ul style="text-align:left;margin-left:30px">

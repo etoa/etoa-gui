@@ -25,6 +25,9 @@ class ShowController extends AbstractLegacyShowController
         if ($index == 'contact') {
             return $this->redirectToRoute('external.contact');
         }
+        if ($index == 'verifymail') {
+            return $this->redirectToRoute('external.verify-email');
+        }
         return $this->handle(function () use ($index) {
             return $this->render('external/404.html.twig');
         });
