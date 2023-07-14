@@ -1,13 +1,24 @@
+{% set title='Account registrieren' %}
+
 {% extends 'layout/external.html.twig' %}
 
-{% import 'macros.html.twig' as macros %}
-
 {% block content %}
-    <h1>Account registrieren</h1>
-
-    {{ macros.successMessage(successMessage,'Registration erfolgreich!') }}
-
-    <input type="button" value="Zum Login" onclick="document.location='?index=login'">
-
-    <br style="clear:both;" />
+    <h2>Registration erfolgreich!</h2>
+    <p>
+        Es wurde eine Bestätigungsnachricht an <b>{{ registerEmail }}</b> verschickt.
+        {% if verificationRequired %}
+            Klicke auf den Link in der Nachricht um deinen Account zu bestätigen!
+        {% endif %}
+    </p>
+    <p>
+        Solltest du innerhalb der n&auml;chsten 5 Minuten keine E-Mail erhalten, pr&uuml;fe zun&auml;chst dein
+        Spam-Verzeichnis.
+    </p>
+    <p>
+        Melde dich bei einem <a href="{{ path('external.contact') }}">Admin</a>, falls du keine E-Mail erh&auml;ltst
+        oder andere Anmeldeprobleme auftreten.
+    </p>
+    <p>
+        <a href="{{ path('external.login') }}" class="button">Zum Login</a>
+    </p>
 {% endblock %}

@@ -31,7 +31,6 @@ class LoginController extends AbstractLegacyShowController
             }
 
             return $this->render('external/login.html.twig', [
-                'title' => 'Game-Login',
                 'loginToken' => $loginToken,
                 'loginUrl' => $loginUrl,
                 'roundName' => $this->config->get('roundname'),

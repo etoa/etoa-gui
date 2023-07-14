@@ -1,0 +1,21 @@
+Hallo {{ newUser.nick }}
+
+Du hast dich erfolgreich beim Sci-Fi Browsergame Escape to Andromeda für die {{ roundName }} registriert.
+Hier nochmals deine Daten:
+
+Name: {{ newUser.name }}
+E-Mail: {{ newUser.email }}
+Nick: {{ newUser.nick }}
+
+{% if verificationUrl %}
+Klicke auf den folgenden Link um deine E-Mail-Adresse zu bestätigen:
+
+{{ verificationUrl }}
+
+{% endif %}
+WICHTIG: Gib dein Passwort an niemanden weiter. Gib dein Passwort auch auf keiner Seite ausser unserer Loginseite ein. Ein Game-Admin oder Entwickler wird dich auch nie nach dem Passwort fragen!
+
+Des Weiteren solltest du dich mit den Regeln ({{ rulesUrl }}) bekannt machen, da ein Regelverstoss eine (temporäre) Sperrung deines Accounts zur Folge haben kann!
+
+Viel Spass beim Spielen!
+Das EtoA-Team

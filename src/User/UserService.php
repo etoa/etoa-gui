@@ -12,6 +12,7 @@ use EtoA\BuddyList\BuddyListRepository;
 use EtoA\Building\BuildingRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Defense\DefenseRepository;
+use EtoA\Exceptions\RecordNotFoundException;
 use EtoA\Fleet\FleetRepository;
 use EtoA\Fleet\FleetSearchParameters;
 use EtoA\Help\TicketSystem\TicketRepository;
@@ -29,6 +30,10 @@ use EtoA\Technology\TechnologyRepository;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Universe\Planet\PlanetService;
 use Exception;
+use Twig\Environment;
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Error\SyntaxError;
 
 class UserService
 {
@@ -66,39 +71,41 @@ class UserService
     private LogRepository $logRepository;
 
     public function __construct(
-        ConfigurationService $config,
-        UserRepository $userRepository,
-        UserRatingRepository $userRatingRepository,
-        UserPropertiesRepository $userPropertiesRepository,
-        PlanetRepository $planetRepository,
-        BuildingRepository $buildingRepository,
-        TechnologyRepository $technologyRepository,
-        MailSenderService $mailSenderService,
-        PlanetService $planetService,
-        UserSittingRepository $userSittingRepository,
-        UserWarningRepository $userWarningRepository,
-        UserMultiRepository $userMultiRepository,
-        AllianceRepository $allianceRepository,
+        ConfigurationService          $config,
+        UserRepository                $userRepository,
+        UserRatingRepository          $userRatingRepository,
+        UserPropertiesRepository      $userPropertiesRepository,
+        PlanetRepository              $planetRepository,
+        BuildingRepository            $buildingRepository,
+        TechnologyRepository          $technologyRepository,
+        MailSenderService             $mailSenderService,
+        PlanetService                 $planetService,
+        UserSittingRepository         $userSittingRepository,
+        UserWarningRepository         $userWarningRepository,
+        UserMultiRepository           $userMultiRepository,
+        AllianceRepository            $allianceRepository,
         AllianceApplicationRepository $allianceApplicationRepository,
-        MarketAuctionRepository $marketAuctionRepository,
-        MarketResourceRepository $marketResourceRepository,
-        MarketShipRepository $marketShipRepository,
-        NotepadRepository $notepadRepository,
-        FleetRepository $fleetRepository,
-        ShipRepository $shipRepository,
-        DefenseRepository $defenseRepository,
-        MissileRepository $missileRepository,
-        BuddyListRepository $buddyListRepository,
-        TicketRepository $ticketRepository,
-        BookmarkRepository $bookmarkRepository,
-        FleetBookmarkRepository $fleetBookmarkRepository,
-        UserPointsRepository $userPointsRepository,
-        UserCommentRepository $userCommentRepository,
-        UserSurveillanceRepository $userSurveillanceRepository,
-        UserLogRepository $userLogRepository,
-        UserToXml $userToXml,
-        LogRepository $logRepository
-    ) {
+        MarketAuctionRepository       $marketAuctionRepository,
+        MarketResourceRepository      $marketResourceRepository,
+        MarketShipRepository          $marketShipRepository,
+        NotepadRepository             $notepadRepository,
+        FleetRepository               $fleetRepository,
+        ShipRepository                $shipRepository,
+        DefenseRepository             $defenseRepository,
+        MissileRepository             $missileRepository,
+        BuddyListRepository           $buddyListRepository,
+        TicketRepository              $ticketRepository,
+        BookmarkRepository            $bookmarkRepository,
+        FleetBookmarkRepository       $fleetBookmarkRepository,
+        UserPointsRepository          $userPointsRepository,
+        UserCommentRepository         $userCommentRepository,
+        UserSurveillanceRepository    $userSurveillanceRepository,
+        UserLogRepository             $userLogRepository,
+        UserToXml                     $userToXml,
+        LogRepository                 $logRepository,
+        private readonly Environment  $twig,
+    )
+    {
         $this->config = $config;
         $this->userRepository = $userRepository;
         $this->userRatingRepository = $userRatingRepository;
@@ -138,10 +145,11 @@ class UserService
         string $email,
         string $nick,
         string $password,
-        ?int $race = 0,
-        bool $ghost = false,
-        bool $forceVerified = false
-    ): User {
+        ?int   $race = 0,
+        bool   $ghost = false,
+        bool   $forceVerified = false
+    ): User
+    {
         // Validate required data is not empty
         if (!filled($name) || !filled($email) || !filled($nick) || !filled($password)) {
             throw new Exception("Nicht alle Felder sind ausgefüllt!");
@@ -181,7 +189,7 @@ class UserService
         }
 
         // Add new record
-        $userId = $this->userRepository->create($nick, $name, $email, $password, (int) $race, $ghost);
+        $userId = $this->userRepository->create($nick, $name, $email, $password, (int)$race, $ghost);
         $this->userRepository->setSittingDays($userId, $this->config->getInt('user_sitting_days'));
         $this->userRatingRepository->addBlank($userId);
         $this->userPropertiesRepository->addBlank($userId);
@@ -243,7 +251,7 @@ class UserService
                 } elseif ($alliance->founderId == $user->id) {
                     foreach ($members as $member) {
                         if ($member['user_id'] != $alliance->founderId) {
-                            $this->allianceRepository->setFounderId($alliance->id, (int) $member['user_id']);
+                            $this->allianceRepository->setFounderId($alliance->id, (int)$member['user_id']);
 
                             break;
                         }
@@ -430,20 +438,34 @@ die Spielleitung";
         $this->addToUserLog($userId, "settings", "{nick} ändert sein Passwort.", false);
     }
 
+    /**
+     * @throws SyntaxError if there is a syntax error in the email template
+     * @throws RuntimeError
+     * @throws RecordNotFoundException if the user record could not be found
+     * @throws LoaderError if the email template could not be loaded
+     */
     public function resetPassword(string $nick, string $emailFixed): void
     {
         $user = $this->userRepository->getUserByNickAndEmail($nick, $emailFixed);
         if ($user === null) {
-            throw new Exception('Es wurde kein entsprechender Datensatz gefunden!');
+            throw new RecordNotFoundException('Es wurde kein entsprechender Datensatz gefunden!');
         }
 
         $pw = generatePasswort();
 
-        $email_text = 'Hallo ' . $_POST['user_nick'] . "\n\nDu hast ein neues Passwort angefordert.\nHier sind die neuen Daten:\n\nUniversum: " . $this->config->get('roundname') . "\n\nNick: " . $nick . "\nPasswort: " . $pw . "\n\nWeiterhin viel Spass...\nDas EtoA-Team";
-        $this->mailSenderService->send("Passwort-Anforderung", $email_text, $emailFixed);
+        $emailText = $this->twig->render('email/new-password.txt.twig', [
+            'user' => $user,
+            'roundName' => $this->config->get('roundname'),
+            'password' => $pw,
+        ]);
+        $this->mailSenderService->send("Passwort-Anforderung", $emailText, $emailFixed);
 
         $this->userRepository->updatePassword($user->id, $pw);
 
-        $this->logRepository->add(LogFacility::USER, LogSeverity::INFO, 'Der Benutzer ' . $_POST['user_nick'] . ' hat ein neues Passwort per E-Mail angefordert!');
+        $this->logRepository->add(
+            LogFacility::USER,
+            LogSeverity::INFO,
+            'Der Benutzer ' . $user->nick . ' hat ein neues Passwort per E-Mail angefordert!'
+        );
     }
 }
