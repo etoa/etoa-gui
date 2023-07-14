@@ -5,6 +5,7 @@ use EtoA\Alliance\AllianceNewsRepository;
 use EtoA\Alliance\AllianceTechnologyRepository;
 use EtoA\Building\BuildingDataRepository;
 use EtoA\Building\BuildingRepository;
+use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Defense\DefenseDataRepository;
 use EtoA\Defense\DefenseQueueRepository;
 use EtoA\Defense\DefenseQueueSearch;
@@ -15,15 +16,13 @@ use EtoA\Fleet\ForeignFleetLoader;
 use EtoA\Ship\ShipDataRepository;
 use EtoA\Ship\ShipQueueRepository;
 use EtoA\Ship\ShipQueueSearch;
+use EtoA\Support\BBCodeUtils;
+use EtoA\Support\StringUtils;
 use EtoA\Technology\TechnologyDataRepository;
 use EtoA\Technology\TechnologyId;
 use EtoA\Technology\TechnologyListItemSearch;
 use EtoA\Technology\TechnologyRepository;
 use EtoA\Text\TextRepository;
-
-use EtoA\Core\Configuration\ConfigurationService;
-use EtoA\Support\BBCodeUtils;
-use EtoA\Support\StringUtils;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Universe\Resources\ResourceNames;
 use EtoA\User\UserLoginFailureRepository;
@@ -61,7 +60,8 @@ $properties = $userPropertiesRepository->getOrCreateProperties($cu->id);
 // BEGIN SKRIPT //
 echo "<h1>&Uuml;bersicht</h1>";
 
-if ($s->firstView) {
+/** @var \EtoA\Legacy\UserSession $s */
+if ($s->isFirstView()) {
     if ($config->getBoolean("round_end")) {
         iBoxStart("Ende der Runde");
         echo "<div style=\"width:100%;text-align:center;\">Die Runde endet am <strong>" . StringUtils::formatDate($config->param1Int("round_end")) . "</strong>!";
@@ -138,12 +138,10 @@ $ownFleets = $fleetRepository->count(FleetSearch::create()->user($cu->getId()));
 //Mehrere Flotten
 if ($ownFleets > 1) {
     echo "<td><a href=\"?page=fleets\" style=\"color:#0f0\"><b>" . $ownFleets . "</b> eigene Flotten</a></td>";
-}
-//Eine Flotte
+} //Eine Flotte
 elseif ($ownFleets === 1) {
     echo "<td><a href=\"?page=fleets\" style=\"color:#0f0\"><b>" . $ownFleets . "</b> eigene Flotte</a></td>";
-}
-//Keine Flotten
+} //Keine Flotten
 else {
     echo "<td>Keine eigenen Flotten</td>";
 }
@@ -159,12 +157,10 @@ $result = $foreignFleetLoader->getVisibleFleets($cu->getId());
 //Mehrere Flotten
 if (count($result->visibleFleets) > 1) {
     echo "<td><a href=\"?page=fleets\" style=\"" . $result->getAttitude() . "\"><b>" . count($result->visibleFleets) . "</b> fremde Flotten</a></td>";
-}
-//Eine Flotte
+} //Eine Flotte
 elseif (count($result->visibleFleets) === 1) {
     echo "<td><a href=\"?page=fleets\" style=\"" . $result->getAttitude() . "\"><b>" . count($result->visibleFleets) . "</b> fremde Flotte</a></td>";
-}
-//Keine Flotten
+} //Keine Flotten
 else {
     echo "<td>Keine fremden Flotten</td>";
 }
@@ -180,8 +176,7 @@ if ($technologyInProgress !== null) {
     //Forschung ist fertig
     if ($technologyInProgress->endTime - time() <= 0) {
         echo "" . $technologyNames[$technologyInProgress->technologyId] . " Fertig";
-    }
-    //Noch am forschen
+    } //Noch am forschen
     else {
         echo startTime($technologyInProgress->endTime - time(), 'tech_counter', 0, '' . $technologyNames[$technologyInProgress->technologyId] . ' TIME');
     }
@@ -208,8 +203,7 @@ if ($genTechnologyInProgress !== null) {
     //Forschung ist fertig
     if ($genTechnologyInProgress->endTime - time() <= 0) {
         echo "" . $technologyNames[$genTechnologyInProgress->technologyId] . " Fertig";
-    }
-    //Noch am forschen
+    } //Noch am forschen
     else {
         echo startTime($genTechnologyInProgress->endTime - time(), 'tech_gen', 0, '' . $technologyNames[$genTechnologyInProgress->technologyId] . ' TIME');
     }
@@ -240,8 +234,7 @@ if ($cu->allianceId != 0) {
         //Forschung ist fertig
         if ($allianceBuildingInProgress['endTime'] - time() <= 0) {
             echo "" . $allianceBuildingInProgress['name'] . " Fertig";
-        }
-        //Noch am forschen
+        } //Noch am forschen
         else {
             echo startTime($allianceBuildingInProgress['endTime'] - time(), 'alliance_building_counter', 0, '' . $allianceBuildingInProgress['name'] . ' TIME');
         }
@@ -259,12 +252,10 @@ if ($cu->allianceId != 0) {
     //Mehrere Flotten
     if ($allianceSupportFleetCount > 1) {
         echo "<td><a href=\"?page=fleets&mode=alliance\"><b>" . $allianceSupportFleetCount . "</b> Supportflotten</a></td>";
-    }
-    //Eine Flotte
+    } //Eine Flotte
     elseif ($allianceSupportFleetCount == 1) {
         echo "<td><a href=\"?page=fleets&mode=alliance\"><b>" . $allianceSupportFleetCount . "</b> Supportflotte</a></td>";
-    }
-    //Keine Flotten
+    } //Keine Flotten
     else {
         echo "<td>Keine Supportflotten</td>";
     }
@@ -276,12 +267,10 @@ if ($cu->allianceId != 0) {
     //Mehrere Flotten
     if ($allianceAttackFleetCount > 1) {
         echo "<td><a href=\"?page=fleets&mode=alliance\"><b>" . $allianceAttackFleetCount . "</b> Allianzangriffe</a></td>";
-    }
-    //Eine Flotte
+    } //Eine Flotte
     elseif ($allianceAttackFleetCount === 1) {
         echo "<td><a href=\"?page=fleets&mode=alliance\"><b>" . $allianceAttackFleetCount . "</b> Allianzangriff</a></td>";
-    }
-    //Keine Flotten
+    } //Keine Flotten
     else {
         echo "<td>Keine Allianzangriffe</td>";
     }
@@ -296,8 +285,7 @@ if ($cu->allianceId != 0) {
         //Forschung ist fertig
         if ($allianceTechnologyInProgress['endTime'] - time() <= 0) {
             echo "" . $allianceTechnologyInProgress['name'] . " Fertig";
-        }
-        //Noch am forschen
+        } //Noch am forschen
         else {
             echo startTime($allianceTechnologyInProgress['endTime'] - time(), 'alliance_tech_counter', 0, '' . $allianceTechnologyInProgress['name'] . ' TIME');
         }
@@ -314,179 +302,177 @@ echo "</tr>";
 tableEnd();
 
 
-
-
 //
 // Javascript für dynamischen Planetkreis
 //
 
 
 ?>
-<script type="text/javascript">
-    function show_info(
-        planet_id,
-        planet_name,
-        building_name,
-        building_time,
-        shipyard_name,
-        shipyard_time,
-        defense_name,
-        defense_time,
-        people,
-        res_metal,
-        res_crystal,
-        res_plastic,
-        res_fuel,
-        res_food,
-        use_power,
-        prod_power,
-        store_metal,
-        store_crystal,
-        store_plastic,
-        store_fuel,
-        store_food,
-        people_place) {
+    <script type="text/javascript">
+        function show_info(
+            planet_id,
+            planet_name,
+            building_name,
+            building_time,
+            shipyard_name,
+            shipyard_time,
+            defense_name,
+            defense_time,
+            people,
+            res_metal,
+            res_crystal,
+            res_plastic,
+            res_fuel,
+            res_food,
+            use_power,
+            prod_power,
+            store_metal,
+            store_crystal,
+            store_plastic,
+            store_fuel,
+            store_food,
+            people_place) {
 
-        //Planetinfo Anzeigen
-        document.getElementById("planet_info_name").firstChild.nodeValue = planet_name;
+            //Planetinfo Anzeigen
+            document.getElementById("planet_info_name").firstChild.nodeValue = planet_name;
 
-        document.getElementById("planet_info_building_name").firstChild.nodeValue = building_name;
-        document.getElementById("planet_info_building_time").firstChild.nodeValue = building_time;
+            document.getElementById("planet_info_building_name").firstChild.nodeValue = building_name;
+            document.getElementById("planet_info_building_time").firstChild.nodeValue = building_time;
 
-        document.getElementById("planet_info_shipyard_name").firstChild.nodeValue = shipyard_name;
-        document.getElementById("planet_info_shipyard_time").firstChild.nodeValue = shipyard_time;
+            document.getElementById("planet_info_shipyard_name").firstChild.nodeValue = shipyard_name;
+            document.getElementById("planet_info_shipyard_time").firstChild.nodeValue = shipyard_time;
 
-        document.getElementById("planet_info_defense_name").firstChild.nodeValue = defense_name;
-        document.getElementById("planet_info_defense_time").firstChild.nodeValue = defense_time;
+            document.getElementById("planet_info_defense_name").firstChild.nodeValue = defense_name;
+            document.getElementById("planet_info_defense_time").firstChild.nodeValue = defense_time;
 
-        //Überprüfen ob Speicher voll ist
-        var check_metal = store_metal - res_metal;
-        var check_crystal = store_crystal - res_crystal;
-        var check_plastic = store_plastic - res_plastic;
-        var check_fuel = store_fuel - res_fuel;
-        var check_food = store_food - res_food;
-        var check_people = people_place - people;
+            //Überprüfen ob Speicher voll ist
+            var check_metal = store_metal - res_metal;
+            var check_crystal = store_crystal - res_crystal;
+            var check_plastic = store_plastic - res_plastic;
+            var check_fuel = store_fuel - res_fuel;
+            var check_food = store_food - res_food;
+            var check_people = people_place - people;
 
-        var rest_power = prod_power - use_power;
+            var rest_power = prod_power - use_power;
 
-        //Wenn Speicher voll, anders darstellen als normal
-        if (check_metal <= 0) {
-            document.getElementById("planet_info_res_metal").className = 'resfullcolor';
-        } else {
-            document.getElementById("planet_info_res_metal").className = 'resmetalcolor';
-        }
-
-        if (check_crystal <= 0) {
-            document.getElementById("planet_info_res_crystal").className = 'resfullcolor';
-        } else {
-            document.getElementById("planet_info_res_crystal").className = 'rescrystalcolor';
-        }
-
-        if (check_plastic <= 0) {
-            document.getElementById("planet_info_res_plastic").className = 'resfullcolor';
-        } else {
-            document.getElementById("planet_info_res_plastic").className = 'resplasticcolor';
-        }
-
-        if (check_fuel <= 0) {
-            document.getElementById("planet_info_res_fuel").className = 'resfullcolor';
-        } else {
-            document.getElementById("planet_info_res_fuel").className = 'resfuelcolor';
-        }
-
-        if (check_food <= 0) {
-            document.getElementById("planet_info_res_food").className = 'resfullcolor';
-        } else {
-            document.getElementById("planet_info_res_food").className = 'resfoodcolor';
-        }
-
-        if (check_people <= 0) {
-            document.getElementById("planet_info_people").className = 'resfullcolor';
-        } else {
-            document.getElementById("planet_info_people").className = 'respeoplecolor';
-        }
-
-        if (rest_power <= 0) {
-            document.getElementById("planet_info_power").className = 'resfullcolor';
-        } else {
-            document.getElementById("planet_info_power").className = 'respowercolor';
-        }
-
-
-        var res_metal = format(res_metal);
-        var res_crystal = format(res_crystal);
-        var res_plastic = format(res_plastic);
-        var res_fuel = format(res_fuel);
-        var res_food = format(res_food);
-        var people = format(people);
-        var use_power = format(use_power);
-
-        var store_metal = format(store_metal);
-        var store_crystal = format(store_crystal);
-        var store_plastic = format(store_plastic);
-        var store_fuel = format(store_fuel);
-        var store_food = format(store_food);
-        var people_place = format(people_place);
-        var prod_power = format(prod_power);
-
-        if (rest_power >= 0) {
-            var rest_power = format(rest_power);
-        } else {
-            var rest_power = '-' + format(Math.abs(rest_power));
-        }
-
-
-        //Roshtoff Anzeigen
-        document.getElementById("planet_info_res_metal").firstChild.nodeValue = '' + res_metal + ' t';
-        document.getElementById("planet_info_res_crystal").firstChild.nodeValue = '' + res_crystal + ' t';
-        document.getElementById("planet_info_res_plastic").firstChild.nodeValue = '' + res_plastic + ' t';
-        document.getElementById("planet_info_res_fuel").firstChild.nodeValue = '' + res_fuel + ' t';
-        document.getElementById("planet_info_res_food").firstChild.nodeValue = '' + res_food + ' t';
-        document.getElementById("planet_info_power").firstChild.nodeValue = rest_power;
-        document.getElementById("planet_info_people").firstChild.nodeValue = people;
-
-
-        //Alle Beschriftungen anzeigen
-        document.getElementById("planet_info_text_building").innerHTML = '<a href=\"?page=buildings&change_entity=' + planet_id + '\">Bauhof:</a>';
-        document.getElementById("planet_info_text_shipyard").innerHTML = '<a href=\"?page=shipyard&change_entity=' + planet_id + '\">Schiffswerft:</a>';
-        document.getElementById("planet_info_text_defense").innerHTML = '<a href=\"?page=defense&change_entity=' + planet_id + '\">Waffenfabrik:</a>';
-        document.getElementById("planet_info_text_res").firstChild.nodeValue = 'Ressourcen';
-        document.getElementById("planet_info_text_res_metal").className = 'resmetalcolor';
-        document.getElementById("planet_info_text_res_crystal").className = 'rescrystalcolor';
-        document.getElementById("planet_info_text_res_plastic").className = 'resplasticcolor';
-        document.getElementById("planet_info_text_res_fuel").className = 'resfuelcolor';
-        document.getElementById("planet_info_text_res_food").className = 'resfoodcolor';
-        document.getElementById("planet_info_text_people").className = 'respeoplecolor';
-        document.getElementById("planet_info_text_power").className = 'respowercolor';
-        document.getElementById("planet_info_text_res_metal").firstChild.nodeValue = '<?php echo ResourceNames::METAL . ":"; ?>';
-        document.getElementById("planet_info_text_res_crystal").firstChild.nodeValue = '<?php echo ResourceNames::CRYSTAL . ":"; ?>';
-        document.getElementById("planet_info_text_res_plastic").firstChild.nodeValue = '<?php echo ResourceNames::PLASTIC . ":"; ?>';
-        document.getElementById("planet_info_text_res_fuel").firstChild.nodeValue = '<?php echo ResourceNames::FUEL . ":"; ?>';
-        document.getElementById("planet_info_text_res_food").firstChild.nodeValue = '<?php echo ResourceNames::FOOD . ":"; ?>';
-        document.getElementById("planet_info_text_people").firstChild.nodeValue = 'Bewohner:';
-        document.getElementById("planet_info_text_power").firstChild.nodeValue = 'Energie:';
-    }
-
-    //Formatiert Zahlen (der PHP Skript will nicht gehen)
-    function format(nummer) {
-        var nummer = '' + nummer;
-        var laenge = nummer.length;
-        if (laenge > 3) {
-            var mod = laenge % 3;
-            var output = (mod > 0 ?
-                (nummer.substring(0, mod)) : '');
-            for (i = 0; i < Math.floor(laenge / 3); i++) {
-                if ((mod == 0) && (i == 0))
-                    output += nummer.substring(mod + 3 * i,
-                        mod + 3 * i + 3);
-                else
-                    output += '`' + nummer.substring(mod + 3 * i,
-                        mod + 3 * i + 3);
+            //Wenn Speicher voll, anders darstellen als normal
+            if (check_metal <= 0) {
+                document.getElementById("planet_info_res_metal").className = 'resfullcolor';
+            } else {
+                document.getElementById("planet_info_res_metal").className = 'resmetalcolor';
             }
-            return (output);
-        } else return nummer;
-    }
-</script>
+
+            if (check_crystal <= 0) {
+                document.getElementById("planet_info_res_crystal").className = 'resfullcolor';
+            } else {
+                document.getElementById("planet_info_res_crystal").className = 'rescrystalcolor';
+            }
+
+            if (check_plastic <= 0) {
+                document.getElementById("planet_info_res_plastic").className = 'resfullcolor';
+            } else {
+                document.getElementById("planet_info_res_plastic").className = 'resplasticcolor';
+            }
+
+            if (check_fuel <= 0) {
+                document.getElementById("planet_info_res_fuel").className = 'resfullcolor';
+            } else {
+                document.getElementById("planet_info_res_fuel").className = 'resfuelcolor';
+            }
+
+            if (check_food <= 0) {
+                document.getElementById("planet_info_res_food").className = 'resfullcolor';
+            } else {
+                document.getElementById("planet_info_res_food").className = 'resfoodcolor';
+            }
+
+            if (check_people <= 0) {
+                document.getElementById("planet_info_people").className = 'resfullcolor';
+            } else {
+                document.getElementById("planet_info_people").className = 'respeoplecolor';
+            }
+
+            if (rest_power <= 0) {
+                document.getElementById("planet_info_power").className = 'resfullcolor';
+            } else {
+                document.getElementById("planet_info_power").className = 'respowercolor';
+            }
+
+
+            var res_metal = format(res_metal);
+            var res_crystal = format(res_crystal);
+            var res_plastic = format(res_plastic);
+            var res_fuel = format(res_fuel);
+            var res_food = format(res_food);
+            var people = format(people);
+            var use_power = format(use_power);
+
+            var store_metal = format(store_metal);
+            var store_crystal = format(store_crystal);
+            var store_plastic = format(store_plastic);
+            var store_fuel = format(store_fuel);
+            var store_food = format(store_food);
+            var people_place = format(people_place);
+            var prod_power = format(prod_power);
+
+            if (rest_power >= 0) {
+                var rest_power = format(rest_power);
+            } else {
+                var rest_power = '-' + format(Math.abs(rest_power));
+            }
+
+
+            //Roshtoff Anzeigen
+            document.getElementById("planet_info_res_metal").firstChild.nodeValue = '' + res_metal + ' t';
+            document.getElementById("planet_info_res_crystal").firstChild.nodeValue = '' + res_crystal + ' t';
+            document.getElementById("planet_info_res_plastic").firstChild.nodeValue = '' + res_plastic + ' t';
+            document.getElementById("planet_info_res_fuel").firstChild.nodeValue = '' + res_fuel + ' t';
+            document.getElementById("planet_info_res_food").firstChild.nodeValue = '' + res_food + ' t';
+            document.getElementById("planet_info_power").firstChild.nodeValue = rest_power;
+            document.getElementById("planet_info_people").firstChild.nodeValue = people;
+
+
+            //Alle Beschriftungen anzeigen
+            document.getElementById("planet_info_text_building").innerHTML = '<a href=\"?page=buildings&change_entity=' + planet_id + '\">Bauhof:</a>';
+            document.getElementById("planet_info_text_shipyard").innerHTML = '<a href=\"?page=shipyard&change_entity=' + planet_id + '\">Schiffswerft:</a>';
+            document.getElementById("planet_info_text_defense").innerHTML = '<a href=\"?page=defense&change_entity=' + planet_id + '\">Waffenfabrik:</a>';
+            document.getElementById("planet_info_text_res").firstChild.nodeValue = 'Ressourcen';
+            document.getElementById("planet_info_text_res_metal").className = 'resmetalcolor';
+            document.getElementById("planet_info_text_res_crystal").className = 'rescrystalcolor';
+            document.getElementById("planet_info_text_res_plastic").className = 'resplasticcolor';
+            document.getElementById("planet_info_text_res_fuel").className = 'resfuelcolor';
+            document.getElementById("planet_info_text_res_food").className = 'resfoodcolor';
+            document.getElementById("planet_info_text_people").className = 'respeoplecolor';
+            document.getElementById("planet_info_text_power").className = 'respowercolor';
+            document.getElementById("planet_info_text_res_metal").firstChild.nodeValue = '<?php echo ResourceNames::METAL . ":"; ?>';
+            document.getElementById("planet_info_text_res_crystal").firstChild.nodeValue = '<?php echo ResourceNames::CRYSTAL . ":"; ?>';
+            document.getElementById("planet_info_text_res_plastic").firstChild.nodeValue = '<?php echo ResourceNames::PLASTIC . ":"; ?>';
+            document.getElementById("planet_info_text_res_fuel").firstChild.nodeValue = '<?php echo ResourceNames::FUEL . ":"; ?>';
+            document.getElementById("planet_info_text_res_food").firstChild.nodeValue = '<?php echo ResourceNames::FOOD . ":"; ?>';
+            document.getElementById("planet_info_text_people").firstChild.nodeValue = 'Bewohner:';
+            document.getElementById("planet_info_text_power").firstChild.nodeValue = 'Energie:';
+        }
+
+        //Formatiert Zahlen (der PHP Skript will nicht gehen)
+        function format(nummer) {
+            var nummer = '' + nummer;
+            var laenge = nummer.length;
+            if (laenge > 3) {
+                var mod = laenge % 3;
+                var output = (mod > 0 ?
+                    (nummer.substring(0, mod)) : '');
+                for (i = 0; i < Math.floor(laenge / 3); i++) {
+                    if ((mod == 0) && (i == 0))
+                        output += nummer.substring(mod + 3 * i,
+                            mod + 3 * i + 3);
+                    else
+                        output += '`' + nummer.substring(mod + 3 * i,
+                            mod + 3 * i + 3);
+                }
+                return (output);
+            } else return nummer;
+        }
+    </script>
 <?PHP
 
 
@@ -546,15 +532,14 @@ foreach ($userPlanets as $userPlanet) {
         $building_zeit = "(" . $building_h . "h " . $building_m . "m " . $building_s . "s)";
 
         $building_time = $building_zeit;
-        $building_name =  $buildingNames[$entry->buildingId];
+        $building_name = $buildingNames[$entry->buildingId];
 
         // Zeigt Ausbaulevel bei Abriss
         if ($entry->buildType == 4) {
-            $building_level =  $entry->currentLevel - 1;
-        }
-        // Bei Ausbau
+            $building_level = $entry->currentLevel - 1;
+        } // Bei Ausbau
         else {
-            $building_level =  $entry->currentLevel + 1;
+            $building_level = $entry->currentLevel + 1;
         }
 
         if ($building_rest_time <= 0) {
@@ -576,7 +561,7 @@ foreach ($userPlanets as $userPlanet) {
         //Verbleibende Zeit bis zur fertigstellung des aktuellen Auftrages
         $shipyard_rest_time[$userPlanet->id] = $queueItem->endTime - time();
         //Schiffsname
-        $shipyard_name[$userPlanet->id] =  $shipNames[$queueItem->shipId];
+        $shipyard_name[$userPlanet->id] = $shipNames[$queueItem->shipId];
 
         //infos über den raumschiffswerft
         $shipyard_h = floor($shipyard_rest_time[$userPlanet->id] / 3600);

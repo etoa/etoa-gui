@@ -3,9 +3,6 @@
 namespace EtoA\Legacy;
 
 use EtoA\Core\Configuration\ConfigurationService;
-use EtoA\Log\LogFacility;
-use EtoA\Log\LogRepository;
-use EtoA\Log\LogSeverity;
 use EtoA\Support\StringUtils;
 use EtoA\User\UserLoginFailureRepository;
 use EtoA\User\UserRepository;
@@ -25,11 +22,6 @@ class UserSession
     private string $lastError;
 
     /**
-     * @var string Short string (one word/abreviation) that characterizes the last error
-     */
-    private string $lastErrorCode;
-
-    /**
      * @var bool True if this is the first run (page) of the session, that means if the user hast just logged in
      */
     private bool $firstView = false;
@@ -42,21 +34,11 @@ class UserSession
 
     private int $time_login;
 
-    private string $passwordField;
-
-    private bool $cLogin;
-
-    private string $cRemoteAddr;
-
-    private string $cUserAgent;
-
     private int $userId;
 
     private string $userNick;
 
     private bool $sittingActive;
-
-    private bool $falseSitter;
 
     private int $sittingUntil;
 
@@ -71,7 +53,6 @@ class UserSession
         private readonly UserSittingRepository      $userSittingRepository,
         private readonly UserLoginFailureRepository $userLoginFailureRepository,
         private readonly UserRepository             $userRepository,
-        private readonly LogRepository              $logRepository,
     )
     {
         // Use SHA1 hash
@@ -86,11 +67,6 @@ class UserSession
     public function getLastError(): string
     {
         return ($this->lastError != null) ? $this->lastError : "";
-    }
-
-    public function getLastErrorCode(): string
-    {
-        return ($this->lastErrorCode != null) ? $this->lastErrorCode : "general";
     }
 
     public function isFirstView(): bool
@@ -143,7 +119,6 @@ class UserSession
      *
      * @param string $field Property name
      * @param mixed $value Property value
-     * @return bool True if setting was successfull
      */
     function __set(string $field, mixed $value): void
     {
@@ -160,146 +135,56 @@ class UserSession
         unset($_SESSION[$field]);
     }
 
-    public function login(array $data): bool
+    public function login(string $loginNick, string $loginPassword): bool
     {
         $this->sessionManager->cleanup();
 
-        $loginTimeDifferenceThreshold = 3600;
+        if (!filled($loginNick) || !filled($loginPassword)) {
+            $this->lastError = "Kein Benutzername oder Passwort eingegeben!";
+            return false;
+        }
 
-        if (isset($data['token'])) {
-            $t = hexdec(substr($data['token'], 40));
-            $logintoken = sha1($_SERVER['REMOTE_ADDR'] . $_SERVER['HTTP_USER_AGENT'] . $t) . dechex($t);
+        $user = $this->userRepository->getUserByNick($loginNick);
+        if ($user === null) {
+            $this->lastError = "Der Benutzername ist in dieser Runde nicht registriert!";
+            return false;
+        }
 
-            // Check token (except if user is form localhost = developer)
-            // Disable this check until https login proglems solved
-            if (true || $logintoken == $data['token'] || $_SERVER['REMOTE_ADDR'] == "127.0.0.1" || $_SERVER['REMOTE_ADDR'] == "::1") {
-                if (!isset($_SESSION['used_login_tokens']))
-                    $_SESSION['used_login_tokens'] = array();
+        $t = time();
 
-                $logintoken = $data['token'];
-                $nickField = sha1("nick" . $logintoken . $t);
-                $passwordField = sha1("password" . $logintoken . $t);
-
-                $this->passwordField = $passwordField;
-
-                // Check if token has not already been used (multi logins with browser auto-refresher)
-                if (!in_array($logintoken, $_SESSION['used_login_tokens'], true)) {
-                    $_SESSION['used_login_tokens'][] = $logintoken;
-
-                    // Check if login is withing given time bounds (+- one hour)
-                    $realtime = time();
-                    if ($t + $loginTimeDifferenceThreshold >= $realtime && $t - $loginTimeDifferenceThreshold <= $realtime) {
-                        // Check if the user and password fields are set
-                        if (isset($data[$nickField]) && isset($data[$passwordField])) {
-                            $loginNick = trim($data[$nickField]);
-                            $loginPassword = trim($data[$passwordField]);
-
-                            if ($loginNick != "" && $loginPassword != "") // Add here regex check for nickname
-                            {
-                                $user = $this->userRepository->getUserByNick($loginNick);
-                                if ($user !== null) {
-                                    $t = time();
-
-                                    // check sitter
-                                    $this->sittingActive = false;
-                                    $this->falseSitter = false;
-                                    $sittingEntry = $this->userSittingRepository->getActiveUserEntry($user->id);
-                                    if ($sittingEntry !== null) {
-                                        if (validatePasswort($loginPassword, $sittingEntry->password)) {
-                                            $this->sittingActive = true;
-                                            $this->sittingUntil = $sittingEntry->dateTo;
-                                        } elseif (validatePasswort($loginPassword, $user->password)) {
-                                            $this->falseSitter = true;
-                                            $this->sittingActive = true;
-                                            $this->sittingUntil = $sittingEntry->dateTo;
-                                        }
-                                    }
-                                    if (strlen($user->password) == 64) {
-                                        $pw = $loginPassword;
-                                        $seed = $user->registered;
-                                        $salt = "yheaP;BXf;UokIAJ4dhaOL"; // Round 9
-                                        if ($user->password == md5($pw . $seed . $salt) . md5($salt . $seed . $pw)) {
-                                            $user->password = $this->userRepository->updatePassword($user->id, $pw);
-                                        }
-                                    }
-
-                                    if (
-                                        validatePasswort($loginPassword, $user->password)
-                                        || $this->sittingActive
-                                        || ($user->passwordTemp != "" && $user->passwordTemp == $loginPassword)
-                                    ) {
-                                        session_regenerate_id(true);
-
-                                        $this->userId = $user->id;
-                                        $this->userNick = $user->nick;
-                                        $this->time_login = $t;
-                                        $this->time_action = $t;
-                                        $this->registerSession();
-                                        $this->bot_count = 0;
-                                        $this->firstView = true;
-
-                                        // do not use this values for real verification
-                                        // intended only for chat session pseudo-validation
-                                        $this->cRemoteAddr = $_SERVER['REMOTE_ADDR'];
-                                        $this->cUserAgent = $_SERVER['HTTP_USER_AGENT'];
-                                        // does not guarantee valid login, see above.
-                                        // this isn't set to false on session timeout
-                                        $this->cLogin = true;
-
-                                        return true;
-                                    } else {
-                                        $this->lastError = "Benutzer nicht vorhanden oder Passwort falsch!";
-                                        $this->userLoginFailureRepository->add($user->id, $t, $_SERVER['REMOTE_ADDR'], $_SERVER['HTTP_USER_AGENT']);
-                                        $this->lastErrorCode = "pass";
-                                    }
-                                } else {
-                                    $this->lastError = "Der Benutzername ist in dieser Runde nicht registriert!";
-                                    $this->lastErrorCode = "pass";
-                                }
-                            } else {
-                                $this->lastError = "Kein Benutzername oder Passwort eingegeben!";
-                                $this->lastErrorCode = "name";
-                            }
-                        } else {
-                            $this->lastError = "Kein Benutzername oder Passwort eingegeben!";
-                            $this->lastErrorCode = "name";
-                        }
-                    } else {
-                        $this->lastError = "Login-Timeout (" . StringUtils::formatTimespan(abs($realtime - $t)) . ")!";
-                        $this->lastErrorCode = "logintimeout";
-                        $tokenlog = true;
-                    }
-                } else {
-                    $this->lastError = "Login ungültig, Token bereits verwendet!";
-                    $this->lastErrorCode = "sameloginkey";
-                    $tokenlog = true;
-                }
-            } else {
-                $this->lastError = "Login ungültig, falsches Token!";
-                $this->lastErrorCode = "wrongloginkey";
-                $tokenlog = true;
+        // check sitter
+        $this->sittingActive = false;
+        $sittingEntry = $this->userSittingRepository->getActiveUserEntry($user->id);
+        if ($sittingEntry !== null) {
+            if (validatePasswort($loginPassword, $sittingEntry->password)) {
+                $this->sittingActive = true;
+                $this->sittingUntil = $sittingEntry->dateTo;
+            } elseif (validatePasswort($loginPassword, $user->password)) {
+                // false sitter
+                $this->sittingActive = true;
+                $this->sittingUntil = $sittingEntry->dateTo;
             }
-        } else {
-            $this->lastError = "Login ungültig, kein Token!";
-            $this->lastErrorCode = "nologinkey";
-            $tokenlog = true;
         }
 
-        if (isset($tokenlog)) {
-            $tokenlog = true;
-            $text = $this->lastError . "\n";
-
-            if (isset($passwordField) && isset($data[$passwordField]))
-                $data[$passwordField] = "*****";
-            $text .= "POST: " . var_export($data, true) . "\n";
-            if (count($_GET) > 0)
-                $text .= "GET: " . var_export($_GET, true) . "\n";
-            $text .= "Agent: " . $_SERVER['HTTP_USER_AGENT'] . "\n";
-            $text .= "Referer: " . $_SERVER['HTTP_REFERER'] . "\n";
-            $this->logRepository->add(LogFacility::ILLEGALACTION, LogSeverity::WARNING, $text);
+        // Validate password
+        $validPassword = validatePasswort($loginPassword, $user->password) || $this->sittingActive || ($user->passwordTemp != "" && $user->passwordTemp == $loginPassword);
+        if (!$validPassword) {
+            $this->lastError = "Benutzer nicht vorhanden oder Passwort falsch!";
+            $this->userLoginFailureRepository->add($user->id, $t, $_SERVER['REMOTE_ADDR'], $_SERVER['HTTP_USER_AGENT']);
+            return false;
         }
 
-        return false;
+        session_regenerate_id(true);
+
+        $this->userId = $user->id;
+        $this->userNick = $user->nick;
+        $this->time_login = $t;
+        $this->time_action = $t;
+        $this->registerSession();
+        $this->bot_count = 0;
+        $this->firstView = true;
+
+        return true;
     }
 
     /**
@@ -313,7 +198,6 @@ class UserSession
             $userSession = $this->userSessionRepository->findByParameters(session_id(), $this->userId, $_SERVER['HTTP_USER_AGENT'], $this->time_login);
             if ($userSession !== null) {
                 $t = time();
-
                 if ($this->time_action + $this->config->getInt('user_timeout') > $t) {
                     $allows = false;
                     $bot = false;
@@ -332,8 +216,9 @@ class UserSession
                                 $allows = true;
                             }
                         }
-                    } else
+                    } else {
                         $allows = true;
+                    }
                     if ($allows) {
                         if (!$bot) {
                             $this->userSessionRepository->update(session_id(), $t, $this->bot_count, $this->last_span, $_SERVER['REMOTE_ADDR']);
@@ -341,7 +226,7 @@ class UserSession
                             $this->time_action = $t;
                             return true;
                         } else {
-                            $this->lastError = "Die Verwendung von Bots ist nichtgestattet!";
+                            $this->lastError = "Die Verwendung von Bots ist nicht gestattet!";
                         }
                     } else {
                         $this->lastError = "Sitting abgelaufen!";
@@ -356,30 +241,8 @@ class UserSession
             $this->lastError = "";
         }
         if ($destroy == 1) {
-            // chat logout
-            $this->cLogin = false;
-
             // destroy user session
             $this->sessionManager->unregisterSession();
-        }
-        return false;
-    }
-
-    /**
-     * only for session validation in chat, do not use
-     * for real validation
-     */
-    function chatValidate(): bool
-    {
-        if (
-            $this->cLogin &&
-            $this->cRemoteAddr == $_SERVER['REMOTE_ADDR'] &&
-            $this->cUserAgent == $_SERVER['HTTP_USER_AGENT'] &&
-            isset($_SESSION['user_id']) &&
-            $this->userId > 0 &&
-            $_SESSION['user_id'] == $this->userId
-        ) {
-            return true;
         }
         return false;
     }
@@ -393,9 +256,6 @@ class UserSession
 
     function logout(): void
     {
-        // chat logout
-        $this->cLogin = false;
-
         // destroy session
         $this->sessionManager->unregisterSession();
     }

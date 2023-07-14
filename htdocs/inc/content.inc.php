@@ -46,7 +46,8 @@ if (!$cu->isSetup() && $page != "help" && $page != "contact") {
     require("inc/usersetup.inc.php");
 } else {
     // Show tipps
-    if ($s->firstView) {
+    /** @var \EtoA\Legacy\UserSession $s */
+    if ($s->isFirstView()) {
         /** @var TipRepository $tipRepository */
         $tipRepository = $app[TipRepository::class];
         $tipText = $tipRepository->getRandomTipText();

@@ -201,7 +201,7 @@ class LegacyIndexController extends AbstractController
         <a href=\"" . $this->utilities->getLoginUrl() . "\">Hauptseite</a></div>";
             } // Zugriff erlauben und Inhalt anzeigen
             else {
-                if ($s->firstView && $properties->startUpChat == 1) {
+                if ($s->isFirstView() && $properties->startUpChat == 1) {
                     echo "<script type=\"text/javascript\">" . ExternalUrl::CHAT_ON_CLICK . "</script>";
                 }
 

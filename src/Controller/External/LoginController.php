@@ -22,30 +22,26 @@ class LoginController extends AbstractLegacyShowController
         return $this->handle(function () use ($loginUrl, $request) {
 
             // Login if requested
-            if (isset($_POST['login'])) {
-                if (!$this->userSession->login($_POST)) {
+            if ($request->request->has('login')) {
+                $loginNick = trim($request->request->get('nickname', ''));
+                $loginPassword = trim($request->request->get('password', ''));
+                if (!$this->userSession->login($loginNick, $loginPassword)) {
                     $this->addFlash('error', $this->userSession->getLastError());
                     return $this->redirectToRoute('external.login');
                 }
                 return $this->redirect('/'); // TODO
             }
 
-            $time = time();
-            $loginToken = sha1($_SERVER['REMOTE_ADDR'] . $_SERVER['HTTP_USER_AGENT'] . $time) . dechex($time);
-            $nickField = sha1('nick' . $loginToken . $time);
-            $passwordField = sha1('password' . $loginToken . $time);
-
             if ($request->query->has('err')) {
                 $errCode = $request->query->get('err');
                 $this->addFlash('error', $this->getErrMsg($errCode));
             }
 
+            // TODO CSRF token
+
             return $this->render('external/login.html.twig', [
-                'loginToken' => $loginToken,
                 'loginUrl' => $loginUrl,
                 'roundName' => $this->config->get('roundname'),
-                'nickField' => $nickField,
-                'passwordField' => $passwordField,
             ]);
         });
     }

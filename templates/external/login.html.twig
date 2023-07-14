@@ -6,20 +6,18 @@
     <form action="{{ path('external.login') }}" method="post" class="styled-form styled-form-medium">
         <p>Willkommen in der {{ roundName }}. Bitte melde dich mit deinen Logindaten an:</p>
         <p>
-            <label for="loginname">Name</label>
-            <input id="loginname" type="text" name="{{ nickField }}" value="" size="20" maxlength="250" tabindex="1"
-                   autofocus/>
-            &nbsp; <a href="{{ path('external.register') }}">Kein Account? Hier registrieren</a>
+            <label for="nickname">Name</label>
+            <input id="nickname" type="text" name="nickname" value="" size="20" maxlength="250" autofocus/> &nbsp;
+            <a href="{{ path('external.register') }}">Kein Account? Hier registrieren</a>
         </p>
         <p>
-            <label for="loginpw">Passwort</label>
-            <input id="loginpw" type="password" name="{{ passwordField }}" value="" size="20" maxlength="250"
-                   tabindex="2"/> &nbsp; <a href="{{ path('external.request-password') }}">Passwort vergessen?</a>
+            <label for="password">Passwort</label>
+            <input id="password" type="password" name="password" value="" size="20" maxlength="250"/> &nbsp;
+            <a href="{{ path('external.request-password') }}">Passwort vergessen?</a>
         </p>
         <p class="form-buttons">
             <input id="loginsubmit" type="submit" name="login" value="Login" class="button"/> &nbsp;
             <a href="{{ path('admin.index') }}">Zum Admin-Login</a>
         </p>
-        <input type="hidden" name="token" value="{{ loginToken }}"/>
     </form>
 {% endblock %}
