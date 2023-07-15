@@ -18,6 +18,8 @@ class NotepadType extends AbstractType
                 'required' => true,
                 'attr' => [
                     'size' => '50',
+                    'placeholder' => 'Titel',
+                    'autofocus' => true,
                 ],
             ])
             ->add('text', TextareaType::class, [
@@ -26,10 +28,11 @@ class NotepadType extends AbstractType
                 'attr' => [
                     'cols' => '80',
                     'rows' => '20',
+                    'placeholder' => 'Inhalt',
                 ],
             ])
-        ->add('submit', SubmitType::class, [
-            'label' => 'Speichern',
-        ]);
+            ->add('submit', SubmitType::class, [
+                'label' => 'Speichern',
+            ]);
     }
 }

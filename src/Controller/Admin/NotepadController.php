@@ -38,11 +38,13 @@ class NotepadController extends AbstractAdminController
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $this->adminNotesRepository->create($note);
-
+            $this->addFlash('success', 'Notiz gespeichert');
             return $this->redirectToRoute('admin.notepad');
         }
 
-        return $this->render('admin/notepad/new.html.twig');
+        return $this->render('admin/notepad/new.html.twig', [
+            'form' => $form->createView(),
+        ]);
     }
 
     #[Route("/admin/notepad/{id}/edit", name: "admin.notepad.edit")]
@@ -53,13 +55,14 @@ class NotepadController extends AbstractAdminController
         $note = $this->adminNotesRepository->findForAdmin($id, $user->getId());
         if ($note === null) {
             $this->addFlash('error', 'Notiz nicht gefunden');
+            return $this->redirectToRoute('admin.notepad');
         }
 
         $form = $this->createForm(NotepadType::class, $note);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
             $this->adminNotesRepository->update($note);
-
+            $this->addFlash('success', 'Notiz aktualisiert');
             return $this->redirectToRoute('admin.notepad');
         }
 

@@ -3,32 +3,23 @@
 {% block content %}
     <h1>Notizen</h1>
 
-    <table>
+    <table class="table table-autofit">
         {% for note in notes %}
             <tr>
-                <td width="120">
-                    <b>{{ BBCodeToHTML(note.title)|raw }}</b>
-                    <br/>
-                    {{ note.date|date("d.m.Y H:i") }}
-                </td>
-                <td width="350">{{ BBCodeToHTML(note.text)|raw }}</td>
-                <td>
-                    <a href="{{ path('admin.notepad.edit', {id: note.id}) }}">Bearbeiten</a><br>
-                    <a href="{{ path('admin.notepad.delete', {id: note.id}) }}"
-                       onclick="return confirm('Eintrag löschen?')">Löschen</a>
-                </td>
+                <th>
+                    <a href="{{ path('admin.notepad.edit', {id: note.id}) }}">{{ note.title }}</a>
+                </th>
+                <td class="absorbing-column">{{ BBCodeToHTML(note.text)|raw }}</td>
+                <td>{{ note.date|date("d.m.Y H:i") }}</td>
+                <td><a href="{{ path('admin.notepad.delete', {id: note.id}) }}"
+                       onclick="return confirm('Eintrag löschen?')">Löschen</a></td>
             </tr>
         {% else %}
             <tr>
-                <td>
-                    <p>Keine Notiz vorhanden</p>
-                </td>
+                <td> Keine Notiz vorhanden!</td>
             </tr>
         {% endfor %}
     </table>
 
-    <form action="{{ path('admin.notepad.new') }}">
-        <br><input type="Submit" name="Neue Notiz" value="Neue Notiz"/>
-    </form>
-
+    <p><a href="{{ path('admin.notepad.new') }}" class="button">Neue Notiz</a></p>
 {% endblock %}

@@ -475,6 +475,18 @@ tbody tr:nth-child(even),
     border-top: 2px solid #aaaaaa;
 }
 
+.table.table-autofit {
+    table-layout: auto;
+}
+
+.table.table-autofit .absorbing-column {
+    width: 100%;
+}
+
+.table.table-autofit th, .table.table-autofit td {
+    white-space: nowrap;
+}
+
 /*
  Card
  */
