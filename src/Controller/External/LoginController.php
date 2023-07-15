@@ -15,11 +15,11 @@ class LoginController extends AbstractLegacyShowController
     public function index(Request $request): Response
     {
         $loginUrl = $this->config->get('loginurl');
-        if ($loginUrl) {
+        if (filled($loginUrl)) {
             return $this->redirect($loginUrl);
         }
 
-        return $this->handle(function () use ($loginUrl, $request) {
+        return $this->handle(function () use ($request) {
 
             // Login if requested
             if ($request->request->has('login')) {
@@ -29,13 +29,12 @@ class LoginController extends AbstractLegacyShowController
                     $this->addFlash('error', $this->userSession->getLastError());
                     return $this->redirectToRoute('external.login');
                 }
-                return $this->redirect('/'); // TODO
+                return $this->redirectToRoute('legacy.index');
             }
 
             // TODO CSRF token
 
             return $this->render('external/login.html.twig', [
-                'loginUrl' => $loginUrl,
                 'roundName' => $this->config->get('roundname'),
             ]);
         });

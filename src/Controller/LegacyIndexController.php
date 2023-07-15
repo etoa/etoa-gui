@@ -88,18 +88,6 @@ class LegacyIndexController extends AbstractController
         //
         $s = $this->userSession;
 
-        // Check for modified etoa tool by pain
-        if ($_GET['ttool'] ?? false) {
-            file_put_contents('cache/log/paintool.log',
-                sprintf("[%s] Pain's modified tool used by %s (%s) from %s on %s\n",
-                    date('d.m.Y, H:i:s'),
-                    $_POST['login_nick'],
-                    $s->getUserId(),
-                    $_SERVER['REMOTE_ADDR'],
-                    $_GET['page'] ?? 'index'
-                ), FILE_APPEND);
-        }
-
         // Perform logout if requested
         if ($_GET['logout'] ?? false) {
             $s->logout();
