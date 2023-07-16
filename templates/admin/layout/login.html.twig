@@ -7,7 +7,9 @@
     <div class="app-login">
         <div class="login-container">
             <header class="branding">
-                <a href=".."><img class="logo" src="{{ asset('build/images/logo.png') }}" alt="Logo"/></a>
+                <a href="{{ path('game.login') }}">
+                    <img class="logo" src="{{ asset('build/images/logo.png') }}" alt="Logo"/>
+                </a>
                 <div class="slogan">Administration {{ configValue('roundname') }}</div>
             </header>
             <main class="main">
