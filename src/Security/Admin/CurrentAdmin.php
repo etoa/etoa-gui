@@ -10,11 +10,8 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 class CurrentAdmin implements UserInterface, PasswordAuthenticatedUserInterface, TwoFactorInterface
 {
-    private AdminUser $adminUser;
-
-    public function __construct(AdminUser $adminUser)
+    public function __construct(private readonly AdminUser $adminUser)
     {
-        $this->adminUser = $adminUser;
     }
 
     public function getId(): int
@@ -27,17 +24,12 @@ class CurrentAdmin implements UserInterface, PasswordAuthenticatedUserInterface,
      */
     public function getRoles(): array
     {
-        return array_map(fn (string $role) => 'ROLE_ADMIN_' . strtoupper($role), $this->adminUser->roles);
+        return array_map(fn(string $role) => 'ROLE_ADMIN_' . strtoupper($role), $this->adminUser->roles);
     }
 
     public function getPassword(): string
     {
         return $this->adminUser->passwordString;
-    }
-
-    public function getSalt(): ?string
-    {
-        return null;
     }
 
     public function eraseCredentials(): void
@@ -61,7 +53,7 @@ class CurrentAdmin implements UserInterface, PasswordAuthenticatedUserInterface,
 
     public function isTotpAuthenticationEnabled(): bool
     {
-        return (bool) $this->adminUser->tfaSecret;
+        return (bool)$this->adminUser->tfaSecret;
     }
 
     public function getTotpAuthenticationUsername(): string

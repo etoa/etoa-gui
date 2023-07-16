@@ -24,12 +24,14 @@ use EtoA\Market\MarketResourceRepository;
 use EtoA\Market\MarketShipRepository;
 use EtoA\Missile\MissileRepository;
 use EtoA\Notepad\NotepadRepository;
+use EtoA\Security\Player\CurrentPlayer;
 use EtoA\Ship\ShipRepository;
 use EtoA\Support\Mail\MailSenderService;
 use EtoA\Technology\TechnologyRepository;
 use EtoA\Universe\Planet\PlanetRepository;
 use EtoA\Universe\Planet\PlanetService;
 use Exception;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Twig\Environment;
 use Twig\Error\LoaderError;
 use Twig\Error\RuntimeError;
@@ -37,107 +39,43 @@ use Twig\Error\SyntaxError;
 
 class UserService
 {
-    private ConfigurationService $config;
-    private UserRepository $userRepository;
-    private UserRatingRepository $userRatingRepository;
-    private UserPropertiesRepository $userPropertiesRepository;
-    private PlanetRepository $planetRepository;
-    private BuildingRepository $buildingRepository;
-    private TechnologyRepository $technologyRepository;
-    private MailSenderService $mailSenderService;
-    private PlanetService $planetService;
-    private UserSittingRepository $userSittingRepository;
-    private UserWarningRepository $userWarningRepository;
-    private UserMultiRepository $userMultiRepository;
-    private AllianceRepository $allianceRepository;
-    private AllianceApplicationRepository $allianceApplicationRepository;
-    private MarketAuctionRepository $marketAuctionRepository;
-    private MarketResourceRepository $marketResourceRepository;
-    private MarketShipRepository $marketShipRepository;
-    private NotepadRepository $notepadRepository;
-    private FleetRepository $fleetRepository;
-    private ShipRepository $shipRepository;
-    private DefenseRepository $defenseRepository;
-    private MissileRepository $missileRepository;
-    private BuddyListRepository $buddyListRepository;
-    private TicketRepository $ticketRepository;
-    private BookmarkRepository $bookmarkRepository;
-    private FleetBookmarkRepository $fleetBookmarkRepository;
-    private UserPointsRepository $userPointsRepository;
-    private UserCommentRepository $userCommentRepository;
-    private UserSurveillanceRepository $userSurveillanceRepository;
-    private UserLogRepository $userLogRepository;
-    private UserToXml $userToXml;
-    private LogRepository $logRepository;
-
     public function __construct(
-        ConfigurationService          $config,
-        UserRepository                $userRepository,
-        UserRatingRepository          $userRatingRepository,
-        UserPropertiesRepository      $userPropertiesRepository,
-        PlanetRepository              $planetRepository,
-        BuildingRepository            $buildingRepository,
-        TechnologyRepository          $technologyRepository,
-        MailSenderService             $mailSenderService,
-        PlanetService                 $planetService,
-        UserSittingRepository         $userSittingRepository,
-        UserWarningRepository         $userWarningRepository,
-        UserMultiRepository           $userMultiRepository,
-        AllianceRepository            $allianceRepository,
-        AllianceApplicationRepository $allianceApplicationRepository,
-        MarketAuctionRepository       $marketAuctionRepository,
-        MarketResourceRepository      $marketResourceRepository,
-        MarketShipRepository          $marketShipRepository,
-        NotepadRepository             $notepadRepository,
-        FleetRepository               $fleetRepository,
-        ShipRepository                $shipRepository,
-        DefenseRepository             $defenseRepository,
-        MissileRepository             $missileRepository,
-        BuddyListRepository           $buddyListRepository,
-        TicketRepository              $ticketRepository,
-        BookmarkRepository            $bookmarkRepository,
-        FleetBookmarkRepository       $fleetBookmarkRepository,
-        UserPointsRepository          $userPointsRepository,
-        UserCommentRepository         $userCommentRepository,
-        UserSurveillanceRepository    $userSurveillanceRepository,
-        UserLogRepository             $userLogRepository,
-        UserToXml                     $userToXml,
-        LogRepository                 $logRepository,
-        private readonly Environment  $twig,
+        private readonly ConfigurationService          $config,
+        private readonly UserRepository                $userRepository,
+        private readonly UserRatingRepository          $userRatingRepository,
+        private readonly UserPropertiesRepository      $userPropertiesRepository,
+        private readonly PlanetRepository              $planetRepository,
+        private readonly BuildingRepository            $buildingRepository,
+        private readonly TechnologyRepository          $technologyRepository,
+        private readonly MailSenderService             $mailSenderService,
+        private readonly PlanetService                 $planetService,
+        private readonly UserSittingRepository         $userSittingRepository,
+        private readonly UserWarningRepository         $userWarningRepository,
+        private readonly UserMultiRepository           $userMultiRepository,
+        private readonly AllianceRepository            $allianceRepository,
+        private readonly AllianceApplicationRepository $allianceApplicationRepository,
+        private readonly MarketAuctionRepository       $marketAuctionRepository,
+        private readonly MarketResourceRepository      $marketResourceRepository,
+        private readonly MarketShipRepository          $marketShipRepository,
+        private readonly NotepadRepository             $notepadRepository,
+        private readonly FleetRepository               $fleetRepository,
+        private readonly ShipRepository                $shipRepository,
+        private readonly DefenseRepository             $defenseRepository,
+        private readonly MissileRepository             $missileRepository,
+        private readonly BuddyListRepository           $buddyListRepository,
+        private readonly TicketRepository              $ticketRepository,
+        private readonly BookmarkRepository            $bookmarkRepository,
+        private readonly FleetBookmarkRepository       $fleetBookmarkRepository,
+        private readonly UserPointsRepository          $userPointsRepository,
+        private readonly UserCommentRepository         $userCommentRepository,
+        private readonly UserSurveillanceRepository    $userSurveillanceRepository,
+        private readonly UserLogRepository             $userLogRepository,
+        private readonly UserToXml                     $userToXml,
+        private readonly LogRepository                 $logRepository,
+        private readonly Environment                   $twig,
+        private readonly UserPasswordHasherInterface   $passwordHasher,
     )
     {
-        $this->config = $config;
-        $this->userRepository = $userRepository;
-        $this->userRatingRepository = $userRatingRepository;
-        $this->userPropertiesRepository = $userPropertiesRepository;
-        $this->planetRepository = $planetRepository;
-        $this->buildingRepository = $buildingRepository;
-        $this->technologyRepository = $technologyRepository;
-        $this->mailSenderService = $mailSenderService;
-        $this->planetService = $planetService;
-        $this->userSittingRepository = $userSittingRepository;
-        $this->userWarningRepository = $userWarningRepository;
-        $this->userMultiRepository = $userMultiRepository;
-        $this->allianceRepository = $allianceRepository;
-        $this->allianceApplicationRepository = $allianceApplicationRepository;
-        $this->marketAuctionRepository = $marketAuctionRepository;
-        $this->marketResourceRepository = $marketResourceRepository;
-        $this->marketShipRepository = $marketShipRepository;
-        $this->notepadRepository = $notepadRepository;
-        $this->fleetRepository = $fleetRepository;
-        $this->shipRepository = $shipRepository;
-        $this->defenseRepository = $defenseRepository;
-        $this->missileRepository = $missileRepository;
-        $this->buddyListRepository = $buddyListRepository;
-        $this->ticketRepository = $ticketRepository;
-        $this->bookmarkRepository = $bookmarkRepository;
-        $this->fleetBookmarkRepository = $fleetBookmarkRepository;
-        $this->userPointsRepository = $userPointsRepository;
-        $this->userCommentRepository = $userCommentRepository;
-        $this->userSurveillanceRepository = $userSurveillanceRepository;
-        $this->userLogRepository = $userLogRepository;
-        $this->userToXml = $userToXml;
-        $this->logRepository = $logRepository;
     }
 
     public function register(
@@ -190,6 +128,10 @@ class UserService
 
         // Add new record
         $userId = $this->userRepository->create($nick, $name, $email, $password, (int)$race, $ghost);
+        $user = $this->userRepository->getUser($userId);
+        $hashedPassword = $this->passwordHasher->hashPassword(new CurrentPlayer($user), $password);
+        $this->userRepository->updatePassword($userId, $hashedPassword, true);
+
         $this->userRepository->setSittingDays($userId, $this->config->getInt('user_sitting_days'));
         $this->userRatingRepository->addBlank($userId);
         $this->userPropertiesRepository->addBlank($userId);

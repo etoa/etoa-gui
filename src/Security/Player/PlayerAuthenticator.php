@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace EtoA\Security\Admin;
+namespace EtoA\Security\Player;
 
 use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -19,20 +19,21 @@ use Symfony\Component\Security\Http\Authenticator\Passport\Passport;
 use Symfony\Component\Security\Http\EntryPoint\AuthenticationEntryPointInterface;
 use function strlen;
 
-class AdminAuthenticator extends AbstractAuthenticator implements AuthenticationEntryPointInterface
+class PlayerAuthenticator extends AbstractAuthenticator implements AuthenticationEntryPointInterface
 {
     public function __construct(
-        private readonly AdminUserProvider                 $userProvider,
-        private readonly AdminAuthenticationSuccessHandler $authenticationSuccessHandler,
-        private readonly AdminAuthenticationFailureHandler $authenticationFailureHandler,
-        private readonly UrlGeneratorInterface             $urlGenerator)
+        private readonly PlayerUserProvider                 $userProvider,
+        private readonly PlayerAuthenticationSuccessHandler $authenticationSuccessHandler,
+        private readonly PlayerAuthenticationFailureHandler $authenticationFailureHandler,
+        private readonly UrlGeneratorInterface              $urlGenerator
+    )
     {
     }
 
     public function supports(Request $request): bool
     {
         return $request->isMethod('POST')
-            && $request->attributes->get('_route') === 'admin.login.check';
+            && $request->attributes->get('_route') === 'game.login.check';
     }
 
     public function authenticate(Request $request): Passport
@@ -40,12 +41,12 @@ class AdminAuthenticator extends AbstractAuthenticator implements Authentication
         $credentials = $this->getCredentials($request);
 
         return new Passport(
-            new UserBadge($credentials['username'], function ($username): CurrentAdmin {
+            new UserBadge($credentials['username'], function ($username): CurrentPlayer {
                 return $this->userProvider->loadUserByIdentifier($username);
             }),
             new PasswordCredentials($credentials['password']),
             [
-                new CsrfTokenBadge('admin_authenticate', $credentials['csrf_token']),
+                new CsrfTokenBadge('player_authenticate', $credentials['csrf_token']),
                 new PasswordUpgradeBadge($credentials['password'], $this->userProvider),
             ]
         );
@@ -84,7 +85,7 @@ class AdminAuthenticator extends AbstractAuthenticator implements Authentication
     public function start(Request $request, AuthenticationException $authException = null): RedirectResponse
     {
         return new RedirectResponse(
-            $this->urlGenerator->generate('admin.login'),
+            $this->urlGenerator->generate('game.login'),
             Response::HTTP_TEMPORARY_REDIRECT
         );
     }

@@ -45,7 +45,7 @@ class LegacyIndexController extends AbstractController
      * TODO
      * - Redirect to setup if no DB config given
      */
-    #[Route('/', name: 'legacy.index')]
+    #[Route('/legacy', name: 'legacy.index')]
     public function index(Environment $twig, string $projectDir): Response
     {
         ob_start();

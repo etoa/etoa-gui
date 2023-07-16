@@ -1,15 +1,31 @@
 controllers:
-    resource:
-        path: ../src/Controller/
-        namespace: EtoA\Controller
-    type: attribute
+  resource:
+    path: ../src/Controller/
+    namespace: EtoA\Controller
+  type: attribute
+
+index:
+  path: /
+  controller: Symfony\Bundle\FrameworkBundle\Controller\RedirectController
+  defaults:
+    route: game.index
+    permanent: true
+    keepQueryParams: true
+
+game.index:
+  path: /game
+  controller: Symfony\Bundle\FrameworkBundle\Controller\RedirectController
+  defaults:
+    route: game.test # TODO for testing only
+    permanent: true
+    keepQueryParams: true
 
 admin.index:
-    path: /admin
-    controller: Symfony\Bundle\FrameworkBundle\Controller\RedirectController
-    defaults:
-        route: 'admin.overview'
-        permanent: true
-        keepQueryParams: true
-        keepRequestMethod: true
-        ignoreAttributes: true
+  path: /admin
+  controller: Symfony\Bundle\FrameworkBundle\Controller\RedirectController
+  defaults:
+    route: 'admin.overview'
+    permanent: true
+    keepQueryParams: true
+    keepRequestMethod: true
+    ignoreAttributes: true

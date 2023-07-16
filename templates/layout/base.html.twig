@@ -1,5 +1,6 @@
 <!doctype html>
-<html class="no-js" lang="de" style="font-size: {{ fontSize }}" data-viewportScale="{{ viewportScale }}">
+<html class="no-js" lang="de" style="font-size: {{ fontSize|default('16px') }}"
+      data-viewportScale="{{ viewportScale|default(0) }}">
 <head>
     <meta charset="utf-8">
     <title>{{ gameTitle|default('EtoA') }}</title>

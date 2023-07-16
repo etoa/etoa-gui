@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-namespace EtoA\Security\Admin;
+namespace EtoA\Security\Player;
 
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
@@ -8,7 +8,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Http\Authentication\DefaultAuthenticationFailureHandler;
 use Symfony\Component\Security\Http\HttpUtils;
 
-class AdminAuthenticationFailureHandler extends DefaultAuthenticationFailureHandler
+class PlayerAuthenticationFailureHandler extends DefaultAuthenticationFailureHandler
 {
     public function __construct(
         HttpKernelInterface   $httpKernel,
@@ -18,7 +18,7 @@ class AdminAuthenticationFailureHandler extends DefaultAuthenticationFailureHand
     )
     {
         parent::__construct($httpKernel, $httpUtils, [
-            'login_path' => $urlGenerator->generate('admin.login'),
+            'login_path' => $urlGenerator->generate('game.login'),
         ], $logger);
     }
 }

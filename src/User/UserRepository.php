@@ -15,17 +15,17 @@ class UserRepository extends AbstractRepository
 
     public function getPoints(int $userId): int
     {
-        return (int) $this->getUserProperty($userId, 'user_points');
+        return (int)$this->getUserProperty($userId, 'user_points');
     }
 
     public function getAllianceId(int $userId): int
     {
-        return (int) $this->getUserProperty($userId, 'user_alliance_id');
+        return (int)$this->getUserProperty($userId, 'user_alliance_id');
     }
 
     public function getSpecialistId(int $userId): int
     {
-        return (int) $this->getUserProperty($userId, 'user_specialist_id');
+        return (int)$this->getUserProperty($userId, 'user_specialist_id');
     }
 
     public function getNick(int $userId): ?string
@@ -47,7 +47,7 @@ class UserRepository extends AbstractRepository
 
     public function count(): int
     {
-        return (int) $this->createQueryBuilder()
+        return (int)$this->createQueryBuilder()
             ->select("COUNT(*)")
             ->from('users')
             ->fetchOne();
@@ -96,7 +96,7 @@ class UserRepository extends AbstractRepository
 
     public function hasUserRankId(int $allianceId, int $userId, int $rankId): bool
     {
-        return (bool) $this->createQueryBuilder()
+        return (bool)$this->createQueryBuilder()
             ->select('user_id')
             ->from('users')
             ->where('user_id = :userId')
@@ -169,16 +169,16 @@ class UserRepository extends AbstractRepository
             ])
             ->fetchAllKeyValue();
 
-        return array_map(fn ($value) => (int) $value, $data);
+        return array_map(fn($value) => (int)$value, $data);
     }
 
     public function activateHolidayMode(int $userId, int $from, int $to): void
     {
         $this->createQueryBuilder()
             ->update('users')
-            ->set('user_hmode_from', (string) $from)
-            ->set('user_hmode_to', (string) $to)
-            ->set('user_logouttime', (string) $from)
+            ->set('user_hmode_from', (string)$from)
+            ->set('user_hmode_to', (string)$to)
+            ->set('user_logouttime', (string)$from)
             ->where('user_id = :id')
             ->setParameters([
                 'id' => $userId,
@@ -190,9 +190,9 @@ class UserRepository extends AbstractRepository
     {
         $this->createQueryBuilder()
             ->update('users')
-            ->set('user_hmode_from', (string) 0)
-            ->set('user_hmode_to', (string) 0)
-            ->set('user_logouttime', (string) time())
+            ->set('user_hmode_from', (string)0)
+            ->set('user_hmode_to', (string)0)
+            ->set('user_logouttime', (string)time())
             ->where('user_id = :id')
             ->setParameters([
                 'id' => $userId,
@@ -219,12 +219,12 @@ class UserRepository extends AbstractRepository
             ->setParameter('nick', $nick)
             ->fetchOne();
 
-        return $result !== false ? (int) $result : null;
+        return $result !== false ? (int)$result : null;
     }
 
     public function markVerifiedByVerificationKey(string $verificationKey): bool
     {
-        return (bool) $this->createQueryBuilder()
+        return (bool)$this->createQueryBuilder()
             ->update('users')
             ->set('verification_key', ':updatedKey')
             ->where('verification_key = :key')
@@ -247,12 +247,13 @@ class UserRepository extends AbstractRepository
             ])
             ->executeQuery();
     }
+
     public function resetDiscoveryMask(): void
     {
         $this->createQueryBuilder()
             ->update('users')
             ->set('discoverymask', "''")
-            ->set('user_setup', (string) 0)
+            ->set('user_setup', (string)0)
             ->executeQuery();
     }
 
@@ -260,7 +261,7 @@ class UserRepository extends AbstractRepository
     {
         $this->createQueryBuilder()
             ->update('users')
-            ->set('user_setup', (string) 1)
+            ->set('user_setup', (string)1)
             ->where('user_id = :userId')
             ->setParameters([
                 'userId' => $userId,
@@ -312,7 +313,7 @@ class UserRepository extends AbstractRepository
             WHERE ' . $where . '
             ORDER BY users.user_nick', $search->parameters);
 
-        return array_map(fn ($row) => new UserAdminView($row), $data);
+        return array_map(fn($row) => new UserAdminView($row), $data);
     }
 
     public function getUserAdminView(int $userId): ?UserAdminView
@@ -365,7 +366,7 @@ class UserRepository extends AbstractRepository
             ])
             ->fetchAllAssociative();
 
-        return array_map(fn ($row) => new User($row), $data);
+        return array_map(fn($row) => new User($row), $data);
     }
 
     /**
@@ -389,7 +390,7 @@ class UserRepository extends AbstractRepository
             ])
             ->fetchAllAssociative();
 
-        return array_map(fn ($row) => new User($row), $data);
+        return array_map(fn($row) => new User($row), $data);
     }
 
     /**
@@ -411,7 +412,7 @@ class UserRepository extends AbstractRepository
             ])
             ->fetchAllAssociative();
 
-        return array_map(fn ($row) => new User($row), $data);
+        return array_map(fn($row) => new User($row), $data);
     }
 
     /**
@@ -429,7 +430,7 @@ class UserRepository extends AbstractRepository
             ])
             ->fetchAllAssociative();
 
-        return array_map(fn ($row) => new User($row), $data);
+        return array_map(fn($row) => new User($row), $data);
     }
 
     public function markDeleted(int $userId, int $timestamp): void
@@ -500,7 +501,7 @@ class UserRepository extends AbstractRepository
             ->set('user_profile_img_check', ':check')
             ->where('user_id = :userId')
             ->setParameters([
-                'check' => (int) $check,
+                'check' => (int)$check,
                 'userId' => $userId,
             ]);
 
@@ -510,7 +511,7 @@ class UserRepository extends AbstractRepository
                 ->setParameter('image', $image);
         }
 
-        return (bool) $qb->executeQuery()->rowCount();
+        return (bool)$qb->executeQuery()->rowCount();
     }
 
     public function addSittingDays(int $days): void
@@ -601,7 +602,7 @@ class UserRepository extends AbstractRepository
 
     public function exists(UserSearch $search): bool
     {
-        return (bool) $this->applySearchSortLimit($this->createQueryBuilder(), $search)
+        return (bool)$this->applySearchSortLimit($this->createQueryBuilder(), $search)
             ->select("1")
             ->from('users')
             ->setMaxResults(1)
@@ -633,12 +634,12 @@ class UserRepository extends AbstractRepository
             ])
             ->executeQuery();
 
-        return (int) $this->getConnection()->lastInsertId();
+        return (int)$this->getConnection()->lastInsertId();
     }
 
-    public function updatePassword(int $userId, string $password): string
+    public function updatePassword(int $userId, string $password, bool $isHashedPassword = false): string
     {
-        $saltedPassword = saltPasswort($password);
+        $saltedPassword = $isHashedPassword ? $password : saltPasswort($password);
         $this->createQueryBuilder()
             ->update('users')
             ->set('user_password', ':password')
@@ -746,13 +747,13 @@ class UserRepository extends AbstractRepository
                 'sittingDays' => $user->sittingDays,
                 'chatAdmin' => $user->chatAdmin,
                 'admin' => $user->admin,
-                'ghost' => (int) $user->ghost,
-                'userChangedMainPlanet' => (int) $user->userChangedMainPlanet,
+                'ghost' => (int)$user->ghost,
+                'userChangedMainPlanet' => (int)$user->userChangedMainPlanet,
                 'profileBoardUrl' => $user->profileBoardUrl,
                 'allianceShipPoints' => $user->allianceShipPoints,
                 'allianceShipPointsUsed' => $user->allianceShipPointsUsed,
                 'allianceRankId' => $user->allianceRankId,
-                'profileImageCheck' => (int) $user->profileImageCheck,
+                'profileImageCheck' => (int)$user->profileImageCheck,
                 'specialistTime' => $user->specialistTime,
                 'specialistId' => $user->specialistId,
                 'profileImage' => $user->profileImage,
@@ -827,7 +828,7 @@ class UserRepository extends AbstractRepository
             ->setParameter('time', time())
             ->fetchAllAssociative();
 
-        return array_map(fn (array $row) => new Pillory($row), $data);
+        return array_map(fn(array $row) => new Pillory($row), $data);
     }
 
     public function updatePointsAndRank(UserStatistic $userStatistic, int $highestRank): void

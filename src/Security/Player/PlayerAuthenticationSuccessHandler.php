@@ -1,12 +1,12 @@
 <?php declare(strict_types=1);
 
-namespace EtoA\Security\Admin;
+namespace EtoA\Security\Player;
 
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Http\Authentication\DefaultAuthenticationSuccessHandler;
 use Symfony\Component\Security\Http\HttpUtils;
 
-class AdminAuthenticationSuccessHandler extends DefaultAuthenticationSuccessHandler
+class PlayerAuthenticationSuccessHandler extends DefaultAuthenticationSuccessHandler
 {
     public function __construct(
         HttpUtils             $httpUtils,
@@ -14,8 +14,8 @@ class AdminAuthenticationSuccessHandler extends DefaultAuthenticationSuccessHand
     )
     {
         parent::__construct($httpUtils, [
-            'default_target_path' => $urlGenerator->generate('admin.index'),
-            'login_path' => $urlGenerator->generate('admin.login'),
+            'default_target_path' => $urlGenerator->generate('game.index'),
+            'login_path' => $urlGenerator->generate('game.login'),
         ]);
     }
 }
