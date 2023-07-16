@@ -186,10 +186,11 @@ input[type="number"],
 input[type="password"],
 input[type="datetime-local"],
 textarea {
-    padding: 3px;
+    padding: 5px;
     margin: 3px;
     box-shadow: inset 1px 1px 1px #eee;
     font-family: Verdana, sans-serif;
+    border-radius: 3px;
 }
 
 input[type="text"],
@@ -358,6 +359,24 @@ input[type="text"].search {
     padding-left: 20px;
 }
 
+form label:after {
+    content: ":";
+}
+
+form input + label:after {
+    content: none;
+}
+
+form table label {
+    text-align: right;
+    display: block;
+}
+
+form table input + label {
+    text-align: inherit;
+    display: inline;
+}
+
 form .changed {
     color: blue;
 }
@@ -421,32 +440,40 @@ form.form-inline {
 /******************
   * Tables          *
   ******************/
-table {
-    border-collapse: collapse;
-    border: 1px solid #bbbbbb;
-}
+/*table {*/
+/*    border-collapse: collapse;*/
+/*    border: 1px solid #bbbbbb;*/
+/*}*/
 
-td,
+/*td,*/
+/*th {*/
+/*    border: 1px solid #bbbbbb;*/
+/*    padding: 1px 2px;*/
+/*}*/
+
+/*th {*/
+/*    background: #e1e1e1;*/
+/*}*/
+
+/*tbody th {*/
+/*    text-align: left;*/
+/*    padding: 1px 3px;*/
+/*}*/
+
 th {
-    border: 1px solid #bbbbbb;
-    padding: 1px 2px;
-}
-
-th {
-    background: #e1e1e1;
-}
-
-tbody th {
     text-align: left;
-    padding: 1px 3px;
 }
 
-tbody tr:nth-child(odd),
+td, th {
+    padding: 2px;
+}
+
+/*tbody tr:nth-child(odd),*/
 .table tbody tr:nth-child(odd) {
     background: #e8e8e8;
 }
 
-tbody tr:nth-child(even),
+/*tbody tr:nth-child(even),*/
 .table tbody tr:nth-child(even) {
     background: #f1f1f1;
 }
@@ -644,7 +671,6 @@ tbody tr:nth-child(even),
     padding: 0;
     display: block;
     margin: 0 auto;
-    text-align: center;
 }
 
 .login-container .branding {
@@ -671,36 +697,15 @@ tbody tr:nth-child(even),
     box-shadow: #2565b0 0 0 10px;
 }
 
-.login_form {
-    text-align: left;
-    width: 380px;
-    margin: 30px auto;
+.login-container .main p,
+.login-container .main h1,
+.login-container .main h2,
+.login-container .main h3 {
+    text-align: center;
 }
 
-.login_form label {
-    width: 120px;
-    display: inline-block;
-    text-align: right;
-    vertical-align: middle;
-}
-
-.login_form label:after {
-    content: ":";
-}
-
-.login_form input[type="text"],
-.login_form input[type="email"],
-.login_form input[type="password"] {
-    padding: 5px;
-    vertical-align: middle;
-}
-
-.login_form .buttons {
-    margin-top: 20px;
-}
-
-.loginmsg {
-    margin: 10px 0 20px 0;
+.login-container .main table {
+    margin: 0 auto;
 }
 
 /******************

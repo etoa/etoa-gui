@@ -10,7 +10,7 @@ class AdminUserRepository extends AbstractRepository
 {
     public function count(): int
     {
-        return (int) $this->createQueryBuilder()
+        return (int)$this->createQueryBuilder()
             ->select("COUNT(*)")
             ->from('admin_users')
             ->fetchOne();
@@ -27,7 +27,7 @@ class AdminUserRepository extends AbstractRepository
             ->where('player_id <> 0')
             ->fetchAllAssociative();
 
-        return array_map(fn ($value) => (int) $value, $data);
+        return array_map(fn($value) => (int)$value, $data);
     }
 
     public function find(int $id): ?AdminUser
@@ -54,6 +54,20 @@ class AdminUserRepository extends AbstractRepository
         return $data !== false ? AdminUser::createFromArray($data) : null;
     }
 
+    public function findOneByNickAndEmail(string $nick, string $email): ?AdminUser
+    {
+        $data = $this->createQueryBuilder()
+            ->select("*")
+            ->from('admin_users')
+            ->where('LCASE(user_nick) = LCASE(:nick)')
+            ->where('user_email = :email')
+            ->setParameter('nick', $nick)
+            ->setParameter('email', $email)
+            ->fetchAssociative();
+
+        return $data !== false ? AdminUser::createFromArray($data) : null;
+    }
+
     /**
      * @return array<AdminUser>
      */
@@ -65,7 +79,7 @@ class AdminUserRepository extends AbstractRepository
             ->orderBy('user_nick')
             ->fetchAllAssociative();
 
-        return array_map(fn (array $arr) => AdminUser::createFromArray($arr), $data);
+        return array_map(fn(array $arr) => AdminUser::createFromArray($arr), $data);
     }
 
     /**
@@ -148,7 +162,7 @@ class AdminUserRepository extends AbstractRepository
                     'name' => $adminUser->name,
                     'email' => $adminUser->email,
                     'tfa_secret' => $adminUser->tfaSecret,
-                    'board_url' => (string) $adminUser->boardUrl,
+                    'board_url' => (string)$adminUser->boardUrl,
                     'user_theme' => $adminUser->userTheme,
                     'ticketmail' => $adminUser->ticketEmail ? 1 : 0,
                     'player_id' => $adminUser->playerId,
@@ -190,7 +204,7 @@ class AdminUserRepository extends AbstractRepository
                     'password' => $password,
                 ])
                 ->executeQuery();
-            $adminUser->id = (int) $this->getConnection()->lastInsertId();
+            $adminUser->id = (int)$this->getConnection()->lastInsertId();
         }
     }
 

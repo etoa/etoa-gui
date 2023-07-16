@@ -6,6 +6,7 @@ use EtoA\Admin\AdminUser;
 use EtoA\Admin\AdminUserRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Form\Type\Admin\FirstAdminUserType;
+use EtoA\Form\Type\Admin\ResetPasswordType;
 use EtoA\HostCache\NetworkNameService;
 use EtoA\Log\LogFacility;
 use EtoA\Log\LogRepository;
@@ -52,10 +53,14 @@ class SecurityController extends AbstractController
         Environment                 $twig,
     ): Response
     {
-        if ($request->isMethod('POST')) {
-            // TODO: Use instead https://symfony.com/doc/current/security/reset_password.html
+        // TODO: Use instead https://symfony.com/doc/current/security/reset_password.html
 
-            $user = $this->adminUserRepository->findOneByNick($_POST['user_nick']);
+        $admin = new AdminUser();
+        $form = $this->createForm(ResetPasswordType::class, $admin);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+
+            $user = $this->adminUserRepository->findOneByNickAndEmail($admin->nick, $admin->email);
             if ($user === null) {
                 $this->addFlash('error', 'Dieser Benutzer existiert nicht!');
                 return $this->redirectToRoute('admin.login.reset');
@@ -78,7 +83,9 @@ class SecurityController extends AbstractController
             return $this->redirectToRoute('admin.login');
         }
 
-        return $this->render('admin/login/request-password.html.twig', []);
+        return $this->render('admin/login/request-password.html.twig', [
+            'form' => $form->createView(),
+        ]);
     }
 
     #[Route("/admin/login/setup", name: "admin.login.setup", methods: ['GET', 'POST'])]

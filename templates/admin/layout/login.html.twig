@@ -13,14 +13,12 @@
                 <div class="slogan">Administration {{ configValue('roundname') }}</div>
             </header>
             <main class="main">
-                <div id="content">
-                    {% for type, messages in app.flashes|default([]) %}
-                        {% for message in messages %}
-                            <twig:alert :type="type">{{ message }}</twig:alert>
-                        {% endfor %}
+                {% for type, messages in app.flashes|default([]) %}
+                    {% for message in messages %}
+                        <twig:alert :type="type">{{ message }}</twig:alert>
                     {% endfor %}
-                    {% block content %}{% endblock %}
-                </div>
+                {% endfor %}
+                {% block content %}{% endblock %}
             </main>
         </div>
     </div>
