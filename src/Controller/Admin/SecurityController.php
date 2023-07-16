@@ -18,6 +18,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
+use Twig\Environment;
 
 class SecurityController extends AbstractController
 {
@@ -45,41 +46,36 @@ class SecurityController extends AbstractController
     }
 
     #[Route("/admin/login/reset", name: "admin.login.reset", methods: ['GET', 'POST'])]
-    public function resetPassword(Request $request, UserPasswordHasherInterface $passwordHasher): Response
+    public function resetPassword(
+        Request                     $request,
+        UserPasswordHasherInterface $passwordHasher,
+        Environment                 $twig,
+    ): Response
     {
         if ($request->isMethod('POST')) {
+            // TODO: Use instead https://symfony.com/doc/current/security/reset_password.html
+
             $user = $this->adminUserRepository->findOneByNick($_POST['user_nick']);
-            if ($user !== null) {
-                // TODO: Use instead https://symfony.com/doc/current/security/reset_password.html
-
-                $pw = generatePasswort();
-                $this->adminUserRepository->setPassword($user, $passwordHasher->hashPassword(new CurrentAdmin($user), $pw), true);
-
-                $msg = "Hallo " . $user->nick . ".\n\nDu hast für die Administration der " . $this->config->get('roundname') . " von EtoA ein neues Passwort angefordert.\n\n";
-                $msg .= "Das neue Passwort lautet: $pw\n\n";
-                $msg .= "Diese Anfrage wurde am " . date("d.m.Y") . " um " . date("H:i") . " Uhr vom Computer " . $this->networkNameService->getHost($request->getClientIp()) . " aus in Auftrag gegeben.\nBitte denke daran, das Passwort nach dem ersten Login zu ändern!";
-                $this->mailer->send("Neues Administrationspasswort", $msg, $user->email);
-
-                $msgStyle = 'color_ok';
-                $statusMsg = 'Das Passwort wurde geändert und dir per Mail zugestellt!';
-                $buttonMsg = 'Zum Login';
-                $buttonTarget = '?';
-
-                $this->logRepository->add(LogFacility::ADMIN, LogSeverity::INFO, "Der Administrator " . $user->nick . " (ID: " . $user->id . ") fordert per E-Mail (" . $user->email . ") von " . $_SERVER['REMOTE_ADDR'] . " aus ein neues Passwort an.");
-            } else {
-                $msgStyle = 'color_warn';
-                $statusMsg = 'Dieser Benutzer existiert nicht!';
-                $buttonMsg = 'Nochmals versuchen';
-                $buttonTarget = '?sendpass=1';
+            if ($user === null) {
+                $this->addFlash('error', 'Dieser Benutzer existiert nicht!');
+                return $this->redirectToRoute('admin.login.reset');
             }
 
-            echo $this->render('admin/login/login-status.html.twig', [
-                'title' => 'Passwort senden',
-                'msgStyle' => $msgStyle,
-                'statusMsg' => $statusMsg,
-                'buttonMsg' => $buttonMsg,
-                'buttonTarget' => $buttonTarget,
+            $newPassword = generatePasswort();
+            $this->adminUserRepository->setPassword($user, $passwordHasher->hashPassword(new CurrentAdmin($user), $newPassword), true);
+
+            $emailText = $twig->render('email/admin/new-password.txt.twig', [
+                'user' => $user,
+                'roundName' => $this->config->get('roundname'),
+                'newPassword' => $newPassword,
+                'hostname' => $this->networkNameService->getHost($request->getClientIp()),
             ]);
+            $this->mailer->send("Neues Administrationspasswort", $emailText, $user->email);
+
+            $this->logRepository->add(LogFacility::ADMIN, LogSeverity::INFO, "Der Administrator " . $user->nick . " (ID: " . $user->id . ") fordert per E-Mail (" . $user->email . ") von " . $_SERVER['REMOTE_ADDR'] . " aus ein neues Passwort an.");
+
+            $this->addFlash('success', 'Das Passwort wurde geändert und dir per Mail zugestellt!');
+            return $this->redirectToRoute('admin.login');
         }
 
         return $this->render('admin/login/request-password.html.twig', []);
