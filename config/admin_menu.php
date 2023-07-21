@@ -23,24 +23,6 @@ return [
             ],
         ]
     ],
-    "Administratoren" => [
-        "route" => "admin.admin_management",
-        "roles" => "master,super-admin,game-admin,trial-game-admin,chat-admin",
-        "children" => [
-            "Admin-Management" => [
-                "route" => "admin.admin_management",
-                "roles" => "master,super-admin",
-                "additional_routes" => [
-                    'admin.admin_management.new',
-                    'admin.admin_management.edit',
-                ],
-            ],
-            "Admin-Sessions" => [
-                "route" => "admin.admin-sessions",
-                "roles" => "master,super-admin",
-            ],
-        ]
-    ],
     "Spieler" => [
         "route" => "admin.users",
         "roles" => "master,super-admin,game-admin,trial-game-admin",
@@ -438,6 +420,24 @@ return [
                 "route" => "admin.config.restore",
                 "roles" => "master"
             ]
+        ]
+    ],
+    "Administratoren" => [
+        "route" => "admin.admin_management",
+        "roles" => "master,super-admin,game-admin,trial-game-admin,chat-admin",
+        "children" => [
+            "Admin-Management" => [
+                "route" => "admin.admin_management",
+                "roles" => "master,super-admin",
+                "additional_routes" => [
+                    'admin.admin_management.new',
+                    'admin.admin_management.edit',
+                ],
+            ],
+            "Admin-Sessions" => [
+                "route" => "admin.admin-sessions",
+                "roles" => "master,super-admin",
+            ],
         ]
     ],
     "Datenbank" => [

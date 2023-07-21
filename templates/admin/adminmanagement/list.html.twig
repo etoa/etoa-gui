@@ -10,6 +10,7 @@
     ]}) }}
 
     <table class="table">
+        <thead>
         <tr>
             <th>Nick</th>
             <th>Name</th>
@@ -20,32 +21,41 @@
             <th>Foren-Profil</th>
             <th>Aktionen</th>
         </tr>
-
+        </thead>
+        <tbody>
         {% for admin in admins %}
             <tr>
-                <td>{{ admin.nick }}</td>
+                <td>
+                    {% if is_granted('ROLE_ADMIN_SUPER-ADMIN') %}
+                        <a href="{{ path('admin.admin_management.edit', {id: admin.id}) }}">{{ admin.nick }}</a>
+                    {% else %}
+                        {{ admin.nick }}
+                    {% endif %}
+                </td>
                 <td>{{ admin.name }}</td>
                 <td><a href="mailto:{{ admin.email }}">{{ admin.email }}</a></td>
                 <td>{{ admin.tfaSecret ? "Aktiv" : "Nicht aktiviert" }}</td>
                 <td>{{ getAdminRoles(admin) }}</td>
                 <td>{{ admin.locked ? "<span style=\"color:red\">Ja</span>" : "Nein" }}</td>
                 <td>{% if admin.boardUrl %}<a href="{{ admin.boardUrl }}" target="_blank">Profil</a>{% endif %}</td>
-                <td style="width:40px;">
+                <td>
                     {% if is_granted('ROLE_ADMIN_SUPER-ADMIN') %}
-                        {{ editButton(path('admin.admin_management.edit', {id: admin.id}))|raw }}
+                        <a href="{{ path('admin.admin_management.edit', {id: admin.id}) }}">Bearbeiten</a>
                         {% if admin.id != app.user.id %}
-                            {{ delButton(path('admin.admin_management.delete', {id: admin.id}), "return confirm('Soll der Benutzer wirklich gelöscht werden?')")|raw }}
+                            <a href="{{ path('admin.admin_management.delete', {id: admin.id}) }}"
+                               onclick="return confirm('Soll der Benutzer wirklich gelöscht werden?')">Löschen</a>
                         {% endif %}
                     {% endif %}
                 </td>
             </tr>
         {% endfor %}
+        </tbody>
     </table>
     <br/>
 
     {% if is_granted('ROLE_ADMIN_SUPER-ADMIN') %}
         <input type="button" onclick="document.location='{{ path('admin.admin_management.new') }}'"
-               value="Neuer Benutzer"/>
+               value="Neuer Administrator"/>
     {% endif %}
 
 {% endblock %}

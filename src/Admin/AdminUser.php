@@ -39,7 +39,7 @@ class AdminUser
         $adminUser->userTheme = $data['user_theme'];
         $adminUser->ticketEmail = (bool)$data['ticketmail'];
         $adminUser->locked = (bool)$data['user_locked'];
-        $adminUser->roles = explode(",", $data['roles']);
+        $adminUser->roles = blank($data['roles']) ? [] : explode(",", $data['roles']);
         $adminUser->isContact = (bool)$data['is_contact'];
 
         return $adminUser;

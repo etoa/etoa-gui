@@ -21,8 +21,8 @@
             <td>{{ formatTimestamp(fleet.launchTime) }}</td>
             <td>{{ formatTimestamp(fleet.landTime) }}</td>
             <td>
-                {{ editButton(path('admin.fleets.edit', {id: fleet.id}))|raw }}
-                {{ delButton(path('admin.fleets.delete', {id: fleet.id}))|raw }}
+                <a href="{{ path('admin.fleets.edit', {id: fleet.id}) }}">Bearbeiten</a>
+                <a href="{{ path('admin.fleets.delete', {id: fleet.id}) }}">Löschen</a>
             </td>
         </tr>
     {% endfor %}

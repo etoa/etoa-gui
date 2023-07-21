@@ -16,8 +16,9 @@ use Symfony\Component\Form\FormBuilderInterface;
 class AdminUserType extends AbstractType
 {
     public function __construct(
-        private AdminRoleManager $adminRoleManager
-    ) {
+        private readonly AdminRoleManager $adminRoleManager
+    )
+    {
     }
 
     public function buildForm(FormBuilderInterface $builder, array $options): void
@@ -28,6 +29,9 @@ class AdminUserType extends AbstractType
         $builder
             ->add('name', TextType::class, [
                 'label' => 'Realer Name',
+                'attr' => [
+                    'autofocus' => $admin?->id === null,
+                ]
             ])
             ->add('email', EmailType::class, [
                 'label' => 'E-Mail',
@@ -36,7 +40,7 @@ class AdminUserType extends AbstractType
                 'label' => 'Nickname',
             ]);
 
-        if ((bool) $admin->id) {
+        if ($admin->id) {
             $builder
                 ->add('passwordString', PasswordType::class, [
                     'required' => false,
@@ -58,6 +62,7 @@ class AdminUserType extends AbstractType
                 'multiple' => true,
                 'expanded' => true,
                 'choices' => array_flip($this->adminRoleManager->getRoles()),
+                'label' => 'Rollen',
             ])
             ->add('isContact', ChoiceType::class, [
                 'multiple' => false,
@@ -66,10 +71,19 @@ class AdminUserType extends AbstractType
                     'Ja' => true,
                     'Nein' => false,
                 ],
+                'label' => 'Kontaktierbar',
+            ])
+            ->add('locked', ChoiceType::class, [
+                'multiple' => false,
+                'expanded' => true,
+                'choices' => [
+                    'Ja' => true,
+                    'Nein' => false,
+                ],
+                'label' => 'Gesperrt',
             ])
             ->add('save', SubmitType::class, [
                 'label' => 'Speichern',
-            ])
-        ;
+            ]);
     }
 }

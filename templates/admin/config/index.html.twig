@@ -5,15 +5,15 @@
     <h2>Grundkonfiguration</h2>
 
     <form action="{{ path('admin.config') }}" method="post">
-        <table class="tb" style="width:auto;">
+        <table class="table">
             {% for item in items %}
-            <tr>
-                <th>{{ item.label }}</th>
-                <td class="tbldata">{{ item.field|raw }}</td>
-            </tr>
+                <tr>
+                    <th>{{ item.label }}</th>
+                    <td>{{ item.field|raw }}</td>
+                </tr>
             {% endfor %}
         </table>
 
-        <p><input type="submit" name="submit" value="&Uuml;bernehmen" /></p>
+        <p><input type="submit" name="submit" value="&Uuml;bernehmen"/></p>
     </form>
 {% endblock %}

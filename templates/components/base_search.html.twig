@@ -1,6 +1,6 @@
 <div
-    {{ attributes }}
-    data-action="change->live#update"
+        {{ attributes }}
+        data-action="change->live#update"
 >
     <div data-controller="search-url">
         {{ form_start(this.form, {'attr': {'onkeydown' :"return event.key != 'Enter';"}}) }}
@@ -22,8 +22,10 @@
 
     {% set search = this.search %}
     <div class="search-container" data-loading="addClass(loading)">
-        <div class="search-overlay"><div class="search-spinner"></div></div>
-        <table class="tb full-width">
+        <div class="search-overlay">
+            <div class="search-spinner"></div>
+        </div>
+        <table class="table">
             <tr>
                 <th colspan="1000">
                     <div>
@@ -31,27 +33,35 @@
                             <input type="hidden" value="{{ search.limit }}" name="limit">
 
                             {% if search.limit > 0 %}
-                                <button type="button" data-action="live#action" data-action-name="prevent|firstPage">&lt;&lt;</button>
-                                <button type="button" data-action="live#action" data-action-name="prevent|previousPage">&lt;</button>
+                                <button type="button" data-action="live#action" data-action-name="prevent|firstPage">
+                                    &lt;&lt;
+                                </button>
+                                <button type="button" data-action="live#action" data-action-name="prevent|previousPage">
+                                    &lt;
+                                </button>
                             {% else %}
                                 <button type="button" disabled="disabled">&lt;&lt;</button>
                                 <button type="button" disabled="disabled">&lt;</button>
                             {% endif %}
                             {% if search.limit < search.total - search.perPage %}
-                                <button type="button" data-action="live#action" data-action-name="prevent|nextPage">&gt;</button>
+                                <button type="button" data-action="live#action" data-action-name="prevent|nextPage">
+                                    &gt;
+                                </button>
                                 <button type="button" data-action="live#action" data-action-name="prevent|lastPage">&gt;&gt;</button>
                             {% else %}
                                 <button type="button" disabled="disabled">&gt;</button>
                                 <button type="button" disabled="disabled">&gt;&gt;</button>
                             {% endif %}
 
-                        </div><div style="float:right">
-                            {{ formatNumber(min(search.limit + 1, search.total)) }} - {{ formatNumber(search.limit + search.entries|length) }} von {{ formatNumber(search.total) }}
+                        </div>
+                        <div style="float:right">
+                            {{ formatNumber(min(search.limit + 1, search.total)) }}
+                            - {{ formatNumber(search.limit + search.entries|length) }}
+                            von {{ formatNumber(search.total) }}
                         </div>
                     </div>
                 </th>
             </tr>
-
             {% block data %}{% endblock %}
         </table>
     </div>

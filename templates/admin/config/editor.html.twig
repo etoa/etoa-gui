@@ -21,27 +21,31 @@
             <div class="configEditorContent">
                 <h3>{{ configData[currentCategory] }}</h3>
                 {% if configItems|default(false) %}
-                    <table class="tb">
+                    <table class="table">
                         <colgroup>
                             <col style="width: 400px;">
-                            <col style="width: 370px";>
+                            <col style="width: 370px" ;>
                             <col>
                             <col>
                         </colgroup>
+                        <thead>
                         <tr>
                             <th>Name</th>
                             <th>Wert</th>
                             <th>Standard</th>
                         </tr>
+                        </thead>
+                        <tbody>
                         {% for item in configItems %}
                             <tr{% if item.changed %} class="configValueChanged"{% endif %}>
-                                <td title="{{ item.name }}, {{ item.type }}">{{ item.label }}</th>
+                                <td title="{{ item.name }}, {{ item.type }}">{{ item.label }}</td>
                                 <td>{{ item.field|raw }}</td>
                                 <td><code>{{ item.default }}</code></td>
                             </tr>
                         {% endfor %}
+                        </tbody>
                     </table>
-                    <br/><input type="submit" name="submit" value="Übernehmen" />
+                    <br/><input type="submit" name="submit" value="Übernehmen"/>
                 {% endif %}
             </div>
         </div>
