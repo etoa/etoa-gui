@@ -34,6 +34,7 @@
     "symfony/intl": "6.3.*",
     "symfony/lock": "6.3.*",
     "symfony/mailer": "6.3.*",
+    "symfony/messenger": "6.3.*",
     "symfony/mime": "6.3.*",
     "symfony/monolog-bundle": "^3.8",
     "symfony/notifier": "6.3.*",
