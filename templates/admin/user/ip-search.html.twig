@@ -1,14 +1,17 @@
+{% set title="Spieler IP-Adressen" %}
+
 {% extends 'admin/layout/admin.html.twig' %}
 
-{% block content %}
-    <h1>Spieler IP-Adressen</h1>
-
+{% block breadcrumbs %}
     {{ component('breadcrumbs', { items: [
         { label: 'IP Suche', url: path('admin.users.ips') },
         { label: ip, url: path('admin.users.ips')~'?ip='~ ip },
     ]}) }}
+{% endblock %}
 
-    <h3>User welche momentan unter dieser Adresse online sind</h3>
+{% block content %}
+
+    <h2>User welche momentan unter der Adresse {{ ip }} online sind</h2>
     {% if sessions is not empty %}
         <table class="table">
             <thead>
@@ -54,7 +57,7 @@
         <twig:alert type="info">Nichts gefunden.</twig:alert>
     {% endif %}
 
-    <h3>User welche schon mal unter dieser Adresse online waren</h3>
+    <h2>User welche schon mal unter der Adresse {{ ip }} online waren</h2>
     {% if sessionLogs is not empty %}
         <table class="table">
             <thead>
@@ -100,7 +103,7 @@
         <twig:alert type="info">Nichts gefunden.</twig:alert>
     {% endif %}
 
-    <h3>Fehlgeschlagene Logins unter dieser Adresse</h3>
+    <h2>Fehlgeschlagene Logins mit der Adresse {{ ip }}</h2>
     {% if loginFailures is not empty %}
         <table class="table">
             <thead>
@@ -145,6 +148,5 @@
     {% else %}
         <twig:alert type="info">Nichts gefunden.</twig:alert>
     {% endif %}
-
 
 {% endblock %}

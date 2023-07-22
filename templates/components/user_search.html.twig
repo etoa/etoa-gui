@@ -11,12 +11,12 @@
         <th>Punkte</th>
         <th>Allianz</th>
         <th>Rasse</th>
-        <th>&nbsp;</th>
+        <th>Aktionen</th>
     </tr>
     {% for user in search.entries %}
         <tr>
             <td>{{ user.id }}</td>
-            <td>{{ user.nick }}</td>
+            <td><a href="{{ path('admin.users.view', {id: user.id}) }}">{{ user.nick }}</a></td>
             <td>{{ user.name }}</td>
             {% if user.blockedFrom < this.time and user.blockedTo > this.time %}
                 <td class="userLockedColor">Gesperrt</td>

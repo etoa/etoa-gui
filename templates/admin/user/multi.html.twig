@@ -1,11 +1,11 @@
+{% set title="Multi-Erkennung" %}
+
+
 {% extends 'admin/layout/admin.html.twig' %}
 
 {% block content %}
-    <h1>Spieler</h1>
-    <h2>Multi-Erkennung - Zusammenfassung</h2>
 
     <p>Multi-Merkmale:</p>
-
     <ul>
         <li>Gleiche IP (durch dieses Tool prüfen)</li>
         <li>Ähnliche Onlinezeit (mit Session-Log prüffen)</li>
@@ -83,9 +83,14 @@
                 </td>
                 </tr>
             {% endfor %}
+        {% else %}
+            <tr>
+                <td colspan="6">Keine Daten gefunden.</td>
+            </tr>
         {% endfor %}
         </tbody>
     </table>
 
     <p>Total {{ ipUsers|length }} IP-Adressen mit Spielern entdeckt.</p>
+
 {% endblock %}

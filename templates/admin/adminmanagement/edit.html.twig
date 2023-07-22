@@ -1,16 +1,14 @@
+{% set title="Administrator bearbeiten" %}
+
 {% extends 'admin/layout/admin.html.twig' %}
 
-{% import 'admin/macros.html.twig' as macros %}
-
-{% block content %}
-
-    <h1>Administrator bearbeiten</h1>
-
+{% block breadcrumbs %}
     {{ component('breadcrumbs', { items: [
         { label: 'Admin-Management', url: path('admin.admin_management') },
         { label: admin.nick, url: path('admin.admin_management.edit', { id: admin.id }) },
     ]}) }}
+{% endblock %}
 
+{% block content %}
     {{ form(form) }}
-
 {% endblock %}

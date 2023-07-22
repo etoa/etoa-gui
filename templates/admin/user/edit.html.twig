@@ -1,15 +1,16 @@
+{% set title="Spieler bearbeiten" %}
+
 {% extends 'admin/layout/admin.html.twig' %}
 
-{% block content %}
-
-    <h1>Spieler bearbeiten</h1>
-
+{% block breadcrumbs %}
     {{ component('breadcrumbs', { items: [
         { label: 'Spielersuche', url: path('admin.users') },
         { label: user.nick, url: path('admin.users.view', {id: user.id}) },
         { label: 'Spieler bearbeiten', url: path('admin.users.edit', {id: user.id}) },
     ]}) }}
+{% endblock %}
 
+{% block content %}
     <form action="{{ path('admin.users.edit', {id: user.id}) }}" method="post">
         <input type="hidden" id="tabactive" name="tabactive" value=""/>
         <div class="tabs" id="user_edit_tabs">

@@ -1,21 +1,23 @@
+{% set title="Logs des Spielers " ~ user.nick %}
+
 {% extends 'admin/layout/admin.html.twig' %}
 
-{% block content %}
-
-    <h1>Logs des Spielers {{ user.nick }}</h1>
-
+{% block breadcrumbs %}
     {{ component('breadcrumbs', { items: [
         { label: 'Spielersuche', url: path('admin.users') },
         { label: user.nick, url: path('admin.users.view', {id: user.id}) },
         { label: 'Logs', url: path('admin.users.logs', {id: user.id}) },
     ]}) }}
+{% endblock %}
 
+
+{% block content %}
     <h2>Neuer Logeintrag</h2>
     <div class="card">
         {{ form(form) }}
     </div>
 
-    <h3>Letzte Logeinträge</h3>
+    <h2>Letzte Logeinträge</h2>
     {% if logs|length > 0 %}
         <table class="table">
             <thead>

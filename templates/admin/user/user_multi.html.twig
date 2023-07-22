@@ -1,14 +1,16 @@
+{% set title="Multis des Spielers " ~ user.nick %}
+
 {% extends 'admin/layout/admin.html.twig' %}
 
-{% block content %}
-
-    <h1>Multis des Spielers {{ user.nick }}</h1>
-
+{% block breadcrumbs %}
     {{ component('breadcrumbs', { items: [
         { label: 'Spielersuche', url: path('admin.users') },
         { label: user.nick, url: path('admin.users.view', {id: user.id}) },
         { label: 'Multis', url: path('admin.users.user_multi', {id: user.id}) },
     ]}) }}
+{% endblock %}
+
+{% block content %}
 
     {% if multiEntries|length > 0 %}
         <h2>Eingetragene Multis</h2>
@@ -97,4 +99,3 @@
     </form>
 
 {% endblock %}
-

@@ -1,14 +1,16 @@
+{% set title="Sitting des Spielers " ~ user.nick %}
+
 {% extends 'admin/layout/admin.html.twig' %}
 
-{% block content %}
-
-    <h1>Sitting des Spielers {{ user.nick }}</h1>
-
+{% block breadcrumbs %}
     {{ component('breadcrumbs', { items: [
         { label: 'Spielersuche', url: path('admin.users') },
         { label: user.nick, url: path('admin.users.view', {id: user.id}) },
         { label: 'Sitting', url: path('admin.users.user_sitting', {id: user.id}) },
     ]}) }}
+{% endblock %}
+
+{% block content %}
 
     {% if sittedEntries|length > 0 %}
         <h2>Wurde gesittet</h2>
@@ -79,9 +81,9 @@
 
     <h2>Sitting einrichten</h2>
     <form action="{{ path('admin.users.addSitting', {id: user.id}) }}" method="post">
-        <table class="tbl">
+        <table>
             <tr>
-                <td>Übrige Tage</td>
+                <td><label>Übrige Tage</label></td>
                 <td>
                     {{ availableDays }}
                 </td>
@@ -124,4 +126,3 @@
     </form>
 
 {% endblock %}
-

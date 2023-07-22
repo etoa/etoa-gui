@@ -56,7 +56,7 @@ class UserSessionController extends AbstractController
             $this->userSessionManager->kick($sessionId);
         }
 
-        success_msg("Alle Sessions gelöscht!");
+        $this->addFlash('success', "Alle Sessions gelöscht!");
 
         return $this->redirectToRoute('admin.users.sessions');
     }

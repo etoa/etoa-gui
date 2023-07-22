@@ -52,12 +52,16 @@
             </ul>
         </aside>
         <main class="app-content">
-            {% for type, messages in app.flashes|default([]) %}
-                {% for message in messages %}
-                    <twig:alert :type="type">{{ message }}</twig:alert>
+            {% block breadcrumbs %}{% endblock %}
+            <div class="app-content-container">
+                {% if title is defined %}<h1>{{ title }}</h1>{% endif %}
+                {% for type, messages in app.flashes|default([]) %}
+                    {% for message in messages %}
+                        <twig:alert :type="type">{{ message }}</twig:alert>
+                    {% endfor %}
                 {% endfor %}
-            {% endfor %}
-            {% block content %}{% endblock %}
+                {% block content %}{% endblock %}
+            </div>
         </main>
     </section>
     <footer class="app-footer">

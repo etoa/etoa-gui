@@ -6,6 +6,7 @@
 
     {% if this.request.user > 0 %}
         <table class="table">
+            <thead>
             <tr>
                 <th>Login</th>
                 <th>Aktivität</th>
@@ -15,6 +16,8 @@
                 <th>Browser</th>
                 <th>OS</th>
             </tr>
+            </thead>
+            <tbody>
             {% for log in this.logs %}
                 <tr>
                     <td>{{ formatTimestamp(log.timeLogin) }}</td>
@@ -48,6 +51,7 @@
                     <td colspan="9999"><i>Keine Einträge vorhanden</i></td>
                 </tr>
             {% endfor %}
+            </tbody>
         </table>
     {% endif %}
 </div>

@@ -758,9 +758,9 @@ class UserController extends AbstractAdminController
         ]);
     }
 
-    #[Route('/admin/users/{id}/points', name: 'admin.users.pointProgression', methods: ['GET'])]
+    #[Route('/admin/users/{id}/points', name: 'admin.users.points', methods: ['GET'])]
     #[IsGranted('ROLE_ADMIN_TRIAL-ADMIN')]
-    public function pointProgression(int $id, Request $request): Response
+    public function points(int $id, Request $request): Response
     {
         $user = $this->userRepository->getUser($id);
         if ($user === null) {
@@ -777,7 +777,7 @@ class UserController extends AbstractAdminController
         $endVal = $request->query->get('end');
         $end = $endVal !== null ? (is_numeric($endVal) ? intval($endVal) : strtotime($endVal)) : $t;
 
-        return $this->render('admin/user/pointProgression.html.twig', [
+        return $this->render('admin/user/points.html.twig', [
             'user' => $user,
             'userPoints' => $this->userPointsRepository->getPoints($id, $limit, $start, $end),
             'limit' => $limit,

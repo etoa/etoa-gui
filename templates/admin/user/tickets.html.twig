@@ -1,14 +1,16 @@
+{% set title="Tickets des Spielers " ~ user.nick %}
+
 {% extends 'admin/layout/admin.html.twig' %}
 
-{% block content %}
-
-    <h1>Tickets des Spielers {{ user.nick }}</h1>
-
+{% block breadcrumbs %}
     {{ component('breadcrumbs', { items: [
         { label: 'Spielersuche', url: path('admin.users') },
         { label: user.nick, url: path('admin.users.view', {id: user.id}) },
         { label: 'Tickets', url: path('admin.users.tickets', {id: user.id}) },
     ]}) }}
+{% endblock %}
+
+{% block content %}
 
     {% if tickets|length > 0 %}
         <table class="table">
@@ -40,4 +42,3 @@
     {% endif %}
 
 {% endblock %}
-

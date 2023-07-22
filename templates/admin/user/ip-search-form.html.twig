@@ -1,26 +1,26 @@
+{% set title="Spieler IP-Adressen" %}
+
 {% extends 'admin/layout/admin.html.twig' %}
 
-{% block content %}
-    <h1>Spieler IP-Adressen</h1>
-
+{% block breadcrumbs %}
     {{ component('breadcrumbs', { items: [
         { label: 'IP Suche', url: path('admin.users.ips') },
     ]}) }}
+{% endblock %}
+
+{% block content %}
 
     <h2>Adresse oder Hostname suchen</h2>
-
     <form>
-        <table class="tb">
+        <table>
             <tr>
-                <th>IP:</th>
-                <td><input type="text" name="ip" value=""/></td>
-            </tr>
-            <tr>
-                <th>Host:</th>
-                <td><input type="text" name="host" value=""/></td>
+                <th><label for="ip">IP Adresse oder Hostname</label></th>
+                <td><input type="text" name="ip" id="ip" value="" autofocus required/></td>
             </tr>
         </table>
-        <br/>
-        <input type="submit" name="search" value="Suchen"/>
+        <p>
+            <input type="submit" name="search" value="Suchen"/>
+        </p>
     </form>
+
 {% endblock %}

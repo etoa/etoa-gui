@@ -2,7 +2,7 @@
 <html lang="de" {% if htmlClass|default('') %} class="{{ htmlClass }}"{% endif %}>
 <head>
     <meta charset="utf-8">
-    <title>{{ getGameIdentifier() }} Administration</title>
+    <title>{% if title is defined %}{{ title }} | {% endif %}{{ getGameIdentifier() }} Administration</title>
 
     <meta name="author" content="Nicolas Perrenoud"/>
     <meta name="keywords" content="Escape to Andromeda, Browsergame, Strategie, Simulation, Andromeda, MMPOG, RPG"/>

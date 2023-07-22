@@ -1,13 +1,15 @@
+{% set title="Spieler" %}
+
 {% extends 'admin/layout/admin.html.twig' %}
 
-{% block content %}
-
-    <h1>Spieler</h1>
-
+{% block breadcrumbs %}
     {{ component('breadcrumbs', { items: [
         { label: 'Spielersuche', url: path('admin.users') },
         { label: user.nick, url: path('admin.users.view', {id: user.id}) },
     ]}) }}
+{% endblock %}
+
+{% block content %}
 
     <div style="display: flex; flex-direction: row; gap: 20px">
         <div style="flex: 1">
@@ -281,7 +283,7 @@
                 <tr>
                     <th>Punkteverlauf</th>
                     <td>
-                        <a href="{{ path('admin.users.pointProgression', {id: user.id}) }}">
+                        <a href="{{ path('admin.users.points', {id: user.id}) }}">
                             <img src="{{ path('admin.images.stats', {user: user.id}) }}?width=300" alt="Diagramm"
                                  style="width:300px;height:200px"/>
                         </a>
@@ -342,7 +344,7 @@
         <a href="{{ path('admin.users.economy', {id: user.id}) }}" class="button">Wirtschaft</a> &nbsp;
         <a href="{{ path('admin.users.messages', {id: user.id}) }}" class="button">Nachrichten</a> &nbsp;
         <a href="{{ path('admin.users.comments', {id: user.id}) }}" class="button">Kommentare</a> &nbsp;
-        <a href="{{ path('admin.users.pointProgression', {id: user.id}) }}" class="button">Punkteverlauf</a> &nbsp;
+        <a href="{{ path('admin.users.points', {id: user.id}) }}" class="button">Punkteverlauf</a> &nbsp;
         <a href="{{ path('admin.users.logs', {id: user.id}) }}" class="button">Logs</a> &nbsp;
         <a href="{{ path('admin.users.tickets', {id: user.id}) }}" class="button">Tickets</a> &nbsp;
         <a href="{{ path('admin.users.user_login_failures', {id: user.id}) }}" class="button">Loginfehler</a> &nbsp;
@@ -361,4 +363,3 @@
     </p>
 
 {% endblock %}
-

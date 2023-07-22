@@ -1,8 +1,8 @@
+{% set title="Laufende Sitteraccounts" %}
+
 {% extends 'admin/layout/admin.html.twig' %}
 
 {% block content %}
-    <h1>Spieler</h1>
-    <h2>Sitting: Laufende Sitteraccounts</h2>
 
     {% if entries is not empty %}
         <table class="table">
@@ -17,8 +17,8 @@
             <tbody>
             {% for entry in entries %}
                 <tr>
-                    <td>{{ entry.userNick }}</td>
-                    <td>{{ entry.sitterNick }}</td>
+                    <td><a href="{{ path('admin.users.view', {id: entry.userId}) }}">{{ entry.userNick }}</a></td>
+                    <td><a href="{{ path('admin.users.view', {id: entry.sitterId}) }}">{{ entry.sitterNick }}</a></td>
                     <td>{{ formatTimestamp(entry.dateFrom) }}</td>
                     <td>{{ formatTimestamp(entry.dateTo) }}</td>
                 </tr>
@@ -28,4 +28,5 @@
     {% else %}
         <twig:alert>Keine Datensätze vorhanden!</twig:alert>
     {% endif %}
+
 {% endblock %}

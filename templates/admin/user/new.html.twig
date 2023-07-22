@@ -1,14 +1,14 @@
+{% set title="Spieler erstellen" %}
+
 {% extends 'admin/layout/admin.html.twig' %}
 
-{% block content %}
-
-    <h1>Spieler erstellen</h1>
-
+{% block breadcrumbs %}
     {{ component('breadcrumbs', { items: [
         { label: 'Spielersuche', url: path('admin.users') },
         { label: 'Erstellen', url: path('admin.users.new') },
     ]}) }}
+{% endblock %}
 
+{% block content %}
     {{ form(form) }}
-
 {% endblock %}

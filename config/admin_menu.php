@@ -34,7 +34,7 @@ return [
             'admin.users.comments',
             'admin.users.logs',
             'admin.users.tickets',
-            'admin.users.pointProgression',
+            'admin.users.points',
             'admin.users.user_login_failures',
             'admin.users.user_multi',
             'admin.users.user_sitting',
@@ -48,6 +48,10 @@ return [
                 "route" => "admin.users.sessions",
                 "roles" => "master,super-admin,game-admin,trial-game-admin",
             ],
+            "Sessionlogs" => [
+                "route" => "admin.users.session-log",
+                "roles" => "master,super-admin,game-admin",
+            ],
             "Multi-Kontrolle" => [
                 "route" => "admin.users.multis",
                 "roles" => "master,super-admin,game-admin,trial-game-admin",
@@ -59,14 +63,6 @@ return [
             "Sitting" => [
                 "route" => "admin.users.sitting",
                 "roles" => "master,super-admin,game-admin,trial-game-admin",
-            ],
-            "Punkteverlauf" => [
-                "route" => "admin.users.points",
-                "roles" => "master,super-admin,game-admin,trial-game-admin",
-            ],
-            "Sessionlogs" => [
-                "route" => "admin.users.session-log",
-                "roles" => "master,super-admin,game-admin",
             ],
             "Profilbilder prüfen" => [
                 "route" => "admin.users.imagecheck",
@@ -436,6 +432,10 @@ return [
             ],
             "Admin-Sessions" => [
                 "route" => "admin.admin-sessions",
+                "roles" => "master,super-admin",
+            ],
+            "Admin Sessionlogs" => [
+                "route" => "admin.admin-sessionlogs",
                 "roles" => "master,super-admin",
             ],
         ]

@@ -9,7 +9,6 @@ use EtoA\Ranking\UserBannerService;
 use EtoA\User\ProfileImage;
 use EtoA\User\UserLoginFailureRepository;
 use EtoA\User\UserMultiRepository;
-use EtoA\User\UserPointsRepository;
 use EtoA\User\UserRepository;
 use EtoA\User\UserSearch;
 use EtoA\User\UserSessionRepository;
@@ -27,7 +26,6 @@ class UsersController extends AbstractAdminController
         private readonly UserRepository             $userRepository,
         private readonly UserSittingRepository      $userSittingRepository,
         private readonly UserLoginFailureRepository $loginFailureRepository,
-        private readonly UserPointsRepository       $userPointsRepository,
         private readonly UserBannerService          $userBannerService,
         private readonly UserSessionRepository      $userSessionRepository,
         private readonly UserMultiRepository        $userMultiRepository,
@@ -67,34 +65,9 @@ class UsersController extends AbstractAdminController
         ]);
     }
 
-    #[Route('/admin/users/points', name: 'admin.users.points', priority: 10)]
-    #[IsGranted('ROLE_ADMIN_TRIAL-ADMIN')]
-    public function points(Request $request): Response
-    {
-        $users = $this->userRepository->searchUserNicknames();
-        if (count($users) === 0) {
-            $this->addFlash('error', 'Keine Benutzer vorhanden!');
-        }
-
-        $user = null;
-        $points = [];
-        if ($request->query->getInt('userId') > 0) {
-            $user = $this->userRepository->getUser($request->query->getInt('userId'));
-            if ($user !== null) {
-                $points = $this->userPointsRepository->getPoints($user->id);
-            }
-        }
-
-        return $this->render('admin/user/points.html.twig', [
-            'users' => $users,
-            'user' => $user,
-            'points' => $points,
-        ]);
-    }
-
     #[Route('/admin/users/banners', name: 'admin.users.banners', priority: 10)]
     #[IsGranted('ROLE_ADMIN_GAME-ADMIN')]
-    public function banners(Request $request): Response
+    public function banners(): Response
     {
         $banners = [];
         $userNicks = $this->userRepository->searchUserNicknames();
@@ -206,12 +179,12 @@ class UsersController extends AbstractAdminController
     public function ipSearch(Request $request): Response
     {
         $ip = $request->query->get('ip');
-        if (!is_string($ip) && ($host = $request->query->get('host'))) {
-            $ip = $this->networkNameService->getAddr((string)$host);
+        if (blank($ip)) {
+            return $this->render('admin/user/ip-search-form.html.twig');
         }
 
-        if (!is_string($ip)) {
-            return $this->render('admin/user/ip-search-form.html.twig');
+        if (!filter_var($ip, FILTER_VALIDATE_IP)) {
+            $ip = $this->networkNameService->getAddr($ip);
         }
 
         $sessions = $this->userSessionRepository->getSessions(UserSessionSearch::create()->ip($ip));

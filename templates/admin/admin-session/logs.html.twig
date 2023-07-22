@@ -1,0 +1,18 @@
+{% set title="Admin Sessionlogs" %}
+
+{% extends 'admin/layout/admin.html.twig' %}
+
+{% block content %}
+
+    {% if sessionLogCount > 0 %}
+        {{ component('admin_session_log', {
+            form: sessionLogForm
+        }) }}
+
+        <h2>Logs löschen</h2>
+        <p>Es sind {{ formatNumber(sessionLogCount) }} Einträge in der Datenbank vorhanden.</p>
+        {{ form(deleteSessionForm, {action: path('admin.admin-sessions.delete')}) }}
+    {% else %}
+        <p><i>Keine Einträge vorhanden</i></p>
+    {% endif %}
+{% endblock %}

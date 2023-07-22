@@ -1,16 +1,14 @@
+{% set title="Administrator hinzufügen" %}
+
 {% extends 'admin/layout/admin.html.twig' %}
 
-{% import 'admin/macros.html.twig' as macros %}
-
-{% block content %}
-
-    <h1>Administrator hinzufügen</h1>
-
+{% block breadcrumbs %}
     {{ component('breadcrumbs', { items: [
         { label: 'Admin-Management', url: path('admin.admin_management') },
         { label: 'Neuer Administrator', url: path('admin.admin_management.new') },
     ]}) }}
+{% endblock %}
 
+{% block content %}
     {{ form(form) }}
-    
 {% endblock %}

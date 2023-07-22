@@ -35,9 +35,6 @@ class AdminSessionController extends AbstractAdminController
             'sessionTimeout' => $this->config->getInt('admin_timeout'),
             'time' => time(),
             'sessions' => $this->sessionRepository->findAll(),
-            'sessionLogForm' => $this->createForm(AdminSessionLogType::class)->createView(),
-            'deleteSessionForm' => $this->createForm(DeleteAdminSessionLogType::class)->createView(),
-            'sessionLogCount' => $this->sessionRepository->countSessionLog(),
         ]);
     }
 
@@ -53,6 +50,17 @@ class AdminSessionController extends AbstractAdminController
         }
 
         return $this->redirectToRoute('admin.admin-sessions');
+    }
+
+    #[Route("/admin/admin-sessionlogs", name: "admin.admin-sessionlogs")]
+    #[IsGranted('ROLE_ADMIN_SUPER-ADMIN')]
+    public function sessionLogs(): Response
+    {
+        return $this->render('admin/admin-session/logs.html.twig', [
+            'sessionLogForm' => $this->createForm(AdminSessionLogType::class)->createView(),
+            'deleteSessionForm' => $this->createForm(DeleteAdminSessionLogType::class)->createView(),
+            'sessionLogCount' => $this->sessionRepository->countSessionLog(),
+        ]);
     }
 
     #[Route("/admin/admin-sessions/delete", name: "admin.admin-sessions.delete", methods: ["POST"])]

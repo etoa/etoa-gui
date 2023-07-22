@@ -1,15 +1,16 @@
+{% set title="Wirtschaft des Spielers " ~ user.nick %}
+
 {% extends 'admin/layout/admin.html.twig' %}
 
-{% block content %}
-
-    <h1>Wirtschaft des Spielers {{ user.nick }}</h1>
-
+{% block breadcrumbs %}
     {{ component('breadcrumbs', { items: [
         { label: 'Spielersuche', url: path('admin.users') },
         { label: user.nick, url: path('admin.users.view', {id: user.id}) },
         { label: 'Wirtschaft', url: path('admin.users.economy', {id: user.id}) },
     ]}) }}
+{% endblock %}
 
+{% block content %}
     <h2>Rohstoff- und Produktionsübersicht</h2>
     <div>
         {% if userPlanets|length > 0 %}
@@ -140,7 +141,7 @@
         {% endif %}
     </div>
 
-    <h2>Die fünf letzten Aufträge</h2>
+    <h2>Die letzten Aufträge</h2>
     <div>
         <h3>Bauaufträge</h3>
         {% include 'admin/user/user_gamelogs.html.twig' with { 'logs': buildLogs } %}
@@ -154,5 +155,6 @@
         <h3>Verteidigungsaufträge</h3>
         {% include 'admin/user/user_gamelogs.html.twig' with { 'logs': defLogs } %}
     </div>
+    <p><em>Es werden maximal 5 Aufträge pro Kategorie angezeigt.</em></p>
 {% endblock %}
 

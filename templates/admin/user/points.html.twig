@@ -1,49 +1,66 @@
+{% set title="Punkteverlauf des Spielers " ~ user.nick %}
+
 {% extends 'admin/layout/admin.html.twig' %}
 
+{% block breadcrumbs %}
+    {{ component('breadcrumbs', { items: [
+        { label: 'Spielersuche', url: path('admin.users') },
+        { label: user.nick, url: path('admin.users.view', {id: user.id}) },
+        { label: 'Punkteverlauf', url: path('admin.users.points', {id: user.id}) },
+    ]}) }}
+{% endblock %}
+
 {% block content %}
-    <h1>Spieler</h1>
-    <h2>Punktespeicherung</h2>
+
+    <p><b>Punkte aktuell:</b> {{ formatNumber(user.points) }}, <b>Rang aktuell:</b> {{ user.rank }}</p>
 
     <p>
-        <b>Punkteentwicklung anzeigen für:</b>
-        <select onchange="document.location='{{ path('admin.users.points') }}?userId='+this.options[this.selectedIndex].value">
-            <option value="0" style="font-style:italic;">(Benutzer wählen...)</option>
-            {% for id,nick in users %}
-                <option value="{{ id }}"{% if user and user.id == id %} selected="selected"{% endif %}>{{ nick }}</option>
-            {% endfor %}
-        </select>
+        <img src="{{ path('admin.images.stats', { user: user.id }) }}?limit={{ limit }}&start={{ start }}&end={{ end }}"
+             width="600" height="400" alt="Diagramm"/>
     </p>
+    <form action="{{ path('admin.users.points', {id: user.id}) }}" method="GET" id="rangeForm">
+        <p>
+            Zeige maximal
+            <twig:forms:select_input name="limit" :options="limitOptions" :value="limit" :keysAsLabel="true"
+                                     onchange="document.querySelector('#rangeForm').submit()"/>
+            Datensätze von
+            <twig:forms:date_time_input name="start" :value="start" :max="iso8601date(end)"
+                                        onchange="document.querySelector('#rangeForm').submit()"/>
+            bis
+            <twig:forms:date_time_input name="end" :value="end" :min="iso8601date(start)"
+                                        :max="iso8601date(date().timestamp)"
+                                        onchange="document.querySelector('#rangeForm').submit()"/>
+        </p>
+    </form>
 
-    {% if user %}
-        <h2>Punktedetails für <a href="{{ path('admin.users.view', { id: user.id }) }}">{{ user.nick }}</a></h2>
-        <p><b>Punkte aktuell:</b> {{ formatNumber(user.points) }}, <b>Rang aktuell:</b> {{ user.rank }}</p>
-        <img src="{{ path('admin.images.stats', {user: user.id}) }}" alt="Diagramm"/><br/><br/>
-
-        <table class="table">
-            <thead>
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Datum</th>
+            <th>Zeit</th>
+            <th>Punkte</th>
+            <th>Gebäude</th>
+            <th>Forschung</th>
+            <th>Flotte</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for points in userPoints %}
             <tr>
-                <th>Datum</th>
-                <th>Punkte</th>
-                <th>Flotte</th>
-                <th>Forschung</th>
-                <th>Gebäude</th>
+                <td>{{ points.timestamp|date("d.m.Y") }}</td>
+                <td>{{ points.timestamp|date("H:i") }}</td>
+                <td>{{ formatNumber(points.points) }}</td>
+                <td>{{ formatNumber(points.buildingPoints) }}</td>
+                <td>{{ formatNumber(points.techPoints) }}</td>
+                <td>{{ formatNumber(points.shipPoints) }}</td>
             </tr>
-            </thead>
-            <tbody>
-            {% for entry in points %}
-                <tr>
-                    <td>{{ formatTimestamp(entry.timestamp) }}</td>
-                    <td>{{ formatNumber(entry.points) }}</td>
-                    <td>{{ formatNumber(entry.shipPoints) }}</td>
-                    <td>{{ formatNumber(entry.techPoints) }}</td>
-                    <td>{{ formatNumber(entry.buildingPoints) }}</td>
-                </tr>
-            {% else %}
-                <tr>
-                    <td colspan="99"><i>Keine Punktedaten vorhanden!</i></td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-    {% endif %}
+        {% else %}
+            <tr>
+                <td colspan="6">Keine Punkte vorhanden!</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
 {% endblock %}
+

@@ -3,9 +3,6 @@
 {% import 'admin/macros.html.twig' as macros %}
 
 {% block content %}
-    {% if title|default(false) %}
-        <h1>{{ title }}</h1>
-    {% endif %}
     {% if subtitle|default(false) %}
         <h2>{{ subtitle }}</h2>
     {% endif %}

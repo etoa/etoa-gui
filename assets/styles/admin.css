@@ -92,6 +92,7 @@ body {
     padding: 20px 10px;
     background: #dddddd;
     font-size: 0.9em;
+    border-right: 1px solid #cccccc;
 }
 
 .app-sidebar .quick-search {
@@ -100,8 +101,11 @@ body {
 
 .app-content {
     flex: 1;
-    padding: 10px 25px;
     background-color: #f8f8f8;
+}
+
+.app-content-container {
+    padding: 10px 25px;
 }
 
 .app-footer {
@@ -110,6 +114,15 @@ body {
     background: none;
     font-size: 8pt;
     text-align: center;
+}
+
+/**
+* Breadcrumbs
+ */
+.breadcrumbs {
+    padding: 5px 10px;
+    background: #dddddd;
+    border-bottom: 1px solid #cccccc;
 }
 
 /******************
@@ -1383,11 +1396,4 @@ input.userDeletedColor {
 .alien,
 .tb .alien {
     color: #000;
-}
-
-/**
-* Breadcrumbs
- */
-.breadcrumbs {
-    margin-bottom: 10px;
 }

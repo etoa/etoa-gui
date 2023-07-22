@@ -1,16 +1,15 @@
+{% set title="Spielerbanner" %}
+
 {% extends 'admin/layout/admin.html.twig' %}
 
 {% block content %}
-    <h1>Spieler</h1>
-    <h2>Banner</h2>
-
     <p>Banner werden jeweils beim Aktualisieren der Punkte neu generiert.</p>
 
     {% for nick,banner in banners %}
         {% if banner %}
-            <img src="{{ banner.url }}" alt="Banner" style="width:{{ width }}'px;height:{{ height }}px;" />
+            <img src="{{ banner.url }}" alt="Banner" style="width:{{ width }}'px;height:{{ height }}px;"/>
         {% else %}
-            <div style="display:inline-block; width:{{ width }}px;height:{{ height }}px;">Banner für <b>{{ nick }}</b> existiert nicht!</div>
+            <twig:alert type="warning">Banner für <b>{{ nick }}</b> existiert nicht!</twig:alert>
         {% endif %}
     {% endfor %}
 {% endblock %}

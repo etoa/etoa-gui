@@ -1,7 +1,8 @@
+{% set title="Seitenzugriffe" %}
+
 {% extends 'admin/layout/admin.html.twig' %}
 
 {% block content %}
-    <h3>Seitenzugriffe</h3>
 
     <form action="{{ path('admin.tools.accesslog.toggle') }}" method="post">
         {% if accessLogEnabled %}
@@ -54,4 +55,5 @@
     <form action="{{ path('admin.tools.accesslog.truncate') }}" method="post">
         <input type="submit" value="Aufzeichnungen löschen" name="submit_truncate"/>
     </form>
+
 {% endblock %}

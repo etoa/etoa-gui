@@ -1,8 +1,8 @@
+{% set title="Spielersessions" %}
+
 {% extends 'admin/layout/admin.html.twig' %}
 
 {% block content %}
-    <h1>Spieler</h1>
-    <h2>Sessions</h2>
 
     <p>Es sind {{ sessions|length }} Sessions aktiv. Das User-Timeout beträgt {{ formatTimespan(timeout) }}</p>
 
@@ -49,4 +49,5 @@
             </tr>
         {% endfor %}
     </table>
+    
 {% endblock %}

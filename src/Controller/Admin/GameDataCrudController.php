@@ -60,54 +60,62 @@ abstract class GameDataCrudController extends AbstractAdminController
             case "readonly":
                 return $value;
             case "numeric":
-                return "<input
-                    $stl
-                    type=\"number\"
-                    name=\"" . $name . "\"
-                    value=\"" . $value . "\"
-                />";
+                return '<input
+                    ' . $stl . '
+                    type="number"
+                    name="' . $name . '"
+                    id="' . $name . '"
+                    value="' . $value . '"
+                />';
             case "decimal":
-                return "<input
-                    $stl
-                    type=\"number\"
-                    step=\".01\"
-                    name=\"" . $name . "\"
-                    value=\"" . $value . "\"
-                />";
+                return '<input
+                    ' . $stl . '
+                    type="number"
+                    step=".01"
+                    name="' . $name . '"
+                    id="' . $name . '"
+                    value="' . $value . '"
+                />';
             case "color":
-                return "<input
-                    type=\"color\"
-                    name=\"" . $name . "\"
-                    value=\"" . $value . "\"
-                />";
+                return '<input
+                    type="color"
+                    name="' . $name . '"
+                    id="' . $name . '"
+                    value="' . $value . '"
+                />';
             case "textarea":
-                return "<textarea
-                    $stl
-                    name=\"" . $name . "\"
-                    rows=\"" . $field['rows'] . "\"
-                    cols=\"" . $field['cols'] . "\"
-                    >" . $value . "</textarea>";
+                return '<textarea
+                    ' . $stl . '
+                    name="' . $name . '"
+                    id="' . $name . '"
+                    rows="' . $field['rows'] . '"
+                    cols="' . $field['cols'] . '"
+                    >' . $value . '</textarea>';
             case "select":
-                $str = "<select name=\"" . $name . "\">";
+                $str = '<select 
+                    name="' . $name . '" 
+                    id="' . $name . '">';
                 if ($value == 0 || $value == "") {
-                    $str .= "<option selected=\"selected\">(Wählen...)</option>";
+                    $str .= '<option selected="selected">(Wählen...)</option>';
                 }
                 foreach ($field['items'] ?? [] as $label => $val) {
-                    $str .= "<option value=\"$val\"";
+                    $str .= '<option value="' . $val . '"';
                     if ($value == $val) {
-                        $str .= " selected=\"selected\"";
+                        $str .= ' selected="selected"';
                     }
-                    $str .= ">$label</option>";
+                    $str .= '>' . $label . '</option>';
                 }
-                $str .= "</select>";
+                $str .= '</select>';
 
                 return $str;
             case "radio":
                 $str = '';
                 foreach ($field['items'] ?? [] as $label => $val) {
-                    $str .= "<label><input name=\"" . $field['name'] . "\" type=\"radio\" value=\"$val\"";
+                    $str .= '<label><input name="' . $field['name'] . '" 
+                        type="radio" 
+                        value="' . $val . '"';
                     if ($value == $val) {
-                        $str .= " checked=\"checked\"";
+                        $str .= ' checked="checked"';
                     }
 
                     $onclick_actions = array();
@@ -130,7 +138,7 @@ abstract class GameDataCrudController extends AbstractAdminController
                         $str .= " onclick=\"" . implode("", $onclick_actions) . "\"";
                     }
 
-                    $str .= " /> $label</label><br>";
+                    $str .= ' /> ' . $label . '</label><br>';
                 }
 
                 return $str;
@@ -147,14 +155,15 @@ abstract class GameDataCrudController extends AbstractAdminController
 
                 return $str;
             default:
-                return "<input
-                    $stl
-                    type=\"text\"
-                    name=\"" . $name . "\"
-                    value=\"" . $value . "\"
-                    size=\"" . $field['size'] . "\"
-                    maxlength=\"" . $field['max_len'] . "\"
-                />";
+                return '<input
+                    ' . $stl . '
+                    type="text"
+                    name="' . $name . '"
+                    id="' . $name . '"
+                    value="' . $value . '"
+                    size="' . $field['size'] . '"
+                    maxlength="' . $field['max_len'] . '"
+                />';
         }
     }
 

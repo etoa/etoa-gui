@@ -1,14 +1,14 @@
+{% set title="Admin-Management" %}
+
 {% extends 'admin/layout/admin.html.twig' %}
 
-{% import 'admin/macros.html.twig' as macros %}
-
-{% block content %}
-    <h1>Admin-Management</h1>
-
+{% block breadcrumbs %}
     {{ component('breadcrumbs', { items: [
         { label: 'Admin-Management', url: path('admin.admin_management') },
     ]}) }}
+{% endblock %}
 
+{% block content %}
     <table class="table">
         <thead>
         <tr>
@@ -57,5 +57,4 @@
         <input type="button" onclick="document.location='{{ path('admin.admin_management.new') }}'"
                value="Neuer Administrator"/>
     {% endif %}
-
 {% endblock %}

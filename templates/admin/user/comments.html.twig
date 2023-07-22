@@ -1,20 +1,23 @@
+{% set title="Kommentare zum Spieler " ~ user.nick %}
+
 {% extends 'admin/layout/admin.html.twig' %}
 
-{% block content %}
-
-    <h1>Kommentare zum Spieler {{ user.nick }}</h1>
-
+{% block breadcrumbs %}
     {{ component('breadcrumbs', { items: [
         { label: 'Spielersuche', url: path('admin.users') },
         { label: user.nick, url: path('admin.users.view', {id: user.id}) },
         { label: 'Kommentare', url: path('admin.users.comments', {id: user.id}) },
     ]}) }}
+{% endblock %}
 
+{% block content %}
     <h2>Neuer Kommentar</h2>
     <div class="card">
         <form action="{{ path('admin.users.comments.add', { id: user.id}) }}" method="POST">
-            <label for="text">Kommentar</label><br>
-            <textarea rows="4" cols="70" id="text" name="text"></textarea><br/><br/>
+            <p>
+                <label for="text">Kommentar</label><br>
+                <textarea rows="4" cols="70" id="text" name="text" placeholder="Neuer Kommentar"></textarea>
+            </p>
             <input type="submit" value="Speichern"/>
         </form>
     </div>

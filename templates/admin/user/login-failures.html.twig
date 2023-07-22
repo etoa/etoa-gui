@@ -1,12 +1,13 @@
+{% set title="Fehlerhafte Spielerlogins" %}
+
 {% extends 'admin/layout/admin.html.twig' %}
 
 {% block content %}
-    <h1>Spieler</h1>
-    <h2>Fehlerhafte Logins</h2>
 
     {{ component('user_login_failures', {
         form: form
     }) }}
 
     <p>Es sind {{ formatNumber(total) }} Einträge in der Datenbank vorhanden.</p>
+
 {% endblock %}

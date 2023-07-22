@@ -199,8 +199,8 @@ abstract class AdvancedGameDataCrudController extends GameDataCrudController
 
     public function create(): void
     {
-        echo "<form action=\"?\" method=\"post\">";
-        echo "<table>";
+        echo '<form action="?" method="post">';
+        echo '<table>';
         foreach ($this->getFields() as $field) {
             if ($field['type'] == "readonly") {
                 continue;
@@ -208,10 +208,10 @@ abstract class AdvancedGameDataCrudController extends GameDataCrudController
 
             $name = $field['name'];
             $value = $field['def_val'] ?? '';
-            echo "<tr>
-                <th>" . $field['text'] . ":</th>
-                <td width=\"200\">" . $this->createInput($field, $name, strval($value)) . "</td>
-            </tr>";
+            echo '<tr>
+                <th><label for="' . $name . '">' . $field['text'] . '</label></th>
+                <td>' . $this->createInput($field, $name, strval($value)) . '</td>
+            </tr>';
         }
         echo "</table><br/>";
         echo "<input type=\"submit\" value=\"Neuen Datensatz speichern\" name=\"new\" />&nbsp;";
@@ -300,11 +300,11 @@ abstract class AdvancedGameDataCrudController extends GameDataCrudController
             ->fetchAssociative();
 
         if ($arr !== false) {
-            echo "<form action=\"?\" method=\"post\">";
-            echo "<input type=\"submit\" value=\"Übernehmen\" name=\"edit\" />&nbsp;";
-            echo "<input type=\"button\" value=\"Abbrechen\" onclick=\"document.location='?'\" /><br/><br/>";
-            echo "<input type=\"hidden\" name=\"" . $this->getTableId() . "\" value=\"" . $request->query->get('id') . "\" />";
-            echo "<table>";
+            echo '<form action="?" method="post">';
+            echo '<input type="submit" value="Übernehmen" name="edit" />&nbsp;';
+            echo '<input type="button" value="Abbrechen" onclick="document.location=\'?\'" /><br/><br/>';
+            echo '<input type="hidden" name="' . $this->getTableId() . '" value="' . $request->query->get('id') . '" />';
+            echo '<table>';
 
             $hiddenRows = [];
             foreach ($this->getFields() as $field) {
@@ -321,33 +321,33 @@ abstract class AdvancedGameDataCrudController extends GameDataCrudController
                 }
             }
 
-            echo "<tr><td style=\"vertical-align:top;\"><table style=\"width:100%;\">";
+            echo '<tr><td style="vertical-align:top;"><table style="width:100%;">';
             foreach ($this->getFields() as $field) {
-                echo "<tr id=\"row_" . $field['name'] . "\"";
+                echo '<tr id="row_' . $field['name'] . '"';
                 if (in_array($field['name'], $hiddenRows, true)) {
-                    echo " style=\"display:none;\"";
+                    echo ' style="display:none;"';
                 }
-                echo ">\n<th>" . $field['text'] . ":</th>\n";
-                echo "<td>\n";
                 $name = $field['name'];
                 $value = $arr[$field['name']];
+                echo '><th><label for="' . $name . '">' . $field['text'] . '</label></th>';
+                echo '<td>';
                 echo $this->createInput($field, $name, strval($value));
-                echo "</td>\n</tr>\n";
+                echo '</td></tr>';
                 if ($field['line'] ?? false) {
-                    echo "<tr><td style=\"height:4px;background:#000\" colspan=\"2\"></td></tr>";
+                    echo '<tr><td style="height:4px;background:#000" colspan="2"></td></tr>';
                 }
                 if ($field['column_end'] ?? false) {
-                    echo "</table></td><td style=\"vertical-align:top;\"><table style=\"width:100%;\">";
+                    echo '</table></td><td style="vertical-align:top;"><table style="width:100%;">';
                 }
             }
-            echo "</table></td></tr>";
-            echo "</table><br/>";
-            echo "<input type=\"submit\" value=\"Übernehmen\" name=\"edit\" />&nbsp;";
-            echo "<input type=\"button\" value=\"Abbrechen\" onclick=\"document.location='?'\" />";
-            echo "</form>";
+            echo '</table></td></tr>';
+            echo '</table><br/>';
+            echo '<input type="submit" value="Übernehmen" name="edit" />&nbsp;';
+            echo '<input type="button" value="Abbrechen" onclick="document.location=\'?\'" />';
+            echo '</form>';
         } else {
             $this->addFlash('error', "Datensatz nicht vorhanden.");
-            echo "<input type=\"button\" value=\"Übersicht\" onclick=\"document.location='?'\" />";
+            echo '<input type="button" value="Übersicht" onclick="document.location=\'?\'" />';
         }
     }
 
