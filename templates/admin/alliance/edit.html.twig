@@ -1,0 +1,17 @@
+{% set title="Allianz bearbeiten" %}
+
+{% extends 'admin/layout/admin.html.twig' %}
+
+{% block breadcrumbs %}
+    {{ component('breadcrumbs', { items: [
+        { label: 'Allianzsuche', url: path('admin.alliances') },
+        { label: alliance.nameWithTag, url: path('admin.alliances.view', {id: alliance.id}) },
+        { label: 'Allianz bearbeiten', url: path('admin.alliances.edit', {id: alliance.id}) },
+    ]}) }}
+{% endblock %}
+
+{% block content %}
+
+    {{ form(form) }}
+
+{% endblock %}

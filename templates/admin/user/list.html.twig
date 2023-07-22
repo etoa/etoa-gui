@@ -9,9 +9,13 @@
 {% endblock %}
 
 {% block content %}
+
     {{ component('user_search', {
         form: form
     }) }}
 
     <p>Es sind {{ formatNumber(total) }} Einträge in der Datenbank vorhanden.</p>
+
+    <p><a href="{{ path('admin.users.new') }}" class="button">Neuen Spieler registrieren</a></p>
+
 {% endblock %}

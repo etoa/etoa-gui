@@ -1,0 +1,18 @@
+{% set title="Einzahlungen für die Allianz " ~ alliance.nameWithTag %}
+
+{% extends 'admin/layout/admin.html.twig' %}
+
+{% block breadcrumbs %}
+    {{ component('breadcrumbs', { items: [
+        { label: 'Allianzsuche', url: path('admin.alliances') },
+        { label: alliance.nameWithTag, url: path('admin.alliances.view', {id: alliance.id}) },
+        { label: 'Einzahlungen', url: path('admin.alliances.deposit', {id: alliance.id}) },
+    ]}) }}
+{% endblock %}
+
+{% block content %}
+    {{ component('admin_alliance_deposit_search', {
+        form: form,
+        allianceId: alliance.id
+    }) }}
+{% endblock %}

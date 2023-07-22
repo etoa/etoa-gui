@@ -1,0 +1,60 @@
+{% set title="Diplomatie der Allianz " ~ alliance.nameWithTag %}
+
+{% extends 'admin/layout/admin.html.twig' %}
+
+{% block breadcrumbs %}
+    {{ component('breadcrumbs', { items: [
+        { label: 'Allianzsuche', url: path('admin.alliances') },
+        { label: alliance.nameWithTag, url: path('admin.alliances.view', {id: alliance.id}) },
+        { label: 'Diplomatie', url: path('admin.alliances.diplomacy', {id: alliance.id}) },
+    ]}) }}
+{% endblock %}
+
+{% block content %}
+
+    <form method="post">
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Allianz</th>
+                <th>Bezeichnung</th>
+                <th>Status</th>
+                <th>Datum</th>
+                <th>Löschen</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for diplomacy in diplomacies %}
+                <tr>
+                    <td>
+                        <a href="{{ path('admin.alliances.edit', {id: diplomacy.otherAllianceId}) }}">[{{ diplomacy.otherAllianceTag }}
+                            ] {{ diplomacy.otherAllianceName }}</a>
+                    </td>
+                    <td>
+                        <input type="text" value="{{ diplomacy.name }}" name="alliance_bnd_name[{{ diplomacy.id }}]"/>
+                    </td>
+                    <td>
+                        <select name="alliance_bnd_level[{{ diplomacy.id }}]">
+                            {% for level,label in levels %}
+                                <option value="{{ level }}"{% if diplomacy.level == level %} selected="selected"{% endif %}>{{ label }}</option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                    <td>
+                        {{ formatTimestamp(diplomacy.date) }}
+                    </td>
+                    <td valign="top"><input type="checkbox" name="alliance_bnd_del[{{ diplomacy.id }}]" value="1"/></td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="9999"><em>Keine Bündnisse/Kriege vorhanden.</em></td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+        {% if diplomacies|length > 0 %}
+            <p><input type="submit" name="bnd_save" value="Übernehmen" class="button"/></p>
+        {% endif %}
+    </form>
+{% endblock %}

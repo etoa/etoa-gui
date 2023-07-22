@@ -1,0 +1,87 @@
+{% set title="Rohstoffe der Allianz " ~ alliance.nameWithTag %}
+
+{% extends 'admin/layout/admin.html.twig' %}
+
+{% block breadcrumbs %}
+    {{ component('breadcrumbs', { items: [
+        { label: 'Allianzsuche', url: path('admin.alliances') },
+        { label: alliance.nameWithTag, url: path('admin.alliances.view', {id: alliance.id}) },
+        { label: 'Rohstoffe', url: path('admin.alliances.resources', {id: alliance.id}) },
+    ]}) }}
+{% endblock %}
+
+{% block content %}
+    <form method="post">
+        <table class="table">
+            <tr>
+                <th class="resmetalcolor">Titan</th>
+                <td>
+                    <input type="text" name="res_metal" id="res_metal" value="{{ formatNumber(alliance.resMetal) }}"
+                           size="12" maxlength="20" autocomplete="off" onfocus="this.select()" onclick="this.select()"
+                           onkeyup="FormatNumber(this.id,this.value,'','','');" onkeypress="return nurZahlen(event)"/>
+                    <br/>
+                    +/-: <input type="text" name="res_metal_add" id="res_metal_add" value="0" size="8" maxlength="20"
+                                autocomplete="off" onfocus="this.select()" onclick="this.select()"
+                                onkeyup="FormatNumber(this.id,this.value,'','','');"
+                                onkeypress="return nurZahlen(event)"/>
+                </td>
+                <th class="rescrystalcolor">Silizium</th>
+                <td>
+                    <input type="text" name="res_crystal" id="res_crystal"
+                           value="{{ formatNumber(alliance.resCrystal) }}"
+                           size="12" maxlength="20" autocomplete="off" onfocus="this.select()" onclick="this.select()"
+                           onkeyup="FormatNumber(this.id,this.value,'','','');" onkeypress="return nurZahlen(event)"/>
+                    <br/>
+                    +/-: <input type="text" name="res_crystal_add" id="res_crystal_add" value="0" size="8"
+                                maxlength="20"
+                                autocomplete="off" onfocus="this.select()" onclick="this.select()"
+                                onkeyup="FormatNumber(this.id,this.value,'','','');"
+                                onkeypress="return nurZahlen(event)"/>
+                </td>
+            </tr>
+            <tr>
+                <th class="resplasticcolor">PVC</th>
+                <td>
+                    <input type="text" name="res_plastic" id="res_plastic"
+                           value="{{ formatNumber(alliance.resPlastic) }}"
+                           size="12" maxlength="20" autocomplete="off" onfocus="this.select()" onclick="this.select()"
+                           onkeyup="FormatNumber(this.id,this.value,'','','');" onkeypress="return nurZahlen(event)"/>
+                    <br/>
+                    +/-: <input type="text" name="res_plastic_add" id="res_plastic_add" value="0" size="8"
+                                maxlength="20"
+                                autocomplete="off" onfocus="this.select()" onclick="this.select()"
+                                onkeyup="FormatNumber(this.id,this.value,'','','');"
+                                onkeypress="return nurZahlen(event)"/>
+                </td>
+                <th class="resfuelcolor">Tritium</th>
+                <td>
+                    <input type="text" name="res_fuel" id="res_fuel" value="{{ formatNumber(alliance.resFuel) }}"
+                           size="12"
+                           maxlength="20" autocomplete="off" onfocus="this.select()" onclick="this.select()"
+                           onkeyup="FormatNumber(this.id,this.value,'','','');" onkeypress="return nurZahlen(event)"/>
+                    <br/>
+                    +/-: <input type="text" name="res_fuel_add" id="res_fuel_add" value="0" size="8" maxlength="20"
+                                autocomplete="off" onfocus="this.select()" onclick="this.select()"
+                                onkeyup="FormatNumber(this.id,this.value,'','','');"
+                                onkeypress="return nurZahlen(event)"/>
+                </td>
+            </tr>
+            <tr>
+                <th class="resfoodcolor">Nahrung</th>
+                <td>
+                    <input type="text" name="res_food" id="res_food" value="{{ formatNumber(alliance.resFood) }}"
+                           size="12"
+                           maxlength="20" autocomplete="off" onfocus="this.select()" onclick="this.select()"
+                           onkeyup="FormatNumber(this.id,this.value,'','','');" onkeypress="return nurZahlen(event)"/>
+                    <br/>
+                    +/-: <input type="text" name="res_food_add" id="res_food_add" value="0" size="8" maxlength="20"
+                                autocomplete="off" onfocus="this.select()" onclick="this.select()"
+                                onkeyup="FormatNumber(this.id,this.value,'','','');"
+                                onkeypress="return nurZahlen(event)"/>
+                </td>
+            </tr>
+        </table>
+
+        <p><input type="submit" name="res_save" value="Übernehmen"/></p>
+    </form>
+{% endblock %}

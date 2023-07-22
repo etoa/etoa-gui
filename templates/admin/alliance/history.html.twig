@@ -1,0 +1,30 @@
+{% set title="Geschichte der Allianz " ~ alliance.nameWithTag %}
+
+{% extends 'admin/layout/admin.html.twig' %}
+
+{% block breadcrumbs %}
+    {{ component('breadcrumbs', { items: [
+        { label: 'Allianzsuche', url: path('admin.alliances') },
+        { label: alliance.nameWithTag, url: path('admin.alliances.view', {id: alliance.id}) },
+        { label: 'Geschichte', url: path('admin.alliances.history', {id: alliance.id}) },
+    ]}) }}
+{% endblock %}
+
+{% block content %}
+    <table class="table">
+        <tr>
+            <th style="width:120px;">Datum / Zeit</th>
+            <th>Ereignis</th>
+        </tr>
+        {% for entry in history %}
+            <tr>
+                <td>{{ formatTimestamp(entry.timestamp) }}</td>
+                <td class="tbldata">{{ BBCodeToHTML(entry.text)|raw }}</td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="3" class="tbldata"><i>Keine Daten vorhanden!</i></td>
+            </tr>
+        {% endfor %}
+    </table>
+{% endblock %}

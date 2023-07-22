@@ -1,13 +1,26 @@
-{% extends 'admin/alliance/edit/edit-subnav.html.twig' %}
+{% set title="Technologien der Allianz " ~ alliance.nameWithTag %}
 
-{% block editContent %}
-    <table>
+{% extends 'admin/layout/admin.html.twig' %}
+
+{% block breadcrumbs %}
+    {{ component('breadcrumbs', { items: [
+        { label: 'Allianzsuche', url: path('admin.alliances') },
+        { label: alliance.nameWithTag, url: path('admin.alliances.view', {id: alliance.id}) },
+        { label: 'Technologien', url: path('admin.alliances.resources', {id: alliance.id}) },
+    ]}) }}
+{% endblock %}
+
+{% block content %}
+    <table class="table">
+        <thead>
         <tr>
             <th>Technologie</th>
             <th>Stufe</th>
             <th>Useranzahl</th>
             <th>Status</th>
         </tr>
+        </thead>
+        <tbody>
         {% for item in techlist %}
             <tr>
                 <td>{{ technologies[item.technologyId] }}</td>
@@ -24,8 +37,11 @@
                 </td>
             </tr>
         {% else %}
-            <tr><td colspan="4">Keine Technologien vorhanden!</td></tr>
+            <tr>
+                <td colspan="4">Keine Technologien vorhanden!</td>
+            </tr>
         {% endfor %}
+        </tbody>
     </table>
 
     <h2>Technologien hinzufügen</h2>

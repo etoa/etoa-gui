@@ -1,0 +1,95 @@
+{% set title="Mitglieder der Allianz " ~ alliance.nameWithTag %}
+
+{% extends 'admin/layout/admin.html.twig' %}
+
+{% block breadcrumbs %}
+    {{ component('breadcrumbs', { items: [
+        { label: 'Allianzsuche', url: path('admin.alliances') },
+        { label: alliance.nameWithTag, url: path('admin.alliances.view', {id: alliance.id}) },
+        { label: 'Mitglieder', url: path('admin.alliances.members', {id: alliance.id}) },
+    ]}) }}
+{% endblock %}
+
+{% block content %}
+
+    <form method="post">
+        <h2>Mitglieder</h2>
+
+        <table class="table">
+            <tr>
+                <th>Name</th>
+                <th>Punkte</th>
+                <th>Rang</th>
+                <th>Mitgliedschaft beenden</th>
+            </tr>
+            {% for member in members %}
+                <tr>
+                    <td id="uifo{{ member.user_id }}" style="display:none;">
+                        <a href="{{ path('admin.users.view', {id: member.user_id}) }}">Daten</a>
+                        <br/>
+                        <a href="{{ path('admin.messages.send', {userId: member.user_id}) }}">Nachricht
+                            senden</a>
+                    </td>
+                    <td>
+                        <a href="{{ path('admin.users.view', {id: member.user_id}) }}" {{ cTT(member.user_nick, 'uifo', member.user_id) }}>{{ member.user_nick }}</a>
+                    </td>
+                    <td>{{ formatNumber(member.user_points) }} Punkte</td>
+                    <td>
+                        <select name="member_rank[{{ member.user_id }}]">
+                            <option value="0">-</option>
+                            {% for rank in ranks %}
+                                <option value="{{ rank.id }}"
+                                        {% if member.user_alliance_rank_id == rank.id %}
+                                            selected="selected"
+                                        {% endif %}
+                                >{{ rank.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                    <td>
+                        <input type="checkbox" name="member_kick[{{ member.user_id }}]" value="1"/>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="9999"><b>KEINE MITGLIEDER!</b></td>
+                </tr>
+            {% endfor %}
+        </table>
+
+        <h2>Ränge</h2>
+
+        <table class="table">
+            <tr>
+                <th>Name</th>
+                <th>Level</th>
+                <th>Löschen</th>
+            </tr>
+            {% for rank in ranks %}
+                <tr>
+                    <td>
+                        <input type="text" size="35" name="rank_name[{{ rank.id }}]"
+                               value="{{ rank.name }}"/>
+                    </td>
+                    <td>
+                        <select name="rank_level[{{ rank.id }}]">
+                            {% for x in range(0, 9) %}
+                                <option value="{{ x }}"
+                                        {% if rank.level == x %}selected="selected"{% endif %}>{{ x }}</option>
+                            {% endfor %}
+                        </select>
+                    </td>
+                    <td>
+                        <input type="checkbox" name="rank_del[{{ rank.id }}]" value="1"/>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="9999"><em>Keine Ränge vorhanden.</em></td>
+                </tr>
+            {% endfor %}
+        </table>
+
+        <p><input type="submit" name="member_save" value="Übernehmen"/></p>
+    </form>
+{% endblock %}

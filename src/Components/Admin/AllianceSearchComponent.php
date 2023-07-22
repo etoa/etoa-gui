@@ -23,9 +23,10 @@ class AllianceSearchComponent extends AbstractController
     private AllianceSearchRequest $request;
 
     public function __construct(
-        private UserRepository $userRepository,
-        private AllianceRepository $allianceRepository
-    ) {
+        private readonly UserRepository     $userRepository,
+        private readonly AllianceRepository $allianceRepository
+    )
+    {
         $this->perPage = 99999;
         $this->request = new AllianceSearchRequest();
     }

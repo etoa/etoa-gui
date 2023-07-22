@@ -19,6 +19,7 @@ use EtoA\Form\Type\Admin\AllianceEditType;
 use EtoA\Form\Type\Admin\AllianceSearchType;
 use EtoA\Form\Type\Admin\AllianceTechnologyAddType;
 use EtoA\Support\StringUtils;
+use EtoA\User\UserRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -35,6 +36,7 @@ class AllianceController extends AbstractAdminController
         private readonly AllianceImageStorage         $allianceImageStorage,
         private readonly AllianceDiplomacyRepository  $allianceDiplomacyRepository,
         private readonly AllianceRankRepository       $allianceRankRepository,
+        private readonly UserRepository               $userRepository,
     )
     {
     }
@@ -46,6 +48,25 @@ class AllianceController extends AbstractAdminController
         return $this->render('admin/alliance/list.html.twig', [
             'form' => $this->createForm(AllianceSearchType::class, $request->query->all()),
             'total' => $this->allianceRepository->count(),
+        ]);
+    }
+
+    #[Route('/admin/alliances/{id}', name: 'admin.alliances.view')]
+    #[IsGranted('ROLE_ADMIN_TRIAL-ADMIN')]
+    public function view(int $id): Response
+    {
+        $alliance = $this->allianceRepository->getAlliance($id);
+        if ($alliance === null) {
+            $this->addFlash('error', 'Allianz nicht gefunden!');
+
+            return $this->redirectToRoute('admin.alliances');
+        }
+
+        return $this->render('admin/alliance/view.html.twig', [
+            'alliance' => $alliance,
+            'founder' => $this->userRepository->getUser($alliance->founderId),
+            'members' => $this->allianceRepository->findUsers($id),
+            'ranks' => $this->allianceRankRepository->getRanks($id),
         ]);
     }
 
@@ -83,9 +104,10 @@ class AllianceController extends AbstractAdminController
             );
 
             $this->addFlash('success', 'Allianzdaten aktualisiert!');
+            return $this->redirectToRoute('admin.alliances.view', ['id' => $id]);
         }
 
-        return $this->render('admin/alliance/edit/edit.html.twig', [
+        return $this->render('admin/alliance/edit.html.twig', [
             'alliance' => $alliance,
             'form' => $form->createView(),
         ]);
@@ -127,7 +149,7 @@ class AllianceController extends AbstractAdminController
             $this->addFlash('success', 'Mitglieder aktualisiert!');
         }
 
-        return $this->render('admin/alliance/edit/members.html.twig', [
+        return $this->render('admin/alliance/members.html.twig', [
             'alliance' => $alliance,
             'members' => $this->allianceRepository->findUsers($id),
             'ranks' => $this->allianceRankRepository->getRanks($id),
@@ -140,10 +162,12 @@ class AllianceController extends AbstractAdminController
     {
         $alliance = $this->allianceRepository->getAlliance($id);
 
+        $changesMade = false;
         if ($request->request->has('alliance_bnd_del') && count($request->request->all('alliance_bnd_del')) > 0) {
             foreach (array_keys($request->request->all('alliance_bnd_del')) as $diplomacyId) {
                 $this->allianceDiplomacyRepository->deleteDiplomacy($diplomacyId);
             }
+            $changesMade = true;
         }
 
         if (count($request->request->all('alliance_bnd_level')) > 0) {
@@ -154,11 +178,15 @@ class AllianceController extends AbstractAdminController
                     $request->request->all('alliance_bnd_name')[$diplomacyId]
                 );
             }
+            $changesMade = true;
         }
 
-        $this->addFlash('success', 'Diplomatie aktualisiert!');
+        if ($changesMade) {
+            $this->addFlash('success', 'Diplomatie aktualisiert!');
+            return $this->redirectToRoute('admin.alliances.view', ['id' => $id]);
+        }
 
-        return $this->render('admin/alliance/edit/diplomacy.html.twig', [
+        return $this->render('admin/alliance/diplomacy.html.twig', [
             'alliance' => $alliance,
             'diplomacies' => $this->allianceDiplomacyRepository->getDiplomacies($alliance->id),
             'levels' => AllianceDiplomacyLevel::all(),
@@ -171,7 +199,7 @@ class AllianceController extends AbstractAdminController
     {
         $alliance = $this->allianceRepository->getAlliance($id);
 
-        return $this->render('admin/alliance/edit/history.html.twig', [
+        return $this->render('admin/alliance/history.html.twig', [
             'alliance' => $alliance,
             'history' => $this->allianceHistoryRepository->findForAlliance($alliance->id),
         ]);
@@ -206,7 +234,7 @@ class AllianceController extends AbstractAdminController
             $alliance = $this->allianceRepository->getAlliance($id);
         }
 
-        return $this->render('admin/alliance/edit/resources.html.twig', [
+        return $this->render('admin/alliance/resources.html.twig', [
             'alliance' => $alliance,
         ]);
     }
@@ -217,7 +245,7 @@ class AllianceController extends AbstractAdminController
     {
         $alliance = $this->allianceRepository->getAlliance($id);
 
-        return $this->render('admin/alliance/edit/deposit.html.twig', [
+        return $this->render('admin/alliance/deposit.html.twig', [
             'alliance' => $alliance,
             'form' => $this->createForm(AllianceDepositSearchType::class, $request->query->all(), ['allianceId' => $alliance->id]),
         ]);
@@ -255,7 +283,7 @@ class AllianceController extends AbstractAdminController
             }
         }
 
-        return $this->render('admin/alliance/edit/buildings.html.twig', [
+        return $this->render('admin/alliance/buildings.html.twig', [
             'alliance' => $alliance,
             'buildings' => $this->allianceBuildingRepository->getNames(),
             'buildlist' => $this->allianceBuildingRepository->getBuildList($alliance->id),
@@ -294,7 +322,7 @@ class AllianceController extends AbstractAdminController
             }
         }
 
-        return $this->render('admin/alliance/edit/technologies.html.twig', [
+        return $this->render('admin/alliance/technologies.html.twig', [
             'alliance' => $alliance,
             'technologies' => $this->allianceTechnologyRepository->getNames(),
             'techlist' => $this->allianceTechnologyRepository->getTechnologyList($alliance->id),

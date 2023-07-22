@@ -1,0 +1,113 @@
+{% set title="Allianz " ~ alliance.nameWithTag %}
+
+{% extends 'admin/layout/admin.html.twig' %}
+
+{% block breadcrumbs %}
+    {{ component('breadcrumbs', { items: [
+        { label: 'Allianzsuche', url: path('admin.alliances') },
+        { label: alliance.nameWithTag, url: path('admin.alliances.view', {id: alliance.id}) },
+    ]}) }}
+{% endblock %}
+
+{% block content %}
+
+    <div class="row">
+        <div class="col">
+            <h2>Basisdaten</h2>
+            <table class="table">
+                <tr>
+                    <th>ID</th>
+                    <td>{{ alliance.id }}</td>
+                </tr>
+                <tr>
+                    <th>Tag</th>
+                    <td>{{ alliance.tag }}</td>
+                </tr>
+                <tr>
+                    <th>Name</th>
+                    <td>{{ alliance.name }}</td>
+                </tr>
+                <tr>
+                    <th>Gründer</th>
+                    <td>
+                        {% if founder is not null %}
+                            <a href="{{ path('admin.users.view', {'id': founder.id}) }}">{{ founder.nick }}</a>
+                        {% else %}
+                            (Niemand)
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <th>Gründung</th>
+                    <td>{{ formatTimestamp(alliance.foundationTimestamp) }}</td>
+                </tr>
+                <tr>
+                    <th>Rang</th>
+                    <td>{{ alliance.currentRank }}</td>
+                </tr>
+                <tr>
+                    <th>Punkte</th>
+                    <td>{{ alliance.points }}</td>
+                </tr>
+                <tr>
+                    <th>Mitglieder</th>
+                    <td>{{ alliance.memberCount }}</td>
+                </tr>
+                <tr>
+                    <th>Rohstoffe</th>
+                    <td>
+                        <span class="resmetalcolor">Titan:</span> {{ formatNumber(alliance.resMetal) }}<br>
+                        <span class="rescrystalcolor">Silizium:</span> {{ formatNumber(alliance.resCrystal) }}<br>
+                        <span class="resplasticcolor">PVC:</span> {{ formatNumber(alliance.resPlastic) }}<br>
+                        <span class="resfuelcolor">Tritium:</span> {{ formatNumber(alliance.resFuel) }}<br>
+                        <span class="resfoodcolor">Nahrung:</span> {{ formatNumber(alliance.resFuel) }}<br>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <div class="col">
+            <h2>Mitglieder</h2>
+            <table class="table">
+                <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Punkte</th>
+                    <th>Rang</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for member in members %}
+                    <tr>
+                        <td>
+                            <a href="{{ path('admin.users.view', {id: member.user_id}) }}">{{ member.user_nick }}</a>
+                        </td>
+                        <td>{{ formatNumber(member.user_points) }}</td>
+                        <td>
+                            {{ ranks|filter(rank => member.user_alliance_rank_id == rank.id)|join(', ') }}
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="9999"><b>KEINE MITGLIEDER!</b></td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <hr>
+
+    <ul class="list-unstyled list-horizontal">
+        <li><a href="{{ path('admin.alliances.edit', {id: alliance.id}) }}" class="button">Allianz bearbeiten</a></li>
+        <li><a href="{{ path('admin.alliances.members', {id: alliance.id}) }}" class="button">Mitglieder</a></li>
+        <li><a href="{{ path('admin.alliances.diplomacy', {id: alliance.id}) }}" class="button">Diplomatie</a></li>
+        <li><a href="{{ path('admin.alliances.history', {id: alliance.id}) }}" class="button">Geschichte</a></li>
+        <li><a href="{{ path('admin.alliances.resources', {id: alliance.id}) }}" class="button">Rohstoffe</a></li>
+        <li><a href="{{ path('admin.alliances.deposit', {id: alliance.id}) }}" class="button">Einzahlungen</a></li>
+        <li><a href="{{ path('admin.alliances.buildings', {id: alliance.id}) }}" class="button">Gebäude</a></li>
+        <li><a href="{{ path('admin.alliances.technologies', {id: alliance.id}) }}" class="button">Technologien</a></li>
+    </ul>
+
+{% endblock %}

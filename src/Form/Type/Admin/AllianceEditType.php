@@ -7,7 +7,6 @@ use EtoA\Form\Type\Core\UserType;
 use EtoA\User\UserSearch;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
@@ -21,15 +20,13 @@ class AllianceEditType extends AbstractType
         /** @var AllianceWithMemberCount $data */
         $data = $options['data'];
         $builder
-            ->add('id', TextType::class, [
-                'disabled' => 'disabled',
-                'label' => 'ID',
-            ])
             ->add('tag', TextType::class, [
                 'label' => 'Tag',
+                'required' => true,
             ])
             ->add('name', TextType::class, [
                 'label' => 'Name',
+                'required' => true,
             ])
             ->add('founderId', UserType::class, [
                 'label' => 'Gründer',
@@ -38,13 +35,8 @@ class AllianceEditType extends AbstractType
                 'search' => UserSearch::create()->allianceId($data->id),
             ])
             ->add('text', TextareaType::class, [
-                'label' => 'Text',
+                'label' => 'Beschreibung',
                 'required' => false,
-            ])
-            ->add('foundationTimestamp', DateTimeType::class, [
-                'label' => 'Gründung',
-                'disabled' => 'disabled',
-                'input' => 'timestamp',
             ])
             ->add('url', UrlType::class, [
                 'label' => 'Website',
@@ -55,7 +47,7 @@ class AllianceEditType extends AbstractType
                 'required' => false,
             ]);
 
-        if ((bool) $data->image) {
+        if ((bool)$data->image) {
             $builder
                 ->add('deleteImage', CheckboxType::class, [
                     'label' => 'Bild entfernen',

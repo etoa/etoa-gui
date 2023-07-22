@@ -544,8 +544,36 @@ td, th {
 * Margin and padding
  */
 
+.mt-0 {
+    margin-top: 0;
+}
+
+.mt-1 {
+    margin-top: 5px;
+}
+
+.mt-2 {
+    margin-top: 10px;
+}
+
+.mt-3 {
+    margin-top: 15px;
+}
+
 .mb-0 {
     margin-bottom: 0;
+}
+
+.mb-1 {
+    margin-bottom: 5px;
+}
+
+.mb-2 {
+    margin-bottom: 10px;
+}
+
+.mb-3 {
+    margin-bottom: 15px;
 }
 
 /******************
@@ -730,46 +758,56 @@ td, th {
     width: 550px;
 }
 
+
+/**
+ * Lists
+ */
+
+.list-unstyled {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.list-unstyled li {
+    padding: 0;
+    margin: 0;
+}
+
+.list-horizontal li {
+    display: inline-block;
+}
+
+/**
+ * Grid
+ */
+
+.row {
+    display: flex;
+    flex-direction: row;
+    gap: 20px
+}
+
+.row .col {
+    flex: 1;
+}
+
+/**
+* HR
+ */
+
+hr {
+    border: 1px solid #cccccc;
+    margin-top: 10px;
+    margin-bottom: 15px;
+}
+
 /******************
   * Custom Stuff    *
   ******************/
 .clear,
 .clearer {
     clear: both;
-}
-
-#userlist {
-    position: absolute;
-    z-index: 10;
-    border: 1px #ccc solid;
-    border-top: none;
-    border-bottom: none;
-    background: #ddd;
-    padding: 0;
-    display: none;
-}
-
-#userlist ul {
-    padding: 0 10px 0 10px;
-    margin: 0;
-}
-
-#userlist li {
-    list-style: none;
-    padding-left: 0;
-}
-
-#userlist a {
-    text-decoration: none;
-    color: #111;
-    display: block;
-    padding: 5px;
-    border-bottom: 1px solid #777;
-}
-
-#userlist a:hover {
-    color: #000;
-    background: #fff;
 }
 
 /*

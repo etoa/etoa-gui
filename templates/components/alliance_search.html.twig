@@ -6,21 +6,22 @@
         <th>Name</th>
         <th>Gründer</th>
         <th>Gründung</th>
-        <th>Rank</th>
+        <th>Rang</th>
         <th>Punkte</th>
-        <th>Users</th>
-        <th>Aktionen</th>
+        <th>Mitglieder</th>
+        <th style="width:150px;">Aktionen</th>
     </tr>
     {% for alliance in search.entries %}
         <tr>
             <td>{{ alliance.id }}</td>
-            <td><a href="{{ path('admin.alliances.edit', {id: alliance.id}) }}">{{ alliance.nameWithTag }}</a></td>
+            <td><a href="{{ path('admin.alliances.view', {id: alliance.id}) }}">{{ alliance.nameWithTag }}</a></td>
             <td>{{ this.users[alliance.founderId]|default('Niemand') }}</td>
             <td>{{ formatTimestamp(alliance.foundationTimestamp) }}</td>
             <td>{{ alliance.currentRank }}</td>
             <td>{{ alliance.points }}</td>
             <td>{{ alliance.memberCount }}</td>
-            <td style="width:50px;">
+            <td>
+                <a href="{{ path('admin.alliances.edit', {id: alliance.id}) }}">Bearbeiten</a>
                 <a href="{{ path('admin.alliances.delete', {id: alliance.id}) }}">Löschen</a>
             </td>
         </tr>
