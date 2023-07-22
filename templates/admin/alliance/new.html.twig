@@ -1,8 +1,16 @@
+{% set title="Neue Allianz erstellen" %}
+
 {% extends 'admin/layout/admin.html.twig' %}
 
+{% block breadcrumbs %}
+    {{ component('breadcrumbs', { items: [
+        { label: 'Allianzsuche', url: path('admin.alliances') },
+        { label: 'Neue Allianz', url: path('admin.alliances.new') },
+    ]}) }}
+{% endblock %}
+
 {% block content %}
-    <h1>Allianzen</h1>
-    <h3>Neu</h3>
 
     {{ form(form) }}
+
 {% endblock %}
