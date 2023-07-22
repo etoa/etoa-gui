@@ -1,15 +1,15 @@
+{% set title="Allianz-Bilder prüfen" %}
+
 {% extends 'admin/layout/admin.html.twig' %}
 
 {% block content %}
-    <h1>Allianzen</h1>
-    <h2>Allianz-Bilder prüfen</h2>
-
-    <h3>Noch nicht verifizierte Bilder</h3>
-    <p>Diese Bilder gehören zu aktiven Allianzen. Bitte prüfe regelmässig, ob sie nicht gegen unsere Regeln verstossen!</p>
+    <h2>Noch nicht verifizierte Bilder</h2>
     {% if alliancesWithUncheckedPictures %}
+        <p>Diese Bilder gehören zu aktiven Allianzen. Bitte prüfe regelmässig, ob sie nicht gegen unsere Regeln
+            verstossen!</p>
         <p>Es sind {{ alliancesWithUncheckedPictures|length }} Bilder gespeichert!</p>
         <form action="" method="post">
-            <table class="tb">
+            <table class="table">
                 <tr>
                     <th>User</th>
                     <th>Fehler</th>
@@ -18,10 +18,10 @@
 
                 {% for alliance in alliancesWithUncheckedPictures %}
                     <tr>
-                        <td>[{{ alliance.alliance_tag }}] {{ alliance.alliance_name}}</td>
+                        <td>[{{ alliance.alliance_tag }}] {{ alliance.alliance_name }}</td>
                         <td>
                             {% if uncheckedImages[alliance.alliance_img] %}
-                                <img src="{{ webroot ~ alliance.alliance_img }}" alt="Profil" />
+                                <img src="{{ webroot ~ alliance.alliance_img }}" alt="Profil"/>
                             {% else %}
                                 <span style="color:red">Bild existiert nicht!</span>
                             {% endif %}
@@ -29,31 +29,35 @@
                         <td>
                             <p>
                                 <label>
-                                    <input type="radio" name="validate[{{ alliance.alliance_id }}]" value="1" checked="checked"> Bild ist in Ordnung
+                                    <input type="radio" name="validate[{{ alliance.alliance_id }}]" value="1"
+                                           checked="checked"> Bild ist in Ordnung
                                 </label>
                             </p>
                             <p>
                                 <label>
-                                    <input type="radio" name="validate[{{ alliance.alliance_id }}]" value="0" > Bild verstösst gegen die Regeln. Lösche es!
+                                    <input type="radio" name="validate[{{ alliance.alliance_id }}]" value="0"> Bild
+                                    verstösst gegen die Regeln. Lösche es!
                                 </label>
                             </p>
                         </td>
                     </tr>
                 {% endfor %}
             </table>
-            <p><input type="submit" name="validate_submit" value="Speichern" /></p>
+            <p><input type="submit" name="validate_submit" value="Speichern"/></p>
         </form>
     {% else %}
-        <p><i>Keine Bilder vorhanden!</i></p>
+        <twig:alert type="info">Keine Bilder vorhanden!</twig:alert>
     {% endif %}
 
     <form method="post">
-        <h3>Verwaiste Bilder</h3>
+        <h2>Verwaiste Bilder</h2>
         {% if orphaned|length > 0 %}
             <p>Diese Bilder gehören zu Allianzen, die nicht mehr in unserer Datenbank vorhanden sind.</p>
-            <p>Es sind {{ orphaned|length }} Bilder vorhanden. <input type="submit" value="Lösche alle verwaisten Bilder" name="deleteOrphaned"></p>
+            <p>Es sind {{ orphaned|length }} Bilder vorhanden. <input type="submit"
+                                                                      value="Lösche alle verwaisten Bilder"
+                                                                      name="deleteOrphaned"></p>
 
-            <table class="tb">
+            <table class="table">
                 <tr>
                     <th>Datei</th>
                     <th>Bild</th>
@@ -63,13 +67,13 @@
                     <tr>
                         <td>{{ image }}</td>
                         <td>
-                            <img src="{{ webroot ~ image }}" alt="Profil" />
+                            <img src="{{ webroot ~ image }}" alt="Profil"/>
                         </td>
                     </tr>
                 {% endfor %}
             </table>
         {% else %}
-            <p><i>Keine vorhanden!</i></p>
+            <twig:alert type="info">Keine Bilder vorhanden!</twig:alert>
         {% endif %}
     </form>
 {% endblock %}

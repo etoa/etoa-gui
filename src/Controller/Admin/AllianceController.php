@@ -13,7 +13,9 @@ use EtoA\Alliance\AllianceRepository;
 use EtoA\Alliance\AllianceService;
 use EtoA\Alliance\AllianceTechnologyListItem;
 use EtoA\Alliance\AllianceTechnologyRepository;
+use EtoA\Alliance\InvalidAllianceParametersException;
 use EtoA\Form\Type\Admin\AllianceBuildingAddType;
+use EtoA\Form\Type\Admin\AllianceCreateType;
 use EtoA\Form\Type\Admin\AllianceDepositSearchType;
 use EtoA\Form\Type\Admin\AllianceEditType;
 use EtoA\Form\Type\Admin\AllianceSearchType;
@@ -48,6 +50,35 @@ class AllianceController extends AbstractAdminController
         return $this->render('admin/alliance/list.html.twig', [
             'form' => $this->createForm(AllianceSearchType::class, $request->query->all()),
             'total' => $this->allianceRepository->count(),
+        ]);
+    }
+
+    #[Route('/admin/alliances/create', name: 'admin.alliances.new')]
+    #[IsGranted('ROLE_ADMIN_TRIAL-ADMIN')]
+    public function create(Request $request): Response
+    {
+        $form = $this->createForm(AllianceCreateType::class);
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $data = $form->getData();
+
+            try {
+                $alliance = $this->allianceService->create(
+                    $data['tag'],
+                    $data['name'],
+                    (int)$data['founder'],
+                );
+
+                $this->addFlash('success', sprintf('Alliance %s erstellt', $alliance->nameWithTag));
+
+                return $this->redirectToRoute('admin.alliances');
+            } catch (InvalidAllianceParametersException $ex) {
+                $this->addFlash('error', "Allianz konnte nicht erstellt werden!\n\n" . $ex->getMessage() . "");
+            }
+        }
+
+        return $this->render('admin/alliance/new.html.twig', [
+            'form' => $form->createView(),
         ]);
     }
 

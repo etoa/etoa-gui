@@ -23,7 +23,7 @@ class AllianceNewsController extends AbstractAdminController
     {
     }
 
-    #[Route('/admin/alliances/news', name: 'admin.alliances.news')]
+    #[Route('/admin/alliances/news', name: 'admin.alliances.news', priority: 10)]
     #[IsGranted('ROLE_ADMIN_TRIAL-ADMIN')]
     public function news(Request $request): Response
     {

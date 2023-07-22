@@ -114,7 +114,15 @@ return [
         "route" => "admin.alliances",
         "roles" => "master,super-admin,game-admin,trial-game-admin",
         "additional_routes" => [
+            'admin.alliances.view',
             'admin.alliances.edit',
+            'admin.alliances.members',
+            'admin.alliances.diplomacy',
+            'admin.alliances.history',
+            'admin.alliances.resources',
+            'admin.alliances.deposit',
+            'admin.alliances.buildings',
+            'admin.alliances.technologies',
         ],
         "children" => [
             "Allianz erstellen" => [

@@ -1,11 +1,10 @@
+{% set title="Fehlerhafte Daten" %}
+
 {% extends 'admin/layout/admin.html.twig' %}
 
 {% block content %}
-    <h1>Allianzen</h1>
-    <h2>Überflüssige Daten</h2>
-
     <form method="post">
-        <h3>Allianzen ohne Gründer</h3>
+        <h2>Allianzen ohne Gründer</h2>
         {% if alliancesWithoutFounder|length > 0 %}
             <table class="tbl">
                 <tr>
@@ -25,12 +24,12 @@
             </table>
             <p>{{ alliancesWithoutFounder|length }} Allianzen ohne Gründer.</p>
         {% else %}
-            <p>Keine fehlerhaften Daten gefunden.</p>
+            <twig:alert type="info">Keine fehlerhaften Daten gefunden.</twig:alert>
         {% endif %}
 
         <h2>User mit fehlerhafter Allianz-Verknüpfung</h2>
         {% if usersWithInvalidAlliances|length > 0 %}
-            <table class="tbl">
+            <table class="table">
                 <tr>
                     <th class="tbltitle">Nick</th>
                     <th class="tbltitle">E-Mail</th>
@@ -46,10 +45,10 @@
             </table>
             <p>{{ usersWithInvalidAlliances|length }} User mit fehlerhafter Verknüpfung.</p>
         {% else %}
-            <p>Keine fehlerhaften Daten gefunden.</p>
+            <twig:alert type="info">Keine fehlerhaften Daten gefunden.</twig:alert>
         {% endif %}
 
-        <h3>Leere Allianzen (Allianzen ohne User)</h3>
+        <h2>Leere Allianzen (Allianzen ohne User)</h2>
         {% if alliancesWithoutUsers|length > 0 %}
             <table class="tbl">
                 <tr>
@@ -75,7 +74,7 @@
                                                                                         name="cleanupEmptyAlliances"
                                                                                         value="Löschen"></p>
         {% else %}
-            <p>Keine fehlerhaften Daten gefunden.</p>
+            <twig:alert type="info">Keine fehlerhaften Daten gefunden.</twig:alert>
         {% endif %}
     </form>
 {% endblock %}
