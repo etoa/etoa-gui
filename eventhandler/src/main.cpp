@@ -16,27 +16,24 @@
 //////////////////////////////////////////////////
 
 /**
-* Startup function, bootstraps the daemon and
-* initializes threads, logging and pidfile.
-*
-* @author Nicolas Perrenoud<mrcage@etoa.ch>
-*
-* Copyright (c) 2004 by EtoA Gaming, www.etoa.net
-*
-* $Rev$
-* $Author$
-* $Date$
-*/
+ * Startup function, bootstraps the daemon and
+ * initializes threads, logging and pidfile.
+ *
+ * @author Nicolas Perrenoud<mrcage@etoa.ch>
+ *
+ * Copyright (c) 2004 by EtoA Gaming, www.etoa.net
+ */
 
 #include "etoa.h"
 #include "version.h"
+#include <pwd.h>
 
 using namespace std;
 
 std::string gameRound;
 std::string pidFile;
 
-PIDFile* pf;
+PIDFile *pf;
 
 bool detach = false;
 
@@ -53,18 +50,17 @@ void sighandler(int sig)
 
 	if (sig == SIGTERM)
 	{
-		LOG(LOG_NOTICE,"Received ordinary termination signal (SIGTERM), shutting down");
+		LOG(LOG_NOTICE, "Received ordinary termination signal (SIGTERM), shutting down");
 		exit(EXIT_SUCCESS);
 	}
 	if (sig == SIGINT)
 	{
-		LOG(LOG_WARNING,"Received interrupt from keyboard (SIGINT), shutting down");
+		LOG(LOG_WARNING, "Received interrupt from keyboard (SIGINT), shutting down");
 		exit(EXIT_SUCCESS);
 	}
 
-	LOG(LOG_ERR,"Caught signal "<<sig<<", shutting down due to error");
+	LOG(LOG_ERR, "Caught signal " << sig << ", shutting down due to error");
 	exit(EXIT_FAILURE);
-
 }
 
 // Create a daemon
@@ -76,19 +72,19 @@ void daemonize()
 	if (pid < 0)
 	{
 		LOG(LOG_CRIT, "Could not fork parent process");
-		exit (EXIT_FAILURE);
+		exit(EXIT_FAILURE);
 	}
 
 	/* If we got a good PID, then we can exit the parent process. */
 	if (pid > 0)
 	{
-		exit (EXIT_SUCCESS);
+		exit(EXIT_SUCCESS);
 	}
 
 	/* Close out the standard file descriptors */
-	close (STDIN_FILENO);
-	close (STDOUT_FILENO);
-	close (STDERR_FILENO);
+	close(STDIN_FILENO);
+	close(STDOUT_FILENO);
+	close(STDERR_FILENO);
 
 	/* Change the file mode mask */
 	umask(0);
@@ -98,33 +94,42 @@ void daemonize()
 	if (sid < 0)
 	{
 		LOG(LOG_CRIT, "Unable to get SID for child process");
-		exit (EXIT_FAILURE);
+		exit(EXIT_FAILURE);
 	}
 
 	// Create pidfile
-	pf->write();
+	try
+	{
+		pf->write();
+	}
+	catch (std::runtime_error &e)
+	{
+		LOG(LOG_ERR, e.what());
+		throw;
+	}
 
-	int myPid = (int) getpid();
+	int myPid = (int)getpid();
 	LOG(LOG_NOTICE, "Daemon initialized with PID " << myPid << " and owned by " << getuid());
-
 }
 
-bool validateRoundName(const std::string& s)
+bool validateRoundName(const std::string &s)
 {
-    for (std::string::size_type i = 0; i < s.size(); i++) {
-        if (!isalnum(s[i])) return false;
-    }
+	for (std::string::size_type i = 0; i < s.size(); i++)
+	{
+		if (!isalnum(s[i]))
+			return false;
+	}
 
-    return true;
+	return true;
 }
 
 /**
-* Returns a version description
-*/
+ * Returns a version description
+ */
 std::string getVersion()
 {
 	std::string out;
-	out  = "\nEscape to Andromeda\n";
+	out = "\nEscape to Andromeda\n";
 	out += "Eventhandler Backend Service (etoad)\n\n";
 	out += "Copyright (c) EtoA Gaming, www.etoa.ch\n\n";
 	out += "Version: " __ETOAD_VERSION_STRING__ "\n";
@@ -132,7 +137,18 @@ std::string getVersion()
 	return out;
 }
 
-int main(int argc, char* argv[])
+static std::string getUserName()
+{
+	uid_t uid = geteuid();
+	struct passwd *pw = getpwuid(uid);
+	if (pw)
+	{
+		return std::string(pw->pw_name);
+	}
+	return {};
+}
+
+int main(int argc, char *argv[])
 {
 	// Register signal handlers
 	signal(SIGABRT, &sighandler);
@@ -147,54 +163,54 @@ int main(int argc, char* argv[])
 
 	// Parse command line
 	AnyOption *opt = new AnyOption();
-	opt->addUsage( "Options: " );
-	opt->addUsage( "  -d, --daemon            Detach from console and run as daemon in background");
-	opt->addUsage( "  -s, --stop              Stops a running instance of this backend");
-	opt->addUsage( "");
-	opt->addUsage( "  -p, --pidfile path      Path to PID file (default: /var/run/etoad/INSTANCE.pid)");
-	opt->addUsage( "  -c, --config path       Path to config file (default: /etc/etoad/INSTANCE.conf)");
-	opt->addUsage( "  -u, --uid userid        Select user id under which it runs (necessary if you are root)");
-	opt->addUsage( "  -k, --killexisting      Kills an already running instance of this backend before starting this instance");
-	opt->addUsage( "  -l, --log level         Specify log level (0=emerg, ... , 7=everything), default is 6");
-	opt->addUsage( "");
-	opt->addUsage( "      --debug             Enable debug mode");
-	opt->addUsage( "  -h, --help              Prints this help");
-	opt->addUsage( "      --version           Prints version information");
-	opt->setFlag("help",'h');
+	opt->addUsage("Options: ");
+	opt->addUsage("  -d, --daemon            Detach from console and run as daemon in background");
+	opt->addUsage("  -s, --stop              Stops a running instance of this backend");
+	opt->addUsage("");
+	opt->addUsage("  -p, --pidfile path      Path to PID file (default: /var/run/etoad/INSTANCE.pid)");
+	opt->addUsage("  -c, --config path       Path to config file (default: /etc/etoad/INSTANCE.conf)");
+	opt->addUsage("  -u, --uid userid        Select user id under which it runs (necessary if you are root)");
+	opt->addUsage("  -k, --killexisting      Kills an already running instance of this backend before starting this instance");
+	opt->addUsage("  -l, --log level         Specify log level (0=emerg, ... , 7=everything), default is 6");
+	opt->addUsage("");
+	opt->addUsage("      --debug             Enable debug mode");
+	opt->addUsage("  -h, --help              Prints this help");
+	opt->addUsage("      --version           Prints version information");
+	opt->setFlag("help", 'h');
 	opt->setFlag("version");
-	opt->setFlag("killexisting",'k');
-	opt->setFlag("stop",'s');
-	opt->setFlag("daemon",'d');
+	opt->setFlag("killexisting", 'k');
+	opt->setFlag("stop", 's');
+	opt->setFlag("daemon", 'd');
 	opt->setFlag("debug");
-	opt->setOption("log",'l');
-	opt->setOption("userid",'u');
-	opt->setOption("pidfile",'p');
-	opt->setOption("config",'c');
-	opt->setOption("sleep",'t');
-	opt->processCommandArgs( argc, argv );
+	opt->setOption("log", 'l');
+	opt->setOption("userid", 'u');
+	opt->setOption("pidfile", 'p');
+	opt->setOption("config", 'c');
+	opt->setOption("sleep", 't');
+	opt->processCommandArgs(argc, argv);
 
 	appPath = std::string(argv[0]);
 
 	// Show help
-	if(argc <= 1 || opt->getFlag( "help" ) || opt->getFlag( 'h' ))
+	if (argc <= 1 || opt->getFlag("help") || opt->getFlag('h'))
 	{
 		std::cerr << "Usage: " << appPath << " INSTANCE [options]" << std::endl;
 		opt->printUsage();
- 		return EXIT_SUCCESS;
+		return EXIT_SUCCESS;
 	}
 
 	// Show version info
-	if( opt->getFlag( "version" ))
+	if (opt->getFlag("version"))
 	{
-		std::cout << getVersion()<<endl;
- 		return EXIT_SUCCESS;
+		std::cout << getVersion() << endl;
+		return EXIT_SUCCESS;
 	}
 
 	// Set game round
 	gameRound = argv[1];
 	if (!validateRoundName(gameRound))
 	{
-		LOG(LOG_ERR,"Invalid game round name!");
+		LOG(LOG_ERR, "Invalid game round name!");
 		return EXIT_FAILURE;
 	}
 
@@ -222,7 +238,8 @@ int main(int argc, char* argv[])
 	{
 		std::cout << "Escape to Andromeda Event-Handler" << std::endl;
 		std::cout << "(C) 2007 EtoA Gaming Switzerland, www.etoa.ch" << std::endl;
-		std::cout << "Version " __ETOAD_VERSION_STRING__ "" << std::endl<< std::endl;
+		std::cout << "Version " __ETOAD_VERSION_STRING__ "" << std::endl
+				  << std::endl;
 	}
 
 	// Log verbosity
@@ -268,25 +285,25 @@ int main(int argc, char* argv[])
 	logProgam(gameRound);
 
 	// Set pidfile
-	if( opt->getValue('p') != NULL)
+	if (opt->getValue('p') != NULL)
 	{
 		pidFile = opt->getValue('p');
 	}
-	else if (opt->getValue("pidfile") != NULL )
+	else if (opt->getValue("pidfile") != NULL)
 	{
 		pidFile = opt->getValue("pidfile");
 	}
 	else
 	{
-		pidFile = "/var/run/etoad/"+gameRound+".pid";
+		pidFile = "/var/run/etoad/" + gameRound + ".pid";
 	}
 
 	// Set user
-	if( opt->getValue('u') != NULL)
+	if (opt->getValue('u') != NULL)
 	{
 		ownerUID = atoi(opt->getValue('u'));
 	}
-	else if (opt->getValue("uid") != NULL )
+	else if (opt->getValue("uid") != NULL)
 	{
 		ownerUID = atoi(opt->getValue("uid"));
 	}
@@ -299,15 +316,14 @@ int main(int argc, char* argv[])
 	if (setuid(ownerUID) != 0)
 	{
 		LOG(LOG_ERR, "Unable to change user id!");
-		exit (EXIT_FAILURE);
+		exit(EXIT_FAILURE);
 	}
 	// Check uid
 	if (getuid() == 0)
 	{
 		LOG(LOG_ERR, "This software cannot be run as root!");
-		exit (EXIT_FAILURE);
+		exit(EXIT_FAILURE);
 	}
-
 
 	pf = new PIDFile(pidFile);
 
@@ -320,16 +336,16 @@ int main(int argc, char* argv[])
 		{
 			kill(existingPid, SIGTERM);
 			DEBUG("Killing process " << existingPid);
-			exit (EXIT_SUCCESS);
+			exit(EXIT_SUCCESS);
 		}
 		if (killExistingInstance)
 		{
 			std::cout << "EtoA Daemon " << gameRound << " seems to run already with PID "
-					<<existingPid<<"! Killing this instance..." << std::endl;
-			int kres = kill(existingPid,SIGTERM);
-			if (kres<0)
+					  << existingPid << "! Killing this instance..." << std::endl;
+			int kres = kill(existingPid, SIGTERM);
+			if (kres < 0)
 			{
-				if (errno==EPERM)
+				if (errno == EPERM)
 				{
 					std::cerr << "I am not allowed to kill the instance. Exiting..." << std::endl;
 					exit(EXIT_FAILURE);
@@ -344,18 +360,18 @@ int main(int argc, char* argv[])
 		else
 		{
 			std::cerr << "EtoA Daemon " << gameRound << " is already running with PID "
-					<<existingPid<<"!"<<std::endl
-					<<"Use the -k flag to force killing it and continue with this instance. Exiting..." << std::endl;
+					  << existingPid << "!" << std::endl
+					  << "Use the -k flag to force killing it and continue with this instance. Exiting..." << std::endl;
 			exit(EXIT_FAILURE);
 		}
 	}
- 	else if (stop)
- 	{
- 		std::cerr << "No running process found, exiting..."<<std::endl;
- 		return EXIT_FAILURE;
- 	}
+	else if (stop)
+	{
+		std::cerr << "No running process found, exiting..." << std::endl;
+		return EXIT_FAILURE;
+	}
 
-	LOG(LOG_NOTICE,"Starting EtoA event-handler " __ETOAD_VERSION_STRING__ " for universe " << gameRound);
+	LOG(LOG_NOTICE, "Starting EtoA event-handler " __ETOAD_VERSION_STRING__ " for universe " << gameRound << " as user " << getUserName());
 
 	if (detach)
 	{

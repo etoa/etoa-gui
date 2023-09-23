@@ -14,6 +14,10 @@
         {{ macros.messagebox(errorMessage, 'error') }}
     {% endif %}
 
+    {% if warningMessage %}
+        {{ macros.messagebox(warningMessage, 'warning') }}
+    {% endif %}
+
     <form id="bustn" action="?page={{ page }}&amp;sub={{ sub }}" method="post">
         <fieldset><legend>Backup-Einstellungen</legend>
             Speicherpfad: <input type="text" value="{{ configValue('backup_dir') }}" name="backup_dir" size="50"> (leerlassen für Standardpfad)

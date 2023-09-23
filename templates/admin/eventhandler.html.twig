@@ -13,6 +13,10 @@
         {{ macros.messagebox(errorMessage, 'error') }}
     {% endif %}
 
+    {% if warningMessage %}
+        {{ macros.messagebox(warningMessage, 'warning') }}
+    {% endif %}
+
     {% if isUnix %}
         <h2>Daemon-Infos</h2>
         <table class="tbl">
@@ -46,7 +50,7 @@
             </pre>
         {% endif %}
 
-        <h2>Log</h2>
+        <h2>Logdatei</h2>
         <div class="eventhandler_log">
             {% for line in log %}
                 <span {% if 'err' in line %}class="color_err"{% elseif 'warning' in line %}class="color_warn"{% endif %}>{{ line }}</span>

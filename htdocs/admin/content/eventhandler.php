@@ -2,6 +2,7 @@
 
 $successMessage = null;
 $errorMessage = null;
+$warningMessage = null;
 $actionOutput = null;
 $eventHandlerPid = null;
 $messageQueueSize = null;
@@ -26,6 +27,7 @@ if (UNIX) {
                     $out = EventHandlerManager::start($executable, $instance, $configfile, $pidfile);
                     $actionOutput = implode("\n", $out);
                     $successMessage = 'Dienst gestartet!';
+                    sleep(1); // wait for service startup
                 } else if ($_GET['action'] === "stop") {
                     $out = EventHandlerManager::stop($executable, $instance, $configfile, $pidfile);
                     $actionOutput = implode("\n", $out);
@@ -63,13 +65,24 @@ if (UNIX) {
         fclose($lf);
         $log = array_reverse($log);
     } else {
-        $log = "<em>Die Logdatei ".$cfg->daemon_logfile." kann nicht geöffnet werden!</em>";
+        $log = [
+            "Die Logdatei ".$cfg->daemon_logfile." kann nicht geöffnet werden! Es kann sein, dass das Logging via Systemd konfiguriert ist.",
+            "Bitte prüfe das Systemlog via Kommandozeile als root user mit dem folgenden Befehl: journalctl --no-pager  _COMM=etoad"
+        ];
+    }
+
+    $pidDirectory = dirname(getAbsPath($cfg->daemon_pidfile->v));
+    try {
+        checkDirectoryWritePermissions($pidDirectory);
+    } catch (Exception $e) {
+        $warningMessage = $e->getMessage();
     }
 }
 
 echo $twig->render('admin/eventhandler.html.twig', [
     'successMessage' => $successMessage,
     'errorMessage' => $errorMessage,
+    'warningMessage' => $warningMessage,
     'log' => $log,
     'eventHandlerPid' => $eventHandlerPid,
     'sysId' => $sysId,

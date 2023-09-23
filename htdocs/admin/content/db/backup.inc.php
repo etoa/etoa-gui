@@ -107,9 +107,17 @@ if ($dir) {
     }
 }
 
+$warningMessage = null;
+try {
+    checkDirectoryWritePermissions($backupDir);
+} catch (Exception $e) {
+    $warningMessage = $e->getMessage();
+}
+
 echo $twig->render('admin/database/backups.html.twig', [
     'errorMessage' => $errorMessage,
     'successMessage' => $successMessage,
+    'warningMessage' => $warningMessage,
     'backupDir' => $backupDir,
     'backups' => $backups,
 ]);

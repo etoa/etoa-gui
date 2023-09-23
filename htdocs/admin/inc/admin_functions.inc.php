@@ -1576,4 +1576,22 @@ function showGameLogs($args=null,$limit=0)
 		}
 		return false;
 	}
+
+	function checkDirectoryWritePermissions($path) {
+		if ($path == null || !is_dir($path)) {
+			throw new Exception("$path is not a directory!");
+		}
+		$webAppUser = posix_geteuid();
+		$webAppGroup = posix_getpwuid($webAppUser)['gid'];
+		$pdUser = fileowner($path);
+		$pdGroup = filegroup($path);
+		$perms = fileperms($path);
+		$userCanWrite = (($perms & 0x0080));
+		$groupCanWrite = (($perms & 0x0010));
+		$worldCanWrite = (($perms & 0x0002));
+		if (!(($webAppUser == $pdUser && $userCanWrite) || ($webAppUser == $pdGroup && $groupCanWrite) || $worldCanWrite)) {
+			throw new Exception("The user ".posix_getpwuid($webAppUser)['name']." (group ".posix_getgrgid($webAppGroup)['name']."), which runs this web application, might not be able to write to the directory $path. Please fix the directory permissions.\n<br>
+			Currently, user ".posix_getpwuid($pdUser)['name']." is the directory owner and can ".($userCanWrite ? "write":"not write").", group ".posix_getpwuid($pdGroup)['name']." is the directory group and can ".($groupCanWrite ? "write":"not write")." and others can ".($worldCanWrite ? "write":"not write").".");
+		}
+	}
 ?>
