@@ -22,6 +22,9 @@ class EventHandlerManager
 	
 	public static function start($executable, $instance, $configfile, $pidfile)
 	{
+		if (file_exists($pidfile) && !self::checkDaemonRunning($pidfile)) {
+			unlink($pidfile);
+		}
 		$cmd = $executable." ".$instance." -d -c ".$configfile." -p ".$pidfile;
 		exec($cmd, $output);
 		return $output;
