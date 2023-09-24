@@ -538,9 +538,9 @@
 				blocked,
 				hmod,
 				inactive,
-				".$order." AS rank,
-				".$field." AS points,
-				".$shift." AS shift,
+				`".$order."` AS `rank`,
+				`".$field."` AS `points`,
+				`".$shift."` AS `shift`,
 				race_name,
 				alliance_tag,
 				sx,
@@ -548,7 +548,7 @@
 			FROM 
 				user_stats
 			ORDER BY 
-				$order ASC,
+				`$order` ASC,
 				nick ASC 
 			;");			
 		}
