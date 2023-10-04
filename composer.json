@@ -42,7 +42,7 @@
         "symfony/webpack-encore-bundle": "^1.13",
         "symfony/ux-live-component": "^2.0",
         "sensio/framework-extra-bundle": "^6.2",
-        "endroid/qr-code": "^4.4",
+        "endroid/qr-code": "^5.0",
         "symfony/mailer": "^6.0"
     },
     "require-dev": {
