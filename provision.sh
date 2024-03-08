@@ -21,7 +21,7 @@ sudo apt-get upgrade -q libpcre3
 
 # install nodejs and yarn npm pkg
 sudo apt-get -y -q install curl dirmngr apt-transport-https lsb-release ca-certificates unzip
-curl -fsSL https://deb.nodesource.com/setup_16.x | sudo -E bash -
+curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
 sudo apt-get install -y -q nodejs
 npm install --global yarn
 
