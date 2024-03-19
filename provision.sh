@@ -11,11 +11,11 @@ sudo apt-get update -q && sudo apt-get upgrade -q
 echo "mysql-server mysql-server/root_password password " | debconf-set-selections
 echo "mysql-server mysql-server/root_password_again password " | debconf-set-selections
 
-# Install mysql, nginx, php8.0-fpm
-sudo apt-get install -q -y -f --no-install-recommends git mysql-server mysql-client nginx php8.0 php8.0-fpm php8.0-xdebug
+# Install mysql, nginx, php8.1-fpm
+sudo apt-get install -q -y -f --no-install-recommends git mysql-server mysql-client nginx php8.1 php8.1-fpm php8.1-xdebug
 
 # Install commonly used php packages
-sudo apt-get install -q -y -f php8.0-curl php8.0-cli php8.0-mysql php8.0-gd php8.0-zip php8.0-mbstring php8.0-intl php8.0-redis php8.0-xml
+sudo apt-get install -q -y -f php8.0-curl php8.1-cli php8.1-mysql php8.1-gd php8.1-zip php8.1-mbstring php8.1-intl php8.1-redis php8.1-xml
 
 sudo apt-get upgrade -q libpcre3
 
