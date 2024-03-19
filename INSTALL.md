@@ -15,6 +15,8 @@ Install [Vagrant](https://www.vagrantup.com/).
 
 In your etoa root run ```vagrant up```.
 
+
+
 #### Linux
 
 Install [Network File System](https://en.wikipedia.org/wiki/Network_File_System) if necessary. Start/Enable NFS-Server with UDP and Version 3 support.
@@ -42,7 +44,11 @@ Additional steps because I haven't figured out yet how to reset the db config vi
   * enable CPU Virtualization in BIOS
   * disable Hyper-V
 * ssh connection timeout: Try Virtualbox 5.2
-
+* Provision can't create symlinks:
+  * Open Start > Windows Administrative Tools > Local Security Policy
+  * Go to Local Policies/User Rights Assignment in tree view.
+  * Add user name or user groups you belongs to, to entry Create symbolic links
+  * Restart
 
 ## All steps below are only necessary if you dont want to use the vagrant box!!!!
 

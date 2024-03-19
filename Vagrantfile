@@ -2,12 +2,18 @@
 VAGRANTFILE_API_VERSION = "2"
 
 Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
-  config.vm.box = "ubuntu/bionic64"
+  config.vm.box = "ubuntu/jammy64"
   config.vm.hostname = "etoa-gui"
 
   config.vm.network "private_network", ip: '192.168.33.11'
 
-  config.vm.synced_folder './', '/var/www/etoa', :nfs => true
+  if Vagrant::Util::Platform.windows? then
+      config.vm.synced_folder './', '/var/www/etoa'
+  else
+      config.vm.synced_folder './', '/var/www/etoa', :nfs => true
+  end
+
+
 
   config.vm.provider "virtualbox" do |vb|
     vb.customize [
