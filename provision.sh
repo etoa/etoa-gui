@@ -15,7 +15,7 @@ echo "mysql-server mysql-server/root_password_again password " | debconf-set-sel
 sudo apt-get install -q -y -f --no-install-recommends git mysql-server mysql-client nginx php8.1 php8.1-fpm php8.1-xdebug
 
 # Install commonly used php packages
-sudo apt-get install -q -y -f php8.0-curl php8.1-cli php8.1-mysql php8.1-gd php8.1-zip php8.1-mbstring php8.1-intl php8.1-redis php8.1-xml
+sudo apt-get install -q -y -f php8.1-curl php8.1-cli php8.1-mysql php8.1-gd php8.1-zip php8.1-mbstring php8.1-intl php8.1-redis php8.1-xml
 
 sudo apt-get upgrade -q libpcre3
 
