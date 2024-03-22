@@ -109,7 +109,7 @@ class UserStatRepository extends AbstractRepository
     {
         $qb = $this->createQueryBuilder()
             ->select('id', 'nick', 'blocked', 'hmod', 'inactive', 'race_name', 'alliance_tag', 'sx', 'sy', 'points_ships', 'points_tech', 'points_buildings', 'points_exp')
-            ->addSelect($search->order . ' AS rank')
+            ->addSelect($search->order . ' AS ranking')
             ->addSelect($search->field . ' AS points')
             ->addSelect($search->shift . ' AS shift')
             ->from('user_stats');

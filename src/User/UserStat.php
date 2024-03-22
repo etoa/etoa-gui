@@ -35,7 +35,7 @@ class UserStat
         $this->blocked = (bool) $data['blocked'];
         $this->hmod = (bool) $data['hmod'];
         $this->inactive = (bool) $data['inactive'];
-        $this->rank = (int) $data['rank'];
+        $this->rank = (int) $data['ranking'];
         $this->points = (int) $data['points'];
         $this->shift = (int) $data['shift'];
         $this->raceName = $data['race_name'];
