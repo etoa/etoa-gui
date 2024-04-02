@@ -4,7 +4,7 @@ namespace EtoA\Core;
 
 interface ObjectWithImage
 {
-    public const BASE_PATH = '/images/imagepacks/Discovery';
+    public const BASE_PATH = '/build/images/imagepacks/Discovery';
 
     public function getImagePath(): string;
 }

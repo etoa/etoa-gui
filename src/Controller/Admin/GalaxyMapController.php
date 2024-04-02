@@ -34,7 +34,7 @@ class GalaxyMapController extends AbstractAdminController
         $cy_num = $this->config->param2Int('num_of_cells');
 
         $sectorMap = new SectorMapRenderer($cx_num, $cy_num);
-        $sectorMap->setCellUrl("/admin/?page=galaxy&cell_id=");
+        $sectorMap->setCellUrl("/admin/universe/entities?cell=");
 
         // Selected cell
         if ($request->query->has('cell')) {
