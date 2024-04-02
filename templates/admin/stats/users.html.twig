@@ -14,37 +14,37 @@
             <th>
                 Punkte
                 <a href="{{ path('admin.stats.users', {sort: 'points', order: 'DESC'}) }}" title="Absteigend sortieren"><img
-                            src="/images/s_desc.png" alt="Absteigend sortieren"/></a>
+                            src="{{ asset('build/images/s_desc.png') }}" alt="Absteigend sortieren"/></a>
                 <a href="{{ path('admin.stats.users', {sort: 'points', order: 'ASC'}) }}" title="Aufsteigend sortieren"><img
-                            src="/images/s_asc.png" alt="Aufsteigend sortieren"/></a>
+                            src="{{ asset('build/images/s_asc.png') }}" alt="Aufsteigend sortieren"/></a>
             </th>
             <th>
                 Schiffe
                 <a href="{{ path('admin.stats.users', {sort: 'ships', order: 'DESC'}) }}"
-                   title="Absteigend sortieren"><img src="/images/s_desc.png" alt="Absteigend sortieren"/></a>
+                   title="Absteigend sortieren"><img src="{{ asset('build/images/s_desc.png') }}" alt="Absteigend sortieren"/></a>
                 <a href="{{ path('admin.stats.users', {sort: 'ships', order: 'ASC'}) }}"
-                   title="Aufsteigend sortieren"><img src="/images/s_asc.png" alt="Aufsteigend sortieren"/></a>
+                   title="Aufsteigend sortieren"><img src="{{ asset('build/images/s_asc.png') }}" alt="Aufsteigend sortieren"/></a>
             </th>
             <th>
                 Technologie
                 <a href="{{ path('admin.stats.users', {sort: 'tech', order: 'DESC'}) }}"
-                   title="Absteigend sortieren"><img src="/images/s_desc.png" alt="Absteigend sortieren"/></a>
+                   title="Absteigend sortieren"><img src="{{ asset('build/images/s_desc.png') }}" alt="Absteigend sortieren"/></a>
                 <a href="{{ path('admin.stats.users', {sort: 'tech', order: 'ASC'}) }}"
-                   title="Aufsteigend sortieren"><img src="/images/s_asc.png" alt="Aufsteigend sortieren"/></a>
+                   title="Aufsteigend sortieren"><img src="{{ asset('build/images/s_asc.png') }}" alt="Aufsteigend sortieren"/></a>
             </th>
             <th>
                 Gebäude
                 <a href="{{ path('admin.stats.users', {sort: 'buildings', order: 'DESC'}) }}"
-                   title="Absteigend sortieren"><img src="/images/s_desc.png" alt="Absteigend sortieren"/></a>
+                   title="Absteigend sortieren"><img src="{{ asset('build/images/s_desc.png') }}" alt="Absteigend sortieren"/></a>
                 <a href="{{ path('admin.stats.users', {sort: 'buildings', order: 'ASC'}) }}"
-                   title="Aufsteigend sortieren"><img src="/images/s_asc.png" alt="Aufsteigend sortieren"/></a>
+                   title="Aufsteigend sortieren"><img src="{{ asset('build/images/s_asc.png') }}" alt="Aufsteigend sortieren"/></a>
             </th>
             <th>
                 Exp
                 <a href="{{ path('admin.stats.users', {sort: 'exp', order: 'DESC'}) }}"
-                   title="Absteigend sortieren"><img src="/images/s_desc.png" alt="Absteigend sortieren"/></a>
+                   title="Absteigend sortieren"><img src="{{ asset('build/images/s_desc.png') }}" alt="Absteigend sortieren"/></a>
                 <a href="{{ path('admin.stats.users', {sort: 'exp', order: 'ASC'}) }}"
-                   title="Aufsteigend sortieren"><img src="/images/s_asc.png" alt="Aufsteigend sortieren"/></a>
+                   title="Aufsteigend sortieren"><img src="{{ asset('build/images/s_asc.png') }}" alt="Aufsteigend sortieren"/></a>
             </th>
         </tr>
         </thead>
@@ -63,11 +63,11 @@
                 <td>
                     {{ loop.index }}
                     {% if shift == 2 %}
-                        <img src="/images/stats/stat_down.gif" alt="down" width="9" height="12"/>
+                        <img src="{{ asset('build/images/stats/stat_down.gif') }}" alt="down" width="9" height="12"/>
                     {% elseif shift == 1 %}
-                        <img src="/images/stats/stat_up.gif" alt="up" width="9" height="11"/>
+                        <img src="{{ asset('build/images/stats/stat_up.gif') }}" alt="up" width="9" height="11"/>
                     {% else %}
-                        <img src="/images/stats/stat_same.gif" alt="same" width="21" height="9"/>
+                        <img src="{{ asset('build/images/stats/stat_same.gif') }}" alt="same" width="21" height="9"/>
                     {% endif %}
                 </td>
                 <td>{{ pointsStats[userId].nick }}</td>

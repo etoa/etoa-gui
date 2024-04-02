@@ -25,7 +25,7 @@
                             <tr {% if loop.index == 1 %} data-collection-target="prototype" id="test"{% endif %}>
                                 {% for element in rows %}
                                     <td>
-                                        {{ form_row(element) }}
+                                        {{ form_widget(element) }}
                                     </td>
                                 {% endfor %}
                                 <td>
