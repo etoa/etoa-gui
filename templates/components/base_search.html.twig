@@ -1,12 +1,11 @@
 <div
         {{ attributes }}
-        data-action="change->live#update"
 >
     <div data-controller="search-url">
-        {{ form_start(this.form, {'attr': {'onkeydown' :"return event.key != 'Enter';"}}) }}
+        {{ form_start(form, {'attr': {'onkeydown' :"return event.key != 'Enter';"}}) }}
         <fieldset>
             <legend>Filter</legend>
-            {% for element in this.form %}
+            {% for element in form %}
                 <div class="inline-block">
                     {{ form_row(element) }}
                 </div>
@@ -14,7 +13,7 @@
 
             <button type="button" data-action="live#action" data-action-name="prevent|reset">Reset</button>
         </fieldset>
-        {{ form_end(this.form) }}
+        {{ form_end(form) }}
     </div>
 
     {% block labeling %}

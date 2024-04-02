@@ -1,37 +1,37 @@
 <div
     {{ attributes }}
-    data-action="change->live#update input->live#update"
 >
     <h2>Totale Kosten</h2>
-    {{ form_start(this.form) }}
-    <table>
-        <tr>
-            <th>Gebäude</th>
-            <th>Stufe</th>
-            <th>Titan</th>
-            <th>Silizium</th>
-            <th>PVC</th>
-            <th>Tritium</th>
-            <th>Nahrung</th>
-        </tr>
-        {% for building in this.buildings %}
+    {{ form_start(form) }}
+        <table>
             <tr>
-                <td>{{ building.name }}</td>
-                <td>Level 0 bis {{ form_row(this.form[building.id]) }}</td>
-                <td>{{ formatNumber(this.buildingCosts[building.id].metal) }}</td>
-                <td>{{ formatNumber(this.buildingCosts[building.id].crystal) }}</td>
-                <td>{{ formatNumber(this.buildingCosts[building.id].plastic) }}</td>
-                <td>{{ formatNumber(this.buildingCosts[building.id].fuel) }}</td>
-                <td>{{ formatNumber(this.buildingCosts[building.id].food) }}</td>
+                <th>Gebäude</th>
+                <th>Stufe</th>
+                <th>Titan</th>
+                <th>Silizium</th>
+                <th>PVC</th>
+                <th>Tritium</th>
+                <th>Nahrung</th>
             </tr>
-        {% endfor %}
-        <tr>
-            <td colspan="2">Total</td>
-            <td>{{ formatNumber(this.totalCosts.metal) }}</td>
-            <td>{{ formatNumber(this.totalCosts.crystal) }}</td>
-            <td>{{ formatNumber(this.totalCosts.plastic) }}</td>
-            <td>{{ formatNumber(this.totalCosts.fuel) }}</td>
-            <td>{{ formatNumber(this.totalCosts.food) }}</td>
-        </tr>
-    </table>
+            {% for building in this.buildings %}
+                <tr>
+                    <td>{{ building.name }}</td>
+                    <td>Level 0 bis {{ form_widget(form[building.id]) }}</td>
+                    <td>{{ formatNumber(this.buildingCosts[building.id].metal) }}</td>
+                    <td>{{ formatNumber(this.buildingCosts[building.id].crystal) }}</td>
+                    <td>{{ formatNumber(this.buildingCosts[building.id].plastic) }}</td>
+                    <td>{{ formatNumber(this.buildingCosts[building.id].fuel) }}</td>
+                    <td>{{ formatNumber(this.buildingCosts[building.id].food) }}</td>
+                </tr>
+            {% endfor %}
+            <tr>
+                <td colspan="2">Total</td>
+                <td>{{ formatNumber(this.totalCosts.metal) }}</td>
+                <td>{{ formatNumber(this.totalCosts.crystal) }}</td>
+                <td>{{ formatNumber(this.totalCosts.plastic) }}</td>
+                <td>{{ formatNumber(this.totalCosts.fuel) }}</td>
+                <td>{{ formatNumber(this.totalCosts.food) }}</td>
+            </tr>
+        </table>
+    {{ form_end(form) }}
 </div>
