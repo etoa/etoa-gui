@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace EtoA\Message;
 
-use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\ArrayParameterType;
 use EtoA\Core\AbstractRepository;
 use EtoA\Message\ReportData\BattleReportData;
 use EtoA\Message\ReportData\MarketReportData;
@@ -123,7 +123,7 @@ class ReportRepository extends AbstractRepository
             ->where('user_id = :userId')
             ->andWhere('id IN (:ids)')
             ->setParameter('userId', $userId)
-            ->setParameter('ids', $ids, Connection::PARAM_INT_ARRAY)
+            ->setParameter('ids', $ids, ArrayParameterType::INTEGER)
             ->executeQuery();
     }
 
@@ -147,7 +147,7 @@ class ReportRepository extends AbstractRepository
         if ($ids !== null) {
             $qb
                 ->andWhere('id IN (:ids)')
-                ->setParameter('ids', $ids, Connection::PARAM_INT_ARRAY);
+                ->setParameter('ids', $ids, ArrayParameterType::INTEGER);
         }
 
         if ($type !== null) {
@@ -188,7 +188,7 @@ class ReportRepository extends AbstractRepository
             ->where('user_id = :userId')
             ->andWhere('id IN (:ids)')
             ->setParameter('userId', $userId)
-            ->setParameter('ids', $ids, Connection::PARAM_INT_ARRAY)
+            ->setParameter('ids', $ids, ArrayParameterType::INTEGER)
             ->executeQuery();
     }
 
@@ -235,7 +235,7 @@ class ReportRepository extends AbstractRepository
             return [];
         }
 
-        $rows = $this->getConnection()->fetchAllAssociative('SELECT * FROM reports_battle WHERE id IN (:ids)', ['ids' => $ids], ['ids' => Connection::PARAM_INT_ARRAY]);
+        $rows = $this->getConnection()->fetchAllAssociative('SELECT * FROM reports_battle WHERE id IN (:ids)', ['ids' => $ids], ['ids' => ArrayParameterType::INTEGER]);
 
         $map = [];
         foreach ($rows as $row) {
@@ -266,7 +266,7 @@ class ReportRepository extends AbstractRepository
             return [];
         }
 
-        $rows = $this->getConnection()->fetchAllAssociative('SELECT * FROM reports_market WHERE id IN (:ids)', ['ids' => $ids], ['ids' => Connection::PARAM_INT_ARRAY]);
+        $rows = $this->getConnection()->fetchAllAssociative('SELECT * FROM reports_market WHERE id IN (:ids)', ['ids' => $ids], ['ids' => ArrayParameterType::INTEGER]);
 
         $map = [];
         foreach ($rows as $row) {
@@ -297,7 +297,7 @@ class ReportRepository extends AbstractRepository
             return [];
         }
 
-        $rows = $this->getConnection()->fetchAllAssociative('SELECT * FROM reports_other WHERE id IN (:ids)', ['ids' => $ids], ['ids' => Connection::PARAM_INT_ARRAY]);
+        $rows = $this->getConnection()->fetchAllAssociative('SELECT * FROM reports_other WHERE id IN (:ids)', ['ids' => $ids], ['ids' => ArrayParameterType::INTEGER]);
 
         $map = [];
         foreach ($rows as $row) {
@@ -328,7 +328,7 @@ class ReportRepository extends AbstractRepository
             return [];
         }
 
-        $rows = $this->getConnection()->fetchAllAssociative('SELECT * FROM reports_spy WHERE id IN (:ids)', ['ids' => $ids], ['ids' => Connection::PARAM_INT_ARRAY]);
+        $rows = $this->getConnection()->fetchAllAssociative('SELECT * FROM reports_spy WHERE id IN (:ids)', ['ids' => $ids], ['ids' => ArrayParameterType::INTEGER]);
 
         $map = [];
         foreach ($rows as $row) {

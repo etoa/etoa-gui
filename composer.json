@@ -13,7 +13,7 @@
     "ext-zip": "*",
     "doctrine/doctrine-bundle": "^2.10",
     "doctrine/doctrine-migrations-bundle": "^3.2",
-    "doctrine/orm": "^2.15",
+    "doctrine/orm": "^3.1",
     "dragonmantank/cron-expression": "^3.3",
     "endroid/qr-code": "^4.8",
     "league/commonmark": "^2.4",

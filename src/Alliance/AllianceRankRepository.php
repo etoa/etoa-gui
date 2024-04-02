@@ -2,7 +2,7 @@
 
 namespace EtoA\Alliance;
 
-use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\ArrayParameterType;
 use EtoA\Core\AbstractRepository;
 
 class AllianceRankRepository extends AbstractRepository
@@ -173,7 +173,7 @@ class AllianceRankRepository extends AbstractRepository
         $this->createQueryBuilder()
             ->delete('alliance_rankrights')
             ->where('rr_rank_id IN (:rankIds)')
-            ->setParameter('rankIds', $rankIds, Connection::PARAM_INT_ARRAY)
+            ->setParameter('rankIds', $rankIds, ArrayParameterType::INTEGER)
             ->executeQuery();
 
         $this->createQueryBuilder()

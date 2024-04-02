@@ -2,7 +2,7 @@
 
 namespace EtoA\Alliance\Board;
 
-use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\ArrayParameterType;
 use EtoA\Core\AbstractRepository;
 
 class AllianceBoardTopicRepository extends AbstractRepository
@@ -18,7 +18,7 @@ class AllianceBoardTopicRepository extends AbstractRepository
             ->from('allianceboard_posts', 'p')
             ->where('p.post_topic_id IN (:topicIds)')
             ->groupBy('p.post_topic_id')
-            ->setParameter('topicIds', $topicIds, Connection::PARAM_INT_ARRAY)
+            ->setParameter('topicIds', $topicIds, ArrayParameterType::INTEGER)
             ->fetchAllKeyValue();
 
         $counts = [];
@@ -39,7 +39,7 @@ class AllianceBoardTopicRepository extends AbstractRepository
             ->select('topic_bnd_id, COUNT(topic_id)')
             ->from('allianceboard_topics')
             ->where('topic_bnd_id IN (:bndIds)')
-            ->setParameter('bndIds', $bndIds, Connection::PARAM_INT_ARRAY)
+            ->setParameter('bndIds', $bndIds, ArrayParameterType::INTEGER)
             ->fetchAllAssociative();
 
         $counts = [];
@@ -61,7 +61,7 @@ class AllianceBoardTopicRepository extends AbstractRepository
             ->from('allianceboard_topics', 't')
             ->innerJoin('t', 'allianceboard_posts', 'p', 'p.post_topic_id = t.topic_id')
             ->where('t.topic_bnd_id IN (:bndIds)')
-            ->setParameter('bndIds', $bndIds, Connection::PARAM_INT_ARRAY)
+            ->setParameter('bndIds', $bndIds, ArrayParameterType::INTEGER)
             ->fetchAllAssociative();
 
         $counts = [];
@@ -278,7 +278,7 @@ class AllianceBoardTopicRepository extends AbstractRepository
             $this->createQueryBuilder()
                 ->delete('allianceboard_posts')
                 ->where('post_topic_id IN (:topicId)')
-                ->setParameter('topicId', $topicIds, Connection::PARAM_INT_ARRAY)
+                ->setParameter('topicId', $topicIds, ArrayParameterType::INTEGER)
                 ->executeQuery();
         }
 

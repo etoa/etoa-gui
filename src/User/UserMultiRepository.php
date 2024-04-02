@@ -2,7 +2,7 @@
 
 namespace EtoA\User;
 
-use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\ArrayParameterType;
 use EtoA\Core\AbstractRepository;
 
 class UserMultiRepository extends AbstractRepository
@@ -162,7 +162,7 @@ class UserMultiRepository extends AbstractRepository
             ->from('user_multi', 'm')
             ->leftJoin('m', 'users', 'u', 'u.user_id = m.multi_id')
             ->where('m.user_id IN (:userIds)')
-            ->setParameter('userIds', $userIds, Connection::PARAM_INT_ARRAY)
+            ->setParameter('userIds', $userIds, ArrayParameterType::INTEGER)
             ->orderBy('m.id', 'DESC')
             ->fetchAllAssociative();
 

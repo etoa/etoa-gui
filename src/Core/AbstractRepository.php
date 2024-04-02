@@ -2,6 +2,7 @@
 
 namespace EtoA\Core;
 
+use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Exception;
 use Doctrine\DBAL\Query\QueryBuilder;
@@ -56,7 +57,7 @@ abstract class AbstractRepository
         if ($search !== null) {
             $qb->setParameters($search->parameters);
             foreach ($search->stringArrayParameters as $parameter => $value) {
-                $qb->setParameter($parameter, $value, Connection::PARAM_STR_ARRAY);
+                $qb->setParameter($parameter, $value, ArrayParameterType::STRING);
             }
             foreach ($search->parts as $query) {
                 $qb->andWhere($query);

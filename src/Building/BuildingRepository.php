@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace EtoA\Building;
 
-use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\ArrayParameterType;
 use Doctrine\DBAL\Query\QueryBuilder;
 use EtoA\Core\AbstractRepository;
 
@@ -467,7 +467,7 @@ class BuildingRepository extends AbstractRepository
             'now' => time(),
             'buildingIds' => [BuildingId::DEFENSE, BuildingId::SHIPYARD, BuildingId::FLEET_CONTROL, BuildingId::MARKET, BuildingId::CRYPTO],
         ], [
-            'buildingIds' => Connection::PARAM_INT_ARRAY,
+            'buildingIds' => ArrayParameterType::INTEGER,
         ]);
 
         return $data !== false ? $data : null;

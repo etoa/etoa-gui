@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace EtoA\Ship;
 
-use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\ArrayParameterType;
 use EtoA\Core\AbstractRepository;
 
 class ShipRepository extends AbstractRepository
@@ -61,7 +61,7 @@ class ShipRepository extends AbstractRepository
         if ($shipIds !== null) {
             $qb
                 ->andWhere('shiplist_ship_id IN (:shipIds)')
-                ->setParameter('shipIds', $shipIds, Connection::PARAM_INT_ARRAY);
+                ->setParameter('shipIds', $shipIds, ArrayParameterType::INTEGER);
         }
 
         $data = $qb

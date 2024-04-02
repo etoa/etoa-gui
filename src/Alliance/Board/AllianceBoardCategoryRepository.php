@@ -2,7 +2,7 @@
 
 namespace EtoA\Alliance\Board;
 
-use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\ArrayParameterType;
 use EtoA\Core\AbstractRepository;
 
 class AllianceBoardCategoryRepository extends AbstractRepository
@@ -19,7 +19,7 @@ class AllianceBoardCategoryRepository extends AbstractRepository
             ->innerJoin('t', 'allianceboard_posts', 'p', 'p.post_topic_id = t.topic_id')
             ->where('t.topic_cat_id IN (:categoryIds)')
             ->groupBy('t.topic_cat_id')
-            ->setParameter('categoryIds', $categoryIds, Connection::PARAM_INT_ARRAY)
+            ->setParameter('categoryIds', $categoryIds, ArrayParameterType::INTEGER)
             ->fetchAllKeyValue();
 
         $counts = [];
@@ -41,7 +41,7 @@ class AllianceBoardCategoryRepository extends AbstractRepository
             ->from('allianceboard_topics', 't')
             ->where('t.topic_cat_id IN (:categoryIds)')
             ->groupBy('t.topic_cat_id')
-            ->setParameter('categoryIds', $categoryIds, Connection::PARAM_INT_ARRAY)
+            ->setParameter('categoryIds', $categoryIds, ArrayParameterType::INTEGER)
             ->fetchAllKeyValue();
 
         $counts = [];
@@ -163,27 +163,27 @@ class AllianceBoardCategoryRepository extends AbstractRepository
             ->select('topic_id')
             ->from('allianceboard_topics')
             ->where('topic_cat_id IN (:categoryIds)')
-            ->setParameter('categoryIds', $categoryIds, Connection::PARAM_INT_ARRAY)
+            ->setParameter('categoryIds', $categoryIds, ArrayParameterType::INTEGER)
             ->fetchFirstColumn();
 
         if (count($topicIds) > 0) {
             $this->createQueryBuilder()
                 ->delete('allianceboard_posts')
                 ->where('post_topic_id IN (:topicId)')
-                ->setParameter('topicId', $topicIds, Connection::PARAM_INT_ARRAY)
+                ->setParameter('topicId', $topicIds, ArrayParameterType::INTEGER)
                 ->executeQuery();
 
             $this->createQueryBuilder()
                 ->delete('allianceboard_topics')
                 ->where('topic_id IN (:topicId)')
-                ->setParameter('topicId', $topicIds, Connection::PARAM_INT_ARRAY)
+                ->setParameter('topicId', $topicIds, ArrayParameterType::INTEGER)
                 ->executeQuery();
         }
 
         $this->createQueryBuilder()
             ->delete('allianceboard_catranks')
             ->where('cr_cat_id IN (:categoryIds)')
-            ->setParameter('categoryIds', $categoryIds, Connection::PARAM_INT_ARRAY)
+            ->setParameter('categoryIds', $categoryIds, ArrayParameterType::INTEGER)
             ->executeQuery();
 
         $this->createQueryBuilder()
@@ -208,13 +208,13 @@ class AllianceBoardCategoryRepository extends AbstractRepository
             $this->createQueryBuilder()
                 ->delete('allianceboard_posts')
                 ->where('post_topic_id IN (:topicId)')
-                ->setParameter('topicId', $topicIds, Connection::PARAM_INT_ARRAY)
+                ->setParameter('topicId', $topicIds, ArrayParameterType::INTEGER)
                 ->executeQuery();
 
             $this->createQueryBuilder()
                 ->delete('allianceboard_topics')
                 ->where('topic_id IN (:topicId)')
-                ->setParameter('topicId', $topicIds, Connection::PARAM_INT_ARRAY)
+                ->setParameter('topicId', $topicIds, ArrayParameterType::INTEGER)
                 ->executeQuery();
         }
 

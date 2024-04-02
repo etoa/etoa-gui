@@ -2,9 +2,9 @@
 
 namespace EtoA\User;
 
-use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Query\QueryBuilder;
 use EtoA\Core\AbstractRepository;
+use Doctrine\DBAL\ArrayParameterType;
 
 class UserSittingRepository extends AbstractRepository
 {
@@ -66,7 +66,7 @@ class UserSittingRepository extends AbstractRepository
             ->andWhere('s.date_from < :time')
             ->andWhere('s.date_to > :time')
             ->setParameter('time', time())
-            ->setParameter('userIds', $userIds, Connection::PARAM_INT_ARRAY)
+            ->setParameter('userIds', $userIds, ArrayParameterType::INTEGER)
             ->fetchAllAssociative();
 
         $entries = [];

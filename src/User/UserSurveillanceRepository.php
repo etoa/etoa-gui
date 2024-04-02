@@ -2,7 +2,7 @@
 
 namespace EtoA\User;
 
-use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\ArrayParameterType;
 use EtoA\Core\AbstractRepository;
 
 class UserSurveillanceRepository extends AbstractRepository
@@ -80,7 +80,7 @@ class UserSurveillanceRepository extends AbstractRepository
             ->select('user_id, COUNT(*)')
             ->from('user_surveillance')
             ->where('user_id IN (:userIds)')
-            ->setParameter('userIds', $userIds, Connection::PARAM_INT_ARRAY)
+            ->setParameter('userIds', $userIds, ArrayParameterType::INTEGER)
             ->groupBy('user_id')
             ->fetchAllKeyValue();
 
