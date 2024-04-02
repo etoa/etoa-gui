@@ -107,11 +107,12 @@ class UserStatRepository extends AbstractRepository
      */
     public function searchStats(UserStatSearch $search, UserRatingSort $sort = null, int $limit = null, int $offset = null): array
     {
+        //TODO use https://www.doctrine-project.org/projects/doctrine-orm/en/latest/reference/basic-mapping.html#quoting-reserved-words instead
         $qb = $this->createQueryBuilder()
             ->select('id', 'nick', 'blocked', 'hmod', 'inactive', 'race_name', 'alliance_tag', 'sx', 'sy', 'points_ships', 'points_tech', 'points_buildings', 'points_exp')
-            ->addSelect($search->order . ' AS ranking')
-            ->addSelect($search->field . ' AS points')
-            ->addSelect($search->shift . ' AS shift')
+            ->addSelect('`' . $search->order . '`' . ' AS ranking')
+            ->addSelect('`' . $search->field . '`' . ' AS points')
+            ->addSelect('`' . $search->shift . '`' . ' AS shift')
             ->from('user_stats');
 
         if (isset($search->parameters['allianceId'])) {
@@ -120,8 +121,8 @@ class UserStatRepository extends AbstractRepository
 
         if ($sort == null || count($sort->sorts) === 0) {
             $qb
-                ->orderBy($search->order, 'ASC')
-                ->addOrderBy('nick', 'ASC');
+                ->orderBy('`' . $search->order . '`', 'ASC')
+                ->addOrderBy('`' . 'nick' . '`', 'ASC');
         }
 
         $data = $this->applySearchSortLimit($qb, $search, $sort, $limit, $offset)
