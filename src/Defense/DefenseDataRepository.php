@@ -27,7 +27,6 @@ class DefenseDataRepository extends AbstractRepository
     {
         return $this->applySearchSortLimit($this->createQueryBuilder(), $search, $orderBy ?? DefenseSort::name(), $limit)
             ->select('def_id', 'def_name')
-            ->addSelect()
             ->from('defense')
             ->fetchAllKeyValue();
     }

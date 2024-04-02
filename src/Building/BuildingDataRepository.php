@@ -72,7 +72,6 @@ class BuildingDataRepository extends AbstractRepository
         $orderBy = $orderBy ?? BuildingSort::name();
         $qb = $this->applySearchSortLimit($this->createQueryBuilder(), null, $orderBy)
             ->select('building_id', 'building_name')
-            ->addSelect()
             ->from('buildings');
 
         if (!$showAll) {
@@ -100,7 +99,6 @@ class BuildingDataRepository extends AbstractRepository
     {
         return $this->createQueryBuilder()
             ->select('building_id, building_name')
-            ->addSelect()
             ->from('buildings')
             ->where('building_people_place > 0')
             ->orderBy('building_order')

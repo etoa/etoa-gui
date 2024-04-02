@@ -24,7 +24,6 @@ class ShipDataRepository extends AbstractRepository
     {
         $qb = $this->createQueryBuilder()
             ->select('ship_id', 'ship_name')
-            ->addSelect()
             ->from('ships');
 
         return $this->applySearchSortLimit($qb, $search, $orderBy ?? ShipSort::name(), $limit)
@@ -64,7 +63,6 @@ class ShipDataRepository extends AbstractRepository
     {
         $qb = $this->createQueryBuilder()
             ->select('*')
-            ->addSelect()
             ->from('ships');
 
         if (!$showAll) {
@@ -97,7 +95,6 @@ class ShipDataRepository extends AbstractRepository
     {
         $data = $this->createQueryBuilder()
             ->select('*')
-            ->addSelect()
             ->from('ships')
             ->andWhere('special_ship = 1')
             ->orderBy('ship_name')
@@ -113,7 +110,6 @@ class ShipDataRepository extends AbstractRepository
     {
         return $this->createQueryBuilder()
             ->select('*')
-            ->addSelect()
             ->from('ships')
             ->andWhere('ship_fakeable = 1')
             ->orderBy('ship_name')
@@ -165,7 +161,6 @@ class ShipDataRepository extends AbstractRepository
     {
         $data = $this->createQueryBuilder()
             ->select('*')
-            ->addSelect()
             ->from('ships')
             ->where('ship_prod_power > 0')
             ->orderBy('ship_order')
@@ -181,7 +176,6 @@ class ShipDataRepository extends AbstractRepository
     {
         $data = $this->createQueryBuilder()
             ->select('*')
-            ->addSelect()
             ->from('ships')
             ->where('ship_alliance_shipyard_level > 0')
             ->orderBy('ship_alliance_shipyard_level')
