@@ -1,0 +1,9 @@
+<div class="boxLayout {{ class }}">
+    {% if title %}
+        <div class="infoboxtitle"><span>{{ title }}</span></div>
+    {% endif %}
+    <div class="infoboxcontent">
+        {% block content %}
+        {% endblock %}
+    </div>
+</div>
