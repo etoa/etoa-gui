@@ -27,6 +27,7 @@ use EtoA\Message\MessageCategoryId;
 use EtoA\Message\MessageRepository;
 use EtoA\Race\RaceDataRepository;
 use EtoA\Ranking\UserBannerService;
+use EtoA\Security\Player\CurrentPlayer;
 use EtoA\Ship\ShipDataRepository;
 use EtoA\Specialist\SpecialistDataRepository;
 use EtoA\Support\ExternalUrl;
@@ -50,6 +51,7 @@ use Exception;
 use Symfony\Component\Form\FormError;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
 use WhichBrowser\Parser as BrowserParser;
@@ -195,7 +197,11 @@ class UserController extends AbstractAdminController
 
     #[Route('/admin/users/{id}/edit', name: 'admin.users.update', methods: ['POST'])]
     #[IsGranted('ROLE_ADMIN_TRIAL-ADMIN')]
-    public function update(Request $request, int $id): Response
+    public function update(
+        Request $request,
+        int $id,
+        UserPasswordHasherInterface $passwordHasher,
+    ): Response
     {
         $user = $this->userRepository->getUser($id);
 
@@ -264,7 +270,7 @@ class UserController extends AbstractAdminController
 
         // Handle password
         if ($request->request->has('user_password') && filled($request->request->get('user_password'))) {
-            $user->password = saltPasswort($request->request->get('user_password'));
+            $user->password = $passwordHasher->hashPassword(new CurrentPlayer($user) , $request->request->get('user_password'));
             $this->addFlash('success', "Das Passwort wurde geändert!");
 
             $this->logRepository->add(LogFacility::ADMIN, LogSeverity::INFO, $this->getUser()->getUserIdentifier() . " ändert das Passwort von " . $request->request->get('user_nick'));
