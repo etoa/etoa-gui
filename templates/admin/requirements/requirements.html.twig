@@ -14,7 +14,7 @@
         {% for object in objects %}
             <tr>
                 <td>
-                    <img src="/build/{{ object.getImagePath() }}"/>
+                    <img src="{{ object.getImagePath() }}"/>
                 </td>
                 <td>{{ object.name }}</td>
                 <td data-controller="collection">
