@@ -9,16 +9,23 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpKernel\Event\ControllerEvent;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 use Symfony\Component\HttpKernel\KernelEvents;
+use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 class ParamConverterListener implements EventSubscriberInterface
 {
     private ConfigurationService $configurationService;
     private UserRepository $userRepository;
+    private AuthenticationUtils $authenticationUtils;
 
-    public function __construct(ConfigurationService $configurationService, UserRepository $userRepository)
+    public function __construct(
+        ConfigurationService $configurationService,
+        UserRepository $userRepository,
+        AuthenticationUtils $authenticationUtils
+    )
     {
         $this->configurationService = $configurationService;
         $this->userRepository = $userRepository;
+        $this->authenticationUtils = $authenticationUtils;
     }
 
     public function onKernelController(ControllerEvent $event): void
@@ -40,17 +47,12 @@ class ParamConverterListener implements EventSubscriberInterface
             $name = $param->getName();
             if (TokenContext::class === $class) {
                 if (!$request->attributes->has('currentUser')) {
-                    $userId = \EtoA\Legacy\UserSession::getInstance($this->configurationService)->user_id;
-                    if (!(bool)$userId) {
+                    $user = $this->userRepository->getUserByNick($this->authenticationUtils->getLastUsername());
+                    if (!$user) {
                         throw new AccessDeniedHttpException();
                     }
 
-                    $user = $this->userRepository->getUser($userId);
-                    if ($user === null) {
-                        throw new AccessDeniedHttpException();
-                    }
-
-                    $request->attributes->set('currentUser', new \EtoA\Legacy\User($user));
+                    $request->attributes->set('currentUser', $user);
                 }
 
                 $value = new TokenContext($request->attributes->get('currentUser'));
