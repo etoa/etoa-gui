@@ -1,0 +1,9 @@
+{% extends 'layout/game.html.twig' %}
+
+{% block content %}
+    <twig:Box title="{{ title }}" class="750">
+        <img src="{{ asset(image) }}" alt="maintenance" /><br/><br/>
+        {{text}}<br/><br/>
+        <input type="button" value="Zur Startseite" onclick="document.location='{{ loginUrl }}'" />
+    </twig:Box>
+{% endblock %}
