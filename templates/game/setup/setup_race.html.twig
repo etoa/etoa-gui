@@ -1,0 +1,18 @@
+{% extends 'layout/game.html.twig' %}
+
+{% block content %}
+    <h2>Rasse auswählen</h2>
+    Bitte wählt die Rasse eures Volkes aus.<br/>
+    Jede Rasse hat Vor- und Nachteile sowie einige Spezialeinheiten:<br/><br/>
+
+    {{ form_start(addForm) }}
+
+    {{ form_widget(addForm.shipId,{ 'id': 'register_user_race_id' })}}
+
+    <br/><br/><div id="raceInfo"></div>
+    <br/><br/>
+    {{ form_widget(addForm.save)}}
+    {{ form_widget(addForm.random)}}
+    {{ form_widget(addForm.checker)}}
+    {{ form_end(addForm) }}
+{% endblock %}
