@@ -28,9 +28,9 @@ class RaceController extends AbstractController
     {
     }
 
-    /**
-     * @Route("/api/races/info", methods={"GET"}, name="api.race.info")
-     */
+
+    #[Route("/api/races/info", name: "api.race.info", methods: "GET")]
+
     public function getInfo(TokenContext $context, Request $request): JsonResponse
     {
         $raceId = $request->query->getInt('id');
