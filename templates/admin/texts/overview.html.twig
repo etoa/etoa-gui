@@ -22,10 +22,10 @@
                 <td>{% if text.updated > 0 %}{{ formatTimestamp(text.updated) }}{% endif %}</td>
                 <td style="text-align:center;">
                     {% if text.enabled %}
-                        <a href="?page={{ page }}&disable={{ text.id }}"><img src="/images/true.gif" alt="true"
+                        <a href="?page={{ page }}&disable={{ text.id }}"><img src="{{ asset('build/images/true.gif') }}" alt="true"
                                                                               title="Deaktivieren"/></a>
                     {% else %}
-                        <a href="?page={{ page }}&enable={{ text.id }}"><img src="/images/false.gif" alt="false"
+                        <a href="?page={{ page }}&enable={{ text.id }}"><img src="{{ asset('build/images/false.gif') }}" alt="false"
                                                                              title="Aktivieren"/></a>
                     {% endif %}
                 </td>

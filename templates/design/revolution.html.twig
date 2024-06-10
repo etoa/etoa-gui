@@ -49,7 +49,7 @@
                 <div id="planetname">{{ currentPlanetName }}</div>
             {% else %}
                 <a href="?page=overview" id="planetimage">
-                    <img src="{{ templateDir }}/images/dummy.gif" width="73.5" height="73.5" align="middle">
+                    <img src="{{ asset('build/designs/official/Revolution/images/dummy.gif') }}" width="73.5" height="73.5" align="middle">
                 </a>
                 <div id="planetname">noch nicht ausgewählt</div>
             {% endif %}
@@ -98,7 +98,7 @@
                 {% block content %}
                 {% endblock %}
             </div>
-            <img src="{{ templateDir }}/images/content_footerabstand.gif" width="142" height="50" alt="">
+            <img src="{{ asset('build/designs/official/Revolution/images/content_footerabstand.gif') }}" width="142" height="50" alt="">
         </section>
 
         <!-- Seitenbereich, rechts -->
