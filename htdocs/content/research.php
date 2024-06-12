@@ -58,6 +58,35 @@ if ($properties->imageFilter) {
     $use_img_filter = false;
 }
 
+function check_building_requirement(EtoA\Requirement\ObjectRequirement $requirement, array $buildlist): bool
+{
+    return isset($buildlist[$requirement->requiredBuildingId]) && $buildlist[$requirement->requiredBuildingId] >= $requirement->requiredLevel;
+}
+
+function check_technology_requirement(EtoA\Requirement\ObjectRequirement $requirement, array $techlist): bool
+{
+    return isset($techlist[$requirement->requiredTechnologyId]) && $techlist[$requirement->requiredTechnologyId]->currentLevel >= $requirement->requiredLevel;
+}
+
+function check_requirements(EtoA\Requirement\RequirementsCollection $requirements, array $buildlist, array $techlist, int $techid): bool
+{
+    // check building prerequisites
+    foreach ($requirements->getBuildingRequirements($techid) as $requirement) {
+        if (!check_building_requirement($requirement, $buildlist)) {
+            return false;
+        }
+    }
+
+    // check technology prerequisites
+    foreach ($requirements->getTechnologyRequirements($techid) as $requirement) {
+        if (!check_technology_requirement($requirement, $techlist)) {
+            return false;
+        }
+    }
+    
+    return true;
+}
+
 if (isset($cp)) {
     $planet = $planetRepo->find($cp->id);
 
@@ -528,18 +557,7 @@ if (isset($cp)) {
 
 
                 // Check requirements for this building
-                $requirements_passed = true;
-                foreach ($requirements->getBuildingRequirements($technology->id) as $requirement) {
-                    if (!isset($buildlist[$requirement->requiredBuildingId]) || $buildlist[$requirement->requiredBuildingId] < $requirement->requiredLevel) {
-                        $requirements_passed = false;
-                    }
-                }
-
-                foreach ($requirements->getTechnologyRequirements($technology->id) as $requirement) {
-                    if (!isset($techlist[$requirement->requiredTechnologyId]) || $techlist[$requirement->requiredTechnologyId]->currentLevel < $requirement->requiredLevel) {
-                        $requirements_passed = false;
-                    }
-                }
+                $requirements_passed = check_requirements($requirements, $buildlist, $techlist, $technology->id);
 
                 //
                 // Baumenü
@@ -767,28 +785,7 @@ if (isset($cp)) {
                             }
 
                             // Check requirements for this tech
-                            $requirements_passed = true;
-                            $b_req_info = array();
-                            $t_req_info = array();
-                            if (isset($b_req[$tech->id]['t']) && count($b_req[$tech->id]['t']) > 0) {
-                                foreach ($b_req[$tech->id]['t'] as $b => $l) {
-                                    if (!isset($techlist[$b]->currentLevel) || $techlist[$b]->currentLevel < $l) {
-                                        $t_req_info[] = array($b, $l, false);
-                                        $requirements_passed = false;
-                                    } else
-                                        $t_req_info[] = array($b, $l, true);
-                                }
-                            }
-                            if (isset($b_req[$tech->id]['b']) && count($b_req[$tech->id]['b']) > 0) {
-                                foreach ($b_req[$tech->id]['b'] as $id => $level) {
-                                    if (!isset($buildlist[$id]) || $buildlist[$id] < $level) {
-                                        $requirements_passed = false;
-                                        $b_req_info[] = array($id, $level, false);
-                                    } else {
-                                        $b_req_info[] = array($id, $level, true);
-                                    }
-                                }
-                            }
+                            $requirements_passed = check_requirements($requirements, $buildlist, $techlist, $tech->id);
 
                             $filterStyleClass = "";
                             if (!$tech->show && $b_level > 0) {
@@ -808,12 +805,13 @@ if (isset($cp)) {
                                     /** @var BuildingDataRepository $buildingRepository */
                                     $buildingRepository = $app[BuildingDataRepository::class];
                                     $buildingNames = $buildingRepository->getBuildingNames(true);
-                                    foreach ($b_req_info as $v) {
-                                        $tmtext .= "<div style=\"color:" . ($v[2] ? '#0f0' : '#f30') . "\">" . $buildingNames[$v[0]] . " Stufe " . $v[1] . "</div>";
+                                    
+                                    foreach ($requirements->getBuildingRequirements($tech->id) as $breq) {
+                                        $tmtext .= "<div style=\"color:" . (check_building_requirement($breq, $buildlist) ? '#0f0' : '#f30') . "\">" . $buildingNames[$breq->requiredBuildingId] . " Stufe " . $breq->requiredLevel . "</div>";
                                     }
 
-                                    foreach ($t_req_info as $v) {
-                                        $tmtext .= "<div style=\"color:" . ($v[2] ? '#0f0' : '#f30') . "\">" . $technologyNames[$v[0]] . " Stufe " . $v[1] . "</div>";
+                                    foreach ($requirements->getTechnologyRequirements($tech->id) as $treq) {
+                                        $tmtext .= "<div style=\"color:" . (check_technology_requirement($treq, $techlist) ? '#0f0' : '#f30') . "\">" . $technologyNames[$treq->requiredTechnologyId] . " Stufe " . $treq->requiredLevel . "</div>";
                                     }
 
                                     $color = '#999';
