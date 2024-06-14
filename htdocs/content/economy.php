@@ -47,6 +47,10 @@ $raceRespository = $app[RaceDataRepository::class];
 if ($cp) {
 
     $planet = $planetRepo->find($cp->id);
+    if(null === $planet)
+    {
+        return;
+    }
     $race = $raceRespository->getRace($cu->raceId);
 
     /** @var SpecialistService $specialistService */
@@ -72,7 +76,7 @@ if ($cp) {
         }
     }
 
-    echo "<h1>Wirtschaft des Planeten " . $planet->name . "</h1>";
+    echo "<h1>Wirtschaft" . (!StringUtils::empty_strict($planet->name) ? " des Planeten " . $planet->name : "") . "</h1>";
     echo $resourceBoxDrawer->getHTML($planet);
 
     if (isset($_GET['action']) && $_GET['action'] == "update") {

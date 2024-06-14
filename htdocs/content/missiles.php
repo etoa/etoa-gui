@@ -57,7 +57,12 @@ define("MISSILE_SILO_MISSILES_ALGO_BASE", $config->getFloat('missile_silo_missil
 define("MISSILE_SILO_FLIGHTS_PER_LEVEL", $config->getInt('missile_silo_flights_per_level'));
 
 $planet = $planetRepo->find($cp->id);
+if(null === $planet)
+{
+    return;
+}
 
+// TODO: needed?
 echo "<form action=\"?page=$page\" method=\"post\">";
 
 // Gebäude Level und Arbeiter laden
@@ -71,7 +76,7 @@ if ($missileBuilding !== null && $missileBuilding->currentLevel > 0) {
     $max_flights = $missileBuilding->currentLevel * MISSILE_SILO_FLIGHTS_PER_LEVEL;
 
     // Titel
-    echo "<h1>Raketensilo (Stufe " . $missileBuilding->currentLevel . ") des Planeten " . $planet->name . "</h1>";
+    echo "<h1>Raketensilo (Stufe " . $missileBuilding->currentLevel . ")" . (!StringUtils::empty_strict($planet->name) ? " des Planeten " . $planet->name : "") . "</h1>";
 
     // Ressourcen anzeigen
     echo $resourceBoxDrawer->getHTML($planet);
@@ -733,7 +738,7 @@ if ($missileBuilding !== null && $missileBuilding->currentLevel > 0) {
     }
 } else {
     // Titel
-    echo "<h1>Raketensilo des Planeten " . $planet->name . "</h1>";
+    echo "<h1>Raketensilo" . (!StringUtils::empty_strict($planet->name) ? " des Planeten " . $planet->name : "") . "</h1>";
 
     // Ressourcen anzeigen
     echo $resourceBoxDrawer->getHTML($planet);
