@@ -1,0 +1,92 @@
+[
+    {
+        "id": "1",
+        "name": "Beleidigung in Nachricht",
+        "sort": "0"
+    },
+    {
+        "id": "2",
+        "name": "Rathaus-Missbrauch",
+        "sort": "1"
+    },
+    {
+        "id": "3",
+        "name": "Missachtung der Angriffsregeln",
+        "sort": "2"
+    },
+    {
+        "id": "4",
+        "name": "Pushing-Verdacht",
+        "sort": "3"
+    },
+    {
+        "id": "5",
+        "name": "Cheat-Verdacht",
+        "sort": "4"
+    },
+    {
+        "id": "6",
+        "name": "Bugusing-Verdacht",
+        "sort": "5"
+    },
+    {
+        "id": "7",
+        "name": "Anst\u00f6ssiges Bild",
+        "sort": "6"
+    },
+    {
+        "id": "8",
+        "name": "Sonstiger Regelverstoss",
+        "sort": "7"
+    },
+    {
+        "id": "9",
+        "name": "\u00c4nderung meiner fixen E-Mail-Adresse",
+        "sort": "9"
+    },
+    {
+        "id": "10",
+        "name": "\u00c4nderung meines Namens (Account\u00fcbergabe)",
+        "sort": "10"
+    },
+    {
+        "id": "11",
+        "name": "Probleme mit einer Flotte (Ung\u00fcltige Koordinaten, h\u00e4ngenbleibende Flotte)",
+        "sort": "11"
+    },
+    {
+        "id": "12",
+        "name": "Problem mit der Allianz (R\u00e4nge, Forum, B\u00fcndnisse, Ausl\u00f6sung etc)",
+        "sort": "12"
+    },
+    {
+        "id": "15",
+        "name": "Probleme mit den Account-Einstellungen (Design, Urlaubsmodus etc)",
+        "sort": "13"
+    },
+    {
+        "id": "14",
+        "name": "Anderes Problem",
+        "sort": "20"
+    },
+    {
+        "id": "16",
+        "name": "Verdacht auf Accounthacking",
+        "sort": "14"
+    },
+    {
+        "id": "17",
+        "name": "Probleme mit meinem Passwort",
+        "sort": "15"
+    },
+    {
+        "id": "18",
+        "name": "\u00c4nderung meines Dualspielers",
+        "sort": "8"
+    },
+    {
+        "id": "19",
+        "name": "Aufteilen eines Tr\u00fcmmerfeldes",
+        "sort": "1"
+    }
+]

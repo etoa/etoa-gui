@@ -1,0 +1,23 @@
+[
+    {
+        "race_id": "7",
+        "race_name": "Die Borg",
+        "race_comment": "Die Borg sind bekannt daf\u00fcr, dass sie fremde Technologien assimilieren und aufgrund des gemeinsamen Bewusstseins extrem schnell auf \u00e4ussere Einfluss reagieren k\u00f6nnen.",
+        "race_short_comment": "Die Borg sind eine hochentwickelte Spezies mit einem gemeinsamen Bewusstsein.",
+        "race_adj1": "",
+        "race_adj2": "",
+        "race_adj3": "",
+        "race_leadertitle": "K\u00f6nigin der Borg",
+        "race_f_researchtime": "1.00",
+        "race_f_buildtime": "1.00",
+        "race_f_fleettime": "1.00",
+        "race_f_metal": "1.00",
+        "race_f_crystal": "1.00",
+        "race_f_plastic": "1.00",
+        "race_f_fuel": "1.00",
+        "race_f_food": "1.00",
+        "race_f_power": "1.00",
+        "race_f_population": "1.00",
+        "race_active": "1"
+    }
+]

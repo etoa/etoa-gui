@@ -1,0 +1,20 @@
+[
+    {
+        "cat_id": "1",
+        "cat_name": "Schilder",
+        "cat_order": "1",
+        "cat_color": "#0080FF"
+    },
+    {
+        "cat_id": "2",
+        "cat_name": "Gesch\u00fctze",
+        "cat_order": "0",
+        "cat_color": "#00ff00"
+    },
+    {
+        "cat_id": "3",
+        "cat_name": "Spezialanlagen",
+        "cat_order": "2",
+        "cat_color": "#B048F8"
+    }
+]
