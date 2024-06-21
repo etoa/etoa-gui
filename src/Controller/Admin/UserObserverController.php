@@ -41,7 +41,7 @@ class UserObserverController extends AbstractAdminController
         }
 
         $users = $this->userRepository->searchAdminView(UserSearch::create()->observed());
-        $userIds = array_map(fn(User $user) => $user->id, $users);
+        $userIds = array_map(fn(User $user) => $user->getId(), $users);
         $entryCounts = $this->userSurveillanceRepository->counts($userIds);
 
         return $this->render('admin/user-observer/list.html.twig', [
@@ -112,7 +112,7 @@ class UserObserverController extends AbstractAdminController
     public function edit(Request $request, int $id): Response
     {
         $user = $this->userRepository->getUser($id);
-        if ($user === null || null === $user->observe) {
+        if ($user === null || null === $user->getObserve()) {
             $this->addFlash('error', 'Spieler steht nicht unter beobachtung');
 
             return $this->redirectToRoute('admin.users.observer');
@@ -121,7 +121,7 @@ class UserObserverController extends AbstractAdminController
         $form = $this->createForm(EditUserObserverType::class, $user);
         $form->handleRequest($request);
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->userRepository->updateObserve($user->id, $user->observe);
+            $this->userRepository->updateObserve($user->getId(), $user->getObserve());
             $this->addFlash('success', 'Beobachtungsgrund aktualisiert!');
 
             return $this->redirectToRoute('admin.users.observer');
@@ -138,11 +138,11 @@ class UserObserverController extends AbstractAdminController
     public function remove(int $id): Response
     {
         $user = $this->userRepository->getUser($id);
-        if ($user === null || null === $user->observe) {
+        if ($user === null || null === $user->getObserve()) {
             $this->addFlash('error', 'Spieler steht nicht unter beobachtung');
         } else {
-            $this->userRepository->updateObserve($user->id, null);
-            $this->userSurveillanceRepository->removeForUser($user->id);
+            $this->userRepository->updateObserve($user->getId(), null);
+            $this->userSurveillanceRepository->removeForUser($user->getId());
 
             $this->addFlash('success', 'Spieler von der Beobachtungsliste entfernt');
         }

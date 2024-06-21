@@ -184,13 +184,13 @@ class UserService
         //
         // Allianz löschen (falls alleine) oder einen Nachfolger bestimmen
         //
-        if ($user->allianceId > 0) {
-            $alliance = $this->allianceRepository->getAlliance($user->allianceId);
+        if ($user->getAllianceId() > 0) {
+            $alliance = $this->allianceRepository->getAlliance($user->getAllianceId());
             if ($alliance !== null) {
                 $members = $this->allianceRepository->findUsers($alliance->id);
                 if (count($members) == 1) {
                     $this->allianceRepository->remove($alliance->id);
-                } elseif ($alliance->founderId == $user->id) {
+                } elseif ($alliance->founderId == $user->getId()) {
                     foreach ($members as $member) {
                         if ($member['user_id'] != $alliance->founderId) {
                             $this->allianceRepository->setFounderId($alliance->id, (int)$member['user_id']);
@@ -229,14 +229,14 @@ class UserService
 
         //Log schreiben
         if ($self) {
-            $this->logRepository->add(LogFacility::USER, LogSeverity::INFO, "Der Benutzer " . $user->nick . " hat sich selbst gelöscht!\nDie Daten des Benutzers wurden nach " . $xmlfile . " exportiert.");
+            $this->logRepository->add(LogFacility::USER, LogSeverity::INFO, "Der Benutzer " . $user->getNick() . " hat sich selbst gelöscht!\nDie Daten des Benutzers wurden nach " . $xmlfile . " exportiert.");
         } elseif ($from != "") {
-            $this->logRepository->add(LogFacility::USER, LogSeverity::INFO, "Der Benutzer " . $user->nick . " wurde von " . $from . " gelöscht!\nDie Daten des Benutzers wurden nach " . $xmlfile . " exportiert.");
+            $this->logRepository->add(LogFacility::USER, LogSeverity::INFO, "Der Benutzer " . $user->getNick() . " wurde von " . $from . " gelöscht!\nDie Daten des Benutzers wurden nach " . $xmlfile . " exportiert.");
         } else {
-            $this->logRepository->add(LogFacility::USER, LogSeverity::INFO, "Der Benutzer " . $user->nick . " wurde gelöscht!\nDie Daten des Benutzers wurden nach " . $xmlfile . " exportiert.");
+            $this->logRepository->add(LogFacility::USER, LogSeverity::INFO, "Der Benutzer " . $user->getNick() . " wurde gelöscht!\nDie Daten des Benutzers wurden nach " . $xmlfile . " exportiert.");
         }
 
-        $text = "Hallo " . $user->nick . "
+        $text = "Hallo " . $user->getNick() . "
 
 Dein Account bei Escape to Andromeda (" . $this->config->get('roundname') . ") wurde auf Grund von Inaktivität
 oder auf eigenem Wunsch hin gelöscht.
@@ -244,13 +244,13 @@ oder auf eigenem Wunsch hin gelöscht.
 Mit freundlichen Grüssen,
 die Spielleitung";
 
-        $this->mailSenderService->send("Accountlöschung", $text, $user->email);
+        $this->mailSenderService->send("Accountlöschung", $text, $user->getEmail());
     }
 
     public function deleteRequest(int $userId, string $password): bool
     {
         $user = $this->userRepository->getUser($userId);
-        if ($user !== null && validatePasswort($password, $user->password)) {
+        if ($user !== null && validatePasswort($password, $user->getPassword())) {
             $timestamp = time() + ($this->config->getInt('user_delete_days') * 3600 * 24);
             $this->userRepository->markDeleted($userId, $timestamp);
 
@@ -275,7 +275,7 @@ die Spielleitung";
 
         $inactiveUsers = $this->userRepository->findInactive($registerTime, $onlineTime);
         foreach ($inactiveUsers as $user) {
-            $this->delete($user->id);
+            $this->delete($user->getId());
         }
 
         $this->logRepository->add(
@@ -294,7 +294,7 @@ die Spielleitung";
 
         $longInactive = $this->userRepository->findLongInactive($inactiveTime - (3600 * 24), $inactiveTime);
         foreach ($longInactive as $user) {
-            $text = "Hallo " . $user->nick . "
+            $text = "Hallo " . $user->getNick() . "
 
 Du hast dich seit mehr als " . $this->config->param2Int('user_inactive_days') . " Tage nicht mehr bei Escape to Andromeda (" . $this->config->get('roundname') . ") eingeloggt und
 dein Account wurde deshalb als inaktiv markiert. Solltest du dich innerhalb von " . $this->config->getInt('user_inactive_days') . " Tage
@@ -303,7 +303,7 @@ nicht mehr einloggen wird der Account gelöscht.
 Mit freundlichen Grüssen,
 die Spielleitung";
 
-            $this->mailSenderService->send('Inaktivität', $text, $user->email);
+            $this->mailSenderService->send('Inaktivität', $text, $user->getEmail());
         }
     }
 
@@ -324,7 +324,7 @@ die Spielleitung";
     {
         $deletedUsers = $this->userRepository->findDeleted();
         foreach ($deletedUsers as $user) {
-            $this->delete($user->id);
+            $this->delete($user->getId());
         }
 
         $this->logRepository->add(
@@ -341,7 +341,7 @@ die Spielleitung";
         $user = $this->userRepository->getUser($userId);
 
         $search = array("{user}", "{nick}");
-        $replace = array($user->nick, $user->nick);
+        $replace = array($user->getNick(), $user->getNick());
         $message = str_replace($search, $replace, $message);
 
         $this->userLogRepository->add($userId, $zone, $message, gethostbyname($_SERVER['REMOTE_ADDR']), $public);
@@ -351,7 +351,7 @@ die Spielleitung";
     {
         $user = $this->userRepository->getUser($userId);
 
-        if (!validatePasswort($oldPassword, $user->password)) {
+        if (!validatePasswort($oldPassword, $user->getPassword())) {
             throw new Exception("Dein altes Passwort stimmt nicht mit dem gespeicherten Passwort &uuml;berein!");
         }
 
@@ -369,12 +369,12 @@ die Spielleitung";
 
         $this->userRepository->updatePassword($userId, $newPassword1);
 
-        $this->logRepository->add(LogFacility::USER, LogSeverity::INFO, "Der Spieler [b]" . $user->nick . "[/b] &auml;ndert sein Passwort!");
+        $this->logRepository->add(LogFacility::USER, LogSeverity::INFO, "Der Spieler [b]" . $user->getNick() . "[/b] &auml;ndert sein Passwort!");
 
         $this->mailSenderService->send(
             "Passwortänderung",
-            "Hallo " . $user->nick . "\n\nDies ist eine Bestätigung, dass du dein Passwort für deinen Account erfolgreich geändert hast!\n\nSolltest du dein Passwort nicht selbst geändert haben, so nimm bitte sobald wie möglich Kontakt mit einem Game-Administrator auf: http://www.etoa.ch/kontakt",
-            $user->email
+            "Hallo " . $user->getNick() . "\n\nDies ist eine Bestätigung, dass du dein Passwort für deinen Account erfolgreich geändert hast!\n\nSolltest du dein Passwort nicht selbst geändert haben, so nimm bitte sobald wie möglich Kontakt mit einem Game-Administrator auf: http://www.etoa.ch/kontakt",
+            $user->getEmail()
         );
 
         $this->addToUserLog($userId, "settings", "{nick} ändert sein Passwort.", false);
@@ -402,12 +402,12 @@ die Spielleitung";
         ]);
         $this->mailSenderService->send("Passwort-Anforderung", $emailText, $emailFixed);
 
-        $this->userRepository->updatePassword($user->id, $pw);
+        $this->userRepository->updatePassword($user->getId(), $pw);
 
         $this->logRepository->add(
             LogFacility::USER,
             LogSeverity::INFO,
-            'Der Benutzer ' . $user->nick . ' hat ein neues Passwort per E-Mail angefordert!'
+            'Der Benutzer ' . $user->getNick() . ' hat ein neues Passwort per E-Mail angefordert!'
         );
     }
 }

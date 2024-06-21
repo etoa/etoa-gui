@@ -14,7 +14,7 @@ class CurrentPlayer implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function getId(): int
     {
-        return $this->user->id;
+        return $this->user->getId();
     }
 
     /**
@@ -27,21 +27,16 @@ class CurrentPlayer implements UserInterface, PasswordAuthenticatedUserInterface
 
     public function getPassword(): string
     {
-        return $this->user->password;  // TODO
+        return $this->user->getPassword();  // TODO
     }
 
     public function eraseCredentials(): void
     {
     }
 
-    public function getUsername(): string
-    {
-        return $this->user->nick;
-    }
-
     public function getUserIdentifier(): string
     {
-        return $this->user->nick;
+        return $this->user->getNick();
     }
 
     public function getData(): User

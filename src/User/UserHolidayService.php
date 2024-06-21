@@ -73,22 +73,22 @@ class UserHolidayService
     public function deactivateHolidayMode(User $user, bool $force = false): bool
     {
         $now = time();
-        if ($user->hmodFrom === 0 || (($user->hmodFrom > $now || $user->hmodTo > $now) && !$force)) {
+        if ($user->getHmodFrom() === 0 || (($user->getHmodFrom() > $now || $user->getHmodTo() > $now) && !$force)) {
             return false;
         }
 
-        $holidayTime = $now - $user->hmodFrom;
+        $holidayTime = $now - $user->getHmodFrom();
 
-        $this->shipQueueRepository->unfreezeConstruction($user->id, $holidayTime);
-        $this->defenseQueueRepository->unfreezeConstruction($user->id, $holidayTime);
-        $this->buildingRepository->unfreezeConstruction($user->id, $holidayTime);
-        $this->technologyRepository->unfreezeConstruction($user->id, $holidayTime);
-        $this->planetRepository->freezeProduction($user->id);
+        $this->shipQueueRepository->unfreezeConstruction($user->getId(), $holidayTime);
+        $this->defenseQueueRepository->unfreezeConstruction($user->getId(), $holidayTime);
+        $this->buildingRepository->unfreezeConstruction($user->getId(), $holidayTime);
+        $this->technologyRepository->unfreezeConstruction($user->getId(), $holidayTime);
+        $this->planetRepository->freezeProduction($user->getId());
 
-        $this->userRepository->addSpecialistTime($user->id, $holidayTime);
-        $this->userRepository->disableHolidayMode($user->id);
+        $this->userRepository->addSpecialistTime($user->getId(), $holidayTime);
+        $this->userRepository->disableHolidayMode($user->getId());
 
-        $userPlanets = $this->planetRepository->getUserPlanets($user->id);
+        $userPlanets = $this->planetRepository->getUserPlanets($user->getId());
         foreach ($userPlanets as $planet) {
             $this->planetRepository->setLastUpdated($planet->id, time());
             $this->backendMessageService->updatePlanet($planet->id);

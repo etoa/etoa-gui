@@ -104,10 +104,10 @@ class UserController extends AbstractAdminController
         if ($form->isSubmitted() && $form->isValid()) {
             try {
                 $user = $this->userService->register($createUserRequest->name, $createUserRequest->email, $createUserRequest->nick, $createUserRequest->password, $createUserRequest->raceId, $createUserRequest->ghost, true);
-                $this->logRepository->add(LogFacility::USER, LogSeverity::INFO, "Der Benutzer " . $user->nick . " (" . $user->name . ", " . $user->email . ") wurde registriert!");
+                $this->logRepository->add(LogFacility::USER, LogSeverity::INFO, "Der Benutzer " . $user->getNick() . " (" . $user->getName() . ", " . $user->getEmail() . ") wurde registriert!");
                 $this->addFlash('success', 'Spieler erstellt');
 
-                return $this->redirectToRoute('admin.users.view', ['id' => $user->id]);
+                return $this->redirectToRoute('admin.users.view', ['id' => $user->getId()]);
             } catch (Exception $e) {
                 $form->addError(new FormError($e->getMessage()));
             }
@@ -129,11 +129,11 @@ class UserController extends AbstractAdminController
         }
 
         $newTickets = $this->ticketRepo->findBy([
-            "user_id" => $user->id,
+            "user_id" => $user->getId(),
             "status" => "new",
         ]);
         $assignedTickets = $this->ticketRepo->findBy([
-            "user_id" => $user->id,
+            "user_id" => $user->getId(),
             "status" => "assigned",
         ]);
 
@@ -145,13 +145,13 @@ class UserController extends AbstractAdminController
             'user' => $user,
             'agent' => (new BrowserParser($user->userAgent))->toString(),
             'host' => $this->networkNameService->getHost($user->ipAddr),
-            'isBlocked' => $user->blockedFrom > 0 && $user->blockedTo > time(),
-            'commentInfo' => $this->userCommentRepository->getCommentInformation($user->id),
-            'activeMultisCount' => count($this->userMultiRepository->getUserEntries($user->id, true)),
-            'activeSitting' => $this->userSittingRepository->getActiveUserEntry($user->id),
+            'isBlocked' => $user->getBlockedFrom() > 0 && $user->getBlockedTo() > time(),
+            'commentInfo' => $this->userCommentRepository->getCommentInformation($user->getId()),
+            'activeMultisCount' => count($this->userMultiRepository->getUserEntries($user->getId(), true)),
+            'activeSitting' => $this->userSittingRepository->getActiveUserEntry($user->getId()),
             'numberOfNewTickets' => count($newTickets),
             'numberOfAssignedTickets' => count($assignedTickets),
-            'warning' => $this->userWarningRepository->getCountAndLatestWarning($user->id),
+            'warning' => $this->userWarningRepository->getCountAndLatestWarning($user->getId()),
             'raceNames' => $this->raceRepository->getRaceNames(),
             'specialistNames' => $this->specialistRepository->getSpecialistNames(),
             'allianceNamesWithTags' => $this->allianceRepository->getAllianceNamesWithTags(),
@@ -180,11 +180,11 @@ class UserController extends AbstractAdminController
 
         return $this->render('admin/user/edit.html.twig', [
             'user' => $user,
-            'properties' => $this->userPropertiesRepository->getOrCreateProperties($user->id),
-            'isNoLongerBlocked' => $user->blockedFrom > 0 && $user->blockedTo < time(),
+            'properties' => $this->userPropertiesRepository->getOrCreateProperties($user->getId()),
+            'isNoLongerBlocked' => $user->getBlockedFrom() > 0 && $user->getBlockedTo() < time(),
             'userBlockedDefaultTime' => time() + (3600 * 24 * $this->config->getInt('user_ban_min_length')),
             'adminUserNicks' => $this->adminUserRepo->findAllAsList(),
-            'holidayModeExpired' => $user->hmodFrom > 0 && $user->hmodTo < time(),
+            'holidayModeExpired' => $user->getHmodFrom() > 0 && $user->getHmodTo() < time(),
             'userHolidayModeDefaultTime' => time() + (3600 * 24 * $this->config->getInt('user_umod_min_length')),
             'raceNames' => $this->raceRepository->getRaceNames(),
             'specialistNames' => $this->specialistRepository->getSpecialistNames(),
@@ -205,48 +205,48 @@ class UserController extends AbstractAdminController
     {
         $user = $this->userRepository->getUser($id);
 
-        if ($user->nick !== $request->get('user_nick')) {
+        if ($user->getNick() !== $request->get('user_nick')) {
             $this->userService->addToUserLog($id, "settings", "{nick} hat seinen Namen zu " . $request->get('user_nick') . " geändert.");
         }
 
-        $user->name = $request->request->get('user_name');
-        $user->npc = $request->request->getInt('npc');
-        $user->nick = $request->request->get('user_nick');
-        $user->email = $request->request->get('user_email');
-        $user->passwordTemp = $request->request->get('user_password_temp');
-        $user->emailFix = $request->request->get('user_email_fix');
-        $user->dualName = $request->request->get('dual_name');
-        $user->dualEmail = $request->request->get('dual_email');
-        $user->raceId = $request->request->getInt('user_race_id');
-        $user->allianceId = $request->request->getInt('user_alliance_id');
-        $user->profileText = $request->request->get('user_profile_text');
-        $user->signature = $request->request->get('user_signature');
-        $user->multiDelets = $request->request->getInt('user_multi_delets');
-        $user->sittingDays = $request->request->getInt('user_sitting_days');
-        $user->chatAdmin = $request->request->getInt('user_chatadmin');
-        $user->admin = $request->request->getInt('admin');
-        $user->ghost = $request->request->getBoolean('user_ghost');
-        $user->userChangedMainPlanet = $request->request->getBoolean('user_changed_main_planet');
-        $user->profileBoardUrl = $request->request->get('user_profile_board_url');
-        $user->allianceShipPoints = $request->request->getInt('user_alliace_shippoints');
-        $user->allianceShipPointsUsed = $request->request->getInt('user_alliace_shippoints_used');
+        $user->setName($request->request->get('user_name'));
+        $user->setNpc($request->request->getInt('npc'));
+        $user->setNick($request->request->get('user_nick'));
+        $user->setEmail($request->request->get('user_email'));
+        $user->setPasswordTemp($request->request->get('user_password_temp'));
+        $user->setEmailFix($request->request->get('user_email_fix'));
+        $user->setDualName($request->request->get('dual_name'));
+        $user->setDualEmail($request->request->get('dual_email'));
+        $user->setRaceId($request->request->getInt('user_race_id'));
+        $user->setAllianceId($request->request->getInt('user_alliance_id'));
+        $user->setProfileText($request->request->get('user_profile_text'));
+        $user->setSignature($request->request->get('user_signature'));
+        $user->setMultiDelets($request->request->getInt('user_multi_delets'));
+        $user->setSittingDays($request->request->getInt('user_sitting_days'));
+        $user->setChatAdmin($request->request->getInt('user_chatadmin'));
+        $user->setAdmin($request->request->getInt('admin'));
+        $user->setGhost($request->request->getBoolean('user_ghost'));
+        $user->setUserChangedMainPlanet($request->request->getBoolean('user_changed_main_planet'));
+        $user->setProfileBoardUrl($request->request->get('user_profile_board_url'));
+        $user->setAllianceShipPoints($request->request->getInt('user_alliace_shippoints'));
+        $user->setAllianceShipPointsUsed($request->request->getInt('user_alliace_shippoints_used'));
 
         if ($request->request->has('user_alliance_rank_id')) {
-            $user->allianceRankId = $request->request->getInt('user_alliance_rank_id');
+            $user->setAllianceRankId($request->request->getInt('user_alliance_rank_id'));
         } else {
-            $user->allianceRankId = 0;
+            $user->setAllianceRankId(0);
         }
         if ($request->request->has('user_profile_img_check')) {
-            $user->profileImageCheck = false;
+            $user->setProfileImageCheck(false);
         }
 
         // Handle specialist decision
         if ($request->request->getInt('user_specialist_id') > 0 && $request->request->get('user_specialist_time') > 0) {
-            $user->specialistTime = strtotime($request->request->get('user_specialist_time'));
-            $user->specialistId = $request->request->getInt('user_specialist_id');
+            $user->setSpecialistTime(strtotime($request->request->get('user_specialist_time')));
+            $user->setSpecialistId($request->request->getInt('user_specialist_id'));
         } else {
-            $user->specialistTime = 0;
-            $user->specialistId = 0;
+            $user->setSpecialistTime(0);
+            $user->setSpecialistId(0);
         }
 
         // Handle profile image
@@ -256,7 +256,7 @@ class UserController extends AbstractAdminController
                 unlink($existingProfileImage);
             }
 
-            $user->profileImage = '';
+            $user->setProfileImage('');
         }
 
         // Handle avatar
@@ -265,12 +265,12 @@ class UserController extends AbstractAdminController
             if (file_exists($existingAvatarPath)) {
                 unlink($existingAvatarPath);
             }
-            $user->avatar = '';
+            $user->setAvatar('');
         }
 
         // Handle password
         if ($request->request->has('user_password') && filled($request->request->get('user_password'))) {
-            $user->password = $passwordHasher->hashPassword(new CurrentPlayer($user) , $request->request->get('user_password'));
+            $user->setPassword($passwordHasher->hashPassword(new CurrentPlayer($user) , $request->request->get('user_password')));
             $this->addFlash('success', "Das Passwort wurde geändert!");
 
             $this->logRepository->add(LogFacility::ADMIN, LogSeverity::INFO, $this->getUser()->getUserIdentifier() . " ändert das Passwort von " . $request->request->get('user_nick'));
@@ -281,30 +281,30 @@ class UserController extends AbstractAdminController
             $ban_from = $this->parseDatePicker($request->request->get('user_blocked_from'));
             $ban_to = $this->parseDatePicker($request->request->get('user_blocked_to'));
 
-            $user->blockedFrom = $ban_from;
-            $user->blockedTo = $ban_to;
-            $user->banAdminId = $request->request->getInt('user_ban_admin_id');
-            $user->banReason = $request->request->get('user_ban_reason');
+            $user->setBlockedFrom($ban_from);
+            $user->setBlockedTo($ban_to);
+            $user->setBanAdminId($request->request->getInt('user_ban_admin_id'));
+            $user->setBanReason( $request->request->get('user_ban_reason'));
 
             $adminUserNicks = $this->adminUserRepo->findAllAsList();
             $adminUserNick = $adminUserNicks[$request->request->getInt('user_ban_admin_id')] ?? '';
             $this->userService->addToUserLog($id, "account", "{nick} wird von [b]" . date("d.m.Y H:i", $ban_from) . "[/b] bis [b]" . date("d.m.Y H:i", $ban_to) . "[/b] gesperrt.\n[b]Grund:[/b] " . addslashes($request->request->get('user_ban_reason')) . "\n[b]Verantwortlich: [/b] " . $adminUserNick);
         } else {
-            $user->blockedFrom = 0;
-            $user->blockedTo = 0;
-            $user->banAdminId = 0;
-            $user->banReason = '';
+            $user->setBlockedFrom(0);
+            $user->setBlockedTo(0);
+            $user->setBanAdminId(0);
+            $user->setBanReason('');
         }
 
         // Handle holiday mode
         if ($request->request->getInt('umod_enable') == 1) {
             $this->userHolidayService->activateHolidayMode($id, true);
-            $user->hmodFrom = $this->parseDatePicker($request->request->get('user_hmode_from'));
-            $user->hmodTo = $this->parseDatePicker($request->request->get('user_hmode_to'));
+            $user->setHmodFrom($this->parseDatePicker($request->request->get('user_hmode_from')));
+            $user->setHmodTo($this->parseDatePicker($request->request->get('user_hmode_to')));
         } else {
             $this->userHolidayService->deactivateHolidayMode($user, true);
-            $user->hmodFrom = 0;
-            $user->hmodTo = 0;
+            $user->setHmodFrom(0);
+            $user->setHmodTo(0);
         }
 
         // Perform query
@@ -803,7 +803,7 @@ class UserController extends AbstractAdminController
             return $this->redirectToRoute('admin.users');
         }
 
-        $userLoginFailures = $this->userLoginFailureRepository->getUserLoginFailures($user->id);
+        $userLoginFailures = $this->userLoginFailureRepository->getUserLoginFailures($user->getId());
 
         return $this->render('admin/user/user_login_failures.html.twig', [
             'user' => $user,
@@ -824,8 +824,8 @@ class UserController extends AbstractAdminController
 
         return $this->render('admin/user/user_multi.html.twig', [
             'user' => $user,
-            'multiEntries' => $this->userMultiRepository->getUserEntries($user->id, true),
-            'deletedMultiEntries' => $this->userMultiRepository->getUserEntries($user->id, false),
+            'multiEntries' => $this->userMultiRepository->getUserEntries($user->getId(), true),
+            'deletedMultiEntries' => $this->userMultiRepository->getUserEntries($user->getId(), false),
         ]);
     }
 
@@ -889,14 +889,14 @@ class UserController extends AbstractAdminController
             return $this->redirectToRoute('admin.users');
         }
 
-        $userSittings = $this->userSittingRepository->getWhereUser($user->id);
+        $userSittings = $this->userSittingRepository->getWhereUser($user->getId());
         $used_days = array_reduce($userSittings, fn($carry, UserSitting $entry) => $carry + (($entry->dateTo - $entry->dateFrom) / 86400), 0);
 
         return $this->render('admin/user/user_sitting.html.twig', [
             'user' => $user,
             'sittedEntries' => $userSittings,
-            'sittingEntries' => $this->userSittingRepository->getWhereSitter($user->id),
-            'availableDays' => floor($user->sittingDays - $used_days),
+            'sittingEntries' => $this->userSittingRepository->getWhereSitter($user->getId()),
+            'availableDays' => floor($user->getSittingDays() - $used_days),
         ]);
     }
 
@@ -940,7 +940,7 @@ class UserController extends AbstractAdminController
             return $this->redirectToRoute('admin.users.user_sitting', ['id' => $id]);
         }
 
-        if ($diff > $user->sittingDays) {
+        if ($diff > $user->getSittingDays()) {
             $this->addFlash('error', "So viele Tage sind nicht mehr vorhanden!!");
             return $this->redirectToRoute('admin.users.user_sitting', ['id' => $id]);
         }

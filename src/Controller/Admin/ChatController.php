@@ -41,11 +41,11 @@ class ChatController extends AbstractAdminController
         if ($user === null) {
             $this->addFlash('error', 'Spieler nicht gefunden');
         } else {
-            $this->chatBanRepository->banUser($user->id, 'Banned by Admin');
-            $this->chatUserRepository->kickUser($user->id, 'Bannend by Admin');
-            $this->chatManager->sendSystemMessage($user->nick . " wurde gebannt!");
+            $this->chatBanRepository->banUser($user->getId(), 'Banned by Admin');
+            $this->chatUserRepository->kickUser($user->getId(), 'Bannend by Admin');
+            $this->chatManager->sendSystemMessage($user->getNick() . " wurde gebannt!");
 
-            $this->addFlash('success', $user->nick . " wurde gebannt!");
+            $this->addFlash('success', $user->getNick() . " wurde gebannt!");
         }
 
         return $this->redirectToRoute('admin.chat');
@@ -59,10 +59,10 @@ class ChatController extends AbstractAdminController
         if ($user === null) {
             $this->addFlash('error', 'Spieler nicht gefunden');
         } else {
-            $this->chatUserRepository->kickUser($user->id, 'Bannend by Admin');
-            $this->chatManager->sendSystemMessage($user->nick . " wurde gekickt!");
+            $this->chatUserRepository->kickUser($user->getId(), 'Bannend by Admin');
+            $this->chatManager->sendSystemMessage($user->getNick() . " wurde gekickt!");
 
-            $this->addFlash('success', $user->nick . " wurde gekickt!");
+            $this->addFlash('success', $user->getNick() . " wurde gekickt!");
         }
 
         return $this->redirectToRoute('admin.chat');
@@ -76,9 +76,9 @@ class ChatController extends AbstractAdminController
         if ($user === null) {
             $this->addFlash('error', 'Spieler nicht gefunden');
         } else {
-            $this->chatUserRepository->deleteUser($user->id);
+            $this->chatUserRepository->deleteUser($user->getId());
 
-            $this->addFlash('success', $user->nick . " wurde aus dem Chat gelöscht!");
+            $this->addFlash('success', $user->getNick() . " wurde aus dem Chat gelöscht!");
         }
 
         return $this->redirectToRoute('admin.chat');
@@ -92,9 +92,9 @@ class ChatController extends AbstractAdminController
         if ($user === null) {
             $this->addFlash('error', 'Spieler nicht gefunden');
         } else {
-            $this->chatBanRepository->deleteBan($user->id);
+            $this->chatBanRepository->deleteBan($user->getId());
 
-            $this->addFlash('success', "Ban für " . $user->nick . " wurde gelöscht!");
+            $this->addFlash('success', "Ban für " . $user->getNick() . " wurde gelöscht!");
         }
 
         return $this->redirectToRoute('admin.chat');

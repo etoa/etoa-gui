@@ -110,8 +110,8 @@ class UsersController extends AbstractAdminController
         $userImageExists = [];
         $usedPaths = [];
         foreach ($usersWithImage as $user) {
-            $usedPaths[] = $user->profileImage;
-            $userImageExists[$user->id] = file_exists($path . $user->profileImage);
+            $usedPaths[] = $user->getProfileImage();
+            $userImageExists[$user->getId()] = file_exists($path . $user->getProfileImage());
         }
 
         $unused = [];
