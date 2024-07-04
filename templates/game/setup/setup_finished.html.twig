@@ -1,0 +1,11 @@
+{% extends 'layout/game.html.twig' %}
+
+{% block content %}
+    <h2>Einrichtung abgeschlossen</h2>
+    {% if text %}
+        <twig:Box title="Willkommen">
+            {{ text|raw }}
+        </twig:Box>
+    {% endif %}
+    <input type="button" value="Zum Heimatplaneten" onclick="document.location='/'" />
+{% endblock %}
