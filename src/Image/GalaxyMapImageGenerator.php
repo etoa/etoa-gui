@@ -203,7 +203,7 @@ class GalaxyMapImageGenerator
             $col[$x] = imagecolorallocate($mim->image, 105 + (150 / $mim->maxNumPlanets * $x), 105 + (150 / $mim->maxNumPlanets * $x), 0);
         }
 
-        $cells = $this->cellRepo->getCellPopulationForUser($user->id);
+        $cells = $this->cellRepo->getCellPopulationForUser($user->getId());
         foreach ($cells as $cell) {
             $x = ((($cell->sx - 1) * $mim->numCellsX + $cell->cx) * $mim->galaxyImageScale) - ($mim->galaxyImageScale / 2);
             $y = $mim->height - $mim->legendHeight + $mim->galaxyImageScale - ((($cell->sy - 1) * $mim->numCellsY + $cell->cy) * $mim->galaxyImageScale) - ($mim->galaxyImageScale / 2);
@@ -228,7 +228,7 @@ class GalaxyMapImageGenerator
         for ($x = 1; $x <= $mim->maxNumPlanets; $x++) {
             $col[$x] = imagecolorallocate($mim->image, 105 + (150 / $mim->maxNumPlanets * $x), 105 + (150 / $mim->maxNumPlanets * $x), 0);
         }
-        $cells = $this->cellRepo->getCellPopulationForUserAlliance($user->id);
+        $cells = $this->cellRepo->getCellPopulationForUserAlliance($user->getId());
         foreach ($cells as $cell) {
             $x = ((($cell->sx - 1) * $mim->numCellsX + $cell->cx) * $mim->galaxyImageScale) - ($mim->galaxyImageScale / 2);
             $y = $mim->height - $mim->legendHeight + $mim->galaxyImageScale - ((($cell->sy - 1) * $mim->numCellsY + $cell->cy) * $mim->galaxyImageScale) - ($mim->galaxyImageScale / 2);
