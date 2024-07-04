@@ -38,6 +38,18 @@ class DefaultItemRepository extends AbstractRepository
         return $data !== false ? DefaultItem::createFromData($data) : null;
     }
 
+    public function getItemNames(): array
+    {
+        $qb = $this->createQueryBuilder()
+            ->select('set_id, set_name')
+            ->from('default_item_sets')
+            ->andWhere('set_active = 1');
+
+        return $qb
+            ->orderBy('set_name')
+            ->fetchAllKeyValue();
+    }
+
     public function createSet(string $name): void
     {
         $this->createQueryBuilder()
