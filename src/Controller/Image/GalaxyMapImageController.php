@@ -20,7 +20,7 @@ class GalaxyMapImageController extends AbstractImageController
     ) {
     }
 
-    #[Route('/images/map', name: 'images.map')]
+    #[Route('/game/images/map', name: 'game.images.map')]
     public function mapImage(Request $request): Response
     {
         if (!$this->isGranted('IS_AUTHENTICATED_REMEMBERED')) {
@@ -34,7 +34,7 @@ class GalaxyMapImageController extends AbstractImageController
             type: $request->query->getString('type', 'default'),
             size: $this->getSize($request),
             showLegend: $request->query->has('legend'),
-            userId: 0, // TODO  $this->getUser()->getUserIdentifier() ...
+            userId: $this->getUser()->getId()
         ));
     }
 
