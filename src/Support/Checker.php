@@ -15,6 +15,7 @@ class Checker
     public function checker_init(int $debug = 0):string
     {
         $session = $this->requestStack->getSession();
+        $flashes = $session->getFlashBag();
 
         $session->set('checker',md5(mt_rand(0, 99999999) . time()));
         if ($session->get('checker_last')) {
@@ -24,7 +25,11 @@ class Checker
         }
         $session->set('checker_last',$session->get('checker'));
         if ($debug == 1)
-            echo "Checker initialized with " . $session->get('checker') . "<br/><br/>";
+            $flashes->add(
+                'warning',
+                "Checker initialized with " . $session->get('checker')
+            );
+
         return $session->get('checker');
     }
 
@@ -36,15 +41,17 @@ class Checker
         $session = $this->requestStack->getSession();
         $request = $this->requestStack->getCurrentRequest()->request;
         $checker = $request->all(array_key_first($request->all()))['checker'];
+        $flashes = $session->getFlashBag();
 
         if ($debug == 1)
-            echo "Checker-Session is: " . $session->get('checker') . ", Checker-POST is: " . $checker . "<br/><br/>";
+            $flashes->add(
+                'warning',
+                "Checker-Session is: " . $session->get('checker') . ", Checker-POST is: " . $checker
+            );
         if ($session->get('checker') && $checker && $session->get('checker') == $checker) {
             $session->set('checker',NULL);
             return true;
         } else {
-            $flashes = $session->getFlashBag();
-
             $flashes->add(
                 'warning',
                 'Seite kann nicht mehrfach aufgerufen werden!'
