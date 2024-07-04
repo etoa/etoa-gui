@@ -25,8 +25,6 @@ class RaceSetupType extends AbstractType
                 'label' => 'Zufällige Rasse auswählen',
                 'attr' => ['onclick' => 'rdm()'],
             ])
-            ->add('checker', HiddenType::class, [
-                'data' => $options['data'][0],
-            ]);
+            ->add('checker', HiddenType::class);
     }
 }
