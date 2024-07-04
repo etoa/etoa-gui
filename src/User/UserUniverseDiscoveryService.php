@@ -23,14 +23,14 @@ class UserUniverseDiscoveryService
 
     private function ensureDiscoveryMaskExists(User $user): void
     {
-        if (!filled($user->discoveryMask) || strlen($user->discoveryMask) < 3) {
+        if (!filled($user->getDiscoveryMask()) || strlen($user->getDiscoveryMask()) < 3) {
             $sx_num = $this->config->param1Int('num_of_sectors');
             $cx_num = $this->config->param1Int('num_of_cells');
             $sy_num = $this->config->param2Int('num_of_sectors');
             $cy_num = $this->config->param2Int('num_of_cells');
 
-            $user->discoveryMask = str_repeat('0', $sx_num * $cx_num * $sy_num * $cy_num);
-            $this->userRepository->saveDiscoveryMask($user->id, $user->discoveryMask);
+            $user->setDiscoveryMask(str_repeat('0', $sx_num * $cx_num * $sy_num * $cy_num));
+            $this->userRepository->saveDiscoveryMask($user->getId(), $user->getDiscoveryMask());
         }
     }
 
@@ -54,16 +54,16 @@ class UserUniverseDiscoveryService
 
         $pos = $absX + ($cy_num * $sy_num) * ($absY - 1) - 1;
 
-        return ($pos < strlen($user->discoveryMask) && $user->discoveryMask[$pos] > 0);
+        return ($pos < strlen($user->getDiscoveryMask()) && $user->getDiscoveryMask()[$pos] > 0);
     }
 
     public function getDiscoveredPercent(User $user): float
     {
         $this->ensureDiscoveryMaskExists($user);
 
-        $len = strlen($user->discoveryMask);
+        $len = strlen($user->getDiscoveryMask());
         if ($len > 0) {
-            return substr_count($user->discoveryMask, "1") / $len * 100;
+            return substr_count($user->getDiscoveryMask(), "1") / $len * 100;
         }
 
         return 0;
@@ -92,9 +92,9 @@ class UserUniverseDiscoveryService
             }
         }
 
-        $user->discoveryMask = implode('', $discoveryMask);
+        $user->setDiscoveryMask(implode('', $discoveryMask));
 
-        $this->userRepository->saveDiscoveryMask($user->id, $user->discoveryMask);
+        $this->userRepository->saveDiscoveryMask($user->getId(), $user->getDiscoveryMask());
     }
 
     public function setDiscoveredAll(User $user, bool $discovered): void
@@ -114,8 +114,8 @@ class UserUniverseDiscoveryService
             }
         }
 
-        $user->discoveryMask = implode('', $discoveryMask);
+        $user->setDiscoveryMask(implode('', $discoveryMask));
 
-        $this->userRepository->saveDiscoveryMask($user->id, $user->discoveryMask);
+        $this->userRepository->saveDiscoveryMask($user->getId(), $user->getDiscoveryMask());
     }
 }

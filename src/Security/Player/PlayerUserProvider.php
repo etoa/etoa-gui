@@ -58,6 +58,6 @@ class PlayerUserProvider implements UserProviderInterface, PasswordUpgraderInter
             throw new UnsupportedUserException(sprintf('Instances of "%s" are not supported.', get_debug_type($user)));
         }
 
-        $this->userRepository->updatePassword($user->getData()->id, $newHashedPassword, true);
+        $this->userRepository->updatePassword($user->getData()->getId(), $newHashedPassword, true);
     }
 }
