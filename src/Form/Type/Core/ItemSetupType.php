@@ -18,7 +18,7 @@ class ItemSetupType extends AbstractType
             ->add('itemset_id', DefaultItemType::class, [
                 'placeholder' => 'Bitte wählen...',
                 'label' => false,
-                'required' => false,
+                'required' => true,
             ])
             ->add('choose', SubmitType::class, [
                 'label' => 'Weiter',
