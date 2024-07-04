@@ -1,0 +1,23 @@
+{% extends 'layout/game.html.twig' %}
+
+{% block content %}
+    {{ form_start(addForm) }}
+    <h2>Heimatsektor auswählen</h2>
+    Wählt einen Sektor aus, in dem sich euer Heimatplanet befinden soll:<br/><br/>
+    Anzeigen:
+    <select onchange="document.getElementById('img').src='{{ path('game.images.map') }}'+this.options[this.selectedIndex].value;">
+        <option value="?t=time()">Normale Galaxieansicht</option>
+        <option value=?type=populated&t="time()">Bevölkerte Systeme</option>
+    </select><br/><br/>
+    <img src="{{ path('game.images.map') }}" alt="Galaxiekarte" id="img" usemap="#Galaxy" style="border:none;"/>
+    <map name="Galaxy">
+        {% for sy,row in map %}
+            {% for sx,data in row %}
+                <div class="sector_map_cell" style="display:inline-block;width:auto">{{ data|raw }}</div>
+            {% endfor %}
+            <br/>
+        {% endfor %}
+    </map>
+    {{ form_widget(addForm.checker)}}
+    {{ form_end(addForm) }}
+{% endblock %}
