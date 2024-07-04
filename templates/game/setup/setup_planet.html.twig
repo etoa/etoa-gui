@@ -1,0 +1,79 @@
+{% extends 'layout/game.html.twig' %}
+
+{% block content %}
+    {{ form_start(addForm) }}
+    <h2>Planetenwahl bestätigen</h2>
+    Folgender Planet wurde für Euch ausgewählt:<br/><br/>
+    <twig:Table title="Daten" width="300">
+        {% block table_content %}
+            <tr>
+                <th>Koordinaten:</th>
+                <td>{{ entity.coordinatesString() }}</td>
+            </tr>
+            <tr>
+                <th>Sonnentyp:</th>
+                <td>{{ starType.name }} </td>
+            </tr>
+            <tr>
+                <th>Planettyp:</th>
+                <td> {{ planetType.name }}</td>
+            </tr>
+            <tr>
+                <th>Felder:</th>
+                <td> {{ planet.fields }} total</td>
+            </tr>
+            <tr>
+                <th>Temperatur:</th>
+                <td>{{planet.tempFrom}} &deg;C bis {{ planet.tempTo }} &deg;C</td>
+            <tr>
+                <th>Ansicht:</th>
+                <td style="background:#000;text-align:center;">
+                    <img src=" {{ planet.getImagePath('medium') }} " style="border:none;" alt="planet" />
+                </td>
+            </tr>
+        {% endblock %}
+    </twig:Table>
+    <twig:Table class="tb">
+        {% block table_content %}
+            <tr>
+                <td>
+                    Du kannst einmal während des Spiels eine andere Kolonie zum Hauptplaneten bestimmen.
+                </td>
+            </tr>
+        {% endblock %}
+    </twig:Table>
+    <twig:Table title="Filter" width="300">
+        {% block table_content %}
+            <tr>
+                <th>Sonnentyp:</th>
+                <td>
+                    {{ form_widget(addForm.filter_sol_id,{ 'id': 'filter_sol_id' }) }}
+                </td>
+            <tr>
+            <tr>
+                <th>Planettyp:</th>
+                <td>
+                    {{ form_widget(addForm.filter_planet_id,{ 'id': 'filter_planet_id' }) }}
+                </td>
+            </tr>
+        {% endblock %}
+    </twig:Table>
+    <twig:Table title="Bonis dieser Zusammenstellung" width="600">
+        {% block table_content %}
+            <tr>
+                <th>Rohstoff</th>
+                <th>{{ planetType.name }}</th>
+                <th>{{ race.name }}</th>
+                <th>{{ starType.name }}</th>
+                <th>TOTAL</th>
+            </tr>
+            <tr>
+                {{ stats|raw }}
+            </tr>
+        {% endblock %}
+    </twig:Table>
+    {{ form_widget(addForm.submit_chooseplanet)}}
+    {{ form_widget(addForm.new_planet)}}
+    {{ form_widget(addForm.redo)}}
+    {{ form_end(addForm) }}
+{% endblock %}
