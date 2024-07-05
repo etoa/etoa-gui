@@ -2,33 +2,22 @@
 
 namespace EtoA\Controller\Game;
 
-use EtoA\BuddyList\BuddyListRepository;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\DefaultItem\DefaultItemRepository;
-use EtoA\Fleet\FleetRepository;
 use EtoA\Form\Type\Core\ChooseSectorSetupType;
 use EtoA\Form\Type\Core\ItemSetupType;
 use EtoA\Form\Type\Core\PlanetSetupType;
 use EtoA\Form\Type\Core\RaceSetupType;
-use EtoA\Legacy\UserSession;
-use EtoA\Legacy\UtilityMethodProvider;
 use EtoA\Message\MessageRepository;
-use EtoA\Message\ReportRepository;
 use EtoA\Support\Checker;
-use EtoA\Support\GameVersionService;
-use EtoA\Support\RuntimeDataStore;
 use EtoA\Text\TextRepository;
 use EtoA\UI\Tooltip;
 use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Entity\EntityType;
 use EtoA\Universe\GalaxyMap;
 use EtoA\Universe\Planet\PlanetRepository;
-use EtoA\Universe\Planet\PlanetService;
-use EtoA\User\UserPropertiesRepository;
 use EtoA\User\UserRepository;
-use EtoA\User\UserSetup;
 use EtoA\User\UserSetupService;
-use EtoA\User\UserUniverseDiscoveryService;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -45,10 +34,8 @@ use EtoA\Support\BBCodeUtils;
 class SetupController extends AbstractGameController
 {
     public function __construct(
-        private readonly ConfigurationService     $config,
         private readonly PlanetRepository         $planetRepository,
         private readonly MessageRepository        $messageRepository,
-        private readonly UserSetup                $userSetup,
         private readonly EntityRepository         $entityRepository,
         private readonly Checker                  $checker,
         private readonly StarRepository           $starRepository,
@@ -142,7 +129,11 @@ class SetupController extends AbstractGameController
             return $this->redirectToRoute('game.setup.race');
         }
 
-        if($this->getUser()->getData()->isSetup()) {
+        $sets = $this->defaultItemRepository->getSets();
+        if($this->planetRepository->getUserMainId($this->getUser()->getId())) {
+            if (count($sets) > 1) {
+                return $this->redirectToRoute('game.setup.itemset');
+            }
             return $this->redirectToRoute('game.setup.finished');
         }
 
@@ -156,7 +147,13 @@ class SetupController extends AbstractGameController
             && $request->query->getInt('setup_sx') <= $sx_num
             && $request->query->getInt('setup_sy') <= $sy_num) {
 
-            $planetId = $this->userSetup->generatePid();
+            $planetId = $this->planetRepository->getRandomFreePlanetId(
+                $request->query->getInt('setup_sx'),
+                $request->query->getInt('setup_sy'),
+                $this->configurationService->getInt('user_min_fields'),
+                $request->query->has('filter_p') ? $request->query->getInt('filter_p') : null,
+                $request->query->has('filter_s') ? $request->query->getInt('filter_s') : null
+            );
 
             if(!$planetId) {
                 $flashes = $request->getSession()->getFlashBag();
@@ -258,7 +255,6 @@ class SetupController extends AbstractGameController
                     $this->checker->checker_verify()
                 ) {
                     $this->userSetupService->coloniseMainPlanet($request->request->all('planet_setup')['planet_id']);
-                    $sets = $this->defaultItemRepository->getSets();
 
                     if (count($sets) > 1) {
                         return $this->redirectToRoute('game.setup.itemset');
