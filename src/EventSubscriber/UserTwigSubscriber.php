@@ -20,7 +20,7 @@ use Twig\Environment;
 use EtoA\Security\Player\CurrentPlayer;
 use EtoA\Design\DesignService;
 
-class GameTwigSubscriber implements EventSubscriberInterface
+class UserTwigSubscriber implements EventSubscriberInterface
 {
     public function __construct(
         private readonly TokenStorageInterface    $tokenStorage,
@@ -114,5 +114,7 @@ class GameTwigSubscriber implements EventSubscriberInterface
         foreach ($globals as $key => $value) {
             $this->twig->addGlobal($key, $value);
         }
+
+
     }
 }
