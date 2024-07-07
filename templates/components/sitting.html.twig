@@ -1,0 +1,6 @@
+
+{% if this.getSittingUntil %}
+    <twig:box title="Sitting-Modus aktiv">
+        Du sittest diesen Account im Auftrag von {{ app.user.usernames }} bis {{ this.getSittingUntil }}.<br> Bitte beachte die speziellen <a href= '#' onclick="window.open('http://www.etoa.ch/regeln','rules','width=auto,height=auto,scrollbars=yes');">Sittingregeln</a> unter §3 - (5):<br>Während eines aktiven Sittings sind Handeln und Angreifen zwischen Sitter und Gesittetem ohne Ausnahme verboten. Gemeinsame Allianzangriffe/-verteidigungen sind hingegen gestattet.
+    </twig:box>
+{% endif %}
