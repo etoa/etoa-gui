@@ -84,8 +84,8 @@ class SetupController extends AbstractGameController
         }
 
         if($this->getUser()->getData()->getRaceId() > 0 ) {
-            $sx_num = $this->config->param1Int('num_of_sectors');
-            $sy_num = $this->config->param2Int('num_of_sectors');
+            $sx_num = $this->configurationService->param1Int('num_of_sectors');
+            $sy_num = $this->configurationService->param2Int('num_of_sectors');
 
             $sec_x_size = GalaxyMap::WIDTH / $sx_num;
             $sec_y_size = GalaxyMap::WIDTH / $sy_num;

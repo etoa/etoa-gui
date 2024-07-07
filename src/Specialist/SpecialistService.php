@@ -23,8 +23,8 @@ class SpecialistService
     {
         $user = $this->userRepository->getUser($userId);
 
-        return $user !== null && $user->specialistId > 0 && $user->specialistTime > time()
-            ? $this->specialistRepository->getSpecialist($user->specialistId)
+        return $user !== null && $user->getSpecialistId() > 0 && $user->getSpecialistTime() > time()
+            ? $this->specialistRepository->getSpecialist($user->getSpecialistId())
             : null;
     }
 }
