@@ -60,7 +60,7 @@ class UserSessionSubscriber implements EventSubscriberInterface
 
             $sittingEntry = $this->userSittingRepository->getActiveUserEntry($user->getId());
             if ($sittingEntry !== null) {
-                $session->set('lastAction', true);
+                $session->set('sittingActive', true);
                 $session->set('sittingUntil', $sittingEntry->dateTo);
             }
 

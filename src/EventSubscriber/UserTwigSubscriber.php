@@ -209,11 +209,9 @@ class UserTwigSubscriber implements EventSubscriberInterface
         } elseif ($cu->getdata()->isSetup() && $this->tutorialManager->hasReadTutorial($cu->getId(), 2) && $this->config->getInt('quest_system_enable')) {
             //$app['cubicle.quests.initializer']->initialize($this->getUser()->getId()); //TODO migrate quests
         }
-
-
     }
 
-    public function onKernelController(ControllerEvent $event) {
+    public function onKernelController(ControllerEvent $event):void {
         $cu = $this->security->getUser();
         if($cu && !$cu->getData()->isSetup() && !in_array($event->getControllerReflector()->class,self::WHITELIST)) { //TODO $page != "help" && $page != "contact"
             $event->setController(fn() => new RedirectResponse(($this->router->generate('game.setup.race'))));
