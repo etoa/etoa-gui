@@ -441,6 +441,7 @@
 		*/
 		function checkTarget()
 		{
+			$this->sourceEntity->reloadRes();
 			if ($this->sourceEntity->resFuel() >= $this->getCosts())
 			{
 				if ($this->sourceEntity->resFood() >= $this->getCostsFood())
@@ -488,7 +489,7 @@
 		{
 			if ($this->actionOk)
 			{
-				if ($this->checkHaven())
+				if ($this->checkHaven() && $this->checkTarget())
 				{
 					$time = time();
 					$this->landTime = ($time+$this->getDuration());
