@@ -441,7 +441,10 @@
 		*/
 		function checkTarget()
 		{
-			$this->sourceEntity->reloadRes();
+			//for some reason updating ress right before fleetstart can cause duplicate ress.
+			//TODO: find a way to check without breaking game 
+			//$this->sourceEntity->reloadRes();
+
 			if ($this->sourceEntity->resFuel() >= $this->getCosts())
 			{
 				if ($this->sourceEntity->resFood() >= $this->getCostsFood())
