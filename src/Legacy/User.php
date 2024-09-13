@@ -156,8 +156,8 @@ class User implements \EtoA\User\UserInterface
             $this->specialistId = $user->specialistId;
             $this->specialistTime = $user->specialistTime;
 
-            $this->boostBonusProduction = $user->boosBonusProduction;
-            $this->boostBonusBuilding = $user->boosBonusBuilding;
+            $this->boostBonusProduction = $user->boostBonusProduction;
+            $this->boostBonusBuilding = $user->boostBonusBuilding;
 
             $this->lastInvasion = $user->lastInvasion;
 

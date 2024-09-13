@@ -70,8 +70,8 @@ class User implements \EtoA\User\UserInterface
     protected int $spyAttackCounter;
     protected ?string $discoveryMask;
     protected int $discoveryMaskLastUpdated;
-    protected float $boosBonusProduction;
-    protected float $boosBonusBuilding;
+    protected float $boostBonusProduction;
+    protected float $boostBonusBuilding;
     protected ?string $dualEmail;
     protected ?string $dualName;
     protected ?string $verificationKey;
@@ -139,8 +139,8 @@ class User implements \EtoA\User\UserInterface
         $this->spyAttackCounter = (int) $data['spyattack_counter'];
         $this->discoveryMask = $data['discoverymask'];
         $this->discoveryMaskLastUpdated = (int) $data['discoverymask_last_updated'];
-        $this->boosBonusProduction = (float) $data['boost_bonus_production'];
-        $this->boosBonusBuilding = (float) $data['boost_bonus_building'];
+        $this->boostBonusProduction = (float) $data['boost_bonus_production'];
+        $this->boostBonusBuilding = (float) $data['boost_bonus_building'];
         $this->dualEmail = $data['dual_email'];
         $this->dualName = $data['dual_name'];
         $this->verificationKey = $data['verification_key'];
@@ -718,24 +718,24 @@ class User implements \EtoA\User\UserInterface
         $this->discoveryMaskLastUpdated = $discoveryMaskLastUpdated;
     }
 
-    public function getBoosBonusProduction(): float
+    public function getboostBonusProduction(): float
     {
-        return $this->boosBonusProduction;
+        return $this->boostBonusProduction;
     }
 
-    public function setBoosBonusProduction(float $boosBonusProduction): void
+    public function setboostBonusProduction(float $boostBonusProduction): void
     {
-        $this->boosBonusProduction = $boosBonusProduction;
+        $this->boostBonusProduction = $boostBonusProduction;
     }
 
-    public function getBoosBonusBuilding(): float
+    public function getboostBonusBuilding(): float
     {
-        return $this->boosBonusBuilding;
+        return $this->boostBonusBuilding;
     }
 
-    public function setBoosBonusBuilding(float $boosBonusBuilding): void
+    public function setboostBonusBuilding(float $boostBonusBuilding): void
     {
-        $this->boosBonusBuilding = $boosBonusBuilding;
+        $this->boostBonusBuilding = $boostBonusBuilding;
     }
 
     public function getDualEmail(): ?string
