@@ -148,6 +148,476 @@ class Planet implements ObjectWithImage
         return $value / 100;
     }
 
+    public function getId(): int
+    {
+        return $this->id;
+    }
+
+    public function setId(int $id): void
+    {
+        $this->id = $id;
+    }
+
+    public function getUserId(): int
+    {
+        return $this->userId;
+    }
+
+    public function setUserId(int $userId): void
+    {
+        $this->userId = $userId;
+    }
+
+    public function isMainPlanet(): bool
+    {
+        return $this->mainPlanet;
+    }
+
+    public function setMainPlanet(bool $mainPlanet): void
+    {
+        $this->mainPlanet = $mainPlanet;
+    }
+
+    public function getUserChanged(): int
+    {
+        return $this->userChanged;
+    }
+
+    public function setUserChanged(int $userChanged): void
+    {
+        $this->userChanged = $userChanged;
+    }
+
+    public function getLastUserId(): int
+    {
+        return $this->lastUserId;
+    }
+
+    public function setLastUserId(int $lastUserId): void
+    {
+        $this->lastUserId = $lastUserId;
+    }
+
+    public function getName(): ?string
+    {
+        return $this->name;
+    }
+
+    public function setName(?string $name): void
+    {
+        $this->name = $name;
+    }
+
+    public function getTypeId(): int
+    {
+        return $this->typeId;
+    }
+
+    public function setTypeId(int $typeId): void
+    {
+        $this->typeId = $typeId;
+    }
+
+    public function getFields(): int
+    {
+        return $this->fields;
+    }
+
+    public function setFields(int $fields): void
+    {
+        $this->fields = $fields;
+    }
+
+    public function getFieldsExtra(): int
+    {
+        return $this->fieldsExtra;
+    }
+
+    public function setFieldsExtra(int $fieldsExtra): void
+    {
+        $this->fieldsExtra = $fieldsExtra;
+    }
+
+    public function getFieldsUsed(): int
+    {
+        return $this->fieldsUsed;
+    }
+
+    public function setFieldsUsed(int $fieldsUsed): void
+    {
+        $this->fieldsUsed = $fieldsUsed;
+    }
+
+    public function getImage(): string
+    {
+        return $this->image;
+    }
+
+    public function setImage(string $image): void
+    {
+        $this->image = $image;
+    }
+
+    public function getTempFrom(): int
+    {
+        return $this->tempFrom;
+    }
+
+    public function setTempFrom(int $tempFrom): void
+    {
+        $this->tempFrom = $tempFrom;
+    }
+
+    public function getTempTo(): int
+    {
+        return $this->tempTo;
+    }
+
+    public function setTempTo(int $tempTo): void
+    {
+        $this->tempTo = $tempTo;
+    }
+
+    public function getSemiMajorAxis(): float
+    {
+        return $this->semiMajorAxis;
+    }
+
+    public function setSemiMajorAxis(float $semiMajorAxis): void
+    {
+        $this->semiMajorAxis = $semiMajorAxis;
+    }
+
+    public function getEcccentricity(): float
+    {
+        return $this->ecccentricity;
+    }
+
+    public function setEcccentricity(float $ecccentricity): void
+    {
+        $this->ecccentricity = $ecccentricity;
+    }
+
+    public function getMass(): int
+    {
+        return $this->mass;
+    }
+
+    public function setMass(int $mass): void
+    {
+        $this->mass = $mass;
+    }
+
+    public function getResMetal(): float
+    {
+        return $this->resMetal;
+    }
+
+    public function setResMetal(float $resMetal): void
+    {
+        $this->resMetal = $resMetal;
+    }
+
+    public function getResCrystal(): float
+    {
+        return $this->resCrystal;
+    }
+
+    public function setResCrystal(float $resCrystal): void
+    {
+        $this->resCrystal = $resCrystal;
+    }
+
+    public function getResPlastic(): float
+    {
+        return $this->resPlastic;
+    }
+
+    public function setResPlastic(float $resPlastic): void
+    {
+        $this->resPlastic = $resPlastic;
+    }
+
+    public function getResFuel(): float
+    {
+        return $this->resFuel;
+    }
+
+    public function setResFuel(float $resFuel): void
+    {
+        $this->resFuel = $resFuel;
+    }
+
+    public function getResFood(): float
+    {
+        return $this->resFood;
+    }
+
+    public function setResFood(float $resFood): void
+    {
+        $this->resFood = $resFood;
+    }
+
+    public function getUsePower(): int
+    {
+        return $this->usePower;
+    }
+
+    public function setUsePower(int $usePower): void
+    {
+        $this->usePower = $usePower;
+    }
+
+    public function getLastUpdated(): int
+    {
+        return $this->lastUpdated;
+    }
+
+    public function setLastUpdated(int $lastUpdated): void
+    {
+        $this->lastUpdated = $lastUpdated;
+    }
+
+    public function getBunkerMetal(): int
+    {
+        return $this->bunkerMetal;
+    }
+
+    public function setBunkerMetal(int $bunkerMetal): void
+    {
+        $this->bunkerMetal = $bunkerMetal;
+    }
+
+    public function getBunkerCrystal(): int
+    {
+        return $this->bunkerCrystal;
+    }
+
+    public function setBunkerCrystal(int $bunkerCrystal): void
+    {
+        $this->bunkerCrystal = $bunkerCrystal;
+    }
+
+    public function getBunkerPlastic(): int
+    {
+        return $this->bunkerPlastic;
+    }
+
+    public function setBunkerPlastic(int $bunkerPlastic): void
+    {
+        $this->bunkerPlastic = $bunkerPlastic;
+    }
+
+    public function getBunkerFuel(): int
+    {
+        return $this->bunkerFuel;
+    }
+
+    public function setBunkerFuel(int $bunkerFuel): void
+    {
+        $this->bunkerFuel = $bunkerFuel;
+    }
+
+    public function getBunkerFood(): int
+    {
+        return $this->bunkerFood;
+    }
+
+    public function setBunkerFood(int $bunkerFood): void
+    {
+        $this->bunkerFood = $bunkerFood;
+    }
+
+    public function getProdMetal(): int
+    {
+        return $this->prodMetal;
+    }
+
+    public function setProdMetal(int $prodMetal): void
+    {
+        $this->prodMetal = $prodMetal;
+    }
+
+    public function getProdCrystal(): int
+    {
+        return $this->prodCrystal;
+    }
+
+    public function setProdCrystal(int $prodCrystal): void
+    {
+        $this->prodCrystal = $prodCrystal;
+    }
+
+    public function getProdPlastic(): int
+    {
+        return $this->prodPlastic;
+    }
+
+    public function setProdPlastic(int $prodPlastic): void
+    {
+        $this->prodPlastic = $prodPlastic;
+    }
+
+    public function getProdFuel(): int
+    {
+        return $this->prodFuel;
+    }
+
+    public function setProdFuel(int $prodFuel): void
+    {
+        $this->prodFuel = $prodFuel;
+    }
+
+    public function getProdFood(): int
+    {
+        return $this->prodFood;
+    }
+
+    public function setProdFood(int $prodFood): void
+    {
+        $this->prodFood = $prodFood;
+    }
+
+    public function getProdPower(): int
+    {
+        return $this->prodPower;
+    }
+
+    public function setProdPower(int $prodPower): void
+    {
+        $this->prodPower = $prodPower;
+    }
+
+    public function getProdPeople(): int
+    {
+        return $this->prodPeople;
+    }
+
+    public function setProdPeople(int $prodPeople): void
+    {
+        $this->prodPeople = $prodPeople;
+    }
+
+    public function getStoreMetal(): int
+    {
+        return $this->storeMetal;
+    }
+
+    public function setStoreMetal(int $storeMetal): void
+    {
+        $this->storeMetal = $storeMetal;
+    }
+
+    public function getStoreCrystal(): int
+    {
+        return $this->storeCrystal;
+    }
+
+    public function setStoreCrystal(int $storeCrystal): void
+    {
+        $this->storeCrystal = $storeCrystal;
+    }
+
+    public function getStorePlastic(): int
+    {
+        return $this->storePlastic;
+    }
+
+    public function setStorePlastic(int $storePlastic): void
+    {
+        $this->storePlastic = $storePlastic;
+    }
+
+    public function getStoreFuel(): int
+    {
+        return $this->storeFuel;
+    }
+
+    public function setStoreFuel(int $storeFuel): void
+    {
+        $this->storeFuel = $storeFuel;
+    }
+
+    public function getStoreFood(): int
+    {
+        return $this->storeFood;
+    }
+
+    public function setStoreFood(int $storeFood): void
+    {
+        $this->storeFood = $storeFood;
+    }
+
+    public function getWfMetal(): int
+    {
+        return $this->wfMetal;
+    }
+
+    public function setWfMetal(int $wfMetal): void
+    {
+        $this->wfMetal = $wfMetal;
+    }
+
+    public function getWfCrystal(): int
+    {
+        return $this->wfCrystal;
+    }
+
+    public function setWfCrystal(int $wfCrystal): void
+    {
+        $this->wfCrystal = $wfCrystal;
+    }
+
+    public function getWfPlastic(): int
+    {
+        return $this->wfPlastic;
+    }
+
+    public function setWfPlastic(int $wfPlastic): void
+    {
+        $this->wfPlastic = $wfPlastic;
+    }
+
+    public function getPeople(): float
+    {
+        return $this->people;
+    }
+
+    public function setPeople(float $people): void
+    {
+        $this->people = $people;
+    }
+
+    public function getPeoplePlace(): int
+    {
+        return $this->peoplePlace;
+    }
+
+    public function setPeoplePlace(int $peoplePlace): void
+    {
+        $this->peoplePlace = $peoplePlace;
+    }
+
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function setDescription(?string $description): void
+    {
+        $this->description = $description;
+    }
+
+    public function getInvadedBy(): int
+    {
+        return $this->invadedBy;
+    }
+
+    public function setInvadedBy(int $invadedBy): void
+    {
+        $this->invadedBy = $invadedBy;
+    }
+
     public function getImagePath(string $type = "small"): string
     {
         switch ($type) {

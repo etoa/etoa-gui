@@ -1,0 +1,143 @@
+<twig:Table title="Status">
+    {% block table_content %}
+        <tr>
+            <th style="width:30%">Rathaus</th>
+            <th style="width:20%">Eigene Flotten</th>
+            <th style="width:20%">Fremde Flotten</th>
+            <th style="width:30%">Forschung</th>
+        </tr>
+        {% if newsCounts > 0  %}
+            <tr>
+            <td>
+                <a href="?page=townhall" style="color:#ff0">
+                    <b>{{ newsCounts }}</b> neue Nachrichten
+                </a>
+            </td>
+        {% else %}
+            <tr>
+            <td>Keine neuen Nachrichten</td>
+        {% endif %}
+
+        {% if ownFleets > 1  %}
+            <td>
+                <a href="?page=fleets" style="color:#0f0"><b>{{ ownFleets }}</b> eigene Flotten</a>
+            </td>
+        {% elseif ownFleets == 1  %}
+            <td>
+                <a href="?page=fleets" style="color:#0f0"><b>{{ ownFleets }}</b> eigene Flotte</a>
+            </td>
+        {% else %}
+            <td>Keine eigenen Flotten</td>
+        {% endif %}
+
+        {% if result.visibleFleets|length > 1  %}
+            <td>
+                <a href="?page=fleets" style=" {{ result.getAttitude }}"><b>{{ result.visibleFleets|length }}</b> fremde Flotten</a>
+            </td>
+        {% elseif result.visibleFleets|length == 1  %}
+            <td>
+                <a href="?page=fleets" style="{{ result.getAttitude }}"><b>{{ result.visibleFleets|length }}</b> fremde Flotte</a>
+            </td>
+        {% else %}
+            <td>Keine fremden Flotten</td>
+        {% endif %}
+
+        {% if technologyInProgress  %}
+            <td>
+                <a href="?page=research&amp;change_entity={{ technologyInProgress.entityId }}" id="tech_counter">
+                    {% if technologyInProgress.endTime - date().timestamp <= 0  %}
+                        {{ technologyNames[technologyInProgress.technologyId ]}} Fertig
+                    {% else %}
+                        <script type="text/javascript">time({{ technologyInProgress.endTime - date().timestamp }}, 'tech_counter', 0, '{{ technologyNames[technologyInProgress.technologyId] }}  TIME');</script>
+                    {% endif %}
+                </a>
+            </td>
+            </tr>
+        {% else %}
+            <td>Es wird nirgendwo geforscht!</td>
+            </tr>
+        {% endif %}
+
+        {% if genTechnologyInProgress  %}
+            <tr >
+                <th colspan =3></th>
+                <th>Gentechnik</th>
+            </tr>
+            <tr>
+                <td colspan =3/>
+                <td>
+                    <a href="?page=research&amp;change_entity={{genTechnologyInProgress.entityId }}" id="tech_gen">
+                        {% if genTechnologyInProgress.endTime - date().timestamp <= 0  %}
+                            {{ technologyNames[genTechnologyInProgress.technologyId ]}} Fertig
+                        {% else %}
+                            <script type="text/javascript">time({{ technologyInProgress.endTime - date().timestamp }}, 'tech_gen', 0, '{{ technologyNames[genTechnologyInProgress.technologyId] }}  TIME');</script>
+                        {% endif %}
+                    </a>
+                </td>
+            </tr>
+        {% endif %}
+
+        {% if app.user.data.allianceId  %}
+            <tr>
+                <th>Allianzgebäude</th>
+                <th>Supportflotten</th>
+                <th>Allianzangriffe</th>
+                <th>Allianzforschungen</th>
+            </tr>
+            <tr>
+                {% if allianceBuildingInProgress  %}
+                    <td>
+                        <a href="?page=alliance&amp;action=base&amp;action2=buildings" id="alliance_building_counter">
+                            {% if allianceBuildingInProgress.endTime - date().timestamp <= 0  %}
+                                {{ allianceBuildingInProgress.name}} Fertig
+                            {% else %}
+                                {# Stellt Zeit Counter dar, wenn ein Gebäude in bau ist #}
+                                <script type="text/javascript">time({{ allianceBuildingInProgress.endTime - date().timestamp }}, 'alliance_building_counter', 0, '{{ allianceBuildingInProgress.name }}  TIME');</script>
+                            {% endif %}
+                        </a>
+                    </td>
+                {% else %}
+                    <td>Es wird nichts gebaut!</td>
+                {% endif %}
+
+                {% if allianceSupportFleetCount > 1  %}
+                    <td>
+                        <a href="?page=fleets"><b>{{ allianceSupportFleetCount }}</b> Supportflotten</a>
+                    </td>
+                {% elseif allianceSupportFleetCount == 1  %}
+                    <td>
+                        <a href="?page=fleets"><b>{{ allianceSupportFleetCount }}</b> Supportflotte</a>
+                    </td>
+                {% else %}
+                    <td>Keine Supportflotten</td>
+                {% endif %}
+
+                {% if allianceAttackFleetCount > 1  %}
+                    <td>
+                        <a href="?page=fleets"><b>{{ allianceAttackFleetCount }}</b> Allianzangriffe</a>
+                    </td>
+                {% elseif allianceAttackFleetCount == 1  %}
+                    <td>
+                        <a href="?page=fleets"><b>{{ allianceAttackFleetCount }}</b> Allianzangriff</a>
+                    </td>
+                {% else %}
+                    <td>Keine Allianzangriffe</td>
+                {% endif %}
+
+                {% if allianceTechnologyInProgress  %}
+                    <td>
+                        <a href="?page=research&amp;change_entity=" id="alliance_tech_counter">
+                            {% if allianceTechnologyInProgress.endTime - date().timestamp <= 0  %}
+                                {{ allianceTechnologyInProgress.name }} Fertig
+                            {% else %}
+                                <script type="text/javascript">time({{ allianceTechnologyInProgress.endTime - date().timestamp }}, 'alliance_tech_counter', 0, '{{ allianceTechnologyInProgress.name }}  TIME');</script>
+                            {% endif %}
+                        </a>
+                    </td>
+                {% else %}
+                    <td>Es wird nirgendwo geforscht!</td>
+                {% endif %}
+            </tr>
+        {% endif %}
+    {% endblock %}
+</twig:Table>
