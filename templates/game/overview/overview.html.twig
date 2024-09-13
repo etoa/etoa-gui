@@ -1,0 +1,178 @@
+{% extends 'layout/game.html.twig' %}
+{% import 'macros.html.twig' as macros %}
+
+{% block content %}
+    {# could need some refactoring #}
+    <script>
+        function show_info(
+            planet_id,
+            planet_name,
+            building_name,
+            building_time,
+            shipyard_name,
+            shipyard_time,
+            defense_name,
+            defense_time,
+            people,
+            res_metal,
+            res_crystal,
+            res_plastic,
+            res_fuel,
+            res_food,
+            use_power,
+            prod_power,
+            store_metal,
+            store_crystal,
+            store_plastic,
+            store_fuel,
+            store_food,
+            people_place) {
+
+            //Planetinfo Anzeigen
+            document.getElementById("planet_info_name").firstChild.nodeValue = planet_name;
+
+            document.getElementById("planet_info_building_name").firstChild.nodeValue = building_name;
+            document.getElementById("planet_info_building_time").firstChild.nodeValue = building_time;
+
+            document.getElementById("planet_info_shipyard_name").firstChild.nodeValue = shipyard_name;
+            document.getElementById("planet_info_shipyard_time").firstChild.nodeValue = shipyard_time;
+
+            document.getElementById("planet_info_defense_name").firstChild.nodeValue = defense_name;
+            document.getElementById("planet_info_defense_time").firstChild.nodeValue = defense_time;
+
+            //Überprüfen ob Speicher voll ist
+            var check_metal = store_metal - res_metal;
+            var check_crystal = store_crystal - res_crystal;
+            var check_plastic = store_plastic - res_plastic;
+            var check_fuel = store_fuel - res_fuel;
+            var check_food = store_food - res_food;
+            var check_people = people_place - people;
+
+            var rest_power = prod_power - use_power;
+
+            //Wenn Speicher voll, anders darstellen als normal
+            if (check_metal <= 0) {
+                document.getElementById("planet_info_res_metal").className = 'resfullcolor';
+            } else {
+                document.getElementById("planet_info_res_metal").className = 'resmetalcolor';
+            }
+
+            if (check_crystal <= 0) {
+                document.getElementById("planet_info_res_crystal").className = 'resfullcolor';
+            } else {
+                document.getElementById("planet_info_res_crystal").className = 'rescrystalcolor';
+            }
+
+            if (check_plastic <= 0) {
+                document.getElementById("planet_info_res_plastic").className = 'resfullcolor';
+            } else {
+                document.getElementById("planet_info_res_plastic").className = 'resplasticcolor';
+            }
+
+            if (check_fuel <= 0) {
+                document.getElementById("planet_info_res_fuel").className = 'resfullcolor';
+            } else {
+                document.getElementById("planet_info_res_fuel").className = 'resfuelcolor';
+            }
+
+            if (check_food <= 0) {
+                document.getElementById("planet_info_res_food").className = 'resfullcolor';
+            } else {
+                document.getElementById("planet_info_res_food").className = 'resfoodcolor';
+            }
+
+            if (check_people <= 0) {
+                document.getElementById("planet_info_people").className = 'resfullcolor';
+            } else {
+                document.getElementById("planet_info_people").className = 'respeoplecolor';
+            }
+
+            if (rest_power <= 0) {
+                document.getElementById("planet_info_power").className = 'resfullcolor';
+            } else {
+                document.getElementById("planet_info_power").className = 'respowercolor';
+            }
+
+
+            var res_metal = format(res_metal);
+            var res_crystal = format(res_crystal);
+            var res_plastic = format(res_plastic);
+            var res_fuel = format(res_fuel);
+            var res_food = format(res_food);
+            var people = format(people);
+
+            //Roshtoff Anzeigen
+            document.getElementById("planet_info_res_metal").firstChild.nodeValue = '' + res_metal + ' t';
+            document.getElementById("planet_info_res_crystal").firstChild.nodeValue = '' + res_crystal + ' t';
+            document.getElementById("planet_info_res_plastic").firstChild.nodeValue = '' + res_plastic + ' t';
+            document.getElementById("planet_info_res_fuel").firstChild.nodeValue = '' + res_fuel + ' t';
+            document.getElementById("planet_info_res_food").firstChild.nodeValue = '' + res_food + ' t';
+            document.getElementById("planet_info_power").firstChild.nodeValue = rest_power;
+            document.getElementById("planet_info_people").firstChild.nodeValue = people;
+
+
+            //Alle Beschriftungen anzeigen
+            document.getElementById("planet_info_text_building").innerHTML = '<a href=\"?page=buildings&change_entity=' + planet_id + '\">Bauhof:</a>';
+            document.getElementById("planet_info_text_shipyard").innerHTML = '<a href=\"?page=shipyard&change_entity=' + planet_id + '\">Schiffswerft:</a>';
+            document.getElementById("planet_info_text_defense").innerHTML = '<a href=\"?page=defense&change_entity=' + planet_id + '\">Waffenfabrik:</a>';
+            document.getElementById("planet_info_text_res").firstChild.nodeValue = 'Ressourcen';
+            document.getElementById("planet_info_text_res_metal").className = 'resmetalcolor';
+            document.getElementById("planet_info_text_res_crystal").className = 'rescrystalcolor';
+            document.getElementById("planet_info_text_res_plastic").className = 'resplasticcolor';
+            document.getElementById("planet_info_text_res_fuel").className = 'resfuelcolor';
+            document.getElementById("planet_info_text_res_food").className = 'resfoodcolor';
+            document.getElementById("planet_info_text_people").className = 'respeoplecolor';
+            document.getElementById("planet_info_text_power").className = 'respowercolor';
+            document.getElementById("planet_info_text_res_metal").firstChild.nodeValue = '{{ resourceNames.0 }}'
+            document.getElementById("planet_info_text_res_crystal").firstChild.nodeValue = '{{ resourceNames.1 }}'
+            document.getElementById("planet_info_text_res_plastic").firstChild.nodeValue = '{{ resourceNames.2 }}'
+            document.getElementById("planet_info_text_res_fuel").firstChild.nodeValue = '{{ resourceNames.3 }}'
+            document.getElementById("planet_info_text_res_food").firstChild.nodeValue = '{{ resourceNames.4 }}'
+            document.getElementById("planet_info_text_people").firstChild.nodeValue = 'Bewohner:'
+            document.getElementById("planet_info_text_power").firstChild.nodeValue = 'Energie:'
+        }
+
+        //Formatiert Zahlen (der PHP Skript will nicht gehen)
+        function format(nummer) {
+            var nummer = '' + nummer;
+            var laenge = nummer.length;
+            if (laenge > 3) {
+                var mod = laenge % 3;
+                var output = (mod > 0 ?
+                    (nummer.substring(0, mod)) : '');
+                for (i = 0; i < Math.floor(laenge / 3); i++) {
+                    if ((mod == 0) && (i == 0))
+                        output += nummer.substring(mod + 3 * i,
+                            mod + 3 * i + 3);
+                    else
+                        output += '`' + nummer.substring(mod + 3 * i,
+                            mod + 3 * i + 3);
+                }
+                return (output);
+            } else return nummer;
+        }
+    </script>
+
+    <h1>Übersicht</h1>
+    {% if firstView  %}
+        <twig:RoundEnd/>
+        {% if failureCount > 0%}
+            <twig:Box title="Fehlerhafte Logins">
+                <div style="color:red;"><b>Seit deinem letzten Login gab es  {{ failureCount }} <a href="?page=userconfig&amp;mode=logins">fehlerhafte Loginversuche</a>!</b></div>
+            </twig:Box>
+        {% endif %}
+    {% endif %}
+
+    <twig:Sitting/>
+    {% if infoText  %}
+        <div class="overviewInfoTextContainer">
+            {{ macros.message(': Wichtige Information :',BBCodeToHTML(infoText)) }}
+        </div>
+    {% endif %}
+
+    {% include 'game/overview/box.html.twig' %}
+
+    <br><br><br><br><br><br><br><br>
+
+    {% include 'game/overview/planets.html.twig' %}
+{% endblock %}

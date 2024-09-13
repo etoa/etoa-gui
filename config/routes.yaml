@@ -16,7 +16,7 @@ game.index:
   path: /game
   controller: Symfony\Bundle\FrameworkBundle\Controller\RedirectController
   defaults:
-    route: game.test # TODO for testing only
+    route: game.overview
     permanent: true
     keepQueryParams: true
 
