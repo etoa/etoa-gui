@@ -2,6 +2,7 @@
 
 namespace EtoA\Controller\Game;
 
+use Doctrine\ORM\EntityManagerInterface;
 use EtoA\Controller\Game\AbstractGameController;
 use EtoA\Form\Type\Core\AvatarUploadType;
 use EtoA\Support\FileUtils;
@@ -41,7 +42,7 @@ class UserConfigController extends AbstractGameController
     ){}
 
     #[Route('/game/config/general', name: 'game.config.general')]
-    public function general(Request $request): Response
+    public function general(Request $request, EntityManagerInterface $entityManager): Response
     {
         $user = $this->getUser()->getData();
         $msg['error'] = '';
@@ -90,6 +91,13 @@ class UserConfigController extends AbstractGameController
                     }
                 }
 
+                //TODO: use this to check if mail has changed after entity is fully working
+                /*
+                $uow = $entityManager->getUnitOfWork();
+                $uow->computeChangeSets();
+                $changeSet = $uow->getEntityChangeSet($user);
+                */
+
                 if ($user->getEmail() !== $form->getData()->getEmail()) {
                     $subject = "Änderung deiner E-Mail-Adresse";
                     $text = "Die E-Mail-Adresse deines Accounts " . $user->getNick() . " wurde von " . $user->getEmail() . " auf " . $form->getData()['email'] . " geändert!";
@@ -100,9 +108,6 @@ class UserConfigController extends AbstractGameController
                     $user->setEmail($form->getData()['email']);
                 }
 
-                $user->setProfileText(addslashes($form->getData()->getProfileText()));
-                $user->setSignature(addslashes($form->getData()->getSignature()));
-                $user->setProfileBoardUrl($form->getData()->getProfileBoardUrl());
                 $this->userRepository->save($user);
                 $msg['success'][] = "Benutzer-Daten wurden geändert!";
             } else
@@ -123,36 +128,32 @@ class UserConfigController extends AbstractGameController
     public function game(Request $request): Response
     {
         $properties = $this->userPropertiesRepository->getOrCreateProperties($this->getUser()->getId());
-        $msg['success'] = [];
-        $msg['error'] = '';
 
         $form = $this->createFormBuilder($properties)
             ->add('spyShipCount', IntegerType::class, [
                 'attr' => ['maxlength'=>5, 'size'=>5]
             ])
             ->add('spyShipId', ChoiceType::class,[
-                'choices' => [
-                    '(keines)' => '0',
-                    'choices' => array_flip($this->shipDataRepository->getShipNamesWithAction('spy')),
-                ]
-            ])
+                'placeholder' =>false,
+                'choices' => array_merge(['(keines)'=>'0'],array_flip($this->shipDataRepository->getShipNamesWithAction('spy'))),
+                'required'=>false
+            ]
+            )
             ->add('analyzeShipCount', IntegerType::class, [
                 'attr' => ['maxlength'=>5, 'size'=>5]
             ])
             ->add('analyzeShipId', ChoiceType::class,[
-                'choices' => [
-                    '(keines)' => '0',
-                    'choices' => array_flip($this->shipDataRepository->getShipNamesWithAction('analyze')),
-                ]
+                'placeholder' =>false,
+                'choices' => array_merge(['(keines)'=>'0'],array_flip($this->shipDataRepository->getShipNamesWithAction('analyze'))),
+                'required'=>false
             ])
             ->add('exploreShipCount', IntegerType::class, [
                 'attr' => ['maxlength'=>5, 'size'=>5]
             ])
             ->add('exploreShipId', ChoiceType::class,[
-                'choices' => [
-                    '(keines)' => '0',
-                    'choices' => array_flip($this->shipDataRepository->getShipNamesWithAction('explore')),
-                ]
+                'placeholder' =>false,
+                'choices' => array_merge(['(keines)'=>'0'],array_flip( $this->shipDataRepository->getShipNamesWithAction('explore'))),
+                'required'=>false
             ])
             ->add('startUpChat', ChoiceType::class,[
                 'choices' => [
@@ -168,7 +169,7 @@ class UserConfigController extends AbstractGameController
                 ],
                 'expanded' => true,
             ])
-            ->add('showTut', ButtonType::class)
+            ->add('showTut', ButtonType::class, ['label'=>'Anzeigen', 'attr'=>['oClick'=>'showTutorialText(1,0']])
             ->add('chatColor', ColorType::class,['attr'=>
                 [
                     'size'=>6,
@@ -189,15 +190,21 @@ class UserConfigController extends AbstractGameController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            if ($form->getData()->getChatColor() == '000' || $form->getData()->getChatColor() == '000000') {
-                success_msg('Chatfarbe schwarz auf schwarz ist eine Weile ja ganz lustig, aber in ein paar Minuten bitte zur&uuml;ck&auml;ndern ;)');
+            $properties->chatColor = substr($properties->chatColor, 1);
+
+            if ($properties->chatColor === '000' || $properties->chatColor === '000000') {
+                $msg['success'] = 'Chatfarbe schwarz auf schwarz ist eine Weile ja ganz lustig, aber in ein paar Minuten bitte zurückändern';
             } else {
-                success_msg('Benutzer-Daten wurden ge&auml;ndert!');
+                $msg['success'] = 'Benutzer-Daten wurden geändert!';
             }
+
+            //TODO: use entity manager for it
+            $this->userPropertiesRepository->storeProperties($this->getUser()->getId(),$properties);
         }
+
         return $this->render('game/userconfig/game.html.twig', [
             'form' => $form,
-            'msg' => $msg,
+            'msg' => $msg??null,
             'chatColor' => $properties->chatColor
         ]);
     }

@@ -3,15 +3,10 @@
 {% import 'macros.html.twig' as macros %}
 
 {% block config %}
-    {% if msg.success %}
-        {% for message in msg.success %}
-            {{ macros.successMessage(message) }}
-        {% endfor %}
+    {% if msg.success is defined%}
+        {{ macros.successMessage(msg.success) }}
     {% endif %}
 
-    {% if msg.error %}
-        {{ macros.errorMessage(msg.error) }}
-    {% endif %}
     {{ form_start(form) }}
         <twig:Table title="Spieloptionen">
             {% block table_content %}
