@@ -1,0 +1,10 @@
+<div class="tabMenu">
+    {% for key,item in data %}
+        {% if active == key %}
+            <a href="{{ path(key) }}" class="tabEnabled">{{ item }}</a>
+        {% else %}
+            <a href="{{ path(key) }}">{{ item }}</a>
+        {% endif %}
+    {% endfor %}
+    <br style="clear:both;"/>
+</div>
