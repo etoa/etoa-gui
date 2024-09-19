@@ -7,11 +7,21 @@ namespace EtoA\Support;
 use Exception;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
+use Symfony\Component\HttpFoundation\File\File;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Webmozart\Assert\Assert;
 use ZipArchive;
+use Symfony\Component\String\Slugger\SluggerInterface;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 
 class FileUtils
 {
+    public function __construct(
+        private readonly SluggerInterface $slugger,
+    )
+    {
+    }
+
     /**
      * Recursively remove a directory and its contents
      */
@@ -57,5 +67,33 @@ class FileUtils
         if (!$zip->close()) {
             throw new Exception("There was a problem writing the ZIP archive " . $zipFile);
         }
+    }
+
+    public function uploadImage(UploadedFile $file, string $targetDir, array $resize, string &$msg = ''): bool|File
+    {
+        $originalFilename = pathinfo($file->getClientOriginalName(), PATHINFO_FILENAME);
+        // this is needed to safely include the file name as part of the URL
+        $safeFilename = $this->slugger->slug($originalFilename);
+        $ext = $file->guessExtension();
+        $newFilename = $safeFilename.'-'.uniqid().'.'.$ext;
+
+        try {
+            $file = $file->move($targetDir,$newFilename);
+        } catch (FileException $e) {
+            $msg = "Es ist ein Fehler beim Hochladen des Bildes aufgetreten. Bitte versuche es später erneut.";
+            return false;
+        }
+
+        $fpath = $targetDir.$newFilename;
+        $ims = getimagesize($fpath);
+
+        if ($ims[0] > $resize[0] || $ims[1] > $resize[1]) {
+            if (!ImageUtils::resizeImage($fpath, $fpath, $resize[0], $resize[1], $ext)) {
+                $msg = "Bildgrösse konnte nicht angepasst werden!";
+                @unlink($fpath);
+                return false;
+            }
+        }
+        return $file;
     }
 }
