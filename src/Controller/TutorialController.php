@@ -21,9 +21,8 @@ class TutorialController extends AbstractController
     {
     }
 
-    /**
-     * @Route("/api/tutorials/{tutorialId}", methods={"GET"}, name="api.tutorial.show")
-     */
+
+    #[Route("/api/tutorials/{tutorialId}", name:"api.tutorial.show", methods:['GET'])]
     public function showAction(Request $request, TokenContext $context, int $tutorialId): JsonResponse
     {
         if ($request->query->has('step')) {
@@ -47,9 +46,8 @@ class TutorialController extends AbstractController
         return new JsonResponse($data);
     }
 
-    /**
-     * @Route("/api/tutorials/{tutorialId}/close", methods={"PUT"}, name="api.tutorial.close")
-     */
+
+    #[Route("/api/tutorials/{tutorialId}/close", name:"api.tutorial.close",methods:["PUT"])]
     public function closeAction(TokenContext $context, int $tutorialId): JsonResponse
     {
         $this->tutorialUserProgressRepository->closeTutorial($context->getCurrentUser()->getId(), $tutorialId);
