@@ -1,0 +1,23 @@
+{% extends 'layout/game.html.twig' %}
+
+{% block content %}
+    <h1>Einstellungen</h1>
+    {% set tabs = {
+        "game.config.general" : "Profil",
+        "game.config.game" : "Spiel",
+        "game.config.messages" : "Nachrichten",
+        "game.config.design" : "Design",
+        "game.config.sitting" : "Sitting",
+        "game.config.dual" : "Dual",
+        "game.config.password" : "Passwort",
+        "game.config.logins" : "Logins",
+        "game.config.banner" : "Banner",
+        "game.config.misc" : "Sonstiges"
+    } %}
+    {% if warning is defined %}
+        {% set tabs = tabs|merge([{ "game.config.warnings": "Verwarnungen"}]) %}
+    {% endif %}
+    <twig:tabmenu data="{{ tabs }}" active="{{ app.request.attributes.get('_route') }}"/>
+    {% block config %}
+    {% endblock %}
+{% endblock %}

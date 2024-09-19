@@ -1,0 +1,99 @@
+{% extends 'game/userconfig/userconfig.html.twig' %}
+
+{% import 'macros.html.twig' as macros %}
+
+{% block config %}
+    {% if msg.success %}
+        {% for message in msg.success %}
+            {{ macros.successMessage(message) }}
+        {% endfor %}
+    {% endif %}
+
+    {% if msg.error %}
+        {{ macros.errorMessage(msg.error) }}
+    {% endif %}
+
+    {{ form_start(form) }}
+        <twig:Table title="Benutzeroptionen">
+            {% block table_content %}
+                <tr>
+                    <th>öffentliches Profil:</th>
+                    <td style="color:#0f0;">Klicke <a href="?page=userinfo&amp;id={{ app.user.id }}">hier</a> um dein Profil anzuzeigen.</td>
+                </tr>
+                <tr>
+                    <th>Benutzername:</th>
+                    <td>{{ app.user.data.nick }}</td>
+                </tr>
+                <tr>
+                    <th>Vollständiger Name:</th>
+                    <td>{{ app.user.data.name}} [ticketLink("Änderung beantragen", 10)]</td>
+                </tr>
+                <tr>
+                    <th>Fixe E-Mail:</th>
+                    <td>{{ app.user.data.emailFix }} [ticketLink("Änderung beantragen", 9)]</td>
+                </tr>
+                <tr>
+                    <th>E-Mail:</th>
+                    <td>
+                        {{ form_widget(form.email, {'attr': {'maxlength': '255','size': '30'}}) }}
+                    </td>
+                </tr>
+                <tr>
+                    <th>Beschreibung:</th>
+                    <td>
+                        {{ form_widget(form.profileText, {'attr': {'cols': '50','rows': '10'}}) }}
+                    </td>
+                </tr>
+                <tr>
+                    <th>User-Bild:</th>
+                    <td>
+                        {% if profileImg  %}
+                            <img src="{{ profileImg }}" alt="Profil" /><br/>
+                            {{ form_widget(form.profileImgDel) }}Bild löschen<br/>
+                        {% else %}
+                            {{ form_widget(form.profileImgDel,{'attr':{'style':'display:none'}}) }}
+                        {% endif %}
+                        Profilbild heraufladen/ändern:
+                        {{ form_widget(form.profileImage) }}
+                        <br/>
+                        <b>Regeln:</b> Max {{ constant('EtoA\\User\\ProfileImage::IMAGE_MAX_WIDTH') }} * {{ constant('EtoA\\User\\ProfileImage::IMAGE_MAX_HEIGHT') }} Pixel, Bilder grösser als
+                        {{ constant('EtoA\\User\\ProfileImage::IMAGE_WIDTH') }} * {{ constant('EtoA\\User\\ProfileImage::IMAGE_HEIGHT') }} werden automatisch verkleinert.<br/>
+                        Format: GIF, JPG oder PNG. Grösse: Max {{ imgMax }}
+                    </td>
+                </tr>
+                <tr>
+                    <th>Allianzforum-Signatur:</th>
+                    <td>
+                        {{ form_widget(form.signature, {'attr': {'cols': '50','rows': '2'}}) }}
+                    </td>
+                </tr>
+                <tr>
+                    <th>Allianzforum-Avatar:</th>
+                    <td>
+                        {% if allianceAvatar  %}
+                            <div style="padding:8px">
+                                <img src="{{ absolute_url(allianceAvatar) }}" style="width:64px;height:64px" alt="Profil" /><br/>
+                            </div>
+                            {{ form_widget(form.avatarDel) }}Avatar löschen<br/>
+                        {% else %}
+                            {{ form_widget(form.avatarDel,{'attr':{'style':'display:none'}}) }}
+                        {% endif %}
+                        Avatar heraufladen/ändern:  {{ form_widget(form.avatar) }}<br/>
+                        <b>Regeln:</b> Max {{ constant('EtoA\\Admin\\AllianceBoardAvatar::AVATAR_MAX_WIDTH') }} *
+                        {{ constant('EtoA\\Admin\\AllianceBoardAvatar::AVATAR_MAX_HEIGHT') }} Pixel, Bilder grösser als
+                        {{ constant('EtoA\\Admin\\AllianceBoardAvatar::AVATAR_WIDTH') }} *
+                        {{ constant('EtoA\\Admin\\AllianceBoardAvatar::AVATAR_HEIGHT') }} werden automatisch verkleinert.<br/>
+                        Format: GIF, JPG oder PNG. Grösse: Max {{ avatarMax }}
+                    </td>
+                </tr>
+                <tr>
+                    <th>Link zum öffentliches Foren-Profil:</th>
+                    <td>
+                        {{ form_widget(form.profileBoardUrl, {'attr': {'maxlength': '200','size': '50'}}) }}
+                    </td>
+                </tr>
+            {% endblock %}
+        </twig:Table>
+        {{ form_widget(form.save, {'label': 'Übernehmen'}) }}
+    {{ form_end(form) }}
+{% endblock %}

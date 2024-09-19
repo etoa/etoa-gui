@@ -404,4 +404,12 @@ class StringUtils
     {
         return ctype_alpha(str_replace('_', '', str_replace('.', '', $str)));
     }
+
+    /**
+     * Checks for a valid mail address
+     */
+    public function checkEmail($email)
+    {
+        return preg_match('/^[a-zA-Z0-9-_.]+@[a-zA-Z0-9-_.]+\.[a-zA-Z]{2,4}$/', $email);
+    }
 }

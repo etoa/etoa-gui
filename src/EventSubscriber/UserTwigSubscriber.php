@@ -31,6 +31,7 @@ use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use EtoA\Controller\Game\SetupController;
 use EtoA\Controller\Image\GalaxyMapImageController;
 use EtoA\Fleet\ForeignFleetLoader;
+use EtoA\User\UserWarningRepository;
 
 class UserTwigSubscriber implements EventSubscriberInterface
 {
@@ -53,7 +54,7 @@ class UserTwigSubscriber implements EventSubscriberInterface
         private readonly TutorialManager          $tutorialManager,
         private readonly ForeignFleetLoader       $foreignFleetLoader,
         private readonly PlanetRepository         $planetRepository,
-
+        private readonly UserWarningRepository    $userWarningRepository,
     )
     {
     }
@@ -165,7 +166,8 @@ class UserTwigSubscriber implements EventSubscriberInterface
             'infoText' => $infoText->isEnabled() ? $infoText->content : null,
             'viewportScale' => $_SESSION['viewportScale'] ?? 0,
             'fontSize' => ($_SESSION['viewportScale'] ?? 1) * 16 . "px",
-            'helpBox' => false
+            'helpBox' => false,
+            'warnings' => $this->userWarningRepository->search(\EtoA\User\UserWarningSearch::create()->userId($cu->getId()))
         ]);
         foreach ($globals as $key => $value) {
             $this->twig->addGlobal($key, $value);
@@ -212,6 +214,11 @@ class UserTwigSubscriber implements EventSubscriberInterface
     }
 
     public function onKernelController(ControllerEvent $event):void {
+        $token = $this->tokenStorage->getToken();
+        if ($token === null || !$token->getUser() instanceof CurrentPlayer) {
+            return;
+        }
+
         $cu = $this->security->getUser();
         if($cu && !$cu->getData()->isSetup() && !in_array($event->getControllerReflector()->class,self::WHITELIST)) { //TODO $page != "help" && $page != "contact"
             $event->setController(fn() => new RedirectResponse(($this->router->generate('game.setup.race'))));

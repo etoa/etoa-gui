@@ -1,0 +1,75 @@
+{% extends 'game/userconfig/userconfig.html.twig' %}
+
+{% import 'macros.html.twig' as macros %}
+
+{% block config %}
+    {% if msg.success %}
+        {% for message in msg.success %}
+            {{ macros.successMessage(message) }}
+        {% endfor %}
+    {% endif %}
+
+    {% if msg.error %}
+        {{ macros.errorMessage(msg.error) }}
+    {% endif %}
+    {{ form_start(form) }}
+        <twig:Table title="Spieloptionen">
+            {% block table_content %}
+                <tr>
+                    <th><b>Spionagesonden für Direktscan:</b></th>
+                    <td>
+                        {{ form_widget(form.spyShipCount) }}
+                        {{ form_widget(form.spyShipId) }}
+                    </td>
+                </tr>
+                <tr>
+                    <th><b>Erkundungsschiffe für Quickanalyse:</b></th>
+                    <td>
+                        {{ form_widget(form.analyzeShipCount) }}
+                        {{ form_widget(form.analyzeShipId) }}
+                    </td>
+                </tr>
+                <tr>
+                    <th><b>Erkundungsschiffe für Direkterkundung:</b></th>
+                    <td>
+                        {{ form_widget(form.exploreShipCount) }}
+                        {{ form_widget(form.exploreShipId) }}
+                    </td>
+                </tr>
+                <tr>
+                    <th><b>Berichte im Sonnensystem:</b></th>
+                    <td>
+                        {{ form_widget(form.showCellreports) }}
+                    </td>
+                </tr>
+                <tr>
+                    <th><b>Chat beim Login öffnen:</b></th>
+                    <td>
+                        {{ form_widget(form.startUpChat) }}
+                    </td>
+                </tr>
+                <tr>
+                    <th>Tutorial:</th>
+                    <td>
+                        {{ form_widget(form.showTut) }}
+                    </td>
+                </tr>
+                <tr>
+                    <th>Chat Schriftfarbe:</th>
+                    <td>
+                        {{ form_widget(form.chatColor) }}
+                        <div id="chatPreview" style="color:#{{ chatColor }}"> &lt;{{ app.user.data.nick}} |
+                            {{ "now"|date("H:i") }} &gt; Chatvorschau </div>
+                    </td>
+                </tr>
+                <tr>
+                    <th>Keybinds (Navigation mit Tastatur):</th>
+                    <td>
+                        {{ form_widget(form.enableKeybinds) }}
+                    </td>
+                </tr>
+            {% endblock %}
+        </twig:Table>
+        {{ form_widget(form.save, {'label': 'Übernehmen'}) }}
+    {{ form_end(form) }}
+{% endblock %}
