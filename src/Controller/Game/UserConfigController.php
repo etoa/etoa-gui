@@ -5,6 +5,7 @@ namespace EtoA\Controller\Game;
 use Doctrine\ORM\EntityManagerInterface;
 use EtoA\Controller\Game\AbstractGameController;
 use EtoA\Form\Type\Core\AvatarUploadType;
+use EtoA\Form\Type\Core\DesignType;
 use EtoA\Support\FileUtils;
 use EtoA\User\UserPropertiesRepository;
 use Symfony\Component\Form\Extension\Core\Type\ButtonType;
@@ -36,7 +37,6 @@ class UserConfigController extends AbstractGameController
         private readonly StringUtils     $stringUtils,
         private readonly MailSenderService     $mailSenderService,
         private readonly FileUtils     $fileUtils,
-        private readonly TutorialManager     $tutorialManager,
         private readonly ShipDataRepository     $shipDataRepository,
         private readonly UserPropertiesRepository     $userPropertiesRepository,
     ){}
@@ -135,7 +135,7 @@ class UserConfigController extends AbstractGameController
             ])
             ->add('spyShipId', ChoiceType::class,[
                 'placeholder' =>false,
-                'choices' => array_merge(['(keines)'=>'0'],array_flip($this->shipDataRepository->getShipNamesWithAction('spy'))),
+                'choices' => array_merge(['(keines)'=>0],array_flip($this->shipDataRepository->getShipNamesWithAction('spy'))),
                 'required'=>false
             ]
             )
@@ -144,7 +144,7 @@ class UserConfigController extends AbstractGameController
             ])
             ->add('analyzeShipId', ChoiceType::class,[
                 'placeholder' =>false,
-                'choices' => array_merge(['(keines)'=>'0'],array_flip($this->shipDataRepository->getShipNamesWithAction('analyze'))),
+                'choices' => array_merge(['(keines)'=>0],array_flip($this->shipDataRepository->getShipNamesWithAction('analyze'))),
                 'required'=>false
             ])
             ->add('exploreShipCount', IntegerType::class, [
@@ -152,20 +152,20 @@ class UserConfigController extends AbstractGameController
             ])
             ->add('exploreShipId', ChoiceType::class,[
                 'placeholder' =>false,
-                'choices' => array_merge(['(keines)'=>'0'],array_flip( $this->shipDataRepository->getShipNamesWithAction('explore'))),
+                'choices' => array_merge(['(keines)'=>0],array_flip( $this->shipDataRepository->getShipNamesWithAction('explore'))),
                 'required'=>false
             ])
             ->add('startUpChat', ChoiceType::class,[
                 'choices' => [
-                    ' Aktiviert ' => '1',
-                    ' Deaktiviert ' => '0',
+                    ' Aktiviert ' => 1,
+                    ' Deaktiviert ' => 0,
                 ],
                 'expanded' => true,
             ])
             ->add('showCellreports', ChoiceType::class,[
                 'choices' => [
-                    ' Aktiviert ' => '1',
-                    ' Deaktiviert ' => '0',
+                    ' Aktiviert ' => 1,
+                    ' Deaktiviert ' => 0,
                 ],
                 'expanded' => true,
             ])
@@ -179,8 +179,8 @@ class UserConfigController extends AbstractGameController
             ])
             ->add('enableKeybinds', ChoiceType::class,[
                 'choices' => [
-                    ' Aktiviert ' => '1',
-                    ' Deaktiviert ' => '0',
+                    ' Aktiviert ' => 1,
+                    ' Deaktiviert ' => 0,
                 ],
                 'expanded' => true,
             ])
@@ -212,13 +212,120 @@ class UserConfigController extends AbstractGameController
     #[Route('/game/config/messages', name: 'game.config.messages')]
     public function messages(Request $request): Response
     {
+        $properties = $this->userPropertiesRepository->getOrCreateProperties($this->getUser()->getId());
 
+        $form = $this->createFormBuilder($properties)
+            ->add('msgSignature', TextareaType::class, [
+                'attr' => ['cols'=>50, 'rows'=>4]
+            ])
+            ->add('msgPreview', ChoiceType::class,[
+                'choices' => [
+                    ' Aktiviert ' => 1,
+                    ' Deaktiviert ' => 0,
+                ],
+                'expanded' => true,
+            ])
+            ->add('msgCreationPreview', ChoiceType::class,[
+                'choices' => [
+                    ' Aktiviert ' => 1,
+                    ' Deaktiviert ' => 0,
+                ],
+                'expanded' => true,
+            ])
+            ->add('msgBlink', ChoiceType::class,[
+                'choices' => [
+                    ' Aktiviert ' => 1,
+                    ' Deaktiviert ' => 0,
+                ],
+                'expanded' => true,
+            ])
+            ->add('msgCopy', ChoiceType::class,[
+                'choices' => [
+                    ' Aktiviert ' => 1,
+                    ' Deaktiviert ' => 0,
+                ],
+                'expanded' => true,
+            ])
+            ->add('fleetRtnMsg', ChoiceType::class,[
+                'choices' => [
+                    ' Aktiviert ' => 1,
+                    ' Deaktiviert ' => 0,
+                ],
+                'expanded' => true,
+            ])
+            ->add('save', SubmitType::class, ['label' => 'Übernehmen'])
+            ->getForm();
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->userPropertiesRepository->storeProperties($this->getUser()->getId(),$properties);
+            $msg['success'] = 'Nachrichten-Einstellungen wurden geändert!';
+        }
+
+        return $this->render('game/userconfig/messages.html.twig', [
+            'form' => $form,
+            'msg' => $msg??null,
+        ]);
     }
 
     #[Route('/game/config/design', name: 'game.config.design')]
     public function design(Request $request): Response
     {
+        $properties = $this->userPropertiesRepository->getOrCreateProperties($this->getUser()->getId());
+        $planetWidth = [];
 
+        for ($x = 450; $x <= 700; $x += 50) {
+            $planetWidth[$x] = $x;
+        }
+
+        $form = $this->createFormBuilder($properties)
+            ->add('cssStyle', DesignType::class)
+            ->add('planetCircleWidth', ChoiceType::class,[
+                'choices' => $planetWidth,
+            ])
+            ->add('itemShow', ChoiceType::class,[
+                'choices' => [
+                    ' Volle Ansicht ' => 'full',
+                    ' Einfache Ansicht ' => 'small',
+                ],
+                'expanded' => true,
+            ])
+            ->add('imageFilter', ChoiceType::class,[
+                'choices' => [
+                    ' An ' => 1,
+                    ' Aus ' => 0,
+                ],
+                'expanded' => true,
+            ])
+            ->add('showAdds', ChoiceType::class,[
+                'choices' => [
+                    ' Aktiviert ' => 1,
+                    ' Deaktiviert ' => 0,
+                ],
+                'expanded' => true,
+            ])
+            ->add('smallResBox', ChoiceType::class,[
+                'choices' => [
+                    ' Aktiviert ' => 1,
+                    ' Deaktiviert ' => 0,
+                ],
+                'expanded' => true,
+            ])
+            ->add('save', SubmitType::class, ['label' => 'Übernehmen'])
+            ->getForm();
+
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->userPropertiesRepository->storeProperties($this->getUser()->getId(),$properties);
+            $msg['success'] = 'Design-Daten wurden geändert!';
+        }
+
+        return $this->render('game/userconfig/design.html.twig', [
+            'form' => $form,
+            'msg' => $msg??null,
+        ]);
     }
 
     #[Route('/game/config/sitting', name: 'game.config.sitting')]

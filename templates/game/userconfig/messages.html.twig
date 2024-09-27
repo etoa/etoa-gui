@@ -1,0 +1,53 @@
+{% extends 'game/userconfig/userconfig.html.twig' %}
+
+{% import 'macros.html.twig' as macros %}
+
+{% block config %}
+    {% if msg.success is defined%}
+        {{ macros.successMessage(msg.success) }}
+    {% endif %}
+
+    {{ form_start(form) }}
+        <twig:Table title="Nachrichtenoptionen">
+            {% block table_content %}
+                <tr>
+                    <th><b>Nachrichten-Signatur:</b></th>
+                    <td>
+                        {{ form_widget(form.msgSignature) }}
+                    </td>
+                </tr>
+                <tr>
+                    <th><b>Nachrichtenvorschau (Neue/Archiv):</b></th>
+                    <td>
+                        {{ form_widget(form.msgPreview) }}
+                    </td>
+                </tr>
+                <tr>
+                    <th><b>Nachrichtenvorschau (Erstellen):</b></th>
+                    <td>
+                        {{ form_widget(form.msgCreationPreview) }}
+                    </td>
+                </tr>
+                <tr>
+                    <th><b>Blinkendes Nachrichtensymbol:</b></th>
+                    <td>
+                        {{ form_widget(form.msgBlink) }}
+                    </td>
+                </tr>
+                <tr>
+                    <th><b>Text bei Antwort/Weiterleiten kopieren:</b></th>
+                    <td>
+                        {{ form_widget(form.msgCopy) }}
+                    </td>
+                </tr>
+                <tr>
+                    <th><b>Nachricht bei Transport-/Spionagerückkehr:</b></th>
+                    <td>
+                        {{ form_widget(form.fleetRtnMsg) }}
+                    </td>
+                </tr>
+            {% endblock %}
+        </twig:Table>
+        {{ form_widget(form.save, {'label': 'Übernehmen'}) }}
+    {{ form_end(form) }}
+{% endblock %}

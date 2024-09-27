@@ -1,0 +1,53 @@
+{% extends 'game/userconfig/userconfig.html.twig' %}
+
+{% import 'macros.html.twig' as macros %}
+
+{% block config %}
+    {% if msg.success is defined%}
+        {{ macros.successMessage(msg.success) }}
+    {% endif %}
+
+    {{ form_start(form) }}
+        <twig:Table title="Nachrichtenoptionen">
+            {% block table_content %}
+                <tr>
+                    <th><b>Design wählen:</b></th>
+                    <td>
+                        {{ component('DesignInfo', { dropdown: form_widget(form.cssStyle),cssStyle:form.cssStyle.vars.value }) }}
+                    </td>
+                </tr>
+                <tr>
+                    <th><b>Planetkreisgr&ouml;sse:</b></th>
+                    <td>
+                        {{ form_widget(form.planetCircleWidth) }}
+                    </td>
+                </tr>
+                <tr>
+                    <th><b>Schiff/Def Ansicht:</b></th>
+                    <td>
+                        {{ form_widget(form.itemShow) }}
+                    </td>
+                </tr>
+                <tr>
+                    <th><b>Bildfilter:</b></th>
+                    <td>
+                        {{ form_widget(form.imageFilter) }}
+                    </td>
+                </tr>
+                <tr>
+                    <th><b>Werbung anzeigen:</b></th>
+                    <td>
+                        {{ form_widget(form.showAdds) }}
+                    </td>
+                </tr>
+                <tr>
+                    <th><b>Schlanke Ressourcenanzeige</b></th>
+                    <td>
+                        {{ form_widget(form.smallResBox) }}
+                    </td>
+                </tr>
+            {% endblock %}
+        </twig:Table>
+        {{ form_widget(form.save, {'label': 'Übernehmen'}) }}
+    {{ form_end(form) }}
+{% endblock %}
