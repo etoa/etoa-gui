@@ -1,0 +1,50 @@
+{% extends 'game/userconfig/userconfig.html.twig' %}
+
+{% import 'macros.html.twig' as macros %}
+
+{% block config %}
+    {% if msg.success is defined%}
+        {{ macros.successMessage(msg.success) }}
+    {% endif %}
+
+    {% if form.dualEmail is defined and not form.dualEmail.vars.valid %}
+        {% for error in form.dualEmail.vars.errors %}
+            {{ macros.errorMessage(error.message) }}
+        {% endfor %}
+    {% endif %}
+
+    {% if form.dualName is defined and not form.dualName.vars.valid %}
+        {% for error in form.dualName.vars.errors %}
+            {{ macros.errorMessage(error.message) }}
+        {% endfor %}
+    {% endif %}
+
+    {{ form_start(form) }}
+        <twig:Table title="Dual">
+            {% block table_content %}
+                <tr>
+                    <th>Vollständiger Name:</th>
+                    <td>
+                        {% if form.children.dualName.vars.data and form.vars.valid %}
+                            {{ form.children.dualName.vars.data }} [ticketLink("Änderung beantragen", 18)]
+                        {% else %}
+                            {{ form_widget(form.dualName,{'value': ''}) }}
+                        {% endif %}
+                    </td>
+                </tr>
+                <tr>
+                    <th>E-Mail:</th>
+                    <td>
+                        {% if form.children.dualEmail.vars.data and form.vars.valid%}
+                            {{ form.children.dualEmail.vars.data }} [ticketLink("Änderung beantragen", 18)]
+                        {% else %}
+                            {{ form_widget(form.dualEmail,{'value': ''}) }}
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endblock %}
+        </twig:Table>
+        {{ form_widget(form._token) }}
+        {{ form_widget(form.save, {'label': 'Übernehmen'}) }}
+    {{ form_end(form,{render_rest: false}) }}
+{% endblock %}
