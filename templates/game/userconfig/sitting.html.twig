@@ -1,0 +1,80 @@
+{% extends 'game/userconfig/userconfig.html.twig' %}
+
+{% import 'macros.html.twig' as macros %}
+
+{% block config %}
+    {% if msg.success is defined%}
+        {{ macros.successMessage(msg.success) }}
+    {% endif %}
+
+    {{ form_start(form) }}
+        <twig:Table title="Multierkennung [<a href='?page=help&site=multi_sitting'>Info</a>]">
+            {% block table_content %}
+                <tr>
+                    <th>User</th>
+                    <th>Beziehung</th>
+                    <th>Löschen</th>
+                </tr>
+                {% if form.userMultis is defined %}
+                    {% for userMulti in form.userMultis %}
+                        <tr>
+                            <td>{{ form_widget(userMulti.multiUserNick) }}</td>
+                            <td>{{ form_widget(userMulti.reason) }}</td>
+                            <td>{{ form_widget(userMulti.delMulti) }}</td>
+                        </tr>
+                    {% endfor %}
+                {% endif %}
+                <tr>
+                    <td style="text-align:center" colspan="3">
+                        <div {{ stimulus_controller('form-collection') }}
+                                data-form-collection-index-value="{{ form.userMultis|length > 0 ? form.userMultis|last.vars.name + 1 : 0 }}"
+                                data-form-collection-prototype-value="{{ form_widget(form.userMultis.vars.prototype)|e('html_attr') }}"
+                        >
+                            <ul {{ stimulus_target('form-collection', 'collectionContainer') }}></ul>
+                            <button type="button" {{ stimulus_action('form-collection', 'addCollectionElement') }}>User hinzufügen</button>
+                        </div>
+                    </td>
+                </tr>
+            {% endblock %}
+        </twig:Table>
+        {{ form_widget(form.save, {'label': 'Übernehmen'}) }}
+    {{ form_end(form) }}
+    <twig:Table title="Sitter Einstellungen [<a href='?page=help&site=multi_sitting'>Info</a>]">
+        {% block table_content %}
+            {% if sittingEntries %}
+                <tr>
+                    <th>Sitter</th>
+                    <th>Von</th>
+                    <th>Bis</th>
+                    <th>Tage</th>
+                    <th>Aktionen</th>
+                </tr>
+                {% for entry in sittingEntries %}
+                    <tr>
+                        <td>{{ entry.sitterNick }}</td>
+                        <td>{{ formatTimestamp(entry.dateFrom) }}</td>
+                        <td>{{ formatTimestamp(entry.dateTo) }}</td>
+                        <td>{{ ((entry.dateTo - entry.dateFrom) / 86400)|round(0, 'ceil') }}</td>
+                    <td>
+                    {% if entry.dateFrom > date().timestamp %}
+                        <a href="{{ app.request.uri }}?remove_sitting={{ entry.id }}" onclick="return confirm('Sittereinstellung löschen?')">Löschen</a>
+                    {% elseif entry.dateFrom < date().timestamp and entry.dateTo > date().timestamp %}
+                        AKTIV <a href="{{ app.request.uri }}?cancel_sitting={{ entry.id }}" onclick="return confirm('Sitting abbrechen?');">Abbrechen</a>
+                    {% else %}
+                        -
+                    {% endif %}
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td>Keine Sitting-Daten vorhanden!</td>
+                </tr>
+            {% endif %}
+        {% endblock %}
+    </twig:Table>
+    <p>Noch {{ app.user.data.sittingDays }} Sittingtage verfügbar.</p>
+    {% if app.user.data.sittingDays > 0 %}
+        <p>
+            <a href="{{ path('game.config.sitting.new') }}"><input type="button" value="Sitting einrichten/hinzufügen"></a>
+        </p>
+    {% endif %}
+{% endblock %}

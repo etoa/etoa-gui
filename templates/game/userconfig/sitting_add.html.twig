@@ -1,0 +1,60 @@
+{% extends 'game/userconfig/userconfig.html.twig' %}
+
+{% import 'macros.html.twig' as macros %}
+
+{% block config %}
+    {% if msg.success is defined%}
+        {{ macros.successMessage(msg.success) }}
+    {% endif %}
+
+    {% if msg.error is defined%}
+        {{ macros.errorMessage(msg.error) }}
+    {% endif %}
+
+    {% if form is defined %}
+        {% if not form.plainPassword.first.vars.valid %}
+            {% for error in form.plainPassword.first.vars.errors %}
+                {{ macros.errorMessage(error.message) }}
+            {% endfor %}
+        {% endif %}
+
+        {% if not form.sitterNick.vars.valid %}
+            {% for error in form.sitterNick.vars.errors %}
+                {{ macros.errorMessage(error.message) }}
+            {% endfor %}
+        {% endif %}
+
+        {{ form_start(form) }}
+            <twig:Table title="Neues Sitting einrichten">
+                {% block table_content %}
+                    <tr>
+                        <th>Sitter Nick:</th>
+                        <td colspan="2" {{ tm("Sitter Nick", "Gib hier den Nick des Users an, welcher dein Account Sitten soll.")|raw }}>
+                            {{ form_widget(form.sitterNick) }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Sitter Passwort:</th>
+                        <td colspan="2" {{ tm("Sitter Passwort", "Definiere hier das Passwort, mit dem sich dein Sitter einlogen kann.")|raw }}>
+                            {{ form_widget(form.plainPassword.first) }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Sitter Passwort (wiederholen):</th>
+                        <td colspan="2" {{ tm("Sitter Passwort (wiederholen)", "Zur Sicherheit musst du hier das Passwort noch einmal hinschreiben.")|raw }}>
+                            {{ form_widget(form.plainPassword.second) }}
+                        </td>
+                    </tr>
+                    <tr>
+                        <th>Zeitraum:</th>
+                        <td>{{ form_widget(form.dateFrom) }}  Dauer (Tage) {{ form_widget(form.dateToDays) }}
+                        </td>
+                    </tr>
+                {% endblock %}
+            </twig:Table>
+            <p>Mit dem Speichern dieses Eintrags werden die entsprechenden Sittingtage von deinem Account abgezogen.<br/><br/>{{ form_widget(form.save) }}<a href="{{ path('game.config.sitting') }}"><input type="button" value="Abbrechen"></a></p>
+        {{ form_end(form) }}
+    {%  else %}
+        <a href="{{ path('game.config.sitting') }}"><input type="button" value="Zurück"></a>
+    {%  endif %}
+{% endblock %}

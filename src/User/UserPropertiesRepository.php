@@ -94,7 +94,7 @@ class UserPropertiesRepository extends AbstractRepository
                 'itemOrderDef' => $properties->itemOrderDef,
                 'itemOrderBookmark' => $properties->itemOrderBookmark,
                 'itemOrderWay' => $properties->itemOrderWay,
-                'imageFilter' => $properties->imageFilter,
+                'imageFilter' => (int) $properties->imageFilter,
                 'msgSignature' => $properties->msgSignature,
                 'msgCreationPreview' => (int) $properties->msgCreationPreview,
                 'msgPreview' => (int) $properties->msgPreview,

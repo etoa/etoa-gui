@@ -2,7 +2,9 @@
 
 namespace EtoA\User;
 
-class UserSitting
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+
+class UserSitting implements PasswordAuthenticatedUserInterface
 {
     public int $id;
     public int $userId;
@@ -12,6 +14,11 @@ class UserSitting
     public string $password;
     public int $dateFrom;
     public int $dateTo;
+
+    public function getPassword(): string
+    {
+        return $this->password;
+    }
 
     public function __construct(array $data)
     {

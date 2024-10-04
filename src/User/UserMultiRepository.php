@@ -181,7 +181,7 @@ class UserMultiRepository extends AbstractRepository
             ->from('user_multi', 'm')
             ->leftJoin('m', 'users', 'u', 'u.user_id = m.multi_id')
             ->where('m.user_id = :userId')
-            ->andWhere('m.id = :id')
+            ->andWhere('m.multi_id = :id')
             ->setParameter('userId', $userId, )
             ->setParameter('id', $id, )
             ->fetchAssociative();

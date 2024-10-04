@@ -170,7 +170,7 @@ class UserSittingRepository extends AbstractRepository
             ->update('user_sitting')
             ->set('date_to', 'UNIX_TIMESTAMP()')
             ->where('id = :id')
-            ->andWhere('userId = :userId')
+            ->andWhere('user_id = :userId')
             ->andWhere('date_from < :time')
             ->andWhere('date_to > :time')
             ->setParameters([
@@ -187,7 +187,7 @@ class UserSittingRepository extends AbstractRepository
         return (bool)$this->createQueryBuilder()
             ->delete('user_sitting')
             ->where('id = :id')
-            ->andWhere('userId = :userId')
+            ->andWhere('user_id = :userId')
             ->andWhere('date_from > :time')
             ->setParameters([
                 'id' => $id,
