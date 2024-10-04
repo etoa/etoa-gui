@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace EtoA\UI;
 
 use EtoA\Support\BBCodeUtils;
+use EtoA\Support\StringUtils;
 
 class Tooltip
 {
@@ -24,7 +25,7 @@ class Tooltip
 
     public function toString(): string
     {
-        return mTT($this->title, $this->text);
+        return $this->mTT($this->title, $this->text);
     }
 
     public function addIcon(string $path): void
@@ -65,5 +66,20 @@ class Tooltip
     public function addImage(string $path): void
     {
         $this->add("<img src=\"" . $path . "\" alt=\"TTImage\" style=\"background:#000;\" /><br/>");
+    }
+
+    public function cTT($title, $content): string
+    {
+        return " onclick=\"showTT('" . StringUtils::encodeDBStringToJS($title) . "','" . StringUtils::encodeDBStringToJS($content) . "',0,event,this);return false;\"  ";
+    }
+
+    public function mTT($title, $content): string
+    {
+        return " onmouseover=\"showTT('" . StringUtils::encodeDBStringToJS($title) . "','" . StringUtils::replaceBR(StringUtils::encodeDBStringToJS($content)) . "',1,event,this);\" onmouseout=\"hideTT();\" ";
+    }
+
+    public function tt($content): string
+    {
+        return " onmouseover=\"showTT('','" . StringUtils::encodeDBStringToJS($content) . "',1,event,this);\" onmouseout=\"hideTT();\" ";
     }
 }

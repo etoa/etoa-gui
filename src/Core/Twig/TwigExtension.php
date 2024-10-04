@@ -11,6 +11,7 @@ use EtoA\Support\ExternalUrl;
 use EtoA\Support\GameVersionService;
 use EtoA\Support\RuntimeDataStore;
 use EtoA\Support\StringUtils;
+use EtoA\UI\Tooltip;
 use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
@@ -26,6 +27,7 @@ class TwigExtension extends AbstractExtension
         private readonly RuntimeDataStore      $runtimeDataStore,
         private readonly GameVersionService    $gameVersion,
         private readonly UrlGeneratorInterface $router,
+        private readonly Tooltip $tooltip,
     )
     {
         $this->startTime = microtime(true);
@@ -192,17 +194,17 @@ class TwigExtension extends AbstractExtension
 
     public function userMTT(string $userNick, int $points): string
     {
-        return mTT($userNick, StringUtils::formatNumber($points) . " Punkte");
+        return $this->tooltip->mTT($userNick, StringUtils::formatNumber($points) . " Punkte");
     }
 
     public function cTT(string $title, string $content): string
     {
-        return cTT($title, $content);
+        return $this->tooltip->cTT($title, $content);
     }
 
     public function tm(string $title, string $text): string
     {
-        return mTT($title, $text);
+        return $this->tooltip->mTT($title, $text);
     }
 
     public function button(string $label, string $target): string
