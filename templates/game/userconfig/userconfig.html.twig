@@ -14,8 +14,8 @@
         "game.config.banner" : "Banner",
         "game.config.misc" : "Sonstiges"
     } %}
-    {% if warning is defined %}
-        {% set tabs = tabs|merge([{ "game.config.warnings": "Verwarnungen"}]) %}
+    {% if warnings %}
+        {% set tabs = tabs|merge({ "game.config.warnings": "Verwarnungen"}) %}
     {% endif %}
     <twig:tabmenu data="{{ tabs }}" active="{{ app.request.attributes.get('_route') }}"/>
     {% block config %}

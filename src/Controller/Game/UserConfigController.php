@@ -3,7 +3,6 @@
 namespace EtoA\Controller\Game;
 
 use Doctrine\ORM\EntityManagerInterface;
-use EtoA\Controller\Game\AbstractGameController;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Form\Type\Core\AvatarUploadType;
 use EtoA\Form\Type\Core\DesignType;
@@ -16,13 +15,10 @@ use EtoA\Log\LogFacility;
 use EtoA\Log\LogRepository;
 use EtoA\Log\LogSeverity;
 use EtoA\Ranking\UserBannerService;
-use EtoA\Security\Player\CurrentPlayer;
 use EtoA\Support\BBCodeUtils;
 use EtoA\Support\FileUtils;
-use EtoA\User\User;
 use EtoA\User\UserHolidayService;
 use EtoA\User\UserLoginFailureRepository;
-use EtoA\User\UserMulti;
 use EtoA\User\UserMultiRepository;
 use EtoA\User\UserPropertiesRepository;
 use EtoA\User\UserService;
@@ -39,7 +35,6 @@ use Symfony\Component\Form\Extension\Core\Type\ColorType;
 use Symfony\Component\Form\Extension\Core\Type\DateTimeType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
-use Symfony\Component\Form\Extension\Core\Type\RadioType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -54,15 +49,11 @@ use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
-use EtoA\Tutorial\TutorialManager;
 use EtoA\Ship\ShipDataRepository;
-use Symfony\Component\Security\Http\Attribute\CurrentUser;
-use Symfony\Component\Validator\Constraints\Blank;
 use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use function Symfony\Component\Clock\now;
-use Exception;
 
 class UserConfigController extends AbstractGameController
 {
@@ -741,8 +732,8 @@ class UserConfigController extends AbstractGameController
     }
 
     #[Route('/game/config/warnings', name: 'game.config.warnings')]
-    public function warnings(Request $request): Response
+    public function warnings(): Response
     {
-
+        return $this->render('game/userconfig/warnings.html.twig');
     }
 }
