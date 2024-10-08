@@ -1,0 +1,23 @@
+{% extends 'game/userconfig/userconfig.html.twig' %}
+
+{% import 'macros.html.twig' as macros %}
+
+{% block config %}
+<twig:Table title="Ausgesprochene Verwarnungen">
+    {% block table_content %}
+        <tr>
+            <th>Text</th>
+            <th>Datum</th>
+            <th>Verwarnt von</th>
+        </tr>
+        {% for warning in warnings %}
+            <tr>
+                <td>{{ warning.text }}</td>
+                <td>{{ formatTimestamp(warning.date) }}</td>
+                <td><a href="?page=contact&rcpt={{ warning.adminId }}">{{ warning.adminNick }}</a>
+                </td>
+            </tr>
+        {% endfor %}
+    {% endblock %}
+</twig:Table>
+{% endblock %}
