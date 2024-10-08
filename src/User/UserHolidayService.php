@@ -39,8 +39,9 @@ class UserHolidayService
         $this->backendMessageService = $backendMessageService;
     }
 
-    public function activateHolidayMode(int $userId, bool $force = false): bool
+    public function activateHolidayMode(User $user, bool $force = false): bool
     {
+        $userId = $user->getId();
         // Prevent umode if user has any fleet in the air
         if ($this->fleetRepository->exists(FleetSearch::create()->user($userId)) && !$force) {
             return false;
@@ -65,7 +66,11 @@ class UserHolidayService
         $this->technologyRepository->freezeConstruction($userId);
         $this->planetRepository->freezeProduction($userId);
 
-        $this->userRepository->activateHolidayMode($userId, $holidayFrom, $holidayTo);
+        $user->setHmodFrom($holidayFrom);
+        $user->setHmodTo($holidayTo);
+        $user->setLogoutTime($holidayFrom);
+
+        $this->userRepository->save($user);
 
         return true;
     }
@@ -85,8 +90,12 @@ class UserHolidayService
         $this->technologyRepository->unfreezeConstruction($user->getId(), $holidayTime);
         $this->planetRepository->freezeProduction($user->getId());
 
-        $this->userRepository->addSpecialistTime($user->getId(), $holidayTime);
-        $this->userRepository->disableHolidayMode($user->getId());
+        $user->setSpecialistTime($user->getSpecialistTime()+$holidayTime);
+        $user->setHmodFrom(0);
+        $user->setHmodTo(0);
+        $user->setLogoutTime(time());
+
+        $this->userRepository->save($user);
 
         $userPlanets = $this->planetRepository->getUserPlanets($user->getId());
         foreach ($userPlanets as $planet) {

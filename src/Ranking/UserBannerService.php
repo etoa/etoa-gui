@@ -52,23 +52,23 @@ class UserBannerService
         $raceNames = $this->raceDataRepository->getRaceNames(true);
         $users = $this->userRepository->searchUsers();
         foreach ($users as $user) {
-            if ($user->admin == 1) {
+            if ($user->getAdmin() == 1) {
                 $pt = "  -  Game-Admin";
-            } elseif ($user->ghost) {
+            } elseif ($user->isGhost()) {
                 $pt = "";
             } else {
-                $pt = "  -  " . StringUtils::formatNumber($user->points) . " Punkte, Platz " . $user->rank . "";
+                $pt = "  -  " . StringUtils::formatNumber($user->getPoints()) . " Punkte, Platz " . $user->getRank() . "";
             }
             $text = $this->config->get('roundname') . $pt;
 
             $im = $this->createUserBannerImage(
-                $user->nick,
-                $user->allianceId > 0 && isset($allianceNames[$user->allianceId]) ? $allianceNames[$user->allianceId] : null,
-                $raceNames[$user->raceId],
+                $user->getNick(),
+                $user->getAllianceId() > 0 && isset($allianceNames[$user->getAllianceId()]) ? $allianceNames[$user->getAllianceId()] : null,
+                $raceNames[$user->getRaceId()],
                 $text
             );
 
-            $file = $this->getUserBannerPath($user->id);
+            $file = $this->getUserBannerPath($user->getId());
             if (file_exists($file)) {
                 unlink($file);
             }

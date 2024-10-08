@@ -5,8 +5,9 @@ declare(strict_types=1);
 namespace EtoA\User;
 
 use EtoA\Admin\AllianceBoardAvatar;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
-class User implements \EtoA\User\UserInterface
+class User implements \EtoA\User\UserInterface, PasswordAuthenticatedUserInterface
 {
     public const NAME_PATTERN = '/^.[^0-9\'\"\?\<\>\$\!\=\;\&]*$/';
     public const NICK_PATTERN = '/^.[^\'\"\?\<\>\$\!\=\;\&]*$/';

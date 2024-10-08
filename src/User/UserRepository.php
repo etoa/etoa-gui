@@ -711,6 +711,7 @@ class UserRepository extends AbstractRepository
             ->set('user_chatadmin', ':chatAdmin')
             ->set('admin', ':admin')
             ->set('user_ghost', ':ghost')
+            ->set('user_deleted', ':deleted')
             ->set('user_changed_main_planet', ':userChangedMainPlanet')
             ->set('user_profile_board_url', ':profileBoardUrl')
             ->set('user_alliace_shippoints', ':allianceShipPoints')
@@ -743,7 +744,7 @@ class UserRepository extends AbstractRepository
                 'allianceId' => $user->getAllianceId(),
                 'profileText' => $user->getProfileText(),
                 'signature' => $user->getSignature(),
-                'multiDelets' => $user->getDeleted(),
+                'multiDelets' => $user->getMultiDelets(),
                 'sittingDays' => $user->getSittingDays(),
                 'chatAdmin' => $user->getChatAdmin(),
                 'admin' => $user->getAdmin(),
@@ -765,6 +766,7 @@ class UserRepository extends AbstractRepository
                 'banReason' => $user->getBanReason(),
                 'hmodFrom' => $user->getHmodFrom(),
                 'hmodTo' => $user->getHmodTo(),
+                'deleted' => $user->getDeleted(),
             ])
             ->executeQuery();
     }

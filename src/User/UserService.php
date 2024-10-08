@@ -260,9 +260,10 @@ die Spielleitung";
         return false;
     }
 
-    public function revokeDelete(int $userId): void
+    public function updateDelete(User $user, int $timestamp): void
     {
-        $this->userRepository->markDeleted($userId, 0);
+        $user->setDeleted($timestamp);
+        $this->userRepository->save($user);
     }
 
     public function removeInactive(bool $manual = false): int
@@ -347,6 +348,11 @@ die Spielleitung";
         $this->userLogRepository->add($userId, $zone, $message, gethostbyname($_SERVER['REMOTE_ADDR']), $public);
     }
 
+    /**
+
+     * @deprecated let symfony/form handler deal with it
+
+     */
     public function setPassword(int $userId, string $oldPassword, string $newPassword1, string $newPassword2): void
     {
         $user = $this->userRepository->getUser($userId);
