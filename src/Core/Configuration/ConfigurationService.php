@@ -89,10 +89,7 @@ class ConfigurationService
         return (bool)$this->get($key);
     }
 
-    /**
-     * @return int|bool|string|float
-     */
-    public function param1(string $key)
+    public function param1(string $key): int|bool|string|float
     {
         $this->ensureLoaded();
         if (isset($this->_items[$key])) {
