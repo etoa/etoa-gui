@@ -1,0 +1,56 @@
+{% extends 'game/userconfig/userconfig.html.twig' %}
+
+{% import 'macros.html.twig' as macros %}
+
+{% block config %}
+    {% if msg.success is defined%}
+        {{ macros.successMessage(msg.success) }}
+    {% endif %}
+    {% if msg.error is defined%}
+        {{ macros.errorMessage(msg.error)|raw }}
+    {% endif %}
+    {% if not form.password.vars.valid %}
+        {% for error in form.password.vars.errors %}
+            {{ macros.errorMessage(error.message)|raw }}
+        {% endfor %}
+    {% endif %}
+
+    {% if showButton %}
+        <a href="{{ path('game.overview') }}"><input type="button" value="Zur Übersicht"></a>
+    {% endif %}
+
+    {{ form_start(form) }}
+        <twig:Table title="Sonstige Accountoptionen">
+            {% block table_content %}
+                {% if app.user.data.deleted %}
+                    <tr>
+                        <th style="width:150px;">Urlaubsmodus</th>
+                        <td>Um den Urlaubsmodus zu beenden, musst du erst die Accountlöschung aufheben</td>
+                        <td></td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <th style="width:150px;">Urlaubsmodus</th>
+                        <td>Im Urlaubsmodus kannst du nicht angegriffen werden, aber deine Produktion steht auch still. <br> Dauer: mindestens
+                            {{ configValue('hmode_days') }} Tage, nach {{ param1('hmode_days') }} Tagen Urlaubsmodus wird der Account inaktiv und kann wieder angegriffen werden.
+                        </td>
+                        <td>
+                            {% if app.user.data.hmodFrom and app.user.data.hmodFrom < date().timestamp and app.user.data.hmodTo < date().timestamp %}
+                                {{ form_widget(form.deactivate, {'label': 'Urlaubsmodus deaktivieren', 'attr':{'style':'color:#0f0'}}) }}
+                            {% elseif  app.user.data.hmodFrom and app.user.data.hmodFrom < date().timestamp and app.user.data.hmodTo >= date().timestamp %}
+                                <span style="color:#f90">Urlaubsmodus ist aktiv bis mindestens <b>{{ formatTimestamp(app.user.data.hmodTo) }}</b>!</span>
+                            {% else %}
+                                {{ form_widget(form.activate) }}
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endif %}
+                {{ component('Delete',{ cancelDelete: form_widget(form.cancelDelete),
+                                        confirmDelete:form_widget(form.confirmDelete),
+                                        password:form_widget(form.password),
+                                        userDeleted:app.user.data.deleted}) }}
+            {% endblock %}
+        </twig:Table>
+    {{ form_widget(form._token) }}
+    {{ form_end(form,{render_rest: false}) }}
+{% endblock %}

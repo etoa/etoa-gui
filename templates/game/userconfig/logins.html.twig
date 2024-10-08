@@ -1,0 +1,71 @@
+{% extends 'game/userconfig/userconfig.html.twig' %}
+
+{% import 'macros.html.twig' as macros %}
+
+{% block config %}
+    {{ macros.message('Logins', 'Hier findest du deine aktiven Sessions, eine Liste der letzten 10 Logins in deinen Account, ebenfalls kannst du weiter unten
+            sehen wann dass fehlerhafte Loginversuche stattgefunden haben. Solltest du feststellen, dass jemand unbefugten
+            Zugriff auf deinen Account hatte, solltest du umgehend dein Passwort ändern und ein ticketLink("Ticket", 16) schreiben.') }}
+
+    <twig:Table title="Aktive Sessions">
+        {% block table_content %}
+            <tr>
+                <th>Login</th>
+                <th>Letzte Aktion</th>
+                <th>IP-Adresse</th>
+                <th>Hostname</th>
+                <th>Client</th>
+            </tr>
+            {% for session in activeSessions %}
+                <tr>
+                    <td>{{ formatTimestamp(session.timeLogin) }}</td>
+                    <td>{{ formatTimestamp(session.timeAction) }}</td>
+                    <td>{{ session.ipAddr }}</td>
+                    <td>{{ networkNameService.getHost(session.ipAddr) }}</td>
+                    <td>{{ session.userAgent }}</td></tr>
+            {% endfor %}
+        {% endblock %}
+    </twig:Table>
+    <twig:Table title="Letzte 10 Logins">
+        {% block table_content %}
+            <tr>
+                <th>Zeit</th>
+                <th>IP-Adresse</th>
+                <th>Hostname</th>
+                <th>Client</th>
+            </tr>
+            {% for sessionLog in sessionLogs %}
+                <tr>
+                    <td>{{ formatTimestamp(sessionLog.timeLogin) }}</td>
+                    <td>{{ sessionLog.ipAddr }}</td>
+                    <td>{{ networkNameService.getHost(sessionLog.ipAddr) }}</td>
+                    <td>{{ sessionLog.userAgent }}</td>
+                </tr>
+            {% endfor %}
+        {% endblock %}
+    </twig:Table>
+    <twig:Table title="Letzte 10 fehlgeschlagene Logins">
+        {% block table_content %}
+            {% if failures %}
+                <tr>
+                    <th>Zeit</th>
+                    <th>IP-Adresse</th>
+                    <th>Hostname</th>
+                    <th>Client</th>
+                </tr>
+                {% for failure in failures %}
+                    <tr>
+                        <td>{{ formatTimestamp(failure.time) }}</td>
+                        <td>{{ failure.ip }}</td>
+                        <td>{{ networkNameService.getHost(failure.ip) }}</td>
+                        <td>{{ failure.client }}</td>
+                    </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td>Keine fehlgeschlagenen Logins</td>
+                </tr>
+            {% endif %}
+        {% endblock %}
+    </twig:Table>
+{% endblock %}
