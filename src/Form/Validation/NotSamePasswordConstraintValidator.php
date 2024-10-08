@@ -11,7 +11,7 @@ use Symfony\Component\Validator\Exception\UnexpectedValueException;
 use Symfony\Bundle\SecurityBundle\Security;
 use EtoA\User\UserRepository;
 
-class SamePasswordConstraintValidator extends ConstraintValidator
+class NotSamePasswordConstraintValidator extends ConstraintValidator
 {
 
     public function __construct(
@@ -24,8 +24,8 @@ class SamePasswordConstraintValidator extends ConstraintValidator
      */
     public function validate(mixed $value, Constraint $constraint):void
     {
-        if (!$constraint instanceof SamePasswordConstraint) {
-            throw new UnexpectedTypeException($constraint, SamePasswordConstraint::class);
+        if (!$constraint instanceof NotSamePasswordConstraint) {
+            throw new UnexpectedTypeException($constraint, NotSamePasswordConstraint::class);
         }
 
         if (null === $value || '' === $value) {
@@ -39,8 +39,8 @@ class SamePasswordConstraintValidator extends ConstraintValidator
 
         $user = $this->security->getUser();
 
-        // input password != main password
-        if (!$this->passwordHasher->isPasswordValid($user, $value)) {
+        // input password = main password
+        if ($this->passwordHasher->isPasswordValid($user, $value)) {
             $this->context->addViolation($constraint->message);
         }
     }

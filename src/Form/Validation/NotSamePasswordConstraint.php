@@ -4,10 +4,10 @@ namespace EtoA\Form\Validation;
 
 use Symfony\Component\Validator\Constraint;
 
-class SamePasswordConstraint extends Constraint
+class NotSamePasswordConstraint extends Constraint
 {
     public string $password = '';
-    public string $message = 'Das Passwort muss identisch sein!';
+    public string $message = 'Das Passwort darf nicht identisch sein!';
 
     public function __construct(?string $message = null)
     {
