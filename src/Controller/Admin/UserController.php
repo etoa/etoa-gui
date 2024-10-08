@@ -298,7 +298,7 @@ class UserController extends AbstractAdminController
 
         // Handle holiday mode
         if ($request->request->getInt('umod_enable') == 1) {
-            $this->userHolidayService->activateHolidayMode($id, true);
+            $this->userHolidayService->activateHolidayMode($user, true);
             $user->setHmodFrom($this->parseDatePicker($request->request->get('user_hmode_from')));
             $user->setHmodTo($this->parseDatePicker($request->request->get('user_hmode_to')));
         } else {
