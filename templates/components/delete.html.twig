@@ -1,0 +1,37 @@
+<tr {{ attributes }}>
+    <th>Account löschen</th>
+    {% if this.confirmation %}
+        <td>
+                Soll dein Account wirklich zur Löschung vorgeschlagen werden?<br/><br/>
+                <b>Passwort eingeben:</b> {{ password|raw }}
+        <td>
+        <button
+                data-model="confirmation"
+                data-value="false"
+                data-action="live#update"
+                type="button"
+        >
+            Abbrechen
+        </button>
+        {{ this.confirmDelete|raw }}
+        </td>
+    {% else %}
+        <td>Hier kannst du deinen Account mitsamt aller Daten löschen. Dafür wird der Account automatisch in den Urlaubsmodus gesetzt und nach
+            {{ configValue('user_delete_days') }} Tagen gelöscht.
+        </td>
+        <td>
+            {% if (this.userDeleted) %}
+                {{ this.cancelDelete|raw }}
+            {% else %}
+                <button
+                       data-model="confirmation"
+                       data-value="true"
+                       data-action="live#update"
+                       type="button"
+                >
+                    Account löschen
+                </button>
+            {% endif %}
+        </td>
+    {% endif %}
+</tr>
