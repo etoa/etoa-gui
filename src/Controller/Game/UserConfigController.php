@@ -8,14 +8,26 @@ use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\Form\Type\Core\AvatarUploadType;
 use EtoA\Form\Type\Core\DesignType;
 use EtoA\Form\Type\Core\MultiViewType;
+use EtoA\Form\Validation\NotSamePasswordConstraint;
 use EtoA\Form\Validation\SamePasswordConstraint;
 use EtoA\Form\Validation\ValidUserConstraint;
+use EtoA\HostCache\NetworkNameService;
+use EtoA\Log\LogFacility;
+use EtoA\Log\LogRepository;
+use EtoA\Log\LogSeverity;
+use EtoA\Ranking\UserBannerService;
 use EtoA\Security\Player\CurrentPlayer;
+use EtoA\Support\BBCodeUtils;
 use EtoA\Support\FileUtils;
 use EtoA\User\User;
+use EtoA\User\UserHolidayService;
+use EtoA\User\UserLoginFailureRepository;
 use EtoA\User\UserMulti;
 use EtoA\User\UserMultiRepository;
 use EtoA\User\UserPropertiesRepository;
+use EtoA\User\UserService;
+use EtoA\User\UserSessionRepository;
+use EtoA\User\UserSessionSearch;
 use EtoA\User\UserSitting;
 use EtoA\User\UserSittingRepository;
 use Symfony\Bundle\SecurityBundle\Security;
@@ -50,6 +62,7 @@ use Symfony\Component\Validator\Constraints\Email;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use function Symfony\Component\Clock\now;
+use Exception;
 
 class UserConfigController extends AbstractGameController
 {
@@ -474,7 +487,7 @@ class UserConfigController extends AbstractGameController
                 'first_options' => [
                     'hash_property_path' => 'password',
                     'constraints' => [
-                        new SamePasswordConstraint()
+                        new NotSamePasswordConstraint('Das Passwort darf nicht dasselbe wie das normale Accountpasswort sein!')
                     ],
                 ],
                 'mapped' => false,
@@ -550,37 +563,181 @@ class UserConfigController extends AbstractGameController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $this->userRepository->save($this->getUser()->getdata());
+            $this->userRepository->save($user);
         }
 
         return $this->render('game/userconfig/dual.html.twig', [
-            'form' => $form,
-            'msg' => $msg??null,
+            'form' => $form
         ]);
     }
 
     #[Route('/game/config/password', name: 'game.config.password')]
-    public function password(Request $request): Response
+    public function password(Request $request, ConfigurationService $config, LogRepository $logRepository, UserService $userService): Response
     {
+        $user = $this->getUser()->getData();
+        $form = $this->createFormBuilder($user)
+            ->add('save', SubmitType::class, ['label' => 'Speichern'])
+            ->add('plainPassword', RepeatedType::class, [
+                'type' => PasswordType::class,
+                'invalid_message' => 'Passwörter sind nicht gleich oder zu kurz (mind. %min% Zeichen)',
+                'invalid_message_parameters' => ['%min%' => $config->getInt('password_minlength')],
+                'options' => [
+                    'attr'=>[
+                        'autocomplete' => 'off',
+                        'maxlength'=>"255",
+                        'size'=>"20",
+                        'minlength'=>$config->getInt('password_minlength'),
+                    ]
+                ],
+                'required' => true,
+                'constraints' => [
+                    new Length(['min' => $config->getInt('password_minlength')])
+                ],
+                'first_options' => [
+                    'hash_property_path' => 'password',
+                    'constraints' => [
+                        new NotSamePasswordConstraint()
+                    ],
+                ],
+                'mapped' => false,
+            ])
+            ->add('oldPassword', PasswordType::class, [
+                'constraints' => [
+                    new SamePasswordConstraint('Dein altes Passwort stimmt nicht mit dem gespeicherten Passwort überein!')
+                ],
+                'mapped' => false,
+            ])
+            ->getForm();
 
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $this->userRepository->save($user);
+            $logRepository->add(LogFacility::USER, LogSeverity::INFO, "Der Spieler [b]" . $user->getNick() . "[/b] ändert sein Passwort!");
+
+            $this->mailSenderService->send(
+                "Passwortänderung",
+                "Hallo " . $user->getNick() . "\n\nDies ist eine Bestätigung, dass du dein Passwort für deinen Account erfolgreich geändert hast!\n\nSolltest du dein Passwort nicht selbst geändert haben, so nimm bitte sobald wie möglich Kontakt mit einem Game-Administrator auf: https://www.etoa.ch/kontakt",
+                $user->getEmail()
+            );
+
+            $userService->addToUserLog($user->getId(), "settings", "{nick} ändert sein Passwort.", false);
+            $msg['success'] = 'Das Passwort wurde geändert!';
+        }
+
+        return $this->render('game/userconfig/password.html.twig', [
+            'form' => $form,
+            'config' => $config,
+            'msg' => $msg??null
+        ]);
     }
 
     #[Route('/game/config/logins', name: 'game.config.logins')]
-    public function logins(Request $request): Response
+    public function logins(
+        UserSessionRepository $userSessionRepository,
+        UserLoginFailureRepository $userLoginFailureRepository,
+        NetworkNameService $networkNameService
+        ): Response
     {
 
+        $activeSessions = $userSessionRepository->getActiveUserSessions($this->getUser()->getId());
+        $sessionLogs = $userSessionRepository->getSessionLogs(UserSessionSearch::create()->userId($this->getUser()->getId()), 10);
+        $failures = $userLoginFailureRepository->getUserLoginFailures($this->getUser()->getId(), 10);
+
+        return $this->render('game/userconfig/logins.html.twig', [
+            'activeSessions' => $activeSessions,
+            'sessionLogs' => $sessionLogs,
+            'networkNameService' => $networkNameService,
+            'failures' => $failures,
+        ]);
     }
 
     #[Route('/game/config/banner', name: 'game.config.banner')]
-    public function banner(Request $request): Response
+    public function banner(UserBannerService $userBannerService): Response
     {
+        $name = $userBannerService->getUserBannerPath($this->getUser()->getId());
 
+        return $this->render('game/userconfig/banner.html.twig', [
+            'banner' => file_exists($name)?$name:false,
+        ]);
     }
 
     #[Route('/game/config/misc', name: 'game.config.misc')]
-    public function misc(Request $request): Response
+    public function misc(Request $request,
+                         UserHolidayService $userHolidayService,
+                         UserService $userService,
+                         ConfigurationService $config,
+                         Security $security): Response
     {
+        $user = $this->getUser()->getData();
+        $form = $this->createFormBuilder($user)
+            ->add('deactivate', SubmitType::class, [
+                'label' => 'Urlaubsmodus deaktivieren',
+                'attr' => ['style'=>'color:#0f0']
+            ])
+            ->add('activate', SubmitType::class, [
+                'label' => 'Urlaubsmodus aktivieren',
+                'attr' => ['onclick'=>"return confirm('Soll der Urlaubsmodus wirklich aktiviert werden?')"]
+            ])
+            ->add('cancelDelete', SubmitType::class, [
+                'label' => 'Löschantrag aufheben',
+                'attr' => ['style'=>'color:#0f0']
+            ])
+            ->add('confirmDelete', SubmitType::class, [
+                'label' => 'Account löschen'
+            ])
+            ->add('password', PasswordType::class, [
+                'constraints' => [
+                    new SamePasswordConstraint('Falsches Passwort!')
+                ],
+                'mapped' => false,
+            ])
+            ->getForm();
 
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()) {
+            if($form->get('activate')->isClicked()) {
+                if ($userHolidayService->activateHolidayMode($user)) {
+                    $msg['success'] = BBCodeUtils::toHTML("Du bist nun im Urlaubsmodus bis mind. [b]" . StringUtils::formatDate(time()+$config->getInt('hmode_days') * 24 * 3600) . "[/b].");
+                    $userService->addToUserLog($user->getId(), "settings", "{nick} ist nun im Urlaub.", true);
+                } else {
+                    $msg['error'] = "Es sind noch Flotten unterwegs!";
+                }
+            }
+
+            if($form->get('deactivate')->isClicked()) {
+                if (!$user->getDeleted() && $userHolidayService->deactivateHolidayMode($user)) {
+                    $msg['success'] = "Urlaubsmodus aufgehoben! Denke daran, auf allen deinen Planeten die Produktion zu überprüfen!";
+                    $userService->addToUserLog($user->getId(), "settings", "{nick} ist nun aus dem Urlaub zurück.", true);
+                    $showButton = true;
+                } else {
+                    $msg['error'] = "Urlaubsmodus kann nicht aufgehoben werden!";
+                }
+            }
+
+            if($form->get('cancelDelete')->isClicked()) {
+                $userService->updateDelete($user,0);
+                $msg['success'] = "Löschantrag aufgehoben!";
+                $userService->addToUserLog($user->getId(), "settings", "{nick} hat seine Accountlöschung aufgehoben.", true);
+                $showButton = true;
+            }
+
+            if($form->get('confirmDelete')->isClicked()) {
+                $timestamp = time() + ($config->getInt('user_delete_days') * 3600 * 24);
+                $userService->updateDelete($user, $timestamp);
+                $msg['success'] = "Deine Daten werden am " . StringUtils::formatDate(time() + ($config->getInt('user_delete_days') * 3600 * 24)) . " Uhr von unserem System gelöscht! Wir wünschen weiterhin viel Erfolg im Netz!";
+                $userHolidayService->activateHolidayMode($user, true);
+                $userService->addToUserLog($user->getId(), "settings", "{nick} hat seinen Account zur Löschung freigegeben.", true);
+                $security->logout();
+            }
+        }
+
+        return $this->render('game/userconfig/misc.html.twig', [
+            'form' => $form,
+            'msg' => $msg??null,
+            'showButton' => $showButton??false
+        ]);
     }
 
     #[Route('/game/config/warnings', name: 'game.config.warnings')]

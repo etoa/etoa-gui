@@ -1,0 +1,18 @@
+{% extends 'game/userconfig/userconfig.html.twig' %}
+
+{% import 'macros.html.twig' as macros %}
+
+{% block config %}
+    {{ macros.message('Banner', 'Hilf mit, EtoA bekannter zu machen und binde unser Banner auf deiner Website ein!
+Hier findest du den Quellcode um das Banner einzubinden:') }}
+    <br><br>
+    {% if banner %}
+    <div style="text-align: center;">
+        <img src="{{ banner }}" alt="Banner"><br><br>
+        HTML:<br/><textarea readonly="readonly" rows="2" cols="65"><a href="{{ etoaUrl('banner') }}"><img src="{{ configValue('roundurl') }}/{{ banner }}" width="{{ banner('width')}}" height="{{ banner('height')}}" alt="EtoA Online-Game" border="0" /></a></textarea><br/>
+        BBCode:<br/><textarea readonly="readonly" rows="1" cols="65">[url={{ etoaUrl('banner') }}][img]{{ configValue('roundurl') }}/{{ banner }}[/img][/url]</textarea>
+    </div>
+    {% else %}
+        Momentan ist kein Banner verfügbar!
+    {% endif %}
+{% endblock %}
