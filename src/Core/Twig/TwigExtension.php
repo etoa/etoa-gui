@@ -6,6 +6,7 @@ use EtoA\Admin\AdminRoleManager;
 use EtoA\Admin\AdminUser;
 use EtoA\Core\Configuration\ConfigurationService;
 use EtoA\HostCache\NetworkNameService;
+use EtoA\Ranking\UserBannerService;
 use EtoA\Support\BBCodeUtils;
 use EtoA\Support\ExternalUrl;
 use EtoA\Support\GameVersionService;
@@ -47,6 +48,7 @@ class TwigExtension extends AbstractExtension
             new TwigFunction('onClick', [$this, 'getOnClick']),
             new TwigFunction('BBCodeToHTML', [$this, 'BBCodeToHTML']),
             new TwigFunction('configValue', [$this, 'getConfigValue']),
+            new TwigFunction('param1', [$this, 'getParam1']),
             new TwigFunction('runtimeValue', [$this, 'getRuntimeValue']),
             new TwigFunction('isAdminAllowed', [$this, 'isAdminAllowed']),
             new TwigFunction('getAdminRoles', [$this, 'getAdminRoles']),
@@ -64,6 +66,7 @@ class TwigExtension extends AbstractExtension
             new TwigFunction('formatNumber', [$this, 'formatNumber']),
             new TwigFunction('base64', [$this, 'base64']),
             new TwigFunction('tm', [$this, 'tm']),
+            new TwigFunction('banner', [$this, 'getBannerValues']),
         ];
     }
 
@@ -87,6 +90,15 @@ class TwigExtension extends AbstractExtension
         return getAppVersion();
     }
 
+    public function getBannerValues(string $info):int
+    {
+        return match ($info) {
+            'width' => UserBannerService::BANNER_WIDTH,
+            'height' => UserBannerService::BANNER_HEIGHT,
+            default => throw new \InvalidArgumentException('Unknown value ' . $info),
+        };
+    }
+
     public function getUrl(string $id): string
     {
         switch ($id) {
@@ -104,6 +116,8 @@ class TwigExtension extends AbstractExtension
                 return ExternalUrl::CHAT;
             case 'login':
                 return $this->router->generate('external.login');
+            case 'banner':
+                return ExternalUrl::USERBANNER_LINK;
             default:
                 throw new \InvalidArgumentException('Unknown url ' . $id);
         }
@@ -135,6 +149,11 @@ class TwigExtension extends AbstractExtension
     public function getConfigValue(string $key): string
     {
         return $this->config->get($key);
+    }
+
+    public function getParam1(string $key): string
+    {
+        return $this->config->param1($key);
     }
 
     public function getRuntimeValue(string $key): string
