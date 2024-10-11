@@ -2,20 +2,20 @@
 
 namespace EtoA\Universe;
 
-use Cell;
 use EtoA\Core\ObjectWithImage;
 use EtoA\UI\Tooltip;
 use EtoA\Universe\Entity\EntityRepository;
 use EtoA\Universe\Entity\EntitySearch;
 use EtoA\User\User;
 use EtoA\User\UserUniverseDiscoveryService;
+use EtoA\Universe\Cell\Cell;
 
 /**
  * Draws a map of a galaxy sector
  */
 class SectorMapRenderer
 {
-    const MapImageDirectory = "images/map";
+    const MapImageDirectory = "build/images/map";
 
     const HorizontalCoordinateNumberImagePrefix = "GalaxyFrameCounterBottom";
     const HorizontalCoordinateNumberHighlighImagePrefix = "GalaxyFrameCounterBottomHighlight";
@@ -24,7 +24,7 @@ class SectorMapRenderer
     const VerticalCoordinateNumberHighlighImagePrefix = "GalaxyFrameCounterLeftHighlight";
 
     /** @var int[] */
-    protected $userCellsIDs = array();
+    protected array $userCellsIDs = array();
 
     protected $numberOfCellsX;
     protected $numberOfCellsY;
@@ -52,7 +52,7 @@ class SectorMapRenderer
      * Sets an array of cell IDs which will be highlighted
      * @param int[] $ids
      */
-    function setUserCellIDs($ids)
+    function setUserCellIDs(array $ids): void
     {
         $this->userCellsIDs = $ids;
     }
@@ -60,7 +60,7 @@ class SectorMapRenderer
     /**
      * Sets a specific cell to be marked as the active cell
      */
-    function setSelectedCell(Cell $cell)
+    function setSelectedCell(Cell $cell): void
     {
         $this->selectedCell = $cell;
     }
@@ -68,7 +68,7 @@ class SectorMapRenderer
     /**
      * If set, the map will be viewed from the perspective of this user (fog of war)
      */
-    function setImpersonatedUser(User $user)
+    function setImpersonatedUser(User $user): void
     {
         $this->impersonatedUser = $user;
     }
@@ -76,7 +76,7 @@ class SectorMapRenderer
     /**
      * Enables ruler (vertical and horizontal numbers)
      */
-    function enableRuler($enable)
+    function enableRuler($enable): void
     {
         $this->rulerEnabled = $enable;
     }
@@ -84,7 +84,7 @@ class SectorMapRenderer
     /**
      * Enables advanced tooltips when hovering over a cell
      */
-    function enableTooltips($enable)
+    function enableTooltips($enable): void
     {
         $this->tooltipsEnabled = $enable;
     }
@@ -92,7 +92,7 @@ class SectorMapRenderer
     /**
      * Sets the URL when clickong on a cell
      */
-    function setCellUrl($cellUrl)
+    function setCellUrl($cellUrl): void
     {
         $this->cellUrl = $cellUrl;
     }
@@ -100,7 +100,7 @@ class SectorMapRenderer
     /**
      * Sets the URL when clickong on an undiscovered cell
      */
-    function setUndiscoveredCellUrl($undiscoveredCellUrl)
+    function setUndiscoveredCellUrl($undiscoveredCellUrl): void
     {
         $this->undiscoveredCellUrl = $undiscoveredCellUrl;
     }
@@ -108,7 +108,7 @@ class SectorMapRenderer
     /**
      * Sets the URL when clickong on an undiscovered cell
      */
-    function setUndiscoveredCellJavaScript($undiscoveredCellJavaScript)
+    function setUndiscoveredCellJavaScript($undiscoveredCellJavaScript): void
     {
         $this->undiscoveredCellJavaScript = $undiscoveredCellJavaScript;
     }
@@ -116,7 +116,7 @@ class SectorMapRenderer
     /**
      * Renders the sector map
      */
-    function render($sx, $sy, UserUniverseDiscoveryService $userUniverseDiscoveryService = null, EntityRepository $entityRepository = null)
+    function render($sx, $sy, UserUniverseDiscoveryService $userUniverseDiscoveryService = null, EntityRepository $entityRepository = null): bool|string
     {
         if ($userUniverseDiscoveryService === null) {
             // TODO
@@ -171,7 +171,7 @@ class SectorMapRenderer
 
                 // Overlay image classes
                 $overlayClasses = array();
-                if ($this->selectedCell != null && $this->selectedCell->getSX() == $sx && $this->selectedCell->getSY() == $sy && $this->selectedCell->getCX() == $xcoords && $this->selectedCell->getCY() == $ycoords) {
+                if ($this->selectedCell != null && $this->selectedCell->sx == $sx && $this->selectedCell->sy == $sy && $this->selectedCell->cx == $xcoords && $this->selectedCell->cy == $ycoords) {
                     $overlayClasses[] = 'selected';
                 } elseif (in_array($cells[$xcoords][$ycoords]->cellId, $this->userCellsIDs, true)) {
                     $overlayClasses[] = 'owned';
@@ -249,7 +249,7 @@ class SectorMapRenderer
                     echo "<a href=\"" . $url . "\" ";
                 }
                 echo " style=\"background-image:url('" . $img . "');\"$class$mouseOver>";
-                echo "<img src=\"/images/blank.gif\" alt=\"Raumzelle\" " . $title . " data-id=\"" . $cells[$xcoords][$ycoords]->cellId . "\" $overlayClass/></a>";
+                echo "<img src=\"/build/images/blank.gif\" alt=\"Raumzelle\" " . $title . " data-id=\"" . $cells[$xcoords][$ycoords]->cellId . "\" $overlayClass/></a>";
                 echo "</td>";
             }
 
@@ -262,7 +262,7 @@ class SectorMapRenderer
 
             // Linke untere ecke
             echo "<td class='galaxyCellCorner'>";
-            echo "<img alt=\"Blank\" src=\"/images/blank.gif\" class=\"cell_number_spacer\"/>";
+            echo "<img alt=\"Blank\" src=\"/build/images/blank.gif\" class=\"cell_number_spacer\"/>";
             echo "</td>";
 
             // Numbers on the bottom side
