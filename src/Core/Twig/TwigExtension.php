@@ -49,6 +49,7 @@ class TwigExtension extends AbstractExtension
             new TwigFunction('BBCodeToHTML', [$this, 'BBCodeToHTML']),
             new TwigFunction('configValue', [$this, 'getConfigValue']),
             new TwigFunction('param1', [$this, 'getParam1']),
+            new TwigFunction('param2', [$this, 'getParam2']),
             new TwigFunction('runtimeValue', [$this, 'getRuntimeValue']),
             new TwigFunction('isAdminAllowed', [$this, 'isAdminAllowed']),
             new TwigFunction('getAdminRoles', [$this, 'getAdminRoles']),
@@ -154,6 +155,11 @@ class TwigExtension extends AbstractExtension
     public function getParam1(string $key): string
     {
         return $this->config->param1($key);
+    }
+
+    public function getParam2(string $key): string
+    {
+        return $this->config->param2($key);
     }
 
     public function getRuntimeValue(string $key): string
