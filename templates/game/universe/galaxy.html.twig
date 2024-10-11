@@ -1,0 +1,26 @@
+{% extends 'layout/game.html.twig' %}
+
+{% block content %}
+    <h1>Galaxie</h1>
+    <twig:Table title="Galaxiekarte">
+        {% block table_content %}
+            <tr>
+                <td id="galaxy_map_nav">Anzeigen:
+                    <select onchange="document.getElementById('img').src='{{ path('game.images.map') }}'+this.options[this.selectedIndex].value;">
+                        <option value="?legend">Normale Galaxieansicht</option>
+                        <option value="?legend&type=populated">Bev&ouml;lkerte Systeme</option>
+                        <option value="?legend&type=own">Systeme mit eigenen Planeten</option>
+                        <option value="?legend&type=alliance">Systeme mit Allianzplaneten</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td id="galaxy_map_container">
+                    <img src="{{ path('game.images.map') }}" alt="Galaxiekarte" id="img" usemap="#Galaxy" style="border:none;"/>
+                </td>
+        {% endblock %}
+    </twig:Table>
+    <map name="Galaxy"><br/>
+        {{ map|raw }}
+    </map>
+{% endblock %}

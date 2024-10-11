@@ -1,0 +1,10 @@
+{% extends 'layout/game.html.twig' %}
+{% import 'macros.html.twig' as macros %}
+
+{% block content %}
+    {{ component('SectorView',{xy:xy}) }}
+
+    <div id="spy_info_box" style="display:none;">
+        {{ macros.message('Flotten','<div id="spy_info"></div>') }}
+    </div>
+{% endblock %}
