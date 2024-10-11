@@ -789,7 +789,7 @@ class User implements \EtoA\User\UserInterface, PasswordAuthenticatedUserInterfa
         $this->userChangedMainPlanet = $userChangedMainPlanet;
     }
 
-    public function getProfileImageUrl(): ?string
+    public function buildProfileImageUrl(): ?string
     {
         if ($this->profileImage == '') {
             return null;
@@ -798,7 +798,7 @@ class User implements \EtoA\User\UserInterface, PasswordAuthenticatedUserInterfa
         return ProfileImage::IMAGE_PATH . $this->profileImage;
     }
 
-    public function getAvatarUrl(): ?string
+    public function buildAvatarUrl(): ?string
     {
         if ($this->avatar == '') {
             return null;

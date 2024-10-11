@@ -93,8 +93,8 @@ class UsersController extends AbstractAdminController
                 if ($validate == 0) {
                     $user = $this->userRepository->getUser($userId);
                     if ($user !== null) {
-                        if (file_exists($storedImagePath . $user->getProfileImageUrl())) {
-                            unlink($storedImagePath . $user->getProfileImageUrl());
+                        if (file_exists($storedImagePath . $user->buildProfileImageUrl())) {
+                            unlink($storedImagePath . $user->buildProfileImageUrl());
                         }
                         if ($this->userRepository->updateImgCheck($userId, false, '')) {
                             $this->addFlash('success', 'Bild entfernt!');

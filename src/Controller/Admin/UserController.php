@@ -251,7 +251,7 @@ class UserController extends AbstractAdminController
 
         // Handle profile image
         if ($request->request->has('profile_img_del')) {
-            $existingProfileImage = $this->projectDir . $user->getProfileImageUrl();
+            $existingProfileImage = $this->projectDir . $user->buildProfileImageUrl();
             if (file_exists($existingProfileImage)) {
                 unlink($existingProfileImage);
             }
@@ -261,7 +261,7 @@ class UserController extends AbstractAdminController
 
         // Handle avatar
         if ($request->request->has('avatar_img_del')) {
-            $existingAvatarPath = $this->projectDir . $user->getAvatarUrl();
+            $existingAvatarPath = $this->projectDir . $user->buildAvatarUrl();
             if (file_exists($existingAvatarPath)) {
                 unlink($existingAvatarPath);
             }
